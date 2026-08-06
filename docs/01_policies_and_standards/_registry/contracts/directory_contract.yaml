@@ -811,6 +811,9 @@ root_directory_whitelist:
     - "SECURITY.md"
     - "SECRETS.md"
     - "LICENSE"
+    # CloneGuard 配置文件（Phase A，#ARCH-FORCE-MERGE-DEDUP-001）
+    - "clone_guard.yml"
+    - "echo-guard.yml"
 
 # ============================================================
 # 4. doc_type→目录交叉验证（Cross-Validation）

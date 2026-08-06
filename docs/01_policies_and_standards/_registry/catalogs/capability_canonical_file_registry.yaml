@@ -8123,6 +8123,19 @@ creation_tokens:
     token: "auto-clone-guard-blueprint-20260806"
     created_by: "session-clone-guard-blueprint"
     capability: "clone_guard_blueprint"
+  # --- CloneGuard Phase A 源文件（2026-08-06，#ARCH-FORCE-MERGE-DEDUP-001）---
+  - file: "src/zephyr/clone_guard/orchestrator.py"
+    token: "auto-clone-guard-orchestrator-20260806"
+    created_by: "session-clone-guard-phase-a"
+    capability: "clone_guard_orchestrator"
+  - file: "src/zephyr/clone_guard/config.py"
+    token: "auto-clone-guard-config-20260806"
+    created_by: "session-clone-guard-phase-a"
+    capability: "clone_guard_config"
+  - file: "src/zephyr/clone_guard/engines/echo_guard_adapter.py"
+    token: "auto-clone-guard-echo-adapter-20260806"
+    created_by: "session-clone-guard-phase-a"
+    capability: "clone_guard_echo_adapter"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

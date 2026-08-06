@@ -1,0 +1,43 @@
+# Echo Guard configuration — ZephyrAlpha CloneGuard Phase A
+# See: https://github.com/echo-guard/echo-guard
+
+# Minimum function size to consider (in lines)
+min_function_lines: 3
+
+# Maximum function size to consider
+max_function_lines: 500
+
+# Languages to analyze — ZephyrAlpha 是纯 Python 项目
+languages:
+  - python
+
+# Directories to exclude (on top of defaults like .git, node_modules, __pycache__)
+exclude_dirs:
+  - metadata
+  - .runtime
+  - .echo-guard
+  - .ailocks
+  - _diag
+  - docs
+  - .venv
+  - venv
+  - site-packages
+  - node_modules
+
+# Additional file patterns to exclude
+exclude_patterns:
+  - "*_test.py"
+  - "test_*.py"
+  - "*_generated*.py"
+  - "conftest.py"
+
+# Output format: rich, json, compact
+output_format: rich
+
+# Minimum severity to fail CI: extract, review, none
+# extract = 3+副本硬阻断（必须合并）
+# review = 2副本警告（尽量精简）
+fail_on: extract
+
+# Enable dependency graph for smarter comparison routing
+enable_dep_graph: true

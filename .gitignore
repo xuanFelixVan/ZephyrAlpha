@@ -231,7 +231,7 @@ docs/_working/analysis/
 
 # 忽略根目录全部直接子项（文件+目录）
 /*
-# --- 合法根文件（git tracked，23 项）---
+# --- 合法根文件（git tracked，25 项）---
 !.dockerignore
 !.editorconfig
 !.env.example
@@ -255,6 +255,9 @@ docs/_working/analysis/
 !SECURITY.md
 !SECRETS.md
 !sitecustomize.py
+# CloneGuard 配置文件（Phase A，#ARCH-FORCE-MERGE-DEDUP-001）
+!clone_guard.yml
+!echo-guard.yml
 # --- 合法根目录（git tracked，12 项）---
 !.github/
 !.trae/

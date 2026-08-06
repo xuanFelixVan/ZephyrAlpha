@@ -1,38 +1,38 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.capability_overlap_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec), zephyr.governance.capability_lookup (REGISTRY_YAML), zephyr.clone_guard.orchestrator (CloneGuardOrchestrator)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] warn-only——永不阻断 commit（passed=True）；tests/ 豁免（真源：commit_gate_registry.is_test_exempt）；YAML 不可达时 fail-loud（logger.warning 告警检测器失效，仍 return True 保留 warn-only 契约；create_guard 已 fail-closed 阻断，本 gate 无需重复阻断）；git diff 失败亦 fail-loud；token 匹配 ≥4 字符才告警（减少短词误报）
+# [INVARIANTS] Phase A 升级——extract 级克隆硬阻断(passed=False), review 级警告, CloneGuard 降级时 warn-only 兜底(passed=True); tests/ 豁免; token overlap 检查保留 warn-only(原有行为); CloneGuard 检查所有 staged .py 文件(AM filter); git diff 失败 fail-loud; token 匹配 ≥4 字符才告警
 # [MODIFY-GUARD] gate_id="CAPABILITY-OVERLAP"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check 永不抛异常——YAML/git diff 异常降级为 fail-loud warn（不阻断 commit 保留 warn-only 契约，但 logger.warning 告警检测器失效以防静默漂移）；warn-only gate 的 fail-closed 语义=告警而非阻断
+# [ERROR_CONTRACT] check 永不抛异常——CloneGuard/YAML/git diff 异常降级为 fail-loud warn(passed=True 不阻断, logger.warning 告警检测器失效防静默漂移); extract 级克隆发现时 passed=False 硬阻断; CloneGuard 降级时 passed=True warn-only 兜底
 # [TESTS] tests/governance/commit_gates/test_capability_overlap_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁（warn-only，2026-06-30 治本）
+"""capability_overlap_gate.py — 新建 .py 文件 CapabilityLookup 提示门禁 + CloneGuard 语义克隆检测
 
-检测 commit 中新建的 .py 文件名是否与 capability_canonical_file_registry.yaml 已注册能力
-的 aliases 重叠——命中则 logger.warning 告警（**不阻断 commit**），提示 AI 应扩展现有
-canonical 文件而非新建。
+Phase A 升级（2026-08-06, #ARCH-FORCE-MERGE-DEDUP-001）：
+  在原有 token overlap warn-only 检查基础上，接入 CloneGuard（Echo-Guard）语义克隆检测。
+  extract 级克隆（3+副本）硬阻断——"必须合并"；review 级（2副本）警告——"尽量精简"。
+  CloneGuard 不可用时降级为 warn-only（passed=True），logger.warning 告警检测器失效。
 
-病根（缺口4：CapabilityLookup 被动反查）
------------------------------------------
+病根（缺口4：CapabilityLookup 被动反查 + AI 重复造轮子）
+------------------------------------------------------
 AGENTS.md §7 已把"查 CapabilityLookup 确认能力是否已存在"列为 step 0，但仅靠文档约定——
 新 AI 若跳过 AGENTS.md 或未读 §7，可在 commit 时直接新建 .py 脚本导致重复造轮子。
-GATE-NO-PURE-SHIM 只拦 pure re-export shim，拦不住完整实现（新 AI 写了个完整的重复实现，
-不是 shim，GATE-NO-PURE-SHIM 放行）。本 gate 在 commit 时自动反查 capability registry，
-补上文档约定的代码层兜底。
+Phase A 前：token overlap 检查仅 warn-only（文件名启发式，不阻断）。
+Phase A 后：+ CloneGuard 语义检测（AST哈希+CodeSAGE嵌入），extract 级硬阻断。
 
-warn-only 裁定
----------------
-文件名 token 匹配是启发式（可能误报：新建 ``data_loader.py`` 可能命中 ``data_loader``
-capability 但实际是不同域的合法新脚本）。阻断会阻碍合法开发，故仅 logger.warning 告警——
-AI 看到 warning 后自行判断是扩展还是新建。
+降级策略（守 blueprint §5.2）
+----------------------------
+  - CloneGuard 不可用（CLI 未装/索引缺失） → warn-only 兜底（passed=True）
+  - CloneGuard 超时 → warn-only 兜底
+  - CloneGuard 正常 → extract 级硬阻断, review 级警告
 
 Usage::
 
@@ -47,6 +47,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
 
@@ -218,6 +219,57 @@ def _check_yaml_overlap(new_yaml_files: list[str]) -> list[str]:
     return warnings
 
 
+# ── Phase A: CloneGuard 语义克隆检测辅助函数（#ARCH-FORCE-MERGE-DEDUP-001）──
+
+
+def _get_all_staged_py_files(gateway) -> list[str]:
+    """获取所有 staged 的 .py 文件（Added + Modified），排除测试文件。
+
+    CloneGuard 检查所有 staged .py 文件（不只是新建的），因为修改文件
+    也可能引入重复代码。
+    """
+    try:
+        diff_result = gateway.run_git(
+            ["git", "diff", "--cached", "--name-only", "--diff-filter=AM"]
+        )
+        if diff_result.returncode != 0:
+            logger.warning(
+                "CAPABILITY-OVERLAP gate: git diff AM 失败(rc=%d)，跳过 CloneGuard 检测",
+                diff_result.returncode,
+            )
+            return []
+        return [
+            f.replace("\\", "/") for f in diff_result.stdout.strip().splitlines()
+            if f.endswith(".py") and not is_test_exempt(f)
+        ]
+    except Exception as e:  # noqa: BLE001  门禁不抛异常
+        logger.warning(
+            "CAPABILITY-OVERLAP gate: git diff AM 异常(%s: %s)，跳过 CloneGuard 检测",
+            type(e).__name__, e,
+        )
+        return []
+
+
+def _run_clone_guard_check(py_files: list[str]):
+    """运行 CloneGuard 语义克隆检测。
+
+    Returns:
+        CheckResult | None: None=CloneGuard 不可用（降级 warn-only），
+        CheckResult=检测结果。
+    """
+    try:
+        from zephyr.clone_guard.orchestrator import CloneGuardOrchestrator
+
+        orch = CloneGuardOrchestrator(Path.cwd())
+        return orch.check(py_files)
+    except Exception as e:  # noqa: BLE001  门禁不抛异常
+        logger.warning(
+            "CAPABILITY-OVERLAP gate: CloneGuard 不可用(%s: %s)，降级 warn-only",
+            type(e).__name__, e,
+        )
+        return None
+
+
 def make_capability_overlap_gate() -> GateSpec:
     """构造新建 .py 文件 CapabilityLookup 提示门禁 GateSpec（warn-only）。
 
@@ -228,30 +280,51 @@ def make_capability_overlap_gate() -> GateSpec:
     """
 
     def _check(gateway, files: list[str], **kwargs) -> tuple[bool, str]:
+        # ── 阶段1: token overlap 检查（warn-only，保留原有行为）──
+        # 文件名 token 与 capability registry 的启发式匹配，仅警告不阻断
         staged_new = _get_staged_new_files(gateway)
-        if staged_new is None:
-            return True, ""  # warn-only 契约：fail-loud 仍 return True
+        if staged_new is not None:
+            new_py_files, new_yaml_files = _filter_new_files(staged_new)
+            if new_py_files or new_yaml_files:
+                data = _load_registry_data()
+                if data is not None:
+                    cap_tokens = _build_cap_token_index(data)
+                    if cap_tokens:
+                        token_warnings: list[str] = []
+                        token_warnings.extend(_check_py_overlap(new_py_files, cap_tokens))
+                        token_warnings.extend(_check_yaml_overlap(new_yaml_files))
+                        if token_warnings:
+                            logger.warning(
+                                "CAPABILITY-OVERLAP gate warn-only: %s",
+                                " | ".join(token_warnings),
+                            )
 
-        new_py_files, new_yaml_files = _filter_new_files(staged_new)
-        if not new_py_files and not new_yaml_files:
-            return True, ""
+        # ── 阶段2: CloneGuard 语义克隆检测（Phase A——extract 级硬阻断）──
+        # 检查所有 staged .py 文件（AM filter）是否与索引中的已有函数语义重复
+        all_staged_py = _get_all_staged_py_files(gateway)
+        if not all_staged_py:
+            return True, ""  # 无 .py 文件需检测
 
-        data = _load_registry_data()
-        if data is None:
-            return True, ""  # warn-only 契约：fail-loud 仍 return True
+        cg_result = _run_clone_guard_check(all_staged_py)
+        if cg_result is None:
+            return True, ""  # CloneGuard 不可用，降级 warn-only 兜底
 
-        cap_tokens = _build_cap_token_index(data)
-        if not cap_tokens:
-            return True, ""  # registry 空，无意义
-
-        warnings: list[str] = []
-        warnings.extend(_check_py_overlap(new_py_files, cap_tokens))
-        warnings.extend(_check_yaml_overlap(new_yaml_files))
-
-        if warnings:
-            logger.warning(
-                "CAPABILITY-OVERLAP gate warn-only: %s", " | ".join(warnings)
+        if not cg_result.passed:
+            # extract 级克隆发现——硬阻断（"必须合并"）
+            reasons = []
+            for f in cg_result.findings:
+                reasons.append(
+                    f"  - {f.source_file}:{f.source_function} 与 "
+                    f"{f.existing_file}:{f.existing_lineno} 的 {f.existing_function} "
+                    f"相似度 {f.similarity:.0%}（{f.severity} 级, {f.clone_type}）"
+                )
+            reason = (
+                "CloneGuard 检测到 extract 级代码克隆——必须合并而非新建:\n"
+                + "\n".join(reasons)
+                + "\n修复: 扩展现有函数而非新建，或使用 import_suggestion"
             )
-        return True, ""  # warn-only：永远 passed=True
+            return False, reason
+
+        return True, ""
 
     return GateSpec(gate_id="CAPABILITY-OVERLAP", check=_check, priority=200)

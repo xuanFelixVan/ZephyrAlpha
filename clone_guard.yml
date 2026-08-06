@@ -1,0 +1,39 @@
+# clone_guard.yml — Zephyr CloneGuard 统一配置 (Phase A MVP)
+# 真源: docs/03_modules/_cross_layer/clone_guard/blueprint.md §6
+# 治本: 100% AI 开发场景下的重复造轮子病根——能合并的必须合并，能精简的必须精简
+
+version: 1
+project_root: .
+languages: [python]
+
+# 忽略路径（除 echo-guard.yml 自身排除规则外的补充忽略）
+ignore_paths:
+  - "tests/"
+  - "docs/"
+  - ".runtime/"
+  - ".echo-guard/"
+  - "**/_generated/"
+
+# ─── Layer 1: pre-commit 拦截 (Phase A) ───
+pre_commit:
+  timeout_sec: 30
+  fail_on: extract          # extract=3+副本硬阻断(必须合并), review=2副本警告(尽量精简)
+  echo_guard_enabled: true
+  fail_closed: false        # echo-guard 不可用时 warn-only 不阻断(降级兜底)
+
+# ─── 严重性映射 (统一) ───
+severity:
+  extract: block            # 3+副本, 硬阻断
+  review: warn              # 2副本, 警告
+  acknowledged: skip        # 已确认的合理重复
+
+# ─── Phase B-D 预留 (Phase A 不启用) ───
+# pre_commit:
+#   ast_grep:
+#     enabled: false         # Phase B
+#   redup:
+#     enabled: false         # Phase B
+# audit:
+#   schedule: "0 2 * * *"   # Phase B
+# compare:
+#   vendetect: false         # Phase C
