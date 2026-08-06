@@ -12151,3 +12151,65 @@ entries:
   status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
+# --- #ARCH-REGIME-VALIDATION-001: regime 回测验证包（Shrinkage 接入点 B + C1 开/关对比器 C）（2026-08-06）---
+- issue_id: '#ARCH-REGIME-VALIDATION-001'
+  title: 新增 regime 回测验证包——Shrinkage 接入点(B) + C1 开/关对比器(C)
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-06 新增模块登记。discussion_002 §4.3 C1 核心验证需要 Shrinkage 开/关对比，
+    故在 D_BACKTEST 域新建 regime_validation 包 + shrinkage_engine 接入点：
+    ① B1 ShrinkageBacktestEngine 继承 DefaultBacktestEngine，override _get_day_signals
+    在归一化后按 Shrinkage 因子缩放权重（剩余留现金），shrinkage=1.0 与父类 bit-identical
+    （C1 可溯源），钳制 [0,1] 保"只减不增"不变量；
+    ② B2 ShrinkageProvider 四类供给（Const/Schedule PIT as-of join/Mock 波动率4档/
+    RegimeDetectorAdapter）+ 工具函数，对接 MOD-REGIME-001 ShrinkageResult；
+    ③ C1 C1ShrinkageComparator 编排开/关两组回测，四项一票否决（Sharpe<0.1 且
+    MaxDD≥3pp 且 Calmar×1.2 且 Turnover×2），门槛取 discussion_002 §5。
+    依赖方向 backtest→regime（消费 ShrinkageResult），符合 discussion_002 §2.1
+    "regime 验证复用现有 BM-BT 框架"约定。不卡 commit（无 commit-stage gate 校验本表）。
+    铁律#9：本条由 AI 提议，status=proposed，待用户显式确认后改 decided。
+  impact:
+    - 'src/zephyr/backtest/implementations/shrinkage_engine.py（ShrinkageBacktestEngine + ShrinkageProvider 协议）'
+    - 'src/zephyr/backtest/regime_validation/shrinkage_provider.py（Const/Schedule/Mock/RegimeDetectorAdapter + 工具函数）'
+    - 'src/zephyr/backtest/regime_validation/c1_comparator.py（C1ShrinkageComparator 四项一票否决）'
+    - 'tests/backtest/test_shrinkage_engine.py + test_shrinkage_provider.py + test_c1_comparator.py（74 项）'
+  fix_phase: 已落地（2026-08-06）—— B1/B2/C1 代码 + 74 项测试全过；module_translation 已登记；ARCH 条目 AI 提议待确认
+  status: proposed
+  created: '2026-08-06'
+  last_updated: '2026-08-06'
+# --- #ARCH-BM-001: 作战地图孤儿治理三档分类——domain_classification + acknowledged_orphans 机制（2026-08-06）---
+- issue_id: '#ARCH-BM-001'
+  title: 作战地图孤儿治理三档分类——domain_classification + acknowledged_orphans 机制
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-06 治本施工。原 BM-INV-001/007 不变量体系为二元逻辑（挂了/没挂），
+    在 100% AI 开发下引发治理振荡：AI 看到 133 孤儿模块 → 尝试给基础设施挂锚点
+    → 违反铁律5 → 删除 → 再误报 → 循环。根因：_business_domain_whitelist() 取
+    flow_stage allowed 域并集，并集含工具域（D_INFRA_RUNTIME 等作 supplement），
+    导致 106 个基础设施模块被误报孤儿。
+    治本方案三层框架：
+    ① 策略层——battle_map_domain_policy.yaml V1.1.0 新增 domain_classification 段
+      （38 业务域 + 9 工具域显式分类，替代并集推断）+ acknowledged_orphans 段
+      （8 模块 + 31 环节已确认合理孤儿登记，带 review_frequency 到期复审）；
+    ② 检测层——align_battle_map.py 四项改造：
+      a. SQL 加 node_type='module' + build_status<>'deprecated' 过滤（排除测试/配置/弃用节点）
+      b. 新增 _load_domain_classification() + _load_acknowledged_orphans() 加载函数
+      c. BM-INV-001/007 三档分类（violations / acknowledged / planned），issues_total 只计违规
+      d. 报告三档渲染（1a/1b + 7a/7b 分段），AI 可区分违规 vs 合理孤儿
+    ③ 生命周期层——acknowledged 项带 review_frequency（quarterly/monthly）到期强制复审，
+      planned 模块 promote 后（build_status planned→stable）补挂锚点并移出清单。
+    验证：重跑 align_battle_map.py，违规总数=0，acknowledged 环节=28 + 模块=8，EXIT_CODE=0。
+  impact:
+    变更文件：
+    - docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml（policy_version 1.0.1→1.1.0）
+    - scripts/governance/align_battle_map.py（SQL+加载函数+三档分类+报告渲染）
+    - docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md（§8.4 BM-INV-001/007 定义更新）
+    - docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md（派生产物，重跑生成）
+    铁律#9：用户显式授权施工（"授权按 P1→P5 顺序施工"），status=decided。
+    治理振荡消除：AI 看到 violations=0 后不再对 acknowledged 项尝试"修复"。
+  fix_phase: 已落地（2026-08-06）—— P1-P5 全部完成，违规归零，EXIT_CODE=0
+  status: decided
+  created: '2026-08-06'
+  last_updated: '2026-08-06'

@@ -48,9 +48,11 @@ from __future__ import annotations
 
 import asyncio
 import fnmatch
+import json
 import logging
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 from typing import Protocol, runtime_checkable
 
@@ -62,11 +64,21 @@ from zephyr.clone_guard.aggregator import (
 from zephyr.clone_guard.config import CloneGuardConfig, load_config
 from zephyr.clone_guard.engines.ast_grep_adapter import AstGrepAdapter
 from zephyr.clone_guard.engines.echo_guard_adapter import EchoGuardAdapter, Finding
+from zephyr.clone_guard.engines.mcrit_adapter import McritAdapter
 from zephyr.clone_guard.engines.redup_adapter import RedupAdapter
+from zephyr.clone_guard.engines.relate_adapter import RelateAdapter
+from zephyr.clone_guard.engines.vendetect_adapter import VendetectAdapter
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["AggregatedFinding", "CheckResult", "CloneGuardOrchestrator", "Finding"]
+__all__ = [
+    "AggregatedFinding",
+    "AuditResult",
+    "CheckResult",
+    "CloneGuardOrchestrator",
+    "CompareResult",
+    "Finding",
+]
 
 
 @runtime_checkable
@@ -103,6 +115,55 @@ class CheckResult:
     checked_files: int = 0
 
 
+@dataclass
+class AuditResult:
+    """L2 周期审计结果（架构裁定：可运行核心闭环）。
+
+    不写 depgraph、不新增 reconciler、不用 cron（守裁定）。
+    结果持久化到 .runtime/clone_guard_audit/audit_<ts>.json（派生产物）。
+
+    Attributes:
+        findings: 聚合后的 AggregatedFinding 列表（全量，含 review/acknowledged）
+        degraded_engines: 降级引擎名列表
+        active_engine_count: 参与表决的活跃引擎数
+        health_score: A-F 评分（A=无债，F=extract 级债严重）
+        refactoring_plan: 重构建议列表（基于 extract 级 findings 生成）
+        checked_files: 实际被检测的文件数
+        timestamp: 审计时间戳（ISO 格式）
+        persisted_path: 持久化 JSON 路径（None=未持久化）
+    """
+
+    findings: list[AggregatedFinding] = field(default_factory=list)
+    degraded_engines: list[str] = field(default_factory=list)
+    active_engine_count: int = 0
+    health_score: str = "A"
+    refactoring_plan: list[str] = field(default_factory=list)
+    checked_files: int = 0
+    timestamp: str = ""
+    persisted_path: str | None = None
+
+
+@dataclass
+class CompareResult:
+    """L3 跨边界审计结果。
+
+    Attributes:
+        findings: 跨仓库聚合后的 AggregatedFinding 列表
+        cross_repo_findings: clone_type=vendored 的跨仓库 findings（合规风险子集）
+        degraded_engines: 降级引擎名列表
+        active_engine_count: 参与表决的活跃引擎数
+        remote_url: 比对远程仓库 URL
+        checked_files: 实际被检测的文件数
+    """
+
+    findings: list[AggregatedFinding] = field(default_factory=list)
+    cross_repo_findings: list[AggregatedFinding] = field(default_factory=list)
+    degraded_engines: list[str] = field(default_factory=list)
+    active_engine_count: int = 0
+    remote_url: str = ""
+    checked_files: int = 0
+
+
 class CloneGuardOrchestrator:
     """CloneGuard 统一编排器。
 
@@ -118,14 +179,14 @@ class CloneGuardOrchestrator:
         self._echo_guard = EchoGuardAdapter(self._repo_root, self._config)
         self._ast_grep = AstGrepAdapter(self._repo_root, self._config)
         self._redup = RedupAdapter(self._repo_root, self._config)
-        # L2/L3 引擎占位（Phase C 注入；None 表示未配置，_build_*_engines 跳过）
-        self._mcrit: _EngineAdapter | None = None
-        self._vendetect: _EngineAdapter | None = None
-        self._relate: _EngineAdapter | None = None
+        # L2/L3 引擎（Phase C；按 config.*_enabled 过滤参与调度）
+        self._mcrit = McritAdapter(self._repo_root, self._config)
+        self._vendetect = VendetectAdapter(self._repo_root, self._config)
+        self._relate = RelateAdapter(self._repo_root, self._config)
         self._aggregator = FindingAggregator(self._config)
 
     # ------------------------------------------------------------------
-    # 引擎集构造（按 config.*_enabled 过滤；Phase C 注入的引擎为 None 时跳过）
+    # 引擎集构造（按 config.*_enabled 过滤）
     # ------------------------------------------------------------------
 
     def _build_l1_engines(self) -> dict[str, _EngineAdapter]:
@@ -141,6 +202,38 @@ class CloneGuardOrchestrator:
             engines["ast_grep"] = self._ast_grep
         if self._config.redup_enabled:
             engines["redup"] = self._redup
+        return engines
+
+    def _build_l2_engines(self) -> dict[str, _EngineAdapter]:
+        """构造 L2 周期审计引擎集（mcrit + echo_guard + redup + ast_grep）。
+
+        守 blueprint §6.1：L2 全量审计，用重引擎精检。mcrit 默认 disabled，
+        启用后作为索引底座加速；echo_guard/redup/ast_grep 复用 L1 引擎做精检。
+        """
+        engines: dict[str, _EngineAdapter] = {}
+        if self._config.mcrit_enabled:
+            engines["mcrit"] = self._mcrit
+        if self._config.echo_guard_enabled:
+            engines["echo_guard"] = self._echo_guard
+        if self._config.redup_enabled:
+            engines["redup"] = self._redup
+        if self._config.ast_grep_enabled:
+            engines["ast_grep"] = self._ast_grep
+        return engines
+
+    def _build_l3_engines(self) -> dict[str, _EngineAdapter]:
+        """构造 L3 跨边界审计引擎集（redup + vendetect + relate）。
+
+        守 blueprint §6.1：L3 跨仓库合规审计。vendetect 检测 vendored 代码 +
+        许可证合规；relate 快速预筛加速；redup 语义克隆精检。
+        """
+        engines: dict[str, _EngineAdapter] = {}
+        if self._config.redup_enabled:
+            engines["redup"] = self._redup
+        if self._config.vendetect_enabled:
+            engines["vendetect"] = self._vendetect
+        if self._config.relate_enabled:
+            engines["relate"] = self._relate
         return engines
 
     def check(self, staged_files: list[str]) -> CheckResult:
@@ -222,6 +315,206 @@ class CloneGuardOrchestrator:
             consensus_summary=consensus_summary,
             checked_files=len(py_files),
         )
+
+    # ------------------------------------------------------------------
+    # L2 周期审计 + L3 跨边界审计（Phase C，架构裁定：可运行核心闭环）
+    # ------------------------------------------------------------------
+
+    def audit(self, files: list[str]) -> AuditResult:
+        """L2 周期审计——全量检测代码克隆累积债（架构裁定实现）。
+
+        调度 L2 引擎集（mcrit + echo_guard + redup + ast_grep），聚合后生成
+        health_score（A-F）+ refactoring_plan，结果持久化到
+        .runtime/clone_guard_audit/audit_<ts>.json（派生产物，不入 git）。
+
+        守裁定：不写 depgraph、不新增 reconciler、不用 cron（事件触发）。
+        AI 冷启动可通过 MCP 工具 clone_guard.audit_status 查询上次结果。
+
+        Args:
+            files: 待审计文件路径列表（相对路径，通常为全量 src/）。
+
+        Returns:
+            AuditResult: 含 findings + health_score + refactoring_plan + 持久化路径。
+        """
+        py_files = self._filter_files(files)
+        timestamp = datetime.now().isoformat(timespec="seconds")
+
+        if not py_files:
+            return AuditResult(timestamp=timestamp, checked_files=0)
+
+        engines = self._build_l2_engines()
+        if not engines:
+            logger.warning("CloneGuard.audit: 无启用 L2 引擎，返回空审计")
+            return AuditResult(timestamp=timestamp, checked_files=len(py_files))
+
+        engine_results = self._run_engines_concurrent(
+            engines, py_files, timeout=self._config.audit_timeout_sec
+        )
+        agg_result = self._aggregator.aggregate(engine_results)
+
+        health_score = self._compute_health_score(agg_result)
+        refactoring_plan = self._build_refactoring_plan(agg_result.findings)
+
+        result = AuditResult(
+            findings=agg_result.findings,
+            degraded_engines=agg_result.degraded_engines,
+            active_engine_count=agg_result.active_engine_count,
+            health_score=health_score,
+            refactoring_plan=refactoring_plan,
+            checked_files=len(py_files),
+            timestamp=timestamp,
+        )
+
+        # 持久化（派生产物，I-GOV-1 离库铁律：写 .runtime/ 已 gitignore）
+        result.persisted_path = self._persist_audit_result(result)
+        return result
+
+    def compare(self, files: list[str], remote_url: str | None = None) -> CompareResult:
+        """L3 跨边界审计——检测跨仓库 vendored 代码 + 许可证合规。
+
+        调度 L3 引擎集（redup + vendetect + relate），分离 cross_repo_findings
+        （clone_type=vendored 的合规风险子集）。vendetect 检测 AGPL 等高风险
+        许可证 → extract 级硬阻断信号（由调用方决定是否阻断）。
+
+        Args:
+            files: 待检测文件路径列表（相对路径）。
+            remote_url: 比对远程仓库 URL（None 时用 config.vendetect_remote_url）。
+
+        Returns:
+            CompareResult: 含 findings + cross_repo_findings（合规子集）。
+        """
+        py_files = self._filter_files(files)
+        url = remote_url or self._config.vendetect_remote_url or ""
+
+        if not py_files:
+            return CompareResult(remote_url=url, checked_files=0)
+
+        engines = self._build_l3_engines()
+        if not engines:
+            logger.warning("CloneGuard.compare: 无启用 L3 引擎，返回空比对")
+            return CompareResult(remote_url=url, checked_files=len(py_files))
+
+        engine_results = self._run_engines_concurrent(
+            engines, py_files, timeout=self._config.compare_timeout_sec
+        )
+        agg_result = self._aggregator.aggregate(engine_results)
+
+        # 分离跨仓库合规风险子集（vendetect 的 clone_type=vendored）
+        cross_repo = [f for f in agg_result.findings if f.clone_type == "vendored"]
+
+        return CompareResult(
+            findings=agg_result.findings,
+            cross_repo_findings=cross_repo,
+            degraded_engines=agg_result.degraded_engines,
+            active_engine_count=agg_result.active_engine_count,
+            remote_url=url,
+            checked_files=len(py_files),
+        )
+
+    @staticmethod
+    def _compute_health_score(agg_result: AggregationResult) -> str:
+        """health_score A-F 评分（基于 extract/review 数量映射）。
+
+        - A: 无 findings
+        - B: 仅 acknowledged/review 且 review < 5
+        - C: review >= 5 或有 1 个 extract
+        - D: 2-4 个 extract
+        - F: >= 5 个 extract（债严重）
+        """
+        if not agg_result.findings:
+            return "A"
+        extract_count = sum(1 for f in agg_result.findings if f.severity == "extract")
+        review_count = sum(1 for f in agg_result.findings if f.severity == "review")
+        if extract_count == 0 and review_count < 5:
+            return "B"
+        if extract_count <= 1:
+            return "C"
+        if extract_count < 5:
+            return "D"
+        return "F"
+
+    @staticmethod
+    def _build_refactoring_plan(findings: list[AggregatedFinding]) -> list[str]:
+        """基于 extract 级 findings 生成重构建议（供 AI 冷启动看见技术债）。"""
+        plan: list[str] = []
+        extract_findings = [f for f in findings if f.severity == "extract"]
+        for f in extract_findings:
+            suggestion = f.import_suggestion or f.existing_function
+            plan.append(
+                f"[{f.consensus}] {f.source_file}:{f.source_function} → "
+                f"复用 {f.existing_file}:{f.existing_function}"
+                + (f" (suggestion: {suggestion})" if suggestion else "")
+            )
+        return plan
+
+    def _persist_audit_result(self, result: AuditResult) -> str | None:
+        """持久化审计结果到 .runtime/clone_guard_audit/（派生产物，已 gitignore）。
+
+        守 I-GOV-1（派生产物离库铁律）：写入 .runtime/ 目录，不入 git。
+        返回写入的文件路径；失败时返回 None（不阻断审计）。
+        """
+        audit_dir = self._repo_root / ".runtime" / "clone_guard_audit"
+        try:
+            audit_dir.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            logger.warning("CloneGuard: 创建审计目录失败(%s)，跳过持久化", e)
+            return None
+
+        # 文件名：audit_YYYYMMDD_HHMMSS.json（可排序）
+        ts_slug = result.timestamp.replace(":", "").replace("-", "")[:15]
+        path = audit_dir / f"audit_{ts_slug}.json"
+
+        payload = {
+            "timestamp": result.timestamp,
+            "checked_files": result.checked_files,
+            "active_engine_count": result.active_engine_count,
+            "degraded_engines": result.degraded_engines,
+            "health_score": result.health_score,
+            "refactoring_plan": result.refactoring_plan,
+            "findings_count": len(result.findings),
+            "findings": [
+                {
+                    "finding_id": f.finding_id,
+                    "severity": f.severity,
+                    "clone_type": f.clone_type,
+                    "similarity": f.similarity,
+                    "source_file": f.source_file,
+                    "source_function": f.source_function,
+                    "source_lineno": f.source_lineno,
+                    "existing_file": f.existing_file,
+                    "existing_function": f.existing_function,
+                    "existing_lineno": f.existing_lineno,
+                    "engines": list(f.engines),
+                    "consensus": f.consensus,
+                    "vote_count": f.vote_count,
+                }
+                for f in result.findings
+            ],
+        }
+        try:
+            path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+            logger.debug("CloneGuard: 审计结果已持久化到 %s", path)
+            return str(path.relative_to(self._repo_root)).replace("\\", "/")
+        except OSError as e:
+            logger.warning("CloneGuard: 持久化审计结果失败(%s)", e)
+            return None
+
+    def load_latest_audit(self) -> dict | None:
+        """读取最近一次审计结果（供 MCP audit_status 工具复用，6层闭环·可达性）。
+
+        返回最新 audit_*.json 的解析字典；无历史记录时返回 None。
+        """
+        audit_dir = self._repo_root / ".runtime" / "clone_guard_audit"
+        if not audit_dir.exists():
+            return None
+        audit_files = sorted(audit_dir.glob("audit_*.json"))
+        if not audit_files:
+            return None
+        try:
+            return json.loads(audit_files[-1].read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as e:
+            logger.warning("CloneGuard: 读取最近审计结果失败(%s)", e)
+            return None
 
     # ------------------------------------------------------------------
     # 并发调度（通用——接受 engines 字典，供 check()/audit()/compare() 复用）

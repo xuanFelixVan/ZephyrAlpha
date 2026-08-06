@@ -5760,6 +5760,68 @@ capabilities:
       check_naming_convention.py main() 显示二元化（actual_blocking vs warn_only_count）。
       新 AI 设计 pre-commit hook 前MUST反查本规则，禁止 commit 阶段全量扫描阻断日常 commit。
 
+  # --------------------------------------------------------------------------
+  - capability_id: shrinkage_backtest_engine
+    canonical_override: src/zephyr/backtest/implementations/shrinkage_engine.py
+    aliases:
+      - ShrinkageBacktestEngine
+      - shrinkage_engine
+      - ShrinkageProvider
+      - ShrinkageEngineError
+      - _ConstOneProvider
+      - _clamp_shrinkage
+    description: >-
+      Shrinkage 接入点回测引擎（D_BACKTEST 域，#ARCH-REGIME-VALIDATION-001 B1）。canonical =
+      src/zephyr/backtest/implementations/shrinkage_engine.py。继承 DefaultBacktestEngine，
+      override _get_day_signals 在信号归一化后按 Shrinkage 因子缩放目标权重（剩余资金留
+      现金），实现 regime 风险节流。shrinkage=1.0 与父类 bit-identical（C1 可溯源）；
+      钳制 [0,1] 保"只减不增"不变量；provider 异常当日退化为满部署。ShrinkageProvider
+      协议在此声明（实现在 shrinkage_provider.py）。依赖方向 backtest→regime（消费
+      ShrinkageResult）。解决发现性：新 AI 搜 "Shrinkage 回测/regime 风险节流/仓位收缩"
+      可定位真源。解决防重建：check_file_canonical() 反查，新 AI 准备造同类接入点前会被
+      引导到本真源。
+
+  # --------------------------------------------------------------------------
+  - capability_id: shrinkage_provider
+    canonical_override: src/zephyr/backtest/regime_validation/shrinkage_provider.py
+    aliases:
+      - ConstShrinkageProvider
+      - ScheduleShrinkageProvider
+      - MockShrinkageProvider
+      - RegimeDetectorShrinkageAdapter
+      - ShrinkageProviderError
+      - clamp_shrinkage
+      - build_schedule_from_results
+      - build_schedule_from_detector
+    description: >-
+      Shrinkage 因子供给适配层（D_BACKTEST 域，#ARCH-REGIME-VALIDATION-001 B2）。canonical =
+      src/zephyr/backtest/regime_validation/shrinkage_provider.py。四类供给方式：
+      ConstShrinkageProvider（恒定值，关闭 regime=1.0）/ ScheduleShrinkageProvider（日期
+      查表，PIT as-of join bisect_right）/ MockShrinkageProvider（波动率 4 档 mock，HMM
+      未好前顶上）/ RegimeDetectorShrinkageAdapter（对接 MOD-REGIME-001 ShrinkageResult）。
+      工具函数 clamp_shrinkage（钳制 [0,1]）/ build_schedule_from_results（从 ShrinkageResult
+      构建查表）/ build_schedule_from_detector（从 RegimeDetector 构建）。解决发现性：
+      新 AI 搜 "Shrinkage 因子供给/regime 回放/波动率 mock" 可定位真源。
+
+  # --------------------------------------------------------------------------
+  - capability_id: c1_shrinkage_comparator
+    canonical_override: src/zephyr/backtest/regime_validation/c1_comparator.py
+    aliases:
+      - C1ShrinkageComparator
+      - C1Config
+      - C1MetricVerdict
+      - C1ComparisonResult
+      - C1ShrinkageComparatorError
+      - c1_comparator
+    description: >-
+      C1 Shrinkage 开/关对比器（D_BACKTEST 域，#ARCH-REGIME-VALIDATION-001 C1）。canonical =
+      src/zephyr/backtest/regime_validation/c1_comparator.py。编排 Shrinkage 开/关两组回测，
+      四项一票否决裁定 regime 是否部署：Sharpe（跌幅 <0.1）/ MaxDD（改善 ≥3pp）/ Calmar
+      （×1.2）/ Turnover（×2），门槛取 discussion_002 §5。C1ComparisonResult 含 metric_verdicts
+      清单 + passed + veto_reason + summary。解决发现性：新 AI 搜 "Shrinkage 开关对比/regime
+      部署裁定/C1 验证" 可定位真源。解决防重建：check_file_canonical() 反查，新 AI 准备造
+      同类对比器前会被引导到本真源。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -8263,11 +8325,36 @@ creation_tokens:
     token: "auto-clone-guard-redup-adapter-20260806"
     created_by: "session-clone-guard-phase-b"
     capability: "clone_guard_redup_adapter"
+  - file: "src/zephyr/clone_guard/engines/mcrit_adapter.py"
+    token: "auto-clone-guard-mcrit-adapter-20260806"
+    created_by: "session-clone-guard-phase-c"
+    capability: "clone_guard_mcrit_adapter"
+  - file: "src/zephyr/clone_guard/engines/relate_adapter.py"
+    token: "auto-clone-guard-relate-adapter-20260806"
+    created_by: "session-clone-guard-phase-c"
+    capability: "clone_guard_relate_adapter"
+  - file: "src/zephyr/clone_guard/engines/vendetect_adapter.py"
+    token: "auto-clone-guard-vendetect-adapter-20260806"
+    created_by: "session-clone-guard-phase-c"
+    capability: "clone_guard_vendetect_adapter"
   # --- oneoff 审计基线生成器（#ARCH-PRECOMMIT-INCREMENTAL Task 6，2026-08-06）---
   - file: "scripts/governance/audit_precommit_incremental_baseline.py"
     token: "auto-precommit-incremental-baseline-20260806"
     created_by: "precommit-incremental-task6"
     capability: "precommit_incremental_discipline"
+  # --- regime 回测验证包（2026-08-06，#ARCH-REGIME-VALIDATION-001 B+C1）---
+  - file: "src/zephyr/backtest/implementations/shrinkage_engine.py"
+    token: "auto-shrinkage-engine-20260806"
+    created_by: "session-regime-validation-bc1"
+    capability: "shrinkage_backtest_engine"
+  - file: "src/zephyr/backtest/regime_validation/shrinkage_provider.py"
+    token: "auto-shrinkage-provider-20260806"
+    created_by: "session-regime-validation-bc1"
+    capability: "shrinkage_provider"
+  - file: "src/zephyr/backtest/regime_validation/c1_comparator.py"
+    token: "auto-c1-comparator-20260806"
+    created_by: "session-regime-validation-bc1"
+    capability: "c1_shrinkage_comparator"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
