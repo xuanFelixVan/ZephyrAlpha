@@ -39,6 +39,7 @@ import os
 import shutil
 import subprocess  # noqa: bare-subprocess  ast-grep CLI 调用需要 subprocess
 from pathlib import Path
+from typing import Iterator
 
 from zephyr.clone_guard.config import CloneGuardConfig
 from zephyr.clone_guard.engines.echo_guard_adapter import Finding
@@ -57,6 +58,14 @@ _SEVERITY_MAP: dict[str, str] = {
 # 默认规则目录（相对仓库根目录，blueprint §4.1：规则随包放置在 src/zephyr/clone_guard/rules/）
 _DEFAULT_RULES_DIR = "src/zephyr/clone_guard/rules"
 
+# 命令行分批阈值——Windows CreateProcess 命令行长度上限 32767 字符。
+# L2 全量审计一次传入 2703 个 .py 文件（~146K 字符）会超限，触发 FileNotFoundError
+# 被误报为"ast-grep CLI 未安装"。按累积字符数分批解决（守 ERROR_CONTRACT：永不抛异常）。
+_MAX_CMDLINE_CHARS = 16000  # 安全阈值，预留命令前缀 + 环境变量开销
+# 命令前缀开销估计：`ast-grep scan --rule <path> --json=compact --include-metadata`
+# 规则路径通常 ~80 字符，固定前缀 ~60 字符，合计预留 512 字符安全余量
+_CMDLINE_OVERHEAD_CHARS = 512
+
 
 class AstGrepAdapter:
     """ast-grep 规则引擎适配器。
@@ -70,22 +79,30 @@ class AstGrepAdapter:
         self._config = config or CloneGuardConfig()
         self._rules_dir = self._repo_root / _DEFAULT_RULES_DIR
 
-    def health_check(self) -> bool:
-        """检查 ast-grep 是否可用（CLI 存在 + 规则目录有 .yaml 文件）。"""
-        ast_grep = shutil.which("ast-grep")
-        if ast_grep is None:
-            return False
+    def _collect_rule_files(self) -> list[Path]:
+        """收集规则目录下全部规则文件（.yaml + .yml，排序）。
 
+        统一 health_check 与 detect 的规则发现逻辑——此前两者用不同扩展名 glob，
+        DCR-005 强制 .yaml 时 health_check 会误判规则不存在导致引擎被跳过。
+        同时兼容 .yml 以备未来迁移。
+        """
         if not self._rules_dir.exists():
-            return False
+            return []
+        # 同一文件不会同时匹配两扩展名；sorted 保证稳定顺序
+        files = list(self._rules_dir.glob("*.yaml")) + list(self._rules_dir.glob("*.yml"))
+        return sorted(files)
 
-        rule_files = list(self._rules_dir.glob("*.yaml"))
-        return len(rule_files) > 0
+    def health_check(self) -> bool:
+        """检查 ast-grep 是否可用（CLI 存在 + 规则目录有规则文件）。"""
+        if shutil.which("ast-grep") is None:
+            return False
+        return len(self._collect_rule_files()) > 0
 
     def detect(self, files: list[str], timeout: int | None = None) -> tuple[list[Finding], bool]:
         """检测给定文件的结构反模式。
 
-        遍历规则目录下所有 .yaml 规则文件，对每个规则运行 ast-grep scan。
+        遍历规则目录下所有规则文件（.yaml/.yml），对每个规则运行 ast-grep scan。
+        文件按命令行长度分批（_chunk_files），避免大批文件超 Windows 上限。
 
         Args:
             files: 待检测文件路径列表（相对路径）。
@@ -105,27 +122,48 @@ class AstGrepAdapter:
             logger.debug("AstGrepAdapter: ast-grep CLI 未安装，跳过检测")
             return [], True
 
-        # 检查规则目录
-        if not self._rules_dir.exists():
-            logger.debug("AstGrepAdapter: 规则目录不存在(%s)，跳过检测", self._rules_dir)
-            return [], True
-
-        rule_files = sorted(self._rules_dir.glob("*.yaml"))
+        rule_files = self._collect_rule_files()
         if not rule_files:
-            logger.debug("AstGrepAdapter: 规则目录无 .yaml 文件，跳过检测")
+            logger.debug("AstGrepAdapter: 规则目录无规则文件(%s)，跳过检测", self._rules_dir)
             return [], True
 
         timeout_sec = timeout or self._config.pre_commit_timeout_sec
         all_findings: list[Finding] = []
         any_degraded = False
 
+        # 按命令行长度分批——避免大批文件（L2 全量审计）超 Windows CreateProcess 上限。
+        # 每个规则独立分批：单批失败仅标记 degraded，不影响其他批次的可用结果
+        # （守"部分降级 warn+继续"哲学，partial findings 优于全量丢弃）。
         for rule_file in rule_files:
-            findings, degraded = self._run_single_rule(rule_file, files, timeout_sec)
-            all_findings.extend(findings)
-            if degraded:
-                any_degraded = True
+            for batch in self._chunk_files(files):
+                findings, degraded = self._run_single_rule(rule_file, batch, timeout_sec)
+                all_findings.extend(findings)
+                if degraded:
+                    any_degraded = True
 
         return all_findings, any_degraded
+
+    def _chunk_files(self, files: list[str]) -> Iterator[list[str]]:
+        """按命令行累积字符数将文件列表分批。
+
+        Windows CreateProcess 命令行长度上限 32767 字符。L2 全量审计传入数千文件时，
+        一次性拼接超限会触发 FileNotFoundError（被误报为"CLI 未安装"）。本方法按
+        累积字符数切片，每批命令行控制在 _MAX_CMDLINE_CHARS 内。
+
+        单文件超阈值时仍单独成批（保证不丢检测，由 _run_single_rule 兜底降级）。
+        """
+        batch: list[str] = []
+        batch_len = _CMDLINE_OVERHEAD_CHARS
+        for f in files:
+            item_len = len(f) + 1  # 路径 + 1 个分隔空格
+            if batch and batch_len + item_len > _MAX_CMDLINE_CHARS:
+                yield batch
+                batch = []
+                batch_len = _CMDLINE_OVERHEAD_CHARS
+            batch.append(f)
+            batch_len += item_len
+        if batch:
+            yield batch
 
     def _run_single_rule(
         self, rule_file: Path, files: list[str], timeout_sec: int
