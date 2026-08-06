@@ -12433,8 +12433,8 @@ entries:
     结论：regime 风险节流有效，可进 Phase 2 模型质量验证。
     测试覆盖：tests/regime/test_overlay_signals_builder.py(13项 8转换触发/常态零信号) +
     test_deadzone_provider.py(11项) + regime features 单测全过；完整套件 473 passed。
-    铁律#9：本条补登已落地施工（commit 852457e9），AI 提议 status=proposed，待用户确认后
-    转 decided。blueprint.md 设计真源已存在（docs/03_modules/_domain_regime/regime_feature_builder/）。
+    铁律#9：本条补登已落地施工（commit 852457e9），AI 提议 status=proposed，经用户授权
+    确认转 decided（2026-08-07）。blueprint.md 设计真源已存在（docs/03_modules/_domain_regime/regime_feature_builder/）。
   impact:
     - 'src/zephyr/regime/regime_feature_builder.py（RegimeFeatureBuilder 主编排器，671行）'
     - 'src/zephyr/regime/features/market_features.py（F1/F3/F4/F5 市场特征算子）'
@@ -12446,7 +12446,7 @@ entries:
     - 'src/zephyr/regime/features/__init__.py（features 包入口）'
     - 'tests/regime/test_overlay_signals_builder.py（13项覆盖层触发/常态零信号）'
     - 'tests/backtest/test_deadzone_provider.py（11项死区装饰器）'
-  fix_phase: 已落地（2026-08-06 commit 852457e9）—— 模块A 7文件 + 测试 + C1 真实数据验证四项全通过；ARCH 条目补登待用户确认转 decided
-  status: proposed
+  fix_phase: 已落地并裁定 decided（2026-08-06 commit 852457e9 落地 + 2026-08-07 commit dba384dd 补登 + 用户授权转 decided）—— 模块A 7文件 + 测试 + C1 真实数据验证四项全通过
+  status: decided
   created: '2026-08-07'
   last_updated: '2026-08-07'
