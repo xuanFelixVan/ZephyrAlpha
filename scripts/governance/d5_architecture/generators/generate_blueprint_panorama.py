@@ -713,6 +713,86 @@ def _update_blueprint_file(bp: BlueprintFrontmatter, new_s06: str, *, dry_run: b
 
 
 # ---------------------------------------------------------------------------
+# §0.6 残留清理（#ARCH-REGEN-CONCURRENCY-001 P2-2a：已删除模块的孤儿蓝图）
+# ---------------------------------------------------------------------------
+# generate_all 原先只遍历 depgraph_map.keys()，对"蓝图存在但 depgraph 已删除"
+# 的模块（孤儿）不做 §0.6 清理，导致 §0.6 内容陈旧。P2-2a 新增本组函数：
+#   - _remove_s06_block：纯函数，移除单个蓝图文本的 §0.6 块（与 _replace_or_insert_s06 对称）
+#   - _cleanup_orphan_s06：编排，比对 blueprint_map 与 depgraph 模块集合清理孤儿
+# ---------------------------------------------------------------------------
+
+# §0.6 块后紧跟的闭合 --- 分隔线（_replace_or_insert_s06 插入产物）。
+# 移除 §0.6 时一并吞掉，避免遗留孤立分隔线。
+_S06_CLOSING_SEPARATOR_RE = re.compile(r"\n---\s*\n")
+
+
+def _remove_s06_block(content: str) -> str:
+    """移除蓝图中的 §0.6 自动生成章节（用于已从 depgraph 删除的孤儿模块）。
+
+    幂等：无 §0.6 时原样返回。
+    同时移除 §0.6 后的闭合 --- 分隔线（若有），避免遗留孤立分隔线；
+    拼接点折叠多余空行，保证 §0.6 前后章节以单个空行分隔。
+
+    与 _replace_or_insert_s06 对称：后者负责"写入/更新 §0.6"，本函数负责"移除 §0.6"。
+
+    Args:
+        content: 蓝图文件原始内容
+
+    Returns:
+        移除 §0.6 后的蓝图文件内容（无 §0.6 时原样返回）
+    """
+    match = _S06_BLOCK_RE.search(content)
+    if not match:
+        return content
+    # §0.6 块后若紧跟闭合 --- 分隔线（_replace_or_insert_s06 插入产物），一并移除
+    after_block = content[match.end():]
+    sep = _S06_CLOSING_SEPARATOR_RE.match(after_block)
+    cut_end = match.end() + (sep.end() if sep else 0)
+    before = content[: match.start()]
+    after = content[cut_end:]
+    # 拼接点折叠多余空行：两侧 rstrip/lstrip 换行后统一插入单个空行分隔，
+    # 避免 §0.6 移除后前后章节之间出现 3+ 连续换行
+    return before.rstrip("\n") + "\n\n" + after.lstrip("\n")
+
+
+def _cleanup_orphan_s06(
+    blueprint_map: dict[str, BlueprintFrontmatter],
+    depgraph_module_ids: set[str],
+    *,
+    dry_run: bool,
+) -> int:
+    """清理已从 depgraph 删除但蓝图仍残留 §0.6 的孤儿模块。
+
+    generate_all 原先只遍历 depgraph 中的模块，对"蓝图存在但 depgraph 已删除"
+    的模块（孤儿）不做 §0.6 清理，导致 §0.6 内容陈旧。本函数比对 blueprint_map
+    与 depgraph 模块集合，对孤儿蓝图移除其 §0.6（depgraph 已非真源，§0.6 失效）。
+
+    Args:
+        blueprint_map: module_id → BlueprintFrontmatter（_build_blueprint_index 产物）
+        depgraph_module_ids: depgraph 中现存的所有 blueprint_id 集合
+        dry_run: True 只打印预览不写文件
+
+    Returns:
+        被清理（§0.6 被移除）的孤儿蓝图数量
+    """
+    orphans = sorted(set(blueprint_map) - depgraph_module_ids)
+    cleaned = 0
+    for mid in orphans:
+        bp = blueprint_map[mid]
+        new_content = _remove_s06_block(bp.content)
+        if new_content == bp.content:
+            continue  # 孤儿但无 §0.6 → 无需清理
+        if not dry_run:
+            bp.file_path.write_text(new_content, encoding="utf-8")
+        cleaned += 1
+        action = "DRY-RUN" if dry_run else "OK"
+        print(f"[{action}] {mid}: §0.6 残留已清理（模块已从 depgraph 删除）")
+    if orphans:
+        print(f"[INFO] 孤儿蓝图清理：{len(orphans)} 个孤儿，{cleaned} 个清理了 §0.6")
+    return cleaned
+
+
+# ---------------------------------------------------------------------------
 # 主流程
 # ---------------------------------------------------------------------------
 
@@ -739,7 +819,7 @@ def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
     """
     try:
         panorama = _collect_panorama(module_id)
-    except Exception as exc:  # noqa: BLE001 — 顶层兜底: 采集失败需继续处理其他模块
+    except Exception as exc:
         print(f"[ERROR] 采集 {module_id} 数据失败: {exc}", file=sys.stderr)
         return EXIT_FINDINGS
     # depgraph 无此模块 → 跳过（ERROR_CONTRACT exit 3 语义，但此处返回 3 不退出）
@@ -1022,10 +1102,17 @@ def generate_all(*, dry_run: bool = False) -> int:
             print(f"[ERROR] {mid}: §0.6 生成失败: {exc}", file=sys.stderr)
             failed += 1
 
+    # P2-2a：清理已从 depgraph 删除但蓝图仍残留 §0.6 的孤儿模块。
+    # depgraph_map.keys() 为 depgraph 现存模块；blueprint_map 中不在其中的即孤儿。
+    orphan_cleaned = _cleanup_orphan_s06(
+        blueprint_map, set(depgraph_map.keys()), dry_run=dry_run
+    )
+
     elapsed = _time.monotonic() - t0
     print(
         f"[INFO] 处理完成：成功={succeeded}, 跳过(蓝图无)={skipped_blueprint}, "
-        f"失败={failed}（共 {len(modules)} 个，总耗时 {elapsed:.1f}s）"
+        f"失败={failed}, 孤儿清理={orphan_cleaned}"
+        f"（共 {len(modules)} 个，总耗时 {elapsed:.1f}s）"
     )
     return 0 if failed == 0 else 1
 

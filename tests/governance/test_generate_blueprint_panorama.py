@@ -27,6 +27,7 @@
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 
@@ -273,3 +274,233 @@ class TestS01TableRowRegex:
         content = "|---|------|------|\n"
         matches = gbp._S01_TABLE_ROW_RE.findall(content)
         assert len(matches) == 0
+
+
+# ---------------------------------------------------------------------------
+# _remove_s06_block / _cleanup_orphan_s06 测试
+# (#ARCH-REGEN-CONCURRENCY-001 P2-2a：已删除模块 §0.6 残留清理)
+# ---------------------------------------------------------------------------
+#
+# 背景：generate_all 原先只遍历 depgraph_map.keys()，对已从 depgraph 删除但蓝图
+# 仍残留 §0.6 的模块（孤儿）不做清理，导致 §0.6 内容陈旧。P2-2a 新增
+# _remove_s06_block（纯函数：移除单个蓝图文本的 §0.6）+ _cleanup_orphan_s06
+# （编排：比对 blueprint_map 与 depgraph 模块集合，清理孤儿）。
+#
+# 测试策略：先写测试（TDD red），再实现函数（green）。纯函数 + tmp_path 文件 IO，
+# 无需 DB 连接。
+# ---------------------------------------------------------------------------
+
+
+def _make_blueprint_with_s06(module_id: str = "MOD-DELETED-001") -> str:
+    """构造带 §0.6 的蓝图文本（结构对标 _replace_or_insert_s06 插入后的产物）。"""
+    return (
+        "---\n"
+        f"module_id: {module_id}\n"
+        "status: Active\n"
+        "---\n"
+        "\n"
+        "### §0.1 代码文件清单\n"
+        "\n"
+        "| # | 文件 | 说明 |\n"
+        "|---|------|------|\n"
+        "| 1 | src/foo.py | foo |\n"
+        "\n"
+        "### §0.6 四图对齐视图\n"
+        "\n"
+        "<!-- AUTOGEN: source=depgraph+dataflow+decision -->\n"
+        "\n"
+        "> **自动生成**：本节由 generate_blueprint_panorama.py 派生。\n"
+        "\n"
+        "#### 四图位置\n"
+        "\n"
+        "| 图 | 位置 | 状态 |\n"
+        "|----|------|------|\n"
+        "\n"
+        "#### 四核心字段\n"
+        "\n"
+        "| 字段 | depgraph 值 | 蓝图值 | 是否一致 |\n"
+        "|------|------------|--------|:-------:|\n"
+        "\n"
+        "> 冲突时以 depgraph 为准。\n"
+        "\n"
+        "---\n"
+        "\n"
+        "## 1. 核心概念\n"
+        "\n"
+        "正文\n"
+    )
+
+
+class TestRemoveS06Block:
+    """_remove_s06_block：移除孤儿蓝图中的 §0.6 自动生成章节。"""
+
+    def test_removes_s06_block_and_closing_separator(self, gbp):
+        """§0.6 + 其闭合 --- 分隔线一并移除，§0.1 与 §1 保留。"""
+        content = _make_blueprint_with_s06()
+        result = gbp._remove_s06_block(content)
+        assert "### §0.6" not in result, "§0.6 标题未移除"
+        assert "AUTOGEN" not in result, "§0.6 自动生成内容未移除"
+        assert "四图位置" not in result, "§0.6 四图位置表未移除"
+        assert "### §0.1 代码文件清单" in result, "§0.1 被误删"
+        assert "## 1. 核心概念" in result, "§1 被误删"
+        assert "src/foo.py" in result, "§0.1 表格内容被误删"
+
+    def test_no_orphan_separator_left(self, gbp):
+        """移除后不遗留孤立 --- 分隔线（原 §0.6 的闭合分隔线）。
+
+        注意：§0.1 表格的分隔行 |---|------|------| 合法包含 ---，不算孤立分隔线。
+        孤立分隔线指独占一行的 --- 水平线（frontmatter 闭合 / §0.6 闭合产物）。
+        """
+        content = _make_blueprint_with_s06()
+        result = gbp._remove_s06_block(content)
+        # §0.1 与 §1 之间不应遗留 §0.6 原闭合的 ---（独占一行的水平线，非表格分隔行）
+        s01_idx = result.index("### §0.1")
+        s1_idx = result.index("## 1. 核心概念")
+        between = result[s01_idx:s1_idx]
+        orphan_hr = re.search(r"^---\s*$", between, re.MULTILINE)
+        assert orphan_hr is None, f"§0.1 与 §1 之间遗留孤立分隔线: {between!r}"
+
+    def test_idempotent(self, gbp):
+        """二次移除 = 一次移除（无 §0.6 时原样返回 → 幂等）。"""
+        content = _make_blueprint_with_s06()
+        once = gbp._remove_s06_block(content)
+        twice = gbp._remove_s06_block(once)
+        assert once == twice, "二次移除结果不一致，非幂等"
+
+    def test_no_s06_returns_unchanged(self, gbp):
+        """无 §0.6 章节时原样返回。"""
+        content = (
+            "---\n"
+            "module_id: MOD-X\n"
+            "---\n"
+            "\n"
+            "### §0.1 代码文件清单\n"
+            "\n"
+            "| # | 文件 |\n"
+            "\n"
+            "## 1. 核心概念\n"
+        )
+        assert gbp._remove_s06_block(content) == content
+
+    def test_s06_without_separator_followed_by_h2(self, gbp):
+        """§0.6 后直接跟 ## §1（无闭合 ---）时，§0.6 移除、§1 保留。"""
+        content = (
+            "### §0.1 清单\n"
+            "\n"
+            "内容\n"
+            "\n"
+            "### §0.6 四图对齐视图\n"
+            "\n"
+            "自动生成内容\n"
+            "\n"
+            "## 1. 核心概念\n"
+            "\n"
+            "正文\n"
+        )
+        result = gbp._remove_s06_block(content)
+        assert "### §0.6" not in result
+        assert "自动生成内容" not in result
+        assert "### §0.1 清单" in result
+        assert "## 1. 核心概念" in result
+
+    def test_s06_at_end_of_file(self, gbp):
+        """§0.6 位于文件末尾时干净移除，前置内容保留。"""
+        content = (
+            "### §0.1 清单\n"
+            "\n"
+            "内容\n"
+            "\n"
+            "### §0.6 四图对齐视图\n"
+            "\n"
+            "末尾自动生成内容\n"
+        )
+        result = gbp._remove_s06_block(content)
+        assert "### §0.6" not in result
+        assert "末尾自动生成内容" not in result
+        assert "### §0.1 清单" in result
+        assert "内容" in result
+
+    def test_preserves_frontmatter(self, gbp):
+        """frontmatter 不受影响。"""
+        content = _make_blueprint_with_s06(module_id="MOD-KEEP-FM")
+        result = gbp._remove_s06_block(content)
+        assert result.startswith("---\n")
+        assert "module_id: MOD-KEEP-FM" in result
+        assert "status: Active" in result
+
+
+class TestCleanupOrphanS06:
+    """_cleanup_orphan_s06：清理已从 depgraph 删除的孤儿蓝图 §0.6。"""
+
+    def _make_bp(self, gbp, tmp_path, module_id, with_s06=True):
+        """构造 BlueprintFrontmatter（content 写入 tmp_path 文件）。"""
+        fpath = tmp_path / f"{module_id}.md"
+        if with_s06:
+            content = _make_blueprint_with_s06(module_id=module_id)
+        else:
+            content = (
+                "---\n"
+                f"module_id: {module_id}\n"
+                "---\n"
+                "\n"
+                "## 1. 核心概念\n"
+            )
+        fpath.write_text(content, encoding="utf-8")
+        return gbp.BlueprintFrontmatter(
+            module_id=module_id,
+            responsibility_domain="",
+            design_maturity="",
+            build_status="",
+            status="Active",
+            file_path=fpath,
+            content=content,
+        )
+
+    def test_cleans_orphan_with_s06(self, gbp, tmp_path):
+        """孤儿蓝图（不在 depgraph）有 §0.6 → 清理并返回 1。"""
+        bp = self._make_bp(gbp, tmp_path, "MOD-DELETED-001", with_s06=True)
+        blueprint_map = {"MOD-DELETED-001": bp}
+        cleaned = gbp._cleanup_orphan_s06(blueprint_map, set(), dry_run=False)
+        assert cleaned == 1
+        new_content = bp.file_path.read_text(encoding="utf-8")
+        assert "### §0.6" not in new_content
+        assert "## 1. 核心概念" in new_content
+
+    def test_skips_non_orphan(self, gbp, tmp_path):
+        """非孤儿（在 depgraph 中）蓝图不被清理。"""
+        bp = self._make_bp(gbp, tmp_path, "MOD-ALIVE-001", with_s06=True)
+        blueprint_map = {"MOD-ALIVE-001": bp}
+        original = bp.file_path.read_text(encoding="utf-8")
+        cleaned = gbp._cleanup_orphan_s06(blueprint_map, {"MOD-ALIVE-001"}, dry_run=False)
+        assert cleaned == 0
+        assert bp.file_path.read_text(encoding="utf-8") == original
+
+    def test_skips_orphan_without_s06(self, gbp, tmp_path):
+        """孤儿蓝图无 §0.6 → 不动文件，返回 0。"""
+        bp = self._make_bp(gbp, tmp_path, "MOD-DELETED-002", with_s06=False)
+        blueprint_map = {"MOD-DELETED-002": bp}
+        original = bp.file_path.read_text(encoding="utf-8")
+        cleaned = gbp._cleanup_orphan_s06(blueprint_map, set(), dry_run=False)
+        assert cleaned == 0
+        assert bp.file_path.read_text(encoding="utf-8") == original
+
+    def test_dry_run_does_not_write(self, gbp, tmp_path):
+        """dry_run=True → 返回计数但不写文件。"""
+        bp = self._make_bp(gbp, tmp_path, "MOD-DELETED-003", with_s06=True)
+        blueprint_map = {"MOD-DELETED-003": bp}
+        original = bp.file_path.read_text(encoding="utf-8")
+        cleaned = gbp._cleanup_orphan_s06(blueprint_map, set(), dry_run=True)
+        assert cleaned == 1
+        assert bp.file_path.read_text(encoding="utf-8") == original, "dry_run 不应写文件"
+
+    def test_multiple_orphans(self, gbp, tmp_path):
+        """多个孤儿蓝图 → 全部清理，存活模块不动，返回正确计数。"""
+        bp1 = self._make_bp(gbp, tmp_path, "MOD-DEL-A", with_s06=True)
+        bp2 = self._make_bp(gbp, tmp_path, "MOD-DEL-B", with_s06=True)
+        bp_alive = self._make_bp(gbp, tmp_path, "MOD-ALIVE", with_s06=True)
+        blueprint_map = {"MOD-DEL-A": bp1, "MOD-DEL-B": bp2, "MOD-ALIVE": bp_alive}
+        cleaned = gbp._cleanup_orphan_s06(blueprint_map, {"MOD-ALIVE"}, dry_run=False)
+        assert cleaned == 2
+        assert "### §0.6" not in bp1.file_path.read_text(encoding="utf-8")
+        assert "### §0.6" not in bp2.file_path.read_text(encoding="utf-8")
+        assert "### §0.6" in bp_alive.file_path.read_text(encoding="utf-8"), "存活模块 §0.6 不应被清理"
