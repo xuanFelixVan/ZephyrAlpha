@@ -39,14 +39,25 @@ mermaid.min.js 策略：dev 环境（仓库根 tmp/mermaid.min.js 存在）内�
 """
 
 import re
+import sys
 from datetime import datetime
 from pathlib import Path
+
+_THIS_FILE = Path(__file__).resolve()
+# 治本（#ARCH-REGEN-CONCURRENCY-001 P2-2b，2026-08-06）：
+# zoomable_html 被 reconcile 以 importlib in-process 加载时，generators 目录不在
+# sys.path 上（脚本直接运行时 Python 自动把脚本目录加到 sys.path[0]，但 importlib
+# 不加），导致下方 ``from _common import`` 抛 ModuleNotFoundError。提前把本文件
+# 所在目录（generators/，即 _common.py 所在目录）加入 sys.path，确保 _common
+# 无论直接运行还是 in-process 加载均可导入。
+_GENERATORS_DIR = str(_THIS_FILE.parent)
+if _GENERATORS_DIR not in sys.path:
+    sys.path.insert(0, _GENERATORS_DIR)
 
 # 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-05）：
 # 幂等时间源（脚本最近 git commit 时间），消除 datetime.now() 导致的 per-second diff。
 from _common import idempotent_timestamp  # noqa: E402
 
-_THIS_FILE = Path(__file__).resolve()
 # 仓库根：含 scripts/ 和 src/ 的目录（zoomable_html.py 在 scripts/governance/d5_architecture/generators/）
 REPO_ROOT = next(p for p in _THIS_FILE.parents if (p / "scripts").is_dir() and (p / "src").is_dir())
 
