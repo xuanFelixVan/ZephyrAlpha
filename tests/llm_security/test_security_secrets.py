@@ -20,8 +20,6 @@
 # [TESTS] pytest tests/test_security_secrets.py -q
 # [TTL] task_bound
 
-import asyncio
-
 import pytest
 
 from zephyr.shared.security.secrets import (
@@ -63,30 +61,30 @@ class TestSecretIndicatorPatterns:
 
 
 class TestEnvSecretProvider:
-    def test_get_existing_secret(self, monkeypatch):
+    @pytest.mark.asyncio
+    async def test_get_existing_secret(self, monkeypatch):
         monkeypatch.setenv("TEST_SECRET_001", "my-secret-value")
         provider = EnvSecretProvider()
-        result = asyncio.get_event_loop().run_until_complete(provider.get_secret("TEST_SECRET_001"))
+        result = await provider.get_secret("TEST_SECRET_001")
         assert result == "my-secret-value"
 
-    def test_get_missing_secret_raises(self):
+    @pytest.mark.asyncio
+    async def test_get_missing_secret_raises(self):
         provider = EnvSecretProvider()
         with pytest.raises(SecretsError, match="not found"):
-            asyncio.get_event_loop().run_until_complete(provider.get_secret("NONEXISTENT_SECRET_XYZ_999"))
+            await provider.get_secret("NONEXISTENT_SECRET_XYZ_999")
 
-    def test_get_secret_or_default_exists(self, monkeypatch):
+    @pytest.mark.asyncio
+    async def test_get_secret_or_default_exists(self, monkeypatch):
         monkeypatch.setenv("TEST_SECRET_002", "val")
         provider = EnvSecretProvider()
-        result = asyncio.get_event_loop().run_until_complete(
-            provider.get_secret_or_default("TEST_SECRET_002", "fallback")
-        )
+        result = await provider.get_secret_or_default("TEST_SECRET_002", "fallback")
         assert result == "val"
 
-    def test_get_secret_or_default_missing(self):
+    @pytest.mark.asyncio
+    async def test_get_secret_or_default_missing(self):
         provider = EnvSecretProvider()
-        result = asyncio.get_event_loop().run_until_complete(
-            provider.get_secret_or_default("NONEXISTENT_999", "fallback")
-        )
+        result = await provider.get_secret_or_default("NONEXISTENT_999", "fallback")
         assert result == "fallback"
 
     def test_implements_protocol(self):
