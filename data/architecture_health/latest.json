@@ -1,43 +1,33 @@
 {
-  "timestamp": "2026-07-16T19:23:00.895604+00:00",
+  "timestamp": "2026-08-06T09:32:22.684373+00:00",
   "dashboard": "architecture_health",
   "phase": "第0期-自动化检测基线",
   "metrics": [
     {
       "metric_id": "M01",
       "name": "词表硬编码违规数",
-      "count": 0,
+      "count": 7,
       "target": 0,
-      "details": [],
+      "details": [
+        "WARN: src\\zephyr\\governance\\persistence\\battlemap_schema.py:117 字面量集合含 2/2 个 maturity 词表值(疑似硬编码，应从 maturity_vocabulary.yaml 动态加载)",
+        "WARN: scripts\\governance\\harvest_candidates_from_drafts.py:175 字面量集合含 4/44 个 target_layer 词表值(疑似硬编码，应从 target_layer_vocabulary.yaml 动态加载)",
+        "WARN: scripts\\governance\\reconcile_generators.py:66 _SUBPROCESS_TIMEOUT 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)",
+        "WARN: scripts\\governance\\reconcile_generators.py:104 _DB_ONLY_STALE_THRESHOLD_SECONDS 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)",
+        "WARN: scripts\\governance\\reconcile_generators.py:146 PROCESS_QUERY_LIMITED_INFORMATION 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)",
+        "WARN: scripts\\governance\\d3_metadata\\domain_header_maint.py:135 PROCESS_QUERY_LIMITED_INFORMATION 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)",
+        "WARN: scripts\\governance\\meta\\backup_runtime_state.py:207 PROCESS_QUERY_LIMITED_INFORMATION 硬编码阈值数值(应从 thresholds.yaml 通过 _get_threshold() 读取)"
+      ],
       "source": "check_vocab_hardcode.py",
       "error": ""
     },
     {
       "metric_id": "M02",
       "name": "manual-only 永久脚本数",
-      "count": 309,
+      "count": 2,
       "target": 0,
       "details": [
-        "scripts\\governance\\apply_dataflowgraph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\apply_decisiongraph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\apply_depgraph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\architecture_health_dashboard.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\extract_decisiongraph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\extract_depgraph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\generate_decision_graph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\generate_project_depgraph.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\generate_project_path_tree.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\query_module_panorama.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\run_all.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\run_gate_chain.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\status.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\sync_panorama_module.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\verify_sync_integrity.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d10_performance\\collect_system_threads.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d11_compliance\\audit_registration.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d11_compliance\\check_ssot_gate.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d11_compliance\\ci_self_check.py [STARTUP]=manual [TTL]=permanent",
-        "scripts\\governance\\d11_compliance\\fix_shared_bypass.py [STARTUP]=manual [TTL]=permanent"
+        "src\\zephyr\\factor\\core\\intraday_factor_loop.py [STARTUP]=manual [TTL]=permanent",
+        "src\\zephyr\\shared\\observability\\metrics_server.py [STARTUP]=manual [TTL]=permanent"
       ],
       "source": "inline",
       "error": ""
@@ -45,10 +35,29 @@
     {
       "metric_id": "M03",
       "name": "重复簇函数数",
-      "count": 1,
+      "count": 44,
       "target": 0,
       "details": [
-        "簇(2): src\\zephyr\\governance\\semantic_audit\\self_healer.py:_build_forbidden_fallback() L84 | src\\zephyr\\shared\\io\\yaml_utils.py:_build_ttl_fallback() L407"
+        "簇(8): src\\zephyr\\pf_alloc\\core\\strategy_correlation_gate.py:on_gate_triggered() L291 | src\\zephyr\\position\\core\\capital_curve_manager.py:on_capital_curve_updated() L322 | src\\zephyr\\position\\core\\position_drift_monitor.py:on_drift_detected() L273",
+        "簇(7): src\\zephyr\\gov_enforcement\\rule_bridge\\git_commit_gateway.py:registry() L476 | src\\zephyr\\security\\access_control\\orphan_judge\\orphan_detector.py:registry() L110 | src\\zephyr\\shared\\adaptation\\prompt_version_manager.py:registry() L73",
+        "簇(6): src\\zephyr\\infrastructure\\auto_fix_engine\\batch_fixer.py:budget() L84 | src\\zephyr\\orchestrator\\hallucination_detector.py:budget() L448 | src\\zephyr\\orchestrator\\hallucination_detector.py:budget_state() L461",
+        "簇(4): src\\zephyr\\backtest\\services\\decay_monitor.py:reset() L212 | src\\zephyr\\ex_sor\\services\\execution_quality_scorer.py:clear_history() L514 | src\\zephyr\\ex_sor\\services\\slippage_analyzer.py:clear_history() L570",
+        "簇(4): src\\zephyr\\data_governance\\core\\metadata_registry.py:count() L118 | src\\zephyr\\ex_core\\multi_contract_adapter.py:count() L326 | src\\zephyr\\factor\\governance\\factor_pool_manager.py:_total_count() L256",
+        "簇(4): src\\zephyr\\integration\\local_model\\deepseek_chat.py:model() L153 | src\\zephyr\\integration\\local_model\\ollama_chat.py:model() L291 | src\\zephyr\\integration\\local_model\\ollama_embedding.py:model() L75",
+        "簇(3): src\\zephyr\\autonomy_core\\ide_watcher.py:on_change() L79 | src\\zephyr\\ex_core\\fill_handler.py:register_callback() L275 | src\\zephyr\\market_data\\failover\\manager.py:on_failover() L180",
+        "簇(3): src\\zephyr\\autonomy_core\\skills\\skill_guardrails.py:active() L49 | src\\zephyr\\ex_sor\\core\\broker_adapter_manager.py:active_broker() L233 | src\\zephyr\\orchestrator\\resilience\\failure_matcher.py:active() L117",
+        "簇(3): src\\zephyr\\data_governance\\core\\schema_registry.py:list_tables() L106 | src\\zephyr\\integration\\shared\\events\\event_bus_upgrade.py:all_event_types() L94 | src\\zephyr\\shared\\events\\event_bus_upgrade.py:all_event_types() L189",
+        "簇(3): src\\zephyr\\ex_core\\adapters\\miniqmt_broker.py:connected() L251 | src\\zephyr\\ex_core\\adapters\\miniqmt_broker.py:is_connected() L605 | src\\zephyr\\ex_sor\\api\\broker_api_connector.py:is_connected() L302",
+        "簇(3): src\\zephyr\\ex_core\\audit_journal\\auditor.py:record_count() L321 | src\\zephyr\\pf_core\\core\\strategy_engine.py:count() L609 | src\\zephyr\\position\\services\\position_audit_logger.py:record_count() L258",
+        "簇(3): src\\zephyr\\governance\\security_governance\\config_scanner.py:baseline() L32 | src\\zephyr\\gov_drift\\drift_detector.py:baseline() L40 | src\\zephyr\\security\\llm_defense\\llm_security\\layers\\l6_observability.py:get_baseline() L114",
+        "簇(3): src\\zephyr\\governance\\security_governance\\github_api_guard.py:get_audit_log() L50 | src\\zephyr\\integration\\mcp\\gateway_server.py:audit() L336 | src\\zephyr\\shared\\foundation\\flags.py:audit() L184",
+        "簇(3): src\\zephyr\\gov_enforcement\\rule_enforcement\\pre_flight_gate.py:engine() L52 | src\\zephyr\\gov_enforcement\\rule_enforcement\\pre_flight_gate.py:get_engine() L101 | src\\zephyr\\orchestrator\\fault_tolerance\\chaos_hooks.py:get_engine() L153",
+        "簇(3): src\\zephyr\\reporting\\ashare_performance_audit.py:_compute_data_hash() L178 | src\\zephyr\\reporting\\regulatory_report_generator.py:_compute_data_hash() L92 | src\\zephyr\\reporting\\report_publisher.py:_compute_content_hash() L137",
+        "簇(2): src\\zephyr\\backtest\\core\\metrics.py:_norm_cdf() L48 | src\\zephyr\\simulation\\deflated_sharpe_calculator.py:_normal_cdf() L104",
+        "簇(2): src\\zephyr\\backtest\\implementations\\shrinkage_engine.py:_clamp_shrinkage() L98 | src\\zephyr\\backtest\\regime_validation\\shrinkage_provider.py:clamp_shrinkage() L76",
+        "簇(2): src\\zephyr\\clone_guard\\aggregator.py:_normalize_path() L208 | src\\zephyr\\gov_enforcement\\commit_gates\\derived_file_deletion_gate.py:_normalize_rel() L94",
+        "簇(2): src\\zephyr\\ex_sor\\api\\api_rate_limiter.py:window_seconds() L205 | src\\zephyr\\gov_enforcement\\rule_enforcement\\adaptive_threshold.py:window() L128",
+        "簇(2): src\\zephyr\\ex_sor\\api\\broker_api_connector.py:circuit_breaker() L558 | src\\zephyr\\security\\adversarial_validation\\commit_trigger.py:circuit() L210"
       ],
       "source": "inline-AST",
       "error": ""
@@ -56,9 +65,26 @@
     {
       "metric_id": "M04",
       "name": "GATE 未登记 capability 数",
-      "count": 0,
+      "count": 16,
       "target": 0,
-      "details": [],
+      "details": [
+        "asyncio_run_in_context_gate.py (stem=asyncio_run_in_context_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "blueprint_amodule_cross_check_gate.py (stem=blueprint_amodule_cross_check_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "depgraph_pre_registration_gate.py (stem=depgraph_pre_registration_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "derivation_annotation_gate.py (stem=derivation_annotation_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "derived_file_deletion_gate.py (stem=derived_file_deletion_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "folder_capacity_hard_limit_gate.py (stem=folder_capacity_hard_limit_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "forged_gw_marker_gate.py (stem=forged_gw_marker_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "mcp_version_field_gate.py (stem=mcp_version_field_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "mutable_const_without_final_gate.py (stem=mutable_const_without_final_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "open_without_with_gate.py (stem=open_without_with_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "protected_paths_gate.py (stem=protected_paths_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "relative_path_literal_gate.py (stem=relative_path_literal_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "schema_file_exists_gate.py (stem=schema_file_exists_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "stash_accumulation_gate.py (stem=stash_accumulation_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "table_name_registry_gate.py (stem=table_name_registry_gate) 未在 capability_canonical_file_registry.yaml 登记",
+        "zephyr_env_direct_access_gate.py (stem=zephyr_env_direct_access_gate) 未在 capability_canonical_file_registry.yaml 登记"
+      ],
       "source": "inline",
       "error": ""
     },
@@ -83,14 +109,12 @@
     {
       "metric_id": "M07",
       "name": "死代码数(orphan模块)",
-      "count": 5,
+      "count": 3,
       "target": 0,
       "details": [
-        "src\\zephyr\\signal_fundamental\\gen\\aggregator_base.py",
-        "src\\zephyr\\signal_quality\\degradation_monitor_base.py",
-        "src\\zephyr\\shared\\contracts\\core\\enforcer.py",
-        "src\\zephyr\\trading\\trading_contracts\\factories.py",
-        "src\\zephyr\\signal_fundamental\\synth\\signal_synthesizer.py"
+        "src\\zephyr\\integration\\mcp\\base_server.py",
+        "src\\zephyr\\shared\\observability\\dashboard\\dashboard_templates.py",
+        "src\\zephyr\\shared\\observability\\dashboard\\datasource_config.py"
       ],
       "source": "inline",
       "error": ""
@@ -116,9 +140,14 @@
     {
       "metric_id": "M10",
       "name": "时间触发残留数",
-      "count": 0,
+      "count": 4,
       "target": 0,
-      "details": [],
+      "details": [
+        "scripts\\governance\\d5_architecture\\generators\\generate_code_wiki_stats.py 命中: APScheduler|BackgroundSchedule",
+        "src\\zephyr\\clone_guard\\orchestrator.py 命中: \\bcron\\b",
+        "src\\zephyr\\ex_core\\trading_session.py 命中: threading\\.Timer\\b",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\manual_only_permanent_gate.py 命中: \\bcron\\b"
+      ],
       "source": "inline",
       "error": ""
     },
@@ -130,9 +159,378 @@
       "details": [],
       "source": "pg_depgraph",
       "error": ""
+    },
+    {
+      "metric_id": "M12",
+      "name": "异常粒度过粗(吞没型)",
+      "count": 19,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\backtest\\services\\param_analyzer.py:372 logged-swallowed",
+        "src\\zephyr\\ex_core\\trading_session.py:392 logged-swallowed",
+        "src\\zephyr\\ex_core\\trading_session.py:402 logged-swallowed",
+        "src\\zephyr\\ex_sor\\api\\broker_api_connector.py:777 logged-swallowed",
+        "src\\zephyr\\ex_sor\\core\\broker_adapter_manager.py:296 logged-swallowed",
+        "src\\zephyr\\factor\\analysis\\factor_optimization.py:113 logged-swallowed",
+        "src\\zephyr\\factor\\analysis\\ic_ir_evaluator.py:57 logged-swallowed",
+        "src\\zephyr\\factor\\governance\\lifecycle_state_machine.py:93 except-pass",
+        "src\\zephyr\\gov_enforcement\\rule_bridge\\emergency_commit.py:562 logged-swallowed",
+        "src\\zephyr\\gov_enforcement\\rule_bridge\\session_worktree.py:3024 logged-swallowed",
+        "src\\zephyr\\market_data\\connectors\\base.py:241 logged-swallowed",
+        "src\\zephyr\\market_data\\connectors\\base.py:262 logged-swallowed",
+        "src\\zephyr\\market_data\\connectors\\base.py:358 logged-swallowed",
+        "src\\zephyr\\market_data\\connectors\\manager.py:115 logged-swallowed",
+        "src\\zephyr\\market_data\\failover\\manager.py:412 logged-swallowed",
+        "src\\zephyr\\security\\adversarial_validation\\game_day_scheduler.py:187 logged-swallowed",
+        "src\\zephyr\\simulation\\sharpe_calculator_fixer.py:259 logged-swallowed",
+        "scripts\\governance\\d3_metadata\\domain_header_maint.py:144 except-pass",
+        "scripts\\governance\\_shared\\file_lock.py:113 except-pass"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M13",
+      "name": "异常信息泄露(返客户端)",
+      "count": 1,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\data\\scheduler.py:1355 return 泄露 f-string{e}"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M14",
+      "name": "ABC抽象方法完整性",
+      "count": 0,
+      "target": 0,
+      "details": [],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M15",
+      "name": "depgraph新鲜度(>24h阻断数)",
+      "count": 0,
+      "target": 0,
+      "details": [
+        "fresh (age=412s, saved_at=2026-08-06T17:24:52.386098)"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M16",
+      "name": "治本进度新鲜度(>90天超期数)",
+      "count": 0,
+      "target": 0,
+      "details": [
+        "table not yet created (Phase 3.1 not bootstrapped)"
+      ],
+      "source": "inline",
+      "error": "table remediation_progress missing"
+    },
+    {
+      "metric_id": "M17",
+      "name": "规则感知缺口(无门禁配对数)",
+      "count": 84,
+      "target": 0,
+      "details": [
+        "UNPAIRED: TRAE-001 (文件操作安全协议)",
+        "UNPAIRED: TRAE-002 (反孤儿与搜索先行协议)",
+        "UNPAIRED: TRAE-003 (任务粒度与完成门槛协议)",
+        "UNPAIRED: TRAE-004 (并行执行与原子事务协议)",
+        "UNPAIRED: TRAE-005 (修改原则与治理施工协议)",
+        "UNPAIRED: TRAE-006 (防幻觉-结构追溯层)",
+        "UNPAIRED: TRAE-007 (防幻觉-行为约束层)",
+        "UNPAIRED: TRAE-008 (防幻觉-输出验证层)",
+        "UNPAIRED: TRAE-009 (防幻觉-安全防护层)",
+        "UNPAIRED: TRAE-010 (代码构建-命名与组织)",
+        "UNPAIRED: TRAE-011 (代码构建-类型与导入)",
+        "UNPAIRED: TRAE-012 (代码构建-测试与安全)",
+        "UNPAIRED: TRAE-013 (架构约束-跨包依赖)",
+        "UNPAIRED: TRAE-014 (架构约束-蓝图对齐)",
+        "UNPAIRED: TRAE-015 (架构约束-路径与注册)",
+        "UNPAIRED: TRAE-016 (架构约束-漂移检测)",
+        "UNPAIRED: TRAE-017 (架构约束-治理顺序)",
+        "UNPAIRED: TRAE-018 (行为边界-代码操作绝对禁止)",
+        "UNPAIRED: TRAE-019 (行为边界-系统安全绝对禁止)",
+        "UNPAIRED: TRAE-020 (行为边界-治理纪律绝对禁止)"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M19",
+      "name": "治理层收敛缺口数",
+      "count": 206,
+      "target": 0,
+      "details": [
+        "unified_detector/gate: 99 components, status=in_progress",
+        "unified_fixer/reconciler: 25 components, status=in_progress",
+        "unified_verifier/verifier: 5 components, status=planned",
+        "audit/audit_component: 3 components, status=in_progress",
+        "registry/registry: 35 components, status=planned",
+        "asset/vocabulary: 39 components, status=planned",
+        "total=206, consolidated=0, gap=206",
+        "target: 6 core function entry points (M19 ≤ 6)"
+      ],
+      "source": "docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml",
+      "error": ""
+    },
+    {
+      "metric_id": "M20",
+      "name": "trae_060 §5 快照漂移数",
+      "count": 4,
+      "target": 0,
+      "details": [
+        "vocab_hardcode: claimed=64, detected=1, drift=-63 (FIXED)",
+        "manual_trigger: claimed=25, detected=0, drift=-25 (FIXED)",
+        "mergeable_clusters: claimed=6, detected=3, drift=-3 (FIXED)",
+        "time_trigger: claimed=14, detected=0, drift=-14 (FIXED)"
+      ],
+      "source": "data/runtime_violation_snapshot/latest.json",
+      "error": "snapshot stale (generated_at > 24h)"
+    },
+    {
+      "metric_id": "M21",
+      "name": "5病根×3要素覆盖缺口数",
+      "count": 0,
+      "target": 0,
+      "details": [
+        "total_cells=15, covered=15, uncovered=0",
+        "declared_uncovered=0 (SSoT)",
+        "target: 0 (all 15 cells covered, M21=0)"
+      ],
+      "source": "docs/01_policies_and_standards/_registry/catalogs/governance_convergence_map.yaml",
+      "error": ""
+    },
+    {
+      "metric_id": "M22",
+      "name": "docstring 覆盖率倒数(公共函数无 docstring)",
+      "count": 6243,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\__init__.py:117 register_lazy",
+        "src\\zephyr\\autonomy_core\\__main__.py:106 main",
+        "src\\zephyr\\autonomy_core\\agent_observability.py:47 start_trace",
+        "src\\zephyr\\autonomy_core\\agent_observability.py:52 add_span",
+        "src\\zephyr\\autonomy_core\\agent_observability.py:59 get_trace",
+        "src\\zephyr\\autonomy_core\\all_skill_modules.py:90 all_modules",
+        "src\\zephyr\\autonomy_core\\all_skill_modules.py:94 count",
+        "src\\zephyr\\autonomy_core\\file_autoregister.py:33 register",
+        "src\\zephyr\\autonomy_core\\ide_watcher.py:61 scan",
+        "src\\zephyr\\autonomy_core\\ide_watcher.py:79 on_change",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:51 to_dict",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:63 can_start",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:117 get_phase",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:120 set_status",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:132 get_ready_phases",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:136 all_phases",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:139 phase_summary",
+        "src\\zephyr\\autonomy_core\\phase_planner.py:145 current_projection",
+        "src\\zephyr\\autonomy_core\\progressive_disclosure_injector.py:33 inject_summary",
+        "src\\zephyr\\autonomy_core\\progressive_disclosure_injector.py:36 expand"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M23",
+      "name": "asyncio.run/get_event_loop 调用数",
+      "count": 27,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\clone_guard\\orchestrator.py:554 raw_results = asyncio.run(",
+        "src\\zephyr\\gov_audit\\cli.py:335 # 5.100.15 治本: 替换 get_event_loop_policy().get_event_loop()（3.12 弃用, 3.14 移除）",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:8 # [INVARIANTS] 硬阻断——检测 src/zephyr/ 全量代码(.py)新增行含 asyncio.run()/asyncio.get_event",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:20 - ``asyncio.run()`` —— 在 async 上下文内静默绕过、跨线程死锁风险",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:21 - ``asyncio.get_event_loop()`` —— Python 3.12+ 弃用、无运行循环时行为不确定",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:78 # 匹配 asyncio.run( / asyncio.get_event_loop( / asyncio.new_event_loop(",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:97 return \"asyncio.run()（应改 async_utils.run_coroutine_sync）\"",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:99 return \"asyncio.get_event_loop()（Python 3.12+ 弃用，应改 async_utils canonical）\"",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\asyncio_run_in_context_gate.py:130 \"  src/zephyr/ 全量禁止 asyncio.run() / asyncio.get_event_loop() / asyncio.new_event",
+        "src\\zephyr\\gov_enforcement\\rule_enforcement\\drift_detector.py:182 # 替代 get_event_loop().run_until_complete + new_event_loop 回退（3.12 下 get_event_lo",
+        "src\\zephyr\\infrastructure\\a2a_protocol\\governance\\governance_adapter.py:74 # 5.162 C1 修复: 移除 except RuntimeError + get_event_loop().is_running() fail-open ",
+        "src\\zephyr\\infrastructure\\a2a_protocol\\layer3_coordination\\a2a_governance_adapter.py:78 # 5.162 C1 修复: 移除 except RuntimeError + get_event_loop().is_running() fail-open ",
+        "src\\zephyr\\orchestrator\\agent_orchestrator.py:965 # 5.52.4 修复：移除 get_event_loop().is_running() return None 的 fail-open 回退",
+        "src\\zephyr\\shared\\security\\secrets.py:309 # 包 asyncio.run() 太重。提供同步入口，直接读 os.environ——",
+        "src\\zephyr\\shared\\utils\\async_utils.py:20 痛点：asyncio.run() 在已有事件循环上下文中抛 RuntimeError：",
+        "src\\zephyr\\shared\\utils\\async_utils.py:21 \"asyncio.run() cannot be called from a running event loop\"",
+        "src\\zephyr\\shared\\utils\\async_utils.py:25 替代散布 40+ 处的裸 asyncio.run() 调用（5.12.8 签名漂移/边界统一）。",
+        "src\\zephyr\\shared\\utils\\async_utils.py:28 - 无运行中的事件循环 -> asyncio.run(coro)（快速路径，与原行为完全一致）",
+        "src\\zephyr\\shared\\utils\\async_utils.py:51 5.12.8 修复：替代散布 40+ 处的裸 asyncio.run() 调用。",
+        "src\\zephyr\\shared\\utils\\async_utils.py:54 - 无运行中的事件循环 -> asyncio.run(coro)（快速路径，与原行为一致）"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M24",
+      "name": "字段遮蔽计数(dataclass/BaseModel 字段遮蔽内置名)",
+      "count": 42,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\autonomy_core\\context\\checkpoint_manager.py:29 Checkpoint.id",
+        "src\\zephyr\\feedback_loop\\collectors\\known_unknown_registry.py:40 KnownUnknown.id",
+        "src\\zephyr\\feedback_loop\\collectors\\schema_migration.py:42 MigrationStep.id",
+        "src\\zephyr\\feedback_loop\\detectors\\guard\\temporal_coherence_of_self_model.py:35 SelfModelSnapshot.hash",
+        "src\\zephyr\\feedback_loop\\forensic\\guard_configuration_drift_monitor.py:33 GuardConfigSnapshot.hash",
+        "src\\zephyr\\feedback_loop\\gates\\blueprint_code_reconciler.py:34 DriftReport.file",
+        "src\\zephyr\\frontend\\dashboard\\components\\backtest_performance.py:173 OHLCBar.open",
+        "src\\zephyr\\governance\\intelligence_governance\\self_benchmark.py:121 KnownAnswerTest.id",
+        "src\\zephyr\\governance\\security_governance\\tamper_evident_log.py:61 LogEntry.hash",
+        "src\\zephyr\\gov_audit\\code_archaeology.py:51 BlameRecord.file",
+        "src\\zephyr\\gov_audit\\evidence_pack.py:52 EvidencePackMetadata.format",
+        "src\\zephyr\\gov_audit\\evidence_pack.py:65 ExportResult.format",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\atomic_fixer.py:50 FixStep.file",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\cache_manager.py:44 FunctionCacheEntry.id",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\cache_manager.py:45 FunctionCacheEntry.file",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\diff_detector.py:38 ChangedFunction.file",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\integration_hub.py:27 IntegrationPoint.type",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\verifier.py:29 VerifyResult.file",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\trackers\\blind_spot_tracker.py:27 BlindSpotStatus.id",
+        "src\\zephyr\\gov_code_quality\\code_dedup\\trackers\\blind_spot_tracker.py:29 BlindSpotStatus.round"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M25",
+      "name": "模块级常量未标 Final 计数",
+      "count": 2319,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\autonomy_core\\self_evolution_fidelity_gate.py:69 _DANGEROUS_PATTERNS (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\spec_engine.py:46 _AUDIT_AVAILABLE (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\context\\ce_vibe_shortcuts.py:36 _MODE_CONFIGS (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_assembler.py:569 _BUILD_CACHE (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_injector.py:442 _CE_TIMEOUT_METRIC (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_rot_model.py:47 REF_TOKENS_DEFAULT (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_rot_model.py:48 K_DEFAULT (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_rot_model.py:49 WARN_ATTENTION_DEFAULT (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_rot_model.py:50 LOW_ATTENTION_DEFAULT (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_rot_model.py:51 CRITICAL_ATTENTION_DEFAULT (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\context\\context_rule_registry.py:32 _VALID_LEVELS (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\context\\context_rule_registry.py:33 _HOT_MAX_TOKENS (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_compliance.py:29 PII_PATTERNS (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_cross_model.py:53 _MODEL_CAPABILITIES (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_executor.py:28 _CORE_AUDIT_AVAILABLE (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_feature_flags.py:34 _PREDEFINED_FLAGS (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_loader.py:227 _STABILITY_FROZEN (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_model_evolution.py:37 MODEL_PROFILES (注解非 Final)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_postmortem.py:42 _WHY_PROBES (无 Final 标注)",
+        "src\\zephyr\\autonomy_core\\skills\\skill_router.py:36 _SEMANTIC_SIMILARITY_THRESHOLD (无 Final 标注)"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M26",
+      "name": "TODO/FIXME 计数",
+      "count": 7,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\governance\\ops_governance\\phase_check_registry.py:684 # TODO: backtest_engine已迁移到zephyr.backtest,待phase_check重新对接",
+        "src\\zephyr\\gov_drift\\chaos_injector.py:419 insertion = \"\\n\\n# TODO: refactor this entire module by Q3 — this is a chaos bom",
+        "src\\zephyr\\shared\\draft\\draft_assistant.py:141 lines.append(\"## TODO\")",
+        "scripts\\governance\\architecture_health_dashboard.py:1770 检测：正则扫描 # TODO / # FIXME（大小写不敏感）。",
+        "scripts\\governance\\audit_worktree_ops_telemetry.py:123 # TODO(P3-1.1 follow-up): 提取 _log_workspace_op 到 shared 模块后，移除此豁免并补遥测",
+        "scripts\\governance\\d11_compliance\\check_test_structure.py:123 \"\"\"源码中是否含 # TODO 注释。\"\"\"",
+        "scripts\\governance\\d11_compliance\\check_test_structure.py:144 warns.append(\"含 skip 装饰器但无 # TODO 注释（skip 测试须标注修复计划）\")"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M27",
+      "name": "open() 未在 with 语句计数",
+      "count": 4,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\gov_enforcement\\commit_gates\\scripts_import_integrity_gate.py:711 open() not in with",
+        "scripts\\governance\\reconcile_generators.py:513 open() not in with",
+        "scripts\\governance\\d11_compliance\\task_self_check.py:240 open() not in with",
+        "scripts\\governance\\git_hooks\\post_commit_regen_yaml.py:233 open() not in with"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M28",
+      "name": "模块级单例无锁 double-check 计数",
+      "count": 1,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\governance\\security_governance\\security_gateway_base.py:139 SecurityGateway (单例无 Lock)"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M29",
+      "name": "资源未在 try/finally 计数",
+      "count": 47,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\autonomy_core\\context\\context_budget_tracker.py:145 resource acquire not in try/finally",
+        "src\\zephyr\\autonomy_core\\context\\context_rot_model.py:94 resource acquire not in try/finally",
+        "src\\zephyr\\autonomy_core\\skills\\skill_locking.py:80 resource acquire not in try/finally",
+        "src\\zephyr\\autonomy_core\\skills\\skill_locking.py:92 resource acquire not in try/finally",
+        "src\\zephyr\\autonomy_core\\skills\\skill_locking.py:104 resource acquire not in try/finally",
+        "src\\zephyr\\ex_core\\position_reconciler.py:136 resource acquire not in try/finally",
+        "src\\zephyr\\ex_core\\position_tracker\\tracker.py:80 resource acquire not in try/finally",
+        "src\\zephyr\\factor\\core\\backpressure\\limiter.py:117 resource acquire not in try/finally",
+        "src\\zephyr\\factor\\core\\dag_manager\\executor.py:282 resource acquire not in try/finally",
+        "src\\zephyr\\factor\\core\\dist_feature_eng\\engine.py:216 resource acquire not in try/finally",
+        "src\\zephyr\\factor\\core\\dist_feature_eng\\engine.py:279 resource acquire not in try/finally",
+        "src\\zephyr\\governance\\financial_governance\\atomic_transaction_manager.py:761 resource acquire not in try/finally",
+        "src\\zephyr\\governance\\persistence\\task_repo.py:1249 resource acquire not in try/finally",
+        "src\\zephyr\\gov_enforcement\\rule_bridge\\worktree_lifecycle.py:126 resource acquire not in try/finally",
+        "src\\zephyr\\infrastructure\\auto_fix_engine\\batch_fixer.py:141 resource acquire not in try/finally",
+        "src\\zephyr\\infrastructure\\auto_fix_engine\\state_machine.py:84 resource acquire not in try/finally",
+        "src\\zephyr\\infrastructure\\capacity_assurance\\risk_mitigation.py:81 resource acquire not in try/finally",
+        "src\\zephyr\\infrastructure\\capacity_assurance\\risk_mitigation.py:105 resource acquire not in try/finally",
+        "src\\zephyr\\infrastructure\\rollback\\rollback_executor.py:722 resource acquire not in try/finally",
+        "src\\zephyr\\infrastructure\\system_telemetry\\facade.py:573 resource acquire not in try/finally"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M30",
+      "name": "ZEPHYR_ENV 直接访问数(绕过 canonical 验证器)",
+      "count": 12,
+      "target": 0,
+      "details": [
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:8 # [INVARIANTS] 硬阻断——检测 src/zephyr/ 代码(.py)新增行直接访问 os.environ[\"ZEPHYR_ENV\"] 或 os.",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:19 检测 staged 代码（src/zephyr/ .py）新增行中直接访问 ``os.environ[\"ZEPHYR_ENV\"]``",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:20 或 ``os.environ.get(\"ZEPHYR_ENV\")`` —— 应通过 config 层统一读取，避免散落直访",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:59 # os.environ[\"ZEPHYR_ENV\"] / os.environ['ZEPHYR_ENV'] / os.environ.get(\"ZEPHYR_E",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:88 f\"  {py_file}:{line_no}: os.environ['ZEPHYR_ENV'] 直访（应走 config 层）-> {content.str",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:93 f\"  {py_file}:{line_no}: os.environ.get('ZEPHYR_ENV') 直访（应走 config 层）-> {content",
+        "src\\zephyr\\gov_enforcement\\commit_gates\\zephyr_env_direct_access_gate.py:101 \"  禁止 os.environ['ZEPHYR_ENV'] / os.environ.get('ZEPHYR_ENV') 散落直访。\\n\"",
+        "src\\zephyr\\infrastructure\\config\\app_config.py:106 if os.environ.get(\"ZEPHYR_ENV\"):",
+        "src\\zephyr\\infrastructure\\config\\app_config.py:107 env = os.environ[\"ZEPHYR_ENV\"].strip()",
+        "scripts\\governance\\architecture_health_dashboard.py:2119 直接 os.environ[\"ZEPHYR_ENV\"] 访问绕过 canonical 验证器（is_prod/get_environment）。",
+        "scripts\\governance\\architecture_health_dashboard.py:2120 检测：正则扫描直接访问 os.environ[\"ZEPHYR_ENV\"] / os.environ.get(\"ZEPHYR_ENV\")",
+        "scripts\\governance\\architecture_health_dashboard.py:2121 / os.getenv(\"ZEPHYR_ENV\") 的位置（应通过 is_prod() / get_environment() canonical 入口）。"
+      ],
+      "source": "inline",
+      "error": ""
+    },
+    {
+      "metric_id": "M31",
+      "name": "MCP version 字段覆盖率(无 version 工具数)",
+      "count": 0,
+      "target": 0,
+      "details": [],
+      "source": "mcp.json",
+      "error": ""
     }
   ],
-  "total_auto": 315,
+  "total_auto": 9092,
   "manual_baseline_total": 3193,
   "note": "自动化检测基线（第0期）。total_auto 为自动化检出总数；manual_baseline_total=3193 为手动调研基线。二者差异源于自动化覆盖度（部分病根需 AST 门禁第1期才覆盖）。"
 }
