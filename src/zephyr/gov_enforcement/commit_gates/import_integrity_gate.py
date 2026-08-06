@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (gate registration)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 硬阻断——staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找；Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在其他活跃 session held_files 中，若是追加友好提示"等待该 session merge"（fail-open：SessionRegistry 不可用时不追加提示，不阻断）
+# [INVARIANTS] 硬阻断——staged .py 文件中 import 的目标模块在 main HEAD + staged 文件中不可解析时阻断（#ARCH-CROSS-COMMIT-ATOMICITY-001 治本）；fail-open（git 失败/文件不可读/ast 解析失败时放行）；wildcard import 跳过（导入集无法静态推断）；相对 import（from . / from ..）跳过（依赖文件位置上下文）；stdlib 与第三方库模块通过 importlib.util.find_spec 解析；项目内 zephyr. / scripts. 模块通过文件系统查找；Phase 2.5（#ARCH-CROSS-COMMIT-ATOMICITY-002）：阻断时自动（不依赖 AI 传 depends_on_sessions）检查目标模块是否在其他活跃 session held_files 中，若是追加友好提示"等待该 session merge"（fail-open：SessionRegistry 不可用时不追加提示，不阻断）；sys.path 注入识别（#ARCH-IMPORT-INTEGRITY-SYSPATH-001 治本）：_extract_sys_path_dirs 提取 sys.path.insert/append 注入目录，_resolve_path_expr 启发式求值 4 种模式（直接 Path(__file__).resolve().parents[N] / str 包装变量 / 变量间接 _VAR.parent / next() 生成器向上搜索），_check_module_in_dirs 在注入目录中查找裸模块名（_shared/_common 等），找到则放行——320+ 脚本免疫，无需逐文件加 noqa 豁免（fail-open：无法求值的注入模式不提取该目录，由既有 noqa 逃生标记兜底）
 # [MODIFY-GUARD] gate_id="IMPORT-INTEGRITY"; check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L

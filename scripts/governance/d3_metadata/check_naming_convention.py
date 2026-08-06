@@ -1837,9 +1837,16 @@ def main() -> int:
                 print(f"[N-17] {v.message}")
 
     # N-16 直接硬阻断（不受 warn_only 影响）；N-17 过渡期 warn-only；其他规则受 warn_only 控制
-    blocking_count = len(n16_violations) + len(other_violations) + (len(n17_violations) if not args.warn_only else 0)
-    if blocking_count:
-        print(f"\n总计 {blocking_count} 个阻断性命名违规")
+    # 治本（Task 3，#ARCH-PRECOMMIT-INCREMENTAL，2026-08-06）：显示二元化——真阻断 vs warn-only，
+    # 消除"369 阻断性命名违规"误导（实际真阻断只有 N-16，其余 warn-only 不卡 commit，走 gate-naming-audit 清零）
+    actual_blocking = len(n16_violations) + (len(n17_violations) if not args.warn_only else 0)
+    warn_only_count = len(other_violations) + (len(n17_violations) if args.warn_only else 0)
+    if actual_blocking:
+        print(f"\n总计 {actual_blocking} 个阻断性命名违规")
+    if warn_only_count:
+        print(f"（另有 {warn_only_count} 个 warn-only 命名违规，不阻断 commit，走 gate-naming-audit CI/manual 清零）")
+    # 返回逻辑与原版一致：有违规时根据 warn_only/N-16 决定，无违规时 PASS
+    if actual_blocking or warn_only_count:
         return EXIT_FINDINGS if (not args.warn_only or n16_violations) else EXIT_PASS
     return EXIT_PASS
 

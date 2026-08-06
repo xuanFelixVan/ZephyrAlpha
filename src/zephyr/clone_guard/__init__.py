@@ -38,13 +38,17 @@ Usage::
     # 通过 MCP stdio 协议调用 clone_guard.check_before_write
 """
 
+from zephyr.clone_guard.aggregator import AggregatedFinding, AggregationResult, FindingAggregator
 from zephyr.clone_guard.mcp_server import CloneGuardMCPServer, create_server
 from zephyr.clone_guard.orchestrator import CheckResult, CloneGuardOrchestrator, Finding
 
 __all__ = [
+    "AggregatedFinding",
+    "AggregationResult",
     "CheckResult",
     "CloneGuardMCPServer",
     "CloneGuardOrchestrator",
     "Finding",
+    "FindingAggregator",
     "create_server",
 ]

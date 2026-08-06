@@ -72,7 +72,6 @@ CLI:
 
 from __future__ import annotations
 
-from typing import Final
 import argparse
 import json
 import logging
@@ -83,15 +82,22 @@ import sys
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Final
 
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
-
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # ---------------------------------------------------------------------------
 # 路径常量
 # ---------------------------------------------------------------------------
-REGISTRY_YAML: Final[Path] = REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"
+REGISTRY_YAML: Final[Path] = (
+    REPO_ROOT
+    / "docs"
+    / "01_policies_and_standards"
+    / "_registry"
+    / "catalogs"
+    / "capability_canonical_file_registry.yaml"
+)
 
 # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2: 审计日志目录与 rule_discovery_server 对称
 # CAPABILITY-LOOKUP-REQUIRED gate 消费此目录的 JSONL 日志（capability_lookup_required_gate.py:81）
@@ -145,16 +151,18 @@ _RE_GIT_HASH = re.compile(r"^[0-9a-f]{40}$")
 # 数据模型（dataclass，无外部依赖，只读查询不需要 Pydantic 验证）
 # ---------------------------------------------------------------------------
 
+
 @dataclass
 class HeaderInfo:
     """代码文件头部提取结果（[MODULE]/[A_module]/[BLUEPRINT]/[DOMAIN]/[MATURITY] + docstring 首行）。"""
+
     path: str
-    module_path: str = ""        # [MODULE] zephyr.xxx.yyy
-    module_id: str = ""          # [A_module] module_id=MOD-XXX_yyy
-    blueprint_id: str = ""       # [BLUEPRINT] MOD-XXX
-    domain: str = ""             # [DOMAIN] D-XXX
-    maturity: str = ""           # [MATURITY] production/design [ARCH-MM-002 两档化]
-    docstring: str = ""          # 第一行 docstring（用于辅助识别）
+    module_path: str = ""  # [MODULE] zephyr.xxx.yyy
+    module_id: str = ""  # [A_module] module_id=MOD-XXX_yyy
+    blueprint_id: str = ""  # [BLUEPRINT] MOD-XXX
+    domain: str = ""  # [DOMAIN] D-XXX
+    maturity: str = ""  # [MATURITY] production/design [ARCH-MM-002 两档化]
+    docstring: str = ""  # 第一行 docstring（用于辅助识别）
 
 
 @dataclass
@@ -163,9 +171,10 @@ class SSoTConflict:
 
     L2（GitCommitGateway）和 L3（pre-commit hook）共享检测逻辑的唯一真源返回类型。
     """
-    rel_path: str                # 新增文件相对路径（正斜杠）
-    module_path: str             # 新增文件声明的 module_path
-    conflicts: list[str]         # 冲突的已有文件列表（已排除新文件自己）
+
+    rel_path: str  # 新增文件相对路径（正斜杠）
+    module_path: str  # 新增文件声明的 module_path
+    conflicts: list[str]  # 冲突的已有文件列表（已排除新文件自己）
 
 
 @dataclass
@@ -180,11 +189,12 @@ class CapabilityDuplicate:
     且 advisory 不阻断=无人行动=死数据。commit 门禁只负责高置信阻断（basename 精确碰撞），
     低置信检测不是门禁职责，由 AGENTS.md §9.0 手动查重 + reconciler 周期审计兜底。
     """
-    rel_path: str                # 新增文件相对路径（正斜杠）
-    capability_id: str           # 撞上的能力 ID
-    canonical_file: str          # 该能力现有 canonical 文件
-    relation: str                # conflicting/sibling/unknown/canonical_displaced_*
-    detail: str                  # 人类可读说明
+
+    rel_path: str  # 新增文件相对路径（正斜杠）
+    capability_id: str  # 撞上的能力 ID
+    canonical_file: str  # 该能力现有 canonical 文件
+    relation: str  # conflicting/sibling/unknown/canonical_displaced_*
+    detail: str  # 人类可读说明
 
 
 @dataclass
@@ -196,9 +206,10 @@ class ModuleIdConflict:
     互补：module_path 是导入路径，module_id 是逻辑标识——两者不同维度。
     一个 module_id 只能对应一个真源文件（责任唯一，真源唯一）。
     """
-    rel_path: str                # 新增文件相对路径（正斜杠）
-    module_id: str               # 冲突的 module_id
-    conflicts: list[str]         # 已声明同 module_id 的已有文件列表（已排除新文件自己）
+
+    rel_path: str  # 新增文件相对路径（正斜杠）
+    module_id: str  # 冲突的 module_id
+    conflicts: list[str]  # 已声明同 module_id 的已有文件列表（已排除新文件自己）
 
 
 @dataclass
@@ -209,10 +220,11 @@ class DomainMismatch:
     = 跨域复刻后忘记改 module_path（病根1 的典型症状：连导入路径一起抄）。
     Python 导入路径必须与物理目录一致（否则 import 不到），声明不符 = 谎报归属。
     """
-    rel_path: str                # 新增文件相对路径（正斜杠）
-    module_path: str             # 新增文件声明的 module_path
-    declared_domain: str         # module_path 第2段（如 "infrastructure"）
-    physical_domain: str         # 物理路径第3段（如 "governance"）
+
+    rel_path: str  # 新增文件相对路径（正斜杠）
+    module_path: str  # 新增文件声明的 module_path
+    declared_domain: str  # module_path 第2段（如 "infrastructure"）
+    physical_domain: str  # 物理路径第3段（如 "governance"）
 
 
 @dataclass
@@ -229,6 +241,7 @@ class CapabilityEntry:
       canonical_alive / duplicates / removed_duplicates / pending_candidates /
       derivation_note（派生过程说明，供 debug/审计）
     """
+
     capability_id: str
     aliases: list[str] = field(default_factory=list)
     description: str = ""
@@ -302,12 +315,17 @@ def write_lookup_audit_log(
     except OSError as exc:
         _logger.warning(
             "capability_lookup: audit log 写入失败 (session=%s): %s",
-            session_id, exc, exc_info=True,
+            session_id,
+            exc,
+            exc_info=True,
         )
     except Exception as exc:  # noqa: BLE001 — broad exception catch (fail-open)
         _logger.warning(
             "capability_lookup: audit log 写入异常 (session=%s): %s: %s",
-            session_id, type(exc).__name__, exc, exc_info=True,
+            session_id,
+            type(exc).__name__,
+            exc,
+            exc_info=True,
         )
 
 
@@ -383,36 +401,37 @@ class CapabilityLookup:
 
     @staticmethod
     def parse_header_from_text(text: str, rel: str) -> HeaderInfo:
-        '解析文本头部（核心逻辑，供 _parse_header 和 git show 输出共用）。\n\n        与 _parse_header 的区别：输入是已加载的文本字符串，适用于\n        - 磁盘文件（_parse_header 读文件后调用本方法）\n        - git show {commit}^:{path} 输出（_git_show_header 调用本方法）\n        '
+        "解析文本头部（核心逻辑，供 _parse_header 和 git show 输出共用）。\n\n        与 _parse_header 的区别：输入是已加载的文本字符串，适用于\n        - 磁盘文件（_parse_header 读文件后调用本方法）\n        - git show {commit}^:{path} 输出（_git_show_header 调用本方法）\n"
         info = HeaderInfo(path=rel)
         lines = text.splitlines()[:HEADER_SCAN_LIMIT]
         in_docstring = False
         docstring_collected: list[str] = []
-        docstring_quote: str = ''
+        docstring_quote: str = ""
         for line in lines:
-            stripped = line.rstrip('\n')
-            if (m := _RE_MODULE.match(stripped)):
+            stripped = line.rstrip("\n")
+            if m := _RE_MODULE.match(stripped):
                 info.module_path = m.group(1).strip()
                 continue
-            if (m := _RE_BLUEPRINT.match(stripped)):
+            if m := _RE_BLUEPRINT.match(stripped):
                 info.blueprint_id = m.group(1).strip()
                 continue
-            if (m := _RE_DOMAIN.match(stripped)):
+            if m := _RE_DOMAIN.match(stripped):
                 info.domain = m.group(1).strip()
                 continue
-            if (m := _RE_MATURITY.match(stripped)):
+            if m := _RE_MATURITY.match(stripped):
                 info.maturity = m.group(1).strip()
                 continue
-            if (m := _RE_MODULE_ID.search(stripped)):
+            if m := _RE_MODULE_ID.search(stripped):
                 info.module_id = m.group(1).strip()
                 continue
-            stop_loop, in_docstring, docstring_quote = _scan_header_docstring_step(stripped, in_docstring, docstring_quote, docstring_collected, info)
+            stop_loop, in_docstring, docstring_quote = _scan_header_docstring_step(
+                stripped, in_docstring, docstring_quote, docstring_collected, info
+            )
             if stop_loop:
                 break
         if docstring_collected and (not info.docstring):
             info.docstring = docstring_collected[0]
         return info
-
 
     # ---- 加载 + 扫描 ----
 
@@ -437,16 +456,18 @@ class CapabilityLookup:
         data = yaml_safe_load(self._yaml_path) or {}
         caps: list[CapabilityEntry] = []
         for raw in data.get("capabilities", []):
-            caps.append(CapabilityEntry(
-                capability_id=raw["capability_id"],
-                aliases=list(raw.get("aliases", []) or []),
-                description=raw.get("description", ""),
-                canonical_override=(raw.get("canonical_override", "") or "").strip(),
-                duplicates_manual=list(raw.get("duplicates_manual", []) or []),
-                removed_duplicates_manual=list(raw.get("removed_duplicates_manual", []) or []),
-                integrity_anchors=list(raw.get("integrity_anchors", []) or []),
-                creation_tokens=list(raw.get("creation_tokens", []) or []),
-            ))
+            caps.append(
+                CapabilityEntry(
+                    capability_id=raw["capability_id"],
+                    aliases=list(raw.get("aliases", []) or []),
+                    description=raw.get("description", ""),
+                    canonical_override=(raw.get("canonical_override", "") or "").strip(),
+                    duplicates_manual=list(raw.get("duplicates_manual", []) or []),
+                    removed_duplicates_manual=list(raw.get("removed_duplicates_manual", []) or []),
+                    integrity_anchors=list(raw.get("integrity_anchors", []) or []),
+                    creation_tokens=list(raw.get("creation_tokens", []) or []),
+                )
+            )
         return caps
 
     def scan_disk_headers(self) -> dict[str, HeaderInfo]:
@@ -571,10 +592,10 @@ class CapabilityLookup:
         else:
             # 判断 top-2 是否打平（成熟度 + import 数都相同 -> 歧义）
             _, second_header = sorted_cands[1]
-            tied = (
-                self._maturity_rank(canonical_header) == self._maturity_rank(second_header)
-                and self._count_importers(canonical_header.module_path)
-                    == self._count_importers(second_header.module_path)
+            tied = self._maturity_rank(canonical_header) == self._maturity_rank(
+                second_header
+            ) and self._count_importers(canonical_header.module_path) == self._count_importers(
+                second_header.module_path
             )
             if tied:
                 cap.derivation_note = (
@@ -582,20 +603,16 @@ class CapabilityLookup:
                     f"picked {canonical_path} (first by path). Set canonical_override to force."
                 )
             else:
-                cap.derivation_note = (
-                    f"derived from {len(candidates)} candidates by maturity+imports"
-                )
+                cap.derivation_note = f"derived from {len(candidates)} candidates by maturity+imports"
 
         cap.duplicates = []
-        #ARCH-031 治本（2026-07-01）：auto-derived canonical 是 __init__.py 时，
+        # ARCH-031 治本（2026-07-01）：auto-derived canonical 是 __init__.py 时，
         # 同目录 .py 文件是包组件，排除出 duplicates（同 override 分支逻辑）。
         _pkg_dir = self._package_dir_if_marker(canonical_path)
         for path, header in sorted_cands[1:]:
             if _pkg_dir and path.startswith(_pkg_dir + "/"):
                 continue  # 包组件，非 duplicate
-            cap.duplicates.append(
-                self._make_duplicate_entry(path, header, canonical_header)
-            )
+            cap.duplicates.append(self._make_duplicate_entry(path, header, canonical_header))
 
     @staticmethod
     def _package_dir_if_marker(canonical_path: str) -> str | None:
@@ -608,10 +625,9 @@ class CapabilityLookup:
             return canonical_path.rsplit("/", 1)[0]
         return None
 
-    def _rank_candidates(
-        self, candidates: list[tuple[str, HeaderInfo]]
-    ) -> list[tuple[str, HeaderInfo]]:
+    def _rank_candidates(self, candidates: list[tuple[str, HeaderInfo]]) -> list[tuple[str, HeaderInfo]]:
         """排序候选：成熟度降序 -> import 数降序 -> 路径字典序（稳定 tiebreak）。"""
+
         def sort_key(ch: tuple[str, HeaderInfo]):
             _path, header = ch
             return (
@@ -619,6 +635,7 @@ class CapabilityLookup:
                 -self._count_importers(header.module_path),
                 ch[0],
             )
+
         return sorted(candidates, key=sort_key)
 
     @staticmethod
@@ -633,17 +650,11 @@ class CapabilityLookup:
         cap.domain = header.domain
         cap.maturity = header.maturity
 
-    def _make_duplicate_entry(
-        self, path: str, header: HeaderInfo, canonical_header: HeaderInfo | None
-    ) -> dict:
+    def _make_duplicate_entry(self, path: str, header: HeaderInfo, canonical_header: HeaderInfo | None) -> dict:
         """构造 duplicate 条目。relation 由 blueprint 比对派生。"""
         relation = "unknown"
         if canonical_header and header.blueprint_id and canonical_header.blueprint_id:
-            relation = (
-                "conflicting"
-                if header.blueprint_id == canonical_header.blueprint_id
-                else "sibling"
-            )
+            relation = "conflicting" if header.blueprint_id == canonical_header.blueprint_id else "sibling"
         return {
             "path": path,
             "module_id": header.module_id,
@@ -672,7 +683,7 @@ class CapabilityLookup:
         for path in self._disk_headers:
             abs_path = self._base_root / path
             try:
-                                # 5.59.3 修复：原 errors="ignore" 静默丢弃非法字节，行数统计和 import 计数失真。
+                # 5.59.3 修复：原 errors="ignore" 静默丢弃非法字节，行数统计和 import 计数失真。
                 # 改为 errors="replace" 用替换字符标记非法字节，至少保留行结构。
                 text = abs_path.read_text(encoding="utf-8", errors="replace")
             except OSError:
@@ -696,8 +707,13 @@ class CapabilityLookup:
         try:
             result = run_subprocess_hidden(
                 [
-                    "git", "log", "--diff-filter=D", "--name-only",
-                    "--format=%H", "--", "src/zephyr/",
+                    "git",
+                    "log",
+                    "--diff-filter=D",
+                    "--name-only",
+                    "--format=%H",
+                    "--",
+                    "src/zephyr/",
                 ],
                 cwd=str(self._base_root),
                 capture_output=True,
@@ -714,11 +730,7 @@ class CapabilityLookup:
                         continue
                     if _RE_GIT_HASH.match(line):
                         current_commit = line
-                    elif (
-                        line.startswith("src/zephyr/")
-                        and line.endswith(".py")
-                        and current_commit
-                    ):
+                    elif line.startswith("src/zephyr/") and line.endswith(".py") and current_commit:
                         deletions.append((line, current_commit))
         except (subprocess.SubprocessError, OSError):
             # git 不可用或超时 -> 降级为空（不阻断查询）
@@ -761,13 +773,15 @@ class CapabilityLookup:
                 continue
             if not self._header_matches_capability(header, match_tokens):
                 continue
-            cap.removed_duplicates.append({
-                "path": path,
-                "removed_in_commit": commit,
-                "module_id": header.module_id,
-                "module_path": header.module_path,
-                "note": "git-derived (auto from git log --diff-filter=D)",
-            })
+            cap.removed_duplicates.append(
+                {
+                    "path": path,
+                    "removed_in_commit": commit,
+                    "module_id": header.module_id,
+                    "module_path": header.module_path,
+                    "note": "git-derived (auto from git log --diff-filter=D)",
+                }
+            )
 
     def _git_show_header(self, commit: str, path: str) -> HeaderInfo | None:
         """git show {commit}^:{path} 读取已删文件，解析头部。失败返回 None。
@@ -820,9 +834,8 @@ class CapabilityLookup:
         """合并派生结果与磁盘扫描：标记 canonical_alive + 合并 manual + 发现 pending。"""
         for cap in self._capabilities:
             # 1. canonical 文件是否存在于磁盘
-            cap.canonical_alive = (
-                cap.canonical_file in self._disk_headers
-                or (bool(cap.canonical_file) and (self._base_root / cap.canonical_file).exists())
+            cap.canonical_alive = cap.canonical_file in self._disk_headers or (
+                bool(cap.canonical_file) and (self._base_root / cap.canonical_file).exists()
             )
             cap.status = "alive" if cap.canonical_alive else "dead"
 
@@ -844,8 +857,7 @@ class CapabilityLookup:
             declared_paths.update(d.get("path", "") for d in cap.duplicates)
             declared_paths.update(d.get("path", "") for d in cap.removed_duplicates)
             _collect_pending_candidates(
-                cap, self._disk_headers, canonical_module_id,
-                canonical_module_path, declared_paths
+                cap, self._disk_headers, canonical_module_id, canonical_module_path, declared_paths
             )
 
     # ---- 查询 API ----
@@ -883,13 +895,13 @@ class CapabilityLookup:
         ascii_tokens, cjk_str = self._tokenize(query)
         for cap in self._capabilities:
             haystacks = [
-                cap.capability_id, cap.description,
-                cap.canonical_file, cap.module_id,
+                cap.capability_id,
+                cap.description,
+                cap.canonical_file,
+                cap.module_id,
             ] + list(cap.aliases)
             haystack = " ".join(haystacks).lower()
-            if q in haystack:
-                results.append(self._entry_to_dict(cap))
-            elif self._token_match(ascii_tokens, cjk_str, haystack):
+            if q in haystack or self._token_match(ascii_tokens, cjk_str, haystack):
                 results.append(self._entry_to_dict(cap))
         # 审计日志落盘（best-effort，fail-open）
         resolved_sid = _resolve_session_id(session_id)
@@ -949,8 +961,10 @@ class CapabilityLookup:
         # CJK：≥_CJK_MIN_SUBSTRING 字符走滑动窗口；短于阈值要求整体在 haystack 中
         if cjk_str:
             if len(cjk_str) >= _CJK_MIN_SUBSTRING:
-                if not any(cjk_str[i:i + _CJK_MIN_SUBSTRING] in haystack
-                           for i in range(len(cjk_str) - _CJK_MIN_SUBSTRING + 1)):
+                if not any(
+                    cjk_str[i : i + _CJK_MIN_SUBSTRING] in haystack
+                    for i in range(len(cjk_str) - _CJK_MIN_SUBSTRING + 1)
+                ):
                     return False
             elif cjk_str not in haystack:
                 return False
@@ -981,27 +995,22 @@ class CapabilityLookup:
 
     def list_duplicates(self) -> list[dict]:
         """列出所有有 duplicates[] 的能力。"""
-        return [
-            self._entry_to_dict(cap)
-            for cap in self._capabilities
-            if cap.duplicates
-        ]
+        return [self._entry_to_dict(cap) for cap in self._capabilities if cap.duplicates]
 
     def list_ssot_conflicts(self) -> list[dict]:
         """列出 relation=conflicting 的 SSoT 冲突（同蓝图多实现）。"""
         results: list[dict] = []
         for cap in self._capabilities:
-            conflicts = [
-                d for d in cap.duplicates
-                if d.get("relation") == "conflicting"
-            ]
+            conflicts = [d for d in cap.duplicates if d.get("relation") == "conflicting"]
             if conflicts:
-                results.append({
-                    "capability_id": cap.capability_id,
-                    "canonical_file": cap.canonical_file,
-                    "blueprint_id": cap.blueprint_id,
-                    "conflicts": conflicts,
-                })
+                results.append(
+                    {
+                        "capability_id": cap.capability_id,
+                        "canonical_file": cap.canonical_file,
+                        "blueprint_id": cap.blueprint_id,
+                        "conflicts": conflicts,
+                    }
+                )
         return results
 
     def check_file_canonical(self, file_path: str) -> dict | None:
@@ -1065,9 +1074,7 @@ class CapabilityLookup:
                 matches.append(path)
         return matches
 
-    def check_ssot_conflicts(
-        self, new_py_files: list[tuple[str, str]]
-    ) -> list[SSoTConflict]:
+    def check_ssot_conflicts(self, new_py_files: list[tuple[str, str]]) -> list[SSoTConflict]:
         """检测新增 .py 文件的 module_path 冲突（L2/L3 共享检测逻辑唯一真源）。
 
         方案 E 治本重构：L2（GitCommitGateway._check_ssot_canonical）和
@@ -1115,16 +1122,16 @@ class CapabilityLookup:
             # 排除新文件自己（rel_path 用正斜杠，与 _disk_headers key 一致）
             matched = [c for c in matched if c != rel_path]
             if matched:
-                violations.append(SSoTConflict(
-                    rel_path=rel_path,
-                    module_path=header.module_path,
-                    conflicts=matched,
-                ))
+                violations.append(
+                    SSoTConflict(
+                        rel_path=rel_path,
+                        module_path=header.module_path,
+                        conflicts=matched,
+                    )
+                )
         return violations
 
-    def check_capability_duplicates(
-        self, new_py_files: list[tuple[str, str]]
-    ) -> list[CapabilityDuplicate]:
+    def check_capability_duplicates(self, new_py_files: list[tuple[str, str]]) -> list[CapabilityDuplicate]:
         """检测新增 .py 文件是否参与"同能力多实现"（basename 碰撞 -> 阻断）。
 
         与 check_ssot_conflicts 的分工（治本：检测逻辑唯一真源收拢到本方法，L2/L3 共用）：
@@ -1178,7 +1185,7 @@ class CapabilityLookup:
             detail = ""
 
             if info is None:
-                #ARCH-031 门禁盲区治本（2026-07-01）：basename 不撞已注册 capability 时，
+                # ARCH-031 门禁盲区治本（2026-07-01）：basename 不撞已注册 capability 时，
                 # 追加磁盘 basename 碰撞检测（根vs子目录同名文件）。
                 # 病根：原直接 continue -> 新 AI 可在 governance/ 根目录重建子目录同名文件，
                 # basename 不撞 capability 但构成磁盘碰撞，三层门禁无一层检测。
@@ -1206,23 +1213,20 @@ class CapabilityLookup:
             else:
                 # 新文件被派生为 duplicate -> 阻断
                 relation = info.get("relation", "unknown")
-                detail = (
-                    f"新文件是 {own_cap_id} 的 {relation} duplicate"
-                    f"（canonical={canonical_file}）——违反 SSoT"
-                )
+                detail = f"新文件是 {own_cap_id} 的 {relation} duplicate（canonical={canonical_file}）——违反 SSoT"
 
-            results.append(CapabilityDuplicate(
-                rel_path=rel_path,
-                capability_id=own_cap_id,
-                canonical_file=canonical_file,
-                relation=relation,
-                detail=detail,
-            ))
+            results.append(
+                CapabilityDuplicate(
+                    rel_path=rel_path,
+                    capability_id=own_cap_id,
+                    canonical_file=canonical_file,
+                    relation=relation,
+                    detail=detail,
+                )
+            )
         return results
 
-    def _check_unregistered_basename_collision(
-        self, rel_path: str
-    ) -> CapabilityDuplicate | None:
+    def _check_unregistered_basename_collision(self, rel_path: str) -> CapabilityDuplicate | None:
         """检测未注册 capability 的新文件是否与已有文件构成 basename 碰撞。
 
         ARCH-031 门禁缺口治本（2026-07-01）：
@@ -1307,20 +1311,40 @@ class CapabilityLookup:
             return False
         depth_a = len(parts_a)
         depth_b = len(parts_b)
-        root_a = (depth_a == common + 1)
-        root_b = (depth_b == common + 1)
+        root_a = depth_a == common + 1
+        root_b = depth_b == common + 1
         return root_a != root_b
 
-    def check_module_id_conflicts(
-        self, new_py_files: list[tuple[str, str]]
-    ) -> list[ModuleIdConflict]:
+    @staticmethod
+    def _same_module_tree(path_a: str, path_b: str) -> bool:
+        """判断两个文件是否在同一模块目录树下（src/zephyr/{module}/ 前缀相同）。
+
+        同模块目录树下的文件共享 module_id 是正常的 Python 包结构
+        （一个 MOD-XXX 模块可包含多个 .py 文件），不算"跨域复刻"冲突。
+        仅当 module_id 跨模块目录树重复时才判定为冲突（P0-2 真正目标）。
+        #ARCH-SSOT-MODULEID-SAMETREE-001 治本 2026-08-06
+        """
+
+        def _module_root(p: str) -> str:
+            parts = p.split("/")
+            if len(parts) >= 3 and parts[0] == "src" and parts[1] == "zephyr":
+                return "/".join(parts[:3])
+            return p
+
+        return _module_root(path_a) == _module_root(path_b)
+
+    def check_module_id_conflicts(self, new_py_files: list[tuple[str, str]]) -> list[ModuleIdConflict]:
         """检测新增 .py 文件的 module_id 全局冲突（P0-2 防再生门禁）。
 
-        同一个 module_id 出现在多个文件 = 跨域复刻后忘记改 ID。
+        同一个 module_id 跨模块目录树出现 = 跨域复刻后忘记改 ID。
         与 check_ssot_conflicts（同 module_path 硬碰撞）互补：
           - module_path 是 Python 导入路径（物理位置），同 module_path = 同一文件重复
           - module_id 是逻辑标识（[A_module] module_id=MOD-XXX），同 module_id = 逻辑重复
         两者维度不同，需分别检测。
+
+        同模块目录树豁免（#ARCH-SSOT-MODULEID-SAMETREE-001 治本 2026-08-06）：
+        同一 src/zephyr/{module}/ 目录树下的文件共享 module_id 是正常包结构，
+        不算冲突。仅跨模块目录树的 module_id 重复才阻断。
 
         治本（向内收）：检测逻辑唯一真源收拢到本方法，L2/L3 共用。
         """
@@ -1332,20 +1356,21 @@ class CapabilityLookup:
             if not header.module_id:
                 continue
             matched = [
-                p for p, h in self._disk_headers.items()
-                if h.module_id == header.module_id and p != rel_path
+                p
+                for p, h in self._disk_headers.items()
+                if h.module_id == header.module_id and p != rel_path and not self._same_module_tree(p, rel_path)
             ]
             if matched:
-                violations.append(ModuleIdConflict(
-                    rel_path=rel_path,
-                    module_id=header.module_id,
-                    conflicts=sorted(matched),
-                ))
+                violations.append(
+                    ModuleIdConflict(
+                        rel_path=rel_path,
+                        module_id=header.module_id,
+                        conflicts=sorted(matched),
+                    )
+                )
         return violations
 
-    def check_module_domain_consistency(
-        self, new_py_files: list[tuple[str, str]]
-    ) -> list[DomainMismatch]:
+    def check_module_domain_consistency(self, new_py_files: list[tuple[str, str]]) -> list[DomainMismatch]:
         """检测新增 .py 文件的 MODULE 声明域与物理路径域一致性（P0-3 防再生门禁）。
 
         文件物理在 src/zephyr/{domain_A}/ 但 [MODULE] 声明 zephyr.{domain_B}.xxx
@@ -1370,12 +1395,14 @@ class CapabilityLookup:
                 continue  # 直接在 src/zephyr/ 下的文件（如 __init__.py），无域段
             physical_domain = path_parts[2]
             if declared_domain != physical_domain:
-                violations.append(DomainMismatch(
-                    rel_path=rel_path,
-                    module_path=header.module_path,
-                    declared_domain=declared_domain,
-                    physical_domain=physical_domain,
-                ))
+                violations.append(
+                    DomainMismatch(
+                        rel_path=rel_path,
+                        module_path=header.module_path,
+                        declared_domain=declared_domain,
+                        physical_domain=physical_domain,
+                    )
+                )
         return violations
 
     def list_all(self) -> list[dict]:
@@ -1422,6 +1449,7 @@ class CapabilityLookup:
 # 辅助函数
 # ---------------------------------------------------------------------------
 
+
 def _normalize_path(p: str) -> str:
     """路径标准化：反斜杠->正斜杠，去掉前导 ./ （正确剥离前缀，非字符集）"""
     p = p.replace("\\", "/")
@@ -1433,12 +1461,13 @@ def _normalize_path(p: str) -> str:
 def yaml_safe_load(path: Path) -> dict:
     """延迟 import yaml，避免 zephyr.governance.__init__ 加载顺序问题。"""
     import yaml
+
     return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
 
 
-def _scan_header_docstring_step(stripped: str, in_docstring: bool,
-                                docstring_quote: str, docstring_collected: list[str],
-                                info: HeaderInfo) -> tuple[bool, bool, str]:
+def _scan_header_docstring_step(
+    stripped: str, in_docstring: bool, docstring_quote: str, docstring_collected: list[str], info: HeaderInfo
+) -> tuple[bool, bool, str]:
     """处理单行 docstring 跟踪（_parse_header_from_text 提取的内联步骤）。
 
     返回 (stop_loop, in_docstring, docstring_quote)：
@@ -1471,9 +1500,13 @@ def _scan_header_docstring_step(stripped: str, in_docstring: bool,
     return (False, in_docstring, docstring_quote)
 
 
-def _collect_pending_candidates(cap: CapabilityEntry, disk_headers: dict[str, HeaderInfo],
-                                canonical_module_id: str, canonical_module_path: str,
-                                declared_paths: set[str]) -> None:
+def _collect_pending_candidates(
+    cap: CapabilityEntry,
+    disk_headers: dict[str, HeaderInfo],
+    canonical_module_id: str,
+    canonical_module_path: str,
+    declared_paths: set[str],
+) -> None:
     """从磁盘头部中发现 pending 重复候选（同 module_id 或同 module_path）。
 
     _reconcile 提取的内联步骤：遍历 disk_headers，跳过 declared_paths，
@@ -1492,24 +1525,26 @@ def _collect_pending_candidates(cap: CapabilityEntry, disk_headers: dict[str, He
         #   （如两文件 [MODULE] 都声称 zephyr.xxx.rollback_executor——头部错声明或真重复）
         if canonical_module_path and header.module_path == canonical_module_path:
             is_candidate = True
-            match_reason = (match_reason + "; " if match_reason else "") + \
-                           f"same module_path={header.module_path}"
+            match_reason = (match_reason + "; " if match_reason else "") + f"same module_path={header.module_path}"
         if is_candidate:
-            cap.pending_candidates.append({
-                "path": path,
-                "module_id": header.module_id,
-                "module_path": header.module_path,
-                "blueprint_id": header.blueprint_id,
-                "domain": header.domain,
-                "maturity": header.maturity,
-                "docstring": header.docstring,
-                "match_reason": match_reason,
-                "note": "磁盘有但派生结果未收录——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
-            })
+            cap.pending_candidates.append(
+                {
+                    "path": path,
+                    "module_id": header.module_id,
+                    "module_path": header.module_path,
+                    "blueprint_id": header.blueprint_id,
+                    "domain": header.domain,
+                    "maturity": header.maturity,
+                    "docstring": header.docstring,
+                    "match_reason": match_reason,
+                    "note": "磁盘有但派生结果未收录——确凿重复信号（同 module_id 或同 module_path），需人工裁定",
+                }
+            )
 
 
-def _apply_canonical_override(lookup: CapabilityLookup, cap: CapabilityEntry,
-                              candidates: list[tuple[str, HeaderInfo]]) -> None:
+def _apply_canonical_override(
+    lookup: CapabilityLookup, cap: CapabilityEntry, candidates: list[tuple[str, HeaderInfo]]
+) -> None:
     """优先级 1：canonical_override（人工裁定）派生（_derive_canonical_and_duplicates 提取）。"""
     norm_override = _normalize_path(cap.canonical_override)
     cap.canonical_file = norm_override
@@ -1518,7 +1553,7 @@ def _apply_canonical_override(lookup: CapabilityLookup, cap: CapabilityEntry,
     if override_header:
         lookup._fill_from_header(cap, override_header)
     cap.duplicates = []
-    #ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
+    # ARCH-031 治本（2026-07-01）：canonical 是 __init__.py（包标记）时，
     # 同目录下的 .py 文件是包组件，不是 conflicting duplicates。
     # 病根：aliases 含包内模块 basename 时，auto-derive 把同目录模块
     # 误判为 conflicting（如 code_dedup_trackers 的 6 个 tracker 模块）。
@@ -1529,14 +1564,13 @@ def _apply_canonical_override(lookup: CapabilityLookup, cap: CapabilityEntry,
             continue
         if _pkg_dir and path.startswith(_pkg_dir + "/"):
             continue  # 包组件，非 duplicate
-        cap.duplicates.append(
-            lookup._make_duplicate_entry(path, header, override_header)
-        )
+        cap.duplicates.append(lookup._make_duplicate_entry(path, header, override_header))
 
 
 # ---------------------------------------------------------------------------
 # CLI 入口
 # ---------------------------------------------------------------------------
+
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(

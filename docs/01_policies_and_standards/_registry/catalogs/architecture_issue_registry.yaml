@@ -12123,3 +12123,22 @@ entries:
   status: decided
   created: '2026-08-06'
   last_updated: '2026-08-06'
+# --- #ARCH-SSOT-MODULEID-SAMETREE-001: GATE-SSOT module_id 同模块目录树豁免（2026-08-06）---
+- issue_id: '#ARCH-SSOT-MODULEID-SAMETREE-001'
+  title: GATE-SSOT module_id 冲突误判同模块新增文件——同模块目录树豁免治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-06 治本。check_module_id_conflicts 硬性要求新增 .py 文件 module_id 全局唯一，
+    但一个 MOD-XXX 模块包含多个 .py 文件是正常 Python 包结构（如 clone_guard 包含
+    orchestrator/aggregator/mcp_server 等多文件共享 MOD-CLONE_GUARD）。原逻辑会误判
+    同包内新增文件为"跨域复刻信号"并阻断 commit。
+    治本：新增 _same_module_tree 判断同 src/zephyr/{module}/ 目录树，同模块目录树下
+    共享 module_id 不算冲突。判断依据：path.split('/') 前3段（src/zephyr/{module}）
+    相同即视为同模块目录树。跨模块目录树复用 module_id 仍按冲突阻断（保留跨域复刻检测能力）。
+  impact:
+    - 'src/zephyr/governance/capability_lookup.py（_same_module_tree + check_module_id_conflicts）'
+  fix_phase: 已落地（2026-08-06）
+  status: decided
+  created: '2026-08-06'
+  last_updated: '2026-08-06'
