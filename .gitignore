@@ -203,6 +203,9 @@ data/metrics.prom
 # 不被任何代码/规则引用；整目录忽略，已跟踪文件用 git rm --cached 退回未跟踪
 .trae/documents/
 logs/
+
+# CloneGuard / Echo-Guard index (派生产物——可由 `echo-guard index` 从源码重建)
+.echo-guard/
 # 治本（2026-07-18）：src/ 下的 logs/ 是 Python 模块目录（system_telemetry.logs），
 # 非日志输出目录，MUST 纳入版本控制——否则 worktree 基于 HEAD 创建时缺此模块，
 # 导致 system_telemetry/__init__.py 的 `from .logs import flush` ModuleNotFoundError
@@ -442,4 +445,25 @@ docs/02_enterprise_architecture/generated/
 # 影响生成器：generate_domain_doc.py（73 域文档）、generate_path_tree.py（2 项目树）
 docs/02_enterprise_architecture/02_domain_architecture_docs/*.md
 !docs/02_enterprise_architecture/02_domain_architecture_docs/README.md
-docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_*.md
+# 01_global_architecture_diagram — 全派生（asset_catalog/contract_catalog/cross_domain_matrix/
+#   capability_heatmap/integration_topology 5 个生成器 + path_tree 项目树）
+docs/02_enterprise_architecture/01_global_architecture_diagram/*.md
+# 00_overview_entry — 全派生（navigation_index + panorama_registry 生成器产出）
+docs/02_enterprise_architecture/00_overview_entry/*.md
+# 03_governance_reports — 全派生（candidate_module_report/capacity_report/constraint_violations/
+#   design_vs_production 生成器 + align_battle_map/align_panoramas 对齐报告 + orphan_module_checklist）
+docs/02_enterprise_architecture/03_governance_reports/*.md
+docs/02_enterprise_architecture/03_governance_reports/candidate_modules/*.md
+# 05_dataflow_architecture — 全派生（dataflow_diagram/data_acquisition_flow/data_inventory 生成器产出）
+# 保留 index.md（手写入口）和 data_acquisition_requirements.yaml（手写 YAML 真源）
+docs/02_enterprise_architecture/05_dataflow_architecture/d_*.md
+docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_flow.md
+docs/02_enterprise_architecture/05_dataflow_architecture/data_inventory.md
+docs/02_enterprise_architecture/05_dataflow_architecture/dataflow_*.md
+# 06_decision_architecture — 全派生（decision_diagram 生成器产出 22 文件）
+# 保留 index.md（手写入口）
+docs/02_enterprise_architecture/06_decision_architecture/[0-9]*.md
+docs/02_enterprise_architecture/06_decision_architecture/decision_index.md
+# 07_trading_decision_architecture/battle_map — 全派生（battle_map 生成器产出 13 文件）
+docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/*.md
+docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_titles_states.txt
