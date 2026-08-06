@@ -653,12 +653,24 @@ def _extract_sys_path_dirs(
     Returns:
         注入目录的绝对路径列表（可能为空——无 sys.path 注入或无法求值）。
     """
-    # 构建变量名 → 赋值表达式映射（多层深度回溯用）
+    # 构建 var_assigns：模块级 Assign 优先（函数内 global 重新赋值不覆盖模块级初始值——
+    # 模块级 sys.path 注入用模块级变量；函数内赋值常依赖运行时参数无法静态求值，
+    # 如 _project_root 模块级 = Path(__file__)... 但函数内 global _project_root = Path(param)）
     var_assigns: dict[str, ast.AST] = {}
+    module_level_vars: set[str] = set()
+    for stmt in tree.body:
+        if isinstance(stmt, ast.Assign):
+            for target in stmt.targets:
+                if isinstance(target, ast.Name):
+                    var_assigns[target.id] = stmt.value
+                    module_level_vars.add(target.id)
     for node in ast.walk(tree):
         if isinstance(node, ast.Assign):
             for target in node.targets:
-                if isinstance(target, ast.Name):
+                if (
+                    isinstance(target, ast.Name)
+                    and target.id not in module_level_vars
+                ):
                     var_assigns[target.id] = node.value
 
     # 识别跨文件 import 的仓库根常量（REPO_ROOT 等），映射为 project_root。
