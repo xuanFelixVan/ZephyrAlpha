@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.2.0"
+version: "1.3.0"
 date: 2026-08-05
 topic: multi_strategy_concurrency
 scope: 07_trading_decision_architecture
@@ -111,6 +111,71 @@ scope: 07_trading_decision_architecture
 - 低换手策略（多因子）：Tier 1+2 给时间，Tier 3 兜底防死扛
 - 每级是独立事件，可 log 可复盘
 - 三级升级而非直接强砍：尊重策略自主权（决定砍哪个）+ 避免随机时刻强制卖出的高成本
+
+### 2.5 StrategyBook Drawdown Protocol（账户级回撤风控，2026-08-05）
+
+> **用户裁定（2026-08-05）**：回撤是沉没成本，不参与下一次决策（不进入 RiskSignal），但触发账户级风险节流（减仓/停仓/清仓）。
+> **定位**：drawdown protocol 是 StrategyBook 内部风控，不属于 regime 检测器的 RiskSignal。regime 管"市场状态风险"，drawdown protocol 管"账户生存风险"。
+> **行业搜索**：LedgerMind Systematic Risk Framework 2026-05、ARKA Global Investments 2026、Sina 量化风控 2026-07、Sina 量化FOF 2026-07、tradingwyckoff Drawdown Guide 2026-01、赢牛资管 VaR-ES 2026-05。
+
+#### 2.5.1 四级回撤阈值（行业基准）
+
+> **行业基准**（LedgerMind 2026-05 / ARKA 2026 / Sina 量化FOF 2026-07）：
+
+| 级别 | 回撤阈值 | 动作 | 行业来源 |
+|---|---|---|---|
+| **Level 1: 警告** | 回撤 > 8% | 降低新仓风险敞口至 75%（单笔风险从 2% 降至 1.5%） | Sina 量化FOF 2026-07：8% 减仓启动线 |
+| **Level 2: 减仓** | 回撤 > 15% | 仓位缩减至 75%，停开新仓（仅允许平仓和调仓） | LedgerMind 2026-05：15% reduce to 75% |
+| **Level 3: 停仓** | 回撤 > 20% | 停止所有新开仓，review framework | LedgerMind 2026-05：20% halt new positions |
+| **Level 4: 清仓** | 回撤 > 25% | 关闭所有仓位，强制休息 | LedgerMind 2026-05：25% close all, mandatory break |
+
+> **日度熔断**（补充）：
+> - 组合单日亏损 > 4% → 暂停开仓 1 天（Eastmoney 2026-07：组合熔断）
+> - 单策略单日亏损 > 5% → 该策略暂停 1 天
+
+#### 2.5.2 恢复机制（Recovery Protocol）
+
+> **行业共识**（ARKA 2026）：Recovery requires explicit re-authorization. 不能自动恢复。
+
+| 阶段 | 条件 | 动作 |
+|---|---|---|
+| **回撤企稳** | 回撤从峰值恢复 50%（如从 -20% 回到 -10%） | 解除停仓，允许新仓但风险敞口仍降 50% |
+| **完全恢复** | 创新高（回撤归零） | 恢复正常风险敞口 |
+| **强制休息期** | Level 4 触发后 | 强制休息 5 个交易日，期间不允许任何交易 |
+
+#### 2.5.3 单策略 vs 组合层面（分层风控）
+
+> **用户洞察**："回撤深了是因为上一次交易没交易好，是策略的问题，不是市场的问题。"
+> → 单策略回撤 = 策略问题 → 该策略独立收缩
+> → 组合回撤 = 系统性问题 → 全局收缩
+
+| 层面 | 回撤基准 | 触发动作 |
+|---|---|---|
+| **单策略层面** | 各 StrategyBook 自身净值回撤 | 该策略独立减仓/停仓，不影响其他策略 |
+| **组合层面** | firm 层总净值回撤 | 所有策略同步收缩（通过 Shrinkage 额外下调） |
+
+#### 2.5.4 VaR/ES 辅助监控（前沿补充）
+
+> **来源**：Sina 量化风控 2026-07 / 赢牛资管 2026-05
+
+| 指标 | 定义 | 触发 |
+|---|---|---|
+| **VaR_95** | 95% 置信下日度最大预期损失 | VaR > 1.2×入场 VaR → 减仓 20% |
+| **ES_95** | 超过 VaR 时的预期平均损失 | ES > 1.3×入场 ES → 再减仓 20% |
+| **波动率调整** | 30 日波动率 | 每增 10% → 仓位减 20%（LedgerMind 2026-05） |
+
+#### 2.5.5 Kill Switch（紧急熔断）
+
+> **来源**：tradingwyckoff 2026-01 Kill Switch Protocol
+
+| 触发条件 | 动作 |
+|---|---|
+| 单日亏损 > 6% | 立即平仓所有持仓，暂停交易 3 天 |
+| 回撤 > 25% | 清仓 + 强制休息 5 天 + 人工 review |
+| 连续 5 天亏损 | 降仓至 50%，review 策略有效性 |
+| 流动性危机（买卖价差 > 正常 5x） | 立即停止开仓，仅允许平仓 |
+
+> **Kill Switch 原则**：宁可错杀不可漏放。触发即执行，不允许人工覆盖延迟。
 
 ## 3. 考虑过的替代方案（拒绝理由）
 
@@ -263,3 +328,4 @@ OOS 2013-2026（扣除 2bps/turnover）：
 | 2026-08-05 | 1.0.0 | 初稿 | 多策略并发架构选型定型，施工前记录推理防飘移 |
 | 2026-08-05 | 1.1.0 | 补充分配公式+权重变动三级升级+灰度 regime+置信度→仓位映射；关闭 §6.5；新增 §6.6 | 策略权重分配与 budget 变动操作流程讨论定型 |
 | 2026-08-05 | 1.2.0 | 移除 RegimeScore，分配公式改为 Base×Performance×Shrinkage；置信度映射改为风险节流语义；regime 仅用于 Shrinkage | 开源实证：regime alpha 择时降收益、风险节流改善回撤；与 A 模型"加法替代优化器"哲学对齐 |
+| 2026-08-05 | 1.3.0 | §2.5 StrategyBook Drawdown Protocol（四级回撤阈值 8/15/20/25%+恢复机制+分层风控+VaR/ES+Kill Switch） | 用户确认"回撤是沉没成本属账户风控不属市场状态"+2026-08-05 行业搜索（LedgerMind/ARKA/Sina量化FOF/tradingwyckoff/赢牛资管） |
