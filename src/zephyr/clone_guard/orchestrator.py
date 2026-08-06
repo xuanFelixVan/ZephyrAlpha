@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.1
 # [MODULE] zephyr.clone_guard.orchestrator
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig, load_config); zephyr.clone_guard.engines.echo_guard_adapter (EchoGuardAdapter, Finding); zephyr.clone_guard.engines.ast_grep_adapter (AstGrepAdapter); zephyr.clone_guard.aggregator (FindingAggregator, AggregatedFinding, AggregationResult); asyncio; concurrent.futures; fnmatch; logging
+# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig, load_config); zephyr.clone_guard.engines.echo_guard_adapter (EchoGuardAdapter, Finding); zephyr.clone_guard.engines.ast_grep_adapter (AstGrepAdapter); zephyr.clone_guard.engines.redup_adapter (RedupAdapter); zephyr.clone_guard.aggregator (FindingAggregator, AggregatedFinding, AggregationResult); asyncio; concurrent.futures; fnmatch; logging
 # [CONSUMERS] zephyr.gov_enforcement.commit_gates.capability_overlap_gate; zephyr.clone_guard (re-export)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 统一调度入口——Phase B 并发调度 Echo-Guard + ast-grep（asyncio.gather + run_in_executor 桥接同步适配器）；check() 永不抛异常；全引擎降级时按 fail_closed 决定阻断或放行；部分降级 warn+继续；extract 级硬阻断=必须合并；结果经 FindingAggregator 去重+多数表决+严重性就高
+# [INVARIANTS] 统一调度入口——Phase B 并发调度 Echo-Guard + ast-grep + reDUP（asyncio.gather + run_in_executor 桥接同步适配器）；check() 永不抛异常；全引擎降级时按 fail_closed 决定阻断或放行；部分降级 warn+继续；extract 级硬阻断=必须合并；结果经 FindingAggregator 去重+多数表决+严重性就高
 # [MODIFY-GUARD] blueprint=docs/03_modules/_cross_layer/clone_guard/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -17,7 +17,7 @@
 """CloneGuard 统一编排器——Phase B（多引擎并发 + 结果聚合）。
 
 统一调度入口，对 CAPABILITY-OVERLAP 门禁暴露 check() 方法。
-Phase B 起：asyncio.gather 并发调度 Echo-Guard + ast-grep，结果经
+Phase B 起：asyncio.gather 并发调度 Echo-Guard + ast-grep + reDUP，结果经
 FindingAggregator 去重 + 多数表决 + 严重性就高，输出 AggregatedFinding 列表。
 
 并发模型
@@ -52,6 +52,7 @@ import logging
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Protocol, runtime_checkable
 
 from zephyr.clone_guard.aggregator import (
     AggregatedFinding,
@@ -61,10 +62,22 @@ from zephyr.clone_guard.aggregator import (
 from zephyr.clone_guard.config import CloneGuardConfig, load_config
 from zephyr.clone_guard.engines.ast_grep_adapter import AstGrepAdapter
 from zephyr.clone_guard.engines.echo_guard_adapter import EchoGuardAdapter, Finding
+from zephyr.clone_guard.engines.redup_adapter import RedupAdapter
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["AggregatedFinding", "CheckResult", "CloneGuardOrchestrator", "Finding"]
+
+
+@runtime_checkable
+class _EngineAdapter(Protocol):
+    """引擎适配器统一接口（detect/health_check）。"""
+
+    def detect(
+        self, files: list[str], timeout: int | None = None
+    ) -> tuple[list[Finding], bool]: ...
+
+    def health_check(self) -> bool: ...
 
 
 @dataclass
@@ -94,16 +107,41 @@ class CloneGuardOrchestrator:
     """CloneGuard 统一编排器。
 
     Phase A: 仅调度 Echo-Guard
-    Phase B: + ast-grep 并发 + FindingAggregator 聚合（当前）
-    Phase C: + mcrit + Vendetect + relate
+    Phase B: + ast-grep + reDUP 并发 + FindingAggregator 聚合（当前）
+    Phase C: + mcrit + Vendetect + relate（audit/compare 方法）
     """
 
     def __init__(self, repo_root: Path, config: CloneGuardConfig | None = None):
         self._repo_root = Path(repo_root)
         self._config = config or load_config(self._repo_root)
+        # L1 引擎（pre-commit 拦截）
         self._echo_guard = EchoGuardAdapter(self._repo_root, self._config)
         self._ast_grep = AstGrepAdapter(self._repo_root, self._config)
+        self._redup = RedupAdapter(self._repo_root, self._config)
+        # L2/L3 引擎占位（Phase C 注入；None 表示未配置，_build_*_engines 跳过）
+        self._mcrit: _EngineAdapter | None = None
+        self._vendetect: _EngineAdapter | None = None
+        self._relate: _EngineAdapter | None = None
         self._aggregator = FindingAggregator(self._config)
+
+    # ------------------------------------------------------------------
+    # 引擎集构造（按 config.*_enabled 过滤；Phase C 注入的引擎为 None 时跳过）
+    # ------------------------------------------------------------------
+
+    def _build_l1_engines(self) -> dict[str, _EngineAdapter]:
+        """构造 L1 pre-commit 引擎集（Echo-Guard + ast-grep + reDUP）。
+
+        守 blueprint §5.1：仅快速引擎参与 L1，按 config.*_enabled 过滤。
+        reDUP 在 L1 用 changed-only 增量模式（config.redup_mode="changed-only"）。
+        """
+        engines: dict[str, _EngineAdapter] = {}
+        if self._config.echo_guard_enabled:
+            engines["echo_guard"] = self._echo_guard
+        if self._config.ast_grep_enabled:
+            engines["ast_grep"] = self._ast_grep
+        if self._config.redup_enabled:
+            engines["redup"] = self._redup
+        return engines
 
     def check(self, staged_files: list[str]) -> CheckResult:
         """检测 staged 文件中的代码克隆（多引擎并发 + 聚合）。
@@ -119,19 +157,25 @@ class CloneGuardOrchestrator:
         if not py_files:
             return CheckResult(passed=True, checked_files=0)
 
-        # 2. 并发调度多引擎
-        engine_results = self._run_engines_concurrent(py_files)
+        # 2. 构造 L1 引擎集（按 config 过滤）
+        engines = self._build_l1_engines()
+        if not engines:
+            logger.warning("CloneGuard: 无启用引擎（全在 config 中禁用），放行")
+            return CheckResult(passed=True, checked_files=len(py_files))
 
-        # 3. 聚合（去重 + 多数表决 + 严重性就高）
+        # 3. 并发调度多引擎
+        engine_results = self._run_engines_concurrent(engines, py_files)
+
+        # 4. 聚合（去重 + 多数表决 + 严重性就高）
         agg_result = self._aggregator.aggregate(engine_results)
 
-        # 4. 全引擎降级 → fail_closed 决定
+        # 5. 全引擎降级 → fail_closed 决定
         if agg_result.active_engine_count == 0:
             return self._handle_total_degradation(
                 len(py_files), agg_result.degraded_engines
             )
 
-        # 5. 部分降级 → warn + 继续（用活跃引擎结果）
+        # 6. 部分降级 → warn + 继续（用活跃引擎结果）
         if agg_result.degraded_engines:
             logger.warning(
                 "CloneGuard: 引擎 %s 降级，仅用 %d 个活跃引擎结果聚合",
@@ -139,7 +183,7 @@ class CloneGuardOrchestrator:
                 agg_result.active_engine_count,
             )
 
-        # 6. 严重性判定
+        # 7. 严重性判定
         block_findings = [
             f for f in agg_result.findings if f.severity in self._config.block_severities
         ]
@@ -180,32 +224,35 @@ class CloneGuardOrchestrator:
         )
 
     # ------------------------------------------------------------------
-    # 并发调度
+    # 并发调度（通用——接受 engines 字典，供 check()/audit()/compare() 复用）
     # ------------------------------------------------------------------
 
     def _run_engines_concurrent(
-        self, py_files: list[str]
+        self, engines: dict[str, _EngineAdapter], py_files: list[str], timeout: int | None = None,
     ) -> dict[str, tuple[list[Finding], bool]]:
-        """asyncio.gather 并发调度所有启用引擎（守 blueprint §5.1）。
+        """asyncio.gather 并发调度给定引擎集（守 blueprint §5.1）。
 
         适配器 detect() 是同步阻塞调用，通过 run_in_executor 提交线程池
         实现真并发。return_exceptions=True 保证单引擎异常被捕获归一为
         ([], degraded=True)，不影响其他引擎。
 
+        Args:
+            engines: {engine_name: adapter} 字典（已按 config 过滤）。
+            py_files: 待检测文件列表。
+            timeout: 超时秒数（None 时用 config.pre_commit_timeout_sec）。
+
         Returns:
             {engine_name: (findings, degraded)} 字典。
         """
-        timeout = self._config.pre_commit_timeout_sec
+        if not engines:
+            return {}
+        timeout_sec = timeout or self._config.pre_commit_timeout_sec
 
         async def _gather_all(executor: ThreadPoolExecutor):
             loop = asyncio.get_running_loop()
             tasks = {
-                "echo_guard": loop.run_in_executor(
-                    executor, self._echo_guard.detect, py_files, timeout
-                ),
-                "ast_grep": loop.run_in_executor(
-                    executor, self._ast_grep.detect, py_files, timeout
-                ),
+                name: loop.run_in_executor(executor, adapter.detect, py_files, timeout_sec)
+                for name, adapter in engines.items()
             }
             raw = await asyncio.gather(*tasks.values(), return_exceptions=True)
             return dict(zip(tasks.keys(), raw))
@@ -214,14 +261,14 @@ class CloneGuardOrchestrator:
             raw_results = asyncio.run(
                 _gather_all(
                     ThreadPoolExecutor(
-                        max_workers=4, thread_name_prefix="clone-guard"
+                        max_workers=max(4, len(engines)), thread_name_prefix="clone-guard"
                     )
                 )
             )
         except RuntimeError:
             # 已有事件循环在跑（如嵌套 async 上下文）——回退顺序执行
             logger.debug("CloneGuard: 检测到已有事件循环，回退顺序执行引擎")
-            raw_results = self._run_engines_sequential(py_files, timeout)
+            raw_results = self._run_engines_sequential(engines, py_files, timeout_sec)
 
         # 归一化异常 → ([], degraded=True)
         engine_results: dict[str, tuple[list[Finding], bool]] = {}
@@ -238,19 +285,17 @@ class CloneGuardOrchestrator:
                 engine_results[name] = res
         return engine_results
 
+    @staticmethod
     def _run_engines_sequential(
-        self, py_files: list[str], timeout: int
+        engines: dict[str, _EngineAdapter], py_files: list[str], timeout: int,
     ) -> dict[str, tuple[list[Finding], bool] | BaseException]:
         """顺序执行引擎（asyncio 不可用时的兜底）。"""
         results: dict[str, tuple[list[Finding], bool] | BaseException] = {}
-        try:
-            results["echo_guard"] = self._echo_guard.detect(py_files, timeout)
-        except Exception as e:  # noqa: BLE001
-            results["echo_guard"] = e
-        try:
-            results["ast_grep"] = self._ast_grep.detect(py_files, timeout)
-        except Exception as e:  # noqa: BLE001
-            results["ast_grep"] = e
+        for name, adapter in engines.items():
+            try:
+                results[name] = adapter.detect(py_files, timeout)
+            except Exception as e:  # noqa: BLE001
+                results[name] = e
         return results
 
     # ------------------------------------------------------------------

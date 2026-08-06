@@ -8259,6 +8259,10 @@ creation_tokens:
     token: "auto-clone-guard-ast-grep-adapter-20260806"
     created_by: "session-clone-guard-phase-b"
     capability: "clone_guard_ast_grep_adapter"
+  - file: "src/zephyr/clone_guard/engines/redup_adapter.py"
+    token: "auto-clone-guard-redup-adapter-20260806"
+    created_by: "session-clone-guard-phase-b"
+    capability: "clone_guard_redup_adapter"
   # --- oneoff 审计基线生成器（#ARCH-PRECOMMIT-INCREMENTAL Task 6，2026-08-06）---
   - file: "scripts/governance/audit_precommit_incremental_baseline.py"
     token: "auto-precommit-incremental-baseline-20260806"
