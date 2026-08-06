@@ -71,9 +71,9 @@ _THIS_DIR = str(_THIS_FILE.parent)
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
-from _common import idempotent_date  # noqa: E402  幂等日期源（消除 date.today() 非确定性）
-from _shared.constants import REPO_ROOT  # noqa: E402
-from _shared.module_translation_loader import (  # noqa: E402
+from _common import idempotent_date  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+from _shared.constants import REPO_ROOT  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+from _shared.module_translation_loader import (  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
     get_cross_cutting_all,
     get_step_indicators_zh,
     get_step_mechanism,
@@ -82,7 +82,9 @@ from _shared.module_translation_loader import (  # noqa: E402
     preload_battle_map_cross_cutting,
     preload_battle_map_steps,
 )
-from d5_architecture.generators.zoomable_html import emit_zoomable_html  # noqa: E402
+from d5_architecture.generators.zoomable_html import (
+    emit_zoomable_html,  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+)
 
 from zephyr.governance.persistence.battle_map_reader import BattleMapReader  # noqa: E402
 from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
