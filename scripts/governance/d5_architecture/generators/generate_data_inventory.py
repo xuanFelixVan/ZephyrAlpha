@@ -51,9 +51,17 @@ if str(_REPO_ROOT) not in sys.path:
 _GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS
+# 治本（#ARCH-REGEN-NONIDEMPOTENT-001）：generators 目录加入 sys.path，
+# in-process 加载（reconciler/tests）时 _common 可解析（正典先例：generate_data_acquisition_flow.py）
+_THIS_DIR = str(Path(__file__).resolve().parent)
+if _THIS_DIR not in sys.path:
+    sys.path.insert(0, _THIS_DIR)
+from _common import idempotent_date  # noqa: E402  幂等日期源（消除 date.today() 非确定性）
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS
+
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
+
 # ch_reader 在 src/zephyr/data/ 下
 _SRC_PATH = _REPO_ROOT / "src"
 if str(_SRC_PATH) not in sys.path:
@@ -69,23 +77,29 @@ timeout_seconds: 120
 warn_only: false
 """
 
-OUTPUT_PATH = (
-    _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture" / "data_inventory.md"
-)
+OUTPUT_PATH = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture" / "data_inventory.md"
 
 REQUIREMENTS_PATH = (
-    _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_architecture" / "data_acquisition_requirements.yaml"
+    _REPO_ROOT
+    / "docs"
+    / "02_enterprise_architecture"
+    / "05_dataflow_architecture"
+    / "data_acquisition_requirements.yaml"
 )
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
-_SQL_TABLES = "SELECT database, name, total_rows FROM system.tables WHERE database IN ('{db_list}') ORDER BY database, name"
+_SQL_TABLES = (
+    "SELECT database, name, total_rows FROM system.tables WHERE database IN ('{db_list}') ORDER BY database, name"
+)
 _SQL_PARTS_DATES_BATCH = "SELECT database, table, min(min_date) as min_d, max(max_date) as max_d FROM system.parts WHERE active = 1 AND database IN ('{db_list}') GROUP BY database, table"
 _SQL_COLUMNS_BATCH = "SELECT database, table, name FROM system.columns WHERE database IN ('{db_list}')"
 _SQL_COLUMNS_SINGLE = "SELECT name FROM system.columns WHERE database='{db}' AND table='{table}'"
 _SQL_DATE_RANGE = "SELECT min({date_col}), max({date_col}) FROM {db}.{table}"
 _SQL_SYMBOL_UNIQ = "SELECT uniq({symbol_col}) FROM {table_name}"
 _SQL_TABLE_ROWS = "SELECT total_rows FROM system.tables WHERE database='{db}' AND name='{table}'"
-_SQL_PARTS_DATES_SINGLE = "SELECT min(min_date), max(max_date) FROM system.parts WHERE database='{db}' AND table='{table}' AND active=1"
+_SQL_PARTS_DATES_SINGLE = (
+    "SELECT min(min_date), max(max_date) FROM system.parts WHERE database='{db}' AND table='{table}' AND active=1"
+)
 
 # 标的数/日期范围查询的行数上限：超过此值的表跳过 uniq(symbol) 与全表 min/max(date) 扫描
 # 治本（2026-07-30，#ARCH-RECONCILER-TIMEOUT-001）：原 docstring 声明"只对小表（<1000万行）查，大表跳过"
@@ -99,31 +113,90 @@ _BUSINESS_DBS = ("c1_market", "c2_factor", "c3_fundamental", "c4_reference")
 
 # 日期列优先级（从高到低）
 _DATE_COL_PRIORITY = (
-    "trade_date", "announce_date", "end_date", "report_period",
-    "cal_date", "date", "datetime",
+    "trade_date",
+    "announce_date",
+    "end_date",
+    "report_period",
+    "cal_date",
+    "date",
+    "datetime",
 )
 
 # 标的列优先级（从高到低）
 _SYMBOL_COL_PRIORITY = (
-    "symbol", "ts_code", "stock_code", "news_id", "code",
-    "etf_code", "sector_code", "index_code", "board_code",
-    "indicator_name", "con_code", "stock_id",
+    "symbol",
+    "ts_code",
+    "stock_code",
+    "news_id",
+    "code",
+    "etf_code",
+    "sector_code",
+    "index_code",
+    "board_code",
+    "indicator_name",
+    "con_code",
+    "stock_id",
 )
 
 # ============================================================
 # 10层数据分层体系（真源：data_retention_contract.yaml §2）
 # ============================================================
 _LAYER_INFO: dict[str, dict] = {
-    "L1":  {"name": "Tick执行层",       "category": "信号", "freq": "3秒",       "desc": "逐笔成交/指数快照/集合竞价，用于做T回测和滑点建模"},
-    "L2":  {"name": "分钟时机层",       "category": "信号", "freq": "1-60min",   "desc": "分钟K线，用于日内入场时机和动量信号"},
-    "L3":  {"name": "日K趋势层",        "category": "信号", "freq": "日/周/月",   "desc": "日K线/复权因子/估值/指数K线，用于择时、趋势、选股"},
-    "L4":  {"name": "资金面层",         "category": "信号", "freq": "日",        "desc": "融资融券/大宗交易/龙虎榜/资金流向，用于主力资金动向分析"},
-    "L5":  {"name": "基本面层",         "category": "信号", "freq": "季度",      "desc": "财务三表/财务指标/分红配股/股权质押/股东数据"},
-    "L6":  {"name": "新闻事件层",       "category": "信号", "freq": "实时",      "desc": "新闻/证券公告/分析师预测/解禁计划，用于事件驱动和情绪分析"},
-    "L7":  {"name": "产业链关联层",     "category": "工具", "freq": "季度/年",    "desc": "产业链全景图/行业分类/板块指数，用于上下游传导分析"},
-    "L8":  {"name": "衍生品跨市场层",   "category": "信号", "freq": "日",        "desc": "期货/期权/港股/美股，用于跨市场套利、对冲和波动率分析"},
-    "L9":  {"name": "宏观层",           "category": "信号", "freq": "月/季",      "desc": "CPI/PMI/M2/社融/LPR等宏观经济指标，用于大类资产配置"},
-    "L10": {"name": "静态元数据层",     "category": "基础", "freq": "月/年",      "desc": "标的列表/交易日历/指数成分，所有层的基础设施"},
+    "L1": {
+        "name": "Tick执行层",
+        "category": "信号",
+        "freq": "3秒",
+        "desc": "逐笔成交/指数快照/集合竞价，用于做T回测和滑点建模",
+    },
+    "L2": {"name": "分钟时机层", "category": "信号", "freq": "1-60min", "desc": "分钟K线，用于日内入场时机和动量信号"},
+    "L3": {
+        "name": "日K趋势层",
+        "category": "信号",
+        "freq": "日/周/月",
+        "desc": "日K线/复权因子/估值/指数K线，用于择时、趋势、选股",
+    },
+    "L4": {
+        "name": "资金面层",
+        "category": "信号",
+        "freq": "日",
+        "desc": "融资融券/大宗交易/龙虎榜/资金流向，用于主力资金动向分析",
+    },
+    "L5": {
+        "name": "基本面层",
+        "category": "信号",
+        "freq": "季度",
+        "desc": "财务三表/财务指标/分红配股/股权质押/股东数据",
+    },
+    "L6": {
+        "name": "新闻事件层",
+        "category": "信号",
+        "freq": "实时",
+        "desc": "新闻/证券公告/分析师预测/解禁计划，用于事件驱动和情绪分析",
+    },
+    "L7": {
+        "name": "产业链关联层",
+        "category": "工具",
+        "freq": "季度/年",
+        "desc": "产业链全景图/行业分类/板块指数，用于上下游传导分析",
+    },
+    "L8": {
+        "name": "衍生品跨市场层",
+        "category": "信号",
+        "freq": "日",
+        "desc": "期货/期权/港股/美股，用于跨市场套利、对冲和波动率分析",
+    },
+    "L9": {
+        "name": "宏观层",
+        "category": "信号",
+        "freq": "月/季",
+        "desc": "CPI/PMI/M2/社融/LPR等宏观经济指标，用于大类资产配置",
+    },
+    "L10": {
+        "name": "静态元数据层",
+        "category": "基础",
+        "freq": "月/年",
+        "desc": "标的列表/交易日历/指数成分，所有层的基础设施",
+    },
 }
 
 # 分类关键词真源路径（data_retention_contract.yaml §2）
@@ -138,7 +211,7 @@ def _load_layer_rules() -> list[tuple[str, tuple[str, ...]]]:
     真源链：data_retention_contract.yaml (layers[].classification_keywords) → 本函数 → _LAYER_RULES
     单真源：分类关键词只在YAML定义，Python不硬编码。改分类规则改YAML，不改Python。
     """
-    with open(_LAYER_CONTRACT_PATH, "r", encoding="utf-8") as f:
+    with open(_LAYER_CONTRACT_PATH, encoding="utf-8") as f:
         contract = yaml.safe_load(f)
     rules = []
     for layer in contract.get("layers", []):
@@ -161,6 +234,7 @@ def _infer_layer(table_name: str) -> str:
                 return layer
     return "L10"
 
+
 # 表中文名映射（真源：terminology_glossary.yaml 的 table_name 类别，经 _shared.terminology_loader 加载）
 # 原硬编码 126 项字典已提升为 YAML 真源，消除跨生成器重复维护 + 漂移风险
 _TABLE_ZH: dict[str, str] = get_category_map("table_name")
@@ -175,9 +249,10 @@ def _query_rows(sql: str) -> list[list]:
     使用 ch_reader（自动注入 FINAL），失败时返回空列表。
     """
     from zephyr.data import ch_reader
+
     try:
         result = ch_reader.query(sql)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  CH 查询降级
         print(f"CH query 失败: {e}", file=sys.stderr)
         return []
 
@@ -217,6 +292,8 @@ def _parse_int(s) -> int:
         return int(s)
     except (ValueError, TypeError):
         return EXIT_PASS
+
+
 # ============================================================
 # 表扫描
 # ============================================================
@@ -247,13 +324,15 @@ def _get_all_tables_batch() -> list[dict]:
         if len(r) >= 3:
             key = f"{r[0]}.{r[1]}"
             min_d, max_d = date_map.get(key, ("", ""))
-            result.append({
-                "db": r[0],
-                "table": r[1],
-                "total_rows": _parse_int(r[2]),
-                "min_date": min_d,
-                "max_date": max_d,
-            })
+            result.append(
+                {
+                    "db": r[0],
+                    "table": r[1],
+                    "total_rows": _parse_int(r[2]),
+                    "min_date": min_d,
+                    "max_date": max_d,
+                }
+            )
     return result
 
 
@@ -271,9 +350,7 @@ def _get_all_columns_batch() -> dict[str, set[str]]:
 
 def _get_table_columns(db: str, table: str) -> set[str]:
     """获取表的所有列名。"""
-    rows = _query_rows(
-        _SQL_COLUMNS_SINGLE.format(db=db, table=table)
-    )
+    rows = _query_rows(_SQL_COLUMNS_SINGLE.format(db=db, table=table))
     return {r[0] for r in rows if r and r[0]}
 
 
@@ -287,9 +364,7 @@ def _detect_column(columns: set[str], priority: tuple) -> str | None:
 
 def _query_date_range(db: str, table: str, date_col: str) -> tuple[str, str]:
     """从数据表的日期列查询 min/max 日期。返回 (min_date, max_date)。"""
-    rows = _query_rows(
-        _SQL_DATE_RANGE.format(date_col=date_col, db=db, table=table)
-    )
+    rows = _query_rows(_SQL_DATE_RANGE.format(date_col=date_col, db=db, table=table))
     if rows and rows[0]:
         min_d = str(rows[0][0]) if rows[0][0] else ""
         max_d = str(rows[0][1]) if len(rows[0]) > 1 and rows[0][1] else ""
@@ -304,9 +379,7 @@ def _query_date_range(db: str, table: str, date_col: str) -> tuple[str, str]:
 
 def _query_symbol_count(db: str, table: str, symbol_col: str) -> int:
     """用 uniq() 近似函数查标的数（秒级，不受表大小限制）。"""
-    val = _query_single(
-        _SQL_SYMBOL_UNIQ.format(symbol_col=symbol_col, table_name=f"{db}.{table}")
-    )
+    val = _query_single(_SQL_SYMBOL_UNIQ.format(symbol_col=symbol_col, table_name=f"{db}.{table}"))
     return _parse_int(val)
 
 
@@ -318,18 +391,12 @@ def _scan_table(db: str, table: str) -> dict:
     full_table = f"{db}.{table}"
 
     # 1. 从 system.tables 元数据获取行数（秒级）
-    total_rows = _parse_int(
-        _query_single(
-            _SQL_TABLE_ROWS.format(db=db, table=table)
-        )
-    )
+    total_rows = _parse_int(_query_single(_SQL_TABLE_ROWS.format(db=db, table=table)))
 
     # 2. 从 system.parts 元数据获取日期范围（秒级）
     min_date = ""
     max_date = ""
-    parts = _query_rows(
-        _SQL_PARTS_DATES_SINGLE.format(db=db, table=table)
-    )
+    parts = _query_rows(_SQL_PARTS_DATES_SINGLE.format(db=db, table=table))
     if parts and parts[0]:
         vals = parts[0]
         if len(vals) > 0 and vals[0]:
@@ -343,9 +410,7 @@ def _scan_table(db: str, table: str) -> dict:
         columns = _get_table_columns(db, table)
         symbol_col = _detect_column(columns, _SYMBOL_COL_PRIORITY)
         if symbol_col:
-            symbol_count = _query_single(
-                _SQL_SYMBOL_UNIQ.format(symbol_col=symbol_col, table_name=full_table)
-            )
+            symbol_count = _query_single(_SQL_SYMBOL_UNIQ.format(symbol_col=symbol_col, table_name=full_table))
 
     # 1970-01-01 是 Date 纪元默认值，无意义，清空
     if min_date == "1970-01-01":
@@ -408,7 +473,7 @@ def _load_requirements() -> dict[str, dict]:
         return {}
     try:
         data = yaml.safe_load(REQUIREMENTS_PATH.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  YAML 解析降级
         print(f"[WARN] 需求清单加载失败: {e}", file=sys.stderr)
         return {}
     return data.get("requirements", {})
@@ -442,9 +507,9 @@ def _gen_header(today: date, all_tables: list[dict]) -> list[str]:
         "",
         "> **这个文档是给人看的**：按10层数据分层体系展示 ClickHouse 每张业务表「存了什么、从什么时候到什么时候、多少标的、多少行」。",
         "> **真源是 ClickHouse 实时扫描**，本文档是自动生成的派生产物，**禁止手工编辑**。",
-        f"> **生成器**：`scripts/governance/d5_architecture/generators/generate_data_inventory.py`（可随时运行刷新）。",
-        f"> **10层分层体系真源**：`docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml` §2。",
-        f"> **需求补充真源**：`docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml`（P0-P3优先级+可获取性）。",
+        "> **生成器**：`scripts/governance/d5_architecture/generators/generate_data_inventory.py`（可随时运行刷新）。",
+        "> **10层分层体系真源**：`docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml` §2。",
+        "> **需求补充真源**：`docs/02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml`（P0-P3优先级+可获取性）。",
         "",
         "---",
         "",
@@ -529,7 +594,9 @@ def _gen_footer() -> list[str]:
 # ============================================================
 def main() -> int:
     """主入口：批量扫描 ClickHouse → 按10层分组生成 data_inventory.md。"""
-    today = date.today()
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001）：幂等日期源（脚本最近 commit 日期），
+    # 消除 date.today() 导致输出日期每日变化 → 半派生文件永续 diff 循环。
+    today = date.fromisoformat(idempotent_date(Path(__file__).resolve()))
 
     # 1. 批量获取所有表基本信息（单条 SQL，避免连接频繁断开）
     print("批量查询所有业务表基本信息...", file=sys.stderr)
@@ -572,17 +639,19 @@ def main() -> int:
         if symbol_col and 0 < t["total_rows"] < SYMBOL_COUNT_MAX_ROWS:
             symbol_count = _query_symbol_count(db, table, symbol_col)
 
-        all_tables.append({
-            "table": table,
-            "full_table": full_table,
-            "db": db,
-            "zh": _TABLE_ZH.get(table, table),
-            "layer": _infer_layer(table),
-            "min_date": min_date,
-            "max_date": max_date,
-            "symbol_count": symbol_count,
-            "total_rows": t["total_rows"],
-        })
+        all_tables.append(
+            {
+                "table": table,
+                "full_table": full_table,
+                "db": db,
+                "zh": _TABLE_ZH.get(table, table),
+                "layer": _infer_layer(table),
+                "min_date": min_date,
+                "max_date": max_date,
+                "symbol_count": symbol_count,
+                "total_rows": t["total_rows"],
+            }
+        )
 
     # 4. 按数据层分组
     layer_tables: dict[str, list[dict]] = {}
@@ -614,11 +683,9 @@ def main() -> int:
 
     total_tables = len(all_tables)
     total_rows = sum(t["total_rows"] for t in all_tables)
-    print(
-        f"✅ 生成完成：{total_tables} 张表，"
-        f"数据总行数 {_fmt_rows(total_rows)}，"
-        f"输出到 {OUTPUT_PATH}"
-    )
+    print(f"✅ 生成完成：{total_tables} 张表，数据总行数 {_fmt_rows(total_rows)}，输出到 {OUTPUT_PATH}")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

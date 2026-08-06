@@ -55,18 +55,23 @@ from __future__ import annotations
 
 import argparse
 import sys
-from datetime import date
 from pathlib import Path
 
 _THIS_FILE = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, str(_GOV_DIR))
-# d5_architecture/generators 在 sys.path 上（用于 zoomable_html）
+# d5_architecture/generators 在 sys.path 上（用于 zoomable_html + _common）
 _SCRIPTS_DIR = str(_THIS_FILE.parents[3])
 if _SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, _SCRIPTS_DIR)
+# 治本（#ARCH-REGEN-NONIDEMPOTENT-001）：generators 目录加入 sys.path，
+# in-process 加载（reconciler/tests）时 _common 可解析（正典先例：generate_data_acquisition_flow.py）
+_THIS_DIR = str(_THIS_FILE.parent)
+if _THIS_DIR not in sys.path:
+    sys.path.insert(0, _THIS_DIR)
 
+from _common import idempotent_date  # noqa: E402  幂等日期源（消除 date.today() 非确定性）
 from _shared.constants import REPO_ROOT  # noqa: E402
 from _shared.module_translation_loader import (  # noqa: E402
     get_cross_cutting_all,
@@ -916,7 +921,7 @@ def _make_frontmatter() -> str:
         "doc_type: architecture_view\n"
         "status: active\n"
         'version: "1.0.0"\n'
-        f"date: {date.today().isoformat()}\n"
+        f"date: {idempotent_date(_THIS_FILE)}\n"
         "---\n"
     )
 
@@ -1080,9 +1085,7 @@ def _generate_stage_md(
     # 边：任一端在本阶段
     stage_edges = [e for e in edges if e["from_step_id"] in stage_step_ids or e["to_step_id"] in stage_step_ids]
     # 本阶段锚点数（双向对齐枢纽显化，BM-INV-005）
-    stage_anchor_count = sum(
-        len(anchors_by_step.get(s["step_id"], [])) for s in stage_steps
-    )
+    stage_anchor_count = sum(len(anchors_by_step.get(s["step_id"], [])) for s in stage_steps)
     # 五态分布统计
     state_counts: dict[str, int] = {}
     for s in stage_steps:

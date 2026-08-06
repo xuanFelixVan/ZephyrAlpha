@@ -35,18 +35,24 @@ __manifest__ = {
 }
 
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 
 _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
+# 治本（#ARCH-REGEN-NONIDEMPOTENT-001）：generators 目录加入 sys.path，
+# in-process 加载（reconciler/tests）时 _common 可解析（正典先例：generate_data_acquisition_flow.py）
+_GEN_DIR = str(_SCRIPT_DIR.parent)
+if _GEN_DIR not in sys.path:
+    sys.path.insert(0, _GEN_DIR)
 
+from _common import idempotent_date  # noqa: E402  幂等日期源（消除实时时间源非确定性）
 from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # exit codes（scripts/ 侧）
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from _shared.encoding import ensure_utf8_stdout
 from _shared.file_utils import atomic_write_safe  # noqa: E402  治本(ARCH-036 P1-1): 收敛本地 tmp+replace 样板→共享 SSoT
+
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 ensure_utf8_stdout()
 
@@ -55,9 +61,7 @@ import re
 
 import yaml
 
-CONTRACTS_YAML = REPO_ROOT / (
-    "architecture_model/contracts/cross_layer_contracts.yaml"
-)
+CONTRACTS_YAML = REPO_ROOT / ("architecture_model/contracts/cross_layer_contracts.yaml")
 
 _TYPE_IMPORTS: dict[str, str] = {
     "datetime": "from datetime import datetime",
@@ -285,7 +289,7 @@ def _generate_file_header(
         "# layer: cross_cutting",
         "# category: data_contract",
         "# status: auto_generated",
-        f'# created: "{datetime.now(UTC).strftime("%Y-%m-%d")}"',
+        f'# created: "{idempotent_date(_SCRIPT_DIR)}"',
         "# generated_by: codegen from cross_layer_contracts.yaml",
         "# ---",
         '"""',
@@ -408,7 +412,9 @@ def generate_contract_file(ctr: dict, dry_run: bool = False) -> str | None:
         existing = output_path.read_text(encoding="utf-8")
         if begin_marker in existing and end_marker in existing:
             before = existing[: existing.index(begin_marker)]
-            after = existing[existing.index(end_marker) + len(end_marker) :]
+            # 治本（#ARCH-REGEN-NONIDEMPOTENT-001）：lstrip("\n") 消除 end_marker 后累积空行——
+            # wrapped_content 末尾已有 {end_marker}\n，若 after 保留原尾部 \n 则每次运行 +1 空行（非幂等）。
+            after = existing[existing.index(end_marker) + len(end_marker) :].lstrip("\n")
             final_content = before + wrapped_content + after
         else:
             # 治本(2026-07-02): 传入class_name, 跳过旧codegen的同名class定义
@@ -510,7 +516,7 @@ def _extract_public_symbols(file_path: Path) -> list[str]:
         return []
     try:
         content = file_path.read_text(encoding="utf-8")
-    except Exception:
+    except Exception:  # noqa: BLE001  文件读取降级
         return []
     # 优先解析 __all__
     all_match = re.search(r"^__all__\s*=\s*\[(.*?)\]", content, re.MULTILINE | re.DOTALL)

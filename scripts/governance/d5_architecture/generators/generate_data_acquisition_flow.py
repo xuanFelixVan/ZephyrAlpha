@@ -67,15 +67,18 @@ _THIS_DIR = str(Path(__file__).resolve().parent)
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_ERROR
+from _shared.constants import EXIT_ERROR, EXIT_PASS
+
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
+
 try:
-    from _common import DB_DISPLAY_NAME  # noqa: E402
+    from _common import DB_DISPLAY_NAME, idempotent_date  # noqa: E402
 except ImportError:
     DB_DISPLAY_NAME = "PostgreSQL depgraph"
+    idempotent_date = lambda _p=None: date.today().isoformat()  # noqa: E731  降级 fallback（_common 不可用时）
 # 可缩放 HTML 联动生成（模板 V1.2 §9.1 #1：MD+HTML 双产物，md 刷新即 HTML 刷新）
-from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402
+from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
 
 __manifest__ = """
 args: []
@@ -103,9 +106,7 @@ OUTPUT_PATH = (
 # 启动：python -m http.server 8765 --bind 127.0.0.1 （仓库根目录执行）
 _DOC_HTTP_BASE = "http://localhost:8765"
 # HTML 集中子文件夹相对于仓库根的 posix 路径（用于拼 http 链接）
-_HTML_REL_POSIX = (
-    OUTPUT_PATH.parent.relative_to(_REPO_ROOT) / HTML_SUBDIR
-).as_posix()
+_HTML_REL_POSIX = (OUTPUT_PATH.parent.relative_to(_REPO_ROOT) / HTML_SUBDIR).as_posix()
 
 # Mermaid 灰色主题头（模板 §4.1，含 clusterBkg transparent §13 前向兼容）
 _MERMAID_THEME = (
@@ -121,7 +122,9 @@ _MERMAID_THEME = (
 _CLASSDEF_PRODUCTION = "classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000"
 _CLASSDEF_DESIGN = "classDef design fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5"
 _CLASSDEF_EXTERNAL_PROD = "classDef external_prod fill:#e8f4fd,stroke:#0277bd,stroke-width:1px,color:#000"
-_CLASSDEF_EXTERNAL_DESIGN = "classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+_CLASSDEF_EXTERNAL_DESIGN = (
+    "classDef external_design fill:#fff8e7,stroke:#ef6c00,stroke-width:1px,color:#000,stroke-dasharray: 5 5"
+)
 
 
 def _wrap_label_text(text: str, max_units: int = 48) -> str:
@@ -172,6 +175,7 @@ def _sanitize_mermaid_label(text: str) -> str:
 def _html_link_for(md_stem: str) -> str:
     """生成 _zoomable_html/{md_stem}.html 的 http 绝对跳转链接（模板 §14）。"""
     return f"{_DOC_HTTP_BASE}/{_HTML_REL_POSIX}/{md_stem}.html"
+
 
 # ============================================================
 # 术语映射
@@ -250,8 +254,16 @@ _SCHEDULE_ORDER: dict[str, int] = {
 _KNOWN_ISSUES: list[dict[str, str]] = [
     {"issue": "下载极慢", "task": "adj_factor_incremental", "note": "每只约11秒，5204只约需16小时，建议夜间运行"},
     {"issue": "API限流", "task": "daily_valuation_incremental", "note": "百度股市通API高频返回空响应，每只休眠1秒"},
-    {"issue": "分类不兼容", "task": "tdx板块 vs 东财/同花顺/申万", "note": "通达信880xxx体系与其他分类不兼容，无法混用"},
-    {"issue": "SDK路径依赖", "task": "kline_sector_880_incremental", "note": "tqcenter SDK 需 E:\\tdx\\PYPlugins 专用路径，非 scheduler 自动调度，由独立脚本触发"},
+    {
+        "issue": "分类不兼容",
+        "task": "tdx板块 vs 东财/同花顺/申万",
+        "note": "通达信880xxx体系与其他分类不兼容，无法混用",
+    },
+    {
+        "issue": "SDK路径依赖",
+        "task": "kline_sector_880_incremental",
+        "note": "tqcenter SDK 需 E:\\tdx\\PYPlugins 专用路径，非 scheduler 自动调度，由独立脚本触发",
+    },
 ]
 
 # 匹配末尾的括号技术备注（全角（）或半角()，内容不含嵌套括号）
@@ -301,7 +313,7 @@ def _parse_tasks_yaml() -> list[dict]:
         return []
     try:
         data = yaml.safe_load(TASKS_YAML.read_text(encoding="utf-8"))
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001  YAML 解析降级
         print(f"[ERROR] 解析 tasks.yaml 失败: {e}", file=sys.stderr)
         return []
     if not isinstance(data, dict):
@@ -321,17 +333,19 @@ def _parse_tasks_yaml() -> list[dict]:
         if not isinstance(deps, list):
             deps = []
         desc = _strip_tech_note(_extract_desc_from_task(task))
-        tasks.append({
-            "task_id": str(task_id),
-            "table": str(task.get("table", "")),
-            "source": str(task.get("source", "")),
-            "schedule": str(task.get("schedule", "")),
-            "incremental": bool(task.get("incremental", True)),
-            "dependencies": [str(d) for d in deps],
-            "description": desc,
-            "disabled": bool(extra.get("disabled", False)),
-            "requires_manual": bool(extra.get("requires_manual", False)),
-        })
+        tasks.append(
+            {
+                "task_id": str(task_id),
+                "table": str(task.get("table", "")),
+                "source": str(task.get("source", "")),
+                "schedule": str(task.get("schedule", "")),
+                "incremental": bool(task.get("incremental", True)),
+                "dependencies": [str(d) for d in deps],
+                "description": desc,
+                "disabled": bool(extra.get("disabled", False)),
+                "requires_manual": bool(extra.get("requires_manual", False)),
+            }
+        )
     return tasks
 
 
@@ -359,10 +373,13 @@ def _format_desc(task: dict) -> str:
 
 def _sort_tasks(tasks: list[dict]) -> list[dict]:
     """按调度时段排序，同时段按 task_id 排序。"""
-    return sorted(tasks, key=lambda t: (
-        _SCHEDULE_ORDER.get(t["schedule"], 99),
-        t["task_id"],
-    ))
+    return sorted(
+        tasks,
+        key=lambda t: (
+            _SCHEDULE_ORDER.get(t["schedule"], 99),
+            t["task_id"],
+        ),
+    )
 
 
 # ============================================================
@@ -384,8 +401,8 @@ def _gen_header(today: date, gen_timestamp: str) -> list[str]:
         "",
         "# 数据采集流图 / Data Acquisition Flow",
         "",
-        '> **这个文档是给人看的**：用大白话说清楚「系统从哪些数据源、采了什么数据、灌到哪张表、什么时候采」。',
-        f"> **真源是 [tasks.yaml](../../../src/zephyr/data/config/tasks.yaml)**，本文档是自动生成的派生产物，禁止手工编辑。",
+        "> **这个文档是给人看的**：用大白话说清楚「系统从哪些数据源、采了什么数据、灌到哪张表、什么时候采」。",
+        "> **真源是 [tasks.yaml](../../../src/zephyr/data/config/tasks.yaml)**，本文档是自动生成的派生产物，禁止手工编辑。",
         "> **数据源连接和 API 细节**见 [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)。",
         "> **自动下载命令**：`python -m zephyr.data run <task_id>` 手动触发任务，`python -m zephyr.data start` 启动常驻调度（见 [cli.py](../../../src/zephyr/data/cli.py)）。",
         "",
@@ -415,9 +432,15 @@ def _gen_overview(tasks: list[dict]) -> list[str]:
             lines.append(f"- `{db}` — 基本面库（财务报表、新闻、股东、分红等）")
         else:
             lines.append(f"- `{db}`")
-    lines += ["", "---", "", "## 数据源分布总览（自动生成 · 生成器: generate_data_acquisition_flow.py）", "",
-              "| 数据源 | 任务数 | 主要采什么 |",
-              "|--------|--------|-----------|"]
+    lines += [
+        "",
+        "---",
+        "",
+        "## 数据源分布总览（自动生成 · 生成器: generate_data_acquisition_flow.py）",
+        "",
+        "| 数据源 | 任务数 | 主要采什么 |",
+        "|--------|--------|-----------|",
+    ]
 
     # 按任务数降序
     by_source: dict[str, int] = defaultdict(int)
@@ -465,8 +488,7 @@ def _gen_source_detail(tasks: list[dict]) -> list[str]:
 
         # 检查已知问题的 task 是否在该源的任务列表中
         src_task_ids = {t["task_id"] for t in src_tasks}
-        src_issues = [i for i in _KNOWN_ISSUES
-                      if i["task"] in src_task_ids or src_zh in i["task"] or src in i["task"]]
+        src_issues = [i for i in _KNOWN_ISSUES if i["task"] in src_task_ids or src_zh in i["task"] or src in i["task"]]
         if src_issues:
             lines.append("**注意**：")
             for iss in src_issues:
@@ -687,19 +709,17 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="从 tasks.yaml 生成业务数据采集流图 MD（人类可读版，按数据源分组）",
     )
-    parser.add_argument(
-        "--output", type=str, default=str(OUTPUT_PATH), help="输出文件路径"
-    )
-    parser.add_argument(
-        "--today", type=str, default="", help="覆盖运行日期（YYYY-MM-DD），默认系统日期"
-    )
+    parser.add_argument("--output", type=str, default=str(OUTPUT_PATH), help="输出文件路径")
+    parser.add_argument("--today", type=str, default="", help="覆盖运行日期（YYYY-MM-DD），默认系统日期")
     args = parser.parse_args()
 
     tasks = _parse_tasks_yaml()
     if not tasks:
         print(f"[ERROR] 未解析到任务，请检查 {TASKS_YAML}", file=sys.stderr)
         return EXIT_ERROR
-    today = datetime.strptime(args.today, "%Y-%m-%d").date() if args.today else date.today()
+    # 治本（#ARCH-REGEN-NONIDEMPOTENT-001）：默认日期从 idempotent_date 派生（脚本最近 commit 日期），
+    # 消除 date.today() 导致 frontmatter date 每日变化 → 半派生文件永续 diff 循环。
+    today = datetime.strptime(args.today or idempotent_date(Path(__file__).resolve()), "%Y-%m-%d").date()
 
     # 生成时间戳从真源文件 mtime 派生（幂等保证：输入不变→输出时间戳不变）
     try:
@@ -721,5 +741,7 @@ def main() -> int:
     print(f"     解析 {len(tasks)} 个采集任务，覆盖 {len({t['table'] for t in tasks})} 张唯一业务表")
     print(f"     运行日期: {today.isoformat()}")
     return EXIT_PASS
+
+
 if __name__ == "__main__":
     sys.exit(main())

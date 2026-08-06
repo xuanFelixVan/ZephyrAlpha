@@ -14,8 +14,8 @@
 # [TESTS]
 # [A_module] module_id=MOD-D_GOV_SCRIPTS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# noqa: consumers-accuracy  # project_handbook/*.md 是文档路径非模块路径
-# noqa: m11-perm-manual-legitimate  生成器由全景图刷新钩子触发(subprocess, 经 process_pool.run_subprocess_hidden)
+# EXEMPT: consumers-accuracy — project_handbook/*.md 是文档路径非模块路径
+# EXEMPT: m11-perm-manual-legitimate — 生成器由全景图刷新钩子触发(subprocess, 经 process_pool.run_subprocess_hidden)
 """Code Wiki 统计数据生成器（半自动维护机制）。
 
 [BLUEPRINT] VIEW-CODE-WIKI | docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/
@@ -71,7 +71,6 @@ warn_only: false
 import argparse
 import re
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 
 _THIS_FILE = Path(__file__).resolve()
@@ -79,10 +78,15 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
-from _shared.constants import EXIT_FINDINGS
-from _common import DB_DISPLAY_NAME  # noqa: E402
+from _common import DB_DISPLAY_NAME, idempotent_date  # noqa: E402
+from _shared.constants import EXIT_FINDINGS, PgConnExecuteWrapper, get_depgraph_pg_connection  # noqa: E402
+
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
+
+# 治本（#ARCH-REGEN-NONIDEMPOTENT-001，2026-08-06）：
+# 幂等日期源（脚本最近 git commit 日期），消除 datetime.now() 导致 AUTO 段"最后同步"
+# 日期每日变化 → 半派生文件永续 diff 循环。相同 commit → 相同日期，数据值变化仍正常反映。
+_SYNC_DATE = idempotent_date(_THIS_FILE)
 # 治本（#ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase A3，2026-07-31）：移除内联
 # DB_DISPLAY_NAME 定义——原注释谎称"避免 import _common 触发 IMPORT-INTEGRITY
 # worktree 误报"，实证 18 个 sibling generators 均成功 from _common import
@@ -93,12 +97,7 @@ from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 # ============================================================
 
 # 04_architecture_principles_decisions 根目录（README.md 与 project_handbook/ 的公共父）
-_BASE_DIR = (
-    REPO_ROOT
-    / "docs"
-    / "02_enterprise_architecture"
-    / "04_architecture_principles_decisions"
-)
+_BASE_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "04_architecture_principles_decisions"
 
 # 目标文件 → 该文件中需刷新的 AUTO 块名清单（路径相对 _BASE_DIR，顺序即刷新顺序）
 _TARGETS: dict[str, list[str]] = {
@@ -253,7 +252,7 @@ def collect_dependency_stats() -> str:
     finally:
         conn.close()
 
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
 
     lines: list[str] = []
     lines.append(f"<!-- 数据源：{DB_DISPLAY_NAME} | 最后同步：{sync_date} -->")
@@ -295,7 +294,7 @@ def collect_project_snapshot() -> str:
     finally:
         conn.close()
 
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     # 计算运营态占比
     production_cnt = sum(r["cnt"] for r in status_rows if r["build_status"] in ("stable", "generated"))
     production_pct = round(production_cnt * 100 / node_count, 1) if node_count else 0
@@ -369,7 +368,7 @@ def collect_module_counts() -> str:
     Returns:
         Markdown 表格字符串。
     """
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     registry_yaml = REPO_ROOT / "architecture_model" / "module_id_registry.yaml"
     total_registered = "—"
     if registry_yaml.exists():
@@ -381,9 +380,7 @@ def collect_module_counts() -> str:
     src_zephyr = REPO_ROOT / "src" / "zephyr"
     top_packages = [p for p in src_zephyr.iterdir() if p.is_dir() and not p.name.startswith("__")]
 
-    gov_scripts = sum(
-        1 for f in (REPO_ROOT / "scripts" / "governance").rglob("*.py") if f.name != "__init__.py"
-    )
+    gov_scripts = sum(1 for f in (REPO_ROOT / "scripts" / "governance").rglob("*.py") if f.name != "__init__.py")
 
     lines: list[str] = []
     lines.append(f"<!-- 数据源：module_id_registry.yaml + 文件系统扫描 | 最后同步：{sync_date} -->")
@@ -402,7 +399,7 @@ def collect_py_file_total() -> str:
     Returns:
         Markdown 表格字符串。
     """
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
 
     def _count_py(root: Path) -> int:
         if not root.exists():
@@ -435,20 +432,20 @@ def collect_table_counts() -> str:
     Returns:
         Markdown 表格字符串。
     """
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     lines: list[str] = [f"<!-- 数据源：table_registry 内存加载 | 最后同步：{sync_date} -->", ""]
 
     by_db: dict[str, int] = {}
     registry_ok = False
     try:
-        from zephyr.data.table_registry import get_registry  # noqa: m11-perm-manual-legitimate  只读访问已注册表名
+        from zephyr.data.table_registry import get_registry  # EXEMPT: m11-perm-manual-legitimate — 只读访问已注册表名
 
         tables = get_registry().all_tables()
         for fqtn in tables:
             prefix = fqtn.split(".", 1)[0] if "." in fqtn else "(unqualified)"
             by_db[prefix] = by_db.get(prefix, 0) + 1
         registry_ok = True
-    except Exception as e:  # noqa: m12-broad-except-legitimate  降级路径，记录原因后用 DB 直查兜底
+    except Exception as e:  # noqa: BLE001  降级路径，记录原因后用 DB 直查兜底
         lines.append(f"<!-- table_registry 加载失败，降级直查 DB：{e} -->")
         by_db = _count_tables_from_dbs()
 
@@ -463,9 +460,7 @@ def collect_table_counts() -> str:
 
     if not registry_ok:
         lines.append("")
-        lines.append(
-            "> ⚠️ table_registry 不可用，上表为直查 DB 结果（不含 ClickHouse 业务表，需 CH 连接）。"
-        )
+        lines.append("> ⚠️ table_registry 不可用，上表为直查 DB 结果（不含 ClickHouse 业务表，需 CH 连接）。")
     return "\n".join(lines)
 
 
@@ -487,7 +482,7 @@ def _count_tables_from_dbs() -> dict[str, int]:
             result[DB_DISPLAY_NAME] = cur.fetchone()["cnt"]
         finally:
             conn.close()
-    except Exception:  # noqa: m12-broad-except-legitimate  降级兜底
+    except Exception:  # noqa: BLE001  降级兜底
         pass
     # governance.db (SQLite)
     try:
@@ -498,14 +493,11 @@ def _count_tables_from_dbs() -> dict[str, int]:
         if DB_PATH.exists():
             con = sqlite3.connect(str(DB_PATH))
             try:
-                cur = con.execute(
-                    "SELECT COUNT(*) FROM sqlite_master WHERE type='table' "
-                    "AND name NOT LIKE 'sqlite_%'"
-                )
+                cur = con.execute("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
                 result["governance.db (SQLite)"] = cur.fetchone()[0]
             finally:
                 con.close()
-    except Exception:  # noqa: m12-broad-except-legitimate  降级兜底
+    except Exception:  # noqa: BLE001  降级兜底
         pass
     return result
 
@@ -518,7 +510,7 @@ def collect_task_counts() -> str:
     Returns:
         Markdown 表格字符串。
     """
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     registry_yaml = REPO_ROOT / "architecture_model" / "data" / "data_sources_registry.yaml"
 
     lines: list[str] = [
@@ -560,22 +552,21 @@ def collect_domain_list() -> str:
             cur = conn.execute(SQL_DOMAIN_LIST_FULL)
             rows = cur.fetchall()
             has_extra = True
-        except Exception:
+        except Exception:  # noqa: BLE001  降级兜底
             cur = conn.execute(SQL_DOMAIN_LIST_FALLBACK)
             rows = cur.fetchall()
             has_extra = False
     finally:
         conn.close()
 
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     lines: list[str] = [f"<!-- 数据源：{DB_DISPLAY_NAME} | 最后同步：{sync_date} -->", ""]
     if has_extra:
         lines.append("| 域 ID | 域名 | 层 | 节点数 |")
         lines.append("|-------|------|----|-------|")
         for r in rows:
             lines.append(
-                f"| `{r['domain_id']}` | {r['domain_name'] or '—'} | "
-                f"{r['layer_id'] or '—'} | {r['node_cnt']} |"
+                f"| `{r['domain_id']}` | {r['domain_name'] or '—'} | {r['layer_id'] or '—'} | {r['node_cnt']} |"
             )
     else:
         lines.append("| 域 ID | 节点数 |")
@@ -592,14 +583,12 @@ def collect_gate_counts() -> str:
     Returns:
         Markdown 表格字符串。
     """
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     gates_dir = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
 
     py_count = 0
     if gates_dir.exists():
-        py_count = sum(
-            1 for f in gates_dir.glob("*.py") if f.name != "__init__.py"
-        )
+        py_count = sum(1 for f in gates_dir.glob("*.py") if f.name != "__init__.py")
 
     lines: list[str] = [f"<!-- 数据源：commit_gates 目录扫描 | 最后同步：{sync_date} -->", ""]
     lines.append("| 指标 | 值 |")
@@ -630,7 +619,7 @@ def collect_edge_stats() -> str:
     finally:
         conn.close()
 
-    sync_date = datetime.now(UTC).strftime("%Y-%m-%d")  # noqa: m46-time  生成器输出同步日期标记
+    sync_date = _SYNC_DATE
     lines: list[str] = [f"<!-- 数据源：{DB_DISPLAY_NAME} | 最后同步：{sync_date} -->", ""]
     lines.append("| dep_type | 边数 / Edges |")
     lines.append("|----------|------|")
@@ -643,10 +632,7 @@ def collect_edge_stats() -> str:
         lines.append(f"| （空/未分类） | {untyped} |")
     lines.append(f"| **合计 / Total** | **{total_edges}** |")
     lines.append("")
-    lines.append(
-        f"**跨域边 / Cross-domain edges：{cross_cnt}** 条"
-        f"（两端节点 domain_id 不同的依赖边）。"
-    )
+    lines.append(f"**跨域边 / Cross-domain edges：{cross_cnt}** 条（两端节点 domain_id 不同的依赖边）。")
     return "\n".join(lines)
 
 
@@ -703,9 +689,7 @@ def replace_block(content: str, block_name: str, new_inner: str) -> tuple[str, b
 # ============================================================
 
 
-def _refresh_all_targets(
-    block_filter: str = "all", handbook_dir: Path | None = None
-) -> dict[str, list[str]]:
+def _refresh_all_targets(block_filter: str = "all", handbook_dir: Path | None = None) -> dict[str, list[str]]:
     """刷新所有目标文件的 AUTO 块。
 
     Args:
@@ -747,7 +731,7 @@ def _refresh_all_targets(
 
             try:
                 new_inner = collector()
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001  采集降级兜底
                 print(f"[ERROR] 采集块 {block_name} 数据失败：{e}", file=sys.stderr)
                 file_skipped.append(f"{block_name}（采集失败）")
                 continue
@@ -793,7 +777,7 @@ def post_depgraph_refresh_hook() -> None:
         print("[DEPGRAPH] post-refresh hook: 同步 project_handbook 统计块 ...")
         _refresh_all_targets(block_filter="all")
         print("[DEPGRAPH] post-refresh hook: 完成")
-    except Exception as e:  # noqa: m12-broad-except-legitimate  钩子必须非阻断
+    except Exception as e:  # noqa: BLE001  钩子必须非阻断
         print(f"[DEPGRAPH] post-refresh hook skipped (非阻断): {e}", file=sys.stderr)
 
 
