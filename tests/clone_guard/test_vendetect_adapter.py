@@ -9,9 +9,12 @@
 # [TESTS] tests/clone_guard/test_vendetect_adapter.py
 # [A_test] module_id: MOD-CLONE_GUARD | layer=test | stability=volatile | safety=L | ai_modifiable
 # [TTL] permanent
-"""VendetectAdapter 单元测试——mock subprocess 调用，不依赖真实 Vendetect CLI。"""
+"""VendetectAdapter 单元测试——mock subprocess 调用，针对真实 vendetect_sample.csv fixture 断言。
 
-import json
+验证后集成纪律（clone-guard-engine-verification-ruling.md §2.3）：解析器针对
+已捕获的真实 CSV 输出样本编写（Vendetect v0.0.3 JSON 含 numpy int64 序列化崩溃，故用 CSV）。
+"""
+
 import subprocess
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -21,76 +24,76 @@ import pytest
 from zephyr.clone_guard.config import CloneGuardConfig
 from zephyr.clone_guard.engines.vendetect_adapter import VendetectAdapter
 
+# Vendetect 真实输出为 CSV 格式，但 tests/ 目录契约仅允许 .txt/.json/.yaml/.py
+# （directory_contract.yaml L305），故 fixture 以 .txt 扩展名存放 CSV 内容。
+_FIXTURE = Path(__file__).parent / "fixtures" / "vendetect_sample.txt"
+_REMOTE = "https://github.com/example/source-repo"
 
-def _make_vendored(similarity=0.97, license="AGPL-3.0", local_file="src/new.py",
-                   local_function="calc", local_line=10, remote_file="vendor/lib.py",
-                   remote_function="compute", remote_line=20, remote_url="https://github.com/x/y"):
-    return {"local_file": local_file, "local_function": local_function, "local_line": local_line,
-            "remote_file": remote_file, "remote_function": remote_function, "remote_line": remote_line,
-            "similarity": similarity, "license": license, "remote_url": remote_url}
+
+def _load_fixture() -> str:
+    """加载真实 Vendetect CSV 输出样本（.txt 扩展名存 CSV 内容，守目录契约）。"""
+    return _FIXTURE.read_text(encoding="utf-8")
+
+
+def _cfg(**kwargs) -> CloneGuardConfig:
+    """构造启用 Vendetect 的配置。"""
+    return CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url=_REMOTE, **kwargs)
+
+
+def _mock_result(stdout: str, returncode: int = 1) -> MagicMock:
+    return MagicMock(returncode=returncode, stdout=stdout, stderr="")
 
 
 class TestVendetectAdapterHealthCheck:
     """health_check 测试。"""
 
     def test_cli_missing_returns_false(self, tmp_path: Path):
-        """Vendetect CLI 未安装时返回 False。"""
-        adapter = VendetectAdapter(tmp_path, CloneGuardConfig(vendetect_remote_url="https://github.com/example/repo"))
+        adapter = VendetectAdapter(tmp_path, CloneGuardConfig(vendetect_remote_url=_REMOTE))
         with patch("shutil.which", return_value=None):
             assert adapter.health_check() is False
 
     def test_cli_present_no_remote_returns_false(self, tmp_path: Path):
-        """CLI 存在但未配 remote_url 时返回 False。"""
         adapter = VendetectAdapter(tmp_path, CloneGuardConfig())  # vendetect_remote_url=None
         with patch("shutil.which", return_value="/fake/vendetect"):
             assert adapter.health_check() is False
 
     def test_cli_and_remote_present_returns_true(self, tmp_path: Path):
-        """CLI 存在且已配 remote_url 时返回 True。"""
-        adapter = VendetectAdapter(tmp_path, CloneGuardConfig(vendetect_remote_url="https://github.com/example/repo"))
+        adapter = VendetectAdapter(tmp_path, CloneGuardConfig(vendetect_remote_url=_REMOTE))
         with patch("shutil.which", return_value="/fake/vendetect"):
             assert adapter.health_check() is True
 
 
-class TestVendetectAdapterDetect:
-    """detect 测试——覆盖降级路径和正常路径。"""
+class TestVendetectAdapterDetectDegradation:
+    """detect 降级路径测试。"""
 
     def test_empty_files(self, tmp_path: Path):
-        """空文件列表直接返回（不调用 CLI）。"""
         adapter = VendetectAdapter(tmp_path, CloneGuardConfig())
         findings, degraded = adapter.detect([])
         assert findings == []
         assert degraded is False
 
     def test_disabled_in_config(self, tmp_path: Path):
-        """vendetect_enabled=False 时降级。"""
         adapter = VendetectAdapter(tmp_path, CloneGuardConfig(vendetect_enabled=False))
         findings, degraded = adapter.detect(["src/foo.py"])
         assert findings == []
         assert degraded is True
 
     def test_cli_not_found_degraded(self, tmp_path: Path):
-        """CLI 未安装时降级。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value=None):
             findings, degraded = adapter.detect(["src/foo.py"])
         assert findings == []
         assert degraded is True
 
     def test_no_remote_url_degraded(self, tmp_path: Path):
-        """已启用但未配 remote_url 时降级。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True)  # vendetect_remote_url=None
-        adapter = VendetectAdapter(tmp_path, cfg)
+        adapter = VendetectAdapter(tmp_path, CloneGuardConfig(vendetect_enabled=True))  # remote=None
         with patch("shutil.which", return_value="/fake/vendetect"):
             findings, degraded = adapter.detect(["src/foo.py"])
         assert findings == []
         assert degraded is True
 
     def test_timeout_degraded(self, tmp_path: Path):
-        """CLI 超时时降级。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value="/fake/vendetect"):
             with patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd="vendetect", timeout=600)):
                 findings, degraded = adapter.detect(["src/foo.py"])
@@ -98,9 +101,7 @@ class TestVendetectAdapterDetect:
         assert degraded is True
 
     def test_generic_exception_degraded(self, tmp_path: Path):
-        """subprocess.run 抛非预期异常时降级。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value="/fake/vendetect"):
             with patch("subprocess.run", side_effect=OSError("boom")):
                 findings, degraded = adapter.detect(["src/foo.py"])
@@ -108,150 +109,169 @@ class TestVendetectAdapterDetect:
         assert degraded is True
 
     def test_bad_exit_code_degraded(self, tmp_path: Path):
-        """退出码非 0/1 时降级。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        mock_result = MagicMock(returncode=2, stdout="", stderr="error")
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
+            with patch("subprocess.run", return_value=_mock_result("", returncode=2)):
                 findings, degraded = adapter.detect(["src/foo.py"])
         assert findings == []
         assert degraded is True
 
-    def test_json_decode_error_degraded(self, tmp_path: Path):
-        """JSON 解析失败时降级。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        mock_result = MagicMock(returncode=0, stdout="not json{", stderr="")
+    def test_empty_stdout_returns_empty(self, tmp_path: Path):
+        """空输出 → 空结果（非降级）。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
-                findings, degraded = adapter.detect(["src/foo.py"])
-        assert findings == []
-        assert degraded is True
-
-    def test_no_vendored_returns_empty(self, tmp_path: Path):
-        """正常执行但无发现（exit 0）。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        mock_result = MagicMock(returncode=0, stdout=json.dumps({"vendored": []}), stderr="")
-        with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
+            with patch("subprocess.run", return_value=_mock_result("", returncode=0)):
                 findings, degraded = adapter.detect(["src/foo.py"])
         assert findings == []
         assert degraded is False
 
-    def test_vendored_parsed_to_finding(self, tmp_path: Path):
-        """正常 vendored 正确解析为 Finding。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        data = {"vendored": [_make_vendored(similarity=0.97, license="AGPL-3.0")]}
-        mock_result = MagicMock(returncode=1, stdout=json.dumps(data), stderr="")
-        with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
-                findings, degraded = adapter.detect(["src/foo.py"])
-        assert degraded is False
-        assert len(findings) == 1
-        f = findings[0]
-        assert f.severity == "extract"  # AGPL + sim>=0.95 → extract
-        assert f.clone_type == "vendored"
-        assert f.similarity == 0.97
-        assert f.source_file == "src/new.py"
-        assert f.source_function == "calc"
-        assert f.source_lineno == 10
-        assert f.existing_file == "vendor/lib.py"
-        assert f.existing_function == "compute"
-        assert f.existing_lineno == 20
-        assert f.import_suggestion == "https://github.com/x/y"
-        assert f.finding_id == "VD-0-src/new.py-vendor/lib.py"
 
-    def test_agpl_license_extract(self, tmp_path: Path):
-        """AGPL + sim>=0.95 → extract（合规硬阻断）。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        data = {"vendored": [_make_vendored(similarity=0.99, license="AGPL-3.0")]}
-        mock_result = MagicMock(returncode=1, stdout=json.dumps(data), stderr="")
-        with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
-                findings, _ = adapter.detect(["src/foo.py"])
-        assert findings[0].severity == "extract"
+class TestVendetectCommandBuilding:
+    """_build_command 命令构造测试（位置参数 TEST_REPO SOURCE_REPO + --format csv）。"""
 
-    def test_compatible_license_review(self, tmp_path: Path):
-        """MIT + sim>=0.95 → review（兼容许可但需 attribution）。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        data = {"vendored": [_make_vendored(similarity=0.96, license="MIT")]}
-        mock_result = MagicMock(returncode=1, stdout=json.dumps(data), stderr="")
+    def test_positional_args_and_csv_format(self, tmp_path: Path):
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
-                findings, _ = adapter.detect(["src/foo.py"])
-        assert findings[0].severity == "review"
-
-    def test_low_similarity_acknowledged(self, tmp_path: Path):
-        """低相似度 → acknowledged。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        data = {"vendored": [_make_vendored(similarity=0.5, license="MIT")]}
-        mock_result = MagicMock(returncode=1, stdout=json.dumps(data), stderr="")
-        with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
-                findings, _ = adapter.detect(["src/foo.py"])
-        assert findings[0].severity == "acknowledged"
+            with patch("subprocess.run", return_value=_mock_result("", returncode=0)) as mock_run:
+                adapter.detect(["src/foo.py"])
+        cmd = mock_run.call_args[0][0]
+        assert cmd[0] == "vendetect"
+        # 位置参数：TEST_REPO (repo_root) + SOURCE_REPO (remote_url)
+        assert str(tmp_path) in cmd
+        assert _REMOTE in cmd
+        assert "--format" in cmd
+        assert "csv" in cmd
+        assert "--min-similarity" in cmd
+        assert "--type" in cmd
+        assert "py" in cmd
+        # 不应再有旧的 --local/--remote/--json
+        assert "--local" not in cmd
+        assert "--remote" not in cmd
+        assert "--json" not in cmd
 
     def test_env_injected(self, tmp_path: Path):
-        """detect 调用 subprocess.run 时注入 config.env。"""
-        cfg = CloneGuardConfig(
-            vendetect_enabled=True,
-            vendetect_remote_url="https://github.com/example/repo",
-            env={"CUSTOM_VAR": "1"},
-        )
-        adapter = VendetectAdapter(tmp_path, cfg)
-        mock_result = MagicMock(returncode=0, stdout=json.dumps({"vendored": []}), stderr="")
+        adapter = VendetectAdapter(tmp_path, _cfg(env={"CUSTOM_VAR": "1"}))
         with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result) as mock_run:
+            with patch("subprocess.run", return_value=_mock_result("", returncode=0)) as mock_run:
                 adapter.detect(["src/foo.py"])
         _, kwargs = mock_run.call_args
         assert kwargs["env"]["CUSTOM_VAR"] == "1"
 
-    def test_absolute_path_converted_to_relative(self, tmp_path: Path):
-        """local_file 绝对路径转为相对仓库根目录（remote_file 保持原样）。"""
-        cfg = CloneGuardConfig(vendetect_enabled=True, vendetect_remote_url="https://github.com/example/repo")
-        adapter = VendetectAdapter(tmp_path, cfg)
-        abs_local = str(tmp_path / "src" / "new.py")
-        v = _make_vendored(local_file=abs_local, remote_file="vendor/lib.py")
-        mock_result = MagicMock(returncode=1, stdout=json.dumps({"vendored": [v]}), stderr="")
+
+class TestVendetectFixtureParsing:
+    """针对真实 vendetect_sample.csv 的解析测试（验证后集成纪律）。"""
+
+    def test_fixture_parses_two_findings(self, tmp_path: Path):
+        """真实样本：2 个 (Test, Source) 对 → 2 findings。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
         with patch("shutil.which", return_value="/fake/vendetect"):
-            with patch("subprocess.run", return_value=mock_result):
-                findings, _ = adapter.detect(["src/new.py"])
-        assert findings[0].source_file == "src/new.py"
-        assert findings[0].existing_file == "vendor/lib.py"  # 远程文件保持原样
+            with patch("subprocess.run", return_value=_mock_result(_load_fixture(), returncode=1)):
+                findings, degraded = adapter.detect(["src/foo.py"])
+        assert degraded is False
+        assert len(findings) == 2
+
+    def test_high_similarity_maps_to_extract(self, tmp_path: Path):
+        """相似度 1.0000 ≥ 0.95 → extract（vendored 高相似 = 合规风险）。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
+        with patch("shutil.which", return_value="/fake/vendetect"):
+            with patch("subprocess.run", return_value=_mock_result(_load_fixture(), returncode=1)):
+                findings, _ = adapter.detect(["src/foo.py"])
+        for f in findings:
+            assert f.severity == "extract"
+            assert f.clone_type == "vendored"
+            assert f.similarity == pytest.approx(1.0, abs=0.0001)
+
+    def test_finding_fields_from_csv(self, tmp_path: Path):
+        """finding 字段取自 CSV（路径归一化斜杠）。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
+        with patch("shutil.which", return_value="/fake/vendetect"):
+            with patch("subprocess.run", return_value=_mock_result(_load_fixture(), returncode=1)):
+                findings, _ = adapter.detect(["src/foo.py"])
+        f0 = findings[0]
+        assert f0.source_file == "src/agg_test.py"  # 反斜杠归一化
+        assert f0.existing_file == "src/agg_orig.py"
+        assert f0.source_function == "unknown"  # CSV 无函数名
+        assert f0.existing_function == "unknown"
+        assert f0.source_lineno == 861  # Test Slice Start
+        assert f0.import_suggestion == _REMOTE  # 远程 URL 作溯源
+
+    def test_finding_id_format(self, tmp_path: Path):
+        """finding_id 格式 VD-{idx}-{test}-{source}。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
+        with patch("shutil.which", return_value="/fake/vendetect"):
+            with patch("subprocess.run", return_value=_mock_result(_load_fixture(), returncode=1)):
+                findings, _ = adapter.detect(["src/foo.py"])
+        assert findings[0].finding_id == "VD-0-src/agg_test.py-src/agg_orig.py"
+        assert findings[1].finding_id == "VD-1-src/cfg_test.py-src/cfg_orig.py"
+
+
+class TestVendetectCsvAggregation:
+    """CSV 切片聚合测试。"""
+
+    def test_multiple_slices_same_pair_aggregated(self, tmp_path: Path):
+        """同一 (test, source) 对多行切片 → 1 finding，相似度取最大。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
+        csv_text = (
+            "Test File,Source File,Test Slice Start,Test Slice End,"
+            "Source Slice Start,Source Slice End,Similarity\n"
+            "src/a.py,src/b.py,10,20,10,20,0.80\n"
+            "src/a.py,src/b.py,30,40,30,40,0.99\n"
+        )
+        with patch("shutil.which", return_value="/fake/vendetect"):
+            with patch("subprocess.run", return_value=_mock_result(csv_text, returncode=1)):
+                findings, _ = adapter.detect(["src/a.py"])
+        assert len(findings) == 1
+        assert findings[0].similarity == pytest.approx(0.99, abs=0.001)
+        assert findings[0].severity == "extract"  # 0.99 >= 0.95
+
+    def test_malformed_row_skipped(self, tmp_path: Path):
+        """列数不足的行被跳过，不阻断解析。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
+        csv_text = (
+            "Test File,Source File,Test Slice Start,Test Slice End,"
+            "Source Slice Start,Source Slice End,Similarity\n"
+            "src/a.py,src/b.py,10,20,10,20,0.99\n"
+            "bad,row\n"  # 列数不足
+        )
+        with patch("shutil.which", return_value="/fake/vendetect"):
+            with patch("subprocess.run", return_value=_mock_result(csv_text, returncode=1)):
+                findings, _ = adapter.detect(["src/a.py"])
+        assert len(findings) == 1  # 仅合法行解析
 
 
 class TestVendetectSeverityMapping:
-    """_severity_for 合规 severity 判定测试。"""
+    """_severity_for 相似度分档测试（CSV 无 license）。"""
 
-    def test_agpl_hard_block(self):
-        """AGPL-3.0 + sim>=0.95 → extract。"""
-        assert VendetectAdapter._severity_for("AGPL-3.0", 0.95) == "extract"
-        assert VendetectAdapter._severity_for("AGPL-3.0", 0.99) == "extract"
+    def test_high_sim_extract(self):
+        assert VendetectAdapter._severity_for(0.95) == "extract"
+        assert VendetectAdapter._severity_for(0.99) == "extract"
+        assert VendetectAdapter._severity_for(1.0) == "extract"
 
-    def test_unknown_license_hard_block(self):
-        """Unknown/空许可证 + sim>=0.95 → extract。"""
-        assert VendetectAdapter._severity_for("Unknown", 0.97) == "extract"
-        assert VendetectAdapter._severity_for("unknown", 0.97) == "extract"
-        assert VendetectAdapter._severity_for("", 0.97) == "extract"
-
-    def test_gpl_hard_block(self):
-        """GPL-3.0 + sim>=0.95 → extract。"""
-        assert VendetectAdapter._severity_for("GPL-3.0", 0.95) == "extract"
-        assert VendetectAdapter._severity_for("GPL-3.0-only", 0.98) == "extract"
-
-    def test_mit_high_sim_review(self):
-        """MIT（兼容许可） + sim>=0.95 → review。"""
-        assert VendetectAdapter._severity_for("MIT", 0.95) == "review"
-        assert VendetectAdapter._severity_for("MIT", 0.99) == "review"
+    def test_mid_sim_review(self):
+        assert VendetectAdapter._severity_for(0.7) == "review"
+        assert VendetectAdapter._severity_for(0.85) == "review"
+        assert VendetectAdapter._severity_for(0.949) == "review"
 
     def test_low_sim_acknowledged(self):
-        """低相似度 → acknowledged。"""
-        assert VendetectAdapter._severity_for("AGPL-3.0", 0.6) == "acknowledged"
-        assert VendetectAdapter._severity_for("MIT", 0.5) == "acknowledged"
-        assert VendetectAdapter._severity_for("MIT", 0.69) == "acknowledged"
+        assert VendetectAdapter._severity_for(0.69) == "acknowledged"
+        assert VendetectAdapter._severity_for(0.5) == "acknowledged"
+        assert VendetectAdapter._severity_for(0.0) == "acknowledged"
+
+
+class TestVendetectPathNormalization:
+    """路径归一化测试。"""
+
+    def test_absolute_test_file_converted_to_relative(self, tmp_path: Path):
+        """test_file 绝对路径转为相对仓库根目录。"""
+        adapter = VendetectAdapter(tmp_path, _cfg())
+        abs_test = str(tmp_path / "src" / "new.py")
+        csv_text = (
+            "Test File,Source File,Test Slice Start,Test Slice End,"
+            "Source Slice Start,Source Slice End,Similarity\n"
+            f"{abs_test},vendor/lib.py,10,20,10,20,0.99\n"
+        )
+        with patch("shutil.which", return_value="/fake/vendetect"):
+            with patch("subprocess.run", return_value=_mock_result(csv_text, returncode=1)):
+                findings, _ = adapter.detect(["src/new.py"])
+        assert findings[0].source_file == "src/new.py"
+        assert findings[0].existing_file == "vendor/lib.py"  # source_file 归一化斜杠

@@ -48,21 +48,24 @@ class CloneGuardConfig:
 
     # ── Phase B 补齐：reDUP（L1 第3引擎 + L2 语义克隆 T3/T4）──
     redup_enabled: bool = True
-    redup_min_sim: float = 0.85           # §3.3 --min-sim 0.85
-    redup_max_groups: int = 0             # §3.3 --max-groups 0（0=不限组数）
-    redup_mode: str = "changed-only"      # "changed-only" (L1) / "semantic" (L2)
+    redup_min_sim: float = 0.85  # §3.3 --min-sim 0.85
+    redup_max_groups: int = 0  # §3.3 --max-groups 0（0=不限组数）
+    redup_mode: str = "changed-only"  # "changed-only" (L1) / "semantic" (L2)
+    # reDUP L1 changed-only 模式的 base ref——redup scan --changed-only --base-ref <ref>
+    # 默认 HEAD；pre-commit 钩子按实际合并基设置（如 origin/dev... 或 merge-base）
+    redup_base_ref: str = "HEAD"
 
     # ── Phase C：mcrit（L2 索引底座 + L0 查重加速）──
-    mcrit_enabled: bool = False           # 默认 False——L2 审计才启用，L1 不用
+    mcrit_enabled: bool = False  # 默认 False——L2 审计才启用，L1 不用
     mcrit_index_path: str = ".mcrit/index.db"
     mcrit_query_threshold: float = 0.7
 
     # ── Phase C：Vendetect（L3 跨仓库合规审计，AGPL 独立工具）──
-    vendetect_enabled: bool = False       # 默认 False——按需触发
+    vendetect_enabled: bool = False  # 默认 False——按需触发
     vendetect_remote_url: str | None = None
 
     # ── Phase C：relate（L2/L3 快速预筛加速器）──
-    relate_enabled: bool = False          # 默认 False——加速器，可选
+    relate_enabled: bool = False  # 默认 False——加速器，可选
     relate_index_path: str = ".relate/index"
     relate_top_k: int = 10
 
@@ -70,8 +73,8 @@ class CloneGuardConfig:
     fail_closed: bool = False  # echo-guard 全部超时/崩溃时是否阻断（False=warn-only 兜底）
 
     # ── Layer 2/3 超时（比 L1 宽松）──
-    audit_timeout_sec: int = 300          # L2 全量审计 5 分钟
-    compare_timeout_sec: int = 600        # L3 跨仓库 10 分钟
+    audit_timeout_sec: int = 300  # L2 全量审计 5 分钟
+    compare_timeout_sec: int = 600  # L3 跨仓库 10 分钟
 
     # 聚合策略（Phase B——多引擎结果合并）
     filter_minority: bool = False  # True=过滤仅单引擎报告的 findings，False=保留但标记 consensus="single"
@@ -148,6 +151,7 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
         redup_min_sim=float(rd_cfg.get("min_sim", 0.85)),
         redup_max_groups=int(rd_cfg.get("max_groups", 0)),
         redup_mode=str(rd_cfg.get("mode", "changed-only")),
+        redup_base_ref=str(rd_cfg.get("base_ref", "HEAD")),
         mcrit_enabled=bool(mcrit_cfg.get("enabled", False)),
         mcrit_index_path=str(mcrit_cfg.get("index_path", ".mcrit/index.db")),
         mcrit_query_threshold=float(mcrit_cfg.get("query_threshold", 0.7)),

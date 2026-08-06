@@ -1,0 +1,83 @@
+{
+  "project_path": "/repo",
+  "stats": {
+    "files_scanned": 10,
+    "total_lines": 500,
+    "total_blocks": 40,
+    "scan_time_ms": 123.4
+  },
+  "summary": {
+    "total_groups": 2,
+    "actionable_groups": 1,
+    "review_groups": 1,
+    "generated_groups": 0,
+    "actionable_saved_lines": 60,
+    "review_saved_lines": 20,
+    "generated_saved_lines": 0,
+    "total_fragments": 5,
+    "total_saved_lines": 80
+  },
+  "groups": [
+    {
+      "id": "grp-001",
+      "type": "structural",
+      "normalized_name": "validate_*",
+      "similarity_score": 0.92,
+      "normalized_hash": "abc123",
+      "total_lines": 30,
+      "occurrences": 3,
+      "saved_lines_potential": 60,
+      "impact_score": 55.2,
+      "fragments": [
+        {"file": "src/auth.py", "line_start": 10, "line_end": 40, "function_name": "validate_input", "class_name": "Auth"},
+        {"file": "src/api.py", "line_start": 50, "line_end": 80, "function_name": "validate_request", "class_name": null},
+        {"file": "src/utils.py", "line_start": 5, "line_end": 35, "function_name": "validate_data", "class_name": null}
+      ],
+      "metadata": {"actionability": "refactor"}
+    },
+    {
+      "id": "grp-002",
+      "type": "exact",
+      "normalized_name": "calc_total",
+      "similarity_score": 1.0,
+      "normalized_hash": "def456",
+      "total_lines": 20,
+      "occurrences": 2,
+      "saved_lines_potential": 20,
+      "impact_score": 20.0,
+      "fragments": [
+        {"file": "src/billing.py", "line_start": 100, "line_end": 120, "function_name": "calc_total", "class_name": null},
+        {"file": "src/invoice.py", "line_start": 200, "line_end": 220, "function_name": "calc_total", "class_name": null}
+      ],
+      "metadata": {"actionability": "review"}
+    },
+    {
+      "id": "grp-003",
+      "type": "exact",
+      "normalized_name": "generated_stub",
+      "similarity_score": 1.0,
+      "normalized_hash": "gen789",
+      "total_lines": 8,
+      "occurrences": 2,
+      "saved_lines_potential": 8,
+      "impact_score": 8.0,
+      "fragments": [
+        {"file": "src/gen_a.py", "line_start": 1, "line_end": 9, "function_name": "stub", "class_name": null},
+        {"file": "src/gen_b.py", "line_start": 1, "line_end": 9, "function_name": "stub", "class_name": null}
+      ],
+      "metadata": {"actionability": "generated"}
+    }
+  ],
+  "refactor_suggestions": [
+    {
+      "group_id": "grp-001",
+      "priority": 1,
+      "action": "extract_function",
+      "new_module": "src/validators.py",
+      "function_name": "validate_input",
+      "original_files": ["src/auth.py", "src/api.py", "src/utils.py"],
+      "risk_level": "low",
+      "rationale": "3 occurrences of structural clone — extract to shared validator."
+    }
+  ]
+}

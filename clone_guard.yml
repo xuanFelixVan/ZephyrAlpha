@@ -22,12 +22,23 @@ ignore_paths:
   - ".echo-guard/"
   - "**/_generated/"
 
-# ─── Layer 1: pre-commit 拦截 (Phase A) ───
+# ─── Layer 1: pre-commit 拦截（Phase A + Phase B 三引擎）───
+# L1 引擎集：echo_guard（AST 哈希 Tier1，离线必装）+ ast_grep（结构化规则）+ redup（语义克隆 T3/T4）
 pre_commit:
   timeout_sec: 30
   fail_on: extract          # extract=3+副本硬阻断(必须合并), review=2副本警告(尽量精简)
-  echo_guard_enabled: true
-  fail_closed: false        # echo-guard 不可用时 warn-only 不阻断(降级兜底)
+  fail_closed: false        # 全引擎不可用时 warn-only 不阻断(降级兜底)
+  engines:
+    echo_guard:
+      enabled: true         # Phase A——L1 离线优先 AST 哈希检测
+    ast_grep:
+      enabled: true         # Phase B——结构化规则检测（no-bare-except 等）
+    redup:
+      enabled: true         # Phase B——语义克隆 T3/T4 检测（L1 changed-only 增量模式）
+      min_sim: 0.85         # §3.3 最小相似度阈值
+      max_groups: 0         # 0=不限重复组数
+      mode: changed-only    # L1 增量模式（L2 审计改 semantic）
+      base_ref: HEAD        # L1 changed-only 对比基（pre-commit 钩子按合并基设置，如 origin/dev）
 
 # ─── 严重性映射 (统一) ───
 severity:
@@ -35,16 +46,24 @@ severity:
   review: warn              # 2副本, 警告
   acknowledged: skip        # 已确认的合理重复
 
-# ─── Phase B-D 预留 (Phase A 不启用) ───
-# pre_commit:
-#   ast_grep:
-#     enabled: false         # Phase B
-#   redup:
-#     enabled: false         # Phase B
-# audit:
-#   schedule: "0 2 * * *"   # Phase B
-# compare:
-#   vendetect: false         # Phase C
+# ─── Layer 2: 周期审计（Phase C——事件触发，非 cron）───
+# audit 由 MCP 工具 clone_guard.audit_status 或 CLI 事件触发（守"禁止时间触发"约束）
+audit:
+  timeout_sec: 300          # L2 全量审计 5 分钟（比 L1 宽松）
+  engines:
+    mcrit:
+      enabled: false        # 默认禁用——需先 `mcrit index` 建索引后启用
+      index_path: .mcrit/index.db
+      query_threshold: 0.7  # MinHash 相似度查询阈值
+
+# ─── Layer 3: 跨边界审计（Phase C——跨仓库合规）───
+compare:
+  timeout_sec: 600          # L3 跨仓库 10 分钟
+  vendetect_cross_repo: false    # 默认禁用——按需触发（AGPL 工具，独立目录隔离）
+  vendetect_remote_url: ~        # 启用时填远程仓库 URL
+  relate_prescreen: false        # 默认禁用——加速器，建索引后启用
+  relate_index_path: .relate/index
+  relate_top_k: 10               # 预筛返回 top-k
 
 # ─── 聚合策略 (Phase B——多引擎结果合并) ───
 aggregation:

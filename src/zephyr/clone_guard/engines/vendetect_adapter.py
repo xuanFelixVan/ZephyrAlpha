@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.3
 # [MODULE] zephyr.clone_guard.engines.vendetect_adapter
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); zephyr.clone_guard.engines.echo_guard_adapter (Finding); subprocess; json; shutil; logging; pathlib
+# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); zephyr.clone_guard.engines.echo_guard_adapter (Finding); subprocess; csv; io; shutil; logging; pathlib
 # [CONSUMERS] zephyr.clone_guard.orchestrator
 # [STARTUP] imported
 # [MATURITY] production
@@ -21,22 +21,36 @@ Vendetect 职责：检测跨仓库 vendored 代码，识别许可证合规风险
 混入项目）。AGPL-3.0 许可证——本适配器仅 subprocess 调 CLI，不 import/链接
 Vendetect 源码进 src/，守许可证隔离铁律。
 
+真实 CLI（核实自 trailofbits/vendetect，位置参数）::
+
+    vendetect TEST_REPO SOURCE_REPO --format csv --min-similarity <thr> --type py
+
+输出格式采用 CSV 而非 JSON——Vendetect v0.0.3 的 JSON 输出含 numpy int64
+导致序列化崩溃（``TypeError: Object of type int64 is not JSON serializable``），
+CSV 稳定可用（见 tests/fixtures/vendetect_sample.csv）。
+
+CSV 表头：``Test File,Source File,Test Slice Start,Test Slice End,
+Source Slice Start,Source Slice End,Similarity``。同一 (Test File, Source File)
+对可能有多行切片——按对聚合，相似度取最大。
+
+severity 策略（CSV 无 license 字段，按相似度判定；license 合规分档待
+Vendetect JSON 序列化修复后补全）：
+  - similarity≥0.95 → extract（高相似跨仓库代码 = 合规风险，须人工核验许可证）
+  - similarity≥0.7  → review
+  - 其余 → acknowledged
+
 降级策略（守 blueprint §5.2）：
   - Vendetect 未安装 → degraded=True, 返回空列表
   - 未配 remote_url → degraded=True, 返回空列表
   - 超时 → degraded=True, 返回空列表
   - CLI 崩溃 → degraded=True, 返回空列表
   - 正常执行 → 返回 Finding 列表
-
-severity 策略（合规硬阻断）：
-  - AGPL/未知许可证 + similarity≥0.95 → extract（合规硬阻断）
-  - 高相似但许可证兼容 → review（警告，建议 attribution）
-  - 低相似 → acknowledged
 """
 
 from __future__ import annotations
 
-import json
+import csv
+import io
 import logging
 import os
 import shutil
@@ -50,19 +64,15 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["VendetectAdapter"]
 
-# 合规风险许可证——出现即硬阻断（extract）
-_HIGH_RISK_LICENSES: frozenset[str] = frozenset({
-    "AGPL-3.0", "AGPL-3.0-only", "AGPL-3.0-or-later",
-    "GPL-3.0", "GPL-3.0-only", "GPL-3.0-or-later",
-    "Unknown", "unknown", "",
-})
+# Vendetect --min-similarity 默认阈值（CSV 输出无 license，仅按相似度分档）
+_DEFAULT_MIN_SIMILARITY: float = 0.7
 
 
 class VendetectAdapter:
     """Vendetect 跨仓库合规审计适配器（Phase C L3）。
 
-    封装 Vendetect CLI 调用，对编排层暴露统一 detect() 接口。
-    AGPL 许可证隔离：仅 subprocess 调 CLI，不链接进 src/。
+    封装 Vendetect CLI 调用（位置参数 TEST_REPO SOURCE_REPO + --format csv），
+    对编排层暴露统一 detect() 接口。AGPL 许可证隔离：仅 subprocess 调 CLI，不链接进 src/。
     """
 
     def __init__(self, repo_root: Path, config: CloneGuardConfig | None = None):
@@ -79,7 +89,8 @@ class VendetectAdapter:
         """检测给定文件在远程仓库中的 vendored 代码（L3 跨边界审计）。
 
         Args:
-            files: 待检测文件路径列表（相对路径）。
+            files: 待检测文件路径列表（相对路径）。Vendetect 对整个 TEST_REPO 与
+                SOURCE_REPO 做对比，files 仅用于空值守卫。
             timeout: 超时秒数（None 时使用 compare_timeout_sec）。
 
         Returns:
@@ -102,10 +113,10 @@ class VendetectAdapter:
             return [], True
 
         timeout_sec = timeout or self._config.compare_timeout_sec
-        cmd = self._build_command(files, remote_url)
+        cmd = self._build_command(remote_url)
 
         try:
-            result = subprocess.run(  # noqa: bare-subprocess  Vendetect CLI compare 调用
+            result = subprocess.run(  # noqa: bare-subprocess  Vendetect CLI 调用
                 cmd,
                 capture_output=True,
                 text=True,
@@ -117,93 +128,135 @@ class VendetectAdapter:
             logger.warning("VendetectAdapter degraded: Vendetect CLI 未安装")
             return [], True
         except subprocess.TimeoutExpired:
-            logger.warning("VendetectAdapter degraded: Vendetect compare 超时(%ds)", timeout_sec)
+            logger.warning("VendetectAdapter degraded: Vendetect 超时(%ds)", timeout_sec)
             return [], True
         except Exception as e:  # noqa: BLE001  适配器不抛异常
-            logger.warning("VendetectAdapter degraded: Vendetect compare 异常(%s: %s)", type(e).__name__, e)
+            logger.warning("VendetectAdapter degraded: Vendetect 异常(%s: %s)", type(e).__name__, e)
             return [], True
 
+        # Vendetect exit codes: 0=无 vendored, 1=发现 vendored, 其他=错误
         if result.returncode not in (0, 1):
             logger.warning(
-                "VendetectAdapter degraded: Vendetect compare 退出码=%d, stderr=%s",
+                "VendetectAdapter degraded: Vendetect 退出码=%d, stderr=%s",
                 result.returncode,
                 result.stderr[:200] if result.stderr else "",
             )
             return [], True
 
-        try:
-            data = json.loads(result.stdout) if result.stdout.strip() else {}
-        except json.JSONDecodeError as e:
-            logger.warning("VendetectAdapter degraded: JSON 解析失败(%s)", e)
-            return [], True
-
-        findings = self._parse_findings(data)
+        findings = self._parse_csv(result.stdout)
         return findings, False
 
-    def _build_command(self, files: list[str], remote_url: str) -> list[str]:
-        """构造 Vendetect compare 命令。"""
+    def _build_command(self, remote_url: str) -> list[str]:
+        """构造 Vendetect 命令（位置参数 TEST_REPO SOURCE_REPO + CSV 格式）。"""
         return [
-            "vendetect", "compare",
-            "--local", str(self._repo_root),
-            "--remote", remote_url,
-            "--json",
-        ] + files
+            "vendetect",
+            str(self._repo_root),
+            remote_url,
+            "--format",
+            "csv",
+            "--min-similarity",
+            str(_DEFAULT_MIN_SIMILARITY),
+            "--type",
+            "py",
+        ]
 
-    def _parse_findings(self, data: dict) -> list[Finding]:
-        """将 Vendetect JSON 输出解析为 Finding 列表。
+    def _parse_csv(self, stdout: str) -> list[Finding]:
+        """将 Vendetect CSV 输出解析为 Finding 列表。
 
-        Vendetect 输出结构（约定）::
-
-            {"vendored": [{"local_file", "local_function", "local_line",
-                           "remote_file", "remote_function", "remote_line",
-                           "similarity", "license", "remote_url"}]}
+        按 (test_file, source_file) 聚合切片：相似度取最大，记录切片数与首切片起始行。
+        跳过表头行（含 "Test File"）。
         """
+        if not stdout or not stdout.strip():
+            return []
+
+        reader = csv.reader(io.StringIO(stdout))
+        rows = list(reader)
+        if not rows:
+            return []
+
+        # 跳过表头行
+        data_rows = rows
+        if rows and rows[0] and "Test File" in rows[0][0]:
+            data_rows = rows[1:]
+
+        # 按 (test_file, source_file) 聚合
+        pairs: dict[tuple[str, str], dict] = {}
+        for row in data_rows:
+            parsed = self._parse_row(row)
+            if parsed is None:
+                continue
+            test_file, source_file, similarity, slice_start = parsed
+            key = (test_file, source_file)
+            if key not in pairs:
+                pairs[key] = {
+                    "test_file": test_file,
+                    "source_file": source_file,
+                    "similarity": similarity,
+                    "slice_count": 1,
+                    "first_slice_start": slice_start,
+                }
+            else:
+                pairs[key]["slice_count"] += 1
+                if similarity > pairs[key]["similarity"]:
+                    pairs[key]["similarity"] = similarity
+
         findings: list[Finding] = []
-        for idx, v in enumerate(data.get("vendored", [])):
-            try:
-                findings.append(self._parse_vendored(v, idx))
-            except (KeyError, TypeError, ValueError) as e:
-                logger.debug("跳过无法解析的 Vendetect vendored: %s (%s)", idx, e)
+        for idx, p in enumerate(pairs.values()):
+            findings.append(self._to_finding(p, idx))
         return findings
 
-    def _parse_vendored(self, v: dict, idx: int) -> Finding:
-        """解析单个 vendored match 为 Finding（合规 severity 判定）。"""
-        similarity = float(v.get("similarity", 0.0))
-        license_ = str(v.get("license", "")).strip()
-        source_file = self._to_relative_path(v.get("local_file", ""))
-        existing_file = v.get("remote_file", "")  # 远程文件路径保持原样（跨仓库）
+    @staticmethod
+    def _parse_row(row: list[str]) -> tuple[str, str, float, int] | None:
+        """解析单行 CSV → (test_file, source_file, similarity, test_slice_start)。
 
-        severity = self._severity_for(license_, similarity)
-        clone_type = "vendored"  # 跨仓库 vendored 代码
+        CSV 列：Test File, Source File, Test Slice Start, Test Slice End,
+                Source Slice Start, Source Slice End, Similarity
+        """
+        if len(row) < 7:
+            return None
+        try:
+            test_file = str(row[0]).strip()
+            source_file = str(row[1]).strip()
+            slice_start = int(row[2])
+            similarity = float(row[6])
+        except (ValueError, IndexError):
+            return None
+        if not test_file or not source_file:
+            return None
+        return test_file, source_file, similarity, slice_start
+
+    def _to_finding(self, p: dict, idx: int) -> Finding:
+        """将聚合后的切片对转为 Finding。"""
+        similarity = float(p["similarity"])
+        test_file = self._to_relative_path(p["test_file"])
+        source_file = str(p["source_file"]).replace("\\", "/")  # 远程仓库路径归一化斜杠
 
         return Finding(
-            finding_id=f"VD-{idx}-{source_file}-{existing_file}",
-            severity=severity,
-            clone_type=clone_type,
+            finding_id=f"VD-{idx}-{test_file}-{source_file}",
+            severity=self._severity_for(similarity),
+            clone_type="vendored",  # 跨仓库 vendored 代码
             similarity=similarity,
-            source_file=source_file,
-            source_function=v.get("local_function", "unknown"),
-            source_lineno=int(v.get("local_line", 0)),
-            existing_file=existing_file,
-            existing_function=v.get("remote_function", "unknown"),
-            existing_lineno=int(v.get("remote_line", 0)),
-            import_suggestion=v.get("remote_url"),  # 远程 URL 作为溯源建议
+            source_file=test_file,
+            source_function="unknown",  # CSV 输出无函数名
+            source_lineno=int(p.get("first_slice_start", 0)),
+            existing_file=source_file,
+            existing_function="unknown",
+            existing_lineno=0,
+            import_suggestion=self._config.vendetect_remote_url,  # 远程 URL 作为溯源
         )
 
     @staticmethod
-    def _severity_for(license_: str, similarity: float) -> str:
-        """合规 severity 判定。
+    def _severity_for(similarity: float) -> str:
+        """合规 severity 判定（CSV 无 license，按相似度分档）。
 
-        - AGPL/GPL/未知许可证 + similarity≥0.95 → extract（合规硬阻断）
-        - 兼容许可证 + similarity≥0.95 → review（建议 attribution）
-        - similarity≥0.7 → review
+        - similarity≥0.95 → extract（高相似跨仓库代码 = 合规风险，须核验许可证）
+        - similarity≥0.7  → review
         - 其余 → acknowledged
+
+        注：license 维度分档待 Vendetect JSON 序列化修复（numpy int64）后补全。
         """
-        license_risky = license_ in _HIGH_RISK_LICENSES
-        if license_risky and similarity >= 0.95:
-            return "extract"  # 合规硬阻断
         if similarity >= 0.95:
-            return "review"  # 兼容许可但需 attribution
+            return "extract"  # 合规硬阻断（vendored 高相似 = 须人工核验）
         if similarity >= 0.7:
             return "review"
         return "acknowledged"

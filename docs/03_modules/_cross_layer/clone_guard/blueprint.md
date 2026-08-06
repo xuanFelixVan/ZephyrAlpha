@@ -83,7 +83,7 @@ build_status: planned
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-CLONE_GUARD` 的 21 个 file 节点 | design | `extract_depgraph.py --modules MOD-CLONE_GUARD` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-CLONE_GUARD` 的 25 个 file 节点 | design | `extract_depgraph.py --modules MOD-CLONE_GUARD` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -95,7 +95,7 @@ build_status: planned
 | module_id | MOD-CLONE_GUARD | MOD-CLONE_GUARD | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 21 文件 | N/A | — |
+| file_count | 25 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -151,14 +151,16 @@ L3 跨边界审计 ┘
 | **Echo-Guard** | MIT | v0.4.1 | 主检测：AST哈希 + CodeSAGE嵌入 + MCP + DRY严重性 + pre-commit快速路径 | L0+L1+L2 | T1/T2/T3/T4 |
 | **ast-grep** | MIT | latest | 规则引擎：YAML 自定义结构化模式（业务规则） | L1 | T1/T2（规则化） |
 | **reDUP** | Apache-2.0 | v0.4.46 | 深度分析：六层全量 + 重构规划 + 影响评分 + 跨项目比较 + `--changed-only`增量 | L1+L2+L3 | T1/T2/T3/T4 |
-| **mcrit** | MIT | latest | 索引底座：MinHash 大规模代码关系图 | L2（底座） | T1/T2/T3 |
-| **Vendetect** | AGPL-3.0 | latest | 跨仓库审计：检测外部代码拷贝（合规） | L3 | T1/T2/T3 |
-| **relate** | MIT | latest | 快速预筛：无模型压缩相似度，加速重引擎 | L2+L3（加速器） | T1/T2 |
+| **mcrit** | ~~MIT~~ GPL-3.0 | latest | ⚠️**已废弃（领域错位）**——原假设"MinHash 源码索引底座"实为二进制/恶意软件逆向相似度工具（Fraunhofer FKIE），非源码克隆检测；需 C++编译器+MongoDB | ~~L2（底座）~~ | 不适用 |
+| **Vendetect** | AGPL-3.0 | latest | 跨仓库审计：检测外部代码拷贝（合规）；CLI 勘误——位置参数 `vendetect TEST_REPO SOURCE_REPO`（非 `compare --local/--remote`） | L3 | T1/T2/T3 |
+| **relate** | ~~MIT~~ Apache-2.0 | latest | ⚠️**Zig 二进制（非 pip 包）**——PyPI `relate` 是 2015 数学库（Py3.10+必崩）；真实 relate（The-Billy-Company）CLI 为 `relate similar/echoes`，输出 NDJSON 带 grade 分档 | L2+L3（加速器） | T1/T2/T3 |
+
+> **⚠️ 引擎核实勘误（2026-08-06，#ARCH-FORCE-MERGE-DEDUP-001）**：上表 mcrit/relate 的原蓝图假设经 PyPI+GitHub 源码核实**与事实不符**，reDUP/Vendetect 的 CLI/输出格式假设亦有偏差。逐引擎裁定：mcrit **废弃**（领域错位，适配器降级为占位）；relate **重新定位**（真实工具是 Zig 二进制，非 pip 包，适配器待按真实 CLI 重写）；Vendetect **采纳并修 CLI**（位置参数 + CSV 输出）；reDUP **条件采纳并修解析器**（`groups/fragments` 结构，安装延后因 ~35 包足迹）。完整分析过程+裁定+施工方案见 `.trae/documents/clone-guard-engine-verification-ruling.md`（IDE scratchpad，非 git 真源）。**验证后集成纪律**：引擎适配器必须针对已捕获的真实 CLI 样本+输出 schema（提交为 `tests/fixtures/<engine>_sample.*`）编写，禁止基于假设实现。
 
 ### §2.3 功能去冗余原则
 
 - **嵌入模型**：只用 CodeSAGE（Echo-Guard），关闭 reDUP 的 sentence-transformers
-- **MinHash 索引**：只用 mcrit 做底座，不重复建 reDUP/PyChase 的 LSH
+- **索引底座**：~~mcrit~~（已废弃）→ relate 压缩相似度 / reDUP 承担预筛底座角色，不重复建 reDUP/PyChase 的 LSH
 - **跨项目比较**：reDUP compare（内部多模块）+ Vendetect（外部仓库）+ relate（快速预筛）
 - **MCP**：统一 wrapper 聚合，不暴露各引擎原生 MCP（避免 AI 困惑）
 

@@ -18,7 +18,7 @@ tier: tier_1_governance
 status: active
 version: 1.8.2
 created: '2026-07-31'
-last_updated: 2026-08-04
+last_updated: 2026-08-06
 unique_key:
 - module_path
 entry_schema:
@@ -41024,6 +41024,35 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "封装 ast-grep CLI 检测结构反模式（如 bare except），统一 detect() 接口，CLI 不可用时降级为空结果"
+# --- CloneGuard Phase B/C 新增引擎适配器（2026-08-06，#ARCH-FORCE-MERGE-DEDUP-001）---
+- module_path: src/zephyr/clone_guard/engines/redup_adapter.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "reDUP 语义克隆适配器"
+  name_en: "reDUP Semantic Clone Adapter"
+  desc_zh: "封装 reDUP CLI（L1 changed-only 增量 + L2 semantic 全量），抓 T3/T4 语义克隆，critical/high→extract"
+  desc_en: "Wrap reDUP CLI for T3/T4 semantic clone detection"
+  plain_zh: "接 reDUP 工具的适配器——专抓换了变量名但逻辑一样的语义克隆，提交时只查改动文件(快)，审计时全量查(准)"
+- module_path: src/zephyr/clone_guard/engines/mcrit_adapter.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "mcrit 适配器（已废弃·占位降级）"
+  name_en: "mcrit Adapter (Deprecated Placeholder)"
+  desc_zh: "⚠️已废弃——mcrit 实为二进制/恶意软件逆向工具（领域错位，非源码克隆检测）；适配器恒返回 ([], True) 降级占位，L2 底座角色由 relate/reDUP 承担"
+  desc_en: "Deprecated—mcrit is a binary/malware reverse-engineering tool (domain mismatch, not source clone detection); adapter always returns ([], True) degraded placeholder"
+  plain_zh: "mcrit 工具的占位适配器——核实发现这工具是查恶意软件的不是查源码重复的，用错了，已废弃。现在它什么都不做，恒返回降级，原本它干的活(建索引加速审计)交给 relate 或 reDUP"
+- module_path: src/zephyr/clone_guard/engines/relate_adapter.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "relate 预筛适配器（待按真实 CLI 重写）"
+  name_en: "relate Prescreen Adapter (Pending Rewrite for Real CLI)"
+  desc_zh: "封装 relate CLI（无模型压缩相似度），L3 跨仓库预筛加速 + L0 search()，severity 仅 review/acknowledged。⚠️当前实现基于错认的 PyPI `relate` 数学库；真实 relate 是 Zig 二进制（CLI `similar/echoes`+NDJSON），待按真实 CLI 重写"
+  desc_en: "Wrap relate CLI for model-free compression similarity prescreen; current impl based on wrong PyPI lib, real relate is Zig binary, pending rewrite"
+  plain_zh: "接 relate 工具的适配器——用压缩算法快速估相似度做预筛提速。注意：当前实现认错了包(PyPI 上的 relate 是数学库不是这工具)，真实 relate 是 Zig 编译的二进制，等按真实命令行重写后才真正能用"
+- module_path: src/zephyr/clone_guard/engines/vendetect_adapter.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: "Vendetect 跨仓库适配器"
+  name_en: "Vendetect Cross-Repo Adapter"
+  desc_zh: "封装 Vendetect CLI 检测跨仓库 vendored 代码，AGPL 许可证 + similarity≥0.95→extract 合规硬阻断"
+  desc_en: "Wrap Vendetect CLI for cross-repo vendored code + AGPL license isolation"
+  plain_zh: "接 Vendetect 工具的适配器——查代码是不是从别的仓库抄来的，重点盯 AGPL 这类传染性许可证，命中就硬阻断防合规事故"
 - module_path: src/zephyr/backtest/implementations/shrinkage_engine.py
   domain_id: D_BACKTEST
   name_zh: "Shrinkage回测引擎"
@@ -41045,6 +41074,14 @@ entries:
   desc_zh: "Shrinkage开/关两组回测对比Sharpe/MaxDD/Calmar/Turnover，四项一票否决裁定regime是否部署"
   desc_en: "Compares Shrinkage on/off backtest groups on Sharpe/MaxDD/Calmar/Turnover with one-vote veto on regime deployment"
   plain_zh: "跑两遍回测对比Shrinkage开关效果——Sharpe不能掉太多、回撤要改善、换手不能爆，四项有一项不达标就一票否决，regime不部署"
+
+- module_path: src/zephyr/backtest/regime_validation/c1_runner.py
+  domain_id: D_BACKTEST
+  name_zh: "C1 执行编排器"
+  name_en: "C1 Validation Runner"
+  desc_zh: "C1开/关对比执行入口，mock模式(波动率驱动)冒烟跑通+regime模式(真实RegimeDetector序列)Phase1裁决，复用C1ShrinkageComparator.compare"
+  desc_en: "C1 on/off comparison execution entry, mock mode (volatility-driven) smoke test + regime mode (real RegimeDetector series) Phase 1 verdict, reuses C1ShrinkageComparator.compare"
+  plain_zh: "C1验证的执行脚本——把取数、构造Shrinkage供给、跑开/关对比、出报告串成一条线。先用波动率mock把流程跑通(不依赖特征管道)，等特征管道就绪切真实regime序列跑Phase1裁决"
 
 battle_map_steps:
 - step_id: BM-BUY-04

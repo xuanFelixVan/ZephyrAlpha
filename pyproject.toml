@@ -88,6 +88,14 @@ demo = [
     # Phase 4: 数据源依赖（按需安装，非核心包）。clickhouse-driver 已升级为核心依赖（见上）
     "baostock>=0.8.8,<0.9.0",          # 交易日历/沪深300成分股（baostock_provider）
 ]
+# CloneGuard 多引擎克隆检测集成防御体系（#ARCH-FORCE-MERGE-DEDUP-001，按需安装，非核心包）
+# 安装：pip install -e ".[clone-guard]"；未装时各适配器 detect() 降级返回 ([], True) 不阻断
+# Vendetect 不入此 extras——AGPL-3.0 许可证，须 git clone 独立目录隔离，仅 subprocess 调 CLI
+# mcrit 已移除——领域错位（二进制/恶意软件逆向工具，非源码克隆检测），见 clone-guard-engine-verification-ruling.md
+# relate 已移除——PyPI `relate` 是 2015 数学库（Py3.10+必崩）；真实 relate 是 Zig 二进制（非 pip 包）
+clone-guard = [
+    "redup>=0.4.0",        # reDUP 语义克隆 T3/T4（Apache-2.0），L1 changed-only + L2 semantic
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

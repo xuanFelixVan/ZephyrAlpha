@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.4
 # [MODULE] zephyr.clone_guard.mcp_server
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.integration.mcp._base_server (BaseMCPServer, MCPError); zephyr.clone_guard.orchestrator (CloneGuardOrchestrator, CheckResult); zephyr.clone_guard.engines.echo_guard_adapter (EchoGuardAdapter); zephyr.clone_guard.engines.mcrit_adapter (McritAdapter); zephyr.clone_guard.engines.relate_adapter (RelateAdapter); zephyr.shared.utils.time_utils (now_iso)
-# [CONSUMERS] config/mcp.json (servers.clone_guard); AI agent (L0 源头预防)
+# [DEPENDENCIES] zephyr.integration.mcp._base_server (BaseMCPServer, MCPError); zephyr.clone_guard.orchestrator (CloneGuardOrchestrator, CheckResult); zephyr.clone_guard.engines.echo_guard_adapter (EchoGuardAdapter); zephyr.clone_guard.engines.relate_adapter (RelateAdapter); zephyr.shared.utils.time_utils (now_iso)
+# [CONSUMERS] config/mcp.json (servers.clone_guard); AI agent (L0 源头预防 + L2 技术债可达性)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] L0 源头预防——AI 写代码前主动调用，返回 advisory findings + import_suggestion（不硬阻断）；check_before_write 永不抛异常（orchestrator.check() 守 ERROR_CONTRACT）；co-located with clone_guard 模块（守 red_blue_validator 先例）；search_functions/audit_status 永不抛异常（6层闭环·可达性）
+# [INVARIANTS] L0 源头预防——AI 写代码前主动调用，返回 advisory findings + import_suggestion（不硬阻断）；check_before_write/search_functions/audit_status 永不抛异常（orchestrator 守 ERROR_CONTRACT）；co-located with clone_guard 模块（守 red_blue_validator 先例）
 # [MODIFY-GUARD] blueprint=docs/03_modules/_cross_layer/clone_guard/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -36,7 +36,7 @@ L0 vs L1 的本质区别
 实现工具
 --------
 - clone_guard.check_before_write — L0 源头预防：AI 写代码前查重，返回 advisory findings
-- clone_guard.search_functions   — L0 按语义搜已有函数（mcrit/relate search()），引导复用
+- clone_guard.search_functions   — L0 按语义搜已有函数（relate search()），引导复用
 - clone_guard.audit_status       — L2 查询技术债（读最近 audit JSON，6层闭环·可达性）
 - clone_guard.health_check       — 检查 echo-guard 引擎 + 索引可用性
 
@@ -66,6 +66,7 @@ from typing import Any, Final
 
 from zephyr.clone_guard.config import load_config
 from zephyr.clone_guard.engines.echo_guard_adapter import EchoGuardAdapter
+from zephyr.clone_guard.engines.relate_adapter import RelateAdapter
 from zephyr.clone_guard.orchestrator import CloneGuardOrchestrator
 from zephyr.integration.mcp._base_server import BaseMCPServer
 from zephyr.shared.utils.time_utils import now_iso
@@ -77,7 +78,7 @@ __all__ = ["CloneGuardMCPServer", "create_server", "main"]
 SERVER_ID: Final[str] = "clone_guard"
 SERVER_VERSION: Final[str] = "1.0.0"
 SERVER_DESCRIPTION: Final[str] = (
-    "CloneGuard L0 源头预防 MCP Server——AI 写代码前查重，返回 advisory findings + import_suggestion"
+    "CloneGuard L0 源头预防 + L2 技术债可达性 MCP Server——AI 写代码前查重 + 冷启动查询累积技术债"
 )
 
 # 默认仓库根目录（MCP Server 通常在仓库根目录启动）
@@ -85,9 +86,9 @@ _DEFAULT_REPO_ROOT: Final[str] = "."
 
 
 class CloneGuardMCPServer(BaseMCPServer):
-    """CloneGuard L0 源头预防 MCP Server。
+    """CloneGuard L0 源头预防 + L2 技术债可达性 MCP Server。
 
-    复用 BaseMCPServer（JSON-RPC 2.0 over stdio），注册 L0 查重工具。
+    复用 BaseMCPServer（JSON-RPC 2.0 over stdio），注册 4 个工具。
     生命周期内复用单个 CloneGuardOrchestrator 实例（避免每次调用重建索引连接）。
     """
 
@@ -105,7 +106,7 @@ class CloneGuardMCPServer(BaseMCPServer):
 
         self._repo_root = Path(repo_root or _DEFAULT_REPO_ROOT).resolve()
         self._config = load_config(self._repo_root)
-        self._orchestrator: CloneGuardOrchestrator | None = None  # 懒加载——首次 check 时初始化
+        self._orchestrator: CloneGuardOrchestrator | None = None  # 懒加载——首次调用时初始化
 
         # ── L0 源头预防：AI 写代码前查重 ──
         self.register_tool(
@@ -133,6 +134,52 @@ class CloneGuardMCPServer(BaseMCPServer):
             },
             handler=self._check_before_write,
             safety_level="L",  # 只读检测，不修改任何文件
+        )
+
+        # ── L0 按语义搜已有函数（Phase C：relate search() 复用）──
+        self.register_tool(
+            name="clone_guard.search_functions",
+            description=(
+                "L0 按语义搜已有函数：传入函数签名/片段，返回 top-k 相似已有函数。"
+                "AI 写新函数前应先调用此工具查找可复用代码（6层闭环·可达性）。"
+                "复用 relate 适配器的 search() 方法，引擎不可用时返回空。"
+            ),
+            input_schema={
+                "type": "object",
+                "required": ["query"],
+                "additionalProperties": False,
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "搜索查询（函数签名/代码片段/功能描述）",
+                    },
+                    "top_k": {
+                        "type": "integer",
+                        "description": "返回 top-k 结果（可选，默认 10）",
+                        "minimum": 1,
+                        "maximum": 100,
+                    },
+                },
+            },
+            handler=self._search_functions,
+            safety_level="L",  # 只读搜索，不修改任何文件
+        )
+
+        # ── L2 查询累积技术债（读最近 audit JSON，6层闭环·可达性）──
+        self.register_tool(
+            name="clone_guard.audit_status",
+            description=(
+                "L2 查询累积技术债：返回最近一次周期审计结果（health_score A-F + "
+                "refactoring_plan + findings_count）。AI 冷启动应先调用此工具看见债。"
+                "无历史审计时返回 no_audit 状态。"
+            ),
+            input_schema={
+                "type": "object",
+                "additionalProperties": False,
+                "properties": {},
+            },
+            handler=self._audit_status,
+            safety_level="L",  # 只读查询，不修改任何文件
         )
 
         # ── 引擎健康检查 ──
@@ -171,13 +218,6 @@ class CloneGuardMCPServer(BaseMCPServer):
 
         调用 CloneGuardOrchestrator.check() 检测给定文件，
         返回 advisory findings（不抛 MCPError 阻断——L0 是建议性而非强制性）。
-
-        Args:
-            files: 待检测文件路径列表（相对路径）。
-            session_id: AI session 标识（审计用，可选）。
-
-        Returns:
-            包含 passed/findings/degraded/hint 的 dict。
         """
         if not files:
             return {
@@ -237,12 +277,118 @@ class CloneGuardMCPServer(BaseMCPServer):
             "checked_at": now_iso(),
         }
 
-    def _health_check(self) -> dict[str, Any]:
-        """检查 echo-guard 引擎可用性。
+    def _search_functions(
+        self,
+        query: str,
+        top_k: int | None = None,
+    ) -> dict[str, Any]:
+        """L0 按语义搜已有函数（relate search() 复用）。
 
-        Returns:
-            包含 engine_available/index_exists/cli_present 的 dict。
+        引擎不可用时返回空结果 + degraded=True（守 6层闭环·可达性——空结果也是有效反馈）。
         """
+        if not query or not query.strip():
+            return {
+                "results": [],
+                "results_count": 0,
+                "degraded": False,
+                "engines_checked": [],
+                "hint": "未提供查询——无需搜索。",
+                "checked_at": now_iso(),
+            }
+
+        results: list[dict[str, Any]] = []
+        engines_checked: list[str] = []
+        engines_available: list[str] = []
+
+        # relate search（无模型快速预筛）
+        try:
+            relate = RelateAdapter(self._repo_root, self._config)
+            engines_checked.append("relate")
+            if relate.health_check():
+                engines_available.append("relate")
+                for f in relate.search(query, top_k):
+                    results.append(self._serialize_search_result(f, "relate"))
+        except Exception as e:  # noqa: BLE001  search 永不抛异常
+            logger.debug("search_functions: relate 异常(%s)", e)
+
+        # 去重（按 existing_file + existing_function，保留相似度最高）
+        seen: dict[tuple[str, str], dict[str, Any]] = {}
+        for r in results:
+            key = (r["existing_file"], r["existing_function"])
+            if key not in seen or r["similarity"] > seen[key]["similarity"]:
+                seen[key] = r
+        deduped = sorted(seen.values(), key=lambda r: r["similarity"], reverse=True)[
+            : (top_k or self._config.relate_top_k)
+        ]
+
+        degraded = len(engines_available) == 0
+        hint = (
+            f"找到 {len(deduped)} 个相似函数——建议复用而非重复实现。"
+            if deduped
+            else (
+                "无可用搜索引擎（relate 未安装或索引未建）——运行 `relate index` 构建索引。"
+                if degraded
+                else "未找到相似函数——可以安全新建。"
+            )
+        )
+
+        return {
+            "results": deduped,
+            "results_count": len(deduped),
+            "degraded": degraded,
+            "engines_checked": engines_checked,
+            "engines_available": engines_available,
+            "hint": hint,
+            "checked_at": now_iso(),
+        }
+
+    def _audit_status(self) -> dict[str, Any]:
+        """L2 查询累积技术债（读最近 audit JSON，6层闭环·可达性）。
+
+        返回最近一次 audit() 持久化结果；无历史记录时返回 no_audit 状态。
+        本工具只读不触发审计——触发审计由 CLI/事件负责（守"禁止时间触发"）。
+        """
+        try:
+            orch = self._get_orchestrator()
+            data = orch.load_latest_audit()
+        except Exception as e:  # noqa: BLE001  audit_status 永不抛异常
+            logger.warning("clone_guard.audit_status 异常(%s: %s)", type(e).__name__, e)
+            return {
+                "status": "error",
+                "degraded": True,
+                "error": f"{type(e).__name__}: {e}",
+                "hint": "读取审计状态异常。",
+                "checked_at": now_iso(),
+            }
+
+        if data is None:
+            return {
+                "status": "no_audit",
+                "degraded": False,
+                "hint": "尚未执行周期审计——无历史技术债记录。可经 CLI 触发 clone_guard audit 后再查询。",
+                "checked_at": now_iso(),
+            }
+
+        health_score = str(data.get("health_score", "?"))
+        findings_count = int(data.get("findings_count", 0))
+        hint = self._audit_hint(health_score, findings_count)
+
+        return {
+            "status": "ok",
+            "degraded": False,
+            "timestamp": data.get("timestamp", ""),
+            "health_score": health_score,
+            "findings_count": findings_count,
+            "refactoring_plan": data.get("refactoring_plan", []),
+            "degraded_engines": data.get("degraded_engines", []),
+            "active_engine_count": data.get("active_engine_count", 0),
+            "checked_files": data.get("checked_files", 0),
+            "hint": hint,
+            "checked_at": now_iso(),
+        }
+
+    def _health_check(self) -> dict[str, Any]:
+        """检查 echo-guard 引擎可用性。"""
         adapter = EchoGuardAdapter(self._repo_root, self._config)
         index_path = self._repo_root / ".echo-guard" / "index.duckdb"
         index_exists = index_path.exists()
@@ -273,6 +419,30 @@ class CloneGuardMCPServer(BaseMCPServer):
     # ------------------------------------------------------------------
 
     @staticmethod
+    def _serialize_search_result(f: Any, engine: str) -> dict[str, Any]:
+        """将 search() 返回的 Finding 序列化为可 JSON 化的 dict。"""
+        return {
+            "existing_file": f.existing_file,
+            "existing_function": f.existing_function,
+            "existing_lineno": f.existing_lineno,
+            "similarity": round(f.similarity, 4),
+            "import_suggestion": f.import_suggestion,
+            "engine": engine,
+        }
+
+    @staticmethod
+    def _audit_hint(health_score: str, findings_count: int) -> str:
+        """根据 health_score 生成技术债 hint。"""
+        if health_score in ("D", "F"):
+            return (
+                f"技术债严重（health_score={health_score}，{findings_count} 处克隆）——"
+                "建议优先处理 refactoring_plan 中的 extract 级项。"
+            )
+        if health_score == "C":
+            return f"有累积技术债（health_score=C，{findings_count} 处克隆）——建议择期还债。"
+        return f"技术债健康（health_score={health_score}，{findings_count} 处克隆）——状态良好。"
+
+    @staticmethod
     def _build_hint(result: Any, findings: list[dict[str, Any]]) -> str:
         """根据检测结果生成 actionable hint，引导 AI 复用而非重复。"""
         if result.degraded:
@@ -297,10 +467,7 @@ class CloneGuardMCPServer(BaseMCPServer):
                 if f["severity"] == "extract" and f["import_suggestion"]:
                     parts.append(f"  {f['import_suggestion']}  # 替代 {f['source_function']}")
         if review_count:
-            parts.append(
-                f"发现 {review_count} 处 review 级克隆（2副本，建议精简）——"
-                "考虑复用已有代码以减少重复。"
-            )
+            parts.append(f"发现 {review_count} 处 review 级克隆（2副本，建议精简）——考虑复用已有代码以减少重复。")
 
         return "\n".join(parts) if parts else "检测到克隆但无 actionable 建议。"
 
