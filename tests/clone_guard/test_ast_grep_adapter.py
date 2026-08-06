@@ -22,9 +22,9 @@ from zephyr.clone_guard.config import CloneGuardConfig
 from zephyr.clone_guard.engines.ast_grep_adapter import AstGrepAdapter
 
 
-def _make_rule_file(tmp_path: Path, name: str = "test-rule.yml") -> Path:
+def _make_rule_file(tmp_path: Path, name: str = "test-rule.yaml") -> Path:
     """创建测试规则文件。"""
-    rules_dir = tmp_path / "clone_guard" / "rules"
+    rules_dir = tmp_path / "src" / "zephyr" / "clone_guard" / "rules"
     rules_dir.mkdir(parents=True, exist_ok=True)
     rule_file = rules_dir / name
     rule_file.write_text(
@@ -76,7 +76,7 @@ class TestAstGrepAdapterHealthCheck:
             assert adapter.health_check() is False
 
     def test_empty_rules_dir_returns_false(self, tmp_path: Path):
-        """规则目录无 .yml 文件时返回 False。"""
+        """规则目录无 .yaml 文件时返回 False。"""
         (tmp_path / "clone_guard" / "rules").mkdir(parents=True)
         adapter = AstGrepAdapter(tmp_path, CloneGuardConfig())
         with patch("shutil.which", return_value="/fake/ast-grep"):
@@ -118,7 +118,7 @@ class TestAstGrepAdapterDetect:
         assert degraded is True
 
     def test_empty_rules_dir_degraded(self, tmp_path: Path):
-        """规则目录无 .yml 文件时降级。"""
+        """规则目录无 .yaml 文件时降级。"""
         (tmp_path / "clone_guard" / "rules").mkdir(parents=True)
         adapter = AstGrepAdapter(tmp_path, CloneGuardConfig())
         with patch("shutil.which", return_value="/fake/ast-grep"):
@@ -220,8 +220,8 @@ class TestAstGrepAdapterDetect:
 
     def test_multiple_rule_files_all_scanned(self, tmp_path: Path):
         """多个规则文件都被扫描。"""
-        rules_dir = _make_rule_file(tmp_path, "rule-a.yml")
-        (rules_dir / "rule-b.yml").write_text("id: rule-b\nlanguage: Python\nrule:\n  kind: pass_statement\n", encoding="utf-8")
+        rules_dir = _make_rule_file(tmp_path, "rule-a.yaml")
+        (rules_dir / "rule-b.yaml").write_text("id: rule-b\nlanguage: Python\nrule:\n  kind: pass_statement\n", encoding="utf-8")
         adapter = AstGrepAdapter(tmp_path, CloneGuardConfig())
         mock_result = MagicMock(returncode=0, stdout="[]", stderr="")
         with patch("shutil.which", return_value="/fake/ast-grep"):
@@ -281,13 +281,13 @@ class TestPathNormalization:
 
     def test_existing_file_path_normalized(self, tmp_path: Path):
         """规则文件路径归一化为正斜杠。"""
-        rules_dir = _make_rule_file(tmp_path, "test-rule.yml")
+        rules_dir = _make_rule_file(tmp_path, "test-rule.yaml")
         adapter = AstGrepAdapter(tmp_path, CloneGuardConfig())
         match_data = [_make_match(file_path="src/foo.py", line=2, rule_id="test-rule")]
         mock_result = MagicMock(returncode=1, stdout=json.dumps(match_data), stderr="")
         with patch("shutil.which", return_value="/fake/ast-grep"):
             with patch("subprocess.run", return_value=mock_result):
                 findings, _ = adapter.detect(["src/foo.py"])
-        # existing_file 应为 clone_guard/rules/test-rule.yml（正斜杠）
+        # existing_file 应为 clone_guard/rules/test-rule.yaml（正斜杠）
         assert "/" in findings[0].existing_file
         assert "\\" not in findings[0].existing_file

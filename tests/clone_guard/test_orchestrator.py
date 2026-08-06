@@ -178,7 +178,7 @@ def _make_sg_finding(
         source_file="src/new.py",
         source_function=source_function,
         source_lineno=source_lineno,
-        existing_file="clone_guard/rules/no-bare-except.yml",
+        existing_file="src/zephyr/clone_guard/rules/no-bare-except.yaml",
         existing_function=existing_function,
         existing_lineno=0,
     )

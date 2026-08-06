@@ -1,0 +1,21 @@
+# no-duplicate-try-except.yml — CloneGuard 业务规则：重复的 try-except 样板包装
+# 真源: docs/03_modules/_cross_layer/clone_guard/blueprint.md §6.2
+# 检测"try + except Exception as e + logger.error + raise"样板模式，
+# 此模式在代码库中重复出现时应抽取为装饰器或上下文管理器。
+id: no-duplicate-try-except-wrapper
+language: Python
+rule:
+  pattern: |
+    try:
+        $$$BODY
+    except Exception as $E:
+        logger.error($$$ARGS)
+        raise
+constraints:
+  E: { regex: "^(e|err|exc)$" }
+message: "重复的 try-except 包装模式——建议抽取为装饰器或上下文管理器"
+severity: warning
+metadata:
+  clone_guard_severity: review
+  clone_guard_type: rule
+  hint: "用 @swallow_and_log 装饰器或 contextlib.suppress 替代重复的 try/except 样板"

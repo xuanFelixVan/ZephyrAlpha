@@ -1,0 +1,15 @@
+# no-broad-except.yml — CloneGuard 业务规则：禁止过宽的 except Exception
+# 真源: docs/03_modules/_cross_layer/clone_guard/blueprint.md §4.3
+id: no-broad-except
+language: Python
+rule:
+  kind: except_clause
+  has:
+    kind: identifier
+    regex: "^Exception$"
+message: except Exception 过宽——捕获所有异常会掩盖 bug，应捕获具体异常类型
+severity: warning
+metadata:
+  clone_guard_severity: review
+  clone_guard_type: rule
+  hint: "使用 `except SpecificError:` 替代 `except Exception:`"

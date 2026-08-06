@@ -17,7 +17,7 @@
 """AstGrepAdapter — ast-grep 规则引擎适配器（Phase B）。
 
 封装 ast-grep CLI 的 scan 命令，对编排层暴露统一 detect() 接口。
-通过 `ast-grep scan --rule <rule.yml> --json=compact --include-metadata FILES` 调用，
+通过 `ast-grep scan --rule <rule.yaml> --json=compact --include-metadata FILES` 调用，
 解析 JSON 输出为 Finding 列表。
 
 ast-grep 职责：YAML 自定义结构化模式匹配（业务规则，如"禁止 bare except"）。
@@ -54,8 +54,8 @@ _SEVERITY_MAP: dict[str, str] = {
     "info": "acknowledged",  # ast-grep info → acknowledged（跳过）
 }
 
-# 默认规则目录（相对仓库根目录）
-_DEFAULT_RULES_DIR = "clone_guard/rules"
+# 默认规则目录（相对仓库根目录，blueprint §4.1：规则随包放置在 src/zephyr/clone_guard/rules/）
+_DEFAULT_RULES_DIR = "src/zephyr/clone_guard/rules"
 
 
 class AstGrepAdapter:
@@ -71,7 +71,7 @@ class AstGrepAdapter:
         self._rules_dir = self._repo_root / _DEFAULT_RULES_DIR
 
     def health_check(self) -> bool:
-        """检查 ast-grep 是否可用（CLI 存在 + 规则目录有 .yml 文件）。"""
+        """检查 ast-grep 是否可用（CLI 存在 + 规则目录有 .yaml 文件）。"""
         ast_grep = shutil.which("ast-grep")
         if ast_grep is None:
             return False
@@ -79,13 +79,13 @@ class AstGrepAdapter:
         if not self._rules_dir.exists():
             return False
 
-        rule_files = list(self._rules_dir.glob("*.yml"))
+        rule_files = list(self._rules_dir.glob("*.yaml"))
         return len(rule_files) > 0
 
     def detect(self, files: list[str], timeout: int | None = None) -> tuple[list[Finding], bool]:
         """检测给定文件的结构反模式。
 
-        遍历规则目录下所有 .yml 规则文件，对每个规则运行 ast-grep scan。
+        遍历规则目录下所有 .yaml 规则文件，对每个规则运行 ast-grep scan。
 
         Args:
             files: 待检测文件路径列表（相对路径）。
@@ -110,9 +110,9 @@ class AstGrepAdapter:
             logger.debug("AstGrepAdapter: 规则目录不存在(%s)，跳过检测", self._rules_dir)
             return [], True
 
-        rule_files = sorted(self._rules_dir.glob("*.yml"))
+        rule_files = sorted(self._rules_dir.glob("*.yaml"))
         if not rule_files:
-            logger.debug("AstGrepAdapter: 规则目录无 .yml 文件，跳过检测")
+            logger.debug("AstGrepAdapter: 规则目录无 .yaml 文件，跳过检测")
             return [], True
 
         timeout_sec = timeout or self._config.pre_commit_timeout_sec

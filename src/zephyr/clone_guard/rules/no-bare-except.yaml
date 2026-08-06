@@ -1,0 +1,16 @@
+# no-bare-except.yml — CloneGuard 业务规则：禁止 bare except 子句
+# 真源: docs/03_modules/_cross_layer/clone_guard/blueprint.md §4.3
+id: no-bare-except
+language: Python
+rule:
+  kind: except_clause
+  # bare except 即 except_clause 文本以 "except:" 开头（无异常类型）。
+  # 不用 not:has:identifier——`except X as e:` 的 identifier 嵌套在 as_pattern 内，
+  # has 只查直接子节点，会导致 not 逻辑误报。regex 锚定文本最稳健。
+  regex: "^except\\s*:"
+message: "bare except 子句捕获所有异常（含 SystemExit/KeyboardInterrupt），应指定具体异常类型"
+severity: warning
+metadata:
+  clone_guard_severity: review
+  clone_guard_type: rule
+  hint: "使用 `except SpecificError:` 替代 bare except"

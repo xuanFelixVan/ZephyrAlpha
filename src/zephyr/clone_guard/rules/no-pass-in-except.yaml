@@ -1,0 +1,17 @@
+# no-pass-in-except.yml — CloneGuard 业务规则：禁止 except: pass 静默吞异常
+# 真源: docs/03_modules/_cross_layer/clone_guard/blueprint.md §4.3
+id: no-pass-in-except
+language: Python
+rule:
+  kind: except_clause
+  # pass_statement 嵌套在 except_clause → block → pass_statement 中，
+  # has 只查直接子节点，需嵌套 has:has: 才能下钻到 block 内的 pass。
+  has:
+    has:
+      kind: pass_statement
+message: "except: pass 静默吞掉异常——应至少 log 或 re-raise"
+severity: warning
+metadata:
+  clone_guard_severity: review
+  clone_guard_type: rule
+  hint: "在 except 块中至少 logger.warning(...) 或 raise"

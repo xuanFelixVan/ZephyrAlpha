@@ -357,7 +357,7 @@ class TestDedupNormalization:
             finding_id="F-1",
         )
         f2 = _make_finding(
-            existing_file="clone_guard/rules/no-duplicate-try-except.yml",
+            existing_file="src/zephyr/clone_guard/rules/no-duplicate-try-except.yaml",
             existing_function="rule:no-duplicate-try-except",
             finding_id="F-2",
         )
