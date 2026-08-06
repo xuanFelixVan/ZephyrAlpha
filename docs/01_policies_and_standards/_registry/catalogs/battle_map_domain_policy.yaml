@@ -344,6 +344,18 @@ acknowledged_orphans:
       review_frequency: "monthly"
       promotion_criteria: "build_status planned→stable 后，挂 BM-RES/BM-SEL 环节并移出此清单"
 
+    - blueprint_id: MOD-REGIME-002
+      domain: D_REGIME
+      reason: "体制识别子系统 stable 实现模块（trend_features.py / __init__.py），待 MOD-REGIME-001 promote 后统一挂载到 stock_selection 环节"
+      review_frequency: "monthly"
+      promotion_criteria: "MOD-REGIME-001 build_status planned→stable 后，与 MOD-REGIME-001 一起挂 BM-SEL 环节并移出此清单"
+
+    - blueprint_id: MOD-REGIME-005
+      domain: D_REGIME
+      reason: "体制识别子系统 stable 实现模块（chip_distribution_engine.py），待 MOD-REGIME-001 promote 后统一挂载"
+      review_frequency: "monthly"
+      promotion_criteria: "MOD-REGIME-001 build_status planned→stable 后，与 MOD-REGIME-001 一起挂 BM-SEL 环节并移出此清单"
+
   # 环节侧：CAND-HARVEST 锚点清除后的"计划中未实现"占位（31个无锚点环节）
   steps:
     # 高风险组（28个）：top-level（无父，15个）+ chain orphan（父也是孤儿，13个）

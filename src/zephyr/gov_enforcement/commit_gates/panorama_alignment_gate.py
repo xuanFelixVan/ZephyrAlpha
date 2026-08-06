@@ -175,7 +175,7 @@ def make_panorama_alignment_gate() -> GateSpec:
             if scripts_root not in sys.path:
                 sys.path.insert(0, scripts_root)
 
-            from governance.d5_architecture.generators.align_panoramas import (
+            from governance.d5_architecture.generators.align_panoramas import (  # noqa: import-integrity  scripts_root 依赖运行时 gateway.project_root，静态不可解析
                 PanoramaEmptyError,
                 run_alignment,
             )

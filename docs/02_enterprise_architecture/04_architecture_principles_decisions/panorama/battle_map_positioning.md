@@ -396,13 +396,13 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 
 ### 8.4 不变量
 
-- **BM-INV-001**：每个 `battle_map_steps` 必须至少有一个 `battle_map_anchors`（环节无锚点 = 悬空决策 = 幻觉风险，君子协定告警，跑顺后升级硬阻断）
+- **BM-INV-001**：每个 `battle_map_steps` 必须至少有一个 `battle_map_anchors`（环节无锚点 = 悬空决策 = 幻觉风险，君子协定告警，跑顺后升级硬阻断）。**V1.1.0 三档分类**（治本）：已确认合理孤儿环节（acknowledged，如"计划中未实现"或"父环节已覆盖"）从违规列表排除——真源 `battle_map_domain_policy.yaml` §acknowledged_orphans.steps，带 review_frequency 到期强制复审。检测器 `align_battle_map.py` `_load_acknowledged_orphans()`。100% AI 开发适配：AI 看到 acknowledged 分类后不再尝试"修复"（消除治理振荡）
 - **BM-INV-002**：`battle_map_anchors.target_id` 必须能在 `target_graph` 对应的图/仓库里找到（防幽灵锚点）
 - **BM-INV-003**：环节叙事必须来自翻译真源 `battle_map_steps` 段，禁止在生成器硬编码
 - **BM-INV-004**：anchor 的 target module/candidate 的 domain 必须在 step.flow_stage 对应的允许域列表里（防域漂移=语义错位，如把卖出决策挂在买入流程）。规则真源：`docs/01_policies_and_standards/_registry/catalogs/battle_map_domain_policy.yaml`，检测器：`align_battle_map.py` §5
 - **BM-INV-005（未落地/规划中，2026-08-03 降级）**：全景图模块的 `battle_map_step_ids` 派生只读缓存——机制未建设（depgraph.nodes 无此列、apply_battle_map.py 无 sync、align_battle_map.py 不检测），当前通过 `battle_map_anchors` 反查（target_graph=depgraph + target_id=blueprint_id，idx_battle_map_anchors_target 索引支撑），无需派生缓存。未来若出现高频查询性能需求再评估建设。
 - **BM-INV-006**（V0.4.0 新增）：父子嵌套一致性——① `parent_step_id` 必须指向同 flow_stage 的已存在环节（防悬空父引用+防跨阶段嵌套）；② `depth ≤ 3`（根→子→孙→曾孙，V0.6.0 扩展上限）；③ parent 链不能成环（A→B→A）；④ `depth` 值与 parent 链长度一致。写入校验：`apply_battle_map.py` op_add_step；对齐检测：`align_battle_map.py` `_check_parent_child_consistency()`
-- **BM-INV-007**（V0.7.0 新增）：孤儿模块——业务域（`battle_map_domain_policy.yaml` 所有 flow_stage 的 allowed 域并集）内的 depgraph 节点，必须至少有一个 `battle_map_anchors` 指向它（target_graph=depgraph，target_id 命中其 blueprint_id 或 path）。无任何锚点指向 = 没有作战使命 = 造出来没用上 = 幻觉/浪费风险。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等基础设施/治理/工具）天然排除，不在此扫。对齐检测：`align_battle_map.py` `_business_modules_depgraph()` + 已锚定集合反查。君子协定告警，不硬阻断。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"，两个方向都显化落单。
+- **BM-INV-007**（V0.7.0 新增，V1.1.0 治本改造）：孤儿模块——业务域（`battle_map_domain_policy.yaml` §domain_classification.business_domains，V1.1.0 用显式分类替代原 flow_stage allowed 域并集——并集含工具域导致 106 个基础设施模块误报）内的 depgraph 节点（node_type=module，排除 deprecated），必须至少有一个 `battle_map_anchors` 指向它（target_graph=depgraph，target_id 命中其 blueprint_id 或 path）。无任何锚点指向 = 没有作战使命 = 造出来没用上 = 幻觉/浪费风险。工具域（D_INFRA_RUNTIME/D_INTEGRATION/D_SHARED/D_SECURITY 等基础设施/管道/支撑）铁律5不挂作战地图，由 domain_classification.tool_domains 天然排除。**V1.1.0 三档分类**（治本）：已确认合理孤儿模块（acknowledged，如 planned 待实现）从违规列表排除——真源 §acknowledged_orphans.modules，带 review_frequency 到期强制复审。对齐检测：`align_battle_map.py` `_business_modules_depgraph()` + 已锚定集合反查 + `_load_domain_classification()` + `_load_acknowledged_orphans()`。君子协定告警，不硬阻断。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"，两个方向都显化落单。
 
 ---
 

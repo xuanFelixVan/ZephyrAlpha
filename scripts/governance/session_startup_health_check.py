@@ -269,7 +269,7 @@ def check_gateway_module(mod_spec: dict, repo_root: Path) -> dict:
     """检查 gateway 模块能否 import + 关键属性存在。"""
     src_path = repo_root / "src"
     if str(src_path) not in sys.path:
-        sys.path.insert(0, str(src_path))
+        sys.path.insert(0, str(src_path))  # noqa: import-integrity  src_path 依赖函数参数 repo_root，静态不可解析
     try:
         mod = importlib.import_module(mod_spec["module"])
     except Exception as e:  # noqa: BLE001 — smoke test 必须捕获所有异常
@@ -376,7 +376,7 @@ def run_startup_health_check(
     # 独立运行时（非 pytest）需要此设置才能正确检测 import 失败（Phase 1 类 NameError）
     src_path = root / "src"
     if src_path.is_dir() and str(src_path) not in sys.path:
-        sys.path.insert(0, str(src_path))
+        sys.path.insert(0, str(src_path))  # noqa: import-integrity  src_path 依赖函数参数 repo_root，静态不可解析
 
     checks: list[dict] = []
 
@@ -422,7 +422,7 @@ def run_startup_health_check(
             # 确保 src/ 在 sys.path（_check_gateway_module 已设过，但保险）
             src_path = root / "src"
             if src_path.is_dir() and str(src_path) not in sys.path:
-                sys.path.insert(0, str(src_path))
+                sys.path.insert(0, str(src_path))  # noqa: import-integrity  src_path 依赖函数参数 repo_root，静态不可解析
             from zephyr.governance.audit.reconciliation_registry import log_gate_failure
             detail = fail_summary or f"session_startup_health_check failed: {len(failed)}/{len(checks)} 项 fail"
             log_gate_failure(

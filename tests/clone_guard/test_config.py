@@ -162,3 +162,182 @@ class TestEnvConfig:
         )
         cfg = load_config(tmp_path)
         assert cfg.env == {}
+
+
+class TestPhaseBConfigFields:
+    """Phase B 补齐字段默认值测试（ast-grep 显式 + reDUP）。"""
+
+    def test_default_ast_grep_enabled(self):
+        cfg = CloneGuardConfig()
+        assert cfg.ast_grep_enabled is True
+
+    def test_default_redup_enabled(self):
+        """reDUP 默认启用（L1 第3引擎）。"""
+        cfg = CloneGuardConfig()
+        assert cfg.redup_enabled is True
+
+    def test_default_redup_min_sim(self):
+        cfg = CloneGuardConfig()
+        assert cfg.redup_min_sim == 0.85
+
+    def test_default_redup_mode_changed_only(self):
+        """reDUP 默认 L1 changed-only 增量模式。"""
+        cfg = CloneGuardConfig()
+        assert cfg.redup_mode == "changed-only"
+
+    def test_default_redup_max_groups_unlimited(self):
+        """redup_max_groups 默认 0（不限组数）。"""
+        cfg = CloneGuardConfig()
+        assert cfg.redup_max_groups == 0
+
+
+class TestPhaseCConfigFields:
+    """Phase C 字段默认值测试（mcrit/vendetect/relate + audit/compare 超时）。"""
+
+    def test_default_mcrit_disabled(self):
+        """mcrit 默认禁用（L2 审计才启用）。"""
+        cfg = CloneGuardConfig()
+        assert cfg.mcrit_enabled is False
+
+    def test_default_mcrit_index_path(self):
+        cfg = CloneGuardConfig()
+        assert cfg.mcrit_index_path == ".mcrit/index.db"
+
+    def test_default_vendetect_disabled(self):
+        cfg = CloneGuardConfig()
+        assert cfg.vendetect_enabled is False
+
+    def test_default_vendetect_remote_url_none(self):
+        cfg = CloneGuardConfig()
+        assert cfg.vendetect_remote_url is None
+
+    def test_default_relate_disabled(self):
+        cfg = CloneGuardConfig()
+        assert cfg.relate_enabled is False
+
+    def test_default_relate_index_path(self):
+        cfg = CloneGuardConfig()
+        assert cfg.relate_index_path == ".relate/index"
+
+    def test_default_audit_timeout(self):
+        cfg = CloneGuardConfig()
+        assert cfg.audit_timeout_sec == 300
+
+    def test_default_compare_timeout(self):
+        cfg = CloneGuardConfig()
+        assert cfg.compare_timeout_sec == 600
+
+    def test_default_filter_minority_false(self):
+        """filter_minority 默认 False——保留少数派但标记 consensus。"""
+        cfg = CloneGuardConfig()
+        assert cfg.filter_minority is False
+
+
+class TestNestedEngineConfig:
+    """嵌套引擎配置加载测试（蓝图 §6.1 pre_commit.engines.* / audit.engines.* / compare.*）。"""
+
+    def test_pre_commit_engines_redup_loaded(self, tmp_path: Path):
+        """pre_commit.engines.redup 嵌套配置正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "pre_commit:\n"
+            "  engines:\n"
+            "    redup:\n"
+            "      enabled: false\n"
+            "      min_sim: 0.9\n"
+            "      mode: semantic\n"
+            "      max_groups: 10\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.redup_enabled is False
+        assert cfg.redup_min_sim == 0.9
+        assert cfg.redup_mode == "semantic"
+        assert cfg.redup_max_groups == 10
+
+    def test_pre_commit_engines_ast_grep_loaded(self, tmp_path: Path):
+        """pre_commit.engines.ast_grep 嵌套配置正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "pre_commit:\n"
+            "  engines:\n"
+            "    ast_grep:\n"
+            "      enabled: false\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.ast_grep_enabled is False
+
+    def test_pre_commit_engines_echo_guard_loaded(self, tmp_path: Path):
+        """pre_commit.engines.echo_guard 嵌套配置正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "pre_commit:\n"
+            "  engines:\n"
+            "    echo_guard:\n"
+            "      enabled: false\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.echo_guard_enabled is False
+
+    def test_audit_engines_mcrit_loaded(self, tmp_path: Path):
+        """audit.engines.mcrit 嵌套配置正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "audit:\n"
+            "  timeout_sec: 600\n"
+            "  engines:\n"
+            "    mcrit:\n"
+            "      enabled: true\n"
+            "      index_path: /custom/mcrit.db\n"
+            "      query_threshold: 0.8\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.mcrit_enabled is True
+        assert cfg.mcrit_index_path == "/custom/mcrit.db"
+        assert cfg.mcrit_query_threshold == 0.8
+        assert cfg.audit_timeout_sec == 600
+
+    def test_compare_vendetect_relate_loaded(self, tmp_path: Path):
+        """compare 段 vendetect/relate 配置正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "compare:\n"
+            "  timeout_sec: 900\n"
+            "  vendetect_cross_repo: true\n"
+            "  vendetect_remote_url: https://github.com/x/y\n"
+            "  relate_prescreen: true\n"
+            "  relate_index_path: /custom/relate\n"
+            "  relate_top_k: 20\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.vendetect_enabled is True
+        assert cfg.vendetect_remote_url == "https://github.com/x/y"
+        assert cfg.relate_enabled is True
+        assert cfg.relate_index_path == "/custom/relate"
+        assert cfg.relate_top_k == 20
+        assert cfg.compare_timeout_sec == 900
+
+    def test_nested_config_backward_compatible(self, tmp_path: Path):
+        """旧式扁平配置（无 engines 嵌套）仍向后兼容。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "pre_commit:\n"
+            "  timeout_sec: 45\n"
+            "  echo_guard_enabled: false\n"
+            "  fail_closed: true\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.pre_commit_timeout_sec == 45
+        assert cfg.echo_guard_enabled is False
+        assert cfg.fail_closed is True
+        # 新字段用默认值
+        assert cfg.redup_enabled is True
+        assert cfg.ast_grep_enabled is True
+
+    def test_aggregation_filter_minority_loaded(self, tmp_path: Path):
+        """aggregation.filter_minority 配置正确加载。"""
+        (tmp_path / "clone_guard.yml").write_text(
+            "aggregation:\n  filter_minority: true\n",
+            encoding="utf-8",
+        )
+        cfg = load_config(tmp_path)
+        assert cfg.filter_minority is True

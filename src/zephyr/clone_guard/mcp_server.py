@@ -1,29 +1,30 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.4
 # [MODULE] zephyr.clone_guard.mcp_server
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.integration.mcp._base_server (BaseMCPServer, MCPError); zephyr.clone_guard.orchestrator (CloneGuardOrchestrator, CheckResult); zephyr.clone_guard.engines.echo_guard_adapter (EchoGuardAdapter); zephyr.shared.utils.time_utils (now_iso)
+# [DEPENDENCIES] zephyr.integration.mcp._base_server (BaseMCPServer, MCPError); zephyr.clone_guard.orchestrator (CloneGuardOrchestrator, CheckResult); zephyr.clone_guard.engines.echo_guard_adapter (EchoGuardAdapter); zephyr.clone_guard.engines.mcrit_adapter (McritAdapter); zephyr.clone_guard.engines.relate_adapter (RelateAdapter); zephyr.shared.utils.time_utils (now_iso)
 # [CONSUMERS] config/mcp.json (servers.clone_guard); AI agent (L0 源头预防)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] L0 源头预防——AI 写代码前主动调用，返回 advisory findings + import_suggestion（不硬阻断）；check_before_write 永不抛异常（orchestrator.check() 守 ERROR_CONTRACT）；co-located with clone_guard 模块（守 red_blue_validator 先例）
+# [INVARIANTS] L0 源头预防——AI 写代码前主动调用，返回 advisory findings + import_suggestion（不硬阻断）；check_before_write 永不抛异常（orchestrator.check() 守 ERROR_CONTRACT）；co-located with clone_guard 模块（守 red_blue_validator 先例）；search_functions/audit_status 永不抛异常（6层闭环·可达性）
 # [MODIFY-GUARD] blueprint=docs/03_modules/_cross_layer/clone_guard/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] check_before_write 永不抛异常——orchestrator 降级时返回 degraded=True + passed=True（warn-only 兜底）；health_check 永不抛异常
+# [ERROR_CONTRACT] check_before_write/search_functions/audit_status 永不抛异常——降级时返回 degraded=True（warn-only 兜底）；health_check 永不抛异常
 # [TESTS] tests/clone_guard/test_mcp_server.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""CloneGuardMCPServer — L0 源头预防 MCP Server（Phase A MVP）
+"""CloneGuardMCPServer — L0 源头预防 + L2 技术债可达性 MCP Server（Phase C）
 
 治本 100% AI 开发场景下的"重复造轮子"病根。L0 层让 AI 在写代码前主动查重，
 返回 advisory findings + import_suggestion，引导 AI 复用已有代码而非重复实现。
+L2 层让 AI 冷启动时主动查询累积技术债（6层闭环·可达性），看见债才能还债。
 
 四层防御纵深定位
 ----------------
   L0 源头预防（本 Server）— AI 写代码前主动调用 check_before_write，advisory 不阻断
   L1 提交拦截              — pre-commit 硬阻断 extract 级克隆（CAPABILITY-OVERLAP 门禁）
-  L2 周期审计              — 全量语义扫描（Phase B）
+  L2 周期审计              — 全量语义扫描（audit_status 让 AI 主动查询技术债）
   L3 跨边界审计            — 跨仓库/跨项目（Phase C）
 
 L0 vs L1 的本质区别
@@ -35,6 +36,8 @@ L0 vs L1 的本质区别
 实现工具
 --------
 - clone_guard.check_before_write — L0 源头预防：AI 写代码前查重，返回 advisory findings
+- clone_guard.search_functions   — L0 按语义搜已有函数（mcrit/relate search()），引导复用
+- clone_guard.audit_status       — L2 查询技术债（读最近 audit JSON，6层闭环·可达性）
 - clone_guard.health_check       — 检查 echo-guard 引擎 + 索引可用性
 
 Usage::
@@ -47,6 +50,12 @@ Usage::
         # AI 看到 import_suggestion，选择复用而非重复实现
         for f in result["findings"]:
             print(f"  已有 {f['existing_function']} 在 {f['existing_file']}——{f['import_suggestion']}")
+
+    # AI 冷启动查询累积技术债
+    status = await mcp_call("clone_guard.audit_status", {})
+    if status["health_score"] in ("D", "F"):
+        for plan in status["refactoring_plan"]:
+            print(f"  待还债: {plan}")
 """
 
 from __future__ import annotations
