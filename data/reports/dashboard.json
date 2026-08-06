@@ -1,28 +1,28 @@
 {
-  "dashboard_id": "DASH-20260806-829",
-  "generated_at": "2026-08-06T08:47:52.200829",
+  "dashboard_id": "DASH-20260806-307",
+  "generated_at": "2026-08-06T09:30:37.627307",
   "health_score": "C",
-  "total_assets": 14980,
+  "total_assets": 15018,
   "orphan_rate_pct": 56.1,
   "ghost_rate_pct": 0.0,
   "drift_rate_pct": 0.0,
   "by_type": {
-    "module": 2688,
-    "unknown": 8398,
+    "module": 2696,
+    "unknown": 8421,
     "registry": 50,
     "gate": 83,
     "script": 563,
     "doc": 508,
     "config": 40,
-    "test": 2424,
+    "test": 2431,
     "data": 226
   },
   "by_layer": {
-    "cross_layer": 10803,
+    "cross_layer": 10862,
     "L01": 1065,
     "L02": 314,
     "L03": 248,
-    "L04": 2550
+    "L04": 2529
   },
   "alerts": [
     "孤儿率 56.1% 超过 2% 阈值"
