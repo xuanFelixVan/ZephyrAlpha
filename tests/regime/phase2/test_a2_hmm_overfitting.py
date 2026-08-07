@@ -70,6 +70,28 @@ class TestA2AlignLabels(unittest.TestCase):
         self.assertEqual(mapping[1], 2)
         self.assertEqual(mapping[2], 0)
 
+    def test_hungarian_all_features_superior(self):
+        """Hungarian 全特征匹配优于单特征排序：对齐特征列恒定时单特征排序失效。
+
+        场景：col 0（vol_pct 代理）三态恒定 0.5，col 1 有区分性。
+          means_a = [[0.5,0.1],[0.5,0.5],[0.5,0.9]]
+          means_b = [[0.5,0.9],[0.5,0.1],[0.5,0.5]]
+        单特征排序（col 0）：三态 rank 全 0（tie）→ 错配 {0:0,1:1,2:2}
+        Hungarian 全特征：col 0 距离全 0，col 1 决定 → 正确 {0:1,1:2,2:0}
+
+        回归守护：防止 _align_labels 退回单特征排序导致一致率被低估
+        （A2 基线 OOS/IS=0.340 部分归因于此）。
+        """
+        means_a = np.array([[0.5, 0.1], [0.5, 0.5], [0.5, 0.9]])
+        means_b = np.array([[0.5, 0.9], [0.5, 0.1], [0.5, 0.5]])
+        hmm_a = _make_hmm_mock(means_a)
+        hmm_b = _make_hmm_mock(means_b)
+        mapping = A2HmmOverfitting._align_labels(hmm_a, hmm_b)
+        # Hungarian 全特征：A 态 0(col1=0.1)→B 态 1(col1=0.1)，非恒等映射
+        self.assertEqual(mapping[0], 1, "A 态0(col1=0.1) 应映射到 B 态1(col1=0.1)")
+        self.assertEqual(mapping[1], 2, "A 态1(col1=0.5) 应映射到 B 态2(col1=0.5)")
+        self.assertEqual(mapping[2], 0, "A 态2(col1=0.9) 应映射到 B 态0(col1=0.9)")
+
 
 class TestA2Accuracy(unittest.TestCase):
     """_accuracy：mapping 对齐后逐日一致率。"""

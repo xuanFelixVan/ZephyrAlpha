@@ -21,7 +21,7 @@
   1. IS 数据（如 2010-2018）fit → HMM_is；OOS 数据（如 2019-2026）fit → HMM_oos
   2. HMM_is 解码 OOS → seq_is（IS 模型看 OOS 的态序列）
   3. HMM_oos 解码 OOS → seq_oos（OOS 模型看自己的态序列，作"参考真值"）
-  4. 标签对齐（HMM permutation invariance）——按态均值特征排序建立 IS→OOS 映射
+  4. 标签对齐（HMM permutation invariance）——Hungarian 全特征最优匹配建立 IS→OOS 映射
   5. 对齐后逐日一致率 = OOS 准确率；同理 IS 准确率
   6. 比值 OOS/IS ≥ 0.7 → PASS（过拟合可控）
 
@@ -174,9 +174,9 @@ class A2HmmOverfitting:
             _logger.warning("A2: HMM 模型为空（hmmlearn 不可用），降级")
             return self._degraded_report(len(X_is), len(X_oos))
 
-        # 标签对齐（permutation invariance）——按态均值特征排序
+        # 标签对齐（permutation invariance）——Hungarian 全特征最优匹配
         mapping = self._align_labels(hmm_is, hmm_oos)
-        alignment_desc = "按态均值特征排序（vol_pct 列）"
+        alignment_desc = "Hungarian 全特征最优匹配（欧氏距离）"
 
         # 交叉解码 + 一致率
         # OOS 准确率：HMM_is 解码 OOS（用 IS scaler transform）vs HMM_oos 解码 OOS
@@ -247,30 +247,47 @@ class A2HmmOverfitting:
 
     @staticmethod
     def _align_labels(hmm_a: Any, hmm_b: Any, feature_idx: int = 0) -> dict[int, int]:
-        """标签对齐：按态均值特征排序，建立 A→B 标签映射。
+        """标签对齐：Hungarian 算法全特征最优匹配（scipy 不可用时回退单特征排序）。
 
         HMM 有 permutation invariance（A 模型的态 0 可能对应 B 模型的态 3）。
-        按各态的 feature_idx 列均值排序，rank 相同的态对齐。
+        用**全部特征列**的态均值向量算 IS/OOS 各态间欧氏距离矩阵，Hungarian
+        算法（scipy.optimize.linear_sum_assignment）求一对一最优匹配（最小化
+        总距离），建立 A→B 映射。
+
+        优于原"按单特征（vol_pct）排序"：9 态 HMM 有 6 特征，单特征排序在
+        两态 vol_pct 相近但其他特征差异大时会错配，导致交叉解码一致率被低估。
+        Hungarian 全特征匹配是无监督 HMM 标签对齐的标准做法。
 
         Args:
             hmm_a: IS 模型（source）。
             hmm_b: OOS 模型（target）。
-            feature_idx: 对齐所用的特征列（默认 0=realized_vol_pct）。
+            feature_idx: scipy 不可用回退单特征排序时所用列（默认 0=realized_vol_pct）。
 
         Returns:
             {a_state: b_state} 映射。
         """
-        means_a = hmm_a.means_[:, feature_idx]
-        means_b = hmm_b.means_[:, feature_idx]
-        # rank：按均值排序后的位置（0=最小均值态）
-        rank_a = np.argsort(np.argsort(means_a))
-        rank_b = np.argsort(np.argsort(means_b))
-        mapping: dict[int, int] = {}
-        for a_state in range(len(rank_a)):
-            # 找 B 中 rank 相同的态
-            b_candidates = np.where(rank_b == rank_a[a_state])[0]
-            mapping[a_state] = int(b_candidates[0]) if len(b_candidates) > 0 else a_state
-        return mapping
+        means_a = hmm_a.means_  # (n_states, n_features)
+        means_b = hmm_b.means_  # (n_states, n_features)
+        try:
+            from scipy.optimize import linear_sum_assignment
+            # 全特征欧氏距离矩阵 (n_states_a, n_states_b)
+            dist = np.linalg.norm(
+                means_a[:, None, :] - means_b[None, :, :], axis=2
+            )
+            row_ind, col_ind = linear_sum_assignment(dist)
+            return {int(r): int(c) for r, c in zip(row_ind, col_ind)}
+        except ImportError:  # pragma: no cover
+            _logger.warning("scipy 不可用，回退单特征排序对齐（可能低估一致率）")
+            means_a_1d = means_a[:, feature_idx]
+            means_b_1d = means_b[:, feature_idx]
+            # rank：按均值排序后的位置（0=最小均值态）
+            rank_a = np.argsort(np.argsort(means_a_1d))
+            rank_b = np.argsort(np.argsort(means_b_1d))
+            mapping: dict[int, int] = {}
+            for a_state in range(len(rank_a)):
+                b_candidates = np.where(rank_b == rank_a[a_state])[0]
+                mapping[a_state] = int(b_candidates[0]) if len(b_candidates) > 0 else a_state
+            return mapping
 
     @staticmethod
     def _accuracy(seq_a: np.ndarray, seq_b: np.ndarray, mapping: dict[int, int]) -> float:
