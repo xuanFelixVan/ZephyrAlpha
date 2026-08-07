@@ -18,6 +18,9 @@
 #   - Anti-rapid-restart: runtime <10s treated as startup failure, wait 30s before retry
 #   - Logs: tick_subscriber writes stdout/stderr, this guard writes tmp/tick_subscriber_guard.log
 #   - NOTE: requires interactive user session (miniQMT/QMT terminal lives in user session)
+#   - Watchdog heartbeat (fix #ARCH-BOOT-001): guard writes heartbeat every 15s; new guard takes
+#     over if lock PID alive but heartbeat stale (>5min) -> kills zombie guard + orphan cleanup.
+#     Child monitoring polls HasExited instead of blocking WaitForExit to avoid main-thread deadlock.
 #
 # DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
 #
@@ -40,6 +43,7 @@ if (-not (Test-Path $PythonExe)) {
 }
 $TmpDir = Join-Path $RepoRoot "tmp"
 $LockFile = Join-Path $TmpDir "tick_subscriber.lock"
+$HeartbeatFile = Join-Path $TmpDir "tick_subscriber.heartbeat"
 $GuardLog = Join-Path $TmpDir "tick_subscriber_guard.log"
 
 if (-not (Test-Path $TmpDir)) {
@@ -53,16 +57,42 @@ function Write-GuardLog {
     "$ts $Message" | Out-File -FilePath $GuardLog -Append -Encoding utf8
 }
 
-# ============== Single-instance lock ==============
+# ============== Watchdog heartbeat (fix #ARCH-BOOT-001) ==============
+# guard writes heartbeat every 15s; new guard takeover if lock PID alive but heartbeat stale (>5min).
+# heartbeat format: <ISO8601>|<guard_pid>|<child_pid>
+function Write-Heartbeat {
+    param([int]$ChildPid)
+    $ts = (Get-Date).ToString("o")  # ISO 8601, with timezone
+    "$ts|$PID|$ChildPid" | Out-File -FilePath $HeartbeatFile -Encoding utf8 -NoNewline
+}
+
+# ============== Single-instance lock (with watchdog heartbeat, fix #ARCH-BOOT-001) ==============
 if (Test-Path $LockFile) {
     $lockPid = (Get-Content $LockFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
     if ($lockPid -match '^\d+$' -and (Get-Process -Id ([int]$lockPid) -ErrorAction SilentlyContinue)) {
-        Write-GuardLog "Guard already running (PID=$lockPid), exit"
-        exit 0
+        # fix: PID alive but heartbeat stale (>5min) => zombie guard, force takeover
+        $stale = $true
+        if (Test-Path $HeartbeatFile) {
+            try {
+                $hb = (Get-Content $HeartbeatFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
+                $hbTs = ($hb -split '\|')[0]
+                if (((Get-Date) - ([datetime]$hbTs)).TotalMinutes -lt 5) { $stale = $false }
+            } catch { }
+        }
+        if ($stale) {
+            Write-GuardLog "Guard PID=$lockPid alive but heartbeat stale (>5min), force takeover (kill zombie guard)"
+            Stop-Process -Id ([int]$lockPid) -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 2
+            Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
+        } else {
+            Write-GuardLog "Guard already running (PID=$lockPid, heartbeat fresh), exit"
+            exit 0
+        }
+    } else {
+        Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
+        Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
     }
-    Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
-    Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
-    # Invariant: no guard => no business process. Kill orphaned business python from the dead guard.
+    # Invariant: no guard => no business process. Kill orphaned business python from the dead/zombie guard.
     Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
         Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
         ForEach-Object {
@@ -91,9 +121,13 @@ try {
             -PassThru
 
         $subPid = $proc.Id
-        Write-GuardLog "tick_subscriber started (PID=$subPid), waiting for exit..."
-
-        $proc.WaitForExit()
+        Write-GuardLog "tick_subscriber started (PID=$subPid), polling exit (watchdog heartbeat every 15s)..."
+        Write-Heartbeat -ChildPid $proc.Id
+        # fix: poll HasExited instead of blocking WaitForExit to avoid main-thread deadlock; heartbeat every 15s
+        while (-not $proc.HasExited) {
+            Start-Sleep -Seconds 15
+            Write-Heartbeat -ChildPid $proc.Id
+        }
         $exitCode = $proc.ExitCode
 
         $elapsed = (Get-Date) - $startTime
@@ -121,5 +155,5 @@ finally {
         Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
         ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
     Write-GuardLog "=== TickSubscriber guard stopped (guard PID=$PID) ==="
-    Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+    Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
 }
