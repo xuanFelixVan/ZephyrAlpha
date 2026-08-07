@@ -81,7 +81,11 @@ __all__ = [
 ]
 
 # 危险子命令集合
-DANGEROUS_SUBCOMMANDS = {"reset", "checkout", "stash", "revert", "restore", "mv"}
+# clean (2026-08-08 #ARCH-GIT-CLEAN-GUARD): git clean -f* 删除 untracked 文件，
+# 完全绕过 .ailocks/ 锁系统（untracked 文件不在锁管辖范围）。手动 git clean -fd 曾误删
+# 15 个 untracked 文件（experiment_tracking .py + 7 docs）。纳入 DANGEROUS_SUBCOMMANDS
+# 触发 self-harm 检测——有 untracked 文件 + 未授权 → 阻断。
+DANGEROUS_SUBCOMMANDS = {"reset", "checkout", "stash", "revert", "restore", "mv", "clean"}
 
 # stash 只读子命令（不影响工作区文件）
 STASH_READONLY = {"list", "show", "drop"}

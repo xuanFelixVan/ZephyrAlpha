@@ -12575,29 +12575,40 @@ entries:
   severity: P3低
   category: reliability
   adjudication: |-
-    2026-08-07 立项。主治本 #ARCH-BOOT-001（Phase 1-5）已闭合僵尸接管闭环。以下三项为战略级
-    补强，非阻断（概率极低或属告警增强），建议立项跟进。详见 boot_autostart_architecture.md §8.6。
-    D. 心跳原子写：Out-File 截断+写非原子，新 guard 轮询期（5min PT5M）撞上旧 guard 写心跳的
-       微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。概率极低（5min×微秒级），
-       零成本消除：写 $HeartbeatFile.tmp + Move-Item -Force（同卷原子）。
-    E. 死人开关告警：08-06/08-07 两日停摆是人工发现的，非系统告警。心跳文件是天然 dead-man
-       信号——独立监控（可复用 ch_health_probe 或独立任务）任一 heartbeat 陈旧 >10min 即告警，
-       闭合"全层失效无人知"循环。优先级不低于主治本。
-    F. WaitForExit 死锁根因文档化：根因是 PowerShell 重定向输出管道满致 WaitForExit 不返回；
-       polling HasExited 已绕过。guard 脚本头注释已固化此知识点（Phase 1-5），防 AI "优化"回
-       WaitForExit。本条目+不变式测试（test_guard_invariants.py TestNoGuardUsesWaitForExit）双重
-       保险，战略补强仅登记跟踪文档完整度。
-    铁律#9：补强决策类，AI提议 status=proposed，待用户确认优先级与排期。
+    2026-08-07 立项，2026-08-08 落地。主治本 #ARCH-BOOT-001（Phase 1-5）已闭合僵尸接管闭环，
+    本条目 #ARCH-BOOT-002 三项战略补强闭合"全层失效无人知"循环。详见
+    boot_autostart_architecture.md §8.6。
+    D. 心跳原子写 ✅ 已落地：Out-File 截断+写非原子，新 guard 轮询期（5min PT5M）撞上旧 guard
+       写心跳的微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。3 个 guard 脚本
+       Write-Heartbeat 改写 $HeartbeatFile.tmp + Move-Item -Force（同卷原子 rename）。
+       不变式测试 TestAtomicHeartbeatWrite 钉死。
+    E. 死人开关告警 ✅ 已落地：08-06/08-07 两日停摆是人工发现的，非系统告警。新建
+       scripts/deadman_switch.ps1——无状态一次性 Task Scheduler 任务（非 while-true guard，
+       无僵尸风险），每 5min fire 读 3 个心跳文件，任一陈旧 >10min 即告警。独立性第一性原理：
+       监控者不属被监控的 3 服务之一，只读心跳；3 服务全死时此任务仍独立 fire。用 .ps1 而非 .py
+       ——若 Python 栈崩溃，.py 监控会跟着死。告警通道：飞书 webhook（推手机，复用
+       ZEPHYR_FEISHU_WEBHOOK）+ Windows Event Log + 本地日志。30min 冷却防刷屏。Fail-safe：
+       此任务自身死亡退化到 pre-E 现状（无监控），非倒退。已注册为第 4 个 Task Scheduler 任务
+       ZephyrAlpha_DeadmanSwitch。不变式测试 TestDeadmanSwitchInvariants +
+       TestDeadmanSwitchRegistered 钉死。
+    F. WaitForExit 死锁根因文档化 ✅ 已落地：根因是 PowerShell 重定向输出管道满致 WaitForExit
+       不返回；polling HasExited 已绕过。3 个 guard 脚本头注释固化"pipe buffer fills →
+       WaitForExit never returns → main thread deadlocks"知识点，防 AI "优化"回 WaitForExit。
+       不变式测试 TestWaitForExitRootCauseDocumented 钉死。
+    铁律#9：补强决策类，用户 2026-08-08 确认排期并授权施工，status=resolved。
   impact:
-    - 'scripts/start_scheduler.ps1（D: Write-Heartbeat 改 tmp+Move-Item 原子写，待办）'
-    - 'scripts/start_tick_subscriber.ps1（D: 同步原子写，待办）'
-    - 'scripts/start_ch_health_probe.ps1（D: 同步原子写，待办）'
-    - 'scripts/ops/ch_health_probe.py 或独立告警任务（E: dead-man 告警，待办）'
-    - 'docs/03_modules/_domain_data/boot_autostart_architecture.md（§8.6 战略补强说明，已写入）'
-  fix_phase: 待施工——立项 proposed，3 项战略补强（D 原子写 / E 死人开关告警 / F 根因文档化已部分完成）
-  status: proposed
+    - 'scripts/start_scheduler.ps1（D: Write-Heartbeat 改 tmp+Move-Item 原子写；F: 头注释固化 pipe buffer 根因，已落地）'
+    - 'scripts/start_tick_subscriber.ps1（D+F: 同步改造，已落地）'
+    - 'scripts/start_ch_health_probe.ps1（D+F: 同步改造，已落地）'
+    - 'scripts/deadman_switch.ps1（E: 新建死人开关一次性任务脚本，已落地）'
+    - 'scripts/register_guard_tasks.ps1（E: 注册第 4 个任务 ZephyrAlpha_DeadmanSwitch，已落地）'
+    - 'tests/scripts/test_guard_invariants.py（D/E/F: 不变式测试 TestAtomicHeartbeatWrite/TestDeadmanSwitch*/TestWaitForExitRootCauseDocumented，已落地）'
+    - 'docs/03_modules/_domain_data/boot_autostart_architecture.md（§8.6 战略补强说明，已更新为已落地）'
+    - 'AGENTS.md（watchdog 服务表新增死人开关行 + 死人开关架构说明段落）'
+  fix_phase: 已落地 2026-08-08——3 项战略补强（D 原子写 / E 死人开关告警 / F 根因文档化）全部施工，21/21 不变式测试通过
+  status: resolved
   created: '2026-08-07'
-  last_updated: '2026-08-07'
+  last_updated: '2026-08-08'
 # --- #ARCH-ECHO-GUARD-YML-COMMENT-LOSS: echo-guard acknowledge CLI 重写 yml 丢注释（2026-08-07 登记）---
 - issue_id: '#ARCH-ECHO-GUARD-YML-COMMENT-LOSS'
   title: echo-guard acknowledge CLI 用 PyYAML 重写 echo-guard.yml 丢失手工注释——项目层 ruamel round-trip 接管治本
@@ -12736,7 +12747,7 @@ entries:
     - '#ARCH-OBS-EXP-TRACK-001（实验跟踪 M1 落地）'
     - '#ARCH-047（可视化技术栈 Panel+HoloViz）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_002_backtest_observability_workplan.md'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_018_backtest_observability_workplan.md'
     - 'docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md（MOD-OBS-001 引用本 umbrella）'
   fix_phase: 'umbrella 聚合条目，无独立修复——子域各自落地。'
   status: proposed
@@ -12752,7 +12763,7 @@ entries:
     根因——confidence=max(P) 直接用 HMM 最大概率值无校准。第一性原理推演 5 性质
     （准确性/锐度/保序性/样本效率/理论保证）推出两阶段方案：Stage 1 Temperature
     Scaling 全局降温，Stage 2 Isotonic Regression 局部修正。四级降级策略
-    （full→temperature-only→isotonic-only→identity）。详见 discussion_004_phase3 §2.2。
+    （full→temperature-only→isotonic-only→identity）。详见 discussion_019_phase3 §2.2。
     铁律#9：用户显式授权 P0 工程施工，status=decided。
   impact:
     新增文件：
@@ -12762,7 +12773,7 @@ entries:
     - 'src/zephyr/regime/validation/phase2/phase2_runner.py（walk-forward 集成校准器）'
     - 'src/zephyr/regime/core/regime_detector.py（predict_log_proba + temperature tempering）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_004_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
   fix_phase: 'P0-E2 已落地（commit 13a5e1d512）——校准器仅对 HMM 基态生效，PIT 防泄漏，四级降级。'
   status: decided
   created: '2026-08-07'
@@ -12777,7 +12788,7 @@ entries:
     需 bad_news_flat ≥ 40，该指标依赖新闻 NLP 分析，当前是 stub（恒返回 0）。
     工程范围：news_collector.py / nlp_inference.py / sentiment_aggregator.py。
     候选模型：Mistral-7B（F1≥65% 基线，不达标切 Qwen2.5-7B）。详见
-    discussion_004_phase3 §P1-E3。
+    discussion_019_phase3 §P1-E3。
   impact:
     规划文件：
     - 'src/zephyr/regime/features/news_collector.py'
@@ -12786,7 +12797,7 @@ entries:
     变更文件：
     - 'src/zephyr/regime/features/overlay_features.py（bad_news_flat 指标）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_004_phase3_engineering_plan.md（§P1-E3 NLP 管道详设）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md（§P1-E3 NLP 管道详设）'
   fix_phase: 'P1-E3 待施工——zero-shot 基线评估 → 模型选型 → 管道搭建。'
   status: proposed
   created: '2026-08-07'

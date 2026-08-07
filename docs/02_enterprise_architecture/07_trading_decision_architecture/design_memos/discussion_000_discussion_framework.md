@@ -2,8 +2,8 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.1.0"
-date: 2026-08-06
+version: "1.2.0"
+date: 2026-08-08
 topic: discussion_framework
 scope: 07_trading_decision_architecture
 ---
@@ -197,7 +197,7 @@ scope: 07_trading_decision_architecture
 | 产出物 | `design_memo_004_position_sizing.md` |
 | 对标 | Morwane inverse-vol risk parity / Kelly criterion 实证 / Morwane sleeve(alpha)+risk-parity-throttle(firm) 分层 |
 | 正交性 | ✅ 与 regime 正交（regime 只缩 budget，不调仓位算法） |
-| 状态 | 框架已定（design_memo_001 §2.1 分层裁定），细节待落 |
+| 状态 | ✅ 已定稿 v1.2.0（[design_memo_004](design_memo_004_position_sizing.md)） |
 | 优先级 | P1（spec 层可先动） |
 
 #### G13 FirmRiskAggregator 逻辑
@@ -530,7 +530,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 |---|---|---|---|
 | discussion_001 | G02 regime spec | 另一AI | ✅ v1.3.1 |
 | discussion_002 | G03 regime 验证 | 另一AI | ✅ v1.0.0 |
-| discussion_003 | G04 首批3策略 | 已分配 | 讨论中 |
+| discussion_003 | G04 首批3策略 | G04-AI | ✅ v1.0.0 |
 | discussion_004 | G06 板块轮动 | （待认领） | 待开工 |
 | discussion_005 | G07 相关性验证 | （待认领） | 待开工 |
 | discussion_006 | G08 打板细节 | （待认领） | 待开工 |
@@ -544,10 +544,15 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | discussion_014 | G23 回测对接 | （待认领） | 待开工 |
 | discussion_015 | G24 模拟实盘 | （待认领） | 待开工 |
 | discussion_016 | G26 监控复盘 | （待认领） | 待开工 |
+| discussion_017 | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.2.0 |
+| discussion_018 | 回测可观测性工作计划（工程文档，非G主题） | 已提议 | 待确认 |
+| discussion_019 | Phase 3 工程规划（工程文档，非G主题） | 已提议 | 草案 |
+| discussion_020 | 方法论遗留提案（工程文档，非G主题） | 已提议 | 待讨论 |
+| discussion_021 | 密度预测远期愿景（工程文档，非G主题） | 已提议 | 待讨论 |
 | design_memo_001 | 多策略并发架构 | 已定稿 | ✅ v1.3.0 |
 | design_memo_002 | G01 数据特征层 | （待认领） | 待开工 |
 | design_memo_003 | G05 选股引擎 | （待认领） | 待开工 |
-| design_memo_004 | G12 仓位算法 | 已分配 | 讨论中 |
+| design_memo_004 | G12 仓位算法 | 已分配 | ✅ v1.2.0 |
 | design_memo_005 | G13 FirmRiskAggregator | （待认领） | 待开工 |
 | design_memo_006 | G14 BudgetChangeHandler | （待认领） | 待开工 |
 | design_memo_007 | G15 RegimeMetaAllocator | （待认领） | ⚠️等C1 |
@@ -576,7 +581,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 
 | 开放问题 | 出处 | 决策状态 |
 |---|---|---|
-| 首批 3 策略确认（打板+多因子+事件驱动） | design_memo_001 §6.1 / G04 | 待决策 |
+| 首批 3 策略确认（打板+多因子+事件驱动） | design_memo_001 §6.1 / G04 | ✅ 已定 v1.0.0（discussion_003；主升龙头并入打板，多因子新增） |
 | convergence_window 按换手率定（打板1-2/多因子3-5/事件2-3天） | design_memo_001 §6.4 / G14 | 待首批策略定后校准 |
 | 情绪周期定位器准确率评估 | design_memo_001 §6.3 / G21 | 待评估 |
 | regime 检测器业务规则 spec | design_memo_001 §6.6 / discussion_001 | ✅ 已定 v1.3.1 |
@@ -590,3 +595,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 |---|---|---|---|
 | 2026-08-06 | 1.0.0 | 初稿 | 建立 28 个主题组（G01-G28）的讨论框架路线图，供多 AI 分工认领；梳理依赖关系与 3 条并行轨道；建立产出物编号占用表 |
 | 2026-08-07 | 1.1.0 | §7.3 标记 G04/G12/G22 认领状态为已分配 | 三主题组分配给并行 AI 开工，避免后续编号撞车 |
+| 2026-08-08 | 1.2.0 | discussion_003 占用状态更新为 ✅ v1.0.0；§9 首批3策略开放问题标记已定 | G04-AI 落盘 discussion_003（首批3策略=打板+多因子+事件驱动；主升龙头并入打板，多因子新增；§1.4 对齐 charter §3 裁定 Model A 非 Citadel pod） |

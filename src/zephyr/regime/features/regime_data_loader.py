@@ -44,7 +44,7 @@ Version: 0.1.0
 from __future__ import annotations
 
 import logging
-from typing import Any, Callable
+from typing import Any, Callable, Final
 
 import pandas as pd
 
@@ -56,7 +56,81 @@ _logger = logging.getLogger(__name__)
 # 多分时共振用的 ETF 代码（510300=沪深300ETF，作为 000300 指数分钟级代理）
 _MULTI_TF_ETF = "510300"
 # 合成 VIX 用的期权标的
-_VIX_UNDERLYINGS = ["510050", "510300"]
+_VIX_UNDERLYINGS: Final = ["510050", "510300"]
+
+# ── NLP 关键词字典（P1-E3 MVP：关键词情感分析，无 GPU 降级方案）──
+# 利好关键词（正面情绪）
+_POSITIVE_KEYWORDS: Final = [
+    "降准",
+    "降息",
+    "减税",
+    "利好",
+    "增长",
+    "盈利",
+    "回购",
+    "增持",
+    "重组",
+    "并购",
+    "改革",
+    "投资",
+    "基建",
+    "补贴",
+    "扶持",
+    "刺激",
+    "支持",
+    "上涨",
+    "突破",
+    "回暖",
+    "复苏",
+    "企稳",
+    "反弹",
+]
+# 利空关键词（负面情绪）
+_NEGATIVE_KEYWORDS: Final = [
+    "跌停",
+    "暴跌",
+    "下跌",
+    "利空",
+    "亏损",
+    "减持",
+    "违规",
+    "处罚",
+    "退市",
+    "爆雷",
+    "违约",
+    "下修",
+    "下调",
+    "风险",
+    "警告",
+    "监管",
+    "限售",
+    "解禁",
+    "商誉减值",
+    "业绩变脸",
+    "诉讼",
+    "熔断",
+    "跳水",
+    "崩盘",
+    "恐慌",
+    "抛售",
+]
+# 政策关键词（政策面信号）
+_POLICY_KEYWORDS: Final = [
+    "央行",
+    "证监会",
+    "国务院",
+    "财政部",
+    "发改委",
+    "政策",
+    "规定",
+    "通知",
+    "指导意见",
+    "监管",
+    "放宽",
+    "限制",
+    "会议",
+    "部署",
+]
 
 
 def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
@@ -198,6 +272,18 @@ class RegimeDataLoader:
         """
         return self._load_or_cache("multi_tf_kline", self._load_multi_tf_kline)
 
+    def load_news_sentiment(self) -> pd.DataFrame | None:
+        """新闻情感聚合（P1-E3 MVP：关键词字典情感分析）。
+
+        从 c3_fundamental.news_data 表按日聚合，用 ClickHouse multiSearchAny
+        做服务端关键词匹配，返回每日正/负面/政策新闻计数。
+
+        Returns:
+            DataFrame(index=trade_date, cols=[total_count, positive_count,
+            negative_count, policy_count]) 或 None。供 S2 policy/bad_news_flat 用。
+        """
+        return self._load_or_cache("news_sentiment", self._load_news_sentiment)
+
     # ── 实际加载逻辑 ──────────────────────────────────────────────────────
 
     def _load_money_flow(self) -> pd.DataFrame | None:
@@ -241,6 +327,9 @@ class RegimeDataLoader:
         df["close"] = pd.to_numeric(df["close"], errors="coerce")
         df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
         df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+        # 去重：ClickHouse FINAL 可能残留重复 (trade_date, code) 对，致 unstack("code") 报
+        # "Index contains duplicate entries, cannot reshape"（P1-E5 修复，2026-08-08）
+        df = df.drop_duplicates(subset=["trade_date", "code"], keep="last")
         return df.set_index(["code", "trade_date"]).sort_index()
 
     def _load_limit_up_down(self) -> pd.DataFrame | None:
@@ -255,12 +344,57 @@ class RegimeDataLoader:
         tsv = self._query(sql, "limit_up_down")
         rows = _parse_tsv(tsv, ncols=5)
         if not rows:
-            _logger.warning("limit_up_down 无数据，leader/one_day_mainline 将降级")
+            # Fallback: limit_up_down 表仅有近期数据（2026-07+），回测窗口内无数据
+            # 从 kline_daily 派生涨跌停（P1-E5 补数据，2026-08-08）
+            _logger.info("limit_up_down 表无回测窗口数据，从 kline_daily 派生涨跌停")
+            return self._derive_limit_up_down_from_kline()
+        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "limit_type", "pct_change", "amount"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["pct_change"] = pd.to_numeric(df["pct_change"], errors="coerce")
+        df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+        return df.set_index(["trade_date", "symbol"]).sort_index()
+
+    def _derive_limit_up_down_from_kline(self) -> pd.DataFrame | None:
+        """从 kline_daily 派生涨跌停数据（limit_up_down 表数据不足时的 fallback）。
+
+        规则：
+          - pct_change >= 9.5 → "涨停"（10% 板，含误差容限）
+          - pct_change <= -9.5 → "跌停"
+          - 仅 A_share, quality_flag=1
+
+        注意：ST(5%)、创业板/科创板(20%)、北交所(30%) 的涨跌停阈值不同，
+        此派生仅捕获 10% 板涨跌停，覆盖率约 70%（MVP 可接受）。
+        """
+        table = self._registry.table("market_kline_daily")
+        sql = (
+            f"SELECT trade_date, symbol, "
+            f"multiIf(toFloat64(pct_change) >= 9.5, '涨停', "
+            f"toFloat64(pct_change) <= -9.5, '跌停', '') AS limit_type, "
+            f"toFloat64(pct_change) AS pct_change, "
+            f"toFloat64(amount) AS amount "
+            f"FROM {table} FINAL "
+            f"WHERE market_type = 'A_share' AND quality_flag = 1 "
+            f"AND (toFloat64(pct_change) >= 9.5 OR toFloat64(pct_change) <= -9.5) "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY trade_date, symbol"
+        )
+        tsv = self._query(sql, "limit_up_down (derived from kline_daily)")
+        rows = _parse_tsv(tsv, ncols=5)
+        if not rows:
+            _logger.warning("kline_daily 派生涨跌停也无数据，leader/one_day_mainline 将降级")
             return None
         df = pd.DataFrame(rows, columns=["trade_date", "symbol", "limit_type", "pct_change", "amount"])
         df["trade_date"] = pd.to_datetime(df["trade_date"])
         df["pct_change"] = pd.to_numeric(df["pct_change"], errors="coerce")
         df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+        df = df.drop_duplicates(subset=["trade_date", "symbol"], keep="last")
+        _logger.info(
+            "从 kline_daily 派生涨跌停: %d 行, %s~%s",
+            len(df),
+            df["trade_date"].min(),
+            df["trade_date"].max(),
+        )
         return df.set_index(["trade_date", "symbol"]).sort_index()
 
     def _load_hk_connect_flow(self) -> pd.DataFrame | None:
@@ -346,6 +480,52 @@ class RegimeDataLoader:
         # 分钟级数据按交易日聚合（取当日最后 bar 的 OHLCV，供日线级 KDJ 用）
         df = df.set_index("trade_date").sort_index()
         return df
+
+    def _load_news_sentiment(self) -> pd.DataFrame | None:
+        """从 news_data 表按日聚合新闻情感（关键词匹配）。
+
+        用 ClickHouse multiSearchAny 做服务端关键词匹配，返回每日
+        正/负面/政策新闻计数，供 S2 policy/bad_news_flat 维度用。
+
+        性能：ClickHouse 对 10M 行 GROUP BY + multiSearchAny 约 5-10 秒。
+        """
+        table = self._registry.table("fund_news_data")
+        pos_list = ", ".join([f"'{k}'" for k in _POSITIVE_KEYWORDS])
+        neg_list = ", ".join([f"'{k}'" for k in _NEGATIVE_KEYWORDS])
+        pol_list = ", ".join([f"'{k}'" for k in _POLICY_KEYWORDS])
+        sql = (
+            f"SELECT toDate(publish_time) AS trade_date, "
+            f"count() AS total_count, "
+            f"countIf(multiSearchAny(title, [{pos_list}])) AS positive_count, "
+            f"countIf(multiSearchAny(title, [{neg_list}])) AS negative_count, "
+            f"countIf(multiSearchAny(title, [{pol_list}])) AS policy_count "
+            f"FROM {table} "
+            f"WHERE region = 'CN' AND language = 'zh' "
+            f"AND publish_time >= toDateTime('{self.data_load_start} 00:00:00') "
+            f"AND publish_time <= toDateTime('{self.backtest_end} 23:59:59') "
+            f"GROUP BY trade_date "
+            f"ORDER BY trade_date"
+        )
+        tsv = self._query(sql, "news_sentiment")
+        rows = _parse_tsv(tsv, ncols=5)
+        if not rows:
+            _logger.warning("news_sentiment 无数据，policy/bad_news_flat 将降级 0.0")
+            return None
+        df = pd.DataFrame(
+            rows,
+            columns=["trade_date", "total_count", "positive_count", "negative_count", "policy_count"],
+        )
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        for c in ["total_count", "positive_count", "negative_count", "policy_count"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+        _logger.info(
+            "news_sentiment 加载: %d 日, %s~%s, 日均 %d 条",
+            len(df),
+            df["trade_date"].min().date(),
+            df["trade_date"].max().date(),
+            int(df["total_count"].mean()),
+        )
+        return df.set_index("trade_date").sort_index()
 
 
 __all__ = ["RegimeDataLoader"]
