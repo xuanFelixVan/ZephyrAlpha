@@ -101,6 +101,7 @@ class HistoricalEvent:
     expected_stage: list[str]  # [trigger, confirm, ...] 任一命中即算
     desc: str
     in_data_range: bool = True  # 是否在 ClickHouse 数据范围内（2008 事件=False）
+    data_ready: bool = True  # 触发条件所需维度是否就绪（S2 需 NLP+high/low，未就绪=False，不计 B4 分母）
 
 
 @dataclass(frozen=True)
@@ -212,6 +213,7 @@ class B4TransitionAccuracy:
                     expected_stage=list(raw.get("expected_stage", ["trigger", "confirm"])),
                     desc=str(raw.get("desc", "")),
                     in_data_range=bool(raw.get("in_data_range", True)),
+                    data_ready=bool(raw.get("data_ready", True)),
                 )
             )
         _logger.info("B4: 加载 %d 个历史事件 (%s)", len(events), path.name)
@@ -269,6 +271,15 @@ class B4TransitionAccuracy:
         for event in events:
             if not event.in_data_range:
                 # 超出数据范围的事件不计入分母（仅作标注）
+                matches.append(
+                    B4EventMatch(
+                        event=event, hit=False, triggered_at=None,
+                        delta_days=None, matched_stage=None, total_score=None,
+                    )
+                )
+                continue
+            if not event.data_ready:
+                # 数据未就绪（触发条件依赖的维度缺失）→ 不计入分母，标注"待数据就绪"
                 matches.append(
                     B4EventMatch(
                         event=event, hit=False, triggered_at=None,

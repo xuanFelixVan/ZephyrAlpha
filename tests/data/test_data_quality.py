@@ -28,7 +28,10 @@ class TestDQDimension:
         assert len(DQDimension) == DQ_DIM_COUNT
 
     def test_dimension_values(self):
-        expected = {"Completeness", "Accuracy", "Consistency", "Timeliness", "Uniqueness", "Validity"}
+        expected = {
+            "Completeness", "Accuracy", "Anomaly", "Consistency",
+            "Freshness", "Timeliness", "Uniqueness", "Validity",
+        }
         actual = {d.value for d in DQDimension}
         assert actual == expected
 
@@ -99,3 +102,34 @@ class TestBoundary:
         spec = get_dq_spec(DQDimension.CONSISTENCY)
         score = score_dq(DQDimension.CONSISTENCY, spec.threshold)
         assert score == 1.0
+
+
+class TestB4Dimensions:
+    """B4 SLA 四维度对齐：FRESHNESS / ANOMALY 的方向性与阈值语义。"""
+
+    def test_freshness_score_direction(self):
+        # age 越小越健康：0→满分, threshold→0分, 超限→0分
+        assert score_dq(DQDimension.FRESHNESS, 0.0) == 1.0
+        assert score_dq(DQDimension.FRESHNESS, 60.0) == 0.0
+        assert score_dq(DQDimension.FRESHNESS, 120.0) == 0.0
+
+    def test_anomaly_score_direction(self):
+        # 离群率越小越健康：0→满分, threshold→0分, 超限→0分
+        assert score_dq(DQDimension.ANOMALY, 0.0) == 1.0
+        assert score_dq(DQDimension.ANOMALY, 0.01) == 0.0
+        assert score_dq(DQDimension.ANOMALY, 0.02) == 0.0
+
+    def test_lower_is_better_flags(self):
+        # 仅 FRESHNESS / ANOMALY 为 True，其余默认 False（向后兼容）
+        assert DQ_SPECS[DQDimension.FRESHNESS].lower_is_better is True
+        assert DQ_SPECS[DQDimension.ANOMALY].lower_is_better is True
+        for dim in (DQDimension.COMPLETENESS, DQDimension.ACCURACY,
+                    DQDimension.CONSISTENCY, DQDimension.TIMELINESS,
+                    DQDimension.UNIQUENESS, DQDimension.VALIDITY):
+            assert DQ_SPECS[dim].lower_is_better is False
+
+    def test_b4_four_dimensions_present(self):
+        # B4 SLA 四维度必须在册
+        b4 = {DQDimension.COMPLETENESS, DQDimension.CONSISTENCY,
+              DQDimension.FRESHNESS, DQDimension.ANOMALY}
+        assert b4.issubset(set(DQDimension))

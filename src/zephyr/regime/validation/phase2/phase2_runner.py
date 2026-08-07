@@ -367,7 +367,7 @@ class Phase2Runner:
             trading_dates: 排序的交易日列表
             detect_records: [{timestamp, confidence, dominant_regime}] 供 B1 用
         """
-        from zephyr.regime.core.regime_detector import RegimeDetector
+        from zephyr.regime.core.regime_detector import HMM_STATES, RegimeDetector
 
         features_shifted = features.shift(1)  # PIT
 
@@ -461,8 +461,11 @@ class Phase2Runner:
                     # 核心：读取 detect 后的 _last_transitions（B4 用）
                     daily_transitions[dt] = list(detector._last_transitions)  # noqa: SLF001
                     # B1 用：confidence + dominant_regime
-                    # 校准器启用时用 calibrator.transform(log_proba) 替代原始 max(P)
-                    if calibrator is not None:
+                    # 校准器只校准 HMM 基态(r1-r4)的 max(P)。当 overlay 态(r10-r12)主导时，
+                    # dominant_regime 来自规则触发，confidence 须取 12 维 merge 的 max(P)
+                    # （即 overlay 概率），否则 confidence/dominant_regime 错配致 B1 评估失真。
+                    dominant = str(getattr(probs, "dominant_regime", ""))
+                    if calibrator is not None and dominant in HMM_STATES:
                         log_proba_dt = detector.predict_log_proba(X)
                         confidence = float(calibrator.transform(log_proba_dt)[-1])
                     else:
@@ -470,7 +473,7 @@ class Phase2Runner:
                     detect_records.append({
                         "timestamp": dt,
                         "confidence": confidence,
-                        "dominant_regime": str(getattr(probs, "dominant_regime", "")),
+                        "dominant_regime": dominant,
                     })
                 except Exception as exc:
                     _logger.warning("Phase2 detect 异常 (date=%s): %s", dt, exc)

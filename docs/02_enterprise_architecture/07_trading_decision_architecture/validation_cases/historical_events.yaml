@@ -56,6 +56,9 @@ events:
   # S2 CRISIS → RECOVERY（r10 → r11，§4.12.8 八维度见底）
   # 触发条件: capitulation + vix + bad_news_flat（trigger）
   #           + wyckoff + policy + valuation + fund（confirm）
+  # data_ready: false —— 触发依赖 NLP(policy/bad_news_flat)+high/low(wyckoff)，
+  #   当前为 stub/缺失，事件不计入 B4 分母，待 P1 数据管道就绪后激活
+  #   （discussion_003 §10.4:431 裁定：S2 0/3 需 P2 数据）
   # ════════════════════════════════════════════════════════════════════
   - id: EVT-2008-RECOVERY
     date: "2008-11-10"
@@ -70,6 +73,7 @@ events:
     expected_stage: [trigger, confirm, strong_confirm]
     desc: "股灾后反弹企稳，政策救市（降准降息+限制做空）见效"
     in_data_range: true
+    data_ready: false
 
   - id: EVT-2020-RECOVERY
     date: "2020-04-10"
@@ -77,6 +81,7 @@ events:
     expected_stage: [trigger, confirm, strong_confirm]
     desc: "全球流动性宽松，A股复苏反弹，北向资金回流"
     in_data_range: true
+    data_ready: false
 
   - id: EVT-2024-RECOVERY
     date: "2024-09-24"
@@ -84,6 +89,7 @@ events:
     expected_stage: [trigger, confirm, strong_confirm]
     desc: "924 政策行情启动：央行降准+创设互换便利+回购增持再贷款，A股暴涨（上证+4.15%→+8.06%）"
     in_data_range: true
+    data_ready: false
 
 # ════════════════════════════════════════════════════════════════════
 # BREAKOUT 主升浪启动点（待人工标注，第一批 MVP 暂不验证）
