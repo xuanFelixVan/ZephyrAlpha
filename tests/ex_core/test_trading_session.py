@@ -85,6 +85,10 @@ def _make_session(
         universe=["600519.SH"],
         broker_id="test_broker",
     )
+    # 测试辅助：禁用订单层熔断（这些测试测调仓逻辑，不测熔断）
+    config.max_single_order_pct = Decimal("1.0")
+    config.max_symbol_orders_per_day = 999999
+    config.max_total_orders_per_day = 999999
     return TradingSession(
         broker=broker,
         strategy=strategy,
@@ -371,10 +375,12 @@ def test_three_state_consistency_with_simulation_broker() -> None:
     session = _make_session(
         broker=broker,
         strategy=_strategy_returning({"600519": 0.10, "000001": 0.05}),
-        price_provider=make_mock_price_provider({
-            "600519": Decimal("100"),
-            "000001": Decimal("10"),
-        }),
+        price_provider=make_mock_price_provider(
+            {
+                "600519": Decimal("100"),
+                "000001": Decimal("10"),
+            }
+        ),
         order_manager=om,
         config=TradingSessionConfig(universe=["600519", "000001"], broker_id="simulation"),
     )

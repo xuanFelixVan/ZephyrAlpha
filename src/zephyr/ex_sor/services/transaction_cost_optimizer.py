@@ -114,12 +114,12 @@ class CostComponent(Enum):
     def __str__(self) -> str:
         return self.value
 
-    COMMISSION = "COMMISSION"            # 佣金 (券商收费)
-    STAMP_DUTY = "STAMP_DUTY"            # 印花税 (卖方单边)
-    TRANSFER_FEE = "TRANSFER_FEE"        # 过户费 (双边)
-    REGULATORY_FEE = "REGULATORY_FEE"    # 监管费 (双边)
-    IMPACT = "IMPACT"                    # 冲击成本 (隐性)
-    OPPORTUNITY = "OPPORTUNITY"          # 机会成本 (隐性)
+    COMMISSION = "COMMISSION"  # 佣金 (券商收费)
+    STAMP_DUTY = "STAMP_DUTY"  # 印花税 (卖方单边)
+    TRANSFER_FEE = "TRANSFER_FEE"  # 过户费 (双边)
+    REGULATORY_FEE = "REGULATORY_FEE"  # 监管费 (双边)
+    IMPACT = "IMPACT"  # 冲击成本 (隐性)
+    OPPORTUNITY = "OPPORTUNITY"  # 机会成本 (隐性)
 
 
 @dataclass(frozen=True)
@@ -129,14 +129,14 @@ class FeeSchedule:
     所有费率单位为 bps (万分之一)。
 
     Attributes:
-        commission_rate_bps: 佣金费率 (双边, 默认 3bps = 0.03%)
+        commission_rate_bps: 佣金费率 (双边, 默认 0.854bps = 万0.854, 国金miniQMT实盘费率)
         commission_min: 最低佣金 (元, 默认 5 元)
         stamp_duty_rate_bps: 印花税率 (卖方单边, 默认 5bps = 0.05%)
         transfer_fee_rate_bps: 过户费率 (双边, 默认 0.1bps = 0.001%)
         regulatory_fee_rate_bps: 监管费率 (双边, 默认 0.2bps = 0.002%)
     """
 
-    commission_rate_bps: Decimal = Decimal("3")
+    commission_rate_bps: Decimal = Decimal("0.854")
     commission_min: Decimal = Decimal("5")
     stamp_duty_rate_bps: Decimal = Decimal("5")
     transfer_fee_rate_bps: Decimal = Decimal("0.1")
@@ -411,17 +411,19 @@ class TransactionCostOptimizer:
 
         # 3. 隐性成本
         implicit = self._calc_implicit(
-            side, quantity, avg_price, notional,
-            decision_price, unfilled_quantity, adv, volatility,
+            side,
+            quantity,
+            avg_price,
+            notional,
+            decision_price,
+            unfilled_quantity,
+            adv,
+            volatility,
             breakdown,
         )
 
         total_cost = self._round2(explicit + implicit)
-        total_bps = (
-            self._round4(total_cost / notional * _BPS_FACTOR)
-            if notional > _ZERO
-            else _ZERO
-        )
+        total_bps = self._round4(total_cost / notional * _BPS_FACTOR) if notional > _ZERO else _ZERO
 
         result = TransactionCostResult(
             order_id=order_id,
@@ -440,7 +442,11 @@ class TransactionCostOptimizer:
         self._history.append(result)
         logger.info(
             "TransactionCost: order=%s total=%s (%s bps) explicit=%s implicit=%s",
-            order_id, total_cost, total_bps, explicit, implicit,
+            order_id,
+            total_cost,
+            total_bps,
+            explicit,
+            implicit,
         )
         return result
 
@@ -460,50 +466,60 @@ class TransactionCostOptimizer:
         commission_raw = notional * fees.commission_rate_bps / _BPS_FACTOR
         commission = max(commission_raw, fees.commission_min)
         commission = self._round2(commission)
-        breakdown.append(TransactionCostBreakdown(
-            component=CostComponent.COMMISSION,
-            amount=commission,
-            rate_bps=fees.commission_rate_bps,
-            description=f"佣金 (费率 {fees.commission_rate_bps}bps, 最低 {fees.commission_min} 元)",
-        ))
+        breakdown.append(
+            TransactionCostBreakdown(
+                component=CostComponent.COMMISSION,
+                amount=commission,
+                rate_bps=fees.commission_rate_bps,
+                description=f"佣金 (费率 {fees.commission_rate_bps}bps, 最低 {fees.commission_min} 元)",
+            )
+        )
         total += commission
 
         # 印花税 (仅卖方)
         if side is OrderSide.SELL:
             stamp_duty = self._round2(notional * fees.stamp_duty_rate_bps / _BPS_FACTOR)
-            breakdown.append(TransactionCostBreakdown(
-                component=CostComponent.STAMP_DUTY,
-                amount=stamp_duty,
-                rate_bps=fees.stamp_duty_rate_bps,
-                description=f"印花税 (卖方, {fees.stamp_duty_rate_bps}bps)",
-            ))
+            breakdown.append(
+                TransactionCostBreakdown(
+                    component=CostComponent.STAMP_DUTY,
+                    amount=stamp_duty,
+                    rate_bps=fees.stamp_duty_rate_bps,
+                    description=f"印花税 (卖方, {fees.stamp_duty_rate_bps}bps)",
+                )
+            )
             total += stamp_duty
         else:
-            breakdown.append(TransactionCostBreakdown(
-                component=CostComponent.STAMP_DUTY,
-                amount=_ZERO,
-                rate_bps=fees.stamp_duty_rate_bps,
-                description="印花税 (买方免征)",
-            ))
+            breakdown.append(
+                TransactionCostBreakdown(
+                    component=CostComponent.STAMP_DUTY,
+                    amount=_ZERO,
+                    rate_bps=fees.stamp_duty_rate_bps,
+                    description="印花税 (买方免征)",
+                )
+            )
 
         # 过户费 (双边)
         transfer = self._round2(notional * fees.transfer_fee_rate_bps / _BPS_FACTOR)
-        breakdown.append(TransactionCostBreakdown(
-            component=CostComponent.TRANSFER_FEE,
-            amount=transfer,
-            rate_bps=fees.transfer_fee_rate_bps,
-            description=f"过户费 (双边, {fees.transfer_fee_rate_bps}bps)",
-        ))
+        breakdown.append(
+            TransactionCostBreakdown(
+                component=CostComponent.TRANSFER_FEE,
+                amount=transfer,
+                rate_bps=fees.transfer_fee_rate_bps,
+                description=f"过户费 (双边, {fees.transfer_fee_rate_bps}bps)",
+            )
+        )
         total += transfer
 
         # 监管费 (双边)
         regulatory = self._round2(notional * fees.regulatory_fee_rate_bps / _BPS_FACTOR)
-        breakdown.append(TransactionCostBreakdown(
-            component=CostComponent.REGULATORY_FEE,
-            amount=regulatory,
-            rate_bps=fees.regulatory_fee_rate_bps,
-            description=f"监管费 (双边, {fees.regulatory_fee_rate_bps}bps)",
-        ))
+        breakdown.append(
+            TransactionCostBreakdown(
+                component=CostComponent.REGULATORY_FEE,
+                amount=regulatory,
+                rate_bps=fees.regulatory_fee_rate_bps,
+                description=f"监管费 (双边, {fees.regulatory_fee_rate_bps}bps)",
+            )
+        )
         total += regulatory
 
         return self._round2(total)
@@ -537,30 +553,36 @@ class TransactionCostOptimizer:
             impact = self._round2(impact_per_share * quantity)
             if impact < _ZERO:
                 impact = _ZERO  # 有利执行不算成本
-            breakdown.append(TransactionCostBreakdown(
-                component=CostComponent.IMPACT,
-                amount=impact,
-                rate_bps=None,
-                description=f"冲击成本 (成交价 {avg_price} vs 决策价 {decision_price})",
-            ))
+            breakdown.append(
+                TransactionCostBreakdown(
+                    component=CostComponent.IMPACT,
+                    amount=impact,
+                    rate_bps=None,
+                    description=f"冲击成本 (成交价 {avg_price} vs 决策价 {decision_price})",
+                )
+            )
         else:
             # 用估计器 (需 adv + volatility)
             if adv is not None and adv > _ZERO and volatility is not None:
                 participation = quantity / adv
                 impact = self._impact_est.estimate(notional, participation, volatility)
-                breakdown.append(TransactionCostBreakdown(
-                    component=CostComponent.IMPACT,
-                    amount=impact,
-                    rate_bps=None,
-                    description=f"冲击成本 (估计, 参与率 {participation:.4f})",
-                ))
+                breakdown.append(
+                    TransactionCostBreakdown(
+                        component=CostComponent.IMPACT,
+                        amount=impact,
+                        rate_bps=None,
+                        description=f"冲击成本 (估计, 参与率 {participation:.4f})",
+                    )
+                )
             else:
-                breakdown.append(TransactionCostBreakdown(
-                    component=CostComponent.IMPACT,
-                    amount=_ZERO,
-                    rate_bps=None,
-                    description="冲击成本 (未提供决策价/ADV, 跳过)",
-                ))
+                breakdown.append(
+                    TransactionCostBreakdown(
+                        component=CostComponent.IMPACT,
+                        amount=_ZERO,
+                        rate_bps=None,
+                        description="冲击成本 (未提供决策价/ADV, 跳过)",
+                    )
+                )
         total += impact
 
         # 机会成本 (未成交部分)
@@ -573,26 +595,32 @@ class TransactionCostOptimizer:
                 else:
                     # SELL 未成交: 后续需更低价卖出 → 机会成本
                     opportunity = self._round2(unfilled_quantity * decision_price * Decimal("0.001"))
-                breakdown.append(TransactionCostBreakdown(
-                    component=CostComponent.OPPORTUNITY,
-                    amount=opportunity,
-                    rate_bps=None,
-                    description=f"机会成本 (未成交 {unfilled_quantity} 股)",
-                ))
+                breakdown.append(
+                    TransactionCostBreakdown(
+                        component=CostComponent.OPPORTUNITY,
+                        amount=opportunity,
+                        rate_bps=None,
+                        description=f"机会成本 (未成交 {unfilled_quantity} 股)",
+                    )
+                )
             else:
-                breakdown.append(TransactionCostBreakdown(
+                breakdown.append(
+                    TransactionCostBreakdown(
+                        component=CostComponent.OPPORTUNITY,
+                        amount=_ZERO,
+                        rate_bps=None,
+                        description="机会成本 (未提供决策价, 跳过)",
+                    )
+                )
+        else:
+            breakdown.append(
+                TransactionCostBreakdown(
                     component=CostComponent.OPPORTUNITY,
                     amount=_ZERO,
                     rate_bps=None,
-                    description="机会成本 (未提供决策价, 跳过)",
-                ))
-        else:
-            breakdown.append(TransactionCostBreakdown(
-                component=CostComponent.OPPORTUNITY,
-                amount=_ZERO,
-                rate_bps=None,
-                description="机会成本 (全部成交, 无机会成本)",
-            ))
+                    description="机会成本 (全部成交, 无机会成本)",
+                )
+            )
         total += opportunity
 
         return self._round2(total)
@@ -652,12 +680,8 @@ class TransactionCostOptimizer:
                 0.0,
             ),
         }
-        rec, action, saving_ratio = advice_map.get(
-            max_item.component, ("无建议", "none", 0.0)
-        )
-        saving_bps = self._round4(
-            result.total_cost_bps * Decimal(str(saving_ratio))
-        )
+        rec, action, saving_ratio = advice_map.get(max_item.component, ("无建议", "none", 0.0))
+        saving_bps = self._round4(result.total_cost_bps * Decimal(str(saving_ratio)))
         return OptimizationAdvice(
             primary_driver=max_item.component,
             recommendation=rec,

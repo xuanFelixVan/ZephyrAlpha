@@ -31,13 +31,14 @@ from __future__ import annotations
 import logging
 import threading
 import uuid
+from collections import defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any
 
-from zephyr.ex_core.order_manager import OrderManager
+from zephyr.ex_core.order_manager import OrderManager, RejectionAction
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
     RiskViolation,
@@ -97,6 +98,10 @@ class TradingSessionConfig:
     min_order_qty: int = 100
     round_lot: int = 100
     risk_limits: RiskLimits = field(default_factory=_default_risk_limits)
+    # 订单层熔断（design_memo_010 §2.8）
+    max_single_order_pct: Decimal = Decimal("0.04")  # 单票单笔≤4%账户市值
+    max_symbol_orders_per_day: int = 10  # 单票≤10笔/日
+    max_total_orders_per_day: int = 50  # 全账户≤50笔/日
 
 
 class TradingSession:
@@ -136,6 +141,9 @@ class TradingSession:
         self._fills: list[Fill] = []
         self._submitted_orders: list[Order] = []
         self._blocked_orders: list[Order] = []
+        # 订单层熔断当日计数（design_memo_010 §2.8）
+        self._symbol_order_counts: dict[str, int] = defaultdict(int)
+        self._total_order_count_today: int = 0
 
     # ------------------------------------------------------------------
     # 生命周期
@@ -295,28 +303,39 @@ class TradingSession:
         target_weights: dict[str, float],
         positions: PositionSnapshot,
     ) -> list[Order]:
-        """逐单风控验证 + 创建并提交订单。返回已提交订单列表。"""
-        current_holdings_float = {
-            s: float(q) for s, q in positions.holdings.items()
-        }
+        """逐单风控验证 + 创建并提交订单。返回已提交订单列表。
+
+        执行顺序：先卖后买——卖出释放 T+0 资金再买入，避免资金不足（error_code=54）。
+        A 股 T+0 资金：当日卖出回笼资金可立即用于当日买入（design_memo_010 §2.6）。
+        """
+        # 先卖后买：SELL 排前释放资金，BUY 排后利用释放资金
+        # （Python sorted 稳定，保持同侧内相对顺序不变）
+        sorted_deltas = sorted(deltas, key=lambda o: 0 if o.side is OrderSide.SELL else 1)
+        current_holdings_float = {s: float(q) for s, q in positions.holdings.items()}
         submitted: list[Order] = []
-        for order in deltas:
+        for order in sorted_deltas:
             target_weight = float(target_weights.get(order.symbol, 0.0))
             if self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float):
                 self._blocked_orders.append(order)
                 continue
-            registered = self._order_manager.create_order(
-                symbol=order.symbol,
-                strategy_id=self._config.strategy_id,
-                side=order.side,
-                order_type=order.order_type,
-                quantity=order.quantity,
-                limit_price=order.limit_price,
-                broker_id=self._config.broker_id,
-            )
-            self._order_manager.submit_order(registered.order_id, self._config.broker_id)
-            self._submitted_orders.append(registered)
-            submitted.append(registered)
+            if self._is_blocked_by_circuit_breaker(order, positions):
+                self._blocked_orders.append(order)
+                continue
+            try:
+                registered = self._order_manager.create_order(
+                    symbol=order.symbol,
+                    strategy_id=self._config.strategy_id,
+                    side=order.side,
+                    order_type=order.order_type,
+                    quantity=order.quantity,
+                    limit_price=order.limit_price,
+                    broker_id=self._config.broker_id,
+                )
+                self._order_manager.submit_order(registered.order_id, self._config.broker_id)
+                self._submitted_orders.append(registered)
+                submitted.append(registered)
+            except Exception as exc:  # noqa: BLE001 — 拒单分类处理，不阻断后续订单
+                self._handle_rejection(order, exc)
         return submitted
 
     def _is_blocked_by_risk(
@@ -340,6 +359,99 @@ class TradingSession:
                 [(v.constraint, v.description) for v in violations],
             )
         return halt
+
+    def _handle_rejection(self, order: Order, error: Exception) -> None:
+        """拒单分类处理（design_memo_010 §2.7 层3）。
+
+        根据 error_code 分类：涨跌停/资金/持仓不重试，价格/连接重试1次。
+        MVP 阶段仅记录日志 + 归入 blocked_orders；重试/冻结/对账由上层 Saga 处理。
+        """
+        raw_code = getattr(error, "error_code", None)
+        action = (
+            self._order_manager.classify_rejection(raw_code) if isinstance(raw_code, int) else RejectionAction.ABANDON
+        )
+        self._blocked_orders.append(order)
+        if action is RejectionAction.ALERT_FREEZE:
+            _logger.error(
+                "拒单[资金不足] 冻结策略新开仓: symbol=%s error=%s",
+                order.symbol,
+                error,
+            )
+        elif action is RejectionAction.ALERT_RECONCILE:
+            _logger.error(
+                "拒单[持仓不足] 触发持仓对账: symbol=%s error=%s",
+                order.symbol,
+                error,
+            )
+        elif action is RejectionAction.ABANDON:
+            _logger.warning(
+                "拒单[放弃] symbol=%s error_code=%s error=%s",
+                order.symbol,
+                raw_code,
+                error,
+            )
+        else:
+            # RETRY_ONCE / IDEMPOTENT_RETURN：MVP 仅记录，上层 Saga 处理重试
+            _logger.info(
+                "拒单[%s] 待上层处理: symbol=%s error=%s",
+                action,
+                order.symbol,
+                error,
+            )
+
+    def _is_blocked_by_circuit_breaker(
+        self,
+        order: Order,
+        positions: PositionSnapshot,
+    ) -> bool:
+        """订单层熔断检查（design_memo_010 §2.8）。
+
+        三项检查：单票单笔≤4%市值 / 单票≤10笔日 / 全账户≤50笔日。
+        通过则计数+1返回 False；触发则返回 True（调用方归入 blocked_orders）。
+        """
+        cfg = self._config
+        total_asset = positions.cash + positions.total_market_value
+
+        # 1. 单票单笔量 ≤4% 账户市值
+        order_value = order.quantity * (order.limit_price or Decimal("0"))
+        if total_asset > 0 and order_value / total_asset > cfg.max_single_order_pct:
+            _logger.warning(
+                "订单层熔断[单笔超限]: symbol=%s order_value=%s pct=%.4f > %.4f",
+                order.symbol,
+                order_value,
+                float(order_value / total_asset),
+                float(cfg.max_single_order_pct),
+            )
+            return True
+
+        # 2. 单票下单频次 ≤10 笔/日
+        if self._symbol_order_counts[order.symbol] >= cfg.max_symbol_orders_per_day:
+            _logger.warning(
+                "订单层熔断[单票频次]: symbol=%s count=%d >= %d",
+                order.symbol,
+                self._symbol_order_counts[order.symbol],
+                cfg.max_symbol_orders_per_day,
+            )
+            return True
+
+        # 3. 全账户下单频次 ≤50 笔/日
+        if self._total_order_count_today >= cfg.max_total_orders_per_day:
+            _logger.warning(
+                "订单层熔断[全账户频次]: count=%d >= %d",
+                self._total_order_count_today,
+                cfg.max_total_orders_per_day,
+            )
+            return True
+
+        # 通过熔断，计数+1（含拒单尝试，防疯狂重试推高撤单率）
+        self._symbol_order_counts[order.symbol] += 1
+        self._total_order_count_today += 1
+        return False
+
+    def reset_daily_circuit_breaker(self) -> None:
+        """重置当日熔断计数（每个交易日开始调用）。"""
+        self._symbol_order_counts.clear()
+        self._total_order_count_today = 0
 
     # ------------------------------------------------------------------
     # 成交回调 + 报告

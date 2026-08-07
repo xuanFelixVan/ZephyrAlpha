@@ -44,11 +44,12 @@ from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import Decimal
 from enum import Enum
+from typing import Final
 
-from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 _logger = logging.getLogger(__name__)
 
@@ -63,16 +64,54 @@ class OrderAction(Enum):
     MODIFY = "modify"
 
 
+class RejectionAction(Enum):
+    """拒单处理动作（design_memo_010 §2.7 层3）。
+
+    原则：涨跌停/资金/持仓类不重试（重试无意义），价格/连接类重试1次（可恢复）。
+    宁可放弃不可盲目重试，避免撤单率超标（BM-EXE-04 撤单率≤15%）。
+    """
+
+    def __str__(self) -> str:
+        return self.value
+
+    ABANDON = "abandon"  # 涨跌停/数量不合法：放弃不重试
+    RETRY_ONCE = "retry_once"  # 价格/连接：重试1次
+    ALERT_FREEZE = "alert_freeze"  # 资金不足：告警+冻结策略新开仓
+    ALERT_RECONCILE = "alert_reconcile"  # 持仓不足：告警+持仓对账
+    IDEMPOTENT_RETURN = "idempotent_return"  # 订单号重复：返回已存在id
+
+
+# xttrader 错误码 → 拒单处理动作映射（与 miniqmt_broker.XTTRADER_ERROR_CODES 对齐）
+_REJECTION_ACTIONS: Final[dict[int, RejectionAction]] = {
+    50: RejectionAction.ABANDON,  # 涨停
+    51: RejectionAction.ABANDON,  # 跌停
+    52: RejectionAction.ABANDON,  # 数量不合法（代码bug，告警）
+    53: RejectionAction.RETRY_ONCE,  # 价格不合法（涨跌停边界1分钱误差，修正后重试）
+    54: RejectionAction.ALERT_FREEZE,  # 资金不足（账户级，重试不会变有钱）
+    55: RejectionAction.ALERT_RECONCILE,  # 持仓不足（T+1锁定或持仓不一致，需对账）
+    -1: RejectionAction.RETRY_ONCE,  # 连接失败（重连后重试）
+    -2: RejectionAction.RETRY_ONCE,  # 未就绪（重连后重试）
+    -3: RejectionAction.IDEMPOTENT_RETURN,  # 订单号重复（幂等：返回已存在id）
+}
+
+
 class OrderManager:
     """订单管理器——订单生命周期状态机驱动"""
 
     VALID_TRANSITIONS: dict[OrderStatus, set[OrderStatus]] = {
-        OrderStatus.PENDING: {OrderStatus.SUBMITTED, OrderStatus.CANCELLED},
-        OrderStatus.SUBMITTED: {OrderStatus.PARTIAL, OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED},
-        OrderStatus.PARTIAL: {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED},
+        OrderStatus.PENDING: {OrderStatus.SUBMITTED, OrderStatus.CANCELLED, OrderStatus.EXPIRED},
+        OrderStatus.SUBMITTED: {
+            OrderStatus.PARTIAL,
+            OrderStatus.FILLED,
+            OrderStatus.CANCELLED,
+            OrderStatus.REJECTED,
+            OrderStatus.EXPIRED,
+        },
+        OrderStatus.PARTIAL: {OrderStatus.FILLED, OrderStatus.CANCELLED, OrderStatus.REJECTED, OrderStatus.EXPIRED},
         OrderStatus.FILLED: set(),
         OrderStatus.CANCELLED: set(),
         OrderStatus.REJECTED: set(),
+        OrderStatus.EXPIRED: set(),
     }
 
     def __init__(self, brokers: dict[str, BrokerInterface] | None = None):
@@ -105,7 +144,6 @@ class OrderManager:
     def orders(self, value):
         """写入：orders（Stage 4 公共化）。"""
         self._orders = value
-
 
     def register_broker(self, broker_id: str, broker: BrokerInterface) -> None:
         self._brokers[broker_id] = broker
@@ -158,11 +196,18 @@ class OrderManager:
         """
         allowed = self.VALID_TRANSITIONS.get(order.status, set())
         if new_status not in allowed:
-            raise ValueError(
-                f"非法状态转换: {order.status} -> {new_status} (order_id={order.order_id})"
-            )
+            raise ValueError(f"非法状态转换: {order.status} -> {new_status} (order_id={order.order_id})")
         order.status = new_status
         order.updated_at = datetime.now(UTC)
+
+    @staticmethod
+    def classify_rejection(error_code: int) -> RejectionAction:
+        """拒单分类——根据 xttrader error_code 决定处理动作。
+
+        涨跌停/资金/持仓类不重试（重试无意义），价格/连接类重试1次（可恢复）。
+        未知错误码保守按 ABANDON 处理。详见 design_memo_010 §2.7。
+        """
+        return _REJECTION_ACTIONS.get(error_code, RejectionAction.ABANDON)
 
     def submit_order(self, order_id: str, broker_id: str = "simulation") -> str:
         order = self._orders.get(order_id)
@@ -236,7 +281,10 @@ class OrderManager:
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error(
                 "券商端撤单失败: order_id=%s broker_order_id=%s broker_id=%s error=%s",
-                order_id, order.broker_order_id, broker_id, e,
+                order_id,
+                order.broker_order_id,
+                broker_id,
+                e,
                 exc_info=True,
             )
             return False
@@ -304,4 +352,4 @@ class OrderManager:
         return sum(len(fills) for fills in self._fills.values())
 
 
-__all__ = ["OrderAction", "OrderManager"]
+__all__: Final = ["OrderAction", "RejectionAction", "OrderManager"]
