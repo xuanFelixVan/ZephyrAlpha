@@ -17,7 +17,7 @@ ttl: permanent
 actual_disk_path: "src/zephyr/clone_guard/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: "MOD-MASTER_BLUEPRINT"
-last_updated: "2026-08-06"
+last_updated: "2026-08-08"
 last_verified: "2026-08-06"
 generation: 1
 functional_domain: governance
@@ -497,7 +497,7 @@ acknowledged:
 
 副作用与边界：
 
-- **注释丢失警示**：echo-guard CLI 用 ruamel.yaml 重写整个 echo-guard.yml，**丢弃所有手工注释**并改引号风格。故 echo-guard.yml 注释应精简（配置即文档），或接受每次 acknowledge 后注释丢失。
+- **注释丢失警示**：echo-guard CLI 用 PyYAML（safe_load/dump）重写整个 echo-guard.yml，**丢弃所有手工注释**并改引号风格。治本：项目层 [`EchoGuardAdapter._acknowledge_via_roundtrip()`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/engines/echo_guard_adapter.py) 用 ruamel.yaml round-trip 接管 acknowledged 段写入（保留注释），见 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS。
 - **持久化**：acknowledge 仅改工作区 echo-guard.yml，**需经 GitCommitGateway 提交**才持久化；未提交的白名单变更会被 post-commit reconciler restore-to-HEAD 恢复（echo-guard.yml 同 src/ 跟踪文件 restore 约定）。
 - **使用边界**：仅对经审慎确认的合理克隆（归档文件间、有意保留的双实现、接口适配层）调用；禁止用于"消除当前不想处理的告警"——属治理逃逸。
 
@@ -564,7 +564,7 @@ priority_score =
 ### §8.1 Phase A — MVP（2 天，堵 80% 病根）
 
 **只装 Echo-Guard，接入现有门禁**：
-1. `pip install "echo-guard[languages,mcp]"`
+1. `pip install "echo-guard[languages,mcp]" onnxscript`  ← onnxscript 非echo-guard声明依赖，torch 2.13+ dynamo ONNX导出器必需，缺则Tier 2静默降级为Tier 1-only
 2. `echo-guard setup`（生成 echo-guard.yml）
 3. 升级 `CAPABILITY-OVERLAP` 门禁，内部调 `echo-guard check FILES`
 4. 注册 MCP：`echo-guard add-mcp`
@@ -629,8 +629,8 @@ priority_score =
 |---|---|---|---|
 | Type-1 | 完全相同(仅空格/注释不同) | Echo-Guard AST哈希 | 复制函数改缩进 |
 | Type-2 | 语法相同(变量名/字面量不同) | Echo-Guard AST哈希 | 复制函数改变量名 |
-| Type-3 | 近似克隆(语句增删改) | Echo-Guard CodeSAGE + reDUP | 复制函数加验证逻辑 |
-| Type-4 | 语义克隆(功能相同实现不同) | Echo-Guard CodeSAGE + reDUP semantic | 快排 vs 归并排序 |
+| Type-3 | 近似克隆(语句增删改) | Echo-Guard CodeSAGE（sim≥0.94阈值；中度改写0.80-0.93不检出） | 复制函数加验证逻辑 |
+| Type-4 | 语义克隆(功能相同实现不同) | 嵌入模型根本局限·不可检出（实测冒泡vs归并sim=0.30；reDUP已裁定不装） | 快排 vs 归并排序 |
 
 ---
 
@@ -670,7 +670,7 @@ priority_score =
 
 ```
 # Phase A
-pip install "echo-guard[languages,mcp]"
+pip install "echo-guard[languages,mcp]" onnxscript   # onnxscript: torch 2.13+ ONNX导出必需，echo-guard 0.4.1未声明(缺则Tier 2静默降级)
 
 # Phase B
 pip install redup[ast,semantic,lsh] ast-grep
