@@ -12718,3 +12718,76 @@ entries:
   status: decided
   created: '2026-08-07'
   last_updated: '2026-08-08'
+
+
+# --- #ARCH-OBSERVABILITY-001: 可观测性 umbrella 架构（2026-08-07）---
+- issue_id: '#ARCH-OBSERVABILITY-001'
+  title: 可观测性架构 umbrella——实验跟踪/回测可观测性/指标面板统一治理
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-07 立项。observability 是横切概念（非独立模块），涵盖实验跟踪
+    （#ARCH-OBS-EXP-TRACK-001 落地）、回测可观测性（discussion_002）、
+    指标面板（Panel+HoloViz，#ARCH-047）。本条目作为 umbrella 聚合子域
+    ARCH 引用，自身不产生代码。命名冲突见 discussion_002 §2.3——observability
+    独占顶层会语义混淆，包名用 experiment_tracking。
+  impact:
+    关联子域：
+    - '#ARCH-OBS-EXP-TRACK-001（实验跟踪 M1 落地）'
+    - '#ARCH-047（可视化技术栈 Panel+HoloViz）'
+    关联文档：
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_002_backtest_observability_workplan.md'
+    - 'docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md（MOD-OBS-001 引用本 umbrella）'
+  fix_phase: 'umbrella 聚合条目，无独立修复——子域各自落地。'
+  status: proposed
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
+# --- #ARCH-CALIBRATOR-001: 两阶段概率校准器（2026-08-07）---
+- issue_id: '#ARCH-CALIBRATOR-001'
+  title: 两阶段概率校准器——Temperature Scaling + Isotonic Regression 解决 HMM 后验过尖
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-07 立项并落地。Phase 2 验证 B1 FAIL（误差 27.6%，80-100%桶误差 45.9%）
+    根因——confidence=max(P) 直接用 HMM 最大概率值无校准。第一性原理推演 5 性质
+    （准确性/锐度/保序性/样本效率/理论保证）推出两阶段方案：Stage 1 Temperature
+    Scaling 全局降温，Stage 2 Isotonic Regression 局部修正。四级降级策略
+    （full→temperature-only→isotonic-only→identity）。详见 discussion_004_phase3 §2.2。
+    铁律#9：用户显式授权 P0 工程施工，status=decided。
+  impact:
+    新增文件：
+    - 'src/zephyr/regime/validation/phase2/confidence_calibrator.py（TwoStageCalibrator）'
+    - 'tests/regime/phase2/test_confidence_calibrator.py'
+    变更文件：
+    - 'src/zephyr/regime/validation/phase2/phase2_runner.py（walk-forward 集成校准器）'
+    - 'src/zephyr/regime/core/regime_detector.py（predict_log_proba + temperature tempering）'
+    关联文档：
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_004_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
+  fix_phase: 'P0-E2 已落地（commit 13a5e1d512）——校准器仅对 HMM 基态生效，PIT 防泄漏，四级降级。'
+  status: decided
+  created: '2026-08-07'
+  last_updated: '2026-08-08'
+# --- #ARCH-NLP-PIPELINE-001: NLP 情感分析管道（2026-08-07）---
+- issue_id: '#ARCH-NLP-PIPELINE-001'
+  title: NLP 情感分析管道——bad_news_flat 指标依赖，S2 复苏确认触发
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-07 立项（proposed）。Phase 2 验证 B4 S2 FAIL 根因——S2 复苏确认触发
+    需 bad_news_flat ≥ 40，该指标依赖新闻 NLP 分析，当前是 stub（恒返回 0）。
+    工程范围：news_collector.py / nlp_inference.py / sentiment_aggregator.py。
+    候选模型：Mistral-7B（F1≥65% 基线，不达标切 Qwen2.5-7B）。详见
+    discussion_004_phase3 §P1-E3。
+  impact:
+    规划文件：
+    - 'src/zephyr/regime/features/news_collector.py'
+    - 'src/zephyr/regime/features/nlp_inference.py'
+    - 'src/zephyr/regime/features/sentiment_aggregator.py'
+    变更文件：
+    - 'src/zephyr/regime/features/overlay_features.py（bad_news_flat 指标）'
+    关联文档：
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_004_phase3_engineering_plan.md（§P1-E3 NLP 管道详设）'
+  fix_phase: 'P1-E3 待施工——zero-shot 基线评估 → 模型选型 → 管道搭建。'
+  status: proposed
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
