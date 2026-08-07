@@ -75,6 +75,11 @@ class CloneGuardConfig:
     # 降级策略
     fail_closed: bool = False  # echo-guard 全部超时/崩溃时是否阻断（False=warn-only 兜底）
 
+    # ── acknowledged 白名单写入路径（治本 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS）──
+    # True=走 echo-guard acknowledge CLI（PyYAML 重写丢注释，诊断/兼容用）
+    # False=项目层 ruamel.yaml round-trip 写 echo-guard.yml acknowledged 段（保留注释，默认）
+    acknowledge_via_cli: bool = False
+
     # ── Layer 2/3 超时（比 L1 宽松）──
     audit_timeout_sec: int = 300  # L2 全量审计 5 分钟
     compare_timeout_sec: int = 600  # L3 跨仓库 10 分钟
@@ -169,6 +174,7 @@ def load_config(repo_root: Path) -> CloneGuardConfig:
         audit_timeout_sec=int(audit.get("timeout_sec", 300)),
         compare_timeout_sec=int(compare.get("timeout_sec", 600)),
         fail_closed=bool(pre_commit.get("fail_closed", False)),
+        acknowledge_via_cli=bool(pre_commit.get("acknowledge_via_cli", False)),
         filter_minority=bool(aggregation.get("filter_minority", False)),
         env=env,
         ignore_paths=tuple(raw.get("ignore_paths", ()) or CloneGuardConfig().ignore_paths),

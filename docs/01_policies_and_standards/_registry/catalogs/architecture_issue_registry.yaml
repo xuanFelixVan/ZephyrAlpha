@@ -12399,6 +12399,87 @@ entries:
   status: proposed
   created: '2026-08-06'
   last_updated: '2026-08-06'
+# --- #ARCH-REGIME-RISK-FULL-001: A2 13参数完整版risk C1验证通过不退化（2026-08-07）---
+- issue_id: '#ARCH-REGIME-RISK-FULL-001'
+  title: A2 13参数完整版RiskSignal C1验证——#1门控修复后不退化（full≈简化版）
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-07 A2 验证登记。RiskSignalConstructor（13参数）已实现：8有效(#1/2/3/5/6/7/10)
+    +3 stub(#4/8/12=1.0)+2 opportunity stub(#11/13=0.0)。#9 KDJ 因代理 high/low 缺失降级。
+    C1 对比（--risk-mode full --overlay off）：Sharpe 开=0.3469 / MaxDD=0.1484 /
+    Calmar=0.3691 / Turnover=2.5863，四项全通过。
+    对比简化版（simple/off）：Sharpe 差 -0.0005 / Calmar 差 -0.0003，噪声范围，不退化。
+    #1 门控（regime_detector._compute_risk_signal L630-632）奏效：#1=1.0时附加参数不参与，
+    平时不干预；危机期(#1<1.0)附加参数加深收缩。治本此前 Sharpe 0.2678->0.2464 退化
+    （附加参数假阳性经min聚合+EMA扩散到99.6%日子）。
+    结论：A2 C1通过不退化，#1门控治本。边际收益极小（C1框架下 full≈简化版），
+    但危机期理论更精细，B系列校准度验证可能体现。建议可采纳。
+    2026-08-07 补完单元测试 test_risk_signal_builder.py（24项全过）：结构契约4 +
+    平时不干预2 + #1门控4（核心机制：#1=1.0屏蔽附加参数/#1<1.0加深收缩/机会恢复上限/空输入降级）
+    + 危机触发7（realized_vol_coef 5档参数化）+ PIT 1（shift(1)边界验证）+ 降级3 + 端到端3。
+    regime 全套 116 项测试无回归。
+    铁律#9：采纳决策类，AI提议 status=proposed，待用户确认。
+  impact:
+    - 'src/zephyr/regime/risk_signal_builder.py（RiskSignalConstructor 13参数构造器，已实现）'
+    - 'src/zephyr/regime/features/risk_features.py（13参数底层算子）'
+    - 'tests/regime/test_risk_signal_builder.py（24项单元测试，2026-08-07 补完全过）'
+    - 'logs/c1_repro/a2_a3_validation_report.md（验证报告，派生产物不入 git）'
+  fix_phase: 验证+测试完成（2026-08-07）—— A2 C1通过不退化；test_risk_signal_builder.py 24项全过；regime 全套 116 项无回归
+  status: proposed
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
+# --- #ARCH-REGIME-OVERLAY-001: A3 8转换overlay C1通过但系统性退化Sharpe（2026-08-07）---
+- issue_id: '#ARCH-REGIME-OVERLAY-001'
+  title: A3 8转换overlay C1验证——通过但Sharpe系统性退化0.02/Calmar余量危险
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-07 A3 验证登记。OverlaySignalsConstructor（8转换31维度）已实现：25可算+6 stub。
+    C1 对比（--risk-mode simple --overlay on）：Sharpe 开=0.3278 / MaxDD=0.1471 /
+    Calmar=0.3546 / Turnover=2.5049，四项全通过（Calmar 0.3546 刚过门槛 0.3502）。
+    对比简化版：Sharpe -0.0196（系统性退化，超噪声）/ Calmar -0.0148（余量0.019->0.004危险）/
+    MaxDD -0.0014（略改善）/ Turnover -0.047（略改善）。
+    A2+A3组合（full/on）：Sharpe 0.3259 / Calmar 0.3529（余量仅0.003，鲁棒性差）。
+    退化根因：overlay触发转换(CRISIS/RECOVERY/BREAKOUT)改变Shrinkage时序，在错误时点
+    压仓致Sharpe下降。Calmar余量缩至0.003-0.004，C1虽过但鲁棒性差。
+    2026-08-07 深挖触发记录（scripts/tests/dump_overlay_triggers.py，logs/c1_repro/
+    overlay_audit_daily.csv + overlay_audit_summary.md，派生产物不入 git）：
+      ① 触发率 68.9%（1882/2733日）但 94.4% 日子 delta=0（无影响）——大量触发是
+         T4/T2/T5 的 fail stage，p_overlay={} 空注入，纯记录无副作用；
+      ② 真正有害的是带 p_overlay 注入的 stage：T1 trigger(r12:0.80, 70日)/
+         S1 trigger(r10:0.60, 63日)/S1 confirm(r10:0.80, 6日)/S2 fail(r10:0.60, 15日)/
+         T6 fail(r11:0.40, 38日)；
+      ③ delta 永远≤0（overlay 只会压低 Shrinkage，从不抬高——印证读码：_run_overlay
+         只用 p_overlay 注入 r10/r11/r12 概率，stage_cfg["shrinkage"] 锚定值是死代码，
+         overlay 经概率合并改 dominant→改 confidence→改 Shrinkage）；
+      ④ 误触发元凶：T1 把正常牛市日误判为 BREAKOUT（2016-2017 多个正常日 delta=-0.15），
+         S1 把正常波动日误判为 CRISIS——正是 #1 门控要解决的"附加信号在非危机期假阳性"。
+    2026-08-07 方案 A 验证（scripts/tests/validate_overlay_gated.py）：overlay 仅在
+      #1<1.0（危机期）生效——与 RiskSignal #1 门控对齐，平时 overlay_signals 置空。
+      monkey-patch detect 入口门控，walk-forward 重跑 + C1 对比：
+        baseline simple/off : Sharpe 0.3474 / Calmar 0.3694
+        A3 ungated          : Sharpe 0.3278 / Calmar 0.3546（退化 -0.0196/-0.0148）
+        方案A gated(#1<1.0) : Sharpe 0.3463 / Calmar 0.3679（vs baseline 差 -0.0011/
+                              -0.0015，噪声范围，不退化✅；MaxDD 0.1484 保留危机保护）
+      方案 A 恢复了 A3 退化的全部 Sharpe（+0.0185），危机期 overlay 仍生效，C1 不退化。
+      Turnover 2.73（vs baseline 2.55 略升，门控让 Shrinkage 变化点更陡，但远低于门槛 4.54）。
+    结论：A3 ungated 退化根因明确（T1/S1 非危机期误触发），方案 A（#1 门控 overlay）
+      治本验证通过——建议采纳方案 A 替代 ungated overlay。当前生产维持 simple/off，
+      方案 A 待用户确认后固化到 detect() 入口（加 #1 门控分支）。
+    铁律#9：否决/调参决策类，AI提议 status=proposed，待用户确认。
+  impact:
+    - 'src/zephyr/regime/overlay_signals_builder.py（OverlaySignalsConstructor 8转换构造器，已实现）'
+    - 'src/zephyr/regime/features/overlay_features.py（8转换底层算子）'
+    - 'tests/regime/test_overlay_signals_builder.py（13项测试全通过）'
+    - 'scripts/tests/dump_overlay_triggers.py（触发历史 dump 脚本，2026-08-07 新增）'
+    - 'scripts/tests/validate_overlay_gated.py（方案A 门控验证脚本，2026-08-07 新增）'
+    - 'logs/c1_repro/a2_a3_validation_report.md（验证报告，派生产物不入 git）'
+    - 'logs/c1_repro/overlay_audit_daily.csv + overlay_audit_summary.md（深挖产物，不入 git）'
+  fix_phase: 深挖+方案A验证完成（2026-08-07）—— A3 ungated 退化根因明确（T1/S1非危机期误触发）；方案A(#1门控overlay)C1不退化验证通过；待用户确认后固化门控到 detect() 入口
+  status: proposed
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
 # --- #ARCH-REGIME-FEATURE-BUILDER-001: regime 特征管道（模块A）——OHLCV→RegimeFeatures/OverlaySignals/RiskSignalInputs Phase 1b 落地（2026-08-07）---
 - issue_id: '#ARCH-REGIME-FEATURE-BUILDER-001'
   title: 新增 regime 特征管道——RegimeFeatureBuilder + features/* + OverlaySignalsConstructor + RiskSignalConstructor
@@ -12447,6 +12528,113 @@ entries:
     - 'tests/regime/test_overlay_signals_builder.py（13项覆盖层触发/常态零信号）'
     - 'tests/backtest/test_deadzone_provider.py（11项死区装饰器）'
   fix_phase: 已落地并裁定 decided（2026-08-06 commit 852457e9 落地 + 2026-08-07 commit dba384dd 补登 + 用户授权转 decided）—— 模块A 7文件 + 测试 + C1 真实数据验证四项全通过
+  status: decided
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
+- issue_id: '#ARCH-BOOT-001'
+  title: Guard Watchdog 心跳治本——guard 僵尸化自检 + 单实例锁健康度判定接管
+  severity: P1高
+  category: reliability
+  adjudication: |-
+    2026-08-07 立项。根因：scheduler/tick_subscriber 主进程死亡后 guard（CPU=0）僵尸化，
+    $proc.WaitForExit() 在某些 Windows 进程退出场景下不返回，guard 主线程卡死不重启子进程；
+    且单实例锁仅验 Get-Process PID 存活、不验健康度，Task Scheduler 每 5min 拉新 guard
+    永远 "Guard already running, exit" 形成死锁无法接管，导致 intraday 下载停滞 08-06/08-07
+    两交易日（kline_1min 停在 08-05 15:00、tick_data 停在 08-04）。
+    治本方案：guard 每 15s 写心跳文件（tmp/{scheduler,tick_subscriber}.heartbeat，格式
+    ISO8601|guard_pid|child_pid）；子进程监控从纯阻塞 WaitForExit 改为轮询 HasExited（避免
+    主线程死锁）；单实例锁接管判定从"PID 存活即 exit"改为"PID 存活且心跳<5min 才 exit，否则
+    判僵尸强制接管"（Stop-Process 僵尸 guard + 清 lock/heartbeat + orphan cleanup）。
+    详细实施步骤见 docs/03_modules/_domain_data/boot_autostart_architecture.md §8.1-§8.6。
+    2026-08-07 治本扩展 Phase 1-5：初版方案 §8.1-8.3 仅覆盖 scheduler/tick 心跳逻辑，端到端
+    验证时发现 IgnoreNew 策略阻断新 guard 启动使心跳接管成死代码（缺陷1）、ch_health_probe
+    同漏洞未纳入（缺陷2）、方案验证步骤4.3 在 IgnoreNew 下不可执行（缺陷3）。扩展为三层治本：
+    Phase 1=register_guard_tasks.ps1 MultipleInstances IgnoreNew→Parallel（解除阻断，Task Scheduler
+    退化为无脑周期触发器，单实例 SSoT 完全由脚本级 PID 锁+心跳承担）；
+    Phase 2=start_ch_health_probe.ps1 心跳改造（镜像 scheduler/tick，三服务同级可靠性）；
+    Phase 3=tests/scripts/test_guard_invariants.py 不变式回归测试（钉死禁用 WaitForExit / Parallel
+    策略 / 心跳定义，防 AI 回退）；Phase 4=端到端验证三服务僵尸接管+心跳+崩溃重启全绿；
+    Phase 5=文档收尾（boot §3 四层防御/§8.5 施工验证表/§8.6 战略补强 + AGENTS.md watchdog 表注
+    + 本条目 resolved + #ARCH-BOOT-002 立项）。详见 boot_autostart_architecture.md §8.5。
+  impact:
+    - 'scripts/start_scheduler.ps1（Write-Heartbeat 函数 + 锁超时判定 + 轮询 HasExited + finally 清理心跳，commit b4c7c841）'
+    - 'scripts/start_tick_subscriber.ps1（同步改造，heartbeat 文件名 tick_subscriber.heartbeat，commit b4c7c841）'
+    - 'scripts/start_ch_health_probe.ps1（Phase 2 心跳改造，镜像 scheduler/tick，commit e8cf841c）'
+    - 'scripts/register_guard_tasks.ps1（Phase 1 MultipleInstances IgnoreNew→Parallel，commit e8cf841c）'
+    - 'tests/scripts/test_guard_watchdog.py（4 项单测 + 三服务参数化扩展，commit b4c7c841/e8cf841c）'
+    - 'tests/scripts/test_guard_invariants.py（Phase 3 不变式回归测试，新建，commit e8cf841c）'
+    - 'docs/03_modules/_domain_data/boot_autostart_architecture.md（§3 四层防御 + §8.5 施工验证 + §8.6 战略补强）'
+    - 'AGENTS.md（watchdog 表注 Parallel 策略 + 时间退避例外 + 四层防御指引）'
+  fix_phase: resolved（2026-08-07）—— Phase 1-5 施工+端到端验证通过：scheduler/tick(24040→640/26940→19480)+ch(9132→23384) 僵尸接管、心跳15s、崩溃重启全绿；pytest 29 passed；commit b4c7c841(scheduler/tick+单测) + e8cf841c(Phase 1-3 扩展)
+  status: resolved
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
+# --- #ARCH-BOOT-002: Watchdog 战略补强——心跳原子写+死人开关告警+死锁根因文档化（2026-08-07 立项）---
+- issue_id: '#ARCH-BOOT-002'
+  title: Guard Watchdog 战略补强——心跳原子写 / 死人开关告警 / WaitForExit 死锁根因文档化
+  severity: P3低
+  category: reliability
+  adjudication: |-
+    2026-08-07 立项。主治本 #ARCH-BOOT-001（Phase 1-5）已闭合僵尸接管闭环。以下三项为战略级
+    补强，非阻断（概率极低或属告警增强），建议立项跟进。详见 boot_autostart_architecture.md §8.6。
+    D. 心跳原子写：Out-File 截断+写非原子，新 guard 轮询期（5min PT5M）撞上旧 guard 写心跳的
+       微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。概率极低（5min×微秒级），
+       零成本消除：写 $HeartbeatFile.tmp + Move-Item -Force（同卷原子）。
+    E. 死人开关告警：08-06/08-07 两日停摆是人工发现的，非系统告警。心跳文件是天然 dead-man
+       信号——独立监控（可复用 ch_health_probe 或独立任务）任一 heartbeat 陈旧 >10min 即告警，
+       闭合"全层失效无人知"循环。优先级不低于主治本。
+    F. WaitForExit 死锁根因文档化：根因是 PowerShell 重定向输出管道满致 WaitForExit 不返回；
+       polling HasExited 已绕过。guard 脚本头注释已固化此知识点（Phase 1-5），防 AI "优化"回
+       WaitForExit。本条目+不变式测试（test_guard_invariants.py TestNoGuardUsesWaitForExit）双重
+       保险，战略补强仅登记跟踪文档完整度。
+    铁律#9：补强决策类，AI提议 status=proposed，待用户确认优先级与排期。
+  impact:
+    - 'scripts/start_scheduler.ps1（D: Write-Heartbeat 改 tmp+Move-Item 原子写，待办）'
+    - 'scripts/start_tick_subscriber.ps1（D: 同步原子写，待办）'
+    - 'scripts/start_ch_health_probe.ps1（D: 同步原子写，待办）'
+    - 'scripts/ops/ch_health_probe.py 或独立告警任务（E: dead-man 告警，待办）'
+    - 'docs/03_modules/_domain_data/boot_autostart_architecture.md（§8.6 战略补强说明，已写入）'
+  fix_phase: 待施工——立项 proposed，3 项战略补强（D 原子写 / E 死人开关告警 / F 根因文档化已部分完成）
+  status: proposed
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
+# --- #ARCH-ECHO-GUARD-YML-COMMENT-LOSS: echo-guard acknowledge CLI 重写 yml 丢注释（2026-08-07 登记）---
+- issue_id: '#ARCH-ECHO-GUARD-YML-COMMENT-LOSS'
+  title: echo-guard acknowledge CLI 用 PyYAML 重写 echo-guard.yml 丢失手工注释——项目层 ruamel round-trip 接管治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-07 治本登记。CloneGuard L2 acknowledged 白名单机制经 EchoGuardAdapter.acknowledge()
+    写入 echo-guard.yml 的 acknowledged 段。
+
+    病根（第一性原理）：
+    echo-guard CLI 的 acknowledge 命令用 PyYAML yaml.safe_load + yaml.dump 重写整个
+    echo-guard.yml，PyYAML 不支持 round-trip——丢弃所有手工注释（顶部说明/行内注释/分段
+    注释）并改变引号风格（"*_test.py"→'*_test.py'）。项目 echo-guard.yml 含 12 行重要
+    注释（含 fail_on: extract 的行内说明 "# extract = 3+副本硬阻断"），每次 acknowledge
+    都会丢失，配置可读性持续退化。
+
+    治本方案（项目层接管 yml 写入）：
+    新增 acknowledge_via_cli 配置开关（默认 False=round-trip 保留注释）。acknowledge()
+    分流两条路径：
+    - 默认 _acknowledge_via_roundtrip：项目层 ruamel.yaml round-trip 只更新 acknowledged 段，
+      保留全部注释/引号/缩进。复现 echo-guard CLI 的 entry 格式（intentional: id/verdict/
+      source_hash[:8]/existing_hash[:8]；dismissed: id/verdict/stable_key=make_stable_key）
+      确保 echo-guard is_suppressed 正确识别。
+    - 诊断兼容 _acknowledge_via_cli：保留原 CLI 路径（acknowledge_via_cli=True）。
+    新增 prune() 方法用 round-trip 清理 stale intentional 条目（dismissed 永久豁免保留）。
+    _make_stable_key / _parse_finding_id_hashes 静态方法复现 echo-guard 内部逻辑保证兼容。
+
+    端到端验证：
+    真实 echo-guard.yml 副本 round-trip 写入后 12 行注释全保留；echo-guard 自身加载器
+    EGConfig.load + is_suppressed(fid, src_hash, ext_hash)=True 正确识别白名单条目。
+    70 项单元测试全通过（含 test_roundtrip_compatible_with_echo_guard_load 兼容性核心、
+    test_roundtrip_preserves_comments 注释保留核心）。
+  impact:
+    - 'src/zephyr/clone_guard/config.py（新增 acknowledge_via_cli 开关，默认 False=round-trip）'
+    - 'src/zephyr/clone_guard/engines/echo_guard_adapter.py（acknowledge 分流 CLI/roundtrip；新增 prune/_make_stable_key/_parse_finding_id_hashes）'
+    - 'tests/clone_guard/test_echo_guard_adapter.py（5 个新测试类：CLI 路径/路由分流/round-trip/prune/辅助函数）'
+  fix_phase: 已完成（2026-08-07）—— round-trip 路径接管 acknowledged 白名单写入保留注释；端到端冒烟通过；70 测试全过
   status: decided
   created: '2026-08-07'
   last_updated: '2026-08-07'

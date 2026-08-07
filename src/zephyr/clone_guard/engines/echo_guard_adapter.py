@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.3
 # [MODULE] zephyr.clone_guard.engines.echo_guard_adapter
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); subprocess; json; logging
+# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); subprocess; json; logging; ruamel.yaml (acknowledge/prune 写入路径，lazy import)
 # [CONSUMERS] zephyr.clone_guard.orchestrator
 # [STARTUP] imported
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] detect()/scan()/acknowledge() 永不抛异常——CLI 失败/超时/索引缺失返回降级标记（detect/scan: ([], True)；acknowledge: (False, error)）
+# [ERROR_CONTRACT] detect()/scan()/acknowledge()/prune() 永不抛异常——CLI/ruamel 失败/超时/异常返回降级标记（detect/scan: ([], True)；acknowledge: (False, error)；prune: (False, error, 0)）
 # [TESTS] tests/clone_guard/test_echo_guard_adapter.py
 # [A_module] module_id=MOD-CLONE_GUARD | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -226,34 +226,48 @@ class EchoGuardAdapter:
         note: str,
         timeout: int | None = None,
     ) -> tuple[bool, str | None]:
-        """将 finding 加入 echo-guard.yml suppressed 白名单（L2 acknowledged 机制）。
+        """将 finding 加入 echo-guard.yml acknowledged 白名单（L2 acknowledged 机制）。
 
-        封装 ``echo-guard acknowledge FINDING_ID --verdict intentional|dismissed --note``：
+        两条写入路径（裁定 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS 治本）：
+        - 项目层 ruamel.yaml round-trip（默认，``acknowledge_via_cli=False``）：保留注释/格式
+        - echo-guard CLI（``acknowledge_via_cli=True``，诊断/兼容）：PyYAML 重写丢注释
+
+        verdict 语义：
         - intentional: 保留两份副本（函数变化时重新浮现，非永久豁免）
         - dismissed:   标记为非重复（永久豁免）
 
-        写操作——修改仓库根目录的 ``echo-guard.yml``。acknowledge 是配置管理操作，
-        不依赖索引（与 detect/scan 不同），故无 exit_code=2 索引缺失分支；但 finding_id
-        不存在/verdict 非法时 CLI 返回非零退出码。
-
-        守 ERROR_CONTRACT：CLI 失败/超时/异常返回 ``(False, error_msg)``，不抛异常。
+        守 ERROR_CONTRACT：CLI/ruamel 失败/超时/异常返回 ``(False, error)``，不抛异常。
 
         Args:
             finding_id: 来自 ``echo-guard scan --output json`` 的 finding ID。
             verdict: ``"intentional"`` 或 ``"dismissed"``（由调用方校验，本方法透传）。
             note: 说明为何 acknowledge（留痕防滥用，由调用方强制非空）。
-            timeout: 超时秒数（None 时用 ``config.pre_commit_timeout_sec``——acknowledge
-                是快速写操作，不需 L2 的 300s）。
+            timeout: 超时秒数（仅 CLI 路径用；None 时用 ``config.pre_commit_timeout_sec``）。
 
         Returns:
             ``(success, error)`` 元组：
-            - success: True 表示已写入 echo-guard.yml suppressed 列表
+            - success: True 表示已写入 echo-guard.yml acknowledged 列表
             - error: 失败原因（成功时为 None）
         """
         if not self._config.echo_guard_enabled:
             logger.debug("echo-guard 已在配置中禁用，跳过 acknowledge")
             return False, "echo-guard 已禁用"
 
+        if self._config.acknowledge_via_cli:
+            return self._acknowledge_via_cli(finding_id, verdict, note, timeout)
+        return self._acknowledge_via_roundtrip(finding_id, verdict, note)
+
+    def _acknowledge_via_cli(
+        self,
+        finding_id: str,
+        verdict: str,
+        note: str,
+        timeout: int | None,
+    ) -> tuple[bool, str | None]:
+        """CLI 写入路径——调 ``echo-guard acknowledge``（PyYAML 重写，丢注释）。
+
+        诊断/兼容用（``acknowledge_via_cli=True``）。默认路径走 ``_acknowledge_via_roundtrip``。
+        """
         timeout_sec = timeout or self._config.pre_commit_timeout_sec
 
         try:
@@ -274,25 +288,211 @@ class EchoGuardAdapter:
                 env={**os.environ, **self._config.env},
             )
         except FileNotFoundError:
-            logger.warning("EchoGuardAdapter acknowledge degraded: echo-guard CLI 未安装")
+            logger.warning("EchoGuardAdapter acknowledge(CLI) degraded: echo-guard CLI 未安装")
             return False, "echo-guard CLI 未安装"
         except subprocess.TimeoutExpired:
-            logger.warning("EchoGuardAdapter acknowledge degraded: 超时(%ds)", timeout_sec)
+            logger.warning("EchoGuardAdapter acknowledge(CLI) degraded: 超时(%ds)", timeout_sec)
             return False, f"echo-guard acknowledge 超时({timeout_sec}s)"
         except Exception as e:  # noqa: BLE001  适配器不抛异常
-            logger.warning("EchoGuardAdapter acknowledge degraded: 异常(%s: %s)", type(e).__name__, e)
+            logger.warning("EchoGuardAdapter acknowledge(CLI) degraded: 异常(%s: %s)", type(e).__name__, e)
             return False, f"{type(e).__name__}: {e}"
 
         if result.returncode != 0:
             err = (result.stderr or result.stdout or "").strip()[:200]
             logger.warning(
-                "EchoGuardAdapter acknowledge 失败: exit=%d, stderr=%s",
+                "EchoGuardAdapter acknowledge(CLI) 失败: exit=%d, stderr=%s",
                 result.returncode,
                 err,
             )
             return False, f"echo-guard acknowledge 退出码={result.returncode}: {err}"
 
         return True, None
+
+    def _acknowledge_via_roundtrip(
+        self,
+        finding_id: str,
+        verdict: str,
+        note: str,
+    ) -> tuple[bool, str | None]:
+        """项目层 ruamel.yaml round-trip 写 echo-guard.yml acknowledged 段（保留注释）。
+
+        治本 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS：echo-guard CLI 用 PyYAML 重写丢注释，
+        本方法用 ruamel round-trip 只更新 acknowledged 段，保留其他注释/格式/引号风格。
+
+        复现 echo-guard CLI 的 acknowledged 段格式（echo_guard/config.py:238-255）：
+        - intentional: ``{id, verdict, source_hash[:8], existing_hash[:8]}``
+        - dismissed:   ``{id, verdict, stable_key=make_stable_key(finding_id)}``
+
+        兼容性：echo-guard ``is_suppressed``（config.py:171-221）完全基于 yml acknowledged
+        段判定，本方法写的格式与 CLI 写的一致，echo-guard check/scan 正确识别并跳过。
+        不写 DuckDB 索引（仅影响 VS Code 扩展展示，不影响 L1/L2 检测）。
+        """
+        yml_path = self._repo_root / "echo-guard.yml"
+        if not yml_path.exists():
+            return False, "echo-guard.yml 不存在"
+
+        try:
+            from ruamel.yaml import YAML  # noqa: PLC0415 — lazy import，仅写入路径需要
+        except ImportError:
+            logger.warning("EchoGuardAdapter acknowledge(roundtrip): ruamel.yaml 未安装")
+            return False, "ruamel.yaml 未安装（pip install ruamel.yaml）"
+
+        # 构造 entry（复现 echo_guard/config.py:248-254）
+        if verdict == "intentional":
+            src_hash, ext_hash = self._parse_finding_id_hashes(finding_id)
+            entry = {
+                "id": finding_id,
+                "verdict": verdict,
+                "source_hash": src_hash[:8] if src_hash else "",
+                "existing_hash": ext_hash[:8] if ext_hash else "",
+            }
+        elif verdict == "dismissed":
+            entry = {
+                "id": finding_id,
+                "verdict": verdict,
+                "stable_key": self._make_stable_key(finding_id),
+            }
+        else:
+            return False, f"verdict 非法: {verdict!r}（须 intentional 或 dismissed）"
+
+        try:
+            ryaml = YAML()
+            ryaml.preserve_quotes = True
+            ryaml.width = 4096  # 防长行折行（守 load_acquisition_decisions.py 先例）
+            with yml_path.open("r", encoding="utf-8") as f:
+                data = ryaml.load(f)
+            if data is None:
+                data = {}
+
+            # acknowledged 段——不存在则初始化
+            if data.get("acknowledged") is None:
+                data["acknowledged"] = []
+            ack_list = data["acknowledged"]
+
+            # 去重：移除同 id 旧 entry（复现 echo_guard/config.py:247）
+            to_remove = [i for i, e in enumerate(ack_list) if isinstance(e, dict) and e.get("id") == finding_id]
+            for i in reversed(to_remove):
+                del ack_list[i]
+            ack_list.append(entry)
+
+            with yml_path.open("w", encoding="utf-8") as f:
+                ryaml.dump(data, f)
+        except Exception as e:  # noqa: BLE001  适配器不抛异常
+            logger.warning("EchoGuardAdapter acknowledge(roundtrip) 失败: %s: %s", type(e).__name__, e)
+            return False, f"{type(e).__name__}: {e}"
+
+        logger.info(
+            "acknowledge(roundtrip): %s verdict=%s 已写入 echo-guard.yml（注释保留）",
+            finding_id[:60],
+            verdict,
+        )
+        return True, None
+
+    def prune(
+        self,
+        scan_finding_ids: set[str] | None = None,
+    ) -> tuple[bool, str | None, int]:
+        """移除 echo-guard.yml acknowledged 中已不存在的 intentional finding（白名单清理）。
+
+        项目层 ruamel round-trip 写入（保留注释）。复现 echo-guard prune CLI 语义
+        （cli.py:2050-2155）的简化版：丢弃 intentional 类型的 stale entry
+        （id 不再出现在 scan 结果）。**dismissed 类型保留**——dismissed 是永久豁免，
+        依赖 stable_key 匹配（非 id），需人工清理，避免 id 匹配误删。
+
+        Args:
+            scan_finding_ids: 当前 scan 返回的所有 finding_id 集合。None 时本方法
+                调 ``self.scan()`` 自取（全仓库扫描，较慢）。
+
+        Returns:
+            ``(success, error, removed_count)`` 元组：
+            - success: True 表示 prune 完成（含 0 移除）
+            - error: 失败原因（成功时为 None）
+            - removed_count: 移除的 stale entry 数
+        """
+        if not self._config.echo_guard_enabled:
+            return False, "echo-guard 已禁用", 0
+
+        # 获取当前 scan 的 finding_ids
+        if scan_finding_ids is None:
+            findings, degraded = self.scan()
+            if degraded:
+                return False, "scan 降级，无法 prune", 0
+            scan_finding_ids = {f.finding_id for f in findings}
+
+        yml_path = self._repo_root / "echo-guard.yml"
+        if not yml_path.exists():
+            return False, "echo-guard.yml 不存在", 0
+
+        try:
+            from ruamel.yaml import YAML  # noqa: PLC0415 — lazy import
+        except ImportError:
+            return False, "ruamel.yaml 未安装", 0
+
+        try:
+            ryaml = YAML()
+            ryaml.preserve_quotes = True
+            ryaml.width = 4096
+            with yml_path.open("r", encoding="utf-8") as f:
+                data = ryaml.load(f)
+            if data is None:
+                data = {}
+
+            ack_list = data.get("acknowledged")
+            if not ack_list:
+                return True, None, 0  # 无 acknowledged，无需 prune
+
+            # 只 prune intentional stale（id 不在 scan 结果）；dismissed 保留
+            to_remove = []
+            for i, entry in enumerate(ack_list):
+                if not isinstance(entry, dict):
+                    continue
+                if entry.get("verdict") != "intentional":
+                    continue  # dismissed 保留（永久豁免，需人工清理）
+                eid = entry.get("id", "")
+                if eid and eid not in scan_finding_ids:
+                    to_remove.append(i)
+            for i in reversed(to_remove):
+                del ack_list[i]
+
+            if to_remove:
+                with yml_path.open("w", encoding="utf-8") as f:
+                    ryaml.dump(data, f)
+        except Exception as e:  # noqa: BLE001  适配器不抛异常
+            logger.warning("EchoGuardAdapter prune 失败: %s: %s", type(e).__name__, e)
+            return False, f"{type(e).__name__}: {e}", 0
+
+        logger.info("prune(roundtrip): 移除 %d 个 stale intentional entry", len(to_remove))
+        return True, None, len(to_remove)
+
+    @staticmethod
+    def _make_stable_key(finding_id: str) -> str:
+        """复现 echo-guard ``config.py:224-236 make_stable_key``。
+
+        finding_id 格式: ``filepath:name:hash||filepath:name:hash``
+        stable_key = 排序两侧 ``filepath:name``（去 hash），``||`` 连接。
+        同一对函数无论哪侧是 source/existing 都产生相同 key。
+        """
+        parts = finding_id.split("||")
+        if len(parts) != 2:
+            return finding_id
+        sides = sorted(p.rsplit(":", 1)[0] for p in parts)
+        return "||".join(sides)
+
+    @staticmethod
+    def _parse_finding_id_hashes(finding_id: str) -> tuple[str, str]:
+        """从 finding_id 解析 source_hash/existing_hash（复现 echo-guard ``cli.py:1961-1968``）。
+
+        finding_id 格式: ``filepath:name:hash||filepath:name:hash``
+        返回 ``(source_hash, existing_hash)``；解析失败返回 ``("", "")``。
+        """
+        parts = finding_id.split("||")
+        if len(parts) != 2:
+            return "", ""
+        a = parts[0].rsplit(":", 1)
+        b = parts[1].rsplit(":", 1)
+        src_hash = a[1] if len(a) == 2 else ""
+        ext_hash = b[1] if len(b) == 2 else ""
+        return src_hash, ext_hash
 
     def _parse_findings(self, data: dict) -> list[Finding]:
         """将 echo-guard JSON 输出解析为 Finding 列表。"""

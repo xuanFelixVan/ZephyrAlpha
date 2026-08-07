@@ -489,15 +489,16 @@ class TestEchoGuardAdapterScan:
 
 
 class TestEchoGuardAdapterAcknowledge:
-    """acknowledge 测试——L2 acknowledged 白名单管理路径（写 echo-guard.yml）。
+    """acknowledge CLI 路径测试——``acknowledge_via_cli=True`` 走 echo-guard CLI。
 
-    镜像 detect/scan 的降级覆盖，确保 acknowledge 守 ERROR_CONTRACT：
+    镜像 detect/scan 的降级覆盖，确保 CLI 路径守 ERROR_CONTRACT：
     CLI 失败/超时/异常返回 (False, error)，不抛异常。
+    默认路径（round-trip）见 TestEchoGuardAdapterAcknowledgeRoundTrip。
     """
 
     def test_echo_guard_disabled_returns_error(self, tmp_path: Path):
-        """echo_guard_enabled=False 时返回 (False, error) 且不调 CLI。"""
-        cfg = CloneGuardConfig(echo_guard_enabled=False)
+        """echo_guard_enabled=False 时返回 (False, error) 且不调 CLI/roundtrip。"""
+        cfg = CloneGuardConfig(echo_guard_enabled=False, acknowledge_via_cli=True)
         adapter = EchoGuardAdapter(tmp_path, cfg)
         with patch("subprocess.run") as mock_run:
             success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
@@ -507,7 +508,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_cli_not_found_returns_error(self, tmp_path: Path):
         """CLI 未安装时返回 (False, error)。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         with patch("subprocess.run", side_effect=FileNotFoundError):
             success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
         assert success is False
@@ -516,7 +517,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_cli_timeout_returns_error(self, tmp_path: Path):
         """CLI 超时时返回 (False, error)。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         with patch("subprocess.run", side_effect=subprocess.TimeoutExpired(cmd="echo-guard", timeout=30)):
             success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
         assert success is False
@@ -525,7 +526,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_generic_exception_returns_error(self, tmp_path: Path):
         """其他异常也返回 (False, error)，不抛出。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         with patch("subprocess.run", side_effect=OSError("boom")):
             success, error = adapter.acknowledge("F-001", "intentional", "合理重复")
         assert success is False
@@ -533,7 +534,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_nonzero_exit_returns_error(self, tmp_path: Path):
         """CLI 非零退出码（finding_id 不存在等）返回 (False, error)。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         mock_result = MagicMock(returncode=1, stdout="", stderr="finding not found")
         with patch("subprocess.run", return_value=mock_result):
             success, error = adapter.acknowledge("F-NOPE", "intentional", "x")
@@ -544,7 +545,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_zero_exit_returns_success(self, tmp_path: Path):
         """CLI 退出码 0 → (True, None)。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result):
             success, error = adapter.acknowledge("F-001", "dismissed", "非重复")
@@ -553,7 +554,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_command_args_correct(self, tmp_path: Path):
         """acknowledge 命令含 finding_id/--verdict/--note 三个参数。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result) as mock_run:
             adapter.acknowledge("F-001", "intentional", "两处实现均需保留")
@@ -570,7 +571,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_uses_pre_commit_timeout_by_default(self, tmp_path: Path):
         """acknowledge 默认用 config.pre_commit_timeout_sec（30s），非 L2 的 300s。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result) as mock_run:
             adapter.acknowledge("F-001", "intentional", "x")
@@ -579,7 +580,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_explicit_timeout_respected(self, tmp_path: Path):
         """显式 timeout 覆盖默认 pre_commit_timeout_sec。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result) as mock_run:
             adapter.acknowledge("F-001", "intentional", "x", timeout=45)
@@ -588,7 +589,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_injects_config_env(self, tmp_path: Path):
         """acknowledge 注入 config.env（与 detect/scan 一致）。"""
-        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"})
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"}, acknowledge_via_cli=True)
         adapter = EchoGuardAdapter(tmp_path, cfg)
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result) as mock_run:
@@ -598,7 +599,7 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_merges_system_env(self, tmp_path: Path):
         """注入的 env 保留系统 PATH + config.env 覆盖。"""
-        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"})
+        cfg = CloneGuardConfig(env={"HF_HUB_OFFLINE": "1"}, acknowledge_via_cli=True)
         adapter = EchoGuardAdapter(tmp_path, cfg)
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result) as mock_run:
@@ -609,9 +610,318 @@ class TestEchoGuardAdapterAcknowledge:
 
     def test_cwd_is_repo_root(self, tmp_path: Path):
         """acknowledge 在 repo_root 目录下执行（echo-guard.yml 在仓库根）。"""
-        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
         mock_result = MagicMock(returncode=0, stdout="", stderr="")
         with patch("subprocess.run", return_value=mock_result) as mock_run:
             adapter.acknowledge("F-001", "intentional", "x")
         _, kwargs = mock_run.call_args
         assert kwargs["cwd"] == str(tmp_path)
+
+
+# ---------------------------------------------------------------------------
+# acknowledge 路由分流测试
+# ---------------------------------------------------------------------------
+
+
+class TestAcknowledgeRouting:
+    """acknowledge 分流测试——acknowledge_via_cli 决定走 CLI 还是 round-trip。"""
+
+    def test_default_routes_to_roundtrip_not_cli(self, tmp_path: Path):
+        """默认 acknowledge_via_cli=False → 走 round-trip，不调 subprocess.run。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("min_function_lines: 3\nacknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())  # 默认 acknowledge_via_cli=False
+        with patch("subprocess.run") as mock_run:
+            success, _ = adapter.acknowledge("a.py:fn:h1||b.py:fn:h2", "intentional", "x")
+        assert success is True
+        mock_run.assert_not_called()  # round-trip 路径不调 CLI
+
+    def test_cli_flag_routes_to_cli(self, tmp_path: Path):
+        """acknowledge_via_cli=True → 走 CLI（调 subprocess.run）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
+        mock_result = MagicMock(returncode=0, stdout="", stderr="")
+        with patch("subprocess.run", return_value=mock_result) as mock_run:
+            adapter.acknowledge("F-001", "intentional", "x")
+        mock_run.assert_called_once()  # CLI 路径调 subprocess
+
+
+# ---------------------------------------------------------------------------
+# acknowledge round-trip 路径测试（治本 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS）
+# ---------------------------------------------------------------------------
+
+
+class TestEchoGuardAdapterAcknowledgeRoundTrip:
+    """acknowledge 项目层 ruamel round-trip 路径测试——保留注释，治本注释丢失副作用。"""
+
+    def test_roundtrip_preserves_comments(self, tmp_path: Path):
+        """治本核心：round-trip 路径保留 echo-guard.yml 所有注释（顶部/手工/行内）。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text(
+            "# Echo Guard configuration\n"
+            "# 重要手工注释——不应丢失\n"
+            "min_function_lines: 3\n"
+            "fail_on: extract  # 行内注释\n"
+            "acknowledged: []\n",
+            encoding="utf-8",
+        )
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        success, error = adapter.acknowledge("a.py:fn:hash1||b.py:fn:hash2", "intentional", "测试")
+        assert success is True, f"acknowledge 失败: {error}"
+        content = yml.read_text(encoding="utf-8")
+        assert "# Echo Guard configuration" in content  # 顶部注释保留
+        assert "# 重要手工注释——不应丢失" in content  # 手工注释保留
+        assert "# 行内注释" in content  # 行内注释保留
+
+    def test_roundtrip_intentional_entry_format(self, tmp_path: Path):
+        """intentional entry 含 id/verdict/source_hash(8)/existing_hash(8)。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        fid = "a.py:fn:abcdef1234||b.py:fn:fedcba9876"
+        success, _ = adapter.acknowledge(fid, "intentional", "测试")
+        assert success
+        from ruamel.yaml import YAML
+
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        entry = data["acknowledged"][0]
+        assert entry["id"] == fid
+        assert entry["verdict"] == "intentional"
+        assert entry["source_hash"] == "abcdef12"  # 前 8 字符
+        assert entry["existing_hash"] == "fedcba98"
+
+    def test_roundtrip_dismissed_entry_format(self, tmp_path: Path):
+        """dismissed entry 含 id/verdict/stable_key。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        fid = "a.py:fn:h1||b.py:fn:h2"
+        success, _ = adapter.acknowledge(fid, "dismissed", "非重复")
+        assert success
+        from ruamel.yaml import YAML
+
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        entry = data["acknowledged"][0]
+        assert entry["id"] == fid
+        assert entry["verdict"] == "dismissed"
+        assert entry["stable_key"] == "a.py:fn||b.py:fn"  # 排序两侧去 hash
+
+    def test_roundtrip_dedup_same_id(self, tmp_path: Path):
+        """同 finding_id 二次 acknowledge 替换旧 entry，不重复。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        fid = "a.py:fn:h1||b.py:fn:h2"
+        adapter.acknowledge(fid, "intentional", "第一次")
+        adapter.acknowledge(fid, "dismissed", "第二次改主意")
+        from ruamel.yaml import YAML
+
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        assert len(data["acknowledged"]) == 1  # 去重，非 2
+        assert data["acknowledged"][0]["verdict"] == "dismissed"  # 后者覆盖
+
+    def test_roundtrip_creates_acknowledged_section_if_absent(self, tmp_path: Path):
+        """echo-guard.yml 无 acknowledged 段时自动创建。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("min_function_lines: 3\n", encoding="utf-8")  # 无 acknowledged
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        success, _ = adapter.acknowledge("a.py:fn:h1||b.py:fn:h2", "intentional", "x")
+        assert success
+        from ruamel.yaml import YAML
+
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        assert "acknowledged" in data
+        assert len(data["acknowledged"]) == 1
+
+    def test_roundtrip_yml_not_exists(self, tmp_path: Path):
+        """echo-guard.yml 不存在 → (False, error)。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        success, error = adapter.acknowledge("F-001", "intentional", "x")
+        assert success is False
+        assert error is not None
+        assert "echo-guard.yml 不存在" in error
+
+    def test_roundtrip_ruamel_not_installed(self, tmp_path: Path):
+        """ruamel.yaml 未安装 → (False, error)，不抛异常。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch.dict("sys.modules", {"ruamel.yaml": None, "ruamel": None}):
+            success, error = adapter.acknowledge("F-001", "intentional", "x")
+        assert success is False
+        assert error is not None
+        assert "ruamel.yaml" in error
+
+    def test_roundtrip_invalid_verdict_returns_error(self, tmp_path: Path):
+        """非法 verdict → (False, error)，不写 yml。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        success, error = adapter.acknowledge("F-001", "maybe", "x")
+        assert success is False
+        assert error is not None
+        assert "verdict" in error
+
+    def test_roundtrip_compatible_with_echo_guard_load(self, tmp_path: Path):
+        """兼容性核心：项目层写的 yml 能被 echo_guard.config.EchoGuardConfig 识别 + is_suppressed=True。"""
+        from echo_guard.config import EchoGuardConfig as EGConfig
+
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("min_function_lines: 3\nacknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        fid = "a.py:fn:abcdef12||b.py:fn:fedcba98"
+        success, _ = adapter.acknowledge(fid, "intentional", "兼容性测试")
+        assert success
+        eg_cfg = EGConfig.load(str(tmp_path))  # echo-guard 自己的加载器
+        assert eg_cfg.is_suppressed(fid, "abcdef12", "fedcba98") is True
+
+
+# ---------------------------------------------------------------------------
+# prune 测试（项目层 round-trip 接管）
+# ---------------------------------------------------------------------------
+
+
+class TestEchoGuardAdapterPrune:
+    """prune 测试——移除 stale intentional entry，保留 dismissed，保留注释。"""
+
+    def _write_yml_with_acknowledged(self, yml: Path) -> None:
+        """写一个含注释 + acknowledged 段（1 stale intentional + 1 fresh intentional + 1 dismissed）的 yml。"""
+        yml.write_text(
+            "# Echo Guard 配置——注释应保留\n"
+            "min_function_lines: 3\n"
+            "acknowledged:\n"
+            "  - id: stale.py:fn:oldhash||other.py:fn:oldhash\n"
+            "    verdict: intentional\n"
+            "    source_hash: oldhash\n"
+            "    existing_hash: oldhash\n"
+            "  - id: fresh.py:fn:newhash||other.py:fn:newhash\n"
+            "    verdict: intentional\n"
+            "    source_hash: newhash\n"
+            "    existing_hash: newhash\n"
+            "  - id: dismissed.py:fn:h1||other.py:fn:h2\n"
+            "    verdict: dismissed\n"
+            "    stable_key: dismissed.py:fn||other.py:fn\n",
+            encoding="utf-8",
+        )
+
+    def test_prune_removes_stale_intentional(self, tmp_path: Path):
+        """stale intentional entry（id 不在 scan 结果）被移除。"""
+        yml = tmp_path / "echo-guard.yml"
+        self._write_yml_with_acknowledged(yml)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        # scan 结果只含 fresh（stale 不在）
+        scan_ids = {"fresh.py:fn:newhash||other.py:fn:newhash"}
+        success, error, removed = adapter.prune(scan_finding_ids=scan_ids)
+        assert success, f"prune 失败: {error}"
+        assert removed == 1  # stale 被移除
+        from ruamel.yaml import YAML
+
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        ids = [e["id"] for e in data["acknowledged"]]
+        assert "stale.py:fn:oldhash||other.py:fn:oldhash" not in ids  # stale 移除
+        assert "fresh.py:fn:newhash||other.py:fn:newhash" in ids  # fresh 保留
+
+    def test_prune_preserves_dismissed(self, tmp_path: Path):
+        """dismissed entry 保留（不因 id 不在 scan 结果而移除）。"""
+        yml = tmp_path / "echo-guard.yml"
+        self._write_yml_with_acknowledged(yml)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        scan_ids: set[str] = set()  # 空 scan——所有 intentional stale
+        success, _, removed = adapter.prune(scan_finding_ids=scan_ids)
+        assert success
+        from ruamel.yaml import YAML
+
+        data = YAML().load(yml.read_text(encoding="utf-8"))
+        ids = [e["id"] for e in data["acknowledged"]]
+        assert "dismissed.py:fn:h1||other.py:fn:h2" in ids  # dismissed 保留
+        assert removed == 2  # 2 个 intentional 都 stale，dismissed 不计
+
+    def test_prune_preserves_comments(self, tmp_path: Path):
+        """prune 后 echo-guard.yml 注释保留（治本验证）。"""
+        yml = tmp_path / "echo-guard.yml"
+        self._write_yml_with_acknowledged(yml)
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        adapter.prune(scan_finding_ids=set())
+        content = yml.read_text(encoding="utf-8")
+        assert "# Echo Guard 配置——注释应保留" in content
+
+    def test_prune_no_acknowledged_returns_zero(self, tmp_path: Path):
+        """无 acknowledged 段 → (True, None, 0)。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("min_function_lines: 3\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        success, error, removed = adapter.prune(scan_finding_ids=set())
+        assert success
+        assert error is None
+        assert removed == 0
+
+    def test_prune_explicit_scan_ids_skips_scan_call(self, tmp_path: Path):
+        """传入 scan_finding_ids 时不调 self.scan()。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch.object(adapter, "scan") as mock_scan:
+            adapter.prune(scan_finding_ids={"F-001"})
+        mock_scan.assert_not_called()  # 显式传 ids 不调 scan
+
+    def test_prune_scan_degraded_returns_error(self, tmp_path: Path):
+        """scan 降级（degraded=True）→ (False, error, 0)。"""
+        yml = tmp_path / "echo-guard.yml"
+        yml.write_text("acknowledged: []\n", encoding="utf-8")
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch.object(adapter, "scan", return_value=([], True)):
+            success, error, removed = adapter.prune()  # 不传 ids，触发自 scan
+        assert success is False
+        assert removed == 0
+        assert "scan 降级" in error
+
+    def test_prune_echo_guard_disabled(self, tmp_path: Path):
+        """echo_guard_enabled=False → (False, error, 0)。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(echo_guard_enabled=False))
+        success, error, removed = adapter.prune(scan_finding_ids=set())
+        assert success is False
+        assert removed == 0
+
+
+# ---------------------------------------------------------------------------
+# _make_stable_key / _parse_finding_id_hashes 单元测试
+# ---------------------------------------------------------------------------
+
+
+class TestStableKeyAndHashParsing:
+    """_make_stable_key + _parse_finding_id_hashes 单元测试（复现 echo-guard 逻辑）。"""
+
+    def test_make_stable_key_normal(self):
+        """标准 finding_id → 排序两侧 filepath:name，|| 连接。"""
+        fid = "a.py:func:hash1||b.py:func:hash2"
+        assert EchoGuardAdapter._make_stable_key(fid) == "a.py:func||b.py:func"
+
+    def test_make_stable_key_order_independent(self):
+        """两侧顺序无关——source/existing 互换产生相同 key。"""
+        fid1 = "a.py:func:h1||b.py:func:h2"
+        fid2 = "b.py:func:h2||a.py:func:h1"
+        assert EchoGuardAdapter._make_stable_key(fid1) == EchoGuardAdapter._make_stable_key(fid2)
+
+    def test_make_stable_key_single_side(self):
+        """无 || 分隔 → 返回原值（容错）。"""
+        fid = "a.py:func:hash1"
+        assert EchoGuardAdapter._make_stable_key(fid) == fid
+
+    def test_parse_hashes_normal(self):
+        """标准 finding_id → (source_hash, existing_hash)。"""
+        fid = "a.py:fn:abcdef12||b.py:fn:fedcba98"
+        src, ext = EchoGuardAdapter._parse_finding_id_hashes(fid)
+        assert src == "abcdef12"
+        assert ext == "fedcba98"
+
+    def test_parse_hashes_single_side(self):
+        """无 || 分隔 → ("", "")（容错）。"""
+        src, ext = EchoGuardAdapter._parse_finding_id_hashes("a.py:fn:hash1")
+        assert src == ""
+        assert ext == ""
+
+    def test_matches_echo_guard_make_stable_key(self):
+        """与 echo_guard.config.EchoGuardConfig.make_stable_key 输出一致（兼容性）。"""
+        from echo_guard.config import EchoGuardConfig as EGConfig
+
+        fid = "x.py:f:h1||y.py:g:h2"
+        assert EchoGuardAdapter._make_stable_key(fid) == EGConfig.make_stable_key(fid)
