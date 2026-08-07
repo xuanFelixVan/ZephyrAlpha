@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-07T15:16:22Z
+# 自动生成于 2026-08-07T15:29:56Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-07T15:16:22Z'
+generated_at: '2026-08-07T15:29:56Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 33
@@ -133,7 +133,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 81
+  entry_count: 82
   status: active
 - registry_id: PS-REG-014
   name: GATE 门禁登记表
