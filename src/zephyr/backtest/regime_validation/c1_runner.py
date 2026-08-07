@@ -137,6 +137,37 @@ def build_volatility_schedule(
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# tracking 适配（track=True 时 lazy import c1_adapter，破 backtest↔experiment_tracking 循环）
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _track_result(
+    result: C1ComparisonResult,
+    *,
+    comparator: C1ShrinkageComparator,
+    mode: str,
+    strategy_name: str,
+) -> None:
+    """track=True 时把 C1 结果记录为 mlflow run（lazy import 破循环）。
+
+    仅在 track=True 分支内 import `c1_adapter.track_c1_result`，避免 backtest →
+    experiment_tracking 包级强依赖（adapter 仅 TYPE_CHECKING 引用 backtest 类型）。
+    tracking 任何失败由 adapter 内 RunContext try/except 兜住，不抛、不崩 C1 业务。
+    """
+    try:
+        from zephyr.experiment_tracking.adapters.c1_adapter import track_c1_result
+    except ImportError as e:  # pragma: no cover — experiment_tracking 缺失时降级
+        _logger.warning("track=True 但 experiment_tracking 不可用(%s)，跳过 tracking", e)
+        return
+    try:
+        track_c1_result(
+            result, comparator=comparator, mode=mode, strategy_name=strategy_name
+        )
+    except Exception as e:  # noqa: BLE001 — tracking 失败不崩 C1 业务
+        _logger.warning("C1 结果 tracking 失败(忽略): %s", e)
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # 核心入口：用任意 provider 跑 C1 开/关对比
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -149,6 +180,8 @@ def run_c1_with_provider(
     c1_config: Optional[C1Config] = None,
     strategy_name: str = "c1-shrinkage",
     initial_capital: Optional[float] = None,
+    track: bool = False,
+    mode: str = "provider",
 ) -> C1ComparisonResult:
     """核心：用给定 shrinkage_provider 跑 C1 开/关对比。
 
@@ -165,6 +198,8 @@ def run_c1_with_provider(
         c1_config: C1 门槛配置。None 用默认 C1Config()（discussion_002 §5 标准）。
         strategy_name: 策略名（两组共用）。
         initial_capital: 初始资金（两组共用，None 用 config 值）。
+        track: True 时把结果记录为 mlflow run（lazy import c1_adapter，失败不崩业务）。
+        mode: tracking 标签（"mock"/"regime"/"provider"），写入 tags 供筛选。
 
     Returns:
         C1ComparisonResult（含四项 metric_verdicts + passed + veto_reason + summary）。
@@ -176,7 +211,7 @@ def run_c1_with_provider(
 
     cfg = backtest_config or BacktestConfig()
     comparator = C1ShrinkageComparator(config=c1_config or C1Config())
-    return comparator.compare(
+    result = comparator.compare(
         data=data,
         signals=signals,
         shrinkage_provider=shrinkage_provider,
@@ -184,6 +219,9 @@ def run_c1_with_provider(
         strategy_name=strategy_name,
         initial_capital=initial_capital,
     )
+    if track:
+        _track_result(result, comparator=comparator, mode=mode, strategy_name=strategy_name)
+    return result
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -198,6 +236,7 @@ def run_c1_mock(
     c1_config: Optional[C1Config] = None,
     vol_window: int = 20,
     strategy_name: str = "c1-mock",
+    track: bool = False,
 ) -> C1ComparisonResult:
     """冒烟模式：用 MockShrinkageProvider（波动率 4 档映射）跑 C1。
 
@@ -211,6 +250,7 @@ def run_c1_mock(
         data/signals/backtest_config/c1_config: 同 run_c1_with_provider。
         vol_window: 实现波动率窗口（默认 20）。
         strategy_name: 策略名。
+        track: True 时把结果记录为 mlflow run（mode="mock"）。
 
     Returns:
         C1ComparisonResult。
@@ -226,6 +266,8 @@ def run_c1_mock(
         backtest_config=backtest_config,
         c1_config=c1_config,
         strategy_name=strategy_name,
+        track=track,
+        mode="mock",
     )
 
 
@@ -241,6 +283,7 @@ def run_c1_regime(
     backtest_config: Optional[BacktestConfig] = None,
     c1_config: Optional[C1Config] = None,
     strategy_name: str = "c1-regime",
+    track: bool = False,
 ) -> C1ComparisonResult:
     """真实模式：用 RegimeDetector 预计算序列跑 C1（Phase 1 裁决依据）。
 
@@ -269,6 +312,8 @@ def run_c1_regime(
         backtest_config=backtest_config,
         c1_config=c1_config,
         strategy_name=strategy_name,
+        track=track,
+        mode="regime",
     )
 
 
@@ -284,6 +329,7 @@ def run_c1_end_to_end(
     runner_config: Any,
     mode: str = "mock",
     regime_results: Optional[list[tuple[datetime, Any]]] = None,
+    track: bool = False,
 ) -> C1ComparisonResult:
     """端到端：StrategyRunner.build_weight_panel → C1 开/关对比。
 
@@ -323,10 +369,10 @@ def run_c1_end_to_end(
     )
 
     if mode == "mock":
-        return run_c1_mock(data=data, signals=signals, backtest_config=bt_config)
+        return run_c1_mock(data=data, signals=signals, backtest_config=bt_config, track=track)
     return run_c1_regime(
         data=data, signals=signals, regime_results=regime_results or [],
-        backtest_config=bt_config,
+        backtest_config=bt_config, track=track,
     )
 
 
