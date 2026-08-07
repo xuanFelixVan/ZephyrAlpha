@@ -276,7 +276,7 @@
 >
 > **acknowledged 白名单纪律（合理重复标记，治本 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS）**：经审慎确认的合理克隆（归档双实现/接口适配层），调 MCP [`clone_guard.resolve_finding`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/mcp_server.py)（`safety_level=M` 写操作）标记。`verdict=intentional`=保留两份（函数变化时重新浮现，非永久豁免）/`dismissed`=非重复（永久豁免）；`note` **强制非空**留痕防滥用。默认走 ruamel round-trip 写 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) acknowledged 段（**保留注释**，禁用 echo-guard CLI 的 PyYAML 重写路径丢注释）。acknowledge 仅改工作区文件，**须经 GitCommitGateway 提交持久化**（未提交会被 post-commit restore-to-HEAD 恢复）。禁止用白名单消除当前不想处理的告警——属治理逃逸。
 >
-> **AI 合规**：①写新函数前调 `clone_guard.check_before_write`，见 `import_suggestion` 优先复用而非新建；②冷启动调 `clone_guard.audit_status` 看累积技术债（6层闭环·可达性）；③遇 extract 级克隆硬阻断时合并去重（**无逃生通道**，区别于第八件事的 `[no-lookup:]`）；④标记合理重复用 `resolve_finding`（intentional/dismissed + note），勿直接改 `echo-guard.yml`；⑤配置真源 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) + [`clone_guard.yml`](file:///d:/ZephyrAlpha/clone_guard.yml)，蓝图 [`blueprint.md §6.1`](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/clone_guard/blueprint.md)。
+> **AI 合规**：①写新函数前调 `clone_guard.check_before_write`，见 `import_suggestion` 优先复用而非新建；②冷启动调 `clone_guard.audit_status` 看累积技术债（6层闭环·可达性）；③遇 extract 级克隆硬阻断时合并去重（**无逃生通道**，区别于第八件事的 `[no-lookup:]`）；④标记合理重复用 `resolve_finding`（intentional/dismissed + note），勿直接改 `echo-guard.yml`；⑤配置真源 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) + [`clone_guard.yml`](file:///d:/ZephyrAlpha/clone_guard.yml)，蓝图 [`blueprint.md §6.1`](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/clone_guard/blueprint.md)；⑥**Tier 2 需 `pip install onnxscript`**（echo-guard 0.4.1 未声明，torch 2.13+ dynamo ONNX 导出器必需，缺则 Tier 2 静默降级为 Tier 1-only），详见蓝图 §8.1。
 
 ## 1. 项目概述
 
