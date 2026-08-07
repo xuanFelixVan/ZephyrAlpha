@@ -151,8 +151,8 @@
       "version": "1.0.0",
       "transport": "BaseMCPServer",
       "tool_prefix": "clone_guard.",
-      "tool_count": 2,
-      "safety_level": ["L"],
+      "tool_count": 5,
+      "safety_level": ["L", "M"],
       "rate_limit": { "default_qps": 30, "burst": 60 },
       "status": "implemented",
       "note": "#ARCH-FORCE-MERGE-DEDUP-001 Phase A 闭合——L0 源头预防 MCP Server。AI 写代码前 SHOULD 调用 clone_guard.check_before_write 查重，返回 advisory findings + import_suggestion（不阻断）。co-located with clone_guard 模块（守 red_blue_validator 先例）。L1 pre-commit 硬阻断由 CAPABILITY-OVERLAP 门禁兜底。"
@@ -230,9 +230,9 @@
         "admin": ["rule_discovery.discover_applicable_rules"]
       },
       "clone_guard": {
-        "reader": ["clone_guard.check_before_write", "clone_guard.health_check"],
-        "operator": ["clone_guard.check_before_write", "clone_guard.health_check"],
-        "admin": ["clone_guard.check_before_write", "clone_guard.health_check"]
+        "reader": ["clone_guard.check_before_write", "clone_guard.search_functions", "clone_guard.audit_status", "clone_guard.health_check"],
+        "operator": ["clone_guard.check_before_write", "clone_guard.search_functions", "clone_guard.audit_status", "clone_guard.health_check", "clone_guard.resolve_finding"],
+        "admin": ["clone_guard.check_before_write", "clone_guard.search_functions", "clone_guard.audit_status", "clone_guard.health_check", "clone_guard.resolve_finding"]
       }
     },
     "roles": {
