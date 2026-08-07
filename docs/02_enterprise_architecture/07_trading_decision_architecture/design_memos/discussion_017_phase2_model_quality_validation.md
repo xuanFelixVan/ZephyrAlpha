@@ -1,5 +1,5 @@
 ---
-doc_id: discussion_003
+doc_id: discussion_017
 title: "Phase 2 模型质量验证设计——A1/A2/B1/B4 四验证器架构"
 doc_type: architecture_view
 ttl: permanent
@@ -18,7 +18,7 @@ related_modules:
   - BM-BT-05 (HMM 模型质量验证，已建)
 ---
 
-# discussion_003 — Phase 2 模型质量验证设计
+# discussion_017 — Phase 2 模型质量验证设计
 
 > **前置**：Phase 1b C1 验证已通过（commit 852457e9，Shrinkage 节流有效）。
 > **本阶段**：验证 HMM 模型本身靠不靠谱——4 项一票否决（A1/A2/B1/B4）。

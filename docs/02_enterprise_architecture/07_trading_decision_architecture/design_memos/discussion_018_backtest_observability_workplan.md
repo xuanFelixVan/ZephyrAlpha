@@ -22,7 +22,7 @@ scope: 07_trading_decision_architecture
 parent: discussion_001_regime_detector_spec.md
 ---
 
-# discussion_002 — 回测可观测性体系工作计划
+# discussion_018 — 回测可观测性体系工作计划
 
 > 状态: 工作计划（待用户确认后进入蓝图阶段）
 > 日期: 2026-08-07（2026-08-07 更新：补开源调研结论 + 命名冲突发现 + 已动手进度 + Panel 决策落地）

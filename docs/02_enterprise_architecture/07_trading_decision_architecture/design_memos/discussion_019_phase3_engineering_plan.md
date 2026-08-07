@@ -1,5 +1,5 @@
 ---
-doc_id: discussion_004
+doc_id: discussion_019
 title: "Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活"
 doc_type: architecture_view
 ttl: permanent
@@ -11,7 +11,7 @@ priority: P0
 depends_on:
   - discussion_001_regime_detector_spec.md
   - discussion_002_regime_backtest_validation_plan.md
-  - discussion_003_phase2_model_quality_validation.md
+  - discussion_017_phase2_model_quality_validation.md
 related_modules:
   - MOD-REGIME-001 (RegimeDetector)
   - MOD-REGIME-002 (RegimeFeatureBuilder)
@@ -19,7 +19,7 @@ related_modules:
   - BM-BT-05 (HMM 模型质量验证)
 ---
 
-# discussion_004 — Phase 3 工程规划
+# discussion_019 — Phase 3 工程规划
 
 > **前置**：Phase 2 验证完成（commit 14c8b9f1），A1 PASS / B4 S1 3/3 / A2 FAIL / B1 FAIL。
 > **本阶段**：修复 A2 过拟合 + B1 过度自信 + 激活 S2/T3 数据管道。

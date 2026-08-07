@@ -30,7 +30,7 @@ scope: 量化投资方法论
 | 约束九 | T+1次日预测(8态) | G02 | ❌ 已过时：discussion_001已定稿12态，非8态 |
 | 约束十 | 流动性风险 | G18 | ⚠️ G18待讨论 |
 | 约束十一 | 数据分层使用(Layer0~4) | G01 | ⚠️ G01待讨论，分层方案未定 |
-| 约束十二 | 密度预测(QNN) | 无 | ⚠️ 已拆为discussion_003独立讨论 |
+| 约束十二 | 密度预测(QNN) | 无 | ⚠️ 已拆为discussion_021独立讨论 |
 | 约束十三 | 仓位管理(C-047) | G12/G13 | ⚠️ design_memo_001用MOD-POS-001等，非C-047编号 |
 
 ---
@@ -205,7 +205,7 @@ scope: 量化投资方法论
 
 ## 10. 密度预测（原约束十二）
 
-> 已拆为独立讨论稿：[discussion_003_density_prediction.md](discussion_003_density_prediction.md)
+> 已拆为独立讨论稿：[discussion_021_density_prediction.md](discussion_021_density_prediction.md)
 
 ---
 
@@ -236,7 +236,7 @@ scope: 量化投资方法论
 | P1 | #1 策略类型 / #2 因子分类 | G04/G01在讨论中，需对齐 |
 | P1 | #6 回测门禁 | V1-V6 vs BM-BT体系需映射 |
 | P2 | #5 成本模型 / #8 流动性 / #9 数据分层 | 细节待定，不阻塞核心流程 |
-| P3 | #10 密度预测 | 远期愿景，见discussion_003 |
+| P3 | #10 密度预测 | 远期愿景，见discussion_021 |
 | P3 | #12 成功指标交易参数 | 源自§9，具体阈值待校准 |
 | P2 | #13 基准设计 | 基准选择会随市场发展变化 |
 | P2 | #14 PIT实现 | 实现方案待定，PIT原则不变 |

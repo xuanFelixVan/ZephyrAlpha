@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.regime_validation.c1_runner
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES] zephyr.backtest.regime_validation.c1_comparator; zephyr.backtest.regime_validation.shrinkage_provider; zephyr.backtest.implementations.shrinkage_engine; zephyr.backtest.implementations.vectorized_engine; zephyr.pf_core.strategy_engine.strategy_runner
+# [DEPENDENCIES] zephyr.backtest.regime_validation.c1_comparator; zephyr.backtest.regime_validation.shrinkage_provider; zephyr.backtest.implementations.shrinkage_engine; zephyr.backtest.implementations.vectorized_engine; zephyr.pf_core.strategy_engine.strategy_runner; zephyr.experiment_tracking.adapters.c1_adapter (lazy: track=True only)
 # [CONSUMERS] discussion_002 Phase 1 验证执行 ; scripts/regime/run_c1.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,7 +14,7 @@
 # [TESTS] tests/backtest/test_c1_runner.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #ARCH-REGIME-VALIDATION-001 #ARCH-REGIME-C1-RUNNER-001 #C1-shrinkage-comparator
+# [ARCH-REF] #discussion_002 #ARCH-REGIME-VALIDATION-001 #ARCH-REGIME-C1-RUNNER-001 #ARCH-OBS-EXP-TRACK-001 #C1-shrinkage-comparator
 
 """L_BACKTEST — C1 Shrinkage 开/关对比执行器 (discussion_002 Phase 1 入口)
 
