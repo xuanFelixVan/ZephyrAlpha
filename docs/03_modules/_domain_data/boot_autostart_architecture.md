@@ -8,11 +8,11 @@ layer_name: data_source
 functional_domain: data
 date: "2026-07-27"
 version: "1.0.0"
-last_updated: "2026-07-27"
+last_updated: "2026-08-07"
 ttl: permanent
 language: zh
 created_by: human_plus_agent
-description: "ZephyrAlpha 开机启动架构: 任务计划程序为唯一自启真源, 7 项第一性原理约束, watchdog 三层防御, legacy 清除记录"
+description: "ZephyrAlpha 开机启动架构: 任务计划程序为唯一自启真源, 7 项第一性原理约束, watchdog 四层防御(含心跳健康层), legacy 清除记录"
 responsibility_domain: 
 design_maturity: design
 ---
@@ -53,21 +53,34 @@ The architecture must meet seven constraints derived from first principles:
 **Task Scheduler is the sole entry point for ZephyrAlpha services.** No Startup folder .bat/.lnk,
 no registry Run entries for ZA services.
 
-## 3. Watchdog Architecture (scheduler / tick_subscriber)
+## 3. Watchdog Architecture (scheduler / tick_subscriber / ch_health_probe)
 
 ```
-Task Scheduler (OS-hosted, survives user-mode kills)
-  -> guard script (while-true, single-instance lock => idempotent re-entry)
-    -> python business process (zephyr.data.scheduler / zephyr.data.tick_subscriber)
+Task Scheduler (OS-hosted, MultipleInstances=Parallel, survives user-mode kills)
+  -> guard script (while-true, single-instance lock + heartbeat => idempotent re-entry / zombie takeover)
+    -> python business process (zephyr.data.scheduler / zephyr.data.tick_subscriber / ch_health_probe.py)
 ```
 
-Three-layer defense:
-1. **OS layer** — Task Scheduler AtLogOn + PT5M repeat. If guard dies, next fire (≤5min) revives it.
+Four-layer defense (fix #ARCH-BOOT-001, verified 2026-08-07):
+1. **OS layer** — Task Scheduler AtLogOn + PT5M repeat. **`MultipleInstances=Parallel`**
+   (Phase 1 治本): Task Scheduler is a DUMB periodic launcher; it must NOT participate in
+   single-instance decisions. IgnoreNew blocks a new guard while a zombie guard holds the slot,
+   defeating heartbeat takeover (root cause of the 08-06/08-07 2-day intraday outage). Parallel
+   lets the 5min re-fire always launch a new powershell; the new powershell then either exits
+   ("already running, heartbeat fresh") or takes over ("heartbeat stale").
 2. **Guard layer** — `while($true)` auto-restarts the python child on crash. Runtime <10s is
-   treated as startup failure (dep not ready / miniQMT not up), waits 30s before retry.
-3. **Single-instance layer** — pid file lock (`tmp/scheduler.lock` / `tmp/tick_subscriber.lock`).
-   Stale lock (pid dead) triggers orphan cleanup: kill any business python from the dead guard
-   (invariant: no guard => no business process). `finally` block kills child on guard exit.
+   treated as startup failure (dep not ready / miniQMT not up), waits 30s before retry. Child
+   monitoring **polls `$proc.HasExited`** (Phase 2 治本) instead of blocking `WaitForExit` —
+   the latter deadlocks the main thread on certain Windows process-exit paths (zombie root cause).
+3. **Single-instance layer** (SSoT) — pid file lock (`tmp/scheduler.lock` etc.). This is the
+   SOLE single-instance enforcer. Stale lock (pid dead) triggers orphan cleanup: kill any
+   business python from the dead guard (invariant: no guard => no business process). `finally`
+   block kills child on guard exit.
+4. **Heartbeat health layer** (Phase 2 治本) — guard writes `tmp/{scheduler,tick_subscriber,
+   ch_health_probe}.heartbeat` every 15s (format `ISO8601|guard_pid|child_pid`). New guard
+   takeover logic: PID alive **and** heartbeat <5min fresh → "already running, exit"; PID alive
+   but heartbeat stale/missing → zombie → `Stop-Process` zombie guard + clean lock/heartbeat +
+   fall through to orphan cleanup. This is the recovery path for zombie guards (layer 2 failure).
 
 ## 4. Legacy Removal (2026-07-27)
 
@@ -139,11 +152,17 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber
 - Restore a removed Startup entry: copy from backup dir back to
   `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\`.
 
-## 8. Guard Watchdog 心跳治本（待办，#ARCH-BOOT-001）
+## 8. Guard Watchdog 心跳治本（#ARCH-BOOT-001，已验证 resolved）
 
 > 立项 2026-08-07。根因：2026-08-07 scheduler/tick_subscriber 主进程死亡、guard 僵尸化
 > 导致 intraday 下载停滞 2 交易日（kline_1min 停在 08-05 15:00、tick_data 停在 08-04）。
-> 当前状态 **decided（已裁定待施工）**。issue 登记：`architecture_issue_registry.yaml` #ARCH-BOOT-001。
+> 当前状态 **resolved（已施工+端到端验证通过 2026-08-07）**。issue 登记：`architecture_issue_registry.yaml` #ARCH-BOOT-001。
+>
+> **scope 扩展（2026-08-07 Phase 1-4）**：初版方案（§8.1-8.3）仅覆盖 scheduler/tick 心跳逻辑，
+> 端到端验证时发现 `IgnoreNew` 策略阻断新 guard 启动使心跳接管成为死代码（缺陷1）、
+> ch_health_probe 同漏洞未纳入（缺陷2）、方案验证步骤4.3 在 IgnoreNew 下不可执行（缺陷3）。
+> 扩展为 Phase 1-5 三层治本：A=Task Scheduler Parallel 策略、B=ch_health_probe 心跳、
+> C=不变式回归测试。详见 §8.5。
 
 ### 8.1 问题根因
 
@@ -292,6 +311,52 @@ finally {
 - **回退**：若改造有问题，`git revert` 两个 ps1 + 重跑 `register_guard_tasks.ps1`（in-place 更新）
 - **不影响 xtquant 连接固化**：本改造仅治 guard 僵尸化；xtquant 进程级连接固化（QMT 启动后
   需重启 scheduler/tick）是独立问题，见 project_memory Lessons Learned，不在本 issue 范围
+
+### 8.5 治本施工与端到端验证（2026-08-07，commit e8cf841c）
+
+初版方案 §8.1-8.3 施工后发现端到端验证被 `IgnoreNew` 策略阻断，扩展为 Phase 1-5 三层治本：
+
+| Phase | 治本项 | 文件 | 验证结果 |
+|-------|--------|------|----------|
+| 1 | Task Scheduler `MultipleInstances IgnoreNew→Parallel`（根因解除阻断） | scripts/register_guard_tasks.ps1 | ✅ schtasks /run 放行新 guard |
+| 2 | ch_health_probe 心跳改造（镜像 scheduler/tick，一致性补全） | scripts/start_ch_health_probe.ps1 | ✅ 接管 9132→23384 + 心跳 15s |
+| 3 | 不变式回归测试（钉死治本为可执行不变式，防 AI 回退） | tests/scripts/test_guard_invariants.py（新）+ test_guard_watchdog.py（扩展） | ✅ pytest 29 passed |
+| 4 | 端到端验证（部署 + 三服务接管/心跳/崩溃重启） | — | ✅ 全绿（见下表） |
+| 5 | 文档收尾 + issue 闭环 | boot_autostart_architecture.md / AGENTS.md / architecture_issue_registry.yaml | 本节 |
+
+**端到端验证结果（2026-08-07 16:00-16:03）**：
+
+| 验证项 | scheduler | tick_subscriber | ch_health_probe |
+|--------|-----------|-----------------|-----------------|
+| 僵尸接管（旧guard→新guard） | 24040→640 ✅ | 26940→19480 ✅ | 9132→23384 ✅ |
+| 心跳每 15s 更新（格式 ISO\|guard\|child） | 640\|23232 ✅ | 19480\|7432 ✅ | 23384\|2364 ✅ |
+| "polling exit" 日志（确认新脚本） | ✅ | ✅ | ✅ |
+| 子进程崩溃→guard 重启 | 杀29640→attempt2(23232) ✅ | — | — |
+| 探针运行 | — | — | 3s 探测 CH TCP+HTTP 双通连 ✅ |
+| 旧僵尸全死 + 无重复实例 | 24040/26940/9132 全死，每服务1实例 ✅ |
+
+**关键日志佐证**（scheduler_guard.log）：
+```
+15:59:50 Guard PID=24040 alive but heartbeat stale (>5min), force takeover (kill zombie guard)
+15:59:52 Killing orphaned zephyr.data.scheduler (PID=25488)
+15:59:53 Scheduler started (PID=29640), polling exit (watchdog heartbeat every 15s)...
+16:00:53 Scheduler exited (exit=-1, uptime=00h01m00s)   # 杀子进程后轮询7s内检测
+16:00:58 Starting scheduler (attempt 2)...                # 5s退避后重启
+```
+
+**不变式测试覆盖**（tests/scripts/test_guard_invariants.py，防 AI 回退）：
+- `TestNoGuardUsesWaitForExit`：3 脚本禁用 `$proc.WaitForExit()`（僵尸根因），必须轮询 HasExited
+- `TestRegisterGuardUsesParallel`：register_guard_tasks.ps1 必须 Parallel（禁 IgnoreNew）
+- `TestRegisterAuxKeepsIgnoreNew`：register_aux_tasks.ps1 保持 IgnoreNew（文档化有意非对称：一次性 AtLogOn 任务无僵尸风险）
+- `TestGuardsDefineHeartbeat`：3 脚本均定义 $HeartbeatFile + Write-Heartbeat + 5min 阈值 + finally 清理
+
+### 8.6 战略补强（#ARCH-BOOT-002，立项待办）
+
+主治本（Phase 1-5）已闭合僵尸接管闭环。以下三项为战略级补强，非阻断，建议立项 #ARCH-BOOT-002：
+
+- **D. 心跳原子写**：`Out-File` 截断+写非原子，新 guard 轮询期（5min PT5M）撞上旧 guard 写心跳的微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。概率极低（5min×微秒级），但可零成本消除：写 `$HeartbeatFile.tmp` + `Move-Item -Force`（同卷原子）。
+- **E. 死人开关告警**：2 日停摆是人工发现的，非系统告警。心跳文件是天然 dead-man 信号——独立监控（可复用 ch_health_probe 或独立任务）任一 heartbeat 陈旧 >10min 即告警，闭合"全层失效无人知"循环。优先级不低于主治本。
+- **F. `WaitForExit` 死锁根因文档化**：根因是 PowerShell 重定向输出管道满致 `WaitForExit` 不返回；polling 已绕过。在 guard 脚本头注释固化此知识点（已加），防 AI "优化"回 `WaitForExit`。
 
 ### §0.6 四图对齐视图
 
