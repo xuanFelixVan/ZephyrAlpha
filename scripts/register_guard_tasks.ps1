@@ -13,6 +13,16 @@
 # correct $env:LOCALAPPDATA, same session as QMT/miniQMT terminal). Re-firing while guard is alive is a
 # no-op ("Guard already running, exit"); if guard was killed, the next fire revives it (<=5min worst case).
 #
+# MultipleInstances policy = Parallel (fix #ARCH-BOOT-001 Phase 1, 2026-08-07):
+#   Single-instance enforcement has ONE SSoT: the script-level PID lock + heartbeat check in each
+#   start_*.ps1 (it can judge health via heartbeat and take over a zombie guard). Task Scheduler is a
+#   DUMB periodic launcher here; it must NOT participate in single-instance decisions. IgnoreNew blocks a
+#   new guard from launching while a zombie guard (alive but stuck in WaitForExit) holds the slot, which
+#   defeats the heartbeat takeover entirely -> this was the exact mechanism of the 08-06/08-07 2-day
+#   intraday download outage. Parallel lets the 5min re-fire always launch a new powershell; the new
+#   powershell then either exits ("already running, heartbeat fresh") or takes over ("heartbeat stale").
+#   register_aux_tasks.ps1 keeps IgnoreNew (one-shot AtLogOn tasks, no while-true guard, no zombie risk).
+#
 # Idempotent + non-destructive: existing tasks are updated IN PLACE via Set-ScheduledTask.
 # NEVER Unregister+Register an existing task - Unregister TERMINATES the running guard instance
 # (root cause of silent guard deaths 2026-07-22 23:30-00:48: re-registration killed guards
@@ -35,7 +45,7 @@ $services = @(
 $settings = New-ScheduledTaskSettingsSet `
     -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries `
     -StartWhenAvailable `
-    -MultipleInstances IgnoreNew `
+    -MultipleInstances Parallel `
     -ExecutionTimeLimit ([TimeSpan]::Zero) `
     -RestartCount 3 -RestartInterval (New-TimeSpan -Minutes 1)
 

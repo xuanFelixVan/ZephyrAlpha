@@ -5,6 +5,7 @@
 These tests mirror the lock-block heartbeat logic in:
   - scripts/start_scheduler.ps1
   - scripts/start_tick_subscriber.ps1
+  - scripts/start_ch_health_probe.ps1   (added fix #ARCH-BOOT-001 Phase 2, 2026-08-07)
 
 The PowerShell guard is not directly callable from pytest, so the heartbeat
 format parsing and stale-detection are reimplemented here in pure Python with
@@ -213,6 +214,39 @@ class TestZombieTakeoverRunsOrphanCleanup:
             GuardDecision.TAKEOVER_STALE,
             GuardDecision.TAKEOVER_DEAD_PID,
         }
+
+
+# The three watchdog-tier guard scripts sharing this heartbeat contract (fix #ARCH-BOOT-001).
+# (module_label, script_name, sample_guard_pid, sample_child_pid)
+GUARD_SCRIPTS_PARAM = (
+    ("scheduler", "start_scheduler.ps1", 24040, 25488),
+    ("tick_subscriber", "start_tick_subscriber.ps1", 26940, 26248),
+    ("ch_health_probe", "start_ch_health_probe.ps1", 9132, 8096),
+)
+
+
+@pytest.mark.parametrize(
+    "module, script_name, guard_pid, child_pid",
+    GUARD_SCRIPTS_PARAM,
+    ids=[m[0] for m in GUARD_SCRIPTS_PARAM],
+)
+class TestThreeGuardsShareHeartbeatContract:
+    """Explicit 3-module coverage: scheduler / tick_subscriber / ch_health_probe all implement
+    the SAME heartbeat contract (ISO8601 format + 5min stale threshold). Pins #ARCH-BOOT-001
+    Phase 2 expansion (ch_health_probe joined the watchdog tier)."""
+
+    def test_format_roundtrip_for_each_module(self, module, script_name, guard_pid, child_pid):
+        # The pure-Python format_heartbeat must roundtrip for each module's sample PIDs
+        line = format_heartbeat(NOW, guard_pid=guard_pid, child_pid=child_pid)
+        ts, gpid, cpid = parse_heartbeat(line)
+        assert gpid == guard_pid
+        assert cpid == child_pid
+
+    def test_stale_decision_for_each_module(self, module, script_name, guard_pid, child_pid):
+        # Each module's guard, when heartbeat stale, must take the takeover path (not exit-fresh)
+        old = NOW - timedelta(minutes=6)
+        hb = format_heartbeat(old, guard_pid=guard_pid, child_pid=child_pid)
+        assert guard_decision(True, True, hb, NOW) == GuardDecision.TAKEOVER_STALE
 
 
 if __name__ == "__main__":
