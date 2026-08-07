@@ -20,6 +20,7 @@ forbidden_modules =
     zephyr.alt_data
     zephyr.autonomy_core
     zephyr.backtest
+    zephyr.clone_guard
     zephyr.compliance
     zephyr.cross_asset
     zephyr.data
@@ -30,6 +31,7 @@ forbidden_modules =
     zephyr.ex_core
     zephyr.ex_sor
     zephyr.execution_simulation
+    zephyr.experiment_tracking
     zephyr.factor
     zephyr.feedback_loop
     zephyr.frontend
@@ -50,6 +52,7 @@ forbidden_modules =
     zephyr.pf_core
     zephyr.position
     zephyr.red_blue_validator
+    zephyr.regime
     zephyr.reporting
     zephyr.research
     zephyr.risk

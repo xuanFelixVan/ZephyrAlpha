@@ -8343,6 +8343,11 @@ creation_tokens:
     token: "auto-c1-runner-20260806"
     created_by: "session-regime-c1-runner"
     capability: "c1_runner"
+  # --- P1-E3 NLP 管道 Phase 1（2026-08-08，#ARCH-NLP-PIPELINE-001）---
+  - file: "src/zephyr/data/news_collector.py"
+    token: "auto-news-collector-20260808"
+    created_by: "session-p1e3-nlp-phase1"
+    capability: "news_collector"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

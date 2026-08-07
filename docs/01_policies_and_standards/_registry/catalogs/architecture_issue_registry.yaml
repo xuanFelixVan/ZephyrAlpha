@@ -12425,10 +12425,11 @@ entries:
     - 'src/zephyr/regime/features/risk_features.py（13参数底层算子）'
     - 'tests/regime/test_risk_signal_builder.py（24项单元测试，2026-08-07 补完全过）'
     - 'logs/c1_repro/a2_a3_validation_report.md（验证报告，派生产物不入 git）'
-  fix_phase: 验证+测试完成（2026-08-07）—— A2 C1通过不退化；test_risk_signal_builder.py 24项全过；regime 全套 116 项无回归
-  status: proposed
+  fix_phase: 验证+测试+生产配置升级完成（2026-08-08）—— A2 C1通过不退化；test_risk_signal_builder.py 24项全过；
+    regime 全套 54 项无回归；C1 验证脚本默认配置升级 simple/off→full/off（生产推荐 full risk）
+  status: decided
   created: '2026-08-07'
-  last_updated: '2026-08-07'
+  last_updated: '2026-08-08'
 # --- #ARCH-REGIME-OVERLAY-001: A3 8转换overlay C1通过但系统性退化Sharpe（2026-08-07）---
 - issue_id: '#ARCH-REGIME-OVERLAY-001'
   title: A3 8转换overlay C1验证——通过但Sharpe系统性退化0.02/Calmar余量危险
@@ -12476,10 +12477,12 @@ entries:
     - 'scripts/tests/validate_overlay_gated.py（方案A 门控验证脚本，2026-08-07 新增）'
     - 'logs/c1_repro/a2_a3_validation_report.md（验证报告，派生产物不入 git）'
     - 'logs/c1_repro/overlay_audit_daily.csv + overlay_audit_summary.md（深挖产物，不入 git）'
-  fix_phase: 深挖+方案A验证完成（2026-08-07）—— A3 ungated 退化根因明确（T1/S1非危机期误触发）；方案A(#1门控overlay)C1不退化验证通过；待用户确认后固化门控到 detect() 入口
-  status: proposed
+  fix_phase: 深挖+方案A验证+门控固化完成（2026-08-08）—— A3 ungated 退化根因明确（T1/S1非危机期误触发）；
+    方案A(#1门控overlay)C1不退化验证通过；门控已固化到 RegimeDetector.detect() 入口（overlay_gated=True 默认开启，
+    #1>=1.0 时 overlay_signals 置空）；8项 TestOverlayGating 单元测试全过；regime 全套 54 项无回归
+  status: decided
   created: '2026-08-07'
-  last_updated: '2026-08-07'
+  last_updated: '2026-08-08'
 # --- #ARCH-REGIME-FEATURE-BUILDER-001: regime 特征管道（模块A）——OHLCV→RegimeFeatures/OverlaySignals/RiskSignalInputs Phase 1b 落地（2026-08-07）---
 - issue_id: '#ARCH-REGIME-FEATURE-BUILDER-001'
   title: 新增 regime 特征管道——RegimeFeatureBuilder + features/* + OverlaySignalsConstructor + RiskSignalConstructor
@@ -12787,18 +12790,22 @@ entries:
     2026-08-07 立项（proposed）。Phase 2 验证 B4 S2 FAIL 根因——S2 复苏确认触发
     需 bad_news_flat ≥ 40，该指标依赖新闻 NLP 分析，当前是 stub（恒返回 0）。
     工程范围：news_collector.py / nlp_inference.py / sentiment_aggregator.py。
-    候选模型：Mistral-7B（F1≥65% 基线，不达标切 Qwen2.5-7B）。详见
-    discussion_019_phase3 §P1-E3。
+    2026-08-08 裁定（in_progress）：跳过 Mistral 直接用 Qwen 系；推理轨复用 Ollama
+    local_model 层，训练轨用 torch/QLoRA 产物转 GGUF 回灌 Ollama（单一推理源）。
+    S2 MVP 关键词 NLP 已激活（commit 2d7bed8c46），stub 2→0。
+    工程范围：news_collector.py / nlp_inference.py / sentiment_aggregator.py。
+    基座模型：Qwen2.5-7B-Instruct（SFT/RLSP），推理用 qwen3:8b（Ollama）。
+    详见 .trae/documents/P1-E3_NLP管道架构裁定与施工方案.md。
   impact:
     规划文件：
-    - 'src/zephyr/regime/features/news_collector.py'
-    - 'src/zephyr/regime/features/nlp_inference.py'
-    - 'src/zephyr/regime/features/sentiment_aggregator.py'
+    - 'src/zephyr/data/news_collector.py'
+    - 'src/zephyr/nlp/nlp_inference.py'
+    - 'src/zephyr/nlp/sentiment_aggregator.py'
     变更文件：
-    - 'src/zephyr/regime/features/overlay_features.py（bad_news_flat 指标）'
+    - 'src/zephyr/regime/features/overlay_features.py（s2_policy_score/s2_bad_news_flat_score 指标）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md（§P1-E3 NLP 管道详设）'
-  fix_phase: 'P1-E3 待施工——zero-shot 基线评估 → 模型选型 → 管道搭建。'
-  status: proposed
+    - '.trae/documents/P1-E3_NLP管道架构裁定与施工方案.md（架构裁定与施工方案）'
+  fix_phase: 'P1-E3 施工中——Phase 0 完成（ml-train 依赖+Qwen2.5-7B 权重），Phase 1 进行中（news_collector.py 已建，评估集构建待做）。'
+  status: in_progress
   created: '2026-08-07'
-  last_updated: '2026-08-07'
+  last_updated: '2026-08-08'

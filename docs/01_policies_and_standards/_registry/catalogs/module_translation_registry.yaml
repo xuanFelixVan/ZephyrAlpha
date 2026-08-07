@@ -2703,6 +2703,13 @@ entries:
   desc_zh: 基于标题 MD5 哈希对新闻数据进行查重去重。
   desc_en: ''
   plain_zh: 基于标题 MD5 哈希对新闻数据进行查重去重。
+- module_path: src/zephyr/data/news_collector.py
+  domain_id: D_DATA
+  name_zh: 新闻数据采集器（P1-E3 NLP 管道 Phase 1）。
+  name_en: news_collector
+  desc_zh: 从 ClickHouse fund_news_data 表按日期范围采集新闻，返回标准列 DataFrame，供 NLP 情感分析使用。
+  desc_en: ''
+  plain_zh: 新闻采集器，从数据库按日期捞新闻给 NLP 情感分析用。
 - module_path: src/zephyr/data/normalizers/
   domain_id: D_DATA
   name_zh: 归一化器

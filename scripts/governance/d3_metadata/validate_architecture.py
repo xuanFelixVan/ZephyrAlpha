@@ -80,7 +80,7 @@ def _load_frontmatter(fpath: Path) -> dict:
     if suffix == ".md":
         from _shared.frontmatter import parse_frontmatter
 
-        metadata, _body = parse_frontmatter(text)
+        metadata = parse_frontmatter(text)
         return metadata if isinstance(metadata, dict) else {}
     if suffix in (".yaml", ".yml"):
         try:
