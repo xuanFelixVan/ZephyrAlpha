@@ -61,6 +61,7 @@ from zephyr.regime.features.market_features import (
     realized_vol_pct,
     volume_anomaly,
 )
+from zephyr.regime.features.regime_data_loader import parse_tsv, safe_float
 from zephyr.regime.features.trend_features import hurst_dfa, kalman_slope
 
 try:
@@ -98,45 +99,6 @@ MARKET_PROXY = "000300"
 CROSS_ASSET_INDICES = ["000300", "000905", "399006"]
 # 涨跌家数源（F4，深证综指 399106，advance_count/decline_count）
 BREADTH_INDEX = "399106"
-
-
-# ──────────────────────────────────────────────────────────────────────────────
-# TSV 解析工具（ch_reader.query 返回无表头 TSV）
-# ──────────────────────────────────────────────────────────────────────────────
-
-
-def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
-    """把 ch_reader.query 返回的 TSV 字符串解析成行列表。
-
-    Args:
-        tsv: TSV 字符串（无表头，每行 tab 分隔）。
-        ncols: 期望列数（不足则跳过该行）。
-
-    Returns:
-        [[c0, c1, ...], ...] 行列表；空输入返回 []。
-    """
-    if not tsv or not tsv.strip():
-        return []
-    rows: list[list[str]] = []
-    for line in tsv.strip().split("\n"):
-        line = line.rstrip("\r")
-        if not line:
-            continue
-        vals = line.split("\t")
-        if len(vals) >= ncols:
-            rows.append(vals)
-    return rows
-
-
-def _safe_float(v: Any) -> float:
-    """NaN/None 安全转 float（NaN→0.0，避免 risk 阈值比较误判）。"""
-    if v is None:
-        return 0.0
-    try:
-        f = float(v)
-        return 0.0 if f != f else f  # NaN → 0.0
-    except (TypeError, ValueError):
-        return 0.0
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -327,6 +289,10 @@ class RegimeFeatureBuilder:
         """Phase 2c: 多分时 ETF K线（供 #9 多分时共振）。None=降级单分时。"""
         return self._data_loader.load_multi_tf_kline() if self._data_loader is not None else None
 
+    def get_news_sentiment(self) -> pd.DataFrame | None:
+        """P1-E3: 新闻情感聚合（供 S2 policy/bad_news_flat 维度）。None=降级。"""
+        return self._data_loader.load_news_sentiment() if self._data_loader is not None else None
+
     def build_train_matrix(self, start: str, end: str) -> dict[str, Any]:
         """构造 HMM 训练矩阵（walk-forward 季度重拟合用）。
 
@@ -470,9 +436,9 @@ class RegimeFeatureBuilder:
                 else:
                     last_row = window.iloc[-1]
                     risk_inputs = self._build_feature_risk(
-                        vol_pct=_safe_float(last_row.get("realized_vol_pct")),
-                        slope=_safe_float(last_row.get("kalman_slope")),
-                        vol_anom=_safe_float(last_row.get("volume_anomaly")),
+                        vol_pct=safe_float(last_row.get("realized_vol_pct")),
+                        slope=safe_float(last_row.get("kalman_slope")),
+                        vol_anom=safe_float(last_row.get("volume_anomaly")),
                     )
                 # overlay_signals：Phase 2b 构造器 vs 空覆盖层（纯 HMM）
                 overlay_signals = self._overlay_ctor.build_for_date(dt) if self._overlay_ctor is not None else {}
@@ -531,13 +497,12 @@ class RegimeFeatureBuilder:
             f"ORDER BY symbol, trade_date"
         )
         tsv = self._safe_query(sql, context="index_kline")
-        rows = _parse_tsv(tsv, ncols=9)
+        rows = parse_tsv(tsv, ncols=9)
         if not rows:
             raise RegimeFeatureError(
                 f"index_kline 查询为空: symbols={symbols}, [{self.data_load_start}, {self.backtest_end}]"
             )
-        cols = ["trade_date", "symbol", "open", "high", "low", "close",
-                "volume", "advance_count", "decline_count"]
+        cols = ["trade_date", "symbol", "open", "high", "low", "close", "volume", "advance_count", "decline_count"]
         df = pd.DataFrame(rows, columns=cols)
         df["trade_date"] = pd.to_datetime(df["trade_date"])
         for c in ["open", "high", "low", "close"]:

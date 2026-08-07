@@ -133,8 +133,11 @@ _POLICY_KEYWORDS: Final = [
 ]
 
 
-def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
-    """把 ch_reader.query 返回的 TSV 字符串解析成行列表（与 regime_feature_builder 同构）。
+def parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
+    """把 ch_reader.query 返回的 TSV 字符串解析成行列表。
+
+    公共工具函数——regime 包内 ``regime_feature_builder`` 等模块统一 import 此实现，
+    避免多副本触发 CloneGuard extract 级硬阻断。
 
     ncols: 期望列数（不足则跳过该行）。空输入返回 []。
     """
@@ -151,8 +154,12 @@ def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
     return rows
 
 
-def _safe_float(v: Any) -> float:
-    """NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。"""
+def safe_float(v: Any) -> float:
+    """NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。
+
+    公共工具函数——regime 包内 ``regime_feature_builder`` 等模块统一 import 此实现，
+    避免多副本触发 CloneGuard extract 级硬阻断。
+    """
     if v is None:
         return 0.0
     try:
@@ -298,7 +305,7 @@ class RegimeDataLoader:
             f"GROUP BY trade_date ORDER BY trade_date"
         )
         tsv = self._query(sql, "money_flow")
-        rows = _parse_tsv(tsv, ncols=3)
+        rows = parse_tsv(tsv, ncols=3)
         if not rows:
             _logger.warning("money_flow 无数据，money_effect 维度将降级 0.0")
             return None
@@ -318,7 +325,7 @@ class RegimeDataLoader:
             f"ORDER BY code, trade_date"
         )
         tsv = self._query(sql, "sector_kline")
-        rows = _parse_tsv(tsv, ncols=5)
+        rows = parse_tsv(tsv, ncols=5)
         if not rows:
             _logger.warning("kline_sector 无数据，mainline/sector_hhi 将降级")
             return None
@@ -342,7 +349,7 @@ class RegimeDataLoader:
             f"ORDER BY trade_date, symbol"
         )
         tsv = self._query(sql, "limit_up_down")
-        rows = _parse_tsv(tsv, ncols=5)
+        rows = parse_tsv(tsv, ncols=5)
         if not rows:
             # Fallback: limit_up_down 表仅有近期数据（2026-07+），回测窗口内无数据
             # 从 kline_daily 派生涨跌停（P1-E5 补数据，2026-08-08）
@@ -380,7 +387,7 @@ class RegimeDataLoader:
             f"ORDER BY trade_date, symbol"
         )
         tsv = self._query(sql, "limit_up_down (derived from kline_daily)")
-        rows = _parse_tsv(tsv, ncols=5)
+        rows = parse_tsv(tsv, ncols=5)
         if not rows:
             _logger.warning("kline_daily 派生涨跌停也无数据，leader/one_day_mainline 将降级")
             return None
@@ -409,7 +416,7 @@ class RegimeDataLoader:
             f"GROUP BY trade_date ORDER BY trade_date"
         )
         tsv = self._query(sql, "hk_connect_flow")
-        rows = _parse_tsv(tsv, ncols=3)
+        rows = parse_tsv(tsv, ncols=3)
         if not rows:
             _logger.warning("hk_connect_flow 无数据，money_effect 辅助维度将降级")
             return None
@@ -432,7 +439,7 @@ class RegimeDataLoader:
             f"ORDER BY underlying, trade_date, expiry, strike"
         )
         tsv = self._query(sql, "option_iv_surface")
-        rows = _parse_tsv(tsv, ncols=8)
+        rows = parse_tsv(tsv, ncols=8)
         if not rows:
             _logger.warning("option_iv_surface 无数据，合成VIX将降级回退 vol_pct")
             return None
@@ -470,7 +477,7 @@ class RegimeDataLoader:
             f"ORDER BY trade_date"
         )
         tsv = self._query(sql, f"etf_kline_{freq}")
-        rows = _parse_tsv(tsv, ncols=6)
+        rows = parse_tsv(tsv, ncols=6)
         if not rows:
             return None
         df = pd.DataFrame(rows, columns=["trade_date", "open", "high", "low", "close", "volume"])
@@ -507,7 +514,7 @@ class RegimeDataLoader:
             f"ORDER BY trade_date"
         )
         tsv = self._query(sql, "news_sentiment")
-        rows = _parse_tsv(tsv, ncols=5)
+        rows = parse_tsv(tsv, ncols=5)
         if not rows:
             _logger.warning("news_sentiment 无数据，policy/bad_news_flat 将降级 0.0")
             return None
@@ -528,4 +535,4 @@ class RegimeDataLoader:
         return df.set_index("trade_date").sort_index()
 
 
-__all__ = ["RegimeDataLoader"]
+__all__: Final = ["RegimeDataLoader", "safe_float", "parse_tsv"]

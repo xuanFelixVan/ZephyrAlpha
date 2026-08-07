@@ -60,6 +60,8 @@ __all__ = [
     "s2_break_sc_low_flag",
     "s2_vix_new_high_flag",
     "s2_fund_outflow_flag",
+    "s2_policy_score",
+    "s2_bad_news_flat_score",
     # T1
     "t1_bqs_score",
     "t1_rcs_score",
@@ -88,9 +90,8 @@ __all__ = [
 # S1: Any → CRISIS（VIX Panic + Correlation + Liquidity）
 # ---------------------------------------------------------------------------
 
-def s1_vix_panic_score(
-    vol_pct: pd.Series, vix_pct: pd.Series | None = None
-) -> pd.Series:
+
+def s1_vix_panic_score(vol_pct: pd.Series, vix_pct: pd.Series | None = None) -> pd.Series:
     """S1 vix_panic: VIX 恐慌代理 → 0-100。
 
     Phase 2c：vix_pct（合成 VIX 历史分位）非空时优先用，回退 vol_pct
@@ -187,6 +188,7 @@ def s1_flash_recover_flag(pct_change: pd.Series, vol_pct: pd.Series) -> pd.Serie
 # S2: CRISIS → RECOVERY（八维度见底）
 # ---------------------------------------------------------------------------
 
+
 def s2_capitulation_score(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     """S2 capitulation: 投降式抛售 → 0-100（成交量飙升 + 暴跌）。
 
@@ -208,9 +210,7 @@ def s2_capitulation_score(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     return score
 
 
-def s2_vix_score(
-    vol_pct: pd.Series, vix_pct: pd.Series | None = None
-) -> pd.Series:
+def s2_vix_score(vol_pct: pd.Series, vix_pct: pd.Series | None = None) -> pd.Series:
     """S2 vix: VIX 见顶回落 → 0-100（从高位下降）。
 
     Phase 2c：vix_pct（合成 VIX 历史分位）非空时优先用，回退 vol_pct。
@@ -259,13 +259,7 @@ def s2_wyckoff_score(
     映射（对齐 S2 confirm 门槛 wyckoff>=60）：
       完整版：Spring 出现累加 ≥60（过门槛）；MVP：range<2% & pos>0.6 → 70。
     """
-    if (
-        high is not None
-        and low is not None
-        and volume is not None
-        and pct_change is not None
-        and vol_z is not None
-    ):
+    if high is not None and low is not None and volume is not None and pct_change is not None and vol_z is not None:
         from zephyr.regime.features.wyckoff_engine import wyckoff_score
 
         return wyckoff_score(close, high, low, volume, pct_change, vol_z, window)
@@ -395,6 +389,7 @@ def s2_fund_outflow_flag(volume: pd.Series, pct_change: pd.Series, window: int =
 # T1: Neutral-Medium → BREAKOUT（突破主升苗头）
 # ---------------------------------------------------------------------------
 
+
 def t1_bqs_score(close: pd.Series, volume: pd.Series, window: int = 60) -> pd.Series:
     """T1 bqs: 突破质量 → 0-100（价格破 rolling max + 量能确认）。
 
@@ -455,6 +450,7 @@ def t1_frs_score(vol_pct: pd.Series, slope: pd.Series) -> pd.Series:
 # T2: Bear-Low → RECOVERY（冰点反核）
 # ---------------------------------------------------------------------------
 
+
 def t2_continue_decline_flag(slope: pd.Series, vol_pct: pd.Series) -> pd.Series:
     """T2 continue_decline: 持续下跌标志（0/1）——T2 fail 条件。
 
@@ -470,6 +466,7 @@ def t2_continue_decline_flag(slope: pd.Series, vol_pct: pd.Series) -> pd.Series:
 # ---------------------------------------------------------------------------
 # T3: RECOVERY → BREAKOUT（主升确立）
 # ---------------------------------------------------------------------------
+
 
 def t3_volume_price_score(pct_change: pd.Series, vol_z: pd.Series) -> pd.Series:
     """T3 volume_price: 量价配合 → 0-100（上涨 + 放量）。
@@ -528,9 +525,7 @@ def t3_sentiment_score(ad_ratio: pd.Series) -> pd.Series:
     return score
 
 
-def t3_money_effect_score(
-    inflow_pct: pd.Series, limit_up_count: pd.Series
-) -> pd.Series:
+def t3_money_effect_score(inflow_pct: pd.Series, limit_up_count: pd.Series) -> pd.Series:
     """T3 money_effect: 资金效应 → 0-100（主力净流入 + 涨停数共振）。
 
     Phase 2c：原 stub=0，现接入 money_flow + limit_up_down 真实数据。
@@ -562,9 +557,7 @@ def t3_money_effect_score(
     return score
 
 
-def t3_mainline_score(
-    sector_hhi: pd.Series, top_sector_pct: pd.Series
-) -> pd.Series:
+def t3_mainline_score(sector_hhi: pd.Series, top_sector_pct: pd.Series) -> pd.Series:
     """T3 mainline: 主线效应 → 0-100（板块涨幅集中度 HHI + 头部板块涨幅）。
 
     Phase 2c：原 stub=0，现接入 kline_sector 真实数据。
@@ -595,9 +588,7 @@ def t3_mainline_score(
     return score
 
 
-def t3_leader_score(
-    max_consec_limit: pd.Series, promotion_rate: pd.Series
-) -> pd.Series:
+def t3_leader_score(max_consec_limit: pd.Series, promotion_rate: pd.Series) -> pd.Series:
     """T3 leader: 龙头效应 → 0-100（最高连板数 + 晋级率）。
 
     Phase 2c：原 stub=0，现接入 limit_up_down 真实数据。
@@ -654,6 +645,7 @@ def t3_one_day_mainline_flag(prev_top3_max_today_pct: pd.Series) -> pd.Series:
 # T4: Bull-Medium → Bull-High（疯狂期赶顶）
 # ---------------------------------------------------------------------------
 
+
 def t4_shrink_flat_flag(vol_pct: pd.Series) -> pd.Series:
     """T4 shrink_flat: 波幅收窄标志（0/1）——T4 fail 条件。
 
@@ -670,6 +662,7 @@ def t4_shrink_flat_flag(vol_pct: pd.Series) -> pd.Series:
 # ---------------------------------------------------------------------------
 # T5: Bull-High → Bear-Medium（逃顶退潮）
 # ---------------------------------------------------------------------------
+
 
 def t5_leader_break_score(close: pd.Series, volume: pd.Series) -> pd.Series:
     """T5 leader_break: 领涨股破位 → 0-100（价格跌破 MA20 + 放量）。
@@ -710,6 +703,7 @@ def t5_rebound_wrap_flag(close: pd.Series) -> pd.Series:
 # T6: Bear-Medium → Bear-Low（退潮冰点）
 # ---------------------------------------------------------------------------
 
+
 def t6_sudden_volume_flag(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     """T6 sudden_volume: 突然放量标志（0/1）——T6 fail 条件。
 
@@ -721,3 +715,74 @@ def t6_sudden_volume_flag(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     recent_trend = pct_change.rolling(5).sum().fillna(0.0)
     flag[(z > 2) & (recent_trend < 0)] = 1.0
     return flag
+
+
+# ---------------------------------------------------------------------------
+# S2 NLP: policy / bad_news_flat（P1-E3 MVP：关键词字典情感分析）
+# ---------------------------------------------------------------------------
+
+
+def s2_policy_score(
+    policy_count: pd.Series,
+    positive_count: pd.Series,
+    negative_count: pd.Series,
+) -> pd.Series:
+    """S2 policy: 政策面信号 → 0-100。
+
+    P1-E3 MVP：基于关键词字典的新闻情感聚合。
+    用 3 日滚动平滑的正负面净差 × 政策新闻有无门控。
+
+    映射（对齐 S2 confirm 门槛 policy>=40）：
+      有政策新闻 + 净正面≥10 → 80  （强政策利好）
+      有政策新闻 + 净正面≥5  → 60  （政策偏正面，过门槛）
+      有政策新闻 + 净正面>0  → 40  （政策轻微正面）
+      有政策新闻 + 净负面    → 20  （政策偏紧）
+      无政策新闻             → 0   （无政策信号）
+
+    Parameters
+    ----------
+    policy_count   : 每日政策类新闻计数。
+    positive_count : 每日正面新闻计数。
+    negative_count : 每日负面新闻计数。
+    """
+    idx = policy_count.index
+    net = (positive_count - negative_count).rolling(3, min_periods=1).mean()
+    has_policy = (policy_count > 0).rolling(3, min_periods=1).max().astype(float)
+    score = pd.Series(0.0, index=idx)
+    score[has_policy > 0] = 20  # 有政策新闻但净面未知
+    score[(has_policy > 0) & (net > 0)] = 40
+    score[(has_policy > 0) & (net >= 5)] = 60
+    score[(has_policy > 0) & (net >= 10)] = 80
+    return score.fillna(0.0)
+
+
+def s2_bad_news_flat_score(
+    negative_count: pd.Series,
+    pct_change: pd.Series,
+) -> pd.Series:
+    """S2 bad_news_flat: 利空出尽 → 0-100。
+
+    P1-E3 MVP：负面新闻密度高 + 市场企稳 = 利空出尽信号。
+    5 日滚动平均负面新闻计数 → 密度评分；5 日累计收益 > -2% → 市场企稳门控。
+
+    映射（对齐 S2 confirm 门槛 bad_news_flat>=40）：
+      负面密度≥20 & 市场企稳 → 80  （利空密集+企稳，强出尽信号）
+      负面密度≥10 & 市场企稳 → 60  （中度利空+企稳，过门槛）
+      负面密度≥5  & 市场企稳 → 40  （轻度利空+企稳）
+      市场未企稳              → 0   （利空未出尽）
+      无负面新闻              → 0   （无利空可出尽）
+
+    Parameters
+    ----------
+    negative_count : 每日负面新闻计数。
+    pct_change     : 市场代理日收益率序列（用于判断市场是否企稳）。
+    """
+    idx = negative_count.index
+    neg_density = negative_count.rolling(5, min_periods=2).mean().fillna(0.0)
+    market_return_5d = pct_change.reindex(idx).fillna(0.0).rolling(5, min_periods=2).sum()
+    market_stable = (market_return_5d >= -0.02).astype(float)
+    density_score = pd.Series(0.0, index=idx)
+    density_score[neg_density >= 5] = 40
+    density_score[neg_density >= 10] = 60
+    density_score[neg_density >= 20] = 80
+    return (density_score * market_stable).fillna(0.0)

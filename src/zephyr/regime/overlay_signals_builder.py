@@ -45,21 +45,21 @@
     loc[:dt].iloc[-1] 即 ≤ dt-1 数据（与 RegimeFeatureBuilder.shift(1) 一致）。
 
 31 个维度 key（对齐 TRANSITION_CONFIG 的 keys_gte，契约守护）:
-  可算 29：vix_panic/correlation/liquidity/flash_recover（S1）
+  可算 31：vix_panic/correlation/liquidity/flash_recover（S1）
            capitulation/vix/wyckoff/valuation/fund/spring/three_yang/
-           break_sc_low/vix_new_high/fund_outflow（S2）
+           break_sc_low/vix_new_high/fund_outflow/policy/bad_news_flat（S2）
            bqs/rcs/frs（T1）, continue_decline（T2）
            volume_price/ma_trend/sentiment/money_effect/mainline/leader/
            one_day_mainline（T3）, shrink_flat（T4）
            leader_break/rebound_wrap（T5）, sudden_volume（T6）
-  stub 2（=0.0）：policy/bad_news_flat（S2, NLP，待 P1-E3 NLP 管道）
+  stub 0：全部已激活（P1-E3 关键词 NLP + P1-E4/E5 资金板块）
 
 Phase 2c 升级：money_effect/mainline/leader/one_day_mainline 从 stub→可算
 （接入 money_flow/kline_sector/limit_up_down + hk_connect_flow 北向融合），T3 confirm/trigger/fail 解锁。
 合成 VIX（vix_pct）优先注入 s1_vix_panic/s2_vix（回退 vol_pct）；
 s2_wyckoff 委托 wyckoff_engine 6 阶段 FSM（需 high/low，P1-E4 已从 kline_index 激活）。
-stub 影响：仅 S2 confirm/trigger（需 policy/bad_news_flat NLP）无法触发——
-S2 strong_confirm/fail + T3 全阶段 + S1/T1/T2/T4/T5/T6 可触发。
+P1-E3 升级：policy/bad_news_flat 从 stub→可算（关键词字典 NLP 情感分析），
+S2 confirm/trigger 全阶段解锁。8 转换全部可触发。
 
 依据: discussion_001 v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
@@ -117,16 +117,12 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
 }
 
 # stub 维度（不预计算，build_for_date 给 0.0）
-# 2 个 stub:
-#   - policy, bad_news_flat: S2 NLP（待 P1-E3 NLP 管道）
+# Phase 2c: policy/bad_news_flat 已从 stub 激活（P1-E3 MVP 关键词 NLP）
 # T3 资金/板块 4 维度（money_effect/mainline/leader/one_day_mainline）已激活（P1-E4/E5）:
 #   _compute_t3_inputs 接入 money_flow/kline_sector/limit_up_down/hk_connect_flow，
 #   _precompute 调用 7 评分函数算出维度 Series 放入 cache。
 #   数据缺失时对应输入 None → 维度=0.0 降级（C1 不退化）。
-_STUB_DIMS: set[str] = {
-    "policy",
-    "bad_news_flat",  # S2 NLP（待 P1-E3 NLP 管道）
-}
+_STUB_DIMS: set[str] = set()  # P1-E3: policy/bad_news_flat 已激活
 
 
 class OverlaySignalsConstructor:
@@ -332,7 +328,19 @@ class OverlaySignalsConstructor:
             cache["fund_outflow"] = overlay_features.s2_fund_outflow_flag(volume, pct_change)
         else:
             _logger.warning("S2 fund_outflow 数据缺失，降级 0.0")
-        # policy / bad_news_flat: stub 0.0（NLP）
+        # policy / bad_news_flat: P1-E3 MVP 关键词 NLP 情感分析
+        news_sent = self._fb_call("get_news_sentiment")
+        if news_sent is not None and not news_sent.empty:
+            pol_count = news_sent["policy_count"].reindex(feat.index).fillna(0)
+            pos_count = news_sent["positive_count"].reindex(feat.index).fillna(0)
+            neg_count = news_sent["negative_count"].reindex(feat.index).fillna(0)
+            cache["policy"] = overlay_features.s2_policy_score(pol_count, pos_count, neg_count)
+            if pct_change is not None:
+                cache["bad_news_flat"] = overlay_features.s2_bad_news_flat_score(neg_count, pct_change)
+            else:
+                _logger.warning("S2 bad_news_flat 数据缺失（pct_change），降级 0.0")
+        else:
+            _logger.warning("S2 policy/bad_news_flat 数据缺失（news_sentiment），降级 0.0")
 
         # ── T1: Neutral → BREAKOUT ──
         if close is not None and volume is not None:
@@ -416,9 +424,9 @@ class OverlaySignalsConstructor:
             _logger.warning("T6 sudden_volume 数据缺失，降级 0.0")
 
         _logger.info(
-            "OverlaySignalsConstructor._precompute: 可算维度 %d，"
-            "stub(policy/bad_news_flat)=0.0（NLP），vix_pct=%s，wyckoff=%s",
+            "OverlaySignalsConstructor._precompute: 可算维度 %d，policy/bad_news_flat=%s，vix_pct=%s，wyckoff=%s",
             len(cache),
+            "NLP" if "policy" in cache else "stub(降级)",
             "synth" if vix_pct is not None else "vol_pct代理",
             "engine" if (high is not None and low is not None) else "MVP",
         )

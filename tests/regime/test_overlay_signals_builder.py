@@ -34,16 +34,15 @@ import pandas as pd
 import pytest
 
 from zephyr.regime.core.regime_detector import (
-    TRANSITIONS,
     TRANSITION_CONFIG,
+    TRANSITIONS,
     RegimeDetector,
 )
 from zephyr.regime.overlay_signals_builder import (
-    OverlaySignalsConstructor,
     _STUB_DIMS,
     _TRANSITION_DIMS,
+    OverlaySignalsConstructor,
 )
-
 
 # ---------------------------------------------------------------------------
 # Mock feature_builder
@@ -140,9 +139,7 @@ def _make_index_df(
 
     Phase 2c：新增可选 high/low（wyckoff_engine 需要，缺失时降级 MVP 简化版）。
     """
-    idx = pd.MultiIndex.from_product(
-        [[symbol], dates], names=["symbol", "trade_date"]
-    )
+    idx = pd.MultiIndex.from_product([[symbol], dates], names=["symbol", "trade_date"])
     data: dict[str, np.ndarray] = {
         "close": close_arr,
         "volume": volume_arr,
@@ -165,9 +162,7 @@ def _make_dates(n: int = 300, start: str = "2020-01-01") -> pd.DatetimeIndex:
 # ---------------------------------------------------------------------------
 
 
-def _make_money_flow(
-    dates: pd.DatetimeIndex, inflow_pct: float = 0.0
-) -> pd.DataFrame:
+def _make_money_flow(dates: pd.DatetimeIndex, inflow_pct: float = 0.0) -> pd.DataFrame:
     """全市场主力净流入占比 DataFrame（index=trade_date, col=avg_main_net_inflow_pct）。"""
     return pd.DataFrame(
         {"avg_main_net_inflow_pct": np.full(len(dates), inflow_pct)},
@@ -226,9 +221,9 @@ def _make_limit_up_down(
             rows.append((d, sym, "涨停", 0.1, 1e8))
     if not rows:
         # 空表也要有正确结构（return None 由调用方处理）
-        return pd.DataFrame(
-            columns=["symbol", "limit_type", "pct_change", "amount"]
-        ).set_index([pd.DatetimeIndex([], name="trade_date"), "symbol"])
+        return pd.DataFrame(columns=["symbol", "limit_type", "pct_change", "amount"]).set_index(
+            [pd.DatetimeIndex([], name="trade_date"), "symbol"]
+        )
     df = pd.DataFrame(rows, columns=["trade_date", "symbol", "limit_type", "pct_change", "amount"])
     return df.set_index(["trade_date", "symbol"]).sort_index()
 
@@ -253,30 +248,25 @@ class TestStructureContract:
             for stage in cfg["stages"].values():
                 config_keys.update((stage.get("keys_gte") or {}).keys())
             builder_keys = set(_TRANSITION_DIMS[tid])
-            assert builder_keys == config_keys, (
-                f"{tid} 维度不匹配: builder={builder_keys} vs config={config_keys}"
-            )
+            assert builder_keys == config_keys, f"{tid} 维度不匹配: builder={builder_keys} vs config={config_keys}"
 
     def test_31_unique_keys(self):
-        """全转换并集 = 31 个维度 key（29 可算 + 2 stub）。
+        """全转换并集 = 31 个维度 key（31 可算 + 0 stub）。
 
         Phase 2c: T3 资金/板块 4 维度从 stub 升级为可算，stub 6→2。
+        P1-E3: policy/bad_news_flat 从 stub 升级为可算（关键词 NLP），stub 2→0。
         """
         all_keys: set[str] = set()
         for keys in _TRANSITION_DIMS.values():
             all_keys.update(keys)
         assert len(all_keys) == 31, f"期望 31 维度，实际 {len(all_keys)}"
-        assert _STUB_DIMS == {"policy", "bad_news_flat"}, (
-            f"期望 2 stub (policy/bad_news_flat)，实际 {_STUB_DIMS}"
-        )
+        assert set() == _STUB_DIMS, f"期望 0 stub（全部已激活），实际 {_STUB_DIMS}"
 
     def test_build_for_date_has_all_transitions_and_dims(self):
         """build_for_date 返回结构包含 8 转换 + 各转换全部维度 key。"""
         dates = _make_dates(300)
         feat = _make_features(dates)
-        idx_df = _make_index_df(
-            dates, np.linspace(3000, 3500, 300), np.full(300, 1e8)
-        )
+        idx_df = _make_index_df(dates, np.linspace(3000, 3500, 300), np.full(300, 1e8))
         fb = _MockFeatureBuilder(feat, idx_df)
         ctor = OverlaySignalsConstructor(
             backtest_start="2020-01-01",
@@ -365,10 +355,12 @@ class TestTriggerScenarios:
         feat = _make_features(dates, vol_pct=0.92, corr=0.96, vol_anom=2.5)
         # 前 270 日平稳（warmup），后 30 日持续大跌 → 合成 VIX 飙升
         rng = np.random.default_rng(0)
-        returns = np.concatenate([
-            rng.normal(0.0, 0.003, 270),    # 平稳期
-            rng.normal(-0.03, 0.015, 30),   # 暴跌期（下行半偏差飙升）
-        ])
+        returns = np.concatenate(
+            [
+                rng.normal(0.0, 0.003, 270),  # 平稳期
+                rng.normal(-0.03, 0.015, 30),  # 暴跌期（下行半偏差飙升）
+            ]
+        )
         close = 3000.0 * np.exp(np.cumsum(returns))
         idx_df = _make_index_df(dates, close, np.full(300, 1e8))
         fb = _MockFeatureBuilder(feat, idx_df)
@@ -464,10 +456,9 @@ class TestPIT:
         )
         result_after = ctor2.build_for_date(dt)
         # dt 当日的极端值因 shift(1) 不影响 build_for_date(dt)
-        assert (
-            result_before["transitions"]["S1"]["vix_panic"]
-            == result_after["transitions"]["S1"]["vix_panic"]
-        ), "PIT 违规：dt 当日数据泄漏到 build_for_date(dt)"
+        assert result_before["transitions"]["S1"]["vix_panic"] == result_after["transitions"]["S1"]["vix_panic"], (
+            "PIT 违规：dt 当日数据泄漏到 build_for_date(dt)"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -552,9 +543,7 @@ class TestPhase2cT3Dims:
         idx_df = _make_index_df(dates, np.linspace(3000, 3100, 300), np.full(300, 1e8))
         money_flow = _make_money_flow(dates, inflow_pct=4.0)  # >3
         limit_df = _make_limit_up_down(dates, limit_up_per_day=60)  # >50
-        fb = _MockFeatureBuilder(
-            feat, idx_df, money_flow=money_flow, limit_up_down=limit_df
-        )
+        fb = _MockFeatureBuilder(feat, idx_df, money_flow=money_flow, limit_up_down=limit_df)
         ctor = OverlaySignalsConstructor(
             backtest_start="2020-01-01",
             backtest_end="2021-03-01",
@@ -572,9 +561,7 @@ class TestPhase2cT3Dims:
         feat = _make_features(dates, vol_pct=0.3, corr=0.5)
         idx_df = _make_index_df(dates, np.linspace(3000, 3100, 300), np.full(300, 1e8))
         # leader 独涨 4%，其余 4 个板块 0% → HHI=1.0, top_sector_pct=4
-        sector_df = _make_sector_kline(
-            dates, n_sectors=5, leader_pct=0.04, others_pct=0.0
-        )
+        sector_df = _make_sector_kline(dates, n_sectors=5, leader_pct=0.04, others_pct=0.0)
         fb = _MockFeatureBuilder(feat, idx_df, sector_kline=sector_df)
         ctor = OverlaySignalsConstructor(
             backtest_start="2020-01-01",
@@ -597,9 +584,7 @@ class TestPhase2cT3Dims:
         feat = _make_features(dates, vol_pct=0.3, corr=0.5)
         idx_df = _make_index_df(dates, np.linspace(3000, 3100, 300), np.full(300, 1e8))
         # 5 连板覆盖 dates[245..249]，build_for_date(dates[250]) 取 dates[249] 的 max_consec=5
-        limit_df = _make_limit_up_down(
-            dates, consec_symbol="LEADER", consec_days=5, consec_start_idx=245
-        )
+        limit_df = _make_limit_up_down(dates, consec_symbol="LEADER", consec_days=5, consec_start_idx=245)
         fb = _MockFeatureBuilder(feat, idx_df, limit_up_down=limit_df)
         ctor = OverlaySignalsConstructor(
             backtest_start="2020-01-01",
@@ -626,9 +611,7 @@ class TestPhase2cT3Dims:
         # 弱 T3 数据：inflow=1（>0 但 <2）→ money_effect=25（未达 50 门槛）
         money_flow = _make_money_flow(dates, inflow_pct=1.0)
         limit_df = _make_limit_up_down(dates, limit_up_per_day=5)
-        fb = _MockFeatureBuilder(
-            feat, idx_df, money_flow=money_flow, limit_up_down=limit_df
-        )
+        fb = _MockFeatureBuilder(feat, idx_df, money_flow=money_flow, limit_up_down=limit_df)
         ctor = OverlaySignalsConstructor(
             backtest_start="2020-01-01",
             backtest_end="2021-03-01",
@@ -657,12 +640,12 @@ class TestPhase2cT3Dims:
         overlay_signals = {
             "transitions": {
                 "T3": {
-                    "volume_price": 0.0,      # < 60 → confirm 不匹配
-                    "ma_trend": 0.0,          # < 50 → confirm 不匹配
-                    "sentiment": 65.0,        # >= 60 (trigger)
-                    "money_effect": 0.0,      # < 50 → confirm 不匹配
-                    "mainline": 65.0,         # >= 60 (trigger)
-                    "leader": 65.0,           # >= 60 (trigger)
+                    "volume_price": 0.0,  # < 60 → confirm 不匹配
+                    "ma_trend": 0.0,  # < 50 → confirm 不匹配
+                    "sentiment": 65.0,  # >= 60 (trigger)
+                    "money_effect": 0.0,  # < 50 → confirm 不匹配
+                    "mainline": 65.0,  # >= 60 (trigger)
+                    "leader": 65.0,  # >= 60 (trigger)
                     "one_day_mainline": 0.0,  # < 1 (no fail)
                 },
                 "S1": {k: 0.0 for k in _TRANSITION_DIMS["S1"]},
@@ -677,9 +660,7 @@ class TestPhase2cT3Dims:
         detector = RegimeDetector(shrinkage_enabled=False)
         overlay_probs = detector._run_overlay(overlay_signals)
         # T3 trigger → r12 (BREAKOUT) 获得非零概率
-        assert overlay_probs.get("r12", 0.0) > 0, (
-            f"T3 触发应给 r12 非零概率，实际 overlay_probs={overlay_probs}"
-        )
+        assert overlay_probs.get("r12", 0.0) > 0, f"T3 触发应给 r12 非零概率，实际 overlay_probs={overlay_probs}"
 
     def test_t3_fail_when_one_day_mainline(self):
         """one_day_mainline=1 且 trigger/confirm 不匹配 → T3 fail 触发（r11 > 0）。
@@ -692,10 +673,10 @@ class TestPhase2cT3Dims:
                 "T3": {
                     "volume_price": 0.0,
                     "ma_trend": 0.0,
-                    "sentiment": 0.0,         # < 60 → trigger 不匹配
+                    "sentiment": 0.0,  # < 60 → trigger 不匹配
                     "money_effect": 0.0,
-                    "mainline": 0.0,          # < 60 → trigger 不匹配
-                    "leader": 0.0,            # < 60 → trigger 不匹配
+                    "mainline": 0.0,  # < 60 → trigger 不匹配
+                    "leader": 0.0,  # < 60 → trigger 不匹配
                     "one_day_mainline": 1.0,  # >= 1 → fail 匹配
                 },
                 "S1": {k: 0.0 for k in _TRANSITION_DIMS["S1"]},
@@ -710,9 +691,7 @@ class TestPhase2cT3Dims:
         detector = RegimeDetector(shrinkage_enabled=False)
         overlay_probs = detector._run_overlay(overlay_signals)
         # T3 fail → r11 (RECOVERY) 获得非零概率
-        assert overlay_probs.get("r11", 0.0) > 0, (
-            f"T3 fail 应给 r11 非零概率，实际 overlay_probs={overlay_probs}"
-        )
+        assert overlay_probs.get("r11", 0.0) > 0, f"T3 fail 应给 r11 非零概率，实际 overlay_probs={overlay_probs}"
 
 
 # ---------------------------------------------------------------------------
@@ -740,15 +719,12 @@ class TestEndToEnd:
         overlay = ctor.build_for_date(dt)
         # 构造 risk_inputs（#1 已触发危机）
         risk_inputs = {
-            "params": {1: 0.30, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0,
-                       6: 1.0, 7: 1.0, 8: 1.0, 9: 1.0, 10: 1.0, 12: 1.0},
+            "params": {1: 0.30, 2: 1.0, 3: 1.0, 4: 1.0, 5: 1.0, 6: 1.0, 7: 1.0, 8: 1.0, 9: 1.0, 10: 1.0, 12: 1.0},
             "opportunity": {"news_ghost": 0.0, "bad_news_flat": 0.0},
         }
         detector = RegimeDetector(shrinkage_enabled=True)
         # HMM 未 fit → 降级均匀分布；overlay + risk 仍可算
         regime_features = {"X": np.zeros((60, 6))}
-        probs, shrinkage = detector.detect(
-            regime_features, overlay_signals=overlay, risk_signal_inputs=risk_inputs
-        )
+        probs, shrinkage = detector.detect(regime_features, overlay_signals=overlay, risk_signal_inputs=risk_inputs)
         assert 0.0 < shrinkage.value <= 1.0
         assert len(probs.probabilities) == 7  # 4 HMM 态(r1-r4) + 3 overlay 态(r10-r12)

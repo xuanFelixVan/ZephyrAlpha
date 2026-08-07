@@ -33,7 +33,7 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, Final
 
 import numpy as np
 import pandas as pd
@@ -73,6 +73,9 @@ from zephyr.regime.validation.phase2.confidence_calibrator import (
     compute_occurred_pit,
     fit_calibrator_with_fallback,
 )
+
+# 公共工具函数（避免多副本触发 CloneGuard extract 级硬阻断）
+from zephyr.regime.features.regime_data_loader import safe_float
 
 _logger = logging.getLogger(__name__)
 
@@ -590,9 +593,9 @@ class Phase2Runner:
         else:
             last_row = window.iloc[-1]
             risk_inputs = builder._build_feature_risk(  # noqa: SLF001
-                vol_pct=_safe_float(last_row.get("realized_vol_pct")),
-                slope=_safe_float(last_row.get("kalman_slope")),
-                vol_anom=_safe_float(last_row.get("volume_anomaly")),
+                vol_pct=safe_float(last_row.get("realized_vol_pct")),
+                slope=safe_float(last_row.get("kalman_slope")),
+                vol_anom=safe_float(last_row.get("volume_anomaly")),
             )
         overlay_ctor = getattr(builder, "_overlay_ctor", None)  # noqa: SLF001
         overlay_signals = (
@@ -621,15 +624,4 @@ def _quarter_end_dates(
     return list(pd.date_range(start=start, end=end, freq=freq))
 
 
-def _safe_float(v: Any) -> float:
-    """NaN/None 安全转 float."""
-    if v is None:
-        return 0.0
-    try:
-        f = float(v)
-        return 0.0 if f != f else f
-    except (TypeError, ValueError):
-        return 0.0
-
-
-__all__ = ["Phase2Report", "Phase2Runner", "Phase2RunnerError"]
+__all__: Final = ["Phase2Report", "Phase2Runner", "Phase2RunnerError"]
