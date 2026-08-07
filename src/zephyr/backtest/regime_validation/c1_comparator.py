@@ -177,6 +177,9 @@ class C1ShrinkageComparator:
 
     def __init__(self, config: C1Config | None = None) -> None:
         self._config = config or C1Config()
+        # 供 experiment_tracking.c1_adapter 取 nav_series 用（不改 compare 返回值，向后兼容）
+        self.last_baseline_portfolio: Optional[Portfolio] = None
+        self.last_experiment_portfolio: Optional[Portfolio] = None
 
     @property
     def config(self) -> C1Config:
@@ -238,6 +241,9 @@ class C1ShrinkageComparator:
                 f"C1 回测执行失败: {exc}"
             ) from exc
 
+        # 暴露 portfolio 引用供 experiment_tracking.c1_adapter 序列化 nav 曲线
+        self.last_baseline_portfolio = baseline_engine.last_portfolio
+        self.last_experiment_portfolio = experiment_engine.last_portfolio
         return self.evaluate(
             baseline_result=baseline_result,
             experiment_result=experiment_result,

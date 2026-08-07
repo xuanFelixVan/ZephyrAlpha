@@ -185,6 +185,71 @@ class TestHMM9States:
             assert abs(probs.hmm_probabilities[s] - 1.0 / 9.0) < 1e-9
 
 
+# ── 2b. 温度缩放校准（discussion_004 §2.2 P0-E2 Stage 1）────────────
+
+
+class TestTemperatureScaling:
+    """温度缩放校准不变性——防回滚 critical fix（项目 invariant 约定）."""
+
+    @skip_no_hmmlearn
+    @pytest.mark.filterwarnings("ignore")
+    def test_t1_identity(self, synthetic_features):
+        """T=1.0 不缩放——HMM 概率与无温度参数完全一致（基准不变性）。"""
+        d_base = RegimeDetector()
+        d_t1 = RegimeDetector(temperature=1.0)
+        d_base.fit({"X": synthetic_features})
+        d_t1.fit({"X": synthetic_features})
+        X = synthetic_features[-50:]
+        p_base, _ = d_base.detect({"X": X}, {}, {})
+        p_t1, _ = d_t1.detect({"X": X}, {}, {})
+        for s in HMM_STATES:
+            assert abs(p_base.hmm_probabilities[s] - p_t1.hmm_probabilities[s]) < 1e-9
+
+    @skip_no_hmmlearn
+    @pytest.mark.filterwarnings("ignore")
+    def test_t_gt1_flattens_and_preserves_argmax(self, synthetic_features):
+        """T>1 降温：max(P) 下降、Σ=1 保持、argmax 不变（保序性，Guo2017 性质）。"""
+        d = RegimeDetector(temperature=3.0)
+        d.fit({"X": synthetic_features})
+        X = synthetic_features[-50:]
+        raw = d._hmm_model.predict_proba(X)[-1]
+        raw_max_idx = int(raw.argmax())
+        raw_max = float(raw.max())
+        probs, _ = d.detect({"X": X}, {}, {})
+        cal = [probs.hmm_probabilities[s] for s in HMM_STATES]
+        # Σ=1 保持（归一化不变性）
+        assert abs(sum(cal) - 1.0) < 1e-9
+        # max 下降（降温有效）
+        assert max(cal) < raw_max
+        # argmax 不变（保序——不改变预测类别）
+        assert int(np.argmax(cal)) == raw_max_idx
+
+    @skip_no_hmmlearn
+    @pytest.mark.filterwarnings("ignore")
+    def test_higher_t_more_flattening(self, synthetic_features):
+        """T 越大降温越强：max(P) 随 T 单调递减（tempering 单调性）。"""
+        X = synthetic_features[-50:]
+        maxes: dict[float, float] = {}
+        for T in [1.0, 2.0, 3.0, 5.0]:
+            d = RegimeDetector(temperature=T)
+            d.fit({"X": synthetic_features})
+            probs, _ = d.detect({"X": X}, {}, {})
+            maxes[T] = max(probs.hmm_probabilities.values())
+        assert maxes[1.0] > maxes[2.0] > maxes[3.0] > maxes[5.0]
+
+    @skip_no_hmmlearn
+    @pytest.mark.filterwarnings("ignore")
+    def test_t_le_zero_degrades_uniform(self, synthetic_features):
+        """T≤0 非法温度 → 降级均匀分布 1/9（防御，防数值爆炸）。"""
+        d = RegimeDetector(temperature=1.0)
+        d.fit({"X": synthetic_features})
+        d.temperature = 0.0  # 运行时改为非法值
+        X = synthetic_features[-50:]
+        probs, _ = d.detect({"X": X}, {}, {})
+        for s in HMM_STATES:
+            assert abs(probs.hmm_probabilities[s] - 1.0 / 9.0) < 1e-9
+
+
 # ── 3. 覆盖层 ───────────────────────────────────────────────────────
 
 
