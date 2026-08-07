@@ -12685,3 +12685,36 @@ entries:
   status: in_progress
   created: '2026-08-07'
   last_updated: '2026-08-07'
+# --- #ARCH-OBS-EXP-TRACK-001: 实验跟踪层(MOD-OBS-001) M1 落地——MLflow 薄包装 + 三 backend 降级 + c1_adapter + track 开关（2026-08-07）---
+- issue_id: '#ARCH-OBS-EXP-TRACK-001'
+  title: 实验跟踪层（MOD-OBS-001）M1 落地——MLflow 薄包装 + 三 backend 降级 + c1_adapter + c1_runner track 开关
+  severity: P3低
+  category: governance
+  adjudication: |-
+    2026-08-07 新增模块登记。discussion_002 §3 ② + backtest_observability_mlflow_plan.md
+    M1 落地——为 ZephyrAlpha 提供统一实验跟踪入口，所有零件（C1 / regime_detector /
+    特征管道 / 回测引擎 / 全链路）的运行记录到本地 MLflow（SQLite），人和 AI 通过
+    query 接口或 mlflow ui 查询、对比、追溯。包名 experiment_tracking（非 observability，
+    discussion_002 §2.3 命名冲突发现 + §9 决策 A——observability 是横切概念，独占顶层
+    会语义混淆）。
+    M1 范围（6 核心文件 + c1_runner track 开关）：config/models/experiment_tracker/
+    fallback_tracker/query/adapters/c1_adapter + c1_runner track=True lazy import。
+    三 backend 降级（mlflow/FallbackBackend JSON/NullBackend no-op），tracking 失败
+    绝不崩业务。循环依赖规避：领域类型仅 TYPE_CHECKING 导入，运行时鸭子类型。
+    铁律#9：用户显式授权"直接起草 6 条 plain_zh + blueprint 并执行 M1-8 全流程"，
+    status=decided（纯技术落地，无价值判断）。
+  impact:
+    新增文件：
+    - 'src/zephyr/experiment_tracking/{__init__,config,models,experiment_tracker,fallback_tracker,query}.py'
+    - 'src/zephyr/experiment_tracking/adapters/{__init__,c1_adapter}.py'
+    - 'docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md（MOD-OBS-001 蓝图）'
+    变更文件：
+    - 'src/zephyr/backtest/regime_validation/c1_runner.py（M1-5 track 开关）'
+    - 'module_translation_registry.yaml（6 条 plain_zh）'
+    - 'capability_canonical_file_registry.yaml（experiment_tracking capability）'
+    - 'architecture_issue_registry.yaml（本条目登记）'
+    depgraph：设计态节点 node_id=9008073 path=src/zephyr/experiment_tracking/ granularity=directory domain_id=D_INFRA_TELEMETRY acquisition_method=self_build
+  fix_phase: 'M1 已落地（2026-08-07）—— 6 核心文件 + c1_adapter + track 开关 + 冒烟测试通过；M1-8 治理登记完成（blueprint + 6 plain_zh + capability + depgraph + ARCH）。M1-7 单元测试 55 passed（test_experiment_tracker + test_c1_adapter）+ M1-9 端到端验证全部通过（mlflow 2 run 可对比 + c1_summary.md/nav_curve artifacts）。M1 全部完成（2026-08-08）。'
+  status: decided
+  created: '2026-08-07'
+  last_updated: '2026-08-08'

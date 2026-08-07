@@ -5845,6 +5845,36 @@ capabilities:
       backtest→regime 单向。解决发现性：新 AI 搜 "C1 执行脚本/regime 验证跑通/Phase 1
       入口/mock 冒烟" 可定位真源。解决防重建：check_file_canonical() 反查。
 
+  # --------------------------------------------------------------------------
+  - capability_id: experiment_tracking
+    canonical_override: src/zephyr/experiment_tracking/experiment_tracker.py
+    aliases:
+      - ExperimentTracker
+      - get_tracker
+      - reset_tracker
+      - RunContext
+      - FallbackBackend
+      - ExperimentTrackingConfig
+      - load_config
+      - list_runs
+      - get_run
+      - compare_runs
+      - track_c1_result
+      - experiment_tracking
+    description: >-
+      实验跟踪统一入口（D_INFRA_TELEMETRY 域，MOD-OBS-001，#ARCH-OBS-EXP-TRACK-001）。
+      canonical = src/zephyr/experiment_tracking/experiment_tracker.py。MLflow 薄包装 +
+      三 backend 降级（mlflow / FallbackBackend JSON / NullBackend no-op）。所有零件
+      （C1 / regime_detector / 特征管道 / 回测引擎 / 全链路）的运行统一记录到本地 MLflow
+      （SQLite），人和 AI 通过 query 接口或 mlflow ui 查询、对比、追溯。lazy import mlflow——
+      未装自动降级到 FallbackBackend（写 logs/experiment_tracking_fallback/ JSON）；
+      enable_tracking=False（ZEPHYR_EXPERIMENT_TRACKING=0）→ NullBackend no-op。所有 log_*
+      包 try/except，tracking 失败绝不崩业务回测。c1_adapter（track_c1_result）把
+      C1ComparisonResult 翻译成 mlflow run（params/metrics/artifacts/tags），c1_runner
+      track=True 时 lazy import 调用。循环依赖规避：领域类型仅 TYPE_CHECKING 导入，运行时
+      鸭子类型。解决发现性：新 AI 搜 "实验记录/mlflow/跟踪实验/C1 结果记录" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================

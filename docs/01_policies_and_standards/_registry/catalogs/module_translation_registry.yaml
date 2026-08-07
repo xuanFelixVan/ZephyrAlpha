@@ -41083,6 +41083,49 @@ entries:
   desc_en: "C1 on/off comparison execution entry, mock mode (volatility-driven) smoke test + regime mode (real RegimeDetector series) Phase 1 verdict, reuses C1ShrinkageComparator.compare"
   plain_zh: "C1验证的执行脚本——把取数、构造Shrinkage供给、跑开/关对比、出报告串成一条线。先用波动率mock把流程跑通(不依赖特征管道)，等特征管道就绪切真实regime序列跑Phase1裁决"
 
+- module_path: src/zephyr/experiment_tracking/config.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 实验跟踪配置
+  name_en: Experiment Tracking Config
+  desc_zh: MLflow tracking_uri / 降级目录 / 全局开关配置（不可变 dataclass，环境变量覆盖）
+  desc_en: MLflow tracking_uri / fallback dir / global toggle config (frozen dataclass, env override)
+  plain_zh: 管实验记录存哪、关没关的配置开关。设了环境变量全局关闭就什么都不记省资源，没装 mlflow 就退到本地 JSON 文件存。
+- module_path: src/zephyr/experiment_tracking/models.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 实验运行数据模型
+  name_en: Experiment Run Models
+  desc_zh: RunSummary/RunDetail 不可变数据模型，屏蔽 mlflow 与降级 JSON 差异
+  desc_en: RunSummary/RunDetail frozen data models shielding mlflow vs fallback JSON differences
+  plain_zh: 给每次实验跑的结果定个统一的数据格式。不管底下用 mlflow 还是本地 JSON，外面查时看到的都是同一套字段，不用关心存哪。
+- module_path: src/zephyr/experiment_tracking/experiment_tracker.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 实验跟踪器
+  name_en: Experiment Tracker
+  desc_zh: MLflow 薄包装——lazy import + 三 backend 降级(mlflow/FallbackBackend JSON/NullBackend no-op) + 单例工厂
+  desc_en: MLflow thin wrapper with lazy import + 3-backend fallback (mlflow/FallbackBackend JSON/NullBackend no-op) + singleton factory
+  plain_zh: 记实验结果的总入口。装了 mlflow 就用 mlflow 有 UI 可对比，没装就退到本地 JSON 文件，全局关了就什么都不记。记录失败只报错不中断正经回测。
+- module_path: src/zephyr/experiment_tracking/fallback_tracker.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 降级跟踪器
+  name_en: Fallback Tracker
+  desc_zh: mlflow 未装时的 JSON 实现——与 _MLflowBackend 同接口，写 logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json
+  desc_en: JSON fallback backend when mlflow unavailable with same interface as _MLflowBackend
+  plain_zh: 没装 mlflow 时的备用记录器。把每次实验结果写成 JSON 文件存本地，接口和正式的 mlflow 一模一样，切换不用改代码。
+- module_path: src/zephyr/experiment_tracking/query.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: 实验查询接口
+  name_en: Experiment Query
+  desc_zh: list_runs/get_run/compare_runs——屏蔽 mlflow vs 降级 JSON 差异，统一返回 RunSummary/RunDetail
+  desc_en: list_runs/get_run/compare_runs shielding mlflow vs fallback JSON differences returning unified RunSummary/RunDetail
+  plain_zh: 查历史实验记录的接口。列出来、看详情、对比多次跑，不管底下存 mlflow 还是 JSON 都返回统一格式，查失败返回空不崩溃。
+- module_path: src/zephyr/experiment_tracking/adapters/c1_adapter.py
+  domain_id: D_INFRA_TELEMETRY
+  name_zh: C1对比结果适配器
+  name_en: C1 Result Adapter
+  desc_zh: C1ComparisonResult→mlflow run(params/metrics/artifacts/tags)，TYPE_CHECKING 隔离破 backtest↔experiment_tracking 循环
+  desc_en: C1ComparisonResult to mlflow run with TYPE_CHECKING isolation breaking backtest-experiment_tracking cycle
+  plain_zh: 把 C1 开关对比的结果翻译成 mlflow 能记的格式——门槛配置记参数、四项指标记度量、净值曲线存文件、通过与否打标签。让多次 C1 跑的结果能在 mlflow 里对比。
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
