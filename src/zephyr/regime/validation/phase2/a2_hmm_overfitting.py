@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME-VAL-002 | discussion_003 §2.3
+# [BLUEPRINT] MOD-REGIME_VAL-002 | discussion_017 §2.3
 # [MODULE] zephyr.regime.validation.phase2.a2_hmm_overfitting
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; zephyr.regime.core.regime_detector
@@ -6,16 +6,16 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] IS/OOS 分割无重叠; 标签对齐按态均值排序(permutation invariance); OOS/IS≥0.7→PASS; 降级时返回明确 degraded 标记
-# [MODIFY-GUARD] discussion_003_phase2_model_quality_validation.md §2.3
+# [MODIFY-GUARD] discussion_017_phase2_model_quality_validation.md §2.3
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] A2ValidationError(ZA-REGIME-0021)
 # [TESTS] tests/regime/phase2/test_a2_hmm_overfitting.py
-# [A_module] module_id=MOD-REGIME-VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_003 §2.3 #discussion_002 §4.1 A2
-"""A2 HMM 过拟合验证器（discussion_003 §2.3）。
+# [ARCH-REF] #discussion_017 §2.3 #discussion_018 §4.1 A2
+"""A2 HMM 过拟合验证器（discussion_017 §2.3）。
 
 方案 A：IS/OOS 交叉解码一致率。
   1. IS 数据（如 2010-2018）fit → HMM_is；OOS 数据（如 2019-2026）fit → HMM_oos
@@ -27,10 +27,10 @@
 
 方案 B（补充）：IS/OOS 概率分布 KL 散度——越小越不过拟合。
 
-判定（discussion_003 §2.3）：
+判定（discussion_017 §2.3）：
   OOS/IS ≥ 0.7 → PASS；0.5 ≤ 比值 < 0.7 → REVIEW；< 0.5 → FAIL
 
-依据: discussion_003 §2.3 / discussion_002 §4.1 A2
+依据: discussion_017 §2.3 / discussion_018 §4.1 A2
 Version: 0.1.0
 """
 
@@ -55,7 +55,7 @@ except Exception:  # pragma: no cover
 
 _logger = logging.getLogger(__name__)
 
-# 判定门槛（discussion_003 §2.3）
+# 判定门槛（discussion_017 §2.3）
 PASS_RATIO = 0.7  # OOS/IS ≥ 0.7 → PASS
 REVIEW_RATIO = 0.5  # ≥ 0.5 → REVIEW
 

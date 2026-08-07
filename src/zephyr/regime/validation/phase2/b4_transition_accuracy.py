@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME-VAL-002-B4 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_003_phase2_model_quality_validation.md §2.2
+# [BLUEPRINT] MOD-REGIME_VAL-002 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_017_phase2_model_quality_validation.md §2.2
 # [MODULE] zephyr.regime.validation.phase2.b4_transition_accuracy
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; pyyaml; zephyr.regime.core.regime_detector
@@ -6,15 +6,15 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] B4只读 detector._last_transitions, 不改其状态; 事件库 YAML 为唯一真源; ±5 交易日窗口用实际交易日历
-# [MODIFY-GUARD] discussion_003_phase2_model_quality_validation.md §2.2
+# [MODIFY-GUARD] discussion_017_phase2_model_quality_validation.md §2.2
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] B4ValidationError(ZA-REGIME-0021)
 # [TESTS] tests/regime/phase2/test_b4_transition_accuracy.py
 # [TTL] permanent
-# [ARCH-REF] #discussion_003 §2.2 #discussion_002 §4.2 B4
-"""B4 转换触发准确性验证器（discussion_003 §2.2，Phase 2 第一批 MVP）.
+# [ARCH-REF] #discussion_017 §2.2 #discussion_018 §4.2 B4
+"""B4 转换触发准确性验证器（discussion_017 §2.2，Phase 2 第一批 MVP）.
 
 验证问题: HMM 8 转换（T1-T6/S1/S2）触发时点与历史事件吻合吗？
 
@@ -28,7 +28,7 @@
 
 判定: ≥6/8 命中 → PASS
 
-依据: discussion_003 §2.2
+依据: discussion_017 §2.2
 Version: 0.1.0
 """
 
@@ -62,7 +62,7 @@ TRANSITION_TYPES: list[str] = ["T1", "T2", "T3", "T4", "T5", "T6", "S1", "S2"]
 # ±5 交易日的窗口宽度（向前/向后各 5 个交易日）
 MATCH_WINDOW_DAYS = 5
 
-# 命中门槛（discussion_003 §2.2: 8 事件中 ≥6 命中 → PASS）
+# 命中门槛（discussion_017 §2.2: 8 事件中 ≥6 命中 → PASS）
 # 采用比率制（6/8=0.75）以适配任意事件数；total_evaluated=0 时为 INSUFFICIENT_DATA
 PASS_RATIO = 0.75
 

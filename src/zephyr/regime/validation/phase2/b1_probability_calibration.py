@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME-VAL-002 | discussion_003 §2.4
+# [BLUEPRINT] MOD-REGIME_VAL-002 | discussion_017 §2.4
 # [MODULE] zephyr.regime.validation.phase2.b1_probability_calibration
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas
@@ -6,16 +6,16 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] forward_days>0; confidence∈[0,1]; 校准误差<0.10→PASS; 每态方向由数据推断(非固定映射)
-# [MODIFY-GUARD] discussion_003_phase2_model_quality_validation.md §2.4
+# [MODIFY-GUARD] discussion_017_phase2_model_quality_validation.md §2.4
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] B1ValidationError(ZA-REGIME-0023)
 # [TESTS] tests/regime/phase2/test_b1_probability_calibration.py
-# [A_module] module_id=MOD-REGIME-VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_003 §2.4 #discussion_002 §4.1 B1
-"""B1 概率校准度验证器（discussion_003 §2.4）。
+# [ARCH-REF] #discussion_017 §2.4 #discussion_018 §4.1 B1
+"""B1 概率校准度验证器（discussion_017 §2.4）。
 
 方案 A：后续收益实现代理标签。
   1. 全历史 detect 收集 (timestamp, confidence, dominant_regime)
@@ -25,15 +25,15 @@
   5. confidence 分桶（0-20/.../80-100%），每桶算"实际发生"频率
   6. 校准误差 = mean(|桶内平均 confidence - 桶内实际频率|)
 
-判定（discussion_003 §2.4）：
+判定（discussion_017 §2.4）：
   校准误差 < 0.10 → PASS；0.10 ≤ 误差 < 0.15 → REVIEW；≥ 0.15 → FAIL
 
 设计决策：
   - 每态"预期方向"由数据推断（平均后续收益 sign），非固定映射——避免无监督 HMM
-    的标签语义依赖，方案自洽（discussion_003 §7 开放问题 2 的务实解法）。
+    的标签语义依赖，方案自洽（discussion_017 §7 开放问题 2 的务实解法）。
   - 态平均收益接近 0（|mean| < min_return_threshold）时跳过该态（无明确方向）。
 
-依据: discussion_003 §2.4 / discussion_002 §4.1 B1
+依据: discussion_017 §2.4 / discussion_018 §4.1 B1
 Version: 0.1.0
 """
 
@@ -54,7 +54,7 @@ except Exception:  # pragma: no cover
 
 _logger = logging.getLogger(__name__)
 
-# 判定门槛（discussion_003 §2.4）
+# 判定门槛（discussion_017 §2.4）
 PASS_ERROR = 0.10  # < 10% → PASS
 REVIEW_ERROR = 0.15  # < 15% → REVIEW
 DEFAULT_FORWARD_DAYS = 20
