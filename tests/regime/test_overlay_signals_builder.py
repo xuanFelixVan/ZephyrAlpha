@@ -642,6 +642,78 @@ class TestPhase2cT3Dims:
             f"常态弱 T3 信号不应触发 overlay，实际 overlay_probs={overlay_probs}"
         )
 
+    def test_t3_trigger_fires(self):
+        """T3 trigger 阶段触发 → _run_overlay 给 r12 BREAKOUT 非零概率。
+
+        _STAGE_ORDER = (strong_confirm, confirm, trigger, fail)，首个匹配生效。
+        trigger 的 p_overlay={r12:0.55} 只有在 strong_confirm/confirm 都不匹配时才命中。
+        故构造：trigger 维度过门槛 + confirm 维度不过门槛 + total<200。
+
+          trigger:  sentiment>=60, mainline>=60, leader>=60 → p_overlay r12=0.55
+          confirm:  volume_price<60（不满足）→ confirm 不匹配
+          strong_confirm: total=195<200 → 不匹配
+          fail:     one_day_mainline=0（不触发）
+        """
+        overlay_signals = {
+            "transitions": {
+                "T3": {
+                    "volume_price": 0.0,      # < 60 → confirm 不匹配
+                    "ma_trend": 0.0,          # < 50 → confirm 不匹配
+                    "sentiment": 65.0,        # >= 60 (trigger)
+                    "money_effect": 0.0,      # < 50 → confirm 不匹配
+                    "mainline": 65.0,         # >= 60 (trigger)
+                    "leader": 65.0,           # >= 60 (trigger)
+                    "one_day_mainline": 0.0,  # < 1 (no fail)
+                },
+                "S1": {k: 0.0 for k in _TRANSITION_DIMS["S1"]},
+                "S2": {k: 0.0 for k in _TRANSITION_DIMS["S2"]},
+                "T1": {k: 0.0 for k in _TRANSITION_DIMS["T1"]},
+                "T2": {k: 0.0 for k in _TRANSITION_DIMS["T2"]},
+                "T4": {k: 0.0 for k in _TRANSITION_DIMS["T4"]},
+                "T5": {k: 0.0 for k in _TRANSITION_DIMS["T5"]},
+                "T6": {k: 0.0 for k in _TRANSITION_DIMS["T6"]},
+            }
+        }
+        detector = RegimeDetector(shrinkage_enabled=False)
+        overlay_probs = detector._run_overlay(overlay_signals)
+        # T3 trigger → r12 (BREAKOUT) 获得非零概率
+        assert overlay_probs.get("r12", 0.0) > 0, (
+            f"T3 触发应给 r12 非零概率，实际 overlay_probs={overlay_probs}"
+        )
+
+    def test_t3_fail_when_one_day_mainline(self):
+        """one_day_mainline=1 且 trigger/confirm 不匹配 → T3 fail 触发（r11 > 0）。
+
+        _STAGE_ORDER 中 fail 排最后，只有 strong_confirm/confirm/trigger 都不匹配时
+        才评估 fail。故构造全 0 维度 + one_day_mainline=1。
+        """
+        overlay_signals = {
+            "transitions": {
+                "T3": {
+                    "volume_price": 0.0,
+                    "ma_trend": 0.0,
+                    "sentiment": 0.0,         # < 60 → trigger 不匹配
+                    "money_effect": 0.0,
+                    "mainline": 0.0,          # < 60 → trigger 不匹配
+                    "leader": 0.0,            # < 60 → trigger 不匹配
+                    "one_day_mainline": 1.0,  # >= 1 → fail 匹配
+                },
+                "S1": {k: 0.0 for k in _TRANSITION_DIMS["S1"]},
+                "S2": {k: 0.0 for k in _TRANSITION_DIMS["S2"]},
+                "T1": {k: 0.0 for k in _TRANSITION_DIMS["T1"]},
+                "T2": {k: 0.0 for k in _TRANSITION_DIMS["T2"]},
+                "T4": {k: 0.0 for k in _TRANSITION_DIMS["T4"]},
+                "T5": {k: 0.0 for k in _TRANSITION_DIMS["T5"]},
+                "T6": {k: 0.0 for k in _TRANSITION_DIMS["T6"]},
+            }
+        }
+        detector = RegimeDetector(shrinkage_enabled=False)
+        overlay_probs = detector._run_overlay(overlay_signals)
+        # T3 fail → r11 (RECOVERY) 获得非零概率
+        assert overlay_probs.get("r11", 0.0) > 0, (
+            f"T3 fail 应给 r11 非零概率，实际 overlay_probs={overlay_probs}"
+        )
+
 
 # ---------------------------------------------------------------------------
 # 端到端：overlay_signals 喂 RegimeDetector.detect 不报错
@@ -679,4 +751,4 @@ class TestEndToEnd:
             regime_features, overlay_signals=overlay, risk_signal_inputs=risk_inputs
         )
         assert 0.0 < shrinkage.value <= 1.0
-        assert len(probs.probabilities) == 12
+        assert len(probs.probabilities) == 7  # 4 HMM 态(r1-r4) + 3 overlay 态(r10-r12)

@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] —
-# [TESTS] tests/regime/test_overlay_signals_builder.py
+# [TESTS] tests/regime/test_overlay_signals_builder.py; tests/regime/test_overlay_features.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #discussion_001 §4 #D-SIGNAL-68 #Phase2b

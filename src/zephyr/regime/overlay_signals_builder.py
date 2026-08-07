@@ -52,7 +52,7 @@
            volume_price/ma_trend/sentiment/money_effect/mainline/leader/
            one_day_mainline（T3）, shrink_flat（T4）
            leader_break/rebound_wrap（T5）, sudden_volume（T6）
-  stub 2（=0.0）：policy/bad_news_flat（S2, NLP，待 NLP 管道）
+  stub 2（=0.0）：policy/bad_news_flat（S2, NLP，待 P1-E3 NLP 管道）
 
 Phase 2c 升级：money_effect/mainline/leader/one_day_mainline 从 stub→可算
 （接入 money_flow/kline_sector/limit_up_down + hk_connect_flow 北向融合），T3 confirm/trigger/fail 解锁。
@@ -109,7 +109,7 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
         "money_effect",
         "mainline",
         "leader",
-        "one_day_mainline",  # stub（资金/板块）
+        "one_day_mainline",  # Phase 2c 已激活（kline_sector）
     ],
     "T4": ["shrink_flat"],
     "T5": ["leader_break", "rebound_wrap"],
@@ -118,14 +118,14 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
 
 # stub 维度（不预计算，build_for_date 给 0.0）
 # 2 个 stub:
-#   - policy, bad_news_flat: S2 NLP（待 NLP 管道）
-# T3 资金/板块 4 维度（money_effect/mainline/leader/one_day_mainline）已升级为可算:
-#   _compute_t3_inputs 接入点已留，当前返回空 dict（数据管道未就绪）；
-#   _precompute 不放入 cache → build_for_date 走 0.0 降级（与 stub 等效，多一条 warning）。
-#   待 money_flow/kline_sector/limit_up_down 数据就绪后实现 _compute_t3_inputs 即激活。
+#   - policy, bad_news_flat: S2 NLP（待 P1-E3 NLP 管道）
+# T3 资金/板块 4 维度（money_effect/mainline/leader/one_day_mainline）已激活（P1-E4/E5）:
+#   _compute_t3_inputs 接入 money_flow/kline_sector/limit_up_down/hk_connect_flow，
+#   _precompute 调用 7 评分函数算出维度 Series 放入 cache。
+#   数据缺失时对应输入 None → 维度=0.0 降级（C1 不退化）。
 _STUB_DIMS: set[str] = {
     "policy",
-    "bad_news_flat",  # S2 NLP（待 NLP 管道）
+    "bad_news_flat",  # S2 NLP（待 P1-E3 NLP 管道）
 }
 
 
@@ -144,7 +144,7 @@ class OverlaySignalsConstructor:
     数据源（经 feature_builder 复用）:
       - feature_builder.build_features() → HMM 6 特征（vol_pct/hurst/slope/corr/ad_ratio/vol_z）
       - feature_builder.get_index_kline() → 代理 OHLCV（close/volume）
-      - stub 维度（policy/bad_news_flat/money_effect/...）：=0.0（待 NLP/资金管道）
+      - stub 维度（policy/bad_news_flat）：=0.0（待 P1-E3 NLP 管道）
 
     PIT: _precompute 末尾 shift(1)，build_for_date(dt) 取 loc[:dt].iloc[-1]（≤ dt-1）。
     降级: 任一数据源缺失 → 该维度=0.0（不触发），log WARN。
