@@ -20,6 +20,8 @@
 #   - Watchdog heartbeat (fix #ARCH-BOOT-001): guard writes heartbeat every 15s; new guard takes
 #     over if lock PID alive but heartbeat stale (>5min) -> kills zombie guard + orphan cleanup.
 #     Child monitoring polls HasExited instead of blocking WaitForExit to avoid main-thread deadlock.
+#     fix #ARCH-BOOT-002 F: root cause = PowerShell redirected output pipe buffer fills -> WaitForExit()
+#     never returns -> main thread deadlocks. Polling sidesteps; do NOT "optimize" back to WaitForExit.
 #
 # DEPLOY (one-time, no admin): powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1
 #   Registers BOTH watchdog tasks (scheduler + tick_subscriber).
@@ -66,7 +68,11 @@ function Write-GuardLog {
 function Write-Heartbeat {
     param([int]$ChildPid)
     $ts = (Get-Date).ToString("o")  # ISO 8601, with timezone
-    "$ts|$PID|$ChildPid" | Out-File -FilePath $HeartbeatFile -Encoding utf8 -NoNewline
+    # fix #ARCH-BOOT-002 D: atomic write -- Out-File truncates+writes non-atomically;
+    # a new guard polling in the 5min window could read a half-written heartbeat
+    # -> false stale -> kill healthy guard. Write tmp + Move-Item (same-volume atomic).
+    "$ts|$PID|$ChildPid" | Out-File -FilePath "$HeartbeatFile.tmp" -Encoding utf8 -NoNewline
+    Move-Item -Path "$HeartbeatFile.tmp" -Destination $HeartbeatFile -Force
 }
 
 # ============== Single-instance lock (with watchdog heartbeat, fix #ARCH-BOOT-001) ==============

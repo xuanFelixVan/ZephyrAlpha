@@ -204,7 +204,7 @@ def _is_pid_alive(pid: int) -> bool:
         # Windows: OpenProcess 检测进程是否存在
         try:
             import ctypes
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
             kernel32 = ctypes.windll.kernel32
             handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if handle:

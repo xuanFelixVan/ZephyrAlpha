@@ -172,7 +172,7 @@ INFRA_KEYWORDS = {
     "breaker",
     "task",
 }
-INFRA_DOMAINS = {"D_INFRA_RUNTIME", "D_INFRA_OPS", "D_OPS", "D_GOV_AUDIT"}
+INFRA_DOMAINS = {"D_INFRA_RUNTIME", "D_INFRA_OPS", "D_OPS", "D_GOV_AUDIT"}  # noqa: gate-vocab
 
 
 def heuristic_dedup(

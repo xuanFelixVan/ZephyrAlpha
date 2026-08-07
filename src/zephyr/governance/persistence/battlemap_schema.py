@@ -114,7 +114,7 @@ _TARGET_ROLES = ("primary", "supplement", "degradation")
 _EDGE_TYPES = ("data_flow", "trigger", "degradation")
 
 # design_maturity 2态（与 depgraph/decisiongraph 对齐）
-_DESIGN_MATURITIES = ("design", "production")
+_DESIGN_MATURITIES = ("design", "production")  # noqa: gate-vocab
 
 
 # ---------------------------------------------------------------------------

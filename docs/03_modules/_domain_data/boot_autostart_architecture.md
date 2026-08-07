@@ -350,13 +350,13 @@ finally {
 - `TestRegisterAuxKeepsIgnoreNew`：register_aux_tasks.ps1 保持 IgnoreNew（文档化有意非对称：一次性 AtLogOn 任务无僵尸风险）
 - `TestGuardsDefineHeartbeat`：3 脚本均定义 $HeartbeatFile + Write-Heartbeat + 5min 阈值 + finally 清理
 
-### 8.6 战略补强（#ARCH-BOOT-002，立项待办）
+### 8.6 战略补强（#ARCH-BOOT-002，已落地 2026-08-08）
 
-主治本（Phase 1-5）已闭合僵尸接管闭环。以下三项为战略级补强，非阻断，建议立项 #ARCH-BOOT-002：
+主治本（Phase 1-5）已闭合僵尸接管闭环。以下三项战略补强已落地，闭合"全层失效无人知"循环：
 
-- **D. 心跳原子写**：`Out-File` 截断+写非原子，新 guard 轮询期（5min PT5M）撞上旧 guard 写心跳的微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。概率极低（5min×微秒级），但可零成本消除：写 `$HeartbeatFile.tmp` + `Move-Item -Force`（同卷原子）。
-- **E. 死人开关告警**：2 日停摆是人工发现的，非系统告警。心跳文件是天然 dead-man 信号——独立监控（可复用 ch_health_probe 或独立任务）任一 heartbeat 陈旧 >10min 即告警，闭合"全层失效无人知"循环。优先级不低于主治本。
-- **F. `WaitForExit` 死锁根因文档化**：根因是 PowerShell 重定向输出管道满致 `WaitForExit` 不返回；polling 已绕过。在 guard 脚本头注释固化此知识点（已加），防 AI "优化"回 `WaitForExit`。
+- **D. 心跳原子写** ✅ 已落地：`Out-File` 截断+写非原子，新 guard 轮询期（5min PT5M）撞上旧 guard 写心跳的微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。概率极低（5min×微秒级），零成本消除：3 个 guard 脚本 `Write-Heartbeat` 改为写 `$HeartbeatFile.tmp` + `Move-Item -Force`（同卷原子 rename）。不变式测试 `TestAtomicHeartbeatWrite` 钉死。
+- **E. 死人开关告警** ✅ 已落地：2 日停摆是人工发现的，非系统告警。新建 `scripts/deadman_switch.ps1`——**无状态一次性 Task Scheduler 任务**（非 while-true guard，无僵尸风险），每 5min fire 读 3 个心跳文件，任一陈旧 >10min 即告警。**独立性第一性原理**：监控者不属被监控的 3 服务之一，只读心跳文件；若 3 服务全死，此任务仍独立 fire 并告警。**为何用 .ps1 而非 .py**：若故障根因是 Python 栈崩溃（坏 import/venv），.py 监控会跟着死；.ps1 读文件+发 webhook 零 Python 依赖。**告警通道**：飞书 webhook（推手机，复用 `ZEPHYR_FEISHU_WEBHOOK`，与 Alerter 同契约）+ Windows Event Log + 本地 `tmp/deadman_switch_alerts.log`（全审计无冷却）。**30min 冷却**防多小时停摆刷屏（同一 staleKey 30min 内只推一次手机）。**Fail-safe**：此任务自身死亡退化到 pre-E 现状（无监控），非倒退——无需无限递归监控。已注册为第 4 个 Task Scheduler 任务 `ZephyrAlpha_DeadmanSwitch`（`register_guard_tasks.ps1`）。不变式测试 `TestDeadmanSwitchInvariants` + `TestDeadmanSwitchRegistered` 钉死（一次性、无 WaitForExit、读 3 心跳、有冷却、有 webhook）。
+- **F. `WaitForExit` 死锁根因文档化** ✅ 已落地：根因是 PowerShell 重定向输出管道满致 `WaitForExit` 不返回；polling 已绕过。3 个 guard 脚本头注释固化"pipe buffer fills → WaitForExit never returns → main thread deadlocks"知识点，防 AI "优化"回 `WaitForExit`。不变式测试 `TestWaitForExitRootCauseDocumented` 钉死。
 
 ### §0.6 四图对齐视图
 
@@ -369,7 +369,7 @@ finally {
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 76 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-L00-004` 的 77 个 file 节点 | design | `extract_depgraph.py --modules MOD-L00-004` |
 | 数据流图 (dataflow) | 5 个 Dataset / 6 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -381,6 +381,6 @@ finally {
 | module_id | MOD-L00-004 | MOD-L00-004 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | N/A | — |
-| file_count | 76 文件 | N/A | — |
+| file_count | 77 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

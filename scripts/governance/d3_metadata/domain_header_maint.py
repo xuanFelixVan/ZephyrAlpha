@@ -132,7 +132,7 @@ def is_process_alive(pid: int) -> bool:
         try:
             import ctypes
 
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
             kernel32 = ctypes.windll.kernel32
             handle = kernel32.OpenProcess(
                 PROCESS_QUERY_LIMITED_INFORMATION, False, pid

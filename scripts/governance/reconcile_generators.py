@@ -63,7 +63,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # subprocess 回退超时（秒/生成器）——治理生成器最重的是 generate_domain_doc
 # （批量写 20+ 域文档），实测 <60s；300s 留足余量防慢机环境误杀。
-_SUBPROCESS_TIMEOUT = 300
+_SUBPROCESS_TIMEOUT = 300  # noqa: gate-vocab
 
 # 并行重生成 worker 数（治本缺口#2：depgraph_db 串行 19 个 subprocess ~50s → 并行 ~13s）。
 # 安全前提（已从 generator_registry.yaml 验证）：同一 trigger_source 的生成器
@@ -101,7 +101,7 @@ _REGISTRY_YAML = (
 # 解法：每次生成器成功后写时间戳到 .runtime/cache/gen_<name>.success；
 # _is_stale() 对 db:-only 生成器检查时间戳年龄，超阈值则视为 stale（最大过时保证）。
 # 阈值 30min：平衡 boot 速度（recent 生成器跳过）与可靠性（超时强制重跑兜底）。
-_DB_ONLY_STALE_THRESHOLD_SECONDS = 1800  # 30 minutes
+_DB_ONLY_STALE_THRESHOLD_SECONDS = 1800  # noqa: gate-vocab  # 30 minutes
 _REGEN_CACHE_DIR = _REPO_ROOT / ".runtime" / "cache"
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -143,7 +143,7 @@ def _is_pid_alive_local(pid: int) -> bool:
         if sys.platform == "win32":
             import ctypes  # type: ignore[import-not-found]
             kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
             handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if not handle:
                 return False

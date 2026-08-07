@@ -45,8 +45,7 @@ def _non_comment_lines(path: Path) -> list[str]:
     checks distinguish real calls from documentation mentions.
     """
     return [
-        ln for ln in path.read_text(encoding="utf-8").splitlines()
-        if ln.strip() and not ln.lstrip().startswith("#")
+        ln for ln in path.read_text(encoding="utf-8").splitlines() if ln.strip() and not ln.lstrip().startswith("#")
     ]
 
 
@@ -58,16 +57,13 @@ class TestNoGuardUsesWaitForExit:
         for script in GUARD_SCRIPTS:
             for ln in _non_comment_lines(script):
                 assert ".WaitForExit()" not in ln, (
-                    f"{script.name}: active WaitForExit() call found (zombie root cause, "
-                    f"fix #ARCH-BOOT-001): {ln!r}"
+                    f"{script.name}: active WaitForExit() call found (zombie root cause, fix #ARCH-BOOT-001): {ln!r}"
                 )
 
     def test_all_guards_poll_hasexited(self):
         for script in GUARD_SCRIPTS:
             text = script.read_text(encoding="utf-8")
-            assert "$proc.HasExited" in text, (
-                f"{script.name}: missing $proc.HasExited polling (fix #ARCH-BOOT-001)"
-            )
+            assert "$proc.HasExited" in text, f"{script.name}: missing $proc.HasExited polling (fix #ARCH-BOOT-001)"
 
 
 class TestRegisterGuardUsesParallel:
@@ -109,16 +105,12 @@ class TestGuardsDefineHeartbeat:
     def test_heartbeat_file_constant(self):
         for script in GUARD_SCRIPTS:
             text = script.read_text(encoding="utf-8")
-            assert "$HeartbeatFile = " in text, (
-                f"{script.name}: missing $HeartbeatFile constant"
-            )
+            assert "$HeartbeatFile = " in text, f"{script.name}: missing $HeartbeatFile constant"
 
     def test_write_heartbeat_function(self):
         for script in GUARD_SCRIPTS:
             text = script.read_text(encoding="utf-8")
-            assert "function Write-Heartbeat" in text, (
-                f"{script.name}: missing Write-Heartbeat function"
-            )
+            assert "function Write-Heartbeat" in text, f"{script.name}: missing Write-Heartbeat function"
 
     def test_stale_threshold_5min(self):
         for script in GUARD_SCRIPTS:
@@ -141,6 +133,94 @@ class TestGuardsDefineHeartbeat:
             text = script.read_text(encoding="utf-8")
             assert "Remove-Item $LockFile, $HeartbeatFile" in text, (
                 f"{script.name}: finally block must clean both lock and heartbeat files"
+            )
+
+
+DEADMAN_SWITCH = SCRIPTS / "deadman_switch.ps1"
+
+
+class TestDeadmanSwitchInvariants:
+    """Dead-man switch (#ARCH-BOOT-002 E) must be a stateless one-shot task, NOT a guard.
+    It reads heartbeat files written by others and alerts if stale -- independent of the
+    3 monitored services. These invariants pin the independence principle so an AI cannot
+    'normalize' it into a while-true guard (which would re-introduce zombie risk) or couple
+    it to the Python stack (which would die if Python is broken)."""
+
+    def test_deadman_script_exists(self):
+        assert DEADMAN_SWITCH.exists(), "scripts/deadman_switch.ps1 must exist (#ARCH-BOOT-002 E)"
+
+    def test_not_a_guard_no_while_true(self):
+        text = DEADMAN_SWITCH.read_text(encoding="utf-8")
+        assert "while ($true)" not in text and "while($true)" not in text, (
+            "deadman_switch.ps1 must be one-shot, NOT a while-true guard "
+            "(one-shot = no zombie risk, #ARCH-BOOT-002 E independence principle)"
+        )
+
+    def test_no_waitforexit_no_child_process(self):
+        for ln in _non_comment_lines(DEADMAN_SWITCH):
+            assert ".WaitForExit()" not in ln, (
+                f"deadman_switch.ps1: WaitForExit() found (no child process, one-shot): {ln!r}"
+            )
+
+    def test_reads_all_three_heartbeats(self):
+        text = DEADMAN_SWITCH.read_text(encoding="utf-8")
+        for hb in ("scheduler.heartbeat", "tick_subscriber.heartbeat", "ch_health_probe.heartbeat"):
+            assert hb in text, f"deadman_switch.ps1: must read {hb} (monitors all 3 permanent services)"
+
+    def test_has_stale_threshold(self):
+        text = DEADMAN_SWITCH.read_text(encoding="utf-8")
+        assert "DEADMAN_STALE_MIN" in text, "deadman_switch.ps1: missing DEADMAN_STALE_MIN config (stale threshold)"
+
+    def test_has_cooldown(self):
+        text = DEADMAN_SWITCH.read_text(encoding="utf-8")
+        assert "Cooldown" in text or "cooldown" in text, (
+            "deadman_switch.ps1: missing cooldown (would spam Feishu during multi-hour outage)"
+        )
+
+    def test_has_feishu_webhook_alert(self):
+        text = DEADMAN_SWITCH.read_text(encoding="utf-8")
+        assert "ZEPHYR_FEISHU_WEBHOOK" in text, (
+            "deadman_switch.ps1: must alert via Feishu webhook (push to phone, survives service failure)"
+        )
+
+
+class TestDeadmanSwitchRegistered:
+    """register_guard_tasks.ps1 must register ZephyrAlpha_DeadmanSwitch as 4th task."""
+
+    def test_deadman_registered(self):
+        text = REGISTER_GUARD.read_text(encoding="utf-8")
+        assert "ZephyrAlpha_DeadmanSwitch" in text, (
+            "register_guard_tasks.ps1: must register ZephyrAlpha_DeadmanSwitch (#ARCH-BOOT-002 E)"
+        )
+
+    def test_deadman_script_in_services(self):
+        text = REGISTER_GUARD.read_text(encoding="utf-8")
+        assert "deadman_switch.ps1" in text, "register_guard_tasks.ps1: must reference deadman_switch.ps1"
+
+
+class TestAtomicHeartbeatWrite:
+    """#ARCH-BOOT-002 D: all guard scripts must write heartbeat atomically (tmp + Move-Item).
+    Out-File truncates+writes non-atomically; a new guard polling in the 5min window could
+    read a half-written heartbeat -> false stale -> kill healthy guard."""
+
+    def test_uses_move_item_for_atomic_write(self):
+        for script in GUARD_SCRIPTS:
+            text = script.read_text(encoding="utf-8")
+            assert "Move-Item" in text and "HeartbeatFile.tmp" in text, (
+                f"{script.name}: Write-Heartbeat must use tmp + Move-Item atomic write (#ARCH-BOOT-002 D)"
+            )
+
+
+class TestWaitForExitRootCauseDocumented:
+    """#ARCH-BOOT-002 F: all guard scripts must document the WaitForExit deadlock root cause
+    (PowerShell redirected output pipe buffer fills -> WaitForExit never returns). Pins the
+    knowledge so an AI does not 'optimize' back to WaitForExit."""
+
+    def test_pipe_buffer_root_cause_documented(self):
+        for script in GUARD_SCRIPTS:
+            text = script.read_text(encoding="utf-8")
+            assert "pipe buffer" in text.lower() or "管道" in text, (
+                f"{script.name}: must document 'pipe buffer fills' root cause (#ARCH-BOOT-002 F)"
             )
 
 

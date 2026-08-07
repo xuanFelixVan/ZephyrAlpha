@@ -38,7 +38,11 @@ $CurrentUser = "$env:USERDOMAIN\$env:USERNAME"
 $services = @(
     @{ TaskName = "ZephyrAlpha_DataScheduler";  Script = "start_scheduler.ps1" },
     @{ TaskName = "ZephyrAlpha_TickSubscriber"; Script = "start_tick_subscriber.ps1" },
-    @{ TaskName = "ZephyrAlpha_CHHealthProbe"; Script = "start_ch_health_probe.ps1" }
+    @{ TaskName = "ZephyrAlpha_CHHealthProbe"; Script = "start_ch_health_probe.ps1" },
+    # Dead-man switch (#ARCH-BOOT-002 E): one-shot per fire (NOT a while-true guard, no PID lock,
+    # no zombie risk). Reads 3 heartbeat files -> alerts if stale >10min. Independent of the 3
+    # monitored services. MultipleInstances=Parallel harmless (exits in <1s).
+    @{ TaskName = "ZephyrAlpha_DeadmanSwitch"; Script = "deadman_switch.ps1" }
 )
 
 # Settings: ExecutionTimeLimit=0 (unlimited; default 3 days would kill the guard every 3 days!)
@@ -91,6 +95,7 @@ foreach ($svc in $services) {
 
 Write-Host ""
 Write-Host "Done. Watchdog: AtLogOn + every 5min, user=$CurrentUser, unlimited execution time."
-Write-Host "Start now:    schtasks /run /tn ZephyrAlpha_DataScheduler ; schtasks /run /tn ZephyrAlpha_TickSubscriber"
+Write-Host "Start now:    schtasks /run /tn ZephyrAlpha_DataScheduler ; schtasks /run /tn ZephyrAlpha_TickSubscriber ; schtasks /run /tn ZephyrAlpha_CHHealthProbe"
+Write-Host "Dead-man:     schtasks /run /tn ZephyrAlpha_DeadmanSwitch (auto-fires every 5min, alerts if any heartbeat stale >10min)"
 Write-Host "Query status: schtasks /query /tn <TaskName> /v /fo LIST"
 Write-Host "Unregister:   Unregister-ScheduledTask -TaskName <TaskName> -Confirm:`$false"
