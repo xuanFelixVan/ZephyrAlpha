@@ -15,7 +15,7 @@
 """test_regime_detector.py — RegimeDetector (MOD-REGIME-001) 单元测试
 
 覆盖 blueprint §6 Phase 1 测试规划（~30 项）：
-  - HMM 9态：拟合/predict_proba 9维Σ=1/因果Viterbi末步/walk-forward季度重拟合/降级
+  - HMM 4态：拟合/predict_proba 9维Σ=1/因果Viterbi末步/walk-forward季度重拟合/降级
   - 覆盖层：3特殊态(CRISIS/RECOVERY/BREAKOUT)触发/不触发/8转换评分
   - 12维合并：无覆盖层退化为纯HMM/覆盖层压缩HMM/归一化Σ=1
   - ConfidenceSignal：max(P) 4档映射/稀有态折扣/边界值/下界0.21
@@ -94,9 +94,10 @@ def full_risk_params() -> dict:
 
 
 class TestRegimeProbabilitiesOutput:
-    def test_12dim_and_sum1(self, detector: RegimeDetector):
+    def test_7dim_and_sum1(self, detector: RegimeDetector):
+        """4 HMM 态 + 3 overlay 态 = 7 维概率分布（discussion_004 §2.1 降态后）。"""
         probs, _ = detector.detect({}, {}, {})
-        assert len(probs.probabilities) == 12
+        assert len(probs.probabilities) == 7
         assert set(probs.probabilities.keys()) == set(REGIME_STATES)
         assert abs(sum(probs.probabilities.values()) - 1.0) < 1e-9
 
@@ -112,7 +113,7 @@ class TestRegimeProbabilitiesOutput:
         assert set(probs.overlay_probabilities.keys()) == set(OVERLAY_STATES)
 
 
-# ── 2. HMM 9态 ──────────────────────────────────────────────────────
+# ── 2. HMM 4态 ──────────────────────────────────────────────────────
 
 
 class TestHMM9States:
@@ -123,7 +124,7 @@ class TestHMM9States:
         assert detector._hmm_model is not None
         assert not detector._hmm_degraded
         probs, _ = detector.detect({"X": synthetic_features[-50:]}, {}, {})
-        assert len(probs.hmm_probabilities) == 9
+        assert len(probs.hmm_probabilities) == 4
         assert set(probs.hmm_probabilities.keys()) == set(HMM_STATES)
         assert abs(sum(probs.hmm_probabilities.values()) - 1.0) < 1e-6
         # 学到结构 → 非均匀（存在 dominant 态）
@@ -167,10 +168,10 @@ class TestHMM9States:
         assert abs(sum(p.hmm_probabilities.values()) - 1.0) < 1e-6
 
     def test_degraded_uniform_when_not_fit(self, detector: RegimeDetector):
-        """未 fit → HMM 降级均匀分布 1/9（blueprint §7.4）。"""
+        """未 fit → HMM 降级均匀分布 1/4（blueprint §7.4）。"""
         probs, _ = detector.detect({}, {}, {})
         for s in HMM_STATES:
-            assert abs(probs.hmm_probabilities[s] - 1.0 / 9.0) < 1e-9
+            assert abs(probs.hmm_probabilities[s] - 1.0 / 4.0) < 1e-9
 
     @skip_no_hmmlearn
     @pytest.mark.filterwarnings("ignore")
@@ -182,7 +183,7 @@ class TestHMM9States:
         # detect 仍可降级运行（不抛错）
         probs, _ = detector.detect({}, {}, {})
         for s in HMM_STATES:
-            assert abs(probs.hmm_probabilities[s] - 1.0 / 9.0) < 1e-9
+            assert abs(probs.hmm_probabilities[s] - 1.0 / 4.0) < 1e-9
 
 
 # ── 2b. 温度缩放校准（discussion_004 §2.2 P0-E2 Stage 1）────────────
@@ -240,14 +241,14 @@ class TestTemperatureScaling:
     @skip_no_hmmlearn
     @pytest.mark.filterwarnings("ignore")
     def test_t_le_zero_degrades_uniform(self, synthetic_features):
-        """T≤0 非法温度 → 降级均匀分布 1/9（防御，防数值爆炸）。"""
+        """T≤0 非法温度 → 降级均匀分布 1/4（防御，防数值爆炸）。"""
         d = RegimeDetector(temperature=1.0)
         d.fit({"X": synthetic_features})
         d.temperature = 0.0  # 运行时改为非法值
         X = synthetic_features[-50:]
         probs, _ = d.detect({"X": X}, {}, {})
         for s in HMM_STATES:
-            assert abs(probs.hmm_probabilities[s] - 1.0 / 9.0) < 1e-9
+            assert abs(probs.hmm_probabilities[s] - 1.0 / 4.0) < 1e-9
 
 
 # ── 3. 覆盖层 ───────────────────────────────────────────────────────
@@ -293,27 +294,27 @@ class TestOverlay:
 
 class TestMerge:
     def test_no_overlay_degrades_to_hmm(self, detector: RegimeDetector):
-        """无覆盖层 → P(r1..r9)=P_hmm，P(r10..r12)=0（blueprint §3.3）。"""
-        hmm = {s: 1.0 / 9.0 for s in HMM_STATES}
+        """无覆盖层 → P(r1..r4)=P_hmm，P(r10..r12)=0（blueprint §3.3）。"""
+        hmm = {s: 1.0 / 4.0 for s in HMM_STATES}
         merged = detector._merge_probabilities(hmm, {"r10": 0.0, "r11": 0.0, "r12": 0.0})
         for s in HMM_STATES:
-            assert abs(merged.probabilities[s] - 1.0 / 9.0) < 1e-9
+            assert abs(merged.probabilities[s] - 1.0 / 4.0) < 1e-9
         for s in OVERLAY_STATES:
             assert merged.probabilities[s] == 0.0
 
     def test_overlay_compresses_hmm(self, detector: RegimeDetector):
-        """S1 触发 P(r10)=0.6 → HMM 9态被压缩到 0.4 等比（blueprint §3.3）。"""
-        hmm = {s: 1.0 / 9.0 for s in HMM_STATES}
+        """S1 触发 P(r10)=0.6 → HMM 4态被压缩到 0.4 等比（blueprint §3.3）。"""
+        hmm = {s: 1.0 / 4.0 for s in HMM_STATES}
         merged = detector._merge_probabilities(hmm, {"r10": 0.6, "r11": 0.0, "r12": 0.0})
         assert abs(merged.probabilities["r10"] - 0.6) < 1e-9
-        # HMM 9态共享剩余 0.4，各 0.4/9
+        # HMM 4态共享剩余 0.4，各 0.4/4
         for s in HMM_STATES:
-            assert abs(merged.probabilities[s] - 0.4 / 9.0) < 1e-9
+            assert abs(merged.probabilities[s] - 0.4 / 4.0) < 1e-9
         assert merged.dominant_regime == "r10"
 
     def test_normalization_sum1(self, detector: RegimeDetector):
         """覆盖层总概率 >1 时等比压缩回 1.0（blueprint §3.3）。"""
-        hmm = {s: 1.0 / 9.0 for s in HMM_STATES}
+        hmm = {s: 1.0 / 4.0 for s in HMM_STATES}
         # S1 confirm(0.8) + S2 confirm(0.65) 同时 → 总 1.45 > 1
         merged = detector._merge_probabilities(hmm, {"r10": 0.8, "r11": 0.65, "r12": 0.0})
         assert abs(sum(merged.probabilities.values()) - 1.0) < 1e-9
@@ -339,13 +340,13 @@ class TestConfidenceSignal:
         )
 
     @pytest.mark.parametrize("max_p,expected_base", [
-        (0.60, 1.0),   # ≥50% → 满部署（9态下0.5已是高置信）
+        (0.60, 1.0),   # ≥50% → 满部署（4态下0.5已是高置信）
         (0.40, 0.9),   # 30-50% → 轻度收缩
         (0.20, 0.8),   # 15-30% → 中度收缩
         (0.10, 0.7),   # <15% → 强收缩（下限0.7，避免过度压低平时Shrinkage）
     ])
     def test_4_bands(self, detector, max_p, expected_base):
-        """四档映射（C1 验证 2026-08-06 校准后阈值，适应 9 态 HMM 概率分散）。
+        """四档映射（C1 验证 2026-08-06 校准后阈值，适应 4 态 HMM 概率分散）。
 
         ConfidenceSignal = base(max_p) × rarity，不含 state_risk（已移除）。
         dominant=r1, freq=0.15(常见态) → rarity=1.0，故 ConfidenceSignal=base。

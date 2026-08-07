@@ -68,6 +68,11 @@ from zephyr.regime.validation.phase2.b4_transition_accuracy import (
     B4TransitionAccuracy,
     B4Verdict,
 )
+from zephyr.regime.validation.phase2.confidence_calibrator import (
+    TwoStageCalibrator,
+    compute_occurred_pit,
+    fit_calibrator_with_fallback,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -136,6 +141,7 @@ class Phase2Runner:
         run_second_batch: bool = True,
         is_oos_split: str = "2018-12-31",
         b1_forward_days: int = 20,
+        enable_calibration: bool = True,
     ) -> Phase2Report:
         """运行 Phase 2 验证（A1 + B4 [+ A2 + B1]）。
 
@@ -148,6 +154,10 @@ class Phase2Runner:
             run_second_batch: 是否运行第二批 A2+B1（默认 True）。
             is_oos_split: A2 的 IS/OOS 分割日期（IS ≤ 此日 < OOS，默认 "2018-12-31"）。
             b1_forward_days: B1 后续收益天数（默认 20 交易日）。
+            enable_calibration: 是否启用两阶段概率校准器（discussion_004 §2.2 P0-E2）。
+                True 时 walk-forward 每季度重拟合校准器，detect_records 中的 confidence
+                为校准后值。PIT 防泄漏：IS 尾部裁剪 forward_days*1.5 + regime_directions
+                只用 IS 安全数据推断。False 时使用原始 max(P) confidence（C1 基准对比用）。
 
         Returns:
             Phase2Report。
@@ -174,9 +184,17 @@ class Phase2Runner:
         _logger.info("A1: %s", a1_report.summary)
 
         # ── B4: walk-forward 逐日 detect 收集 _last_transitions + detect_records ──
+        # 校准器需要 close 序列算 occurred 标签——在 walk-forward 前获取
+        close = self._get_index_close(builder) if enable_calibration else None
+        if enable_calibration and (close is None or close.empty):
+            _logger.warning("enable_calibration=True 但无法获取 index close，校准禁用")
+            enable_calibration = False
+
         _logger.info("Phase2 B4: walk-forward 逐日 detect 收集 _last_transitions...")
         daily_transitions, trading_dates, detect_records = self._collect_daily_transitions(
             builder, features, feature_names, train_years, detect_window, refit_freq,
+            close=close, forward_days=b1_forward_days,
+            enable_calibration=enable_calibration,
         )
         _logger.info(
             "B4: 收集 %d 日 transitions，%d 日有触发记录，%d 条 detect_records",
@@ -326,6 +344,9 @@ class Phase2Runner:
         train_years: int,
         detect_window: int,
         refit_freq: str,
+        close: pd.Series | None = None,
+        forward_days: int = 20,
+        enable_calibration: bool = False,
     ) -> tuple[dict[pd.Timestamp, list[Any]], list[pd.Timestamp], list[dict[str, Any]]]:
         """复刻 build_shrinkage_schedule 的 walk-forward detect 循环，但收集 _last_transitions.
 
@@ -334,6 +355,11 @@ class Phase2Runner:
           - 季度 refit + RobustScaler（每季 fit on train）
           - trailing detect_window 窗口
           - overlay_signals / risk_inputs 构造器复用 builder 的 _risk_ctor / _overlay_ctor
+
+        校准器集成（enable_calibration=True，discussion_004 §2.2 P0-E2）：
+          每季度 HMM fit 后，在 IS 安全数据上 fit 两阶段校准器（Temperature + Isotonic），
+          OOS detect 时用 calibrator.transform(log_proba) 替代原始 max(P) confidence。
+          PIT 防泄漏（§2.2.9）：IS 尾部裁剪 forward_days*1.5 + regime_directions 只用 IS 数据。
 
         Returns:
             (daily_transitions, trading_dates, detect_records)
@@ -364,6 +390,7 @@ class Phase2Runner:
         daily_transitions: dict[pd.Timestamp, list[Any]] = {}
         all_trading_dates: list[pd.Timestamp] = []
         detect_records: list[dict[str, Any]] = []  # B1 用
+        prev_calibrator: TwoStageCalibrator | None = None  # 校准器 Level 3 回退用
 
         for i, q in enumerate(quarter_ends):
             train_start = (q - pd.DateOffset(years=train_years)).strftime("%Y-%m-%d")
@@ -382,6 +409,25 @@ class Phase2Runner:
                     "Phase2 walk-forward fit Q%d [%s, %s] 失败，本季降级: %s",
                     i + 1, train_start, train_end, exc,
                 )
+
+            # ── 校准器 fit（discussion_004 §2.2 P0-E2，PIT 防泄漏 §2.2.9）──
+            # 每季度 HMM fit 后，在 IS 安全数据上 fit 两阶段校准器
+            # IS 尾部裁剪 forward_days*1.5 → forward_return 不跨入 OOS（防泄漏 #1）
+            # regime_directions 只用 IS 安全数据推断（防泄漏 #2）
+            calibrator: TwoStageCalibrator | None = None
+            if enable_calibration and close is not None and detector._hmm_model is not None:  # noqa: SLF001
+                try:
+                    calibrator = self._fit_calibrator_for_quarter(
+                        detector, features_shifted, feature_names, scaler,
+                        close, q, train_start, forward_days, prev_calibrator,
+                    )
+                    if calibrator is not None:
+                        prev_calibrator = calibrator
+                except Exception as exc:
+                    _logger.warning(
+                        "Phase2 校准器 fit Q%d 失败，本季不校准: %s", i + 1, exc,
+                    )
+                    calibrator = None
 
             next_q = (
                 quarter_ends[i + 1]
@@ -415,9 +461,15 @@ class Phase2Runner:
                     # 核心：读取 detect 后的 _last_transitions（B4 用）
                     daily_transitions[dt] = list(detector._last_transitions)  # noqa: SLF001
                     # B1 用：confidence + dominant_regime
+                    # 校准器启用时用 calibrator.transform(log_proba) 替代原始 max(P)
+                    if calibrator is not None:
+                        log_proba_dt = detector.predict_log_proba(X)
+                        confidence = float(calibrator.transform(log_proba_dt)[-1])
+                    else:
+                        confidence = float(getattr(probs, "confidence", 0.0))
                     detect_records.append({
                         "timestamp": dt,
-                        "confidence": float(getattr(probs, "confidence", 0.0)),
+                        "confidence": confidence,
                         "dominant_regime": str(getattr(probs, "dominant_regime", "")),
                     })
                 except Exception as exc:
@@ -426,6 +478,72 @@ class Phase2Runner:
                 all_trading_dates.append(dt)
 
         return daily_transitions, sorted(set(all_trading_dates)), detect_records
+
+    @staticmethod
+    def _fit_calibrator_for_quarter(
+        detector: Any,
+        features_shifted: pd.DataFrame,
+        feature_names: list[str],
+        scaler: Any,
+        close: pd.Series,
+        quarter_end: pd.Timestamp,
+        train_start: str,
+        forward_days: int,
+        prev_calibrator: TwoStageCalibrator | None,
+    ) -> TwoStageCalibrator | None:
+        """单季度校准器 fit（PIT 防泄漏，discussion_004 §2.2.9）。
+
+        流程：
+          1. IS 尾部裁剪 forward_days*1.5 天（防泄漏 #1）
+          2. IS 特征 → scaler transform → predict_log_proba
+          3. compute_occurred_pit（regime_directions 只用 IS 安全数据，防泄漏 #2）
+          4. fit_calibrator_with_fallback（四级降级）
+
+        Returns:
+            校准器实例，样本严重不足且无前序时返回 T=1.0 identity 校准器。
+        """
+        # 1. IS 尾部裁剪（forward_days * 1.5 天余量）
+        safe_end = quarter_end - pd.Timedelta(days=int(forward_days * 1.5))
+        is_features = features_shifted.loc[train_start:safe_end]
+        close_safe = close.loc[train_start:safe_end]
+
+        if len(is_features) < 10 or close_safe.empty:
+            _logger.warning(
+                "校准器: IS 安全数据不足 (features=%d, close=%d)，跳过",
+                len(is_features), len(close_safe),
+            )
+            return prev_calibrator  # 回退上季度
+
+        # 2. IS 特征 → scaler transform → log_proba
+        X_is = is_features[feature_names].to_numpy(dtype=float)
+        X_is = np.nan_to_num(X_is, nan=0.0, posinf=0.0, neginf=0.0)
+        if scaler is not None:
+            X_is = scaler.transform(X_is)
+
+        log_proba_is = detector.predict_log_proba(X_is)
+
+        # 3. occurred 标签（PIT 安全）
+        log_proba_valid, occurred_valid = compute_occurred_pit(
+            log_proba_is, is_features.index, close_safe, forward_days,
+        )
+
+        if len(occurred_valid) < 5:
+            _logger.warning(
+                "校准器: 有效 occurred 样本不足 %d，回退上季度", len(occurred_valid),
+            )
+            return prev_calibrator
+
+        # 4. fit 带降级
+        calibrator, result = fit_calibrator_with_fallback(
+            log_proba_valid, occurred_valid, prev_calibrator,
+        )
+        _logger.info(
+            "Phase2 校准器 fit: %s (T=%s, isotonic_points=%s)",
+            result.summary,
+            f"{result.T:.4f}" if result.T is not None else "N/A",
+            len(result.isotonic_points) if result.isotonic_points else 0,
+        )
+        return calibrator
 
     @staticmethod
     def _ensure_constructors(builder: Any) -> None:

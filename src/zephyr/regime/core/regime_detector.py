@@ -56,6 +56,7 @@ Version: 0.3.0
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
@@ -64,6 +65,8 @@ try:  # 治理基类缺失时降级为 Exception，保证模块可独立 import
     from zephyr.shared.foundation.errors import ZephyrBaseError
 except Exception:  # pragma: no cover
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
+
+_logger = logging.getLogger(__name__)
 
 # 7 态编号（discussion_001 §3 + discussion_004 §2.1 降态：HMM 9态→4态）
 # r1-r4: HMM 4态（BIC 扫描确定，Viterbi 解码验证语义）；r10 CRISIS / r11 RECOVERY / r12 BREAKOUT
@@ -446,6 +449,47 @@ class RegimeDetector:
             raise HMMFittingError(f"GaussianHMM.fit 不收敛: {last_exc}") from last_exc
         self._hmm_model = best_model
         self._hmm_degraded = False
+
+    def predict_log_proba(self, X: np.ndarray) -> np.ndarray:
+        """返回 HMM 对数后验概率矩阵 (T, n_states)——校准器输入（discussion_004 §2.2.6 Step 1）。
+
+        hmmlearn 的 predict_proba(X) 返回 P(state|X) 后验概率矩阵，取 np.log()
+        得到对数后验。加 epsilon 防 log(0)。Temperature Scaling 对此做
+        softmax(log_proba/T) 是 tempering（§2.2.3 注释：数学有效但非 Guo2017
+        严格 Brier 最优，因 HMM log_proba 是对数后验非 pre-softmax logits）。
+
+        ⚠️ 返回**原始** log_proba，不应用 self.temperature——校准器的
+        TemperatureCalibrator 会从 IS 数据学习自己的 T 参数（BCE 最小化），
+        self.temperature 是 detect 路径（_run_hmm）的手动 tempering，两机制独立。
+
+        降级（hmmlearn 不可用 / 未 fit）：返回均匀分布的 log，即 log(1/n_states)。
+
+        Args:
+            X: 观测矩阵 (T, F)，同 fit() 的特征格式。
+
+        Returns:
+            (T, n_states) 对数后验概率矩阵。
+        """
+        import numpy as np
+
+        if X is None:
+            raise HMMFittingError("predict_log_proba: X 为 None")
+        if not isinstance(X, np.ndarray):
+            X = np.asarray(X, dtype=float)
+        if X.ndim == 1:
+            X = X.reshape(1, -1)
+
+        n_states = len(HMM_STATES)
+        if self._hmm_model is None or self._hmm_degraded:
+            # 降级：均匀分布的 log 概率
+            return np.full((X.shape[0], n_states), np.log(1.0 / n_states))
+
+        try:
+            proba = self._hmm_model.predict_proba(X)  # (T, n_states)
+            return np.log(proba + 1e-30)  # 加 epsilon 防 log(0)
+        except Exception as exc:
+            _logger.warning("predict_log_proba 推断异常，降级均匀分布: %s", exc)
+            return np.full((X.shape[0], n_states), np.log(1.0 / n_states))
 
     def record_transition(
         self, transition_type: str, score_breakdown: dict[str, float]

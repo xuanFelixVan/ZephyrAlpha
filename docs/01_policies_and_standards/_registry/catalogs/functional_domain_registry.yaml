@@ -1275,6 +1275,24 @@ entries:
   # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
 
 
+# 治本(2026-08-07): 补注册 D_REGIME——regime_detector/a1/a2/phase2_runner/confidence_calibrator
+# 均声明 [DOMAIN] D_REGIME（GATE-DOMAIN-FK 门禁要求新增文件 [DOMAIN] 行须在注册表）。
+- domain: D_REGIME
+  subdomain: regime
+  domain_name_zh: 市场状态
+  ssot_module: MOD-REGIME-001
+  ssot_path: src/zephyr/regime/
+  covers:
+  - 市场状态，负责 regime 检测、HMM 状态推断、覆盖层触发(CRISIS/RECOVERY/BREAKOUT)和 regime 验证(A1/B4/A2/B1)
+  aliases:
+  - regime
+  - 市场状态
+  - 市场状态检测
+  - regime detection
+  stability: evolving
+  ai_autonomy: ai_modifiable
+
+
 - domain: D_CROSS_ASSET
   subdomain: cross_asset
   domain_name_zh: 跨资产

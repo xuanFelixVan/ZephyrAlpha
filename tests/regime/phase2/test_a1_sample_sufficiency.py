@@ -15,7 +15,7 @@ from zephyr.regime.validation.phase2.a1_sample_sufficiency import (
 )
 
 
-def _make_detector_mock(state_seq: np.ndarray, n_states: int = 9, score: float = -100.0):
+def _make_detector_mock(state_seq: np.ndarray, n_states: int = 4, score: float = -100.0):
     """构造 mock detector，_hmm_model.predict 返回指定序列.
 
     state_seq 长度必须 == 特征矩阵行数 T（predict(X) 返回 (T,) 标签）。
@@ -38,18 +38,18 @@ class TestA1SampleSufficiency(unittest.TestCase):
     """A1 验证器核心逻辑测试。"""
 
     def test_all_sufficient_pass(self):
-        """9 态各 ≥100 天 → PASS。"""
-        # 9 态 × 150 天 = 1350 样本，每态均衡
-        seq = np.repeat(np.arange(9), 150)
+        """4 态各 ≥100 天 → PASS。"""
+        # 4 态 × 150 天 = 600 样本，每态均衡
+        seq = np.repeat(np.arange(4), 150)
         np.random.default_rng(0).shuffle(seq)
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
         a1 = A1SampleSufficiency()
         report = a1.validate_with_fit_detector(detector, X, standardize=False)
         self.assertEqual(report.overall, A1Overall.PASS)
-        self.assertEqual(report.total_samples, 1350)
+        self.assertEqual(report.total_samples, 600)
         self.assertFalse(report.degraded)
-        self.assertEqual(len(report.state_stats), 9)
+        self.assertEqual(len(report.state_stats), 4)
         for s in report.state_stats:
             self.assertEqual(s.verdict, A1StateVerdict.SUFFICIENT)
             self.assertEqual(s.action, "独立建模")
@@ -58,8 +58,7 @@ class TestA1SampleSufficiency(unittest.TestCase):
         """存在 <50 天态 → FAIL。"""
         seq = np.concatenate([
             np.repeat(0, 200), np.repeat(1, 200), np.repeat(2, 200),
-            np.repeat(3, 200), np.repeat(4, 200), np.repeat(5, 200),
-            np.repeat(6, 200), np.repeat(7, 200), np.repeat(8, 30),  # 不足
+            np.repeat(3, 30),  # 不足
         ])
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
@@ -67,15 +66,14 @@ class TestA1SampleSufficiency(unittest.TestCase):
         report = a1.validate_with_fit_detector(detector, X, standardize=False)
         self.assertEqual(report.overall, A1Overall.FAIL)
         insuff = report.insufficient_states
-        self.assertEqual(insuff, ["r9"])
+        self.assertEqual(insuff, ["r4"])
         self.assertEqual(report.min_state_count, 30)
 
     def test_moderate_only_review(self):
         """存在 50-100 天态但无 <50 → REVIEW。"""
         seq = np.concatenate([
             np.repeat(0, 200), np.repeat(1, 200), np.repeat(2, 200),
-            np.repeat(3, 200), np.repeat(4, 200), np.repeat(5, 200),
-            np.repeat(6, 200), np.repeat(7, 200), np.repeat(8, 70),  # 中等
+            np.repeat(3, 70),  # 中等
         ])
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
@@ -83,7 +81,7 @@ class TestA1SampleSufficiency(unittest.TestCase):
         report = a1.validate_with_fit_detector(detector, X, standardize=False)
         self.assertEqual(report.overall, A1Overall.REVIEW)
         moderate = [s.state for s in report.state_stats if s.verdict is A1StateVerdict.MODERATE]
-        self.assertEqual(moderate, ["r9"])
+        self.assertEqual(moderate, ["r4"])
 
     def test_nan_rows_dropped(self):
         """含 NaN 的行被 dropna 清除。"""
@@ -106,7 +104,7 @@ class TestA1SampleSufficiency(unittest.TestCase):
         X = np.full((200, 6), 1.0)
         X[5, 0] = np.inf
         X[10, 2] = -np.inf
-        seq = np.repeat(np.arange(9), 23)[:200]  # 9 态分布
+        seq = np.repeat(np.arange(4), 23)[:200]  # 4 态分布
         detector = _make_detector_mock(seq)
         a1 = A1SampleSufficiency()
         report = a1.validate_with_fit_detector(detector, X, standardize=False)
@@ -135,7 +133,7 @@ class TestA1SampleSufficiency(unittest.TestCase):
 
     def test_to_dict_serializable(self):
         """to_dict 可序列化。"""
-        seq = np.repeat(np.arange(9), 100)
+        seq = np.repeat(np.arange(4), 100)
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
         a1 = A1SampleSufficiency()
@@ -150,7 +148,7 @@ class TestA1SampleSufficiency(unittest.TestCase):
 
     def test_min_state_count_property(self):
         """min_state_count 属性。"""
-        seq = np.concatenate([np.repeat(i, 100) for i in range(8)] + [np.repeat(8, 55)])
+        seq = np.concatenate([np.repeat(i, 100) for i in range(3)] + [np.repeat(3, 55)])
         detector = _make_detector_mock(seq)
         X = _make_X(len(seq))
         a1 = A1SampleSufficiency()
