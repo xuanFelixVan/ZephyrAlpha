@@ -515,12 +515,15 @@ class RegimeFeatureBuilder:
         """从 ClickHouse 加载指数 K 线（市场代理 + 跨资产 + 广度指数）。
 
         Returns:
-            MultiIndex(symbol, trade_date) DataFrame，含 close/volume/advance_count/decline_count。
+            MultiIndex(symbol, trade_date) DataFrame，含
+            open/high/low/close/volume/advance_count/decline_count。
+            high/low 供 #9 KDJ + S2 wyckoff 使用（P1-E4 激活，2026-08-08）。
         """
         symbols = sorted(set(self.cross_asset_indices + [self.market_proxy, self.breadth_index]))
         syms_str = ", ".join([f"'{s}'" for s in symbols])
         sql = (
-            f"SELECT trade_date, symbol, close, volume, advance_count, decline_count "
+            f"SELECT trade_date, symbol, open, high, low, close, volume, "
+            f"advance_count, decline_count "
             f"FROM {table} FINAL "
             f"WHERE symbol IN ({syms_str}) "
             f"AND trade_date >= toDate('{self.data_load_start}') "
@@ -528,14 +531,17 @@ class RegimeFeatureBuilder:
             f"ORDER BY symbol, trade_date"
         )
         tsv = self._safe_query(sql, context="index_kline")
-        rows = _parse_tsv(tsv, ncols=6)
+        rows = _parse_tsv(tsv, ncols=9)
         if not rows:
             raise RegimeFeatureError(
                 f"index_kline 查询为空: symbols={symbols}, [{self.data_load_start}, {self.backtest_end}]"
             )
-        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume", "advance_count", "decline_count"])
+        cols = ["trade_date", "symbol", "open", "high", "low", "close",
+                "volume", "advance_count", "decline_count"]
+        df = pd.DataFrame(rows, columns=cols)
         df["trade_date"] = pd.to_datetime(df["trade_date"])
-        df["close"] = pd.to_numeric(df["close"], errors="coerce")
+        for c in ["open", "high", "low", "close"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
         df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
         df["advance_count"] = pd.to_numeric(df["advance_count"], errors="coerce").fillna(0)
         df["decline_count"] = pd.to_numeric(df["decline_count"], errors="coerce").fillna(0)

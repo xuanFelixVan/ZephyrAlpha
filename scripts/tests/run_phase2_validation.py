@@ -43,6 +43,7 @@ try:
     from zephyr.data.table_registry import get_registry  # noqa: F401
     from zephyr.regime.core.regime_detector import RegimeDetector  # noqa: F401
     from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
+    from zephyr.regime.features.regime_data_loader import RegimeDataLoader
     from zephyr.regime.validation.phase2 import Phase2Runner
     REAL_DEPS_OK = True
 except Exception as _exc:  # pragma: no cover
@@ -126,12 +127,18 @@ def run_real(
     print(f"[real] 配置: enable_overlay={enable_overlay}, enable_full_risk={enable_full_risk}, "
           f"batch={batch_tag}")
     print("[real] 构建 RegimeFeatureBuilder（复用 C1 真实模式配置）...")
+    data_loader = RegimeDataLoader(
+        data_load_start="2010-01-01",
+        backtest_end="2026-06-30",
+    )
     builder = RegimeFeatureBuilder(
         backtest_start="2015-01-01",
         backtest_end="2026-06-30",
         data_load_start="2010-01-01",
         enable_full_risk=enable_full_risk,
         enable_overlay=enable_overlay,
+        enable_phase2c=True,
+        data_loader=data_loader,
     )
 
     est = "3-5 分钟" if run_second_batch else "2-3 分钟"

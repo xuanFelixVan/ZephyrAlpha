@@ -25,7 +25,7 @@
     S2 CRISIS→RECOVERY（八维度见底：capitulation/vix/wyckoff/valuation/fund/spring/three_yang/...）
     T1 Neutral→BREAKOUT（bqs/rcs/frs）
     T2 Bear-Low→RECOVERY（冰点反核，total 评分）
-    T3 RECOVERY→BREAKOUT（volume_price/ma_trend/sentiment + 资金/板块 stub）
+    T3 RECOVERY→BREAKOUT（volume_price/ma_trend/sentiment + 资金/板块/北向资金）
     T4 Bull-Med→Bull-High（疯狂赶顶，total 评分）
     T5 Bull-High→Bear-Med（逃顶退潮，leader_break/rebound_wrap）
     T6 Bear-Med→Bear-Low（退潮冰点，sudden_volume）
@@ -55,9 +55,9 @@
   stub 2（=0.0）：policy/bad_news_flat（S2, NLP，待 NLP 管道）
 
 Phase 2c 升级：money_effect/mainline/leader/one_day_mainline 从 stub→可算
-（接入 money_flow/kline_sector/limit_up_down），T3 confirm/trigger/fail 解锁。
+（接入 money_flow/kline_sector/limit_up_down + hk_connect_flow 北向融合），T3 confirm/trigger/fail 解锁。
 合成 VIX（vix_pct）优先注入 s1_vix_panic/s2_vix（回退 vol_pct）；
-s2_wyckoff 委托 wyckoff_engine 6 阶段 FSM（需 high/low，缺失回退 MVP）。
+s2_wyckoff 委托 wyckoff_engine 6 阶段 FSM（需 high/low，P1-E4 已从 kline_index 激活）。
 stub 影响：仅 S2 confirm/trigger（需 policy/bad_news_flat NLP）无法触发——
 S2 strong_confirm/fail + T3 全阶段 + S1/T1/T2/T4/T5/T6 可触发。
 
@@ -497,8 +497,10 @@ class OverlaySignalsConstructor:
             return None
 
     def _compute_t3_inputs(self, index: pd.DatetimeIndex) -> dict[str, pd.Series | None]:
-        """Phase 2c: 加载 money_flow/sector/limit_up_down，算 4 T3 维度的 7 输入。
+        """Phase 2c: 加载 money_flow/sector/limit_up_down/hk_connect_flow，算 4 T3 维度的 7 输入。
 
+        北向资金（hk_connect_flow）作为主力净流入的辅助确认信号：
+        z-score > 1 时加成 inflow_pct，z-score < -1 时削弱（P1-E5 融合）。
         任一数据源缺失 → 对应输入 None（维度降级 0.0，C1 不退化）。
         """
         inputs: dict[str, pd.Series | None] = {
@@ -514,6 +516,21 @@ class OverlaySignalsConstructor:
         money_flow = self._fb_call("get_money_flow")
         if money_flow is not None and not money_flow.empty and "avg_main_net_inflow_pct" in money_flow:
             inputs["inflow_pct"] = money_flow["avg_main_net_inflow_pct"].reindex(index)
+        # hk_connect_flow: 北向资金辅助（P1-E5 融合到 inflow_pct）
+        hk_flow = self._fb_call("get_hk_connect_flow")
+        if hk_flow is not None and not hk_flow.empty and "net_buy_amount" in hk_flow:
+            hk_net = hk_flow["net_buy_amount"].reindex(index)
+            # 20 日滚动 z-score（北向资金相对于自身近期的异常程度）
+            hk_mean = hk_net.rolling(20, min_periods=5).mean()
+            hk_std = hk_net.rolling(20, min_periods=5).std()
+            hk_z = (hk_net - hk_mean) / hk_std.replace(0.0, np.nan)
+            # z-score → 百分比调整：z=1 → +0.5pp，z=2 → +1.0pp，z=-1 → -0.5pp
+            hk_adj = (hk_z.clip(-3, 3) * 0.5).fillna(0.0)
+            if inputs["inflow_pct"] is not None:
+                inputs["inflow_pct"] = inputs["inflow_pct"] + hk_adj
+            else:
+                # 主力资金缺失时，北向 z-score 单独作为弱代理
+                inputs["inflow_pct"] = hk_adj
         # sector: mainline(HHI+top) + one_day_mainline(prev_top3)
         sector_df = self._fb_call("get_sector_kline")
         if sector_df is not None and not sector_df.empty:
