@@ -322,7 +322,7 @@ domains:
   name: 仓位管理
   layer_id: L2_domain
 - id: D_REGIME
-  name: 市场状态检测
+  name: 市场状态
   layer_id: L2_domain
 - id: D_REPORTING
   name: 报告
