@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-08-08
 topic: position_sizing
 scope: 07_trading_decision_architecture
@@ -123,13 +123,17 @@ f_i = max(0, 0.5 × K_i)     # 半 Kelly 硬上限 + 不能做空（f_i<0 截 0�
 ```
 
 - **半 Kelly（0.5×K）是硬上限**：禁全 Kelly。行业共识（2026 多源实证）：full Kelly 回撤 50-80%；half Kelly 保 75% 增长、大幅降回撤；Thorp 本人用 0.25-0.5×；机构普遍 0.2-0.5×
-- **连续形式选择理由**：二值版 `f*=(bp-q)/b` 适合单笔输赢赌博，多标的组合收益是连续分布，K=μ/σ² 是 Markowitz 框架下 Kelly 的连续等价（与 mean-variance 理论衔接），crucible-backtester 2026-07 工程实现亦用此形式
+- **连续形式选择理由**：二值版 `f*=(bp-q)/b` 适合单笔输赢赌博，多标的组合收益是连续分布，K=(μ-r)/σ² 是 Markowitz 框架下 Kelly 的连续等价（与 mean-variance 理论衔接），crucible-backtester 2026-07 工程实现亦用此形式
+- **不能做空约束（f_i≥0）**：A 股 T+1 不能做空，f_i<0（即 μ_i<r，预期收益低于无风险利率）时截断为 0（不持有），不做空。与 ryanoconnellfinance / xueqiu 实证"f*<0→不下注"一致
+- **量纲统一年化**：μ_i、r、σ_i² 均用年化口径，保证 f_i 落在 0~1 量级（如 μ=12%、r=2%、σ=25% → K=(0.12-0.02)/0.0625=1.6 → f=0.8，再受硬上限裁剪）
+- **交易成本从 μ 扣除**：μ_i 是扣预期交易成本（佣金+印花税+滑点+冲击，system_charter §3 约束一）后的净收益；薄 edge 扣成本后 K_i≤0 → f_i=0，自动过滤劣质标的
 
 #### 2.3.2 Kelly 参数来源（密度 PDF 主 + 历史降级）
 
 | 参数 | 主源 | 降级源 | 触发降级条件 |
 |---|---|---|---|
-| μ_i（预期超额收益） | 密度 PDF 积分（BM-SEL-13） | 60 日历史均值超额收益 | BM-SEL-13 未就绪 / 输出异常 |
+| μ_i（预期总收益，扣成本后） | 密度 PDF 积分（BM-SEL-13） | 60 日历史均值收益 | BM-SEL-13 未就绪 / 输出异常 |
+| r（无风险利率） | 逆回购利率 GC001（市场公开） | 固定 2.5% | 逆回购数据缺失 |
 | σ_i²（方差） | 密度 PDF 积分（BM-SEL-13） | 60 日历史方差 | BM-SEL-13 未就绪 / 输出异常 |
 
 - **主源用密度 PDF**：与 battle_map BM-POS-02 现有设计一致（"从条件 PDF 直接积分计算胜率 p 和赔率 b"），能捕捉未来分布的偏度/峰度/厚尾
@@ -150,9 +154,50 @@ Kelly 精裁决后，叠加密度 PDF 的分布特征调整（与 battle_map BM-
 
 **约束**：调整后 f_i ≤ 原粗仓位求和值（防御性原则，默认只减不增；正偏例外允许有限加仓 ≤10%）。
 
-#### 2.3.4 Kelly 精裁决输出
+#### 2.3.4 Kelly 与粗仓位合成规则
 
-MOD-POS-001 对求和后每个标的输出 `kelly_adjusted_weight`（精裁决后仓位建议），交 FirmRiskAggregator 做硬上限裁剪。
+Kelly 精裁决不是"替代"策略层粗仓位，而是对粗仓位求和值做"上限约束 + 分布调整"。合成公式：
+
+```
+f_i^final = min(w_i^sum × dist_adj_i, f_i)     且 f_i^final ≥ 0
+
+其中：
+  w_i^sum    = 各策略对标的 i 的粗仓位求和值（自然叠加，§2.1）
+  dist_adj_i = 分布感知调整因子（§2.3.3，默认 ≤1，正偏例外 ≤1.1）
+  f_i        = Kelly 精裁决值（§2.3.1，半 Kelly + 截0）
+  f_i^final  = 最终 Kelly 精裁决输出
+```
+
+**语义**：
+- Kelly 是"风险预算上限"——f_i^final 不超过 Kelly 算出的 f_i（防止策略意愿过度下注）
+- 粗仓位是"策略意愿"——f_i^final 不超过 w_i^sum × dist_adj（尊重策略选股，Kelly 不凭空加仓）
+- 取两者较小者 = 在"策略意愿"和"风险预算"之间取保守平衡，符合分层裁定"只减不增为主"
+
+#### 2.3.5 多标的 pro-rata 归一化
+
+各标的 f_i^final 独立算，sum(f_i^final) 可能 > 总仓位上限（如 10 个标的各 0.1，sum=1.0）。为保留 Kelly 相对排序（高 edge 标的相对多配），在 Kelly 层做 pro-rata 归一化，而非纯靠硬上限裁剪：
+
+```
+若 sum(f_i^final) > 总仓位上限（regime Shrinkage 后，§2.4.3）：
+    f_i^norm = f_i^final × (总仓位上限 / sum(f_i^final))     # 按比例缩放
+否则：
+    f_i^norm = f_i^final                                      # 不超限不缩放
+```
+
+**理由**（prevayo / eltonaguiar 2026 实践）：先算各 fractional Kelly，sum 超总暴露阈值则 pro-rata 缩放，保留 Kelly 相对排序信息。若纯靠 §2.4 硬上限按比例削，可能丢失 Kelly 排序。归一化在 Kelly 层做一次，硬上限裁剪作为最后兜底。
+
+**注**：归一化只缩不放（f_i^norm ≤ f_i^final），不引入杠杆。
+
+#### 2.3.6 CASH 豁免
+
+CASH 不参与 Kelly 精裁决：
+- CASH 的 σ≈0，K=(μ-r)/σ² → ∞，Kelly 公式无意义
+- CASH 权重由现金管理约束（§2.5）直接定：firm_target_portfolio 中 `CASH = 1.0 − sum(股票权重)`，再叠加最低储备金 / 节假日等约束
+- CASH 的 μ 取逆回购利率（= r），作为"无风险收益"基准，不进入 Kelly 算式
+
+#### 2.3.7 Kelly 精裁决输出
+
+MOD-POS-001 对求和后每个标的输出 `kelly_adjusted_weight`（= f_i^norm，经合成 + 归一化后的最终仓位建议），交 FirmRiskAggregator 做硬上限裁剪。
 
 ### 2.4 硬上限裁剪（FirmRiskAggregator / MOD-POS-021）
 
@@ -278,6 +323,12 @@ class FirmTargetPortfolio:                 # firm 层最终输出
 ### 3.5 与 Morwane 的差异说明
 Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 inverse-vol risk parity**（sleeve 级）。本项目是**策略层 inverse-vol**（标的级）+ **firm 层 Kelly**（标的级）。分层思想一致，但 Kelly 放 firm 层是本项目选择——策略层已做 inverse-vol 粗分，firm 层需要基于密度 PDF 的"精裁决"（半 Kelly + 偏度/峰度/VaR 分布感知调整），risk parity 做不到分布感知。Morwane 印证的是"分层"思想，不是"具体在哪层用哪种算法"。
 
+### 3.6 multivariate Kelly（估协方差）—— 拒绝且有实证印证
+- **理论形式**：多标的 Kelly 最优解是 w=Σ⁻¹μ（Σ=协方差矩阵，μ=预期超额收益向量），即 mean-variance 解
+- **拒绝理由**：需估协方差矩阵，与 design_memo_001 §3.1 拒绝协方差一致
+- **实证印证**（Conformal Kelly arXiv:2608.01494 §6.4）：在硬上限（gross cap）约束下，multivariate Kelly w=Σ⁻¹μ 增长仅 0.023–0.179，**远差于** per-asset Kelly（不考虑协方差）。原因是"Markowitz 不稳定性 + 对冲掉权益溢价"。论文原话："under a binding gross cap only the direction survives"（有总仓位硬上限时，只有方向信息有用，协方差是理论上最大的洞但实证不起作用）
+- **结论**：本项目 per-asset Kelly（K_i=(μ_i−r)/σ_i² 不考虑标的间相关）+ 硬上限裁剪的架构，不仅可行，且在硬上限约束下比理论上的 multivariate Kelly 更优。把"不做协方差"从"拒绝理由"升级为"有实证支持的更优选择"
+
 ## 4. 上限定义
 
 ### 4.1 参数上限汇总
@@ -292,6 +343,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 | 新策略冷启动 | 正常 × 30% | 硬约束 |
 | 正偏加仓幅度 | ≤ 原粗仓位求和值 10% | 硬上限（唯一允许加仓的例外） |
 | 最低储备金 | 账户最低现金底线 | 硬约束 |
+| Kelly 仓位下限 | f_i ≥ 0（禁做空） | 硬约束（A 股 T+1 不能做空） |
 
 ### 4.2 演进路径
 
@@ -317,6 +369,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 | **动态粗仓位算法选择** | MVP 用静态差异化映射表；动态（按策略滚动 Sharpe 自适应选算法）增加 meta 参数 | 各策略有 6+ 月实盘 track record |
 | **Kelly 分数自适应** | MVP 固定半 Kelly（0.5×）；自适应 Kelly 分数（按估计置信度调整）增加复杂度 | 密度 PDF 主源稳定运行 6+ 月，置信度可量化 |
 | **full risk parity** | 需估协方差，与 §3.1 拒绝协方差一致 | 协方差估计方案成熟（因子模型+shrinkage 验证有效），且 N 策略数显著增加 |
+| **样本不足 Kelly 降级** | MVP 固定半 Kelly；样本 <50 trades 时 Kelly 估计误差大（completetradersedge 实证：±5% 胜率误差致 Kelly 变 3×），应进一步降级或忽略 Kelly 用固定比例 | 各策略有 50+ trades track record |
 
 ## 6. 待定问题
 
@@ -424,3 +477,4 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 |---|---|---|---|
 | 2026-08-08 | 1.0.0 | 初稿 | 落地 design_memo_001 §2.1 分层裁定框架为可施工 spec：策略层差异化粗仓位（等权/inverse-vol）+ firm 层连续 Kelly 精裁决（K=μ/σ²，半 Kelly，密度 PDF 主+历史降级）+ 硬上限裁剪（单票 8% 总资金口径/行业/总仓位/显式 CASH）；吸收 Conformal Kelly "稳不要锐"原则；记录 Conformal Kelly 为待裁定演进路径；与 system_charter §3 约束对齐确认边界 |
 | 2026-08-08 | 1.1.0 | 新增 §8 交接清单 | 抽取 G12 供 G13/G14/G15 兄弟组直接消费的交接点，方便兄弟组 AI 不通读全文即可索引所需输入；修订记录顺延为 §9 |
+| 2026-08-08 | 1.2.0 | 补全 Kelly 施工细节 | §2.3.1 公式补无风险利率 r（逆回购）+ f_i≥0 截断（不能做空）+ 量纲年化 + 交易成本扣 μ；§2.3 新增 Kelly 与粗仓位合成规则（§2.3.4）/ pro-rata 归一化（§2.3.5）/ CASH 豁免（§2.3.6）；§3 新增 per-asset Kelly 优于 multivariate Kelly 的实证印证（§3.6，Conformal Kelly §6.4）；§4.1 加 f_i≥0 上限；§5 加样本不足降级 |
