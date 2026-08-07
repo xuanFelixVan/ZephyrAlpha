@@ -38,7 +38,7 @@ dependencies = [
     "openai>=1.0.0,<2.0.0",
     "sentence-transformers>=3.0.0,<4.0.0",
     "structlog>=24.1.0,<25.0.0",
-    "pyarrow>=15.0.0,<20.0.0",
+    "pyarrow>=15.0.0,<26.0.0",  # 上界放宽 <20→<26：datasets 4.x 要求 pyarrow>=21（P1-E3 ML 训练轨）
     "psycopg2-binary>=2.9.0,<3.0.0",
     # ClickHouse native protocol 驱动：核心基础设施 database_service(MOD-INF-002) lazy-import
     # 原误判为 demo 可选——CH 是主行情库(c1_market)，pip install . 后应能直连 (#ARCH-REQ-CLASSIFY-001)
@@ -96,6 +96,16 @@ demo = [
 clone-guard = [
     "redup>=0.4.0",        # reDUP 语义克隆 T3/T4（Apache-2.0），L1 changed-only + L2 semantic
     "datasketch>=2.0.0",   # MinHash LSH 进程内预筛（relate Path B 替代），MIT
+]
+# P1-E3 NLP 管道训练轨依赖（#ARCH-NLP-PIPELINE-001，按需安装，非核心包）
+# 安装：pip install -e ".[ml-train]"；torch 须单独装 CUDA 版（cu126 wheel）
+# 推理轨复用 local_model（Ollama/DeepSeek），训练轨用 peft/trl QLoRA + bitsandbytes 4bit 量化
+ml-train = [
+    "peft>=0.20.0",           # QLoRA adapter（Apache-2.0），LoraConfig + get_peft_model
+    "trl>=1.9.0",             # SFTTrainer + PPOTrainer（Apache-2.0），RLSP 训练
+    "datasets>=4.0.0,<5.0.0", # HuggingFace datasets（Apache-2.0），SFT 数据加载
+    "accelerate>=1.14.0",     # 分布式训练加速（Apache-2.0），device_map 自动分配
+    "bitsandbytes>=0.50.0",   # 4bit/8bit 量化（MIT），QLoRA 核心——3090 24GB 跑 7B 必需
 ]
 
 [tool.pytest.ini_options]
