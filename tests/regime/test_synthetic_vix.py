@@ -35,13 +35,10 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from zephyr.regime.features.market_features import (
-    realized_vol_pct,
-    synthetic_vix_pct,
-)
+from zephyr.regime.features.market_features import realized_vol_pct
 from zephyr.regime.features.overlay_features import s1_vix_panic_score
+from zephyr.regime.features.synthetic_vix import synthetic_vix_pct
 from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
-
 
 # ---------------------------------------------------------------------------
 # 测试数据构造
@@ -54,10 +51,12 @@ def _make_crisis_close(n: int = 600, seed: int = 42) -> pd.Series:
     保证 warmup（20+250=270 日）之后，正常期与危机期都有足够非 NaN 样本对比。
     """
     rng = np.random.default_rng(seed)
-    returns = np.concatenate([
-        rng.normal(0.0005, 0.005, 350),   # 平稳期：小正漂移，低波动
-        rng.normal(-0.015, 0.010, 250),   # 危机期：持续大跌，高下行波动
-    ])
+    returns = np.concatenate(
+        [
+            rng.normal(0.0005, 0.005, 350),  # 平稳期：小正漂移，低波动
+            rng.normal(-0.015, 0.010, 250),  # 危机期：持续大跌，高下行波动
+        ]
+    )
     close = 100.0 * np.exp(np.cumsum(returns))
     dates = pd.bdate_range("2018-01-01", periods=n)
     return pd.Series(close, index=dates, name="close")
@@ -67,10 +66,12 @@ def _make_crisis_then_rebound(n: int = 600, seed: int = 11) -> pd.Series:
     """危机 + 反弹场景：前 300 日持续大跌（高下行波动），后 300 日持续大涨
     （总波动相同但下行占比小）→ 反弹期 vix_pct 应明显低于 vol_pct（互补性）。"""
     rng = np.random.default_rng(seed)
-    returns = np.concatenate([
-        rng.normal(-0.015, 0.012, 300),   # 危机：大跌，高下行波动
-        rng.normal(0.015, 0.012, 300),    # 反弹：大涨，下行占比小但总波动相同
-    ])
+    returns = np.concatenate(
+        [
+            rng.normal(-0.015, 0.012, 300),  # 危机：大跌，高下行波动
+            rng.normal(0.015, 0.012, 300),  # 反弹：大涨，下行占比小但总波动相同
+        ]
+    )
     close = 100.0 * np.exp(np.cumsum(returns))
     dates = pd.bdate_range("2018-01-01", periods=n)
     return pd.Series(close, index=dates, name="close")
@@ -140,7 +141,7 @@ class TestSyntheticVixPct:
         warmup = vix.iloc[: hv + pct - 1]
         assert warmup.isna().all(), "warmup 期应全 NaN"
         # warmup 之后应有非 NaN
-        assert vix.iloc[hv + pct:].notna().any()
+        assert vix.iloc[hv + pct :].notna().any()
 
     def test_crisis_spike_in_single_series(self) -> None:
         """核心：单序列内危机期（后段）分位显著高于平稳期，且出现 > 0.8 飙升。
@@ -178,13 +179,9 @@ class TestSyntheticVixPct:
     def test_constant_price_uniform_output(self) -> None:
         """恒定价格：下行波动恒为 0 → 所有非 NaN 分位相等（rank 平均分位）。"""
         n = 400
-        close = pd.Series(
-            np.full(n, 100.0), index=pd.bdate_range("2020-01-01", periods=n)
-        )
+        close = pd.Series(np.full(n, 100.0), index=pd.bdate_range("2020-01-01", periods=n))
         vix = synthetic_vix_pct(close).dropna()
-        assert vix.nunique() == 1, (
-            f"恒定输入应输出全相等的分位，实际有 {vix.nunique()} 个不同值"
-        )
+        assert vix.nunique() == 1, f"恒定输入应输出全相等的分位，实际有 {vix.nunique()} 个不同值"
 
     def test_custom_windows_respected(self) -> None:
         """自定义窗口参数生效：小窗口 warmup 更短。"""
@@ -257,9 +254,7 @@ class TestComputeVixPctFallback:
         score = s1_vix_panic_score(vol_pct, vix_pct)
         crisis_late = score.iloc[-200:]
         # 危机期 vix_pct 飙升 > 0.90 → score=85（过 vix_panic>=60 trigger 门槛）
-        assert (crisis_late >= 85).any(), (
-            f"危机期 vix_pct 注入后 s1_vix_panic 应达 85，实际最大 {crisis_late.max()}"
-        )
+        assert (crisis_late >= 85).any(), f"危机期 vix_pct 注入后 s1_vix_panic 应达 85，实际最大 {crisis_late.max()}"
 
     def test_synth_vix_reaches_extreme_panic(self) -> None:
         """危机期合成 VIX 注入后 s1_vix_panic 出现 100 分（极端恐慌 >0.95）。
@@ -272,6 +267,4 @@ class TestComputeVixPctFallback:
         vix_pct = synthetic_vix_pct(close)
         score = s1_vix_panic_score(vol_pct, vix_pct)
         crisis = score.iloc[-250:]
-        assert (crisis == 100).any(), (
-            f"危机期应出现 s1_vix_panic=100 的极端恐慌点，实际最大 {crisis.max()}"
-        )
+        assert (crisis == 100).any(), f"危机期应出现 s1_vix_panic=100 的极端恐慌点，实际最大 {crisis.max()}"

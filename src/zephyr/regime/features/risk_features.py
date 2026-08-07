@@ -68,6 +68,7 @@ __all__ = [
 # #1: 实现波动率分位 + 趋势斜率交集（危机地板，复刻 Phase 1 _build_feature_risk）
 # ---------------------------------------------------------------------------
 
+
 def realized_vol_coef(vol_pct: pd.Series, slope: pd.Series) -> pd.Series:
     """#1: vol_pct 分位 × slope 方向交集 → 系数（复刻 Phase 1 危机地板）。
 
@@ -104,9 +105,8 @@ def realized_vol_coef(vol_pct: pd.Series, slope: pd.Series) -> pd.Series:
 # #2: 量能异动（放量暴跌/杀跌/滞涨）
 # ---------------------------------------------------------------------------
 
-def volume_anomaly_coef(
-    vol_z: pd.Series, pct_change: pd.Series
-) -> pd.Series:
+
+def volume_anomaly_coef(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     """#2: 量能异动 × 涨跌幅 → 系数（复用 F5 volume_anomaly z-score）。
 
     映射（discussion_001 §5.3.3 维度2）：
@@ -141,6 +141,7 @@ def volume_anomaly_coef(
 # ---------------------------------------------------------------------------
 # #3: 价格形态（空头排列 / 破前低）
 # ---------------------------------------------------------------------------
+
 
 def price_pattern_coef(close: pd.Series) -> pd.Series:
     """#3: 破前低 → 系数（新算 rolling min）。
@@ -179,6 +180,7 @@ def price_pattern_coef(close: pd.Series) -> pd.Series:
 # #5: 空间位置（close vs 250 日高点）
 # ---------------------------------------------------------------------------
 
+
 def space_position_coef(close: pd.Series, window: int = 250) -> pd.Series:
     """#5: 当前价相对 250 日高点位置 → 系数（新算）。
 
@@ -213,6 +215,7 @@ def space_position_coef(close: pd.Series, window: int = 250) -> pd.Series:
 # ---------------------------------------------------------------------------
 # #6: 跨资产相关性（恐慌时相关性飙升）
 # ---------------------------------------------------------------------------
+
 
 def cross_asset_corr_coef(corr: pd.Series) -> pd.Series:
     """#6: 跨资产相关性均值 → 系数（复用 F3 cross_asset_corr）。
@@ -250,6 +253,7 @@ def cross_asset_corr_coef(corr: pd.Series) -> pd.Series:
 # ---------------------------------------------------------------------------
 # #7: 涨跌家数极端（普跌广度）
 # ---------------------------------------------------------------------------
+
 
 def ad_ratio_extreme_coef(ad_ratio: pd.Series) -> pd.Series:
     """#7: 涨跌家数比 → 系数（复用 F4 ad_ratio ∈ [-1,1]）。
@@ -291,6 +295,7 @@ def ad_ratio_extreme_coef(ad_ratio: pd.Series) -> pd.Series:
 # #8: 虹吸态（板块 HHI + 资金集中度）
 # ---------------------------------------------------------------------------
 
+
 def siphon_coef(sector_hhi: pd.Series | None, fund_concentration: pd.Series | None) -> pd.Series:
     """#8: 虹吸态 → 系数（板块集中度 HHI + 资金集中度）。
 
@@ -329,9 +334,8 @@ def siphon_coef(sector_hhi: pd.Series | None, fund_concentration: pd.Series | No
 # #9: 技术指标背离（KDJ 顶背离）
 # ---------------------------------------------------------------------------
 
-def kdj(
-    high: pd.Series, low: pd.Series, close: pd.Series, n: int = 9
-) -> tuple[pd.Series, pd.Series, pd.Series]:
+
+def kdj(high: pd.Series, low: pd.Series, close: pd.Series, n: int = 9) -> tuple[pd.Series, pd.Series, pd.Series]:
     """计算 KDJ 指标（#9 顶背离检测用）。
 
     K = SMA(RSV, 3, 1)；D = SMA(K, 3, 1)；J = 3K - 2D。
@@ -355,9 +359,7 @@ def kdj(
     return k, d, j
 
 
-def detect_top_divergence(
-    close: pd.Series, indicator: pd.Series, window: int = 60
-) -> pd.Series:
+def detect_top_divergence(close: pd.Series, indicator: pd.Series, window: int = 60) -> pd.Series:
     """检测顶背离：价格创 window 日新高但指标未新高。
 
     顶背离 = 赶顶衰竭信号（discussion_001 §5.3.3 维度9）。
@@ -380,25 +382,43 @@ def detect_top_divergence(
     return divergence.astype(float).fillna(0.0)
 
 
-def tech_divergence_coef(divergence: pd.Series) -> pd.Series:
-    """#9: KDJ 顶背离 → 系数。
+def tech_divergence_coef(
+    divergence: pd.Series,
+    divergence_60min: pd.Series | None = None,
+    divergence_30min: pd.Series | None = None,
+) -> pd.Series:
+    """#9: KDJ 顶背离 → 系数（多分时共振极端档）。
 
-    映射：
-      顶背离 → 0.92  （赶顶衰竭，轻度警惕）
-      else   → 1.00
+    映射（discussion_001 §4.11.4 多分时共振是 #9 极端档）：
+      日线背离 + 60min&30min 同背离 → 0.60  （多分时共振，确定性翻倍）
+      日线背离 + 任一分时共振       → 0.75  （双周期共振）
+      日线背离（单分时）            → 0.92  （轻度预警，原值）
+      else                          → 1.00
 
-    C1 验证 2026-08-06 二次调优：0.85→0.92（min() 聚合下减少单次收缩幅度）。
+    C1 验证 2026-08-06 二次调优：单分时 0.85→0.92（min() 聚合下减少单次收缩幅度）。
+    Phase 2c 新增多分时共振档（0.75/0.60），数据缺失时降级单分时 0.92（C1 不退化）。
 
     Parameters
     ----------
-    divergence : detect_top_divergence 返回的 0/1 序列。
+    divergence : 日线顶背离 0/1 序列（detect_top_divergence 返回）。
+    divergence_60min : 60min 顶背离 0/1 序列（None=降级单分时）。
+    divergence_30min : 30min 顶背离 0/1 序列（None=降级单分时）。
 
     Returns
     -------
-    pd.Series，值 ∈ {1.0, 0.92}。
+    pd.Series，值 ∈ {1.0, 0.92, 0.75, 0.60}。
     """
     coef = pd.Series(1.0, index=divergence.index)
     coef[divergence > 0.5] = 0.92
+    if divergence_60min is not None and divergence_30min is not None:
+        # 对齐到日线 index（取当日最后值，ffill 填充非交易日）
+        d60 = divergence_60min.reindex(divergence.index, method="ffill").fillna(0)
+        d30 = divergence_30min.reindex(divergence.index, method="ffill").fillna(0)
+        daily_div = divergence > 0.5
+        both = daily_div & (d60 > 0.5) & (d30 > 0.5)
+        any2 = daily_div & ((d60 > 0.5) | (d30 > 0.5))
+        coef[any2] = 0.75
+        coef[both] = 0.60
     return coef
 
 
@@ -406,9 +426,8 @@ def tech_divergence_coef(divergence: pd.Series) -> pd.Series:
 # #10: 趋势斜率衰竭（Kalman 斜率 z-score + Hurst 衰退）
 # ---------------------------------------------------------------------------
 
-def trend_slope_decay_coef(
-    slope: pd.Series, hurst: pd.Series | None = None, window: int = 250
-) -> pd.Series:
+
+def trend_slope_decay_coef(slope: pd.Series, hurst: pd.Series | None = None, window: int = 250) -> pd.Series:
     """#10: 趋势斜率衰竭 → 系数（复用 F2b kalman_slope + F2a hurst）。
 
     斜率显著走弱 + Hurst<0.5（均值回复，趋势失效）= 趋势衰竭风险。

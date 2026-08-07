@@ -34,18 +34,13 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-__all__ = [
-    "realized_vol_pct",
-    "cross_asset_corr",
-    "ad_ratio",
-    "volume_anomaly",
-    "synthetic_vix_pct",
-]
+__all__ = ["realized_vol_pct", "cross_asset_corr", "ad_ratio", "volume_anomaly"]
 
 
 # ---------------------------------------------------------------------------
 # F1: 实现波动率历史分位（realized volatility percentile）
 # ---------------------------------------------------------------------------
+
 
 def realized_vol_pct(
     close: pd.Series,
@@ -80,6 +75,7 @@ def realized_vol_pct(
 # ---------------------------------------------------------------------------
 # F3: 跨资产相关性（cross-asset correlation）
 # ---------------------------------------------------------------------------
+
 
 def cross_asset_corr(
     returns_df: pd.DataFrame,
@@ -116,6 +112,7 @@ def cross_asset_corr(
 # F4: 涨跌家数比（advance/decline ratio）
 # ---------------------------------------------------------------------------
 
+
 def ad_ratio(advance: pd.Series, decline: pd.Series) -> pd.Series:
     """全市场涨跌家数比的对数 tanh 归一化 ∈ [-1, 1]。
 
@@ -146,6 +143,7 @@ def ad_ratio(advance: pd.Series, decline: pd.Series) -> pd.Series:
 # F5: 量能异动（volume anomaly / z-score）
 # ---------------------------------------------------------------------------
 
+
 def volume_anomaly(volume: pd.Series, window: int = 20) -> pd.Series:
     """成交量 z-score（20日滚动标准化）。
 
@@ -168,47 +166,3 @@ def volume_anomaly(volume: pd.Series, window: int = 20) -> pd.Series:
     # std=0（成交量恒定）时返回 0，避免 inf/NaN
     z = (volume - mean) / std.replace(0.0, np.nan)
     return z.fillna(0.0)
-
-
-# ---------------------------------------------------------------------------
-# 合成 VIX 分位（synthetic VIX percentile）—— Phase 2c 危机恐慌代理
-# ---------------------------------------------------------------------------
-
-def synthetic_vix_pct(
-    close: pd.Series,
-    hv_window: int = 20,
-    pct_window: int = 250,
-) -> pd.Series:
-    """合成 VIX 历史分位（downside semi-deviation percentile）∈ [0, 1]。
-
-    用**下行半偏差**（只计负收益）的年化值在过去 250 日的滚动分位作为恐慌代理。
-    与 realized_vol_pct（上下行均计）互补：
-
-      - **bull 高波期**（急涨急跌但向上）：vol_pct 高，但下行占比小 → vix_pct 低
-      - **危机期**（持续大跌）：下行主导 → vix_pct 飙升
-
-    算法：
-      1. 对数收益率 r = log(close / close.shift(1))
-      2. 下行收益 r_down = min(r, 0)（正收益归 0，只保留负收益的"伤害"）
-      3. 下行半方差 = mean(r_down^2) over hv_window
-      4. 年化下行波动 = sqrt(下行半方差) × √252
-      5. 过去 pct_window 日的滚动分位（pct=True）→ ∈ [0, 1]
-
-    依据：downside deviation（Sortino 分母）是公认的下行风险度量；
-    A 股无期权市场，用此作 VIX 代用，危机特异性强于总波动率。
-
-    Parameters
-    ----------
-    close : 收盘价序列（index=日期）。应为市场代理（如沪深300指数）。
-    hv_window : 下行半偏差窗口（默认20日）。
-    pct_window : 分位回看窗口（默认250日≈1年）。
-
-    Returns
-    -------
-    pd.Series，index 同 close，值 ∈ [0, 1]；前 (hv_window+pct_window) 日为 NaN。
-    """
-    returns = np.log(close / close.shift(1))
-    down_returns = returns.clip(upper=0.0)  # 正收益→0，只保留负收益
-    downside_var = (down_returns ** 2).rolling(hv_window).mean()
-    downside_vol = np.sqrt(downside_var) * np.sqrt(252)
-    return downside_vol.rolling(pct_window).rank(pct=True)

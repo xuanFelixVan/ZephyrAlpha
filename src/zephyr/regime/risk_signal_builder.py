@@ -61,7 +61,8 @@ _logger = logging.getLogger(__name__)
 # 11 个风险参数 id（#1-10, #12；#11/#13 属 opportunity）
 _RISK_PARAM_IDS: list[int] = list(range(1, 11)) + [12]
 # Phase 2a 有效计算的参数 id（其余 stub=1.0）
-_ACTIVE_PARAMS: set[int] = {1, 2, 3, 5, 6, 7, 9, 10}
+# Phase 2c：#8 siphon 从 stub 升级为有效（接 sector_kline）
+_ACTIVE_PARAMS: set[int] = {1, 2, 3, 5, 6, 7, 8, 9, 10}
 
 
 class RiskSignalConstructor:
@@ -79,7 +80,9 @@ class RiskSignalConstructor:
     数据源（经 feature_builder 复用 / TableRegistry）:
       - feature_builder.build_features() → HMM 6 特征（#1/#2/#6/#7/#10 复用）
       - feature_builder.get_index_kline() → 代理 OHLC（#3/#5/#9 新算）
-      - #8 siphon / #12 chip：Phase 2a stub=1.0（Phase 2c 接入）
+      - #8 siphon：Phase 2c 接 sector_kline（涨幅 HHI 集中度）
+      - #9 多分时共振：Phase 2c 接 multi_tf_kline（60min/30min KDJ 背离）
+      - #12 chip：stub=1.0（chip 引擎按日成本高，后续接）
 
     PIT: _precompute 末尾 shift(1)，build_for_date(dt) 取 loc[:dt].iloc[-1]（≤ dt-1）。
     降级: 任一数据源缺失 → 该参数系数=1.0（保守不下调），log WARN。
@@ -90,7 +93,7 @@ class RiskSignalConstructor:
         backtest_start: str,
         backtest_end: str,
         data_load_start: str,
-        feature_builder: "RegimeFeatureBuilder | None" = None,
+        feature_builder: RegimeFeatureBuilder | None = None,
         market_proxy: str = "000300",
     ) -> None:
         """初始化。
@@ -192,34 +195,26 @@ class RiskSignalConstructor:
         # 3. 各参数系数（仅有效参数，stub 参数不放入 cache → build_for_date 给 1.0）
         # #1 realized_vol（vol_pct + slope 交集，复刻 Phase 1 危机地板）
         if {"realized_vol_pct", "kalman_slope"}.issubset(feat.columns):
-            cache[1] = risk_features.realized_vol_coef(
-                feat["realized_vol_pct"], feat["kalman_slope"]
-            )
+            cache[1] = risk_features.realized_vol_coef(feat["realized_vol_pct"], feat["kalman_slope"])
         else:
             _logger.warning("参数 #1 数据缺失（realized_vol_pct/kalman_slope），降级 1.0")
 
         # #2 volume_anomaly（F5 z-score + 日涨跌幅）
         if "volume_anomaly" in feat.columns and proxy_close is not None:
             pct_change = proxy_close.reindex(feat.index).pct_change()
-            cache[2] = risk_features.volume_anomaly_coef(
-                feat["volume_anomaly"], pct_change
-            )
+            cache[2] = risk_features.volume_anomaly_coef(feat["volume_anomaly"], pct_change)
         else:
             _logger.warning("参数 #2 数据缺失，降级 1.0")
 
         # #3 price_pattern（MA5/20/60 + 破前低）
         if proxy_close is not None:
-            cache[3] = risk_features.price_pattern_coef(
-                proxy_close.reindex(feat.index)
-            )
+            cache[3] = risk_features.price_pattern_coef(proxy_close.reindex(feat.index))
         else:
             _logger.warning("参数 #3 数据缺失，降级 1.0")
 
         # #5 space_position（close vs 250日高点）
         if proxy_close is not None:
-            cache[5] = risk_features.space_position_coef(
-                proxy_close.reindex(feat.index)
-            )
+            cache[5] = risk_features.space_position_coef(proxy_close.reindex(feat.index))
         else:
             _logger.warning("参数 #5 数据缺失，降级 1.0")
 
@@ -235,29 +230,36 @@ class RiskSignalConstructor:
         else:
             _logger.warning("参数 #7 数据缺失，降级 1.0")
 
-        # #9 tech_divergence（KDJ J 值顶背离）
+        # #9 tech_divergence（KDJ J 值顶背离 + Phase 2c 多分时共振）
         if proxy_high is not None and proxy_low is not None and proxy_close is not None:
             h = proxy_high.reindex(feat.index)
             l = proxy_low.reindex(feat.index)
             c = proxy_close.reindex(feat.index)
             _k, _d, j = risk_features.kdj(h, l, c)
             div = risk_features.detect_top_divergence(c, j)
-            cache[9] = risk_features.tech_divergence_coef(div)
+            # Phase 2c：60min/30min 顶背离共振（数据缺失降级单分时 0.92）
+            div_60, div_30 = self._compute_multi_tf_divergence(feat.index)
+            cache[9] = risk_features.tech_divergence_coef(div, div_60, div_30)
         else:
             _logger.warning("参数 #9 数据缺失，降级 1.0")
 
         # #10 trend_slope_decay（F2b slope z-score + F2a hurst）
         if "kalman_slope" in feat.columns:
             hurst = feat.get("hurst_dfa")
-            cache[10] = risk_features.trend_slope_decay_coef(
-                feat["kalman_slope"], hurst
-            )
+            cache[10] = risk_features.trend_slope_decay_coef(feat["kalman_slope"], hurst)
         else:
             _logger.warning("参数 #10 数据缺失，降级 1.0")
 
-        # #4/#8/#12：Phase 2a stub=1.0（不放入 cache，build_for_date 给 1.0）
+        # #8 siphon（Phase 2c：板块涨幅 HHI 集中度 → 虹吸态系数）
+        sector_hhi, fund_conc = self._compute_siphon_inputs(feat.index)
+        if sector_hhi is not None:
+            cache[8] = risk_features.siphon_coef(sector_hhi, fund_conc)
+        else:
+            _logger.warning("参数 #8 数据缺失（sector_kline），降级 1.0")
+
+        # #4/#12：stub=1.0（不放入 cache，build_for_date 给 1.0）
         _logger.info(
-            "RiskSignalConstructor._precompute: 有效参数 %s，stub(#4/#8/#12)=1.0",
+            "RiskSignalConstructor._precompute: 有效参数 %s，stub(#4/#12)=1.0",
             sorted(k for k in cache.keys()),
         )
 
@@ -267,6 +269,73 @@ class RiskSignalConstructor:
 
         self._cache = cache
         return cache
+
+    # ── Phase 2c 数据加载辅助 ─────────────────────────────────────────────
+
+    def _fb_call(self, method_name: str) -> Any:
+        """安全调用 feature_builder 的数据透传方法，缺失/失败返回 None。
+
+        兼容旧 mock（无新透传方法时 getattr 返回 None → 降级），保证测试隔离。
+        """
+        fn = getattr(self._feature_builder, method_name, None)
+        if fn is None:
+            return None
+        try:
+            return fn()
+        except Exception as exc:  # noqa: BLE001 — 降级友好
+            _logger.warning("%s 调用失败，降级 None: %s", method_name, exc)
+            return None
+
+    def _compute_siphon_inputs(self, index: pd.Index) -> tuple[pd.Series | None, pd.Series | None]:
+        """Phase 2c: #8 siphon 输入（板块涨幅 HHI + 资金集中度）。
+
+        sector_hhi：从 kline_sector 算板块涨幅 HHI（集中度），越高越虹吸。
+        fund_concentration：头部资金净流入占比（需 per-sector money_flow，
+            当前 loader 仅全市场聚合 → 暂返回 None，siphon_coef 按仅 hhi 降级，
+            OR 语义保证部分数据仍有效）。
+        """
+        sector_df = self._fb_call("get_sector_kline")
+        if sector_df is None or sector_df.empty:
+            return None, None
+        try:
+            close = sector_df["close"].unstack("code")
+            pct = close.pct_change()
+            abs_ret = pct.abs()
+            total_abs = abs_ret.sum(axis=1).replace(0.0, np.nan)
+            share = abs_ret.div(total_abs, axis=0)
+            hhi = (share**2).sum(axis=1)
+            return hhi.reindex(index), None  # fund_concentration 待 per-sector money_flow
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning("siphon 输入计算失败，#8 降级 1.0: %s", exc)
+            return None, None
+
+    def _compute_multi_tf_divergence(self, index: pd.Index) -> tuple[pd.Series | None, pd.Series | None]:
+        """Phase 2c: #9 多分时顶背离（60min + 30min）。
+
+        对每个频率的 ETF K 线聚合到日线（每日 max high / min low / last close），
+        算 KDJ J 值顶背离。数据缺失返回 (None, None) → tech_divergence_coef 降级单分时。
+        """
+        multi_tf = self._fb_call("get_multi_tf_kline")
+        if multi_tf is None:
+            return None, None
+        div_60 = self._divergence_for_freq(multi_tf.get("60min"), index)
+        div_30 = self._divergence_for_freq(multi_tf.get("30min"), index)
+        return div_60, div_30
+
+    def _divergence_for_freq(self, df: pd.DataFrame | None, index: pd.Index) -> pd.Series | None:
+        """单频率 KDJ 顶背离（聚合到日线后计算）。"""
+        if df is None or df.empty:
+            return None
+        try:
+            # 聚合到日线（分钟级表可能一日多 bar，取每日 max high / min low / last close）
+            daily = df.groupby(level=df.index.name).agg({"high": "max", "low": "min", "close": "last"})
+            daily = daily.reindex(index)
+            h, l, c = daily["high"], daily["low"], daily["close"]
+            _k, _d, j = risk_features.kdj(h, l, c)
+            return risk_features.detect_top_divergence(c, j)
+        except Exception as exc:  # noqa: BLE001
+            _logger.warning("多分时背离计算失败，降级单分时: %s", exc)
+            return None
 
 
 __all__ = ["RiskSignalConstructor"]

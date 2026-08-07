@@ -1,0 +1,351 @@
+# [BLUEPRINT] MOD-REGIME-002 | docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md | §5.3 Phase2c
+# [MODULE] zephyr.regime.features.regime_data_loader
+# [DOMAIN] D_REGIME
+# [DEPENDENCIES] numpy; pandas; zephyr.data.ch_reader; zephyr.data.table_registry
+# [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder透传→risk/overlay构造器消费)
+# [STARTUP] imported
+# [MATURITY] design
+# [INVARIANTS] 任一表查询失败返回None(降级友好); 表名经TableRegistry获取(禁止硬编码); 同表首次查询后缓存
+# [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
+# [STABILITY] evolving
+# [SAFETY] M
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 查询失败->log warning+返回None(调用方按0.0/1.0降级); 表未注册->KeyError(fail-closed)
+# [TESTS] tests/regime/test_regime_data_loader.py
+# [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
+# [TTL] permanent
+# [ARCH-REF] #discussion_001 §5.3 #MOD-REGIME-002 #Phase2c
+"""Phase 2c 新数据源加载层（MOD-REGIME-002 Phase 2c）。
+
+为 4 个 T3 stub 维度（money_effect/mainline/leader/one_day_mainline）、#8 siphon、
+合成 VIX、多分时共振提供 ClickHouse 数据加载。经 RegimeFeatureBuilder 透传 + 缓存，
+供 RiskSignalConstructor / OverlaySignalsConstructor 复用，避免重复查询。
+
+设计原则（与 RegimeFeatureBuilder._load_index_kline 一致）：
+  - **表名经 TableRegistry**：通过 get_registry().table(category_id) 获取全限定表名，
+    禁止硬编码（fail-closed，与 #ARCH-CH-024 一致）。
+  - **降级友好**：任一表查询失败 → log warning + 返回 None（调用方按 0.0/1.0 降级），
+    保证 risk/overlay 只因真实信号触发，不因数据空洞误杀。
+  - **单例式缓存**：同表首次查询后缓存全序列 DataFrame，后续 O(1)。
+  - **PIT 由调用方负责**：本模块只加载数据，shift(1) 在构造器 _precompute 统一做。
+
+数据源（6 类，均已在 business_data_categories.yaml 注册）:
+  - money_flow         → 全市场聚合主力净流入（money_effect 维度）
+  - kline_sector       → 行业板块K线（mainline 维度 + #8 sector_hhi）
+  - limit_up_down      → 涨跌停统计（leader/one_day_mainline 维度）
+  - hk_connect_flow    → 北向资金（money_effect 辅助）
+  - option_iv_surface  → 50ETF/300ETF 期权IV曲面（合成VIX）
+  - etf_kline_30/60min → ETF分钟K线（多分时共振 #9）
+
+依据: discussion_001 v1.3.1 §5.3 / Phase 2c 计划 §核心架构
+Version: 0.1.0
+"""
+
+from __future__ import annotations
+
+import logging
+from typing import Any, Callable
+
+import pandas as pd
+
+from zephyr.data import ch_reader
+from zephyr.data.table_registry import get_registry
+
+_logger = logging.getLogger(__name__)
+
+# 多分时共振用的 ETF 代码（510300=沪深300ETF，作为 000300 指数分钟级代理）
+_MULTI_TF_ETF = "510300"
+# 合成 VIX 用的期权标的
+_VIX_UNDERLYINGS = ["510050", "510300"]
+
+
+def _parse_tsv(tsv: str, ncols: int) -> list[list[str]]:
+    """把 ch_reader.query 返回的 TSV 字符串解析成行列表（与 regime_feature_builder 同构）。
+
+    ncols: 期望列数（不足则跳过该行）。空输入返回 []。
+    """
+    if not tsv or not tsv.strip():
+        return []
+    rows: list[list[str]] = []
+    for line in tsv.strip().split("\n"):
+        line = line.rstrip("\r")
+        if not line:
+            continue
+        vals = line.split("\t")
+        if len(vals) >= ncols:
+            rows.append(vals)
+    return rows
+
+
+def _safe_float(v: Any) -> float:
+    """NaN/None 安全转 float（NaN→0.0，避免阈值比较误判）。"""
+    if v is None:
+        return 0.0
+    try:
+        f = float(v)
+        return 0.0 if f != f else f  # NaN → 0.0
+    except (TypeError, ValueError):
+        return 0.0
+
+
+class RegimeDataLoader:
+    """Phase 2c 新数据源加载层。
+
+    Usage（由 RegimeFeatureBuilder 注入，透传给构造器）::
+
+        loader = RegimeDataLoader(
+            data_load_start="2010-01-01", backtest_end="2026-06-30"
+        )
+        money_flow = loader.load_money_flow()        # → DataFrame | None
+        sector = loader.load_sector_kline()          # → DataFrame | None
+
+    降级: 任一表查询失败返回 None（调用方按 0.0/1.0 降级），log warning 不抛错。
+    """
+
+    def __init__(
+        self,
+        data_load_start: str = "2010-01-01",
+        backtest_end: str = "2026-06-30",
+        registry: Any = None,
+    ) -> None:
+        """初始化。
+
+        Args:
+            data_load_start: 数据加载起始日（需早于 backtest_start，供 warmup）。
+            backtest_end: 数据加载结束日（含）。
+            registry: TableRegistry 实例（None 时用单例 get_registry()）。
+        """
+        self.data_load_start = data_load_start
+        self.backtest_end = backtest_end
+        self._registry = registry or get_registry()
+        self._cache: dict[str, pd.DataFrame | None] = {}
+
+    # ── 内部工具 ──────────────────────────────────────────────────────────
+
+    def _query(self, sql: str, context: str) -> str:
+        """执行 ClickHouse 查询，失败返回空串（降级友好，不抛错）。"""
+        try:
+            return ch_reader.query(sql)
+        except Exception as exc:  # noqa: BLE001 — 降级友好
+            _logger.warning("ClickHouse 查询失败 (%s): %s", context, exc)
+            return ""
+
+    def _load_or_cache(self, cache_key: str, loader_fn: Callable[[], pd.DataFrame | None]) -> pd.DataFrame | None:
+        """缓存式加载：首次调用执行 loader_fn 并缓存，后续直接返回缓存。"""
+        if cache_key in self._cache:
+            return self._cache[cache_key]
+        try:
+            df = loader_fn()
+        except Exception as exc:  # noqa: BLE001 — 降级友好
+            _logger.warning("加载 %s 失败，降级 None: %s", cache_key, exc)
+            df = None
+        self._cache[cache_key] = df
+        return df
+
+    # ── 公共接口 ──────────────────────────────────────────────────────────
+
+    def load_money_flow(self) -> pd.DataFrame | None:
+        """全市场按 trade_date 聚合的主力资金净流入。
+
+        Returns:
+            DataFrame(index=trade_date, cols=[total_main_net_inflow, avg_main_net_inflow_pct])
+            或 None（查询失败降级）。供 t3_money_effect_score + money_effect 维度用。
+        """
+        return self._load_or_cache("money_flow", self._load_money_flow)
+
+    def load_sector_kline(self) -> pd.DataFrame | None:
+        """行业板块K线（code/trade_date/OHLCV）。
+
+        Returns:
+            MultiIndex(code, trade_date) DataFrame，含 close/volume/amount。
+            供 t3_mainline_score + #8 sector_hhi 用。或 None。
+        """
+        return self._load_or_cache("sector_kline", self._load_sector_kline)
+
+    def load_limit_up_down(self) -> pd.DataFrame | None:
+        """涨跌停统计（symbol/trade_date/limit_type/pct_change）。
+
+        Returns:
+            MultiIndex(trade_date, symbol) DataFrame，含 limit_type/pct_change/amount。
+            供 t3_leader_score + t3_one_day_mainline_flag 用。或 None。
+        """
+        return self._load_or_cache("limit_up_down", self._load_limit_up_down)
+
+    def load_hk_connect_flow(self) -> pd.DataFrame | None:
+        """北向资金（trade_date 聚合的净买入额）。
+
+        Returns:
+            DataFrame(index=trade_date, cols=[net_buy_amount, daily_inflow]) 或 None。
+            供 t3_money_effect_score 辅助用。
+        """
+        return self._load_or_cache("hk_connect_flow", self._load_hk_connect_flow)
+
+    def load_option_iv_surface(self) -> pd.DataFrame | None:
+        """50ETF+300ETF 期权 IV 曲面（双标的）。
+
+        Returns:
+            MultiIndex(trade_date, underlying) DataFrame，含 strike/expiry/iv/option_type/delta/vega。
+            供合成 VIX 用。或 None。
+        """
+        return self._load_or_cache("option_iv_surface", self._load_option_iv)
+
+    def load_multi_tf_kline(self) -> dict[str, pd.DataFrame] | None:
+        """多分时 ETF K 线（60min/30min，510300）。
+
+        Returns:
+            {"60min": df, "30min": df}，每个 df 是 index=trade_date 的 OHLCV。
+            供 #9 多分时共振 KDJ 用。或 None（全部失败）。
+        """
+        return self._load_or_cache("multi_tf_kline", self._load_multi_tf_kline)
+
+    # ── 实际加载逻辑 ──────────────────────────────────────────────────────
+
+    def _load_money_flow(self) -> pd.DataFrame | None:
+        table = self._registry.table("market_money_flow")
+        sql = (
+            f"SELECT trade_date, "
+            f"sum(toFloat64(main_net_inflow)) AS total_main_net_inflow, "
+            f"avg(toFloat64(main_net_inflow_pct)) AS avg_main_net_inflow_pct "
+            f"FROM {table} FINAL "
+            f"WHERE trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"GROUP BY trade_date ORDER BY trade_date"
+        )
+        tsv = self._query(sql, "money_flow")
+        rows = _parse_tsv(tsv, ncols=3)
+        if not rows:
+            _logger.warning("money_flow 无数据，money_effect 维度将降级 0.0")
+            return None
+        df = pd.DataFrame(rows, columns=["trade_date", "total_main_net_inflow", "avg_main_net_inflow_pct"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["total_main_net_inflow"] = pd.to_numeric(df["total_main_net_inflow"], errors="coerce")
+        df["avg_main_net_inflow_pct"] = pd.to_numeric(df["avg_main_net_inflow_pct"], errors="coerce")
+        return df.set_index("trade_date").sort_index()
+
+    def _load_sector_kline(self) -> pd.DataFrame | None:
+        table = self._registry.table("market_sector_kline")
+        sql = (
+            f"SELECT trade_date, code, close, volume, amount "
+            f"FROM {table} FINAL "
+            f"WHERE trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY code, trade_date"
+        )
+        tsv = self._query(sql, "sector_kline")
+        rows = _parse_tsv(tsv, ncols=5)
+        if not rows:
+            _logger.warning("kline_sector 无数据，mainline/sector_hhi 将降级")
+            return None
+        df = pd.DataFrame(rows, columns=["trade_date", "code", "close", "volume", "amount"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["close"] = pd.to_numeric(df["close"], errors="coerce")
+        df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
+        df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+        return df.set_index(["code", "trade_date"]).sort_index()
+
+    def _load_limit_up_down(self) -> pd.DataFrame | None:
+        table = self._registry.table("market_limit_up_down")
+        sql = (
+            f"SELECT trade_date, symbol, limit_type, pct_change, amount "
+            f"FROM {table} FINAL "
+            f"WHERE trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY trade_date, symbol"
+        )
+        tsv = self._query(sql, "limit_up_down")
+        rows = _parse_tsv(tsv, ncols=5)
+        if not rows:
+            _logger.warning("limit_up_down 无数据，leader/one_day_mainline 将降级")
+            return None
+        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "limit_type", "pct_change", "amount"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["pct_change"] = pd.to_numeric(df["pct_change"], errors="coerce")
+        df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
+        return df.set_index(["trade_date", "symbol"]).sort_index()
+
+    def _load_hk_connect_flow(self) -> pd.DataFrame | None:
+        table = self._registry.table("market_hk_connect_flow")
+        sql = (
+            f"SELECT trade_date, "
+            f"sum(toFloat64(net_buy_amount)) AS net_buy_amount, "
+            f"sum(toFloat64(daily_inflow)) AS daily_inflow "
+            f"FROM {table} FINAL "
+            f"WHERE trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"GROUP BY trade_date ORDER BY trade_date"
+        )
+        tsv = self._query(sql, "hk_connect_flow")
+        rows = _parse_tsv(tsv, ncols=3)
+        if not rows:
+            _logger.warning("hk_connect_flow 无数据，money_effect 辅助维度将降级")
+            return None
+        df = pd.DataFrame(rows, columns=["trade_date", "net_buy_amount", "daily_inflow"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["net_buy_amount"] = pd.to_numeric(df["net_buy_amount"], errors="coerce")
+        df["daily_inflow"] = pd.to_numeric(df["daily_inflow"], errors="coerce")
+        return df.set_index("trade_date").sort_index()
+
+    def _load_option_iv(self) -> pd.DataFrame | None:
+        table = self._registry.table("market_option_iv")
+        underlyings = ", ".join([f"'{u}'" for u in _VIX_UNDERLYINGS])
+        sql = (
+            f"SELECT trade_date, underlying, strike, expiry, iv, option_type, delta, vega "
+            f"FROM {table} FINAL "
+            f"WHERE underlying IN ({underlyings}) "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"AND quality_flag = 1 "
+            f"ORDER BY underlying, trade_date, expiry, strike"
+        )
+        tsv = self._query(sql, "option_iv_surface")
+        rows = _parse_tsv(tsv, ncols=8)
+        if not rows:
+            _logger.warning("option_iv_surface 无数据，合成VIX将降级回退 vol_pct")
+            return None
+        df = pd.DataFrame(
+            rows, columns=["trade_date", "underlying", "strike", "expiry", "iv", "option_type", "delta", "vega"]
+        )
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        df["expiry"] = pd.to_datetime(df["expiry"])
+        for c in ["strike", "iv", "delta", "vega"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+        return df.set_index(["trade_date", "underlying"]).sort_index()
+
+    def _load_multi_tf_kline(self) -> dict[str, pd.DataFrame] | None:
+        """加载 60min + 30min ETF K 线（510300）。"""
+        out: dict[str, pd.DataFrame] = {}
+        cat_map = {"60min": "market_etf_kline_60min", "30min": "market_etf_kline_30min"}
+        for freq, cid in cat_map.items():
+            df = self._load_single_etf_kline(cid, freq)
+            if df is not None:
+                out[freq] = df
+        if not out:
+            _logger.warning("multi_tf_kline 全部无数据，#9 多分时共振将降级单分时")
+            return None
+        return out
+
+    def _load_single_etf_kline(self, category_id: str, freq: str) -> pd.DataFrame | None:
+        """加载单频 ETF K 线（510300）。"""
+        table = self._registry.table(category_id)
+        sql = (
+            f"SELECT trade_date, open, high, low, close, volume "
+            f"FROM {table} FINAL "
+            f"WHERE symbol = '{_MULTI_TF_ETF}' "
+            f"AND trade_date >= toDate('{self.data_load_start}') "
+            f"AND trade_date <= toDate('{self.backtest_end}') "
+            f"ORDER BY trade_date"
+        )
+        tsv = self._query(sql, f"etf_kline_{freq}")
+        rows = _parse_tsv(tsv, ncols=6)
+        if not rows:
+            return None
+        df = pd.DataFrame(rows, columns=["trade_date", "open", "high", "low", "close", "volume"])
+        df["trade_date"] = pd.to_datetime(df["trade_date"])
+        for c in ["open", "high", "low", "close", "volume"]:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+        # 分钟级数据按交易日聚合（取当日最后 bar 的 OHLCV，供日线级 KDJ 用）
+        df = df.set_index("trade_date").sort_index()
+        return df
+
+
+__all__ = ["RegimeDataLoader"]

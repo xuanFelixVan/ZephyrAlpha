@@ -87,15 +87,29 @@ _logger = logging.getLogger(__name__)
 _TRANSITION_DIMS: dict[str, list[str]] = {
     "S1": ["vix_panic", "correlation", "liquidity", "flash_recover"],
     "S2": [
-        "capitulation", "vix", "wyckoff", "valuation", "fund",
-        "spring", "three_yang", "break_sc_low", "vix_new_high", "fund_outflow",
-        "policy", "bad_news_flat",  # stub（NLP）
+        "capitulation",
+        "vix",
+        "wyckoff",
+        "valuation",
+        "fund",
+        "spring",
+        "three_yang",
+        "break_sc_low",
+        "vix_new_high",
+        "fund_outflow",
+        "policy",
+        "bad_news_flat",  # stub（NLP）
     ],
     "T1": ["bqs", "rcs", "frs"],
     "T2": ["continue_decline"],
     "T3": [
-        "volume_price", "ma_trend", "sentiment",
-        "money_effect", "mainline", "leader", "one_day_mainline",  # stub（资金/板块）
+        "volume_price",
+        "ma_trend",
+        "sentiment",
+        "money_effect",
+        "mainline",
+        "leader",
+        "one_day_mainline",  # stub（资金/板块）
     ],
     "T4": ["shrink_flat"],
     "T5": ["leader_break", "rebound_wrap"],
@@ -110,7 +124,8 @@ _TRANSITION_DIMS: dict[str, list[str]] = {
 #   _precompute 不放入 cache → build_for_date 走 0.0 降级（与 stub 等效，多一条 warning）。
 #   待 money_flow/kline_sector/limit_up_down 数据就绪后实现 _compute_t3_inputs 即激活。
 _STUB_DIMS: set[str] = {
-    "policy", "bad_news_flat",  # S2 NLP（待 NLP 管道）
+    "policy",
+    "bad_news_flat",  # S2 NLP（待 NLP 管道）
 }
 
 
@@ -140,8 +155,8 @@ class OverlaySignalsConstructor:
         backtest_start: str,
         backtest_end: str,
         data_load_start: str,
-        feature_builder: "RegimeFeatureBuilder | None" = None,
-        risk_constructor: "RiskSignalConstructor | None" = None,
+        feature_builder: RegimeFeatureBuilder | None = None,
+        risk_constructor: RiskSignalConstructor | None = None,
         market_proxy: str = "000300",
     ) -> None:
         """初始化。
@@ -213,9 +228,7 @@ class OverlaySignalsConstructor:
 
         # 无 feature_builder → 全降级 0.0（纯 HMM）
         if self._feature_builder is None:
-            _logger.warning(
-                "OverlaySignalsConstructor 无 feature_builder，所有维度=0.0（纯 HMM 降级）"
-            )
+            _logger.warning("OverlaySignalsConstructor 无 feature_builder，所有维度=0.0（纯 HMM 降级）")
             self._cache = cache
             return cache
 
@@ -236,17 +249,13 @@ class OverlaySignalsConstructor:
             proxy_close = proxy["close"].astype(float)
             proxy_volume = proxy["volume"].astype(float)
         except Exception as exc:  # noqa: BLE001
-            _logger.warning(
-                "代理 OHLCV 加载失败，需 close/volume 的维度降级 0.0: %s", exc
-            )
+            _logger.warning("代理 OHLCV 加载失败，需 close/volume 的维度降级 0.0: %s", exc)
         if proxy_close is not None:
             try:
                 proxy_high = proxy["high"].astype(float)
                 proxy_low = proxy["low"].astype(float)
             except Exception as exc:  # noqa: BLE001
-                _logger.warning(
-                    "代理 high/low 缺失，s2_wyckoff 回退 MVP 简化版: %s", exc
-                )
+                _logger.warning("代理 high/low 缺失，s2_wyckoff 回退 MVP 简化版: %s", exc)
 
         # 限定到 [data_load_start, backtest_end]
         feat = features.loc[self.data_load_start : self.backtest_end]
@@ -274,9 +283,7 @@ class OverlaySignalsConstructor:
 
         # ── S1: Any → CRISIS ──
         if vol_pct is not None:
-            cache["vix_panic"] = overlay_features.s1_vix_panic_score(
-                vol_pct, vix_pct
-            )
+            cache["vix_panic"] = overlay_features.s1_vix_panic_score(vol_pct, vix_pct)
         else:
             _logger.warning("S1 vix_panic 数据缺失（realized_vol_pct），降级 0.0")
         if corr is not None:
@@ -288,17 +295,13 @@ class OverlaySignalsConstructor:
         else:
             _logger.warning("S1 liquidity 数据缺失（volume_anomaly），降级 0.0")
         if pct_change is not None and vol_pct is not None:
-            cache["flash_recover"] = overlay_features.s1_flash_recover_flag(
-                pct_change, vol_pct
-            )
+            cache["flash_recover"] = overlay_features.s1_flash_recover_flag(pct_change, vol_pct)
         else:
             _logger.warning("S1 flash_recover 数据缺失，降级 0.0")
 
         # ── S2: CRISIS → RECOVERY ──
         if vol_z is not None and pct_change is not None:
-            cache["capitulation"] = overlay_features.s2_capitulation_score(
-                vol_z, pct_change
-            )
+            cache["capitulation"] = overlay_features.s2_capitulation_score(vol_z, pct_change)
         else:
             _logger.warning("S2 capitulation 数据缺失，降级 0.0")
         if vol_pct is not None:
@@ -307,9 +310,7 @@ class OverlaySignalsConstructor:
             _logger.warning("S2 vix 数据缺失，降级 0.0")
         if close is not None:
             # Phase 2c：s2_wyckoff 委托 wyckoff_engine（需 high/low/volume/pct/vol_z）
-            cache["wyckoff"] = overlay_features.s2_wyckoff_score(
-                close, high, low, volume, pct_change, vol_z
-            )
+            cache["wyckoff"] = overlay_features.s2_wyckoff_score(close, high, low, volume, pct_change, vol_z)
             cache["valuation"] = overlay_features.s2_valuation_score(close)
             cache["spring"] = overlay_features.s2_spring_flag(close)
             cache["break_sc_low"] = overlay_features.s2_break_sc_low_flag(close)
@@ -328,9 +329,7 @@ class OverlaySignalsConstructor:
         else:
             _logger.warning("S2 vix_new_high 数据缺失，降级 0.0")
         if volume is not None and pct_change is not None:
-            cache["fund_outflow"] = overlay_features.s2_fund_outflow_flag(
-                volume, pct_change
-            )
+            cache["fund_outflow"] = overlay_features.s2_fund_outflow_flag(volume, pct_change)
         else:
             _logger.warning("S2 fund_outflow 数据缺失，降级 0.0")
         # policy / bad_news_flat: stub 0.0（NLP）
@@ -351,17 +350,13 @@ class OverlaySignalsConstructor:
 
         # ── T2: Bear-Low → RECOVERY ──
         if slope is not None and vol_pct is not None:
-            cache["continue_decline"] = overlay_features.t2_continue_decline_flag(
-                slope, vol_pct
-            )
+            cache["continue_decline"] = overlay_features.t2_continue_decline_flag(slope, vol_pct)
         else:
             _logger.warning("T2 continue_decline 数据缺失，降级 0.0")
 
         # ── T3: RECOVERY → BREAKOUT ──
         if pct_change is not None and vol_z is not None:
-            cache["volume_price"] = overlay_features.t3_volume_price_score(
-                pct_change, vol_z
-            )
+            cache["volume_price"] = overlay_features.t3_volume_price_score(pct_change, vol_z)
         else:
             _logger.warning("T3 volume_price 数据缺失，降级 0.0")
         if close is not None:
@@ -377,17 +372,13 @@ class OverlaySignalsConstructor:
         inflow_pct = t3_inputs.get("inflow_pct")
         lu_count = t3_inputs.get("limit_up_count")
         if inflow_pct is not None and lu_count is not None:
-            cache["money_effect"] = overlay_features.t3_money_effect_score(
-                inflow_pct, lu_count
-            )
+            cache["money_effect"] = overlay_features.t3_money_effect_score(inflow_pct, lu_count)
         else:
             _logger.warning("T3 money_effect 数据缺失（money_flow/limit_up_down），降级 0.0")
         sector_hhi = t3_inputs.get("sector_hhi")
         top_sector_pct = t3_inputs.get("top_sector_pct")
         if sector_hhi is not None and top_sector_pct is not None:
-            cache["mainline"] = overlay_features.t3_mainline_score(
-                sector_hhi, top_sector_pct
-            )
+            cache["mainline"] = overlay_features.t3_mainline_score(sector_hhi, top_sector_pct)
         else:
             _logger.warning("T3 mainline 数据缺失（kline_sector），降级 0.0")
         max_consec = t3_inputs.get("max_consec_limit")
@@ -398,9 +389,7 @@ class OverlaySignalsConstructor:
             _logger.warning("T3 leader 数据缺失（limit_up_down），降级 0.0")
         prev_top3_max = t3_inputs.get("prev_top3_max_today_pct")
         if prev_top3_max is not None:
-            cache["one_day_mainline"] = overlay_features.t3_one_day_mainline_flag(
-                prev_top3_max
-            )
+            cache["one_day_mainline"] = overlay_features.t3_one_day_mainline_flag(prev_top3_max)
         else:
             _logger.warning("T3 one_day_mainline 数据缺失（kline_sector），降级 0.0")
 
@@ -412,9 +401,7 @@ class OverlaySignalsConstructor:
 
         # ── T5: Bull-High → Bear-Med ──
         if close is not None and volume is not None:
-            cache["leader_break"] = overlay_features.t5_leader_break_score(
-                close, volume
-            )
+            cache["leader_break"] = overlay_features.t5_leader_break_score(close, volume)
         else:
             _logger.warning("T5 leader_break 数据缺失，降级 0.0")
         if close is not None:
@@ -424,9 +411,7 @@ class OverlaySignalsConstructor:
 
         # ── T6: Bear-Med → Bear-Low ──
         if vol_z is not None and pct_change is not None:
-            cache["sudden_volume"] = overlay_features.t6_sudden_volume_flag(
-                vol_z, pct_change
-            )
+            cache["sudden_volume"] = overlay_features.t6_sudden_volume_flag(vol_z, pct_change)
         else:
             _logger.warning("T6 sudden_volume 数据缺失，降级 0.0")
 
@@ -495,7 +480,7 @@ class OverlaySignalsConstructor:
             index_df = self._feature_builder.get_index_kline()
             proxy = index_df.xs(self.market_proxy, level="symbol")
             close = proxy["close"].astype(float)
-            from zephyr.regime.features.market_features import synthetic_vix_pct
+            from zephyr.regime.features.synthetic_vix import synthetic_vix_pct
 
             vix = synthetic_vix_pct(close)
             non_na = int(vix.notna().sum())
@@ -508,9 +493,7 @@ class OverlaySignalsConstructor:
             )
             return vix.reindex(index)
         except Exception as exc:  # noqa: BLE001 — 降级友好
-            _logger.warning(
-                "合成 VIX 计算失败，回退 None（s1/s2 vix 用 vol_pct 代理）: %s", exc
-            )
+            _logger.warning("合成 VIX 计算失败，回退 None（s1/s2 vix 用 vol_pct 代理）: %s", exc)
             return None
 
     def _compute_t3_inputs(self, index: pd.DatetimeIndex) -> dict[str, pd.Series | None]:
@@ -519,18 +502,17 @@ class OverlaySignalsConstructor:
         任一数据源缺失 → 对应输入 None（维度降级 0.0，C1 不退化）。
         """
         inputs: dict[str, pd.Series | None] = {
-            "inflow_pct": None, "limit_up_count": None,
-            "sector_hhi": None, "top_sector_pct": None,
-            "max_consec_limit": None, "promotion_rate": None,
+            "inflow_pct": None,
+            "limit_up_count": None,
+            "sector_hhi": None,
+            "top_sector_pct": None,
+            "max_consec_limit": None,
+            "promotion_rate": None,
             "prev_top3_max_today_pct": None,
         }
         # money_effect: 全市场主力净流入占比
         money_flow = self._fb_call("get_money_flow")
-        if (
-            money_flow is not None
-            and not money_flow.empty
-            and "avg_main_net_inflow_pct" in money_flow
-        ):
+        if money_flow is not None and not money_flow.empty and "avg_main_net_inflow_pct" in money_flow:
             inputs["inflow_pct"] = money_flow["avg_main_net_inflow_pct"].reindex(index)
         # sector: mainline(HHI+top) + one_day_mainline(prev_top3)
         sector_df = self._fb_call("get_sector_kline")
@@ -548,9 +530,7 @@ class OverlaySignalsConstructor:
             inputs["limit_up_count"] = lu_inputs.get("limit_up_count")
         return inputs
 
-    def _compute_sector_metrics(
-        self, sector_df: pd.DataFrame, index: pd.Index
-    ) -> dict[str, pd.Series]:
+    def _compute_sector_metrics(self, sector_df: pd.DataFrame, index: pd.Index) -> dict[str, pd.Series]:
         """从板块K线算 HHI / top_sector_pct / prev_top3_max_today_pct。
 
         HHI = Σ(share_i²)，share_i = |ret_i| / Σ|ret_j|（涨幅集中度）。
@@ -563,7 +543,7 @@ class OverlaySignalsConstructor:
             abs_ret = pct.abs()
             total_abs = abs_ret.sum(axis=1).replace(0.0, np.nan)
             share = abs_ret.div(total_abs, axis=0)
-            hhi = (share ** 2).sum(axis=1)
+            hhi = (share**2).sum(axis=1)
             top_pct = pct.max(axis=1) * 100  # 转百分数
             # 昨日 Top3 板块今日最佳表现（max < -2 ⟺ 三者全跌 >2%）
             ranks = pct.rank(axis=1, ascending=False, method="first")
@@ -580,9 +560,7 @@ class OverlaySignalsConstructor:
             _logger.warning("板块指标计算失败，降级 None: %s", exc)
             return {}
 
-    def _compute_limit_up_metrics(
-        self, limit_df: pd.DataFrame, index: pd.Index
-    ) -> dict[str, pd.Series]:
+    def _compute_limit_up_metrics(self, limit_df: pd.DataFrame, index: pd.Index) -> dict[str, pd.Series]:
         """从涨跌停统计算 max_consec_limit / promotion_rate / limit_up_count。
 
         max_consec_limit = 全市场最高连板数（按 symbol 分组，非涨停重置 cumsum）。
@@ -591,21 +569,15 @@ class OverlaySignalsConstructor:
         """
         try:
             df = limit_df.reset_index().copy()
-            df["is_up"] = (
-                df["limit_type"].astype(str).str.contains("涨停").astype(int)
-            )
+            df["is_up"] = df["limit_type"].astype(str).str.contains("涨停").astype(int)
             df = df.sort_values(["symbol", "trade_date"])
             # 连板数：按 symbol 分组，遇到非涨停重置 run_group
-            df["run_group"] = df.groupby("symbol")["is_up"].transform(
-                lambda x: (x == 0).cumsum()
-            )
+            df["run_group"] = df.groupby("symbol")["is_up"].transform(lambda x: (x == 0).cumsum())
             df["consec"] = df.groupby(["symbol", "run_group"])["is_up"].cumsum()
             max_consec = df.groupby("trade_date")["consec"].max()
             lu_count = df.groupby("trade_date")["is_up"].sum()
             # 晋级率：昨日涨停今日继续涨停比例
-            pivot = df.pivot(
-                index="trade_date", columns="symbol", values="is_up"
-            ).fillna(0)
+            pivot = df.pivot(index="trade_date", columns="symbol", values="is_up").fillna(0)
             yesterday_up = pivot.shift(1)
             continued = (pivot == 1) & (yesterday_up == 1)
             yest_count = yesterday_up.sum(axis=1).replace(0, np.nan)

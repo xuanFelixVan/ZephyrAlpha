@@ -70,7 +70,7 @@ except ImportError:  # pragma: no cover
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # noqa: BLE001  # pragma: no cover
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
 _logger = logging.getLogger(__name__)
@@ -176,6 +176,8 @@ class RegimeFeatureBuilder:
         standardize_features: bool = True,
         enable_full_risk: bool = False,
         enable_overlay: bool = False,
+        enable_phase2c: bool = False,
+        data_loader: Any = None,
     ) -> None:
         """初始化。
 
@@ -199,6 +201,10 @@ class RegimeFeatureBuilder:
                 默认 False（C1 回归保护），Phase 2a 验证时置 True。
             enable_overlay: Phase 2b 开关。True=用 OverlaySignalsConstructor 产 8 转换
                 overlay_signals；False=overlay_signals={}（纯 HMM）。默认 False。
+            enable_phase2c: Phase 2c 开关。True=启用 4 T3 stub 维度 + #8 siphon + 合成VIX +
+                多分时共振（需配合 data_loader）；False=Phase 2b 行为（stub=0/1.0）。默认 False。
+            data_loader: RegimeDataLoader 实例（Phase 2c 新数据源加载层）。
+                None 时 Phase 2c 新维度全降级（0.0/1.0），保持 Phase 2b 行为。
         """
         self.backtest_start = backtest_start
         self.backtest_end = backtest_end
@@ -212,11 +218,13 @@ class RegimeFeatureBuilder:
             _logger.warning("sklearn 不可用，特征标准化关闭（HMM 拟合质量可能下降）")
         self.enable_full_risk = enable_full_risk
         self.enable_overlay = enable_overlay
+        self.enable_phase2c = enable_phase2c
         self._features_cache: pd.DataFrame | None = None
         self._index_df_cache: pd.DataFrame | None = None  # 代理 OHLC 缓存（供 risk/overlay 构造器复用）
         self._risk_ctor: Any = None  # RiskSignalConstructor（惰性构造）
         self._overlay_ctor: Any = None  # OverlaySignalsConstructor（惰性构造，Phase 2b）
         self._registry = get_registry()
+        self._data_loader = data_loader  # Phase 2c 数据加载层（None 时新维度全降级）
 
     # ── 公共接口 ──────────────────────────────────────────────────────────
 
@@ -293,9 +301,33 @@ class RegimeFeatureBuilder:
         self._index_df_cache = self._load_index_kline(idx_table)
         return self._index_df_cache
 
-    def build_train_matrix(
-        self, start: str, end: str
-    ) -> dict[str, Any]:
+    # ── Phase 2c 数据透传（委托 RegimeDataLoader，None 时降级）────────────
+
+    def get_money_flow(self) -> pd.DataFrame | None:
+        """Phase 2c: 全市场主力资金净流入（供 money_effect 维度）。None=降级。"""
+        return self._data_loader.load_money_flow() if self._data_loader is not None else None
+
+    def get_sector_kline(self) -> pd.DataFrame | None:
+        """Phase 2c: 行业板块K线（供 mainline 维度 + #8 sector_hhi）。None=降级。"""
+        return self._data_loader.load_sector_kline() if self._data_loader is not None else None
+
+    def get_limit_up_down(self) -> pd.DataFrame | None:
+        """Phase 2c: 涨跌停统计（供 leader/one_day_mainline 维度）。None=降级。"""
+        return self._data_loader.load_limit_up_down() if self._data_loader is not None else None
+
+    def get_hk_connect_flow(self) -> pd.DataFrame | None:
+        """Phase 2c: 北向资金（供 money_effect 辅助）。None=降级。"""
+        return self._data_loader.load_hk_connect_flow() if self._data_loader is not None else None
+
+    def get_option_iv_surface(self) -> pd.DataFrame | None:
+        """Phase 2c: 50ETF+300ETF 期权IV曲面（供合成VIX）。None=降级回退 vol_pct。"""
+        return self._data_loader.load_option_iv_surface() if self._data_loader is not None else None
+
+    def get_multi_tf_kline(self) -> dict[str, pd.DataFrame] | None:
+        """Phase 2c: 多分时 ETF K线（供 #9 多分时共振）。None=降级单分时。"""
+        return self._data_loader.load_multi_tf_kline() if self._data_loader is not None else None
+
+    def build_train_matrix(self, start: str, end: str) -> dict[str, Any]:
         """构造 HMM 训练矩阵（walk-forward 季度重拟合用）。
 
         Args:
@@ -309,9 +341,7 @@ class RegimeFeatureBuilder:
         features = self.build_features()
         sub = features.loc[start:end].dropna()
         if len(sub) < 100:
-            raise RegimeFeatureError(
-                f"训练矩阵样本不足: [{start}, {end}] 仅 {len(sub)} 行（需 ≥100）"
-            )
+            raise RegimeFeatureError(f"训练矩阵样本不足: [{start}, {end}] 仅 {len(sub)} 行（需 ≥100）")
         X = sub[FEATURE_NAMES].to_numpy(dtype=float)
         # 钳制 inf/NaN（防极端值破坏 HMM 拟合）
         X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
@@ -348,6 +378,7 @@ class RegimeFeatureBuilder:
         # Phase 2a/2b：惰性构造 risk/overlay 构造器（复用 self 已加载的 6 特征 + index_df）
         if self.enable_full_risk and self._risk_ctor is None:
             from zephyr.regime.risk_signal_builder import RiskSignalConstructor
+
             self._risk_ctor = RiskSignalConstructor(
                 backtest_start=self.backtest_start,
                 backtest_end=self.backtest_end,
@@ -360,6 +391,7 @@ class RegimeFeatureBuilder:
             # Phase 2b：OverlaySignalsConstructor（尚未实现，import 失败时关闭并 WARN）
             try:
                 from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
+
                 self._overlay_ctor = OverlaySignalsConstructor(
                     backtest_start=self.backtest_start,
                     backtest_end=self.backtest_end,
@@ -387,7 +419,9 @@ class RegimeFeatureBuilder:
 
         _logger.info(
             "walk-forward: %d 个季度边界，train=%d年，detect_window=%d",
-            len(quarter_ends), train_years, detect_window,
+            len(quarter_ends),
+            train_years,
+            detect_window,
         )
 
         for i, q in enumerate(quarter_ends):
@@ -404,18 +438,17 @@ class RegimeFeatureBuilder:
                     X_train = scaler.transform(X_train)
                 detector.fit({"X": X_train, "lengths": train_matrix.get("lengths")})
                 _logger.info("walk-forward fit Q%d [%s, %s] OK", i + 1, train_start, train_end)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 _logger.warning(
                     "walk-forward fit Q%d [%s, %s] 失败，本季降级均匀分布: %s",
-                    i + 1, train_start, train_end, exc,
+                    i + 1,
+                    train_start,
+                    train_end,
+                    exc,
                 )
 
             # detect 季度内每个交易日：(q, next_q]
-            next_q = (
-                quarter_ends[i + 1]
-                if i + 1 < len(quarter_ends)
-                else pd.Timestamp(self.backtest_end)
-            )
+            next_q = quarter_ends[i + 1] if i + 1 < len(quarter_ends) else pd.Timestamp(self.backtest_end)
             # detect 区间 = (q, next_q]，限定到 backtest 区间
             detect_start = max(q + pd.Timedelta(days=1), pd.Timestamp(self.backtest_start))
             detect_end = min(next_q, pd.Timestamp(self.backtest_end))
@@ -442,11 +475,7 @@ class RegimeFeatureBuilder:
                         vol_anom=_safe_float(last_row.get("volume_anomaly")),
                     )
                 # overlay_signals：Phase 2b 构造器 vs 空覆盖层（纯 HMM）
-                overlay_signals = (
-                    self._overlay_ctor.build_for_date(dt)
-                    if self._overlay_ctor is not None
-                    else {}
-                )
+                overlay_signals = self._overlay_ctor.build_for_date(dt) if self._overlay_ctor is not None else {}
                 X = window[FEATURE_NAMES].to_numpy(dtype=float)
                 X = np.nan_to_num(X, nan=0.0, posinf=0.0, neginf=0.0)
                 if scaler is not None:
@@ -458,17 +487,13 @@ class RegimeFeatureBuilder:
                         risk_signal_inputs=risk_inputs,
                     )
                     schedule[dt.to_pydatetime()] = float(shrinkage.value)
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001
                     _logger.warning("detect 异常 (date=%s)，退化为 1.0: %s", dt, exc)
                     schedule[dt.to_pydatetime()] = 1.0
 
         # EMA 时序平滑：抑制四档硬映射在阈值边界的跳变（降 Turnover）
         # PIT 满足（只用 t 及之前数据），值仍∈[0,1]（凸组合），只减不增不变量保持
-        if (
-            self.shrinkage_ema_alpha is not None
-            and 0.0 < self.shrinkage_ema_alpha < 1.0
-            and len(schedule) > 1
-        ):
+        if self.shrinkage_ema_alpha is not None and 0.0 < self.shrinkage_ema_alpha < 1.0 and len(schedule) > 1:
             schedule = self._ema_smooth_schedule(schedule, self.shrinkage_ema_alpha)
             _logger.info(
                 "Shrinkage EMA 平滑: α=%.2f，平滑后均值=%.3f",
@@ -492,9 +517,7 @@ class RegimeFeatureBuilder:
         Returns:
             MultiIndex(symbol, trade_date) DataFrame，含 close/volume/advance_count/decline_count。
         """
-        symbols = sorted(
-            set(self.cross_asset_indices + [self.market_proxy, self.breadth_index])
-        )
+        symbols = sorted(set(self.cross_asset_indices + [self.market_proxy, self.breadth_index]))
         syms_str = ", ".join([f"'{s}'" for s in symbols])
         sql = (
             f"SELECT trade_date, symbol, close, volume, advance_count, decline_count "
@@ -508,11 +531,9 @@ class RegimeFeatureBuilder:
         rows = _parse_tsv(tsv, ncols=6)
         if not rows:
             raise RegimeFeatureError(
-                f"index_kline 查询为空: symbols={symbols}, "
-                f"[{self.data_load_start}, {self.backtest_end}]"
+                f"index_kline 查询为空: symbols={symbols}, [{self.data_load_start}, {self.backtest_end}]"
             )
-        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume",
-                                          "advance_count", "decline_count"])
+        df = pd.DataFrame(rows, columns=["trade_date", "symbol", "close", "volume", "advance_count", "decline_count"])
         df["trade_date"] = pd.to_datetime(df["trade_date"])
         df["close"] = pd.to_numeric(df["close"], errors="coerce")
         df["volume"] = pd.to_numeric(df["volume"], errors="coerce")
@@ -520,9 +541,7 @@ class RegimeFeatureBuilder:
         df["decline_count"] = pd.to_numeric(df["decline_count"], errors="coerce").fillna(0)
         return df.set_index(["symbol", "trade_date"]).sort_index()
 
-    def _load_breadth(
-        self, index_df: pd.DataFrame
-    ) -> tuple[pd.Series, pd.Series]:
+    def _load_breadth(self, index_df: pd.DataFrame) -> tuple[pd.Series, pd.Series]:
         """从 index_df 提取广度指数的涨跌家数（F4 源）。
 
         399106 深证综指 advance_count/decline_count（2015-2026-07 有数据，近期断更处填 0）。
@@ -530,18 +549,14 @@ class RegimeFeatureBuilder:
         try:
             br = index_df.xs(self.breadth_index, level="symbol")
         except KeyError as exc:
-            raise RegimeFeatureError(
-                f"广度指数 {self.breadth_index} 未在 index_kline 数据中"
-            ) from exc
+            raise RegimeFeatureError(f"广度指数 {self.breadth_index} 未在 index_kline 数据中") from exc
         # 对齐到市场代理日期
         proxy_dates = index_df.xs(self.market_proxy, level="symbol").index
         adv = br["advance_count"].reindex(proxy_dates).fillna(0.0)
         dec = br["decline_count"].reindex(proxy_dates).fillna(0.0)
         return adv, dec
 
-    def _unstack_close(
-        self, index_df: pd.DataFrame, symbols: list[str]
-    ) -> pd.DataFrame:
+    def _unstack_close(self, index_df: pd.DataFrame, symbols: list[str]) -> pd.DataFrame:
         """把多指数 close 展开成 date × symbol DataFrame（F3 用）。"""
         sub = index_df.loc[[s for s in symbols if s in index_df.index.get_level_values(0)]]
         return sub["close"].unstack("symbol")
@@ -549,9 +564,7 @@ class RegimeFeatureBuilder:
     # ── 私有：工具 ────────────────────────────────────────────────────────
 
     @staticmethod
-    def _ema_smooth_schedule(
-        schedule: dict[datetime, float], alpha: float
-    ) -> dict[datetime, float]:
+    def _ema_smooth_schedule(schedule: dict[datetime, float], alpha: float) -> dict[datetime, float]:
         """对 Shrinkage schedule 做离线 EMA 平滑（降 Turnover）。
 
         smoothed_t = α * raw_t + (1-α) * smoothed_{t-1}，按日期升序递推。
@@ -576,9 +589,7 @@ class RegimeFeatureBuilder:
         return smoothed
 
     @staticmethod
-    def _build_feature_risk(
-        vol_pct: float, slope: float, vol_anom: float
-    ) -> dict[str, Any]:
+    def _build_feature_risk(vol_pct: float, slope: float, vol_anom: float) -> dict[str, Any]:
         """基于 HMM 6 特征构造简化版 risk_signal_inputs（危机覆盖）。
 
         不依赖 HMM 状态语义（无监督 HMM 的 r1-r9 标签不可控），直接用特征
@@ -623,9 +634,7 @@ class RegimeFeatureBuilder:
         return {"params": {1: risk}, "opportunity": {}}
 
     @staticmethod
-    def _rolling_apply(
-        series: pd.Series, func: Any, window: int
-    ) -> pd.Series:
+    def _rolling_apply(series: pd.Series, func: Any, window: int) -> pd.Series:
         """对 series 做 trailing window 滚动应用单值函数（F2a/F2b 用）。
 
         Args:
@@ -644,9 +653,7 @@ class RegimeFeatureBuilder:
         return pd.Series(out, index=series.index)
 
     @staticmethod
-    def _quarter_end_dates(
-        start: pd.Timestamp, end: pd.Timestamp, freq: str = "QE"
-    ) -> list[pd.Timestamp]:
+    def _quarter_end_dates(start: pd.Timestamp, end: pd.Timestamp, freq: str = "QE") -> list[pd.Timestamp]:
         """生成 [start, end] 内的季度末日列表（pandas 锚点，QE=季末）。"""
         dates = pd.date_range(start=start, end=end, freq=freq)
         return [d for d in dates]
@@ -656,9 +663,7 @@ class RegimeFeatureBuilder:
         try:
             return ch_reader.query(sql)
         except Exception as exc:
-            raise RegimeFeatureError(
-                f"ClickHouse 查询失败 ({context}): {exc}"
-            ) from exc
+            raise RegimeFeatureError(f"ClickHouse 查询失败 ({context}): {exc}") from exc
 
 
 __all__ = [
