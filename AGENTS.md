@@ -260,6 +260,24 @@
 >
 > **AI 合规**：①读 [`SECRETS.md`](file:///d:/ZephyrAlpha/SECRETS.md) 知全貌；②读密钥用 `from zephyr.shared.security.secrets import get_required_secret`（第三方 token）/ `get_service_secret("KEY", "postgres")`（基础设施凭证），**禁止裸 `os.getenv`**；③新增密钥三步走（加 KEY 到 .env → 更新 .env.example → 更新 config/secret_registry.yaml），缺任一步被 `SECRET-REGISTRY-CONSISTENCY` 阻断；④密钥值禁止硬编码到代码/配置，被 `NO-SECRET-HARDCODE` 阻断。
 
+## RULE-CLONEGUARD：第十二件事（代码克隆检测四层防御，治 AI 重复造轮子，#ARCH-FORCE-MERGE-DEDUP-001，2026-08-07 Phase D 闭合）
+
+> **AI 写新函数前 SHOULD 调 `clone_guard.check_before_write` 查重**（L0 源头预防，advisory 不阻断）；**L1 提交时 extract 级克隆（3+副本）由 `CAPABILITY-OVERLAP` 门禁硬阻断**（priority=200，无逃生通道）；**L2 周期审计事件触发**（`python scripts/clone_guard_audit.py`，非 cron，结果派生产物入 `.runtime/clone_guard_audit/` 不入 git）。与第八件事 RULE-CAPABILITY-LOOKUP 互补——前者**能力级**反查（capability token），本规则**代码级**检测（AST 哈希 + CodeSAGE 嵌入 + 语义相似度）。
+>
+> **病根（第一性原理）**：100% AI 开发 → AI 每会话冷启动无记忆 → 为已解决任务重复生成代码 → 功能重叠"AI Rot"累积 → 维护成本指数增长 + bug 传播。单靠能力反查（第八件事）堵不住函数/片段级语义克隆，须四层防御纵深。
+>
+> **四层防御（实现现状）**：
+> | 层 | 触发 | 强度 | 实现 |
+> |---|---|---|---|
+> | L0 源头预防 | AI 写代码前 SHOULD 调 MCP | advisory（不阻断） | [`clone_guard.check_before_write`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/mcp_server.py)（L 只读，返回 findings + import_suggestion 引导复用）+ `search_functions`/`audit_status`/`health_check` |
+> | L1 提交拦截 | `git commit` 经 GitCommitGateway | **extract 硬阻断** / review 警告 / acknowledged 跳过 | [`CAPABILITY-OVERLAP` gate](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py)（priority=200，全引擎降级 warn-only 兜底，`tests/` 豁免） |
+> | L2 周期审计 | 事件触发（手动/CI push） | 派生产物 + reconciler warn | [`orchestrator.audit()`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/orchestrator.py)（health_score A-F，`.runtime/clone_guard_audit/` 不入 git） |
+> | L3 跨边界 | 按需手动 | 占位（默认禁用） | `compare()`（redup/vendetect/relate，默认 disabled） |
+>
+> **acknowledged 白名单纪律（合理重复标记，治本 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS）**：经审慎确认的合理克隆（归档双实现/接口适配层），调 MCP [`clone_guard.resolve_finding`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/mcp_server.py)（`safety_level=M` 写操作）标记。`verdict=intentional`=保留两份（函数变化时重新浮现，非永久豁免）/`dismissed`=非重复（永久豁免）；`note` **强制非空**留痕防滥用。默认走 ruamel round-trip 写 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) acknowledged 段（**保留注释**，禁用 echo-guard CLI 的 PyYAML 重写路径丢注释）。acknowledge 仅改工作区文件，**须经 GitCommitGateway 提交持久化**（未提交会被 post-commit restore-to-HEAD 恢复）。禁止用白名单消除当前不想处理的告警——属治理逃逸。
+>
+> **AI 合规**：①写新函数前调 `clone_guard.check_before_write`，见 `import_suggestion` 优先复用而非新建；②冷启动调 `clone_guard.audit_status` 看累积技术债（6层闭环·可达性）；③遇 extract 级克隆硬阻断时合并去重（**无逃生通道**，区别于第八件事的 `[no-lookup:]`）；④标记合理重复用 `resolve_finding`（intentional/dismissed + note），勿直接改 `echo-guard.yml`；⑤配置真源 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) + [`clone_guard.yml`](file:///d:/ZephyrAlpha/clone_guard.yml)，蓝图 [`blueprint.md §6.1`](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/clone_guard/blueprint.md)。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。
@@ -317,7 +335,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | 一次性运维/诊断/迁移脚本 | A 类·非永久 | trae_060 §6 not_applies_to |
 | 测试夹具/常量 | A 类·非规则数据 | trae_060 §6 not_applies_to |
 
-> **常驻守护服务（watchdog 三服务，C 类·永久系统）**：三个 Task Scheduler 任务构成数据层 7×24 守护体系，均经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/register_guard_tasks.ps1) 一次性注册（AtLogOn 事件触发 + 5min repeat 兜底）。
+> **常驻守护服务（watchdog 三服务，C 类·永久系统）**：三个 Task Scheduler 任务构成数据层 7×24 守护体系，均经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/register_guard_tasks.ps1) 一次性注册（AtLogOn 事件触发 + 5min repeat 兜底）。Task Scheduler `MultipleInstances=Parallel`（#ARCH-BOOT-001 治本）：脚本级 PID 锁+心跳为单实例 SSoT，Task Scheduler 退化为无脑周期触发器（IgnoreNew 会阻断僵尸 guard 接管，导致 08-06/08-07 两交易日 intraday 停摆）。watchdog 的 5min repeat + 15s sleep 轮询属 **OS 进程监管时间退避例外**（非 reconciler 事件触发约束范围，对标 #ARCH-CH-PROBE-GUARD "5min repeat 属兜底"先例）。四层防御+心跳接管细节见 [`boot_autostart_architecture.md §3/§8`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/boot_autostart_architecture.md)。
 >
 > | 服务 | Task Scheduler 任务名 | guard 脚本 | 说明 |
 > |------|----------------------|-----------|------|
@@ -1530,45 +1548,4 @@ blueprint.md §组件全景原列 5 个"待施工"组件，经第一性原理审
 
 ## §灾备备份系统（MOD-INF-043）
 
-> v2.0（2026-07-28）：restic → robocopy /MIR + CH 增量。详见 [README.md](file:///d:/ZephyrAlpha/scripts/backup/README.md)。
-
-### 位置与组成
-- 蓝图: `docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md`
-- 代码: `scripts/backup/`（backup_config.yaml + backup.ps1 + backup_reconciler.py + backup_manual.ps1 + backup_daily_trigger.ps1 + backup_ch_vm.ps1 + restore.ps1 + ch_vm_ssh.py + README.md）
-- 配置 SSoT: `scripts/backup/backup_config.yaml`（路径/排除/CH base+inc/触发条件）
-- 外部依赖（不进 git）: `config/.env.ch_backup`（VM SSH 凭据）+ `config/.env.postgres` + `config/.env.clickhouse` + `F:\ch_backup_disk.vhdx`（1TB 动态 VHDX，附加到 Hyper-V VM `zephyr-ch`）
-- 备份目标: `F:\`（外置盘；代码 robocopy 镜像 + PG/SQLite dump + CH base/inc + VM VHDX）
-- 状态文件: `data/databases/backup_state.json`（运行时状态，派生非真源）
-
-### 触发机制
-- **每日保底**: Windows 计划任务 `ZephyrAlpha-DailyBackup`，每日 06:00（+StartWhenAvailable 补跑），运行 `backup.ps1 -Mode all -Force`
-- **post-commit 补充**: reconciler 注册在 GitCommitGateway（BACKUP-RECONCILER，第24个reconciler），双条件触发：committed_files 含重要文件 + 距上次备份≥8h
-- **每周 VM**: Windows 计划任务 `ZephyrAlpha-WeeklyVMBackup`，每周六 06:00，`backup_ch_vm.ps1 -AutoCheck`（CH 无变化则零停机跳过）
-- **手动（兜底）**: `scripts/backup/backup_manual.ps1`（-Force 跳过节奏保护）
-
-### 备份内容
-- 代码+配置: robocopy /MIR 镜像（~10-100 MB/日，仅复制变化文件，删除目标多余文件）
-- PG 数据: pg_dump -Fc（~1.5 MB/日）+ PG 配置每日同步到 `config/system_configs/pg/`
-- SQLite: sqlite3 .backup（不可用时 Python sqlite3.connect().backup() fallback）
-- CH 数据: CH BACKUP 增量（base `market.zip` + inc `inc.zip`，~1-5 GiB/日；inc 每日覆盖重写，inc≥50% base 时自动重建基线）
-- CH 配置: SSH sync → `config/system_configs/ch/`
-- CH VM (OS+程序): 每周 AutoCheck，仅 CH 升级/配置变更时全量备份（Stop-VM → robocopy → Start-VM）
-- 必须排除: __pycache__/.pytest_cache/.mypy_cache/.ruff_cache/.aidrafts/.runtime/tmp/(除_db_dumps)/logs/*.log/.venv/node_modules
-
-### 保留策略
-- robocopy /MIR 镜像语义——不累积版本，目标始终是源的最新镜像
-- CH 增量 inc.zip 每日覆盖重写（非链式累积）；inc ≥ 50% base 时自动重建基线
-- 日写入量从 restic 时代 ~209 GB 降至 ~1-5 GB（降 98%）
-
-### 恢复
-详见 `docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/dr_runbook.md`。快速入口：
-- `scripts/backup/restore.ps1 inventory` — 查看 F: 盘备份清单
-- `scripts/backup/restore.ps1 verify` — 验证备份完整性（只读，安全）
-- `scripts/backup/restore.ps1 all` — 完整恢复：vm → ch → pg → sqlite → code
-- 单项: `restore.ps1 vm|ch|pg|sqlite|code`（pg 支持 -drop 重建）
-
-### 注意事项
-- 无 restic 依赖，无加密密码（`config/.env.restic` 已删除，`F:\restic-zephyr` 405GB 已删除）
-- 并发防护: `.runtime/backup.lock`（4h TTL 自动过期）防止每日任务与 post-commit 同时运行
-- CH 24h 节奏门: last_ch_backup_time 仅成功时推进；-Force 旁路（每日任务用 -Force）
-- CH BACKUP/RESTORE 异步执行，脚本轮询 system.backups（max 3h）
+> v2.0（2026-07-28）：restic → robocopy /MIR + CH 增量。完整内容（位置组成/触发机制/备份内容/保留策略/恢复/注意事项）见 [`scripts/backup/README.md`](file:///d:/ZephyrAlpha/scripts/backup/README.md) + [蓝图](file:///d:/ZephyrAlpha/docs/03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md) + `dr_runbook.md`（C 类派生细节，#ARCH-AGENTS-BUDGET-RECONCILE-001 离库）。

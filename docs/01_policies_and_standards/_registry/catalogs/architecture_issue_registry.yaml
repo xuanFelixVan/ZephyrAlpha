@@ -12102,10 +12102,10 @@ entries:
     - 'src/zephyr/clone_guard/（Phase A/B/C 已施工：orchestrator/config/aggregator/mcp_server + 6 引擎适配器）'
     - 'src/zephyr/gov_enforcement/commit_gates/（CAPABILITY-OVERLAP 门禁升级）'
     - 'AGENTS.md（CloneGuard 使用规范，Phase D）'
-  fix_phase: 'Phase A/B/C 完成（2026-08-06）—— Phase A: echo_guard 适配器 + orchestrator MVP + L0 MCP Server(check_before_write/health_check) + 离线优先配置(HF_HUB_OFFLINE)；Phase B: ast-grep 规则适配器 + FindingAggregator(去重/多数表决/严重性就高) + asyncio.gather 并发调度 + reDUP 语义克隆适配器(T3/T4)；Phase C: mcrit/relate/vendetect 三引擎适配器 + orchestrator audit()/compare() 方法(可运行核心闭环) + MCP 增强(search_functions/audit_status)；260 单测全绿，capability/translation 登记齐备。Phase D（AGENTS.md 使用规范 + 全量真实引擎联调）待施工。'
+  fix_phase: 'Phase A/B/C 完成（2026-08-06）—— Phase A: echo_guard 适配器 + orchestrator MVP + L0 MCP Server(check_before_write/health_check) + 离线优先配置(HF_HUB_OFFLINE)；Phase B: ast-grep 规则适配器 + FindingAggregator(去重/多数表决/严重性就高) + asyncio.gather 并发调度 + reDUP 语义克隆适配器(T3/T4)；Phase C: mcrit/relate/vendetect 三引擎适配器 + orchestrator audit()/compare() 方法(可运行核心闭环) + MCP 增强(search_functions/audit_status)；260 单测全绿，capability/translation 登记齐备。Phase D 部分完成（2026-08-07）—— AGENTS.md RULE-CLONEGUARD 使用规范入库（#ARCH-AGENTS-BUDGET-RECONCILE-001 Phase 1 闭合可知性断裂）；全量真实引擎联调仍待施工。'
   status: in_progress
   created: '2026-08-06'
-  last_updated: '2026-08-06'
+  last_updated: '2026-08-07'
 # --- #ARCH-IMPORT-INTEGRITY-SYSPATH-001: import_integrity_gate sys.path 注入目录启发式识别（2026-08-06）---
 - issue_id: '#ARCH-IMPORT-INTEGRITY-SYSPATH-001'
   title: import_integrity_gate 误判 sys.path 动态注入的裸模块名为悬空 import——启发式提取注入目录治本
@@ -12636,5 +12636,52 @@ entries:
     - 'tests/clone_guard/test_echo_guard_adapter.py（5 个新测试类：CLI 路径/路由分流/round-trip/prune/辅助函数）'
   fix_phase: 已完成（2026-08-07）—— round-trip 路径接管 acknowledged 白名单写入保留注释；端到端冒烟通过；70 测试全过
   status: decided
+  created: '2026-08-07'
+  last_updated: '2026-08-07'
+# --- #ARCH-AGENTS-BUDGET-RECONCILE-001: AGENTS.md 行数预算冲突化解——1234 降级软目标 + 类别分离公约（2026-08-07 登记）---
+- issue_id: '#ARCH-AGENTS-BUDGET-RECONCILE-001'
+  title: AGENTS.md 行数预算(1234)与 #ARCH-FORCE-MERGE-DEDUP-001 Phase D(强制写入 CloneGuard 规范)冲突——1234 无第一性推导且零执行，降级软目标 + 类别分离治本
+  severity: P2中
+  category: architecture_governance
+  adjudication: |
+    2026-08-07 架构师客观裁定（第一性原理 + 三路调研实测数据）。
+    冲突：#ARCH-GOV-BUDGET-001 I-GOV-3 规定 AGENTS.md<=1234 行、新增必须等量退役；
+    #ARCH-FORCE-MERGE-DEDUP-001 impact 明确要求 Phase D 把 CloneGuard 使用规范写入 AGENTS.md。
+    实测数据（三路调研）：
+    (1) 1234 无 first-principles 推导——全 registry 仅 1 处出现（I-GOV-3 条款本身），形似
+    记忆数列 1-2-3-4；裁定时(2026-08-05) AGENTS.md 已 1519 行(超 285)；全代码库零处
+    读取/比对 1234（无 gate/reconciler/hook 计行数）；超标早于裁定 17 天(2026-07-19 即破)。
+    (2) AGENTS.md 现 1574 行，内容审计证实 ~340(下界)至 ~680(上界)行为 C 类可派生细节
+    （§3 域表/§7 gate 明细/§10 hook 细节/§11 生成器表/§灾备摘要），违反 I-GOV-1 派生产物
+    离库——超标根因是宪法文档被派生细节污染，非宪法本身过载。
+    (3) CloneGuard 已完整落地(5 MCP 工具+L1 硬阻断+L2 审计+acknowledged 白名单)但 AGENTS.md
+    0 处提及——可知性断裂(G4 同型病根)。
+    第一性原理裁定：
+    1. 1234 作为"绝对硬上限"无效——从未被满足/强制/推导，是 aspirational text 非不变量。
+    2. I-GOV-3 真实内核是"治理开销不无限膨胀"(类别分离+等量退役)，非某个绝对行数。
+       1234 降级为"软目标 + 类别分离纪律参考值"。
+    3. 冲突是混类假冲突：CloneGuard RULE 属 A 类宪章(Phase D 强制)合法入库；超标 340+ 行
+       属 C 类派生细节(I-GOV-1 漏渗)合法退役。退役 C 类为 A 类腾位，非真冲突。
+    4. 处置：不上调 1234(奖励混类污染)、不下调内容标准(损害可知性)，执行 C 类退役 +
+       A 类 CloneGuard RULE 入库。目标退役 ~450 行→降至 ~1124→加 RULE ~13 行→~1137，
+       低于 1234 软目标留增长空间。
+    5. 自指矛盾：项目有 TestAgentsMdNoHardcodedCount 禁止 AGENTS.md 硬编码计数，而 1234
+       本身是 registry 硬编码计数——降级为软目标消除该矛盾。
+    施工分期：
+    - Phase 1(本次,2026-08-07)：添加 RULE-CLONEGUARD(~18 行 A 类) + 退役 §灾备(44→3 行
+      指针,保 heading 防 DANGLING-REFERENCE) + 修 mcp.json 漂移(tool_count 2→5/ACL 补
+      3 工具/safety_level 补 M)。净 -23 行(预算正向)。
+    - Phase 2(待施工)：系统性 C 类退役 ~450 行——§3 域表/§7 gate 明细/§10 hook 细节/§11
+      生成器表迁指针到对应 registry/蓝图(保 heading)；§11.2-§11.3 历史裁定先迁"真源:本节"
+      到 ruling_registry.yaml 再退役。
+    - Phase 3(待施工)：AGENTS.md 类别分离公约(A 留/C 迁) + warn-only reconciler 监测 C 类
+      回潮 + CloneGuard CI 集成(clone_guard_audit.py 接入 GitHub workflow 事件触发) +
+      capability_overlap_gate AGENTS.md 旧描述同步 Phase A 升级。
+  impact:
+    - 'AGENTS.md（新增 RULE-CLONEGUARD 第十二件事 + §灾备退役为指针）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（登记本裁定 + 更新 #ARCH-FORCE-MERGE-DEDUP-001 Phase D 状态）'
+    - 'config/mcp.json（clone_guard 段 tool_count 2→5 + safety_level 补 M + acl_by_server.clone_guard 补 search_functions/audit_status/resolve_finding）'
+  fix_phase: 'Phase 1 已完成（2026-08-07）—— RULE-CLONEGUARD 入库 + §灾备退役 + mcp.json 漂移修复，AGENTS.md 1574→1551 行（净 -23，预算正向）。Phase 2/3 待施工。'
+  status: in_progress
   created: '2026-08-07'
   last_updated: '2026-08-07'
