@@ -346,8 +346,9 @@ def main() -> None:
         help="mock=合成数据冒烟（默认）；real=真实数据 2015-2026",
     )
     parser.add_argument(
-        "--risk-mode", choices=["simple", "full"], default="simple",
-        help="risk参数模式：simple=Phase1简化版(1参数#1)；full=Phase2a全量(13参数)",
+        "--risk-mode", choices=["simple", "full"], default="full",
+        help="risk参数模式：simple=Phase1简化版(1参数#1)；full=Phase2a全量(13参数，"
+             "生产默认——#ARCH-REGIME-RISK-FULL-001 C1验证不退化)",
     )
     parser.add_argument(
         "--overlay", choices=["off", "on"], default="off",

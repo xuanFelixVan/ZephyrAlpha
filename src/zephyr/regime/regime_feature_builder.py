@@ -160,7 +160,8 @@ class RegimeFeatureBuilder:
                 训练窗口 fit scaler，detect 时 transform（PIT：scaler 只见训练数据）。
             enable_full_risk: Phase 2a 开关。True=用 RiskSignalConstructor 产 13 参数
                 risk_signal_inputs；False=回退 Phase 1 简化版 _build_feature_risk（1参数 #1）。
-                默认 False（C1 回归保护），Phase 2a 验证时置 True。
+                默认 False（C1 回归保护）。生产推荐 True（#ARCH-REGIME-RISK-FULL-001 C1
+                验证不退化，#1 门控保证非危机日 ≈ Phase 1）；C1 验证脚本已默认 full。
             enable_overlay: Phase 2b 开关。True=用 OverlaySignalsConstructor 产 8 转换
                 overlay_signals；False=overlay_signals={}（纯 HMM）。默认 False。
             enable_phase2c: Phase 2c 开关。True=启用 4 T3 stub 维度 + #8 siphon + 合成VIX +

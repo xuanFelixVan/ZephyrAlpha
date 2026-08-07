@@ -314,6 +314,7 @@ class RegimeDetector:
         shrinkage_enabled: bool = True,
         state_frequencies: dict[str, float] | None = None,
         temperature: float = 1.0,
+        overlay_gated: bool = True,
     ) -> None:
         """初始化 Regime 检测器。
 
@@ -329,10 +330,16 @@ class RegimeDetector:
                 P^(1/T)/ΣP^(1/T)，是"tempering"——数学有效但非 Guo2017 严格 Brier
                 最优（标准 TS 需对 pre-softmax logits 操作，HMM log_proba 是对数后验）。
                 正式的 T 学习（IS 数据最小化 BCE）见 discussion_004 §2.2.6 Step 3。
+            overlay_gated: overlay #1 门控开关（#ARCH-REGIME-OVERLAY-001 方案A治本）。
+                True（默认）→ overlay 仅在危机期（#1<1.0）生效，非危机期 overlay_signals
+                置空不干预——避免 T1/S1 在非危机期假阳性触发系统性压仓致 Sharpe 退化 0.02。
+                与 _compute_risk_signal 的 #1 门控对齐（#1>=1.0 时 RiskSignal=1.0）。
+                False → overlay 全程生效（ungated，诊断用，如 dump_overlay_triggers.py）。
         """
         self.hmm_params = hmm_params or {"n_states": 4, "covariance_type": "full", "n_iter": 100}
         self.shrinkage_enabled = shrinkage_enabled
         self.temperature = float(temperature)
+        self.overlay_gated = overlay_gated
         self._hmm_model: Any = None  # hmmlearn GaussianHMM，fit() 后赋值
         self._hmm_degraded: bool = False  # hmmlearn 不可用 / 拟合失败标记
         # 各态历史频率（稀有态判断用），默认按 discussion_004 §2.1 Viterbi 全历史统计
@@ -365,6 +372,13 @@ class RegimeDetector:
         Returns:
             (RegimeProbabilities, ShrinkageResult)
         """
+        # 方案A门控（#ARCH-REGIME-OVERLAY-001）：overlay 仅在危机期（#1<1.0）生效。
+        # 非危机期 T1/S1 假阳性触发系统性压仓致 Sharpe 退化 0.02；与 RiskSignal #1 门控
+        # 对齐——#1>=1.0 时 overlay_signals 置空，平时不干预，危机期才允许 overlay 改概率。
+        if self.overlay_gated:
+            _params = (risk_signal_inputs or {}).get("params") or {}
+            if float(_params.get(1, 1.0)) >= 1.0:
+                overlay_signals = {}
         # 子模块①：HMM 4态
         hmm_probs = self._run_hmm(regime_features)
         # 子模块②：覆盖层 3 特殊态 + 8 转换评分

@@ -11,7 +11,7 @@
 # [TESTS] tests/regime/test_regime_detector.py
 # [A_module] module_id=MOD-TEST-REGIME-DET | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #MOD-REGIME-001 #discussion_001 #discussion_002
+# [ARCH-REF] #MOD-REGIME-001 #discussion_001 #discussion_002 #ARCH-REGIME-OVERLAY-001
 """test_regime_detector.py — RegimeDetector (MOD-REGIME-001) 单元测试
 
 覆盖 blueprint §6 Phase 1 测试规划（~30 项）：
@@ -287,6 +287,70 @@ class TestOverlay:
             assert trig.transition_type == tid
             assert trig.total_score == 1.0
             assert isinstance(trig.score_breakdown, dict)
+
+
+# ── 3b. overlay #1 门控（方案A，#ARCH-REGIME-OVERLAY-001）─────────
+
+
+class TestOverlayGating:
+    """overlay #1 门控测试（#ARCH-REGIME-OVERLAY-001 方案A固化）。
+
+    门控逻辑：overlay_gated=True（默认）时，detect() 入口检查
+    risk_signal_inputs.params[1]：
+      - #1 >= 1.0（非危机）→ overlay_signals 置空，overlay 不干预
+        （避免 T1/S1 假阳性触发系统性压仓致 Sharpe 退化 0.02）
+      - #1 <  1.0（危机期）→ overlay_signals 保留，overlay 正常生效
+    与 _compute_risk_signal 的 #1 门控对齐（#1>=1.0 时 RiskSignal=1.0）。
+    """
+
+    @pytest.fixture
+    def s1_overlay(self) -> dict:
+        """S1 触发的 overlay_signals（CRISIS r10=0.6）。"""
+        return {"transitions": {"S1": {"vix_panic": 70, "correlation": 65, "liquidity": 40}}}
+
+    def test_default_overlay_gated_is_true(self):
+        """默认 overlay_gated=True（治本方案默认开启）。"""
+        d = RegimeDetector(shrinkage_enabled=True)
+        assert d.overlay_gated is True
+
+    def test_gated_blocks_overlay_when_primary_ge_1(self, s1_overlay):
+        """#1>=1.0（非危机）+ overlay_gated=True → overlay 被屏蔽，overlay_probs 全 0。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s1_overlay, {"params": {1: 1.0}})
+        for s in OVERLAY_STATES:
+            assert probs.overlay_probabilities[s] == 0.0, f"{s} 应被门控屏蔽"
+
+    def test_gated_keeps_overlay_when_primary_lt_1(self, s1_overlay):
+        """#1<1.0（危机期）+ overlay_gated=True → overlay 正常生效，r10=0.6。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s1_overlay, {"params": {1: 0.5}})
+        assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
+
+    def test_ungated_keeps_overlay_regardless_of_primary(self, s1_overlay):
+        """overlay_gated=False → 无论 #1 值，overlay 全程生效（ungated 诊断模式）。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=False)
+        probs, _ = d.detect({}, s1_overlay, {"params": {1: 1.0}})
+        assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
+
+    def test_gated_blocks_when_risk_inputs_missing(self, s1_overlay):
+        """risk_signal_inputs 缺失 → 默认 #1=1.0 → overlay 被屏蔽（降级安全）。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s1_overlay, {})
+        for s in OVERLAY_STATES:
+            assert probs.overlay_probabilities[s] == 0.0
+
+    def test_gated_blocks_when_risk_inputs_none(self, s1_overlay):
+        """risk_signal_inputs=None → 默认 #1=1.0 → overlay 被屏蔽。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s1_overlay, None)
+        for s in OVERLAY_STATES:
+            assert probs.overlay_probabilities[s] == 0.0
+
+    def test_gated_just_below_boundary(self, s1_overlay):
+        """#1=0.99（略低于 1.0）→ overlay 正常生效（危机期）。"""
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s1_overlay, {"params": {1: 0.99}})
+        assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
 
 
 # ── 4. 12维合并归一化 ───────────────────────────────────────────────
