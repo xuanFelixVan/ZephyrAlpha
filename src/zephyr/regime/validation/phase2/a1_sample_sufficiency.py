@@ -55,7 +55,7 @@ except ImportError:  # pragma: no cover
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover  # noqa: BLE001
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
 _logger = logging.getLogger(__name__)
@@ -193,9 +193,7 @@ class A1SampleSufficiency:
 
         X_clean = self._clean_matrix(X)
         if len(X_clean) < 100:
-            raise A1ValidationError(
-                f"特征矩阵样本不足: dropna 后仅 {len(X_clean)} 行（需 ≥100）"
-            )
+            raise A1ValidationError(f"特征矩阵样本不足: dropna 后仅 {len(X_clean)} 行（需 ≥100）")
 
         scaler = None
         X_fit = X_clean
@@ -209,7 +207,7 @@ class A1SampleSufficiency:
 
     def validate_with_fit_detector(
         self,
-        detector: Any,
+        detector: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         X: np.ndarray,
         standardize: bool = False,
     ) -> A1Report:
@@ -254,9 +252,9 @@ class A1SampleSufficiency:
 
     def _validate_with_detector(
         self,
-        detector: Any,
+        detector: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         X: np.ndarray,
-        scaler: Any,
+        scaler: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         original_count: int,
     ) -> A1Report:
         """核心：fit（如未 fit）+ Viterbi 解码 + 统计。"""
@@ -269,7 +267,7 @@ class A1SampleSufficiency:
         if needs_fit:
             try:
                 detector.fit({"X": X, "lengths": None})
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 _logger.warning("A1: HMM 拟合失败，降级为均匀分布判定: %s", exc)
                 degraded = True
         else:
@@ -284,7 +282,7 @@ class A1SampleSufficiency:
         try:
             state_seq = hmm_model.predict(X)  # Viterbi 解码，返回 (T,) 标签 0..n-1
             log_likelihood = float(hmm_model.score(X))
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.warning("A1: Viterbi 解码失败: %s", exc)
             return self._build_degraded_report(len(X))
 
@@ -317,9 +315,7 @@ class A1SampleSufficiency:
             )
 
         # 整体判定
-        has_insufficient = any(
-            s.verdict is A1StateVerdict.INSUFFICIENT for s in state_stats
-        )
+        has_insufficient = any(s.verdict is A1StateVerdict.INSUFFICIENT for s in state_stats)
         has_moderate = any(s.verdict is A1StateVerdict.MODERATE for s in state_stats)
         if has_insufficient:
             overall = A1Overall.FAIL
@@ -329,10 +325,7 @@ class A1SampleSufficiency:
             overall = A1Overall.PASS
 
         min_count = min((s.count for s in state_stats), default=0)
-        summary = (
-            f"A1 样本充足性: {total} 样本，{n_states} 态，"
-            f"最少态样本={min_count} 天 → {overall.value}"
-        )
+        summary = f"A1 样本充足性: {total} 样本，{n_states} 态，最少态样本={min_count} 天 → {overall.value}"
         _logger.info("A1 完成: %s", summary)
         return A1Report(
             state_stats=state_stats,
@@ -351,9 +344,9 @@ class A1SampleSufficiency:
                 state=HMM_STATES_N[i],
                 count=per_state,
                 frequency=per_state / total if total > 0 else 0.0,
-                verdict=A1StateVerdict.SUFFICIENT if per_state >= SUFFICIENT_DAYS
-                else (A1StateVerdict.MODERATE if per_state >= INSUFFICIENT_DAYS
-                      else A1StateVerdict.INSUFFICIENT),
+                verdict=A1StateVerdict.SUFFICIENT
+                if per_state >= SUFFICIENT_DAYS
+                else (A1StateVerdict.MODERATE if per_state >= INSUFFICIENT_DAYS else A1StateVerdict.INSUFFICIENT),
                 action="[降级] hmmlearn 不可用，按均匀分布估计",
             )
             for i in range(4)

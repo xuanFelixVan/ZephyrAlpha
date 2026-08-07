@@ -51,7 +51,7 @@ except ImportError:  # pragma: no cover
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover  # noqa: BLE001
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
 _logger = logging.getLogger(__name__)
@@ -273,8 +273,12 @@ class B4TransitionAccuracy:
                 # 超出数据范围的事件不计入分母（仅作标注）
                 matches.append(
                     B4EventMatch(
-                        event=event, hit=False, triggered_at=None,
-                        delta_days=None, matched_stage=None, total_score=None,
+                        event=event,
+                        hit=False,
+                        triggered_at=None,
+                        delta_days=None,
+                        matched_stage=None,
+                        total_score=None,
                     )
                 )
                 continue
@@ -282,8 +286,12 @@ class B4TransitionAccuracy:
                 # 数据未就绪（触发条件依赖的维度缺失）→ 不计入分母，标注"待数据就绪"
                 matches.append(
                     B4EventMatch(
-                        event=event, hit=False, triggered_at=None,
-                        delta_days=None, matched_stage=None, total_score=None,
+                        event=event,
+                        hit=False,
+                        triggered_at=None,
+                        delta_days=None,
+                        matched_stage=None,
+                        total_score=None,
                     )
                 )
                 continue
@@ -333,9 +341,7 @@ class B4TransitionAccuracy:
         daily_transitions: dict[Any, list[Any]],
     ) -> dict[str, dict[pd.Timestamp, list[Any]]]:
         """构建 {transition_type: {date: [TransitionTriggered]}} 索引。"""
-        index: dict[str, dict[pd.Timestamp, list[Any]]] = {
-            tid: {} for tid in TRANSITION_TYPES
-        }
+        index: dict[str, dict[pd.Timestamp, list[Any]]] = {tid: {} for tid in TRANSITION_TYPES}
         for raw_date, triggers in daily_transitions.items():
             if not triggers:
                 continue
@@ -357,8 +363,12 @@ class B4TransitionAccuracy:
         window_dates = self._trading_window(event.date, sorted_dates, MATCH_WINDOW_DAYS)
         if not window_dates:
             return B4EventMatch(
-                event=event, hit=False, triggered_at=None,
-                delta_days=None, matched_stage=None, total_score=None,
+                event=event,
+                hit=False,
+                triggered_at=None,
+                delta_days=None,
+                matched_stage=None,
+                total_score=None,
             )
 
         type_index = trigger_index.get(event.transition_type, {})
@@ -383,8 +393,12 @@ class B4TransitionAccuracy:
 
         if best_match is None:
             return B4EventMatch(
-                event=event, hit=False, triggered_at=None,
-                delta_days=None, matched_stage=None, total_score=None,
+                event=event,
+                hit=False,
+                triggered_at=None,
+                delta_days=None,
+                matched_stage=None,
+                total_score=None,
             )
         wd, trig, delta_idx = best_match
         return B4EventMatch(
@@ -407,6 +421,7 @@ class B4TransitionAccuracy:
             return []
         # 二分查找事件日位置
         import bisect
+
         idx = bisect.bisect_left(sorted_dates, event_date)
         start = max(0, idx - n_days)
         end = min(len(sorted_dates), idx + n_days + 1)
@@ -420,6 +435,7 @@ class B4TransitionAccuracy:
     ) -> int:
         """事件日到目标日的交易日偏移（+ = 滞后，- = 提前）。"""
         import bisect
+
         i_event = bisect.bisect_left(sorted_dates, event_date)
         i_target = bisect.bisect_left(sorted_dates, target_date)
         return i_target - i_event
@@ -429,9 +445,7 @@ class B4TransitionAccuracy:
         matches: list[B4EventMatch],
     ) -> dict[str, dict[str, int]]:
         """按 transition_type 统计命中。"""
-        stats: dict[str, dict[str, int]] = {
-            tid: {"hit": 0, "total": 0} for tid in TRANSITION_TYPES
-        }
+        stats: dict[str, dict[str, int]] = {tid: {"hit": 0, "total": 0} for tid in TRANSITION_TYPES}
         for m in matches:
             if not m.event.in_data_range:
                 continue

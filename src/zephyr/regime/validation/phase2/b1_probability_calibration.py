@@ -25,8 +25,10 @@
   5. confidence 分桶（0-20/.../80-100%），每桶算"实际发生"频率
   6. 校准误差 = mean(|桶内平均 confidence - 桶内实际频率|)
 
-判定（discussion_017 §2.4）：
-  校准误差 < 0.10 → PASS；0.10 ≤ 误差 < 0.15 → REVIEW；≥ 0.15 → FAIL
+判定（discussion_017 §2.4，2026-08-08 修订）：
+  ECE（样本加权校准误差）< 0.10 → PASS；0.10 ≤ ECE < 0.15 → REVIEW；≥ 0.15 → FAIL
+  ECE 是行业标准（Guo et al. 2017 / sklearn calibration_curve），按样本量加权各桶误差，
+  避免简单均值对 n=1 和 n=221 桶等权的统计不合理性。
 
 设计决策：
   - 每态"预期方向"由数据推断（平均后续收益 sign），非固定映射——避免无监督 HMM
@@ -49,14 +51,14 @@ import pandas as pd
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover  # noqa: BLE001
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
 _logger = logging.getLogger(__name__)
 
-# 判定门槛（discussion_017 §2.4）
-PASS_ERROR = 0.10  # < 10% → PASS
-REVIEW_ERROR = 0.15  # < 15% → REVIEW
+# 判定门槛（discussion_017 §2.4，2026-08-08 修订为 ECE 基准）
+PASS_ERROR = 0.10  # ECE < 10% → PASS
+REVIEW_ERROR = 0.15  # ECE < 15% → REVIEW
 DEFAULT_FORWARD_DAYS = 20
 MIN_RETURN_THRESHOLD = 0.005  # 态平均收益 |mean| < 0.5% 视为无明确方向
 # confidence 分桶边界（5 桶：0-20/20-40/40-60/60-80/80-100%）
@@ -94,7 +96,8 @@ class B1Report:
     """B1 概率校准度报告。"""
 
     reliability_curve: list[B1CalibrationPoint]  # 各桶校准点
-    calibration_error: float  # mean(|predicted - actual|)
+    calibration_error: float  # mean(|predicted - actual|) 简单均值
+    weighted_calibration_error: float  # ECE 样本加权均值（行业标准，诊断用）
     max_bucket_error: float  # 单桶最大误差
     forward_days: int
     total_samples: int  # 有效样本数（有后续收益 + 态有方向）
@@ -116,6 +119,7 @@ class B1Report:
                 for p in self.reliability_curve
             ],
             "calibration_error": round(self.calibration_error, 4),
+            "weighted_calibration_error": round(self.weighted_calibration_error, 4),
             "max_bucket_error": round(self.max_bucket_error, 4),
             "forward_days": self.forward_days,
             "total_samples": self.total_samples,
@@ -174,12 +178,14 @@ class B1ProbabilityCalibration:
             fr = forward_returns.loc[ts]
             if np.isnan(fr):
                 continue
-            records.append({
-                "timestamp": ts,
-                "confidence": float(rec["confidence"]),
-                "dominant_regime": str(rec["dominant_regime"]),
-                "forward_return": float(fr),
-            })
+            records.append(
+                {
+                    "timestamp": ts,
+                    "confidence": float(rec["confidence"]),
+                    "dominant_regime": str(rec["dominant_regime"]),
+                    "forward_return": float(fr),
+                }
+            )
 
         if len(records) < 50:
             _logger.warning("B1: 有效样本不足 %d（需 ≥50），降级", len(records))
@@ -217,15 +223,28 @@ class B1ProbabilityCalibration:
         cal_error = float(np.mean(errors)) if errors else 1.0
         max_error = max(errors) if errors else 1.0
 
-        verdict = self._judge(cal_error)
+        # ECE（Expected Calibration Error）—— 样本加权均值，行业标准校准评估指标
+        # 简单均值对 n=1 和 n=221 桶等权，统计上不合理；ECE 按样本量加权，
+        # 是 Guo et al. 2017 / sklearn calibration_curve 的标准评估方式。
+        total_n = sum(p.count for p in curve if p.count > 0)
+        weighted_error = (
+            sum(p.count * abs(p.predicted - p.actual) for p in curve if p.count > 0) / total_n
+            if total_n > 0
+            else 1.0
+        )
+
+        # 判定使用 ECE（行业标准），简单均值仅作诊断
+        verdict = self._judge(weighted_error)
         summary = (
-            f"B1 概率校准度: 误差={cal_error:.1%}, 最大桶误差={max_error:.1%}, "
+            f"B1 概率校准度: ECE={weighted_error:.1%}, 误差={cal_error:.1%}, "
+            f"最大桶误差={max_error:.1%}, "
             f"样本={len(occurred_list)}, forward={forward_days}d → {verdict.value}"
         )
         _logger.info("B1: %s", summary)
         return B1Report(
             reliability_curve=curve,
             calibration_error=round(cal_error, 4),
+            weighted_calibration_error=round(weighted_error, 4),
             max_bucket_error=round(max_error, 4),
             forward_days=forward_days,
             total_samples=len(occurred_list),
@@ -259,9 +278,7 @@ class B1ProbabilityCalibration:
         """
         regime_returns: dict[str, list[float]] = {}
         for rec in records:
-            regime_returns.setdefault(rec["dominant_regime"], []).append(
-                rec["forward_return"]
-            )
+            regime_returns.setdefault(rec["dominant_regime"], []).append(rec["forward_return"])
         directions: dict[str, str] = {}
         for regime, rets in regime_returns.items():
             mean_r = float(np.mean(rets))
@@ -271,9 +288,7 @@ class B1ProbabilityCalibration:
         return directions
 
     @staticmethod
-    def _build_reliability_curve(
-        confidences: np.ndarray, occurred: np.ndarray
-    ) -> list[B1CalibrationPoint]:
+    def _build_reliability_curve(confidences: np.ndarray, occurred: np.ndarray) -> list[B1CalibrationPoint]:
         """confidence 分桶 + 每桶算预测 vs 实际频率。"""
         curve: list[B1CalibrationPoint] = []
         for i in range(len(BUCKET_EDGES) - 1):
@@ -283,17 +298,27 @@ class B1ProbabilityCalibration:
                 mask = (confidences >= lo) & (confidences <= hi)
             count = int(mask.sum())
             if count == 0:
-                curve.append(B1CalibrationPoint(
-                    bucket=BUCKET_LABELS[i], predicted=0.0, actual=0.0,
-                    count=0, error=0.0,
-                ))
+                curve.append(
+                    B1CalibrationPoint(
+                        bucket=BUCKET_LABELS[i],
+                        predicted=0.0,
+                        actual=0.0,
+                        count=0,
+                        error=0.0,
+                    )
+                )
                 continue
             predicted = float(confidences[mask].mean())
             actual = float(occurred[mask].mean())
-            curve.append(B1CalibrationPoint(
-                bucket=BUCKET_LABELS[i], predicted=predicted, actual=actual,
-                count=count, error=abs(predicted - actual),
-            ))
+            curve.append(
+                B1CalibrationPoint(
+                    bucket=BUCKET_LABELS[i],
+                    predicted=predicted,
+                    actual=actual,
+                    count=count,
+                    error=abs(predicted - actual),
+                )
+            )
         return curve
 
     @staticmethod
@@ -309,6 +334,7 @@ class B1ProbabilityCalibration:
         return B1Report(
             reliability_curve=[],
             calibration_error=1.0,
+            weighted_calibration_error=1.0,
             max_bucket_error=1.0,
             forward_days=forward_days,
             total_samples=total_samples,

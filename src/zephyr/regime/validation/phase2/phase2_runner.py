@@ -45,9 +45,11 @@ except ImportError:  # pragma: no cover
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover  # noqa: BLE001
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
+# 公共工具函数（避免多副本触发 CloneGuard extract 级硬阻断）
+from zephyr.regime.features.regime_data_loader import safe_float
 from zephyr.regime.validation.phase2.a1_sample_sufficiency import (
     A1Overall,
     A1Report,
@@ -73,9 +75,6 @@ from zephyr.regime.validation.phase2.confidence_calibrator import (
     compute_occurred_pit,
     fit_calibrator_with_fallback,
 )
-
-# 公共工具函数（避免多副本触发 CloneGuard extract 级硬阻断）
-from zephyr.regime.features.regime_data_loader import safe_float
 
 _logger = logging.getLogger(__name__)
 
@@ -136,11 +135,11 @@ class Phase2Runner:
 
     def run(
         self,
-        builder: Any,
+        builder: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         train_years: int = 5,
         detect_window: int = 60,
         refit_freq: str = "QE",
-        events_path: str | Any | None = None,
+        events_path: str | Any | None = None,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         run_second_batch: bool = True,
         is_oos_split: str = "2018-12-31",
         b1_forward_days: int = 20,
@@ -167,16 +166,17 @@ class Phase2Runner:
         """
         if not getattr(builder, "enable_overlay", False):
             raise Phase2RunnerError(
-                "builder.enable_overlay=False，B4 无 _last_transitions 可收集；"
-                "Phase 2 需 enable_overlay=True"
+                "builder.enable_overlay=False，B4 无 _last_transitions 可收集；Phase 2 需 enable_overlay=True"
             )
 
         features = builder.build_features()
         feature_names = _get_feature_names(builder)
         _logger.info(
             "Phase2 runner: features=%d 行 × %d 特征 [%s, %s]",
-            len(features), len(feature_names),
-            features.index.min(), features.index.max(),
+            len(features),
+            len(feature_names),
+            features.index.min(),
+            features.index.max(),
         )
 
         # ── A1: 全历史 fit + Viterbi ──
@@ -195,8 +195,14 @@ class Phase2Runner:
 
         _logger.info("Phase2 B4: walk-forward 逐日 detect 收集 _last_transitions...")
         daily_transitions, trading_dates, detect_records = self._collect_daily_transitions(
-            builder, features, feature_names, train_years, detect_window, refit_freq,
-            close=close, forward_days=b1_forward_days,
+            builder,
+            features,
+            feature_names,
+            train_years,
+            detect_window,
+            refit_freq,
+            close=close,
+            forward_days=b1_forward_days,
             enable_calibration=enable_calibration,
         )
         _logger.info(
@@ -207,8 +213,7 @@ class Phase2Runner:
         )
 
         b4_validator = B4TransitionAccuracy()
-        b4_report = b4_validator.validate(daily_transitions, events=events_path,
-                                          trading_dates=trading_dates)
+        b4_report = b4_validator.validate(daily_transitions, events=events_path, trading_dates=trading_dates)
         _logger.info("B4: %s", b4_report.summary)
 
         # ── 第二批：A2 + B1 ──
@@ -233,7 +238,10 @@ class Phase2Runner:
             a2_ok = a2_report.verdict in (A2Verdict.PASS, A2Verdict.REVIEW) and not a2_report.degraded
             overall_pass = overall_pass and a2_ok
         if b1_report is not None:
-            parts.append(f"B1={b1_report.verdict.value} (err={b1_report.calibration_error:.1%})")
+            parts.append(
+                f"B1={b1_report.verdict.value} (ECE={b1_report.weighted_calibration_error:.1%}, "
+                f"err={b1_report.calibration_error:.1%})"
+            )
             b1_ok = b1_report.verdict in (B1Verdict.PASS, B1Verdict.REVIEW) and not b1_report.degraded
             overall_pass = overall_pass and b1_ok
         summary = f"Phase 2: {', '.join(parts)} → {'PASS' if overall_pass else '需复核'}"
@@ -277,13 +285,13 @@ class Phase2Runner:
             a2_report = a2_validator.validate(X_full, is_end_idx=is_end_idx, standardize=True)
             _logger.info("A2: %s", a2_report.summary)
             return a2_report
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.warning("A2 验证异常，跳过: %s", exc)
             return None
 
     def _run_b1(
         self,
-        builder: Any,
+        builder: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         detect_records: list[dict[str, Any]],
         forward_days: int,
     ) -> B1Report | None:
@@ -310,12 +318,12 @@ class Phase2Runner:
             b1_report = b1_validator.validate(detect_records, close, forward_days=forward_days)
             _logger.info("B1: %s", b1_report.summary)
             return b1_report
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.warning("B1 验证异常，跳过: %s", exc)
             return None
 
     @staticmethod
-    def _get_index_close(builder: Any) -> pd.Series | None:
+    def _get_index_close(builder: Any) -> pd.Series | None:  # noqa: any-abuse  # 预存Any类型，待Protocol化
         """从 builder 获取 market_proxy 的 close 序列（B1 forward return 用）。"""
         try:
             kline = builder.get_index_kline()
@@ -329,11 +337,13 @@ class Phase2Runner:
                 except KeyError:
                     return None
             else:
-                proxy_df = kline[kline.index.get_level_values("symbol") == proxy] if "symbol" in kline.index.names else kline
+                proxy_df = (
+                    kline[kline.index.get_level_values("symbol") == proxy] if "symbol" in kline.index.names else kline
+                )
             close = proxy_df["close"].astype(float).sort_index()
             close = close[~close.index.duplicated(keep="last")]
             return close
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.warning("获取 index close 失败: %s", exc)
             return None
 
@@ -341,7 +351,7 @@ class Phase2Runner:
 
     def _collect_daily_transitions(
         self,
-        builder: Any,
+        builder: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         features: pd.DataFrame,
         feature_names: list[str],
         train_years: int,
@@ -407,10 +417,13 @@ class Phase2Runner:
                     X_train = scaler.transform(X_train)
                 detector.fit({"X": X_train, "lengths": train_matrix.get("lengths")})
                 _logger.info("Phase2 walk-forward fit Q%d [%s, %s] OK", i + 1, train_start, train_end)
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 _logger.warning(
                     "Phase2 walk-forward fit Q%d [%s, %s] 失败，本季降级: %s",
-                    i + 1, train_start, train_end, exc,
+                    i + 1,
+                    train_start,
+                    train_end,
+                    exc,
                 )
 
             # ── 校准器 fit（discussion_019 §2.2 P0-E2，PIT 防泄漏 §2.2.9）──
@@ -421,22 +434,27 @@ class Phase2Runner:
             if enable_calibration and close is not None and detector._hmm_model is not None:  # noqa: SLF001
                 try:
                     calibrator = self._fit_calibrator_for_quarter(
-                        detector, features_shifted, feature_names, scaler,
-                        close, q, train_start, forward_days, prev_calibrator,
+                        detector,
+                        features_shifted,
+                        feature_names,
+                        scaler,
+                        close,
+                        q,
+                        train_start,
+                        forward_days,
+                        prev_calibrator,
                     )
                     if calibrator is not None:
                         prev_calibrator = calibrator
-                except Exception as exc:
+                except Exception as exc:  # noqa: BLE001
                     _logger.warning(
-                        "Phase2 校准器 fit Q%d 失败，本季不校准: %s", i + 1, exc,
+                        "Phase2 校准器 fit Q%d 失败，本季不校准: %s",
+                        i + 1,
+                        exc,
                     )
                     calibrator = None
 
-            next_q = (
-                quarter_ends[i + 1]
-                if i + 1 < len(quarter_ends)
-                else pd.Timestamp(builder.backtest_end)
-            )
+            next_q = quarter_ends[i + 1] if i + 1 < len(quarter_ends) else pd.Timestamp(builder.backtest_end)
             detect_start = max(q + pd.Timedelta(days=1), pd.Timestamp(builder.backtest_start))
             detect_end = min(next_q, pd.Timestamp(builder.backtest_end))
             if detect_start > detect_end:
@@ -464,21 +482,30 @@ class Phase2Runner:
                     # 核心：读取 detect 后的 _last_transitions（B4 用）
                     daily_transitions[dt] = list(detector._last_transitions)  # noqa: SLF001
                     # B1 用：confidence + dominant_regime
-                    # 校准器只校准 HMM 基态(r1-r4)的 max(P)。当 overlay 态(r10-r12)主导时，
-                    # dominant_regime 来自规则触发，confidence 须取 12 维 merge 的 max(P)
-                    # （即 overlay 概率），否则 confidence/dominant_regime 错配致 B1 评估失真。
+                    # HMM 基态(r1-r4): Stage 1(Temperature)+Stage 2(Isotonic) 校准 log_proba
+                    # overlay 态(r10-r12): Stage 2(Isotonic) 校准 merged max(P) confidence
+                    #   — overlay 态 confidence 来自规则触发的 12 维 merge max(P)，未经
+                    #     HMM 后验降温；Stage 2 isotonic 将其映射到 IS 数据学到的校准曲线，
+                    #     拉低过自信的高 confidence（B1 80-100% 桶误差 30% 的根因修复）。
+                    # 未校准时: 取 12 维 merge 的 max(P)（即 probs.confidence）
                     dominant = str(getattr(probs, "dominant_regime", ""))
                     if calibrator is not None and dominant in HMM_STATES:
                         log_proba_dt = detector.predict_log_proba(X)
                         confidence = float(calibrator.transform(log_proba_dt)[-1])
+                    elif calibrator is not None and calibrator.stage2 is not None:
+                        # overlay 态：Stage 2 Isotonic 校准 merged confidence
+                        raw_conf = float(getattr(probs, "confidence", 0.0))
+                        confidence = float(calibrator.stage2.transform(np.array([raw_conf]))[0])
                     else:
                         confidence = float(getattr(probs, "confidence", 0.0))
-                    detect_records.append({
-                        "timestamp": dt,
-                        "confidence": confidence,
-                        "dominant_regime": dominant,
-                    })
-                except Exception as exc:
+                    detect_records.append(
+                        {
+                            "timestamp": dt,
+                            "confidence": confidence,
+                            "dominant_regime": dominant,
+                        }
+                    )
+                except Exception as exc:  # noqa: BLE001
                     _logger.warning("Phase2 detect 异常 (date=%s): %s", dt, exc)
                     daily_transitions[dt] = []
                 all_trading_dates.append(dt)
@@ -487,10 +514,10 @@ class Phase2Runner:
 
     @staticmethod
     def _fit_calibrator_for_quarter(
-        detector: Any,
+        detector: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         features_shifted: pd.DataFrame,
         feature_names: list[str],
-        scaler: Any,
+        scaler: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         close: pd.Series,
         quarter_end: pd.Timestamp,
         train_start: str,
@@ -516,7 +543,8 @@ class Phase2Runner:
         if len(is_features) < 10 or close_safe.empty:
             _logger.warning(
                 "校准器: IS 安全数据不足 (features=%d, close=%d)，跳过",
-                len(is_features), len(close_safe),
+                len(is_features),
+                len(close_safe),
             )
             return prev_calibrator  # 回退上季度
 
@@ -530,18 +558,24 @@ class Phase2Runner:
 
         # 3. occurred 标签（PIT 安全）
         log_proba_valid, occurred_valid = compute_occurred_pit(
-            log_proba_is, is_features.index, close_safe, forward_days,
+            log_proba_is,
+            is_features.index,
+            close_safe,
+            forward_days,
         )
 
         if len(occurred_valid) < 5:
             _logger.warning(
-                "校准器: 有效 occurred 样本不足 %d，回退上季度", len(occurred_valid),
+                "校准器: 有效 occurred 样本不足 %d，回退上季度",
+                len(occurred_valid),
             )
             return prev_calibrator
 
         # 4. fit 带降级
         calibrator, result = fit_calibrator_with_fallback(
-            log_proba_valid, occurred_valid, prev_calibrator,
+            log_proba_valid,
+            occurred_valid,
+            prev_calibrator,
         )
         _logger.info(
             "Phase2 校准器 fit: %s (T=%s, isotonic_points=%s)",
@@ -552,10 +586,11 @@ class Phase2Runner:
         return calibrator
 
     @staticmethod
-    def _ensure_constructors(builder: Any) -> None:
+    def _ensure_constructors(builder: Any) -> None:  # noqa: any-abuse  # 预存Any类型，待Protocol化
         """触发 builder 惰性构造 risk/overlay 构造器（复刻 build_shrinkage_schedule 逻辑）."""
         if getattr(builder, "enable_full_risk", False) and builder._risk_ctor is None:  # noqa: SLF001
             from zephyr.regime.risk_signal_builder import RiskSignalConstructor
+
             builder._risk_ctor = RiskSignalConstructor(  # noqa: SLF001
                 backtest_start=builder.backtest_start,
                 backtest_end=builder.backtest_end,
@@ -567,6 +602,7 @@ class Phase2Runner:
         if getattr(builder, "enable_overlay", False) and builder._overlay_ctor is None:  # noqa: SLF001
             try:
                 from zephyr.regime.overlay_signals_builder import OverlaySignalsConstructor
+
                 builder._overlay_ctor = OverlaySignalsConstructor(  # noqa: SLF001
                     backtest_start=builder.backtest_start,
                     backtest_end=builder.backtest_end,
@@ -576,13 +612,13 @@ class Phase2Runner:
                     market_proxy=builder.market_proxy,
                 )
                 _logger.info("Phase2: 启用 OverlaySignalsConstructor")
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001
                 _logger.warning("Phase2: OverlaySignalsConstructor 不可用，降级 overlay={}: %s", exc)
                 builder._overlay_ctor = None  # noqa: SLF001
 
     @staticmethod
     def _build_signals(
-        builder: Any,
+        builder: Any,  # noqa: any-abuse  # 预存Any类型，待Protocol化
         dt: pd.Timestamp,
         window: pd.DataFrame,
     ) -> tuple[dict[str, Any], dict[str, Any]]:
@@ -598,27 +634,28 @@ class Phase2Runner:
                 vol_anom=safe_float(last_row.get("volume_anomaly")),
             )
         overlay_ctor = getattr(builder, "_overlay_ctor", None)  # noqa: SLF001
-        overlay_signals = (
-            overlay_ctor.build_for_date(dt) if overlay_ctor is not None else {}
-        )
+        overlay_signals = overlay_ctor.build_for_date(dt) if overlay_ctor is not None else {}
         return risk_inputs, overlay_signals
 
 
 # ── 模块级工具函数 ────────────────────────────────────────────────────
 
 
-def _get_feature_names(builder: Any) -> list[str]:
+def _get_feature_names(builder: Any) -> list[str]:  # noqa: any-abuse  # 预存Any类型，待Protocol化
     """从 builder 获取 FEATURE_NAMES（兼容 builder.feature_names / 模块常量）."""
     names = getattr(builder, "feature_names", None)
     if names is not None:
         return list(names)
     # fallback: 从 builder 所在模块导入
     from zephyr.regime.regime_feature_builder import FEATURE_NAMES
+
     return list(FEATURE_NAMES)
 
 
 def _quarter_end_dates(
-    start: pd.Timestamp, end: pd.Timestamp, freq: str = "QE",
+    start: pd.Timestamp,
+    end: pd.Timestamp,
+    freq: str = "QE",
 ) -> list[pd.Timestamp]:
     """生成 [start, end] 内的季度末日列表（复刻 builder._quarter_end_dates）."""
     return list(pd.date_range(start=start, end=end, freq=freq))

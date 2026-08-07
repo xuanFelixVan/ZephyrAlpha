@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.regime.validation.phase2.phase2_runner; scripts.tests.run_phase2_validation
 # [STARTUP] imported
 # [MATURITY] design
-# [INVARIANTS] 校准只减自信不减锐度(T>1降温); 保序性(argmax不变); PIT防泄漏(IS裁剪+方向只用IS数据); BCE非多类NLL; 四级降级(n>=50/20/prev/identity)
+# [INVARIANTS] 校准只减自信不减锐度(T>1降温); 保序性(argmax不变); PIT防泄漏(IS裁剪+方向只用IS数据); BCE非多类NLL; 四级降级(n>=50/20/prev/identity); Isotonic原始数据fit(PAVA自带正则化,无需预分桶); overlay态走Stage2校准
 # [MODIFY-GUARD] discussion_019_phase3_engineering_plan.md §2.2
 # [STABILITY] evolving
 # [SAFETY] M
@@ -23,8 +23,10 @@ Stage 1: Temperature Scaling（全局降温，治本）
     pre-softmax logits，故为 tempering——数学有效但非严格 Brier 最优，§2.2.3）。
 
 Stage 2: Isotonic Regression（局部修正，治标）
-    分桶后每桶算 (mean_confidence, mean_occurred)，IsotonicRegression 拟合
-    非参数单调映射，修正 Stage 1 后的残余局部偏差。
+    直接在原始 (confidence, occurred) 对上 fit IsotonicRegression（PAVA 算法），
+    无需预分桶。PAVA 的单调性约束自带正则化，避免预分桶导致的信息损失
+    （5 桶预分桶仅产生 3-4 个拟合点，局部修正过粗）。分桶点仅用于日志可观测性。
+    亦用于 overlay 态 confidence 校准（HMM 基态走 Stage 1+2，overlay 态走 Stage 2）。
 
 降级策略（§2.2.10）：
     Level 1 (n≥50): 正常 fit Stage 1 + Stage 2
@@ -66,7 +68,7 @@ except ImportError:  # pragma: no cover
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover  # noqa: BLE001
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
 _logger = logging.getLogger(__name__)
@@ -81,8 +83,13 @@ T_BOUNDS: tuple[float, float] = (0.1, 30.0)
 # confidence 分桶边界——对齐 B1 验证器（b1_probability_calibration.py:63）
 BUCKET_EDGES: list[float] = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
 
-# Isotonic 每桶最少样本数（§2.2.8 D：防止稀有桶过拟合）
+# Isotonic 每桶最少样本数（§2.2.8 D：防止稀有桶过拟合）——仅用于日志分桶
 MIN_BUCKET_SAMPLES: int = 5
+
+# Isotonic 原始数据 fit 所需的最少唯一 confidence 值（防止退化拟合）
+# 5 桶预分桶仅产生 3-4 个拟合点（局部修正过粗）；直接在原始 (confidence, occurred)
+# 对上 fit IsotonicRegression（PAVA 单调性约束 = 自带正则化），保留全部分辨率。
+MIN_UNIQUE_FOR_FIT: int = 5
 
 # 降级阈值（§2.2.10）
 LEVEL1_MIN_SAMPLES: int = 50  # ≥50 → 正常 fit Stage 1 + Stage 2
@@ -129,9 +136,7 @@ class CalibrationResult:
             "n_samples": self.n_samples,
             "T": round(self.T, 6) if self.T is not None else None,
             "isotonic_points": (
-                [(round(x, 6), round(y, 6)) for x, y in self.isotonic_points]
-                if self.isotonic_points
-                else None
+                [(round(x, 6), round(y, 6)) for x, y in self.isotonic_points] if self.isotonic_points else None
             ),
             "summary": self.summary,
         }
@@ -163,7 +168,7 @@ class Calibrator(ABC):
         return {"type": self.__class__.__name__}
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "Calibrator":
+    def from_dict(cls, d: dict[str, Any]) -> Calibrator:
         """反序列化校准参数。"""
         raise NotImplementedError(f"{cls.__name__} 未实现 from_dict")
 
@@ -194,13 +199,9 @@ class TemperatureCalibrator(Calibrator):
         occurred_arr = np.asarray(occurred, dtype=float)
 
         if log_proba.ndim != 2:
-            raise CalibrationError(
-                f"TemperatureCalibrator.fit: log_proba 须 2D (N, n_states)，实际 {log_proba.ndim}D"
-            )
+            raise CalibrationError(f"TemperatureCalibrator.fit: log_proba 须 2D (N, n_states)，实际 {log_proba.ndim}D")
         if len(log_proba) != len(occurred_arr):
-            raise CalibrationError(
-                f"样本数不匹配: log_proba={len(log_proba)}, occurred={len(occurred_arr)}"
-            )
+            raise CalibrationError(f"样本数不匹配: log_proba={len(log_proba)}, occurred={len(occurred_arr)}")
         if len(log_proba) < 2:
             _logger.warning("TemperatureCalibrator: 样本不足 %d，保持 T=%.3f", len(log_proba), self.T)
             return
@@ -214,7 +215,8 @@ class TemperatureCalibrator(Calibrator):
         if len(unique) < 2:
             _logger.warning(
                 "TemperatureCalibrator: occurred 全 %.0f，无法优化 T，保持 T=%.3f",
-                unique[0] if len(unique) > 0 else -1, self.T,
+                unique[0] if len(unique) > 0 else -1,
+                self.T,
             )
             return
 
@@ -253,7 +255,7 @@ class TemperatureCalibrator(Calibrator):
         return {"type": "TemperatureCalibrator", "T": round(self.T, 6)}
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "TemperatureCalibrator":
+    def from_dict(cls, d: dict[str, Any]) -> TemperatureCalibrator:
         return cls(T=float(d["T"]))
 
     # ── 内部 ──────────────────────────────────────────────────────
@@ -275,9 +277,7 @@ class TemperatureCalibrator(Calibrator):
                 )
             )
 
-        result = minimize_scalar(
-            binary_cross_entropy, bounds=T_BOUNDS, method="bounded"
-        )
+        result = minimize_scalar(binary_cross_entropy, bounds=T_BOUNDS, method="bounded")
         return float(result.x)
 
 
@@ -287,21 +287,29 @@ class TemperatureCalibrator(Calibrator):
 class IsotonicCalibrator(Calibrator):
     """Stage 2: Isotonic Regression（局部修正）。
 
-    分桶后每桶算 (mean_confidence, mean_occurred)，IsotonicRegression 拟合
-    非参数单调映射（§2.2.8 D）。修正 Stage 1 后的残余局部偏差。
+    直接在原始 (confidence, occurred) 对上 fit IsotonicRegression（PAVA 算法），
+    无需预分桶。PAVA 的单调性约束自带正则化，避免 5 桶预分桶导致的信息损失
+    （预分桶仅产生 3-4 个拟合点，局部修正过粗）。分桶点仅用于日志可观测性。
 
-    降级：sklearn 不可用或样本不足 → passthrough（返回原始 confidence）。
+    亦用于 overlay 态 confidence 校准：HMM 基态走 Stage 1(Temperature)+Stage 2，
+    overlay 态（r10-r12）直接走 Stage 2（输入 merged max(P) confidence）。
+
+    降级：sklearn 不可用 / 唯一值不足 / 拟合失败 → passthrough。
     """
 
     def __init__(self) -> None:
-        self._iso: Any = None  # sklearn IsotonicRegression
-        self._fit_points: tuple[tuple[float, float], ...] = ()
+        self._x_thresh: np.ndarray | None = None  # isotonic x 断点
+        self._y_thresh: np.ndarray | None = None  # isotonic y 断点（单调非递减）
+        self._fit_points: tuple[tuple[float, float], ...] = ()  # 分桶点（日志用）
 
     def fit(self, X: np.ndarray, occurred: np.ndarray) -> None:
-        """分桶 + IsotonicRegression 拟合。
+        """在原始 (confidence, occurred) 上 fit IsotonicRegression。
+
+        PAVA（Pool Adjacent Violators Algorithm）保证单调性，自带正则化——
+        无需预分桶，保留全部分辨率。
 
         Args:
-            X: (N,) confidence 值（Stage 1 输出）。
+            X: (N,) confidence 值（Stage 1 输出，或 overlay merged max(P)）。
             occurred: (N,) 二值标签。
         """
         confidences = np.asarray(X, dtype=float).ravel()
@@ -309,68 +317,106 @@ class IsotonicCalibrator(Calibrator):
 
         if len(confidences) != len(occurred_arr):
             raise CalibrationError(
-                f"IsotonicCalibrator: 样本数不匹配 confidence={len(confidences)}, "
-                f"occurred={len(occurred_arr)}"
+                f"IsotonicCalibrator: 样本数不匹配 confidence={len(confidences)}, occurred={len(occurred_arr)}"
             )
 
         if IsotonicRegression is None:
             _logger.warning("sklearn 不可用，IsotonicCalibrator 降级 passthrough")
             return
 
-        # 分桶 + 每桶算 (mean_confidence, mean_occurred)
-        points = self._bucketize(confidences, occurred_arr)
-        if len(points) < 2:
+        if len(confidences) < 2:
+            _logger.warning("IsotonicCalibrator: 样本不足 %d，降级 passthrough", len(confidences))
+            return
+
+        # 唯一 confidence 值不足 → 退化（无法拟合有意义的单调映射）
+        unique_count = int(np.unique(confidences).size)
+        if unique_count < MIN_UNIQUE_FOR_FIT:
             _logger.warning(
-                "IsotonicCalibrator: 有效桶不足 %d（需 ≥2），降级 passthrough",
-                len(points),
+                "IsotonicCalibrator: 唯一 confidence 值 %d < %d，降级 passthrough",
+                unique_count,
+                MIN_UNIQUE_FOR_FIT,
             )
             return
 
-        x = np.array([p[0] for p in points])
-        y = np.array([p[1] for p in points])
-        self._iso = IsotonicRegression(out_of_bounds="clip")
-        self._iso.fit(x, y)
-        self._fit_points = tuple((float(xi), float(yi)) for xi, yi in zip(x, y))
+        # 直接在原始数据上 fit（PAVA 单调性约束 = 自带正则化）
+        iso = IsotonicRegression(out_of_bounds="clip", y_min=0.0, y_max=1.0)
+        iso.fit(confidences, occurred_arr)
+
+        # 提取 thresholds 用于 transform + 序列化
+        # sklearn ≥1.0: X_thresholds_/y_thresholds_; <1.0: X_/y_
+        x_thresh = getattr(iso, "X_thresholds_", getattr(iso, "X_", None))
+        y_thresh = getattr(iso, "y_thresholds_", getattr(iso, "y_", None))
+        if x_thresh is None or len(x_thresh) < 2:
+            _logger.warning("IsotonicCalibrator: 拟合后 thresholds 不足，降级 passthrough")
+            return
+
+        self._x_thresh = np.asarray(x_thresh, dtype=float)
+        self._y_thresh = np.asarray(y_thresh, dtype=float)
+
+        # 分桶点（日志可观测性，不参与拟合）
+        self._fit_points = tuple(self._bucketize(confidences, occurred_arr))
+
         _logger.info(
-            "IsotonicCalibrator: 拟合 %d 个桶点 %s",
-            len(points),
+            "IsotonicCalibrator: 原始数据 fit (n=%d, %d thresholds), 分桶点 %s",
+            len(confidences),
+            len(self._x_thresh),
             [(round(x, 3), round(y, 3)) for x, y in self._fit_points],
         )
 
     def transform(self, X: np.ndarray) -> np.ndarray:
-        """应用 isotonic 映射。未 fit 时 passthrough。"""
+        """应用 isotonic 映射。未 fit 时 passthrough。
+
+        np.interp 线性插值 + 越界 clip（等价于 sklearn IsotonicRegression.predict）。
+        """
         confidences = np.asarray(X, dtype=float).ravel()
-        if self._iso is None:
+        if self._x_thresh is None:
             return confidences  # passthrough
-        return np.clip(self._iso.predict(confidences), 0.0, 1.0)
+        return np.clip(
+            np.interp(confidences, self._x_thresh, self._y_thresh),
+            0.0,
+            1.0,
+        )
 
     def to_dict(self) -> dict[str, Any]:
-        return {
-            "type": "IsotonicCalibrator",
-            "points": [(round(x, 6), round(y, 6)) for x, y in self._fit_points],
-        }
+        if self._x_thresh is not None:
+            return {
+                "type": "IsotonicCalibrator",
+                "x_thresholds": [round(float(x), 6) for x in self._x_thresh],
+                "y_thresholds": [round(float(y), 6) for y in self._y_thresh],
+                # 分桶点（日志用 + backward compat）
+                "points": [(round(x, 6), round(y, 6)) for x, y in self._fit_points],
+            }
+        return {"type": "IsotonicCalibrator", "points": []}
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "IsotonicCalibrator":
+    def from_dict(cls, d: dict[str, Any]) -> IsotonicCalibrator:
         cal = cls()
-        points = d.get("points") or []
-        if len(points) >= 2 and IsotonicRegression is not None:
-            x = np.array([p[0] for p in points])
-            y = np.array([p[1] for p in points])
-            cal._iso = IsotonicRegression(out_of_bounds="clip")
-            cal._iso.fit(x, y)
-            cal._fit_points = tuple((float(xi), float(yi)) for xi, yi in zip(x, y))
+        # 新格式：x_thresholds / y_thresholds（原始 PAVA 断点）
+        x = d.get("x_thresholds")
+        y = d.get("y_thresholds")
+        if x and y and len(x) >= 2:
+            cal._x_thresh = np.array(x, dtype=float)
+            cal._y_thresh = np.array(y, dtype=float)
+            cal._fit_points = tuple(
+                (float(xi), float(yi)) for xi, yi in zip(x, y, strict=False)
+            )
+            return cal
+        # 旧格式：points（binned means）—— 直接用作插值断点
+        pts = d.get("points") or []
+        if len(pts) >= 2:
+            cal._x_thresh = np.array([p[0] for p in pts], dtype=float)
+            cal._y_thresh = np.array([p[1] for p in pts], dtype=float)
+            cal._fit_points = tuple((float(xi), float(yi)) for xi, yi in pts)
         return cal
 
     # ── 内部 ──────────────────────────────────────────────────────
 
     @staticmethod
-    def _bucketize(
-        confidences: np.ndarray, occurred: np.ndarray
-    ) -> list[tuple[float, float]]:
+    def _bucketize(confidences: np.ndarray, occurred: np.ndarray) -> list[tuple[float, float]]:
         """分桶对齐 B1 的 BUCKET_EDGES，每桶算 (mean_confidence, mean_occurred)。
 
-        每桶 < MIN_BUCKET_SAMPLES 时跳过（防止过拟合）。
+        仅用于日志可观测性，不参与 isotonic 拟合。
+        每桶 < MIN_BUCKET_SAMPLES 时跳过。
         """
         bucket_idx = np.digitize(confidences, BUCKET_EDGES[1:-1])
         points: list[tuple[float, float]] = []
@@ -439,7 +485,7 @@ class TwoStageCalibrator:
         }
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "TwoStageCalibrator":
+    def from_dict(cls, d: dict[str, Any]) -> TwoStageCalibrator:
         stage1 = None
         stage2 = None
         s1 = d.get("stage1")
@@ -491,7 +537,7 @@ def fit_calibrator_with_fallback(
         T = calibrator.stage1.T if calibrator.stage1 else None
         iso_points = (
             calibrator.stage2._fit_points  # noqa: SLF001
-            if calibrator.stage2 and calibrator.stage2._iso is not None  # noqa: SLF001
+            if calibrator.stage2 and calibrator.stage2._x_thresh is not None  # noqa: SLF001
             else None
         )
         result = CalibrationResult(
@@ -591,8 +637,7 @@ def compute_occurred_pit(
     ts_list = list(timestamps)
     if len(ts_list) != log_proba.shape[0]:
         raise CalibrationError(
-            f"compute_occurred_pit: timestamps ({len(ts_list)}) 与 log_proba 行数 "
-            f"({log_proba.shape[0]}) 不匹配"
+            f"compute_occurred_pit: timestamps ({len(ts_list)}) 与 log_proba 行数 ({log_proba.shape[0]}) 不匹配"
         )
 
     # 1. dominant state per timestamp
@@ -725,6 +770,7 @@ def load_calibration(
 
 __all__ = [
     "BUCKET_EDGES",
+    "MIN_UNIQUE_FOR_FIT",
     "T_BOUNDS",
     "CalibrationError",
     "CalibrationResult",

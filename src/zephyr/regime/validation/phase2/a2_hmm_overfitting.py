@@ -50,7 +50,7 @@ except ImportError:  # pragma: no cover
 
 try:
     from zephyr.shared.foundation.errors import ZephyrBaseError
-except Exception:  # pragma: no cover
+except Exception:  # pragma: no cover  # noqa: BLE001
     ZephyrBaseError = Exception  # type: ignore[assignment,misc]
 
 _logger = logging.getLogger(__name__)
@@ -150,9 +150,7 @@ class A2HmmOverfitting:
         X_oos = self._clean_matrix(X[is_end_idx:])
 
         if len(X_is) < 100 or len(X_oos) < 100:
-            raise A2ValidationError(
-                f"IS/OOS 样本不足: IS={len(X_is)}, OOS={len(X_oos)}（需各 ≥100）"
-            )
+            raise A2ValidationError(f"IS/OOS 样本不足: IS={len(X_is)}, OOS={len(X_oos)}（需各 ≥100）")
 
         # 各自标准化（PIT：IS scaler 只见 IS 数据，OOS scaler 只见 OOS 数据）
         X_is_fit, scaler_is = self._standardize(X_is, standardize)
@@ -164,7 +162,7 @@ class A2HmmOverfitting:
         try:
             detector_is.fit({"X": X_is_fit, "lengths": None})
             detector_oos.fit({"X": X_oos_fit, "lengths": None})
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001
             _logger.warning("A2: HMM 拟合失败，降级: %s", exc)
             return self._degraded_report(len(X_is), len(X_oos))
 
@@ -203,8 +201,7 @@ class A2HmmOverfitting:
 
         verdict = self._judge(ratio)
         summary = (
-            f"A2 过拟合: IS_acc={is_acc:.1%}, OOS_acc={oos_acc:.1%}, "
-            f"OOS/IS={ratio:.3f}, KL={kl:.4f} → {verdict.value}"
+            f"A2 过拟合: IS_acc={is_acc:.1%}, OOS_acc={oos_acc:.1%}, OOS/IS={ratio:.3f}, KL={kl:.4f} → {verdict.value}"
         )
         _logger.info("A2: %s", summary)
         return A2Report(
@@ -236,9 +233,7 @@ class A2HmmOverfitting:
         return np.nan_to_num(X_clean, nan=0.0, posinf=0.0, neginf=0.0)
 
     @staticmethod
-    def _standardize(
-        X: np.ndarray, standardize: bool
-    ) -> tuple[np.ndarray, Any]:
+    def _standardize(X: np.ndarray, standardize: bool) -> tuple[np.ndarray, Any]:
         """RobustScaler 标准化（返回标准化后 X + scaler，standardize=False 时 scaler=None）。"""
         if standardize and RobustScaler is not None:
             scaler = RobustScaler().fit(X)
@@ -246,7 +241,7 @@ class A2HmmOverfitting:
         return X, None
 
     @staticmethod
-    def _align_labels(hmm_a: Any, hmm_b: Any, feature_idx: int = 0) -> dict[int, int]:
+    def _align_labels(hmm_a: Any, hmm_b: Any, feature_idx: int = 0) -> dict[int, int]:  # noqa: any-abuse  # 预存Any类型，待Protocol化
         """标签对齐：Hungarian 算法全特征最优匹配（scipy 不可用时回退单特征排序）。
 
         HMM 有 permutation invariance（A 模型的态 0 可能对应 B 模型的态 3）。
@@ -270,12 +265,11 @@ class A2HmmOverfitting:
         means_b = hmm_b.means_  # (n_states, n_features)
         try:
             from scipy.optimize import linear_sum_assignment
+
             # 全特征欧氏距离矩阵 (n_states_a, n_states_b)
-            dist = np.linalg.norm(
-                means_a[:, None, :] - means_b[None, :, :], axis=2
-            )
+            dist = np.linalg.norm(means_a[:, None, :] - means_b[None, :, :], axis=2)
             row_ind, col_ind = linear_sum_assignment(dist)
-            return {int(r): int(c) for r, c in zip(row_ind, col_ind)}
+            return {int(r): int(c) for r, c in zip(row_ind, col_ind, strict=False)}
         except ImportError:  # pragma: no cover
             _logger.warning("scipy 不可用，回退单特征排序对齐（可能低估一致率）")
             means_a_1d = means_a[:, feature_idx]
