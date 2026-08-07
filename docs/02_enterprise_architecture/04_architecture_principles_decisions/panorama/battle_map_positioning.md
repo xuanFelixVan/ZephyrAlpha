@@ -204,7 +204,7 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 
 - `07_` MD 是 **battle_map 的派生人类视图**
 - `07_` 通过 battle_map 间接进对齐体系（battle_map 进，`07_` 作为派生视图跟随）
-- 三态展示机制（production/design/候选）→ 本文 §十
+- 五态展示机制（production/design/deprecated/missing/candidate）→ 本文 §十
 - SSoT 铁律（改真源不改派生物）→ 本文 §七
 - 06_/07_ 区别（零件 vs 装配）→ 本文 §一、§二
 - 四模式开关 + 应急保命降级 → 仍由翻译真源横切层承载，battle_map 环节引用
@@ -434,7 +434,7 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ---
 
-## 十、四态展示机制
+## 十、五态展示机制
 
 07_ MD 按模块状态颜色标注（生成器 join depgraph.build_status 产出）：
 
@@ -452,11 +452,12 @@ battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全
 
 ## 十一、可视化规范
 
-遵循 [visualization_view_template.md](visualization_view_template.md)（三视图 + 可缩放 HTML + 节点四要素 + 预折行铁律）。battle_map 生成器（`generate_battle_map_diagram.py`，取代已退役的 `generate_trading_flow_diagram.py`）必须复用：
+遵循 [visualization_view_template.md](visualization_view_template.md)（三视图 + 可缩放 HTML + 节点四要素 + 预折行铁律 + acquisition 徽标）。battle_map 生成器（`generate_battle_map_diagram.py`，取代已退役的 `generate_trading_flow_diagram.py`）必须复用：
 - 灰色主题头 + `flowchart TD`
 - 节点四要素（成熟度 + 双语名称 + 大白话 + 路径/标识），叙事来自翻译真源 `battle_map_steps` 段
 - `_wrap_label_text()` 预折行（禁止 CSS max-width 二次折行）
-- 四类 classDef + 颜色（§十 的五态映射到 classDef）
+- 五类 classDef + 颜色（§十 的五态映射到 classDef）
+- acquisition 徽标（设计态环节节点卡成熟度行下方显示 `（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`，模板 §4.13）
 - HTML 联动生成到 `_zoomable_html/`
 
 **作战地图特有的可视化**：
@@ -780,6 +781,7 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 
 | 版本 | 日期 | 变更 |
 |---|---|---|
+| V0.8.0 | 2026-08-07 | acquisition 徽标 + 五态展示修正：①§十 标题"四态"→"五态"（表格已列 5 态但标题漏改）；②§十一 "四类 classDef"→"五类 classDef" + 新增 acquisition 徽标条目（设计态环节节点卡成熟度行下方显示 `（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`，模板 §4.13）；③L207 "三态"→"五态"；④同步 `visualization_view_template.md` V1.6（§4.13 acquisition 徽标章节 + §7.5 数据真源 + §4.7 五态 classDef 扩展）；⑤acquisition 字段分层 SSoT：设计态 depgraph `nodes_metadata.acquisition_method/source`（DDL CHECK）+ 候选态 `candidate_module_registry.yaml`（草稿层），107 决策表全量导入。 |
 | V0.7.0 | 2026-08-04 | 新增 BM-INV-007 孤儿模块反向检测：①§8.4 不变量列表加 BM-INV-007（业务域 depgraph 模块无任何锚点指向=造出来没用上）；②`align_battle_map.py` 加 `_business_domain_whitelist()`（业务域白名单=所有 flow_stage 的 allowed 域并集，运行时从 YAML 取，零硬编码）+ `_business_modules_depgraph()`（采集业务域节点）+ 已锚定集合反查（target_graph=depgraph 的 target_id，blueprint_id/path 宽松匹配）；③报告加第 7 节孤儿模块 + 业务域模块统计行 + 处置建议顺移第 8 节；④§17.3.3 表加 BM-INV-007 行；⑤AGENTS.md/battlemap_schema.py 同步。这是 BM-INV-001 的对偶——001 查"功能没模块"，007 查"模块没功能"。君子协定 warn-only，不硬阻断。非业务域（D_GOVERNANCE/D_GOV_SCRIPTS/D_GOV_RULE/D_FRONTEND 等）天然排除。 |
 | V0.6.0 | 2026-08-03 | 四层嵌套上限放开：①§6.1 `depth` 字段上限从2→3（根→子→孙→曾孙）；②§8.4 BM-INV-006 `depth≤2`→`depth≤3`；③§6.1.1 新增 step_id 四层命名约定表（根-子字母-孙数字-曾孙小写字母）；④`align_battle_map.py` L763 depth上限 2→3 + 文案；⑤`apply_battle_map.py` op_add_step 加 depth≤3 写入校验（前置防线）；⑥生成器递归函数无需改（已支持任意深度）。全自动化：写入时设 parent_step_id+depth → 生成器自动渲染嵌套 subgraph。 |
 | V0.5.1 | 2026-08-03 | BM-INV-005 降级为未落地规划（方案B）：①核实 depgraph.nodes 无 `battle_map_step_ids` 列（information_schema 0 列）、apply_battle_map.py 无 sync、align_battle_map.py 不检测、无 trigger——原"派生只读缓存"机制四要素全缺；②删除 battlemap_schema.py 注释虚假描述"apply_battle_map.py 单向 sync：anchors→各图字段"（代码无此逻辑）；③§8.4 BM-INV-005 标注"未落地/规划中"，当前通过 `battle_map_anchors` 反查（target_graph=depgraph+target_id=blueprint_id，idx_battle_map_anchors_target 索引）；④AGENTS.md 同步：七类问题→六类问题（align 实检 001/002/003/004/006+悬空边），BM-INV-005 单列标注未落地。治本依据：反查路径已通（抽样5模块各7锚点），派生缓存冗余违反 SSoT+向内收。 |

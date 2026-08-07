@@ -1,16 +1,16 @@
 ---
 doc_type: architecture_view
 title: 可视化视图模板规范（三视图 + 可缩放 HTML）
-version: "1.5"
+version: "1.6"
 status: active
-date: 2026-08-03
+date: 2026-08-07
 owner: MOD-INF-037
 ttl: permanent
 ---
 
 # 可视化视图模板规范（三视图 + 可缩放 HTML）
 
-> **版本**：V1.5 | 2026-08-03
+> **版本**：V1.6 | 2026-08-07
 > **读者**：项目 Owner + AI 开发 Agent + 架构治理人员
 > **写法**：大白话为主，配完整代码模板和验收清单。变更历史见 git log。
 
@@ -245,7 +245,7 @@ flowchart TD
 成熟度放最后、⛔受限原因放最前的顺序，便于快速识别环节身份：
 
 ```
-    <节点ID>["⛔ 受限原因（仅设计态+gate_reason非空）<br/>【step_id 中文名】<br/>大白话简介<br/>(成熟度 / maturity)<br/>标记（⚠无锚点 / 🟡候选承载，可选）<br/>【English Name】"]
+    <节点ID>["⛔ 受限原因（仅设计态+gate_reason非空）<br/>【step_id 中文名】<br/>大白话简介<br/>(成熟度 / maturity)<br/>acquisition徽标（可选）<br/>标记（⚠无锚点 / 🟡候选承载，可选）<br/>【English Name】"]
 ```
 
 **行顺序铁律**（从上到下）：
@@ -255,9 +255,10 @@ flowchart TD
 | ① | `⛔ 受限原因` | 可选 | 仅设计态+`gate_reason`非空时显示，**放最前面** |
 | ② | `【step_id 中文名】` | 必填 | step_id + 中文名，用【】包裹 |
 | ③ | 大白话简介 | 必填 | 日常语言说"做什么" |
-| ④ | `(成熟度 / maturity)` | 必填 | **放最后**（与域文档"成熟度在最前"相反） |
-| ⑤ | 标记 | 可选 | `⚠无锚点` / `🟡候选承载` |
-| ⑥ | `【English Name】` | 可选 | 英文名，用【】包裹，**放最后** |
+| ④ | `(成熟度 / maturity)` | 必填 | 五态之一：生产态/设计态/弃用态/缺失态/候选态 |
+| ⑤ | acquisition 徽标 | 可选 | `（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`，仅设计态有 depgraph 锚点的环节显示（§4.13） |
+| ⑥ | 标记 | 可选 | `⚠无锚点` / `🟡候选承载` / `🟧设计态子环节` |
+| ⑦ | `【English Name】` | 可选 | 英文名，用【】包裹，**放最后** |
 
 > **阶段标识说明**：节点标签中**不显示**环节所属 flow_stage（如"买入阶段 / buy_flow"），
 > 因为文档标题已标明阶段（如 `battle_map_02_buy_flow.md`），图内每个节点都属同一阶段，
@@ -267,7 +268,8 @@ flowchart TD
 
 ```
     BM_BUY_02["【BM-BUY-02 四轨融合】<br/>把逻辑驱动、数据驱动、人工指令、应急保命四路信号<br/>按优先级融成一条决策流——应急永远最优先。<br/>(生产态 / production)<br/>【Four-Track Fusion (MTF)】"]
-    BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓...<br/>(设计态 / design)<br/>【Intraday T+0 Arbitrage】"]
+    BM_BUY_05["⛔ 卖出决策域，设计已就绪，等待开发排期<br/>【BM-BUY-05 做T日内套利】<br/>A股T+1约束下的日内套利——每天扫全部持仓...<br/>(设计态 / design)<br/>（🔴自建）<br/>【Intraday T+0 Arbitrage】"]
+    BM_MT_01["⛔ ML训练域，设计已就绪，等待开发排期<br/>【BM-MT-01 训练流水线】<br/>把研究出的因子和特征喂给模型训练...<br/>(设计态 / design)<br/>（🟡借鉴）<br/>【Training Pipeline】"]
 ```
 
 > **【】括号说明**：中英文名用全角【】包裹，视觉上突出环节身份。Mermaid 节点标签用双引号
@@ -343,9 +345,9 @@ flowchart TD
 - 环内节点统一放最大层 + 1
 - 同层节点横向排列，层间纵向流动
 
-### 4.7 classDef 样式定义（固定四类）
+### 4.7 classDef 样式定义（域文档四类 + 作战地图五态）
 
-每个 Mermaid 图**末尾**必须定义四类样式：
+域文档每个 Mermaid 图**末尾**必须定义四类样式（作战地图扩展为五态，见下方注释）：
 
 ```
     classDef production fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
@@ -360,6 +362,27 @@ flowchart TD
 | `design` | 浅橙填充 `#fff3e0` + 深橙边框 `#e65100` | 设计态域内节点 | 2px **虚线**（`stroke-dasharray: 5 5`） |
 | `external_prod` | 更浅蓝 `#e8f4fd` + 中蓝边框 `#0277bd` | 运营态跨域节点 | 1px 实线（更细，区分内外） |
 | `external_design` | 更浅橙 `#fff8e7` + 中橙边框 `#ef6c00` | 设计态跨域节点 | 1px **虚线** |
+
+> **作战地图 5 态扩展**（`generate_battle_map_diagram.py`）：域文档用上述 4 类 classDef；
+> 作战地图在此基础上**替换为 5 态**（panorama §九），适配"环节↔模块"五态生命周期：
+>
+> ```
+> classDef production  fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+> classDef design      fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+> classDef deprecated  fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000
+> classDef missing     fill:#eeeeee,stroke:#9e9e9e,stroke-width:2px,color:#000
+> classDef candidate   fill:#fffde7,stroke:#f9a825,stroke-width:2px,color:#000,stroke-dasharray: 5 5
+> ```
+>
+> | 状态 | 颜色 | 含义 | 推导来源 |
+> |------|------|------|---------|
+> | `production` | 浅蓝 | 运营态（锚点模块 stable/generated/testing） | depgraph `build_status` |
+> | `design` | 浅橙虚线 | 设计态（锚点模块 planned） | depgraph `build_status` |
+> | `deprecated` | 浅红 | 弃用态 | depgraph `build_status=deprecated` |
+> | `missing` | 浅灰 | 缺失态（环节无锚点，BM-INV-001 违例） | 无锚点 |
+> | `candidate` | 浅黄虚线 | 候选态（承载模块在候选池） | `battle_map_anchors.target_graph=candidate` |
+>
+> 状态推导优先级：primary depgraph 锚点 > 其他 depgraph 锚点 > candidate 锚点 > missing。
 
 ### 4.8 class 应用（把样式绑到节点）
 
@@ -555,6 +578,74 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 > **实现真源**：`generate_battle_map_diagram.py` 的 `_build_children_map()` +
 > `_emit_nodes_with_subgraphs()` 函数；`align_battle_map.py` 的
 > `_check_parent_child_consistency()` 函数。
+
+### 4.13 acquisition 徽标（作战地图专属，2026-08-07 V1.6）
+
+> **适用范围**：仅作战地图（battle_map）。域文档/依赖全景图不显示 acquisition 徽标
+> （域文档节点是已建模块，无"怎么搞到手"问题）。
+
+#### 4.13.1 什么是 acquisition 徽标
+
+每个设计态环节在节点卡成熟度行 `（设计态 / design）` 下方显示一个 acquisition 徽标，
+回答"这个模块怎么搞到手"——AI 施工时一眼就知道该找开源还是自己造：
+
+| 徽标 | acquisition_method | 大白话 | 数据来源 |
+|------|-------------------|--------|---------|
+| `（🔴自建）` | `self_build` | 自己车间造（核心 alpha / A 股特色 / 合规硬约束） | depgraph `nodes_metadata.acquisition_method` |
+| `（🟢开源）` | `opensource` | 网上有现成货，搬来直接用 | 同上 |
+| `（🟡借鉴）` | `borrow` | 自建为主，局部复用开源组件 | 同上 |
+| `（⬜弃用）` | `deprecate` | 暂不做 | 同上 |
+
+> **半角→全角**：徽标定义用半角 `[]`（如 `[🔴自建]`），经 `_sanitize` 转义后显示为全角
+> `（🔴自建）`（§4.9 转义规则：`[`→`（`、`]`→`）`）。emoji 不受转义影响，正常显示。
+
+#### 4.13.2 显示规则
+
+| 环节状态 | 显示徽标？ | 原因 |
+|---------|-----------|------|
+| **设计态**（design，有 depgraph 锚点） | ✅ 显示 | 施工前必须知道"怎么搞到手" |
+| **生产态**（production） | ❌ 不显示 | 已建成，acquisition 已完成 |
+| **弃用态**（deprecated） | ✅ 显示（⬜弃用） | 标明弃用决策 |
+| **缺失态**（missing，无锚点） | ❌ 不显示 | 无锚点模块，acquisition 未定义 |
+| **候选态**（candidate） | ❌ 不显示 | 候选池 acquisition 存于 YAML 不上图 |
+
+> **设计依据**：acquisition 是模块级属性（depgraph `nodes_metadata`），不是步骤级。
+> 运营态模块已施工完成，acquisition 自然不需要；候选态 acquisition 存于
+> `candidate_module_registry.yaml`（候选池草稿层），晋升到设计态时迁移到 depgraph。
+
+#### 4.13.3 详情区"获取方式"行
+
+除节点卡内的徽标外，每个环节的详情区（`### BM-xxx` 小节）标题下方还有一行
+**完整 acquisition 标记**（不带 source 详情，避免污染展示层）：
+
+```markdown
+### BM-MT-01 训练流水线 / Training Pipeline
+
+> **大白话**：把研究出的因子和特征喂给模型训练...
+
+> **获取方式**：[🟡借鉴]
+
+**机制说明**：
+...
+```
+
+> 完整 acquisition_source（如 `Kedro / PyTorch Lightning`）不渲染到展示层，
+> 存于 depgraph `nodes_metadata.acquisition_source` 字段，可通过
+> `apply_depgraph.py --update-module-metadata` 查询/修改。
+
+#### 4.13.4 数据真源与写入方式
+
+| 层级 | 真源 | 字段 | 写入方式 |
+|------|------|------|---------|
+| **设计态**（depgraph） | PostgreSQL `nodes_metadata` | `acquisition_method` + `acquisition_source` | `apply_depgraph.py --update-module-metadata <path> acquisition_method=xxx acquisition_source=yyy` |
+| **候选态**（candidate pool） | `candidate_module_registry.yaml` | `acquisition_method` + `acquisition_source` | YAML 直接编辑（草稿层，可随意修改） |
+| **晋升**（候选→设计态） | 候选 YAML → depgraph | 字段迁移 | `apply_depgraph.py --add-design-node` 后跟 `--update-module-metadata` |
+
+> **分层 SSoT**：候选池是工作草稿（可随意修改），设计态是施工真源（AI 施工前必读）。
+> 运营态不加 acquisition——已施工完成，自然不需要。
+
+> **实现真源**：`generate_battle_map_diagram.py` 的 `_node_label()` 函数（节点卡徽标）+
+> `_format_step_detail()` 函数（详情区"获取方式"行）+ `_ACQUISITION_BADGE` 映射常量。
 
 ## 五、完整 Mermaid 代码示例
 
@@ -875,6 +966,27 @@ window.addEventListener('resize', function() {
 > **为什么放 DB 不放 YAML**：`gate_reason` 是架构数据（随节点状态变化），按 SSoT 真源分类铁律，
 > 架构数据真源在 depgraph (PostgreSQL)，由 `apply_depgraph.py` 等写入，禁止写 YAML。
 
+### 7.5 acquisition 获取方式真源（2026-08-07 V1.6）
+
+acquisition 徽标的 `acquisition_method` / `acquisition_source` **分层存储**：
+
+| 层级 | 真源 | 表/文件 | 字段 | 枚举 |
+|------|------|---------|------|------|
+| 设计态 | PostgreSQL | `nodes_metadata` | `acquisition_method` | `self_build` / `opensource` / `borrow` / `deprecate`（DDL CHECK 约束） |
+| 设计态 | PostgreSQL | `nodes_metadata` | `acquisition_source` | TEXT，开源候选名/借鉴组件名（如 `Kedro`、`MLflow`、`hmmlearn`） |
+| 候选态 | YAML | `candidate_module_registry.yaml` | `acquisition_method` + `acquisition_source` | 同枚举（草稿层，与 depgraph DDL CHECK 对齐） |
+
+| 项 | 内容 |
+|----|------|
+| 查询 | `BattleMapReader` 取锚点模块的 `nodes_metadata.acquisition_method`，enrich 到 `step["_acquisition_method"]` |
+| 写入（设计态） | `apply_depgraph.py --update-module-metadata <path> acquisition_method=xxx acquisition_source=yyy` |
+| 写入（候选态） | YAML 直接编辑；批量导入用 `load_acquisition_decisions.py` / `register_candidate_acquisitions.py` |
+| 晋升迁移 | 候选→设计态时从 YAML 迁移到 depgraph（`--add-design-node` 后跟 `--update-module-metadata`） |
+| 显示 | 节点卡成熟度行下方徽标（§4.13）+ 详情区"获取方式"行 |
+
+> **warn 门禁**（君子协定不阻断）：`apply_depgraph.py --add-design-node` 时若未登记
+> `acquisition_method`，打印 WARN 提示施工前须明确"怎么搞到手"。候选晋升时从 YAML 自动迁移。
+
 ---
 
 ## 八、生成器调用方式
@@ -921,12 +1033,13 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 4. **节点四要素**：成熟度 + 双语名称 + 大白话 + 文件路径/标识
 5. **设计态 ⛔ 受限原因**：`gate_reason` 非空的设计态节点必须追加 `⛔` 行（§4.3 要素⑤）
 6. **标签预折行**：所有标签行经 `_wrap_label_text()` 预折行（§4.10 铁律），禁止依赖 CSS max-width 折行
-7. **颜色规范**：production 蓝、design 橙虚线、external 区分
+7. **颜色规范**：production 蓝、design 橙虚线、external 区分；作战地图扩展为 5 态（+deprecated 红/missing 灰/candidate 黄，§4.7）
 8. **箭头规范**：production→production 实线，其他虚线
 9. **HTML 交互**：Ctrl+滚轮缩放、拖动平移、双击重置、Ctrl+Shift+D 切换模式
 10. **mermaid 配置**：`maxTextSize: 100000000, maxEdges: 10000`
 11. **渲染逻辑**：小图优先逐个渲染
 12. **CSS 纪律**：渲染字号（11px）≤ 测量字号（主题 14px）；max-width 560px 仅兜底
+13. **acquisition 徽标**（仅作战地图）：设计态环节节点卡成熟度行下方显示 `（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）` 徽标 + 详情区"获取方式"行（§4.13）；生产态/缺失态/候选态不显示
 
 ### 9.2 可调整的部分
 
@@ -955,6 +1068,7 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
         BM_BUY_02 -.->|嵌套| BM_BUY_02_A
     end
     BM_BUY_01 -->|买入预案 / data_flow| BM_BUY_02
+    BM_BUY_04["⛔ 买入决策域，设计已就绪，等待开发排期<br/>【BM-BUY-04 分批建仓】<br/>A股特色——分批建仓降低择时风险...<br/>(设计态 / design)<br/>（🔴自建）<br/>【Batched Position Builder】"]
 ```
 
 > **格式选择铁律**：域文档/依赖全景图用"成熟度在最前"格式（§4.3 域内节点），
@@ -980,11 +1094,13 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 - [ ] 每个 Mermaid 块第二行是 `flowchart TD`
 - [ ] 节点标签四要素齐全（成熟度 + 双语名称 + 大白话 + 文件路径）
 - [ ] 设计态节点（`gate_reason` 非空）有 `⛔ 受限原因` 行
+- [ ] **作战地图**：设计态环节节点卡有 acquisition 徽标（`（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`）在成熟度行下方（§4.13）；生产态/缺失态/候选态无徽标
+- [ ] **作战地图**：每个有 depgraph 锚点的环节详情区有 `> **获取方式**：[徽标]` 行
 - [ ] 标签长行已预折行（单行显示宽度 ≤48，约 24 汉字；`<br/>` 显式断行）
 - [ ] **简介无五类坏值**（§4.11/§十七）：无模板话、无截断代码片段、无"供X使用"消费者引用、无纯技术术语堆砌、plain_zh ≠ name_zh
 - [ ] 节点标签无 `[` `]` `"` `|` 特殊字符（已转义）
 - [ ] 边用 `-->`（production 间）或 `-.->`（其他）
-- [ ] 末尾有四类 classDef + class 应用
+- [ ] 末尾有 classDef + class 应用（域文档四类 / 作战地图五态，§4.7）
 - [ ] 有跨域依赖表格（出边 + 入边）
 - [ ] **0 个"待补充"**（所有模块都有中文名和大白话）
 
@@ -1045,6 +1161,8 @@ html_path = emit_zoomable_html(md_path, md_content, output_dir)
 | HTML 里图空白 | mermaid.js 未加载 | 检查内嵌/CDN 策略，看控制台报错 |
 | YAML 修复后文档仍显示旧值 | 文档未重新生成 | `python generate_domain_doc.py <DOMAIN_ID>` 重新生成（§十七.5 SOP 步骤4） |
 | 修改 YAML 后被回退、提交丢失 | 直接 `git commit` 被 pre-commit 钩子阻断 / 并发 session 干扰 / reconciler 回退 | 走 `scripts/git_commit.py`（GitCommitGateway），见 §十七.6 |
+| 作战地图 acquisition 徽标不显示 | `nodes_metadata.acquisition_method` 为空（未导入决策）；或环节无 depgraph 锚点（缺失态/候选态不显示） | 用 `apply_depgraph.py --update-module-metadata` 写入；候选态写入 `candidate_module_registry.yaml`（§4.13/§7.5） |
+| HTML 打不开"无法显示网页" | localhost:8765 本地文档 HTTP 服务未启动 | `python -m http.server 8765 --bind 127.0.0.1`（在仓库根运行，§14 HTML 链接依赖此服务） |
 
 ---
 
@@ -1424,6 +1542,7 @@ python scripts/git_commit.py \
 | V1.3 | 2026-08-02 | ①新增 §4.11 节点标签简介质量铁律（五类坏简介概览 + 指向 §十七）；②新增 §十七 节点标签简介质量规范与审计（三问法标准、正反例对照、五类坏简介详解、生成器兜底链、人工补齐 SOP 含审计脚本、GitCommitGateway 提交注意事项）；③§十 验收清单新增"简介无五类坏值"+"运行审计脚本问题=0"+"name_en 非 docstring 片段"检查项；④§十一 常见问题表新增 12 行（五类坏简介+name_en 片段+desc_zh 未同步+审计误报+LOCK_TIMEOUT+DOC-REF-BROKEN+文档未重生成+提交被回退）；⑤§17.5 审计脚本更新为防误报版（重建完整简介、遇纯英文段停止）；⑥§17.6 提交坑表新增 LOCK_TIMEOUT + DOC-REF-BROKEN 两个坑及应对；⑦起因：D_GOV_ENFORCEMENT 域 42 模块中 21 个 plain_zh 是坏值（模板话/截断片段/消费者引用/术语堆砌/名称重复），用户反馈"看不懂有什么作用" |
 | V1.4 | 2026-08-02 | ①审计脚本从 tmp/（gitignored）提升为 committed 治理脚本 `scripts/governance/d5_architecture/checkers/check_node_label_quality.py`；②新增 GATE-NODE-LABEL-QUALITY pre-commit gate（warn-only 观察期，与 TRANSLATION-COVERAGE 互补——后者管 plain_zh 存在性，本 gate 管质量）；③§17.5 审计脚本引用从 `tmp/_audit_doc_labels.py` 改为 committed 路径；④脚本泛化：无参数扫描全部域文档 + `--warn-only`/`--ci` 双模式 + `__manifest__` 块（script_manifest.yaml 自动登记）；⑤起因：tmp/ 被 gitignore，pre-commit hook 指向 tmp/ 在 fresh checkout/CI 不可用——治本为 committed 脚本 |
 | V1.5 | 2026-08-03 | ①§4.3 新增「作战地图节点格式」子节（【】包裹中英文名 + 行顺序铁律：⛔最前→【step_id中文名】→大白话→作战环节→成熟度→标记→【英文名】最后）；②§4.12 新增父子嵌套关系章节（仅作战地图适用，subgraph+嵌套虚线边，BM-INV-006 不变量，子环节状态继承）；③§9.3 全景图适配示例拆分为域文档格式 vs 作战地图格式两种；④起因：作战地图 V0.4.0 父子嵌套功能落地（BM-BUY-02 四轨融合→4子环节），需同步更新模板规范 |
+| V1.6 | 2026-08-07 | ①§4.3 作战地图行顺序铁律新增行⑤ acquisition 徽标（成熟度下方，`（🔴自建）`/`（🟢开源）`/`（🟡借鉴）`/`（⬜弃用）`），行序扩展为 7 行；②§4.7 新增作战地图 5 态 classDef 扩展（production/design/deprecated/missing/candidate，替代域文档 4 类）；③§4.13 新增 acquisition 徽标章节（显示规则、半角→全角转义、详情区"获取方式"行、分层 SSoT 数据真源、warn 门禁）；④§7.5 新增 acquisition 数据真源（depgraph `nodes_metadata` + candidate YAML 分层存储，DDL CHECK 枚举对齐）；⑤§9.1 规则清单新增第 13 条 acquisition 徽标；⑥§10 验收清单新增 acquisition 徽标 + 详情区"获取方式"行检查项；⑦起因：107 决策表 acquisition 字段全量导入候选池+设计态，节点卡需可视化"怎么搞到手" |
 
 ---
 

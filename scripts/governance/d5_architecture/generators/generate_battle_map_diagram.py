@@ -489,6 +489,15 @@ def _node_label(step: dict) -> str:
     # 成熟度
     parts.append(maturity)
 
+    # acquisition 徽标（2026-08-07：放成熟度行下方，节点卡内一目了然"怎么搞到手"）。
+    # _sanitize 会把半角 [] 转成全角（），emoji 保留——显示为（🔴自建）/（🟢开源）等。
+    # 完整 acquisition_source 在详情区"获取方式"行 + depgraph DB，此处仅展示层标记。
+    am = step.get("_acquisition_method") or ""
+    if am:
+        badge = _ACQUISITION_BADGE.get(am, "")
+        if badge:
+            parts.append(badge)
+
     # 标记（⚠无锚点 / 🟡候选承载 / 🟧设计态子环节）
     marks: list[str] = []
     if status == "missing":
