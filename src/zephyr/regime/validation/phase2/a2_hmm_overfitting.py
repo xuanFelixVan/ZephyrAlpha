@@ -120,7 +120,7 @@ class A2HmmOverfitting:
 
     def __init__(self, hmm_params: dict[str, Any] | None = None) -> None:
         self.hmm_params = hmm_params or {
-            "n_states": 9,
+            "n_states": 4,
             "covariance_type": "full",
             "n_iter": 100,
             "n_init": 3,
@@ -254,7 +254,7 @@ class A2HmmOverfitting:
         算法（scipy.optimize.linear_sum_assignment）求一对一最优匹配（最小化
         总距离），建立 A→B 映射。
 
-        优于原"按单特征（vol_pct）排序"：9 态 HMM 有 6 特征，单特征排序在
+        优于原"按单特征（vol_pct）排序"：4 态 HMM 有 6 特征，单特征排序在
         两态 vol_pct 相近但其他特征差异大时会错配，导致交叉解码一致率被低估。
         Hungarian 全特征匹配是无监督 HMM 标签对齐的标准做法。
 

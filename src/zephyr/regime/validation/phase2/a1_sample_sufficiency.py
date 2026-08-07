@@ -16,13 +16,13 @@
 # [ARCH-REF] #discussion_003 §2.1 #discussion_002 §4.1 A1
 """A1 样本充足性验证器（discussion_003 §2.1，Phase 2 第一批 MVP）.
 
-验证问题: HMM 9 态的稀有态够 HMM 学吗？
+验证问题: HMM 4 态的稀有态够 HMM 学吗？
 
 算法:
   1. 全量历史特征（dropna 去 warmup 期 NaN）+ RobustScaler 标准化（与 walk-forward 一致）
-  2. fit 一个全新 RegimeDetector（9 态 GaussianHMM）
+  2. fit 一个全新 RegimeDetector（4 态 GaussianHMM）
   3. 用 _hmm_model.predict(X)（hmmlearn 原生 Viterbi）解码全历史状态序列
-  4. 统计 r1-r9 各态出现天数
+  4. 统计 r1-r4 各态出现天数
   5. 对照判定门槛
 
 判定门槛（discussion_002 §4.1 A1）:
@@ -60,8 +60,8 @@ except Exception:  # pragma: no cover
 
 _logger = logging.getLogger(__name__)
 
-# r1-r9 HMM 9 态（与 regime_detector.HMM_STATES 对齐）
-HMM_STATES_9: list[str] = [f"r{i}" for i in range(1, 10)]
+# r1-r4 HMM 4 态（与 regime_detector.HMM_STATES 对齐）
+HMM_STATES_N: list[str] = [f"r{i}" for i in range(1, 5)]
 
 # 判定门槛（discussion_002 §4.1 A1）
 SUFFICIENT_DAYS = 100  # ≥100 → 充足
@@ -94,7 +94,7 @@ class A1Overall(str, Enum):
 class A1StateStat:
     """单态统计。"""
 
-    state: str  # r1-r9
+    state: str  # r1-r4
     count: int  # 出现天数
     frequency: float  # 占比
     verdict: A1StateVerdict
@@ -105,7 +105,7 @@ class A1StateStat:
 class A1Report:
     """A1 验证报告。"""
 
-    state_stats: list[A1StateStat]  # r1-r9 各态统计（按 state 排序）
+    state_stats: list[A1StateStat]  # r1-r4 各态统计（按 state 排序）
     total_samples: int  # 总样本数（dropna 后）
     overall: A1Overall
     summary: str  # 人类可读总结
@@ -164,10 +164,10 @@ class A1SampleSufficiency:
         """初始化。
 
         Args:
-            hmm_params: HMM 参数（默认 9 态 full 协方差，与 regime_detector 默认一致）。
+            hmm_params: HMM 参数（默认 4 态 full 协方差，与 regime_detector 默认一致）。
         """
         self.hmm_params = hmm_params or {
-            "n_states": 9,
+            "n_states": 4,
             "covariance_type": "full",
             "n_iter": 100,
             "n_init": 3,
@@ -277,7 +277,7 @@ class A1SampleSufficiency:
             pass
 
         if getattr(detector, "_hmm_model", None) is None or degraded:
-            # 降级：无法 Viterbi 解码，按均匀分布估计（每态 T/9 天）
+            # 降级：无法 Viterbi 解码，按均匀分布估计（每态 T/4 天）
             return self._build_degraded_report(len(X))
 
         hmm_model = detector._hmm_model  # noqa: SLF001 — 访问私有模型做 Viterbi（OCP: 只读不改）
@@ -288,7 +288,7 @@ class A1SampleSufficiency:
             _logger.warning("A1: Viterbi 解码失败: %s", exc)
             return self._build_degraded_report(len(X))
 
-        n_states = int(self.hmm_params.get("n_states", 9))
+        n_states = int(self.hmm_params.get("n_states", 4))
         return self._build_report(state_seq, n_states, log_likelihood, degraded=False)
 
     def _build_report(
@@ -302,7 +302,7 @@ class A1SampleSufficiency:
         total = len(state_seq)
         state_stats: list[A1StateStat] = []
         for i in range(n_states):
-            state_label = HMM_STATES_9[i] if i < len(HMM_STATES_9) else f"r{i + 1}"
+            state_label = HMM_STATES_N[i] if i < len(HMM_STATES_N) else f"r{i + 1}"
             count = int(np.sum(state_seq == i))
             freq = count / total if total > 0 else 0.0
             verdict, action = self._judge_state(count)
@@ -345,10 +345,10 @@ class A1SampleSufficiency:
 
     def _build_degraded_report(self, total: int) -> A1Report:
         """降级报告（hmmlearn 不可用 / 拟合失败）。"""
-        per_state = total // 9
+        per_state = total // 4
         state_stats = [
             A1StateStat(
-                state=HMM_STATES_9[i],
+                state=HMM_STATES_N[i],
                 count=per_state,
                 frequency=per_state / total if total > 0 else 0.0,
                 verdict=A1StateVerdict.SUFFICIENT if per_state >= SUFFICIENT_DAYS
@@ -356,13 +356,13 @@ class A1SampleSufficiency:
                       else A1StateVerdict.INSUFFICIENT),
                 action="[降级] hmmlearn 不可用，按均匀分布估计",
             )
-            for i in range(9)
+            for i in range(4)
         ]
         return A1Report(
             state_stats=state_stats,
             total_samples=total,
             overall=A1Overall.REVIEW,
-            summary=f"A1 降级: hmmlearn 不可用，按 1/9 均匀分布估计（每态 ~{per_state} 天）",
+            summary=f"A1 降级: hmmlearn 不可用，按 1/4 均匀分布估计（每态 ~{per_state} 天）",
             fit_log_likelihood=0.0,
             degraded=True,
         )
