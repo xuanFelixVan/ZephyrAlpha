@@ -139,6 +139,160 @@ schtasks /run /tn ZephyrAlpha_TickSubscriber
 - Restore a removed Startup entry: copy from backup dir back to
   `%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\`.
 
+## 8. Guard Watchdog 心跳治本（待办，#ARCH-BOOT-001）
+
+> 立项 2026-08-07。根因：2026-08-07 scheduler/tick_subscriber 主进程死亡、guard 僵尸化
+> 导致 intraday 下载停滞 2 交易日（kline_1min 停在 08-05 15:00、tick_data 停在 08-04）。
+> 当前状态 **decided（已裁定待施工）**。issue 登记：`architecture_issue_registry.yaml` #ARCH-BOOT-001。
+
+### 8.1 问题根因
+
+当前 guard（`scripts/start_scheduler.ps1` / `scripts/start_tick_subscriber.ps1`）用
+`$proc.WaitForExit()` 纯阻塞等待子进程，存在两个治本缺陷：
+
+1. **guard 僵尸化无自检**：`WaitForExit()` 在某些 Windows 进程退出场景下不返回，guard 主线程
+   卡死（CPU=0），子进程已死但 guard 不 log "exited"、不重启。
+2. **单实例锁只验 PID 存活、不验健康度**：Task Scheduler 每 5min 拉新 guard，锁检查只做
+   `Get-Process -Id <guardPID>`——僵尸 guard 的 PID 仍在，新 guard 永远 "Guard already
+   running, exit"，形成**死锁**，无法接管。
+
+后果：scheduler/tick 主进程死亡后无人重启，intraday 下载停滞，直到人工介入。
+
+### 8.2 治本方案：心跳 + 僵尸判定接管
+
+核心思路：guard 定期写心跳时间戳；新 guard 启动时若 lock PID 存活但心跳超时，判定僵尸
+并强制接管；子进程监控从纯阻塞 `WaitForExit` 改为轮询 `HasExited`（避免主线程死锁）。
+
+| 机制 | 当前 | 治本后 |
+|------|------|--------|
+| 子进程退出检测 | `$proc.WaitForExit()` 纯阻塞 | 每 15s 轮询 `$proc.HasExited` |
+| guard 健康自检 | 无 | 每 15s 写心跳文件 `tmp/scheduler.heartbeat` |
+| 单实例锁接管判定 | 仅验 PID 存活 | PID 存活 **且** 心跳 < 5min 内更新；否则判僵尸接管 |
+| 僵尸 guard 清理 | 无 | Stop-Process 僵尸 guard + 清 lock/heartbeat + orphan cleanup |
+
+心跳文件格式：单行 `<ISO8601时间>|<guard_pid>|<child_pid>`，如
+`2026-08-07T11:30:00+08:00|24040|25488`。
+
+### 8.3 实施步骤
+
+#### 步骤 1：改造 `scripts/start_scheduler.ps1`
+
+**1.1** 新增心跳文件路径常量（`$LockFile` 旁）：
+
+```powershell
+$HeartbeatFile = Join-Path $TmpDir "scheduler.heartbeat"
+```
+
+**1.2** 新增写心跳函数：
+
+```powershell
+function Write-Heartbeat {
+    param([int]$ChildPid)
+    $ts = (Get-Date).ToString("o")  # ISO 8601, 含时区
+    "$ts|$PID|$ChildPid" | Out-File -FilePath $HeartbeatFile -Encoding utf8 -NoNewline
+}
+```
+
+**1.3** 单实例锁检查增加心跳超时判定（替换现有 `if (Test-Path $LockFile)` 块中"PID 存活即 exit"分支）：
+
+```powershell
+if (Test-Path $LockFile) {
+    $lockPid = (Get-Content $LockFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
+    if ($lockPid -match '^\d+$' -and (Get-Process -Id ([int]$lockPid) -ErrorAction SilentlyContinue)) {
+        # 治本：PID 存活但心跳超时 → 判定僵尸 guard，强制接管
+        $stale = $true
+        if (Test-Path $HeartbeatFile) {
+            try {
+                $hb = (Get-Content $HeartbeatFile -ErrorAction SilentlyContinue | Select-Object -First 1).Trim()
+                $hbTs = ($hb -split '\|')[0]
+                if (((Get-Date) - ([datetime]$hbTs)).TotalMinutes -lt 5) { $stale = $false }
+            } catch { }
+        }
+        if ($stale) {
+            Write-GuardLog "Guard PID=$lockPid alive but heartbeat stale (>5min), force takeover (kill zombie guard)"
+            Stop-Process -Id ([int]$lockPid) -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 2
+            Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
+            # 落入下方 orphan cleanup（既有逻辑保留）
+        } else {
+            Write-GuardLog "Guard already running (PID=$lockPid, heartbeat fresh), exit"
+            exit 0
+        }
+    } else {
+        Write-GuardLog "Cleaning stale lock (old PID=$lockPid no longer alive)"
+        Remove-Item $LockFile -Force -ErrorAction SilentlyContinue
+    }
+    # orphan cleanup（既有逻辑保留）：杀遗留业务 python
+    Get-CimInstance Win32_Process -Filter "Name='python.exe'" -ErrorAction SilentlyContinue |
+        Where-Object { $_.CommandLine -and $_.CommandLine.Contains("-m $BizModule") } |
+        ForEach-Object { Write-GuardLog "Killing orphaned $BizModule (PID=$($_.ProcessId))"; Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+}
+```
+
+**1.4** 子进程监控从 `WaitForExit` 改为轮询 + 心跳（替换 while-true 内部 `$proc.WaitForExit()`）：
+
+```powershell
+$proc = Start-Process -FilePath $PythonExe -ArgumentList "-m",$BizModule `
+    -WorkingDirectory $RepoRoot -WindowStyle Hidden -PassThru
+Write-GuardLog "Scheduler started (PID=$($proc.Id)), polling exit (watchdog heartbeat every 15s)..."
+Write-Heartbeat -ChildPid $proc.Id
+# 治本：轮询 HasExited 代替纯 WaitForExit，避免主线程死锁；每 15s 写心跳
+while (-not $proc.HasExited) {
+    Start-Sleep -Seconds 15
+    Write-Heartbeat -ChildPid $proc.Id
+}
+$exitCode = $proc.ExitCode
+```
+
+**1.5** finally 块追加清理心跳文件：
+
+```powershell
+finally {
+    ...（既有 finally-kill 逻辑保留）
+    Remove-Item $LockFile, $HeartbeatFile -Force -ErrorAction SilentlyContinue
+}
+```
+
+#### 步骤 2：同步改造 `scripts/start_tick_subscriber.ps1`
+
+- `$HeartbeatFile = Join-Path $TmpDir "tick_subscriber.heartbeat"`
+- 复用 1.2–1.5 的 Write-Heartbeat 函数、锁超时判定、轮询 HasExited、finally 清理
+- `$BizModule = "zephyr.data.tick_subscriber"`
+
+#### 步骤 3：单元测试 `tests/scripts/test_guard_watchdog.py`（新建）
+
+- `test_heartbeat_format`：Write-Heartbeat 写入 `ISO|guard|child` 三段格式正确
+- `test_stale_heartbeat_triggers_takeover`：构造 >5min 旧心跳 → `$stale=true` → 接管路径
+- `test_fresh_heartbeat_exits`：构造 <5min 新心跳 → `$stale=false` → "already running" exit 0
+- `test_zombie_takeover_runs_orphan_cleanup`：僵尸接管后仍执行 orphan cleanup
+- 用 mock `Start-Process` / `Get-Process` 避免真起 python
+
+#### 步骤 4：端到端验证（手动）
+
+4.1 部署：`powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1`
+    （idempotent，`Set-ScheduledTask` in-place 更新，不杀运行实例）
+4.2 正常路径：`schtasks /run /tn ZephyrAlpha_DataScheduler` → 确认 `tmp/scheduler.heartbeat`
+    每 15s 更新 → `Stop-Process <scheduler_child_pid>` → 确认 guard log "exited" + 重启 attempt N+1
+4.3 僵尸接管模拟：用 Process Explorer 挂起 guard 主线程（模拟僵尸：进程活但卡死）→
+    等 >5min 心跳超时 → Task Scheduler 触发新 guard → 确认 log "heartbeat stale, force takeover"
+    + 杀僵尸 + 接管 + orphan cleanup
+4.4 回归：确认 intraday 下载正常、finally-kill 生效、无重复 scheduler 实例
+
+#### 步骤 5：收尾
+
+- 本文档 §3 Watchdog Architecture 表格更新：三层防御 → 四层（加"心跳健康层"）
+- frontmatter `last_updated` → 施工日期
+- `architecture_issue_registry.yaml` 中 #ARCH-BOOT-001 `status` 改 `resolved`、`fix_phase` 填施工阶段
+
+### 8.4 风险与回退
+
+- **检测延迟**：轮询 15s 引入最多 15s 子进程死亡检测延迟（可接受，远小于当前"无限期不重启"）
+- **误判风险**：心跳超时阈值 5min——guard 在轮询循环每 15s 写心跳，正常永不超时；仅主线程
+  卡死才会超时，判定准确
+- **回退**：若改造有问题，`git revert` 两个 ps1 + 重跑 `register_guard_tasks.ps1`（in-place 更新）
+- **不影响 xtquant 连接固化**：本改造仅治 guard 僵尸化；xtquant 进程级连接固化（QMT 启动后
+  需重启 scheduler/tick）是独立问题，见 project_memory Lessons Learned，不在本 issue 范围
+
 ### §0.6 四图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
