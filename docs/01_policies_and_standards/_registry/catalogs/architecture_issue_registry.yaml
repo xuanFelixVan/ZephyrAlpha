@@ -12809,3 +12809,30 @@ entries:
   status: in_progress
   created: '2026-08-07'
   last_updated: '2026-08-08'
+# --- #ARCH-EXECUTION-BROKER-001: G22 下单对接与撮合——执行层代码施工（2026-08-08）---
+- issue_id: '#ARCH-EXECUTION-BROKER-001'
+  title: G22 下单对接与撮合——执行层 5 项代码 gap 施工 + design_memo_010 定型
+  severity: P3低
+  category: architecture
+  adjudication: |-
+    2026-08-08 立项+施工完成（decided）。按 design_memo_010 §2 定型执行层 spec，
+    施工 5 项代码 gap（commit 015826ae）：
+    (1) OrderManager.VALID_TRANSITIONS 补 EXPIRED 状态转换 + RejectionAction 拒单分类枚举
+    (2) FeeSchedule 佣金费率 万3→万0.854（国金 miniQMT 实盘费率）
+    (3) TradingSession 先卖后买排序 + 订单层熔断（4%/10笔/50笔）+ 拒单分类处理
+    (4)(5) 测试同步更新
+    设计决策：撮合算法自适应选择（小单直发/大单TWAP）、滑点以 DECISION 价为基准、
+    集合竞价 MVP 阶段不做（选 A）、4% 单笔熔断留 2 倍缓冲。
+  impact:
+    变更文件：
+    - 'src/zephyr/ex_core/order_manager.py（EXPIRED 状态机 + RejectionAction + classify_rejection）'
+    - 'src/zephyr/ex_core/trading_session.py（先卖后买 + 熔断 + 拒单处理）'
+    - 'src/zephyr/ex_sor/services/transaction_cost_optimizer.py（佣金万0.854）'
+    - 'tests/ex_core/test_trading_session.py（测试辅助禁用熔断）'
+    - 'tests/ex_sor/test_transaction_cost_optimizer.py（佣金期望值更新）'
+    关联文档：
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_010_execution_broker.md'
+  fix_phase: '代码已施工（commit 015826ae），71 测试通过。待补：先卖后买+熔断专项集成测试。'
+  status: decided
+  created: '2026-08-08'
+  last_updated: '2026-08-08'

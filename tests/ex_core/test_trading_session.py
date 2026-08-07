@@ -412,3 +412,238 @@ def test_multiple_rebalances_increment_counts() -> None:
     session.rebalance()
     report = session.get_session_report()
     assert report["submitted_count"] == 2
+
+
+# ---------------------------------------------------------------------
+# 先卖后买顺序验证（design_memo_010 §2.6）
+# ---------------------------------------------------------------------
+
+
+def test_sell_before_buy_with_mock_broker_recording() -> None:
+    """先卖后买：用 mock broker 记录 submit_order 调用顺序验证。
+
+    不依赖 SimulationBroker，直接验证 _validate_and_submit 内部排序。
+    """
+    submit_calls: list[str] = []
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("900000"),
+        holdings={"600519.SH": Decimal("1000")},
+        total_market_value=Decimal("100000"),
+    )
+    # 记录提交顺序
+    broker.submit_order.side_effect = lambda order: (
+        submit_calls.append(f"{order.side}:{order.symbol}"),
+        f"broker_{order.order_id[:8]}",
+    )[1]
+
+    session = _make_session(
+        broker=broker,
+        strategy=_strategy_returning({"000001.SH": 0.05}),  # SELL 600519, BUY 000001
+        price_provider=make_mock_price_provider(
+            {"600519.SH": Decimal("100"), "000001.SH": Decimal("10")}
+        ),
+        config=TradingSessionConfig(
+            universe=["600519.SH", "000001.SH"], broker_id="test_broker"
+        ),
+    )
+    session.start()
+    orders = session.rebalance()
+    # 验证提交顺序：SELL 在前
+    sell_indices = [i for i, c in enumerate(submit_calls) if c.startswith("SELL")]
+    buy_indices = [i for i, c in enumerate(submit_calls) if c.startswith("BUY")]
+    assert sell_indices, "应有 SELL 提交"
+    assert buy_indices, "应有 BUY 提交"
+    assert max(sell_indices) < min(buy_indices), (
+        f"所有 SELL 应在 BUY 之前: SELL={sell_indices}, BUY={buy_indices}"
+    )
+    session.stop()
+
+
+# ---------------------------------------------------------------------
+# 订单层熔断测试（design_memo_010 §2.8）
+# ---------------------------------------------------------------------
+
+
+def test_circuit_breaker_blocks_oversized_order() -> None:
+    """熔断：单笔订单 > 4% 账户市值 → 阻断，归入 blocked_orders。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("100000"),  # 总资产 100,000
+        holdings={},
+        total_market_value=Decimal("0"),
+    )
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+
+    config = TradingSessionConfig(
+        universe=["600519.SH"],
+        broker_id="test_broker",
+    )
+    # 启用熔断：单笔 ≤4%
+    config.max_single_order_pct = Decimal("0.04")
+    config.max_symbol_orders_per_day = 999
+    config.max_total_orders_per_day = 999
+
+    session = TradingSession(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.50}),  # 50% → 50,000 元 > 4,000 (4%)
+        risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        order_manager=_make_real_om(broker),
+        config=config,
+    )
+    session.start()
+    orders = session.rebalance()
+    # 50% of 100,000 = 50,000 元，远超 4% = 4,000 元 → 被熔断
+    assert len(orders) == 0, "超限订单应被熔断阻断"
+    assert len(session._blocked_orders) >= 1, "应归入 blocked_orders"
+    session.stop()
+
+
+def test_circuit_breaker_allows_small_order() -> None:
+    """熔断：单笔订单 ≤ 4% 账户市值 → 放行。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("1000000"),  # 总资产 1,000,000
+        holdings={},
+        total_market_value=Decimal("0"),
+    )
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+
+    config = TradingSessionConfig(
+        universe=["600519.SH"],
+        broker_id="test_broker",
+    )
+    config.max_single_order_pct = Decimal("0.04")  # 4% = 40,000
+    config.max_symbol_orders_per_day = 999
+    config.max_total_orders_per_day = 999
+
+    session = TradingSession(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.03}),  # 3% → 30,000 元 < 40,000
+        risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        order_manager=_make_real_om(broker),
+        config=config,
+    )
+    session.start()
+    orders = session.rebalance()
+    # 3% of 1,000,000 = 30,000 < 40,000 (4%) → 放行
+    assert len(orders) == 1, "未超限订单应放行"
+    session.stop()
+
+
+def test_circuit_breaker_symbol_frequency_limit() -> None:
+    """熔断：单票下单频次超限 → 阻断。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("1000000"),
+        holdings={},
+        total_market_value=Decimal("0"),
+    )
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+
+    config = TradingSessionConfig(
+        universe=["600519.SH"],
+        broker_id="test_broker",
+    )
+    config.max_single_order_pct = Decimal("1.0")  # 不限制单笔
+    config.max_symbol_orders_per_day = 2  # 单票 ≤2 笔/日
+    config.max_total_orders_per_day = 999
+
+    session = TradingSession(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.03}),
+        risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        order_manager=_make_real_om(broker),
+        config=config,
+    )
+    session.start()
+    # 第一次 rebalance：放行（计数 1）
+    orders1 = session.rebalance()
+    assert len(orders1) == 1
+    # 第二次 rebalance：放行（计数 2）
+    orders2 = session.rebalance()
+    assert len(orders2) == 1
+    # 第三次 rebalance：频次超限（计数已达 2）→ 阻断
+    orders3 = session.rebalance()
+    assert len(orders3) == 0, "第三次应被频次熔断阻断"
+    session.stop()
+
+
+def test_circuit_breaker_total_frequency_limit() -> None:
+    """熔断：全账户下单频次超限 → 阻断。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("1000000"),
+        holdings={},
+        total_market_value=Decimal("0"),
+    )
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+
+    config = TradingSessionConfig(
+        universe=["600519.SH"],
+        broker_id="test_broker",
+    )
+    config.max_single_order_pct = Decimal("1.0")
+    config.max_symbol_orders_per_day = 999
+    config.max_total_orders_per_day = 2  # 全账户 ≤2 笔/日
+
+    session = TradingSession(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.03}),
+        risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        order_manager=_make_real_om(broker),
+        config=config,
+    )
+    session.start()
+    session.rebalance()  # 计数 1
+    session.rebalance()  # 计数 2
+    orders3 = session.rebalance()  # 计数已达 2 → 阻断
+    assert len(orders3) == 0, "第三次应被全账户频次熔断阻断"
+    session.stop()
+
+
+def test_circuit_breaker_reset_daily() -> None:
+    """熔断：reset_daily_circuit_breaker 清零计数后恢复下单。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("1000000"),
+        holdings={},
+        total_market_value=Decimal("0"),
+    )
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+
+    config = TradingSessionConfig(
+        universe=["600519.SH"],
+        broker_id="test_broker",
+    )
+    config.max_single_order_pct = Decimal("1.0")
+    config.max_symbol_orders_per_day = 1  # 单票 ≤1 笔/日
+    config.max_total_orders_per_day = 999
+
+    session = TradingSession(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.03}),
+        risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        order_manager=_make_real_om(broker),
+        config=config,
+    )
+    session.start()
+    orders1 = session.rebalance()
+    assert len(orders1) == 1  # 第一笔放行
+    orders2 = session.rebalance()
+    assert len(orders2) == 0  # 频次超限阻断
+    # 重置当日计数
+    session.reset_daily_circuit_breaker()
+    orders3 = session.rebalance()
+    assert len(orders3) == 1, "重置后应恢复下单"
+    session.stop()

@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.2.0"
+version: "1.3.0"
 date: 2026-08-08
 topic: discussion_framework
 scope: 07_trading_decision_architecture
@@ -43,7 +43,7 @@ scope: 07_trading_decision_architecture
 | 07 | 卖出流 | ❌ 空白 | — | — | 待讨论 |
 | 08 | 仓位管理 | ✅ design_memo_001 §2.1（分层裁定框架） | ✅ MOD-POS-020/021/022 | 另一AI 🔄 blueprint+骨架 | 框架已定，细节待落 |
 | 09 | 风控 | ✅ design_memo_001 §2.5（回撤Protocol四级框架） | — | — | 框架已定，落地待讨论 |
-| 10 | 执行 | ✅ design_memo_010 | — | G22-AI | ✅ 已定稿 |
+| 10 | 执行 | ✅ design_memo_010 | — | G22-AI | ✅ 已定稿+代码已施工 |
 | 11 | 对账 | ❌ 空白 | — | — | 待讨论 |
 | 12 | 跨切 | 🟧 design_memo_001 §3 指明大部分冲突因A模型消失 | — | — | 待清理 |
 
@@ -329,7 +329,7 @@ scope: 07_trading_decision_architecture
 | 产出物 | [design_memo_010](design_memo_010_execution_broker.md) |
 | 对标 | miniQMT 文档 / 机构执行算法（TWAP/VWAP/IS） |
 | 正交性 | ✅ 与 regime 正交 |
-| 状态 | ✅ 已定稿 v1.0.0（2026-08-08，G22-AI） |
+| 状态 | ✅ 已定稿 v1.0.0 + 代码已施工（commit 015826ae，2026-08-08，G22-AI） |
 | 优先级 | P4 |
 
 ---
@@ -530,7 +530,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 |---|---|---|---|
 | discussion_001 | G02 regime spec | 另一AI | ✅ v1.3.1 |
 | discussion_002 | G03 regime 验证 | 另一AI | ✅ v1.0.0 |
-| discussion_003 | G04 首批3策略 | G04-AI | ✅ v1.0.0 |
+| discussion_003 | G04 首批3策略 | G04-AI | ✅ v1.2.0 |
 | discussion_004 | G06 板块轮动 | （待认领） | 待开工 |
 | discussion_005 | G07 相关性验证 | （待认领） | 待开工 |
 | discussion_006 | G08 打板细节 | （待认领） | 待开工 |
@@ -558,7 +558,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | design_memo_007 | G15 RegimeMetaAllocator | （待认领） | ⚠️等C1 |
 | design_memo_008 | G19 买入流 | （待认领） | 待开工 |
 | design_memo_009 | G20 卖出流 | （待认领） | 待开工 |
-| design_memo_010 | G22 下单对接 | G22-AI | ✅ v1.0.0 |
+| design_memo_010 | G22 下单对接 | G22-AI | ✅ v1.0.0 + 代码已施工 |
 | design_memo_011 | G25 对账归因 | （待认领） | 待开工 |
 | design_memo_012 | G27 冲突矩阵清理 | （待认领） | 待开工 |
 | design_memo_013 | G28 生命周期多AI | （待认领） | 待开工 |
@@ -581,7 +581,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 
 | 开放问题 | 出处 | 决策状态 |
 |---|---|---|
-| 首批 3 策略确认（打板+多因子+事件驱动） | design_memo_001 §6.1 / G04 | ✅ 已定 v1.0.0（discussion_003；主升龙头并入打板，多因子新增） |
+| 首批 3 策略确认（打板+多因子+事件驱动） | design_memo_001 §6.1 / G04 | ✅ 已定 v1.2.0（discussion_003；主升龙头并入打板，多因子新增） |
 | convergence_window 按换手率定（打板1-2/多因子3-5/事件2-3天） | design_memo_001 §6.4 / G14 | 待首批策略定后校准 |
 | 情绪周期定位器准确率评估 | design_memo_001 §6.3 / G21 | 待评估 |
 | regime 检测器业务规则 spec | design_memo_001 §6.6 / discussion_001 | ✅ 已定 v1.3.1 |
@@ -596,3 +596,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-06 | 1.0.0 | 初稿 | 建立 28 个主题组（G01-G28）的讨论框架路线图，供多 AI 分工认领；梳理依赖关系与 3 条并行轨道；建立产出物编号占用表 |
 | 2026-08-07 | 1.1.0 | §7.3 标记 G04/G12/G22 认领状态为已分配 | 三主题组分配给并行 AI 开工，避免后续编号撞车 |
 | 2026-08-08 | 1.2.0 | discussion_003 占用状态更新为 ✅ v1.0.0；§9 首批3策略开放问题标记已定 | G04-AI 落盘 discussion_003（首批3策略=打板+多因子+事件驱动；主升龙头并入打板，多因子新增；§1.4 对齐 charter §3 裁定 Model A 非 Citadel pod） |
+| 2026-08-08 | 1.3.0 | discussion_003 占用状态同步至 ✅ v1.2.0（补施工流程+灰度判据）；G22 design_memo_010 状态更新为"代码已施工" | discussion_003 经多轮审查迭代至 v1.2.0（补施工环节流程算法+2026灰度判据）；G22-AI 完成 design_memo_010 代码施工（commit 015826ae） |
