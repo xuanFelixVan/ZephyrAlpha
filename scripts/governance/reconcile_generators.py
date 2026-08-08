@@ -38,6 +38,7 @@ reconcile_generators.py — 生成器自动触发统一编排器
   - reconcile_stale(): boot_hooks 启动时扫描全部生成器——yaml:源按 mtime 对比，
     db:源按成功时间戳年龄判定（P2-1：drop-not-queue 丢弃后 boot 兜底）
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -50,8 +51,8 @@ timeout_seconds: 300
 warn_only: false
 """
 
-import importlib
 import concurrent.futures
+import importlib
 import logging
 import os
 import subprocess
@@ -63,7 +64,7 @@ _LOGGER = logging.getLogger(__name__)
 
 # subprocess 回退超时（秒/生成器）——治理生成器最重的是 generate_domain_doc
 # （批量写 20+ 域文档），实测 <60s；300s 留足余量防慢机环境误杀。
-_SUBPROCESS_TIMEOUT = 300  # noqa: gate-vocab
+_SUBPROCESS_TIMEOUT = 300  # noqa: gate-vocab  # subprocess 调用超时阈值常量
 
 # 并行重生成 worker 数（治本缺口#2：depgraph_db 串行 19 个 subprocess ~50s → 并行 ~13s）。
 # 安全前提（已从 generator_registry.yaml 验证）：同一 trigger_source 的生成器
@@ -88,8 +89,7 @@ if str(_REPO_ROOT) not in sys.path:
 
 # 生成器注册表真源（TRAE-062 规则数据真源=YAML，只读）
 _REGISTRY_YAML = (
-    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry"
-    / "catalogs" / "generator_registry.yaml"
+    _REPO_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "generator_registry.yaml"
 )
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -142,8 +142,9 @@ def _is_pid_alive_local(pid: int) -> bool:
     try:
         if sys.platform == "win32":
             import ctypes  # type: ignore[import-not-found]
+
             kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
-            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab
+            PROCESS_QUERY_LIMITED_INFORMATION = 0x1000  # noqa: gate-vocab  # Win32 OpenProcess 访问权限标志
             handle = kernel32.OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, False, pid)
             if not handle:
                 return False
@@ -174,7 +175,7 @@ def _acquire_regen_lock() -> tuple[bool, str]:
     def _write_owner() -> bool:
         fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         try:
-            os.write(fd, f"{os.getpid()}\n".encode("utf-8"))
+            os.write(fd, f"{os.getpid()}\n".encode())
         finally:
             os.close(fd)
         return True
@@ -264,6 +265,7 @@ def _load_registry() -> dict:
     """
     try:
         import yaml  # type: ignore[import-untyped]
+
         if not _REGISTRY_YAML.exists():
             _LOGGER.warning("generator_registry.yaml 不存在: %s", _REGISTRY_YAML)
             return {"generators": []}
@@ -373,7 +375,8 @@ def _invoke_generator(entry: dict) -> dict:
             # entry_function 声明了但模块中没有 → 落 subprocess 回退
             _LOGGER.debug(
                 "entry_function '%s' not found in %s, falling back to subprocess",
-                entry_fn_name, module_path,
+                entry_fn_name,
+                module_path,
             )
         except Exception as e:  # noqa: BLE001 — 生成失败不阻断调用方
             return {
@@ -456,10 +459,7 @@ def reconcile(source: str) -> dict:
         }
     try:
         registry = _load_registry()
-        matched = [
-            e for e in registry.get("generators", [])
-            if source in e.get("trigger_sources", [])
-        ]
+        matched = [e for e in registry.get("generators", []) if source in e.get("trigger_sources", [])]
         results = _invoke_parallel(matched)
         return {
             "source": source,
@@ -468,6 +468,20 @@ def reconcile(source: str) -> dict:
         }
     finally:
         _release_regen_lock()
+        # #ARCH-GW-002 治本方案A：体系A 跑完 depgraph 生成器后清 dirty flag，
+        # 使 GATE-DOMAIN-DOC 的 dirty-flag trigger 不再重复 fire（消除双重执行）。
+        # 前提：domain_doc 生成器 trigger_sources=[depgraph_db]（generator_registry.yaml
+        # L127-128），reconcile("depgraph_db") 已跑 domain_doc，dirty flag 使命完成。
+        # 限定 source=="depgraph_db"：避免 reconcile("rules_yaml") 等误清 depgraph flag。
+        # 边界：GATE-ARCH-DIAGRAM 不依赖 dirty flag，本方案不覆盖——见
+        # architecture_issue_registry.yaml #ARCH-GW-002 完整治本方向。
+        if source == "depgraph_db":
+            try:
+                from zephyr.shared.io.paths import DEPGRAPH_DIRTY_FLAG
+
+                DEPGRAPH_DIRTY_FLAG.unlink(missing_ok=True)
+            except OSError:
+                pass  # flag 删除失败不阻断（最坏残留→下次 commit 多 fire 一次，生成器幂等）
 
 
 def _prune_detached() -> None:
@@ -624,7 +638,7 @@ def reconcile_stale() -> dict:
         # 阶段2：并行重生成 stale 生成器（慢——subprocess spawn）
         raw_results = _invoke_parallel([e for e, _ in stale_entries])
         regenerated: list[dict] = []
-        for r, (entry, reason) in zip(raw_results, stale_entries):
+        for r, (entry, reason) in zip(raw_results, stale_entries, strict=False):
             name = entry.get("name", "<unknown>")
             r["stale_reason"] = reason
             regenerated.append(r)
@@ -633,7 +647,9 @@ def reconcile_stale() -> dict:
             else:
                 _LOGGER.warning(
                     "reconcile_stale: %s FAILED (reason=%s): %s",
-                    name, reason, r.get("error"),
+                    name,
+                    reason,
+                    r.get("error"),
                 )
         return {
             "regenerated": regenerated,
@@ -663,6 +679,7 @@ def _fmt_result(r: dict) -> str:
 def main() -> int:
     """CLI 入口（手动测试用，正常由 apply/boot_hooks 自动调用）."""
     import argparse
+
     parser = argparse.ArgumentParser(description="生成器自动触发编排器")
     parser.add_argument("--source", help="按触发源重生成（如 depgraph_db）")
     parser.add_argument("--stale", action="store_true", help="扫描 mtime 重生成过时产物")

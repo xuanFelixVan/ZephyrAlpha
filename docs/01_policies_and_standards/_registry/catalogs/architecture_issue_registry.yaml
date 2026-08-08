@@ -13270,3 +13270,63 @@ entries:
   status: resolved
   created: '2026-08-09'
   last_updated: '2026-08-09'
+# --- #ARCH-GW-002: drift-gate 与派生文档 untrack 冲突——体系A 清 dirty flag 局部治本（2026-08-09 登记）---
+- issue_id: '#ARCH-GW-002'
+  title: drift-gate 依赖 git diff 检测产物变更，派生文档 untrack（#ARCH-GOV-BUDGET-001）后失效——体系A/体系B 生成器双重执行
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-09 登记。#ARCH-DUAL-TRIGGER 的 drift-gate 治本方案的后续缺陷。
+
+    病根（第一性原理）：
+    drift-gate（#ARCH-DUAL-TRIGGER 治本）在 _reconcile_domain_doc / make_arch_diagram_reconciler
+    开头用 `git diff --name-only -- <产物>` 预检测产物是否已有未提交变更——有变更=体系A
+    reconcile_async 已跑过→跳过生成器直接 auto-commit。但 commit 326952a276（#ARCH-GOV-BUDGET-001）
+    将 100 个派生 .md 产物移出 git 跟踪（git rm --cached + .gitignore），drift-gate 的
+    `git diff` 对 untracked+ignored 文件返回空→永远不命中→drift-gate 静默失效→体系B 永远
+    跑生成器（与体系A 双重执行）。
+
+    实证（2026-08-09 核对）：
+    - GATE-DOMAIN-DOC 的 _DOC_DIRS（02_domain_architecture_docs/ + generated/domains/）：
+      git ls-files 仅剩 README.md（派生产物全 untrack）→ git diff 恒空。
+    - GATE-ARCH-DIAGRAM 的 _OUTPUTS（16 产物）：15 个 untracked+ignored（asset_catalog.md /
+      panorama_registry.md / decision_index.md 等均 git check-ignore 命中），仅
+      src/zephyr/data/config/policies.yaml 1 个仍跟踪→drift-gate 16 分之 15 失效。
+
+    治本方案A（本次施工，局部治本）：
+    在 reconcile_generators.py 的 reconcile() finally 块，当 source=="depgraph_db" 时清除
+    DEPGRAPH_DIRTY_FLAG。前提：domain_doc 生成器 trigger_sources=[depgraph_db]
+    （generator_registry.yaml L127-128），reconcile("depgraph_db") 已跑 domain_doc，
+    dirty flag 使命（触发 GATE-DOMAIN-DOC 重生域文档）完成。清 flag 后 GATE-DOMAIN-DOC 的
+    _trigger_domain_doc 不再因 flag 存在而 fire→消除最高频双重执行场景
+    （apply_depgraph.py 写 DB 后 commit 业务文件，committed_files 不含 PG 脚本）。
+    限定 source=="depgraph_db" 避免误清（reconcile("rules_yaml") 等不应清 depgraph flag）。
+
+    方案A 边界（不覆盖，后续方向）：
+    1. GATE-ARCH-DIAGRAM 不依赖 dirty flag（trigger=committed_files 含 PG 脚本/YAML 真源），
+       方案A 无效。当用户 commit apply_depgraph.py 或 YAML 真源时，trigger 命中→drift-gate
+       失效→仍双重执行 15 生成器。缓解：跨进程串行锁（#ARCH-REGEN-CONCURRENCY-001）+
+       生成器幂等，不损坏数据，仅浪费 CPU。
+    2. GATE-DOMAIN-DOC 的 PG-script-commit trigger 路径（committed_files 含 apply_depgraph.py）：
+       dirty flag 已被方案A 清，但 trigger 仍因 committed_files 命中→drift-gate 失效→双重执行。
+
+    完整治本方向（待施工，铁律#9）：
+    drift-gate 改用不依赖 git 跟踪的检测信号。候选：
+    a. 复用 _write_success_marker 时间戳——drift-gate 检测对应生成器 success marker 比上次
+       commit 新→体系A 已跑过→跳过（覆盖两个 reconciler，改动中）；
+    b. 体系A 跑完写通用 regen_done 标记（按 source），drift-gate 检测标记存在→跳过；
+    c. 为 GATE-ARCH-DIAGRAM 引入类似 DEPGRAPH_DIRTY_FLAG 的 arch_dirty_flag（apply_*.py 设，
+       体系A 清，GATE-ARCH-DIAGRAM trigger 检测）——对称扩展方案A。
+    方向 a 最通用（复用已有 marker 基础设施），推荐优先评估。
+  impact:
+    - 'scripts/governance/reconcile_generators.py（reconcile() finally 块清 dirty flag，方案A）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（_reconcile_domain_doc / make_arch_diagram_reconciler drift-gate，untrack 后失效，后续完整治本目标）'
+    - 'scripts/governance/apply_depgraph.py（mark_depgraph_dirty + reconcile_async，方案A 协调端）'
+  fix_phase: |-
+    方案A 已施工（2026-08-09）：reconcile_generators.py reconcile() finally 块加
+    `if source == "depgraph_db": DEPGRAPH_DIRTY_FLAG.unlink(missing_ok=True)`，
+    限定 depgraph_db source 避免误清。解决 GATE-DOMAIN-DOC dirty-flag trigger 路径双重执行。
+    完整治本（覆盖 GATE-ARCH-DIAGRAM，方向 a/b/c）待施工，非本次范围。
+  status: decided
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
