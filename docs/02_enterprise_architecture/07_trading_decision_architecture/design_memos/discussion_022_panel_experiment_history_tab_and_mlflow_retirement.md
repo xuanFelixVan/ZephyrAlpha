@@ -2,8 +2,8 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.1.0"
-date: 2026-08-08
+version: "1.2.3"
+date: 2026-08-09
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
 parent: discussion_018_backtest_observability_workplan.md
@@ -89,6 +89,7 @@ parent: discussion_018_backtest_observability_workplan.md
 - **新增** `download_artifact_text(...)` 薄包装（返回 str 或 None），便于直接读 c1_summary.md。
 
 #### B2. 新建 `src/zephyr/frontend/dashboard/components/experiment_history.py`
+- **设计参考**（v1.2.2 补，来源前端可视化讨论线 2026-08-02 调研）：屏幕布局可参考 [backtest-kit/ui](https://github.com/tripolskypetr/backtest-kit)（`@backtest-kit/ui`，2026-08 开源回测仪表盘，React18 + Material-UI + Lightweight Charts，5 小时前更新活跃）。该项目屏幕设计专为回测可视化——portfolio cards / KPI boards / candlestick+signal overlays / strategy heatmap / markdown reports / dump explorer，与「实验历史」Tab 需求高度重叠（KPI 卡片网格 ↔ 指标 diff 卡片；列表+详情切换 ↔ run 列表+多选对比；Markdown 报告折叠 ↔ c1_summary.md）。**参考其布局思路，不引入其代码**（技术栈 React/JS vs 本项目 Panel/Python，且它配套自家 backtest-kit 引擎）。本项目 4 轮再审（§八 2026-08-08）未覆盖此项目，v1.2.2 由前端讨论线调研注入。
 - **数据模型**：
   - `@dataclass ExperimentHistoryData`：`runs: list[RunSummary]`、`component: str`。
   - `@dataclass C1ComparisonView`：`run_id`、`run_name`、`start_time`、`passed`、`verdicts: list[C1VerdictRow]`、`nav_baseline: list[float]`、`nav_experiment: list[float]`、`metrics_diff: dict`、`summary_md: str`。
@@ -104,7 +105,7 @@ parent: discussion_018_backtest_observability_workplan.md
   - 用 `pn.bind` 绑定选择回调：选 0 个→空状态；选 1 个→`fetch_c1_comparison` + `_render_c1_comparison`（双曲线）；选 2-N 个→横向指标表格（§七.P1-4）。
   - **C1 对比视图**（`_render_c1_comparison(view) -> pn.Column`）：
     - 顶部：若 `view.degraded_reason` 非空 → `pn.pane.Alert(reason)`（§七.P1-7）；若 `view.alignment_warning` 非空 → 次级 Alert。
-    - 双净值曲线叠加图（plotly Scatter，baseline 蓝/experiment 橙，复用 `backtest_performance.py` 暗色调色板 `_BG/_BLUE/_ORANGE` 等——从该模块 import 常量，避免重定义）。⚠️ 画图前数据已按 §七.P0-1 归一化 + §七.P0-2 对齐；x 轴用对齐后交集时间戳。
+    - 双净值曲线叠加图（plotly Scatter，baseline 蓝/experiment 橙，复用 `backtest_performance.py` 暗色调色板 `_BG/_BLUE/_ORANGE` 等——从该模块 import 常量，避免重定义）。⚠️ 画图前数据已按 §七.P0-1 归一化 + §七.P0-2 对齐；x 轴用对齐后交集时间戳。y 轴：长跨度（>3 年）用**对数刻度**（equal vertical = equal percentage，避免早期被压扁；来源 alphanume.com 2026-06「How to Plot an Equity Curve」），短跨度线性即可（v1.2.0 补）。
     - 四项 verdict 对比表（plotly Table 或 pn.pane.Markdown 表格：指标/baseline/experiment/通过✅❌）。
     - 指标 diff 卡片（sharpe Δ、maxdd Δ、turnover Δ、calmar Δ，红绿色编码）。⚠️ Δ=experiment-baseline + `_METRIC_POLARITY` 正负向（§七.P1-5）。
     - "看 baseline/experiment 详情"按钮 → 重建 `_MinPortfolio` 喂 `render_backtest_performance`（§七.P0-3，**施工前先勘探 5-Tab 入参契约**，不可降级则砍按钮）。
@@ -138,6 +139,7 @@ parent: discussion_018_backtest_observability_workplan.md
 - `architecture_issue_registry.yaml`：更新 `#ARCH-OBS-EXP-TRACK-001` status（M2 完成；mlflow 退役说明）。
 - blueprint `blueprint_experiment_tracking.md`：同步"单一 JSON 后端"（去 mlflow）。
 - `app_panel.py`/`experiment_history.py` 文件头元数据自检（MOD-L08-001 归属）。
+- **前端 C4 Container Diagram 待登记**（v1.2.2 补，来源前端可视化讨论线）：将来用 C4-PlantUML 画前端 Container Diagram 时，「实验历史」作为第 11 个 Container 登记（D_FRONTEND 域，CONSUMERS=app_panel，DEPENDENCIES=query/panel/plotly）。注：C4 是通用架构图方法（非前端专用），项目后端已有 C4 组件图（`docs/02_enterprise_architecture/target_architecture/diagrams/` 4 个 C4 组件图 + 5 个序列图），**前端缺 Container Diagram**——此 Tab 随前端图一并补，闭环"纸面 vs 实际"断层。
 
 #### C3. 提交
 - 经 `GitCommitGateway` 提交（项目唯一合法入口；不用 `--no-verify`）。
@@ -153,10 +155,11 @@ parent: discussion_018_backtest_observability_workplan.md
 6. **`artifact_logging` 字段保留**：虽当前未消费，但属配置旋钮低风险；本次不顺带删（避免连带改测试）。tracking_uri/experiment_prefix 明确 mlflow 专属，删除。
 7. **依赖声明**：pyproject 本就无 mlflow，无需改；panel/plotly/pandas 已是核心依赖，新组件零新增依赖。
 8. **交互方式**：Panel Tab 用 `pn.bind` 绑定 run 选择回调（动态更新详情），与现有静态 Tab 不同但属 Panel 标准用法；pn=None 时返回 dict 保证可测。
+9. **G0.5 过渡层定位**（v1.2.2 补，来源前端可视化讨论线 `docs/_working/frontend_visualization_discussion.md`）：本 Tab 属 **G0.5 Python 过渡层（开发工具/回测眼睛）**，非 G1 正式前端（React 网页版）。现有 Panel 仪表盘（10 Tab + 本 Tab = 11 Tab）即"高度集成前端"的 G0.5 形态——一个入口、多 Tab 联动，不另起 React。将来升级 G1 时，`fetch_c1_comparison` 返回的 dataclass（数据契约）可复用，render 层会重写。此定位防"纸面 VIEW-10 vs 实际 Panel"断层重演（项目最大架构认知差：架构文档说前端未建，实际 Panel 在跑）。
 
 ## 五、Verification（验证步骤）
 
-1. **单测**：`pytest tests/experiment_tracking/ tests/frontend/dashboard/components/test_experiment_history.py -v` 全绿。
+1. **单测**：`pytest tests/experiment_tracking/ tests/frontend/dashboard/components/test_experiment_history.py -v` 全绿。⚠️ v1.2.0 补充断言：① P1-4 节流——"快速连选 3 个 run → 仅触发 1 次回调"；② P1-7 CSV 鲁棒性——"nav CSV 损坏/缺 `nav` 列 → `degraded_reason='NAV CSV 解析失败'` + Alert 显示"。
 2. **mlflow 残留检查**：`rg "import mlflow|_MLflowBackend" src/zephyr/` 无命中（仅 docstring 历史提及可接受，执行时清理为"tracking run"措辞）。
 3. **端到端**：跑 C1 mock 生成 2 个 fallback run → `python -c "from zephyr.experiment_tracking.query import list_runs; print(list_runs('c1-validation'))"` 返回 2 条。
 4. **Panel 可视化**：`panel serve src/zephyr/frontend/dashboard/app_panel.py --port 5006` → 浏览器「实验历史」Tab 列出 2 个 C1 run → 选中 → 见双净值曲线叠加 + 四项 verdict 表 + 指标 diff + summary 折叠。
@@ -174,7 +177,7 @@ parent: discussion_018_backtest_observability_workplan.md
 
 ---
 
-## 七、施工流程/算法补遗（审查发现的 10 项缺口）
+## 七、施工流程/算法补遗（10 个编号项；v1.1.0 在 P1-4/P1-7 内各补 1 项内容）
 
 > 来源：2026-08-08 全网搜索 + 对照本计划逐条审查
 > 分级：P0 必须补（影响正确性）/ P1 应该补（影响完整性）/ P2 建议补（影响可维护性）
@@ -375,12 +378,38 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 - **对本项目的价值**：100% AI 开发场景下，AI 能在对话里直接渲染/截图验证 Panel Tab，不用用户手动开浏览器。
 - **建议**：**值得后续接入**（不阻塞当前 MVP）。理由：与项目"AI 可发现性"治理目标一致，且是 HoloViz 官方工具非外部依赖。登记为"Panel Tab 上线后评估接入 panel-live-server 做开发期可视化验证"。
 
+### E. 过拟合检测体系（PBO / DSR / 多重检验校正）
+- **来源**：deflated-alpha v0.3.0（GitHub 0scarito，2026-07-26，MIT）+ Bailey et al. PBO/CSCV (2017) + marketmaker.cc 控制实验 (2026-07)
+- **是什么**：回测过拟合检测工具包，一个 `audit()` 调用封装 DSR(Deflated Sharpe Ratio) + PBO/CSCV(Combinatorially Symmetric Cross-Validation) + Harvey-Liu haircuts + White's Reality Check + Hansen's SPA。
+  - PBO 的 null 是 **0.5**（不是 0）：PBO≈0.5 表示选择过程是抛硬币（过拟合），PBO<0.1 表示有真实信号。
+  - 实测误报率（零假设搜索中）：原始"best Sharpe 显著吗"=1.000（每次误报）；DSR=0.001；Harvey-Liu Bonferroni=0.057；White's RC=0.022。
+- **对 C1 的价值**：当前 C1 verdict 只有 Sharpe/MaxDD/Calmar/Turnover 四项**静态阈值**判定。这套工具能回答"跑了很多次实验后，这个 sharpe 是不是侥幸"——比 §八 A 的 DTW 更根本（DTW 看曲线相似度，PBO 看选择过程是否可信）。
+- **建议**：**MVP 不做，登记为后续增强**。理由：① 属策略验证方法论层，非展示层，不落在 discussion_022 施工范围；② 需引入 deflated-alpha 依赖（或自行实现 CSCV，成本高）；③ 需 C1 记录"所有试过的配置"（当前只记最终 run，不记搜索路径），是 C1 verdict 体系的上游改造。登记为"C1 verdict 体系升级时评估接入 deflated-alpha 做过拟合检测"。
+- **局限**（v1.2.1 补，来源 CSDN 2026-03）：PBO 自身有三重脆弱性：① 子样本构造偏差（须 Circular Block Bootstrap，滑动窗口违反零均值假设致 PBO 系统性低估）；② 平稳性幻觉（结构性断点如 2020 疫情/2022 加息致 PBO 低估过拟合风险）；③ 搜索空间覆盖不足（网格稀疏区最优解致基准分布失真）。单一 PBO 不具决策鲁棒性，工业实践推荐 **PBO + SRD（Sharpe Ratio Decay，滚动 12M Sharpe 斜率 < -0.03/年 警戒）+ DSR 三维交叉验证矩阵**。这进一步支持"MVP 不做"——接入成本远高于单个 `audit()` 调用。
+
+### F. 曲线平滑度指标（curve_smoothness，机读曲线质量判定）
+- **来源**：july-backtester #151（zachisit，2026-04-30，`llm_verdict.json` PR #153 已合并）
+- **是什么**：从净值曲线算 6 个标量 + 一个综合判定（SMOOTH/ACCEPTABLE/ROUGH），让"曲线质量"可机读（不依赖看图）：
+  - `smoothness_r2`：log-equity vs OLS 线性趋势的 R²（1.0=完美线性增长，低=锯齿/erratic）
+  - `monthly_return_std_pct`：月收益标准差（高=锯齿）
+  - `positive_months_pct`：正收益月占比（高=稳健上行）
+  - `max_monthly_drawdown_pct`：最大单月回撤（大负值=可见下挫）
+  - `longest_flat_streak_months`：最长无新高平台期（≥12=可见平台）
+  - `upthrust_count`：离群上涨月数（>3×std，>2=锯齿）
+  - `smooth_verdict`：SMOOTH（全过阈值）/ ACCEPTABLE（差 1 项）/ ROUGH（差 2+ 项）；阈值：R²≥0.90 & positive_months≥60% & longest_flat≤11 & upthrust≤2 & max_monthly_dd≥−10%
+- **对 C1 的价值**：当前 C1 verdict 只看 Sharpe/MaxDD/Calmar/Turnover 四项**终值**。curve_smoothness 能回答"experiment 的曲线是不是比 baseline 更平滑/更稳健"——两个策略同 Sharpe 可能曲线质量天差地别。与 §八 E 的 PBO 互补：PBO 看"选择过程可信吗"，curve_smoothness 看"这条曲线长得健康吗"。
+- **建议**：**MVP 不做，登记为后续增强**。理由：① 属 verdict/指标计算层，非展示层，不落在 discussion_022 施工范围；② 需月度重采样（C1 nav 是日频，需 `.resample("M")`），是 c1_adapter 上游改造；③ 6 个阈值面向美股月度策略，需针对本项目策略类型校准。登记为"C1 verdict 体系升级时与 §八 E 一并评估"。
+
 ### 验证当前选择正确的搜索证据
 | 发现 | 来源 | 对本项目的意义 |
 |---|---|---|
 | Streamlit vs Panel（2026-04）：Panel 更适合 100+ widget 生产级仪表盘，Streamlit rerun 模型在复杂交互下脆弱 | theneuralbase.com | 选 Panel 集成而非另起 Streamlit，**正确**——项目已有 10+ Tab |
 | Qlib 仍用 MLflowRecorder（2026-07） | CSDN/GitHub | 主流量化平台实验跟踪仍走 MLflow 薄包装，"薄包装层"思路与微软 Qlib 一致 |
 | Plotly 是 2026 量化交互可视化首选（2026-03） | novaquantlab.com | 掘金 5-Tab + 双曲线图都用 plotly，技术栈对齐主流 |
+| 开源量化前端调研（8 项目，2026-08-02）：backtest-kit/ui（回测可视化最贴合，已在 B2 参考）/ Finanalyzer（国产 OpenBB，React+FastAPI）/ Tickflow Stock Panel（A股 Polars）/ QuantMuse（Streamlit）/ FinceptTerminal（C++/Qt 桌面标杆，难嫁接）/ MarketMind（Electron 桌面）/ backtrader-pyqt-ui（PyQt 桌面）/ Investing Algorithm Framework（HTML 报告） | 前端可视化讨论线调研（`docs/_working/frontend_visualization_discussion.md`） | 无完全可直接嫁接的（后端定制化），但 backtest-kit/ui 屏幕设计最贴合→已融入 B2；**Panel 集成仍是正确选择**，不另起 React/Streamlit |
+| Streamlit/Dash/Panel 框架对比（2026）：Streamlit 是默认首选（Snowflake 收购，1-3 天出活），Dash 企业级（AG Grid 100万行），Panel 不落后但不主流首选 | usedatabrain.com 2026-06 + freemail.ai 2026-07 | 项目已有 10+ Tab 用 Panel，**不必现在换**；将来 G1 升级再评估 Streamlit/Dash |
+| Lightweight Charts 仍是 2026 开源 K线首选（Canvas 渲染 10万+ 点，45KB，Apache 2.0） | hedgeui.com 2026-04 + thefrontkit.com 2026-06 | 项目 memory 已记在用，**继续用对**；本 Tab 用 plotly 做净值曲线不涉及 K线 |
+| 桌面 vs 网页裁定：专业机构交易终端桌面版（Bloomberg/TWS/MT5），研究/回测网页版（QuantConnect），趋势混合；用户场景（一人看回测）网页版够用 | 前端可视化讨论线 | G0.5 用 Panel 网页版（已裁定），桌面感留待 G1 评估 Electron/Tauri 包层；与 §四.9 G0.5 定位一致 |
 
 ## 九、修订记录
 
@@ -388,3 +417,7 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 |---|---|---|---|
 | 2026-08-08 | 1.0.0 | 初稿落盘 design_memos | 从 `.trae/documents/` 工作稿定稿存入永久区；补 §七 10 项施工算法补遗（P0×3 / P1×4 / P2×3）+ §八 4 项后续增强登记（2026-08-08 全网搜索）；按 design_memo_management_spec §4.2 frontmatter 规范 + discussion_018 文档头范式定稿 |
 | 2026-08-08 | 1.1.0 | 再审补遗 2 项缺口 | 缺口 A（P1 节流）：P1-4 多选回调补 `value_throttled` 防抖（来源 Panel 官方文档「Harnessing Throttling」）；缺口 B（P2 CSV 鲁棒性）：P1-7 `degraded_reason` 表补“NAV CSV 解析失败”触发源。第二轮全网搜索（A/B 仪表盘 / akquant / khQuant / PostHog / QuantStats）未发现更优方案，现行 Panel+FallbackBackend JSON 选择再验证正确 |
+| 2026-08-08 | 1.2.0 | 第三轮再审：结构完善 + 登记过拟合检测 | 4 处调整：①§七标题澄清“10 编号项 + v1.1.0 补 2 项内容”；②§五验证补节流 + CSV 鲁棒性单测断言；③§八新增 E 过拟合检测体系（deflated-alpha PBO/DSR/CSCV/White RC，2026-07 开源）；④§三 B2 双曲线图补对数 y 轴（长跨度 >3 年）。第三轮全网搜索（PBO/DSR/多重检验校正/净值归一化）验证 P0-1 归一化算法正确，无新施工缺口 |
+| 2026-08-08 | 1.2.1 | 第四轮再审：登记曲线平滑度 + PBO 局限 | 2 处补充（均落 §八 后续增强，不改施工计划）：①§八新增 F 曲线平滑度指标（july-backtester #151，2026-04，6 标量+SMOOTH/ACCEPTABLE/ROUGH 判定，与 PBO 互补看曲线健康度）；②§八 E 补 PBO 三重脆弱性局限（CSDN 2026-03：子样本/平稳性/搜索空间）+ PBO+SRD+DSR 三维验证矩阵。第四轮全网搜索（PBO/CSCV/DSR/曲线平滑度/对数刻度）验证 P0-1/P0-2 算法正确，核心施工（A/B/C 三工作流 + 10 编号项）无新缺口；新发现 2 项均属 verdict 层非展示层，登记为后续增强 |
+| 2026-08-09 | 1.2.2 | 第五轮融合：前端可视化讨论线调研注入 | 3 处融合（来源 `docs/_working/frontend_visualization_discussion.md` 讨论线 + 2026-08-02 开源量化前端调研，非新全网搜索）：①B2 补 backtest-kit/ui 屏幕布局设计参考（tripolskypetr/backtest-kit，2026-08，React18+Lightweight Charts 回测可视化仪表盘，4 轮再审批漏覆盖——屏幕设计专为回测：KPI 卡片/列表详情切换/Markdown 报告，与「实验历史」Tab 重叠，参考布局不引代码）；②§四 Decisions 补第 9 条 G0.5 过渡层定位（本 Tab 属 G0.5 开发工具非 G1 正式前端，dataclass 契约可复用、render 层将来重写，防"纸面 VIEW-10 vs 实际 Panel"断层重演）；③C2 治理登记补前端 C4 Container Diagram 待登记项（C4 通用非前端专用，后端已有 C4 组件图，前端缺，此 Tab 随前端图一并补）。本轮不改 A/B/C 核心施工流程与 §七 10 编号项，仅做设计参考与定位/治理登记层面的融合 |
+| 2026-08-09 | 1.2.3 | 第六轮融合：补全 §八调研留痕 | §八验证表补 4 行（来源前端可视化讨论线 2026-08-02 调研，非新全网搜索）：①开源量化前端 8 项目调研结论（backtest-kit/ui/Finanalyzer/Tickflow/QuantMuse/FinceptTerminal/MarketMind/backtrader-pyqt-ui/Investing Algorithm Framework——无可直接嫁接，Panel 集成正确，backtest-kit/ui 已融入 B2）；②Streamlit/Dash/Panel 框架对比（Panel 不落后不必换，G1 再评估）；③Lightweight Charts K线首选（项目已在用，本 Tab 不涉及）；④桌面 vs 网页裁定（G0.5 用 Panel 网页版，桌面感留待 G1 Electron/Tauri 包层，与 §四.9 一致）。本轮仅补 §八验证表留痕，不改 A/B/C 施工流程与 §七 10 编号项 |
