@@ -6,7 +6,7 @@ ttl: permanent
 status: draft
 version: "0.2.0"
 date: "2026-08-07"
-last_updated: "2026-08-07"
+last_updated: "2026-08-08"
 priority: P0
 depends_on:
   - discussion_001_regime_detector_spec.md
@@ -37,6 +37,17 @@ related_modules:
 | B4 转换触发 | ⚠️ FAIL (3/6) | S1 3/3 ✅，S2 0/3 | S2 需 NLP + 资金/板块数据 |
 | A2 过拟合 | ❌ FAIL | OOS/IS=0.340, KL=16.95 | 9 态过多，模型时间不稳定 |
 | B1 概率校准 | ❌ FAIL | 误差 27.6%，80-100%桶误差 45.9% | confidence 严重过度自信 |
+
+> **2026-08-08 更新**：P0-E1 降态（9→4）+ P0-E2 两阶段校准器 + B4 修复后，Phase 2 全 PASS：
+>
+> | 验证器 | 结果 | 关键指标 |
+> |---|---|---|
+> | A1 样本充足性 | ✅ PASS | 3733 样本，4 态最少 555 天（r3） |
+> | B4 转换触发 | ✅ PASS (3/3) | S1 3/3 命中；S2 [待数据]（data_ready=False，需 NLP+high/low，不计分母） |
+> | A2 过拟合 | ✅ PASS | OOS/IS=1.042，KL=13.05（9 态时仅 0.340） |
+> | B1 概率校准 | ✅ PASS | ECE=4.2%（60-80%桶 n=221 误差 3.7%） |
+>
+> 上表为初始 9 态验证历史（P0 修复前）；P0 完成后 Phase 2 闭环（commit 0c5ea28bb1/83c94c4f/e4fd931a），进入 P1 数据管道激活阶段。
 
 ### 0.2 问题诊断
 
