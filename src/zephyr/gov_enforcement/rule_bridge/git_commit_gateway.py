@@ -528,9 +528,15 @@ class GitCommitGateway:
             return
         # 非 worktree commit——检查是否有其他活跃 session（并发风险判定）
         try:
+            # #ARCH-RECONCILER-WORKTREE-RACE 治本（2026-08-09）：
+            # 与 worktree_required_gate.py 对齐——排除 reconciler worker session
+            # （worker-{sha8}-{pid}）。worker 是 commit 下游产物（held_files 空、变更经
+            # gateway 串行提交），无搭便车风险。不排除则每次 commit 有活跃 worker 都产
+            # 噪音 WARN（非阻断，但治理噪音 + 与 gate 判定标准不一致=第二决策点）。
             other_active = [
                 s for s in self.registry.list_active()
                 if s.session_id != session_id
+                and not s.session_id.startswith("worker-")
             ]
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             other_active = []
