@@ -1518,7 +1518,7 @@ tasks:
     description: "期权日K线增量（miniQMT get_market_data_ex，symbols如10000001.SH）"
 
   fallback_sources:
-  - source: exchange
+  - source: akshare            # #ARCH-OPTION-AKSHARE-FALLBACK: QMT无期权权限时走新浪源
     capability: option_kline
 - task_id: option_greeks_incremental
   table: c1_market.option_greeks

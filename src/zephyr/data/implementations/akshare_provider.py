@@ -179,6 +179,7 @@ _AKSHARE_CAPABILITIES = frozenset({
     "realtime_snapshot",   # 替代 iFind THS_RealtimeQuotes（akshare stock_zh_a_spot_em，注意反爬）
     "sector_meta",         # 替代 iFind 881板块汇总（akshare 从成分股聚合计算）
     "stock_hot_rank",  # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
+    "option_kline",  # #ARCH-OPTION-AKSHARE-FALLBACK: 新浪源期权日K线（QMT无期权权限时fallback）
 })
 
 
@@ -376,6 +377,8 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("sector_meta", supports_symbols_null=True),
             # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
             CapabilityContract("stock_hot_rank", supports_symbols_null=True),
+            # #ARCH-OPTION-AKSHARE-FALLBACK: 新浪源期权日K线（QMT无期权权限时fallback）
+            CapabilityContract("option_kline", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -1351,8 +1354,13 @@ class AkshareIngestProvider(IngestProviderBase):
         API: push2.eastmoney.com/api/qt/stock/fflow/daykline/get
         klines 格式: 日期,主力净流入,小单净流入,中单净流入,大单净流入,超大单净流入,主力占比,小单占比,中单占比,大单占比,超大单占比
         close/pct_change 接口未提供，填 None。
+
+        #ARCH-PARALLEL-MONEY-FLOW（2026-08-09 治本）：
+        原串行 5000只×~1s=60min+，逼近6h STALE红线被 reaped。
+        改 ThreadPoolExecutor 并行（参照 _fetch_daily_valuation 已验证模式）。
         """
         import akshare as ak  # 用于 _get_all_a_symbols 获取标的列表（裁定 #ARCH-CH-018）
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
         table = _TBL_MONEY_FLOW
         columns = [
@@ -1388,59 +1396,94 @@ class AkshareIngestProvider(IngestProviderBase):
         batch_rows: list[tuple] = []
         t0 = time.time()
 
-        for sym in symbols:
-            sym = str(sym).split(".")[0].zfill(6)
-            market = "1" if sym.startswith(("6", "5", "9")) else "0"
-            secid = f"{market}.{sym}"
-            params = {
-                "secid": secid, "lmt": 100, "klt": "1",
-                "fields1": "f1,f2,f3,f7",
-                "fields2": fields2,
-            }
-            try:
-                # #ARCH-RSS-INVESTING-403-001 治本扩展：切到 _http_get（raise_for_status），
-                # 移除手动 status_code 检查——5xx/4xx 抛 HTTPError 不匹配 retry_on → except → continue
-                resp = self._call_with_policy(
-                    self._http_get, policy, url,
-                    params=params, headers=headers, timeout=15,
+        _MAX_WORKERS = 4  # 保守并发，与 _fetch_daily_valuation 一致
+
+        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as ex:
+            future_to_code = {}
+            for idx, sym in enumerate(symbols):
+                code = str(sym).split(".")[0].zfill(6)
+                fut = ex.submit(
+                    self._fetch_money_flow_one_symbol,
+                    sym, policy, url, headers, fields2, start_str, end_str,
                 )
-                data = resp.json()
-                klines = (data.get("data") or {}).get("klines") or []
-                for line in klines:
-                    parts = line.split(",")
-                    if len(parts) < 11:
-                        continue
-                    trade_date = parts[0]
-                    if trade_date < start_str or trade_date > end_str:
-                        continue
-                    batch_rows.append((
-                        trade_date, sym,
-                        None,  # close 接口未提供
-                        None,  # pct_change 接口未提供
-                        safe_float(parts[1]),    # 主力净流入
-                        safe_float(parts[6]),    # 主力净流入占比
-                        safe_float(parts[5]),    # 超大单净流入
-                        safe_float(parts[10]),   # 超大单净流入占比
-                        safe_float(parts[4]),    # 大单净流入
-                        safe_float(parts[9]),    # 大单净流入占比
-                        safe_float(parts[3]),    # 中单净流入
-                        safe_float(parts[8]),    # 中单净流入占比
-                        safe_float(parts[2]),    # 小单净流入
-                        safe_float(parts[7]),    # 小单净流入占比
-                    ))
-                    if len(batch_rows) >= 500:
-                        yield FetchResult(
-                            table=table, columns=columns, rows=batch_rows[:],
-                            last_key=last_key, elapsed_sec=time.time() - t0,
-                        )
-                        batch_rows.clear()
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                self._log.warning(f"money_flow({sym}) 失败: {e}")
-                continue
+                future_to_code[fut] = code
+                if (idx + 1) % 100 == 0:
+                    self._log.info(f"money_flow 提交进度: {idx+1}/{len(symbols)}")
+
+            done = 0
+            total = len(future_to_code)
+            for fut in as_completed(future_to_code):
+                code = future_to_code[fut]
+                try:
+                    rows = fut.result()
+                except Exception as e:  # noqa: BLE001 — 5.135治标
+                    self._log.warning(f"money_flow {code} 并行任务异常: {e}")
+                    rows = []
+                batch_rows.extend(rows)
+                done += 1
+                if done % 100 == 0:
+                    self._log.info(f"money_flow 完成进度: {done}/{total}")
+                if len(batch_rows) >= 500:
+                    yield FetchResult(
+                        table=table, columns=columns, rows=batch_rows[:],
+                        last_key=last_key, elapsed_sec=time.time() - t0,
+                    )
+                    batch_rows.clear()
+
         yield FetchResult(
             table=table, columns=columns, rows=batch_rows[:],
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
+
+    def _fetch_money_flow_one_symbol(
+        self, sym, policy, url, headers, fields2, start_str, end_str,
+    ) -> list[tuple]:
+        """抓取单只标的的资金流向数据并组装为行（提取自 _fetch_money_flow 供并行）。
+
+        #ARCH-RSS-INVESTING-403-001 治本扩展：切到 _http_get（raise_for_status），
+        移除手动 status_code 检查——5xx/4xx 抛 HTTPError 不匹配 retry_on → except → 空行
+        """
+        sym = str(sym).split(".")[0].zfill(6)
+        market = "1" if sym.startswith(("6", "5", "9")) else "0"
+        secid = f"{market}.{sym}"
+        params = {
+            "secid": secid, "lmt": 100, "klt": "1",
+            "fields1": "f1,f2,f3,f7",
+            "fields2": fields2,
+        }
+        rows: list[tuple] = []
+        try:
+            resp = self._call_with_policy(
+                self._http_get, policy, url,
+                params=params, headers=headers, timeout=15,
+            )
+            data = resp.json()
+            klines = (data.get("data") or {}).get("klines") or []
+            for line in klines:
+                parts = line.split(",")
+                if len(parts) < 11:
+                    continue
+                trade_date = parts[0]
+                if trade_date < start_str or trade_date > end_str:
+                    continue
+                rows.append((
+                    trade_date, sym,
+                    None,  # close 接口未提供
+                    None,  # pct_change 接口未提供
+                    safe_float(parts[1]),    # 主力净流入
+                    safe_float(parts[6]),    # 主力净流入占比
+                    safe_float(parts[5]),    # 超大单净流入
+                    safe_float(parts[10]),   # 超大单净流入占比
+                    safe_float(parts[4]),    # 大单净流入
+                    safe_float(parts[9]),    # 大单净流入占比
+                    safe_float(parts[3]),    # 中单净流入
+                    safe_float(parts[8]),    # 中单净流入占比
+                    safe_float(parts[2]),    # 小单净流入
+                    safe_float(parts[7]),    # 小单净流入占比
+                ))
+        except Exception as e:  # noqa: BLE001 — 5.135治标
+            self._log.debug(f"money_flow({sym}) 失败: {e}")
+        return rows
 
     # ---- 6. 限售解禁（share_unlock） ----
 
@@ -3241,8 +3284,13 @@ class AkshareIngestProvider(IngestProviderBase):
 
         调用 ak.stock_value_em(symbol) 逐只获取历史指标。
         dividend_yield 接口未提供，填 None。
+
+        #ARCH-PARALLEL-STOCK-INDICATOR（2026-08-09 治本）：
+        原串行 5000只×~1s=90min，逼近6h STALE红线被 reaped。
+        改 ThreadPoolExecutor 并行（参照 _fetch_daily_valuation 已验证模式）。
         """
         import akshare as ak
+        from concurrent.futures import ThreadPoolExecutor, as_completed
 
         table = _TBL_STOCK_INDICATOR
         columns = [
@@ -3258,26 +3306,157 @@ class AkshareIngestProvider(IngestProviderBase):
         batch_rows: list[tuple] = []
         t0 = time.time()
 
-        for idx, sym in enumerate(symbols):
-            code = str(sym).split(".")[0].zfill(6)
-            if (idx + 1) % 100 == 0:
-                self._log.info(f"stock_indicator 进度: {idx+1}/{len(symbols)}")
-            batch_rows.extend(self._collect_indicator_rows(
-                ak, policy, code, start_str, end_str,
-            ))
-            if len(batch_rows) >= 500:
-                yield FetchResult(
-                    table=table, columns=columns, rows=batch_rows[:],
-                    last_key=last_key, elapsed_sec=time.time() - t0,
+        _MAX_WORKERS = 4  # 保守并发，与 _fetch_daily_valuation 一致
+
+        with ThreadPoolExecutor(max_workers=_MAX_WORKERS) as ex:
+            future_to_code = {}
+            for idx, sym in enumerate(symbols):
+                code = str(sym).split(".")[0].zfill(6)
+                fut = ex.submit(
+                    self._collect_indicator_rows,
+                    ak, policy, code, start_str, end_str,
                 )
-                batch_rows.clear()
+                future_to_code[fut] = code
+                if (idx + 1) % 100 == 0:
+                    self._log.info(f"stock_indicator 提交进度: {idx+1}/{len(symbols)}")
+
+            done = 0
+            total = len(future_to_code)
+            for fut in as_completed(future_to_code):
+                code = future_to_code[fut]
+                try:
+                    rows = fut.result()
+                except Exception as e:  # noqa: BLE001 — 5.135治标
+                    self._log.warning(f"stock_indicator {code} 并行任务异常: {e}")
+                    rows = []
+                batch_rows.extend(rows)
+                done += 1
+                if done % 100 == 0:
+                    self._log.info(f"stock_indicator 完成进度: {done}/{total}")
+                if len(batch_rows) >= 500:
+                    yield FetchResult(
+                        table=table, columns=columns, rows=batch_rows[:],
+                        last_key=last_key, elapsed_sec=time.time() - t0,
+                    )
+                    batch_rows.clear()
 
         yield FetchResult(
-            table=table, columns=columns, rows=batch_rows,
+            table=table, columns=columns, rows=batch_rows[:],
             last_key=last_key, elapsed_sec=time.time() - t0,
         )
 
-    # ---- 28. 大宗交易明细（block_trade_detail） ----
+    # ---- 28. 期权日K线（option_kline，新浪源 fallback） ----
+
+    def _fetch_option_kline(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """获取期权日K线数据，写入 c1_market.option_kline。
+
+        #ARCH-OPTION-AKSHARE-FALLBACK（2026-08-09）：
+        QMT 模拟账户无期权权限 → miniqmt 返回 0 行。
+        用 akshare 新浪源获取 SSE ETF 期权日K线（50ETF/300ETF）。
+
+        数据流:
+          1. option_sse_list_sina(underlying) → 到期月份列表
+          2. option_sse_codes_sina(opt_type, month, underlying) → 合约代码
+          3. option_sse_daily_sina(code) → 日K线（日期/开盘/最高/最低/收盘/成交量）
+
+        表 schema: (trade_date, symbol, open, high, low, close, volume, amount, data_source)
+        amount 接口未提供，填 None。
+        """
+        import akshare as ak
+
+        table = "c1_market.option_kline"
+        columns = [
+            "trade_date", "symbol", "open", "high", "low", "close",
+            "volume", "amount", "data_source",
+        ]
+        last_key = payload.end.isoformat()
+        start_str = payload.start.isoformat()
+        end_str = payload.end.isoformat()
+        batch_rows: list[tuple] = []
+        t0 = time.time()
+
+        # SSE ETF 期权标的: (underlying_code, underlying_name)
+        sse_underlyings = [
+            ("510050", "50ETF"),
+            ("510300", "300ETF"),
+        ]
+
+        for underlying_code, underlying_name in sse_underlyings:
+            # 1. 获取到期月份
+            try:
+                months = self._call_with_policy(
+                    ak.option_sse_list_sina, policy, symbol=underlying_name,
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标
+                self._log.warning(f"option_kline: {underlying_name} 到期月份获取失败: {e}")
+                continue
+            if not months:
+                self._log.info(f"option_kline: {underlying_name} 无到期月份")
+                continue
+
+            self._log.info(f"option_kline: {underlying_name} 到期月份: {months}")
+
+            for month in months:
+                for opt_type in ("看涨期权", "看跌期权"):
+                    # 2. 获取合约代码列表
+                    try:
+                        df = self._call_with_policy(
+                            ak.option_sse_codes_sina, policy,
+                            symbol=opt_type, trade_date=month,
+                            underlying=underlying_code,
+                        )
+                    except Exception as e:  # noqa: BLE001 — 5.135治标
+                        self._log.debug(
+                            f"option_kline: {underlying_name} {month} {opt_type} 合约列表失败: {e}"
+                        )
+                        continue
+                    if df is None or len(df) == 0:
+                        continue
+
+                    for _, row in df.iterrows():
+                        code = str(row.get("期权代码") or "").strip()
+                        if not code:
+                            continue
+                        # 3. 获取日K线
+                        try:
+                            klines = self._call_with_policy(
+                                ak.option_sse_daily_sina, policy, symbol=code,
+                            )
+                        except Exception as e:  # noqa: BLE001 — 5.135治标
+                            self._log.debug(f"option_kline: {code} 日K线获取失败: {e}")
+                            continue
+                        if klines is None or len(klines) == 0:
+                            continue
+
+                        for _, kline in klines.iterrows():
+                            d = self._norm_date_str(kline.get("日期"))
+                            if not d or d < start_str or d > end_str:
+                                continue
+                            batch_rows.append((
+                                d, code,
+                                safe_float(kline.get("开盘")),
+                                safe_float(kline.get("最高")),
+                                safe_float(kline.get("最低")),
+                                safe_float(kline.get("收盘")),
+                                safe_float(kline.get("成交量")),
+                                None,  # amount 接口未提供
+                                "akshare_sina",
+                            ))
+                            if len(batch_rows) >= 500:
+                                yield FetchResult(
+                                    table=table, columns=columns, rows=batch_rows[:],
+                                    last_key=last_key, elapsed_sec=time.time() - t0,
+                                )
+                                batch_rows.clear()
+
+        yield FetchResult(
+            table=table, columns=columns, rows=batch_rows[:],
+            last_key=last_key, elapsed_sec=time.time() - t0,
+        )
+
+    # ---- 29. 大宗交易明细（block_trade_detail） ----
 
     @staticmethod
     def _parse_block_trade_detail_row(row) -> tuple:

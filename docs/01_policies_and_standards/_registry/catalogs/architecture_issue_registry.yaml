@@ -12571,6 +12571,56 @@ entries:
   status: confirmed
   created: '2026-08-08'
   last_updated: '2026-08-08'
+# --- #ARCH-OPTION-AKSHARE-FALLBACK: 期权日K线 QMT无权限→akshare新浪源 fallback（2026-08-09）---
+- issue_id: '#ARCH-OPTION-AKSHARE-FALLBACK'
+  title: 期权日K线 QMT 模拟账户无权限 → akshare 新浪源 fallback
+  severity: P2低
+  category: data
+  adjudication: |-
+    2026-08-09 登记。QMT 模拟账户无期权权限 → miniqmt get_market_data_ex 对 option_kline 返回 0 行
+    （8/3-8/5 数据缺口根因 C）。akshare 新浪源提供 SSE ETF 期权（50ETF/300ETF）日K线，
+    作为 option_kline 的 fallback_source。AkshareIngestProvider 新增 _fetch_option_kline：
+    option_sse_list_sina→option_sse_codes_sina→option_sse_daily_sina 三步取数。
+    tasks.yaml option_greeks_incremental fallback_source exchange→akshare。零成本治标，
+    权限获批后可切回 QMT 主源。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_fetch_option_kline + _AKSHARE_CAPABILITIES + CapabilityContract）'
+    - 'src/zephyr/data/config/tasks.yaml（option_greeks_incremental fallback_source=akshare）'
+  fix_phase: akshare 新浪源 fallback 已落地；QMT 期权权限获批后切回主源
+  status: decided
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
+# --- #ARCH-PARALLEL-MONEY-FLOW: money_flow 串行→并行治本（2026-08-09）---
+- issue_id: '#ARCH-PARALLEL-MONEY-FLOW'
+  title: money_flow 逐只串行 60min+ 逼近 6h STALE 被 reap → ThreadPoolExecutor 并行
+  severity: P1中
+  category: data
+  adjudication: |-
+    2026-08-09 登记。akshare money_flow 原串行 5000 只 ×~1s=60min+，逼近 scheduler 6h STALE 红线
+    被 reaped（8/3-8/5 数据缺口根因 A）。改 ThreadPoolExecutor(max_workers=4) 并行，参照
+    _fetch_daily_valuation 已验证模式。抽取 _fetch_money_flow_one_symbol 供并行复用，
+    as_completed 收集 + 500 行批量 yield。保守并发 4 防反爬。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_fetch_money_flow 并行化 + _fetch_money_flow_one_symbol 抽取）'
+  fix_phase: 并行化已落地；运行时验证全量 5000 只完成时间 < STALE 红线
+  status: decided
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
+# --- #ARCH-PARALLEL-STOCK-INDICATOR: stock_indicator 串行→并行治本（2026-08-09）---
+- issue_id: '#ARCH-PARALLEL-STOCK-INDICATOR'
+  title: stock_indicator 逐只串行 90min 逼近 6h STALE 被 reap → ThreadPoolExecutor 并行
+  severity: P1中
+  category: data
+  adjudication: |-
+    2026-08-09 登记。akshare stock_indicator 原串行 5000 只 ×~1s=90min，逼近 scheduler 6h STALE
+    红线被 reaped（8/3-8/5 数据缺口根因 A，与 money_flow 同因）。改 ThreadPoolExecutor(max_workers=4)
+    并行，复用 _collect_indicator_rows。修最后一 yield 缺切片 bug（batch_rows→batch_rows[:]）。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_fetch_stock_indicator 并行化 + 末尾 yield 切片修复）'
+  fix_phase: 并行化已落地；运行时验证全量完成时间 < STALE 红线
+  status: decided
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
 # --- #ARCH-REGIME-FEATURE-BUILDER-001: regime 特征管道（模块A）——OHLCV→RegimeFeatures/OverlaySignals/RiskSignalInputs Phase 1b 落地（2026-08-07）---
 - issue_id: '#ARCH-REGIME-FEATURE-BUILDER-001'
   title: 新增 regime 特征管道——RegimeFeatureBuilder + features/* + OverlaySignalsConstructor + RiskSignalConstructor
