@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-08-08
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
@@ -245,7 +245,8 @@ class _MinPortfolio:
 - 选 2-N 个 run → 右侧切换为"横向对比视图"：指标表格（行=run，列=sharpe/maxdd/calmar/turnover/passed/时间）+ 可选指标雷达图（plotly）。
 - 选 1 个 → 走原 `_render_c1_comparison`（双曲线叠加）。
 - 选 0 个 → 空状态提示。
-- 单测：选 2 个→表格 2 行；选 1 个→双曲线视图。
+- **节流防抖**（2026-08-08 再审补遗·缺口 A）：多选回调绑 `MultiSelect.param.value_throttled`（鼠标释放时触发）而非 `value`（实时触发），避免用户快速连点多个 run 时连续触发 `fetch_c1_comparison` + 重渲染导致 Panel 卡顿（同类问题曾致 MLflow UI 轮询卡死）。来源：Panel 官方文档「Harnessing Throttling for Performance」原文“the text is only updated when you release the mouse”+ 2026 最佳实践。备注：Panel 当前推荐 `pn.rx` 响应式表达式（比 `pn.bind` 更灵活），可选 `widget.param.value_throttled.rx()` 写法；MVP 先用 `value_throttled` 保证不卡，`pn.rx` 全量迁移列为后续优化（非阻塞）。
+- 单测：选 2 个→表格 2 行；选 1 个→双曲线视图；快速连选 3 个→仅触发 1 次回调（节流生效）。
 
 ### P1-5　指标 diff 计算 + 正负向语义（落点：B2 `_render_c1_comparison` 指标 diff 卡片）
 
@@ -304,6 +305,7 @@ def _parse_verdicts(metrics: dict) -> list[C1VerdictRow]:
   - run 存在但 nav CSV 双缺 → `degraded_reason="NAV 数据缺失"`，nav_baseline/experiment=[]。
   - run 存在但仅 baseline 缺 → `degraded_reason="baseline NAV 缺失"`，只画 experiment。
   - summary 缺 → `summary_md=""`，不显示折叠面板。
+  - nav CSV 解析失败（空/损坏/缺 `nav` 列/index 非日期）→ `degraded_reason="NAV CSV 解析失败"`，nav 置空走降级态（2026-08-08 再审补遗·缺口 B；本路径已被 P1-7 降级机制覆盖，此处仅点名触发源，不新增分支）。
 - `_render_c1_comparison` 检查 `degraded_reason`：非空时在顶部显示 `pn.pane.Alert(reason)`，其余区域按可用数据渲染。
 - 单测：双缺→Alert + 空 nav 区；单缺→Alert + 单曲线。
 
@@ -385,3 +387,4 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-08 | 1.0.0 | 初稿落盘 design_memos | 从 `.trae/documents/` 工作稿定稿存入永久区；补 §七 10 项施工算法补遗（P0×3 / P1×4 / P2×3）+ §八 4 项后续增强登记（2026-08-08 全网搜索）；按 design_memo_management_spec §4.2 frontmatter 规范 + discussion_018 文档头范式定稿 |
+| 2026-08-08 | 1.1.0 | 再审补遗 2 项缺口 | 缺口 A（P1 节流）：P1-4 多选回调补 `value_throttled` 防抖（来源 Panel 官方文档「Harnessing Throttling」）；缺口 B（P2 CSV 鲁棒性）：P1-7 `degraded_reason` 表补“NAV CSV 解析失败”触发源。第二轮全网搜索（A/B 仪表盘 / akquant / khQuant / PostHog / QuantStats）未发现更优方案，现行 Panel+FallbackBackend JSON 选择再验证正确 |
