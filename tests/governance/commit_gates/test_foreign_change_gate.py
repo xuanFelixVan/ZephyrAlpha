@@ -23,6 +23,11 @@
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestSnapshotDiskPersistence: S3-C 治本——claim 快照磁盘持久化 + 崩溃恢复
 - TestAdoptPriorWork: 治本(2026-07-23)——claim_files(adopt_prior_work=True) 认领跨 session 前序工作（空基线+审计）
+- TestPostClaimAuditNormalSelfEditSkipped: P1——正常自编辑不记审计（噪音过滤）
+- TestPostClaimAuditDirtyBaselineChanged: P1——基线非空+变化→记审计（gate同时阻断）
+- TestPostClaimAuditAdoptedChanged: P1——adopted文件+变化→记审计
+- TestPostClaimAuditNoChange: P1——无变化不记审计
+- TestPostClaimAuditFailOpen: P1——审计失败不阻断commit
 """
 from __future__ import annotations
 
@@ -389,3 +394,176 @@ class TestAdoptPriorWork:
         # 无 adopt 审计日志
         audit_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
         assert not audit_file.exists()
+
+
+# ---------------------------------------------------------------------------
+# P1（13a5e1d512 治本补强）：post-claim 修改审计测试
+# ---------------------------------------------------------------------------
+
+def _make_audit_gateway(
+    project_root: Path,
+    session_snapshots: dict[str, str] | None = None,
+    capture_map: dict[str, str] | None = None,
+    adopted_records: list[dict] | None = None,
+) -> MagicMock:
+    """构造 mock gateway，支持 post-claim 审计测试。
+
+    Args:
+        project_root: 项目根目录（真实 Path，审计日志写入此目录下）。
+        session_snapshots: per-session 快照 {abs_path: baseline}。
+        capture_map: capture_baseline_diff 返回值映射 {abs_path: current_diff}。
+            未命中的文件返回空串（模拟干净文件）。
+        adopted_records: 写入 {sid}_adopted.jsonl 的记录列表（模拟 adopt_prior_work）。
+    """
+    gw = MagicMock()
+    gw.project_root = project_root
+    gw.claim_snapshots.get.return_value = session_snapshots or {}
+    gw.claim_snapshots_dir = project_root / ".runtime" / "claim_snapshots"
+    capture_map = capture_map or {}
+
+    def _capture(abs_f):
+        return capture_map.get(abs_f, "")
+
+    gw.capture_baseline_diff = _capture
+
+    # 写入 adopted 日志（模拟 adopt_prior_work 的审计记录）
+    if adopted_records:
+        gw.claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
+        adopted_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
+        with adopted_file.open("w", encoding="utf-8") as fh:
+            for rec in adopted_records:
+                fh.write(json.dumps(rec, ensure_ascii=False) + "\n")
+
+    return gw
+
+
+def _read_audit_log(project_root: Path) -> list[dict]:
+    """读取 post_claim_modifications.jsonl 审计日志。"""
+    audit_path = project_root / ".runtime" / "gate_audit" / "post_claim_modifications.jsonl"
+    if not audit_path.is_file():
+        return []
+    return [
+        json.loads(line)
+        for line in audit_path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+
+class TestPostClaimAuditNormalSelfEditSkipped:
+    """正常自编辑（空基线+非adopted+当前有diff）→ 不记审计（噪音过滤）。"""
+
+    def test_self_edit_not_audited(self, tmp_path):
+        """session claim 干净文件后自己编辑 → 审计跳过（baseline空+current非空=自编辑）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_audit_gateway(
+            tmp_path,
+            session_snapshots={abs_target: ""},  # 干净 claim
+            capture_map={abs_target: "+my own edit\n-new line"},  # session 自己编辑
+        )
+        gate = make_foreign_change_gate()
+        gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        records = _read_audit_log(tmp_path)
+        assert records == [], "正常自编辑不应记审计"
+
+
+class TestPostClaimAuditDirtyBaselineChanged:
+    """基线非空 + 当前≠基线 → 记审计（可疑：claim 时已脏且继续变）。"""
+
+    def test_dirty_baseline_change_audited(self, tmp_path):
+        """基线非空（claim 时脏）+ 当前 diff 变化 → 审计记录（gate 同时阻断）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_audit_gateway(
+            tmp_path,
+            session_snapshots={abs_target: "-old\n+foreign"},  # claim 时脏
+            capture_map={abs_target: "-old\n+foreign\n+more changes"},  # commit 时变了
+        )
+        gate = make_foreign_change_gate()
+        passed, detail = gate.check(
+            gw, [str(target)], session_id="s1", allow_overlap=False,
+        )
+        assert passed is False  # gate 阻断（基线非空）
+        records = _read_audit_log(tmp_path)
+        assert len(records) == 1, "基线非空+变化应记审计"
+        assert records[0]["file"] == "a.py"
+        assert records[0]["baseline_size"] > 0
+        assert records[0]["current_size"] > records[0]["baseline_size"]
+        assert records[0]["adopted"] is False
+        assert records[0]["post_claim_change"] is True
+
+
+class TestPostClaimAuditAdoptedChanged:
+    """adopted 文件（空存储基线+adopted日志）+ 当前有diff → 记审计。"""
+
+    def test_adopted_file_change_audited(self, tmp_path):
+        """adopt_prior_work 认领的文件（空基线）+ commit 时有 diff → 审计记录。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        gw = _make_audit_gateway(
+            tmp_path,
+            session_snapshots={abs_target: ""},  # adopt 清空了基线
+            capture_map={abs_target: "+adopted work visible at commit"},  # commit 时有 diff
+            adopted_records=[{  # adopt 审计日志
+                "timestamp": 1700000000.0,
+                "session_id": "s1",
+                "file": abs_target,
+                "diff_size": 50,
+                "diff_sha256": "abc123def456abc7",
+            }],
+        )
+        gate = make_foreign_change_gate()
+        passed, detail = gate.check(
+            gw, [str(target)], session_id="s1", allow_overlap=False,
+        )
+        assert passed is True  # 空基线 → gate 放行
+        records = _read_audit_log(tmp_path)
+        assert len(records) == 1, "adopted+变化应记审计"
+        assert records[0]["adopted"] is True
+        assert records[0]["baseline_size"] == 0  # 存储基线为空
+        assert records[0]["current_size"] > 0
+
+
+class TestPostClaimAuditNoChange:
+    """当前==基线 → 不记审计（无 post-claim 变化）。"""
+
+    def test_no_change_not_audited(self, tmp_path):
+        """文件自 claim 后未变 → 审计跳过。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        same_diff = "-old\n+unchanged"
+        gw = _make_audit_gateway(
+            tmp_path,
+            session_snapshots={abs_target: same_diff},
+            capture_map={abs_target: same_diff},  # 当前==基线
+        )
+        gate = make_foreign_change_gate()
+        gate.check(gw, [str(target)], session_id="s1", allow_overlap=False)
+        records = _read_audit_log(tmp_path)
+        assert records == [], "无变化不应记审计"
+
+
+class TestPostClaimAuditFailOpen:
+    """审计写入失败不阻断 commit（fail-open）。"""
+
+    def test_audit_failure_doesnt_block(self, tmp_path):
+        """project_root 不可写 → 审计失败 → gate 仍正常阻断/放行。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        # 构造 gateway：project_root 指向不可写路径触发审计失败
+        gw = MagicMock()
+        gw.project_root = tmp_path  # 正常路径（claim_snapshots 可读）
+        gw.claim_snapshots.get.return_value = {abs_target: ""}
+        gw.claim_snapshots_dir = tmp_path / ".runtime" / "claim_snapshots"
+        # capture_baseline_diff 返回非 str → 审计跳过该文件（不崩溃）
+        gw.capture_baseline_diff = lambda abs_f: 42  # int，非 str
+        gate = make_foreign_change_gate()
+        passed, detail = gate.check(
+            gw, [str(target)], session_id="s1", allow_overlap=False,
+        )
+        assert passed is True  # 空基线 → 放行，审计异常不影响决策

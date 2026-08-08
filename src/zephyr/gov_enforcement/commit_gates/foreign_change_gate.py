@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] allow_overlap=True 时直接放行（逃生通道，与 HELD-OVERLAP 对齐）；无基线快照时 PASS（reconciler auto-commit 等未走 claim_files 的路径不阻断）；基线为空时 PASS（claim 时文件干净，所有变更都是本 session 的）；基线非空时 BLOCK（claim 时文件已有外来变更）；_claim_snapshots 读取异常安全降级为无快照（不阻断 commit）
+# [INVARIANTS] allow_overlap=True 时直接放行（逃生通道，与 HELD-OVERLAP 对齐）；无基线快照时 PASS（reconciler auto-commit 等未走 claim_files 的路径不阻断）；基线为空时 PASS（claim 时文件干净，所有变更都是本 session 的）；基线非空时 BLOCK（claim 时文件已有外来变更）；_claim_snapshots 读取异常安全降级为无快照（不阻断 commit）；P1 post-claim 修改审计 warn-only（在 block 决策前运行，捕获 claim 后到 commit 前的文件变化记录到 .runtime/gate_audit/post_claim_modifications.jsonl，审计失败不阻断 commit）
 # [MODIFY-GUARD] gate_id="FOREIGN-CHANGE-DETECTION"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -40,6 +40,23 @@ HELD-OVERLAP gate 只检测目标文件是否被其他**活跃** session **claim
 - 基线为空（claim 时文件干净，所有变更都是本 session 的）→ PASS
 - 基线非空（claim 时文件已有外来变更）→ BLOCK，逃生通道 ``allow_overlap=True``
 
+时序缺口审计（P1，13a5e1d512 治本补强）
+-----------------------------------------
+FOREIGN-CHANGE gate 只检查 **claim 时刻** 的基线快照，不检测 **claim 后到 commit 前**
+文件是否被修改。时序缺口：session claim 文件（基线干净）→ 后台 auto-sync 进程/其他
+session 修改同一文件 → session commit 时 gate 看到干净基线直接 PASS，但实际 commit
+内容已混入 post-claim 外来修改。
+
+本 gate 在 commit 时（block 决策前）追加 **post-claim 修改审计**（warn-only）：
+捕获当前 diff 与 claim 基线对比，差异记录到
+``.runtime/gate_audit/post_claim_modifications.jsonl`` 供事后取证。
+
+噪音过滤（避免每个正常 commit 都记审计）：
+- 基线空 + 非 adopted + 当前有 diff → 正常自编辑（session claim 干净文件后自己编辑），跳过
+- 基线非空 + 当前≠基线 → 可疑（claim 时已脏且继续变），记录
+- adopted（基线被 adopt_prior_work 故意清空但实际脏）+ 当前有 diff → 可疑，记录
+- 当前==基线 → 无 post-claim 变化，跳过
+
 设计理由：claim 时基线非空意味着文件在 session 声明持有前已有未提交修改——这些
 修改不属于本 session（否则应在编辑前 claim）。阻断迫使调用方显式用逃生通道确认，
 或调整工作流在编辑前 claim。
@@ -59,11 +76,129 @@ Usage::
 
 from __future__ import annotations
 
+import json
+import logging
 import os
+import time
+from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 
+logger = logging.getLogger(__name__)
+
 __all__ = ["make_foreign_change_gate"]
+
+# post-claim 修改审计日志路径（与 allow_overlap_usage.jsonl 同目录）
+_POST_CLAIM_AUDIT_REL = ".runtime/gate_audit/post_claim_modifications.jsonl"
+
+
+def _load_adopted_files(gateway, session_id: str) -> set[str]:
+    """加载 session 的 adopted 文件集合（adopt_prior_work 认领的文件）。
+
+    adopt_prior_work=True 时，claim_files 将实际脏文件的基线**故意清空**（让
+    FOREIGN-CHANGE gate 放行），但真实基线记录到
+    ``{claim_snapshots_dir}/{sid}_adopted.jsonl``。本函数读取该日志提取被认领
+    的文件绝对路径集合，供 post-claim 审计识别 adopted 场景。
+
+    Args:
+        gateway: GitCommitGateway 实例（提供 claim_snapshots_dir）。
+        session_id: session 标识。
+
+    Returns:
+        被认领文件的绝对路径集合；日志不存在/读取异常时返回空集（fail-open）。
+    """
+    adopted: set[str] = set()
+    try:
+        adopted_file = gateway.claim_snapshots_dir / f"{session_id}_adopted.jsonl"
+        if not adopted_file.is_file():
+            return adopted
+        for line in adopted_file.read_text(encoding="utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                rec = json.loads(line)
+                f = rec.get("file", "")
+                if f:
+                    adopted.add(os.path.abspath(f))
+            except (json.JSONDecodeError, TypeError):
+                continue
+    except Exception:  # noqa: BLE001 — fail-open
+        pass
+    return adopted
+
+
+def _audit_post_claim_modifications(
+    gateway, session_id: str, files: list[str], snapshots: dict[str, str]
+) -> None:
+    """P1：审计 claim 后到 commit 前的文件修改（时序缺口可见性，warn-only）。
+
+    FOREIGN-CHANGE gate 只检查 claim 时刻基线，不检测 claim 后的修改。本函数在
+    commit 时捕获当前 diff 与 claim 基线对比，差异记录到审计日志供事后取证。
+
+    不影响 gate pass/block 决策——审计写入失败不阻断 commit（fail-open）。
+
+    噪音过滤：跳过正常自编辑（空基线+非adopted+当前有diff），仅记录可疑场景
+    （基线非空+变化 / adopted+变化）。
+
+    Args:
+        gateway: GitCommitGateway 实例（提供 capture_baseline_diff / project_root）。
+        session_id: session 标识。
+        files: 待 commit 文件绝对路径列表。
+        snapshots: {abs_file: baseline_diff} 字典（claim 时刻基线）。
+    """
+    try:
+        adopted_files = _load_adopted_files(gateway, session_id)
+        audit_path = Path(str(gateway.project_root)) / _POST_CLAIM_AUDIT_REL
+        audit_path.parent.mkdir(parents=True, exist_ok=True)
+
+        records: list[dict] = []
+        for f in files:
+            abs_f = os.path.abspath(f)
+            if abs_f not in snapshots:
+                continue
+            baseline = snapshots[abs_f]
+            try:
+                current = gateway.capture_baseline_diff(abs_f)
+            except Exception:  # noqa: BLE001 — fail-open
+                continue
+
+            # 防御：capture_baseline_diff 应返回 str，mock/异常场景可能返回非 str → 跳过
+            if not isinstance(current, str):
+                continue
+
+            if current == baseline:
+                continue  # 无 post-claim 变化
+
+            is_adopted = abs_f in adopted_files
+            # 噪音过滤：正常自编辑（干净 claim → session 自己编辑 → commit）跳过
+            if not baseline and not is_adopted and current:
+                continue
+
+            try:
+                rel = os.path.relpath(abs_f, str(gateway.project_root))
+            except (ValueError, AttributeError):
+                rel = abs_f
+
+            records.append({
+                "timestamp": time.time(),  # noqa: m46-time — 审计事件时间戳
+                "session_id": session_id,
+                "file": rel.replace("\\", "/"),
+                "baseline_size": len(baseline),
+                "current_size": len(current),
+                "adopted": is_adopted,
+                "post_claim_change": True,
+            })
+
+        if records:
+            with audit_path.open("a", encoding="utf-8") as fh:
+                for r in records:
+                    fh.write(json.dumps(r, ensure_ascii=False) + "\n")
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断 commit
+        logger.debug(
+            "FOREIGN-CHANGE: post-claim audit write failed (non-blocking)",
+            exc_info=True,
+        )
 
 
 def make_foreign_change_gate() -> GateSpec:
@@ -93,6 +228,12 @@ def make_foreign_change_gate() -> GateSpec:
             # _claim_snapshots 读取异常 -> 安全降级为无快照（不阻断）
             # 理由：快照基础设施故障不应卡死 commit 工作流
             snapshots = {}
+
+        # P1（13a5e1d512 治本补强）：post-claim 修改审计（warn-only）
+        # 在 block 决策前运行——即使 gate 阻断也记录 post-claim 变化供事后取证。
+        # 时序缺口：gate 只检查 claim 时刻基线，不检测 claim 后到 commit 前的修改。
+        # 本审计捕获当前 diff 与基线的差异，记录可疑场景到审计日志。
+        _audit_post_claim_modifications(gateway, session_id, files, snapshots)
 
         # 检测每个目标文件的基线
         dirty_files: list[str] = []
