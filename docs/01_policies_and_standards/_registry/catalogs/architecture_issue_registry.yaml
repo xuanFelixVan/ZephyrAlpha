@@ -12519,8 +12519,57 @@ entries:
     不计入分母，与 HistoricalEvent.data_ready docstring+historical_events.yaml L59-61 注释对齐(commit 83c94c4f)；
     TestOverlayGating 9项+B4单元测试 16项全过；regime 全套 56 项无回归；
     Phase 2 真实数据验证 B4 FAIL(3/6)→PASS(3/3)，A1/A2/B1/B4 全 PASS，Phase 2 闭环
+    2026-08-08 续：S2 排除机制从 data_ready=False 升级为 design_match=false（数据确已就绪，问题在算法
+    设计域——Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏），另修 capitulation/valuation 两个 P0 bug
+    （commit 93a25890），B4 仍 PASS(3/3) 闭环，详见#ARCH-REGIME-S2-ALGORITHM-001
   status: decided
   created: '2026-08-07'
+  last_updated: '2026-08-08'
+# --- #ARCH-REGIME-S2-ALGORITHM-001: S2 评分算法时点错配——capitulation 当日值 vs 过程 / valuation 价格回撤 vs 基本面（2026-08-08）---
+- issue_id: '#ARCH-REGIME-S2-ALGORITHM-001'
+  title: S2 评分算法时点错配——capitulation 当日值 vs 过程 / valuation 价格回撤 vs 基本面
+  severity: P1中
+  category: governance
+  adjudication: |-
+    2026-08-08 登记。Phase 2 B4 验证曾因 S2 data_ready=False（不计分母）以 PASS(3/3) 闭环
+    （见 #ARCH-REGIME-OVERLAY-001）。另一 session 以"数据管道已就绪"为由将 S2 data_ready 改 true，
+    S2 重新计入分母但 0/3 未命中，B4 退回 FAIL(3/6)。
+    诊断脚本 scripts/tests/dump_s2_scores.py dump 三事件日（2015-09-15/2020-04-10/2024-09-24）
+    ±10 交易日 S2 各维度评分，定位 0/3 根因：3 个关键维度（capitulation/valuation/spring）在复苏
+    事件日窗口恒为 0 或近 0，使 trigger/confirm/strong_confirm 三阶段全部无法满足——非阈值过高，
+    而是算法逻辑与时点语义错配（详见 discussion_023）：
+      ① capitulation：设计意图是"危机见底过程"信号（§4.12.1 Phase 1-5），实现是当日瞬时信号
+         （vol_z>z ∧ pct<-1.5%）。复苏事件日是企稳时点不会暴跌，capitulation 当日必为 0；
+      ② valuation：设计意图是基本面估值（§4.12.5 PE/破净率/风险溢价历史分位），实现是价格回撤
+         （close/rolling_max(250)）。2020/2024 复苏 pos≈0.90 距高点仅 -10%，价格回撤捕捉不到
+         "价格没跌但估值分位已低"；
+      ③ spring：close 跨日简化判断（前日破+当日收）与真 Spring"同日 low 破支撑+当日 close 收回"
+         语义时点错位。
+    诊断期另发现两个独立 P0 实现 bug，同 commit 修复：capitulation 原阈值 z>2 在持续高量危机期
+    经验性不可达（z-score 滚窗均值被抬高、单日 z 被压低，2015 vol_z max=1.79）→ 降至 z>1（治标，
+    P1-E9a rolling-max 过程化才是治本）；valuation rolling_max(250) 无 min_periods 致 warmup 期
+    NaN→误零 → 加 min_periods=20（治本，纯实现 bug）。
+    裁定（discussion_023 §2.5）：不为过 B4 而改算法（守住验证独立性），但绝不掩盖缺陷。采纳
+    design_match 语义隔离——HistoricalEvent 新增 design_match 字段，S2 三事件 design_match=false
+    （数据已就绪但 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏）不计 B4 分母，B4 回 PASS(3/3)，
+    Phase 2 闭环；data_ready 维持 true（数据确已就绪，问题在算法设计域而非数据）。design_match
+    比 data_ready 更精确——避免"数据就绪但算法设计域不符"被误标为"数据未就绪"。修 P0 bug 后 S2 仍
+    0/3，反向证实根因是设计域不符非 bug。治本方案独立为 P1-E9 工程项（discussion_019 §3.5），
+    算法重设计（capitulation 过程化+多维度、valuation 基本面化、spring 复用 wyckoff_engine）
+    独立于 B4 结果进行，完成后 S2 事件 design_match 回 true 重跑验证。
+    全部落地于 commit 93a25890：overlay_features.py（P0 bug 修复）+ b4_transition_accuracy.py
+    （design_match 字段）+ historical_events.yaml（design_match=false + 注释）+ discussion_023（诊断详档）。
+  impact:
+    - 'src/zephyr/regime/features/overlay_features.py（s2_capitulation_score/s2_valuation_score/s2_spring_flag，P0 bug 修复）'
+    - 'src/zephyr/regime/validation/phase2/b4_transition_accuracy.py（HistoricalEvent 新增 design_match 字段，validate 不计分母）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml（S2 三事件 design_match=false + 排除理由注释）'
+    - 'scripts/tests/dump_s2_scores.py（S2 维度评分诊断脚本）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md（诊断与治本详档）'
+  fix_phase: design_match=false 排除 + P0 bug 修复已落地（commit 93a25890，B4 PASS(3/3) Phase 2 闭环）；
+    治本待 P1-E9 算法重设计（discussion_019 §3.5）——capitulation 过程化(rolling max)+多维度、
+    valuation 基本面化(PE/破净率历史分位)、spring 复用 wyckoff_engine；完成后 S2 design_match 回 true 重跑验证
+  status: confirmed
+  created: '2026-08-08'
   last_updated: '2026-08-08'
 # --- #ARCH-REGIME-FEATURE-BUILDER-001: regime 特征管道（模块A）——OHLCV→RegimeFeatures/OverlaySignals/RiskSignalInputs Phase 1b 落地（2026-08-07）---
 - issue_id: '#ARCH-REGIME-FEATURE-BUILDER-001'
@@ -13052,3 +13101,22 @@ entries:
   status: decided
   created: '2026-08-08'
   last_updated: '2026-08-08'
+- issue_id: '#ARCH-GW-001'
+  title: GitCommitGateway 并发 session early return 时 stash 吞变更
+  severity: P2中
+  adjudication: |-
+    病根：GitCommitGateway 在多 session 共享工作区场景下，遇到 WORKTREE_VIOLATION /
+    FOREIGN_CHANGE_VIOLATION 等 gate 阻断时 early return，但此前为隔离而 stash 的
+    WIP 变更未正确 pop，导致未提交修改被丢失（需手动 git stash pop 才能找回）。
+    实证：2026-08-05 修复 generate_rule_ai_perception_index import 时，首次
+    git_commit.py 调用因 WORKTREE_VIOLATION early return，stash 吞掉已 staged 的
+    脚本修改，后续 reconciler auto-commit 把文件 restore 回 HEAD，修改消失。重新
+    Edit + 用 --allow-non-worktree --allow-overlap 一次过才提交成功（commit 0c6d6f6c）。
+    提议修复方向（待用户确认，铁律#9）：
+    1. early return 前确保 stash pop（finally 块恢复 WIP）；
+    2. 或 early return 路径不 stash（仅阻断路径才 stash）；
+    3. 或 stash 时写审计日志 + 提示 stash ref 便于找回。
+  fix_phase: 待施工（修复方向待用户确认，铁律#9 status=proposed）
+  status: proposed
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
