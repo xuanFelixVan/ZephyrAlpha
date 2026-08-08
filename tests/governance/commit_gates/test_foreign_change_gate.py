@@ -360,6 +360,25 @@ class TestAdoptPriorWork:
         assert records[0]["diff_size"] > 0
         assert "diff_sha256" in records[0]
         assert len(records[0]["diff_sha256"]) == 16
+        # P2：domain 字段存在（空文件无 [DOMAIN] 头 → UNKNOWN）
+        assert records[0]["domain"] == "UNKNOWN"
+
+    def test_adopt_audit_includes_domain(self, tmp_path):
+        """P2：adopt 审计记录含 domain 字段（从文件 [DOMAIN] 头部读取）。"""
+        target = tmp_path / "a.py"
+        # 写入 [DOMAIN] 头部
+        target.write_text("# [DOMAIN] D_REGIME\n# [MODULE] test\nx = 1\n", encoding="utf-8")
+        abs_target = os.path.abspath(str(target))
+        gw = self._make_claimable_gateway(tmp_path, {abs_target: "-old\n+new dirty work"})
+        gw.claim_files("s1", [str(target)], adopt_prior_work=True)
+        audit_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
+        records = [
+            json.loads(line)
+            for line in audit_file.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        assert len(records) == 1
+        assert records[0]["domain"] == "D_REGIME"
 
     def test_adopt_clean_file_no_audit(self, tmp_path):
         """clean 文件（actual_baseline 空）adopt → 不写审计（无前序工作可认领）。"""

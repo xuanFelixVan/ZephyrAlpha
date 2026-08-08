@@ -644,17 +644,36 @@ class GitCommitGateway:
         """治本(2026-07-23)：认领跨 session 前序工作的审计日志。
 
         adopt_prior_work=True 且文件有实际 diff 时调用。记录被认领文件的 diff
-        大小+sha256(前16位)到 .runtime/claim_snapshots/{sid}_adopted.jsonl，供
-        commit_gateway_abuse_monitor_reconciler 检测滥用。审计失败不阻断主流程。
+        大小+sha256(前16位)+domain 到 .runtime/claim_snapshots/{sid}_adopted.jsonl，
+        供 commit_gateway_abuse_monitor_reconciler 检测滥用。审计失败不阻断主流程。
+
+        P2（13a5e1d512 治本补强）：追加 domain 字段——从文件 [DOMAIN] 头部读取，
+        便于事后审计追溯认领的文件属于哪个功能域（跨域 adopt 是混合提交的信号）。
         """
         try:
             self.claim_snapshots_dir.mkdir(parents=True, exist_ok=True)
             import hashlib
+            import re
             import time as _t
+            # P2：读取文件 [DOMAIN] 头部（与 commit_scope_gate / domain_fk_gate 同模式）
+            domain = "UNKNOWN"
+            try:
+                with open(abs_file, "r", encoding="utf-8", errors="replace") as fh:
+                    for _ in range(20):
+                        line = fh.readline()
+                        if not line:
+                            break
+                        m = re.match(r"^#\s*\[DOMAIN\]\s*(\S+)", line)
+                        if m:
+                            domain = m.group(1)
+                            break
+            except Exception:  # noqa: BLE001 — 文件不可读（staged delete 等）
+                pass
             record = {
                 "timestamp": _t.time(),
                 "session_id": session_id,
                 "file": abs_file,
+                "domain": domain,
                 "diff_size": len(actual_baseline),
                 "diff_sha256": hashlib.sha256(
                     actual_baseline.encode("utf-8", errors="replace")
