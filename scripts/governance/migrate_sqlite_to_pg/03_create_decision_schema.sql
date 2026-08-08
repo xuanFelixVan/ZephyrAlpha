@@ -27,7 +27,7 @@
 -- 变更历史：
 --   v1.0.0 (2026-07-05): 初版——4张表 + 5索引 + 2触发器
 --   v1.1.0 (2026-07-06): decision_layers 加 module_id + source_code_ref；decision_nodes 加 source_code_ref
--- v1.2.0 (2026-07-09): decision_layers/decision_nodes 加 domain_id（ARCH-056 四图模块同步引擎核心字段对齐）
+-- v1.2.0 (2026-07-09): decision_layers/decision_nodes 加 domain_id（ARCH-056 五图模块同步引擎核心字段对齐）
 -- v1.3.0 (2026-07-23): ARCH-MM-002 design_maturity 从 3 态简化为 2 态（design/production），删除 prototype
 -- =====================================================================
 
@@ -127,7 +127,7 @@ ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS design_maturity TEXT DEFAULT
     CHECK (design_maturity IN ('design', 'production'));
 ALTER TABLE decision_edges ADD COLUMN IF NOT EXISTS build_status TEXT DEFAULT 'generated'
     CHECK (build_status IN ('planned', 'generated', 'testing', 'stable', 'deprecated'));
--- v1.2.0 (ARCH-056): decision_layers/decision_nodes 加 domain_id（四图模块同步引擎核心字段对齐）
+-- v1.2.0 (ARCH-056): decision_layers/decision_nodes 加 domain_id（五图模块同步引擎核心字段对齐）
 ALTER TABLE decision_layers ADD COLUMN IF NOT EXISTS domain_id TEXT;
 ALTER TABLE decision_nodes ADD COLUMN IF NOT EXISTS domain_id TEXT;
 CREATE INDEX IF NOT EXISTS idx_decision_layers_domain ON decision_layers(domain_id);
