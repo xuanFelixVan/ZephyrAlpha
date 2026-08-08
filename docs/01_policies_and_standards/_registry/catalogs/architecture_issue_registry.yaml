@@ -13170,3 +13170,94 @@ entries:
   status: proposed
   created: '2026-08-09'
   last_updated: '2026-08-09'
+# --- #ARCH-RECONCILER-WORKTREE-RACE: post-commit reconciler worker 被判"活跃 session"阻断下一条非-worktree commit（2026-08-09 登记）---
+- issue_id: '#ARCH-RECONCILER-WORKTREE-RACE'
+  title: post-commit reconciler worker 注册为活跃 session → WORKTREE-REQUIRED gate 阻断同工作区下一条 commit，形成 --allow-non-worktree 依赖循环
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-09 登记。100% AI 开发批量清理场景（5 连续 commit）实证。
+
+    病根（第一性原理）：
+    GitCommitGateway 的 WORKTREE-REQUIRED gate（#ARCH-WORKTREE-GATE-001 治本）判定逻辑为
+    "非 worktree commit 且存在其他活跃 session → 阻断"。其"活跃 session"集合来自
+    SessionRegistry，而 post-commit reconciler 用 worker session（命名 worker-<commit_sha>-<pid>，
+    如 worker-0f12f1aa-20176）执行批量 auto-commit，这些 worker 会注册进 SessionRegistry。
+    于是形成固定竞态循环：
+      commit N → post-commit reconciler 注册 worker-N → commit N+1 在主工作区执行 →
+      WORKTREE-REQUIRED gate 命中"worker-N 活跃"→ WORKTREE_VIOLATION 阻断 →
+      必须加 --allow-non-worktree 才能继续。
+
+    实证（2026-08-09 cleanup-0809 session 5 连续 commit）：
+    - commit E（6939f0d9，新文件 docs/_working/）：无 WORKTREE 阻断（无前置 worker）
+    - commit D（0f12f1aa）：post-commit 注册 worker-0f12f1aa-20176
+    - commit B（9e7e8b35）：WORKTREE_VIOLATION 命中 worker-0f12f1aa-20176 → 加 --allow-non-worktree
+    - commit C（bdf1a00f）/ commit F（8579bdef）：同上，均需 --allow-non-worktree
+    每条非-worktree commit 都被迫带 [GW:cleanup-0809:non-worktree] 审计标记，审计噪音 +
+    逃生通道被常态化（削弱"AI 不得自行使用 --allow-non-worktree"治理意图）。
+
+    与 #ARCH-GW-001 区别：
+    #ARCH-GW-001 是 early return 吞 stash（数据丢失）；本条目是 worker session 误判为活跃
+    session 导致逃生通道常态化（治理稀释），根因不同，独立登记。
+
+    提议修复方向（待用户确认，铁律#9）：
+    1. WORKTREE-REQUIRED gate 的"活跃 session"判定排除 worker-<sha>-<pid> 命名的 reconciler
+       worker（它们是 commit 的下游产物，非并发编辑者，无搭便车风险）；
+    2. 或 reconciler worker 注册时打 role=reconciler 标记，gate 仅对 role=user 的活跃 session
+       计数；
+    3. 或主工作区无真实并发编辑时（worktree 池全空闲）放行 WORKTREE gate。
+    方向1/2 精准度最高（保留对真实并发 user session 的防护）。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（WORKTREE-REQUIRED gate 活跃 session 判定逻辑）'
+    - 'src/zephyr/security/access_control/session_concurrency.py（SessionRegistry worker 注册，可加 role 标记）'
+  fix_phase: 待施工（修复方向待用户确认，铁律#9 status=proposed）
+  status: proposed
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
+# --- #ARCH-MEMORY-GATE-DRIFT-001: project_memory "docs/_working/ MUST 含 doc_type" 与 EXEMPT-ZONE-FM 门禁冲突（2026-08-09 登记）---
+- issue_id: '#ARCH-MEMORY-GATE-DRIFT-001'
+  title: project_memory 规则"docs/_working/ MUST 含 frontmatter doc_type"与 EXEMPT-ZONE-FM 门禁（豁免区禁 doc_type）直接冲突——AI 按 memory 行事必被门禁阻断
+  severity: P2中
+  category: architecture_governance
+  adjudication: |-
+    2026-08-09 登记。100% AI 开发场景下 memory（AI 行事依据）与 enforced gate（硬阻断）
+    不一致是高危隐患——AI 按 memory 规则写文件，commit 时被 gate 阻断，需返工修正。
+
+    冲突实证（2026-08-09 commit E 场景）：
+    - project_memory.md 规则原文："docs/_working/ 下 .md MUST 含 frontmatter：
+      ttl: task_bound + doc_type + completes_when（可验证完成条件）+ title/date/status。
+      参考样本：docs/_working/107_decision_table_filled.md frontmatter 格式"
+    - EXEMPT-ZONE-FM gate（exempt_zone_frontmatter_gate.py，priority=87，fail-closed）：
+      豁免区（docs/_working/ 等）文件 frontmatter 含非空 doc_type → 阻断（"should be in
+      formal directory"）。历史违规（HEAD 已存在）豁免，新引入硬阻断。
+    - 实际跟踪文件核对：107_decision_table_filled.md（memory 引用的"样本"）frontmatter
+      实际只有 ttl: task_bound，并无 doc_type 字段——memory 引用的样本自身就违反 memory
+      规则，证明 memory 规则已过时。
+    - commit E 的 2 个新文件按 memory 规则写了 doc_type=archive/decision_record →
+      EXEMPT-ZONE-FM 阻断 → 删除 doc_type 后通过。
+
+    病根（第一性原理）：
+    EXEMPT-ZONE-FM gate 的设计哲学是"豁免区文件带 doc_type 说明本应放正式目录却被塞进
+    豁免区"，故任何非空 doc_type 都阻断。这与 memory 的"task_bound 文档需要 doc_type 标识
+    类型"是两套互斥的文档治理模型。gate 是 enforced ground truth（fail-closed），memory
+    是 AI guidance——二者漂移时 AI 必然撞墙。
+
+    提议修复方向（待用户确认，铁律#9）：
+    1. 修正 project_memory.md：docs/_working/ 文档 frontmatter 要求改为 ttl: task_bound
+       （+ 可选 completes_when），删除 doc_type 要求，与 EXEMPT-ZONE-FM gate + 实际跟踪
+       文件惯例对齐；
+    2. 建立 memory↔gate 一致性校验（warn-only reconciler）：扫描 project_memory.md /
+       user_profile.md 中"MUST 含 X"类硬约束，与 commit gate 实际判定逻辑交叉核对，
+       漂移即告警——治本"AI 按 memory 行事被 gate 阻断"的系统性风险；
+    3. 顺带审查 user_profile.md / project_memory.md 其他可能与 gate 冲突的规则。
+
+    边界：本条目不否定 memory 机制本身（memory 对 100% AI 开发的连续性至关重要），仅要求
+    memory 规则与 enforced gate 保持一致，并加一致性校验防漂移复发。
+  impact:
+    - 'c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha--p2-1c552864b6a6a396cfb0\project_memory.md（doc_type 规则待修正）'
+    - 'src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py（EXEMPT-ZONE-FM gate，ground truth）'
+    - 'docs/_working/107_decision_table_filled.md（memory 引用样本，实际无 doc_type，证 memory 过时）'
+  fix_phase: 待施工（修复方向待用户确认，铁律#9 status=proposed）——方向1（修正 memory）低风险可立即执行；方向2（一致性校验）需新建 reconciler
+  status: proposed
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
