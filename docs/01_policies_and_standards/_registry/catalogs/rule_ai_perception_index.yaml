@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
 status: active
-generated_at: '2026-08-07T18:58:42Z'
+generated_at: '2026-08-08T08:22:28Z'
 generated_by: scripts/governance/generators/generate_rule_ai_perception_index.py
 maintenance: auto
 source: docs/01_policies_and_standards/rules/trae_*.yaml
@@ -2090,7 +2090,7 @@ rules:
   paired_gate_id: null
   rule_file: docs/01_policies_and_standards/rules/trae_079_commit_serialization.yaml
 - rule_id: TRAE-080
-  title: 四图对齐铁律（设计态先行 + 派生 + 对齐验证）
+  title: 五图对齐铁律（设计态先行 + 派生 + 对齐验证）
   module_id: TRAE-080
   scope: panorama_alignment
   domain: TRAE
@@ -2111,16 +2111,16 @@ rules:
   - TRAE
   - panorama_alignment
   - L1_foundation
-  - 四图对齐
+  - 五图对齐
   - design_maturity
   - depgraph
   - single_entry
   - 君子协定
   aliases:
   - RULE-PANORAMA
-  - 四图对齐
+  - 五图对齐
   - panorama_alignment
-  - four_panoramas_alignment
+  - five_panoramas_alignment
   - ARCH-053
   - ARCH-056
   paired_gate_id: null
