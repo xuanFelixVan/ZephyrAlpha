@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-NLP-PIPELINE | P1-E3_NLP管道架构裁定与施工方案.md | §Phase 2
+# [BLUEPRINT] MOD-NLP-PIPELINE | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md | §Phase 2
 # [MODULE] scripts.ml.eval_sentiment
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.nlp.nlp_inference; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.cache_layer; sklearn.metrics
@@ -7,7 +7,7 @@
 # [STARTUP] manual
 # [MATURITY] design
 # [INVARIANTS] 零样本情感分类 F1 评估；断点续作追加写入；Ollama 不可达 exit 1；评估集不存在 exit 1
-# [MODIFY-GUARD] P1-E3_NLP管道架构裁定与施工方案.md Phase 2
+# [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md Phase 2
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -26,7 +26,7 @@
     - data/eval/zero_shot_predictions.jsonl  （逐条预测，断点续作用）
     - stdout: Macro-F1 / Accuracy / classification_report
 
-依据: P1-E3_NLP管道架构裁定与施工方案.md Phase 2
+依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md Phase 2
 SSoT: #ARCH-NLP-PIPELINE-001
 """
 from __future__ import annotations
