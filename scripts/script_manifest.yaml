@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-07'
-total_scripts: 678
+generated_at: '2026-08-08'
+total_scripts: 685
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -2161,6 +2161,14 @@ scripts:
 - name: governance/d5_architecture/generators/_common.py
   path: governance/d5_architecture/generators/_common.py
   description: 当前提供 cleanup_stale_files()——治本修复"生成器只增不删"问题。
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/align_all.py
+  path: governance/d5_architecture/generators/align_all.py
+  description: 依据：trae_080_panorama_alignment.yaml v1.1.0（五图对齐铁律）;
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4726,6 +4734,22 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ml/build_eval_set.py
+  path: ml/build_eval_set.py
+  description: 分层抽样（危机期/复苏期/常态期）从 ClickHouse 采集新闻，
+  domain: ml
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ml/eval_sentiment.py
+  path: ml/eval_sentiment.py
+  description: 对 ``data/eval/news_sentiment_200.jsonl`` 评估集跑零样本推理（Ollama qwen3:8b），
+  domain: ml
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: ops/ch_health_probe.py
   path: ops/ch_health_probe.py
   description: 独立于调度器运行，覆盖盘后/周末/节假日等调度器不运行的时段。
@@ -4846,6 +4870,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: tests/diag_s2_recovery.py
+  path: tests/diag_s2_recovery.py
+  description: 根因假设：
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: tests/diagnose_shrinkage_distribution.py
   path: tests/diagnose_shrinkage_distribution.py
   description: 目的：判断 C1 MaxDD 改善不足的根因
@@ -4899,6 +4931,22 @@ scripts:
   description: 复用 C1 真实模式管线（取数+特征+walk-forward refit），自行执行 detect 收集
   domain: test
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/scan_b1_forward_days.py
+  path: tests/scan_b1_forward_days.py
+  description: B1 基线误差 17.7%，80-100% 桶预测 0.982 实际 0.524（HMM 过度自信）。
+  domain: test
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/scan_hmm_states.py
+  path: tests/scan_hmm_states.py
+  description: 数据驱动选择 HMM 最优态数（2-9 态），用 BIC elbow method 找拐点。
+  domain: test
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
@@ -4971,6 +5019,14 @@ scripts:
   description: 基于 dump_overlay_triggers.py 的发现：overlay 退化 Sharpe 的元凶是 T1/S1 在非危机期
   domain: test
   execution_plane: hot-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: tests/verify_calibration_nll.py
+  path: tests/verify_calibration_nll.py
+  description: 构造 3 组 mock 数据：
+  domain: test
+  execution_plane: warm-path
   status: registered
   timeout_seconds: 60
   dimensions: []
