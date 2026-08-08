@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.5.0"
+version: "1.6.0"
 date: 2026-08-08
 topic: execution_broker
 scope: 07_trading_decision_architecture
@@ -24,7 +24,7 @@ scope: 07_trading_decision_architecture
 - 执行层是数据流主动脉的末端：接收 firm_target_portfolio，分解为订单，经风控/合规/拆单后通过 miniQMT 发出，回收成交回报，更新持仓，做 TCA 成本尸检
 
 ### 1.2 核心问题
-执行层要回答"信号→订单→成交→对账"全链路的 18 个问题：下单接口对接、撮合算法、滑点模型、交易成本、订单状态机、失败重试、执行风控、集合竞价、T+1 约束、订单分解算法、未成交续接、撤单率控制、资金预占、挂单价算法、临时停牌处理、除权除息日处理、零股与板块差异化申报数量、程序化交易报备合规。前 10 个为 v1.0.0 已定型，⑪-⑭为 v1.1.0 补全的施工环节流程（实盘生存项），v1.2.0 补全 miniQMT 工程约束与价格笼子合规校验，v1.3.0 订正高频认定标准与价格笼子基准价两处事实错误 + 新增决策⑮临时停牌处理，v1.4.0 订正 ST 涨跌幅 + 新增决策⑯除权除息日处理 + 补充盘后固定价格交易/回报延迟/2026最新RL研究，v1.5.0 订正决策⑩科创板整手处理硬错误 + 新增决策⑰零股与板块差异化申报数量 + 新增决策⑱程序化交易报备合规 + 强化高频认定标准权威证据。每个决策都影响实盘成本与稳定性。
+执行层要回答"信号→订单→成交→对账"全链路的 19 个问题：下单接口对接、撮合算法、滑点模型、交易成本、订单状态机、失败重试、执行风控、集合竞价、T+1 约束、订单分解算法、未成交续接、撤单率控制、资金预占、挂单价算法、临时停牌处理、除权除息日处理、零股与板块差异化申报数量、程序化交易报备合规、MiniQMT 关停风险与迁移路径。前 10 个为 v1.0.0 已定型，⑪-⑭为 v1.1.0 补全的施工环节流程（实盘生存项），v1.2.0 补全 miniQMT 工程约束与价格笼子合规校验，v1.3.0 订正高频认定标准与价格笼子基准价两处事实错误 + 新增决策⑮临时停牌处理，v1.4.0 订正 ST 涨跌幅 + 新增决策⑯除权除息日处理 + 补充盘后固定价格交易/回报延迟/2026最新RL研究，v1.5.0 订正决策⑩科创板整手处理硬错误 + 新增决策⑰零股与板块差异化申报数量 + 新增决策⑱程序化交易报备合规 + 强化高频认定标准权威证据，v1.6.0 新增决策⑲MiniQMT 关停风险与迁移路径 + 补充 xtquant Python 版本约束/可转债权限/subscribe_whole_quote BUG + 补充 2026 MPC/MAP-Elites/Direct VWAP 最新执行算法。每个决策都影响实盘成本与稳定性。
 
 ### 1.3 约束条件
 - miniQMT 个人账户**不支持券商端 VWAP/TWAP 算法接口**（机构客户才有）→ 拆单逻辑必须系统自实现
@@ -35,6 +35,9 @@ scope: 07_trading_decision_architecture
 - AI 开发 → 故障隔离与幂等是生存项：断线/拒单/重复下单必须有兜底
 - **板块差异化申报数量**（v1.5.0 补全）：沪深主板/创业板 100 股整数倍起买；科创板 200 股起买、超 200 股按 1 股递增（201/202 股合法）；北交所 100 股起买。卖出时不足最低单位的零股必须**一次性申报卖出**，不可拆分、不可忽略
 - **程序化交易报备**（v1.5.0 补全）：使用 miniQMT 自动下单属程序化交易，上线前必须通过券商完成报备（策略类型/服务器地址/算法逻辑/风控参数），未报备将被限制交易
+- **MiniQMT 关停风险**（v1.6.0 补全）：迅投 MiniQMT 轻型外部接口模式正在有序关停，多家券商已停止新增开通，存量用户后续将陆续无法连接。执行层需规划迁移路径（详见决策⑲）
+- **xtquant Python 版本限制**（v1.6.0 补全）：xtquant 仅支持 Windows Python 3.6-3.8，与系统其他模块可能使用的更高版本 Python 冲突，需通过虚拟环境隔离
+- **可转债程序化交易权限**（v1.6.0 补全）：卖出可转债需券商单独开通可转债程序化交易权限 + 签署协议 + 增加流量费；股票期权需 100 万以上资金申请
 
 ### 1.4 现有资产盘点（施工前已实现，本备忘为其补 why 层）
 
@@ -133,6 +136,10 @@ firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
 2. **同步/异步查询陷阱**（防死锁）：`query_stock_trades`/`query_stock_orders`/`query_stock_positions` 等同步查询接口，**在回调函数内调用会导致线程死锁**（C++ 底层线程阻塞）。规则：所有同步查询只能在主线程/独立线程调用；回调内如需查询，用 `query_stock_trades_async` 异步版本（返回 seq，通过 `on_query_trades_async_response` 回调返回结果）。决策⑥⑨的 `query_stock_positions` 调用必须确保不在回调链路中。
 
 3. **时序一致性**（防状态不一致）：`set_relaxed_response_order_enabled(True)` 开启后，允许在 `on_stock_order` 等推送回调中调用同步请求接口（否则会导致事件循环阻塞）。但开启后查询与推送的数据时序会变得不确定，需在"回调内可同步查询"与"时序严格"之间取舍。MVP 建议：**开启 relaxed 模式**（实盘需要回调内查询补状态），但查询结果仅作参考，以 `query_stock_orders` 主动全量同步为准。
+
+4. **Python 版本限制**（v1.6.0 补全，环境约束）：xtquant 仅支持 Windows 下的 **Python 3.6-3.8**（miniqmt.com 官方 QA 确认）。系统其他模块若使用更高版本 Python，需通过虚拟环境隔离——xtquant 运行在独立 venv 中，通过 IPC（文件/消息队列/Redis）与主系统通信。这是架构约束，影响执行层的进程隔离设计。
+
+5. **subscribe_whole_quote BUG**（v1.6.0 补全，数据约束）：`xtdata.subscribe_whole_quote` 取全市场数据时存在实现 BUG（miniqmt.com QA A28），推送回调返回全市场数据而非订阅标的。需在回调函数中自行过滤出感兴趣的标的，不能假设推送的数据只含订阅标的。
 
 **为何不再造**：MiniQmtBroker 已 production 且通过测试，重复造轮子违反 AI-dev 归因清晰度原则。本备忘只记录 why，不改 what。
 
@@ -693,6 +700,55 @@ for order in sorted_deltas:  # 先卖后买顺序
 
 **为何记录报备约束而非代码实现**：报备是券商侧行政流程（签署文件 + 提交信息），不是执行层代码功能。但执行层文档必须记录此约束——系统上线前须确认已完成报备，且系统参数变更时须同步更新报备。将报备字段与系统文档映射，便于报备时对照填写、变更时同步更新。
 
+### 2.20 决策⑲：MiniQMT 关停风险与迁移路径（Platform Shutdown Risk & Migration）
+
+**决策**：记录 MiniQMT 关停风险为系统生存级风险，规划"BrokerInterface 抽象层隔离 + 大 QMT 迁移路径"作为应对策略，MVP 阶段继续用 MiniQMT 但做好随时迁移准备。
+
+> v1.6.0 新增。前 18 个决策均假设 miniQMT 持续可用，但 2026 年 7 月券商信息显示迅投 MiniQMT 轻型外部接口模式正在有序关停。这是系统生存级风险——执行层全部基于 MiniQmtBroker，若通道断开则无法下单。缺失此决策会导致系统在 MiniQMT 关停时无迁移预案，策略停跑。
+
+**风险事实**（licai.cofool.com 2026-07-30 + miniqmt.com QA 2026）：
+- 迅投 MiniQMT 轻型外部接口模式**正在有序关停**，多家券商已停止新增开通
+- 存量用户后续将陆续无法登录、无法连接交易通道
+- 部分券商不再维护 miniQMT（miniqmt.com QA A4："部分券商不再维护 miniQMT"）
+- 大 QMT（完整版 QMT）与 miniQMT 同属迅投原生系统，底层交易通道一致，是唯一无缝替代选择
+
+**为何这是生存级风险**：
+- 执行层 13 个 production 模块中，[MiniQmtBroker](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 是唯一下单通道
+- 若 MiniQMT 关停，系统将完全无法下单——所有策略停跑
+- 迁移涉及 API 重写（`xttrader.order_stock` → `passorder`）、行情接口变更（`xtdata` → 框架内置）、架构调整（外部 Python 进程 → QMT 内置 Python 环境）
+
+**应对策略——BrokerInterface 抽象层隔离**（已实现，关键防线）：
+- 系统已通过 [BrokerInterface](file:///d:/ZephyrAlpha/src/zephyr/trading/trading_contracts/broker_interface.py) 抽象层隔离券商具体实现
+- `submit_order/cancel_order/query_order/get_positions` 等接口与具体 broker 解耦
+- 迁移时只需实现新的 `BigQmtBroker(BrokerInterface)`，上层代码（OrderManager/TradingSession/Saga）无需改动
+- **这是架构设计的核心价值**——抽象层让 broker 迁移从"系统重写"降为"适配器替换"
+
+**迁移路径**（MiniQMT → 大 QMT，三套方案按优先级）：
+
+| 方案 | 原理 | 优势 | 劣势 | 适用场景 |
+|---|---|---|---|---|
+| A. 消息队列桥接 | 本地 Python 策略→Redis/ZMQ→大 QMT 内脚本下单 | 延迟低（几十ms）、支持多策略并行、保留外部 Python 环境 | 需学习 Redis、有一定技术门槛 | **推荐**：日内 T+0、ETF 套利、多策略并行 |
+| B. 文件信号中转 | 本地 Python→signal.csv→大 QMT 轮询读取下单 | 原有策略几乎不改、不需要数据库 | 秒级延迟、不适合高频 | 中低频日线策略 |
+| C. 策略迁入大 QMT | 策略代码改写为大 QMT 原生框架，内置运行 | 零额外软件、最低故障率、自带回测 | 代码需大幅改造、运行在 QMT 内置编辑器 | 代码量小的简单策略 |
+
+**迁移改造要点**（通用必改项）：
+1. 删除 `XtQuantTrader` 连接/`connect` 语句，改用大 QMT 内置 `ContextInfo`
+2. 移除 `xtdata` 主动订阅逻辑，改用框架内置行情
+3. 下单函数：`xttrader.order_stock()` → 官方 `passorder()`
+4. 使用 `handlebar(ContextInfo)` 周期驱动，替代 `while` 死循环
+5. 编码：大 QMT 策略文件默认 **GBK** 编码（外部 Python 多为 UTF-8），需处理编码转换
+
+**MVP 阶段行动项**：
+1. **立即**：确认国金证券 miniQMT 的关停时间表（联系客户经理），评估存量用户可用窗口
+2. **持续**：保持 BrokerInterface 抽象层不变，确保上层代码不耦合 miniQMT 具体实现
+3. **预案**：预先实现 `BigQmtBroker(BrokerInterface)` 的骨架代码（不接入实盘），确保迁移时只需填充适配逻辑
+4. **触发条件**：国金通知 miniQMT 即将关停，或 miniQMT 连续 3 日无法稳定连接时，启动迁移
+
+**与现有决策的关系**：
+- 决策①~⑱的全部规则（撮合/风控/成本/滑点/状态机等）在迁移后**完全保留不变**——它们是 broker 无关的执行层规则
+- 仅决策①的 MiniQMT 工程约束（回调线程模型/同步查询陷阱/Python 版本等）需要替换为大 QMT 对应约束
+- BrokerInterface 抽象层是迁移的基石——已实现，这是架构设计的远见
+
 ## 3. 考虑过的替代方案（拒绝理由）
 
 ### 3.1 撮合：统一 TWAP —— 拒绝
@@ -759,6 +815,10 @@ for order in sorted_deltas:  # 先卖后买顺序
 - **拒绝理由**：《程序化交易管理实施细则》要求程序化交易者事前报备，未报备将被限制交易
 - 上线前通过券商完成报备（策略/算法/服务器/风控参数），变更时同步更新（决策⑱）
 
+### 3.17 MiniQMT 关停风险：不记录不预案 —— 拒绝（v1.6.0）
+- **拒绝理由**：迅投 MiniQMT 正在有序关停（多家券商已停止新增），不记录会导致关停时无迁移预案，策略停跑
+- 记录风险 + 规划 BrokerInterface 抽象层隔离 + 大 QMT 迁移路径（决策⑲）
+
 ## 4. 上限定义（Ceiling）
 
 ### 4.1 系统上限
@@ -780,12 +840,14 @@ for order in sorted_deltas:  # 先卖后买顺序
 - **ST 涨跌幅**：主板 ST 2026-07-06 起统一 ±10%（与普通股持平），创业板/科创板 ST ±20%，北交所 ±30%
 - **板块差异化申报数量**（v1.5.0）：主板/创业板/北交所 100 股整数倍；科创板 200 股起买/1 股递增；卖出零股一次性报出（决策⑰）
 - **程序化交易报备**（v1.5.0）：上线前通过券商完成报备（策略/算法/服务器/风控），变更同步更新（决策⑱）
+- **MiniQMT 关停风险**（v1.6.0）：迅投 MiniQMT 正在有序关停，BrokerInterface 抽象层是迁移防线，预案大 QMT 迁移（决策⑲）
+- **xtquant Python 版本**（v1.6.0）：仅支持 Windows Python 3.6-3.8，需虚拟环境隔离
 
 ### 4.2 演进路径
 - **第一阶段（MVP，立即施工）**：连续竞价 + 自适应撮合 + DECISION 滑点 + 万0.854 佣金 + 订单层熔断 + 拒单分类处理 + 未成交续接 + 撤单率控制 + 资金预占 + 被动档挂单价。复用全部已实现 production 模块，补代码 gap（见 §6.1）
 - **Phase 1.5（首批策略 track record 1-3 个月）**：① 自适应参与率 POV（盘口深度/价差/波动率动态调参与率，取代固定 5%）② peg 到盘口（盘口移动自动撤单重挂跟随）③ TCA 规则闭环（滑点持续超阈值→自动调高拆单分档阈值）④ 冲击模型 coeff 校准（用实盘 TCA 数据回归拟合 SquareRootImpactPredictor 的 coeff，为 Phase 2 RL 地基）⑤ 盘后固定价格交易（以收盘价建仓/减仓的确定性通道，适合指数调仓/ETF 套利场景）
-- **第二阶段（首批策略 track record 3 个月后）**：上加集合竞价（按策略差异化）+ 算法参数 RL 优化器（需 coeff 已校准 + 足够 TCA 历史数据）。2026 最新 RL 执行研究表明：成本模型准确性对 RL 算法选择有决定性影响（MACE：AC 冲击模型下 TD3 最优而固定成本下 PPO 最优）；DASRL（AAMAS 2026）动态动作空间 RL 比传统策略降本 16.2%；TT-DAC-PS（arXiv 2026.06）双目标 Actor-Critic 持续降低 IS；Queue-Reactive+DDQN（arXiv 2025.11）model-free RL 适应 LOB 动态。机构实践（Finantrix 2026）：JPMorgan LOXM（2017）首个 RL 执行生产案例，到 2026 年 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均在用 RL 执行，训练范式一致（历史数据训练→仿真验证→上线）
-- **第三阶段（AUM 增长或 miniQMT 容量不足时）**：启用多 broker 路由 + ICEBERG 隐藏大单 + Bouchaud Propagator 模型（冲击时间衰减结构，超越平方根律瞬时冲击）
+- **第二阶段（首批策略 track record 3 个月后）**：上加集合竞价（按策略差异化）+ 算法参数 RL 优化器（需 coeff 已校准 + 足够 TCA 历史数据）+ **MPC 执行**（模型预测控制，介于规则驱动和 RL 之间的中间路线，减少 schedule shortfall 40-50%，模块化适合生产部署，arXiv 2603.28898 Bayforest+MIT Bertsekas 2026-03）+ **Direct VWAP Optimization**（深度学习直接优化 VWAP 执行目标，绕过成交量曲线预测中间步骤，arXiv 2502.13722）。2026 最新 RL 执行研究表明：成本模型准确性对 RL 算法选择有决定性影响（MACE：AC 冲击模型下 TD3 最优而固定成本下 PPO 最优）；DASRL（AAMAS 2026）动态动作空间 RL 比传统策略降本 16.2%；TT-DAC-PS（arXiv 2026.06）双目标 Actor-Critic 持续降低 IS；Queue-Reactive+DDQN（arXiv 2025.11）model-free RL 适应 LOB 动态。机构实践（Finantrix 2026）：JPMorgan LOXM（2017）首个 RL 执行生产案例，到 2026 年 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均在用 RL 执行，训练范式一致（历史数据训练→仿真验证→上线）
+- **第三阶段（AUM 增长或 miniQMT 容量不足时）**：启用多 broker 路由 + ICEBERG 隐藏大单 + Bouchaud Propagator 模型（冲击时间衰减结构，超越平方根律瞬时冲击）+ **MAP-Elites 质量多样性执行**（Imperial College+BoA arXiv 2601.22113 2026-01，不搜索单一最优策略，生成按流动性/波动率索引的 regime-specialist 策略组合，PPO+CNN 实现 2.13bps vs VWAP 5.23bps，适合 AUM 增长后的大单 regime-adaptive 执行）
 
 ### 4.3 为何这是上限而非妥协
 - 个人账户资金体量小，多数订单 <1% ADV，6 种算法 + 自适应已覆盖全场景
@@ -840,6 +902,9 @@ for order in sorted_deltas:  # 先卖后买顺序
 17. **板块差异化整手 + 零股一次性卖出**（决策⑰，硬错误订正）：[TradingSession._compute_order_deltas](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 当前硬编码 `floor(qty, 100)` 对科创板是错误的（应 200 股起/1 股递增），且卖出零股按"忽略"处理是合规错误。需新增 `get_board_lot_rule(symbol)` 返回板块对应的 `(lot_size, min_unit, increment)`，买入按板块差异化取整，卖出零股（<min_unit）检测后一次性申报卖出。[MiniQmtBroker.submit_order](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 的 100 股整数倍校验也需同步改为板块差异化校验。
 18. **程序化交易报备确认**（决策⑱，合规前置非代码）：系统上线前确认已通过券商完成程序化交易报备（策略/算法/服务器/风控参数），在系统启动配置中增加 `programmatic_trading_registered: bool` 开关，未报备时拒绝进入实盘模式（仅允许模拟/回测）。报备字段对照表见决策⑱，参数变更时提醒同步更新报备。
 
+**v1.6.0 gap（待施工，MiniQMT 关停迁移预案）**：
+19. **BigQmtBroker 骨架代码**（决策⑲，迁移预案）：预先实现 `BigQmtBroker(BrokerInterface)` 的骨架代码（不接入实盘），确保 MiniQMT 关停时只需填充 `passorder()` 适配逻辑即可迁移。需对接大 QMT 的 `ContextInfo`/`handlebar`/`passorder` API，保持与 MiniQmtBroker 相同的 BrokerInterface 契约。MVP 暂不施工（miniQMT 存量可用），登记为迁移触发时优先施工项。
+
 ### 6.2 开放问题
 - **佣金费率实盘校准**：万0.854 为用户口头提供，实盘开户后需对照交割单二次校准
 - **集合竞价差异化规则**：第二阶段评估时，需定打板策略是否参与开盘集合竞价、卖出流是否走收盘集合竞价
@@ -892,7 +957,12 @@ for order in sorted_deltas:  # 先卖后买顺序
 - 2023-08-28 印花税降率（0.1%→0.05%）；2022-04-29 过户费降率（0.002%→0.001%）
 - Almgren-Chriss 最优执行框架（平方根冲击模型）；Implementation Shortfall（IS）成本分解
 - Gatheral (2010) 无动态套利约束下平方根冲击形式的唯一性证明
-- 2026 最优执行 RL 研究：DASRL（AAMAS 2026，动态动作空间 RL，比传统策略降本 16.2%）、TT-DAC-PS（arXiv 2026.06，双目标 Actor-Critic+TD3 平滑，持续降低 IS）、MACE+AC（arXiv 2026.04，成本模型对 RL 算法选择的决定性影响：AC 模型下 TD3 最优而固定成本下 PPO 最优）、Queue-Reactive+DDQN（arXiv 2025.11，model-free RL 适应 LOB 动态）、Stanford CS224R（PPO 优于 DDPG，更稳定适应高波动）、ETH Zurich 市场单+限价单联合 RL（arXiv 2507.06345v2，2026-01，logistic-normal 分配建模）、Berkeley 收盘集合竞价做市 RL（arXiv 2601.17247v2，2026-07-30，DQN+DDPG+TD3+SAC）、MacroHFT 记忆增强元学习 RL（2026-08，子代理按市场状态分解+超级代理元策略）、Oxford APEX DQN（Frontiers 2023，LOB 信号执行）
+- 2026 最优执行 RL 研究：DASRL（AAMAS 2026，动态动作空间 RL，比传统策略降本 16.2%）、TT-DAC-PS（arXiv 2026.06，双目标 Actor-Critic+TD3 平滑，持续降低 IS）、MACE+AC（arXiv 2603.29086v2，2026-03，成本模型对 RL 算法选择的决定性影响：AC 模型下 TD3 最优而固定成本下 PPO 最优，NASDAQ 100 实证）、Queue-Reactive+DDQN（arXiv 2025.11，model-free RL 适应 LOB 动态）、Stanford CS224R（PPO 优于 DDPG，更稳定适应高波动）、ETH Zurich 市场单+限价单联合 RL（arXiv 2507.06345v2，2026-01，logistic-normal 分配建模）、Berkeley 收盘集合竞价做市 RL（arXiv 2601.17247v2，2026-07-30，DQN+DDPG+TD3+SAC）、MacroHFT 记忆增强元学习 RL（2026-08，子代理按市场状态分解+超级代理元策略）、Oxford APEX DQN（Frontiers 2023，LOB 信号执行）
+- 2026 MPC 执行：MPC for Trade Execution（arXiv 2603.28898v1，Bayforest+MIT Bertsekas 2026-03）——模型预测控制框架，平衡订单完成/市场冲击/机会成本三目标，每步解快速二次规划，相比价差交叉基准减少 schedule shortfall 40-50%，模块化数据驱动适合生产部署（介于规则驱动 TWAP/VWAP 与 RL 之间的中间路线，不需大量训练数据）
+- 2026 MAP-Elites 质量多样性执行（arXiv 2601.22113v2，Imperial College+Bank of America 2026-01-30）——首次将 MAP-Elites 质量多样性算法应用于交易执行，不搜索单一最优策略，生成按流动性/波动率索引的 regime-specialist 策略组合，PPO+CNN 在 4900 笔样本外订单（$210亿名义金额）实现 2.13bps 到达滑点 vs VWAP 5.23bps，校准 Bouchaud Propagator 瞬时冲击模型
+- Direct VWAP Optimization（arXiv 2502.13722，2025-04）——深度学习直接优化 VWAP 执行目标，绕过成交量曲线预测中间步骤，利用自动微分和自定义损失函数，在波动市场比传统两步法（先预测量曲线再分配）持续实现更低 VWAP 滑点
+- MiniQMT 关停风险（licai.cofool.com 2026-07-30 + miniqmt.com QA 2026）：迅投 MiniQMT 轻型外部接口模式正在有序关停，多家券商已停止新增开通，存量用户后续将陆续无法连接；大 QMT（完整版 QMT）同属迅投原生系统，底层交易通道一致，是唯一无缝替代；迁移方案：消息队列桥接/文件信号中转/策略迁入大 QMT 内置环境
+- miniQMT 工程约束（miniqmt.com QA + CSDN 2026-03 实战避坑）：xtquant 仅支持 Windows Python 3.6-3.8；subscribe_whole_quote 取全市场数据需自行过滤（实现 BUG）；回调函数阻塞致成交回报延迟3秒（CSDN 2026-03 实盘案例）；断线5分钟内重连7次需指数退避（CSDN 2026-03）；set_relaxed_response_order_enabled 时序控制；可转债程序化交易需单独开通权限+流量费
 - Finantrix 2026 执行算法综述：JPMorgan LOXM（2017）首个 RL 执行生产案例，到 2026 年 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均用 RL 执行；TCA 2.0 从事后评分卡转向事前决策支持
 - AAAI/ICLR 2026 量化金融前沿综述（国联民生金工 2026-07）：研究重心从"调用通用模型"转向"围绕金融约束重构模型"，强调延迟/回测有效性/非平稳性/交易成本/可解释性；TiMi（ICLR 2026）LLM 离线研发→蒸馏为程序→在线分钟级执行
 - miniQMT/ptrade 实盘避坑：回调函数阻塞/异步时序混乱/断线重连指数退避（CSDN 2026-03）；同步查询死锁与 async 替代（findtruman 2026-05）；`set_relaxed_response_order_enabled` 时序控制（thinktrader 官方文档）；柜台持仓/资金同步 6 秒时滞导致连续下单重复（ptrade 2026-07 order_target_value 注意事项）；吃单按现价±1%占用现金致可用资金错位（果仁网 2025-11 实盘案例）
@@ -917,3 +987,4 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 2026-08-08 | 1.3.0 | 事实订正 + 临时停牌处理 + 2026最新RL研究 | 全网搜索 2026-08-08 最新执行算法研究与 A 股监管规则，发现并订正 2 处硬错误 + 补 1 项关键缺失：①**订正高频认定标准**（决策⑫）——"每秒≤15笔"是市场误传（新浪/财联社 2026-04-07 辟谣，多家量化私募确认未收到），真实标准为每秒≥300笔或单日≥20000笔（2025-07-07《实施细则》），本系统内部保守限频15笔/秒作为安全垫；②**订正价格笼子基准价**（决策⑭）——买入基准价=卖一价（非买一价）、卖出基准价=买一价（非卖一价），基准价取对手方最优价；补板块差异（主板/创业板±2%+0.1兜底、科创板严格±2%、北交所±5%）+适用范围（仅连续竞价限价单，集合竞价/临停/市价单豁免）；③**新增决策⑮临时停牌处理**——盘中临停等复牌/跨日停牌核查移除目标+释放资金预占/复牌重新评估，补代码 gap 14；④补订单有效期GFD说明（决策⑪）+市价单类型差异（沪4种/深5种）；⑤补2026最新RL执行研究（DASRL/TT-DAC-PS/MACE/Queue-Reactive+DDQN/Stanford PPO）+Finantrix机构实践+AAAI/ICLR 2026综述。核心问题14→15。 |
 | 2026-08-08 | 1.4.0 | ST涨跌幅订正 + 除权除息日 + 盘后定价 + 回报延迟 + 2026最新RL | 二次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 处硬错误 + 2 项施工环节流程缺失 + 工程细节补充：①**订正ST涨跌幅**（§1.1）——主板ST股2026-07-06起已从±5%统一为±10%（与普通股持平，官方确认），原文"ST ±5%"已过时，代码"ST简化统一10%"反成正确；②**新增决策⑯除权除息日处理**——识别除权除息票→调整前收盘价/涨跌停价/笼子基准价/持仓股数（送股转增），避免用旧基准价废单，补代码 gap 15；③**补充盘后固定价格交易**（决策⑪可选通道）——2026-07-06新规扩容至全部A股/ETF（15:05-15:30以收盘价撮合），MVP暂不参与登记Phase 1.5，补代码 gap 16；④**补充回报延迟6秒时滞背景**（决策⑬）——柜台持仓/资金同步6秒时滞致连续下单重复，本地串行预扣正是解决此问题（ptrade/果仁网实盘案例）；⑤**补2026最新RL研究**（ETH Zurich市场单+限价单联合RL/Berkeley收盘集合竞价做市RL/MacroHFT记忆增强元学习/Oxford APEX DQN）+深交所2026修订规则引用。核心问题15→16。 |
 | 2026-08-08 | 1.5.0 | 科创板整手硬错误订正 + 零股处理 + 程序化报备 + 高频认定权威强化 | 三次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 处硬错误 + 2 项施工环节流程缺失 + 2 项事实强化：①**订正决策⑩科创板整手处理硬错误**——原"floor(qty,100)全板块统一100股"对科创板是废单级错误（科创板200股起买/1股递增，100股申报error_code=52），且卖出零股"忽略"是合规错误（零股必须一次性卖出），已订正为板块差异化整手+零股一次性卖出；②**新增决策⑰零股处理与板块差异化申报数量**——主板100股/科创200股1股递增/北交所100股，零股一次性报出，补代码 gap 17；③**新增决策⑱程序化交易报备合规约束**——上线前必须报备（策略/算法/服务器/风控），未报备限制交易，补代码 gap 18（配置开关非算法）；④**强化高频认定标准权威证据**——补充中基协私募委员会2026-07权威解读（晚于7月7日全面实施）确认300笔/秒未变，"15笔/秒""50微秒停留"均源自美国误传谣言，辟谣自媒体（东方财富/叩富问财）2026-07后仍误传"15笔/秒"；⑤**补充撤单率官方监控线50%**（中基协确认），本系统内部15%远低于官方线；⑥补EESD 2026多智能体RL（高频范畴，个人小资金不适用）。核心问题16→18。 |
+| 2026-08-08 | 1.6.0 | MiniQMT关停风险 + Python版本约束 + 2026 MPC/MAP-Elites/Direct VWAP | 四次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 项生存级风险 + 3 项工程约束 + 3 项新算法：①**新增决策⑲MiniQMT关停风险与迁移路径**——迅投MiniQMT正在有序关停（多家券商已停止新增），记录生存级风险+规划BrokerInterface抽象层隔离+大QMT迁移三套方案（消息队列桥接/文件信号中转/策略迁入），补代码gap 19（BigQmtBroker骨架）；②**补充xtquant Python版本限制**——仅支持Windows Python 3.6-3.8，需虚拟环境隔离；③**补充subscribe_whole_quote BUG**——取全市场数据需自行过滤；④**补充可转债程序化交易权限**——需单独开通+流量费；⑤**补2026 MPC执行**（Bayforest+MIT Bertsekas arXiv 2603.28898，介于规则和RL之间的中间路线，减少schedule shortfall 40-50%）；⑥**补MAP-Elites质量多样性执行**（Imperial College+BoA arXiv 2601.22113，PPO+CNN 2.13bps vs VWAP 5.23bps）；⑦**补Direct VWAP Optimization**（arXiv 2502.13722，深度学习直接优化VWAP绕过量曲线预测）。CSDN自媒体(syp1110 2026-07-28)仍在传播"15笔/秒"谣言，印证v1.5.0订正必要性。核心问题18→19。 |
