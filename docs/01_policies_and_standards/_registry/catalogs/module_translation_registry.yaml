@@ -2717,6 +2717,20 @@ entries:
   desc_zh: 复用 local_model 层（Ollama/DeepSeek）对新闻标题+内容做情感分类，支持 prompt 模板、思维链剥离、JSON 解析、CacheLayer 缓存去重，推理失败降级 neutral。
   desc_en: ''
   plain_zh: 新闻情感推理器，调用本地模型给新闻打情感标签（正面/负面/中性），带缓存防重复算。
+- module_path: scripts/ml/eval_sentiment.py
+  domain_id: D_DATA
+  name_zh: 情感分类 F1 评估脚本（P1-E3 NLP 管道 Phase 2）。
+  name_en: eval_sentiment
+  desc_zh: 对 news_sentiment_200.jsonl 评估集跑零样本推理（Ollama qwen3:8b），计算 Macro-F1/Accuracy/per-class metrics，断点续作追加写入预测文件，目标 F1≥65%。
+  desc_en: ''
+  plain_zh: 情感评估脚本，拿评估集跑模型推理，算 F1 分数看分类准不准，支持断点续作。
+- module_path: scripts/ml/build_eval_set.py
+  domain_id: D_DATA
+  name_zh: 新闻情感评估集构建脚本（P1-E3 NLP 管道 Phase 1）。
+  name_en: build_eval_set
+  desc_zh: 分层抽样（危机期/复苏期/常态期）从 ClickHouse 采集新闻，关键词规则标注 sentiment，存为 news_sentiment_200.jsonl，断点续作追加写入。
+  desc_en: ''
+  plain_zh: 评估集构建脚本，按时间段分层抽新闻，用关键词规则打情感标签，存成评估集。
 - module_path: src/zephyr/data/normalizers/
   domain_id: D_DATA
   name_zh: 归一化器
