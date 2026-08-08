@@ -64,6 +64,12 @@ gates:
   source: in_process
   register_line: 46  # priority=46（in-process 新增，非 gateway 迁移；FOREIGN-CHANGE 45 之后、HELD-OVERLAP 50 之前）
   enabled: true
+- gate_id: COMMIT-SCOPE
+  module_path: zephyr.gov_enforcement.commit_gates.commit_scope_gate
+  factory_function: make_commit_scope_gate
+  source: in_process
+  register_line: 48  # priority=48（in-process 新增；DERIVED-FILE 46 之后、HELD-OVERLAP 50 之前；语义层跨域检测，治本 13a5e1d512 混合提交）
+  enabled: true
 - gate_id: SESSION-REQUIRED
   module_path: zephyr.gov_enforcement.commit_gates.session_required_gate
   factory_function: make_session_required_gate

@@ -156,6 +156,7 @@ class CommitStatus(str, Enum):
     FOREIGN_CHANGE_VIOLATION = "FOREIGN_CHANGE_VIOLATION"  #ARCH-054 外来变更检测
     CLAIM_REQUIRED_VIOLATION = "CLAIM_REQUIRED_VIOLATION"
     WORKTREE_VIOLATION = "WORKTREE_VIOLATION"  # #ARCH-WORKTREE-GATE-001
+    COMMIT_SCOPE_VIOLATION = "COMMIT_SCOPE_VIOLATION"  # 跨域混合提交治本（13a5e1d512）
     PURE_SHIM_VIOLATION = "PURE_SHIM_VIOLATION"
     STASH_CONFLICT = "STASH_CONFLICT"  # 阶段3 已弃用，保留向后兼容
 
@@ -882,6 +883,8 @@ class GitCommitGateway:
                     return CommitResult(status=CommitStatus.WORKTREE_VIOLATION, message=gr.detail)
                 if gr.gate_id == "FOREIGN-CHANGE-DETECTION":  #ARCH-054
                     return CommitResult(status=CommitStatus.FOREIGN_CHANGE_VIOLATION, message=gr.detail)
+                if gr.gate_id == "COMMIT-SCOPE":  # 跨域混合提交治本（13a5e1d512）
+                    return CommitResult(status=CommitStatus.COMMIT_SCOPE_VIOLATION, message=gr.detail)
                 if gr.gate_id == "FILE-PLACEMENT-TTL" and gr.detail.startswith("PROMOTION_BLOCKED"):
                     return CommitResult(status=CommitStatus.PROMOTION_BLOCKED, message=gr.detail)
                 return CommitResult(
@@ -1137,6 +1140,7 @@ class GitCommitGateway:
         allow_overlap: bool = False,
         allow_derived_deletion: bool = False,
         allow_non_worktree: bool = False,
+        allow_multi_domain: bool = False,
     ) -> CommitResult:
         """串行化 commit 入口。allow_overlap 逃生通道放行被其他 session 持有的文件，追加 [GW:<sid>:overlap] 标记。
         allow_derived_deletion 逃生通道放行受保护派生文件删除（#ARCH-BP-REGISTRY-DELETION-001 P1）。
@@ -1189,6 +1193,8 @@ class GitCommitGateway:
                 "TRAE-079: allow_overlap=True last-resort escape hatch used by session %s on %d files",
                 session_id, len(existing),
             )
+        if allow_multi_domain:
+            full_message += f"\n[GW:{session_id}:multi-domain]"
 
         # TRAE-079 铁律1：[gate → stage → commit] 整体在 _GlobalCommitLock 临界区内，消除 TOCTOU
         # 病根：gate 检查在锁外时，另一 session 可在 gate 通过后、commit 前修改文件（搭便车/FOREIGN_CHANGE）
@@ -1204,6 +1210,7 @@ class GitCommitGateway:
                     allow_promote=allow_promote, commit_message=message,
                     allow_derived_deletion=allow_derived_deletion,
                     allow_non_worktree=allow_non_worktree,
+                    allow_multi_domain=allow_multi_domain,
                 )
                 blocked = self._check_gate_results(gate_results)
                 if blocked is not None:
@@ -1227,6 +1234,7 @@ class GitCommitGateway:
                 allow_promote=allow_promote, commit_message=message,
                 allow_derived_deletion=allow_derived_deletion,
                 allow_non_worktree=allow_non_worktree,
+                allow_multi_domain=allow_multi_domain,
             )
             blocked = self._check_gate_results(gate_results)
             if blocked is not None:

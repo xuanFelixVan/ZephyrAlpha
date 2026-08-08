@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过); exit 8=worktree隔离阻断(WORKTREE_VIOLATION)
+# [ERROR_CONTRACT] exit 0=commit成功; exit 1=commit失败/无变更; exit 2=锁超时/stash冲突; exit 3=永久区晋升阻断; exit 4=SSOT违规; exit 5=搭便车防护阻断(HELD_OVERLAP_VIOLATION); exit 6=claim_files前置检查阻断(CLAIM_REQUIRED_VIOLATION); exit 7=claim-only部分文件被其他session持有(冲突跳过); exit 8=worktree隔离阻断(WORKTREE_VIOLATION); exit 9=跨域混合提交阻断(COMMIT_SCOPE_VIOLATION)
 # [TESTS] tests/test_git_commit_gateway.py
 # [A_module] module_id=MOD-INF-005 | layer=script | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -32,7 +32,7 @@
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
 - git_commit.py 强制走 GitCommitGateway（串行锁+stash 隔离+GW 标记）
 
-exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=worktree隔离阻断
+exit codes: 0=commit成功, 1=commit失败/无变更, 2=锁超时/stash冲突, 5=搭便车防护阻断, 6=claim_files前置检查阻断, 7=claim-only部分冲突, 8=worktree隔离阻断, 9=跨域混合提交阻断
 """
 
 from __future__ import annotations
@@ -100,6 +100,15 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "  非 worktree 并发 commit 被阻断（#ARCH-WORKTREE-GATE-001 治本）。"
         "  治本：使用 session_worktree_start() 创建物理隔离 worktree。"
         "  如确认需提交，请在终端手动添加 --allow-non-worktree 重新执行。",
+        False,
+    ),
+    CommitStatus.COMMIT_SCOPE_VIOLATION: (
+        9,
+        "COMMIT_SCOPE_VIOLATION: {message}",
+        "  commit 跨越多个功能域（13a5e1d512 混合提交事故治本）。"
+        "  请拆分为多个 commit，每个域一个（AGENTS.md「一个任务=1次commit」原则）。"
+        "  如确认需跨域提交（跨域重构/域注册表变更），请在终端手动添加"
+        " --allow-multi-domain 重新执行。",
         False,
     ),
 }
@@ -463,6 +472,15 @@ def main() -> int:
              "（对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
+        "--allow-multi-domain",
+        action="store_true",
+        default=False,
+        help="COMMIT_SCOPE_VIOLATION 治本通道（13a5e1d512 混合提交事故治本）——跨域提交"
+             "场景放行 COMMIT-SCOPE gate。commit message 追加 [GW:<sid>:multi-domain] "
+             "标记供审计追踪。合理场景：跨域重构/域注册表本身变更/裁定引用+registry 同 commit。"
+             "AI 不得自行使用——须用户终端手动指定（对称 --allow-overlap 治理）。",
+    )
+    parser.add_argument(
         "--adopt-prior-work",
         action="store_true",
         default=False,
@@ -581,6 +599,7 @@ def main() -> int:
                 allow_overlap=args.allow_overlap,
                 allow_derived_deletion=args.allow_derived_deletion,
                 allow_non_worktree=args.allow_non_worktree,
+                allow_multi_domain=args.allow_multi_domain,
             )
         finally:
             gw.release_files(args.session, claimed)
