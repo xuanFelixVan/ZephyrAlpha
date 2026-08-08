@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-08-06
 last_updated: 2026-08-08
 topic: regime_backtest_validation_plan
@@ -176,11 +176,152 @@ src/zephyr/backtest/
 | C4 统计显著性 | — | ❌ 未验证 | P(Sharpe_开>Sharpe_关)≥75% 未跑 |
 | Phase 5 决策门控 | 5 | ❌ 未完成 | BM-BT-07 IS→WFA→OOS 适配未启动 |
 
+## 0.6 算法审查与 2026 研究对照（2026-08-08）
+
+> 本节是 2026-08-08 对方案核心算法选择的审查，对照 2026 最新研究实践，
+> 判断：核心算法是否选对？验证方法是否有缺口？有没有更好的算法？
+> 审查方法：全网搜索 2026 年最新研究 + 对照项目现有实现 + 第一性原理判断。
+
+### 0.6.1 核心算法审查结论：选择正确，有 2026 研究背书
+
+| 算法选择 | 项目现状 | 2026 研究验证 | 结论 |
+|---|---|---|---|
+| **HMM 4 态** | BIC 驱动降态（9→4） | firestrand/marketregimeml（2025-09 真实数据）：**n_regimes>3 在真实数据上过拟合**；HMM RQI 67.8-76.6 | ✅ 正确 |
+| **两阶段校准**（Temperature + Isotonic） | #ARCH-CALIBRATOR-001，ECE=4.2% | Dheur 博士论文（2025-12）大规模实验：**post-hoc 校准一致优于内嵌校准** | ✅ 正确 |
+| **乘法 Shrinkage**（ConfidenceSignal × RiskSignal） | C1 四项全通过 | VIX-Regime Position Sizing（2026-05）：regime 状态直接缩放仓位（1.0x/0.6x/0.3x）= 我们的 Shrinkage | ✅ 正确 |
+| **"特征>模型"工程** | Hurst DFA/Kalman/筹码/合成VIX/Wyckoff | mathandmarkets（2026-01）：**特征重要性远超模型选择**，realized_vol 单特征 28% 重要性；10 优化特征 > 35+ 特征 | ✅ 正确 |
+| **"风险节流器非策略"定位** | design_memo_001 §2.2 | 多源 2026 共识：regime 检测最大价值是仓位缩放而非 alpha 信号 | ✅ 正确 |
+
+**核心算法不需要推翻重做。**
+
+### 0.6.2 明确不采用的算法（避免过度工程）
+
+| 算法 | 研究证据 | 不采用原因 |
+|---|---|---|
+| **深度学习 LSTM/Transformer** 做 regime 检测 | firestrand 真实数据：LSTM RQI 49.1-64.9（最差），HMM 67.8-76.6 | 黑箱、需海量数据、实测最差；风控要可解释性 |
+| **增加状态数**（>4 态） | "n_regimes>3 overfits on real data" | 已从 9→4 降态，A2 从 0.34→1.042 验证 |
+| **堆更多特征** | "10 optimized > 35+ features" | 已有 13 参数 + 8 转换，再加边际递减 |
+| **SVM Ensemble 替换 HMM** | RQI 83.6-86.9 > HMM 67.8 | SVM 做分类强，但**无转移矩阵/无持续性建模**，做风控（要知道"危机还要持续多久"）不如 HMM |
+
+### 0.6.3 需要补充的算法（3 个真缺口 + 1 个现成该跑）
+
+#### 缺口 1：Conformal Prediction 校准层（B1/B2 升级）— 2026 前沿
+
+**现状**：两阶段校准（Temperature + Isotonic），ECE=4.2% 已达标。
+**缺口**：无有限样本覆盖保证——"P(危机)=80%" 在统计上不保证 80% 的时间真是危机。
+**2026 研究**：
+- arXiv:2605.19024（2026-05）Conformal Prediction via Transported Beta Laws——**处理时序分布漂移**，金融非 i.i.d. 适用
+- arXiv:2607.27143（2026-07）Mondrian CP（类条件 conformal）——**少数类覆盖恢复 +61.7pp**，r3/r4 少数态（14.9%/20.2%）正适用
+- ACS Chem. Res. Toxicol.（2026-06）Adaptive Conformal Prediction——**model-agnostic 校准层，不需重训，有限样本覆盖保证**
+
+**建议**：在 Isotonic 之上叠 Conformal Prediction（分布无关保证），替代原方案 B2 的纯 CRPS。比 CRPS 更强——CRPS 只测技能分数，Conformal 给统计保证。
+
+#### 缺口 2：CPCV + PBO 过拟合检测（A2/E2 升级）— 2026 金标准
+
+**现状**：A2 用 IS/OOS 单次分割 + KL 散度。E2 计划固定 block-bootstrap。
+**缺口**：无 Combinatorial Purged Cross-Validation（CPCV）+ Probability of Backtest Overfitting（PBO）。
+**2026 研究**：
+- backtest-audit（2026-05 开源库）：CPCV 分 S 块枚举 C(S,S/2) 种 train/test 划分，**PBO = IS 冠军 OOS 不是冠军的比例**。PBO≈0 可靠，PBO>0.5 过拟合
+- mathandmarkets（2026-05）：测试 80 个变体时 P(假阳性)=98.3%——多重比较是量化最贵的 bug
+- algovantis（2026-04）：purged k-fold 删边界观测防滚动窗口泄漏
+
+**建议**：E2 从固定 block-bootstrap 升级为 **stationary bootstrap + CPCV/PBO**。CPCV 比 IS/OOS 单次分割严格得多（枚举所有组合），PBO 给过拟合概率而非主观判断。
+
+#### 缺口 3：Stationary Bootstrap（E2 升级）
+
+**现状**：原方案计划 21-day 固定块 block-bootstrap 2000×。
+**2026 研究**：algovantis（2026-04）——**stationary bootstrap 块长随机（几何分布），保平稳性，优于固定块**。固定块在块边界引入人为不连续。
+
+**建议**：E2 用 stationary bootstrap 替代固定 block-bootstrap，或两者都跑做对照。
+
+#### 现成该跑：Deflated Sharpe Ratio（C4）
+
+**现状**：`src/zephyr/simulation/deflated_sharpe_calculator.py` 已存在，C4 未执行。
+**2026 研究**：mathandmarkets（2026-05）——Deflated Sharpe 校正多重比较（测了 N 个变体后 Sharpe 要打折）。
+**建议**：直接跑，零开发成本。
+
+### 0.6.4 施工优先级
+
+```
+优先级 1（零开发，立即跑）：
+  └── C4 Deflated Sharpe Ratio（已有 calculator，跑一次出结果）
+
+优先级 2（补充验证，中等工作量）：
+  ├── E2 Stationary Bootstrap（替代固定 block，~1天）
+  ├── E3 参数敏感性 ±20% 网格（~1天，BM-BT-05-B 已有框架）
+  └── E4 交易成本 0-50bps 敏感性（~半天，BM-BT-01-D 已有框架）
+
+优先级 3（算法升级，较大工作量但有 2026 研究背书）：
+  ├── B2 Conformal Prediction 校准层（叠在 Isotonic 上，~2-3天）
+  └── E2+ A2 CPCV/PBO 过拟合检测（~2-3天，金标准升级）
+
+优先级 4（理论补全，低紧迫）：
+  ├── D1/D3 参数敏感性网格（max(P)四档 + 聚合公式参数）
+  ├── C2 极端事件回撤保护 / C3 节流归因（分析型，基于已有数据）
+  └── Phase 5 决策门控（BM-BT-07 适配）
+
+明确不做（研究证明更差/过度工程）：
+  ✗ 深度学习 regime 检测（LSTM/Transformer）
+  ✗ 增加状态数（>4 态）
+  ✗ SVM Ensemble 替换 HMM（丢转移矩阵）
+  ✗ 堆更多特征
+```
+
+### 0.6.5 研究来源索引
+
+| 来源 | 覆盖领域 | 关键结论 |
+|---|---|---|
+| firestrand/marketregimeml（2025-09，真实数据） | regime 模型对比 | n_regimes>3 过拟合；LSTM 最差；SVM Ensemble 最强但无转移矩阵 |
+| mathandmarkets Ensemble（2026-01） | CUSUM/BOCPD/三信号框架 | 特征>模型；realized_vol 28% 重要性 |
+| mathandmarkets Expensive Bug（2026-05） | 多重比较/Deflated Sharpe | 80 变体 P(假阳性)=98.3%；CPCV 金标准 |
+| arXiv:2605.19024（2026-05） | Conformal + Beta Laws | 时序分布漂移 conformal |
+| arXiv:2607.27143（2026-07） | Mondrian CP | 类条件 conformal 少数类覆盖 +61.7pp |
+| backtest-audit（2026-05 开源） | CPCV/PBO | PBO 过拟合概率量化 |
+| algovantis（2026-04） | Stationary Bootstrap / Purged k-fold | 随机块长保平稳性 |
+| trendsandbreakouts VIX-Regime（2026-05） | regime 仓位缩放 | = 我们的 Shrinkage |
+| Dheur 博士论文（2025-12） | post-hoc 校准 | post-hoc 一致优于内嵌 |
+
+### 0.6.6 补充发现：HMM 引擎升级路径（2026-08 二次搜索）
+
+> 二次搜索发现 3 项 2026 HMM 前沿研究，可作为现有 Gaussian HMM 4 态的**未来升级路径**（非立即必要，但记录备查）。
+
+#### 升级路径 1：Wasserstein HMM — 解决标签切换（label switching）
+
+**问题**：HMM 标签有 permutation invariance——walk-forward 各季度 refit 后 r1 可能变成不同语义。我们当前用 `#ARCH-REGIME-CONFIDENCE-FIX-001` 移除 state_risk 来缓解，但这是治标。
+**2026 研究**：arXiv:2603.04441（Boukardagha 2026-02）Wasserstein HMM——用 2-Wasserstein 距离做 template-based regime identity tracking，**跨 refit 保持标签语义一致**。Sharpe 2.18 vs 1.18 buy-hold，MaxDD -5.43% vs -14.62%。
+**评估**：治本方案，但需重写 HMM 引擎。当前 4 态已通过 A2（OOS/IS=1.042），标签切换问题已大幅缓解。**列为未来升级，非当前缺口**。
+
+#### 升级路径 2：Student-t / GED 重尾发射 — 处理金融危机尾部
+
+**问题**：当前 Gaussian 发射假设正态，但金融收益有肥尾。flash-crash 单日极端值可能毒化整个训练窗口的 regime 均值/协方差。
+**2026 研究**：
+- arXiv:2606.23492（2026-06）Continuous HMM Heavy-Tail Emission Families——Student-t / GED / Laplace 发射，KS/AD pass rate >97% IS / >94% OOS
+- Küçükdağ & Hekimoğlu（2026）Robust HMM——Huber 加权 M-step，outlier-robust 参数更新
+**评估**：对风控用例（尾部事件=危机=最重要）有价值。但需重写 EM M-step。**列为优先级 3 之后的可选升级**。
+
+#### 升级路径 3：Feature Saliency HMM — 自动特征选择（补 A4 缺口）
+
+**问题**：A4 特征重要性未验证。当前 13 参数 + 8 转换靠人工设计，无数据驱动的特征筛选。
+**2026 研究**：
+- Fons et al.（2019/2021）Feature Saliency HMM——**在 EM 训练中学习哪些特征是 state-discriminating**，自动特征选择
+- SHAP/Permutation Importance（metricgate 2026-04）：SHAP 局部解释稳定但相关特征致归因稀释（需 Group Shapley）；Permutation 全局但相关特征隐藏重要性。**金融时序须严格按滚动窗口防 look-ahead**
+- mental-momentum（2026-06）警告：SHAP 测相关性非因果性，"常被误当因果证明编造金融叙事"
+**评估**：Feature Saliency HMM 是 HMM 特征重要性的**第一性原理方案**（训练中学习而非事后解释）。SHAP 适合作为审计工具监控 concept drift。**A4 验证建议用 Feature Saliency HMM + SHAP 审计双轨**。
+
+#### 不采用：LSTM+HMM 混合 / 在线无限 HMM
+
+| 算法 | 来源 | 不采用原因 |
+|---|---|---|
+| LSTM 自编码器 + GHMM | microbell（2026-07） | LSTM 做特征压缩引入黑箱；研究发现 Kelly 在特定状态有"均值回归"保守倾向（执行层问题）；增加复杂度无明确收益 |
+| BR-iHMM 在线无限 HMM | Yiu et al.（2026） | 在线学习无 batch refit，但"无限态"与我们的 4 态精简方向相反；复杂度过高 |
+
 ## 1. 目标与定位
 
 ### 1.1 验证什么
 
 regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = ConfidenceSignal × RiskSignal` 做风险节流。回测验证回答三个核心问题：
+
+> ⚠️ **已更新（见 §0.5.2）**：实际实现为 **7 维概率**（4 HMM 基态 + 3 overlay 特殊态），非原方案的 12 维。9 态经 BIC 降为 4 态。下文 12 维/9 态表述为原始规划，保留为历史真源。
 
 | 问题 | 验证维度 | 失败后果 |
 |---|---|---|
@@ -477,6 +618,8 @@ Phase 5：决策门控（对接 BM-BT-07）
 ### 8.1 实现分解（完整 12 态，分模块施工）
 
 > **用户裁定（2026-08-06）**：从第一性原理出发，直接实现完整 12 态，回测验证后再根据结果优化/简化。理由：最终目标就是 12 态，先做简化版再重做完整版是重复工作；完整版验证后若发现某些态可合并/某些参数可去除，那是"基于证据的简化"，比"拍脑袋的简化"更可靠。
+>
+> ⚠️ **已更新（见 §0.5.2）**：A2 过拟合检测发现 9 态过度细分（OOS/IS=0.34），经 BIC 降为 **4 态**（discussion_004 §2.1）。这正是本节预期的"基于证据的简化"——验证后发现过度细分，基于 BIC 证据降态。下表 9 态/12 态为原始规划，保留为历史真源。
 
 | 模块 | 实现内容 | spec 真源 |
 |---|---|---|
@@ -532,3 +675,4 @@ Phase 5：决策门控（对接 BM-BT-07）
 | 2026-08-06 | 0.2.0 | §8.1 改为完整 12 态分模块实现（用户裁定直接做完整版）；§10.1 标记已决策；新增与另一 AI 施工对话的协调说明 | 用户第一性原理意见：最终目标就是 12 态，先简化再重做是重复工作；验证后基于证据简化更可靠 |
 | 2026-08-06 | 1.0.0 | §10 全部 4 项决策定稿（完整12态/topn_momentum载体/2015-2026区间/hmmlearn）；status→active；性质改为已定稿验收指南 | 用户确认定稿交接，方案进入施工对话参考阶段 |
 | 2026-08-08 | 1.1.0 | 新增 §0.5 方案执行状态（反向同步）；标注 Phase 0-2 完成 / 3-5 部分未完成；记录重大偏离 9态→4态（BIC驱动）；回填 C1/A1/A2/B1/B4 实际验证结果与代码结构 | 用户要求从文档可知项目代码最新功能情况；实际执行结果与原方案偏离需文档化 |
+| 2026-08-08 | 1.2.0 | 新增 §0.6 算法审查与 2026 研究对照（核心算法审查结论 + 明确不采用算法 + 3缺口1现成 + 施工优先级 + 研究来源索引 + HMM引擎升级路径）；§1.1/§8.1 加 9态→4态 内联注释 | 用户要求审查算法缺口+搜2026最新算法+查文档结构；二次搜索发现 Wasserstein HMM/Student-t发射/Feature Saliency HMM |
