@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-06T15:34:06Z'
+generated_at: '2026-08-08T09:10:40Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 145
+total_gates: 146
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -263,7 +263,7 @@ gates:
   source: pre-commit
 - gate_id: GATE-TEST
   name: 'GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）'
-  entry: python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:cacheprovider,-m,"not
+  entry: python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:asyncio,--import-mode=importlib,-m,"not
     slow and not e2e" scripts/governance/d11_compliance/check_test_structure.py
   description: 测试门禁合并——GATE-18(pytest --collect-only，保留 -m not slow and not e2e) +
     GATE-19(测试结构合规)，run_gate_chain 顺序执行
@@ -668,6 +668,15 @@ gates:
     priority=40）'
   entry: in-process (GitCommitGateway)
   description: claim_files 前置检查门禁（CLAIM-REQUIRED，2026-06-30 治本）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: COMMIT-SCOPE
+  name: 'COMMIT-SCOPE: 提交边界域一致性门禁（COMMIT-SCOPE）（CommitGate, priority=50）'
+  entry: in-process (GitCommitGateway)
+  description: 提交边界域一致性门禁（COMMIT-SCOPE）
   files_trigger: ''
   always_run: false
   category: commit_gate
@@ -1103,10 +1112,10 @@ gates:
   status: active
   source: commit-gate
 - gate_id: GATE-PANORAMA-ALIGNMENT
-  name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）（CommitGate,
+  name: 'GATE-PANORAMA-ALIGNMENT: 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）（CommitGate,
     priority=830）'
   entry: in-process (GitCommitGateway)
-  description: 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
+  description: 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）
   files_trigger: ''
   always_run: false
   category: commit_gate
