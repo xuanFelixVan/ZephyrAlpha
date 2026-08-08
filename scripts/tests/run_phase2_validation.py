@@ -25,6 +25,7 @@ Usage:
 
 依据: discussion_003 §4
 """
+
 from __future__ import annotations
 
 import argparse
@@ -42,17 +43,20 @@ try:
     from zephyr.data import ch_reader  # noqa: F401
     from zephyr.data.table_registry import get_registry  # noqa: F401
     from zephyr.regime.core.regime_detector import RegimeDetector  # noqa: F401
-    from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
     from zephyr.regime.features.regime_data_loader import RegimeDataLoader
+    from zephyr.regime.regime_feature_builder import RegimeFeatureBuilder
     from zephyr.regime.validation.phase2 import Phase2Runner
+
     REAL_DEPS_OK = True
-except Exception as _exc:  # pragma: no cover
+except Exception as _exc:  # pragma: no cover  # noqa: BLE001
     _REAL_IMPORT_ERROR = _exc
 
 
 def run_mock() -> int:
     """合成数据冒烟：验证 Phase 2 流程端到端跑通（不代表真实效果）。"""
     print("[mock] Phase 2 冒烟：合成特征矩阵 + A1/B4/A2/B1 流程")
+    import pandas as pd
+
     from zephyr.regime.validation.phase2.a1_sample_sufficiency import A1SampleSufficiency
     from zephyr.regime.validation.phase2.a2_hmm_overfitting import A2HmmOverfitting
     from zephyr.regime.validation.phase2.b1_probability_calibration import (
@@ -62,7 +66,6 @@ def run_mock() -> int:
         B4TransitionAccuracy,
         HistoricalEvent,
     )
-    import pandas as pd
 
     # 合成 9 态分布均衡的特征矩阵（2000 样本 × 6 特征，IS=1000/OOS=1000）
     rng = np.random.default_rng(42)
@@ -86,8 +89,7 @@ def run_mock() -> int:
         index=dates,
     )
     records = [
-        {"timestamp": dates[i], "confidence": 0.6 + 0.3 * (i / 300), "dominant_regime": "r3"}
-        for i in range(250)
+        {"timestamp": dates[i], "confidence": 0.6 + 0.3 * (i / 300), "dominant_regime": "r3"} for i in range(250)
     ]
     b1 = B1ProbabilityCalibration()
     b1_report = b1.validate(records, close, forward_days=20)
@@ -97,9 +99,12 @@ def run_mock() -> int:
     b4 = B4TransitionAccuracy()
     events = [
         HistoricalEvent(
-            id="EVT-MOCK", date=pd.Timestamp("2024-01-15"),
-            transition_type="S1", expected_stage=["trigger", "confirm"],
-            desc="mock", in_data_range=True,
+            id="EVT-MOCK",
+            date=pd.Timestamp("2024-01-15"),
+            transition_type="S1",
+            expected_stage=["trigger", "confirm"],
+            desc="mock",
+            in_data_range=True,
         )
     ]
     daily = {pd.Timestamp("2024-01-14"): []}
@@ -124,8 +129,7 @@ def run_real(
     logging.getLogger("hmmlearn").setLevel(logging.ERROR)
 
     batch_tag = "A1+B4+A2+B1" if run_second_batch else "A1+B4"
-    print(f"[real] 配置: enable_overlay={enable_overlay}, enable_full_risk={enable_full_risk}, "
-          f"batch={batch_tag}")
+    print(f"[real] 配置: enable_overlay={enable_overlay}, enable_full_risk={enable_full_risk}, batch={batch_tag}")
     print("[real] 构建 RegimeFeatureBuilder（复用 C1 真实模式配置）...")
     data_loader = RegimeDataLoader(
         data_load_start="2010-01-01",
@@ -145,7 +149,9 @@ def run_real(
     print(f"[real] 运行 Phase 2（{batch_tag}），预计 {est}...")
     runner = Phase2Runner()
     report = runner.run(
-        builder, train_years=5, detect_window=60,
+        builder,
+        train_years=5,
+        detect_window=60,
         run_second_batch=run_second_batch,
     )
 
@@ -155,30 +161,37 @@ def run_real(
     print(f"Phase 2 模型质量验证结果（{batch_tag}）")
     print("=" * 70)
     print()
-    print(f"{'='*30} A1 样本充足性 {'='*30}")
+    print(f"{'=' * 30} A1 样本充足性 {'=' * 30}")
     print(report.a1.summary)
-    print(f"  总样本: {report.a1.total_samples}, log-lik: {report.a1.fit_log_likelihood:.2f}, "
-          f"degraded={report.a1.degraded}")
+    print(
+        f"  总样本: {report.a1.total_samples}, log-lik: {report.a1.fit_log_likelihood:.2f}, "
+        f"degraded={report.a1.degraded}"
+    )
     print("  各态统计:")
     for s in report.a1.state_stats:
-        flag = "✅" if s.verdict.value == "sufficient" else (
-            "⚠️" if s.verdict.value == "moderate" else "❌")
+        flag = "✅" if s.verdict.value == "sufficient" else ("⚠️" if s.verdict.value == "moderate" else "❌")
         print(f"    {s.state}: {s.count:4d} 天 ({s.frequency:5.1%}) {flag} {s.action}")
 
     print()
-    print(f"{'='*30} B4 转换触发 {'='*30}")
+    print(f"{'=' * 30} B4 转换触发 {'=' * 30}")
     print(report.b4.summary)
     print("  事件匹配明细:")
     for m in report.b4.matches:
         tag = "✓" if m.hit else "✗"
         if m.triggered_at is not None:
-            print(f"    {tag} {m.event.id} ({m.event.transition_type}) "
-                  f"事件日={m.event.date.date()} 触发日={m.triggered_at.date()} "
-                  f"Δ={m.delta_days:+d}d stage={m.matched_stage}")
+            print(
+                f"    {tag} {m.event.id} ({m.event.transition_type}) "
+                f"事件日={m.event.date.date()} 触发日={m.triggered_at.date()} "
+                f"Δ={m.delta_days:+d}d stage={m.matched_stage}"
+            )
         else:
-            tag2 = "[超出范围]" if not m.event.in_data_range else tag
-            print(f"    {tag2} {m.event.id} ({m.event.transition_type}) "
-                  f"事件日={m.event.date.date()} 未触发")
+            if not m.event.in_data_range:
+                tag2 = "[超出范围]"
+            elif not m.event.data_ready:
+                tag2 = "[待数据]"
+            else:
+                tag2 = tag
+            print(f"    {tag2} {m.event.id} ({m.event.transition_type}) 事件日={m.event.date.date()} 未触发")
     print("  按转换类型:")
     for tid, st in report.b4.per_transition_hits.items():
         if st["total"] > 0:
@@ -186,26 +199,28 @@ def run_real(
 
     if report.a2 is not None:
         print()
-        print(f"{'='*30} A2 过拟合 {'='*30}")
+        print(f"{'=' * 30} A2 过拟合 {'=' * 30}")
         print(report.a2.summary)
-        print(f"  IS_acc={report.a2.is_accuracy:.1%}, OOS_acc={report.a2.oos_accuracy:.1%}, "
-              f"OOS/IS={report.a2.ratio:.3f}, KL={report.a2.kl_divergence:.4f}")
+        print(
+            f"  IS_acc={report.a2.is_accuracy:.1%}, OOS_acc={report.a2.oos_accuracy:.1%}, "
+            f"OOS/IS={report.a2.ratio:.3f}, KL={report.a2.kl_divergence:.4f}"
+        )
         print(f"  标签对齐: {report.a2.label_alignment}")
-        print(f"  IS样本={report.a2.is_samples}, OOS样本={report.a2.oos_samples}, "
-              f"degraded={report.a2.degraded}")
+        print(f"  IS样本={report.a2.is_samples}, OOS样本={report.a2.oos_samples}, degraded={report.a2.degraded}")
 
     if report.b1 is not None:
         print()
-        print(f"{'='*30} B1 概率校准度 {'='*30}")
+        print(f"{'=' * 30} B1 概率校准度 {'=' * 30}")
         print(report.b1.summary)
-        print(f"  校准误差={report.b1.calibration_error:.1%}, 最大桶误差={report.b1.max_bucket_error:.1%}, "
-              f"样本={report.b1.total_samples}, forward={report.b1.forward_days}d")
+        print(
+            f"  校准误差={report.b1.calibration_error:.1%}, 最大桶误差={report.b1.max_bucket_error:.1%}, "
+            f"样本={report.b1.total_samples}, forward={report.b1.forward_days}d"
+        )
         print(f"  各态推断方向: {report.b1.regime_directions}")
         print("  可靠性曲线:")
         for p in report.b1.reliability_curve:
             if p.count > 0:
-                print(f"    {p.bucket}: 预测={p.predicted:.3f} 实际={p.actual:.3f} "
-                      f"误差={p.error:.3f} (n={p.count})")
+                print(f"    {p.bucket}: 预测={p.predicted:.3f} 实际={p.actual:.3f} 误差={p.error:.3f} (n={p.count})")
 
     print()
     print("=" * 70)
@@ -233,17 +248,18 @@ def main() -> None:
     parser.add_argument("--mock", action="store_true", help="合成数据冒烟")
     parser.add_argument("--no-overlay", action="store_true", help="关闭 overlay（B4 将降级）")
     parser.add_argument("--no-full-risk", action="store_true", help="关闭 full risk（回退 Phase 1）")
-    parser.add_argument("--first-batch", action="store_true",
-                        help="仅跑第一批 A1+B4（跳过 A2+B1）")
+    parser.add_argument("--first-batch", action="store_true", help="仅跑第一批 A1+B4（跳过 A2+B1）")
     args = parser.parse_args()
 
     if args.mock:
         sys.exit(run_mock())
-    sys.exit(run_real(
-        enable_overlay=not args.no_overlay,
-        enable_full_risk=not args.no_full_risk,
-        run_second_batch=not args.first_batch,
-    ))
+    sys.exit(
+        run_real(
+            enable_overlay=not args.no_overlay,
+            enable_full_risk=not args.no_full_risk,
+            run_second_batch=not args.first_batch,
+        )
+    )
 
 
 if __name__ == "__main__":

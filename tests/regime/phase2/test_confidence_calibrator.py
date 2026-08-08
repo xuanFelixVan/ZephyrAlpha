@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """两阶段概率校准器单元测试（discussion_004 §2.2 P0-E2）.
 
 测试覆盖：
@@ -11,6 +10,7 @@
 
 依据: discussion_004 §2.2.7 验收标准 / §2.2.9 防泄漏检查清单 / §2.2.10 降级验收
 """
+
 from __future__ import annotations
 
 import json
@@ -162,7 +162,7 @@ class TestIsotonicCalibrator(unittest.TestCase):
         occurred = (rng.random(n) < 0.5).astype(int)
         cal = IsotonicCalibrator()
         cal.fit(confidence, occurred)
-        self.assertIsNotNone(cal._iso, "IsotonicRegression 应已 fit")
+        self.assertIsNotNone(cal._x_thresh, "IsotonicRegression 应已 fit")
         calibrated = cal.transform(confidence)
         # 校准后应更接近 0.5
         self.assertLess(abs(calibrated.mean() - 0.5), abs(confidence.mean() - 0.5))
@@ -174,18 +174,61 @@ class TestIsotonicCalibrator(unittest.TestCase):
         result = cal.transform(confidence)
         np.testing.assert_array_equal(result, confidence)
 
-    def test_min_bucket_samples_filter(self):
-        """每桶 < MIN_BUCKET_SAMPLES 时跳过该桶。"""
-        # 只有一个桶有足够样本（另一桶 3 样本 < MIN_BUCKET_SAMPLES=5）
-        confidence = np.concatenate([
-            np.full(3, 0.1),   # 0-20% 桶，3 < 5 → 跳过
-            np.full(100, 0.5),  # 40-60% 桶，≥5 样本
-        ])
+    def test_passthrough_when_insufficient_unique_values(self):
+        """唯一 confidence 值 < MIN_UNIQUE_FOR_FIT 时降级 passthrough。"""
+        # 仅 2 个唯一值（0.1 和 0.5）< MIN_UNIQUE_FOR_FIT=5 → 退化
+        confidence = np.concatenate(
+            [
+                np.full(3, 0.1),
+                np.full(100, 0.5),
+            ]
+        )
         occurred = np.concatenate([np.zeros(3), np.ones(100)])
         cal = IsotonicCalibrator()
         cal.fit(confidence, occurred)
-        # 只有 1 个桶点 → 不足 2 个，应降级 passthrough
-        self.assertIsNone(cal._iso)
+        self.assertIsNone(cal._x_thresh)
+
+    def test_raw_data_fit_more_thresholds_than_binned(self):
+        """原始数据 fit 产生更多 thresholds（vs 5 桶预分桶的 3-4 点）。"""
+        rng = np.random.default_rng(42)
+        n = 500
+        # 连续 confidence 分布（模拟温度缩放后 HMM 输出）
+        confidence = np.clip(rng.normal(0.55, 0.12, n), 0.1, 0.95)
+        occurred = (rng.random(n) < confidence * 0.8 + 0.1).astype(int)
+        cal = IsotonicCalibrator()
+        cal.fit(confidence, occurred)
+        self.assertIsNotNone(cal._x_thresh)
+        # 原始数据 fit 应产生 ≥5 个 thresholds（5 桶预分桶最多 5 个）
+        self.assertGreaterEqual(
+            len(cal._x_thresh),
+            5,
+            f"原始数据 fit 应产生 ≥5 thresholds，实际 {len(cal._x_thresh)}",
+        )
+
+    def test_high_confidence_pulled_down(self):
+        """过自信高 confidence 被 isotonic 拉低（B1 80-100% 桶根因修复）。"""
+        rng = np.random.default_rng(42)
+        n = 300
+        # 中低 confidence 校准良好，高 confidence 过自信
+        confidence = np.concatenate(
+            [
+                rng.uniform(0.4, 0.6, 200),  # 中低段
+                rng.uniform(0.8, 0.95, 100),  # 高段过自信
+            ]
+        )
+        # 中低段 occurred ~ confidence，高段 occurred ~0.5（过自信）
+        occurred = np.concatenate(
+            [
+                (rng.random(200) < 0.5).astype(int),
+                (rng.random(100) < 0.5).astype(int),
+            ]
+        )
+        cal = IsotonicCalibrator()
+        cal.fit(confidence, occurred)
+        self.assertIsNotNone(cal._x_thresh)
+        # 高 confidence（0.9）应被拉低
+        high_calibrated = cal.transform(np.array([0.9]))[0]
+        self.assertLess(high_calibrated, 0.9, f"过自信 0.9 应被拉低，实际 {high_calibrated:.3f}")
 
     def test_monotonic_mapping(self):
         """Isotonic 映射保持单调性（输入越大输出越大）。"""
@@ -195,7 +238,7 @@ class TestIsotonicCalibrator(unittest.TestCase):
         occurred = (rng.random(n) < confidence).astype(int)  # 大致校准
         cal = IsotonicCalibrator()
         cal.fit(confidence, occurred)
-        if cal._iso is not None:
+        if cal._x_thresh is not None:
             test_x = np.array([0.1, 0.3, 0.5, 0.7, 0.9])
             test_y = cal.transform(test_x)
             # 单调非递减
@@ -209,7 +252,7 @@ class TestIsotonicCalibrator(unittest.TestCase):
         occurred = (rng.random(200) < confidence).astype(int)
         cal = IsotonicCalibrator()
         cal.fit(confidence, occurred)
-        if cal._iso is not None:
+        if cal._x_thresh is not None:
             d = cal.to_dict()
             cal2 = IsotonicCalibrator.from_dict(d)
             np.testing.assert_allclose(
@@ -217,6 +260,18 @@ class TestIsotonicCalibrator(unittest.TestCase):
                 cal2.transform(np.array([0.3, 0.5, 0.7])),
                 atol=1e-6,
             )
+
+    def test_backward_compat_old_points_format(self):
+        """旧格式（仅 points）反序列化 → 直接用作插值断点。"""
+        d = {
+            "type": "IsotonicCalibrator",
+            "points": [(0.3, 0.5), (0.5, 0.6), (0.8, 0.7)],
+        }
+        cal = IsotonicCalibrator.from_dict(d)
+        self.assertIsNotNone(cal._x_thresh)
+        result = cal.transform(np.array([0.4, 0.6]))
+        # 0.4 在 0.3-0.5 之间 → 插值 ~0.55
+        self.assertAlmostEqual(result[0], 0.55, delta=0.01)
 
 
 class TestTwoStageCalibrator(unittest.TestCase):
@@ -235,8 +290,7 @@ class TestTwoStageCalibrator(unittest.TestCase):
         orig_conf = np.exp(log_proba).max(axis=1)
         orig_err = abs(orig_conf.mean() - occurred_rate)
         cal_err = abs(calibrated.mean() - occurred_rate)
-        self.assertLess(cal_err, orig_err,
-                        f"校准误差应减小: orig={orig_err:.4f} cal={cal_err:.4f}")
+        self.assertLess(cal_err, orig_err, f"校准误差应减小: orig={orig_err:.4f} cal={cal_err:.4f}")
 
     def test_stage2_none_passthrough(self):
         """Stage 2=None 时只走 Stage 1。"""
@@ -301,7 +355,9 @@ class TestFitCalibratorWithFallback(unittest.TestCase):
         prev_cal, _ = fit_calibrator_with_fallback(log_proba, occurred)
         # 用 10 个样本 + 上季度校准器
         cal, result = fit_calibrator_with_fallback(
-            log_proba[:10], occurred[:10], prev_calibrator=prev_cal,
+            log_proba[:10],
+            occurred[:10],
+            prev_calibrator=prev_cal,
         )
         self.assertEqual(result.level, DegradationLevel.LEVEL_3)
         self.assertIs(cal, prev_cal, "Level 3 应返回上季度校准器实例")
@@ -352,8 +408,7 @@ class TestComputeOccurredPit(unittest.TestCase):
         lp_valid, occurred = compute_occurred_pit(log_proba, dates, close, forward_days=forward_days)
         # 最后 forward_days 天不应有 occurred 标签（无 forward return）
         valid_count = len(occurred)
-        self.assertLessEqual(valid_count, n - forward_days,
-                             "尾部 forward_days 天应被过滤")
+        self.assertLessEqual(valid_count, n - forward_days, "尾部 forward_days 天应被过滤")
 
     def test_regime_directions_pit_only(self):
         """防泄漏 #2: regime_directions 只用传入的 IS 数据推断，不看 OOS。"""
@@ -379,16 +434,17 @@ class TestComputeOccurredPit(unittest.TestCase):
         # 只用 IS 数据算 occurred
         lp_is, occ_is = compute_occurred_pit(is_log_proba, is_dates, is_close, forward_days=20)
         # state 0 在 IS 中是"涨"，后续确实涨 → occurred 应大量为 1
-        self.assertGreater(occ_is.mean(), 0.7,
-                           f"IS state 0 涨 → occurred 应多为 1，实际 {occ_is.mean():.2%}")
+        self.assertGreater(occ_is.mean(), 0.7, f"IS state 0 涨 → occurred 应多为 1，实际 {occ_is.mean():.2%}")
 
         # 只用 OOS 数据算 occurred
         lp_oos, occ_oos = compute_occurred_pit(
-            _make_log_proba(oos_logits), oos_dates, oos_close, forward_days=20,
+            _make_log_proba(oos_logits),
+            oos_dates,
+            oos_close,
+            forward_days=20,
         )
         # state 0 在 OOS 中是"跌"，后续确实跌 → occurred 应大量为 1（方向匹配）
-        self.assertGreater(occ_oos.mean(), 0.7,
-                           f"OOS state 0 跌 → occurred 应多为 1，实际 {occ_oos.mean():.2%}")
+        self.assertGreater(occ_oos.mean(), 0.7, f"OOS state 0 跌 → occurred 应多为 1，实际 {occ_oos.mean():.2%}")
 
         # 关键验证：IS 的 occurred 不受 OOS 数据影响
         # 如果用全量数据推断方向，IS 的 occurred 会被 OOS 污染
@@ -431,7 +487,11 @@ class TestTrimIsForPit(unittest.TestCase):
         train_end = pd.Timestamp("2021-03-31")
         forward_days = 20
         features_safe, close_safe = trim_is_for_pit(
-            features, close, train_start, train_end, forward_days,
+            features,
+            close,
+            train_start,
+            train_end,
+            forward_days,
         )
         safe_end = train_end - pd.Timedelta(days=int(forward_days * 1.5))
         self.assertEqual(features_safe.index[-1], safe_end)
@@ -492,7 +552,10 @@ class TestPitLeakageIntegration(unittest.TestCase):
         future_dates = pd.date_range(is_dates[-1] + pd.Timedelta(days=1), periods=100, freq="B")
         future_close = pd.Series(50 - np.arange(100) * 0.1, index=future_dates)
         lp_future, occ_future = compute_occurred_pit(
-            future_log_proba, future_dates, future_close, forward_days=20,
+            future_log_proba,
+            future_dates,
+            future_close,
+            forward_days=20,
         )
 
         # 用 IS + 未来 数据 fit（模拟泄漏场景）
@@ -527,19 +590,19 @@ class TestPitLeakageIntegration(unittest.TestCase):
 
         # Q2 用 Q2 数据 fit（带 Q1 作为 prev_calibrator）
         cal_q2, result_q2 = fit_calibrator_with_fallback(
-            q2_log_proba, q2_occ, prev_calibrator=cal_q1,
+            q2_log_proba,
+            q2_occ,
+            prev_calibrator=cal_q1,
         )
         # Q2 应该正常 fit（n=100 ≥ 50 → Level 1），不回退 Q1
         self.assertEqual(result_q2.level, DegradationLevel.LEVEL_1)
         T_q2 = cal_q2.stage1.T
 
         # T_q1 和 T_q2 应该不同（数据特征不同）
-        self.assertNotAlmostEqual(T_q1, T_q2, delta=0.01,
-                                   msg="Q1/Q2 数据不同，T 应不同")
+        self.assertNotAlmostEqual(T_q1, T_q2, delta=0.01, msg="Q1/Q2 数据不同，T 应不同")
 
         # Q1 的 T 不受 Q2 影响（已经是历史值）
-        self.assertAlmostEqual(cal_q1.stage1.T, T_q1,
-                               msg="Q1 校准器 T 不应被 Q2 数据修改")
+        self.assertAlmostEqual(cal_q1.stage1.T, T_q1, msg="Q1 校准器 T 不应被 Q2 数据修改")
 
 
 if __name__ == "__main__":

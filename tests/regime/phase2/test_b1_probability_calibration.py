@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """B1 概率校准度验证器单元测试（discussion_003 §2.4）.
 
 测试覆盖：
@@ -10,6 +9,7 @@
   - validate() 端到端（完美校准 → PASS；严重偏差 → FAIL）
   - 异常路径（空记录 / forward_days≤0 / 样本不足）
 """
+
 from __future__ import annotations
 
 import unittest
@@ -189,11 +189,13 @@ class TestB1Validate(unittest.TestCase):
         rng = np.random.default_rng(42)
         records = []
         for i, ts in enumerate(dates):
-            records.append({
-                "timestamp": ts,
-                "confidence": 0.8,
-                "dominant_regime": "r1",
-            })
+            records.append(
+                {
+                    "timestamp": ts,
+                    "confidence": 0.8,
+                    "dominant_regime": "r1",
+                }
+            )
         b1 = B1ProbabilityCalibration()
         report = b1.validate(records, close, forward_days=20)
         self.assertFalse(report.degraded)
@@ -212,16 +214,12 @@ class TestB1Validate(unittest.TestCase):
         returns = rng.normal(0.0, 0.02, n)
         close = pd.Series(np.cumprod(1 + returns) * 100, index=dates)
         # 全部标 confidence=0.9，但实际方向随机
-        records = [
-            {"timestamp": dates[i], "confidence": 0.9, "dominant_regime": "r1"}
-            for i in range(350)
-        ]
+        records = [{"timestamp": dates[i], "confidence": 0.9, "dominant_regime": "r1"} for i in range(350)]
         b1 = B1ProbabilityCalibration()
         report = b1.validate(records, close, forward_days=20)
         # 由于 close 均值收益≈0，r1 可能无明确方向 → 降级，或方向不稳定 → 大误差
         if not report.degraded:
-            self.assertGreater(report.calibration_error, 0.1,
-                              "严重偏差应导致误差 > 10%")
+            self.assertGreater(report.calibration_error, 0.1, "严重偏差应导致误差 > 10%")
 
     def test_multiple_regimes(self):
         """多态校准：r1 涨态 confidence=0.7，r2 跌态 confidence=0.6。"""
@@ -233,11 +231,13 @@ class TestB1Validate(unittest.TestCase):
 
         records = []
         for i in range(250):
-            records.append({
-                "timestamp": dates_up[i],
-                "confidence": 0.7 if i % 2 == 0 else 0.5,
-                "dominant_regime": "r1" if i % 2 == 0 else "r2",
-            })
+            records.append(
+                {
+                    "timestamp": dates_up[i],
+                    "confidence": 0.7 if i % 2 == 0 else 0.5,
+                    "dominant_regime": "r1" if i % 2 == 0 else "r2",
+                }
+            )
         b1 = B1ProbabilityCalibration()
         report = b1.validate(records, close_up, forward_days=20)
         self.assertFalse(report.degraded)
@@ -281,6 +281,7 @@ class TestB1Validate(unittest.TestCase):
                 B1CalibrationPoint(bucket="0-20%", predicted=0.1, actual=0.15, count=10, error=0.05),
             ],
             calibration_error=0.08,
+            weighted_calibration_error=0.06,
             max_bucket_error=0.12,
             forward_days=20,
             total_samples=100,
@@ -295,6 +296,7 @@ class TestB1Validate(unittest.TestCase):
         self.assertEqual(d["regime_directions"], {"r1": "涨"})
         self.assertEqual(len(d["reliability_curve"]), 1)
         self.assertAlmostEqual(d["calibration_error"], 0.08)
+        self.assertAlmostEqual(d["weighted_calibration_error"], 0.06)
 
 
 if __name__ == "__main__":

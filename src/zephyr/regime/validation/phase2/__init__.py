@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME-VAL-002 | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-REGIME_VAL-002 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
 # [MODULE] zephyr.regime.validation.phase2
 # [DOMAIN] D_REGIME
@@ -11,8 +11,8 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_003 §2
-"""Phase 2 模型质量验证（discussion_003）.
+# [ARCH-REF] #discussion_017 §2
+"""Phase 2 模型质量验证（discussion_017）.
 
 四验证器:
   A1 - 样本充足性（稀有态够 HMM 学吗）
