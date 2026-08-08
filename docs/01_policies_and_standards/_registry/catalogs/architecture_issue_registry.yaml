@@ -12983,3 +12983,72 @@ entries:
   status: proposed
   created: '2026-08-08'
   last_updated: '2026-08-08'
+# --- #ARCH-NLP-BASELINE-DERIVED-001: zero_shot_predictions.jsonl 派生产物裁定——非 I-GOV-1 范畴，保留 git 跟踪（2026-08-08）---
+- issue_id: '#ARCH-NLP-BASELINE-DERIVED-001'
+  title: NLP 零样本基线预测文件 zero_shot_predictions.jsonl 与"派生产物禁止入 git"硬约束的张力裁定——非派生产物，保留跟踪
+  severity: P3低
+  category: architecture_governance
+  adjudication: |-
+    2026-08-08 架构师裁定（第一性原理 + I-GOV-1 立法意图精确对照）。
+
+    起因：#ARCH-NLP-PIPELINE-001 Phase 2 NLP 管道审查（commit 05ad9619）将
+    ``data/eval/zero_shot_predictions.jsonl``（200 条零样本预测，32KB）提交入 git。
+    审查识别该提交与硬约束 I-GOV-1（#ARCH-GOV-BUDGET-001 不变量，AGENTS.md §11.1.4）
+    "凡可由 DB/源码/YAML 经生成器重现的文档，禁止入 git"存在字面张力，标记为 P4
+    保留待裁定。本条目完成该裁定。
+
+    I-GOV-1 立法意图精读（#ARCH-GOV-BUDGET-001 病根分析 L12096-12105）：
+    I-GOV-1 的立法目标是治理"由生成器（generator_registry 登记）从 DB/源码/YAML
+    派生的 .md 文档入 git 导致 reconciler 非收敛循环"。三要素缺一不可：
+    (a) 文档（.md）——约束对象是架构文档（域文档/项目树/catalog）；
+    (b) 生成器派生——经 generator_registry 登记的生成器从 DB/源码/YAML 重现；
+    (c) reconciler 关联——入 git 触发 drift-gate → auto-commit → 非收敛循环。
+    三要素是 I-GOV-1 的适用前提，非任意"可重现文件"。
+
+    zero_shot_predictions.jsonl 三要素逐一核对：
+    (a) ✗ 非 .md 文档——是 .jsonl 数据文件（每行一条预测：news_id/y_true/y_pred/
+        pred_score/polarity/cached/error），非架构文档；
+    (b) ✗ 非生成器派生——由 ``scripts/ml/eval_sentiment.py`` 调用 Ollama qwen3:8b
+        LLM 推理产生，eval_sentiment.py 是 CLI 评估脚本，非 generator_registry 登记的
+        生成器；产出依赖模型推理（非 DB/源码/YAML 机械派生）；
+    (c) ✗ 无 reconciler 关联——不触发任何 drift-gate / auto-commit / 非收敛循环。
+    三要素全不满足 → 不在 I-GOV-1 适用范畴。审查标记的"张力"是字面泛化误读
+    （把"可重现"泛化为任意可重新运行的产物），精确对照立法意图后消解。
+
+    锁定基线的工程价值（保留跟踪的正向理由）：
+    1. LLM 推理非完美可重现——InferConfig.temperature=0.0（贪心解码）理论近似确定性，
+       但 GPU/CPU 数值非确定性 + Ollama 模型版本漂移（qwen3:8b 可被更新）= 无法保证
+       bit-identical 重现。锁定基线是 SFT 训练前（Phase 4）的不可替代参照点。
+    2. ML 工程惯例——版本控制评估集（ground truth）+ 锁定基线预测是可复现研究的
+       标准实践（对标 MLflow artifact + DVC baseline tracking）。
+    3. 既有先例——data/ 下已跟踪 14 个 .jsonl 数据文件（audit_logs/telemetry/
+       metrics/ground truth），.jsonl 数据文件跟踪是项目既有模式，非本文件开创。
+    4. 文件小（32KB / 200 行），无仓库膨胀问题。
+
+    GATE-NO-COMMIT-DERIVED 门禁作用域核对：
+    ``check_no_commit_derived.py`` 的 DERIVED_PATHS 仅匹配
+    ``docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_*.md``
+    等 .md 文档路径，不覆盖 ``data/eval/*.jsonl``。门禁未阻断 = 文件不在门禁管控范围，
+    与本裁定结论一致（非门禁漏洞，是作用域正确）。
+
+    边界裁定（防滥用先例）：
+    本裁定仅适用于"ML 实验锁定基线"——committed once、作为后续对比参照的预测/指标快照。
+    不扩展到以下情形（仍应入 .runtime/ 或 .gitignore）：
+    - 可频繁重跑的实验输出（每次 run 产生新文件）；
+    - 训练中间产物（checkpoints/logs）；
+    - 大体积模型权重（用 DVC/LFS 管理）。
+    判据：文件语义为"锁定基线"（如 zero_shot = SFT 前零样本参照点），且体积小、
+    提交一次后不频繁变更。``data/eval/news_sentiment_200.jsonl``（评估集 ground truth，
+    207KB）同理保留——它是评估真源（标签即 source of truth），非派生产物。
+
+    铁律#9：本条为裁定类议题（非新增模块），AI 提议经第一性原理 + I-GOV-1 立法意图
+    精确对照后裁定，status=decided。
+  impact:
+    - 'data/eval/zero_shot_predictions.jsonl（保留 git 跟踪，裁定非派生产物）'
+    - 'data/eval/news_sentiment_200.jsonl（评估集 ground truth，同理保留跟踪）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本裁定登记）'
+    - 'AGENTS.md §11.1.4（推荐后续：I-GOV-1 适用边界澄清——约束对象=生成器派生的 .md 文档，不含 ML 锁定基线数据；受 I-GOV-3 行数预算约束，待等量退役后追加）'
+  fix_phase: '已裁定 decided（2026-08-08）—— zero_shot_predictions.jsonl 非 I-GOV-1 派生产物范畴，保留 git 跟踪；边界裁定限定为 ML 锁定基线，防滥用先例；AGENTS.md 边界澄清为推荐后续（待行数预算腾位）'
+  status: decided
+  created: '2026-08-08'
+  last_updated: '2026-08-08'
