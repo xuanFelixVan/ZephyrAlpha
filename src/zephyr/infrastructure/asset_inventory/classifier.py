@@ -237,7 +237,7 @@ class Classifier:
         payload = result.model_dump(mode="json")
         content = json.dumps(payload, ensure_ascii=False, indent=2)
         tmp = f"{out}.{os.getpid()}.tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
+        with open(tmp, "w", encoding="utf-8", newline="") as f:
             f.write(content)
         os.replace(tmp, out)
 

@@ -311,7 +311,7 @@ class BypassManager:
 
         self._override_path.parent.mkdir(parents=True, exist_ok=True)
         tmp = f"{self._override_path}.{_os.getpid()}.tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
+        with open(tmp, "w", encoding="utf-8", newline="") as f:
             yaml.dump(override, f, allow_unicode=True)
         _os.replace(tmp, str(self._override_path))
 

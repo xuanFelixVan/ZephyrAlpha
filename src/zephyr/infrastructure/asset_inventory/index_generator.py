@@ -92,7 +92,7 @@ class IndexGenerator:
 
         tmp = f"{target}.{os.getpid()}.tmp"
         try:
-            with open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8", newline="") as f:
                 f.write(content)
             os.replace(tmp, target)
         except PermissionError:
@@ -351,7 +351,7 @@ class SchemaEvolutionManager:
         import yaml
 
         tmp = f"{log_path}.{os.getpid()}.tmp"
-        with open(tmp, "w", encoding="utf-8") as f:
+        with open(tmp, "w", encoding="utf-8", newline="") as f:
             yaml.dump(plan.model_dump(mode="python"), f, allow_unicode=True, default_flow_style=False)
         os.replace(tmp, str(log_path))
         return log_path

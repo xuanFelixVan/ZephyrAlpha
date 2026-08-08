@@ -209,7 +209,7 @@ class Reconciler:
 
         tmp = f"{target}.{os.getpid()}.tmp"
         try:
-            with open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8", newline="") as f:
                 f.write(content)
             os.replace(tmp, target)
         except PermissionError:

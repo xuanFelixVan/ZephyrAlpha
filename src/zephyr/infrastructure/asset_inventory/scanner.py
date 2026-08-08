@@ -405,7 +405,7 @@ class Scanner:
 
         tmp = f"{target}.{os.getpid()}.tmp"
         try:
-            with open(tmp, "w", encoding="utf-8") as f:
+            with open(tmp, "w", encoding="utf-8", newline="") as f:
                 f.write(content)
             os.replace(tmp, target)
         except PermissionError:
@@ -735,7 +735,7 @@ class SecurityAccessLogger:
         try:
             tmp = f"{self._log_path}.{os.getpid()}.tmp"
             line = record.model_dump_json(exclude_none=True) + "\n"
-            with open(tmp, "a", encoding="utf-8") as f:
+            with open(tmp, "a", encoding="utf-8", newline="") as f:
                 f.write(line)
             os.replace(tmp, self._log_path)
         except OSError:

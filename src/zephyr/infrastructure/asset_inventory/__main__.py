@@ -161,7 +161,7 @@ def _cmd_classify(args: argparse.Namespace) -> int:
     out = out_dir / "classified-assets.json"
     payload = result.model_dump(mode="json")
     tmp = f"{out}.{os.getpid()}.tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
+    with open(tmp, "w", encoding="utf-8", newline="") as f:
         f.write(_json.dumps(payload, ensure_ascii=False, indent=2))
     os.replace(tmp, out)
 
@@ -425,7 +425,7 @@ def _cmd_bootstrap(args: argparse.Namespace) -> int:
     out = out_dir / "classified-assets.json"
     payload = classified.model_dump(mode="json")
     tmp = f"{out}.{os.getpid()}.tmp"
-    with open(tmp, "w", encoding="utf-8") as f:
+    with open(tmp, "w", encoding="utf-8", newline="") as f:
         f.write(json.dumps(payload, ensure_ascii=False, indent=2))
     os.replace(tmp, out)
     print(f"  [2/5] CLASSIFY  {classified.total_classified} assets, {classified.unknown_pct:.1f}% unknown")
