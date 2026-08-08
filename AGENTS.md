@@ -1356,7 +1356,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 > 三条裁定都是在补偿这个根因，但只要派生产物在库 + auto-commit 存在，补偿永无止境。
 > 治本（第一性原理）：**源真源（DB + 生成器代码）已跟踪，派生产物离库，按需生成**。
 
-- **不变量 I-GOV-1**：凡可由 DB/源码/YAML 经生成器重现的文档，**禁止入 git**。源真源已跟踪，派生产物是构建产物。
+- **不变量 I-GOV-1**：凡可由 DB/源码/YAML 经生成器重现的文档，**禁止入 git**。源真源已跟踪，派生产物是构建产物。**适用边界**：约束对象=生成器（generator_registry 登记）派生的 .md 文档；不含 ML 锁定基线数据（.jsonl 预测/评估集——LLM 推理产物非生成器派生、无 reconciler 关联，#ARCH-NLP-BASELINE-DERIVED-001）。
 - **当前离库范围**（2026-08-05 落地）：
   - `docs/02_enterprise_architecture/02_domain_architecture_docs/*.md`（73 域文档，[`generate_domain_doc.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_domain_doc.py) 输出；`README.md` 例外）
   - `docs/02_enterprise_architecture/01_global_architecture_diagram/full_project_tree_*.md`（2 项目树，[`generate_path_tree.py`](file:///d:/ZephyrAlpha/scripts/governance/d5_architecture/generators/generate_path_tree.py) 输出）

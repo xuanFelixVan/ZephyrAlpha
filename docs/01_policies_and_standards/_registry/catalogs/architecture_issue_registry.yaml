@@ -13047,8 +13047,8 @@ entries:
     - 'data/eval/zero_shot_predictions.jsonl（保留 git 跟踪，裁定非派生产物）'
     - 'data/eval/news_sentiment_200.jsonl（评估集 ground truth，同理保留跟踪）'
     - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本裁定登记）'
-    - 'AGENTS.md §11.1.4（推荐后续：I-GOV-1 适用边界澄清——约束对象=生成器派生的 .md 文档，不含 ML 锁定基线数据；受 I-GOV-3 行数预算约束，待等量退役后追加）'
-  fix_phase: '已裁定 decided（2026-08-08）—— zero_shot_predictions.jsonl 非 I-GOV-1 派生产物范畴，保留 git 跟踪；边界裁定限定为 ML 锁定基线，防滥用先例；AGENTS.md 边界澄清为推荐后续（待行数预算腾位）'
+    - 'AGENTS.md §11.1.4（I-GOV-1 适用边界澄清——约束对象=生成器派生的 .md 文档，不含 ML 锁定基线数据；0 新增行，原 bullet 行内扩展，无需等量退役）'
+  fix_phase: '已裁定 decided（2026-08-08）—— zero_shot_predictions.jsonl 非 I-GOV-1 派生产物范畴，保留 git 跟踪；边界裁定限定为 ML 锁定基线，防滥用先例；AGENTS.md §11.1.4 I-GOV-1 边界澄清已落地（0 新增行）'
   status: decided
   created: '2026-08-08'
   last_updated: '2026-08-08'
