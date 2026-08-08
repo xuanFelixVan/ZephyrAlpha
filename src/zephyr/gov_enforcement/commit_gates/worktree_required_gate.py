@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__ (via auto_register_gates)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] worktree 内放行 / solo session 放行 / 并发非 worktree 阻断；allow_overlap=True 或 allow_non_worktree=True 时放行（双逃生通道）；get_current_worktree/list_active 异常->安全降级放行（基础设施故障不应卡死 commit）
+# [INVARIANTS] worktree 内放行 / solo session 放行 / 并发非 worktree 阻断；reconciler worker session（worker-* 前缀）排除出活跃 session 计数（#ARCH-RECONCILER-WORKTREE-RACE 治本）；allow_overlap=True 或 allow_non_worktree=True 时放行（双逃生通道）；get_current_worktree/list_active 异常->安全降级放行（基础设施故障不应卡死 commit）
 # [MODIFY-GUARD] gate_id="WORKTREE-REQUIRED"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；priority=44
 # [STABILITY] evolving
 # [SAFETY] L
@@ -24,8 +24,12 @@ fail-closed 阻断。
 -------------
 1. **worktree 内** → 放行（物理隔离生效，无搭便车风险）
 2. **非 worktree + 无其他活跃 session** → 放行（solo session，向后兼容）
-3. **非 worktree + 有其他活跃 session** → 阻断（``WORKTREE_VIOLATION``，
+3. **非 worktree + 有其他活跃 user session** → 阻断（``WORKTREE_VIOLATION``，
    共享工作区 commit 可能搭便车带入其他 session WIP）
+
+   reconciler worker session（``worker-{sha8}-{pid}`` 前缀）排除出"其他活跃 session"
+   计数——worker 是 commit 下游产物（held_files 空、无搭便车风险），
+   #ARCH-RECONCILER-WORKTREE-RACE 治本（2026-08-09）
 
 双逃生通道
 -----------
