@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.3.0"
+version: "1.4.0"
 date: 2026-08-08
 topic: discussion_framework
 scope: 07_trading_decision_architecture
@@ -549,6 +549,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | discussion_019 | Phase 3 工程规划（工程文档，非G主题） | 已提议 | 草案 |
 | discussion_020 | 方法论遗留提案（工程文档，非G主题） | 已提议 | 待讨论 |
 | discussion_021 | 密度预测远期愿景（工程文档，非G主题） | 已提议 | 待讨论 |
+| discussion_022 | Panel 实验历史 Tab + mlflow 退役施工计划（工程文档，非G主题，discussion_018 M2 下游） | 已提议 | 待施工 |
 | design_memo_001 | 多策略并发架构 | 已定稿 | ✅ v1.3.0 |
 | design_memo_002 | G01 数据特征层 | （待认领） | 待开工 |
 | design_memo_003 | G05 选股引擎 | （待认领） | 待开工 |
@@ -597,3 +598,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-07 | 1.1.0 | §7.3 标记 G04/G12/G22 认领状态为已分配 | 三主题组分配给并行 AI 开工，避免后续编号撞车 |
 | 2026-08-08 | 1.2.0 | discussion_003 占用状态更新为 ✅ v1.0.0；§9 首批3策略开放问题标记已定 | G04-AI 落盘 discussion_003（首批3策略=打板+多因子+事件驱动；主升龙头并入打板，多因子新增；§1.4 对齐 charter §3 裁定 Model A 非 Citadel pod） |
 | 2026-08-08 | 1.3.0 | discussion_003 占用状态同步至 ✅ v1.2.0（补施工流程+灰度判据）；G22 design_memo_010 状态更新为"代码已施工" | discussion_003 经多轮审查迭代至 v1.2.0（补施工环节流程算法+2026灰度判据）；G22-AI 完成 design_memo_010 代码施工（commit 015826ae） |
+| 2026-08-08 | 1.4.0 | discussion_022 落盘登记 | Panel 实验历史 Tab + mlflow 退役施工计划定稿（discussion_018 M2 下游），补 §七 10 项施工算法补遗 + §八 4 项后续增强登记 |
