@@ -13210,8 +13210,11 @@ entries:
   impact:
     - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（WORKTREE-REQUIRED gate 活跃 session 判定逻辑）'
     - 'src/zephyr/security/access_control/session_concurrency.py（SessionRegistry worker 注册，可加 role 标记）'
-  fix_phase: 待施工（修复方向待用户确认，铁律#9 status=proposed）
-  status: proposed
+  fix_phase: 已施工（2026-08-09 方向1：WORKTREE-REQUIRED gate 活跃 session 判定排除 worker-{sha8}-{pid}
+    命名的 reconciler worker——worktree_required_gate.py L95-100 加 startswith("worker-") 过滤；
+    test_worktree_required_gate.py 新增 TestWorkerExclusion 3 测试覆盖 worker-only/multi-worker/
+    worker+real-user 混合场景，16 测试全绿。保留对真实并发 user session 的阻断防护。）
+  status: resolved
   created: '2026-08-09'
   last_updated: '2026-08-09'
 # --- #ARCH-MEMORY-GATE-DRIFT-001: project_memory "docs/_working/ MUST 含 doc_type" 与 EXEMPT-ZONE-FM 门禁冲突（2026-08-09 登记）---
@@ -13257,7 +13260,13 @@ entries:
     - 'c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha--p2-1c552864b6a6a396cfb0\project_memory.md（doc_type 规则待修正）'
     - 'src/zephyr/gov_enforcement/commit_gates/exempt_zone_frontmatter_gate.py（EXEMPT-ZONE-FM gate，ground truth）'
     - 'docs/_working/107_decision_table_filled.md（memory 引用样本，实际无 doc_type，证 memory 过时）'
-  fix_phase: 待施工（修复方向待用户确认，铁律#9 status=proposed）——方向1（修正 memory）低风险可立即执行；方向2（一致性校验）需新建 reconciler
-  status: proposed
+  fix_phase: |-
+    方向1 已施工（2026-08-09）：project_memory.md 文档放置铁律条目 doc_type 规则改为
+    "docs/_working/ 下 .md 禁止包含 doc_type 字段（豁免区不应有 doc_type）"，与 EXEMPT-ZONE-FM
+    gate（豁免区禁 doc_type）+ 实际跟踪文件 107_decision_table_filled.md 惯例（仅 ttl: task_bound）
+    三方对齐。memory↔gate 冲突消除，AI 按 memory 行事不再被 gate 阻断。
+    方向2（memory↔gate 一致性校验 warn-only reconciler）延后——需新建 reconciler，作为独立
+    未来增强（治本"AI 按 memory 行事被 gate 阻断"的系统性复发风险，非本条目修复范围）。
+  status: resolved
   created: '2026-08-09'
   last_updated: '2026-08-09'
