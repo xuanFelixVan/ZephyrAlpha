@@ -274,7 +274,7 @@
 > | L0 源头预防 | AI 写代码前 SHOULD 调 MCP | advisory（不阻断） | [`clone_guard.check_before_write`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/mcp_server.py)（L 只读，返回 findings + import_suggestion 引导复用）+ `search_functions`/`audit_status`/`health_check` |
 > | L1 提交拦截 | `git commit` 经 GitCommitGateway | **extract 硬阻断** / review 警告 / acknowledged 跳过 | [`CAPABILITY-OVERLAP` gate](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py)（priority=200，全引擎降级 warn-only 兜底，`tests/` 豁免） |
 > | L2 周期审计 | 事件触发（手动/CI push） | 派生产物 + reconciler warn | [`orchestrator.audit()`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/orchestrator.py)（health_score A-F，`.runtime/clone_guard_audit/` 不入 git） |
-> | L3 跨边界 | 按需手动 | 占位（默认禁用） | `compare()`（redup/vendetect/relate，默认 disabled） |
+> | L3 跨边界 | 按需手动 | 占位（vendetect 禁用） | `compare()`（redup + relate prescreen 已启用；vendetect 默认禁用按需触发）。注：`relate_prescreen` 同时驱动 L0 `search_functions`（MCP 按语义搜已有函数引导复用，`clone_guard.yml` 已开启） |
 >
 > **acknowledged 白名单纪律（合理重复标记，治本 #ARCH-ECHO-GUARD-YML-COMMENT-LOSS）**：经审慎确认的合理克隆（归档双实现/接口适配层），调 MCP [`clone_guard.resolve_finding`](file:///d:/ZephyrAlpha/src/zephyr/clone_guard/mcp_server.py)（`safety_level=M` 写操作）标记。`verdict=intentional`=保留两份（函数变化时重新浮现，非永久豁免）/`dismissed`=非重复（永久豁免）；`note` **强制非空**留痕防滥用。默认走 ruamel round-trip 写 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) acknowledged 段（**保留注释**，禁用 echo-guard CLI 的 PyYAML 重写路径丢注释）。acknowledge 仅改工作区文件，**须经 GitCommitGateway 提交持久化**（未提交会被 post-commit restore-to-HEAD 恢复）。禁止用白名单消除当前不想处理的告警——属治理逃逸。
 >
