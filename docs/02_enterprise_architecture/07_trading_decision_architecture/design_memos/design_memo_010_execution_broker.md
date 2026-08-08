@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.0.0"
+version: "1.1.1"
 date: 2026-08-08
 topic: execution_broker
 scope: 07_trading_decision_architecture
@@ -64,6 +64,9 @@ firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
 [订单分解] TradingSession._compute_order_deltas  差额下单：目标-当前=净买卖
         │   先卖后买（释放资金再买入）/ 100股整手取整 / 微调忽略
         ↓
+[资金预占] ⑬ 预校验  串行扣减可用资金，卖出单预占释放额度给后续买入
+        │   提交前本地拦截资金不足（避免 54 拒单推高撤单率）
+        ↓
 [执行风控] 订单层熔断  单票单笔≤4% + 单票≤10笔/日 + 全账户≤50笔/日
         │   （firm 层 8% 上限在上游 FirmRiskAggregator 已裁剪）
         ↓
@@ -73,17 +76,26 @@ firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
 [撮合拆单] AlgoTradingEngine  按订单大小自适应：小单直发/中单TWAP/大单VWAP/超大单IS
         │   参与率≤5% / 单笔≤15%ADV（miniQMT 不支持券商端算法，系统自实现）
         ↓
+[挂单价] ⑭ 被动档挂买一/卖一，超时触发 Make-or-Take 切主动档
+        │   涨停卖单挂涨停价 / 跌停买单挂跌停价（唯一可成交价位）
+        ↓
 [下单通道] MiniQmtBroker  对接 xttrader（新版 xtquant 250807.1.2）
         │   T+1查持仓 / 涨跌停±10% / 100股整数倍 / 幂等INV-007 / 回测=实盘一致性预校验
+        ↓
+[未成交续接] ⑪ 超时Make-or-Take / PARTIAL按urgency补单 / 14:55尾盘清退
+        │
+        ↓
+[撤单率控制] ⑫ 滚动监控降级  >12%只挂不撤 / >15%冻结告警 / 每秒≤15笔新规
+        │
         ↓
 [成交回报] FillHandler  fill_id幂等 / 加权均价累积 / FillSummary
         │
         ↓
-[持仓更新] PositionTracker + PositionReconciler  每5min对账
+[持仓更新] PositionTracker + PositionReconciler  每5min对账 / 盘后全量对账（Phase 2）
         │
         ↓
 [TCA 尸检] DefaultTcaEngine + SlippageAnalyzer + TransactionCostOptimizer
-        IS成本分解 / 滑点归因 / 成本分解 → 反馈拆单算法优化
+        IS成本分解 / 滑点归因 / 成本分解 → 反馈拆单算法优化（Phase 1.5 规则闭环）
 ```
 
 ### 2.2 决策①：miniQMT 下单接口对接（按现状定型）
@@ -147,6 +159,8 @@ firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
 
 **预测模型**：[SquareRootImpactPredictor](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/slippage_analyzer.py) 平方根法则（Almgren-Chriss 简化版），`impact_bps = coeff × √participation × vol_bps + half_spread`。
 
+**理论依据**：平方根形式不是经验拟合，而是**无动态套利约束（no-dynamic-arbitrage）下唯一自洽的冲击形式**（Gatheral 2010）。这一约束保证了"冲击的衰减函数不能允许通过组合交易构造无风险套利"，平方根律是满足该约束的存活形式。这为模型可信度提供了理论地基，而非仅依赖实证拟合。MVP 用平方根律（瞬时冲击）足够；Phase 2 可上推 Bouchaud Propagator 模型（描述冲击的时间衰减结构，今天的交易影响未来价格）。
+
 ### 2.5 决策④：交易成本模型（佣金万0.854 + 2023 法定费率）
 
 **决策**：复用 [TransactionCostOptimizer](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py)（MOD-EX_SOR_EXT-003），费率按用户实盘账户校准。
@@ -162,7 +176,7 @@ firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
 
 **佣金最低收费影响**：万0.854 费率下，5 元最低佣金对应成交金额 ≈ 5.85 万元。**单笔成交 <5.85 万都触发最低 5 元佣金**——个人账户小资金多数订单走最低收费，此时佣金成本占比反而高于费率隐含值。拆单需谨慎（拆得越碎，最低佣金触发越多）。
 
-**代码 gap**：[FeeSchedule](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py) 默认 `commission_rate_bps=Decimal("3")`（万3），需更新为 `Decimal("0.854")`（万0.854）。实盘开户后需二次校准。
+**已修复**（v1.0.0 施工，commit 015826ae）：[FeeSchedule](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py) 默认已更新为 `Decimal("0.854")`（万0.854）。实盘开户后需对照交割单二次校准。
 
 ### 2.6 决策⑤：订单状态机（7 态 + 先卖后买）
 
@@ -182,7 +196,7 @@ EXPIRED → 终态
 **执行顺序规则——先卖后买**：
 - 订单分解时，卖出订单优先于买入订单提交
 - 理由：A 股 T+0 资金——卖出回笼的资金可立即用于买入。先卖后买释放资金，避免买入时资金不足（error_code=54）
-- 代码 gap：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 当前按字典序遍历 deltas，需改为先 SELL 后 BUY 排序
+- 已修复（v1.0.0 施工，commit 015826ae）：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已按先 SELL 后 BUY 排序（`sorted(deltas, key=lambda o: 0 if o.side is OrderSide.SELL else 1)`）
 
 **状态码映射**（[MiniQmtBroker._map_xt_status](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 已实现）：xttrader 48=UNKNOWN→PENDING / 49=PENDING→SUBMITTED / 50=PARTIAL / 52=FILLED / 53=CANCELLED / 55=REJECTED / 56=EXPIRED。
 
@@ -201,7 +215,7 @@ EXPIRED → 终态
 - 步骤5（持仓）失败 → 持仓回滚（反向 apply_fill，幂等）
 - ≤5s 超时硬约束 / 补偿幂等 / Redis Stream 状态持久化
 
-**层3 拒单（REJECTED）分类处理**（待实现，本备忘定型规则）：
+**层3 拒单（REJECTED）分类处理**（部分实现：分类映射 + `classify_rejection` + `_handle_rejection` 日志已实现，RETRY/冻结/对账动作待 Saga 接管，见 §6.1 gap 4）：
 
 | 拒单原因 | error_code | 处理策略 | 理由 |
 |---|---|---|---|
@@ -293,6 +307,135 @@ for symbol, weight in firm_target_portfolio:
 
 **幂等**：每个订单携带 `idempotency_key`（INV-007），重复调仓不会重复下单。
 
+### 2.12 决策⑪：未成交/部分成交订单的续接处理（Open Order Resolution）
+
+**决策**：对提交后未成交或部分成交的订单，按 urgency 分档续接，而非统一挂死或统一撤单。
+
+> v1.0.0 的状态机只定义了 PARTIAL 的合法后继态，未定义"剩余量怎么决策"。这是实盘"信号发了但没成交"的直接落地点，缺失会导致订单悬挂、持仓与目标长期偏离。v1.1.0 补全。
+
+**续接算法**（待实现，本备忘定型规则）：
+
+| 订单剩余状态 | 触发条件 | 处理策略 | 理由 |
+|---|---|---|---|
+| SUBMITTED 未成交 | 挂单 ≤ T 秒（默认 30s） | 继续等待 | 给被动挂单充分成交时间，避免频繁撤单推高撤单率 |
+| SUBMITTED 未成交 | 挂单 > T 秒 | **Make-or-Take 切换**：撤单 → 对手价主动吃单（剩余量） | 被动挂单超时未成交，转主动兜底，保证成交确定性 |
+| PARTIAL 剩余 <100 股 | 任意 | 忽略，订单转 CANCELLED | 避免碎片化订单触发最低佣金（5 元） |
+| PARTIAL 剩余 ≥100 股 | urgency=高（打板） | Make-or-Take 切换补单 | 打板需快速成交，不可久等 |
+| PARTIAL 剩余 ≥100 股 | urgency=低（多因子） | 留单等成交，下轮调仓再校准 | 多因子换手率低（3-5 天），不必急于补单 |
+| 任意非终态 | 14:55 收盘前 | **尾盘清退**：转入收盘集合竞价或放弃（MVP 选放弃→撤单） | 避免隔夜挂单（miniQMT 不支持隔夜挂单，且 T+1 资金/持仓需盘后清算） |
+
+**Make-or-Take 切换**（介于纯被动 TWAP 与纯主动 ALT 之间的中间档）：
+```
+挂限价单(买一/卖一) → 等 T 秒
+  ├─ 成交 → 完成
+  └─ 未成交 → 撤单 + 对手价主动吃单(剩余量)  # 兜底
+```
+平衡成本（被动挂单省 spread）与成交确定性（主动兜底防漏单）。对打板策略必需（纯被动会错过龙头）。
+
+**为何不统一挂死等成交**：A 股限价单可能因价格远离挂单价而长期不成交，挂死会导致持仓与目标长期偏离，下轮调仓时重复下单（虽有幂等保护，但占用资金预占额度）。
+
+**为何不统一撤单转市价**：市价单冲击成本高，且 A 股市价单有"最优五档"限制，大单可能成交到极差价位。
+
+### 2.13 决策⑫：撤单流程与撤单率控制（Cancel Flow + Rate Limiting）
+
+**决策**：主动撤单按场景触发 + 撤单率滚动监控降级，确保不触犯 2026.4.7 程序化交易新规。
+
+> v1.0.0 §2.8 提了撤单率 ≤15% 约束，但撤单触发逻辑和撤单率控制算法未定义。这是合规生存项。
+
+**2026 程序化交易新规硬约束**（2026.4.7 生效，7.7 全面执行）：
+- **每秒报单 ≤15 笔**（高频认定标准从 300 笔骤降至 15 笔）
+- **每秒撤单 ≤15 笔**
+- **单日撤单率 ≤15%**
+- **报单停留时间 ≥50μs**
+
+> 这直接决定拆单切片间隔下限：若每秒最多 15 笔，则切片间隔 ≥ 1000ms/15 ≈ 67ms（实际应远大于此，留合规缓冲）。MVP 切片间隔默认 ≥10s，远超下限。
+
+**主动撤单触发场景**（待实现）：
+
+| 触发条件 | 动作 | 理由 |
+|---|---|---|
+| 价格远离挂单价 > X tick（默认 3 tick） | 撤单重挂 | 市场价格已偏离，原挂单价无意义，重挂到新盘口 |
+| 挂单超时（决策⑪ T 秒） | 撤单转 Make-or-Take | 见决策⑪ |
+| 策略信号反转 | 撤单 | 目标权重已变，原订单方向错误 |
+| 资金被更高优先级订单占用 | 撤单重排 | 先卖后买优先级调整 |
+
+**撤单率滚动监控与降级**（待实现）：
+```
+maintain rolling_window = 最近 500 笔报单的成交/撤单记录
+rolling_cancel_rate = 撤单数 / 总报单数
+
+if rolling_cancel_rate > 12%:   # 预警线（阈值 - 3% 缓冲）
+    降级为 "只挂不撤" 模式：挂单后禁止撤单重挂，必须等成交或收盘
+if rolling_cancel_rate > 15%:   # 硬线
+    冻结全账户新下单，告警人工介入
+```
+**为何 12% 预警而非等到 15%**：滚动窗口有滞后性，等看到 15% 时实际可能已超。留 3% 缓冲是合规安全垫。
+
+**为何不省略撤单率控制**：2026 新规下撤单率超限会被交易所标记为异常交易，轻则警告重则限制交易。这是合规生存项，不可省。
+
+### 2.14 决策⑬：资金预占与预校验（Pre-Trade Cash Reservation）
+
+**决策**：下单前做资金预占，避免并发提交多个 BUY 单时资金不足（error_code=54）。
+
+> v1.0.0 决策⑤讲了"先卖后买释放资金"，但下单前如何预判资金足够未定义。先卖后买是粗粒度排序，并发提交多个 BUY 单时，若不做资金预扣，可能都通过预校验但实际提交时资金不足。
+
+**资金预占算法**（待实现）：
+```
+available_cash = broker.get_positions().cash
+pending_release = 0   # 待成交卖出单的净回笼资金
+
+for order in sorted_deltas:  # 先卖后买顺序
+    if order.side == SELL:
+        预估回笼 = order.quantity × price × (1 - 卖出费率)
+        pending_release += 预估回笼
+        预占 = 0   # 卖出不占资金
+    else:  # BUY
+        预估占用 = order.quantity × price × (1 + 买入费率)
+        预占 = 预估占用
+
+    if 预占 > available_cash + pending_release:
+        拒绝下单（资金不足，归入 blocked_orders）
+        # 注意：不提交给 broker（避免 54 拒单），直接本地拦截
+    else:
+        available_cash -= 预占   # 立即扣减预占额度
+        submit(order)
+```
+
+**与拒单分类（决策⑥）的协同**：
+- error_code=54（资金不足）是"已提交给 broker 后被拒"——说明预占机制失效或 broker 端有其他扣款
+- 本决策的预校验是"提交前本地拦截"——更早一层，避免无意义的 54 拒单（54 拒单会推高报单数和撤单率）
+- 两者是防御纵深：预校验拦截 99%，54 拒单兜底 1%（如 broker 端费率变动、其他程序占用资金）
+
+**为何不依赖 broker 端资金校验**：miniQMT 的 broker 端校验是提交时同步检查，但并发提交多个订单时，每个订单提交时都看到"资金够"，但累计起来不够。本地预占是串行扣减，保证累计不超。
+
+### 2.15 决策⑭：挂单价算法（Pegging / Pricing Logic）
+
+**决策**：MVP 默认被动档挂单——买单挂买一价、卖单挂卖一价（不跨价，避免主动吃单成本），超时未成交触发决策⑪的 Make-or-Take 切换。
+
+> v1.0.0 讲了拆单算法（TWAP/VWAP 切片），但每个子单的具体挂单价未定义。这是 TWAP/VWAP 落地的最后一公里。
+
+**挂单价规则**（待实现）：
+
+| 订单类型 | 默认挂单价 | 理由 |
+|---|---|---|
+| 被动买单 | 买一价（bid） | 不跨价，省 spread，排队等成交 |
+| 被动卖单 | 卖一价（ask） | 不跨价，省 spread，排队等成交 |
+| 主动买单（Make-or-Take 兜底） | 卖一价（ask） | 跨价吃单，保证成交 |
+| 主动卖单（Make-or-Take 兜底） | 买一价（bid） | 跨价吃单，保证成交 |
+| 涨停板卖单 | 涨停价 | 唯一可能成交的价位（排队） |
+| 跌停板买单 | 跌停价 | 唯一可能成交的价位（排队） |
+
+**为何默认被动档**：
+- 个人账户小资金多数订单 <1% ADV，被动挂单排队足够成交
+- 被动档省 spread（A 股 spread 约 1-2 tick，被动档比主动档省 1-2 tick 成本）
+- 主动吃单只作兜底（Make-or-Take），不作为默认
+
+**为何不挂 mid 价**：A 股最小变动单位 0.01 元，mid 价常落在两个 tick 之间，无法挂单；且挂 mid 等于既不占买一也不占卖一，成交概率更低。
+
+**为何不挂对手价（主动档）作为默认**：主动档跨价吃单，每笔都付 spread，小单累积成本高。仅 urgency 高（打板）或超时兜底时用。
+
+**Phase 1.5 改进项**：peg 到盘口（盘口移动时自动撤单重挂跟随），需实时盘口数据（miniQMT `xtdata.get_full_tick` 支持）。MVP 先用静态挂单（挂出后不动，超时才撤），简单可靠。
+
 ## 3. 考虑过的替代方案（拒绝理由）
 
 ### 3.1 撮合：统一 TWAP —— 拒绝
@@ -323,6 +466,22 @@ for symbol, weight in firm_target_portfolio:
 - **拒绝理由**：涨跌停板重试 3 次也无用，还浪费频次、推高撤单率（违反 ≤15% 监管约束）
 - 分类处理：可恢复（价格/连接）重试 1 次，不可恢复（涨跌停/资金/持仓）直接放弃
 
+### 3.8 未成交续接：统一挂死等成交 —— 拒绝
+- **拒绝理由**：A 股限价单可能因价格远离挂单价长期不成交，挂死导致持仓与目标长期偏离，下轮调仓重复下单
+- 按 urgency 分档续接（决策⑪）：超时 Make-or-Take、PARTIAL 按 urgency 补单、14:55 尾盘清退
+
+### 3.9 未成交续接：统一撤单转市价 —— 拒绝
+- **拒绝理由**：市价单冲击成本高，A 股市价单有"最优五档"限制，大单可能成交到极差价位
+- Make-or-Take 平衡：被动挂单优先（省 spread），超时才转对手价主动吃单（保证成交）
+
+### 3.10 挂单价：默认主动档对手价 —— 拒绝
+- **拒绝理由**：主动档每笔跨价吃单付 spread，小单累积成本高；个人账户小资金被动档排队足够成交
+- 默认被动档（买一/卖一），主动档仅作 Make-or-Take 兜底或 urgency 高（打板）时用
+
+### 3.11 撤单率：不设控制全靠 broker 端 —— 拒绝
+- **拒绝理由**：2026.4.7 新规下撤单率超限被交易所标记异常交易，轻则警告重则限制交易
+- 滚动监控降级（决策⑫）：>12% 只挂不撤、>15% 冻结告警，合规生存项不可省
+
 ## 4. 上限定义（Ceiling）
 
 ### 4.1 系统上限
@@ -330,12 +489,16 @@ for symbol, weight in firm_target_portfolio:
 - **6 种撮合算法**：TWAP/VWAP/ICEBERG/POV/IS/ALT，注册表模式可扩展
 - **7 态订单状态机**：PENDING/SUBMITTED/PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED
 - **订单层熔断**：单票单笔 4% / 单票 10 笔日 / 全账户 50 笔日
+- **撤单率控制**：滚动 500 笔窗口，>12% 只挂不撤 / >15% 冻结告警；每秒报单/撤单 ≤15 笔（2026 新规）
+- **挂单价**：默认被动档（买一/卖一），Make-or-Take 超时切主动档
+- **资金预占**：串行扣减，提交前本地拦截资金不足
 - **连续竞价时段**：9:30-11:30 + 13:00-14:57（MVP 不含集合竞价）
 
 ### 4.2 演进路径
-- **第一阶段（MVP，立即施工）**：连续竞价 + 自适应撮合 + DECISION 滑点 + 万0.854 佣金 + 订单层熔断 + 拒单分类处理。复用全部已实现 production 模块，补 3 个 gap（见 §6）
-- **第二阶段（首批策略 track record 3 个月后）**：上加集合竞价（按策略差异化）+ 算法参数自适应优化器 Phase 2（RL，需足够 TCA 历史数据）
-- **第三阶段（AUM 增长或 miniQMT 容量不足时）**：启用多 broker 路由 + ICEBERG 隐藏大单
+- **第一阶段（MVP，立即施工）**：连续竞价 + 自适应撮合 + DECISION 滑点 + 万0.854 佣金 + 订单层熔断 + 拒单分类处理 + 未成交续接 + 撤单率控制 + 资金预占 + 被动档挂单价。复用全部已实现 production 模块，补代码 gap（见 §6.1）
+- **Phase 1.5（首批策略 track record 1-3 个月）**：① 自适应参与率 POV（盘口深度/价差/波动率动态调参与率，取代固定 5%）② peg 到盘口（盘口移动自动撤单重挂跟随）③ TCA 规则闭环（滑点持续超阈值→自动调高拆单分档阈值）④ 冲击模型 coeff 校准（用实盘 TCA 数据回归拟合 SquareRootImpactPredictor 的 coeff，为 Phase 2 RL 地基）
+- **第二阶段（首批策略 track record 3 个月后）**：上加集合竞价（按策略差异化）+ 算法参数 RL 优化器（需 coeff 已校准 + 足够 TCA 历史数据；2026 研究表明成本模型准确性对 RL 算法选择有决定性影响——MACE 研究中 AC 冲击模型下 TD3 最优而固定成本下 PPO 最优）
+- **第三阶段（AUM 增长或 miniQMT 容量不足时）**：启用多 broker 路由 + ICEBERG 隐藏大单 + Bouchaud Propagator 模型（冲击时间衰减结构，超越平方根律瞬时冲击）
 
 ### 4.3 为何这是上限而非妥协
 - 个人账户资金体量小，多数订单 <1% ADV，6 种算法 + 自适应已覆盖全场景
@@ -352,20 +515,34 @@ for symbol, weight in firm_target_portfolio:
 | 算法参数 RL 优化器 | 需足够 TCA 历史数据训练；Phase 1 规则驱动已够用 | 累积 6 个月实盘 TCA 数据 |
 | Pre-Trade 合规检查（BM-EXE-04） | wash trade/spoofing 检测需多账户数据；个人单账户无自交易风险 | 多账户或合规要求升级 |
 | ST 股 ±5% 涨跌停差异化 | 代码当前简化统一 10%；ST 股识别需数据源 | 实盘涉及 ST 股时 |
+| 盘后全量对账（EOD Reconciliation） | MVP 盘中每5min对账够用；盘后三方核对流程待定 | 实盘上线后，T+1 结算确认需求 |
+| peg 到盘口（动态挂单跟随） | MVP 静态挂单够用；动态跟随需实时盘口数据 + 撤单率预算 | Phase 1.5，撤单率控制稳定后 |
 
 ## 6. 待定问题（需人决策/代码 gap）
 
-### 6.1 代码 gap（本备忘定型，待施工修）
-1. **OrderManager.VALID_TRANSITIONS 缺 EXPIRED**：[OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) 的 `VALID_TRANSITIONS` 字典没有 EXPIRED 状态的转换定义（FillHandler 的 `_FILL_TRANSITIONS` 有）。需补 `OrderStatus.EXPIRED: set()`。
-2. **FeeSchedule 佣金默认值**：[TransactionCostOptimizer](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py) 默认 `commission_rate_bps=Decimal("3")`（万3），需更新为 `Decimal("0.854")`（万0.854）。实盘开户后二次校准。
-3. **TradingSession 先卖后买顺序**：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 当前按字典序遍历 deltas，需改为先 SELL 后 BUY 排序。
-4. **拒单分类处理实现**：§2.7 层3 拒单分类处理规则已定型，待在 OrderManager 或 Saga 层实现（当前拒单只标记 REJECTED 不分类处理）。
-5. **订单层熔断实现**：§2.8 三项熔断阈值已定型，待实现（当前只有 firm 层 8% 上限，无订单层单笔/频次熔断）。
+### 6.1 代码 gap
+
+**v1.0.0 gap（4/5 已闭合 + 1 部分实现，commit 015826ae）**：
+1. ✅ **OrderManager.VALID_TRANSITIONS 补 EXPIRED**：[OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) 已补 `OrderStatus.EXPIRED: set()` 及相关转换。
+2. ✅ **FeeSchedule 佣金默认值**：[TransactionCostOptimizer](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py) 已更新为 `Decimal("0.854")`（万0.854）。
+3. ✅ **TradingSession 先卖后买顺序**：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已改为先 SELL 后 BUY 排序。
+4. ⚠️ **拒单分类处理实现**（部分）：[OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) 已实现 `RejectionAction` 枚举 + `classify_rejection` 静态方法（8 错误码映射）+ [TradingSession._handle_rejection](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 分类日志。**待补全**：RETRY_ONCE/ALERT_FREEZE/ALERT_RECONCILE 的实际动作（重试 1 次 / 冻结策略新开仓 / 触发持仓对账）待上层 OrderExecutionSaga 接管——当前 MVP 仅记录日志 + 归入 `_blocked_orders`。
+5. ✅ **订单层熔断实现**：[TradingSession](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已实现 `_is_blocked_by_circuit_breaker`（单票单笔4%/单票10笔日/全账户50笔日）。
+
+**v1.1.0 gap（待施工，本备忘定型规则）**：
+6. **未成交续接实现**（决策⑪）：Make-or-Take 超时切换（被动挂单 T 秒未成交→撤单转对手价）、PARTIAL 按 urgency 补单、14:55 尾盘清退。待在 [OrderExecutionSaga](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_execution_saga.py) 或新建 OpenOrderResolver 实现。
+7. **撤单率控制实现**（决策⑫）：滚动 500 笔窗口监控、>12% 只挂不撤降级、>15% 冻结告警、主动撤单触发场景（价格远离/超时/信号反转）。待在 [OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) 或新建 CancelRateGuard 实现。
+8. **资金预占实现**（决策⑬）：串行扣减可用资金、卖出单预占释放额度、提交前本地拦截资金不足。待在 [TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 实现。
+9. **挂单价算法实现**（决策⑭）：被动档买一/卖一、主动档对手价、涨停卖单挂涨停价/跌停买单挂跌停价。待在 [AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) 或新建 PricingPolicy 实现。
+10. **盘后全量对账实现**（Phase 2）：券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、未成交订单日终转 EXPIRED。待在 [PositionReconciler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/position_reconciler.py) 扩展。
 
 ### 6.2 开放问题
 - **佣金费率实盘校准**：万0.854 为用户口头提供，实盘开户后需对照交割单二次校准
 - **集合竞价差异化规则**：第二阶段评估时，需定打板策略是否参与开盘集合竞价、卖出流是否走收盘集合竞价
 - **与 G19/G20 接口对齐**：执行层接收 firm_target_portfolio，上游 G19 买入流/G20 卖出流定型后需对齐接口契约（本备忘先定执行层 spec，不依赖 G19/G20 细节）
+- **Make-or-Take 超时 T 的初始值**：决策⑪ 默认 30s，实盘需按标的流动性校准（高流动性票可降到 10s，低流动性票可升到 60s）
+- **撤单率滚动窗口大小**：决策⑫ 默认 500 笔，实盘需校准（窗口太小则敏感易误降级，太大则滞后失去预警作用）
+- **资金预占费率假设**：决策⑬ 预估占用/回笼用的费率需与 broker 端实际扣款一致，否则预占额度会偏
 
 ## 7. 引用
 
@@ -403,12 +580,17 @@ for symbol, weight in firm_target_portfolio:
 
 ### 7.4 外部参考
 - 《上海证券交易所交易规则（2026年修订）》（上证发〔2026〕41号，2026-07-06 施行）§3.3.2 集合竞价撤单规则
+- 《程序化交易管理实施细则》（证监会/沪深北交易所，2026-04-07 生效，7-07 全面执行）：每秒报单≤15笔、每秒撤单≤15笔、单日撤单率≤15%、报单停留≥50μs
 - miniQMT / xtquant 250807.1.2 API 文档（`xttrader.order_stock` / `StockAccount` / `query_stock_positions`）
 - 2023-08-28 印花税降率（0.1%→0.05%）；2022-04-29 过户费降率（0.002%→0.001%）
 - Almgren-Chriss 最优执行框架（平方根冲击模型）；Implementation Shortfall（IS）成本分解
+- Gatheral (2010) 无动态套利约束下平方根冲击形式的唯一性证明
+- 2026 最优执行 RL 研究：DASRL（AAMAS 2026，动态动作空间）、TT-DAC-PS（arXiv 2026.06，自适应探索 Actor-Critic）、MACE+AC（arXiv 2026.04，成本模型对 RL 算法选择的决定性影响）、Queue-Reactive+DDQN（arXiv 2025.11，model-free RL）
 
 ## 8. 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-08 | 1.0.0 | 初稿 | G22 下单对接与撮合执行层 spec 定型：10 要点决策（撮合自适应/滑点DECISION/佣金万0.854/7态机/拒单分类/订单层熔断4%-10-50/集合竞价MVP不碰/T+1查持仓/差额下单先卖后买）+ 现有 production 资产 why 层补全 + 5 项代码 gap 标注 |
+| 2026-08-08 | 1.1.0 | 施工环节流程补全 | 审查发现 4 个施工环节流程算法缺失（实盘生存项）：⑪未成交续接（Make-or-Take/PARTIAL补单/尾盘清退）、⑫撤单率控制（滚动监控降级/2026新规每秒≤15笔）、⑬资金预占（串行扣减/提交前拦截）、⑭挂单价算法（被动档买一卖一/主动档对手价）。补 §2.4 Gatheral 无套利理论依据。补 Phase 1.5 演进路径（自适应参与率/peg盘口/TCA规则闭环/coeff校准）。补 2026 最新执行 RL 研究引用。v1.0.0 的 5 项代码 gap 已施工（commit 015826ae），新增 v1.1.0 gap 6-10 待施工。 |
+| 2026-08-08 | 1.1.1 | 文档-代码漂移对账 | 逐项核查 §6.1 五项 v1.0.0 gap 对照实码：gap 4（拒单分类）由 ✅ 修正为 ⚠️ 部分实现——分类映射(`_REJECTION_ACTIONS`/`classify_rejection`)+`_handle_rejection` 日志已实现，RETRY/冻结/对账实际动作待 Saga 接管。修正 §2.5/§2.6/§2.7 三处 stale 内联"代码 gap"标注（佣金费率/先卖后买已施工，拒单分类标为部分实现）。 |
