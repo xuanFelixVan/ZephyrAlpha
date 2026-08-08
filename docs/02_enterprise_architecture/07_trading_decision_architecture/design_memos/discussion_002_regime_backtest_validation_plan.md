@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.3.0"
+version: "1.4.0"
 date: 2026-08-06
 last_updated: 2026-08-08
 topic: regime_backtest_validation_plan
@@ -378,15 +378,86 @@ src/zephyr/backtest/
 
 **对我们的警示**：如果未来做 Kelly 连接（§0.6.4 优先级 4），需注意 Kelly 在特定 regime 的保守倾向。当前我们的 Shrinkage 是规则法（非 Kelly），不受此影响。
 
-### 0.6.8 三轮搜索总结论
+### 0.6.8 四轮搜索总结论
 
 | 轮次 | 搜索领域 | 关键发现 | 对本项目影响 |
 |---|---|---|---|
 | 第一轮 | regime 检测/校准/节流/鲁棒性 | 核心算法选对；3 缺口（Conformal/CPCV/Stationary Bootstrap） | 高——直接补缺口 |
 | 第二轮 | HMM 引擎升级/特征重要性 | 3 升级路径（Wasserstein/Student-t/Feature Saliency） | 中——未来升级备查 |
 | 第三轮 | A股专属/组合构建 | 4 态行业共识；动态调制矩阵/RARP/Kelly 警示 | 中——确认选择+远期路径 |
+| 第四轮 | 层次化/多尺度/BOCPD | 层次 HMM 状态持续时间+38.5%/伪转移-28.6%；TVTP 时变转移；Shannon entropy 替代 ConfidenceSignal | 高——层次 HMM 是最有价值的升级路径 |
 
-**最终结论**：核心算法（HMM 4态 + 两阶段校准 + 乘法 Shrinkage + 特征工程）**三轮搜索全部背书**，不需要推翻。3 个验证缺口该补（Conformal/CPCV/Stationary Bootstrap）。6 条未来升级路径备查（Wasserstein/Student-t/Feature Saliency/动态调制矩阵/RARP/regime-conditional allocation）。
+### 0.6.9 第四轮发现：层次化 HMM + TVTP + BOCPD（2026-08-08）
+
+> 第四轮搜索聚焦层次化/多尺度 regime 检测与在线变点检测，发现 4 项与本项目直接相关的 2026 研究。
+
+#### 发现 1：层次化 HMM — 状态持续时间 +38.5%，伪转移 -28.6%（最有价值升级）
+
+**AlgoGators Capstone（2025-11）核心实验**：
+- 两层层次 HMM：**周线宏观 regime → 条件化日线市场状态**
+- 对比 flat HMM：**平均状态持续时间 53.1 vs 38.3 天（+38.5%）**，**伪转移减少 28.6%**
+- COVID-19 crash 期间 regime 持续性显著优于 flat HMM
+- 周线宏观特征（周收益/4周滚动波动率/VIX/12周动量）条件化日线微观特征
+
+**与我们对比**：
+- 我们的 HMM 4 态是 **flat**（单尺度日线）
+- 层次 HMM 用**周线宏观层条件化日线层**——结构性地分离"宏观 regime"与"日间噪声"
+- **直接解决 A3（状态转移合理性）**：伪转移 -28.6% = 转移更合理
+- **评估**：这是四轮搜索中**最有价值的升级路径**。但需新增周线宏观层 HMM + 条件化机制，工作量中等。**列为优先级 3（与 Conformal/CPCV 同级）**。
+
+#### 发现 2：TVTP 时变转移概率 — 动态调制矩阵的第一性原理解法
+
+**arXiv:2606.06190（2026-06）Multi-Scale MS-GARCH 核心**：
+- **Time-Varying Transition Probabilities (TVTP)**：转移矩阵 p_ij,t = exp(a_ij + γ_ij·z_t) / Σ exp(...)
+- z_t 是复合压力指数（microstructure stress + seasonality + macro stress）
+- TVTP 在 4H/1H 尺度 ΔAIC=+690.7/+499.9（显著优于静态），1D 尺度静态仍最优
+- **Staggered parameter bounds**：强制波动率单调排序，**缓解标签切换**——比 Wasserstein HMM 简单
+- **Shannon entropy filter**：H_t = -Σ π_t(k) log π_t(k)，高熵抑制交易——比我们的 ConfidenceSignal（max(P) 四档启发式映射）更第一性原理
+
+**与我们对比**：
+- 我们的 HMM 转移矩阵是**静态**的（每季度 refit 一次，期间不变）
+- TVTP 让转移概率随外部压力指数**动态变化**——这是中邮证券"动态调制矩阵"的学术原版
+- Shannon entropy 替代 ConfidenceSignal：entropy 直接度量分布不确定性，无需手动调四档阈值
+- Staggered bounds 比 Wasserstein HMM 更简单地缓解标签切换
+- **评估**：TVTP + Shannon entropy + Staggered bounds 三件套是 HMM 引擎的**系统性升级**。但需重写 EM 训练（TVTP 的 multinomial logit 参数估计）。**列为优先级 4（远期系统性升级）**。
+
+#### 发现 3：BOCPD 在线变点检测 — overlay 的概率化升级
+
+**Adams & MacKay 2007，2026 多个 Python 实现**：
+- `fiannai/bocd`（PyPI 2026-03）：Gaussian + Student-t + Poisson 观测模型，pip 可装
+- metricgate（2026-05）：Normal-Gamma 共轭预测，O(t) 每步更新，**O(1) 内存**（带剪枝）
+- CSDN（2026-02）：金融异常检测实战，**Student-t 似然处理肥尾**
+
+**与我们对比**：
+- 我们的 D-SIGNAL-68 overlay 是**规则法**（阈值穿越触发 CRISIS/RECOVERY/BREAKOUT）
+- BOCPD 产出 **P(刚发生变点)** 的概率流——比阈值规则更原理化
+- 但 BOCPD 是**单变量**（多变量是未来方向），需应用到复合信号（如 Shrinkage 输出或波动率指数）
+- **评估**：BOCPD 可作为 overlay 的**概率化补充**——在规则法 overlay 之上叠一层 BOCPD 变点概率，提高拐点检测的统计严谨性。但单变量限制使其只能作为辅助信号。**列为优先级 4（可选辅助升级）**。
+
+#### 发现 4：Multi-Scale 共识 — 多时间框架对齐
+
+**Junglebot Adaptive Regime Framework（2026-05）+ TDFI Multi-Resolution（2026-04）**：
+- 每个时间框架有自己的 regime 模型 + 特征集
+- 加权对齐分数：高时间框架权重更大（定义结构性条件）
+- TDFI 三分辨率（fast 8 / medium 13 / slow 21）+ 共识分数 -3~+3
+- 过渡态（±1）标记早期转折——一个层次已转，其他还没跟上
+
+**与我们对比**：
+- 我们的 regime 检测是**单一日线尺度**
+- 多尺度共识可捕捉"周线已转牛但日线还在震荡"的过渡态
+- **评估**：多尺度是层次 HMM（发现 1）的扩展——层次 HMM 是"周线条件化日线"，多尺度共识是"多框架投票"。两者可结合。**列为发现 1 的扩展，优先级随层次 HMM**。
+
+#### 第四轮新增升级路径汇总
+
+| 升级路径 | 解决问题 | 优先级 | 来源 |
+|---|---|---|---|
+| **层次 HMM**（周→日） | 伪转移 -28.6%，状态持续 +38.5% | 优先级 3 | AlgoGators 2025-11 |
+| TVTP 时变转移概率 | 静态转移矩阵→动态 | 优先级 4 | arXiv:2606.06190 |
+| Shannon entropy filter | ConfidenceSignal 启发式→信息论 | 优先级 4 | arXiv:2606.06190 |
+| Staggered parameter bounds | 标签切换（比 Wasserstein 简单） | 优先级 4 | arXiv:2606.06190 |
+| BOCPD 变点概率 | overlay 规则法→概率化 | 优先级 4 | Adams-MacKay 2007 |
+
+**最终总结论**：核心算法（HMM 4态 + 两阶段校准 + 乘法 Shrinkage + 特征工程）**四轮搜索全部背书**。3 个验证缺口该补（Conformal/CPCV/Stationary Bootstrap）。**11 条升级路径**备查（层次 HMM 最有价值，TVTP/Shannon/Staggered 三件套是系统性升级，BOCPD/Wasserstein/Student-t/Feature Saliency/动态调制矩阵/RARP/regime-conditional 为远期路径）。
 
 ## 1. 目标与定位
 
@@ -750,3 +821,4 @@ Phase 5：决策门控（对接 BM-BT-07）
 | 2026-08-08 | 1.1.0 | 新增 §0.5 方案执行状态（反向同步）；标注 Phase 0-2 完成 / 3-5 部分未完成；记录重大偏离 9态→4态（BIC驱动）；回填 C1/A1/A2/B1/B4 实际验证结果与代码结构 | 用户要求从文档可知项目代码最新功能情况；实际执行结果与原方案偏离需文档化 |
 | 2026-08-08 | 1.2.0 | 新增 §0.6 算法审查与 2026 研究对照（核心算法审查结论 + 明确不采用算法 + 3缺口1现成 + 施工优先级 + 研究来源索引 + HMM引擎升级路径）；§1.1/§8.1 加 9态→4态 内联注释 | 用户要求审查算法缺口+搜2026最新算法+查文档结构；二次搜索发现 Wasserstein HMM/Student-t发射/Feature Saliency HMM |
 | 2026-08-08 | 1.3.0 | 新增 §0.6.7 第三轮搜索（A股4态行业共识 + 动态调制矩阵 + RARP状态条件协方差 + regime-conditional allocation + Kelly警示）；新增 §0.6.8 三轮总结论 | 用户要求再次审查+全网搜2026最新；三轮搜索确认核心算法全部背书，6条升级路径备查 |
+| 2026-08-08 | 1.4.0 | 新增 §0.6.9 第四轮发现（层次HMM状态持续+38.5%/伪转移-28.6% + TVTP时变转移 + Shannon entropy替代ConfidenceSignal + Staggered bounds缓解标签切换 + BOCPD变点概率 + 多尺度共识）；§0.6.8 更新为四轮总结论；升级路径从6条增至11条 | 用户要求第四轮审查；层次HMM是四轮中最有价值的升级路径（直接解决A3伪转移问题） |
