@@ -194,7 +194,7 @@ enforcement:
   - human_review
   - ai_pre_action_check
   bypass_allowed: false
-  note: '君子协定强制——不新建硬门禁（与TRAE-080四图对齐一致，规则落地优先于门禁自动化）。强制点落在候选库条目字段校验：design_admission 证据 MUST引用设计文档章节、弃用条目tech_notes MUST含双源证据。未来可考虑在候选库录入脚本加校验'
+  note: '君子协定强制——不新建硬门禁（与TRAE-080五图对齐一致，规则落地优先于门禁自动化）。强制点落在候选库条目字段校验：design_admission 证据 MUST引用设计文档章节、弃用条目tech_notes MUST含双源证据。未来可考虑在候选库录入脚本加校验'
 metadata:
   change_policy: evolving
   impact_level: H

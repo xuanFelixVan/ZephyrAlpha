@@ -57,4 +57,4 @@ created_by: agent
 | 决策架构 | `docs/02_enterprise_architecture/06_decision_architecture/` | generate_decision_diagram |
 | 治理报告 | `docs/02_enterprise_architecture/03_governance_reports/` | generate_capacity_report / generate_constraint_violations / generate_design_vs_production |
 | 全景注册表 | `docs/02_enterprise_architecture/00_overview_entry/` | generate_panorama_registry / generate_navigation_index |
-| 四图对齐 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` | align_panoramas |
+| 五图对齐 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` | align_panoramas |

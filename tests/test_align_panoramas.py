@@ -17,14 +17,14 @@
 覆盖：
   - PanoramaNode 数据模型字段
   - _detect_orphans 孤儿检测逻辑（仅一图存在的 module_id）
-  - _detect_state_drifts 状态漂移检测逻辑（design_maturity 不一致，四图含 blueprint）
-  - _detect_domain_mismatches 域不一致检测逻辑（四图含 blueprint）
+  - _detect_state_drifts 状态漂移检测逻辑（design_maturity 不一致，全景含 blueprint）
+  - _detect_domain_mismatches 域不一致检测逻辑（全景含 blueprint）
   - _detect_design_only_in_one 设计态孤立检测逻辑
   - _fetch_blueprint_nodes 从 frontmatter 采集 blueprint 节点（ARCH-056）
   - PanoramaEmptyError 异常类型存在性
   - PanoramaAlignmentReport.to_markdown 渲染（含 blueprint 列）
 
-依据：ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）。
+依据：ARCH-053 裁定（2026-07-06）；ARCH-056 五图升级（2026-07-09）。
 """
 
 from __future__ import annotations
@@ -173,7 +173,7 @@ class TestDetectOrphans:
 
 class TestDetectStateDrifts:
     def test_no_drift_when_same_maturity(self):
-        """四图 design_maturity 相同 → 无漂移。"""
+        """全景 design_maturity 相同 → 无漂移。"""
         nodes = [
             _make_node("MOD-X", "depgraph", design_maturity="design"),
             _make_node("MOD-X", "dataflow", design_maturity="design"),
@@ -183,7 +183,7 @@ class TestDetectStateDrifts:
         assert _detect_state_drifts(nodes) == []
 
     def test_no_drift_when_maturity_differs_across_graphs(self):
-        """四图 design_maturity 不一致 → 不再报漂移（各图维度不同是正常的）。
+        """全景 design_maturity 不一致 → 不再报漂移（各图维度不同是正常的）。
 
         ARCH-MM-002: design_maturity 只有 design/production 两态。
         """
@@ -366,7 +366,7 @@ class TestPanoramaAlignmentReport:
             issues_total=0,
         )
         md = report.to_markdown()
-        assert "# 四图对齐报告" in md
+        assert "# 全景对齐报告" in md
         assert "## 1. 孤儿节点" in md
         assert "## 2. 状态漂移" in md
         assert "## 3. 域不一致" in md

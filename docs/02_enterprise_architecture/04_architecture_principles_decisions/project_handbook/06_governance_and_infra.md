@@ -30,7 +30,7 @@ language: zh
 | 指标 | 值 |
 |------|----|
 | commit_gates 目录 / Directory | `src\zephyr\gov_enforcement\commit_gates` |
-| 门禁 .py 文件数 / Gate files (excl. __init__) | 98 |
+| 门禁 .py 文件数 / Gate files (excl. __init__) | 99 |
 
 > 门禁按 priority 升序执行（AST/diff/路径/命名/依赖/blueprint 格式/depgraph 预登记/能力反查等维度）。
 <!-- AUTO-END:gate_counts -->
@@ -43,7 +43,7 @@ language: zh
 
 - **存储**：PostgreSQL 16（P2 迁移 2026-06-27，MVCC 行级锁）
 - **双态模型**：`design`（设计态，蓝图）→ `production`（运营态，代码已写），单调推进
-- **三层防御**（RULE-DEPGRAPH）：①依赖关系先行 ②四图对齐 ③双态机械判定
+- **三层防御**（RULE-DEPGRAPH）：①依赖关系先行 ②五图对齐 ③双态机械判定
 - 详见 [../panorama/dependency_path_panorama.md](../panorama/dependency_path_panorama.md)
 
 **关键工具**：
@@ -51,7 +51,7 @@ language: zh
 python scripts/governance/generate_project_depgraph.py    # 刷新运营态（扫描代码）
 python scripts/governance/apply_depgraph.py --add-design-node PATH BLUEPRINT_ID DOMAIN_ID  # 登记设计态
 python scripts/governance/sync_panorama_module.py --all      # 派生其余3图
-python scripts/governance/d5_architecture/generators/align_panoramas.py  # 四图对齐验证
+python scripts/governance/d5_architecture/generators/align_panoramas.py  # 五图对齐验证
 ```
 
 ## 5. Registry 体系

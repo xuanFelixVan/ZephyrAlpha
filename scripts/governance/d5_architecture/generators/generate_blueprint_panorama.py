@@ -18,18 +18,18 @@
 # [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-MM-001
 # 真源说明：本生成器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，
 # 从 docs/03_modules/ 下的蓝图文件 frontmatter 采集第四张图（blueprint），
-# 生成 §0.6 四图对齐视图（四图位置表 + 四核心字段对比表）并写入蓝图文件。
+# 生成 §0.6 五图对齐视图（全景位置表 + 四核心字段对比表）并写入蓝图文件。
 # 详见 AGENTS.md §真源分类（11.0.2）+ ARCH-053 / ARCH-056 裁定 + 蓝图模板 v2.1.0 §0.6。
-"""G-panorama-gen: 蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）
+"""G-panorama-gen: 蓝图 §0.6 五图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）
 
-依据：蓝图模板 v2.1.0 §0.6 格式定义；ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）
+依据：蓝图模板 v2.1.0 §0.6 格式定义；ARCH-053 裁定（2026-07-06）；ARCH-056 五图升级（2026-07-09）
 
 功能：
   - 从 depgraph.nodes 读取模块核心字段（build_status, domain_id, file_count）—— 加权投票聚合
   - 从 dataflow_datasets + dataflow_jobs 读取模块的数据流节点计数
   - 从 decision_nodes + decision_layers 读取模块的决策节点计数
   - 从蓝图文件 frontmatter 采集第四张图字段（module_id, responsibility_domain, build_status）
-  - 生成 §0.6 四图对齐视图（两个表格）并写入蓝图文件
+  - 生成 §0.6 五图对齐视图（两个表格）并写入蓝图文件
   - 幂等：多次运行同一模块结果相同（不会重复插入 §0.6）
 
 定位：写入型生成器（只写蓝图 §0.6 章节，不动 frontmatter / 不动其他章节）。
@@ -111,7 +111,7 @@ _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 # 使用非贪婪匹配 + 前瞻，确保只匹配 §0.6 内容（不含闭合的 "---"）
 # 不含前导 \n：避免替换时引入多余换行，保证幂等性（insert 与 replace 产生相同结构）
 # 注意：前瞻必须包含 ### （3级标题），否则 §0.6 后跟 §0.2/§0.3 时会误吞这些章节
-# （#{2,3} 匹配2或3个#，[^#] 排除4级标题 ####，§0.6内部的 #### 四图位置 等不受影响）
+# （#{2,3} 匹配2或3个#，[^#] 排除4级标题 ####，§0.6内部的 #### 全景位置 等不受影响）
 _S06_BLOCK_RE = re.compile(
     r"(#{2,3} §0\.6[^\n]*\n).*?(?=\n---\s*\n|\n#{2,3} [^#]|\Z)",
     re.DOTALL,
@@ -238,7 +238,7 @@ class BlueprintFrontmatter:
 
 @dataclass
 class ModulePanorama:
-    """单模块四图全景数据。"""
+    """单模块全景数据。"""
 
     module_id: str
     depgraph: DepgraphModuleInfo | None
@@ -525,10 +525,10 @@ def _blueprint_status_str(bp: BlueprintFrontmatter) -> str:
 
 
 def _render_position_table(pan: ModulePanorama) -> str:
-    """渲染四图位置表。"""
+    """渲染全景位置表。"""
     mid = pan.module_id
     lines: list[str] = []
-    lines.append("#### 四图位置")
+    lines.append("#### 全景位置")
     lines.append("")
     lines.append("| 图 | 位置 | 状态 | 链接 |")
     lines.append("|----|------|------|------|")
@@ -627,11 +627,11 @@ def _render_core_fields_table(pan: ModulePanorama) -> str:
 def _generate_s06_section(pan: ModulePanorama) -> str:
     """生成完整的 §0.6 章节内容（不含闭合的 --- 分隔线）。
 
-    返回值以 "### §0.6 四图对齐视图" 开头，以 "> 冲突时..." 结尾。
+    返回值以 "### §0.6 五图对齐视图" 开头，以 "> 冲突时..." 结尾。
     """
     mid = pan.module_id
     lines: list[str] = []
-    lines.append("### §0.6 四图对齐视图")
+    lines.append("### §0.6 五图对齐视图")
     lines.append("")
     lines.append(
         "<!-- AUTOGEN: source=depgraph+dataflow+decision, "
@@ -639,7 +639,7 @@ def _generate_s06_section(pan: ModulePanorama) -> str:
         "reconciler=sync_panorama_module.py -->"
     )
     lines.append("")
-    lines.append("> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。")
+    lines.append("> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。")
     lines.append(
         f"> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py {mid}`"
     )
@@ -798,7 +798,7 @@ def _cleanup_orphan_s06(
 
 
 def _collect_panorama(module_id: str) -> ModulePanorama:
-    """采集单模块的四图全景数据。"""
+    """采集单模块的全景数据。"""
     depgraph_info = _fetch_depgraph_module(module_id)
     dataflow_info = _fetch_dataflow_module(module_id)
     decision_info = _fetch_decision_module(module_id)
@@ -813,7 +813,7 @@ def _collect_panorama(module_id: str) -> ModulePanorama:
 
 
 def generate_for_module(module_id: str, *, dry_run: bool = False) -> int:
-    """生成单个模块的 §0.6 四图对齐视图并写入蓝图。
+    """生成单个模块的 §0.6 五图对齐视图并写入蓝图。
 
     Returns: 0=成功/跳过, 1=DB异常, 3=depgraph无此模块
     """
@@ -1119,7 +1119,7 @@ def generate_all(*, dry_run: bool = False) -> int:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）")
+    parser = argparse.ArgumentParser(description="蓝图 §0.6 五图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）")
     parser.add_argument(
         "module_id",
         nargs="?",

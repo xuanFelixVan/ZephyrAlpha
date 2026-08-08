@@ -1808,7 +1808,7 @@ scripts:
   path: governance/d5_architecture/generators/_common.py
   status: registered
   timeout_seconds: 60
-- description: 依据：ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）
+- description: 依据：ARCH-053 裁定（2026-07-06）；ARCH-056 五图升级（2026-07-09）
   dimensions: []
   domain: governance
   execution_plane: warm-path
@@ -1833,7 +1833,7 @@ scripts:
   path: governance/d5_architecture/generators/generate_asset_catalog.py
   status: registered
   timeout_seconds: 60
-- description: 依据：蓝图模板 v2.1.0 §0.6 格式定义；ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）
+- description: 依据：蓝图模板 v2.1.0 §0.6 格式定义；ARCH-053 裁定（2026-07-06）；ARCH-056 五图升级（2026-07-09）
   dimensions: []
   domain: governance
   execution_plane: warm-path

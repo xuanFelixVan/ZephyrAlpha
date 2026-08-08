@@ -112,7 +112,7 @@ _GRAPH_PRINTERS = {
 
 
 def show_position(entry):
-    """显示某候选的四图定位详情。"""
+    """显示某候选的全景定位详情。"""
     pp = entry.get("panorama_position", {})
     print(f"\n{'=' * 60}")
     print(f"候选 {entry['id']}: {entry.get('name', '')}")
@@ -200,7 +200,7 @@ def build_parser():
     parser.add_argument("--status", help="按状态筛选 (candidate/deferred/rejected/approved/promoted)")
     parser.add_argument("--priority", help="按优先级筛选 (P0/P1/P2)")
     parser.add_argument("--id", help="按 ID 精确查找 (如 CAND-RSK-014)")
-    parser.add_argument("--show-position", action="store_true", help="显示四图定位详情")
+    parser.add_argument("--show-position", action="store_true", help="显示全景定位详情")
     parser.add_argument("--due-review", action="store_true", help="查找到期需复审的候选")
     parser.add_argument("--check-duplicate", help="登记前查重")
     parser.add_argument("--has-position-in",

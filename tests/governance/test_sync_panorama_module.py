@@ -11,7 +11,7 @@
 # [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 # [ARCH-REF] #ARCH-056 #ARCH-058
-"""test_sync_panorama_module.py — 四图模块同步引擎单测（ARCH-056 Phase 2）
+"""test_sync_panorama_module.py — 五图模块同步引擎单测（ARCH-056 Phase 2）
 
 覆盖：
 - 主函数签名存在性

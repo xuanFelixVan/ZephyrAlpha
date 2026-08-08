@@ -11,7 +11,7 @@
 # [TTL] task_bound
 """test_decisiongraph_schema_domain_id.py — decision_layers/decision_nodes domain_id 字段测试（ARCH-056 Phase 1）
 
-验证 DDL 常量中包含 domain_id 字段，用于四图模块同步引擎的核心字段对齐。
+验证 DDL 常量中包含 domain_id 字段，用于五图模块同步引擎的核心字段对齐。
 """
 from __future__ import annotations
 

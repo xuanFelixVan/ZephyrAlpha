@@ -11,7 +11,7 @@
 # [ERROR_CONTRACT] ImportError->skip_module
 # [TESTS] tests/governance/test_apply_depgraph_transition_sync.py
 # [TTL] task_bound
-"""test_apply_depgraph_transition_sync.py — 状态转换后四图同步单测（ARCH-056）
+"""test_apply_depgraph_transition_sync.py — 状态转换后全景同步单测（ARCH-056）
 
 覆盖 _sync_panorama_after_transition 的 4 个场景：
 - blueprint_id 非空 → sync_module_panorama 被调用

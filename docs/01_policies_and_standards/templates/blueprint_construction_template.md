@@ -29,11 +29,11 @@ title: Blueprint Construction Template
 ttl: permanent
 verifiability: manual
 version: 2.1.0
-# === 蓝图模板 v2.1.0 — 四图对齐（ARCH-056）===
+# === 蓝图模板 v2.1.0 — 五图对齐（ARCH-056）===
 # depgraph.nodes 是架构数据真源（SSoT），蓝图是派生视图。
 # 蓝图只存全景图(depgraph)没有的独有信息：设计意图/职责边界/接口契约/施工指引/验收标准/决策记录/约束条件/错误处理
 # §0.1 代码文件清单 = 自动生成（派生自 depgraph.nodes），禁止手写
-# §0.6 四图对齐视图 = 自动生成（派生自 depgraph + dataflow + decision）
+# §0.6 五图对齐视图 = 自动生成（派生自 depgraph + dataflow + decision）
 # 查询文件清单：python scripts/governance/extract_depgraph.py --modules <module_id>
 # 查询依赖关系：python scripts/governance/extract_depgraph.py --paths
 # 自动生成字段说明（3字段，depgraph→蓝图单向同步，详见 §0.6 四核心字段）：
@@ -57,7 +57,7 @@ REQUIRED_SECTIONS:
   §0.3: "版本-代码映射"
   §0.4: "SSoT与责任唯一性"
   §0.5: "代码目录唯一性"
-  §0.6: "四图对齐视图"  # v2.0.0 新增：自动生成（depgraph + dataflow + decision + blueprint 四图对齐）
+  §0.6: "五图对齐视图"  # v2.0.0 新增：自动生成（depgraph + dataflow + decision + blueprint 五图对齐）
   §1: "设计背景与目标"
   §1.1: "背景"
   §1.2: "目标范围"
@@ -214,16 +214,16 @@ END_REQUIRED_SECTIONS
 
 ---
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **v2.0.0 新增**：自动生成（派生自 depgraph + dataflow + decision + blueprint 四图对齐，ARCH-056）。
-> 本节展示模块在四图中的位置和核心字段，满足"模块清单含四图对齐信息"需求。
+> **v2.0.0 新增**：自动生成（派生自 depgraph + dataflow + decision + blueprint 五图对齐，ARCH-056）。
+> 本节展示模块在全景中的位置和核心字段，满足"模块清单含五图对齐信息"需求。
 > 生成命令：`python scripts/governance/d5_architecture/generators/align_panoramas.py --module {module_id}`
 > 禁止手写——depgraph 是架构数据真源，蓝图是派生视图。
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

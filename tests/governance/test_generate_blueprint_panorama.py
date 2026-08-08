@@ -83,7 +83,7 @@ class TestS06BlockRegex:
         [^#] 匹配失败，正则不停止，§0.6 块扩展到 §0.2/§0.3。
         """
         content = (
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
             "一些内容\n"
             "\n"
@@ -98,7 +98,7 @@ class TestS06BlockRegex:
     def test_stops_at_h3_heading_s03(self, gbp):
         """回归测试：§0.6 后跟 ### §0.3（3级标题）时必须停止。"""
         content = (
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
             "内容\n"
             "\n"
@@ -113,7 +113,7 @@ class TestS06BlockRegex:
     def test_stops_at_h2_heading(self, gbp):
         """§0.6 后跟 ## §1（2级标题）时必须停止。"""
         content = (
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
             "内容\n"
             "\n"
@@ -128,7 +128,7 @@ class TestS06BlockRegex:
     def test_stops_at_hr_separator(self, gbp):
         """§0.6 后跟 --- 分隔线时必须停止。"""
         content = (
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
             "内容\n"
             "\n"
@@ -141,11 +141,11 @@ class TestS06BlockRegex:
         assert "---" not in match.group(0)
 
     def test_h4_subheading_inside_s06_not_treated_as_boundary(self, gbp):
-        """§0.6 内部的 #### 四图位置（4级标题）不应被当作边界，应包含在块内。"""
+        """§0.6 内部的 #### 全景位置（4级标题）不应被当作边界，应包含在块内。"""
         content = (
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
-            "#### 四图位置\n"
+            "#### 全景位置\n"
             "\n"
             "| 图 | 位置 |\n"
             "\n"
@@ -157,13 +157,13 @@ class TestS06BlockRegex:
         )
         match = gbp._S06_BLOCK_RE.search(content)
         assert match is not None
-        assert "四图位置" in match.group(0), "§0.6 块应包含内部 4 级子标题"
+        assert "全景位置" in match.group(0), "§0.6 块应包含内部 4 级子标题"
         assert "四核心字段" in match.group(0)
 
     def test_matches_h2_level_s06(self, gbp):
         """§0.6 用 ## （2级标题）时也能匹配。"""
         content = (
-            "## §0.6 四图对齐视图\n"
+            "## §0.6 五图对齐视图\n"
             "\n"
             "内容\n"
             "\n"
@@ -305,13 +305,13 @@ def _make_blueprint_with_s06(module_id: str = "MOD-DELETED-001") -> str:
         "|---|------|------|\n"
         "| 1 | src/foo.py | foo |\n"
         "\n"
-        "### §0.6 四图对齐视图\n"
+        "### §0.6 五图对齐视图\n"
         "\n"
         "<!-- AUTOGEN: source=depgraph+dataflow+decision -->\n"
         "\n"
         "> **自动生成**：本节由 generate_blueprint_panorama.py 派生。\n"
         "\n"
-        "#### 四图位置\n"
+        "#### 全景位置\n"
         "\n"
         "| 图 | 位置 | 状态 |\n"
         "|----|------|------|\n"
@@ -340,7 +340,7 @@ class TestRemoveS06Block:
         result = gbp._remove_s06_block(content)
         assert "### §0.6" not in result, "§0.6 标题未移除"
         assert "AUTOGEN" not in result, "§0.6 自动生成内容未移除"
-        assert "四图位置" not in result, "§0.6 四图位置表未移除"
+        assert "全景位置" not in result, "§0.6 全景位置表未移除"
         assert "### §0.1 代码文件清单" in result, "§0.1 被误删"
         assert "## 1. 核心概念" in result, "§1 被误删"
         assert "src/foo.py" in result, "§0.1 表格内容被误删"
@@ -389,7 +389,7 @@ class TestRemoveS06Block:
             "\n"
             "内容\n"
             "\n"
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
             "自动生成内容\n"
             "\n"
@@ -410,7 +410,7 @@ class TestRemoveS06Block:
             "\n"
             "内容\n"
             "\n"
-            "### §0.6 四图对齐视图\n"
+            "### §0.6 五图对齐视图\n"
             "\n"
             "末尾自动生成内容\n"
         )

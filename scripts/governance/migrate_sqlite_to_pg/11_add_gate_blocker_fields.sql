@@ -1,7 +1,7 @@
 -- ============================================================
 -- 11_add_gate_blocker_fields.sql
 -- ============================================================
--- 用途：四图（depgraph/dataflowgraph/decisiongraph）新增 gate_reason + blocker_status 字段
+-- 用途：全景（depgraph/dataflowgraph/decisiongraph）新增 gate_reason + blocker_status 字段
 -- 背景：232 个设计态模块需要记录"为什么没施工"（gate_reason）和"受限是否仍存在"（blocker_status）
 -- blocker_status 取值：active(受限仍存在) / resolved(受限已解除但未施工) / none(无受限)
 --

@@ -55,17 +55,17 @@ governance/ (桥接层, G-CT-001~008 契约)
 
 | dep_type | 边数 / Edges |
 |----------|------|
-| `import_depends` | 5040 |
-| `test_depends` | 3914 |
-| `config_depends` | 442 |
+| `import_depends` | 5180 |
+| `test_depends` | 3943 |
+| `config_depends` | 447 |
 | `import` | 214 |
 | `data` | 51 |
 | `runtime` | 44 |
 | `contract` | 6 |
 | `event` | 3 |
-| **合计 / Total** | **9714** |
+| **合计 / Total** | **9888** |
 
-**跨域边 / Cross-domain edges：2599** 条（两端节点 domain_id 不同的依赖边）。
+**跨域边 / Cross-domain edges：2634** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->
 
 > 节点/域总数见 [01_overview.md](01_overview.md) 的 `dependency_stats` AUTO 块。
@@ -83,6 +83,6 @@ governance/ (桥接层, G-CT-001~008 契约)
 | 契约目录 | 全接口契约（CTR-001~005、G-CT-001~008 等） | `docs/02_enterprise_architecture/01_global_architecture_diagram/contract_catalog.md` |
 | 跨域矩阵 | 域间依赖矩阵 | `docs/02_enterprise_architecture/01_global_architecture_diagram/cross_domain_matrix.md` |
 | 集成拓扑 | 外部集成点 | `docs/02_enterprise_architecture/01_global_architecture_diagram/integration_topology.md` |
-| 全景对齐 | 四图孤儿/漂移检测 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` |
+| 全景对齐 | 全景孤儿/漂移检测 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` |
 
 > 依赖全景能力定位（双态/SSoT/生成器）见 [../panorama/dependency_path_panorama.md](../panorama/dependency_path_panorama.md)。

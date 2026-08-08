@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] oneoff
-# [INVARIANTS] 数据域四图设计态补全：补全 subdomain_id + 登记 design 节点 + 修复契约 fulfillment_status；depgraph 修改通过 apply_depgraph.py 受控函数（铁律）
+# [INVARIANTS] 数据域全景设计态补全：补全 subdomain_id + 登记 design 节点 + 修复契约 fulfillment_status；depgraph 修改通过 apply_depgraph.py 受控函数（铁律）
 # [MODIFY-GUARD] none
 # [STABILITY] ephemeral
 # [SAFETY] M
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] dry-run->退出码0; 执行成功->退出码0; depgraph不可达->退出码2; 部分失败->退出码1
 # [TESTS] python scripts/governance/oneoff/data_domain_design_state_complete.py --dry-run
 # [TTL] task_bound
-"""数据域四图设计态补全——一次性执行脚本。
+"""数据域全景设计态补全——一次性执行脚本。
 
 执行计划 Step 1-3：
   Step 1: 补全 6 个数据域节点的 subdomain_id（扁平分组，不建子域幻影节点）
@@ -291,7 +291,7 @@ def step3_update_contracts(dry_run: bool) -> int:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="数据域四图设计态补全")
+    parser = argparse.ArgumentParser(description="数据域全景设计态补全")
     parser.add_argument("--dry-run", action="store_true", help="仅预览，不写 DB")
     args = parser.parse_args()
 
@@ -303,7 +303,7 @@ def main() -> int:
 
     print("=== 完成 ===")
     print("\n下一步：")
-    print("  1. 运行 sync_panorama_module.py 同步数据域 module_id 到四图")
+    print("  1. 运行 sync_panorama_module.py 同步数据域 module_id 到全景")
     print("  2. 运行 align_panoramas.py 验证数据域 0 问题")
     print("  3. 用 GitCommitGateway 提交")
     return 0

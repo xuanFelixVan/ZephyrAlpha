@@ -23,7 +23,7 @@ last_updated: '2026-08-05'
 # ============================================================
 # 1. 候选库是"点子池"，不是"项目库"——depgraph 设计态是"将要开发的模块"，
 #    候选库是"可能开发也可能不开发的想法"。两者严格分开。
-# 2. 四图定位：每个候选在 depgraph/dataflowgraph/decisiongraph/blueprint 四图
+# 2. 全景定位：每个候选在 depgraph/dataflowgraph/decisiongraph/blueprint 全景
 #    都写清位置（或明确标 has_position: false）。晋升时直接用。
 # 3. 一问标准：仅记录 q1已实现/重复（裁定 2026-08-04，原 q2/q3/q4 灰度已废），blocking_question 标明是否卡在 q1。
 # 4. 晋升流程：deferred → trigger_signals 命中 → 重新过一问 → apply_depgraph
@@ -49,7 +49,7 @@ entry_schema:
   domain_status: enum              # active/skeleton/dead
   domain_node_count: int           # 登记时该域 depgraph 节点数
   sub_layer: str                  # 子层定位
-  panorama_position: obj          # 四图定位(depgraph/dataflowgraph/decisiongraph/blueprint)
+  panorama_position: obj          # 全景定位(depgraph/dataflowgraph/decisiongraph/blueprint)
   description: str
   capability: str                 # 对标能力 C-XXX
   problem_it_solves: str          # 解决什么痛点
@@ -247,7 +247,7 @@ entries:
         downstream: ["MOD-EX-002"]
       insertion_description: "拟插入 D_RISK L1 事前风控区,但已由 risk_validator+risk_validation_bridge+position_limit_checker 三件组合承接,无需新增独立节点"
       target_edges: []
-      note: "一问标准 q1挂:重复实现。四图位置仅作'若强行实现会插哪'的参考,实际不新增节点"
+      note: "一问标准 q1挂:重复实现。全景位置仅作'若强行实现会插哪'的参考,实际不新增节点"
     dataflowgraph:
       has_position: true
       target_node_type: transform

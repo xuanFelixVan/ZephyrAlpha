@@ -6,20 +6,20 @@ version: "0.7.0"
 date: 2026-08-04
 ---
 
-# 交易决策作战地图能力定位书（第四全景图 / battle_map）
+# 交易决策作战地图能力定位书（第五全景图 / battle_map）
 
 > 版本：V0.7.0（BM-INV-007 孤儿模块反向检测）| 2026-08-04
 > 读者：项目 Owner（主要）+ AI 开发 Agent（次要）
 > 写法：大白话为主，配表格和 ASCII 图。变更历史见文末。
-> **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第四全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
+> **文档责任范围**：定义**交易决策作战地图**（`battle_map`）——项目第五全景图——的能力定位、数据模型、真源分工、双向对齐机制、迁移策略。它是 `07_trading_decision_architecture/` 人类视图背后的真源。
 
-> **定位裁定**：`07_` 背后有第四全景图 `battle_map` 作真源，`07_` MD 是它的派生人类视图。全景图共四个：depgraph / dataflowgraph / decisiongraph / battle_map。
+> **定位裁定**：`07_` 背后有第五全景图 `battle_map` 作真源，`07_` MD 是它的派生人类视图。全景图共五个：depgraph / dataflowgraph / decisiongraph / blueprint.md / battle_map。
 
 ---
 
 ## 一、作战地图是什么？（一句话）
 
-**交易决策作战地图（battle_map）是项目的第四全景图——一张以"决策环节"为节点、以"钱怎么赚"为流程主线、把 decisiongraph / depgraph / 候选池 / 蓝图 / 数据流按业务流程串联起来的索引层真源图。**
+**交易决策作战地图（battle_map）是项目的第五全景图——一张以"决策环节"为节点、以"钱怎么赚"为流程主线、把 decisiongraph / depgraph / 候选池 / 蓝图 / 数据流按业务流程串联起来的索引层真源图。**
 
 它回答的问题不是"决策怎么分层"（那是 decisiongraph 的事），也不是"模块依赖谁"（那是 depgraph 的事），而是：
 
@@ -59,7 +59,7 @@ date: 2026-08-04
 
 > 本节摘录草图 [交易决策架构.md](file:///d:/临时工作区/架构图/交易决策架构.md) §1.1（交易决策架构唯一真源）和 §1.8（数据流主动脉与正向闭环）的关键内容，作为作战地图定位的系统背景。作战地图的每个环节都落在下列架构层和数据流上——看环节时能对到"它在第几层、在数据流哪一跳"。
 >
-> **v9.0 统一架构**：系统架构图 + 决策流全景图合并为唯一真源。上半部分为系统架构（L0-L6 + 横切层），下半部分为决策流全景图（选股→买入→卖出→仓位→支撑）。作战地图（第四全景图）是决策流全景图的索引层真源——它把决策流的每个环节挂载到具体模块/候选/蓝图章节。
+> **v9.0 统一架构**：系统架构图 + 决策流全景图合并为唯一真源。上半部分为系统架构（L0-L6 + 横切层），下半部分为决策流全景图（选股→买入→卖出→仓位→支撑）。作战地图（第五全景图）是决策流全景图的索引层真源——它把决策流的每个环节挂载到具体模块/候选/蓝图章节。
 
 ### 3.1 L0-L6 分层架构（草图 §1.1）
 
@@ -193,14 +193,14 @@ C-027 因子工厂 → C-028 信号工厂 → C-006 策略工厂
 | decisiongraph 的副本 | battle_map 环节 ≠ decisiongraph 节点。一个环节聚合多个 decision_node + 多个 depgraph 模块 + 候选 + 蓝图章节。battle_map 引用这些图，不复制节点 |
 | 07_ 视图本身 | 07_ MD 是 battle_map 的派生人类视图。battle_map 在 DB，07_ 在 docs |
 | 策略参数文档 | battle_map 的 `indicators` 字段记录"指标方案的结构化引用"（trigger/threshold/source_module），不是策略参数清单。具体参数值在策略蓝图/代码里 |
-| 新造的孤立图 | battle_map 是索引层，所有锚点指向已有四图+候选池的现存节点。不 invent 新模块 |
+| 新造的孤立图 | battle_map 是索引层，所有锚点指向已有各全景图+候选池的现存节点。不 invent 新模块 |
 | 替代 trading_flow_narrative.yaml | 叙事职责移交给翻译真源 `battle_map_steps` 段；narrative.yaml 已于 2026-08-02 退役删除（4 横切段迁至 `module_translation_registry.yaml §battle_map_cross_cutting`） |
 
 ---
 
 ## 五、全景图体系裁定
 
-全景图共**四个**：depgraph / dataflowgraph / decisiongraph / **battle_map**。
+全景图共**五个**：depgraph / dataflowgraph / decisiongraph / blueprint.md / **battle_map**。
 
 - `07_` MD 是 **battle_map 的派生人类视图**
 - `07_` 通过 battle_map 间接进对齐体系（battle_map 进，`07_` 作为派生视图跟随）
@@ -408,15 +408,15 @@ Owner 倾向"在三个全景图+候选池都给模块加一个 battle_map_positi
 
 ## 九、与全景图对齐体系的关系
 
-### 9.1 第四全景图
+### 9.1 第五全景图
 
-battle_map 和 depgraph / dataflowgraph / decisiongraph 并列，是第四个全景图。**图名 `battlemap`**（对标 depgraph/dataflowgraph/decisiongraph 的 Xgraph 复合形式），**表前缀 `battle_map_*`**（对标 `decision_*` 的"全词_功能"形式）。在 `panorama_registry` 登记为 `PAN-BATTLE-MAP-01`。
+battle_map 和 depgraph / dataflowgraph / decisiongraph / blueprint.md 并列，是第五个全景图。**图名 `battlemap`**（对标 depgraph/dataflowgraph/decisiongraph 的 Xgraph 复合形式），**表前缀 `battle_map_*`**（对标 `decision_*` 的"全词_功能"形式）。在 `panorama_registry` 登记为 `PAN-BATTLE-MAP-01`。
 
 ### 9.2 两套对齐，正交不冲突
 
 | 对齐 | 轴 | 回答 | 用途 | 工具 |
 |---|---|---|---|---|
-| 现有四图对齐 | `module_id` | 一个模块在4张图里一致吗 | 建模块时 | `align_panoramas.py`（保持不动） |
+| 全景对齐 | `module_id` | 一个模块在4张图里一致吗 | 建模块时 | `align_panoramas.py`（保持不动） |
 | 作战地图对齐（新） | `step_id` | 一个环节都落地了吗、落在哪 | 写决策时 | `align_battle_map.py`（新建） |
 
 两套对齐正交：module_id 轴管"模块一致性"，step_id 轴管"环节落地性"。互不干扰。
@@ -626,15 +626,16 @@ battle_map_steps:
 
 > 本节是整篇文档的"导读速查版"——把前面 §一~§十五 的核心机制浓缩成一页纸，方便 Owner 快速确认机制设计是否正确，也方便 AI 写决策前快速定位"该查哪、该写哪"。详细设计见各对应章节，本节不重复展开。
 
-### 17.1 四张全景图定位
+### 17.1 五张全景图定位
 
-battle_map 是项目第四全景图。前三图是横向切片（按 module/decision/entity 轴），作战地图是纵向贯穿（按业务流程 step 轴），它把前三图的节点按"选股→买入→卖出→仓位→执行→对账"6 阶段重新编排成端到端作战链条。
+battle_map 是项目第五全景图。前三图（depgraph/dataflowgraph/decisiongraph）是横向切片（按 module/decision/entity 轴），blueprint.md 是模块级蓝图（按 module_id 轴），作战地图是纵向贯穿（按业务流程 step 轴），它把前四图的节点按"选股→买入→卖出→仓位→执行→对账"6 阶段重新编排成端到端作战链条。
 
 | 全景图 | 真源 | 关注轴 | 回答的问题 |
 |---|---|---|---|
 | 依赖全景图 depgraph | PostgreSQL `nodes`/`edges` | module_id | "谁连谁？模块依赖关系是什么？" |
 | 数据流全景图 dataflowgraph | PostgreSQL `dataflow_*` | entity/job | "数据怎么流？谁消费谁产出？" |
 | 决策流全景图 decisiongraph | PostgreSQL `decision_*` | decision_id | "决策怎么编排？谁触发谁？" |
+| 模块蓝图 blueprint.md | 蓝图文件 frontmatter | module_id | "模块怎么设计？接口契约/施工指引是什么？" |
 | **作战地图 battle_map** | PostgreSQL `battle_map_*` + YAML 叙事 | **step_id** | "业务作战环节怎么串？每环节靠哪些模块落地？" |
 
 详见 §一、§九。
@@ -787,8 +788,8 @@ battle_map 是项目第四全景图。前三图是横向切片（按 module/deci
 | V0.5.1 | 2026-08-03 | BM-INV-005 降级为未落地规划（方案B）：①核实 depgraph.nodes 无 `battle_map_step_ids` 列（information_schema 0 列）、apply_battle_map.py 无 sync、align_battle_map.py 不检测、无 trigger——原"派生只读缓存"机制四要素全缺；②删除 battlemap_schema.py 注释虚假描述"apply_battle_map.py 单向 sync：anchors→各图字段"（代码无此逻辑）；③§8.4 BM-INV-005 标注"未落地/规划中"，当前通过 `battle_map_anchors` 反查（target_graph=depgraph+target_id=blueprint_id，idx_battle_map_anchors_target 索引）；④AGENTS.md 同步：七类问题→六类问题（align 实检 001/002/003/004/006+悬空边），BM-INV-005 单列标注未落地。治本依据：反查路径已通（抽样5模块各7锚点），派生缓存冗余违反 SSoT+向内收。 |
 | V0.5.0 | 2026-08-03 | 全生命周期扩展 +5 新阶段：①§3.6 阶段对应表从 6→11 阶段（+研究孵化/模型训练/回测验证/仿真验证/风控管控），按生命周期重排（研究→训练→回测→仿真→选股→买入→卖出→仓位→风控→执行→对账）；②§6.1 `flow_stage` 字段合法值扩展至 11 阶段；③§17.3.4 域策略表补入 5 新阶段的允许域/禁止域（与 `battle_map_domain_policy.yaml` V1.0.0 对齐）；④`battle_map_domain_policy.yaml` 同步补入 5 新阶段 `flow_stage_allowed_domains`；⑤`module_translation_registry.yaml` §battle_map_steps 补入 33 条新阶段环节叙事 + 44 条子环节叙事（含 BM-SEL-22~25 短线选股/游资接力/量化强度/双引擎融合子环节）；⑥生成器重新生成 12 阶段文档 + panorama 总图；⑦对齐报告 0 问题（steps=152/anchors=214/edges=114/叙事真源=152）。 |
 | V0.4.0 | 2026-08-03 | 父子嵌套机制落地：①§6.1 `battle_map_steps` 表新增 `parent_step_id`（FK 自引用）+ `depth`（层级深度，上限2）两字段；②§8.4 新增 BM-INV-006 不变量（父存在+同阶段+无环+depth≤2+depth一致），写入校验在 `apply_battle_map.py` op_add_step，对齐检测在 `align_battle_map.py` `_check_parent_child_consistency()`；③生成器 `generate_battle_map_diagram.py` 支持 subgraph 渲染父子嵌套 + `-.->｜嵌套｜` 虚线边 + 子环节状态继承父环节 + 【】节点格式（⛔最前/成熟度最后/英文名最后）；④首批拆子落地：BM-BUY-02 四轨融合→4子环节（A逻辑驱动/B数据驱动/C人工指令/D应急保命）；⑤可视化模板 `visualization_view_template.md` V1.5 同步更新（§4.3 作战地图节点格式 + §4.12 父子嵌套关系） |
-| V0.3.2 | 2026-08-03 | 新增 §十七「运作机制速查总览（一页纸看懂）」：把 §一~§十五 的核心机制浓缩成导读速查版，含①四图定位速查表②三表结构简表③五类 target_graph 对齐路径详表④四条承重墙不变量 BM-INV-001~004⑤域漂移规则与当前已知 7 漂移点⑥运作机制数据流 ASCII 图⑦写入流程决策表⑧与 align_panoramas 正交关系。补充文档此前分散/缺失的"一页纸总览"视角，方便 Owner 快速确认机制与 AI 写决策前定位。重复部分以"详见 §X"引用，不破坏现有设计章节。 |
-| V0.1.0 | 2026-08-01 | 草案：第四全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
+| V0.3.2 | 2026-08-03 | 新增 §十七「运作机制速查总览（一页纸看懂）」：把 §一~§十五 的核心机制浓缩成导读速查版，含①全景定位速查表②三表结构简表③五类 target_graph 对齐路径详表④四条承重墙不变量 BM-INV-001~004⑤域漂移规则与当前已知 7 漂移点⑥运作机制数据流 ASCII 图⑦写入流程决策表⑧与 align_panoramas 正交关系。补充文档此前分散/缺失的"一页纸总览"视角，方便 Owner 快速确认机制与 AI 写决策前定位。重复部分以"详见 §X"引用，不破坏现有设计章节。 |
+| V0.1.0 | 2026-08-01 | 草案：第五全景图 battle_map 设计。三表数据模型 + 翻译真源 battle_map_steps 段 + 双向查找机制 + 取代 trading_flow_panorama.md V1.0.0。 |
 | V0.3.1 | 2026-08-03 | BM-INV-004 域漂移检查实现落地：①新增规则真源 `battle_map_domain_policy.yaml`（flow_stage→允许 domain 列表，TRAE-062 规则数据真源=YAML）；②`align_battle_map.py` 新增 §5 域漂移检测（采集 depgraph/candidate 的 target domain，逐锚点校验是否在 flow_stage 允许列表）；③对齐报告新增域漂移段+处置建议。首跑发现 8 处漂移（含误报：MOD-INF-002 跨域巨型蓝图单一 domain_id 采集器局限，待采集器修复）。④不变量编号调整：原 BM-INV-004（派生只读字段禁令）renumber 为 BM-INV-005，BM-INV-004 归位为域漂移（与 001孤儿/002幽灵/003叙事同属 align_battle_map.py 对齐检查系列）。 |
 | V0.3.0 | 2026-08-02 | 缺口2补完：①新增§三系统架构上下文（草图§1.1/§1.8摘要，L0-L6分层+数据流主动脉+闭环反馈+工厂三兄弟+作战地图对应关系）；②横切视图扩展§15计算节奏与时序+§1.7分布感知增强体系（翻译真源+生成器渲染函数）；③16个选股孤儿环节挂载candidate锚点；④13个非HARVEST候选池模块挂载到对应环节；⑤BM-SEL-01参数code_location反向回填。对齐报告0问题。 |
 | V0.2.0 | 2026-08-01 | Owner 评审反馈落地：① 环节粒度升级为 6 件套标准（§6.4），50-100 个环节，indicators JSONB 扩展为 6 件套 + 双向参数（implemented/proposed/testing）；② 图名定为 battlemap，表前缀 battle_map_*（对标 decision_*）；③ 旧文档处置定为删除重建；④ narrative.yaml 退场定为并行观察；⑤ 双向查找确认 anchors 单真源 + 派生只读字段方案；⑥ 门禁君子协定。 |

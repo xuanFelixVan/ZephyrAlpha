@@ -488,7 +488,7 @@ def _fetch_dataflow_data(conn) -> tuple[list[dict], list[dict], list[dict]]:
 
         # ARCH-056：dataflow_jobs 含两类记录——
         #   entity_type='job'（13 个真实数据流作业，yaml 真源同步）
-        #   entity_type='module_placeholder'（depgraph 模块占位投影，四图对齐用，非数据流作业）
+        #   entity_type='module_placeholder'（depgraph 模块占位投影，五图对齐用，非数据流作业）
         # 本生成器只展示真实数据流作业，占位投影由 sync_panorama_module.py 维护、不画入图。
         cur.execute("""
             SELECT job_id, job_name, scope, source_code_ref, trigger_type,
@@ -721,7 +721,7 @@ def _gen_panorama_md(datasets: list[dict], jobs: list[dict], edges: list[dict]) 
     lines.append("")
     lines.append(f"> 生成时间: {now}")
     lines.append(f"> 真源: `dataflow_graph_registry.yaml`（13 个真实 Job/Dataset）→ PostgreSQL `dataflow_*` 表（ARCH-051）")
-    lines.append(f"> 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于四图对齐 ARCH-056，非数据流作业，本文档不展示）")
+    lines.append(f"> 注: `dataflow_jobs` 另含 `entity_type='module_placeholder'` 占位记录（`sync_panorama_module.py` 从 depgraph 模块派生，用于五图对齐 ARCH-056，非数据流作业，本文档不展示）")
     lines.append(f"> 数据库: {DB_DISPLAY_NAME}")
     lines.append(f"> 生成器: `scripts/governance/d5_architecture/generators/generate_dataflow_diagram.py`（全文自动生成，禁止手工编辑）")
     lines.append("")

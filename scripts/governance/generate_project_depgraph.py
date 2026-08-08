@@ -1298,7 +1298,7 @@ def extract_py_imports(filepath: Path) -> list:
 
 
 def extract_public_api(filepath: Path) -> str:
-    """四图模块对齐 Step 3 Task 3.5：从 Python AST 提取 __all__ 列表作为 public_api。
+    """五图模块对齐 Step 3 Task 3.5：从 Python AST 提取 __all__ 列表作为 public_api。
 
     __all__ 是 Python 模块的公开 API 约定（PEP 8）。
     返回逗号分隔的字符串（便于 DB 存储），无 __all__ 时返回空串。
@@ -3635,7 +3635,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                         node.get("hard_boundary_ref", ""),  # H6 fix
                         node.get("consumed_interfaces", ""),  # H6 fix
                         node.get("content_hash", ""),  # 裁定#209 Stage 3
-                        node.get("public_api", ""),  # 四图模块对齐 Step 3
+                        node.get("public_api", ""),  # 五图模块对齐 Step 3
                     ),
                 )
                 cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
@@ -4062,7 +4062,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
 
         # 治本 #ARCH-DEPGRAPH-BACKUP-FIRST-CHECK：post-write DR 快照
         # 匹配 apply_depgraph.py 模式——写入成功后 backup_pg_architecture()
-        # 导出四图 19 张 DB 真源表到 tmp/pg_backups/，备份失败不阻断主流程（DR 安全网）
+        # 导出全景 19 张 DB 真源表到 tmp/pg_backups/，备份失败不阻断主流程（DR 安全网）
         # 根因：generate_project_depgraph.py --force 做 DELETE all + INSERT from scan，
         # 设计态节点（planned）和保护字段不可从文件系统重建，需 DB 快照兜底。
         try:

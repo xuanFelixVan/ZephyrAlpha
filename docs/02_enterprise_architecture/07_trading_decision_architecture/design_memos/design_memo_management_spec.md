@@ -34,7 +34,7 @@ scope: 07_trading_decision_architecture 下的设计备忘管理
 |---|---|---|---|---|
 | 生成器（generator） | "what is"——当前状态快照 | 机器自动生成 | 派生，禁止手编 | battle_map_01~12、micro battle map |
 | 人（design memo） | "why"——决策推理 | 人手写 | 永久态，可修订 | design_memo_001 |
-| depgraph | "what will be"——设计态模块 | apply_depgraph.py 登记 + sync 派生其余3图 | 真源，四图对齐 | StrategyBook 节点 |
+| depgraph | "what will be"——设计态模块 | apply_depgraph.py 登记 + sync 派生其余3图 | 真源，五图对齐 | StrategyBook 节点 |
 
 ### 2.1 核心纪律
 - **生成器不写 why**：生成器只能描述状态，写不出"为什么不是另一个"
@@ -44,7 +44,7 @@ scope: 07_trading_decision_architecture 下的设计备忘管理
 ### 2.2 三层协作流程
 1. 人写设计备忘（why + 决策 + 替代方案 + 负空间）
 2. 根据备忘决策，用 apply_depgraph.py 登记模块到 depgraph 设计态（what will be）
-3. sync_panorama_module.py 自动派生其余 3 图，align_panoramas.py 验证四图对齐
+3. sync_panorama_module.py 自动派生其余 3 图，align_panoramas.py 验证五图对齐
 4. 施工后 status 从 planned → production
 5. 生成器（battle_map 等）从 depgraph 派生当前状态视图（what is）
 6. 备言引用 depgraph 的稳定 path，形成 why ↔ what 的双向追溯
@@ -92,7 +92,7 @@ scope: 07_trading_decision_architecture
 
 ### 5.1 三重锚点
 1. **设计备忘是 why 的锚**：任何未来 AI/人想改架构，先读备忘，知道为什么现在是这样
-2. **depgraph 是 what 的锚**：四图对齐铁律强制施工前先登记设计态，备忘决策的模块必须在 depgraph 里找得到
+2. **depgraph 是 what 的锚**：五图对齐铁律强制施工前先登记设计态，备忘决策的模块必须在 depgraph 里找得到
 3. **备忘引用 depgraph 的 path**：双向可追溯，从备忘能找到模块，从模块 blueprint 能回溯到备忘
 
 ### 5.2 引用纪律

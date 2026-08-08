@@ -15,7 +15,7 @@
 # [TESTS] tests/governance/test_query_module_panorama.py
 # [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""query_module_panorama.py — 模块全景查询入口（四图模块对齐 Step 5）
+"""query_module_panorama.py — 模块全景查询入口（五图模块对齐 Step 5）
 
 输入 module_id（MOD-XXX），输出该模块在三图（depgraph/dataflow/decision）的所有记录，
 以及蓝图 frontmatter、文件清单、能力索引。
@@ -284,7 +284,7 @@ def _print_all_modules() -> int:
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
-        description="模块全景查询入口（四图模块对齐 Step 5）"
+        description="模块全景查询入口（五图模块对齐 Step 5）"
     )
     parser.add_argument(
         "module_id",

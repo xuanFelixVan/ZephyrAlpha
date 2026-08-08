@@ -1610,7 +1610,7 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 | 动作 | 说明 | 文件 |
 |---|---|---|
-| **四图对齐** | 数据流图/决策图/架构图/状态图是否需要更新 | 如涉及数据流/决策变化 |
+| **五图对齐** | 数据流图/决策图/架构图/状态图是否需要更新 | 如涉及数据流/决策变化 |
 | **作战地图更新** | 在全景图中标注该工程的模块和依赖 | battle_map 相关 |
 | **蓝图编写** | 新模块的 `[BLUEPRINT]` 头注释 | 每个新 .py 文件 |
 | **ARCH 登记** | 在 `architecture_issue_registry.yaml` 登记新 ARCH 条目 | 每个新模块 |
@@ -1627,7 +1627,7 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 ### 5.3 每个工程的治理清单
 
-| 工程 | 新模块 | ARCH 条目 | 四图影响 |
+| 工程 | 新模块 | ARCH 条目 | 全景影响 |
 |---|---|---|---|
 | P0-E1 降态数 | 无（改现有） | 无 | 无 |
 | P0-E2 校准器 | `calibrator_base.py` / `confidence_calibrator.py` | #ARCH-CALIBRATOR-001 | 决策图（confidence 后处理） |

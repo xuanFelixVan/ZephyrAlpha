@@ -16,7 +16,7 @@
 # [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-056
-"""panorama_common.py — 四图投票共享工具（ARCH-056 引擎加固）
+"""panorama_common.py — 全景投票共享工具（ARCH-056 引擎加固）
 
 提供确定性域投票函数，消除 3 个引擎文件中 Counter.most_common 平局不稳定的问题。
 

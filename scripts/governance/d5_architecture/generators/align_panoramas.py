@@ -2,7 +2,7 @@
 # [MODULE] scripts.governance.d5_architecture.generators.align_panoramas
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance.depgraph_schema; zephyr.governance.persistence.dataflowgraph_schema; zephyr.governance.persistence.decisiongraph_schema; _common (DB_DISPLAY_NAME); _shared.module_translation_loader (get_module_name_bilingual, preload)
-# [CONSUMERS] CI自动触发;人工审查四图对齐报告
+# [CONSUMERS] CI自动触发;人工审查全景对齐报告
 # [STARTUP] manual
 # [MATURITY] production
 # [INVARIANTS] 只读PG（零写入）;只读blueprint.md文件（零写入）;输出幂等(相同输入→相同输出);输出到03_governance_reports/panorama_alignment_report.md
@@ -18,11 +18,11 @@
 # [ARCH-REF] #ARCH-053 #ARCH-056 #ARCH-059
 # 真源说明：本检测器从 depgraph / dataflowgraph / decisiongraph (PostgreSQL) 读取三图节点，
 # 并从 docs/03_modules/ 下的 blueprint.md / 模块文件 frontmatter 采集第四张图（blueprint），
-# 生成四图对齐报告（孤儿/状态漂移/域不一致/设计态孤立）。
+# 生成全景对齐报告（孤儿/状态漂移/域不一致/设计态孤立）。
 # 详见 AGENTS.md §真源分类（11.0.2）+ ARCH-053 / ARCH-056 裁定。
-"""G-panorama-align: 四图对齐检测器（ARCH-053 + ARCH-056 四图升级）
+"""G-panorama-align: 全景对齐检测器（ARCH-053 + ARCH-056 五图升级）
 
-依据：ARCH-053 裁定（2026-07-06）；ARCH-056 四图升级（2026-07-09）
+依据：ARCH-053 裁定（2026-07-06）；ARCH-056 五图升级（2026-07-09）
 
 功能：
   - 从 depgraph.nodes / dataflow_datasets+jobs / decision_nodes+layers 读取三图节点（DB 真源）
@@ -110,7 +110,7 @@ class PanoramaEmptyError(RuntimeError):
 
 @dataclass
 class PanoramaNode:
-    """四图任一节点视图（统一字段供对齐检测）。"""
+    """全景任一节点视图（统一字段供对齐检测）。"""
 
     module_id: str
     graph: str  # "depgraph" | "dataflow" | "decision" | "blueprint"
@@ -130,7 +130,7 @@ def _make_frontmatter(generated_at: str) -> str:
     return (
         "---\n"
         "doc_type: audit_report\n"
-        "title: 四图对齐报告\n"
+        "title: 全景对齐报告\n"
         'version: "1.0"\n'
         "status: active\n"
         f"date: {date_str}\n"
@@ -142,11 +142,11 @@ def _make_frontmatter(generated_at: str) -> str:
 
 @dataclass
 class PanoramaAlignmentReport:
-    """四图对齐检测报告。"""
+    """五图对齐检测报告。"""
 
     generated_at: str = ""
     db_name: str = DB_DISPLAY_NAME
-    # 四图统计
+    # 全景统计
     depgraph_count: int = 0
     dataflow_count: int = 0
     decision_count: int = 0
@@ -162,12 +162,12 @@ class PanoramaAlignmentReport:
     def to_markdown(self) -> str:
         """渲染为 Markdown 报告。"""
         lines: list[str] = []
-        lines.append("# 四图对齐报告 (Panorama Alignment Report)")
+        lines.append("# 全景对齐报告 (Panorama Alignment Report)")
         lines.append("")
         lines.append(f"- 生成时间: {self.generated_at}")
         lines.append(f"- 数据源: {self.db_name}")
         lines.append(
-            f"- 四图节点数: depgraph={self.depgraph_count} / "
+            f"- 全景节点数: depgraph={self.depgraph_count} / "
             f"dataflow={self.dataflow_count} / decision={self.decision_count} / "
             f"blueprint={self.blueprint_count}"
         )
@@ -182,7 +182,7 @@ class PanoramaAlignmentReport:
         lines.append("## 1. 孤儿节点（仅一图存在）")
         lines.append("")
         if not self.orphans:
-            lines.append("> 无孤儿节点，四图在 module_id 维度对齐。")
+            lines.append("> 无孤儿节点，全景在 module_id 维度对齐。")
         else:
             lines.append("| module_id | graph | 名称 / Name | entity_name |")
             lines.append("|---|---|---|---|")
@@ -240,7 +240,7 @@ class PanoramaAlignmentReport:
         lines.append("## 5. 处置建议")
         lines.append("")
         lines.append("- 孤儿节点：决定是否需在另三图登记对应 module_id，或在一图删除")
-        lines.append("- 状态漂移：blueprint frontmatter 补齐 design_maturity 字段（四图维度差异不再报告）")
+        lines.append("- 状态漂移：blueprint frontmatter 补齐 design_maturity 字段（全景维度差异不再报告）")
         lines.append("- 域不一致：dataflow/decision 向 blueprint 对齐（depgraph 路径投票值不覆盖逻辑声明）")
         lines.append("- 设计态孤立：评估设计态是否需要同步到另三图")
         lines.append("")
@@ -640,7 +640,7 @@ def _detect_orphans(all_nodes: list[PanoramaNode], exempt_list: set[str] | None 
 def _detect_state_drifts(all_nodes: list[PanoramaNode]) -> list[dict]:
     """状态漂移：blueprint 缺 design_maturity 字段（ARCH-056 修正后新语义）。
 
-    四图 design_maturity 维度差异不再报告（各图评估维度不同是正常的）。
+    全景 design_maturity 维度差异不再报告（各图评估维度不同是正常的）。
     仅检测 blueprint 图中 design_maturity 字段缺失的情况。
     """
     grouped = _group_by_module_id(all_nodes)
@@ -743,7 +743,7 @@ def run_alignment(
     *,
     write_report: bool = True,
 ) -> PanoramaAlignmentReport:
-    """运行四图对齐检测，生成报告。
+    """运行五图对齐检测，生成报告。
 
     Args:
         output_path: 报告输出路径。None 时使用默认路径
@@ -834,7 +834,7 @@ def run_alignment(
             _make_frontmatter(report.generated_at) + report.to_markdown(),
             encoding="utf-8",
         )
-        print(f"OK: 四图对齐报告已写入 {output_path}")
+        print(f"OK: 全景对齐报告已写入 {output_path}")
         print(
             f"    问题总数: {report.issues_total} "
             f"(孤儿={len(orphans)}, 状态漂移={len(state_drifts)}, "
@@ -846,7 +846,7 @@ def run_alignment(
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="四图对齐检测器（ARCH-053 + ARCH-056）")
+    parser = argparse.ArgumentParser(description="全景对齐检测器（ARCH-053 + ARCH-056）")
     parser.add_argument(
         "--output",
         type=Path,

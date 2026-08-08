@@ -42,7 +42,7 @@ apply_depgraph.update_module_metadata 已对齐：acquisition_method='' → None
   DEPGRAPH-WRITE-PATH gate 白名单中（schema 迁移合法 DDL 入口）。
 
 备份（trae_054 v1.6.0 STEP0）：DDL+数据规范化提交成功后，事件触发 backup_pg_architecture()
-做 PG 架构库物理快照（四图 19 表）。DDL 在事务内（autocommit=False），失败回滚无副作用；
+做 PG 架构库物理快照（全景 19 表）。DDL 在事务内（autocommit=False），失败回滚无副作用；
 成功后快照保证可恢复。
 
 用法::

@@ -41,7 +41,7 @@
   - 输出 MD 报告到 docs/02_enterprise_architecture/03_governance_reports/battle_map_alignment_report.md
 
 定位：只读检测器（君子协定告警，不做自动修复，不硬阻断 commit），由人工或后续工具根据报告处理。
-与 align_panoramas.py 正交：align_panoramas 管 module_id 轴（四图模块一致性），
+与 align_panoramas.py 正交：align_panoramas 管 module_id 轴（全景模块一致性），
 本工具管 step_id 轴（作战环节落地性）。互不干扰。
 
 用法

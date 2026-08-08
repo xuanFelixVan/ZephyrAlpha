@@ -7,7 +7,7 @@
 # ai_autonomy: human_gated
 # ttl: permanent
 # --- 治理锚定结束 ---
-# 四图对齐检测豁免清单
+# 五图对齐检测豁免清单
 # 列入此清单的 module_id 不参与 align_panoramas 孤儿检测
 # 用途：仅在 depgraph 合理存在的模块（工具/测试/基础设施/域子模块），
 #       不需要 dataflowgraph/decisiongraph/blueprint 对应节点
@@ -20,7 +20,7 @@
 exempt_module_ids:
   # --- 历史豁免 ---
   - MOD-MKT_DATA
-  # --- 测试文件（57个）：测试非业务模块，不需四图对齐 ---
+  # --- 测试文件（57个）：测试非业务模块，不需五图对齐 ---
   - MOD-E2E-001
   - MOD-GOV_ARCH_REFERENCE_GATE
   - MOD-GOV_ASSET_INDEX_RECONCILER

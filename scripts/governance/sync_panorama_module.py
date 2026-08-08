@@ -16,7 +16,7 @@
 # [A_module] module_id=MOD-GOV_SYNC_PANORAMA | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-056 #ARCH-058
-"""sync_panorama_module.py — 四图模块同步引擎（ARCH-056）
+"""sync_panorama_module.py — 五图模块同步引擎（ARCH-056）
 
 从 depgraph.nodes 读取模块核心字段，单向派生到：
   1. dataflow_jobs（占位记录，entity_type='module_placeholder'）
@@ -219,7 +219,7 @@ def _sync_to_decision(conn, module: dict) -> int:
 
 
 def sync_module_panorama(module_id: str) -> int:
-    """同步单个模块的四图核心字段。
+    """同步单个模块的全景核心字段。
 
     Returns: 0=成功, 3=模块不存在, 4=DB异常, 5=部分下游同步失败（dataflow/decision/blueprint）
     """
@@ -442,7 +442,7 @@ def prune_orphans() -> dict:
 
 def main():
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="四图模块同步引擎（ARCH-056）")
+    parser = argparse.ArgumentParser(description="五图模块同步引擎（ARCH-056）")
     parser.add_argument("module_ids", nargs="*", help="要同步的模块 ID 列表（MOD-XXX MOD-YYY ...）")
     parser.add_argument("--all", action="store_true", help="同步所有模块")
     parser.add_argument(

@@ -22,7 +22,7 @@ DEPRECATED（ARCH-041）：git history 已是 yaml/jsonl 文件真源（director
 tmp/runtime_backups/（临时目录，不进 git）。
 
 PG 架构库备份已实现（ARCH-041 §5.33.1 治本 v2 扩展）：backup_pg_architecture() 函数，
-覆盖四图 19 张 DB 真源表（depgraph 11 + battle_map 3 + decisiongraph 2 + dataflowgraph 3）。
+覆盖全景 19 张 DB 真源表（depgraph 11 + battle_map 3 + decisiongraph 2 + dataflowgraph 3）。
 触发方式：apply_depgraph/apply_battle_map/apply_decisiongraph/apply_dataflowgraph
 成功修改架构数据后自动调用（事件触发）。
 
@@ -43,7 +43,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 运行时状态备份 — PG 架构库（四图19表）+ .runtime/handoffs 物理备份（灾备 §33）
+description: 运行时状态备份 — PG 架构库（全景19表）+ .runtime/handoffs 物理备份（灾备 §33）
 dimensions:
 - D1
 priority: P1
@@ -80,7 +80,7 @@ DEFAULT_BACKUP_DIR = REPO_ROOT / "tmp" / "runtime_backups"
 _PROTECTED_KEEP = 5
 
 # §5.160.2 SQL 集中化：架构库备份导出 SQL（提取到模块级常量，禁裸 SQL 字面量）
-# ARCH-041 §5.33.1 治本 v2 扩展（2026-08-03）：从 depgraph 2 表扩展到四图 19 张 DB 真源表。
+# ARCH-041 §5.33.1 治本 v2 扩展（2026-08-03）：从 depgraph 2 表扩展到全景 19 张 DB 真源表。
 #   - depgraph (11 表)：nodes/edges/nodes_metadata/edges_metadata/domains/domain_dependencies/
 #       domain_mapping/rule_bindings/blueprint_links/nodes_archive_module_lifecycle/domain_events
 #   - battle_map (3 表)：battle_map_steps/battle_map_anchors/battle_map_edges
@@ -227,11 +227,11 @@ def _is_pid_alive(pid: int) -> bool:
 # 触发方式：apply_depgraph/apply_battle_map/apply_decisiongraph/apply_dataflowgraph
 #   成功修改架构数据后自动调用（事件触发，非时间触发）。
 # 自动清理：保留最近 max_backups 个备份。
-# v2 扩展（2026-08-03）：从 depgraph 2 表（nodes/edges）扩展到四图 19 张 DB 真源表。
+# v2 扩展（2026-08-03）：从 depgraph 2 表（nodes/edges）扩展到全景 19 张 DB 真源表。
 
 
 def _export_architecture_tables(cur) -> dict[str, dict]:
-    """导出四图架构真源表（_ARCHITECTURE_TABLES，19 表）为 dict。
+    """导出全景架构真源表（_ARCHITECTURE_TABLES，19 表）为 dict。
 
     从 backup_pg_architecture 提取（§5.158 NO-HIGH-COMPLEXITY 治本：降低主函数复杂度）。
     缺失表优雅跳过（psycopg2.UndefinedTable），不阻断整体备份。
@@ -279,10 +279,10 @@ def _prune_old_backups(backup_dir: Path, max_backups: int) -> None:
 
 
 def backup_pg_architecture(max_backups: int = 10, throttle_seconds: int = 0) -> str | None:
-    """备份 PG 架构库数据（四图 19 张 DB 真源表）到 tmp/pg_backups/。
+    """备份 PG 架构库数据（全景 19 张 DB 真源表）到 tmp/pg_backups/。
 
     ARCH-041 §5.33.1 治本 v2 扩展：原 backup_pg_depgraph 仅备份 nodes/edges，
-    扩展为 backup_pg_architecture 覆盖四图架构真源表（depgraph+battle_map+decisiongraph+dataflowgraph）。
+    扩展为 backup_pg_architecture 覆盖全景架构真源表（depgraph+battle_map+decisiongraph+dataflowgraph）。
     使用 psycopg2 查询导出为 JSON（pg_dump 不可用时的 fallback）。
     自动清理旧备份（保留最近 max_backups 个）。
 

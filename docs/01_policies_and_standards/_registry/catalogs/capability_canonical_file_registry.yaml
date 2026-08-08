@@ -6101,6 +6101,12 @@ creation_tokens:
     created_by: "session-sess-41368-20260723000636"
     capability: "data_service_watchdog"
 
+  # --- 死人开关（#ARCH-BOOT-002 E，2026-08-08，独立心跳陈旧监控：系统级失效告警兜底）---
+  - file: "scripts/deadman_switch.ps1"
+    token: "auto-deadman-switch-20260808"
+    created_by: "session-g22-v150-review"
+    capability: "deadman_switch_monitor"
+
   # --- Phase 1 gate marker 目录（2026-07-21，test_phase1_gate_check 期望 8 个 kebab-case 目录）---
   - file: "src/zephyr/governance/agent-spec/__init__.py"
     token: "auto-phase1-marker-agent-spec-20260721"

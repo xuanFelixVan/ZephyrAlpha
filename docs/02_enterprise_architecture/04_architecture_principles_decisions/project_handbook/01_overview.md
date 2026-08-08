@@ -130,16 +130,17 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | 指标 | 值 |
 |------|----|
 | 域总数 / Total domains | 73 |
-| 节点总数 / Total nodes | 6308 |
-| 依赖边总数 / Total edges | 9714 |
+| 节点总数 / Total nodes | 6392 |
+| 依赖边总数 / Total edges | 9888 |
 | 孤儿节点数 / Orphan nodes | 0 |
 
 | build_status | 节点数 |
 |--------------|--------|
 | `deprecated` | 90 |
-| `generated` | 4261 |
-| `planned` | 136 |
-| `stable` | 1821 |
+| `generated` | 4326 |
+| `planned` | 137 |
+| `stable` | 1838 |
+| `testing` | 1 |
 <!-- AUTO-END:dependency_stats -->
 
 <!-- AUTO-START:external_deps -->
@@ -154,7 +155,7 @@ pytest --cov=zephyr --cov-report=term-missing   # 覆盖率（阈值 70%）
 | `openai>=1.0.0,<2.0.0` | LLM 客户端 / LLM client |
 | `sentence-transformers>=3.0.0,<4.0.0` | 句向量模型 / Sentence embeddings |
 | `structlog>=24.1.0,<25.0.0` | 结构化日志 / Structured logging |
-| `pyarrow>=15.0.0,<20.0.0` | Parquet I/O / Parquet I/O |
+| `pyarrow>=15.0.0,<26.0.0` | Parquet I/O / Parquet I/O |
 | `psycopg2-binary>=2.9.0,<3.0.0` | PostgreSQL 驱动 / PostgreSQL driver |
 | `clickhouse-driver>=0.2.6,<1.0.0` | — / — |
 | `redis>=5.0.0,<6.0.0` | — / — |

@@ -8,7 +8,7 @@
 # [TESTS] —
 # [A_module] module_id=MOD-GOV_PANORAMA_ALIGNMENT_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""test_panorama_alignment_gate.py — 四图模块对齐门禁单测（GATE-PANORAMA-ALIGNMENT，ARCH-056 四图升级）
+"""test_panorama_alignment_gate.py — 五图模块对齐门禁单测（GATE-PANORAMA-ALIGNMENT，ARCH-056 五图升级）
 
 权威依据：panorama_alignment_gate.py（make_panorama_alignment_gate）
 
@@ -17,9 +17,9 @@
 - TestShouldTrigger: _should_trigger 路径匹配（命中/不命中/Windows 反斜杠）
 - TestCheckNoTrigger: staged 文件不触及三图 → 跳过检测（passed=True）
 - TestCheckTriggerClean: 触发但报告无问题 → passed=True
-- TestCheckTriggerBlockDomainMismatch: 三图内部不一致（dataflow/decision）→ **阻断**（passed=False）【ARCH-056 四图升级】
+- TestCheckTriggerBlockDomainMismatch: 三图内部不一致（dataflow/decision）→ **阻断**（passed=False）【ARCH-056 五图升级】
 - TestCheckTriggerBlockDomainMismatchWithOrphans: 三图内部不一致+orphans → 仍阻断
-- TestCheckTriggerBlueprintOnlyMismatchWarns: blueprint-only 不一致 → warn-only（passed=True）【ARCH-056 四图升级】
+- TestCheckTriggerBlueprintOnlyMismatchWarns: blueprint-only 不一致 → warn-only（passed=True）【ARCH-056 五图升级】
 - TestCheckTriggerWarnOrphans: 触发且孤儿超阈值 → warn-only（passed=True）
 - TestCheckTriggerWarnDrift: 触发且状态漂移超阈值 → warn-only（passed=True）
 - TestCheckPanoramaEmpty: run_alignment 抛 PanoramaEmptyError → 跳过（passed=True）
@@ -27,7 +27,7 @@
 - TestCheckGitDiffFails: git diff 返回非零 → fail-open（passed=True）
 - TestCheckGitDiffRaises: git diff 抛异常 → fail-open（passed=True）
 
-阻断契约（ARCH-056 四图升级）：
+阻断契约（ARCH-056 五图升级）：
 - 三图内部 domain_mismatches>0（dataflow/decision 列非"-"）→ passed=False（阻断 commit）
 - blueprint-only 域不一致（仅 blueprint 列不一致）→ warn-only（passed=True）
 - orphans / state_drifts 超阈值 → warn-only（passed=True）
@@ -275,7 +275,7 @@ class TestCheckTriggerBlockDomainMismatchWithOrphans:
 
 
 class TestCheckTriggerBlueprintOnlyMismatchWarns:
-    """blueprint-only 域不一致 → warn-only（passed=True，ARCH-056 四图升级）。
+    """blueprint-only 域不一致 → warn-only（passed=True，ARCH-056 五图升级）。
 
     blueprint 是 depgraph 的派生数据，其域不一致属同步延迟问题，
     不阻断 commit，仅 warn 提示运行 sync_panorama_module.py 对齐。

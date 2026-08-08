@@ -59,7 +59,7 @@ GIT 备份门禁（P2 迁移后治本 2026-06-27）：
 
 PG depgraph 备份（ARCH-041 §5.33.1 治本，2026-07-03）：
   写入命令（非 --dry-run）执行后自动调用 backup_pg_architecture()（事件触发），
-  导出四图 19 张 DB 真源表为 JSON 到 tmp/pg_backups/，自动清理旧备份（保留 10 个）。
+  导出全景 19 张 DB 真源表为 JSON 到 tmp/pg_backups/，自动清理旧备份（保留 10 个）。
   备份失败不阻断主流程（main 已成功）。定义：backup_runtime_state.py。
 """
 
@@ -1660,7 +1660,7 @@ def transition_design_maturity(node_id: int, to: str, db_path: str = None, force
 
 
 def _sync_panorama_after_transition(node_id: int) -> None:
-    """状态转换后自动同步四图核心字段（ARCH-056）。
+    """状态转换后自动同步全景核心字段（ARCH-056）。
 
     查询 node 的 blueprint_id，如非空则调用 sync_module_panorama
     将新状态（design_maturity/build_status）同步到 dataflow/decision/blueprint。
@@ -4542,7 +4542,7 @@ def cmd_insert_domain_mapping(
 def mark_entry_point(path: str, entry_flag: bool = True, db_path: str = None) -> bool:
     """标记文件级节点为入口文件（nodes.entry_point）。
 
-    四图模块对齐 Step 3：为 nodes 表新增 entry_point 字段配套写入入口。
+    五图模块对齐 Step 3：为 nodes 表新增 entry_point 字段配套写入入口。
     入口文件 = 模块对外暴露的执行入口（如 __main__.py、CLI 入口、app.py）。
 
     :param path: 节点 path（nodes 表 PK 候选，唯一索引保证）
@@ -4603,7 +4603,7 @@ def update_module_metadata(
 ) -> bool:
     """更新模块级元数据（nodes_metadata 表 UPSERT）。
 
-    四图模块对齐 Step 3：为 nodes_metadata 表新增 4 个模块级字段配套写入入口。
+    五图模块对齐 Step 3：为 nodes_metadata 表新增 4 个模块级字段配套写入入口。
     path 为稳定 PK（裁定#209 Stage 2）。若行不存在则 INSERT，存在则 UPDATE 指定字段。
 
     :param path: 节点 path（与 nodes.path 对齐）
@@ -5026,7 +5026,7 @@ def main() -> None:
         "用于 infra_id 误存为 blueprint_id 的清理（INFRA-DB-* 是基础设施资源 ID，非 module_id）。"
         "节点仍由 path 唯一标识（裁定#209 Stage 2: path 是稳定 PK）。配 --dry-run 预览。",
     )
-    # 四图模块对齐 Step 3 Task 3.4：模块全景字段写入入口
+    # 五图模块对齐 Step 3 Task 3.4：模块全景字段写入入口
     parser.add_argument(
         "--mark-entry",
         type=str,
@@ -5095,7 +5095,7 @@ def main() -> None:
         ok = transition_build_status(node_id, to_status)
         if not ok:
             sys.exit(4)
-        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步四图
+        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步全景
         return
 
     if args.transition_design_maturity:
@@ -5104,7 +5104,7 @@ def main() -> None:
         ok = transition_design_maturity(node_id, to_maturity, force=args.force)
         if not ok:
             sys.exit(4)
-        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步四图
+        _sync_panorama_after_transition(node_id)  # ARCH-056: 状态转换后自动同步全景
         return
 
     if args.remove_design_node is not None:
@@ -5485,7 +5485,7 @@ def main() -> None:
         count = cmd_cleanup_orphan_nodes(dry_run=args.dry_run)
         sys.exit(0 if count >= 0 else 4)
 
-    # 四图模块对齐 Step 3 Task 3.4：模块全景字段写入 dispatch
+    # 五图模块对齐 Step 3 Task 3.4：模块全景字段写入 dispatch
     if args.mark_entry:
         if len(args.mark_entry) != 1:
             print(
@@ -5621,7 +5621,7 @@ if __name__ == "__main__":
                 # Obs2 治本：传 throttle_seconds=60 节流——连续 apply 调用
                 # 在数秒内产生冗余快照（实测 14 秒 8 份），DR 备份无需细粒度
                 # （git commit 已追溯架构变更，trae_054 STEP0 铁律）。
-                # v2 扩展（2026-08-03）：backup_pg_architecture 覆盖四图 19 张 DB 真源表。
+                # v2 扩展（2026-08-03）：backup_pg_architecture 覆盖全景 19 张 DB 真源表。
                 backup_pg_architecture(throttle_seconds=60)
             except Exception as _e:  # noqa: BLE001  # 备份失败不阻断主流程（DR 安全网）
                 # 备份失败不阻断主流程（main 已成功），仅记录到 stderr

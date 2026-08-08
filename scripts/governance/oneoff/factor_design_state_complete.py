@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] oneoff
-# [INVARIANTS] 因子工厂四图设计态补全：补全 subdomain_id + 删反向边 + 新增域内依赖边 + GATE 分类；depgraph 修改通过 apply_depgraph.py 受控函数（铁律）
+# [INVARIANTS] 因子工厂全景设计态补全：补全 subdomain_id + 删反向边 + 新增域内依赖边 + GATE 分类；depgraph 修改通过 apply_depgraph.py 受控函数（铁律）
 # [MODIFY-GUARD] none
 # [STABILITY] ephemeral
 # [SAFETY] M
@@ -13,7 +13,7 @@
 # [ERROR_CONTRACT] dry-run->退出码0; 执行成功->退出码0; depgraph不可达->退出码2; 部分失败->退出码1
 # [TESTS] python scripts/governance/oneoff/factor_design_state_complete.py --dry-run
 # [TTL] permanent
-"""因子工厂四图设计态补全——一次性执行脚本。
+"""因子工厂全景设计态补全——一次性执行脚本。
 
 执行计划 Step 1-4：
   Step 1: 补全 50 个节点的 subdomain_id（扁平分组，FAC-CORE/ASHARE/ANALYSIS/GOV/BARRA/MINE）
@@ -181,7 +181,7 @@ def resolve_subdomain(path: str) -> str | None:
 
 def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
-    parser = argparse.ArgumentParser(description="因子工厂四图设计态补全")
+    parser = argparse.ArgumentParser(description="因子工厂全景设计态补全")
     parser.add_argument("--dry-run", action="store_true", help="仅预览，不写 DB")
     args = parser.parse_args()
 

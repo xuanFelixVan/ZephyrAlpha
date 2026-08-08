@@ -8,7 +8,7 @@
 # [TESTS] —
 # [A_module] module_id=MOD-D5_ARCH_TOOLS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
-"""test_query_module_panorama.py — 模块全景查询入口单测（四图模块对齐 Step 5）
+"""test_query_module_panorama.py — 模块全景查询入口单测（五图模块对齐 Step 5）
 
 权威依据：scripts/governance/query_module_panorama.py
 

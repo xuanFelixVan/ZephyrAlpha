@@ -285,5 +285,5 @@
 | Step 1 | 补全 6 个数据域节点的 subdomain_id | apply_depgraph.py `_load_depgraph` + `_atomic_write` |
 | Step 2 | 登记 4 个 design 节点（含 gate_reason） | apply_depgraph.py `--add-design-node` |
 | Step 3 | 修复 3 个契约的 fulfillment_status | 直接 UPDATE contracts 表（sync 不处理此字段） |
-| Step 4 | 四图对齐验证 | sync_panorama_module.py + align_panoramas.py |
+| Step 4 | 五图对齐验证 | sync_panorama_module.py + align_panoramas.py |
 | Step 5 | GitCommitGateway 提交 | python scripts/git_commit.py |

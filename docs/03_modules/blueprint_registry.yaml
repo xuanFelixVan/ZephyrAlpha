@@ -1,12 +1,12 @@
 registry:
   version: 2.7.10
   created: '2026-05-02'
-  last_updated: '2026-08-07'
+  last_updated: '2026-08-08'
   total_blueprints: 153
   scope: 03_modules/
   note: Auto-synced from 153 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-08-07'
+  generated_at: '2026-08-08'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -434,9 +434,9 @@ blueprints:
   file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
 - module_id: MOD-GOV-SYNC-PANORAMA
   name: panorama_alignment_engine
-  title: 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
-  summary: '四图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 四图模块对齐。 4
-    核心字段（module_id/domain_id/design_maturity/build_status）跨四图同步。 单模块同步+全量同步+transition
+  title: 五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐
+  summary: '五图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 五图模块对齐。 4
+    核心字段（module_id/domain_id/design_maturity/build_status）跨全景同步。 单模块同步+全量同步+transition
     触发+blueprint 缺失标记+多数投票聚合。
 
     '
@@ -2160,7 +2160,7 @@ summary:
     L03_trading: 3
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-08-07'
+  last_recomputed: '2026-08-08'
 changelog:
 - version: 2.7.13
   date: '2026-08-07'

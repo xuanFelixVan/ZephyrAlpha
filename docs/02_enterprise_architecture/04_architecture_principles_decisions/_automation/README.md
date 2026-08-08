@@ -67,7 +67,7 @@ python -m scripts.governance.d5_architecture.generators.generate_code_wiki_stats
 | 决策图 | generate_decision_diagram | 06_decision_architecture/ |
 | 治理报告 | generate_capacity_report 等 | 03_governance_reports/ |
 | 全景注册表 | generate_panorama_registry | 00_overview_entry/panorama_registry.md |
-| 四图对齐 | align_panoramas | generated/panorama_alignment_report.md |
+| 五图对齐 | align_panoramas | generated/panorama_alignment_report.md |
 
 ## 五、SSoT 红线
 

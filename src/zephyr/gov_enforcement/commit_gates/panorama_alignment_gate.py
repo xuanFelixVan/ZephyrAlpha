@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 四图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
+# [INVARIANTS] 三图内部 domain_mismatches>0 阻断 commit（passed=False，ARCH-056 五图升级：只阻断 depgraph/dataflow/decision 三图内部不一致）；blueprint 图域不一致 warn-only（blueprint 是 depgraph 派生数据）；orphans/state_drifts 保持 warn-only；仅当 staged 文件触及 depgraph/dataflow/decision 相关路径时触发检测；run_alignment 异常时 fail-open（return True）+ 持久化 critical_warn 到 reconcile_execution_log（Ruling:100PCT-AI-GOVERNANCE P1-5）；三图任一为空（PanoramaEmptyError）时跳过检测（return True）
 # [MODIFY-GUARD] gate_id="GATE-PANORAMA-ALIGNMENT"；check 闭包签名 (gateway, files, **kwargs) -> tuple[bool, str]；domain_mismatches 阻断阈值=0（任何不一致即阻断）
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,7 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_panorama_alignment_gate.py
 # [A_module] module_id=MOD-GATE_ENGINE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""panorama_alignment_gate.py — 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
+"""panorama_alignment_gate.py — 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）
 
 在 GitCommitGateway pre-commit 阶段调用 align_panoramas.run_alignment() 检测三图
 （depgraph / dataflowgraph / decisiongraph）的模块对齐情况：
@@ -209,7 +209,7 @@ def make_panorama_alignment_gate() -> GateSpec:
         design_only_count = len(report.design_only_in_one)
 
         # 4a. 核心字段 domain_id 不一致 → 阻断 commit（ARCH-056 升级）
-        #     ARCH-056 四图升级：只阻断三图（depgraph/dataflow/decision）内部的不一致；
+        #     ARCH-056 五图升级：只阻断三图（depgraph/dataflow/decision）内部的不一致；
         #     blueprint 图的域不一致只 warn（blueprint 是 depgraph 的派生数据，
         #     其不一致是同步延迟问题，需通过 sync_panorama_module.py 渐进修复）。
         #     判定：三图内部不一致 = 三图中存在 ≥2 个不同的非空 domain；
@@ -230,7 +230,7 @@ def make_panorama_alignment_gate() -> GateSpec:
             detail = (
                 f"核心字段 domain_id 不一致（三图内部）：{len(strict_mismatches)} 处，"
                 f"请运行 `python scripts/governance/sync_panorama_module.py --all` "
-                f"对齐四图后重试"
+                f"对齐全景后重试"
             )
             logger.error(
                 "GATE-PANORAMA-ALIGNMENT BLOCK: %s (orphans=%d, drifts=%d, design_only=%d, "

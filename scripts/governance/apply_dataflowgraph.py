@@ -126,7 +126,7 @@ SQL_DELETE_JOB_BY_ID = "DELETE FROM dataflow_jobs WHERE job_id = %s"
 def _backup_after_write(rc: int) -> None:
     """写操作成功后自动触发架构库备份（trae_054 v1.6.0 STEP0）。失败不阻断主流程。
 
-    v2 扩展（2026-08-03）：backup_pg_architecture 覆盖四图 19 张 DB 真源表
+    v2 扩展（2026-08-03）：backup_pg_architecture 覆盖全景 19 张 DB 真源表
     （depgraph+battle_map+decisiongraph+dataflowgraph），非仅 dataflowgraph。
     """
     if rc == EXIT_PASS:

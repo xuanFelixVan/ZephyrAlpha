@@ -81,8 +81,8 @@ depgraph 节点两态生命周期：`design`（设计态，蓝图阶段代码未
 | 指标 | 值 |
 |------|----|
 | 功能域 / Domains | 73 |
-| 代码节点 / Nodes | 6308 |
-| 依赖边 / Edges | 9714 |
+| 代码节点 / Nodes | 6392 |
+| 依赖边 / Edges | 9888 |
 | 孤儿节点 / Orphans | 0 |
 | 运营态占比 / Production ratio | 96.4%（stable+generated） |
 <!-- AUTO-END:project_snapshot -->
@@ -132,7 +132,7 @@ pip install -r requirements.txt
 | 决策架构 | `docs/02_enterprise_architecture/06_decision_architecture/` | 决策轨迹图（模型/数据/人类接管/紧急 + L2a/L3） |
 | 治理报告 | `docs/02_enterprise_architecture/03_governance_reports/` | 容量报告、约束违反、设计 vs 运营态、能力热图 |
 | 全景注册表 | `docs/02_enterprise_architecture/00_overview_entry/` | 导航索引、全景注册表 |
-| 四图对齐报告 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` | depgraph/dataflow/decision/blueprint 四图对齐检测 |
+| 全景对齐报告 | `docs/02_enterprise_architecture/generated/panorama_alignment_report.md` | depgraph/dataflow/decision/blueprint 五图对齐检测 |
 
 ---
 
