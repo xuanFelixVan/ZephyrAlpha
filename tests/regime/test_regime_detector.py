@@ -295,11 +295,13 @@ class TestOverlay:
 class TestOverlayGating:
     """overlay #1 门控测试（#ARCH-REGIME-OVERLAY-001 方案A固化）。
 
-    门控逻辑：overlay_gated=True（默认）时，detect() 入口检查
+    门控逻辑：overlay_gated=True（默认）时，detect() 在 _run_overlay 之后检查
     risk_signal_inputs.params[1]：
-      - #1 >= 1.0（非危机）→ overlay_signals 置空，overlay 不干预
-        （避免 T1/S1 假阳性触发系统性压仓致 Sharpe 退化 0.02）
-      - #1 <  1.0（危机期）→ overlay_signals 保留，overlay 正常生效
+      - #1 >= 1.0（非危机）→ overlay_probs 置零，overlay 概率不注入
+        （避免 T1/S1 假阳性触发系统性压仓致 Sharpe 退化 0.02）；
+        但 _run_overlay 已完成转换评估，_last_transitions 保留触发记录
+        （S2 在危机结束 #1≥1.0 时点触发，B4 验证需捕获）
+      - #1 <  1.0（危机期）→ overlay_probs 保留，overlay 正常生效
     与 _compute_risk_signal 的 #1 门控对齐（#1>=1.0 时 RiskSignal=1.0）。
     """
 
@@ -307,6 +309,11 @@ class TestOverlayGating:
     def s1_overlay(self) -> dict:
         """S1 触发的 overlay_signals（CRISIS r10=0.6）。"""
         return {"transitions": {"S1": {"vix_panic": 70, "correlation": 65, "liquidity": 40}}}
+
+    @pytest.fixture
+    def s2_overlay(self) -> dict:
+        """S2 触发的 overlay_signals（RECOVERY r11=0.4，trigger 阶段）。"""
+        return {"transitions": {"S2": {"capitulation": 65, "vix": 45, "bad_news_flat": 45}}}
 
     def test_default_overlay_gated_is_true(self):
         """默认 overlay_gated=True（治本方案默认开启）。"""
@@ -351,6 +358,43 @@ class TestOverlayGating:
         d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
         probs, _ = d.detect({}, s1_overlay, {"params": {1: 0.99}})
         assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
+
+    def test_gated_keeps_transition_records_when_blocked(self, s1_overlay):
+        """门控屏蔽概率注入，但保留转换评估记录（B4 验证接口，discussion_002 §4 ③）。
+
+        #1>=1.0（非危机）+ overlay_gated=True → overlay_probs 全 0，但 _last_transitions
+        仍记录 S1 触发事件（triggered=True, stage=trigger），供 B4 转换触发准确性验证。
+        """
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s1_overlay, {"params": {1: 1.0}})
+        # overlay 概率被屏蔽
+        for s in OVERLAY_STATES:
+            assert probs.overlay_probabilities[s] == 0.0
+        # 转换记录仍保留（B4 验证依赖）
+        assert len(d._last_transitions) == 1
+        trig = d._last_transitions[0]
+        assert trig.transition_type == "S1"
+        assert trig.triggered is True
+        assert trig.stage == "trigger"
+
+    def test_gated_s2_recorded_in_non_crisis(self, s2_overlay):
+        """S2(CRISIS→RECOVERY) 在危机结束（#1≥1.0）时点触发，转换记录被保留。
+
+        回归测试：S2 语义恰在危机结束时触发（#1 从 <1.0 恢复到 ≥1.0），
+        旧门控在入口清空 overlay_signals 致 S2 转换评估被跳过，B4 验证
+        S2 recovery 0/3 漏触发（Phase 2 不闭环）。修复后 _last_transitions
+        保留 S2 触发记录，B4 可捕获。
+        """
+        d = RegimeDetector(shrinkage_enabled=True, overlay_gated=True)
+        probs, _ = d.detect({}, s2_overlay, {"params": {1: 1.0}})
+        # overlay 概率被屏蔽（Sharpe 保护不变）
+        assert probs.overlay_probabilities["r11"] == 0.0
+        # S2 转换记录保留（B4 修复核心）
+        assert len(d._last_transitions) == 1
+        trig = d._last_transitions[0]
+        assert trig.transition_type == "S2"
+        assert trig.triggered is True
+        assert trig.stage == "trigger"
 
 
 # ── 4. 12维合并归一化 ───────────────────────────────────────────────

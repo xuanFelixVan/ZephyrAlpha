@@ -331,8 +331,10 @@ class RegimeDetector:
                 最优（标准 TS 需对 pre-softmax logits 操作，HMM log_proba 是对数后验）。
                 正式的 T 学习（IS 数据最小化 BCE）见 discussion_004 §2.2.6 Step 3。
             overlay_gated: overlay #1 门控开关（#ARCH-REGIME-OVERLAY-001 方案A治本）。
-                True（默认）→ overlay 仅在危机期（#1<1.0）生效，非危机期 overlay_signals
-                置空不干预——避免 T1/S1 在非危机期假阳性触发系统性压仓致 Sharpe 退化 0.02。
+                True（默认）→ overlay 仅在危机期（#1<1.0）生效，非危机期屏蔽 overlay 概率
+                注入（overlay_probs 置零）——避免 T1/S1 在非危机期假阳性触发系统性压仓致
+                Sharpe 退化 0.02。转换评估记录（_last_transitions）始终保留，确保 S2
+                (CRISIS→RECOVERY) 在危机结束（#1≥1.0）时点的触发能被 B4 验证捕获。
                 与 _compute_risk_signal 的 #1 门控对齐（#1>=1.0 时 RiskSignal=1.0）。
                 False → overlay 全程生效（ungated，诊断用，如 dump_overlay_triggers.py）。
         """
@@ -372,17 +374,20 @@ class RegimeDetector:
         Returns:
             (RegimeProbabilities, ShrinkageResult)
         """
+        # 子模块①：HMM 4态
+        hmm_probs = self._run_hmm(regime_features)
+        # 子模块②：覆盖层 3 特殊态 + 8 转换评分（始终评估，记录 _last_transitions 供 B4 验证）
+        overlay_probs = self._run_overlay(overlay_signals)
         # 方案A门控（#ARCH-REGIME-OVERLAY-001）：overlay 仅在危机期（#1<1.0）生效。
-        # 非危机期 T1/S1 假阳性触发系统性压仓致 Sharpe 退化 0.02；与 RiskSignal #1 门控
-        # 对齐——#1>=1.0 时 overlay_signals 置空，平时不干预，危机期才允许 overlay 改概率。
+        # 非危机期屏蔽 overlay 概率注入（避免 T1/S1 假阳性触发系统性压仓致 Sharpe 退化
+        # 0.02），但保留转换评估记录（_last_transitions）——S2(CRISIS→RECOVERY) 在危机
+        # 结束时触发，恰好是 #1≥1.0 时点，若在入口清空 overlay_signals 会跳过 S2 转换
+        # 评估，致 B4 验证 S2 recovery 0/3 漏触发（Phase 2 不闭环）。故门控改为在
+        # _run_overlay 之后屏蔽概率注入，与 RiskSignal #1 门控（#1>=1.0 时=1.0）对齐。
         if self.overlay_gated:
             _params = (risk_signal_inputs or {}).get("params") or {}
             if float(_params.get(1, 1.0)) >= 1.0:
-                overlay_signals = {}
-        # 子模块①：HMM 4态
-        hmm_probs = self._run_hmm(regime_features)
-        # 子模块②：覆盖层 3 特殊态 + 8 转换评分
-        overlay_probs = self._run_overlay(overlay_signals)
+                overlay_probs = {s: 0.0 for s in OVERLAY_STATES}
         # 7 维合并归一化
         probs = self._merge_probabilities(hmm_probs, overlay_probs)
         # 子模块③④⑤：Shrinkage 链
