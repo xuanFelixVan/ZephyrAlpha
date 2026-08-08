@@ -310,7 +310,7 @@ class TestJulyCaseS1Trigger:
         probs, shrinkage = detector.detect(regime_features, overlay_signals=overlay, risk_signal_inputs=risk_inputs)
         # 危机 Shrinkage 应显著<1.0（risk=0.30 × confidence）
         assert shrinkage.value < 0.5, f"7/17 危机 Shrinkage 应<0.5，实际 {shrinkage.value}"
-        assert len(probs.probabilities) == 12
+        assert len(probs.probabilities) == 7  # 7态(4 HMM r1-r4 + 3 overlay r10-r12),见 REGIME_STATES
 
 
 # ---------------------------------------------------------------------------

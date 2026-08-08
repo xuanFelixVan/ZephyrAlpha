@@ -46173,9 +46173,51 @@ battle_map_cross_cutting:
   domain_id: D_REGIME
   name_zh: Regime检测器
   name_en: Regime Detector
-  desc_zh: 12态灰度概率分布+Shrinkage风险节流信号产出，regime链源头（跨市场状态检测域）
-  desc_en: 12-state grayscale probability distribution + Shrinkage risk throttle signal producer
-  plain_zh: 判断市场处于12种状态中的哪种(牛市/熊市/震荡/危机/复苏等)，输出概率分布驱动风险节流
+  desc_zh: 7态灰度概率分布(4 HMM r1-r4 + 3 overlay r10-r12)+Shrinkage风险节流信号产出，regime链源头（跨市场状态检测域）
+  desc_en: 7-state grayscale probability distribution (4 HMM r1-r4 + 3 overlay r10-r12) + Shrinkage risk throttle signal producer
+  plain_zh: 判断市场处于7种状态中的哪种(4个HMM基态:低波/中波震荡/牛市/熊市 + 3个overlay:危机/复苏/突破)，输出概率分布驱动风险节流
+- module_path: src/zephyr/regime/features/market_features.py
+  domain_id: D_REGIME
+  name_zh: 市场级regime特征
+  name_en: Market Regime Features
+  desc_zh: 实现波动率分位(F1)/跨资产相关性(F3)/涨跌家数比(F4)/量能异动(F5)纯函数，MOD-REGIME-002 §3
+  desc_en: Realized vol percentile / cross-asset corr / AD ratio / volume anomaly pure functions (MOD-REGIME-002 §3)
+  plain_zh: 算市场级别的几个特征——波动率分位、跨资产相关性、涨跌家数比、量能异动，给regime检测器当输入
+- module_path: src/zephyr/regime/features/risk_features.py
+  domain_id: D_REGIME
+  name_zh: RiskSignal 13参数算子
+  name_en: RiskSignal 13-Param Operators
+  desc_zh: RiskSignal 13参数纯函数（系数映射→risk_signal_inputs），平时=1.0不干预，危机期加深收缩，Phase 2a
+  desc_en: RiskSignal 13-param pure functions (coef mapping to risk_signal_inputs), idle=1.0, deepens shrinkage in crisis, Phase 2a
+  plain_zh: 算风险信号的13个参数——平时都是1.0不干预，检测到危机时把对应参数压低加深收缩，只降不升
+- module_path: src/zephyr/regime/features/overlay_features.py
+  domain_id: D_REGIME
+  name_zh: Overlay 8转换评分算子
+  name_en: Overlay 8-Transition Score Operators
+  desc_zh: overlay_signals 8转换评分纯函数（score∈[0,100]/flag∈{0,1}），MOD-REGIME-002 §4 D-SIGNAL-68，Phase 2b
+  desc_en: overlay_signals 8-transition scoring pure functions (score/flag dims), D-SIGNAL-68, Phase 2b
+  plain_zh: 算overlay信号的8个转换评分——每个维度打分(0-100)或标记(0/1)，平时为0不干预，触发时叠加到HMM概率上
+- module_path: src/zephyr/regime/regime_feature_builder.py
+  domain_id: D_REGIME
+  name_zh: Regime特征构建器
+  name_en: Regime Feature Builder
+  desc_zh: HMM 6特征X矩阵构建+walk-forward季度重拟合+Shrinkage调度编排，MOD-REGIME-002核心枢纽
+  desc_en: HMM 6-feature X-matrix builder + walk-forward quarterly refit + Shrinkage schedule orchestration, MOD-REGIME-002 hub
+  plain_zh: regime检测的核心构建器——把各种特征拼成HMM输入矩阵，季度重拟合模型，编排Shrinkage调度（含risk/overlay信号接入）
+- module_path: src/zephyr/regime/risk_signal_builder.py
+  domain_id: D_REGIME
+  name_zh: RiskSignalInputs构造器
+  name_en: RiskSignalInputs Builder
+  desc_zh: RiskSignalInputs构造器（build_for_date PIT严格），#1门控(#1=1.0屏蔽附加参数/#1<1.0加深收缩)，Phase 2a
+  desc_en: RiskSignalInputs builder (PIT-strict), #1 gating (idle=1.0 masks add-ons / crisis<1.0 deepens), Phase 2a
+  plain_zh: 构造风险信号输入——按日期算13参数，平时#1=1.0屏蔽附加参数不干预，危机期#1<1.0加深收缩
+- module_path: src/zephyr/regime/overlay_signals_builder.py
+  domain_id: D_REGIME
+  name_zh: OverlaySignals构造器
+  name_en: OverlaySignals Builder
+  desc_zh: OverlaySignals构造器（8转换评分→overlay_signals），#1门控对齐，数据缺失降级0.0，Phase 2b
+  desc_en: OverlaySignals builder (8-transition scores to overlay_signals), #1-gated, missing data degrades to 0.0, Phase 2b
+  plain_zh: 构造overlay信号——按日期算8个转换评分，#1门控（危机期才生效），数据缺失降级为0.0不影响HMM基态
 - module_path: src/zephyr/position/core/strategy_book.py
   domain_id: D_POSITION
   name_zh: 策略账本
