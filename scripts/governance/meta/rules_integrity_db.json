@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "4cfce6ed96c815bb",
+      "hash": "d6ac672d762de138",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -51,7 +51,7 @@
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "f0e0f7664c46af67",
+      "hash": "5a458e73533166e2",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "14f3b131793f6245",
+      "hash": "89def0548d51f255",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -71,6 +71,6 @@
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     }
   },
-  "registered_at": "2026-08-08T11:03:02.357103+00:00",
+  "registered_at": "2026-08-08T11:20:56.510427+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
