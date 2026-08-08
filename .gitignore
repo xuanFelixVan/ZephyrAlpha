@@ -342,6 +342,10 @@ data/backups/depgraph_pre_variant_patch_*.sql
 /models/
 data/models/
 
+# SFT 训练数据集（build_sft_dataset.py 派生产物，4.5MB+，可重建；#ARCH-NLP-PIPELINE-001 Phase 4）
+# 治本 2026-08-09：原未忽略，untracked 状态被 git clean/reconciler 误删风险
+data/sft/
+
 # Runtime cache (walk_cache.json 400MB+, regenerate on demand)
 data/cache/
 

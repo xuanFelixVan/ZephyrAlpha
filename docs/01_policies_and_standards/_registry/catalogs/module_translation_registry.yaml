@@ -2731,6 +2731,34 @@ entries:
   desc_zh: 分层抽样（危机期/复苏期/常态期）从 ClickHouse 采集新闻，关键词规则标注 sentiment，存为 news_sentiment_200.jsonl，断点续作追加写入。
   desc_en: ''
   plain_zh: 评估集构建脚本，按时间段分层抽新闻，用关键词规则打情感标签，存成评估集。
+- module_path: scripts/ml/build_sft_dataset.py
+  domain_id: D_DATA
+  name_zh: SFT 训练数据集构建脚本（P1-E3 NLP 管道 Phase 4）。
+  name_en: build_sft_dataset
+  desc_zh: 多时间段采集中文新闻（危机期密集），复用 build_eval_set.keyword_label 标注，平衡采样 pos/neg/neutral，合并 Financial PhraseBank 英文异源增强，排除评估集 200 条防泄露，输出 data/sft/{train,eval}.jsonl。
+  desc_en: ''
+  plain_zh: 训练数据构建脚本，采中文新闻用关键词打标，平衡三类样本，加英文金融句库增强，存成 SFT 训练集。
+- module_path: scripts/ml/run_sft_train.py
+  domain_id: D_ML_TRAIN
+  name_zh: LoRA SFT 训练脚本（P1-E3 NLP 管道 Phase 4）。
+  name_en: run_sft_train
+  desc_zh: 加载 data/sft/{train,eval}.jsonl 转 messages 格式，SentimentSFTTrainer 做 QLoRA 4bit 训练，在 news_sentiment_200.jsonl 算 Macro-F1，LoRA adapter 持久化 models/qwen25-7b-sft-v1/。支持 --smoke 快速验证管道。
+  desc_en: ''
+  plain_zh: 训练执行脚本，加载训练数据跑 QLoRA 微调，算 F1 看效果，存模型适配器。
+- module_path: src/zephyr/ml_train/implementations/sentiment_sft_trainer.py
+  domain_id: D_ML_TRAIN
+  name_zh: 情感 LoRA SFT 训练器（P1-E3 NLP 管道 Phase 4）。
+  name_en: sentiment_sft_trainer
+  desc_zh: 对 Qwen2.5-7B-Instruct 做 QLoRA 4bit 微调（r=8/alpha=16/target=q,k,v,o_proj），训练数据 messages 格式对齐 nlp_inference prompt，assistant_only_loss 只对 JSON 输出算 loss，继承 ModelTrainerBase，LoRA adapter 持久化。重依赖 lazy-import 确保无 [ml-train] extras 可 import。
+  desc_en: ''
+  plain_zh: 情感模型训练器，用 QLoRA 微调 Qwen2.5-7B 学新闻情感分类，输出对齐推理格式。
+- module_path: tests/ml_train/test_sentiment_sft_trainer.py
+  domain_id: D_ML_TRAIN
+  name_zh: 情感 SFT 训练器桩测试（P1-E3 NLP 管道 Phase 4）。
+  name_en: test_sentiment_sft_trainer
+  desc_zh: 不依赖 torch/peft/trl，覆盖 SFTTrainConfig 默认值、build_sft_messages 消息格式、SFTTrainError error_code 纯逻辑。训练/推理路径属 [ml-train] extras 集成测试范畴。
+  desc_en: ''
+  plain_zh: 训练器桩测试，不加载重依赖，只测配置和消息格式的纯逻辑。
 - module_path: src/zephyr/data/normalizers/
   domain_id: D_DATA
   name_zh: 归一化器

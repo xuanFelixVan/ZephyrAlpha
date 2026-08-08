@@ -110,6 +110,10 @@ class SentimentResult:
 _THINK_RE = re.compile(r"<think>[\s\S]*?</think>", re.IGNORECASE)
 # 匹配第一个扁平 JSON 对象（情感输出无嵌套花括号）
 _JSON_OBJ_RE = re.compile(r"\{[^{}]*\}", re.DOTALL)
+# 宽松兜底：decoder-only 生成切片瑕疵（开头 "{" 被切掉）或模型未充分收敛时，
+# 仍能从残缺输出中提取 sentiment/score 字段，避免一律降级 neutral。
+_SENTIMENT_FIELD_RE = re.compile(r'"sentiment"\s*:\s*"(positive|negative|neutral)"', re.IGNORECASE)
+_SCORE_FIELD_RE = re.compile(r'"score"\s*:\s*([0-9]*\.?[0-9]+)', re.IGNORECASE)
 
 
 def parse_sentiment(raw: str) -> tuple[str, float]:
@@ -149,6 +153,21 @@ def parse_sentiment(raw: str) -> tuple[str, float]:
         sentiment, score = _try_parse_json(m.group(0))
         if sentiment is not None:
             return sentiment, score
+
+    # 终极兜底：字段级正则——不依赖花括号配对，容忍开头 "{" 丢失 / 前缀噪声。
+    # SFT 早期或 batch generate 切片边界瑕疵时，JSON 主体仍完整但缺 "{"，
+    # 此时 _JSON_OBJ_RE 匹配不到，用字段正则直接提取 sentiment/score。
+    sm = _SENTIMENT_FIELD_RE.search(text)
+    if sm:
+        sentiment = sm.group(1).lower()
+        score = 0.5
+        scm = _SCORE_FIELD_RE.search(text)
+        if scm:
+            try:
+                score = max(0.0, min(1.0, float(scm.group(1))))
+            except ValueError:
+                pass
+        return sentiment, score
 
     _log.warning("parse_sentiment: 解析失败，降级 neutral; raw=%s", raw[:200])
     return NEUTRAL, 0.5

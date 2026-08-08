@@ -8388,6 +8388,22 @@ creation_tokens:
     token: "auto-build-eval-set-20260808"
     created_by: "session-p1e3-nlp-phase2"
     capability: "nlp_inference"
+  - file: "scripts/ml/build_sft_dataset.py"
+    token: "auto-build-sft-dataset-20260809"
+    created_by: "session-p1e3-nlp-phase4"
+    capability: "nlp_inference"
+  - file: "scripts/ml/run_sft_train.py"
+    token: "auto-run-sft-train-20260809"
+    created_by: "session-p1e3-nlp-phase4"
+    capability: "nlp_inference"
+  - file: "src/zephyr/ml_train/implementations/sentiment_sft_trainer.py"
+    token: "auto-sentiment-sft-trainer-20260809"
+    created_by: "session-p1e3-nlp-phase4"
+    capability: "nlp_inference"
+  - file: "tests/ml_train/test_sentiment_sft_trainer.py"
+    token: "auto-test-sentiment-sft-trainer-20260809"
+    created_by: "session-p1e3-nlp-phase4"
+    capability: "nlp_inference"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
