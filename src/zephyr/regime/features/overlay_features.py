@@ -197,15 +197,19 @@ def s2_capitulation_score(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
 
     映射（对齐 S2 trigger 门槛 capitulation>=60）：
       z>3 & 跌>4%  → 90  （极端投降抛售）
-      z>2 & 跌>3%  → 70  （严重投降，过门槛）
-      z>2 & 跌>1.5%→ 50  （放量下跌，未达门槛）
+      z>1 & 跌>3%  → 70  （严重投降，过门槛）
+      z>1 & 跌>1.5%→ 50  （放量下跌，未达门槛）
       else        → 0    （无投降信号）
+
+    注：原阈值 z>2 在持续高量危机期经验性不可达——2015 股灾期 vol_z max=1.79
+   （z-score 对持续高量滚窗均值被抬高，单日 z 被压低）。2026-08-08 降至 z>1
+   （~1σ，全局仍仅 ~16% 日达标，选择性足够）。
     """
     score = pd.Series(0.0, index=vol_z.index)
     z = vol_z.fillna(0.0)
     pct = pct_change.fillna(0.0)
-    score[(z > 2) & (pct < -0.015)] = 50
-    score[(z > 2) & (pct < -0.03)] = 70
+    score[(z > 1) & (pct < -0.015)] = 50
+    score[(z > 1) & (pct < -0.03)] = 70
     score[(z > 3) & (pct < -0.04)] = 90
     return score
 
@@ -288,7 +292,9 @@ def s2_valuation_score(close: pd.Series, window: int = 250) -> pd.Series:
       else     → 0   （接近高点，无估值吸引力）
     """
     score = pd.Series(0.0, index=close.index)
-    rolling_max = close.rolling(window).max()
+    # min_periods=20：避免 warmup 期（数据起点 < window）rolling_max=NaN → pos=NaN → 误零。
+    # 实测 000300 kline 数据起点晚于 data_load_start，2015 年 rolling(250) 不足 250 非 NaN → 全零。
+    rolling_max = close.rolling(window, min_periods=20).max()
     pos = close / rolling_max
     score[pos < 0.60] = 20
     score[pos < 0.50] = 40

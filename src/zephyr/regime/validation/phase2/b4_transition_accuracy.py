@@ -102,6 +102,7 @@ class HistoricalEvent:
     desc: str
     in_data_range: bool = True  # 是否在 ClickHouse 数据范围内（2008 事件=False）
     data_ready: bool = True  # 触发条件所需维度是否就绪（S2 需 NLP+high/low，未就绪=False，不计 B4 分母）
+    design_match: bool = True  # 事件类型是否在当前模型设计域内（S2 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏=False）
 
 
 @dataclass(frozen=True)
@@ -214,6 +215,7 @@ class B4TransitionAccuracy:
                     desc=str(raw.get("desc", "")),
                     in_data_range=bool(raw.get("in_data_range", True)),
                     data_ready=bool(raw.get("data_ready", True)),
+                    design_match=bool(raw.get("design_match", True)),
                 )
             )
         _logger.info("B4: 加载 %d 个历史事件 (%s)", len(events), path.name)
@@ -295,13 +297,28 @@ class B4TransitionAccuracy:
                     )
                 )
                 continue
+            if not event.design_match:
+                # 数据已就绪但事件类型超出当前模型设计域 → 不计入分母，标注"超出设计域"
+                # （S2 Wyckoff 吸筹模板不匹配 A 股 V 反转/政策驱动型复苏，待重设计后激活）
+                matches.append(
+                    B4EventMatch(
+                        event=event,
+                        hit=False,
+                        triggered_at=None,
+                        delta_days=None,
+                        matched_stage=None,
+                        total_score=None,
+                    )
+                )
+                continue
             match = self._match_event(event, sorted_dates, trigger_index)
             matches.append(match)
 
-        # data_ready=False 的事件（S2 需 NLP+high/low，未就绪）不计入分母
-        # （HistoricalEvent.data_ready docstring + historical_events.yaml L59-61 一致）
+        # data_ready=False / design_match=False 的事件不计入分母
+        # （data_ready: S2 需 NLP+high/low 未就绪；design_match: S2 Wyckoff 模板不匹配 A 股 V/政策型复苏）
+        # （HistoricalEvent docstring + historical_events.yaml 注释一致）
         total_evaluated = sum(
-            1 for m in matches if m.event.in_data_range and m.event.data_ready
+            1 for m in matches if m.event.in_data_range and m.event.data_ready and m.event.design_match
         )
         hit_count = sum(1 for m in matches if m.hit)
         per_transition = self._per_transition_stats(matches)
@@ -451,7 +468,7 @@ class B4TransitionAccuracy:
         """按 transition_type 统计命中。"""
         stats: dict[str, dict[str, int]] = {tid: {"hit": 0, "total": 0} for tid in TRANSITION_TYPES}
         for m in matches:
-            if not m.event.in_data_range or not m.event.data_ready:
+            if not m.event.in_data_range or not m.event.data_ready or not m.event.design_match:
                 continue
             tid = m.event.transition_type
             if tid in stats:
