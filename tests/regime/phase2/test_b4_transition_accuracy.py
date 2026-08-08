@@ -194,6 +194,36 @@ class TestB4TransitionAccuracy(unittest.TestCase):
         self.assertEqual(report.per_transition_hits["S1"], {"hit": 1, "total": 2})
         self.assertEqual(report.per_transition_hits["S2"], {"hit": 1, "total": 1})
 
+    def test_data_ready_false_not_counted(self):
+        """data_ready=False 的事件不计入分母（S2 需 NLP+high/low 未就绪）。
+
+        回归测试：HistoricalEvent.data_ready docstring + historical_events.yaml
+        L59-61 注释一致——data_ready=False 的事件不计入 B4 分母。此前
+        total_evaluated 和 _per_transition_stats 只检查 in_data_range 漏检
+        data_ready，致 data_ready=False 事件被计入分母但必然 miss，拉低命中率
+        （B4 FAIL 3/6）。修复后 S2 data_ready=False 不计入 → B4 PASS 3/3。
+        """
+        events = [
+            HistoricalEvent(id="E1", date=self.dates[0], transition_type="S1",
+                            expected_stage=["trigger"], desc="", in_data_range=True),
+            HistoricalEvent(id="E2", date=self.dates[11], transition_type="S2",
+                            expected_stage=["trigger"], desc="", in_data_range=True,
+                            data_ready=False),  # S2 数据未就绪，不计入分母
+        ]
+        daily = {
+            self.dates[0]: [_make_transition("S1", "trigger")],   # S1 hit
+            self.dates[11]: [_make_transition("S2", "trigger")],  # S2 触发但不计入
+        }
+        report = self.b4.validate(daily, events=events, trading_dates=self.dates)
+        # data_ready=False 的 S2 不计入分母
+        self.assertEqual(report.total_evaluated, 1)
+        self.assertEqual(report.hit_count, 1)
+        # per_transition: S2 total=0（data_ready=False 不计入）
+        self.assertEqual(report.per_transition_hits["S1"], {"hit": 1, "total": 1})
+        self.assertEqual(report.per_transition_hits["S2"], {"hit": 0, "total": 0})
+        # S1 1/1 → PASS
+        self.assertEqual(report.verdict, B4Verdict.PASS)
+
     def test_to_dict_serializable(self):
         """to_dict 可 JSON 序列化。"""
         daily = {self.event_date: [_make_transition("S1", "trigger")]}

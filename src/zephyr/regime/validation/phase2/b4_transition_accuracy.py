@@ -298,7 +298,11 @@ class B4TransitionAccuracy:
             match = self._match_event(event, sorted_dates, trigger_index)
             matches.append(match)
 
-        total_evaluated = sum(1 for m in matches if m.event.in_data_range)
+        # data_ready=False 的事件（S2 需 NLP+high/low，未就绪）不计入分母
+        # （HistoricalEvent.data_ready docstring + historical_events.yaml L59-61 一致）
+        total_evaluated = sum(
+            1 for m in matches if m.event.in_data_range and m.event.data_ready
+        )
         hit_count = sum(1 for m in matches if m.hit)
         per_transition = self._per_transition_stats(matches)
 
@@ -447,7 +451,7 @@ class B4TransitionAccuracy:
         """按 transition_type 统计命中。"""
         stats: dict[str, dict[str, int]] = {tid: {"hit": 0, "total": 0} for tid in TRANSITION_TYPES}
         for m in matches:
-            if not m.event.in_data_range:
+            if not m.event.in_data_range or not m.event.data_ready:
                 continue
             tid = m.event.transition_type
             if tid in stats:
