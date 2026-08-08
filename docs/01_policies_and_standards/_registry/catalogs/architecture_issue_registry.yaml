@@ -1633,6 +1633,37 @@ entries:
   related_adjudication: '#ARCH-053'
   created: '2026-07-09'
   last_updated: '2026-07-10'
+- issue_id: '#ARCH-ALIGN-UNIFIED-001'
+  title: 五图对齐统一入口（align_all.py 编排层）
+  category: architecture_governance
+  severity: P2中
+  status: decided
+  description: |
+    原四图对齐存在两个独立检测器（align_panoramas.py 查 module_id 轴图 1-4 +
+    align_battle_map.py 查 step_id 轴图 5），但无统一入口——施工前需分别跑两个
+    命令、看两份报告，违反单一入口铁律。术语"四图"本身存在歧义（TRAE-080 的
+    四图含 blueprint.md；battle_map_positioning 的四全景图含 battle_map）。
+    裁定：采纳"五图对齐"统称，新增 align_all.py 作为五图对齐执行入口，复用两个
+    检测器的 run_alignment(write_report=False)，产出 panorama_alignment_overview.md
+    总览报告。exit code 分层：硬问题（domain_mismatches/ghost_anchors）→1，
+    软问题→0+warn。全项目"四图"术语统一替换为"五图"/"全景"。
+  adjudication: |
+    (a) 五图定义：depgraph/dataflowgraph/decisiongraph/blueprint.md（module_id 轴）
+        + battle_map（step_id 轴 + 双向锚点 BM-INV-002/007）
+    (b) align_all.py 定位为编排层（调两个检测器+汇总），不重复检测逻辑
+    (c) exit code 分层：硬问题=domain_mismatches+ghost_anchors；软问题=其余 warn-only
+    (d) 全项目术语替换：四图对齐→五图对齐；四图位置→全景位置；四图真源→全景真源；
+        第四全景图(battle_map)→第五全景图；four_panoramas_alignment→five_panoramas_alignment
+    (e) C 类 rule_four_way（四方对齐）绝不动——独立纵向对齐体系
+    (f) D 类派生产物通过重跑生成器刷新，禁止手改
+  fix_phase: |
+    Phase 1: A/B 类源码术语替换（scripts/tests/AGENTS.md/YAML catalogs/docs）
+    Phase 2: 重跑 7 个生成器刷新 D 类派生产物（blueprint §0.6 + reports + domain docs）
+    Phase 3: 新增 align_all.py 统一入口 + 治理登记（depgraph + capability + translation）
+    Phase 4: 验证 rg 四图只剩 C/E 类 + 前四图 + rule_four_way 未误伤
+  related_adjudication: '#ARCH-053, #ARCH-056, TRAE-080'
+  created: '2026-08-08'
+  last_updated: '2026-08-08'
 - issue_id: '#ARCH-057'
   title: Gate 测试覆盖率盲区——36 gate 中 15 个缺测试 + [TESTS] 头部声明无强制校验
   category: test_governance
@@ -12468,6 +12499,9 @@ entries:
     结论：A3 ungated 退化根因明确（T1/S1 非危机期误触发），方案 A（#1 门控 overlay）
       治本验证通过——建议采纳方案 A 替代 ungated overlay。当前生产维持 simple/off，
       方案 A 待用户确认后固化到 detect() 入口（加 #1 门控分支）。
+    2026-08-08 续：方案A门控已固化（见 fix_phase）。B4 验证暴露 S2 recovery 0/3 bug——
+      门控原在入口清空 overlay_signals 致 S2 转换记录丢失，已改为屏蔽概率注入保留记录；
+      B4 验证器分母漏查 data_ready 致待数据事件拉低命中率，已修复。Phase 2 全 PASS 闭环。
     铁律#9：否决/调参决策类，AI提议 status=proposed，待用户确认。
   impact:
     - 'src/zephyr/regime/overlay_signals_builder.py（OverlaySignalsConstructor 8转换构造器，已实现）'
@@ -12477,9 +12511,14 @@ entries:
     - 'scripts/tests/validate_overlay_gated.py（方案A 门控验证脚本，2026-08-07 新增）'
     - 'logs/c1_repro/a2_a3_validation_report.md（验证报告，派生产物不入 git）'
     - 'logs/c1_repro/overlay_audit_daily.csv + overlay_audit_summary.md（深挖产物，不入 git）'
-  fix_phase: 深挖+方案A验证+门控固化完成（2026-08-08）—— A3 ungated 退化根因明确（T1/S1非危机期误触发）；
-    方案A(#1门控overlay)C1不退化验证通过；门控已固化到 RegimeDetector.detect() 入口（overlay_gated=True 默认开启，
-    #1>=1.0 时 overlay_signals 置空）；8项 TestOverlayGating 单元测试全过；regime 全套 54 项无回归
+  fix_phase: 深挖+方案A验证+门控固化+B4闭环完成（2026-08-08）—— A3 ungated 退化根因明确（T1/S1非危机期误触发）；
+    方案A(#1门控overlay)C1不退化验证通过；门控固化到 RegimeDetector.detect()（overlay_gated=True 默认开启）；
+    B4 S2 recovery 0/3 治本两层修复——(1)门控从"入口清空 overlay_signals"改为"_run_overlay 后屏蔽 overlay_probs"，
+    保留转换评估记录(_last_transitions)，S2(CRISIS→RECOVERY)在危机结束(#1>=1.0)时点的触发不再被跳过(commit 0c5ea28bb1)；
+    (2)B4 验证器 total_evaluated/_per_transition_stats 增查 data_ready，data_ready=False 事件(S2需NLP+high/low未就绪)
+    不计入分母，与 HistoricalEvent.data_ready docstring+historical_events.yaml L59-61 注释对齐(commit 83c94c4f)；
+    TestOverlayGating 9项+B4单元测试 16项全过；regime 全套 56 项无回归；
+    Phase 2 真实数据验证 B4 FAIL(3/6)→PASS(3/3)，A1/A2/B1/B4 全 PASS，Phase 2 闭环
   status: decided
   created: '2026-08-07'
   last_updated: '2026-08-08'
@@ -12594,6 +12633,10 @@ entries:
        此任务自身死亡退化到 pre-E 现状（无监控），非倒退。已注册为第 4 个 Task Scheduler 任务
        ZephyrAlpha_DeadmanSwitch。不变式测试 TestDeadmanSwitchInvariants +
        TestDeadmanSwitchRegistered 钉死。
+       告警通道配置状态（2026-08-08 确认）：本地日志 ✅ 始终生效 + Windows Event Log ✅
+       源 "ZephyrAlpha" 已 UAC 提权注册（EventId 9002）+ 飞书 webhook ⏳ 暂缓——实盘前
+       配置 ZEPHYR_FEISHU_WEBHOOK 时一并激活手机推送（未配置时 deadman_switch.ps1
+       自动降级为仅日志+EventLog，不报错；2/3 通道已满足独立监控需求）。
     F. WaitForExit 死锁根因文档化 ✅ 已落地：根因是 PowerShell 重定向输出管道满致 WaitForExit
        不返回；polling HasExited 已绕过。3 个 guard 脚本头注释固化"pipe buffer fills →
        WaitForExit never returns → main thread deadlocks"知识点，防 AI "优化"回 WaitForExit。
@@ -12871,5 +12914,72 @@ entries:
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_010_execution_broker.md'
   fix_phase: '代码已施工（commit 015826ae），71 测试通过。待补：先卖后买+熔断专项集成测试。'
   status: decided
+  created: '2026-08-08'
+  last_updated: '2026-08-08'
+# --- #ARCH-DEDUP-SSOT-CONFLICT-001: 5 套代码重复检测系统功能重叠 + SSoT 冲突（2026-08-08 登记）---
+- issue_id: '#ARCH-DEDUP-SSOT-CONFLICT-001'
+  title: 5 套独立代码重复检测系统功能重叠 + code_dedup 与 CloneGuard SSoT 冲突
+  severity: P2中
+  category: architecture
+  adjudication: |-
+    2026-08-08 立项（proposed）。调研发现项目内存在 5 套独立的代码重复检测系统，
+    核心检测技术（AST 归一化 + hash/相似度比对）严重重叠，且 code_dedup 与 CloneGuard
+    两个蓝图互不引用，SSoT 直接冲突。
+
+    五套系统：
+    (A) CloneGuard（MOD-CLONE_GUARD, src/zephyr/clone_guard/）：多引擎编排器
+        （echo-guard AST哈希+CodeSAGE嵌入 / ast-grep 结构规则 / redup 语义克隆），
+        L1 commit gate(prio200) + L2审计 + L0 MCP search_functions。~10文件 350测试。
+        独有：多引擎聚合+语义T3/T4+acknowledged白名单+L0源头预防。
+    (B) code_dedup（MOD-INF-017, src/zephyr/gov_code_quality/code_dedup/）：66文件
+        ~5000行，ast_comparator + micro_clone_detector(n-gram) + signature_matcher +
+        symbol_index。pre-commit gate-dedup(manual)。SSoT声称"重复检测结果"+"函数签名指纹"。
+        独有：自动修复管道(auto_fixer/atomic_fixer/shadow_verifier/canary) + 健康评分(BRS/SBS/SAS)
+        + 行为验证(behavioral_trust_checker)。
+    (C) FUNCTION-DUP gate（commit_gates/function_dup_gate.py, prio90）：独立 ast.unparse(body)
+        + sha256[:16]，scope限同目录顶层函数，每次commit跑。
+    (D) FILE-COPY gate（commit_gates/file_copy_gate.py, prio85）→ check_code_duplication.py：
+        ast.unparse + 相似度阈值0.8，每次commit跑。
+    (E) dedup_extractor（infrastructure/auto_fix_engine/dedup_extractor.py）：ast+hashlib，
+        auto_fix_engine内部用。
+
+    重叠证据：
+    1. 3+套用相同AST哈希技术（echo-guard Tier1 ≈ FUNCTION-DUP ≈ code_dedup.ast_comparator ≈ check_code_duplication.py）
+    2. 每次commit AST函数哈希跑至少2遍（FUNCTION-DUP prio90 + echo-guard prio200）
+    3. code_dedup蓝图(line 237)显式声称SSoT"重复检测结果"，CloneGuard也产同样结果 = SSoT冲突
+    4. 两个蓝图互不引用（code_dedup提到clone_guard 0次，clone_guard提到code_dedup 0次）
+
+    整合方向（待调研确认）：
+    - CloneGuard做唯一检测引擎（多引擎+语义T3/T4+L0-L3纵深，能力最强）
+    - code_dedup退化为CloneGuard的"修复消费者"（保留auto_fixer/health_score/canary/behavioral，
+      退役ast_comparator/micro_clone_detector/signature_matcher/symbol_index）
+    - FUNCTION-DUP和FILE-COPY退役（检测被CloneGuard L1覆盖）
+    - dedup_extractor评估是否可改为调用CloneGuard orchestrator
+    - SSoT统一到CloneGuard orchestrator.check()/audit()输出
+
+    待调研项：
+    - code_dedup的66文件中哪些是检测（可退役）vs 修复/评分（保留）的精确边界
+    - FUNCTION-DUP的同目录快速预筛是否有独立价值（比echo-guard index查询快？）
+    - code_dedup的auto_fix管道是否依赖自己的检测结果格式（迁移成本）
+    - pre-commit gate-dedup hook 迁移到 CloneGuard 的成本
+    - 各系统 acknowledged/grandfather 白名单机制是否需要统一
+  impact:
+    重叠系统文件：
+    - 'src/zephyr/clone_guard/（CloneGuard——保留为唯一检测引擎）'
+    - 'src/zephyr/gov_code_quality/code_dedup/（66文件——检测组件待退役，修复/评分组件保留）'
+    - 'src/zephyr/gov_enforcement/commit_gates/function_dup_gate.py（FUNCTION-DUP gate prio90，待退役）'
+    - 'src/zephyr/gov_enforcement/commit_gates/file_copy_gate.py（FILE-COPY gate prio85，待退役）'
+    - 'src/zephyr/gov_enforcement/commit_gates/capability_overlap_gate.py（CloneGuard L1入口，保留）'
+    - 'scripts/governance/d5_architecture/checkers/check_code_duplication.py（FILE-COPY后端，待退役）'
+    - 'scripts/pre_commit/verify_dedup.py（code_dedup CLI入口，待迁移）'
+    - 'src/zephyr/infrastructure/auto_fix_engine/dedup_extractor.py（待评估）'
+    蓝图文件：
+    - 'docs/03_modules/_cross_layer/clone_guard/blueprint.md（CloneGuard蓝图）'
+    - 'docs/03_modules/_domain_governance/code_dedup_engine/blueprint.md（code_dedup蓝图，SSoT冲突方）'
+    配置文件：
+    - 'clone_guard.yml（CloneGuard配置）'
+    - '.pre-commit-config.yaml（gate-dedup / gate-function-dup / gate-file-copy hook定义）'
+  fix_phase: 'proposed——待新session调研整合方案，确认检测 vs 修复/评分边界后制定退役计划'
+  status: proposed
   created: '2026-08-08'
   last_updated: '2026-08-08'
