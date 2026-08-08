@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.1.1"
+version: "1.2.0"
 date: 2026-08-08
 topic: execution_broker
 scope: 07_trading_decision_architecture
@@ -24,7 +24,7 @@ scope: 07_trading_decision_architecture
 - 执行层是数据流主动脉的末端：接收 firm_target_portfolio，分解为订单，经风控/合规/拆单后通过 miniQMT 发出，回收成交回报，更新持仓，做 TCA 成本尸检
 
 ### 1.2 核心问题
-执行层要回答"信号→订单→成交"全链路的 10 个问题：下单接口对接、撮合算法、滑点模型、交易成本、订单状态机、失败重试、执行风控、集合竞价、T+1 约束、订单分解算法。每个决策都影响实盘成本与稳定性。
+执行层要回答"信号→订单→成交→对账"全链路的 14 个问题：下单接口对接、撮合算法、滑点模型、交易成本、订单状态机、失败重试、执行风控、集合竞价、T+1 约束、订单分解算法、未成交续接、撤单率控制、资金预占、挂单价算法。前 10 个为 v1.0.0 已定型，后 4 个为 v1.1.0 补全的施工环节流程（实盘生存项），v1.2.0 补全 miniQMT 工程约束与价格笼子合规校验。每个决策都影响实盘成本与稳定性。
 
 ### 1.3 约束条件
 - miniQMT 个人账户**不支持券商端 VWAP/TWAP 算法接口**（机构客户才有）→ 拆单逻辑必须系统自实现
@@ -112,6 +112,16 @@ firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
 - 与 D_DATA 共用 xtquant 连接（`shared_xtquant_conn`，避免重复 connect 到 miniQMT 终端）
 
 **xttrader 错误码映射**（代码已实现）：0=成功 / -1=连接失败 / -2=未就绪 / -3=订单号重复 / 50=涨停 / 51=跌停 / 52=数量不合法 / 53=价格不合法 / 54=资金不足 / 55=持仓不足。
+
+**miniQMT 工程约束**（v1.2.0 补全，实盘生存项）：
+
+> 以下三条是 XtQuant 实盘的"头号踩坑点"，缺失会导致死锁/延迟/状态不一致。源自 2026 年 miniQMT 实盘避坑指南与官方文档。
+
+1. **回调线程模型**（防死锁/延迟）：`on_stock_order`/`on_stock_trade` 等回调在底层 C++ 线程执行，**回调内绝对不能执行耗时操作**（如数据库写入、复杂计算）。实盘案例：回调中执行复杂计算导致成交回报延迟 3 秒。正确做法：回调内只入队（`Queue.put(trade)`），独立线程消费（`process_trades()` 循环 `Queue.get()`）。[FillHandler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/fill_handler.py) 的回调处理必须遵循此模式。
+
+2. **同步/异步查询陷阱**（防死锁）：`query_stock_trades`/`query_stock_orders`/`query_stock_positions` 等同步查询接口，**在回调函数内调用会导致线程死锁**（C++ 底层线程阻塞）。规则：所有同步查询只能在主线程/独立线程调用；回调内如需查询，用 `query_stock_trades_async` 异步版本（返回 seq，通过 `on_query_trades_async_response` 回调返回结果）。决策⑥⑨的 `query_stock_positions` 调用必须确保不在回调链路中。
+
+3. **时序一致性**（防状态不一致）：`set_relaxed_response_order_enabled(True)` 开启后，允许在 `on_stock_order` 等推送回调中调用同步请求接口（否则会导致事件循环阻塞）。但开启后查询与推送的数据时序会变得不确定，需在"回调内可同步查询"与"时序严格"之间取舍。MVP 建议：**开启 relaxed 模式**（实盘需要回调内查询补状态），但查询结果仅作参考，以 `query_stock_orders` 主动全量同步为准。
 
 **为何不再造**：MiniQmtBroker 已 production 且通过测试，重复造轮子违反 AI-dev 归因清晰度原则。本备忘只记录 why，不改 what。
 
@@ -204,9 +214,10 @@ EXPIRED → 终态
 
 **决策**：三层异常处理（断线重连 + Saga 补偿 + 拒单分类处理）。
 
-**层1 断线重连**（[MiniQmtBroker._call_xttrader_with_reconnect](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py)，已实现）：
-- xttrader 调用失败 → 自动 `_reconnect` 重连 1 次 → 重试
+**层1 断线重连**（[MiniQmtBroker._call_xttrader_with_reconnect](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py)，已实现；v1.2.0 定型增强规则）：
+- xttrader 调用失败 → 自动 `_reconnect` 重连 → 重试
 - 连接失败带重试：`_do_connect_with_retry` 最多 3 次，间隔 1 秒
+- **v1.2.0 增强（待实现，gap 13）**：断线重连应从"重连 1 次"升级为**指数退避多次重连**——立即→2s→4s→8s→…→max 30s，应对网络抖动场景（实盘案例：5 分钟内重连 7 次，重连 1 次不够）。重连成功后**主动 `query_stock_orders` 全量同步订单状态缺口**——断线期间的回报可能丢失，不能只依赖回调推送，必须主动查询补齐系统与券商端的订单状态差异。
 
 **层2 Saga 补偿**（[OrderExecutionSaga](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_execution_saga.py)，已实现）：
 - 六步（风控→信号→下单→成交→持仓→报告）任一步失败自动补偿
@@ -434,6 +445,23 @@ for order in sorted_deltas:  # 先卖后买顺序
 
 **为何不挂对手价（主动档）作为默认**：主动档跨价吃单，每笔都付 spread，小单累积成本高。仅 urgency 高（打板）或超时兜底时用。
 
+**"提 1 tick"中间档策略**（v1.2.0 补充）：A 股买一/卖一常堆积大量机构/量化挂单，纯被动档排队难成交。可增加"提 1 tick"策略——买单挂买一+1 tick、卖单挂卖一-1 tick，以极小成本（0.01 元/股）换取成交确定性，避开盘口拥堵区。这是介于纯被动档和纯主动档之间的**中间偏主动**策略，适合 urgency 中等的订单（如多因子建仓）。MVP 可暂不用（被动档+Make-or-Take 已覆盖），登记为 Phase 1.5 候选。
+
+**价格笼子校验**（v1.2.0 补全，合规硬约束）：
+
+> 上交所 2026 修订交易规则设有**价格笼子**机制，超范围委托直接废单。这是决策⑭挂单价的**前置合规校验**，不做会废单。
+
+| 方向 | 笼子上/下限 | 超限处理 |
+|---|---|---|
+| 买入 | ≤ max(买一价×102%, 买一价+0.10元) | 夹到笼子上限 |
+| 卖出 | ≥ min(卖一价×98%, 卖一价-0.10元) | 夹到笼子下限 |
+
+- 正常 spread（1-2 tick ≈ 0.01-0.02 元）远小于 2% 笼子，被动档（买一/卖一）和 Make-or-Take（对手价）正常不触发
+- **低流动性股票 spread 较大时**，Make-or-Take 对手价可能超笼子→需夹到笼子边界
+- **集合竞价结束进入连续竞价时**，基准价瞬间变化，极易触发废单→MVP 不碰集合竞价（决策⑧）已规避此风险
+- **涨停板卖单挂涨停价**：涨停价 = 前收盘×110%，远超卖一价×98% 笼子下限→涨停价在笼子内（笼子只限制"偏离方向"，涨停价是卖出方向的最高价，不受下限约束）。同理跌停板买单在笼子内
+- 实现位置：[MiniQmtBroker.submit_order](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 提交前校验，超限自动夹到笼子边界（不废单，修正后提交）
+
 **Phase 1.5 改进项**：peg 到盘口（盘口移动时自动撤单重挂跟随），需实时盘口数据（miniQMT `xtdata.get_full_tick` 支持）。MVP 先用静态挂单（挂出后不动，超时才撤），简单可靠。
 
 ## 3. 考虑过的替代方案（拒绝理由）
@@ -482,6 +510,14 @@ for order in sorted_deltas:  # 先卖后买顺序
 - **拒绝理由**：2026.4.7 新规下撤单率超限被交易所标记异常交易，轻则警告重则限制交易
 - 滚动监控降级（决策⑫）：>12% 只挂不撤、>15% 冻结告警，合规生存项不可省
 
+### 3.12 断线重连：仅重连 1 次 —— 拒绝（升级为指数退避）
+- **拒绝理由**：网络抖动场景下重连 1 次不够（实盘案例 5 分钟内断线 7 次）；重连后不主动同步状态会导致系统与券商端订单状态不一致
+- 指数退避多次重连（立即→2s→4s→8s→max30s）+ 重连后 `query_stock_orders` 全量同步状态缺口（决策⑥层1）
+
+### 3.13 挂单价：无价格笼子校验 —— 拒绝（补合规校验）
+- **拒绝理由**：上交所 2026 修订规则价格笼子超范围直接废单，低流动性股票 spread 大时 Make-or-Take 对手价可能超笼子
+- submit_order 前校验笼子边界，超限自动夹到笼子边界（决策⑭）
+
 ## 4. 上限定义（Ceiling）
 
 ### 4.1 系统上限
@@ -492,6 +528,9 @@ for order in sorted_deltas:  # 先卖后买顺序
 - **撤单率控制**：滚动 500 笔窗口，>12% 只挂不撤 / >15% 冻结告警；每秒报单/撤单 ≤15 笔（2026 新规）
 - **挂单价**：默认被动档（买一/卖一），Make-or-Take 超时切主动档
 - **资金预占**：串行扣减，提交前本地拦截资金不足
+- **价格笼子校验**：买入价≤max(买一×102%,买一+0.1)，卖出价≥min(卖一×98%,卖一-0.1)，超限夹到边界
+- **回调线程模型**：on_stock_order/on_stock_trade 入队+独立线程消费，回调内禁同步查询
+- **断线重连**：指数退避（立即→2s→4s→8s→max30s）+ 重连后全量状态同步
 - **连续竞价时段**：9:30-11:30 + 13:00-14:57（MVP 不含集合竞价）
 
 ### 4.2 演进路径
@@ -535,6 +574,11 @@ for order in sorted_deltas:  # 先卖后买顺序
 8. **资金预占实现**（决策⑬）：串行扣减可用资金、卖出单预占释放额度、提交前本地拦截资金不足。待在 [TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 实现。
 9. **挂单价算法实现**（决策⑭）：被动档买一/卖一、主动档对手价、涨停卖单挂涨停价/跌停买单挂跌停价。待在 [AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) 或新建 PricingPolicy 实现。
 10. **盘后全量对账实现**（Phase 2）：券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、未成交订单日终转 EXPIRED。待在 [PositionReconciler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/position_reconciler.py) 扩展。
+
+**v1.2.0 gap（待施工，miniQMT 工程约束 + 合规）**：
+11. **价格笼子校验实现**（决策⑭）：[MiniQmtBroker.submit_order](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 提交前校验挂单价是否在笼子内（买入≤max(买一×102%,买一+0.1)，卖出≥min(卖一×98%,卖一-0.1)），超限自动夹到笼子边界。
+12. **回调线程模型实现**（决策①工程约束2）：[FillHandler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/fill_handler.py) 回调改为"入队+独立线程消费"模式，回调内禁同步查询（`query_stock_trades` 等），需调则用 async 版本。配置 `set_relaxed_response_order_enabled(True)`。
+13. **断线重连增强实现**（决策⑥层1）：[MiniQmtBroker](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) `_call_xttrader_with_reconnect` 从"重连1次"升级为指数退避（立即→2s→4s→8s→max30s）+ 重连后主动 `query_stock_orders` 全量同步订单状态缺口。
 
 ### 6.2 开放问题
 - **佣金费率实盘校准**：万0.854 为用户口头提供，实盘开户后需对照交割单二次校准
@@ -586,6 +630,9 @@ for order in sorted_deltas:  # 先卖后买顺序
 - Almgren-Chriss 最优执行框架（平方根冲击模型）；Implementation Shortfall（IS）成本分解
 - Gatheral (2010) 无动态套利约束下平方根冲击形式的唯一性证明
 - 2026 最优执行 RL 研究：DASRL（AAMAS 2026，动态动作空间）、TT-DAC-PS（arXiv 2026.06，自适应探索 Actor-Critic）、MACE+AC（arXiv 2026.04，成本模型对 RL 算法选择的决定性影响）、Queue-Reactive+DDQN（arXiv 2025.11，model-free RL）
+- miniQMT 实盘避坑：回调函数阻塞/异步时序混乱/断线重连指数退避（CSDN 2026-03 miniQMT 实战避坑指南）；同步查询死锁与 async 替代（findtruman 2026-05）；`set_relaxed_response_order_enabled` 时序控制（thinktrader 官方文档）
+- A 股价格笼子规则（上交所 2026 修订交易规则 §3.3.4）：连续竞价阶段买入≤max(买一×102%,买一+0.1)，卖出≥min(卖一×98%,卖一-0.1)
+- A 股限价单盘口博弈：买一/卖一拥堵区排队难成交，提1 tick 避开拥堵（yueniuzq 2026-06 盘口博弈技巧）
 
 ## 8. 修订记录
 
@@ -594,3 +641,4 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 2026-08-08 | 1.0.0 | 初稿 | G22 下单对接与撮合执行层 spec 定型：10 要点决策（撮合自适应/滑点DECISION/佣金万0.854/7态机/拒单分类/订单层熔断4%-10-50/集合竞价MVP不碰/T+1查持仓/差额下单先卖后买）+ 现有 production 资产 why 层补全 + 5 项代码 gap 标注 |
 | 2026-08-08 | 1.1.0 | 施工环节流程补全 | 审查发现 4 个施工环节流程算法缺失（实盘生存项）：⑪未成交续接（Make-or-Take/PARTIAL补单/尾盘清退）、⑫撤单率控制（滚动监控降级/2026新规每秒≤15笔）、⑬资金预占（串行扣减/提交前拦截）、⑭挂单价算法（被动档买一卖一/主动档对手价）。补 §2.4 Gatheral 无套利理论依据。补 Phase 1.5 演进路径（自适应参与率/peg盘口/TCA规则闭环/coeff校准）。补 2026 最新执行 RL 研究引用。v1.0.0 的 5 项代码 gap 已施工（commit 015826ae），新增 v1.1.0 gap 6-10 待施工。 |
 | 2026-08-08 | 1.1.1 | 文档-代码漂移对账 | 逐项核查 §6.1 五项 v1.0.0 gap 对照实码：gap 4（拒单分类）由 ✅ 修正为 ⚠️ 部分实现——分类映射(`_REJECTION_ACTIONS`/`classify_rejection`)+`_handle_rejection` 日志已实现，RETRY/冻结/对账实际动作待 Saga 接管。修正 §2.5/§2.6/§2.7 三处 stale 内联"代码 gap"标注（佣金费率/先卖后买已施工，拒单分类标为部分实现）。 |
+| 2026-08-08 | 1.2.0 | miniQMT 工程约束 + 价格笼子合规 | 搜索 miniQMT 实盘踩坑与 A 股微观结构，补 4 项实盘生存级缺失：①决策①补回调线程模型（on_stock_order/on_stock_trade 不能阻塞，入队+独立线程消费）+同步/异步查询陷阱（回调内不能调同步查询，用 async 版本）+set_relaxed_response_order_enabled 时序控制；②决策⑥层1断线重连从"重连1次"升级为指数退避（立即→2s→4s→8s→max30s）+重连后主动 query_stock_orders 同步状态缺口；③决策⑭补价格笼子校验（买入价≤max(买一×102%,买一+0.1)，卖出价≥min(卖一×98%,卖一-0.1)，超范围废单）+提1tick策略（避开盘口拥堵区）；④修正§1.2"10个问题"→"14个问题"内部不一致。新增代码 gap 11-13 待施工。 |
