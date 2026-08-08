@@ -12103,7 +12103,13 @@ entries:
     三条不变量（后续所有治理决策必须满足）：
     - I-GOV-1（派生产物离库）：凡可由DB/源码/YAML经生成器重现的文档，禁止入git。
     - I-GOV-2（reconciler无写权）：reconciler只允许warn/skip/fix-in-place，禁止action="commit"。
-    - I-GOV-3（治理预算硬上限）：gate<=54 / reconciler<=121 / AGENTS.md<=1234行，新增必须等量退役。
+    - I-GOV-3（治理预算硬上限）：gate<=54 / reconciler<=121 / AGENTS.md<=3000行，新增必须等量退役。
+      AGENTS.md 上限计算依据（2026-08-09 重算，原 1234 为 2026-08-05 行数快照冻结）：
+      100% AI 开发主力模型 GLM-5.2 + Kimi K3 上下文窗口均为 1,048,576 tokens（1M）；
+      减输出/思考预留 131,072 tokens（GLM-5.2 max output 含 CoT）→ 有效输入 917,504 tokens；
+      AGENTS.md 作为"第一读"系统文档分配 15% = 137,626 tokens；
+      实测 token 密度 48.7 tokens/行（1556 行 / 75,799 tokens）→ 137,626 ÷ 48.7 ≈ 2827 → 取整 3000 行；
+      验算：3000 行 ≈ 146K tokens = 13.9% 上下文，剩 856K 给任务/代码/对话 + 131K 给输出，够用。
   impact:
     - '.gitignore（派生产物路径忽略规则）'
     - '.pre-commit-config.yaml（gate-generator-no-realtime-time + gate-no-commit-derived hook注册）'
@@ -12111,7 +12117,7 @@ entries:
   fix_phase: Phase 1+2 已完成（2026-08-06）—— Phase 3/4 待施工
   status: decided
   created: '2026-08-05'
-  last_updated: '2026-08-06'
+  last_updated: '2026-08-09'
 # --- #ARCH-FORCE-MERGE-DEDUP-001: 强制合并去重——升级CAPABILITY-OVERLAP门禁为硬阻断（2026-08-06，CloneGuard 蓝图登记）---
 - issue_id: '#ARCH-FORCE-MERGE-DEDUP-001'
   title: 100%AI开发场景下重复造轮子病根——升级CAPABILITY-OVERLAP门禁为强制合并去重(多引擎集成)
