@@ -112,19 +112,19 @@ responsibility_domain:
 - `zephyr.risk.risk_limits` (D-RISK, VarCvarMetrics)
 - 消费者: MOD-POS-001 (仓位上限调整), D-EX-CORE (执行减仓指令)
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-POS-008`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-POS-008` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-POS-008` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

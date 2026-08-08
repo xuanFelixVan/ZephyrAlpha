@@ -1,6 +1,6 @@
 ---
 module_id: MOD-GOV-SYNC-PANORAMA
-title: "四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐"
+title: "五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐"
 doc_type: blueprint
 status: Active
 version: "1.1.2"
@@ -27,22 +27,22 @@ tags:
   - blueprint-reconciler
   - majority-vote-aggregation
 summary: >
-  四图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 四图模块对齐。
-  4 核心字段（module_id/domain_id/design_maturity/build_status）跨四图同步。
+  五图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 五图模块对齐。
+  4 核心字段（module_id/domain_id/design_maturity/build_status）跨全景同步。
   单模块同步+全量同步+transition 触发+blueprint 缺失标记+多数投票聚合。
 design_maturity: production
 build_status: generated
 
 ---
 
-# 四图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 四图对齐
+# 五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐
 
 > module_id: MOD-GOV-SYNC-PANORAMA | version: 1.1.2 | status: Active
 > actual_disk_path: sync_panorama_module.py + align_panoramas.py + blueprint_frontmatter_reconciler.py
 
 ## 概述
 
-本蓝图描述 ZephyrAlpha 的**四图模块对齐引擎**——它解决了架构图中模块在不同图之间名称/编号/域/状态不一致的问题。
+本蓝图描述 ZephyrAlpha 的**五图模块对齐引擎**——它解决了架构图中模块在不同图之间名称/编号/域/状态不一致的问题。
 
 核心能力：当用户在 depgraph（依赖图）中添加一个设计态模块后，引擎自动将该模块同步到另外三张图（dataflowgraph 数据流图 / decisiongraph 决策图 / blueprint.md 蓝图文档），使同一个模块在四张图中都能找到、位置对齐、四个核心字段一模一样。
 
@@ -67,7 +67,7 @@ build_status: generated
 
 | # | 字段 | depgraph 列 | dataflow 列 | decision 列 | blueprint frontmatter key | 说明 |
 |---|------|------------|------------|------------|--------------------------|------|
-| 1 | module_id | `blueprint_id` | `job_name` | `layer_id` | `module_id` | 模块唯一标识，四图对齐的主键 |
+| 1 | module_id | `blueprint_id` | `job_name` | `layer_id` | `module_id` | 模块唯一标识，五图对齐的主键 |
 | 2 | domain_id | `domain_id` | `domain_id` | `domain_id` | `responsibility_domain` | 责任域（如 D_TRADING / D_GOVERNANCE） |
 | 3 | design_maturity | `design_maturity` | `design_maturity` | `design_maturity` | `design_maturity` | 设计成熟度：design < production |
 | 4 | build_status | `build_status` | `build_status` | `build_status` | `build_status` | 构建状态：planned / generated / ... |
@@ -105,7 +105,7 @@ build_status: generated
 
 ### 2.2 transition 自动触发
 
-状态转换（transition）完成后自动触发四图同步——模块状态变更时无需手动同步。
+状态转换（transition）完成后自动触发全景同步——模块状态变更时无需手动同步。
 
 ### 2.3 blueprint 对齐（blueprint_frontmatter_reconciler.py）
 
@@ -125,7 +125,7 @@ build_status: generated
 
 depgraph.nodes 中同一个 `blueprint_id` 可有多行——这是**跨域模块的正常现象**。例如 MOD-INF-002（基础设施模块）有 79 行，分布在 8 个域（D_GOVERNANCE 22 行 / D_INFRA_RUNTIME 20 行 / D_AUDITTEST 17 行 / ...）。
 
-如果用 `LIMIT 1` 取第一行，domain_id 取值不稳定（取决于 SQL 返回顺序），会导致四图域不一致误报。
+如果用 `LIMIT 1` 取第一行，domain_id 取值不稳定（取决于 SQL 返回顺序），会导致全景域不一致误报。
 
 ### 3.2 聚合规则
 
@@ -175,7 +175,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 ### 4.3 当前对齐状态（2026-07-09）
 
 ```
-四图节点数: depgraph=140 / dataflow=165 / decision=296 / blueprint=220
+全景节点数: depgraph=140 / dataflow=165 / decision=296 / blueprint=220
 问题总数: 35（修复前 64，-45%）
   - 域不一致: 37 → 9（-76%，剩余为平局/非标准 domain 历史数据）
   - 状态漂移: 7 → 2（-71%）
@@ -198,7 +198,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 python scripts/governance/apply_depgraph.py --add-module MOD-NEW-001 \
     --domain D_TRADING --maturity design --status planned
 
-# 2. 同步到四图（自动写入 dataflow/decision）
+# 2. 同步到全景（自动写入 dataflow/decision）
 python scripts/governance/sync_panorama_module.py MOD-NEW-001
 
 # 3. 验证对齐（生成报告）
@@ -260,7 +260,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 
 | # | 文件 | 路径 | 职责 |
 |---|------|------|------|
-| 1 | sync_panorama_module.py | `scripts/governance/sync_panorama_module.py` | 同步引擎——单模块/全量同步四图核心字段 |
+| 1 | sync_panorama_module.py | `scripts/governance/sync_panorama_module.py` | 同步引擎——单模块/全量同步全景核心字段 |
 | 2 | align_panoramas.py | `scripts/governance/d5_architecture/generators/align_panoramas.py` | 对齐检测——生成 panorama_alignment_report.md |
 | 3 | blueprint_frontmatter_reconciler.py | `scripts/governance/d5_architecture/syncers/blueprint_frontmatter_reconciler.py` | blueprint 对齐——更新 blueprint.md frontmatter（缺失则标记跳过） |
 
@@ -281,11 +281,11 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 
 | # | 决策 | 选项 | 选中 | 依据 |
 |---|------|------|------|------|
-| 1 | 四图对齐 key | module_id / blueprint_id / path | module_id（depgraph 的 blueprint_id） | 跨图唯一标识，已在 depgraph 使用 |
+| 1 | 五图对齐 key | module_id / blueprint_id / path | module_id（depgraph 的 blueprint_id） | 跨图唯一标识，已在 depgraph 使用 |
 | 2 | 聚合策略 | LIMIT 1 / 多数投票 | 多数投票 | 跨域模块多行，LIMIT 1 取值不稳定 |
 | 3 | blueprint_path 为空时 | 跳过 / 自动创建 | 标记缺失跳过（不创建文件） | 避免自动生成大量空蓝图；blueprint 图对齐依赖手动创建蓝图 |
 | 4 | dataflow/decision 占位策略 | 不创建 / 创建占位记录 | 创建占位记录（module_placeholder / placeholder） | 确保三图都有该模块节点 |
-| 5 | GATE 阻断范围 | 四图全阻断 / 三图阻断 | 三图内部不一致阻断，blueprint-only warn | blueprint 数据质量较低，warn-only 避免过度阻断 |
+| 5 | GATE 阻断范围 | 全景全阻断 / 三图阻断 | 三图内部不一致阻断，blueprint-only warn | blueprint 数据质量较低，warn-only 避免过度阻断 |
 
 ---
 
@@ -293,8 +293,8 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 
 | 术语 | 精确定义 | 易混淆术语 | 区别 |
 |------|---------|-----------|------|
-| 四图 | depgraph + dataflowgraph + decisiongraph + blueprint.md | 全景图 | 全景图是更广的概念（含 44 个全景图），四图是模块对齐的 4 张图 |
-| 对齐 | 同一 module_id 在四图中的 4 核心字段一致 | 同步 | 同步是动作，对齐是结果 |
+| 全景 | depgraph + dataflowgraph + decisiongraph + blueprint.md | 全景图 | 全景图是更广的概念（含 44 个全景图），全景是模块对齐的 4 张图 |
+| 对齐 | 同一 module_id 在全景中的 4 核心字段一致 | 同步 | 同步是动作，对齐是结果 |
 | 多数投票 | 同一 blueprint_id 多行的 domain_id 取出现次数最多的值 | 平均/第一行 | 平均无意义（domain 是枚举），第一行不稳定 |
 | 占位记录 | dataflow/decision 中 entity_type='module_placeholder' / track='placeholder' 的记录 | 正式记录 | 占位记录仅含 4 核心字段，正式记录有完整业务字段 |
 | 孤儿模块 | 仅在一张图存在的模块 | 漂移模块 | 孤儿是缺失，漂移是字段不一致 |

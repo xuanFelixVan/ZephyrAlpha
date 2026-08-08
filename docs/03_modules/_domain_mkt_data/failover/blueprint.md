@@ -147,19 +147,19 @@ class FailoverManager:
 - 覆盖: 初始选择、健康检查失败切换、自动 failback、手动 failover、
   无可用源(ALL_FAILED)、轮询策略、事件回调、历史记录、线程安全
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-MKT-004`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-MKT-004` 的 4 个 file 节点 | production | `extract_depgraph.py --modules MOD-MKT-004` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 

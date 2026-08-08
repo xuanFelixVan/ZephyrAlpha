@@ -850,19 +850,19 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | 2026-08-06 | **全面治本修正：14处糊弄点→2026前沿算法** | 用户要求"把所有糊弄人的全部重新算一遍"。6方向调研（Wyckoff/虹吸资金/VIX/筹码/Capitulation/新闻NLP/背离/衰竭）后，14处糊弄点全部替换为2026前沿算法：F2均线斜率→Hurst(DFA)+Kalman；#8模糊虹吸→前5%集中度+HHI+资金集中度；#9 KDJ>90模糊→Pivot-Pair单调配对；#10均线角度伪精确→Hurst衰退+ADX回落；#12换手率代理→华泰前沿VWAP三角分布(MOD-REGIME-005)；S2 capitulation加密货币指标→ACSI A股投降指数；S2 wyckoff名词堆砌→规则法TR+4触发器+FSM；S2 fund北向死数据→超大单IC加权；S2 policy/bad_news_flat定性词→NLP三层管道；T3 mainline逻辑错位→RRG+多周期交叉；T3 sentiment北向死数据→融资+主力资金 |
 | 2026-08-06 | HMM 特征数 5→6 | F2拆为Hurst(DFA)+Kalman斜率双子特征，X矩阵(T,5)→(T,6)，同步更新regime_detector.py |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-REGIME-002`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 15 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-002` 的 16 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-002` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -873,6 +873,6 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | module_id | MOD-REGIME-002 | MOD-REGIME-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
-| file_count | 15 文件 | N/A | — |
+| file_count | 16 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

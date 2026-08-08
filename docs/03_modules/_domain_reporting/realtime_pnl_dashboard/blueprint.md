@@ -173,14 +173,14 @@ class RealtimePnlDashboard:
   风控状态注入/降级、持仓明细(多空/零)、3s刷新幂等、Decimal精度、frozen不可变、
   边界值(空持仓/负市价拒绝/initial_capital非正)
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RPT-004`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

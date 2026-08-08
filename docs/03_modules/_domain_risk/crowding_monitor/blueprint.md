@@ -83,20 +83,20 @@ is_crowded = crowding_score > threshold (默认 0.6)
 ## 7. 施工步骤
 
 - S1: depgraph 登记 ✓
-- S2: 四图对齐 ✓
+- S2: 五图对齐 ✓
 - S3: 写代码（持仓重叠度 + 方向一致性 + 拥挤评分）
 - S4: 测试
 - S5: 状态转换 + 验收
 - S6: 接入编排器
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RK-13`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

@@ -203,14 +203,14 @@ build_status: generated
 
 ---
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-GOVERNANCE`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
@@ -2147,14 +2147,14 @@ STEP 3: 拆分后验证
 | `docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml` §battle_map_steps + §battle_map_cross_cutting | 环节叙事 + 横切叙事真源（退役迁移自 trading_flow_narrative.yaml，2026-08-02） | battle_map_translation |
 | `scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py` | 作战地图生成器（读 battle_map 三表 + 翻译真源 → battle_map/ MD+HTML） | battle_map_generator |
 | `docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/` | 生成产物（总指挥图 + 6 分阶段 + 横切视图 + HTML） | battle_map_artifacts |
-| `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md` | 能力定位书（第四全景图） | battle_map_capability_doc |
+| `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/battle_map_positioning.md` | 能力定位书（第五全景图） | battle_map_capability_doc |
 
 **SSoT 分工**：
 - 结构化数据（节点/边/flow_stage 字段）真源 = decisiongraph (PostgreSQL)
 - 规则数据（flow_stages 定义/叙事）真源 = YAML
 - 07_ MD = 生成器派生产物（只读视图）
 
-**与四图对齐的关系**：不进 align_panoramas 四图对齐（视图不是图），通过 module_id 链回 decisiongraph + depgraph。在 panorama_registry 登记为 PAN-BUILT-21。
+**与五图对齐的关系**：不进 align_panoramas 五图对齐（视图不是图），通过 module_id 链回 decisiongraph + depgraph。在 panorama_registry 登记为 PAN-BUILT-21。
 
 ---
 

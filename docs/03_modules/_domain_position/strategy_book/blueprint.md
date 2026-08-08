@@ -278,14 +278,14 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 | 灰度发布 5%→20%→50%→100% | 新策略冷启动防失控，冷启动期 PerformanceScore 不参与分配 |
 | TargetPortfolio 不含 Kelly | 与 MOD-POS-001 PositionPlan 粗→精分层，避免双重 Kelly |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-POS-020`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

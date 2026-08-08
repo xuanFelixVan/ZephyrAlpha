@@ -796,14 +796,14 @@ except Exception as e:
 |------|:-:|------|
 | 2026-04-24 | 1.0.0 | 初版（B-a-4）。基于 VMS v1.2 模板 + KBG-0019。重点：① §5 下游 Protocol 单向引用（`ContextAdjustActionProtocol` 等）解决遗漏 #5 耦合风险；② §3.2 ANOMALY_ACTION_ROUTING 静态路由表；③ §6 EMA + 滑窗斜率 + Flatline 三算法；④ §11.2 DEGRADE-001/002 + 所有 Action TTL 强制（FLE 挂也不会留下永久错误配置）；⑤ §5.4 无循环依赖图。 |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-FEEDBACK_LOOP`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

@@ -362,14 +362,14 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 | 再平衡 ≤1次/日 + 紧急例外 | 防过度交易；regime 突变/Kill Switch 允许紧急再平衡 |
 | RiskSignal 由 regime 检测器侧计算 | 13 参数是市场风险指标，属于 regime 检测范畴；本模块是消费者，职责单一 |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-PA-007`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

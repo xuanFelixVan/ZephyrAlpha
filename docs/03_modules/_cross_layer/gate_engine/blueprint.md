@@ -173,7 +173,7 @@ build_status: planned
 | `commit_gates/datetime_now_forbidden_gate.py` | §0.1 | 生成器代码datetime.now()硬阻断门禁（AGENTS.md §11.1.1） | 已实现 | | 本模块 |
 | `commit_gates/import_direction_gate.py` | §0.1 | shared层向上依赖阻断门禁（NO-UPWARD-IMPORT，§5.152防复发） | 已实现 | | 本模块 |
 | `commit_gates/hardcoded_url_gate.py` | §0.1 | 硬编码localhost URL阻断门禁（NO-HARDCODED-URL，§5.160.9防复发） | 已实现 | | 本模块 |
-| `commit_gates/panorama_alignment_gate.py` | §0.1 | 三图模块对齐warn-only门禁（GATE-PANORAMA-ALIGNMENT，四图模块对齐Step 4） | 已实现 | | 本模块 |
+| `commit_gates/panorama_alignment_gate.py` | §0.1 | 三图模块对齐warn-only门禁（GATE-PANORAMA-ALIGNMENT，五图模块对齐Step 4） | 已实现 | | 本模块 |
 | `commit_gates/long_param_list_gate.py` | §0.1 | 长参数列表阻断门禁（NO-LONG-PARAM-LIST，§5.150防复发，AST检测新增函数参数数>7） | 已实现 | | 本模块 |
 | `commit_gates/bare_sql_gate.py` | §0.1 | 裸SQL字面量阻断门禁（NO-BARE-SQL，§5.160.2防复发，diff检测SELECT/INSERT/UPDATE/DELETE） | 已实现 | | 本模块 |
 | `commit_gates/depgraph_write_path_gate.py` | §0.1 | depgraph写入路径白名单门禁（DEPGRAPH-WRITE-PATH，裁定#ARCH-DEPGRAPH_ACCESS_CONTROL，diff检测非白名单文件中的writable-params） | 已实现 | | 本模块 |
@@ -281,14 +281,14 @@ build_status: planned
 
 ---
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-GATE_ENGINE`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

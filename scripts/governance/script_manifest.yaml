@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-08T08:33:56Z
+# 自动生成于 2026-08-08T08:40:17Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-08T08:33:56Z'
+generated_at: '2026-08-08T08:40:17Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 398
+total_scripts: 399
 with_manifest: 324
-missing_manifest: 74
+missing_manifest: 75
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 26
   governance:d4_paths: 4
-  governance:d5_architecture: 108
+  governance:d5_architecture: 109
   governance:d6_security: 15
   governance:d7_code: 41
   governance:d8_doc_sync: 12
@@ -1826,6 +1826,16 @@ scripts:
   description: 生成器公共工具（向内收：消除重复）。
   tags:
   - Critical
+- name: d5_architecture/generators/align_all.py
+  owner: governance:d5_architecture
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d5_architecture/generators/align_panoramas.py
   owner: governance:d5_architecture
   dimensions: []

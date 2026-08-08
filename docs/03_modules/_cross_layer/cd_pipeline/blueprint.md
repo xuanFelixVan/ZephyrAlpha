@@ -60,14 +60,14 @@ build_status: generated
 
 **Shadow Canary 模式**：新版本并行跑、吸相同输入、**不下真单**（走 `simulation_broker`），比对输出一致性后再切——契合单机+实盘安全。shadow 必须在生产机（Windows 单机）本地跑（要比对真实生产输出），不能在 GitHub Actions 托管 runner 上跑。
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-CD-001`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

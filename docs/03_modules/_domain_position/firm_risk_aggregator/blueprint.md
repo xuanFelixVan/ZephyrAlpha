@@ -295,14 +295,14 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 | contributions 记录裁剪前原始贡献 | 归因可追溯：亏钱时能区分"哪个策略贡献了这只票""裁剪削了多少" |
 | 不做 MVO/协方差 | design_memo_001 §3.1：协方差估计是研究课题，A 股情绪周期切换时全错，归因纠缠 |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-POS-021`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

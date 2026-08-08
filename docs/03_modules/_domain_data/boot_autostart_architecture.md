@@ -358,14 +358,14 @@ finally {
 - **E. 死人开关告警** ✅ 已落地：2 日停摆是人工发现的，非系统告警。新建 `scripts/deadman_switch.ps1`——**无状态一次性 Task Scheduler 任务**（非 while-true guard，无僵尸风险），每 5min fire 读 3 个心跳文件，任一陈旧 >10min 即告警。**独立性第一性原理**：监控者不属被监控的 3 服务之一，只读心跳文件；若 3 服务全死，此任务仍独立 fire 并告警。**为何用 .ps1 而非 .py**：若故障根因是 Python 栈崩溃（坏 import/venv），.py 监控会跟着死；.ps1 读文件+发 webhook 零 Python 依赖。**告警通道**：飞书 webhook（推手机，复用 `ZEPHYR_FEISHU_WEBHOOK`，与 Alerter 同契约）+ Windows Event Log + 本地 `tmp/deadman_switch_alerts.log`（全审计无冷却）。**30min 冷却**防多小时停摆刷屏（同一 staleKey 30min 内只推一次手机）。**Fail-safe**：此任务自身死亡退化到 pre-E 现状（无监控），非倒退——无需无限递归监控。已注册为第 4 个 Task Scheduler 任务 `ZephyrAlpha_DeadmanSwitch`（`register_guard_tasks.ps1`）。不变式测试 `TestDeadmanSwitchInvariants` + `TestDeadmanSwitchRegistered` 钉死（一次性、无 WaitForExit、读 3 心跳、有冷却、有 webhook）。
 - **F. `WaitForExit` 死锁根因文档化** ✅ 已落地：根因是 PowerShell 重定向输出管道满致 `WaitForExit` 不返回；polling 已绕过。3 个 guard 脚本头注释固化"pipe buffer fills → WaitForExit never returns → main thread deadlocks"知识点，防 AI "优化"回 `WaitForExit`。不变式测试 `TestWaitForExitRootCauseDocumented` 钉死。
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-L00-004`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

@@ -803,14 +803,14 @@ except (CECompressionError, asyncio.TimeoutError):
 | 2026-05-05 | 1.0.2 | 蓝图 v0.4.1 第三轮同步。新增 7 项深水区盲点已补齐（context poisoning OWASP ASI06 / compressor hallucination validator / memory echo detector / context curator "less docs same tokens" / relevance validator 门槛过滤 / active memory CRUD / typed memory router）。蓝图完整度 93→100/100（25项盲点全覆盖）。本接口规范在 experimental 施工前需与蓝图 v0.4.1 重新对轨——尤其 attention: poison_detect/compressor_validate/relevance_threshold 三条新增流水线节点在接口侧尚无对应 slot。 |
 | 2026-04-24 | 1.0.0 | 初版（B-a-2）。基于 VMS v1.2 模板。重点：① §5 MCP 能力矩阵（遗漏 #4）解决 Cursor/Trae/Claude-Desktop 差异；② §4.1 `adjust_strategy` + §3.3 `FeedbackSignal`（遗漏 #5）通过 Protocol 单向依赖接收 FLE 反馈；③ 三条 P0 降级 DEGRADE-001~003。 |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-CONTEXT_ENGINE`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

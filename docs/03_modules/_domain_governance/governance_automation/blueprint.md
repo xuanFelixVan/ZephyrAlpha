@@ -103,14 +103,14 @@ design_maturity: design
 | 12 | `scripts/governance/meta/validate_rules_integrity.py` | §23 供应链安全 | SHA256 完整性校验 | 已实现 | — |
 | 13 | `scripts/governance/architecture_health_dashboard.py` | §六 架构健康度 | 10项指标自动化检测基线（第0期，对标 ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） §四） | 已实现 | — |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-INF-005`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|

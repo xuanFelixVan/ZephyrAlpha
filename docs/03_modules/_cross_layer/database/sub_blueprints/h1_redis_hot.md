@@ -102,14 +102,14 @@ H1 redis_hot 是业务数据库三层冷热架构的 **Hot 平面**——盘中�
 |---------|------------|---------|---------|
 | v1.2.0 (本版) | 全部业务代码已建（schema/writer/reader/projectors/integration/get_redis_conn）+ E2E 联调通过 + depgraph=stable | 真实 QMT 盘中联调（需交易日） | 休市日无法进行实盘联调 |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-H1_REDIS_HOT`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
@@ -462,7 +462,7 @@ def get_redis_conn(self):
 |---|--------|---------|:---:|
 | 1 | 蓝图 frontmatter 合法 | PS-STD-001 字段校验 | ☑ |
 | 2 | depgraph H1 节点已登记（build_status=stable） | `extract_depgraph.py --modules MOD-H1_REDIS_HOT` | ☑ |
-| 3 | 四图对齐干净 | `align_panoramas.py` domain_mismatches=0 | ☑ |
+| 3 | 五图对齐干净 | `align_panoramas.py` domain_mismatches=0 | ☑ |
 | 4 | Redis Key 设计与数据架构.md 一致 | 路径比对 §3 | ☑ |
 | 5 | get_redis_conn() 已实现 | grep database_service.py | ☑ |
 | 6 | E2E 读取延迟 <5ms | test_h1_writer_reader_projectors.py（avg=0.20ms） | ☑ |

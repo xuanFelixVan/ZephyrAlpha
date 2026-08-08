@@ -34,7 +34,7 @@ references:
     why: "自动修复引擎——S2 分级自治的基础设施"
   - path: "D:\\ZephyrAlpha\\docs\\03_modules\\_domain_governance\\panorama_alignment_engine\\blueprint.md"
     section: "§2 同步引擎"
-    why: "四图对齐引擎——S3 增量同步的基础设施"
+    why: "五图对齐引擎——S3 增量同步的基础设施"
   - path: "D:\\ZephyrAlpha\\src\\zephyr\\governance\\audit\\reconciliation_registry.py"
     section: "post-commit 对账注册表"
     why: "reconciler 注册表——S1/S2 的注册入口"
@@ -47,7 +47,7 @@ depends_on:
     why: "auto_fix_engine——S2 分级自治修复复用其 pre_fix_snapshot+验证闭环"
   - target: MOD-GOV-SYNC-PANORAMA
     at: "§2"
-    why: "四图对齐引擎——S3 增量同步扩展其同步能力"
+    why: "五图对齐引擎——S3 增量同步扩展其同步能力"
   - target: MOD-INF-005
     at: "§reconciler注册"
     why: "governance_automation——reconciler 注册与调度"
@@ -217,7 +217,7 @@ Phase 0-4 蓝图格式统一化任务将 drift 从 683 降至 0，但这一成�
 | 6 | ✅ 包含 | dashboard 更新 | 扫描结果驱动 dashboard 更新 | 本模块 |
 | 7 | ❌ 排除 | drift 检测器实现 | 39检测器 | MOD-INF-023 |
 | 8 | ❌ 排除 | 修复策略实现 | pre_fix_snapshot/验证 | MOD-INF-031 |
-| 9 | ❌ 排除 | 同步引擎实现 | 四图同步 | MOD-GOV-SYNC-PANORAMA |
+| 9 | ❌ 排除 | 同步引擎实现 | 全景同步 | MOD-GOV-SYNC-PANORAMA |
 | 10 | ❌ 排除 | gate 框架实现 | commit gate 注册/调度 | MOD-INF-005 |
 
 ### §2.2 排除项
@@ -226,7 +226,7 @@ Phase 0-4 蓝图格式统一化任务将 drift 从 683 降至 0，但这一成�
 |---|--------|------|---------|
 | 1 | 新建 drift 检测器 | 已有39检测器 | MOD-INF-023 |
 | 2 | 新建修复算法 | 已有 AutoFixer | MOD-INF-031 |
-| 3 | 新建同步引擎 | 已有四图同步 | MOD-GOV-SYNC-PANORAMA |
+| 3 | 新建同步引擎 | 已有全景同步 | MOD-GOV-SYNC-PANORAMA |
 | 4 | commit gate 框架 | 已有 GitCommitGateway | MOD-INF-005 |
 
 ---
@@ -306,7 +306,7 @@ session_worktree_merge()
 |---------|--------|---------|----------|
 | MOD-INF-023 drift_detector | drift_engine.run_scan() | 39检测器 | S1 编排其全量运行 |
 | MOD-INF-031 auto_fix_engine | AutoFixer.pre_fix_snapshot/fix/verify | 快照+修复+验证 | S2 分级自治决策 |
-| MOD-GOV-SYNC-PANORAMA | sync_panorama_module.py | 四图同步 | S3 增量 hash |
+| MOD-GOV-SYNC-PANORAMA | sync_panorama_module.py | 全景同步 | S3 增量 hash |
 | MOD-INF-005 governance_automation | ReconciliationRegistry.register() | reconciler 注册 | S1 注册新 reconciler |
 | MOD-INF-016 shared_core | EventBus.publish() | 事件分发 | S1 订阅 merge.completed |
 | MOD-INF-024 budget_enforcer | BudgetEngine.pre_flight_check() | 预算控制 | S1/S2 扫描预算 |

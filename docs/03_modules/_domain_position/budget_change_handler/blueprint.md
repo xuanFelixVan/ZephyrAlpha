@@ -365,14 +365,14 @@ if delta ≥ 0 (budget 上调):
 | 每级独立事件可 log 可复盘 | 归因清晰：能追溯"哪个策略何时被冻结/自主/强裁" |
 | firm 风险违例直接 Tier 3 | 风控违例不等 convergence_window，立即强裁（保命优先） |
 
-### §0.6 四图对齐视图
+### §0.6 五图对齐视图
 
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
-> **自动生成**：本节由 generate_blueprint_panorama.py 从四图真源派生，禁止手写。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
 > 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-POS-022`
 
-#### 四图位置
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
