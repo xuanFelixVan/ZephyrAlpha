@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-CLONE_GUARD | docs/03_modules/_cross_layer/clone_guard/blueprint.md | §4.3
 # [MODULE] zephyr.clone_guard.engines.echo_guard_adapter
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); subprocess; json; logging; ruamel.yaml (acknowledge/prune 写入路径，lazy import)
+# [DEPENDENCIES] zephyr.clone_guard.config (CloneGuardConfig); subprocess; json; logging; ruamel.yaml (acknowledge/prune 写入路径，lazy import); filelock (_embedding_lock 跨进程锁，lazy import)
 # [CONSUMERS] zephyr.clone_guard.orchestrator
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Adapter 模式——封装 echo-guard CLI 调用，对编排层暴露统一 detect() 接口；echo-guard 不可用时返回空列表 + degraded 标记；永不抛异常
+# [INVARIANTS] Adapter 模式——封装 echo-guard CLI 调用，对编排层暴露统一 detect() 接口；echo-guard 不可用时返回空列表 + degraded 标记；永不抛异常；OOB 治本（P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）：_embedding_lock 跨进程文件锁序列化 echo-guard CLI 调用（detect/scan），防 EmbeddingStore 无锁并发写导致 153 函数 embedding_row OOB（0.74%）；锁超时→degraded 不执行 CLI（避免无锁竞态）；filelock 未安装/锁目录不可写→fail-open 无锁执行（守 _GlobalCommitLock 先例）
 # [MODIFY-GUARD] blueprint=docs/03_modules/_cross_layer/clone_guard/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -33,6 +33,7 @@ import json
 import logging
 import os
 import subprocess  # noqa: bare-subprocess  echo-guard CLI 调用需要 subprocess
+from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -41,6 +42,15 @@ from zephyr.clone_guard.config import CloneGuardConfig
 logger = logging.getLogger(__name__)
 
 __all__ = ["EchoGuardAdapter", "Finding"]
+
+# OOB 治本（P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）：跨进程文件锁序列化 echo-guard CLI 调用。
+# 锁文件与 _GlobalCommitLock 同目录（.ailocks/），60s 超时守 _LOCK_TIMEOUT_DEFAULT 先例。
+_EMBEDDING_LOCK_FILE = "echo_guard_embedding.lock"
+_EMBEDDING_LOCK_TIMEOUT = 60.0
+
+
+class _EmbeddingLockTimeout(RuntimeError):
+    """echo-guard embedding 锁等待超时——调用方降级（不执行 CLI 防 OOB 竞态）。"""
 
 
 @dataclass(frozen=True)
@@ -74,6 +84,61 @@ class EchoGuardAdapter:
     def __init__(self, repo_root: Path, config: CloneGuardConfig | None = None):
         self._repo_root = repo_root
         self._config = config or CloneGuardConfig()
+
+    @contextmanager
+    def _embedding_lock(self):
+        """跨进程文件锁——序列化 echo-guard CLI 调用防 EmbeddingStore 并发写 OOB。
+
+        OOB 治本（P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）：echo-guard EmbeddingStore 无文件锁，
+        多进程并发写 ``embeddings.npy`` 导致 153 函数 embedding_row 越界（0.74%）。本锁序列化
+        所有 echo-guard CLI 调用（detect/scan/acknowledge-CLI），消除并发写竞态。
+
+        降级策略（守 INVARIANTS + ``_GlobalCommitLock`` 先例）：
+        - filelock 未安装 → fail-open（无锁执行，落 warning）
+        - 锁目录不可写 → fail-open（无锁执行，落 warning）
+        - 锁超时（60s）→ raise ``_EmbeddingLockTimeout``（调用方降级，不执行 CLI——避免无锁竞态）
+
+        fail-open 理由：filelock 是可选依赖，缺失时不应阻断所有 echo-guard 检测
+        （守 ``_GlobalCommitLock`` OSError fail-open 先例）。锁超时不 fail-open 而降级的理由：
+        基础设施可用但竞争失败时，无锁执行会重新引入 OOB 竞态——宁可本次跳过检测
+        （degraded，``fail_closed=False`` 不阻断 commit）也不冒险。
+        """
+        try:
+            from filelock import FileLock, Timeout  # noqa: PLC0415 — lazy import
+        except ImportError:
+            logger.warning(
+                "EchoGuardAdapter: filelock 未安装，fail-open 无锁执行 echo-guard CLI"
+                "（存在 EmbeddingStore 并发写 OOB 风险）"
+            )
+            yield
+            return
+
+        lock_dir = self._repo_root / ".ailocks"
+        try:
+            lock_dir.mkdir(parents=True, exist_ok=True)
+        except OSError as e:
+            logger.warning(
+                "EchoGuardAdapter: 锁目录不可写(%s: %s)，fail-open 无锁执行 echo-guard CLI",
+                type(e).__name__, e,
+            )
+            yield
+            return
+
+        lock = FileLock(str(lock_dir / _EMBEDDING_LOCK_FILE), timeout=_EMBEDDING_LOCK_TIMEOUT)
+        try:
+            lock.acquire()
+        except Timeout:
+            raise _EmbeddingLockTimeout(
+                f"echo-guard embedding 锁等待超时({_EMBEDDING_LOCK_TIMEOUT}s)——"
+                f"另一进程正在执行 echo-guard CLI，本次降级跳过以防 EmbeddingStore 并发写 OOB"
+            ) from None
+        try:
+            yield
+        finally:
+            try:
+                lock.release()
+            except OSError:
+                pass  # 锁已释放或进程异常——filelock 自身有锁文件清理机制
 
     def health_check(self) -> bool:
         """检查 echo-guard 是否可用（CLI 存在 + 索引已建）。"""
@@ -115,14 +180,18 @@ class EchoGuardAdapter:
         timeout_sec = timeout or self._config.pre_commit_timeout_sec
 
         try:
-            result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI check 调用
-                ["echo-guard", "check", "--output", "json"] + files,
-                capture_output=True,
-                text=True,
-                timeout=timeout_sec,
-                cwd=str(self._repo_root),
-                env={**os.environ, **self._config.env},
-            )
+            with self._embedding_lock():
+                result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI check 调用
+                    ["echo-guard", "check", "--output", "json"] + files,
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout_sec,
+                    cwd=str(self._repo_root),
+                    env={**os.environ, **self._config.env},
+                )
+        except _EmbeddingLockTimeout:
+            logger.warning("EchoGuardAdapter degraded: embedding 锁超时，跳过 check 防 OOB")
+            return [], True
         except FileNotFoundError:
             logger.warning("EchoGuardAdapter degraded: echo-guard CLI 未安装")
             return [], True
@@ -179,14 +248,18 @@ class EchoGuardAdapter:
         timeout_sec = timeout or self._config.audit_timeout_sec
 
         try:
-            result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI scan 调用
-                ["echo-guard", "scan", "--output", "json"],
-                capture_output=True,
-                text=True,
-                timeout=timeout_sec,
-                cwd=str(self._repo_root),
-                env={**os.environ, **self._config.env},
-            )
+            with self._embedding_lock():
+                result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI scan 调用
+                    ["echo-guard", "scan", "--output", "json"],
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout_sec,
+                    cwd=str(self._repo_root),
+                    env={**os.environ, **self._config.env},
+                )
+        except _EmbeddingLockTimeout:
+            logger.warning("EchoGuardAdapter degraded: embedding 锁超时，跳过 scan 防 OOB")
+            return [], True
         except FileNotFoundError:
             logger.warning("EchoGuardAdapter degraded: echo-guard CLI 未安装")
             return [], True
@@ -271,22 +344,26 @@ class EchoGuardAdapter:
         timeout_sec = timeout or self._config.pre_commit_timeout_sec
 
         try:
-            result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI acknowledge 调用
-                [
-                    "echo-guard",
-                    "acknowledge",
-                    finding_id,
-                    "--verdict",
-                    verdict,
-                    "--note",
-                    note,
-                ],
-                capture_output=True,
-                text=True,
-                timeout=timeout_sec,
-                cwd=str(self._repo_root),
-                env={**os.environ, **self._config.env},
-            )
+            with self._embedding_lock():
+                result = subprocess.run(  # noqa: bare-subprocess  echo-guard CLI acknowledge 调用
+                    [
+                        "echo-guard",
+                        "acknowledge",
+                        finding_id,
+                        "--verdict",
+                        verdict,
+                        "--note",
+                        note,
+                    ],
+                    capture_output=True,
+                    text=True,
+                    timeout=timeout_sec,
+                    cwd=str(self._repo_root),
+                    env={**os.environ, **self._config.env},
+                )
+        except _EmbeddingLockTimeout:
+            logger.warning("EchoGuardAdapter acknowledge(CLI) degraded: embedding 锁超时，跳过防 OOB")
+            return False, "echo-guard embedding 锁超时（并发写 OOB 防护），请重试"
         except FileNotFoundError:
             logger.warning("EchoGuardAdapter acknowledge(CLI) degraded: echo-guard CLI 未安装")
             return False, "echo-guard CLI 未安装"

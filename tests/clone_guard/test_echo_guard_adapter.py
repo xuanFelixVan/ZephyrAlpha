@@ -883,6 +883,140 @@ class TestEchoGuardAdapterPrune:
 
 
 # ---------------------------------------------------------------------------
+# _embedding_lock 跨进程文件锁测试（OOB 治本 P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）
+# ---------------------------------------------------------------------------
+
+
+class TestEmbeddingLockSerialization:
+    """_embedding_lock 跨进程文件锁测试——OOB 治本（P2 #ARCH-ECHO-GUARD-EMBEDDING-OOB）。
+
+    验证三个不变量：
+    - 锁正常获取 → CLI 在锁内执行（序列化），锁文件路径/超时正确
+    - 锁超时 → degraded（不执行 CLI，防无锁竞态 OOB）
+    - filelock 未安装/锁目录不可写 → fail-open（无锁执行，守 _GlobalCommitLock 先例）
+    - subprocess 异常时锁仍释放（finally 块）
+    - health_check 不加锁（--version 不触碰 EmbeddingStore）
+    """
+
+    def test_detect_acquires_lock_with_correct_path_and_timeout(self, tmp_path: Path):
+        """detect 用 .ailocks/echo_guard_embedding.lock（60s 超时）序列化 CLI 调用。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch("filelock.FileLock") as mock_filelock_cls:
+            mock_lock = MagicMock()
+            mock_filelock_cls.return_value = mock_lock
+            with patch("subprocess.run", return_value=mock_result):
+                adapter.detect(["src/foo.py"])
+        mock_filelock_cls.assert_called_once()
+        args, kwargs = mock_filelock_cls.call_args
+        assert "echo_guard_embedding.lock" in args[0]
+        assert ".ailocks" in args[0]
+        assert kwargs["timeout"] == 60.0
+        mock_lock.acquire.assert_called_once()
+        mock_lock.release.assert_called_once()
+
+    def test_detect_lock_timeout_degraded(self, tmp_path: Path):
+        """锁超时 → detect 降级（[], True），不执行 CLI（防无锁竞态 OOB）。"""
+        from filelock import Timeout
+
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch("filelock.FileLock") as mock_filelock_cls:
+            mock_lock = MagicMock()
+            mock_lock.acquire.side_effect = Timeout("lock busy")
+            mock_filelock_cls.return_value = mock_lock
+            with patch("subprocess.run") as mock_run:
+                findings, degraded = adapter.detect(["src/foo.py"])
+        assert findings == []
+        assert degraded is True
+        mock_run.assert_not_called()  # 锁超时不执行 CLI
+
+    def test_scan_lock_timeout_degraded(self, tmp_path: Path):
+        """锁超时 → scan 降级（[], True），不执行 CLI。"""
+        from filelock import Timeout
+
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch("filelock.FileLock") as mock_filelock_cls:
+            mock_lock = MagicMock()
+            mock_lock.acquire.side_effect = Timeout("lock busy")
+            mock_filelock_cls.return_value = mock_lock
+            with patch("subprocess.run") as mock_run:
+                findings, degraded = adapter.scan()
+        assert findings == []
+        assert degraded is True
+        mock_run.assert_not_called()
+
+    def test_acknowledge_cli_lock_timeout_returns_error(self, tmp_path: Path):
+        """锁超时 → acknowledge(CLI) 返回 (False, error)，不执行 CLI。"""
+        from filelock import Timeout
+
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig(acknowledge_via_cli=True))
+        with patch("filelock.FileLock") as mock_filelock_cls:
+            mock_lock = MagicMock()
+            mock_lock.acquire.side_effect = Timeout("lock busy")
+            mock_filelock_cls.return_value = mock_lock
+            with patch("subprocess.run") as mock_run:
+                success, error = adapter.acknowledge("F-001", "intentional", "x")
+        assert success is False
+        assert error is not None
+        assert "锁超时" in error
+        mock_run.assert_not_called()
+
+    def test_detect_filelock_missing_fail_open(self, tmp_path: Path):
+        """filelock 未安装 → fail-open（无锁执行 CLI，正常返回 degraded=False）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch.dict("sys.modules", {"filelock": None}):
+            with patch("subprocess.run", return_value=mock_result) as mock_run:
+                findings, degraded = adapter.detect(["src/foo.py"])
+        assert findings == []
+        assert degraded is False  # fail-open 正常执行
+        mock_run.assert_called_once()
+
+    def test_scan_filelock_missing_fail_open(self, tmp_path: Path):
+        """filelock 未安装 → scan fail-open（无锁执行，正常返回）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch.dict("sys.modules", {"filelock": None}):
+            with patch("subprocess.run", return_value=mock_result) as mock_run:
+                findings, degraded = adapter.scan()
+        assert degraded is False
+        mock_run.assert_called_once()
+
+    def test_detect_lock_dir_not_writable_fail_open(self, tmp_path: Path):
+        """锁目录不可写 → fail-open（无锁执行 CLI，正常返回 degraded=False）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0, stdout=json.dumps({"findings": []}), stderr="")
+        with patch("pathlib.Path.mkdir", side_effect=OSError("permission denied")):
+            with patch("subprocess.run", return_value=mock_result) as mock_run:
+                findings, degraded = adapter.detect(["src/foo.py"])
+        assert findings == []
+        assert degraded is False  # fail-open 正常执行
+        mock_run.assert_called_once()
+
+    def test_lock_released_on_subprocess_exception(self, tmp_path: Path):
+        """subprocess.run 抛异常时锁仍被释放（finally 块，防死锁）。"""
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        with patch("filelock.FileLock") as mock_filelock_cls:
+            mock_lock = MagicMock()
+            mock_filelock_cls.return_value = mock_lock
+            with patch("subprocess.run", side_effect=FileNotFoundError):
+                adapter.detect(["src/foo.py"])
+        mock_lock.acquire.assert_called_once()
+        mock_lock.release.assert_called_once()  # 异常后锁仍释放
+
+    def test_health_check_does_not_acquire_lock(self, tmp_path: Path):
+        """health_check（--version）不触碰 EmbeddingStore，不获取 embedding 锁。"""
+        (tmp_path / ".echo-guard").mkdir(parents=True)
+        (tmp_path / ".echo-guard" / "index.duckdb").touch()
+        adapter = EchoGuardAdapter(tmp_path, CloneGuardConfig())
+        mock_result = MagicMock(returncode=0)
+        with patch("filelock.FileLock") as mock_filelock_cls:
+            with patch("subprocess.run", return_value=mock_result):
+                adapter.health_check()
+        mock_filelock_cls.assert_not_called()  # health_check 不加锁
+
+
+# ---------------------------------------------------------------------------
 # _make_stable_key / _parse_finding_id_hashes 单元测试
 # ---------------------------------------------------------------------------
 

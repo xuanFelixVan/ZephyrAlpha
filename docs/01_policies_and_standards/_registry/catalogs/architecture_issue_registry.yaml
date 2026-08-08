@@ -743,9 +743,9 @@ entries:
     阶段2（本条目）：修复_backups reconciler失效；归档backup_runtime_state.py改默认输出路径；清理_backups/磁盘9个snapshot。
     阶段3（本条目）：补充meta/增长治理文档章节。
     阶段4（条件性）：阶段0已裁定".py口径"为准，meta/47<60合规，跳过拆分。
-    阶段5（v2扩展，2026-08-03 DONE）：backup_pg_depgraph→backup_pg_architecture 扩展四图19表备份。
+    阶段5（v2扩展，2026-08-03 DONE）：backup_pg_depgraph→backup_pg_architecture 扩展全景19表备份。
       原 backup_pg_depgraph 仅备份 depgraph nodes/edges 2表，扩展为 backup_pg_architecture 覆盖
-      四图19张DB真源表（depgraph 11表+battle_map 3表+decisiongraph 2表+dataflowgraph 3表）。
+      全景19张DB真源表（depgraph 11表+battle_map 3表+decisiongraph 2表+dataflowgraph 3表）。
       接入 apply_battle_map/apply_decisiongraph/apply_dataflowgraph 写入后自动备份（throttle 60s）。
       backup_pg_depgraph 保留为 deprecated 别名（向后兼容）。函数拆分降低复杂度（_export_architecture_tables
       +_prune_old_backups）。提交：f84d804733+0a5298fda4。
@@ -1606,14 +1606,14 @@ entries:
   created: '2026-07-09'
   last_updated: '2026-07-09'
 - issue_id: '#ARCH-056'
-  title: 四图模块同步引擎（depgraph → dataflow/decision/blueprint 核心字段单向派生）
+  title: 五图模块同步引擎（depgraph → dataflow/decision/blueprint 核心字段单向派生）
   category: architecture_governance
   severity: P1高
   status: decided
   description: |
-    四图（depgraph/dataflow/decision/blueprint）模块核心字段不对齐。
+    全景（depgraph/dataflow/decision/blueprint）模块核心字段不对齐。
     当前只有事后检测（align_panoramas.py），无自动同步引擎。
-    裁定：建立四图模块同步引擎，depgraph 为真源，单向派生到 dataflow/decision/blueprint。
+    裁定：建立五图模块同步引擎，depgraph 为真源，单向派生到 dataflow/decision/blueprint。
   adjudication: |
     6 项架构裁定：
     (a) depgraph.nodes 为架构数据真源（模块存在性/依赖关系/文件路径/node_type）；domain_id 真源为 blueprint frontmatter（逻辑职责声明，非物理位置）；design_maturity 各图独立评估（维度不同，不强制一致）。2026-07-10 修正
@@ -1673,7 +1673,7 @@ entries:
   status: decided
   adjudication: |
     ARCH-058 扩展 sync_panorama_module.prune_orphans 的清理范围与权限模型：
-    (1) 清理范围从仅 decision_layers 扩展到 dataflow_jobs，覆盖四图孤儿占位记录；
+    (1) 清理范围从仅 decision_layers 扩展到 dataflow_jobs，覆盖全景孤儿占位记录；
     (2) 修复 get_dataflowgraph_pg_connection 不支持 read_only=False 的权限缺陷——
         始终用 reader 角色（无 DELETE 权限），改用 get_depgraph_pg_connection(read_only=False)
         获取 writer 角色；
@@ -2399,7 +2399,7 @@ entries:
       （arch_directory_tree 表写入器，原 _write_tree_to_db 调用未传 read_only=False，
       导致 path_tree sync failed reconciler 警告——本次治本修复）
     - 2026-08-01 补登：scripts/governance/apply_battle_map.py
-      （battle_map_steps/anchors/edges 表写入器，第四全景图 battle_map 唯一合法写入 CLI。
+      （battle_map_steps/anchors/edges 表写入器，第五全景图 battle_map 唯一合法写入 CLI。
       注意：本脚本写 battle_map_* 表（非 depgraph nodes/edges 表），但因复用
       depgraph_writer 角色（DML 角色）需传 read_only=False，被 DEPGRAPH-WRITE-PATH gate
       正则检出——加入白名单豁免。gate 正则机制无法区分目标表，legitimate battle_map
@@ -2426,9 +2426,9 @@ entries:
     (h) _write_tree_to_db 显式传 read_only=False（原 SQLite→PG 迁移遗漏）
     (i) 明确白名单扩展规则（治本文档漂移，三步流程）
 
-    2026-08-01 补登裁定（第四全景图 battle_map 写入路径）：
+    2026-08-01 补登裁定（第五全景图 battle_map 写入路径）：
     (j) apply_battle_map.py 加入白名单——battle_map_steps/anchors/edges 表的写入器，
-        第四全景图 battle_map 唯一合法写入 CLI（对标 apply_depgraph.py 对 depgraph 的地位）。
+        第五全景图 battle_map 唯一合法写入 CLI（对标 apply_depgraph.py 对 depgraph 的地位）。
         本脚本写 battle_map_* 表（非 depgraph nodes/edges 表），但因复用 depgraph_writer
         角色（DML 角色）需传 read_only=False，被 gate 正则检出。gate 正则机制无法区分
         目标表，legitimate battle_map 写入器与 depgraph 写入器同类受控入口，故纳入同一白名单。
@@ -9339,7 +9339,7 @@ entries:
     修复：在 DELETE production 节点前，快照所有非 design 节点的 subdomain_id/gate_reason
     （WHERE subdomain_id IS NOT NULL OR gate_reason != ''）；rebuild 重建后，按 path 恢复
     （UPDATE ... WHERE subdomain_id IS NULL，仅填充 NULL 不覆盖新值，幂等安全）。
-    严重度 P1：系统性问题——每次 commit 后 auto-regenerate 都会丢失，导致四图对齐报告
+    严重度 P1：系统性问题——每次 commit 后 auto-regenerate 都会丢失，导致全景对齐报告
     域分类失效、AI 无法通过 subdomain_id 反查模块归属。非 risk acceptance/wontfix/边界裁定
     ——纯 factual 代码修复，直接标 resolved。
   fix_phase: |-
@@ -9349,7 +9349,7 @@ entries:
     bus_factor_defense.py subdomain_id=FAC-GOV（正确——治理功能，非核心引擎）。
     提交：commit cb71d3be（scripts/governance/generate_project_depgraph.py）。
   status: resolved
-  related_adjudication: 'TRAE-062 SSoT 分类铁律, AGENTS.md §11.0 全景图是真源, 四图对齐铁律 TRAE-080'
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, AGENTS.md §11.0 全景图是真源, 五图对齐铁律 TRAE-080'
   created: '2026-07-24'
   last_updated: '2026-07-24'
 # --- #ARCH-DEPGRAPH-BACKUP-FIRST-CHECK: 备份先行门禁治本（2026-07-24）---
@@ -9452,7 +9452,7 @@ entries:
       - panorama alignment 报告：域不一致=0（硬阻断通过）
       - cross_domain_matrix.md / integration_topology.md regenerate 成功
   status: resolved
-  related_adjudication: 'TRAE-062 SSoT 分类铁律, AGENTS.md §11.0 全景图是真源, 四图对齐铁律 TRAE-080'
+  related_adjudication: 'TRAE-062 SSoT 分类铁律, AGENTS.md §11.0 全景图是真源, 五图对齐铁律 TRAE-080'
   related_rules: 'AGENTS.md RULE-DEPGRAPH (apply_depgraph 唯一写入口), RULE-SSOT'
   created: '2026-07-25'
   last_updated: '2026-07-25'
@@ -10491,7 +10491,7 @@ entries:
     - 'tests/memory/test_unified_memory_api_unit.py（TestWriteTrace 严格约束测试：frozen/required/forbid）'
   fix_phase: '已完成（commit 76c628a7d0）：__getattr__ 懒加载 + 严格 WriteTrace + enforcer 简化 + 测试更新'
   status: resolved
-  related_rules: 'AGENTS.md RULE-SSOT, RULE-DEPGRAPH (依赖关系先行), 四图对齐铁律'
+  related_rules: 'AGENTS.md RULE-SSOT, RULE-DEPGRAPH (依赖关系先行), 五图对齐铁律'
   created: '2026-07-31'
   last_updated: '2026-07-31'
 
@@ -11537,7 +11537,7 @@ entries:
     后续（非本次）：trae_080 yaml 可追加 enforcement_note 字段标注分层关系（PROTECTED-PATH，
     需 Owner 审批）。
   status: decided
-  related_adjudication: 'trae_080 四图对齐铁律, 规则二元化元规则（2026-08-04）, NEW-FILE-DEPGRAPH-ENFORCEMENT gate'
+  related_adjudication: 'trae_080 五图对齐铁律, 规则二元化元规则（2026-08-04）, NEW-FILE-DEPGRAPH-ENFORCEMENT gate'
   created: '2026-08-04'
   last_updated: '2026-08-04'
 
@@ -12652,6 +12652,43 @@ entries:
   status: decided
   created: '2026-08-07'
   last_updated: '2026-08-07'
+# --- #ARCH-ECHO-GUARD-EMBEDDING-OOB: echo-guard EmbeddingStore 无锁并发写 embedding_row 越界——跨进程文件锁序列化治本（2026-08-08 登记）---
+- issue_id: '#ARCH-ECHO-GUARD-EMBEDDING-OOB'
+  title: echo-guard EmbeddingStore 无文件锁多进程并发写 embeddings.npy 导致 embedding_row 越界——项目层跨进程文件锁序列化 CLI 调用治本
+  severity: P2中
+  category: governance
+  adjudication: |-
+    2026-08-08 治本登记。CloneGuard L2 echo-guard CLI（detect/scan）多进程并发调用时，
+    EmbeddingStore 无文件锁保护，并发写 ``embeddings.npy`` 导致 153 函数 embedding_row
+    越界（占 0.74%），重复代码检测覆盖完整性受损。
+
+    病根（第一性原理）：
+    echo-guard CLI 自身的 EmbeddingStore 写入无跨进程锁，pre-commit hook 与后台 scanner
+    并发执行时，两个进程同时 append/resize embeddings.npy，numpy 数组 shape 与 index
+    表错位→embedding_row 越界。echo-guard 是外部工具，项目层无法直接加锁其内部存储。
+
+    治本方案（项目层序列化 CLI 调用）：
+    EchoGuardAdapter 新增 ``_embedding_lock`` 跨进程文件锁（contextmanager），锁文件
+    ``.ailocks/echo_guard_embedding.lock``（与 ``_GlobalCommitLock`` 同目录），60s 超时
+    （守 ``_LOCK_TIMEOUT_DEFAULT`` 先例）。所有触碰 EmbeddingStore 的 CLI 调用
+    （detect/scan/acknowledge-CLI）在锁内执行，序列化消除并发写竞态。
+
+    降级策略（守 INVARIANTS + ``_GlobalCommitLock`` 先例）：
+    - filelock 未安装 / 锁目录不可写 → fail-open（无锁执行，落 warning；filelock 是可选依赖）
+    - 锁超时(60s) → ``_EmbeddingLockTimeout`` → degraded 跳过 CLI（``[], True``），
+      fail_closed=False 不阻断 commit——基础设施可用但竞争失败时，无锁执行会重新引入 OOB
+      竞态，宁可本次跳过检测也不冒险。
+    - subprocess 异常时锁仍释放（finally 块防死锁）。
+    - health_check(--version) 不触碰 EmbeddingStore，不加锁。
+
+    端到端验证：9 个单元测试覆盖正常获取/超时降级/fail-open/异常释放/health_check 不加锁。
+  impact:
+    - 'src/zephyr/clone_guard/engines/echo_guard_adapter.py（新增 _embedding_lock 跨进程文件锁 + _EmbeddingLockTimeout；detect/scan/acknowledge-CLI 包入锁）'
+    - 'tests/clone_guard/test_echo_guard_adapter.py（新增 TestEmbeddingLockSerialization 9 测试）'
+  fix_phase: 已完成（2026-08-08）—— 跨进程文件锁序列化 echo-guard CLI 调用；9 测试全过；filelock fail-open + 锁超时降级覆盖
+  status: decided
+  created: '2026-08-08'
+  last_updated: '2026-08-08'
 # --- #ARCH-AGENTS-BUDGET-RECONCILE-001: AGENTS.md 行数预算冲突化解——1234 降级软目标 + 类别分离公约（2026-08-07 登记）---
 - issue_id: '#ARCH-AGENTS-BUDGET-RECONCILE-001'
   title: AGENTS.md 行数预算(1234)与 #ARCH-FORCE-MERGE-DEDUP-001 Phase D(强制写入 CloneGuard 规范)冲突——1234 无第一性推导且零执行，降级软目标 + 类别分离治本
