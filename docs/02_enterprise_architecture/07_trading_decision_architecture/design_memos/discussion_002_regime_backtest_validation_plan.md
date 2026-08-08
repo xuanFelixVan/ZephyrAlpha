@@ -2,8 +2,9 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-08-06
+last_updated: 2026-08-08
 topic: regime_backtest_validation_plan
 scope: 07_trading_decision_architecture
 parent: discussion_001_regime_detector_spec.md
@@ -14,6 +15,166 @@ parent: discussion_001_regime_detector_spec.md
 > 本文档定义 regime 检测器（discussion_001 v1.3.1 spec）的回测验证方案。
 > 性质：**已定稿（v1.0.0，2026-08-06），交接给施工对话作为模块实现的验收指南**。等 regime 检测器骨架+实现就绪后，按本方案执行回测验证。
 > 关联：[discussion_001_regime_detector_spec.md](discussion_001_regime_detector_spec.md)（regime spec 真源）｜ [battle_map_03_backtest_validation.md](../battle_map/battle_map_03_backtest_validation.md)（现有回测框架）
+>
+> **v1.1.0 更新（2026-08-08）**：方案已部分执行（Phase 0-2 完成，Phase 3-5 部分/未完成）。
+> 实际实现与原方案有一处重大偏离：HMM **9 态 → 4 态**（BIC 扫描驱动，discussion_004 §2.1），
+> 输出 **7 维概率**（4 HMM + 3 overlay）非 12 维。详见下方 [§0.5 方案执行状态](#05-方案执行状态2026-08-08-反向同步)。
+
+## 0.5 方案执行状态（2026-08-08 反向同步）
+
+> 本节是 2026-08-08 对方案执行情况的反向同步——从代码/ARCH/验证报告回填到文档，
+> 使文档反映项目最新功能状态。原方案（§1-§11）保留为历史规划真源，本节记录实际执行结果与偏离。
+
+### 0.5.1 Phase 完成度总览
+
+| Phase | 原方案内容 | 实际状态 | 关键 ARCH / 代码 |
+|---|---|---|---|
+| **Phase 0** | regime 检测器实现（HMM 9态 + D-SIGNAL-68 + Shrinkage） | ✅ 完成（**4 态非 9 态**） | `regime_detector.py` 618 行 + `regime_feature_builder.py` + features/* |
+| **Phase 1** | C1 开/关对比（核心一票否决） | ✅ 完成 — **四项全通过** | `c1_comparator.py` + `c1_runner.py` + `shrinkage_engine.py` |
+| **Phase 2** | A1/A2/B1/B4 模型质量 | ✅ 完成 — **四项全 PASS** | `phase2/` 4 验证器 + `confidence_calibrator.py` |
+| **Phase 3** | D1-D4 参数阈值校准 | 🟧 部分完成 — D2/D4 完成，D1 部分，D3 未验证 | A2/A3 升级验证覆盖 D2/D4 |
+| **Phase 4** | E1-E4 鲁棒性 | 🟧 部分完成 — E1 walk-forward 已实现，E2/E3/E4 未验证 | `_smoke_walkforward.py` |
+| **Phase 5** | 决策门控（BM-BT-07） | ❌ 未完成 | — |
+| A3/A4/B2/B3/C2/C3/C4 | 未明确归入 Phase | 🟧/❌ 多数未完成 | A3 部分覆盖，其余未实现 |
+
+**结论**：方案**未全部执行完成**。核心假设（C1 节流有效）已验证通过，模型质量（Phase 2）已闭环；
+参数校准（Phase 3）与鲁棒性（Phase 4）部分完成；决策门控（Phase 5）未启动。
+
+### 0.5.2 重大偏离：9 态 → 4 态（discussion_004 §2.1）
+
+原方案 §8.1 规划 HMM **9 态**（3×3 趋势×波动率网格），§1.1 称输出 **12 维概率分布**。
+实际执行中 A2 过拟合检测发现 9 态过度细分（OOS/IS 一致率仅 0.34，门槛 0.7），经 BIC 扫描
+确认降为 **4 态**（discussion_004 §2.1，2026-08-07）：
+
+- **BIC Kneedle 拐点=4**，walk-forward 46 季度拐点分布 {4:19, 5:25, 7:2}
+- **4 态语义**（全历史 3733 样本，RobustScaler 标准化后 Viterbi 统计）：
+  - r1 低波震荡（27.6%）：vol_pct=-0.52, fr_5d=+0.0003（低波横盘）
+  - r2 中波震荡（37.4%）：vol_pct=+0.42, fr_5d=+0.0018（中波温和偏强）
+  - r3 牛市趋势（14.9%）：vol_pct=+0.58, slope=+0.149, fr_5d=+0.0039（强涨量增，最高正收益）
+  - r4 熊市阴跌（20.2%）：vol_pct=-0.44, slope=-0.049, fr_5d=-0.0014（唯一负收益，阴跌）
+- **输出 7 维概率**（4 HMM 基态 + 3 overlay 特殊态 CRISIS/RECOVERY/BREAKOUT），Σ=1.0
+- 降态后 A2 OOS/IS 一致率从 0.34 提升到 **1.042**（KL=13.05），过拟合消除
+
+这正是原方案 §8.1 预期的"基于证据的简化"——验证后发现 9 态过度细分，基于 BIC 证据降为 4 态。
+
+### 0.5.3 实际代码结构（Phase 0 产物）
+
+```
+src/zephyr/regime/
+├── core/
+│   └── regime_detector.py          # HMM 4态 + D-SIGNAL-68 overlay + ConfidenceSignal + RiskSignal + Shrinkage（618行）
+├── regime_feature_builder.py        # 特征管道主编排器（OHLCV→三dict输出，PIT严格，walk-forward季度refit）
+├── overlay_signals_builder.py       # OverlaySignalsConstructor（8转换评分 T1-T6/S1/S2）
+├── risk_signal_builder.py           # RiskSignalConstructor（13参数，#1门控）
+├── features/
+│   ├── market_features.py           # F1 realized_vol_pct + F3 cross_asset_corr + F4 ad_ratio + F5 volume_anomaly
+│   ├── trend_features.py            # F2a hurst_dfa + F2b kalman_slope（替代均线角度糊弄）
+│   ├── overlay_features.py          # 8转换评分算子
+│   ├── risk_features.py             # 13风险参数系数映射
+│   ├── chip_distribution_engine.py  # 筹码分布（华泰前沿算法，替代换手率代理）
+│   ├── synthetic_vix.py             # 合成VIX（期权IV曲面，替代北向资金死数据）
+│   ├── wyckoff_engine.py            # Wyckoff FSM（规则法结构识别，替代名词堆砌糊弄）
+│   └── regime_data_loader.py        # 数据加载公共工具
+└── validation/phase2/
+    ├── a1_sample_sufficiency.py     # A1 样本充足性验证器
+    ├── a2_hmm_overfitting.py        # A2 HMM 过拟合检测器
+    ├── b1_probability_calibration.py # B1 概率校准度验证器
+    ├── b4_transition_accuracy.py    # B4 转换触发准确性验证器
+    ├── confidence_calibrator.py     # 两阶段概率校准器（Temperature Scaling + Isotonic Regression）
+    └── phase2_runner.py             # Phase 2 编排器（依据 discussion_017 §4）
+
+src/zephyr/backtest/
+├── implementations/shrinkage_engine.py  # ShrinkageBacktestEngine（override _get_day_signals，shrinkage=1.0 bit-identical）
+└── regime_validation/
+    ├── c1_comparator.py             # C1ShrinkageComparator（四项一票否决）
+    ├── c1_runner.py                 # C1 执行编排器（mock冒烟 + regime真实模式）
+    └── shrinkage_provider.py        # ShrinkageProvider 协议 + 4 实现（Const/Schedule/Mock/RegimeDetector）
+```
+
+**算法糊弄治理**（#ARCH-067）：原 regime_feature_builder/blueprint.md 含 15 处糊弄算法
+（换手率代理筹码分布、定性词无量化、伪精确均线角度、死数据北向资金、名词堆砌结构识别、逻辑错位），
+已全部替换为 2026 前沿算法（Hurst DFA / Kalman / VWAP 三角分布筹码 / ACSI / Wyckoff FSM / 合成VIX）。
+
+### 0.5.4 验证结果明细（Phase 1-2）
+
+#### C1 开/关对比（Phase 1，核心一票否决）— ✅ 四项全通过
+
+> 数据：10 大盘股 2015-01-01~2026-06-30，walk-forward 46 季度 HMM refit，1886 万行 ClickHouse
+> 报告：`logs/c1_repro/c1_repro_report.md` + `c1_metrics.json`
+> ARCH：#ARCH-REGIME-VALIDATION-001 + #ARCH-REGIME-C1-RUNNER-001
+
+| 指标 | 关（基准） | 开（实验） | 门槛 | 判定 |
+|---|---|---|---|---|
+| Sharpe | 0.3678 | 0.3474 | ≥0.2678（S_关−0.1） | ✅ 通过 |
+| MaxDD | 0.2221 | 0.1485 | 改善≥0.03 | ✅ 通过（改善 +0.0736） |
+| Calmar | 0.2918 | 0.3694 | ≥0.3502（C_关×1.2） | ✅ 通过（+27%） |
+| Turnover | 2.2722/yr | 2.5522/yr | ≤4.5444（T_关×2） | ✅ 通过 |
+
+**行业对照**（Morwane OOS 2013-2026）：Sharpe 不变 ✅ / MaxDD 改善 3.9pp（本方案 7.4pp 更优）/ Calmar +38%（本方案 +27%）。
+
+#### Phase 2 模型质量 — ✅ 四项全 PASS
+
+> ARCH：#ARCH-REGIME-FEATURE-BUILDER-001 + #ARCH-CALIBRATOR-001 + #ARCH-REGIME-OVERLAY-001 + #ARCH-REGIME-CONFIDENCE-FIX-001
+> 报告：`logs/c1_repro/a2_a3_validation_report.md`
+
+| 验证项 | 结果 | 关键指标 | 门槛 |
+|---|---|---|---|
+| **A1 样本充足性** | ✅ PASS | 3733 样本，4 态最少 r3=555 天 | ≥50 天/态 |
+| **A2 HMM 过拟合** | ✅ PASS | OOS/IS=1.042，KL=13.05（9态时仅0.340） | OOS/IS≥0.7 |
+| **B1 概率校准度** | ✅ PASS | ECE=4.2%，60-80%桶 n=221 误差 3.7% | 校准误差<10% |
+| **B4 转换触发准确性** | ✅ PASS | S1 3/3 命中；S2 data_ready=False 不计分母（需NLP+high/low） | ≥6/8 事件吻合 |
+
+**B1 校准器**（#ARCH-CALIBRATOR-001）：两阶段——Stage 1 Temperature Scaling（全局降温）+ Stage 2 Isotonic Regression（局部修正），四级降级（full→temperature-only→isotonic-only→identity），仅对 HMM 基态生效，PIT 防泄漏。
+
+**ConfidenceSignal 修复**（#ARCH-REGIME-CONFIDENCE-FIX-001）：移除 state_risk_factor 回归 spec（原 base(max_p)×state_risk×rarity → 纯 base(max_p)×rarity）。state_risk 是代码偏离 spec 的私加，HMM 标签 permutation invariance 致按数字标签套 state_risk=随机惩罚，永久中性态惩罚致牛市也砍仓。修复后 Sharpe 0.10→0.3474（×3.5）。
+
+### 0.5.5 A2/A3 升级验证（Phase 3 部分）
+
+> 报告：`logs/c1_repro/a2_a3_validation_report.md`
+> ARCH：#ARCH-REGIME-RISK-FULL-001（A2/D2）+ #ARCH-REGIME-OVERLAY-001（A3/D4）
+
+| 配置 | Sharpe | MaxDD | Calmar | Turnover | C1 |
+|------|--------|-------|--------|----------|----|
+| 简化版（simple/off）生产基线 | 0.3474 | 0.1485 | 0.3694 | 2.5522 | ✅ |
+| A2 full risk（13参数，D2） | 0.3469 | 0.1484 | 0.3691 | 2.5863 | ✅ 不退化 |
+| A3 overlay on（8转换，D4） | 0.3278 | 0.1471 | 0.3546 | 2.5049 | ✅ 但退化 |
+| A2+A3（full/on） | 0.3259 | 0.1472 | 0.3529 | 2.5241 | ✅ 余量危险 |
+
+**A2（D2 RiskSignal 13参数）**：✅ 可采纳。#1 门控奏效（#1=1.0 时附加参数不参与，平时不干预；危机期 #1<1.0 加深收缩）。C1 不退化，边际收益极小但危机期理论更精细。有效参数 7/8（#9 KDJ 因 high/low 缺失降级，#4/8/12 stub=1.0，#11/13 stub=0.0）。
+
+**A3（D4 8转换 overlay）**：🟧 方案A门控治本。ungated overlay 系统性退化 Sharpe（-0.0196，超噪声），根因 T1/S1 非危机期误触发。**方案 A**（#1<1.0 门控 overlay）C1 不退化（Sharpe 0.3463 vs baseline 0.3474，差 -0.0011 噪声范围），危机期 overlay 仍生效。已固化到 `RegimeDetector.detect()`（overlay_gated=True 默认开启）。
+
+**死区装饰器**（#ARCH-REGIME-DEADZONE-001，proposed）：序列层减变化点 72.9% 但回测 Turnover 不降反升 4.2%（等权策略下 Shrinkage 同向缩放致相对权重恒等）。**不采纳**，代码保留为可选 decorator 默认不启用。
+
+### 0.5.6 关联设计文档
+
+实际执行中方案拆分为多个 discussion 文档（原方案 §1-§11 为 v1.0.0 规划真源）：
+
+| 文档 | 覆盖范围 | 状态 |
+|---|---|---|
+| `discussion_004`（降态裁定） | 9态→4态 BIC 证据 + 4态语义 | ✅ 已定稿 |
+| `discussion_017`（Phase 2 验证详设） | A1/A2/B1/B4 验证器设计 | ✅ 已定稿 |
+| `discussion_018`（回测可观测性） | C1 runner 可观测性 + MLflow 跟踪 | ✅ 已定稿 |
+| `discussion_019`（Phase 3 工程规划） | HMM降态/校准器/NLP管道/置信度信号 | ✅ 施工中 |
+
+### 0.5.7 待完成项（Phase 3-5 缺口）
+
+| 验证项 | Phase | 状态 | 缺口说明 |
+|---|---|---|---|
+| D1 ConfidenceSignal 四档阈值 | 3 | 🟧 部分 | state_risk 已移除（回归spec），但 max(P) 60/80/95% 四档 ±20% 敏感性网格未跑 |
+| D3 聚合公式参数 | 3 | ❌ 未验证 | 共振惩罚 0.05 + 机会恢复 0.25 的 ±20% 扰动未跑 |
+| E1 Walk-Forward 稳定性 | 4 | 🟧 部分 | walk-forward 46 季度已实现，但各窗口 MaxDD 改善 CV<0.5 的正式统计未产出 |
+| E2 Block-bootstrap | 4 | ❌ 未验证 | 2000× block-bootstrap 置信区间未跑（C4 同） |
+| E3 参数敏感性 | 4 | ❌ 未验证 | ±20% 扰动效果变化<30% 未跑 |
+| E4 交易成本敏感性 | 4 | ❌ 未验证 | 0-50bps 成本下 Shrinkage 效果稳健性未跑 |
+| A3 状态转移合理性 | — | 🟧 部分 | Viterbi 解码已实现，overlay_audit 分析了转换触发，但 spec §4 路径覆盖≥80% 正式统计未产出 |
+| A4 特征重要性 | — | ❌ 未验证 | BM-BT-05-B 特征重要性未跑 |
+| B2 CRPS | — | ❌ 未验证 | BM-BT-03-E CRPS 对比 climatology 未跑 |
+| B3 置信度合理性 | — | ❌ 未验证 | max(P) 分布合理性未分析 |
+| C2 极端事件回撤保护 | — | ❌ 未验证 | CRISIS 时段 MaxDD 改善≥5pp 未跑 |
+| C3 节流归因 | — | ❌ 未验证 | 各态 Shrinkage 贡献未分析 |
+| C4 统计显著性 | — | ❌ 未验证 | P(Sharpe_开>Sharpe_关)≥75% 未跑 |
+| Phase 5 决策门控 | 5 | ❌ 未完成 | BM-BT-07 IS→WFA→OOS 适配未启动 |
 
 ## 1. 目标与定位
 
@@ -370,3 +531,4 @@ Phase 5：决策门控（对接 BM-BT-07）
 | 2026-08-06 | 0.1.0 | 初稿 | regime 检测器回测验证方案设计，对接现有 BM-BT 框架，参考 Morwane risk-throttle 验证范式 |
 | 2026-08-06 | 0.2.0 | §8.1 改为完整 12 态分模块实现（用户裁定直接做完整版）；§10.1 标记已决策；新增与另一 AI 施工对话的协调说明 | 用户第一性原理意见：最终目标就是 12 态，先简化再重做是重复工作；验证后基于证据简化更可靠 |
 | 2026-08-06 | 1.0.0 | §10 全部 4 项决策定稿（完整12态/topn_momentum载体/2015-2026区间/hmmlearn）；status→active；性质改为已定稿验收指南 | 用户确认定稿交接，方案进入施工对话参考阶段 |
+| 2026-08-08 | 1.1.0 | 新增 §0.5 方案执行状态（反向同步）；标注 Phase 0-2 完成 / 3-5 部分未完成；记录重大偏离 9态→4态（BIC驱动）；回填 C1/A1/A2/B1/B4 实际验证结果与代码结构 | 用户要求从文档可知项目代码最新功能情况；实际执行结果与原方案偏离需文档化 |
