@@ -1,7 +1,7 @@
-# [BLUEPRINT] MOD-GOV-ALIGN-ALL | docs/03_modules/_domain_governance/panorama_alignment_engine/blueprint.md | §align_all
+# [BLUEPRINT] MOD-GOV-ALIGN-ALL | docs/03_modules/_domain_governance/panorama_alignment_engine/align_all_blueprint.md | §main
 # [MODULE] scripts.governance.d5_architecture.generators.align_all
 # [DOMAIN] D_GOV_SCRIPTS
-# [DEPENDENCIES] scripts.governance.d5_architecture.generators.align_panoramas (run_alignment); scripts.governance.align_battle_map (run_alignment); _shared.constants (EXIT_*); _common (DB_DISPLAY_NAME)
+# [DEPENDENCIES] scripts.governance.d5_architecture.generators.align_panoramas (run_alignment); scripts.governance.align_battle_map (run_alignment); _shared.constants (EXIT_*)
 # [CONSUMERS] CI自动触发;人工审查五图对齐总览;施工前对齐验证（AGENTS.md RULE-DEPGRAPH 第三件事）
 # [STARTUP] manual
 # [MATURITY] production
