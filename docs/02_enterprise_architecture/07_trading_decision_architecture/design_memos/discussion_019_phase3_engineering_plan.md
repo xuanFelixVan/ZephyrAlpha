@@ -48,6 +48,8 @@ related_modules:
 > | B1 概率校准 | ✅ PASS | ECE=4.2%（60-80%桶 n=221 误差 3.7%） |
 >
 > 上表为初始 9 态验证历史（P0 修复前）；P0 完成后 Phase 2 闭环（commit 0c5ea28bb1/83c94c4f/e4fd931a），进入 P1 数据管道激活阶段。
+>
+> **2026-08-08 续（S2 算法缺陷诊断）**：另一 session 将 S2 `data_ready` 误改 true 后 B4 退回 FAIL(3/6)。诊断脚本 `dump_s2_scores.py` 证实根因是 **S2 评分算法时点错配**（capitulation 当日值 vs 过程、valuation 价格回撤 vs 基本面），非数据缺失——三事件 capitulation/valuation 恒 0 致 trigger/confirm 永不触发。采用 `design_match=false` 排除 S2 事件（数据已就绪但 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏）+ 修复 capitulation/valuation 两个 P0 bug（commit 93a25890，B4 维持 PASS(3/3)），登记 #ARCH-REGIME-S2-ALGORITHM-001，新增 P1-E9 工程项（§3.5）治本。完整诊断与裁定见 [discussion_023](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)。
 
 ### 0.2 问题诊断
 
@@ -81,9 +83,10 @@ related_modules:
 | P1-E4 | 资金/板块数据激活 | P1 | 无 | ~100 | T3 依赖 |
 | P1-E5 | T3 激活与注释清理 | P1 | P1-E4 | ~50 | T3 代码已实现，清理注释+融合北向资金 |
 | P1-E6 | bad_news_flat 指标 | P1 | P1-E3 | ~150 | S2 触发条件 |
+| P1-E9 | S2 评分算法重设计 | P1 | 无（算法层，独立于数据激活） | ~120 | S2 时点错配根因（见 discussion_023） |
 | P2-E7 | policy 指标 | P2 | P1-E3 | ~150 | S2 触发条件 |
 | P2-E8 | forward_days 参数扫描 | P2 | P0-E2 | ~50 | B1 参数调优 |
-| **合计** | | | | **~1740** | |
+| **合计** | | | | **~1860** | |
 
 ### 1.2 依赖关系图
 
@@ -1540,6 +1543,58 @@ def bad_news_flat_score(news_sentiment: pd.Series, window: int = 5) -> pd.Series
 - [ ] S2 在 2024-02 低点后复苏期能触发
 - [ ] S2 常态不误触发
 - [ ] B4 S2 命中率 ≥ 2/3
+
+---
+
+### 3.5 P1-E9: S2 评分算法重设计（时点错配治本）
+
+> **诊断详档**：[discussion_023](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)（完整诊断报告 + 架构裁定 + 治本详设）
+> **治理登记**：#ARCH-REGIME-S2-ALGORITHM-001（待登记）
+> **本节为引用摘要**——完整诊断证据与裁定推理见 discussion_023，本节仅列工程清单所需的背景/步骤/验收。
+
+#### 3.5.1 背景（简述）
+
+B4 验证暴露 S2 recovery 0/3 未触发。诊断脚本 `scripts/tests/dump_s2_scores.py` 证实根因是 **S2 评分算法时点错配**（非数据缺失）——三个关键维度在复苏事件日恒为 0：
+
+| 维度 | 设计意图（§4.12） | 实现（overlay_features.py） | 错配 |
+|---|---|---|---|
+| capitulation | 危机见底的**过程**信号（近 N 日曾出现投降抛售） | **当日** vol_z>2 ∧ 跌幅>1.5% | 复苏日不暴跌 → 恒 0 |
+| valuation | PE/破净率等**基本面估值** | close/rolling_max(250) 价格回撤，pos<0.50 才给 40 分 | 非腰斩级复苏 → 恒 0 |
+| spring | Wyckoff Spring（需 high/low） | 用 close 简化判断 | 偶尔触发，但 total 不够 |
+
+trigger/confirm/strong_confirm 三阶段全堵死。NLP 维度（bad_news_flat=80 / policy=80）评分正常，证明 P1-E3/E6 数据已生效——**S2 不触发的根因不在数据，而在算法**。故 P1-E3/E4/E5/E6/E7 即使全部完成，S2 仍 0/3。
+
+#### 3.5.2 裁定（简述）
+
+- **立即**：回退 `historical_events.yaml` S2 `data_ready` true→false，B4 回 PASS(3/3)，Phase 2 闭环
+- **立即**：登记 #ARCH-REGIME-S2-ALGORITHM-001
+- **P1 阶段**：本 P1-E9 算法重设计 → 重跑验证 → S2 激活
+- **核心理由**：不为过 B4 而改算法（守住验证独立性），算法重设计独立于验证结果进行（防过拟合）
+
+> 完整裁定推理（第一性原理 + 长远战略 + 100% AI 开发考量）见 [discussion_023 §2](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)。
+
+#### 3.5.3 工程步骤
+
+| 步骤 | 内容 | 产出 |
+|---|---|---|
+| 1 | capitulation 过程化（rolling max，lookback=20，可参数化扫描） | overlay_features.py `s2_capitulation_score` 改造 |
+| 2 | valuation 阈值校准（路 B：pos<0.70→40 分）或基本面化（路 A：接入 c1_market.daily_valuation） | `s2_valuation_score` 改造 |
+| 3 | spring 复用 wyckoff_engine Spring 事件 | `s2_spring_flag` 改造 |
+| 4 | 重跑 dump_s2_scores.py 确认三事件 capitulation/valuation 不再恒 0 | 算法层验证（独立于 B4） |
+| 5 | S2 data_ready true 激活 + 重跑 Phase 2（A1+B4+A2+B1） | B4 S2 命中验证 |
+
+#### 3.5.4 验收标准
+
+- [ ] capitulation 取近 N 日 max（过程化），三事件日窗口不再恒 0
+- [ ] valuation 路 B 阈值放宽或路 A 接入基本面数据，三事件日窗口不再恒 0
+- [ ] spring 复用 wyckoff_engine，不重复逻辑
+- [ ] dump_s2_scores.py 显示三事件 trigger/confirm 可达
+- [ ] B4 S2 命中率 ≥ 2/3（且非靠调参过拟合达成）
+- [ ] 算法重设计独立于 B4 结果（先按设计意图改，再看 B4，禁止"调参直到命中"）
+
+#### 3.5.5 防过拟合铁律
+
+算法重设计必须独立于 B4 验证结果进行——先按 §4.12 设计意图改算法（过程化/基本面化），再看 B4 结果。**禁止"调参直到 3/3 命中"**——若改后仍不命中，说明设计意图与历史事件时点有更深层偏差，应回到 §4.12 重新审视事件标注（expected_stage）而非继续调参。详见 [discussion_023 §3.7](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md) 与 [discussion_023 §5 开放问题 3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)。
 
 ---
 
