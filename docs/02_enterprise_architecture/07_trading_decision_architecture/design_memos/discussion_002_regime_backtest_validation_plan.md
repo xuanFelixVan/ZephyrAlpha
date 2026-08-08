@@ -2,7 +2,7 @@
 ttl: permanent
 doc_type: architecture_view
 status: active
-version: "1.4.0"
+version: "1.5.0"
 date: 2026-08-06
 last_updated: 2026-08-08
 topic: regime_backtest_validation_plan
@@ -459,6 +459,87 @@ src/zephyr/backtest/
 
 **最终总结论**：核心算法（HMM 4态 + 两阶段校准 + 乘法 Shrinkage + 特征工程）**四轮搜索全部背书**。3 个验证缺口该补（Conformal/CPCV/Stationary Bootstrap）。**11 条升级路径**备查（层次 HMM 最有价值，TVTP/Shannon/Staggered 三件套是系统性升级，BOCPD/Wasserstein/Student-t/Feature Saliency/动态调制矩阵/RARP/regime-conditional 为远期路径）。
 
+### 0.6.10 第五轮发现：NLP-Regime 连接 + 因果发现（2026-08-08）
+
+> 第五轮搜索发现本项目**最关键的缺失**：NLP 情感管道与 regime 检测的连接。我们已有 NLP（Phase 2 完成）和 HMM 4 态，但未连接。
+
+#### 发现 1：NLP 情感 → regime 检测（最关键缺失，连接现有组件）
+
+**Mudarisov et al.（ICAIF '24，ACM）核心结论**：
+- **FinBERT 集成比纯时序预测准确率高 73%、F1 高 110%**
+- NLP 模型"展现出检测市场切换的强能力"——能捕获价格 HMM 遗漏的 regime shift
+- 新闻情感往往**先于价格变动**，提供 regime shift 早期预警
+
+**akhila2308/Regime-Adaptive-Stock-Prediction（ICCICT 2026）**：
+- HMM + FinBERT + LightGBM/XGBoost 集成
+- Multi-granularity sentiment fusion（层次注意力）
+- Sentiment-technical divergence indicators（情感-技术背离指标）
+- **Conformal prediction 做不确定性量化**——再次确认我们的 Conformal 缺口
+- SHAP 分层可解释性
+
+**ryxel.ai（2026-04）**：
+- 端到端混合策略：trend/momentum + mean-reversion + FinBERT 情感 + **regime-aware gating**
+- Bull regime 重权 trend 信号；mean-reverting regime 重权均值回归
+- 情感信号在价格信号之前提供 regime shift 预警
+
+**对本项目的直接意义**：
+- 我们已有 `nlp_inference.py`（零样本情感推理）+ HMM 4 态 regime 检测
+- **但两者未连接**——NLP 情感未作为 HMM 特征或 overlay 信号
+- 三种连接方式：
+  1. **NLP 作为 HMM 特征**：将情感分数作为 HMM 的第 N+1 维特征输入
+  2. **NLP 作为 overlay 信号**：情感急剧转负→CRISIS overlay 触发（替代/补充 D-SIGNAL-68 规则）
+  3. **NLP 作为 transition 验证**：HMM 状态转移时，检查情感是否同向确认（降低伪转移）
+- **评估**：这是五轮搜索中**最可操作的发现**——不需要新算法，只需连接现有组件。**列为优先级 2（与 Stationary Bootstrap 同级，工作量小但价值高）**。
+
+#### 发现 2：因果发现 — Bloomberg Causal-TS 库
+
+**arXiv:2607.24673（Bloomberg，2026-07）Causal-TS Python 库**：
+- pip 可装，DoWhy 集成
+- **Regime-aware discovery pipeline**：检测结构断点 → 每个 regime 内独立运行因果发现
+- 4 种算法（CDNOTS/Cedar/Grace/GES）+ 统一条件独立性检验层 + GPU 加速
+
+**CASTOR（AISTATS 2025）**：
+- **联合学习 regime 数量 K + regime 边界 + 每个 regime 的因果 DAG**
+- EM 算法交替：regime 分配（E步）→ 因果图推断（M步）
+- **不需要先验 regime 数量**——从数据中学习
+
+**对本项目的意义**：
+- 当前 HMM 只告诉你"在 r3"但不告诉你"r3 内什么导致什么"
+- 因果发现可在每个 regime 内推断因果结构（如"r3 中，北向资金→涨跌家数→指数"）
+- **评估**：学术前沿但工程复杂度高。Bloomberg Causal-TS 可作为 A4 特征重要性的升级方案（从相关性→因果性）。**列为优先级 4（远期探索）**。
+
+#### 发现 3：Autoencoder + RL 自适应阈值
+
+**arXiv:2603.19136（2026-04）**：
+- 正常市场训练 autoencoder → 重构误差识别异常 regime
+- 双通道 Transformer（正常通道 + 事件通道）
+- **Soft Actor-Critic RL 控制器自适应调节 regime 检测阈值**
+- "异常 = 标准预测方法失败的市场状态"——有趣的定义
+
+**评估**：黑箱（autoencoder + RL），与我们 HMM 的可解释性方向相反。**明确不采用**，但记录其"自适应阈值"思想——我们的 ConfidenceSignal 四档阈值是静态的，RL 自适应调节是有趣的远期方向。
+
+### 0.6.11 五轮搜索总结论（最终）
+
+| 轮次 | 搜索领域 | 关键发现 | 对本项目影响 |
+|---|---|---|---|
+| 第一轮 | regime/校准/节流/鲁棒性 | 核心算法选对；3 缺口（Conformal/CPCV/Stationary Bootstrap） | 高——直接补缺口 |
+| 第二轮 | HMM 引擎/特征重要性 | 3 升级路径（Wasserstein/Student-t/Feature Saliency） | 中——未来升级备查 |
+| 第三轮 | A股专属/组合构建 | 4 态行业共识；动态调制矩阵/RARP/Kelly 警示 | 中——确认选择+远期路径 |
+| 第四轮 | 层次化/多尺度/BOCPD | 层次 HMM 状态持续+38.5%/伪转移-28.6%；TVTP/Shannon/Staggered | 高——层次 HMM 最有价值升级 |
+| 第五轮 | NLP-regime 连接/因果发现 | **NLP 情感→regime 最关键缺失**；Bloomberg Causal-TS 因果发现 | **最高——连接现有组件即可** |
+
+**最终结论**：核心算法（HMM 4态 + 两阶段校准 + 乘法 Shrinkage + 特征工程）**五轮搜索全部背书**。
+
+**4 个缺口该补**（按优先级）：
+1. **优先级 1**（零开发）：Deflated Sharpe Ratio
+2. **优先级 2**：**NLP→regime 连接**（最可操作，连接现有组件）+ Stationary Bootstrap + E3/E4
+3. **优先级 3**：Conformal Prediction + CPCV/PBO + 层次 HMM
+4. **优先级 4**：TVTP/Shannon/Staggered/BOCPD/Wasserstein/Student-t/Feature Saliency/Causal-TS/RARP
+
+**13 条升级路径**备查（第五轮新增 NLP-regime 连接 + Causal-TS 因果发现）。
+
+**明确不采用**：深度学习 LSTM/Transformer（实测最差）、加态（>4 过拟合）、SVM 替换 HMM（丢转移矩阵）、堆特征、Autoencoder+RL（黑箱）。
+
 ## 1. 目标与定位
 
 ### 1.1 验证什么
@@ -822,3 +903,4 @@ Phase 5：决策门控（对接 BM-BT-07）
 | 2026-08-08 | 1.2.0 | 新增 §0.6 算法审查与 2026 研究对照（核心算法审查结论 + 明确不采用算法 + 3缺口1现成 + 施工优先级 + 研究来源索引 + HMM引擎升级路径）；§1.1/§8.1 加 9态→4态 内联注释 | 用户要求审查算法缺口+搜2026最新算法+查文档结构；二次搜索发现 Wasserstein HMM/Student-t发射/Feature Saliency HMM |
 | 2026-08-08 | 1.3.0 | 新增 §0.6.7 第三轮搜索（A股4态行业共识 + 动态调制矩阵 + RARP状态条件协方差 + regime-conditional allocation + Kelly警示）；新增 §0.6.8 三轮总结论 | 用户要求再次审查+全网搜2026最新；三轮搜索确认核心算法全部背书，6条升级路径备查 |
 | 2026-08-08 | 1.4.0 | 新增 §0.6.9 第四轮发现（层次HMM状态持续+38.5%/伪转移-28.6% + TVTP时变转移 + Shannon entropy替代ConfidenceSignal + Staggered bounds缓解标签切换 + BOCPD变点概率 + 多尺度共识）；§0.6.8 更新为四轮总结论；升级路径从6条增至11条 | 用户要求第四轮审查；层次HMM是四轮中最有价值的升级路径（直接解决A3伪转移问题） |
+| 2026-08-08 | 1.5.0 | 新增 §0.6.10 第五轮发现（NLP情感→regime最关键缺失——FinBERT比纯时序+73%准确率/+110% F1；Bloomberg Causal-TS因果发现；Autoencoder+RL自适应阈值）；§0.6.11 五轮总结论；升级路径从11条增至13条 | 用户要求第五轮审查；NLP-regime连接是五轮中最可操作的发现（连接现有组件即可，不需新算法） |
