@@ -530,11 +530,14 @@ repos:
       # ── GATE-TEST: 测试门禁合并簇（原 GATE-18 + GATE-19 二合一）──
       # 合并说明：2 个测试门禁合并为单 hook，run_gate_chain 顺序执行：
       #           ① pytest --collect-only（保留 -m "not slow and not e2e" 排除标记，检测能力不变）
+      #              -p no:asyncio: pytest-asyncio 在全量收集时阻塞（仅全量套件触发，单目录正常）
+      #              --import-mode=importlib: 解决 test_regime_detector.py 等同名文件跨目录冲突
+      #              原 -p no:cacheprovider 移除：cache_dir 配置依赖 cacheprovider 插件注册，禁用导致 PytestConfigWarning→error
       #           ② check_test_structure.py（测试结构合规）
       # 行为变化：原 GATE-18/GATE-19 分别 pass_filenames=false 自扫描，合并后 run_gate_chain 等价。
       - id: gate-test
         name: "GATE-TEST: 测试门禁合并（GATE-18 收集 + GATE-19 结构）"
-        entry: "python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:cacheprovider,-m,\"not slow and not e2e\" scripts/governance/d11_compliance/check_test_structure.py"
+        entry: "python scripts/governance/run_gate_chain.py -m,pytest,tests/,--collect-only,-q,--tb=line,-p,no:asyncio,--import-mode=importlib,-m,\"not slow and not e2e\" scripts/governance/d11_compliance/check_test_structure.py"
         language: system
         pass_filenames: false
         always_run: false
