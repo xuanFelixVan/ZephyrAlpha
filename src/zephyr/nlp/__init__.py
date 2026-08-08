@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-NLP-INFERENCE-001 | P1-E3_NLP管道架构裁定与施工方案.md | §
 # [MODULE] zephyr.nlp
 # [DOMAIN] D_DATA
 # [TTL] permanent

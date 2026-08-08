@@ -1,10 +1,19 @@
 #!/usr/bin/env python
+# [BLUEPRINT] MOD-NLP-PIPELINE | P1-E3_NLP管道架构裁定与施工方案.md | §Phase 1
 # [MODULE] scripts.ml.build_eval_set
 # [DOMAIN] D_DATA
-# [TTL] permanent
+# [DEPENDENCIES] zephyr.data.news_collector; zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.ollama_chat
+# [CONSUMERS] (CLI 脚本，无模块消费者)
+# [STARTUP] manual
+# [MATURITY] design
+# [INVARIANTS] 分层抽样构建评估集；DeepSeek/关键词异源标注；断点续作追加写入
+# [MODIFY-GUARD] P1-E3_NLP管道架构裁定与施工方案.md Phase 1
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] 未采到新闻 exit 1；标注异常降级 neutral 不阻断
+# [TESTS] (CLI 脚本，无单元测试)
+# [TTL] permanent
 """build_eval_set.py — P1-E3 Phase 1: 构建 200 条新闻情感评估集。
 
 分层抽样（危机期/复苏期/常态期）从 ClickHouse 采集新闻，

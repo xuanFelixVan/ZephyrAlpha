@@ -1,10 +1,19 @@
 #!/usr/bin/env python
+# [BLUEPRINT] MOD-NLP-PIPELINE | P1-E3_NLP管道架构裁定与施工方案.md | §Phase 2
 # [MODULE] scripts.ml.eval_sentiment
 # [DOMAIN] D_DATA
-# [TTL] permanent
+# [DEPENDENCIES] zephyr.nlp.nlp_inference; zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.cache_layer; sklearn.metrics
+# [CONSUMERS] (CLI 评估脚本，无模块消费者)
+# [STARTUP] manual
+# [MATURITY] design
+# [INVARIANTS] 零样本情感分类 F1 评估；断点续作追加写入；Ollama 不可达 exit 1；评估集不存在 exit 1
+# [MODIFY-GUARD] P1-E3_NLP管道架构裁定与施工方案.md Phase 2
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] Ollama 不可达 exit 1；评估集不存在 exit 1；逐条推理异常降级 neutral 不阻断
+# [TESTS] (CLI 评估脚本，无单元测试)
+# [TTL] permanent
 """eval_sentiment.py — P1-E3 Phase 2: 零样本情感分类 F1 评估。
 
 对 ``data/eval/news_sentiment_200.jsonl`` 评估集跑零样本推理（Ollama qwen3:8b），

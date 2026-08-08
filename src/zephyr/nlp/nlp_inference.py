@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-NLP-INFERENCE-001 | P1-E3_NLP管道架构裁定与施工方案.md | §Phase 2
 # [MODULE] zephyr.nlp.nlp_inference
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.cache_layer
