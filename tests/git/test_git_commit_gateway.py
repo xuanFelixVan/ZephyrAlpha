@@ -1202,6 +1202,46 @@ class TestNonWorktreeCommitWarning:
             f"异常降级应走 INFO 路径: {[r.message for r in infos]!r}"
         )
 
+    # ------------------------------------------------------------------
+    # #ARCH-RECONCILER-WORKTREE-RACE 治本（2026-08-09）：
+    # warn_non_worktree_commit 与 worktree_required_gate.py 对齐——排除
+    # worker-{sha8}-{pid} session，消除第二决策点 + 噪音 WARN。
+    # ------------------------------------------------------------------
+    def test_no_warn_when_only_worker_sessions(self, tmp_path: Path, caplog) -> None:
+        """非 worktree commit + 仅 reconciler worker 活跃 → INFO（worker 无搭便车风险）。"""
+        gw = _make_gateway_for_warning_test(
+            tmp_path, other_session_ids=["worker-0f12f1aa-20176"]
+        )
+        with caplog.at_level(
+            logging.DEBUG,
+            logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+        ):
+            gw.warn_non_worktree_commit("sess-current", wt_session=None)
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
+        assert len(warnings) == 0, f"worker session 不应触发 WARN: {warnings}"
+        infos = [r for r in caplog.records if r.levelno == logging.INFO]
+        assert any("无其他活跃 session" in r.message for r in infos), (
+            f"仅 worker 活跃应走 INFO 路径: {[r.message for r in infos]!r}"
+        )
+
+    def test_warns_when_worker_plus_real_session(self, tmp_path: Path, caplog) -> None:
+        """非 worktree commit + worker + 真实 user session → WARN（user 计数，worker 排除）。"""
+        gw = _make_gateway_for_warning_test(
+            tmp_path,
+            other_session_ids=["worker-0f12f1aa-20176", "sess-real-user"],
+        )
+        with caplog.at_level(
+            logging.WARNING,
+            logger="zephyr.gov_enforcement.rule_bridge.git_commit_gateway",
+        ):
+            gw.warn_non_worktree_commit("sess-current", wt_session=None)
+        warnings = [r for r in caplog.records if r.levelno >= logging.WARNING]
+        assert len(warnings) == 1, f"应有 1 条 WARNING（真实 user session），实际 {len(warnings)}"
+        assert "sess-real-user" in warnings[0].message
+        assert "worker-" not in warnings[0].message, (
+            f"WARN 消息不应含 worker session: {warnings[0].message!r}"
+        )
+
 
 # ---------------------------------------------------------------------------
 # P2-2b 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
