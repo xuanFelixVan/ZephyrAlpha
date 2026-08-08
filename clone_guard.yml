@@ -61,7 +61,7 @@ compare:
   timeout_sec: 600          # L3 跨仓库 10 分钟
   vendetect_cross_repo: false    # 默认禁用——按需触发（AGPL 工具，独立目录隔离）
   vendetect_remote_url: ~        # 启用时填远程仓库 URL
-  relate_prescreen: false        # 默认禁用——加速器，建索引后启用
+  relate_prescreen: true         # 已开启（裁定：复活 L0 MCP search_functions 预防——AI 写前搜已有函数引导复用；flag 关闭时 search() 恒返回空。detect 预筛 redundant 但无害，不在 L1/L2 引擎集，仅 L3+MCP 按需触发）
   relate_index_path: .relate/index  # 保留（磁盘持久化预留）；MVP 进程内索引
   relate_top_k: 10               # 预筛返回 top-k
   relate_threshold: 0.7          # LSH 候选阈值（MinHash Jaccard 估计）
