@@ -155,6 +155,51 @@ class TestGradedBlocking:
 
 
 # ---------------------------------------------------------------------------
+# TestWorkerExclusion — #ARCH-RECONCILER-WORKTREE-RACE 治本
+# reconciler worker（worker-{sha8}-{pid}）是 commit 下游产物，held_files 为空，
+# 不应计入"其他活跃 session"导致非-worktree commit 被阻断。
+# ---------------------------------------------------------------------------
+class TestWorkerExclusion:
+    def test_worker_only_session_passes(self):
+        """仅 reconciler worker 活跃时，非-worktree commit 应放行（worker 无搭便车风险）。"""
+        gw = _make_gateway(
+            wt_session=None,
+            active_sessions=[_FakeSession("worker-0f12f1aa-20176")],
+        )
+        passed, msg = make_worktree_required_gate().check(gw, [], session_id="sess-1")
+        assert passed
+        assert msg == ""
+
+    def test_multiple_workers_passes(self):
+        """多个 worker 活跃、无真实 user session 时应放行。"""
+        gw = _make_gateway(
+            wt_session=None,
+            active_sessions=[
+                _FakeSession("worker-0f12f1aa-20176"),
+                _FakeSession("worker-bdf1a00f-21928"),
+            ],
+        )
+        passed, msg = make_worktree_required_gate().check(gw, [], session_id="sess-1")
+        assert passed
+        assert msg == ""
+
+    def test_worker_does_not_mask_real_concurrent_session(self):
+        """worker + 真实 user session 同时活跃时仍应阻断（user session 计数，worker 排除）。"""
+        gw = _make_gateway(
+            wt_session=None,
+            active_sessions=[
+                _FakeSession("worker-0f12f1aa-20176"),
+                _FakeSession("sess-real-user"),
+            ],
+        )
+        passed, msg = make_worktree_required_gate().check(gw, [], session_id="sess-1")
+        assert not passed  # 真实 user session 触发阻断
+        # 阻断消息应只含真实 user session，不含 worker
+        assert "sess-real-user" in msg
+        assert "worker-" not in msg
+
+
+# ---------------------------------------------------------------------------
 # TestFailOpen — 基础设施故障安全降级
 # ---------------------------------------------------------------------------
 class TestFailOpen:
