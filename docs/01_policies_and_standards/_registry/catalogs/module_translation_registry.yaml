@@ -2710,6 +2710,13 @@ entries:
   desc_zh: 从 ClickHouse fund_news_data 表按日期范围采集新闻，返回标准列 DataFrame，供 NLP 情感分析使用。
   desc_en: ''
   plain_zh: 新闻采集器，从数据库按日期捞新闻给 NLP 情感分析用。
+- module_path: src/zephyr/nlp/nlp_inference.py
+  domain_id: D_DATA
+  name_zh: 新闻情感推理器（P1-E3 NLP 管道 Phase 2）。
+  name_en: nlp_inference
+  desc_zh: 复用 local_model 层（Ollama/DeepSeek）对新闻标题+内容做情感分类，支持 prompt 模板、思维链剥离、JSON 解析、CacheLayer 缓存去重，推理失败降级 neutral。
+  desc_en: ''
+  plain_zh: 新闻情感推理器，调用本地模型给新闻打情感标签（正面/负面/中性），带缓存防重复算。
 - module_path: src/zephyr/data/normalizers/
   domain_id: D_DATA
   name_zh: 归一化器
@@ -9504,9 +9511,9 @@ entries:
   domain_id: D_GOV_CODE_QUALITY
   name_zh: panorama对齐门禁
   name_en: panorama_alignment_gate
-  desc_zh: panorama_alignment_gate.py — 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
+  desc_zh: panorama_alignment_gate.py — 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）
   desc_en: ''
-  plain_zh: 三图模块对齐门禁（四图模块对齐 Step 4，ARCH-056 升级）
+  plain_zh: 三图模块对齐门禁（五图模块对齐 Step 4，ARCH-056 升级）
 - module_path: src/zephyr/gov_enforcement/commit_gates/perm_trigger_gate.py
   domain_id: D_GOV_CODE_QUALITY
   name_zh: permtrigger门禁
@@ -13264,7 +13271,7 @@ entries:
   plain_zh: ''
 - module_path: tests/governance/commit_gates/test_panorama_alignment_gate.py
   domain_id: D_GOV_ENFORCEMENT
-  name_zh: 四图模块对齐门禁单测
+  name_zh: 五图模块对齐门禁单测
   name_en: Test Panorama Alignment Gate
   desc_zh: ''
   desc_en: ''
@@ -14657,7 +14664,7 @@ entries:
   plain_zh: ''
 - module_path: scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: 蓝图 §0.6 四图对齐视图生成器
+  name_zh: 蓝图 §0.6 五图对齐视图生成器
   name_en: Generate Blueprint Panorama
   desc_zh: ''
   desc_en: ''
@@ -32759,7 +32766,7 @@ entries:
   plain_zh: ''
 - module_path: scripts/governance/d5_architecture/panorama_common.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: 四图投票共享工具
+  name_zh: 全景投票共享工具
   name_en: Panorama Common
   desc_zh: ''
   desc_en: ''
@@ -34012,7 +34019,7 @@ entries:
   plain_zh: ''
 - module_path: tests/governance/test_sync_panorama_module.py
   domain_id: D_GOVERNANCE
-  name_zh: 四图模块同步引擎单测
+  name_zh: 五图模块同步引擎单测
   name_en: Test Sync Panorama Module
   desc_zh: ''
   desc_en: ''
@@ -36784,7 +36791,7 @@ entries:
   plain_zh: ''
 - module_path: tests/governance/test_apply_depgraph_transition_sync.py
   domain_id: D_GOVERNANCE
-  name_zh: 状态转换后四图同步单测
+  name_zh: 状态转换后全景同步单测
   name_en: Test Apply Depgraph Transition Sync
   desc_zh: ''
   desc_en: ''
@@ -38737,7 +38744,7 @@ entries:
   plain_zh: ''
 - module_path: scripts/governance/sync_panorama_module.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: 四图模块同步引擎
+  name_zh: 五图模块同步引擎
   name_en: Sync Panorama Module
   desc_zh: ''
   desc_en: ''
@@ -38863,11 +38870,18 @@ entries:
   plain_zh: ''
 - module_path: scripts/governance/d5_architecture/generators/align_panoramas.py
   domain_id: D_GOV_SCRIPTS
-  name_zh: 四图对齐检测器
+  name_zh: 全景对齐检测器
   name_en: Align Panoramas
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
+- module_path: scripts/governance/d5_architecture/generators/align_all.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 五图对齐执行入口
+  name_en: Align All Panoramas
+  desc_zh: 一站式五图对齐验证——调 align_panoramas 查图 1-4（module_id 轴）+ align_battle_map 查图 5（step_id 轴），产出总览报告，exit code 分层（硬问题→1，软问题→0+warn）。
+  desc_en: ''
+  plain_zh: 五图对齐执行入口，施工前对齐验证唯一命令
 - module_path: tests/safety/test_async_monitor.py
   domain_id: ''
   name_zh: 创建一个 check 方法被 mock 为 no-op 的 AsyncMonitor，避免文件系统副作用

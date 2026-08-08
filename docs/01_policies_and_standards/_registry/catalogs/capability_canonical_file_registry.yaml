@@ -671,7 +671,7 @@ capabilities:
       - ARCH-056
       - ARCH-058
     description: >-
-      四图模块同步引擎（ARCH-056 Phase 2 + ARCH-058 治本）。从 depgraph.nodes
+      五图模块同步引擎（ARCH-056 Phase 2 + ARCH-058 治本）。从 depgraph.nodes
       读取模块清单，单向派生到 dataflow_jobs / decision_layers 占位记录
       （sync_module_panorama：UPSERT 不覆盖真实 job 核心字段）；
       prune_orphans 清理 decision_layers + dataflow_jobs 中的孤儿占位记录
@@ -691,16 +691,33 @@ capabilities:
       - ARCH-053
       - ARCH-056
     description: >-
-      蓝图 §0.6 四图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）。
+      蓝图 §0.6 五图对齐视图生成器（ARCH-053 + ARCH-056 + 模板 v2.1.0）。
       从 depgraph.nodes / dataflow_datasets+jobs / decision_nodes+layers
       （PostgreSQL 三图真源）+ 蓝图 frontmatter（第四张图）读取模块核心字段，
-      生成 §0.6 四图对齐视图（四图位置表 + 四核心字段对比表）并写入蓝图文件。
+      生成 §0.6 五图对齐视图（全景位置表 + 四核心字段对比表）并写入蓝图文件。
       定位：写入型生成器（只写蓝图 §0.6 章节，不动 frontmatter / 不动其他章节）。
       幂等：多次运行同一模块结果相同（_S06_BLOCK_RE 正则控制替换范围）。
       depgraph 是架构数据真源（SSoT），蓝图是派生视图，冲突时以 depgraph 为准。
       canonical = scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py。
       与 align_panoramas（只读检测器）+ sync_panorama_module（同步引擎）职责分离：
       本生成器写蓝图 §0.6 派生视图，检测器只读报告，同步引擎写 dataflow/decision 占位。
+
+  # --------------------------------------------------------------------------
+  - capability_id: five_panorama_alignment_unified_entry
+    aliases:
+      - align_all
+      - five_panorama_align
+      - ARCH-ALIGN-UNIFIED-001
+    description: >-
+      五图对齐执行入口（ARCH-ALIGN-UNIFIED-001）。一站式五图对齐验证——
+      调 align_panoramas.run_alignment 查图 1-4（module_id 轴：depgraph/dataflowgraph/
+      decisiongraph/blueprint.md）+ 调 align_battle_map.run_alignment 查图 5
+      （step_id 轴：battle_map），产出 panorama_alignment_overview.md 总览报告。
+      exit code 分层：硬问题（domain_mismatches/ghost_anchors）→1，软问题→0+warn。
+      复用两个检测器的 run_alignment(write_report=False)，不重复检测逻辑。
+      canonical = scripts/governance/d5_architecture/generators/align_all.py。
+      与 align_panoramas（图 1-4 检测器）+ align_battle_map（图 5 检测器）职责关系：
+      本入口是编排层（调两个检测器+汇总），检测器是执行层（各自只读检测）。
 
   # --------------------------------------------------------------------------
   - capability_id: design_maturity_trigger_protection
@@ -5492,14 +5509,14 @@ capabilities:
       - make_in_process_gate_registry_drift_reconciler  # reconciler 工厂(删则漂移检测失效)
 
   # --------------------------------------------------------------------------
-  # --- 因子工厂四图设计态补全（2026-07-24，四图对齐铁律 TRAE-080）---
+  # --- 因子工厂全景设计态补全（2026-07-24，五图对齐铁律 TRAE-080）---
   - capability_id: factor_design_state_complete
     aliases:
       - factor_state_complete
       - factor_four_graph_design
       - factor_design_state
     description: >-
-      因子工厂四图设计态补全一次性脚本。canonical =
+      因子工厂全景设计态补全一次性脚本。canonical =
       scripts/governance/oneoff/factor_design_state_complete.py（auto 派生：
       basename factor_design_state_complete 匹配 capability_id）。
       功能：补全 50 个 D_FACTOR 节点的 subdomain_id（扁平分组 FAC-CORE/ASHARE/
@@ -5515,7 +5532,7 @@ capabilities:
       - data_domain_state_complete
       - data_domain_four_graph_design
     description: >-
-      数据域四图设计态补全一次性脚本。canonical =
+      数据域全景设计态补全一次性脚本。canonical =
       scripts/governance/oneoff/data_domain_design_state_complete.py。
       功能：补全数据域 subdomain_id + 登记 design 节点 + 修复契约 fulfillment_status。
       域：D_DATA。一次性脚本（MATURITY=oneoff），已执行完毕。
@@ -5618,7 +5635,7 @@ capabilities:
       候选模块登记表查询工具。解决"草稿散乱+设计态污染"痛点——过度工程/死域/待开发
       候选不进 depgraph 设计态（违反设计准入一问标准，原"四问铁律"已于2026-08-04收敛
       为一问标准，q2/q3/q4因灰度已废），而是登记在 candidate_module_registry.yaml
-      候选库，支持按域/痛点/关键词/ID/状态多维检索 + 四图定位展示。对标敏捷 Product
+      候选库，支持按域/痛点/关键词/ID/状态多维检索 + 全景定位展示。对标敏捷 Product
       Backlog / 量化 Alpha Idea Pipeline。canonical: scripts/governance/query_candidate_registry.py;
       数据真源: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml。
 
@@ -7965,7 +7982,7 @@ creation_tokens:
     created_by: "session-sess-46256-20260723223757"
     capability: "clickhouse_rbac_management"
 
-  # --- 数据域设计态排查与补全（2026-07-24，四图对齐铁律 TRAE-080）---
+  # --- 数据域设计态排查与补全（2026-07-24，五图对齐铁律 TRAE-080）---
   # 一次性脚本：查询数据域 DB 现状（只读），供场外文档 vs 场内现状对比审查
   - file: "scripts/governance/oneoff/data_domain_audit_query.py"
     token: "auto-data-domain-audit-query-20260724"
@@ -7987,7 +8004,7 @@ creation_tokens:
     created_by: "session-sess-51376-20260724162054"
     capability: "data_domain_audit_report_db"
 
-  # --- 因子工厂四图设计态补全（2026-07-24，四图对齐铁律 TRAE-080）---
+  # --- 因子工厂全景设计态补全（2026-07-24，五图对齐铁律 TRAE-080）---
   # 一次性脚本：补全50个D_FACTOR节点subdomain_id + 删2条barra反向边 + 新增43条域内依赖边 + 24个GATE注解
   - file: "scripts/governance/oneoff/factor_design_state_complete.py"
     token: "auto-factor-design-state-complete-20260724"
@@ -8348,6 +8365,23 @@ creation_tokens:
     token: "auto-news-collector-20260808"
     created_by: "session-p1e3-nlp-phase1"
     capability: "news_collector"
+  # --- P1-E3 NLP 管道 Phase 2（2026-08-08，#ARCH-NLP-PIPELINE-001）---
+  - file: "src/zephyr/nlp/nlp_inference.py"
+    token: "auto-nlp-inference-20260808"
+    created_by: "session-p1e3-nlp-phase2"
+    capability: "nlp_inference"
+  - file: "src/zephyr/nlp/__init__.py"
+    token: "auto-nlp-init-20260808"
+    created_by: "session-p1e3-nlp-phase2"
+    capability: "nlp_inference"
+  - file: "scripts/ml/eval_sentiment.py"
+    token: "auto-eval-sentiment-20260808"
+    created_by: "session-p1e3-nlp-phase2"
+    capability: "nlp_inference"
+  - file: "scripts/ml/build_eval_set.py"
+    token: "auto-build-eval-set-20260808"
+    created_by: "session-p1e3-nlp-phase2"
+    capability: "nlp_inference"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
