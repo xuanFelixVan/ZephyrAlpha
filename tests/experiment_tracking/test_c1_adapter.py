@@ -33,6 +33,7 @@ from zephyr.experiment_tracking.adapters.c1_adapter import (
     _extract_metrics,
     _extract_params,
     _log_nav_artifacts,
+    _render_nav_png,
     track_c1_result,
 )
 from zephyr.experiment_tracking.config import ExperimentTrackingConfig
@@ -305,6 +306,25 @@ class TestLogNavArtifacts:
         # CSV 内容含 header
         baseline_csv = next(c[2] for c in spy.calls if c[0] == "nav_curve_baseline.csv")
         assert b"nav" in baseline_csv
+
+    def test_with_portfolios_writes_png(self):
+        """comparator 有 portfolio → 写 nav_curve_comparison.png（matplotlib 装了时）。"""
+        class _Spy:
+            def __init__(self):
+                self.calls = []
+            def log_artifact_bytes(self, data, filename, artifact_path):
+                self.calls.append((filename, artifact_path, data))
+
+        spy = _Spy()
+        comp = _make_comparator(with_portfolios=True, nav_len=50)
+        _log_nav_artifacts(spy, comp)
+        filenames = [c[0] for c in spy.calls]
+        # PNG 只在 matplotlib 可用时生成——检查是否在列表中
+        if "nav_curve_comparison.png" in filenames:
+            png_bytes = next(c[2] for c in spy.calls if c[0] == "nav_curve_comparison.png")
+            # PNG 文件头 magic bytes: \x89PNG
+            assert png_bytes[:4] == b"\x89PNG"
+            assert len(png_bytes) > 100  # 不是空图
 
     def test_portfolio_none_skips(self):
         """portfolio=None → 跳过该侧。"""

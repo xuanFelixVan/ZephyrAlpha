@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.backtest.regime_validation.c1_runner (track=True 时 lazy import 调用)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] C1ComparisonResult → mlflow run（params/metrics/artifacts/tags）；tracker 降级时 no-op 不抛；comparator=None 时跳过 nav artifact；不依赖 backtest 运行时 import（TYPE_CHECKING 隔离）
+# [INVARIANTS] C1ComparisonResult → mlflow run（params/metrics/artifacts/tags）；tracker 降级时 no-op 不抛；comparator=None 时跳过 nav artifact；matplotlib 未装时跳过 PNG（仅写 CSV）；不依赖 backtest 运行时 import（TYPE_CHECKING 隔离）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -23,7 +23,7 @@
 Zephyr 语义 → MLflow 映射:
   - params   : C1 门槛配置（sharpe_tolerance 等）+ 模式 + 策略名 + 数据日期范围
   - metrics  : baseline_/experiment_ sharpe/maxdd/turnover/calmar + 各 verdict 值 + passed
-  - artifacts: nav_curve_baseline.csv / nav_curve_experiment.csv / c1_summary.md
+  - artifacts: nav_curve_baseline.csv / nav_curve_experiment.csv / nav_curve_comparison.png / c1_summary.md
   - tags     : component=c1-validation / mode / passed / veto_reason
 
 循环依赖规避
@@ -128,13 +128,44 @@ def _extract_metrics(result: "C1ComparisonResult") -> dict[str, float]:
     return metrics
 
 
+def _render_nav_png(nav_data: dict[str, Any]) -> Optional[bytes]:
+    """渲染 baseline/experiment 净值曲线对比图为 PNG bytes。
+
+    matplotlib 未安装时返回 None（调用方跳过 PNG，仅写 CSV）。
+    """
+    try:
+        import matplotlib
+        matplotlib.use("Agg")  # 非交互后端，不弹窗
+        import matplotlib.pyplot as plt
+    except ImportError:
+        _logger.warning("c1_adapter: matplotlib 未安装，跳过净值曲线 PNG")
+        return None
+
+    fig, ax = plt.subplots(figsize=(10, 5))
+    for label, nav_series in nav_data.items():
+        display_label = "baseline (Shrinkage OFF)" if label == "baseline" else "experiment (Shrinkage ON)"
+        ax.plot(nav_series.index, nav_series.values, label=display_label, linewidth=1.2)
+    ax.set_title("NAV Curve Comparison")
+    ax.set_xlabel("Time")
+    ax.set_ylabel("NAV")
+    ax.legend()
+    ax.grid(True, alpha=0.3)
+
+    from io import BytesIO
+    buf = BytesIO()
+    fig.savefig(buf, format="png", dpi=100, bbox_inches="tight")
+    plt.close(fig)
+    return buf.getvalue()
+
+
 def _log_nav_artifacts(
     run: Any,
     comparator: Optional["C1ShrinkageComparator"],
 ) -> None:
-    """把 baseline/experiment 净值曲线写为 CSV artifact（comparator=None 或无 nav 时跳过）。"""
+    """把 baseline/experiment 净值曲线写为 CSV + PNG artifact（comparator=None 或无 nav 时跳过）。"""
     if comparator is None:
         return
+    nav_data: dict[str, Any] = {}
     for label, portfolio in (
         ("baseline", comparator.last_baseline_portfolio),
         ("experiment", comparator.last_experiment_portfolio),
@@ -148,8 +179,18 @@ def _log_nav_artifacts(
             continue
         if nav_series is None or len(nav_series) == 0:
             continue
+        nav_data[label] = nav_series
         csv_bytes = nav_series.to_csv(index=True, header=["nav"]).encode("utf-8")
         run.log_artifact_bytes(csv_bytes, f"nav_curve_{label}.csv", artifact_path="nav")
+
+    # PNG 对比图（两条曲线画在同一张图上，matplotlib 未装时跳过）
+    if nav_data:
+        try:
+            png_bytes = _render_nav_png(nav_data)
+            if png_bytes is not None:
+                run.log_artifact_bytes(png_bytes, "nav_curve_comparison.png", artifact_path="nav")
+        except Exception as e:  # noqa: BLE001 — PNG 渲染失败不阻断 tracking
+            _logger.warning("c1_adapter: 渲染净值曲线 PNG 失败(跳过): %s", e)
 
 
 def _build_summary_md(result: "C1ComparisonResult") -> str:
