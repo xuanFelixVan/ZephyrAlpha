@@ -460,12 +460,19 @@ def get_insert_columns(table: str) -> str:
     （_cols_clause=None 时）返回的列数与 TSV 数据列数不匹配（provider
     提供 DEFAULT 列值时 INSERT 报 Code 27 Cannot parse input）。
 
+    修复(2026-08-09): DESCRIBE 失败时原返回 "*"，生成非法 SQL
+    "INSERT INTO t * SETTINGS ..."（CH 不支持 INSERT INTO t * 语法），
+    导致 err.log 疯涨。改为返回 "" 生成合法 SQL "INSERT INTO t SETTINGS ...
+    FORMAT TSV"（无列子句 = 插入全部列）。调用方（BufferedWriter/write_result）
+    应在 DESCRIBE 失败时用 result.columns 构造显式列子句，避免列数不匹配。
+
     Returns:
-        "(col1, col2, ...)" 字符串。查询失败返回 "*"（由 CH 推断全部列）。
+        "(col1, col2, ...)" 字符串。查询失败返回 ""（空串 = 无列子句，
+        CH 按 TSV 字段顺序插入全部列，调用方应确保 TSV 列数 = 表列数）。
     """
     out = query(f"DESCRIBE TABLE {table}")
     if not out.strip():
-        return "*"
+        return ""
     cols = []
     for line in out.split("\n"):
         if not line.strip():
@@ -479,7 +486,7 @@ def get_insert_columns(table: str) -> str:
             continue
         cols.append(name)
     if not cols:
-        return "*"
+        return ""
     return "(" + ", ".join(cols) + ")"
 
 
@@ -676,10 +683,12 @@ def write_tsv_outcome(
     # 数据写入本地 TSV 文件，待 CH 恢复后自动回灌
     from zephyr.data.local_replay import save_fallback
 
-    # cols_clause=="*" 意味着 get_insert_columns 在 CH 不可用时返回的未校验值，
-    # 回灌时 "INSERT INTO t * FORMAT TSV" 非法；存 None 让回灌时重新查询表列
-    # （裁定 #ARCH-CH-013 Phase 1 根因修复）
-    fallback_cols = None if cols_clause == "*" else cols_clause
+    # cols_clause 为 "*" 或 "" 意味着 get_insert_columns 在 CH 不可用时返回的
+    # 未校验值。"*" 生成非法 SQL（已废弃），"" 生成无列子句 SQL（CH 按全列插入）。
+    # 两者都意味着 TSV 列数可能与表列数不匹配；存 None 让回灌时重新查询表列。
+    # 注意：调用方（BufferedWriter/write_result）应在 DESCRIBE 失败时用
+    # result.columns 构造显式列子句，避免走到此 None 分支（裁定 #ARCH-CH-013）。
+    fallback_cols = None if cols_clause in ("*", "") else cols_clause
     if save_fallback(table, fallback_cols, tsv_bytes):
         _record_write_outcome(WriteDisposition.LOCAL_DURABLE, time.time() - _t0)
         return WriteOutcome(WriteDisposition.LOCAL_DURABLE, "local_fallback")
@@ -760,12 +769,18 @@ def write_result(
             cols_clause = "(" + ", ".join(common_cols) + ")"
             eff_cols = common_cols
         else:
-            # CH 不可用：无法校验列，落盘 None 让回灌时（CH 已恢复）重新查询表列
-            # 原样用 result.columns 会固化不可信列名（如 Provider 占位符 col1），
-            # 回灌时 INSERT 失败永久卡死（裁定 #ARCH-CH-013 Phase 1 根因修复）
-            cols_clause = None
+            # CH 不可用（DESCRIBE 失败）：用 result.columns 构造显式列子句，
+            # 确保 TSV 字段数 = cols_clause 列数（2026-08-09 修复）。
+            # 原设计存 None 让回灌重新查询表列，但 get_insert_columns 返回全部
+            # 可插入列（含 DEFAULT），TSV 字段数 < 表列数 → Code 27 列数不匹配。
+            # 所有 provider 已使用真实列名，用 result.columns 保证列数匹配；
+            # 列名有误时 INSERT fail-fast（Code 47），优于静默列数不匹配。
+            if result.columns and result.rows and len(result.columns) == len(result.rows[0]):
+                cols_clause = "(" + ", ".join(result.columns) + ")"
+            else:
+                cols_clause = None  # 无列信息，落盘 None 让回灌时重新查询
             rows = result.rows
-            eff_cols = list(result.columns)
+            eff_cols = list(result.columns) if result.columns else None
     else:
         cols_clause = None  # write_tsv 内部自动查询
         rows = result.rows

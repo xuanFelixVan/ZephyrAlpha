@@ -13,18 +13,19 @@
 
 不依赖真实 ClickHouse 和真实 data/local_fallback/ 目录。
 """
+
 import json
-from unittest.mock import patch, MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from src.zephyr.data import local_replay
 from src.zephyr.data.local_replay import (
-    save_fallback,
-    has_backlog,
-    get_backlog_summary,
     _replay_one_file,
+    get_backlog_summary,
+    has_backlog,
     replay_batch,
+    save_fallback,
 )
 
 
@@ -214,7 +215,7 @@ class TestReplayOneFile:
         assert call_args[0][1] is None
 
     def test_cols_clause_star_in_manifest(self, tmp_path, monkeypatch):
-        """manifest 中 cols_clause='*' 时回灌传 None（'*' 等价于让 CH 推断全部列）。"""
+        """manifest 中 cols_clause='*' 时回灌传 None（'*' 已废弃，等价于让 CH 推断全部列）。"""
         monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
         tsv_path = tmp_path / "data.tsv"
         tsv_path.write_bytes(b"v1\n")
@@ -223,6 +224,25 @@ class TestReplayOneFile:
             "file": "data.tsv",
             "rows": 1,
             "cols_clause": "*",
+        }
+        mock_cw = MagicMock()
+        mock_cw.write_tsv.return_value = True
+
+        _replay_one_file(entry, mock_cw)
+
+        call_args = mock_cw.write_tsv.call_args
+        assert call_args[0][1] is None
+
+    def test_cols_clause_empty_in_manifest(self, tmp_path, monkeypatch):
+        """manifest 中 cols_clause='' 时回灌传 None（'' 表示无列子句，等价于让 CH 推断全部列）。"""
+        monkeypatch.setattr(local_replay, "_FALLBACK_DIR", tmp_path)
+        tsv_path = tmp_path / "data.tsv"
+        tsv_path.write_bytes(b"v1\n")
+        entry = {
+            "table": "c1_market.test",
+            "file": "data.tsv",
+            "rows": 1,
+            "cols_clause": "",
         }
         mock_cw = MagicMock()
         mock_cw.write_tsv.return_value = True
@@ -376,9 +396,7 @@ class TestReplayBatch:
         for i in range(3):
             (tmp_path / f"data{i}.tsv").write_bytes(b"v1\n")
             entries.append({"table": "c1_market.test", "file": f"data{i}.tsv", "rows": 1})
-        manifest_path.write_text(
-            "\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8"
-        )
+        manifest_path.write_text("\n".join(json.dumps(e) for e in entries) + "\n", encoding="utf-8")
         monkeypatch.setattr(local_replay, "_MANIFEST_PATH", manifest_path)
 
         with patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):

@@ -34,6 +34,7 @@ scheduler 启动时 + 每 30 分钟检查并回灌积压文件到 CH。
     3. 成功则删除文件 + 从 manifest 移除条目
     4. 失败则保留，等下次重试
 """
+
 from __future__ import annotations
 
 import json
@@ -110,13 +111,14 @@ def save_fallback(table: str, cols_clause: str | None, tsv_bytes: bytes) -> bool
             "rows": rows,
             "ts": ts_str,
         }
-        with _manifest_lock:
-            with open(_MANIFEST_PATH, "a", encoding="utf-8") as f:
-                f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        with _manifest_lock, open(_MANIFEST_PATH, "a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
         log.warning(
             "local_fallback: %s 落盘 %d 行到 %s（CH 不可用，数据保留待回灌）",
-            table, rows, filename,
+            table,
+            rows,
+            filename,
         )
         return True
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -140,15 +142,14 @@ def get_backlog_summary() -> dict[str, int]:
     try:
         if not _MANIFEST_PATH.exists():
             return summary
-        with _manifest_lock:
-            with open(_MANIFEST_PATH, "r", encoding="utf-8") as f:
-                for line in f:
-                    line = line.strip()
-                    if not line:
-                        continue
-                    entry = json.loads(line)
-                    table = entry["table"]
-                    summary[table] = summary.get(table, 0) + entry.get("rows", 0)
+        with _manifest_lock, open(_MANIFEST_PATH, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                entry = json.loads(line)
+                table = entry["table"]
+                summary[table] = summary.get(table, 0) + entry.get("rows", 0)
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         log.warning("get_backlog_summary 读取 manifest 失败: %s", e)
     return summary
@@ -159,16 +160,15 @@ def _read_manifest() -> list[dict]:
     entries: list[dict] = []
     if not _MANIFEST_PATH.exists():
         return entries
-    with _manifest_lock:
-        with open(_MANIFEST_PATH, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    entries.append(json.loads(line))
-                except json.JSONDecodeError:
-                    log.warning("local_replay: manifest 行解析失败，跳过: %s", line[:100])
+    with _manifest_lock, open(_MANIFEST_PATH, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entries.append(json.loads(line))
+            except json.JSONDecodeError:
+                log.warning("local_replay: manifest 行解析失败，跳过: %s", line[:100])
     return entries
 
 
@@ -197,10 +197,12 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
     try:
         tsv_bytes = file_path.read_bytes()
         # 回灌时使用 manifest 中保存的 cols_clause（落盘时确定，与 TSV 字段数匹配）。
-        # 仅在 cols_clause 为 None/"*"/缺失时才让 ch_writer 重新查询表列。
-        # 原因：_get_insert_columns 会排除 DEFAULT 列（如 data_source/quality_flag），
-        # 但 TSV 数据包含这些列的值，导致 INSERT 列数(12) < TSV 字段数(14) → Code: 27 parse error。
+        # 仅在 cols_clause 为 None/""/"*"/缺失时才让 ch_writer 重新查询表列。
+        # 原因：get_insert_columns 返回全部可插入列（含 DEFAULT），但 TSV 数据
+        # 可能不含 DEFAULT 列的值，导致 INSERT 列数(7) > TSV 字段数(5) → Code 27。
         # 使用保存的 cols_clause 确保 INSERT 列数与 TSV 字段数一致。
+        # 2026-08-09: "*" 已废弃（生成非法 SQL），"" 表示无列子句（CH 按全列插入），
+        # 两者都意味着 TSV 列数可能与表列数不匹配，回灌时重新查询表列。
         # create_fallback=False：回灌失败时不创建新 fallback 文件，避免无限复制 duplicates。
         # 表名前缀修正：历史积压可能有不带 db. 前缀的裸表名，补全为默认库前缀
         # （裁定 #ARCH-CH-013 Phase 2：从 CLICKHOUSE_DATABASE 读取，不再硬编码 c1_market.）
@@ -208,7 +210,25 @@ def _replay_one_file(entry: dict, ch_writer_mod) -> str:
         if "." not in replay_table:
             replay_table = f"{_DEFAULT_DB}.{replay_table}"
         saved_cols = entry.get("cols_clause")
-        replay_cols = saved_cols if saved_cols and saved_cols != "*" else None
+        replay_cols = saved_cols if saved_cols and saved_cols not in ("*", "") else None
+        # 2026-08-09 修复：cols_clause=None 时 get_insert_columns 返回全部可插入列（含
+        # DEFAULT），但 TSV 数据可能不含 DEFAULT 列值 → INSERT 列数 > TSV 字段数 → Code 27。
+        # 按 TSV 首行字段数截取列清单前 N 列，确保 INSERT 列数 = TSV 字段数。
+        if replay_cols is None:
+            first_line = tsv_bytes.split(b"\n", 1)[0]
+            tsv_ncol = first_line.count(b"\t") + 1
+            all_cols_str = ch_writer_mod.get_insert_columns(replay_table)
+            if all_cols_str and all_cols_str not in ("*", ""):
+                col_names = [c.strip() for c in all_cols_str.strip("()").split(",")]
+                if len(col_names) > tsv_ncol:
+                    col_names = col_names[:tsv_ncol]
+                    replay_cols = "(" + ", ".join(col_names) + ")"
+                    log.info(
+                        "local_replay: %s cols_clause=None, TSV %d fields, 截取前 %d 列",
+                        entry["file"],
+                        tsv_ncol,
+                        tsv_ncol,
+                    )
         ok = ch_writer_mod.write_tsv(
             replay_table,
             replay_cols,
@@ -310,7 +330,9 @@ def replay_batch(max_files: int = 100) -> dict[str, int]:
     if result["replayed"] > 0:
         log.info(
             "local_replay: 回灌完成 — 成功 %d, 失败 %d, 剩余 %d",
-            result["replayed"], result["failed"], result["remaining"],
+            result["replayed"],
+            result["failed"],
+            result["remaining"],
         )
 
     return result

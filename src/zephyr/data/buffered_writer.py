@@ -37,6 +37,7 @@
     # 搭配 ReplacingMergeTree（裁定 #ARCH-CH-002）：
     # 直接 INSERT，CH 后台去重，无需先删后插。
 """
+
 from __future__ import annotations
 
 import logging
@@ -87,7 +88,7 @@ class BufferedWriter:
         self._flush_count: int = 0
         self._last_outcome = None
 
-    def add(self, result: "FetchResult") -> bool:
+    def add(self, result: FetchResult) -> bool:
         """添加 FetchResult 到缓冲区。达阈值时自动 flush。
 
         Args:
@@ -116,15 +117,14 @@ class BufferedWriter:
 
         self._total_added += len(result.rows)
         if self._first_buffer_ts is None:
-            self._first_buffer_ts = time.time()
+            self._first_buffer_ts = time.time()  # noqa: m46-time — elapsed 超时测量，非时区用途
 
         # 达阈值触发 flush
-        if len(self._buffer) >= self._max_rows or \
-           (time.time() - self._first_buffer_ts) >= self._max_seconds:
+        if len(self._buffer) >= self._max_rows or (time.time() - self._first_buffer_ts) >= self._max_seconds:  # noqa: m46-time elapsed 超时测量非时区用途
             return self.flush()
         return True
 
-    def _init_columns(self, result: "FetchResult") -> None:
+    def _init_columns(self, result: FetchResult) -> None:
         """从首个 FetchResult 确定列子句（含列过滤）。
 
         复用 ch_writer.get_insertable_columns_set 做列过滤：
@@ -141,15 +141,21 @@ class BufferedWriter:
                 if len(common_cols) < len(result.columns):
                     log.info(
                         "BufferedWriter(%s): 列过滤 %d->%d",
-                        self._table, len(result.columns), len(common_cols),
+                        self._table,
+                        len(result.columns),
+                        len(common_cols),
                     )
                 return
             log.error("BufferedWriter(%s): result.columns 与表列无交集", self._table)
-        # CH 不可用 fallback：不固化不可信的 result.columns（可能含占位符列名 col1），
-        # 落盘 None 让回灌时（CH 已恢复）重新查询表列构造正确的 cols_clause
-        # （裁定 #ARCH-CH-013 Phase 1 根因修复）
+        # CH 不可用 fallback（DESCRIBE 失败）：
+        # 用 result.columns 构造显式列子句，确保 TSV 字段数 = cols_clause 列数。
+        # 原 Phase 1 设计存 None 让回灌重新查询表列，但 get_insert_columns 返回
+        # 全部可插入列（含 DEFAULT），TSV 字段数 < 表列数 → Code 27 列数不匹配。
+        # 2026-08-09 修复：所有 provider 已使用真实列名（非占位符 col1），
+        # 用 result.columns 构造 cols_clause 可保证列数匹配；若列名有误，
+        # INSERT 会 fail-fast（Code 47 unknown column），优于静默列数不匹配。
         if result.columns:
-            self._cols_clause = None
+            self._cols_clause = "(" + ", ".join(result.columns) + ")"
             self._keep_indices = list(range(len(result.columns)))
         else:
             self._cols_clause = None  # write_tsv 内部自动查询
@@ -170,7 +176,9 @@ class BufferedWriter:
         tsv_bytes = "\n".join(tsv_lines).encode("utf-8")
 
         self._last_outcome = ch_writer.write_tsv_outcome(
-            self._table, self._cols_clause, tsv_bytes,
+            self._table,
+            self._cols_clause,
+            tsv_bytes,
         )
         ok = self._last_outcome.is_ch_committed
         if ok:
@@ -178,15 +186,19 @@ class BufferedWriter:
             self._flush_count += 1
             log.info(
                 "BufferedWriter.flush(%s): 第%d次 flush，%d 行（累计 flush %d/%d 行）",
-                self._table, self._flush_count, len(self._buffer),
-                self._total_flushed, self._total_added,
+                self._table,
+                self._flush_count,
+                len(self._buffer),
+                self._total_flushed,
+                self._total_added,
             )
             self._buffer.clear()
             self._first_buffer_ts = None
         else:
             log.error(
                 "BufferedWriter.flush(%s): 写入失败，%d 行保留在缓冲区待重试",
-                self._table, len(self._buffer),
+                self._table,
+                len(self._buffer),
             )
         return ok
 

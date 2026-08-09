@@ -12,21 +12,22 @@
 
 不依赖真实 ClickHouse，用 unittest.mock.patch 替换 TCP/HTTP 传输层。
 """
-from unittest.mock import patch, MagicMock
+
+from unittest.mock import MagicMock, patch
 
 import pytest
 
 from src.zephyr.data.ch_writer import (
-    tsv_escape,
-    write_tsv,
-    write_tsv_outcome,
     WriteDisposition,
-    write_result,
     delete_where,
-    query,
     get_insert_columns,
     get_table_engine,
     is_replacing_engine,
+    query,
+    tsv_escape,
+    write_result,
+    write_tsv,
+    write_tsv_outcome,
 )
 from src.zephyr.data.provider_base import FetchResult
 
@@ -74,6 +75,7 @@ class TestQuery:
     def setup_method(self):
         """每个测试前重置客户端单例。"""
         import src.zephyr.data.ch_writer as cw
+
         cw.ch_client = None
         cw.ch_http_host = None
 
@@ -202,6 +204,7 @@ class TestWriteResult:
     def setup_method(self):
         """清理模块级缓存，防止跨用例污染。"""
         from src.zephyr.data import ch_writer
+
         ch_writer.table_cols_cache.clear()
         ch_writer.table_insertable_cols_cache.clear()
 
@@ -214,9 +217,10 @@ class TestWriteResult:
             last_key="2026-07-05",
             elapsed_sec=1.0,
         )
-        with patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http, \
-             patch("src.zephyr.data.ch_writer.get_insertable_columns_set",
-                   return_value={"code", "date", "close"}):
+        with (
+            patch("src.zephyr.data.ch_writer.http_insert", return_value=True) as mock_http,
+            patch("src.zephyr.data.ch_writer.get_insertable_columns_set", return_value={"code", "date", "close"}),
+        ):
             ok = write_result(result)
         assert ok is True
         # 验证 TSV 数据正确构造
@@ -276,6 +280,7 @@ class TestDeleteWhere:
     def setup_method(self):
         """每个测试前重置客户端单例。"""
         import src.zephyr.data.ch_writer as cw
+
         cw.ch_client = None
         cw.ch_http_host = None
 
@@ -311,19 +316,19 @@ class TestGetInsertColumns:
     """get_insert_columns 函数测试（mock query）。"""
 
     def test_with_default_columns(self):
-        """含 DEFAULT 列时应排除。"""
+        """含 DEFAULT 列时保留（仅排除 MATERIALIZED/ALIAS）。"""
         describe_output = "code\tString\t\ndate\tDate\tDEFAULT\ttoday()\nclose\tFloat64\t\n"
         with patch("src.zephyr.data.ch_writer.query", return_value=describe_output):
             cols = get_insert_columns("c1_market.kline_daily")
         assert "code" in cols
         assert "close" in cols
-        assert "date" not in cols  # DEFAULT 列排除
+        assert "date" in cols  # DEFAULT 列保留（可显式提供值覆盖默认值）
 
     def test_empty_describe(self):
-        """DESCRIBE 返回空时返回 *。"""
+        """DESCRIBE 返回空时返回空串（非 '*'，避免非法 SQL）。"""
         with patch("src.zephyr.data.ch_writer.query", return_value=""):
             cols = get_insert_columns("nonexistent")
-        assert cols == "*"
+        assert cols == ""
 
 
 class TestGetTableEngine:
@@ -332,6 +337,7 @@ class TestGetTableEngine:
     def setup_method(self):
         """每个测试前清空引擎缓存，避免测试间污染。"""
         import src.zephyr.data.ch_writer as cw
+
         cw.table_engine_cache.clear()
 
     def test_replacing_engine(self):
