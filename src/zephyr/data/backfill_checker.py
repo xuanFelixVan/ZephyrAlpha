@@ -42,8 +42,7 @@ from time import sleep
 
 import yaml
 
-from zephyr.data import ch_reader
-from zephyr.data import ch_writer
+from zephyr.data import ch_reader, ch_writer
 from zephyr.data.table_registry import get_registry
 from zephyr.data.tick_subscriber import _safe_int
 
@@ -76,10 +75,7 @@ _SQL_KLINE_DISTINCT = (
     "WHERE trade_date >= toDate('{start}') AND trade_date <= toDate('{today}') "
     "ORDER BY trade_date"
 )
-_SQL_COUNT_BY_DATE = (
-    "SELECT count() FROM c1_market.{table} "
-    "WHERE trade_date=toDate('{d_str}')"
-)
+_SQL_COUNT_BY_DATE = "SELECT count() FROM c1_market.{table} WHERE trade_date=toDate('{d_str}')"
 
 # tick_data 表写入列子句（用于 ch_writer.write_tsv）
 _TICK_DATA_COLS = (
@@ -90,6 +86,7 @@ _TICK_DATA_TABLE = _TBL_TICK_DATA
 
 
 # ========== ClickHouse 查询（统一走 ch_reader，自动注入 FINAL） ==========
+
 
 def _ch_query(query: str, timeout: int = 30) -> str | None:
     """通过 ch_reader 查询单值（自动注入 FINAL，二级降级 TCP→HTTP）。"""
@@ -105,7 +102,10 @@ def _ch_insert_tsv(tsv_lines: list[str], retries: int = 3) -> bool:
     for i in range(retries):
         try:
             ok = ch_writer.write_tsv(
-                _TICK_DATA_TABLE, _TICK_DATA_COLS, tsv_bytes, timeout=120,
+                _TICK_DATA_TABLE,
+                _TICK_DATA_COLS,
+                tsv_bytes,
+                timeout=120,
             )
             if ok:
                 return True
@@ -117,6 +117,7 @@ def _ch_insert_tsv(tsv_lines: list[str], retries: int = 3) -> bool:
 
 
 # ========== 交易日历 ==========
+
 
 def get_trade_dates(days: int = 7) -> list[datetime.date]:
     """获取过去N天的交易日列表（从 trade_calendar 表查 is_open=1）。
@@ -149,8 +150,11 @@ def get_trade_dates(days: int = 7) -> list[datetime.date]:
 
 # ========== 缺失检测 ==========
 
+
 def detect_missing_dates(
-    table: str, dates: list[datetime.date], threshold: int,
+    table: str,
+    dates: list[datetime.date],
+    threshold: int,
 ) -> list[datetime.date]:
     """检测指定表在哪些日期的数据行数低于阈值。
 
@@ -185,8 +189,13 @@ _TASKS_YAML_PATH = Path(__file__).parent / "config" / "tasks.yaml"
 
 # 日期列名优先级（按常见命名排序）
 _DATE_COLUMN_PRIORITIES = [
-    "trade_date", "end_date", "report_date", "unlock_date",
-    "announce_date", "date", "fdate",
+    "trade_date",
+    "end_date",
+    "report_date",
+    "unlock_date",
+    "announce_date",
+    "date",
+    "fdate",
 ]
 
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
@@ -198,9 +207,7 @@ _SQL_AVG_ROWS_7D = (
     "AND {date_col} < today() "
     "GROUP BY {date_col})"
 )
-_SQL_COUNT_BY_CUSTOM_DATE = (
-    "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
-)
+_SQL_COUNT_BY_CUSTOM_DATE = "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
 
 
 def _load_tasks_yaml() -> list[dict]:
@@ -296,7 +303,10 @@ def _discover_backfill_tables() -> list[dict]:
 
 
 def detect_missing_dates_generic(
-    table: str, date_col: str, dates: list[datetime.date], threshold: int,
+    table: str,
+    date_col: str,
+    dates: list[datetime.date],
+    threshold: int,
 ) -> list[datetime.date]:
     """通用缺失检测（支持任意日期列名）。
 
@@ -314,21 +324,19 @@ def detect_missing_dates_generic(
     missing = []
     for d in dates:
         d_str = d.isoformat()
-        cnt = ch_reader.query(
-            _SQL_COUNT_BY_CUSTOM_DATE.format(table=table, date_col=date_col, d_str=d_str)
-        )
+        cnt = ch_reader.query(_SQL_COUNT_BY_CUSTOM_DATE.format(table=table, date_col=date_col, d_str=d_str))
         try:
             count = int(cnt.strip()) if cnt and cnt.strip() else 0
         except ValueError:
             count = 0
         if count < threshold:
-            log.info("检测到缺失: %s[%s] %s 行数=%d 阈值=%d",
-                     table, date_col, d_str, count, threshold)
+            log.info("检测到缺失: %s[%s] %s 行数=%d 阈值=%d", table, date_col, d_str, count, threshold)
             missing.append(d)
     return missing
 
 
 # ========== Tick 数据解析 ==========
+
 
 def _safe_float(val) -> float | None:
     if val is None:
@@ -398,22 +406,40 @@ def _parse_tick_df(df, stock_code: str) -> list[str]:
         ask_price = _safe_float(_list_first(row.get("askPrice")))
         bid_vol = _safe_int(_list_first(row.get("bidVol")))
         ask_vol = _safe_int(_list_first(row.get("askVol")))
+        # #ARCH-CH-033: UInt64 列不支持负数，QMT 某些指数 tick
+        # volume 为 int32 溢出负值（如 399379 vol=-2147422702），
+        # 导致 CH INSERT Code 27 解析失败。过滤为 None（TSV \N）。
+        if vol is not None and vol < 0:
+            vol = None
+        if bid_vol is not None and bid_vol < 0:
+            bid_vol = None
+        if ask_vol is not None and ask_vol < 0:
+            ask_vol = None
 
-        tsv_lines.append("\t".join([
-            trade_date, timestamp_str, symbol, market_type,
-            str(price) if price is not None else "\\N",
-            str(vol) if vol is not None else "\\N",
-            str(amt) if amt is not None else "\\N",
-            "", "miniqmt",
-            str(bid_price) if bid_price is not None else "\\N",
-            str(ask_price) if ask_price is not None else "\\N",
-            str(bid_vol) if bid_vol is not None else "\\N",
-            str(ask_vol) if ask_vol is not None else "\\N",
-        ]))
+        tsv_lines.append(
+            "\t".join(
+                [
+                    trade_date,
+                    timestamp_str,
+                    symbol,
+                    market_type,
+                    str(price) if price is not None else "\\N",
+                    str(vol) if vol is not None else "\\N",
+                    str(amt) if amt is not None else "\\N",
+                    "",
+                    "miniqmt",
+                    str(bid_price) if bid_price is not None else "\\N",
+                    str(ask_price) if ask_price is not None else "\\N",
+                    str(bid_vol) if bid_vol is not None else "\\N",
+                    str(ask_vol) if ask_vol is not None else "\\N",
+                ]
+            )
+        )
     return tsv_lines
 
 
 # ========== Tick 补下载 ==========
+
 
 def backfill_tick_data(dates: list[datetime.date]) -> int:
     """补下载指定日期的 tick 数据。
@@ -433,6 +459,7 @@ def backfill_tick_data(dates: list[datetime.date]) -> int:
 
     try:
         from xtquant import xtdata
+
         xtdata.enable_hello = False
     except ImportError:
         log.error("xtquant 不可用，无法补下载 tick 数据")
@@ -460,7 +487,10 @@ def backfill_tick_data(dates: list[datetime.date]) -> int:
 
 
 def _backfill_tick_range(
-    symbols: list[str], start_str: str, end_str: str, date_label: str,
+    symbols: list[str],
+    start_str: str,
+    end_str: str,
+    date_label: str,
 ) -> int:
     """补下载一个时间段的 tick 数据。"""
     from xtquant import xtdata
@@ -495,8 +525,14 @@ def _backfill_tick_range(
                 speed = (i + 1) / elapsed if elapsed > 0 else 0
                 log.info(
                     "  %s %s-%s: 进度=%d/%d 行数=%d 失败=%d 速度=%.1f/s",
-                    date_label, start_str[8:], end_str[8:],
-                    i + 1, len(symbols), total_rows, fail_count, speed,
+                    date_label,
+                    start_str[8:],
+                    end_str[8:],
+                    i + 1,
+                    len(symbols),
+                    total_rows,
+                    fail_count,
+                    speed,
                 )
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             fail_count += 1
@@ -515,8 +551,10 @@ def _backfill_tick_range(
 
 # ========== 主入口 ==========
 
+
 def _backfill_tick_table(
-    trade_dates: list[datetime.date], all_missing_tables: list[dict],
+    trade_dates: list[datetime.date],
+    all_missing_tables: list[dict],
 ) -> int:
     """补下载 tick_data 表缺失日期，返回新增行数。
 
@@ -527,11 +565,13 @@ def _backfill_tick_table(
         return 0
     log.info("tick_data 缺失日期: %s", [d.isoformat() for d in missing])
     rows = backfill_tick_data(missing)
-    all_missing_tables.append({
-        "table": _TBL_TICK_DATA,
-        "missing_dates": [d.isoformat() for d in missing],
-        "rows_backfilled": rows,
-    })
+    all_missing_tables.append(
+        {
+            "table": _TBL_TICK_DATA,
+            "missing_dates": [d.isoformat() for d in missing],
+            "rows_backfilled": rows,
+        }
+    )
     # 验证
     for d in missing:
         d_str = d.isoformat()
@@ -541,7 +581,9 @@ def _backfill_tick_table(
 
 
 def _backfill_generic_table(
-    info: dict, trade_dates: list[datetime.date], scheduler,
+    info: dict,
+    trade_dates: list[datetime.date],
+    scheduler,
     all_missing_tables: list[dict],
 ) -> None:
     """检测并补下载通用表（非 tick_data）。缺失记录追加到 all_missing_tables。"""
@@ -561,11 +603,13 @@ def _backfill_generic_table(
         return
 
     log.info("表 %s 缺失日期: %s", table, [d.isoformat() for d in missing])
-    all_missing_tables.append({
-        "table": table,
-        "missing_dates": [d.isoformat() for d in missing],
-        "rows_backfilled": 0,
-    })
+    all_missing_tables.append(
+        {
+            "table": table,
+            "missing_dates": [d.isoformat() for d in missing],
+            "rows_backfilled": 0,
+        }
+    )
 
     # 通过 scheduler 重跑任务补下载
     if scheduler is not None and task_id:
@@ -581,14 +625,17 @@ def _backfill_generic_table(
 
 
 def _record_backfill_progress(
-    scheduler, total_rows: int, all_missing_tables: list[dict],
+    scheduler,
+    total_rows: int,
+    all_missing_tables: list[dict],
 ) -> None:
     """记录补下载结果到 progress_store 并发送告警（scheduler 可用时）。"""
     if scheduler is None:
         return
     try:
         scheduler._progress_store.save_progress(
-            "tick_backfill_weekly", "backfill",
+            "tick_backfill_weekly",
+            "backfill",
             datetime.date.today().isoformat(),
             "SUCCESS" if total_rows > 0 or not all_missing_tables else "PARTIAL",
             total_rows,
@@ -610,9 +657,7 @@ def _record_backfill_progress(
 # ========== 已知缺口检测（audit 2.7/3.8 治本，#ARCH-CH-029） ==========
 
 # 已知数据缺口注册表路径
-_KNOWN_GAPS_PATH = os.path.join(
-    os.path.dirname(__file__), "config", "known_data_gaps.yaml"
-)
+_KNOWN_GAPS_PATH = os.path.join(os.path.dirname(__file__), "config", "known_data_gaps.yaml")
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，audit 2.7/3.8）
 _SQL_GAP_DATE_RANGE_COUNTS = (
@@ -663,7 +708,10 @@ def _check_date_range_gap(gap: dict) -> dict:
 
     # 查询缺口范围内每个日期的行数
     sql = _SQL_GAP_DATE_RANGE_COUNTS.format(
-        date_col=date_col, table=table, start=start, end=end,
+        date_col=date_col,
+        table=table,
+        start=start,
+        end=end,
     )
     raw = ch_reader.query(sql)
     date_counts: dict[str, int] = {}
@@ -675,7 +723,9 @@ def _check_date_range_gap(gap: dict) -> dict:
             date_counts[parts[0]] = int(parts[1])
 
     # 生成缺口范围内的交易日列表
-    from datetime import date as _date, timedelta as _td
+    from datetime import date as _date
+    from datetime import timedelta as _td
+
     start_d = _date.fromisoformat(start)
     end_d = _date.fromisoformat(end) if end else _date.today()
     all_dates: list[str] = []
@@ -685,10 +735,7 @@ def _check_date_range_gap(gap: dict) -> dict:
             all_dates.append(cur.isoformat())
         cur += _td(days=1)
 
-    missing_dates = [
-        d for d in all_dates
-        if date_counts.get(d, 0) < threshold
-    ]
+    missing_dates = [d for d in all_dates if date_counts.get(d, 0) < threshold]
 
     return {
         "id": gap["id"],
@@ -767,15 +814,16 @@ def run_known_gap_backfill(scheduler=None) -> dict:
                 still_missing_count += result["still_missing"]
                 log.warning(
                     "缺口 %s: %s 仍有 %d/%d 天缺失",
-                    gap_id, result["table"],
-                    result["still_missing"], result["total_dates"],
+                    gap_id,
+                    result["table"],
+                    result["still_missing"],
+                    result["total_dates"],
                 )
                 # 对 tick_data 缺口触发 backfill
                 if result["table"] == _TBL_TICK_DATA:
                     from datetime import date as _date
-                    missing_d = [
-                        _date.fromisoformat(d) for d in result["missing_dates"]
-                    ]
+
+                    missing_d = [_date.fromisoformat(d) for d in result["missing_dates"]]
                     if missing_d:
                         log.info("触发 tick_data 补下载: %d 天", len(missing_d))
                         rows = backfill_tick_data(missing_d)
@@ -790,7 +838,9 @@ def run_known_gap_backfill(scheduler=None) -> dict:
                 still_missing_count += 1
                 log.warning(
                     "缺口 %s: %s 仍为空 (行数=%d)——%s",
-                    gap_id, result["table"], result["row_count"],
+                    gap_id,
+                    result["table"],
+                    result["row_count"],
                     gap.get("resolution_plan", "需人工介入"),
                 )
             else:
@@ -809,7 +859,9 @@ def run_known_gap_backfill(scheduler=None) -> dict:
 
 
 def run_weekend_backfill(
-    scheduler=None, days: int = _DEFAULT_BACKFILL_DAYS, skip_known_gaps: bool = False,
+    scheduler=None,
+    days: int = _DEFAULT_BACKFILL_DAYS,
+    skip_known_gaps: bool = False,
 ) -> dict:
     """L10 周末补下载主入口（全表覆盖）。
 
@@ -906,8 +958,11 @@ def run_daily_backfill(scheduler=None) -> dict:
     result = run_weekend_backfill(scheduler, days=1, skip_known_gaps=True)
 
     log.info("=" * 60)
-    log.info("L10.5 每日盘后补下载完成: 缺失表=%d 总行数=%d",
-             len(result.get("missing_tables", [])), result.get("total_rows", 0))
+    log.info(
+        "L10.5 每日盘后补下载完成: 缺失表=%d 总行数=%d",
+        len(result.get("missing_tables", [])),
+        result.get("total_rows", 0),
+    )
     log.info("=" * 60)
 
     return result

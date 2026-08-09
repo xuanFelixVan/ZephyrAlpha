@@ -10438,6 +10438,65 @@ entries:
   created: '2026-08-04'
   last_updated: '2026-08-04'
 
+# --- #ARCH-RSS-001: Yahoo Finance RSSHub 路由移除（反爬 403/超时不可修复）---
+- issue_id: '#ARCH-RSS-001'
+  title: 'Yahoo Finance RSSHub 路由被反爬盯死（403+超时）——移除 3 个路由，海外源由 5 个直连源覆盖'
+  category: data_source
+  severity: P2中
+  adjudication: |-
+    病根（2026-08-09 调研）：rss_provider.py 中 3 个 Yahoo Finance RSSHub 路由
+    （/yahoo/news/us/business、/yahoo/news/hk/business、/yahoo/news/tw/finance）
+    全部失效。美国版返回 403（Yahoo 反爬），香港/台湾版连接超时。对照实验：
+    V2rayN 节点直连 Yahoo Finance 网站 HTTP 200 正常，确认是 RSSHub 路由层面
+    被反爬盯死，而非网络/代理问题。retry_on HTTPError 重试对 403 无效，每轮
+    浪费 30s+ 超时等待。
+
+    治本裁定（用户已确认 2026-08-09）：移除 3 个 Yahoo RSSHub 路由。否决备选：
+    ①换 RSSHub 参数/UA（治标，Yahoo 反爬升级仍会失效）；②自建 Yahoo RSS
+    （维护成本高，内容与现有海外源重叠）；③走直连 Yahoo（Yahoo 无稳定 RSS feed，
+    且直连模式与 #ARCH-RSS-INVESTING-403-001 移除直连异类的架构统一方向矛盾）。
+
+    裁定依据：①内容覆盖（5 个海外直连源 BBC/CNBC/NYT/Guardian/Bloomberg 已覆盖
+    全球财经，Yahoo 无独家价值）；②架构统一（消除 RSSHub 海外路由反爬风险，
+    海外源统一为直连+SOCKS5 代理模式）；③稳定性（403/超时 vs 直连源稳定）；
+    ④100% AI 维护性（少 3 个不稳定路由 = 少 3 个排查点）。
+  impact:
+    - 'src/zephyr/data/implementations/rss_provider.py（移除 3 个 Yahoo RSSHub 路由 URL + 清理 _YAHOO_REGION_MAP / _OVERSEAS_FEED_PATTERNS Yahoo 特征 / _extract_region_language Yahoo 解析分支）'
+  fix_phase: '已落地。移除 3 个 Yahoo RSSHub 路由，清理相关映射表/特征/解析分支，代码中保留注释说明移除原因。'
+  status: resolved
+  related_rules: '#ARCH-RSS-INVESTING-403-001, #ARCH-RSS-REUTERS-404-001'
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
+
+# --- #ARCH-CH-033: QMT 指数 tick 负 volume 过滤（UInt64 列不支持负数）---
+- issue_id: '#ARCH-CH-033'
+  title: 'QMT 指数 tick volume int32 溢出负值导致 ClickHouse UInt64 写入失败——过滤负值为 None'
+  category: data_quality
+  severity: P2中
+  adjudication: |-
+    病根（2026-08-09 调研）：QMT 某些指数 tick 数据的 volume 字段为 int32，
+    溢出后产生负值（如 399379 vol=-2147422702）。ClickHouse tick 表 volume
+    列为 UInt64，不支持负数，导致 INSERT 时 Code 27（Cannot parse string as
+    UInt64）解析失败，整批数据写入中断。
+
+    治本裁定：在 backfill_checker.py _parse_tick_df 函数中对 volume、bid_vol、
+    ask_vol 三个字段做负数过滤，将负值设为 None（TSV 中为 \N，ClickHouse
+    正确解析为 NULL）。否决备选：①改 ClickHouse 列类型为 Int64（影响面大，
+    所有 tick 查询/物化视图需适配，且负 volume 无业务语义）；②在 QMT SDK
+    层修复（第三方 SDK 无法修改）。
+
+    裁定依据：①数据正确性（int32 溢出负值是 QMT SDK bug，非真实交易量，
+    过滤为 NULL 不丢失有效信息）；②最小侵入（仅 _parse_tick_df 一处过滤，
+    不改表结构/不改查询）；③defense-in-depth（与 #ARCH-CH-029 已知缺口检测
+    同层，数据质量过滤应在入库前完成）。
+  impact:
+    - 'src/zephyr/data/backfill_checker.py（_parse_tick_df 函数添加 volume/bid_vol/ask_vol 负数过滤，负值设为 None）'
+  fix_phase: '已落地。在 _parse_tick_df 中对 vol/bid_vol/ask_vol 添加 < 0 判断，负值设 None（TSV \N）。'
+  status: resolved
+  related_rules: '#ARCH-CH-029'
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
+
 # --- #ARCH-SSOT-SURVIVORSHIP-CLEANUP-001: survivorship_policy.yaml 迁移残留清理（audit 2026-07-31 议题3）---
 - issue_id: '#ARCH-SSOT-SURVIVORSHIP-CLEANUP-001'
   title: 'survivorship_policy.yaml 迁移残留清理——删除 redirect stub + 重生成陈旧文档引用'
@@ -12194,7 +12253,7 @@ entries:
   severity: P3低
   category: governance
   adjudication: |-
-    2026-08-06 新增模块登记。discussion_002 §4.3 C1 核心验证需要 Shrinkage 开/关对比，
+    2026-08-06 新增模块登记。11_regime_backtest_validation_plan §4.3 C1 核心验证需要 Shrinkage 开/关对比，
     故在 D_BACKTEST 域新建 regime_validation 包 + shrinkage_engine 接入点：
     ① B1 ShrinkageBacktestEngine 继承 DefaultBacktestEngine，override _get_day_signals
     在归一化后按 Shrinkage 因子缩放权重（剩余留现金），shrinkage=1.0 与父类 bit-identical
@@ -12202,8 +12261,8 @@ entries:
     ② B2 ShrinkageProvider 四类供给（Const/Schedule PIT as-of join/Mock 波动率4档/
     RegimeDetectorAdapter）+ 工具函数，对接 MOD-REGIME-001 ShrinkageResult；
     ③ C1 C1ShrinkageComparator 编排开/关两组回测，四项一票否决（Sharpe<0.1 且
-    MaxDD≥3pp 且 Calmar×1.2 且 Turnover×2），门槛取 discussion_002 §5。
-    依赖方向 backtest→regime（消费 ShrinkageResult），符合 discussion_002 §2.1
+    MaxDD≥3pp 且 Calmar×1.2 且 Turnover×2），门槛取 11_regime_backtest_validation_plan §5。
+    依赖方向 backtest→regime（消费 ShrinkageResult），符合 11_regime_backtest_validation_plan §2.1
     "regime 验证复用现有 BM-BT 框架"约定。不卡 commit（arch_reference_gate 只校验
     issue_id 是否登记，不校验 status 字段——proposed/decided 均放行）。
     铁律#9：本条由 AI 提议，status=proposed，待用户显式确认后改 decided。
@@ -12212,7 +12271,7 @@ entries:
     归一化之后介入，shrinkage=1.0 早返回 super() 同一 dict 对象（bit-identical，
     已补 total_return 精确相等断言强化可溯源性），钳制 [0,1] 四 provider + 异常
     路径全成立（defense-in-depth：provider 层 clamp_shrinkage + 引擎层 _clamp_shrinkage）；
-    ② discussion_002 §4.3/§5 四项一票否决门槛数值精确对齐（Sharpe<0.1/MaxDD≥3pp/
+    ② 11_regime_backtest_validation_plan §4.3/§5 四项一票否决门槛数值精确对齐（Sharpe<0.1/MaxDD≥3pp/
     Calmar×1.2/Turnover×2），compare() 承担"同一批策略/区间/成本"编排责任（evaluate()
     为可选裁定入口），非缺口；
     ③ 架构边界清晰——三模块均未 import zephyr.regime（RegimeDetectorShrinkageAdapter
@@ -12221,7 +12280,7 @@ entries:
     ④ Phase 0 前置就绪——regime_detector.py 618 行真实现（GaussianHMM.fit 真调用 +
     因果 Viterbi predict_proba + D-SIGNAL-68 + walk-forward），RegimeDetectorShrinkageAdapter
     可对接 ShrinkageResult；RegimeMetaAllocator 骨架（MATURITY=design）符合设计——
-    生产路径待 C1 验证通过后实现，与 discussion_002 §6 Phase 顺序一致；
+    生产路径待 C1 验证通过后实现，与 11_regime_backtest_validation_plan §6 Phase 顺序一致；
     ⑤ 测试达标——74 项覆盖四项否决各分支/provider 异常退化/PIT as-of join 全边界/
     钳制边界/Mock 4 档。非阻断优化 5 项（[DEPENDENCIES] 元数据注释精确化/Calmar inf
     summary 格式化/portfolio=None 语义文档化等）记入后续迭代。
@@ -12243,7 +12302,7 @@ entries:
   adjudication: |-
     2026-08-06 算法核心修复登记。regime_detector.py _compute_confidence_signal
     原实现 ConfidenceSignal = base(max_p) × state_risk × rarity，含 state_risk_factor
-    乘法。经核查 discussion_001 §5.1 spec 真源（L1915 ConfidenceSignal = f(max(P))），
+    乘法。经核查 10_regime_detector_spec §5.1 spec 真源（L1915 ConfidenceSignal = f(max(P))），
     spec 纯定义不含 state_risk——state_risk 是代码偏离 spec 的私加。移除回归 spec。
     两个致命缺陷论证：
     ① HMM 标签任意性——无监督 HMM r1-r9 标签在 walk-forward 各季 refit 间无一致语义
@@ -12297,7 +12356,7 @@ entries:
        则 import backtest.c1_comparator 形成 regime→backtest 反向，与既有 backtest→regime
        成环；
     ② mock 边界正确——mock 是波动率 4 档规则映射（vol<15%→1.0/.../>=40%→0.3），非 HMM
-       概率分布，测不出"regime 检测有没有用"（discussion_002 §6 Phase 1 验证的是 HMM 12
+       概率分布，测不出"regime 检测有没有用"（11_regime_backtest_validation_plan §6 Phase 1 验证的是 HMM 12
        态驱动的节流）。docstring 已声明"无 regime 部署决策价值"。治本补强：save_c1_report
        在 mock 报告头加显式 ⚠️ 警示（防误用 mock 结果做部署决策）；
     ③ 分工边界清晰——c1_runner 消费 regime_results（Any 解耦），不做特征计算；另一个
@@ -12543,7 +12602,7 @@ entries:
     诊断脚本 scripts/tests/dump_s2_scores.py dump 三事件日（2015-09-15/2020-04-10/2024-09-24）
     ±10 交易日 S2 各维度评分，定位 0/3 根因：3 个关键维度（capitulation/valuation/spring）在复苏
     事件日窗口恒为 0 或近 0，使 trigger/confirm/strong_confirm 三阶段全部无法满足——非阈值过高，
-    而是算法逻辑与时点语义错配（详见 discussion_023）：
+    而是算法逻辑与时点语义错配（详见 14_regime_s2_diagnosis）：
       ① capitulation：设计意图是"危机见底过程"信号（§4.12.1 Phase 1-5），实现是当日瞬时信号
          （vol_z>z ∧ pct<-1.5%）。复苏事件日是企稳时点不会暴跌，capitulation 当日必为 0；
       ② valuation：设计意图是基本面估值（§4.12.5 PE/破净率/风险溢价历史分位），实现是价格回撤
@@ -12555,24 +12614,24 @@ entries:
     经验性不可达（z-score 滚窗均值被抬高、单日 z 被压低，2015 vol_z max=1.79）→ 降至 z>1（治标，
     P1-E9a rolling-max 过程化才是治本）；valuation rolling_max(250) 无 min_periods 致 warmup 期
     NaN→误零 → 加 min_periods=20（治本，纯实现 bug）。
-    裁定（discussion_023 §2.5）：不为过 B4 而改算法（守住验证独立性），但绝不掩盖缺陷。采纳
+    裁定（14_regime_s2_diagnosis §2.5）：不为过 B4 而改算法（守住验证独立性），但绝不掩盖缺陷。采纳
     design_match 语义隔离——HistoricalEvent 新增 design_match 字段，S2 三事件 design_match=false
     （数据已就绪但 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏）不计 B4 分母，B4 回 PASS(3/3)，
     Phase 2 闭环；data_ready 维持 true（数据确已就绪，问题在算法设计域而非数据）。design_match
     比 data_ready 更精确——避免"数据就绪但算法设计域不符"被误标为"数据未就绪"。修 P0 bug 后 S2 仍
-    0/3，反向证实根因是设计域不符非 bug。治本方案独立为 P1-E9 工程项（discussion_019 §3.5），
+    0/3，反向证实根因是设计域不符非 bug。治本方案独立为 P1-E9 工程项（13_regime_phase3_engineering_plan §3.5），
     算法重设计（capitulation 过程化+多维度、valuation 基本面化、spring 复用 wyckoff_engine）
     独立于 B4 结果进行，完成后 S2 事件 design_match 回 true 重跑验证。
     全部落地于 commit 93a25890：overlay_features.py（P0 bug 修复）+ b4_transition_accuracy.py
-    （design_match 字段）+ historical_events.yaml（design_match=false + 注释）+ discussion_023（诊断详档）。
+    （design_match 字段）+ historical_events.yaml（design_match=false + 注释）+ 14_regime_s2_diagnosis（诊断详档）。
   impact:
     - 'src/zephyr/regime/features/overlay_features.py（s2_capitulation_score/s2_valuation_score/s2_spring_flag，P0 bug 修复）'
     - 'src/zephyr/regime/validation/phase2/b4_transition_accuracy.py（HistoricalEvent 新增 design_match 字段，validate 不计分母）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml（S2 三事件 design_match=false + 排除理由注释）'
     - 'scripts/tests/dump_s2_scores.py（S2 维度评分诊断脚本）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md（诊断与治本详档）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md（诊断与治本详档）'
   fix_phase: design_match=false 排除 + P0 bug 修复已落地（commit 93a25890，B4 PASS(3/3) Phase 2 闭环）；
-    治本待 P1-E9 算法重设计（discussion_019 §3.5）——capitulation 过程化(rolling max)+多维度、
+    治本待 P1-E9 算法重设计（13_regime_phase3_engineering_plan §3.5）——capitulation 过程化(rolling max)+多维度、
     valuation 基本面化(PE/破净率历史分位)、spring 复用 wyckoff_engine；完成后 S2 design_match 回 true 重跑验证
   status: confirmed
   created: '2026-08-08'
@@ -12633,9 +12692,9 @@ entries:
   severity: P2中
   category: governance
   adjudication: |-
-    2026-08-07 补登模块A（前序会话施工，commit 852457e9 落地）。discussion_001 §3/§4/§5.3
+    2026-08-07 补登模块A（前序会话施工，commit 852457e9 落地）。10_regime_detector_spec §3/§4/§5.3
     定义 RegimeDetector.detect() 三参输入（regime_features/overlay_signals/risk_signal_inputs），
-    discussion_002 §7 数据基础确认 13 参数全有数据（#12 筹码用华泰前沿算法自建，非换手率代理），
+    11_regime_backtest_validation_plan §7 数据基础确认 13 参数全有数据（#12 筹码用华泰前沿算法自建，非换手率代理），
     §8.1 实现后验证再简化——先 Phase 1b 最小特征跑通 C1 一票否决，通过后补完整参数。
     故在 D_REGIME 域落地 MOD-REGIME-002 特征管道 7 文件：
     ① RegimeFeatureBuilder 主编排器（regime_feature_builder.py）——OHLCV(ClickHouse)→
@@ -12890,11 +12949,11 @@ entries:
   severity: P3低
   category: governance
   adjudication: |-
-    2026-08-07 新增模块登记。discussion_002 §3 ② + backtest_observability_mlflow_plan.md
+    2026-08-07 新增模块登记。11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md
     M1 落地——为 ZephyrAlpha 提供统一实验跟踪入口，所有零件（C1 / regime_detector /
     特征管道 / 回测引擎 / 全链路）的运行记录到本地 MLflow（SQLite），人和 AI 通过
     query 接口或 mlflow ui 查询、对比、追溯。包名 experiment_tracking（非 observability，
-    discussion_002 §2.3 命名冲突发现 + §9 决策 A——observability 是横切概念，独占顶层
+    11_regime_backtest_validation_plan §2.3 命名冲突发现 + §9 决策 A——observability 是横切概念，独占顶层
     会语义混淆）。
     M1 范围（6 核心文件 + c1_runner track 开关）：config/models/experiment_tracker/
     fallback_tracker/query/adapters/c1_adapter + c1_runner track=True lazy import。
@@ -12926,16 +12985,16 @@ entries:
   category: governance
   adjudication: |-
     2026-08-07 立项。observability 是横切概念（非独立模块），涵盖实验跟踪
-    （#ARCH-OBS-EXP-TRACK-001 落地）、回测可观测性（discussion_002）、
+    （#ARCH-OBS-EXP-TRACK-001 落地）、回测可观测性（11_regime_backtest_validation_plan）、
     指标面板（Panel+HoloViz，#ARCH-047）。本条目作为 umbrella 聚合子域
-    ARCH 引用，自身不产生代码。命名冲突见 discussion_002 §2.3——observability
+    ARCH 引用，自身不产生代码。命名冲突见 11_regime_backtest_validation_plan §2.3——observability
     独占顶层会语义混淆，包名用 experiment_tracking。
   impact:
     关联子域：
     - '#ARCH-OBS-EXP-TRACK-001（实验跟踪 M1 落地）'
     - '#ARCH-047（可视化技术栈 Panel+HoloViz）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_018_backtest_observability_workplan.md'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/50_backtest_observability_workplan.md'
     - 'docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md（MOD-OBS-001 引用本 umbrella）'
   fix_phase: 'umbrella 聚合条目，无独立修复——子域各自落地。'
   status: proposed
@@ -12951,7 +13010,7 @@ entries:
     根因——confidence=max(P) 直接用 HMM 最大概率值无校准。第一性原理推演 5 性质
     （准确性/锐度/保序性/样本效率/理论保证）推出两阶段方案：Stage 1 Temperature
     Scaling 全局降温，Stage 2 Isotonic Regression 局部修正。四级降级策略
-    （full→temperature-only→isotonic-only→identity）。详见 discussion_019_phase3 §2.2。
+    （full→temperature-only→isotonic-only→identity）。详见 13_regime_phase3_engineering_plan §2.2。
     铁律#9：用户显式授权 P0 工程施工，status=decided。
   impact:
     新增文件：
@@ -12961,7 +13020,7 @@ entries:
     - 'src/zephyr/regime/validation/phase2/phase2_runner.py（walk-forward 集成校准器）'
     - 'src/zephyr/regime/core/regime_detector.py（predict_log_proba + temperature tempering）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md（§2.2 两阶段校准器详设）'
   fix_phase: 'P0-E2 已落地（commit 13a5e1d512）——校准器仅对 HMM 基态生效，PIT 防泄漏，四级降级。'
   status: decided
   created: '2026-08-07'
@@ -12996,11 +13055,11 @@ entries:
   last_updated: '2026-08-08'
 # --- #ARCH-EXECUTION-BROKER-001: G22 下单对接与撮合——执行层代码施工（2026-08-08）---
 - issue_id: '#ARCH-EXECUTION-BROKER-001'
-  title: G22 下单对接与撮合——执行层 5 项代码 gap 施工 + design_memo_010 定型
+  title: G22 下单对接与撮合——执行层 5 项代码 gap 施工 + 40_execution_broker 定型
   severity: P3低
   category: architecture
   adjudication: |-
-    2026-08-08 立项+施工完成（decided）。按 design_memo_010 §2 定型执行层 spec，
+    2026-08-08 立项+施工完成（decided）。按 40_execution_broker §2 定型执行层 spec，
     施工 5 项代码 gap（commit 015826ae）：
     (1) OrderManager.VALID_TRANSITIONS 补 EXPIRED 状态转换 + RejectionAction 拒单分类枚举
     (2) FeeSchedule 佣金费率 万3→万0.854（国金 miniQMT 实盘费率）
@@ -13016,7 +13075,7 @@ entries:
     - 'tests/ex_core/test_trading_session.py（测试辅助禁用熔断）'
     - 'tests/ex_sor/test_transaction_cost_optimizer.py（佣金期望值更新）'
     关联文档：
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_010_execution_broker.md'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md'
   fix_phase: '代码已施工（commit 015826ae），71 测试通过。待补：先卖后买+熔断专项集成测试。'
   status: decided
   created: '2026-08-08'
@@ -13333,6 +13392,48 @@ entries:
     `if source == "depgraph_db": DEPGRAPH_DIRTY_FLAG.unlink(missing_ok=True)`，
     限定 depgraph_db source 避免误清。解决 GATE-DOMAIN-DOC dirty-flag trigger 路径双重执行。
     完整治本（覆盖 GATE-ARCH-DIAGRAM，方向 a/b/c）待施工，非本次范围。
+  status: decided
+  created: '2026-08-09'
+  last_updated: '2026-08-09'
+# --- #ARCH-68: 模块核心算法纵览文档生成器（跨域按layer拓扑·三档派生·离库·域文档+battle_map联动）---
+- issue_id: '#ARCH-68'
+  title: 模块核心算法纵览文档生成器——从代码docstring+blueprint派生模块算法，按depgraph architecture_layer分层，输出到08_algorithm_overview/（新建顶层目录，离库）
+  severity: P2中
+  category: governance
+  adjudication: |-
+    新增 generate_module_algorithm_overview.py + code_algorithm_extractor.py，从代码 docstring+header
+    和 blueprint §核心规则派生模块算法纵览，按 depgraph architecture_layer 字段分层（L0→L3，
+    #ARCH-005 权威4层），输出到 08_algorithm_overview/（新建顶层目录，离库派生）。
+    三档源优先级：code>blueprint>empty（修正点②看文件是否真实存在而非 build_status）。
+    三大修正点：①__init__.py 回退扫描子文件找最丰富 docstring；②三档判定看文件存在；
+    ③blueprint 章节鲁棒关键词匹配（非固定 §3/§4）。
+    扩展 generate_domain_doc.py 加「模块核心算法」章节（域内检修一站式，truncate=False 完整视角）。
+    generate_battle_map_diagram.py 加算法纵览深链接（锚点表后🔗行，指向08纵览对应模块锚点）。
+    纵览加 <a id="module_id"> 稳定HTML锚点，供深链接跳转。
+    共享 code_algorithm_extractor.py 保证同一模块算法描述在纵览和域文档一致。
+    铁律#9：纯技术增强（新增生成器+提取器+测试），无价值判断/风险接受/推翻约束/改边界，status=decided。
+    不改受治 depgraph_reader.py（用公共 API get_all_nodes/get_all_edges 在 Python 层去重/过滤，零侵入）。
+  impact:
+    新增文件：
+    - 'scripts/governance/_shared/code_algorithm_extractor.py（模块核心算法提取器，共享派生逻辑真源）'
+    - 'scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py（纵览生成器）'
+    - 'tests/governance/shared/test_code_algorithm_extractor.py（10项测试）'
+    - 'tests/governance/generators/test_generate_module_algorithm_overview.py（5项测试）'
+    - 'docs/02_enterprise_architecture/08_algorithm_overview/README.md（目录入口，入git）'
+    变更文件：
+    - 'scripts/governance/d5_architecture/generators/generate_domain_doc.py（新增render_module_algorithm_section+import extractor）'
+    - 'scripts/governance/d5_architecture/generators/generate_battle_map_diagram.py（_format_step_detail加🔗深链接）'
+    - 'docs/02_enterprise_architecture/index.md（子目录一览补08）'
+    - 'AGENTS.md（生成器入口登记）'
+    - 'scripts/governance/script_manifest.yaml（自动刷新，400脚本）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（2条翻译条目）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（2条creation_tokens）'
+    离库产物（不入git）：08_algorithm_overview/（index.md + stages/01~11_*.md + system_foundation.md，13文件）；73域文档+HTML；26 battle_map+HTML
+    预算影响：gate/reconciler/AGENTS.md 行数未触及硬上限；新建08目录逆向02收敛趋势但属新维度（跨域拓扑）。
+    v2 升级（2026-08-09）：纵览按 battle_map 作战环节拆分多文件（index + 11 stages + system_foundation），
+    零漂移（HTML锚点 + battle_map.anchors SSoT + 同一次运行），最大文件从8755行→system_foundation约3500行。
+  fix_phase: 已执行（Step 0-8 + v2多文件拆分）—— 提取器+纵览生成器（多文件）+域文档算法章节+battle_map深链接+22项测试+治理登记全部完成；
+    纵览501模块（402运营/3设计/96缺失，覆盖率58.5%），按11作战环节拆分+系统基础；73域文档57含算法章节；26 battle_map含深链接（指向正确环节文件）。
   status: decided
   created: '2026-08-09'
   last_updated: '2026-08-09'

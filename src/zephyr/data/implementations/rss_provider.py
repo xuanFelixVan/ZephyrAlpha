@@ -56,7 +56,7 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 
 # 默认财经 RSS 源（国内源 + 海外源）
 # 国内源：直连 RSS + 本地 RSSHub 路由（V2rayN 规则模式国内域名直连，不走代理）
-# 海外源：Yahoo Finance 经 RSSHub 代理走 V2rayN SOCKS5(10808)；统一走代理，无直连异类
+# 海外源：国际主流财经媒体原生 RSS 直连，走 V2rayN SOCKS5(10808) 代理
 # 依赖本地 RSSHub 实例（D:\RSSHub，pm2 守护，监听 localhost:1200，ecosystem.config.cjs 配 PROXY_URI）
 from zephyr.shared.foundation.constants import DEFAULT_HTTP_UA, DEFAULT_RSSHUB_URL
 
@@ -75,16 +75,15 @@ _DEFAULT_RSS_FEEDS = [
     f"{DEFAULT_RSSHUB_URL}/caixin/latest",  # 财新网
     f"{DEFAULT_RSSHUB_URL}/36kr/newsflashes",  # 36氪快讯
     f"{DEFAULT_RSSHUB_URL}/jin10/index",  # 金十数据
-    # ---- 海外源：Yahoo Finance（RSSHub 路由，出站走 SOCKS5 代理）----
-    # 路由 /yahoo/news/:region/:category，财经类 category：hk=business / tw=finance / us=business
-    f"{DEFAULT_RSSHUB_URL}/yahoo/news/us/business",  # Yahoo Finance 美国-商业（英文，全球财经）
-    f"{DEFAULT_RSSHUB_URL}/yahoo/news/hk/business",  # Yahoo 財經 香港（中文，港股/全球）
-    f"{DEFAULT_RSSHUB_URL}/yahoo/news/tw/finance",  # Yahoo 財經 台湾（中文，台股/全球）
+    # 注：Yahoo Finance RSSHub 路由已移除（#ARCH-RSS-001，2026-08-09）——
+    # Yahoo 对 RSSHub 请求返回 403（美国版反爬）+ 香港/台湾版连接超时，
+    # V2rayN 节点直连 Yahoo Finance 正常（HTTP 200），确认是 RSSHub 路由被反爬盯死。
+    # 海外新闻由下方 5 个直连源（BBC/CNBC/NYT/Guardian/Bloomberg）覆盖，无需 Yahoo。
     # 注：Investing.com 直连源已移除（#ARCH-RSS-INVESTING-403-001）——bot UA 触发 WAF 间歇 403，
-    # 内容与 Yahoo Finance 重叠，海外源统一走 RSSHub+SOCKS5 代理架构。
+    # 内容与 Yahoo Finance 重叠。
     # ---- 海外源：直连 RSS（#ARCH-EDB-EXPAND，2026-08-04）----
     # 国际主流财经媒体原生 RSS，直连（非 RSSHub 中转），走 V2rayN SOCKS5 代理。
-    # 比 Yahoo RSSHub 中转更稳定（无 RSSHub 单点），内容更权威（BBC/CNBC/NYT/Guardian/Bloomberg）。
+    # 无 RSSHub 单点依赖，内容权威（BBC/CNBC/NYT/Guardian/Bloomberg）。
     # 注：Reuters RSS 已移除（#ARCH-RSS-REUTERS-404-001）——reutersagency.com/feed 返回 404，
     # Reuters 2020 年后大幅削减 RSS 支持，URL 不稳定。
     "https://feeds.bbci.co.uk/news/business/rss.xml",  # BBC Business（英国，英文）
@@ -95,7 +94,7 @@ _DEFAULT_RSS_FEEDS = [
 ]
 
 # 海外直连 RSS 域名 → (region, language) 映射（#ARCH-EDB-EXPAND）
-# _extract_region_language 按域名查此表；Yahoo RSSHub 路由仍按路径段解析。
+# _extract_region_language 按域名查此表；国内源默认 (CN, zh)。
 _OVERSEAS_DIRECT_REGION_MAP: dict[str, tuple[str, str]] = {
     "feeds.bbci.co.uk": ("UK", "en"),
     "www.cnbc.com": ("US", "en"),
@@ -104,11 +103,10 @@ _OVERSEAS_DIRECT_REGION_MAP: dict[str, tuple[str, str]] = {
     "feeds.bloomberg.com": ("US", "en"),
 }
 
-# 海外源 URL 特征——含 Yahoo RSSHub 路由 + 直连域名。
+# 海外源 URL 特征——海外直连域名。
 # VPN 关闭时（SOCKS5 10808 未监听）跳过所有海外源，国内源正常拉取。
 # 新增海外源时需同步更新此列表。
 _OVERSEAS_FEED_PATTERNS = (
-    "/yahoo/",
     "feeds.bbci.co.uk",
     "www.cnbc.com",
     "rss.nytimes.com",
@@ -116,7 +114,7 @@ _OVERSEAS_FEED_PATTERNS = (
     "feeds.bloomberg.com",
 )
 
-# 海外直连域名（需 requests 走 SOCKS5 代理，区别于 Yahoo 经 RSSHub localhost）
+# 海外直连域名（需 requests 走 SOCKS5 代理）
 # _http_get 重写时按此列表判断是否注入 proxies。
 _OVERSEAS_DIRECT_DOMAINS = tuple(_OVERSEAS_DIRECT_REGION_MAP.keys())
 
@@ -127,9 +125,9 @@ _VPN_SOCKS5_PORT = 10808
 def _is_vpn_ready(port: int = _VPN_SOCKS5_PORT, timeout: float = 1.0) -> bool:
     """探测 V2rayN SOCKS5 代理端口是否在监听（VPN 开关状态）。
 
-    海外新闻源（Yahoo Finance）依赖 VPN 走 SOCKS5 代理。VPN 关闭时
-    SOCKS5 端口不监听，本函数快速返回 False（1s 超时），避免海外源请求
-    在 RSSHub 内部超时拖慢整轮 RSS 拉取。
+    海外新闻源（BBC/CNBC/NYT/Guardian/Bloomberg）依赖 VPN 走 SOCKS5 代理。
+    VPN 关闭时 SOCKS5 端口不监听，本函数快速返回 False（1s 超时），
+    避免海外源请求超时拖慢整轮 RSS 拉取。
 
     Returns: True 如果 VPN 开启（端口监听中），False 如果 VPN 关闭。
     """
@@ -148,27 +146,15 @@ def _is_overseas_feed(feed_url: str) -> bool:
     return any(p in feed_url for p in _OVERSEAS_FEED_PATTERNS)
 
 
-# Yahoo Finance 路由 region 段 → (region, language) 映射
-# 路由格式 /yahoo/news/:region/:category，国内源默认 (CN, zh)
 # #ARCH-RSS-INVESTING-403-001：海外新闻显式标记 region/language，避免被表 DEFAULT 误标 CN/zh
-_YAHOO_REGION_MAP = {
-    "us": ("US", "en"),  # Yahoo Finance 美国（英文）
-    "hk": ("HK", "zh"),  # Yahoo 財經 香港（繁中）
-    "tw": ("TW", "zh"),  # Yahoo 財經 台湾（繁中）
-}
 
 
 def _extract_region_language(feed_url: str) -> tuple[str, str]:
     """从 feed URL 提取 (region, language) 标记。
 
-    海外 Yahoo 源路由 /yahoo/news/:region/:category，按 region 段映射；
+    海外直连源按域名查 _OVERSEAS_DIRECT_REGION_MAP；
     国内源（直连 + 本地 RSSHub 国内路由）默认 (CN, zh)。
     """
-    if "/yahoo/news/" in feed_url:
-        # 路径形如 /yahoo/news/us/business，取第 3 段为 region
-        parts = feed_url.split("/yahoo/news/", 1)[1].split("/", 1)
-        if parts:
-            return _YAHOO_REGION_MAP.get(parts[0], ("CN", "zh"))
     # 海外直连源（#ARCH-EDB-EXPAND）：按域名查 _OVERSEAS_DIRECT_REGION_MAP
     host = urlparse(feed_url).netloc.lower()
     if host in _OVERSEAS_DIRECT_REGION_MAP:
@@ -214,8 +200,8 @@ class RSSProvider(IngestProviderBase):
     ):
         """HTTP GET + raise_for_status（重写基类，#ARCH-EDB-EXPAND 海外直连源走 SOCKS5）。
 
-        海外直连源（BBC/CNBC/NYT/Guardian/Bloomberg/Reuters）需 V2rayN SOCKS5 代理；
-        国内源 + Yahoo 经 RSSHub（localhost:1200）不走代理（RSSHub 内部处理代理）。
+        海外直连源（BBC/CNBC/NYT/Guardian/Bloomberg）需 V2rayN SOCKS5 代理；
+        国内源 + 本地 RSSHub 路由（localhost:1200）不走代理（RSSHub 内部处理代理）。
         VPN 关闭时海外源已在 _fetch_news_data 循环外跳过，此处不重复探测。
         """
         import requests
@@ -293,8 +279,8 @@ class RSSProvider(IngestProviderBase):
         respect_robots = policy.respect_robots_txt if policy else True
 
         # 海外源 VPN 状态探测（治本 2026-07-31）：
-        # 海外源（Yahoo/Investing）依赖 V2rayN SOCKS5(10808)。VPN 关闭时若仍请求
-        # 海外源，RSSHub 内部代理连接会超时，串行拖慢整轮（含国内源）。
+        # 海外直连源（BBC/CNBC/NYT/Guardian/Bloomberg）依赖 V2rayN SOCKS5(10808)。
+        # VPN 关闭时若仍请求海外源，连接会超时，串行拖慢整轮（含国内源）。
         # 探测一次缓存结果：VPN 关→跳过海外源（快速失败），国内源正常；VPN 开→正常拉取。
         # 下一轮（≤3min）重新探测，VPN 开了自动恢复海外源——实现"海外源与 VPN 开关绑定"。
         vpn_ready = _is_vpn_ready()
@@ -362,7 +348,7 @@ class RSSProvider(IngestProviderBase):
             except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 单源失败不中断整个任务：scheduler._fetch_and_write 遇 FetchResult.error 会 break，
                 # 若此处 yield error 会导致后续 feed（含海外源）永不被抓取（如 domestic 源 503 时
-                # 海外 Yahoo/Investing.com 排在其后会被跳过）。仅记录告警并跳过该源，继续抓取后续 feed。
+                # 海外源排在其后会被跳过）。仅记录告警并跳过该源，继续抓取后续 feed。
                 # 失败可见性由本 warning 日志保证；全部源均 0 行时 scheduler 会发 "SUCCESS 但 0 行写入" 告警。
                 self._log.warning(f"RSS {feed_url} 获取失败，跳过该源继续后续 feed: {e}")
 

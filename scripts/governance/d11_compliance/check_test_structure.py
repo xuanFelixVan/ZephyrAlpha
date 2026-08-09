@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """测试结构合规门禁——检查 test_*.py 文件结构，防止"脚本伪装测试"和模块级副作用。
 
 检查项:
@@ -13,6 +12,7 @@
 
 退出码: 0 = 全部合规, 1 = 有违规
 """
+
 from __future__ import annotations
 
 __manifest__ = """
@@ -31,8 +31,14 @@ import ast
 import re
 import sys
 from pathlib import Path
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS  # 退出码常量（scripts/governance sys.path）
+
+_GOV_DIR = str(next(p for p in Path(__file__).resolve().parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS  # 退出码常量（scripts/governance sys.path）  # noqa: E402
+
+from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）  # noqa: E402
 
 DEFAULT_TEST_DIR = REPO_ROOT / "tests"
 
@@ -40,6 +46,7 @@ DEFAULT_TEST_DIR = REPO_ROOT / "tests"
 # 门禁硬阻断新增违规，豁免既有文件，逐步清零至 0。
 # 2026-06-26: 8个豁免文件全部已添加 def test_* 包装，集合清零。
 _EXEMPTED: set[str] = set()
+
 
 def _is_docstring_expr(node: ast.Expr) -> bool:
     """Expr 节点是否为 docstring（字符串常量）。"""
@@ -49,9 +56,13 @@ def _is_docstring_expr(node: ast.Expr) -> bool:
 def _is_name_main_check(test: ast.expr) -> bool:
     """判断条件是否是 __name__ == "__main__"。"""
     if isinstance(test, ast.Compare):
-        if (isinstance(test.left, ast.Name) and test.left.id == "__name__"
-                and len(test.ops) == 1 and isinstance(test.ops[0], ast.Eq)
-                and len(test.comparators) == 1):
+        if (
+            isinstance(test.left, ast.Name)
+            and test.left.id == "__name__"
+            and len(test.ops) == 1
+            and isinstance(test.ops[0], ast.Eq)
+            and len(test.comparators) == 1
+        ):
             cmp = test.comparators[0]
             if isinstance(cmp, ast.Constant) and cmp.value == "__main__":
                 return True
@@ -63,20 +74,24 @@ def _is_sys_path_call(node: ast.expr) -> bool:
     if not isinstance(node, ast.Call):
         return False
     func = node.func
-    if (isinstance(func, ast.Attribute)           # .insert / .append
-            and isinstance(func.value, ast.Attribute)  # .path
-            and isinstance(func.value.value, ast.Name)  # sys
-            and func.value.value.id == "sys"
-            and func.value.attr == "path"
-            and func.attr in ("insert", "append")):
+    if (
+        isinstance(func, ast.Attribute)  # .insert / .append
+        and isinstance(func.value, ast.Attribute)  # .path
+        and isinstance(func.value.value, ast.Name)  # sys
+        and func.value.value.id == "sys"
+        and func.value.attr == "path"
+        and func.attr in ("insert", "append")
+    ):
         return True
     return False
 
 
 def _is_allowed_toplevel(node: ast.stmt) -> bool:
     """判断模块级节点是否允许——精细判定，排除合法模式误报。"""
-    if isinstance(node, (ast.Import, ast.ImportFrom, ast.Assign, ast.AnnAssign,
-                         ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)):
+    if isinstance(
+        node,
+        (ast.Import, ast.ImportFrom, ast.Assign, ast.AnnAssign, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef),
+    ):
         return True
     # docstring
     if isinstance(node, ast.Expr) and _is_docstring_expr(node):
@@ -184,7 +199,7 @@ def main() -> int:
             total_errors += len(errors)
         total_warns += len(warns)
 
-    print(f"\n== 结果 ==")
+    print("\n== 结果 ==")
     print(f"  扫描: {len(test_files)} | ERROR: {total_errors} | WARN: {total_warns} | EXEMPT: {exempt_count}")
 
     if total_errors == 0 and total_warns == 0:
