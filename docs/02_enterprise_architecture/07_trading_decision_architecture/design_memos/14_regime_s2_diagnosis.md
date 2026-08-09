@@ -1,18 +1,22 @@
 ---
-doc_id: discussion_023
-title: "S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路"
-doc_type: architecture_view
 ttl: permanent
+doc_type: architecture_view
+title: "S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路"
+owner: ZephyrAlpha-Owner
+language: zh
 status: draft
-version: "0.4.3"
+version: "0.4.5"
 date: "2026-08-08"
 last_updated: "2026-08-09"
+topic: regime_s2_diagnosis
+scope: 07_trading_decision_architecture
+doc_id: 14_regime_s2_diagnosis
 priority: P1
 depends_on:
-  - discussion_001_regime_detector_spec.md
-  - discussion_002_regime_backtest_validation_plan.md
-  - discussion_017_phase2_model_quality_validation.md
-  - discussion_019_phase3_engineering_plan.md
+  - 10_regime_detector_spec.md
+  - 11_regime_backtest_validation_plan.md
+  - 12_regime_phase2_validation.md
+  - 13_regime_phase3_engineering_plan.md
 related_modules:
   - MOD-REGIME-001 (RegimeDetector)
   - MOD-REGIME-002 (RegimeFeatureBuilder / OverlaySignalsConstructor)
@@ -22,7 +26,7 @@ related_issues:
   - '#ARCH-REGIME-S2-ALGORITHM-001'
 ---
 
-# discussion_023 — S2 评分算法时点错配诊断与治本方案
+# S2 评分算法时点错配诊断与治本方案——capitulation 过程化 + valuation 基本面化 + V 反转通路
 
 > **前置**：Phase 2 验证 B4 曾因 `data_ready=False`（S2 不计分母）以 PASS(3/3) 闭环
 > （commit 0c5ea28bb1/83c94c4f，见 [#ARCH-REGIME-OVERLAY-001](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）。
@@ -31,7 +35,7 @@ related_issues:
 > **结论**：以 `design_match=false` 排除 S2 事件（数据已就绪但 Wyckoff 吸筹模板不匹配 A 股
 > V/政策型复苏）+ 修复 capitulation/valuation 两个 P0 bug（commit 93a25890），让 Phase 2 闭环；
 > S2 算法重设计独立为 P1-E9 工程项
-> （见 [discussion_019 §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md)）。
+> （见 [13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md)）。
 >
 > **修订历程**：
 > - **0.2.0**：同步 §1.2/§4 现状描述与源码；三维度算法吸收 2026 研究（ChartMath capitulation 四过滤器、
@@ -73,6 +77,7 @@ related_issues:
 >   ③ **§4.5 防过拟合方法论栈**——PBO/CSCV 在 N<10-12 不可用（archimedes #819 2026-06），改用事件研究法 + 预注册 + DSR（Bailey & López de Prado 2014）+ CPCV（N=10,k=2→45 组合）+ MinTRL + WFE 验收标准（OOS/IS Sharpe≥0.6），参考 [Neyt/How-To-Backtest-Correctly](https://github.com/Neyt/How-To-Backtest-Correctly) 开源实现（2026-03）；
 >   ④ **§4.6 演进方向补 EVR + flush**——EVR（量价背离/effort vs result，WyckoffTradingAgent 2026-05：量>1.6×+实体极小=主力暗中吸筹）+ flush（capitulation→spring 桥接信号，TradingSim 2026-05：末端暴跌+高量+收盘回区间+长下影）；
 >   ⑤ **§4.3 ATR 止损过紧警告**——phuazz/breadth-thrust-etf 2026-08 实证 2×ATR 止损"actively destructive"，移除后 7 年回报 -1%→+110%，提示 spring 0.5×ATR 失效边距需 Step 0 敏感性测试。
+> - **0.4.4**（2026-08-09 文档体系重排）：文件名 discussion_023_s2_algorithm_misalignment_diagnosis.md → 14_regime_s2_diagnosis.md（段位编号制）；doc_id 同步；depends_on/body 旧名引用全量更新为新名。新旧名对照见 00_index_trading_decision §10。
 
 ---
 
@@ -97,14 +102,14 @@ related_issues:
 
 ## 1. 诊断报告：设计意图 vs 实现的语义错配
 
-### 1.1 S2 设计源头（discussion_001 §4.12）
+### 1.1 S2 设计源头（10_regime_detector_spec §4.12）
 
-[discussion_001 §4.12](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md#L1525) 明确定义 S2 的语义与触发标准：
+[10_regime_detector_spec §4.12](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md#L1525) 明确定义 S2 的语义与触发标准：
 
 > **核心逻辑**：S2 是 CRISIS → RECOVERY 的转换，本质是"恐慌抛售**见底**→机构抄底→企稳复苏"。
 > 与 T2（冰点→反核）同为"底部恢复"但起点不同——T2 从慢性阴跌的 Bear-Low 恢复，S2 从急性暴跌的 CRISIS 恢复。
 
-[§4.12.8 触发标准汇总](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md#L1668)：
+[§4.12.8 触发标准汇总](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md#L1668)：
 
 | 阶段 | 评分门槛 | P 更新 | Shrinkage |
 |---|---|---|---|
@@ -120,7 +125,7 @@ related_issues:
 
 | 项 | 内容 |
 |---|---|
-| **设计意图**（[§4.12.1](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md#L1527)） | Capitulation 是"危机见底信号"，描述 **Phase 1-5 的过程**：慢性阴跌→杠杆清算级联→止损簇扫荡→长下影线→反弹与怀疑。底部在情绪恢复前形成（price leads narrative） |
+| **设计意图**（[§4.12.1](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md#L1527)） | Capitulation 是"危机见底信号"，描述 **Phase 1-5 的过程**：慢性阴跌→杠杆清算级联→止损簇扫荡→长下影线→反弹与怀疑。底部在情绪恢复前形成（price leads narrative） |
 | **实现**（[overlay_features.py:192-214](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L192) `s2_capitulation_score`） | 当日 `z>1 ∧ pct_change<-1.5%` 分档给分（50/70/90），**瞬时信号无 rolling**。原 `z>2` 已于 2026-08-08 降至 `z>1`（持续高量期 z-score 被滚窗均值抬高、单日 z 被压低，z>2 经验性不可达）。仅 vol_z+pct_change 两维，无 ATR 实体/量能放大/下影线过滤 |
 | **诊断实测** | 三事件日 ±10 交易日窗口内 capitulation **为 0**——但 commit 93a25890 精确诊断澄清：**并非算法完全失效，而是触发在窗口外**。2015 事件 capitulation 在 **08-24/25 底部触发，早于 09-15 事件日约 3 周**（见 [historical_events.yaml:82](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L82) 注释），落在 B4 ±10 评估窗口外，故窗口内仍 0/3 |
 | **错配本质** | 复苏事件日是企稳时点，当日不会出现"放量暴跌"。设计意图是"近期**曾**出现投降抛售"（过程），实现是"当日**正在**投降抛售"（瞬时）。S2 触发要求 capitulation≥60，但复苏时点 capitulation 必然为 0 → trigger 永不触发。**窗口外触发反而印证了 §4.1 衰减加权和的必要性**：把 08-25 的 capitulation 信号衰减带到 09-15 |
@@ -131,18 +136,18 @@ related_issues:
 
 | 项 | 内容 |
 |---|---|
-| **设计意图**（[§4.12.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md#L1618)） | 估值和破净率是底部最硬的客观证据：沪深300 PE<15、全市场 PE<16、破净率>10%、风险溢价>95%分位、巴菲特指标<80% |
+| **设计意图**（[§4.12.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md#L1618)） | 估值和破净率是底部最硬的客观证据：沪深300 PE<15、全市场 PE<16、破净率>10%、风险溢价>95%分位、巴菲特指标<80% |
 | **实现**（[overlay_features.py:282-303](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L282) `s2_valuation_score`） | `close/rolling_max(250, min_periods=20)`，分档 `pos<0.60→20 / <0.50→40 / <0.40→60 / <0.30→80`——用价格回撤代理估值 |
 | **诊断实测** | 三事件日 valuation **远未达 confirm 门槛 40**（实测见 dump_s2_scores.py；2020/2024 复苏 pos≈0.90 落 0 分档，2015 pos≈0.58 仅落 20 分档） |
 | **错配本质** | 价格回撤 ≠ 估值。2020/2024 复苏距高点仅 -10%（pos≈0.90），但 PE 历史分位可能已在低估区——价格回撤捕捉不到"价格没跌但估值分位已低"。设计意图是基本面估值（PE/破净率历史分位），实现是价格回撤，且阈值偏严，不适用于非腰斩级复苏 |
 
-**结论**：valuation 应用真正的基本面估值。**注意陷阱**（§4.2 路 A 详述）：S2 正是危机场景，危机期盈利 E 崩塌会令 PE_TTM"越跌越贵"失真，须用 CAPE（席勒 PE）或 PB 分位而非 PE_TTM 分位。discussion_019 §6.2 已提及 `c1_market.daily_valuation`（日度估值表），数据源可获取。
+**结论**：valuation 应用真正的基本面估值。**注意陷阱**（§4.2 路 A 详述）：S2 正是危机场景，危机期盈利 E 崩塌会令 PE_TTM"越跌越贵"失真，须用 CAPE（席勒 PE）或 PB 分位而非 PE_TTM 分位。13_regime_phase3_engineering_plan §6.2 已提及 `c1_market.daily_valuation`（日度估值表），数据源可获取。
 
 #### 1.2.3 spring（弹簧信号）——close 跨日简化，时点错位
 
 | 项 | 内容 |
 |---|---|
-| **设计意图**（[§4.12.2](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md#L1553)） | Wyckoff Spring 震仓——跌破支撑诱空+快速收回+清洗止损=最经典底部信号。需 high/low 判断 |
+| **设计意图**（[§4.12.2](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md#L1553)） | Wyckoff Spring 震仓——跌破支撑诱空+快速收回+清洗止损=最经典底部信号。需 high/low 判断 |
 | **实现**（[overlay_features.py:328-343](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L328) `s2_spring_flag`） | 用 close **跨日**简化判断（无 low）：`前日 close 跌破前低 ∧ 当日 close 收回`。这与真正 Spring"**同日** low 跌破支撑 + 当日 close 收回"语义**时点错位**（非"逻辑较严"）——它要求两日配合（前日破+当日收），而真 Spring 是单日完成（日内 low 破支撑+收盘收回） |
 | **诊断实测** | 偶尔触发（1.0），如 2015-08-28、2024-09-06/11/19/23-30 |
 | **错配本质** | spring 本身能触发，但 strong_confirm 要求 total≥250 ∧ spring≥1 ∧ three_yang≥1，总分不够（capitulation/valuation 恒 0 拖累 total）。Phase 2c 已激活 high/low，spring 应复用 wyckoff_engine 的 Spring 事件（已在 [s2_wyckoff_score](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L248) 中识别），避免重复逻辑 |
@@ -171,7 +176,7 @@ related_issues:
 | **confirm** | wyckoff≥60 ∧ policy≥40 ∧ valuation≥40 ∧ fund≥50 | valuation 远未达 40 + wyckoff 偏低(10-40) + **2020/2024 V 反转不走吸筹致 wyckoff 设计域不匹配**（policy 80 / fund 0-70 可满足） | **永不触发** |
 | **strong_confirm** | total≥250 ∧ spring≥1 ∧ three_yang≥1 | total 不够（capitulation/valuation 恒 0 拖累） | **永不触发** |
 
-> **关键洞察**：NLP 维度（bad_news_flat=80 / policy=80）评分正常，证明 P1-E3 NLP 管道 + P1-E6 bad_news_flat 已生效。S2 不触发的根因不在 NLP 数据，而在 capitulation/valuation 的算法逻辑 + **wyckoff 吸筹模板对 V/政策型复苏的设计域不匹配**。这意味着 discussion_019 现有 P1-E3/E6/E7（数据激活）即使全部完成，S2 仍会 0/3——因为算法缺陷不在这些工程项范围内。
+> **关键洞察**：NLP 维度（bad_news_flat=80 / policy=80）评分正常，证明 P1-E3 NLP 管道 + P1-E6 bad_news_flat 已生效。S2 不触发的根因不在 NLP 数据，而在 capitulation/valuation 的算法逻辑 + **wyckoff 吸筹模板对 V/政策型复苏的设计域不匹配**。这意味着 13_regime_phase3_engineering_plan 现有 P1-E3/E6/E7（数据激活）即使全部完成，S2 仍会 0/3——因为算法缺陷不在这些工程项范围内。
 
 ### 1.4 "数据就绪"≠"算法正确"——data_ready 字段的语义陷阱
 
@@ -229,7 +234,7 @@ S2 算法重设计涉及评分逻辑的**语义重新定义**：
 
 - **已落地（commit 93a25890）**：3 个 S2 事件 `design_match: false`（data_ready 维持 true）；修 capitulation z>1 + valuation min_periods=20 两个 P0 治标 bug；B4 回 PASS(3/3)，Phase 2 闭环
 - **已落地**：登记 `#ARCH-REGIME-S2-ALGORITHM-001`，记录 S2 算法时点错配 + 设计域不匹配缺陷
-- **已落地**：discussion_019 新增 P1-E9 工程项（§3.5），引用本文档
+- **已落地**：13_regime_phase3_engineering_plan 新增 P1-E9 工程项（§3.5），引用本文档
 - **P1 阶段**：P1-E9 算法重设计（capitulation 过程化 + valuation 基本面化 + spring 深度分级 + **V 反转通路**）→ 重跑验证 → S2 激活（design_match 改 true）
 - **`design_match` 语义**：从"维度数据是否就绪"（data_ready）扩展出"事件形态是否在当前模型设计域内"（design_match），两字段正交。S2 注释更新为"评分算法有时点错配 + V 反转设计域不匹配缺陷，待 P1-E9 重设计后激活"
 
@@ -255,7 +260,7 @@ S2 算法重设计涉及评分逻辑的**语义重新定义**：
   #   2015: capitulation 在 08-24/25 底部触发，早于 09-15 事件日 3 周（窗口外）
   #   2020: V 型反转不走 Wyckoff 吸筹，valuation/wyckoff 合法不达标
   #   2024: 政策驱动 V 反转不走 Wyckoff 吸筹，bad_news_flat/capitulation 不达标
-  #   S2 待重设计（加政策/V 反转信号）后激活（见 discussion_023 §4.4）
+  #   S2 待重设计（加政策/V 反转信号）后激活（见 14_regime_s2_diagnosis §4.4）
 ```
 
 **效果**：S2 被 design_match 排除不计 B4 分母，B4 = S1 3/3 = PASS，Phase 2 闭环（A1/A2/B1/B4 全 PASS）。
@@ -269,14 +274,14 @@ S2 算法重设计涉及评分逻辑的**语义重新定义**：
 - severity: P1中
 - category: governance
 - adjudication: 记录诊断证据（三事件 capitulation 窗口外触发/valuation 不达标/wyckoff 设计域不匹配）、设计意图 vs 实现差异、裁定结论（design_match=false 排除 + P0 治标 + P1-E9 治本）
-- impact: overlay_features.py（s2_capitulation_score/s2_valuation_score/s2_spring_flag）、b4_transition_accuracy.py（design_match 字段）、historical_events.yaml（design_match 定级）、discussion_023（诊断详档）
+- impact: overlay_features.py（s2_capitulation_score/s2_valuation_score/s2_spring_flag）、b4_transition_accuracy.py（design_match 字段）、historical_events.yaml（design_match 定级）、14_regime_s2_diagnosis（诊断详档）
 - fix_phase: 待 P1-E9 算法重设计完成
 - status: proposed（铁律#9：调参决策类 AI 提议，待用户确认）
 - 修订 `#ARCH-REGIME-OVERLAY-001` 的 fix_phase：承认"B4 闭环"是基于 `design_match=false`，S2 算法缺陷未治本，见 `#ARCH-REGIME-S2-ALGORITHM-001`
 
-### 3.3 步骤 3（已落地）：discussion_019 新增 P1-E9
+### 3.3 步骤 3（已落地）：13_regime_phase3_engineering_plan 新增 P1-E9
 
-**文件**：[discussion_019 §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md)
+**文件**：[13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md)
 
 新增 §3.5 P1-E9: S2 评分算法重设计（~120 行），引用本文档作为诊断详档。同时在 §1.1 工程清单加一行 P1-E9。
 
@@ -954,9 +959,9 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 | [overlay_features.py](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py) | capitulation z>1 + valuation min_periods=20（P0 治标） | ✅ 已落地（commit 93a25890）；P1-E9 治本待施工 |
 | [b4_transition_accuracy.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py) | design_match 字段 + 三处同步 | ✅ 已落地（commit 93a25890） |
 | [architecture_issue_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) | 新建 #ARCH-REGIME-S2-ALGORITHM-001 + 修订 #ARCH-REGIME-OVERLAY-001 fix_phase | ✅ 已落地 |
-| [discussion_019](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md) | §1.1 工程清单加 P1-E9 + §3.5 新增章节 + §0.1 结果摘要更新 | ✅ 已落地 |
-| [discussion_003 §10.4](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_003_first_batch_strategies.md) | 裁定修订："S2 0/3 根因是算法错配 + V 反转设计域不匹配非数据缺失" → 引用本文档 | 待施工（P1 阶段） |
-| [discussion_017](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_017_phase2_model_quality_validation.md) | Phase 2 结果：B4 PASS(3/3) 基于 design_match=false，S2 待 P1-E9 | 待施工（P1 阶段） |
+| [13_regime_phase3_engineering_plan](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) | §1.1 工程清单加 P1-E9 + §3.5 新增章节 + §0.1 结果摘要更新 | ✅ 已落地 |
+| [20_first_batch_strategies §10.4](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/20_first_batch_strategies.md) | 裁定修订："S2 0/3 根因是算法错配 + V 反转设计域不匹配非数据缺失" → 引用本文档 | 待施工（P1 阶段） |
+| [12_regime_phase2_validation](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/12_regime_phase2_validation.md) | Phase 2 结果：B4 PASS(3/3) 基于 design_match=false，S2 待 P1-E9 | 待施工（P1 阶段） |
 
 ---
 
@@ -979,5 +984,15 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 ---
 
 > **本文档定位**：S2 算法缺陷的**完整诊断 + 架构裁定 + 治本详设**单一真源。
-> P1-E9 施工时以本文档 §4 为详设依据，[discussion_019 §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md) 为工程清单引用。
+> P1-E9 施工时以本文档 §4 为详设依据，[13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) 为工程清单引用。
 > 治理以 `#ARCH-REGIME-S2-ALGORITHM-001` 为登记真源。
+
+---
+
+## 7. 修订记录
+
+> v0.2.0-v0.4.4 的修订历程记录在文首 blockquote（保留不动）；自 v0.4.5 起在本表登记。
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-09 | 0.4.5 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules/related_issues 扩展字段保留），H1 去文件名前缀与 title 对齐；文末补建本「修订记录」章节（§7）；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾）；14 号此前无修订记录章节，补齐对齐 01_design_memo_management_spec §4.3 规范 |

@@ -46274,3 +46274,17 @@ battle_map_cross_cutting:
   desc_zh: budget下调三级升级(Tier1封锁新仓/Tier2策略自平衡/Tier3强制裁剪)
   desc_en: Budget reduction three-tier escalation (lock/rebalance/force-trim)
   plain_zh: 处理资金预算下调的三级升级——先封锁开新仓，再让策略自己砍，超时了firm层强行按比例裁剪
+- module_path: scripts/governance/_shared/code_algorithm_extractor.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 模块核心算法提取器
+  name_en: Code Algorithm Extractor
+  desc_zh: 从 .py docstring+header 或 blueprint.md 提取模块核心算法摘要，供纵览/域文档生成器共享消费
+  desc_en: Extract module algorithm summary from .py docstring+header or blueprint.md, shared by overview/domain generators
+  plain_zh: 把每个模块代码开头注释和说明书(docstring)里写的算法步骤、不能违反的铁律(不变量)抽出来做成统一卡片；代码没写就退去找设计蓝图，都没有就标记缺失。两个生成器共用它，保证同一模块算法描述两边一致。
+- module_path: scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py
+  domain_id: D_GOVERNANCE
+  name_zh: 模块核心算法纵览生成器
+  name_en: Module Algorithm Overview Generator
+  desc_zh: 跨域按 layer 拓扑从代码+蓝图派生模块算法纵览，输出到 08_algorithm_overview/（离库）
+  desc_en: Cross-domain module algorithm overview by layer topology, derived from code+blueprint, output to 08_algorithm_overview/
+  plain_zh: 把全仓库每个模块的核心算法按底层到顶层(基础设施→应用四层)排成一张纵览表，一眼看清哪些模块算法写得全、哪些缺文档、哪些还没开发。改了代码或设计蓝图重跑一遍就自动更新，是检修算法问题的入口。

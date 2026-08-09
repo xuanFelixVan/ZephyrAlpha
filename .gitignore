@@ -477,3 +477,7 @@ docs/02_enterprise_architecture/06_decision_architecture/decision_index.md
 # 07_trading_decision_architecture/battle_map — 全派生（battle_map 生成器产出 13 文件）
 docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/*.md
 docs/02_enterprise_architecture/07_trading_decision_architecture/battle_map/_titles_states.txt
+
+# 08_algorithm_overview — 全派生（generate_module_algorithm_overview.py 产出，跨域按 layer 拓扑）
+# 真源：代码 docstring + header ｜ blueprint.md §核心规则 ｜ depgraph (PostgreSQL)
+docs/02_enterprise_architecture/08_algorithm_overview/

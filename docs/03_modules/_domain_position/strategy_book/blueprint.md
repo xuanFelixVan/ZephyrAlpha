@@ -23,12 +23,12 @@ responsibility_domain:
 
 > **module_id**: MOD-POS-020 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-POS-020 | **设计真源**: [design_memo_001_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.2（三个核心模块）、§2.4（权重变动流程）、§2.5（Drawdown Protocol）
-> **regime 依赖**: [discussion_001_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，由 RegimeMetaAllocator 施加）
+> **SSoT**: depgraph MOD-POS-020 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（三个核心模块）、§2.4（权重变动流程）、§2.5（Drawdown Protocol）
+> **regime 依赖**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，由 RegimeMetaAllocator 施加）
 
 ## 1. 定位
 
-独立策略账本——A 模型（[design_memo_001](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，自带选股 + 粗仓位 + 独立风控，输出 `target_portfolio`（标的 + 目标权重）。
+独立策略账本——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，自带选股 + 粗仓位 + 独立风控，输出 `target_portfolio`（标的 + 目标权重）。
 
 属 **B 类核心业务模块**（多源融合 + 策略逻辑 + 风控自洽），策略 alpha 逻辑为 C 类可插拔策略实现。
 
@@ -46,14 +46,14 @@ responsibility_domain:
 
 **数据流**：`StrategyBook → FirmRiskAggregator → MOD-POS-001 → 下单`
 
-> ⚠️ **需回写 design_memo_001 §2.2**：原文"StrategyBook 自带仓位算法（Kelly / risk parity / 简单等权）"修正为"自带粗仓位（等权/risk parity），Kelly 精裁决由 firm 层 MOD-POS-001 承担"。本 blueprint 落地后执行回写。
+> ⚠️ **需回写 30_multi_strategy_concurrency §2.2**：原文"StrategyBook 自带仓位算法（Kelly / risk parity / 简单等权）"修正为"自带粗仓位（等权/risk parity），Kelly 精裁决由 firm 层 MOD-POS-001 承担"。本 blueprint 落地后执行回写。
 
 ### 1.2 不做什么
 
 - **不做 Kelly 精裁**（由 MOD-POS-001 firm 层做）
 - **不做组合级约束**（单票上限跨策略叠加，由 FirmRiskAggregator 做）
-- **不做 MVO 协方差优化**（design_memo_001 §3.1 拒绝）
-- **不知道市场态**（design_memo_001 §2.2：市场态是 meta 层的事，StrategyBook 只收到 budget 数字）
+- **不做 MVO 协方差优化**（30_multi_strategy_concurrency §3.1 拒绝）
+- **不知道市场态**（30_multi_strategy_concurrency §2.2：市场态是 meta 层的事，StrategyBook 只收到 budget 数字）
 - **不执行交易**（由 D-EX-CORE 承接）
 
 ## 2. 输入 / 输出
@@ -111,7 +111,7 @@ class StrategyBook(ABC):
         """粗仓位方法：equal_weight / risk_parity / custom"""
 ```
 
-首批 3 个策略候选（design_memo_001 §6.1 待人决策）：打板 / 多因子 / 事件驱动。
+首批 3 个策略候选（30_multi_strategy_concurrency §6.1 待人决策）：打板 / 多因子 / 事件驱动。
 
 ### 3.2 粗仓位（不用 Kelly，不用 MVO）
 
@@ -126,7 +126,7 @@ class StrategyBook(ABC):
 - 单标的 `target_weight ≤ 5%`（策略内上限，组合级 8% 由 FirmRiskAggregator 裁剪）
 - **不计算 Kelly**（f* 留给 MOD-POS-001）
 
-### 3.3 Budget 适配（design_memo_001 §2.4 三级升级）
+### 3.3 Budget 适配（30_multi_strategy_concurrency §2.4 三级升级）
 
 budget 是硬约束（来自 meta 层），策略自主权在"怎么适应"，不在"要不要适应"。
 
@@ -141,12 +141,12 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 | Tier 2 | Tier 1 后 | `rebalance_to_budget`——策略自选砍最不自信的仓位 | 建议，策略自主 |
 | Tier 3 | Tier 2 窗口超时 / firm 风险违例 | 按比例强行裁剪所有仓位（dumb but safe） | 强制，firm 层（BudgetChangeHandler MOD-POS-022） |
 
-- convergence_window（design_memo_001 §6.4 待人决策）：打板 1-2 天 / 多因子 3-5 天 / 事件驱动 2-3 天
+- convergence_window（30_multi_strategy_concurrency §6.4 待人决策）：打板 1-2 天 / 多因子 3-5 天 / 事件驱动 2-3 天
 - budget 上调：直接抬高上限，策略通过买入信号自然部署，现金拖累可接受
 
-### 3.4 独立风控（design_memo_001 §2.5 Drawdown Protocol）
+### 3.4 独立风控（30_multi_strategy_concurrency §2.5 Drawdown Protocol）
 
-> **用户裁定**（design_memo_001 §2.5）：回撤是沉没成本，不进 regime RiskSignal，但触发账户级风险节流。单策略回撤=策略问题→该策略独立收缩。
+> **用户裁定**（30_multi_strategy_concurrency §2.5）：回撤是沉没成本，不进 regime RiskSignal，但触发账户级风险节流。单策略回撤=策略问题→该策略独立收缩。
 
 **四级回撤阈值**（复用 POS-008 drawdown_controller）：
 
@@ -171,7 +171,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 | 灰度 2 | 50% | 20 交易日 |
 | 全量 | 100% | — |
 
-> 冷启动期 PerformanceScore 不参与 RegimeMetaAllocator 分配（design_memo_001 §2.2：新策略冷启动只用 Base_i）。
+> 冷启动期 PerformanceScore 不参与 RegimeMetaAllocator 分配（30_multi_strategy_concurrency §2.2：新策略冷启动只用 Base_i）。
 
 ## 4. 关键不变量 (INVARIANTS)
 
@@ -179,7 +179,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 - 单标的 `target_weight ≤ 5%`（策略内上限）
 - `rebalance_to_budget` 必须返回适配新 budget 的组合（**策略不能拒绝**）
 - 单策略回撤 > 25% → Kill Switch 强制清仓 + 休息 5 天
-- Kill Switch 触发即执行，不允许人工覆盖延迟（design_memo_001 §2.5.5）
+- Kill Switch 触发即执行，不允许人工覆盖延迟（30_multi_strategy_concurrency §2.5.5）
 - TargetPortfolio **不含 Kelly 裁决结果**（粗仓位，精裁决由 MOD-POS-001 做）
 - TargetPortfolio 幂等（idempotency_key 防重复决策）
 - 灰度期策略 budget ≤ 灰度阶段上限
@@ -273,8 +273,8 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 |------|------|
 | 粗仓位不用 Kelly（方案 A 分层） | 组合级约束跨策略叠加天然在 firm 层；Kelly 需密度预测不宜每策略重复；风险合规与 alpha 解耦防归因纠缠；开源 Morwane 实证分层架构 Sharpe +1.43 |
 | StrategyBook 是容器（策略可插拔） | 不同策略 alpha 逻辑差异大（打板/多因子/事件驱动），容器+继承避免 if-else 深渊 |
-| budget 是硬约束（策略不能拒绝） | design_memo_001 §2.4：策略自主权在"怎么适应"不在"要不要适应" |
-| 单策略回撤独立收缩（不进 regime RiskSignal） | design_memo_001 §2.5 用户裁定：回撤是沉没成本属账户风控，单策略回撤=策略问题 |
+| budget 是硬约束（策略不能拒绝） | 30_multi_strategy_concurrency §2.4：策略自主权在"怎么适应"不在"要不要适应" |
+| 单策略回撤独立收缩（不进 regime RiskSignal） | 30_multi_strategy_concurrency §2.5 用户裁定：回撤是沉没成本属账户风控，单策略回撤=策略问题 |
 | 灰度发布 5%→20%→50%→100% | 新策略冷启动防失控，冷启动期 PerformanceScore 不参与分配 |
 | TargetPortfolio 不含 Kelly | 与 MOD-POS-001 PositionPlan 粗→精分层，避免双重 Kelly |
 
@@ -316,7 +316,7 @@ def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/strategy_book.py` | ❌ 未实现 | design_memo_001 §7.2 指定路径，Phase 1 施工 |
+| `src/zephyr/position/core/strategy_book.py` | ❌ 未实现 | 30_multi_strategy_concurrency §7.2 指定路径，Phase 1 施工 |
 
 ### 10.5 路径索引使用指南
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME_VAL-002 | discussion_019 §2.2 P0-E2
+# [BLUEPRINT] MOD-REGIME_VAL-002 | 13_regime_phase3_engineering_plan §2.2 P0-E2
 # [MODULE] zephyr.regime.validation.phase2.confidence_calibrator
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; scipy; sklearn; pandas
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] 校准只减自信不减锐度(T>1降温); 保序性(argmax不变); PIT防泄漏(IS裁剪+方向只用IS数据); BCE非多类NLL; 四级降级(n>=50/20/prev/identity); Isotonic原始数据fit(PAVA自带正则化,无需预分桶); overlay态走Stage2校准
-# [MODIFY-GUARD] discussion_019_phase3_engineering_plan.md §2.2
+# [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §2.2
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -14,8 +14,8 @@
 # [TESTS] tests/regime/phase2/test_confidence_calibrator.py
 # [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_019 §2.2 #discussion_017 §2.4 B1
-"""两阶段概率校准器（discussion_019 §2.2 P0-E2）。
+# [ARCH-REF] #13_regime_phase3_engineering_plan §2.2 #12_regime_phase2_validation §2.4 B1
+"""两阶段概率校准器（13_regime_phase3_engineering_plan §2.2 P0-E2）。
 
 Stage 1: Temperature Scaling（全局降温，治本）
     softmax(log_proba / T)，T 从 IS 数据最小化二元交叉熵学习。
@@ -39,7 +39,7 @@ PIT 防泄漏（§2.2.9）：
     #2 regime_directions 用全量数据 → 只用 IS 安全数据推断
     #3 NLL 用二元交叉熵（occurred 是二值指标非类别标签）
 
-依据: discussion_019 §2.2 / discussion_017 §2.4 B1
+依据: 13_regime_phase3_engineering_plan §2.2 / 12_regime_phase2_validation §2.4 B1
 Version: 0.1.0
 """
 

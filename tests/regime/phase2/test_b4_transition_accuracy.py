@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""B4 转换触发准确性验证器单元测试（discussion_003 §2.2）."""
+"""B4 转换触发准确性验证器单元测试（12_regime_phase2_validation §2.2）."""
 from __future__ import annotations
 
 import unittest

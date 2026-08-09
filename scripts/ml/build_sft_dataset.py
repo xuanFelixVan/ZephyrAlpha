@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-NLP-PIPELINE | discussion_019_phase3_engineering_plan.md | §3.1.9
+# [BLUEPRINT] MOD-NLP-PIPELINE | 13_regime_phase3_engineering_plan.md | §3.1.9
 # [MODULE] scripts.ml.build_sft_dataset
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.news_collector; scripts.ml.build_eval_set(keyword_label); urllib; pandas
@@ -7,7 +7,7 @@
 # [STARTUP] manual
 # [MATURITY] design
 # [INVARIANTS] 中文新闻关键词规则标注+平衡采样；排除评估集 200 条防数据泄露；FPB 英文异源增强；train/eval 9:1 划分
-# [MODIFY-GUARD] discussion_019_phase3_engineering_plan.md §3.1.9
+# [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §3.1.9
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -35,7 +35,7 @@
 用法:
     python scripts/ml/build_sft_dataset.py [--target-per-class 1200] [--no-fpb]
 
-依据: discussion_019_phase3_engineering_plan.md §3.1.9
+依据: 13_regime_phase3_engineering_plan.md §3.1.9
 SSoT: #ARCH-NLP-PIPELINE-001
 """
 from __future__ import annotations

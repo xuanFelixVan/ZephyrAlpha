@@ -23,12 +23,12 @@ responsibility_domain:
 
 > **module_id**: MOD-POS-021 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-POS-021 | **设计真源**: [design_memo_001_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.2（FirmRiskAggregator）、§2.3（自然叠加）、§3.1（拒绝 MVO）
+> **SSoT**: depgraph MOD-POS-021 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（FirmRiskAggregator）、§2.3（自然叠加）、§3.1（拒绝 MVO）
 > **上游契约**: [StrategyBook blueprint](../strategy_book/blueprint.md) MOD-POS-020 §2.3 TargetPortfolio (CTR-POS-020)
 
 ## 1. 定位
 
-Firm 层风险聚合器——A 模型（[design_memo_001](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.2）的组合汇总层。消费所有 StrategyBook 的 `TargetPortfolio`，**按标的求和（自然叠加）+ 组合级硬上限裁剪 + 冲突净额处理**，产出 `FirmTargetPortfolio` 交由 MOD-POS-001 精裁决。
+Firm 层风险聚合器——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2）的组合汇总层。消费所有 StrategyBook 的 `TargetPortfolio`，**按标的求和（自然叠加）+ 组合级硬上限裁剪 + 冲突净额处理**，产出 `FirmTargetPortfolio` 交由 MOD-POS-001 精裁决。
 
 属 **A 类基础设施**（求和+裁剪+净额，逻辑明确无优化），O(N) 复杂度（N=策略数×标的数），**不做 MVO，不做协方差估计**。
 
@@ -44,17 +44,17 @@ Firm 层风险聚合器——A 模型（[design_memo_001](../../../02_enterprise
 
 > 本模块是"粗→精"分层的中转站：上游各策略粗仓位自然叠加，本模块做组合级硬裁剪（防多策略叠加集中），下游 MOD-POS-001 做 Kelly 精裁决。两层裁剪不冗余——本模块管"跨策略叠加集中"，MOD-POS-001 管"标的级 Kelly 合规"。
 
-### 1.2 核心哲学：用加法替代优化器（design_memo_001 §2.3）
+### 1.2 核心哲学：用加法替代优化器（30_multi_strategy_concurrency §2.3）
 
 > **自然叠加**：多策略选到同一只票时，仓位自然叠加（S1 给 3% + S2 给 5% = 8%）。这等价于一个永远稳定的等权 risk-budget 优化器，无需调投票权重，无需估协方差。这是 A 模型最被低估的优点——**用加法替代优化器，O(N) 替代 O(N²)**。
 
 ### 1.3 不做什么
 
-- **不做 MVO / 协方差估计**（design_memo_001 §3.1 拒绝：协方差估计是研究课题，放大噪声，归因纠缠）
+- **不做 MVO / 协方差估计**（30_multi_strategy_concurrency §3.1 拒绝：协方差估计是研究课题，放大噪声，归因纠缠）
 - **不做 Kelly**（方案 A，Kelly 归 MOD-POS-001）
 - **不做选股**（选股在 StrategyBook）
 - **不做标的级精裁**（VaR/参与率/退出时间归 MOD-POS-001）
-- **不做跨策略投票/优先级仲裁**（design_memo_001 §3.2 拒绝 Model D；A 模型下自然叠加替代投票）
+- **不做跨策略投票/优先级仲裁**（30_multi_strategy_concurrency §3.2 拒绝 Model D；A 模型下自然叠加替代投票）
 
 ## 2. 输入 / 输出
 
@@ -103,7 +103,7 @@ Firm 层风险聚合器——A 模型（[design_memo_001](../../../02_enterprise
 
 ## 3. 核心规则
 
-### 3.1 求和（自然叠加，design_memo_001 §2.3）
+### 3.1 求和（自然叠加，30_multi_strategy_concurrency §2.3）
 
 按标的合并所有 StrategyBook 的 TargetPortfolio：
 
@@ -115,7 +115,7 @@ Firm 层风险聚合器——A 模型（[design_memo_001](../../../02_enterprise
 
 **关键**：这是**加法**，不是投票。S1 给 3% + S2 给 5% = 8%，不需要投票权重或优先级仲裁。多策略共识→大仓位是自然涌现的，无需 meta-参数。
 
-### 3.2 组合级硬上限裁剪（三类，design_memo_001 §2.2 步骤 2-3）
+### 3.2 组合级硬上限裁剪（三类，30_multi_strategy_concurrency §2.2 步骤 2-3）
 
 > **与 MOD-POS-001 裁剪的区别**：本模块管"跨策略叠加集中"（组合级），MOD-POS-001 管"标的级 Kelly 合规"。本模块裁剪在 Kelly 前，MOD-POS-001 裁剪在 Kelly 后。
 
@@ -132,7 +132,7 @@ cut_ratio = 单票上限 / 叠加后权重
 target_weight = 单票上限
 ```
 
-> **为何等比而非优先级**：design_memo_001 §3.2 拒绝 Model D 投票权重（meta-参数是技术债）。等比削减无需优先级配置，O(N) 简单可审计。如未来需优先级，config 可切换 `cut_mode: "pro_rata" | "priority"`。
+> **为何等比而非优先级**：30_multi_strategy_concurrency §3.2 拒绝 Model D 投票权重（meta-参数是技术债）。等比削减无需优先级配置，O(N) 简单可审计。如未来需优先级，config 可切换 `cut_mode: "pro_rata" | "priority"`。
 
 #### 3.2.2 行业/板块硬约束
 
@@ -148,11 +148,11 @@ target_weight = 单票上限
 | 总暴露上限 | total_exposure > total_budget | 等比削减所有标的 | total_budget |
 | 总暴露上限 | total_exposure > 市场状态上限 | 等比削减至市场状态上限 | 来自 regime（Phase 2） |
 
-> Phase 1 市场状态上限用降级默认（design_memo_001 §2.2 置信度<60%→0.3）；Phase 2 接入 regime 检测器的灰度概率。
+> Phase 1 市场状态上限用降级默认（30_multi_strategy_concurrency §2.2 置信度<60%→0.3）；Phase 2 接入 regime 检测器的灰度概率。
 
-### 3.3 冲突标的净额处理（design_memo_001 §2.2 步骤 4）
+### 3.3 冲突标的净额处理（30_multi_strategy_concurrency §2.2 步骤 4）
 
-> **A 模型下冲突罕见**（design_memo_001 §7.3：§16 的 31 条跨策略冲突仲裁大部分消失），但仍需处理同标的一买一卖的净额。
+> **A 模型下冲突罕见**（30_multi_strategy_concurrency §7.3：§16 的 31 条跨策略冲突仲裁大部分消失），但仍需处理同标的一买一卖的净额。
 
 | 冲突类型 | 场景 | 处理 | 记录 |
 |---------|------|------|------|
@@ -193,7 +193,7 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 - 单行业占比 ≤ 行业上限（30%）
 - **裁剪只减不增**（单次顺序执行，无需迭代收敛）
 - **不做 Kelly**（粗仓位层，精裁决归 MOD-POS-001）
-- **不做 MVO**（design_memo_001 §3.1 拒绝）
+- **不做 MVO**（30_multi_strategy_concurrency §3.1 拒绝）
 - O(N) 复杂度（N=策略数×标的数，无 O(N²) 协方差计算）
 - FirmTargetPortfolio 幂等（idempotency_key 防重复聚合）
 - Kill Switch 策略的贡献被排除（不参与求和）
@@ -286,14 +286,14 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 
 | 决策 | 理由 |
 |------|------|
-| 用加法替代优化器（自然叠加） | design_memo_001 §2.3：等价等权 risk-budget 优化器，O(N) 替代 O(N²)，无需协方差估计 |
-| 等比削减（非优先级） | design_memo_001 §3.2 拒绝 Model D 投票权重（meta-参数是技术债）；等比 O(N) 简单可审计；config 预留 priority 模式 |
+| 用加法替代优化器（自然叠加） | 30_multi_strategy_concurrency §2.3：等价等权 risk-budget 优化器，O(N) 替代 O(N²)，无需协方差估计 |
+| 等比削减（非优先级） | 30_multi_strategy_concurrency §3.2 拒绝 Model D 投票权重（meta-参数是技术债）；等比 O(N) 简单可审计；config 预留 priority 模式 |
 | 裁剪只减不增（单次执行） | 每步裁剪只降权重不升，无需迭代收敛，保证 O(N) |
 | 不做 Kelly（方案 A 分层） | Kelly 归 MOD-POS-001；本模块管"跨策略叠加集中"，MOD-POS-001 管"标的级 Kelly 合规"，两层不冗余 |
 | 单票上限 8%（>MOD-POS-001 的 5%） | 本模块防"多策略叠加极端集中"（Kelly 前），MOD-POS-001 做"最终合规"（Kelly 后 5%）；8%>5% 合理，粗裁→精裁 |
-| 冲突净额而非仲裁 | design_memo_001 §7.3：A 模型下跨策略冲突大部分消失，简单净额即可，无需 31 条仲裁规则 |
+| 冲突净额而非仲裁 | 30_multi_strategy_concurrency §7.3：A 模型下跨策略冲突大部分消失，简单净额即可，无需 31 条仲裁规则 |
 | contributions 记录裁剪前原始贡献 | 归因可追溯：亏钱时能区分"哪个策略贡献了这只票""裁剪削了多少" |
-| 不做 MVO/协方差 | design_memo_001 §3.1：协方差估计是研究课题，A 股情绪周期切换时全错，归因纠缠 |
+| 不做 MVO/协方差 | 30_multi_strategy_concurrency §3.1：协方差估计是研究课题，A 股情绪周期切换时全错，归因纠缠 |
 
 ### §0.6 五图对齐视图
 
@@ -333,7 +333,7 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/firm_risk_aggregator.py` | ❌ 未实现 | design_memo_001 §7.2 指定路径，Phase 1 施工 |
+| `src/zephyr/position/core/firm_risk_aggregator.py` | ❌ 未实现 | 30_multi_strategy_concurrency §7.2 指定路径，Phase 1 施工 |
 
 ### 10.5 路径索引使用指南
 

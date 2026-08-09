@@ -2,7 +2,7 @@
 # [MODULE] zephyr.backtest.regime_validation.c1_runner
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.backtest.regime_validation.c1_comparator; zephyr.backtest.regime_validation.shrinkage_provider; zephyr.backtest.implementations.shrinkage_engine; zephyr.backtest.implementations.vectorized_engine; zephyr.pf_core.strategy_engine.strategy_runner; zephyr.experiment_tracking.adapters.c1_adapter (lazy: track=True only)
-# [CONSUMERS] discussion_002 Phase 1 验证执行 ; scripts/regime/run_c1.py
+# [CONSUMERS] 11_regime_backtest_validation_plan Phase 1 验证执行 ; scripts/regime/run_c1.py
 # [STARTUP] imported
 # [MATURITY] production
 # [INARIANTS] 开/关两组除 Shrinkage 外全等(同config/数据/信号); mock模式不依赖特征管道; regime模式用预计算序列(PIT as-of join); 报告落盘幂等
@@ -14,9 +14,9 @@
 # [TESTS] tests/backtest/test_c1_runner.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #ARCH-REGIME-VALIDATION-001 #ARCH-REGIME-C1-RUNNER-001 #ARCH-OBS-EXP-TRACK-001 #C1-shrinkage-comparator
+# [ARCH-REF] #11_regime_backtest_validation_plan #ARCH-REGIME-VALIDATION-001 #ARCH-REGIME-C1-RUNNER-001 #ARCH-OBS-EXP-TRACK-001 #C1-shrinkage-comparator
 
-"""L_BACKTEST — C1 Shrinkage 开/关对比执行器 (discussion_002 Phase 1 入口)
+"""L_BACKTEST — C1 Shrinkage 开/关对比执行器 (11_regime_backtest_validation_plan Phase 1 入口)
 
 编排 C1ShrinkageComparator.compare() 的执行层，提供两种 Shrinkage 供给模式：
 
@@ -40,7 +40,7 @@
   - mock/regime 两模式共用同一 compare() 管线，切换 provider 即可，回测/裁定逻辑零差异
   - 报告落盘幂等：同输入同输出（C1ComparisonResult 不可变）
 
-依据: discussion_002 §4.3/§5/§6（C1 一票否决 + Phase 1 顺序）
+依据: 11_regime_backtest_validation_plan §4.3/§5/§6（C1 一票否决 + Phase 1 顺序）
 SSoT: depgraph MOD-BT-001 / MOD-REGIME-001 / MOD-REGIME-002
 Version: 0.1.0
 """
@@ -195,7 +195,7 @@ def run_c1_with_provider(
         shrinkage_provider: 实验组（开）的 Shrinkage 供给方。
             mock 模式传 MockShrinkageProvider；regime 模式传 ScheduleShrinkageProvider。
         backtest_config: 回测配置（两组共用）。None 用默认 BacktestConfig()。
-        c1_config: C1 门槛配置。None 用默认 C1Config()（discussion_002 §5 标准）。
+        c1_config: C1 门槛配置。None 用默认 C1Config()（11_regime_backtest_validation_plan §5 标准）。
         strategy_name: 策略名（两组共用）。
         initial_capital: 初始资金（两组共用，None 用 config 值）。
         track: True 时把结果记录为 mlflow run（lazy import c1_adapter，失败不崩业务）。
@@ -428,7 +428,7 @@ def save_c1_report(
             "",
             f"> {result.veto_reason}",
             "",
-            "C1 不通过 = regime 检测器不部署（回退静态等权，discussion_002 §6）。",
+            "C1 不通过 = regime 检测器不部署（回退静态等权，11_regime_backtest_validation_plan §6）。",
             "",
         ])
 

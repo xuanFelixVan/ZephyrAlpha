@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# [BLUEPRINT] MOD-REGIME-001-SCAN | discussion_004 §2.1.5 / §2.1.6 步骤1-2
-# [ARCH-REF] #discussion_004 §2.1 #discussion_003 §4
+# [BLUEPRINT] MOD-REGIME-001-SCAN | 13_regime_phase3_engineering_plan §2.1.5 / §2.1.6 步骤1-2
+# [ARCH-REF] #13_regime_phase3_engineering_plan §2.1 #12_regime_phase2_validation §4
 # [TTL] permanent
-"""HMM 状态数 BIC 扫描脚本（discussion_004 §2.1.5 / §2.1.6 步骤 1-2）.
+"""HMM 状态数 BIC 扫描脚本（13_regime_phase3_engineering_plan §2.1.5 / §2.1.6 步骤 1-2）.
 
 数据驱动选择 HMM 最优态数（2-9 态），用 BIC elbow method 找拐点。
 复用 C1 真实模式特征管线（RegimeFeatureBuilder）保证与生产 HMM 可比。
 
-核心动作（对齐 discussion_004 §2.1.6 施工顺序）：
+核心动作（对齐 13_regime_phase3_engineering_plan §2.1.6 施工顺序）：
   步骤 1：全历史 BIC 扫描（2-9 态）→ BIC/AIC/LL 曲线 + 拐点判定
   步骤 2 输入：用拐点 n_states 做 Viterbi 解码全历史 → 各态统计特征
               （出现天数 / 频率 / 各特征均值 / 1日&5日 forward return 均值）
@@ -38,7 +38,7 @@ Usage:
   python scripts/tests/scan_hmm_states.py --mock             # 合成数据冒烟
   python scripts/tests/scan_hmm_states.py --states 2,3,4,5,6 # 自定义态数列表
 
-依据: discussion_004 §2.1.5 / §2.1.6
+依据: 13_regime_phase3_engineering_plan §2.1.5 / §2.1.6
 """
 from __future__ import annotations
 
@@ -65,7 +65,7 @@ except Exception as _exc:  # pragma: no cover
 
 _logger = logging.getLogger("scan_hmm_states")
 
-# 扫描的默认态数列表（对齐 discussion_004 §2.1.5：2-9 态，含 9 作基线对照）
+# 扫描的默认态数列表（对齐 13_regime_phase3_engineering_plan §2.1.5：2-9 态，含 9 作基线对照）
 DEFAULT_STATES: tuple[int, ...] = (2, 3, 4, 5, 6, 7, 9)
 
 
@@ -458,7 +458,7 @@ def walk_forward_bic_stability(
     n_iter: int = 100,
     n_init: int = 3,
 ) -> dict[str, Any]:
-    """walk-forward 各季度窗口跑 BIC，确认拐点跨期一致（discussion_004 §2.1.6 步骤7）。
+    """walk-forward 各季度窗口跑 BIC，确认拐点跨期一致（13_regime_phase3_engineering_plan §2.1.6 步骤7）。
 
     每个 walk-forward 季度：
       - 取 train_years 年训练数据
@@ -591,7 +591,7 @@ def run_mock(states: list[int]) -> int:
 
     合成 3 个高斯簇（序列拼接，含时序结构利于 HMM 建模），预期拐点 ∈ {3, 4}。
     mock 用较高 n_init（8）让 EM 有足够重启跳出局部最优；生产扫描用 n_init=3
-    与 A1/walk-forward 可比（discussion_004 §2.1.6 步骤1）。
+    与 A1/walk-forward 可比（13_regime_phase3_engineering_plan §2.1.6 步骤1）。
     """
     # mock 用较高 n_init 避免 EM 局部最优（数据小，开销可接受）
     mock_n_init = 8
@@ -807,7 +807,7 @@ def run_real(
 
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
-    parser = argparse.ArgumentParser(description="HMM 状态数 BIC 扫描（discussion_004 §2.1.5）")
+    parser = argparse.ArgumentParser(description="HMM 状态数 BIC 扫描（13_regime_phase3_engineering_plan §2.1.5）")
     parser.add_argument("--mock", action="store_true", help="合成数据冒烟")
     parser.add_argument("--walk-forward", action="store_true",
                         help="加跑 walk-forward 季度 BIC 稳定性（步骤7）")

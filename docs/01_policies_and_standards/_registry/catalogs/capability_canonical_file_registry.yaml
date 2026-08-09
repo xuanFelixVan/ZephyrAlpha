@@ -5834,7 +5834,7 @@ capabilities:
       C1 Shrinkage 开/关对比器（D_BACKTEST 域，#ARCH-REGIME-VALIDATION-001 C1）。canonical =
       src/zephyr/backtest/regime_validation/c1_comparator.py。编排 Shrinkage 开/关两组回测，
       四项一票否决裁定 regime 是否部署：Sharpe（跌幅 <0.1）/ MaxDD（改善 ≥3pp）/ Calmar
-      （×1.2）/ Turnover（×2），门槛取 discussion_002 §5。C1ComparisonResult 含 metric_verdicts
+      （×1.2）/ Turnover（×2），门槛取 11_regime_backtest_validation_plan §5。C1ComparisonResult 含 metric_verdicts
       清单 + passed + veto_reason + summary。解决发现性：新 AI 搜 "Shrinkage 开关对比/regime
       部署裁定/C1 验证" 可定位真源。解决防重建：check_file_canonical() 反查，新 AI 准备造
       同类对比器前会被引导到本真源。
@@ -5852,7 +5852,7 @@ capabilities:
       - c1_runner
     description: >-
       C1 执行编排器（D_BACKTEST 域，#ARCH-REGIME-C1-RUNNER-001）。canonical =
-      src/zephyr/backtest/regime_validation/c1_runner.py。discussion_002 Phase 1 入口，
+      src/zephyr/backtest/regime_validation/c1_runner.py。11_regime_backtest_validation_plan Phase 1 入口，
       编排 C1ShrinkageComparator.compare() 的执行层。两种 Shrinkage 供给模式：
       run_c1_mock（波动率驱动 MockShrinkageProvider，不依赖特征管道，冒烟跑通 C1 流程）
       / run_c1_regime（RegimeSeriesOrchestrator 产出 → ScheduleShrinkageProvider，Phase 1
@@ -8404,6 +8404,14 @@ creation_tokens:
     token: "auto-test-sentiment-sft-trainer-20260809"
     created_by: "session-p1e3-nlp-phase4"
     capability: "nlp_inference"
+  - file: "scripts/governance/_shared/code_algorithm_extractor.py"
+    token: "auto-gov-code-algorithm-extractor-20260809"
+    created_by: "session-algo-overview"
+    capability: "code_algorithm_extractor"
+  - file: "scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py"
+    token: "auto-gov-generate-module-algorithm-overview-20260809"
+    created_by: "session-algo-overview"
+    capability: "module_algorithm_overview_generator"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

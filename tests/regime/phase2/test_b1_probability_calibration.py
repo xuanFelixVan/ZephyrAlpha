@@ -1,4 +1,4 @@
-"""B1 概率校准度验证器单元测试（discussion_003 §2.4）.
+"""B1 概率校准度验证器单元测试（12_regime_phase2_validation §2.4）.
 
 测试覆盖：
   - 后续收益计算 _compute_forward_returns

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A2 HMM 过拟合验证器单元测试（discussion_003 §2.3）.
+"""A2 HMM 过拟合验证器单元测试（12_regime_phase2_validation §2.3）.
 
 测试覆盖：
   - 标签对齐 _align_labels（permutation invariance）

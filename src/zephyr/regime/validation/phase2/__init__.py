@@ -11,8 +11,8 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_017 §2
-"""Phase 2 模型质量验证（discussion_017）.
+# [ARCH-REF] #12_regime_phase2_validation §2
+"""Phase 2 模型质量验证（12_regime_phase2_validation）.
 
 四验证器:
   A1 - 样本充足性（稀有态够 HMM 学吗）

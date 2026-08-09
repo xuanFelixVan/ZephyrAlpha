@@ -14,7 +14,7 @@
 # [TESTS] tests/regime/test_risk_signal_builder.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §5.3 #MOD-REGIME-002 #Phase2a #C1-shrinkage-comparator
+# [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2a #C1-shrinkage-comparator
 """RiskSignalInputs 构造器（MOD-REGIME-002 Phase 2a）。
 
 把原始特征转换成 RegimeDetector._compute_risk_signal 期望的 13 参数输入 dict：
@@ -39,7 +39,7 @@ Phase 2a MVP 参数范围（Phase 2 计划 §13参数数据来源）：
             #12 chip_structure=1.0（chip 引擎按日成本高，Phase 2c 接）
   opportunity stub（2）：#11 news_ghost=0.0 / #13 bad_news_flat=0.0（待 NLP）
 
-依据: discussion_001 v1.3.1 §5.3.3 / Phase 2 计划 §Phase2a
+依据: 10_regime_detector_spec v1.3.1 §5.3.3 / Phase 2 计划 §Phase2a
 Version: 0.1.0
 """
 

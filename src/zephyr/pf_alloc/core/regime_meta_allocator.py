@@ -18,11 +18,11 @@
 """
 RegimeMetaAllocator — Regime元分配器 (MOD-PA-007)
 
-A 模型（design_memo_001 §2.2）的 meta 层。消费 regime 检测器 (MOD-REGIME-001) 的
+A 模型（30_multi_strategy_concurrency §2.2）的 meta 层。消费 regime 检测器 (MOD-REGIME-001) 的
 12 维灰度概率 + 各策略 PerformanceScore，通过 **Shrinkage 风险节流（只减不增）**
 + **PerformanceScore 后验分配**，产出各 StrategyBook 的资金预算占比。
 
-核心裁定（design_memo_001 §2.2，2026-08-05）：移除 RegimeScore，regime 仅通过
+核心裁定（30_multi_strategy_concurrency §2.2，2026-08-05）：移除 RegimeScore，regime 仅通过
 Shrinkage 做风险节流。regime 只回答"现在该多谨慎"，不回答"现在该偏向哪个策略"——
 后者由 PerformanceScore 后验 PnL 自然捕获。
 
@@ -33,8 +33,8 @@ Shrinkage 做风险节流。regime 只回答"现在该多谨慎"，不回答"现
 MaxDD −10.3%；regime 做 alpha-timing Sharpe +0.87（降）。数据印证：同信号用于进攻
 有害，用于防守有益。
 
-阶段：骨架（接口完整，实现待填充）。第二阶段上（design_memo_001 §4.2）。
-依据: design_memo_001 §2.2 + discussion_001 §5（Shrinkage 二维公式）+ blueprint §2.3
+阶段：骨架（接口完整，实现待填充）。第二阶段上（30_multi_strategy_concurrency §4.2）。
+依据: 30_multi_strategy_concurrency §2.2 + 10_regime_detector_spec §5（Shrinkage 二维公式）+ blueprint §2.3
 SSoT: depgraph MOD-PA-007
 Version: 0.1.0
 """
@@ -97,7 +97,7 @@ class RegimeMetaAllocator:
 
         Args:
             base_weights: 先验权重（等权 1/N 或人工先验），新策略冷启动只用这个。
-            shrinkage_enabled: Shrinkage 开关（discussion_002 C1 验证，默认 True）。
+            shrinkage_enabled: Shrinkage 开关（11_regime_backtest_validation_plan C1 验证，默认 True）。
                 True → global_shrinkage = ConfidenceSignal × RiskSignal
                 False → global_shrinkage = 1.0（C1 开/关对比基准，一票否决）
         """

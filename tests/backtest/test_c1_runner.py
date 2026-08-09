@@ -3,8 +3,8 @@
 # [DOMAIN] D_BACKTEST
 # [A_module] module_id=MOD-TEST-BT-C1RUN | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #ARCH-REGIME-VALIDATION-001 #C1-shrinkage-comparator
-"""C1 Runner (C1 执行器) 单元测试——discussion_002 Phase 1 入口。
+# [ARCH-REF] #11_regime_backtest_validation_plan #ARCH-REGIME-VALIDATION-001 #C1-shrinkage-comparator
+"""C1 Runner (C1 执行器) 单元测试——11_regime_backtest_validation_plan Phase 1 入口。
 
 覆盖:
   - build_volatility_schedule：从 OHLCV 算市场等权实现波动率序列

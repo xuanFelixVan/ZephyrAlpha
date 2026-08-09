@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME_VAL-002 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_017_phase2_model_quality_validation.md §2.1
+# [BLUEPRINT] MOD-REGIME_VAL-002 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/12_regime_phase2_validation.md §2.1
 # [MODULE] zephyr.regime.validation.phase2.a1_sample_sufficiency
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; zephyr.regime.core.regime_detector
@@ -6,15 +6,15 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] A1只读 detector/builder, 不改其状态(OCP); Viterbi解码用同一拟合模型; dropna去warmup期NaN
-# [MODIFY-GUARD] discussion_017_phase2_model_quality_validation.md §2.1
+# [MODIFY-GUARD] 12_regime_phase2_validation.md §2.1
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] A1ValidationError(ZA-REGIME-0020)
 # [TESTS] tests/regime/phase2/test_a1_sample_sufficiency.py
 # [TTL] permanent
-# [ARCH-REF] #discussion_017 §2.1 #discussion_018 §4.1 A1
-"""A1 样本充足性验证器（discussion_017 §2.1，Phase 2 第一批 MVP）.
+# [ARCH-REF] #12_regime_phase2_validation §2.1 #12_regime_phase2_validation §4.1 A1
+"""A1 样本充足性验证器（12_regime_phase2_validation §2.1，Phase 2 第一批 MVP）.
 
 验证问题: HMM 4 态的稀有态够 HMM 学吗？
 
@@ -25,7 +25,7 @@
   4. 统计 r1-r4 各态出现天数
   5. 对照判定门槛
 
-判定门槛（discussion_018 §4.1 A1）:
+判定门槛（12_regime_phase2_validation §4.1 A1）:
   ≥100 天  → 充足（独立建模）
   50-100   → 中等（收缩向均值，§2.7 稀有态处理）
   <50      → 不足（合并高波动三态 → 6 态）
@@ -35,7 +35,7 @@ Overall:
   存在态 50-100 但无 <50 → REVIEW
   存在态 <50            → FAIL（合并态数后重跑）
 
-依据: discussion_017 §2.1
+依据: 12_regime_phase2_validation §2.1
 Version: 0.1.0
 """
 
@@ -63,7 +63,7 @@ _logger = logging.getLogger(__name__)
 # r1-r4 HMM 4 态（与 regime_detector.HMM_STATES 对齐）
 HMM_STATES_N: list[str] = [f"r{i}" for i in range(1, 5)]
 
-# 判定门槛（discussion_018 §4.1 A1）
+# 判定门槛（12_regime_phase2_validation §4.1 A1）
 SUFFICIENT_DAYS = 100  # ≥100 → 充足
 INSUFFICIENT_DAYS = 50  # <50 → 不足（50-100 为中等区间）
 

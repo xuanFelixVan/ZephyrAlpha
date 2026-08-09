@@ -40,7 +40,7 @@ Zephyr 语义 → MLflow 映射:
 本 adapter 只调 ``start_run`` + ``log_*``，不关心 backend 选择——tracker 关闭时 NullBackend
 全 no-op，run_id="null-run"。所有 log 失败由 ``RunContext`` 内 try/except 兜住，不抛。
 
-依据: discussion_002 §3 ② + backtest_observability_mlflow_plan.md M1-3
+依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1-3
 Version: 0.1.0
 """
 from __future__ import annotations

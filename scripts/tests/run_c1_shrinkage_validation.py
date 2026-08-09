@@ -6,9 +6,9 @@
 # [DOMAIN] D_REGIME
 # [STARTUP] manual
 # [MATURITY] production
-# [ARCH-REF] #discussion_002 #C1-shrinkage-comparator #MOD-REGIME-002
+# [ARCH-REF] #11_regime_backtest_validation_plan #C1-shrinkage-comparator #MOD-REGIME-002
 # [TTL] permanent
-"""C1 Shrinkage 开/关对比验证执行脚本（discussion_002 Phase 1 核心验证）
+"""C1 Shrinkage 开/关对比验证执行脚本（11_regime_backtest_validation_plan Phase 1 核心验证）
 
 一票否决：C1 不通过 = regime 检测器不部署（回退静态等权）。
 
@@ -28,7 +28,7 @@ Usage:
   python scripts/tests/run_c1_shrinkage_validation.py --mode real # 真实数据 C1
   python scripts/tests/run_c1_shrinkage_validation.py --mode real --risk-mode full --overlay off  # Phase 2a
 
-依据: discussion_002 §4.3 C1 + §5 验证标准（Morwane OOS 行业基准）
+依据: 11_regime_backtest_validation_plan §4.3 C1 + §5 验证标准（Morwane OOS 行业基准）
 """
 from __future__ import annotations
 
@@ -278,7 +278,7 @@ def run_real(risk_mode: str = "simple", overlay: str = "off",
     Args:
         risk_mode: "simple"=Phase1简化版risk(1参数#1)；"full"=Phase2a全量(13参数)
         overlay:   "off"=无覆盖层(纯HMM)；"on"=Phase2b启用8转换overlay_signals
-        temperature: HMM 概率温度缩放 T（discussion_004 §2.2 P0-E2 Stage 1）。
+        temperature: HMM 概率温度缩放 T（13_regime_phase3_engineering_plan §2.2 P0-E2 Stage 1）。
             1.0=不缩放（基准）；>1 降温摊平 HMM 后验，验证 C1 不退化。
     """
     if not REAL_DEPS_OK:
@@ -341,7 +341,7 @@ def run_real(risk_mode: str = "simple", overlay: str = "off",
 def main() -> None:
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
     parser = argparse.ArgumentParser(
-        description="C1 Shrinkage 开/关对比验证（discussion_002 Phase 1）"
+        description="C1 Shrinkage 开/关对比验证（11_regime_backtest_validation_plan Phase 1）"
     )
     parser.add_argument(
         "--mode", choices=["mock", "real"], default="mock",
@@ -358,7 +358,7 @@ def main() -> None:
     )
     parser.add_argument(
         "--temperature", type=float, default=1.0,
-        help="HMM 概率温度缩放 T（discussion_004 §2.2 P0-E2）：1.0=不缩放（基准）；"
+        help="HMM 概率温度缩放 T（13_regime_phase3_engineering_plan §2.2 P0-E2）：1.0=不缩放（基准）；"
              ">1 降温摊平后验验证 C1 不退化；仅 real 模式生效",
     )
     args = parser.parse_args()

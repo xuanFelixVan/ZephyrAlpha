@@ -1,4 +1,4 @@
-"""两阶段概率校准器单元测试（discussion_004 §2.2 P0-E2）.
+"""两阶段概率校准器单元测试（13_regime_phase3_engineering_plan §2.2 P0-E2）.
 
 测试覆盖：
   - TemperatureCalibrator: T 学习方向（过自信→T>1，欠自信→T<1，已校准→T≈1）
@@ -8,7 +8,7 @@
   - compute_occurred_pit: PIT 防泄漏（§2.2.9 #1 #2）
   - Bug #3: BCE 不崩溃（occurred 是 1D 二值标签）
 
-依据: discussion_004 §2.2.7 验收标准 / §2.2.9 防泄漏检查清单 / §2.2.10 降级验收
+依据: 13_regime_phase3_engineering_plan §2.2.7 验收标准 / §2.2.9 防泄漏检查清单 / §2.2.10 降级验收
 """
 
 from __future__ import annotations

@@ -60510,14 +60510,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 24062
-    mtime_utc: "2026-08-06T06:33:40.925554Z"
-    sha256: "cc5b6aefabce16768a285eca6619bf5bab8ba9de83e47a2d38b76ce5418d6bdc"
+    size_bytes: 24453
+    mtime_utc: "2026-08-09T10:35:28.224777Z"
+    sha256: "f3fc2b2def1e8baade8e11b0fbbd5b69f4dffc3ccbb0d4e7c4dc1a2ed27702c9"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60540,14 +60540,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_004_position_sizing.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/31_position_sizing.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 33427
-    mtime_utc: "2026-08-07T18:35:11.427120Z"
-    sha256: "1bb14b530cfa33b51ff8609e879bf2b9ed8a6da5ccbe446ca2339a62005f4626"
+    size_bytes: 34476
+    mtime_utc: "2026-08-09T10:35:32.972459Z"
+    sha256: "c7e080e805fa1399402c5e4d45936fc7cb894ce7694c09576a6f4e2fba5ade27"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60570,14 +60570,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_000_discussion_framework.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 34549
-    mtime_utc: "2026-08-08T12:15:41.641886Z"
-    sha256: "8911f22de9e059390838a24cc4c76b98858956f98bcbd33a7601388e25b2bea1"
+    size_bytes: 45122
+    mtime_utc: "2026-08-09T10:35:26.265703Z"
+    sha256: "780a0c79053138efe0325a68cdcfaddc8089020d16413f7d724b202e06feef1e"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60600,14 +60600,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_003_first_batch_strategies.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/20_first_batch_strategies.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 26337
-    mtime_utc: "2026-08-08T03:28:27.676204Z"
-    sha256: "6d781615db1b81ece00c72a38ad77bde30191d05fe24ccda9585317e489de4f3"
+    size_bytes: 27076
+    mtime_utc: "2026-08-09T10:35:30.612469Z"
+    sha256: "39f6f3a272b31473d14111e4cedad27495387266ac01d1b41fbac92be37bd38c"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60615,14 +60615,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 83555
-    mtime_utc: "2026-08-08T15:56:10.325753Z"
-    sha256: "4dee0fe3b038adc30307318ffee78bb5a344a0fc682437c1c50c2dd3da41df5c"
+    size_bytes: 90086
+    mtime_utc: "2026-08-09T10:09:11.294308Z"
+    sha256: "217f2879e039c2aac0e4f50db0103c7ea93c3410bf3c8acb78c86bd50cd89a85"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60630,14 +60630,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_018_backtest_observability_workplan.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/50_backtest_observability_workplan.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 16644
-    mtime_utc: "2026-08-07T18:25:31.834790Z"
-    sha256: "a54662aa4b32277a297da6b88d5268c7f0884d3960b06e1e6fa2019a07fc5e8b"
+    size_bytes: 16699
+    mtime_utc: "2026-08-09T10:09:11.294816Z"
+    sha256: "78b4a961489a0c48bfc60f2fb1457519adadcd05b81fe0058aab50f94f7bb408"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60645,14 +60645,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_010_execution_broker.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 102741
-    mtime_utc: "2026-08-08T11:53:42.343696Z"
-    sha256: "0fc23c990cb13dedbb427fd41f6a5655d20bdeb523741a468c216f293bdd1f16"
+    size_bytes: 103219
+    mtime_utc: "2026-08-09T10:35:34.915226Z"
+    sha256: "f6483db1705c6c684c583b849bf70b7ad5d60be50c3cc2993df33970563f9f20"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60660,14 +60660,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_002_regime_backtest_validation_plan.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/11_regime_backtest_validation_plan.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 62793
-    mtime_utc: "2026-08-08T15:33:43.815059Z"
-    sha256: "3ac5eb0be4341422812b453c04a2db92a0fa1004fa5701b62c33f0f96b6c4fc7"
+    size_bytes: 63297
+    mtime_utc: "2026-08-09T09:56:41.041787Z"
+    sha256: "c91d97100f3c21e69c90c05bff0123c6bb3349d0033d4723f5419b7a2637f449"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60675,14 +60675,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_017_phase2_model_quality_validation.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/12_regime_phase2_validation.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 22585
-    mtime_utc: "2026-08-07T18:25:31.834790Z"
-    sha256: "e54569ce36539b3e0f2ea6a753226dd161797888bbc96bcf27bfc1e5e282fdf7"
+    size_bytes: 22990
+    mtime_utc: "2026-08-09T10:09:11.292291Z"
+    sha256: "19fcca332d84989648c8dce83084ca78ddf11b6c14741929e8d5fed0e710717a"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60690,14 +60690,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_021_density_prediction.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/91_density_prediction.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 1510
-    mtime_utc: "2026-08-07T16:05:02.857751Z"
-    sha256: "0df845bc3e3e872d65176078176ba03a75daf27587163ef716c81371fa24df05"
+    size_bytes: 1847
+    mtime_utc: "2026-08-09T10:09:11.296388Z"
+    sha256: "1feb3c2294e2fcfd589e71edcf4abafd32ab58cd9b98279af5519529f7cbfb86"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60705,14 +60705,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 188521
-    mtime_utc: "2026-08-06T03:41:46.008109Z"
-    sha256: "0b8e1206aa34e2da105d6c9e748dede8da73a59ca7f644a13b73db27d36edc76"
+    size_bytes: 188906
+    mtime_utc: "2026-08-09T09:56:37.158956Z"
+    sha256: "1421406de0d188f84302cb2778ab52fd5309f317d9e7e46a8685d9f54b7e352b"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60735,14 +60735,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_022_panel_experiment_history_tab_and_mlflow_retirement.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/51_panel_experiment_history_mlflow_retirement.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 45470
-    mtime_utc: "2026-08-08T16:35:29.553462Z"
-    sha256: "4767af254f935a3c86a963cd54d48221fd9c4b32e39bafed4eb949c9983cbfad"
+    size_bytes: 45897
+    mtime_utc: "2026-08-09T09:56:41.043296Z"
+    sha256: "2d453de1c9931d35a90615030c253c33f953f3a795ec402f8dadf97a8ad68f5e"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60765,14 +60765,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_020_methodology_open_questions.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/90_methodology_open_questions.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 24258
-    mtime_utc: "2026-08-07T18:25:31.840874Z"
-    sha256: "8395800c8e7345f4b3be72ee9d902e6c3e436906e9ea3165cc4fdbf699786deb"
+    size_bytes: 24739
+    mtime_utc: "2026-08-09T10:09:11.294816Z"
+    sha256: "5414fd1edae8f9e8e6f32e86739937b4f086aaf28d158fc5e179d2f2ebf98ef6"
     registered_in:
     classification_confidence: 0.85
     tags:
@@ -60795,14 +60795,14 @@ assets:
 
     tags_last_updated: None
   -
-    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md"
+    relative_path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md"
     asset_type: "doc"
     layer: "L02"
     status: "active"
     priority: "P3"
-    size_bytes: 96029
-    mtime_utc: "2026-08-08T16:51:40.246303Z"
-    sha256: "ba8a94f0760d1c1fc2f9d1c7e0a7443d32a4eaf8cdc417ca2d1840b65bc6a1a5"
+    size_bytes: 96385
+    mtime_utc: "2026-08-09T10:09:11.285716Z"
+    sha256: "44fa01593904fa32b2f3c3c3db3cf7ab34e1ad0f614202077f2b6600d80ab62b"
     registered_in:
     classification_confidence: 0.85
     tags:

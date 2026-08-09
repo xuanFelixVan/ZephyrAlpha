@@ -2,7 +2,7 @@
 # [MODULE] zephyr.backtest.regime_validation.c1_comparator
 # [DOMAIN] D_BACKTEST
 # [DEPENDENCIES] zephyr.backtest.core.engine_base; zephyr.backtest.core.portfolio; zephyr.backtest.implementations.shrinkage_engine; zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.regime_validation.shrinkage_provider
-# [CONSUMERS] 人工审查 ; discussion_002 Phase 1 验证
+# [CONSUMERS] 人工审查 ; 11_regime_backtest_validation_plan Phase 1 验证
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 基准/实验组除 Shrinkage 外全等(同config/数据/信号); 一票否决(C1不过=regime不部署); MaxDD存负值(更高=更好); 不修改输入
@@ -14,15 +14,15 @@
 # [TESTS] tests/backtest/test_c1_comparator.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #C1-shrinkage-comparator #MOD-REGIME-001
+# [ARCH-REF] #11_regime_backtest_validation_plan #C1-shrinkage-comparator #MOD-REGIME-001
 
 """L_BACKTEST — C1 Shrinkage 开/关对比器 (C1: 一票否决裁定)
 
-discussion_002 §4.3 C1 核心验证——Shrinkage 开 vs 关两组回测对比，判定 regime
+11_regime_backtest_validation_plan §4.3 C1 核心验证——Shrinkage 开 vs 关两组回测对比，判定 regime
 风险节流是否"不伤害 Sharpe 且改善回撤"。**一票否决：C1 不通过 = regime 不部署**
 （回退静态等权）。
 
-实验设计（discussion_002 §4.3 + §5）:
+实验设计（11_regime_backtest_validation_plan §4.3 + §5）:
   - 基准组（关）: ShrinkageBacktestEngine + ConstShrinkageProvider(1.0)  → 满部署
   - 实验组（开）: ShrinkageBacktestEngine + 真实/mock shrinkage_provider  → 节流
   - 同一批策略、同一历史区间、同一交易成本（除 Shrinkage 外全等，可溯源对比）
@@ -40,7 +40,7 @@ discussion_002 §4.3 C1 核心验证——Shrinkage 开 vs 关两组回测对比
 Calmar = annual_return / |max_drawdown|（MaxDD 存负值，取绝对值）。
 Turnover = Σ(|fill.quantity × fill.price|) / (avg_nav × num_years)（年化单向换手）。
 
-依据: discussion_002 §4.3/§5（C1 一票否决）+ design_memo_001 §2.2
+依据: 11_regime_backtest_validation_plan §4.3/§5（C1 一票否决）+ 30_multi_strategy_concurrency §2.2
 SSoT: depgraph MOD-BT-001 / MOD-REGIME-001
 Version: 0.1.0
 """
@@ -80,7 +80,7 @@ class C1ShrinkageComparatorError(ZephyrBaseError):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# 配置（C 类可调参数，默认值来自 discussion_002 §5）
+# 配置（C 类可调参数，默认值来自 11_regime_backtest_validation_plan §5）
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -88,7 +88,7 @@ class C1ShrinkageComparatorError(ZephyrBaseError):
 class C1Config:
     """C1 开/关对比门槛配置——不可变。
 
-    默认值取自 discussion_002 §5 验证标准汇总表（行业基准 Morwane OOS 2013-2026）。
+    默认值取自 11_regime_backtest_validation_plan §5 验证标准汇总表（行业基准 Morwane OOS 2013-2026）。
     """
 
     sharpe_tolerance: float = 0.1           # S_开 ≥ S_关 − tol（不显著伤害）
@@ -156,7 +156,7 @@ class C1ComparisonResult:
 class C1ShrinkageComparator:
     """Shrinkage 开/关对比器（C1 一票否决裁定）。
 
-    Usage（discussion_002 Phase 1 核心验证）:
+    Usage（11_regime_backtest_validation_plan Phase 1 核心验证）:
         comparator = C1ShrinkageComparator()
         result = comparator.compare(
             data=data_df,

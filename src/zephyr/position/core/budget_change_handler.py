@@ -18,12 +18,12 @@
 """
 BudgetChangeHandler — Budget变动处理器 (MOD-POS-022)
 
-A 模型（design_memo_001 §2.4）的执行层。当 RegimeMetaAllocator 产出新
+A 模型（30_multi_strategy_concurrency §2.4）的执行层。当 RegimeMetaAllocator 产出新
 BudgetAllocation 导致某策略 budget 变动时，本模块负责**把 budget 变动落地到
 StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 强裁），确保策略
 适配新 budget。
 
-核心原则（design_memo_001 §2.4）：budget 是硬约束，策略的自主权在"怎么适应 budget"，
+核心原则（30_multi_strategy_concurrency §2.4）：budget 是硬约束，策略的自主权在"怎么适应 budget"，
 不在"要不要适应"。**策略不能说"我不卖"**。三级升级而非直接强砍：尊重策略自主权
 （决定砍哪个）+ 避免随机时刻强制卖出的高成本。
 
@@ -32,7 +32,7 @@ StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 �
          / 处理 budget 上调（上调简单，直接抬高上限自然部署）
 
 阶段：骨架（接口完整，实现待填充）。
-依据: design_memo_001 §2.4 + blueprint §3
+依据: 30_multi_strategy_concurrency §2.4 + blueprint §3
 SSoT: depgraph MOD-POS-022
 Version: 0.1.0
 """
@@ -46,7 +46,7 @@ from typing import Any
 
 
 class TierLevel(Enum):
-    """三级升级级别（design_memo_001 §2.4）。"""
+    """三级升级级别（30_multi_strategy_concurrency §2.4）。"""
 
     TIER_1_LOCK = "tier_1_lock"          # 封锁新仓（立即，被动）
     TIER_2_REBALANCE = "tier_2_rebalance"  # 策略自主 rebalance（建议，策略自主）
@@ -116,7 +116,7 @@ class BudgetChangeHandler:
 
         Args:
             convergence_windows: 各策略 convergence_window（按换手率差异化）。
-                design_memo_001 §6.4：打板 1-2 天，多因子 3-5 天，事件驱动 2-3 天。
+                30_multi_strategy_concurrency §6.4：打板 1-2 天，多因子 3-5 天，事件驱动 2-3 天。
         """
         self.convergence_windows = convergence_windows or {
             "打板": timedelta(days=2),
@@ -138,7 +138,7 @@ class BudgetChangeHandler:
 
         只处理 budget 下调（new < old）。上调简单，StrategyBook 直接抬高上限自然部署。
 
-        三级升级（design_memo_001 §2.4）：
+        三级升级（30_multi_strategy_concurrency §2.4）：
             Tier 1（立即）：封锁新仓，现有仓位不动
             Tier 2（Tier 1 后立即）：发 rebalance_to_budget，策略自选砍哪些
             Tier 3（Tier 2 窗口超时 / firm 风险违例）：按比例强行裁剪所有仓位

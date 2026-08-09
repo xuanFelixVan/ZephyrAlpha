@@ -14,7 +14,7 @@
 # [TESTS] tests/regime/test_market_features.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §3 #MOD-REGIME-002
+# [ARCH-REF] #10_regime_detector_spec §3 #MOD-REGIME-002
 """市场级 regime 特征：实现波动率分位 / 跨资产相关性 / 涨跌家数比 / 量能异动（MOD-REGIME-002 §3 F1/F3/F4/F5）。
 
 与 trend_features（F2a Hurst / F2b Kalman，单标的趋势）互补，本模块为**市场级**特征，

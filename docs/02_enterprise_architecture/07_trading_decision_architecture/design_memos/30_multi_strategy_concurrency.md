@@ -1,18 +1,21 @@
 ---
 ttl: permanent
 doc_type: architecture_view
+title: 多策略并发架构
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "1.3.0"
+version: "1.3.3"
 date: 2026-08-05
 topic: multi_strategy_concurrency
 scope: 07_trading_decision_architecture
 ---
 
-# 设计备忘·多策略并发架构
+# 多策略并发架构
 
 > 本备忘记录多策略并发执行架构的选型推理与上限定义。
 > 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。
-> 管理规范见 [design_memo_management_spec.md](design_memo_management_spec.md)。
+> 管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)。
 
 ## 1. 背景
 
@@ -256,7 +259,7 @@ Tier 2 的 rebalance 窗口需按策略换手率差异化设置。初拟：打�
 
 ### 6.6 regime 检测器业务规则 spec（需人定义，讨论中）
 regime 检测器须输出 12 维灰度概率分布（非硬标签）。业务规则（各态转换路径、触发/确认信号、置信度更新规则、主线识别）需人定义——这是主观交易经验的系统化编码。
-讨论文档：[discussion_001_regime_detector_spec.md](discussion_001_regime_detector_spec.md)
+讨论文档：[10_regime_detector_spec.md](10_regime_detector_spec.md)
 
 ## 7. 引用
 
@@ -331,3 +334,6 @@ OOS 2013-2026（扣除 2bps/turnover）：
 | 2026-08-05 | 1.1.0 | 补充分配公式+权重变动三级升级+灰度 regime+置信度→仓位映射；关闭 §6.5；新增 §6.6 | 策略权重分配与 budget 变动操作流程讨论定型 |
 | 2026-08-05 | 1.2.0 | 移除 RegimeScore，分配公式改为 Base×Performance×Shrinkage；置信度映射改为风险节流语义；regime 仅用于 Shrinkage | 开源实证：regime alpha 择时降收益、风险节流改善回撤；与 A 模型"加法替代优化器"哲学对齐 |
 | 2026-08-05 | 1.3.0 | §2.5 StrategyBook Drawdown Protocol（四级回撤阈值 8/15/20/25%+恢复机制+分层风控+VaR/ES+Kill Switch） | 用户确认"回撤是沉没成本属账户风控不属市场状态"+2026-08-05 行业搜索（LedgerMind/ARKA/Sina量化FOF/tradingwyckoff/赢牛资管） |
+| 2026-08-09 | 1.3.1 | 文件名 design_memo_001_multi_strategy_concurrency.md → 30_multi_strategy_concurrency.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.3.2 | §1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md` | 改名工程遗留断链修复（全量断链扫描发现） |
+| 2026-08-09 | 1.3.3 | 文档头统一：frontmatter 补 title/owner/language，H1 去"设计备忘·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

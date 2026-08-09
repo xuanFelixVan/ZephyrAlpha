@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-VERIFY-CALIB | discussion_004 §2.2.9 Bug #3 验证
+# [BLUEPRINT] MOD-VERIFY-CALIB | 13_regime_phase3_engineering_plan §2.2.9 Bug #3 验证
 # [MODULE] scripts.tests.verify_calibration_nll
 # [DOMAIN] D_REGIME
 # [STARTUP] event_driven
@@ -24,7 +24,7 @@ from scipy.optimize import minimize_scalar
 
 
 def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
-    """T 从 IS 数据学：最小化二元交叉熵（discussion_004 §2.2.8 B 修正版）."""
+    """T 从 IS 数据学：最小化二元交叉熵（13_regime_phase3_engineering_plan §2.2.8 B 修正版）."""
     def binary_cross_entropy(T: float) -> float:
         scaled = log_proba / T
         log_softmax = scaled - np.logaddexp.reduce(scaled, axis=1, keepdims=True)
@@ -139,7 +139,7 @@ def main() -> None:
     occurred_list = [0, 1] * 25  # Python list
 
     print("=" * 60)
-    print("二元交叉熵 NLL 验证（discussion_004 §2.2.9 Bug #3 修复）")
+    print("二元交叉熵 NLL 验证（13_regime_phase3_engineering_plan §2.2.9 Bug #3 修复）")
     print("=" * 60)
 
     run_scenario("1. 过自信（模拟 B1 FAIL）", logits_over, occurred_over)

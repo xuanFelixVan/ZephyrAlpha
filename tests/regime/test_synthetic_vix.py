@@ -26,7 +26,7 @@
       * feature_builder=None 且期权缺失 → 返回 None
       * 注入 S1 vix_panic：危机期 vix_pct 使 s1_vix_panic_score 达 85（过门槛）
 
-依据: discussion_003 §9 P0 / Phase 2 计划 §Phase2c
+依据: 12_regime_phase2_validation §9 P0 / Phase 2 计划 §Phase2c
 """
 
 from __future__ import annotations

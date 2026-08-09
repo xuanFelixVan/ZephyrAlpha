@@ -1,7 +1,7 @@
 ---
 # B4 转换触发准确性验证 —— 历史事件库真源
 #
-# 依据: discussion_002 §4.2 B4 + discussion_003 §2.2
+# 依据: 11_regime_backtest_validation_plan §4.2 B4 + 12_regime_phase2_validation §2.2
 # 用途: Phase 2 B4 验证器对照本库判定 HMM 8 转换触发时点是否吻合
 # 标注原则:
 #   - 选取 A 股历史上有明确"危机爆发/危机复苏"特征转换的事件
@@ -63,7 +63,7 @@ events:
 #   ② 2020/2024 为 V 反转/政策驱动型复苏，不走 Wyckoff 吸筹（valuation/wyckoff 合法不达标）；
 #   ③ 修复 capitulation 阈值(z>2→z>1)+valuation warmup bug 后仍 0/3，确认是设计域不符非 bug。
 #   待 S2 重设计（加政策/V 反转信号，解耦 capitulation 与复苏确认时滞）后激活。
-#   （原 discussion_003 §10.4:431 裁定 S2 0/3 需 P2 数据 → P2 数据已就位，现升级为设计域不符）
+#   （原 12_regime_phase2_validation §10.4:431 裁定 S2 0/3 需 P2 数据 → P2 数据已就位，现升级为设计域不符）
   # ════════════════════════════════════════════════════════════════════
   - id: EVT-2008-RECOVERY
     date: "2008-11-10"

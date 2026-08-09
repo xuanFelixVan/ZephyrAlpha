@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""A1 样本充足性验证器单元测试（discussion_003 §2.1）."""
+"""A1 样本充足性验证器单元测试（12_regime_phase2_validation §2.1）."""
 from __future__ import annotations
 
 import unittest

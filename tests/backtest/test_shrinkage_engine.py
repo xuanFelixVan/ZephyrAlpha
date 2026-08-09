@@ -3,7 +3,7 @@
 # [DOMAIN] D_BACKTEST
 # [A_module] module_id=MOD-TEST-BT-SHRINK | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #B-shrinkage-engine
+# [ARCH-REF] #11_regime_backtest_validation_plan #B-shrinkage-engine
 """ShrinkageBacktestEngine (B1) 单元测试——Shrinkage 接入点。
 
 覆盖:

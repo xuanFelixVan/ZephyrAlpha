@@ -14,7 +14,7 @@
 # [TESTS] tests/regime/test_overlay_signals_builder.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §4 #D-SIGNAL-68 #MOD-REGIME-002 #Phase2b #C1-shrinkage-comparator
+# [ARCH-REF] #10_regime_detector_spec §4 #D-SIGNAL-68 #MOD-REGIME-002 #Phase2b #C1-shrinkage-comparator
 """OverlaySignals 构造器（MOD-REGIME-002 Phase 2b）。
 
 把原始特征转换成 RegimeDetector._run_overlay 期望的 8 转换 overlay_signals 输入 dict：
@@ -61,7 +61,7 @@ s2_wyckoff 委托 wyckoff_engine 6 阶段 FSM（需 high/low，P1-E4 已从 klin
 P1-E3 升级：policy/bad_news_flat 从 stub→可算（关键词字典 NLP 情感分析），
 S2 confirm/trigger 全阶段解锁。8 转换全部可触发。
 
-依据: discussion_001 v1.3.1 §4 / Phase 2 计划 §Phase2b
+依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
 """
 

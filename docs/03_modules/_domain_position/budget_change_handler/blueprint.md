@@ -23,17 +23,17 @@ responsibility_domain:
 
 > **module_id**: MOD-POS-022 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-POS-022 | **设计真源**: [design_memo_001_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.4（权重变动操作流程·三级升级）
+> **SSoT**: depgraph MOD-POS-022 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.4（权重变动操作流程·三级升级）
 > **上游触发**: [RegimeMetaAllocator blueprint](../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007 §2.2 BudgetChanged 事件 (E-PA-07)
 > **执行目标**: [StrategyBook blueprint](../strategy_book/blueprint.md) MOD-POS-020 §3.3 rebalance_to_budget 接口
 
 ## 1. 定位
 
-Budget 变动处理器——A 模型（[design_memo_001](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.4）的执行层。当 RegimeMetaAllocator 产出新 `BudgetAllocation` 导致某策略 budget 变动时，本模块负责**把 budget 变动落地到 StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 强裁），确保策略适配新 budget，策略不能说"我不卖"。
+Budget 变动处理器——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.4）的执行层。当 RegimeMetaAllocator 产出新 `BudgetAllocation` 导致某策略 budget 变动时，本模块负责**把 budget 变动落地到 StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 强裁），确保策略适配新 budget，策略不能说"我不卖"。
 
 属 **A 类基础设施**（事件驱动 + 状态机 + 超时升级，逻辑明确），convergence_window / 超时阈值为 C 类可调参数。
 
-### 1.1 核心原则（design_memo_001 §2.4）
+### 1.1 核心原则（30_multi_strategy_concurrency §2.4）
 
 > **budget 是硬约束**（来自 meta 层），策略的自主权在"怎么适应 budget"，不在"要不要适应"。策略必须实现 `rebalance_to_budget(new_budget)` 接口——**策略不能说"我不卖"**。
 
@@ -68,7 +68,7 @@ RegimeMetaAllocator ──BudgetChanged事件──→ BudgetChangeHandler
 - **不做选股 / 仓位裁决**（归 StrategyBook / MOD-POS-001）
 - **不决定砍哪个仓位**（Tier 2 由策略自主决定；Tier 3 按比例 dumb 裁剪）
 - **不执行交易**（归 D-EX-CORE；本模块只产出 rebalance 指令）
-- **不处理 budget 上调**（上调简单，StrategyBook 直接抬高上限自然部署，design_memo_001 §2.4）
+- **不处理 budget 上调**（上调简单，StrategyBook 直接抬高上限自然部署，30_multi_strategy_concurrency §2.4）
 
 ## 2. 输入 / 输出
 
@@ -78,7 +78,7 @@ RegimeMetaAllocator ──BudgetChanged事件──→ BudgetChangeHandler
 |------|------|-----------|------|:----:|
 | 触发 | BudgetAllocation（新分配方案） | CTR-PA-007 | RegimeMetaAllocator (MOD-PA-007) | ❌ 待建 |
 | 事件 | BudgetChanged（budget 变动事件，含 old/new 对比） | E-PA-07 | RegimeMetaAllocator | ❌ 待建 |
-| 配置 | ConvergenceWindows（各策略 convergence_window，按换手率差异化） | config | 配置文件 | 🟡 待校准（design_memo_001 §6.4） |
+| 配置 | ConvergenceWindows（各策略 convergence_window，按换手率差异化） | config | 配置文件 | 🟡 待校准（30_multi_strategy_concurrency §6.4） |
 | 持仓 | PositionSnapshot（当前持仓，Tier 3 强裁计算用） | CTR-006 | D-EX-CORE | ⚠️ 部分 |
 | 反馈 | StrategyRebalanced（策略 rebalance 完成反馈） | E-POS-20 | StrategyBook | ❌ 待建 |
 
@@ -92,7 +92,7 @@ RegimeMetaAllocator ──BudgetChanged事件──→ BudgetChangeHandler
 | 事件 | BudgetChangeHandled（变动处理完成） | E-POS-40 | RegimeMetaAllocator + Trader（归因用） |
 | 事件 | TierEscalation（升级事件，记录 Tier 1→2→3 流转） | E-POS-41 | Trader + 归因系统 |
 
-## 3. 核心规则：三级升级（design_memo_001 §2.4）
+## 3. 核心规则：三级升级（30_multi_strategy_concurrency §2.4）
 
 ### 3.1 触发判定
 
@@ -107,7 +107,7 @@ RegimeMetaAllocator ──BudgetChanged事件──→ BudgetChangeHandler
         if delta < 0:  budget 下调 → 启动三级升级（§3.2-3.4）
 ```
 
-> **只处理下调**：上调简单（抬高上限 + 买入信号自然部署），不需要 Handler 介入（design_memo_001 §2.4）。
+> **只处理下调**：上调简单（抬高上限 + 买入信号自然部署），不需要 Handler 介入（30_multi_strategy_concurrency §2.4）。
 
 ### 3.2 Tier 1：封锁新仓（立即，被动）
 
@@ -178,7 +178,7 @@ Tier 3 完成后:
     标记 strategy_i 为 "forced_trimmed"（归因用）
 ```
 
-> **设计理由**：dumb but safe——策略死扛不卖时，firm 层兜底。按比例等比裁剪（不挑仓位），保证 budget 约束被满足。宁可错杀不可漏放（与 Kill Switch 原则一致，design_memo_001 §2.5.5）。
+> **设计理由**：dumb but safe——策略死扛不卖时，firm 层兜底。按比例等比裁剪（不挑仓位），保证 budget 约束被满足。宁可错杀不可漏放（与 Kill Switch 原则一致，30_multi_strategy_concurrency §2.5.5）。
 
 ### 3.5 Budget 上调处理（不经过三级升级）
 
@@ -193,7 +193,7 @@ if delta ≥ 0 (budget 上调):
 
 > 上调无需 Handler 介入——StrategyBook 直接收到新 budget 上限，自然部署。Handler 只记录 BudgetChangeHandled 事件（归因用）。
 
-### 3.6 ConvergenceWindow（按换手率差异化，design_memo_001 §6.4 待校准）
+### 3.6 ConvergenceWindow（按换手率差异化，30_multi_strategy_concurrency §6.4 待校准）
 
 | 策略类型 | convergence_window | 理由 |
 |---------|:------------------:|------|
@@ -201,9 +201,9 @@ if delta ≥ 0 (budget 上调):
 | 事件驱动（中换手） | 2-3 交易日 | 事件发酵有节奏，给中等时间 |
 | 多因子（低换手） | 3-5 交易日 | 持仓周期长，给充足时间自主调仓 |
 
-> **初始值待校准**（design_memo_001 §6.4 需人决策）：首批 3 策略确定后，用历史换手率数据校准。config 可调，支持 per-strategy 配置。
+> **初始值待校准**（30_multi_strategy_concurrency §6.4 需人决策）：首批 3 策略确定后，用历史换手率数据校准。config 可调，支持 per-strategy 配置。
 
-### 3.7 高换手 vs 低换手策略的收敛特征（design_memo_001 §2.4）
+### 3.7 高换手 vs 低换手策略的收敛特征（30_multi_strategy_concurrency §2.4）
 
 | 策略类型 | Tier 1+2 收敛 | Tier 3 触发频率 |
 |---------|:-------------:|:---------------:|
@@ -343,7 +343,7 @@ if delta ≥ 0 (budget 上调):
 - 状态持久化（跨交易日恢复）
 - 多策略并发 BudgetChanged 处理（策略间隔离）
 - 全链路联调（RegimeMetaAllocator → Handler → StrategyBook → FirmRiskAggregator）
-- convergence_window 校准（首批策略换手率数据，design_memo_001 §6.4）
+- convergence_window 校准（首批策略换手率数据，30_multi_strategy_concurrency §6.4）
 
 ### Phase 3: 生产化（待 Phase 1/2 验证后）
 
@@ -354,13 +354,13 @@ if delta ≥ 0 (budget 上调):
 
 | 决策 | 理由 |
 |------|------|
-| 三级升级而非直接强砍 | design_memo_001 §2.4：尊重策略自主权 + 避免随机时刻强制卖出高成本 |
+| 三级升级而非直接强砍 | 30_multi_strategy_concurrency §2.4：尊重策略自主权 + 避免随机时刻强制卖出高成本 |
 | Tier 1 立即封锁新仓 | budget 下调第一时间止血，防策略用旧 budget 惯性继续开仓 |
 | Tier 2 策略自主选砍哪些 | 策略最清楚自己哪个仓位最不自信；避免错砍即将盈利的仓位 |
 | Tier 3 等比裁剪（dumb but safe） | 策略死扛时 firm 层兜底；按比例不挑仓位，保证 budget 约束达标 |
-| Tier 3 绕过策略自主权 | 策略不能说"我不卖"——budget 是硬约束（design_memo_001 §2.4） |
+| Tier 3 绕过策略自主权 | 策略不能说"我不卖"——budget 是硬约束（30_multi_strategy_concurrency §2.4） |
 | 只处理下调（上调不介入） | 上调简单（抬高上限+自然部署），现金拖累可接受 |
-| convergence_window 按换手率差异化 | 高换手自然快收敛，低换手给充足时间；design_memo_001 §6.4 |
+| convergence_window 按换手率差异化 | 高换手自然快收敛，低换手给充足时间；30_multi_strategy_concurrency §6.4 |
 | 状态持久化（跨日恢复） | 低换手策略 convergence_window 可能跨日，防重启丢失状态 |
 | 每级独立事件可 log 可复盘 | 归因清晰：能追溯"哪个策略何时被冻结/自主/强裁" |
 | firm 风险违例直接 Tier 3 | 风控违例不等 convergence_window，立即强裁（保命优先） |
@@ -403,7 +403,7 @@ if delta ≥ 0 (budget 上调):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/budget_change_handler.py` | ❌ 未实现 | design_memo_001 §7.2 指定路径，Phase 1 施工 |
+| `src/zephyr/position/core/budget_change_handler.py` | ❌ 未实现 | 30_multi_strategy_concurrency §7.2 指定路径，Phase 1 施工 |
 
 ### 11.5 路径索引使用指南
 

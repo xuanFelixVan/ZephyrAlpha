@@ -2,9 +2,9 @@
 # [TTL] permanent
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# [ARCH-REF] #discussion_003 #MOD-REGIME-VAL-002
+# [ARCH-REF] #12_regime_phase2_validation #MOD-REGIME-VAL-002
 # [TTL] permanent
-"""Phase 2 模型质量验证执行脚本（discussion_003: A1 + B4 + A2 + B1）
+"""Phase 2 模型质量验证执行脚本（12_regime_phase2_validation: A1 + B4 + A2 + B1）
 
 复用 C1 真实模式管线（取数+特征+walk-forward refit），自行执行 detect 收集
 A1/B4/B1 所需中间产物（Viterbi 状态序列 / _last_transitions / detect_records）。
@@ -23,7 +23,7 @@ Usage:
   python scripts/tests/run_phase2_validation.py --no-overlay   # B4 降级（无 overlay）
   python scripts/tests/run_phase2_validation.py --mock         # 合成数据冒烟
 
-依据: discussion_003 §4
+依据: 12_regime_phase2_validation §4
 """
 
 from __future__ import annotations

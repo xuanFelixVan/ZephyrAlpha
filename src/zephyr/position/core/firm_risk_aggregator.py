@@ -18,18 +18,18 @@
 """
 FirmRiskAggregator — Firm层风险聚合器 (MOD-POS-021)
 
-A 模型（design_memo_001 §2.2）的组合汇总层。消费所有 StrategyBook 的
+A 模型（30_multi_strategy_concurrency §2.2）的组合汇总层。消费所有 StrategyBook 的
 TargetPortfolio，**按标的求和（自然叠加）+ 组合级硬上限裁剪 + 冲突净额处理**，
 产出 FirmTargetPortfolio 交由 MOD-POS-001 精裁决。
 
-核心哲学（design_memo_001 §2.3）：用加法替代优化器，O(N) 替代 O(N²)。
+核心哲学（30_multi_strategy_concurrency §2.3）：用加法替代优化器，O(N) 替代 O(N²)。
 多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器。
 
 不做什么：MVO/协方差估计（§3.1 拒绝）/ Kelly（归 MOD-POS-001）/
          选股（归 StrategyBook）/ 跨策略投票（§3.2 拒绝 Model D）
 
 阶段：骨架（接口完整，实现待填充）。
-依据: design_memo_001 §2.2/§2.3/§3.1 + blueprint §2.3
+依据: 30_multi_strategy_concurrency §2.2/§2.3/§3.1 + blueprint §2.3
 SSoT: depgraph MOD-POS-021
 Version: 0.1.0
 """
@@ -110,7 +110,7 @@ class FirmRiskAggregator:
     ) -> FirmTargetPortfolio:
         """主入口：自然叠加 + 硬上限裁剪 + 冲突净额 → FirmTargetPortfolio。
 
-        步骤（design_memo_001 §2.2 + blueprint §3）：
+        步骤（30_multi_strategy_concurrency §2.2 + blueprint §3）：
             1. 按标的求和（自然叠加，S1 给 3% + S2 给 5% = 8%）
             2. 冲突标的净额处理（一策略买一策略卖 → 按净额）
             3. 单票硬上限裁剪（>8% 按比例削，非按策略优先级截断）

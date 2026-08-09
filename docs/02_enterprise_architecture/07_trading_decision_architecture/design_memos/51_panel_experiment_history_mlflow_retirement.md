@@ -1,22 +1,25 @@
 ---
 ttl: permanent
 doc_type: architecture_view
+title: Panel「实验历史」Tab + MLflow 退役施工计划
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "1.2.4"
+version: "1.2.6"
 date: 2026-08-09
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
-parent: discussion_018_backtest_observability_workplan.md
+parent: 50_backtest_observability_workplan.md
 ---
 
-# discussion_022 — Panel「实验历史」Tab + MLflow 退役施工计划
+# Panel「实验历史」Tab + MLflow 退役施工计划
 
 > 状态: 工作计划（待施工，M2 实施计划；方向已由用户裁定）
 > 日期: 2026-08-08
 > 作者: AI 提议，用户已裁定方向（Panel 集成 + MLflow 退役）
-> 关联: #ARCH-OBS-EXP-TRACK-001（实验跟踪体系）→ discussion_018（上游工作计划）→ 本施工计划
-> 前序: discussion_018（回测可观测性工作计划，M1 已完成）
-> 依据: discussion_018 §3 ④（M2）+ 用户决策（完全卸载 MLflow / 自建 C1 对比视图）
+> 关联: #ARCH-OBS-EXP-TRACK-001（实验跟踪体系）→ 50_backtest_observability_workplan（上游工作计划）→ 本施工计划
+> 前序: 50_backtest_observability_workplan（回测可观测性工作计划，M1 已完成）
+> 依据: 50_backtest_observability_workplan §3 ④（M2）+ 用户决策（完全卸载 MLflow / 自建 C1 对比视图）
 
 ## 一、Summary（一句话目标）
 
@@ -384,7 +387,7 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
   - PBO 的 null 是 **0.5**（不是 0）：PBO≈0.5 表示选择过程是抛硬币（过拟合），PBO<0.1 表示有真实信号。
   - 实测误报率（零假设搜索中）：原始"best Sharpe 显著吗"=1.000（每次误报）；DSR=0.001；Harvey-Liu Bonferroni=0.057；White's RC=0.022。
 - **对 C1 的价值**：当前 C1 verdict 只有 Sharpe/MaxDD/Calmar/Turnover 四项**静态阈值**判定。这套工具能回答"跑了很多次实验后，这个 sharpe 是不是侥幸"——比 §八 A 的 DTW 更根本（DTW 看曲线相似度，PBO 看选择过程是否可信）。
-- **建议**：**MVP 不做，登记为后续增强**。理由：① 属策略验证方法论层，非展示层，不落在 discussion_022 施工范围；② 需引入 deflated-alpha 依赖（或自行实现 CSCV，成本高）；③ 需 C1 记录"所有试过的配置"（当前只记最终 run，不记搜索路径），是 C1 verdict 体系的上游改造。登记为"C1 verdict 体系升级时评估接入 deflated-alpha 做过拟合检测"。
+- **建议**：**MVP 不做，登记为后续增强**。理由：① 属策略验证方法论层，非展示层，不落在 51_panel_experiment_history_mlflow_retirement 施工范围；② 需引入 deflated-alpha 依赖（或自行实现 CSCV，成本高）；③ 需 C1 记录"所有试过的配置"（当前只记最终 run，不记搜索路径），是 C1 verdict 体系的上游改造。登记为"C1 verdict 体系升级时评估接入 deflated-alpha 做过拟合检测"。
 - **局限**（v1.2.1 补，来源 CSDN 2026-03）：PBO 自身有三重脆弱性：① 子样本构造偏差（须 Circular Block Bootstrap，滑动窗口违反零均值假设致 PBO 系统性低估）；② 平稳性幻觉（结构性断点如 2020 疫情/2022 加息致 PBO 低估过拟合风险）；③ 搜索空间覆盖不足（网格稀疏区最优解致基准分布失真）。单一 PBO 不具决策鲁棒性，工业实践推荐 **PBO + SRD（Sharpe Ratio Decay，滚动 12M Sharpe 斜率 < -0.03/年 警戒）+ DSR 三维交叉验证矩阵**。这进一步支持"MVP 不做"——接入成本远高于单个 `audit()` 调用。
 - **DSR 有效试验数难题**（v1.2.4 补，来源 marketmaker.cc 2026-07 受控实验「How Many Backtest Winners Survive Deflation?」）：DSR fed **raw trial count（试验数 N）** 会**错误拒绝真 edge**——受控实验中真 edge（年化 Sharpe 3.92）被 DSR 错判为不显著（0.748<0.95）。根因："有效试验数"不是单一数字，5 个估计器对同一矩阵**跨 1.6 到 370.0**（差两个数量级）——最小估计下 deflation 几乎失效，最大估计下过度 deflate。正确做法：用 **bootstrap-based 测试**（White's RC / Hansen's SPA）sidestep 有效试验数选择。这进一步支持"MVP 不做"——DSR 不是"调一个 audit() 就行"，有效试验数估计本身就是开放问题。
 - **九大门控完整菜单**（v1.2.4 补，来源 Student One 2026-06「The Full Menu: Every Out-of-Sample Test We Run」）：业界已系统化为 **9 个 OOS 门禁**，每个针对不同过拟合失效模式：① Holdout（参数过拟合，最弱）② Walk-Forward ③ Purged K-Fold（CV 泄漏）④ PBO（选择过拟合）⑤ Romano-Wolf（多重检验 FDR 控制）⑥ SPA/Hansen（studentized 多重检验）⑦ MC block-bootstrap（路径依赖）⑧ cluster stability（聚类鲁棒）⑨ FDR（假发现率控制）。本节原记 PBO/DSR/CSCV/White RC/Harvey-Liu **5 种**，补全为 9 门禁完整菜单；其中 PBO 是最贵门禁（0.45× cost multiplier）。这进一步支持"MVP 不做"——完整门禁体系是 9 个不是 5 个，接入成本远超当前展示层范围；C1 verdict 体系升级时按此菜单逐项评估。
@@ -400,7 +403,7 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
   - `upthrust_count`：离群上涨月数（>3×std，>2=锯齿）
   - `smooth_verdict`：SMOOTH（全过阈值）/ ACCEPTABLE（差 1 项）/ ROUGH（差 2+ 项）；阈值：R²≥0.90 & positive_months≥60% & longest_flat≤11 & upthrust≤2 & max_monthly_dd≥−10%
 - **对 C1 的价值**：当前 C1 verdict 只看 Sharpe/MaxDD/Calmar/Turnover 四项**终值**。curve_smoothness 能回答"experiment 的曲线是不是比 baseline 更平滑/更稳健"——两个策略同 Sharpe 可能曲线质量天差地别。与 §八 E 的 PBO 互补：PBO 看"选择过程可信吗"，curve_smoothness 看"这条曲线长得健康吗"。
-- **建议**：**MVP 不做，登记为后续增强**。理由：① 属 verdict/指标计算层，非展示层，不落在 discussion_022 施工范围；② 需月度重采样（C1 nav 是日频，需 `.resample("M")`），是 c1_adapter 上游改造；③ 6 个阈值面向美股月度策略，需针对本项目策略类型校准。登记为"C1 verdict 体系升级时与 §八 E 一并评估"。
+- **建议**：**MVP 不做，登记为后续增强**。理由：① 属 verdict/指标计算层，非展示层，不落在 51_panel_experiment_history_mlflow_retirement 施工范围；② 需月度重采样（C1 nav 是日频，需 `.resample("M")`），是 c1_adapter 上游改造；③ 6 个阈值面向美股月度策略，需针对本项目策略类型校准。登记为"C1 verdict 体系升级时与 §八 E 一并评估"。
 
 ### 验证当前选择正确的搜索证据
 | 发现 | 来源 | 对本项目的意义 |
@@ -419,10 +422,12 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
-| 2026-08-08 | 1.0.0 | 初稿落盘 design_memos | 从 `.trae/documents/` 工作稿定稿存入永久区；补 §七 10 项施工算法补遗（P0×3 / P1×4 / P2×3）+ §八 4 项后续增强登记（2026-08-08 全网搜索）；按 design_memo_management_spec §4.2 frontmatter 规范 + discussion_018 文档头范式定稿 |
+| 2026-08-08 | 1.0.0 | 初稿落盘 design_memos | 从 `.trae/documents/` 工作稿定稿存入永久区；补 §七 10 项施工算法补遗（P0×3 / P1×4 / P2×3）+ §八 4 项后续增强登记（2026-08-08 全网搜索）；按 design_memo_management_spec §4.2 frontmatter 规范 + 50_backtest_observability_workplan 文档头范式定稿 |
 | 2026-08-08 | 1.1.0 | 再审补遗 2 项缺口 | 缺口 A（P1 节流）：P1-4 多选回调补 `value_throttled` 防抖（来源 Panel 官方文档「Harnessing Throttling」）；缺口 B（P2 CSV 鲁棒性）：P1-7 `degraded_reason` 表补“NAV CSV 解析失败”触发源。第二轮全网搜索（A/B 仪表盘 / akquant / khQuant / PostHog / QuantStats）未发现更优方案，现行 Panel+FallbackBackend JSON 选择再验证正确 |
 | 2026-08-08 | 1.2.0 | 第三轮再审：结构完善 + 登记过拟合检测 | 4 处调整：①§七标题澄清“10 编号项 + v1.1.0 补 2 项内容”；②§五验证补节流 + CSV 鲁棒性单测断言；③§八新增 E 过拟合检测体系（deflated-alpha PBO/DSR/CSCV/White RC，2026-07 开源）；④§三 B2 双曲线图补对数 y 轴（长跨度 >3 年）。第三轮全网搜索（PBO/DSR/多重检验校正/净值归一化）验证 P0-1 归一化算法正确，无新施工缺口 |
 | 2026-08-08 | 1.2.1 | 第四轮再审：登记曲线平滑度 + PBO 局限 | 2 处补充（均落 §八 后续增强，不改施工计划）：①§八新增 F 曲线平滑度指标（july-backtester #151，2026-04，6 标量+SMOOTH/ACCEPTABLE/ROUGH 判定，与 PBO 互补看曲线健康度）；②§八 E 补 PBO 三重脆弱性局限（CSDN 2026-03：子样本/平稳性/搜索空间）+ PBO+SRD+DSR 三维验证矩阵。第四轮全网搜索（PBO/CSCV/DSR/曲线平滑度/对数刻度）验证 P0-1/P0-2 算法正确，核心施工（A/B/C 三工作流 + 10 编号项）无新缺口；新发现 2 项均属 verdict 层非展示层，登记为后续增强 |
 | 2026-08-09 | 1.2.2 | 第五轮融合：前端可视化讨论线调研注入 | 3 处融合（来源 `docs/_working/frontend_visualization_discussion.md` 讨论线 + 2026-08-02 开源量化前端调研，非新全网搜索）：①B2 补 backtest-kit/ui 屏幕布局设计参考（tripolskypetr/backtest-kit，2026-08，React18+Lightweight Charts 回测可视化仪表盘，4 轮再审批漏覆盖——屏幕设计专为回测：KPI 卡片/列表详情切换/Markdown 报告，与「实验历史」Tab 重叠，参考布局不引代码）；②§四 Decisions 补第 9 条 G0.5 过渡层定位（本 Tab 属 G0.5 开发工具非 G1 正式前端，dataclass 契约可复用、render 层将来重写，防"纸面 VIEW-10 vs 实际 Panel"断层重演）；③C2 治理登记补前端 C4 Container Diagram 待登记项（C4 通用非前端专用，后端已有 C4 组件图，前端缺，此 Tab 随前端图一并补）。本轮不改 A/B/C 核心施工流程与 §七 10 编号项，仅做设计参考与定位/治理登记层面的融合 |
 | 2026-08-09 | 1.2.3 | 第六轮融合：补全 §八调研留痕 | §八验证表补 4 行（来源前端可视化讨论线 2026-08-02 调研，非新全网搜索）：①开源量化前端 8 项目调研结论（backtest-kit/ui/Finanalyzer/Tickflow/QuantMuse/FinceptTerminal/MarketMind/backtrader-pyqt-ui/Investing Algorithm Framework——无可直接嫁接，Panel 集成正确，backtest-kit/ui 已融入 B2）；②Streamlit/Dash/Panel 框架对比（Panel 不落后不必换，G1 再评估）；③Lightweight Charts K线首选（项目已在用，本 Tab 不涉及）；④桌面 vs 网页裁定（G0.5 用 Panel 网页版，桌面感留待 G1 Electron/Tauri 包层，与 §四.9 一致）。本轮仅补 §八验证表留痕，不改 A/B/C 施工流程与 §七 10 编号项 |
 | 2026-08-09 | 1.2.4 | 第七轮再审：补强 §八 E 过拟合检测论证 | 2 处补充（均落 §八 E 后续增强，不改施工计划）：①§八 E 补 DSR 有效试验数难题（marketmaker.cc 2026-07 受控实验：DSR fed raw trial count 错误拒绝真 edge，5 估计器跨 1.6-370.0，须 bootstrap sidestep）；②§八 E 补九大门控完整菜单（Student One 2026-06：Holdout/Walk-Forward/Purged K-Fold/PBO/Romano-Wolf/SPA/MC block-bootstrap/cluster stability/FDR，原记 5 种补全为 9 门禁）。验证表补 2 行留痕。第七轮全网搜索（PBO/DSR/多重检验/回测审计 2026-07/08）验证施工层（A/B/C + §七 10 项）算法完整无缺失，新发现 2 项均属验证方法论层，强化"MVP 不做"论证 |
+| 2026-08-09 | 1.2.5 | 文件名 discussion_022_panel_experiment_history_tab_and_mlflow_retirement.md → 51_panel_experiment_history_mlflow_retirement.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.2.6 | 文档头统一：frontmatter 补 title/owner/language，H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

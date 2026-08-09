@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-NLP-PIPELINE | discussion_019_phase3_engineering_plan.md | §3.1.9
+# [BLUEPRINT] MOD-NLP-PIPELINE | 13_regime_phase3_engineering_plan.md | §3.1.9
 # [MODULE] scripts.ml.run_sft_train
 # [DOMAIN] D_ML_TRAIN
 # [DEPENDENCIES] zephyr.ml_train.implementations.sentiment_sft_trainer; datasets; torch
@@ -7,7 +7,7 @@
 # [STARTUP] manual
 # [MATURITY] design
 # [INVARIANTS] 加载 data/sft/{train,eval}.jsonl → build_sft_dataset 转 messages → SentimentSFTTrainer 训练 → validate 算 F1；支持 --smoke 快速验证管道
-# [MODIFY-GUARD] discussion_019_phase3_engineering_plan.md §3.1.9
+# [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §3.1.9
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -29,7 +29,7 @@
     # 全量训练
     python scripts/ml/run_sft_train.py --epochs 3 --batch-size 4
 
-依据: discussion_019_phase3_engineering_plan.md §3.1.9
+依据: 13_regime_phase3_engineering_plan.md §3.1.9
 SSoT: #ARCH-NLP-PIPELINE-001
 """
 from __future__ import annotations

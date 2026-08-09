@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME_VAL-002 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_017_phase2_model_quality_validation.md §4
+# [BLUEPRINT] MOD-REGIME_VAL-002 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/12_regime_phase2_validation.md §4
 # [MODULE] zephyr.regime.validation.phase2.phase2_runner
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas; zephyr.regime.core.regime_detector; zephyr.regime.regime_feature_builder
@@ -6,15 +6,15 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] runner只读 builder/detector, 不改其状态; walk-forward 复刻 C1 真实模式(PIT shift+季度refit+trailing窗口); A1用全历史fit, B4用walk-forward逐日detect收集_last_transitions
-# [MODIFY-GUARD] discussion_017_phase2_model_quality_validation.md §4
+# [MODIFY-GUARD] 12_regime_phase2_validation.md §4
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] Phase2RunnerError(ZA-REGIME-0022)
 # [TESTS] tests/regime/phase2/test_phase2_runner.py
 # [TTL] permanent
-# [ARCH-REF] #discussion_017 §4 #discussion_018 §6
-"""Phase 2 模型质量验证编排器（discussion_017 §4）.
+# [ARCH-REF] #12_regime_phase2_validation §4 #12_regime_phase2_validation §6
+"""Phase 2 模型质量验证编排器（12_regime_phase2_validation §4）.
 
 复用 C1 真实模式管线（取数+特征+walk-forward refit），但自行执行 detect 以收集
 A1/B4 所需中间产物（_last_transitions / Viterbi 状态序列）。
@@ -24,7 +24,7 @@ A1/B4 所需中间产物（_last_transitions / Viterbi 状态序列）。
   B4 - 转换触发准确性（walk-forward 逐日 detect 收集 _last_transitions + 事件匹配）
   第二批 A2/B1 待补
 
-依据: discussion_017 §4
+依据: 12_regime_phase2_validation §4
 Version: 0.1.0
 """
 
@@ -156,7 +156,7 @@ class Phase2Runner:
             run_second_batch: 是否运行第二批 A2+B1（默认 True）。
             is_oos_split: A2 的 IS/OOS 分割日期（IS ≤ 此日 < OOS，默认 "2018-12-31"）。
             b1_forward_days: B1 后续收益天数（默认 20 交易日）。
-            enable_calibration: 是否启用两阶段概率校准器（discussion_019 §2.2 P0-E2）。
+            enable_calibration: 是否启用两阶段概率校准器（13_regime_phase3_engineering_plan §2.2 P0-E2）。
                 True 时 walk-forward 每季度重拟合校准器，detect_records 中的 confidence
                 为校准后值。PIT 防泄漏：IS 尾部裁剪 forward_days*1.5 + regime_directions
                 只用 IS 安全数据推断。False 时使用原始 max(P) confidence（C1 基准对比用）。
@@ -369,7 +369,7 @@ class Phase2Runner:
           - trailing detect_window 窗口
           - overlay_signals / risk_inputs 构造器复用 builder 的 _risk_ctor / _overlay_ctor
 
-        校准器集成（enable_calibration=True，discussion_019 §2.2 P0-E2）：
+        校准器集成（enable_calibration=True，13_regime_phase3_engineering_plan §2.2 P0-E2）：
           每季度 HMM fit 后，在 IS 安全数据上 fit 两阶段校准器（Temperature + Isotonic），
           OOS detect 时用 calibrator.transform(log_proba) 替代原始 max(P) confidence。
           PIT 防泄漏（§2.2.9）：IS 尾部裁剪 forward_days*1.5 + regime_directions 只用 IS 数据。
@@ -426,7 +426,7 @@ class Phase2Runner:
                     exc,
                 )
 
-            # ── 校准器 fit（discussion_019 §2.2 P0-E2，PIT 防泄漏 §2.2.9）──
+            # ── 校准器 fit（13_regime_phase3_engineering_plan §2.2 P0-E2，PIT 防泄漏 §2.2.9）──
             # 每季度 HMM fit 后，在 IS 安全数据上 fit 两阶段校准器
             # IS 尾部裁剪 forward_days*1.5 → forward_return 不跨入 OOS（防泄漏 #1）
             # regime_directions 只用 IS 安全数据推断（防泄漏 #2）
@@ -524,7 +524,7 @@ class Phase2Runner:
         forward_days: int,
         prev_calibrator: TwoStageCalibrator | None,
     ) -> TwoStageCalibrator | None:
-        """单季度校准器 fit（PIT 防泄漏，discussion_019 §2.2.9）。
+        """单季度校准器 fit（PIT 防泄漏，13_regime_phase3_engineering_plan §2.2.9）。
 
         流程：
           1. IS 尾部裁剪 forward_days*1.5 天（防泄漏 #1）

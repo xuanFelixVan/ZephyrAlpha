@@ -14,13 +14,13 @@
 # [TESTS] tests/regime/test_risk_signal_builder.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_modifiable=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §5.3 #MOD-REGIME-002 #Phase2a
+# [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2a
 """RiskSignal 13 参数纯函数（MOD-REGIME-002 Phase 2a）。
 
 把原始特征（HMM 6 特征 + 新算 MA/KDJ/HHI）映射成 [0.30, 1.00] 系数，供
 RiskSignalConstructor 组装 risk_signal_inputs 喂 RegimeDetector._compute_risk_signal。
 
-设计原则（discussion_001 §5.3 + Phase 2 计划 §C1不退化保护）：
+设计原则（10_regime_detector_spec §5.3 + Phase 2 计划 §C1不退化保护）：
   - **无异常 = 1.0**：平时所有参数系数 1.0 → RiskBase=1.0 → Shrinkage 不变（C1 不退化前提）
   - **#1 保留 Phase 1 危机地板**：realized_vol_coef 复刻 _build_feature_risk 的 vol_pct+slope
     交集映射，保证 risk_base_phase2a ≤ risk_base_phase1（危机区只更严不更松）
@@ -28,7 +28,7 @@ RiskSignalConstructor 组装 risk_signal_inputs 喂 RegimeDetector._compute_risk
   - **保守阈值**：新参数仅在明确异常时触发，避免慢熊误杀致 Sharpe 退化
   - **PIT 由调用方负责**：本模块函数纯计算，shift(1) 在 RiskSignalConstructor._precompute 统一做
 
-13 参数对照（discussion_001 §5.3.3）：
+13 参数对照（10_regime_detector_spec §5.3.3）：
   #1  realized_vol       — vol_pct+slope 交集（危机地板，复刻 Phase 1）
   #2  volume_anomaly     — 放量暴跌/杀跌/滞涨（复用 F5）
   #3  price_pattern      — 空头排列/破前低（新算 MA5/20/60）
@@ -109,7 +109,7 @@ def realized_vol_coef(vol_pct: pd.Series, slope: pd.Series) -> pd.Series:
 def volume_anomaly_coef(vol_z: pd.Series, pct_change: pd.Series) -> pd.Series:
     """#2: 量能异动 × 涨跌幅 → 系数（复用 F5 volume_anomaly z-score）。
 
-    映射（discussion_001 §5.3.3 维度2）：
+    映射（10_regime_detector_spec §5.3.3 维度2）：
       放量暴跌（z>2 & 跌>3%）   → 0.30  （恐慌抛售）
       放量杀跌（z>1.5 & 跌>1.5%）→ 0.60  （主动抛压）
       else                      → 1.00
@@ -299,7 +299,7 @@ def ad_ratio_extreme_coef(ad_ratio: pd.Series) -> pd.Series:
 def siphon_coef(sector_hhi: pd.Series | None, fund_concentration: pd.Series | None) -> pd.Series:
     """#8: 虹吸态 → 系数（板块集中度 HHI + 资金集中度）。
 
-    虹吸 = 资金极度集中少数板块/个股，其余失血阴跌（discussion_001 §5.3.3 维度8）。
+    虹吸 = 资金极度集中少数板块/个股，其余失血阴跌（10_regime_detector_spec §5.3.3 维度8）。
     任一数据缺失 → 该维度不参与（系数 1.0），两者都极端取更严。
 
     映射（HHI 为板块涨幅平方和归一化，越高越集中；fund_concentration 为头部净流入占比）：
@@ -362,7 +362,7 @@ def kdj(high: pd.Series, low: pd.Series, close: pd.Series, n: int = 9) -> tuple[
 def detect_top_divergence(close: pd.Series, indicator: pd.Series, window: int = 60) -> pd.Series:
     """检测顶背离：价格创 window 日新高但指标未新高。
 
-    顶背离 = 赶顶衰竭信号（discussion_001 §5.3.3 维度9）。
+    顶背离 = 赶顶衰竭信号（10_regime_detector_spec §5.3.3 维度9）。
 
     Parameters
     ----------
@@ -389,7 +389,7 @@ def tech_divergence_coef(
 ) -> pd.Series:
     """#9: KDJ 顶背离 → 系数（多分时共振极端档）。
 
-    映射（discussion_001 §4.11.4 多分时共振是 #9 极端档）：
+    映射（10_regime_detector_spec §4.11.4 多分时共振是 #9 极端档）：
       日线背离 + 60min&30min 同背离 → 0.60  （多分时共振，确定性翻倍）
       日线背离 + 任一分时共振       → 0.75  （双周期共振）
       日线背离（单分时）            → 0.92  （轻度预警，原值）

@@ -3,7 +3,7 @@ title: 前端可视化架构讨论（归档）
 date: 2026-08-01
 status: archived
 ttl: task_bound
-completes_when: "内容已被 discussion_022_panel_experiment_history_tab_and_mlflow_retirement.md 等永久文档吸收；本归档作前端/可视化讨论线历史存档保留，不再续写"
+completes_when: "内容已被 51_panel_experiment_history_mlflow_retirement.md 等永久文档吸收；本归档作前端/可视化讨论线历史存档保留，不再续写"
 ---
 
 # 前端可视化架构讨论（归档）

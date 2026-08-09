@@ -65,7 +65,7 @@ class OrderAction(Enum):
 
 
 class RejectionAction(Enum):
-    """拒单处理动作（design_memo_010 §2.7 层3）。
+    """拒单处理动作（40_execution_broker §2.7 层3）。
 
     原则：涨跌停/资金/持仓类不重试（重试无意义），价格/连接类重试1次（可恢复）。
     宁可放弃不可盲目重试，避免撤单率超标（BM-EXE-04 撤单率≤15%）。
@@ -205,7 +205,7 @@ class OrderManager:
         """拒单分类——根据 xttrader error_code 决定处理动作。
 
         涨跌停/资金/持仓类不重试（重试无意义），价格/连接类重试1次（可恢复）。
-        未知错误码保守按 ABANDON 处理。详见 design_memo_010 §2.7。
+        未知错误码保守按 ABANDON 处理。详见 40_execution_broker §2.7。
         """
         return _REJECTION_ACTIONS.get(error_code, RejectionAction.ABANDON)
 

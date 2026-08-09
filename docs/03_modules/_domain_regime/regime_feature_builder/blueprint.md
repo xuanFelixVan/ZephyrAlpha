@@ -23,13 +23,13 @@ responsibility_domain:
 
 > **module_id**: MOD-REGIME-002 | **域**: D_REGIME | **层**: L2 业务域
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-REGIME-002 | **spec 真源**: [discussion_001_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md) v1.3.1（13参数§5.3 / S2十二维度§4.12 / 8转换§4）
-> **验证真源**: [discussion_002_regime_backtest_validation_plan.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_002_regime_backtest_validation_plan.md) v1.0.0（C1一票否决§5 / 数据基础§7）
+> **SSoT**: depgraph MOD-REGIME-002 | **spec 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) v1.3.1（13参数§5.3 / S2十二维度§4.12 / 8转换§4）
+> **验证真源**: [11_regime_backtest_validation_plan.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/11_regime_backtest_validation_plan.md) v1.0.0（C1一票否决§5 / 数据基础§7）
 > **消费方**: [RegimeDetector](../regime_detector/blueprint.md) MOD-REGIME-001（detect() 三参输入消费者）
 
 ## 0. 本蓝图存在理由（第一性原理）
 
-discussion_002 §5 **C1 开/关对比是一票否决**——Shrinkage 节流不改善回撤还伤害 Sharpe，整个 regime 系统不部署。C1 的输入是 regime 特征管道的输出。**特征算错一处、PIT 边界泄漏一天、字段名对不齐一个，C1 验证链全部污染**，最后无法判断 regime 到底有没有用——在不稳定地基上盖楼，盖完发现塌了不知道是楼的问题还是地基的问题。
+11_regime_backtest_validation_plan §5 **C1 开/关对比是一票否决**——Shrinkage 节流不改善回撤还伤害 Sharpe，整个 regime 系统不部署。C1 的输入是 regime 特征管道的输出。**特征算错一处、PIT 边界泄漏一天、字段名对不齐一个，C1 验证链全部污染**，最后无法判断 regime 到底有没有用——在不稳定地基上盖楼，盖完发现塌了不知道是楼的问题还是地基的问题。
 
 本蓝图把"OHLCV + 多源数据 → RegimeDetector.detect() 三参输入"的每一步计算逻辑、数据源、PIT 边界、warmup 窗口钉死成机器可读真源，是 100% AI 开发场景下后续续写的硬契约。
 
@@ -53,9 +53,9 @@ def detect(
 
 | 输出 | 内容 | detect() 内消费方 | spec 真源 |
 |------|------|-------------------|-----------|
-| ① regime_features | HMM 6特征 + X矩阵 (T,6) | `_run_hmm()` | discussion_001 §3 / blueprint §3 |
-| ② overlay_signals | 8转换维度评分 {T_id: {dim: score}} | `_run_overlay()` → `record_transition()` | discussion_001 §4 / TRANSITION_CONFIG |
-| ③ risk_signal_inputs | 13参数 {params: {1..10,12}, opportunity: {...}} | `_compute_risk_signal()` | discussion_001 §5.3 |
+| ① regime_features | HMM 6特征 + X矩阵 (T,6) | `_run_hmm()` | 10_regime_detector_spec §3 / blueprint §3 |
+| ② overlay_signals | 8转换维度评分 {T_id: {dim: score}} | `_run_overlay()` → `record_transition()` | 10_regime_detector_spec §4 / TRANSITION_CONFIG |
+| ③ risk_signal_inputs | 13参数 {params: {1..10,12}, opportunity: {...}} | `_compute_risk_signal()` | 10_regime_detector_spec §5.3 |
 
 ### 1.2 不做什么
 
@@ -63,13 +63,13 @@ def detect(
 - **不做 Shrinkage 计算**（归 MOD-REGIME-001，本模块只产 13 参数原料）
 - **不做 budget 分配**（归 MOD-PA-007 RegimeMetaAllocator）
 - **不做回测**（归 BM-BT 框架，本模块只供数据）
-- **不做账户回撤风控**（discussion_001 §5.3：回撤是沉没成本，归 StrategyBook drawdown protocol，不进 RiskSignal）
+- **不做账户回撤风控**（10_regime_detector_spec §5.3：回撤是沉没成本，归 StrategyBook drawdown protocol，不进 RiskSignal）
 
 ## 2. 输入 / 输出
 
 ### 2.1 输入（ClickHouse 多源，经 TableRegistry 取表名）
 
-> 数据基础已确认（discussion_002 §7）：13 参数全部有数据（#12 筹码用华泰前沿算法自建，非换手率代理）。
+> 数据基础已确认（11_regime_backtest_validation_plan §7）：13 参数全部有数据（#12 筹码用华泰前沿算法自建，非换手率代理）。
 > **2026-08-06 修正**：北向资金 2024-08-19 起日度数据停发（仅季度公布），`hk_connect_flow` 标为死数据（仅历史回测用）；资金承接改用 `money_flow` 超大单逆势承接（湘财证券实证前瞻性最强）。
 
 | category_id | 全限定表名 | 用途 | 就绪 |
@@ -188,7 +188,7 @@ risk_signal_inputs: dict[str, Any] = {
 
 **X 构造规则**：
 - 单标的 regime（如全市场等权指数）→ X 形状 **(T, 6)**
-- 多标的（如分市场分别建模）→ `lengths` 参数标分段，X 拼接（discussion_001 §3 多序列可选）
+- 多标的（如分市场分别建模）→ `lengths` 参数标分段，X 拼接（10_regime_detector_spec §3 多序列可选）
 - **warmup**：前 250 日（max 窗口）X 置 NaN，HMM 训练前 `np.nan_to_num(X, nan=0.0)` 或 dropna
 - **feature_names** 更新: `["realized_vol_pct","hurst_dfa","kalman_slope","cross_asset_corr","ad_ratio","volume_anomaly"]`
 
@@ -196,7 +196,7 @@ risk_signal_inputs: dict[str, Any] = {
 
 ## 4. 8转换维度评分详细（overlay_signals["transitions"]）
 
-> 每个维度的 score 是 0~100 分（动态评分制，discussion_001 §4.1）。本模块负责从原始数据计算各维度分值；阈值判定（trigger/confirm/fail）由 MOD-REGIME-001 `record_transition()` 按 `TRANSITION_CONFIG` 完成。
+> 每个维度的 score 是 0~100 分（动态评分制，10_regime_detector_spec §4.1）。本模块负责从原始数据计算各维度分值；阈值判定（trigger/confirm/fail）由 MOD-REGIME-001 `record_transition()` 按 `TRANSITION_CONFIG` 完成。
 
 ### 4.1 T1 NORMAL→BREAKOUT→Bull-Medium（§4.6）
 
@@ -300,7 +300,7 @@ mainline_score = 0.30*rrg + 0.30*cross + 0.25*persist + 0.15*leader
 
 ### 4.8 S2 CRISIS→RECOVERY（§4.12 八基础维度 + §4.12.10 四机构补强）
 
-> S2 是用户抄底能力的系统化编码（discussion_001 §4.12）。八基础维度对应 `TRANSITION_CONFIG.S2.stages` 的 keys_gte。
+> S2 是用户抄底能力的系统化编码（10_regime_detector_spec §4.12）。八基础维度对应 `TRANSITION_CONFIG.S2.stages` 的 keys_gte。
 
 | 维度 key | 含义 | 计算 | 数据源 |
 |----------|------|------|--------|
@@ -545,7 +545,7 @@ fund_score = 100 * sigmoid_rank_pct(composite_fund)
 
 ## 5. RiskSignal 13参数详细（risk_signal_inputs）
 
-> 11个下调参数四档系数 {1.0, 0.85, 0.6, 0.3}（discussion_001 §5.3.1）+ 2个机会抵消参数（§5.3.2，合计上限0.25）。本模块从原始数据计算 raw 特征 → 按阈值映射系数。
+> 11个下调参数四档系数 {1.0, 0.85, 0.6, 0.3}（10_regime_detector_spec §5.3.1）+ 2个机会抵消参数（§5.3.2，合计上限0.25）。本模块从原始数据计算 raw 特征 → 按阈值映射系数。
 
 ### 5.1 11个下调参数（params[1..10, 12]）
 
@@ -697,7 +697,7 @@ long_term_bottom_ratio = sum(C_t[长期桶] at 底部网格) / sum(C_t[长期桶
 > **合计上限 0.25**：detect() 内 `min(recovery, 0.25)` clamp，本模块产出时可不 clamp（让 detect 负责）。
 > **#11 风险侧**（利好密集→0.85 / 天灾→0.6）：本模块计算后暂存 `params[11]`，待 detect() 扩展启用（遗留，§11）。
 
-### 5.3 7月案例验证基准（discussion_001 §5.3.4）
+### 5.3 7月案例验证基准（10_regime_detector_spec §5.3.4）
 
 > 本模块实现后必须复现此案例（tests/regime/test_regime_feature_builder.py 核心断言）：
 
@@ -740,7 +740,7 @@ long_term_bottom_ratio = sum(C_t[长期桶] at 底部网格) / sum(C_t[长期桶
 
 ## 7. walk-forward HMM 训练数据准备
 
-> discussion_002 §4.5 E1 / §9：HMM 季度重拟合（对照 Morwane）。
+> 11_regime_backtest_validation_plan §4.5 E1 / §9：HMM 季度重拟合（对照 Morwane）。
 
 | 配置 | 值 | 说明 |
 |------|-----|------|
@@ -845,7 +845,7 @@ MOD-REGIME-002 → D_DATA (ClickHouse 行情)
 | 日期 | 裁定 | 理由 |
 |------|------|------|
 | 2026-08-06 | 先出 Module A blueprint 再写代码 | C1 一票否决的地基，特征算错/PIT泄漏全链污染；100% AI 开发需硬契约防漂移；B/C 依赖 A 输出契约 |
-| 2026-08-06 | 完整 13 参数 + 8 转换 + S2 十二维度 | discussion_002 §8.1 用户裁定：直接完整版，验证后基于证据简化 |
+| 2026-08-06 | 完整 13 参数 + 8 转换 + S2 十二维度 | 11_regime_backtest_validation_plan §8.1 用户裁定：直接完整版，验证后基于证据简化 |
 | 2026-08-06 | #11 双向 / S2 机构补强暂存 | detect() 当前未消费，本模块先计算暂存，避免后续返工 |
 | 2026-08-06 | **全面治本修正：14处糊弄点→2026前沿算法** | 用户要求"把所有糊弄人的全部重新算一遍"。6方向调研（Wyckoff/虹吸资金/VIX/筹码/Capitulation/新闻NLP/背离/衰竭）后，14处糊弄点全部替换为2026前沿算法：F2均线斜率→Hurst(DFA)+Kalman；#8模糊虹吸→前5%集中度+HHI+资金集中度；#9 KDJ>90模糊→Pivot-Pair单调配对；#10均线角度伪精确→Hurst衰退+ADX回落；#12换手率代理→华泰前沿VWAP三角分布(MOD-REGIME-005)；S2 capitulation加密货币指标→ACSI A股投降指数；S2 wyckoff名词堆砌→规则法TR+4触发器+FSM；S2 fund北向死数据→超大单IC加权；S2 policy/bad_news_flat定性词→NLP三层管道；T3 mainline逻辑错位→RRG+多周期交叉；T3 sentiment北向死数据→融资+主力资金 |
 | 2026-08-06 | HMM 特征数 5→6 | F2拆为Hurst(DFA)+Kalman斜率双子特征，X矩阵(T,5)→(T,6)，同步更新regime_detector.py |

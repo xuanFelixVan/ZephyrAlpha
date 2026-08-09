@@ -1,30 +1,33 @@
 ---
 ttl: permanent
 doc_type: architecture_view
+title: 仓位算法（分层裁定落地）
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "1.2.0"
+version: "1.2.4"
 date: 2026-08-08
 topic: position_sizing
 scope: 07_trading_decision_architecture
 ---
 
-# 设计备忘·仓位算法（分层裁定落地）
+# 仓位算法（分层裁定落地）
 
-> 本备忘把 [design_memo_001 §2.1](design_memo_001_multi_strategy_concurrency.md) 已定稿的"分层裁定"框架落地为可施工的参数与接口契约。
+> 本备忘把 [30_multi_strategy_concurrency §2.1](30_multi_strategy_concurrency.md) 已定稿的"分层裁定"框架落地为可施工的参数与接口契约。
 > 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。
-> 管理规范见 [design_memo_management_spec.md](design_memo_management_spec.md)。
+> 管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)。
 > 边界：本备忘只定仓位**算法与参数**（how much 的 why+spec）；FirmRiskAggregator 的求和/裁剪**执行逻辑**（G13）、BudgetChangeHandler 三级升级（G14）、RegimeMetaAllocator 参数（G15）不在本备忘范围。
 
 ## 1. 背景
 
 ### 1.1 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1，不能做空）
-- 多策略并发架构已定稿为 Model A（独立账本 + firm 风险聚合），见 [design_memo_001 §2](design_memo_001_multi_strategy_concurrency.md)
-- 仓位决策采用"分层裁定"（design_memo_001 §2.1 方案 A）：策略层做粗仓位，firm 层做 Kelly 精裁决
+- 多策略并发架构已定稿为 Model A（独立账本 + firm 风险聚合），见 [30_multi_strategy_concurrency §2](30_multi_strategy_concurrency.md)
+- 仓位决策采用"分层裁定"（30_multi_strategy_concurrency §2.1 方案 A）：策略层做粗仓位，firm 层做 Kelly 精裁决
 - 当前处于施工前阶段，框架已定但缺可施工的参数与接口契约
 
 ### 1.2 核心问题
-design_memo_001 §2.1 已锁定分层裁定的**框架**（策略层等权/risk parity 不用 Kelly + firm 层 Kelly 精裁决定），但未定义：
+30_multi_strategy_concurrency §2.1 已锁定分层裁定的**框架**（策略层等权/risk parity 不用 Kelly + firm 层 Kelly 精裁决定），但未定义：
 - 各策略具体用哪种粗仓位算法、公式是什么
 - Kelly 参数（预期收益/方差）从哪来、用几分之几 Kelly
 - 单票 8% / 行业 / 总仓位硬上限的具体阈值与裁剪口径
@@ -36,8 +39,8 @@ design_memo_001 §2.1 已锁定分层裁定的**框架**（策略层等权/risk 
 ### 1.3 约束条件
 - **system_charter §3 约束四（策略三维度解耦）**：策略 = 选股信号 × 组合权重 × 执行方式（what × how much × how），仓位（how much）必须独立于选股（what）实现 → 强化分层裁定
 - **system_charter §3 约束五（少而精）**：3-5 个策略，各策略特性不同，粗仓位算法应差异化适配而非统一一种
-- **design_memo_001 §3.1**：不做 MVO，不做协方差估计 → 粗仓位用 inverse-vol（只估 σ），不用 full risk parity（估协方差）
-- **design_memo_001 §2.2**：regime 只缩 budget 数值，不调仓位算法 → 仓位算法本身不内置 regime 切换逻辑
+- **30_multi_strategy_concurrency §3.1**：不做 MVO，不做协方差估计 → 粗仓位用 inverse-vol（只估 σ），不用 full risk parity（估协方差）
+- **30_multi_strategy_concurrency §2.2**：regime 只缩 budget 数值，不调仓位算法 → 仓位算法本身不内置 regime 切换逻辑
 - A 股 T+1 / 不能做空 / 打板容量极小（单票几万~几十万）→ 打板必须小账本、粗仓位不能按波动率机械决定
 
 ## 2. 决策：分层裁定（策略层粗仓位 + firm 层 Kelly 精裁决 + 硬上限裁剪）
@@ -49,7 +52,7 @@ design_memo_001 §2.1 已锁定分层裁定的**框架**（策略层等权/risk 
 ```
 [各 StrategyBook]                [FirmRiskAggregator]           [MOD-POS-001]              [FirmRiskAggregator]
 策略层粗仓位         →   按标的求和(自然叠加)  →   Kelly精裁决      →    硬上限裁剪        →  firm_target_portfolio
-(等权/inverse-vol)        (design_memo_001 §2.3)     (半Kelly+分布感知)     (单票8%/行业/总仓位/现金)
+(等权/inverse-vol)        (30_multi_strategy_concurrency §2.3)     (半Kelly+分布感知)     (单票8%/行业/总仓位/现金)
 不用Kelly                 O(N) 加法替代优化器        只减不增为主           兜底不可突破
 ```
 
@@ -59,7 +62,7 @@ design_memo_001 §2.1 已锁定分层裁定的**框架**（策略层等权/risk 
 
 #### 2.2.1 算法映射表（差异化，静态先定，G04 产出后校准）
 
-各策略按类型用不同粗仓位算法。映射表先静态，等 G04（discussion_003 首批 3 策略定义）产出后校准：
+各策略按类型用不同粗仓位算法。映射表先静态，等 G04（20_first_batch_strategies 首批 3 策略定义）产出后校准：
 
 | 策略类型 | 粗仓位算法 | 理由 |
 |---|---|---|
@@ -80,7 +83,7 @@ w_i = (1 / σ_i) / Σ_j (1 / σ_j)
 
 - **窗口选 60 日**：与 RegimeMetaAllocator 的 PerformanceScore（60 日 Sharpe）窗口对齐，统一滚动窗口口径
 - **σ_i 缺失/异常（如新股、停牌）**：降级为等权（w_i = 1/N），不阻断
-- **只估 σ 不估协方差**：与 design_memo_001 §3.1 拒绝协方差一致。2026 实证（quanthedgeai）确认 inverse-vol 估 1 个参数最鲁棒，12 月数据 ±10% 准确；full risk parity 估协方差（N(N+1)/2 参数），N=5 策略需 60 月数据才 borderline
+- **只估 σ 不估协方差**：与 30_multi_strategy_concurrency §3.1 拒绝协方差一致。2026 实证（quanthedgeai）确认 inverse-vol 估 1 个参数最鲁棒，12 月数据 ±10% 准确；full risk parity 估协方差（N(N+1)/2 参数），N=5 策略需 60 月数据才 borderline
 
 #### 2.2.3 等权
 
@@ -219,7 +222,7 @@ MOD-POS-001 对求和后每个标的输出 `kelly_adjusted_weight`（= f_i^norm�
 | 单行业绝对上限 | 30% | 不可突破硬顶 |
 
 - **口径**：按持仓权重按行业归类求和（只需持仓权重 + 行业映射，**不估协方差**）
-- 来源：battle_map BM-POS-04（与 design_memo_001 §3.1 不估协方差一致）
+- 来源：battle_map BM-POS-04（与 30_multi_strategy_concurrency §3.1 不估协方差一致）
 
 #### 2.4.3 总仓位硬约束（regime Shrinkage 节流后）
 
@@ -238,11 +241,11 @@ MOD-POS-001 对求和后每个标的输出 `kelly_adjusted_weight`（= f_i^norm�
 | ⑪板块轮动叠加态 | 基础（行业集中度放宽至 ±15%） |
 
 - 来源：battle_map BM-POS-04 §20.3 仓位上限框架
-- **边界**：仓位算法本身不读市场状态，只收到 regime Shrinkage 缩放后的 budget 数值上限（design_memo_001 §2.2"策略本身不知道市场态，只收到 budget 数字"）
+- **边界**：仓位算法本身不读市场状态，只收到 regime Shrinkage 缩放后的 budget 数值上限（30_multi_strategy_concurrency §2.2"策略本身不知道市场态，只收到 budget 数字"）
 
 ### 2.5 现金管理（显式 CASH 标的）
 
-**现金也是一种仓位**（design_memo_001 §2.4）。`firm_target_portfolio` 显式包含 `CASH` 虚拟标的，所有权重加和 = 1.0：
+**现金也是一种仓位**（30_multi_strategy_concurrency §2.4）。`firm_target_portfolio` 显式包含 `CASH` 虚拟标的，所有权重加和 = 1.0：
 
 ```python
 firm_target_portfolio: dict[str, float]
@@ -260,7 +263,7 @@ firm_target_portfolio: dict[str, float]
 | 节假日现金 | 节前 2 天 + 节后 1 天提高 5-15% | 规避节假日不确定性 |
 | 闲置资金逆回购 | 闲置现金做逆回购生息 | 提升资金利用率 |
 
-- **现金拖累可接受**（design_memo_001 §2.4）：budget 增加时策略不必立即满部署，现金拖累可接受
+- **现金拖累可接受**（30_multi_strategy_concurrency §2.4）：budget 增加时策略不必立即满部署，现金拖累可接受
 - **现金在仓位层直接表达**：最低储备金/节假日等约束直接作用在 `CASH` 权重上，无需另开机制
 
 ### 2.6 分层接口契约（数据结构汇总）
@@ -297,23 +300,23 @@ class FirmTargetPortfolio:                 # firm 层最终输出
 
 | 边界 | 内容 | 依据 |
 |---|---|---|
-| **Kelly 不在策略层重复** | 策略层只用等权/inverse-vol，禁 Kelly；Kelly 只在 firm 层 MOD-POS-001 做一次 | design_memo_001 §2.1 第一性原理：Kelly 需密度预测不宜每策略重复 |
-| **不做 MVO / 不估协方差** | firm 层只求和+Kelly+裁剪，不做 MVO，不估协方差矩阵 | design_memo_001 §3.1：协方差估计是研究课题，放大噪声，归因纠缠 |
-| **仓位算法不内置 regime 切换** | 仓位算法（等权/inverse-vol/Kelly）本身不随 regime 变；regime 只通过 Shrinkage 缩 budget 间接影响仓位上限 | design_memo_001 §2.2：策略不知道市场态，只收到 budget 数字。system_charter §3 约束二"状态切换权重"的张力已由 design_memo_001 移除 RegimeScore 裁定收敛（regime 不做 alpha 择时，只做风险节流） |
-| **不做 G13/G14/G15 的事** | FirmRiskAggregator 求和/裁剪执行逻辑（G13）、BudgetChangeHandler 三级升级（G14）、RegimeMetaAllocator 参数（G15）不在本备忘 | discussion_000 主题组分工 |
+| **Kelly 不在策略层重复** | 策略层只用等权/inverse-vol，禁 Kelly；Kelly 只在 firm 层 MOD-POS-001 做一次 | 30_multi_strategy_concurrency §2.1 第一性原理：Kelly 需密度预测不宜每策略重复 |
+| **不做 MVO / 不估协方差** | firm 层只求和+Kelly+裁剪，不做 MVO，不估协方差矩阵 | 30_multi_strategy_concurrency §3.1：协方差估计是研究课题，放大噪声，归因纠缠 |
+| **仓位算法不内置 regime 切换** | 仓位算法（等权/inverse-vol/Kelly）本身不随 regime 变；regime 只通过 Shrinkage 缩 budget 间接影响仓位上限 | 30_multi_strategy_concurrency §2.2：策略不知道市场态，只收到 budget 数字。system_charter §3 约束二"状态切换权重"的张力已由 30_multi_strategy_concurrency 移除 RegimeScore 裁定收敛（regime 不做 alpha 择时，只做风险节流） |
+| **不做 G13/G14/G15 的事** | FirmRiskAggregator 求和/裁剪执行逻辑（G13）、BudgetChangeHandler 三级升级（G14）、RegimeMetaAllocator 参数（G15）不在本备忘 | 00_index_trading_decision 主题组分工 |
 
 ## 3. 考虑过的替代方案（拒绝理由）
 
 ### 3.1 全 MVO 统一优化器 —— 拒绝
-- **拒绝理由**（design_memo_001 §3.1）：统一 MVO 需协方差矩阵（5000×5000），是研究课题不是工程任务；协方差估计在 A 股情绪周期切换时全错（冰点期相关性飙升到 0.8+）；优化器放大输入噪声；归因纠缠（亏钱时无法区分策略 alpha 错/优化器权重错/协方差估错）
+- **拒绝理由**（30_multi_strategy_concurrency §3.1）：统一 MVO 需协方差矩阵（5000×5000），是研究课题不是工程任务；协方差估计在 A 股情绪周期切换时全错（冰点期相关性飙升到 0.8+）；优化器放大输入噪声；归因纠缠（亏钱时无法区分策略 alpha 错/优化器权重错/协方差估错）
 - AI 能写对优化器代码，但写不出"准确的协方差矩阵"——那是数据+研究问题
 
 ### 3.2 策略层重复 Kelly —— 拒绝
-- **拒绝理由**（design_memo_001 §2.1 第一性原理）：Kelly 需密度预测（估 μ/σ²），每策略都估一遍又累又错；密度 PDF 估计是重资源计算，不宜每策略重复
+- **拒绝理由**（30_multi_strategy_concurrency §2.1 第一性原理）：Kelly 需密度预测（估 μ/σ²），每策略都估一遍又累又错；密度 PDF 估计是重资源计算，不宜每策略重复
 - Kelly 放 firm 层做一次，对所有策略求和后的标的统一精算
 
 ### 3.3 full risk parity（估协方差） —— 拒绝
-- **拒绝理由**：full risk parity 需估协方差矩阵（N(N+1)/2 参数），N=5 策略需 60 月数据才 borderline 准确；与 design_memo_001 §3.1 拒绝协方差一致
+- **拒绝理由**：full risk parity 需估协方差矩阵（N(N+1)/2 参数），N=5 策略需 60 月数据才 borderline 准确；与 30_multi_strategy_concurrency §3.1 拒绝协方差一致
 - **采用 inverse-vol**（只估 σ，1 个参数）：2026 实证（quanthedgeai）确认 inverse-vol 几乎和等权一样鲁棒，12 月数据 ±10% 准确；Morwane 实证 inverse-vol risk parity OOS Sharpe +1.43
 
 ### 3.4 全 Kelly（不半 Kelly） —— 拒绝
@@ -321,11 +324,11 @@ class FirmTargetPortfolio:                 # firm 层最终输出
 - **采用半 Kelly（0.5×K）**：保 75% 增长、大幅降回撤；Thorp 本人用 0.25-0.5×；机构普遍 0.2-0.5×
 
 ### 3.5 与 Morwane 的差异说明
-Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 inverse-vol risk parity**（sleeve 级）。本项目是**策略层 inverse-vol**（标的级）+ **firm 层 Kelly**（标的级）。分层思想一致，但 Kelly 放 firm 层是本项目选择——策略层已做 inverse-vol 粗分，firm 层需要基于密度 PDF 的"精裁决"（半 Kelly + 偏度/峰度/VaR 分布感知调整），risk parity 做不到分布感知。Morwane 印证的是"分层"思想，不是"具体在哪层用哪种算法"。
+Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 + **firm 层 inverse-vol risk parity**（sleeve 级）。本项目是**策略层 inverse-vol**（标的级）+ **firm 层 Kelly**（标的级）。分层思想一致，但 Kelly 放 firm 层是本项目选择——策略层已做 inverse-vol 粗分，firm 层需要基于密度 PDF 的"精裁决"（半 Kelly + 偏度/峰度/VaR 分布感知调整），risk parity 做不到分布感知。Morwane 印证的是"分层"思想，不是"具体在哪层用哪种算法"。
 
 ### 3.6 multivariate Kelly（估协方差）—— 拒绝且有实证印证
 - **理论形式**：多标的 Kelly 最优解是 w=Σ⁻¹μ（Σ=协方差矩阵，μ=预期超额收益向量），即 mean-variance 解
-- **拒绝理由**：需估协方差矩阵，与 design_memo_001 §3.1 拒绝协方差一致
+- **拒绝理由**：需估协方差矩阵，与 30_multi_strategy_concurrency §3.1 拒绝协方差一致
 - **实证印证**（Conformal Kelly arXiv:2608.01494 §6.4）：在硬上限（gross cap）约束下，multivariate Kelly w=Σ⁻¹μ 增长仅 0.023–0.179，**远差于** per-asset Kelly（不考虑协方差）。原因是"Markowitz 不稳定性 + 对冲掉权益溢价"。论文原话："under a binding gross cap only the direction survives"（有总仓位硬上限时，只有方向信息有用，协方差是理论上最大的洞但实证不起作用）
 - **结论**：本项目 per-asset Kelly（K_i=(μ_i−r)/σ_i² 不考虑标的间相关）+ 硬上限裁剪的架构，不仅可行，且在硬上限约束下比理论上的 multivariate Kelly 更优。把"不做协方差"从"拒绝理由"升级为"有实证支持的更优选择"
 
@@ -350,7 +353,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 | 阶段 | 内容 | 触发条件 |
 |---|---|---|
 | **MVP（当前）** | 静态差异化映射表；密度 PDF 未就绪时 Kelly 降级历史回测；硬上限裁剪就绪 | 本备忘定稿即可施工 |
-| **阶段 2** | G04 产出首批 3 策略定义后，校准粗仓位映射表 | discussion_003 产出 |
+| **阶段 2** | G04 产出首批 3 策略定义后，校准粗仓位映射表 | 20_first_batch_strategies 产出 |
 | **阶段 3** | BM-SEL-13 密度 PDF 就绪，Kelly 主源切换 | BM-SEL-13 施工完成 |
 | **阶段 4（待裁定）** | 评估 Conformal Kelly 替代/补充 σ 估计 | Conformal Kelly OOS 增长验证有效 |
 
@@ -365,7 +368,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 
 | 暂缓项 | 暂缓理由 | 重评条件 |
 |---|---|---|
-| **Conformal Kelly** | 2026-08 arXiv 前沿研究，用 conformal prediction 区间宽度做 fractional Kelly 缩放，有有限样本覆盖率保证；但论文 lockbox OOS 增长失效（2022 后 8.5%/7.0% 低于被动基准），不成熟 | Conformal Kelly OOS 增长验证有效；其 drawdown dial（区间 downside miss 频繁→砍杠杆）可作为风控叠加，与 design_memo_001 §2.5 回撤 Protocol 互补 |
+| **Conformal Kelly** | 2026-08 arXiv 前沿研究，用 conformal prediction 区间宽度做 fractional Kelly 缩放，有有限样本覆盖率保证；但论文 lockbox OOS 增长失效（2022 后 8.5%/7.0% 低于被动基准），不成熟 | Conformal Kelly OOS 增长验证有效；其 drawdown dial（区间 downside miss 频繁→砍杠杆）可作为风控叠加，与 30_multi_strategy_concurrency §2.5 回撤 Protocol 互补 |
 | **动态粗仓位算法选择** | MVP 用静态差异化映射表；动态（按策略滚动 Sharpe 自适应选算法）增加 meta 参数 | 各策略有 6+ 月实盘 track record |
 | **Kelly 分数自适应** | MVP 固定半 Kelly（0.5×）；自适应 Kelly 分数（按估计置信度调整）增加复杂度 | 密度 PDF 主源稳定运行 6+ 月，置信度可量化 |
 | **full risk parity** | 需估协方差，与 §3.1 拒绝协方差一致 | 协方差估计方案成熟（因子模型+shrinkage 验证有效），且 N 策略数显著增加 |
@@ -375,22 +378,22 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 
 | 开放问题 | 出处 | 决策状态 |
 |---|---|---|
-| 首批 3 策略确认（打板+多因子+事件驱动）→ 粗仓位映射表校准 | design_memo_001 §6.1 / G04 | 待 G04（discussion_003）产出 |
+| 首批 3 策略确认（打板+多因子+事件驱动）→ 粗仓位映射表校准 | 30_multi_strategy_concurrency §6.1 / G04 | 待 G04（20_first_batch_strategies）产出 |
 | BM-SEL-13 密度 PDF 就绪时间 → Kelly 参数主源切换 | 本备忘 §2.3.2 | 待 BM-SEL-13 施工 |
-| convergence_window 按换手率定（打板 1-2 / 多因子 3-5 / 事件 2-3 天）→ 影响再平衡成本-收益 | design_memo_001 §6.4 / G14 | 待首批策略定后校准 |
+| convergence_window 按换手率定（打板 1-2 / 多因子 3-5 / 事件 2-3 天）→ 影响再平衡成本-收益 | 30_multi_strategy_concurrency §6.4 / G14 | 待首批策略定后校准 |
 | Kelly 参数密度 PDF 降级触发条件细化 | 本备忘 §2.3.2 | 待 BM-SEL-13 接口契约明确后定 |
 
 ## 7. 引用
 
 ### 7.1 相关 design_memo
-- [design_memo_001_multi_strategy_concurrency.md](design_memo_001_multi_strategy_concurrency.md)
+- [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)
   - §2.1 分层裁定（方案 A）——本备忘的框架来源
   - §2.2 三个核心模块（StrategyBook / FirmRiskAggregator / RegimeMetaAllocator）——regime 只缩 budget 不调仓位算法
   - §2.3 自然叠加——求和用加法替代优化器
   - §2.4 权重变动操作流程——现金也是一种仓位
   - §3.1 拒绝 MVO——不做协方差估计
-- [discussion_000_discussion_framework.md](discussion_000_discussion_framework.md) §3 G12 仓位算法 spec / §5 轨道 B / §7.3 编号占用表
-- [design_memo_management_spec.md](design_memo_management_spec.md) §4.3 推荐章节 / §5.2 引用纪律（用 path/blueprint_id 不用 node_id）
+- [00_index_trading_decision.md](00_index_trading_decision.md) §3 G12 仓位算法 spec / §5 轨道 B / §7.3 编号占用表
+- [01_design_memo_management_spec.md](01_design_memo_management_spec.md) §4.3 推荐章节 / §5.2 引用纪律（用 path/blueprint_id 不用 node_id）
 
 ### 7.2 depgraph 模块（用 blueprint_id / path 引用）
 
@@ -408,7 +411,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 - BM-POS-06 现金管理约束（MOD-POS-006）——最低储备金 / T+1 / 节假日 5-15%
 
 ### 7.4 开源实证参考
-- **[Morwane/multi-strategy-alpha-book](https://github.com/Morwane/multi-strategy-alpha-book)** — inverse-vol risk parity OOS Sharpe +1.43；regime 风险节流 MaxDD −14.2%→−10.3%。印证分层思想（design_memo_001 §7.4 已引）
+- **[Morwane/multi-strategy-alpha-book](https://github.com/Morwane/multi-strategy-alpha-book)** — inverse-vol risk parity OOS Sharpe +1.43；regime 风险节流 MaxDD −14.2%→−10.3%。印证分层思想（30_multi_strategy_concurrency §7.4 已引）
 - **Conformal Kelly (arXiv:2608.01494v1, 2026-08-02)** — conformal prediction 区间做 fractional Kelly 缩放；反直觉发现"宽度稳定性 > 局部锐度"；OOS 增长失效。本备忘吸收"稳不要锐"原则（§2.3.2），Conformal Kelly 记为待裁定演进路径（§5）；其 §6.4 实测 per-asset Kelly 在硬上限约束下优于 multivariate Kelly（w=Σ⁻¹μ），印证本项目不做协方差的决策（§3.6）
 - **quanthedgeai Strategy Allocation Methods (2026-06)** — "Theory says mean-variance. Practice says inverse volatility." 印证 inverse-vol 估 1 参数最鲁棒，强化策略层 inverse-vol 选择（§2.2 / §3.3）
 - **crucible-backtester PR#559 (2026-07)** — fractional-Kelly = `kelly_fraction × μ / σ²` 工程实现，印证连续 Kelly 形式（§2.3.1）
@@ -417,14 +420,14 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 ### 7.5 system_charter 约束映射
 - §3 约束四（策略三维度解耦）→ 强化分层裁定（仓位独立于选股）
 - §3 约束五（少而精）→ 支持差异化粗仓位映射（§2.2.1）
-- §3 约束二（统一框架派/状态切换）→ 与 regime 节流的张力已由 design_memo_001 §2.2 移除 RegimeScore 裁定收敛；本备忘边界声明仓位算法不内置 regime 切换（§2.7）
+- §3 约束二（统一框架派/状态切换）→ 与 regime 节流的张力已由 30_multi_strategy_concurrency §2.2 移除 RegimeScore 裁定收敛；本备忘边界声明仓位算法不内置 regime 切换（§2.7）
 
 ## 8. 交接清单（供兄弟主题组 AI 索引）
 
 > 本节抽取 G12 仓位算法 spec 中供兄弟主题组（G13/G14/G15）直接消费的交接点，方便兄弟组 AI 不必通读全文即可定位所需输入。完整上下文见对应章节。
-> 交接纪律（discussion_000 §7.2）：AI 间不直接通信，通过产出物 + depgraph path 交接。兄弟组认领时读本节 + 对应章节即可开工。
+> 交接纪律（00_index_trading_decision §7.2）：AI 间不直接通信，通过产出物 + depgraph path 交接。兄弟组认领时读本节 + 对应章节即可开工。
 
-### 8.1 给 G13 FirmRiskAggregator（产出 `design_memo_005`）的交接项
+### 8.1 给 G13 FirmRiskAggregator（产出 `32_firm_risk_aggregator`）的交接项
 
 | 交接项 | G12 出处 | G13 需自行定义 |
 |---|---|---|
@@ -437,7 +440,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 | 不做 MVO / 不估协方差 | §2.7 | O(N) 求和实现保证 |
 | 冲突标的处理（一策略买、一策略卖同标的） | — | **G13 独有**，G12 不涉及 |
 
-### 8.2 给 G14 BudgetChangeHandler（产出 `design_memo_006`）的交接项
+### 8.2 给 G14 BudgetChangeHandler（产出 `33_budget_change_handler`）的交接项
 
 | 交接项 | G12 出处 | G14 需自行定义 |
 |---|---|---|
@@ -448,7 +451,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 | convergence_window 参考值 | §6（待定：打板 1-2 / 多因子 3-5 / 事件 2-3 天） | 窗口参数校准（**G14 独有**） |
 | `rebalance_to_budget` 接口 | — | **G14 独有**（策略不能说"我不卖"），G12 不涉及 |
 
-### 8.3 给 G15 RegimeMetaAllocator（产出 `design_memo_007`）的交接项
+### 8.3 给 G15 RegimeMetaAllocator（产出 `34_regime_meta_allocator`）的交接项
 
 | 交接项 | G12 出处 | G15 需自行定义 |
 |---|---|---|
@@ -456,7 +459,7 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 | 仓位算法不内置 regime 切换（边界声明） | §2.7 | Shrinkage 输出的 budget 数字是仓位算法唯一 regime 输入 |
 | 2 叠加态（事件驱动 ⑩ / 板块轮动 ⑪）总仓位规则 | §2.4.3 | 叠加态激活判定（G15 / regime 侧） |
 
-> ⚠️ G15 依赖 discussion_002 C1 验证结果 + G04 策略 PnL，第二阶段上线（P3），当前不阻塞 G12/G13/G14。G15 定 Shrinkage 参数，G12 只消费其输出的 budget 数字。
+> ⚠️ G15 依赖 11_regime_backtest_validation_plan C1 验证结果 + G04 策略 PnL，第二阶段上线（P3），当前不阻塞 G12/G13/G14。G15 定 Shrinkage 参数，G12 只消费其输出的 budget 数字。
 
 ### 8.4 G12 不做的事（避免兄弟组误判覆盖范围）
 
@@ -475,6 +478,10 @@ Morwane（design_memo_001 §7.4 核心实证）是 sleeve 信号 + **firm 层 in
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
-| 2026-08-08 | 1.0.0 | 初稿 | 落地 design_memo_001 §2.1 分层裁定框架为可施工 spec：策略层差异化粗仓位（等权/inverse-vol）+ firm 层连续 Kelly 精裁决（K=μ/σ²，半 Kelly，密度 PDF 主+历史降级）+ 硬上限裁剪（单票 8% 总资金口径/行业/总仓位/显式 CASH）；吸收 Conformal Kelly "稳不要锐"原则；记录 Conformal Kelly 为待裁定演进路径；与 system_charter §3 约束对齐确认边界 |
+| 2026-08-08 | 1.0.0 | 初稿 | 落地 30_multi_strategy_concurrency §2.1 分层裁定框架为可施工 spec：策略层差异化粗仓位（等权/inverse-vol）+ firm 层连续 Kelly 精裁决（K=μ/σ²，半 Kelly，密度 PDF 主+历史降级）+ 硬上限裁剪（单票 8% 总资金口径/行业/总仓位/显式 CASH）；吸收 Conformal Kelly "稳不要锐"原则；记录 Conformal Kelly 为待裁定演进路径；与 system_charter §3 约束对齐确认边界 |
 | 2026-08-08 | 1.1.0 | 新增 §8 交接清单 | 抽取 G12 供 G13/G14/G15 兄弟组直接消费的交接点，方便兄弟组 AI 不通读全文即可索引所需输入；修订记录顺延为 §9 |
 | 2026-08-08 | 1.2.0 | 补全 Kelly 施工细节 | §2.3.1 公式补无风险利率 r（逆回购）+ f_i≥0 截断（不能做空）+ 量纲年化 + 交易成本扣 μ；§2.3 新增 Kelly 与粗仓位合成规则（§2.3.4）/ pro-rata 归一化（§2.3.5）/ CASH 豁免（§2.3.6）；§3 新增 per-asset Kelly 优于 multivariate Kelly 的实证印证（§3.6，Conformal Kelly §6.4）；§4.1 加 f_i≥0 上限；§5 加样本不足降级 |
+| 2026-08-09 | 1.2.1 | 文件名 design_memo_004_position_sizing.md → 31_position_sizing.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.2.2 | §8 前向引用旧名（design_memo_005-007）更新为段位名（32_firm_risk_aggregator/33_budget_change_handler/34_regime_meta_allocator） | 文档体系重排补遗：前向引用未随 1.2.1 改名同步更新 |
+| 2026-08-09 | 1.2.3 | §1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md` | 改名工程遗留断链修复（全量断链扫描发现） |
+| 2026-08-09 | 1.2.4 | 文档头统一：frontmatter 补 title/owner/language，H1 去"设计备忘·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

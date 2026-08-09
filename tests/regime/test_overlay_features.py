@@ -11,7 +11,7 @@
 # [TESTS] tests/regime/test_overlay_features.py
 # [A_module] module_id: MOD-TEST-OVERLAY-FEAT | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #MOD-REGIME-002 #discussion_001 §4 #Phase2c #P1-E5
+# [ARCH-REF] #MOD-REGIME-002 #10_regime_detector_spec §4 #Phase2c #P1-E5
 """test_overlay_features.py — T3 评分纯函数单元测试（P1-E5 Step 4）。
 
 覆盖 7 个 T3（RECOVERY→BREAKOUT）评分函数，每个 4+ 用例：
@@ -29,7 +29,7 @@
   - 返回类型/值域（pd.Series, score∈[0,100], flag∈{0,1}）
   - 索引对齐（reindex 行为）
 
-依据: discussion_001 v1.3.1 §4 / Phase 2c 计划 / P1-E5
+依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2c 计划 / P1-E5
 """
 
 from __future__ import annotations

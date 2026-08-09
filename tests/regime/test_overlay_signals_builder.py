@@ -11,7 +11,7 @@
 # [TESTS] tests/regime/test_overlay_signals_builder.py
 # [A_module] module_id: MOD-TEST-OVERLAY-SIG | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #MOD-REGIME-002 #discussion_001 §4 #Phase2b
+# [ARCH-REF] #MOD-REGIME-002 #10_regime_detector_spec §4 #Phase2b
 """test_overlay_signals_builder.py — OverlaySignalsConstructor (Phase 2b) 单元测试。
 
 覆盖：
@@ -24,7 +24,7 @@
   - 降级：feature_builder=None → 全维度=0.0（纯 HMM）
   - 端到端：overlay_signals 喂 RegimeDetector._run_overlay 不报错
 
-依据: discussion_001 v1.3.1 §4 / Phase 2 计划 §Phase2b
+依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 """
 
 from __future__ import annotations

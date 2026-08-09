@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] QLoRA 4bit（r=8/alpha=16/dropout=0.05/target=q,k,v,o_proj）；继承 ModelTrainerBase；重依赖 lazy-import；训练数据 messages 格式对齐 nlp_inference prompt 模板；LoRA adapter 持久化 models/qwen25-7b-sft-v1/
-# [MODIFY-GUARD] discussion_019_phase3_engineering_plan.md §3.1.9
+# [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §3.1.9
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -32,7 +32,7 @@
 重依赖（torch/peft/trl/transformers/datasets）lazy-import 到方法内，
 确保无 ``[ml-train]`` extras 环境也能 import 本模块（注册器模式需要）。
 
-依据: discussion_019_phase3_engineering_plan.md §3.1.9
+依据: 13_regime_phase3_engineering_plan.md §3.1.9
 SSoT: #ARCH-NLP-PIPELINE-001
 Version: 0.1.0
 """

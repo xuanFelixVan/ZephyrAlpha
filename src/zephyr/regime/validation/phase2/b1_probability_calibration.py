@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-REGIME_VAL-002 | discussion_017 §2.4
+# [BLUEPRINT] MOD-REGIME_VAL-002 | 12_regime_phase2_validation §2.4
 # [MODULE] zephyr.regime.validation.phase2.b1_probability_calibration
 # [DOMAIN] D_REGIME
 # [DEPENDENCIES] numpy; pandas
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] forward_days>0; confidence∈[0,1]; 校准误差<0.10→PASS; 每态方向由数据推断(非固定映射)
-# [MODIFY-GUARD] discussion_017_phase2_model_quality_validation.md §2.4
+# [MODIFY-GUARD] 12_regime_phase2_validation.md §2.4
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -14,8 +14,8 @@
 # [TESTS] tests/regime/phase2/test_b1_probability_calibration.py
 # [A_module] module_id=MOD-REGIME_VAL-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_017 §2.4 #discussion_018 §4.1 B1
-"""B1 概率校准度验证器（discussion_017 §2.4）。
+# [ARCH-REF] #12_regime_phase2_validation §2.4 #12_regime_phase2_validation §4.1 B1
+"""B1 概率校准度验证器（12_regime_phase2_validation §2.4）。
 
 方案 A：后续收益实现代理标签。
   1. 全历史 detect 收集 (timestamp, confidence, dominant_regime)
@@ -25,17 +25,17 @@
   5. confidence 分桶（0-20/.../80-100%），每桶算"实际发生"频率
   6. 校准误差 = mean(|桶内平均 confidence - 桶内实际频率|)
 
-判定（discussion_017 §2.4，2026-08-08 修订）：
+判定（12_regime_phase2_validation §2.4，2026-08-08 修订）：
   ECE（样本加权校准误差）< 0.10 → PASS；0.10 ≤ ECE < 0.15 → REVIEW；≥ 0.15 → FAIL
   ECE 是行业标准（Guo et al. 2017 / sklearn calibration_curve），按样本量加权各桶误差，
   避免简单均值对 n=1 和 n=221 桶等权的统计不合理性。
 
 设计决策：
   - 每态"预期方向"由数据推断（平均后续收益 sign），非固定映射——避免无监督 HMM
-    的标签语义依赖，方案自洽（discussion_017 §7 开放问题 2 的务实解法）。
+    的标签语义依赖，方案自洽（12_regime_phase2_validation §7 开放问题 2 的务实解法）。
   - 态平均收益接近 0（|mean| < min_return_threshold）时跳过该态（无明确方向）。
 
-依据: discussion_017 §2.4 / discussion_018 §4.1 B1
+依据: 12_regime_phase2_validation §2.4 / 12_regime_phase2_validation §4.1 B1
 Version: 0.1.0
 """
 
@@ -56,7 +56,7 @@ except Exception:  # pragma: no cover  # noqa: BLE001
 
 _logger = logging.getLogger(__name__)
 
-# 判定门槛（discussion_017 §2.4，2026-08-08 修订为 ECE 基准）
+# 判定门槛（12_regime_phase2_validation §2.4，2026-08-08 修订为 ECE 基准）
 PASS_ERROR = 0.10  # ECE < 10% → PASS
 REVIEW_ERROR = 0.15  # ECE < 15% → REVIEW
 DEFAULT_FORWARD_DAYS = 20

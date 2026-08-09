@@ -1,19 +1,22 @@
 ---
 ttl: permanent
 doc_type: architecture_view
+title: regime 检测器完整 spec
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "1.3.1"
+version: "1.3.2"
 date: 2026-08-06
 topic: regime_detector_full_spec
 scope: 07_trading_decision_architecture
-parent: design_memo_001_multi_strategy_concurrency.md
+parent: 30_multi_strategy_concurrency.md
 ---
 
-# 讨论文档·regime 检测器完整 spec
+# regime 检测器完整 spec
 
-> 本文档合并原 discussion_001（regime 业务规则）+ discussion_002（L0 范围决策），为 12 态 regime 检测器的完整讨论文档。
-> 性质：regime 检测器完整 spec 真源。讨论阶段已完成（2026-08-06，v1.3.0），结论已回写至 design_memo_001 §6.6。施工/回测阶段本档继续作为活 spec 更新。
-> 关联备忘：[design_memo_001_multi_strategy_concurrency.md](design_memo_001_multi_strategy_concurrency.md)
+> 本文档合并原 10_regime_detector_spec（regime 业务规则）+ 11_regime_backtest_validation_plan（L0 范围决策），为 12 态 regime 检测器的完整讨论文档。
+> 性质：regime 检测器完整 spec 真源。讨论阶段已完成（2026-08-06，v1.3.0），结论已回写至 30_multi_strategy_concurrency §6.6。施工/回测阶段本档继续作为活 spec 更新。
+> 关联备忘：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)
 
 ## 1. 目标与核心原则
 
@@ -28,14 +31,14 @@ parent: design_memo_001_multi_strategy_concurrency.md
 
 ### 1.2 已定型的机制
 - regime 输出：12 维概率分布 P(r1)...P(r12)，Σ=1
-- **regime 仅用于 Shrinkage 风险节流，不做 alpha 择时**（design_memo_001 v1.2.0 裁定）
+- **regime 仅用于 Shrinkage 风险节流，不做 alpha 择时**（30_multi_strategy_concurrency v1.2.0 裁定）
 - ~~RegimeScore = Σ_r P(r) × Sharpe(策略i, r)~~ → 已移除（开源实证：regime alpha 择时降收益）
 - 性能追踪用软分配（归因用，非分配器输入）
 - **Shrinkage = ConfidenceSignal × RiskSignal**（二维参数驱动，§5.2，用户 2026-08-05 确认方向）
 
 ## 2. L0 范围决策：检测器与现有资产关系
 
-> 本节原为 discussion_002，已合并。决策状态：C-prime（AI 建议，待用户最终确认）。
+> 本节原为 11_regime_backtest_validation_plan，已合并。决策状态：C-prime（AI 建议，待用户最终确认）。
 
 ### 2.1 已有的探测器资产
 
@@ -97,7 +100,7 @@ parent: design_memo_001_multi_strategy_concurrency.md
 
 **结论**：C-prime 的 9 基础 + 3 特殊(CRISIS/RECOVERY/BREAKOUT) 架构与行业模式一致。特殊态优先级高于基础网格也是共识（CRISIS 不能被基础网格的"高波动"简单涵盖）。
 
-**实证 4：regime 做风险节流不做 alpha 择时（直接验证 design_memo_001 v1.2.0 裁定）**
+**实证 4：regime 做风险节流不做 alpha 择时（直接验证 30_multi_strategy_concurrency v1.2.0 裁定）**
 
 Morwane multi-strategy-alpha-book 实证（OOS 2013-2026, vol-targeted 10%, net of 2bps/turnover）：
 
@@ -110,7 +113,7 @@ Morwane multi-strategy-alpha-book 实证（OOS 2013-2026, vol-targeted 10%, net 
 
 **作者结论原文**："here, HMM regime detection is a risk-management tool, not a return-timing signal — exactly what a desk would conclude."
 
-**结论**：用 regime 做 alpha 择时**摧毁价值**（Sharpe 1.43→0.87），做风险节流**保持收益+降低回撤**（MaxDD −14.2%→−10.3%, Calmar +38%）。直接验证 design_memo_001 v1.2.0 裁定和 §5.2 Shrinkage 机制方向。
+**结论**：用 regime 做 alpha 择时**摧毁价值**（Sharpe 1.43→0.87），做风险节流**保持收益+降低回撤**（MaxDD −14.2%→−10.3%, Calmar +38%）。直接验证 30_multi_strategy_concurrency v1.2.0 裁定和 §5.2 Shrinkage 机制方向。
 
 **实证 5：多信号加权融合（情绪/breadth 作为软输入）是机构做法**
 
@@ -1877,7 +1880,7 @@ AQR / Man Group / Two Sigma / Renaissance 真实做法：
 
 ### 5.1 ConfidenceSignal（置信度映射，已定型）
 
-> **裁定（design_memo_001 v1.2.0）**：regime 仅用于 Shrinkage 风险节流，不重定向资金。
+> **裁定（30_multi_strategy_concurrency v1.2.0）**：regime 仅用于 Shrinkage 风险节流，不重定向资金。
 
 | max(P) | ConfidenceSignal | 风险节流行为 | 说明 |
 |---|---|---|---|
@@ -2302,7 +2305,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 |---|---|---|
 | 2026-08-05 | 文档建立，框架定义 | ✅ 完成 |
 | 2026-08-05 | 12 态清单确认（D-SIGNAL-04 真源） | ✅ 完成 |
-| 2026-08-05 | RegimeScore 移除，regime 改为纯风险节流 | ✅ 完成（design_memo_001 v1.2.0） |
+| 2026-08-05 | RegimeScore 移除，regime 改为纯风险节流 | ✅ 完成（30_multi_strategy_concurrency v1.2.0） |
 | 2026-08-05 | 置信度→风险节流映射（ConfidenceSignal） | ✅ 完成 |
 | 2026-08-05 | 状态机转移规则表（T1-S2 + 状态机图） | ✅ 全部用户确认/标定完成（§4.6-§4.12） |
 | 2026-08-05 | §5.2 参数驱动 Shrinkage 方向确认（ConfidenceSignal × RiskSignal） | ✅ 用户确认方向 |
@@ -2310,13 +2313,13 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 2026-08-06 | §5.3.1-§5.3.4 RiskSignal 13 参数阈值标定（11 风险参数四档 1.0/0.85/0.6/0.3 + 机会信号 #11/#13 + 聚合公式最严主导+共振惩罚+机会恢复 + 7 月案例验证） | ✅ 阈值标定完成（v0.6.0） |
 | 2026-08-05 | §5.4 盘感 8 维度（含虹吸态/新闻反向/筹码峰/利空不跌/背离早信号） | ✅ 真源已记录 |
 | 2026-08-05 | §2 L0 范围决策合并（C-prime 建议） | ✅ 用户确认（经行业实证校验） |
-| 2026-08-05 | 文档合并 discussion_001 + discussion_002 | ✅ 完成 |
+| 2026-08-05 | 文档合并 10_regime_detector_spec + 11_regime_backtest_validation_plan | ✅ 完成 |
 | 2026-08-05 | §4.6 T1 参数标定（三阶段动态评分 BQS/RCS/FRS） | ✅ 用户确认落盘 |
 | 2026-08-05 | §4.7 T2/T6 参数标定（冰点+反核四路径，融合 Wyckoff/订单流前沿） | ✅ 升级版落盘 |
 | 2026-08-05 | §6 主线识别规则系统化（四阶段评分+虹吸态量化+连板标准+RRG/HMM/资金流对照） | ✅ 落盘 |
 | 2026-08-05 | §4.8 T4 疯狂期参数标定（LPPL 模型+技术赶顶+情绪估值极端） | ✅ 落盘 |
 | 2026-08-05 | §4.9 S1 CRISIS 参数标定（VIX Panic+跨资产相关性+流动性枯竭+5阶段共振） | ✅ 落盘 |
-| 2026-08-05 | 回撤风控规则 → StrategyBook drawdown protocol（design_memo_001 §2.5，四级阈值 8/15/20/25%+恢复+Kill Switch） | ✅ 落盘 |
+| 2026-08-05 | 回撤风控规则 → StrategyBook drawdown protocol（30_multi_strategy_concurrency §2.5，四级阈值 8/15/20/25%+恢复+Kill Switch） | ✅ 落盘 |
 | 2026-08-05 | §4.10 T3 参数标定（七维度动态评分：情绪热度升级+主线板块+龙头个股+量价配合+均线趋势+虹吸排除+赚钱效应） | ✅ 落盘 |
 | 2026-08-05 | §4.11 T5 参数标定（八维度逃顶检测：情绪退潮+龙头断板+Wyckoff派发+顶背离共振+量价顶背离+毕业照+资金筹码+新闻反向） | ✅ 落盘 |
 | 2026-08-05 | §4.12 S2 参数标定（八维度见底检测：Capitulation投降+Wyckoff吸筹+VIX见顶回落+政策底传导+估值极端+利空钝化+资金承接+底部筹码） | ✅ 落盘 |
@@ -2333,10 +2336,10 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-05 | 0.1.0 | 初稿 | 建立 regime 检测器讨论框架 |
-| 2026-08-05 | 0.2.0 | 填充 12 态定义；移除 RegimeScore；更新置信度映射 | design_memo_001 v1.2.0 裁定 + D-SIGNAL-04 真源 |
+| 2026-08-05 | 0.2.0 | 填充 12 态定义；移除 RegimeScore；更新置信度映射 | 30_multi_strategy_concurrency v1.2.0 裁定 + D-SIGNAL-04 真源 |
 | 2026-08-05 | 0.3.0 | 新增状态机转移规则表（T1-S2 + 状态机图 + 10 项待确认参数） | 用户描述转换路径系统化 |
 | 2026-08-05 | 0.4.0 | 新增参数驱动 Shrinkage 提案 + 盘感 6 维度（含虹吸态） | 用户7月案例洞察"只信参数不信标签" |
-| 2026-08-05 | 0.5.0 | 合并 discussion_002（L0 范围决策 C-prime）；RiskSignal 删回撤（用户+机构实证：沉没成本属账户风控不属市场状态）；量价时空改四要素（补时+空）；新增盘感维度7新闻反向/维度8筹码峰/维度1利空不跌验证/背离早信号；用户确认 Shrinkage 二维公式方向 | 用户第二轮讨论确认+量价时空/回撤机构实证搜索验证 |
+| 2026-08-05 | 0.5.0 | 合并 11_regime_backtest_validation_plan（L0 范围决策 C-prime）；RiskSignal 删回撤（用户+机构实证：沉没成本属账户风控不属市场状态）；量价时空改四要素（补时+空）；新增盘感维度7新闻反向/维度8筹码峰/维度1利空不跌验证/背离早信号；用户确认 Shrinkage 二维公式方向 | 用户第二轮讨论确认+量价时空/回撤机构实证搜索验证 |
 | 2026-08-05 | 0.6.0 | §2.2.2-2.2.3 行业实证支持（6 项实证验证 C-prime）；§2.5 探测器分工+情绪周期软影响三阶段路径；§2.6 3×3 九宫格作用；§2.8 D-SIGNAL-68 独立覆盖层；§2.7 待回测验证项标注 | 用户确认 C-prime + 行业对照校验（fibalgo/jeremyknox/UMwai/Morwane/WSC） |
 | 2026-08-05 | 0.7.0 | §4.6 T1 三阶段动态评分（BQS/RCS/FRS，整合 1600 万样本+机构级订单流+A 股标准）；§4.7 T2/T6 升级版（冰点判定加换手率/布林带/筹码单峰；反核首信号从 2 路径升级为 4 路径，新增 Wyckoff Spring+订单流吸收两条机构级前沿路径）；§4.7.4 量能分级胜率统计；§4.5 待确认项 #1-6 标记完成 | 用户要求"行业最优化/最前沿"参数+2026-08-05 多维搜索验证（tradingsim/stockchartsai/quantscanai/forexeapro/damnpropfirms/Minervini VCP/A股实战） |
 | 2026-08-05 | 0.8.0 | §6 主线识别规则系统化（四阶段动态评分：苗头/确认/退潮/切换）；§6.3 虹吸态量化标准（5 维度健康 vs 虹吸区分，7 月案例验证）；§6.4 主线与 regime 关系映射；§6.5 连板高度标准（3 连板=主升苗头，连板铁律 6 特征）；§6.6 行业方法对照（RRG/HMM/连板/资金流/NetworkX/动量排名/Two-Stage ML）；§5.4 虹吸态确认状态更新；§4.5 待确认项 #7-8 标记完成 | 用户要求"按顺序推进"+2026-08-05 行业搜索（RRG de Kempenaer/HMM 板块状态/连板铁律 1200 只复盘/FMP 机构资金流/NetworkX 资金图谱/dananalytics 动量轮动） |
@@ -2347,3 +2350,5 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 2026-08-05 | 1.1.0 | §4.11.9 行业对照：机构级逃顶检测实践（学术前沿ML崩盘预测IEEE/arxiv/ASEAN-5 + 对冲基金实操AQR/Man Group/Goldman/BlackRock + Wyckoff量化QZ ALGO/Quantum Algo/ProRealTime + T5八维度vs机构对照表 + 用户体系3优势 + 可补强5维度）；§4.11.10 机构级数据维度补强（⑨IV隐含波动率IEEE最强预测因子+⑩COT拥挤度FLIP Percentile+⑪信用利差2-4周提前量+⑫期权异动机构建仓痕迹），T5从8维度升级到12维度，完全对标机构级逃顶检测 | 用户疑问"专业机构怎么做的？我这套上不得台面？"+2026-08-05 行业搜索（IEEE Access韩国2812股CatBoost AUC0.841 VKOSPI最强预测因子/arxiv多层网络LSTM溢出效应/forexfundamentals COT FLIP Percentile/tradingdesk Quantum Edge信用利差领先2-4周/Quantum Algo期权异动/Goldman 2026-05 AI动量100th percentile→-8%/BlackRock pod-shop拥挤/prorealcode Wyckoff Event Detection/QZ ALGO前Goldman交易员验证/培风客A股威科夫派发实证） |
 | 2026-08-06 | 1.2.0 | §4.7.5 T2/T6 行业对照（学术均值回归Fama-French/De Bondt-Thaler+价值投资机构巴菲特/格雷厄姆+xueqiu三筛法+A股底部框架sina/eastmoney/sohu+对照表+用户体系2优势）；§4.7.6 机构级数据维度补强（⑨估值分位PE/PB/破净率/ERP+⑩融资去杠杆两融余额/margin debt周期+⑪聪明钱底背离北向/主力/ETF+⑫Put-Call恐慌极值），T2/T6从8维度升级到12维度；§4.8.4 T4 行业对照（泡沫理论Shiller CAPE/Minsky/Kindleberger+机构大佬Dalio 80%/Grantham 50%崩盘/Burry抛物线/Buffett现金3970亿/Marks INVESTCON 5+量化泡沫指标6项全红灯+对照表+用户体系2优势）；§4.8.5 机构级数据维度补强（④Shiller CAPE诺奖155年仅2次>40+⑤巴菲特指标234%+⑥Margin Debt $1.42万亿+⑦指数集中度前10大42%），T4从3基础组升级到7维度；§4.12.9 S2 行业对照（VantMacro Post-Shock Recovery 53%复发率+Ironborn 45日周期6阶段+LighthouseMacro 8维金融条件+复苏vs反弹区分+对照表+用户体系2优势）；§4.12.10 机构级数据维度补强（⑨信用利差收窄HY/IG OAS tightening复苏真伪试金石+⑩跨资产相关性回落多元化恢复+⑪流动性恢复净流动性/DR007+⑫市场广度恢复上涨股占比/涨停跌停比），S2从8维度升级到12维度，补齐机构金融条件框架 | 用户要求"对其他转换（T2/T4/S2）也做类似的行业对照+机构维度补强"+2026-08-06 行业搜索（xueqiu 2026-07三筛法PE/PB<15%分位/onequity 2026-06八大基本面指标Put-Call/ERP/sina 2026-07熊市末期八大信号/Shiller CAPE 41.6x 155年第二高/volity 2026-07 Margin Debt $1.42万亿53.7% YoY/theasset 2026-07巴菲特指标234%/shifd 2026-06前10大权重42%/stockwirex 2026-05 Minsky投机融资阶段/Dalio 80%泡沫/Grantham 50%崩盘/Burry抛物线/Buffett 3970亿现金/VantMacro Post-Shock Recovery 53%转回Crisis/Ironborn 45日周期信用稳定=系统不崩溃/LighthouseMacro HY OAS 319bps金融条件/Morgan Stanley IG收紧11bps HY收紧49bps） |
 | 2026-08-06 | 1.3.0 | §5.3.1 RiskSignal 11 风险参数四档阈值标定（1.0/0.85/0.6/0.3，行业共识 80 分位警戒线）；§5.3.2 机会信号处理（#11 新闻反向双向+#13 利空不跌，上调=抵消恢复≤1.0 非超 1.0）；§5.3.3 聚合公式（最严主导 min+共振惩罚 0.05/异常+机会恢复上限 0.25，WR+调节混合避免纯 min 过度保守）；§5.3.4 7 月案例验证（5 时间点全部吻合 §5.2.3）；**Shrinkage 二维公式 RiskSignal 侧闭环** | 用户要求"继续①RiskSignal 13 参数阈值标定"+2026-08-06 行业搜索（positioned.app ATR Percentile>80 高波动/tradingbotmaker HV percentile>80 regime/CSDN 分位数动态映射 10/50/90/portfolioboss 80th 退出/mystum Model Aggregation vs Worst-Case WR 保守 vs MA 稳健/fastercapital Risk Aggregation 加权方案） |
+| 2026-08-09 | 1.3.1 | 文件名 discussion_001_regime_detector_spec.md → 10_regime_detector_spec.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.3.2 | 文档头统一：frontmatter 补 title/owner/language，H1 去"讨论文档·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

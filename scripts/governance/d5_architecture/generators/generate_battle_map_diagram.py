@@ -131,6 +131,9 @@ _STEP_PREFIX_TO_STAGE_FILE = {
     "BM-REC": "11_reconciliation",
 }
 
+# flow_stage → 算法纵览环节文件路径（用于深链接到 08_algorithm_overview/stages/XX.md）
+_FLOW_STAGE_TO_ALGO_FILE = {fs_id: f"stages/{num}_{fs_id}.md" for fs_id, _, num in FLOW_STAGES}
+
 # Mermaid 分页大小（防 >100 节点渲染失败，memory lesson）
 # V1.5：48 环节全景图分 2 页用户反馈不直观，调到 60 合并为单图
 PAGE_SIZE = 60
@@ -903,6 +906,28 @@ def _format_step_detail(step: dict, anchors: list[dict]) -> str:
                 f"{a.get('status_snapshot') or '—'} | {live_text} |"
             )
         parts.append("")
+        # 深链接：锚点模块的算法详情见跨域算法纵览（08_algorithm_overview，按作战环节拆分）
+        # 仅对 depgraph 锚点的 MOD-xxx 模块生成链接（CAND-xxx/其他不在纵览中）
+        # 环节文件路径由 step 的 flow_stage 决定（零漂移：映射从 FLOW_STAGES 派生）
+        flow_stage = step.get("flow_stage", "")
+        stage_file = _FLOW_STAGE_TO_ALGO_FILE.get(flow_stage, "system_foundation.md")
+        algo_link_base = f"../../08_algorithm_overview/{stage_file}"
+        algo_index_link = "../../08_algorithm_overview/index.md"
+        depgraph_mods = [
+            a for a in anchors
+            if a.get("target_graph") == "depgraph"
+            and (a.get("target_id") or "").startswith("MOD-")
+        ]
+        if depgraph_mods:
+            mod_links = [
+                f"[{a['target_id']}]({algo_link_base}#{a['target_id'].lower()})"
+                for a in depgraph_mods
+            ]
+            parts.append(
+                f"> 🔗 **算法详情**：见[算法全景图]({algo_index_link})，"
+                f"本环节锚点模块：{' / '.join(mod_links)}"
+            )
+            parts.append("")
     else:
         parts += ["**锚点**：⚠ 无（BM-INV-001 君子协定违例——环节无锚点=悬空决策）", ""]
     eff = step.get("_effective_status", "—")

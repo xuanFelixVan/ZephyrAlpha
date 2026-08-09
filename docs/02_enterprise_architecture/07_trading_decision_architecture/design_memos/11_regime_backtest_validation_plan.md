@@ -1,23 +1,26 @@
 ---
 ttl: permanent
 doc_type: architecture_view
+title: regime 检测器回测验证方案
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "1.5.0"
+version: "1.5.2"
 date: 2026-08-06
 last_updated: 2026-08-08
 topic: regime_backtest_validation_plan
 scope: 07_trading_decision_architecture
-parent: discussion_001_regime_detector_spec.md
+parent: 10_regime_detector_spec.md
 ---
 
-# 讨论文档·regime 检测器回测验证方案
+# regime 检测器回测验证方案
 
-> 本文档定义 regime 检测器（discussion_001 v1.3.1 spec）的回测验证方案。
+> 本文档定义 regime 检测器（10_regime_detector_spec v1.3.1 spec）的回测验证方案。
 > 性质：**已定稿（v1.0.0，2026-08-06），交接给施工对话作为模块实现的验收指南**。等 regime 检测器骨架+实现就绪后，按本方案执行回测验证。
-> 关联：[discussion_001_regime_detector_spec.md](discussion_001_regime_detector_spec.md)（regime spec 真源）｜ [battle_map_03_backtest_validation.md](../battle_map/battle_map_03_backtest_validation.md)（现有回测框架）
+> 关联：[10_regime_detector_spec.md](10_regime_detector_spec.md)（regime spec 真源）｜ [battle_map_03_backtest_validation.md](../battle_map/battle_map_03_backtest_validation.md)（现有回测框架）
 >
 > **v1.1.0 更新（2026-08-08）**：方案已部分执行（Phase 0-2 完成，Phase 3-5 部分/未完成）。
-> 实际实现与原方案有一处重大偏离：HMM **9 态 → 4 态**（BIC 扫描驱动，discussion_004 §2.1），
+> 实际实现与原方案有一处重大偏离：HMM **9 态 → 4 态**（BIC 扫描驱动，13_regime_phase3_engineering_plan §2.1），
 > 输出 **7 维概率**（4 HMM + 3 overlay）非 12 维。详见下方 [§0.5 方案执行状态](#05-方案执行状态2026-08-08-反向同步)。
 
 ## 0.5 方案执行状态（2026-08-08 反向同步）
@@ -40,11 +43,11 @@ parent: discussion_001_regime_detector_spec.md
 **结论**：方案**未全部执行完成**。核心假设（C1 节流有效）已验证通过，模型质量（Phase 2）已闭环；
 参数校准（Phase 3）与鲁棒性（Phase 4）部分完成；决策门控（Phase 5）未启动。
 
-### 0.5.2 重大偏离：9 态 → 4 态（discussion_004 §2.1）
+### 0.5.2 重大偏离：9 态 → 4 态（13_regime_phase3_engineering_plan §2.1）
 
 原方案 §8.1 规划 HMM **9 态**（3×3 趋势×波动率网格），§1.1 称输出 **12 维概率分布**。
 实际执行中 A2 过拟合检测发现 9 态过度细分（OOS/IS 一致率仅 0.34，门槛 0.7），经 BIC 扫描
-确认降为 **4 态**（discussion_004 §2.1，2026-08-07）：
+确认降为 **4 态**（13_regime_phase3_engineering_plan §2.1，2026-08-07）：
 
 - **BIC Kneedle 拐点=4**，walk-forward 46 季度拐点分布 {4:19, 5:25, 7:2}
 - **4 态语义**（全历史 3733 样本，RobustScaler 标准化后 Viterbi 统计）：
@@ -81,7 +84,7 @@ src/zephyr/regime/
     ├── b1_probability_calibration.py # B1 概率校准度验证器
     ├── b4_transition_accuracy.py    # B4 转换触发准确性验证器
     ├── confidence_calibrator.py     # 两阶段概率校准器（Temperature Scaling + Isotonic Regression）
-    └── phase2_runner.py             # Phase 2 编排器（依据 discussion_017 §4）
+    └── phase2_runner.py             # Phase 2 编排器（依据 12_regime_phase2_validation §4）
 
 src/zephyr/backtest/
 ├── implementations/shrinkage_engine.py  # ShrinkageBacktestEngine（override _get_day_signals，shrinkage=1.0 bit-identical）
@@ -152,10 +155,10 @@ src/zephyr/backtest/
 
 | 文档 | 覆盖范围 | 状态 |
 |---|---|---|
-| `discussion_004`（降态裁定） | 9态→4态 BIC 证据 + 4态语义 | ✅ 已定稿 |
-| `discussion_017`（Phase 2 验证详设） | A1/A2/B1/B4 验证器设计 | ✅ 已定稿 |
-| `discussion_018`（回测可观测性） | C1 runner 可观测性 + MLflow 跟踪 | ✅ 已定稿 |
-| `discussion_019`（Phase 3 工程规划） | HMM降态/校准器/NLP管道/置信度信号 | ✅ 施工中 |
+| `13_regime_phase3_engineering_plan`（降态裁定） | 9态→4态 BIC 证据 + 4态语义 | ✅ 已定稿 |
+| `12_regime_phase2_validation`（Phase 2 验证详设） | A1/A2/B1/B4 验证器设计 | ✅ 已定稿 |
+| `50_backtest_observability_workplan`（回测可观测性） | C1 runner 可观测性 + MLflow 跟踪 | ✅ 已定稿 |
+| `13_regime_phase3_engineering_plan`（Phase 3 工程规划） | HMM降态/校准器/NLP管道/置信度信号 | ✅ 施工中 |
 
 ### 0.5.7 待完成项（Phase 3-5 缺口）
 
@@ -190,7 +193,7 @@ src/zephyr/backtest/
 | **两阶段校准**（Temperature + Isotonic） | #ARCH-CALIBRATOR-001，ECE=4.2% | Dheur 博士论文（2025-12）大规模实验：**post-hoc 校准一致优于内嵌校准** | ✅ 正确 |
 | **乘法 Shrinkage**（ConfidenceSignal × RiskSignal） | C1 四项全通过 | VIX-Regime Position Sizing（2026-05）：regime 状态直接缩放仓位（1.0x/0.6x/0.3x）= 我们的 Shrinkage | ✅ 正确 |
 | **"特征>模型"工程** | Hurst DFA/Kalman/筹码/合成VIX/Wyckoff | mathandmarkets（2026-01）：**特征重要性远超模型选择**，realized_vol 单特征 28% 重要性；10 优化特征 > 35+ 特征 | ✅ 正确 |
-| **"风险节流器非策略"定位** | design_memo_001 §2.2 | 多源 2026 共识：regime 检测最大价值是仓位缩放而非 alpha 信号 | ✅ 正确 |
+| **"风险节流器非策略"定位** | 30_multi_strategy_concurrency §2.2 | 多源 2026 共识：regime 检测最大价值是仓位缩放而非 alpha 信号 | ✅ 正确 |
 
 **核心算法不需要推翻重做。**
 
@@ -557,7 +560,7 @@ regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = Confidence
 ### 1.2 核心原则
 
 1. **对接现有 BM-BT 框架，不另起炉灶**：项目已有 49 环节回测体系（48 运营态），regime 验证复用现有引擎/指标/门控，只补 regime 特有的验证逻辑
-2. **regime 是"风险节流器"不是"策略"**：验证焦点是"风险节流效果"（防御性），不是"alpha 收益"（进攻性）——与 design_memo_001 v1.2.0 裁定一致
+2. **regime 是"风险节流器"不是"策略"**：验证焦点是"风险节流效果"（防御性），不是"alpha 收益"（进攻性）——与 30_multi_strategy_concurrency v1.2.0 裁定一致
 3. **参考 Morwane 实证的验证方法**：开/关对比 + block-bootstrap + walk-forward 季度重拟合
 4. **先简后繁**：MVP 先验证核心假设（节流有效），再验证模型质量，最后参数校准
 
@@ -574,7 +577,7 @@ regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = Confidence
 | **因果链** | 信号→持仓→收益 | 概率→Shrinkage→budget→策略部署→组合回撤 |
 | **现有模块对接** | BM-BT-01~07 全流程 | 需在 BM-BT-02 数据接入侧加 regime 输出，BM-BT-05/06 验证模型质量 |
 
-**关键洞察**：regime 做风险节流的误差不对称（design_memo_001 §2.2）——判错=机会成本（少赚），不像 alpha 择时判错=主动亏损。所以验证标准应宽松于策略验证：**重点验证"不伤害"（Sharpe 不显著降），而非"大幅改善"**。
+**关键洞察**：regime 做风险节流的误差不对称（30_multi_strategy_concurrency §2.2）——判错=机会成本（少赚），不像 alpha 择时判错=主动亏损。所以验证标准应宽松于策略验证：**重点验证"不伤害"（Sharpe 不显著降），而非"大幅改善"**。
 
 ## 2. 对接现有回测框架
 
@@ -812,7 +815,7 @@ Phase 5：决策门控（对接 BM-BT-07）
 
 | Phase | 前置依赖 | 产出 |
 |---|---|---|
-| Phase 0 | regime spec（已就绪 discussion_001 v1.3.1） | 可运行 regime 原型 |
+| Phase 0 | regime spec（已就绪 10_regime_detector_spec v1.3.1） | 可运行 regime 原型 |
 | Phase 1 | Phase 0 + 现有回测引擎 + 至少 1 个策略 | C1 开/关对比报告 |
 | Phase 2 | Phase 0 + BM-BT-03-E/05 | 模型质量报告 |
 | Phase 3 | Phase 2 通过 + BM-BT-05-B/E | 参数校准报告 |
@@ -838,21 +841,21 @@ Phase 5：决策门控（对接 BM-BT-07）
 
 ## 8. 前置工程：regime 检测器实现路径
 
-> Phase 0 的具体内容——把 discussion_001 spec 变成可运行代码。
+> Phase 0 的具体内容——把 10_regime_detector_spec spec 变成可运行代码。
 
 ### 8.1 实现分解（完整 12 态，分模块施工）
 
 > **用户裁定（2026-08-06）**：从第一性原理出发，直接实现完整 12 态，回测验证后再根据结果优化/简化。理由：最终目标就是 12 态，先做简化版再重做完整版是重复工作；完整版验证后若发现某些态可合并/某些参数可去除，那是"基于证据的简化"，比"拍脑袋的简化"更可靠。
 >
-> ⚠️ **已更新（见 §0.5.2）**：A2 过拟合检测发现 9 态过度细分（OOS/IS=0.34），经 BIC 降为 **4 态**（discussion_004 §2.1）。这正是本节预期的"基于证据的简化"——验证后发现过度细分，基于 BIC 证据降态。下表 9 态/12 态为原始规划，保留为历史真源。
+> ⚠️ **已更新（见 §0.5.2）**：A2 过拟合检测发现 9 态过度细分（OOS/IS=0.34），经 BIC 降为 **4 态**（13_regime_phase3_engineering_plan §2.1）。这正是本节预期的"基于证据的简化"——验证后发现过度细分，基于 BIC 证据降态。下表 9 态/12 态为原始规划，保留为历史真源。
 
 | 模块 | 实现内容 | spec 真源 |
 |---|---|---|
-| **HMM 9态** | 9 态 3×3 网格（趋势×波动率），多特征喂入 | discussion_001 §2.6/§3 |
-| **D-SIGNAL-68 覆盖层** | 3 特殊态（CRISIS/RECOVERY/BREAKOUT）规则触发 + 8 转换评分 | discussion_001 §2.8/§4 |
-| **ConfidenceSignal** | max(P) → 4 档映射（<60%→0.3 / 60-80%→0.6 / 80-95%→0.85 / >95%→1.0） | design_memo_001 §2.2 |
-| **RiskSignal** | 13 参数完整计算 + 聚合公式（min主导+共振惩罚+机会恢复） | discussion_001 §5.3 |
-| **Shrinkage** | ConfidenceSignal × RiskSignal，注入 RegimeMetaAllocator | design_memo_001 §2.2 |
+| **HMM 9态** | 9 态 3×3 网格（趋势×波动率），多特征喂入 | 10_regime_detector_spec §2.6/§3 |
+| **D-SIGNAL-68 覆盖层** | 3 特殊态（CRISIS/RECOVERY/BREAKOUT）规则触发 + 8 转换评分 | 10_regime_detector_spec §2.8/§4 |
+| **ConfidenceSignal** | max(P) → 4 档映射（<60%→0.3 / 60-80%→0.6 / 80-95%→0.85 / >95%→1.0） | 30_multi_strategy_concurrency §2.2 |
+| **RiskSignal** | 13 参数完整计算 + 聚合公式（min主导+共振惩罚+机会恢复） | 10_regime_detector_spec §5.3 |
+| **Shrinkage** | ConfidenceSignal × RiskSignal，注入 RegimeMetaAllocator | 30_multi_strategy_concurrency §2.2 |
 
 > **实现后验证再简化**：完整 12 态跑通回测后，若验证发现某些态样本不足（A1）或某些参数无贡献（D2），再做"基于证据的简化"（如高波动三态合并）。这与"先拍脑袋简化"本质不同。
 
@@ -890,7 +893,7 @@ Phase 5：决策门控（对接 BM-BT-07）
 3. **验证区间** → ✅ 已决策（2026-08-06）：2015-2026（覆盖 2015 股灾/2018 贸易战/2020 疫情/2024 见底，含多轮 CRISIS-RECOVERY 周期）。
 4. **HMM 实现** → ✅ 已决策（2026-08-06）：hmmlearn GaussianHMM（与行业主流一致，Morwane/fibalgo 均用）。
 
-> **与另一个 AI 施工对话的协调**（2026-08-06）：另一对话正在落盘 4 个多策略模块 blueprint（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator/BudgetChangeHandler）+ regime 检测器 blueprint + 代码骨架。本验证方案（discussion_002）是这些模块的"验收指南"——等骨架就绪后，按本方案执行回测验证。另一对话施工时应参考本方案 §4，确保 regime 检测器接口满足验证需求（输出概率分布供 CRPS、可开关 Shrinkage 供 C1 对比）。
+> **与另一个 AI 施工对话的协调**（2026-08-06）：另一对话正在落盘 4 个多策略模块 blueprint（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator/BudgetChangeHandler）+ regime 检测器 blueprint + 代码骨架。本验证方案（11_regime_backtest_validation_plan）是这些模块的"验收指南"——等骨架就绪后，按本方案执行回测验证。另一对话施工时应参考本方案 §4，确保 regime 检测器接口满足验证需求（输出概率分布供 CRPS、可开关 Shrinkage 供 C1 对比）。
 
 ## 11. 修订记录
 
@@ -904,3 +907,5 @@ Phase 5：决策门控（对接 BM-BT-07）
 | 2026-08-08 | 1.3.0 | 新增 §0.6.7 第三轮搜索（A股4态行业共识 + 动态调制矩阵 + RARP状态条件协方差 + regime-conditional allocation + Kelly警示）；新增 §0.6.8 三轮总结论 | 用户要求再次审查+全网搜2026最新；三轮搜索确认核心算法全部背书，6条升级路径备查 |
 | 2026-08-08 | 1.4.0 | 新增 §0.6.9 第四轮发现（层次HMM状态持续+38.5%/伪转移-28.6% + TVTP时变转移 + Shannon entropy替代ConfidenceSignal + Staggered bounds缓解标签切换 + BOCPD变点概率 + 多尺度共识）；§0.6.8 更新为四轮总结论；升级路径从6条增至11条 | 用户要求第四轮审查；层次HMM是四轮中最有价值的升级路径（直接解决A3伪转移问题） |
 | 2026-08-08 | 1.5.0 | 新增 §0.6.10 第五轮发现（NLP情感→regime最关键缺失——FinBERT比纯时序+73%准确率/+110% F1；Bloomberg Causal-TS因果发现；Autoencoder+RL自适应阈值）；§0.6.11 五轮总结论；升级路径从11条增至13条 | 用户要求第五轮审查；NLP-regime连接是五轮中最可操作的发现（连接现有组件即可，不需新算法） |
+| 2026-08-09 | 1.5.1 | 文件名 discussion_002_regime_backtest_validation_plan.md → 11_regime_backtest_validation_plan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.5.2 | 文档头统一：frontmatter 补 title/owner/language，H1 去"讨论文档·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

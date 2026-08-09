@@ -98,7 +98,7 @@ class TradingSessionConfig:
     min_order_qty: int = 100
     round_lot: int = 100
     risk_limits: RiskLimits = field(default_factory=_default_risk_limits)
-    # 订单层熔断（design_memo_010 §2.8）
+    # 订单层熔断（40_execution_broker §2.8）
     max_single_order_pct: Decimal = Decimal("0.04")  # 单票单笔≤4%账户市值
     max_symbol_orders_per_day: int = 10  # 单票≤10笔/日
     max_total_orders_per_day: int = 50  # 全账户≤50笔/日
@@ -141,7 +141,7 @@ class TradingSession:
         self._fills: list[Fill] = []
         self._submitted_orders: list[Order] = []
         self._blocked_orders: list[Order] = []
-        # 订单层熔断当日计数（design_memo_010 §2.8）
+        # 订单层熔断当日计数（40_execution_broker §2.8）
         self._symbol_order_counts: dict[str, int] = defaultdict(int)
         self._total_order_count_today: int = 0
 
@@ -306,7 +306,7 @@ class TradingSession:
         """逐单风控验证 + 创建并提交订单。返回已提交订单列表。
 
         执行顺序：先卖后买——卖出释放 T+0 资金再买入，避免资金不足（error_code=54）。
-        A 股 T+0 资金：当日卖出回笼资金可立即用于当日买入（design_memo_010 §2.6）。
+        A 股 T+0 资金：当日卖出回笼资金可立即用于当日买入（40_execution_broker §2.6）。
         """
         # 先卖后买：SELL 排前释放资金，BUY 排后利用释放资金
         # （Python sorted 稳定，保持同侧内相对顺序不变）
@@ -361,7 +361,7 @@ class TradingSession:
         return halt
 
     def _handle_rejection(self, order: Order, error: Exception) -> None:
-        """拒单分类处理（design_memo_010 §2.7 层3）。
+        """拒单分类处理（40_execution_broker §2.7 层3）。
 
         根据 error_code 分类：涨跌停/资金/持仓不重试，价格/连接重试1次。
         MVP 阶段仅记录日志 + 归入 blocked_orders；重试/冻结/对账由上层 Saga 处理。
@@ -404,7 +404,7 @@ class TradingSession:
         order: Order,
         positions: PositionSnapshot,
     ) -> bool:
-        """订单层熔断检查（design_memo_010 §2.8）。
+        """订单层熔断检查（40_execution_broker §2.8）。
 
         三项检查：单票单笔≤4%市值 / 单票≤10笔日 / 全账户≤50笔日。
         通过则计数+1返回 False；触发则返回 True（调用方归入 blocked_orders）。

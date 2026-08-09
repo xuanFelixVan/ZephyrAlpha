@@ -1,17 +1,21 @@
 ---
-doc_id: discussion_019
-title: "Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活"
-doc_type: architecture_view
 ttl: permanent
+doc_type: architecture_view
+title: "Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活"
+owner: ZephyrAlpha-Owner
+language: zh
 status: draft
-version: "0.3.0"
+version: "0.3.2"
 date: "2026-08-07"
 last_updated: "2026-08-09"
+topic: regime_phase3_engineering_plan
+scope: 07_trading_decision_architecture
+doc_id: 13_regime_phase3_engineering_plan
 priority: P0
 depends_on:
-  - discussion_001_regime_detector_spec.md
-  - discussion_002_regime_backtest_validation_plan.md
-  - discussion_017_phase2_model_quality_validation.md
+  - 10_regime_detector_spec.md
+  - 11_regime_backtest_validation_plan.md
+  - 12_regime_phase2_validation.md
 related_modules:
   - MOD-REGIME-001 (RegimeDetector)
   - MOD-REGIME-002 (RegimeFeatureBuilder)
@@ -19,7 +23,7 @@ related_modules:
   - BM-BT-05 (HMM 模型质量验证)
 ---
 
-# discussion_019 — Phase 3 工程规划
+# Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/T3 数据激活
 
 > **前置**：Phase 2 验证完成（commit 14c8b9f1），A1 PASS / B4 S1 3/3 / A2 FAIL / B1 FAIL。
 > **本阶段**：修复 A2 过拟合 + B1 过度自信 + 激活 S2/T3 数据管道。
@@ -49,7 +53,7 @@ related_modules:
 >
 > 上表为初始 9 态验证历史（P0 修复前）；P0 完成后 Phase 2 闭环（commit 0c5ea28bb1/83c94c4f/e4fd931a），进入 P1 数据管道激活阶段。
 >
-> **2026-08-08 续（S2 算法缺陷诊断）**：另一 session 将 S2 `data_ready` 误改 true 后 B4 退回 FAIL(3/6)。诊断脚本 `dump_s2_scores.py` 证实根因是 **S2 评分算法时点错配**（capitulation 当日值 vs 过程、valuation 价格回撤 vs 基本面），非数据缺失——三事件 capitulation/valuation 恒 0 致 trigger/confirm 永不触发。采用 `design_match=false` 排除 S2 事件（数据已就绪但 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏）+ 修复 capitulation/valuation 两个 P0 bug（commit 93a25890，B4 维持 PASS(3/3)），登记 #ARCH-REGIME-S2-ALGORITHM-001，新增 P1-E9 工程项（§3.5）治本。完整诊断与裁定见 [discussion_023](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)。
+> **2026-08-08 续（S2 算法缺陷诊断）**：另一 session 将 S2 `data_ready` 误改 true 后 B4 退回 FAIL(3/6)。诊断脚本 `dump_s2_scores.py` 证实根因是 **S2 评分算法时点错配**（capitulation 当日值 vs 过程、valuation 价格回撤 vs 基本面），非数据缺失——三事件 capitulation/valuation 恒 0 致 trigger/confirm 永不触发。采用 `design_match=false` 排除 S2 事件（数据已就绪但 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏）+ 修复 capitulation/valuation 两个 P0 bug（commit 93a25890，B4 维持 PASS(3/3)），登记 #ARCH-REGIME-S2-ALGORITHM-001，新增 P1-E9 工程项（§3.5）治本。完整诊断与裁定见 [14_regime_s2_diagnosis](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)。
 
 ### 0.2 问题诊断
 
@@ -83,7 +87,7 @@ related_modules:
 | P1-E4 | 资金/板块数据激活 | P1 | 无 | ~100 | T3 依赖 |
 | P1-E5 | T3 激活与注释清理 | P1 | P1-E4 | ~50 | T3 代码已实现，清理注释+融合北向资金 |
 | P1-E6 | bad_news_flat 指标 | P1 | P1-E3 | ~150 | S2 触发条件 |
-| P1-E9 | S2 评分算法重设计 | P1 | 无（算法层，独立于数据激活） | ~120 | S2 时点错配根因（见 discussion_023） |
+| P1-E9 | S2 评分算法重设计 | P1 | 无（算法层，独立于数据激活） | ~120 | S2 时点错配根因（见 14_regime_s2_diagnosis） |
 | P2-E7 | policy 指标 | P2 | P1-E3 | ~150 | S2 触发条件 |
 | P2-E8 | forward_days 参数扫描 | P2 | P0-E2 | ~50 | B1 参数调优 |
 | **合计** | | | | **~1860** | |
@@ -1634,9 +1638,9 @@ def bad_news_flat_score(news_sentiment: pd.Series, window: int = 5) -> pd.Series
 
 ### 3.5 P1-E9: S2 评分算法重设计（时点错配治本）
 
-> **诊断详档**：[discussion_023](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)（完整诊断报告 + 架构裁定 + 治本详设）
+> **诊断详档**：[14_regime_s2_diagnosis](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)（完整诊断报告 + 架构裁定 + 治本详设）
 > **治理登记**：#ARCH-REGIME-S2-ALGORITHM-001（待登记）
-> **本节为引用摘要**——完整诊断证据与裁定推理见 discussion_023，本节仅列工程清单所需的背景/步骤/验收。
+> **本节为引用摘要**——完整诊断证据与裁定推理见 14_regime_s2_diagnosis，本节仅列工程清单所需的背景/步骤/验收。
 
 #### 3.5.1 背景（简述）
 
@@ -1657,7 +1661,7 @@ trigger/confirm/strong_confirm 三阶段全堵死。NLP 维度（bad_news_flat=8
 - **P1 阶段**：本 P1-E9 算法重设计 → 重跑验证 → S2 激活
 - **核心理由**：不为过 B4 而改算法（守住验证独立性），算法重设计独立于验证结果进行（防过拟合）
 
-> 完整裁定推理（第一性原理 + 长远战略 + 100% AI 开发考量）见 [discussion_023 §2](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)。
+> 完整裁定推理（第一性原理 + 长远战略 + 100% AI 开发考量）见 [14_regime_s2_diagnosis §2](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)。
 
 #### 3.5.3 工程步骤
 
@@ -1680,7 +1684,7 @@ trigger/confirm/strong_confirm 三阶段全堵死。NLP 维度（bad_news_flat=8
 
 #### 3.5.5 防过拟合铁律
 
-算法重设计必须独立于 B4 验证结果进行——先按 §4.12 设计意图改算法（过程化/基本面化），再看 B4 结果。**禁止"调参直到 3/3 命中"**——若改后仍不命中，说明设计意图与历史事件时点有更深层偏差，应回到 §4.12 重新审视事件标注（expected_stage）而非继续调参。详见 [discussion_023 §3.7](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md) 与 [discussion_023 §5 开放问题 3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_023_s2_algorithm_misalignment_diagnosis.md)。
+算法重设计必须独立于 B4 验证结果进行——先按 §4.12 设计意图改算法（过程化/基本面化），再看 B4 结果。**禁止"调参直到 3/3 命中"**——若改后仍不命中，说明设计意图与历史事件时点有更深层偏差，应回到 §4.12 重新审视事件标注（expected_stage）而非继续调参。详见 [14_regime_s2_diagnosis §3.7](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) 与 [14_regime_s2_diagnosis §5 开放问题 3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)。
 
 ---
 
@@ -1958,3 +1962,10 @@ Phase 3 完成需同时满足以下条件：
 ---
 
 **下一步**：用户审阅本规划，确认开放问题后，按批次施工。第一批 P0（降态数 + 校准器）优先启动。
+
+## 修订记录
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-09 | 0.3.1 | 文件名 discussion_019_phase3_engineering_plan.md → 13_regime_phase3_engineering_plan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 0.3.2 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules 扩展字段保留），H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

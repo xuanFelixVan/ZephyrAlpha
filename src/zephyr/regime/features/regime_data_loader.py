@@ -14,7 +14,7 @@
 # [TESTS] tests/regime/test_regime_data_loader.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §5.3 #MOD-REGIME-002 #Phase2c
+# [ARCH-REF] #10_regime_detector_spec §5.3 #MOD-REGIME-002 #Phase2c
 """Phase 2c 新数据源加载层（MOD-REGIME-002 Phase 2c）。
 
 为 4 个 T3 stub 维度（money_effect/mainline/leader/one_day_mainline）、#8 siphon、
@@ -37,7 +37,7 @@
   - option_iv_surface  → 50ETF/300ETF 期权IV曲面（合成VIX）
   - etf_kline_30/60min → ETF分钟K线（多分时共振 #9）
 
-依据: discussion_001 v1.3.1 §5.3 / Phase 2c 计划 §核心架构
+依据: 10_regime_detector_spec v1.3.1 §5.3 / Phase 2c 计划 §核心架构
 Version: 0.1.0
 """
 

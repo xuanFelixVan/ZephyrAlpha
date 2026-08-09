@@ -1,17 +1,17 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-title: 讨论稿：方法论约束遗留提案（全部待讨论）
+title: 方法论约束遗留提案（全部待讨论）
 owner: ZephyrAlpha-Owner
 language: zh
-status: 待讨论
-version: "0.1.0"
+status: draft
+version: "0.1.2"
 date: 2026-08-07
 topic: methodology_open_questions
-scope: 量化投资方法论
+scope: 07_trading_decision_architecture
 ---
 
-# 讨论稿：方法论约束遗留提案（全部待讨论）
+# 方法论约束遗留提案（全部待讨论）
 
 > **状态**：全部待讨论。#1-#11 源自原《能力定位书》§3 约束一~十三；#12-#20 源自系统宪章多轮精简移出项（成功指标/基准/PIT/资产分级/行为边界/资产覆盖/大额下单/工程细节）。
 >
@@ -23,15 +23,15 @@ scope: 量化投资方法论
 |:------:|------|:--------:|-------------|
 | 约束一 | 策略类型目录(6大类) | G04 | ⚠️ 项目实际讨论"首批3策略"，非6大类框架 |
 | 约束二 | 因子分类与IC阈值 | G01 | ⚠️ G01因子工程总纲待讨论，IC阈值未验证 |
-| 约束三 | 组合构建硬约束 | G12 | ⚠️ design_memo_001已裁定risk parity，非risk budgeting |
-| 约束四 | 风险模型(L1/L2/L3) | G16-G18 | ⚠️ design_memo_001已定4级回撤Protocol，非L1/L2/L3 |
+| 约束三 | 组合构建硬约束 | G12 | ⚠️ 30_multi_strategy_concurrency已裁定risk parity，非risk budgeting |
+| 约束四 | 风险模型(L1/L2/L3) | G16-G18 | ⚠️ 30_multi_strategy_concurrency已定4级回撤Protocol，非L1/L2/L3 |
 | 约束五 | 成本模型细节 | G22 | ⚠️ 宪章只保留成本结构(不含费率)，细节待讨论 |
 | 约束七 | 回测门禁(V1~V6) | G23 | ⚠️ 项目实际用BM-BT-01~07体系，非V1-V6 |
-| 约束九 | T+1次日预测(8态) | G02 | ❌ 已过时：discussion_001已定稿12态，非8态 |
+| 约束九 | T+1次日预测(8态) | G02 | ❌ 已过时：10_regime_detector_spec已定稿12态，非8态 |
 | 约束十 | 流动性风险 | G18 | ⚠️ G18待讨论 |
 | 约束十一 | 数据分层使用(Layer0~4) | G01 | ⚠️ G01待讨论，分层方案未定 |
-| 约束十二 | 密度预测(QNN) | 无 | ⚠️ 已拆为discussion_021独立讨论 |
-| 约束十三 | 仓位管理(C-047) | G12/G13 | ⚠️ design_memo_001用MOD-POS-001等，非C-047编号 |
+| 约束十二 | 密度预测(QNN) | 无 | ⚠️ 已拆为91_density_prediction独立讨论 |
+| 约束十三 | 仓位管理(C-047) | G12/G13 | ⚠️ 30_multi_strategy_concurrency用MOD-POS-001等，非C-047编号 |
 
 ---
 
@@ -90,10 +90,10 @@ scope: 量化投资方法论
 | 再平衡 | 日频信号驱动+周频强制再平衡 | 每周五收盘后强制再平衡 |
 | 集中度 | 行业偏离≤基准±10%（⑪时±15%，绝对上限30%）；风格暴露≤±0.3标准差 | 条件性硬约束+风格中性化 |
 
-**⚠️ 与现状冲突**：design_memo_001已裁定用 **risk parity**（非risk budgeting）+ Kelly在firm层精裁决。本约束的"风险预算"方案已被替代。
+**⚠️ 与现状冲突**：30_multi_strategy_concurrency已裁定用 **risk parity**（非risk budgeting）+ Kelly在firm层精裁决。本约束的"风险预算"方案已被替代。
 
 **待讨论问题**：
-- risk parity vs risk budgeting：design_memo_001的裁定是否最终采用？
+- risk parity vs risk budgeting：30_multi_strategy_concurrency的裁定是否最终采用？
 - 市场状态→仓位上限的9档+2叠加态映射是否合理？
 - 集中度硬约束（行业偏离±10%、风格暴露±0.3σ）的阈值依据？
 - 再平衡频率（日频+周频强制）是否合适？
@@ -106,7 +106,7 @@ scope: 量化投资方法论
 
 **原始内容**：L1实时监控(延迟<1秒)+L2日频因子风险模型(申万31行业+4风格因子)+L3压力测试；VaR/CVaR作为L2量化输入，VaR回测通过率>95%。
 
-**⚠️ 与现状冲突**：design_memo_001已定义 **4级回撤Protocol**（8%/15%/20%/25%），不是L1/L2/L3三层架构。
+**⚠️ 与现状冲突**：30_multi_strategy_concurrency已定义 **4级回撤Protocol**（8%/15%/20%/25%），不是L1/L2/L3三层架构。
 
 **待讨论问题**：
 - 4级回撤Protocol与L1/L2/L3如何统一？是替代还是叠加？
@@ -163,11 +163,11 @@ scope: 量化投资方法论
 
 **原始内容**：次日走势8态叠加模型(高开高走/高开低走/低开高走/低开低走/平开高走/平开低走/震荡收平/剧烈震荡)；8态→今日决策映射(P1+P5>60%→买入加分20%，P4+P6>60%→降权30%推迟，P8>30%→仓位减半)；分阶段实现Phase1=3态→Phase2=5态→Phase3=8态。
 
-**❌ 已过时**：discussion_001已定稿 **12态** regime（v1.3.1），不是8态。8态模型已被替代。
+**❌ 已过时**：10_regime_detector_spec已定稿 **12态** regime（v1.3.1），不是8态。8态模型已被替代。
 
 **待讨论问题**：
 - 8态→12态的映射关系？原始8态内容是否完全废弃？
-- 12态→今日决策的映射规则？（discussion_001可能已定义，需确认）
+- 12态→今日决策的映射规则？（10_regime_detector_spec可能已定义，需确认）
 - 分阶段实现计划是否需要更新？
 
 ---
@@ -205,7 +205,7 @@ scope: 量化投资方法论
 
 ## 10. 密度预测（原约束十二）
 
-> 已拆为独立讨论稿：[discussion_021_density_prediction.md](discussion_021_density_prediction.md)
+> 已拆为独立讨论稿：[91_density_prediction.md](91_density_prediction.md)
 
 ---
 
@@ -215,11 +215,11 @@ scope: 量化投资方法论
 
 **原始内容**：C-047仓位裁决不可绕过(唯一例外：C-004风控veto)；半Kelly硬上限；漂移再平衡阈值(总仓位±2%/单标的±3%)；再平衡成本-收益规则(收益改善>2×成本才执行)；资金曲线驱动仓位缩放(回撤>5%→总仓位缩减10%，>10%→缩减20%)。
 
-**⚠️ 与现状冲突**：design_memo_001用 **MOD-POS-001** 等模块编号，不用C-047。半Kelly在design_memo_001中定位为firm层精裁决的工具，非全局硬上限。
+**⚠️ 与现状冲突**：30_multi_strategy_concurrency用 **MOD-POS-001** 等模块编号，不用C-047。半Kelly在30_multi_strategy_concurrency中定位为firm层精裁决的工具，非全局硬上限。
 
 **待讨论问题**：
 - C-047 vs MOD-POS-001：仓位裁决模块的最终编号和接口？
-- 半Kelly是全局硬上限还是firm层工具？design_memo_001的裁定是否最终采用？
+- 半Kelly是全局硬上限还是firm层工具？30_multi_strategy_concurrency的裁定是否最终采用？
 - 漂移再平衡阈值（±2%/±3%）的依据？
 - 再平衡成本-收益规则（>2×成本）的阈值是否合理？
 - 资金曲线驱动仓位缩放（回撤>5%→-10%，>10%→-20%）与4级回撤Protocol的关系？
@@ -231,12 +231,12 @@ scope: 量化投资方法论
 | 优先级 | 主题 | 理由 |
 |:------:|------|------|
 | P0 | #7 T+1次日预测(8态→12态) | 已过时，需确认旧内容是否完全废弃 |
-| P0 | #3 组合构建 / #11 仓位管理 | design_memo_001已裁定不同方案，需确认最终采用 |
+| P0 | #3 组合构建 / #11 仓位管理 | 30_multi_strategy_concurrency已裁定不同方案，需确认最终采用 |
 | P0 | #4 风险模型 | L1/L2/L3 vs 4级回撤Protocol需统一 |
 | P1 | #1 策略类型 / #2 因子分类 | G04/G01在讨论中，需对齐 |
 | P1 | #6 回测门禁 | V1-V6 vs BM-BT体系需映射 |
 | P2 | #5 成本模型 / #8 流动性 / #9 数据分层 | 细节待定，不阻塞核心流程 |
-| P3 | #10 密度预测 | 远期愿景，见discussion_021 |
+| P3 | #10 密度预测 | 远期愿景，见91_density_prediction |
 | P3 | #12 成功指标交易参数 | 源自§9，具体阈值待校准 |
 | P2 | #13 基准设计 | 基准选择会随市场发展变化 |
 | P2 | #14 PIT实现 | 实现方案待定，PIT原则不变 |
@@ -347,7 +347,7 @@ scope: 量化投资方法论
 - B-005 禁止AI绕过风控引擎直接下单 → 架构原则，风控引擎在关键路径
 
 **待讨论问题**：
-- 杠杆/集中度上限应放在风险模型的哪个模块？（design_memo_001的FirmRiskAggregator？）
+- 杠杆/集中度上限应放在风险模型的哪个模块？（30_multi_strategy_concurrency的FirmRiskAggregator？）
 - 交易时段校验放在执行层的哪个组件？
 - 风控引擎在关键路径的架构设计如何保证不可绕过？
 
@@ -407,7 +407,7 @@ A股核心矩阵：
 - TWAP/VWAP/IS 三种算法的选择策略？（按波动率？按成交量分布？）
 - 算法执行模块放在 C-002 交易执行还是独立模块？
 - 极端情况（流动性枯竭）下的 fallback 方案？
-- 与 design_memo_001 的 BudgetChangeHandler 三级升级如何协同？
+- 与 30_multi_strategy_concurrency 的 BudgetChangeHandler 三级升级如何协同？
 
 ---
 
@@ -477,3 +477,10 @@ A股核心矩阵：
 - 做T失败（日内未买回底仓）的处置规则？
 - 做T与主策略的协同/冲突？（做T可能影响主策略的持仓周期和信号）
 - 3个已有做T策略的alpha来源差异？是否需要在统一框架下整合？
+
+## 修订记录
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-09 | 0.1.1 | 文件名 discussion_020_methodology_open_questions.md → 90_methodology_open_questions.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 0.1.2 | 文档头统一：title/H1 去"讨论稿："前缀，scope 归一为 07_trading_decision_architecture；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

@@ -14,13 +14,13 @@
 # [TESTS] tests/regime/test_wyckoff_engine.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §4.12 #MOD-REGIME-002 #Phase2c
+# [ARCH-REF] #10_regime_detector_spec §4.12 #MOD-REGIME-002 #Phase2c
 """Wyckoff 吸筹 FSM 6 阶段识别 + 评分（MOD-REGIME-002 Phase 2c）。
 
 把 OHLCV + 量能 z-score 映射成 Wyckoff 吸筹理论的 6 阶段事件 + 累加评分（0-100），
 供 OverlaySignalsConstructor 组装 s2_wyckoff_score 维度喂 RegimeDetector S2 confirm。
 
-Wyckoff 吸筹理论（discussion_001 §4.12.2）：
+Wyckoff 吸筹理论（10_regime_detector_spec §4.12.2）：
     PS(初步支撑) → SC(抛售高潮) → AR(自动反弹) → ST(二次测试)
     → Spring(震仓) → Test/SOS(强势信号)
 
@@ -34,7 +34,7 @@ Wyckoff 吸筹理论（discussion_001 §4.12.2）：
   - **无结构 = 0**：无任何阶段出现 → score=0 → S2 confirm 不触发（C1 不退化前提）。
   - **Spring 是关键转折**：Spring 出现（+40）→ 累计至少 60+（过 S2 confirm 门槛 60）。
 
-依据: discussion_001 v1.3.1 §4.12.2 / Phase 2c 计划 §任务3
+依据: 10_regime_detector_spec v1.3.1 §4.12.2 / Phase 2c 计划 §任务3
 Version: 0.1.0
 """
 
@@ -46,7 +46,7 @@ import pandas as pd
 __all__ = ["detect_wyckoff_events", "wyckoff_score"]
 
 
-# Wyckoff 6 阶段权重（discussion_001 §4.12.2）
+# Wyckoff 6 阶段权重（10_regime_detector_spec §4.12.2）
 _STAGE_WEIGHTS: dict[str, float] = {
     "ps": 10.0,
     "sc": 30.0,

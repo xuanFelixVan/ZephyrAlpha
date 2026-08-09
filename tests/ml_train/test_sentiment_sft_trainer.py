@@ -6,7 +6,7 @@
 # [STARTUP] manual
 # [MATURITY] design
 # [INVARIANTS] 不依赖 torch/peft/trl（重依赖 lazy-import）；仅测 config/messages/error 纯逻辑
-# [MODIFY-GUARD] discussion_019_phase3_engineering_plan.md §3.1.9
+# [MODIFY-GUARD] 13_regime_phase3_engineering_plan.md §3.1.9
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable

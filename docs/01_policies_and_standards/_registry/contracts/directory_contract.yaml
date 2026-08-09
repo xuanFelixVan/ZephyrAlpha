@@ -225,7 +225,7 @@ directory_extensions:
         extensions: [".json"]
 
   - path: "scripts/"
-    allowed: [".py", ".sh", ".ps1", ".yaml", ".json", ".md"]
+    allowed: [".py", ".sh", ".ps1", ".vbs", ".yaml", ".json", ".md"]
     forbidden: [".bak", ".baseline"]
     zone: neutral
     allowed_doc_types: [policy, index]

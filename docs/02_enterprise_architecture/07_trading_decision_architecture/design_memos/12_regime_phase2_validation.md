@@ -1,16 +1,20 @@
 ---
-doc_id: discussion_017
-title: "Phase 2 模型质量验证设计——A1/A2/B1/B4 四验证器架构"
-doc_type: architecture_view
 ttl: permanent
+doc_type: architecture_view
+title: "Phase 2 模型质量验证设计——A1/A2/B1/B4 四验证器架构"
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "0.2.0"
+version: "0.2.2"
 date: "2026-08-07"
 last_updated: "2026-08-07"
+topic: regime_phase2_validation
+scope: 07_trading_decision_architecture
+doc_id: 12_regime_phase2_validation
 priority: P1
 depends_on:
-  - discussion_001_regime_detector_spec.md
-  - discussion_002_regime_backtest_validation_plan.md
+  - 10_regime_detector_spec.md
+  - 11_regime_backtest_validation_plan.md
 related_modules:
   - MOD-REGIME-001 (RegimeDetector)
   - MOD-REGIME-002 (RegimeFeatureBuilder)
@@ -18,7 +22,7 @@ related_modules:
   - BM-BT-05 (HMM 模型质量验证，已建)
 ---
 
-# discussion_017 — Phase 2 模型质量验证设计
+# Phase 2 模型质量验证设计——A1/A2/B1/B4 四验证器架构
 
 > **前置**：Phase 1b C1 验证已通过（commit 852457e9，Shrinkage 节流有效）。
 > **本阶段**：验证 HMM 模型本身靠不靠谱——4 项一票否决（A1/A2/B1/B4）。
@@ -42,7 +46,7 @@ Phase 2 验证模型的"内在质量"：样本够不够学、过没过拟合、�
 | B1 | 概率校准度 | P=80% 真有 80% 吗 | 误差<10% | `RegimeProbabilities.confidence` | "实际态"标签策略 |
 | B2 | 转换触发准确 | 8 转换时点吻合吗 | ≥6/8 | `TransitionTriggered` + `_last_transitions` | 历史事件库 |
 
-> 标注：discussion_002 §5 表里 B4 编号在文档中为 "B4"，本设计沿用。部分早期笔记称 B2（CRPS），不冲突——CRPS 是 B1 的互补指标，本阶段不做。
+> 标注：11_regime_backtest_validation_plan §5 表里 B4 编号在文档中为 "B4"，本设计沿用。部分早期笔记称 B2（CRPS），不冲突——CRPS 是 B1 的互补指标，本阶段不做。
 
 ## 2. 各验证器详细设计
 
@@ -56,7 +60,7 @@ Phase 2 验证模型的"内在质量"：样本够不够学、过没过拟合、�
 3. 统计 r1-r9 各态出现天数
 4. 对照判定门槛
 
-**判定门槛**（discussion_002 §4.1 A1）：
+**判定门槛**（11_regime_backtest_validation_plan §4.1 A1）：
 | 天数/态 | 判定 | 动作 |
 |---|---|---|
 | ≥ 100 | 充足 | 独立建模 |
@@ -78,7 +82,7 @@ Phase 2 验证模型的"内在质量"：样本够不够学、过没过拟合、�
 3. 对照历史事件库，判定 ±5 交易日内是否吻合
 4. 统计吻合数 / 总事件数
 
-**历史事件库**（discussion_002 §4.2 B4，需新建为 YAML 真源）：
+**历史事件库**（11_regime_backtest_validation_plan §4.2 B4，需新建为 YAML 真源）：
 ```yaml
 # docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml
 events:
@@ -104,7 +108,7 @@ events:
 
 **路径**：`src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py`
 
-**核心难点**：无监督 HMM **没有真实态标签**——"准确率"无法直接算。discussion_002 §4.1 A2 给两条指标：
+**核心难点**：无监督 HMM **没有真实态标签**——"准确率"无法直接算。11_regime_backtest_validation_plan §4.1 A2 给两条指标：
 - IS vs OOS 状态识别一致率（Viterbi 解码对比）
 - IS vs OOS 概率分布 KL 散度
 
@@ -152,7 +156,7 @@ events:
 **标签策略候选**（设计需选定其一）：
 - **方案 A（推荐）**：后续 20 天收益分位 + 波动率，映射到 12 态预期区间
 - **方案 B**：用 Viterbi 全历史解码作为"软真值"（但这是循环验证——HMM 自己解码当真值）
-- **方案 C**：用 A3 状态转移合理性（discussion_002 §4.1 A3，本阶段不做但可作为 B1 的旁证）
+- **方案 C**：用 A3 状态转移合理性（11_regime_backtest_validation_plan §4.1 A3，本阶段不做但可作为 B1 的旁证）
 
 **推荐方案 A**——独立于 HMM 的市场实现作为锚点，避免循环验证。
 
@@ -448,3 +452,10 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 - A2/B1 FAIL 指向概率映射层需重设计，非 HMM 核心失效
 - 重设计 ConfidenceSignal + 降态数后回到 Phase 2 重验
 
+
+## 修订记录
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-09 | 0.2.1 | 文件名 discussion_017_phase2_model_quality_validation.md → 12_regime_phase2_validation.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 0.2.2 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules 扩展字段保留），H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

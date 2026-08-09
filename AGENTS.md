@@ -1240,6 +1240,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 | `generate_integration_topology.py` | `01_global_architecture_diagram/` | 集成拓扑 |
 | `generate_capability_heatmap.py` | `01_global_architecture_diagram/` | 能力热图 |
 | `generate_domain_doc.py` | `02_domain_architecture_docs/` | 域架构文档 |
+| `generate_module_algorithm_overview.py` | `02_enterprise_architecture/08_algorithm_overview/` | 模块核心算法纵览（跨域按 layer 拓扑，三档 code>blueprint>empty，离库派生；共享 code_algorithm_extractor.py） |
 | `generate_domain_index.py` | `02_domain_architecture_docs/` | 域索引 |
 | `generate_design_vs_production.py` | `03_governance_reports/` | 设计 vs 生产 |
 | `generate_constraint_violations.py` | `03_governance_reports/` | 约束违规（读 PG 展示） |

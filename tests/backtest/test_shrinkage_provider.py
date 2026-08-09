@@ -3,7 +3,7 @@
 # [DOMAIN] D_BACKTEST
 # [A_module] module_id=MOD-TEST-BT-PROV | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #B2-shrinkage-provider
+# [ARCH-REF] #11_regime_backtest_validation_plan #B2-shrinkage-provider
 """ShrinkageProvider 系列 (B2) 单元测试——mock 生成器 + ShrinkageAdapter。
 
 覆盖:

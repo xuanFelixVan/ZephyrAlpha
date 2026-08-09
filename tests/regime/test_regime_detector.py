@@ -11,7 +11,7 @@
 # [TESTS] tests/regime/test_regime_detector.py
 # [A_module] module_id=MOD-TEST-REGIME-DET | layer=module | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #MOD-REGIME-001 #discussion_001 #discussion_002 #ARCH-REGIME-OVERLAY-001
+# [ARCH-REF] #MOD-REGIME-001 #10_regime_detector_spec #11_regime_backtest_validation_plan #ARCH-REGIME-OVERLAY-001
 """test_regime_detector.py — RegimeDetector (MOD-REGIME-001) 单元测试
 
 覆盖 blueprint §6 Phase 1 测试规划（~30 项）：
@@ -24,7 +24,7 @@
   - TransitionTriggered：8转换触发/评分明细完整/未知类型抛错
   - RegimeProbabilities：12维Σ=1/字段完整性
 
-依据: discussion_001 v1.3.1 §5.3.4（7月案例）/ discussion_002 §4（验证接口）
+依据: 10_regime_detector_spec v1.3.1 §5.3.4（7月案例）/ 11_regime_backtest_validation_plan §4（验证接口）
 """
 
 from __future__ import annotations
@@ -95,7 +95,7 @@ def full_risk_params() -> dict:
 
 class TestRegimeProbabilitiesOutput:
     def test_7dim_and_sum1(self, detector: RegimeDetector):
-        """4 HMM 态 + 3 overlay 态 = 7 维概率分布（discussion_004 §2.1 降态后）。"""
+        """4 HMM 态 + 3 overlay 态 = 7 维概率分布（13_regime_phase3_engineering_plan §2.1 降态后）。"""
         probs, _ = detector.detect({}, {}, {})
         assert len(probs.probabilities) == 7
         assert set(probs.probabilities.keys()) == set(REGIME_STATES)
@@ -186,7 +186,7 @@ class TestHMM9States:
             assert abs(probs.hmm_probabilities[s] - 1.0 / 4.0) < 1e-9
 
 
-# ── 2b. 温度缩放校准（discussion_004 §2.2 P0-E2 Stage 1）────────────
+# ── 2b. 温度缩放校准（13_regime_phase3_engineering_plan §2.2 P0-E2 Stage 1）────────────
 
 
 class TestTemperatureScaling:
@@ -280,7 +280,7 @@ class TestOverlay:
         assert op == {"r10": 0.0, "r11": 0.0, "r12": 0.0}
 
     def test_8_transitions_all_recordable(self, detector: RegimeDetector):
-        """8 转换均可记录（B4 验证接口，discussion_002 §4）。"""
+        """8 转换均可记录（B4 验证接口，11_regime_backtest_validation_plan §4）。"""
         for tid in TRANSITIONS:
             trig = detector.record_transition(tid, {"_dummy": 1.0})
             assert isinstance(trig, TransitionTriggered)
@@ -360,7 +360,7 @@ class TestOverlayGating:
         assert abs(probs.overlay_probabilities["r10"] - 0.6) < 1e-9
 
     def test_gated_keeps_transition_records_when_blocked(self, s1_overlay):
-        """门控屏蔽概率注入，但保留转换评估记录（B4 验证接口，discussion_002 §4 ③）。
+        """门控屏蔽概率注入，但保留转换评估记录（B4 验证接口，11_regime_backtest_validation_plan §4 ③）。
 
         #1>=1.0（非危机）+ overlay_gated=True → overlay_probs 全 0，但 _last_transitions
         仍记录 S1 触发事件（triggered=True, stage=trigger），供 B4 转换触发准确性验证。
@@ -564,7 +564,7 @@ class TestShrinkage:
         assert abs(s.value - 0.42) < 1e-9
 
     def test_disabled_constant_1(self, detector_off: RegimeDetector):
-        """shrinkage_enabled=False → value 恒=1.0（C1 验证基准，discussion_002）。"""
+        """shrinkage_enabled=False → value 恒=1.0（C1 验证基准，11_regime_backtest_validation_plan）。"""
         s = detector_off._compute_shrinkage(0.3, 0.3)
         assert s.shrinkage_enabled is False
         assert s.value == 1.0
@@ -580,7 +580,7 @@ class TestShrinkage:
         assert abs(s.value - 0.063) < 1e-9
 
     def test_switch_c1_baseline(self, detector, detector_off):
-        """C1 开/关对比：同输入下 开<关=1.0（discussion_002 一票否决基准）。"""
+        """C1 开/关对比：同输入下 开<关=1.0（11_regime_backtest_validation_plan 一票否决基准）。"""
         conf, risk = 0.51, 0.85
         s_on = detector._compute_shrinkage(conf, risk)
         s_off = detector_off._compute_shrinkage(conf, risk)

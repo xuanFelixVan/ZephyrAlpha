@@ -30,7 +30,7 @@ Zephyr 语义 → MLflow 映射:
   - enable_tracking=False（ZEPHYR_EXPERIMENT_TRACKING=0）→ _NullBackend（no-op）
   - 所有 log 调用包 try/except，失败只记 stderr 不抛——业务回测不受 tracking 失败影响
 
-依据: discussion_002 §3 ② + backtest_observability_mlflow_plan.md M1
+依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1
 SSoT: depgraph MOD-OBS-001
 Version: 0.1.0
 """

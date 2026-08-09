@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-NLP-INFERENCE-001 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md | §Phase 2
+# [BLUEPRINT] MOD-NLP-INFERENCE-001 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md | §Phase 2
 # [MODULE] zephyr.nlp.nlp_inference
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.integration.local_model.ollama_chat; zephyr.integration.local_model.deepseek_chat; zephyr.integration.local_model.cache_layer
@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] design
 # [INVARIANTS] 单一推理源——复用 Ollama/DeepSeek local_model 层；零 torch 依赖；CacheLayer 缓存去重；推理失败降级 neutral 不抛异常
-# [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md Phase 2
+# [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -28,7 +28,7 @@
 单一推理源原则（§1.4）：推理轨复用 Ollama local_model 层，零 torch 依赖。
 训练轨（SFT/RLSP）产物转 GGUF 回灌 Ollama，保持推理路径统一。
 
-依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md Phase 2
+依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 SSoT: #ARCH-NLP-PIPELINE-001
 Version: 0.1.0
 """

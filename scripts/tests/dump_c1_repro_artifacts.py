@@ -198,7 +198,7 @@ def main() -> None:
 
 ## 1. 验证目标
 
-C1 开/关对比（discussion_002 Phase 1 核心验证）：
+C1 开/关对比（11_regime_backtest_validation_plan Phase 1 核心验证）：
 - **关**（基准）: Shrinkage=1.0（满部署，无 regime 节流）
 - **开**（实验）: Shrinkage=regime 检测器输出（HMM ConfidenceSignal × feature_risk）
 - 一票否决：四项指标任一不通过 = regime 不部署

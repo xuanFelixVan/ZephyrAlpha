@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# [BLUEPRINT] MOD-NLP-PIPELINE | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md | §Phase 1
+# [BLUEPRINT] MOD-NLP-PIPELINE | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md | §Phase 1
 # [MODULE] scripts.ml.build_eval_set
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] zephyr.data.news_collector
@@ -7,7 +7,7 @@
 # [STARTUP] manual
 # [MATURITY] design
 # [INVARIANTS] 分层抽样构建评估集；关键词规则标注（DeepSeek/Ollama backend 预留未实现）；断点续作追加写入
-# [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md Phase 1
+# [MODIFY-GUARD] docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 1
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -25,7 +25,7 @@
 输出:
     data/eval/news_sentiment_200.jsonl  （200 条标注新闻，断点续作用）
 
-依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md Phase 1
+依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 1
 SSoT: #ARCH-NLP-PIPELINE-001
 """
 from __future__ import annotations

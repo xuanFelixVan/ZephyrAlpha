@@ -44,6 +44,7 @@ ttl: permanent
 
 | 子目录 | 说明 | 入口 | 轨道 |
 |--------|------|------|:---:|
+| `08_algorithm_overview/` | 算法全景图（按作战环节拆分·三档 code>blueprint>empty·零漂移·离库派生） | [`08_algorithm_overview/README.md`](08_algorithm_overview/README.md) | 人类视图 |
 
 > `archive/` 目录已于 2026-06-23 物理删除（DM-200908）。历史文档价值已提取至 `project_memory.md` Lessons Learned。
 

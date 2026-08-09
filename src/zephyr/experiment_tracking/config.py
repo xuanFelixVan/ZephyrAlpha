@@ -24,7 +24,7 @@ enable_tracking=False（ZEPHYR_EXPERIMENT_TRACKING=0）时 get_tracker() 返回 
   ZEPHYR_EXPERIMENT_TRACKING=0  → enable_tracking=False（全局关闭，NullBackend）
   ZEPHYR_TRACKING_URI=...       → tracking_uri（默认本地 SQLite）
 
-依据: discussion_002 §3 ② 薄包装层设计 + backtest_observability_mlflow_plan.md M1
+依据: 11_regime_backtest_validation_plan §3 ② 薄包装层设计 + backtest_observability_mlflow_plan.md M1
 Version: 0.1.0
 """
 from __future__ import annotations

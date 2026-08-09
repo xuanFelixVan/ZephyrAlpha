@@ -23,7 +23,7 @@
 命名说明: 包名 ``experiment_tracking``（非 ``observability``）——项目里 observability 是横切
 概念（infrastructure/shared/security 各有 observability 子域），实验跟踪独占顶层 observability
 会语义混淆。MLflow 本质即 experiment tracking，故本包取名 experiment_tracking。
-详见 discussion_002 §2.3 命名冲突发现 + §9 决策 A。
+详见 11_regime_backtest_validation_plan §2.3 命名冲突发现 + §9 决策 A。
 
 公共 API:
     ExperimentTracker / get_tracker / reset_tracker — 跟踪器（单例工厂）
@@ -31,7 +31,7 @@
     ExperimentTrackingConfig / load_config — 配置（环境变量覆盖）
     RunSummary / RunDetail — 数据模型（屏蔽 MLflow vs 降级差异）
 
-依据: discussion_002 §3 ② + backtest_observability_mlflow_plan.md M1
+依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1
 Version: 0.1.0
 """
 from __future__ import annotations

@@ -100002,9 +100002,9 @@ entries:
     source_section: 'LL52'
     original_id: "MOD-PF-ALLOC-011"
     estimated_complexity: M
-    tech_notes: "rejected 2026-08-05: 多策略并发架构选型 Model A（独立账本+firm风险聚合），跨策略投票层被否决。A 的自然叠加已等价实现多策略共识→大仓位（S1给5%+S2给5%=10%），无需投票权重 meta-参数。投票权重需回测/调参/衰减监控=技术债。D 的跨策略冲突仲裁 O(N²) 乃至 O(2^N)，A 是 O(N)。参见 design_memo_001_multi_strategy_concurrency.md §3.2"
+    tech_notes: "rejected 2026-08-05: 多策略并发架构选型 Model A（独立账本+firm风险聚合），跨策略投票层被否决。A 的自然叠加已等价实现多策略共识→大仓位（S1给5%+S2给5%=10%），无需投票权重 meta-参数。投票权重需回测/调参/衰减监控=技术债。D 的跨策略冲突仲裁 O(N²) 乃至 O(2^N)，A 是 O(N)。参见 30_multi_strategy_concurrency.md §3.2"
     tags: ['harvest', 'likely_implemented', '模块', 'rejected']
-    alternatives: "Model A 自然叠加（design_memo_001 §2.3）——多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器"
+    alternatives: "Model A 自然叠加（30_multi_strategy_concurrency §2.3）——多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器"
     next_review_date: '2026-11-30'
     review_frequency: quarterly
     last_review_outcome: 'rejected（Model A 自然叠加替代，2026-08-05）'

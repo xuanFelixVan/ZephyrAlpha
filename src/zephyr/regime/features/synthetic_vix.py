@@ -14,7 +14,7 @@
 # [TESTS] tests/regime/test_synthetic_vix.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §4.9 #MOD-REGIME-002 #Phase2c
+# [ARCH-REF] #10_regime_detector_spec §4.9 #MOD-REGIME-002 #Phase2c
 """合成 VIX（CBOE 简化版，50ETF+300ETF 双标的均值）（MOD-REGIME-002 Phase 2c）。
 
 利用 50ETF(510050)+300ETF(510300) 期权隐含波动率曲面，按 CBOE VIX 简化公式
@@ -35,7 +35,7 @@ CBOE VIX 简化公式：
     回退 vol_pct，C1 不退化）。
   - **PIT 由调用方负责**：本模块纯计算，shift(1) 在 OverlaySignalsConstructor._precompute 统一做。
 
-依据: discussion_001 v1.3.1 §4.9 / Phase 2c 计划 §任务4
+依据: 10_regime_detector_spec v1.3.1 §4.9 / Phase 2c 计划 §任务4
 Version: 0.1.0
 """
 

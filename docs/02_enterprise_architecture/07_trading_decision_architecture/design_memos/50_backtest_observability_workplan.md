@@ -1,34 +1,24 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-title: 讨论稿：回测可观测性体系工作计划
+title: 回测可观测性体系工作计划
 owner: ZephyrAlpha-Owner
 language: zh
-status: 工作计划
-version: "0.1.0"
-date: 2026-08-07
-topic: backtest_observability
-scope: 07_trading_decision_architecture
----
-
----
-ttl: permanent
-doc_type: architecture_view
-status: active
-version: "1.0.0"
+status: draft
+version: "1.0.2"
 date: 2026-08-07
 topic: backtest_observability_workplan
 scope: 07_trading_decision_architecture
-parent: discussion_001_regime_detector_spec.md
+parent: 10_regime_detector_spec.md
 ---
 
-# discussion_018 — 回测可观测性体系工作计划
+# 回测可观测性体系工作计划
 
 > 状态: 工作计划（待用户确认后进入蓝图阶段）
 > 日期: 2026-08-07（2026-08-07 更新：补开源调研结论 + 命名冲突发现 + 已动手进度 + Panel 决策落地）
 > 作者: AI 提议，待用户裁定
 > 关联: #ARCH-REGIME-DEADZONE-001（死区否决触发可观测性诉求）→ 本工作计划 → 实施蓝图 `.trae/documents/backtest_observability_mlflow_plan.md`
-> 前序: discussion_001（regime_detector spec）
+> 前序: 10_regime_detector_spec（regime_detector spec）
 
 ## 0. 一句话目标
 
@@ -265,3 +255,10 @@ M5（⑦）：治理登记收尾                                       [约 0.5 
    - B. 保持顶层 `zephyr.observability`（独占顶层，但与 4 处子域语义重叠）
    - C. `zephyr.shared.observability.experiment_tracking`（归入现有 shared.observability）
 4. ⏳ 工作文档本身是否认可 —— 认可后进入蓝图阶段（实施蓝图 `.trae/documents/backtest_observability_mlflow_plan.md` 已存在，需按 ⓪ 决策同步包名）
+
+## 修订记录
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-09 | 1.0.1 | 文件名 discussion_018_backtest_observability_workplan.md → 50_backtest_observability_workplan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.0.2 | 文档头统一：frontmatter 补 title/owner/language，H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

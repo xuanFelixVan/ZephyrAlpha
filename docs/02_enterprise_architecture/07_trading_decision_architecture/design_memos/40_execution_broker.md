@@ -1,26 +1,29 @@
 ---
 ttl: permanent
 doc_type: architecture_view
+title: 下单对接与撮合（执行层）
+owner: ZephyrAlpha-Owner
+language: zh
 status: active
-version: "1.6.2"
+version: "1.6.5"
 date: 2026-08-08
 topic: execution_broker
 scope: 07_trading_decision_architecture
 ---
 
-# 设计备忘·下单对接与撮合（执行层）
+# 下单对接与撮合（执行层）
 
 > 本备忘记录"信号→订单→成交"执行层的选型推理与上限定义。
 > 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。
-> 管理规范见 [design_memo_management_spec.md](design_memo_management_spec.md)。
-> 上游：[design_memo_001 §2.2](design_memo_001_multi_strategy_concurrency.md) FirmRiskAggregator 输出 firm_target_portfolio → 下单。
+> 管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)。
+> 上游：[30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md) FirmRiskAggregator 输出 firm_target_portfolio → 下单。
 
 ## 1. 背景
 
 ### 1.1 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统，下单通道为 miniQMT（迅投，国金证券）
 - A 股 T+1 结算、不能做空、涨跌停 ±10%（主板 ST 2026-07-06 起统一 ±10%，创业板/科创板 ST ±20%，北交所 ±30%）、100 股整数倍
-- 多策略并发架构已定稿 Model A（design_memo_001）：各 StrategyBook 输出 target_portfolio → FirmRiskAggregator 求和裁剪 → firm_target_portfolio → 下单
+- 多策略并发架构已定稿 Model A（30_multi_strategy_concurrency）：各 StrategyBook 输出 target_portfolio → FirmRiskAggregator 求和裁剪 → firm_target_portfolio → 下单
 - 执行层是数据流主动脉的末端：接收 firm_target_portfolio，分解为订单，经风控/合规/拆单后通过 miniQMT 发出，回收成交回报，更新持仓，做 TCA 成本尸检
 
 ### 1.2 核心问题
@@ -63,7 +66,7 @@ scope: 07_trading_decision_architecture
 ### 2.1 执行层架构总览
 
 ```
-firm_target_portfolio (来自 FirmRiskAggregator, design_memo_001 §2.2)
+firm_target_portfolio (来自 FirmRiskAggregator, 30_multi_strategy_concurrency §2.2)
         │
         ↓
 [订单分解] TradingSession._compute_order_deltas  差额下单：目标-当前=净买卖
@@ -260,7 +263,7 @@ EXPIRED → 终态
 
 ### 2.8 决策⑦：执行风控——订单层熔断
 
-**决策**：在 firm 层风控（单票 8% 上限，design_memo_001 §2.2）之上，加订单层熔断防乌龙指与过度交易。
+**决策**：在 firm 层风控（单票 8% 上限，30_multi_strategy_concurrency §2.2）之上，加订单层熔断防乌龙指与过度交易。
 
 | 熔断项 | 阈值 | 触发动作 | 理由 |
 |---|---|---|---|
@@ -682,7 +685,7 @@ for order in sorted_deltas:  # 先卖后买顺序
 
 | 报备字段 | 本系统对应 | 文档出处 |
 |---|---|---|
-| 策略类型 | 多策略并发（Model A），各 StrategyBook 输出 target_portfolio | design_memo_001 §2.2 |
+| 策略类型 | 多策略并发（Model A），各 StrategyBook 输出 target_portfolio | 30_multi_strategy_concurrency §2.2 |
 | 拆单算法 | 自适应分档：小单直发/中单TWAP/大单VWAP/超大单IS | 决策② |
 | 下单频率 | 内部限频 ≤15 笔/秒（远低于高频认定线 300 笔/秒） | 决策⑫ |
 | 撤单率控制 | 滚动 500 笔窗口，>12% 只挂不撤 / >15% 冻结 | 决策⑫ |
@@ -881,10 +884,10 @@ for order in sorted_deltas:  # 先卖后买顺序
 ## 7. 引用
 
 ### 7.1 相关设计备忘
-- [design_memo_001 §2.2](design_memo_001_multi_strategy_concurrency.md) FirmRiskAggregator 输出 firm_target_portfolio → 下单（上游契约）
-- [design_memo_001 §2.5](design_memo_001_multi_strategy_concurrency.md) 回撤 Protocol（账户级风控，与订单层熔断协同）
-- [discussion_000 §3 G22](discussion_000_discussion_framework.md) 下单对接与撮合主题组定义
-- [design_memo_management_spec §4.3](design_memo_management_spec.md) 设计备忘推荐章节结构
+- [30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md) FirmRiskAggregator 输出 firm_target_portfolio → 下单（上游契约）
+- [30_multi_strategy_concurrency §2.5](30_multi_strategy_concurrency.md) 回撤 Protocol（账户级风控，与订单层熔断协同）
+- [00_index_trading_decision §3 G22](00_index_trading_decision.md) 下单对接与撮合主题组定义
+- [01_design_memo_management_spec §4.3](01_design_memo_management_spec.md) 设计备忘推荐章节结构
 
 ### 7.2 相关作战地图
 - [battle_map_10_execution.md](../battle_map/battle_map_10_execution.md) 执行阶段 6 环节：
@@ -955,3 +958,6 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 2026-08-08 | 1.6.0 | MiniQMT关停风险 + Python版本约束 + 2026 MPC/MAP-Elites/Direct VWAP | 四次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 项生存级风险 + 3 项工程约束 + 3 项新算法：①**新增决策⑲MiniQMT关停风险与迁移路径**——迅投MiniQMT正在有序关停（多家券商已停止新增），记录生存级风险+规划BrokerInterface抽象层隔离+大QMT迁移三套方案（消息队列桥接/文件信号中转/策略迁入），补代码gap 19（BigQmtBroker骨架）；②**补充xtquant Python版本限制**——仅支持Windows Python 3.6-3.8，需虚拟环境隔离；③**补充subscribe_whole_quote BUG**——取全市场数据需自行过滤；④**补充可转债程序化交易权限**——需单独开通+流量费；⑤**补2026 MPC执行**（Bayforest+MIT Bertsekas arXiv 2603.28898，介于规则和RL之间的中间路线，减少schedule shortfall 40-50%）；⑥**补MAP-Elites质量多样性执行**（Imperial College+BoA arXiv 2601.22113，PPO+CNN 2.13bps vs VWAP 5.23bps）；⑦**补Direct VWAP Optimization**（arXiv 2502.13722，深度学习直接优化VWAP绕过量曲线预测）。CSDN自媒体(syp1110 2026-07-28)仍在传播"15笔/秒"谣言，印证v1.5.0订正必要性。核心问题18→19。 |
 | 2026-08-08 | 1.6.1 | 订正miniQMT关停夸大表述+Python版本过时信息 | 用户指出miniQMT交易日正常使用、仅周末维护。查证后确认v1.6.0引用licai.cofool.com（券商营销网站）单一不权威来源夸大了风险：①**订正决策⑲miniQMT关停风险**——从"正在有序关停/生存级风险"降为"部分券商收紧新增、存量稳定、交易日正常、多数正常开放"（搜狐两融小顾问2026-07行业调研四类情况），风险等级从"生存级紧急"降为"中长期关注"，保留迁移路径预案但不再定性为紧急；②**订正Python版本**——从"仅支持3.6-3.8"更正为"支持3.6-3.14（建议3.11），2025-10起pip可装"（miniqmt.com官方QA 2026-04确认）；③国金证券存量用户确认正常使用（迅投论坛2026-07-16/22仍有国金用户正常使用miniqmt xtquant），周末维护属正常系统维护非关停信号。教训：引用信息须交叉验证，券商营销网站有夸大动机（引导迁移开户）。 |
 | 2026-08-08 | 1.6.2 | 精简决策⑲移除过度工程 | 用户判定v1.6.1的三套迁移方案+BigQmtBroker骨架代码(gap 19)为过度工程。miniQMT正常运营，无需为不紧急的、可能不会发生的迁移预先写代码。精简决策⑲：①移除三套迁移方案详情表格（消息队列桥接/文件信号中转/策略迁入）；②移除迁移改造要点5项；③移除gap 19（BigQmtBroker骨架代码）；④只保留"正常运营但需关注政策变化"+BrokerInterface抽象层防线（已实现）+触发条件。决策⑲从50行精简到15行。原则：BrokerInterface让迁移从"系统重写"降为"适配器替换"——有这个就足够。 |
+| 2026-08-09 | 1.6.3 | 文件名 design_memo_010_execution_broker.md → 40_execution_broker.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
+| 2026-08-09 | 1.6.4 | §1+§7.1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md`（2 处） | 改名工程遗留断链修复（全量断链扫描发现） |
+| 2026-08-09 | 1.6.5 | 文档头统一：frontmatter 补 title/owner/language，H1 去"设计备忘·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |

@@ -23,8 +23,8 @@ responsibility_domain:
 
 > **module_id**: MOD-REGIME-001 | **域**: D_REGIME | **层**: L2 业务域
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
-> **SSoT**: depgraph MOD-REGIME-001 | **spec 真源**: [discussion_001_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md) v1.3.1（12态完整 spec）
-> **验证真源**: [discussion_002_regime_backtest_validation_plan.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_002_regime_backtest_validation_plan.md) v1.0.0（回测验证方案，§4 验证需求）
+> **SSoT**: depgraph MOD-REGIME-001 | **spec 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) v1.3.1（12态完整 spec）
+> **验证真源**: [11_regime_backtest_validation_plan.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/11_regime_backtest_validation_plan.md) v1.0.0（回测验证方案，§4 验证需求）
 > **消费方**: [RegimeMetaAllocator](../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007（Shrinkage + 12维概率消费者）
 
 ## 1. 定位
@@ -33,17 +33,17 @@ responsibility_domain:
 
 属 **B 类核心业务模块**（HMM 模型 + 规则覆盖层 + 多源融合），HMM 超参数/转换评分门槛为 C 类可调参数。
 
-### 1.1 五子模块分解（discussion_002 §8.1）
+### 1.1 五子模块分解（11_regime_backtest_validation_plan §8.1）
 
 > **用户裁定（2026-08-06）**：直接实现完整 12 态，回测验证后再基于证据简化。
 
 | 子模块 | 职责 | spec 真源 | 技术选型 |
 |---|---|---|---|
-| ① HMM 9态 | 9 态 3×3 网格（趋势×波动率），多特征喂入，输出 P(r1)..P(r9) | discussion_001 §2.6/§3 | hmmlearn GaussianHMM |
-| ② D-SIGNAL-68 覆盖层 | 3 特殊态（CRISIS/RECOVERY/BREAKOUT）规则触发 + 8 转换评分 | discussion_001 §2.8/§4 | 规则引擎（动态评分制） |
-| ③ ConfidenceSignal | max(P) → 4 档映射 + 稀有态折扣 | design_memo_001 §2.2 | 公式计算 |
-| ④ RiskSignal | 13 参数完整计算 + 聚合公式 | discussion_001 §5.3 | 公式计算 |
-| ⑤ Shrinkage | ConfidenceSignal × RiskSignal，可开关 | design_memo_001 §2.2 | 公式计算 |
+| ① HMM 9态 | 9 态 3×3 网格（趋势×波动率），多特征喂入，输出 P(r1)..P(r9) | 10_regime_detector_spec §2.6/§3 | hmmlearn GaussianHMM |
+| ② D-SIGNAL-68 覆盖层 | 3 特殊态（CRISIS/RECOVERY/BREAKOUT）规则触发 + 8 转换评分 | 10_regime_detector_spec §2.8/§4 | 规则引擎（动态评分制） |
+| ③ ConfidenceSignal | max(P) → 4 档映射 + 稀有态折扣 | 30_multi_strategy_concurrency §2.2 | 公式计算 |
+| ④ RiskSignal | 13 参数完整计算 + 聚合公式 | 10_regime_detector_spec §5.3 | 公式计算 |
+| ⑤ Shrinkage | ConfidenceSignal × RiskSignal，可开关 | 30_multi_strategy_concurrency §2.2 | 公式计算 |
 
 **数据流**（内部）：
 ```
@@ -55,9 +55,9 @@ responsibility_domain:
                                                     └──→ ④RiskSignal ────────┘
 ```
 
-### 1.2 可验证性接口（discussion_002 §4 验证需求）
+### 1.2 可验证性接口（11_regime_backtest_validation_plan §4 验证需求）
 
-> **关键约束**：接口设计必须满足 discussion_002 的 4 个验证需求，否则代码写完没法验证就返工。
+> **关键约束**：接口设计必须满足 11_regime_backtest_validation_plan 的 4 个验证需求，否则代码写完没法验证就返工。
 
 | 验证需求 | 接口设计 | 验证项 |
 |---------|---------|--------|
@@ -80,8 +80,8 @@ responsibility_domain:
 | 方向 | 内容 | 契约/事件 | 来源 | 就绪 |
 |------|------|-----------|------|:----:|
 | HMM 特征 | RegimeFeatures（波动率分位/趋势斜率/相关性矩阵/涨跌家数/量能异动） | CTR-SIG-001-F | ClickHouse 特征工程 | 🟡 待建（§8.2 步骤1） |
-| 覆盖层信号 | OverlaySignals（Capitulation/Wyckoff/VIX/政策底/利空钝化/资金承接/筹码/估值等） | CTR-SIG-001-O | discussion_001 §4 各转换数据源 | ❌ 待建 |
-| RiskSignal 输入 | RiskSignalInputs（13 参数市场风险输入） | CTR-SIG-013 | discussion_001 §5.3 数据源 | ❌ 待建 |
+| 覆盖层信号 | OverlaySignals（Capitulation/Wyckoff/VIX/政策底/利空钝化/资金承接/筹码/估值等） | CTR-SIG-001-O | 10_regime_detector_spec §4 各转换数据源 | ❌ 待建 |
+| RiskSignal 输入 | RiskSignalInputs（13 参数市场风险输入） | CTR-SIG-013 | 10_regime_detector_spec §5.3 数据源 | ❌ 待建 |
 | 配置 | shrinkage_enabled（验证开关，默认 True） | config | 配置文件 | ✅ config |
 | 配置 | hmm_params（n_states=9, covariance_type, n_iter） | config | 配置文件 | ✅ config |
 
@@ -109,7 +109,7 @@ responsibility_domain:
 | timestamp | datetime | |
 | schema_version | str | "1.0" |
 
-**12 态清单**（discussion_001 §3，D-SIGNAL-04）：
+**12 态清单**（10_regime_detector_spec §3，D-SIGNAL-04）：
 
 | 编号 | 态 | 来源 | 驱动 |
 |------|-----|------|------|
@@ -135,7 +135,7 @@ responsibility_domain:
 
 ## 3. 核心规则
 
-### 3.1 子模块①：HMM 9态（discussion_001 §2.6/§3）
+### 3.1 子模块①：HMM 9态（10_regime_detector_spec §2.6/§3）
 
 > **技术选型（§10 已决策）**：hmmlearn GaussianHMM，9 态 3×3 网格，walk-forward 季度重拟合。
 
@@ -147,7 +147,7 @@ responsibility_domain:
 | 重拟合频率 | 季度 | walk-forward（对照 Morwane） |
 | 解码方式 | 因果 Viterbi | 防前视（§9 行业对照：Morwane causal Viterbi） |
 
-**9 态 3×3 网格**（discussion_001 §3）：
+**9 态 3×3 网格**（10_regime_detector_spec §3）：
 
 | | 低波动 | 中波动 | 高波动 |
 |---|---|---|---|
@@ -164,16 +164,16 @@ responsibility_domain:
 - 涨跌家数比
 - 量能异动
 
-### 3.2 子模块②：D-SIGNAL-68 覆盖层（discussion_001 §2.8/§4）
+### 3.2 子模块②：D-SIGNAL-68 覆盖层（10_regime_detector_spec §2.8/§4）
 
 > 3 特殊态规则触发 + 8 转换评分。规则引擎，非 HMM。
 
 **3 特殊态触发**：
-- **CRISIS (r10)**：discussion_001 §4.12 S2 参数（Capitulation投降+Wyckoff吸筹+VIX见顶+政策底+估值极端+利空钝化+资金承接+底部筹码，8维度评分）
-- **RECOVERY (r11)**：discussion_001 §4.12 S2 确认标准
-- **BREAKOUT (r12)**：discussion_001 §4.10 S1 参数（复苏→突破）
+- **CRISIS (r10)**：10_regime_detector_spec §4.12 S2 参数（Capitulation投降+Wyckoff吸筹+VIX见顶+政策底+估值极端+利空钝化+资金承接+底部筹码，8维度评分）
+- **RECOVERY (r11)**：10_regime_detector_spec §4.12 S2 确认标准
+- **BREAKOUT (r12)**：10_regime_detector_spec §4.10 S1 参数（复苏→突破）
 
-**8 转换评分**（动态评分制，discussion_001 §4.1 总览表）：
+**8 转换评分**（动态评分制，10_regime_detector_spec §4.1 总览表）：
 
 | 转换 | 路径 | 评分维度 | spec 真源 |
 |------|------|---------|---------|
@@ -210,7 +210,7 @@ P = normalize(P(r1..r12))                 # Σ=1.0
 
 > **设计理由**：特殊态触发时，覆盖层"覆盖"HMM 的判断——CRISIS 触发时 P(r10) 上升，P(r1..r9) 等比压缩。无特殊态时 overlay_mass=0，P(r1..r9)=P_hmm，退化为纯 HMM。
 
-### 3.4 子模块③：ConfidenceSignal（design_memo_001 §2.2）
+### 3.4 子模块③：ConfidenceSignal（30_multi_strategy_concurrency §2.2）
 
 > **直接引用 RegimeMetaAllocator blueprint §3.2.1**——计算逻辑在本模块（regime 检测器侧），消费在 RegimeMetaAllocator。
 
@@ -229,9 +229,9 @@ rarity_discount:
   稀有态 <1% → 0.7
 ```
 
-### 3.5 子模块④：RiskSignal（discussion_001 §5.3）
+### 3.5 子模块④：RiskSignal（10_regime_detector_spec §5.3）
 
-> **直接引用 discussion_001 §5.3.3 聚合公式 + RegimeMetaAllocator blueprint §3.2.2**——13 参数计算在本模块，消费在 RegimeMetaAllocator。
+> **直接引用 10_regime_detector_spec §5.3.3 聚合公式 + RegimeMetaAllocator blueprint §3.2.2**——13 参数计算在本模块，消费在 RegimeMetaAllocator。
 
 ```
 RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
@@ -241,9 +241,9 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
   机会恢复   = #11 鬼故事抵消 + #13 利空不跌抵消          # 上限 +0.25
 ```
 
-13 参数清单见 discussion_001 §5.3.1-§5.3.2。
+13 参数清单见 10_regime_detector_spec §5.3.1-§5.3.2。
 
-### 3.6 子模块⑤：Shrinkage（可开关，discussion_002 C1 验证）
+### 3.6 子模块⑤：Shrinkage（可开关，11_regime_backtest_validation_plan C1 验证）
 
 ```
 if shrinkage_enabled:
@@ -252,7 +252,7 @@ else:
     Shrinkage = 1.0                                  # 验证模式（C1 开/关对比基准组）
 ```
 
-> **可开关设计**：discussion_002 C1 是一票否决验证——对比"Shrinkage=1.0（关）"vs"Shrinkage=ConfidenceSignal×RiskSignal（开）"。开关由 config 控制，回测框架切换。
+> **可开关设计**：11_regime_backtest_validation_plan C1 是一票否决验证——对比"Shrinkage=1.0（关）"vs"Shrinkage=ConfidenceSignal×RiskSignal（开）"。开关由 config 控制，回测框架切换。
 
 ## 4. 关键不变量 (INVARIANTS)
 
@@ -287,8 +287,8 @@ else:
 
 ### Phase 2 测试 (~15)
 - walk-forward 季度重拟合/模型老化检测
-- 7 月案例验证（discussion_001 §5.3.4 五时间点 Shrinkage 值吻合）
-- 历史事件验证（discussion_002 B4：2008/2015/2020/2024 转换触发时点 ±5 交易日）
+- 7 月案例验证（10_regime_detector_spec §5.3.4 五时间点 Shrinkage 值吻合）
+- 历史事件验证（11_regime_backtest_validation_plan B4：2008/2015/2020/2024 转换触发时点 ±5 交易日）
 
 ## 7. 依赖
 
@@ -299,7 +299,7 @@ else:
 
 ### 7.2 待建 (前置)
 - RegimeFeatures 特征工程（ClickHouse → 波动率分位/趋势斜率/相关性/涨跌家数/量能）— §8.2 步骤1
-- OverlaySignals 数据源（discussion_001 §4 各转换的 Capitulation/Wyckoff/VIX 等信号）— ❌ 待建
+- OverlaySignals 数据源（10_regime_detector_spec §4 各转换的 Capitulation/Wyckoff/VIX 等信号）— ❌ 待建
 - RiskSignalInputs 13 参数数据源 — ❌ 待建
 
 ### 7.3 消费者
@@ -346,27 +346,27 @@ else:
 - 真实 RegimeFeatures（波动率分位/趋势斜率/相关性/涨跌家数/量能）
 - walk-forward 季度重拟合
 - 真实 13 参数 RiskSignal
-- 7 月案例验证 + 历史事件验证（discussion_002 B4）
+- 7 月案例验证 + 历史事件验证（11_regime_backtest_validation_plan B4）
 - 接入 BM-BT-03-E 验证（B1/B2）
 
-### Phase 3: 回测验证 + 生产化（discussion_002 全流程）
+### Phase 3: 回测验证 + 生产化（11_regime_backtest_validation_plan 全流程）
 
 **范围**：
-- discussion_002 Phase 1-5 回测验证（C1 开/关对比是一票否决）
+- 11_regime_backtest_validation_plan Phase 1-5 回测验证（C1 开/关对比是一票否决）
 - 验证通过 → depgraph build_status → generated, design_maturity → production
-- 验证失败 → regime 不部署，回退静态等权（discussion_002 §10）
+- 验证失败 → regime 不部署，回退静态等权（11_regime_backtest_validation_plan §10）
 
 ## 9. 设计决策记录
 
 | 决策 | 理由 |
 |------|------|
-| 完整 12 态（非先简化） | discussion_002 §10 已决策：直接实现完整 12 态，验证后基于证据简化，避免重复工作 |
-| hmmlearn GaussianHMM | discussion_002 §10 已决策：行业主流（Morwane/fibalgo 均用），与开源生态一致 |
+| 完整 12 态（非先简化） | 11_regime_backtest_validation_plan §10 已决策：直接实现完整 12 态，验证后基于证据简化，避免重复工作 |
+| hmmlearn GaussianHMM | 11_regime_backtest_validation_plan §10 已决策：行业主流（Morwane/fibalgo 均用），与开源生态一致 |
 | 因果 Viterbi 解码 | 防前视（§9 行业对照：Morwane causal Viterbi），回测不能用未来信息 |
-| walk-forward 季度重拟合 | 防模型老化，对照 Morwane，discussion_002 E1 鲁棒性验证 |
-| Shrinkage 可开关 | discussion_002 C1 一票否决验证：对比开/关，不通过则 regime 不部署 |
-| 12 维概率输出（非硬标签） | discussion_002 B1/B2 验证需要概率分布（CRPS/校准度），硬标签无法验证概率质量 |
-| 转换触发事件记录 | discussion_002 B4 验证：8 转换触发时点 ±5 交易日吻合 ≥6/8 |
+| walk-forward 季度重拟合 | 防模型老化，对照 Morwane，11_regime_backtest_validation_plan E1 鲁棒性验证 |
+| Shrinkage 可开关 | 11_regime_backtest_validation_plan C1 一票否决验证：对比开/关，不通过则 regime 不部署 |
+| 12 维概率输出（非硬标签） | 11_regime_backtest_validation_plan B1/B2 验证需要概率分布（CRPS/校准度），硬标签无法验证概率质量 |
+| 转换触发事件记录 | 11_regime_backtest_validation_plan B4 验证：8 转换触发时点 ±5 交易日吻合 ≥6/8 |
 | 覆盖层压缩 HMM 概率 | 特殊态触发时覆盖 HMM 判断，无触发时退化为纯 HMM，平滑兼容 |
 | RiskSignal 在本模块计算 | 13 参数是市场风险指标，属于 regime 检测范畴；RegimeMetaAllocator 是消费者 |
 | 不做宏观 regime | 现有 gov_drift/regime_detector.py 是宏观 4 态（经济周期），与本模块（交易 12 态）无关 |

@@ -82,6 +82,12 @@ from _shared.module_translation_loader import (  # noqa: E402 — 模块级翻�
     is_generic_desc_zh,
     is_generic_plain_suffix,
 )
+from _shared.code_algorithm_extractor import (  # noqa: E402 — 模块核心算法提取器（与 08 纵览生成器共享同一派生逻辑真源）
+    AlgorithmSummary,
+    build_blueprint_index,
+    extract_algorithm_from_blueprint,
+    extract_algorithm_from_code,
+)
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
 from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）
@@ -1317,6 +1323,156 @@ def _atomic_write(path: Path, content: str) -> None:
 
 
 # ---------------------------------------------------------------------------
+# 模块核心算法章节（域内检修一站式·与 08 纵览共享 code_algorithm_extractor）
+# ---------------------------------------------------------------------------
+
+# 三档状态徽章（与 08 纵览生成器保持一致，保证跨文档视觉统一）
+_ALGO_STATUS_EMOJI = {"operational": "🟦", "design": "🟧", "missing": "⬜"}
+_ALGO_STATUS_LABEL = {"operational": "运营态", "design": "设计态", "missing": "缺失"}
+
+# layer 排序键：L0→L2 在前，未知/空层置末（L1_platform 历史遗留兼容）
+_ALGO_LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]
+
+
+def _algo_layer_sort_key(layer: str) -> tuple:
+    """layer 排序键（与纵览一致的分层顺序）。"""
+    return (0, _ALGO_LAYER_ORDER.index(layer)) if layer in _ALGO_LAYER_ORDER else (1, layer or "")
+
+
+def _algo_file_url(rel_path: str) -> str:
+    """相对路径 → file:// URL（与纵览生成器同款，Windows 兼容正斜杠）。"""
+    return "file:///" + (REPO_ROOT / rel_path).as_posix()
+
+
+def _algo_blockquote(text: str) -> list[str]:
+    """多行文本每行加 > 前缀，返回行列表（用于算法步骤/概述多行展开）。"""
+    if not text:
+        return []
+    return [f"> {ln}" if ln.strip() else ">" for ln in text.splitlines()]
+
+
+def render_module_algorithm_section(nodes: list[dict], domain_id: str) -> str:
+    """渲染「模块核心算法」章节（域内检修一站式）。
+
+    对域内每个模块（.py）按三档源优先级提取算法摘要：
+      - 🟦运营态：代码 .py 存在 → extract_algorithm_from_code(truncate=False)
+      - 🟧设计态：代码不存在但 blueprint 命中 → extract_algorithm_from_blueprint(truncate=False)
+      - ⬜缺失：两者皆无 → 空摘要 + ❌ 标记
+
+    与 08 纵览生成器共享 code_algorithm_extractor（同一派生逻辑真源），
+    保证同一模块算法描述在纵览和域文档里一致，只是组织粒度不同：
+    - 纵览：跨域 501 模块精简卡片（truncate=True 截断防爆）
+    - 域文档：单域模块完整算法（truncate=False 不截断，域内检修完整视角）
+
+    :param nodes: get_domain_nodes() 返回的节点列表
+    :param domain_id: 域 ID（用于跨文档链接）
+    :return: markdown 章节文本；无 .py 模块时返回空串（不输出空章节）
+    """
+    # 过滤出模块节点（.py 路径，与纵览生成器同口径）
+    module_nodes = [n for n in nodes if (n.get("path") or "").endswith(".py")]
+    if not module_nodes:
+        return ""
+
+    # blueprint 索引（模块级缓存，首次扫描 152 个 blueprint.md 后复用，--all 73 域只扫一次）
+    blueprint_index = build_blueprint_index()
+
+    # 按 layer → path 排序（与纵览一致，便于跨文档对照）
+    module_nodes.sort(key=lambda n: (_algo_layer_sort_key(n.get("architecture_layer") or ""), n.get("path") or ""))
+
+    # 三档提取 + 统计
+    tier_counts = {"operational": 0, "design": 0, "missing": 0}
+    cards: list[tuple[dict, AlgorithmSummary, str, str]] = []  # (node, summary, tier, bp_ref)
+    for n in module_nodes:
+        path = n.get("path") or ""
+        bp_id = (n.get("blueprint_id") or "").strip()
+        py_abs = (REPO_ROOT / path) if path and not Path(path).is_absolute() else Path(path)
+        file_exists = bool(path) and py_abs.exists()
+        bp_path = blueprint_index.get(bp_id) if bp_id else None
+        bp_ref = ""
+        if bp_path:
+            try:
+                bp_ref = str(bp_path.relative_to(REPO_ROOT)).replace("\\", "/")
+            except ValueError:
+                bp_ref = str(bp_path).replace("\\", "/")
+
+        if file_exists:
+            s = extract_algorithm_from_code(py_abs, module_id=bp_id, blueprint_ref=bp_ref, truncate=False)
+            tier = "operational"
+        elif bp_path:
+            s = extract_algorithm_from_blueprint(bp_path, module_id=bp_id, truncate=False)
+            tier = "design"
+        else:
+            s = AlgorithmSummary(source_type="empty", module_id=bp_id, quality_issue="无代码文件无蓝图，需补")
+            tier = "missing"
+
+        tier_counts[tier] += 1
+        cards.append((n, s, tier, bp_ref))
+
+    covered = sum(1 for _, s, _, _ in cards if s.algo_steps)
+    total = len(cards)
+
+    lines: list[str] = []
+    lines.append("## 模块核心算法 / Module Algorithm Details")
+    lines.append("")
+    lines.append(
+        f"> 域内 {total} 个模块的算法详情。三档源优先级：🟦运营态（代码存在，以代码为准）｜"
+        f"🟧设计态（代码未落盘，以蓝图为准）｜⬜缺失（无代码无蓝图，需补）。"
+    )
+    lines.append(
+        f"> **算法覆盖**：🟦运营 {tier_counts['operational']} ｜ 🟧设计 {tier_counts['design']} ｜ "
+        f"⬜缺失 {tier_counts['missing']} ｜ 有算法步骤 {covered}/{total}。"
+    )
+    lines.append(
+        "> 与[算法全景图](../08_algorithm_overview/index.md)共享提取器"
+        "（`code_algorithm_extractor.py`），同一模块算法描述一致。域内视角完整展示（不截断），"
+        "更长算法请点真源链接查看代码/蓝图原文。"
+    )
+    lines.append("")
+
+    # 逐模块卡片
+    for n, s, tier, bp_ref in cards:
+        emoji = _ALGO_STATUS_EMOJI[tier]
+        path = n.get("path") or ""
+        bp_id = (n.get("blueprint_id") or "").strip()
+        bi_name = get_module_name_bilingual(path) if path else ""
+        name = bi_name or s.module_name or bp_id or n.get("node_name") or ""
+        layer = n.get("architecture_layer") or "—"
+        build_st = n.get("build_status") or "—"
+
+        lines.append(f"### {emoji} {bp_id or '(无ID)'} {name}")
+        lines.append(f"> [{_ALGO_STATUS_LABEL[tier]}] layer=`{layer}` ｜ build_status=`{build_st}`")
+        lines.append(">")
+
+        # 真源行
+        src_parts = []
+        if s.source_path:
+            anchor = f"{s.source_path}:{s.source_line_range}" if s.source_line_range else s.source_path
+            src_parts.append(f"[`{anchor}`]({_algo_file_url(s.source_path)})")
+        if bp_ref:
+            src_parts.append(f"[蓝图 `{bp_ref}`]({_algo_file_url(bp_ref)})")
+        if src_parts:
+            lines.append(f"> **真源**：{' ｜ '.join(src_parts)}")
+            lines.append(">")
+
+        if s.summary:
+            lines.append(f"> **概述**：{s.summary}")
+            lines.append(">")
+        if s.algo_steps:
+            lines.append("> **算法步骤**：")
+            lines.extend(_algo_blockquote(s.algo_steps))
+            lines.append(">")
+        if s.invariants:
+            lines.append("> **不变量**：")
+            lines.extend(_algo_blockquote(s.invariants))
+            lines.append(">")
+
+        lines.append(f"> **质量**：{s.quality_issue}")
+        lines.append("")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
 # 主文档生成
 # ---------------------------------------------------------------------------
 
@@ -1482,6 +1638,13 @@ def generate_domain_doc(domain_id: str, conn: PgConnExecuteWrapper, number: int 
         f"仅展示蓝图阶段、代码未写的设计态模块（共 {len(design_nodes)} 个），不含跨域外部节点。",
         design_nodes, [], [],
     )
+
+    # 模块核心算法（域内检修一站式·与 08 纵览共享 code_algorithm_extractor）
+    # 放在域内依赖图之后、跨域依赖之前：先看结构图，再逐模块钻取算法，最后看跨域上下文。
+    algo_section = render_module_algorithm_section(nodes, domain_id)
+    if algo_section:
+        lines.append(algo_section)
+        lines.append("")
 
     # 跨域依赖（中英文对照）
     lines.append("## 跨域依赖 / Cross-domain Dependencies")

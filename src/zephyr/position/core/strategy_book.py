@@ -18,7 +18,7 @@
 """
 StrategyBook — 独立策略账本 (MOD-POS-020)
 
-A 模型（design_memo_001 §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，
+A 模型（30_multi_strategy_concurrency §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，
 自带选股 + 粗仓位（等权/risk parity，**不用 Kelly，不用 MVO**）+ 独立风控，
 输出 target_portfolio（标的 + 目标权重）。
 
@@ -30,10 +30,10 @@ A 模型（design_memo_001 §2.1）的核心实体。每个策略是一个自洽
 数据流：StrategyBook → FirmRiskAggregator → MOD-POS-001 → 下单
 
 不做什么：Kelly 精裁（归 MOD-POS-001）/ 组合级约束（归 MOD-POS-021）/
-         MVO（design_memo_001 §3.1 拒绝）/ 知道市场态（只收 budget 数字）
+         MVO（30_multi_strategy_concurrency §3.1 拒绝）/ 知道市场态（只收 budget 数字）
 
 阶段：骨架（接口完整，实现待填充）。
-依据: design_memo_001 §2.2/§2.4/§2.5 + blueprint §2.3
+依据: 30_multi_strategy_concurrency §2.2/§2.4/§2.5 + blueprint §2.3
 SSoT: depgraph MOD-POS-020
 Version: 0.1.0
 """
@@ -114,7 +114,7 @@ class StrategyBook:
         raise NotImplementedError("骨架：待实现选股+粗仓位+budget裁剪+cash_ratio 计算")
 
     def rebalance_to_budget(self, new_budget: float) -> TargetPortfolio:
-        """适配新 budget（design_memo_001 §2.4，三级升级 Tier 2 调用）。
+        """适配新 budget（30_multi_strategy_concurrency §2.4，三级升级 Tier 2 调用）。
 
         策略自主决定砍哪些仓位——**策略不能说"我不卖"**。
         budget 上调时通过买入信号自然部署；下调时砍最不自信的仓位。

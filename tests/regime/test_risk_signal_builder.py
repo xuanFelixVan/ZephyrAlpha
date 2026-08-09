@@ -11,7 +11,7 @@
 # [TESTS] tests/regime/test_risk_signal_builder.py
 # [A_module] module_id: MOD-TEST-RISK-SIG | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #MOD-REGIME-002 #discussion_001 §5.3 #Phase2a #C1-shrinkage-comparator
+# [ARCH-REF] #MOD-REGIME-002 #10_regime_detector_spec §5.3 #Phase2a #C1-shrinkage-comparator
 """test_risk_signal_builder.py — RiskSignalConstructor (Phase 2a) 单元测试。
 
 覆盖：
@@ -23,7 +23,7 @@
   - 降级：feature_builder=None → 全参数=1.0（保守不下调）
   - 端到端：risk_inputs 喂 RegimeDetector._compute_risk_signal 不报错
 
-依据: discussion_001 v1.3.1 §5.3.3 / Phase 2 计划 §Phase2a
+依据: 10_regime_detector_spec v1.3.1 §5.3.3 / Phase 2 计划 §Phase2a
 """
 
 from __future__ import annotations

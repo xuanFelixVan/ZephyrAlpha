@@ -22,20 +22,20 @@ D_REGIME 域核心模块，整个交易决策架构的**最上游**。输出 7 �
 Shrinkage 风险节流因子，供 RegimeMetaAllocator 做 budget 分配。是 regime 链源头
 （regime → Shrinkage → budget → StrategyBook）。
 
-五子模块（discussion_002 §8.1）：
+五子模块（11_regime_backtest_validation_plan §8.1）：
     ① HMM 4态（BIC 扫描确定，Viterbi 解码验证语义）—— hmmlearn GaussianHMM
     ② D-SIGNAL-68 覆盖层（CRISIS/RECOVERY/BREAKOUT 规则触发 + 8转换评分）
     ③ ConfidenceSignal（max(P) 4档映射 + 稀有态折扣）
     ④ RiskSignal（13参数完整计算 + 聚合公式）
     ⑤ Shrinkage（ConfidenceSignal × RiskSignal，可开关）
 
-可验证性接口（discussion_002 §4 验证需求，接口设计不可破坏）：
+可验证性接口（11_regime_backtest_validation_plan §4 验证需求，接口设计不可破坏）：
     ① 输出 7 维概率分布（RegimeProbabilities，Σ=1）—— B1 校准度 / B2 CRPS
     ② Shrinkage 可开关（shrinkage_enabled）—— C1 开/关对比（**一票否决**）
     ③ 8 转换触发可记录（TransitionTriggered）—— B4 转换触发准确性
     ④ HMM hmmlearn GaussianHMM 4态 walk-forward 季度重拟合 —— A1/A2/A3 模型质量
 
-降态说明（discussion_004 §2.1，2026-08-07）：
+降态说明（13_regime_phase3_engineering_plan §2.1，2026-08-07）：
     原 9 态（3×3 趋势×波动率网格）经 BIC 扫描确认过度细分——A2 OOS/IS 一致率仅
     0.34（门槛 0.7），9 态在 2010-2018 和 2019-2026 学的规律完全不同。全历史 BIC
     Kneedle 拐点=4，walk-forward 46 季度拐点分布{4:19, 5:25, 7:2}。选 4 态：
@@ -49,7 +49,7 @@ Shrinkage 风险节流因子，供 RegimeMetaAllocator 做 budget 分配。是 r
 降级策略（blueprint §7.4）：hmmlearn 不可用 / 拟合失败 → HMM 4 态均匀分布 P=1/4；
 RiskSignalInputs 缺失 → RiskSignal=1.0；OverlaySignals 缺失 → 退化为纯 HMM。
 
-依据: discussion_001 v1.3.1（原12态spec）/ discussion_002 v1.0.0（验证方案）/ discussion_004 §2.1（4态降维）
+依据: 10_regime_detector_spec v1.3.1（原12态spec）/ 11_regime_backtest_validation_plan v1.0.0（验证方案）/ 13_regime_phase3_engineering_plan §2.1（4态降维）
 SSoT: depgraph MOD-REGIME-001
 Version: 0.3.0
 """
@@ -68,22 +68,22 @@ except Exception:  # pragma: no cover
 
 _logger = logging.getLogger(__name__)
 
-# 7 态编号（discussion_001 §3 + discussion_004 §2.1 降态：HMM 9态→4态）
+# 7 态编号（10_regime_detector_spec §3 + 13_regime_phase3_engineering_plan §2.1 降态：HMM 9态→4态）
 # r1-r4: HMM 4态（BIC 扫描确定，Viterbi 解码验证语义）；r10 CRISIS / r11 RECOVERY / r12 BREAKOUT
 REGIME_STATES: list[str] = ["r1", "r2", "r3", "r4", "r10", "r11", "r12"]
 HMM_STATES: list[str] = [f"r{i}" for i in range(1, 5)]
 OVERLAY_STATES: list[str] = ["r10", "r11", "r12"]
 
-# 8 转换（discussion_001 §4，T1-T6 趋势/震荡转换 + S1/S2 恐慌/复苏转换）
+# 8 转换（10_regime_detector_spec §4，T1-T6 趋势/震荡转换 + S1/S2 恐慌/复苏转换）
 TRANSITIONS: list[str] = ["T1", "T2", "T3", "T4", "T5", "T6", "S1", "S2"]
 
-# Shrinkage 4 档映射（design_memo_001 §2.2 / discussion_001 §5.1）
+# Shrinkage 4 档映射（30_multi_strategy_concurrency §2.2 / 10_regime_detector_spec §5.1）
 # (max(P) 下界, base_confidence) —— 从高到低匹配，取首个 max(P) >= 下界
 # C1 验证 2026-08-06 校准：原阈值 0.95/0.80/0.60 对 HMM 过高（分散概率质量，
 # max(P) 天然偏低，总落入最低档 base=0.3 致平时过度收缩）。
 # 调整为适应 HMM 分布的阈值，下限抬高到 0.7：ConfidenceSignal 只做"高置信加成"
 # 而非"低置信惩罚"，让稳定的 feature-risk（RiskSignal）主导危机节流。
-# ⚠️ 4 态降维后（discussion_004 §2.1）：均匀分布 max(P)=0.25，有信号时 0.4-0.7。
+# ⚠️ 4 态降维后（13_regime_phase3_engineering_plan §2.1）：均匀分布 max(P)=0.25，有信号时 0.4-0.7。
 # 当前阈值沿用 9 态校准值，步骤8 C1 验证后根据 4 态 max(P) 分布精调。
 _CONFIDENCE_BANDS: tuple[tuple[float, float], ...] = (
     (0.50, 1.0),   # top1 ≥50% → 满部署（4态下0.5已是高置信）
@@ -91,24 +91,24 @@ _CONFIDENCE_BANDS: tuple[tuple[float, float], ...] = (
     (0.15, 0.8),   # 15-30% → 中度收缩（4态均匀分布=0.25，此档极少触发）
     (0.0, 0.7),    # <15% → 强收缩（4态下不可能低于0.25，此档为防御保留）
 )
-# 稀有态折扣（design_memo_001 §2.2）：(频率下界, discount)
+# 稀有态折扣（30_multi_strategy_concurrency §2.2）：(频率下界, discount)
 _RARITY_BANDS: tuple[tuple[float, float], ...] = (
     (0.05, 1.0),   # 常见态 >5%
     (0.01, 0.85),  # 中等态 1-5%
     (0.0, 0.7),    # 稀有态 <1%
 )
-# 状态风险因子（discussion_004 §2.1.6.2 重设计，基于 4 态 Viterbi 统计特征）
+# 状态风险因子（13_regime_phase3_engineering_plan §2.1.6.2 重设计，基于 4 态 Viterbi 统计特征）
 # ⚠️ DEPRECATED — C1 验证 2026-08-06 从 ConfidenceSignal 移除，不再参与 Shrinkage 计算。
 # 原因：无监督 HMM 标签在 walk-forward refit 间有 label-switching 问题（r1 本季=牛市，
 # 下季可能=熊市），按数字标签套风险因子 = 随机惩罚。危机保护改由 RiskSignal 的
 # feature_risk（vol_pct + slope）承担——可靠信号非任意标签。
 # 保留定义供未来 label-switching 对齐后（§2.1.6.4 协议）重新启用。
-# 4 态语义（discussion_004 §2.1，Viterbi 全历史 3733 样本 RobustScaler 标准化后统计）：
+# 4 态语义（13_regime_phase3_engineering_plan §2.1，Viterbi 全历史 3733 样本 RobustScaler 标准化后统计）：
 #   r1 低波震荡(27.6%): vol_pct=-0.52, slope=-0.027, fr_5d=+0.0003 → 轻微收缩 0.90
 #   r2 中波震荡(37.4%): vol_pct=+0.42, slope=+0.007, fr_5d=+0.0018 → 轻微收缩 0.85
 #   r3 牛市趋势(14.9%): vol_pct=+0.58, slope=+0.149, fr_5d=+0.0039 → 不收缩 1.0
 #   r4 熊市阴跌(20.2%): vol_pct=-0.44, slope=-0.049, fr_5d=-0.0014 → 大幅收缩 0.50
-# overlay 态 r10-r12 编号不变（独立于 HMM 基态，discussion_004 §2.1.6.3）
+# overlay 态 r10-r12 编号不变（独立于 HMM 基态，13_regime_phase3_engineering_plan §2.1.6.3）
 _STATE_RISK_FACTORS: dict[str, float] = {
     "r1": 0.90,  # 低波震荡  低波动横盘，轻微正收益 → 轻微收缩
     "r2": 0.85,  # 中波震荡  中波动温和偏强，正收益 → 轻微收缩
@@ -119,8 +119,8 @@ _STATE_RISK_FACTORS: dict[str, float] = {
     "r12": 1.0,  # BREAKOUT  突破主升苗头 → 满部署
 }
 
-# 8 转换阶段配置（discussion_001 §4.1 总览表 + §4.6/§4.10.8/§4.11.8/§4.12.8 标准汇总）
-# discussion_004 §2.1.6.3 降态重设计：原 T1/T4/T5/T6 依赖 3×3 网格态间转移
+# 8 转换阶段配置（10_regime_detector_spec §4.1 总览表 + §4.6/§4.10.8/§4.11.8/§4.12.8 标准汇总）
+# 13_regime_phase3_engineering_plan §2.1.6.3 降态重设计：原 T1/T4/T5/T6 依赖 3×3 网格态间转移
 # （如 T4="Bull-Medium→Bull-High"），4 态降维后网格语义不存在，转换语义重新映射：
 #   T1 震荡态(r1/r2)→BREAKOUT / T2 熊市态(r4)→RECOVERY / T3 RECOVERY→BREAKOUT
 #   T4 牛市态(r3)赶顶 / T5 牛市态(r3)→熊市态(r4)逃顶 / T6 熊市态(r4)冰点
@@ -214,7 +214,7 @@ _STAGE_ORDER: tuple[str, ...] = ("strong_confirm", "confirm", "trigger", "fail")
 class RegimeProbabilities:
     """7 维灰度概率分布（CTR-SIG-012）。
 
-    满足 discussion_002 验证需求 ①：输出 7 维概率分布（非硬标签），供 B1 校准度 / B2 CRPS。
+    满足 11_regime_backtest_validation_plan 验证需求 ①：输出 7 维概率分布（非硬标签），供 B1 校准度 / B2 CRPS。
     probabilities 必须 Σ=1.0（INVARIANTS）。
     """
 
@@ -232,7 +232,7 @@ class RegimeProbabilities:
 class ShrinkageResult:
     """Shrinkage 风险节流因子（CTR-SIG-014）。
 
-    满足 discussion_002 验证需求 ②：shrinkage_enabled 可开关。
+    满足 11_regime_backtest_validation_plan 验证需求 ②：shrinkage_enabled 可开关。
     - True  → value = ConfidenceSignal × RiskSignal
     - False → value = 1.0（C1 开/关对比基准）
     value ≤ 1.0（只减不增，INVARIANTS）。
@@ -250,7 +250,7 @@ class ShrinkageResult:
 class TransitionTriggered:
     """8 转换触发记录（E-SIG-01）。
 
-    满足 discussion_002 验证需求 ③：8 转换触发可记录，供 B4 转换触发准确性。
+    满足 11_regime_backtest_validation_plan 验证需求 ③：8 转换触发可记录，供 B4 转换触发准确性。
     """
 
     transition_type: str          # T1-T6 / S1 / S2
@@ -321,15 +321,15 @@ class RegimeDetector:
         Args:
             hmm_params: HMM 超参（n_states=4, covariance_type, n_iter 等）。
             shrinkage_enabled: Shrinkage 开关（验证用，默认 True）。
-                discussion_002 C1 开/关对比一票否决——False 时 Shrinkage=1.0。
+                11_regime_backtest_validation_plan C1 开/关对比一票否决——False 时 Shrinkage=1.0。
             state_frequencies: 各态历史频率（稀有态判断用），未提供时按 Viterbi 统计估计。
-            temperature: HMM 概率温度缩放参数（discussion_004 §2.2 P0-E2 Stage 1）。
+            temperature: HMM 概率温度缩放参数（13_regime_phase3_engineering_plan §2.2 P0-E2 Stage 1）。
                 T=1.0（默认）不缩放；T>1 降温（摊平分布，缓解 GaussianHMM full
                 covariance 后验过尖——B1 实测 80-100% 桶预测 0.982 实际 0.523）；
                 T<1 升温（锐化，一般不用）。对 HMM 后验做 softmax(log P / T) ≡
                 P^(1/T)/ΣP^(1/T)，是"tempering"——数学有效但非 Guo2017 严格 Brier
                 最优（标准 TS 需对 pre-softmax logits 操作，HMM log_proba 是对数后验）。
-                正式的 T 学习（IS 数据最小化 BCE）见 discussion_004 §2.2.6 Step 3。
+                正式的 T 学习（IS 数据最小化 BCE）见 13_regime_phase3_engineering_plan §2.2.6 Step 3。
             overlay_gated: overlay #1 门控开关（#ARCH-REGIME-OVERLAY-001 方案A治本）。
                 True（默认）→ overlay 仅在危机期（#1<1.0）生效，非危机期屏蔽 overlay 概率
                 注入（overlay_probs 置零）——避免 T1/S1 在非危机期假阳性触发系统性压仓致
@@ -344,7 +344,7 @@ class RegimeDetector:
         self.overlay_gated = overlay_gated
         self._hmm_model: Any = None  # hmmlearn GaussianHMM，fit() 后赋值
         self._hmm_degraded: bool = False  # hmmlearn 不可用 / 拟合失败标记
-        # 各态历史频率（稀有态判断用），默认按 discussion_004 §2.1 Viterbi 全历史统计
+        # 各态历史频率（稀有态判断用），默认按 13_regime_phase3_engineering_plan §2.1 Viterbi 全历史统计
         # r1 低波震荡 27.6% / r2 中波震荡 37.4% / r3 牛市 14.9% / r4 熊市 20.2%
         # overlay 态 r10-r12 为规则触发，频率低（稀有态折扣生效）
         self._state_frequencies: dict[str, float] = dict(state_frequencies or {
@@ -363,7 +363,7 @@ class RegimeDetector:
     ) -> tuple[RegimeProbabilities, ShrinkageResult]:
         """主入口：输出 7 维灰度概率 + Shrinkage。
 
-        满足 discussion_002 验证需求 ①②：7 维概率分布 + Shrinkage 可开关。
+        满足 11_regime_backtest_validation_plan 验证需求 ①②：7 维概率分布 + Shrinkage 可开关。
         供 RegimeMetaAllocator (MOD-PA-007) 消费。
 
         Args:
@@ -399,7 +399,7 @@ class RegimeDetector:
     def fit(self, train_features: dict[str, Any]) -> None:
         """HMM 拟合（walk-forward 季度重拟合）。
 
-        满足 discussion_002 验证需求 ④：hmmlearn GaussianHMM 4 态 walk-forward。
+        满足 11_regime_backtest_validation_plan 验证需求 ④：hmmlearn GaussianHMM 4 态 walk-forward。
 
         Args:
             train_features: {"X": np.ndarray (T, F), "lengths": list[int]} 序列特征。
@@ -470,7 +470,7 @@ class RegimeDetector:
         self._hmm_degraded = False
 
     def predict_log_proba(self, X: np.ndarray) -> np.ndarray:
-        """返回 HMM 对数后验概率矩阵 (T, n_states)——校准器输入（discussion_004 §2.2.6 Step 1）。
+        """返回 HMM 对数后验概率矩阵 (T, n_states)——校准器输入（13_regime_phase3_engineering_plan §2.2.6 Step 1）。
 
         hmmlearn 的 predict_proba(X) 返回 P(state|X) 后验概率矩阵，取 np.log()
         得到对数后验。加 epsilon 防 log(0)。Temperature Scaling 对此做
@@ -515,7 +515,7 @@ class RegimeDetector:
     ) -> TransitionTriggered:
         """记录 8 转换触发事件（动态评分制聚合）。
 
-        满足 discussion_002 验证需求 ③：8 转换触发可记录，供 B4 转换触发准确性。
+        满足 11_regime_backtest_validation_plan 验证需求 ③：8 转换触发可记录，供 B4 转换触发准确性。
 
         Args:
             transition_type: T1-T6 / S1 / S2（不在 TRANSITIONS 中抛 ValueError）。
@@ -575,7 +575,7 @@ class RegimeDetector:
             if len(last) != n_states:
                 # 状态数不匹配，降级
                 return {s: 1.0 / n_states for s in HMM_STATES}
-            # 温度缩放（discussion_004 §2.2.3 tempering）：对 HMM 后验做
+            # 温度缩放（13_regime_phase3_engineering_plan §2.2.3 tempering）：对 HMM 后验做
             # softmax(log P / T) ≡ P^(1/T) / Σ P^(1/T)。T>1 降温摊平分布，
             # 缓解 GaussianHMM full covariance 后验过尖（B1 实测过度自信）。
             # 数值稳定实现：log-sum-exp 减最大值。T=1.0 时恒等（短路跳过省算）。
@@ -668,7 +668,7 @@ class RegimeDetector:
         )
 
     def _compute_confidence_signal(self, probs: RegimeProbabilities) -> float:
-        """子模块③：max(P) → 4 档映射 × 稀有态折扣（design_memo_001 §2.2 / 模块 docstring ③）。
+        """子模块③：max(P) → 4 档映射 × 稀有态折扣（30_multi_strategy_concurrency §2.2 / 模块 docstring ③）。
 
         ConfidenceSignal = base_confidence(max(P)) × rarity_discount(dominant_frequency)
 
@@ -706,7 +706,7 @@ class RegimeDetector:
         return base * rarity
 
     def _compute_risk_signal(self, risk_inputs: dict[str, Any]) -> float:
-        """子模块④：13 参数聚合（discussion_001 §5.3.3）。
+        """子模块④：13 参数聚合（10_regime_detector_spec §5.3.3）。
 
         RiskSignal = clamp[0.30, RiskBase × 共振惩罚 + 机会恢复, 1.00]
           RiskBase = #1 门控 + min(11 个风险参数系数 #1-10/#12)

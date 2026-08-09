@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-NLP-INFERENCE-001 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_019_phase3_engineering_plan.md | §
+# [BLUEPRINT] MOD-NLP-INFERENCE-001 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md | §
 # [MODULE] zephyr.nlp
 # [DOMAIN] D_DATA
 # [TTL] permanent

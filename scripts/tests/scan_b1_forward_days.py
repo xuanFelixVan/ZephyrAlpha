@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""B1 forward_days 参数扫描脚本（discussion_003 §10.4 P2）。
+"""B1 forward_days 参数扫描脚本（12_regime_phase2_validation §10.4 P2）。
 
 B1 基线误差 17.7%，80-100% 桶预测 0.982 实际 0.524（HMM 过度自信）。
 但 forward_days=20 可能太短——HMM 6 特征含 Hurst/vol_pct 是中期特征，

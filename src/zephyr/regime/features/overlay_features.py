@@ -14,13 +14,13 @@
 # [TESTS] tests/regime/test_overlay_signals_builder.py; tests/regime/test_overlay_features.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §4 #D-SIGNAL-68 #Phase2b
+# [ARCH-REF] #10_regime_detector_spec §4 #D-SIGNAL-68 #Phase2b
 """overlay_signals 8 转换评分纯函数（MOD-REGIME-002 Phase 2b）。
 
 把 HMM 6 特征 + 代理 OHLCV 映射成 8 转换（T1-T6/S1/S2）的各维度评分（0-100）或
 标志（0/1），供 OverlaySignalsConstructor 组装 overlay_signals 喂 RegimeDetector._run_overlay。
 
-设计原则（discussion_001 §4 + Phase 2b 计划 §C1不退化保护）：
+设计原则（10_regime_detector_spec §4 + Phase 2b 计划 §C1不退化保护）：
   - **无信号 = 0**：平时所有维度评分 0 → 无转换触发 → overlay 不干预（C1 不退化前提）
   - **保守阈值**：维度 >= 60（触发门槛）只在明确信号时达到，避免常态误触发
   - **PIT 由调用方负责**：本模块函数纯计算，shift(1) 在 OverlaySignalsConstructor._precompute 统一做
@@ -34,7 +34,7 @@
   stub 2 个（=0）：bad_news_flat/policy（S2, NLP，待 NLP 管道）
   Phase 2c：money_effect/mainline/leader/one_day_mainline 从 stub 升级为可算（接 money_flow/kline_sector/limit_up_down）
 
-依据: discussion_001 v1.3.1 §4 / Phase 2 计划 §Phase2b
+依据: 10_regime_detector_spec v1.3.1 §4 / Phase 2 计划 §Phase2b
 Version: 0.1.0
 """
 
@@ -127,7 +127,7 @@ def s1_vix_panic_score(vol_pct: pd.Series, vix_pct: pd.Series | None = None) -> 
 def s1_correlation_score(corr: pd.Series) -> pd.Series:
     """S1 correlation: cross_asset_corr → 0-100（恐慌期相关性→1）。
 
-    P1 校准（discussion_003 §9）：原 corr>0.93→65 门槛过高，A 股三大指数
+    P1 校准（12_regime_phase2_validation §9）：原 corr>0.93→65 门槛过高，A 股三大指数
     （沪深300/中证500/创业板指）危机期 corr 多在 0.86-0.93，导致 529 天
     vix_panic 达标但 correlation<60（B4 全部漏触发）。校准后 corr>0.85 即
     过 trigger 门槛（65），让系统性危机的高相关信号能被捕获。

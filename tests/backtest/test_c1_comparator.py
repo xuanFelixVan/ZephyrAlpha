@@ -3,7 +3,7 @@
 # [DOMAIN] D_BACKTEST
 # [A_module] module_id=MOD-TEST-BT-C1 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #C1-shrinkage-comparator
+# [ARCH-REF] #11_regime_backtest_validation_plan #C1-shrinkage-comparator
 """C1ShrinkageComparator (C1) 单元测试——开/关对比 + 一票否决裁定。
 
 策略:
@@ -95,7 +95,7 @@ def _verdict(result: C1ComparisonResult, name: str) -> C1MetricVerdict:
 
 class TestC1Config:
     def test_defaults_match_plan(self):
-        """默认门槛 = discussion_002 §5 汇总表。"""
+        """默认门槛 = 11_regime_backtest_validation_plan §5 汇总表。"""
         cfg = C1Config()
         assert cfg.sharpe_tolerance == 0.1
         assert cfg.maxdd_improvement_pp == 0.03

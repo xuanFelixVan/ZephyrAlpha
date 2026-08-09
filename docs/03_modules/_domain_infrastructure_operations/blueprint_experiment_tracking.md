@@ -60,7 +60,7 @@ responsibility_domain:
 
 **命名说明**：包名 `experiment_tracking`（非 `observability`）——项目里 observability 是横切概念
 （infrastructure/shared/security 各有 observability 子域），实验跟踪独占顶层 observability 会语义
-混淆。MLflow 本质即 experiment tracking，故本包取名 experiment_tracking。详见 discussion_002 §2.3
+混淆。MLflow 本质即 experiment tracking，故本包取名 experiment_tracking。详见 11_regime_backtest_validation_plan §2.3
 命名冲突发现 + §9 决策 A。
 
 **降级机制**（核心设计）：三 backend 自动选择，业务零感知——
@@ -195,7 +195,7 @@ experiment_tracking→backtest 包级循环。
 - **capability**: experiment_tracking（capability_canonical_file_registry.yaml）
 - **ARCH**: #ARCH-OBS-EXP-TRACK-001（architecture_issue_registry.yaml）
 
-依据: discussion_002 §3 ② + backtest_observability_mlflow_plan.md M1
+依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1
 SSoT: depgraph MOD-OBS-001
 Version: 0.1.0
 

@@ -14,13 +14,13 @@
 # [TESTS] tests/backtest/test_shrinkage_provider.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #MOD-REGIME-001 #C1-shrinkage-comparator
+# [ARCH-REF] #11_regime_backtest_validation_plan #MOD-REGIME-001 #C1-shrinkage-comparator
 
 """L_BACKTEST — Shrinkage Provider 适配层 (B2: mock 生成器 + ShrinkageAdapter)
 
 为 ShrinkageBacktestEngine 提供 Shrinkage 因子的多种供给方式，对接
 RegimeDetector (MOD-REGIME-001) 的 ShrinkageResult，并支持 HMM 未就绪时的
-mock 占位。是 discussion_002 §4.3 C1 开/关对比的输入侧。
+mock 占位。是 11_regime_backtest_validation_plan §4.3 C1 开/关对比的输入侧。
 
 四类 Provider:
   ① ConstShrinkageProvider       — 恒定值（1.0=关/C1 基准，<1.0=测试）
@@ -39,7 +39,7 @@ ShrinkageAdapter 工具函数:
   - RegimeDetector.shrinkage_enabled=False 时，detector 自身返回 value=1.0，
     adapter 透传，无需 adapter 再判断开关（单一真源在 detector）
 
-依据: discussion_002 §2.2/§4.3 + design_memo_001 §2.2（Shrinkage=Confidence×Risk）
+依据: 11_regime_backtest_validation_plan §2.2/§4.3 + 30_multi_strategy_concurrency §2.2（Shrinkage=Confidence×Risk）
 SSoT: depgraph MOD-BT-001 / MOD-REGIME-001
 Version: 0.1.0
 """

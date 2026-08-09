@@ -22,18 +22,18 @@ responsibility_domain:
 # MOD-PA-007 RegimeMetaAllocator — Regime元分配器 蓝图
 
 > **module_id**: MOD-PA-007 | **域**: D_PF_ALLOC | **层**: L02 组合分配
-> **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工（第二阶段上，design_memo_001 §4.2）
-> **SSoT**: depgraph MOD-PA-007 | **设计真源**: [design_memo_001_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.2（RegimeMetaAllocator + 分配公式 + 置信度映射 + 稀有态处理）
-> **Shrinkage 真源**: [discussion_001_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/discussion_001_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，二维公式 + 13 参数阈值 + 聚合公式）
+> **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工（第二阶段上，30_multi_strategy_concurrency §4.2）
+> **SSoT**: depgraph MOD-PA-007 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2（RegimeMetaAllocator + 分配公式 + 置信度映射 + 稀有态处理）
+> **Shrinkage 真源**: [10_regime_detector_spec.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) §5（Shrinkage = ConfidenceSignal × RiskSignal，二维公式 + 13 参数阈值 + 聚合公式）
 > **开源实证**: [Morwane/multi-strategy-alpha-book](https://github.com/Morwane/multi-strategy-alpha-book) — regime 做 risk-throttle Sharpe +1.43 / MaxDD −10.3%，regime 做 alpha-timing Sharpe +0.87（降）
 
 ## 1. 定位
 
-Regime 元分配器——A 模型（[design_memo_001](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/design_memo_001_multi_strategy_concurrency.md) §2.2）的 meta 层。消费 regime 检测器的 12 维灰度概率分布 + 各策略 PerformanceScore，通过 **Shrinkage 风险节流**（只减不增）+ **PerformanceScore 后验分配**，产出各 StrategyBook 的资金预算占比。
+Regime 元分配器——A 模型（[30_multi_strategy_concurrency](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.2）的 meta 层。消费 regime 检测器的 12 维灰度概率分布 + 各策略 PerformanceScore，通过 **Shrinkage 风险节流**（只减不增）+ **PerformanceScore 后验分配**，产出各 StrategyBook 的资金预算占比。
 
 属 **B 类核心业务模块**（多源融合 + 风险节流 + 动态分配），Shrinkage 阈值/PerformanceScore 映射为 C 类可调参数。
 
-### 1.1 核心裁定（design_memo_001 §2.2，2026-08-05）
+### 1.1 核心裁定（30_multi_strategy_concurrency §2.2，2026-08-05）
 
 > **移除 RegimeScore，regime 仅通过 Shrinkage 做风险节流。**
 > - regime **不做 alpha 择时**（开源实证 Morwane：择时降 Sharpe 1.43→0.87，节流降 MaxDD −14.2%→−10.3%）
@@ -51,13 +51,13 @@ Regime 元分配器——A 模型（[design_memo_001](../../../02_enterprise_arc
 
 **数据流**：`regime检测器(灰度P) → RegimeMetaAllocator(Shrinkage+Performance) → budget_i → StrategyBook_i`
 
-> **关键纪律**（design_memo_001 §2.2）：市场态是 meta 层的事，StrategyBook 本身不知道市场态，只收到 budget 数字。
+> **关键纪律**（30_multi_strategy_concurrency §2.2）：市场态是 meta 层的事，StrategyBook 本身不知道市场态，只收到 budget 数字。
 
 ### 1.3 不做什么
 
-- **不做 alpha 择时**（移除 RegimeScore，design_memo_001 §2.2 裁定）
+- **不做 alpha 择时**（移除 RegimeScore，30_multi_strategy_concurrency §2.2 裁定）
 - **不重定向资金到"regime 友好"策略**（PerformanceScore 后验捕获，无需前瞻下注）
-- **不做 MVO / 协方差估计**（design_memo_001 §3.1 拒绝）
+- **不做 MVO / 协方差估计**（30_multi_strategy_concurrency §3.1 拒绝）
 - **不做选股 / 仓位裁决**（归 StrategyBook / MOD-POS-001）
 - **不执行交易**（归 D-EX-CORE）
 
@@ -69,7 +69,7 @@ Regime 元分配器——A 模型（[design_memo_001](../../../02_enterprise_arc
 |------|------|-----------|------|:----:|
 | 核心 | RegimeProbabilities（12 维灰度概率，Σ=1） | CTR-SIG-012 | regime 检测器 (MOD-REGIME-001, D_REGIME) | 🟡 骨架 |
 | 核心 | PerformanceScore[]（各策略 60 日滚动 Sharpe，[0.5,1.5]） | CTR-PA-007-P | StrategyBook 反馈 / 净值计算 | ❌ 待建 |
-| 核心 | RiskSignalInputs（13 参数市场风险输入） | CTR-SIG-013 | discussion_001 §5.3 数据源 | ❌ 待建 |
+| 核心 | RiskSignalInputs（13 参数市场风险输入） | CTR-SIG-013 | 10_regime_detector_spec §5.3 数据源 | ❌ 待建 |
 | 配置 | Base[]（先验权重，等权 1/N 或人工先验） | config | 配置文件 | ✅ config |
 | 配置 | StrategySampleDays[]（各策略样本天数，<30 额外收缩） | CTR-PA-007-S | StrategyBook 注册 | ❌ 待建 |
 | 事件 | StrategyRebalanced（策略再平衡完成，触发再平衡频率控制） | E-POS-20 | StrategyBook | ❌ 待建 |
@@ -109,7 +109,7 @@ Regime 元分配器——A 模型（[design_memo_001](../../../02_enterprise_arc
 
 ## 3. 核心规则
 
-### 3.1 分配公式（design_memo_001 §2.2）
+### 3.1 分配公式（30_multi_strategy_concurrency §2.2）
 
 ```
 allocation_i = normalize( Base_i × PerformanceScore_i × SampleShrinkage_i )
@@ -120,19 +120,19 @@ effective_budget_i = allocation_i × global_shrinkage
   SampleShrinkage_i = f(StrategySampleDays_i)                # 策略级样本量收缩
 ```
 
-> **关键设计**：`global_shrinkage` 是全局的（所有策略共享），在 `normalize` **外部**控制总暴露；`SampleShrinkage_i` 是策略级的，在 `normalize` **内部**影响相对分配。这精确实现了 design_memo_001 §2.2 的裁定——"regime 只回答多谨慎（global_shrinkage），不回答偏向谁（normalize 内由 PerformanceScore 决定）"。
+> **关键设计**：`global_shrinkage` 是全局的（所有策略共享），在 `normalize` **外部**控制总暴露；`SampleShrinkage_i` 是策略级的，在 `normalize` **内部**影响相对分配。这精确实现了 30_multi_strategy_concurrency §2.2 的裁定——"regime 只回答多谨慎（global_shrinkage），不回答偏向谁（normalize 内由 PerformanceScore 决定）"。
 
-### 3.2 Shrinkage 二维公式（discussion_001 §5）
+### 3.2 Shrinkage 二维公式（10_regime_detector_spec §5）
 
 ```
 global_shrinkage = ConfidenceSignal × RiskSignal
 ```
 
-#### 3.2.1 ConfidenceSignal（置信度→风险节流，discussion_001 §5.1）
+#### 3.2.1 ConfidenceSignal（置信度→风险节流，10_regime_detector_spec §5.1）
 
 > max(P) 为当前最高态概率，来自 regime 检测器灰度输出。
 
-**base_confidence 映射**（design_memo_001 §2.2）：
+**base_confidence 映射**（30_multi_strategy_concurrency §2.2）：
 
 | max(P) | base_confidence | 语义 |
 |--------|:---------------:|------|
@@ -141,7 +141,7 @@ global_shrinkage = ConfidenceSignal × RiskSignal
 | 80-95% | 0.85 | 轻度收缩，正常部署 |
 | > 95% | 1.0 | 接近无收缩，满部署 |
 
-**稀有态额外折扣**（design_memo_001 §2.2 稀有态处理）：
+**稀有态额外折扣**（30_multi_strategy_concurrency §2.2 稀有态处理）：
 
 | 态频率 | rarity_discount | 说明 |
 |--------|:---------------:|------|
@@ -154,9 +154,9 @@ ConfidenceSignal = base_confidence(max(P)) × rarity_discount(dominant_regime_fr
 # 最低可能: 0.3 × 0.7 = 0.21（稀有态 + 低置信度）
 ```
 
-#### 3.2.2 RiskSignal（13 参数市场风险，discussion_001 §5.3）
+#### 3.2.2 RiskSignal（13 参数市场风险，10_regime_detector_spec §5.3）
 
-> **直接引用 discussion_001 §5.3.3 聚合公式**，本模块是 RiskSignal 的消费者，不是计算者。RiskSignal 由 regime 检测器侧的 13 参数聚合产出。
+> **直接引用 10_regime_detector_spec §5.3.3 聚合公式**，本模块是 RiskSignal 的消费者，不是计算者。RiskSignal 由 regime 检测器侧的 13 参数聚合产出。
 
 ```
 RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
@@ -168,9 +168,9 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 
 | 信号 | 含义 | 来源 |
 |------|------|------|
-| #1-10, #12 | 11 个风险下调参数（波动率/量能/形态/时间/空间/相关性/涨跌家数/虹吸/背离/斜率/筹码）四档 1.0/0.85/0.6/0.3 | discussion_001 §5.3.1 |
-| #11 | 新闻情绪反向（双向：鬼故事抵消 / 利好出货下调 / 天灾避险下调） | discussion_001 §5.3.2 |
-| #13 | 利空不跌验证（纯机会：低开拉回+0.10 / 平开高开+0.15 / 连续钝化+0.20） | discussion_001 §5.3.2 |
+| #1-10, #12 | 11 个风险下调参数（波动率/量能/形态/时间/空间/相关性/涨跌家数/虹吸/背离/斜率/筹码）四档 1.0/0.85/0.6/0.3 | 10_regime_detector_spec §5.3.1 |
+| #11 | 新闻情绪反向（双向：鬼故事抵消 / 利好出货下调 / 天灾避险下调） | 10_regime_detector_spec §5.3.2 |
+| #13 | 利空不跌验证（纯机会：低开拉回+0.10 / 平开高开+0.15 / 连续钝化+0.20） | 10_regime_detector_spec §5.3.2 |
 
 > 本模块消费 `RiskSignal`（标量）+ `RiskSignalInputs`（13 参数明细，归因用）。计算逻辑在 regime 检测器侧，本模块只做 `global_shrinkage = ConfidenceSignal × RiskSignal`。
 
@@ -183,7 +183,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 危机（max(P)<60% + RiskSignal=0.3） | 0.3 × 0.3 = **0.09** | 9% |
 | 稀有态 + 低置信 + 极端风险 | 0.21 × 0.3 = **0.063** | 6.3% |
 
-### 3.3 PerformanceScore（后验分配，design_memo_001 §2.2）
+### 3.3 PerformanceScore（后验分配，30_multi_strategy_concurrency §2.2）
 
 > **策略亲和性由后验 PnL 自然捕获**——无需 regime 前瞻下注。
 
@@ -205,7 +205,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 
 > **为何不直接用 Sharpe 而要映射**：原始 Sharpe 可能负值或极端，直接乘会破坏归一化。映射到 [0.5,1.5] 保证差策略不被清零（floor 0.5）、好策略不独占（cap 1.5）。
 
-### 3.4 SampleShrinkage（样本量收缩，design_memo_001 §2.2）
+### 3.4 SampleShrinkage（样本量收缩，30_multi_strategy_concurrency §2.2）
 
 | 样本天数 | SampleShrinkage | 说明 |
 |---------|:---------------:|------|
@@ -217,7 +217,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 SampleShrinkage_i = clamp(0.5 + 0.5 × min(sample_days_i / 30, 1), 0.5, 1.0)
 ```
 
-### 3.5 归一化 + floor/cap 硬约束（design_memo_001 §2.2）
+### 3.5 归一化 + floor/cap 硬约束（30_multi_strategy_concurrency §2.2）
 
 ```
 raw_i = Base_i × PerformanceScore_i × SampleShrinkage_i
@@ -236,7 +236,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 | 规则 | 说明 |
 |------|------|
-| ≤ 1 次/交易日 | 防过度交易（design_memo_001 引用 MOD-PA-003 §3.4） |
+| ≤ 1 次/交易日 | 防过度交易（30_multi_strategy_concurrency 引用 MOD-PA-003 §3.4） |
 | 当日已再平衡 → rebalance_allowed=False | 沿用上次 BudgetAllocation |
 | 触发例外 | regime 突变（max(P) 跨越置信度档位）+ Kill Switch 事件 → 允许紧急再平衡 |
 
@@ -273,7 +273,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 - 接入 regime 检测器真实灰度概率 / 13 参数 RiskSignal
 - PerformanceScore 反馈联调（StrategyRebalanced 事件 → Sharpe 更新 → allocation 调整）
 - 归因联调（ShrinkageDetail 完整链）
-- 7 月案例验证（discussion_001 §5.3.4 五个时间点 Shrinkage 值吻合）
+- 7 月案例验证（10_regime_detector_spec §5.3.4 五个时间点 Shrinkage 值吻合）
 
 ## 7. 依赖
 
@@ -300,7 +300,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 | 冷启动缩放 | StrategyBook 灰度发布（5%→100%）+ MOD-PA-007 SampleShrinkage | 已被覆盖 |
 | 再平衡频率 | MOD-PA-007 §3.6（≤1次/日） | 已被覆盖 |
 
-> **初步判断**：MOD-PA-003 大部分功能被 A 模型其他模块覆盖，可能降级/重构。但 MOD-PA-003 有活跃生产依赖，具体处置待 MOD-PA-003 blueprint 范围内决定（参考 design_memo_001 §7.3 MOD-PF-002 暂缓弃用先例）。
+> **初步判断**：MOD-PA-003 大部分功能被 A 模型其他模块覆盖，可能降级/重构。但 MOD-PA-003 有活跃生产依赖，具体处置待 MOD-PA-003 blueprint 范围内决定（参考 30_multi_strategy_concurrency §7.3 MOD-PF-002 暂缓弃用先例）。
 
 ### 7.5 降级策略
 
@@ -339,7 +339,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 - 接入 regime 检测器 12 维灰度概率（真实 ConfidenceSignal）
 - 接入 13 参数 RiskSignal（真实 RiskSignal 聚合）
 - PerformanceScore 真实计算（60 日滚动 Sharpe，StrategyRebalanced 事件反馈）
-- 7 月案例验证（discussion_001 §5.3.4 五时间点）
+- 7 月案例验证（10_regime_detector_spec §5.3.4 五时间点）
 - 归因联调（ShrinkageDetail 完整链）
 
 ### Phase 3: 生产化（待 Phase 1/2 验证后）
@@ -352,13 +352,13 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 | 决策 | 理由 |
 |------|------|
-| 移除 RegimeScore（regime 不做 alpha 择时） | design_memo_001 §2.2 裁定 + Morwane 开源实证：择时降 Sharpe 1.43→0.87，节流降 MaxDD；误差不对称（择时判错=亏损，节流判错=机会成本） |
+| 移除 RegimeScore（regime 不做 alpha 择时） | 30_multi_strategy_concurrency §2.2 裁定 + Morwane 开源实证：择时降 Sharpe 1.43→0.87，节流降 MaxDD；误差不对称（择时判错=亏损，节流判错=机会成本） |
 | global_shrinkage 在 normalize 外部（控制总暴露） | 精确实现"regime 回答多谨慎"：全局因子不改变相对分配，只控制总暴露 |
 | SampleShrinkage 在 normalize 内部（影响相对分配） | 新策略样本不足时相对分配更保守，与 PerformanceScore 同层 |
 | PerformanceScore 映射 [0.5,1.5] | 差策略不被清零（floor 0.5 验证机会）、好策略不独占（cap 1.5 防集中） |
 | PerformanceScore 后验捕获策略亲和性 | momentum 趋势态表现好→Sharpe 上升→有机获更多 budget，无需 regime 前瞻下注（避免估计误差放大） |
-| 稀有态 rarity_discount | 稀有态检测置信度天然低，额外收缩（design_memo_001 §2.2） |
-| floor 5% / cap 40% | 防饿死 + 防集中（design_memo_001 §2.2 硬约束） |
+| 稀有态 rarity_discount | 稀有态检测置信度天然低，额外收缩（30_multi_strategy_concurrency §2.2） |
+| floor 5% / cap 40% | 防饿死 + 防集中（30_multi_strategy_concurrency §2.2 硬约束） |
 | 再平衡 ≤1次/日 + 紧急例外 | 防过度交易；regime 突变/Kill Switch 允许紧急再平衡 |
 | RiskSignal 由 regime 检测器侧计算 | 13 参数是市场风险指标，属于 regime 检测范畴；本模块是消费者，职责单一 |
 
@@ -400,7 +400,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | ❌ 未实现 | design_memo_001 §7.2 指定路径，Phase 1 施工 |
+| `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | ❌ 未实现 | 30_multi_strategy_concurrency §7.2 指定路径，Phase 1 施工 |
 
 ### 10.5 路径索引使用指南
 

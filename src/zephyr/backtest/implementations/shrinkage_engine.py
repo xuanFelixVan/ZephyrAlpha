@@ -14,14 +14,14 @@
 # [TESTS] tests/backtest/test_shrinkage_engine.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_002 #MOD-REGIME-001 #C1-shrinkage-comparator
+# [ARCH-REF] #11_regime_backtest_validation_plan #MOD-REGIME-001 #C1-shrinkage-comparator
 
 """L_BACKTEST — Shrinkage Backtest Engine (B: Shrinkage 接入点)
 
 继承 DefaultBacktestEngine，在目标权重归一化后按 Shrinkage 因子缩放仓位，
 剩余资金保留为现金，实现 regime 风险节流（只减不增）。
 
-接入点设计（discussion_002 §2.2 "Shrinkage 接入点"）:
+接入点设计（11_regime_backtest_validation_plan §2.2 "Shrinkage 接入点"）:
   DefaultBacktestEngine._get_day_signals 把当日信号归一化为 Σ=1.0 的权重 dict。
   MatchingEngine._build_target_orders 用 target_value = NAV × weight 计算目标持仓——
   若权重和 < 1.0，差额自然留作现金。故 Shrinkage 接入只需在归一化后把每个权重
@@ -42,7 +42,7 @@ Shrinkage 因子来源（ShrinkageProvider，B2 实现）:
   - 不修改归一化前的原始信号（PIT 铁律不变）
   - shrinkage=1.0 时行为与 DefaultBacktestEngine 完全一致（C1 对比可溯源）
 
-依据: discussion_002 §2.2/§4.3 C1 + design_memo_001 §2.2（Shrinkage=Confidence×Risk）
+依据: 11_regime_backtest_validation_plan §2.2/§4.3 C1 + 30_multi_strategy_concurrency §2.2（Shrinkage=Confidence×Risk）
 SSoT: cross_layer_contracts.yaml -> CTR-P1-016
 Version: 0.1.0
 """

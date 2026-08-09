@@ -14,14 +14,14 @@
 # [TESTS] tests/regime/test_regime_feature_builder.py
 # [A_module] module_id=MOD-REGIME-002 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #discussion_001 §3 #discussion_002 §4.5 #MOD-REGIME-001 #C1-shrinkage-comparator
+# [ARCH-REF] #10_regime_detector_spec §3 #11_regime_backtest_validation_plan §4.5 #MOD-REGIME-001 #C1-shrinkage-comparator
 
 """MOD-REGIME-002 RegimeFeatureBuilder — Regime 特征管道编排器。
 
 把 ClickHouse 多源数据转换成 RegimeDetector.detect() 的三参输入，是 regime 链的
 "数据入口"（ClickHouse → 特征 → 检测器 → Shrinkage → budget）。
 
-Phase 1 范围（discussion_002 §6）：
+Phase 1 范围（11_regime_backtest_validation_plan §6）：
   - HMM 6 特征 + X 矩阵（本模块）→ 真实 HMM fit/detect
   - overlay_signals / risk_signal_inputs 暂用空 dict（regime_detector 降级为
     纯 HMM ConfidenceSignal 节流）—— 这是 C1 一票否决的核心假设验证
@@ -39,7 +39,7 @@ walk-forward（blueprint §7）：季度重拟合，滚动5年训练，季度内
 PIT 铁律（blueprint §6.1）：detect(t) 用 ≤ t-1 的特征（features.shift(1)），
 禁止未来信息泄漏——C1 一票否决的前提。
 
-依据: discussion_001 v1.3.1 §3 / discussion_002 v1.0.0 §4.5/§6
+依据: 10_regime_detector_spec v1.3.1 §3 / 11_regime_backtest_validation_plan v1.0.0 §4.5/§6
 SSoT: depgraph MOD-REGIME-002
 Version: 0.1.0
 """

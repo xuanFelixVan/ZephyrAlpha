@@ -11,10 +11,10 @@
 # [TESTS] tests/regime/test_july_case_e2e.py
 # [A_module] module_id: MOD-TEST-JULY-E2E | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ARCH-REF] #MOD-REGIME-002 #discussion_001 §5.3.4 #Phase2c #July-2026-crash
+# [ARCH-REF] #MOD-REGIME-002 #10_regime_detector_spec §5.3.4 #Phase2c #July-2026-crash
 """test_july_case_e2e.py — 2026年7月A股暴跌案例 §5.3.4 精确值端到端测试。
 
-验证 discussion_001 §5.3.4 定义的 5 阶段 RiskSignal 精确值 + S1/S2 overlay 触发。
+验证 10_regime_detector_spec §5.3.4 定义的 5 阶段 RiskSignal 精确值 + S1/S2 overlay 触发。
 **年份是 2026**（spec §5.3.4 明确"2026年7月 A股暴跌"，非 2015）。
 
 5 阶段 RiskSignal 精确值（公式 RiskSignal = clamp[0.30, RiskBase×共振惩罚+机会恢复, 1.00]）:
@@ -36,7 +36,7 @@
 S2 strong_confirm/fail 不依赖 NLP stub，但需复杂 Wyckoff Spring OHLCV 序列构造，
 由 test_wyckoff_engine.py 单独覆盖阶段识别；本文件聚焦 §5.3.4 精确值 + S1 触发。
 
-依据: discussion_001 v1.3.1 §5.3.4 / Phase 2c 计划 §任务6
+依据: 10_regime_detector_spec v1.3.1 §5.3.4 / Phase 2c 计划 §任务6
 """
 
 from __future__ import annotations
