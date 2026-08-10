@@ -12943,24 +12943,30 @@ entries:
   status: in_progress
   created: '2026-08-07'
   last_updated: '2026-08-07'
-# --- #ARCH-OBS-EXP-TRACK-001: 实验跟踪层(MOD-OBS-001) M1 落地——MLflow 薄包装 + 三 backend 降级 + c1_adapter + track 开关（2026-08-07）---
+# --- #ARCH-OBS-EXP-TRACK-001: 实验跟踪层(MOD-OBS-001) 落地——单一 JSON 后端（FallbackBackend）+ c1_adapter + track 开关（M1 落地 2026-08-07 + MLflow 退役逆转 2026-08-10）---
 - issue_id: '#ARCH-OBS-EXP-TRACK-001'
-  title: 实验跟踪层（MOD-OBS-001）M1 落地——MLflow 薄包装 + 三 backend 降级 + c1_adapter + c1_runner track 开关
+  title: 实验跟踪层（MOD-OBS-001）——单一 JSON 后端（FallbackBackend）+ c1_adapter + c1_runner track 开关（M1 落地 + MLflow 退役收敛）
   severity: P3低
   category: governance
   adjudication: |-
-    2026-08-07 新增模块登记。11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md
-    M1 落地——为 ZephyrAlpha 提供统一实验跟踪入口，所有零件（C1 / regime_detector /
-    特征管道 / 回测引擎 / 全链路）的运行记录到本地 MLflow（SQLite），人和 AI 通过
-    query 接口或 mlflow ui 查询、对比、追溯。包名 experiment_tracking（非 observability，
-    11_regime_backtest_validation_plan §2.3 命名冲突发现 + §9 决策 A——observability 是横切概念，独占顶层
-    会语义混淆）。
-    M1 范围（6 核心文件 + c1_runner track 开关）：config/models/experiment_tracker/
+    2026-08-07 新增模块登记（M1 落地，原方向"MLflow 薄包装 + 三 backend 降级"）。
+    2026-08-10 方向逆转（51_panel_experiment_history_mlflow_retirement 用户裁定）：
+    完全卸载 MLflow、存储收敛为单一 FallbackBackend JSON、用户只在 Panel 看回测。
+    逆转根因（过度工程审查）：MLflow UI 是外部 UI，违反用户偏好"集成新功能到现有
+    frontend 而非外部工具"；MLflow 全量包依赖对个人+100%AI 项目过重；pyproject
+    从未真正落地 observability extras（§2.5 原声称"已落地"不实，已订正）。
+    当前状态：包 experiment_tracking（非 observability，11_regime_backtest_validation_plan
+    §2.3 命名冲突发现 + §9 决策 A——observability 是横切概念，独占顶层会语义混淆）保留。
+    M1 落地范围（6 核心文件 + c1_runner track 开关）：config/models/experiment_tracker/
     fallback_tracker/query/adapters/c1_adapter + c1_runner track=True lazy import。
-    三 backend 降级（mlflow/FallbackBackend JSON/NullBackend no-op），tracking 失败
-    绝不崩业务。循环依赖规避：领域类型仅 TYPE_CHECKING 导入，运行时鸭子类型。
+    原三 backend 降级（mlflow/FallbackBackend JSON/NullBackend no-op）中 _MLflowBackend
+    类代码已于 2026-08-10 退役清理（experiment_tracker.py _MLflowBackend 类删除 +
+    query.py _list_runs_mlflow/_get_run_mlflow/_row_to_summary/_from_ms 删除 +
+    mlruns/ 目录 + .runtime/tmp/mlflow_m1_9_test.db 删除）。config.py tracking_uri/
+    experiment_prefix 字段保留向后兼容（FallbackBackend 不使用）。tracking 失败绝不崩业务。循环依赖规避：
+    领域类型仅 TYPE_CHECKING 导入，运行时鸭子类型。
     铁律#9：用户显式授权"直接起草 6 条 plain_zh + blueprint 并执行 M1-8 全流程"，
-    status=decided（纯技术落地，无价值判断）。
+    status=decided（纯技术落地，无价值判断）。2026-08-10 逆转亦由用户显式裁定（51 号）。
   impact:
     新增文件：
     - 'src/zephyr/experiment_tracking/{__init__,config,models,experiment_tracker,fallback_tracker,query}.py'
@@ -12971,11 +12977,19 @@ entries:
     - 'module_translation_registry.yaml（6 条 plain_zh）'
     - 'capability_canonical_file_registry.yaml（experiment_tracking capability）'
     - 'architecture_issue_registry.yaml（本条目登记）'
+    MLflow 退役清理已完成（2026-08-10 51 号 A 工作流执行）：
+    - 'src/zephyr/experiment_tracking/experiment_tracker.py（_MLflowBackend 类已删 + _make_backend 简化为 Null/Fallback 二选一 + lazy import mlflow 块删除）'
+    - 'src/zephyr/experiment_tracking/query.py（_list_runs_mlflow/_get_run_mlflow/_row_to_summary/_from_ms 已删 + list_runs/get_run 简化为单一 JSON 路径）'
+    - 'src/zephyr/experiment_tracking/config.py（tracking_uri/experiment_prefix 字段保留向后兼容，FallbackBackend 不使用）'
+    - 'src/zephyr/experiment_tracking/{__init__,experiment_tracker,query,adapters/c1_adapter}.py docstring/frontmatter 更新（版本 0.1.0→0.2.0）'
+    - 'tests/experiment_tracking/test_{experiment_tracker,c1_adapter}.py 更新（_MLFLOW_AVAILABLE monkeypatch 移除，fixture 改为 setenv ZEPHYR_EXPERIMENT_TRACKING=1）'
+    - 'mlruns/ 目录已删 + .runtime/tmp/mlflow_m1_9_test.db + .runtime/_smoke_m1_9_mlflow.py 已删'
+    - '38 个测试全部通过（MLflow 清理无回归，0.82s）'
     depgraph：设计态节点 node_id=9008073 path=src/zephyr/experiment_tracking/ granularity=directory domain_id=D_INFRA_TELEMETRY acquisition_method=self_build
-  fix_phase: 'M1 已落地（2026-08-07）—— 6 核心文件 + c1_adapter + track 开关 + 冒烟测试通过；M1-8 治理登记完成（blueprint + 6 plain_zh + capability + depgraph + ARCH）。M1-7 单元测试 55 passed（test_experiment_tracker + test_c1_adapter）+ M1-9 端到端验证全部通过（mlflow 2 run 可对比 + c1_summary.md/nav_curve artifacts）。M1 全部完成（2026-08-08）。'
+  fix_phase: 'M1 已落地（2026-08-07）—— 6 核心文件 + c1_adapter + track 开关 + 冒烟测试通过；M1-8 治理登记完成（blueprint + 6 plain_zh + capability + depgraph + ARCH）。M1-7 单元测试 55 passed（test_experiment_tracker + test_c1_adapter）+ M1-9 端到端验证全部通过（mlflow 2 run 可对比 + c1_summary.md/nav_curve artifacts）。M1 全部完成（2026-08-08）。✅ 2026-08-10 方向逆转已执行：51 号 A 工作流 MLflow 退役完成（_MLflowBackend 类删除 + query.py mlflow 函数删除 + mlruns/ 清理 + 38 测试通过 0.82s），收敛为单一 FallbackBackend JSON 后端。'
   status: decided
   created: '2026-08-07'
-  last_updated: '2026-08-08'
+  last_updated: '2026-08-10'
 
 
 # --- #ARCH-OBSERVABILITY-001: 可观测性 umbrella 架构（2026-08-07）---
@@ -13437,3 +13451,314 @@ entries:
   status: decided
   created: '2026-08-09'
   last_updated: '2026-08-09'
+
+# --- #ARCH-CH-034: 建表脚本只收录 10 张表，74 张 schema 定义表从未建表（2026-08-10 排查）---
+- issue_id: '#ARCH-CH-034'
+  title: 'apply_market_tables_ddl.py _ALL_DDL 只收录 10 张表，74 张 schema 定义的 c1_market 表从未建表'
+  category: schema_governance
+  severity: P1高
+  adjudication: |-
+    病根（2026-08-10 排查）：scripts/ch/apply_market_tables_ddl.py 的 _ALL_DDL 列表是手工维护的，
+    仅收录了 10 张表（kline_1min/5min/15min/30min/60min、kline_etf_*、kline_index、kline_sector_*）。
+    但 schemas/categories/ 下有 84 张 c1_market schema 定义文件（含 TABLE_NAME/DATABASE 元数据）。
+    差值 74 张表的 DDL 从未被建表脚本执行 → CH c1_market 库长期只有 40 张表（含手工建的）。
+    长期未暴露的根因：miniqmt 连不上 → 任务走 fallback → akshare 不支持大部分 capability →
+    任务 FAILED 在"unsupported capability"阶段，根本没到写 CH 的步骤 → 表不存在的错误被掩盖。
+    miniqmt 恢复后拉到数据，写入时才暴露"Table doesn't exist"。
+
+    治本裁定：将 apply_market_tables_ddl.py 改造为自动扫描 schemas/categories/*.py，
+    提取 DDL 变量（*_DDL）执行 CREATE TABLE IF NOT EXISTS，不再手工维护 _ALL_DDL 列表。
+    自动扫描保证新加 schema 文件即被收录，消除"手工维护列表遗漏"的系统性风险。
+
+    临时修复（已执行 2026-08-10）：手动从 schema 文件提取 DDL 建表，c1_market 从 40 张→86 张表。
+    tasks.yaml 引用的 83 张表全部存在（3 张 disabled 的 QMT placeholder 除外）。
+
+    治本改造（已执行 2026-08-10）：apply_market_tables_ddl.py 新增 _discover_schemas() 函数，
+    自动扫描 schemas/categories/*.py 提取 *_DDL 变量（CREATE TABLE IF NOT EXISTS），
+    与手工段 _ALL_DDL_MANUAL（10 张含迁移逻辑的表）合并执行。
+    验证：执行 95 张表 DDL（10 手工 + 85 自动发现），全部成功，0 失败。
+    新加 schema 文件即被收录，消除"手工维护列表遗漏"的系统性风险。
+  impact:
+    - 'scripts/ch/apply_market_tables_ddl.py（_ALL_DDL 手工列表 → _ALL_DDL_MANUAL + _discover_schemas() 自动扫描）'
+    - 'schemas/categories/*.py（84 张 c1_market 表 + 11 张 c3_fundamental 表 schema 定义，已作为 DDL 真源）'
+  fix_phase: '已执行。临时修复（手动建表 86 张）+ 治本改造（自动扫描 95 张表 DDL 全部成功）。'
+  status: resolved
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+
+# --- #ARCH-CH-035: schema DDL ORDER BY 多列不带括号，CH 26.6 新 analyzer 语法不兼容（2026-08-10 排查）---
+- issue_id: '#ARCH-CH-035'
+  title: 'schema DDL ORDER BY 多列不带括号，CH 26.6 新 analyzer 语法不兼容'
+  category: schema_governance
+  severity: P2中
+  adjudication: |-
+    病根（2026-08-10 排查）：CH 26.6（version 26.6.1.1193）新 analyzer 严格化，
+    不再支持 ORDER BY col1, col2（不带括号），报 Syntax error: failed at position (,)。
+    只支持 ORDER BY (col1, col2)（带括号）。
+    schemas/categories/ 下 52 个 schema 文件的 DDL 使用了不带括号的多列 ORDER BY 语法。
+    首次建表时 18 张表（ORDER BY 已带括号）成功，28 张表（不带括号）失败。
+
+    治本裁定：批量修复 schemas/categories/*.py 中 DDL 字符串的 ORDER BY 多列语法，
+    统一为 ORDER BY (col1, col2) 带括号格式。已修复 52 个文件（含 macro/market 域）。
+    Python 元数据 ORDER_BY = "col1, col2" 字符串不改（仅描述性，不直接执行）。
+
+    连带修复：kline_hk_daily 表首次建表时用简化 DDL（去 MATERIALIZED 列）绕过语法错误，
+    缺 exchange/symbol_canonical 两个 MATERIALIZED 派生列。schema ORDER BY 修复后，
+    用完整 DDL（含 MATERIALIZED + ORDER BY 带括号）DROP 重建恢复。
+
+    验证：修复后用完整 DDL（含 MATERIALIZED 列）+ ORDER BY 带括号成功执行全部 28 张表建表。
+  impact:
+    - 'schemas/categories/*.py（52 个文件 DDL 字符串 ORDER BY 多列加括号）'
+    - 'c1_market.kline_hk_daily（DROP 重建恢复 MATERIALIZED 列）'
+  fix_phase: '已执行。52 个 schema 文件 ORDER BY 语法修复 + kline_hk_daily 表 DROP 重建。'
+  status: resolved
+  related_rules: '#ARCH-CH-034'
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+- issue_id: '#ARCH-DATA-TI-001'
+  title: '技术指标计算模块新建——~40指标纯自实现 pandas/numpy 骨架先行（KDJ/MACD/RSI/BOLL/ATR 等）'
+  category: module_creation
+  severity: P2中
+  adjudication: |-
+    病根（第一性原理）：业务数据库 c1_market 无 KDJ/MACD/RSI 等技术指标数据。
+    技术指标属"派生数据"（可由 OHLCV K线实时计算），不需外部数据源下载，
+    纯自实现 pandas/numpy 计算效率最快、可控性最强、无第三方依赖风险。
+
+    裁定（骨架先行 2026-08-10）：
+    1. 范围：全量 ~40 个技术指标，分五类——趋势(MA/EMA/MACD/ADX/DMI/CCI/SAR/TRIX)
+       /动量(KDJ/RSI/WR/ROC/MTM/CMF)/波动(ATR/BOLL/Keltner/Donchian/STDDEV)
+       /成交量(OBV/MFI/VWAP/VR/AD)/反转(K线形态/RSI背离/BOLL突破)。
+    2. 实现：纯自实现 pandas/numpy（不引入 TA-Lib 等第三方库，避免 C 依赖+Windows 编译问题）。
+    3. 存储：ClickHouse c1_market.technical_indicator 宽表（40列 Nullable(Float64)），
+       DDL-as-Code 真源 schemas/categories/market_technical_indicator.py。
+    4. 计算：TechnicalIndicatorBase 基类（输出多列 DataFrame，区别于 FactorBase 单 Series），
+       internal_compute_provider 接入调度器（source=internal，preload 模式盘后预计算）。
+    5. 调度：盘后 daily_kline 时段增量计算（dependencies=["kline_daily_incremental"]），
+       盘中实时计算由 sleeve 内 alpha 择时调用（不在调度器范围内）。
+    6. 命名漂移裁定：market_stock_indicator 表实存估值指标(PE/PB)，技术指标用新表
+       technical_indicator 避免歧义（business_data_categories.yaml 登记
+       market_technical_indicator 品类）。
+
+    骨架先行纪律：本次仅建文档(16号清单)+schema+基类/stub+调度配置+测试桩，
+    40 个指标算法实现留待后续逐类施工（接口契约先冻结）。
+    纯技术实现（模块新建+数据品类扩展），AI 直接标 decided。
+  impact:
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md（新建，骨架清单文档）'
+    - 'schemas/categories/market_technical_indicator.py（新建，DDL宽表真源）'
+    - 'src/zephyr/factor/technical_indicators/{__init__,base,trend,momentum,volatility,volume,reversal}.py（新建，基类+5类stub）'
+    - 'src/zephyr/data/implementations/internal_compute_provider.py（新建，内部计算provider）'
+    - 'src/zephyr/data/scheduler.py（编辑，+internal source 分支）'
+    - 'src/zephyr/data/config/tasks.yaml（编辑，+technical_indicator 任务）'
+    - 'docs/03_modules/_cross_layer/database/business_data_categories.yaml（编辑，+品类）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（编辑，+capability+tokens）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（编辑，+翻译）'
+  fix_phase: '骨架先行（2026-08-10）：文档+schema+基类/stub+调度+测试桩；算法实现待后续逐类施工'
+  status: decided
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+
+- issue_id: '#ARCH-BREG-001'
+  title: 业务资产注册表体系建立（12个注册表，治本业务核心资产游离于注册表体系外）
+  severity: P1高
+  adjudication: >-
+    项目有52个注册表管到gate/script/module/blueprint/error_code，唯独最核心的业务资产
+    （因子/策略/技术指标/图形形态/股票池/基准/成本模型/执行算法/风控限额/数据资产/字段字典/实验）
+    全部游离于registry_of_registries统一入口外，导致AI答不出"项目有多少因子/策略"。
+    治本：建12个业务资产注册表，分P0/P1/P2三阶段施工，全部登记registry_of_registries.yaml。
+    P0首批3个（universe/benchmark/cost_model）为回测必需输入三件套，2026-08-10施工完成。
+    详见 docs/_working/business_registry_consolidation_plan.md（施工方案+调研报告+裁定+schema）。
+    用户2026-08-10多轮确认12个注册表设计后明确"确认开工"。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml（新建，5个股票池）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml（新建，4个基准）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml（新建，3个成本模型）'
+    - 'docs/registry_of_registries.yaml（编辑，tier_2加3个业务资产注册表条目）'
+    - 'AGENTS.md（编辑，RULE-REGISTRY段加业务资产速查显化）'
+    - 'docs/_working/business_registry_consolidation_plan.md（新建，施工方案文档）'
+  fix_phase: 'P0（2026-08-10完成）：universe/benchmark/cost_model 3个回测必需注册表；P1待施工：factor/strategy/indicator/pattern/execution/risk/data_asset 7个；P2待施工：field_dictionary/experiment 2个'
+  status: decided
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+
+
+- issue_id: '#ARCH-DATA-UTIL'
+  title: 业务数据资产利用率审查与施工计划（101张表 vs 42篇design_memo引用审查，43张闲置分批接入）
+  severity: P1中
+  adjudication: >-
+    病根（第一性原理）：业务数据库已建成 schemas/categories/ 下 101 张表（market/fundamental/macro
+    三大类），但 design_memos 42 篇文档引用审查显示利用率仅 57.4%（58/101），43 张表完全闲置。
+    两类典型病灶：①高价值信号闲置——限售解禁（restricted_shares/share_unlock）、大宗交易明细
+    （block_trade_detail）、ETF净值（etf_nav）、可转债IV（cb_iv）、EDB宏观库（edb_data）等
+    alpha信号金矿零引用；②采集资源错配——生猪期货3张表（A股体系完全不涉及）仍在采集，
+    LOF分钟级5张表不在主策略范围仍占用采集资源。同时 index_list/index_meta/sector_meta/
+    concept_board 系列元数据全闲置，说明 registry_of_registries 12注册表中的 data_asset_registry
+    （REG-DATAFLOW-001，62号P1-B待施工）登记不完整。
+
+    裁定（审查登记+三波分批接入）：
+    1. 现状审查完成（2026-08-10）：63_data_utilization_audit v0.1.0 落档，43张闲置表分
+       P0（8张高价值待接入）/P1（15张跨市场看业务边界）/P2（8张元数据注册表待登记）/
+       P3（12张分钟级K线看是否做日内）/P4（5张待归档含生猪期货）五档；
+    2. 第一波施工（P0，1-2周）：接入8张高价值表，利用率57.4%→65.3%。每张表至少在1篇
+       策略/风控文档中作为数据源被显式消费（不只是列表中列举）；
+    3. 第二波施工（P1+P2，1个月）：业务边界裁定后接入约15张表，利用率→80%+。同步启动
+       data_asset_registry（REG-DATAFLOW-001）P1-B施工，本审查提供首批66张表登记清单；
+    4. 第三波（P3+P4，按需）：归档或启用 P3 12张+P4 5张表。归档操作在数据采集脚本层，
+       design_memos层只记录决策；
+    5. 与 62_business_registry_construction 配对：62号建12注册表schema，63号盘点101张表
+       实际利用率，两者形成 schema ↔ 实际资产 双向闭环。
+
+    用户2026-08-10确认"继续执行这两步登记"（00_index §7.3占用表+本ARCH条目）。
+  impact:
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/63_data_utilization_audit.md（新建，审查底稿+施工计划 v0.1.0）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（编辑，§0文档表+1行 63号条目）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（编辑，+本ARCH条目）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（待建，P1-B 首批66张表登记清单，本审查作为输入）'
+    - 'schemas/categories/（引用，101张表DDL真源）'
+  fix_phase: '审查完成（2026-08-10）；第一波P0 8张接入 1-2周；第二波P1+P2 15张 1个月；第三波P3+P4归档/启用 按需'
+  status: decided
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+- issue_id: '#ARCH-EXECUTION-CHANNEL-001'
+  title: 'miniQMT 服务停止新申请——交易通道迁移规划（2026-07-06 基础设施变更）'
+  category: infrastructure_risk
+  severity: P1高
+  adjudication: |-
+    病根（第一性原理）：2026-07-06 接券商A通知，miniQMT 全面停止新申请，
+    已申请用户存量暂可用，后期逐步停止服务（来源：miniqmt.com 官方通知）。
+    ZephyrAlpha 全量架构以 miniQMT 为唯一交易通道（10号 L24 / 30号 L23 明示
+    "miniQMT 通道，T+1 结算"），40号执行层 MiniQmtBroker/MiniQmtQuoteProvider
+    全部基于 xtquant API。若存量服务终止，整个执行链路断裂。
+
+    同期基础设施变更（2026-07-31）：交易所机房局域网行情接入正式关闭，
+    统一切换为广域网，实现"基础设施平权"——速度红利消退，量化竞争回归策略本身。
+    此变更对 ZephyrAlpha 风险优先策略有利（不依赖低延迟），已在 37号 v1.0.9
+    + 33号 v2.4.0 登记交叉引用。但 miniQMT 停止新申请是独立的上层通道风险。
+
+    裁定（登记待规划，非立即迁移）：
+    1. 当前状态：项目已有 miniQMT 存量访问权限，短期可用（"后期逐步停止"无明确时间表）。
+    2. 迁移路径选项（按优先级）：
+       a. QMT 正式版（miniQMT 的完整版，券商终端集成，API 兼容 xtquant，
+          迁移成本最低但需券商开户门槛）；
+       b. 其他券商 API（如 Ptrade/恒生 E监管）——API 不兼容，需重写适配层；
+       c. 开源框架参考：weihong-su/miniQMT（XtQuantManager 架构）、
+          123quant/QMT-QuantLimit（打板策略）、BulletTrade（聚宽兼容）。
+    3. MVP 影响：无立即影响（存量可用），但须在 40号执行层接口抽象
+       （BrokerAdapter 基类）确保迁移时只需新增适配器不改上游逻辑。
+    4. 重评条件：① 券商发出存量用户停止时间表通知；② miniQMT 客户端
+       版本停止更新导致 xtquant API 不兼容；③ AUM 增长触发券商升级要求。
+
+    与 2026-07 量化踩踏的关联：2026-07 多家量化机构深度回撤（幻方9只产品
+    单月跌幅全破20%），同质化量价因子负反馈——与 miniQMT 停止无关但
+    共同指向"量化行业格局变化"，ZephyrAlpha 风险优先+因子去同质化设计
+    已对此有所防御（35号 v1.15.0 行业实证背书已登记）。
+  impact:
+    - 'src/zephyr/ex_core/adapters/miniqmt_broker.py（MiniQmtBroker 依赖 xtquant API）'
+    - 'src/zephyr/governance/data_governance/miniqmt_provider.py（MiniQmtQuoteProvider 行情依赖）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（G22 执行层通道选型）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md（L24 miniQMT 通道引用）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md（L23 miniQMT 通道引用）'
+  fix_phase: '待规划（Phase 2 迁移评估）：当前存量可用，40号 BrokerAdapter 基类已提供迁移接口抽象；重评条件触发时启动迁移'
+  status: decided
+  related_rules: ''
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+
+- issue_id: '#ARCH-DATA-001'
+  title: 'hk_trade_calendar 数据源语义错配——akshare 用 A 股日历冒充港股日历'
+  category: data_quality
+  severity: P1高
+  adjudication: |-
+    病根（第一性原理）：akshare_provider._fetch_hk_trade_calendar 调用
+    ak.tool_trade_date_hist_sina（新浪 A 股交易日历接口）填充
+    c1_market.hk_trade_calendar（港股交易日历表）。该 API 返回的是沪深交易所
+    交易日，与港交所（XHKG）交易日历在圣诞/复活节/佛诞/耶稣受难日等休市日
+    完全不同——若运行 hk_trade_calendar_refresh 任务会把正确港股日历覆盖成
+    A 股日历，下游 calendar_event.hk_connect_closed 派生（A股开盘且港股休市
+    = 北向资金停摆日）全部失真。
+
+    结构性根因（治理盲区，详见 #ARCH-DATA-002）：
+    1. CapabilityContract（#ARCH-CH-022）只校验 4 个行为标志
+       （symbols_null/incremental/full_refresh/date_range），无"市场语义"字段，
+       无法识别 capability 名 hk_trade_calendar 的 "hk" 前缀与 API
+       tool_trade_date_hist_sina 的 "A 股" 语义错配。
+    2. capability_validator / check_route_meta_consistency 只比对字符串存在性
+       与 AST 路由-meta 一致性，不比对 API 函数名的市场语义。
+    3. 历史前例 #ARCH-CH-INDUSTRY-CLASS-MIGRATE（2026-08-03，仅一周前）是
+       几乎一模一样的语义错配（tdx 板块成分股→ifind 申万行业分级），但治本仅做
+       source 迁移，未建预防性机制，导致同类 bug 一周后再现。
+    4. 100% AI 开发放大：AI 凭"函数名直觉"选 API（tool_trade_date_hist_sina
+       名字含 trade_date，看似通用），不主动查 akshare 文档确认市场归属；
+       task description 白纸黑字写着 "AKShare tool_trade_date_hist_sina" 却
+       无人机识别。
+
+    裁定（即时止血，本次已完成）：
+    ① InternalComputeProvider 实现 _fetch_hk_trade_calendar，用
+       exchange_calendars XHKG（港交所真日历）生成数据（sessions_in_range 主路径
+       + is_session 逐日回退，与 trading_calendar.is_trading_day 同源）；
+    ② akshare_provider 移除 hk_trade_calendar capability（frozenset +
+       CapabilityContract）+ _fetch_hk_trade_calendar 方法 + 死常量
+       _TBL_HK_TRADE_CALENDAR（4 处全删，py_compile 通过，零残留）；
+    ③ tasks.yaml: hk_trade_calendar_refresh source akshare→internal，
+       fallback_sources 清空（internal 自包含，无需外部源）；
+    ④ business_data_categories.yaml: market_hk_trade_calendar data_source
+       [exchange]→[internal]。
+
+    系统性治本（capability-API 语义对齐 gate）登记 #ARCH-DATA-002 后续立项。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（移除 hk_trade_calendar capability + _fetch_hk_trade_calendar 方法 + _TBL_HK_TRADE_CALENDAR 常量）'
+    - 'src/zephyr/data/implementations/internal_compute_provider.py（新增 _fetch_hk_trade_calendar，XHKG 日历派生）'
+    - 'src/zephyr/data/config/tasks.yaml（hk_trade_calendar_refresh source akshare→internal，fallback 清空）'
+    - 'docs/03_modules/_cross_layer/database/business_data_categories.yaml（market_hk_trade_calendar data_source exchange→internal）'
+  fix_phase: '即时止血已完成；系统性治本见 #ARCH-DATA-002'
+  status: decided
+  related_rules: '#ARCH-DATA-002（系统性治本）; #ARCH-CH-022（CapabilityContract 行为契约）; #ARCH-CH-INDUSTRY-CLASS-MIGRATE（同类前例）; #ARCH-CH-004（蓝图-实现鸿沟）'
+  created: '2026-08-10'
+  last_updated: '2026-08-10'
+
+- issue_id: '#ARCH-DATA-002'
+  title: 'capability-API 语义对齐校验机制——打破数据源语义盲区（#ARCH-DATA-001 系统性治本）'
+  category: governance
+  severity: P2中
+  adjudication: |-
+    病根（第一性原理）：#ARCH-DATA-001（hk_trade_calendar A股日历冒充港股日历）
+    与 #ARCH-CH-INDUSTRY-CLASS-MIGRATE（tdx 板块成分股→ifind 申万行业分级）
+    是同一类病——provider 声明的 capability 名字携带市场/品种语义（hk_/industry_），
+    但底层调用的 API 返回数据语义不符，而全项目无任何机制校验这种对齐。
+    CapabilityContract（#ARCH-CH-022）刻意只覆盖"行为契约"，留下"语义契约"盲区；
+    capability_validator 只比对字符串存在性；cross_source_validator 只覆盖 tick_data
+    数值偏差；integrity_checker 只看行数阈值。校验体系在"capability 名 ↔ API 数据
+    语义"维度完全空白。
+
+    在 100% AI 开发模式下该盲区被放大：AI 凭函数名直觉选 API
+    （tool_trade_date_hist_sina 含 trade_date 即用），不主动查文档确认市场归属；
+    capability 前缀对 AI 只是字符串。一周内同类 bug 再现
+    （INDUSTRY-CLASS → hk_trade_calendar）证明点对点修复无法收敛。
+
+    治本方向（待设计，非立即施工）：
+    1. 扩展 CapabilityContract 增加语义字段：expected_market
+       （a_share/hk/us/futures/macro/...）、expected_variety
+       （stock/etf/index/calendar/news/...），使 capability 携带机器可读语义。
+    2. 新建 capability 语义注册表（capability_semantic_registry.yaml）：
+       capability_id → {market, variety, allowed_apis[]}，作为权威语义锚与
+       API 白名单（API 不在白名单→声明时拒提交）。
+    3. 新增声明时 gate（capability_validator 扩展）：AST 解析 _fetch_xxx 方法体，
+       提取调用的外部 API（ak.*/bs.*/xt.*/THS_*），校验是否在该 capability 的
+       allowed_apis 白名单内；未登记→拒提交（reconciler fix-in-place 提示登记）。
+    4. 新增运行时抽样校验（cross_source_validator 扩展）：对日历类数据，
+       抽样比对 exchange_calendars（XHKG/XSHG）与表内数据，发现语义漂移→告警。
+    5. 把 #ARCH-CH-INDUSTRY-CLASS-MIGRATE 与 #ARCH-DATA-001 合并为本议题的
+       验收用例（gate 上线后须能检出这两个历史 bug）。
+
+    优先级裁定：P2（非实盘生存级，但属治理债务）。MVP 阶段先靠 #ARCH-DATA-001
+    类即时止血 + 人工 review 兜底；下个治理窗口启动语义契约扩展设计。过度工程
+    防线：不搞全量 API 白名单（成本过高），只对"跨市场/跨品种易混淆"capability
+    （hk_*/us_*/industry_*/calendar 类）强制白名单，其余 capability 保持现状。
+  impact:
+    - 'src/zephyr/data/provider_base.py（CapabilityContract 扩展语义字段，待设计）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_semantic_registry.yaml（新建，待规划）'
+    - 'src/zephyr/governance/（capability_validator/cross_source_validator 扩展，待规划）'
+  fix_phase: '待规划（设计阶段）：MVP 阶段以即时止血+人工 review 兜底；下个治理窗口启动语义契约扩展设计'
+  status: decided
+  related_rules: '#ARCH-DATA-001（即时止血）; #ARCH-CH-022（CapabilityContract 行为契约）; #ARCH-CH-INDUSTRY-CLASS-MIGRATE（同类前例）; #ARCH-CH-004（蓝图-实现鸿沟）'
+  created: '2026-08-10'
+  last_updated: '2026-08-10'

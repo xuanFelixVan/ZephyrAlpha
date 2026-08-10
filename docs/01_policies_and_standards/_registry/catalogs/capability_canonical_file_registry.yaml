@@ -5892,6 +5892,27 @@ capabilities:
       鸭子类型。解决发现性：新 AI 搜 "实验记录/mlflow/跟踪实验/C1 结果记录" 可定位真源。
       解决防重建：check_file_canonical() 反查。
 
+  # --------------------------------------------------------------------------
+  - capability_id: technical_indicator
+    canonical_override: src/zephyr/factor/technical_indicators/indicator_base.py
+    aliases:
+      - TechnicalIndicatorBase
+      - TechnicalIndicatorMeta
+      - TechnicalIndicatorRegistry
+      - autodiscover_technical_indicators
+      - technical_indicator
+      - internal_compute_provider
+      - InternalComputeProvider
+    description: >-
+      技术指标计算能力（D_FACTOR 域，#ARCH-DATA-TI-001，骨架先行 2026-08-10）。
+      canonical = src/zephyr/factor/technical_indicators/indicator_base.py。纯自实现 pandas/numpy
+      计算 ~40 个技术指标（趋势/动量/波动/成交量/反转五类），输出多列 DataFrame（区别于
+      FactorBase 单 Series）。盘中实时计算 + 盘后 preload 模式统一入 ClickHouse
+      c1_market.technical_indicator 宽表。internal_compute_provider 作为 IngestProviderBase
+      子类接入调度器（source=internal），区别于外部数据源 provider（ifind/miniqmt/akshare）。
+      解决发现性：新 AI 搜 "技术指标/KDJ/MACD/RSI/technical_indicator" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -5974,6 +5995,10 @@ creation_tokens:
   - file: "docs/_working/潘潘直播课程/11.md"
     token: "auto-panpan-course-11-20260810"
     created_by: "session-trae-agent"
+    capability: "panpan_course_notes"
+  - file: "docs/_working/潘潘直播课程/因子与策略提炼.md"
+    token: "auto-panpan-factor-extraction-20260810"
+    created_by: "session-panpan-factor-extraction"
     capability: "panpan_course_notes"
 
   # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
@@ -8458,6 +8483,49 @@ creation_tokens:
     token: "auto-gov-generate-module-algorithm-overview-20260809"
     created_by: "session-algo-overview"
     capability: "module_algorithm_overview_generator"
+
+  # --- 技术指标骨架先行（2026-08-10，#ARCH-DATA-TI-001，~40指标纯自实现 pandas/numpy）---
+  # 清单文档 + DDL宽表 + 基类/注册表 + 5类指标stub + internal_compute_provider
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md"
+    token: "auto-ti-catalog-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "schemas/categories/market_technical_indicator.py"
+    token: "auto-ti-schema-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/__init__.py"
+    token: "auto-ti-init-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/indicator_base.py"
+    token: "auto-ti-base-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/trend.py"
+    token: "auto-ti-trend-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/momentum.py"
+    token: "auto-ti-momentum-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/volatility.py"
+    token: "auto-ti-volatility-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/volume.py"
+    token: "auto-ti-volume-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/factor/technical_indicators/reversal.py"
+    token: "auto-ti-reversal-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
+  - file: "src/zephyr/data/implementations/internal_compute_provider.py"
+    token: "auto-ti-internal-provider-20260810"
+    created_by: "session-ti-skeleton"
+    capability: "technical_indicator"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
