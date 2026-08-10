@@ -5,8 +5,8 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.4.0"
-date: 2026-08-09
+version: "2.5.0"
+date: 2026-08-10
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
 ---
@@ -18,7 +18,7 @@ scope: 07_trading_decision_architecture
 > 用途：用户将开启多个 AI，每个 AI 认领一个主题组 → 讨论 → 落盘 discussion/design_memo → 施工。本文档是分工的"作战地图"。
 > 关联：[30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构，已定稿 v1.3.0）｜ [10_regime_detector_spec](10_regime_detector_spec.md)（regime spec，已定稿 v1.3.1）｜ [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md)（regime 验证，已定稿 v1.0.0）
 
-## 0. 现有文档总目录（38 篇·按段位编号）
+## 0. 现有文档总目录（39 篇·按段位编号）
 
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
@@ -34,6 +34,7 @@ scope: 07_trading_decision_architecture
 | [13_regime_phase3_engineering_plan.md](13_regime_phase3_engineering_plan.md) | Phase 3 工程规划（降态+校准+NLP+S2/T3） | draft |
 | [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md) | S2 算法错配诊断报告 | draft |
 | [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | 骨架 |
+| [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | 特殊交易日数据资产清单 + #ARCH-DATA-001 hk日历语义错配修复 + #ARCH-DATA-002 语义契约治本方案 | active |
 | [20_first_batch_strategies.md](20_first_batch_strategies.md) | 首批 3 策略定义（打板+多因子+事件驱动） | active |
 | [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | 骨架 |
 | [22_sector_rotation_spec.md](22_sector_rotation_spec.md) | G06 板块轮动 spec | 骨架 |
@@ -45,20 +46,20 @@ scope: 07_trading_decision_architecture
 | [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策 | 骨架 |
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active |
 | [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active |
-| [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | 骨架 |
-| [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | 骨架 |
-| [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator 参数（⚠️等 C1） | 骨架 |
-| [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | 骨架 |
-| [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | 骨架 |
-| [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | 骨架 |
+| [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 多策略聚合风控 | active |
+| [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active |
+| [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator+双轨P&L基础设施 | active |
+| [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active |
+| [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active |
+| [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | active |
 | [40_execution_broker.md](40_execution_broker.md) | 执行层下单对接（19项决策+代码已施工） | active |
-| [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec | 骨架 |
-| [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec | 骨架 |
+| [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec | active |
+| [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec | active |
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active |
-| [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | 骨架 |
-| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径 | 骨架 |
-| [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | 骨架 |
+| [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接+IS→WFA→OOS | active |
+| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径+5态FSM | active |
+| [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因+TCA 2.0 | active |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | 骨架 |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线 | 骨架 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | 骨架 |
@@ -678,3 +679,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-09 | 2.3.0 | §0 目录 15→38 篇（新增 23 篇骨架文档行 + 状态图例）；§7.3 占用表 23 项状态更新为"骨架已建 v0.1.0"，补登 22_sector_rotation_spec（G06）占用行 | 施工图骨架先行：G01-G28 全部待讨论主题组的产出物骨架一次性落盘（frontmatter status=draft，仅含主题组信息+讨论要点清单，§2-§6 待填空），统一结构后再逐篇讨论填空；22 号此前仅有 discussion_004 澄清行、无独立占用行 |
 | 2026-08-09 | 2.3.1 | 关联行+§3/§5/G22 产出物行修复 7 处重复后缀断链（`_name_name.md`→`_name.md`，涉及 30/10/11/31/40 号） | 改名工程遗留：段位前缀重复拼接产生断链，全量断链扫描发现并修复 |
 | 2026-08-09 | 2.4.0 | 15 篇有内容文档文档头统一登记：frontmatter 字段集/顺序统一（补齐 title/owner/language/topic/scope，12/13/14 的 doc_id/priority/depends_on 等扩展字段保留），H1 去前缀与 title 对齐（废止"讨论框架·/讨论文档·/讨论·/设计备忘·/讨论稿：/NN_filename —"六种混用风格），修订记录各补一行（14 号补建修订记录章节）；00 自身同步 | 骨架体系收尾：结构统一只动文档头元数据与标题行，章节编号与正文内容零变更、零遗漏风险；规范真源见 01_design_memo_management_spec §4.2/§4.3（v1.1.1 同步） |
+| 2026-08-10 | 2.5.0 | §0 目录 11 篇骨架→active 状态同步（32/33/34/35/36/37/41/42/52/53/54）；各篇 v0.1.0→v1.0.0 补齐施工算法 | 施工算法批量补齐：32号FirmRiskAggregator聚合风控+33号BudgetChangeHandler三级升级+34号双轨P&L基础设施+regime分配QP优化器+35/36/37号风险Protocol+41/42号买卖流+52号IS→WFA→OOS+DSR bootstrap+53号5态FSM+54号Brinson归因+TCA 2.0；整合2026-08最新研究（LORD-ZYTHOZ regime QP/Kou滚动自适应/Drovix TCA 2.0/Soloviov DSR鲁棒性带/causal-quant因果验证） |

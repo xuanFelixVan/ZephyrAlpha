@@ -8526,6 +8526,27 @@ creation_tokens:
     token: "auto-ti-internal-provider-20260810"
     created_by: "session-ti-skeleton"
     capability: "technical_indicator"
+  # --- 业务资产注册表 5 件套（2026-08-10，P1 阶段首批 registry YAML 落地，62号文档施工总案 §6/§7）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml"
+    token: "auto-reg-factor-20260810"
+    created_by: "session-registry-v130"
+    capability: "business_registry_construction"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml"
+    token: "auto-reg-strategy-20260810"
+    created_by: "session-registry-v130"
+    capability: "business_registry_construction"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml"
+    token: "auto-reg-risk-limit-20260810"
+    created_by: "session-registry-v130"
+    capability: "business_registry_construction"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml"
+    token: "auto-reg-benchmark-20260810"
+    created_by: "session-registry-v130"
+    capability: "business_registry_construction"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml"
+    token: "auto-reg-cost-model-20260810"
+    created_by: "session-registry-v130"
+    capability: "business_registry_construction"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

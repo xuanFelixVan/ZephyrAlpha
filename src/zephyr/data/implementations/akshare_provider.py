@@ -131,7 +131,6 @@ _TBL_HOG_PROVINCE_SPOT = get_registry().table("market_hog_province_spot")
 _TBL_HK_CONNECT_FLOW = get_registry().table("market_hk_connect_flow")
 _TBL_HK_STOCK_LIST = get_registry().table("market_hk_stock_list")
 _TBL_STOCK_HOT_RANK = get_registry().table("market_stock_hot_rank")  # #ARCH-REALTIME-ACCUM
-_TBL_HK_TRADE_CALENDAR = get_registry().table("market_hk_trade_calendar")
 _TBL_INDEX_LIST = get_registry().table("market_index_list")
 _TBL_KLINE_FUTURES = get_registry().table("market_futures_kline")
 _TBL_KLINE_HK_DAILY = get_registry().table("market_hk_kline_daily")
@@ -4444,37 +4443,8 @@ class AkshareIngestProvider(IngestProviderBase):
                           elapsed_sec=time.time() - t0)
 
     # ---- 30. 港股交易日历（hk_trade_calendar） ----
-
-    def _fetch_hk_trade_calendar(
-        self, payload: FetchPayload, policy: SourcePolicy
-    ) -> Iterator[FetchResult]:
-        """港股交易日历全量刷新，写入 c1_market.hk_trade_calendar。"""
-        import akshare as ak
-        table = _TBL_HK_TRADE_CALENDAR
-        columns = ["cal_date", "is_open", "pretrade_date"]
-        t0 = time.time()
-        try:
-            df = self._call_with_policy(ak.tool_trade_date_hist_sina, policy)
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            yield FetchResult(table=table, columns=columns, rows=[], last_key="",
-                              elapsed_sec=time.time() - t0, error=str(e))
-            return
-        rows: list[tuple] = []
-        if df is not None and len(df) > 0:
-            date_list = df["trade_date"].tolist() if "trade_date" in df.columns else []
-            date_set = set(date_list)
-            sorted_dates = sorted(date_list)
-            for i, d in enumerate(sorted_dates):
-                cal_date = self._norm_date_str(d)
-                if not cal_date:
-                    continue
-                # 前一个交易日
-                pretrade = sorted_dates[i - 1] if i > 0 else None
-                pretrade_str = self._norm_date_str(pretrade) if pretrade else ""
-                rows.append((cal_date, 1, pretrade_str))
-        yield FetchResult(table=table, columns=columns, rows=rows,
-                          last_key=datetime.date.today().isoformat(),
-                          elapsed_sec=time.time() - t0)
+    # #ARCH-DATA-001: 已迁移至 InternalComputeProvider（exchange_calendars XHKG 港交所真日历）。
+    # akshare tool_trade_date_hist_sina 实为 A 股日历，语义错配，故移除本 provider 的该能力。
 
     # ---- 31. 指数列表（index_list） ----
 

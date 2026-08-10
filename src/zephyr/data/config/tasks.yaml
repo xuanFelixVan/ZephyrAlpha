@@ -1832,18 +1832,15 @@ tasks:
 
 - task_id: hk_trade_calendar_refresh
   table: c1_market.hk_trade_calendar
-  source: akshare
+  source: internal  # #ARCH-DATA-001: akshare→internal（akshare tool_trade_date_hist_sina 实为A股日历）
   schedule: monthly_static
   incremental: false
   dependencies: []
   capability: hk_trade_calendar
   symbols:
   extra:
-    description: "港股交易日历全量刷新（AKShare tool_trade_date_hist_sina）"
+    description: "港股交易日历全量刷新（exchange_calendars XHKG，港交所真日历）"
 
-  fallback_sources:
-  - source: exchange
-    capability: hk_trade_calendar
 - task_id: index_list_refresh
   table: c1_market.index_list
   source: akshare

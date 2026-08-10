@@ -791,7 +791,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 年频
-  data_source: [exchange]
+  data_source: [internal]  # #ARCH-DATA-001: exchange_calendars XHKG 派生（非 akshare A股日历）
   blueprint: null
 
 - category_id: market_hk_connect_flow

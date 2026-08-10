@@ -41189,6 +41189,99 @@ entries:
   desc_en: C1ComparisonResult to mlflow run with TYPE_CHECKING isolation breaking backtest-experiment_tracking cycle
   plain_zh: 把 C1 开关对比的结果翻译成 mlflow 能记的格式——门槛配置记参数、四项指标记度量、净值曲线存文件、通过与否打标签。让多次 C1 跑的结果能在 mlflow 里对比。
 
+- module_path: src/zephyr/regime/core/regime_detector.py
+  domain_id: D_REGIME
+  name_zh: Regime检测器
+  name_en: Regime Detector
+  desc_zh: 7态灰度概率分布(4 HMM r1-r4 + 3 overlay r10-r12)+Shrinkage风险节流信号产出，regime链源头（跨市场状态检测域）
+  desc_en: 7-state grayscale probability distribution (4 HMM r1-r4 + 3 overlay r10-r12) + Shrinkage risk throttle signal producer
+  plain_zh: 判断市场处于7种状态中的哪种(4个HMM基态:低波/中波震荡/牛市/熊市 + 3个overlay:危机/复苏/突破)，输出概率分布驱动风险节流
+- module_path: src/zephyr/regime/features/market_features.py
+  domain_id: D_REGIME
+  name_zh: 市场级regime特征
+  name_en: Market Regime Features
+  desc_zh: 实现波动率分位(F1)/跨资产相关性(F3)/涨跌家数比(F4)/量能异动(F5)纯函数，MOD-REGIME-002 §3
+  desc_en: Realized vol percentile / cross-asset corr / AD ratio / volume anomaly pure functions (MOD-REGIME-002 §3)
+  plain_zh: 算市场级别的几个特征——波动率分位、跨资产相关性、涨跌家数比、量能异动，给regime检测器当输入
+- module_path: src/zephyr/regime/features/risk_features.py
+  domain_id: D_REGIME
+  name_zh: RiskSignal 13参数算子
+  name_en: RiskSignal 13-Param Operators
+  desc_zh: RiskSignal 13参数纯函数（系数映射→risk_signal_inputs），平时=1.0不干预，危机期加深收缩，Phase 2a
+  desc_en: RiskSignal 13-param pure functions (coef mapping to risk_signal_inputs), idle=1.0, deepens shrinkage in crisis, Phase 2a
+  plain_zh: 算风险信号的13个参数——平时都是1.0不干预，检测到危机时把对应参数压低加深收缩，只降不升
+- module_path: src/zephyr/regime/features/overlay_features.py
+  domain_id: D_REGIME
+  name_zh: Overlay 8转换评分算子
+  name_en: Overlay 8-Transition Score Operators
+  desc_zh: overlay_signals 8转换评分纯函数（score∈[0,100]/flag∈{0,1}），MOD-REGIME-002 §4 D-SIGNAL-68，Phase 2b
+  desc_en: overlay_signals 8-transition scoring pure functions (score/flag dims), D-SIGNAL-68, Phase 2b
+  plain_zh: 算overlay信号的8个转换评分——每个维度打分(0-100)或标记(0/1)，平时为0不干预，触发时叠加到HMM概率上
+- module_path: src/zephyr/regime/regime_feature_builder.py
+  domain_id: D_REGIME
+  name_zh: Regime特征构建器
+  name_en: Regime Feature Builder
+  desc_zh: HMM 6特征X矩阵构建+walk-forward季度重拟合+Shrinkage调度编排，MOD-REGIME-002核心枢纽
+  desc_en: HMM 6-feature X-matrix builder + walk-forward quarterly refit + Shrinkage schedule orchestration, MOD-REGIME-002 hub
+  plain_zh: regime检测的核心构建器——把各种特征拼成HMM输入矩阵，季度重拟合模型，编排Shrinkage调度（含risk/overlay信号接入）
+- module_path: src/zephyr/regime/risk_signal_builder.py
+  domain_id: D_REGIME
+  name_zh: RiskSignalInputs构造器
+  name_en: RiskSignalInputs Builder
+  desc_zh: RiskSignalInputs构造器（build_for_date PIT严格），#1门控(#1=1.0屏蔽附加参数/#1<1.0加深收缩)，Phase 2a
+  desc_en: RiskSignalInputs builder (PIT-strict), #1 gating (idle=1.0 masks add-ons / crisis<1.0 deepens), Phase 2a
+  plain_zh: 构造风险信号输入——按日期算13参数，平时#1=1.0屏蔽附加参数不干预，危机期#1<1.0加深收缩
+- module_path: src/zephyr/regime/overlay_signals_builder.py
+  domain_id: D_REGIME
+  name_zh: OverlaySignals构造器
+  name_en: OverlaySignals Builder
+  desc_zh: OverlaySignals构造器（8转换评分→overlay_signals），#1门控对齐，数据缺失降级0.0，Phase 2b
+  desc_en: OverlaySignals builder (8-transition scores to overlay_signals), #1-gated, missing data degrades to 0.0, Phase 2b
+  plain_zh: 构造overlay信号——按日期算8个转换评分，#1门控（危机期才生效），数据缺失降级为0.0不影响HMM基态
+- module_path: src/zephyr/position/core/strategy_book.py
+  domain_id: D_POSITION
+  name_zh: 策略账本
+  name_en: Strategy Book
+  desc_zh: 独立策略账本，自带选股+粗仓位(等权/risk parity)+风控，产出TargetPortfolio
+  desc_en: Independent strategy book with stock selection + rough sizing + risk control
+  plain_zh: 每个策略自己的独立账本，自己选股、自己定粗仓位、自己风控，最后吐出目标持仓清单
+- module_path: src/zephyr/position/core/firm_risk_aggregator.py
+  domain_id: D_POSITION
+  name_zh: firm层风险聚合器
+  name_en: Firm Risk Aggregator
+  desc_zh: firm层求和+单票/行业/总仓位硬上限裁剪+冲突净额处理，不做MVO
+  desc_en: Firm-level summing + hard cap clipping + conflict netting, no MVO
+  plain_zh: 把所有策略账本的目标持仓加起来，按硬上限(单票/行业/总仓位)裁剪，冲突标的按净额处理，不做协方差优化
+- module_path: src/zephyr/pf_alloc/core/regime_meta_allocator.py
+  domain_id: D_PF_ALLOC
+  name_zh: regime元分配器
+  name_en: Regime Meta Allocator
+  desc_zh: regime灰度概率→Shrinkage风险节流+PerformanceScore→各策略budget占比
+  desc_en: Regime probability to Shrinkage throttle + PerformanceScore to strategy budget allocation
+  plain_zh: 根据市场状态置信度做风险节流(Shrinkage)+策略近期表现评分，给每个策略账本分配资金预算占比
+- module_path: src/zephyr/position/core/budget_change_handler.py
+  domain_id: D_POSITION
+  name_zh: 预算变动处理器
+  name_en: Budget Change Handler
+  desc_zh: budget下调三级升级(Tier1封锁新仓/Tier2策略自平衡/Tier3强制裁剪)
+  desc_en: Budget reduction three-tier escalation (lock/rebalance/force-trim)
+  plain_zh: 处理资金预算下调的三级升级——先封锁开新仓，再让策略自己砍，超时了firm层强行按比例裁剪
+- module_path: scripts/governance/_shared/code_algorithm_extractor.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 模块核心算法提取器
+  name_en: Code Algorithm Extractor
+  desc_zh: 从 .py docstring+header 或 blueprint.md 提取模块核心算法摘要，供纵览/域文档生成器共享消费
+  desc_en: Extract module algorithm summary from .py docstring+header or blueprint.md, shared by overview/domain generators
+  plain_zh: 把每个模块代码开头注释和说明书(docstring)里写的算法步骤、不能违反的铁律(不变量)抽出来做成统一卡片；代码没写就退去找设计蓝图，都没有就标记缺失。两个生成器共用它，保证同一模块算法描述两边一致。
+- module_path: scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py
+  domain_id: D_GOVERNANCE
+  name_zh: 模块核心算法纵览生成器
+  name_en: Module Algorithm Overview Generator
+  desc_zh: 跨域按 layer 拓扑从代码+蓝图派生模块算法纵览，输出到 08_algorithm_overview/（离库）
+  desc_en: Cross-domain module algorithm overview by layer topology, derived from code+blueprint, output to 08_algorithm_overview/
+  plain_zh: 把全仓库每个模块的核心算法按底层到顶层(基础设施→应用四层)排成一张纵览表，一眼看清哪些模块算法写得全、哪些缺文档、哪些还没开发。改了代码或设计蓝图重跑一遍就自动更新，是检修算法问题的入口。
+
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
@@ -46197,94 +46290,4 @@ battle_map_cross_cutting:
     TSFM 零样本预测的低延迟推理）、四轨融合（BM-BUY-02 盘中信号融合时延预算）联动。
 
     '
-- module_path: src/zephyr/regime/core/regime_detector.py
-  domain_id: D_REGIME
-  name_zh: Regime检测器
-  name_en: Regime Detector
-  desc_zh: 7态灰度概率分布(4 HMM r1-r4 + 3 overlay r10-r12)+Shrinkage风险节流信号产出，regime链源头（跨市场状态检测域）
-  desc_en: 7-state grayscale probability distribution (4 HMM r1-r4 + 3 overlay r10-r12) + Shrinkage risk throttle signal producer
-  plain_zh: 判断市场处于7种状态中的哪种(4个HMM基态:低波/中波震荡/牛市/熊市 + 3个overlay:危机/复苏/突破)，输出概率分布驱动风险节流
-- module_path: src/zephyr/regime/features/market_features.py
-  domain_id: D_REGIME
-  name_zh: 市场级regime特征
-  name_en: Market Regime Features
-  desc_zh: 实现波动率分位(F1)/跨资产相关性(F3)/涨跌家数比(F4)/量能异动(F5)纯函数，MOD-REGIME-002 §3
-  desc_en: Realized vol percentile / cross-asset corr / AD ratio / volume anomaly pure functions (MOD-REGIME-002 §3)
-  plain_zh: 算市场级别的几个特征——波动率分位、跨资产相关性、涨跌家数比、量能异动，给regime检测器当输入
-- module_path: src/zephyr/regime/features/risk_features.py
-  domain_id: D_REGIME
-  name_zh: RiskSignal 13参数算子
-  name_en: RiskSignal 13-Param Operators
-  desc_zh: RiskSignal 13参数纯函数（系数映射→risk_signal_inputs），平时=1.0不干预，危机期加深收缩，Phase 2a
-  desc_en: RiskSignal 13-param pure functions (coef mapping to risk_signal_inputs), idle=1.0, deepens shrinkage in crisis, Phase 2a
-  plain_zh: 算风险信号的13个参数——平时都是1.0不干预，检测到危机时把对应参数压低加深收缩，只降不升
-- module_path: src/zephyr/regime/features/overlay_features.py
-  domain_id: D_REGIME
-  name_zh: Overlay 8转换评分算子
-  name_en: Overlay 8-Transition Score Operators
-  desc_zh: overlay_signals 8转换评分纯函数（score∈[0,100]/flag∈{0,1}），MOD-REGIME-002 §4 D-SIGNAL-68，Phase 2b
-  desc_en: overlay_signals 8-transition scoring pure functions (score/flag dims), D-SIGNAL-68, Phase 2b
-  plain_zh: 算overlay信号的8个转换评分——每个维度打分(0-100)或标记(0/1)，平时为0不干预，触发时叠加到HMM概率上
-- module_path: src/zephyr/regime/regime_feature_builder.py
-  domain_id: D_REGIME
-  name_zh: Regime特征构建器
-  name_en: Regime Feature Builder
-  desc_zh: HMM 6特征X矩阵构建+walk-forward季度重拟合+Shrinkage调度编排，MOD-REGIME-002核心枢纽
-  desc_en: HMM 6-feature X-matrix builder + walk-forward quarterly refit + Shrinkage schedule orchestration, MOD-REGIME-002 hub
-  plain_zh: regime检测的核心构建器——把各种特征拼成HMM输入矩阵，季度重拟合模型，编排Shrinkage调度（含risk/overlay信号接入）
-- module_path: src/zephyr/regime/risk_signal_builder.py
-  domain_id: D_REGIME
-  name_zh: RiskSignalInputs构造器
-  name_en: RiskSignalInputs Builder
-  desc_zh: RiskSignalInputs构造器（build_for_date PIT严格），#1门控(#1=1.0屏蔽附加参数/#1<1.0加深收缩)，Phase 2a
-  desc_en: RiskSignalInputs builder (PIT-strict), #1 gating (idle=1.0 masks add-ons / crisis<1.0 deepens), Phase 2a
-  plain_zh: 构造风险信号输入——按日期算13参数，平时#1=1.0屏蔽附加参数不干预，危机期#1<1.0加深收缩
-- module_path: src/zephyr/regime/overlay_signals_builder.py
-  domain_id: D_REGIME
-  name_zh: OverlaySignals构造器
-  name_en: OverlaySignals Builder
-  desc_zh: OverlaySignals构造器（8转换评分→overlay_signals），#1门控对齐，数据缺失降级0.0，Phase 2b
-  desc_en: OverlaySignals builder (8-transition scores to overlay_signals), #1-gated, missing data degrades to 0.0, Phase 2b
-  plain_zh: 构造overlay信号——按日期算8个转换评分，#1门控（危机期才生效），数据缺失降级为0.0不影响HMM基态
-- module_path: src/zephyr/position/core/strategy_book.py
-  domain_id: D_POSITION
-  name_zh: 策略账本
-  name_en: Strategy Book
-  desc_zh: 独立策略账本，自带选股+粗仓位(等权/risk parity)+风控，产出TargetPortfolio
-  desc_en: Independent strategy book with stock selection + rough sizing + risk control
-  plain_zh: 每个策略自己的独立账本，自己选股、自己定粗仓位、自己风控，最后吐出目标持仓清单
-- module_path: src/zephyr/position/core/firm_risk_aggregator.py
-  domain_id: D_POSITION
-  name_zh: firm层风险聚合器
-  name_en: Firm Risk Aggregator
-  desc_zh: firm层求和+单票/行业/总仓位硬上限裁剪+冲突净额处理，不做MVO
-  desc_en: Firm-level summing + hard cap clipping + conflict netting, no MVO
-  plain_zh: 把所有策略账本的目标持仓加起来，按硬上限(单票/行业/总仓位)裁剪，冲突标的按净额处理，不做协方差优化
-- module_path: src/zephyr/pf_alloc/core/regime_meta_allocator.py
-  domain_id: D_PF_ALLOC
-  name_zh: regime元分配器
-  name_en: Regime Meta Allocator
-  desc_zh: regime灰度概率→Shrinkage风险节流+PerformanceScore→各策略budget占比
-  desc_en: Regime probability to Shrinkage throttle + PerformanceScore to strategy budget allocation
-  plain_zh: 根据市场状态置信度做风险节流(Shrinkage)+策略近期表现评分，给每个策略账本分配资金预算占比
-- module_path: src/zephyr/position/core/budget_change_handler.py
-  domain_id: D_POSITION
-  name_zh: 预算变动处理器
-  name_en: Budget Change Handler
-  desc_zh: budget下调三级升级(Tier1封锁新仓/Tier2策略自平衡/Tier3强制裁剪)
-  desc_en: Budget reduction three-tier escalation (lock/rebalance/force-trim)
-  plain_zh: 处理资金预算下调的三级升级——先封锁开新仓，再让策略自己砍，超时了firm层强行按比例裁剪
-- module_path: scripts/governance/_shared/code_algorithm_extractor.py
-  domain_id: D_GOV_SCRIPTS
-  name_zh: 模块核心算法提取器
-  name_en: Code Algorithm Extractor
-  desc_zh: 从 .py docstring+header 或 blueprint.md 提取模块核心算法摘要，供纵览/域文档生成器共享消费
-  desc_en: Extract module algorithm summary from .py docstring+header or blueprint.md, shared by overview/domain generators
-  plain_zh: 把每个模块代码开头注释和说明书(docstring)里写的算法步骤、不能违反的铁律(不变量)抽出来做成统一卡片；代码没写就退去找设计蓝图，都没有就标记缺失。两个生成器共用它，保证同一模块算法描述两边一致。
-- module_path: scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py
-  domain_id: D_GOVERNANCE
-  name_zh: 模块核心算法纵览生成器
-  name_en: Module Algorithm Overview Generator
-  desc_zh: 跨域按 layer 拓扑从代码+蓝图派生模块算法纵览，输出到 08_algorithm_overview/（离库）
-  desc_en: Cross-domain module algorithm overview by layer topology, derived from code+blueprint, output to 08_algorithm_overview/
-  plain_zh: 把全仓库每个模块的核心算法按底层到顶层(基础设施→应用四层)排成一张纵览表，一眼看清哪些模块算法写得全、哪些缺文档、哪些还没开发。改了代码或设计蓝图重跑一遍就自动更新，是检修算法问题的入口。
+
