@@ -5,7 +5,7 @@ title: 事件驱动策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.4"
+version: "1.9.5"
 date: 2026-08-12
 topic: event_driven_strategy_detail
 scope: 07_trading_decision_architecture
@@ -90,7 +90,7 @@ scope: 07_trading_decision_architecture
 
 **关键区分**：`corporate_action_processor`（[MOD-TRADING-004](../../../03_modules/_domain_trading/corporate_action_processor/blueprint.md)，production）处理的是除权除息/分红/送股/配股/拆股等**持仓调整类**公司行动——它是持仓数量与均价的机械调整，不产生 alpha 信号，**不归入事件源**，但事件驱动 sleeve 须消费其事件以避免在除权日误判异动（见 §2.5 降级）。
 
-> **⚠️ 龙虎榜事件源 2026 信号失效提示（v1.8.0 补，与 [24 号 §3.5 v1.8.2](24_daban_strategy_detail.md) 同步）**：龙虎榜作为四类事件源之一（上表"资金面事件/主力行为佐证"），其"机构净买入=利好佐证"假设已于 2026 年反向失效——[24 号 v1.8.2 实证](24_daban_strategy_detail.md)机构净买入次日胜率从 2018-2023 的 62-68% 暴跌至 **45.7%（低于 50% 随机）**。事件驱动 sleeve 消费龙虎榜作事件佐证同样受影响，event_score 须同步校准——详见 §2.5 [龙虎榜 2026 机构信号失效校准](#25-事件信号选股映射讨论要点④)。
+> **⚠️ 龙虎榜事件源 2026 信号失效提示（v1.8.0 补，与 [24 号 §3.5 v1.8.2](24_daban_strategy_detail.md) 同步）**：龙虎榜作为四类事件源之一（上表"资金面事件/主力行为佐证"），其"机构净买入=利好佐证"假设已于 2026 年反向失效——[24 号 v1.8.2 实证](24_daban_strategy_detail.md)机构净买入次日胜率从 2018-2023 的 62-68% 暴跌至 **45.7%（低于 50% 随机）**。事件驱动 sleeve 消费龙虎榜作事件佐证同样受影响，event_score 须同步校准——详见 §2.5"龙虎榜 2026 机构信号失效校准"块。
 
 ### 2.3 事件分类（讨论要点②）
 
@@ -197,11 +197,11 @@ def check_selling_pressure_absorbed(symbol, day2_3_data, baseline_volume_ratio=1
 > - **dReport × ORJ**：dReport（披露时点）是 PEAD 的事件时点扩展——dReport 大幅提前 + ORJ>3% = 强信号叠加（"靓女先嫁"+开盘确认双重利好）
 > - **Jump on PEAD × ORJ**：Jump on PEAD（5 日窗口跳跃）是 ORJ（单日跳空）的冲击强度扩展——ORJ 即时确认，Jump on PEAD 滚动跟踪
 > - **隔夜趋势 × ORJ**：隔夜趋势（日常隔夜）是 ORJ（事件日隔夜）的时序扩展——事件日 ORJ>3% + 近 20 日隔夜趋势为正 = 强信号叠加
-> - **AStockEvent × §2.3 事件分类**：AStockEvent 的 13 类比六类粗分类更细，可作 [Janus-Q 10 类细分类](#23-事件分类讨论要点②) 的 A 股本土化映射，直接驱动 dReport 计算
+> - **AStockEvent × §2.3 事件分类**：AStockEvent 的 13 类比六类粗分类更细，可作 Janus-Q 10 类细分类（§2.3 细分类预留）的 A 股本土化映射，直接驱动 dReport 计算
 >
 > **施工优先级**：dReport（年化超额 4.88%）与 Jump on PEAD（IC 10.96%）有 10 年/5 日窗口实证，优先级最高——可作为 NLP 管道（[#ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）未就绪前的数值 alpha 补充（与 ORJ 同属降级算法，不依赖 NLP）。隔夜趋势作为日常 alpha 因子接入因子工厂。AStockEvent 作为 NLP 管道工程化候选，远期评估。
 >
-> **对 [21 号 §3.6](21_stock_selection_engine.md) 漏斗③ event_impact_score 的施工落地**：六因子矩阵为 [21 号 §3.6](21_stock_selection_engine.md) 事件驱动漏斗第三层"事件影响评分排序"提供具体因子——`event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_PEAD_z + w4·overnight_trend_z + PEAD_inversion_gate`（权重待 G10 校准，PEAD Inversion 作门控非加权项）。详见 [20 §2.4 v1.4.4 六因子矩阵](20_first_batch_strategies.md)。（v1.9.3 修正：此前裸写"§3.6"在本备忘内悬空——本备忘 §3 无 3.6 节，真源是 21 号 §3.6 漏斗模型）
+> **对 [21 号 §3.6](21_stock_selection_engine.md) 漏斗③ event_impact_score 的施工落地**：六因子矩阵为 [21 号 §3.6](21_stock_selection_engine.md) 事件驱动漏斗第三层"事件影响评分排序"提供具体因子——`event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_PEAD_z + w4·overnight_trend_z + PEAD_inversion_gate`（权重待 G10 校准，PEAD Inversion 作门控非加权项）。详见 [20 §2.4 v1.4.4 六因子矩阵](20_first_batch_strategies.md)。（v1.9.4 修正：此前裸写"§3.6"在本备忘内悬空——本备忘 §3 无 3.6 节，真源是 21 号 §3.6 漏斗模型）
 
 **Hawkes 自激发建模（暂缓前沿）**：[Hawkes Processes for Investors 2026-02](https://stockalpha.ai/alpha-learning/hawkes-processes-for-investors-modeling-self-exciting-volatility-bursts) 用自激发点过程建模事件聚类（branching ratio n=α/β，n→1 近临界=事件簇爆发）。2026 新实证：
 - [中国股市传染分析（arXiv 2512.08000）](https://arxiv.org/html/2512.08000v1/) 用时空 Hawkes 建模 A 股板块轮动——高交易活跃期板块延续趋势，低活跃期板块轮动加剧，与本项目板块轮动（[G06](22_sector_rotation_spec.md)）天然契合
@@ -1072,3 +1072,4 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 2026-08-12 | 1.9.2 | **过度工程审查回执（第 5 轮）** | §4.3 新增过度工程审查回执，逐项对照 charter §2 硬边界判定：①多源 news_data 不过重——东财/财联社/RSS 是 production 存量设施非新增负担，RavenPack 跨源实证多源是 alpha 来源；反向边界明确——再新增社交源（微博/雪球/股吧）属过重不扩源；②Hawkes 当前形态不过重——经验衰减承载 sleeve 层，Hawkes 登记暂缓项 1 留 firm 层风控，若首版引入 sleeve alpha 层则过重（自 v1.0.0 起即拒绝，持续成立）；③Janus-Q/CNN 视觉/LLM 动态图谱/Data Funnel 双阶段全部显式暂缓/远期，按"远期工程不算过度工程"规则保留 |
 | 2026-08-12 | 1.9.3 | **一致性与交叉引用审查 + 文档质量复核（第 6-7 轮）** | 第 6 轮：①与 20 号一致性——§2.1 定位表六维与 20 §2.4 逐项对齐 ✅，四类→六类漂移已登记 §6；②与 30 号一致性——convergence_window 2-3 天引 30 §6.4（锚点真实存在）✅，但发现 30 号 §2.4 反引"[20 §6.4]"为失效锚点（20 号无 §6.4 节），登记 §6 待 30 号 owner 修正；③与 23 号 G07 相关性验证引用闭环 ✅；④与 62 号一致性——strategy_registry 6 类含 event_driven ✅、62 号 UNI-RULE-002 事件驱动池引本备忘 ✅；⑤§7.3 全部 blueprint 链接目标（strategy_book/firm_risk_aggregator/regime_meta_allocator/corporate_action_processor）逐一验证存在 ✅。第 7 轮：frontmatter 字段完整合法（doc_type=architecture_view/status=active/ttl=permanent 均在受控词表）✅；§4.4 文档种类适配（讨论记录范式：背景/决策/替代方案/上限/待裁定/待定问题/引用/修订记录八段齐全）✅；两条硬约束（修订记录+开放问题节）✅；交叉引用全稳定相对 path ✅ |
 | 2026-08-12 | 1.9.4 | **确认轮内部锚点审计修复** | 循环自检发现 3 类内部引用失效并修复：①"§6 待裁定-N"×7 处误指——待裁定（暂缓项）表真源在 §5，§6 为待定问题，replace_all 修正为 §5 待裁定；②"§3.6 漏斗③"裸写悬空——本备忘 §3 无 3.6 节，真源为 21 号 §3.6 漏斗模型，补全链接；③v1.6.0 四类→六类升级的三处残留（§2.4 六因子协同块/§2.5 施工优先级块/§5 暂缓项 2 理由中"四类粗分类"）统一为六类 |
+| 2026-08-12 | 1.9.5 | **确认轮 C：页内锚点加固** | 零发现确认轮中仅见 2 处渲染器脆弱的页内锚点（#23-事件分类讨论要点② / #25-事件信号选股映射讨论要点④——GitHub/CommonMark 渲染会剥离 ②④ 特殊字符致锚点失效），改为稳健文字引用（"§2.3 细分类预留"/"§2.5 龙虎榜 2026 机构信号失效校准块"），符合"交叉引用全用稳定 path"规范；并校正 §2.4 六因子块内版本标注（v1.9.3 修正→v1.9.4 修正，与实际修订行对齐） |
