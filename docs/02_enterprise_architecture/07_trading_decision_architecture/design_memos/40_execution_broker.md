@@ -5,8 +5,8 @@ title: 下单对接与撮合（执行层）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.9.2"
-date: 2026-08-10
+version: "2.10.0"
+date: 2026-08-12
 topic: execution_broker
 scope: 07_trading_decision_architecture
 ---
@@ -42,9 +42,12 @@ scope: 07_trading_decision_architecture
 - **xtquant Python 版本**（v1.6.0 补全，v1.6.1 订正）：截至 2026-04 已支持 **64 位 Python 3.6-3.14**（建议 3.11），不同版本导入时自动切换；2025-10 起已支持 pip 直接安装（miniqmt.com 官方 QA 确认，此前"仅支持 3.6-3.8"为过时信息）
 - **可转债程序化交易权限**（v1.6.0 补全）：卖出可转债需券商单独开通可转债程序化交易权限 + 签署协议 + 增加流量费；股票期权需 100 万以上资金申请
 
-### 1.4 现有资产盘点（施工前已实现，本备忘为其补 why 层）
+### 1.4 已施工设施盘点（通用规则 #11：先清楚有什么 → 才能知道怎么改 → 才能知道该退役什么）
 
 > 执行层不是从零设计——miniQMT 对接、撮合、成本、滑点、Saga 均已真实实现（非 stub）。本备忘给已有实现补 why 层决策记录 + 填补 gap。
+> 盘点分两块：**施工前已实现 12 项**（v1.0.0 前已 production）+ **v2.5.0-v2.6.0 施工新增 9 项**（gap 6-18 实盘生存级模块，对应决策⑪-⑱）。
+
+**施工前已实现**（12 项，v1.0.0 前 production）：
 
 | 环节 | 模块 | path | 状态 |
 |---|---|---|---|
@@ -60,6 +63,24 @@ scope: 07_trading_decision_architecture
 | TCA 引擎 | DefaultTcaEngine | `src/zephyr/reporting/default_tca_engine.py` | 🟦 production |
 | 持仓对账 | PositionReconciler | `src/zephyr/ex_core/position_reconciler.py` | 🟦 production |
 | 撮合逻辑（回测=实盘共用） | MatchingLogic | `src/zephyr/backtest/core/matching_logic.py` | 🟦 production |
+
+**v2.5.0-v2.6.0 施工新增**（9 项，对应决策⑪-⑱ 实盘生存级 gap，全部测试全绿；⚠️ 均未登记 depgraph，见 §6.2 开放问题）：
+
+| 环节 | 模块 | path | 对应决策 | 状态 |
+|---|---|---|---|---|
+| 未成交续接 | OpenOrderResolver | `src/zephyr/ex_core/open_order_resolver.py` | ⑪ | 🟦 production（21 测试） |
+| 撤单率控制 | CancelRateGuard | `src/zephyr/ex_core/cancel_rate_guard.py` | ⑫ | 🟦 production（23 测试） |
+| 资金预占 | TradingSession `_validate_and_submit` 内嵌 | `src/zephyr/ex_core/trading_session.py` | ⑬ | 🟦 production（串行扣减+拒单回滚） |
+| 挂单价算法 | PricingPolicy | `src/zephyr/ex_core/pricing_policy.py` | ⑭ | 🟦 production（22 测试） |
+| 价格笼子 | price_cage.check_price_cage | `src/zephyr/ex_core/price_cage.py` | ⑭ | 🟦 production（23 测试） |
+| 回调线程模型 | AsyncFillDispatcher | `src/zephyr/ex_core/async_fill_dispatcher.py` | ①工程约束 | 🟦 production（14 测试） |
+| 断线重连增强 | MiniQmtBroker `_reconnect` 指数退避 | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ⑥层1 | 🟦 production（RECONNECT_BACKOFF=(0,2,4,8,16,30)） |
+| 临时停牌 | TradingHaltResolver | `src/zephyr/ex_core/trading_halt_resolver.py` | ⑮ | 🟦 production（16 测试） |
+| 除权除息 | CorporateActionAdjuster | `src/zephyr/ex_core/corporate_action_adjuster.py` | ⑯ | 🟦 production（25 测试） |
+| 板块整手/零股 | board_lot.get_board_lot_rule | `src/zephyr/ex_core/board_lot.py` | ⑰ | 🟦 production（53 测试） |
+| 程序化报备开关 | ProgrammaticTradingGuard | `src/zephyr/ex_core/programmatic_trading_guard.py` | ⑱ | 🟦 production（44 测试） |
+
+> 关联域文档：[44_d_ex_core](../../02_domain_architecture_docs/44_d_ex_core.md)（38 模块：18 生产态+20 设计态，2026-08-05 生成）+ [45_d_ex_sor](../../02_domain_architecture_docs/45_d_ex_sor.md)（18 模块：17 生产态+1 设计态）。⚠️ 两份域文档生成于 v2.5.0 施工前，上表 9 个新模块均未登记（depgraph 未刷新），详见 §6.2 开放问题。
 
 ## 2. 决策
 
@@ -1120,6 +1141,7 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 - **临时冲击 vs 永久冲击分离（未实现）**：[SquareRootImpactPredictor](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/slippage_analyzer.py) 是总冲击（瞬时平方根律），未分离 temporary_impact（η·trade_rate/avg_volume，衰减回补）和 permanent_impact（γ·trade_rate/avg_volume，信息效应）。**判定**：MVP 总冲击足够（个人 <1% ADV 分离边际价值低）；Phase 2 coeff 校准后上推 Obizhaeva-Wang 分离模型，为 RL 执行铺路（§2.4 已登记）
 
 ### 6.2 开放问题
+- **9 个施工新增模块未登记 depgraph**（v2.10.0 审查发现）：OpenOrderResolver/CancelRateGuard/PricingPolicy/price_cage/AsyncFillDispatcher/TradingHaltResolver/CorporateActionAdjuster/board_lot/ProgrammaticTradingGuard 已施工 production（v2.5.0-v2.6.0），但 44_d_ex_core（2026-08-05 生成，38 模块）/battle_map_10（47 锚点）均未收录，depgraph 生成器自 v2.5.0 施工后未刷新。**待办**：刷新 depgraph 登记 9 模块 blueprint_id → 重新生成 44_d_ex_core → 同步 battle_map_10 锚点（涉及 depgraph 生成器与域文档/作战地图，超出本备忘修改范围，登记待治理流程处理）
 - **佣金费率实盘校准**：万0.854 为用户口头提供，实盘开户后需对照交割单二次校准
 - **集合竞价差异化规则**：第二阶段评估时，需定打板策略是否参与开盘集合竞价、卖出流是否走收盘集合竞价
 - **与 G19/G20 接口对齐**：执行层接收 firm_target_portfolio，上游 G19 买入流/G20 卖出流定型后需对齐接口契约（本备忘先定执行层 spec，不依赖 G19/G20 细节）
@@ -1135,6 +1157,8 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 - [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) 流动性危机检测（LIQUIDITY_CRISIS 信号→LEVEL_3 逃生指令 `build_escape_directive`→执行层清仓+撤单+暂停；涨跌停流动性失效处理 §3.5 协同——跌停时 spread 置大值 1.0 使双条件 AND 触发，执行层决策⑥⑭⑮配合）
 - [00_index_trading_decision §3 G22](00_index_trading_decision.md) 下单对接与撮合主题组定义
 - [01_design_memo_management_spec §4.3](01_design_memo_management_spec.md) 设计备忘推荐章节结构
+- 下游：[54_reconciliation_attribution](54_reconciliation_attribution.md)（G25，消费本层成交回报/持仓/资金流水做对账归因；54 号 §上游已引用本备忘）
+- 下游：[42_sell_flow](42_sell_flow.md)（G20 卖出流 spec，本层是其落地通道——42 号止损/止盈/强制清仓信号最终经本层订单分解→PricingPolicy→MiniQmtBroker 发出）
 
 ### 7.2 相关作战地图
 - [battle_map_10_execution.md](../battle_map/battle_map_10_execution.md) 执行阶段 6 环节：
@@ -1161,6 +1185,20 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 | DefaultTcaEngine | MOD-L07-001 | `src/zephyr/reporting/default_tca_engine.py` | D_REPORTING |
 | MatchingLogic | — | `src/zephyr/backtest/core/matching_logic.py` | D_BACKTEST |
 | BrokerInterface | MOD-L06-001 | `src/zephyr/trading/trading_contracts/broker_interface.py` | D_TRADING |
+
+**v2.5.0-v2.6.0 施工新增模块**（⚠️ 均未登记 depgraph blueprint_id，待生成器刷新后补号，见 §6.2 开放问题）：
+
+| 模块 | blueprint_id | path | 域 |
+|---|---|---|---|
+| OpenOrderResolver | 未登记 | `src/zephyr/ex_core/open_order_resolver.py` | D_EX_CORE |
+| CancelRateGuard | 未登记 | `src/zephyr/ex_core/cancel_rate_guard.py` | D_EX_CORE |
+| PricingPolicy | 未登记 | `src/zephyr/ex_core/pricing_policy.py` | D_EX_CORE |
+| price_cage | 未登记 | `src/zephyr/ex_core/price_cage.py` | D_EX_CORE |
+| AsyncFillDispatcher | 未登记 | `src/zephyr/ex_core/async_fill_dispatcher.py` | D_EX_CORE |
+| TradingHaltResolver | 未登记 | `src/zephyr/ex_core/trading_halt_resolver.py` | D_EX_CORE |
+| CorporateActionAdjuster | 未登记 | `src/zephyr/ex_core/corporate_action_adjuster.py` | D_EX_CORE |
+| board_lot | 未登记 | `src/zephyr/ex_core/board_lot.py` | D_EX_CORE |
+| ProgrammaticTradingGuard | 未登记 | `src/zephyr/ex_core/programmatic_trading_guard.py` | D_EX_CORE |
 
 ### 7.4 外部参考
 - 《上海证券交易所交易规则（2026年修订）》（上证发〔2026〕41号，2026-07-06 施行）§3.2 委托、§3.3 申报与竞价（§3.3.2 集合竞价撤单、§3.3.13 涨跌幅限制、§3.3.14 价格笼子）、§3.7 盘后固定价格交易、§4.2 挂牌摘牌停牌复牌、§4.3 除权与除息、§8 交易异常情况处理
@@ -1267,3 +1305,4 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 | 2026-08-10 | 2.9.0 | §7.4 补 Wang et al. A 股监管流动性效应实证 + 三十八轮审查结论 | 三十八轮审查 + 2026-08-10 最新执行算法研究四次复查，1 项 §7.4 实证支撑补充 + 审查结论确认：①**§7.4 补 Wang/Ji/Chen 2026 A 股程序化交易监管流动性效应实证**（preprints.org 202607.1753 2026-07-22）：利用 2024-05 证监会《程序化交易管理试行》作为准自然实验，DID 实证限制 HFT（300笔/秒认定线）显著改善 A 股流动性（降低价差+价格冲击），效果集中在股价下跌时，小中盘股和融资融券标的改善更强。为 gap 18 程序化报备开关提供政策效果实证支撑（项目作为非 HFT 参与者是受益者）+ 支撑 §4.1 内部限频 15 笔/秒保守策略 + 为 §2.12 监管约束提供 A 股本土实证。非新算法，为监管合规设计提供实证依据。②**2026-08-10 最新研究四次复查**——确认 2026-08 最新执行算法研究已全覆盖：PACE LLM 执行(2607.28410)/Amaral 闭式阈值(2608.00885)/Garg regime-RL 三部曲(SSRN 6559598+6733198+TQFB)/Barzykin 被动冲击 HJB(2607.28323)/Yu 序贯闭式报价(2605.24242)/Cheridoto-Weiss logistic-normal RL(2507.06345)/Zhou A 股平方根必要性(2607.05141)/DASRL(AAMAS 2026)/HALOP(2207.11152)/España Queue-Reactive(2511.15262)/Chevalier 流动性不确定性(2506.11813)/Sato 精确可解(2608.00988)/Bonart 扩散冲击(2606.07059)/Muhle-Karbe 统一理论(2601.23172)/Vasaikar SRL 实证(2606.24019)/Robust MFC(2607.29514)/Wang-Gao-Li 连续时间RL(Finance Stochastics 2026)/广发撤单因子(2026-08-08)/被动冲击点过程(2412.07461)/Signature 执行(2606.31387)/内生市场阻力 propagator(2601.03215) 均已登记。新发现 Zhai 公开交易者身份(2608.04373 2026-08-06)A 股不公开身份不适用、Feng 多智能体 RL(EESD 2026-07)个人单 broker 不适用，均不补充。③**文档结构/顺序/内容审查结论**——结构一致性总评 A 级：§1→§2(20节)→§3→§4→§5→§6→§7→§8 符合 ADR 惯例；决策编号①-⑲连续无缺失；§4.2 演进路径⑩-⑰与 §2 决策①-⑲两套独立编号体系无歧义；§7.4 外部参考按版本号递增排列无重复引用；frontmatter 版本与修订记录一致；gap 1-19 状态标注一致（13 项已实现+gap 10 Phase 2+gap 16 Phase 1.5+gap 19 移除）。④**施工算法完整性结论**——全部 13 项实盘生存级 gap 已闭合（v2.6.0），Phase 1.5/2/3 候选均已登记重评条件，无施工算法缺失。⑤**L866 "每秒≤15笔"核查**——确认为项目内部保守限频（括号明确"远低于法定高频认定线 300 笔/秒"），非外部标准误传，与 project_memory 记录不冲突，无需修改 |
 | 2026-08-10 | 2.9.1 | §2.12 通道平权行补 2026-07-31 正式关闭局域网行情通道事件 | 三十九轮审查 + 2026-08-10 A 股市场结构变化事件补充：§2.12 监管约束表"通道平权"行从"已推进，削弱速度特权"更新为完整事件描述——**2026-07-31 交易所正式关闭局域网行情通道**（华夏时报 2026-08 报道）：托管机房行情接入统一由局域网切换为广域网，微秒级延迟（0.3-0.8μs）→ 毫秒级，微秒级套利窗口消失；同步禁止券商为特定客户提供更低延迟/优先报单/专属带宽等特权。量化行业从"拼速度"转向"拼深度"（因子挖掘+模型能力），与本项目设计中低频+因子驱动定位一致——速度特权终结对本项目无负面影响，反而消除高频竞品的速度优势。非新算法，为监管约束表补全 2026-07-31 重大市场结构变化事件 |
 | 2026-08-10 | 2.9.2 | §4.5 新增大 tick 限价单挂单闭式最优解算法节（Amaral+Yu 2026 整合） | 四十轮审查 + 整合两篇 2026 限价单挂单闭式最优解论文为独立算法节：§4.5 新增"Microstructure Mean Reversion Optimal Quoting & Signal-Adaptive Sequential Quotes——大 tick 限价单挂单闭式最优解"。整合论文1 [arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) Amaral 2026-08-01（G gap OU 过程+对称阈值带+闭式 θ\*(θ\*-φ)=s_G² / R\*=α·s_G·√(2/π)·exp(-θ\*²/2s_G²)+"等待的期权价值"洞见）+ 论文2 [arXiv:2605.24242v1](https://arxiv.org/abs/2605.24242) Yu 2026-05-22 TU Delft（4 风险集成+4 准则显式解+信号依赖漂移+三角有限维结构）。两篇此前已分别登记于 §4.2 演进路径⑫⑭ 与 §7.4 外部参考（v1.8.0/v1.9.0/v2.7.0/v2.8.0），本次整合为集中技术展开节：补全 A 股适用性表（大 tick+deep queue→论文1 适用性高）、三层层次关系（PACE 高层规划/Almgren-Chriss 中层速率/本节底层挂单价 micro layer）、Phase 1.5 候选+当前 Phase 限价单增强定位、2026 量化新规 15 笔/秒约束下单笔挂单优化>批量拆单的 ROI 论证、<60 行 Python 伪代码（G gap 估计+OU 拟合+θ\* 闭式解+对称带策略）。frontmatter 2.9.1→2.9.2（patch 级新增算法条目） |
+| 2026-08-12 | 2.10.0 | 已施工设施盘点补全 + 交叉引用补全 + depgraph 登记缺口登记 | 架构审查（通用规则 #11 基础设施盘点）：①**§1.4 升级为「已施工设施盘点」**——原表仅列施工前 12 项资产，补 v2.5.0-v2.6.0 施工新增 9 模块（OpenOrderResolver/CancelRateGuard/资金预占内嵌/PricingPolicy/price_cage/AsyncFillDispatcher/断线重连增强/TradingHaltResolver/CorporateActionAdjuster/board_lot/ProgrammaticTradingGuard，对应决策⑪-⑱），分"施工前已实现 12 项+施工新增 9 项"两块，标注各模块测试数与对应决策号；②**§7.1 补下游交叉引用**——54_reconciliation_attribution（对账归因消费本层产出，54 号已引用本备忘，补回链）+ 42_sell_flow（卖出流落地通道）；③**§7.3 depgraph 模块表补 9 个新模块**（标注"未登记 blueprint_id，待生成器刷新"）；④**§6.2 开放问题新增 depgraph 登记缺口**——44_d_ex_core（2026-08-05 生成）/battle_map_10 均未收录 9 个新模块，待 depgraph 生成器刷新（超本备忘范围，登记待治理流程）。⑤**2026-08 最新研究五次复查**——WebSearch 确认 TT-DAC-PS/quant67 执行算法/AC 教学/miniqmt 官方 QA（Python 3.6-3.14/pip 可装）均已在文档登记或与 v1.6.1 订正一致，无新硬错误、无新算法遗漏 |

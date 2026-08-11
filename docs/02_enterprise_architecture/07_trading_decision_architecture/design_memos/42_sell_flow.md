@@ -5,8 +5,8 @@ title: 卖出流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.2"
-date: 2026-08-10
+version: "1.6.0"
+date: 2026-08-12
 topic: sell_flow
 scope: 07_trading_decision_architecture
 ---
@@ -34,7 +34,7 @@ scope: 07_trading_decision_architecture
 
 ### 2.1 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，**T+1，不能做空**）
-- 卖出决策域 D_SELL_DECISION 已有 24 模块（[68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md)）：**13 生产态**（突破成败/收集器/融合引擎/紧迫度/冲突仲裁/猎杀防护/置换再平衡等）+ **11 设计态**（止盈/止损/策略止损范式/分批退出/情景预案/做T/闭环优化等）
+- 卖出决策域 D_SELL_DECISION 已有 24 模块（[68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md)）：**13 生产态**（⚠️ v1.6.0 精确化：其中 6 个为 __init__.py 包入口 generated 占位，真实业务生产态 7 个——突破成败/收集器/融合引擎/紧迫度/冲突仲裁/猎杀防护/置换再平衡，详见 §2.4）+ **11 设计态**（止盈/止损/策略止损范式/分批退出/情景预案/做T/闭环优化等）
 - battle_map_07 已有 14 环节（6 运营态 / 7 设计态 / 1 弃用态），BM-SELL-04 止盈止损族是核心待施工环节
 - 卖出侧比买入侧更复杂——"何时卖"是交易最难决策，且 A 股 T+1 + 跌停板约束叠加
 
@@ -54,7 +54,48 @@ battle_map_07 锁定了卖出流的**环节拓扑**（突破成败→收集评�
 - **system_charter §3 约束四（策略三维度解耦）**：卖出（how）独立于选股（what）/仓位（how much）
 - **保守原则**（BM-SELL-06）：同标的同时有买卖信号→卖出优先；风控>仓位>市场态>卖出>T+1预测>...>买入
 - **Kill Switch 不可覆盖**（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5.5）：触发即执行，不允许人工覆盖延迟
-- **BM-SELL-04 策略止损范式**（MOD-SELL-014 已建）：不同策略类型用不同止损风格（趋势宽/均值回归中/高频紧/Carry 宽/套利无）
+- **BM-SELL-04 策略止损范式**（MOD-SELL-014 设计态待施工，v1.6.0 订正——此前标"已建"有误：68 域文档 planned 无代码无蓝图、源码目录无实现文件，battle_map"generated"仅包入口级；MVP 先用 §3.3 Chandelier 按持仓阶段切 M 值的简化分工替代）：不同策略类型用不同止损风格（趋势宽/均值回归中/高频紧/Carry 宽/套利无）
+
+### 2.4 已施工设施盘点（通用规则 #11：先清楚有什么 → 才能知道怎么改 → 才能知道该退役什么）
+
+> v1.6.0 新增。卖出流不是从零设计——信号收集/融合/仲裁/紧迫度/破位/猎杀防护/置换再平衡均已 production（非 stub）。本备忘为止损/止盈/Triage 等待施工环节补 why 层 spec。盘点分三块：**sell_decision 域已施工 7 模块** + **跨域可复用设施** + **未施工清单（本 spec 的施工对象）**。
+
+**sell_decision 域已施工**（7 个业务生产态模块，全部 [MATURITY] production，v1.6.0 源码核实）：
+
+| 环节 | 模块 | blueprint_id | path | 本备忘消费方式 |
+|---|---|---|---|---|
+| 突破成败（破位卖出源） | BreakoutFailureDetector | MOD-SELL-003 | `src/zephyr/sell_decision/core/breakout_failure_detector.py` | §3.6 破位卖出：K≥3 次失败→FORCED_CLEAR 强制清仓 |
+| 卖出信号收集 | SellSignalCollector | MOD-SELL-001 | `src/zephyr/sell_decision/core/sell_signal_collector.py` | §3.2 收集评分：8 类信号枚举（含时间止损第⑦类枚举，算法待施工） |
+| 融合仲裁 | SellSignalFusionEngine | MOD-SELL-007 | `src/zephyr/sell_decision/core/sell_signal_fusion_engine.py` | §3.1 融合：加权融合算综合卖出意愿 0~1，强制清仓绕过 |
+| 紧迫度 | SellUrgencyScorer | MOD-SELL-009 | `src/zephyr/sell_decision/core/sell_urgency_scorer.py` | §3.8 执行时序：紧迫度→市价/限价执行策略映射 |
+| 冲突仲裁 | SellConflictArbitrator | MOD-SELL-008 | `src/zephyr/sell_decision/core/sell_conflict_arbitrator.py` | §3.8 做T 优先级：卖出优先+强/弱冲突分级（⚠️ depgraph build_status=deprecated 与源码 production 标注分裂，见 §7） |
+| 猎杀防护 | StopHuntingProtector | MOD-SELL-015 | `src/zephyr/sell_decision/core/stop_hunting_protector.py` | §3.3 止损位偏移 1-2% + 软止损 OBSERVING 观察期（四态机 NORMAL/OBSERVING/CONFIRMED/CLEARED） |
+| 置换再平衡 | ReplacementRebalanceSeller | MOD-SELL-006 | `src/zephyr/sell_decision/core/replacement_rebalance_seller.py` | §3.7 倒金字塔分批（50-30-20）唯一已施工的分批实现，止盈止损族可复用 |
+
+**跨域可复用设施**（v1.6.0 源码核实，止损/止盈施工时不需从零造）：
+
+| 设施 | 位置 | 现状 | 与本备忘关系 |
+|---|---|---|---|
+| 移动止损（trailing） | `src/zephyr/risk/implementations/default_stop_loss_engine.py`（method="trailing"，trailing_pct=0.03，`highest_since_entry × (1−trail_pct)`） | 🟦 已施工（risk 域简化版） | §3.3 Chandelier 止损是其升级——固定 trail_pct→ATR 自适应 M×ATR(14)，施工时替换/并存关系待定（见 §7 待定问题） |
+| 时间止损（time_based） | 同上（method="time_based"，max_hold_days=20，`_check_time_based`） | 🟦 已施工（risk 域简化版） | §3.2 时间止损"5 天未移动 1×ATR"是其升级——固定天数→ATR 自适应阈值 |
+| 波动率止损（volatility） | 同上（method="volatility"，vol × vol_multiplier × entry_price） | 🟦 已施工（最接近 ATR 止损，但未引用 ATR 指标） | §3.3 ATR 止损的直接前身，施工时以 ATR(14) 替换通用 vol 估计 |
+| 持仓 Triage 消费方 | `src/zephyr/position/core/position_drift_monitor.py`（TriageLevel 枚举，注释"来自 SELL-00"） | 🟦 已施工（消费方） | §3.2 Triage 分级的生产方 MOD-SELL-000 待施工，消费方已就位 |
+
+**未施工清单**（本 spec 的施工对象，v1.6.0 全 src grep 确认无实现）：
+
+| 环节 | blueprint_id | 本 spec 章节 | 伪代码状态 |
+|---|---|---|---|
+| 持仓 Triage 分级（生产方） | MOD-SELL-000 | §3.2 | ✅ 已补全（triage_position） |
+| 止盈策略（移动止盈 Chandelier 盈利区） | MOD-SELL-004 | §3.4 | ✅ 已补全（compute_exit_price） |
+| 止损策略（ATR+移动 Chandelier 统一） | MOD-SELL-005 | §3.3 | ✅ 已补全（compute_stop_loss） |
+| 策略止损范式 | MOD-SELL-014 | §2.3/§4.1 | 映射规则已定型（趋势宽/均值回归中/高频紧），代码待施工 |
+| 分批退出 | MOD-SELL-017 | §3.7 | ✅ 演进路径已补全（simple_scaling_out 三步法） |
+| 连续亏损熔断 | —（未登记） | §3.10 | ✅ 已补全（TradeLevelCircuitBreaker） |
+| 时间止损算法（ATR 自适应） | —（收集器第⑦类信号枚举已建） | §3.2 | ✅ 已补全（check_time_stop） |
+| 跌停板排队优先级 | —（执行层落地） | §3.8 | ✅ 已补全（rank_limit_down_orders） |
+| Kill Switch 清仓排序 | —（执行层落地） | §3.9 | ✅ 已补全（rank_kill_switch_liquidation） |
+
+> **与执行层（40 号）的落地边界**：本 spec 伪代码（止损/止盈/Triage/排队/排序）落地后产出卖出信号/目标权重，经 [40_execution_broker](40_execution_broker.md) §2.11 订单分解→§2.15 PricingPolicy 挂单价→MiniQmtBroker 发出；跌停板排队优先级与 Kill Switch 清仓排序的最终执行依赖 40 号 OpenOrderResolver/PricingPolicy（均已施工，40 号 §1.4）。
 
 ## 3. 决策：止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护 四族 MVP，分批/密度感知/逻辑止损族降级
 
@@ -409,7 +450,7 @@ def rank_kill_switch_liquidation(positions):
 
 > **为何流动性优先而非亏损优先**：Kill Switch 是生存底线，首要目标是"全部成交"而非"卖好价"。流动性差的标的如果后卖，可能被封死跌停无法成交→暴露无法消除。先卖流动性差的确保全部能成交，再卖流动性好的（即使跌停也能排队成交）。
 
-> **联动边界**：drawdown 是**账户级**风险（35），regime 是**市场级**风险（G15），卖出逻辑在**策略内**（42）。35 触发时通过 budget 节流（G15 Shrinkage）+ 卖出端响应（42 强制清仓/停新仓）协同，三者正交。MVP 阶段 35 未就绪时，直接用 30 §2.5 框架（已定）。
+> **联动边界**：drawdown 是**账户级**风险（35），regime 是**市场级**风险（G15），卖出逻辑在**策略内**（42）。35 触发时通过 budget 节流（G15 Shrinkage）+ 卖出端响应（42 强制清仓/停新仓）协同，三者正交。~~MVP 阶段 35 未就绪时，直接用 30 §2.5 框架~~ **35 已 active v1.37.0**（v1.6.0 订正）：本表四级阈值=30 §2.5 外层框架口径，35 号 §3.2 另有内层代码阈值（5/10/15% 更紧，A/B/C 三层模块）双轨运行，卖出端响应动作不变。
 
 ### 3.10 ⑨ 连续亏损熔断 —— 策略级 Circuit Breaker（2026-08-10 四次审查补充，选项外更优算法）
 
@@ -493,7 +534,7 @@ class TradeLevelCircuitBreaker:
 
 ### 4.1 四族全上（止损+止盈+破位+分批+逻辑止损族+密度感知）—— 拒绝（MVP）
 - **拒绝理由**：battle_map BM-SELL-04 止盈止损族含止盈 4 类+止损 4 类+逻辑止损 4 类+策略止损范式 5 类+猎杀防护+分批退出 4 模式，全上是研究课题不是工程任务。MVP 复杂度过高，且密度感知依赖 BM-SEL-13（未就绪）
-- **采用**：MVP = 止损(ATR+移动) + 止盈(移动) + 破位(突破成败) + 猎杀防护(已建) + 策略止损范式(已建)；分批/密度感知/逻辑止损族(除主力出货)降级为演进路径
+- **采用**：MVP = 止损(ATR+移动) + 止盈(移动) + 破位(突破成败) + 猎杀防护(已建) + 策略止损范式(设计态待施工，v1.6.0 订正——MVP 先用 §3.3 Chandelier 按持仓阶段切 M 值的简化分工，策略类型差异化随 MOD-SELL-014 施工启用)；分批/密度感知/逻辑止损族(除主力出货)降级为演进路径
 
 ### 4.2 固定%止损为主 —— 拒绝
 - **拒绝理由**：固定%忽略标的波动率差异，低波动股止损过宽、高波动股被噪声扫出（quantstock 2026 / algovestiq 2026）。A 股波动大，硬性 5% 易被正常波动扫出
@@ -543,9 +584,9 @@ class TradeLevelCircuitBreaker:
 
 | 阶段 | 内容 | 触发条件 |
 |---|---|---|
-| **MVP（当前）** | 止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护(已建)+策略止损范式(已建)；分批一次性；28/35 未就绪用 30 §2.5/regime 降级 | 本备忘定稿即可施工 |
+| **MVP（当前）** | 止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护(已建)+策略止损范式(设计态待施工，MVP 用 Chandelier 阶段切换替代，v1.6.0 订正)；分批一次性；28 未就绪用 regime 降级，35 已 active 1.37.0 可直接联动（v1.6.0 订正） | 本备忘定稿即可施工 |
 | **阶段 2** | [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 定稿，退潮信号 L2-B 注入权重校准 | 28 active |
-| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值与卖出端响应正式联动 | 35 active |
+| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值与卖出端响应正式联动 | ~~35 active~~ **已满足**（35 已 active 1.37.0，v1.6.0 订正）——35 §3.2 三层映射（外层 8/15/20/25% + 内层代码 5/10/15%）与 §3.9 卖出端响应可直接对接，联动代码施工后本阶段关闭 |
 | **阶段 4** | BM-SEL-13 密度 PDF 就绪，密度感知止损/止盈启用 | BM-SEL-13 施工完成 |
 | **阶段 5** | MOD-SELL-017 分批退出施工，分批卖出启用 | 各策略 track record 积累 |
 | **阶段 6（待裁定）** | 逻辑止损族（基本面/技术面/事件）除主力出货外逐步启用 | 各信号源就绪 |
@@ -577,8 +618,8 @@ class TradeLevelCircuitBreaker:
 
 ### 5.3 为何这是上限而非妥协
 - 止损(ATR+移动)+止盈(移动)+破位+猎杀防护是 2026 年行业共识（quantstock / vibetrader / algovestiq / fairmontequities）
-- 不硬依赖 28/35 骨架，保证 MVP 可独立施工——避免循环阻塞
-- 已建模块（突破成败/收集器/融合/紧迫度/冲突仲裁/猎杀防护/置换再平衡）直接复用，MVP 只需施工止盈(MOD-SELL-004)/止损(MOD-SELL-005)/策略止损范式(MOD-SELL-014 已建)
+- 不硬依赖 28 骨架（35 已 active 1.37.0，v1.6.0 订正），保证 MVP 可独立施工——避免循环阻塞
+- 已建模块（突破成败/收集器/融合/紧迫度/冲突仲裁/猎杀防护/置换再平衡 7 个业务生产态）直接复用，MVP 只需施工止盈(MOD-SELL-004)/止损(MOD-SELL-005)/持仓Triage(MOD-SELL-000)；策略止损范式(MOD-SELL-014)为设计态待施工（v1.6.0 订正，此前"已建"有误——68 域文档标 planned 无代码无蓝图、源码目录无实现文件，battle_map"generated"仅包入口级）
 - 真正的上限 = 在 ATR+trailing 框架内把退出做到极致，而不是堆密度感知/分批/逻辑止损族等未就绪信号
 
 ## 6. 待裁定（暂缓项）
@@ -604,21 +645,24 @@ class TradeLevelCircuitBreaker:
 | 时间止损 N 天按策略类型定（打板 1-2/多因子 5-10/事件 2-3） | 本备忘 §3.2 | 待 G04 校准 |
 | 退潮信号注入 BM-SELL-03 的权重值 | 本备忘 §3.5 | 待 28 active |
 | 35 Level 2/3 触发时，进行中的分批卖出如何处理 | 本备忘 §3.9 | 待 35 active |
-| BM-SELL-06 弃用态（MOD-SELL-008 build_status=deprecated）的替代路径 | [68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md) | 待确认冲突仲裁是否迁移到融合引擎内 |
+| BM-SELL-06 弃用态（MOD-SELL-008 build_status=deprecated）的替代路径 | [68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md) | 待确认冲突仲裁是否迁移到融合引擎内。v1.6.0 源码核实补记：状态三方分裂——68 域文档标生产态 stable、源码 `sell_conflict_arbitrator.py` 标 [MATURITY] production 且无 deprecated 字样、仅 battle_map_07 锚点表标"真实 build_status=deprecated"（据此判 BM-SELL-06 弃用态）。源码与 68 文档一致（已建可用），弃用判定仅来自 depgraph 字段，需用户裁定以哪侧为真源 |
+| risk 域 default_stop_loss_engine 与本 spec 止损族的替换/并存关系 | 本备忘 §2.4 跨域可复用设施 | 待 MOD-SELL-004/005 施工时裁定：risk 域已有 trailing/time_based/volatility 三方法简化实现（生产态），本 spec 的 Chandelier（ATR 自适应）施工后，两域止损逻辑是"替换"（sell_decision 新实现接管，risk 域旧实现退役）还是"并存"（risk 域管账户级硬止损，sell_decision 管策略级退出）——倾向并存（分层防御），施工时确认 |
 
-> **循环至零检查**：42 → 41（G19 已 active）/35（G16 骨架）/28（G21 骨架）。35 框架在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5（active）已定，28 退潮降级为 regime ⑧/⑨ 触发。**无真循环阻塞**，42 可独立施工。✓
+> **循环至零检查**：42 → 41（G19 已 active）/35（G16 已 active 1.37.0，v1.6.0 订正）/28（G21 骨架）。35 框架在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5（active）已定且 35 号 impl 已 active，28 退潮降级为 regime ⑧/⑨ 触发。**无真循环阻塞**，42 可独立施工。✓
 
 ## 8. 引用
 
 ### 8.1 相关 design_memo
 - [41_buy_flow](41_buy_flow.md) —— 买入流（突破失败降级联动，G19 已 active）
-- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（骨架，框架在 30 §2.5）
+- [40_execution_broker](40_execution_broker.md) —— 执行层下单对接与撮合（v1.6.0 补链：本 spec 卖出信号的**落地通道**——卖出信号→40 号订单分解/PricingPolicy 挂单价/MiniQmtBroker 发出；跌停排队优先级 §3.8 与 Kill Switch 清仓排序 §3.9 的最终执行依赖 40 号 OpenOrderResolver/PricingPolicy，均已施工）
+- [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) —— 流动性危机检测（v1.6.0 补链：§3.9 Kill Switch"流动性危机→立即停止开仓仅允许平仓"的检测真源；LEVEL_3 逃生指令→执行层清仓）
+- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（active 1.37.0，v1.6.0 订正——此前版本标"骨架"已过时；外层框架在 30 §2.5，内层代码阈值 5/10/15% 见 35 §3.2）
 - [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) —— 情绪周期退潮卖出（骨架，降级为 regime）
 - [31_position_sizing](31_position_sizing.md) —— 仓位产出（卖出端响应仓位变化）
-- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值/Kill Switch 框架（35 未就绪时真源）
+- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值/Kill Switch 框架真源（35 号 impl 已 active，框架口径以此为准）
 
 ### 8.2 相关域架构与 battle_map
-- [68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md) —— D_SELL_DECISION 域 24 模块（13 生产态/11 设计态）
+- [68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md) —— D_SELL_DECISION 域 24 模块（13 生产态含 6 个包入口占位，真实业务生产态 7 个/11 设计态，§2.4 盘点）
 - [battle_map_07_sell_flow](../battle_map/battle_map_07_sell_flow.md) —— BM-SELL-01 突破成败 / BM-SELL-04 止盈止损族 / BM-SELL-06 冲突仲裁
 - [battle_map_06_buy_flow](../battle_map/battle_map_06_buy_flow.md) —— BM-BUY-04 分批建仓（突破失败降级联动）
 
@@ -644,6 +688,8 @@ class TradeLevelCircuitBreaker:
 - **Conformal Kelly drawdown dial（[arxiv 2608.01494](https://arxiv.org/html/2608.01494v1)，2026-08-02）** —— conformal prediction 区间 downside miss 时降杠杆、MaxDD 27.7%→20.3%、slow per-asset rolling 优于 adaptive；本备忘阶段 7 ML 风控远期实证（§5.2）
 - **CUSUM 策略衰减检测（[mathandmarkets 2026-02 Part 81](https://mathandmarkets.com/p/detecting-decay-in-real-time-when)）** —— CUSUM 单侧统计量 S⁺ₜ=max(0, S⁺ₜ₋₁+(μ₀-xₜ)-k)，k=0.5σ/h=4σ balanced；Sharpe~1 策略 50 交易日检测延迟（远优于滚动 Sharpe 6+ 月）；四检验对比（CUSUM/Page-Hinkley/Bayesian 变点/滚动 Sharpe）；本备忘阶段 8 策略衰减检测远期实证（§5.2）
 - **Optimal SL/TP Parameterization（[Li, Laryea & Ihlamur 2026 arXiv:2604.27150](https://arxiv.org/abs/2604.27150)，Oxford + Vela Research）** —— 900+ 历史交易反事实模拟，8960 配置全网格搜索；最强配置 ATR 1.0× 止损+2.0× 止盈+连续 2 笔亏损 circuit-breaker 减仓因子 0.25；exit-rule tuning 是校准问题非启发式选择；本备忘策略级连续亏损熔断施工算法来源（§3.10）
+- **Chuck LeBeau《Exit Strategies for Stocks and Futures》TradeStationWorld 演讲（一手出处）** —— Chandelier Exit 原作者本人材料：退出优先级四层（initial stop→trailing stop→profit protection stop→profit maximizing exit）；"My favorite initial stop is placed 2 or 3 ATRs below my entry point"；"Never let a large profit turn into a small profit. The bigger the profit the tighter the exit"——本 spec 亏损区宽 M=3.0/盈利区紧 M=2.0 双参数设计的一手理论原型（§3.3）
+- **O'Neil 卖出法则 2026 三源**（[openswingtrading 2026-02](https://www.openswingtrading.com/blog/apply-william-o-neil-rules-in-20-minutes-daily) + befreed.ai CANSLIM podcast 2026-04 + eastmoney 威廉·欧奈尔体系 2025-11）—— -7~8% 固定止损无例外/+20~25% 止盈（1-3 周暴涨 20%+ 龙头例外持有 8 周）/跌破 50 日线卖出；本 spec §1 对标项的展开对比与不搬用论证（§3.3）；fxglory 2026-06 Chandelier Exit 22 周期 3×ATR 常见设置与 §3.3 参数表一致
 
 ## 9. 修订记录
 
@@ -658,3 +704,4 @@ class TradeLevelCircuitBreaker:
 | 2026-08-10 | 1.5.0 | 施工标注清理——"施工缺失补全"→"施工伪代码已补全" | §3.2 Triage 分级判定算法 / §3.8 跌停板排队优先级算法 / §3.8 卖出执行时序算法 / §3.9 Kill Switch 强制清仓排序算法 共 4 处标注从"施工缺失补全"更新为"施工伪代码已补全"——v1.1.0/v1.2.0 已补全全部伪代码（triage_position/rank_limit_down_orders/schedule_sell_order/rank_kill_switch_liquidation 四函数完整），标注为历史遗留未同步 | 用户要求再次审查文档所有内容+施工环节流程算法缺失+持续改进。核查发现 42 号 4 处算法伪代码早在 v1.1.0/v1.2.0 已完整补全，但"施工缺失补全"标注未同步更新造成"算法缺失"的误读。本次清理过时标注，准确反映施工状态 |
 | 2026-08-10 | 1.5.1 | 伪代码精度审计——3 处修复 | ①§3.7 `simple_scaling_out` 删除冗余参数 `risk_reward_ratio`（函数体用 `position.risk_reward` 属性，参数未被引用）+ 补全 `compute_exit_price` 的 `highest_close_fn` 参数（原 `...` 省略导致调用不完整）；②§3.3 `compute_stop_loss` 补 `highest_close_fn` 签名说明（Callable[[int], float]，施工方注入，来源 K 线 close rolling max）；③§3.10 TradeLevelCircuitBreaker 表格修正（原"≥5 笔\|0+block"易误解为仓位归零，实际 get_position_scale 返回 min_scale=0.25，is_blocked 仅暂停开新仓，修正为"0.25+block"消除歧义）。边界条件审计：TradeLevelCircuitBreaker.get_position_scale 连续亏损 0-5 笔缩放计算逐笔验证正确（1.0/1.0/0.75/0.50/0.25/0.25）；rank_limit_down_orders/rank_kill_switch_liquidation 三级排序逻辑一致（流动性优先→亏损/仓位）| 七十二轮伪代码边界条件深度审计——换三个新角度（跨文档调用链验证/伪代码边界条件审计/参数来源追踪）发现 3 处精度缺陷，已修复 |
 | 2026-08-10 | 1.5.2 | 伪代码崩溃 bug 修复——死参数+ATR None 崩溃 | ①§3.3 `compute_stop_loss` 删除未使用的 `symbol` 参数（死参数，函数体从不引用），补 `phase` 参数语义说明（与 §3.4 `compute_exit_price` 自动判定 phase 的分工边界）；②§3.4 `compute_exit_price` 修复 ATR None 崩溃 bug——原 `atr_pct = atr_value / position.entry_price if atr_value else 0.02` 仅兜底 atr_pct 但 return 行 `highest_close_fn(N) - M * atr_value` 在 atr_value=None 时 None×float 崩溃，补 ATR 缺失降级固定%逻辑与 §3.3 `compute_stop_loss` 对齐 | 伪代码边界条件深度审计第七十三轮——聚焦 None/空值/除零三类崩溃路径，发现 `compute_exit_price` ATR None 路径必崩（`if atr_value else 0.02` 兜底了 atr_pct 但 return 行仍用 None），与 §3.3 `compute_stop_loss` 的 ATR 缺失降级逻辑不一致。修复后两函数 ATR 缺失路径一致（均降级固定%），`symbol` 死参数清理 |
+| 2026-08-12 | 1.6.0 | 已施工设施盘点新增 + MOD-SELL-014 状态订正 + 35 号状态订正 + 交叉引用补全 + O'Neil/LeBeau 对标展开 | 架构审查（通用规则 #11 基础设施盘点 + 一致性审查）：①**§2.4 新增「已施工设施盘点」**——sell_decision 域已施工 7 模块（突破成败 003/收集器 001/融合 007/紧迫度 009/冲突仲裁 008/猎杀防护 015/置换再平衡 006）+ 跨域可复用设施（risk 域 default_stop_loss_engine trailing/time_based/volatility 三方法 + position 域 TriageLevel 消费方）+ 未施工清单（9 项伪代码状态全标注）+ 与 40 号执行层落地边界；②**MOD-SELL-014 策略止损范式状态硬错误订正**（4 处：§2.3/§4.1/§5.2/§5.3）——此前版本标"已建"，源码核实三方分裂：68 域文档 planned 无代码无蓝图/battle_map generated 仅包入口/源码目录无实现文件，以 68 域文档为准=设计态待施工，MVP 用 Chandelier 阶段切换替代；③**35 号状态全面订正**（7 处：§1/§3.9/§5.2/§5.3/§7/§8.1/循环至零检查）——35 已 active 1.37.0（此前版本标"骨架/未就绪"已过时），阶段 3 触发条件已满足，§3.9 四级阈值与 30 §2.5 外层口径一致无需改数值，补 35 §3.2 内层代码 5/10/15% 双轨说明；④**§2.1 "13 生产态"精确化**——6 个为 __init__.py 包入口占位，真实业务生产态 7 个；⑤**§7 待定问题补 2 项**——MOD-SELL-008 三方分裂源码核实补记（源码 production 无 deprecated 字样）+ risk 域止损引擎与本 spec 替换/并存关系裁定请求；⑥**§8.1 补 40/37 号交叉引用**（40=落地通道/37=流动性危机检测真源）；⑦**§3.3 补 O'Neil 卖出法则对比论证 + LeBeau 一手出处**——§1 对标项"O'Neil 卖出法则"此前只有标题未展开，补 7-8% 固定止损/+20-25% 止盈/8 周例外三规则的不搬用论证（A 股 T+1+涨跌停缺口）+ LeBeau 退出优先级四层与"利润越大止盈越紧"是 Chandelier 双 M 值设计的一手原型；§8.3 补 LeBeau 演讲 PDF + O'Neil 三源条目。⑧**2026-08 最新研究五次复查**——WebSearch 确认 journalplus/volatilitybox/fxglory Chandelier 参数与 §3.3 一致、Li 2026 circuit breaker 已登记、miniQMT/执行算法无新内容，无新硬错误 |
