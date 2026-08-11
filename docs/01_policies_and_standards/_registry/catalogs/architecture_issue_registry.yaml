@@ -14444,7 +14444,8 @@ entries:
     - '无 battle_map 环节（该能力未上地图，本条为"不引入"治理记录）'
     - 'strategy_registry.yaml capacity 字段保留为静态元数据'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-CH-032（异地副本不引入先例）; Mamba/SSM 过度工程评估先例'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14464,7 +14465,8 @@ entries:
     - '无 battle_map 环节（该能力未上地图）'
     - 'BM-POS-06 / BM-REC-01-B 现有能力承接，不新建'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; #ARCH-CH-032（不引入先例）'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14482,7 +14484,8 @@ entries:
     - '无 battle_map 环节（该能力未上地图）'
     - 'BM-REC-02-D 现有报告能力承接"自看"需求'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; #ARCH-OE-002'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14498,7 +14501,8 @@ entries:
   impact:
     - '无 battle_map 环节（该能力未上地图）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; #ARCH-OE-002'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14517,7 +14521,8 @@ entries:
     - 'BM-RC-08-E（操作风险审计，设计态）降级为轻量操作日志'
     - 'battle_map 真源待联动更新（用户确认后）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14537,7 +14542,8 @@ entries:
     - 'config/model_pricing.yaml + config/budget_policy.yaml 保留'
     - '可选：scripts/ops/weekly_token_usage_report.py（轻量定期汇总，非实时）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14558,7 +14564,8 @@ entries:
     - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
     - 'CC-15 事件溯源承接可追溯需求'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; CC-15（事件溯源承接可追溯）'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14577,7 +14584,8 @@ entries:
     - 'BM-BUY-11（设计态，🔴自建）裁剪为 deprecated'
     - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; #ARCH-OE-007'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14599,7 +14607,8 @@ entries:
     - 'BM-MT-03 / BM-MT-04 / BM-MT-06 / BM-MT-06-A / BM-MT-06-B / BM-MT-02-B 裁剪为 deprecated（远期不采纳）'
     - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: 'Mamba/SSM + Autoencoder-Gated+SAC RL 过度工程评估先例; #ARCH-OE-001'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14621,7 +14630,8 @@ entries:
     - '世界模型 DreamerV3/TD-MPC2 推演裁剪（远期不采纳）'
     - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: 'Mamba/SSM 过度工程评估先例; #ARCH-OE-001; #ARCH-OE-009'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14641,7 +14651,8 @@ entries:
     - 'CC-14（横切机制，设计态）降级为可选模式'
     - 'battle_map_cross_cutting 真源联动更新（用户确认后）'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; red_blue_validator + constitution_guard（承接审查）'
   created: '2026-08-11'
   last_updated: '2026-08-11'
@@ -14662,13 +14673,14 @@ entries:
     - '无 battle_map 环节（多券商 failover 未上地图，本条为"不引入"治理记录）'
     - 'COD（Cancel-on-Disconnect）保留为真缺口，另行登记'
   fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
-  status: proposed
+  status: decided
+  confirmed_by_user: '2026-08-11'
   related_rules: '#ARCH-OE-001; #ARCH-OE-004'
   created: '2026-08-11'
   last_updated: '2026-08-11'
 
 # === 第十批 12 项过度工程裁剪登记完毕（#ARCH-OE-001 ~ #ARCH-OE-012）===
-# 状态汇总：全部 status=proposed（铁律#9：决策类议题 AI 提议待用户确认）
+# 状态汇总：全部 status=decided（用户 2026-08-11 显式确认，铁律#9 满足）
 # 用户确认后改为 decided，再联动更新 battle_map 真源（battle_map_steps / module_translation_registry）
 # 将对应环节标 deprecated/wontfix
 # 裁剪分类：不引入（OE-001~006, OE-012）/ 裁剪已登记设计态环节（OE-007~011）

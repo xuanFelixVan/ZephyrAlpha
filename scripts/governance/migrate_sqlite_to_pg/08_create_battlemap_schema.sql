@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
     indicators       JSONB,
     source_ref       TEXT,
     design_maturity  TEXT    DEFAULT 'production'
-        CHECK (design_maturity IN ('design', 'production')),
+        CHECK (design_maturity IN ('design', 'production', 'deprecated')),
     parent_step_id   TEXT    REFERENCES battle_map_steps(step_id) ON DELETE SET NULL,
     depth            INTEGER NOT NULL DEFAULT 0,
     created_at       TIMESTAMPTZ DEFAULT NOW(),
@@ -53,6 +53,14 @@ CREATE TABLE IF NOT EXISTS battle_map_steps (
 ALTER TABLE battle_map_steps ADD COLUMN IF NOT EXISTS parent_step_id TEXT
     REFERENCES battle_map_steps(step_id) ON DELETE SET NULL;
 ALTER TABLE battle_map_steps ADD COLUMN IF NOT EXISTS depth INTEGER NOT NULL DEFAULT 0;
+
+-- 2026-08-11 #ARCH-OE-007~009 治本：design_maturity CHECK 约束从 2 值升级到 3 值（+deprecated，幂等）
+-- 已存在的库需 DROP 旧约束 + ADD 新约束；新库由 CREATE TABLE 直接建对
+ALTER TABLE battle_map_steps DROP CONSTRAINT IF EXISTS battle_map_steps_design_maturity_check;
+ALTER TABLE battle_map_steps DROP CONSTRAINT IF EXISTS battle_map_steps_design_maturity_check1;
+ALTER TABLE battle_map_steps
+    ADD CONSTRAINT battle_map_steps_design_maturity_check
+    CHECK (design_maturity IN ('design', 'production', 'deprecated'));
 
 -- 2026-08-03 全生命周期扩展：flow_stage CHECK 约束从 6 值升级到 11 值（幂等）
 -- 已存在的库需 DROP 旧约束 + ADD 新约束；新库由 CREATE TABLE 直接建对

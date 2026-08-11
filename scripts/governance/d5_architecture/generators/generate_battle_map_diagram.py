@@ -315,6 +315,14 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
     for s in steps:
         sid = s["step_id"]
         al = anchors_by_step.get(sid, [])
+        # #ARCH-OE-007~009 治理裁定优先（2026-08-11）：step.design_maturity='deprecated'
+        # 直接生效为弃用态（红🟥），覆盖 depgraph 锚点推导——wontfix 裁定是权威的。
+        if (s.get("design_maturity") or "").strip() == "deprecated":
+            s["_effective_status"] = "deprecated"
+            s["_has_candidate"] = _has_candidate_anchor(al)
+            s["_gate_reason"] = ""
+            s["_acquisition_method"] = ""
+            continue
         s["_effective_status"] = _compute_step_status(al, status_map)
         s["_has_candidate"] = _has_candidate_anchor(al)
         # gate_reason：取该环节 primary depgraph 锚点的 gate_reason（首个非空）
@@ -345,9 +353,11 @@ def _load_all() -> tuple[list[dict], list[dict], dict[str, list[dict]]]:
             parent = step_by_id[pid]
             if not anchors_by_step.get(s["step_id"]):  # 子环节无自身锚点
                 own_maturity = (s.get("design_maturity") or "").strip()
-                if own_maturity == "design":
-                    # 子环节显式声明设计态——保持 design，不继承父的 production
-                    s["_effective_status"] = "design"
+                if own_maturity in ("design", "deprecated"):
+                    # 子环节显式声明 design/deprecated——保持，不继承父状态
+                    # design：父已建不代表所有子环节已实现（如 BM-RC-04-E 流动性风险监控）
+                    # deprecated（#ARCH-OE-009，2026-08-11）：子环节 wontfix 裁定，保持弃用态
+                    s["_effective_status"] = own_maturity
                     s["_has_candidate"] = False
                     s["_gate_reason"] = ""
                     s["_acquisition_method"] = ""

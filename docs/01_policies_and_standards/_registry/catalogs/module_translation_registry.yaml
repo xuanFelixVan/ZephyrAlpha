@@ -43827,9 +43827,10 @@ battle_map_steps:
     '
 - step_id: BM-SIM-05
   flow_stage: simulation_validation
-  name_zh: 依赖图数字孪生
+  name_zh: 依赖图数字孪生（已降级-保留快照，#ARCH-OE-010）
   name_en: Dependency Graph Digital Twin
   plain_zh: 把整个系统的依赖图复制一份做数字孪生——改任何模块前先在孪生上 what-if 一遍，预测变更影响。
+    #ARCH-OE-010（2026-08-11 降级）：solo 单组合无架构变更复杂度，降级为"依赖图快照"（保留拓扑可视化，去数字孪生推演+世界模型 DreamerV3 远期不采纳）。
   mechanism_zh: 'D-SIMULATION-13 Dependency Graph Digital Twin 提供依赖图数字孪生+what-if仿真+批量/流式/实时三种模式+依赖拓扑实时映射（P2）；
 
     D-SIMULATION-14 Real-time DT Synchronizer 提供实时数字孪生同步器+依赖图实时同步+预测仿真+变更预演（P2）。
@@ -46164,7 +46165,7 @@ battle_map_cross_cutting:
 
     '
 - category: voting_first_multi_agent
-  name_zh: 投票优先多Agent协作
+  name_zh: 投票优先多Agent协作（已降级-可选，#ARCH-OE-011）
   name_en: Voting-First Multi-Agent Collaboration
   sketch_ref: 交易决策架构 v8.2（L433 升级注记 / L856 支撑层，§29.39 裁定17）
   source_ref: 交易决策架构.md v8.2 支撑层 + §29.39 裁定17

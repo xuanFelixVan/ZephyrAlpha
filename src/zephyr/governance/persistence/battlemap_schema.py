@@ -38,7 +38,12 @@ Safety  : M（DDL 定义，init_battle_map_db 幂等验证）
 
 design_maturity 受控词表（与 depgraph/decisiongraph 节点表对齐）
 -------------------------------------------------------------
-- design_maturity 2态：design / production [ARCH-MM-002 两档化]
+- design_maturity 3态：design / production / deprecated [ARCH-MM-002 两档化]
+  - design/production 与 depgraph/decisiongraph 对齐
+  - deprecated（2026-08-11 新增，#ARCH-OE-007~009 治本）：环节 wontfix/裁剪裁定态。
+    由 architecture_issue_registry.yaml 的 #ARCH-OE-007~009 decided 裁定驱动，生成器
+    _compute_step_status 优先识别 step.design_maturity='deprecated' 直接生效（治理
+    裁定权威，覆盖 depgraph 锚点推导），渲染红色 🟥 弃用态。
 
 四条承重墙不变量（BM-INV-001~004）
 ---------------------------------
@@ -113,8 +118,9 @@ _TARGET_ROLES = ("primary", "supplement", "degradation")
 # edge_type 3值（环节流转边类型）
 _EDGE_TYPES = ("data_flow", "trigger", "degradation")
 
-# design_maturity 2态（与 depgraph/decisiongraph 对齐）
-_DESIGN_MATURITIES = ("design", "production")  # noqa: gate-vocab
+# design_maturity 3态（与 depgraph/decisiongraph 对齐 + deprecated 治理裁定态）
+# deprecated（2026-08-11，#ARCH-OE-007~009）：环节 wontfix/裁剪，生成器渲染红🟥弃用态
+_DESIGN_MATURITIES = ("design", "production", "deprecated")  # noqa: gate-vocab  design_maturity 3态受控词表(含deprecated治理态),depgraph对齐
 
 
 # ---------------------------------------------------------------------------
