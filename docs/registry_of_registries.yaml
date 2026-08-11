@@ -386,7 +386,7 @@ tiers:
         format: yaml
         tier: tier_1_governance
         maintenance: manual
-        entry_count: 12
+        entry_count: 399  # 2026-08-11 更新：含 2026-08-11 第一性原理调研发现的 35 项 proposed 议题（#ARCH-AIGOV-001~010/AICOLLAB-001/RISK-001~005/QUANT-001~005/REG-001~005/ASHARE-001~002/COMPLIANCE-001/SDD-001/AUDIT-001/DRIFT-002/EXEC-001/CI-001/REGCAN-001）
         status: active
         ssoT_for: architecture_issue_id, issue_status, issue_adjudication
 

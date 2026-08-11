@@ -9,9 +9,9 @@ description: 架构议题（#ARCH-XXX）唯一真源（SSoT）。登记所有架
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.5.0
+version: 1.6.0
 created: '2026-06-26'
-last_updated: '2026-08-02'
+last_updated: '2026-08-11'
 # 裁定#208 R6+R7: 议题登记机制建立 + 编号分配铁律文档化
 
 # ============================================================
@@ -13762,3 +13762,914 @@ entries:
   related_rules: '#ARCH-DATA-001（即时止血）; #ARCH-CH-022（CapabilityContract 行为契约）; #ARCH-CH-INDUSTRY-CLASS-MIGRATE（同类前例）; #ARCH-CH-004（蓝图-实现鸿沟）'
   created: '2026-08-10'
   last_updated: '2026-08-10'
+
+# ===========================================================================
+# 2026-08-11 批量登记：第一性原理调研发现的 33 项缺失
+# 来源：客观架构师对标专业机构+量化社区+氛围编程社区的差距分析报告
+# 决策依据：5 条第一性原理（P1资金安全/P2回测可复现/P3状态确定性/P4决策可追溯/P5风险不可累积）
+# 替代机制说明：项目已有 ruling_registry.yaml（裁定#NNN 含 superseded_by 链，可推翻）
+#               替代 ADR（ADR 不可推翻，对个人项目是过度工程），故不引入 ADR
+# 状态说明：所有议题 status=proposed（铁律#9：决策类议题 AI 提议待用户确认）
+# ===========================================================================
+
+# --- 第一批：AI 治理类（10 项，#ARCH-AIGOV-001~010）---
+- issue_id: '#ARCH-AIGOV-001'
+  title: 'PATH-shim git wrapper 补充拦截 git commit --no-verify（65号 §7.1 扩展）'
+  category: ai_governance
+  severity: P0致命
+  adjudication: |-
+    背景：65号 §7.1 已落地 PowerShell git wrapper 覆盖 clean/reset/checkout/restore/stash/rm/branch/push 9 类命令，但未拦截 `git commit --no-verify`——AI 可绕过 pre-commit 60+ hooks。
+    业界事件（anthropics/claude-code issue #40117）：Claude Code Opus 4.6 被记录连续 6 次提交绕过 deny 规则，使用 --no-verify、git stash、quiet flag。issue 被 close as "not planned"。
+    裁定：扩展 65 号 §7.1 PowerShell wrapper 增加 `git commit` 的 `--no-verify`/`-n` 阻断规则。逃生通道：用户显式确认后用 `& $_realGit commit --no-verify`。
+    与 PreToolUse hook 关系：Trae IDE 不支持 hooks，PATH-shim 是唯一可靠层。
+  impact:
+    - 'scripts/install_git_safety_wrapper.ps1（扩展 wrapper 函数新增 commit --no-verify 阻断）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（§7.1 阻断规则表补充 commit --no-verify 行 + §8 验证清单补测试用例）'
+  fix_phase: '待施工（与 65 号 §7.1 同步扩展，约 0.5 天）'
+  status: proposed
+  related_rules: 'ARCH-GIT-CLEAN-GUARD-FIX; #ARCH-GIT-SELF-HARM-GUARD'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-002'
+  title: 'Secret 双层扫描（pre-commit detect-secrets + post-push GitGuardian）'
+  category: ai_governance
+  severity: P0致命
+  adjudication: |-
+    业界数据（GitGuardian 2026）：2025 年 public GitHub 扫描到 28.65M 新泄露密钥（+34% YoY）；AI 辅助提交泄露率是基线 2×；Claude Code 特定泄露率 3.2%（基线 1.5%）。
+    本项目 26 路 AI 处理 API key / exchange secret（量化系统核心资产），3.2% 泄露率 = 必然泄露交易所密钥。
+    裁定：①pre-commit 引入 Yelp detect-secrets hook（pre-commit-config.yaml 新增）；②post-push 接 GitGuardian（GitHub Actions 新增 secret-scan job）；③ AGENTS.md RULE-SECRET 永久规则禁止硬编码密钥。
+  impact:
+    - '.pre-commit-config.yaml（新增 detect-secrets hook）'
+    - '.github/workflows/governance.yml（新增 secret-scan job）'
+    - 'AGENTS.md（新增 RULE-SECRET 节）'
+  fix_phase: '待施工（约 1 天）'
+  status: proposed
+  related_rules: '#ARCH-SEC-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-003'
+  title: 'Library Hallucination 检测（Mypy + Pyright + 包名验证）'
+  category: ai_governance
+  severity: P0致命
+  adjudication: |-
+    业界研究（Miranda-Pena 2026 arXiv 2604.07755）：Mypy/Pyright/grammar 三种静态方法可检 14-85% library 幻觉，理论上限 48.5-77%。LLM 在 NL-to-code benchmark 上 8.1-40% 响应含不存在库特性。Spracklen 2025：GPT-4 turbo 4% 幻觉包名、CodeLlama 7B 26%。
+    本项目量化系统依赖大量第三方库（ccxt/backtrader/zipline/vectorbt/akshare/tushare 等），AI 幻觉包名/参数 = 运行时崩溃或更糟的"恶意包供应链攻击"（攻击者注册与幻觉同名的恶意包）。
+    裁定：①pre-commit 新增 mypy + pyright 类型检查（覆盖 import 语句）；②新增包名白名单校验脚本（scripts/verify_imports.py 扫 src/zephyr 全部 import，与 PyPI 白名单对比）；③ AGENTS.md RULE-IMPORT 防幻觉规则。
+  impact:
+    - '.pre-commit-config.yaml（新增 mypy/pyright hook）'
+    - 'scripts/governance/verify_imports.py（新建）'
+    - 'AGENTS.md（新增 RULE-IMPORT 节）'
+  fix_phase: '待施工（约 2 天）'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-004'
+  title: 'Revertability git 四步纪律（push before risky run）'
+  category: ai_governance
+  severity: P0致命
+  adjudication: |-
+    业界（Replit 2025-12 / Claude Code /rewind / Cursor Restore Checkpoint）：coding agent 必然犯错，必须运行在"每个操作可逆"的基础设施上。但工具 checkpoint 都不追踪 bash 命令（rm/mv/cp）副作用，且本地存储、机器 dies 即丢失。
+    65 号 2026-08-11 灾难正是 bash 副作用（git clean -fd）的典型。
+    裁定：建立 git 四步纪律——①commit baseline（开工前基线）→ ②diff review（每轮 diff 自检）→ ③中间 commit（每完成一个子任务 commit 一次）→ ④push before risky run（执行危险命令前必须先 commit + push 远程）。
+    落地：AGENTS.md RULE-REVERT 永久规则；pre-commit 新增 GATE-PUSH-BEFORE-RISKY 检测（dangerous command 前无 push 则阻断，可选）。
+  impact:
+    - 'AGENTS.md（新增 RULE-REVERT 节）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（§7 新增施工项 9）'
+  fix_phase: '待施工（约 0.5 天）'
+  status: proposed
+  related_rules: 'ARCH-GIT-CLEAN-GUARD-FIX'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-005'
+  title: '对抗式多 agent（生成/审查/测试分离，禁止单 agent 自审）'
+  category: ai_governance
+  severity: P1高
+  adjudication: |-
+    业界数据（QuantCode-Bench arxiv 2604.15151 2026-04）：单轮 claude-opus-4.6/gpt-5.4 编译率 100% 但 Judge Pass 仅 70-76%；主要失败：信号条件不激活（17.8%）、__bool__/Line 对象错误（13.1%）、回测失败（26.8%）、无交易（17.8%）。多轮迭代后 best 模型达 95-98%。
+    业界做法（freecodecamp GAN-for-code 2026-03 Claude Forge）：生成器与判别器用独立上下文窗口，判别器看不到生成器推理过程只看输出，避免继承盲点。Plan Reviewer / Code Reviewer / Implementer / Tester 分角色。
+    本项目 26 路 AI 各自循环审查"直到连续 1 轮零改动"——但零改动 ≠ 零问题，可能是共享盲点。
+    裁定：①AI_review_instructions §0 通用规则新增"对抗式审查"机制——每路 AI 完成后必须由另一路 AI 独立审查（context 隔离）；②引入"红队 AI"角色专门找 bug（不写代码只审）；③ AGENTS.md RULE-ADVERSARIAL 永久规则。
+  impact:
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md（§0 新增对抗式审查规则）'
+    - 'AGENTS.md（新增 RULE-ADVERSARIAL 节）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-006'
+  title: 'AGENTS.md 嵌套就近优先（拆分 327KB 根文件）'
+  category: ai_governance
+  severity: P2中
+  adjudication: |-
+    业界（Linux Foundation AAIF 2025 采纳，2026-03 已被 60,000+ 仓库采纳，支持 14+ 工具；OpenAI Codex 仓库使用 88 个嵌套 AGENTS.md）。
+    Gloaguen 2026 研究结论：LLM 自动生成的 context 文件会降低 agent 任务成功率并使推理成本增加 20% 以上；人类手写、最小化、非可推断信息才有效（仅 +4% 改进）。
+    本项目单一根 AGENTS.md 327KB，违反 Gloaguen 研究结论——已超 LLM 可靠跟随能力。
+    裁定：①按业务域拆分 AGENTS.md（src/zephyr/<domain>/AGENTS.md 各一份，只写该域特化规则）；②根 AGENTS.md 保留跨域通用规则（精简至 <50KB）；③就近优先机制——离被编辑文件最近的 AGENTS.md 优先生效。
+  impact:
+    - 'AGENTS.md（精简根文件至 <50KB）'
+    - 'src/zephyr/{regime,factor,pf_core,risk,ex_core,...}/AGENTS.md（新建各域子文件）'
+  fix_phase: '待施工（约 1-2 周）'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-007'
+  title: '静态分析反馈环（Bandit+Pylint+CodeQL→AI 修复迭代）'
+  category: ai_governance
+  severity: P1高
+  adjudication: |-
+    业界（Blyth 2025 arXiv 2508.14419）：Bandit + Pylint + CodeQL 作为 LLM 反馈环，GPT-4o 经 10 次迭代：security issues 40%→13%，readability violations 80%→11%，reliability warnings 50%→11%。Alrashedy et al. 用 Bandit feedback loop 实现 CodeQL 安全问题 -30.8%。
+    裁定：①pre-commit 已有 60+ hooks 但无 LLM-specific 反馈环——新增 scripts/ai_fix_loop.py（执行 Bandit/Pylint/CodeQL → 提取 violations → 反馈给 AI 修复 → 迭代至收敛）；②CI 增加 ai-fix-loop job（PR 触发）；③阈值：security issues >0 阻断 merge。
+  impact:
+    - 'scripts/governance/ai_fix_loop.py（新建）'
+    - '.github/workflows/governance.yml（新增 ai-fix-loop job）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-008'
+  title: '多层 Guardrails（pre-input + post-retrieval + pre-tool-call + post-output）'
+  category: ai_governance
+  severity: P1高
+  adjudication: |-
+    业界（futureagi.com 2026 / SENTINEL SAID Lab / TRIAD arXiv 2606.05805 2026-06）：guardrail = runtime policy check 拦截 LLM input/output，毫秒级决策 allow/block/rewrite/escalate。
+    2026 threat surface：pre-input（PromptInjection judge-model）→ post-retrieval（间接注入，RAG/MCP 主导攻击向量）→ pre-tool-call（authorization spoofing）→ post-output（toxicity/PII/hallucination）。
+    SENTINEL Layer 3 context-integrity 规则贡献 +35.7pp 边际增益，86% 拦截间接 tool-injection。TRIAD 三路决策（Proceed/Update/Refuse）。
+    裁定：①引入 LangChain Middleware PIIMiddleware（redact/mask/hash/block 四策略）；②新建 scripts/guardrails/pre_tool_call.py 拦截危险 tool 调用（如直接执行 SQL drop）；③ AGENTS.md RULE-GUARDRAIL 永久规则。
+  impact:
+    - 'src/zephyr/governance/guardrails/（新建目录，pre_tool_call.py / post_output.py）'
+    - 'AGENTS.md（新增 RULE-GUARDRAIL 节）'
+  fix_phase: '待施工（约 1-2 周）'
+  status: proposed
+  related_rules: '#ARCH-AIGOV-005'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-009'
+  title: 'Patchwork Problem 图不变量验证框架（import/call/dependency/config/schema/resource/control-flow/routing 图）'
+  category: ai_governance
+  severity: P2中
+  adjudication: |-
+    业界（Mothukuri & Parizi 2026-07 arXiv 2607.08981）：LLM 生成代码常局部正确但全局不一致（FastAPI 端点引用不存在的 Pydantic 字段、Django view 假设未声明环境变量）。提出 8 类失败分类 + 图不变量验证框架。
+    本项目 26 路并行生成，每路只看局部，跨文件 invariant（如策略文件与回测引擎接口一致性、配置 schema 与读取代码一致性）必然破坏。
+    裁定：①新建 scripts/governance/patchwork_check.py（构建 8 类图，每类验证不变量）；②CI 增加 patchwork job；③阈值：不变量违反 >0 阻断 merge。
+  impact:
+    - 'scripts/governance/patchwork_check.py（新建）'
+    - '.github/workflows/governance.yml（新增 patchwork job）'
+  fix_phase: '待施工（约 1-2 周）'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AIGOV-010'
+  title: 'OWASP Agentic Top 10 安全扫描（agent-audit CI 集成）'
+  category: ai_governance
+  severity: P1高
+  adjudication: |-
+    业界（agent-audit HeadyZhang 2026-07，72 条规则映射 OWASP Agentic Top 10 2026）：CI 中 `agent-audit scan . --severity high` 硬门禁。覆盖 extension permission boundary、prompt injection、tool abuse 等。
+    本项目 26 路 AI 调用 MCP/工具/外部 API，无 agentic 安全扫描 = OWASP Agentic Top 10 风险（如 prompt injection via tool response、system_prompt_extraction）无防线。
+    裁定：①引入 agent-audit 工具；②CI 新增 agent-audit-scan job（severity=high 阻断）；③ AGENTS.md RULE-OWASP 永久规则。
+  impact:
+    - '.github/workflows/governance.yml（新增 agent-audit-scan job）'
+    - 'AGENTS.md（新增 RULE-OWASP 节）'
+  fix_phase: '待施工（约 3 天）'
+  status: proposed
+  related_rules: '#ARCH-AIGOV-008'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第二批：AI 协作类（1 项，#ARCH-AICOLLAB-001，方案写入 65 号备忘）---
+- issue_id: '#ARCH-AICOLLAB-001'
+  title: 'Git Worktree + File Lock(TTL) + Task Board 三件套（26 路协调层）'
+  category: ai_collaboration
+  severity: P1高
+  adjudication: |-
+    业界事实标准（Conductor / Superset / Emdash / Claude Code Agent Teams 2026）：每个 agent 一个独立 checkout 目录 + 分支；file lock with TTL（60 min 自动过期）；task board（claim/complete/block）；presence（heartbeat 自动衰减）。
+    Anthropic 报告 multi-agent 相比单 agent 任务完成率 +90%；Cognition 测得单 agent 60% 时间在搜索（context 污染）。
+    本项目 26 路 AI 共用同一 working directory + 611 行 lock_files.py 但 registry.json 为空无人用——必然出现 silent data loss。
+    裁定：完整采纳三件套——①Git Worktree（每 AI 独立 checkout+分支，物理隔离）；②File Lock(TTL 60min) 激活现有 lock_files.py；③Task Board（claim/complete/block 状态机，基于 SQLite）。
+    方案详写入 65 号备忘 §12（另一 AI 正施工），施工完成后从 design 态晋升。
+  impact:
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（激活+扩展）'
+    - 'scripts/lock_files.py（激活 registry.json + TTL 60min 自动过期）'
+    - 'scripts/task_board.py（新建，SQLite-based claim/complete/block 状态机）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md（§12 新增三件套方案）'
+  fix_phase: '待施工（约 1 周，另一 AI 正施工）'
+  status: proposed
+  related_rules: '#ARCH-WORKTREE-001（stale worktree 堆积治本）; ARCH-GIT-CLEAN-GUARD-FIX'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第三批：机构风控类（5 项，#ARCH-RISK-001~005）---
+- issue_id: '#ARCH-RISK-001'
+  title: 'Kill Switch 经纪商侧硬止损（miniQMT 平台崩溃托底）'
+  category: institutional_risk_control
+  severity: P0致命
+  adjudication: |-
+    业界标配（NexusFi 2026-06）：Kill Switch 四层架构——L1 代码级（P&L guard / 订单数限制 / 仓 size 校验）+ L2 平台级（NinjaTrader/Sierra 风控）+ L3 经纪商/FCM 硬止损（即使平台崩溃仍生效）+ L4 交易所级（CME Globex 挂单断连仍存活）。
+    Knight Capital 45 分钟亏 4.4 亿美元是强制 kill switch 的法规起源（SEC Rule 15c3-5 / MiFID II RTS 6）。
+    本项目 miniQMT 通道只依赖客户端代码止损，平台崩溃则无人托底——违反第一性原理 P1（资金安全 > Alpha 收益），#1 高风险缺失。
+    裁定：①在 miniQMT 客户端配置经纪商侧硬止损（总回撤 10%/日内 3%）；②探索 xtquant 提供的 broker-side stop 接口；③若无 broker-side 接口，引入外部 watchdog 进程（独立监控 + 强制平仓 API）。
+  impact:
+    - 'src/zephyr/ex_core/broker_hard_stop.py（新建）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§Kill Switch 扩展经纪商侧）'
+  fix_phase: '待施工（约 3-5 天）'
+  status: proposed
+  related_rules: '#ARCH-EXEC-001; 35 号 §Kill Switch'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-RISK-002'
+  title: '7-Trigger 熔断器（补"系统错误频发"触发：拒单率/行情断流）'
+  category: institutional_risk_control
+  severity: P0致命
+  adjudication: |-
+    业界（KlawTrade 2026-04）：7 触发——5 连亏 / 日亏 3% / 周亏 7% / 回撤 15% / VIX>35 / 5 分钟 3+ 系统错误 / 手动 kill。任一触发 halt 新单，存量止损仍走经纪商。
+    本项目缺"系统错误频发"触发（miniQMT 拒单、行情断流），会在基础设施异常时继续盲目下单。
+    裁定：扩展 35 号回撤 Protocol 与 37 号流动性危机，新增第 7 触发——5 分钟内 3+ 系统错误（拒单/行情断流/连接断开）→ halt 新单 30 分钟 + 自动告警。
+  impact:
+    - 'src/zephyr/risk/circuit_breaker_7trigger.py（新建或扩展）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§7-Trigger 扩展）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/37_liquidity_crisis_protocol.md（联动）'
+  fix_phase: '待施工（约 2 天）'
+  status: proposed
+  related_rules: '35 号 §Kill Switch; 37 号 §流动性危机'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-RISK-003'
+  title: '14-Check 事前风控（A 股特化：涨跌停/ST/停牌/新股次新股/板块集中度）'
+  category: institutional_risk_control
+  severity: P0致命
+  adjudication: |-
+    业界（KlawTrade 2026-04）：事前风控四组 14 项——Universe（黑名单/信号置信度下限）+ Position（单仓≤10%/单笔亏损≤1-2%/现金预留 10%）+ Portfolio（开仓数≤15/日交易≤50/日亏≤3%/周亏≤7%/回撤≤15%/板块≤30%/相关簇≤40%）+ Market-quality（最小成交量/最大买卖价差 2%）。全部非短路评估，留审计日志。
+    本项目 A 股 T+1 不能做空，但仍需检查——单标的持仓、板块集中度、涨跌停价拒绝、ST/退市标的拒绝、新股次新股过滤、停牌处理。
+    裁定：新建 src/zephyr/risk/pre_trade_check.py 实现 14-Check；扩展 ex_core 在下单前调用；每项检查留审计日志。
+  impact:
+    - 'src/zephyr/risk/pre_trade_check.py（新建 14-Check 实现）'
+    - 'src/zephyr/ex_core/order_manager.py（下单前调用 pre_trade_check）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（§14-Check 扩展）'
+  fix_phase: '待施工（约 3 天）'
+  status: proposed
+  related_rules: '#ARCH-EXEC-001; 35 号 §风控; 40 号 §执行'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-RISK-004'
+  title: '单笔风控 L1（0.5-1% risk / 最小 R:R 2:1 / 杠杆上限）'
+  category: institutional_risk_control
+  severity: P0致命
+  adjudication: |-
+    业界（titan-trading-system 2026-01 五层风控）：L1 单笔（0.5-1% risk / 杠杆 / 最小 R:R 2:1）。机构框架通常单笔 1-2%、组合 15-20%。
+    本项目缺单笔 L1 风控——违反第一性原理 P1，无单笔风控 = 一次大单即可爆仓。
+    裁定：新建 src/zephyr/risk/single_trade_risk.py，实现单笔 risk% 限制（默认 1%）+ 最小 R:R 2:1 + 杠杆上限（A 股无杠杆，但融资融券可设）；下单前校验。
+  impact:
+    - 'src/zephyr/risk/single_trade_risk.py（新建）'
+    - 'src/zephyr/ex_core/order_manager.py（下单前调用 single_trade_risk）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§L1 单笔扩展）'
+  fix_phase: '待施工（约 1 天）'
+  status: proposed
+  related_rules: '#ARCH-RISK-003'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-RISK-005'
+  title: '3-Tier 回撤协议（Green/Amber/Red 中间态减仓）'
+  category: institutional_risk_control
+  severity: P1高
+  adjudication: |-
+    业界（CompleteTradersEdge 2026-04）：三区——Green（满仓正常）+ Amber（回撤 2-3%→仓位减半至 0.5% risk + 仅 A 级行情 + 日≤2-3 笔）+ Red（回撤 6%→强制停盘 48h + 逐笔复盘）。阈值需基于策略历史最大连亏校准（Amber≈50%最大回撤，Red≈75-80%）。
+    本项目四级阈值 8/15/20/25% 是"亏到 X% 就停"的单阈值模型，缺少"减仓不减仓"的中间态——情绪化报复交易风险高。
+    裁定：扩展 35 号回撤 Protocol，在 8%/15%/20%/25% 四级阈值之间插入 Amber 减仓带——回撤 4-6% 时仓位减半 + 仅 A 级行情 + 日≤2-3 笔；阈值校准基于策略历史最大连亏。
+  impact:
+    - 'src/zephyr/risk/drawdown_protocol.py（扩展 Amber 中间态）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/35_drawdown_protocol_impl.md（§3-Tier 扩展）'
+  fix_phase: '待施工（约 3 天）'
+  status: proposed
+  related_rules: '35 号 §四级回撤'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第四批：量化架构类（5 项，#ARCH-QUANT-001~005）---
+- issue_id: '#ARCH-QUANT-001'
+  title: '回测-模拟-实盘同一内核（NautilusKernel 式抽象）'
+  category: quant_architecture
+  severity: P1高
+  adjudication: |-
+    业界标准（NautilusTrader 2026-03）：NautilusKernel 单线程 + MessageBus 同步优先级；BacktestEngine 与 LiveNode 共享同一消息总线、执行引擎、风控、组合状态机；只在"数据/执行客户端"边界做替换；同一份 Python 策略文件回测、模拟、实盘三用。
+    QuantConnect Lean 五大可插拔接口 IDataFeed/IAlgorithm/IBrokerage/ITransactionHandler/IResultHandler 实现回测↔实盘零代码迁移。
+    本项目 backtest/ 已施工 9 模块，execution_simulation/ 是 stub，ex_core/ partially_implemented，ex_sor/ 是 planning stub——回测/模拟/实盘三套路径独立，会产生 reality gap，策略行为无法在回测中被证伪。
+    裁定：参考 NautilusKernel 设计，在 pf_core 建立统一 Kernel 抽象，回测/模拟/实盘三模式共享策略代码 + 风控 + 组合状态机，只在 data_feed 与 broker_client 边界做替换。
+  impact:
+    - 'src/zephyr/pf_core/kernel.py（新建统一 Kernel 抽象）'
+    - 'src/zephyr/backtest/core/engine_base.py（重构为 Kernel 模式）'
+    - 'src/zephyr/ex_core/execution_engine.py（重构为 Kernel client）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/52_backtest_framework_docking.md（§同一内核扩展）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§同一内核扩展）'
+  fix_phase: '待施工（约 2-4 周，大重构）'
+  status: proposed
+  related_rules: '#ARCH-QUANT-002; #ARCH-QUANT-003; #ARCH-QUANT-004'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-QUANT-002'
+  title: 'Crash-only 设计 + 状态外部化（Redis 持久化）'
+  category: quant_architecture
+  severity: P1高
+  adjudication: |-
+    业界（NautilusTrader）：crash-only 设计——启动与崩溃恢复共用同一路径，关键状态外部化（Redis 持久化），快速重启 + 幂等操作 + 不可恢复错误 fail-fast 终止。
+    本项目 miniQMT 连接断开重连后持仓/挂单状态可能与策略记忆不一致（"ghost position"问题），2026 年 NexusFi 文档反复警告的高频事故源。
+    裁定：①关键状态（持仓/挂单/资金/策略状态机）外部化到 Redis（已有 Redis 基础设施）；②启动流程统一为"恢复或新建"双路径；③幂等操作（如下单带 idempotency_key）；④不可恢复错误 fail-fast。
+  impact:
+    - 'src/zephyr/shared/state_store.py（新建 Redis 状态外部化层）'
+    - 'src/zephyr/pf_core/kernel.py（启动恢复流程）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§Crash-only 扩展）'
+  fix_phase: '待施工（约 1-2 周）'
+  status: proposed
+  related_rules: '#ARCH-QUANT-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-QUANT-003'
+  title: '53_simulation_live_path 5 态 FSM 状态机代码落地'
+  category: quant_architecture
+  severity: P1高
+  adjudication: |-
+    项目记忆已记录：53_simulation_live_path 5 态 FSM 状态机代码未落地。
+    5 态：INITIALIZING / PAPER_TRADING / HALF_SIZED / FULL_LIVE / HALTED。
+    裁定：新建 src/zephyr/simulation/live_path_fsm.py 实现 5 态状态机；与 53 号文档对齐；接入 pf_core Kernel。
+  impact:
+    - 'src/zephyr/simulation/live_path_fsm.py（新建）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§5 态 FSM 落地）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '#ARCH-QUANT-001; #ARCH-QUANT-002'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-QUANT-004'
+  title: 'pf_core / pf_alloc / ex_sor 三个 stub 落地'
+  category: quant_architecture
+  severity: P1高
+  adjudication: |-
+    项目调研发现：pf_core/ 仅 strategy_engine.py 单文件；pf_alloc/ 仅空骨架子目录；ex_sor/ 是 planning stub。
+    违反第一性原理 P2/P3——策略载体未施工，回测/实盘无统一抽象；仓位/资金分配无实现，状态无法重建；Smart Order Router 未建，回测/实盘下单路径分叉。
+    裁定：①pf_core 落地 StrategyBook + FirmRiskAggregator + Kernel 抽象（参考 30 号 Model A）；②pf_alloc 落地 RegimeMetaAllocator + BudgetChangeHandler（参考 33/34 号）；③ex_sor 落地 TWAP/VWAP/IS 三算法（参考 40 号）。
+  impact:
+    - 'src/zephyr/pf_core/{strategy_book,firm_risk_aggregator,kernel}.py（新建）'
+    - 'src/zephyr/pf_alloc/{regime_meta_allocator,budget_change_handler}.py（新建）'
+    - 'src/zephyr/ex_sor/{twap,vwap,is}.py（新建）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/32_firm_risk_aggregator.md（落地）'
+  fix_phase: '待施工（约 2-3 周）'
+  status: proposed
+  related_rules: '#ARCH-QUANT-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-QUANT-005'
+  title: 'VaR → ES 范式迁移（ES 进决策层，不只监控层）'
+  category: quant_architecture
+  severity: P2中
+  adjudication: |-
+    业界：Basel Committee 2019 FRTB 正式用 ES（97.5%）替代 VaR（99%），因为 VaR 不满足次可加性、对肥尾盲视。forex-basics 2026-05 / positioned.app 2026-03 / frmquizbank 2026-08 均强调 ES 是"相干风险测度"。
+    本项目 36 号 v1.8.0 已含 VaR+ES，但 ES 仅作监控层未作决策层，A 股 2015/2024 连续跌停的 ES 远超 VaR。
+    裁定：扩展 36 号 VaR/ES，将 ES_95 作为仓位决策的硬约束（ES>1.3×基准→再减仓 20%），不只监控告警。
+  impact:
+    - 'src/zephyr/risk/var_es_monitoring.py（ES 进决策层）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/36_var_es_monitoring.md（§ES 决策层扩展）'
+  fix_phase: '待施工（约 3 天）'
+  status: proposed
+  related_rules: '36 号 §VaR/ES'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第五批：治理/注册表类（5 项，#ARCH-REG-001~005）---
+- issue_id: '#ARCH-REG-001'
+  title: 'factor_registry schema + provenance（含 experiment_id/backtest_id）'
+  category: registry_governance
+  severity: P1高
+  adjudication: |-
+    业界标准（EasyQuant 2026-05）：factor_definition（code/category/calc_expr_json/status DRAFT|ACTIVE|DEPRECATED）+ factor_version（version+params+calc_expr）+ experiment（config_json/result_json/trace_json）+ artifact（release_note/published_by）。
+    本项目 factor_registry 已设计 schema（62 号 v1.13.0）但未施工（P1 待施工），后期无法回答"实盘跑的是哪个版本因子"。
+    裁定：按 62 号 §6.1.1 schema 落地 factor_registry.yaml；新增 provenance 字段（experiment_id + backtest_id + created_at + published_by + status 状态机）。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml（新建，按 62 号 schema）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md（§5 factor_registry 落地）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '62 号 §6.1.1; #ARCH-REG-002'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-REG-002'
+  title: 'strategy_registry 退役状态机（rolling Sharpe 退化阈值 + 相关性不稳定）'
+  category: registry_governance
+  severity: P1高
+  adjudication: |-
+    业界（Linitics 2026-04 / QuantInsider 2026-04）：68% 策略 18-24 个月内需重大修改或退役。QuantInsider 给出衰减诊断三步——OOS 模型精度评估、执行指标调查、长期单笔 P&L 分析；Linitics 明确"策略不是亏钱时退役，而是失去统计有效性时退役"。
+    本项目 61 号 v2.9.1 已有生命周期框架，但实际只做"上线/下线"二态，缺少退役判定阈值。
+    裁定：扩展 strategy_registry schema，新增退役状态机字段（rolling_sharpe_30d / decay_threshold_20pct / correlation_drift / status=DRAFT|ACTIVE|DEPRECATED|RETIRED）。
+  impact:
+    - 'docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml（新建，含退役状态机）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md（§6.1.2 落地）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '#ARCH-REG-001; 61 号 §策略生命周期'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-REG-003'
+  title: '策略衰减检测（30 天滚动窗口 + 20% 退化阈值告警）'
+  category: registry_governance
+  severity: P1高
+  adjudication: |-
+    业界（WorldQuant BRAIN AlphaQualityMonitor）：30 天滚动窗口 + 20% 退化阈值触发告警。
+    本项目 55 号 v1.21.0 已有监控框架，但缺少具体的衰减检测算法——会在策略已失效后仍持续亏损加仓。
+    裁定：新建 src/zephyr/observability/strategy_decay_detector.py，实现 30 天 rolling Sharpe + 20% 退化阈值告警 + 自动建议退役。
+  impact:
+    - 'src/zephyr/observability/strategy_decay_detector.py（新建）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md（§衰减检测扩展）'
+  fix_phase: '待施工（约 3 天）'
+  status: proposed
+  related_rules: '#ARCH-REG-002; 55 号 §监控'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-REG-004'
+  title: 'MLOps 四支柱简化版（versioning + tests + CI/CD + monitoring drift，无 model card）'
+  category: registry_governance
+  severity: P2中
+  adjudication: |-
+    业界（iana-data 2026-06）：MLOps 四支柱——Versioning（code+data+model+hyperparams）+ Tests + CI/CD + Monitoring（数据漂移/概念漂移/运营）。
+    用户裁定：不引入 model card（量化策略不是 ML 模型，无需伦理考虑）；保留其他三支柱。
+    裁定：①扩展 51 号 Panel dashboard 增加 model versioning + drift detection（PSI/KS）+ rollback；②新建 src/zephyr/observability/drift_detector.py（PSI/KS 自动检测）；③触发再训练告警。
+  impact:
+    - 'src/zephyr/observability/drift_detector.py（新建）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/51_panel_experiment_history_mlflow_retirement.md（§MLOps 扩展）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '#ARCH-REG-001; #ARCH-REG-002; #ARCH-REG-003'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-REG-005'
+  title: '多策略独立 sub-book + 归因到"框架决策 vs override"'
+  category: registry_governance
+  severity: P2中
+  adjudication: |-
+    业界（QuantHedgeAI 2026-07 Step 6）：年度组合级复盘——目标权重是否在容差内、监控信号是否被采纳、移除触发是否按框架执行、实现组合属性（Sharpe/vol/MDD/effective N）是否与设计一致、override 是否重大、把组合业绩归因到"框架决策"vs"操作员 override"。
+    本项目 30 号 v2.5.0 已定 Model A 独立账本 + firm 聚合，但 53 号 5 态 FSM 代码未落地，独立 sub-book 未真正实现。
+    裁定：①扩展 pf_core/strategy_book.py 实现 sub-book 隔离（每策略独立 P&L）；②新建 src/zephyr/reporting/attribution.py 归因到"框架决策 vs override"。
+  impact:
+    - 'src/zephyr/pf_core/strategy_book.py（扩展 sub-book 隔离）'
+    - 'src/zephyr/reporting/attribution.py（新建归因模块）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/54_reconciliation_attribution.md（§归因扩展）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '30 号 §Model A; 54 号 §归因'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第六批：A 股特化类（2 项，#ARCH-ASHARE-001~002）---
+- issue_id: '#ARCH-ASHARE-001'
+  title: '北向资金配置型/交易型双结构信号 + regime 信号源'
+  category: a_share_specific
+  severity: P1高
+  adjudication: |-
+    2026 数据（东方财富）：Q1 北向净买 3274 亿、Q2 净买 2086 亿创纪录，季末持仓 3.13 万亿首破 3 万亿。硬科技成绝对主线（前 10 中 7 家硬科技，半导体持仓环增 130%）。
+    业界区分：配置型（80%，连续多日稳定流入=底部信号）vs 交易型（20%，日内进出=博弈信号）。区分方法：看持续性（连续多日稳定=配置型；今天大进明天大出=交易型）+ 看标的（消费医药新能源=配置；券商周期=交易）。
+    本项目 19 号北向季度快照 fetcher 仅 draft v0.1.0，未做配置型/交易型区分，未作为 regime 信号源。
+    裁定：①扩展 19 号 fetcher 增加配置型/交易型分类算法；②接入 10 号 regime 检测器作为信号源；③新增因子 northbound_configuration_flow / northbound_trading_flow。
+  impact:
+    - 'src/zephyr/data/implementations/northbound_provider.py（扩展配置型/交易型分类）'
+    - 'src/zephyr/regime/features/northbound_signal.py（新建 regime 信号源）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/19_northbound_hold_snapshot.md（§双结构扩展）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '19 号 §北向; 10 号 §regime 信号源'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-ASHARE-002'
+  title: '情绪周期 6 阶段标准化 + 4 盘面指标自动检测'
+  category: a_share_specific
+  severity: P1高
+  adjudication: |-
+    业界（炒股养家体系 2026）：情绪 6 阶段——极致冰点→弱修复→强回暖→主升高潮→分歧退潮→深度亏钱潮。
+    4 个简易盘面指标：涨停/跌停比值（连续 3 日抬升=回暖）、昨日涨停平均涨幅（>4% 高潮 / <2% 亏钱）、空间板高度、炸板率（<20% 强势 / >40% 松动）。
+    仓位铁律：冰点 10-20% / 回暖 30-50% / 主升 70-90% / 高潮退潮 0-20%。
+    2026-08 数据：打板次日溢价从 2023 年 4.2% 滑至 1.7%，炸板率 68%，传统打板模式胜率崩塌。
+    本项目 28 号 v1.11.0 已有情绪周期框架，但未与 6 阶段标准化对齐，未做盘面 4 指标的自动检测。
+    裁定：①扩展 28 号情绪周期与 6 阶段对齐；②新建 src/zephyr/factor/ashare/sentiment_4indicator.py 实现 4 盘面指标自动检测；③仓位铁律接入 31 号 position_sizing。
+  impact:
+    - 'src/zephyr/factor/ashare/sentiment_4indicator.py（新建）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/28_sentiment_cycle_trading.md（§6 阶段扩展）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/31_position_sizing.md（§仓位铁律扩展）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: '28 号 §情绪周期; 31 号 §仓位'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第七批：合规类（1 项，P0-5 与 P2-8 合并，#ARCH-COMPLIANCE-001）---
+- issue_id: '#ARCH-COMPLIANCE-001'
+  title: '2026-06-08 程序化交易新规模块（5000 笔预警 + 撤单率 80% + 存档 20 年 + 全流程存档）'
+  category: compliance
+  severity: P0致命
+  adjudication: |-
+    法规：2026-06-08 三项新规同步落地——程序化交易细则（单账户单日申报>5000 笔预警/>1 万笔限交易/撤单率>80% 监管/全流程存档 20 年）、港股通风险新规、私募全链条穿透监管。监管高压打击联合坐庄、恶意尾盘砸盘、瞬间拉抬、频繁虚假挂单。
+    本项目未见合规审计模块。AI 生成策略可能在涨跌停边界反复挂撤单，触发监管异动核查甚至账户冻结。
+    裁定：①新建 src/zephyr/compliance/program_trading_regulation.py 实现 4 项硬指标监控（5000 笔预警/1 万笔阻断/撤单率 80% 告警/全流程存档 20 年）；②接入 ex_core 实时监控；③存档日志用 append-only SQLite（不可篡改）。
+  impact:
+    - 'src/zephyr/compliance/program_trading_regulation.py（新建）'
+    - 'src/zephyr/ex_core/order_manager.py（接入合规监控）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（§合规扩展）'
+  fix_phase: '待施工（约 5 天）'
+  status: proposed
+  related_rules: '#ARCH-RISK-002; 40 号 §执行'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# --- 第八批：SDD / 审计 / drift / 执行（4 项）---
+- issue_id: '#ARCH-SDD-001'
+  title: 'GitHub Spec Kit / AWS Kiro SDD 四阶段闭环（Specify→Plan→Tasks→Implement）'
+  category: spec_driven_development
+  severity: P2中
+  adjudication: |-
+    业界（GitHub Spec Kit 82K stars 2026-03 / AWS Kiro 2026-05 GA / Fora Soft 2026-08）：SDD 四阶段 Specify → Plan → Tasks → Implement，每阶段有人工 gate；Spec drift detection job（CI 中强制，代码与 spec 不一致则 build fail）；PR 不带 spec 不合并；task 不带 spec 不启动；GitHub Copilot 借此将 PR cycle time 缩短 75%。
+    用户裁定：全部加入。
+    裁定：①引入 GitHub Spec Kit 框架（npm 安装）；②未来 design_memo 渐进迁移到 Kiro 三文档格式（requirements.md + design.md + tasks.md）；③CI 新增 spec-drift-detection job；④AGENTS.md RULE-SDD 永久规则。
+  impact:
+    - '.github/workflows/governance.yml（新增 spec-drift-detection job）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/_sdd_template/（新建 SDD 模板）'
+    - 'AGENTS.md（新增 RULE-SDD 节）'
+  fix_phase: '待施工（约 2 周，含 design_memo 渐进迁移）'
+  status: proposed
+  related_rules: '#ARCH-DRIFT-002; 01 号 §design_memo 管理'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-AUDIT-001'
+  title: '简化版 IETF AAT audit trail（SHA-256 hash chaining + action classification + tamper-evident）'
+  category: audit_trail
+  severity: P1高
+  adjudication: |-
+    业界（IETF draft-sharif-agent-audit-trail-00 2026-03 / Kognitos 2026-05）：AAT（Agent Audit Trail）JSON 格式——mandatory fields（agent identity / action classification / outcome / trust level）+ tamper-evident SHA-256 hash chaining（RFC 8785）+ optional ECDSA 签名非抵赖。映射 EU AI Act Article 12（2026-08 全面执行，high-risk AI 至少 6 个月留存）。
+    用户裁定：保留核心（SHA-256 hash chaining + action classification + tamper-evident），砍 individual user attribution（单人项目无意义）+ ECDSA 签名 + 6 个月合规留存。
+    本项目有 gov_audit 50+ 模块 + EventStore(WAL+SHA256) + rollback/ 模块，但不符合 IETF AAT 标准。
+    裁定：扩展 gov_audit/EventStore 对齐 IETF AAT 核心字段（agent_id / action_class / outcome / trust_level + SHA-256 hash chain）；不做 individual user attribution / ECDSA / 合规留存。
+  impact:
+    - 'src/zephyr/gov_audit/audit_trail.py（扩展对齐 IETF AAT 核心）'
+    - 'src/zephyr/gov_audit/event_store.py（扩展 hash chaining）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md（§AAT 扩展）'
+  fix_phase: '待施工（约 1 周）'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-DRIFT-002'
+  title: 'Spec drift detection CI job（design_memo 与代码漂移自动检测）'
+  category: spec_drift_detection
+  severity: P1高
+  adjudication: |-
+    业界（Fora Soft 2026-08）：CI 中强制 spec drift detection job，代码与 spec 不一致则 build fail；PR 不带 spec 不合并；task 不带 spec 不启动。GitHub 数据：PR cycle time -75%（Copilot），AWS Kiro 3 周 3 人交付 95% 业务逻辑。
+    本项目 design_memo 体系完善但无 spec drift detection，spec 与代码必然漂移，26 路 AI 读旧 spec 写新代码 = 系统性偏差。
+    裁定：①新建 scripts/governance/spec_drift_detector.py（Grep design_memo 引用的 path 与代码实际 path 比对 + frontmatter status 与代码 build_status 比对）；②CI 新增 spec-drift job；③阈值：drift >5 条阻断 merge。
+  impact:
+    - 'scripts/governance/spec_drift_detector.py（新建）'
+    - '.github/workflows/governance.yml（新增 spec-drift job）'
+  fix_phase: '待施工（约 2 天）'
+  status: proposed
+  related_rules: '#ARCH-SDD-001; #ARCH-DRIFT-PREVENTION-001（已有 depgraph drift）'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-EXEC-001'
+  title: '40_execution_broker 10 项 P0 gap 落地（项目记忆已记录）'
+  category: execution_gap
+  severity: P0致命
+  adjudication: |-
+    项目记忆已记录：40_execution_broker 10 项 P0 实盘生存级 gap——未成交续接 / 撤单率滚动监控 / 资金预占串行扣减 / 价格笼子 / 回调线程 / 断线重连 / 临时停牌 / 除权除息 / 板块整手 / 程序化报备。
+    违反第一性原理 P1/P3——执行层未完整，实盘生存级 gap 会导致资金损失或状态不一致。
+    裁定：扩展 40 号备忘与 ex_core 代码，逐项落地 10 项 gap；每项 gap 配单元测试。
+  impact:
+    - 'src/zephyr/ex_core/order_manager.py（10 项 gap 逐项落地）'
+    - 'src/zephyr/ex_core/miqmt_broker.py（10 项 gap 逐项落地）'
+    - 'tests/zephyr/ex_core/test_10_p0_gaps.py（新建 10 项单测）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/40_execution_broker.md（§10 项 gap 落地）'
+  fix_phase: '待施工（约 5-10 天）'
+  status: proposed
+  related_rules: '#ARCH-RISK-001; #ARCH-RISK-002; #ARCH-RISK-003; #ARCH-COMPLIANCE-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# === 33 项登记完毕 ===
+# 状态汇总：全部 status=proposed（铁律#9：决策类议题 AI 提议待用户确认）
+# 用户确认后改为 decided，再分配裁定#NNN（在 ruling_registry.yaml 登记）
+# 与 ADR 的关系：项目已有 ruling_registry.yaml（裁定#NNN 含 superseded_by 链，可推翻）
+#               替代 ADR（ADR 不可推翻，对个人项目是过度工程），故不引入 ADR
+
+# --- 第九批：循环审查第 1 轮发现 2 项遗漏（#ARCH-CI-001 / #ARCH-REGCAN-001）---
+- issue_id: '#ARCH-CI-001'
+  title: 'CI 真正运行（首次 push origin/dev + 后续每次 commit 自动触发 governance.yml）'
+  category: ai_governance
+  severity: P0致命
+  adjudication: |-
+    65 号备忘记录：origin/dev 已有 783 commits ahead，但从未 push——CI 配置完善（.github/workflows/governance.yml 7 层 40 步 + docker-build job）但实际从未运行。
+    这意味着 60+ pre-commit hooks + 7 层 governance 检查全部名存实亡，"最后防线"完全没生效。
+    违反第一性原理 P1（资金安全）——CI 不运行 = 所有质量门禁形同虚设。
+    裁定：①首次 push origin/dev 触发 CI 全量回归（预计会发现大量错误，分批修复）；②后续每次 commit 自动触发 governance.yml；③建立 GATE-PUSH-FREQUENCY reconciler（7 天无 push 告警）。
+  impact:
+    - 'origin/dev 远程仓库（首次 push）'
+    - '.github/workflows/governance.yml（实际触发）'
+    - 'scripts/governance/push_frequency_reconciler.py（新建，post-commit priority=180）'
+  fix_phase: '待施工（首次 push + 修复 CI 错误，约 3-5 天）'
+  status: proposed
+  related_rules: '#ARCH-AIGOV-004; #ARCH-DRIFT-002'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-REGCAN-001'
+  title: 'ROOR entry_count 自动同步 reconciler（治本 registry_of_registries 元数据漂移）'
+  category: registry_governance
+  severity: P1高
+  adjudication: |-
+    调研发现：ROOR（registry_of_registries.yaml）声明 REG-ARCH-ISSUE-001 entry_count=12，实际 397；声明 REG-CAPCAN-001 entry_count=2，实际 340。"登记表的登记表"自身元数据漂移。
+    这与 #ARCH-DRIFT-PREVENTION-001 depgraph drift 同类但独立——ROOR 是治理注册表的元数据，自身漂移会导致 AI 据此做决策时基础数据失真。
+    裁定：①新建 scripts/governance/roor_entry_count_reconciler.py（post-commit priority=210），每次 commit 后扫描所有注册表实际条目数，与 ROOR 的 entry_count 比对，不一致 fix-in-place；②与 metric_count_drift_reconciler 模式对齐；③覆盖所有 entry_count 字段（REG-ARCH-ISSUE-001 / REG-CAND-001 / REG-RULING-001 / REG-CAPCAN-001 等）。
+  impact:
+    - 'scripts/governance/roor_entry_count_reconciler.py（新建）'
+    - 'tests/scripts/governance/test_roor_entry_count_reconciler.py（新建 ≥10 用例）'
+    - 'src/zephyr/governance/audit/reconciliation_registry.py（__all__ 追加）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册 reconciler）'
+  fix_phase: '待施工（约 2 天）'
+  status: proposed
+  related_rules: '#ARCH-DRIFT-PREVENTION-001（已有 depgraph drift）; #ARCH-DRIFT-002（spec drift）'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# === 35 项登记完毕（33 + 2 循环审查第 1 轮追加）===
+
+# --- 第十批：过度工程裁剪清单登记（#ARCH-OE-001 ~ #ARCH-OE-012，2026-08-11）---
+# 背景：作战地图调研对标专业机构/量化开源/氛围编程社区后发现，若干"机构标配"能力对
+# "单人单账户 A 股、100% AI 开发"场景属过度工程。本批登记裁剪/降级/不引入决议。
+# 先例：#ARCH-CH-032（异地副本不引入）、Mamba/SSM + Autoencoder-Gated+SAC RL 评估为过度工程、
+#       ADR 对个人项目过度工程故不引入（见末尾批注）。
+# 铁律#9：本批为 AI 提议的"改变架构边界/永久关闭功能"决策类议题，MUST status=proposed，
+#         待用户显式确认后改为 decided，再联动更新 battle_map 真源（battle_map_steps /
+#         module_translation_registry §battle_map 段）将对应环节标 deprecated/wontfix。
+- issue_id: '#ARCH-OE-001'
+  title: '容量/AUM 缩放管理 不引入（solo 资金量小不构成容量约束）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    调研对标机构（Two Sigma/Man Group）发现"策略容量上限随 AUM 增长动态管理"是机构标配，
+    但该能力解决的是"资金量大到能冲击市场、需降权或关闭策略"的基金规模化问题。
+    本项目为单人单账户 A 股，资金量永远打不满策略容量，不会冲击市场，容量约束永不触发。
+    裁定：不引入"容量/AUM 缩放管理"子系统。strategy_registry.yaml 的 capacity 字段保留为
+    元数据（记录策略理论容量上限）但不建动态容量管理环节。与 Mamba/SSM 评估为过度工程同类。
+  impact:
+    - '无 battle_map 环节（该能力未上地图，本条为"不引入"治理记录）'
+    - 'strategy_registry.yaml capacity 字段保留为静态元数据'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
+  status: proposed
+  related_rules: '#ARCH-CH-032（异地副本不引入先例）; Mamba/SSM 过度工程评估先例'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-002'
+  title: '资本/国库多账户调度 不引入（solo 单账户无资金调度需求）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    机构有独立 Treasury/Capital Management 子系统处理入金/出金/分红再投/资金在多策略多账户间
+    再分配。本项目为单人单 miniQMT 账户，无"资金在多账户间调度"需求。
+    现有 BM-POS-06（现金管理约束：最低储备金+机会储备+T+1结算+逆回购）已覆盖 solo 场景的
+    现金约束需求，BM-POS-05（资金曲线回撤缩放）已覆盖回撤下的资金调整。
+    裁定：不引入独立"资本/国库管理"子系统。入金/出金/分红再投由 BM-REC-01-B（公司行为与
+    费率）+ BM-POS-06（现金管理）现有能力承接，无需新建环节。
+  impact:
+    - '无 battle_map 环节（该能力未上地图）'
+    - 'BM-POS-06 / BM-REC-01-B 现有能力承接，不新建'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
+  status: proposed
+  related_rules: '#ARCH-OE-001; #ARCH-CH-032（不引入先例）'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-003'
+  title: '投资人报告 不引入（solo 无外部投资人）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    机构需向 LP/投资人披露净值/业绩/持仓季报。本项目为个人自有资金，无外部投资人需汇报。
+    现有 BM-REC-02-D（报告发布：微信 Webhook+邮件+SQLite+Parquet+LLM 摘要）产出的日报/周报
+    已满足"自己看"的需求，BM-REC-02-E/F（风险报告/监管报告）已覆盖风控与合规披露。
+    裁定：不引入独立"投资人报告"环节。净值/业绩自看即可，不建面向外部投资人的披露子系统。
+  impact:
+    - '无 battle_map 环节（该能力未上地图）'
+    - 'BM-REC-02-D 现有报告能力承接"自看"需求'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
+  status: proposed
+  related_rules: '#ARCH-OE-001; #ARCH-OE-002'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-004'
+  title: '对手方风险监测 不引入（solo 单券商，监测意义有限）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    机构监测券商/托管行违约风险（CDS 利差、信用评级、资本充足率）以做对手方切换。
+    本项目单券商（miniQMT），若券商违约也只能换券商，监测指标无可操作出口——监测无意义。
+    裁定：不引入"对手方风险监测"环节。券商资质在开户时一次性评估即可，不建持续监测子系统。
+  impact:
+    - '无 battle_map 环节（该能力未上地图）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
+  status: proposed
+  related_rules: '#ARCH-OE-001; #ARCH-OE-002'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-005'
+  title: '操作风险四类框架（人/流程/系统/外部）不引入（机构合规框架）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    机构操作风险按 Basel"人/流程/系统/外部"四类分类管理，用于内部资本计提与合规审计。
+    本项目为个人项目，无内部资本计提需求，无合规审计外部压力。
+    现有 BM-RC-08-E（操作风险审计，设计态）可降级为"系统操作风险日志"轻量版（记录系统故障
+    /断线/数据异常），不建四类分类框架。
+    裁定：不引入四类操作风险框架。BM-RC-08-E 降级为轻量操作日志。
+  impact:
+    - 'BM-RC-08-E（操作风险审计，设计态）降级为轻量操作日志'
+    - 'battle_map 真源待联动更新（用户确认后）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map'
+  status: proposed
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-006'
+  title: 'AI 成本实时治理仪表盘 降级为定期检查（solo 无实时仪表盘需求）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    社区（Anthropic 研究：80% 性能方差由 token 用量解释）建议实时 AI spend 仪表盘。
+    本项目为个人开发，config/ 已有 model_pricing + budget_policy 静态配置。
+    实时仪表盘是平台级（多 session/多用户）需求，solo 定期看 token 账单即可。
+    裁定：不建实时 AI 成本仪表盘。保留 model_pricing + budget_policy 静态配置，
+    增加"每周 token 用量汇总"定期检查脚本（轻量），不建实时监控仪表盘。
+  impact:
+    - '不新建实时 AI 成本仪表盘子系统'
+    - 'config/model_pricing.yaml + config/budget_policy.yaml 保留'
+    - '可选：scripts/ops/weekly_token_usage_report.py（轻量定期汇总，非实时）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
+  status: proposed
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-007'
+  title: 'BM-BUY-10 合规技术深度（可追溯/不可篡改审计链）裁剪'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BUY-10（合规技术深度，设计态，🔴自建）规划可追溯性/不可篡改性/审计日志等技术保障。
+    该能力是机构为应对 SEC 17a-4 / MiFID II 外部审计留痕要求而建，个人账户无外部审计压力。
+    现有 CC-15（事件溯源与配置中心，设计态）+ gov_audit 子系统已提供事件链可回溯能力，
+    满足 solo 场景的"自查可回溯"需求，不需要不可篡改级别的审计链。
+    裁定：BM-BUY-10 裁剪（不施工）。可追溯性由 CC-15 事件溯源承接，不建独立不可篡改审计链。
+    用户确认后联动 battle_map 真源将 BM-BUY-10 标 deprecated。
+  impact:
+    - 'BM-BUY-10（设计态，🔴自建）裁剪为 deprecated'
+    - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
+    - 'CC-15 事件溯源承接可追溯需求'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
+  status: proposed
+  related_rules: '#ARCH-OE-001; CC-15（事件溯源承接可追溯）'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-008'
+  title: 'BM-BUY-11 合规持续运营（AML/KYC）裁剪（券商职责非用户职责）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BUY-11（合规持续运营，设计态，🔴自建）规划定期审查/规则更新/AML/KYC/培训等持续性工作。
+    AML/KYC 是券商的法定职责，不是个人交易系统的职责；个人账户开户时券商已完成 KYC。
+    培训/定期审查是机构合规人力流程，solo 无团队无此需求。
+    裁定：BM-BUY-11 裁剪（不施工）。AML/KYC 由券商承接，不建个人 AML/KYC 子系统。
+    用户确认后联动 battle_map 真源将 BM-BUY-11 标 deprecated。
+  impact:
+    - 'BM-BUY-11（设计态，🔴自建）裁剪为 deprecated'
+    - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
+  status: proposed
+  related_rules: '#ARCH-OE-001; #ARCH-OE-007'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-009'
+  title: '模型训练研究级组件裁剪（元学习/自我进化、AutoML、因果发现、对抗鲁棒性）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    调研发现 BM-MT 阶段若干研究级组件对 solo ROI 极低，与已裁掉的 Mamba/SSM + SAC 同类：
+    - BM-MT-03 AutoML 与超参优化（Optuna 贝叶斯优化）——solo 跑策略少，手动调参够
+    - BM-MT-04 因子发现与因果发现（PC 算法/LiNGAM/时滞因果图）——研究级，远期不采纳
+    - BM-MT-06 元学习与自我进化（RSI 四维度/技能库/Agent 自我进化）——研究级花活
+    - BM-MT-02-B 对抗鲁棒性验证（FGSM/PGD）——对抗样本攻击防护是 ML 安全研究，solo 过度
+    裁定：上述 4 项裁剪（不施工，远期不采纳）。保留 BM-MT-01（训练基座，已运营）、
+    BM-MT-02（实验追踪与晋升，设计态但 MVP 需要 A/B 对比）、BM-MT-05（漂移检测，实用）、
+    BM-MT-01-C（策略数字孪生，实用预警）。与 Mamba/SSM 评估为过度工程一致处理。
+  impact:
+    - 'BM-MT-03 / BM-MT-04 / BM-MT-06 / BM-MT-06-A / BM-MT-06-B / BM-MT-02-B 裁剪为 deprecated（远期不采纳）'
+    - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
+  status: proposed
+  related_rules: 'Mamba/SSM + Autoencoder-Gated+SAC RL 过度工程评估先例; #ARCH-OE-001'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-010'
+  title: '仿真高级组件裁剪（依赖图数字孪生、世界模型 DreamerV3 市场推演）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SIM-05（依赖图数字孪生，已运营但属过度）+ 世界模型市场推演（DreamerV3/TD-MPC2，门禁
+    GPU≥48GB）对 solo 过度：
+    - 依赖图数字孪生用于大型组合架构变更 what-if，solo 单组合无架构变更复杂度
+    - 世界模型推演需多 GPU，solo 硬件不满足，且研究级未成熟
+    裁定：BM-SIM-05 降级为"依赖图快照"（保留拓扑可视化，去数字孪生推演）；世界模型推演
+    裁剪（远期不采纳）。保留 BM-SIM-02/03/04/06/07（策略仿真/蒙特卡洛/压力测试/结果分析/
+    风控仿真）+ BM-SIM-01（市场仿真器基础入口，仍需补建，见 #ARCH 真缺口）。
+  impact:
+    - 'BM-SIM-05 降级为依赖图快照（去推演）'
+    - '世界模型 DreamerV3/TD-MPC2 推演裁剪（远期不采纳）'
+    - 'battle_map_steps 真源 + module_translation_registry §battle_map 联动更新（用户确认后）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
+  status: proposed
+  related_rules: 'Mamba/SSM 过度工程评估先例; #ARCH-OE-001; #ARCH-OE-009'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-011'
+  title: 'CC-14 投票优先多 Agent 协作 降级（solo 简单裁决即可）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    CC-14（投票优先多 Agent 协作，横切机制，设计态）规划"先投票（<100 行）后辩论（<300 行）"
+    适用于策略工厂/因子工厂/闭环优化。该模式解决多 Agent 协作场景的共识形成问题。
+    本项目 100% AI 开发但单 session 主导，多 Agent 投票是团队协作场景，solo 可用简单裁决
+    （单 Agent 决策 + red_blue_validator 审查）承接。
+    裁定：CC-14 降级为"可选模式"（不强制施工，策略工厂/因子工厂如需再启用）。
+    现有 red_blue_validator + constitution_guard 已提供 AI 代码审查，承接 solo 审查需求。
+  impact:
+    - 'CC-14（横切机制，设计态）降级为可选模式'
+    - 'battle_map_cross_cutting 真源联动更新（用户确认后）'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided + 联动更新 battle_map 真源'
+  status: proposed
+  related_rules: '#ARCH-OE-001; red_blue_validator + constitution_guard（承接审查）'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-OE-012'
+  title: '多券商执行层故障切换 不引入（保留 Cancel-on-Disconnect）'
+  category: over_engineering_trim
+  severity: P3低
+  adjudication: |-
+    调研发现机构标配"主券商挂了切备用券商"的执行层 failover。本项目单券商（miniQMT），
+    无备用券商可切，多券商 failover 无可操作出口。
+    但 Cancel-on-Disconnect（COD，连接断开自动撤单防孤儿订单）是 solo 单券商更需要的
+    安全能力（无人兜底），保留并需补建（见真缺口，非本条范围）。
+    裁定：不引入"多券商执行层故障切换"环节。COD 保留为真缺口另行登记（P1）。
+    BM-SEL-01-C（数据源 failover，已运营）是数据层 failover，与执行层 failover 不同，
+    保留不动。
+  impact:
+    - '无 battle_map 环节（多券商 failover 未上地图，本条为"不引入"治理记录）'
+    - 'COD（Cancel-on-Disconnect）保留为真缺口，另行登记'
+  fix_phase: '裁定性记录（无代码施工）；用户确认后转 decided'
+  status: proposed
+  related_rules: '#ARCH-OE-001; #ARCH-OE-004'
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+# === 第十批 12 项过度工程裁剪登记完毕（#ARCH-OE-001 ~ #ARCH-OE-012）===
+# 状态汇总：全部 status=proposed（铁律#9：决策类议题 AI 提议待用户确认）
+# 用户确认后改为 decided，再联动更新 battle_map 真源（battle_map_steps / module_translation_registry）
+# 将对应环节标 deprecated/wontfix
+# 裁剪分类：不引入（OE-001~006, OE-012）/ 裁剪已登记设计态环节（OE-007~011）
+# 先例：#ARCH-CH-032（异地副本不引入）、Mamba/SSM + SAC 过度工程评估、ADR 不引入

@@ -47,6 +47,7 @@ forbidden_modules =
     zephyr.market_data
     zephyr.ml_serve
     zephyr.ml_train
+    zephyr.nlp
     zephyr.orchestrator
     zephyr.pf_alloc
     zephyr.pf_core

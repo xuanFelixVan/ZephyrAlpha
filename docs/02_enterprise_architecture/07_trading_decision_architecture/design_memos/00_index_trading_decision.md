@@ -651,6 +651,105 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 第二批次策略上线时机 | G11 | 暂缓（首批 track record 后） |
 | G15 RegimeMetaAllocator 上线 | G15 | ⚠️ 等 C1 验证 |
 
+### 9.1 2026-08-11 第一性原理调研发现的 35 项缺失议题（全部 status=proposed）
+
+> 来源：客观架构师对标专业机构 + 量化社区 + 氛围编程社区的差距分析报告。
+> 决策依据：5 条第一性原理（P1 资金安全 / P2 回测可复现 / P3 状态确定性 / P4 决策可追溯 / P5 风险不可累积）。
+> 替代机制：项目已有 `ruling_registry.yaml`（裁定#NNN 含 `superseded_by` 链，可推翻）替代 ADR（ADR 不可推翻，对个人项目是过度工程），故不引入 ADR。
+> 完整议题内容见 [architecture_issue_registry.yaml](../../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 末尾 35 条新增条目。
+
+#### AI 治理类（10 项，#ARCH-AIGOV-001~010）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-AIGOV-001 | PATH-shim git wrapper 补充拦截 git commit --no-verify（65 号 §7.1 扩展） | P0 致命 | proposed |
+| #ARCH-AIGOV-002 | Secret 双层扫描（pre-commit detect-secrets + post-push GitGuardian） | P0 致命 | proposed |
+| #ARCH-AIGOV-003 | Library Hallucination 检测（Mypy + Pyright + 包名验证） | P0 致命 | proposed |
+| #ARCH-AIGOV-004 | Revertability git 四步纪律（push before risky run） | P0 致命 | proposed |
+| #ARCH-AIGOV-005 | 对抗式多 agent（生成/审查/测试分离，禁止单 agent 自审） | P1 高 | proposed |
+| #ARCH-AIGOV-006 | AGENTS.md 嵌套就近优先（拆分 327KB 根文件） | P2 中 | proposed |
+| #ARCH-AIGOV-007 | 静态分析反馈环（Bandit+Pylint+CodeQL→AI 修复迭代） | P1 高 | proposed |
+| #ARCH-AIGOV-008 | 多层 Guardrails（pre/post-input/tool-call/output） | P1 高 | proposed |
+| #ARCH-AIGOV-009 | Patchwork Problem 图不变量验证框架 | P2 中 | proposed |
+| #ARCH-AIGOV-010 | OWASP Agentic Top 10 安全扫描（agent-audit CI 集成） | P1 高 | proposed |
+
+#### AI 协作类（1 项，#ARCH-AICOLLAB-001，方案已写入 65 号 §12）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-AICOLLAB-001 | Git Worktree + File Lock(TTL) + Task Board 三件套（26 路协调层） | P1 高 | proposed（方案已落 65 号 §12，另一 AI 正施工） |
+
+#### 机构风控类（5 项，#ARCH-RISK-001~005）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-RISK-001 | Kill Switch 经纪商侧硬止损（miniQMT 平台崩溃托底） | P0 致命 | proposed |
+| #ARCH-RISK-002 | 7-Trigger 熔断器（补"系统错误频发"触发） | P0 致命 | proposed |
+| #ARCH-RISK-003 | 14-Check 事前风控（A 股特化） | P0 致命 | proposed |
+| #ARCH-RISK-004 | 单笔风控 L1（0.5-1% risk / 最小 R:R 2:1） | P0 致命 | proposed |
+| #ARCH-RISK-005 | 3-Tier 回撤协议（Green/Amber/Red 中间态减仓） | P1 高 | proposed |
+
+#### 量化架构类（5 项，#ARCH-QUANT-001~005）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-QUANT-001 | 回测-模拟-实盘同一内核（NautilusKernel 式抽象） | P1 高 | proposed |
+| #ARCH-QUANT-002 | Crash-only 设计 + 状态外部化（Redis） | P1 高 | proposed |
+| #ARCH-QUANT-003 | 53_simulation_live_path 5 态 FSM 状态机代码落地 | P1 高 | proposed |
+| #ARCH-QUANT-004 | pf_core / pf_alloc / ex_sor 三个 stub 落地 | P1 高 | proposed |
+| #ARCH-QUANT-005 | VaR → ES 范式迁移（ES 进决策层） | P2 中 | proposed |
+
+#### 治理/注册表类（5 项，#ARCH-REG-001~005）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-REG-001 | factor_registry schema + provenance | P1 高 | proposed |
+| #ARCH-REG-002 | strategy_registry 退役状态机 | P1 高 | proposed |
+| #ARCH-REG-003 | 策略衰减检测（30 天滚动 + 20% 退化阈值） | P1 高 | proposed |
+| #ARCH-REG-004 | MLOps 四支柱简化版（无 model card） | P2 中 | proposed（用户已裁定不引入 model card） |
+| #ARCH-REG-005 | 多策略独立 sub-book + 归因到"框架决策 vs override" | P2 中 | proposed |
+
+#### A 股特化类（2 项，#ARCH-ASHARE-001~002）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-ASHARE-001 | 北向资金配置型/交易型双结构信号 + regime 信号源 | P1 高 | proposed |
+| #ARCH-ASHARE-002 | 情绪周期 6 阶段标准化 + 4 盘面指标自动检测 | P1 高 | proposed |
+
+#### 合规类（1 项，#ARCH-COMPLIANCE-001，P0-5 与 P2-8 合并）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-COMPLIANCE-001 | 2026-06-08 程序化交易新规模块（5000 笔预警 + 撤单率 80% + 存档 20 年） | P0 致命 | proposed |
+
+#### SDD / 审计 / drift / 执行 / CI / 注册表治本（6 项）
+
+| # | 议题 | 优先级 | 决策状态 |
+|---|---|---|---|
+| #ARCH-SDD-001 | GitHub Spec Kit / AWS Kiro SDD 四阶段闭环 | P2 中 | proposed |
+| #ARCH-AUDIT-001 | 简化版 IETF AAT audit trail（SHA-256 + action classification + tamper-evident，砍个体归属） | P1 高 | proposed（用户已裁定简化） |
+| #ARCH-DRIFT-002 | Spec drift detection CI job（design_memo 与代码漂移自动检测） | P1 高 | proposed |
+| #ARCH-EXEC-001 | 40_execution_broker 10 项 P0 gap 落地 | P0 致命 | proposed |
+| #ARCH-CI-001 | CI 真正运行（首次 push origin/dev + 后续自动触发） | P0 致命 | proposed（循环审查第 1 轮追加） |
+| #ARCH-REGCAN-001 | ROOR entry_count 自动同步 reconciler（治本元数据漂移） | P1 高 | proposed（循环审查第 1 轮追加） |
+
+#### 已排除项（用户裁定不引入）
+
+| 项 | 不引入理由 |
+|---|---|
+| P1-10 ADR supersede 链 | 项目已有 `ruling_registry.yaml`（裁定#NNN 含 `superseded_by` 链，可推翻）完美替代 ADR；ADR 不可推翻对个人项目是过度工程 |
+| P2-5 model card 部分 | 用户裁定不引入 model card（量化策略不是 ML 模型，无需伦理考虑），保留 MLOps 其他三支柱 |
+| 测试覆盖率监控 | 用户裁定不引入（个人项目 158 处 TODO/stub，强制阈值太严；靠对抗式多 agent + 静态分析反馈环已够） |
+| 部署运维（Docker 真用） | 用户裁定不引入（65 号 §4.1 已确认 Trae IDE + Windows 本地环境，纯本地开发，Docker 是过度工程） |
+
+#### 状态汇总
+
+- **登记总数**：35 项（全部 `status=proposed`，铁律#9 决策类议题待用户确认）
+- **优先级分布**：P0 致命 11 项 / P1 高 17 项 / P2 中 7 项
+- **域分布**：AI 治理 10 / AI 协作 1 / 机构风控 5 / 量化架构 5 / 治理注册表 5 / A 股特化 2 / 合规 1 / SDD 1 / 审计 1 / drift 1 / 执行 1 / CI 1 / 注册表治本 1
+- **第一性原理覆盖**：P1 资金安全 ✓ / P2 回测可复现 ✓ / P3 状态确定性 ✓ / P4 决策可追溯 ✓ / P5 风险不可累积 ✓
+- **用户裁定记录**：Git Worktree 三件套全部加入（写入 65 号 §12）/ SDD 全部加入 / IETF AAT 简化版 / model card 不引入 / 测试覆盖率不引入 / Docker 部署不引入
+
 ## 10. 改名对照表（2026-08-09 文档体系重排）
 
 | 旧名 | 新名 |

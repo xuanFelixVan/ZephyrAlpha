@@ -59,6 +59,11 @@ scope: 07_trading_decision_architecture
       确保读者从文档就能知道：这个功能在项目里现在有哪些设施？有哪些配套？有哪些配件？有哪些规则或指令？
     - **盘点的目的**：先清楚有什么→才能知道怎么改→才能知道接下来该怎么更新→才能知道哪些需要删除/退役
     - **这一步在第 1 轮做，后续每轮审查中如发现新的相关设施，补充进盘点表**
+12. **⚠️ proposed 议题查询（2026-08-11 新增，#ARCH-AIGOV-005 对抗式审查联动）**：
+    - **AI 启动前 MUST 查询** `architecture_issue_registry.yaml` 中所有 `status=proposed` 的议题，特别是与本次任务相关的议题（如本次负责 35 号 drawdown，必查 #ARCH-RISK-001~005）
+    - **proposed 议题是 AI 提议待用户确认的决策**（铁律#9），AI 不能自行标 `decided`/`resolved`，但可在文档中引用并按 proposed 议题的 `adjudication` 内容做施工预研
+    - **2026-08-11 新登记 35 项 proposed 议题**（#ARCH-AIGOV-001~010 / AICOLLAB-001 / RISK-001~005 / QUANT-001~005 / REG-001~005 / ASHARE-001~002 / COMPLIANCE-001 / SDD-001 / AUDIT-001 / DRIFT-002 / EXEC-001 / CI-001 / REGCAN-001），详见 [00_index_trading_decision.md §9.1](00_index_trading_decision.md#91-2026-08-11-第一性原理调研发现的-35-项缺失议题全部-statusproposed)
+    - **AI 完成任务后 MUST**：①在文档「开放问题」节列出本次相关的 proposed 议题（标注 status=proposed，等用户确认）；②在 architecture_issue_registry.yaml 对应议题的 `last_updated` 字段更新为本次审查日期
 
 ---
 
