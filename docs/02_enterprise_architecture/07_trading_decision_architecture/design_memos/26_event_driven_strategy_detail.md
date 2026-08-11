@@ -5,7 +5,7 @@ title: 事件驱动策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.1"
+version: "1.9.2"
 date: 2026-08-12
 topic: event_driven_strategy_detail
 scope: 07_trading_decision_architecture
@@ -948,6 +948,11 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 - 复用而非自建——sleeve 边界清晰（事件→候选→评分→注入漏斗），不向数据源层与漏斗层蔓延
 - 与打板的相关性风险（情绪隐形驱动）是上限的真实约束——若 G07 实测相关性 >0.6，需重新审视 sleeve 组合（[20 §2.5](20_first_batch_strategies.md)）
 
+> **过度工程审查回执（v1.9.2，2026-08-12 第 5 轮，判定基准=[system_charter §2 硬边界](../04_architecture_principles_decisions/system_charter.md)）**：
+> ①**多源 news_data 是否过重（个人项目是否只需 1-2 个源）**——**裁定：不过重**。东财/财联社/RSS 三源是已 production 的存量设施（§1.4 盘点真源确认），复用存量 ≠ 新增负担；RavenPack×FT 2026-03 实证（§2.7）跨源集成 IR 0.48→0.81，多源恰是 alpha 来源而非成本。但**反向边界**：再新增社交源（微博/雪球/股吧）属过重——非结构化社交文本清洗成本高、噪声大，个人项目不扩源
+> ②**Hawkes 衰减模型是否过重**——**裁定：当前形态不过重**（§2.4 经验衰减曲线承载，Hawkes 登记 §5 暂缓项 1 留给 firm 层风控）。Hawkes 若首版引入 sleeve alpha 层则过重（参数估计需充分事件样本+校准带宽，单机 64GB RAM 可算但标注/校准人力不足）——本备忘自 v1.0.0 起即拒绝首版引入，持续成立
+> ③**其余重机制分布**：Janus-Q 10 类细分类（§5 暂缓项 2，62,400 篇标注带宽）、CNN 可视化盈余（§5 暂缓项 7，GPU 视觉路径）、LLM 动态知识图谱（§5 暂缓项 6）、Data Funnel 双阶段（§2.7 远期候选）——全部显式标注暂缓/远期，按审查规则"远期工程不算过度工程"予以保留
+
 ## 5. 待裁定（暂缓）
 
 > 以下项目暂不施工，非永久禁止。随项目演进重新裁定。
@@ -1063,3 +1068,4 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 2026-08-10 | 1.8.0 | **龙虎榜 2026 机构信号失效校准（与 24 号 v1.8.2 同步）** | 用户再次审查要求全网搜索 2026-08-08 最新研究+施工环节算法缺失+持续改进。24 号 v1.8.2 已实证龙虎榜生态 2026 结构性变化（机构净买入次日胜率 62-68%→45.7% < 50% 随机，信号反向失效），并明确要求 26 号 §2.5 event_score 同步校准。本次补：①§2.2 新增龙虎榜事件源 2026 信号失效提示（指向 §2.5 校准）；②§2.5 新增龙虎榜 2026 机构信号失效校准块——4 维度退化表（机构净买胜率/净买率极端值/外资占比/拉萨天团退潮）+ 4 项施工建议（机构净买佐证降权/净买率 12% 硬阈值门控/席位类型差异化/数据源就绪）+ `dragon_tiger_corroboration_modifier()` 施工算法（乘法修正因子 ∈[0.7,1.2]，净买率≥12% 加分/量化席位 hard×0.7 soft×0.85）+ 与 24 号口径一致性说明（共用 dragon_tiger 表+12% 阈值+detect_quant_seat_warning 双阈值）；③§6 新增待定问题（校准参数实盘复核）。确保打板 sleeve（23-A）与事件驱动 sleeve（event_score）对龙虎榜信号解读口径一致，避免跨 sleeve 信号歧义 |
 | 2026-08-12 | 1.9.0 | **已施工设施盘点节新增 + 交叉引用真源修正（通用规则 #11 审查）** | 架构审查第 1-2 轮（读现状+代码侧真源审计+回填）：①新增 §1.4「已施工设施盘点」——14 项设施逐项核对代码/schema/tasks.yaml 真源（新闻三源/news_collector/news_dedup/龙虎榜双表/corporate_action_processor/market_event_integrator EMERGENCY 落码确认/intraday_buy_sell_point_analyzer/market_sentiment_analyzer/nlp_inference/IPO stock_ipo_info），盘点结论：四类事件源数据链路全部 production，真正待新建仅异动识别器+事件影响评分两项 sleeve 内部组件；②交叉引用修正：§2.2/§2.5a/§2.7/§7.3 共 4 处误引 09_d_alt_data（该文档仅含 alt_data 域 7 个包入口，无 provider 描述）→ 改引 11_d_data（D_DATA 域，provider 真实登记处）；③§2.5 龙虎榜数据源声明精确化——双表（dragon_tiger 汇总 + dragon_tiger_seat 席位明细），席位类型字段消费自 seat 表；④同名消歧：backtest/event_driven_engine.py 是 Tick 级回测内核（做T专用），与本备忘"新闻/公告事件驱动 alpha"同名不同义，盘点节标注勿混淆；⑤§6 新增 2 项开放问题：20 号 §2.4 事件分类四类→六类跨文档漂移（不越界改 20 号，登记待同步）+ sentiment_aggregator.py 未落盘时序。⚠️ 本轮编辑在主工作区曾两次被并发 session git 操作回滚丢失，改用 session_worktree 物理隔离后重放恢复（#ARCH-GIT-CLEAN-GUARD-FIX 教训实证） |
 | 2026-08-12 | 1.9.1 | **缺失环节审查补全 + 2026-08-10/11 最新研究（第 3-4 轮）** | ①§1.3 新增 T+1 事件→交易时序显式映射（盘后事件 T→T+1 开盘行动→T+2 可卖；盘中事件当日买入不可卖，should_exit holding_days>=1 隐含此约束；holding_days 计数约定；rising phase 盘后事件可捕捉窗口折损一日）——收拢散见 §1.3/§2.4/ORJ/should_exit 的 T+1 约束为单点声明；②§2.5 补全说明接口契约精确化——event_store/volume_series/volume_ma/trading_days_ago 全仓扫描确认无已定义函数（已有 EventStore 类在 gov_audit/infrastructure 域是治理事件存储勿混用），修正 v1.7.0"复用 D_FEED 域已建接口"表述为"接口契约待落码"，落码路径明确（fund_news_data+pit_query+交易日历基座全部具备，仅缺薄封装，工程量<1天）；③§2.7 新增跨源情绪集成方法论（RavenPack×FT 2026-03：两源秩相关仅10-14%真正交，tanh 软投票集成 IR 0.48→0.81/+108bps——sentiment_aggregator 落码应采跨源一致性投票非简单均值，≥2 源同向才出强信号）+ Burchi&Regni 2026-07 独立印证（情绪方向准确率近随机但捕捉大幅波动，与 QLoRA 负结果互证"分类性能≠经济价值"）；④§2.5a 新增进行时案例（宇树科技科创板 IPO 中签率 0.018% 历史新低/8288 倍申购，2026-08-11 机器人板块异动）+ §5 暂缓项 8（IPO 虹吸系数引入申购热度代理变量） |
+| 2026-08-12 | 1.9.2 | **过度工程审查回执（第 5 轮）** | §4.3 新增过度工程审查回执，逐项对照 charter §2 硬边界判定：①多源 news_data 不过重——东财/财联社/RSS 是 production 存量设施非新增负担，RavenPack 跨源实证多源是 alpha 来源；反向边界明确——再新增社交源（微博/雪球/股吧）属过重不扩源；②Hawkes 当前形态不过重——经验衰减承载 sleeve 层，Hawkes 登记暂缓项 1 留 firm 层风控，若首版引入 sleeve alpha 层则过重（自 v1.0.0 起即拒绝，持续成立）；③Janus-Q/CNN 视觉/LLM 动态图谱/Data Funnel 双阶段全部显式暂缓/远期，按"远期工程不算过度工程"规则保留 |
