@@ -5,7 +5,7 @@ title: 板块轮动 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.4"
+version: "1.9.5"
 date: 2026-08-12
 topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
@@ -68,7 +68,7 @@ scope: 07_trading_decision_architecture
 
 | 设施 | 真源路径 / 表 | 状态 | 本 spec 消费点 |
 |---|---|---|---|
-| 板块快照采集 | `src/zephyr/data/sector_snapshot_collector.py` → `c1_market.sector_snapshot`（ReplacingMergeTree，18 采集字段：now_price/open/max/min/last_close/amount/up_home/down_home/zangsu 等，**无 N 日累计涨跌幅字段**） | ✅ production | §3.1① 强度实时输入；快照是**实时截面**，非多日日频序列 |
+| 板块快照采集 | `src/zephyr/data/sector_snapshot_collector.py` → `c1_market.sector_snapshot`（ReplacingMergeTree，18 采集字段：now_price/open/max/min/last_close/amount/up_home/down_home/zangsu 等，**无 N 日累计涨跌幅字段，亦无资金流字段**——板块级 net_inflow 需 money_flow×sector_constituent 聚合，见 §3.1⑥） | ✅ production | §3.1① 强度实时输入；快照是**实时截面**，非多日日频序列 |
 | 板块 K 线下载 | `src/zephyr/data/sector_kline_downloader.py` → `c1_market.market_kline_sector_880`（tqcenter 盘后日K/分钟K，`--period all` 全周期） | ✅ production | **§3.1⑧ q3/q5/q20 真正数据源**——N 日累计涨跌幅从 880xxx 日K 收盘价计算（v1.9.0 修正：此前误声明自 sector_snapshot 的 change_pct_3d/5d/20d 字段，该表无此字段）；§3.1④ RRG 的 P_sector 序列同源 |
 | 板块动态排名 | `src/zephyr/data/sector_ranking_engine.py`（5 因子复合，基准 880001.SH） | ✅ production | §3.1① 动量活跃度维 + Top99 推送池选取 |
 | 板块分析器 | `src/zephyr/signal_ashare/sector_analyzer.py`（MOD-SIG-026） | ✅ production/stable | §3.1① 结构强度维（evaluate_strength）+ §3.1④ 单板块轮动预警（warn_rotation）+ §3.1⑥ 资金流字段（SectorData.net_inflow） |
@@ -314,10 +314,10 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
 
 #### ⑥ 板块资金流 —— 复用现有字段，不新建
 
-**裁定**：`sector_analyzer.SectorData` 已含 `net_inflow`（净流入，亿）字段，`sector_snapshot_collector` 采集 26 字段含资金数据。
+**裁定**：`sector_analyzer.SectorData` 已含 `net_inflow`（净流入，亿）字段（代码确认 [sector_analyzer.py L88](../../../src/zephyr/signal_ashare/sector_analyzer.py)）。⚠️ v1.9.4 数据源精确化：**snapshot 链路不含资金流字段**——`sector_snapshot` 表 18 采集字段无 inflow 类字段（schema 真源），`sector_snapshot_collector` 不采集资金流；全仓当前无 `SectorData(` 实例化代码（analyzer 是纯函数库，数据装配调用方未落码）。板块级 `net_inflow` 的正确来源 = **`money_flow`（个股级五层净流入，production）× `sector_constituent`（SCD-2 成分股）聚合**——与 v1.8.0 `aggregate_capital_nature_to_sector` 同一聚合路径，该聚合器待施工（纯函数，无新数据源）。
 
 - `evaluate_launch_conditions` 已用 `net_inflow > 0` 加分，`judge_continuity` 已用 `net_inflow ≥ 10亿` 判深度介入
-- §3.1⑤ 虹吸态识别直接消费这些字段，不新建资金流模块
+- §3.1⑤ 虹吸态识别直接消费聚合后的板块级净流入，不新建资金流采集管道
 
 #### ⑦ 板块→个股的传导映射 —— 待施工（G05 选股引擎消费），含龙头识别前置
 
@@ -738,3 +738,4 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | 2026-08-12 | 1.9.2 | **过度工程审查回执（第 5 轮）** | §5.3 新增过度工程审查回执，逐项对照 charter §2 硬边界判定：①460 板块全覆盖不过重——582 只板块是 snapshot_collector production 存量事实，且 Top99 推送池动态选取已是比静态 50-100 重点板块名单更优的答案（电风扇行情周度排名变化 12.75 下静态名单一周即失效）；②板块→个股传导多层逻辑不过重——⑦传导两步+⑩准入 gate 共三层全部是阈值规则 if-else 无 ML 无 GPU 依赖，§5.2 四阶段分层控制交付复杂度；③lead-lag network/ML 转折点检测/相关性聚类/GRU-Transformer 全部第四阶段或已拒绝，按"远期工程不算过度工程"规则保留 |
 | 2026-08-12 | 1.9.3 | **一致性与交叉引用审查 + 文档质量复核（第 6-7 轮）** | 第 6 轮：①与 20 号一致性——v1.9.0 已修正§2.5 矩阵引用并登记板块维度行补登；②与 30 号一致性——§1 正交性声明与 30 §2.2 firm 层边界一致 ✅；③与 41 号一致性——发现 41 号 L130"调整周期到位"标 BM-SEL-03 应为 BM-SEL-09（ID 笔误）+ L44/L511 称回踩 A/B/C"目前是骨架"表述过期（v1.6.0 起已是公式级量化算法），登记 §7 待 41 号 owner 修正（不越界改）；④与 62 号一致性——strategy_registry 6 类含 sector_rotation ✅、62 号§4 引本 spec Top3 次日重合率 14.8% 作板块轮动校准依据 ✅；⑤BM-SEL-08/09 状态与 battle map 逐项核对（BM-SEL-08 有效状态运营态=锚点 MOD-SIG-026 production，代码映射缺失态-未实现；BM-SEL-09 MOD-SIG-040 planned）✅。第 7 轮：frontmatter 完整合法 ✅；§4.4 文档种类适配（spec 范式九段齐全）✅；两条硬约束 ✅；交叉引用全稳定相对 path（§8.3 depgraph 表 blueprint 目标验证存在）✅ |
 | 2026-08-12 | 1.9.4 | **确认轮内部锚点审计修复** | 循环自检发现 §2.2/§3.1⑦ 两处"§2.4 一日游实证"锚点不精确——Top3 次日重合率 14.8% 的真源出处是 §2.3 约束末条（WyckoffTradingAgent 链接所在），§2.4 为 2026-08 市场实证对照节，修正为 §2.3 |
+| 2026-08-12 | 1.9.5 | **确认轮 §3.1⑥ 资金流数据源精确化** | 循环自检深挖发现 §3.1⑥"板块资金流——复用现有字段"裁定含两处真源偏差：①"snapshot_collector 采集 26 字段含资金数据"——schema 真源确认 snapshot 表 18 采集字段且无 inflow 类字段，collector 不采集资金流；②全仓扫描无任何 `SectorData(` 实例化代码——analyzer 是纯函数库，数据装配调用方未落码。修正：板块级 net_inflow 正确来源 = money_flow（个股级五层净流入 production）× sector_constituent（SCD-2 成分股）聚合，与 v1.8.0 资金性质聚合同路径，聚合器待施工（纯函数无新数据源）；§2.5 盘点表 snapshot 行同步补"无资金流字段"注记。SectorData.net_inflow 字段本身存在（代码确认 L88），裁定结论"不新建资金流采集管道"不变，仅数据源路径精确化 |
