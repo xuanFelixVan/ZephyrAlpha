@@ -42,6 +42,23 @@ scope: 07_trading_decision_architecture
     - **检查文件是否被锁**：`python scripts/lock_files.py check <file>`——返回 FREE 才能修改
     - **session_id 用法**：用你的 AI 编号（如 AI-01/AI-02）作为 session_id
     - **锁冲突时**：如果 check 返回 LOCKED，说明其他 AI 正在修改该文件，等待 5 分钟后重试，不要强制修改
+11. **⚠️ 基础设施盘点（前置必做，所有 AI 第 1 轮的核心任务）**：
+    - **为什么要做**：文档是项目的"为什么"层，但如果连"项目里现在有什么"都不清楚，就无法判断该保留、该修改、该退役什么。必须先盘清楚现有家底，才能审查。
+    - **做什么**：全面扫描项目代码和配置，找出与你的文档主题相关的**所有**已建设施、配套组件、规则指令，包括但不限于：
+      - **代码模块**：`src/zephyr/` 下与文档主题相关的所有 Python 模块/类/函数（用 Glob + Grep 搜索关键词）
+      - **配置文件**：`config/`、`tasks.yaml`、`business_data_categories.yaml`、`.env` 等相关配置
+      - **Schema 定义**：`schemas/categories/` 下相关的 ClickHouse 表定义
+      - **注册表条目**：`capability_canonical_file_registry.yaml`、`architecture_issue_registry.yaml` 等相关条目
+      - **测试文件**：`tests/` 下相关测试覆盖情况
+      - **脚本工具**：`scripts/` 下相关治理/运维脚本
+      - **前端组件**：`frontend/` 下相关 dashboard/panel 组件
+      - **治理规则**：`docs/01_policies_and_standards/` 下相关规则/契约/铁律
+      - **其他文档引用**：design_memos 其他文档对本主题的引用（用 Grep 搜交叉引用）
+    - **怎么写进文档**：在文档中新增或更新「已施工设施盘点」节（或在现有「背景」「现状」节中补充），按类别列出：
+      | 类别 | 路径/位置 | 内容简述 | 状态（production/draft/deprecated） |
+      确保读者从文档就能知道：这个功能在项目里现在有哪些设施？有哪些配套？有哪些配件？有哪些规则或指令？
+    - **盘点的目的**：先清楚有什么→才能知道怎么改→才能知道接下来该怎么更新→才能知道哪些需要删除/退役
+    - **这一步在第 1 轮做，后续每轮审查中如发现新的相关设施，补充进盘点表**
 
 ---
 
@@ -100,7 +117,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 62 号全文（每段 1500 行），或用 Grep 定位 H2 章节逐段读
 2. 核验 P0 三件套已落盘 YAML：LS d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ 找 universe_registry.yaml / benchmark_registry.yaml / cost_model_registry.yaml，读其内容验证与 62 号 §5 登记是否一致
 3. 读 registry_of_registries.yaml（tier_2 业务资产段）验证 3 个 P0 是否已登记 + entry_count 是否准确
@@ -192,7 +210,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读全文（每段 1500 行），或用 Grep 定位 H2 章节逐段读
 2. 读 src/zephyr/regime/ 下全部代码（LS src/zephyr/regime + 读 core/regime_detector.py / features/ / validation/）
 3. 列出文档 frontmatter 的 status/version 确认当前版本
@@ -269,7 +288,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 54 号全文
 2. 读 battle_map_11_reconciliation.md 了解对账阶段现状
 3. LS src/zephyr/ 找 reconciliation/attribution/pnl/reporting 相关代码
@@ -348,7 +368,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 63 号全文（2637 行）
 2. 核验 schemas/categories/：LS d:\ZephyrAlpha\schemas\categories\ 验证实际表数是否=101
 3. 逐类核对 §4 八大类表清单是否与实际文件数一致
@@ -439,7 +460,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 35 号全文（2456 行）
 2. 读 30_multi_strategy §2.5（四级回撤阈值 + Kill Switch 定义）
 3. LS src/zephyr/risk/ + position/ 找 drawdown/kill_switch 相关代码
@@ -526,7 +548,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 36 号全文（2080 行）
 2. 读 30_multi_strategy §2.5.4（VaR_95/ES_95/波动率调整定义）
 3. LS src/zephyr/risk/ 找 var/es/volatility 相关代码
@@ -613,7 +636,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 13 号全文（1971 行）
 2. 读 src/zephyr/regime/（降态/校准/NLP/S2/T3 相关代码）
 3. 读 10 号 regime spec 相关章节
@@ -694,7 +718,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 用 Read offset/limit 分段读 64 号全文（1659 行）
 2. 核验 §3-§10 八个对象分节：数据源 Provider 体系 / 下载调度 / ClickHouse 落库 / 数据质量校验 / 韧性与容错 / 数据缺口治理 / 实时行情 / 宏观数据
 3. 核验 depends_on 和 related_issues 的 path 是否正确
@@ -781,7 +806,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 40 号全文 + 读 42 号全文
 2. 读 src/zephyr/ex_core/ + ex_sor/（LS + 读核心下单/撮合/滑点代码）
 3. 读 02_domain_architecture_docs/44_d_ex_core.md（43 模块）+ 45_d_ex_sor.md（18 模块）
@@ -870,7 +896,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 37 号全文 + 读 41 号全文
 2. 读 30_multi_strategy §2.5.5（Kill Switch 流动性危机）
 3. LS src/zephyr/risk/ 找 liquidity/spread 相关代码
@@ -961,7 +988,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 32 号全文 + 读 30 号全文
 2. 读 src/zephyr/position/core/firm_risk_aggregator.py（MOD-POS-021）+ src/zephyr/pf_core/ + pf_alloc/ + position/
 3. 读 battle_map_08_position_management.md
@@ -1048,7 +1076,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 34 号全文 + 读 00 号全文
 2. 读 30_multi_strategy §2.2（分配公式 Base×Performance×Shrinkage）
 3. 读 src/zephyr/pf_alloc/core/regime_meta_allocator.py（MOD-PA-007）
@@ -1134,7 +1163,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 26 号全文 + 读 22 号全文
 2. 读 battle_map_05_stock_selection.md（BM-SEL-27 盘中实时事件处理 / BM-SEL-08 板块强度 460 板块 / BM-SEL-09 调整周期追踪）
 3. LS src/zephyr/ 找 event/news/sentiment/announcement/sector/rotation/plate 相关
@@ -1226,7 +1256,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 61 号全文 + 读 53 号全文
 2. 读 01_design_memo_management_spec §2.2（三层协作）
 3. 读 battle_map_01_research_incubation + battle_map_02_model_training + battle_map_04_simulation_validation
@@ -1320,7 +1351,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 14 号全文 + 读 25 号全文
 2. 读 src/zephyr/regime/（S2 trigger 逻辑、overlay_signals_builder、bad_news_flat/policy stub）
 3. 读 battle_map_05（BM-SEL-02 因子计算/注册表/IC-IR/衰减/合成/治理）
@@ -1409,7 +1441,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 24 号全文 + 读 11 号全文
 2. 读 battle_map_05（BM-SEL-22 短线评分卡7维、BM-SEL-23 游资接力6因子+情绪周期4+1、BM-SEL-24 量化强度6维、BM-SEL-25 双引擎融合6类决策）
 3. LS src/zephyr/ 找 daban/limit_up/board_ladder/ashare_signal 相关
@@ -1498,7 +1531,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 31 号全文 + 读 18 号全文 + 读 12 号全文
 2. 读 src/zephyr/position/core/position_sizing_engine.py + 02_domain_architecture_docs/64_d_position.md（28 模块）
 3. 读 src/zephyr/regime/validation/phase2/（a1/a2/b1/b4 四验证器代码）
@@ -1592,7 +1626,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 21 号全文 + 读 51 号全文 + 读 23 号全文 + 读 17 号全文 + 读 50 号全文
 2. 读 battle_map_05（BM-SEL-25 双引擎融合、L0→L1→L2-C 分层、量化强度评级）
 3. LS src/zephyr/ 找 selection/stock_selection/ashare_signal 相关
@@ -1703,7 +1738,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读 20 号全文 + 读 19 号全文 + 读 01 号全文 + 读 28 号全文 + 读 60 号全文
 2. 读 src/zephyr/pf_core/strategies/ + battle_map_05_stock_selection.md（BM-SEL-22~27）
 3. 核验 19 号 §3.1 akshare 实测表 + §3.2 tushare hk_hold 实测表
@@ -1822,7 +1858,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单——循环执行直到全部为零】
 
-■ 第 1 轮：读现状（只读不改）
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 读全部 7 篇文档（每篇 47-74 行，可一次读完）
 2. 读项目代码：
    - LS d:\ZephyrAlpha\src\zephyr\ 找 data/factor/feature/mkt_data 相关子包
@@ -1951,7 +1988,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单】
 
-■ 第 1 阶段：通读与问题梳理
+■ 第 1 阶段：通读与问题梳理 + 基础设施盘点
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 完整读 90 号全文（1068 行，21 项遗留提案）
 2. 列出所有 21 项待讨论问题/开放问题
 3. 读所有相关文档（用 Grep/SearchCodebase 找交叉引用）：
@@ -2038,7 +2076,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 【工作清单】
 
-■ 第 1 阶段：通读与问题梳理
+■ 第 1 阶段：通读与问题梳理 + 基础设施盘点
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
 1. 完整读 91 号全文（45 行）
 2. 列出所有待讨论问题/开放问题（密度预测必需性/QNN 可行性/校准阈值/与风控关系）
 3. 读所有相关文档：
