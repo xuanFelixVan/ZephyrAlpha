@@ -36,7 +36,7 @@ scope: 07_trading_decision_architecture
 | 对标 | WorldQuant Alpha 工厂 / Numerai 多因子 / 华泰金工多因子 / BigQuant ICIR 加权合成（2026-07） |
 | 正交 | ✅ 与 regime 正交（[28 §3.4]）：多因子不读情绪周期，不读 regime，纯横截面选股 |
 | 优先级 | P2（承载主力资金的低频基石） |
-| 状态 | active 1.12.11（6 项讨论要点已对齐 + §3.7 施工算法 8 项补全：合成降级链+约束冲突仲裁+衰减动作生命周期(6态状态机含NEW冷启动+RETIRED退役)+MVP归因+**拥挤实时监控MVP必做**+**换仓触发MVP即做+Inaction Cost成本门控**+**PIT回测框架**+**持仓偏差监控** + Mask-First 可交易性掩码（Phase 4.1 arXiv:2507.07107 mask 单一最大贡献者+0.44）+ §3.3 A股高频因子2026实证（国泰海通8/10行为因子多空12-16%）+ §3.3 A股拥挤崩盘实证（57只量化基金7月踩雷）+ Phase 4.1-4.20 远期候选栈 20 子项含 Dynamic-β reward+Wasserstein鲁棒组合+CVaR RaQL自适应训练+MFCCA多尺度组合配置+平稳模糊性训练+Conformal Kelly完整实证+QUBO换仓调度优化 + 2026-08 arXiv 最新研究整合） |
+| 状态 | active 1.13.1（6 项讨论要点已对齐 + §3.7 施工算法 8 项补全：合成降级链+约束冲突仲裁+衰减动作生命周期(6态状态机含NEW冷启动+RETIRED退役)+MVP归因+**拥挤实时监控MVP必做**+**换仓触发MVP即做+Inaction Cost成本门控**+**PIT回测框架**+**持仓偏差监控** + Mask-First 可交易性掩码（Phase 4.1 arXiv:2507.07107 mask 单一最大贡献者+0.44）+ §3.3 A股高频因子2026实证（国泰海通8/10行为因子多空12-16%）+ §3.3 A股拥挤崩盘实证（57只量化基金7月踩雷）+ Phase 4.1-4.20 远期候选栈 20 子项含 Dynamic-β reward+Wasserstein鲁棒组合+CVaR RaQL自适应训练+MFCCA多尺度组合配置+平稳模糊性训练+Conformal Kelly完整实证+QUBO换仓调度优化 + 2026-08 arXiv 最新研究整合 + **v1.13.x 名实相符修正：§2.4 已施工设施盘点+4处误写校正（decay_monitor MOD-L02-009/池容量60+4/MOD-PF-002/约束链注记）+23号错链修正**） |
 
 ## 2. 背景
 
@@ -924,6 +924,7 @@ class HoldingDriftMonitor:
 | C1-C7 策略级约束链 ↔ MOD-PF-006 代码约束链对齐 | 代码约束参数（行业 ±10%/MDD 5%/相关性 0.7 等）与 §3.5 决策参数不一致（§3.5 代码现状注记） | 多因子 sleeve 上线前经 CTR-003 RiskLimits 注入对齐 |
 | DecayActionLifecycle 6 态 ↔ factor_registry status 5 态映射 | 运行时 6 态（NEW/ACTIVE/OBSERVE/DORMANT/RECOVERY/RETIRED）vs registry 治理 5 态（candidate/experimental/active/deprecated/retired）双轨，DORMANT/OBSERVE 在 registry 应标什么未定义 | §3.7#3 落码时定义映射规则并回写 62 号 |
 | G01 因子工程总纲（15 号）仍为 draft 骨架 | 本文档因子治理参数无上游 why 层背书；因子 10 类真源实际在 62 号 §6.1.1 + factor_registry.yaml | 15 号定稿后回填对齐（由 AI-20 负责 15 号） |
+| 00_index 版本显示同步 | 00_index §0 目录/L215/L600 仍显示 v1.12.11，本文档已 1.13.1 | 由 AI-12 负责 00_index 同步（不越界改） |
 
 ## 7. 引用
 
