@@ -5,7 +5,7 @@ title: 板块轮动 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.2"
+version: "1.9.3"
 date: 2026-08-12
 topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
@@ -648,6 +648,7 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | **三级放行门槛与 G05 选股引擎漏斗的衔接** | 本 spec §3.1⑩ / G05 | 待 G05 选股引擎架构讨论（准入 gate 在漏斗哪一层执行） |
 | **20 号 §2.5 差异化矩阵补"板块信号"维度行** | 本 spec §2.1 v1.9.0 审查发现：板块信号消费关系真实出处是 20 号 §2.2-2.4 各节 + §7.2，§2.5 矩阵 8 行维度无板块行；且 §7.4 下游交接列表（G05/G07/G08/G09/G10）未含 G06 | 待 20 号 owner 下次修订时补登（建议 §2.5 矩阵加"板块信号消费"行 + §7.4 交接列表补 G06）。按审查约束不越界改 20 号，登记于此 |
 | **MOD-L00-004 blueprint 补板块采集节** | 本 spec §2.1 v1.9.0 审查发现：blueprint 无 §sector_snapshot/§sector_ranking 节（此前引用为假锚点），且 `sector_kline_downloader.py` 代码头 `# [BLUEPRINT] MOD-L00-004 ... §sector_kline` 同样指向不存在的节 | 待 MOD-L00-004 owner 补登板块采集三节（或代码头改引 11_d_data）。按审查约束不越界改，登记于此 |
+| **41 号对 22 号两处引用过期/ID 笔误** | v1.9.2 第 6 轮一致性审查发现：[41_buy_flow](41_buy_flow.md) L130 将"调整周期到位（进度≥80%）"标为 **BM-SEL-03**（应为 **BM-SEL-09**，BM-SEL-03 是市场状态感知）；L44/L511 称回踩 A/B/C"目前是骨架"——v1.6.0 起 §3.1② 已是公式级量化算法（Fib+量能衰减+时间窗+regime 适配），"骨架"表述过期 | 待 41 号 owner（sess-37-41-review 活跃施工中）修正 BM-SEL ID 笔误并更新 A/B/C 状态表述。按审查约束不越界改 41 号，登记于此 |
 
 ## 8. 引用
 
@@ -735,3 +736,4 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | 2026-08-12 | 1.9.0 | **已施工设施盘点节新增 + 数据源/引用真源修正（通用规则 #11 审查）** | 架构审查第 1-2 轮（读现状+代码侧/schema 真源审计+回填）：①新增 §2.5「已施工设施盘点」——10 项设施逐项核对代码/schema 真源（snapshot_collector/kline_downloader→market_kline_sector_880/ranking_engine/analyzer 6 方法落码确认/sector_constituent SCD-2/money_flow 五层净流入/sector_meta/list/concept_sector/market_sentiment_analyzer/intraday_buy_sell_point_analyzer），盘点结论：采集层全部 production，待施工 8 项全是计算/逻辑层纯函数无新增数据源需求；②**q 因子数据源错误修正**（§3.1⑧ 表+数据源注+待施工注+§5.2 共 4 处）：sector_snapshot 表无 change_pct_3d/5d/20d 字段（schema 真源确认仅 18 个实时快照采集字段）——q3/q5/q20 真正数据源是 market_kline_sector_880 日K 收盘价，两表分工"快照管实时截面、K线管多日序列"；③§2.1 交叉引用修正：MOD-L00-004 blueprint 无 §sector_snapshot/§sector_ranking 节（假锚点）→ 改引 11_d_data；"26 字段"声明与 schema 真源不符 → 修正为 18 采集字段（22 列含审计列）；④§2.1/§8.1 对 20 号引用精确化："§2.5 差异化矩阵已定三策略均消费板块信号"不精确（矩阵无板块维度行）→ 真实出处 §2.2-2.4 各节 + §7.2；"§7.4 下游交接（G06 前置）"不精确（列表未含 G06）；⑤§7 新增 2 项待定问题：20 号 §2.5 矩阵补板块维度行 + §7.4 补 G06（不越界改 20 号）、MOD-L00-004 blueprint 补板块采集节（含 sector_kline_downloader 代码头假锚点）；⑥sector_analyzer 6 维度声明经代码确认精确属实。⚠️ 本轮编辑在主工作区曾两次被并发 session git 操作回滚丢失，改用 session_worktree 物理隔离后重放恢复（#ARCH-GIT-CLEAN-GUARD-FIX 教训实证） |
 | 2026-08-12 | 1.9.1 | **T+1 信号时序显式化 + 电风扇行情机构量化印证（第 3-4 轮）** | ①§2.3 新增信号→执行时序显式声明（盘后信号 T 日收盘后批量计算→T+1 日开盘 earliest 可执行→信号有效期须覆盖 T+1 全天；q3 超短因子 T→T+1 隔夜衰减是主要损耗源权重 0.3 已含折损；RRG 象限变化缓慢时滞可忽略；5 状态快照 T+1 盘中翻转滞后风险由 whipsaw 2-3 日确认规则对冲）；②§2.4 新增"电风扇"式再平衡量化确认（2026-08-10/11 最新）：国泰海通周度行业排名变化均值 12.75 > 历史 75 分位 11.75（电风扇式再平衡，科技反弹为拥挤出清后超跌修复非单边主升）+ 川观 2026-08-11 盘面（沪指六连阳终结跌 0.82% 报 3934 点缩量 2.34 万亿，机器人/MLCC/算力租赁/创新药轮动无持续性）+ 财信证券行业轮动周报 2026-08-10（高拥挤电子/食品饮料 + Beta/Alpha 区间 12/18 行业划分）——为一日游约束（Top3 次日重合率 14.8%）提供 2026-08 机构侧量化印证，支撑 q3 权重 0.3 与门槛 v2.1 降阈值裁定 |
 | 2026-08-12 | 1.9.2 | **过度工程审查回执（第 5 轮）** | §5.3 新增过度工程审查回执，逐项对照 charter §2 硬边界判定：①460 板块全覆盖不过重——582 只板块是 snapshot_collector production 存量事实，且 Top99 推送池动态选取已是比静态 50-100 重点板块名单更优的答案（电风扇行情周度排名变化 12.75 下静态名单一周即失效）；②板块→个股传导多层逻辑不过重——⑦传导两步+⑩准入 gate 共三层全部是阈值规则 if-else 无 ML 无 GPU 依赖，§5.2 四阶段分层控制交付复杂度；③lead-lag network/ML 转折点检测/相关性聚类/GRU-Transformer 全部第四阶段或已拒绝，按"远期工程不算过度工程"规则保留 |
+| 2026-08-12 | 1.9.3 | **一致性与交叉引用审查 + 文档质量复核（第 6-7 轮）** | 第 6 轮：①与 20 号一致性——v1.9.0 已修正§2.5 矩阵引用并登记板块维度行补登；②与 30 号一致性——§1 正交性声明与 30 §2.2 firm 层边界一致 ✅；③与 41 号一致性——发现 41 号 L130"调整周期到位"标 BM-SEL-03 应为 BM-SEL-09（ID 笔误）+ L44/L511 称回踩 A/B/C"目前是骨架"表述过期（v1.6.0 起已是公式级量化算法），登记 §7 待 41 号 owner 修正（不越界改）；④与 62 号一致性——strategy_registry 6 类含 sector_rotation ✅、62 号§4 引本 spec Top3 次日重合率 14.8% 作板块轮动校准依据 ✅；⑤BM-SEL-08/09 状态与 battle map 逐项核对（BM-SEL-08 有效状态运营态=锚点 MOD-SIG-026 production，代码映射缺失态-未实现；BM-SEL-09 MOD-SIG-040 planned）✅。第 7 轮：frontmatter 完整合法 ✅；§4.4 文档种类适配（spec 范式九段齐全）✅；两条硬约束 ✅；交叉引用全稳定相对 path（§8.3 depgraph 表 blueprint 目标验证存在）✅ |
