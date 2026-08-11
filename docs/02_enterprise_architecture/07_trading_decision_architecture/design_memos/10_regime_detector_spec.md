@@ -5,8 +5,8 @@ title: regime 检测器完整 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.1"
-date: 2026-08-10
+version: "1.6.0"
+date: 2026-08-12
 topic: regime_detector_full_spec
 scope: 07_trading_decision_architecture
 parent: 30_multi_strategy_concurrency.md
@@ -32,7 +32,7 @@ parent: 30_multi_strategy_concurrency.md
 > | 置信度 | max(P) → 4 档硬映射 | max(P) → 两阶段校准器（Temperature Scaling + Isotonic Regression） |
 > | state_risk_factor | §5.1 原设计含 | **已移除**（C1 验证：label-switching 致随机惩罚，Sharpe 0.37→0.10） |
 > | §4 各转换（T1-T6） | 网格态间转移（如 Bull-Medium→Bull-High） | 4 态下转换语义已重映射，T1/T4/T5/T6 的"网格间跳转"定义不直接适用 |
-> | Phase 2 验证 | §2.7 标注"待回测" | A2 OOS/IS 0.34→1.042（PASS）；B1 误差 27.6%→4.2%（PASS）；B4 S2 待 P1-E9 重设计 |
+> | Phase 2 验证 | §2.7 标注"待回测" | A2 OOS/IS 0.34→1.042（PASS）；B1 ECE 27.6%→4.2%（PASS）；B4 回 PASS(3/3)——S2 三事件 design_match=false 排除（设计域错配非数据缺口），**Phase 2 已闭环**（commit 93a25890），S2 算法重设计仍待 P1-E9 |
 >
 > **阅读指引**：
 > - §1-§6 为设计期真源，保留完整推理链（why 12 态 / why 3×3 网格 / why 各转换参数），**作为历史规划与设计意图的记录**。
@@ -2373,6 +2373,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 2026-08-07 | 4 态降维语义标定（Viterbi 全历史 3733 样本）：r1 低波震荡 27.6% / r2 中波震荡 37.4% / r3 牛市趋势 14.9% / r4 熊市阴跌 20.2%；8 转换重映射（T1/T4/T5/T6 网格间转移语义在 4 态下重定义）。详见 [13_regime_phase3_engineering_plan.md](13_regime_phase3_engineering_plan.md) §2.1 | ✅ 落盘 |
 | 2026-08-10 | §9 实现验证与模型重设计专章新增；实现现状横幅；§2.7/§3/§5.1 回填 Phase 2 实际结果；2026 算法调研（Wasserstein HMM / NRSM-MIA / 4态+CVaR）；过度工程审查（12→4 态降维确认）；结构调整评估（§9 汇总不拆分）；文档升级 v1.4.0 | 🎯 里程碑 |
 | 2026-08-10 | **施工环节算法完整性审查**：§9.12 回填 6 类已施工但 spec 未记录 why 的算法（n_init 多次拟合/synthetic_vix 合成 VIX/chip_distribution_engine 筹码引擎/wyckoff_engine 吸筹 FSM/RobustScaler/predict_log_proba 接口）；§9.13 补 2026-08 最新算法调研（Student-t HMM 治 B1 根因★高优/Beta Calibration Level 2 备选/Multi-Scale MS-GARCH+TVTP/AH-HMM meta-regime/Gaussian-vs-Student-t 尾部分类器/FerroQuant 定位验证）；§9.11 待裁定项扩充至 10 项；§2.7 标题更新为已回测；文档升级 v1.4.1 | 🎯 里程碑 |
+| 2026-08-12 | **第六轮审查（v1.6.0）**：B4/Phase 2 闭环状态回填（S2 三事件 design_match=false 排除，B4 回 PASS(3/3)，commit 93a25890）；§9.7 重写（14 号诊断结论+验证独立性第一性原理）；§9.12.7 回填 risk_features/risk_signal_builder/overlay_features/regime_data_loader 算法 why；§9.17 新增「已施工设施盘点」（通用规则 #11）；§9.18 第六轮算法调研（Cornell CHMM 厚尾发射★/A 股 VIX 完整方差互换+IV Spread/RPubs 定位验证）；§9.9.2 NLP 关键词字典 MVP 施工状态更新；§9.11 待裁定项扩充至 25 项 | 🎯 里程碑 |
 
 ## 8. 修订记录
 
@@ -2400,6 +2401,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 2026-08-10 | 1.4.2 | **第三轮算法调研+HMM/overlay 算法 why 回填**：①§9.14 新增第三轮算法调研（自适应 Kalman+IMM 升级 F2b★高优/EGARCH-GJR-GARCH 杠杆效应升级 F1/CUSUM 触发 refit 替代固定季度/MSIM QDS 定位验证）；②§9.12.5 回填 HMM 6 特征算法 why（F1 vol_pct/F2a hurst_dfa DFA 法/F2b kalman_slope Q/R 比例/F3 cross_asset_corr/F4 ad_ratio tanh/F5 volume_anomaly z-score）；③§9.12.6 回填 overlay 维度算法 why（板块 HHI/连板数+晋级率/北向 z-score 融合/EMA 时序平滑/_build_feature_risk 简化版）；④§9.11 无新增待裁定（§9.14 待裁定项合入现有 #7-10）；⑤§9.14.5 综合优先级表更新 | 架构审查 AI 三次审查：用户要求"持续改进不要停下来询问"。全网搜 2026-08-08 最新算法发现自适应 Kalman+IMM（CSDN 2026-08-08/arXiv:2601.05716v2）直接升级已施工 kalman_slope，工程量小收益大 |
 | 2026-08-10 | 1.5.0 | **第四轮算法调研：深度学习/SSM/A 股实证**：①§9.15 新增第四轮算法调研 8 篇 2026 新研究——HSMM 显式持续时间（Liu&Wang A 股 Sharpe 1.14★新增高优）/HARQ+MS-GJR-GARCH+XGBoost 中国 CSI 300 高频实证（定位背书★）/Mamba-SSM 长序列（RAMK/CMDMamba/Mamba-3 远期不采纳）/Autoencoder-Gated Dual Transformers+SAC RL（远期不采纳）/LSTM-FIGARCH 早期预警（FIGARCH 补 GJR-GARCH 长记忆+S1 5 日窗口）/Ensemble-HMM Voting+DTW Clustering（多模型投票+时序模式匹配）/Velocity 操纵检测负面结果（★反向验证 regime 做 Shrinkage 非 alpha 定位）；②§9.11 待裁定项扩充至 15 项（新增 #11 HSMM/#12 Ensemble Voting/#13 DTW/#14 FIGARCH/#15 S1 5 日窗口）；③§9.15.8 综合优先级表；④§9 修订记录补 v1.4.2/v1.5.0 | 架构审查 AI 四次审查：用户要求"选项之外更好的答案算法+全网搜 2026 年 8 月 8 日最新研究实践算法+文档结构顺序内容调整更新+持续改进"。全网搜发现 HSMM（A 股实证 Sharpe 1.14）解决 HMM 几何持续时间缺陷，与 Student-t HMM+自适应 Kalman 并列最高优先级；Velocity 负面结果反向验证本方案"regime 做风险节流不做 alpha"定位正确 |
 | 2026-08-10 | 1.5.1 | **第五轮算法调研：贝叶斯非参数/流式/鲁棒/多尺度/Conformal+sticky prior 施工 why 回填**：①§9.16 新增第五轮算法调研 7 篇 2026 新研究——RED-HDP-HMM ICML 2026 贝叶斯非参数自动状态数+观察依赖持续时间（RED>sticky 远期候选）/Streaming HMM beam search 流式增量避免季度重训（O(S·K) 固定内存）/BR-iHMM ICML 2026 双重鲁棒离群点+模型误设定（预测误差-67% 远期候选）/Hierarchical HMM 多时间尺度周级条件化日级★新增最高优（状态持续时间+38.5% 工程量小）/Sticky HMM+PCA Absorption Ratio F3 升级（多资产共振整体性）/Conformal Prediction 分布无关覆盖保证★新增最高优（B1 经验 ECE→P≥1-α 数学保证 mapie 库）；②§9.12.1 回填已施工 sticky Dirichlet 先验（regime_detector.py:518 _apply_sticky_prior post-hoc πₖ~Dir(α·1+κ·eₖ) 抑制 regime chatter 引用 Nkamga 2026+Wang 2026 Adaptive Sticky）；③§9.11 待裁定项扩充至 22 项（新增 #16-22：Hierarchical HMM/Conformal/PCA Absorption/RED-HDP-HMM/Streaming/BR-iHMM/sticky κ 校准）；④§9.16.7 综合优先级表+Phase 4 评估矩阵 10 项 | 架构审查 AI 五次审查：用户要求"持续改进不要停下来询问"。对照 src/zephyr/regime/ 代码发现 sticky prior 已施工但 spec 完全未记录（关键缺口）；全网搜 2026-08 发现 ICML 2026 两篇（RED-HDP-HMM/BR-iHMM）+ Oxford Streaming HMM + AlgoGators Hierarchical HMM（持续时间+38.5%）+ UChicago Conformal macro-coverage（数学保证层）。Hierarchical HMM+Conformal 与 Student-t HMM+HSMM+自适应 Kalman 并列 Phase 4 最高优先级 |
+| 2026-08-12 | 1.6.0 | **B4/Phase 2 闭环状态回填 + 已施工设施盘点 + 第四批算法 why 回填 + 第六轮算法调研**：①§9.1 表格 B4 行+结论、文档头横幅 Phase 2 行更新——S2 三事件 design_match=false 排除后 B4 回 PASS(3/3)，**Phase 2 已于 2026-08-08 闭环**（commit 93a25890），S2 算法重设计仍待 P1-E9；②§9.7 重写——回填 14 号诊断精确结论（capitulation 当日值 vs 过程 / valuation 价格回撤 vs 基本面 / spring 跨日 vs 同日 三维度时点错配 + capitulation z>1、valuation min_periods=20 两个 P0 bug 修复）+ design_match 语义隔离裁定（验证器不驱动算法设计的第一性原理）；③§9.12.7 新增——risk_features 9 系数函数（#1 逐档复刻 Phase 1 危机地板 / #2 移除放量滞涨的 C1 修正 / #8 仅 HHI 降级 / #9 KDJ-J 顶背离+多分时共振）、risk_signal_builder 组装降级（_fb_call/仅 HHI/分钟聚合日线）、overlay_features 8 转换评分族（S2 NLP 关键词字典 MVP 已落码）、regime_data_loader（TSV 协议/会话缓存/涨跌停派生降级 70% 覆盖/multiSearchAny 服务端关键词聚合）的 why 回填；④§9.17 新增「已施工设施盘点」（通用规则 #11：核心代码 13 文件/回测验证包/16 测试文件/脚本与验证用例/蓝图/9 条 ARCH 条目/注册表登记/下游消费与同名辨析）；⑤§9.9.2 NLP 施工状态更新（关键词字典 MVP 已落码，完整版 NLP 保留 P2）；⑥§9.18 新增第六轮算法调研——Cornell CHMM 厚尾发射族（arXiv:2606.23492，Student-t 第二独立证据★+HSMM 边界澄清+4 态第三佐证）/A 股 VIX 完整 CBOE 方差互换+IV Spread 方向性偏度（synthetic_vix 升级路径⭐⭐）/RPubs rolling+软仓位定位验证/粗糙路径签名+GraphTM+VIX 4 档期限结构记录级；⑦§9.11 待裁定项扩充至 25 项（新增 #23 12 号待同步 / #24 synthetic VIX 升级 / #25 HSMM 评估指标） | 架构审查 AI 六次审查：①通用规则 #11 要求盘点已施工设施，发现本文档缺「已施工设施盘点」节；②对照 architecture_issue_registry 发现 B4 经 design_match 排除回 PASS(3/3)、Phase 2 已闭环（2026-08-08 #ARCH-REGIME-S2-ALGORITHM-001）未回填本文档（§9.1/§9.7 仍停"FAIL 待重设计"状态）；③对照 src/zephyr/regime/ 代码发现 risk_features/risk_signal_builder/overlay_features/regime_data_loader 四个文件算法 why 未记录；④发现 S2 NLP 关键词字典 MVP（s2_policy_score/s2_bad_news_flat_score/load_news_sentiment）已落码但 §9.9.2 仍标"P1 待施工"；⑤第六轮全网搜发现 Cornell CHMM（Student-t 第二证据）+ A 股 VIX 完整方法（synthetic_vix 升级路径）两项增量 |
 
 ---
 
@@ -2417,9 +2419,9 @@ Phase 2 验证 HMM 模型本身靠不靠谱（Phase 1b C1 已验 Shrinkage 节�
 | **A1 样本充足** | 9 常驻态低频态样本≥50 | 待验 | **PASS**：3733 样本，9 态全 sufficient，最少 r1=267 天 | 样本量非瓶颈 | — |
 | **A2 HMM 过拟合** | OOS/IS 一致率≥0.7 | 待验 | **FAIL→PASS**：9 态 OOS/IS=0.340（FAIL）；BIC 降维 4 态后=1.042（PASS） | 9 态过拟合，降 4 态 | §9.2 |
 | **B1 概率校准** | ECE≤10% | 待验 | **FAIL→PASS**：原始 ECE=27.6%（80-100% 桶预测 0.982 实际 0.523）；两阶段校准后 ECE=4.2% | HMM 严重过度自信，需校准 | §9.3 |
-| **B4 转换触发** | S2 recovery 触发准确性 | 待验 | **FAIL**：S2 recovery 0/3（3 个危机复苏窗口 0 个触发） | S2 算法需重设计 | §9.7，待 P1-E9 |
+| **B4 转换触发** | 转换触发准确性（历史事件） | 待验 | **FAIL→PASS**：初验 S2 recovery 0/3（3 个危机复苏窗口 0 触发，FAIL(3/6)）；14 号诊断定位为算法设计域错配（非数据缺口），S2 三事件 design_match=false 排除出分母 + 修 2 个 P0 bug，B4 回 PASS(3/3)，**Phase 2 闭环**（commit 93a25890） | S2 算法重设计仍待 P1-E9 | §9.7 |
 
-**结论**：4 项中 2 项 FAIL（A2/B1）经修复转 PASS，1 项 FAIL（B4 S2）待重设计。Phase 2 部分通过——HMM 主体可用（4 态+校准器），S2 转换单独待修。
+**结论**：A2/B1 修复转 PASS；B4 经 design_match 语义隔离（S2 三事件不计分母，2026-08-08）回 PASS(3/3)，**Phase 2 已闭环**——HMM 主体可用（4 态+两阶段校准器）。S2 算法重设计（capitulation 过程化/valuation 基本面化/spring 复用 wyckoff_engine）独立为 P1-E9 工程项，完成后 S2 事件 design_match 回 true 重跑 B4。
 
 ### 9.2 9 态→4 态降维（A2 FAIL 修复）
 
@@ -2536,19 +2538,33 @@ C1 验证实测：9 态下 r4/r5/r6（中性态）state_risk=0.70-0.90，A 股�
 
 stages 阈值暂沿用原值，P1 阶段（E3 NLP + E5 T3 + E6 bad_news_flat）精调。
 
-### 9.7 S2 转换缺陷诊断（B4 FAIL，待重设计）
+### 9.7 S2 转换缺陷诊断（B4 FAIL→design_match 排除闭环，重设计待 P1-E9）
 
 #### 9.7.1 B4 S2 FAIL 现象
 
-S2 recovery 触发准确性 **0/3**——3 个历史危机复苏窗口（如 2015 股灾后、2018 贸易战后、2024 春节后）0 个触发 S2 confirm/trigger。
+S2 recovery 触发准确性 **0/3**——3 个历史危机复苏窗口（2015-09-15 / 2020-04-10 / 2024-09-24）0 个触发 S2 confirm/trigger，B4 退回 FAIL(3/6)。
 
-#### 9.7.2 根因初判
+#### 9.7.2 根因定位（14 号诊断，commit 93a25890）：算法与时点语义错配，非阈值过高
 
-S2 八维度评分（Capitulation 投降 + Wyckoff 吸筹 + VIX 见顶 + 政策底传导 + 估值极端 + 利空钝化 + 资金承接 + 底部筹码）阈值标定基于设计期盘感，未用历史危机窗口校准。可能问题：①阈值过高（总分门槛 250/180 太严）；②维度权重未区分（8 维等权 vs 关键维度主导）；③时序条件缺失（Spring/三阳等关键信号需先于其他维度出现）。
+诊断脚本 `scripts/tests/dump_s2_scores.py` dump 三事件日 ±10 交易日 S2 各维度评分，定位 3 个关键维度在复苏事件日窗口恒为 0 或近 0，trigger/confirm/strong_confirm 三阶段全部无法满足：
 
-#### 9.7.3 后续
+| 维度 | 设计意图（§4.12） | 实现 | 错配 |
+|---|---|---|---|
+| capitulation | "危机见底过程"信号（§4.12.1 Phase 1-5 过程） | 当日瞬时信号（vol_z>z ∧ pct<-1.5%） | 复苏事件日是企稳时点不暴跌，capitulation 当日必为 0 |
+| valuation | 基本面估值分位（§4.12.5 PE/破净率/ERP 历史分位） | 价格回撤（close/rolling_max(250)） | 2020/2024 复苏 pos≈0.90 距高点仅 -10%，价格回撤捕捉不到"价格没跌但估值分位已低" |
+| spring | 真 Spring"同日 low 破支撑+当日 close 收回" | 跨日简化判断（前日破+当日收） | 语义时点错位 |
 
-S2 算法重设计归入 P1-E9，详见 [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md)。本节仅回填结论，不展开重设计方案（避免与 14 号文档重复维护）。
+诊断期另修 2 个独立 P0 实现 bug（同 commit 93a25890）：capitulation 原阈值 z>2 在持续高量危机期经验性不可达（z-score 滚窗均值被抬高，2015 vol_z max=1.79）→ 降 z>1（治标，P1-E9 过程化才治本）；valuation rolling_max(250) 无 min_periods 致 warmup 期 NaN→误零 → 加 min_periods=20（治本，纯实现 bug）。**修 bug 后 S2 仍 0/3，反向证实根因是设计域不符非 bug。**
+
+#### 9.7.3 裁定：design_match 语义隔离（守住验证独立性），Phase 2 闭环
+
+**第一性原理**：B4 验证的目的是"客观验证检测器触发时点是否吻合历史"。为过 B4 而改算法会让验证失去独立性——**自我证明循环**（改算法让验证通过→验证通过证明算法正确）。算法重设计必须回归 §4.12 设计源头重新对齐语义，独立于验证结果进行。验证结果可以**暴露**缺陷，但不能**驱动**算法设计（不能"调参直到 3/3 命中"）。
+
+**裁定（14 号 §2.5 路 3 采纳，#ARCH-REGIME-S2-ALGORITHM-001 status=confirmed）**：HistoricalEvent 新增 `design_match` 字段，S2 三事件 `design_match=false`（数据已就绪但 Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏）不计 B4 分母；`data_ready` 维持 **true**——design_match 比 data_ready 更精确，诚实区分"数据未就绪"与"设计域不匹配"。B4 回 **PASS(3/3)**（S1 3/3），**Phase 2 闭环**。
+
+#### 9.7.4 后续
+
+S2 算法重设计归入 P1-E9（13 号 §3.5）：capitulation 过程化（rolling-max 窗口+多维度共振）、valuation 基本面化（CAPE/PB 分位——避开危机期 PE_TTM"越跌越贵"失真陷阱，数据源 c1_market.daily_valuation 可获）、spring 复用 wyckoff_engine 6 阶段 FSM。完成后 S2 事件 design_match 回 true 重跑 B4 验证，并防止"调参过拟合 3 个历史事件"。详见 [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md)。本节仅回填结论，不展开重设计方案（避免与 14 号文档重复维护）。
 
 ### 9.8 2026 年 regime 检测前沿算法调研
 
@@ -2629,11 +2645,11 @@ S2 算法重设计归入 P1-E9，详见 [14_regime_s2_diagnosis.md](14_regime_s2
 
 **设计期规划**（§4.7-§4.12）：每个转换 8-12 维度评分（含 NLP 新闻情绪、资金流、板块轮动、龙头个股等）。
 
-**当前实现**（`TRANSITION_CONFIG`）：维度评分阈值已落码，但部分维度（NLP #11 鬼故事 / bad_news_flat / mainline 板块 / leader 龙头）的**数据源接入在 P1 阶段待施工**（13 号文档 P1-E3 NLP / E5 T3 / E6 bad_news_flat）。
+**当前实现**（`TRANSITION_CONFIG` + `overlay_features.py`）：维度评分阈值已落码。**v1.6.0 状态更新**：板块/龙头维度已施工（§9.12.6 板块 HHI/连板晋级/北向 z-score）；NLP 关键词字典 MVP 已施工（P1-E3 落地：`s2_policy_score`/`s2_bad_news_flat_score` + `regime_data_loader.load_news_sentiment` 从 fund_news_data 表 ClickHouse multiSearchAny 服务端关键词聚合，§9.12.7c/d）；完整版 NLP（LLM 级情感分析、RiskSignal 侧 #11 可预判利好/鬼故事与 #13 利空不跌接入）仍待 P2（13 号 P2-E7），RiskSignal #11/#13 当前 stub opportunity=0.0（§9.12.7a）。
 
 **审查结论**：
 - **已施工且验证有效的维度**（量价/波动率/趋势斜率/相关性/VIX）：保留，是 RiskSignal 和 overlay 的核心
-- **P1 待施工维度**（NLP/板块/龙头）：**不降级**。理由：①7 月暴跌案例（§5.2.1）正是"指数看是牛市但跌得比熊市惨"——单靠量价特征无法捕获虹吸/龙头断板/情绪退潮，NLP 和板块维度是用户盘感真源的系统化；②Phase 2 B4 S2 FAIL 部分原因即维度数据源未全接入，降级会进一步恶化；③个人系统算力可支撑（NLP 推理非实时高频）
+- **NLP/板块/龙头维度**：**不降级**（关键词字典 MVP 已落地，完整版 NLP 保留 P2 不降级远期）。理由：①7 月暴跌案例（§5.2.1）正是"指数看是牛市但跌得比熊市惨"——单靠量价特征无法捕获虹吸/龙头断板/情绪退潮，NLP 和板块维度是用户盘感真源的系统化；②Phase 2 B4 S2 根因是设计域错配而非维度多余（§9.7），降级会进一步削弱 S2 重设计后的验证能力；③个人系统算力可支撑（NLP 推理非实时高频）
 - **机构级补强维度**（§4.7.6/§4.8.5/§4.11.10/§4.12.10 的 IV/COT/信用利差/期权异动/CAPE/巴菲特指标/Margin Debt 等）：**降级为远期候选**（candidate_module_registry.yaml 登记）。理由：A 股缺乏对应数据源（无 COT、期权市场薄），海外指标本土化适配成本高，当前 RiskSignal 13 参数已覆盖核心风险
 
 **判定**：设计期规划在"核心维度已施工+P1 维度待施工+机构维度远期候选"的分层下不过度，符合个人系统 MVP→全量演进策略。
@@ -2689,6 +2705,9 @@ S2 算法重设计归入 P1-E9，详见 [14_regime_s2_diagnosis.md](14_regime_s2
 | 20 | Streaming HMM 流式增量是否替代季度 refit | §9.16.2 记录为候选 | Phase 4：避免全量重训，O(S·K) 固定内存 | §9.16.2, §9.12.4 walk-forward |
 | 21 | BR-iHMM 双重鲁棒是否采纳 | §9.16.3 记录为远期候选 | Phase 5+：离群点+模型误设定，预测误差 -67% | §9.16.3, §9.13.1 Student-t |
 | 22 | sticky prior κ 参数是否需校准（当前固定值） | §9.12.1 已施工未校准 | Phase 4：κ 是否随 regime 自适应（Wang 2026 Adaptive Sticky） | §9.12.1, regime_detector.py:518 |
+| 23 | 12_regime_phase2_validation 未回填 design_match 裁定与 Phase 2 闭环结果（仍停 v0.2.2/2026-08-07） | 10 号已回填（§9.1/§9.7），**12 号待同步**（越界不改，登记于此） | 12 号文档下次修订时同步 | §9.7, #ARCH-REGIME-S2-ALGORITHM-001 |
+| 24 | synthetic VIX 是否升级完整 CBOE 方差互换公式 + 叠加 IV Spread 方向性偏度 | §9.18.2 记录为候选 | Phase 3/4：多到期日期权链数据完整性核验后 | §9.18.2, synthetic_vix.py |
+| 25 | HSMM 评估指标需纳入 Cornell CHMM 边界证据（raw fit 优但不支持 regime-conditional 风险预测） | §9.18.1 已记录 | 与 #11 合并评估，评估指标用风险预测非仅拟合优度 | §9.18.1, §9.15.1 |
 
 ### 9.12 施工环节算法完整性审查（v1.4.1 新增）
 
@@ -2799,6 +2818,59 @@ S2 算法重设计归入 P1-E9，详见 [14_regime_s2_diagnosis.md](14_regime_s2
 - **算法**：5 级分级 vol_pct×slope：>0.90+下跌→0.30 / >0.90→0.60 / >0.75+下跌→0.50 / >0.75→0.80 / else→1.00
 - **why**：交集而非并集（"高波 AND 下跌"才强收缩），避免单独下跌（低波阴跌）误判。Phase 1 简化版只传 #1 参数，Phase 2a 升级为 13 参数构造器后替换
 
+#### 9.12.7 RiskSignal 系数/overlay 评分/数据加载算法回填（v1.6.0 新增）
+
+> **触发**：第六轮审查（通用规则 #11 设施盘点）发现 `risk_features.py` / `risk_signal_builder.py` / `overlay_features.py` / `regime_data_loader.py` 已施工但算法 why 未在 spec 记录。
+
+**(a) risk_features.py —— §5.3 十三参数四档系数纯函数**
+
+设计不变量（文件头 INVARIANTS）：coef∈[0.30,1.00]；**无异常=1.0**（平时不干预，C1 不退化前提）；**系数只降不升**（风险只减不增）；PIT 由调用方统一 shift(1)。
+
+| 参数 | 函数 | 实现算法 | why（回填） |
+|---|---|---|---|
+| #1 realized_vol | `realized_vol_coef(vol_pct, slope)` | 5 档交集：>0.90+下跌→0.30 / >0.90→0.60 / >0.75+下跌→0.50 / >0.75→0.80 / else→1.00 | **逐档复刻 Phase 1 `_build_feature_risk`**——保证 risk_base_phase2a ≤ risk_base_phase1（危机区只更严不更松，C1 不退化保护）。交集非并集（"高波 AND 下跌"才 0.30），避免低波阴跌误判。NaN slope 视为未跌（保守不误杀） |
+| #2 量能异动 | `volume_anomaly_coef(vol_z, pct_change)` | z>2&跌>3%→0.30 / z>1.5&跌>1.5%→0.60 / else→1.00 | **C1 验证修正移除"放量滞涨→0.85"**：A 股约 4.3% 日子触发（放量小涨是常态换手非危机），且多在 #1 未触发的非危机日，纯增 Sharpe 拖累不增 MaxDD 保护。仅保留罕见且与 #1 危机互补的放量下跌信号 |
+| #3 价格形态 | `price_pattern_coef(close)` | 新算 MA5/20/60 空头排列 + 破前低 | 均线排列是趋势结构的最简稳健代理；新算 MA 不复用 HMM 特征，避免与 F2b 循环依赖 |
+| #4 时间酝酿 | stub=1.0 | — | 主观盘感暂无数据代理，stub 不干预（宁缺毋滥，避免伪精确） |
+| #5 空间位置 | `space_position_coef(close)` | close vs 250 日高点距离分档 | 250 日≈年线，套牢盘/形态目标位的市场共识锚点 |
+| #6 跨资产相关 | `cross_asset_corr_coef(corr)` | 复用 F3 四档映射 | 恐慌期相关性飙升=分散化失效（§4.9.2） |
+| #7 涨跌广度 | `ad_ratio_extreme_coef(ad_ratio)` | 复用 F4 极端普跌分档 | 广度普跌是系统性抛售的直接度量 |
+| #8 虹吸态 | `siphon_coef(sector_hhi, fund_concentration)` | 板块 HHI（\|涨幅\|占比平方和）+ 资金集中度；fund_concentration 数据缺→仅 HHI 降级（OR 语义） | HHI 高=涨幅集中少数板块=虹吸（§6.3）。OR 降级语义保证部分数据仍有效，优于"缺一即全废" |
+| #9 技术背离 | `tech_divergence_coef` + `kdj` + `detect_top_divergence` | KDJ(9) J 值顶背离（价格新高 vs J 未新高，60 日窗口）+ 多分时共振（60min/30min ETF K 线聚合日线后各算背离） | J 值比 K/D 更敏感适合背离检测；多分时共振对应 §5.3.1 #9 极端档"日+120m+60m 共振背离" |
+| #10 斜率衰竭 | `trend_slope_decay_coef(slope, hurst)` | 复用 F2b 斜率骤降 + F2a Hurst 衰退双确认 | 斜率衰竭+趋势持久性衰退双确认，避免单纯回调误杀 |
+| #11/#13 新闻机会 | stub opportunity=0.0 | — | 完整 NLP（可预判利好/鬼故事/利空不跌）待 P2-E7；S2 侧 policy/bad_news_flat 已由 overlay_features 关键词字典 MVP 承接（见 (c)） |
+| #12 筹码结构 | stub=1.0 | — | chip_distribution_engine 已施工（§9.12.1），接入 RiskSignal 待 Phase 2c |
+
+**(b) risk_signal_builder.py RiskSignalConstructor —— 13 参数组装器**
+
+- **数据缺失→参数=1.0 降级（不抛错）**：ERROR_CONTRACT 显式声明——单参数数据缺口不应让整套 RiskSignal 失效（降级友好优先于严格报错，符合 §5.2.2"无异常即不干预"哲学）
+- **`_fb_call` 安全调用**：getattr 探测 feature_builder 透传方法，缺失/异常→None→对应参数降级——兼容旧 mock 保证测试隔离
+- **`_compute_siphon_inputs`**：板块 close unstack→pct_change→|ret| 占比→HHI=Σshare²；fund_concentration 需 per-sector money_flow（当前 loader 仅全市场聚合）→ 暂返回 None，#8 按仅 HHI 降级
+- **`_compute_multi_tf_divergence`**：60min/30min ETF K 线**先聚合到日线**（每日 max high / min low / last close）再算 KDJ J 顶背离——分钟级直接算背离噪声过大，聚合日线保留结构信息，与 #9 日线背离对齐同尺度比较
+
+**(c) overlay_features.py —— 8 转换评分纯函数族（MOD-REGIME-002 Phase 2b）**
+
+设计不变量：score 维度∈[0,100]；flag 维度∈{0,1}；**无信号=0（平时不干预）**；PIT 由调用方 shift(1)。与 §4.6-§4.12 设计标定的对应：
+
+| 转换 | 已实现评分函数 | 对应设计节 |
+|---|---|---|
+| S1 | `s1_vix_panic_score` / `s1_correlation_score` / `s1_liquidity_score` / `s1_flash_recover_flag` | §4.9（VIX Panic+相关性飙升+流动性枯竭+闪崩恢复否决） |
+| S2 | `s2_capitulation/vix/wyckoff/valuation/fund_score` + `s2_spring/three_yang/break_sc_low/vix_new_high/fund_outflow_flag` | §4.12（八维度见底+否决旗标）。**NLP 两维度已落 MVP**：`s2_policy_score`（政策新闻有无门控 × 3 日净正面滚动均值：净正面≥10→80 / ≥5→60 / >0→40 / 净负→20 / 无政策新闻→0，对齐 confirm 门槛 policy≥40）+ `s2_bad_news_flat_score`（5 日负面密度≥5/10/20→40/60/80 × 5 日累计收益≥-2% 企稳门控，未企稳→0） |
+| T1 | `t1_bqs/rcs/frs_score` | §4.6（三阶段动态评分 BQS/RCS/FRS） |
+| T2 | `t2_continue_decline_flag` | §4.7（放量后继续缩量阴跌=T2 失败否决） |
+| T3 | `t3_volume_price/ma_trend/sentiment/money_effect/mainline/leader_score` + `t3_one_day_mainline_flag` | §4.10（七维度评分+主线一日游证伪旗标） |
+| T4 | `t4_shrink_flat_flag` | §4.8（天量后缩量横盘=赶顶失败信号） |
+| T5 | `t5_leader_break_score` + `t5_rebound_wrap_flag` | §4.11（龙头断板+退潮反包否决） |
+| T6 | `t6_sudden_volume_flag` | §4.7（冰点后突然放量=T2 升级信号） |
+
+**(d) regime_data_loader.py RegimeDataLoader —— 数据加载与降级**
+
+- **TSV 文本协议**（`parse_tsv`/`safe_float`）：ClickHouse HTTP 接口返回 TSV 字符串再逐行解析——与项目数据层统一查询接口对齐，无额外 Native 协议依赖
+- **`_load_or_cache` 会话内缓存**：9 张输入表一次加载多次复用，避免 walk-forward 各季度重复全表查询（46 季度 × 9 表的 IO 放大）
+- **`_derive_limit_up_down_from_kline` 降级**：market_limit_up_down 表数据不足时从 market_kline_daily 派生——pct_change≥9.5→"涨停"（10% 板含误差容限）、≤-9.5→"跌停"，仅 A_share + quality_flag=1。**已知局限**（代码注释显式标注）：ST(5%)/创业板科创板(20%)/北交所(30%) 阈值不同，派生仅捕获 10% 板，覆盖率约 70%（MVP 可接受）
+- **`load_news_sentiment`（P1-E3 MVP）**：从 fund_news_data 表用 ClickHouse `multiSearchAny` 做**服务端关键词匹配**，聚合每日正/负面/政策新闻计数——关键词匹配下推到服务端，避免全量新闻回传本地过滤的 IO 开销
+- **输入表清单**（9 张，经 `_registry.table()` 逻辑名解析）：market_index_kline / market_money_flow / market_sector_kline / market_limit_up_down / market_kline_daily / market_hk_connect_flow / market_option_iv / fund_news_data / 多周期 ETF K线（category_id 动态解析）
+
 ### 9.13 2026-08 最新算法调研补充（v1.4.1 新增）
 
 > **触发**：用户要求全网搜 2026 年 8 月 8 日最新研究实践算法。在 §9.8（2026-02 至 2026-06 调研）基础上补充 2026-07/08 最新发现。
@@ -2817,6 +2889,8 @@ S2 算法重设计归入 P1-E9，详见 [14_regime_s2_diagnosis.md](14_regime_s2
 **为何最相关**：本方案 §9.3 B1 FAIL 根因是"HMM 严重过度自信"（80-100% 桶预测 0.982 实际 0.523）。GaussianHMM full covariance 后验过尖的**潜在根因之一是 Gaussian 假设对厚尾不适用**——A 股有涨跌停、缺口、政策冲击等极端值，Gaussian 尾部衰减过快致后验过度集中。Student-t 的肥尾特性可能从源头缓解过度自信，减少对 Temperature Scaling 的依赖。
 
 **借鉴门槛**：⭐⭐⭐ 高价值——hmmlearn 支持 `GaussianHMM` 但不直接支持 Student-t HMM，需自定义 emission 或转 pomegranate/hmmlearn fork。工程量中等。**待裁定**是否在 Phase 3 参数校准时对比 Gaussian vs Student-t 的 B1 ECE。
+
+**第二独立证据（v1.6.0 §9.18.1 补充）**：arXiv:2606.23492（Cornell 2026-06）统一 EM 框架对比 Gaussian/Student-t/Laplace/GED 发射族，谱恒等式证明 |收益| ACF 衰减模态数受中心化转移矩阵秩约束——但该秩约束在少数几个态后不再活跃，**边缘分布灵活性（厚尾发射）比增加态数解释更多拟合缺口**；厚尾发射无调参超参即复现 Cont 三大典型事实、收窄 Gaussian 峰度缺口；regime-conditional VaR 通过 OOS 联合条件覆盖检验。→ 直接支持"4 态 + Student-t 发射"优于"增加态数"，与 BIC 降维（§9.2）互证。
 
 #### 9.13.2 Beta Calibration（校准器 Stage 2 备选）
 
@@ -3258,6 +3332,120 @@ S2 算法重设计归入 P1-E9，详见 [14_regime_s2_diagnosis.md](14_regime_s2
 | 单模型方差 | n_init=3 取最优 | Ensemble-HMM Voting / DTW Clustering | §9.15.6 |
 | label-switching | Viterbi 语义漂移 | Wasserstein HMM / DTW identity tracking | §9.8.1 / §9.15.6 |
 
+### 9.17 已施工设施盘点（v1.6.0 新增，通用规则 #11）
+
+> **定位**：regime 检测器相关全部已建设施与配套的一次性盘点（2026-08-12 快照）。"已施工"=代码/配置/测试真实存在于仓库，可复查。
+
+#### 9.17.1 核心代码（src/zephyr/regime/，MOD-REGIME-001/002）
+
+| 层 | 文件 | 职责 | 状态 |
+|---|---|---|---|
+| core | core/regime_detector.py（43KB） | RegimeDetector：4 态 GaussianHMM + sticky Dirichlet 先验 + walk-forward 季度 refit（n_init=3）+ overlay_gated 合并 + ConfidenceSignal/RiskSignal/Shrinkage 计算 + RegimeSnapshot 输出契约 | production 级（C1/Phase 2 验证通过） |
+| 特征 | features/market_features.py | F1 vol_pct / F3 cross_asset_corr / F4 ad_ratio / F5 volume_anomaly（§9.12.5） | 已施工 |
+| 特征 | features/trend_features.py | F2a hurst_dfa（DFA 5 步）/ F2b kalman_slope（Q/R=0.01）（§9.12.5） | 已施工 |
+| 特征 | features/risk_features.py | §5.3 十三参数系数纯函数 9 个 + KDJ/顶背离（§9.12.7a） | 已施工（#4/#11/#12/#13 stub） |
+| 特征 | features/overlay_features.py（33KB） | 8 转换评分纯函数族 + S2 NLP 两维度关键词字典 MVP（§9.12.7c） | 已施工 |
+| 特征 | features/synthetic_vix.py | 50ETF+300ETF 期权 IV 合成 VIX（CBOE 简化公式，§9.12.1） | 已施工 |
+| 特征 | features/chip_distribution_engine.py | 华泰 2026 筹码分布引擎（VWAP 三角分布+换手递推+筹码龄分层+32 网格，§9.12.1） | 已施工（RiskSignal #12 接入待 Phase 2c） |
+| 特征 | features/wyckoff_engine.py | Wyckoff 吸筹 6 阶段 FSM（§9.12.1） | 已施工 |
+| 数据 | features/regime_data_loader.py | 9 张输入表加载+会话缓存+涨跌停派生降级+新闻 multiSearchAny（§9.12.7d） | 已施工 |
+| 管道 | regime_feature_builder.py（33KB） | RegimeFeatureBuilder：特征矩阵/训练矩阵/Shrinkage schedule（EMA 平滑 α=0.15）+ walk-forward 季度切分（§9.12.4/§9.12.6） | 已施工 |
+| 管道 | overlay_signals_builder.py（32KB） | OverlaySignalsConstructor：overlay_signals 日级构建（板块 HHI/连板晋级/北向 z-score 融合，§9.12.6） | 已施工 |
+| 管道 | risk_signal_builder.py | RiskSignalConstructor：13 参数组装+降级友好（§9.12.7b） | 已施工 |
+| 验证 | validation/phase2/{a1_sample_sufficiency, a2_hmm_overfitting, b1_probability_calibration, b4_transition_accuracy, confidence_calibrator, phase2_runner}.py | Phase 2 四验证器+两阶段校准器+运行编排（§9.1-§9.3）；b4 含 design_match 字段 | 已施工，Phase 2 闭环 |
+
+#### 9.17.2 回测验证包（src/zephyr/backtest/regime_validation/）
+
+| 文件 | 职责 | 关联 ARCH |
+|---|---|---|
+| shrinkage_provider.py | Shrinkage 因子 4 类供给（Const=1.0 关闭 / Schedule 查表回放 / VolMock 波动率 mock / RegimeDetectorAdapter 真实序列），PIT as-of join | #ARCH-REGIME-VALIDATION-001 |
+| c1_comparator.py | Shrinkage 开/关双回测对比，Sharpe/MaxDD/Calmar/Turnover 四项一票否决（门槛取 11 号 §5） | #ARCH-REGIME-VALIDATION-001 |
+| c1_runner.py | C1 编排入口（mock 冒烟 + regime 真实模式），复用 comparator.compare | #ARCH-REGIME-C1-RUNNER-001 |
+| （上层）回测引擎 Shrinkage 接入点 B | 归一化后按 Shrinkage 缩放目标权重、余留现金，shrinkage=1.0 与父类 bit-identical（C1 可溯源） | #ARCH-REGIME-VALIDATION-001 |
+
+#### 9.17.3 测试（16 文件）
+
+- tests/regime/（13）：test_regime_detector / test_trend_features / test_synthetic_vix / test_chip_distribution_engine / test_overlay_features / test_overlay_signals_builder / test_risk_signal_builder / test_july_case_e2e（7 月案例 E2E）+ phase2/ 下 5 个（test_a1/a2/b1/b4/confidence_calibrator）
+- tests/audit/（2）：test_regime_detector / test_regime_gain_scheduling（审计侧）
+- tests/fle/（1）：test_fle_regime_detector（同名不同域，feedback loop 用）
+
+#### 9.17.4 脚本与验证用例
+
+- scripts/tests/run_phase2_validation.py（Phase 2 执行入口）/ dump_s2_scores.py（S2 维度评分诊断，§9.7.2）/ diag_s2_recovery.py（S2 复苏诊断）
+- validation_cases/historical_events.yaml（历史危机/复苏事件库，S2 三事件 design_match=false + 排除理由注释）
+
+#### 9.17.5 蓝图与注册表登记
+
+- Blueprint（3 篇）：docs/03_modules/_domain_regime/{regime_detector, regime_feature_builder, chip_distribution_engine}/blueprint.md
+- ARCH 条目（9 条）：#ARCH-REGIME-VALIDATION-001（回测验证包）/ #ARCH-REGIME-CONFIDENCE-FIX-001（state_risk 移除，§9.4）/ #ARCH-REGIME-C1-RUNNER-001（C1 编排器）/ #ARCH-REGIME-DEADZONE-001（死区装饰器验证后否决）/ #ARCH-REGIME-RISK-FULL-001（13 参数完整版 C1 通过不退化）/ #ARCH-REGIME-OVERLAY-001（overlay_gated，§9.5.2）/ #ARCH-REGIME-S2-ALGORITHM-001（design_match，§9.7）/ #ARCH-REGIME-FEATURE-BUILDER-001（特征管道落地）/ #ARCH-CALIBRATOR-001（两阶段校准器，§9.3）
+- module_translation_registry：MOD-REGIME-001（regime_detector）/ MOD-REGIME-002（market_features/risk_features/overlay_features 等）plain_zh 条目已登记
+- capability_canonical_file_registry：shrinkage_provider / c1_comparator canonical 条目已登记
+
+#### 9.17.6 下游消费与同名辨析
+
+- **下游消费**：pf_alloc/core/regime_meta_allocator.py（MOD-PA-007，34 号，production，55 测试全绿）消费 7 维概率 + RiskSignal 13 参数；backtest 引擎 Shrinkage 接入点 B（§9.17.2）
+- **同名不同域**（避免误判为本检测器设施）：gov_drift/detector_core/regime_detector.py（治理漂移域）/ feedback_loop/diagnosers/reliability/regime_gain_scheduling.py（FBL 增益调度，production）/ signal_ashare/regime_change_detector.py（BM-BUY-02-A-1-d 体制转换检测，design 态登记、未施工，§2.1 资产表）
+- **无独立 DB 输出表**：regime 输出为内存契约（RegimeSnapshot/ShrinkageResult），经 shrinkage schedule 传递；输入侧 9 张表见 §9.12.7(d)
+
+### 9.18 2026-08 第六轮算法调研补充（v1.6.0 新增）
+
+> **触发**：第六轮审查要求全网搜 2026 年 8 月最新研究（4 组查询：regime detection HMM / regime switching model / non-parametric+deep learning / synthetic VIX+volatility regime）。前五轮已覆盖的不重复收录（Ensemble-HMM Voting / AE-Gated+SAC / LSTM-FIGARCH / HARQ-XGBoost / Velocity 负面结果 / Wasserstein HMM / AH-HMM / MDPI 4态+CVaR 见 §9.8-§9.16）。本轮新增 4 项：
+
+#### 9.18.1 Cornell CHMM 厚尾发射族统一框架（★ Student-t 第二独立证据 + HSMM 边界 + 4 态佐证）
+
+**来源**：arXiv:2606.23492，2026-06-22，Cornell University，"Continuous Hidden Markov Models for Equity Returns: Heavy-Tail Emission Families and Regime-Conditional Value-at-Risk"
+
+**核心**：
+- 统一 EM 框架：Gaussian / Student-t / Laplace / GED 发射族共享 forward-backward 递推 + 分位数初始化，仅每族更新不同
+- **谱恒等式**：|收益| ACF 慢衰减 = 有限几何模态之和，模态数受**中心化转移矩阵秩**约束——回答 Rydén 1998"Gaussian HMM 无法复现 ACF 慢衰减"的历史负面结果：秩约束在少数几个态后**不再活跃**，边缘分布灵活性（厚尾发射）比增加态数（更多衰减模态）解释更多拟合缺口
+- 厚尾发射**无调参超参**即复现 Cont 三大对称典型事实、收窄 Gaussian 峰度缺口
+- regime-conditional VaR 通过 OOS 联合条件覆盖检验；Student-t copula 比单指数更忠实复现跨资产相关
+- **HSMM 基准对照**：i.i.d. bootstrap 和 ML-HSMM 在单窗口原始拟合上有匹配或更优，但**不支持 regime-conditional 风险预测和 multi-asset 组合**
+
+**对本方案的三点价值**：
+1. **Student-t HMM（§9.13.1）第二独立证据**——"厚尾发射 > 增加态数"直接支持"4 态 + Student-t"方向，与 BIC 降维（§9.2）互证
+2. **HSMM（§9.15.1）边界澄清**——HSMM raw fit 优但不支持 regime-conditional 风险预测（本方案 regime-conditional Shrinkage 正是此类用法），评估时需用风险预测指标而非仅拟合优度（§9.11 #25）
+3. **4 态合理性第三佐证**——谱秩约束在少态后不活跃，"更多态"收益递减有理论解释
+
+#### 9.18.2 A 股 VIX 完整 CBOE 方差互换方法 + IV Spread（★ synthetic_vix 升级路径）
+
+**来源 A**：xueqiu 淡定菌 2026-05-16，"构建VIX恐慌指数抄底A股"——CBOE 方差互换方法论完整移植到中金所沪深300指数期权（IO）
+**来源 B**：SCIRP OJSS 14(3):668-687，2026-03-31，澳门大学，"Dynamic Correlation between Implied Volatility Spreads and Movement of CSI 300 ETF: Regime Identification"
+
+**核心**：
+- **完整方差互换公式**（vs 本方案 synthetic_vix 的 CBOE 简化公式）：F=K₀+e^{RT}(C(K₀)-P(K₀)) 定远期 → σ²=(2/T)Σ[ΔKᵢ/Kᵢ²]e^{RT}Q(Kᵢ)-(1/T)[F/K₀-1]² → 近月/次月 30 天期限插值；SHIBOR 1M 无风险利率；剔除距到期<7 天合约
+- **实证锚点**：2026-03-23 CSI300 -3.26% 时 VIX 飙至 25.2，看跌期权单日 +70-80%——A 股期权是机构纯市场（50 万门槛），IV 天然反映"聪明钱"恐惧，前瞻性优于历史波动率（政策驱动拐点无前兆）
+- **IV Spread（put IV − call IV）**：捕获**方向性恐惧**（put skew），补 synthetic VIX 只测波动率水平、不测方向的缺口；澳门大学用两阶段变点检测（Bottom-Up 合并 + Lavielle 最大曲率选段）在 IV Spread 上识别 18 个宏观态——变点检测与 §9.14.3 CUSUM refit 触发同族
+
+**对本方案的启示**：当前 synthetic_vix（§9.12.1）用 50ETF+300ETF 期权 IV 的 CBOE 简化公式。升级路径：①简化公式→完整方差互换（有公开完整实现参照）；②叠加 IV Spread 方向性维度（S1/S2 的"VIX 见顶回落"维度可区分"恐慌加剧"vs"恐慌消退"）。属工程细化非范式变更。**待裁定** Phase 3/4（多到期日期权链数据完整性是前提，§9.11 #24）。
+
+#### 9.18.3 RPubs 2 态 HMM walk-forward 实证（定位验证，无需改代码）
+
+**来源**：RPubs Majumder 2026-04-26，SPY 20 年日频 2 态 Gaussian HMM 三策略对照
+
+**关键发现**：expanding 窗口基线 OOS 失败（仅 ~20% 时间持仓——训练集被历史危机"伤疤"主导，模型长期判 panic）；**rolling 3 年窗口**（防过度索引历史危机）+ **后验概率软仓位**（probability-weighted exposure，消除硬切换）修复。
+
+**对本方案**：独立验证两个已定设计——①§9.12.4 walk-forward rolling > expanding（why#1）；②§1 灰度概率分布 + Shrinkage 连续收缩 > 硬切换。**记录为定位验证，不采纳新算法**。
+
+#### 9.18.4 其他（记录不采纳 / 远期）
+
+- **粗糙路径签名 + MMD 非参数在线检测**（arXiv:2306.15835，Oxford Horvath & Issa）：path-wise 双样本检验，非马尔可夫可行、对小样本窗口反应快。理论重（rough path signatures）、工程量超单人系统边界，**远期记录**。
+- **GraphTM 图 Tsetlin 机 FX regime**（arXiv:2607.06719，2026-07）：宏观消息传递+可解释逻辑子句预测 USD/JPY regime。FX 域、A 股边际相关，**记录**。
+- **Volatility Box 4 档 VIX regime**（2026-03）：VIX<15/15-20/20-30/>30 四档（频率 ~35/30/25/10%）+ 200 日均线越界升档 + 期限结构倒挂升档 + 5 日连续收盘确认新 regime。确认规则与 §4 各转换 confirm 阶段同思路（互证）；**期限结构维度**需多到期日 IV，当前 synthetic VIX 单 30 天期限，与 §9.18.2 升级捆绑评估。
+
+#### 9.18.5 调研结论（v1.6.0）
+
+| 发现 | 类型 | 对本方案价值 | 优先级 |
+|---|---|---|---|
+| Cornell CHMM 厚尾发射族 | 理论+实证 | Student-t 第二证据 + HSMM 边界 + 4 态第三佐证 | ⭐⭐⭐（并入 §9.13.1 高优） |
+| A 股 VIX 完整方法 + IV Spread | 工程升级路径 | synthetic_vix 简化公式→完整方差互换+方向性偏度 | ⭐⭐（Phase 3/4 待裁定 #24） |
+| RPubs rolling+软仓位 | 定位验证 | walk-forward rolling + 灰度概率设计独立验证 | ✅ 已验证（无需采纳） |
+| 粗糙路径签名 MMD | 非参数新族 | 非马尔可夫在线检测 | ⭐（远期记录） |
+| GraphTM FX regime | 可解释 ML | FX 域边际相关 | ⭐（记录） |
+| VIX 4 档+期限结构 | 规则参照 | confirm 思路互证 + 期限结构远期增强 | ⭐（与 §9.18.2 捆绑） |
+
+**结论**：本轮无推翻性发现。Student-t HMM 优先级获第二独立证据强化（唯一 ⭐⭐⭐ 增量）；synthetic_vix 完整化是唯一直接可落地的工程升级候选（⭐⭐）。深度学习/非参数新族仍全部远期或记录级。
+
 ---
 
-> **§9 修订记录**：本章为 v1.4.0 新增，回填 Phase 2 验证结果与模型重设计决策。v1.4.1 补充 §9.12 施工算法完整性审查（6 类缺失回填）+ §9.13 2026-08 最新算法调研（Student-t HMM / Beta Calibration / Multi-Scale MS-GARCH / AH-HMM / 尾部分类器 / FerroQuant）。v1.4.2 补充 §9.14 第三轮算法调研（自适应 Kalman+IMM / EGARCH-GJR-GARCH / CUSUM 触发 refit / MSIM QDS 定位验证）+ §9.12.5-6 HMM 6 特征+overlay 维度算法 why 回填。v1.5.0 补充 §9.15 第四轮算法调研（HSMM A 股实证 / HARQ+MS-GJR-GARCH+XGBoost 中国高频定位背书 / Mamba-SSM 长序列 / Autoencoder-Gated Transformers+SAC / LSTM-FIGARCH 早期预警 / Ensemble-HMM Voting+DTW / Velocity 负面结果警示）。**v1.5.1 补充 §9.16 第五轮算法调研**（RED-HDP-HMM ICML 2026 贝叶斯非参数 / Streaming HMM beam search / BR-iHMM ICML 2026 双重鲁棒 / Hierarchical HMM 多时间尺度持续时间 +38.5% / Sticky HMM+PCA Absorption Ratio / Conformal Prediction 分布无关覆盖保证）+ §9.12.1 回填已施工 sticky Dirichlet 先验。后续 S2 重设计（P1-E9）完成、Phase 4 鲁棒性验证启动、算法升级决策落地时，在本节追加小节并升版本。
+> **§9 修订记录**：本章为 v1.4.0 新增，回填 Phase 2 验证结果与模型重设计决策。v1.4.1 补充 §9.12 施工算法完整性审查（6 类缺失回填）+ §9.13 2026-08 最新算法调研（Student-t HMM / Beta Calibration / Multi-Scale MS-GARCH / AH-HMM / 尾部分类器 / FerroQuant）。v1.4.2 补充 §9.14 第三轮算法调研（自适应 Kalman+IMM / EGARCH-GJR-GARCH / CUSUM 触发 refit / MSIM QDS 定位验证）+ §9.12.5-6 HMM 6 特征+overlay 维度算法 why 回填。v1.5.0 补充 §9.15 第四轮算法调研（HSMM A 股实证 / HARQ+MS-GJR-GARCH+XGBoost 中国高频定位背书 / Mamba-SSM 长序列 / Autoencoder-Gated Transformers+SAC / LSTM-FIGARCH 早期预警 / Ensemble-HMM Voting+DTW / Velocity 负面结果警示）。**v1.5.1 补充 §9.16 第五轮算法调研**（RED-HDP-HMM ICML 2026 贝叶斯非参数 / Streaming HMM beam search / BR-iHMM ICML 2026 双重鲁棒 / Hierarchical HMM 多时间尺度持续时间 +38.5% / Sticky HMM+PCA Absorption Ratio / Conformal Prediction 分布无关覆盖保证）+ §9.12.1 回填已施工 sticky Dirichlet 先验。**v1.6.0 补充**：§9.1/文档头横幅 B4 行闭环状态回填（design_match 排除回 PASS(3/3)，commit 93a25890）+ §9.7 重写（14 号诊断结论+验证独立性第一性原理）+ §9.12.7（risk_features/risk_signal_builder/overlay_features/regime_data_loader 算法 why 回填，含 S2 NLP 关键词字典 MVP 落码状态）+ §9.17 已施工设施盘点（通用规则 #11）+ §9.18 第六轮算法调研（Cornell CHMM 厚尾发射★/A 股 VIX 完整方差互换+IV Spread/RPubs 定位验证）+ §9.9.2 NLP 状态更新 + §9.11 待裁定项 #23-25。后续 S2 重设计（P1-E9）完成、Phase 4 鲁棒性验证启动、算法升级决策落地时，在本节追加小节并升版本。
