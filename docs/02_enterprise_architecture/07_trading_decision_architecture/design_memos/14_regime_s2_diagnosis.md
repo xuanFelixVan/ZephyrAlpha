@@ -5,9 +5,9 @@ title: "S2 评分算法时点错配诊断与治本方案——capitulation 过�
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.4.5"
+version: "0.5.1"
 date: "2026-08-08"
-last_updated: "2026-08-09"
+last_updated: "2026-08-12"
 topic: regime_s2_diagnosis
 scope: 07_trading_decision_architecture
 doc_id: 14_regime_s2_diagnosis
@@ -980,7 +980,7 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 2. **LVI 强平级联模型**（LiveVolatile 2026-02）：把 capitulation 建模为机械性强平级联（margin call→强平→价跌→更多强平），LVI=(多头强平总量/未平仓合约)×波动率乘子，>30 高风险/>50 级联中。比 §4.1"量能+实体+下影线"更接近 capitulation 本质（杠杆清洗）。A 股可用融资融券余额变化+质押爆仓 proxy。需衍生品/杠杆数据，P2+ 方向。
 3. **滞回边沿触发器**（Modgil, arXiv:2606.19386, 2026-06）：用衰减信号做阈值触发时，带滞回的上升沿触发器（触发 60/解除 40）可有效避免衰减曲线在阈值附近震荡反复触发。§4.1 衰减加权解决了 rolling max 粘滞，但衰减信号仍可能在 trigger 门槛 60 附近上下震荡反复触发/解除 S2。ArXiv 实证滞回触发每轨迹仅 0-3 次 vs 持续报警 20/20。P1-E9 验证若发现反复触发，加滞回。
 4. **ProRealCode 16 事件 FSM 相位引擎**（González 2026-06-09）：用相位引擎自动分类 16 个 Wyckoff 事件（PSY/UT/BC/SOW/Spring/TSO...），从事件平衡推断主导相位（ACCUMULATION/DISTRIBUTION/NEUTRAL）。§4.3 spring 复用 wyckoff_engine 的 Spring 事件 flag；相位引擎更进一步——spring 只在 ACCUMULATION 相位下才有效，单 flag 不够。若 wyckoff_engine 不输出相位，可参考此引擎补相位判定。
-5. **EVR 量价背离信号**（v0.4.3 新增，[YoungCan-Wang/WyckoffTradingAgent](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/01_Finance_Wyckoff_Method) 2026-05）：EVR（Effort vs Result）= 成交量 > 1.6× 均量 + K 线实体极小（平盘）= 主力暗中吸筹（放了巨量但价格没动=有人在大量买入但刻意压住股价）。**当前 S2 无此维度**——capitulation 衡量"恐慌卖出"，EVR 衡量"放量抗跌暗中吸筹"，二者互补。可作为 S2 confirm 的辅助维度或 wyckoff_score 加分项。A 股可用"成交量分位 + 日内振幅"自算，无需额外数据源。P2+ 方向。
+5. **EVR 量价背离信号**（v0.4.3 新增，[YoungCan-Wang/WyckoffTradingAgent](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/01_Finance_Wyckoff_Method) 2026-05）：EVR（Effort vs Result）= 成交量 > 1.6× 均量 + K 线实体极小（平盘）= 主力暗中吸筹（放了巨量但价格没动=有人在大量买入但刻意压住股价）。**当前 S2 无此维度**——capitulation 衡量"恐慌卖出"，EVR 衡量"放量抗跌暗中吸筹"，二者互补。可作为 S2 confirm 的辅助维度或 wyckoff_score 加分项。A 股可用"成交量分位 + 日内振幅"自算，无需额外数据源。P2+ 方向。**v0.5.1 补可计算代理**：ADL（Accumulation/Distribution Line）反转三模式可作 EVR 的成熟可计算实现（FibAlgo 2026-02）——① 经典背离（价格新低但 ADL 更高低，跨度≥5 日 + 收盘在日振幅中的位置由下 25% 区间改善至上 50% 区间）② 吸筹脉冲（大跌日 ADL 暴增=收盘位置极强，2020-03-23 新冠底实例）③ 隐形吸筹（ADL 走平/微升而价格阴跌 7-10 日）。ADL = 前值 + 资金流乘子×成交量，资金流乘子 = [(close-low)-(high-close)]/(high-low)，纯 OHLCV 可算无需新数据。
 6. **Flush 桥接信号**（v0.4.3 新增，[TradingSim 2026-05](https://www.tradingsim.com/blog/capitulate)）：flush = capitulation 末端的最终暴跌——"扫掉最后弱手和止损，高量打印但收盘回到前区间内，留长下影线"。这正好是 §4.1 capitulation（过程）→ §4.3 spring（收回）的**时序桥接信号**：当前两个维度分离，flush 可量化判定"capitulation 刚结束、spring 即将开始"的过渡态。量化：当日 low 创 N 日新低 + 收盘回到前日区间内 + 下影线 >50% + 量 >2× 均量。可作为 strong_confirm 的时序前置条件。P2+ 方向。
 
 > 这 6 项均为"§4.1-§4.4b 治本方案验证效果不理想时的进阶选项"，非 P1-E9 必做。P1-E9 先做 §4.1-§4.4b + §4.5 验证闭环，效果不足再按本节演进。
@@ -1036,3 +1036,4 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 |---|---|---|---|
 | 2026-08-09 | 0.4.5 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules/related_issues 扩展字段保留），H1 去文件名前缀与 title 对齐；文末补建本「修订记录」章节（§7）；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾）；14 号此前无修订记录章节，补齐对齐 01_design_memo_management_spec §4.3 规范 |
 | 2026-08-12 | 0.5.0 | 第十一轮审查（AI-15）：① §0.1 事件经过表回填 2026-08-07 两个 commit（eb3db21bd8 合成 VIX 后备 + 981d59d8cc S1 correlation 门槛校准）+ 新增因果链完整性注记（数据层根因 vs 算法层根因两层区分）；② 新增 §0.3 已施工设施盘点（通用规则 #11：12 维度函数/合成 VIX/wyckoff_engine/design_match 字段/诊断脚本/测试/治理登记 + P1-E9 未施工清单）；③ §4.4b 校正实参名（s2_three_yang_flag 传 pct_change 非 close）；④ §6 开放问题新增 12-14（ARCH 状态三方不一致 / 12+13 号闭环叙事未同步 / 10 号 §4.12.10 十二维体系演进对齐） | 因果时间线完整性（thresholds 过高/NLP stub=0/合成 VIX 缺失的第一层根因及修复方案此前未入本文档）；规则 #11 基础设施盘点合规；跨文档一致性缺口登记（不越界改 10/12/13 号） |
+| 2026-08-12 | 0.5.1 | 第十二轮最新研究整合（AI-15，2026-08-12 全网搜索）：§4.6 演进方向#5 EVR 补 ADL 可计算代理（FibAlgo 2026-02 ADL 反转三模式：经典背离/吸筹脉冲/隐形吸筹，纯 OHLCV 可算无需新数据）；本轮搜索确认 capitulation 检测（Williams Vix Fix 价格合成恐慌指标=合成 VIX 思路同源）与 S2 多维度触发逻辑无新决策缺口 | 第十二轮搜索（crisis recovery/capitulation 2026）增量价值仅 ADL 一项，其余与既有研究库重合 |

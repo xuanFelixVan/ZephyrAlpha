@@ -5,8 +5,8 @@ title: 多因子策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.12.11"
-date: 2026-08-10
+version: "1.13.1"
+date: 2026-08-12
 topic: multifactor_strategy_detail
 scope: 07_trading_decision_architecture
 ---
@@ -23,6 +23,8 @@ scope: 07_trading_decision_architecture
 > **v1.12.9 补**：第八轮字段填充断裂点审查——§3.7#3 DecayActionLifecycle 补 NEW（新因子冷启动：低权重30%试运行+IC样本积累≥20日转ACTIVE）和 RETIRED（永久退役：DORMANT持续120日无恢复→从factor_registry注销+释放池配额）两边界状态。原4态状态机（ACTIVE→OBSERVE→DORMANT→RECOVERY）补全为6态（+NEW+RETIRED），填补新因子入池和永久退役的流程断裂点。
 > **v1.12.10 补**：第九轮最新研究整合——Phase 4 新增 MFCCA 多尺度组合配置（arXiv:2608.04987 多重分形互相关分析+符号保留，突破"等权/IC/ICIR三种加权接近"瓶颈，同向与反向因子以相反符号贡献风险，非简单加权）+ 平稳模糊性训练原则（arXiv:2608.04832 防止训练中模糊性衰减导致 regime-shift 过拟合，从模拟器设计源头延缓因子衰减，比事后IC监控退役更上游）。8项施工算法仍完整，本轮无新施工算法缺口。
 > **v1.12.11 补**：第十轮施工算法断裂点修复+最新研究——§3.7#6 RebalanceTrigger 补 Inaction Cost 成本感知门控（cost_aware 参数 v1.12.6 声明但未实现→补 Perold 1988 Implementation Shortfall 框架：漂移/信号触发命中后额外检查 Inaction Cost > Action Cost，A 股 0.4% 往返成本 break-even 8 天，convergence_window_max=5 < 8 提供安全垫，避免窗口末尾多余换仓）+ Phase 4.20 QUBO 换仓调度优化（arXiv:2603.16904 换仓时序 QUBO 组合优化，S&P 500 实证 8 次 vs 24 次成本降 44.5%，经典求解器可替代量子，作为 RebalanceTrigger 的远期全局优化升级路径）。8项施工算法仍完整（本轮修复#6内部断裂点非新增算法），无新施工算法缺口。
+> **v1.13.0 补**：第十一轮名实相符审查（AI-15，通用规则 #11 基础设施盘点）——① 新增 §2.4 已施工设施盘点（D_FACTOR 域 65 production 模块逐个对号 + §3.7 八项施工算法落码状态 grep 实证全部为 ❌ 未落码）；② 名实不符修正 4 处：§3.3 衰减监控误写 `factor_decay_monitor.py` MOD-L02-013/ANA-11（实为 `decay_monitor.py` MOD-L02-009/ANA-08，且**CUSUM 层+自动淘汰层代码不存在**，仅半衰期 min_half_life=10）/ §2.3+§5.1 池容量误写活跃≤30 休眠≤8（实为 60/4，ADR-FAC-006+_config.yaml）/ §3.2+§3.5 组合优化器误写 MOD-L02-012（实为 MOD-PF-002+约束求解 MOD-PF-006，D_PF_CORE 域）/ §3.5 7 约束链 C1-C7 标注与代码实际约束（行业±10%/MDD5%/相关性0.7 等）不一致的注记；③ §3.6 错链修正（G07 相关性验证真源是 23 号非 28 号）+ §7 补 23 号引用 + 46_d_factor 断链修复；④ §6 待裁定新增 4 行（CUSUM+自动淘汰落码 / C1-C7↔MOD-PF-006 对齐 / 运行时 6 态↔registry 5 态映射 / 15 号骨架依赖倒挂）。决策内容零变更，全部为事实性校正与缺口登记。
+> **v1.13.1 补**：第十二轮缺失环节+最新研究整合（AI-15）——① §4.3 补 Barra 风格中性化替代方案行（选型谱系补齐：简单行业减均值 vs Barra vs 组合约束层）；② §3.3 补信号衰减双时标框架（Alphanume 2026-06：intra-signal horizon decay vs secular alpha decay）实证半衰期监控与拥挤监控的正交分工 + gs-quant 2026-07 行业标准确认；③ 并发会话覆盖修复（§3.3/§3.5 两处 v1.13.0 修正被并发 session 回退后重补）；④ 全网搜索（2026-08-12）确认因子加权/因子挖掘方向无新决策缺口（中信建投 2026-06 三加权接近+GRU 最优=Phase 4.9 已登记；AlphaMemo arXiv:2606.20625=Phase 4.6 同类）。
 
 ## 1. 主题组信息
 
@@ -140,7 +142,7 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 | CUSUM 预警 | 累积 IC 偏移 `S_t = max(0, S_{t-1} + (IC_t - μ_IC - k))` | S_t > h（k=0.5σ, h=4σ） | 触发衰减预警，进入观察池 |
 | 自动淘汰 | 连续 40 交易日 |IC| < 0.02 | 衰减至噪声级 | 移入休眠池，停止参与合成 |
 
-**施工**：`factor_decay_monitor.py`（MOD-L02-013，D-FACTOR-ANA-11）已 production。半衰期拟合 + CUSUM 双检测器，与 `factor_pool_manager.py` 联动自动淘汰。
+**施工**：`decay_monitor.py`（MOD-L02-009，D-FACTOR-ANA-08，v1.13.0 校正——此前误写 `factor_decay_monitor.py` MOD-L02-013/ANA-11）已 production。**代码现状注记（v1.13.0 源码实证）**：当前仅实现**半衰期监控**（`min_half_life=10`，`analysis/_config.yaml`），**CUSUM 预警层与"连续 40 日 |IC|<0.02→休眠"自动淘汰层在代码中不存在**——二者是本文档决策，随 §3.7#3 DecayActionLifecycle 一并落码；`factor_pool_manager.py` 的 `min_ic_to_enter=0.02` 是入池门槛，非休眠淘汰逻辑。上表三层阈值为决策目标态，非代码现状。
 
 **A 股因子衰减实证**（laoyulaoyu 2026-06）：A 股因子半衰期约 15-25 交易日（美股 30-50），需更激进的监控。Hyperbolic 衰减模型 α(t) = K/(1+λt)（博弈论 Nash 均衡推导）比指数衰减更贴合 A 股因子衰减曲线——远期校准时考虑替换指数衰减拟合。
 
@@ -167,7 +169,7 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 **裁定**：合成因子分→组合优化器（7 约束链 C1/C2），输出目标持仓。
 
-**7 约束链**（`portfolio_optimizer.py`，MOD-L02-012，production）：
+**7 约束链**（策略级决策；代码载体 `portfolio_optimizer.py` MOD-PF-002 + `constraint_solver.py` MOD-PF-006，D_PF_CORE 域，production——v1.13.0 校正 MOD ID，此前误写 MOD-L02-012）：
 
 | 约束 | 内容 | 参数 |
 |---|---|---|
@@ -918,15 +920,20 @@ class HoldingDriftMonitor:
 | ✅换仓触发 Inaction Cost 门控 | §3.7#6 RebalanceTrigger cost_aware 补 Perold IS 成本-收益门控 | §3.7 v1.12.11 补 |
 | QUBO 换仓调度优化 | arXiv:2603.16904 换仓时序 QUBO 组合优化 成本降 44.5% | Phase 4.20 远期候选 |
 | A 股 2026-07-06 交易新规 | ST 涨跌幅 5%→10%+盘后固定价格交易扩容 | G22 执行层施工时同步 |
+| 衰减监控 CUSUM 层 + 自动淘汰层落码 | 代码仅半衰期监控（decay_monitor.py min_half_life=10），CUSUM/40 日\|IC\|<0.02 休眠为本文档决策（§3.3 代码现状注记） | 随 §3.7#3 DecayActionLifecycle 一并落码 |
+| C1-C7 策略级约束链 ↔ MOD-PF-006 代码约束链对齐 | 代码约束参数（行业 ±10%/MDD 5%/相关性 0.7 等）与 §3.5 决策参数不一致（§3.5 代码现状注记） | 多因子 sleeve 上线前经 CTR-003 RiskLimits 注入对齐 |
+| DecayActionLifecycle 6 态 ↔ factor_registry status 5 态映射 | 运行时 6 态（NEW/ACTIVE/OBSERVE/DORMANT/RECOVERY/RETIRED）vs registry 治理 5 态（candidate/experimental/active/deprecated/retired）双轨，DORMANT/OBSERVE 在 registry 应标什么未定义 | §3.7#3 落码时定义映射规则并回写 62 号 |
+| G01 因子工程总纲（15 号）仍为 draft 骨架 | 本文档因子治理参数无上游 why 层背书；因子 10 类真源实际在 62 号 §6.1.1 + factor_registry.yaml | 15 号定稿后回填对齐（由 AI-20 负责 15 号） |
 
 ## 7. 引用
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G09
 - [20_first_batch_strategies](20_first_batch_strategies.md) §2.3 多因子 sleeve 定义
+- [23_strategy_correlation_validation](23_strategy_correlation_validation.md) §2.3/§3.1 G07 相关性验证（战略级 >0.6 vs 运营级门禁 0.85/0.90 分层，v1.13.0 补链）
 - [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) §3.4 多因子与 regime 正交边界
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.4/§2.5/§6.4
 - [15_data_feature_layer_spec](15_data_feature_layer_spec.md)（G01 因子工程总纲）
-- [46_d_factor](46_d_factor.md) D_FACTOR 域 65 个 production 模块
+- [46_d_factor](../02_domain_architecture_docs/46_d_factor.md) D_FACTOR 域 65 个 production 模块
 - battle_map_05_stock_selection（BM-SEL-02）
 - **arXiv**：2507.07107 Mask-First 消融实证+Adjusted-MSE（v1.12.5 补）/ 2608.07032 Certified Wasserstein Robust Portfolio（v1.12.6 补 2026-08-10）/ 2608.06618 MINGLE / 2607.27461 OMD / 2608.05755 LSTM Cross-Sectional / 2608.01494 Conformal Kelly / 2608.02355 Path Portfolio / 2608.00127 Drawdown Beyond Brownian / 2608.04987 Multifractal Portfolio（v1.12.10 补，MFCCA 多尺度组合配置）/ 2608.04832 Stationary Ambiguity 平稳模糊性训练（v1.12.10 补，防 regime-shift 过拟合）/ 2603.16904 QUBO 换仓调度优化（v1.12.11 补，S&P 500 成本降 44.5%）/ **2608.04305 CVaR RaQL 自适应训练（v1.12.8 补，6 机制训练控制器 Bellman 残差-85%）**
 - **经典理论**：Perold (1988) Implementation Shortfall——不换仓的机会成本 IS=(P_close-P_0)×Q_unexecuted（v1.12.11 补，§3.7#6 RebalanceTrigger Inaction Cost 理论基础）/ Almgren-Chriss (2000) 最优执行前沿（执行成本-方差权衡）
