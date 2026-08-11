@@ -1,0 +1,1225 @@
+# [A_config] module_id=REG-RLM-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-RLM-001
+name: 风控限额登记表
+description: >-
+  交易风控限额唯一真源（SSoT）。登记所有交易风控规则（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk 9类）。
+  含止损策略、仓位管理、风险控制规则、心法改编风控规则。
+  对标 NISTIR 8286 / ISO 31000 Risk Register。
+  reconciler只能warn/skip/fix-in-place，禁止action="commit"。
+  治本"风控规则分散无登记"硬缺口。business_registry_construction_plan §6.2.2。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-10'
+last_updated: '2026-08-10'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- risk_limit_id
+
+entry_schema:
+  risk_limit_id: str             # RLM-{TYPE}-{NNN}
+  name: str
+  name_zh: str
+  limit_type: str                # position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk
+  scope: str                     # strategy/sleeve/portfolio/firm
+  scope_strategy: str            # scope=strategy时关联strategy_id
+  threshold_value: float
+  threshold_unit: str            # %/元/σ
+  inherent_risk: float           # 固有风险（控制前）
+  residual_risk: float           # 剩余风险（控制后）
+  consumption_tracking: str
+  kri_frequency: str             # daily/weekly/monthly
+  review_cycle: str              # quarterly/annually
+  breach_action: str             # warn/skip/fix-in-place/halt
+  module_id: str
+  doc_ref: str
+  code_path: str
+  status: str                    # candidate/experimental/active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  current_consumption: float     # 运行时消耗
+  # v1.22.0 新增字段
+  stage: str                     # active/deprecated/disabled（Apidurio 四阶段状态机，disabled 阻止新策略引用即将退役的限额）
+  response_strategy: str         # mitigate/transfer/avoid/accept（ISO 31000 风险响应策略，与 breach_action 执行动作正交）
+  # v1.23.0 新增字段（对标 RSB 非高斯回撤校准 + RWC 共形 VaR 校准）
+  drawdown_calibration_method: str  # gaussian/rsb_non_gaussian/fbm_long_memory/weighted_kolmogorov，回撤阈值校准方法
+                                   # gaussian=高斯假设（MVP 默认，保守阈值兜底）
+                                   # rsb_non_gaussian=Rej-Seager-Bouchaud 非高斯校准（Phase 1.5+，重尾策略 γ₄>6 MUST 启用）
+                                   # fbm_long_memory=分数布朗运动长记忆校准（Phase 2+，Hurst H≠0.5 的策略）
+                                   # weighted_kolmogorov=Weighted Kolmogorov Metric 重尾分布回测指标收敛性修复（v1.27.0，arXiv:2601.04490，重尾策略 γ₄>8 MUST 启用）
+                                   # 仅 drawdown 类限额（RLM-DRAWDOWN-001~008）声明
+  var_calibration_method: str       # historical/rwc_conformal/weighted_kolmogorov，VaR 校准方法
+                                   # historical=历史模拟法（MVP 默认，固定窗口分位数）
+                                   # rwc_conformal=Regime-Weighted Conformal Calibration（Phase 1.5+）
+                                   # weighted_kolmogorov=Weighted Kolmogorov Metric 重尾分布回测指标收敛性修复（v1.27.0，arXiv:2601.04490，重尾策略 γ₄>8 MUST 启用）
+                                   # 仅 var 类限额声明
+  # v1.28.0 新增字段（对标 Leave-One-Out 风险贡献分解 arXiv:2604.10375 Alexander & Fabozzi）
+  risk_contribution_decomposition: obj  # {inherent_component: float, correlation_component: float, decomposition_method: enum(loo/standard_rc/none)}
+                                   # LOO 分解将标准 RC 拆为 inherent（仓位自身波动，恒正）+ correlation（与组合协方差，可对冲）
+                                   # 区分"孤立高风险"（inherent 主导→降仓位）vs"高相关风险"（correlation 主导→加对冲）
+                                   # 注意：与 inherent_risk/residual_risk（NIST 控制前/后语义）完全不同——
+                                   #   NIST inherent=加风控前风险，LOO inherent=仓位自身波动占组合风险比例
+                                   # decomposition_method: loo=Leave-One-Out 精确分解（Phase 1.5+ 持仓>20 MUST）
+                                   #                       standard_rc=单一 RC 数字（MVP 默认，持仓<10 人工判断）
+                                   #                       none=未分解
+                                   # 仅 concentration/var 类限额声明
+  # v1.30.0 新增字段（对标 Ulcer Index/Calmar/Pain Index 路径依赖疼痛度量 Martin 1989 / metricgate 2026-05）
+  pain_metric: obj                 # {metric_type: enum(ulcer_index/pain_index/none), threshold: float, monitoring_window_days: int}
+                                   # 路径依赖回撤度量，编码"深度×持续时间"——区别于 max_drawdown（单一深度标量）和 VaR（分布尾部）
+                                   # ulcer_index=drawdown 序列二次均值 √(ΣD²/N)，0-2% 极低/2-5% 中等/5-10% 升高/>10% 深度或持续
+                                   # pain_index=drawdown 序列算术均值（比 Ulcer 更平滑）
+                                   # none=MVP 默认（持仓<10 人工判断 max_drawdown 足够）
+                                   # threshold=疼痛告警阈值（如 ulcer_index 5%），超阈触发 breach_action
+                                   # monitoring_window_days=计算窗口（如 252 交易日）
+                                   # 仅 drawdown 类限额声明
+  # v1.31.0 新增字段（对标证监会法释〔2026〕13号 2026-07-27 内幕交易司法解释 + 短线交易监管规定 2026-04-07）
+  compliance_notices: list[obj]    # 每项 {regulation: str, effective_date: date, applicability: enum(applicable/not_applicable/conditional), impact_note: str}
+                                   # 登记 A 股合规红线及适用性——§4.20 交易规则/程序化之外的司法解释维度
+                                   # 法释〔2026〕13号（内幕交易司法解释 14 年来首次系统性修订）：
+                                   #   敏感期前移（初步意向即认定）+ 四类人群入刑减半 + 三大脱罪理由失效
+                                   #   event_driven 策略 applicability=conditional（事件窗口划定不得依赖非公开信息）
+                                   # 短线交易规定（适用主体 5%+股东/董监高）：个人非大股东 applicability=not_applicable
+                                   # 个人量化基于公开数据不涉内幕；compliance_notices 作合规存档非阻断门禁
+
+risk_limits:
+  # ============================================================
+  # DRAWDOWN（回撤类）— 8条
+  # S12 止损策略 7条 + S15.6 盈利保护 1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-DRAWDOWN-001"
+    name: "Stop Loss Three Elements"
+    name_zh: "止损三要素"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "跌破20日线三要素（缩量/放量/光头阴）逐条检测，触发即消耗止损额度"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.1"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-002"
+    name: "Break Support Stop Loss"
+    name_zh: "跌破支撑必止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "关键支撑线/价位跌破检测，触发即止损"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.2"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-003"
+    name: "Sell Even at Limit Down"
+    name_zh: "跌停也卖"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: -10.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "跌停板检测，纪律要求排队卖出"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.3"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-004"
+    name: "Trial Position Cost-Blind Stop Loss"
+    name_zh: "试错仓不计成本止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 30.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "下跌行情试错仓≤3成，止损独立于盈亏（沉没成本不参与决策）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.5"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-005"
+    name: "Life-or-Death Line Breach Clearance"
+    name_zh: "生死线破位清仓"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "生死线（如3741）放量破位=环境级硬止损，无条件清仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.6"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-006"
+    name: "Time Stop Loss Three Tiers"
+    name_zh: "时间止损三档"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "强共振T+1须新高否则减半/中共振T+0收盘须站稳/独立信号T+0收盘须平仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.8"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-007"
+    name: "First-Minute Error Correction"
+    name_zh: "首分钟纠错决策"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 15.0
+    threshold_unit: "min"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "买入后5-15分钟瞬时表现诊断，危险信号=错误交易立即止损"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S12.9"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  - risk_limit_id: "RLM-DRAWDOWN-008"
+    name: "Profit Protection Stop Loss"
+    name_zh: "盈利回撤保护止盈"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 50.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "浮盈>5%回撤50%=止盈半仓；浮盈>10%回撤40%=清仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.6"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+
+  # ============================================================
+  # POSITION（仓位类）— 21条
+  # S14 仓位管理 13条 + S15 风控 4条 + S16 心法改编 4条
+  # ============================================================
+
+  - risk_limit_id: "RLM-POSITION-001"
+    name: "Market Regime Position Sizing"
+    name_zh: "行情三分仓位法"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 70.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "上涨5-7成/震荡2-5成/下跌<3成，按20日线斜率分类行情映射仓位"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.1"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-002"
+    name: "Broad ETF Allocation 20-30%"
+    name_zh: "宽基ETF配置2-3成"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 30.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "无主线时宽基ETF仓位≤3成，留资金布局个股"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.3"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-003"
+    name: "Heavy Position in Uptrend Light in Downtrend"
+    name_zh: "上涨重仓下跌轻仓"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "主升期仓位上调+下跌期仓位下调，趋势跟踪核心仓位规则"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.5"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-004"
+    name: "No Blind Averaging Down"
+    name_zh: "不盲目补仓"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "20日线向下=下跌趋势，禁止补仓硬规则"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.8"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-005"
+    name: "Position Split Ballast Plus Attack"
+    name_zh: "分仓管理（压舱石+进攻）"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 300000.0
+    threshold_unit: "元"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "30万以上必须分仓：波段压舱石50-70%+短趋势进攻30-50%"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.9"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-006"
+    name: "Three-Tier Position Allocation"
+    name_zh: "首批+二批+现金机动仓位分配"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 30.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "首批30%（开盘30分确认）+二批30%（午后翻红放量）+现金20%（四硬条件触发）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.10"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-007"
+    name: "Dynamic Position Cap Adjustment"
+    name_zh: "仓位上限动态调整规则"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 70.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "站稳3882+涨停>100跌停<20→上限70%；破3741→上限30%；基准55-60%"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.11"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-008"
+    name: "Emergency Position Adjustment"
+    name_zh: "应急仓位调整"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 30.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "上证收盘破3741→总仓降至30%+观察仓全清；应急优先于常规"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.12"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-009"
+    name: "Pre-Embedded Add Position Path"
+    name_zh: "加仓路径预埋"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "加仓触发条件预设（如上证翻红+站稳3800→加仓X万），条件满足自动执行"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.14"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-010"
+    name: "Barbell Hedging"
+    name_zh: "哑铃对冲"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "防御端（银行/电力/石油/黄金）+进攻端（算力）低相关配置，相关系数矩阵校验"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.15"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-011"
+    name: "Rebound Halve to Attack Position"
+    name_zh: "反弹冲高减半转进攻仓"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 50.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "弱beta压舱石反弹冲高减半，转入主线进攻仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.18"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-012"
+    name: "Resonance Level to Position Mapping"
+    name_zh: "共振等级仓位映射"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 8.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "强共振5-8%/中共振3-5%/独立信号1-2%，共振等级越高仓位越大"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.19"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-013"
+    name: "Resonance Strategy First Position is Final"
+    name_zh: "共振策略首仓即终仓（不加仓）"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "共振信号瞬时高置信度，首仓即终仓禁止加仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.20"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-014"
+    name: "No Bottom Fishing"
+    name_zh: "不抄底"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "20日线向下=下跌趋势，禁止买入硬规则"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.3"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-015"
+    name: "Regulatory Anomaly Avoidance"
+    name_zh: "监管异动避雷"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 6.0
+    threshold_unit: "板"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "6板异动=进小黑屋风险，触发禁止追高+等分歧回调"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.9"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-016"
+    name: "Sector Ebb Warning"
+    name_zh: "板块退潮预警"
+    limit_type: "position"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 50.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "中军不新高/龙头放量滞涨/后排掉队，任一触发=板块仓位降50%"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.10"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-017"
+    name: "Absolute Blacklist"
+    name_zh: "绝对不碰清单"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "主力出货中/A字杀/无资金/竞价低开>-2%等黑名单标的禁止交易"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.17"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-018"
+    name: "Stock Pool Whitelist Pre-Check"
+    name_zh: "股票池白名单前置校验规则"
+    limit_type: "position"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "非当日股票池内标的买入指令100%拒绝，禁止临盘随机选股"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S16.10"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-019"
+    name: "Trigger Condition Bound Execution"
+    name_zh: "触发条件绑定式执行风控引擎"
+    limit_type: "position"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "每只标的绑定2-3个量化阈值，盘中实时监控，条件满足自动触发买卖"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S16.16"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-020"
+    name: "Probability Tiered Position Sizing"
+    name_zh: "概率分层仓位风控规则"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 65.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "方向概率>65%×时点概率<50%→分批建仓（首仓50%+回调触发后续）；两者均低→禁止开仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S16.25"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-POSITION-021"
+    name: "Strategy Win-Rate Driven Position (Kelly)"
+    name_zh: "策略胜率驱动仓位风控（凯利公式）"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 3.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "波段策略单票仓位上限按凯利公式约束（20%胜率→仓位≤2-3%），禁止重仓单只波段票"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S16.29"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  # ============================================================
+  # CONCENTRATION（集中度类）— 6条
+  # S14 仓位管理 4条 + S15 风控 1条 + S16 心法改编 1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-CONCENTRATION-001"
+    name: "No All-In Single Stock"
+    name_zh: "不梭哈一只"
+    limit_type: "concentration"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "任何情况不梭哈/all in一只股票（指数确认不退位品种可例外）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.2"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-CONCENTRATION-002"
+    name: "Total Position Control Rule"
+    name_zh: "总仓位控制规则"
+    limit_type: "concentration"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 60.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单股≤10%+单板块≤20%+总仓≤55-60%，三层集中度约束"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.13"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-CONCENTRATION-003"
+    name: "Correlation Matrix Exposure Merge"
+    name_zh: "相关性矩阵敞口合并"
+    limit_type: "concentration"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 0.7
+    threshold_unit: "σ"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "近60日收益相关矩阵>0.7→敞口合并计算，避免名义分散实际集中"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.16"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-CONCENTRATION-004"
+    name: "Single Sector Cap 20 Percent"
+    name_zh: "单板块上限20%（风险预算+凯利）"
+    limit_type: "concentration"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 20.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单板块上限20%总资产，风险预算法（1%÷止损幅度）+凯利公式交叉验证"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S14.17"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-CONCENTRATION-005"
+    name: "Large Capital Anti-Landmine"
+    name_zh: "大资金防雷"
+    limit_type: "concentration"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 5000000.0
+    threshold_unit: "元"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "500万以上强制分散持仓+单股≤10%+单板块≤20%，防雷触发"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.7"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-CONCENTRATION-006"
+    name: "Lone Wolf Sector Concentration"
+    name_zh: "孤勇者板块持仓集中度风控约束"
+    limit_type: "concentration"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 1.0
+    threshold_unit: "只"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "孤勇者板块（超大单冠军+板块主力净流出）仅允许持有龙头1只，禁止同板块其他标的新开仓"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S16.21"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  # ============================================================
+  # LEVERAGE（杠杆类）— 1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-LEVERAGE-001"
+    name: "No Leverage Iron Rule"
+    name_zh: "不加杠杆（铁律）"
+    limit_type: "leverage"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 0.0
+    threshold_unit: "x"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "禁止融资融券/场外配资/任何形式杠杆，爆仓即一切归零"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.1"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  # ============================================================
+  # TURNOVER（换手类）— 1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-TURNOVER-001"
+    name: "No Impromptu Trading"
+    name_zh: "不做临盘交易"
+    limit_type: "turnover"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "所有交易标的必须提前入池+预设触发条件，禁止盘中新选标的"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.2"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  # ============================================================
+  # FIRM_RISK（公司级类）— 5条
+  # S15 风控 4条 + S16 心法改编 1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-FIRM-RISK-001"
+    name: "No Layer Skipping Iron Rule"
+    name_zh: "跳层禁止铁律"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "九阶段SOP逐层校验不通过即停，上层验证失败自动阻断下层执行"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.11"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-FIRM-RISK-002"
+    name: "QMT Disconnection Risk"
+    name_zh: "QMT未连接推断风险"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: -1.0
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "QMT连接失败(connect=-1)时冻结交易指令，9:25开盘前强制实查持仓对账"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.14"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-FIRM-RISK-003"
+    name: "Data Limitation Disclosure"
+    name_zh: "数据局限明示"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "数据异常检测(pct_change全0/缺失值)自动触发降级模式，所有数字必须来源查询禁止编造"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "fix-in-place"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.15"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-FIRM-RISK-004"
+    name: "Three Scenario Contingency Plans"
+    name_zh: "情景预案三套应对"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: 3.0
+    threshold_unit: "套"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "反弹(主案)+下跌(备案)+震荡三情景并行预案，任何走势都有应对不临盘决策"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "fix-in-place"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S15.18"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-FIRM-RISK-005"
+    name: "Three-Stage Timed Verification"
+    name_zh: "三段式定时校验风控任务调度"
+    limit_type: "firm_risk"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "9:25竞价校验+10:00首小时校验+15:05盘后校验，三段定时任务防操作失误"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "fix-in-place"
+    module_id: "MOD-RISK"
+    doc_ref: "因子与策略提炼.md §S16.17"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"

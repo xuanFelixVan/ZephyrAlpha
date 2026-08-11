@@ -1,0 +1,159 @@
+module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-BMK-001
+name: 基准登记表
+description: >-
+  交易基准唯一真源（SSoT）。登记所有回测/归因对比基准（沪深300/中证500/中证全指/绝对收益）。
+  回测必需输入：每次回测 MUST 指定 benchmark_id 计算超额收益/相对收益。
+  与 universe_registry 关联：benchmark 通常基于某 universe 加权。
+  治本"回测无法计算超额收益"硬缺口。business_registry_consolidation_plan §8.7e。
+  engine_base.py 现仅 benchmark_symbol 字符串，需结构化。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-10'
+last_updated: '2026-08-10'
+related_arch: '#ARCH-BUSINESS-REGISTRY'
+unique_key:
+- benchmark_id
+
+entry_schema:
+  benchmark_id: str              # BMK-{TYPE}-{NNN}
+  name: str
+  name_zh: str
+  aliases: list
+  benchmark_type: str            # index / custom_equal / custom_cap / absolute / peer_strategy
+  underlying_universe: str       # universe_id
+  weight_method: str             # cap_weighted / equal_weighted / price_weighted / custom
+  data_source: str               # data_asset_registry source_id
+  used_by_strategies: list       # strategy_id 列表
+  module_id: str
+  doc_ref: str
+  code_path: str
+  status: str
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  annual_return: float           # 运行时可空
+  sharpe: float
+  max_drawdown: float
+  last_evaluated_at: date
+  # v1.30.0 新增字段（对标 Custom Benchmark Construction + Active Share + Style Drift / 2026 Great Benchmark Reset）
+  construction_method: str       # index_provider/holdings_based/returns_based/custom
+                                 # 基准构造路线——2026 大基准重置（Russell 半年再平衡+S&P 咨询）使"被动基准"不被动
+                                 # index_provider=指数公司官方（沪深300/中证500/中证全指，MVP 默认）
+                                 # holdings_based=持仓复制（首选，constrained opt 匹配因子暴露+最小化 tracking error）
+                                 # returns_based=回归推断暴露（持仓不可得时，快速但精度低）
+                                 # custom=自定义（BMK-ABSOLUTE-001 零基准）
+  active_share: float            # 组合 vs 基准持仓差异百分比（0%=完全复制 100%=完全不同）
+                                 # 指示 concentration/overlap，>60% 主动管理 / <20% 接近指数增强
+                                 # BMK-ABSOLUTE-001 零基准填 null
+  style_drift_detection: obj     # {method: enum(rolling_regression/holdings_similarity/none), monitoring_frequency: str}
+                                 # 风格漂移检测——rolling_regression=滚动因子暴露变化
+                                 # holdings_similarity=持仓相似度（Jaccard/cosine）
+                                 # none=MVP 默认（单策略无需漂移检测）
+                                 # monitoring_frequency=daily/weekly/monthly
+
+benchmarks:
+  - benchmark_id: BMK-INDEX-001
+    name: CSI300 Index
+    name_zh: 沪深300指数
+    aliases: [CSI300, 沪深300, 000300]
+    benchmark_type: index
+    underlying_universe: UNI-INDEX-001
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: [STR-MULTIFACTOR-001]
+    module_id: MOD-MKT-DATA
+    doc_ref: 25_multifactor_strategy_detail.md §CSI300实证
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+
+  - benchmark_id: BMK-INDEX-002
+    name: CSI500 Index
+    name_zh: 中证500指数
+    aliases: [CSI500, 中证500, 000905]
+    benchmark_type: index
+    underlying_universe: null
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: []
+    module_id: MOD-MKT-DATA
+    doc_ref: null
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+
+  - benchmark_id: BMK-INDEX-003
+    name: CSI All Share Index
+    name_zh: 中证全指
+    aliases: [中证全指, 000985, 全A指数]
+    benchmark_type: index
+    underlying_universe: UNI-RULE-001
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: [STR-EVENT-001]
+    module_id: MOD-MKT-DATA
+    doc_ref: null
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+
+  - benchmark_id: BMK-ABSOLUTE-001
+    name: Absolute Return (Zero)
+    name_zh: 绝对收益（零基准）
+    aliases: [绝对收益, 零基准]
+    benchmark_type: absolute
+    underlying_universe: null
+    weight_method: null
+    data_source: null
+    used_by_strategies: [STR-DABAN-001]
+    module_id: MOD-GOVERNANCE
+    doc_ref: 24_daban_strategy_detail.md
+    code_path: null
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-GOVERNANCE
+    annual_return: 0.0
+    sharpe: 0.0
+    max_drawdown: 0.0
+    last_evaluated_at: '2026-08-10'
+    construction_method: custom
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}

@@ -33,6 +33,17 @@ dataset_schema:
   valid_since: str
   module_id: str
   design_maturity: str
+  # v1.25.0 新增字段（对标 Assay PIT 正确回测引擎 as_of_date 字段语义契约）
+  as_of_date_semantics: str       # eod_bar/execution_date/declaration_date/ex_date/universe_snapshot
+                                  # eod_bar=收盘价当日可得（Prices）
+                                  # execution_date=除权日生效（Splits）
+                                  # declaration_date=公告日（Dividends，fallback 除权日，公告日≠除权日）
+                                  # ex_date=除权日
+                                  # universe_snapshot=时点成分（Universe，formation date 当下可得）
+                                  # 复权价用后复权（backward-only）避免前瞻偏差
+  # v1.26.0 新增字段（对标 NannyML 标签延迟分层监控）
+  label_delay_days: int           # 标签可用延迟天数（财报90天/公告1天/Tick 0天），NannyML CBPE 估计须按延迟分层
+  drift_detector: str             # none/evidently/nannyml/alibi_detect（漂移检测器，MVP 填 none，实盘后启用）
 job_schema:
   job_id: str
   job_name: str

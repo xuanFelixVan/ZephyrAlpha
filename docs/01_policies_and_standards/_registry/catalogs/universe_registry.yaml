@@ -1,0 +1,171 @@
+module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-UNI-001
+name: 股票池登记表
+description: >-
+  股票池/标的池唯一真源（SSoT）。登记所有可交易股票池（打板连板梯队/全A可交易/CSI300/CSI800/事件驱动池）。
+  回测必需输入：每次回测 MUST 指定 universe_id。
+  支持 static（固定成分股）/ dynamic（每日生成，如打板连板梯队）/ rule_based（规则过滤，如剔ST/低流动性）。
+  对标 MSCI Index Universe / Bloomberg Universe Management。
+  治本"回测不知道在哪些股票上跑"硬缺口。business_registry_consolidation_plan §8.7d。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-10'
+last_updated: '2026-08-10'
+related_arch: '#ARCH-BUSINESS-REGISTRY'
+unique_key:
+- universe_id
+
+entry_schema:
+  universe_id: str               # UNI-{TYPE}-{NNN}
+  name: str
+  name_zh: str
+  aliases: list
+  universe_type: str             # static / dynamic / rule_based
+  construction_rule: str
+  base_universe: str             # 基础池（rule_based 在此过滤）
+  filter_rules: list
+  rebalance_frequency: str       # daily/weekly/monthly/quarterly/none
+  component_count: int           # 成分股数量（摘要）
+  components_ref: str            # 成分股列表位置（DB/文件）
+  used_by_strategies: list       # strategy_id 列表
+  data_source: str               # data_asset_registry source_id
+  module_id: str
+  doc_ref: str
+  code_path: str
+  status: str                    # candidate/experimental/active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+
+universes:
+  - universe_id: UNI-DYNAMIC-001
+    name: Daban Lianban Echelon Pool
+    name_zh: 打板连板梯队池
+    aliases: [连板池, 涨停梯队池, 打板池]
+    universe_type: dynamic
+    construction_rule: >-
+      每日从全市场涨停股中识别连板梯队结构（54321阵型），含首板/2板/3板/4板+标的。
+      排除 ST/*ST/退市风险警示/涨跌停流动性失效标的。主板+创业板涨停标的。
+    base_universe: UNI-RULE-001
+    filter_rules:
+      - 排除 ST/*ST
+      - 排除退市风险警示
+      - 排除涨跌停流动性失效标的
+      - 仅含当日涨停（主板+创业板）
+    rebalance_frequency: daily
+    component_count: null
+    components_ref: src/zephyr/signal_ashare/
+    used_by_strategies: [STR-DABAN-001]
+    data_source: SRC-QMT-001
+    module_id: MOD-SIGNAL-ASHARE
+    doc_ref: 24_daban_strategy_detail.md §3.1
+    code_path: src/zephyr/signal_ashare/
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-SIGNAL-ASHARE
+
+  - universe_id: UNI-RULE-001
+    name: Tradable A-Share Universe
+    name_zh: 全A可交易池
+    aliases: [全A, 沪深A股, 可交易池]
+    universe_type: rule_based
+    construction_rule: >-
+      全市场沪深A股，剔除 ST/*ST/退市风险警示/次新(上市<60天)/低流动性(日均成交额<1000万)。
+      多因子策略选股池，承载主资金，容量大。
+    base_universe: null
+    filter_rules:
+      - 排除 ST/*ST
+      - 排除退市风险警示
+      - 排除次新（上市<60天）
+      - 排除低流动性（日均成交额<1000万）
+    rebalance_frequency: monthly
+    component_count: 4500
+    components_ref: src/zephyr/ex_core/trading_halt_resolver.py
+    used_by_strategies: [STR-MULTIFACTOR-001]
+    data_source: SRC-AKSHARE-001
+    module_id: MOD-EX-CORE
+    doc_ref: 25_multifactor_strategy_detail.md §选股池
+    code_path: src/zephyr/ex_core/trading_halt_resolver.py + pricing_policy.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-EX-CORE
+
+  - universe_id: UNI-INDEX-001
+    name: CSI300 Index Constituents
+    name_zh: 沪深300成分股
+    aliases: [CSI300, 沪深300, 000300]
+    universe_type: static
+    construction_rule: 沪深300指数成分股（中证指数公司官方，季度调整）
+    base_universe: null
+    filter_rules: []
+    rebalance_frequency: quarterly
+    component_count: 300
+    components_ref: data/index_constituents/csi300.csv
+    used_by_strategies: []
+    data_source: SRC-AKSHARE-001
+    module_id: MOD-MKT-DATA
+    doc_ref: 25_multifactor_strategy_detail.md §CSI300实证
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-MKT-DATA
+
+  - universe_id: UNI-INDEX-002
+    name: CSI800 Index Constituents
+    name_zh: 中证800成分股
+    aliases: [CSI800, 中证800]
+    universe_type: static
+    construction_rule: 中证800指数成分股（沪深300+中证500，季度调整）
+    base_universe: null
+    filter_rules: []
+    rebalance_frequency: quarterly
+    component_count: 800
+    components_ref: data/index_constituents/csi800.csv
+    used_by_strategies: []
+    data_source: SRC-AKSHARE-001
+    module_id: MOD-MKT-DATA
+    doc_ref: 25_multifactor_strategy_detail.md §CSI800实证
+    code_path: src/zephyr/data/implementations/akshare_provider.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-MKT-DATA
+
+  - universe_id: UNI-RULE-002
+    name: Event-Driven Pool
+    name_zh: 事件驱动池
+    aliases: [事件池]
+    universe_type: rule_based
+    construction_rule: >-
+      基于事件触发的动态股票池（并购/业绩/政策/增减持等事件）。
+      在全A可交易池基础上，叠加事件触发条件筛选。
+    base_universe: UNI-RULE-001
+    filter_rules:
+      - 排除 ST/*ST
+      - 排除退市风险警示
+      - 事件触发条件（具体见26号文档）
+    rebalance_frequency: daily
+    component_count: null
+    components_ref: src/zephyr/signal_ashare/
+    used_by_strategies: [STR-EVENT-001]
+    data_source: SRC-AKSHARE-001
+    module_id: MOD-SIGNAL-ASHARE
+    doc_ref: 26_event_driven_strategy_detail.md
+    code_path: src/zephyr/signal_ashare/
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-SIGNAL-ASHARE

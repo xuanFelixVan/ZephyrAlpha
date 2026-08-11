@@ -1,0 +1,148 @@
+module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-CST-001
+name: 交易成本模型登记表
+description: >-
+  交易成本模型唯一真源（SSoT）。登记所有回测/执行成本模型（佣金/印花税/过户费/滑点/冲击成本）。
+  回测必需输入：每次回测 MUST 指定 cost_model_id 扣除交易成本，否则结果严重失真。
+  A 股成本结构：佣金(万2.5-3) + 印花税(卖出万5) + 过户费(沪深万0.1) + 滑点 + 冲击成本。
+  高频策略成本可能吃掉全部 alpha，回测不扣成本=自欺欺人。
+  治本"回测不扣成本结果失真"硬缺口。business_registry_consolidation_plan §8.7f。
+  注意：现有 cost_estimator.py 是 AI token 成本，非交易成本。
+  成本参数来源：52_backtest_framework_docking.md §G1（万三佣金/5元最低/1bp滑点）。
+# v1.1.0 changelog: 印花税千1→万5（2023-08-28减半延续至2026），过户费沪市only→沪深双向（中国结算统一标准）。依据62号文档v1.1.0 R1修正。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.1.0
+created: '2026-08-10'
+last_updated: '2026-08-10'
+related_arch: '#ARCH-BUSINESS-REGISTRY'
+unique_key:
+- cost_model_id
+
+entry_schema:
+  cost_model_id: str             # CST-{TYPE}-{NNN}
+  name: str
+  name_zh: str
+  aliases: list
+  cost_model_type: str           # astock_standard / conservative / aggressive / zero_cost
+  components: obj                # 成本组件（结构化）
+  slippage_model: str            # fixed/linear/square_root/none
+  impact_model: str              # none/square_root/linear（引用 40号 propagator/Barzykin）
+  # v1.30.0 新增字段（对标 Propagator 瞬态冲击模型 Bouchaud-Farmer 2018 / I-Star Kissell-Glantz 2003 / Algo Wheel 2026）
+  propagator_config: obj         # {decay_kernel: enum(exponential/power_law), temp_impact_coeff: float, perm_impact_coeff: float}
+                                 # propagator 瞬态冲击模型参数——square_root 是 Almgren-Chriss 经验近似，propagator 更精细
+                                 # decay_kernel=冲击随时间衰减核：exponential（短期记忆）/power_law（长记忆，常见于 A 股）
+                                 # temp_impact_coeff=临时冲击系数 η（η·n/τ，瞬时流动性消耗）
+                                 # perm_impact_coeff=永久冲击系数 γ（γ·Q，信息泄漏不可恢复）
+                                 # MVP 阶段 impact_model=square_root/none 时填 null（不需 propagator 参数）
+                                 # Phase 1.5+ impact_model=propagator 时 MUST 填三参数
+  used_by_strategies: list       # strategy_id 列表
+  module_id: str
+  doc_ref: str
+  code_path: str
+  status: str
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+
+cost_models:
+  - cost_model_id: CST-ASTOCK-001
+    name: A-Share Standard Cost Model
+    name_zh: A股标准成本模型
+    aliases: [标准成本, 默认成本]
+    cost_model_type: astock_standard
+    components:
+      commission:
+        rate: 0.0003
+        min: 5.0
+        mode: both_sides
+      stamp_duty:
+        rate: 0.0005
+        side: sell_only
+      transfer_fee:
+        rate: 0.00001
+        market: sh_sz_both
+      slippage:
+        model: fixed
+        params:
+          bps: 1
+      market_impact:
+        model: none
+        params: null
+    slippage_model: fixed
+    impact_model: none
+    propagator_config: null
+    used_by_strategies: [STR-DABAN-001, STR-MULTIFACTOR-001, STR-EVENT-001]
+    module_id: MOD-EX-CORE
+    doc_ref: 52_backtest_framework_docking.md §G1
+    code_path: src/zephyr/backtest/core/engine_base.py
+    status: active
+    version: 1.1.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-EX-CORE
+
+  - cost_model_id: CST-ASTOCK-002
+    name: A-Share Conservative Cost Model
+    name_zh: A股保守成本模型
+    aliases: [保守成本, 压力测试成本]
+    cost_model_type: conservative
+    components:
+      commission:
+        rate: 0.0003
+        min: 5.0
+        mode: both_sides
+      stamp_duty:
+        rate: 0.0005
+        side: sell_only
+      transfer_fee:
+        rate: 0.00001
+        market: sh_sz_both
+      slippage:
+        model: fixed
+        params:
+          bps: 2
+      market_impact:
+        model: square_root
+        params:
+          coefficient: 0.1
+    slippage_model: fixed
+    impact_model: square_root
+    propagator_config: null
+    used_by_strategies: []
+    module_id: MOD-EX-CORE
+    doc_ref: 40_execution_broker.md §冲击模型
+    code_path: src/zephyr/backtest/core/engine_base.py
+    status: candidate
+    version: 1.1.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-EX-CORE
+
+  - cost_model_id: CST-ZERO-001
+    name: Zero Cost Model
+    name_zh: 零成本模型
+    aliases: [零成本, 无成本]
+    cost_model_type: zero_cost
+    components:
+      commission: {rate: 0, min: 0, mode: both_sides}
+      stamp_duty: {rate: 0, side: sell_only}
+      transfer_fee: {rate: 0, market: sh_only}
+      slippage: {model: none, params: null}
+      market_impact: {model: none, params: null}
+    slippage_model: none
+    impact_model: none
+    propagator_config: null
+    used_by_strategies: []
+    module_id: MOD-EX-CORE
+    doc_ref: 52_backtest_framework_docking.md §成本敏感性
+    code_path: src/zephyr/backtest/core/engine_base.py
+    status: active
+    version: 1.1.0
+    created_at: '2026-08-10'
+    updated_at: '2026-08-10'
+    owner: MOD-EX-CORE

@@ -1,0 +1,252 @@
+# [BLUEPRINT] gap-7 cancel_rate_guard | (auto-injected) |
+# [TTL] permanent
+"""CancelRateGuard 单元测试（40_execution_broker §决策⑫ gap 7 施工）。
+
+覆盖：滚动撤单率计算、12% 预警降级、15% 冻结、15 笔/秒限频。
+"""
+
+from __future__ import annotations
+
+import time
+
+import pytest
+
+from zephyr.ex_core.cancel_rate_guard import CancelRateGuard, CancelRateStatus
+
+
+# ── 撤单率计算 ────────────────────────────────────────────────────────────────
+
+
+class TestCancelRate:
+    def test_empty_window_zero_rate(self):
+        guard = CancelRateGuard()
+        assert guard.cancel_rate == 0.0
+        assert guard.status is CancelRateStatus.NORMAL
+
+    def test_all_fills_zero_rate(self):
+        guard = CancelRateGuard()
+        for _ in range(100):
+            guard.record_fill()
+        assert guard.cancel_rate == 0.0
+        assert guard.status is CancelRateStatus.NORMAL
+
+    def test_all_cancels_100pct_rate(self):
+        guard = CancelRateGuard()
+        for _ in range(100):
+            guard.record_cancel()
+        assert guard.cancel_rate == 1.0
+        assert guard.status is CancelRateStatus.FROZEN
+
+    def test_mixed_10pct_rate(self):
+        guard = CancelRateGuard()
+        # 90 成交 + 10 撤单 = 10%
+        for _ in range(90):
+            guard.record_fill()
+        for _ in range(10):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.10)
+        assert guard.status is CancelRateStatus.NORMAL  # 10% < 12%
+
+    def test_mixed_15pct_rate_warn(self):
+        guard = CancelRateGuard()
+        # 88 成交 + 12 撤单 = 12% → WARN（>12%）
+        for _ in range(88):
+            guard.record_fill()
+        for _ in range(12):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.12)
+        # 12% 不 > 12%，需超过才预警
+        assert guard.status is CancelRateStatus.NORMAL
+
+    def test_mixed_above_12pct_warn(self):
+        guard = CancelRateGuard()
+        # 87 成交 + 13 撤单 ≈ 13% > 12% → WARN
+        for _ in range(87):
+            guard.record_fill()
+        for _ in range(13):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.13, abs=0.001)
+        assert guard.status is CancelRateStatus.WARN_ONLY_PLACE
+
+    def test_mixed_above_15pct_frozen(self):
+        guard = CancelRateGuard()
+        # 84 成交 + 16 撤单 = 16% > 15% → FROZEN
+        for _ in range(84):
+            guard.record_fill()
+        for _ in range(16):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.16, abs=0.001)
+        assert guard.status is CancelRateStatus.FROZEN
+
+    def test_rolling_window_evicts_old(self):
+        """窗口滚动：旧记录被挤出，撤单率随新记录更新。"""
+        guard = CancelRateGuard(window_size=100)
+        # 初始 60 撤单 + 40 成交 = 60%（FROZEN）
+        for _ in range(60):
+            guard.record_cancel()
+        for _ in range(40):
+            guard.record_fill()
+        assert guard.status is CancelRateStatus.FROZEN
+        # 再补 100 成交，挤出旧的 60 撤单 → 100 成交 = 0%
+        for _ in range(100):
+            guard.record_fill()
+        assert guard.cancel_rate == 0.0
+        assert guard.status is CancelRateStatus.NORMAL
+
+    def test_total_counts(self):
+        guard = CancelRateGuard(window_size=500)
+        for _ in range(80):
+            guard.record_fill()
+        for _ in range(20):
+            guard.record_cancel()
+        assert guard.total_resolved == 100
+        assert guard.total_cancels == 20
+
+
+# ── 决策接口 ──────────────────────────────────────────────────────────────────
+
+
+class TestCanPlaceCancel:
+    def test_normal_allows_place_and_cancel(self):
+        guard = CancelRateGuard()
+        for _ in range(100):
+            guard.record_fill()  # 0% 撤单率
+        assert guard.can_place_order() is True
+        assert guard.can_cancel_order() is True
+
+    def test_warn_blocks_cancel_allows_place(self):
+        guard = CancelRateGuard()
+        # 13% 撤单率 → WARN
+        for _ in range(87):
+            guard.record_fill()
+        for _ in range(13):
+            guard.record_cancel()
+        assert guard.status is CancelRateStatus.WARN_ONLY_PLACE
+        assert guard.can_place_order() is True   # 预警仍可挂单
+        assert guard.can_cancel_order() is False  # 但禁止撤单
+
+    def test_frozen_blocks_both(self):
+        guard = CancelRateGuard()
+        # 16% 撤单率 → FROZEN
+        for _ in range(84):
+            guard.record_fill()
+        for _ in range(16):
+            guard.record_cancel()
+        assert guard.status is CancelRateStatus.FROZEN
+        assert guard.can_place_order() is False   # 冻结禁止新下单
+        assert guard.can_cancel_order() is False  # 冻结禁止撤单
+
+
+# ── 限频 15 笔/秒 ─────────────────────────────────────────────────────────────
+
+
+class TestRateLimit:
+    def test_under_limit_allowed(self):
+        guard = CancelRateGuard(rate_limit_per_sec=15)
+        for _ in range(10):
+            guard.record_submit()
+        assert guard.can_submit_now() is True
+
+    def test_at_limit_blocked(self):
+        guard = CancelRateGuard(rate_limit_per_sec=15)
+        for _ in range(15):
+            guard.record_submit()
+        assert guard.can_submit_now() is False
+
+    def test_over_limit_blocked(self):
+        guard = CancelRateGuard(rate_limit_per_sec=15)
+        for _ in range(20):
+            guard.record_submit()
+        assert guard.can_submit_now() is False
+
+    def test_limit_resets_after_one_second(self):
+        """1 秒后限频窗口清空，恢复提交。"""
+        guard = CancelRateGuard(rate_limit_per_sec=5)
+        for _ in range(5):
+            guard.record_submit()
+        assert guard.can_submit_now() is False
+        # 等待 1.1 秒（略大于 1 秒确保窗口清理）
+        time.sleep(1.1)
+        assert guard.can_submit_now() is True
+
+    def test_cancel_consumes_rate_limit(self):
+        """撤单也消耗限频额度。"""
+        guard = CancelRateGuard(rate_limit_per_sec=15)
+        for _ in range(15):
+            guard.record_cancel()
+        assert guard.can_submit_now() is False
+
+
+# ── 重置 ──────────────────────────────────────────────────────────────────────
+
+
+class TestReset:
+    def test_reset_clears_window(self):
+        guard = CancelRateGuard()
+        for _ in range(84):
+            guard.record_fill()
+        for _ in range(16):
+            guard.record_cancel()
+        assert guard.status is CancelRateStatus.FROZEN
+        guard.reset()
+        assert guard.cancel_rate == 0.0
+        assert guard.status is CancelRateStatus.NORMAL
+        assert guard.total_resolved == 0
+
+    def test_reset_clears_rate_limit(self):
+        guard = CancelRateGuard(rate_limit_per_sec=5)
+        for _ in range(5):
+            guard.record_submit()
+        assert guard.can_submit_now() is False
+        guard.reset()
+        assert guard.can_submit_now() is True
+
+
+# ── 边界场景 ──────────────────────────────────────────────────────────────────
+
+
+class TestEdgeCases:
+    def test_small_window_precision(self):
+        """小窗口下少量撤单即可触发预警（实盘初期需注意）。"""
+        guard = CancelRateGuard(window_size=10)
+        # 8 成交 + 2 撤单 = 20% → FROZEN
+        for _ in range(8):
+            guard.record_fill()
+        for _ in range(2):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.20)
+        assert guard.status is CancelRateStatus.FROZEN
+
+    def test_threshold_boundary_12pct(self):
+        """恰好 12% 不触发预警（>12% 才触发）。"""
+        guard = CancelRateGuard(window_size=100)
+        # 88 成交 + 12 撤单 = 12.0%，不 > 12%
+        for _ in range(88):
+            guard.record_fill()
+        for _ in range(12):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.12)
+        assert guard.status is CancelRateStatus.NORMAL
+
+    def test_threshold_boundary_15pct(self):
+        """恰好 15% 不触发冻结（>15% 才触发）。"""
+        guard = CancelRateGuard(window_size=100)
+        # 85 成交 + 15 撤单 = 15.0%，不 > 15% → WARN
+        for _ in range(85):
+            guard.record_fill()
+        for _ in range(15):
+            guard.record_cancel()
+        assert guard.cancel_rate == pytest.approx(0.15)
+        assert guard.status is CancelRateStatus.WARN_ONLY_PLACE
+
+    def test_custom_thresholds(self):
+        """自定义阈值（更保守或更宽松）。"""
+        guard = CancelRateGuard(
+            warn_threshold=0.05, freeze_threshold=0.10
+        )
+        for _ in range(90):
+            guard.record_fill()
+        for _ in range(10):
+            guard.record_cancel()
+        # 10% > 5% warn, 10% 不 > 10% freeze → WARN
+        assert guard.status is CancelRateStatus.WARN_ONLY_PLACE

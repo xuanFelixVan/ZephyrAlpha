@@ -1,0 +1,2687 @@
+# [A_config] module_id=REG-STR-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-STR-001
+name: 策略登记表
+description: >-
+  交易策略唯一真源（SSoT）。登记所有alpha策略（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation 6类）。
+  策略=入场+出场+仓位+风控的完整交易逻辑。
+  风控规则（止损/仓位管理/风险控制）不在本注册表，在risk_limit_registry.yaml。
+  治本"策略无登记、无法系统化管理"硬缺口。business_registry_construction_plan §6.1.2。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-10'
+last_updated: '2026-08-10'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- strategy_id
+
+entry_schema:
+  strategy_id: str               # STR-{CLASS}-{NNN}，如 STR-DABAN-001
+  name: str
+  name_zh: str
+  aliases: list
+  strategy_class: str            # daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation
+  sleeve: str                    # 所属sleeve
+  alpha_sources: list            # factor_id列表
+  variant_of: str                # 可选：variant指向parent
+  entry_logic: str
+  exit_logic: str
+  position_sizing: str           # Kelly/固定比例/风险预算
+  risk_rules: list               # risk_limit_id列表
+  holding_period: str            # T+1/波段/趋势
+  benchmark_id: str
+  module_id: str
+  doc_ref: str
+  code_path: str
+  lifecycle_status: str          # candidate/backtest/sim/paper/live/monitoring/decayed/retired
+  status: str                    # active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  go_live_date: date
+  retired_date: date
+  owner: str
+  decay_detection_method: str
+  decay_threshold: float
+  last_decay_scan_at: date
+  mrp_baseline: float
+  adaptation_level: int
+  last_refit_at: date
+  baseline_sharpe: float
+  baseline_expectancy: float
+  baseline_win_rate: float
+  baseline_profit_factor: float
+  baseline_max_drawdown: float
+  # v1.18.0 新增字段（对标 Regime融合 + Meta-labeling）
+  combination_strategy: obj       # 组合策略配置（{enabled: bool, regime_detector: str, allocation_method: str}）
+                                  # regime_detector enum: 200d_sma/hmm/msm/wasserstein_hmm/news_aware/text_var_dual/statistical_jump/jump_diffusion_hmm/none
+                                  # 200d_sma=200日简单均线（MVP 默认，简单可解释）
+                                  # hmm=隐马尔可夫模型（plain HMM 滚动重估计有标签置换问题，受"过快回归"失败模式影响）
+                                  # msm=Markov-Switching Multifractal
+                                  # wasserstein_hmm=Wasserstein HMM 2-Wasserstein 模板跟踪锚定身份（v1.26.0，Phase 1.5+ 优先于 plain hmm）
+                                  # news_aware=Alpha-R1 风格 LLM 推理激活/停用因子（v1.19.0）
+                                  # text_var_dual=文本候选+VAR 双向验证（v1.27.0，Phase 2+，FinLLM@IJCAI 2026 arXiv:2605.30363v2）
+                                  # statistical_jump=Nystrup 显式跳跃惩罚，捕获持续 regime（v1.31.0 §4.38③，data-driven 惩罚选择，实证优于 Markov-switching）
+                                  # jump_diffusion_hmm=HMM + Poisson jump-duration，强制尾部驻留时间（v1.31.0 §4.38③，避免 Baum-Welch EM，合成数据+压力测试用）
+                                  # none=不启用 regime 检测
+  meta_labeling_config: obj       # Meta-labeling 配置（{enabled: bool, primary_model: str, meta_model: str, direction_position_separated: bool}）
+  # v1.19.0 新增字段（对标 LLM 蒸馏策略）
+  origin: str                     # human/llm_distilled/llm_assisted/hybrid（策略来源标记）
+  distilled_to_code: bool         # 是否已从自然语言/LLM 描述蒸馏为可执行代码
+  # v1.20.0 新增字段（对标策略容量检验 G9 门禁）
+  capacity_aum_limit: float       # 策略可承载最大 AUM（资金量），按 5% ADV 估算
+  participation_rate_limit: float # 最大参与率上限（≤0.05-0.10，占 ADV 比例）
+  market_impact_model: str        # square_root/linear/none（市场冲击模型）
+
+strategies:
+  # ============================================================
+  # S9 选股策略 (multifactor) — STR-MULTIFACTOR-001 ~ 026
+  # ============================================================
+  - strategy_id: "STR-MULTIFACTOR-001"
+    name: "Short Trend Stock Selection (Four-Step)"
+    name_zh: "短趋势选股四步法"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "四步筛选：①定主线（资金流扎堆方向，无主线空仓）；②找定位（龙头/中军/后排，新手做中军）；③定趋势（20日线拐头向上）；④看位置（大级别底部突破/放量拉升缩量回踩/靠近20日线回踩不破）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.1"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-002"
+    name: "Swing Stock Selection (Four-Step)"
+    name_zh: "波段选股四步法"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "四步筛选：①定行业（有想象空间，机构能造梦）；②定容量（板块流通市值大）；③定个股（行业龙头/细分龙头，市值2-300亿以上）；④定形态（脱离大级别底部+调整30%或缩量横盘2个月+红肥绿瘦+启动前不加速）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.2"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-003"
+    name: "Stock Pool Whitelist Enforcement"
+    name_zh: "股票池建立与管住手"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "所有次日操作标的必须事先进入股票池，不在池内坚决不碰，非池内标的买入指令100%拒绝。股票池是跟踪池不是买入按钮"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.3"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-004"
+    name: "No Selection in Downtrend"
+    name_zh: "下跌趋势不选不抄底"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "20日线向下=下跌趋势，一概不选不抄底，只在上涨趋势找拐点介入。博5个点反弹会套50个点"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.5"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-005"
+    name: "Mid-Cap Leader Selection (Highest Volume)"
+    name_zh: "中军选择（成交量最大）"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "板块内按日成交额从大到小排序，成交量最大的即为中军，选中军操作（如医药的药明康德）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.7"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-006"
+    name: "Full Adjustment Condition (30% or 2 Months)"
+    name_zh: "充分调整条件（30%或两个月）"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "脱离底部后需充分调整方可再次买入，满足以下之一：①调整幅度25-32%；②横盘震荡约2个月（3-5个月亦可，用时间换空间）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.8"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-007"
+    name: "Industry Imagination Space"
+    name_zh: "行业想象空间"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "波段选股第一要素——行业必须有想象空间（人形机器人/商业航天/AI应用/国产算力等），排除无想象力板块（世界杯/贺岁档/轮胎/赛马/钢铁等）。需新增B级数据：行业标签/政策关键词/研报热度评分"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.9"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-008"
+    name: "Sector Capacity Filter"
+    name_zh: "板块容量"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "波段选股第二要素——板块流通市值要大能装下大资金，流通市值2万亿以上为大板块（如券商），容量太小（脑机接口/可控核聚变）大资金进不去出不来则排除"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.10"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-009"
+    name: "No Acceleration Before Launch"
+    name_zh: "启动前不加速"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "启动前不能出现加速行情（如三天涨30%），加速=主力即将兑现。近3日累计涨幅<30%且无涨停加速方可买入，起爆之前不加速慢磨之后主升出"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.11"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-010"
+    name: "Leader Strategy / Sector Mid-Cap"
+    name_zh: "龙头战法/行业中军"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "每个方向选择中军龙头操作，主线出现时中军龙头率先表现。封测三杰（通富/华天/长电）需联动观察"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.12"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-011"
+    name: "Isolated Rally Avoidance (Manipulated Stocks)"
+    name_zh: "孤立拉升规避（庄股）"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "无板块效应的孤立拉升多为庄股，个股涨幅-板块涨幅>阈值且无板块联动=孤立拉升，需规避。明明看到反常但找不出原因的股票要规避"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.14"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-012"
+    name: "Valuation Percentile Not for Cyclical Stocks"
+    name_zh: "估值分不适用于周期股"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "估值分不适用于周期股走势判断：周期股（猪肉）估值分高但涨不起价（想象空间小），成长股（半导体）估值分极低却能大涨（想象空间大）。需区分成长vs周期再适用估值分位"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.16"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-013"
+    name: "Nine-Stage Stock Selection SOP"
+    name_zh: "选票九阶段SOP"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "九阶段闭环：0大盘环境判定→1板块方向→2全市场无偏扫描→3三维共振体检→4资金性质定性→5消息面催化验证→6买点三档裁决→7组合仓位→8盘中盘后复核，任何一步不通过即停绝不跳层"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.17"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-014"
+    name: "Unbiased Full-Market Scan"
+    name_zh: "全市场无偏扫描"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "全市场约5197只剔除后可交易池约1753只，三层打分（短线5分+波段5分+双策略5分）输出TOP40清单，扫描结果须过板块定性过滤避免选择偏差"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.18"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-015"
+    name: "Tradable Pool Exclusion Rules"
+    name_zh: "可交易池剔除规则"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "五条剔除硬规则：①日成交<2亿（流动性）；②跌幅≥9.5%/跌停；③ST/退市；④一字板买不进；⑤主力出货结构（超大单大额流出）。数据坑处理：重复行去重/pct_change为0用收盘价自算/money_flow去重/剔除周末幻影行"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.19"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-016"
+    name: "Short-Term Pool 5-Point Scoring"
+    name_zh: "短线池5分制打分"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "五条打分：①所在板块是当前主线+1；②个股是龙头/中军/核心辨识度+1；③股价在20日线上方或20日线向上+1；④放量异动+缩量回踩或主升趋势+缩量回踩+1；⑤大盘环境允许（弱修复统一0.5）+1"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.20"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-017"
+    name: "Swing Pool 5-Point Scoring"
+    name_zh: "波段池5分制打分"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "五条打分：①行业符合未来大方向（AI算力/能源安全/金融强国）+1；②板块日成交>100亿+1；③个股是龙头/细分龙头/业绩优秀+1；④20日线走平向上未加速+1；⑤调整30%后缩量回踩或横盘2月红多绿少+1"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.21"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-018"
+    name: "Dual-Strategy 5-Point (Range Top-3 + Counter-Trend Capital)"
+    name_zh: "双策略5分（区间三强+逆势资金流入）"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "双策略共振打分：区间三强（RS5/RS10/RS20均>1）+逆势资金流入（下跌日中主力净流入为正），与短线池/波段池并列三层打分输出TOP40"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.22"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-019"
+    name: "Three-Dimensional Resonance Check"
+    name_zh: "三维共振体检"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "三维=业绩（30%权重）×资金（35%权重）×技术（35%权重），任一维否决级问题直接淘汰。业绩维含增速/PE/PB分位/券商金股；资金维含money_flow五档/5日累计净流入/tick大单；技术维含KDJ/MACD/均线/形态/多时间级别"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.23"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-020"
+    name: "Earnings Dimension Factors"
+    name_zh: "业绩维因子"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "业绩维因子集合：业绩预告/快报增速（akshare接口）+PE-TTM/2026E PE（一致预期）/PB分位/PEG+券商共识（金股推荐家数/目标价/评级变化）+盈利质量（扣非占比）+市值与流动性（日均成交额/冲击成本）+估值分位（近10年PE/PB分位数）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.24"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-021"
+    name: "Stabilization Blue Chips != Offensive Targets"
+    name_zh: "护盘蓝筹不等于进攻标的"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "扫描结果须过板块定性过滤：护盘蓝筹（人寿/长电/神华等银行保险两桶油）是托底工具非进攻标的，进攻候选从进攻板块（云计算/券商/电力梯队）高分股中取"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.27"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-022"
+    name: "Diluted Hot Concept Warning"
+    name_zh: "警惕掺水标的"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "识别蹭热点标的：采购金额/合作公告需与实际业务收入匹配，否则为掺水（如杰创智能100亿采购vs AI收入仅2亿），需产业证据链交叉验证"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.28"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-023"
+    name: "Stock Outperformance vs Sector Index"
+    name_zh: "板块内个股区间涨幅大于板块指数"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "板块内个股区间涨幅>板块指数区间涨幅的为板块内强势股，与区间三强策略（RS）配合，从强势板块中选强势个股"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.29"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-024"
+    name: "ETF Multi-Comparison Four-Dimensional Selection"
+    name_zh: "ETF多只对比四维选优法"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "同主题多只ETF四维对比选优：①形态（破底翻/底背离/箱体结构）；②资金（主动净买入/买卖比）；③结构（MACD零轴位置/均线乖离）；④相对强度（组内唯一收阳/唯一偏多），四维对比后选唯一胜出者"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.31"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-025"
+    name: "Research Report Classification System"
+    name_zh: "研报分类投研体系"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "分行业对标研究实力最强的券商研报团队：宏观科技→广发/天风+安信；新能源→中信+建投；医药→兴业+东吴；消费→中信+长江；周期→申万+中泰；券商→华泰。头部机构推荐权重高于其他机构，需新增B级数据"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.32"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MULTIFACTOR-026"
+    name: "50% Pullback Trend Breakdown Threshold"
+    name_zh: "波段调整50%趋势走坏阈值"
+    aliases: []
+    strategy_class: "multifactor"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "波段个股异动拉升后回调幅度超50%即视为趋势走坏，不再符合波段买点条件需重新评估。与S9.8（25-32%充分调整可买入）形成上下边界：25-32%为可买入区，50%以上为不可买入"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S9.33"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  # ============================================================
+  # S10 买点策略 (momentum_trend) — STR-MOMENTUM-TREND-001 ~ 018
+  # ============================================================
+  - strategy_id: "STR-MOMENTUM-TREND-001"
+    name: "Breakout First Buy Point (2:57 PM Auction)"
+    name_zh: "突破型第一买点（尾盘2:57竞价）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "六条件：①股票池内个股；②脱离大级别底部；③经过充分调整（30%或2个月）；④当日放量30%突破20日线；⑤20日线由下跌走平并拐头向上；⑥尾盘2:57-2:59竞价买入（越晚越好）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.1"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-002"
+    name: "Pullback Confirmation Second Buy Point (5 Elements)"
+    name_zh: "回踩确认第二买点（五大要素）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "两大前提：选股思路不变+20日线拐头向上且脱离大级别底部。五大要素：①缩量回踩不能放量（放量=出货）；②小阴小阳回踩不大跌；③回踩不破20日线（硬性条件）；④靠近20日线时出现锤子线或十字星；⑤日线级别出现小趋势上涨"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.2"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-003"
+    name: "Acceleration Third Buy Point (Risk Point - No Buy)"
+    name_zh: "加速第三买点（风险点不买）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "第二买点后股价加速上涨未突破前高却继续放量=风险点/加速点，买入第二天大概率调整，禁止买入（过滤条件）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.3"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-004"
+    name: "Scale-In / Pyramid Position Building"
+    name_zh: "分批建仓/金字塔加仓"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "回踩过程中不确定最低点，通过分批建仓控制成本：先打2成底仓观察，未跌破关键阳线底部再加2成，总体4成"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "分批建仓：2成底仓→2成加仓=4成总仓"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.7"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-005"
+    name: "Risk-Reward Ratio Game"
+    name_zh: "盈亏比博弈"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "用极小代价博取较大上涨空间，盈亏比=阻力空间/止损空间≥2:1，如4成仓亏5%博上方10-20%空间（1:2以上赔率），跌破止损认亏出局"
+    exit_logic: "跌破止损认亏出局"
+    position_sizing: "仓位=单笔最大亏损÷止损幅度，盈亏比≥2:1"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.9"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-006"
+    name: "ETF DCA / Buy The Dip"
+    name_zh: "ETF定投/越跌越买"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "指数与个股操作相反：指数越跌越买（定投，不会退市长期回归），个股越涨越买（上涨趋势找拐点）。宽基ETF配置2-3成避免踏空"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "宽基ETF配置2-3成"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.10"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-007"
+    name: "Dual-Strategy Resonance Buy Signal"
+    name_zh: "双策略共振买入信号"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "四条件全满足：①板块区间三强（RS>1.2+均线多头+突破前高+Alpha>1%）；②个股逆势资金流Top10+持续≥1分钟；③板块-个股一致性（逆势个股板块=三强板块）；④过滤通过（未涨停/非尾盘/非开盘/流动性达标/大票大单降权）"
+    exit_logic: "见S11.16共振卖出信号"
+    position_sizing: "强共振仓位5-8%"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.11"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-008"
+    name: "Resonance Trigger Condition Matrix"
+    name_zh: "共振触发条件矩阵"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "3×3×2矩阵（板块状态×个股逆势状态×板块-个股匹配）输出6种信号：①三强+强逆势+匹配=强共振5-8%；②三强+中逆势+匹配=中等共振3-5%（等15秒二次确认）；③三强+弱/无=观察；④非三强+强逆势=谨慎1-2%；⑤非三强+中/弱=不交易；⑥三强+强逆势+跨板块=不交易"
+    exit_logic: "见S11.16共振卖出信号"
+    position_sizing: "按矩阵输出：强共振5-8%/中等3-5%/谨慎1-2%"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.12"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-009"
+    name: "Sector-Stock Consistency Check"
+    name_zh: "板块-个股一致性校验"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "逆势个股所属板块必须=区间三强筛选出的板块（必须匹配不可跨板块），跨板块=信号冲突=不交易。一致性校验确保板块强势背景与个股逆势主动性同向"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.13"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-010"
+    name: "A/B/C Three-Tier Buy Point Classification"
+    name_zh: "A/B/C三类买点分级"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "A类（明天直接买轻仓）：买入区间+仓位+止损+止盈完整；B类（等回调买）：目标回调价+回调概率+仓位；C类（不碰）：原因明确"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "A类轻仓/B类等回调/C类不碰"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.14"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-011"
+    name: "Buy Point Three-Level Verdict"
+    name_zh: "买点三档裁决"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "每只票输出三档结论：①是（买点已现可直接执行）；②观察（条件单等待，给精确触发价）；③否（不碰，给重新评估条件）。必须附带触发价（精确到分）+止损价（前低/均线/缺口）+第一阻力位（算盈亏比）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.15"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-012"
+    name: "Risk-Reward < 2:1 No Trade"
+    name_zh: "盈亏比小于2:1不做"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "盈亏比=阻力位空间/止损空间，<2:1不做。盈亏比不足=风险收益不对等=不入场（硬门槛过滤器）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.16"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-013"
+    name: "Stop-Loss Width Rule (>=1.5x Daily Volatility)"
+    name_zh: "止损宽度铁律（≥1.5倍日波动）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "止损宽度≥1.5倍日波动（ATR14为日波动参考），否则会被噪声扫掉。如紫光日波动±4.6%则-5%止损会被噪声扫掉，需给-7%或用仓位换宽度"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "止损宽度≥1.5×ATR14"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.17"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-014"
+    name: "Rebound Probability Grading"
+    name_zh: "反弹概率分级"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "反弹概率量化分级（如45%/65%/75%），反弹概率=环境判定输出决定仓位上限。如07-21反弹概率45%→仓位上限66%，07-24反弹概率75%→仓位上限70%"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "反弹概率45%→仓位上限66%/75%→上限70%"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.18"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-015"
+    name: "Three Opening Scenarios Response Matrix"
+    name_zh: "三种开盘情形应对矩阵"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "三分类应对：①高开≥+0.3%：30分钟不回补缺口+黄线≥白线+首小时>8000亿+510300放量=反弹可跟，否则诱多不动；②平开±0.3%：站稳3796+510300金叉+跌停<30=可跟，放量破3741=不动；③低开≤-0.3%：3741不破15分钟收回=假摔可小仓，放量破3741=清仓，破3700=空仓"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.19"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-016"
+    name: "Full Position Four Hard Conditions"
+    name_zh: "全仓四硬条件"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "全仓四硬条件（缺一不可）：①上证站稳3800；②上涨家数>3000；③跌停<50家；④黄线强于白线。站稳3882（涨停>100且跌停<20持续）→上限70%，收盘破3741→降至30%"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "四条件全满足投现金仓，基准55-60%/站稳3882→70%/破3741→30%"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.20"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-017"
+    name: "Pre-Market Auction Three Verification"
+    name_zh: "竞价启动条件三验证"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "竞价9:25后三项验证：①上证低开<0.5%或高开30分钟不破缺口；②紫光/浪潮竞价不低开>-2%；③首小时量能放大。三条满足执行主案，不满足转备案"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.21"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-018"
+    name: "Primary + Backup Dual Scenario Response"
+    name_zh: "主案+备案双情景应对"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "反弹情景主案（竞价条件满足→执行首批+二批+现金机动仓位分配）+非反弹备案（低开破3741或开盘30分钟信号失败→不开新仓+按3741止损纪律执行+保留底仓观察）"
+    exit_logic: "见S11卖点策略"
+    position_sizing: "首批30%+二批30%+现金20%机动"
+    risk_rules: []
+    holding_period: "T+1/波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S10.22"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  # ============================================================
+  # S11 卖点策略 (momentum_trend) — STR-MOMENTUM-TREND-019 ~ 031
+  # ============================================================
+  - strategy_id: "STR-MOMENTUM-TREND-019"
+    name: "Moving Take-Profit / Moving Order Method"
+    name_zh: "移动止盈法/移动挂单法"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "针对盘中极限拉升，挂单价格设在现价下方3-5分钱处（或与下方最大托单挂一起），股价继续拉升则同步上移挂单，出现连续砸盘/大单抛售时跟随砸出。盈利后不断将止盈线上移，跌破即走"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.2"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-020"
+    name: "Stock First Sell Point (Break 20-Day Line)"
+    name_zh: "个股第一卖点（跌破20日线）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "同板块出现退潮信号时，个股跌破20日线为兜底卖出信号，按规矩卖哪怕多亏一点也不至于被套死"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.4"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-021"
+    name: "Stock Second Sell Point (High Volume Stall)"
+    name_zh: "个股第二卖点（高位放巨量滞涨）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "板块已有分化退潮迹象，个股在高位放巨量滞涨（如冲高回落大上影线/涨幅<3%且量比>2），为主力明牌出货，果断卖出"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.5"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-022"
+    name: "Intraday Quick Reaction Sell"
+    name_zh: "分时急反应卖法"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "板块龙头滞涨时，同板块个股冲高，跌破分时均线即卖。三条件联动：龙头滞涨+同板块个股冲高+跌破分时均线"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.6"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-023"
+    name: "Pressure Level Three Failures Double Top"
+    name_zh: "压力位三次不过双头"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "压力位（前高/整数位）附近迟迟不敢突破，反抽做双头概率大。三根阳线过不了压力位就是卖点，没卖掉的那天就是第二卖点"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.8"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-024"
+    name: "One Stock One Settlement"
+    name_zh: "一票一结"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "每只股票独立结算，卖出后该股票后续涨跌与自己无关不再恋战。卖出后标的进入T+观察期，出现新买点满足方可重新买入"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.9"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-025"
+    name: "Trend-Corresponding Sell Point"
+    name_zh: "趋势对应卖点"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "上涨趋势（20日向上）卖点后置不急卖可格局等一等；下跌趋势卖点前置有利润就跑不犹豫；震荡趋势高抛低吸，最忌讳把盈利做成亏损"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.10"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-026"
+    name: "Scale-Out Selling Method"
+    name_zh: "分批卖出法"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "大仓位分批卖出：第一卖点出现卖一半，等二次确认（背离/走弱）再清仓"
+    position_sizing: "第一卖点卖一半+二次确认清仓"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.12"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-027"
+    name: "Anchor Selling Method (Core Strategy)"
+    name_zh: "锚定法卖出（压箱底战法）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "七步流程：①识别板块龙头和中军→②龙头连续2-3天不创新高（滞涨）警惕→③中军不创新高或冲高回落进一步确认→④小弟补涨接旗失败确认退潮→⑤第一卖点板块创新高但龙头不创新高时卖→⑥第二卖点跌破20日线兜底→⑦第三卖点高位天量滞涨"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.13"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-028"
+    name: "Sector Top Four Warning Signs"
+    name_zh: "板块见顶四特征预警"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "四特征任一触发先卖：①高位振幅加大（筹码松动）；②加速见顶（一致看多后无接力资金，缩量上涨=卖盘枯竭）；③高位放量下跌/乌云盖顶放天量（主力明牌出货）；④锚定法内部分化龙头滞涨背离"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.14"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-029"
+    name: "Resonance Sell Signal (Resonance Exit)"
+    name_zh: "共振卖出信号（共振出场）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10.11双策略共振买入信号"
+    exit_logic: "共振卖出五条件：①板块三强失效（RS<1.0/均线空头/跌破支撑）；②逆势资金流出（净流入转负持续>30秒）；③板块-个股双弱；④时间止损（T+1未创新高减半仓）；⑤硬止损（跌破成本-3%）。入场出场逻辑必须匹配"
+    position_sizing: "T+1未创新高减半仓，跌破成本-3%清仓"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.16"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-030"
+    name: "Position Disposition Rules (Weak Position Clearing)"
+    name_zh: "持仓处置规则（弱势仓出清换主线）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "弱势非主流出清+ETF减至1/3+紫光减半（反弹44~45减半跌破41.10清仓）+主线仓位加至15-20%"
+    position_sizing: "ETF减至1/3+主线加至15-20%"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.17"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-031"
+    name: "Weak Asset Rotation"
+    name_zh: "弱资产换仓"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "见S10买点策略"
+    exit_logic: "弱beta压舱石（与主线相关<X）反弹至阻力位分批减，换强结构主线。弱资产换仓=卖出弱相关资产+买入强结构主线"
+    position_sizing: "分批减弱资产+换强结构主线"
+    risk_rules: []
+    holding_period: "波段"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S11.18"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  # ============================================================
+  # S13 做T策略 (momentum_trend) — STR-MOMENTUM-TREND-032 ~ 033
+  # ============================================================
+  - strategy_id: "STR-MOMENTUM-TREND-032"
+    name: "No T on Limit Down"
+    name_zh: "跌停不T"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "跌停的股票不能做正T，因跌停拉不起板次日可能再跌停，做T变成补仓。跌停判定后禁止做T"
+    exit_logic: "跌停判定后禁止做T操作"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+0"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S13.2"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"
+
+  - strategy_id: "STR-MOMENTUM-TREND-033"
+    name: "T-Trading Two Disciplines (No Add + Node Required)"
+    name_zh: "做T两纪律（不补仓+有节点）"
+    aliases: []
+    strategy_class: "momentum_trend"
+    sleeve: "alpha"
+    alpha_sources: []
+    variant_of: null
+    entry_logic: "两条纪律：①做T不补仓——做T是当日回转交易，做错了必须当天出来（哪怕做错马上得出来），不能把做T仓位留下变相加仓摊成本；②做T有节点——不是每天都做，只在有好的节点（分时量价背离/急跌急反等信号）时才做"
+    exit_logic: "做T做错当天平仓出局，无节点不做T"
+    position_sizing: "见风控规则"
+    risk_rules: []
+    holding_period: "T+0"
+    benchmark_id: "BMK-INDEX-001"
+    module_id: "MOD-STRATEGY"
+    doc_ref: "因子与策略提炼.md §S13.5"
+    code_path: ""
+    lifecycle_status: "candidate"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-10"
+    updated_at: "2026-08-10"
+    go_live_date: null
+    retired_date: null
+    owner: "MOD-GOVERNANCE"
+    decay_detection_method: null
+    decay_threshold: null
+    last_decay_scan_at: null
+    mrp_baseline: null
+    adaptation_level: 1
+    last_refit_at: null
+    baseline_sharpe: null
+    baseline_expectancy: null
+    baseline_win_rate: null
+    baseline_profit_factor: null
+    baseline_max_drawdown: null
+    combination_strategy: {}
+    meta_labeling_config: {}
+    origin: "human"
+    distilled_to_code: false
+    capacity_aum_limit: null
+    participation_rate_limit: 0.05
+    market_impact_model: "square_root"

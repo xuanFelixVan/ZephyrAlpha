@@ -4,7 +4,7 @@
 # [DEPENDENCIES] zephyr.position.core.strategy_book
 # [CONSUMERS] MOD-POS-001(position_sizing_engine消费FirmTargetPortfolio)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] 自然叠加(S1给3%+S2给5%=8%); 单票硬上限裁剪按比例削(非按策略优先级截断); 不做MVO不做协方差估计; O(N)复杂度; 冲突标的按净额处理
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
@@ -28,17 +28,31 @@ TargetPortfolio，**按标的求和（自然叠加）+ 组合级硬上限裁剪 
 不做什么：MVO/协方差估计（§3.1 拒绝）/ Kelly（归 MOD-POS-001）/
          选股（归 StrategyBook）/ 跨策略投票（§3.2 拒绝 Model D）
 
-阶段：骨架（接口完整，实现待填充）。
-依据: 30_multi_strategy_concurrency §2.2/§2.3/§3.1 + blueprint §2.3
+两段接口（32号 §2.1.1 v1.0.19）：
+    StrategyBook → pre_kelly_aggregate → MOD-PO-001 Kelly → post_kelly_clip → FirmTargetPortfolio
+
+依据: 30_multi_strategy_concurrency §2.2/§2.3/§3.1 + 32_firm_risk_aggregator §2.1.1
 SSoT: depgraph MOD-POS-021
-Version: 0.1.0
+Version: 1.0.0
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
+from typing import Any, Callable
+
+
+# ── 常量（参数来源：31_position_sizing §2.4）──
+SINGLE_NAME_CAP = 0.08           # 单票硬上限 8%（总资金口径，§2.4）
+SECTOR_DEVIATION_CAP = 0.10      # 单行业偏离基准 ±10%（§2.5.1）
+SECTOR_DEVIATION_CAP_OVERLAY = 0.15  # 叠加态 ±15%（板块轮动 overlay 激活时）
+SECTOR_ABSOLUTE_CAP = 0.30       # 单行业绝对上限 30%（§2.5.1）
+CASH_SYMBOL = "CASH"             # 现金虚拟标的（§2.4 CASH 豁免裁剪）
+
+# 流动性裁剪阈值（31号 §2.4.4 ADV 口径）
+LIQUIDITY_SEVERE_PCT = 0.20      # 严重档：持仓 > 20% ADV → 削到 20% ADV
+LIQUIDITY_MODERATE_PCT = 0.10    # 削半档：持仓 > 10% ADV → 削半
 
 
 @dataclass(frozen=True)
@@ -79,14 +93,36 @@ class FirmTargetPortfolio:
     schema_version: str = "1.0"
 
 
+@dataclass(frozen=True)
+class PreKellyResult:
+    """pre_kelly_aggregate 输出：求和+冲突净额后的权重 + 冲突记录 + 策略贡献归因。
+
+    交 MOD-POS-001 做 Kelly 精裁决（31号 §2.3.4 合成规则消费 summed_weights[symbol] 作为 w_i^sum）。
+    """
+
+    summed_weights: dict[str, float]          # symbol → 归一后权重（budget 口径，含净额截断）
+    conflicts: list[dict[str, Any]]           # ConflictRecord 列表（§2.3 冲突标的净额处理记录）
+    total_exposure_pre_kelly: float           # 求和后总暴露（sum of summed_weights，供 Kelly 层 pro-rata 参考）
+    contributions: dict[str, dict[str, float]]  # symbol → {strategy_id: 贡献权重}（§2.2 归因用，须透传给 post_kelly_clip）
+
+
 class FirmRiskAggregator:
     """Firm 层风险聚合器（MOD-POS-021）。
 
-    使用方式：
-        aggregator = FirmRiskAggregator(risk_limits={...})
-        firm_target = aggregator.aggregate([tp1, tp2, tp3])
+    两段接口（32号 §2.1.1 v1.0.19）：
+        1. pre_kelly_aggregate(): 求和(§2.2) + 冲突净额(§2.3) → PreKellyResult
+        2. [MOD-POS-001 Kelly 精裁决在中间调用]
+        3. post_kelly_clip(): 单票裁剪(§2.4) + 流动性裁剪(§2.4.4) + 行业裁剪(§2.5.1) + 总仓位裁剪(§2.5.2) + 现金管理 → FirmTargetPortfolio
 
-    骨架阶段：方法签名完整，实现待填充。
+    使用方式（两段分别调用，Kelly 在中间由 MOD-POS-001 执行）：
+        aggregator = FirmRiskAggregator()
+        pre = aggregator.pre_kelly_aggregate(targets, holdings, total_budget, industry_map)
+        kelly_adjusted = kelly_fn(pre.summed_weights)  # MOD-POS-001 Kelly
+        firm_target = aggregator.post_kelly_clip(kelly_adjusted, total_budget, industry_map, regime_cap,
+                                                   contributions=pre.contributions, conflicts=pre.conflicts)
+
+    便捷入口（aggregate）内部做 identity Kelly passthrough，适合测试/无 Kelly 场景：
+        firm_target = aggregator.aggregate(targets, total_budget=1.0, industry_map={...})
     """
 
     def __init__(self, risk_limits: dict[str, Any] | None = None) -> None:
@@ -96,55 +132,520 @@ class FirmRiskAggregator:
             risk_limits: 硬上限配置（single_name_cap / sector_cap / total_exposure_cap）。
         """
         self.risk_limits = risk_limits or {
-            "single_name_cap": 0.08,   # 单票 8%
-            "sector_cap": 0.30,        # 行业 30%
-            "total_exposure_cap": 0.95,  # 总仓位 95%
+            "single_name_cap": SINGLE_NAME_CAP,
+            "sector_cap": SECTOR_ABSOLUTE_CAP,
+            "total_exposure_cap": 0.95,
         }
 
-    # ── 公共接口 ──────────────────────────────────────────────────────
+    # ══ 公共接口 ══════════════════════════════════════════════════════
 
     def aggregate(
         self,
-        target_portfolios: list[Any],  # list[TargetPortfolio]，避免循环导入用 Any
+        target_portfolios: list[Any],
         position_snapshot: dict[str, Any] | None = None,
+        total_budget: float = 1.0,
+        industry_map: dict[str, str] | None = None,
+        regime_cap: float = 0.95,
+        kelly_fn: Callable[[dict[str, float]], dict[str, float]] | None = None,
+        adv_data: dict[str, dict[str, float]] | None = None,
+        kelly_param_source: str = "density_pdf",
     ) -> FirmTargetPortfolio:
-        """主入口：自然叠加 + 硬上限裁剪 + 冲突净额 → FirmTargetPortfolio。
+        """便捷入口：pre_kelly_aggregate → Kelly → post_kelly_clip → FirmTargetPortfolio。
 
         步骤（30_multi_strategy_concurrency §2.2 + blueprint §3）：
-            1. 按标的求和（自然叠加，S1 给 3% + S2 给 5% = 8%）
-            2. 冲突标的净额处理（一策略买一策略卖 → 按净额）
-            3. 单票硬上限裁剪（>8% 按比例削，非按策略优先级截断）
-            4. 行业集中度裁剪
-            5. 总仓位硬约束
+            1. pre_kelly_aggregate: 按标的求和（自然叠加）+ 冲突净额处理
+            2. Kelly 精裁决（若 kelly_fn 为 None，identity passthrough）
+            3. post_kelly_clip: 单票/流动性/行业/总仓位硬裁剪 + 现金管理
+
+        Args:
+            target_portfolios: 各 StrategyBook 产出的 StrategyTarget 列表
+                （每个含 strategy_id / target_portfolio / budget_used）
+            position_snapshot: T-1 持仓快照 {symbol: weight}，净额截断必需
+            total_budget: 所有策略 budget 之和
+            industry_map: symbol → 申万/中信行业映射
+            regime_cap: G15 RegimeMetaAllocator 总仓位上限
+            kelly_fn: Kelly 精裁决函数（None=identity passthrough，测试/无 Kelly 场景）
+            adv_data: symbol → {adv_20d_p25: float}，流动性裁剪用
+            kelly_param_source: Kelly 参数来源（density_pdf 正常 / historical_fallback 降级）
+
+        Returns:
+            FirmTargetPortfolio
         """
-        raise NotImplementedError("骨架：待实现求和+净额+三级硬裁剪")
+        current_holdings: dict[str, float] = {}
+        if position_snapshot:
+            # position_snapshot 可能是 {symbol: weight} 或 {symbol: {weight: float, ...}}
+            for sym, val in position_snapshot.items():
+                if isinstance(val, dict):
+                    current_holdings[sym] = val.get("weight", 0.0)
+                else:
+                    current_holdings[sym] = float(val)
 
-    # ── 子方法（待实现）──────────────────────────────────────────────
+        industry_map = industry_map or {}
 
-    def _sum_by_symbol(self, target_portfolios: list[Any]) -> dict[str, dict[str, float]]:
-        """按标的求和（自然叠加），返回 {symbol: {strategy_id: 贡献}}。"""
-        raise NotImplementedError("骨架：待实现自然叠加求和")
+        # Step 1: pre_kelly_aggregate
+        pre = self.pre_kelly_aggregate(
+            targets=target_portfolios,
+            current_holdings=current_holdings,
+            total_budget=total_budget,
+            industry_map=industry_map,
+        )
+
+        # Step 2: Kelly 精裁决（MOD-POS-001 职责，此处 passthrough 或外部传入）
+        if kelly_fn is not None:
+            kelly_adjusted = kelly_fn(pre.summed_weights)
+        else:
+            kelly_adjusted = dict(pre.summed_weights)  # identity passthrough
+
+        # Step 3: post_kelly_clip
+        result_dict = self.post_kelly_clip(
+            kelly_adjusted=kelly_adjusted,
+            total_budget=total_budget,
+            industry_map=industry_map,
+            regime_cap=regime_cap,
+            contributions=pre.contributions,
+            adv_data=adv_data,
+            conflicts=pre.conflicts,
+            kelly_param_source=kelly_param_source,
+        )
+
+        # 转换 dict → FirmTargetPortfolio dataclass
+        return self._dict_to_firm_target_portfolio(result_dict)
+
+    def pre_kelly_aggregate(
+        self,
+        targets: list[Any],
+        current_holdings: dict[str, float],
+        total_budget: float,
+        industry_map: dict[str, str],
+    ) -> PreKellyResult:
+        """第一段：按标的求和（自然叠加，§2.2）+ 冲突标的净额处理（§2.3）。
+
+        职责：
+          - §2.2 各策略 target_portfolio 按 budget 口径归一后按 symbol 求和
+          - §2.3 冲突标的（一买一卖）按净额处理，净额<0 截断为 max(0, net+holdings)
+
+        不做：Kelly / 单票裁剪 / 行业裁剪 / 总仓位裁剪 / 现金管理
+
+        Args:
+            targets: 各 StrategyBook 产出的 StrategyTarget 列表
+                （每个含 strategy_id / target_portfolio / budget_used）
+            current_holdings: symbol → 当前持仓权重（T-1 收盘快照，净额截断必需）
+            total_budget: 所有策略 budget_used 之和
+            industry_map: symbol → 申万/中信行业映射（pre_kelly 只传递，不消费）
+
+        Returns:
+            PreKellyResult（summed_weights + conflicts + total_exposure_pre_kelly + contributions）
+        """
+        # ── Step 1: budget 口径归一化求和（§2.2 自然叠加）──
+        raw_summed, contributions = self._sum_by_symbol(targets, total_budget)
+
+        # ── Step 2: 冲突标的净额处理（§2.3）──
+        summed_weights, conflicts = self._resolve_conflicts(
+            raw_summed, contributions, current_holdings
+        )
+
+        total_exposure_pre_kelly = sum(summed_weights.values())
+
+        return PreKellyResult(
+            summed_weights=summed_weights,
+            conflicts=conflicts,
+            total_exposure_pre_kelly=total_exposure_pre_kelly,
+            contributions=contributions,
+        )
+
+    def post_kelly_clip(
+        self,
+        kelly_adjusted: dict[str, float],
+        total_budget: float,
+        industry_map: dict[str, str],
+        regime_cap: float,
+        sector_overlay_active: bool = False,
+        contributions: dict[str, dict[str, float]] | None = None,
+        adv_data: dict[str, dict[str, float]] | None = None,
+        conflicts: list[dict[str, Any]] | None = None,
+        kelly_param_source: str = "density_pdf",
+    ) -> dict[str, Any]:
+        """第二段：硬上限裁剪（§2.4 单票 → §2.4.4 流动性 → §2.5.1 行业 → §2.5.2 总仓位）+ 现金管理。
+
+        职责：
+          - §2.4 单票裁剪（>8% 按比例削，CASH 豁免）
+          - §2.4.4 流动性裁剪（ADV 口径，20% 严重档/10% 削半档）
+          - §2.5.1 行业裁剪（绝对 30%，偏离基准待 D-FACTOR）
+          - §2.5.2 总仓位裁剪（>regime_cap 等比缩放）
+          - 现金管理（CASH = total_budget - sum(裁剪后股票权重)）
+
+        级联关系（§2.5.2）：每步输入=上步输出，每步只减不增，单调收敛。
+
+        Args:
+            kelly_adjusted: MOD-POS-001 Kelly 精裁决后输出（f_i^norm）
+            total_budget: 所有策略 budget 之和
+            industry_map: symbol → 申万/中信行业映射
+            regime_cap: G15 RegimeMetaAllocator 输出的总仓位上限
+            sector_overlay_active: 预留参数（§2.5.1 overlay 档开关，待 D-FACTOR 落地）
+            contributions: 各 symbol 的策略贡献（归因用），从 PreKellyResult 传入
+            adv_data: symbol → {adv_20d_p25: float}，流动性裁剪用
+            conflicts: pre_kelly_aggregate 产出的冲突记录（degraded 条件1 判定必需）
+            kelly_param_source: Kelly 参数来源（degraded 条件5 判定）
+
+        Returns:
+            dict[str, Any]——FirmTargetPortfolio 字典表示（含 firm_positions /
+            constraint_checks / degraded / conflicts_resolved）
+        """
+        # ── 初始化 ──
+        clipped: dict[str, float] = {}
+        cut_ratios: dict[str, float] = {}
+        constraint_checks: dict[str, Any] = {
+            "single_name": {"triggered": False, "cuts": []},
+            "sector": {"triggered": False, "cuts": []},
+            "total_exposure": {"triggered": False, "scale": 1.0},
+            "liquidity_cap": {"triggered": False, "cuts": []},
+        }
+
+        for symbol, weight in kelly_adjusted.items():
+            if symbol == CASH_SYMBOL:
+                continue  # CASH 豁免裁剪（§2.4），权重在 Step 4 残差计算
+            clipped[symbol] = weight
+            cut_ratios[symbol] = 0.0
+
+        # ══ Step 1: 单票硬上限裁剪（§2.4 按比例削）══
+        self._clip_single_name(clipped, cut_ratios, constraint_checks)
+
+        # ══ Step 1b: 流动性硬上限裁剪（§2.4.4 ADV 口径）══
+        self._clip_liquidity(
+            clipped, cut_ratios, constraint_checks, adv_data, industry_map, total_budget
+        )
+
+        # ══ Step 2: 行业硬约束裁剪（§2.5.1）══
+        self._clip_sector(clipped, cut_ratios, constraint_checks, industry_map)
+
+        # ══ Step 3: 总仓位硬约束裁剪（§2.5.2 等比缩放）══
+        total_exposure = self._clip_total_exposure(
+            clipped, cut_ratios, constraint_checks, regime_cap
+        )
+
+        # ══ Step 4: 现金管理（CASH 残差计算，§2.5）══
+        cash_weight = total_budget - total_exposure
+        if cash_weight < 0:
+            # 理论上 Step 3 总仓位裁剪后 total_exposure ≤ regime_cap ≤ total_budget
+            # 但浮点精度或 lot 对齐偏差可能导致微小负值，兜底为 0
+            cash_weight = 0.0
+
+        clipped[CASH_SYMBOL] = cash_weight
+
+        # ══ 组装 FirmTargetPortfolio（§2.7 数据结构）══
+        firm_positions: dict[str, dict[str, Any]] = {}
+        for symbol, weight in clipped.items():
+            firm_positions[symbol] = {
+                "target_weight": weight,
+                "contributions": contributions.get(symbol, {}) if contributions else {},
+                "cut_ratio": cut_ratios.get(symbol, 0.0),
+            }
+
+        # ── degraded 降级标记（§2.1 触发条件 5 条）──
+        conflicts_resolved = conflicts or []
+        degraded = (
+            any(c.get("truncated", False) for c in conflicts_resolved)      # 条件1: 冲突净额截断
+            or constraint_checks["single_name"]["triggered"]                # 条件2: 单票裁剪触发
+            or constraint_checks["sector"]["triggered"]                     # 条件3: 行业裁剪触发
+            or constraint_checks["total_exposure"]["triggered"]            # 条件4: 总仓位裁剪触发
+            or constraint_checks["liquidity_cap"]["triggered"]             # 条件4b: 流动性裁剪触发
+            or kelly_param_source == "historical_fallback"                 # 条件5: Kelly 参数降级传导
+        )
+
+        return {
+            "firm_positions": firm_positions,
+            "total_exposure": total_exposure,
+            "total_budget": total_budget,
+            "cash_ratio": cash_weight,
+            "constraint_checks": constraint_checks,
+            "conflicts_resolved": conflicts_resolved,
+            "degraded": degraded,
+            "created_at": datetime.now(),
+            "idempotency_key": f"firm_agg_{int(datetime.now().timestamp())}",
+            "schema_version": "1.0",
+        }
+
+    # ══ 内部辅助方法 ═══════════════════════════════════════════════════
+
+    def _sum_by_symbol(
+        self, targets: list[Any], total_budget: float
+    ) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
+        """按标的求和（自然叠加，§2.2），返回 (raw_summed, contributions)。
+
+        各策略 target_portfolio 权重是相对各自 strategy_budget 的占比。
+        求和前先归一到账户总资金口径：account_weight = tp_weight × budget_used / total_budget
+
+        Returns:
+            raw_summed: symbol → 求和后权重（未处理冲突）
+            contributions: symbol → {strategy_id: 贡献权重}（归因用，正=买，负=卖）
+        """
+        raw_summed: dict[str, float] = {}
+        contributions: dict[str, dict[str, float]] = {}
+
+        for tp in targets:
+            # 兼容 dict 和对象两种格式
+            if isinstance(tp, dict):
+                strategy_id = tp.get("strategy_id", "unknown")
+                budget_used = tp.get("budget_used", 0.0)
+                tp_portfolio = tp.get("target_portfolio", {})
+            else:
+                strategy_id = getattr(tp, "strategy_id", "unknown")
+                budget_used = getattr(tp, "budget_used", 0.0)
+                tp_portfolio = getattr(tp, "target_portfolio", {})
+
+            scale = budget_used / total_budget if total_budget > 0 else 0.0
+
+            for symbol, tp_weight in tp_portfolio.items():
+                if symbol == CASH_SYMBOL:
+                    continue  # CASH 不参与求和（§2.4 CASH 豁免）
+                account_weight = tp_weight * scale
+                raw_summed[symbol] = raw_summed.get(symbol, 0.0) + account_weight
+                if symbol not in contributions:
+                    contributions[symbol] = {}
+                # 记录策略贡献方向（正=买，负=卖）
+                contributions[symbol][strategy_id] = (
+                    contributions[symbol].get(strategy_id, 0.0) + account_weight
+                )
+
+        return raw_summed, contributions
 
     def _resolve_conflicts(
-        self, symbol_contributions: dict[str, dict[str, float]]
-    ) -> tuple[dict[str, float], list[ConflictRecord]]:
-        """冲突标的净额处理（买方卖方对冲）。"""
-        raise NotImplementedError("骨架：待实现冲突净额")
+        self,
+        raw_summed: dict[str, float],
+        contributions: dict[str, dict[str, float]],
+        current_holdings: dict[str, float],
+    ) -> tuple[dict[str, float], list[dict[str, Any]]]:
+        """冲突标的净额处理（§2.3），返回 (summed_weights, conflicts)。
+
+        冲突 = 一策略买（正权重）另一策略卖（负权重）同一标的。
+        净额 < 0 时 A 股不能做空 → 截断为 max(0, net + holdings_weight)。
+        """
+        conflicts: list[dict[str, Any]] = []
+        summed_weights: dict[str, float] = {}
+
+        for symbol, net_weight in raw_summed.items():
+            strategy_contribs = contributions[symbol]
+            has_buy = any(w > 0 for w in strategy_contribs.values())
+            has_sell = any(w < 0 for w in strategy_contribs.values())
+
+            if has_buy and has_sell:
+                # 冲突标的（§2.3）：一买一卖
+                conflict_record: dict[str, Any] = {
+                    "symbol": symbol,
+                    "buy_strategies": {k: v for k, v in strategy_contribs.items() if v > 0},
+                    "sell_strategies": {k: v for k, v in strategy_contribs.items() if v < 0},
+                    "net_weight": net_weight,
+                }
+
+                if net_weight < 0:
+                    # 净额<0：A 股不能做空，截断为 max(0, net + holdings)（§2.3 净额截断）
+                    holdings_weight = current_holdings.get(symbol, 0.0)
+                    final_weight = max(0.0, net_weight + holdings_weight)
+                    conflict_record["truncated"] = True
+                    conflict_record["final_weight"] = final_weight
+                    conflict_record["truncated_amount"] = (
+                        net_weight + holdings_weight - final_weight
+                    )
+                    conflicts.append(conflict_record)
+                    summed_weights[symbol] = final_weight
+                else:
+                    # 净额≥0：无截断需求
+                    conflict_record["truncated"] = False
+                    conflict_record["final_weight"] = net_weight
+                    conflicts.append(conflict_record)
+                    summed_weights[symbol] = net_weight
+            else:
+                # 非冲突（同向叠加或单策略），直接使用求和值
+                summed_weights[symbol] = net_weight
+
+        return summed_weights, conflicts
 
     def _clip_single_name(
-        self, firm_positions: dict[str, FirmTarget]
-    ) -> dict[str, FirmTarget]:
-        """单票硬上限裁剪（>8% 按比例削，INVARIANTS：非按策略优先级截断）。"""
-        raise NotImplementedError("骨架：待实现单票按比例裁剪")
+        self,
+        clipped: dict[str, float],
+        cut_ratios: dict[str, float],
+        constraint_checks: dict[str, Any],
+    ) -> None:
+        """单票硬上限裁剪（§2.4 按比例削，>8% 削到 8%）。
+
+        INVARIANTS：非按策略优先级截断，按比例削保持各策略相对贡献不变。
+        """
+        cap = self.risk_limits.get("single_name_cap", SINGLE_NAME_CAP)
+        for symbol in list(clipped.keys()):
+            if clipped[symbol] > cap:
+                cut_ratio = 1.0 - cap / clipped[symbol]
+                clipped[symbol] = cap
+                cut_ratios[symbol] = cut_ratio
+                constraint_checks["single_name"]["triggered"] = True
+                constraint_checks["single_name"]["cuts"].append({
+                    "symbol": symbol,
+                    "cut_ratio": cut_ratio,
+                    "capped_at": cap,
+                })
+
+    def _clip_liquidity(
+        self,
+        clipped: dict[str, float],
+        cut_ratios: dict[str, float],
+        constraint_checks: dict[str, Any],
+        adv_data: dict[str, dict[str, float]] | None,
+        industry_map: dict[str, str],
+        total_budget: float,
+    ) -> None:
+        """流动性硬上限裁剪（§2.4.4 ADV 口径）。
+
+        阈值（31号 §2.4.4）：
+          - 严重档：持仓 > 20% ADV → 削到 20% ADV
+          - 削半档：持仓 > 10% ADV → 削半
+        ADV 缺失/停牌 → 降级取同行业中位数。
+        """
+        if not adv_data:
+            return  # 无 ADV 数据时跳过流动性裁剪（降级为不触发）
+
+        # 预计算行业 ADV 中位数（降级路径用）
+        sector_advs: dict[str, list[float]] = {}
+        for sym, adv_info in adv_data.items():
+            sec = industry_map.get(sym, "UNKNOWN")
+            adv_val = adv_info.get("adv_20d_p25", 0)
+            if adv_val > 0:
+                sector_advs.setdefault(sec, []).append(adv_val)
+        sector_adv_median = {
+            sec: sorted(vals)[len(vals) // 2]
+            for sec, vals in sector_advs.items()
+            if vals
+        }
+
+        for symbol in list(clipped.keys()):
+            adv_i = adv_data.get(symbol, {}).get("adv_20d_p25", 0)
+            if adv_i <= 0:
+                # ADV 缺失/停牌 → 降级取同行业中位数（31号 §2.4.4 降级路径）
+                adv_i = sector_adv_median.get(industry_map.get(symbol, "UNKNOWN"), 0)
+            if adv_i <= 0:
+                continue  # 仍无 ADV 数据，跳过
+
+            position_value = clipped[symbol] * total_budget
+            adv_pct = position_value / adv_i
+
+            if adv_pct > LIQUIDITY_SEVERE_PCT:
+                # 严重档：削到 20% ADV
+                old = clipped[symbol]
+                clipped[symbol] = old * (LIQUIDITY_SEVERE_PCT / adv_pct)
+                cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * (
+                    LIQUIDITY_SEVERE_PCT / adv_pct
+                )
+                constraint_checks["liquidity_cap"]["triggered"] = True
+                constraint_checks["liquidity_cap"]["cuts"].append({
+                    "symbol": symbol,
+                    "tier": "severe",
+                    "adv_pct": adv_pct,
+                    "capped_at_adv": LIQUIDITY_SEVERE_PCT,
+                })
+            elif adv_pct > LIQUIDITY_MODERATE_PCT:
+                # 削半档
+                clipped[symbol] *= 0.5
+                cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * 0.5
+                constraint_checks["liquidity_cap"]["triggered"] = True
+                constraint_checks["liquidity_cap"]["cuts"].append({
+                    "symbol": symbol,
+                    "tier": "moderate",
+                    "adv_pct": adv_pct,
+                    "halved": True,
+                })
 
     def _clip_sector(
-        self, firm_positions: dict[str, FirmTarget]
-    ) -> dict[str, FirmTarget]:
-        """行业集中度裁剪。"""
-        raise NotImplementedError("骨架：待实现行业裁剪")
+        self,
+        clipped: dict[str, float],
+        cut_ratios: dict[str, float],
+        constraint_checks: dict[str, Any],
+        industry_map: dict[str, str],
+    ) -> None:
+        """行业硬约束裁剪（§2.5.1）。
+
+        MVP 先做绝对上限 30% 裁剪（只需 industry_map）。
+        偏离基准 ±10%/±15% 裁剪需行业基准权重数据，待 D-FACTOR 行业分类模块确认后补充。
+        """
+        cap = self.risk_limits.get("sector_cap", SECTOR_ABSOLUTE_CAP)
+
+        # 2a. 行业归类求和
+        sector_weights: dict[str, float] = {}
+        sector_symbols: dict[str, list[str]] = {}
+        for symbol, weight in clipped.items():
+            sector = industry_map.get(symbol, "UNKNOWN")
+            sector_weights[sector] = sector_weights.get(sector, 0.0) + weight
+            sector_symbols.setdefault(sector, []).append(symbol)
+
+        # 2b. 绝对上限 30% 裁剪（不可突破硬顶）
+        for sector, weight in sector_weights.items():
+            if weight > cap:
+                scale = cap / weight
+                for symbol in sector_symbols[sector]:
+                    clipped[symbol] = clipped[symbol] * scale
+                    cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * scale
+                sector_weights[sector] = cap
+                constraint_checks["sector"]["triggered"] = True
+                constraint_checks["sector"]["cuts"].append({
+                    "sector": sector,
+                    "type": "absolute_cap",
+                    "scale": scale,
+                    "capped_at": cap,
+                })
 
     def _clip_total_exposure(
-        self, firm_positions: dict[str, FirmTarget]
-    ) -> dict[str, FirmTarget]:
-        """总仓位硬约束裁剪。"""
-        raise NotImplementedError("骨架：待实现总仓位裁剪")
+        self,
+        clipped: dict[str, float],
+        cut_ratios: dict[str, float],
+        constraint_checks: dict[str, Any],
+        regime_cap: float,
+    ) -> float:
+        """总仓位硬约束裁剪（§2.5.2 等比缩放）。
+
+        若 Kelly 层 §2.3.5 已做 pro-rata 归一化（sum ≤ regime_cap），此步自动不触发。
+
+        Returns:
+            total_exposure: 裁剪后总暴露
+        """
+        total_exposure = sum(clipped.values())
+        if total_exposure > regime_cap:
+            scale = regime_cap / total_exposure
+            for symbol in clipped:
+                clipped[symbol] *= scale
+                cut_ratios[symbol] = 1.0 - (1.0 - cut_ratios.get(symbol, 0)) * scale
+            constraint_checks["total_exposure"]["triggered"] = True
+            constraint_checks["total_exposure"]["scale"] = scale
+            total_exposure = regime_cap
+        return total_exposure
+
+    def _dict_to_firm_target_portfolio(
+        self, result_dict: dict[str, Any]
+    ) -> FirmTargetPortfolio:
+        """将 post_kelly_clip 的 dict 输出转换为 FirmTargetPortfolio dataclass。"""
+        firm_positions: dict[str, FirmTarget] = {}
+        for symbol, pos_data in result_dict["firm_positions"].items():
+            firm_positions[symbol] = FirmTarget(
+                target_weight=pos_data["target_weight"],
+                contributions=dict(pos_data.get("contributions", {})),
+                cut_ratio=pos_data.get("cut_ratio", 0.0),
+            )
+
+        # conflicts_resolved 中 dict → ConflictRecord
+        conflicts_resolved: list[ConflictRecord] = []
+        for c in result_dict.get("conflicts_resolved", []):
+            conflicts_resolved.append(ConflictRecord(
+                symbol=c["symbol"],
+                buy_strategies=dict(c.get("buy_strategies", {})),
+                sell_strategies=dict(c.get("sell_strategies", {})),
+                net_weight=c.get("net_weight", 0.0),
+            ))
+
+        return FirmTargetPortfolio(
+            firm_positions=firm_positions,
+            total_exposure=result_dict["total_exposure"],
+            total_budget=result_dict["total_budget"],
+            cash_ratio=result_dict["cash_ratio"],
+            constraint_checks=result_dict["constraint_checks"],
+            conflicts_resolved=conflicts_resolved,
+            degraded=result_dict["degraded"],
+            created_at=result_dict.get("created_at", datetime.now()),
+            idempotency_key=result_dict.get("idempotency_key", ""),
+            schema_version=result_dict.get("schema_version", "1.0"),
+        )

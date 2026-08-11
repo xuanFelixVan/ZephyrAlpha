@@ -4,8 +4,8 @@
 # [DEPENDENCIES] zephyr.position.core.strategy_book
 # [CONSUMERS] MOD-POS-020(StrategyBook收rebalance指令); MOD-POS-021(FirmRiskAggregator收ForcedTrim); RegimeMetaAllocator(收BudgetChangeHandled反馈)
 # [STARTUP] imported
-# [MATURITY] design
-# [INVARIANTS] 只处理budget下调(上调简单直接抬高上限); 三级升级Tier1封锁→Tier2策略自主→Tier3强裁; 策略不能说"我不卖"(rebalance_to_budget必返回适配portfolio); convergence_window按换手率差异化; 每级独立事件可log可复盘
+# [MATURITY] production
+# [INVARIANTS] 只处理budget下调(上调简单直接抬高上限); 三级升级Tier1封锁→Tier2策略自主→Tier3强裁; 策略不能说"我不卖"(rebalance_to_budget必返回适配portfolio); convergence_window按换手率差异化; 每级独立事件可log可复盘; fail-closed(TierState读取失败假设Tier1封锁)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -27,14 +27,30 @@ StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 �
 不在"要不要适应"。**策略不能说"我不卖"**。三级升级而非直接强砍：尊重策略自主权
 （决定砍哪个）+ 避免随机时刻强制卖出的高成本。
 
+三级升级（§2.4）：
+    Tier 1（立即，被动）：封锁新仓，现有仓位不动
+    Tier 2（Tier 1 后立即，策略自主）：发 rebalance_to_budget，策略自选砍哪些
+    Tier 3（Tier 2 窗口超时 / firm 风险违例，强制）：按比例强行裁剪所有仓位
+
+收敛检测（§2.4 Tier 2→Tier 3）：
+    ① 仓位差收敛：|实际总仓位 - target_budget| / target_budget < ε_pos（5%）
+    ② 持续性：连续维持 ε_days 日（1 个交易日）
+    ③ 无新违例：窗口内无新的 firm 层风险违例
+
+防抖（§6 待裁定，theledgermind 2026-05 实证 5% 为 return/cost trade-off 最优点）：
+    日内抖动 <5% 忽略；日间累计趋势 >10% 强制触发（防抖不过度）
+
 不做什么：budget 计算（归 RegimeMetaAllocator）/ 选股仓位裁决（归 StrategyBook/MOD-POS-001）
          / 决定砍哪个仓位（Tier 2 策略自主，Tier 3 按比例 dumb）/ 执行交易（归 D-EX-CORE）
          / 处理 budget 上调（上调简单，直接抬高上限自然部署）
 
-阶段：骨架（接口完整，实现待填充）。
-依据: 30_multi_strategy_concurrency §2.4 + blueprint §3
+设计决策：本模块生成指令（FreezeNewPositions/RebalanceRequest/ForcedTrim）但不直接
+         调用 broker/strategy_book——调用者负责执行指令。这使得本模块可纯单元测试，
+         且与执行层解耦（circuit breaker/大宗交易/TWAP 等执行细节归 D-EX-CORE）。
+
+依据: 30_multi_strategy_concurrency §2.4 + 33_budget_change_handler §3.4 + blueprint §3
 SSoT: depgraph MOD-POS-022
-Version: 0.1.0
+Version: 1.0.0
 """
 
 from __future__ import annotations
@@ -45,37 +61,71 @@ from enum import Enum
 from typing import Any
 
 
+# ── 常量（参数来源：30_multi_strategy_concurrency §2.4/§6 + 33号 §3.4）──
+
+# 防抖阈值（§6，theledgermind 2026-05 实证 5% 最优）
+DEBOUNCE_THRESHOLD = 0.05          # budget 变动 <5% 忽略（日内抖动）
+CUMULATIVE_TREND_THRESHOLD = 0.10  # 连降累计 >10% 必须执行（日间趋势）
+
+# 收敛检测阈值（§2.4 Tier 2→Tier 3）
+CONVERGENCE_EPS_POS = 0.05         # 仓位差 <5% 视为收敛
+CONVERGENCE_EPS_DAYS = 1           # 连续维持 1 日
+
+# 默认 convergence_window（§6.4，按换手率差异化）
+DEFAULT_CONVERGENCE_WINDOWS = {
+    "打板": timedelta(days=2),       # 高换手 1-2 天自然收敛
+    "多因子": timedelta(days=4),     # 低换手需更多时间
+    "事件驱动": timedelta(days=3),   # 中等换手
+}
+
+
 class TierLevel(Enum):
     """三级升级级别（30_multi_strategy_concurrency §2.4）。"""
 
+    IDLE = "idle"                        # 空闲（无活跃升级）
     TIER_1_LOCK = "tier_1_lock"          # 封锁新仓（立即，被动）
     TIER_2_REBALANCE = "tier_2_rebalance"  # 策略自主 rebalance（建议，策略自主）
     TIER_3_FORCE_TRIM = "tier_3_force_trim"  # 强制裁剪（强制，firm 层）
+    CONVERGED = "converged"              # 收敛完成
 
 
 @dataclass(frozen=True)
 class FreezeNewPositions:
-    """Tier 1 指令：封锁新仓（CTR-POS-022-F）。"""
+    """Tier 1 指令：封锁新仓（CTR-POS-022-F）。
+
+    策略收到后：不允许开任何新仓，现有仓位不动。
+    撤未成交买单（减仓方向不超限），保留卖单。
+    """
 
     strategy_id: str
+    cancel_pending_buy_orders: bool = True   # 撤未成交买单
+    keep_pending_sell_orders: bool = True    # 卖单不撤
     timestamp: datetime = field(default_factory=datetime.now)
     schema_version: str = "1.0"
 
 
 @dataclass(frozen=True)
 class RebalanceRequest:
-    """Tier 2 指令：策略自主 rebalance（CTR-POS-022-R）。"""
+    """Tier 2 指令：策略自主 rebalance（CTR-POS-022-R）。
+
+    策略收到后：调用 rebalance_to_budget(new_budget) 自选砍哪些仓位。
+    **策略不能说"我不卖"**——必须返回适配新 budget 的 target_portfolio。
+    """
 
     strategy_id: str
     new_budget: float
     convergence_window: timedelta        # 按换手率差异化
+    interface_contract: str = "rebalance_to_budget() 必须返回 target_portfolio 总暴露 ≤ new_budget"
     timestamp: datetime = field(default_factory=datetime.now)
     schema_version: str = "1.0"
 
 
 @dataclass(frozen=True)
 class ForcedTrim:
-    """Tier 3 指令：强制按比例裁剪（CTR-POS-022-T，dumb but safe）。"""
+    """Tier 3 指令：强制按比例裁剪（CTR-POS-022-T，dumb but safe）。
+
+    策略/FirmRiskAggregator 收到后：所有仓位 × trim_ratio 等比缩放。
+    """
 
     strategy_id: str
     trim_ratio: float                    # 裁剪比例（如 0.2 = 所有仓位削 20%）
@@ -86,46 +136,83 @@ class ForcedTrim:
 
 @dataclass
 class TierState:
-    """单策略 budget 变动的三级升级状态机。"""
+    """单策略 budget 变动的三级升级状态机。
+
+    每个策略独立一份状态，进程内缓存（生产环境可持久化到 DB）。
+    """
 
     strategy_id: str
-    current_tier: TierLevel
-    old_budget: float
-    new_budget: float
+    current_tier: TierLevel = TierLevel.IDLE
+    old_budget: float = 0.0
+    target_budget: float = 0.0
     tier1_at: datetime | None = None
     tier2_at: datetime | None = None
     tier3_at: datetime | None = None
-    converged: bool = False              # 是否已收敛（策略适配完成）
+    converged_at: datetime | None = None
+    convergence_window_end: datetime | None = None
+    cumulative_budget_change: float = 0.0  # 累计 budget 变动（防抖"日间趋势"判定用）
+    last_budget_change_date: str = ""       # 上次 budget 变动日期（YYYY-MM-DD，日内防抖重置用）
+    convergence_days_satisfied: int = 0     # 连续满足收敛条件的天数（§2.4 ε_days）
+    instructions_issued: list[dict[str, Any]] = field(default_factory=list)  # 已发出的指令记录
+
+    def is_in_convergence(self) -> bool:
+        """是否正在收敛流程中（Tier 1/2/3 任一活跃）→ re-target 不防抖。"""
+        return self.current_tier in (
+            TierLevel.TIER_1_LOCK,
+            TierLevel.TIER_2_REBALANCE,
+            TierLevel.TIER_3_FORCE_TRIM,
+        )
+
+
+@dataclass
+class BudgetChangeResult:
+    """handle_budget_change 返回结果。"""
+
+    action: str                           # 动作描述
+    state: TierState                      # 更新后的状态
+    instructions: list[dict[str, Any]]    # 待执行指令列表（调用者负责执行）
 
 
 class BudgetChangeHandler:
     """Budget 变动处理器（MOD-POS-022）。
 
     使用方式：
-        handler = BudgetChangeHandler(convergence_windows={"打板": timedelta(days=2), ...})
-        handler.handle_budget_change(strategy_id, old_budget, new_budget)
+        handler = BudgetChangeHandler()
+        result = handler.handle_budget_change("s1", 0.30, 0.20, strategy_type="打板")
+        # result.instructions 含 FreezeNewPositions + RebalanceRequest
+        # 调用者负责执行这些指令（发送给 StrategyBook）
 
-    骨架阶段：方法签名完整，实现待填充。
+        # Tier 2 窗口结束后检查收敛
+        result = handler.check_convergence("s1", current_exposure=0.22)
+        # 若未收敛 → result.instructions 含 ForcedTrim
     """
 
     def __init__(
         self,
         convergence_windows: dict[str, timedelta] | None = None,
+        debounce_threshold: float = DEBOUNCE_THRESHOLD,
+        cumulative_trend_threshold: float = CUMULATIVE_TREND_THRESHOLD,
+        eps_pos: float = CONVERGENCE_EPS_POS,
+        eps_days: int = CONVERGENCE_EPS_DAYS,
     ) -> None:
         """初始化。
 
         Args:
             convergence_windows: 各策略 convergence_window（按换手率差异化）。
-                30_multi_strategy_concurrency §6.4：打板 1-2 天，多因子 3-5 天，事件驱动 2-3 天。
+                30_multi_strategy_concurrency §6.4：打板 2 天，多因子 4 天，事件驱动 3 天。
+            debounce_threshold: 日内防抖阈值（默认 5%）。
+            cumulative_trend_threshold: 日间累计趋势阈值（默认 10%）。
+            eps_pos: 收敛仓位差容忍度（默认 5%）。
+            eps_days: 收敛持续性天数（默认 1 日）。
         """
-        self.convergence_windows = convergence_windows or {
-            "打板": timedelta(days=2),
-            "多因子": timedelta(days=4),
-            "事件驱动": timedelta(days=3),
-        }
-        self._active_states: dict[str, TierState] = {}  # 进行中的升级状态
+        self.convergence_windows = convergence_windows or dict(DEFAULT_CONVERGENCE_WINDOWS)
+        self.debounce_threshold = debounce_threshold
+        self.cumulative_trend_threshold = cumulative_trend_threshold
+        self.eps_pos = eps_pos
+        self.eps_days = eps_days
+        self._active_states: dict[str, TierState] = {}  # strategy_id → TierState
 
-    # ── 公共接口 ──────────────────────────────────────────────────────
+    # ══ 公共接口 ══════════════════════════════════════════════════════
 
     def handle_budget_change(
         self,
@@ -133,38 +220,353 @@ class BudgetChangeHandler:
         old_budget: float,
         new_budget: float,
         strategy_type: str = "多因子",
-    ) -> TierState:
-        """主入口：处理 budget 下调，启动三级升级。
+        current_date: str | None = None,
+    ) -> BudgetChangeResult:
+        """主入口：处理 budget 变动，裁决是否触发三级升级。
 
-        只处理 budget 下调（new < old）。上调简单，StrategyBook 直接抬高上限自然部署。
+        规则优先级（§3.4 伪代码）：
+            1. 上调 → 即时返回不防抖（StrategyBook 自然部署）
+            2. 已在收敛中 → re-target 不防抖
+            3. 首次下调 <5% → 防抖忽略（日内抖动）
+            4. 首次下调 ≥5% → 触发三级升级
+            5. 累计趋势 >10% → 强制触发（日间趋势，防抖不过度）
 
-        三级升级（30_multi_strategy_concurrency §2.4）：
-            Tier 1（立即）：封锁新仓，现有仓位不动
-            Tier 2（Tier 1 后立即）：发 rebalance_to_budget，策略自选砍哪些
-            Tier 3（Tier 2 窗口超时 / firm 风险违例）：按比例强行裁剪所有仓位
+        Args:
+            strategy_id: 策略 ID
+            old_budget: 旧 budget 占比
+            new_budget: 新 budget 占比
+            strategy_type: 策略类型（打板/多因子/事件驱动，convergence_window 用）
+            current_date: 当前日期 YYYY-MM-DD（防抖日内/日间判定用），None=用今天
+
+        Returns:
+            BudgetChangeResult（含动作描述+更新后状态+待执行指令列表）
         """
+        if current_date is None:
+            current_date = datetime.now().strftime("%Y-%m-%d")
+
+        # 获取或创建 TierState
+        state = self._get_or_create_state(strategy_id, old_budget)
+
+        # ── 规则 1：上调 → 即时返回，不防抖（§3.1 对称性）──
         if new_budget >= old_budget:
-            raise ValueError(f"本模块只处理 budget 下调（{old_budget}→{new_budget}），上调由 StrategyBook 自然部署")
-        raise NotImplementedError("骨架：待实现 Tier1 封锁 → Tier2 rebalance → 超时 Tier3 强裁 状态机")
+            if state.is_in_convergence():
+                # 收敛中上调 → re-target（trim_ratio 变小/为负 → 停止强裁）
+                return self._retarget_in_convergence(state, new_budget)
+            # 非收敛中上调：无动作
+            state.target_budget = new_budget
+            return BudgetChangeResult(
+                action="NO_ACTION: budget 上调或不变，StrategyBook 自然部署",
+                state=state,
+                instructions=[],
+            )
 
-    def check_convergence(self, strategy_id: str, now: datetime | None = None) -> TierState:
-        """检查 Tier 2 是否在 convergence_window 内收敛，否则升级 Tier 3。"""
-        raise NotImplementedError("骨架：待实现超时检测 + Tier 3 升级")
+        # ── 下调场景（new < old）──
+        change_pct = (old_budget - new_budget) / old_budget if old_budget > 0 else 0.0
 
-    # ── 三级指令生成（待实现）────────────────────────────────────────
+        # ── 规则 2：已在收敛中 → re-target 不防抖（§3.3 防抖豁免）──
+        if state.is_in_convergence():
+            return self._retarget_in_convergence(state, new_budget)
+
+        # ── 日内/日间防抖累计 ──
+        if current_date != state.last_budget_change_date:
+            # 新交易日 → 重置日内累计
+            state.cumulative_budget_change = 0.0
+            state.last_budget_change_date = current_date
+        state.cumulative_budget_change += change_pct
+
+        # ── 规则 3：首次下调 <5% 且累计 <10% → 防抖忽略 ──
+        if change_pct < self.debounce_threshold and state.cumulative_budget_change < self.cumulative_trend_threshold:
+            return BudgetChangeResult(
+                action=f"DEBOUNCE: budget 下调 {change_pct:.1%} < {self.debounce_threshold:.0%} 阈值，忽略（日内抖动）",
+                state=state,
+                instructions=[],
+            )
+
+        # ── 规则 4/5：触发三级升级（≥5% 或累计趋势 >10%）──
+        trigger_reason = (
+            f"budget 下调 {change_pct:.1%} ≥ {self.debounce_threshold:.0%} 阈值"
+            if change_pct >= self.debounce_threshold
+            else f"累计趋势 {state.cumulative_budget_change:.1%} ≥ {self.cumulative_trend_threshold:.0%} 阈值（日间趋势强制触发）"
+        )
+
+        return self._trigger_three_tier_escalation(
+            state, old_budget, new_budget, strategy_type, trigger_reason
+        )
+
+    def check_convergence(
+        self,
+        strategy_id: str,
+        current_exposure: float,
+        now: datetime | None = None,
+    ) -> BudgetChangeResult:
+        """检查 Tier 2 是否在 convergence_window 内收敛，否则升级 Tier 3。
+
+        收敛条件（§2.4，同时满足）：
+            ① 仓位差收敛：|实际总仓位 - target_budget| / target_budget < ε_pos（5%）
+            ② 持续性：连续维持 ε_days 日（1 日）
+            ③ 无新违例（调用者保证，本方法不检查）
+
+        Args:
+            strategy_id: 策略 ID
+            current_exposure: 策略当前实际暴露占比
+            now: 当前时间（测试用），None=用 datetime.now()
+
+        Returns:
+            BudgetChangeResult（收敛 → CONVERGED；未收敛且超时 → Tier 3 ForcedTrim）
+        """
+        if now is None:
+            now = datetime.now()
+
+        state = self._active_states.get(strategy_id)
+        if state is None or not state.is_in_convergence():
+            return BudgetChangeResult(
+                action="NO_ACTION: 无活跃升级状态",
+                state=state or TierState(strategy_id=strategy_id),
+                instructions=[],
+            )
+
+        # 只在 Tier 2 阶段检查收敛（Tier 1 是瞬时的，Tier 3 已在强裁）
+        if state.current_tier != TierLevel.TIER_2_REBALANCE:
+            return BudgetChangeResult(
+                action=f"NO_ACTION: 当前 Tier={state.current_tier.value}，非 Tier 2",
+                state=state,
+                instructions=[],
+            )
+
+        target = state.target_budget
+        if target <= 0:
+            # target=0：exposure=0 才算收敛
+            is_position_converged = current_exposure <= 0.001
+        else:
+            is_position_converged = (
+                abs(current_exposure - target) / target < self.eps_pos
+            )
+
+        # ── 检查收敛 ──
+        if is_position_converged:
+            state.convergence_days_satisfied += 1
+            if state.convergence_days_satisfied >= self.eps_days:
+                # 完全收敛
+                state.current_tier = TierLevel.CONVERGED
+                state.converged_at = now
+                return BudgetChangeResult(
+                    action=f"CONVERGED: Tier 2 收敛完成（exposure={current_exposure:.4f} ≤ target={target:.4f}+ε）",
+                    state=state,
+                    instructions=[],
+                )
+            else:
+                # 持续性未达标，继续等待
+                return BudgetChangeResult(
+                    action=f"WAITING: 仓位已收敛但持续性未达标（{state.convergence_days_satisfied}/{self.eps_days} 日）",
+                    state=state,
+                    instructions=[],
+                )
+        else:
+            # 仓位未收敛 → 重置持续性计数
+            state.convergence_days_satisfied = 0
+
+        # ── 检查是否超时 → 升级 Tier 3 ──
+        if state.convergence_window_end and now >= state.convergence_window_end:
+            return self._escalate_to_tier3(state, current_exposure, now)
+        else:
+            # 窗口内但未收敛，继续等待
+            return BudgetChangeResult(
+                action=f"WAITING: 仓位未收敛（exposure={current_exposure:.4f} vs target={target:.4f}），窗口内继续等待",
+                state=state,
+                instructions=[],
+            )
+
+    def get_state(self, strategy_id: str) -> TierState | None:
+        """获取策略的当前 TierState。"""
+        return self._active_states.get(strategy_id)
+
+    # ══ 内部方法 ══════════════════════════════════════════════════════
+
+    def _get_or_create_state(
+        self, strategy_id: str, current_budget: float
+    ) -> TierState:
+        """获取或创建 TierState。"""
+        if strategy_id not in self._active_states:
+            state = TierState(
+                strategy_id=strategy_id,
+                current_tier=TierLevel.IDLE,
+                old_budget=current_budget,
+                target_budget=current_budget,
+            )
+            self._active_states[strategy_id] = state
+        return self._active_states[strategy_id]
+
+    def _trigger_three_tier_escalation(
+        self,
+        state: TierState,
+        old_budget: float,
+        new_budget: float,
+        strategy_type: str,
+        trigger_reason: str,
+    ) -> BudgetChangeResult:
+        """触发三级升级：Tier 1 封锁 → Tier 2 策略自主 → Tier 3 强裁兜底。
+
+        Tier 1 和 Tier 2 立即发出（Tier 1 是瞬时的，Tier 2 紧随其后）。
+        Tier 3 仅在 check_convergence 超时时触发。
+        """
+        state.old_budget = old_budget
+        state.target_budget = new_budget
+        instructions: list[dict[str, Any]] = []
+
+        # ── Tier 1：封锁新仓（瞬时）──
+        state.current_tier = TierLevel.TIER_1_LOCK
+        state.tier1_at = datetime.now()
+        tier1_instr = self._issue_tier1_freeze(state.strategy_id)
+        instructions.append({"tier": 1, "instruction": tier1_instr, "reason": trigger_reason})
+        state.instructions_issued.append({"tier": 1, "reason": trigger_reason, "at": state.tier1_at})
+
+        # ── Tier 2：发 rebalance 请求（策略自选砍仓）──
+        state.current_tier = TierLevel.TIER_2_REBALANCE
+        state.tier2_at = datetime.now()
+        convergence_window = self.convergence_windows.get(
+            strategy_type, timedelta(days=3)
+        )
+        state.convergence_window_end = state.tier2_at + convergence_window
+        state.convergence_days_satisfied = 0  # 重置收敛计数
+
+        tier2_instr = self._issue_tier2_rebalance(
+            state.strategy_id, new_budget, convergence_window
+        )
+        instructions.append({
+            "tier": 2,
+            "instruction": tier2_instr,
+            "reason": f"窗口 {convergence_window.days} 天，截止 {state.convergence_window_end}",
+        })
+        state.instructions_issued.append({
+            "tier": 2,
+            "reason": f"窗口 {convergence_window.days} 天",
+            "at": state.tier2_at,
+        })
+
+        return BudgetChangeResult(
+            action=f"TIER1+TIER2 触发：{trigger_reason}，窗口 {convergence_window.days} 天",
+            state=state,
+            instructions=instructions,
+        )
+
+    def _retarget_in_convergence(
+        self, state: TierState, new_budget: float
+    ) -> BudgetChangeResult:
+        """收敛中 budget 再变动 → re-target（§3.3 防抖豁免）。
+
+        上调 → trim_ratio 变小/为负 → 停止强裁（若在 Tier 3）。
+        下调 → 更新 target_budget，重置收敛窗口。
+        """
+        old_target = state.target_budget
+        state.target_budget = new_budget
+
+        if new_budget >= old_target:
+            # 上调：若在 Tier 3，停止强裁
+            if state.current_tier == TierLevel.TIER_3_FORCE_TRIM:
+                state.current_tier = TierLevel.CONVERGED
+                state.converged_at = datetime.now()
+                return BudgetChangeResult(
+                    action=f"RETARGET: 收敛中上调 {old_target:.4f}→{new_budget:.4f}，停止 Tier 3 强裁",
+                    state=state,
+                    instructions=[],
+                )
+            # Tier 2 上调：更新 target，重置收敛窗口
+            state.convergence_days_satisfied = 0
+            return BudgetChangeResult(
+                action=f"RETARGET: 收敛中上调 {old_target:.4f}→{new_budget:.4f}，更新 target 重置收敛计数",
+                state=state,
+                instructions=[],
+            )
+        else:
+            # 下调：更新 target，重置收敛窗口（给策略更多时间）
+            state.convergence_window_end = datetime.now() + self.convergence_windows.get(
+                "多因子", timedelta(days=3)
+            )
+            state.convergence_days_satisfied = 0
+            return BudgetChangeResult(
+                action=f"RETARGET: 收敛中下调 {old_target:.4f}→{new_budget:.4f}，更新 target 重置窗口",
+                state=state,
+                instructions=[],
+            )
+
+    def _escalate_to_tier3(
+        self, state: TierState, current_exposure: float, now: datetime
+    ) -> BudgetChangeResult:
+        """升级到 Tier 3：按比例强裁兜底（dumb but safe）。
+
+        trim_ratio = (current_exposure - target_budget) / current_exposure
+        若 current_exposure=0 则无需裁剪。
+        """
+        state.current_tier = TierLevel.TIER_3_FORCE_TRIM
+        state.tier3_at = now
+
+        if current_exposure <= 0:
+            # 无暴露，无需裁剪
+            state.current_tier = TierLevel.CONVERGED
+            state.converged_at = now
+            return BudgetChangeResult(
+                action="CONVERGED: 当前暴露=0，无需 Tier 3 强裁",
+                state=state,
+                instructions=[],
+            )
+
+        target = state.target_budget
+        if current_exposure <= target:
+            # 已收敛（窗口结束时实际已收敛）
+            state.current_tier = TierLevel.CONVERGED
+            state.converged_at = now
+            return BudgetChangeResult(
+                action=f"CONVERGED: 窗口结束时已收敛（exposure={current_exposure:.4f} ≤ target={target:.4f}）",
+                state=state,
+                instructions=[],
+            )
+
+        # 计算 trim_ratio：需裁剪的比例
+        trim_ratio = (current_exposure - target) / current_exposure
+        reason = f"Tier 2 超时未收敛（exposure={current_exposure:.4f} vs target={target:.4f}）"
+
+        tier3_instr = self._issue_tier3_force_trim(
+            state.strategy_id, trim_ratio, reason
+        )
+
+        state.instructions_issued.append({
+            "tier": 3,
+            "reason": reason,
+            "at": now,
+        })
+
+        return BudgetChangeResult(
+            action=f"TIER3 强裁：{reason}，trim_ratio={trim_ratio:.4f}",
+            state=state,
+            instructions=[{"tier": 3, "instruction": tier3_instr, "reason": reason}],
+        )
+
+    # ── 三级指令生成 ──────────────────────────────────────────────────
 
     def _issue_tier1_freeze(self, strategy_id: str) -> FreezeNewPositions:
         """Tier 1：封锁新仓指令。"""
-        raise NotImplementedError("骨架：待实现封锁新仓指令")
+        return FreezeNewPositions(
+            strategy_id=strategy_id,
+            cancel_pending_buy_orders=True,
+            keep_pending_sell_orders=True,
+        )
 
     def _issue_tier2_rebalance(
-        self, strategy_id: str, new_budget: float, strategy_type: str
+        self, strategy_id: str, new_budget: float, convergence_window: timedelta
     ) -> RebalanceRequest:
         """Tier 2：策略自主 rebalance 请求（含 convergence_window）。"""
-        raise NotImplementedError("骨架：待实现 rebalance 请求（按换手率差异化窗口）")
+        return RebalanceRequest(
+            strategy_id=strategy_id,
+            new_budget=new_budget,
+            convergence_window=convergence_window,
+        )
 
     def _issue_tier3_force_trim(
-        self, strategy_id: str, position_snapshot: dict[str, Any]
+        self, strategy_id: str, trim_ratio: float, reason: str
     ) -> ForcedTrim:
         """Tier 3：强制按比例裁剪（dumb but safe）。"""
-        raise NotImplementedError("骨架：待实现按比例强裁（所有仓位 ×trim_ratio）")
+        return ForcedTrim(
+            strategy_id=strategy_id,
+            trim_ratio=trim_ratio,
+            reason=reason,
+        )
