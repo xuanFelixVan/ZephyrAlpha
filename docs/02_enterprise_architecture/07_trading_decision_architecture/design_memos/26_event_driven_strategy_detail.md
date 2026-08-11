@@ -5,8 +5,8 @@ title: 事件驱动策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.0"
-date: 2026-08-10
+version: "1.9.0"
+date: 2026-08-12
 topic: event_driven_strategy_detail
 scope: 07_trading_decision_architecture
 ---
@@ -38,6 +38,30 @@ scope: 07_trading_decision_architecture
 - 情绪周期是隐形驱动 → 事件驱动与打板相关性风险（[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)）
 - AI 开发 → 故障隔离与归因清晰度是生存项；事件链路长（数据源→分类→情绪→衰减→选股），任一环节失效须可降级不阻塞
 
+### 1.4 已施工设施盘点（通用规则 #11，2026-08-12 代码侧真源审计）
+
+> 本节盘点与本主题相关的全部已建设施（代码/schema/调度任务真源），作为 §2"复用而非新建"裁定的事实基座。✅=已落盘可消费，🟧=在建未落盘，⚠️=同名消歧。
+
+| 设施 | 真源路径 / 表 | 状态 | 本备忘消费点 |
+|---|---|---|---|
+| 东方财富新闻源 | `src/zephyr/data/implementations/eastmoney_news_provider.py` | ✅ production（[11_d_data](../../02_domain_architecture_docs/11_d_data.md)） | §2.2 新闻事件源 |
+| 财联社快讯源 | `src/zephyr/data/implementations/cls_provider.py` | ✅ production（同上） | §2.2 新闻事件源 |
+| 海外 RSS 源 | `src/zephyr/data/implementations/rss_provider.py`（BBC/CNBC/NYT/Guardian/Bloomberg） | ✅ production（同上） | §2.2 新闻事件源 / §2.5b 地缘事件源 |
+| 新闻采集器 | `src/zephyr/data/news_collector.py`（MOD-DATA-NEWS-001）→ ClickHouse `fund_news_data` 表 | ✅ production（11_d_data 标注"P1-E3 NLP 管道 Phase 1"） | §2.7 情绪数据基座 |
+| 跨源去重 | `src/zephyr/data/news_dedup.py` | ✅ production | §2.7 标准化层 |
+| 龙虎榜双表 | `c1_market.dragon_tiger` + `c1_market.dragon_tiger_seat`（AKShare `stock_lhb_detail_em` / `stock_lhb_stock_detail_em`，tasks.yaml `dragon_tiger_incremental` / `dragon_tiger_seat_incremental` 盘后调度） | ✅ production | §2.2 龙虎榜事件源 / §2.5 席位类型差异化校准（**席位类型字段在 `dragon_tiger_seat` 表**，Top5 买卖席位合并去重） |
+| 公司行动处理 | `src/zephyr/trading/corporate_action_processor.py`（MOD-TRADING-004） | ✅ production | §2.2 除权日防误异动（非 alpha 源） |
+| 熔断模式集成 | `src/zephyr/feedback_loop/collectors/market_event_integrator.py`（`MarketMode.EMERGENCY` 已确认落码） | ✅ production | §2.5 熔断期停止开仓 |
+| 盘中买卖点分析 | `src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py`（BM-SEL-05-C） | ✅ production | §2.5 异动识别复用基础 |
+| 市场情绪分析 | `src/zephyr/signal_ashare/market_sentiment_analyzer.py`（BM-SEL-03-A） | ✅ production | §2.7 情绪分数基础 |
+| NLP 推理 | `src/zephyr/nlp/nlp_inference.py`（Qwen2.5-7B） | ✅ 已落盘（#ARCH-NLP-PIPELINE-001 Phase 0/1） | §2.7 情绪分数源 |
+| 情绪聚合器 | `sentiment_aggregator.py`（#ARCH-NLP-PIPELINE-001 登记工程范围） | 🟧 **未落盘**（`src/zephyr/nlp/` 当前仅 `nlp_inference.py` + `__init__.py`） | §2.7 情绪聚合——就绪前 sentiment_score 用单条推理输出降级 |
+| 盘中实时事件处理 | BM-SEL-27 锚点 MOD-RUNTIME_INTRADAY（`src/zephyr/runtime/intraday_main.py`） | ✅ 运营态（battle map 有效状态；环节自报 design，事件流水线细化待施工） | §2.5 盘中事件感知 |
+| IPO 数据源 | `akshare_provider` `stock_ipo_info` 接口（production） | ✅ production | §2.5a IPO 虹吸系数 |
+| ⚠️ 同名消歧：Tick 回测引擎 | `src/zephyr/backtest/implementations/event_driven_engine.py` | ✅ production，但**与本文无关**——该引擎是 Tick 级回测内核（做T专用，逐 Tick 撮合），"事件驱动"指回测架构范式（tick-event-driven），非本备忘的"新闻/公告事件驱动 alpha"。引用时勿混淆 | 不消费 |
+
+**盘点结论**：事件驱动 sleeve 所需的四类事件源（公告/新闻/龙虎榜/异动）数据链路全部 production，唯一未落盘的是 NLP 管道的 `sentiment_aggregator.py`——§2.7 已裁定 sentiment_score 作事件方向触发而非截面排序，单条 `nlp_inference.py` 输出即可降级承载，不阻塞 MVP。真正待新建的 sleeve 内部组件仅两项：异动识别器（§2.5）与事件影响评分（§2.5 首版公式），与 §3.1"复用全部已有基础设施"裁定一致。
+
 ## 2. 决策：事件驱动 sleeve 定义
 
 > 本节是对 [20_first_batch_strategies §2.4](20_first_batch_strategies.md) 策略C"事件驱动"的细化展开，逐项对齐 G10 六个讨论要点。
@@ -59,7 +83,7 @@ scope: 07_trading_decision_architecture
 
 | 事件源 | 数据内容 | 已建模块（状态） | 角色 |
 |---|---|---|---|
-| **公告** | 业绩预告/快报、并购重组、增减持、分红送转、政策公告 | `tushare_provider` / `akshare_provider`（production，见 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md)） | 结构化事件主源（时间戳明确、PIT 严格） |
+| **公告** | 业绩预告/快报、并购重组、增减持、分红送转、政策公告 | `tushare_provider` / `akshare_provider`（production，见 [11_d_data](../../02_domain_architecture_docs/11_d_data.md)） | 结构化事件主源（时间戳明确、PIT 严格） |
 | **新闻** | 财经新闻、政策解读、行业动态 | `eastmoney_news_provider` / `cls_provider`（财联社）/ `rss_provider`（BBC/CNBC/NYT/Guardian/Bloomberg，production） | 非结构化情绪事件源 |
 | **龙虎榜** | 游资/机构席位买卖明细 | `akshare_provider`（[BM-SEL-05-A 机构行为分析](../battle_map/battle_map_05_stock_selection.md)，production） | 资金面事件（主力行为佐证） |
 | **异动** | 盘中价格/成交量相对基准的异常偏离 | 国盛证券异动雷达方法（[2026-03 国盛金工](http://stock.finance.sina.com.cn/stock/view/paper.php?autocallup=no&isfromsina=no&reportid=826626291912&symbol=sh000001)）；复用 `signal_ashare/intraday_buy_sell_point_analyzer`（[BM-SEL-05-C](../battle_map/battle_map_05_stock_selection.md)，production）+ `market_sentiment_analyzer`（[BM-SEL-03-A](../battle_map/battle_map_05_stock_selection.md)，production） | 量价异动事件（需新建识别器，见 §2.5） |
@@ -242,7 +266,7 @@ event_score = (
 > 1. **机构净买入佐证降权**：龙虎榜机构净买入作为事件佐证（confirmation）的权重砍半或归零——当事件（业绩/并购/政策利好）伴随龙虎榜机构净买入时，不再自动强化 event_score，等首批策略实盘 3-6 月后用本项目持仓数据重新校准
 > 2. **净买率极端值硬阈值门控**：新增 `dragon_tiger_corroboration_modifier`——净买率≥12% → 佐证加分（×1.2），<12% → 不加分（×1.0），用 12% 硬阈值替代"机构净买入=加分"软评分
 > 3. **席位类型差异化**：外资席位（高盛/瑞银/摩根大通）≠ 量化机构席位 ≠ 传统游资席位——量化机构席位触发 [24 号 §3.10/§3.11 量化席位过滤](24_daban_strategy_detail.md) 降权（≥3 量化席位+买入占比>30% → 佐证无效化），与 23-A 校准口径一致
-> 4. **数据源**：龙虎榜数据已入库（`dragon_tiger` 表，c1_market，2026-08-07 最新，5,145 条/170,789 行），席位类型字段可直接消费
+> 4. **数据源**：龙虎榜数据已入库双表——`c1_market.dragon_tiger`（每日上榜汇总，AKShare `stock_lhb_detail_em`）+ `c1_market.dragon_tiger_seat`（**席位明细**，AKShare `stock_lhb_stock_detail_em` Top5 买卖席位合并去重），tasks.yaml `dragon_tiger_incremental` / `dragon_tiger_seat_incremental` 盘后调度（v1.9.0 代码侧审计确认，见 §1.4）。**席位类型字段消费自 `dragon_tiger_seat` 表**，量化席位/外资席位/游资席位分类在此表落地
 >
 > **event_score 佐证修正因子（施工算法）**：
 >
@@ -744,7 +768,7 @@ def ipo_siphon_position_adjustment(ipo_event, current_positions, siphon_level):
 
 **与 [37_liquidity_crisis_protocol §3.2](37_liquidity_crisis_protocol.md) 的联动**：IPO 虹吸是**前瞻性**流动性预警（上市日前已知），不同于 Amihud/spread 的事后检测。37 号 §3.2 日频结构性流动性监控新增"IPO 流动性抽离预警"维度——基于未来 N 日 IPO 募资规模/全市场成交额比值，提前调整仓位上限。两者互补：37 号负责"检测+响应"，26 号负责"alpha 方向+仓位策略"。
 
-**数据源**：IPO 上市日历/募资规模来自 `akshare_provider`（`stock_ipo_info` 接口，production），已在 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md) 登记。前 5 日无涨跌幅限制是科创板/创业板规则硬编码。
+**数据源**：IPO 上市日历/募资规模来自 `akshare_provider`（`stock_ipo_info` 接口，production），provider 清单见 [11_d_data](../../02_domain_architecture_docs/11_d_data.md)。前 5 日无涨跌幅限制是科创板/创业板规则硬编码。
 
 **注意**：虹吸态概念在 [22_sector_rotation_spec §3.1⑤](22_sector_rotation_spec.md) 已存在，但那是**板块间虹吸**（强势板块吸金致其余缺血），非 IPO 驱动的**全市场流动性虹吸**——两者机制不同。IPO 虹吸是**事件型、全局性、可预知的**流动性抽离，板块间虹吸是**持续性、局部性、事后才能检测的**资金迁移。
 
@@ -849,7 +873,7 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 东方财富 | `eastmoney_news_provider` | 国内财经新闻 | production |
 | 财联社 | `cls_provider` | 国内快讯 | production |
 | 海外 RSS | `rss_provider`（BBC/CNBC/NYT/Guardian/Bloomberg） | 海外财经新闻 | production |
-| ClickHouse | `news_collector`（MOD-DATA-NEWS-001）→ `fund_news_data` 表 | PIT 严格查询 | design→production（[09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md)） |
+| ClickHouse | `news_collector`（MOD-DATA-NEWS-001）→ `fund_news_data` 表 | PIT 严格查询 | production（[11_d_data](../../02_domain_architecture_docs/11_d_data.md)） |
 | 去重 | `news_dedup` | 跨源去重 | production |
 
 **NLP 情感管道（在建，复用）**：
@@ -944,6 +968,8 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | convergence_window 实盘校准（事件 2-3 天） | [30 §6.4](30_multi_strategy_concurrency.md) / [G14](33_budget_change_handler.md) | 待首批策略实盘后校准 |
 | 事件驱动六因子矩阵权重校准（dReport/Jump on PEAD/隔夜趋势接入） | §2.4 | 待 G10 校准，dReport 与 Jump on PEAD 优先级最高（有 10 年/5 日实证） |
 | 龙虎榜 2026 机构信号失效校准参数实盘复核 | §2.2/§2.5（v1.8.0 与 24 号 v1.8.2 同步） | 待首批策略实盘 3-6 月后用本项目持仓数据重新校准——机构净买入佐证降权系数/净买率 12% 硬阈值/量化席位双阈值，与 23-A 校准口径一致 |
+| **20 号 §2.4 事件分类表述同步（四类→六类）** | 本备忘 §2.3 v1.6.0 已升级为六类（+IPO/再融资+地缘/宏观），但 [20 §2.4](20_first_batch_strategies.md) 仍写"事件分类（业绩/并购/政策/突发）"四类——跨文档版本漂移（v1.9.0 审查发现） | 待 20 号 owner 下次修订时同步为"六类（业绩/并购/政策/突发/IPO/地缘，详见 26 号 §2.3）"。按审查约束不越界改 20 号，登记于此 |
+| **`sentiment_aggregator.py` 落盘时序** | §1.4 盘点：`src/zephyr/nlp/` 当前仅 `nlp_inference.py` + `__init__.py`，#ARCH-NLP-PIPELINE-001 登记的 sentiment_aggregator 未落盘 | 待 #ARCH-NLP-PIPELINE-001 Phase 1 完成；就绪前 sentiment_score 用单条推理输出降级（§2.7 已裁定非截面排序用途，不阻塞） |
 
 ## 7. 引用
 
@@ -977,7 +1003,7 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | AI 舆情分析器（候选） | CAND-AISA-001 | 候选库 | 待四问评估（自建 vs TRAPE AI） |
 | 事件漏斗 L4 | MOD-SIG-049 | BM-SEL-19 | 事件影响评分+条件PDF修正+传导链（design） |
 
-> news_data 多源：`rss_provider.py` / `eastmoney_news_provider.py` / `cls_provider.py` / `news_dedup.py` 均为 production（见 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md)）。
+> news_data 多源：`rss_provider.py` / `eastmoney_news_provider.py` / `cls_provider.py` / `news_dedup.py` 均为 production（见 [11_d_data](../../02_domain_architecture_docs/11_d_data.md)；v1.9.0 修正：此前误引 09_d_alt_data——该文档仅含 alt_data 域 7 个包入口，provider 真实登记在 11_d_data D_DATA 域）。
 
 ### 7.4 开源实证与 2026 行业参考
 - [Janus-Q — End-to-End Event-Driven Trading（arXiv 2026-02）](https://arxiv.org/html/2602.19919v2)：LLM + 分层门控奖励建模，10 fine-grained event types + 62,400 篇标注，event-to-CAR 建模。[20 §7.5](20_first_batch_strategies.md) 已引；本讨论 §2.3/§3.3 引为细分类暂缓前沿
@@ -1028,3 +1054,4 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 2026-08-10 | 1.7.0 | 施工算法补全：should_enter/should_exit 被调用未定义的 5 项辅助函数与数据结构 | 用户要求持续改进。审计 §2.5 进出场触发算法发现 should_enter / should_exit / should_enter_with_confirmation 三个函数调用了 5 项辅助函数/数据结构但未给出定义，补全后施工闭环：① event_score_single_factor——首版内联公式（§2.5 L215-222）封装为函数，供 compute_event_score 调度；② compute_event_score——评分调度器，业绩类走 SUE+EAR 双因子（event_score_dual_factor）、其他五类（并购/政策/突发/IPO/地缘）走单因子，should_enter 统一调用本函数；③ decay_exit_window——§2.4 衰减曲线表程序化形态（6 类事件 rising+decay 总长 = 持仓天数上限），should_exit 第一道线 DECAY_TIMEOUT 查表；④ has_contradictory_event——查 event_store 近 5 日反向事件，支撑 should_exit 第三道线 CONTRADICTION；⑤ has_volume_confirmation——确认型入场第三分支量能判据（事件后量比≥1.5 倍 20 日均量），NexusFi 2026-06 confirmation-based entry 施工化。5 项补全后 should_enter/should_exit/should_enter_with_confirmation 所有被调用符号均有定义，event_store/volume_series/volume_ma 复用 D_FEED 域已建接口。施工算法完整性结论：进出场触发算法施工闭环，无新算法缺失 |
 | 2026-08-10 | 1.7.1 | event_score_dual_factor 裸变量修复（actual_eps/consensus_eps 未定义） | 第五十五轮审查。审计 v1.7.0 新增 5 项辅助函数内部闭合性时发现 `event_score_dual_factor`（§2.5 v1.2.0 双因子，降级默认）L237 使用裸变量 `actual_eps` / `consensus_eps` 但函数签名 `event_score_dual_factor(event)` 内未定义这两个变量——而同节三因子主选版 `event_score_triple_factor`（L398-399）正确使用 `event.actual_eps` + `expectation_gap_with_revision_momentum(...)`，`expectation_gap_with_revision_momentum`（L362/367-368）正确使用 `wind_consensus_eps(symbol, event_date)`。属 v1.2.0 遗留伪代码精度缺陷，非 v1.7.0 引入。修复：L239 统一为 `sue = (event.actual_eps - wind_consensus_eps(event.symbol, event.date)) / rolling_std_surprise(event.symbol)`，与三因子版 + 预期差函数口径一致。修复后双因子降级默认版与三因子主选版 SUE 分量计算口径统一，代码施工时无双轨歧义 |
 | 2026-08-10 | 1.8.0 | **龙虎榜 2026 机构信号失效校准（与 24 号 v1.8.2 同步）** | 用户再次审查要求全网搜索 2026-08-08 最新研究+施工环节算法缺失+持续改进。24 号 v1.8.2 已实证龙虎榜生态 2026 结构性变化（机构净买入次日胜率 62-68%→45.7% < 50% 随机，信号反向失效），并明确要求 26 号 §2.5 event_score 同步校准。本次补：①§2.2 新增龙虎榜事件源 2026 信号失效提示（指向 §2.5 校准）；②§2.5 新增龙虎榜 2026 机构信号失效校准块——4 维度退化表（机构净买胜率/净买率极端值/外资占比/拉萨天团退潮）+ 4 项施工建议（机构净买佐证降权/净买率 12% 硬阈值门控/席位类型差异化/数据源就绪）+ `dragon_tiger_corroboration_modifier()` 施工算法（乘法修正因子 ∈[0.7,1.2]，净买率≥12% 加分/量化席位 hard×0.7 soft×0.85）+ 与 24 号口径一致性说明（共用 dragon_tiger 表+12% 阈值+detect_quant_seat_warning 双阈值）；③§6 新增待定问题（校准参数实盘复核）。确保打板 sleeve（23-A）与事件驱动 sleeve（event_score）对龙虎榜信号解读口径一致，避免跨 sleeve 信号歧义 |
+| 2026-08-12 | 1.9.0 | **已施工设施盘点节新增 + 交叉引用真源修正（通用规则 #11 审查）** | 架构审查第 1-2 轮（读现状+代码侧真源审计+回填）：①新增 §1.4「已施工设施盘点」——14 项设施逐项核对代码/schema/tasks.yaml 真源（新闻三源/news_collector/news_dedup/龙虎榜双表/corporate_action_processor/market_event_integrator EMERGENCY 落码确认/intraday_buy_sell_point_analyzer/market_sentiment_analyzer/nlp_inference/IPO stock_ipo_info），盘点结论：四类事件源数据链路全部 production，真正待新建仅异动识别器+事件影响评分两项 sleeve 内部组件；②交叉引用修正：§2.2/§2.5a/§2.7/§7.3 共 4 处误引 09_d_alt_data（该文档仅含 alt_data 域 7 个包入口，无 provider 描述）→ 改引 11_d_data（D_DATA 域，provider 真实登记处）；③§2.5 龙虎榜数据源声明精确化——双表（dragon_tiger 汇总 + dragon_tiger_seat 席位明细），席位类型字段消费自 seat 表；④同名消歧：backtest/event_driven_engine.py 是 Tick 级回测内核（做T专用），与本备忘"新闻/公告事件驱动 alpha"同名不同义，盘点节标注勿混淆；⑤§6 新增 2 项开放问题：20 号 §2.4 事件分类四类→六类跨文档漂移（不越界改 20 号，登记待同步）+ sentiment_aggregator.py 未落盘时序。⚠️ 本轮编辑在主工作区曾两次被并发 session git 操作回滚丢失，改用 session_worktree 物理隔离后重放恢复（#ARCH-GIT-CLEAN-GUARD-FIX 教训实证） |
