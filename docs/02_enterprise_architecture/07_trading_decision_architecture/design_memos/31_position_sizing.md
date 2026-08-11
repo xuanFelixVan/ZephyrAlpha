@@ -5,8 +5,8 @@ title: 仓位算法（分层裁定落地）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.23.0"
-date: 2026-08-10
+version: "1.24.0"
+date: 2026-08-12
 topic: position_sizing
 scope: 07_trading_decision_architecture
 ---
@@ -633,6 +633,28 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 
 **结论**：分层裁定整体不过重。Kelly 精裁决的"精"在半 Kelly 硬上限 + 防御性分布调整，不在协方差估计或优化器。真正的过重是 MVO/协方差（已拒绝 §3.1/§3.6）。当前代码 MVP（二值 Kelly + VaR/CVaR + 波动率检查）是恰当的起点，分布感知高阶矩随 BM-SEL-13 渐进补充。
 
+### 4.5 已施工设施盘点（2026-08-12 审查新增，通用规则 #11）
+
+> 本备忘 §2 的算法 spec 对应的已施工代码资产盘点。先清楚有什么，才知怎么改、该退役什么。
+
+| 设施 | 模块 | 路径 | 状态 | 覆盖本备忘章节 |
+|---|---|---|---|---|
+| 仓位决策引擎 | MOD-POS-001 | `src/zephyr/position/core/position_sizing_engine.py`（881 行） | ✅ production | §2.3 主体：C1 半 Kelly（二值 `f*=(bp-q)/b`，§2.3.1 已证即精确 Kelly）+ C2 风险配额 + C3 波动率检查（μ+2σ 减半）+ C4/C5 VaR/CVaR 下调（0.8/0.7）+ C12 单票默认 5%（`RiskLimits.symbol_overrides` 可覆盖）+ C13 总仓位 12 态 `MARKET_REGIME_CAPS`（§2.4.3 映射一致）+ C6 参与率 >15% 否决 + C7/C8 退出时间减仓 + C9 策略容量 + C11 冲击成本否决（sqrt 模型）+ POS-006 现金 / POS-007 资金曲线 / POS-017 日历 + 降级模式（D-SIGNAL 缺失默认态④）+ 幂等键 |
+| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | ✅ production（70 测试，30号 v2.5.0 §2.2 施工状态块） | §2.2 策略层粗仓位：`size_positions` 支持 equal_weight / risk_parity / custom，**禁用 Kelly/MVO**（与 §2.7 边界声明一致） |
+| FirmRiskAggregator | MOD-POS-021 | `src/zephyr/position/core/firm_risk_aggregator.py` | ✅ production（54 测试） | §2.4 硬上限裁剪执行（求和/按比例削/冲突净额，G13 范围） |
+| BudgetChangeHandler | MOD-POS-022 | `src/zephyr/position/core/budget_change_handler.py` | ✅ production（47 测试） | G14 三级升级（本备忘只引用不展开） |
+
+**设计已定但代码未施工**（均属已知演进项，非缺口）：
+
+| 未施工项 | 本备忘出处 | 阻塞条件 |
+|---|---|---|
+| C10 偏度/峰度分布感知 | §2.3.3 | BM-SEL-13 密度 PDF 高阶矩输出（阶段 3） |
+| `sizing_basis` 显式输出（6 约束取最小命名） | §2.3.4 | MOD-POS-001 输出 dataclass 补字段（§6 待定） |
+| ADV 三档流动性硬上限（20%/10% 两档削减） | §2.4.4 | 代码 C6 参与率 >15% 否决是**近似但不等价**——C6 是否决（veto 保持现仓），§2.4.4 是削减（truncate 到 20% ADV）且含 P25 最坏情况口径；施工时注意口径差异 |
+| 策略层 inverse-vol σ_i 异常判定 4 检查链 | §2.2.2 | StrategyBook risk_parity 路径的异常降级逻辑（§2.2.2 补的施工参数） |
+
+**域文档滞后提示**：64_d_position.md（auto-generator，date 2026-08-05）仍将 MOD-POS-020/021 标为"设计态/骨架 v0.1.0"，与 30号 v2.5.0 + 本表不符——该文档需重新生成，见 §6 待定问题。
+
 ## 5. 待裁定（暂缓项）
 
 > 以下项目暂不施工，**非永久禁止**。随项目演进重新裁定。
@@ -664,6 +686,8 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 | Kelly 参数密度 PDF 降级触发条件细化 | 本备忘 §2.3.2 | 待 BM-SEL-13 接口契约明确后定 |
 | `sizing_basis` 输出字段补全（5 约束取最小 + 命名 binding constraint） | 本备忘 §2.3.4（2026-08-10 补充） | 待 MOD-POS-001 Kelly 精裁决施工时补 `sizing_basis` 到输出 dataclass，提升归因可观测性（deadeye-rs 2026-06 `sizing_basis` 模式） |
 | §2.3.3 前瞻 VaR_95 / CVaR_95 的**计算方法**未指定 | 本备忘 §2.3.3（2026-08-10 审查发现） | 当前代码 C4/C5 已实现 var_reduce_factor=0.8 / cvar_reduce_factor=0.7 的下调逻辑，但 VaR/CVaR **数值从何而来**未定型——候选：① 参数化（GARCH/EVT，假设分布形态，A 股厚尾下易失真）② 密度 PDF 积分（BM-SEL-13 就绪后，与 §2.3.2 Kelly 参数同源）③ **Conformal Prediction**（§5 待裁定，regime-weighted conformal，有限样本覆盖保证，与 regime 架构契合）④ **EVT-Based Tail Budgeting**（[stockalpha](https://stockalpha.ai/alpha-learning/evt-based-tail-budgeting-allocating-capital-by-expected-tail-loss) 2026-02-17：GPD 拟合尾部超限 + ETL=Expected Tail Loss 做 tail budget 分配，不依赖整体分布假设只拟合尾部，A 股厚尾场景理论最严谨；与 36号 VaR/ES 监控的 GPD 校准同源可复用）。需人决策：MVP 先用哪种（密度 PDF 未就绪时降级方案），远期演进为 conformal 的触发条件 |
+| 30号 §2.2 遗留描述待同步（StrategyBook"Kelly/risk parity/等权"旧文字与 §2.1"策略层不用 Kelly"矛盾；FirmRiskAggregator 链路缺 MOD-POS-001 Kelly 环节） | 2026-08-12 审查发现（30号 v2.5.0 §2.2，与其 §2.1/§7.2 及代码 size_positions 不符） | 归 30号作者侧修订，本备忘不越界改；与本备忘 §2.1/§2.7 引用一致性不受影响（31号引用的 30号 §2.1 分层裁定内容成立） |
+| 64_d_position.md 域文档滞后待重新生成（MOD-POS-020/021 标"设计态/骨架"，实际已 production 171 测试全绿；64号全文未引用本备忘） | 2026-08-12 审查发现（64号 date 2026-08-05 早于 08-10 三模块施工） | 归 auto-generator 重新生成；本备忘 §4.5 已盘点真实状态可作生成输入 |
 
 ## 7. 引用
 
@@ -830,3 +854,4 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 | 2026-08-10 | 1.21.0 | §3.10 新增 Multi-period mean-DCVaR optimization via RNN —— arXiv:2604.14439 Lelong/Maume-Deschamps/Thevenot 2026-04 SCOR | 三十轮审查 + 后台搜索 agent 返回 2026-08-08 最新仓位管理研究 5 领域 15 篇论文，§3.10 新增 DCVaR RNN 多期组合优化（arXiv:2604.14439 Lelong/Maume-Deschamps/Thevenot 2026-04-17 SCOR 再保险数学团队）：离散时间多期组合优化约束为 Deviation CVaR（DCVaR=CVaR−E[W_T] 偏差度量），RNN 近似最优预承诺策略绕开动态规划维数灾难。**核心创新**：① DCVaR 作为偏差度量比 mean-CVaR 更良态（coercive），绕开多期 CVaR 时间不一致性；② RNN 参数化将无限维最优策略映射到有限维参数空间；③ 预承诺策略端到端训练可执行。**与本项目关系**：范式差异（分层裁定 vs 统一多期优化器），与 §3.1 全 MVO 统一优化器（拒绝）同类但 DCVaR RNN 有两改进（DCVaR 适合重尾 + RNN 绕开协方差估计）；与 §3.7 HRP/§3.8 Bayesian Kelly/§3.9 Tepelyan 区别是单期 vs 多期。**记为 Phase 4 远期候选**：① 架构范式不兼容（分层裁定 vs 统一优化器）；② RNN 不可解释性违反可解释性优先原则；③ 多期预承诺时间不一致性与 T+1 低频再平衡有张力；④ SCOR 再保险场景 ≠ A 股交易场景。**DCVaR 偏差度量洞察可先于 RNN 在 36 号 ES 监控评估借鉴**。**施工算法完整性结论**：31 号 22 轮审查施工算法完整性闭合，本次为多期组合优化远期候选登记非新施工算法 |
 | 2026-08-10 | 1.22.0 | §3.10 补 **路径依赖警示——"凸性才创造价值"**（Noguer i Alonso arXiv:2608.02355 2026-08-03 Path Portfolio Optimization） | 三十三轮审查+后台搜索 agent 返回 2026-08-01~08 窗口 7 领域 13 篇论文，经覆盖检查 11/13 已整合，仅 2 项未整合（Noguer Path Portfolio + Garcia Seuma 临界性异质性）。§3.10 DCVaR RNN 章节补 Noguer i Alonso 2026-08-03 arXiv:2608.02355"Path Portfolio Optimization: Defect, Lift, and the Price of Path Complexity"路径签名（path signature）张量代数组合优化——核心发现"路径复杂性本身不创造价值，凸性才创造价值"（全部增益在对称块=终端增量凸性，非路径依赖块）；实证：期望签名已知时 2 资产确定性等价提升 11 倍/20 资产截面提升 60 倍，但估计时未正则策略在样本约 6 观测/参数前严重为负（过拟合风险极高）。**对 DCVaR RNN 的直接警示**：RNN 学到的"路径依赖"可能部分是过拟合，真正信号在对称凸性结构。Phase 4 评估 DCVaR RNN 时须验证：① RNN 捕获的路径依赖信号是否在对称化（去除路径信息）后消失（若消失则信号在凸性非路径）；② 与 Noguer 签名方法的对称块做 ablation 对比（若对称块已捕获大部分增益，RNN 的路径建模复杂度不值得）。此警示不改变 DCVaR RNN 的 Phase 4 远期候选定位，但为评估提供"路径依赖 vs 凸性"验证维度。**施工算法完整性结论**：31 号施工算法完整性闭合，本次为路径依赖方法论警示非新施工算法 |
 | 2026-08-10 | 1.23.0 | §2.6 FirmTargetPortfolio 跨文档数据结构同步修复（31号 4 字段过时定义 → 32号 §2.7 权威 10 字段定义） | 六十一轮审查。自动化跨文档数据结构字段一致性审计发现 `FirmTargetPortfolio` 在 31号 §2.6（L423）与 32号 §2.7（L602）定义完全不一致：31号 4 字段（holdings/kelly_adjustments/clip_log/timestamp）为 v1.0.0 遗留简化版，32号 10 字段（firm_positions/total_exposure/total_budget/cash_ratio/constraint_checks/conflicts_resolved/degraded/created_at/idempotency_key/schema_version）为 v1.0.x 演进后权威版——两者字段集零交集，31号 缺 constraint_checks/conflicts_resolved/degraded/contributions 等施工关键字段，代码施工若依 31号 旧定义将产出不完整 FirmTargetPortfolio。修复：31号 §2.6 FirmTargetPortfolio 定义替换为 32号 §2.7 权威版（含 FirmTarget 子结构 target_weight/contributions/cut_ratio），补字段映射说明（旧 holdings→firm_positions、旧 kelly_adjustments→degraded+kelly_param_source、旧 clip_log→constraint_checks+cut_ratio、旧 timestamp→created_at+idempotency_key+schema_version），契约纪律"holdings 权重和=1.0"更新为"firm_positions 权重和+cash_ratio=total_budget"。StrategyTarget 定义两文档一致无需同步。**施工算法完整性结论**：跨文档数据结构漂移修复填补施工契约缺口，非新算法 |
+| 2026-08-12 | 1.24.0 | 新增 §4.5 已施工设施盘点 + §6 两项跨文档同步待定问题 | 架构审查回填（通用规则 #11 已施工设施盘点要求）：① §4.5 盘点分层裁定全链路代码资产——MOD-POS-001（881 行 production，C1-C13+POS-006/007/017 全约束链，与本备忘 §2.3/§2.4.3 映射一致）+ MOD-POS-020/021/022 三模块 production（171 测试全绿，30号 v2.5.0 §2.2 印证）；登记 4 项"设计已定代码未施工"演进项（C10 偏度峰度/sizing_basis 显式输出/ADV 三档与 C6 参与率否决的口径差异警示/inverse-vol σ_i 异常 4 检查链）；② §6 新增 2 项跨文档同步待定问题（30号 §2.2 遗留矛盾描述待修订、64_d_position.md 域文档滞后待重新生成——均不越界改）；全网施工状态核查确认 §2 决策链已完整落地可施工 |
