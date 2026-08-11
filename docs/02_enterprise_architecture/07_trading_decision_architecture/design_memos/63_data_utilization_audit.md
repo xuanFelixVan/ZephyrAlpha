@@ -5,8 +5,8 @@ title: 业务数据资产利用率审查与施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "2.0.0"
-date: 2026-08-10
+version: "2.1.0"
+date: 2026-08-12
 topic: data_utilization_audit
 scope: 07_trading_decision_architecture
 related_modules:
@@ -21,9 +21,9 @@ depends_on:
 
 # 业务数据资产利用率审查与施工计划
 
-> 本备忘是业务数据库 102 张数据表在 design_memos 文档与 src/zephyr/ 代码层的**引用审查底稿 + 文档覆盖缺口清单 + 归档决策**。
+> 本备忘是业务数据库 103 张数据表在 design_memos 文档与 src/zephyr/ 代码层的**引用审查底稿 + 文档覆盖缺口清单 + 归档决策**。
 > 性质：**审查清单 + 施工计划混合文档**，承载现状盘点、覆盖率缺口归因、分批补文档方案，供后续 AI/人逐张表补文档或归档使用。
-> 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；与 [62_business_registry_construction](62_business_registry_construction.md) 配对——62 号建 12 业务注册表的 schema，63 号盘点 102 张表的**实际利用率与文档覆盖缺口**。
+> 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；与 [62_business_registry_construction](62_business_registry_construction.md) 配对——62 号建 12 业务注册表的 schema，63 号盘点 103 张表的**实际利用率与文档覆盖缺口**。
 > 关联：[15_data_feature_layer_spec](15_data_feature_layer_spec.md)（数据/因子工程总纲）｜ [16_technical_indicator_catalog](16_technical_indicator_catalog.md)（技术指标目录）｜ [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md)（事件驱动数据消费方）
 
 ## 1. 主题组信息
@@ -32,8 +32,8 @@ depends_on:
 |---|---|
 | 主题组 | G63 业务数据资产利用率审查 |
 | 创建 | 2026-08-10 |
-| 优先级 | P2（数据利用率 97.1% 已达标；真问题在文档覆盖率 37.3% < 80% 行业基准） |
-| 状态 | 审查完成（v2.0.0 补 SetGo metadata readiness 评估排除+2026-08-11 SSDBM 最新研究可追溯；v1.9.0 补 DataHub docFreshnessInfo verifiedAtVersion 状态指纹+Google OKF v0.2 trust/provenance/attestation 模型+Freshness SLO SLI 公式+DZone freshness gap 五种管道级假新鲜失败模式+OKF Attested Computation 验证概念；v1.8.0 补 Temporal Coupling commit-size 归一化+CodeScene 三信号说明+Sum of Coupling 聚合度+min-heap Kahn 确定性排序+DFS 三色标记环路径提取+Tarjan SCC 远期路径+predict Omissions schema↔doc 共变检测+ODCS v3.1.0 版本号+DCS 弃用说明；v1.7.0 补 Temporal Coupling 隐藏依赖检测+Data Contract ODCS 概念重构+SATD 跨制品传播优先级+AI 技术债 7 类映射+Leiden 选型结论修正；v1.6.0 补 Leiden 替代 Louvain+Temporal Coupling 隐藏依赖+Doc-Freshness-Score anti-gaming+driftGuard 双信号自适应阈值+Content Freshness 多信号融合+Tessera coverage@precision+CRRF 因果回滚+CFD 累积流图+Cognitive Debt+AIGenerated Debt+Binarly 权重再分配+paired-model 双 LLM 交叉验证；v1.5.0 补 SQALE 技术债视角+Kahn 环检测+Leading/Lagging 指标区分；v1.4.0 补 Nelson Rules 误报率风险矩阵+自适应控制限思想+MTTD/MTTR 回滚效能度量；v1.3.0 补 Nelson Rules 名称修正+施工进度跟踪看板+symbol-level drift 检测+Hotelling T² 远期路径；v1.2.0 补 Model drift 漂移来源分类+Western Electric 8 异常模式+Innovation-Residual 故障归因+Detection Limit；v1.1.0 补 effort 矛盾修复+L3 主动学习分层抽样+SPC 冷启动三阶段+跨波次优先级动态重评；v1.0.0 补 SPC EWMA/CUSUM 趋势分析+CPM 关键路径识别+贝叶斯权重更新形式化+有赞调度感知差异化弃用阈值+MIN_AGE_DAYS 安全过滤；v0.9.0 补 Syntropy 编码会话级新鲜度+SITS2026 Doc-Entropy Ratio+DocPilot 两 pass 质量门+Louvain 社区发现批次验证+Preventive/Detective 双层检测；v0.8.0 补 Cascade 双重条件语义验证+消费链路主动监控+字段级血缘排除；v0.7.0 补 Milvus 乘法模型对比+DocAgent 多智能体远期路径+Consequence Ranking 批判辩护+REFORGE 漏斗+CoDe-R 双路径回退；v0.6.0 补 Kano 分类层+指数衰减新鲜度+回滚机制+努力度 rubric+多消费方冲突解决+6 轴远期路径），待补文档施工 |
+| 优先级 | P2（v2.1.0 实测：数据利用率 99.0% 健康；真问题是**消费层文档覆盖** 37/103=35.9% < 80% 行业基准——规划层 17/64 号已覆盖 53 张，但策略/风控消费文档未跟进） |
+| 状态 | 审查完成（v2.1.0 全量重扫核验：表数 102→103、文档 42→47 篇、真闲置 3→1 张、新增"代码零引用但规划已登记"6 张类别、§5/§6 全部数字以 git 提交态实测重算；v2.0.0 补 SetGo metadata readiness 评估排除+2026-08-11 SSDBM 最新研究可追溯；v1.9.0 补 DataHub docFreshnessInfo verifiedAtVersion 状态指纹+Google OKF v0.2 trust/provenance/attestation 模型+Freshness SLO SLI 公式+DZone freshness gap 五种管道级假新鲜失败模式+OKF Attested Computation 验证概念；v1.8.0 补 Temporal Coupling commit-size 归一化+CodeScene 三信号说明+Sum of Coupling 聚合度+min-heap Kahn 确定性排序+DFS 三色标记环路径提取+Tarjan SCC 远期路径+predict Omissions schema↔doc 共变检测+ODCS v3.1.0 版本号+DCS 弃用说明；v1.7.0 补 Temporal Coupling 隐藏依赖检测+Data Contract ODCS 概念重构+SATD 跨制品传播优先级+AI 技术债 7 类映射+Leiden 选型结论修正；v1.6.0 补 Leiden 替代 Louvain+Temporal Coupling 隐藏依赖+Doc-Freshness-Score anti-gaming+driftGuard 双信号自适应阈值+Content Freshness 多信号融合+Tessera coverage@precision+CRRF 因果回滚+CFD 累积流图+Cognitive Debt+AIGenerated Debt+Binarly 权重再分配+paired-model 双 LLM 交叉验证；v1.5.0 补 SQALE 技术债视角+Kahn 环检测+Leading/Lagging 指标区分；v1.4.0 补 Nelson Rules 误报率风险矩阵+自适应控制限思想+MTTD/MTTR 回滚效能度量；v1.3.0 补 Nelson Rules 名称修正+施工进度跟踪看板+symbol-level drift 检测+Hotelling T² 远期路径；v1.2.0 补 Model drift 漂移来源分类+Western Electric 8 异常模式+Innovation-Residual 故障归因+Detection Limit；v1.1.0 补 effort 矛盾修复+L3 主动学习分层抽样+SPC 冷启动三阶段+跨波次优先级动态重评；v1.0.0 补 SPC EWMA/CUSUM 趋势分析+CPM 关键路径识别+贝叶斯权重更新形式化+有赞调度感知差异化弃用阈值+MIN_AGE_DAYS 安全过滤；v0.9.0 补 Syntropy 编码会话级新鲜度+SITS2026 Doc-Entropy Ratio+DocPilot 两 pass 质量门+Louvain 社区发现批次验证+Preventive/Detective 双层检测；v0.8.0 补 Cascade 双重条件语义验证+消费链路主动监控+字段级血缘排除；v0.7.0 补 Milvus 乘法模型对比+DocAgent 多智能体远期路径+Consequence Ranking 批判辩护+REFORGE 漏斗+CoDe-R 双路径回退；v0.6.0 补 Kano 分类层+指数衰减新鲜度+回滚机制+努力度 rubric+多消费方冲突解决+6 轴远期路径），待补文档施工 |
 | 上游 | [62_business_registry_construction](62_business_registry_construction.md)（12 注册表 schema 已定稿） |
 | 下游 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) / [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) / [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) 等数据消费方 |
 
@@ -41,25 +41,35 @@ depends_on:
 
 ### 2.1 项目处境
 
-- 业务数据库已建成 [schemas/categories/](../../../schemas/categories/) 下 **102 张表**的 DDL（market/fundamental/macro/cross 四大类前缀），覆盖 A 股/港股/美股/期货/期权/可转债/生猪期货/宏观经济等全品类
-- design_memos 下 42 篇文档（不含 [AI_review_instructions.md](AI_review_instructions.md) 辅助文件）共约 4.59M 字符，承载交易决策架构 why 层
+- 业务数据库已建成 [schemas/categories/](../../../schemas/categories/) 下 **103 张表**的 DDL（market/fundamental/macro/cross 四大类前缀），覆盖 A 股/港股/美股/期货/期权/可转债/生猪期货/宏观经济等全品类（v2.1.0 核验：`market_stock_valuation.py` 于 2026-08-11 commit 81c7687540 新增，102→103）
+- design_memos 下 47 篇编号文档（不含 [AI_review_instructions.md](AI_review_instructions.md) 辅助文件；受扫 46 篇=47 篇-本备忘自引）共约 5.24M 字符，承载交易决策架构 why 层（v2.1.0 核验：v0.2.0 时 42 篇/4.59M 字符，新增 60/61/64/65/90/91 等）
 - [62_business_registry_construction](62_business_registry_construction.md) 已定稿 12 个业务注册表 schema（P0 完成 universe/benchmark/cost_model 三件套，P1 待施工 9 件套）
 - 62 号 line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记（待 S6 改名为 data_asset_registry.yaml）
-- **但** 62 号解决的是"注册表 schema"，未盘点"现有 102 张表实际有多少被 design_memos + 代码层引用"——数据利用率与文档覆盖盲区
+- **但** 62 号解决的是"注册表 schema"，未盘点"现有 103 张表实际有多少被 design_memos + 代码层引用"——数据利用率与文档覆盖盲区
 
-### 2.2 核心问题（v0.2.0 修正）
+### 2.2 核心问题（v2.1.0 全量重扫核验修正）
 
-> **"102 张表里 99 张被代码或文档引用（利用率 97.1%），但只有 38 张在 design_memos 有英文表名记录（文档覆盖率 37.3%，含中文别名 ~56.9%）——~41-61 张表代码在用但文档没写，3 张完全闲置。"**
+> **"103 张表里 102 张被代码或文档引用（利用率 99.0%），真闲置仅 1 张（`index_meta`）。文档覆盖呈三层结构：消费层（策略/风控文档显式描述用法）仅 37 张（35.9%）< 80% 行业基准——这是真问题；规划层（[17_special_trading_days_data_assets](17_special_trading_days_data_assets.md)/[64_data_source_download_spec](64_data_source_download_spec.md) 资产清单与下载规范提及）53 张；零覆盖 13 张。另有 6 张表 DDL 已建+规划已登记但代码/config/tasks 全零引用（采集未施工、消费未落地）。"**
 
-v0.1.0 曾因仅扫 design_memos 而误判"43 张闲置"。v0.2.0 补代码层扫描后修正为：
+v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲置+61 张文档缺口"。v2.1.0（2026-08-12）以 git 提交态全量重扫，三层校验数字再次修正：
 
-| 病灶 | v0.1.0 误判 | v0.2.0 修正 |
-|---|---|---|
-| 数据利用率 | 57.4%（58/101） | **97.1%（99/102）**——代码层补查后 40 张"闲置"实为"代码在用" |
-| 真闲置表 | 43 张 | **3 张**（dividend_tax_node / index_meta / msci_adjustment） |
-| 文档覆盖缺口 | 未识别 | **~41-61 张表代码在用但 design_memos 英文表名零引用**（上界 61，含中文别名下界 41）——文档落后于代码 |
-| P0"高价值闲置" | 8 张 | 全部 CODE_ONLY（代码已有 6-18 次引用），非闲置——文档需补但数据已接入 |
-| P4 生猪期货 | "完全不涉及" | 代码层有 7-8 次引用——需核实是否为采集脚本的模板引用 |
+| 病灶 | v0.1.0 误判 | v0.2.0 修正 | v2.1.0 实测核验 |
+|---|---|---|---|
+| 总表数 | 101 | 102 | **103**（`market_stock_valuation` 2026-08-11 新增） |
+| 受扫文档数 | 42 篇 | 42 篇 | **46 篇**（47 篇编号文档-本备忘自引；新增 60/61/64/65/90/91 等） |
+| 数据利用率 | 57.4%（58/101） | 97.1%（99/102） | **99.0%（102/103）**——文档∪代码任一引用 |
+| 真闲置表 | 43 张 | 3 张 | **1 张**（`index_meta` 文档+代码+config 全零引用） |
+| 文档覆盖（英文表名任一文档命中） | 38（37.3%） | 38（37.3%） | **90（87.4%）**——但含规划层引用，口径过宽 |
+| **消费层文档覆盖**（v2.1.0 新增口径） | 未区分 | 未区分 | **37（35.9%）**——非 17/64 号规划文档外的消费方文档引用，**真问题在此，与 v0.2.0 的 38 张惊人稳定** |
+| 规划层文档覆盖（v2.1.0 新增口径） | 未识别 | 未识别 | **53（51.5%）**——仅 17/64 号资产清单/下载规范提及，消费用法未描述 |
+| 零覆盖 | 未识别 | 61（英文上界） | **13（12.6%）**——其中 12 张代码在用（真文档缺口），1 张真闲置 |
+| 代码零引用但规划已登记 | 未识别 | 未识别 | **6 张**（dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation）——DDL+规划文档有，代码/config/tasks.yaml 全零，采集未施工 |
+| P0"高价值闲置" | 8 张 | 全部 CODE_ONLY | v2.1.0 确认：批次 A 风险表代码均活跃，但**消费文档仍缺**（仅 17/64 号规划层提及）——§7 第一波施工内容不变 |
+| P4 生猪期货 | "完全不涉及" | 代码 7-8 次引用 | v2.1.0 实测：3 张生猪表代码各 1 次引用（采集模板级）+规划层覆盖——维持批次 D 暂缓 |
+
+> **v2.1.0 关键口径修正**：v0.2.0 的"文档覆盖率 37.3%"与 v2.1.0 实测的"消费层覆盖 35.9%"（37 张）在数值上高度一致——**v0.2.0 的扫描实质上测的就是消费层覆盖**（当时 17/64 号尚未提交或未含大量表引用，未污染口径）。2026-08-11 后 17/64 号提交带来 53 张规划层引用，若按"任一文档命中"口径覆盖率虚高至 87.4%，会掩盖消费层缺口。**v2.1.0 起 §5.1 以三层口径分别报告，施工目标以消费层覆盖为准**。
+>
+> **v0.2.0 历史数字不可复现声明**：v0.2.0 的逐表引用计数（如 `block_trade` 52 次/5 文档、`index_adjustment` 代码 17 次）以 2026-08-10 工作区未提交文件为扫描对象，2026-08-12 以 git 提交态重扫无法复现（`block_trade` 实测 7 次/2 文档，`index_adjustment` 代码 0 次）。教训：§3.4 扫描输出必须落地 CSV 快照随施工提交（dogfood 本文 §3.4 机制），否则历史审计数字无法回溯验证。v2.1.0 起 §5/§6 全部数字以本版实测为准，历史版本数字仅作演进参考。
 
 **Data Contract 概念重构（v1.7.0 新增，参考 [soda.io 2026-06-01](https://soda.io/blog/data-contracts-vs-schema-registry) + [datus.ai 2026-06-29](https://datus.ai/blog/what-is-data-contract/) + [streamkap.com 2026-02-25](https://streamkap.com/resources-and-guides/data-contracts-streaming)）**：
 
@@ -73,8 +83,8 @@ v0.1.0 曾因仅扫 design_memos 而误判"43 张闲置"。v0.2.0 补代码层�
 
 | Data Contract 六组件 | 本仓库对应 | 完整度 |
 |---|---|---|
-| Schema（结构） | schemas/categories/*.py DDL | ✅ 102/102 完整 |
-| Semantics（语义） | design_memos 文档消费方描述 | ⚠️ 38-61/102 缺口（本审查核心问题） |
+| Schema（结构） | schemas/categories/*.py DDL | ✅ 103/103 完整 |
+| Semantics（语义） | design_memos 文档消费方描述 | ⚠️ 消费层 37/103（规划层 53 张仅有资产清单级语义）——本审查核心问题 |
 | Quality rules（质量规则） | data_asset_registry.yaml 字段 + §7.0.4 Q score | ⚠️ 待施工（§8 关联） |
 | SLA（新鲜度/可用性） | §7.0.4 timeliness 指数衰减 + §3.4 Detective 扫描 | ⚠️ 待施工 |
 | Ownership（所有权） | data_asset_registry.yaml owner 字段 + frontmatter owner | ⚠️ 待登记 |
@@ -89,26 +99,55 @@ v0.1.0 曾因仅扫 design_memos 而误判"43 张闲置"。v0.2.0 补代码层�
 
 ### 2.3 约束条件
 
-- **不引入新数据源**：本计划只盘活已有 102 张表，不申请新供应商
+- **不引入新数据源**：本计划只盘活已有 103 张表，不申请新供应商
 - **不破坏现有策略**：补文档是"记录已有用法"，不改变数据流
 - **优先级原则**（project_memory）：风险相关模块（drawdown/var/kill_switch）先于 alpha 策略；文档覆盖优先服务风险与回撤模块
-- **不过度工程**：60 张"文档缺口"表代码已在用，无需"接入数据"，只需补文档；3 张真闲置表的归档是有效产出
+- **不过度工程**：v2.1.0 实测消费层缺口 66 张（53 规划层+13 零覆盖）中代码活跃 59 张——只需补文档，无需"接入数据"；1 张真闲置表（`index_meta`）的处置 + 6 张代码零引用表的采集决策是有效产出
+
+### 2.4 已施工设施盘点（v2.1.0 新增，回应通用规则 #11"先清楚有什么→才能知道怎么改→才能知道该退役什么"）
+
+> 本文此前各版本引用了多个脚本/目录作为"实施位置"（如 `scripts/audit_data_utilization.ps1`、`scripts/quality_spc.py`、`docs/_audit/`）。v2.1.0 全仓核验其真实存在性，防止"文档引用不存在设施"的脱节（§3.4 Detective 扫描第 5 类检查的前车之鉴）。
+
+**已施工（真实存在，v2.1.0 核验）**：
+
+| 设施 | 位置 | 状态 | 说明 |
+|---|---|---|---|
+| 业务表 DDL 真源 | [schemas/categories/](../../../schemas/categories/) 103 个 .py | ✅ 全部入 git | 2026-08-11 提交 `022910926f`/`81c7687540` 补齐最后 8 张（calendar_event/dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation/technical_indicator） |
+| 数据源登记注册表 | [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) | ✅ 76 条 DS-001~076 | data_asset_registry.yaml 待 S6 改名（62 号 P1-B），v2.1.0 核验 6 张代码零引用表**未登记**在内 |
+| 数据采集 Provider 层 | `src/zephyr/data/implementations/` 15 个 provider | ✅ production | akshare/baostock/cls/eastmoney_news/eia/fred/ifind/internal_compute/miniqmt/qweather/rss/tdx/tickflow/tqcenter/tushare——**无逐表 *_ingestion.py 脚本**，采集由 provider + 配置驱动 |
+| 调度配置 | `src/zephyr/data/config/tasks.yaml` | ✅ 存在 | §7.5 归档指引中的路径以此为准（非仓库根目录） |
+| 规划层数据资产文档 | [17_special_trading_days_data_assets](17_special_trading_days_data_assets.md) / [64_data_source_download_spec](64_data_source_download_spec.md) | ✅ 已提交 | 53 张表的规划层覆盖来源（资产清单+下载规范），64 号与本文互补声明见各自头部 |
+| 红利税节点 VIEW | ClickHouse `c1_market.dividend_tax_node` | ✅ DB 层派生 VIEW | 从 rights_issue 实时派生（见 project_memory），DDL 文件已入 git，无 Python 代码引用属正常（VIEW 在 SQL 层消费） |
+| 00 号占用表登记 | [00_index_trading_decision](00_index_trading_decision.md) line 71 | ✅ 已登记 | 但版本字符串停留在 "draft v0.9.0" 未同步（§10 Q5 跟踪） |
+
+**未施工（本文引用但尚不存在，均为设计态）**：
+
+| 设施 | 本文引用位置 | 状态 | 处置 |
+|---|---|---|---|
+| `scripts/audit_data_utilization.ps1` | §3.4/§7.0.3/§7.0.5/§7.0.9 | ❌ 未创建 | 第一波施工前创建——v2.1.0 已用内联 PowerShell 完成首轮全量重扫，脚本化是固化产物 |
+| `scripts/community_detection.py` / `scripts/temporal_coupling.py` / `scripts/quality_spc.py` / `scripts/freshness_fingerprint.py` | §7.0.3/§7.0.4/§7.0.5 | ❌ 未创建 | 随对应机制启用时再建（Leiden/Temporal Coupling/SPC/状态指纹均为**运维期**机制，非施工前置） |
+| `docs/_audit/` 全部 CSV 矩阵 | §3.4/§7.0.4/§7.0.9 等 | ❌ 未创建 | 随脚本创建同步建立；首个快照应为本版 §5 实测矩阵 |
+| 逐表采集脚本 `src/zephyr/data/ingestions/<table>_ingestion.py` | §7.5 | ❌ 目录不存在 | §7.5 已修正为 provider 层路径——归档操作在 provider 的任务映射/tasks.yaml 层执行 |
+
+**盘点结论**：本审查的**被审查对象**（103 表 DDL + 76 条注册表 + 15 provider）全部已施工；本审查的**审查工具链**（5 脚本 + _audit 矩阵）全部未施工——v2.1.0 的全量重扫以一次性内联命令完成，验证了"无工具链也可审查"，但**持续校验**（§3.4 extract/trace 循环）必须先落地 `audit_data_utilization.ps1`。6 张代码零引用表的"采集未施工"状态由此盘点首次确认（Provider 层无引用、tasks.yaml 无任务、注册表无条目）。
 
 ## 3. 审查方法
 
 ### 3.1 表清单来源
 
-[schemas/categories/](../../../schemas/categories/) 下 102 个 `.py` 文件，每个对应一张 ClickHouse 业务表（文件名前缀 `market_`/`fundamental_`/`macro_`/`cross_` 对应业务域）。
+[schemas/categories/](../../../schemas/categories/) 下 103 个 `.py` 文件，每个对应一张 ClickHouse 业务表（文件名前缀 `market_`/`fundamental_`/`macro_`/`cross_` 对应业务域）。v2.1.0 核验：market 88 / fundamental 12 / macro 2 / cross 1 = 103。
 
-### 3.2 引用扫描方法（v0.2.0 三层校验）
+### 3.2 引用扫描方法（v0.2.0 三层校验 / v2.1.0 补覆盖分层口径）
 
 | 层 | 方法 | 工具 | 命中判定 |
 |---|---|---|---|
-| 1. 英文/拼音表名 @ design_memos | `Select-String` 在 design_memos/*.md 全文搜表名（不区分大小写，排除 63 号自引 + AI_review_instructions） | PowerShell | 命中即视为文档已覆盖 |
+| 1. 英文/拼音表名 @ design_memos | `Select-String` 在 design_memos/*.md 全文搜表名（不区分大小写，排除 63 号自引 + AI_review_instructions） | PowerShell | 命中即视为文档已覆盖——**v2.1.0 起细分两层**：命中文档为 17/64 号（资产清单/下载规范）=**规划层覆盖**；命中其他消费方文档（策略/风控/数据层）=**消费层覆盖**。施工目标以消费层为准 |
 | 2. 中文别名补校 @ design_memos | 对未命中的表，搜中文别名（如 `dragon_tiger_seat` → "龙虎榜营业部"） | 人工 | 任一别名命中即恢复为"文档已覆盖" |
-| 3. 代码层引用 @ src/zephyr/（v0.2.0 新增） | `Get-ChildItem -Recurse *.py \| Select-String` 搜表名 | PowerShell | 命中即视为代码已消费——**文档未覆盖但代码在用 = 文档覆盖缺口，非闲置** |
+| 3. 代码层引用 @ src/zephyr/（v0.2.0 新增） | `Get-ChildItem -Recurse *.py \| Select-String` 搜表名 | PowerShell | 命中即视为代码已消费——**文档未覆盖但代码在用 = 文档覆盖缺口，非闲置**。v2.1.0 扩展：同步扫 `config/`+`tasks.yaml`+注册表 yaml，区分"代码零引用"是"采集未施工"还是"真闲置" |
 
 > **v0.2.0 关键修正**：v0.1.0 仅做层 1+2（design_memos 扫描），得出"43 张闲置"的误判。层 3 代码层扫描发现其中 40 张实际被 src/zephyr/ 代码引用——**"文档没写"不等于"数据闲置"**。
+>
+> **v2.1.0 口径修正**：层 1 的"任一文档命中即覆盖"在 17/64 号提交后失效——53 张表仅被资产清单/下载规范提及（"要下载/已登记"），但无任何消费方文档描述其用法（字段/频率/下游逻辑）。v2.1.0 将层 1 拆分为规划层/消费层两档（§5.1 三层覆盖表），避免"规划引用冒充消费覆盖"。同时层 3 补 config/调度/注册表扫描——v2.1.0 实测发现 6 张表代码+config+tasks+注册表全零引用，此类不是"文档缺口"而是"采集未施工"（§6.1b 新类别）。
 
 ### 3.3 审查局限
 
@@ -346,9 +385,9 @@ Gate 8: 运行时足迹（runtime footprint）——是否有运行时日志证�
 - **溯源链值得吸收**：REFORGE 每个判定结果附"证据链"（哪些门通过/未通过）——本审查 §3.5 当前仅记录"命中优先级"，v0.7.0 建议 CSV 矩阵补 `evidence` 列记录"命中行 + 正则模式 + 上下文摘要"，轻量实现溯源链
 - **多门叠加降假阳性**：REFORGE 8 门叠加可将假阳性从 survivorship bias 中分离——本审查 §3.3 的"通用名假阳性"（`index` 匹配 `index_list`）可通过"Gate 3 符号表提示"（全名 `market_index` 复核）降假阳性，当前已用全名复核实现等价效果
 
-## 4. 业务数据库总览（102 张表）
+## 4. 业务数据库总览（103 张表）
 
-按业务域分 9 大类（v0.1.0 报 101 张 + 算术合计 103 均有误，v0.2.0 修正为 102）：
+按业务域分 9 大类（v0.1.0 报 101 张 + 算术合计 103 均有误，v0.2.0 修正为 102，v2.1.0 实测为 103——`market_stock_valuation` 2026-08-11 新增）：
 
 | # | 业务域 | 表数 | 代表表（稳定 path） |
 |---|---|---|---|
@@ -359,75 +398,72 @@ Gate 8: 运行时足迹（runtime footprint）——是否有运行时日志证�
 | 5 | 基础元数据（股票/指数/板块/概念列表） | 21 | [stock_list](../../../schemas/categories/market_stock_list.py) / [index_list](../../../schemas/categories/market_index_list.py) / [sector_list](../../../schemas/categories/market_sector_list.py) / [concept_board](../../../schemas/categories/market_concept_board.py) / [etf_list](../../../schemas/categories/market_etf_list.py) / [convertible_bond_list](../../../schemas/categories/market_convertible_bond_list.py) |
 | 6 | 资金流/杠杆/事件（龙虎榜/大宗/拍卖/MSCI） | 11 | [money_flow](../../../schemas/categories/market_money_flow.py) / [margin_trading](../../../schemas/categories/market_margin_trading.py) / [hk_connect_flow](../../../schemas/categories/market_hk_connect_flow.py) / [dragon_tiger](../../../schemas/categories/market_dragon_tiger.py) / [block_trade](../../../schemas/categories/market_block_trade.py) / [msci_adjustment](../../../schemas/categories/market_msci_adjustment.py) |
 | 7 | 衍生品（期权/期货/生猪/可转债 IV） | 11 | [option_kline](../../../schemas/categories/market_option_kline.py) / [option_iv](../../../schemas/categories/market_option_iv.py) / [option_greeks](../../../schemas/categories/market_option_greeks.py) / [cb_iv](../../../schemas/categories/market_cb_iv.py) / [hog_futures_core](../../../schemas/categories/market_hog_futures_core.py) |
-| 8 | 基本面/宏观 | 21 | [balance_sheet](../../../schemas/categories/fundamental_balance_sheet.py) / [income_statement](../../../schemas/categories/fundamental_income_statement.py) / [cashflow_statement](../../../schemas/categories/fundamental_cashflow_statement.py) / [analyst_forecast](../../../schemas/categories/fundamental_analyst_forecast.py) / [restricted_shares](../../../schemas/categories/fundamental_restricted_shares.py) / [share_unlock](../../../schemas/categories/fundamental_share_unlock.py) / [edb_data](../../../schemas/categories/macro_edb_data.py) / [macro_data](../../../schemas/categories/macro_macro_data.py) |
+| 8 | 基本面/宏观 | 22 | [balance_sheet](../../../schemas/categories/fundamental_balance_sheet.py) / [income_statement](../../../schemas/categories/fundamental_income_statement.py) / [cashflow_statement](../../../schemas/categories/fundamental_cashflow_statement.py) / [analyst_forecast](../../../schemas/categories/fundamental_analyst_forecast.py) / [restricted_shares](../../../schemas/categories/fundamental_restricted_shares.py) / [share_unlock](../../../schemas/categories/fundamental_share_unlock.py) / [edb_data](../../../schemas/categories/macro_edb_data.py) / [macro_data](../../../schemas/categories/macro_macro_data.py) / [stock_valuation](../../../schemas/categories/market_stock_valuation.py)（v2.1.0 新增归入） |
 | 9 | 衍生（技术指标/验证日志） | 2 | [technical_indicator](../../../schemas/categories/market_technical_indicator.py) / [cross_validation_log](../../../schemas/categories/cross_validation_log.py) |
-| | **合计** | **102**（15+12+5+4+21+11+11+21+2=102；v0.1.0 报 101 且算术合计 103 均有误，v0.2.0 以 [schemas/categories/](../../../schemas/categories/) 实际 102 个 .py 文件为准修正） | |
+| | **合计** | **103**（15+12+5+4+21+11+11+22+2=103；v0.1.0 报 101 且算术合计 103 均有误，v0.2.0 修正为 102，v2.1.0 以 [schemas/categories/](../../../schemas/categories/) 实际 103 个 .py 文件为准修正——market 88 + fundamental 12 + macro 2 + cross 1；分类边界按代表表归集，单表归属以 §6 清单为准） | |
 
 ## 5. 引用审查结果
 
-### 5.1 总体利用率（v0.2.0 三层校验）
+### 5.1 总体利用率（v2.1.0 全量重扫实测，2026-08-12 git 提交态）
 
 | 指标 | 数值 | 说明 |
 |---|---|---|
-| 总表数 | 102 | [schemas/categories/](../../../schemas/categories/) 实际 .py 文件数 |
-| design_memos 引用-英文表名（excl 63 自引） | 38（37.3%） | 文档覆盖率下界——**真问题在此** |
-| design_memos 引用-含中文别名（v0.1.0 层 2） | ~58（56.9%） | 文档覆盖率上界——v0.2.0 未重跑中文别名，沿用 v0.1.0 |
-| src/zephyr/ 代码引用 | 99（97.1%） | 代码层消费率 |
-| 文档+代码任一引用（**已使用**） | **99（97.1%）** | 真实数据利用率 |
-| **完全闲置**（文档+代码均零引用） | **3（2.9%）** | dividend_tax_node / index_meta / msci_adjustment |
-| 文档覆盖缺口-英文上界（代码在用但英文表名未覆盖） | **61（59.8%）** | 施工重点——补文档，非接入数据 |
-| 文档覆盖缺口-含中文别名下界 | ~41（40.2%） | 61 减去 v0.1.0 层 2 恢复的 20 张 |
+| 总表数 | 103 | [schemas/categories/](../../../schemas/categories/) 实际 .py 文件数（market 88 + fundamental 12 + macro 2 + cross 1） |
+| 受扫文档数 | 46 篇 | 47 篇编号 design_memos - 本备忘自引（AI_review_instructions 辅助文件除外） |
+| **消费层文档覆盖**（非 17/64 号消费方文档命中） | **37（35.9%）** | **真问题在此**——策略/风控/数据层文档显式引用表名，< 80% 行业基准 |
+| 规划层文档覆盖（仅 17/64 号命中） | 53（51.5%） | 资产清单/下载规范级引用——"登记了要下/已建表"，未描述消费用法 |
+| 零覆盖（无任何文档命中） | 13（12.6%） | 其中 12 张代码在用（真文档缺口），1 张真闲置 |
+| 文档覆盖-任一文档命中（旧口径，仅参考） | 90（87.4%） | v0.2.0 口径——含规划层后虚高，不再作为施工目标 |
+| src/zephyr/ 代码引用 | 96（93.2%） | 代码层消费率（v2.1.0 实测；7 张零引用见下） |
+| 文档+代码任一引用（**已使用**） | **102（99.0%）** | 真实数据利用率——仅 `index_meta` 完全闲置 |
+| **完全闲置**（文档+代码+config+tasks 全零引用） | **1（0.97%）** | `index_meta`（§6.1） |
+| **代码零引用但规划已登记**（v2.1.0 新类别） | **6（5.8%）** | dividend_tax_node / index_adjustment / ipo_schedule / margin_target_adjustment / msci_adjustment / stock_valuation——DDL+规划文档有，代码/config/tasks.yaml 全零（§6.1b 采集未施工类别） |
+| **消费层文档缺口**（施工目标清单） | **59（57.3%）** | 47 张规划层代码活跃 + 12 张零覆盖代码活跃——补消费文档，非接入数据 |
 
-> **核心修正**：v0.1.0 报"58 已用 / 43 闲置（57.4%）"因仅扫 design_memos。v0.2.0 补代码层后：利用率 97.1%（99/102），闲置仅 3 张。**项目数据利用率健康，真问题是文档覆盖率 37.3%-56.9%（取决于是否含中文别名）低于行业 80% 基准**（[thedataops.org 2026](https://www.thedataops.org/data-documentation/)：Doc coverage = assets with docs / total assets，starting target 80% core assets）。v0.2.0 代码层扫描仅做英文表名匹配，未重跑中文别名校验——§6.2 批次清单为"潜在缺口"上界。
+> **v2.1.0 三层口径说明**：v0.2.0 的"38（37.3%）"实测对应今天的**消费层覆盖**（37 张，两天仅 -1，口径稳定）——真问题从未变化：消费方文档不描述表的用法。2026-08-11 提交的 17/64 号带来 53 张规划层引用，任一文档命中口径虚高至 87.4%，**规划层引用不等于消费覆盖**（§7.0.6 L2/L3 标准要求字段/下游逻辑/频率描述）。利用率 99.0% 健康（[thedataops.org 2026](https://www.thedataops.org/data-documentation/) 的 doc coverage 80% 基准针对的是消费级文档，本审查以消费层 35.9% 对齐该基准）。行业对照：[modern-datatools.com 2026-04 Data Baselining](https://www.modern-datatools.com/blog/data-baselining-warehouse-lifecycle-2026) 三层基线法（生命周期策略→使用量清理→团队 ritual）验证"先盘点真源再分层处置"路径；其"20% 表被活跃查询"的企业常态反衬本仓库 99.0% 利用率异常健康。
 
-### 5.2 已使用表热度分布（design_memos 前 15 名，excl 63 自引）
+### 5.2 已使用表热度分布（design_memos 前 15 名，excl 63 自引 / v2.1.0 实测重排）
 
-| 表名 | 引用次数 | 引用文档数 | 主要消费方 |
-|---|---|---|---|
-| tick | 385 | 29 | 几乎全文档（高频词，含 ticker 误判） |
-| technical_indicator | 68 | 6 | 16 技术指标 / 62 注册表 |
-| block_trade | 52 | 5 | 00 索引 / 13 regime / 33 预算变更 |
-| auction | 27 | 6 | 20 首批策略 / 24 打板 / 41 买流 / 42 卖流 |
-| daily_valuation | 22 | 5 | 11/13/14 regime 系列 / 15 数据特征层 |
-| limit_up_down | 18 | 5 | 13/25/36 |
-| dragon_tiger | 20 | 6 | 00 索引 / 13 regime / 24 打板 / 26 事件驱动 |
-| kline_daily | 17 | 6 | 00/12/15/16 系列 |
-| sector_snapshot | 14 | 3 | 22 板块轮动 / 90 开放问题 |
-| money_flow | 14 | 6 | 13/22/25 |
-| adj_factor | 9 | 3 | 00/15 |
-| hk_connect_flow | 9 | 2 | 13 regime phase3 |
-| sector_constituent | 7 | 3 | 15/22 |
-| option_iv | 7 | 3 | 13/14 |
-| trade_calendar | 7 | 2 | 15 |
+| 表名 | 引用次数 | 引用文档数 | 性质 | 主要消费方/引用来源 |
+|---|---|---|---|---|
+| tick | 471 | 20 | ⚠️ 通用名膨胀 | 几乎全文档（高频词，含 ticker 等误判，仅作参考） |
+| technical_indicator | 59 | 6 | 消费层 | 16 技术指标系列 / 62 注册表 |
+| trade_calendar | 48 | 3 | 混合 | 15 数据特征层 + 17/64 规划层 |
+| hk_trade_calendar | 40 | 3 | 混合 | 19 北向 / 17/64 规划层 |
+| dragon_tiger | 34 | 4 | 消费层 | 13 regime / 24 打板 / 26 事件驱动（含 dragon_tiger_seat 子串） |
+| calendar_event | 31 | 2 | 规划层 | 17 特殊交易日 / 64 下载规范 |
+| daily_valuation | 27 | 4 | 消费层 | 11/13/14 regime 系列 / 15 数据特征层 |
+| sector_snapshot | 25 | 3 | 消费层 | 22 板块轮动 / 90 开放问题 |
+| auction | 25 | 5 | 消费层 | 20 首批策略 / 24 打板 / 41 买流 / 42 卖流（含 auction_book 子串） |
+| kline_daily | 17 | 3 | 消费层 | 15/16 系列（含 kline_daily_hfq 子串） |
+| edb_data | 16 | 1 | 规划层 | 17 特殊交易日（宏观 EDB 资产） |
+| money_flow | 16 | 3 | 消费层 | 13/22/25 |
+| hk_connect_flow | 15 | 3 | 消费层 | 13 regime phase3 / 19 北向 |
+| ipo_schedule | 14 | 2 | 规划层 | 17/64 规划层（代码零引用，§6.1b） |
+| index_adjustment | 14 | 2 | 规划层 | 17/64 规划层（代码零引用，§6.1b） |
 
-> v0.1.0 热度数字全部偏低（如 tick 报 373 实为 385），系扫描时点或方法差异所致，v0.2.0 已以 2026-08-10 实时扫描修正。
+> v2.1.0 以 git 提交态实测重排（任一文档命中口径，子串匹配）。v0.2.0 热度数字（如 block_trade 52 次/5 文档、trade_calendar 7 次/2 文档）以当时未提交工作区为扫描对象，现已不可复现——如 `block_trade` 实测 7 次/2 文档（13/64 号），跌出前 15。通用名 `index`（441 次/43 文档）为子串假阳性（命中 index_list/kline_index 等），按 §3.3 惯例以全名 `market_index` 复核（3 次真实命中），不入榜。热度仅作参考，施工优先级以 §6 为准。
 
-### 5.3 代码层高引用但文档零覆盖（TOP 15 缺口）
+### 5.3 零文档覆盖但代码在用（v2.1.0 实测 12 张真缺口）
 
-以下表在 src/zephyr/ 有显著代码引用，但 design_memos 零引用（excl 63 自引）——**文档覆盖缺口最严重的表，补文档优先级最高**：
+以下 12 张表在 src/zephyr/ 有代码引用，但 46 篇受扫 design_memos 零引用（excl 63 自引，v2.1.0 实测）——**当前文档覆盖缺口的全部硬缺口**。v0.2.0 的 TOP 15 缺口表（concept_sector/option_kline/realtime_snapshot/calendar_event/index_constituent 等）已于 2026-08-11 被 17/64 号规划层覆盖，不再零覆盖（但消费级描述仍缺，转入 §6.2 施工清单）：
 
-| 表名 | 代码引用次数 | 代码文件数 | 推测消费方 |
-|---|---|---|---|
-| concept_sector | 30 | 2 | [22_sector_rotation_spec](22_sector_rotation_spec.md) 概念板块 |
-| option_kline | 29 | 3 | 期权策略（待建文档） |
-| realtime_snapshot | 25 | 2 | 实时行情（[53_simulation_live_path](53_simulation_live_path.md)） |
-| calendar_event | 24 | 1 | [10_regime_detector_spec](10_regime_detector_spec.md) 事件日历 |
-| index_constituent | 23 | 4 | [22_sector_rotation_spec](22_sector_rotation_spec.md) 指数成分 |
-| kline_futures | 22 | 3 | [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) 期货对冲 |
-| sector_meta | 22 | 2 | [22_sector_rotation_spec](22_sector_rotation_spec.md) 板块元数据 |
-| industry_class_suppl | 22 | 2 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) 行业分类 |
-| futures_position | 20 | 2 | [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) 持仓信号 |
-| sector_list | 19 | 4 | [22_sector_rotation_spec](22_sector_rotation_spec.md) |
-| lof_list | 18 | 3 | [62_business_registry_construction](62_business_registry_construction.md) universe 扩展 |
-| index_adjustment | 17 | 1 | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) 指数调仓事件 |
-| etf_nav | 17 | 2 | [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) 折溢价监测 |
-| us_index | 16 | 3 | [10_regime_detector_spec](10_regime_detector_spec.md) 外盘风险 |
-| etf_list | 15 | 2 | [62_business_registry_construction](62_business_registry_construction.md) universe 扩展 |
+| 表名 | 代码引用次数 | 代码文件数 | 推测消费方 | 应补文档 |
+|---|---|---|---|---|
+| stock_indicator | 12 | 2 | 个股指标（技术/估值衍生） | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) |
+| hk_kline | 10 | 2 | 港股 K 线（与 kline_hk_daily 并存，口径待厘清） | 批次 D 记录 |
+| cross_validation_log | 7 | 1 | 交叉验证日志（回测/校准派生） | [52_backtest_framework_docking](52_backtest_framework_docking.md) |
+| cb_iv | 7 | 1 | 可转债 IV | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) |
+| kline_etf_15min / kline_etf_5min | 6+6 | 2+2 | ETF 分钟 K（路由映射级引用） | 16 号指标 machinery 配套 |
+| kline_lof_15min / 30min / 5min / 60min | 各 6 | 各 2 | LOF 分钟 K（路由映射级引用；90 号 §18 LOF=P0） | 16 号指标 machinery 配套 |
+| concept_board_constituent | 4 | 1 | 概念板块成分 | [22_sector_rotation_spec](22_sector_rotation_spec.md) |
+| kline_etf_daily | 2 | 1 | ETF 日 K | 批次 D 记录 |
 
-### 5.4 v0.1.0"低频引用"表复核
+> 分钟级 K 线（kline_etf_*/kline_lof_*）的代码引用均为 2 文件 6 次的路由映射级（`internal_compute_provider` period→table 映射族）——按 §3.5 判级为 Confidence 0.8（配置驱动消费）。此类表的"补文档"应以 16 号技术指标 machinery 的 period 覆盖说明统一承载，不逐表铺文档（§9 不过度工程）。
 
-v0.1.0 §5.3 称 `macro_data`/`industry_class`/三大报表/`disclosure_plan`/`kline_weekly`/`kline_monthly` 仅 1-2 次引用。v0.2.0 复核确认这些表在 design_memos 确为低频，但代码层均有引用——**文档覆盖不足，非数据闲置**。基本面三表（balance_sheet/income_statement/cashflow_statement）仅在 [15_data_feature_layer_spec](15_data_feature_layer_spec.md) 列为数据源清单，未在策略文档实际消费——基本面 alpha 信号链文档待建。
+### 5.4 历史"低频引用"表 v2.1.0 复核
 
+v0.1.0 §5.3 称 `macro_data`/`industry_class`/三大报表/`disclosure_plan`/`kline_weekly`/`kline_monthly` 仅 1-2 次引用。v2.1.0 实测复核：(1) 上述表全部已被 17/64 号**规划层覆盖**（资产清单/下载规范），`industry_class` 另有代码 59 次引用（消费层活跃）；(2) 但**消费级描述**仍缺——基本面三表（balance_sheet/income_statement/cashflow_statement）仅在规划层与 [15_data_feature_layer_spec](15_data_feature_layer_spec.md) 数据源清单出现，未在策略文档描述消费逻辑——基本面 alpha 信号链文档待建（§6.2 批次 B）；(3) v0.2.0 的逐表计数（如 `calendar_event` 代码 24 次）以未提交工作区为扫描对象不可复现，v2.1.0 起以 git 提交态实测为准（§2.2 不可复现声明）。
 ## 6. 闲置与文档覆盖缺口清单（v0.2.0 重写 / v0.3.0 补评分模型 / v0.4.0 升级 RICE）
 
 ### 6.0 优先级评分模型（v0.3.0 新增 / v0.4.0 升级 RICE 置信度 / v0.6.0 补 Kano 分类层 / v1.0.0 补贝叶斯权重更新形式化）
@@ -828,18 +864,32 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 
 **映射结论**：本审查已覆盖 7 类中的 6 类（1/3/4/5/6/7），第 2 类（Model Debt）不适用（本审查无 ML 模型）。AI 技术债 7 类映射验证了本审查的债务视角完整性——**无需新增独立债务类别**，v1.5.0 SQALE + v1.6.0 Cognitive/AI-Generated Debt + v1.7.0 SATD 传播已覆盖全部适用类别。
 
-### 6.1 真闲置表（3 张，4 阶段生命周期决策 / v0.8.0 补消费链路主动监控 / v1.0.0 补调度感知差异化弃用阈值+MIN_AGE_DAYS 安全过滤）
+### 6.1 真闲置表（v2.1.0 实测仅 1 张 / 4 阶段生命周期决策 / v0.8.0 补消费链路主动监控 / v1.0.0 补调度感知差异化弃用阈值+MIN_AGE_DAYS 安全过滤）
 
-以下 3 张表在 design_memos + src/zephyr/ 均零引用（已用全名复核排除通用名假阴性）。采用 [4 阶段生命周期](https://oneuptime.com/blog/post/2026-01-30-mlops-feature-versioning/view)（2026-01，ACTIVE→DEPRECATED→SUNSET→REMOVED）+ [数据弃用 7 步流程](https://atlan.com/know/data-deprecation-process/)（2026-03）决策，替代二元"归档/保留"：
+v2.1.0 五源实测（design_memos 46 篇 + src/zephyr/ 代码 + config/ + tasks.yaml + 注册表 yaml）：v0.2.0 的 3 张"真闲置"中，`dividend_tax_node` 与 `msci_adjustment` 已被 17/64 号规划层覆盖（转入 §6.1b），**仅 `index_meta` 保持五源全零引用**。采用 [4 阶段生命周期](https://oneuptime.com/blog/post/2026-01-30-mlops-feature-versioning/view)（2026-01，ACTIVE→DEPRECATED→SUNSET→REMOVED）+ [数据弃用 7 步流程](https://atlan.com/know/data-deprecation-process/)（2026-03）决策，替代二元"归档/保留"：
 
 | # | 表名 | 稳定 path | 生命周期建议 | 理由 |
 |---|---|---|---|---|
-| 1 | `dividend_tax_node` | [market_dividend_tax_node](../../../schemas/categories/market_dividend_tax_node.py) | → DEPRECATED（弃用观察期） | 分红税节点——A 股分红税差异化征收（持有期 <1 月 20% / 1-12 月 10% / >12 月 0%），短期无分红税策略需求。标 `status: deprecated`，观察 1 个季度无消费方认领则 → SUNSET → REMOVED |
-| 2 | `index_meta` | [market_index_meta](../../../schemas/categories/market_index_meta.py) | → ACTIVE（补建激活） | 指数元数据——`index_constituent` 代码已在用（23 次），meta 应配合补文档。补登记到 [62_business_registry_construction](62_business_registry_construction.md) universe/benchmark 后转 ACTIVE |
-| 3 | `msci_adjustment` | [market_msci_adjustment](../../../schemas/categories/market_msci_adjustment.py) | → ACTIVE（补建激活） | MSCI 调入/调出事件——A 股 MSCI 权重调整是外资流入信号，有 alpha 价值。补登记到 [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) 后转 ACTIVE |
+| 1 | `index_meta` | [market_index_meta](../../../schemas/categories/market_index_meta.py) | → DEPRECATED 观察期（默认建议，待人裁定） | 指数元数据——v0.2.0"补建激活"建议的前提是 `index_constituent` 代码 23 次引用需 meta 配合；v2.1.0 实测 `index_constituent` 已有规划层覆盖、`index_meta` 五源全零，补建价值取决于 62 号 universe/benchmark 注册表是否需要 meta 字段——**若 62 号 P1-A/B 施工不需要 → 确认 DEPRECATED**；若需要 → 转 ACTIVE 补建（§10 Q1） |
 
-> **弃用流程**（[atlan.com 2026-03](https://atlan.com/know/data-deprecation-process/)）：DEPRECATED 标记 → 影响分析（grep 下游消费者）→ 无人认领 → SUNSET（只读 1 季度）→ REMOVED（删 DDL + 采集脚本）。`dividend_tax_node` 当前零下游消费者，可直接进 DEPRECATED 观察期。
+> **弃用流程**（[atlan.com 2026-03](https://atlan.com/know/data-deprecation-process/)）：DEPRECATED 标记 → 影响分析（grep 下游消费者）→ 无人认领 → SUNSET（只读 1 季度）→ REMOVED（删 DDL + 采集脚本）。`index_meta` 当前零下游消费者，可直接进 DEPRECATED 观察期。
 
+#### 6.1b 代码零引用但规划已登记（v2.1.0 新增类别，6 张——采集未施工）
+
+以下 6 张表 DDL 已入 git（2026-08-11 提交）且被 17/64 号规划层登记，但 src/zephyr/ 代码、config/、tasks.yaml、注册表**全零引用**——不是"文档缺口"（§6.2）也不是"真闲置"（§6.1），而是**采集/消费链路未施工**：
+
+| # | 表名 | 稳定 path | v2.1.0 实测状态 | 默认建议（待人裁定，§10 Q8） |
+|---|---|---|---|---|
+| 1 | `dividend_tax_node` | [market_dividend_tax_node](../../../schemas/categories/market_dividend_tax_node.py) | DB 层派生 VIEW（从 rights_issue 实时派生），无 Python 引用属正常 | **免归档**——VIEW 零存储零采集成本，标 dormant 保留；v0.2.0 的 DEPRECATED 建议撤销（当时误判为"需采集的实体表"） |
+| 2 | `msci_adjustment` | [market_msci_adjustment](../../../schemas/categories/market_msci_adjustment.py) | 规划已登记（17/64 号），采集未施工 | 保留 DDL + 标 `status: dormant`——MSCI 调仓事件有 alpha 价值（v0.2.0 论证保留），待 26 号事件驱动启用时补采集 |
+| 3 | `index_adjustment` | [market_index_adjustment](../../../schemas/categories/market_index_adjustment.py) | 规划已登记，采集未施工（v0.2.0"代码 17 次引用"不可复现） | 同上——指数调仓事件是 26 号既定事件源，待启用时补采集 |
+| 4 | `ipo_schedule` | [market_ipo_schedule](../../../schemas/categories/market_ipo_schedule.py) | 规划已登记，采集未施工（v0.2.0"代码 12 次引用"不可复现） | 同上——IPO 日程事件待启用 |
+| 5 | `margin_target_adjustment` | [market_margin_target_adjustment](../../../schemas/categories/market_margin_target_adjustment.py) | 规划已登记，采集未施工（v0.2.0"代码 14 次引用"不可复现） | 同上——两融标的调整事件待启用 |
+| 6 | `stock_valuation` | [market_stock_valuation](../../../schemas/categories/market_stock_valuation.py) | 2026-08-11 DDL 新增，规划层提及（1 次），采集未施工 | 同上——与 `daily_valuation`（代码 42 次活跃）的口径分工待 15 号明确；注意 MIN_AGE_DAYS=30 安全过滤适用（新建表 30 天内不判闲置） |
+
+> **类别边界**：本类表不进 §6.2 消费文档施工队列（无代码消费可反推，§7.0.2 反推无源），仅登记注册表 + 标 dormant。若后续补采集施工（Provider 任务落地），自动转入 §6.2 队列。与 §6.1 真闲置的区别：本类有明确业务规划（17/64 号登记在册），`index_meta` 无任何消费方规划。
+>
+> **对 v0.2.0"代码引用"数字的处置**：本类 4 张表（msci/index_adjustment/ipo_schedule/margin_target_adjustment）v0.2.0 报代码引用 0-17 次不等，v2.1.0 五源实测全零——以实测为准（§2.2 不可复现声明）。若采集脚本曾存在后被删除，其 git 历史可查，不影响当前"采集未施工"判定。
 **消费链路主动监控（v0.8.0 新增）**：
 
 > 当前 §6.1 的生命周期管理是**被动式**——"标 DEPRECATED → 等 1 季度 → 无人认领则 SUNSET"。[simor consulting 2026-04](https://simorconsulting.com/blog/the-data-pipeline-that-cost-50kmonth--and-the-audit-that-found-why) 的金融数据平台审计案例发现：**31% 的计算花在零消费者管道上**，根因是"平台跟踪了任务依赖（技术依赖）但没跟踪消费依赖（组织依赖）"——管道被创建后从不重新评估。simor 提出**消费链路生命周期管理**（consumption-linked lifecycle），v0.8.0 吸收其"主动监控"思想补强 §6.1 的被动式等待。
@@ -848,7 +898,7 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 
 | 浪费类型 | 占比 | 根因 | 本审查对应 |
 |---|---|---|---|
-| 零消费者管道 | 31% | 仪表板/ML 模型/报告已弃用但管道未删 | §6.1 的 3 张真闲置表（dividend_tax_node 等） |
+| 零消费者管道 | 31% | 仪表板/ML 模型/报告已弃用但管道未删 | §6.1 的 1 张真闲置表（index_meta）+ §6.1b 的 6 张采集未施工表 |
 | 冗余转换 | 22% | 两个团队建了几乎相同的聚合管道 | 未覆盖（个人项目无多团队冗余，但代码可能有重复采集） |
 | 过度刷新物化视图 | 14% | 视图每 15 分钟刷新但下游仪表板每日才看 | 未覆盖（ClickHouse 物化视图刷新策略，§6.1 可延伸） |
 
@@ -871,7 +921,7 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 5. 观察 1 季度（90 天）仍无消费 → 确认 SUNSET → 按 §7.5 归档流程执行
 
 → 替代当前"标 DEPRECATED → 等 1 季度"的被动式
-→ 优势：3 张已知闲置表 + 未来新增的闲置表都能被系统主动发现
+→ 优势：1 张已知闲置表（+ §6.1b 六源监控）+ 未来新增的闲置表都能被系统主动发现
 ```
 
 **为何吸收"主动监控"但不全面采纳 simor 系统**：
@@ -914,13 +964,17 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 - **不采纳有赞自动下线的理由**：有赞的"满足条件→自动下线"对金融数据风险过高（§6.1 v0.8.0 已声明不采纳 simor 的"60 天自动暂停"）。本审查保留"标 ⚠️ → 人工确认 DEPRECATED→SUNSET→REMOVED"（§10 Q1 决策方=人），差异化阈值仅优化"标 ⚠️"的准确性，不改变后续人工确认流程
 - **与 §6.0 Kano 分类层的对齐**：PROTECTED_TABLES 白名单 = Kano 基本型表，无论零查询多久都不标闲置——风险红线表的 dormant 状态（危机时才用）不应被误判为闲置
 
-> **注**：v0.1.0 的 43 张"P0-P4 闲置表"经代码层扫描后：40 张为 CODE_ONLY（代码在用，非闲置），3 张为真闲置（本节）。另有多张 v0.1.0 误判为"已用"的表（因中文别名匹配）实际也可能仅在代码层引用——§6.2 的 61 张为英文表名匹配上界。
+> **注**：v0.1.0 的 43 张"P0-P4 闲置表"经代码层扫描后：40 张为 CODE_ONLY（代码在用，非闲置）。v2.1.0 五源实测再修正：真闲置 3→1 张（§6.1），4 张转 §6.1b 采集未施工类别，§6.2 施工清单以消费层口径重排为 59 张。
 
-### 6.2 文档覆盖缺口表（61 张，按消费方模块分批补文档）
+### 6.2 消费层文档覆盖缺口施工清单（v2.1.0 重排：59 张代码活跃表，按消费方模块分批补文档）
 
-以下表在 src/zephyr/ 有代码引用但 design_memos 零引用（excl 63 自引）。**数据已接入，只需补文档记录用法**，分 4 批按消费方模块归集：
+v2.1.0 实测（§5.1 三层口径）：消费层缺口 = 103 - 37 消费层已覆盖 - 6 张 §6.1b 代码零引用 - 1 张真闲置 = **59 张代码活跃表缺消费级文档**（47 张仅 17/64 号规划层覆盖 + 12 张零覆盖）。**数据已接入，只需补文档记录用法**——v0.1.0"三波接入"是误判（过度工程），v0.2.0 修正为补文档，v2.1.0 以三层口径精确化施工对象。分 4 批按消费方模块归集（批次内排序用 §6.0 RICE/Kano，批次内顺序用 §7.0.3 拓扑）：
+
+> **各批次表格的"代码引用"列数字为 v0.2.0 估值（不可复现，§2.2 声明）**——v2.1.0 已逐表二值核验"代码活跃=✓"，精确计数以下一轮 `audit_data_utilization.ps1` 输出的 CSV 快照为准。"v2.1.0 状态"列为实测：规划层=仅 17/64 号提及；零覆盖=无任何文档命中。
 
 #### 批次 A：风险/回撤模块相关（优先，符合风险优先原则）
+
+> v2.1.0 状态：本批 9 张全部**代码活跃✓ + 规划层已覆盖**（17/64 号），消费级文档均缺——施工内容不变，补写各消费方文档的用法描述节。
 
 | 表名 | 代码引用 | 应补文档 |
 |---|---|---|
@@ -947,11 +1001,13 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 
 #### 批次 B：事件驱动/策略模块相关
 
+> v2.1.0 状态：cb_iv 为**零覆盖**（代码 7 次/1 文件）；其余各张规划层已覆盖、代码活跃。
+
 | 表名 | 代码引用 | 应补文档 |
 |---|---|---|
 | cb_iv | 6 | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) 可转债 IV（90 号 §18 可转债 P1 待验证） |
 | convertible_bond_list | 7 | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) 可转债标的池 |
-| msci_adjustment | 0（真闲置→补建） | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) MSCI 调仓事件 |
+| ~~msci_adjustment~~ | 移出 | v2.1.0：转 §6.1b（代码零引用+规划已登记，标 dormant 待启用）——不进消费文档队列 |
 | calendar_event | 24 | [10_regime_detector_spec](10_regime_detector_spec.md) 事件日历 |
 | index_adjustment | 17 | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) 指数调仓事件 |
 | ipo_schedule | 12 | [26_event_driven_strategy_detail](26_event_driven_strategy_detail.md) IPO 日程 |
@@ -961,6 +1017,8 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 | analyst_forecast | 8 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md) 分析师预期（[forage.ai 2026](https://forage.ai/blog/alternative-data-for-hedge-funds/)：alt data 核心在 nowcasting） |
 
 #### 批次 C：板块轮动/行业分类相关
+
+> v2.1.0 状态：concept_board_constituent **零覆盖**（代码 4 次/1 文件）；新增 stock_indicator（零覆盖，代码 12 次/2 文件，v0.2.0 漏列）→ 应补 [15_data_feature_layer_spec](15_data_feature_layer_spec.md) 个股指标节。
 
 | 表名 | 代码引用 | 应补文档 |
 |---|---|---|
@@ -976,6 +1034,8 @@ SATD 传播优先级调整（融入 §6.0 RICE confidence 因子）：
 | index_weight | 12 | [62_business_registry_construction](62_business_registry_construction.md) benchmark 扩展 |
 
 #### 批次 D：跨市场/分钟级/衍生品（业务边界待定，暂只记录代码用法）
+
+> v2.1.0 状态：本批含全部零覆盖分钟级 K 线（kline_lof_15min/30min/5min/60min、kline_etf_15min/5min/daily，代码各 2-6 次路由映射级引用）+ hk_kline（10 次）+ cross_validation_log（7 次）——按 §5.3 决议：分钟级 K 线的文档由 16 号技术指标 machinery 的 period 覆盖说明统一承载，不逐表铺文档。
 
 | 表名 | 代码引用 | 说明 |
 |---|---|---|
@@ -2218,10 +2278,10 @@ L3 抽检须逐项确认以下 4 个检查点（缺一不可），并在 verific
 
 | 波次 | 目标覆盖率（英文下界） | 验收点 |
 |---|---|---|
-| 施工前 | 37.3%（38/102） | 基线 |
-| 第一波后 | ~46%（47/102） | 重跑扫描确认 +9 张转 BOTH |
-| 第二波后 | ~70%（72/102） | 重跑扫描确认 +25 张转 BOTH |
-| 第三波后 | ~97%（99/102） | 仅剩 3 张真闲置（DEPRECATED/待激活） |
+| 施工前 | 35.9%（37/103，v2.1.0 实测消费层口径） | 基线 |
+| 第一波后 | ~44.7%（46/103） | 重跑扫描确认批次 A 9 张转消费层覆盖 |
+| 第二波后 | ~68.9%（71/103） | 重跑扫描确认批次 B+C 25 张转消费层覆盖 |
+| 第三波后 | ~93.2%（96/103） | 批次 D 25 张记录完毕——终态：59 张缺口清零，余 6 张 §6.1b dormant + 1 张真闲置不进消费覆盖目标 |
 
 #### 7.0.7 施工回滚机制（v0.6.0 新增）
 
@@ -2434,7 +2494,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 
 ### 7.1 第一波：风险/回撤模块文档补齐（批次 A，1-2 周）
 
-**目标**：补齐批次 A 共 9 张风险相关表的文档覆盖，文档覆盖率 37.3% → ~46%（英文下界；含中文别名则 ~57% → ~66%）
+**目标**：补齐批次 A 共 9 张风险相关表的**消费级**文档描述（字段/频率/下游逻辑，§7.0.1 模板），消费层覆盖率 35.9% → ~44.7%（v2.1.0 口径；9 张均已有 17/64 号规划层引用，本波补的是消费语义非表名）
 
 | 步骤 | 内容 | 产出 |
 |---|---|---|
@@ -2449,7 +2509,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 
 ### 7.2 第二波：事件驱动/板块轮动文档补齐（批次 B+C，2-4 周）
 
-**目标**：补齐批次 B（12 张，含 msci_adjustment 补建）+ 批次 C（13 张）共 25 张表文档覆盖，覆盖率 → ~70%（英文下界）
+**目标**：补齐批次 B（11 张，msci_adjustment 已转 §6.1b）+ 批次 C（14 张，新增 stock_indicator）共 25 张表消费级文档，消费层覆盖率 → ~68.9%
 
 | 步骤 | 内容 |
 |---|---|
@@ -2461,13 +2521,14 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 
 **目标**：记录批次 D 各表代码用法（不接入新数据，只补文档），并对 3 张真闲置表做归档/补建决策
 
-- 批次 D 各表在对应消费方文档补"代码已用、业务边界待定"标注——**不强制接入，只记录现状**
-- 3 张真闲置表（§6.1）按 §10 Q1 决策：归档则标 `status: retired`，补建则登记到对应文档
+- 批次 D 各表在对应消费方文档补"代码已用、业务边界待定"标注——**不强制接入，只记录现状**；分钟级 K 线按 §5.3 决议由 16 号 machinery 统一承载
+- 1 张真闲置表 `index_meta`（§6.1）按 §10 Q1 决策：归档则标 `status: retired`，补建则登记到 62 号 universe/benchmark
+- 6 张 §6.1b 代码零引用表按 §10 Q8 决策：标 `status: dormant` 待启用，或补采集施工后转 §6.2 队列
 - **后复权周/月线**（`kline_weekly_hfq` / `kline_monthly_hfq`）矛盾处理见 §10 Q3——代码已有 7 次引用，需核实代码是否实际切换为 hfq 版本，若是则反向修正 [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md) §3.2
 
 ### 7.4 data_asset_registry 对接
 
-[62_business_registry_construction](62_business_registry_construction.md) line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记。本审查不另起"首批 66 张"清单（v0.1.0 的"66 张"与现有 76 条矛盾）——**直接以现有 76 条为 base，按本审查 §6 缺口清单补齐剩余 26 张**（102 - 76 = 26），待 S6 改名同步为 data_asset_registry.yaml。
+[62_business_registry_construction](62_business_registry_construction.md) line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记。本审查不另起"首批 66 张"清单（v0.1.0 的"66 张"与现有 76 条矛盾）——**直接以现有 76 条为 base，按本审查 §6 缺口清单补齐剩余 27 张**（103 - 76 = 27，v2.1.0 实测——含 6 张 §6.1b dormant 表以 `status: dormant` 登记，v2.1.0 核验该 6 张当前未在 76 条内），待 S6 改名同步为 data_asset_registry.yaml。
 
 ### 7.5 归档操作位置指引（v0.5.0 新增）
 
@@ -2479,28 +2540,28 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 |---|---|---|---|
 | design_memos（本文） | §6.1 生命周期决策表 | 记录"该表应 DEPRECATED/SUNSET/REMOVED"决策 + 理由 | 决策层，不执行 |
 | data_asset_registry | [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) | 将该表条目标 `status: deprecated` / `sunset` / `removed` + 标 `sunset_date` | 注册表层，标记状态 |
-| 采集脚本 | `src/zephyr/data/ingestions/` 下对应 `<table>_ingestion.py` | SUNSET 阶段：停调度 + 保留 DDL 只读；REMOVED 阶段：删采集脚本 + 删 DDL | 执行层，实际归档 |
-| 调度配置 | `tasks.yaml` 中对应 task_id | SUNSET 阶段：注释掉 task；REMOVED 阶段：删除 task 条目 | 调度层，停采集 |
+| 采集执行 | `src/zephyr/data/implementations/` provider 任务映射（v2.1.0 修正：无逐表 `*_ingestion.py`，采集由 provider + 配置驱动，§2.4 盘点） | SUNSET 阶段：provider 任务映射中停用该表 + 保留 DDL 只读；REMOVED 阶段：移除映射 + 删 DDL | 执行层，实际归档 |
+| 调度配置 | `src/zephyr/data/config/tasks.yaml` 中对应 task_id（v2.1.0 修正路径：非仓库根目录） | SUNSET 阶段：注释掉 task；REMOVED 阶段：删除 task 条目 | 调度层，停采集 |
 | 数据库 | ClickHouse `c1_market.<table>` | SUNSET 阶段：保留数据只读；REMOVED 阶段：`DROP TABLE` + 备份到冷存储 | 存储层，删数据 |
 
-**`dividend_tax_node` 归档路径示例**（§6.1 决策 DEPRECATED→SUNSET→REMOVED）：
+**`index_meta` 归档路径示例**（v2.1.0 更新——§6.1 唯一真闲置表；v0.5.0 的 dividend_tax_node 示例随其改判 dormant VIEW 而替换）：
 
 ```
 1. design_memos §6.1：标 DEPRECATED（已记录）
 2. 观察 1 季度无消费方认领 → data_asset_registry 标 status: sunset + sunset_date: 2026-11-10
 3. SUNSET 期（1 季度）：
-   a. tasks.yaml 注释 market_dividend_tax_node_ingestion task
+   a. src/zephyr/data/config/tasks.yaml 注释 index_meta 对应 task（当前无任务，SKIP）
    b. ClickHouse 表保留只读，不再写入
 4. SUNSET 期满无回滚需求 → REMOVED：
-   a. 删除 src/zephyr/data/ingestions/market_dividend_tax_node_ingestion.py
-   b. ClickHouse DROP TABLE c1_market.dividend_tax_node（先备份到冷存储）
+   a. 无采集脚本可删（provider 无映射，§2.4 已核验）——仅确认
+   b. ClickHouse DROP TABLE c1_market.index_meta（先备份到冷存储）
    c. data_asset_registry 标 status: removed + removed_date
-   d. schemas/categories/market_dividend_tax_node.py 移至 schemas/_archived/（保留 DDL 模板备查）
+   d. schemas/categories/market_index_meta.py 移至 schemas/_archived/（保留 DDL 模板备查）
 5. 本备忘 §6.1 表格标 ✅ REMOVED + 移除日期
 ```
 
 **归档验证**（REMOVED 后）：
-- §3.2 三层扫描确认 `dividend_tax_node` 在 design_memos + src/zephyr/ 均零命中（已删除）
+- §3.2 三层扫描确认 `index_meta` 在 design_memos + src/zephyr/ 均零命中（已删除）
 - ClickHouse `SHOW TABLES FROM c1_market` 确认表已不存在
 - `tasks.yaml` 确认 task 已删除
 - 冷存储备份可恢复（年度审计抽检 1 次恢复测试，参考 [atlan 数据归档 best practices 2026-03](https://atlan.com/know/data-archival-best-practices/)："Test retrieval workflows quarterly"）
@@ -2573,6 +2634,8 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 不自动修复 predict Omissions 检测结果（v1.8.0 新增） | [CodeScene 2.4.0 predict Omissions](https://docs.enterprise.codescene.io/versions/2.4.0/guides/technical/temporal-coupling.html#use-temporal-coupling-to-predict-omissions) 可预测"schema 变了但文档没跟"的遗漏，但修复需 LLM 生成文档内容——§9 已声明"不自动生成文档"红线（金融系统文档 LLM 可能"自信地错误"修复 T+1→T+0）。§7.0.5 v1.8.0 的 predict Omissions 仅输出 `predicted_omission.csv` 标记需复核的文档（HIGH/MEDIUM/LOW 严重度分级），注入 §7.0.5 增量更新流程触发 false-positive filter → 标记需重写 → 由 §7.0.2 代码反推草稿 + L3 人工抽检处理。预测≠修复，人工 review 不可省 |
 | 不引入 Google OKF v0.2 完整工具链（密码学 attestation）（v1.9.0 新增） | [Google Open Knowledge Format v0.2（2026-07-27 发布）](https://itbrief.asia/story/google-adds-trust-provenance-to-open-knowledge-format) 的完整 attestation 使用密码学签名（Sigstore/CLASPIE）验证计算完整性——适合多方协作的开源知识包场景（需密钥管理 + 签名验证 + 分发链）。个人项目无多方信任需求（单作者 + AI），密码学 attestation 的基础设施成本远超增量价值。§7.0.6 v1.9.0 仅借鉴 Attested Computation **思想**（L3 抽检清单 4 检查点逐项记录 ✅/⚠️ 替代二元"通过/不通过"，记录验证过程本身即为 attestation 的轻量实现），不引入密码学签名工具链。OKF v0.2 的 trust 分离（generated vs verified）用 frontmatter `verification_status: draft/verified` 字段标注替代，不引入 OKF 知识包 frontmatter 格式 |
 | 不引入 DataHub docFreshnessInfo aspect 工具链（v1.9.0 新增） | [DataHub PR #19023 2026-08-09](https://github.com/datahub-project/datahub/pull/19023) 的 `docFreshnessInfo` 是 metadata platform 的 aspect——需 DataHub server + ingestion pipeline + metadata graph + GraphQL API 基础设施。与 §9 已声明的"不引入外部数据目录工具（DataHub/Amundsen/Atlan）"一致，docFreshnessInfo 是 DataHub 的内建 aspect，引入它即引入整个 DataHub 平台。§7.0.5 v1.9.0 仅借鉴 `verifiedAtVersion` 状态指纹**机制**（frontmatter 记录 `verifiedAgainstUrns` 上游表集合 + 联合 hash + 一跳 lineage 传播），用 git + frontmatter + PowerShell 脚本（`scripts/freshness_fingerprint.py`）实现轻量版——不依赖 DataHub server，结果存 CSV 而非 metadata graph。状态指纹的核心思想（用内容 hash 而非时间戳判断新鲜度）可在无 DataHub 环境下完整复刻 |
+| 不为 53 张规划层覆盖表全部补消费级文档（v2.1.0 新增） | v2.1.0 三层口径实测：53 张仅 17/64 号规划层覆盖的表中 6 张代码零引用（§6.1b）——无代码消费可反推（§7.0.2 无源），补消费文档是凭空编写。仅 47 张代码活跃表进 §6.2 施工队列；代码零引用表注册表登记 dormant 即可。"为凑覆盖率而给无消费方的表写消费文档"=浅覆盖反模式（§7.0.4 Q score 防的就是它） |
+| 不追溯复现 v0.2.0 历史扫描数字（v2.1.0 新增） | v0.2.0 逐表引用计数以未提交工作区为扫描对象，2026-08-12 git 提交态重扫不可复现（§2.2 声明）。v2.1.0 起以实测为准，且 §3.4 扫描输出必须落地 CSV 快照随施工提交（dogfood 本文机制）——历史审计数字无法回溯验证的教训只记录不再纠缠 |
 | 不引入 SetGo metadata readiness 工具链（v2.0.0 新增） | [SetGo SSDBM '26 2026-08-11](https://dlnext.acm.org/doi/10.1145/3828820.3828827) 是开源 Python 工具包，评估+修复科学数据集的 **metadata readiness** 六维（FAIR 合规/许可/溯源/治理/可复现/目录就绪），assess→enrich→publish 闭环将 FAIR 分数从 52-57% 提升到 81-91%，发布到 Hugging Face Hub/CKAN/OpenMetadata + Croissant 1.0 metadata sidecar，集成 LLM coding agent /setgo skill。六维中：许可（licensing）不适用（本仓库自采市场数据无外部 dataset 许可约束）/ 目录就绪（catalog readiness）不适用（无外部目录发布需求，design_memos 即内部目录）/ 可复现（reproducibility）部分相关（数据管道可复现已由 tasks.yaml 覆盖）。剩余 3 维（FAIR 合规/溯源/治理）已由 §7.0.4 Q score 4 维（completeness/accuracy/specificity/timeliness）+ v1.7.0 ODCS 6 组件（schema/语义/质量/SLA/所有权/变更管理）覆盖。SetGo 面向科学数据集对外发布场景（ERA5 气候/材料/PDB 蛋白质组发布到 HF Hub），本审查是内部市场数据文档覆盖审计无对外发布需求。SetGo 的 assess→enrich 思想已由 §7.0.2 代码反推（assess 代码用法）+ §7.0.1 模板套用（enrich 补文档）+ §7.0.6 L3 抽检（verify）三步覆盖，/setgo LLM agent skill 与 v0.7.0 DocAgent 远期路径同质（LLM 多步调用成本过高）。不引入 SetGo 工具链+Croissant 1.0 sidecar（派生产物不入 git 约束） |
 
 ## 10. 开放问题
@@ -2590,10 +2653,11 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 
 | # | 问题 | 默认建议 | 决策方 |
 |---|---|---|---|
-| Q1 | 3 张真闲置表的生命周期裁定（§6.1）？ | `dividend_tax_node` → DEPRECATED 观察期（短期无分红税策略需求，1 季度无认领则 SUNSET→REMOVED）；`index_meta` + `msci_adjustment` → ACTIVE 补建（配合 index_constituent 已用 + MSCI 事件有 alpha 价值） | 人 |
+| Q1 | 1 张真闲置表 `index_meta` 的生命周期裁定（§6.1，v2.1.0 从 3 张收敛）？ | 默认建议 DEPRECATED 观察期——v0.2.0"补建激活"前提（index_constituent 需 meta 配合）已弱化：index_constituent 规划层已覆盖且 index_meta 五源全零。若 62 号 universe/benchmark 施工需要 meta 字段则转 ACTIVE 补建，否则 1 季度无认领 → SUNSET → REMOVED（§7.5 归档路径） | 人 |
+| Q8（v2.1.0 新增） | 6 张 §6.1b"代码零引用但规划已登记"表的处置？（dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation） | 默认建议：dividend_tax_node 免归档（DB 派生 VIEW 零成本，标 dormant）；其余 5 张标 `status: dormant` 保留 DDL，待对应消费方启用（26 号事件驱动/15 号估值）时补采集——不删表不补采集，注册表登记即可 | 人 |
 | Q3 | 后复权周/月线（`kline_weekly_hfq` / `kline_monthly_hfq`）代码已有 7 次引用，但 [16_technical_indicator_build_plan](16_technical_indicator_build_plan.md) §3.2 三级时间框架栈用未复权 `kline_weekly`/`kline_monthly`——是否统一？ | 先用 §3.5 Confidence 自动判定核实代码 7 次引用性质：若优先级 1（SQL/数据加载，confidence=1.0）则活跃消费，反向修正 16 号改用 hfq；若优先级 2（import 注册，confidence=0.5）则模板继承，清理代码引用 + 16 号维持现状 | 人（需代码核实） |
-| Q4 | 本审查是否登记 ARCH 条目到 [architecture_issue_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)？ | 登记 `#ARCH-DOC-COVERAGE-GAP`（文档覆盖率 37.3%-56.9% < 80% 基准为治理议题） | 人 |
-| Q5 | 是否在 [00_index_trading_decision.md](00_index_trading_decision.md) §7.3 占用表登记 63 号文档？ | 需要（按 [01_design_memo_management_spec](01_design_memo_management_spec.md) §4.1 规则） | 人 |
+| Q4 | 本审查是否登记 ARCH 条目到 [architecture_issue_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)？ | 拟登记条目（编号待裁定后按治理段分配，本文不引用未登记编号）：消费层文档覆盖 35.9% < 80% 基准的治理议题 | 人 |
+| Q5 | 是否在 [00_index_trading_decision.md](00_index_trading_decision.md) §7.3 占用表登记 63 号文档？ | ✅ 已登记（v2.1.0 核验 line 71）——但版本字符串停留在 "draft v0.9.0" 且 00 号目录计数（42 篇）落后于实际（47 篇），需 00 号维护方同步（不越界改 00 号，记录待办） | 人（00 号维护方） |
 | Q6 | 是否将文档覆盖率纳入 pre-commit warn？（v0.3.0 新增） | 建议纳入——封装 §3.2 扫描为 `scripts/audit_data_utilization.ps1`，pre-commit 调用后若覆盖率 < 80% 则 warn（不阻断）。符合 [CI 文档覆盖率门禁](https://codex.danielvaughan.com/2026/05/16/codex-cli-automated-code-documentation-generation-docstrings-jsdoc-sphinx-ci-pipelines/)（2026-05）实践但降级为 warn 适配个人项目 | 人 |
 
 > v0.1.0 的 Q3（A+H/美股/期货业务边界）/Q4（LOF 归档）/Q5（生猪归档）不再列为开放问题——90 号 §18 已有覆盖范围裁定（LOF 是 P0 保留、股指期货 P2 需期货账户、生猪不在覆盖范围但代码有引用需核实）。v0.1.0 建议"归档 LOF"与 90 号 §18 矛盾，v0.2.0 撤销。
@@ -2635,3 +2699,4 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 2026-08-10 | 1.8.0 | Temporal Coupling 增强+确定性排序+环路径提取+predict Omissions+ODCS v3.1.0：commit-size 归一化+CodeScene 三信号+Sum of Coupling+min-heap Kahn+DFS 三色标记+Tarjan SCC 远期+predict Omissions schema↔doc 共变检测+ODCS v3.1.0 版本号+DCS 弃用说明 | **Temporal Coupling 精度增强与施工调度确定性补强**（回应"施工环节流程算法有缺失"+"2026 年 8月今天最新研究实践算法"+"有没有更好的答案算法"+"文档结构内容有没有需要调整"+"持续改进不要停下来询问"审查）：(1) §7.0.3 Temporal Coupling 补 **commit-size 归一化过滤**——参考 [Archy #131 2026-05-25](https://github.com/hslee16/Archy/issues/131) 明确指出"large commits couple everything"是 temporal coupling 的首要假阳性源。大 commit（初始化/批量重构/全仓格式化）同时触碰几十个文件污染 co-change 矩阵。补入 MAX_FILES_PER_COMMIT=15 过滤阈值（本仓库 102 表的 ~15%），超过此阈值的 commit 从 co_change 矩阵剔除，输出 filtered_commits.csv 供审计；(2) §7.0.3 Temporal Coupling 补 **CodeScene 三信号说明**——参考 [CodeScene 3.5.23 Temporal Coupling](https://docs.enterprise.codescene.io/versions/3.5.23/guides/technical/temporal-coupling.html) 明确三信号：(a) 同一 commit 修改、(b) 同一程序员时间段内修改、(c) commit message 同一 Ticket ID。本审查为个人+AI 项目（单一开发者），信号 (b) 无区分力、信号 (c) 无 ticket 系统——仅采用信号 (a) 同一 commit co-change 以 Jaccard 量化。信号 (b)/(c) 作为团队规模化后远期升级路径记录；(3) §7.0.3 Temporal Coupling 补 **Sum of Coupling 聚合度**——参考 [CodeScene Sum of Coupling](https://docs.enterprise.codescene.io/versions/3.5.23/guides/technical/temporal-coupling.html#dig-deeper-with-sum-of-coupling)。sum_of_coupling(A) = Σ temporal_coupling(A,B) for all B≠A。高 SoC 表是"枢纽表"施工时需优先关注（变更牵连多表文档同步），低 SoC 表是"孤岛表"可独立施工。输出 SoC 排序与 §5.2 热度分布交叉验证；(4) §7.0.3 Kahn 拓扑排序补 **min-heap 确定性打破平局**——参考 [spacecomplexity.ai 2026-05-24](https://spacecomplexity.ai/blog/topological-sort-algorithm)。Kahn 队列改为按 (priority DESC, table_name ASC) 排序的优先队列，确保同层同分表的施工顺序可复现（多次运行拓扑排序结果一致），避免"随机队列顺序导致施工计划不可复现"，O(V log V + E)；(5) §7.0.3 补 **DFS 三色标记环路径提取**——参考 [spacecomplexity.ai 2026-05-24](https://spacecomplexity.ai/blog/topological-sort-algorithm) + [quant67.com 2026-06-08](https://quant67.com/post/algorithms/48-topo-sort/topo-sort.html)。v1.5.0 Kahn 环检测能"检测到环存在+定位环内节点集合"但无法输出环的边路径（A→B→C→A 的具体环链）。补入 DFS 三色标记法（white/gray/black）提取具体环路径，输出 cycle_paths.csv 供 architecture_issue_registry.yaml 人工裁定打破环。注意单一 visited 数组无法正确检测有向图环（共享节点误判），三色标记的 gray 状态专门区分"在当前 DFS 路径上"vs"已完成"；(6) §7.0.3 记录 **Tarjan SCC 远期升级路径**——[quant67.com 2026-06-08](https://quant67.com/post/algorithms/48-topo-sort/topo-sort.html) §四的 Tarjan 强连通分量算法一次性识别所有 SCC 并构建凝聚 DAG。102 表规模下 DFS 三色标记已足够（环数量预期 ≤2），Tarjan SCC 作为"环数量>5 时的升级路径"记录不实施。三层递进：Kahn 检测"有没有环"→ DFS 三色标记提取"环路径"→（环复杂时）Tarjan SCC 识别"所有 SCC"；(7) §7.0.5 补 **CodeScene predict Omissions schema↔doc 共变检测**——参考 [CodeScene 2.4.0 Use Temporal Coupling to predict Omissions](https://docs.enterprise.codescene.io/versions/2.4.0/guides/technical/temporal-coupling.html#use-temporal-coupling-to-predict-omissions) + [Software Design X-Rays Adam Tornhill 2018](https://media.pragprog.com/titles/atevol/intro.pdf)。predict Omissions 是 Temporal Coupling 的**逆向应用**：当两文件应当共变但实际不共变（schema 变了但文档没跟），预测文档更新被遗漏。CodeScene 明确列出三种"应当共变"场景，本审查关注"文档应随其描述的系统共变"。补入 predict Omissions 算法（定义 expected_coupling 映射 → 复用 §7.0.3 Jaccard 共现矩阵 → 计算 actual_coupling → 若 schema 有变更但 actual_coupling=0 → 标 ⚠️ 预测遗漏）+ 严重度分级（HIGH/MEDIUM/LOW/OK）+ 与 §7.0.5 增量更新联动（predicted_omission.csv HIGH/MEDIUM 项注入增量更新流程）。不自动修复（§9 红线"不自动生成文档"）。与 SCORE [Orphan Topics](https://github.com/informatique-cdc/SCORE/blob/main/docs/INGESTION_AND_ANALYSIS.md) 对比：predict Omissions 找"有代码变更但无文档跟随"（schema→doc 缺失），SCORE Orphan Topics 找"有文档但无代码消费"（doc→schema 缺失），两者对偶互补；(8) §2.2 补 **ODCS v3.1.0 版本号+DCS 弃用说明**——参考 [bitol.io 2025-12-07 ODCS v3.1.0 公告](https://bitol.io/bitol-announces-odcs-v3-1-0-stronger-smarter-and-stricter/) + [docs.datacontract.com 2026](https://docs.datacontract.com/open-data-contract-standard) + [adriennevermorel.com 2026-03-27](https://adriennevermorel.com/notes/open-data-contract-standard/)。ODCS 当前最新版本为 v3.1.0（2025-12-07 发布），相比 v3.0 的关键增强：RFC-0013 属性间关系（foreignKey 声明）+ 更严格 JSON Schema 校验 + 可执行 SLA + 外部/内部契约引用。v3.1.0 完全向后兼容 v3.0。旧 Data Contract Specification (DCS) 格式已被弃用——datacontract.com CLI 仍接受但新契约应遵循 ODCS，两支团队正在协调合并。ODCS 已成为 de facto 标准。§9 补 2 项不做什么（不实施 Tarjan SCC 环检测——102 表规模 DFS 三色标记已够 / 不自动修复 predict Omissions 检测结果——预测≠修复，人工 review 不可省）。全网搜索验证：[Archy #131 2026-05-25](https://github.com/hslee16/Archy/issues/131) 验证 commit-size 归一化方向+large commits FP 源、[CodeScene 3.5.23](https://docs.enterprise.codescene.io/versions/3.5.23/guides/technical/temporal-coupling.html) 验证三信号+Sum of Coupling 指标、[CodeScene 2.4.0 predict Omissions](https://docs.enterprise.codescene.io/versions/2.4.0/guides/technical/temporal-coupling.html#use-temporal-coupling-to-predict-omissions) 验证逆运算方向+三种应当共变场景、[spacecomplexity.ai 2026-05-24](https://spacecomplexity.ai/blog/topological-sort-algorithm) 验证 min-heap Kahn 确定性排序+DFS 三色标记 O(V+E)、[quant67.com 2026-06-08](https://quant67.com/post/algorithms/48-topo-sort/topo-sort.html) 验证 Kahn 环检测存在性判定+Tarjan SCC 远期路径、[bitol.io 2025-12-07](https://bitol.io/bitol-announces-odcs-v3-1-0-stronger-smarter-and-stricter/) 验证 ODCS v3.1.0 版本号+RFC-0013 关系+可执行 SLA、[docs.datacontract.com 2026](https://docs.datacontract.com/open-data-contract-standard) 验证 DCS 弃用+ODCS 成为 de facto 标准、[adriennevermorel.com 2026-03-27](https://adriennevermorel.com/notes/open-data-contract-standard/) 验证 ODCS de facto 标准地位、[SCORE 2026](https://github.com/informatique-cdc/SCORE/blob/main/docs/INGESTION_AND_ANALYSIS.md) 验证 Orphan Topics 对偶方向。维持 draft（Temporal Coupling 增强+确定性排序+环路径提取+predict Omissions+ODCS v3.1.0 算法已完整但待执行验证） |
 | 2026-08-10 | 1.9.0 | 新鲜度度量升级+状态指纹+假新鲜失败模式+验证信任模型：Freshness SLO/SLI+OKF v0.2 stale_after 对比+DataHub docFreshnessInfo verifiedAtVersion 状态指纹+DZone 五种假新鲜失败模式+OKF v0.2 trust/provenance/attestation+Attested Computation | **文档新鲜度度量体系升级与验收信任模型补强**（回应"施工环节流程算法有缺失"+"2026 年 8 月今天最新研究实践算法"+"有没有更好的答案算法"+"文档结构内容有没有需要调整"+"持续改进不要停下来询问"审查）：(1) §7.0.4 补 **Freshness SLO/SLI 服务级别度量**——参考 [oneuptime.com 2026-01-30 Freshness SLOs](https://oneuptime.com/blog/post/2026-01-30-freshness-slos/view) + [yutils.jdgrid.com 2026-05-25 SLI/SLO](https://yutils.jdgrid.com/en/guides/how-slis-and-slos-actually-work) + [skillmd.ai 2026 SLA/SLO/SLI](https://www.skillmd.ai/skills/sla-slo-and-slis/)。当前 §7.0.4 的 timeliness 是**连续值**（0-10 分）度量"单表文档多新鲜"，但缺少**二元合规判定**"多少比例文档达标"。补入 Freshness SLI = (timeliness ≥ 7.0 的表数 / 总表数) × 100% + SLO=90% 目标 + Error Budget=10% 管理（剩余 >50% 正常施工 / 20-50% 降速修复 / 耗尽冻结新施工）。补入 Age-based vs Lag-based 新鲜度区分（age_days 绝对年龄 vs 文档同步时间-代码变更时间=更新滞后天数），当前 §7.0.4 用 age_days（Age-based），Lag-based 作为远期 git log 计算路径记录；(2) §7.0.4 补 **Google OKF v0.2 stale_after 固定日期备选对比**——参考 [itbrief.asia 2026-07-27 Google OKF v0.2](https://itbrief.asia/story/google-adds-trust-provenance-to-open-knowledge-format)。OKF v0.2 的 stale_after 是 frontmatter 中写死的固定日期（如 2026-12-31 后过时），适合有明确过期日的知识包（如法规文档）。本审查文档无固定过期日（业务持续即有效），stale_after 不适用——v1.9.0 保留状态指纹（内容 hash 判断）+time_decay（指数衰减）双机制，stale_after 作为"有明确过期日文档"的备选记录；(3) §7.0.5 补 **DataHub docFreshnessInfo verifiedAtVersion 状态指纹机制**——参考 [DataHub PR #19023 2026-08-09](https://github.com/datahub-project/datahub/pull/19023)。当前 §7.0.5 的 Embedded Freshness 闭环是"git commit→hook 触发→识别受影响表→标记文档需重写"的**事件驱动**模式（每次 commit 都触发检查）。但存在盲区：上游表 schema 变更但下游文档未级联标记（git diff 只触发 stock_list 自身文档检查，不传播到依赖它的 kline_daily）。补入 docFreshnessInfo 五字段模型（verifiedAtTime/verifiedAgainstUrns/actor/verificationType/lastVerifiedSchemaHash）+ 状态指纹机制（verifiedAgainstUrns 包含一跳上游 + 联合 hash → 上游 hash 变更→下游联合指纹变更→自动标记 stale，状态驱动补事件驱动）。与 Google OKF v0.2 trust/provenance 模型对比（DataHub 状态指纹+一跳传播 vs OKF 固定日期+无传播），结论：DataHub 状态指纹更适合本审查场景（文档-代码依赖关系明确，需上游传播检测）。封装 `scripts/freshness_fingerprint.py` 输出 `freshness_fingerprint.csv`。不引入 DataHub 平台（§9 已声明，仅借鉴机制）；(4) §3.4 补 **DZone 五种管道级假新鲜失败模式**——参考 [DZone 2026-07-20 "When Data Quality Checks Pass but the Data Is Still Stale"](https://dzone.com/articles/data-freshness-enhances-validity)。§3.4 的"文档腐烂三类"+Model drift 分类都是**漂移发生后的检测**，但 DZone 指出更隐蔽的问题是"管道成功 ≠ 数据新鲜"——五种假新鲜失败模式：(1)源端无新文件→git commit 改无关文件 hook 误判、(2)部分分区到达→一个 commit 改多表但增量更新只标记第 1 张、(3)迟到上游→上游 schema 变更但下游未级联、(4)仪表板缓存→文档已更新但读者本地未 pull、(5)回填覆盖→git revert 恢复了旧版文档。映射到文档-代码同步场景并补强：失败模式 2 补"动态表名追踪"（f-string/变量拼接的表名用 AST 提取字符串字面量）、失败模式 5 补"回滚版本校验"（revert 前检查目标 commit 文档 timeliness 是否低于当前→警告"回滚到更旧文档版本"）。失败模式 1 已由 v0.9.0 DocPilot false-positive filter 覆盖、失败模式 3 已由 v1.9.0 verifiedAtVersion 一跳 lineage 传播覆盖、失败模式 4 非本审查范围（属 git 工作流培训）；(5) §7.0.6 补 **Google OKF v0.2 trust/provenance/attestation 三层验证信任模型+Attested Computation 验证概念**——参考 [itbrief.asia 2026-07-27 Google OKF v0.2](https://itbrief.asia/story/google-adds-trust-provenance-to-open-knowledge-format)。OKF v0.2 的三层验证：(1)trust（generated vs verified 分离——文档是 AI 生成的草案还是人工验证通过）、(2)provenance（来源追溯——记录验证者+验证时间，对齐 §7.0.5 docFreshnessInfo 五字段）、(3)attestation（Attested Computation——验证验证过程本身是否可信，即 L3 抽检是否真执行了规定检查步骤）。补入 generated vs verified 分离（frontmatter verification_status: draft→verified 替代 OKF 知识包 frontmatter 格式）+ Attested L3 抽检清单 4 检查点（关键字段是否在 SQL SELECT 真实出现/下游逻辑计算是否在代码真实执行/消费频率与 tasks.yaml 调度是否一致/依赖上游与 frontmatter depends_on 是否一致——4 检查点全过才 L3 通过，逐项记录 ✅/⚠️ 替代二元"通过/不通过"）。不引入密码学 attestation（OKF v0.2 完整 attestation 用 Sigstore/CLASPIE 密码学签名，适合多方协作开源场景，个人项目无多方信任需求，§9 已记录）；(6) §9 补 2 项不做什么（不引入 Google OKF v0.2 完整工具链——密码学 attestation 基础设施成本超增量价值，仅借鉴 Attested Computation 思想用 L3 抽检清单 4 检查点记录验证过程 / 不引入 DataHub docFreshnessInfo aspect 工具链——docFreshnessInfo 是 DataHub 平台内建 aspect，引入它即引入整个 DataHub，与 §9 已声明"不引入外部数据目录工具"一致，仅借鉴 verifiedAtVersion 状态指纹机制用 git+frontmatter+PowerShell 脚本实现轻量版）。全网搜索验证：[oneuptime.com 2026-01-30](https://oneuptime.com/blog/post/2026-01-30-freshness-slos/view) 验证 Freshness SLO 框架方向+error budget 速度契约、[yutils.jdgrid.com 2026-05-25](https://yutils.jdgrid.com/en/guides/how-slis-and-slos-actually-work) 验证 SLI/SLO 机制、[skillmd.ai 2026](https://www.skillmd.ai/skills/sla-slo-and-sli/) 验证 SLA/SLO/SLI 层级、[itbrief.asia 2026-07-27](https://itbrief.asia/story/google-adds-trust-provenance-to-open-knowledge-format) 验证 OKF v0.2 trust/provenance/attestation 五类信号、[DataHub PR #19023 2026-08-09](https://github.com/datahub-project/datahub/pull/19023) 验证 docFreshnessInfo aspect+verifiedAtVersion 字段、[DZone 2026-07-20](https://dzone.com/articles/data-freshness-enhances-validity) 验证五种假新鲜失败模式。维持 draft（新鲜度度量升级+状态指纹+假新鲜失败模式+验证信任模型算法已完整但待执行验证） |
 | 2026-08-10 | 2.0.0 | 2026-08 最新研究评估闭环：SetGo metadata readiness 工具链评估排除 | **2026-08 全网最新研究评估完整性闭环**（回应"全网搜索最新的 2026 年 8 月今天的最新研究实践算法"+"持续改进不要停下来询问"审查）：(1) §9 补 **SetGo metadata readiness 工具链排除**——参考 [SetGo SSDBM '26 2026-08-11](https://dlnext.acm.org/doi/10.1145/3828820.3828827)（Wilkinson et al.，SSDBM '26 Proceedings of the 38th International Conference on Scalable Scientific Data Management，2026-08-11 出版）。SetGo 是开源 Python 工具包，评估+修复科学数据集的 metadata readiness 六维（FAIR 合规/许可/溯源/治理/可复现/目录就绪），assess→enrich→publish 闭环将 FAIR 分数从 52-57% 提升到 81-91%，发布到 Hugging Face Hub/CKAN/OpenMetadata + ML Commons Croissant 1.0 metadata sidecar，集成 LLM coding agent /setgo skill。六维适用性分析：许可（licensing）不适用（本仓库自采 A 股市场数据无外部 dataset 许可约束）/ 目录就绪（catalog readiness）不适用（无外部目录发布需求，design_memos 即内部目录）/ 可复现（reproducibility）部分相关（数据管道可复现已由 tasks.yaml 调度配置覆盖）→ 3 维不适用或已覆盖。剩余 3 维（FAIR 合规/溯源/治理）已由 §7.0.4 Q score 4 维（completeness/accuracy/specificity/timeliness）+ v1.7.0 ODCS 6 组件（schema/语义/质量/SLA/所有权/变更管理）覆盖。SetGo 面向科学数据集对外发布场景（ERA5 气候/材料/PDB 蛋白质组发布到 HF Hub），本审查是内部市场数据文档覆盖审计无对外发布需求。SetGo 的 assess→enrich 思想已由 §7.0.2 代码反推（assess 代码用法）+ §7.0.1 模板套用（enrich 补文档）+ §7.0.6 L3 抽检（verify）三步覆盖，/setgo LLM agent skill 与 v0.7.0 DocAgent 远期路径同质（LLM 多步调用成本过高，§9 已记录 DocAgent 不当前采纳）。不引入 SetGo 工具链+Croissant 1.0 sidecar（派生产物不入 git 约束）。本版本标志 2026-08 全网最新研究（含 2026-08-11 SetGo + 2026-08-09 DataHub docFreshnessInfo + 2026-08-04 paired-model + 2026-08-02 MTTD/MTTR + 2026-08-06 Innovation-Residual）已全部评估完毕，文档算法体系达到当前时间点的完整性闭环——施工环节流程算法无缺失、选项外无更优算法、2026-08 最新研究已穷尽评估。全网搜索验证：[dlnext.acm.org SSDBM '26 2026-08-11](https://dlnext.acm.org/doi/10.1145/3828820.3828827) 验证 SetGo 六维 metadata readiness+assess→enrich→publish 闭环+FAIR 提升 52-57%→81-91%、[dosu.dev 2026-05-14](https://dosu.dev/blog/score-documentation-freshness-in-ci) 验证 freshness scoring 三信号（已 v1.3.0 覆盖 symbol-level drift）、[WikiMonitor-onto JAAI 2026-07-24](https://www.jaai.net/vol4/JAAI-V4N3-66.pdf) 验证 ontology-aware staleness BFS 传播（已 v0.6.0 覆盖）。维持 draft（算法体系已达完整性闭环，待执行验证） |
+| 2026-08-12 | 2.1.0 | 全量重扫核验修正：三层覆盖口径+真闲置收敛+设施盘点+施工计划重 scope | **2026-08-12 git 提交态全量重扫核验**（七轮审查：现状盘点/方法学/缺失环节/最新研究/过度工程/一致性/规范符合性）：(1) **基数修正**——表数 102→103（`market_stock_valuation` 2026-08-11 commit 81c7687540 新增）、受扫文档 42→46 篇（47 篇编号文档-本备忘自引，新增 60/61/64/65/90/91 等）、字符量 4.59M→5.24M；(2) **三层覆盖口径替代单一文档覆盖率**——消费层 37（35.9%）/规划层 53（51.5%，17/64 号资产清单+下载规范）/零覆盖 13（12.6%）：v0.2.0 的"37.3%"实测即消费层口径（两天稳定），17/64 号带来的规划层引用使任一文档命中口径虚高至 87.4% 但**规划引用≠消费覆盖**（§7.0.6 L2/L3 要求字段/下游逻辑/频率描述），施工目标以消费层为准；(3) **真闲置 3→1 张**（仅 `index_meta` 五源全零）+ 新增 §6.1b"代码零引用但规划已登记"6 张类别（dividend_tax_node 改判 dormant VIEW 免归档/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation 采集未施工标 dormant）——v0.2.0 的 dividend_tax_node/msci_adjustment"真闲置"判定被 17/64 号规划覆盖推翻；(4) **§5 全部数字实测重算**——热度榜（tick 471/technical_indicator 59/trade_calendar 48，通用名 index 假阳性 441 次按全名复核 3 次）、零文档缺口清单 15→12 张（stock_indicator 12 次/cb_iv 7 次/分钟级 K 线 9 张路由映射级）、低频表复核全部转规划层；(5) **§2.4 已施工设施盘点**（通用规则 #11）——被审查对象（103 表 DDL+76 条注册表+15 provider）全部已施工，审查工具链（audit_data_utilization.ps1 等 5 脚本+docs/_audit/ 矩阵）全部未施工，`src/zephyr/data/ingestions/` 目录不存在（§7.5 路径修正为 provider 层+src/zephyr/data/config/tasks.yaml）；(6) **§7 施工计划重 scope**——消费层缺口 59 张（47 规划层代码活跃+12 零覆盖代码活跃），覆盖轨迹 35.9%→44.7%→68.9%→93.2%（终端口径），data_asset_registry 补齐数 26→27 张；(7) **§10 开放问题更新**——Q1 从 3 张收敛为 1 张（index_meta 默认 DEPRECATED 观察期）、新增 Q8（6 张 §6.1b dormant 裁定，AI 默认建议不删不采仅登记）、Q5 核验已登记但 00 号版本字符串/目录计数待同步；(8) **§9 补 2 项不做什么**（不为 53 张规划层覆盖表全部补消费级文档——代码零引用表无消费可反推 / 不追溯复现 v0.2.0 历史扫描数字——扫描输出须落地 CSV 快照）；(9) **v0.2.0 历史数字不可复现声明**——其逐表计数以未提交工作区为扫描对象（如 block_trade 52 次/5 文档 vs 实测 7 次/2 文档），教训：审计扫描输出必须入 git 快照。全网搜索验证：[modern-datatools.com 2026-04 Data Baselining](https://www.modern-datatools.com/blog/data-baselining-warehouse-lifecycle-2026) 三层基线法（生命周期策略→使用量清理→团队 ritual）验证盘点-分层路径 + "20% 表活跃查询"企业常态反衬 99.0% 利用率健康、[heth.ink 可转债量化](https://heth.ink/ConvertibleBonds/) 双低/隐波差因子 2022 后系统性衰退佐证 cb_iv 降权合理、[Fidelity 可转债套利](https://institutional.fidelity.com/app/proxy/content?literatureURL=/9912569.PDF) gamma trading 需做空正股不适用于 T+1 无融券约束（§6.2 批次 B cb_iv 仅记录不施工佐证）。**施工执行插曲**：本版回填过程中遭遇并发会话 stash 隔离清空暂存区事故，全部修改经 dangling blob（f34adb8b）字节级恢复——教训已记入 project_memory 同级灾难模式（git add 快照是最小保护层）。维持 draft（Q1/Q8 待人裁定 + 三波施工未执行） |
