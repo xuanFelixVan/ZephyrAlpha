@@ -5,8 +5,8 @@ title: 模拟与实盘验证路径
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.6"
-date: 2026-08-10
+version: "1.7.0"
+date: 2026-08-12
 topic: simulation_live_path
 scope: 07_trading_decision_architecture
 ---
@@ -16,7 +16,7 @@ scope: 07_trading_decision_architecture
 > 本备忘定义策略从回测通过到全资金实盘的模拟验证与灰度上线路径，是 [20_first_batch_strategies](20_first_batch_strategies.md) §4.4 灰度指引的"具体 schedule 与执行"展开。
 > 性质：**已定稿（v1.0.0，2026-08-10）**，作为策略模拟实盘迁移的对接指南。
 > 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G24。
-> 关联：[52_backtest_framework_docking](52_backtest_framework_docking.md)（G23 上游，回测通过是模拟实盘前置）｜ [20_first_batch_strategies](20_first_batch_strategies.md) §4.4（灰度上游指引）
+> 关联：[52_backtest_framework_docking](52_backtest_framework_docking.md)（G23 上游，⚠️骨架 draft v0.1.0 待讨论——回测门控当前真源为代码 `backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)，回测通过是模拟实盘前置）｜ [20_first_batch_strategies](20_first_batch_strategies.md) §4.4（灰度上游指引，active v1.2.4）
 
 ## 1. 主题组信息
 
@@ -24,7 +24,7 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G24 模拟与实盘验证路径 |
 | 所属 | 作战地图 04 |
-| 依赖 | G23（回测通过，[52_backtest_framework_docking](52_backtest_framework_docking.md) IS→WFA→OOS 门控放行） |
+| 依赖 | G23（回测通过；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架 draft v0.1.0 待讨论，IS→WFA→OOS 门控当前真源为代码 `backtest/core/decision_gate.py`） |
 | 对标 | 机构 paper trading → 小资金 → 全量 / nexusfi 2026 门控部署管线 / `paper_live_transition.py` 已实现三阶段 |
 | 正交性 | ✅ 与 regime 正交（迁移路径不依赖 regime，regime 只影响 budget 缩放） |
 | 优先级 | P4 |
@@ -37,8 +37,8 @@ scope: 07_trading_decision_architecture
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1 结算，不能做空，涨跌停限制）。
 - **⚠️ 2026-07-06 miniQMT 通道变更**（[miniqmt.com](https://www.miniqmt.com/) 2026-07-07 声明）：miniQMT 已全面停止新申请，存量用户暂可用但后期逐步停止服务。新项目应直接基于完整版 QMT（20 日日均资产 50 万门槛）。本备忘以 miniQMT 为例描述，迁移路径同样适用于 QMT——策略代码（.py/.json）可迁移，但权限/配置/程序化报备不继承，换券商须重新装包+订阅行情+跑 3-5 个交易日验证数据对齐（[licai.cofool](https://licai.cofool.com/ask/qa_7397791_1_2.html) 2026-07-30 QMT 迁移 SOP）。
 - **⚠️ 2026-07-07 A 股程序化交易新规全面执行**（[CSDN syp1110](https://blog.csdn.net/syp1110/article/details/163276625) 2026-08-08）：高频认定每秒申报从 300 笔骤降至 **15 笔**、单日总撤单率 ≤**15%**、每笔报单停留 ≥**50 微秒**、暂停新增独立交易单元。**影响**：GRAY_RAMP 的加仓节奏必须适配 TWAP/VWAP 拆单（[40_execution_broker](40_execution_broker.md) G22 已建 6 种算法），纯速度套利失效（超额收益从 14% 回落至 3%），转向中低频多因子——**反而利好个人 AI 开发者**（研究与算法成为核心竞争力）。
-- 回测框架已建成（[52_backtest_framework_docking](52_backtest_framework_docking.md) G23，BM-BT-01~07 + 3 阶段门控 IS→WFA→OOS），策略回测通过后须进入模拟实盘验证。
-- 灰度上游指引已定（[20_first_batch_strategies](20_first_batch_strategies.md) §4.4，v1.4.4）：回测验证 → 模拟盘（≥6 月）→ 小资金实盘（≥6 月）→ 全资金实盘，但"具体 schedule 与执行在 G24"——即本备忘。
+- 回测框架代码已建成（`src/zephyr/backtest/` 域 + `backtest/core/decision_gate.py` IS→WFA→OOS 门控 + 参数悬崖检测 + `monitor_backtest_live_deviation`；环节视图见 [battle_map_03](../battle_map/battle_map_03_backtest_validation.md) BM-BT-01~07；⚠️ [52_backtest_framework_docking](52_backtest_framework_docking.md) 设计备忘为 draft v0.1.0 骨架待讨论，G23 的 why 层未定稿），策略回测通过后须进入模拟实盘验证。
+- 灰度上游指引已定（[20_first_batch_strategies](20_first_batch_strategies.md) §4.4，active v1.2.4）：回测验证 → 模拟盘（≥6 月）→ 小资金实盘（≥6 月）→ 全资金实盘，但"具体 schedule 与执行在 G24"——即本备忘。
 - 迁移门禁代码已实现：`src/zephyr/governance/lifecycle_governance/paper_live_transition.py`（MOD-GOVERNANCE，production）定义三阶段 PARALLEL → SHADOW → GRAY_RAMP，阶段不可跳级，各阶段有明确 key_gates。
 - 市场仿真域已建（[71_d_simulation](../../02_domain_architecture_docs/71_d_simulation.md) 15 模块 + [battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md) 7 环节），但**市场仿真（what-if 假设场景）≠ 模拟盘（paper trading，真实行情模拟执行）**——两者易混，本备忘须澄清。
 
@@ -53,6 +53,29 @@ scope: 07_trading_decision_architecture
 - 个人 + AI 开发 → 迁移路径须自动化门禁（`paper_live_transition.py` 已实现 valid_transition 强制顺序），减少人工判断负担。
 - 首批 3 策略差异化（打板小容量/多因子主资金/事件驱动中）→ 各 sleeve 独立灰度，不强制同步（[20_first_batch_strategies](20_first_batch_strategies.md) §4.4）。
 
+### 2.4 已施工设施盘点
+
+> 通用规则 #11：先清楚有什么 → 才能知道怎么改 → 才能知道该删除/退役什么。本节盘点与本备忘主题（模拟→实盘迁移）相关的全部已建设施与配套（代码验证 2026-08-12）。
+
+| 设施 | 路径 / 位置 | 施工状态 | 与本备忘关系 |
+|---|---|---|---|
+| 三阶段迁移门禁 | `src/zephyr/governance/lifecycle_governance/paper_live_transition.py`（MOD-GOVERNANCE） | ✅ production（⚠️回退逻辑未实现，§3.8 设计伪代码待施工） | 本备忘核心承载：PARALLEL/SHADOW/GRAY_RAMP + key_gates + valid_transition 不可跳级 + TransitionState 持久化 |
+| 回测门控 + 偏差监控 | `src/zephyr/backtest/core/decision_gate.py` | ✅ production | IS→WFA→OOS 门控 + 参数悬崖检测 + `monitor_backtest_live_deviation`（warn>30%/retire>50%，§3.5 触发条件代码真源） |
+| rolling DSR | `src/zephyr/simulation/deflated_sharpe_calculator.py`（MOD-SIM-024） | ✅ production | §3.4 half-sized 晋级门禁（rolling DSR 确认信号稳定） |
+| 滑点分析（square-root） | `src/zephyr/ex_sor/services/slippage_analyzer.py`（`SquareRootImpactPredictor` coeff=0.142） | ✅ production | §3.2 撮合 Step③ 滑点建模 + §3.5 滑点偏差归因（BM-BT-05-H-A） |
+| 执行质量打分 | `src/zephyr/ex_sor/services/execution_quality_scorer.py` | ✅ production | §3.5 延迟差异归因（BM-BT-05-H-D） |
+| 前瞻偏差检测 | `src/zephyr/simulation/look_ahead_bias_detector.py`（MOD-SIM-022） | ✅ production | §3.5 信号一致性归因（BM-BT-05-H-C 数据层金标准） |
+| 盘后结算对账 | `src/zephyr/trading/settlement_reconciliation.py`（MOD-TRADING-003） | ✅ production | §3.5 `settlement_match 100%` 门禁承载（54 号 G25 对账执行算法） |
+| 盘中持仓对账 | `src/zephyr/ex_core/position_reconciler.py`（MOD-EX-056） | ✅ production | §3.5 执行对账复用（每 5min 盘中持仓对账） |
+| 回测费率配置 | `backtest/implementations/vectorized_engine.py`（`commission_rate` 万三默认）+ `event_driven_engine.py` | ✅ production | §3.2 撮合 Step④ 佣金/印花税/过户费复用（paper 撮合同一费率常量） |
+| 执行层硬约束 | `ex_core/`（order_manager / price_cage 价格笼子 / cancel_rate_guard 撤单率 / board_lot 整手） | ✅ production（40 号 G22 已建） | §3.2 撮合 Step①②⑤ 复用（信号→订单/涨跌停排队规则/拆单） |
+| 市场仿真域 | `simulation/`（risk_simulator / result_analyzer / scenario_generator 等 15 模块，[71_d_simulation](../../02_domain_architecture_docs/71_d_simulation.md)） | ✅ 15 模块全 production | §3.2 市场仿真（what-if）≠ paper trading——并行非必经（BM-SIM-01~07；⚠️BM-SIM-05 数字孪生已降级 #ARCH-OE-010，BM-SIM-01 市场仿真器缺失态） |
+| 四模式开关 | [battle_map_12](../battle_map/battle_map_12_cross_cutting.md) §四模式开关（回测/Paper/Shadow/实盘） | 设计态（横切条目） | §3.5 sim↔live divergence 监控的模式基础（四模式决策逻辑同构） |
+| Ghost Position 兜底 | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.5.1（active v1.37.0） | ⚠️架构已设计，`detect_ghost_positions` 代码待施工（其 §6.11） | §3.5 Ghost Position 运营风险——SHADOW `settlement_match 100%` 隐含检测要求 |
+| 降级/回退 5 态状态机 | 本备忘 §3.8（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING） | ⚠️设计规范伪代码，代码待施工 | §3.8 回退程序执行算法（单向更保守 + fail-closed + Hysteresis） |
+| 涨跌停排队撮合 | 待新建（`slippage_analyzer` 仅滑点归因无排队） | ❌ 待施工 | §3.2 撮合 Step②（paper matching 引擎排队逻辑） |
+| MLflow 实验追踪 | [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（draft v1.0.2）+ `src/zephyr/experiment_tracking/` | 代码已有（config/models/query），体系工作计划 draft | §4.4/§5.2 远期演进项的多 regime 数据积累依赖 |
+
 ## 3. 决策
 
 ### 3.1 核心决策：三阶段迁移 PARALLEL → SHADOW → GRAY_RAMP，对齐 20 号 §4.4 四阶段
@@ -61,7 +84,7 @@ scope: 07_trading_decision_architecture
 
 | 20 号 §4.4 四阶段 | 代码三阶段 | 阶段机制 | 关键门禁（key_gates） |
 |---|---|---|---|
-| ① 回测验证（G23） | —（前置，非迁移阶段） | IS→WFA→OOS 门控放行 | 见 [52_backtest_framework_docking](52_backtest_framework_docking.md) §3.4 |
+| ① 回测验证（G23） | —（前置，非迁移阶段） | IS→WFA→OOS 门控放行 | 见 [battle_map_03](../battle_map/battle_map_03_backtest_validation.md) BM-BT-07 + 代码 `backtest/core/decision_gate.py`（[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架待讨论） |
 | ② 模拟盘（paper，≥6 月） | **PARALLEL** 并行运行（30 天机制下限） | Paper 与 Live 并行，比较所有信号与执行质量 | signal_match ≥ 99.9% / slippage_diff < 1bp / fill_rate ≥ 99% |
 | ③ 小资金实盘（≥6 月） | **SHADOW** 影子账户（14 天）+ **GRAY_RAMP** 前期（1%→5%→20%） | 小额真实资金运行影子账户，验证执行链路与结算；随后逐级放大 | shadow_pnl_corr ≥ 0.95 / settlement 100% / latency < 100ms；ramp 步 drawdown < 1% |
 | ④ 全资金实盘 | **GRAY_RAMP** 后期（50%→100%） | 逐级放大至全量 | daily_loss < 3% / 无 circuit_breaker 触发 |
@@ -77,7 +100,7 @@ scope: 07_trading_decision_architecture
 | 性质 | 真实行情模拟执行（不下单） | 假设场景 what-if（造假市场） |
 | 数据 | 实时 live 数据 | 生成/重放/蒙特卡洛路径 |
 | 用途 | 验证系统端到端 + 执行链路 + 运营 | 探策略边界 + 压力测试 + 极端场景 |
-| 阶段 | 回测后、实盘前（PARALLEL 阶段） | 回测后、可并行于 paper（BM-SIM-01~06） |
+| 阶段 | 回测后、实盘前（PARALLEL 阶段） | 回测后、可并行于 paper（BM-SIM-01~07） |
 | 代码 | paper_live_transition PARALLEL + 策略沙箱 | D_SIMULATION 域 15 模块（scenario_generator / risk_simulator 等） |
 
 **paper trading 环境定义**（对齐 referentiallabs 2026 / x3algo）：
@@ -92,7 +115,7 @@ scope: 07_trading_decision_architecture
 | ① 信号→订单 | 策略 target_portfolio → 订单列表（含 direction/qty/price/type） | T+1 卖出校验：检查持仓买入日期，T 日买入 T+1 才能卖 | [40_execution_broker](40_execution_broker.md) §2.4 + OrderManager |
 | ② 涨跌停撮合 | 涨停板仅撮合 bid 队列（限价单按时间优先排队）、跌停板仅撮合 ask 队列；触及涨跌停的市价单转为限价单排队 | A 股 10%/20%/30%（创业板/科创板/ST）三档涨跌停 | paper matching 引擎须新建排队逻辑（`slippage_analyzer` 仅做滑点归因无排队）；排队规则对齐 [40_execution_broker](40_execution_broker.md) §2.4 OrderManager |
 | ③ 滑点建模 | 决策价 → 成交价加滑点：linear/square-root/Almgren-Chriss 模型；参与率 > 5% 触发冲击成本非线性放大 | A 股小盘股 5% 滑点（[BigQuant 2026-03](https://bigquant.com/wiki/doc/muD2XDiJRG) 实证）须建模 | `ex_sor/slippage_analyzer`（BM-BT-05-H-A） |
-| ④ 佣金/印花税/过户费 | 佣金 ≤ 0.03%（双边）/ 印花税 0.05%（卖单）/ 过户费 0.001%（双边） | A 股费率硬编码，过户费仅沪深交易所 | CorporateActionProcessor（MOD-TRADING-004） |
+| ④ 佣金/印花税/过户费 | 佣金 ≤ 0.03%（双边）/ 印花税 0.05%（卖单）/ 过户费 0.001%（双边） | A 股费率硬编码，过户费仅沪深交易所 | backtest 引擎费率配置（`backtest/implementations/vectorized_engine.py` `commission_rate` 万三默认 + `event_driven_engine.py`），paper 撮合复用同一费率常量；⚠️ v1.6.6 前误引 CorporateActionProcessor（MOD-TRADING-004）——该类不存在且公司行动（分红送股）≠费率，已修正 |
 | ⑤ 部分成交 | 大单按 TWAP/VWAP 拆单，逐笔模拟部分成交；未成交订单按 5/10/30 分钟超时转限价或撤销 | 适配 2026-07 新规 15 笔/秒 + 15% 撤单率 | [40_execution_broker](40_execution_broker.md) §2.4 拆单算法 |
 
 > **撮合算法公式补全**（v1.6.1 补，代码验证 `slippage_analyzer.py` `SquareRootImpactPredictor` + 2026-08 研究）：上表 5 步仅列 what，以下补 how（伪代码/公式/参数）——
@@ -203,7 +226,7 @@ scope: 07_trading_decision_architecture
 > ```
 > **与 §3.2 square-root 模型的关系**：两者同源（sqrt market impact），公式形式不同——§3.2 用 `order_size/ADV` 参与率，citrusquant 用 `|Δw|×notional/dollar_volume` 权重变化率；后者更贴近组合权重再平衡场景（rebalance-driven），前者更贴近单笔订单场景（order-driven）。**裁定**：MVP 用 §3.2 的 `SquareRootImpactPredictor`（已实现，参与率形式），citrusquant 形式记为 v2.0 候选（若未来从 order-level 升级到 portfolio-rebalance-level 撮合时评估采纳）；acceptance criteria 四条（单调性/fallback/sign symmetry/向后兼容）是通用工程验收标准，适用于本项目 slippage_analyzer 的任何 sqrt 模型变更。
 >
-> **撮合引擎复用原则**：不重造撮合引擎——复用 `ex_sor/slippage_analyzer` + [40_execution_broker](40_execution_broker.md) OrderManager + CorporateActionProcessor 的现成逻辑，paper trading 只是在"不送真实订单"前提下复用同一撮合代码路径。这是 paper-live parity 的工程保证（同一代码路径 = 同一撮合行为 = 模拟与实盘可对账）。
+> **撮合引擎复用原则**：不重造撮合引擎——复用 `ex_sor/slippage_analyzer` + [40_execution_broker](40_execution_broker.md) OrderManager + backtest 引擎费率配置（`vectorized_engine.py` / `event_driven_engine.py` 的 commission_rate 常量）的现成逻辑，paper trading 只是在"不送真实订单"前提下复用同一撮合代码路径。这是 paper-live parity 的工程保证（同一代码路径 = 同一撮合行为 = 模拟与实盘可对账）。
 >
 > **EvoMarket T+1 native 模拟器参考**（v1.6.4 补，[arXiv:2604.18046](https://arxiv.org/abs/2604.18046) Zhong/Yang/Liu/Tang/Yang 2026-04 哈工大/南科大）：首个明确将 A 股 **T+1 结算、涨跌停限制、开盘集合竞价、市场日历**作为一等公民建模的开源离散事件多智能体模拟器。高吞吐量执行核心（优化 LOB 数据结构 + 传播延迟分层调度 + 异步 per-asset 撮合）+ Oracle 引导纠正性订单合成自校准。**对本项目 §3.2 撮合算法的验证价值**：① §3.2 五步撮合算法（T+1 校验/涨跌停排队/滑点建模/费率/部分成交）可对照 EvoMarket 的 A 股 native 机制建模核验——若本项目撮合引擎在 T+1 结算/涨跌停排队/集合竞价任一环节与 EvoMarket 存在行为差异，须排查是否遗漏 A 股硬约束；② EvoMarket 的"异步 per-asset 撮合"架构可参考——本项目多标的并行撮合时，各标的 LOB 独立推进避免交叉影响；③ **裁定**：MVP 不引入 EvoMarket（复用原则——不重造撮合引擎），但登记为**T+1 native 撮合行为验证基准**——SHADOW 阶段若发现 paper-live 撮合行为差异，可用 EvoMarket 作交叉验证环境排查根因。登记为远期候选（Phase 2+，SHADOW 阶段首次校准后评估）。
 
@@ -221,7 +244,7 @@ scope: 07_trading_decision_architecture
 - **机制层（天数下限）**：PARALLEL 满 30 天且 key_gates 全通过，方可申请晋级 SHADOW（`elapsed_days` 达标）。
 - **统计层（交易笔数地板）**：PARALLEL 期间累计 ≥30 笔交易（[AlphaFactory G2.2](https://github.com/ShellPayant/AlphaFactory/blob/main/docs/graduation_criteria.md) 2026-05 ratified 统计地板——低于此任何指标都是噪声）。打板 sleeve 高换手易达；多因子低换手须延长观察至达标。
 - **观察层（保守期上限）**：A 股 + 小资金 + AI 开发取保守，须再观察至累计 ≥6 月（覆盖牛/熊/震荡多 regime，对齐 [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) 验证区间 2015-2026 的多周期思路），且 PnL 偏离回测预期 ≤30%（[20_first_batch_strategies](20_first_batch_strategies.md) §4.4 阈值；>30% 须调查后再推进）。
-- **MinTRL 统计依据**（[purgedcv](https://pypi.org/project/purgedcv/) `min_track_record_length`，[52_backtest_framework_docking](52_backtest_framework_docking.md) §3.6）：建立 SR 所需最小观测数——天数之外补"足够交易笔数"的统计地板，避免"30 天但只 3 笔交易"的假达标。
+- **MinTRL 统计依据**（[purgedcv](https://pypi.org/project/purgedcv/) `min_track_record_length`；DSR/MinTRL 代码真源 `src/zephyr/simulation/deflated_sharpe_calculator.py` MOD-SIM-024 production）：建立 SR 所需最小观测数——天数之外补"足够交易笔数"的统计地板，避免"30 天但只 3 笔交易"的假达标。
 - **理由**：行业 2-4 周偏短（美股 swing 语境，A 股 T+1 + 涨跌停 + 小资金需更长捕获极端事件）；20 号 ≥6 月保守合理但须有机制下限 + 交易笔数地板避免"天数到了但样本不足"的假达标。
 
 ### 3.4 讨论要点③：实盘小资金验证路径
@@ -233,9 +256,9 @@ scope: 07_trading_decision_architecture
   - **SHADOW 三不原则**（[NeuraTrade #260](https://github.com/) 2026 + [Reversal 3.5](https://github.com/randomwalkhan/Short-Term-Reversal-Strategy) 2026-08-07 实证）：shadow NEVER places real orders（不下真实单）/ NEVER blocks live（不阻断实盘）/ NEVER self-promotes（不自动晋级）。当 live underperformance 时回退到 shadow-only（Reversal 3.5 实战：live-paper 表现不佳→早期入场执行改为 shadow-only）。
 - **GRAY_RAMP 灰度放大**（30 天机制下限，5 级 ramp）：逐级放大仓位 1% → 5% → 20% → 50% → 100%。每级 ramp 步门禁：`drawdown < 1%`、`daily_loss < 3%`、无 `circuit_breaker` 触发。`ramp_up(step_percent)` 逐级累加，任一级触发熔断即停止放大（对齐 nexusfi 2026 kill switch 机制）。
   - **每级观察期**（代码验证 `paper_live_transition.py` L56-62 可配置但未明确默认值，本备忘裁定）：**每级最小观察期 7-14 天 + 累计机制下限 30 天**。前两级（1%→5%）每级 7 天（小仓位风险低，快速验证）；后三级（20%→50%→100%）每级 14 天（大仓位须充分观察）。[Pomegra 2026](https://pomegra.io/learn/library/track-e-trading-risk/technical-analysis/chapter-15-building-a-simple-ta-based-system/forward-testing-and-paper-trading) 三档微阶梯替代方案：每档 10 笔交易（0.5%→1%→2% 风险），适合更精细控制——记为 v2.0 备选。
-  - **half-sized live 晋级**（[20_first_batch_strategies](20_first_batch_strategies.md) §4.4 + [QuantHedgeAI 2026-07](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)）：GRAY_RAMP 的 20%→50% 区间即 half-sized live，须跑 **rolling DSR**（[52_backtest_framework_docking](52_backtest_framework_docking.md) §3.6 calculator 已就绪）确认信号稳定 + **≥6 月 half-sized track record** 后才放大至 100%。QuantHedgeAI 明确"half-sized live: 50% 设计权重，≥6 月且 rolling DSR 确认后晋升"。
+  - **half-sized live 晋级**（[20_first_batch_strategies](20_first_batch_strategies.md) §4.4 + [QuantHedgeAI 2026-07](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)）：GRAY_RAMP 的 20%→50% 区间即 half-sized live，须跑 **rolling DSR**（DSR calculator 代码真源 `src/zephyr/simulation/deflated_sharpe_calculator.py` MOD-SIM-024 production 已就绪；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架待讨论）确认信号稳定 + **≥6 月 half-sized track record** 后才放大至 100%。QuantHedgeAI 明确"half-sized live: 50% 设计权重，≥6 月且 rolling DSR 确认后晋升"。
 
-> 对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §4.4"小资金实盘（half-sized live，≥6 月）：rolling DSR 确认信号稳定"——GRAY_RAMP 的 20%→50% 区间即 half-sized live，须跑 rolling DSR（Deflated Sharpe，[52_backtest_framework_docking](52_backtest_framework_docking.md) §3.6 calculator 已就绪）确认信号稳定后才放大至 100%。
+> 对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §4.4"小资金实盘（half-sized live，≥6 月）：rolling DSR 确认信号稳定"——GRAY_RAMP 的 20%→50% 区间即 half-sized live，须跑 rolling DSR（Deflated Sharpe，代码真源 `src/zephyr/simulation/deflated_sharpe_calculator.py` MOD-SIM-024 production 已就绪）确认信号稳定后才放大至 100%。
 
 **Capacity 监控**（[nexusfi 2026-06](https://nexusfi.com/a/automation/algo-trading-live-deployment) + [QuantConnect LEAN 2026](https://www.quantconnect.com/docs/v2/lean-engine/statistics/capacity) + [Linitics 2026-04](https://linitics.com/quant-liquidity/)）：GRAY_RAMP 逐级放大须感知**策略容量**——最大可持续仓位（不退化执行质量）。
 
@@ -298,7 +321,7 @@ scope: 07_trading_decision_architecture
 >
 > **3 态 Kill Switch**（oh-my-opentrade 2026-04）：ACTIVE（正常运行）/ HALTED（平仓+阻止新入场）/ REDUCING（优雅降级，仅减仓不新建）。REDUCING 态比二元 HALT 更精细，对应 GRAY_RAMP 的"降档"逻辑。
 >
-> **触发条件**：`daily_loss ≥ 3%` / `circuit_breaker` / 回测-实盘 Sharpe 偏差 `retire`（[52_backtest_framework_docking](52_backtest_framework_docking.md) `monitor_backtest_live_deviation` 偏差 >50%）/ `session DD ≤ −1.25%` / `日 DD ≤ −2.0%`（[fxmacrodata 2026-05](https://fxmacrodata.com/zh/articles/kill-switch-framework-for-ai-fx-bots) AI 特有阈值）。
+> **触发条件**：`daily_loss ≥ 3%` / `circuit_breaker` / 回测-实盘 Sharpe 偏差 `retire`（代码真源 `backtest/core/decision_gate.py` `monitor_backtest_live_deviation` 偏差 >50%，warn >30%）/ `session DD ≤ −1.25%` / `日 DD ≤ −2.0%`（[fxmacrodata 2026-05](https://fxmacrodata.com/zh/articles/kill-switch-framework-for-ai-fx-bots) AI 特有阈值）。
 >
 > **独立性要求**：Kill switch 是"最后安全网"，须独立于策略进程（策略 crash 时仍能触发），miniQMT/QMT 通道须落地**独立心跳看门狗**。代码验证 `paper_live_transition.py` L31-37：**回退逻辑未在代码中实现**，须外部代码落地——本备忘 §3.8 降级/回退程序为设计指导，标注"待施工"。
 >
@@ -306,7 +329,7 @@ scope: 07_trading_decision_architecture
 >
 > **A 股开源参考实现**（[mx-risk-guard v0.1.0](https://github.com/27dream/mx-risk-guard) 27dream 2026-06-15）：券商无关的 A 股交易机器人风控引擎，纯 Python 规则护栏（不依赖 LLM），可作为本项目 kill switch 的工程参考——内置规则：`SinglePositionRule`（单股市值>total×max_pct→减仓）、`DailyLossCircuitBreaker`（当日盈亏≤-max_loss_pct→全部清仓）、`DrawdownStopLoss`（持仓浮亏≤-max_drawdown_pct→强平）、`BlacklistRule`（黑名单→立即清仓）。本项目 kill switch 须在此基础上扩展 4 级梯子（Throttle→Cancel-all→Block→Flatten）+ REDUCING 态，但 mx-risk-guard 的"纯规则、券商无关、独立于策略层"设计哲学可直接借鉴。
 >
-> **Ghost Position 运营风险**（[nexusfi Emergency Protocols 2026-06-01](https://nexusfi.com/a/automation/automated-trading-emergency-protocols)）：Ghost position = 平台显示持仓但券商无此持仓（或反之）——是最危险的自动化交易失败模式之一，因平台持仓跟踪驱动后续下单逻辑。若策略以为"多 2 手"但券商实际 flat，下一笔买入信号触发→加倍了一个不存在的仓位→实际多 4 手但系统毫不知情。nexusfi 实证案例：FOMC 日 kill switch 触发后 CME 拒绝市价单，14 手 ES 无自动退出逻辑运行。**对本项目**：[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) v1.2.0 已建 Ghost Position 4 层兜底（含盘中循环+复位端到端），SHADOW 阶段须验证 ghost position 检测在 miniQMT 通道下端到端可达——这是 SHADOW `settlement_match 100%` 门禁的隐含要求（结算不一致可能是 ghost position 的表现）。
+> **Ghost Position 运营风险**（[nexusfi Emergency Protocols 2026-06-01](https://nexusfi.com/a/automation/automated-trading-emergency-protocols)）：Ghost position = 平台显示持仓但券商无此持仓（或反之）——是最危险的自动化交易失败模式之一，因平台持仓跟踪驱动后续下单逻辑。若策略以为"多 2 手"但券商实际 flat，下一笔买入信号触发→加倍了一个不存在的仓位→实际多 4 手但系统毫不知情。nexusfi 实证案例：FOMC 日 kill switch 触发后 CME 拒绝市价单，14 手 ES 无自动退出逻辑运行。**对本项目**：[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.5.1（active v1.37.0）已设计 Ghost Position 4 层兜底架构（⚠️`detect_ghost_positions` 检测代码待施工，见其 §6.11），SHADOW 阶段须验证 ghost position 检测在 miniQMT 通道下端到端可达——这是 SHADOW `settlement_match 100%` 门禁的隐含要求（结算不一致可能是 ghost position 的表现）。
 
 **每指标可接受差异带**（[x3algo 2026](https://www.x3algo.com/docs/tutorials/paper-to-live-transition) industry benchmark + [Bharath 2026-04](https://bharathshiksha.com/articles-html/08-paper-trading-to-live-capital) 2 标准误标准）：key_gates 是硬门禁（过/不过），差异带是软告警（调查/放行）——
 
@@ -385,13 +408,13 @@ scope: 07_trading_decision_architecture
 
 | 设计原则 | 本项目落地 | 施工状态 |
 |---|---|---|
-| **rolling_monitor**（滚动表现监控→连续差自动降权/下线） | [55_monitoring_review](55_monitoring_review.md) G26 + §3.5 漂移检测 | ✅ v1.0.0 |
-| **multi_strategy**（多策略并行，无"皇冠策略"） | [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A 独立账本 | ✅ v1.4.0 |
+| **rolling_monitor**（滚动表现监控→连续差自动降权/下线） | 本备忘 §3.5 漂移检测 + [55_monitoring_review](55_monitoring_review.md)（G26，⚠️骨架 draft v0.1.0 待讨论，定型后承接监控告警联动） | ✅ 本备忘承载 |
+| **multi_strategy**（多策略并行，无"皇冠策略"） | [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A 独立账本 | ✅ active |
 | **candidate_pipeline**（持续新策略候选池） | [20_first_batch_strategies](20_first_batch_strategies.md) G11 第二批次（暂缓） | draft |
-| **regime_switch**（内置风格切换识别） | [10_regime_detector_spec](10_regime_detector_spec.md) G02 + [34_regime_meta_allocator](34_regime_meta_allocator.md) G15 | ✅ v1.4.0 |
+| **regime_switch**（内置风格切换识别） | [10_regime_detector_spec](10_regime_detector_spec.md) G02 + [34_regime_meta_allocator](34_regime_meta_allocator.md) G15 | ✅ active |
 | **pause_if_underperform**（连续 N 月跑输→暂停） | §3.5 退役决策矩阵 LuxAlgo 三档 | ✅ v1.2.0 |
 | **pause_if_drawdown_breach**（回撤超历史最大→暂停） | §3.5 DD 1.5-2× 触发审查 | ✅ v1.2.0 |
-| **alert_if_ic_drops**（信号 IC 大幅下降→警报） | [25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) G09 衰减监控三层 | ✅ v1.1.0 |
+| **alert_if_ic_drops**（信号 IC 大幅下降→警报） | [25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) G09 衰减监控三层 | ✅ active |
 
 > **AI 不是策略失灵的解药**（CSDN 2026-08-07）：AI 学的是历史模式，依然受限于"过去不代表未来"；AI 训练数据若有过拟合，结果只会**更隐蔽地**过拟合；AI 学到的"规律"若被大家用，一样被市场套利掉。**对本项目的警示**：100% AI 开发模式下，AI 既是策略生成者也是策略失效源——G28 [61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) 的 Champion-Challenger + 自动退役机制是必须项而非可选项。
 
@@ -408,7 +431,7 @@ scope: 07_trading_decision_architecture
 | **市场前提不再成立** | — | **Retire** | LuxAlgo 2026-08 |
 | **策略生命周期** | **68% 策略在 18-24 月内需重大修改或退役** | 定期审查 | DeepTradeX 2026-07 |
 
-> **三档退役响应**（LuxAlgo 2026-08-03）：①**Reoptimize**（参数平原稳定、逻辑契合当前 regime、扣成本后 edge 存活）→ 回 [52_backtest_framework_docking](52_backtest_framework_docking.md) G23 重新调参；②**Pause+Cut Size**（证据混合、expectancy 近 $0、DD 超常但可辩护）→ 降级回 GRAY_RAMP 上一级或 SHADOW；③**Retire**（OOS expectancy 转负、WFA 反复失败、成本抹平 edge、原始前提失效）→ 直接退役回 G23。**先减半仓而非直接停**（ArrowAlgo 2026-05）。滚动窗口：30-50 笔交易早期预警，100+ 笔确认。
+> **三档退役响应**（LuxAlgo 2026-08-03）：①**Reoptimize**（参数平原稳定、逻辑契合当前 regime、扣成本后 edge 存活）→ 回 G23 回测迭代（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md) BM-BT-07；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架待讨论）重新调参；②**Pause+Cut Size**（证据混合、expectancy 近 $0、DD 超常但可辩护）→ 降级回 GRAY_RAMP 上一级或 SHADOW；③**Retire**（OOS expectancy 转负、WFA 反复失败、成本抹平 edge、原始前提失效）→ 直接退役回 G23。**先减半仓而非直接停**（ArrowAlgo 2026-05）。滚动窗口：30-50 笔交易早期预警，100+ 笔确认。
 
 ### 3.6 讨论要点⑤：上线决策门控
 
@@ -422,7 +445,7 @@ PARALLEL (0) → SHADOW (1) → GRAY_RAMP (2) → 全量上线(ramping_percentag
 ```
 
 - **晋级条件**：当前阶段 `elapsed_days` 达机制下限 **且** key_gates 全通过 **且**（观察期层）累计达标——三者同时满足方可 `get_next_phase()` 晋级。
-- **降级/回退**：任一 ramp 步触发 circuit_breaker / daily_loss 超限 → 停止放大，回退至上一级 ramp 或回退 SHADOW；持续异常 → 回退 [52_backtest_framework_docking](52_backtest_framework_docking.md)（G23）继续回测迭代（对齐 [battle_map_03](../battle_map/battle_map_03_backtest_validation.md) BM-BT-08 试运行与验证：试运行失败→回退 BM-BT-07）。
+- **降级/回退**：任一 ramp 步触发 circuit_breaker / daily_loss 超限 → 停止放大，回退至上一级 ramp 或回退 SHADOW；持续异常 → 回退 G23 回测迭代（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架待讨论）继续迭代（对齐 battle_map_03 BM-BT-08 试运行与验证：试运行失败→回退 BM-BT-07）。
 - **审计**：`TransitionState` 持久化 current_phase / started_at / ramping_percentage，留好审计凭证（对齐 BM-BT-07-C BacktestRunArtifact 持久化纪律）。
 
 > **Promotion Gate 工程参考**（[quant-live-readiness-kit v0.1.0](https://github.com/cyangIIT/quant-live-readiness-kit) cyangIIT 2026-04-23）：开源 Python 工具包，提供 YAML 驱动的 promotion gate 评分器——checklist 含 booleans + thresholds + manual sign-off 三类条目，输入 metrics 输出 PASS/WARN/HALT。其 `qlrk gate` 子命令可直接作为本备忘 §3.6 三条件（机制+门禁+观察）的工程参考实现。配套 freeze manifest（config/git/flag 快照 + hash）+ contamination detection（结构性 diff 检测配置漂移）+ paper-vs-model reconciliation（fill 级对账分类器）+ crash-safe kill switch flag——与本备忘 §3.2 撮合引擎复用 + §3.5 执行对账 + §3.8 状态机设计互补。**MVP 借鉴**：不引入完整工具包，但 promotion gate checklist 的 YAML schema 可作为 `paper_live_transition.py` key_gates 配置化的参考格式。
@@ -499,7 +522,7 @@ flowchart TD
 |---|---|---|---|---|
 | **GRAY_RAMP 内回退** | drawdown/daily_loss 触发但未到 circuit_breaker | 上一级 ramp（如 50%→20%） | 1-2 级（Throttle/Cancel-all） | 代码待施工（算法见下状态机） |
 | **跨阶段回退** | 持续异常 / Kill Switch 3 级（Block） | SHADOW 或 PARALLEL | 3 级（Block） | 代码待施工（算法见下状态机） |
-| **回 G23 回测迭代** | 严重异常 / Kill Switch 4 级（Flatten）/ 回测-实盘偏差 `retire`（>50%） | [52_backtest_framework_docking](52_backtest_framework_docking.md) G23 | 4 级（Flatten，T+1 受限） | 代码待施工（算法见下状态机） |
+| **回 G23 回测迭代** | 严重异常 / Kill Switch 4 级（Flatten）/ 回测-实盘偏差 `retire`（>50%） | G23（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架 draft v0.1.0） | 4 级（Flatten，T+1 受限） | 代码待施工（算法见下状态机） |
 | **退役** | OOS expectancy 转负 / WFA 反复失败 / 市场前提失效 | 直接退役（§3.5 退役矩阵） | 4 级（Flatten） | 代码待施工（算法见下状态机） |
 
 **降级/回退状态机算法**（v1.6.0 补，填补上表"做什么→怎么做"的算法缺失；对齐 [quant67 2026-05-01](https://quant67.com/post/quant/28-ops-compliance/28-ops-compliance.html) 熔断状态机 + 本备忘 §3.5 Kill Switch 4 级梯子 + oh-my-opentrade REDUCING 态）：
@@ -673,12 +696,12 @@ def _state_idx(s: RollbackState) -> int:
 ### 4.4 MPC 多期预测验证作为模拟→实盘门禁 —— 暂缓（远期演进，非拒绝）
 - **暂缓理由**：[Nystrup, Boyd, Lindström & Madsen 2019（Annals of Operations Research 282:245-271）](https://stanford.edu/~boyd/papers/multiperiod_portfolio_drawdown.html) 的 MPC（Model Predictive Control）+ HMM 多期预测——根据已实现回撤动态调整风险厌恶 γ，交易/持仓成本作为估计误差处理和正则化手段——是比当前三阶段门禁更精细的"预测型门禁"。但 MPC 需要：①HMM 状态转移矩阵估计（需足够长的多 regime 样本）；②多期协方差预测（与 30 号拒绝 MVO 协方差矩阵同源风险）；③实时滚动优化器（计算开销大于 key_gates 阈值检查）。对个人 + AI MVP 是过度工程。
 - **与当前三阶段的关系**：MPC 不是替代三阶段门禁，而是 GRAY_RAMP 后期的"智能 ramp 调速器"——当前 ramp 步是固定 1%→5%→20%→50%→100%，MPC 可根据多期预测动态调整每级 ramp 步长（预测好→加大步长，预测差→减小或回退）。
-- **重评条件**：首批策略 GRAY_RAMP 跑完 + 50 号 experiment_tracking 积累 ≥ 2 年多 regime 数据 + 30 号 RegimeMetaAllocator 的 HMM 已校准可用时（MPC 复用其 HMM）。
+- **重评条件**：首批策略 GRAY_RAMP 跑完 + 50 号 [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（回测可观测性/MLflow 实验追踪体系，draft v1.0.2；代码 `src/zephyr/experiment_tracking/`）积累 ≥ 2 年多 regime 数据 + 30 号 RegimeMetaAllocator 的 HMM 已校准可用时（MPC 复用其 HMM）。
 - **处置**：登记 §6 待裁定 + §5.2 v3.0 远期演进路径。
 
 ### 4.5 RMATS 多 agent 递归协调作为灰度调度 —— 暂缓（远期演进）
 - **暂缓理由**：[RMATS（arXiv:2605.25311, 2026-05）](https://arxiv.org/pdf/2605.25311) 的 4 专门 agent（Sentiment/Report/Analysis/Risk）+ 递归 Manager Agent + typed message passing（AgentMessage schema）+ 收敛保证（‖w^(r+1)−w^(r)‖₂ < ε）——是比当前固定 ramp 步长更智能的灰度调度框架。561 交易日回测 MaxDD 9.62%（低于 MVO 15.49%），5 个地缘政治压力场景中 3 个事件期回撤最低。但 RMATS 需要：①4 个 LLM agent 推理成本（个人项目 LLM API 成本可能不可承受）；②递归协调协议工程实现复杂（typed message passing + 收敛判定）；③A 股权益 + T+1 适配（原论文是多资产多类别 + 全球市场）。
-- **对本项目的简化借鉴**（与 [55_monitoring_review](55_monitoring_review.md) §3.2 协同）：本项目不引入完整 RMATS，但可借鉴其 typed message passing 思路——GRAY_RAMP 阶段各 SleeveBook 间的 budget 协调（如打板 sleeve capacity-bound 早停 → 多因子 sleeve budget 自动接管）可用简化的 typed message（如 `BudgetReleaseMsg` / `CapacityBoundMsg`）替代当前的固定 ramp 步长。这是 v2.0+ 演进项。
+- **对本项目的简化借鉴**（与 [55_monitoring_review](55_monitoring_review.md) G26 协同——⚠️55 号为 draft v0.1.0 骨架待讨论，监控协调章节未定型，定型后承接）：本项目不引入完整 RMATS，但可借鉴其 typed message passing 思路——GRAY_RAMP 阶段各 SleeveBook 间的 budget 协调（如打板 sleeve capacity-bound 早停 → 多因子 sleeve budget 自动接管）可用简化的 typed message（如 `BudgetReleaseMsg` / `CapacityBoundMsg`）替代当前的固定 ramp 步长。这是 v2.0+ 演进项。
 - **重评条件**：多 sleeve 同时在 GRAY_RAMP 不同阶段时（§7 开放问题已记）+ LLM API 成本可承受 + 30 号 RegimeMetaAllocator budget 调整接口成熟时。
 - **处置**：登记 §6 待裁定 + §5.2 v3.0 远期演进路径。
 
@@ -691,13 +714,13 @@ def _state_idx(s: RollbackState) -> int:
 ### 5.2 演进路径
 - **v2.0 偏差归因**：BM-BT-05-H 四因子归因（滑点/数据滞后/前瞻残留/延迟，[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)）待实盘数据累积后补——当前 `paper_live_transition` 只做总值门禁，无归因分解。
 - **Strategy Drift 自动化告警**：从 key_gates 阈值告警升级为 drift 趋势监控（nexusfi 2026 Strategy Drift）。
-- **市场仿真并行**：[battle_map_04](../battle_map/battle_map_04_simulation_validation.md) BM-SIM-01~06（蒙特卡洛/压力测试/数字孪生）可与 paper trading 并行跑，作为 paper 的 what-if 补充（非迁移必经阶段）。
-- **v3.0 MPC 多期预测验证**（远期，§4.4）：GRAY_RAMP 后期引入 MPC + HMM 多期预测作为"智能 ramp 调速器"，根据已实现回撤动态调整每级 ramp 步长。复用 30 号 RegimeMetaAllocator 的 HMM + 50 号 experiment_tracking 的多 regime 数据。重评条件：首批策略 GRAY_RAMP 跑完 + ≥ 2 年多 regime 数据积累。
+- **市场仿真并行**：[battle_map_04](../battle_map/battle_map_04_simulation_validation.md) BM-SIM-01~07（蒙特卡洛/压力测试等；⚠️BM-SIM-05 数字孪生已降级保留快照 #ARCH-OE-010，BM-SIM-01 市场仿真器缺失态待施工）可与 paper trading 并行跑，作为 paper 的 what-if 补充（非迁移必经阶段）。
+- **v3.0 MPC 多期预测验证**（远期，§4.4）：GRAY_RAMP 后期引入 MPC + HMM 多期预测作为"智能 ramp 调速器"，根据已实现回撤动态调整每级 ramp 步长。复用 30 号 RegimeMetaAllocator 的 HMM + 50 号 [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（MLflow 实验追踪体系）的多 regime 数据。重评条件：首批策略 GRAY_RAMP 跑完 + ≥ 2 年多 regime 数据积累。
 - **v3.0 RMATS 简化 typed message 协调**（远期，§4.5）：GRAY_RAMP 阶段各 SleeveBook 间用简化的 typed message（`BudgetReleaseMsg` / `CapacityBoundMsg`）协调 budget 接管，替代固定 ramp 步长。重评条件：多 sleeve 同时在 GRAY_RAMP 不同阶段时 + LLM API 成本可承受。
-- **v2.0 概率型 kill switch（Bayesian online changepoint detection）**（中远期）：当前 §3.8 状态机用固定阈值（daily_loss≥3% / DD>1%）判定降级——这是"隐式概率模型，通常很差的那种"（[quantbeckman 2025-11](https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online)）。Bayesian online changepoint detection（Adams & MacKay 2007）用递归更新计算"策略已发生结构性断点"的后验概率 P(run_length=0|data)，区分 **State 1 噪声**（generative process 不变，do nothing）vs **State 2 结构性衰减**（μ≤0，立即停）——比固定阈值更优：① Type I 误杀（kill 盈利策略）+ Type II 漏杀（继续跑负期望策略）成本不对称，概率框架可显式建模；② dual-trigger（概率阈值 + PnL 阈值）降低误判。复用 52 号 deflated_sharpe_calculator 的统计基础设施。重评条件：首批策略 GRAY_RAMP 跑完 + 累计足够 PnL 序列（≥200 笔交易以校准先验）。
+- **v2.0 概率型 kill switch（Bayesian online changepoint detection）**（中远期）：当前 §3.8 状态机用固定阈值（daily_loss≥3% / DD>1%）判定降级——这是"隐式概率模型，通常很差的那种"（[quantbeckman 2025-11](https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online)）。Bayesian online changepoint detection（Adams & MacKay 2007）用递归更新计算"策略已发生结构性断点"的后验概率 P(run_length=0|data)，区分 **State 1 噪声**（generative process 不变，do nothing）vs **State 2 结构性衰减**（μ≤0，立即停）——比固定阈值更优：① Type I 误杀（kill 盈利策略）+ Type II 漏杀（继续跑负期望策略）成本不对称，概率框架可显式建模；② dual-trigger（概率阈值 + PnL 阈值）降低误判。复用 `simulation/deflated_sharpe_calculator.py`（MOD-SIM-024）的统计基础设施。重评条件：首批策略 GRAY_RAMP 跑完 + 累计足够 PnL 序列（≥200 笔交易以校准先验）。
 
 ### 5.3 为何是上限而非妥协
-- 多于 3 阶段（如 nexusfi 2026 的 7 阶段 backtest→WFA→MC→paper→shadow→small-live→scale-up）对个人 + AI 过重——其中 backtest/WFA 属 G23（[52_backtest_framework_docking](52_backtest_framework_docking.md)），MC 属市场仿真（[battle_map_04](../battle_map/battle_map_04_simulation_validation.md) 并行），本备忘只收敛迁移专属的 3 阶段。
+- 多于 3 阶段（如 nexusfi 2026 的 7 阶段 backtest→WFA→MC→paper→shadow→small-live→scale-up）对个人 + AI 过重——其中 backtest/WFA 属 G23（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架 draft v0.1.0 待讨论），MC 属市场仿真（[battle_map_04](../battle_map/battle_map_04_simulation_validation.md) 并行），本备忘只收敛迁移专属的 3 阶段。
 - 少于 3 阶段（如砍 SHADOW）跳过小额真实资金验证，paper 的乐观偏差无法弥补。
 - 3 阶段是"完整迁移链路"与"个人+AI 可维护"的平衡点。
 
@@ -711,10 +734,10 @@ def _state_idx(s: RollbackState) -> int:
 | 模拟盘观察期最终值（6 月 vs 更长） | 6 月是保守上限，实际够不够覆盖极端事件待验证 | 首批策略 PARALLEL 跑满后校准 |
 | `paper_live_transition` 门禁阈值校准（99.9%/1bp/0.95/100ms 等） | 阈值是机制初始值，未经实盘校准 | 首批策略迁移各阶段数据累积后 |
 | 跨 sleeve 灰度顺序最终确认 | [20_first_batch_strategies](20_first_batch_strategies.md) §4.4 建议打板最先，待回测通过确认 | G23 回测通过后 |
-| 市场仿真（BM-SIM-01~06）与迁移路径的并行调度 | 当前市场仿真独立于迁移，未与 paper trading 联动 | 多策略上线后，仿真作为 paper 的 what-if 补充时 |
-| **MPC 多期预测验证作为 GRAY_RAMP 智能调速器**（v1.5.0 新增） | [Nystrup/Boyd 2019](https://stanford.edu/~boyd/papers/multiperiod_portfolio_drawdown.html) MPC+HMM 多期预测根据已实现回撤动态调整风险厌恶 γ；需 HMM 状态转移矩阵估计 + 多期协方差预测（与 30 号拒绝 MVO 同源风险）+ 实时滚动优化器；对个人 + AI MVP 过重 | 首批策略 GRAY_RAMP 跑完 + 50 号 experiment_tracking ≥ 2 年多 regime 数据 + 30 号 RegimeMetaAllocator HMM 校准可用 |
+| 市场仿真（BM-SIM-01~07）与迁移路径的并行调度 | 当前市场仿真独立于迁移，未与 paper trading 联动 | 多策略上线后，仿真作为 paper 的 what-if 补充时 |
+| **MPC 多期预测验证作为 GRAY_RAMP 智能调速器**（v1.5.0 新增） | [Nystrup/Boyd 2019](https://stanford.edu/~boyd/papers/multiperiod_portfolio_drawdown.html) MPC+HMM 多期预测根据已实现回撤动态调整风险厌恶 γ；需 HMM 状态转移矩阵估计 + 多期协方差预测（与 30 号拒绝 MVO 同源风险）+ 实时滚动优化器；对个人 + AI MVP 过重 | 首批策略 GRAY_RAMP 跑完 + 50 号 [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（MLflow 实验追踪体系）≥ 2 年多 regime 数据 + 30 号 RegimeMetaAllocator HMM 校准可用 |
 | **RMATS typed message 简化协调**（v1.5.0 新增） | [RMATS arXiv:2605.25311](https://arxiv.org/pdf/2605.25311) 多 agent 递归协调（4 专门 agent + 递归 Manager + typed message passing + 收敛保证）可用于 SleeveBook 间 budget 接管协调；但需 4 LLM agent 推理成本 + 递归协调协议工程实现 + A 股 T+1 适配 | 多 sleeve 同时在 GRAY_RAMP 不同阶段 + LLM API 成本可承受 + 30 号 budget 调整接口成熟 |
-| **概率型 kill switch（Bayesian online changepoint detection）**（v1.6.0 新增） | [quantbeckman 2025-11](https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online) Bayesian online changepoint detection（Adams & MacKay 2007）用递归后验概率区分噪声 vs 结构性衰减，比 §3.8 固定阈值状态机更优（显式建模 Type I/II 不对称成本 + dual-trigger）；但需 N-IG/Student-t 似然 + log-space 数值稳定 + state-space 剪枝 + 先验校准（≥200 笔交易） | 首批策略 GRAY_RAMP 跑完 + 累计 ≥200 笔 PnL 序列以校准先验 + 52 号 deflated_sharpe_calculator 统计基础设施可复用 |
+| **概率型 kill switch（Bayesian online changepoint detection）**（v1.6.0 新增） | [quantbeckman 2025-11](https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online) Bayesian online changepoint detection（Adams & MacKay 2007）用递归后验概率区分噪声 vs 结构性衰减，比 §3.8 固定阈值状态机更优（显式建模 Type I/II 不对称成本 + dual-trigger）；但需 N-IG/Student-t 似然 + log-space 数值稳定 + state-space 剪枝 + 先验校准（≥200 笔交易） | 首批策略 GRAY_RAMP 跑完 + 累计 ≥200 笔 PnL 序列以校准先验 + `simulation/deflated_sharpe_calculator.py`（MOD-SIM-024）统计基础设施可复用 |
 | **propagator 传播子滑点模型（Bouchaud）**（v1.6.2 新增） | [hftradingbook 2026-06](https://hftradingbook.com/costs/market-impact) + [youngju.dev TCA 2026 Deep Dive](https://www.youngju.dev/blog/culture/2026-05-25-tca-market-impact-implementation-shortfall-almgren-chriss-kissell-bloomberg-btca-virtu-big-xyt-2026-deep-dive.en) propagator/transient-impact 模型用幂律衰减核 G(t)~t^(−γ)（γ≈0.5）刻画临时冲击的时变衰减（`ΔP_t = Σ G(t−s)·ε_s·v_s^δ`，δ≈0.5 即 square-root law），比 §3.2 Almgren-Chriss 的二元（临时/永久）切分更贴近真实微观结构——hftradingbook 评为"the modern, continuous refinement of this dichotomy"；但需逐笔订单流数据 + 核函数校准（A 股 miniQMT 逐笔委托队列接入待建） | SHADOW 阶段逐笔成交数据累积 + 40 号 ex_sor 订单簿深度接入成熟后 |
 
 ## 7. 待定问题
@@ -731,28 +754,34 @@ def _state_idx(s: RollbackState) -> int:
 | MPC 智能调速器的 ramp 步长动态调整范围（最小步长下限 / 最大步长上限） | 本备忘 §4.4（v1.5.0 新增） | 待 MPC 重评条件满足后定（保 1% 最小步长兜底） |
 | §3.8 降级/回退状态机的代码落地（`paper_live_transition.py` L31-37 未实现回退） | 本备忘 §3.8（v1.6.0 新增） | 待首批策略进入 SHADOW/GRAY_RAMP 阶段需回退时实现（当前为设计规范伪代码） |
 | Bayesian changepoint 的先验分布选择（N-IG vs Student-t）+ dual-trigger 概率阈值 | 本备忘 §5.2/§6（v1.6.0 新增） | 待 ≥200 笔 PnL 序列累积后用历史数据回测校准 |
+| **52/55 号骨架对本备忘的联动影响**（v1.7.0 新增） | 52 号（G23 回测 why 层）与 55 号（G26 监控告警 why 层）均为 draft v0.1.0 骨架待讨论；本备忘已先行承载迁移侧设计（回测门控引用代码真源、差异监控、退役矩阵） | 待 52/55 号定型后回填双向联动并复核本备忘引用（当前引用均已标注骨架状态） |
+| **00_index 多处漂移需同步**（v1.7.0 新增，不越界改仅登记） | ①§3 G24 行状态仍标"待讨论"且产出物名误为 `53_simulation_live_path_simulation_live_path.md`（topic 重复）；②§3 G26 行标 55 号"active v1.21.0"虚构（实际 draft v0.1.0）；③§0 目录标 52 号"active v1.7.4"/55 号"active v1.21.0"虚构；④§0 目录标 61 号 v2.9.1 滞后（实际 v2.10.0+）；⑤§2 快照 01/02/04 阶段标"why 层空白"滞后（61/53 号已承载） | 待 00_index owner 会话同步（本备忘不越界改） |
 
 ## 8. 引用
 
 ### 8.1 相关设计备忘
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G24
-- [52_backtest_framework_docking](52_backtest_framework_docking.md)（G23 上游，回测门控放行是迁移前置）
+- [52_backtest_framework_docking](52_backtest_framework_docking.md)（G23 上游，⚠️骨架 draft v0.1.0 待讨论；回测门控当前真源为代码 `backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)，回测门控放行是迁移前置）
 - [20_first_batch_strategies](20_first_batch_strategies.md) §4.4（灰度上游指引，本备忘是其"具体 schedule 与执行"展开）
 - [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) §0.6（DSR / 验证区间多周期思路）
 - [54_reconciliation_attribution](54_reconciliation_attribution.md)（G25 下游，§3.5 执行对账复用其 SettlementReconciliation + PositionReconciler；SHADOW/GRAY_RAMP 阶段实盘成交供 54 号对账归因）
-- [55_monitoring_review](55_monitoring_review.md)（G26 下游，§3.5 差异监控衔接其 LiveBacktestParityMonitor；§4.5 RMATS 简化 typed message 与 55 号 §3.9 监控协调协同）
+- [55_monitoring_review](55_monitoring_review.md)（G26 下游，⚠️骨架 draft v0.1.0 待讨论——实盘-回测偏离监控与告警复盘的 why 层未定稿；本备忘 §3.5 差异监控/§3.8 降级回退先行承载迁移侧设计，55 号定型后承接运营侧监控联动。⚠️ v1.6.6 前误引其"§3.5 LiveBacktestParityMonitor / §3.9 监控协调"——55 号为骨架无此章节且 LiveBacktestParityMonitor 组件代码不存在，已修正）
 
 ### 8.2 相关作战地图与域文档
 - [battle_map_03_backtest_validation](../battle_map/battle_map_03_backtest_validation.md) BM-BT-08（试运行与验证，迁移上游衔接）+ BM-BT-05-H（回测-实盘偏差归因，v2.0）
 - [battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md)（市场仿真，与 paper trading 并行非迁移必经）
+- [battle_map_12_cross_cutting](../battle_map/battle_map_12_cross_cutting.md) §四模式开关（回测/Paper/Shadow/实盘——四模式决策逻辑同构是 sim↔live divergence 监控基础）
 - [71_d_simulation](../../02_domain_architecture_docs/71_d_simulation.md)（D_SIMULATION 域 15 模块）
 
 ### 8.3 代码真源
 - `src/zephyr/governance/lifecycle_governance/paper_live_transition.py`（MOD-GOVERNANCE，三阶段迁移门禁 PARALLEL/SHADOW/GRAY_RAMP + key_gates + valid_transition 不可跳级 + TransitionState 持久化）
+- `src/zephyr/backtest/core/decision_gate.py`（IS→WFA→OOS 门控 + 参数悬崖检测 + `monitor_backtest_live_deviation` 回测-实盘 Sharpe 偏差 warn>30%/retire>50%，§3.5 触发条件与 §3.8 回退判定的代码真源）
 - `src/zephyr/simulation/deflated_sharpe_calculator.py`（MOD-SIM-024，rolling DSR 完整实现）
-- `src/zephyr/ex_sor/services/slippage_analyzer.py`（滑点分析，BM-BT-05-H-A 归因复用）
+- `src/zephyr/ex_sor/services/slippage_analyzer.py`（滑点分析 + `SquareRootImpactPredictor` coeff=0.142，BM-BT-05-H-A 归因复用）
 - `src/zephyr/ex_sor/services/execution_quality_scorer.py`（执行质量打分，BM-BT-05-H-D 归因复用）
 - `src/zephyr/simulation/look_ahead_bias_detector.py`（MOD-SIM-022，前瞻偏差检测，BM-BT-05-H-C 数据层金标准）
+- `src/zephyr/trading/settlement_reconciliation.py`（MOD-TRADING-003，盘后结算对账，§3.5 settlement_match 100% 门禁承载）
+- `src/zephyr/ex_core/position_reconciler.py`（MOD-EX-056，盘中持仓对账，§3.5 执行对账复用）
 
 ### 8.4 2026 研究来源
 - [nexusfi — Algo Trading Live Deployment (2026-06)](https://nexusfi.com/a/automation/algo-trading-live-deployment)：门控部署管线（backtest→WFA→MC→paper→shadow→small-live→scale-up）+ Strategy Drift + Execution Reconciliation + Kill Switch + Capacity——本备忘 §3.5 差异监控与 §4.2 灰度必要性 + §3.4 Capacity 监控的行业背书
@@ -762,7 +791,7 @@ def _state_idx(s: RollbackState) -> int:
 - [quanthedgeai — Multi-Strategy Portfolio End-to-End (2026-07)](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)（经 [20_first_batch_strategies](20_first_batch_strategies.md) §7.5 转引）：intake 四阶段 + 25% no-trade band——本备忘 §3.7 灰度顺序与再平衡纪律的来源
 - [AlphaFactory — Strategy Graduation Criteria (2026-05-24 ratified)](https://github.com/ShellPayant/AlphaFactory/blob/main/docs/graduation_criteria.md)：G2 paper→live 门禁（≥30 天 + **≥30 交易统计地板** + paper Sharpe≥1.0 + MaxDD≤live cap + PF≥1.0）；operator 选 30 天 vs 推荐 90-180 天的取舍——本备忘 §3.3 交易笔数地板 + 机制最小 30 天的实证背书
 - [algovantis — Backtest to Live Execution Checklist (2026-03)](https://algovantis.com/automated-trading-system-backtesting-to-live-execution-checklist/)：kill switch / panic button 必须随时可用且充分测试 + 多层 circuit breaker（单笔止损 / 日损上限 / 总账户熔断）+ 容器化部署——本备忘 §3.5 Kill Switch 精确语义 + 独立看门狗的依据
-- [purgedcv v0.1.3 (eslazarev, 2026)](https://pypi.org/project/purgedcv/) `min_track_record_length`：建立 SR 所需最小观测数——本备忘 §3.3 MinTRL 统计依据（经 [52_backtest_framework_docking](52_backtest_framework_docking.md) §3.6 转引）
+- [purgedcv v0.1.3 (eslazarev, 2026)](https://pypi.org/project/purgedcv/) `min_track_record_length`：建立 SR 所需最小观测数——本备忘 §3.3 MinTRL 统计依据（⚠️ v1.6.6 前标注"经 52 号 §3.6 转引"，52 号为骨架无 §3.6，实为直接引用 + DSR 代码真源 `simulation/deflated_sharpe_calculator.py`）
 - [hftradingbook — Kill Switches (2026-06-04 评审)](https://hftradingbook.com/risk/kill-switches)：4 级响应梯子（Throttle→Cancel-all→Block→Flatten）+ trigger→cancel-all ack <10ms + halt 后永不自动恢复——本备忘 §3.5 Kill Switch 4 级梯子
 - [oh-my-opentrade — Sprint 4 Plan (2026-04-11)](https://github.com/ridopark/oh-my-opentrade/blob/main/docs/plans/SPRINT_4_PLAN.md)：3 态 Kill Switch（ACTIVE/HALTED/REDUCING）——REDUCING 态特别适合 A 股 T+1（只卖不买），本备忘 §3.5/§3.8 REDUCING 态优先
 - [fxmacrodata — Kill Switch Framework for AI FX Bots (2026-05-21)](https://fxmacrodata.com/zh/articles/kill-switch-framework-for-ai-fx-bots)：5 层独立开关 + "不要让模型评估自己的安全状态" + fail-closed + session DD −1.25% / 日 DD −2.0%——本备忘 §3.5 AI 特有触发条件
@@ -789,9 +818,9 @@ def _state_idx(s: RollbackState) -> int:
 - [eastmoney — A 股量化监管分析 (2026-07-17)](https://caifuhao.eastmoney.com/news/20260717132858115538530)：SEC Rule 15c3-5 强制 kill switch + CAT 全生命周期审计 + Knight Capital 2012 教科书案例——本备忘 §3.5 kill switch 监管依据
 - [mx-risk-guard v0.1.0 (27dream, 2026-06-15)](https://github.com/27dream/mx-risk-guard)：A 股券商无关风控引擎（SinglePositionRule/DailyLossCircuitBreaker/DrawdownStopLoss/BlacklistRule）——本备忘 §3.5 kill switch A 股开源参考实现
 - [CSDN — Alpha Decay 策略失灵是宿命 (2026-07-14 更新 2026-08-07)](https://blog.csdn.net/2601_95872481/article/details/162839541)：StrategyLifecycle 设计模式（rolling_monitor/multi_strategy/candidate_pipeline/regime_switch + pause 规则）+ AI 非策略失灵解药——本备忘 §3.5 Alpha Decay 系统设计哲学 + G28 协同依据
-- [nexusfi — Automated Trading Emergency Protocols (2026-06-01)](https://nexusfi.com/a/automation/automated-trading-emergency-protocols)：4 层 kill switch 架构（code/platform/broker/exchange）+ **Ghost Position 问题**（平台持仓≠券商持仓→加倍不存在仓位的最危险失败模式）+ Dead Man's Switch 外部看门狗 + 重连状态恢复——本备忘 §3.5 Ghost Position 运营风险（与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) Ghost Position 4 层兜底交叉引用）
+- [nexusfi — Automated Trading Emergency Protocols (2026-06-01)](https://nexusfi.com/a/automation/automated-trading-emergency-protocols)：4 层 kill switch 架构（code/platform/broker/exchange）+ **Ghost Position 问题**（平台持仓≠券商持仓→加倍不存在仓位的最危险失败模式）+ Dead Man's Switch 外部看门狗 + 重连状态恢复——本备忘 §3.5 Ghost Position 运营风险（与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.5.1 Ghost Position 4 层兜底交叉引用）
 - [Nystrup, Boyd, Lindström & Madsen — Multi-Period Portfolio Selection with Drawdown Control (2019, Annals of Operations Research 282:245-271)](https://stanford.edu/~boyd/papers/multiperiod_portfolio_drawdown.html)：MPC + HMM 多期预测，根据已实现回撤动态调整风险厌恶 γ；交易/持仓成本作为估计误差处理和正则化手段；20 年 OOS 测试成功控制回撤且无 mean-variance 效率牺牲——本备忘 §4.4 MPC 多期预测验证作为 GRAY_RAMP 智能调速器远期演进
-- [Yang et al. — RMATS: Recursive Multi-Agent Trading System (arXiv:2605.25311, 2026-05)](https://arxiv.org/pdf/2605.25311)：4 专门 agent（Sentiment/Report/Analysis/Risk）+ 递归 Manager Agent + typed message passing（AgentMessage schema）+ 收敛保证（‖w^(r+1)−w^(r)‖₂ < ε）；561 交易日回测 MaxDD 9.62%（低于 MVO 15.49%）；5 地缘政治压力场景中 3 个事件期回撤最低；消融实验确认每个 agent 贡献——本备忘 §4.5 RMATS 简化 typed message 协调作为灰度调度远期演进（与 [55_monitoring_review](55_monitoring_review.md) §3.2 监控协调协同）
+- [Yang et al. — RMATS: Recursive Multi-Agent Trading System (arXiv:2605.25311, 2026-05)](https://arxiv.org/pdf/2605.25311)：4 专门 agent（Sentiment/Report/Analysis/Risk）+ 递归 Manager Agent + typed message passing（AgentMessage schema）+ 收敛保证（‖w^(r+1)−w^(r)‖₂ < ε）；561 交易日回测 MaxDD 9.62%（低于 MVO 15.49%）；5 地缘政治压力场景中 3 个事件期回撤最低；消融实验确认每个 agent 贡献——本备忘 §4.5 RMATS 简化 typed message 协调作为灰度调度远期演进（与 [55_monitoring_review](55_monitoring_review.md) G26 监控协调协同——⚠️55 号骨架待讨论，定型后承接）
 - [quant67 — 量化交易运维与合规：监控、熔断、监管报送、复盘 (2026-05-01)](https://quant67.com/post/quant/28-ops-compliance/28-ops-compliance.html)：熔断 5 态状态机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）+ 单向"更保守"原则（自动化的方向只能是更保守，绝不能自动恢复并继续下单）+ 恢复须人工 + 双人复核 + RCA 已写 + 6 层监控体系（L1 基础设施→L6 盈亏归因）+ ChatOps 命令骨架——本备忘 §3.8 降级/回退状态机算法的核心来源
 - [quant-live-readiness-kit v0.1.0 (cyangIIT, 2026-04-23)](https://github.com/cyangIIT/quant-live-readiness-kit)：开源 Python 工具包，research backtest → auditable paper/live-ready 系统——freeze manifest（config/git/flag 快照 + hash）+ contamination detection（结构性 diff）+ paper-vs-model reconciliation（fill 级对账分类器）+ crash-safe kill switch flag + YAML 驱动 promotion gate 评分器（booleans + thresholds + manual sign-off）——本备忘 §3.6 上线决策门控的 promotion gate 工程参考实现
 - [quantbeckman — Switch-Off: Bayesian online changepoint detection (2025-11-17)](https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online)：概率型 kill switch 框架，用 Bayesian online changepoint detection（Adams & MacKay 2007）递归后验概率区分 State 1 噪声（do nothing）vs State 2 结构性衰减（立即停）——显式建模 Type I 误杀 / Type II 漏杀不对称成本 + dual-trigger（概率阈值 + PnL 阈值）+ N-IG/Student-t 似然 + log-space 数值稳定——本备忘 §5.2/§6 概率型 kill switch 作为 v2.0 中远期演进
@@ -813,8 +842,8 @@ def _state_idx(s: RollbackState) -> int:
 | 2026-08-10 | 1.1.0 | 深度复审：①补 §3.8 施工算法（迁移执行流程图 + 每日检查清单 + 阶段转换仪式 + 降级回退程序，填补施工环节流程算法缺失）；②§3.3 模拟时长补交易笔数地板 ≥30 笔（AlphaFactory G2.2）+ MinTRL 统计依据（purgedcv），三层标准（天数+笔数+保守期）；③§3.4 补 Capacity 监控（nexusfi，GRAY_RAMP 逐级放大须感知策略容量，打板容量小可能 20% 即触顶）；④§3.5 补 Kill Switch 精确语义（撤单+阻断+平仓三动作 + 独立看门狗）+ 每指标可接受差异带（x3algo: 胜率±5-10%/PF±10-15%/MaxDD+20%）；⑤§8.4 补 4 项 2026 来源（AlphaFactory 毕业门禁 / algovantis kill switch / x3algo 差异带 / purgedcv MinTRL） | 用户要求复审施工环节流程算法缺失 + 更优算法 + 2026-08 最新研究。发现施工算法（每日执行清单+升级程序）缺失、交易笔数统计地板缺失、Capacity 监控缺失、Kill Switch 语义未定义、每指标差异带缺失；2026 AlphaFactory G2 毕业门禁 + algovantis kill switch + x3algo 差异带 + purgedcv MinTRL 为更优互补 |
 | 2026-08-10 | 1.2.0 | 二次深度复审：①§2.1 补 miniQMT 2026-07-06 停止申请 + A 股 2026-07-07 程序化新规（15 笔/秒、15% 撤单率、50μs 停留）+ QMT 迁移 SOP；②§3.4 SHADOW 资金定义（GRAY_RAMP 第一级或学费额度 1000-5000 元）+ SHADOW 三不原则（NeuraTrade/Reversal 3.5）+ GRAY_RAMP 每级观察期（7-14 天/级 + 累计 30 天）+ half-sized 晋级（QuantHedgeAI ≥6 月 rolling DSR）；③§3.4 Capacity 监控量化公式（参与率 5-10% / LEAN 可用比例 Daily 2%/Minute 20% / 衍复 A 股容量定义）；④§3.5 Kill Switch 升级 4 级梯子（Throttle→Cancel-all→Block→Flatten + A 股 T+1 REDUCING 态）+ 3 态 Kill Switch（ACTIVE/HALTED/REDUCING）+ 偏差归因四类分类法（marketmaker 数据 2-5%/执行 10-30% + BigQuant A 股五大隐性偏差）+ 漂移检测算法（PSI/CUSUM/Page-Hinkley/Change-point + PineForge Rolling PF 70%/DD 1.2×）+ Sharpe 偏差带（≥70-80% Good/<50% Concerning）+ 退役决策矩阵（LuxAlgo 三档 DD 1.5-2×/PF→1.0/胜率-10~15pp + DeepTradeX 68% 18-24 月）；⑤§3.7 打板 capacity-bound 早停例外澄清；⑥§3.8 降级/回退程序完善（4 类回退 + 待施工标注 + REDUCING 态优先 + Bharath 5 项通过标准）；⑦§8.4 补 20 项 2026-08 来源 | 用户要求二次复审 + 2026-08-08 最新研究。全网搜索发现 2026-08-03 LuxAlgo 退役矩阵 + 2026-08-07 Reversal 3.5 shadow 回退 + 2026-08-01 Live Trading Monitoring Sharpe 偏差带 + 2026-08-04 CSDN 漂移检测 + hftradingbook 4 级 kill switch + oh-my-opentrade REDUCING 态 + QuantConnect LEAN 容量公式 + marketmaker/BigQuant 偏差归因。代码验证发现 SHADOW 资金未定义 + GRAY_RAMP 观察期未明确 + Kill Switch 回退逻辑未实现（paper_live_transition L31-37）→ 须补设计指导标注待施工 |
 | 2026-08-10 | 1.3.0 | 三次深度复审：①§3.5 补 kill switch 监管依据（SEC Rule 15c3-5 强制+CAT 审计+Knight Capital 教科书案例，eastmoney 2026-07-17）+ A 股开源参考实现（mx-risk-guard v0.1.0，SinglePositionRule/DailyLossCircuitBreaker/DrawdownStopLoss/BlacklistRule 券商无关风控引擎）；②§3.5 补 Alpha Decay 系统设计哲学（CSDN 2026-07-14/08-07 "策略失灵是宿命"框架 + StrategyLifecycle 设计模式 7 原则映射本项目落地 + AI 非策略失灵解药警示）；③§8.4 补 3 项 2026-08 来源 | 用户要求三次复审 + 2026-08-08 最新研究。全网搜索发现 SEC Rule 15c3-5 使 kill switch 从"最佳实践"升级为"法定要求"（监管依据补强）+ mx-risk-guard 为 A 股券商无关 kill switch 开源参考实现（工程参考补强）+ CSDN Alpha Decay "策略失灵是宿命"框架给出 StrategyLifecycle 设计模式 7 原则（系统设计哲学补强 + G28 协同）。施工环节流程算法审查：kill switch 监管依据+开源参考实现+Alpha Decay 系统设计哲学填补"为什么需要"+"工程怎么落地"+"系统怎么共存"三层缺口 |
-| 2026-08-10 | 1.4.0 | 四次复审（自检循环）：①§2.1 修复版本漂移（20号 v1.2.4→v1.3.0 对齐 00_index 现状）；②§3.5 补 Ghost Position 运营风险（nexusfi Emergency Protocols 2026-06-01：平台持仓≠券商持仓→加倍不存在仓位的最危险失败模式，FOMC 日 14 手 ES 无退出逻辑实证，与 35_drawdown_protocol_impl v1.2.0 Ghost Position 4 层兜底交叉引用，SHADOW settlement_match 100% 门禁隐含 ghost position 检测要求）；③§8.4 补 nexusfi Emergency Protocols 来源 | 用户要求持续改进不停。自检循环发现 1 处版本漂移（20号引用版本滞后）；全网搜索发现 nexusfi Emergency Protocols 的 Ghost Position 详解为 kill switch 运营风险的关键补充——项目 35 号已建 Ghost Position 4 层兜底但 53 号 kill switch 章节未交叉引用，SHADOW 阶段须验证 ghost position 检测端到端可达 |
-| 2026-08-10 | 1.5.0 | 五次复审（施工算法补全 + 2026 最新研究整合）：①§3.2 补模拟撮合算法子决策（5 步：信号→订单/T+1 卖出校验 + 涨跌停撮合（10%/20%/30% 三档）+ 滑点建模（linear/square-root/Almgren-Chriss）+ 佣金/印花税/过户费 + 部分成交 TWAP/VWAP 拆单适配 2026-07 新规）+ 撮合乐观偏差校准（涨停板排队成交概率 + 滑点 1.5-2× + 部分成交按真实市场深度）+ 撮合引擎复用原则（不重造，复用 ex_sor/slippage_analyzer + 40号 OrderManager + CorporateActionProcessor）；②§4.4 新增 MPC 多期预测验证作为模拟→实盘门禁暂缓项（Nystrup/Boyd 2019 MPC+HMM 根据已实现回撤动态调整风险厌恶 γ，交易/持仓成本作为正则化；定位为 GRAY_RAMP 后期"智能 ramp 调速器"非替代三阶段门禁）；③§4.5 新增 RMATS 多 agent 递归协调作为灰度调度暂缓项（arXiv:2605.25311 4 专门 agent + 递归 Manager + typed message passing + 收敛保证；简化借鉴为 SleeveBook 间 typed message budget 协调）；④§5.2 演进路径补 v3.0 MPC + v3.0 RMATS 简化 typed message；⑤§6 待裁定补 MPC + RMATS 两项；⑥§7 待定问题补滑点倍率校准 + MPC ramp 步长范围两项；⑦§8.4 补 Nystrup/Boyd 2019 + RMATS arXiv:2605.25311 两项 2026 研究 | 用户要求审查施工环节流程算法缺失 + 补充选项之外更好的算法 + 整合 2026 最新研究。发现模拟撮合算法缺失（仅定义 paper 环境未定义撮合算法）+ 缺远期更优算法。全网搜 2026-08 研究：[Nystrup/Boyd 2019 MPC+HMM 多期预测](https://stanford.edu/~boyd/papers/multiperiod_portfolio_drawdown.html)（根据已实现回撤动态调整风险厌恶 γ + 成本作为正则化）；[RMATS arXiv:2605.25311](https://arxiv.org/pdf/2605.25311)（4 agent + 递归 Manager + typed message passing + 收敛保证，MaxDD 9.62% 低于 MVO 15.49%）。施工环节算法补全：模拟撮合 5 步算法填补 paper trading 撮合引擎缺失；MPC + RMATS 作为 v3.0 远期演进路径填补"选项之外更好的算法" |
+| 2026-08-10 | 1.4.0 | 四次复审（自检循环）：①§2.1 修复版本漂移（20号 v1.2.4→v1.3.0 对齐 00_index 现状）；②§3.5 补 Ghost Position 运营风险（nexusfi Emergency Protocols 2026-06-01：平台持仓≠券商持仓→加倍不存在仓位的最危险失败模式，FOMC 日 14 手 ES 无退出逻辑实证，与 35_drawdown_protocol_impl Ghost Position 4 层兜底交叉引用，SHADOW settlement_match 100% 门禁隐含 ghost position 检测要求）；③§8.4 补 nexusfi Emergency Protocols 来源 | 用户要求持续改进不停。自检循环发现 1 处版本漂移（20号引用版本滞后）；全网搜索发现 nexusfi Emergency Protocols 的 Ghost Position 详解为 kill switch 运营风险的关键补充——项目 35 号已建 Ghost Position 4 层兜底但 53 号 kill switch 章节未交叉引用，SHADOW 阶段须验证 ghost position 检测端到端可达 |
+| 2026-08-10 | 1.5.0 | 五次复审（施工算法补全 + 2026 最新研究整合）：①§3.2 补模拟撮合算法子决策（5 步：信号→订单/T+1 卖出校验 + 涨跌停撮合（10%/20%/30% 三档）+ 滑点建模（linear/square-root/Almgren-Chriss）+ 佣金/印花税/过户费 + 部分成交 TWAP/VWAP 拆单适配 2026-07 新规）+ 撮合乐观偏差校准（涨停板排队成交概率 + 滑点 1.5-2× + 部分成交按真实市场深度）+ 撮合引擎复用原则；②§4.4 新增 MPC 多期预测验证作为模拟→实盘门禁暂缓项（Nystrup/Boyd 2019 MPC+HMM 根据已实现回撤动态调整风险厌恶 γ，交易/持仓成本作为正则化；定位为 GRAY_RAMP 后期"智能 ramp 调速器"非替代三阶段门禁）；③§4.5 新增 RMATS 多 agent 递归协调作为灰度调度暂缓项（arXiv:2605.25311 4 专门 agent + 递归 Manager + typed message passing + 收敛保证；简化借鉴为 SleeveBook 间 typed message budget 协调）；④§5.2 演进路径补 v3.0 MPC + v3.0 RMATS 简化 typed message；⑤§6 待裁定补 MPC + RMATS 两项；⑥§7 待定问题补滑点倍率校准 + MPC ramp 步长范围两项；⑦§8.4 补 Nystrup/Boyd 2019 + RMATS arXiv:2605.25311 两项 2026 研究 | 用户要求审查施工环节流程算法缺失 + 补充选项之外更好的算法 + 整合 2026 最新研究。发现模拟撮合算法缺失（仅定义 paper 环境未定义撮合算法）+ 缺远期更优算法。全网搜 2026-08 研究：[Nystrup/Boyd 2019 MPC+HMM 多期预测](https://stanford.edu/~boyd/papers/multiperiod_portfolio_drawdown.html)（根据已实现回撤动态调整风险厌恶 γ + 成本作为正则化）；[RMATS arXiv:2605.25311](https://arxiv.org/pdf/2605.25311)（4 agent + 递归 Manager + typed message passing + 收敛保证，MaxDD 9.62% 低于 MVO 15.49%）。施工环节算法补全：模拟撮合 5 步算法填补 paper trading 撮合引擎缺失；MPC + RMATS 作为 v3.0 远期演进路径填补"选项之外更好的算法" |
 | 2026-08-10 | 1.5.1 | 交叉引用补全：①§3.5 执行对账补 54 号交叉引用（SettlementReconciliation MOD-TRADING-003 + PositionReconciler MOD-EX-056，53 号定义门禁阈值 / 54 号定义对账执行算法职责分工）；②§8.1 补 54 号 + 55 号相关设计备忘条目（原 §8.1 缺下游 G25/G26 引用，body 已引用但 §8.1 未登记） | 三文档最终交叉引用审查发现 53 号 §8.1 缺 54/55 号条目 + §3.5 执行对账未交叉引用 54 号对账引擎。补全双向引用确保 53→54→55 数据流可追溯 |
 | 2026-08-10 | 1.6.0 | 六次复审（施工算法补全 + 2026 最新研究整合）：①§3.8 补降级/回退状态机算法（5 态有限状态机 NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING，对齐 quant67 2026-05-01 熔断状态机 + §3.5 Kill Switch 4 级梯子 + oh-my-opentrade REDUCING 态；单向"更保守"迁移原则 + 恢复须人工+双人复核+RCA + fail-closed 默认 SOFT_HALT + Hysteresis 防抖动 trip/recover 不同阈值 + ≥30 笔最小样本保护；附 90 行 Python 伪代码 evaluate_rollback/recover/safe_read_state 三函数）；填补 §3.8 回退表 4 类"待施工"的"做什么→怎么做"算法缺失；②§3.6 补 promotion gate 工程参考（quant-live-readiness-kit v0.1.0 cyangIIT 2026-04-23，YAML 驱动 gate 评分器 + freeze manifest + contamination detection + paper-vs-model reconciliation）；③§5.2 补 v2.0 概率型 kill switch 演进路径（quantbeckman 2025-11 Bayesian online changepoint detection，比固定阈值更优——显式建模 Type I/II 不对称成本 + dual-trigger）；④§6 待裁定补概率型 kill switch 项；⑤§7 待定问题补状态机代码落地 + Bayesian 先验选择两项；⑥§8.4 补 4 项 2026 来源（quant67 状态机 / quant-live-readiness-kit promotion gate / quantbeckman Bayesian changepoint / ssystechsoftwares Hysteresis+fail-open） | 用户要求审查施工环节流程算法缺失 + 更优算法 + 2026-08 最新研究。发现 §3.8 降级/回退表 4 类全标"待施工"但仅有触发条件表无执行算法（描述了"做什么"没给"怎么做"的状态机/伪代码）。全网搜 2026-08 研究：[quant67 2026-05-01](https://quant67.com/post/quant/28-ops-compliance/28-ops-compliance.html) 5 态熔断状态机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING + 单向保守原则 + 恢复须 RCA）；[quant-live-readiness-kit 2026-04-23](https://github.com/cyangIIT/quant-live-readiness-kit) promotion gate 工程参考；[quantbeckman 2025-11](https://www.quantbeckman.com/p/with-code-switch-off-bayesian-online) Bayesian online changepoint 概率型 kill switch（比固定阈值更优，登记 v2.0）；[ssystechsoftwares 2026-05](https://ssystechsoftwares.com/circuit-breaker-pattern-trading-bots-python.html) Hysteresis 防抖动 + fail-open vs fail-closed 职责区分。施工算法补全：5 态状态机 + 90 行伪代码填补回退执行算法缺失 |
 | 2026-08-10 | 1.6.1 | 七次复审（撮合算法公式补全 + 版本漂移修复）：①§3.2 补撮合算法公式（4 步伪代码：T+1 卖出校验 lot 遍历 + 涨跌停成交概率估算 P(fill)≈min(1,counter_vol/(queue_ahead+order_size)) + 滑点建模公式 impact_bps=0.142×√(order_size/ADV)×vol_bps+half_spread 代码验证 SquareRootImpactPredictor + TWAP/VWAP 拆单参数 67ms 间隔/撤单率 12% buffer），填补 5 步撮合算法"描述了 what 缺 how"的公式/参数缺失；②§3.2 滑点模型选型裁定（square-root 优于 linear——trading-spacial #340 实证 linear 高参与率爆炸 + quant67 确认 √(qty/ADV)×σ 为工程标准）；③§3.2 修复 Step ② 复用代码错误引用（slippage_analyzer 无涨停板排队逻辑，改为"paper matching 引擎须新建"）；④§2.1 修复版本漂移（20号 v1.3.0→v1.4.4 对齐 00_index 现状）；⑤§8.4 补 2 项 2026 来源（trading-spacial #340 sqrt slippage + quant67 回测引擎设计） | 代码验证 slippage_analyzer.py SquareRootImpactPredictor 已实现 square-root 模型（coeff=0.142）但文档 §3.2 Step ③ 仅列"linear/square-root/Almgren-Chriss"未给公式未裁定选型。全网搜 2026-08 研究：trading-spacial #340 linear→sqrt 迁移实证 + quant67 √(qty/ADV)×σ 工程标准。版本漂移：20号 v1.3.0 滞后（00_index 已 v1.4.4） |
@@ -823,3 +852,4 @@ def _state_idx(s: RollbackState) -> int:
 | 2026-08-10 | 1.6.4 | 十次复审（T+1 native 模拟器验证基准登记）：①§3.2 补 EvoMarket T+1 native 模拟器参考（[arXiv:2604.18046](https://arxiv.org/abs/2604.18046) Zhong/Yang/Liu/Tang/Yang 2026-04 哈工大/南科大）——首个将 A 股 T+1 结算/涨跌停/集合竞价/市场日历作一等公民建模的开源离散事件多智能体模拟器，高吞吐执行核心+Oracle 引导纠正性订单合成自校准。**裁定**：MVP 不引入（复用原则不重造撮合引擎），登记为 T+1 native 撮合行为验证基准——SHADOW 阶段若发现 paper-live 撮合行为差异，可用 EvoMarket 作交叉验证环境排查根因。登记为远期候选（Phase 2+，SHADOW 阶段首次校准后评估） | 90 号 v1.18.0 七十三轮审查登记的 2 篇新增论文之一（EvoMarket），交叉引用到 53 号 §3.2 撮合算法验证基准。填补"§3.2 五步撮合算法如何验证 A 股 native 机制正确性"的验证基准缺失 |
 | 2026-08-10 | 1.6.5 | 十一次复审（square-root law 理论背书）：①§3.2 补 square-root law 理论证明背书——[arXiv:2608.00988](https://arxiv.org/abs/2608.00988) Sato/Fujiwara/Kanazawa 2026-08-02（京都大学，PRL 2025 同作者）证明 square-root law 下即使订单流可预测价格仍扩散（square-root law 是 EMH 微观结构必要条件非异常）+[arXiv:2606.07059](https://arxiv.org/abs/2606.07059) Bonart 2026-06 从价格扩散性结构约束推导冲击标度（信息中性 regime→square-root，强信息耦合→linear 交叉）。将 v1.6.1 的 square-root 选型裁定从"quant67/trading-spacial 工程实证标准"提升为"EMH 扩散约束的理论必然"，linear 仅在强信息耦合 regime（知情交易）成立本项目不适用 | 用户要求再次审查 + 全网搜索 2026-08-08 最新研究 + 持续改进不停。90 号 v1.7.0 十六轮已将 2608.00988 标为"理论物理论文非可施工算法，记理论参考"，本次将其理论价值交叉引用到 53 号 §3.2 作为 square-root 选型的理论背书——从"经验工程标准"升级为"理论证明最优"，强化滑点模型选型的理论根基 |
 | 2026-08-10 | 1.6.6 | 十二次复审（calibrate_slippage 崩溃 bug 修复）：①§3.2 `calibrate_slippage` 空数组 guard——`live_fills` 为空时 `np.percentile([], 50)` 崩溃，补 guard 返回 `INSUFFICIENT` verdict（未达统计地板不计算分位数，不影响 GRAY_RAMP 推进）；②§3.2 `calibrate_slippage` 除零 guard——`backtest_assumed_bps=0` 时 `calibration_ratio` 除零，补 guard 返回 `FAIL`+`float('inf')`+reason；③§3.2 `import numpy as np` 移至模块顶层（原函数内 import 不规范）；④§3.2 补 `order_price≤0` 异常 fill 跳过 + 二次 guard（过滤后可能为空）；⑤校准结果处置补 `INSUFFICIENT` verdict 说明（继续 SHADOW 观察至满 14 天+≥30 笔后重试） | 伪代码边界条件深度审计——聚焦 None/空值/除零三类崩溃路径。`calibrate_slippage` 原代码在 SHADOW 初期（fills 未达 30 笔前）或回测配置异常（slippage_bps=0）时必崩。修复后函数在边界条件下优雅降级返回 INSUFFICIENT/FAIL 而非崩溃，符合 fail-closed 原则 |
+| 2026-08-12 | 1.7.0 | 十三次复审（幻觉引用清除 + 已施工设施盘点 + 版本漂移修复）：①**幻觉引用修正**——git log 实证 52/55 号从未离开 draft v0.1.0 骨架（仅 3 个 commit），但 v1.6.6 前 body 引用其"§3.4/§3.6 章节、active v1.7.3/v1.13.0 版本"为虚构（00_index v2.5.0 批量同步时错标 52-55 号 active 导致连环幻觉）：全部 14 处 52 号引用改为代码真源（`backtest/core/decision_gate.py` IS→WFA→OOS+`monitor_backtest_live_deviation` / `simulation/deflated_sharpe_calculator.py` MOD-SIM-024）或 battle_map_03 + 骨架状态标注；55 号 5 处引用去虚构章节（§3.5 LiveBacktestParityMonitor——组件代码核查不存在 / §3.9 / §3.2）改骨架待讨论标注；②**张冠李戴修正**——"50 号 experiment_tracking"×4 处：50 号实为 backtest_observability_workplan（回测可观测性工作计划 draft v1.0.2），experiment_tracking 是代码目录；§3.2 Step④ + 撮合引擎复用原则"CorporateActionProcessor（MOD-TRADING-004）"×2 处：该类不存在且公司行动（分红送股）≠费率，改为 backtest 引擎 `commission_rate` 费率配置；③**版本漂移修复**——20 号 v1.4.4→v1.2.4（frontmatter 实证，v1.6.1 时对齐的是 00_index 错标记录）/ 35 号 v1.2.0→v1.37.0 且 Ghost Position 为"已设计 4 层架构、detect_ghost_positions 代码待施工（其 §6.11）"非"已建端到端" / Alpha Decay 表 30 号/10+34 号/25 号版本号去除防再漂移 / BM-SIM-01~06→01~07×4 处 + BM-SIM-05 数字孪生已降级（#ARCH-OE-010）+ BM-SIM-01 缺失态注记；④**新增 §2.4 已施工设施盘点**（通用规则 #11——16 行设施表：paper_live_transition / decision_gate / deflated_sharpe / slippage_analyzer / execution_quality_scorer / look_ahead_bias_detector / settlement_reconciliation / position_reconciler / backtest 费率配置 / ex_core 执行硬约束 / simulation 域 15 模块 / battle_map_12 四模式开关 + 3 项待施工标注）；⑤§7 新增 2 项开放问题（52/55 号骨架联动影响 + 00_index 五处漂移登记——不越界改）；⑥§8.2 补 battle_map_12 条目 + §8.3 代码真源补 decision_gate/settlement_reconciliation/position_reconciler 3 项 | 通用规则 #11 已施工设施盘点 + 交叉引用实证审查：git log 证明 52/55 号从未有 active 版本（v1.7.3/v1.13.0/v1.21.0 均为 00_index 错标后的连环幻觉）；代码核查发现 LiveBacktestParityMonitor / CorporateActionProcessor 不存在；50 号 topic 实为 backtest_observability_workplan；battle_map_04 实为 BM-SIM-01~07 且 BM-SIM-05 已降级。⚠️施工备注：本次修订期间检测到并发会话（arch-review-g10-g06 等 6 个活跃 session）git 操作导致工作区多次回滚，改为全量写入+Gateway 提交固化 |
