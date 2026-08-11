@@ -3806,10 +3806,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: rejected
   priority: P2
   created_at: '2026-08-07'
-  last_reviewed_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
   promoted_to: ''
   source_draft: battle_map_01_research_incubation.md:591
   source_section: ''
@@ -3832,7 +3832,7 @@ entries:
   blocked_by: []
   next_review_date: ''
   review_frequency: yearly
-  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/MLflow
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-050（复现包第三方定位弃用）），对应 battle_map 环节已标 deprecated
   acquisition_method: opensource
   acquisition_source: MLflow
 - id: CAND-RES-008
@@ -4337,10 +4337,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: rejected
   priority: P2
   created_at: '2026-08-07'
-  last_reviewed_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
   promoted_to: ''
   source_draft: battle_map_01_research_incubation.md:885
   source_section: ''
@@ -4363,7 +4363,7 @@ entries:
   blocked_by: []
   next_review_date: ''
   review_frequency: yearly
-  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/—
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-017（研究协作中心弃用，单人无团队）），对应 battle_map 环节已标 deprecated
   acquisition_method: borrow
   acquisition_source: ''
 - id: CAND-RES-017
@@ -4396,10 +4396,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: rejected
   priority: P2
   created_at: '2026-08-07'
-  last_reviewed_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
   promoted_to: ''
   source_draft: battle_map_01_research_incubation.md:916
   source_section: ''
@@ -4422,7 +4422,7 @@ entries:
   blocked_by: []
   next_review_date: ''
   review_frequency: yearly
-  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=self_build/—
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-018（研究信息隔离墙弃用，个人资金无MNPI）），对应 battle_map 环节已标 deprecated
   acquisition_method: self_build
   acquisition_source: ''
 - id: CAND-RES-018
@@ -5340,10 +5340,10 @@ entries:
       evidence: 待复核
     blocking_question: none
     result: candidate
-  status: candidate
+  status: rejected
   priority: P2
   created_at: '2026-08-07'
-  last_reviewed_at: '2026-08-07'
+  last_reviewed_at: '2026-08-12'
   promoted_to: ''
   source_draft: battle_map_05_stock_selection.md:2084
   source_section: ''
@@ -5366,7 +5366,7 @@ entries:
   blocked_by: []
   next_review_date: ''
   review_frequency: yearly
-  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/Axelrod
+  last_review_outcome: 2026-08-12 作战地图审查裁定弃用（#ARCH-OE-037（多方博弈纳什均衡模拟弃用）），对应 battle_map 环节已标 deprecated
   acquisition_method: borrow
   acquisition_source: Axelrod
 - id: CAND-PFALLOC-002
@@ -5484,6 +5484,367 @@ entries:
   blocked_by: []
   next_review_date: ''
   review_frequency: yearly
-  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/ABIDES+market-sim
+  last_review_outcome: 2026-08-12 复核：ABIDES 订单簿仿真部分已裁定弃用（#ARCH-OE-034），本条目仅保留市场仿真器基础入口（market-sim 轻量路线）；原登记"由 register_candidate_acquisitions.py 补登，承载 acquisition=opensource/ABIDES+market-sim"
   acquisition_method: opensource
-  acquisition_source: ABIDES+market-sim
+  acquisition_source: market-sim（已移除 ABIDES，#ARCH-OE-034）
+
+# ----------------------------------------------------------
+# 作战地图全景审查转入（2026-08-12，#ARCH-OE-013~055 裁定）
+# ----------------------------------------------------------
+- id: CAND-RPT-001
+  name: Regulatory Report Automation / 监管报告自动生成
+  aliases:
+  - BM-REC-02-F
+  domain: D_REPORTING
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-REC-02-F 转候选（#ARCH-OE-020），未登记 depgraph
+  description: 程序化交易报告/异常交易自报/持仓/绩效四类监管报送自动生成。当前手动填报已够用（激活门槛 GATE-002=AUM≥1000万，个人资金现实不符）。
+  capability: ''
+  problem_it_solves: AUM 达到监管报送量级后手动填报工作量大且易错
+  trigger_signals:
+  - '账户 AUM≥1000 万（GATE-002 激活）'
+  - '监管开放个人程序化交易自动化报送接口'
+  - '跨市场交易（GATE-003 激活）'
+  keywords:
+  - 监管报告
+  - 程序化交易报备
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: MOD-RPT-006 stable，当前手动填报
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-A8
+  source_section: ''
+  original_id: BM-REC-02-F
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 手动填报指引文档（保留）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-REC-02-F
+  - 监管报告
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-020）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-TRD-001
+  name: Multi-Account Manager / 多账户分仓管理
+  aliases:
+  - BM-REC-05
+  domain: D_TRADING
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-REC-05 转候选（#ARCH-OE-021），未登记 depgraph
+  description: 按各账户 AUM 分仓+独立风控/独立PnL/独立报告的多账户管理体系。当前双账户（实盘+QMT模拟）用本地账本配置隔离即可。
+  capability: ''
+  problem_it_solves: 账户数超过 2 个或出现代客理财场景时的分仓核算
+  trigger_signals:
+  - '账户数量 >2'
+  - '出现代客理财/多资金管理需求'
+  keywords:
+  - 多账户
+  - 分仓
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: D-TRADING-05 未开发
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-A9
+  source_section: ''
+  original_id: BM-REC-05
+  estimated_complexity: L
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 双账户本地账本配置隔离（并入 #ARCH-GAP-002 设计）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-REC-05
+  - 多账户分仓
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-021，用户确认）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-010
+  name: KG-GNN Inference Suite / 知识图谱GNN推演族
+  aliases:
+  - BM-SEL-11
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-D
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-SEL-11 转候选（#ARCH-OE-036），未登记 depgraph
+  description: RGCN/TGN/GAT 图神经网络三件套+供应链 GNN+Causal RL（v9.0 门禁项）。研究级图学习设施，单卡 24GB 与单人验证带宽难以支撑。
+  capability: ''
+  problem_it_solves: 事件沿产业链/供应链图谱的学习式传导推演
+  trigger_signals:
+  - 'Wind 产业链数据库（6631 节点/11 级）落地且图谱遍历式传导（普通图查询）验证有效后仍需学习式推演'
+  keywords:
+  - GNN
+  - 知识图谱
+  - Causal RL
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全部 planned，无代码
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-D4
+  source_section: ''
+  original_id: BM-SEL-11
+  estimated_complexity: XL
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 普通图谱遍历（非 GNN）即可承接产业链事件传导（见 #ARCH-OE-053 RC-12-B 拆分）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-SEL-11
+  - GNN
+  - 知识图谱
+  related_candidates:
+  - CAND-RSK-021
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-036）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-PFALLOC-003
+  name: Copula-GARCH Covariance & Core-Satellite / 高阶协方差与核心-卫星框架
+  aliases:
+  - BM-POS-02 部分
+  domain: D_PORTFOLIO
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L3.5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-POS-02 部分能力转候选（#ARCH-OE-041），环节主体保留
+  description: Copula-GARCH 协方差建模+核心-卫星仓位管理框架。30-80 只持仓下协方差工程保留（Ledoit-Wolf 收缩/因子模型），本条目仅承载高阶学术选型。
+  capability: ''
+  problem_it_solves: 多 sleeve 并行且持仓数较大时的尾部相关结构与仓位分层
+  trigger_signals:
+  - '多 sleeve 并行上线且组合持仓 >50 只'
+  - '收缩估计/因子模型协方差在实盘归因中表现不足'
+  keywords:
+  - Copula-GARCH
+  - 核心-卫星
+  - 协方差
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: MOD-POS-011 planned
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-E1
+  source_section: ''
+  original_id: BM-POS-02
+  estimated_complexity: L
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: Ledoit-Wolf 收缩估计/因子模型协方差（行业标准，保留在 BM-POS-02 主体）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-POS-02
+  - Copula-GARCH
+  - 核心-卫星
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-041，30-80 只修正后部分保留）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-FBL-001
+  name: Meta-Level Iteration & Second-Order Optimization / 元级迭代与二阶优化
+  aliases:
+  - BM-REC-03-D
+  - C-041
+  domain: D_FEEDBACK_LOOP
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L5
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-REC-03-D 转候选（#ARCH-OE-052），未登记 depgraph
+  description: C-041 十五个优化维度的元优化+二阶反馈（优化"优化策略的方法"）。研究性质浓、验证困难，单人系统奢侈品。
+  capability: ''
+  problem_it_solves: 优化方法本身的自进化
+  trigger_signals:
+  - '单层反馈闭环（因子/信号/模型层）稳定运行 ≥6 个月且产出可度量收益'
+  keywords:
+  - 元优化
+  - 二阶优化
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 待开发（planned，D_FEEDBACK_LOOP 域）
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-F4
+  source_section: ''
+  original_id: BM-REC-03-D
+  estimated_complexity: XL
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 单层反馈闭环（BM-REC-03-A/B/C 已建）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-REC-03-D
+  - 元级迭代
+  - 二阶优化
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-052）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SIG-011
+  name: Density Prediction Alternative Model Zoo / 密度预测备选模型族
+  aliases:
+  - BM-SEL-13 部分
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2-D
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 作战地图环节 BM-SEL-13 未入选模型族转候选（#ARCH-OE-035），环节主体收敛单一路线
+  description: Mamba/SSM+xLSTM+KAN+QNN+归一化流/扩散等密度预测备选模型族。主路线收敛为轻量密度头或 Kronos-mini 二选一（91_density_prediction.md），本条目承载备选族。
+  capability: ''
+  problem_it_solves: 主路线模型验证不达标时的备选模型储备
+  trigger_signals:
+  - '主路线（轻量密度头/Kronos-mini）IS→WFA→OOS 验证不达标'
+  keywords:
+  - Mamba
+  - xLSTM
+  - KAN
+  - QNN
+  - 扩散模型
+  upstream_deps: []
+  downstream_consumers: []
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全部 planned，无代码
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-12'
+  last_reviewed_at: '2026-08-12'
+  promoted_to: ''
+  source_draft: battle_map_gap_oe_review.md §五-D3
+  source_section: ''
+  original_id: BM-SEL-13
+  estimated_complexity: XL
+  estimated_effort: ''
+  tech_notes: ''
+  risks: []
+  alternatives: 轻量密度头或 Kronos-mini 单一路线（BM-SEL-13 主体保留）
+  tags:
+  - 作战地图审查转入
+  search_terms:
+  - BM-SEL-13
+  - 密度预测
+  - 模型族
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: ''
+  review_frequency: yearly
+  last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-035）
+  acquisition_method: self_build
+  acquisition_source: ''

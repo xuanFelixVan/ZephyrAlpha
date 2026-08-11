@@ -41312,13 +41312,13 @@ battle_map_steps:
   flow_stage: stock_selection
   name_zh: 数据接入与预处理
   name_en: Data Ingestion & Preprocessing
-  plain_zh: 把外面来的行情、新闻、另类数据收进来洗干净，按热度分层存好，供后面所有环节使用。
-  mechanism_zh: 'L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare 行情+新闻+另类数据经事件总线写入分层时序存储（Redis 热+ClickHouse 温+Parquet
-    冷）。是整个数据流主动脉的起点。🆕v8.1 L0 数据增强：FWT检索增强扩散 + GBM-Diffusion 数据增强（A股数据增强，扩充训练样本分布）。
+  plain_zh: 把 miniQMT/iFind/tushare 等外部行情、新闻、另类数据收进来洗干净存好，供后面所有环节使用。
+  mechanism_zh: 'L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare 多源行情+新闻+另类数据接入清洗，写入 ClickHouse 主存+Parquet 冷归档（18号文档）+文件/Redis
+    缓存。是整个数据流主动脉的起点。🆕v8.1 L0 数据增强：FWT检索增强扩散 + GBM-Diffusion 数据增强（候选池，未施工）。
 
     '
-  indicators_zh: '①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、分层存储策略、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion；④数据流：外部源→事件总线→分层存储→BM-SEL-02；⑤代码：C-001
-    L0 层；⑥降级：数据源断流→仅执行卖出指令。数据架构扩展：数据源含 miniQMT(xtdata/xttrader SDK)/iFind/tushare/BaoStock；CDC 变更数据捕获增量同步；存储=Lakehouse+TSDB+Embedding向量库（Warm热/Cold冷分层）；事件契约统一 TickEvent/SignalEvent/DecisionEvent/ExecutionEvent/RiskEvent/SystemEvent；🆕AI驱动异常检测（数据质量）；数据质量四维度=完整性Completeness/一致性Consistency/时效性Timeliness/可用性Availability（数据架构§10）。
+  indicators_zh: '①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、存储策略(ClickHouse主存+Parquet冷归档+文件/Redis缓存)、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion（候选池，未施工）；④数据流：外部源→接入清洗→ClickHouse主存/缓存→BM-SEL-02；⑤代码：C-001
+    L0 层；⑥降级：数据源断流→仅执行卖出指令。数据架构扩展：数据源含 miniQMT(xtdata/xttrader SDK)/iFind/tushare/BaoStock；存储=ClickHouse 主存+Parquet 冷归档（18号文档）+文件/Redis 缓存；事件契约统一 TickEvent/SignalEvent/DecisionEvent/ExecutionEvent/RiskEvent/SystemEvent；🆕AI驱动异常检测（数据质量）；数据质量四维度=完整性Completeness/一致性Consistency/时效性Timeliness/可用性Availability（数据架构§10）。
 
     📌 概念覆盖清单（草稿H3逐字登记）：§29.4 时序数据库与分层存储架构（→A3数据架构）；§0.2 数据流全景图（接入→处理→存储→服务→质量→治理）；1.3 L0原始行情与L1标准化行情；§17.5 D-ML-TRAIN/D-ML-SERVE 训练/推理域缺失模块；§17.9 D-GOVERNANCE 治理域缺失模块；§16.18 A1§29.4 迁移内容：时序数据库与分层存储架构（历史参考）；§29.4 时序数据库与分层存储架构；§15.3 治理漂移(Governance Drift)防护
 
@@ -42009,14 +42009,14 @@ battle_map_steps:
   name_zh: 收益率条件密度预测
   name_en: Conditional Density Prediction
   plain_zh: 不只预测明天涨多少，而是预测明天收益率的完整概率分布——偏多少、尾巴多厚、极端情况多罕见。
-  mechanism_zh: 'L2-A 层。f(r|X_t) 条件PDF，分阶段实现（参数化→混合→非参数化归一化流/扩散），派生偏度/峰度/前瞻VaR/CVaR/8态概率P1~P8。被8态预测、组合优化、风控共形VaR三层消费。
+  mechanism_zh: 'L2-A 层。f(r|X_t) 条件PDF，单一路线收敛（轻量密度头或 Kronos-mini 二选一，选型见 91_density_prediction.md；备选模型族已转候选池 CAND-SIG-011），派生偏度/峰度/前瞻VaR/CVaR/8态概率P1~P8。被8态预测、组合优化、风控共形VaR三层消费。
 
-    时序建模升级：🆕v8.1 Mamba/SSM 时序增强（MOD-SIG-051，线性复杂度长序列建模，与 Transformer 互补，替代二次复杂度瓶颈）；🆕v8.2 Kronos-mini/base（MOD-SIG-050，金融K线 TSFM 零样本预测，无需逐股微调即可产出收益率分布先验）；🆕v9.0 xLSTM 长程记忆（MOD-SIG-053，第三时序架构）。Phase 2 采用 QNN 两阶段（🆕v6.0 KAN 可解释函数逼近替代 QNN 中 MLP 层，参数更少，§29.33），Transformer/PatchTST 作时序特征提取器（§29.7）。🆕v4.1 密度预测叠加态统一模式（§5.5/§6.1.3/§6.6/§6.7/§8.2：离散标签硬规则不变+条件PDF软化仓位/评分，🆕次日走势8态叠加模型替代原涨/跌二值预测，8态与收益率条件密度预测融合）。
+    🆕v4.1 密度预测叠加态统一模式（§5.5/§6.1.3/§6.6/§6.7/§8.2：离散标签硬规则不变+条件PDF软化仓位/评分，🆕次日走势8态叠加模型替代原涨/跌二值预测，8态与收益率条件密度预测融合）。
 
     '
-  indicators_zh: '①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)+Kronos零样本先验；③参数：Phase=参数化→混合→非参数化，派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)，Mamba/SSM序列长度(proposed)；④数据流：分布特征→PDF(Mamba/SSM+Kronos增强)→派生量→8态/组合优化/风控；⑤代码：MOD-SIG-043 条件密度预测器(planned)+MOD-SIG-050 Kronos TSFM(planned)+MOD-SIG-051 Mamba/SSM时序增强(planned)（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
+  indicators_zh: '①触发：信号层产出条件PDF；②消费：分布特征+因子池(L1)；③参数：单一路线收敛（轻量密度头或 Kronos-mini 二选一，选型见 91_density_prediction.md；备选模型族转候选池 CAND-SIG-011），派生偏度/峰度/前瞻VaR/CVaR/P1~P8(proposed)；④数据流：分布特征→条件PDF→派生量→8态/组合优化/风控；⑤代码：MOD-SIG-043 条件密度预测器(planned)（草图§4.5）；⑥降级：未就绪→8态用离散估计无分布增强。
 
-    📌 概念覆盖清单（草稿H3逐字登记）：§4.5.1 🆕密度预测专业机构实践增强；§29.7 Transformer时序架构用于密度预测增强；§29.22 Mamba/SSM状态空间模型用于金融时序建模（v5.1新增）
+    📌 概念覆盖清单（草稿H3逐字登记）：§4.5.1 🆕密度预测专业机构实践增强
 
     '
 - step_id: BM-SEL-14
@@ -42341,18 +42341,16 @@ battle_map_steps:
   flow_stage: sell_flow
   name_zh: 止盈止损族
   name_en: Take-Profit & Stop-Loss Strategy Family
-  plain_zh: 卖出端的"策略工厂"——根据策略类型用不同的止盈止损范式(趋势宽止损/均值回归中止损/套利无止损/高频紧止损/Carry宽止损)，叠加猎杀防护和期权定价评估。
-  mechanism_zh: '§1.4 第二层卖出策略工厂(C-006卖出子集) + v6.0策略类型→止损范式映射 + 止损猎杀防护 + 止损期权定价评估。
+  plain_zh: 卖出端的"策略工厂"——根据策略类型用不同的止盈止损范式(趋势宽止损/均值回归中止损/套利无传统止损)，叠加猎杀防护。
+  mechanism_zh: '§1.4 第二层卖出策略工厂(C-006卖出子集) + v6.0策略类型→止损范式映射 + 止损猎杀防护。
 
     止盈策略族：固定止盈/移动止盈/分批止盈/时间加权止盈。
 
-    v6.0策略类型→止损范式映射层(Strategy-Specific Stop Framework)：趋势跟踪→宽止损(否则必被震出)+移动止损为主；均值回归→中等止损(不盈利=论点错误)+固定止损为主；统计套利→无传统止损(用组合对冲+仓位管理替代)；高频→极紧止损(论点失效立即退出)；Carry→极宽止损或无止损(接受小亏大赚)。
+    v6.0策略类型→止损范式映射层(Strategy-Specific Stop Framework)：趋势跟踪→宽止损(否则必被震出)+移动止损为主；均值回归→中等止损(不盈利=论点错误)+固定止损为主；统计套利→无传统止损(用组合对冲+仓位管理替代)。
 
     止损策略族：固定止损/波动率止损(ATR)/密度感知止损/移动止损。逻辑止损族：基本面/技术面/事件/主力出货止损。
 
     v6.0止损猎杀防护(Stop-Hunting Protection)：止损位偏移1-2%防猎杀；软止损模式(到达止损位→不立即执行→进入OBSERVING观察期→收盘价<止损位→执行/收回→解除)。
-
-    v6.0止损期权定价评估(Stop-Loss as Embedded Option)：设止损=卖出隐含看跌期权→止损越紧隐含期权费越高→成本过高则换退出方式(时间止损/手动观察退出)。
 
     v4.1突破成败策略族：压力位突破失败→止损卖出；第K次挑战失败(K≥3)→强制离场。
 
@@ -42362,7 +42360,7 @@ battle_map_steps:
 
     '
   indicators_zh: '①触发：评分输出>阈值/突破成败信号触发；②消费：卖出评分(BM-SELL-03)+策略类型(L3)+ATR波动率(BM-SEL-02)+密度PDF分位数(BM-SEL-13)+压力位/支撑位(BM-SEL-02)+突破成败信号(BM-SELL-01)；③参数：止盈位PDF
-    75%分位数、止损位PDF 5%分位数、止损偏移1-2%、趋势宽/均值回归中/高频紧/Carry宽(proposed)；④数据流：评分+策略类型+波动率→止盈族+止损族+逻辑止损+猎杀防护+期权定价→止盈/止损决策→融合仲裁/置换再平衡；⑤代码：MOD-SELL-004
+    75%分位数、止损位PDF 5%分位数、止损偏移1-2%、趋势宽/均值回归中/套利无传统止损(proposed)；④数据流：评分+策略类型+波动率→止盈族+止损族+逻辑止损+猎杀防护→止盈/止损决策→融合仲裁/置换再平衡；⑤代码：MOD-SELL-004
     止盈(planned)+MOD-SELL-005 止损(planned)+MOD-SELL-014 策略止损范式(planned)+MOD-SELL-015 猎杀防护(stable)+MOD-SELL-017 分批退出(planned)；⑥降级：策略类型→止损范式映射未就绪→退化为固定止损范式。
 
     '
@@ -42386,17 +42384,17 @@ battle_map_steps:
   flow_stage: sell_flow
   name_zh: 策略止损范式
   name_en: Strategy-Specific Stop Framework
-  plain_zh: 不同策略用不同止损风格——趋势跟踪用宽止损(防被震出)、均值回归用中止损(不盈利即论点错误)、套利无传统止损、高频极紧止损、Carry极宽或无止损。
-  mechanism_zh: BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0策略类型→止损范式映射层：趋势跟踪→宽止损+移动止损为主；均值回归→中等止损+固定止损为主；统计套利→无传统止损(组合对冲+仓位管理替代)；高频→极紧止损(论点失效立即退出)；Carry→极宽止损或无止损(接受小亏大赚)。
-  indicators_zh: ①触发：策略类型确定后映射止损范式；②消费：策略类型(L3 C-006策略工厂)+ATR波动率(BM-SEL-02)；③参数：趋势宽/均值回归中/高频紧/Carry宽/套利无(proposed)；④数据流：策略类型→止损范式映射→范式参数→BM-SELL-04-B止损族执行；⑤代码：MOD-SELL-014
+  plain_zh: 不同策略用不同止损风格——趋势跟踪用宽止损(防被震出)、均值回归用中止损(不盈利即论点错误)、套利无传统止损。
+  mechanism_zh: BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0策略类型→止损范式映射层：趋势跟踪→宽止损+移动止损为主；均值回归→中等止损+固定止损为主；统计套利→无传统止损(组合对冲+仓位管理替代)。
+  indicators_zh: ①触发：策略类型确定后映射止损范式；②消费：策略类型(L3 C-006策略工厂)+ATR波动率(BM-SEL-02)；③参数：趋势宽/均值回归中/套利无(proposed)；④数据流：策略类型→止损范式映射→范式参数→BM-SELL-04-B止损族执行；⑤代码：MOD-SELL-014
     策略止损范式(planned)；⑥降级：映射未就绪→退化为固定止损范式。
 - step_id: BM-SELL-04-D
   flow_stage: sell_flow
   name_zh: 猎杀防护
   name_en: Stop-Hunting Protection
-  plain_zh: 防止损位被庄家猎杀——止损位偏移1-2%防猎杀，到止损位不立即卖而是进入观察期，收盘价确认才执行，把止损当隐含看跌期权定价评估成本。
-  mechanism_zh: BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0止损猎杀防护：止损位偏移1-2%防猎杀；软止损模式(到达止损位→不立即执行→进入OBSERVING观察期→收盘价<止损位→执行/收回→解除)。止损期权定价评估：设止损=卖出隐含看跌期权→止损越紧隐含期权费越高→成本过高则换退出方式(时间止损/手动观察退出)。
-  indicators_zh: ①触发：价格触及止损位±偏移带；②消费：止损位(BM-SELL-04-B)+收盘价(L0行情)；③参数：止损偏移1-2%、软止损观察期、期权费阈值(proposed)；④数据流：止损位+偏移→猎杀防护带→软止损观察→确认执行/收回→BM-SELL-04汇总；⑤代码：MOD-SELL-015
+  plain_zh: 防止损位被庄家猎杀——止损位偏移1-2%防猎杀，到止损位不立即卖而是进入观察期，收盘价确认才执行。
+  mechanism_zh: BM-SELL-04 止盈止损族的子环节（depth=1）。v6.0止损猎杀防护：止损位偏移1-2%防猎杀；软止损模式(到达止损位→不立即执行→进入OBSERVING观察期→收盘价<止损位→执行/收回→解除)。
+  indicators_zh: ①触发：价格触及止损位±偏移带；②消费：止损位(BM-SELL-04-B)+收盘价(L0行情)；③参数：止损偏移1-2%、软止损观察期(proposed)；④数据流：止损位+偏移→猎杀防护带→软止损观察→确认执行/收回→BM-SELL-04汇总；⑤代码：MOD-SELL-015
     猎杀防护(stable)；⑥降级：猎杀防护失效→硬止损立即执行(无观察期)。
 - step_id: BM-SELL-04-E
   flow_stage: sell_flow
@@ -42474,12 +42472,12 @@ battle_map_steps:
   flow_stage: sell_flow
   name_zh: 卖出闭环优化
   name_en: Sell Closed-loop Optimization
-  plain_zh: 卖出后复盘——统计信号准确率(假阳性/假阴性)、做策略A/B测试、追踪执行质量(滑点/冲击成本/延迟)，反馈调整信号权重与策略参数，让卖出越做越准。
+  plain_zh: 卖出后复盘——统计信号准确率(假阳性/假阴性)、做策略参数简单对比、追踪执行质量(滑点/冲击成本/延迟)，反馈调整信号权重与策略参数，让卖出越做越准。
   mechanism_zh: '§1.4 卖出闭环优化层（SELL-10/11/12）+ §7第四层。卖出后N天复盘三维度。
 
     SELL-10 卖出信号准确率监控：卖出后N天内是否继续下跌？→准确率统计(按信号类型/策略类型分组)+假阳性分析(卖了又涨→止损过紧?)+假阴性分析(没卖继续跌→信号漏判?)+准确率趋势→动态调整信号权重。
 
-    SELL-11 卖出策略A/B测试：止盈线8% vs 10%/移动止损vs固定止损/分批止盈vs一次性止盈→统计显著性检验→参数调整建议。
+    SELL-11 卖出策略参数对比：止盈线8% vs 10%/移动止损vs固定止损/分批止盈vs一次性止盈→简单准确率追踪(假阳性/假阴性统计)→参数调整建议。
 
     SELL-12 卖出执行质量追踪：滑点/冲击成本/执行延迟/分批执行效果→执行质量评分→反馈至卖出执行策略优化。
 
@@ -42487,8 +42485,8 @@ battle_map_steps:
     执行策略。
 
     '
-  indicators_zh: '①触发：卖出执行完成后N天复盘；②消费：卖出执行回报(BM-EXE-02)+卖出决策记录(BM-SELL-02)+卖出后N天价格(BM-SEL-01)；③参数：复盘窗口N天、准确率分组维度(信号类型/策略类型)、A/B显著性阈值(proposed)；④数据流：卖出执行+决策记录+卖出后价格→准确率统计+A/B检验+执行质量评分→信号权重/策略参数调整建议→E-SELL-04
-    SellLoopFeedback→D-REPORTING→学习系统；⑤代码：MOD-SELL-010 准确率监控(planned)+MOD-SELL-011 A/B测试(planned)+MOD-SELL-012 执行质量追踪(planned)；⑥降级：闭环优化未就绪→跳过复盘，卖出策略参数保持静态不动态调整。
+  indicators_zh: '①触发：卖出执行完成后N天复盘；②消费：卖出执行回报(BM-EXE-02)+卖出决策记录(BM-SELL-02)+卖出后N天价格(BM-SEL-01)；③参数：复盘窗口N天、准确率分组维度(信号类型/策略类型)、假阳性/假阴性统计(proposed)；④数据流：卖出执行+决策记录+卖出后价格→准确率统计(假阳性/假阴性)+执行质量评分→信号权重/策略参数调整建议→E-SELL-04
+    SellLoopFeedback→D-REPORTING→学习系统；⑤代码：MOD-SELL-010 准确率监控(planned)+MOD-SELL-011 简单准确率追踪(planned)+MOD-SELL-012 执行质量追踪(planned)；⑥降级：闭环优化未就绪→跳过复盘，卖出策略参数保持静态不动态调整。
 
     '
 - step_id: BM-POS-02
@@ -42501,10 +42499,8 @@ battle_map_steps:
     风险预算+约束优化\"。\n分布感知调整(防御性原则，默认只减不增)：\n  偏度调整：偏度>0(正偏=上涨惊喜概率高)→仓位×(1+偏度调整系数)；偏度<0(负偏=下跌风险大)→仓位×(1-|偏度|调整系数)。\n  峰度调整：超额峰度>0(厚尾=极端事件概率高)→仓位×(1-峰度惩罚系数)；超额峰度≤0→不调整。\n\
     \  前瞻性VaR约束：前瞻性95%VaR>阈值→仓位上限自动下调；前瞻性95%CVaR>阈值→仓位上限进一步下调(CVaR比VaR更严格)。\n  调整后约束：调整后仓位≤原优化仓位(防御性原则，默认只减不增)。⚠️正偏分布允许有限加仓但幅度不超过原优化仓位的10%(约束12.6)。\n\
     Kelly仓位与原优化仓位取较小值(防御性原则: Kelly只减不增)。\n"
-  indicators_zh: '①触发：买入信号到达/再平衡触发；②消费：买入信号+得分(BM-BUY-04)+风险配额MRC(BM-POS-01风险预算层)+密度PDF偏度/峰度/VaR/CVaR(BM-SEL-13)+流动性评分(BM-EXE-01)；③参数：Kelly=0.5×f*(半Kelly)、半Kelly硬上限、偏度调整系数、峰度惩罚系数、前瞻VaR阈值、正偏加仓≤10%、协方差矩阵估计=收缩估计/因子模型/Copula-GARCH(持仓≤50只)+相关性体制监控(PCA主成分+滚动PSI监测)+尾部相关性压力折扣+核心-卫星仓位管理模型(Core-Satellite，核心仓Kelly+Risk Parity风险平价/卫星仓ATR止损)(proposed)；④数据流：信号+风险配额+密度PDF→Kelly求解→半Kelly截断→风险配额约束→分布调整(只减不增)→标级仓位→跨策略硬限制→风控；⑤代码：MOD-POS-001
+  indicators_zh: '①触发：买入信号到达/再平衡触发；②消费：买入信号+得分(BM-BUY-04)+风险配额MRC(BM-POS-01风险预算层)+密度PDF偏度/峰度/VaR/CVaR(BM-SEL-13)+流动性评分(BM-EXE-01)；③参数：Kelly=0.5×f*(半Kelly)、半Kelly硬上限、偏度调整系数、峰度惩罚系数、前瞻VaR阈值、正偏加仓≤10%、协方差矩阵估计=Ledoit-Wolf收缩估计/因子模型协方差（行业标准）+尾部相关性压力折扣；Copula-GARCH与核心-卫星仓位管理已转候选池 CAND-PFALLOC-003(proposed)；④数据流：信号+风险配额+密度PDF→Kelly求解→半Kelly截断→风险配额约束→分布调整(只减不增)→标级仓位→跨策略硬限制→风控；⑤代码：MOD-POS-001
     position_sizing_engine(planned)+MOD-POS-011 协方差估计器(planned)；⑥降级：Kelly引擎未就绪→降级为固定比例仓位(按市场状态查表§20.3)。
-
-    📌 概念覆盖清单（草稿H3逐字登记）：模块24 核心-卫星仓位管理模型（Core-Satellite Position Managemen
 
     '
 - step_id: BM-POS-03
@@ -42624,23 +42620,21 @@ battle_map_steps:
   flow_stage: position_management
   name_zh: 仓位审计追溯
   name_en: Position Audit Trail
-  plain_zh: 仓位变动的"黑匣子"——每次仓位变更全记录+审批链+哈希链防篡改，可追溯到报告域和治理域，是仓位决策合规追溯的唯一真源。
+  plain_zh: 仓位变动的"黑匣子"——每次仓位变更全记录+审批链+append-only 追加日志，可追溯到报告域，是仓位决策合规追溯的唯一真源。
   mechanism_zh: 'D-POSITION §1.3 POS-09 Position Audit Logger。
 
-    仓位审计日志：仓位变更事件 → 仓位审计报告 → D-REPORTING + D-GOVERNANCE。
+    仓位审计日志：仓位变更事件 → 仓位审计报告 → D-REPORTING。
 
-    审计要素：全记录(每次仓位变更)+审批链(决策→裁决→风控→执行全链路)+可追溯(哈希链防篡改)。
+    审计要素：全记录(每次仓位变更)+审批链(决策→裁决→风控→执行全链路)+可追溯(append-only 追加日志，与配置快照共用存储)。
 
     审计范围：仓位裁决(C-047)决策+标级Kelly仓位+漂移再平衡+资金曲线缩放+日历约束调整+跨策略合并等全部仓位变更事件。
 
-    审计报告产出：PositionAuditReport → D-REPORTING(报告域归档) + D-GOVERNANCE(治理域合规审计)。
+    审计报告产出：PositionAuditReport → D-REPORTING(报告域归档)。
 
     与不变量INV-POS-001(仓位裁决不可绕过)的关系：审计日志是"不可绕过"的事后验证手段——所有仓位决策必须留痕，无留痕=绕过裁决。
 
-    哈希链机制：每条审计记录含前一条哈希，篡改任意记录会导致后续哈希全部失效，确保审计完整性。
-
     '
-  indicators_zh: '①触发：任意仓位变更事件(裁决/Kelly/漂移/再平衡/缩放/日历/合并)；②消费：仓位变更事件(BM-POS-01~09全部环节)+审批链(D-RISK C-004)+执行结果(D-EX-CORE)；③参数：全记录、审批链、哈希链防篡改(implemented)；④数据流：仓位变更事件→全记录+审批链+哈希链→PositionAuditReport→D-REPORTING归档+D-GOVERNANCE合规审计；⑤代码：MOD-POS-009
+  indicators_zh: '①触发：任意仓位变更事件(裁决/Kelly/漂移/再平衡/缩放/日历/合并)；②消费：仓位变更事件(BM-POS-01~09全部环节)+审批链(D-RISK C-004)+执行结果(D-EX-CORE)；③参数：全记录、审批链、append-only追加日志(与配置快照共用存储)；④数据流：仓位变更事件→全记录+审批链+append-only日志→PositionAuditReport→D-REPORTING归档；⑤代码：MOD-POS-009
     position_audit_logger(stable)；⑥降级：审计日志器未就绪→仓位决策阻断(审计是合规底线，无审计不允许执行，保守原则)。
 
     '
@@ -42650,14 +42644,14 @@ battle_map_steps:
   name_en: Tomorrow Boundary Planner
   plain_zh: 盘后生成明日交易边界（箱体上下沿+加仓/止盈/突破验证规则），作为次日所有交易的"安全围栏"——边界比聪明更重要。
   mechanism_zh: '草图§明日预案（BM-PLAN 设计）。双层架构三层触发：B盘后生成 TomorrowBoundary（箱体上沿/下沿/加仓仓位上限/禁加仓价位/必出止盈/突破验证条件）→
-    C盘前加载 ConstraintState → A盘中每15分钟重算在边界内推演（毫秒级）。边界层(B/C)是安全底线，推演层(A)是优化层。
+    C盘前加载 ConstraintState → A盘中 3 秒 Tick 粒度在边界内推演。边界层(B/C)是安全底线，推演层(A)是优化层。
 
     消费 BM-SEL-03 市场状态 / BM-SEL-04 次日8态 / BM-SEL-05 主力行为 / BM-SEL-23 情绪周期 / BM-SELL-07 卖出侧边界；输出 TomorrowBoundary/ConstraintState/BoundedActionAdvice
     → BM-BUY-02 买入融合 + BM-SELL-02 卖出融合 + BM-POS-01 仓位。
 
     设计哲学：有边界无推演=笨但安全，有推演无边界=聪明但危险，故边界层失败=致命，推演层失败=可接受机械执行边界。
     '
-  indicators_zh: '①触发：盘后收盘生成边界(B)/盘前加载(C)/盘中每15分钟重算(A)；②消费：市场状态(BM-SEL-03)+次日8态(BM-SEL-04)+主力行为(BM-SEL-05)+情绪周期(BM-SEL-23)+卖出侧边界(BM-SELL-07)；③参数：箱体上沿/下沿(昨日冷静算)、加仓仓位上限30%、禁加仓价位(接近上沿)、必出止盈(冲上沿必出)、突破验证(放量站稳10分钟)；④数据流：市场状态+次日预测+主力行为+情绪周期+卖出侧边界→B生成边界→C加载→A推演→BoundedActionAdvice；⑤代码：MOD-PLAN-001
+  indicators_zh: '①触发：盘后收盘生成边界(B)/盘前加载(C)/盘中3秒Tick粒度推演(A)；②消费：市场状态(BM-SEL-03)+次日8态(BM-SEL-04)+主力行为(BM-SEL-05)+情绪周期(BM-SEL-23)+卖出侧边界(BM-SELL-07)；③参数：箱体上沿/下沿(昨日冷静算)、加仓仓位上限30%、禁加仓价位(接近上沿)、必出止盈(冲上沿必出)、突破验证(放量站稳10分钟)；④数据流：市场状态+次日预测+主力行为+情绪周期+卖出侧边界→B生成边界→C加载→A推演→BoundedActionAdvice；⑤代码：MOD-PLAN-001
     tomorrow_boundary_planner(planned)；⑥降级：边界层(B/C)坏=致命暂停操作，推演层(A)坏=可接受机械执行边界（边界比聪明更重要）。
     '
 - step_id: BM-PLAN-02
@@ -42704,22 +42698,19 @@ battle_map_steps:
   flow_stage: execution
   name_zh: Pre-Trade合规检查
   name_en: Pre-Trade Compliance Gate
-  plain_zh: 下单前的交易所合规硬闸——涨跌停/参与率/撤单率/报单停留时间锁/Wash Trade/Spoofing 全检查，Fail-Closed，不过就拦。
+  plain_zh: 下单前的交易所合规硬闸——涨跌停/停牌/持仓限额/行业集中度/撤单率/T+1 等 A 股真实规则全检查，Fail-Closed，不过就拦。
   mechanism_zh: 'L4 层。C-002 执行域 Pre-Trade 合规主链（D-EX-CORE-24 Pre-Execution Checker + D-EX-CORE-07 Execution Risk Gate）。
 
     与 BM-EXE-01 的 C-004 仓位风控互补：C-004 管仓位/单笔上限（自适应风控），本环节管交易所合规硬阻断（2026.4.7新规）。
 
-    Pre-Trade 合规检查主链6项顺序（均 Hard Block）：涨跌停→参与率(≤5%)→持仓限额→行业集中度→撤单率(≤15%)→报单停留时间锁(≥50μs)。
-
-    并行阻塞管道：Wash Trade 自交易检测(C-002执行域) + Spoofing/Layering/尾盘操纵检测(C-004)。
+    Pre-Trade 合规检查主链6项顺序（均 Hard Block，A股规则检查链）：涨跌停→停牌→持仓限额→行业集中度→撤单率(≤15%)→T+1约束。
 
     程序化交易报告先报后交易铁律：report_confirmed=False→拒绝所有订单。
 
     Fail-Closed：合规规则引擎不可用→C-004默认拒绝所有订单→C-002亦不可用→Kill Switch自动触发。
 
     '
-  indicators_zh: '①触发：风控审批通过(BM-EXE-01)；②消费：BM-EXE-01 审批后订单 + 市场状态(涨跌停)+持仓/撤单率/参与率实时累计；③参数：报单停留时间锁≥50μs、参与率≤5%、撤单率≤15%、Wash
-    Trade检测、Spoofing/Layering检测、report_confirmed前置；④数据流：审批后订单→Pre-Trade合规主链6项顺序检查+操纵防护→合规通过订单→BM-EXE-05；⑤代码：MOD-EX-024 pre_execution_checker(planned)+MOD-EX-007
+  indicators_zh: '①触发：风控审批通过(BM-EXE-01)；②消费：BM-EXE-01 审批后订单 + 市场状态(涨跌停/停牌)+持仓/撤单率实时累计；③参数：撤单率≤15%、涨跌停/停牌/持仓限额/行业集中度/T+1检查、report_confirmed前置；④数据流：审批后订单→Pre-Trade合规主链6项顺序检查→合规通过订单→BM-EXE-05；⑤代码：MOD-EX-024 pre_execution_checker(planned)+MOD-EX-007
     execution_risk_gate(planned) / 草图§9 L4层+A6§Pre-Trade；⑥降级：合规引擎不可用→Fail-Closed拒所有新订单(C-004默认拒绝)。
 
     📌 概念覆盖清单（草稿H3逐字登记）：日内量能结构与订单流分析模型（Intraday Volume Structure & Order F；§11.2.1 因子元数据（Metadata）；§17.6 D-COMPLIANCE 合规监管域缺失模块
@@ -42754,25 +42745,20 @@ battle_map_steps:
   name_zh: 成交回报处理与持仓更新
   name_en: Fill Processing & Position Update
   plain_zh: 成交回来后拆解回报、算费用、更新持仓、推订单状态机——部分成交聚合、T+1 结算、持仓对账，把成交变成可用的持仓和账面数据。
-  mechanism_zh: 'L4 层。D-EX-CORE-08 Fill Processor + D-EX-CORE-04 Position Tracker + D-EX-CORE-11 Order State Machine + D-EX-CORE-57
-    下单执行Saga编排器 + D-EX-CORE-56 持仓对账器。
+  mechanism_zh: 'L4 层。D-EX-CORE-08 Fill Processor + D-EX-CORE-04 Position Tracker + D-EX-CORE-11 Order State Machine + D-EX-CORE-56
+    持仓对账器。
 
     Fill Processor(D-EX-CORE-08)：成交解析器+部分成交聚合器+成交归因器+费用计算器(佣金/印花税/过户费)，T+1结算合规。
 
     Position Tracker(D-EX-CORE-04)：AGG-002 Position聚合根(symbol/quantity/avg_cost/market_value/unrealized_pnl)，方案C(风控发指令+Fill回调写入)，每笔成交后更新Redis，持仓数据3秒内一致。
 
-    Order State Machine(D-EX-CORE-11)：7状态机 PENDING→{SUBMITTED,CANCELLED}/SUBMITTED→{PARTIAL,FILLED,CANCELLED,REJECTED,EXPIRED}/PARTIAL→{FILLED,CANCELLED,REJECTED,EXPIRED}，持久化+事件发射。
-
-    下单执行Saga(D-EX-CORE-57)：编排式六步(风控检查→信号确认→下单提交→成交确认→持仓更新→报告生成)，≤5s超时硬约束，补偿幂等，Redis Stream状态持久化。
+    Order State Machine(D-EX-CORE-11)：7状态机 PENDING→{SUBMITTED,CANCELLED}/SUBMITTED→{PARTIAL,FILLED,CANCELLED,REJECTED,EXPIRED}/PARTIAL→{FILLED,CANCELLED,REJECTED,EXPIRED}，本地订单状态机+结构化日志（单机进程内），状态迁移逐条落盘可回放。
 
     持仓对账(D-EX-CORE-56)：每5分钟与miniQMT持仓查询自动对账，差异>0→立即告警+冻结该标的交易，恢复后先对账不一致→D-L1降级。
 
-    最终一致性：订单成交→持仓更新<100ms。
-
     '
-  indicators_zh: '①触发：成交回报到达(BM-EXE-02)；②消费：BM-EXE-02 成交回报 + 订单状态；③参数：订单7状态机(PENDING→SUBMITTED→PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED)、部分成交聚合、费用计算=佣金/印花税/过户费、T+1结算、持仓对账周期=5min、Saga超时≤5s；④数据流：成交回报→Fill解析+部分成交聚合+费用计算+持仓更新+订单状态机流转→持仓快照+PnL→BM-EXE-03(TCA)+BM-POS-03(持仓状态机)+BM-REC-01(清算)；⑤代码：MOD-EX-008
-    fill_processor(planned)+MOD-EX-002 tracker(stable)+MOD-EX-057 saga(stable)+MOD-EX-056 reconciler(stable) / 草图§9 L4层+§13
-    Saga；⑥降级：Fill Processor未就绪→仅原始成交记录(持仓更新延迟，依赖盘后对账)。
+  indicators_zh: '①触发：成交回报到达(BM-EXE-02)；②消费：BM-EXE-02 成交回报 + 订单状态；③参数：订单7状态机(PENDING→SUBMITTED→PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED)、部分成交聚合、费用计算=佣金/印花税/过户费、T+1结算、持仓对账周期=5min、本地订单状态机+结构化日志(单机进程内)；④数据流：成交回报→Fill解析+部分成交聚合+费用计算+持仓更新+订单状态机流转→持仓快照+PnL→BM-EXE-03(TCA)+BM-POS-03(持仓状态机)+BM-REC-01(清算)；⑤代码：MOD-EX-008
+    fill_processor(planned)+MOD-EX-002 tracker(stable)+MOD-EX-056 reconciler(stable) / 草图§9 L4层；⑥降级：Fill Processor未就绪→仅原始成交记录(持仓更新延迟，依赖盘后对账)。
 
     '
 - step_id: BM-RES-01
@@ -42969,18 +42955,16 @@ battle_map_steps:
   flow_stage: model_training
   name_zh: 漂移检测与自适应重训练
   name_en: Drift Detection & Adaptive Retraining
-  plain_zh: 市场变了模型就老了——实时检测概念漂移，触发重训练，元学习让新模型快速适应不忘旧。
-  mechanism_zh: 'MT-05 DriftAdapter 提供概念漂移检测+自适应重训练+元学习（DDM/EDDM/ADWIN检测、MAML快速适应、
+  plain_zh: 市场变了模型就老了——检测概念漂移，触发重训练，防止模型悄悄失效。
+  mechanism_zh: 'MT-05 DriftAdapter 提供单一漂移检测（PSI 或 ADWIN 选一）+触发重训。是模型"保鲜"的关键，
 
-    在线EWC防遗忘=🆕持续学习抗遗忘（EWC+伪回放，v9.0注记/v6.0新增）、技能库 Voyager、元反思、AutoSkill）。是模型"保鲜"的关键，
-
-    防止"上线时好用，三个月后失效"。🆕漂移检测三闭环（§29.5）：事前特征漂移PSI→事中在线适应（EWMA/Stage2缩放）→事后C-007离线重训。
+    防止"上线时好用，三个月后失效"。🆕漂移检测闭环（§29.5）：特征漂移PSI检测→触发C-007离线重训。
 
     '
-  indicators_zh: '①触发：盘中漂移检测信号/定时；②消费：实时预测误差+特征分布；③参数：DDM/EDDM/ADWIN检测阈值、MAML快速适应、在线EWC防遗忘、Voyager技能库；④数据流：预测误差→漂移检测→重训练触发→MAML适应→EWC防遗忘→BM-MT-01训练；⑤代码：MT-05
+  indicators_zh: '①触发：盘中漂移检测信号/定时；②消费：实时预测误差+特征分布；③参数：单一漂移检测（PSI 或 ADWIN 选一）检测阈值、重训触发；④数据流：预测误差+特征分布→漂移检测→重训练触发→BM-MT-01训练；⑤代码：MT-05
     DriftAdapter（planned）；⑥降级：漂移检测未就绪→定时重训练(无自适应)。
 
-    📌 概念覆盖清单（草稿H3逐字登记）：§29.5 特征漂移与概念漂移检测；§29.35 持续学习抗遗忘框架（v6.0新增）
+    📌 概念覆盖清单（草稿H3逐字登记）：§29.5 特征漂移与概念漂移检测
 
     '
 - step_id: BM-MT-01-A
@@ -42999,9 +42983,9 @@ battle_map_steps:
   name_zh: AI辅助代码生成与分析师Agent反馈
   name_en: AI-Assisted Code Generation & Analyst Agent Feedback
   plain_zh: LLM 生成模块代码，Critic Agent 审漏洞，多轮反馈收敛后过 AST 沙箱——把人力调参瓶颈用 AI 填上。
-  mechanism_zh: MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码→Critic(DeepSeek V4 Pro)审查→反馈循环→Judge(Claude)综合评估→AST沙箱三层安全→人工审核。含因子DSL约束（6类算子）、三重语义一致性、进化式代码生成、轨迹级进化。是
-    MT-01 的智能代码生成侧。🆕v8.0 可建设项（ML模型工厂）：自反Agent（Reflexion 自我推理反思→策略自我修正）+ 分层Agent指挥链（战略→战术→执行Agent，军事指挥链模式）+ 涌现行为检测器（多Agent交互非预期涌现→自动告警+人工介入）——Agent架构主体不挂作战地图（铁律5），此处仅作训练侧能力注记。
-  indicators_zh: '①触发：BM-MT-01 训练前/研究员配置新模块需求；②消费：ModuleRequirementSpec+交易流水线架构文档；③参数：Generator/Critic/Judge模型、AST沙箱白名单+复杂度+语义三层、DSL
+  mechanism_zh: MOD-ML-002 ai_operator 对应设计文档§9.2：Generator(GLM-5.1)生成代码→Critic(DeepSeek V4 Pro)审查→反馈循环→Judge(Claude)按需触发（多轮不收敛时上裁判）→AST沙箱三层安全→人工审核。含因子DSL约束（6类算子）、三重语义一致性、进化式代码生成、轨迹级进化。是
+    MT-01 的智能代码生成侧。🆕v8.0 可建设项（ML模型工厂）：自反Agent（Reflexion 自我推理反思→策略自我修正）——Agent架构主体不挂作战地图（铁律5），此处仅作训练侧能力注记。
+  indicators_zh: '①触发：BM-MT-01 训练前/研究员配置新模块需求；②消费：ModuleRequirementSpec+交易流水线架构文档；③参数：Generator/Critic模型、Judge按需触发（多轮不收敛时上裁判）、AST沙箱白名单+复杂度+语义三层、DSL
     6类算子、进化轮数上限5；④数据流：需求→LLM生成→Critic审查→反馈收敛→AST沙箱→人工审核→注册Module Registry；⑤代码：MOD-ML-002 ai_operator（planned）；🎯对标：QuantaAlpha 轨迹级进化/Hubble DSL+AST沙箱/ProFiT 进化式代码重写（见battle_map_12 外部对标清单）；⑥降级：AI生成未就绪→人工编写代码（效率低）。
 
     📌 概念覆盖清单（草稿H3逐字登记）：§7.2 LLM辅助代码生成（v4.0升级：DSL约束+AST沙箱+三重语义一致性+进化式代码生成+
@@ -43062,18 +43046,18 @@ battle_map_steps:
   flow_stage: backtest_validation
   name_zh: 绩效指标与Tick回放
   name_en: Metrics & Tick Replay
-  plain_zh: 算 Sharpe/Sortino/最大回撤/IC/IR/胜率这些硬指标；还能把历史 Tick 逐笔回放做秒级策略验证。
+  plain_zh: 算 Sharpe/Sortino/最大回撤/IC/IR/胜率这些硬指标；还能把历史 Tick 逐笔回放用于事件驱动回测验证。
   mechanism_zh: 'BT-07 core/metrics.py 算 Sharpe/Sortino/MaxDD/IC/IR/胜率；
 
-    BT-08 core/tick_replay.py 是 Tick回放引擎（秒级做T，30秒/5秒级）；
+    BT-08 core/tick_replay.py 是 Tick回放引擎（Tick 逐笔回放用于事件驱动回测验证）；
 
     BT-09 implementations/event_driven_engine.py 是事件驱动回测（Tick级，与 tick_replay 协同）。
 
     是回测"出分"环节，决定策略评估的全面性。
 
     '
-  indicators_zh: '①触发：BM-BT-01 回测完成；②消费：BacktestResult 净值曲线+成交记录；③参数：Sharpe/Sortino/MaxDD/IC/IR/胜率、Tick回放秒级/30秒/5秒；④数据流：BacktestResult→metrics计算+Tick回放→绩效报告→BM-BT-05过拟合检测；⑤代码：BT-07/08/09（stable,
-    production）；⑥降级：Tick回放未就绪→仅日线指标(无秒级验证)。
+  indicators_zh: '①触发：BM-BT-01 回测完成；②消费：BacktestResult 净值曲线+成交记录；③参数：Sharpe/Sortino/MaxDD/IC/IR/胜率、Tick逐笔回放；④数据流：BacktestResult→metrics计算+Tick回放→绩效报告→BM-BT-05过拟合检测；⑤代码：BT-07/08/09（stable,
+    production）；⑥降级：Tick回放未就绪→仅日线指标(无Tick级回放验证)。
 
     📌 概念覆盖清单（草稿H3逐字登记）：§7.2 事件驱动的因果推演流程；1.2 miniQMT 3秒Tick数据
 
@@ -43690,11 +43674,11 @@ battle_map_steps:
   flow_stage: backtest_validation
   name_zh: 延迟差异偏差归因
   name_en: Latency Divergence Bias Attribution
-  plain_zh: 回测下单即成交，实盘下单到撮合有延迟——算延迟期间价格漂了多少，拆成算法拆单、券商链路、交易所排队、限价等待。
-  mechanism_zh: 'BM-BT-05-H 子环节（depth=2, design）。回测即时撮合(matching_engine) vs 实盘下单→撮合有延迟(algo_trading_engine time_horizon)的偏差归因。复用 execution_quality_scorer.TIME 耗时数据 + algo_trading_engine 延迟来源，新建延迟→价格漂移偏差归因：偏差=latency×price_drift_rate，归因到算法拆单延迟/券商链路延迟/交易所排队延迟/限价单等待延迟。输出喂 paper_live_transition.latency 门禁。不重写耗时打分（execution_quality_scorer已做）。
+  plain_zh: 回测下单即成交，实盘下单到成交回报有延迟——按秒级记录信号→成交回报的延迟，算延迟期间价格漂了多少并做因子归因。
+  mechanism_zh: 'BM-BT-05-H 子环节（depth=2, design）。回测即时撮合(matching_engine) vs 实盘下单→成交回报有延迟(algo_trading_engine time_horizon)的偏差归因。复用 execution_quality_scorer.TIME 耗时数据 + algo_trading_engine 延迟来源，新建秒级延迟记录（信号→成交回报）→价格漂移偏差归因：偏差=latency×price_drift_rate，按秒级口径做4因子归因（算法拆单/下单提交/限价单等待/成交回报）。输出喂 paper_live_transition.latency 门禁。不重写耗时打分（execution_quality_scorer已做）。
 
     '
-  indicators_zh: '①触发：每笔实盘成交；②消费：execution_quality_scorer.TIME耗时+algo_trading_engine算法参数+arrival/fill价；③参数：延迟阈值(100ms门禁)、漂移归因维度(4因子)；④数据流：order_submit→fill延迟+价格漂移→4因子归因→latency门禁；⑤代码：EX_SOR execution_quality_scorer 归因层扩展（planned）；⑥降级：归因未就绪→仅耗时记录(无漂移偏差归因)。
+  indicators_zh: '①触发：每笔实盘成交；②消费：execution_quality_scorer.TIME耗时+algo_trading_engine算法参数+arrival/fill价；③参数：秒级延迟记录(信号→成交回报)、漂移归因维度(4因子,秒级口径)；④数据流：order_submit→fill延迟(秒级记录)+价格漂移→4因子归因→latency门禁；⑤代码：EX_SOR execution_quality_scorer 归因层扩展（planned）；⑥降级：归因未就绪→仅耗时记录(无漂移偏差归因)。
 
     '
 - step_id: BM-BT-05-I
@@ -43898,12 +43882,12 @@ battle_map_steps:
   name_zh: 盘前风控检查
   name_en: Pre-Trade Risk Check
   plain_zh: 下单前过五关——仓位限额→行业集中度→杠杆率→合规规则→Kill Switch 状态，任一不过就拒单。
-  mechanism_zh: 'RK-02 Pre-Trade Checker 提供5步检查链(仓位限额→行业集中度→杠杆率→合规规则→Kill Switch状态)+幂等+Fail-Closed(50ms SLA)+E-RK-04。
+  mechanism_zh: 'RK-02 Pre-Trade Checker 提供5步检查链(仓位限额→行业集中度→杠杆率→合规规则→Kill Switch状态)+幂等+Fail-Closed(3秒Tick内完成)+E-RK-04。
 
     是风控的"门卫"，硬阻断不合格订单。Fail-Closed=检查超时即拒单(保守)。
 
     '
-  indicators_zh: '①触发：BM-BUY/BM-SELL 下单请求；②消费：BM-RC-01 RiskLimits+持仓+Kill Switch状态；③参数：5步检查链、幂等、Fail-Closed、50ms SLA；④数据流：下单请求→5步检查→通过/拒绝(E-RK-04
+  indicators_zh: '①触发：BM-BUY/BM-SELL 下单请求；②消费：BM-RC-01 RiskLimits+持仓+Kill Switch状态；③参数：5步检查链、幂等、Fail-Closed(3秒Tick内完成)；④数据流：下单请求→5步检查→通过/拒绝(E-RK-04
     PreTradeRejected)→BM-EXE执行/拦截；⑤代码：RK-02 risk_validator（stable, production）；⑥降级：检查超时→Fail-Closed拒单(保守,不放过)。
 
     📌 概念覆盖清单（草稿H3逐字登记）：§8.3 新鲜度检查点与延迟预算；§6.2 持仓限额
@@ -44029,16 +44013,16 @@ battle_map_steps:
   flow_stage: stock_selection
   name_zh: 故障切换与Failover
   name_en: Failover & Fault Tolerance
-  plain_zh: 主数据源挂了自动切到备用源，切换过程对下游透明，不让行情断流。
-  mechanism_zh: BM-SEL-01 数据接入的子环节。MOD-MKT-004 Failover 引擎监控主源健康（心跳/延迟/数据完整性），主源异常时按供应商优先级自动切换到备用源，切换期间缓冲数据保证下游不丢 Tick。是数据高可用的核心保障。
-  indicators_zh: ①触发：主源心跳超时/数据异常/延迟超限；②消费：BM-SEL-01-B 连接器状态；③参数：健康检查阈值、切换优先级链、缓冲窗口；④数据流：主源异常→健康检测→优先级切换→备用源接管→下游无感；⑤代码：MOD-MKT-004（D_MKT_DATA）；⑥降级：所有备用源都挂→仅执行卖出指令（保护性降级）。
+  plain_zh: 主数据源挂了手动切到备用源（iFind/akshare fallback）并重启恢复，尽量不让行情断流。
+  mechanism_zh: BM-SEL-01 数据接入的子环节。主源故障时手动切换备用源（iFind/akshare fallback）+重启恢复。是数据可用性的基础保障。
+  indicators_zh: ①触发：主源心跳超时/数据异常确认后人工介入；②消费：BM-SEL-01-B 连接器状态；③参数：备用源优先级（iFind/akshare fallback）、重启恢复流程；④数据流：主源异常→人工确认→手动切换备用源→重启恢复→下游恢复；⑤代码：MOD-MKT-004（D_MKT_DATA）；⑥降级：所有备用源都挂→仅执行卖出指令（保护性降级）。
 - step_id: BM-SEL-01-D
   flow_stage: stock_selection
   name_zh: 自动加载与热切换
   name_en: Auto-loading & Hot-swap
-  plain_zh: 新数据源上线不用重启服务——热插拔注册即生效，老源下线平滑迁移。
-  mechanism_zh: BM-SEL-01 数据接入的子环节。MOD-MKT-005 自动加载器支持供应商热插拔（注册即生效/下线即停用），无需重启服务。配合配置中心实现动态路由，新增数据源时自动发现并接入适配器。
-  indicators_zh: ①触发：配置中心变更/新源注册；②消费：BM-SEL-01-A 供应商注册表；③参数：热加载策略、配置刷新间隔、路由规则；④数据流：配置变更→自动发现→热加载适配器→路由生效→无重启；⑤代码：MOD-MKT-005（D_MKT_DATA）；⑥降级：热加载失败→回滚上一版配置（需重启才生效）。
+  plain_zh: 新数据源上线经配置变更后重启加载生效，老源下线后重启完成迁移。
+  mechanism_zh: BM-SEL-01 数据接入的子环节。新数据源接入经配置变更后重启加载生效；老源下线后重启完成迁移。配合配置文件管理数据源清单与路由。
+  indicators_zh: ①触发：配置变更/新源登记；②消费：BM-SEL-01-A 供应商注册表；③参数：源配置清单、重启加载流程；④数据流：配置变更→重启加载适配器→路由生效；⑤代码：MOD-MKT-005（D_MKT_DATA）；⑥降级：加载失败→回滚上一版配置。
 - step_id: BM-SEL-01-E
   flow_stage: stock_selection
   name_zh: 原始数据缓存
@@ -44558,7 +44542,7 @@ battle_map_steps:
     特征血缘→PIT正确特征(训练/推理共享)→BM-RES-02 实验追踪；⑤代码：D-RESEARCH-02 / 20-D-RESEARCH §1 + §12.0 R-68/R-69；⑥降级：Feature Store不可用→回退原始数据直算(无PIT,仅探索)。；📌 概念覆盖清单（草稿H3逐字登记）：§11.2.3 质量指标（Quality）；§11.3.1 单一定义原则详解；§11.5.1 职责边界；§11.7 技术选型（适配单机约束）'
 - step_id: BM-RES-01-C
   flow_stage: research_incubation
-  name_zh: 研究数据沙箱（含🆕联邦学习门禁：数据不出域的联邦学习需过安全门禁审批）
+  name_zh: 研究数据沙箱
   name_en: Research Data Sandbox
   plain_zh: 给研究员一个隔离的沙箱环境，随便折腾不影响生产数据，实验完了一键清理。
   mechanism_zh: '隔离研究环境→数据隔离+代码隔离+资源隔离→沙箱生命周期管理→审计。承载模块: D-RESEARCH-12。出处: 20-D-RESEARCH §1'
@@ -44636,8 +44620,8 @@ battle_map_steps:
   name_en: DAG Orchestration & Task Scheduling
   plain_zh: 把研究步骤串成 DAG 自动跑——数据准备→特征计算→训练→评估，依赖管好、失败重试、并行加速。
   mechanism_zh: 'DAG编排器→任务调度(依赖解析→执行)→重试+并行+通知。承载模块: D-RESEARCH-09。出处: 20-D-RESEARCH §1 + §12.0 R-89'
-  indicators_zh: '①触发：假设被接受触发工作流 / 定时调度（阈值: DAG依赖解析成功）；②消费：已验证假设（来自 BM-RES-03）；③参数：dag_engine=Prefect（范围 Airflow/Prefect/custom）、retry_strategy=exponential_backoff（范围
-    fixed/exponential）、max_parallelism=4（范围 1-16）；④数据流：已验证假设+数据/特征/模型→DAG编排器→任务调度(依赖解析→执行)→重试+并行+通知→工作流执行结果(E-RS-01/R-03)→BM-RES-05
+  indicators_zh: '①触发：假设被接受触发工作流 / 定时调度（阈值: DAG依赖解析成功）；②消费：已验证假设（来自 BM-RES-03）；③参数：dag_engine=Prefect单机版或自研轻量DAG（已锁定，不引 Airflow 集群）、retry_strategy=exponential_backoff（范围
+    fixed/exponential）、max_parallelism=4；④数据流：已验证假设+数据/特征/模型→DAG编排器→任务调度(依赖解析→执行)→重试+并行+通知→工作流执行结果(E-RS-01/R-03)→BM-RES-05
     Notebook协作；⑤代码：D-RESEARCH-09 / 20-D-RESEARCH §1 + §12.0 R-89；⑥降级：Workflow Engine不可用→手动串行脚本(无DAG/无重试)。'
 - step_id: BM-RES-05-A
   flow_stage: research_incubation
@@ -44714,10 +44698,10 @@ battle_map_steps:
   flow_stage: risk_control
   name_zh: 预警分级与审批流
   name_en: Alert Tiering & Approval Flow
-  plain_zh: 风控告警分级别——黄色提醒、橙色警告、红色紧急，各级别走不同的审批和处置流程。
-  mechanism_zh: '分级预警+审批流(合规官放行)。承载模块: MOD-L04-001。出处: risk/risk_manager.py'
-  indicators_zh: '①触发：限额消耗达阈值（阈值: 预警分级(WARNING/CRITICAL/EMERGENCY)）；②消费：限额消耗（来自 BM-RC-01-B）；③参数：—；④数据流：限额消耗→分级预警+审批流(合规官放行)→审批结果+预警事件→BM-RC-04
-    盘中监控告警；⑤代码：MOD-L04-001 / risk/risk_manager.py；⑥降级：审批流不可用→保守拒单待人工。'
+  plain_zh: 风控告警分级别——黄色提醒、橙色警告、红色紧急，AI 自治分级处置，红色紧急由 Owner 微信/前端确认。
+  mechanism_zh: 'AI自治分级告警(黄/橙/红)+红色级Owner微信/前端确认。承载模块: MOD-L04-001。出处: risk/risk_manager.py'
+  indicators_zh: '①触发：限额消耗达阈值（阈值: 预警分级(WARNING/CRITICAL/EMERGENCY)）；②消费：限额消耗（来自 BM-RC-01-B）；③参数：—；④数据流：限额消耗→AI自治分级告警(黄/橙/红)+红色级Owner微信/前端确认→预警事件→BM-RC-04
+    盘中监控告警；⑤代码：MOD-L04-001 / risk/risk_manager.py；⑥降级：告警通道不可用→保守拒单待人工。'
 - step_id: BM-RC-02-A
   flow_stage: risk_control
   name_zh: 仓位限额检查
@@ -44773,10 +44757,10 @@ battle_map_steps:
   name_zh: 触发条件判定
   name_en: Trigger Condition Evaluation
   plain_zh: Kill Switch 的触发条件判定——哪些指标破了红线就该拉闸，逻辑集中管理不散落各处。
-  mechanism_zh: 'VR-009 5条件评估+4路径激活(同步<1ms/人工<100ms/定时<1ms/外部<1s)。承载模块: MOD-INF-018。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1 VR-009+多路径激活'
+  mechanism_zh: 'VR-009 5条件评估+4路径激活(均在3秒Tick内完成)。承载模块: MOD-INF-018。出处: 依赖图/05-D-PF-CORE-组合核心域.md §8.1 VR-009+多路径激活'
   indicators_zh: '①触发：VR-009 AI自治熔断5条件任一: ①Agent越界>0 ②模型漂移PSI>0.5 ③自治等级异常跳变(跨≥2级) ④资源消耗超限(CPU>90%持续60s) ⑤连续否决5min>10次（阈值:
-    多路径激活: AI自动<1ms | 人工一键<100ms(CLI/Web/微信) | 定时熔断<1ms(核心进程无心跳>5s) | 外部信号<1s(A9运维告警)）；②消费：盘中监控信号+Owner指令+Agent行为+心跳（来自 BM-RC-04
-    / 人工 / D-AUTONOMY）；③参数：—；④数据流：回撤+VaR+Owner+Agent行为+心跳→VR-009 5条件评估+4路径激活(同步<1ms/人工<100ms/定时<1ms/外部<1s)→KillSwitch触发/不触发→BM-RC-03-B
+    多路径激活: AI自动 | 人工一键(CLI/Web/微信) | 定时熔断(核心进程无心跳>5s) | 外部信号(A9运维告警)，均在3秒Tick内完成）；②消费：盘中监控信号+Owner指令+Agent行为+心跳（来自 BM-RC-04
+    / 人工 / D-AUTONOMY）；③参数：—；④数据流：回撤+VaR+Owner+Agent行为+心跳→VR-009 5条件评估+4路径激活(3秒Tick内完成)→KillSwitch触发/不触发→BM-RC-03-B
     状态机；⑤代码：MOD-INF-018 / 依赖图/05-D-PF-CORE-组合核心域.md §8.1 VR-009+多路径激活；⑥降级：信号缺失→保守熔断(停止新开仓), HB-SEC-09 Fail-Closed。'
 - step_id: BM-RC-03-B
   flow_stage: risk_control
@@ -44887,9 +44871,9 @@ battle_map_steps:
   name_zh: 尾部风险监控
   name_en: Tail Risk Monitoring
   plain_zh: 监控尾部风险——小概率大亏损的事件，用 EVT（极值理论）估算极端情况下的损失。
-  mechanism_zh: 'EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价。承载模块: MOD-RK-15。出处: core/tail_risk_monitor.py'
-  indicators_zh: '①触发：尾部异常检测（阈值: EVT/POT 极值预警）；②消费：尾部数据+跳跃检测（来自 D-MKT-DATA）；③参数：—；④数据流：收益分布尾部→EVT/POT模型+Copula尾部依赖+跳跃检测+FRTB加价→极值预警→BM-RC-06-C
-    三级警报；⑤代码：MOD-RK-15 / core/tail_risk_monitor.py；⑥降级：尾部监控未就绪→跳过尾部加价。'
+  mechanism_zh: 'EVT/POT模型+Copula尾部依赖+跳跃检测+极值预警。承载模块: MOD-RK-15。出处: core/tail_risk_monitor.py'
+  indicators_zh: '①触发：尾部异常检测（阈值: EVT/POT 极值预警）；②消费：尾部数据+跳跃检测（来自 D-MKT-DATA）；③参数：—；④数据流：收益分布尾部→EVT/POT模型+Copula尾部依赖+跳跃检测→极值预警→BM-RC-06-C
+    三级警报；⑤代码：MOD-RK-15 / core/tail_risk_monitor.py；⑥降级：尾部监控未就绪→跳过尾部预警。'
 - step_id: BM-RC-06-C
   flow_stage: risk_control
   name_zh: 三级警报与清仓执行
@@ -44910,10 +44894,10 @@ battle_map_steps:
   flow_stage: risk_control
   name_zh: VaR三阶段演进
   name_en: VaR Three-Stage Evolution
-  plain_zh: VaR 计算三阶段演进——历史模拟→参数法→蒙特卡洛，精度逐步提升。
-  mechanism_zh: '三阶段VaR(参数法→蒙特卡洛→Basel III三角验证)。承载模块: MOD-RK-05。出处: core/var_calculator.py'
-  indicators_zh: '①触发：盘前预算/盘中VaR重算（阈值: Phase1参数法+历史模拟 → Phase2蒙特卡洛(GPU) → Phase3 Basel III三角）；②消费：持仓+限额（来自 BM-RC-04 / BM-RC-01）；③参数：—；④数据流：持仓+收益分布→三阶段VaR(参数法→蒙特卡洛→Basel
-    III三角验证)→VaR值+乘数因子→BM-RC-07-B 风险预算；⑤代码：MOD-RK-05 / core/var_calculator.py；⑥降级：VaR计算器未就绪→仅限额检查(无概率性风控)。'
+  plain_zh: VaR 计算两阶段演进——历史模拟→参数法（蒙特卡洛可选不优先）。
+  mechanism_zh: '两阶段VaR(历史模拟→参数法；蒙特卡洛可选不优先)。承载模块: MOD-RK-05。出处: core/var_calculator.py'
+  indicators_zh: '①触发：盘前预算/盘中VaR重算（阈值: 历史模拟→参数法两阶段，蒙特卡洛可选不优先）；②消费：持仓+限额（来自 BM-RC-04 / BM-RC-01）；③参数：—；④数据流：持仓+收益分布→两阶段VaR(历史模拟→参数法)→VaR值→BM-RC-07-B
+    风险预算；⑤代码：MOD-RK-05 / core/var_calculator.py；⑥降级：VaR计算器未就绪→仅限额检查(无概率性风控)。'
 - step_id: BM-RC-07-B
   flow_stage: risk_control
   name_zh: 风险预算优化求解
@@ -44959,10 +44943,10 @@ battle_map_steps:
   name_zh: 模型风险审计
   name_en: Model Risk Audit
   plain_zh: 审计模型风险——模型有没有过拟合、有没有数据泄漏、上线后有没有衰减，定期检查。
-  mechanism_zh: 'SR 26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md
+  mechanism_zh: '5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证。承载模块: (depgraph无实现-设计态)。出处: 依赖图/01-跨域交叉点与因果链.md
     L250'
-  indicators_zh: '①触发：盘后/定时（阈值: SR 26-2/5类漂移检测/CUSUM/过拟合防护/训练-服务一致性）；②消费：模型预测+实际收益（来自 D-ML-SERVE / D-REPORTING）；③参数：—；④数据流：模型预测+实际→SR
-    26-2模型风险管理+5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证→模型风险报告→BM-RES 策略迭代 / 因果链3 模型漂移→降级；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md
+  indicators_zh: '①触发：盘后/定时（阈值: 5类漂移检测/CUSUM/过拟合防护/训练-服务一致性）；②消费：模型预测+实际收益（来自 D-ML-SERVE / D-REPORTING）；③参数：—；④数据流：模型预测+实际→5类漂移检测(数据/概念/预测/标签/特征)+CUSUM变点+过拟合检测+训练-服务一致性验证→模型风险报告→BM-RES
+    策略迭代 / 因果链3 模型漂移→降级；⑤代码：(depgraph无实现-设计态) / 依赖图/01-跨域交叉点与因果链.md
     L250；⑥降级：模型风险审计未就绪→人工抽检。'
 - step_id: BM-RC-08-E
   flow_stage: risk_control
@@ -44997,9 +44981,9 @@ battle_map_steps:
   flow_stage: buy_flow
   name_zh: '信息合规'
   name_en: 'Information Compliance'
-  plain_zh: '管信息合规，确保数据来源、使用、披露都符合法规，防止信息违规。'
-  mechanism_zh: '信息合规层。管理数据来源合法性、使用合规性、披露合规性。确保非公开信息不违规使用，公开信息合规披露。'
-  indicators_zh: '①触发：交易前/通信发生时/盘后审计；②消费：交易记录+通信日志+内幕信息标记；③参数：内幕交易深度防护、通信监控、信息隔离墙；④数据流：通信/交易→内幕检测→通信监控→合规存档→BM-REC监管报告；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：检测失效→人工合规复核+延迟交易。'
+  plain_zh: '管数据源使用条款合规，确保行情/另类数据的来源与使用符合供应商授权条款，防止数据违规使用。'
+  mechanism_zh: '数据源使用条款合规层。管理数据来源合法性与使用合规性：数据来源/使用符合供应商授权条款，确保采购数据不越权使用。'
+  indicators_zh: '①触发：数据接入前/数据源变更时；②消费：数据使用记录+供应商授权条款；③参数：数据源使用条款合规自查（数据来源/使用符合供应商条款）；④数据流：数据源条款→合规自查→合规存档；⑤代码映射：待开发（planned，D_COMPLIANCE域）；⑥降级：自查失效→人工合规复核。'
 - step_id: BM-BUY-10
   flow_stage: buy_flow
   name_zh: '合规技术深度'
@@ -45032,9 +45016,9 @@ battle_map_steps:
   flow_stage: buy_flow
   name_zh: '交易合规检测'
   name_en: 'Trading Compliance Detection'
-  plain_zh: '检测异常交易行为、市场操纵、速率违规、程序化交易报告义务等交易合规。'
-  mechanism_zh: '交易合规检测层。异常交易行为检测(虚假申报/对倒/拉抬打压)+市场操纵防护(账户关联/利益输送)+速率与时间约束(委托频率/撤单率)+程序化交易报告义务。'
-  indicators_zh: '①触发：订单提交前(Pre-Trade)/盘中实时(3秒Tick刷新)/首次交易前(报告义务)。区别于BM-BUY-08交易纪律闸(行为纪律四项严禁)，本环节是合规检测层：异常交易行为+市场操纵+速率约束+程序化报告；②消费：实时订单流 + 3秒Tick行情 + 账户持仓 + 报单时序(微秒级) + 同一实控人关联账户合并数据；③参数：4类异常交易行为阈值(瞬时申报速率>15笔/秒[2026.4.7新规]/频繁撤单率>15%/频繁拉抬打压价格偏离度+成交量占比/短时间大额成交合并持仓变动率) + 市场操纵4类(Spoofing幌骗:挂单-撤单模式+意图分析/Layering分层/Wash Trade自交易跨账户/尾盘操纵) + 速率约束(单标的参与率≤5%+Almgren-Chriss冲击模型取较小值+订单停留≥50μs时间锁) + 程序化交易报告6项(账户基本信息/交易软件信息/6大类策略类型/最高申报速率miniQMT 10笔/秒/单日最高申报笔数/重大变更T+1报告) + 铁律:先报告后交易；④数据流：订单→C-004风控引擎实时检测→命中阈值→Hard Block(自动限速/拒绝撤单/暂停交易/限仓)+告警→合规数据库持久化→监管报送(T+1)→审计证据链(→§3报告合规)；⑤代码映射：待开发（planned，D_COMPLIANCE域；C-004风控引擎嵌入检测规则；C-002执行域实现50μs时间锁）；⑥降级：检测引擎失效→Hard Block拒绝发送任何订单(安全失败，宁可不交易不可违规)；报告未完成确认前C-002执行域拒绝订单。'
+  plain_zh: '检测异常交易行为阈值与程序化交易报告义务（2026.4.7新规）等交易合规自查。'
+  mechanism_zh: '交易合规检测层。异常交易行为阈值自查(瞬时申报速率/频繁撤单/拉抬打压/短时间大额成交)+程序化交易报告义务(2026.4.7新规，先报告后交易)。'
+  indicators_zh: '①触发：订单提交前(Pre-Trade)/盘中实时(3秒Tick刷新)/首次交易前(报告义务)。区别于BM-BUY-08交易纪律闸(行为纪律四项严禁)，本环节是合规检测层：异常交易阈值自查+程序化交易报告；②消费：实时订单流 + 3秒Tick行情 + 账户持仓 + 同一实控人关联账户合并数据；③参数：4类异常交易行为阈值(瞬时申报速率>15笔/秒[2026.4.7新规]/频繁撤单率>15%/频繁拉抬打压价格偏离度+成交量占比/短时间大额成交合并持仓变动率) + 程序化交易报告6项(账户基本信息/交易软件信息/6大类策略类型/最高申报速率miniQMT 10笔/秒/单日最高申报笔数/重大变更T+1报告) + 铁律:先报告后交易；④数据流：订单→C-004风控引擎实时检测→命中阈值→Hard Block(自动限速/拒绝撤单/暂停交易/限仓)+告警→合规数据库持久化→监管报送(T+1)→审计证据链(→§3报告合规)；⑤代码映射：待开发（planned，D_COMPLIANCE域；C-004风控引擎嵌入检测规则）；⑥降级：检测引擎失效→Hard Block拒绝发送任何订单(安全失败，宁可不交易不可违规)；报告未完成确认前C-002执行域拒绝订单。'
 - step_id: BM-MT-06
   flow_stage: model_training
   name_zh: '元学习与自我进化'
@@ -45137,9 +45121,9 @@ battle_map_steps:
   flow_stage: risk_control
   name_zh: '否决执行引擎'
   name_en: 'Veto Execution Engine'
-  plain_zh: '否决执行引擎——同步拦截(<50ms)+熔断器模式+Kill Switch多路径激活+审计追踪。'
-  mechanism_zh: '否决执行引擎。同步拦截(<50ms P99)+熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED)+多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒/外部信号<1s)+隔离策略(舱壁/超时/混沌验证)+否决审计。'
-  indicators_zh: '①触发：策略信号到达订单执行入口前，否决规则引擎同步拦截判定是否放行/否决；②消费：策略订单信号 + 否决规则(RC-10) + 实时持仓 + 实时行情 + Kill Switch状态；③参数：同步拦截延迟<50ms(P99) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + 多路径激活(AI自动<1ms/人工<100ms/定时熔断5秒无心跳/外部信号<1s) + 否决审计(时间/规则/触发值/被否决指令/执行者) + 隔离策略三机制(§6): 舱壁隔离(Bulkhead,故障域隔离到单策略防级联) + 超时与重试(否决引擎超时50ms后熔断,重试策略指数退避) + 混沌工程验证(定期注入故障验证否决引擎不可绕过性)；④数据流：策略信号→否决规则引擎同步拦截→通过→订单执行 / 否决→否决日志+通知推送；Kill Switch多路径→基础设施层平仓；⑤代码映射：待开发（planned，D_RISK域；Kill Switch需miniQMT API支持）；⑥降级：否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控)。'
+  plain_zh: '否决执行引擎——同步否决拦截(3秒Tick内完成)+熔断器模式+Kill Switch多路径激活+审计追踪。'
+  mechanism_zh: '否决执行引擎。同步否决拦截(3秒Tick内完成)+熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED)+Kill Switch多路径激活(AI自动/人工/定时熔断5秒无心跳/外部信号)+否决审计追踪。'
+  indicators_zh: '①触发：策略信号到达订单执行入口前，否决规则引擎同步拦截判定是否放行/否决；②消费：策略订单信号 + 否决规则(RC-10) + 实时持仓 + 实时行情 + Kill Switch状态；③参数：同步否决拦截(3秒Tick内完成) + 不可绕过(所有下单必经引擎无旁路,HC-RISK-03) + 不可人工否决(HC-RISK-02防御性决策自动执行) + Kill Switch基础设施层实现(非Agent运行时内,OWASP ASI08) + 熔断器模式(5次失败/60秒→OPEN全拒→30秒HALF-OPEN探针→CLOSED) + Kill Switch多路径激活(AI自动/人工/定时熔断5秒无心跳/外部信号) + 否决审计追踪(时间/规则/触发值/被否决指令/执行者)；④数据流：策略信号→否决规则引擎同步拦截→通过→订单执行 / 否决→否决日志+通知推送；Kill Switch多路径→基础设施层平仓；⑤代码映射：待开发（planned，D_RISK域；Kill Switch需miniQMT API支持）；⑥降级：否决引擎自身故障→熔断器OPEN→全拒订单(安全失败)；引擎不可用→Kill Switch激活(宁可停交易不可绕过风控)。'
 - step_id: BM-RC-11
   flow_stage: risk_control
   name_zh: '独立风险数据管道'
@@ -45196,28 +45180,10 @@ battle_map_steps:
   plain_zh: '信号工厂九大子阶段流水线——信号从生成到输出的完整子阶段流水线。'
   mechanism_zh: '信号工厂九大子阶段流水线。信号从因子输入到最终输出的完整流水线：因子输入→预处理→信号生成→过滤→评分→聚合→投票→加权→输出。每个子阶段可独立配置。
 
-    信号模型库（交易决策架构 §3/§4/§8 专业机构实践系列，按建议归属层分组，中英双语）：
-
-    L1因子层：模块1多维度情绪合成指数模型(Multi-Dimensional Sentiment Composite Index)、模块2波动率体制转换与关键时点预警模型(Volatility Regime Transition & Key Date Alert Model)、模块5日内量能结构与订单流分析模型(Intraday Volume Structure & Order Flow Analysis Model)、模块7多指标背离检测模型(Multi-Indicator Divergence Detection Model)、模块8板块资金流再配置模型(Sector Flow Reallocation Model)、模块9多维度相对强弱筛选模型(Multi-Dimensional Relative Strength Screening Model)、模块10动量领导因子与涨停板生态模型(Momentum Leadership & Limit-Up Factor)、模块11动量层级与板块持续性模型(Momentum Hierarchy & Persistence Model)、模块12板块间资金流迁移检测模型(Inter-Sector Flow Migration Detection)、模块30多维度资金流体制识别模型(Multi-Dimensional Flow Regime Identification Model)、模块45分时微结构分析与大小盘风格检测模型(Intraday Microstructure & Style Detection Model)、模块55A股日历效应与关键节点量化模型(A-Share Calendar Effect & Key Node Quantitative Model)、模块58统一技术图形识别引擎(Unified Technical Pattern Recognition Engine)；
-
-    L2-A信号层：模块3缺口回补概率模型(Gap Fill Probability Model)、模块4逼空行情检测模型(Short Squeeze Detection Model)、模块6Wyckoff吸筹阶段与底部确认模型(Wyckoff Accumulation & Bottom Confirmation Model)、模块14极端情绪反转与恐慌底部检测模型(Extreme Sentiment Reversal & Capitulation Bottom Detection Model)、模块15假突破与诱多检测模型(False Breakout & Bull Trap Detection Model)、模块16情绪-价格背离指数模型(Sentiment-Price Divergence Index)、模块17多维度底部确认与右侧入场模型(Multi-Dimensional Bottom Confirmation & Right-Side Entry Model)、模块18Wyckoff二次测试与动量延续模型(Wyckoff Secondary Test & Momentum Continuation Model)、模块20Wyckoff派发阶段与CVD背离检测模型(Wyckoff Distribution & CVD Divergence Detection Model)、模块263秒级逆势资金流识别模块
-
-**架构现状**: 架构有3秒Tick数据基础设施(miniQMT每3秒推送)、模块29次日上涨概率统一门槛模块
-
-**架构现状**: 架构有密度预测模型输出条件PDF f(r|X\_t)、模块31协同交易行为检测模型(Coordinated Trading Detection Model)、模块33IC加权多因子涨停板潜力评分模型(IC-Weighted Multi-Factor Limit-Up Potential Scoring Model)、模块35开盘竞价微结构分析模型(Opening Auction Microstructure Analysis Model)、模块39多因子选股评分模型(Multi-Factor Stock Selection Scoring Model)、模块44量化模式匹配与执行策略库(Quantitative Pattern Matching & Execution Strategy Library)、模块49财报季事件驱动与PEAD模型(Earnings Season Event-Driven & PEAD Model)、模块51波动率压缩与突破模型(Volatility Compression & Breakout Model)、模块53衍生品到期日效应与波动率日历模型(Derivatives Expiration Effect & Volatility Calendar Model)、模块27主力假动作与筹码派发识别模块
-
-**架构现状**: 架构有"诱多"(Gap开盘决策框架中1处)、模块54信息不对称期与操纵行为检测模型(Information Asymmetry Period & Manipulation Detection Model)、模块28利好落地变利空(预期透支)、模块13隔夜收益预测与开仓期望值模型(Overnight Return Prediction & Expected Value Model)；
-
-    L2-B主力行为层：模块34异质参与者互动模型(Heterogeneous Agent Interaction Model)、模块50北向资金流向与Smart Money信号模型(Northbound Capital Flow & Smart Money Signal Model)；
-
-    L2-C市场状态层：模块19市场体制转换模型(Regime-Switching Model)、模块23量能体制自适应策略模型(Volume Regime Adaptive Strategy Model)、模块25板块轮动与主线切换量化模型(Sector Rotation & Theme Switching Quantitative Model)、模块32市场风格体制识别模型(Market Style Regime Identification Model)、模块56量能×体制×风格三维策略矩阵模型(Volume×Regime×Style 3D Strategy Matrix Model)、模块57多因子叠加择时模型(Multi-Factor Overlay Timing Model)；
-
-    L2-D知识图谱层：模块21隔夜全球市场传导与事件影响评估模型(Overnight Global Market Contagion & Event Impact Assessment Model)、模块22产业链传导与供应链动量模型(Supply Chain Momentum & Industry Contagion Model)、模块41事件链推理与因果图模型(Event Chain Reasoning & Causal Graph Model)、模块52跨资产订单流网络与亏钱效应扩散模型(Cross-Asset Order Flow Network & Loss Effect Diffusion Model)；
-
-    仓位/风控/对账归属：模块24核心-卫星仓位管理模型(Core-Satellite Position Management Model)→BM-POS-02、模块47Kelly Criterion仓位管理与Risk Parity组合优化模型(Kelly Position Sizing & Risk Parity Portfolio Optimization Model)→BM-POS-02、模块37系统性风险分级预警与尾部风险管理模型(Systemic Risk Tiered Alert & Tail Risk Management Model)→BM-RC-12、模块42交易绩效归因与策略退化检测模型(Performance Attribution & Strategy Degradation Detection Model)→BM-REC-02-B、模块43ATR动态止损与Bayesian参数优化模型(ATR Dynamic Stop-Loss & Bayesian Optimization Model)→BM-SELL-04-B、模块36买入后即时验证与快速纠错模型(Post-Entry Instant Validation & Quick Correction Model)→BM-BUY-03、模块38交易计划偏差检测与异常机会评估模型(Trade Plan Deviation Detection & Anomalous Opportunity Assessment Model)→BM-REC-02-C、模块40板块拥挤度与启动条件量化模型(Sector Crowding & Launch Condition Quantitative Model)→BM-RC-06-D、模块46决策树与强化学习交易决策架构(Decision Tree & RL Trading Decision Architecture)→Agent架构交叉引用、模块48动态信号权重模型(Dynamic Signal Weighting via Bayesian Model Averaging)→BM-SEL-02-K。
+    信号模型库：按实际在用信号模型登记（个位数），其余已转候选池。
 
     '
-  indicators_zh: '①触发：BM-SEL-02 因子计算产出因子值后，信号工厂九大子阶段依次处理生成可执行信号；②消费：因子值(来自SEL-02因子计算引擎) + 市场状态(SEL-03) + 主力行为(SEL-05)；③参数：九大子阶段：因子预处理→单因子信号化→多因子合成→信号过滤→信号增强→信号校准→信号投票→信号聚合→信号输出；④数据流：因子值→逐子阶段流水线处理→标准化信号(含方向/强度/置信度)→下游SEL-02-K投票/SEL-02-L聚合；⑤代码映射：待开发（planned，D_SIGNAL/D_ASHARE_SIGNAL域，C-028信号工厂）；⑥降级：子阶段失效→降级跳过该阶段(如信号增强失效→输出未增强信号)，保证流水线不中断。；📌 概念覆盖清单（草稿H3逐字登记）：模块1 多维度情绪合成指数模型（Multi-Dimensional Sentiment Compos；模块2 波动率体制转换与关键时点预警模型（Volatility Regime Transition；模块3 缺口回补概率模型（Gap Fill Probability Model）；模块4 逼空行情检测模型（Short Squeeze Detection Model）；模块5 日内量能结构与订单流分析模型（Intraday Volume Structure & Ord；模块6 Wyckoff吸筹阶段与底部确认模型（Wyckoff Accumulation & Bott；模块7 多指标背离检测模型（Multi-Indicator Divergence Detection；模块8 板块资金流再配置模型（Sector Flow Reallocation Model）；模块9 多维度相对强弱筛选模型（Multi-Dimensional Relative Strengt；模块10 动量领导因子与涨停板生态模型（Momentum Leadership & Limit-Up；模块11 动量层级与板块持续性模型（Momentum Hierarchy & Persistence；模块12 板块间资金流迁移检测模型（Inter-Sector Flow Migration Dete；模块14 极端情绪反转与恐慌底部检测模型（Extreme Sentiment Reversal &；模块15 假突破与诱多检测模型（False Breakout & Bull Trap Detecti；模块16 情绪-价格背离指数模型（Sentiment-Price Divergence Index）；模块18 Wyckoff二次测试与动量延续模型（Wyckoff Secondary Test & M；模块19 市场体制转换模型（Regime-Switching Model）；模块20 Wyckoff派发阶段与CVD背离检测模型（Wyckoff Distribution &；模块21 隔夜全球市场传导与事件影响评估模型（Overnight Global Market Con；模块22 产业链传导与供应链动量模型（Supply Chain Momentum & Industr；模块26 3秒级逆势资金流识别模块；模块30 多维度资金流体制识别模型（Multi-Dimensional Flow Regime Id；模块31 协同交易行为检测模型（Coordinated Trading Detection Mode；模块33 IC加权多因子涨停板潜力评分模型（IC-Weighted Multi-Factor Lim；模块34 异质参与者互动模型（Heterogeneous Agent Interaction Mod；模块35 开盘竞价微结构分析模型（Opening Auction Microstructure An；模块39 多因子选股评分模型（Multi-Factor Stock Selection Scorin；模块45 分时微结构分析与大小盘风格检测模型（Intraday Microstructure & S；模块50 北向资金流向与Smart Money信号模型（Northbound Capital Flo；模块51 波动率压缩与突破模型（Volatility Compression & Breakout；模块52 跨资产订单流网络与亏钱效应扩散模型（Cross-Asset Order Flow Netw；模块52 汇总：缺失模块与建议归属层映射（更新版）；模块53 衍生品到期日效应与波动率日历模型（Derivatives Expiration Effec；模块55 A股日历效应与关键节点量化模型（A-Share Calendar Effect & Key；模块58 统一技术图形识别引擎（Unified Technical Pattern Recognit；模块58 附录：已有架构覆盖的功能（不重复列出）；模块58 附录二：已剔除模块说明（架构文档完全覆盖）；模块17 多维度底部确认与右侧入场模型（Multi-Dimensional Bottom Confi；模块29 次日上涨概率统一门槛模块；模块44 量化模式匹配与执行策略库（Quantitative Pattern Matching &；模块49 财报季事件驱动与PEAD模型（Earnings Season Event-Driven &；模块27 主力假动作与筹码派发识别模块；模块54 信息不对称期与操纵行为检测模型（Information Asymmetry Period；模块23 量能体制自适应策略模型（Volume Regime Adaptive Strategy M；模块25 板块轮动与主线切换量化模型（Sector Rotation & Theme Switchi；模块32 市场风格体制识别模型（Market Style Regime Identification；模块41 事件链推理与因果图模型（Event Chain Reasoning & Causal Gr；模块28 利好落地变利空（预期透支）模块；模块13 隔夜收益预测与开仓期望值模型（Overnight Return Prediction &；模块56 量能×体制×风格三维策略矩阵模型（Volume×Regime×Style 3D Strat；模块57 多因子叠加择时模型（Multi-Factor Overlay Timing Model）'
+  indicators_zh: '①触发：BM-SEL-02 因子计算产出因子值后，信号工厂九大子阶段依次处理生成可执行信号；②消费：因子值(来自SEL-02因子计算引擎) + 市场状态(SEL-03) + 主力行为(SEL-05)；③参数：九大子阶段：因子预处理→单因子信号化→多因子合成→信号过滤→信号增强→信号校准→信号投票→信号聚合→信号输出；④数据流：因子值→逐子阶段流水线处理→标准化信号(含方向/强度/置信度)→下游SEL-02-K投票/SEL-02-L聚合；⑤代码映射：待开发（planned，D_SIGNAL/D_ASHARE_SIGNAL域，C-028信号工厂）；⑥降级：子阶段失效→降级跳过该阶段(如信号增强失效→输出未增强信号)，保证流水线不中断。'
 - step_id: BM-SEL-02-K
   flow_stage: stock_selection
   name_zh: '多策略投票与加权'
@@ -45259,15 +45225,14 @@ battle_map_steps:
   name_en: 'Decision Explainability & Human-AI Collaboration'
   plain_zh: '决策可解释性与人机协作——每个决策都有可追溯的解释链，人机协作边界清晰。'
   mechanism_zh: 'L6决策可解释性与人机协作层。每个决策都有可追溯解释链(因子→信号→策略→决策→执行)。人机协作边界清晰：AI可自主区/人工门控区/immutable禁区四级自治。🆕v6.0
-    LLM自评估（Judge+交叉验证，L6）+ 多模态金融推理（§29.38，门禁项）；🆕v8.1 VeNRA Double-Lock 零幻觉锚定（MOD-INF-049，实体+数值双重锚定UFL确定性事实层，§29.24）+
-    Sentinel幻觉检测器（MOD-INF-050，3B SLM <50ms实时检测）+ Spectral Guardrails 谱分析幻觉检测（v7.0，注意力拓扑谱分析，训练无关/零标注/即插即用，§29.24新增7）。可解释性方法族：SHAP/LIME/Causal SHAP/LLM-as-Explainer（学习系统§10.2.9）。'
+    LLM自评估（Judge+交叉验证，L6）+ 多模态金融推理（§29.38，门禁项）；幻觉检测收敛为一个轻量规则检查（CoVe 规则引擎，已建）。可解释性方法族：SHAP/LIME/Causal SHAP/LLM-as-Explainer（学习系统§10.2.9）。'
   indicators_zh: '①触发：决策产出时/人工复核请求；②消费：决策链路+置信度+因子贡献度；③参数：C-030决策溯源链、C-031置信度分层决策、人机协作接口；④数据流：决策→溯源链路→置信度分层→人机协作输出→执行/拒绝；⑤代码映射：待开发（planned，D_INTELLIGENCE域）；⑥降级：可解释性缺失→降级人工复核(不阻塞)。'
 - step_id: BM-SEL-27
   flow_stage: stock_selection
   name_zh: '盘中实时事件处理'
   name_en: 'Intraday Real-Time Event Processing'
   plain_zh: '盘中实时事件处理——盘中突发新闻/公告/异动等事件的实时感知与策略调整。'
-  mechanism_zh: '盘中实时事件处理。盘中突发新闻/公告/异动等事件的实时感知→分类→评估影响→策略调整。事件驱动架构，毫秒级感知+秒级响应。🆕v3.6 盘中即时反应决策引擎（事件到达→即时评估→秒级决策调整）。'
+  mechanism_zh: '盘中实时事件处理。盘中突发新闻/公告/异动等事件的实时感知→分类→评估影响→策略调整。事件驱动架构，3 秒 Tick 粒度事件处理。🆕v3.6 盘中即时反应决策引擎（事件到达→即时评估→Tick级决策调整）。'
   indicators_zh: '①触发：盘中实时事件触发(新闻/异动/盘口突变)；②消费：实时行情事件+新闻事件+BM-SEL信号输出；③参数：事件完整清单与处理流程、事件处理流水线、优先级调度；④数据流：事件→分类→处理流水线→信号更新/交易触发→BM-BUY决策；⑤代码映射：待开发（planned，D_INTEGRATION域）；⑥降级：事件处理积压→降级批量处理+告警。；📌 概念覆盖清单（草稿H3逐字登记）：§14.1 事件完整清单与处理流程；§14.2 事件处理流水线'
 - step_id: BM-SEL-02-M
   flow_stage: stock_selection
@@ -45972,7 +45937,7 @@ battle_map_cross_cutting:
   mechanism_zh: "信号生命周期横切贯穿信号从生产到废弃的全过程，由 D-SIGNAL 域 7 个能力协同：\n  ① D-SIGNAL-01 Synthesizer（信号合成+权重分配，产出标准 Insight 契约）\n  ②\
     \ D-SIGNAL-17 Confidence Calibrator（Platt/Isotonic/温度缩放校准+ECE/MCE 评估）\n  ③ D-SIGNAL-03 Degradation Monitor（三级降级 MILD/MODERATE/SEVERE，SEVERE\
     \ 立即撤销）\n  ④ D-SIGNAL-08 Decay Tracker（半衰期估计+衰减曲线拟合+消散预警）\n  ⑤ D-SIGNAL-11 Performance Tracker（滚动 IC/IR/Sharpe+归因分解+基准比较+异常检测）\n\
-    \  ⑥ D-SIGNAL-12 Version Manager（版本树+A/B 分流+灰度发布+回滚引擎）\n  ⑦ D-SIGNAL-06 Audit Logger（WORM 不可变存储+事件溯源+合规报告，MiFID II 5 年保留）\n\
+    \  ⑥ D-SIGNAL-12 Version Manager（版本树+A/B 分流+灰度发布+回滚引擎）\n  ⑦ D-SIGNAL-06 Audit Logger（WORM 不可变存储+事件溯源+合规报告）\n\
     \  ⑧ D-SIGNAL-14 Lifecycle Manager（7 状态机：研发/测试/灰度/生产/观察/废弃/归档）\n核心原则：降级判断必须可审计——每次降级决策的输入/阈值/结果必须记录；\nSEVERE 降级→立即撤销所有相关信号（E-SG-02）→通知\
     \ D-PORTFOLIO 停止建仓→通知 D-RISK 重新评估。\n与应急保命降级路径横切的关系：本横切是信号级降级（单一信号失效），\n应急保命降级是系统级降级（整个 L2 信号层失效）。\n"
   lifecycle_stages:
@@ -46003,7 +45968,7 @@ battle_map_cross_cutting:
   - stage: audit
     name_zh: 审计日志
     capability: D-SIGNAL-06 Audit Logger
-    note: 事件采集器+WORM 写入器+查询接口+合规报告生成器，MiFID II 5 年保留
+    note: 事件采集器+WORM 写入器+查询接口+合规报告生成器
   - stage: retirement
     name_zh: 废弃流程
     capability: D-SIGNAL-14 Lifecycle Manager
@@ -46199,11 +46164,9 @@ battle_map_cross_cutting:
     出事能复盘，改参不重启。
 
     '
-  mechanism_zh: '🆕v8.0 横切层两项：①事件溯源（Event Sourcing）——全事件链可回溯，决策/订单/成交/风控事件统一事件存储，
+  mechanism_zh: '🆕v8.0 横切层两项：①事件溯源——全事件链可回溯，决策/订单/成交/风控事件统一写入 SQLite append-only 日志，
 
-    支持任意时点状态重建与审计回放（与集成架构 CQRS/At-Least-Once 投递语义衔接）；②配置中心（Config Center）——
-
-    统一配置管理与热更新，参数变更不重启交易链路。事件名契约见 BM-SEL-01 indicators（TickEvent/SignalEvent/DecisionEvent 等）；集成侧事件名：OrderPlaced/OrderFilled/RiskThresholdBreached/DataQualityDegraded/StrategyRetired/ModelDriftDetected（集成架构事件契约）。
+    支持任意时点状态重建与审计回放；②配置中心——统一配置管理与热更新，参数变更不重启交易链路，配置快照以 git commit hash+数据分区号三元组标识。事件名契约见 BM-SEL-01 indicators（TickEvent/SignalEvent/DecisionEvent 等）；集成侧事件名：OrderPlaced/OrderFilled/RiskThresholdBreached/DataQualityDegraded/StrategyRetired/ModelDriftDetected（集成架构事件契约）。
 
     '
 - category: benchmark_mapping

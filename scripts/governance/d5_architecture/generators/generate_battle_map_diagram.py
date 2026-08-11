@@ -494,7 +494,11 @@ def _node_label(step: dict) -> str:
         parts.append(f"⛔ {gate}")
 
     # 环节标识（step_id + 中文名，用【】包裹放最前面）
-    parts.append(f"【{sid} {name_zh}】")
+    # #ARCH-OE-055（2026-08-12）：弃用环节标签加【已弃用】显眼前缀，防 AI 误读为活设计而复建
+    if status == "deprecated":
+        parts.append(f"【已弃用】【{sid} {name_zh}】")
+    else:
+        parts.append(f"【{sid} {name_zh}】")
 
     # 大白话
     parts.append(plain if plain else "—")
@@ -707,8 +711,14 @@ def _build_mermaid(
     lines.extend(_emit_layer_chains(steps, layer_map))
 
     # 边定义（只画两端都在本图 step 集内的边；箭头按端点状态，标签含 edge_type）
+    # #ARCH-OE-054（2026-08-12）：两端含 deprecated 环节的流转边不渲染——弃用环节不在流转路径上
     for e in edges:
         if e["from_step_id"] in step_ids and e["to_step_id"] in step_ids:
+            if "deprecated" in (
+                status_by_id.get(e["from_step_id"]),
+                status_by_id.get(e["to_step_id"]),
+            ):
+                continue
             from_n = _mermaid_node_id(e["from_step_id"])
             to_n = _mermaid_node_id(e["to_step_id"])
             arrow = _edge_arrow(status_by_id[e["from_step_id"]], status_by_id[e["to_step_id"]])
@@ -1128,8 +1138,10 @@ def _generate_stage_md(
     """
     stage_steps = [s for s in steps if s["flow_stage"] == stage_id]
     stage_step_ids = {s["step_id"] for s in stage_steps}
-    # 边：任一端在本阶段
-    stage_edges = [e for e in edges if e["from_step_id"] in stage_step_ids or e["to_step_id"] in stage_step_ids]
+    # 边：两端都在本阶段（计数口径修复 2026-08-12，#ARCH-OE-054 批次——头部声明数必须与
+    # 图内实际渲染边数一致；跨阶段边在阶段图中本就不渲染（_build_mermaid 只画两端同页），
+    # 用 OR 计入会造成"声明 N 条 vs 图 M 条"口径打架）
+    stage_edges = [e for e in edges if e["from_step_id"] in stage_step_ids and e["to_step_id"] in stage_step_ids]
     # 本阶段锚点数（双向对齐枢纽显化，BM-INV-005）
     stage_anchor_count = sum(len(anchors_by_step.get(s["step_id"], [])) for s in stage_steps)
     # 五态分布统计
