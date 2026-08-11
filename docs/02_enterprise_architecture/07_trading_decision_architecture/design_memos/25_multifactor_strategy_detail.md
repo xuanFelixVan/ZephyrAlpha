@@ -53,11 +53,56 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 ### 2.3 约束条件
 
-- **因子池容量**：N_max ≤ 64（运行上限制），活跃池 ≤ 30，休眠池 ≤ 8（`factor_pool_manager.py` ADR-FAC-006）；[30 §5] 待裁定：个人系统 8-15 个因子足够，多了是过拟合温床
+- **因子池容量**：N_max ≤ 64（运行上限），活跃池 ≤ 60，休眠池 ≤ 4（`factor_pool_manager.py` ADR-FAC-006 + `governance/_config.yaml`，v1.13.0 源码校正——此前误写活跃 ≤30/休眠 ≤8）；[30 §5] 待裁定：个人系统实际活跃 8-15 个因子足够，多了是过拟合温床（池容量是运行上限，非目标持仓因子数）
 - **PIT 铁律**：INV-004——合成仅使用同期因子值，IC 加权权重来自历史 IC（不引入未来函数）；因子回测必须 AS OF JOIN，禁止 lookahead bias
 - **T+1 结算**：同打板，但多因子换手低，T+1 影响小
 - **低换手**：convergence_window = 3-5 天（[30 §6.4]），Tier 1+2 给时间达，Tier 3 兜底防死扛（[30 §2.4]）
 - **不读 regime/情绪周期**：纯横截面选股；市场状态适配"由 PerformanceScore 后验捕获（[20 §2.3]）"
+
+### 2.4 已施工设施盘点（v1.13.0 新增，通用规则 #11）
+
+> 盘点多因子策略相关的全部已建设施（截至 2026-08-12 源码 + [46_d_factor](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/02_domain_architecture_docs/46_d_factor.md) 实证：D_FACTOR 域 66 模块 = 65 production + 1 design），明确"有什么"→"改什么"→"退役什么"。
+
+**因子计算与评估（src/zephyr/factor/）**：
+
+| 设施 | 路径 | MOD/域 ID | 状态 | 与本策略的关系 |
+|---|---|---|---|---|
+| 多因子合成 | [multifactor_synthesis.py](file:///d:/ZephyrAlpha/src/zephyr/factor/analysis/multifactor_synthesis.py) | MOD-L02-011 / D-FACTOR-ANA-10 | ✅ production | §3.1 三方法（等权/IC 加权 w/Σ\|w\| 归一化负 IC 自动反向/回归 OLS lstsq）+ `synthesize` 统一入口，各方法失败自动退化等权；默认 ic_weighted（analysis/_config.yaml） |
+| IC/IR 批量计算 | `analysis/ic_ir_calc.py` | D-FACTOR-ANA-01 | ✅ production | §3.1 IC 加权权重的数据来源 |
+| 多因子评估报告 | `analysis/ic_ir_evaluator.py` | D-FACTOR-ANA-02 | ✅ production | 因子准入评估 |
+| 相关性去重 | `analysis/correlation_dedup.py` | D-FACTOR-ANA-05 | ✅ production | §3.1 正交化不实现的前提（因子筛选期已控相关性） |
+| 分层回测 | `analysis/layered_backtest.py` | D-FACTOR-ANA-06 | ✅ production | 5 分位单调性验证 |
+| 三级判定 | `analysis/three_level_judgment.py` | D-FACTOR-ANA-07 | ✅ production | excellent_ic=0.1 / pass_ic=0.05（_config.yaml） |
+| 衰减监控 | `analysis/decay_monitor.py` | MOD-L02-009 / D-FACTOR-ANA-08 | ⚠️ production 但仅半衰期 | §3.3 第一层；**CUSUM 层 + 自动淘汰层未实现**（决策待落码） |
+| 因子归因 | `analysis/factor_attribution.py` | D-FACTOR-ANA-09 | ✅ production | 按月时间归因；§3.7#4 的 Brinson 式因子 PnL 分解待落码 |
+| 因子优化 | `analysis/factor_optimization.py` | D-FACTOR-ANA-11 | ✅ production | 合成权重优化（max_ir 目标） |
+| 因子 DAG | `core/factor_dag/dag.py` + `core/dag_manager/executor.py` | D-FACTOR-04 | ✅ production | 依赖拓扑 + 双模调度（盘前全量/盘中增量） |
+
+**因子治理（src/zephyr/factor/governance/）**：
+
+| 设施 | MOD/域 ID | 状态 | 关键参数（_config.yaml 实证） |
+|---|---|---|---|
+| 因子池管理 `factor_pool_manager.py` | MOD-L02-018 / D-FACTOR-08 | ✅ production | ADR-FAC-006：n_max=64 / active=60 / dormant=4 / min_ic_to_enter=0.02（入池门槛，非休眠淘汰） |
+| 生命周期状态机 `lifecycle_state_machine.py` | D-FACTOR-GOV-01 | ✅ production | 8 态：research→development→backtest→paper→grayscale→production→deprecated→retired |
+| ABS001 上线门禁 `abs001_gate.py` | D-FACTOR-GOV-02 | ✅ production | min_ic=0.03 / min_ir=0.5 / min_oos_rate=0.5 |
+| 灰度发布 `grayscale_rollout.py` | D-FACTOR-GOV-03 | ✅ production | 阶梯 10%→30%→100% |
+| 六步流程 `six_step_flow.py` + 治理引擎 `engine.py` | D-FACTOR-GOV-04/05 | ✅ production | 状态转换编排 |
+
+**组合优化（src/zephyr/pf_core/，D_PF_CORE 域）**：
+
+| 设施 | MOD ID | 状态 | 与本策略的关系 |
+|---|---|---|---|
+| 组合优化器 `portfolio_optimizer.py` | MOD-PF-002 | ✅ production | 风险预算（MOD-RK-08）+ Kelly 截断（只减不增）+ 约束求解 → TargetPortfolio（CTR-007） |
+| 约束求解器 `constraint_solver.py` | MOD-PF-006 | ✅ production | 代码侧 7 约束：行业绝对≤30%/行业相对±10%/市值暴露/MDD≤5%/相关性≤0.7/风格±0.3σ/仓位上限 + 拥挤检测——**与 §3.5 C1-C7 策略级参数不一致**（对齐缺口 §6 待裁定） |
+
+**注册表 / battle_map**：
+
+| 设施 | 路径 | 状态 |
+|---|---|---|
+| 因子注册表 | [factor_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（REG-FCT-001） | ✅ active v1.0.0，111 条目（62 号 §3）；status 枚举 candidate/experimental/active/deprecated/retired（与 §3.7#3 运行时 6 态映射缺口见 §6 待裁定） |
+| 因子工坊 | battle_map_05 BM-SEL-02（+ 子环节 A-M，M 因果验证层为设计态） | ✅ production |
+
+**§3.7 八项施工算法落码状态**（全部为本文档形式化伪代码，grep 实证未落码，禁止误判为已建）：#1 SynthesisDegradationChain ❌ / #2 ConstraintArbitration ❌ / #3 DecayActionLifecycle（6 态）❌ / #4 SimpleFactorAttribution ❌ / #5 CrowdingRealTimeMonitor ❌ / #6 RebalanceTrigger（含 Inaction Cost）❌ / #7 MultifactorPITBacktestFramework ❌ / #8 HoldingDriftMonitor ❌。
 
 ## 3. 决策
 
@@ -83,7 +128,7 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 **理由**：因子层中性化会损失因子信号（某些因子本就含行业 alpha——如银行 PB 低是行业特征非错误暴露）。组合约束层通过行业暴露约束保留因子信号同时控制行业偏离。
 
-**施工**：`portfolio_optimizer.py`（MOD-L02-012）约束链 C2 行业暴露约束——单行业暴露 ≤ ±5%（相对基准），7 约束链的一部分。
+**施工**：`portfolio_optimizer.py`（MOD-PF-002，D_PF_CORE 域，v1.13.0 校正 MOD ID——此前误写 MOD-L02-012）约束链 C2 行业暴露约束——单行业暴露 ≤ ±5%（相对基准），7 约束链的一部分。**代码现状注记**：`constraint_solver.py`（MOD-PF-006）当前实现的行业约束为绝对 ≤30% / 相对 ±10%，与本节裁定 ±5% 不一致——±5% 是多因子 sleeve 的策略级决策，严于基础设施默认，施工对齐缺口见 §6 待裁定。
 
 ### 3.3 讨论要点③：因子衰减监控
 
@@ -136,9 +181,11 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 **优化目标**：最大化合成因子分 × 因子暴露（C6 约束下），即 `max Σ(w_i * score_i)` s.t. 7 约束链。
 
+> **代码现状注记（v1.13.0 源码实证）**：`constraint_solver.py`（MOD-PF-006）当前实现的 7 约束为**行业绝对 ≤30% / 行业相对 ±10% / 市值暴露 ≤±0.3σ / MDD≤5% / 相关性 ≤0.7 / 风格暴露 ≤±0.3σ / 仓位上限**（+拥挤检测 ρ>0.8 减半、ρ>0.9 留一），与上表 C1-C7 策略级参数（单票 2%/行业 ±5%/波动 25%/换手 30%/流动性 5%/因子暴露 ±10%/≥20 只）**不一致**——上表是多因子 sleeve 的策略级决策目标态，经 CTR-003 RiskLimits 注入约束求解器，参数对齐施工缺口见 §6 待裁定。
+
 ### 3.6 讨论要点⑥：多因子×事件驱动相关性
 
-**裁定**：多因子与事件驱动 sleeve 正交设计（不读情绪/不读 regime），相关性由 PerformanceScore 后验捕获。G07 相关性验证施工前必做（[28 §3.5]），若相关性 >0.6 需重新审视策略组合。
+**裁定**：多因子与事件驱动 sleeve 正交设计（不读情绪/不读 regime），相关性由 PerformanceScore 后验捕获。G07 相关性验证施工前必做（[23_strategy_correlation_validation](23_strategy_correlation_validation.md) §3.1，v1.13.0 校正错链——此前误引 [28 §3.5]），若相关性 >0.6 需重新审视策略组合（战略级阈值；运营级门禁 0.85/0.90 由 MOD-PA-004 执行，见 23 号 §2.3 分层）。
 
 ### 3.7 施工算法 8 项缺失补全（v1.12.5+v1.12.6+v1.12.7 新增，第四+五+六轮施工算法深度审查）
 
@@ -777,7 +824,7 @@ class HoldingDriftMonitor:
 
 | 维度 | 上限 | 依据 |
 |---|---|---|
-| 因子池 | ≤64 活跃≤30 | `factor_pool_manager.py` ADR-FAC-006 |
+| 因子池 | ≤64 活跃≤60 休眠≤4 | `factor_pool_manager.py` ADR-FAC-006 + governance/_config.yaml（v1.13.0 源码校正） |
 | 单票仓位 | ≤2% NAV（C12） | 分散度 |
 | sleeve 容量 | 500-2000 万（待校准） | 横截面流动性 |
 | 持仓周期 | 5-20 天 | convergence 3-5 天 |
@@ -906,3 +953,4 @@ class HoldingDriftMonitor:
 | 2026-08-10 | 1.12.9 | **第八轮字段填充断裂点审查——§3.7#3 DecayActionLifecycle 补 NEW+RETIRED 边界状态**：原4态状态机（ACTIVE→OBSERVE→DORMANT→RECOVERY）假设因子从ACTIVE开始、DORMANT可无限恢复，但新因子入池和永久退役流程未形式化。补全为6态：①NEW（新因子冷启动：低权重30%试运行+IC样本积累≥20日转ACTIVE，与SynthesisDegradationChain联动）②RETIRED（永久退役：DORMANT持续120日无恢复→从factor_registry注销+释放池配额，check_retirement()执行清理）。新增init_new_factor()+transition_with_boundaries()+check_retirement()三方法。延续轻量优先+不替换已定决策原则 |
 | 2026-08-10 | 1.12.10 | **第九轮最新研究整合+文档完整性修复——Phase 4 新增 MFCCA 多尺度组合配置（Phase 4.18）+ 平稳模糊性训练原则（Phase 4.19）**：①Phase 4.18 MFCCA（arXiv:2608.04987 Kakinaka&Umeno 2026-08-05）——多重分形互相关分析带符号涨落函数作为风险泛函，保留局部去趋势协方差符号（同向与反向因子以相反符号贡献风险），q=2退化为均值-方差，符号保留对尾部风险降低贡献>跨阶聚合，突破"等权/IC/ICIR三种加权接近"瓶颈（中信建投2026-06研报确认）②Phase 4.19 Stationary Ambiguity（arXiv:2608.04832 Mueller et al. 2026-08-05）——标准鲁棒训练致命缺陷=策略推断潜在参数后模糊性系统性衰减→特化→丧失regime-shift鲁棒性，平稳模糊性原则构建模拟器使模糊性随状态变化但不随时间系统性衰减，从训练源头延缓因子衰减（比事后IC监控退役更上游）③文档完整性修复：§6待裁定补Phase 4.18/4.19条目+§7引用补arXiv:2608.04832。8项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
 | 2026-08-10 | 1.12.11 | **第十轮施工算法断裂点修复+最新研究——§3.7#6 RebalanceTrigger 补 Inaction Cost 成本感知门控 + Phase 4.20 QUBO 换仓调度优化**：①§3.7#6 RebalanceTrigger 的 cost_aware 参数 v1.12.6 声明但未实现——本轮补 Perold (1988) Implementation Shortfall 框架的成本-收益门控：漂移/信号触发器命中后，额外检查 Inaction Cost (drift×daily_alpha×expected_days) > Action Cost (transaction_cost_rate×drift) 才真正换仓，时间触发器（保底）不受成本门控。A 股 0.4% 往返成本 break-even 8 天，convergence_window_max=5 < 8 提供安全垫——窗口内漂移/信号触发时若距保底仅剩 1-2 天，inaction cost 不足以覆盖 action cost → 等保底触发省交易成本。新增 _is_rebalance_worthwhile() 方法+transaction_cost_rate/daily_alpha_estimate 参数。②Phase 4.20 QUBO 换仓调度优化（arXiv:2603.16904 Weinberg 2026-03）——换仓时序建模为 QUBO 组合优化（边际 Sharpe 增益-交易成本惩罚-过频惩罚指数衰减交互项），S&P 500 实证 8 次换仓 vs 日历 24 次（成本降 44.5%），Sharpe 0.588 vs 0.575。QAOA 可用经典 QUBO 求解器替代，n=5 天窗口经典可秒解。作为 RebalanceTrigger+Inaction Cost 的远期全局优化升级路径。8项施工算法仍完整（本轮修复#6内部断裂点非新增算法），无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
+| 2026-08-12 | 1.13.0 | **第十一轮名实相符审查（AI-15，通用规则 #11 基础设施盘点）**：① 新增 §2.4 已施工设施盘点——D_FACTOR 域 65 production 模块逐个对号（合成/评估/治理/DAG）+ pf_core 组合优化 + factor_registry（111 条目）+ BM-SEL-02，§3.7 八项施工算法 grep 实证全部未落码（禁止误判为已建）；② 名实不符修正 4 处：§3.3 衰减监控文件名/MOD ID 误写（实 decay_monitor.py MOD-L02-009/ANA-08，CUSUM+自动淘汰层代码不存在）/ §2.3+§5.1 池容量误写 30/8（实 60/4）/ §3.2+§3.5 MOD ID 误写（实 MOD-PF-002/MOD-PF-006）/ §3.5 7 约束链与代码实际约束参数不一致注记；③ §3.6 错链修正（G07 真源 23 号非 28 号）+ §7 补 23 号引用 + 46_d_factor 相对路径断链修复；④ §6 待裁定新增 4 行（CUSUM+自动淘汰落码 / C1-C7↔MOD-PF-006 对齐 / 6 态↔5 态映射 / 15 号骨架依赖倒挂）。决策内容零变更，全部为事实性校正与缺口登记 |

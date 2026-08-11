@@ -98,6 +98,42 @@ related_issues:
 
 **核心发现**：3 个关键维度（capitulation / valuation / spring）在复苏事件日 ±10 窗口内**评分为 0 或近 0**，使 trigger/confirm/strong_confirm 三阶段全部无法满足。后续 commit 93a25890 的精确诊断进一步澄清（见 §1.2.1/§1.2.4）：capitulation 并非算法完全失效，而是**触发在窗口外**；wyckoff 是**设计域不匹配**而非"正常"。这不是阈值过高，而是**算法逻辑与时点/形态语义错配**。
 
+### 0.3 已施工设施盘点（v0.5.0 新增，通用规则 #11）
+
+> 盘点 S2 主题相关的全部已建设施（截至 2026-08-12 源码实证），明确"有什么"→"改什么"→"退役什么"。
+
+**代码模块（src/zephyr/regime/）**：
+
+| 设施 | 路径 | 状态 | 与 S2 的关系 |
+|---|---|---|---|
+| S2 四阶段阈值配置 | [regime_detector.py:195-207](file:///d:/ZephyrAlpha/src/zephyr/regime/core/regime_detector.py#L195) `TRANSITION_CONFIG["S2"]` | ✅ production | trigger/confirm/strong_confirm/fail 阈值真源，与 §1.1 设计表一致 |
+| S2 维度注册表 | [overlay_signals_builder.py:89-102](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L89) `_TRANSITION_DIMS["S2"]` | ✅ production | 12 个维度 key（无 breadth_thrust——P1-E9d 待施工） |
+| S2 维度计算调用链 | [overlay_signals_builder.py:297-342](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L297) | ✅ production | 12 维度评分调用 + `_compute_vix_pct` 合成 VIX 后备（commit eb3db21bd8） |
+| 12 个 S2 维度评分函数 | [overlay_features.py](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py)：s2_capitulation_score L192 / s2_vix_score L217 / s2_wyckoff_score L248 / s2_valuation_score L282 / s2_fund_score L306 / s2_spring_flag L328 / s2_three_yang_flag L346 / s2_break_sc_low_flag L358 / s2_vix_new_high_flag L369 / s2_fund_outflow_flag L380 / s2_policy_score L731 / s2_bad_news_flat_score L765 | ✅ production | capitulation/valuation/spring/three_yang 为当前实现（P1-E9 重设计对象）；policy/bad_news_flat 为 P1-E3 关键词 NLP（已激活非 stub） |
+| 合成 VIX | [synthetic_vix.py](file:///d:/ZephyrAlpha/src/zephyr/regime/features/synthetic_vix.py) + `market_features.synthetic_vix_pct` | ✅ production（commit eb3db21bd8） | vix 维度数据前置，S1/S2 共用 |
+| Wyckoff 6 阶段 FSM | [wyckoff_engine.py](file:///d:/ZephyrAlpha/src/zephyr/regime/features/wyckoff_engine.py) | ✅ production | s2_wyckoff_score 委托；Spring 事件接口达标度=P1-E9c Step 0 勘探项 |
+| design_match 验证字段 | [b4_transition_accuracy.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py) | ✅ production（commit 93a25890） | 区分"数据未就绪"（data_ready）与"设计域不符"（design_match） |
+
+**诊断脚本 / 测试**：
+
+| 设施 | 路径 | 状态 |
+|---|---|---|
+| S2 评分 dump 诊断 | [dump_s2_scores.py](file:///d:/ZephyrAlpha/scripts/tests/dump_s2_scores.py) | ✅ 已建（本文档诊断工具，P1-E9 验收复用） |
+| S2 复苏诊断 | [diag_s2_recovery.py](file:///d:/ZephyrAlpha/scripts/tests/diag_s2_recovery.py) | ✅ 已建 |
+| Overlay 构造器单测 | `tests/regime/test_overlay_signals_builder.py` | ✅ 29 测试全过（含合成 VIX 后备适配，commit 981d59d8cc） |
+| 合成 VIX 单测 | `tests/regime/test_synthetic_vix.py` | ✅ 11 单测全过（commit eb3db21bd8） |
+| P1-E9 TDD stub（5 个） | `tests/regime/features/test_s2_*.py` | ❌ 未建（§4.5 step 1，P1-E9 施工时先写 stub） |
+
+**数据 / 治理登记**：
+
+| 设施 | 路径 | 状态 |
+|---|---|---|
+| S2 事件定级 | [historical_events.yaml:59-100](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L59) | ✅ data_ready=true + design_match=false（commit 93a25890） |
+| ARCH 缺陷登记 | [architecture_issue_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `#ARCH-REGIME-S2-ALGORITHM-001` | ✅ 已登记（status 三方不一致见 §6 开放问题 12） |
+| P1-E9 工程项 | [13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) | ✅ 已登记（范围同步缺口见 §6 开放问题 13） |
+
+**P1-E9 未施工清单**（grep 实证均不存在于代码，禁止误判为已建）：`s2_breadth_thrust_score` / `keys_or_gte` 析取字段 / `s2_valuation_score_fundamental`（CAPE 路 A）/ spring 深度分级与 velocity / three_yang 6 维分级 / capitulation 衰减加权与多过滤器 / `_atr` 辅助函数 / `c1_market.daily_valuation` 字段勘探。
+
 ---
 
 ## 1. 诊断报告：设计意图 vs 实现的语义错配
@@ -867,7 +903,7 @@ def s2_three_yang_flag(
     return score
 ```
 
-> **调用链改造**：当前 `overlay_signals_builder.py` 仅 `s2_three_yang_flag(close)` 传 1 参数，需扩为 5 参数（open/high/low/close/volume），迁移至含 OHLCV 的检查块（与 §4.1 capitulation 调用链改造同类）。
+> **调用链改造**：当前 `overlay_signals_builder.py` 仅 `s2_three_yang_flag(pct_change)` 传 1 参数（v0.5.0 校正：实参是 pct_change 非 close，见 [overlay_signals_builder.py:319](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L319)），需扩为 5 参数（open/high/low/close/volume），迁移至含 OHLCV 的检查块（与 §4.1 capitulation 调用链改造同类）。
 
 > **strong_confirm 门槛适配**：当前 `keys_gte: {"three_yang": 1}`，升级后建议改为 `{"three_yang": 2}`（标准红三兵及以上），三个白武士(3)作加分但非必要。
 
@@ -980,6 +1016,9 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 9. **[重要] breadth_thrust 阈值本土化校准（v0.4.3 新增）**：§4.4 的 Zweig Breadth Thrust 阈值 0.615（thrust）/ 0.40（washout）是美股 NYSE 标准，A 股市场广度特征不同（涨跌停板制度、散户占比 60%+、924 上涨占比 96.97%）。**Step 0 ③ 勘探时需用 A 股历史数据校准**——建议测试 0.58-0.65 区间，可参考沪深300 成分股上涨占比的 90%分位值。washout 阈值 0.40 同理需校准。校准须在独立于 3 事件的样本上做（§4.5 防过拟合），不能只在 3 个事件上调。
 10. **[阻断] fund 维度升级——成交量代理偏弱（v0.4.3 新增，跨 P1-E4）**：§4.0 警告已述，fund 当前用成交量代理资金承接，但 2026 研究（慧眼财经/华夏时报/东方财富）实证成交量不区分方向（散户接盘式上涨持续性差）、无法识别资金性质（配置型 vs 交易型北向）、缺乏"出清"语义（融资余额低点=出清）。924 是"主力净流入 209.85 亿 + 融资余额攀升 + 成交量量级跃升"三者共振。**confirm≥50 依赖 fund**——P1-E4 应升级 fund 为"融资余额变化分位 + 超大单净流入分位 + 成交量分位"加权。若 P1-E4 未完成，confirm 仍卡 fund 门槛。施工顺序需协调 P1-E4 与 P1-E9。
 11. **[重要] vix 门槛校准——≥40 偏美股标准（v0.4.3 新增，跨 P1-E7）**：§4.0 警告已述，vix≥40 是美股 3-sigma 标准（数年一遇），A 股合成 VIX>25 即触发 8/8 胜率信号（雪球淡定菌/浙商廖静池 2026，沪深300 期权 CBOE 方差互换法）。2026-07 大跌沪深300 期权隐波仅升至 23-28%。**trigger≥40 依赖 vix**——P1-E7 应校准 vix 门槛：若用沪深300 合成 VIX 降至 ≥25-30；或改"IV 近 89 日分位≥80% + 价格布林下轨"（浙商方案，胜率 75-86%）。实现波动率分位是后视镜，无法捕捉 924 这类政策脉冲拐点——需期权隐含 VIX 互补。非 P1-E9 范围，但 trigger 能否触发依赖此。
+12. **[重要] ARCH 登记状态三方不一致（v0.5.0 新增，跨文档治理）**：`#ARCH-REGIME-S2-ALGORITHM-001` 的 status 在三处不一致——本文档 §3.2 写 `proposed`（铁律#9 待用户确认）、[10_regime_detector_spec §9.7.3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) 写 `confirmed`、[13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) 写"待登记"。真源 [architecture_issue_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 条目为准，10/13 号引用需同步（不越界改，由负责 AI 回填）。
+13. **[重要] 12/13 号闭环叙事未同步（v0.5.0 新增，跨文档治理）**：① [12_regime_phase2_validation](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/12_regime_phase2_validation.md) 仍停留在"B4 FAIL(3/6)、S2 0/3 归因数据缺失"的第二批结论，**未回填** commit 93a25890 的 design_match 闭环（B4=S1 3/3 PASS、Phase 2 闭环）——与 10 号 §9.7/本文档/13 号 §0.1 的闭环叙事直接矛盾，12 号作为 Phase 2 验证真源需回填终态（不越界改，由 AI-17 负责）。② 13 号 §3.5.2 仍写"回退 `data_ready` true→false"（路 1 旧表述），与本文档 §2.5 裁定（路 3：design_match 排除 + data_ready 维持 true）矛盾；13 号 §3.5 范围仅 3 维（capitulation/valuation/spring），未同步本文档 v0.4.0/v0.4.3 扩围的 P1-E9d（breadth_thrust V 反转通路）/P1-E9e（three_yang 6 维校准）；E7 编号 13 号写 `P2-E7`、本文档写 `P1-E7` 需统一（不越界改，由 AI-07 负责）。
+14. **[参考] 10 号 §4.12.10 十二维体系演进对齐（v0.5.0 新增）**：10 号 §4.12.10 已将 S2 升级为 12 维体系——"触发：8 基础维度≥80 或 4 机构维度≥50；确认：8 基础≥140 且 4 机构≥80；强确认：12 维总分≥**260** + Spring Terminal Shakeout + 信用利差收紧"。本文档 §1.1/§1.3 的 strong_confirm（total≥250）对齐的是 §4.12.8 八维体系。P1-E9 施工前需裁定：TRANSITION_CONFIG["S2"] 的 total_gte=250 是否随 10 号 §4.12.10 升至 260、机构维度组（信用利差等）是否纳入（不越界改 10 号，裁定后回写本文档 §4 + regime_detector.py）。
 
 ---
 
@@ -996,3 +1035,4 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-09 | 0.4.5 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules/related_issues 扩展字段保留），H1 去文件名前缀与 title 对齐；文末补建本「修订记录」章节（§7）；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾）；14 号此前无修订记录章节，补齐对齐 01_design_memo_management_spec §4.3 规范 |
+| 2026-08-12 | 0.5.0 | 第十一轮审查（AI-15）：① §0.1 事件经过表回填 2026-08-07 两个 commit（eb3db21bd8 合成 VIX 后备 + 981d59d8cc S1 correlation 门槛校准）+ 新增因果链完整性注记（数据层根因 vs 算法层根因两层区分）；② 新增 §0.3 已施工设施盘点（通用规则 #11：12 维度函数/合成 VIX/wyckoff_engine/design_match 字段/诊断脚本/测试/治理登记 + P1-E9 未施工清单）；③ §4.4b 校正实参名（s2_three_yang_flag 传 pct_change 非 close）；④ §6 开放问题新增 12-14（ARCH 状态三方不一致 / 12+13 号闭环叙事未同步 / 10 号 §4.12.10 十二维体系演进对齐） | 因果时间线完整性（thresholds 过高/NLP stub=0/合成 VIX 缺失的第一层根因及修复方案此前未入本文档）；规则 #11 基础设施盘点合规；跨文档一致性缺口登记（不越界改 10/12/13 号） |
