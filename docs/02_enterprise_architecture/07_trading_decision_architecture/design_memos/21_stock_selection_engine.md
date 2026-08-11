@@ -5,8 +5,8 @@ title: 选股引擎架构
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.18"
-date: 2026-08-10
+version: "1.1.19"
+date: 2026-08-12
 topic: stock_selection_engine
 scope: 07_trading_decision_architecture
 ---
