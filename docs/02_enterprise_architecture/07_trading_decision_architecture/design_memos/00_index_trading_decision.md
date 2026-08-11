@@ -34,6 +34,8 @@ scope: 07_trading_decision_architecture
 | [13_regime_phase3_engineering_plan.md](13_regime_phase3_engineering_plan.md) | Phase 3 工程规划（降态+校准+NLP+S2/T3） | draft |
 | [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md) | S2 算法错配诊断报告 | draft |
 | [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | 骨架 |
+| [16_technical_indicator_catalog.md](16_technical_indicator_catalog.md) | 技术指标目录（9周期/存储架构/调度策略/三级时间框架栈） | draft |
+| [16_technical_indicator_build_plan.md](16_technical_indicator_build_plan.md) | 技术指标施工计划（§3-§4 待补充） | draft |
 | [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | 特殊交易日数据资产清单 + #ARCH-DATA-001 hk日历语义错配修复 + #ARCH-DATA-002 语义契约治本方案 | active |
 | [20_first_batch_strategies.md](20_first_batch_strategies.md) | 首批 3 策略定义（打板+多因子+事件驱动） | active |
 | [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | active |
