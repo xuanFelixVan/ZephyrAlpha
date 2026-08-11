@@ -5,7 +5,7 @@ title: 对账归因
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.15.1"
+version: "1.15.2"
 date: 2026-08-12
 topic: reconciliation_attribution
 scope: 07_trading_decision_architecture
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构中后台对账 / Brinson 归因（非 Barra 因子风险归因） |
 | 正交性 | ✅ 与 regime 正交（归因是事后解释，不参与事前决策） |
 | 优先级 | P5 |
-| 状态 | active 1.15.1 |
+| 状态 | active 1.15.2 |
 
 ## 2. 背景
 
@@ -2379,7 +2379,7 @@ def shapley_strategy_attribution(
 - 状态: ✅ PASS / 🟥 FAIL（residual > 0.01%，报告拒绝发布）
 
 ## 4. 策略贡献分解（firm 级报告独有）
-| StrategyBook | 净 PnL | 占 firm PnL 比例 | 60 日滚动 Sharpe | PerformanceScore |
+| StrategyBook | 净 PnL | 占 firm PnL 比例 | 60 日滚动 Sortino | PerformanceScore |
 |---|---|---|---|---|
 | 打板策略 | {%} | {%} | {%} | {%} |
 | 多因子策略 | {%} | {%} | {%} | {%} |
@@ -2995,4 +2995,5 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 | 2026-08-10 | 1.14.0 | 新增 §3.14 MCR/CCR 风险分解（Phase 2.5 候选）+ §1 状态行版本同步修复（1.12.1→1.14.0） | 持续改进：用户要求"再次审查文档所有内容+施工环节流程算法有缺失+选项之外更好的答案算法+全网搜 2026年8月今天最新研究+文档结构顺序内容调整+持续改进不要停下来询问"。施工算法完整性审查发现收益-风险归因不对称缺口：§3.2 Brinson 分解组合**收益**到 allocation/selection/interaction，但组合**风险**（波动率）分解维度完全空白——直到 §4.1 Barra（Phase 3，需因子模型许可证）才填补，MVP~Phase 2 期间 owner 能回答"谁赚了钱"但无法回答"谁贡献了风险"。决策：新增 §3.14 决策⑬ MCR/CCR 风险分解（经典 Euler 齐次函数定理分解 σ_p 到各资产 MCR/CCR，求和不变量 ΣCCR=σ_p 类比 §3.5 Brinson 求和不变量），定位 Phase 2.5 候选（比 §3.12 Shapley 风险归因 Phase 2+ 更轻量 O(n²)闭式解、比 §4.1 Barra Phase 3 更轻量无需许可证），仅需经验协方差矩阵（np.cov 估计，绕过 Barra 因子模型），不违反 §4.1 拒绝裁定（MCR/CCR 是事后 EXPLAIN 工具非事前 DECIDE 优化器，与 30 号拒 MVO 性质不同）。含完整 calc_mcr_ccr_risk_attribution() + calc_strategy_risk_attribution() Python 伪代码 + 与 §3.5 Brinson 收益归因对称关系 + 与 30 号 RegimeMetaAllocator 联动（risk_concentration_ratio=CCR_pct/PnL_share 反馈 budget 风险维度调整）+ 三档定位表（MCR/CCR Phase 2.5 / Shapley 风险归因 Phase 2+ / Barra Phase 3）+ 过度工程审查（工业标准 Litterman 1996 Goldman Sachs Hot Spots 框架，O(n²)<1ms，Phase 2.5 非因小样本协方差不稳定）。同步：§5.1 上限补 MCR/CCR 条目 + §5.2 第二阶段补⑩ MCR/CCR 评估 + frontmatter 1.13.0→1.14.0 + §1 状态 1.12.1→1.14.0（修复既有同步 bug）。全网搜 2026-08 最新研究交叉验证：15 篇候选论文中 14 篇已收录（DASC/Conditional CTM/Changepoint/MPC/Microstructure/Diffusive/CVaR Tail/Three Matrices/EFS/Alpha Decay/FactorEngine/Unstructured Regime/MS-GARCH/Wasserstein HMM），仅 arXiv:2608.01294 Information-Geometric Bayesian 未收录（登记到 36 号风险监控作 Phase 3+ 远期候选）。施工算法完整性结论：54号 §3.1-§3.14 共 24+ python 块覆盖收益归因(Brinson)+风险归因(MCR/CCR)+对账(三层匹配)+审计(三阶段)+异常检测 全闭环。 |
 | 2026-08-12 | 1.15.0 | 全仓设施盘点回填（通用规则 #11）+ Brinson 公式守恒 bug 修复（纯 BHB 对齐 pf_core）+ PerformanceScore Sharpe→Sortino 口径修正 + 双实现冲突登记 + 55 号悬空引用校准 + OE-007 对齐声明 + 2026-08-12 研究整合（FPRO/bad-print/例外根因/ML 校准期）+ frontmatter/§1 状态同步 1.14.0→1.15.0 | 架构审查七轮循环（读现状盘点→内容回填→缺失审查→全网搜索→过度工程→一致性→规范）发现：①§2.4 盘点缺 12+ 已施工设施（pf_core MOD-PF-007 真实归因实现 698 行带测试 / DailyAuditor MOD-RK-20 日终 PnL 对账 / CashManager MOD-POS-006 T+1 资金账 / MOD-RPT-013/017/027 / MOD-INF-022 双 Reconciler / MOD-EX-003 审计链 / 前端 PnL 组件）+ 横向缺口（无 DB 表/无 15:30 调度/双渠道仅 PENDING）+ 3 处 `...` 悬空路径回填；②**§3.2 公式表守恒 bug**：BF-alloc(−R_b) + w_p-selection + BHB-interaction 组合三式求和 = R_p−R_b + interaction（双计），违反本备忘自定的 Carino residual 门禁——修为纯 BHB（alloc=∑(w_p−w_b)·r_b、selec=∑w_b·(r_p−r_b)），与 pf_core MOD-PF-007 生产实现 + §3.13 GLS 骨架 + "BHB vs BF"决策文字三方对齐，BF 3-effect 登记备选；T+1 拆分随之从权重拆分改为收益贡献拆分（w_b×λ×(r_new−r_b)）；③PerformanceScore 误用 Sharpe/[0.5,2.0]——与 30 号 §2.2 契约（60 日 Sortino/[0.5,1.5]，真源 34 号 §3.1）冲突，已按 Sortino 重写 calc_performance_score；④55 号磁盘 v0.1.0 draft 骨架（2026-08-09），§3.6/§3.9 等小节全部不存在——本备忘所有 55 号小节级引用校准为设计预留对接点（§7 登记回对齐，00_index G26 v1.21.0 标注漂移登记越界项）；⑤OE-007（2026-08-11 decided，BM-BUY-10 不建独立不可篡改审计链）与 §3.3 三阶段轨迹归属张力——补对齐声明：本节为对账业务内生 tamper-evident 证据链，机构级能力全在 Phase 2+；⑥40 号 fill_id 幂等引用错位修正（决策⑥→§6.1 gap 12 AsyncFillDispatcher LRU）；⑦MOD-RPT-015 报告生成器未施工且无 registry 条目（CTR-P1-009 契约已落盘）——§3.12 悬空路径修正为 shared/contracts；⑧TCA IS 四组件未施工（DefaultTcaEngine 仅简易滑点）/ReportPublisher 渠道仅 PENDING/盘后调度无接线/audit_trail 无 DDL——状态夸大全部校准；⑨三对双实现登记（归因引擎 §6 待裁定置顶 + PositionReconciler + 公司行为 §7），MOD-PF-007 算术链接 vs Carino 精度差登记收敛方向（不擅自定）。新增研究：Holtes 2026-07 FPRO（Euler 对冲对符号失真，Phase 2.5+ 远期）；referentiallabs Tick Test（bad-print vs 真实跳空，Phase 1.5）；m2pfintech 例外根因分类（root_cause+recurrence_key 轻量字段）；theneuralbase ML 校准期警示（新机构前 18 月检出率 40-50%，佐证规则优先）。过度工程审查：全部重型机制（Merkle/VCP/Shapley/GLS/MCR-CCR/FPRO/AI 对账/bi-temporal）维持 Phase 2+/待裁定标注，本轮无新增过度工程项。开放问题新增 9 项（PositionReconciler 双实现/公司行为双口径/StrategyBook 独立 PnL 数据源/MOD-RPT-015 登记/CTR-P1-007 产出 GAP-L06-003/15:30 调度接线/DB 持久化 schema/55 号回对齐/含 00_index G26 越界登记）。工程注记：本轮编辑历经并发会话 stash 隔离两次整体回退，经 claim_files（session=arch-review-54）+ session_worktree 物理隔离（ai/arch-review-54/task-54-review）+ GitCommitGateway 提交固化。 |
 | 2026-08-12 | 1.15.1 | 55 号引用校准覆盖面扩展 + v1.12.0 记录-正文漂移勘误 + frontmatter/§1 状态同步 | 确认轮复核发现 2 项遗留：①§3.6 stale-value 节"Hampel 鲁棒增强（55 号 §3.10）"等引用落在 §3.9 校准注记覆盖面（原仅"本节及 §3.10"）之外——扩展注记范围为"§3.6/§3.10/§5.1/§5.2/§8.1 等处"，55 号全部小节级引用统一按设计预留口径理解；②v1.12.0 修订记录声称"§3.13 GLS 设计矩阵已改 BF 公式（X[t,0]=(w_p−w_b)(r_b−R_b)、X[t,1]=w_p(r_p−r_b)）"，但正文实为 BHB（X[t,0]=(w_p−w_b)·r_b、X[t,1]=w_b(r_p−r_b)）——记录-正文漂移勘误：v1.15.0 起**纯 BHB 为本备忘唯一口径**（与 pf_core MOD-PF-007 生产实现 + §3.2 表格 + GLS 骨架三方一致），v1.12.0 条目的 BF 方向声明作废，以本条为准；且 v1.12.0 所述 BF 组合（BF-alloc + w_p-selection + BHB-interaction）即 v1.15.0 修复的守恒 bug 形态，作废正当时。 |
+| 2026-08-12 | 1.15.2 | MOD-RPT-015 报告模板 §4 表头 Sharpe→Sortino 口径跟随修正 + frontmatter/§1 状态同步 | 确认轮二复核发现：§3.12 MOD-RPT-015 报告模板第 4 节"策略贡献分解"表头仍为"60 日滚动 Sharpe"——v1.15.0 已将 PerformanceScore 修正为 Sortino 口径（30 号 §2.2 / 34 号 §3.1 契约），模板表头跟随修正为"60 日滚动 Sortino"，消除正文-模板口径分叉。 |
 
