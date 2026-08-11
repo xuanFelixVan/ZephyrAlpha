@@ -5,8 +5,8 @@ title: 北向资金季度持仓快照 fetcher 施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.1.0"
-date: 2026-08-10
+version: "0.2.0"
+date: 2026-08-12
 topic: northbound_hold_snapshot
 scope: 07_trading_decision_architecture
 depends_on:
@@ -43,13 +43,13 @@ related_modules:
 - **2024-08-19**：沪深港通日终数据停止披露（第二阶段），北向资金日频净流入/净买入永久停发
 - **调整后只剩**：每个交易日收市后公布成交总额/总笔数/ETF 成交额/前十大活跃证券；**每季度第 5 个沪深股通交易日**公布上季度末单只证券沪深股通投资者合计持有数量
 
-### 2.2 项目已有治理（前瞻性）
+### 2.2 已施工设施盘点（项目已有治理，通用规则 #11）
 
-项目在数据断档治理上已先行：
+项目在数据断档治理上已先行（2026-08-12 按 [01 号规范](01_design_memo_management_spec.md) §5.2 引用纪律核验，引用只保留稳定标识——条目 id / 常量名 / 方法名，不写行号）：
 
-- [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) `hk_connect_flow_source_discontinued`（L84）标 `status: accepted`，root_cause 记明"港交所 2024-08-16 停止公布日频明细"
-- [akshare_provider.py](../../../../src/zephyr/data/implementations/akshare_provider.py) `_fetch_hk_connect_flow`（L2596）注释"有效数据范围 2014-11-17~2024-08-16，NaN 行自动过滤"
-- [check_algo_quality.py](../../../../scripts/governance/d5_architecture/checkers/check_algo_quality.py) `DEAD_DATA_SOURCES`（L99-116）登记 `northbound_flow`/`northbound_capital`/`hk_connect_daily`/`stock_connect_flow` 四个死数据源（停发 2024-08-19），AST+正则双检测
+- [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) 条目 `hk_connect_flow_source_discontinued`：标 `status: accepted`，root_cause 记明"港交所 2024-08-16 停止公布日频明细"
+- [akshare_provider.py](../../../../src/zephyr/data/implementations/akshare_provider.py) `_fetch_hk_connect_flow`：docstring 记明"有效数据范围 2014-11-17 ~ 2024-08-16"，NaN 行自动过滤
+- [check_algo_quality.py](../../../../scripts/governance/d5_architecture/checkers/check_algo_quality.py) 常量 `DEAD_DATA_SOURCES`：登记 `hk_connect_flow`/`hk_connect_daily`/`northbound_flow`/`northbound_capital` 四个死数据源（停发 2024-08-19），AST+正则双检测
 - **factor/strategy 无实盘信号依赖北向日频净流入**（2026-08-10 排查确认）
 
 ### 2.3 核心问题
@@ -69,7 +69,7 @@ related_modules:
 | stock_hsgt_board_rank_em | ❌ 接口失效 | NoneType |
 | stock_hsgt_stock_statistics_em | ❌ 接口失效 | NoneType |
 
-三条失效接口已登记 [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) L158-210（`akshare_hsgt_hold_stock_em_broken` 等，gap_type=interface_broken）。
+> ⚠️ **2026-08-12 核验修正**：三条失效接口**尚未登记** [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml)（初稿声称"L158-210 已登记 `akshare_hsgt_hold_stock_em_broken` 等"为不实引用，实际不存在）——已列入 §9 开放问题，施工 fetcher 时同步补登记（gap_type=interface_broken）。
 
 ### 3.2 tushare hk_hold 实测（2026-08-10）
 
@@ -113,6 +113,7 @@ related_modules:
 - 接口：`pro.hk_hold(trade_date=季度末)`
 - 过滤：`exchange in ('SH', 'SZ')`（仅北向，剔除 HK 南向）
 - 字段映射：code→src_code, trade_date→trade_date, ts_code→ts_code, name→name, vol→hold_share, ratio→hold_ratio, exchange→exchange
+- **设计刻意保持最小**：单接口、单表、全量覆盖写入（季度 3000-4000 行，无增量/无分页状态机），无反爬/无代理池/无重试编排——季度级任务失败下季度重跑即可
 
 ### 5.2 落表 schema
 
@@ -141,10 +142,13 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 
 - [data_asset_registry.yaml](../../../../01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml) 登记 `northbound_hold_snapshot` 数据资产（62 号 §3 第 9 项 REG-DATAFLOW-001 下）
 - [field_dictionary.yaml](../../../../01_policies_and_standards/_registry/catalogs/field_dictionary.yaml) 登记新字段（若 62 号 P2 字段字典施工已启动）
+- [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) 补登记三条 akshare 失效接口（§3.1 核验修正项）
 
 ## 6. 外资行为分析方法论
 
-基于季度快照的外资行为分析（参考东证期货《北向资金跟踪系列》框架）：
+基于季度快照的外资行为分析（参考东证期货《北向资金跟踪系列》框架；2026 年行业实证：国信/招商证券每季度发布外资动向跟踪，按"长线稳定型/短线灵活型"拆解净流入——季度快照行为分析是行业标配做法）。
+
+> **MVP 边界（2026-08-12 过度工程审查裁定）**：本节 6 小节是完整方法论地图，**首期只做 §6.3（个股增减持排名）+ §6.5（季度净流入估算）两项**——两者只需"Δ持股数量 × 当季 VWAP"一个公式，pandas 数十行可落地；§6.1/§6.2/§6.4 待外资行为因子立项后随需求演进，不提前施工。
 
 ### 6.1 持市值变化分解
 
@@ -161,20 +165,20 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 超配比例 = 北向持有该行业市值占比 − 全A该行业市值占比
 ```
 
-### 6.3 个股增减持排名（流量信号）
+### 6.3 个股增减持排名（流量信号）——MVP ①
 
 按"主动增减仓金额"排序，取 top 加仓/top 减仓。
 
 ### 6.4 板块切换能力评估（择时验证）
 
-当季加仓行业 vs 下季该行业涨跌幅，算相关性。
+当季加仓行业 vs 下季该行业涨跌幅，算相关性。**注意样本量约束**：季度颗粒下有效样本每年仅 4 个观测点，2-3 年数据仅 8-12 个点，相关性结论统计功效弱——只做方向性参考，不做硬信号。
 
-### 6.5 季度净流入估算（总量）
+### 6.5 季度净流入估算（总量）——MVP ②
 
 ```
 季度净流入 ≈ Σ_all_stocks(Δ持股数量 × 当季VWAP)
 ```
-这是现在唯一能算出的"准北向净流入"（季度颗粒度）。
+这是现在唯一能算出的"准北向净流入"（季度颗粒度）。行业对标：国信证券估算 2026Q2 北向净流入 ~2193 亿元（创单季新高），本公式落地后可与之交叉验证误差范围。
 
 ### 6.6 数据需求
 
@@ -182,7 +186,7 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 
 ## 7. 验证
 
-- 数据完整性：每季度末日期返回 ~3300-3800 只北向持股，与官方公布 top10（京东方A/工商银行/紫金矿业等）核对
+- 数据完整性：每季度末日期返回 ~3300-4000 只北向持股（2026Q2 官方公布 3958 只，标的持续扩容），与官方公布 top10（宁德时代/中际旭创/北方华创等）核对
 - 与历史衔接：2024-08-16 前 hk_connect_flow 日频数据 vs 2024-09-30 季度快照，持股数量应连续（无突变）
 - 字段质量：hold_share > 0，hold_ratio ∈ [0, 100]
 
@@ -195,6 +199,7 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 | 不走方案 A 爬交易所官网 | 方案 C 已验证可行，工程量更小 |
 | 不做外资行为因子开发（本备忘） | 因子开发单独立项，本备忘只到"数据就绪" |
 | 不采集南向（HK）数据 | 本备忘聚焦北向；南向仍日频可用，另议 |
+| 不做增量/断点续传/重试编排 | 季度全量覆盖即可（§5.1），复杂状态机是过度工程 |
 
 ## 9. 开放问题
 
@@ -203,7 +208,8 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 | 落表用新表 northbound_hold_snapshot 还是扩展 hk_connect_flow | 倾向新表（颗粒度不同：日频 vs 季度），待施工时确认 |
 | 是否同步采集南向季度快照 | 本备忘暂不做，待外资行为因子需要时再议 |
 | 外资行为因子何时立项 | 待本 fetcher 落地 + 数据积累 2-3 个季度后评估 |
-| tushare hk_hold 单次返回上限 4200 行，季度末 ~3300 行无分页问题；若未来北向标的超 4200 需分页 | 当前无风险，监控 |
+| tushare hk_hold 单次返回上限 4200 行——2026Q2 官方公布北向持股 3958 只，逼近上限，分页风险已从"理论"变为"近在眼前" | 施工时必须先验证 2026Q2 季度末日期（20260630）实际返回行数；若 ≥4200 需分页逻辑（按 ts_code 分段或 exchange 分两次） |
+| 三条 akshare 失效接口（§3.1）known_data_gaps.yaml 补登记 | 已列 §5.4 施工项，随 fetcher 施工同步完成 |
 
 ## 10. 修订记录
 
@@ -211,3 +217,4 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 |---|---|---|---|
 | 2026-08-10 | 0.1.0 | 初稿 | 北向日频断档后，实测 akshare 失效/tushare 可行，建立季度快照 fetcher 施工计划 + 外资行为分析方法论 |
 | 2026-08-11 | 0.1.1 | 文件被 git clean 误删后从对话历史重建 | #ARCH-GIT-CLEAN-GUARD-FIX：git alias 无法覆盖内置 clean 命令，文件物理删除 |
+| 2026-08-12 | 0.2.0 | ①frontmatter version 与修订记录对齐（0.1.0→0.2.0，修复 0.1.1 未同步）；②§2.2 改「已施工设施盘点」并按 01 号 §5.2 引用纪律去行号（条目 id/常量名/方法名为稳定标识），修正 DEAD_DATA_SOURCES 键名与代码一致；③§3.1 修正不实引用——三条失效接口尚未登记 known_data_gaps，列入 §5.4/§9；④§6 方法论加 MVP 边界（首期只做 6.3+6.5，6.4 补样本量约束警示）；⑤§5.1 补最小设计声明、§8 补"不做增量/重试编排"（过度工程审查）；⑥§7 验证标准更新（2026Q2 官方 3958 只）、§9 分页风险升级（逼近 4200 上限）、§6 开头补行业实证（国信/招商季度跟踪） | 多轮审查：核验发现虚构引用与行号漂移，过度工程审查裁定 MVP 边界，2026Q2 行业数据入库（2026-08-12 三次并发回滚后重建） |
