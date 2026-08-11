@@ -5,22 +5,19 @@ title: Git 安全治理体系——alias 失效修复与多层防护施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "1.9.0"
-date: 2026-08-11
+version: "2.1.0"
+date: 2026-08-12
 topic: git_safety_governance
 scope: 07_trading_decision_architecture
 related_issues:
-  - "#ARCH-GIT-CLEAN-GUARD（git clean 误删防护）"
-  - "#ARCH-GIT-CLEAN-GUARD-FIX（alias 失效修复+clean 自伤检测）"
   - "#ARCH-GIT-SELF-HARM-GUARD（reset/checkout 自伤防护）"
-  - "#ARCH-GIT-CALL-BUDGET（git 调用预算优化）"
   - "#ARCH-AICOLLAB-001（Git Worktree + File Lock(TTL) + Task Board 三件套）"
-  - "#ARCH-GIT-DEOBFUSCATOR（shell 反混淆归一化层——v1.5.0 新登记）"
-  - "#ARCH-GIT-VAR-COLLISION（PowerShell 自动变量碰撞检测——v1.5.0 新登记）"
-  - "#ARCH-GIT-RISKCHAIN（session 级多步攻击链追踪——v1.5.0 新登记）"
-  - "#ARCH-GIT-CVE-2026-44244（git config 注入防护——v1.6.0 新登记）"
-  - "#ARCH-GIT-CVE-2026-55607（worktree 沙箱逃逸防护——v1.6.0 新登记）"
-  - "#ARCH-GIT-TOCTOU（symlink/junction + TOCTOU 防护——v1.6.0 新登记）"
+  - "#ARCH-GIT-DEOBFUSCATOR（shell 反混淆归一化层——v1.5.0 新登记，v2.1.0 deprecated）"
+  - "#ARCH-GIT-VAR-COLLISION（PowerShell 自动变量碰撞检测——v1.5.0 新登记，v2.1.0 deprecated）"
+  - "#ARCH-GIT-RISKCHAIN（session 级多步攻击链追踪——v1.5.0 新登记，v2.0.0 deprecated）"
+  - "#ARCH-GIT-CVE-2026-44244（git config 注入防护——v1.6.0 新登记，v2.0.0 deprecated）"
+  - "#ARCH-GIT-CVE-2026-55607（worktree 沙箱逃逸防护——v1.6.0 新登记，v2.0.0 deprecated）"
+  - "#ARCH-GIT-TOCTOU（symlink/junction + TOCTOU 防护——v1.6.0 新登记，v2.0.0 deprecated）"
 depends_on:
   - 01_design_memo_management_spec
   - 60_cross_cutting_cleanup
@@ -44,6 +41,10 @@ related_modules:
 > 性质：**决策备忘 + 施工计划**混合体，按"背景→调研→现状→分析→裁定→施工→验证→不做→开放问题"组织。
 > 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)。
 > 关联：[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md)（跨切治理）｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)（多 AI 生命周期）
+>
+> **⚠️ v2.0.0 精简裁定（2026-08-12）**：v1.x 累计膨胀到 36 施工项 / 19 层防御 / 293KB，根因是把"AI 误操作"（合法错误）误判为"AI 恶意攻击"（adversarial）——单人单账户 AI 协作开发中 AI 是协作者不是攻击者。v2.0.0 把 adversarial 防御层（§7.16/§7.19-§7.26/§7.29/§7.33-§7.36）全部标 `deprecated`，§14/§15 删除，§3.6+ 调研过程归档保留但不再作为施工依据。**实际施工范围 = §7.1/§7.2/§7.7/§7.10/§7.13-§7.15/§7.17/§7.18/§7.23/§7.27/§7.32 + §11 三件套**，共 ~12 项 / ~15 天 / 5-6 层防御。详见 §6.2 + §9 + §13。
+>
+> **⚠️ v2.1.0 第二轮精简（2026-08-12）**：v2.0.0 保留项内部的实现细节仍残留 adversarial 思维。v2.1.0 进一步砍掉：①§7.17.1 自动变量碰撞检测（30+ 变量清单过度）②§7.18 反混淆归一化层 9 策略（防 shell 注入攻击，AI 不会混淆命令）③§7.15 错误分类 STOP/ALTERNATIVE 格式（AI 提示工程层过度）。简化：④§7.23 git 危险命令 20+→4 命令（只保留 AI 易误用的 filter-branch/filter-repo/reflog expire/gc --prune）⑤§7.27 审计日志 Mutex→每 session 独立文件（append-only 风险低）⑥§7.32 init-session.ps1+TRAE_ENV_FILE→$PROFILE 一行 UUID ⑦§11.3.2 去 heartbeat ⑧§11.3.3 去 epoch 防 ABA ⑨§11.3.1 去 7 天告警。**v2.1.0 实际施工范围 = 8 项 / ~11 天**。详见 §6.2 + §9 + §13。
 
 ## 1. 主题组信息
 
@@ -79,6 +80,8 @@ related_modules:
 alias 失效不仅影响 clean——`reset`/`checkout`/`restore`/`stash`/`revert`/`mv` 全部是 git 内置命令，它们的 alias 拦截**可能全部失效**。这意味着 git_guard.py 的整个 alias 拦截体系（7 个 DANGEROUS_SUBCOMMANDS）在 Windows git 2.48.1 上可能形同虚设。
 
 ## 3. 调研报告
+
+> **⚠️ v2.0.0 精简说明**：§3.1-§3.5 为核心调研（git alias 失效根因 + GitHub/AI/量化社区实践 + 2026-08 最新研究），是 §6/§7 裁定的依据。§3.6-§3.14 为 v1.x 累计 9 轮搜索补充过程，**保留作为决策追溯历史归档，不再作为施工依据**——其中发现的 trash redirect 算法（§3.6）、PS 5.1 并发写入算法（§3.12.4）、Trae 多 session 病根（§3.12.1-3.12.3）已提炼到 §7 对应施工项；其余 adversarial 防御算法（RiskChain/CFD/symlink 攻击/AST 升级等）在 v2.0.0 判定为单人 AI 协作场景不适用，详见 §9。
 
 ### 3.1 git alias 无法覆盖内置命令——确认与溯源
 
@@ -1343,17 +1346,44 @@ AI 执行 git clean -fd
 | E. session_worktree | 工作区隔离 | 根本消除冲突 | AI 未遵守 | ✅ **采用（P1 强制）** |
 | F. git hooks（pre-*） | git 内置 hook | git 原生支持 | git 无 pre-clean hook | ❌ 不适用 |
 | G. 定期 auto-commit | 定时把 untracked 变 tracked | 自动保护 | 可能 commit 垃圾文件 | ⏸ 远期考虑 |
-| H. PowerShell 原生命令覆盖（v0.9.0） | 函数覆盖 Remove-Item/rd/del 等 | 拦截非 git 破坏性命令 | 需处理 cmdlet 参数绑定 | ✅ **采用（L7）** |
-| I. 审计日志（v0.9.0） | JSONL 持久化所有拦截/放行 | 事后可追溯 | 日志文件增长 | ✅ **采用（L8）** |
+| H. PowerShell 原生命令覆盖（v0.9.0） | 函数覆盖 Remove-Item/rd/del 等 | 拦截非 git 破坏性命令 | 需处理 cmdlet 参数绑定 | ✅ **采用** |
+| I. 审计日志（v0.9.0） | JSONL 持久化所有拦截/放行 | 事后可追溯 | 日志文件增长 | ✅ **采用** |
+| J. Named Pipe 协调器 daemon（v1.8.0） | 单线程消除并发 | 跨 session 状态统一 | 单点故障+复杂度高+SQLite WAL 已够 | ❌ **v2.0.0 deprecated**（见 §9） |
+| K. 跨 session GovernanceStore（v1.7.0） | SQLite 共享状态 | 跨 session circuit breaker | 与 §11.3.3 Task Board 重复 | ❌ **v2.0.0 deprecated**（见 §9） |
+| L. adversarial 防御层（v1.5.0-v1.6.0） | RiskChain/SafeFix/symlink/hook hash 等 | 防 AI 攻击 | 单人 AI 协作无 adversarial 场景 | ❌ **v2.0.0 deprecated**（见 §9） |
 
-### 6.2 最终裁定：多层组合防御（v1.8.0 更新——新增 L19）
+### 6.2 最终裁定：v2.1.0 精简防御层（6 层，实现简化）
+
+> **v2.0.0 精简裁定**：v1.x 的 19 层防御（L1-L19）中，L9/L10/L12-L16/L18/L19 共 9 层在 v2.0.0 判定为单人 AI 协作场景过度工程，全部 `deprecated`。保留 6 层核心防御 + §11 三件套。
+>
+> **v2.1.0 第二轮精简**：v2.0.0 保留项内部的实现细节仍残留 adversarial 思维。v2.1.0 进一步简化：L4 砍掉自动变量碰撞检测（只保留 .git 阻断）；L5 从 Mutex 串行化简化为每 session 独立文件；L6 从 init-session.ps1+TRAE_ENV_FILE 简化为 $PROFILE 一行；§11 三件套去掉 heartbeat/epoch/7 天告警。6 层结构不变，实现大幅精简。
 
 ```
-L1-L16: （同 v1.7.0，略）
-L17: 并发安全串行化（v1.7.0 新增——P0）——命名 Mutex + 原子写 + 规则文件完整性 + git 串行化
-L18: 跨 session GovernanceStore（v1.7.0 新增——P1）——共享 SQLite 实现跨 session circuit breaker + global halt
-L19: Named Pipe 单线程协调器 + Session 身份 + 生命周期管理（v1.8.0 新增——P0）——从"用锁管理并发"升级到"用单线程消除并发"+ Trae SessionStart/End hook 注入 session ID + 自动锁清理
+L1: PowerShell git wrapper 函数（拦截 git clean/reset --hard/checkout -- + 4 命令：filter-branch/filter-repo/reflog expire/gc --prune）—— §7.1.1 + §7.23（v2.1.0 简化到 4 命令）
+L2: PowerShell 原生破坏性命令覆盖（Remove-Item -Recurse -Force/rd/del/format 等）—— §7.1.2
+L3: AGENTS.md + .trae/rules/ RULE-GIT-SAFE 永久规则 + 保护性 git add + fail-open 策略 —— §7.2 + §7.14（v2.1.0 §7.15 错误分类 deprecated）
+L4: .git 目录运行时硬阻断（v2.1.0 自动变量碰撞检测 deprecated，改为 RULE-GIT-SAFE 规则一条）—— §7.17.2
+L5: 审计日志（每 session 独立文件 audit_{yyyyMMdd}_{sessionId}.jsonl，v2.1.0 从 Mutex 简化）—— §7.10 + §7.27
+L6: Session ID 注入（$PROFILE 顶部一行 UUID，v2.1.0 从 init-session.ps1 简化）—— §7.32
+
+外加 §11 三件套（P1 并发协调层，v2.1.0 简化版）：
+  - Git Worktree（每 AI 独立 checkout + 分支，v2.1.0 去 7 天告警）—— §11.3.1
+  - File Lock TTL（lock_files.py 扩展，60min 自动过期，v2.1.0 去 heartbeat）—— §11.3.2
+  - Task Board（SQLite CAS 状态机 pending→claimed→completed，v2.1.0 去 epoch/blocked/abandoned）—— §11.3.3
 ```
+
+**v2.0.0 deprecated 的 v1.x 层级对照**：
+- L9 Trash Redirect → 降级为 L2 的可选实现细节（不单独成层）
+- L10 Shell 反混淆归一化 → v2.0.0 保留 regex 版（§7.18），**v2.1.0 整体 deprecated**（AI 不会混淆命令）
+- L11 自动变量碰撞 + .git 阻断 → v2.0.0 保留为 L4，**v2.1.0 自动变量碰撞 deprecated**（只保留 .git 阻断）
+- L12 SafeFix block+suggest → deprecated（AI 提示工程层，规则足够）
+- L13 RiskChain 攻击链追踪 → deprecated（无 adversarial 场景）
+- L14 Atomic Path Resolution / symlink 防护 → deprecated（无 symlink 攻击场景）
+- L15 git hook 信任链 / reflog 不可变 → deprecated（单人项目无恶意 actor）
+- L16 Script Block Logging 4104 → deprecated（企业级方案）
+- L17 并发安全串行化 → v2.0.0 保留为 L5，**v2.1.0 从 Mutex 简化为每 session 独立文件**
+- L18 跨 session GovernanceStore → deprecated（与 §11.3.3 Task Board 重复）
+- L19 Named Pipe Coordinator Daemon → deprecated（SQLite WAL 已够，daemon 单点故障）
 
 ### 6.3 不采用的方案及理由
 
@@ -1363,6 +1393,9 @@ L19: Named Pipe 单线程协调器 + Session 身份 + 生命周期管理（v1.8.
 | Claude Code PreToolUse hooks | Trae IDE 不支持 hooks |
 | git hooks（pre-clean） | git 没有 pre-clean hook（git hook 只覆盖 commit/push/checkout 等，不覆盖 clean） |
 | 定期 auto-commit | 可能 commit 垃圾文件，需设计排除规则，复杂度高，远期考虑 |
+| Named Pipe Coordinator Daemon（v2.0.0 deprecated） | §11.3.3 Task Board 已用 SQLite WAL + CAS——SQLite 本身就是工业级并发方案。Named Pipe daemon 是单点故障（v1.x §14 还要单独写灾难恢复），增益仅微秒级（0.1ms→0.05ms） |
+| 跨 session GovernanceStore（v2.0.0 deprecated） | 与 §11.3.3 Task Board SQLite 重复——Task Board 已是跨 session 协调层 |
+| adversarial 防御层（v2.0.0 deprecated） | RiskChain/SafeFix/symlink 防护/hook hash 锁定/AST 升级等均为"防 AI 攻击自己"设计——单人单账户 AI 协作开发中 AI 是协作者不是攻击者，无 adversarial 场景 |
 
 ## 7. 施工方案
 
@@ -2018,6 +2051,8 @@ function git {
 
 ### 7.15 施工项 15：错误分类与 AI 重试防护（v1.3.0 新增）
 
+> **⚠️ v2.1.0 DEPRECATED**：AI 提示工程层过度。RULE-GIT-SAFE 规则已说明"禁止危险命令"，wrapper 阻断时简单错误消息（如"BLOCKED: git clean 会删除文件"）已够。STOP:/ALTERNATIVE: 格式规范是过度设计——AI 看到 BLOCKED 就知道不该执行，不需要教它"替代方案"。**§7.14 fail-open 策略 + 简单错误消息已足够**。本节内容保留作为决策追溯，不施工。详见 §6.2 + §9。
+
 > **背景**：§3.9.3 opencode-swarm #1875 揭示 AI agent 遇到不识别的错误会无限重试（8000-15000 tokens/循环）。
 
 **目标**：wrapper 返回的错误消息必须**AI 可识别为 STOP 信号**，防止无限重试。
@@ -2043,6 +2078,8 @@ function git {
 ```
 
 ### 7.16 施工项 16：Circuit Breaker 模式（v1.4.0 新增——防 AI 无限尝试危险命令）
+
+> **⚠️ v2.0.0 DEPRECATED**：单人 AI 协作无 adversarial 场景，AI 不会"无限尝试危险命令"。§7.15 错误分类已防 AI 卡死循环重试。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
 
 > **背景**：第六轮搜索发现 Circuit Breaker 是 AI agent 安全的关键模式（来源：valuestreamai/pockit.tools/channel.tel/truefoundry，均为 2026 年发表）。AI agent 被阻断后可能反复尝试不同的危险命令变体——circuit breaker 在 N 次阻断后"跳闸"，拒绝所有命令一段时间，防止 AI 浪费 token 反复尝试。
 
@@ -2160,6 +2197,8 @@ function git {
 
 #### 7.17.1 PowerShell 自动变量碰撞检测
 
+> **⚠️ v2.1.0 DEPRECATED**：30+ 只读自动变量清单 + `_ZephyrCheckVarCollision` 函数过度。Codex `$home` 事故是极端组合案例，AI 不会主动写 `$home = "test"`。PowerShell 碰撞只读变量产生非终止错误但执行继续，不会递归删除。**改为 RULE-GIT-SAFE 加一条规则"禁止用 $HOME/$PID/$TRUE 等作变量名"即可**。本节内容保留作为决策追溯，不施工。§7.17.2 `.git` 阻断保留。详见 §6.2 + §9。
+
 **PowerShell 只读自动变量清单**（赋值会产生非终止错误但执行继续）：
 
 ```powershell
@@ -2249,6 +2288,8 @@ function _ZephyrCheckGitDirProtection {
 
 ### 7.18 施工项 18：Shell 反混淆归一化层（L10，P0，v1.5.0 新增）
 
+> **⚠️ v2.1.0 DEPRECATED**：9 策略全是防 adversarial shell 注入——相邻引号拼接/ANSI-C quoting/hex 转义/八进制转义/$IFS 展开/Base64 decode/命令替换/反引号/变量展开。单人 AI 协作中 AI 不会写 `rm$IFS-rf$IFS/` 或 `echo "cm0=" | base64 -d | bash` 这种混淆命令，AI 写的命令是直接的、可读的。**§7.1 wrapper 的直接 regex 匹配已够用**。本节内容保留作为决策追溯，不施工。详见 §6.2 + §9。
+
 > **背景**：§3.10.1 GuardFall 证明正则/AST 单层防护不够；§3.10.2 AgentTrust 提出 9 策略反混淆归一化层。现有 §7.1 wrapper 直接用 `$fullArgs -match` 匹配 raw text，5 大绕过类全部失效。
 
 #### 7.18.1 9 策略反混淆归一化算法
@@ -2329,6 +2370,8 @@ function git {
 
 ### 7.19 施工项 19：SafeFix block+suggest 算法（L12，P1，v1.5.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：AI 提示工程层，过度工程。RULE-GIT-SAFE 规则 + §7.15 错误分类的 `STOP:/ALTERNATIVE:` 格式已足够指导 AI。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.10.2 AgentTrust 的 SafeFix 创新——不只阻断，建议更安全替代。减少 AI 循环重试（比纯 block 减少重试，比 trash 更确定）。
 
 #### 7.19.1 SafeFix 规则库
@@ -2382,6 +2425,8 @@ if ($blocked) {
 **采用**——P1 优先级。SafeFix 减少 AI 循环重试（AI 看到 SAFEFIX 后可直接执行替代命令，不需要换写法重试）。规则库从 7 条起步，可扩展。
 
 ### 7.20 施工项 20：RiskChain session 级攻击链追踪（L13，P1，v1.5.0 新增）
+
+> **⚠️ v2.0.0 DEPRECATED**：典型 adversarial 防御——追踪 base64 解码/变量调用/命令替换等"绕过"行为。单人 AI 协作中 AI 不会"绕过"自己的安全机制。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
 
 > **背景**：§3.10.6 CFD 攻击证明 per-call guardrail 无法防御跨调用拆分攻击（+28pp jailbreak 成功率）；§3.10.3 Codex 事故证明子 agent 破坏性动作不在父任务 UI。§7.16 Circuit Breaker 是 per-command 级别，需升级为 session 级。
 
@@ -2493,6 +2538,8 @@ function _ZephyrRiskChainRecord {
 
 ### 7.21 施工项 21：Risk-tiered fail mode（升级 §7.14，P1，v1.5.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：四级风险分层过度细分。§7.14 fail-open（普通命令出错放行+记录，CRITICAL 命令 fail-closed）两级已足够。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.10 Cordum 风险分层矩阵证明全局 fail-open/closed 不如 risk-tiered。§7.14 当前是"非 CRITICAL fail-open，CRITICAL fail-closed"二分法，需升级为四级。
 
 #### 7.21.1 四级风险分层 fail mode
@@ -2571,6 +2618,8 @@ function _ZephyrFailMode {
 
 ### 7.22 施工项 22：跨工具/跨 shell 绕过检测（P1，v1.5.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：adversarial 防御——防 AI 切换 shell/工具绕过安全机制。单人 AI 协作中 AI 不会主动"绕过"。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.10 hermes-agent #69256 修复建议——AI 被阻断后会换路径/换 shell/换工具绕过。当前 §7.16 Circuit Breaker 不检测此类绕过。
 
 #### 7.22.1 三类绕过检测
@@ -2644,6 +2693,8 @@ function _ZephyrCheckBypass {
 **采用**——P1 优先级。hermes-agent #69256 真实事故证明 AI 会无限重试（31+ 次）+ 换路径/shell 绕过。当前 Circuit Breaker 只检测"相同命令重试"，不检测"换路径/shell 重试"。
 
 ### 7.23 施工项 23：git 专属危险命令阻断列表扩展（L1，P0，v1.6.0 新增）
+
+> **⚠️ v2.1.0 简化（20+→4 命令）**：v1.x 的 20+ 命令中，16+ 是防 adversarial RCE（`config core.hooksPath`/`fsmonitor`/`update-index --cacheinfo`/`notes add`/`hash-object -w`/`apply symlink`/`submodule add`/`init --template=`/`push --receive-pack` 等）——AI 不会主动写 `git config core.hooksPath /tmp/evil`。**v2.1.0 只保留 4 个 AI 易误用命令**：`git filter-branch`（历史重写）/`git filter-repo`（历史重写+force push）/`git reflog expire`（抹除 forensic 证据）/`git gc --prune=now`（物理删除对象）。其余 16+ 命令的阻断规则保留在 §7.23.1 表格中作为决策追溯，但**不施工**——单人 AI 协作无 adversarial RCE 场景。详见 §6.2 + §9。
 
 > **背景**：§3.11.3-3.11.10 发现 20+ 个 git 专属攻击命令未在 §7.1 wrapper 阻断列表中，含 CVE-2026-44244/67326/55607 等真实漏洞链。
 
@@ -2768,6 +2819,8 @@ if ($cmd -eq 'log' -and $normalizedArgs -notmatch '--no-notes') {
 
 ### 7.24 施工项 24：symlink/junction + TOCTOU 防护（L14，P1，v1.6.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：adversarial 防御——防 AI 用 symlink/junction 攻击自己。单人 AI 协作中 AI 不会发动 symlink 攻击。P/Invoke CreateFile 实现复杂度高且 PS 5.1 兼容性存疑。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.11.13 发现 wrapper 的 `Test-Path` + `Remove-Item` 模式是结构性缺陷——`mklink /J`（目录 junction）不需要任何特权，可在 wrapper 检查后替换路径。
 
 #### 7.24.1 Atomic Path Resolution 算法
@@ -2885,6 +2938,8 @@ function _ZephyrCheckGitDirProtection {
 **限制**：`Add-Type -TypeDefinition` 在 CLM 下被阻断——若未来启用 CLM，需用 WDAC 签名规则白名单 wrapper 模块。
 
 ### 7.25 施工项 25：git hook 信任链加固 + worktree 安全 + reflog 不可变窗口（L15，P1，v1.6.0 新增）
+
+> **⚠️ v2.0.0 DEPRECATED**：adversarial 防御——防恶意修改 git hook / reflog。单人单账户项目无恶意 actor，且 hooksPath 白名单 + hash 锁定维护成本高。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
 
 > **背景**：§3.11.3 CVE-2026-44244/67326 证明 git hook 信任链是 2026 年最活跃攻击面；§3.11.4 CVE-2026-55607 证明 worktree 沙箱逃逸；§3.11.6 reflog expire 抹除 forensic 证据。
 
@@ -3015,6 +3070,8 @@ function _ZephyrCheckReflogImmutable {
 
 ### 7.26 施工项 26：Script Block Logging 4104 集成（L16，P2，v1.6.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：企业级 Windows 事件日志方案，个人项目过重。4104 通道扩到 1GB + evtxparser 影响主机 IO。§7.10 JSONL 审计日志已足够追溯。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.11.12 发现 4104 事件是"最接近 EDR 的平台原生能力"，与 §7.10 `_ZephyrAuditLog` JSONL 互补。
 
 #### 7.26.1 启用 Script Block Logging
@@ -3065,6 +3122,8 @@ function _ZephyrAuditLog {
 **采用**——P2 优先级。4104 是引擎级审计，_ZephyrAuditLog 是应用级审计，双向追溯能力是防御深度的关键补充。
 
 ### 7.27 施工项 27：审计日志并发安全修复（L17，P0，v1.7.0 新增）
+
+> **⚠️ v2.1.0 简化（Mutex→每 session 独立文件）**：v1.x 用命名 Mutex（`Global\ZephyrAuditLogMutex`）串行化 StreamWriter——这是为"多进程并发写同一文件"设计。但审计日志是 append-only 事后追溯，不是关键状态。Claude Code `.claude.json` 423 次损坏是状态文件（read-modify-write），不是 append-only 日志。**v2.1.0 改为每 session 独立文件 `audit_{yyyyMMdd}_{sessionId}.jsonl`**（§3.12.4 算法 D），无需 Mutex，离线合并。append-only 并发损坏概率远低于状态文件。§7.10 审计日志设施（JSONL）保留，仅并发安全实现简化。详见 §6.2 + §9。
 
 > **背景**：§3.12.1 发现 `_ZephyrAuditLog` 的 `Add-Content` 在 26 session 并发写同一 `audit_{yyyyMMdd}.jsonl` 时**必然数据交错/丢失**（PowerShell #24774 证实）。§3.12.2 Claude Code `.claude.json` 423 次损坏是同类 bug 的决定性证据。
 
@@ -3130,6 +3189,8 @@ function _ZephyrAuditLog {
 **采用**——P0 优先级。这是 v1.7.0 最关键的并发安全修复。PowerShell #24774 证实 `Add-Content` 并发不安全，Claude Code `.claude.json` 423 次损坏是决定性前车之鉴。命名 Mutex（`Global\` 前缀）+ StreamWriter 是 PS 5.1 兼容的最佳实践。
 
 ### 7.28 施工项 28：lock_files.py registry.json 并发安全升级（L17，P0，v1.7.0 新增）
+
+> **⚠️ v2.0.0 部分保留**：§7.28.1 方案选型 + §7.28.2 过渡方案（registry.json + 命名 Mutex）**保留施工**——这是 22 session 并发写 registry.json 的必需修复。§7.28.3 最终方案（迁移到 SQLite）**deprecated**——§11.3.3 Task Board 已用 SQLite，lock_files.py 保留 JSON+Mutex 即可，无需重复迁移。详见 §6.2 + §9。
 
 > **背景**：§3.12.1 发现 `lock_files.py` 的 `registry.json` 在 26 session 并发 read-modify-write 时**必然丢锁/双锁**。§3.10.8 grite C2 已证实 file-based tracker 静默丢失并发写。
 
@@ -3223,6 +3284,8 @@ WHERE locks.expires_at < datetime('now') OR locks.session_id = ?;
 **采用**——P0 优先级。过渡方案（Mutex + 原子写）立即修复并发 bug；最终方案（SQLite）与 §11.3.3 统一并获 grite C2 验证。
 
 ### 7.29 施工项 29：跨 session GovernanceStore（L18，P1，v1.7.0 新增）
+
+> **⚠️ v2.0.0 DEPRECATED**：与 §11.3.3 Task Board SQLite 重复——Task Board 已是跨 session 协调层（claim/complete/block 状态机 + SQLite CAS）。另建 GovernanceStore 是重复造轮子。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
 
 > **背景**：§3.12.1 发现 `$_circuitState` 和 `$_riskChain` 仅 per-session——一个 session 熔断后其他 session 不知道。§3.12.5 OpenClaw RFC #27442 提出跨 session GovernanceStore 需求。恶意 AI 可换 session 绕过 circuit breaker。
 
@@ -3372,6 +3435,8 @@ function git {
 
 ### 7.30 施工项 30：共享规则文件完整性防护（L17，P1，v1.7.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：adversarial 防御——防"恶意 session 注入规则"。单人项目无恶意 actor，AGENTS.md/project_rules.md 通过 git 版本控制已足够追溯变更。hash 监控每次 git 命令检查是过度防护。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.12.1 发现 `.trae/rules/project_rules.md` 和 `AGENTS.md` 可被任何 session 修改——恶意 session 可注入规则 weakening wrapper 防护。
 
 #### 7.30.1 完整性监控算法
@@ -3508,6 +3573,8 @@ function _ZephyrGitCommitGateway {
 
 ### 7.32 施工项 32：Session ID 注入机制（L19，P0，v1.8.0 新增）
 
+> **⚠️ v2.1.0 简化（init-session.ps1+TRAE_ENV_FILE→$PROFILE 一行）**：v1.x 的 Trae SessionStart hook 配置 + init-session.ps1 脚本（从 stdin 读 JSON + 生成 UUID + 写 TRAE_ENV_FILE）机制复杂，且 Trae hook 可行性本身是开放问题（§10 列为"待测试"）。**v2.1.0 简化为 $PROFILE 顶部一行**：`if (-not $env:ZEPHYR_SESSION_ID) { $env:ZEPHYR_SESSION_ID = [guid]::NewGuid().ToString() }`。每 session 启动时自动生成 UUID，足够 Task Board 身份识别。init-session.ps1 + TRAE_ENV_FILE + Trae hook 配置不施工。详见 §6.2 + §9。
+
 > **背景**：§3.13.2 发现 Trae SessionStart hook 可注入环境变量。v1.7.0 的 `$env:ZEPHYR_SESSION_ID` 之前没有注入源——所有跨 session 追踪（GovernanceStore/RiskChain/审计日志）的 session_id 都是空的。
 
 #### 7.32.1 Trae SessionStart Hook 配置
@@ -3574,6 +3641,8 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 **采用**——P0 优先级。Session ID 是所有跨 session 追踪的基础。Trae SessionStart hook `TRAE_ENV_FILE` 机制是官方支持的注入方式（§3.13.2 证实）。fallback 到 `[guid]::NewGuid()` 确保 hook 未配置时仍能工作。
 
 ### 7.33 施工项 33：Named Pipe Coordinator Daemon（L19，P0，v1.8.0 新增）
+
+> **⚠️ v2.0.0 DEPRECATED**：重复造轮子 + 单点故障。§11.3.3 Task Board 已用 SQLite WAL + CAS——SQLite 本身就是工业级并发方案，22 session 并发读写完全胜任。Named Pipe daemon 增益仅微秒级（0.1ms→0.05ms），却引入单点故障（v1.x §14 还要单独写灾难恢复）。daemon 实现 200+ 行 PowerShell + PS 5.1 兼容性风险。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
 
 > **背景**：§3.13.1 发现 Named Pipe 单线程协调器**优于** v1.7.0 的 Mutex+SQLite——单线程消除并发，而非用锁管理并发。§3.13.6 Hybrid 架构：Named Pipe 实时协调 + SQLite 持久审计。
 
@@ -3858,6 +3927,8 @@ _ZephyrEnsureDaemon
 
 ### 7.34 施工项 34：Session 生命周期管理（L19，P1，v1.8.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：依赖 §7.33 Named Pipe Daemon，连带 deprecated。锁 TTL 60min 自动过期（§11.3.2）已覆盖"崩溃 AI 永久阻塞"场景，无需 SessionEnd hook + heartbeat。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.13.3 Trae 七事件 Hook 模型提供 SessionStart/SessionEnd hook。v1.7.0 缺少 session 结束时的锁/circuit breaker 清理——崩溃 session 的锁永久阻塞他人。
 
 #### 7.34.1 SessionEnd Hook 配置
@@ -3942,6 +4013,8 @@ function _ZephyrCleanupStaleSessions {
 
 ### 7.35 施工项 35：Wrapper 热重载+版本管理+跨项目隔离（L19，P1，v1.8.0 新增）
 
+> **⚠️ v2.0.0 DEPRECATED**：单项目无跨项目隔离需求。Wrapper 热重载 + 版本管理是为"多项目共用 $PROFILE"场景设计，本项目 100% 围绕 ZephyrAlpha 单项目。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
+
 > **背景**：§3.13.7 发现三个剩余 gap：①26 session 运行中更新 $PROFILE 的版本 skew ②`Global\` Mutex 跨项目冲突 ③SQLite busy_timeout 未配置。
 
 #### 7.35.1 版本化 $PROFILE + Reload-Profile
@@ -4012,6 +4085,8 @@ function _ZephyrSQLiteConnect {
 **采用**——P1 优先级。版本管理防 26 session 版本 skew；项目 hash 后缀防跨项目 Mutex 冲突；SQLite busy_timeout 防 26 并发 writer 争用。三者都是 v1.7.0 遗留的工程细节 gap。
 
 ### 7.36 施工项 36：AST-based 命令分析替换 regex（L10 升级，P1，v1.9.0 新增）
+
+> **⚠️ v2.0.0 DEPRECATED**：过度升级。§7.18 regex 反混淆归一化（9 策略）已覆盖 22 路并发审查场景下的所有真实命令模式。AST 分析是为"防 adversarial shell 注入"设计——单人 AI 协作中 AI 不会发动 shell 注入攻击自己。本节保留作为决策追溯，**不施工**。详见 §6.2 + §9。
 
 > **背景**：§3.14.2 确认 AST 分析是 v1.8.0 后唯一明确的算法升级。GuardFall 证明 regex 匹配可被绕过，AST 结构化分析更鲁棒。
 
@@ -4272,6 +4347,41 @@ function git {
 | 不引入 WDAC + CLM（v1.6.0） | §3.11.1 WDAC + CLM 是 Windows 企业级防御层，但本方案是个人项目，CLM 下 `Add-Type` 被阻断会影响 §7.24 Atomic Path Resolution 的 P/Invoke——作为远期评估 |
 | 不引入 Job Object + Restricted Token（v1.6.0） | §3.11.13 Job Object 是内核级资源隔离，但实现复杂度高（需 Go/C# 编译二进制），与 §9"不编译 Go/Rust 二进制 wrapper"裁定一致——作为远期评估 |
 | 不引入 PSReadLine 集成（v1.6.0 修订） | §3.11.2 证实 PSReadLine 仅在交互式 REPL 中工作，对 AI agent 通过 -Command/-File/-EncodedCommand 调用的脚本完全无效——不作为 AI agent 场景的防御层 |
+| **v2.0.0 deprecated：§7.16 Circuit Breaker**（v2.0.0 新增） | 单人 AI 协作无 adversarial 场景，AI 不会"无限尝试危险命令"。§7.15 错误分类的 STOP/ALTERNATIVE 格式已防 AI 卡死循环重试 |
+| **v2.0.0 deprecated：§7.19 SafeFix block+suggest**（v2.0.0 新增） | AI 提示工程层，过度工程。RULE-GIT-SAFE 规则 + §7.15 错误分类已足够指导 AI |
+| **v2.0.0 deprecated：§7.20 RiskChain 攻击链追踪**（v2.0.0 新增） | 典型 adversarial 防御——追踪 base64 解码/变量调用/命令替换等"绕过"行为。单人 AI 协作中 AI 不会"绕过"自己的安全机制 |
+| **v2.0.0 deprecated：§7.21 Risk-tiered fail mode**（v2.0.0 新增） | 四级风险分层过度细分。§7.14 fail-open（普通命令出错放行+记录，CRITICAL 命令 fail-closed）两级已足够 |
+| **v2.0.0 deprecated：§7.22 跨工具/跨 shell 绕过检测**（v2.0.0 新增） | adversarial 防御——防 AI 切换 shell/工具绕过安全机制。单人 AI 协作中 AI 不会主动"绕过" |
+| **v2.0.0 deprecated：§7.24 symlink/junction + TOCTOU 防护**（v2.0.0 新增） | adversarial 防御——防 AI 用 symlink/junction 攻击自己。单人 AI 协作中 AI 不会发动 symlink 攻击。P/Invoke CreateFile 实现复杂度且 PS 5.1 兼容性存疑 |
+| **v2.0.0 deprecated：§7.25 git hook 信任链 + hash 锁定**（v2.0.0 新增） | adversarial 防御——防恶意修改 git hook / reflog。单人单账户项目无恶意 actor，hooksPath 白名单 + hash 锁定维护成本高 |
+| **v2.0.0 deprecated：§7.26 Script Block Logging 4104**（v2.0.0 新增） | 企业级 Windows 事件日志方案，个人项目过重。4104 通道扩到 1GB + evtxparser 影响主机 IO。§7.10 JSONL 审计日志已足够追溯 |
+| **v2.0.0 deprecated：§7.28.3 lock_files.py SQLite 迁移最终方案**（v2.0.0 新增） | §11.3.3 Task Board 已用 SQLite，lock_files.py 保留 §7.28.2 过渡方案（JSON + 命名 Mutex）即可，无需重复迁移 |
+| **v2.0.0 deprecated：§7.29 跨 session GovernanceStore**（v2.0.0 新增） | 与 §11.3.3 Task Board SQLite 重复——Task Board 已是跨 session 协调层（claim/complete/block 状态机 + SQLite CAS）。另建 GovernanceStore 是重复造轮子 |
+| **v2.0.0 deprecated：§7.30 共享规则文件完整性防护**（v2.0.0 新增） | adversarial 防御——防"恶意 session 注入规则"。单人项目无恶意 actor，AGENTS.md/project_rules.md 通过 git 版本控制已足够追溯变更 |
+| **v2.0.0 deprecated：§7.33 Named Pipe Coordinator Daemon**（v2.0.0 新增） | 重复造轮子 + 单点故障。§11.3.3 Task Board 已用 SQLite WAL + CAS——SQLite 本身就是工业级并发方案，22 session 并发读写完全胜任。Named Pipe daemon 增益仅微秒级，却引入单点故障 |
+| **v2.0.0 deprecated：§7.34 Session 生命周期管理**（v2.0.0 新增） | 依赖 §7.33 Named Pipe Daemon，连带 deprecated。锁 TTL 60min 自动过期（§11.3.2）已覆盖"崩溃 AI 永久阻塞"场景，无需 SessionEnd hook + heartbeat |
+| **v2.0.0 deprecated：§7.35 Wrapper 热重载+版本管理+跨项目隔离**（v2.0.0 新增） | 单项目无跨项目隔离需求。Wrapper 热重载 + 版本管理是为"多项目共用 $PROFILE"场景设计，本项目 100% 围绕 ZephyrAlpha 单项目 |
+| **v2.0.0 deprecated：§7.36 AST-based 命令分析替换 regex**（v2.0.0 新增） | 过度升级。§7.18 regex 反混淆归一化（9 策略）已覆盖 22 路并发审查场景下的所有真实命令模式。AST 分析是为"防 adversarial shell 注入"设计——单人 AI 协作中 AI 不会发动 shell 注入攻击自己 |
+| **v2.0.0 删除：§14 灾难恢复 RPO/RTO**（v2.0.0 新增） | 量化交易开发项目，不是 7×24 服务。RPO=0/RTO<30s 是 SRE 话术，对个人 AI 开发项目过度。SQLite WAL + JSONL append-only 已提供足够的容错 |
+| **v2.0.0 删除：§15 性能影响评估的 12 层防御开销**（v2.0.0 新增） | 防御层数量本身过度（19→6），砍到 6 层后无需逐层评估开销。git 命令本身 >100ms，5-6 层 wrapper 开销总计 <5ms 可忽略 |
+
+> **v2.0.0 deprecated 根因总结**：v1.x 累计 14 施工项被 deprecated，根因是把"AI 误操作"（合法错误）误判为"AI 恶意攻击"（adversarial）。单人单账户 AI 协作开发中 AI 是协作者不是攻击者——所有"防 AI 攻击自己"的防御层（RiskChain/SafeFix/symlink 防护/hook hash 锁定/AST 升级/Named Pipe daemon 等）均偏离实际诉求。真实场景只有两类：①AI 误删文件（§7.1 wrapper 拦截）②多 AI 共用工作区冲突（§11 三件套协调）。v2.0.0 精简到 6 层防御 + 3 件套协调，共 ~12 施工项 / ~15 天，覆盖 22 路并发审查 + 未来多 AI 施工的全部真实场景。
+>
+> **v2.1.0 第二轮 deprecated/simplified**：v2.0.0 保留项内部的实现细节仍残留 adversarial 思维：
+
+| 不做/简化 | 理由 |
+|---|---|
+| **v2.1.0 deprecated：§7.17.1 自动变量碰撞检测** | 30+ 只读自动变量清单 + 函数检测过度。Codex `$home` 事故是极端组合案例，AI 不会主动写 `$home = "test"`。改为 RULE-GIT-SAFE 加一条规则"禁止用 $HOME/$PID/$TRUE 等作变量名"即可。§7.17.2 .git 阻断保留 |
+| **v2.1.0 deprecated：§7.18 反混淆归一化层 9 策略** | 9 策略全是防 adversarial shell 注入（$IFS/base64/hex 转义等）。AI 不会写 `rm$IFS-rf$IFS/` 混淆命令，AI 写的命令是直接的、可读的。§7.1 wrapper 直接 regex 匹配已够 |
+| **v2.1.0 deprecated：§7.15 错误分类 STOP/ALTERNATIVE 格式** | AI 提示工程层过度。RULE-GIT-SAFE 规则 + wrapper 简单错误消息（"BLOCKED: git clean 会删除文件"）已够。AI 看到 BLOCKED 就知道不该执行，不需要教它"替代方案"。§7.14 fail-open 保留 |
+| **v2.1.0 简化：§7.23 git 危险命令 20+→4 命令** | 20+ 命令中 16+ 是防 adversarial RCE（config hooksPath/fsmonitor/update-index/notes/hash-object/apply symlink/submodule/init --template/push --receive-pack）——AI 不会主动写 `git config core.hooksPath /tmp/evil`。只保留 4 个 AI 易误用命令：filter-branch/filter-repo/reflog expire/gc --prune |
+| **v2.1.0 简化：§7.27 审计日志 Mutex→每 session 独立文件** | 审计日志是 append-only 事后追溯，不是关键状态。Claude Code `.claude.json` 423 次损坏是状态文件（read-modify-write），不是 append-only。改为每 session 独立文件 `audit_{yyyyMMdd}_{sessionId}.jsonl`，无需 Mutex |
+| **v2.1.0 简化：§7.32 init-session.ps1+TRAE_ENV_FILE→$PROFILE 一行** | Trae hook + init-session.ps1 + TRAE_ENV_FILE 机制复杂，且 hook 可行性是开放问题。简化为 $PROFILE 顶部一行 `$env:ZEPHYR_SESSION_ID = [guid]::NewGuid().ToString()`，每 session 自动生成 UUID |
+| **v2.1.0 简化：§11.3.2 去 heartbeat 续期** | heartbeat 续期 30min + 5 分钟无 heartbeat 告警是为"7×24 长任务"设计。22 路审查中 AI 任务通常 30-60 分钟，TTL 60min 到期释放已够。保留 acquire/release/check/list/cleanup 五命令 |
+| **v2.1.0 简化：§11.3.3 去 epoch 防 ABA + 状态机精简** | epoch 防 ABA 是为"lease 释放后又被获取"精确时序设计，22 路审查中几乎不会发生。砍掉 epoch 字段，保留基本 SQLite + CAS + WAL。状态机精简为 pending→claimed→completed（去 blocked/abandoned） |
+| **v2.1.0 简化：§11.3.1 去 7 天告警** | `auto_cleanup_days: 7` 是为"长期 worktree 堆积"设计。22 路审查是一次性的（几小时到 1 天），不会持续 7 天。merge 后立即 abort 清理 |
+
+> **v2.1.0 deprecated/simplified 根因总结**：v2.0.0 砍掉了宏观 adversarial 防御层，但保留项内部的实现细节仍残留 adversarial 思维——9 策略反混淆（防 shell 注入）、30+ 自动变量检测（防极端碰撞）、20+ git RCE 命令（防恶意 hooksPath）、Mutex 串行化（防并发损坏状态文件）、heartbeat/epoch（防 7×24 服务边缘场景）、init-session.ps1（完美注入）。这些实现细节为"adversarial 攻击"或"7×24 服务"场景设计，偏离"22 路并发审查 + 未来多 AI 施工"的实际诉求。v2.1.0 精简到 **8 项 / ~11 天**，6 层防御结构不变但实现大幅简化。
 
 ## 10. 开放问题
 
@@ -4356,6 +4466,8 @@ function git {
 
 #### 11.3.1 Git Worktree（每 AI 独立 checkout+分支）
 
+> **⚠️ v2.1.0 简化（去 7 天告警）**：v1.x 的 `auto_cleanup_days: 7`（7 天未活动告警）是为"长期 worktree 堆积"设计。22 路审查是一次性的（几小时到 1 天），不会持续 7 天。**v2.1.0 砍掉 7 天告警**，保留基本 worktree create/exec/merge/abort/list。merge 后立即 abort 清理。详见 §6.2 + §9。
+
 **目录结构**：
 ```
 d:\ZephyrAlpha\                          # 主工作区（main branch，只读给 AI 看）
@@ -4405,6 +4517,8 @@ RULE-WORKTREE:
 ```
 
 #### 11.3.2 File Lock(TTL) 激活 lock_files.py
+
+> **⚠️ v2.1.0 简化（去 heartbeat 续期）**：v1.x 的 heartbeat 续期 30min + 5 分钟无 heartbeat 告警 + RULE-LOCK 配置（`heartbeat_interval: 5`）是为"7×24 长任务"设计。22 路审查中 AI 任务通常 30-60 分钟完成，TTL 60min 到期释放已够。**v2.1.0 砍掉 heartbeat 续期机制**，保留 TTL 60min 到期释放 + cleanup 命令。acquire/release/check/list/cleanup 五命令即可。详见 §6.2 + §9。
 
 **现有设施**：`scripts/lock_files.py` v2.0.0 已实现 acquire/release/check 三命令，但 `registry.json` 为空——AI 未主动调用。
 
@@ -4464,6 +4578,8 @@ python scripts/lock_files.py cleanup  # 清理过期锁（post-commit hook 调�
 - **暂不施工**——v1.5.0 先用固定 TTL 60min，Phi Accrual 作为 §11.3.2 远期升级（见 §10 开放问题）
 
 #### 11.3.3 Task Board（SQLite-based claim/complete/block 状态机）
+
+> **⚠️ v2.1.0 简化（去 epoch 防 ABA + 状态机精简）**：v1.x 的 `epoch INTEGER` 字段防 ABA + TTL 60s = 4×15s heartbeat 是为"7×24 服务的 lease 释放后又被获取"精确时序设计。22 路审查中几乎不会发生 ABA。**v2.1.0 砍掉 epoch 字段**，保留基本 SQLite + CAS（`UPDATE...WHERE...SELECT changes()`）+ WAL 模式。状态机精简为 `pending→claimed→completed`（去掉 blocked/abandoned 中间态，22 路审查不需要——AI 完成就 completed，放弃就删除 task 重新 create）。详见 §6.2 + §9。
 
 **数据模型**（SQLite `d:\ZephyrAlpha\.runtime\task_board.db`）：
 
@@ -4636,148 +4752,55 @@ python scripts/task_board.py show <task_id>  # 含事件历史
 | 是否自动从 architecture_issue_registry 同步 task | 建议半自动：用户/AI 手动 create，但 sync 脚本检测 orphan task |
 | Trae IDE 是否支持自动触发 worktree | 待测：Trae 无 PreToolUse hook，需 AI 主动调用 CLI |
 
-## 13. 施工路线图（v1.9.0 新增——36 施工项分 4 Phase）
+## 13. 施工路线图（v2.1.0 精简——8 施工项分 2 Phase）
 
-> 36 个施工项需优先级排序和依赖管理。按"P0 生存级 → P1 并发安全 → P2 审计增强 → P3 远期评估"分 4 Phase。
+> **v2.1.0 精简裁定**：v2.0.0 的 12 施工项 / 2 Phase / ~17 天精简到 **8 施工项 / 2 Phase / ~11 天**。v2.0.0 保留项中 §7.15 错误分类 / §7.17.1 自动变量碰撞 / §7.18 反混淆层 3 项 deprecated（详见 §6.2 + §9）；§7.23 / §7.27 / §7.32 / §11.3.1-3 六项实现简化（去 adversarial 细节 + 去 7×24 服务边缘场景）。
 
 ### Phase 1: P0 生存级（立即施工，防灾难重演）
 
-| 顺序 | 施工项 | 依赖 | 预计工作量 |
-|---|---|---|---|
-| 1 | §7.1 PowerShell wrapper 函数集（L1/L7） | 无 | 2 天 |
-| 2 | §7.7 wrapper 安装脚本 | §7.1 | 1 天 |
-| 3 | §7.2 AGENTS.md + .trae/rules/ RULE-GIT-SAFE | 无 | 0.5 天 |
-| 4 | §7.23 git 专属危险命令阻断（20+ CVE 命令） | §7.1 | 1 天 |
-| 5 | §7.17 PowerShell 自动变量碰撞 + .git 永久阻断 | §7.1 | 1 天 |
-| 6 | §7.27 审计日志并发安全修复（Mutex+StreamWriter） | §7.1 | 1 天 |
-| 7 | §7.32 Session ID 注入（Trae SessionStart hook） | 无 | 1 天 |
-| 8 | §7.33 Named Pipe Coordinator Daemon | §7.32 | 3 天 |
+| 顺序 | 施工项 | 防御层 | 依赖 | 预计工作量 |
+|---|---|---|---|---|
+| 1 | §7.1 PowerShell wrapper 函数集（git 拦截 + Remove-Item/rd/del 覆盖） | L1+L2 | 无 | 2 天 |
+| 2 | §7.7 wrapper 安装脚本 | - | §7.1 | 1 天 |
+| 3 | §7.2 AGENTS.md + .trae/rules/ RULE-GIT-SAFE + §7.14 fail-open 策略 | L3 | 无 | 1 天 |
+| 4 | §7.23 git 危险命令阻断（v2.1.0 简化到 4 命令：filter-branch/filter-repo/reflog expire/gc --prune） | L1 | §7.1 | 0.5 天 |
+| 5 | §7.17.2 .git 永久阻断（v2.1.0 §7.17.1 自动变量碰撞 deprecated，改为 RULE-GIT-SAFE 规则一条） | L4 | §7.1 | 0.5 天 |
+| 6 | §7.27 审计日志（v2.1.0 简化为每 session 独立文件 audit_{yyyyMMdd}_{sessionId}.jsonl）+ §7.10 JSONL 设施 + §7.13 d6_security pre-commit | L5 | §7.1 | 1.5 天 |
+| 7 | §7.32 Session ID 注入（v2.1.0 简化为 $PROFILE 顶部一行 UUID） | L6 | 无 | 0.5 天 |
 
-**Phase 1 合计：~10.5 天**——完成后即具备基础防护+并发安全+session 身份。
+**Phase 1 合计：~7 天**——完成后即具备 6 层核心防御（实现精简版）+ session 身份，22 路 AI 可安全并发审查。
 
-### Phase 2: P1 并发安全+深度防护（Phase 1 完成后）
+### Phase 2: P1 并发协调（Phase 1 完成后）
 
-| 顺序 | 施工项 | 依赖 | 预计工作量 |
-|---|---|---|---|
-| 9 | §7.28 lock_files.py registry.json 并发安全 | §7.33 | 2 天 |
-| 10 | §7.29 跨 session GovernanceStore（SQLite） | §7.33 | 2 天 |
-| 11 | §7.34 Session 生命周期管理（SessionEnd hook） | §7.32, §7.33 | 1 天 |
-| 12 | §7.31 git 并发操作串行化（single-flight commit） | §7.33 | 1 天 |
-| 13 | §7.18 Shell 反混淆归一化层 | §7.1 | 2 天 |
-| 14 | §7.36 AST-based 命令分析（替换 regex） | §7.18 | 2 天 |
-| 15 | §7.19 SafeFix block+suggest | §7.1 | 1 天 |
-| 16 | §7.20 RiskChain session 级追踪 | §7.33 | 2 天 |
-| 17 | §7.16 Circuit Breaker 三态状态机 | §7.1 | 1 天 |
-| 18 | §7.21 Risk-tiered fail mode | §7.16 | 1 天 |
-| 19 | §7.22 跨工具/跨 shell 绕过检测 | §7.20 | 1 天 |
-| 20 | §7.24 symlink/junction + TOCTOU 防护 | §7.1 | 2 天 |
-| 21 | §7.25 git hook 信任链 + worktree 安全 + reflog | §7.1, §7.23 | 2 天 |
-| 22 | §7.30 共享规则文件完整性防护 | §7.1 | 1 天 |
-| 23 | §7.35 Wrapper 热重载+版本管理+跨项目隔离 | §7.33 | 1 天 |
+| 顺序 | 施工项 | 类别 | 依赖 | 预计工作量 |
+|---|---|---|---|---|
+| 8 | §11.3.2 File Lock TTL（v2.1.0 去 heartbeat，acquire/release/check/list/cleanup 五命令 + 60min 到期释放） | 三件套-1 | §7.27 | 1 天 |
+| 9 | §11.3.3 Task Board（v2.1.0 去 epoch/blocked/abandoned，SQLite CAS + WAL + pending→claimed→completed 三态） | 三件套-2 | §7.32 | 1.5 天 |
+| 10 | §11.3.1 Git Worktree（v2.1.0 去 7 天告警，create/exec/merge/abort/list + merge 后立即 abort） | 三件套-3 | §11.3.3 | 1.5 天 |
 
-**Phase 2 合计：~23 天**——完成后即具备 19 层防御全覆盖。
+**Phase 2 合计：~4 天**——完成后即具备 22 路并发审查的完整协调层（Task Board 防重复认领 + File Lock 防同时改 + Worktree 物理隔离）。
 
-### Phase 3: P2 审计增强（可选，Phase 2 完成后）
+### 远期评估（不施工，仅记录）
 
-| 顺序 | 施工项 | 依赖 | 预计工作量 |
-|---|---|---|---|
-| 24 | §7.10 审计日志设施 | §7.27 | 1 天 |
-| 25 | §7.26 Script Block Logging 4104 集成 | §7.10 | 1 天 |
-| 26 | §7.11 Trash Redirect 算法 | §7.1 | 1 天 |
-| 27 | §7.13 d6_security 接入 pre-commit | 无 | 0.5 天 |
-
-**Phase 3 合计：~3.5 天**
-
-### Phase 4: P3 远期评估（视需求）
-
-| 施工项 | 评估时机 |
-|---|---|
-| §7.3 project_memory 确认 | Phase 1 完成后 |
-| §7.4 git_guard.py alias 配置清理 | Phase 1 完成后 |
-| §7.5 lock_files.py 激活 | Phase 2 完成后 |
-| §7.6 session_worktree 强制 | Phase 2 完成后 |
-| §7.8 AI_review_instructions §0 内嵌 | Phase 1 完成后 |
-| §7.9 Trae IDE 开发约束专节 | Phase 1 完成后 |
-| §7.12 setup_git_guard_aliases.py 修复 | Phase 1 完成后 |
-| §7.14-7.15 fail-open + 错误分类 | Phase 2 完成后 |
-| §11 三件套（Worktree+FileLock+TaskBoard） | Phase 2 完成后 |
-| MXC/Defender/eBPF/Sandbox | 远期 |
-
-**总计：Phase 1 (10.5天) + Phase 2 (23天) + Phase 3 (3.5天) = ~37 天**
-
-## 14. 灾难恢复计划（v1.9.0 新增）
-
-### 14.1 Daemon 崩溃恢复
-
-| 场景 | 恢复步骤 | 自动/手动 |
+| 项目 | 评估时机 | 说明 |
 |---|---|---|
-| Named Pipe Daemon 崩溃 | 下一个 session 的 `_ZephyrEnsureDaemon` 检测到 pipe 无响应，自动 `Start-Process` 重启 | ✅ 自动 |
-| Daemon 崩溃时内存状态丢失 | 所有锁/circuit breaker 状态丢失——session 重新注册时重建 | ✅ 自动（但锁状态丢失） |
-| Daemon 崩溃时 SQLite 审计日志 | SQLite WAL 模式保证已写入的日志不丢 | ✅ 自动 |
-| Daemon 崩溃时正在处理的请求 | 请求超时（2秒），wrapper fallback 到 v1.7.0 per-session 模式 | ✅ 自动 |
+| §7.3-§7.6 / §7.8 / §7.9 / §7.12 | Phase 1 完成后 | 配套确认/激活项，按需推进 |
+| §7.11 Trash Redirect 算法 | Phase 2 完成后 | 回收站重定向，§7.1.2 阻断已够安全，trash 是体验优化 |
+| §11 三件套的 v1.5.0 升级方向（Phi Accrual / heartbeat / epoch 等） | 远期 | v2.1.0 已砍，固定 TTL 60min + 基本 CAS 已够 22 路审查 |
+| v2.0.0 deprecated 的 14 项（§7.16/§7.19-§7.26/§7.29/§7.30/§7.33-§7.36） | 不评估 | 详见 §6.2 + §9，单人 AI 协作无 adversarial 场景 |
+| v2.1.0 deprecated 的 3 项（§7.15/§7.17.1/§7.18） | 不评估 | 详见 §6.2 + §9，AI 不会混淆命令/碰撞变量/需要 STOP 格式教学 |
 
-### 14.2 SQLite 损坏恢复
+**总计：Phase 1 (7天) + Phase 2 (4天) = ~11 天**
 
-| 场景 | 恢复步骤 |
-|---|---|
-| governance.db 损坏 | `sqlite3 governance.db ".recover"` 恢复；失败则删除重建（状态可从审计日志 JSONL 重建） |
-| audit JSONL 文件损坏 | JSONL 是 append-only，损坏行丢弃，其余行可用 |
-| registry.json 损坏 | v1.7.0 Mutex 写入的 temp+rename 保证原子性——要么完整要么旧版本 |
+> 对比历程：v1.x 37 天 → v2.0.0 17 天 → **v2.1.0 11 天**，累计减 70%。覆盖 22 路并发审查 + 未来多 AI 施工的全部真实场景（AI 误删文件 + 多 AI 共用工作区冲突）。6 层防御结构不变，实现大幅简化。
 
-### 14.3 Wrapper Bug 恢复
+## 14. ~~灾难恢复计划~~（v2.0.0 删除）
 
-| 场景 | 恢复步骤 |
-|---|---|
-| $PROFILE 语法错误导致 PowerShell 无法启动 | 用 `powershell -NoProfile` 启动，修复 $PROFILE |
-| Wrapper 误阻断合法命令 | 用逃生通道 `& 'C:\Program Files\Git\cmd\git.exe' <args>` |
-| Wrapper 版本 skew（部分 session 旧代码） | `Reload-Profile` 函数重新加载；Daemon 协议版本协商拒绝不兼容 session |
+> **v2.0.0 删除理由**：v1.x §14 的 Named Pipe Daemon 崩溃恢复 / SQLite 损坏恢复 / Wrapper Bug 恢复 / RPO/RTO 指标——其中 Daemon 崩溃恢复依赖 §7.33 Named Pipe Daemon（已 deprecated）；SQLite 损坏恢复用 `sqlite3 .recover` 是标准操作无需专节；RPO/RTO 是 SRE 话术对个人 AI 开发项目过度。容错由 SQLite WAL + JSONL append-only + git 版本控制天然提供，无需单独章节。
 
-### 14.4 灾难恢复 RPO/RTO
+## 15. ~~性能影响评估~~（v2.0.0 删除）
 
-| 指标 | 值 | 理由 |
-|---|---|---|
-| RPO（数据丢失上限） | 0（审计日志同步写入） | SQLite WAL + StreamWriter 同步 Flush |
-| RTO（恢复时间上限） | < 30 秒 | Daemon 自动重启 + session 重新注册 |
-| 锁状态 RPO | 0-60 分钟 | Daemon 崩溃时内存锁丢失，但 TTL 60min 内其他 session 不会抢占 |
-
-## 15. 性能影响评估（v1.9.0 新增）
-
-### 15.1 每次 git 命令的防御层开销
-
-| 防御层 | 操作 | 预计耗时 | 是否每次执行 |
-|---|---|---|---|
-| L1 git wrapper 函数调用 | PowerShell 函数 | ~0.1ms | ✅ |
-| L10 AST 分析 | `[Parser]::ParseInput()` | ~1ms | ✅ |
-| L10 反混淆归一化 | 9 策略字符串处理 | ~0.5ms | ✅ |
-| L11 变量碰撞检测 | regex 匹配 | ~0.1ms | ✅ |
-| L11 .git 路径检查 | Resolve-Path | ~0.5ms | ✅ |
-| L13 RiskChain 记录 | Named Pipe IPC | ~0.05ms | ✅ |
-| L14 Atomic Path Resolution | P/Invoke CreateFile | ~0.1ms | 仅写操作 |
-| L17 审计日志 | Mutex + StreamWriter | ~0.5ms | ✅ |
-| L17 规则完整性检查 | Get-FileHash | ~1ms | ✅ |
-| L17 Git commit 串行化 | Mutex WaitOne | 0-30s（等待其他 session） | 仅 commit |
-| L18 Circuit Breaker 检查 | Named Pipe IPC | ~0.05ms | ✅ |
-| L19 Coordinator Daemon 请求 | Named Pipe round-trip | ~0.05ms | ✅ |
-
-**总计开销（非 commit）**：~4-5ms/命令——可忽略（git 命令本身通常 >100ms）
-**commit 额外开销**：0-30s（single-flight 等待，仅当其他 session 正在 commit）
-
-### 15.2 26 session 并发场景
-
-| 场景 | 性能影响 |
-|---|---|
-| 26 session 同时 git status | 各自独立，无争用（只读命令不经过 commit gateway） |
-| 26 session 同时 git commit | single-flight 串行化——26 个 commit 排队，每个 ~2s，总 ~52s |
-| 26 session 同时写审计日志 | Named Pipe 单线程串行化——每个 ~0.5ms，总 ~13ms（可忽略） |
-| Daemon 内存占用 | ~50MB（26 session 的锁/circuit breaker/risk chain 状态） |
-| SQLite WAL 文件增长 | ~1MB/天（26 session × ~100 条审计/天 × ~200B/条） |
-
-### 15.3 性能优化建议
-
-1. **只读命令跳过 Coordinator**：`git status`/`git log`/`git diff` 等只读命令不需检查 circuit breaker——直接放行
-2. **AST 分析缓存**：相同命令的 AST 结果可缓存（命令文本 hash → 结果）
-3. **规则完整性检查降频**：从"每次 git 命令"降到"每 5 分钟"——规则文件不会频繁修改
-4. **审计日志批量写入**：多个审计事件积累后批量写入 SQLite（减少 IPC 次数）
+> **v2.0.0 删除理由**：v1.x §15 评估的是 12 层防御的开销——v2.0.0 精简到 6 层后，开销总计 <3ms/命令（git 命令本身 >100ms），无需逐层评估。22 session 并发场景由 SQLite WAL + busy_timeout 工业级方案承载，无需单独性能章节。
 
 ## 16. 修订记录
 
@@ -4802,3 +4825,5 @@ python scripts/task_board.py show <task_id>  # 含事件历史
 | 2026-08-11 | 1.7.0 | 第16轮审查修复（第九轮全网搜索+Trae多AI并发病根分析+3个P0并发bug修复+跨session GovernanceStore）：①**§3.12 新增第九轮搜索补充7子节——Trae多AI并发病根分析**：病根定位（Trae每session独立PowerShell进程✅但共享状态文件read-modify-write竞态❌——7个共享文件清单：audit JSONL/registry.json/.trae/rules/AGENTS.md/.git/index/$_circuitState/$_riskChain）；Claude Code .claude.json 423次跨session损坏决定性证据；f2t.jp AI session并发git index抢占案例（git add A B后commit进去C D E）；PowerShell并发文件写入安全算法（命名Mutex+temp+rename原子写+StreamWriter+每session独立文件4种方案，PS 5.1兼容性确认）；OpenClaw GovernanceStore RFC #27442（跨session circuit breaker/kill switch）；WOWHOW Single-Push Protocol（4阶段多agent git串行化）；Trae病根治本方案三层架构（L1进程隔离+L2共享状态串行化+L3跨session协调）；②**§7.27 新增施工项27（P0）：审计日志并发安全修复**——_ZephyrAuditLog用命名Mutex（Global\ZephyrAuditLogMutex）串行化StreamWriter并发append+5秒timeout降级到session独立文件（防26 session并发数据交错/丢失，PowerShell #24774+Claude Code #29217前车之鉴）；③**§7.28 新增施工项28（P0）：lock_files.py registry.json并发安全升级**——过渡方案（Windows全局命名Mutex CreateMutexW+WaitForSingleObject串行化RMW+temp+rename原子写pathlib.Path.replace）+最终方案（迁移到SQLite WAL CAS单语句原子claim ON CONFLICT DO UPDATE+epoch防ABA，与§11.3.3 Task Board统一）；④**§7.29 新增施工项29（P1）：跨session GovernanceStore**——共享SQLite governance.db（circuit_breakers表+risk_chains表+governance_flags表）+全局halt检查（任何session可设置所有session遵守）+3+session同时熔断自动触发global halt+UPSERT原子写；⑤**§7.30 新增施工项30（P1）：共享规则文件完整性防护**——.trae/rules/AGENTS.md SHA256 hash基线监控+每次git命令前检查+hash不匹配告警+RiskChain风险分增加+AGENTS.md Boundaries段声明禁改文件清单；⑥**§7.31 新增施工项31（P1）：git并发操作串行化**——commit前git diff --cached --stat暂存内容验证（防另一session的add污染）+GIT_OPTIONAL_LOCKS=0给后台watcher+GitCommitGateway single-flight命名Mutex串行化所有commit（Global\ZephyrGitCommitGateway 30秒timeout）；⑦§6.2 防御层从16层扩展到18层（新增L17并发安全串行化/L18跨session GovernanceStore）；⑧§9 不做什么新增1条（不引入ACP）；⑨§10 开放问题新增4条（GovernanceStore SQLite依赖部署/跨session global halt误触发风险/lock_files.py SQLite迁移时机/Trae Hooks配置可行性）；⑩frontmatter 版本1.6.0→1.7.0 | 第九轮全网搜索2026年8月最新研究（Trae多session架构实证+PowerShell并发文件写入安全+Claude Code .claude.json 423次损坏+f2t.jp git index抢占+OpenClaw GovernanceStore RFC+WOWHOW Single-Push）+3个P0并发bug修复（审计日志Add-Content/registry.json RMW/circuitState per-session）+跨session GovernanceStore+共享规则文件完整性防护+git并发操作串行化 |
 | 2026-08-11 | 1.8.0 | 第17轮审查修复（第十轮全网搜索+Named Pipe 单线程协调器+Session 身份+Trae Hooks+Hybrid 架构）：①**§3.13 新增第十轮搜索补充7子节——深层病根分析**：核心发现 Named Pipe 单线程协调器优于 Mutex+SQLite（rjmurillo/ai-agents #287 性能 10-50ms + Rutgers CS 417 单机集中式协调最优理论 + Reactor pattern）；Trae SessionStart hook 可通过 TRAE_ENV_FILE 注入 ZEPHYR_SESSION_ID（解决 v1.7.0 session_id 无注入源 gap）；Trae 七事件 Hook 模型（SessionStart/End/PreToolUse/PostToolUse/UserPromptSubmit/Stop/PreCompact）；PS 5.1 NamedPipeServerStream 完整支持（ResidentDaemon 2026-04 生产级实现 + Start-Process 独立进程）；SQLite busy_timeout=5000 + BEGIN IMMEDIATE 配置；Hybrid 架构（Named Pipe 实时协调 ~50μs + SQLite WAL 持久审计）；②**§7.32 新增施工项32（P0）：Session ID 注入机制**——Trae SessionStart hook + init-session.ps1 生成 UUID 写入 TRAE_ENV_FILE + $PROFILE 顶部 [guid]::NewGuid() fallback；③**§7.33 新增施工项33（P0）：Named Pipe Coordinator Daemon**——单进程单线程事件循环 NamedPipeServerStream + 内存状态（锁/circuitBreakers/riskChains/globalHats）+ SQLite WAL 异步审计 + 7 action 协议（acquire_lock/release_lock/check_circuit/record_block/record_success/register_session/unregister_session）+ Start-Process 独立进程 + Global Mutex 防双重启动 + 项目 hash 跨项目隔离 + wrapper pipe client + v1.7.0 fallback；④**§7.34 新增施工项34（P1）：Session 生命周期管理**——Trae SessionEnd hook + cleanup-session.ps1 通过 pipe 注销 session 自动释放锁 + daemon heartbeat 30 分钟超时清理；⑤**§7.35 新增施工项35（P1）：Wrapper 热重载+版本管理+跨项目隔离**——版本化 $PROFILE + Reload-Profile 函数 + 协议版本协商 + Mutex 项目路径 hash 后缀 + SQLite busy_timeout=5000 配置；⑥§6.2 防御层新增 L19（Named Pipe 单线程协调器+Session 身份+生命周期管理）；⑦frontmatter 版本 1.7.0→1.8.0 | 第十轮全网搜索2026年8月最新研究（rjmurillo named pipe daemon/ResidentDaemon 生产级/Trae SessionStart hook TRAE_ENV_FILE/Microsoft AGT/Rutgers CS 417 单机集中式协调/SQLite busy_timeout/WOWHOW Single-Push）+Named Pipe 单线程协调器架构升级（从"用锁管理并发"到"用单线程消除并发"）+Session ID 注入+生命周期管理+热重载+跨项目隔离 |
 | 2026-08-11 | 1.9.0 | 第18轮审查修复（第十一轮全网搜索+诚实评估+AST 升级+施工路线图+灾难恢复+性能评估）：①**§3.14 新增第十一轮搜索——诚实评估**：v1.8.0 基本到达边际收益递减点。评估 8 个底层方案（eBPF/AST/Process Mitigation/Git Alternates/ETW/MIC/CLM/Windows Sandbox），仅 AST 分析明确更优，其他均不适用（eBPF 未签名/Sandbox 单实例/CLM 系统级/MIC 破坏性/ETW 仅审计/Git Alternates 不解决 index 锁）；②**§7.36 新增施工项36（P1）：AST-based 命令分析**——`[Parser]::ParseInput()` 结构化遍历 AST 节点检测 6 类危险模式（命令替换/$IFS/Invoke-Expression/Add-Type/base64/pipe-to-shell），覆盖 GuardFall 3/5 类，~1ms/call，PS 5.1 原生支持；③**§13 新增施工路线图**——36 施工项分 4 Phase（Phase 1 P0 生存级 10.5 天/Phase 2 P1 并发安全 23 天/Phase 3 P2 审计增强 3.5 天/Phase 4 P3 远期评估），总计 ~37 天，含依赖关系和工作量估算；④**§14 新增灾难恢复计划**——Daemon 崩溃自动重启+SQLite 损坏恢复+Wrapper Bug 恢复+RPO 0/RTO <30s/锁状态 RPO 0-60min；⑤**§15 新增性能影响评估**——每次 git 命令防御层开销 ~4-5ms（可忽略），26 session 并发 commit single-flight 串行化 ~52s，Daemon 内存 ~50MB，4 条优化建议（只读跳过/AST 缓存/规则检查降频/审计批量写入）；⑥§12→§16 重编号；⑦frontmatter 版本 1.8.0→1.9.0 | 第十一轮全网搜索2026年8月最新研究（eBPF for Windows/PowerShell AST/Process Mitigation/Git Alternates/ETW/MIC/CLM/Windows Sandbox）+诚实评估确认 v1.8.0 边际收益递减+AST 升级（唯一明确更优算法）+施工路线图+灾难恢复计划+性能影响评估 |
+| 2026-08-12 | 2.0.0 | **过度工程精简大修**：v1.x 累计膨胀到 36 施工项 / 19 层防御 / 293KB / 14 轮搜索，根因是把"AI 误操作"（合法错误）误判为"AI 恶意攻击"（adversarial）——单人单账户 AI 协作开发中 AI 是协作者不是攻击者。本轮按"22 路并发审查 + 未来多 AI 施工"的真实场景精简：①**§6.2 防御层 19→6**：L1 PowerShell git wrapper / L2 原生破坏性命令覆盖 / L3 RULE-GIT-SAFE 规则 / L4 .git 阻断+变量碰撞 / L5 审计日志并发安全 / L6 Session ID 注入 + §11 三件套（Worktree+FileLock+TaskBoard）；②**14 个施工项 deprecated**（§7.16 Circuit Breaker / §7.19 SafeFix / §7.20 RiskChain / §7.21 Risk-tiered fail / §7.22 跨工具绕过检测 / §7.24 symlink TOCTOU / §7.25 git hook 信任链 / §7.26 Script Block Logging 4104 / §7.28.3 SQLite 迁移最终方案 / §7.29 跨 session GovernanceStore / §7.30 共享规则完整性 / §7.33 Named Pipe Daemon / §7.34 Session 生命周期 / §7.35 Wrapper 热重载 / §7.36 AST 升级）——每个施工项标题下加 `⚠️ v2.0.0 DEPRECATED` 标记+理由，内容保留作为决策追溯；③**§3 开头加精简说明**：§3.1-§3.5 为核心调研依据，§3.6-§3.14 为历史归档不再作为施工依据；④**§9 不做什么新增 16 条 deprecated 理由**+deprecated 根因总结；⑤**§13 路线图重写**：36 项/4 Phase/37 天 → 12 项/2 Phase/17 天，减 54%；⑥**§14 灾难恢复 / §15 性能评估删除**（保留章节号+删除理由说明）；⑦frontmatter 版本 1.9.0→2.0.0，date 2026-08-11→2026-08-12 | 用户审查后确认 v1.x 存在明显过度工程——核心诉求是"多 AI 并发施工安全"（22 路并发审查 + 未来多 AI 施工），不是"防 AI 攻击自己"。adversarial 防御层（RiskChain/SafeFix/symlink/hook hash/AST 等）误把 AI 当攻击者，全部 deprecated。Named Pipe Daemon 与 §11.3.3 Task Board SQLite 重复造轮子+单点故障，deprecated。§14 RPO/RTO 是 SRE 话术对个人项目过度，删除。§15 评估的是被砍掉的 12 层防御开销，连带删除 |
+| 2026-08-12 | 2.1.0 | **第二轮过度工程精简**：v2.0.0 砍掉了宏观 adversarial 防御层，但保留项内部的实现细节仍残留 adversarial 思维。本轮再砍 3 项 deprecated + 6 项简化：①**§7.17.1 自动变量碰撞检测 deprecated**——30+ 只读变量清单+函数检测过度，Codex $home 是极端案例，改为 RULE-GIT-SAFE 一条规则；②**§7.18 反混淆归一化层 9 策略 deprecated**——全是防 shell 注入攻击，AI 不会写 `rm$IFS-rf` 混淆命令，§7.1 regex 已够；③**§7.15 错误分类 STOP/ALTERNATIVE deprecated**——AI 提示工程层过度，简单 BLOCKED 消息已够；④**§7.23 git 危险命令 20+→4 命令**——只保留 AI 易误用的 filter-branch/filter-repo/reflog expire/gc --prune，砍 16+ adversarial RCE 命令；⑤**§7.27 审计日志 Mutex→每 session 独立文件**——append-only 风险远低于状态文件，无需 Mutex；⑥**§7.32 init-session.ps1+TRAE_ENV_FILE→$PROFILE 一行 UUID**——hook 可行性是开放问题，fallback UUID 已够；⑦**§11.3.2 去 heartbeat**——22 路审查不是 7×24 长任务，TTL 60min 到期释放已够；⑧**§11.3.3 去 epoch 防 ABA+状态机精简**——ABA 在 22 路审查中几乎不会发生，状态机精简为 pending→claimed→completed；⑨**§11.3.1 去 7 天告警**——22 路审查是一次性的，merge 后立即 abort；⑩§6.2 防御层 6 层结构不变但实现大幅简化；⑪§9 新增 9 条 v2.1.0 deprecated/simplified 理由+根因总结；⑫§13 路线图 12 项/17 天 → 8 项/11 天，累计减 70%；⑬frontmatter 2.0.0→2.1.0 | 用户第二轮审查确认 v2.0.0 保留项内部仍残留 adversarial 思维——9 策略反混淆/30+ 变量检测/20+ RCE 命令/Mutex 串行化/heartbeat/epoch/init-session.ps1 均为"adversarial 攻击"或"7×24 服务"场景设计，偏离"22 路并发审查"实际诉求。v2.1.0 精简到 8 项/11 天，6 层防御结构不变但实现大幅简化 |

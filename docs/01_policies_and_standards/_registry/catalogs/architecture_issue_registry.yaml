@@ -11554,6 +11554,22 @@ entries:
   created: '2026-08-04'
   last_updated: '2026-08-04'
 
+# --- #ARCH-GIT-CLEAN-GUARD-FIX: git clean -fd 误删防护+alias 失效修复（2026-08-11 灾难事件）---
+- issue_id: '#ARCH-GIT-CLEAN-GUARD-FIX'
+  title: git clean -fd 物理删除 untracked 文件 + git alias 无法覆盖内置命令（2026-08-11 灾难事件治本）
+  severity: P0紧急
+  category: governance
+  adjudication: |-
+    2026-08-11 灾难事件治本。问题：AI 执行 git clean -fd 物理删除多个 untracked 文件（含 19_northbound_hold_snapshot.md
+    等新建文档）。根因：git 2.48.1 Windows 上 alias 无法覆盖内置命令——git clean/reset/checkout/restore/stash
+    等 7 个 DANGEROUS_SUBCOMMANDS 的 alias 拦截全部失效。治本方案见 65_git_safety_governance.md v2.1.0：
+    PowerShell wrapper 函数集（L1 git 拦截 + L2 原生破坏性命令覆盖）+ RULE-GIT-SAFE 永久规则 + .git 阻断 +
+    审计日志 + Session ID + §11 三件套（Worktree+FileLock+TaskBoard）。v2.0.0/v2.1.0 两轮过度工程精简后
+    8 施工项 / ~11 天。
+  status: decided
+  related_rules: '#ARCH-GIT-SELF-HARM-GUARD'
+  last_updated: '2026-08-12'
+
 # --- #ARCH-GIT-SELF-HARM-GUARD: git reset --hard 工作区自伤防护（L1+L2+L3.1，2026-08-04）---
 - issue_id: '#ARCH-GIT-SELF-HARM-GUARD'
   title: git reset --hard / checkout -- / restore 覆盖未提交 AI 编辑（自伤防护）
