@@ -5,8 +5,8 @@ title: 选股引擎架构
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-10
+version: "1.2.0"
+date: 2026-08-11
 topic: stock_selection_engine
 scope: 07_trading_decision_architecture
 ---
@@ -88,7 +88,7 @@ C 组合输出（Portfolio Composition）
 **分层裁定原则**（对齐 [30_multi_strategy_concurrency §2.1](30_multi_strategy_concurrency.md) 分层哲学）：
 - **L0 差异化**：候选池生成按策略类型分化，不强行统一——打板窄池/多因子宽池/事件动态池各有生成逻辑
 - **L1 统一化**：量化过滤 mask 跨策略共享（A 股可交易性约束与策略无关），避免重复实现；策略特定 mask（次新/涨停封板）按策略差异化
-- **L2 半统一**：评分框架统一（4 维度），各维度内部按策略差异化（alpha 信号维度策略特定，其余三维可共享）
+- **L2 半统一**：评分框架统一（v1.2.0 升级为 6 维 BM-SEL-24），各维度内部按策略差异化（连板梯队/游资接力维度策略特定，情绪/板块/资金/技术维度可共享）
 - **C 标准化**：target_portfolio 输出接口完全统一，下游 StrategyBook/FirmRiskAggregator 无需感知策略类型
 
 ### 3.2 选股 pipeline 标准接口
@@ -117,12 +117,31 @@ class SentimentPhase(Enum):
 
 
 class RatingGrade(Enum):
-    """量化强度评级 A~E 五级（BM-SEL-24-B）。"""
-    A = "A"  # 最强（≥80分），直接追
-    B = "B"  # 较强（≥65分），可介入
-    C = "C"  # 中等（≥50分），观望
-    D = "D"  # 较弱（≥35分），不介入
-    E = "E"  # 最弱（<35分），剔除
+    """量化强度评级 A~E 五级（BM-SEL-24-B，v1.2.0 阈值对齐 SignalQuality）。"""
+    A = "A"  # 最强（≥85分），直接追
+    B = "B"  # 较强（≥70分），可介入
+    C = "C"  # 中等（≥55分），观望
+    D = "D"  # 较弱（≥40分），不介入
+    E = "E"  # 最弱（<40分）或硬风险，剔除
+
+
+class SignalQuality(Enum):
+    """信号质量 A~E 五级（v1.2.0 从早期 A/B/C 三级升级）。
+
+    与 RatingGrade 阈值对齐：
+    - ≥85 → A（优秀，强信号）
+    - ≥70 → B（良好，可执行）
+    - ≥55 → C（中等，观望）
+    - ≥40 → D（较弱，不介入）
+    - <40 或硬风险（ST/停牌/封板/流动性失效）→ E（剔除）
+
+    硬风险标的直接判 E，不参与评分——对齐 mask-first 设计（§3.3.1）。
+    """
+    A = "A"  # 优秀（≥85）
+    B = "B"  # 良好（≥70）
+    C = "C"  # 中等（≥55）
+    D = "D"  # 较弱（≥40）
+    E = "E"  # 最弱（<40）或硬风险
 
 
 @dataclass
@@ -148,6 +167,7 @@ class SelectionContext:
     capital_flow: dict[str, dict[str, float]]   # {symbol: {main_net_inflow, northbound, net_buy_ratio...}}
     budget_ratio: float                         # 当前 sleeve 的 budget 占比 [0,1]（来自 RegimeMetaAllocator）
     universe_snapshot: dict[str, dict]          # {symbol: {is_st, is_suspended, list_days, adv, limit_status...}}
+    mask_policy: "TradabilityMaskPolicy" = None  # 可交易性掩码策略（§3.3.1，默认 MODERATE；None→MODERATE）
 
 
 @dataclass
@@ -356,6 +376,39 @@ def _generate_event_pool(ctx: SelectionContext) -> CandidatePool:
     )
 ```
 
+### 3.3.1 mask-first 可交易性掩码（TradabilityMaskPolicy）
+
+mask-first 设计（arXiv:2507.07107v2）的核心论点：A 股结构性不可交易标的（ST/停牌/涨跌停封板/流动性失效）必须在 alpha 生成/评分前 mask，否则会从两个方向污染 pipeline——
+
+1. **upstream contamination（上游污染）**：涨跌停封板标的的盘口/成交数据异常（封板期间无成交或成交价=涨跌停价），若进入 alpha 计算会污染因子横截面排名与 IC 评估，且污染会向下游传播（contamination upstream）。
+2. **row_filter 虚增 IC**：在 alpha 算完后用 `row_filter` 过滤不可交易标的，会人为剔除"低分且不可交易"的样本，导致 IC 虚增约 +18%、样本外 Sharpe 虚高 -0.44（即回测 Sharpe 比真实高 0.44，是回测失真的主要来源）。
+
+**mask-first 是单一最大贡献者**：在 ablation 研究中，从 row_filter 切换到 mask-first 单独贡献 +0.44 Sharpe（样本外），超过因子正交化（+0.18）与 IC-IR 加权（+0.12）等其他改进。因此 mask 贯穿 L0→L1→L2-C 全 pipeline：L0 候选池生成后立即应用 mask，L1 评分只在 mask 通过的标的上进行，L2-C 组合输出继承 mask 状态。
+
+```python
+class TradabilityMaskPolicy(Enum):
+    """可交易性掩码策略——控制 mask 严格程度（§3.3.1）。
+
+    三档策略对应不同 sleeve 的风险偏好与池特征：
+    - STRICT：所有掩码全开（含次新/涨停封板），最保守，适合多因子宽池
+    - MODERATE：共享掩码 + 策略特定掩码（默认，§3.4 表格），平衡
+    - PERMISSIVE：仅 ST + 停牌 + 流动性，最宽松，适合打板窄池
+    """
+    STRICT = "strict"            # 全掩码（次新/涨停封板对所有策略剔除）
+    MODERATE = "moderate"        # 默认：共享 + 策略特定（§3.4 _evaluate_reject）
+    PERMISSIVE = "permissive"    # 仅硬约束（ST + 停牌 + 流动性）
+```
+
+`mask_policy` 字段已加入 `SelectionContext`（§3.2），pipeline 在 L1 调用 `apply_mask_first_filter(pool, ctx, mask_policy=ctx.mask_policy or TradabilityMaskPolicy.MODERATE)` 时读取策略。`apply_mask_first_filter` 的 policy-aware 实现见 §3.4（已升级为接受 `mask_policy` 参数）；`TradabilityMask` dataclass（含 `is_tradable` + `mask_reason` 汇总字段）亦见 §3.4。
+
+**policy → 掩码集映射**：
+
+| Policy | ST | 停牌 | 次新 | 涨停封板 | 流动性 | 适用 |
+|---|---|---|---|---|---|---|
+| STRICT | ✓剔除 | ✓剔除 | ✓剔除 | ✓剔除 | ✓剔除 | 多因子宽池（最保守） |
+| MODERATE | ✓剔除 | ✓剔除 | 策略特定 | 策略特定 | ✓剔除 | 默认（三策略差异化，§3.4 表格） |
+| PERMISSIVE | ✓剔除 | ✓剔除 | ✗保留 | ✗保留 | ✓剔除 | 打板窄池（最宽松） |
+
 ### 3.4 L1 量化过滤算法（A 股 mask-first 设计）
 
 L1 采用 A 股 mask-first 设计（arXiv:2507.07107）：可交易性掩码在 alpha 生成/评分前应用，确保 alpha 模型只见可交易标的。
@@ -384,7 +437,9 @@ class TradabilityMask:
     is_limit_up_sealed: bool    # 涨停封板（买不进）
     is_limit_down_sealed: bool  # 跌停封板（卖不出，T+1 不涉及但标记）
     is_illiquid: bool           # 流动性不足（ADV < 阈值）
-    reject_reason: str = ""     # 首要剔除原因
+    reject_reason: str = ""     # 首要剔除原因（策略特定，由 _evaluate_reject 填充）
+    is_tradable: bool = True    # 汇总：是否可交易（硬约束级，True=可进入 alpha 评分）
+    mask_reason: str = ""       # 汇总：首要不可交易原因（is_tradable=False 时非空，对齐 §3.3.1）
 
 
 def build_tradability_mask(
@@ -417,6 +472,16 @@ def build_tradability_mask(
     is_limit_up_sealed = limit_status == "limit_up_sealed"
     is_limit_down_sealed = limit_status == "limit_down_sealed"
 
+    # 汇总字段（硬约束级；策略特定原因由 _evaluate_reject 层叠加到 reject_reason）
+    is_tradable = not (is_st or is_suspended or is_illiquid)
+    mask_reason = ""
+    if is_st:
+        mask_reason = "st_or_delisting"
+    elif is_suspended:
+        mask_reason = "suspended"
+    elif is_illiquid:
+        mask_reason = "illiquid"
+
     return TradabilityMask(
         is_st=is_st,
         is_suspended=is_suspended,
@@ -424,16 +489,24 @@ def build_tradability_mask(
         is_limit_up_sealed=is_limit_up_sealed,
         is_limit_down_sealed=is_limit_down_sealed,
         is_illiquid=is_illiquid,
+        is_tradable=is_tradable,
+        mask_reason=mask_reason,
     )
 
 
 def apply_mask_first_filter(
     pool: CandidatePool,
     ctx: SelectionContext,
+    mask_policy: TradabilityMaskPolicy = TradabilityMaskPolicy.MODERATE,
 ) -> FilteredUniverse:
-    """L1 量化过滤——应用 mask-first 可交易性掩码。
+    """L1 量化过滤——应用 mask-first 可交易性掩码（policy-aware，§3.3.1）。
 
-    过滤规则（按策略类型差异化）：
+    mask_policy 控制掩码严格程度（§3.3.1）：
+    - STRICT：次新/涨停封板对所有策略剔除（最保守）
+    - MODERATE：共享掩码 + 策略特定掩码（默认，下表）
+    - PERMISSIVE：仅 ST + 停牌 + 流动性（最宽松）
+
+    MODERATE 过滤规则（按策略类型差异化）：
     | 掩码 | 打板 | 多因子 | 事件驱动 |
     |---|---|---|---|
     | ST/*ST | ✗ 剔除 | ✗ 剔除 | ✗ 剔除 |
@@ -452,7 +525,7 @@ def apply_mask_first_filter(
         snapshot = ctx.universe_snapshot.get(symbol, {})
         mask = build_tradability_mask(symbol, snapshot, pool.strategy_type)
 
-        reject_reason = _evaluate_reject(mask, pool.strategy_type)
+        reject_reason = _evaluate_reject(mask, pool.strategy_type, mask_policy)
         if reject_reason:
             rejected[symbol] = reject_reason
         else:
@@ -467,18 +540,43 @@ def apply_mask_first_filter(
     )
 
 
-def _evaluate_reject(mask: TradabilityMask, strategy_type: StrategyType) -> str:
-    """评估掩码是否触发剔除——按策略差异化。
+def _evaluate_reject(
+    mask: TradabilityMask,
+    strategy_type: StrategyType,
+    mask_policy: TradabilityMaskPolicy = TradabilityMaskPolicy.MODERATE,
+) -> str:
+    """评估掩码是否触发剔除——按策略 + policy 差异化。
 
     返回空字符串=通过，非空=剔除原因。
+
+    policy 调制（§3.3.1）：
+    - STRICT：次新 + 涨停封板对所有策略剔除（最保守）
+    - MODERATE：共享 + 策略特定（默认）
+    - PERMISSIVE：仅 ST + 停牌 + 流动性（跳过次新/涨停封板）
     """
-    # ===== 共享掩码：ST + 停牌（所有策略剔除）=====
+    # ===== 共享硬约束：ST + 停牌 + 流动性（所有 policy 剔除）=====
     if mask.is_st:
         return "st_or_delisting"
     if mask.is_suspended:
         return "suspended"
 
-    # ===== 策略特定掩码 =====
+    # PERMISSIVE：仅硬约束，跳过次新/涨停封板
+    if mask_policy == TradabilityMaskPolicy.PERMISSIVE:
+        if mask.is_illiquid:
+            return "illiquid"
+        return ""
+
+    # STRICT：次新 + 涨停封板对所有策略剔除
+    if mask_policy == TradabilityMaskPolicy.STRICT:
+        if mask.is_new_stock:
+            return "new_stock_strict"
+        if mask.is_limit_up_sealed:
+            return "limit_up_sealed_strict"
+        if mask.is_illiquid:
+            return "illiquid"
+        return ""
+
+    # ===== MODERATE：策略特定掩码 =====
     if strategy_type == StrategyType.MULTIFACTOR:
         # 多因子：排除次新（因子不稳定）+ 涨停封板（买不进）+ 流动性不足
         if mask.is_new_stock:
@@ -502,11 +600,108 @@ def _evaluate_reject(mask: TradabilityMask, strategy_type: StrategyType) -> str:
             return "illiquid_event"
 
     return ""
+
+
+def _loewin_orthogonalize(factor_matrix):
+    """Löwdin 对称正交化——消除因子共线性，保留因子方向。
+
+    公式：F_orth = F (F^T F)^{-1/2}
+
+    对比 Gram-Schmidt（非对称，顺序敏感）：
+    - Löwdin 对称正交化对所有因子平等对待，不依赖因子顺序
+    - 正交化后各因子两两不相关，IC 评估更纯净
+    - 保留因子的原始方向（旋转最小化），信息损失最小
+
+    用于 L1 多因子 sleeve 的因子预处理（BM-SEL-02-G 因子正交化）。
+    ablation 贡献：+0.18 Sharpe（仅次于 mask-first +0.44）。
+    """
+    import numpy as np
+    F = np.asarray(factor_matrix, dtype=float)
+    # 中心化（去均值）
+    F = F - F.mean(axis=0, keepdims=True)
+    # (F^T F)^{-1/2} via 对称特征分解：A = V Λ V^T → A^{-1/2} = V Λ^{-1/2} V^T
+    FtF = F.T @ F
+    eigvals, eigvecs = np.linalg.eigh(FtF)
+    eigvals = np.clip(eigvals, 1e-10, None)  # 防奇异
+    inv_sqrt = (eigvecs * (eigvals ** -0.5)) @ eigvecs.T
+    F_orth = F @ inv_sqrt
+    return F_orth
+
+
+def _compute_ic_ir_weights(
+    ic_history: dict[str, list[float]],  # {factor: [ic_t-Window..t-1]}
+    min_window: int = 20,
+) -> dict[str, float]:
+    """滚动 IC-IR 动态权重——按各因子的信息系数信息比分配权重。
+
+    IC-IR = mean(IC) / std(IC)（滚动窗口内）
+    权重 ∝ max(IC-IR, 0)，归一化到 [0, 1]。
+
+    对比等权（忽略因子质量差异）与 IC 加权（忽略 IC 稳定性）：
+    - IC-IR 同时考虑 IC 的水平与稳定性，高且稳的因子获更高权重
+    - 负 IC-IR 因子权重归零（剔除反向且不稳定的因子）
+    - 滚动窗口适应因子衰减（IC 随时间漂移）
+
+    ablation 贡献：+0.12 Sharpe。
+    """
+    positive_ir: dict[str, float] = {}
+    for factor, ics in ic_history.items():
+        if len(ics) < min_window:
+            continue
+        recent = ics[-min_window:]
+        mean_ic = sum(recent) / len(recent)
+        var_ic = sum((x - mean_ic) ** 2 for x in recent) / len(recent)
+        std_ic = (var_ic ** 0.5) or 1e-8
+        ir = mean_ic / std_ic
+        if ir > 0:
+            positive_ir[factor] = ir
+    total_ir = sum(positive_ir.values()) or 1.0
+    return {f: ir / total_ir for f, ir in positive_ir.items()}
+
+
+def score_l1_multifactor(
+    factor_values: dict[str, dict[str, float]],  # {symbol: {factor: value}}
+    ic_history: dict[str, list[float]],          # {factor: [ic...]}
+) -> dict[str, float]:
+    """L1 多因子合成评分——Löwdin 正交化 + IC-IR 加权。
+
+    pipeline：
+    1. 因子矩阵组装 → Löwdin 对称正交化（消除共线性）
+    2. IC-IR 动态权重计算（滚动窗口）
+    3. 正交化后因子 × IC-IR 权重 → 综合得分
+    4. 横截面排名归一化到 [0, 100]
+
+    对齐 BM-SEL-02-H 多因子合成（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）。
+    """
+    import numpy as np
+    symbols = list(factor_values.keys())
+    factors = list(ic_history.keys())
+    if not symbols or not factors:
+        return {s: 0.0 for s in symbols}
+
+    # 1. 组装因子矩阵 (N, K)
+    F = np.array([[factor_values[s].get(f, 0.0) for f in factors] for s in symbols])
+
+    # 2. Löwdin 正交化
+    F_orth = _loewin_orthogonalize(F)
+
+    # 3. IC-IR 权重
+    weights = _compute_ic_ir_weights(ic_history)
+    w_vec = np.array([weights.get(f, 0.0) for f in factors])
+
+    # 4. 加权合成 + 横截面归一化到 [0, 100]
+    composite = F_orth @ w_vec  # (N,)
+    lo, hi = composite.min(), composite.max()
+    if hi - lo > 1e-10:
+        composite = (composite - lo) / (hi - lo) * 100.0
+    else:
+        composite = np.full_like(composite, 50.0)
+    return {s: float(composite[i]) for i, s in enumerate(symbols)}
 ```
 
 ### 3.5 L2 量化强度评级算法
 
-L2 对过滤后的 universe 做多维度打分，输出 A~E 五级评级与排序。评分框架跨策略统一（4 维度），各维度内部按策略差异化。
+L2 对过滤后的 universe 做多维度打分，输出 A~E 五级评级与排序。评分框架跨策略统一——v1.2.0 从 4 维升级为 **6 维 BM-SEL-24**（连板梯队/游资接力/情绪周期/板块强度/资金流向/技术形态），各维度内部按策略差异化。下方先给出 v1.0 4维简化版（`compute_strength_score`，保留兼容旧调用方），再给出 v1.2.0 6维生产路径（`compute_six_dim_strength`）。
 
 ```python
 @dataclass
@@ -684,7 +879,10 @@ def compute_strength_score(
     ctx: SelectionContext,
     strategy_type: StrategyType,
 ) -> StrengthScore:
-    """L2 量化强度评级——4 维度加权总分。
+    """L2 量化强度评级——4 维度加权总分（v1.0 简化版，保留兼容旧调用方）。
+
+    v1.2.0 生产路径改用 compute_six_dim_strength（6维 BM-SEL-24，见本节末尾）。
+    本函数保留以兼容尚未迁移到 6维的旧调用方，逻辑不变。
 
     权重按策略类型差异化（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.5 差异化矩阵）。
     """
@@ -722,15 +920,22 @@ def compute_strength_score(
     )
 
 
-def rating_from_score(total_score: float) -> RatingGrade:
-    """总分→A~E 五级评级（BM-SEL-24-B A~E五级评级）。"""
-    if total_score >= 80:
+def rating_from_score(total_score: float, hard_risk: bool = False) -> RatingGrade:
+    """总分→A~E 五级评级（v1.2.0 阈值对齐 SignalQuality）。
+
+    阈值：≥85→A / ≥70→B / ≥55→C / ≥40→D / <40→E。
+    硬风险（ST/停牌/封板/流动性失效）直接判 E，不参与评分
+    ——对齐 mask-first 设计（§3.3.1，硬风险标的在 L1 已被 mask）。
+    """
+    if hard_risk:
+        return RatingGrade.E
+    if total_score >= 85:
         return RatingGrade.A
-    elif total_score >= 65:
+    elif total_score >= 70:
         return RatingGrade.B
-    elif total_score >= 50:
+    elif total_score >= 55:
         return RatingGrade.C
-    elif total_score >= 35:
+    elif total_score >= 40:
         return RatingGrade.D
     else:
         return RatingGrade.E
@@ -742,8 +947,12 @@ def rank_and_filter_candidates(
     strategy_type: StrategyType,
     min_rating: RatingGrade = RatingGrade.C,  # 最低评级阈值
     max_positions: int = 20,                   # 最大持仓数
+    crowding_days: dict[str, int] | None = None,  # v1.2.0 各维度因子拥挤天数（供 apply_factor_crowding_decay）
 ) -> list[ScoredCandidate]:
     """L2 排序与筛选——按评级阈值+最大持仓数截断。
+
+    v1.2.0：评分改用 6维 BM-SEL-24（compute_six_dim_strength + map_signals_to_six_dims
+    + apply_factor_crowding_decay）。旧 4维 compute_strength_score 保留兼容。
 
     max_positions 按策略类型差异化（§3.8 `_get_max_positions`）：
     - 打板：≤5 只（容量极小）
@@ -752,8 +961,9 @@ def rank_and_filter_candidates(
     """
     scored = []
     for symbol in filtered.symbols:
-        strength = compute_strength_score(symbol, ctx, strategy_type)
-        rating = rating_from_score(strength.total_score)
+        # v1.2.0: 6维 BM-SEL-24 强度评级（取分→衰减→加权→分级）
+        strength = compute_six_dim_strength(symbol, ctx, strategy_type, crowding_days)
+        rating = strength.grade
         confidence = strength.total_score / 100.0
 
         scored.append(ScoredCandidate(
@@ -761,12 +971,15 @@ def rank_and_filter_candidates(
             total_score=strength.total_score,
             rating=rating,
             score_breakdown={
-                "alpha": strength.alpha_strength,
-                "sector": strength.sector_strength,
-                "sentiment": strength.sentiment_strength,
-                "capital": strength.capital_strength,
+                "consecutive_ladder": strength.consecutive_ladder,
+                "hot_money_relay": strength.hot_money_relay,
+                "sentiment_cycle": strength.sentiment_cycle,
+                "sector_strength": strength.sector_strength,
+                "capital_flow": strength.capital_flow,
+                "technical_pattern": strength.technical_pattern,
+                "total_raw": strength.total_raw,
             },
-            signal_source=f"{strategy_type.value}_pipeline",
+            signal_source=f"{strategy_type.value}_pipeline_v1.2",
             confidence=confidence,
         ))
 
@@ -787,6 +1000,219 @@ def rank_and_filter_candidates(
         s.rank = i
 
     return scored
+```
+
+#### 3.5.1 6维 BM-SEL-24 强度评级（v1.2.0 生产路径）
+
+v1.2.0 将 L2 强度评级从 4 维升级为 6 维 BM-SEL-24：将 alpha 信号拆解为更细粒度的策略特定维度（连板梯队/游资接力），并新增技术形态维度。评分流程：**取分 → apply_factor_crowding_decay 双曲衰减 → DIMENSION_WEIGHTS 加权 → 分级**。
+
+```python
+# 6维 BM-SEL-24 维度标识
+SIX_DIMENSIONS = (
+    "consecutive_ladder",   # 连板梯队
+    "hot_money_relay",      # 游资接力
+    "sentiment_cycle",      # 情绪周期
+    "sector_strength",      # 板块强度
+    "capital_flow",         # 资金流向
+    "technical_pattern",    # 技术形态
+)
+
+# 各策略 6维权重（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.5 差异化矩阵）
+# - 打板：连板0.25 + 游资0.25（情绪驱动型，连板+游资占 50%）
+# - 多因子：资金0.25 + 技术0.30（alpha 主导型，资金+技术占 55%）
+# - 事件驱动：情绪0.20 + 资金0.20（事件+资金驱动型）
+DIMENSION_WEIGHTS: dict[StrategyType, dict[str, float]] = {
+    StrategyType.DABAN: {
+        "consecutive_ladder": 0.25,
+        "hot_money_relay": 0.25,
+        "sentiment_cycle": 0.15,
+        "sector_strength": 0.10,
+        "capital_flow": 0.15,
+        "technical_pattern": 0.10,
+    },
+    StrategyType.MULTIFACTOR: {
+        "consecutive_ladder": 0.05,
+        "hot_money_relay": 0.10,
+        "sentiment_cycle": 0.10,
+        "sector_strength": 0.20,
+        "capital_flow": 0.25,
+        "technical_pattern": 0.30,
+    },
+    StrategyType.EVENT_DRIVEN: {
+        "consecutive_ladder": 0.10,
+        "hot_money_relay": 0.15,
+        "sentiment_cycle": 0.20,
+        "sector_strength": 0.15,
+        "capital_flow": 0.20,
+        "technical_pattern": 0.20,
+    },
+}
+
+# 维度类型：机械型衰减，判断型不衰减（arXiv:2512.11913v1）
+MECHANICAL_DIMENSIONS = frozenset({
+    "consecutive_ladder", "hot_money_relay", "capital_flow", "technical_pattern",
+})
+JUDGMENT_DIMENSIONS = frozenset({
+    "sentiment_cycle", "sector_strength",
+})
+
+
+@dataclass
+class QuantitativeStrength:
+    """6维 BM-SEL-24 量化强度评级（v1.2.0 升级）。
+
+    从 v1.0 的 4 维（alpha/sector/sentiment/capital）升级为 6 维：
+    将 alpha 拆解为连板梯队 + 游资接力（策略特定），并新增技术形态维度。
+
+    6 维度：
+    1. consecutive_ladder（连板梯队）：连板高度/梯队位置/封单质量
+    2. hot_money_relay（游资接力）：游资席位合力/接力意愿
+    3. sentiment_cycle（情绪周期）：市场情绪阶段（BM-SEL-23-B）
+    4. sector_strength（板块强度）：所属板块动量（G06）
+    5. capital_flow（资金流向）：主力/北向/龙虎榜净买率
+    6. technical_pattern（技术形态）：量价/突破/形态
+
+    评分流程：取分 → apply_factor_crowding_decay 衰减 → DIMENSION_WEIGHTS 加权 → 分级。
+    """
+    consecutive_ladder: float              # 连板梯队 [0, 100]
+    hot_money_relay: float                # 游资接力 [0, 100]
+    sentiment_cycle: float                # 情绪周期 [0, 100]
+    sector_strength: float                # 板块强度 [0, 100]
+    capital_flow: float                   # 资金流向 [0, 100]
+    technical_pattern: float              # 技术形态 [0, 100]
+    total_raw: float                      # 衰减前总分（均值，供归因）
+    total_score: float                    # 衰减后加权总分 [0, 100]
+    grade: RatingGrade                    # A~E 等级（对齐 SignalQuality）
+    weights: dict[str, float]             # 各维度权重
+    decayed_dims: dict[str, float]        # 衰减后各维度得分（供归因）
+
+
+def apply_factor_crowding_decay(
+    dim_scores: dict[str, float],          # {dimension: raw_score}
+    crowding_days: dict[str, int],         # {dimension: days_since_crowded}
+    lambda_decay: float = 0.05,            # 双曲衰减系数
+) -> dict[str, float]:
+    """因子拥挤双曲衰减（arXiv:2512.11913v1）。
+
+    机械型维度（规则驱动，易被拥挤套利）按双曲衰减：
+        α(t) = K / (1 + λ·t)
+    其中 t = 拥挤天数，K = 原始得分，λ = 衰减系数。
+
+    判断型维度（情绪周期/板块强度，主观+宏观驱动）不衰减——
+    这类维度的"拥挤"难以量化且衰减模式不同，保持原值。
+
+    维度分类：
+    - 机械型（衰减）：consecutive_ladder / hot_money_relay / capital_flow / technical_pattern
+    - 判断型（不衰减）：sentiment_cycle / sector_strength
+
+    arXiv:2512.11913 实证：机械型因子拥挤后 IC 在 20-40 天衰减 30-50%，
+    双曲衰减（λ≈0.05）比线性衰减更贴合实测衰减曲线。
+    """
+    decayed: dict[str, float] = {}
+    for dim, score in dim_scores.items():
+        if dim in MECHANICAL_DIMENSIONS:
+            t = crowding_days.get(dim, 0)
+            decayed[dim] = score / (1.0 + lambda_decay * t)
+        else:
+            # 判断型维度不衰减
+            decayed[dim] = score
+    return decayed
+
+
+def map_signals_to_six_dims(
+    symbol: str,
+    ctx: SelectionContext,
+    strategy_type: StrategyType,
+) -> dict[str, float]:
+    """各策略 L1 信号差异化映射到 6 维。
+
+    不同策略的 alpha 信号来源不同，映射到 6 维的方式差异化：
+    - 打板：连板梯队 + 游资接力是主维度（来自 BM-SEL-22~23）
+    - 多因子：技术形态 + 资金流向是主维度（来自 BM-SEL-02 因子工厂）
+    - 事件驱动：情绪周期 + 资金流向是主维度（来自 BM-SEL-27 事件冲击）
+
+    跨策略共享维度（sentiment_cycle/sector_strength/capital_flow）复用本节上方
+    score_sentiment_strength/score_sector_strength/score_capital_strength。
+    """
+    signals = ctx.alpha_signals.get(symbol, {})
+    # 跨策略共享维度（复用 v1.0 共享评分函数）
+    sentiment_s = score_sentiment_strength(ctx)
+    sector_s = score_sector_strength(symbol, ctx)
+    capital_s = score_capital_strength(symbol, ctx)
+
+    if strategy_type == StrategyType.DABAN:
+        # 打板：连板梯队 + 游资接力为主（BM-SEL-22-C / BM-SEL-23-A）
+        return {
+            "consecutive_ladder": signals.get("limit_up_potential_score", 0.0),
+            "hot_money_relay": signals.get("relay_6factor_score", 0.0),
+            "sentiment_cycle": sentiment_s,
+            "sector_strength": sector_s,
+            "capital_flow": capital_s,
+            "technical_pattern": signals.get("technical_pattern_score", 50.0),
+        }
+    elif strategy_type == StrategyType.MULTIFACTOR:
+        # 多因子：技术形态 + 资金流向为主（BM-SEL-02-H 因子合成）
+        return {
+            "consecutive_ladder": signals.get("momentum_score", 50.0),
+            "hot_money_relay": signals.get("smart_money_score", 50.0),
+            "sentiment_cycle": sentiment_s,
+            "sector_strength": sector_s,
+            "capital_flow": capital_s,
+            "technical_pattern": signals.get("factor_composite_score", 0.0),
+        }
+    else:  # EVENT_DRIVEN
+        # 事件驱动：情绪周期 + 资金流向为主（BM-SEL-27 事件冲击）
+        return {
+            "consecutive_ladder": signals.get("momentum_score", 50.0),
+            "hot_money_relay": signals.get("smart_money_score", 50.0),
+            "sentiment_cycle": sentiment_s,
+            "sector_strength": sector_s,
+            "capital_flow": capital_s,
+            "technical_pattern": signals.get("event_impact_score", 0.0),
+        }
+
+
+def compute_six_dim_strength(
+    symbol: str,
+    ctx: SelectionContext,
+    strategy_type: StrategyType,
+    crowding_days: dict[str, int] | None = None,
+) -> QuantitativeStrength:
+    """6维 BM-SEL-24 量化强度评分主函数（v1.2.0 生产路径）。
+
+    流程：取分（map_signals_to_six_dims）→ apply_factor_crowding_decay 双曲衰减
+    → DIMENSION_WEIGHTS 加权 → rating_from_score 分级。
+
+    对齐 BM-SEL-24 量化强度6维（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）。
+    """
+    # 1. 取分——各策略 L1 信号差异化映射到 6 维
+    raw_dims = map_signals_to_six_dims(symbol, ctx, strategy_type)
+
+    # 2. 因子拥挤双曲衰减（机械型衰减，判断型不衰减）
+    crowding = crowding_days or {}
+    decayed = apply_factor_crowding_decay(raw_dims, crowding)
+
+    # 3. 加权
+    weights = DIMENSION_WEIGHTS[strategy_type]
+    total_raw = sum(raw_dims[d] for d in SIX_DIMENSIONS) / len(SIX_DIMENSIONS)
+    total = sum(weights[d] * decayed[d] for d in SIX_DIMENSIONS)
+
+    # 4. 分级（对齐 SignalQuality 阈值，硬风险在 L1 已被 mask）
+    grade = rating_from_score(total)
+
+    return QuantitativeStrength(
+        consecutive_ladder=raw_dims["consecutive_ladder"],
+        hot_money_relay=raw_dims["hot_money_relay"],
+        sentiment_cycle=raw_dims["sentiment_cycle"],
+        sector_strength=raw_dims["sector_strength"],
+        capital_flow=raw_dims["capital_flow"],
+        technical_pattern=raw_dims["technical_pattern"],
+        total_raw=total_raw,
+        total_score=total,
+        grade=grade,
+        weights=weights,
+        decayed_dims=decayed,
+    )
 ```
 
 ### 3.6 C 组合输出算法
@@ -924,6 +1350,129 @@ def _summarize_rejections(rejected: dict[str, str]) -> dict[str, int]:
 3. **差异化保护**：打板是情绪驱动型（游资60%），多因子是 alpha 主导型（因子60%），事件是事件驱动型——三者的引擎融合逻辑不同，强行统一跨策略融合会破坏差异化（违反 charter 约束五）
 4. **主升龙头并入打板**（[20_first_batch_strategies](20_first_batch_strategies.md) §2.1 裁定）：BM-SEL-25-C-1 主升龙头决策类是打板双引擎融合的最强输出，作为独立策略会产生 alpha 重叠，已并入打板 sleeve
 
+**双引擎融合的可施工 spec**（v1.2.0 补齐，打板 sleeve 内部）：
+
+```python
+class FusionStrategy(Enum):
+    """双引擎融合策略（BM-SEL-25，打板策略内部）。"""
+    WEIGHTED = "weighted"            # 加权融合（游资60%+量化40%，情绪周期自适应微调）
+    CONDITIONAL = "conditional"      # 条件融合（情绪周期门控：冰点/退潮期量化权重提升）
+    DECISION_TREE = "decision_tree"  # 6类决策树（BM-SEL-25-C）
+
+
+@dataclass
+class EngineScore:
+    """单引擎评分——游资情绪引擎或量化强度引擎的输出。"""
+    engine_name: str             # "hot_money"（游资情绪）/ "quantitative"（量化强度）
+    score: float                 # 引擎评分 [0, 100]
+    confidence: float            # 置信度 [0, 1]
+    breakdown: dict[str, float]  # 引擎内部维度得分（供归因）
+
+
+@dataclass
+class FusedSignal:
+    """双引擎融合后信号——打板 alpha 的最终形态。"""
+    fused_score: float                 # 融合后综合分 [0, 100]
+    hot_money_component: float         # 游资引擎贡献（融合前原始分）
+    quantitative_component: float      # 量化引擎贡献（融合前原始分）
+    fusion_strategy: FusionStrategy    # 实际使用的融合策略
+    decision_class: str = ""           # 6类决策分类（BM-SEL-25-C，DECISION_TREE 时填充）
+    sentiment_adjusted: bool = False   # 是否经情绪周期自适应权重调整
+
+
+def fuse_dual_engine(
+    hot_money: EngineScore,
+    quantitative: EngineScore,
+    sentiment_phase: SentimentPhase,
+    strategy: FusionStrategy = FusionStrategy.WEIGHTED,
+) -> FusedSignal:
+    """打板双引擎融合（BM-SEL-25，打板策略内部融合，非跨策略层）。
+
+    融合方式：
+    - WEIGHTED：基准权重 游资60% + 量化40%，情绪周期自适应微调
+      （BM-SEL-25-B：冰点量化70% / 主升游资70% / 退潮量化60%）
+    - CONDITIONAL：情绪周期门控——冰点/退潮期以量化引擎为主（游资信号失效）
+    - DECISION_TREE：6类决策分类（主升龙头/二进三/跟风/复苏/伪强/地天反包）
+
+    定位：打板 sleeve 内部（本节§3.7），非跨策略层。
+    对齐 [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.4 BM-SEL-25。
+    """
+    # 情绪周期自适应权重 (w_hot, w_quant)（BM-SEL-25-B）
+    phase_weights = {
+        SentimentPhase.FREEZING: (0.30, 0.70),    # 冰点：量化70%（游资信号失效）
+        SentimentPhase.STARTING: (0.50, 0.50),
+        SentimentPhase.FERMENTING: (0.60, 0.40),  # 发酵：基准 游资60%+量化40%
+        SentimentPhase.CONSENSUS: (0.65, 0.35),
+        SentimentPhase.EBING: (0.40, 0.60),       # 退潮：量化60%
+    }
+    w_hot, w_quant = phase_weights.get(sentiment_phase, (0.60, 0.40))
+
+    if strategy == FusionStrategy.WEIGHTED:
+        fused = w_hot * hot_money.score + w_quant * quantitative.score
+        return FusedSignal(
+            fused_score=fused,
+            hot_money_component=hot_money.score,
+            quantitative_component=quantitative.score,
+            fusion_strategy=strategy,
+            sentiment_adjusted=True,
+        )
+    elif strategy == FusionStrategy.CONDITIONAL:
+        # 情绪周期门控：冰点/退潮期以量化引擎为主
+        if sentiment_phase in (SentimentPhase.FREEZING, SentimentPhase.EBING):
+            fused = 0.30 * hot_money.score + 0.70 * quantitative.score
+        else:
+            fused = 0.60 * hot_money.score + 0.40 * quantitative.score
+        return FusedSignal(
+            fused_score=fused,
+            hot_money_component=hot_money.score,
+            quantitative_component=quantitative.score,
+            fusion_strategy=strategy,
+            sentiment_adjusted=True,
+        )
+    else:  # DECISION_TREE
+        fused = w_hot * hot_money.score + w_quant * quantitative.score
+        decision_class = _classify_daban_decision(fused, hot_money, quantitative, sentiment_phase)
+        return FusedSignal(
+            fused_score=fused,
+            hot_money_component=hot_money.score,
+            quantitative_component=quantitative.score,
+            fusion_strategy=strategy,
+            decision_class=decision_class,
+            sentiment_adjusted=True,
+        )
+
+
+def _classify_daban_decision(
+    fused: float,
+    hot_money: EngineScore,
+    quantitative: EngineScore,
+    sentiment_phase: SentimentPhase,
+) -> str:
+    """6类决策分类（BM-SEL-25-C）：主升龙头/二进三/跟风/复苏/伪强/地天反包。
+
+    分类逻辑（简化，完整规则见 [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.4）：
+    - 主升龙头：fused≥85 + 游资≥80 + 发酵/一致期
+    - 二进三：连板高度≥2 + 游资接力强（fused≥70）
+    - 跟风：fused 60-75 + 板块强度高
+    - 复苏：冰点/退潮期 + 量化引擎转正（≥55）
+    - 伪强：游资高但量化<40（情绪虚高）
+    - 地天反包：跌停后反转（特殊形态，兜底）
+    """
+    if fused >= 85 and hot_money.score >= 80 and sentiment_phase in (
+        SentimentPhase.FERMENTING, SentimentPhase.CONSENSUS
+    ):
+        return "主升龙头"
+    if hot_money.score >= 70 and quantitative.score < 40:
+        return "伪强"
+    if sentiment_phase in (SentimentPhase.FREEZING, SentimentPhase.EBING) and quantitative.score >= 55:
+        return "复苏"
+    if 60 <= fused < 75:
+        return "跟风"
+    if fused >= 70:
+        return "二进三"
+    return "地天反包"
+```
+
 ### 3.8 与 StrategyBook 的对接契约
 
 选股引擎的输出 `TargetPortfolio` 是 StrategyBook 的输入契约。
@@ -967,6 +1516,68 @@ def _get_max_positions(strategy_type: StrategyType) -> int:
         return 20
     else:  # EVENT_DRIVEN
         return 10
+
+
+def _compute_vol_20d(returns: list[float]) -> float:
+    """计算 20 日收益波动率 σ_20d（供 inverse-vol risk parity）。"""
+    if len(returns) < 2:
+        return 1e-6  # 数据不足，给极小波动率（退化为等权时由调用方处理）
+    mean = sum(returns) / len(returns)
+    var = sum((r - mean) ** 2 for r in returns) / len(returns)
+    return max(var ** 0.5, 1e-6)
+
+
+def selection_to_target_portfolio(
+    output: SelectionOutput,
+    budget: float = 1.0,
+    market_data: dict[str, dict] | None = None,
+) -> TargetPortfolio:
+    """将选股输出转为 risk-parity 加权的 target_portfolio（v1.2.0 补齐实现）。
+
+    v1.2.0：补齐 inverse-vol risk parity 实现（原 v1.0 仅占位"实现见 31_position_sizing"）。
+
+    inverse-vol risk parity：
+        final_weight_i ∝ signal_weight_i × (1 / σ_i,20d)
+    其中 σ_i,20d 为标的 i 的 20 日收益波动率，归一化到 budget。
+    signal_weight 来自 §3.6 compose_target_portfolio 的评级分层+得分加权。
+
+    market_data=None 时退化为等权（无波动率数据）。
+
+    对齐 [31_position_sizing](31_position_sizing.md) 分层裁定：
+    - 此处是 StrategyBook 粗仓位层（risk parity，不用 Kelly）
+    - firm 层 Kelly 精裁决在 [32_firm_risk_aggregator](32_firm_risk_aggregator.md)
+    """
+    target = output.target_portfolio
+    positions = target.positions
+    if not positions:
+        return target
+
+    # 无 market_data → 退化为等权
+    if market_data is None:
+        n = len(positions)
+        eq = budget / n
+        for p in positions:
+            p.signal_weight = eq
+        return target
+
+    # inverse-vol: final_weight_i ∝ signal_weight_i × (1/σ_i)
+    raw: dict[str, float] = {}
+    for p in positions:
+        rets = market_data.get(p.symbol, {}).get("returns_20d", [])
+        sigma = _compute_vol_20d(rets)
+        raw[p.symbol] = p.signal_weight * (1.0 / sigma)
+
+    total_raw = sum(raw.values())
+    if total_raw <= 0:
+        # 全部 signal_weight=0 或数据异常 → 退化为等权
+        n = len(positions)
+        for p in positions:
+            p.signal_weight = budget / n
+    else:
+        for p in positions:
+            p.signal_weight = raw[p.symbol] / total_raw * budget
+
+    return target
 ```
 
 **对接契约要点**：
@@ -1039,7 +1650,7 @@ final_position_i = signal_weight_i × strategy_budget × risk_parity_factor_i
 | **打板最大持仓** | ≤5 只 | 容量极小（单票几万~几十万，[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)） |
 | **多因子最大持仓** | ≤20 只 | 承载主资金，分散化需求 |
 | **事件驱动最大持仓** | ≤10 只 | 中容量，介于打板与多因子之间 |
-| **最低评级阈值** | C 级（≥50分） | D/E 级标的剔除，保证最低信号质量 |
+| **最低评级阈值** | C 级（≥55分，v1.2.0 对齐 SignalQuality） | D/E 级标的剔除，保证最低信号质量 |
 | **L1 共享掩码** | ST + 停牌 + 流动性 | 跨策略共享，所有策略剔除 |
 | **L1 策略特定掩码** | 次新/涨停封板 | 按策略差异化（§3.4） |
 | **cash_buffer** | 5% | 预留现金缓冲，防极端情况 |
@@ -1071,7 +1682,7 @@ final_position_i = signal_weight_i × strategy_budget × risk_parity_factor_i
 
 - [x] ① 双引擎融合（BM-SEL-25，30_multi_strategy_concurrency 定位为"打板策略内部融合"，非跨策略层）→ §3.7 双引擎融合定位说明
 - [x] ② L0→L1→L2-C 分层 → §3.1 架构定义 + §3.3-§3.6 各层算法
-- [x] ③ 量化强度评级 → §3.5 L2 量化强度评级算法（4 维度+策略差异化权重+A~E 五级）
+- [x] ③ 量化强度评级 → §3.5 L2 量化强度评级算法（6维 BM-SEL-24 + apply_factor_crowding_decay 双曲衰减 + map_signals_to_six_dims 差异化映射 + A~E 五级）
 - [x] ④ 选股 pipeline 标准接口（输入信号→输出 target_portfolio）→ §3.2 dataclass 定义（SelectionContext→TargetPortfolio）
 - [x] ⑤ 候选池生成→过滤→排序→输出 → §3.3 L0 候选池生成 + §3.4 L1 mask-first 过滤 + §3.5 L2 评级排序 + §3.6 C 组合输出
 - [x] ⑥ 与 StrategyBook 的对接契约 → §3.8 对接契约（target_portfolio 接口规范 + signal_weight→最终仓位转换 + 分层裁定对齐）
@@ -1106,7 +1717,8 @@ final_position_i = signal_weight_i × strategy_budget × risk_parity_factor_i
 | BudgetChangeHandler | MOD-POS-022 | `src/zephyr/position/core/budget_change_handler.py` | budget 适配三级升级 |
 
 ### 8.4 开源实证参考
-- arXiv:2507.07107 — A 股 mask-first 设计：可交易性掩码前置，避免 alpha 污染与回测失真。本讨论 §3.4 L1 mask-first 过滤的直接依据
+- arXiv:2507.07107 — A 股 mask-first 设计：可交易性掩码前置，避免 alpha 污染与回测失真。本讨论 §3.3.1/§3.4 L1 mask-first 过滤的直接依据（row_filter 虚增 IC +18%/Sharpe -0.44，mask-first 单一最大贡献者 +0.44 Sharpe）
+- arXiv:2512.11913 — 因子拥挤双曲衰减：机械型因子 α(t)=K/(1+λt) 衰减，判断型不衰减。本讨论 §3.5 apply_factor_crowding_decay 的依据
 - WorldQuant Alpha 工厂分层 — Region→Universe→Data→Expression→Operators→Decay→Neutralization→Tests 八层架构。本讨论 L0→L1→L2-C 分层 pipeline 的对标范式
 - quantskills (2026-06) Smart Money Profiler — 席位画像+合力型/独食型识别。§3.5 资金面评分依据（[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.9 已整合）
 - 东方财富 (2026-08) 龙虎榜净买率回测 — 净买率>12% 次日+3.10%/20日+5.11%。§3.5 资金面评分阈值依据
@@ -1117,3 +1729,5 @@ final_position_i = signal_weight_i × strategy_budget × risk_parity_factor_i
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G05 讨论要点占位，待讨论填空 |
 | 2026-08-10 | 1.0.0 | 落地 spec 定稿 | L0→L1→L2-C 分层 pipeline + 标准接口（SelectionContext→TargetPortfolio dataclass）+ 候选池生成（打板连板梯队/多因子全市场/事件驱动动态池三策略差异化）+ mask-first 过滤（arXiv:2507.07107，ST/次新/停牌/涨跌停封板/流动性按策略差异化）+ 量化强度评级（4维度 alpha+板块+情绪+资金，A~E五级，策略差异化权重）+ 双引擎融合内部化定位（对齐 30_multi_strategy_concurrency §7.3，BM-SEL-25 是打板内部融合非跨策略层）+ StrategyBook 对接契约（target_portfolio 接口规范 + signal_weight→最终仓位转换 + 分层裁定对齐）；整合 2026-08 研究（A 股 mask-first / WorldQuant Alpha 工厂分层 / 龙虎榜净买率回测）；4 个替代方案拒绝（统一候选池/跨策略融合/不做mask-first/选股直接输出仓位） |
+| 2026-08-10 | 1.1.0 | 补齐 mask-first 设计（arXiv:2507.07107v2） | §3.3.1 新增 TradabilityMaskPolicy 枚举（STRICT/MODERATE/PERMISSIVE）+ policy→掩码集映射表；apply_mask_first_filter 升级为 policy-aware（接受 mask_policy 参数）；_evaluate_reject 增补 STRICT/PERMISSIVE 分支；TradabilityMask 增补 is_tradable/mask_reason 汇总字段；SelectionContext 增 mask_policy 字段；实证：row_filter 虚增 IC +18%/Sharpe -0.44，mask-first 单一最大贡献者 +0.44 Sharpe；涨跌停板 upstream contamination 防护；mask 贯穿 L0→L1→L2-C pipeline |
+| 2026-08-11 | 1.2.0 | 6维 BM-SEL-24 + 因子拥挤衰减 + risk_parity 补齐 | §3.5/§3.6 从 4维升级为 6维 BM-SEL-24（连板梯队/游资接力/情绪周期/板块强度/资金流向/技术形态）：新增 QuantitativeStrength dataclass + DIMENSION_WEIGHTS（三策略各自权重，打板连板0.25+游资0.25 / 多因子资金0.25+技术0.30 / 事件驱动情绪0.20+资金0.20）+ apply_factor_crowding_decay 因子拥挤双曲衰减（arXiv:2512.11913v1，机械型 α(t)=K/(1+λt) 衰减/判断型不衰减）+ map_signals_to_six_dims 各策略差异化映射 + compute_six_dim_strength 6维评分主函数（取分→衰减→加权→分级）；§3.4 增补 Löwdin 对称正交化 _loewin_orthogonalize + IC-IR 加权 _compute_ic_ir_weights + score_l1_multifactor；SignalQuality 升级为 A~E 五级（≥85/≥70/≥55/≥40/<40，硬风险→E）+ rating_from_score 阈值对齐；§3.7 增补 EngineScore/FusedSignal/FusionStrategy/fuse_dual_engine 双引擎融合可施工 spec（WEIGHTED/CONDITIONAL/DECISION_TREE + 6类决策分类）；§3.8 risk_parity inverse-vol 实现补齐 + selection_to_target_portfolio(market_data=None)；§7 讨论要点③更新；§8 引用增补 arXiv:2512.11913 |

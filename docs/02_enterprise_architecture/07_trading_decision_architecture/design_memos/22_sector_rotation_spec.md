@@ -5,8 +5,8 @@ title: 板块轮动 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-10
+version: "1.0.1"
+date: 2026-08-11
 topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
 ---
@@ -1219,6 +1219,382 @@ def map_sector_to_stock_signal(
 - **[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §1.3 情绪周期**：板块轮动是情绪周期的具象化载体。情绪周期（冰点/反核/主升/疯狂/退潮）驱动资金在板块间轮动，板块轮动序列（§3.5）是情绪周期的可观测投影。
 - **[52_backtest_framework_docking](52_backtest_framework_docking.md) A 股 mask-first 前置设计**：本节 §3.2 `calc_advancer_ratio` 实现板块级 mask-first 涨跌停过滤，与回测框架的 mask-first 设计一致。
 
+### 3.10 多元 Hawkes 传染矩阵
+
+**背景**：板块间情绪传染建模——不仅看单个板块的涨跌，更看板块间的事件传染效应（如龙头板块涨停潮如何激发跟风板块涨停潮）。Hawkes 过程是自激发点过程，事件的发生会提升后续事件的瞬时强度，自然刻画"事件簇"现象。多元 Hawkes 把单板块自激发扩展为跨板块互激发——龙头板块的事件不仅抬高自身后续事件强度，也通过激发矩阵抬高其他板块的强度。
+
+**算法说明**：
+
+- **一元 Hawkes 强度**：λ_i(t) = λ₀_i + Σ_j ∫ α_ij · exp(-β_ij · (t - s)) · dN_j(s)
+- **离散形式**：λ_i(t) = λ₀_i + Σ_j Σ_{t_j < t} α_ij · exp(-β_ij · (t - t_j))
+- **多元 Hawkes 矩阵**：N 个板块间的 N×N 激发矩阵（α、β 均为 N×N）
+  - α_ij：板块 j 事件对板块 i 的激发幅度（j→i 的传染强度）
+  - β_ij：板块 j 事件对板块 i 的衰减速率（越大衰减越快）
+- **分支比**：η_i = Σ_j α_ij / β_ij
+  - η_i < 1：稳态（事件最终衰减）
+  - η_i ≥ 1：爆发态（事件自激失控，传染失控）
+- **传染爆发检测**：某板块 η_i 超过预警阈值（0.8）→ 传染爆发态
+
+```python
+from dataclasses import dataclass, field
+from typing import Sequence
+import numpy as np
+
+
+@dataclass
+class MultivariateHawkesParams:
+    """多元 Hawkes 过程参数（N 板块 × N 板块 激发矩阵）。
+
+    一元 Hawkes 强度公式：
+        λ_i(t) = λ₀_i + Σ_j Σ_{t_j < t} α_ij · exp(-β_ij · (t - t_j))
+
+    其中：
+    - λ₀_i：板块 i 的基线强度（无条件事件发生率）
+    - α_ij：板块 j 事件对板块 i 的激发幅度（j→i 的传染强度）
+    - β_ij：板块 j 事件对板块 i 的衰减速率（越大衰减越快）
+    - N：板块数（Phase 1.0 = 5 大核心板块；Phase 2.0 扩展到全 460 板块）
+
+    分支比：
+        η_i = Σ_j α_ij / β_ij
+    - η_i < 1：稳态（事件最终衰减）
+    - η_i ≥ 1：爆发态（事件自激失控，传染失控）
+    """
+    n_sectors: int                              # 板块数 N
+    sector_codes: list[str]                     # 板块代码列表（长度 N）
+    baseline: np.ndarray                        # 基线强度 λ₀，shape (N,)
+    excitation: np.ndarray                      # 激发幅度矩阵 α，shape (N, N)
+    decay: np.ndarray                           # 衰减速率矩阵 β，shape (N, N)
+
+
+@dataclass
+class HawkesIntensityVector:
+    """多元 Hawkes 瞬时强度向量。"""
+    timestamp: float                            # 时间戳（秒）
+    sector_codes: list[str]                     # 板块代码列表
+    intensity: np.ndarray                       # N 个板块的瞬时强度向量，shape (N,)
+    above_baseline: list[bool]                  # 各板块强度是否超过基线（事件激发态）
+
+
+def compute_hawkes_intensity_matrix(
+    params: MultivariateHawkesParams,
+    events: dict[str, list[float]],             # {板块代码: 事件时间戳列表}
+    current_time: float,
+) -> HawkesIntensityVector:
+    """计算 N 个板块的瞬时强度向量。
+
+    λ_i(t) = λ₀_i + Σ_j Σ_{t_j < t} α_ij · exp(-β_ij · (t - t_j))
+
+    对每个板块 i：
+    1. 取基线 λ₀_i
+    2. 遍历所有板块 j 的事件历史
+    3. 对每个 t_j < t，累加 α_ij · exp(-β_ij · (t - t_j))
+
+    时间复杂度：O(N² · M)，M 为平均事件数。N=5 时极快，N=460 时需稀疏化/截断。
+
+    与 §3.7 板块资金流算法的协同：
+    - §3.7 的板块主力净流入脉冲（>5% 成交额的大单）作为 Hawkes 的事件输入
+    - 资金流事件强度（inflow/outflow）映射为事件符号（正向/负向）
+    """
+    n = params.n_sectors
+
+    intensity = params.baseline.copy()
+
+    # 遍历每个激发源板块 j
+    for j, src_code in enumerate(params.sector_codes):
+        src_events = events.get(src_code, [])
+        # 只考虑 current_time 之前的事件
+        valid_events = [t for t in src_events if t < current_time]
+        if not valid_events:
+            continue
+
+        # 对每个目标板块 i，累加激发项
+        for i in range(n):
+            alpha_ij = params.excitation[i, j]
+            beta_ij = params.decay[i, j]
+            if alpha_ij <= 0 or beta_ij <= 0:
+                continue
+            # Σ α_ij · exp(-β_ij · (t - t_j))
+            excitation_sum = sum(
+                alpha_ij * float(np.exp(-beta_ij * (current_time - t_j)))
+                for t_j in valid_events
+            )
+            intensity[i] += excitation_sum
+
+    above_baseline = [
+        bool(intensity[i] > params.baseline[i] * 1.5)
+        for i in range(n)
+    ]
+
+    return HawkesIntensityVector(
+        timestamp=current_time,
+        sector_codes=params.sector_codes,
+        intensity=intensity,
+        above_baseline=above_baseline,
+    )
+
+
+@dataclass
+class BranchingRatioMatrix:
+    """多元 Hawkes 分支比矩阵评估结果。"""
+    sector_codes: list[str]
+    branching_ratio: np.ndarray                 # 分支比向量 η_i = Σ_j α_ij/β_ij，shape (N,)
+    ratio_matrix: np.ndarray                    # 详细 α_ij/β_ij 矩阵，shape (N, N)
+    is_stable: list[bool]                       # 各板块是否稳态（η_i < 1）
+    outbreak_sectors: list[str]                 # 爆发态板块（η_i ≥ 1）
+
+
+def estimate_branching_ratio_matrix(
+    params: MultivariateHawkesParams,
+    stability_threshold: float = 1.0,
+) -> BranchingRatioMatrix:
+    """估计 N×N 分支比矩阵。
+
+    分支比定义：
+        η_i = Σ_j α_ij / β_ij
+
+    含义：板块 i 上每个事件平均能激发多少个后续事件。
+    - η_i < 1：稳态，事件最终衰减（每事件激发 < 1 个后续事件）
+    - η_i ≥ 1：爆发态，事件自激失控（每事件激发 ≥ 1 个后续事件）
+
+    与稳态判定：
+    - stability_threshold 默认 1.0（Hawkes 理论稳态条件）
+    - 实际传染爆发预警用更保守的阈值（0.8，见 detect_contagion_outbreak）
+    """
+    n = params.n_sectors
+
+    # α_ij / β_ij 矩阵
+    ratio_matrix = np.zeros((n, n))
+    for i in range(n):
+        for j in range(n):
+            if params.decay[i, j] > 1e-8:
+                ratio_matrix[i, j] = params.excitation[i, j] / params.decay[i, j]
+
+    # η_i = Σ_j α_ij / β_ij（行和）
+    branching_ratio = ratio_matrix.sum(axis=1)
+
+    is_stable = [bool(eta < stability_threshold) for eta in branching_ratio]
+    outbreak_sectors = [
+        params.sector_codes[i]
+        for i in range(n)
+        if branching_ratio[i] >= stability_threshold
+    ]
+
+    return BranchingRatioMatrix(
+        sector_codes=params.sector_codes,
+        branching_ratio=branching_ratio,
+        ratio_matrix=ratio_matrix,
+        is_stable=is_stable,
+        outbreak_sectors=outbreak_sectors,
+    )
+
+
+@dataclass
+class ContagionOutbreak:
+    """板块传染爆发检测结果。"""
+    is_outbreak: bool                           # 是否爆发
+    outbreak_sectors: list[str]                 # 爆发源板块列表
+    outbreak_intensity: float                   # 爆发强度（最大分支比）
+    affected_sectors: list[str]                 # 受波及板块列表（强度被显著抬升）
+    # 应对建议
+    risk_level: str                             # "LOW" / "MEDIUM" / "HIGH" / "CRITICAL"
+    recommendation: str                         # 应对建议（如 "暂停追高/降仓位/不动"）
+
+
+def detect_contagion_outbreak(
+    params: MultivariateHawkesParams,
+    intensity: HawkesIntensityVector,
+    branching_ratio_threshold: float = 0.8,     # 分支比预警阈值（< 1.0 保守预警）
+    intensity_multiplier_threshold: float = 3.0,  # 强度超过基线 N 倍判定为受波及
+) -> ContagionOutbreak:
+    """检测传染爆发——分支比超过阈值且强度显著抬升。
+
+    爆发判定规则：
+    1. 分支比 η_i ≥ 0.8（保守阈值，提前预警）
+    2. 该板块当前强度 > 基线 × 3（确认事件已实际激发）
+
+    风险等级：
+    - LOW：无爆发
+    - MEDIUM：1 个板块爆发，影响范围小
+    - HIGH：2-3 个板块爆发
+    - CRITICAL：≥4 板块爆发或多板块 η ≥ 1（理论失控）
+
+    与 §3.6 虹吸态识别的协同：
+    - 虹吸态是资金面集中度（成交额维度）
+    - 传染爆发是事件面激发强度（Hawkes 维度）
+    - 两者可同时发生（虹吸龙头 + 传染爆发 = 极端情绪）
+    """
+    branching = estimate_branching_ratio_matrix(params, stability_threshold=1.0)
+
+    outbreak_sectors = []
+    outbreak_intensity = 0.0
+
+    for i, code in enumerate(params.sector_codes):
+        # 分支比超阈值 + 强度显著超基线
+        if (branching.branching_ratio[i] >= branching_ratio_threshold
+                and intensity.intensity[i] > params.baseline[i] * intensity_multiplier_threshold):
+            outbreak_sectors.append(code)
+            outbreak_intensity = max(outbreak_intensity, float(branching.branching_ratio[i]))
+
+    # 受波及板块（强度被显著抬升但非爆发源）
+    affected_sectors = []
+    for i, code in enumerate(params.sector_codes):
+        if code in outbreak_sectors:
+            continue
+        if intensity.intensity[i] > params.baseline[i] * intensity_multiplier_threshold:
+            affected_sectors.append(code)
+
+    # 风险等级
+    n_outbreak = len(outbreak_sectors)
+    has_unstable = any(eta >= 1.0 for eta in branching.branching_ratio)
+
+    if n_outbreak == 0:
+        risk_level = "LOW"
+        recommendation = "正常交易，按既有板块强度信号操作"
+    elif n_outbreak == 1 and not has_unstable:
+        risk_level = "MEDIUM"
+        recommendation = "关注爆发源板块的情绪扩散，非爆发板块正常操作"
+    elif n_outbreak <= 3 and not has_unstable:
+        risk_level = "HIGH"
+        recommendation = "暂停追高爆发板块，受波及板块降仓位 50%"
+    else:
+        risk_level = "CRITICAL"
+        recommendation = "全板块降仓位 50%+，禁止追高，等待分支比回落"
+
+    return ContagionOutbreak(
+        is_outbreak=n_outbreak > 0,
+        outbreak_sectors=outbreak_sectors,
+        outbreak_intensity=outbreak_intensity,
+        affected_sectors=affected_sectors,
+        risk_level=risk_level,
+        recommendation=recommendation,
+    )
+
+
+@dataclass
+class SectorContagionScore:
+    """板块传染评分——综合强度+持续时间+波及范围。"""
+    sector_code: str
+    # 三个维度
+    intensity_score: float                      # 强度维度评分 [0, 100]
+    duration_score: float                       # 持续时间维度评分 [0, 100]
+    spread_score: float                         # 波及范围维度评分 [0, 100]
+    # 综合
+    composite_score: float                      # 综合传染评分 [0, 100]
+    contagion_level: str                        # "LOW" / "MEDIUM" / "HIGH" / "EXTREME"
+
+
+def compute_sector_contagion_score(
+    sector_code: str,
+    params: MultivariateHawkesParams,
+    intensity_series: list[HawkesIntensityVector],  # 时间序列强度向量
+    sector_index: int,                          # 目标板块在 params 中的索引
+    lookback_window: int = 20,                  # 评分回看窗口（事件数）
+    intensity_threshold: float = 2.0,           # 强度超基线倍数阈值
+    weights: dict = None,
+) -> SectorContagionScore:
+    """板块传染评分——综合强度+持续时间+波及范围。
+
+    评分三维度：
+    1. 强度维度（40%）：板块强度峰值 / 基线
+       - 峰值 / 基线 ≥ 5 → 满分
+       - 峰值 / 基线 = 1 → 0 分
+    2. 持续时间维度（30%）：强度持续超阈值的事件数
+       - 持续 ≥ lookback_window → 满分
+       - 持续 0 → 0 分
+    3. 波及范围维度（30%）：该板块对其他板块的激发贡献（α_ij 行和）
+       - 激发 ≥ 5 个其他板块 → 满分
+       - 激发 0 → 0 分
+
+    与 §3.8 板块→个股传导映射的协同：
+    - Hawkes 传染评分作为传导映射的权重加成
+    - EXTREME 传染评分 → 个股信号 ×1.3（强传染加成）
+    - HIGH 传染评分 → 个股信号 ×1.15
+    - MEDIUM 传染评分 → 个股信号 ×1.0
+    - LOW 传染评分 → 个股信号 ×0.9（无传染，衰减）
+    """
+    if weights is None:
+        weights = {"intensity": 0.40, "duration": 0.30, "spread": 0.30}
+
+    n = params.n_sectors
+    lookback = min(lookback_window, len(intensity_series))
+
+    # ===== 维度 1：强度维度 =====
+    if lookback > 0:
+        recent_intensities = [
+            intensity_series[-(k + 1)].intensity[sector_index]
+            for k in range(lookback)
+        ]
+        peak_intensity = max(recent_intensities)
+        baseline = params.baseline[sector_index]
+        peak_ratio = peak_intensity / baseline if baseline > 1e-8 else 1.0
+        # peak_ratio ≥ 5 → 满分；= 1 → 0 分
+        if peak_ratio >= 5.0:
+            intensity_score = 100.0
+        elif peak_ratio <= 1.0:
+            intensity_score = 0.0
+        else:
+            intensity_score = (peak_ratio - 1.0) / 4.0 * 100
+    else:
+        intensity_score = 0.0
+
+    # ===== 维度 2：持续时间维度 =====
+    if lookback > 0:
+        baseline = params.baseline[sector_index]
+        sustained_count = sum(
+            1 for k in range(lookback)
+            if intensity_series[-(k + 1)].intensity[sector_index] > baseline * intensity_threshold
+        )
+        duration_score = min(100.0, sustained_count / max(1, lookback) * 100)
+    else:
+        duration_score = 0.0
+
+    # ===== 维度 3：波及范围维度 =====
+    # 该板块对其他板块的激发贡献（α_ij 行和的归一化）
+    row_excitation = params.excitation[sector_index, :]
+    # 显著激发阈值：α_ij > 行内最大值的 20%
+    if row_excitation.max() > 1e-8:
+        threshold = row_excitation.max() * 0.20
+        spread_count = int(np.sum(row_excitation > threshold))
+    else:
+        spread_count = 0
+    # spread_count ≥ 5 → 满分
+    spread_score = min(100.0, spread_count / 5.0 * 100)
+
+    # ===== 综合评分 =====
+    composite = (
+        weights["intensity"] * intensity_score +
+        weights["duration"] * duration_score +
+        weights["spread"] * spread_score
+    )
+
+    if composite >= 80:
+        level = "EXTREME"
+    elif composite >= 60:
+        level = "HIGH"
+    elif composite >= 40:
+        level = "MEDIUM"
+    else:
+        level = "LOW"
+
+    return SectorContagionScore(
+        sector_code=sector_code,
+        intensity_score=float(intensity_score),
+        duration_score=float(duration_score),
+        spread_score=float(spread_score),
+        composite_score=float(composite),
+        contagion_level=level,
+    )
+```
+
+**上限声明**：
+- **Phase 1.0**：仅做 5 大核心板块间的 Hawkes（如半导体/新能源/医药/消费/金融），计算量限制（N=5 → 25 维参数矩阵，实时计算可行）
+- **Phase 2.0**：扩展到全 460 板块（需稀疏化处理 + GPU 加速；N=460 → 211600 维参数矩阵，无法稠密计算）
+
+**与其他小节的协同**：
+- **与 §3.7 板块资金流算法的协同**：§3.7 的板块主力净流入脉冲（>5% 成交额的大单）作为 Hawkes 的事件输入；资金流趋势（inflow/outflow）决定事件符号。
+- **与 §3.8 板块→个股传导映射的协同**：Hawkes 传染评分（`SectorContagionScore.contagion_level`）作为传导映射的权重加成——EXTREME ×1.3 / HIGH ×1.15 / MEDIUM ×1.0 / LOW ×0.9，扩展 §3.8 `map_sector_to_stock_signal` 的加成系数链。
+- **与 §3.6 虹吸态识别的协同**：虹吸态是资金面集中度（成交额维度），传染爆发是事件面激发强度（Hawkes 维度），两者可同时发生（虹吸龙头 + 传染爆发 = 极端情绪）。
+
 ## 4. 考虑过的替代方案
 
 | 方案 | 描述 | 拒绝理由 |
@@ -1244,11 +1620,15 @@ def map_sector_to_stock_signal(
 | **虹吸强度阈值** | >0.15 → 虹吸态 | 游资集中度模型经验值 |
 | **传导延迟上限** | 5 天 | A 股板块→个股传导规律（边缘股 3-5 天） |
 | **板块回踩质量加成** | A=1.2 / B=1.0 / C=0.3 | 个股信号调整系数 |
+| **Hawkes 板块数（Phase 1.0）** | 5 大核心板块 | 计算量限制（N=5 → 25 维参数矩阵，实时计算可行） |
+| **Hawkes 分支比预警阈值** | 0.8 | 保守预警阈值（< 1.0 理论稳态条件，提前预警传染爆发） |
+| **Hawkes 传染评分加成** | EXTREME ×1.3 / HIGH ×1.15 / MEDIUM ×1.0 / LOW ×0.9 | 个股信号传染加成系数链（联动 §3.8 传导映射） |
 
 **演进路径**：
 - **MVP**：板块强度多因子加权 + 板块级 A/B/C + 调整进度 80% 阈值 + 轮动阶段检测 + 虹吸态识别 + 板块→个股传导映射
+- **Phase 1.0**：多元 Hawkes 传染矩阵（5 大核心板块 N×N 激发矩阵 + 分支比估计 + 传染爆发检测 + 板块传染评分）；与 §3.7 资金流/§3.8 传导映射协同
 - **Phase 1.5**：历史轮动模式匹配（需积累 6 月+ 板块轮动数据）+ 资金流趋势 ML 预测 + 权重数据驱动校准
-- **Phase 2**：ML 板块轮动预测（XGBoost/LSTM）+ 虹吸态持续性追踪 + 跨市场板块轮动（港股/A 股联动）
+- **Phase 2**：ML 板块轮动预测（XGBoost/LSTM）+ 虹吸态持续性追踪 + 跨市场板块轮动（港股/A 股联动）+ Hawkes 扩展到全 460 板块（稀疏化 + GPU 加速）
 
 ## 6. 待裁定
 
@@ -1297,3 +1677,4 @@ def map_sector_to_stock_signal(
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G06 讨论要点占位，待讨论填空 |
 | 2026-08-10 | 1.0.0 | 落地 spec 定稿 | 板块强度多因子加权+板块级 A/B/C（扩展个股级）+调整周期追踪+轮动序列四阶段+虹吸态识别+板块资金流+板块→个股传导映射 7 算法化；整合 2026-08 研究（AQR sector momentum/华泰三维度/申万 880xxx/虹吸效应/四阶段模型/mask-first）；与 regime 正交，作为选股输入特征非独立层 |
+| 2026-08-11 | 1.0.1 | 新增 §3.10 多元 Hawkes 传染矩阵 | 新增 §3.10 多元 Hawkes 传染矩阵（N×N 激发矩阵+分支比估计+传染爆发检测+板块传染评分）；与 §3.7 资金流/§3.8 传导映射协同；Phase 1.0 限制 5 大核心板块，分支比预警阈值 0.8 |
