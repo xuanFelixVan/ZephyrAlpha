@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.5.0"
+version: "2.9.0"
 date: 2026-08-10
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -36,14 +36,14 @@ scope: 07_trading_decision_architecture
 | [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | 骨架 |
 | [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | 特殊交易日数据资产清单 + #ARCH-DATA-001 hk日历语义错配修复 + #ARCH-DATA-002 语义契约治本方案 | active |
 | [20_first_batch_strategies.md](20_first_batch_strategies.md) | 首批 3 策略定义（打板+多因子+事件驱动） | active |
-| [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | 骨架 |
-| [22_sector_rotation_spec.md](22_sector_rotation_spec.md) | G06 板块轮动 spec | 骨架 |
-| [23_strategy_correlation_validation.md](23_strategy_correlation_validation.md) | G07 策略间相关性验证 | 骨架 |
-| [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | 骨架 |
-| [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) | G09 多因子策略细节 | 骨架 |
-| [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | 骨架 |
+| [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | active |
+| [22_sector_rotation_spec.md](22_sector_rotation_spec.md) | G06 板块轮动 spec | active |
+| [23_strategy_correlation_validation.md](23_strategy_correlation_validation.md) | G07 策略间相关性验证 | active |
+| [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | active |
+| [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) | G09 多因子策略细节 | active |
+| [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | active |
 | [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | 骨架 |
-| [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策 | 骨架 |
+| [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策 | active |
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active |
 | [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active |
 | [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 多策略聚合风控 | active |
@@ -60,7 +60,7 @@ scope: 07_trading_decision_architecture
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接+IS→WFA→OOS | active |
 | [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径+5态FSM | active |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因+TCA 2.0 | active |
-| [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | 骨架 |
+| [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线 | 骨架 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | 骨架 |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案 21 项（全部待讨论） | draft |
@@ -586,20 +586,20 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 20_first_batch_strategies | G04 首批3策略 | G04-AI | ✅ v1.2.0 |
 | discussion_004 | ⚠️ 编号冲突已澄清：代码误用此号指代 13 号文档（Phase 3 降维裁定）；G06 板块轮动实际产出物为 `22_sector_rotation_spec.md` | — | 已澄清 |
 | 15_data_feature_layer_spec | G01 数据特征层 | （待认领） | 骨架已建 v0.1.0 |
-| 21_stock_selection_engine | G05 选股引擎 | （待认领） | 骨架已建 v0.1.0 |
-| 22_sector_rotation_spec | G06 板块轮动 | （待认领） | 骨架已建 v0.1.0 |
-| 23_strategy_correlation_validation | G07 相关性验证 | （待认领） | 骨架已建 v0.1.0 |
-| 24_daban_strategy_detail | G08 打板细节 | （待认领） | 骨架已建 v0.1.0 |
+| 21_stock_selection_engine | G05 选股引擎 | （待认领） | ✅ v1.2.0（L0候选池+L1评分+L2-C排序+双引擎融合+容量估算+§3.3.1 mask-first+§3.6 6维BM-SEL-24强度评级+因子拥挤双曲衰减+risk_parity补齐） |
+| 22_sector_rotation_spec | G06 板块轮动 | （待认领） | ✅ v1.0.1（板块强度+回踩质量+轮动序列+虹吸态+资金流传导+多元Hawkes传染矩阵） |
+| 23_strategy_correlation_validation | G07 相关性验证 | （待认领） | ✅ v1.1.1（12算法流水线：相关矩阵+block-bootstrap+情绪周期分层+滚动CUSUM+copula尾部相依+DCC-GARCH+Ledoit-Wolf+RMT+多重共线性+情绪beta+验证报告，semver修复+ASCII/重复/乱码清理） |
+| 24_daban_strategy_detail | G08 打板细节 | （待认领） | ✅ v1.1.0（疯牛v2.0四维评分+Smart Money席位+连板强度+ZT2LB熔断） |
 | 25_multifactor_strategy_detail | G09 多因子细节 | （待认领） | 骨架已建 v0.1.0 |
-| 26_event_driven_strategy_detail | G10 事件驱动 | （待认领） | 骨架已建 v0.1.0 |
+| 26_event_driven_strategy_detail | G10 事件驱动 | （待认领） | ✅ v1.1.0（六因子矩阵+龙虎榜Smart Money+EVOQUANT远期候选） |
 | 27_second_batch_strategies | G11 第二批次 | （待认领） | 骨架已建 v0.1.0（暂缓讨论） |
-| 35_drawdown_protocol_impl | G16 回撤落地 | （待认领） | 骨架已建 v0.1.0 |
-| 36_var_es_monitoring | G17 VaR/ES | （待认领） | 骨架已建 v0.1.0 |
-| 37_liquidity_crisis_protocol | G18 流动性危机 | （待认领） | 骨架已建 v0.1.0 |
-| 28_sentiment_cycle_trading | G21 情绪周期 | （待认领） | 骨架已建 v0.1.0 |
-| 52_backtest_framework_docking | G23 回测对接 | （待认领） | 骨架已建 v0.1.0 |
-| 53_simulation_live_path | G24 模拟实盘 | （待认领） | 骨架已建 v0.1.0 |
-| 55_monitoring_review | G26 监控复盘 | （待认领） | 骨架已建 v0.1.0 |
+| 35_drawdown_protocol_impl | G16 回撤落地 | （待认领） | ✅ v1.2.0（四级回撤+Kill Switch+恢复50%判定+Decay-LORD FDR熔断+现金底线三级防护） |
+| 36_var_es_monitoring | G17 VaR/ES | （待认领） | ✅ v1.1.0（GARCH-FHS+GARCH(1,1)MLE落地+EVT深尾+L-VaR+e-value回测） |
+| 37_liquidity_crisis_protocol | G18 流动性危机 | （待认领） | ✅ v1.3.0（Hawkes内生+VPIN毒性+Unified OFI+三联检测+跨市场毒性识别远期候选） |
+| 28_sentiment_cycle_trading | G21 情绪周期 | （待认领） | ✅ v1.2.0（五阶段定位+买卖纪律+regime映射+§3.5软影响+§3.6部署+§3.7 Hawkes+block-bootstrap+§3.10 8算法签名契约+compute_sentiment_temperature+detect_phase_transition） |
+| 52_backtest_framework_docking | G23 回测对接 | （待认领） | ✅ v1.2.0（IS/WFA/OOS落地+DSR bootstrap+A股mask-first前置设计） |
+| 53_simulation_live_path | G24 模拟实盘 | （待认领） | ✅ v1.1.0（5态FSM+FSMContext命名修复+双批准角色修复+paper trading循环落地） |
+| 55_monitoring_review | G26 监控复盘 | （待认领） | ✅ v1.0.0 |
 | 12_regime_phase2_validation | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.2.0 |
 | 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | 已提议 | 待确认 |
 | 13_regime_phase3_engineering_plan | Phase 3 工程规划（工程文档，非G主题） | 已提议 | 草案 |
@@ -608,13 +608,13 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 51_panel_experiment_history_mlflow_retirement | Panel 实验历史 Tab + mlflow 退役施工计划（工程文档，非G主题，50_backtest_observability_workplan M2 下游） | 已提议 | 待施工 |
 | 30_multi_strategy_concurrency | 多策略并发架构 | 已定稿 | ✅ v1.3.0 |
 | 31_position_sizing | G12 仓位算法 | 已分配 | ✅ v1.2.0 |
-| 32_firm_risk_aggregator | G13 FirmRiskAggregator | （待认领） | 骨架已建 v0.1.0 |
-| 33_budget_change_handler | G14 BudgetChangeHandler | （待认领） | 骨架已建 v0.1.0 |
-| 34_regime_meta_allocator | G15 RegimeMetaAllocator | （待认领） | 骨架已建 v0.1.0（⚠️参数等C1） |
-| 41_buy_flow | G19 买入流 | （待认领） | 骨架已建 v0.1.0 |
-| 42_sell_flow | G20 卖出流 | （待认领） | 骨架已建 v0.1.0 |
-| 40_execution_broker | G22 下单对接 | G22-AI | ✅ v1.0.0 + 代码已施工 |
-| 54_reconciliation_attribution | G25 对账归因 | （待认领） | 骨架已建 v0.1.0 |
+| 32_firm_risk_aggregator | G13 FirmRiskAggregator | （待认领） | ✅ v1.0.0 |
+| 33_budget_change_handler | G14 BudgetChangeHandler | （待认领） | ✅ v1.0.0 |
+| 34_regime_meta_allocator | G15 RegimeMetaAllocator | （待认领） | ✅ v1.0.0（⚠️参数等C1） |
+| 41_buy_flow | G19 买入流 | （待认领） | ✅ v1.0.0 |
+| 42_sell_flow | G20 卖出流 | （待认领） | ✅ v1.1.0（Level 3 elif逻辑修复：超配削减+个股止损可同时触发） |
+| 40_execution_broker | G22 下单对接 | G22-AI | ✅ v1.7.0 + 代码已施工（PACE LLM+Unified OFI+I-Star/Propagator/OW+Algo Wheel） |
+| 54_reconciliation_attribution | G25 对账归因 | （待认领） | ✅ v1.2.0（Brinson T+1+TCA 2.0五分量+I-Star/OW/Propagator冲击+Algo Wheel） |
 | 60_cross_cutting_cleanup | G27 冲突矩阵清理 | （待认领） | 骨架已建 v0.1.0 |
 | 61_lifecycle_multi_ai | G28 生命周期多AI | （待认领） | 骨架已建 v0.1.0 |
 
@@ -680,3 +680,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-09 | 2.3.1 | 关联行+§3/§5/G22 产出物行修复 7 处重复后缀断链（`_name_name.md`→`_name.md`，涉及 30/10/11/31/40 号） | 改名工程遗留：段位前缀重复拼接产生断链，全量断链扫描发现并修复 |
 | 2026-08-09 | 2.4.0 | 15 篇有内容文档文档头统一登记：frontmatter 字段集/顺序统一（补齐 title/owner/language/topic/scope，12/13/14 的 doc_id/priority/depends_on 等扩展字段保留），H1 去前缀与 title 对齐（废止"讨论框架·/讨论文档·/讨论·/设计备忘·/讨论稿：/NN_filename —"六种混用风格），修订记录各补一行（14 号补建修订记录章节）；00 自身同步 | 骨架体系收尾：结构统一只动文档头元数据与标题行，章节编号与正文内容零变更、零遗漏风险；规范真源见 01_design_memo_management_spec §4.2/§4.3（v1.1.1 同步） |
 | 2026-08-10 | 2.5.0 | §0 目录 11 篇骨架→active 状态同步（32/33/34/35/36/37/41/42/52/53/54）；各篇 v0.1.0→v1.0.0 补齐施工算法 | 施工算法批量补齐：32号FirmRiskAggregator聚合风控+33号BudgetChangeHandler三级升级+34号双轨P&L基础设施+regime分配QP优化器+35/36/37号风险Protocol+41/42号买卖流+52号IS→WFA→OOS+DSR bootstrap+53号5态FSM+54号Brinson归因+TCA 2.0；整合2026-08最新研究（LORD-ZYTHOZ regime QP/Kou滚动自适应/Drovix TCA 2.0/Soloviov DSR鲁棒性带/causal-quant因果验证） |
+| 2026-08-10 | 2.6.0 | 24号v1.1.0（疯牛v2.0四维评分+Smart Money席位画像+连板强度+ZT2LB熔断）+26号v1.1.0（龙虎榜Smart Money因子+EVOQUANT LLM远期候选）+40号v1.7.0（PACE LLM执行+Unified OFI+I-Star/Propagator/OW冲击模型+Algo Wheel） | 整合2026-08打板/事件驱动/执行层最新研究：疯牛v2.0回测TOP20次日+4.94%/上涨率80%+龙虎榜净买率>12%次日+3.10%+PACE LLM超越TWAP/AC 0.65bps+Unified OFI R²=0.65 |
+| 2026-08-10 | 2.7.0 | §7.3 状态表全面同步（24/26/32/33/34/35/36/37/40/41/42/52/53/54/55 共15篇版本号更新）；37号v1.2.0（VPIN订单流毒性+Unified OFI含撤单流+三联毒性危机检测）+54号v1.2.0（I-Star/OW/Propagator市场冲击模型族临时/永久分离+Algo Wheel TCA驱动算法路由） | 2026-08全网最新研究整合：Easley VPIN 2012+Andersen&Bondarenko 2014批判性讨论+VisualHFT 2026-03实务阈值+Kolm Unified OFI 2025 R²翻倍+finantrix 2026-08 Conditional OFI Sharpe=1.79+Kissell-Glantz I-Star 2003+Obizhaeva-Wang 2013+Bouchaud Propagator 2004+Gatheral 2010无套利约束 |
+| 2026-08-10 | 2.8.0 | §7.3 状态表 37 号同步至 v1.3.0（跨市场流动性毒性识别远期候选） | 整合 Zhai 2026-08 arXiv:2608.04373 Public Trader Identity 钱包毒性（R² 提升 13.2% + matched-wallet placebo）+ SEBI 2026-08-03 India CAS 收盘集合竞价改革（首周 Nifty 跳 200 点）+ A 股类比评估（龙虎榜席位画像方法论同构 + A 股收盘竞价 3 分钟 vs CAS 20 分钟结构差异） |
+| 2026-08-10 | 2.9.0 | §0 目录+§7.3 占用表 4 篇骨架→active 同步（21/22/23/28 v0.1.0→v1.0.0）；验证 P0 bug 修复落地（53号FSMState Enum/dataclass命名冲突→FSMContext+approve_upgrade双批准角色初始化、35号check_recovery_conditions峰值50%恢复判定、42号Level 3 elif→if个股止损可同触）；确认2026-08研究整合到位（35号§3.8 Decay-LORD FDR熔断+§3.9 r1000三级cash floor、52号§3.8 A股mask-first前置、62号E15 Tradability Mask） | G05选股引擎（L0候选池+L1评分+L2-C排序+双引擎融合）+G06板块轮动（板块强度+回踩质量+轮动序列+虹吸态）+G07相关性验证（相关矩阵+block-bootstrap+情绪周期分层）+G21情绪周期（五阶段定位+买卖纪律）四篇骨架升级为完整spec；P0级生存bug与2026-08研究整合经逐行代码验证确认已落地 |

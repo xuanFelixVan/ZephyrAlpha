@@ -5,8 +5,8 @@ title: 下单对接与撮合（执行层）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.5"
-date: 2026-08-08
+version: "1.7.0"
+date: 2026-08-10
 topic: execution_broker
 scope: 07_trading_decision_architecture
 ---
@@ -718,6 +718,323 @@ for order in sorted_deltas:  # 先卖后买顺序
 
 **触发条件**（何时才需要研究迁移方案）：国金通知 miniQMT 即将关停，或 miniQMT 连续 3 日无法稳定连接时，再研究大 QMT 迁移（届时查官方文档选方案，不在文档里预存）。
 
+### 2.21 决策⑳：2026-08 最新执行算法研究整合（v1.7.0）
+
+**决策**：整合 2026-08 最新执行算法研究（PACE LLM 执行 / Unified OFI / Kissell-Glantz I-Star / Bouchaud-Farmer Propagator / Obizhaeva-Wang），作为 Phase 1.5+ 演进路径的理论基础。MVP 阶段不施工 LLM 执行，但预留接口 + 记录研究对标。
+
+> **2026-08 研究整合**（v1.7.0）：
+> - **PACE LLM 执行**（arXiv:2607.28410v1, 2026-07-30, Shenzhen Stock Exchange Level-1 数据）：首个 LLM 父单执行研究，分层框架（长周期规划+短周期执行），超越 TWAP/Almgren-Chriss 0.65 bps。LLM 行为特征：高置信度预测更好表现 + 更早交易而非拖延。
+> - **Unified OFI / Cancel-Stream Gap**（electronictradinghub 2026-04-30）：Cont/Kukanov/Stoikov 2014 unified OFI R²=0.65 vs trade-only OFI R²=0.32-0.35——30 个 R² 点的差距源于撤单流。Lu/Reinert/Cucuringu 2024 conditional OFI Sharpe=1.79 vs undifferentiated OFI 负 Sharpe。SEC Rule 605 修订 2026-08 生效（50ms 分辨率执行质量公开记录）。
+> - **Kissell-Glantz I-Star 模型**（2003）：市场冲击定价模型，分离临时冲击（temporary）和永久冲击（permanent），用于 pre-trade 成本估计。
+> - **Bouchaud-Farmer Propagator 模型**（2018）：市场冲击的非线性时间序列结构，propagator G(t) 描述单笔交易对后续价格的传播效应。
+> - **Obizhaeva-Wang 临时/永久冲击分离**（2013）：最优交易策略与供需动态，将冲击显式分解为临时（恢复）+永久（信息）两部分。
+
+#### 2.21.1 PACE LLM 执行框架（Phase 2+ 候选）
+
+```python
+@dataclass
+class PaceConfig:
+    """PACE (Plan-Ahead Controlled Execution) LLM 父单执行配置。
+
+    来源：arXiv:2607.28410v1（2026-07-30, Shenzhen Stock Exchange）
+    核心创新：首个将 LLM 用于"how to execute"（而非"what to trade"）的研究
+
+    分层架构：
+    1. Long-horizon Planning: HP filter 分解价格趋势+波动，LLM 生成全周期执行计划
+    2. Short-horizon Execution: 每个时间片 LLM 决策具体下单量
+
+    实验结果（深交所 Level-1 数据）：
+    - 超越 TWAP/Almgren-Chriss/learning-based baselines 0.65 bps
+    - LLM 行为特征：高置信度→更好表现（vs 人类高置信度→更差回报）
+    - LLM 更早交易而非拖延至截止（避免 end-of-period 集中执行）
+
+    MVP 阶段：不启用（需 LLM 推理基础设施）
+    Phase 2+ 候选：当 LLM 推理成本降至可接受时评估
+    """
+    enabled: bool = False
+    planning_horizon: int = 60          # 规划周期（分钟）
+    execution_slice: int = 5            # 执行切片（分钟）
+    use_hp_filter: bool = True          # Hodrick-Prescott 趋势分解
+    confidence_threshold: float = 0.7   # LLM 置信度阈值
+
+
+def pace_execute_parent_order(
+    parent_order_size: float,
+    time_horizon_minutes: int,
+    market_data_stream: dict,           # 实时行情流
+    config: PaceConfig = None,
+) -> list[dict]:
+    """PACE LLM 父单执行——Phase 2+ 候选，MVP 不施工。
+
+    工作流程（Phase 2+）：
+    1. HP filter 分解价格序列为趋势+波动分量
+    2. LLM 长周期规划：基于趋势+波动生成全周期执行计划
+    3. LLM 短周期执行：每个切片根据实时盘口决策下单量
+    4. 置信度过滤：低置信度切片降低执行量
+
+    与现有 AlgoTradingEngine 的关系：
+    - MVP 阶段使用 TWAP/VWAP/IS 自适应分档（决策②）
+    - Phase 2+ PACE 作为第四种算法选项，由 Algo Wheel 路由
+    """
+    if config is None or not config.enabled:
+        return [{
+            "status": "deferred",
+            "algorithm": "twap_or_vwap",
+            "reason": "PACE LLM execution is Phase 2+ candidate",
+            "reference": "arXiv:2607.28410v1 (2026-07-30)",
+        }]
+
+    raise NotImplementedError(
+        "PACE LLM execution is Phase 2+ feature. "
+        "See arXiv:2607.28410v1 for implementation details."
+    )
+```
+
+#### 2.21.2 Unified OFI 信号增强（Phase 1.5+ 评估）
+
+```python
+def calc_unified_ofi(
+    bid_updates: list[float],       # 最优买价变动序列
+    ask_updates: list[float],       # 最优卖价变动序列
+    bid_size_updates: list[float],  # 最优买量变动序列
+    ask_size_updates: list[float],  # 最优卖量变动序列
+    trade_flows: list[float],       # 成交单方向（+1买/-1卖）
+) -> float:
+    """Unified Order Flow Imbalance (OFI)——超越 trade-only OFI 的信号增强。
+
+    来源：Cont/Kukanov/Stoikov (2014 JFE) + Lu/Reinert/Cucuringu (2024 QF)
+    核心发现（Cancel-Stream Gap, electronictradinghub 2026-04-30）：
+    - Unified OFI（含撤单流）R²=0.65
+    - Trade-only OFI（仅成交流）R²=0.32-0.35
+    - 30 个 R² 点的差距源于 limit order 的添加/修改/撤单事件
+    - Conditional OFI（区分事件类型）Sharpe=1.79 vs undifferentiated 负 Sharpe
+
+    定义：
+    Unified OFI = Σ(Δbid_size × I[bid↑]) - Σ(Δask_size × I[ask↓])
+                 + limit_additions - cancellations
+
+    A 股适用性：
+    - miniQMT Level-1 数据包含 5 档买卖盘口，可计算 unified OFI
+    - 但个人账户无 Level-2 逐笔委托数据，撤单流需从盘口变动推断
+    - Phase 1.5+ 评估：当 miniQMT Level-2 数据可用时启用
+
+    MVP 阶段：暂不实施（需 Level-2 数据支持）
+    """
+    n = min(len(bid_updates), len(ask_updates),
+            len(bid_size_updates), len(ask_size_updates))
+
+    ofi = 0.0
+    for i in range(n):
+        # 买方 OFI：买价上升或买量增加 = 买方压力
+        if bid_updates[i] > 0 or bid_size_updates[i] > 0:
+            ofi += abs(bid_size_updates[i])
+        # 卖方 OFI：卖价下降或卖量增加 = 卖方压力
+        if ask_updates[i] < 0 or ask_size_updates[i] > 0:
+            ofi -= abs(ask_size_updates[i])
+
+    return ofi
+
+
+def calc_conditional_ofi(
+    events: list[dict],  # [{type: "trade"/"limit_add"/"cancel"/"modify", side, size, price}]
+) -> dict[str, float]:
+    """Conditional OFI——按事件类型分解的 OFI（Lu/Reinert/Cucuringu 2024）。
+
+    回测结果：conditional OFI Sharpe=1.79 vs undifferentiated OFI 负 Sharpe
+
+    事件类型分解：
+    - trade_ofi: 成交驱动的 OFI
+    - limit_add_ofi: 限价单挂单驱动的 OFI
+    - cancel_ofi: 撤单驱动的 OFI（最关键——含信息量最高）
+    - modify_ofi: 改单驱动的 OFI
+    """
+    ofi_components = {
+        "trade_ofi": 0.0,
+        "limit_add_ofi": 0.0,
+        "cancel_ofi": 0.0,
+        "modify_ofi": 0.0,
+    }
+
+    for event in events:
+        etype = event.get("type", "")
+        side = event.get("side", "")  # "bid" / "ask"
+        size = event.get("size", 0)
+        sign = 1 if side == "bid" else -1
+
+        if etype == "trade":
+            ofi_components["trade_ofi"] += sign * size
+        elif etype == "limit_add":
+            ofi_components["limit_add_ofi"] += sign * size
+        elif etype == "cancel":
+            ofi_components["cancel_ofi"] -= sign * size  # 撤单反转 OFI
+        elif etype == "modify":
+            ofi_components["modify_ofi"] += sign * size
+
+    return ofi_components
+```
+
+#### 2.21.3 市场冲击模型对标（I-Star / Propagator / Obizhaeva-Wang）
+
+```python
+def estimate_istar_impact(
+    order_size: float,
+    adv: float,                       # 平均日成交额
+    daily_volatility: float,          # 日波动率
+    a1: float = 0.5,                  # 临时冲击系数（需校准）
+    a2: float = 0.3,                  # 永久冲击系数（需校准）
+    b1: float = 1.0,                  # 临时冲击非线性指数
+    b2: float = 1.0,                  # 永久冲击非线性指数
+) -> dict[str, float]:
+    """Kissell-Glantz I-Star 市场冲击模型——pre-trade 成本估计。
+
+    来源：Kissell & Glantz "Optimal Trading Strategies" (2003)
+    公式：
+    - Temporary Impact = a1 × (order_size/adv)^b1 × daily_vol
+    - Permanent Impact = a2 × (order_size/adv)^b2 × daily_vol
+    - Total Impact = Temporary + Permanent
+
+    用途：
+    - pre-trade 成本估计（决策⑬资金预占参考）
+    - Algo Wheel 算法路由依据（大单用更激进的拆单）
+    - TCA 归因中冲击成本拆解
+
+    A 股校准建议：
+    - a1/a2 需基于历史成交数据回归校准
+    - MVP 阶段用占位值，Phase 1.5+ 用实盘数据回归
+    """
+    participation = order_size / adv if adv > 0 else 1.0
+
+    temp_impact = a1 * (participation ** b1) * daily_volatility
+    perm_impact = a2 * (participation ** b2) * daily_volatility
+
+    return {
+        "temporary_impact_bps": temp_impact * 10000,
+        "permanent_impact_bps": perm_impact * 10000,
+        "total_impact_bps": (temp_impact + perm_impact) * 10000,
+        "participation_rate": participation,
+        "model": "I-Star (Kissell-Glantz 2003)",
+    }
+
+
+def estimate_propagator_impact(
+    trades: list[dict],               # [{size, side, timestamp}]
+    propagator_func: callable = None,  # G(t) 传播函数
+    decay_half_life: float = 30.0,    # 传播衰减半衰期（秒）
+) -> float:
+    """Bouchaud-Farmer Propagator 模型——市场冲击的时间序列传播。
+
+    来源：Bouchaud & Farmer "Trades, Quotes and Prices" (2018)
+    核心思想：单笔交易的冲击不是瞬时的，而是通过 propagator G(t) 传播
+
+    公式：ΔP(t) = Σ_i G(t - t_i) × ε_i × q_i
+    - G(t) = 1/(t^β)（幂律衰减）或 exp(-t/τ)（指数衰减）
+    - ε_i = 交易方向（+1买/-1卖）
+    - q_i = 交易量
+
+    用途：
+    - 估计累积冲击（多笔拆单的总冲击非线性叠加）
+    - 优化拆单时序（最小化 propagator 叠加效应）
+    - TCA 中区分"即时冲击"vs"传播冲击"
+
+    MVP 阶段：用简化指数衰减，Phase 1.5+ 校准 G(t)
+    """
+    import math
+
+    if propagator_func is None:
+        # 默认指数衰减传播子
+        tau = decay_half_life / math.log(2)
+        propagator_func = lambda dt: math.exp(-dt / tau) if dt > 0 else 1.0
+
+    total_impact = 0.0
+    current_time = max(t.get("timestamp", 0) for t in trades) if trades else 0
+
+    for trade in trades:
+        dt = current_time - trade.get("timestamp", 0)
+        sign = 1 if trade.get("side") == "buy" else -1
+        size = trade.get("size", 0)
+        total_impact += propagator_func(dt) * sign * size
+
+    return total_impact
+
+
+def estimate_obizhaeva_wang_impact(
+    order_size: float,
+    adv: float,
+    recovery_rate: float = 0.5,       # 价差恢复率（需校准）
+) -> dict[str, float]:
+    """Obizhaeva-Wang 临时/永久冲击分离模型。
+
+    来源：Obizhaeva & Wang "Optimal trading strategy and supply/demand dynamics" (2013)
+    核心贡献：将市场冲击显式分解为：
+    - Temporary Impact: 交易时的瞬时价格偏移（随后部分恢复）
+    - Permanent Impact: 交易后的新均衡价格偏移（不恢复）
+
+    公式：
+    - Temporary Impact ∝ order_size / adv × (1 - recovery_rate)
+    - Permanent Impact ∝ order_size / adv × recovery_rate
+
+    用途：
+    - 拆单策略优化（考虑恢复率决定切片间隔）
+    - TCA 中区分"可恢复成本"vs"不可恢复成本"
+    - 与 I-Star 交叉验证冲击估计
+    """
+    participation = order_size / adv if adv > 0 else 1.0
+
+    total_impact = participation  # 简化：总冲击 = 参与率
+    temp_impact = total_impact * (1 - recovery_rate)
+    perm_impact = total_impact * recovery_rate
+
+    return {
+        "temporary_impact_bps": temp_impact * 10000,
+        "permanent_impact_bps": perm_impact * 10000,
+        "total_impact_bps": total_impact * 10000,
+        "recovery_rate": recovery_rate,
+        "model": "Obizhaeva-Wang (2013)",
+    }
+```
+
+#### 2.21.4 Algo Wheel 概念（Phase 1.5+ 路由框架）
+
+```python
+def algo_wheel_route(
+    order: dict,                       # {symbol, size, side, urgency, ...}
+    market_conditions: dict,           # {adv, volatility, spread, depth, ...}
+    historical_tca: list[dict],        # 历史 TCA 记录（按算法分组）
+) -> str:
+    """Algo Wheel 算法路由——基于历史 TCA 的智能算法选择。
+
+    概念来源：youngju.dev TCA 2026 深度研究（2026-05-25）
+    核心思想：2026 年 Algo Wheel 已普及，所有订单由 ML 模型基于
+    历史 TCA 数据自动路由到最优 broker/算法
+
+    MVP 阶段：使用规则路由（决策②自适应分档）
+    Phase 1.5+：基于历史 TCA 的 ML 路由
+
+    路由规则（MVP 简化版）：
+    - 小单（<0.1% ADV）：直接限价单
+    - 中单（0.1%-1% ADV）：TWAP 切片
+    - 大单（1%-5% ADV）：VWAP + 参与率限制
+    - 超大单（>5% ADV）：IS + 多日分拆
+    - 紧急单：市价单（接受滑点）
+    """
+    size = order.get("size", 0)
+    adv = market_conditions.get("adv", 0)
+    urgency = order.get("urgency", "normal")
+    participation = size / adv if adv > 0 else 1.0
+
+    if urgency == "urgent":
+        return "market_order"
+
+    if participation < 0.001:
+        return "direct_limit"
+    elif participation < 0.01:
+        return "twap"
+    elif participation < 0.05:
+        return "vwap_with_cap"
+    else:
+        return "is_multi_day"
+```
+
 ## 3. 考虑过的替代方案（拒绝理由）
 
 ### 3.1 撮合：统一 TWAP —— 拒绝
@@ -961,3 +1278,4 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 2026-08-09 | 1.6.3 | 文件名 design_memo_010_execution_broker.md → 40_execution_broker.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 1.6.4 | §1+§7.1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md`（2 处） | 改名工程遗留断链修复（全量断链扫描发现） |
 | 2026-08-09 | 1.6.5 | 文档头统一：frontmatter 补 title/owner/language，H1 去"设计备忘·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
+| 2026-08-10 | 1.7.0 | 新增决策⑳：2026-08最新执行算法研究整合 | PACE LLM执行(arXiv:2607.28410v1 2026-07-30深交所数据,超TWAP/Almgren-Chriss 0.65bps,Phase 2+候选)；Unified OFI(Cancel-Stream Gap 2026-04-30,unified R²=0.65 vs trade-only 0.32-0.35,conditional OFI Sharpe=1.79)；Kissell-Glantz I-Star(2003临时/永久冲击分离)；Bouchaud-Farmer Propagator(2018冲击时间序列传播)；Obizhaeva-Wang(2013恢复率模型)；Algo Wheel概念(2026 ML路由)。MVP不施工LLM执行但预留接口+记录研究对标。核心问题19→20 |
