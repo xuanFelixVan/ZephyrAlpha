@@ -5,7 +5,7 @@ title: A股"特殊交易日"数据资产全景与治理（含 hk_trade_calendar 
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 date: 2026-08-12
 topic: special_trading_days_data_assets
 scope: 07_trading_decision_architecture
@@ -388,11 +388,16 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
    删前确认无任务以 source=akshare 调度该 capability（tasks.yaml 唯一任务 source=internal，安全）。
 2. **calendar_event_refresh 任务补登记**（§3.3 最优先缺口）：派生函数已就绪，登记任务
    （monthly_static / 全量幂等 / 依赖 trade_calendar_refresh）并跑一次回填 7 年历史。
+   下游等待方：[15_data_feature_layer_spec](15_data_feature_layer_spec.md) §待定项"Embargo BDay 近似
+   换真交易日历（接 calendar_event）"依赖本表有数据；63 号 v2.1.0 已将本表列入"代码零引用但规划已登记"
+   类别交叉佐证。
 3. **三条 akshare 采集链施工评估**（§3.4）：index_adjustment / ipo_schedule /
    margin_target_adjustment 的 provider 方法 + 任务 + 品类注册整套补建；施工前先确认 MVP
-   是否真需要这三类数据（与 §6.2 一并评估优先级）。
+   是否真需要这三类数据（与 §6.2 一并评估优先级）。63 号 v2.1.0 亦将此 3 表列入
+   "代码零引用但规划已登记"类别（交叉佐证）。
 4. **6 条品类注册补登**（§3.2）：随对应采集链施工一并补登；calendar_event/dividend_tax_node
-   两条 internal 类可先行。
+   两条 internal 类可先行。注册表体系施工规范与 data_asset_registry 登记要求见
+   [62_business_registry_construction](62_business_registry_construction.md)（G62 总案）。
 5. **特殊日子数据资产立项条目补登评估**（v0.2.0 新增）：v0.1.0 frontmatter related_issues 曾引用一个
    "特殊日子数据资产立项"的 ARCH 编号，但 architecture_issue_registry.yaml 中并无对应条目。
    v0.2.0 已从 frontmatter 移除该悬空引用；若需立项追踪后续施工（§6.6-2/3/4），
@@ -421,3 +426,4 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
 |---|---|---|
 | v0.1.0 | 2026-08-10 | 初稿。承接 .trae 工作文档规划职责；记录完整清单 + 已施工盘点 + #ARCH-DATA-001 止血 + #ARCH-DATA-002 治本讨论稿 |
 | v0.2.0 | 2026-08-12 | **已施工盘点真实化修正**（架构审查第 1-3 轮 Grep 全量核实）：① §3.2 品类注册从"7 条已注册"修正为"仅 market_hk_trade_calendar 1 条已注册，6 条待施工"（v0.1.0 声称的 L1921-2019 注册段不存在）；② §3.3 采集任务从"6 个已注册"修正为"仅 hk_trade_calendar_refresh 1 个已注册，5 个待施工"（v0.1.0 声称的 L2369-2433 任务段不存在），并点名 calendar_event 表"代码就绪、数据未灌"为最优先缺口；③ §3.4 三个 akshare 采集方法（index_adjustment/ipo_schedule/margin_target_adjustment）从"已实现"修正为"方法不存在"；④ §2.3 三个个股事件覆盖状态从"✅ 已施工"修正为"🟨 schema 已建、采集链未施工"；⑤ §4.2 止血动作第 2 行从"4 处全删"修正为"方法体+死常量已删，capability frozenset（L169）+ CapabilityContract（L363）两处声明残留"；⑥ §6.4 悬空引用修正任务关闭（全项目 Grep 核实该引用已不存在）；⑦ 新增 §6.6 紧随清理任务 5 项（残留清理/任务补登记/采集链评估/注册补登/立项条目补登评估）；⑧ §2.4 待评估项新增 5 行（国债期货交割日/MLF 操作日/财报强制披露截止窗口/央行 OMO 与经济数据发布日/富时A50期货交割日——A50 为第4轮搜索新发现，每月倒数第2个工作日，离岸衍生品隔夜调仓直接影响 A 股次日跳空，优先级高于国债期货交割日）；⑨ §5.7 补过度工程审查（MVP 最小集=施工项 4+1）；⑩ frontmatter 修正：related_issues 移除注册表中不存在的立项条目引用，scope 双值改单值（01 号规范 §4.2 单值范式）。教训：schema DDL 落盘 ≠ 采集链施工完成，盘点类文档须以 Grep 实证为准。另注：本版修正曾遭并发会话回滚三次，此为重放写入并立即 git add 保护 |
+| v0.2.1 | 2026-08-12 | 第6轮一致性审查·交叉引用补全：§6.6-2 补 15 号下游依赖注记（15 号 PIT Embargo"BDay 近似换真交易日历"待决策项依赖 calendar_event 表有数据）+ 63 号 v2.1.0 交叉佐证（63 号已将 calendar_event 等 6 表列入"代码零引用但规划已登记"类别，与本版 §3.2/§3.3 核实结论互验）；§6.6-4 补 62 号引用（品类注册补登施工规范见 G62 总案） |
