@@ -5,8 +5,8 @@ title: 首批 3 策略定义
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.4"
-date: 2026-08-08
+version: "1.3.0"
+date: 2026-08-12
 topic: first_batch_strategies
 scope: 07_trading_decision_architecture
 ---
@@ -42,7 +42,7 @@ scope: 07_trading_decision_architecture
 
 **矛盾诊断**：charter §3 约束二明确"不走多策略平台派（Citadel/Millennium 式独立 PM 并行），走统一框架派"；而 30_multi_strategy_concurrency §4.3 写"Citadel/Millennium 的 pod 模型本质就是 A"——字面直接冲突。
 
-**实质裁定**：Model A **不是** Citadel pod 式，是 Morwane 式"统一风险框架（firm 求和+裁剪+Kelly）+ 独立 alpha sleeve + regime 风险节流"——它正是 charter 约束二"统一框架派"的正确实现。Citadel pod = 几十个互不相关独立 PM + 被动风险聚合 + PM 间不共享不协同；Model A = 统一 firm 层 + 统一 StrategyBook 接口 + 统一信号工厂（G05）+ 少而精（3-5 个）差异化 sleeve。30_multi_strategy_concurrency §4.3 的 pod 类比是误标，待修订（见 §5 待裁定-1）。
+**实质裁定**：Model A **不是** Citadel pod 式，是 Morwane 式"统一风险框架（firm 求和+裁剪+Kelly）+ 独立 alpha sleeve + regime 风险节流"——它正是 charter 约束二"统一框架派"的正确实现。Citadel pod = 几十个互不相关独立 PM + 被动风险聚合 + PM 间不共享不协同；Model A = 统一 firm 层 + 统一 StrategyBook 接口 + 统一信号工厂（G05）+ 少而精（3-5 个）差异化 sleeve。30_multi_strategy_concurrency §4.3 的 pod 类比是误标，已由其 v1.4.0 修正（§5 待裁定-2 已落地）。
 
 **charter §3 约束逐条对齐**：
 
@@ -79,7 +79,7 @@ scope: 07_trading_decision_architecture
 | **容量上限** | 极小。单票几万~几十万（[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)）。sleeve 整体容量小，必须小账本独立运行，不可承载主资金 |
 | **选股池范围** | 连板梯队标的（主板 + 创业板涨停标的）。排除 ST / *ST / 退市风险警示 / 涨跌停流动性失效标的。具体池生成规则在 G08 打板细节讨论 |
 | **持仓周期** | 1-3 天。T+1 约束下以打板次日卖出为主，连板晋级者持有至分歧/破板 |
-| **与 regime 关系** | 选股**不读** regime 输出，只收 budget 数字。打板内部的"情绪周期4+1阶段定位"（BM-SEL-23-B：冰点/反核/主升/疯狂/退潮）是 **sleeve 内 alpha 择时信号**，决定买卖什么；与 regime 12态灰度概率分布**正交**（regime 决定多谨慎，不决定买卖什么）。边界细化留给 G21 |
+| **与 regime 关系** | 选股**不读** regime 输出，只收 budget 数字。打板内部的"情绪周期4+1阶段定位"（BM-SEL-23-B：冰点/反核/主升/疯狂/退潮）是 **sleeve 内 alpha 择时信号**，决定买卖什么；与 regime 灰度概率分布**正交**（regime 决定多谨慎，不决定买卖什么）。边界已定型：[28_sentiment_cycle_trading §3.1/§3.4](28_sentiment_cycle_trading.md) |
 
 ### 2.3 策略B：多因子（multifactor）
 
@@ -132,6 +132,24 @@ scope: 07_trading_decision_architecture
 - **冲突场景**：同一标的同时被多策略选中（如某连板股既进打板池又因事件进事件池）。处理原则：**按 sleeve 独立账本叠加，不强制去重**——每个 sleeve 独立下自己的单，由 firm 层（[30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md) MOD-POS-021）裁剪控总风险敞口。具体冲突标的净额/优先级规则在 G13
 - **此低交集设计是 G07 相关性验证的前置假设**：若 G07 实测选股池交集率过高（如三策略持仓重合 >20%），需重新审视差异化是否成立
 
+### 2.7 已施工设施盘点（通用规则 #11）
+
+> 全面扫描三策略 alpha 信号链的已建设施（2026-08-12 核验），明确"哪些已能用、哪些是缺口"，作为回填 why 与施工排序的依据。
+
+| 链 | 环节 | 设施 | 状态 |
+|---|---|---|---|
+| 打板 | BM-SEL-22 短线评分卡（7维+强庄股） | `signal_ashare/short_term_stock_selector.py` + `institutional_behavior_analyzer.py` | ✅ production |
+| 打板 | BM-SEL-23 游资接力情绪周期（6因子+4+1阶段） | `signal_ashare/youzi_relay_emotion_engine.py` | ✅ production |
+| 打板 | BM-SEL-24 量化短线强度（6维+A~E评级） | `signal_ashare/quant_short_term_strength_engine.py` | ✅ production |
+| 打板 | BM-SEL-25 双引擎融合（60/40基准+情绪自适应+6类决策） | `signal_ashare/dual_engine_fusion_decision_engine.py` | ✅ production |
+| 多因子 | BM-SEL-02 因子工厂（计算/注册表/IC-IR/衰减/合成/治理） | `factor/`（ic_ir_calc、multifactor_synthesis、factor_optimization、momentum/value_factor、alpha_signal_pipeline、governance/） | ✅ production |
+| 事件驱动 | BM-SEL-27 盘中实时事件处理 | `signal_ashare/intraday_buy_sell_point_analyzer.py` 等 | ✅ production（news_data 多源接入未完成，G10） |
+| 三 sleeve 载体 | StrategyBook / FirmRiskAggregator / BudgetChangeHandler | `position/core/`（MOD-POS-020/021/022） | ✅ production（[30 §7.2](30_multi_strategy_concurrency.md)：54/47 测试） |
+| firm 资金分配 | RegimeMetaAllocator | `pf_alloc/core/regime_meta_allocator.py` | ⚠️ design 骨架（C1 验证已通过，参数待首批 3-6 月 PnL 校准，第二阶段上线） |
+| **3 策略 sleeve 策略类** | daban / multifactor / event_driven 组装策略类 | `pf_core/strategies/` | ❌ **缺口：目录为 re-export 空壳**（仅 DefaultEquityStrategy wrapper），3 个 sleeve 策略类未施工 |
+
+**关键缺口与 why**：三策略的"信号链组件"（打板四引擎 / 因子工厂 / 事件处理）均 production，但把组件组装为 StrategyBook sleeve 的**策略类代码**未落地——这是从"组件就绪"到"首批上线"的最后一公里。组装依赖 G08/G09/G10 细节讨论定型与 G05 选股引擎标准接口（21 号），在此之前本文档的 3 策略定义停留在"架构定义已闭环、代码实例未闭环"状态。
+
 ## 3. 考虑过的替代方案
 
 ### 3.1 主升龙头作为独立策略 —— 拒绝
@@ -169,11 +187,13 @@ scope: 07_trading_decision_architecture
 
 > 多策略运营纪律是生死线（业界经验：80% 写作在研究、50% 实际时间在运营，[quanthedgeai 2026-07](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)）。本节声明首批3策略的灰度上线指引，具体 schedule 与执行在 G24 模拟实盘验证路径。
 
-- **统一灰度流程**（对齐 [charter §4.2 B-007](../../04_architecture_principles_decisions/system_charter.md) 策略工厂上线流程 + quanthedgeai intake 四阶段）：
+- **统一灰度流程**（对齐 [charter §4.2 B-007](../../04_architecture_principles_decisions/system_charter.md) 策略工厂上线流程 + quanthedgeai intake 四阶段；v1.2.0 起**判据驱动**，不设日历硬下限）：
   1. **回测验证**（G23 回测框架）：honest split（in-sample / out-of-sample / true OOS），composite score 达标
-  2. **模拟盘**（paper portfolio，≥6 月）：PnL 偏离回测预期 >30% 则调查后再推进
-  3. **小资金实盘**（half-sized live，≥6 月）：rolling DSR（Deflated Sharpe Ratio）确认信号稳定
+  2. **模拟盘**（paper portfolio）：累计 ≥30 笔有效交易且 PnL 偏离回测预期 ≤30% 即达标；偏离 >30% 则调查后再推进
+  3. **小资金实盘**（half-sized live）：rolling DSR（Deflated Sharpe Ratio）确认信号稳定（DSR>0 且滚动窗口不破）即达标
   4. **全资金实盘**（full size）：持续监控，触发回撤 Protocol 即降级
+
+  > **为何判据驱动而非"≥6 月"日历硬锁**：单人小资金项目按月硬性等待会无谓推迟上线，且与 [30 §6.1](30_multi_strategy_concurrency.md) "3 个月 track record"矛盾；样本量（trade-count）与统计显著性（DSR）才是推进依据（AlphaFactory 2026-05 小项目权衡）。日历时长仅作参考下限（~2 月），不作推进门禁。
 - **上线顺序建议**（各 sleeve 独立灰度，不强制同步）：
   - 打板：容量小、风控参数独立、BM-SEL-22~25 已 production → 可最先灰度
   - 多因子：承载主资金、需充分模拟盘验证因子衰减 → 排第二
@@ -186,10 +206,10 @@ scope: 07_trading_decision_architecture
 
 | 暂缓项 | 暂缓理由 | 重评条件 | 责任方 |
 |---|---|---|---|
-| 1. charter §3 约束二/三措辞修订 | charter 写"按市场状态切换权重"已被 Morwane 实证否决，应修订为"按市场状态做风险节流"；并补充"统一框架=统一firm风险框架+少而精差异化sleeve，非Citadel pod"澄清 | 本讨论已裁定，待物理修订 | 04域 owner 待认领 |
-| 2. 30_multi_strategy_concurrency §4.3 pod 误标修正 | "Citadel/Millennium 的 pod 模型本质就是 A"是误标，应改为"Model A = Morwane 式统一风险框架 + 独立alpha sleeve + regime风险节流"；升版本 v1.3.0→v1.4.0 | 本讨论已裁定，待物理修订 | 07域 owner 待认领 |
-| 3. 30_multi_strategy_concurrency §1.1 5候选清单同步 | 原文列"价值反转/动量趋势/事件驱动/打板/主升龙头"，需更新为"价值反转/动量趋势/事件驱动/打板/多因子"（主升龙头并入打板，多因子新增） | 本讨论 §2.1 已裁定 | 07域 owner 待认领 |
-| 4. 打板情绪周期4+1 与 regime 12态边界 | 两者都沾"情绪"，需明确分工：打板情绪周期=sleeve内alpha择时，regime=市场级风险节流。本讨论只确认"打板选股不读regime输出" | G21 情绪周期×交易决策主题组 | G21 待开工 |
+| 1. charter §3 约束二/三措辞修订 | charter 写"按市场状态切换权重"已被 Morwane 实证否决，应修订为"按市场状态做风险节流"；并补充"统一框架=统一firm风险框架+少而精差异化sleeve，非Citadel pod"澄清 | 本讨论已裁定，待物理修订（2026-08-12 核验：charter §3 约束二仍写"按市场状态切换权重"，未修订） | 04 域 owner 待认领 |
+| ~~2. 30_multi_strategy_concurrency §4.3 pod 误标修正~~ | ✅ **已落地**：30 号 v1.4.0 已修正（§4.3 划删除线 + §7.4 补 resonanzcapital/bayes-group 等 2026 实证） | — | — |
+| ~~3. 30_multi_strategy_concurrency §1.1 5候选清单同步~~ | ✅ **已落地**：30 号 v1.4.0 §1.1 已同步为"价值反转/动量趋势/事件驱动/打板/多因子"（主升龙头并入打板） | — | — |
+| ~~4. 打板情绪周期4+1 与 regime 12态边界~~ | ✅ **已定型**：[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) v1.0.0 §3.1/§3.4（情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，正交） | — | G21 已闭合 |
 
 ## 6. 待定问题
 
@@ -199,7 +219,8 @@ scope: 07_trading_decision_architecture
 | 三策略相关性实测（施工前必做） | [30_multi_strategy_concurrency §6.2](30_multi_strategy_concurrency.md) / G07 | 待 G07 执行 |
 | 各策略容量精确测算 | 本讨论 §2.2-2.4 | 待 G08/G09/G10 细节讨论 |
 | 事件驱动事件源接入（news_data 多源） | 本讨论 §2.4 / G10 | 待 G10 讨论 |
-| 打板情绪周期定位器准确率评估 | [30_multi_strategy_concurrency §6.3](30_multi_strategy_concurrency.md) / G21 | 待评估 |
+| 打板情绪周期定位器准确率评估 | [30_multi_strategy_concurrency §6.3](30_multi_strategy_concurrency.md) / G21 | 待评估（G21 已由 [28](28_sentiment_cycle_trading.md) v1.0.0 定型，回测待 G07） |
+| 3 策略 sleeve 策略类施工（信号链组件→StrategyBook 组装） | 本讨论 §2.7 | 待 G08/G09/G10 细节定型后经 G05 标准接口（21 号）施工 |
 
 ## 7. 引用
 
@@ -207,6 +228,7 @@ scope: 07_trading_decision_architecture
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md)（多策略并发架构总纲，Model A）
 - [00_index_trading_decision.md](00_index_trading_decision.md)（讨论框架路线图，G04 定位）
 - [10_regime_detector_spec.md](10_regime_detector_spec.md)（regime spec，正交边界依据）
+- [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md)（G21 情绪周期×交易决策，v1.0.0 已定型）
 - [system_charter.md §3](../../04_architecture_principles_decisions/system_charter.md)（投资哲学，§1.4 对齐）
 
 ### 7.2 相关作战地图
@@ -239,6 +261,10 @@ scope: 07_trading_decision_architecture
 - [Yukka — Sentiment Decay & Source Selection (2026-05)](https://cdn.prod.website-files.com/66b4f3430903efa023fe741b/69fdded32f3d7e02f17ff3f8_Sentiment%20Decay%20&%20Source%20Selection%20in%20Global%20Equity%20Markets%20-%20White%20Paper.pdf)：情绪 IC 衰减曲线 regime-dependent。§2.4 事件衰减边界细化依据
 - [Hawkes Processes for Investors (2026-02)](https://stockalpha.ai/alpha-learning/hawkes-processes-for-investors-modeling-self-exciting-volatility-bursts)：自激发点过程建模事件聚类。G10 事件冲击建模先进方法
 - [Beyond the Event Horizon (2025)](https://www.preprints.org/manuscript/202506.0079)：事件后 day 0-5 rising phase RVR 9.5x on decay phase。§2.4 持仓周期实证依据
+- 2026-08 A 股游资生态（东方财富社区）：炸板率 ~68%（2023 年 ~40%）、打板隔日溢价 ~1.7%（2023 年 ~4.2%）、量化成交占比 >35%——涨停端 alpha 衰减实证，支撑 §2.2 打板"小容量+情绪周期纪律"定位（详见 [28 §8.3](28_sentiment_cycle_trading.md)）
+- J.P. Morgan Factor Views 3Q26（2026-08-07）：动量因子持续强势、价值/质量历史估值低位、建议跨因子分散——多因子 sleeve 因子族配置的宏观参考
+- LVS Event-Driven 实证（2026Q1）：事件驱动组合在 S&P -8.9% 季度仅 -0.2%——事件驱动收益流与大盘低相关的下行保护属性，支撑 §2.4 事件驱动 sleeve 的分散价值
+- quant67 另类数据综述（2026-05）：新闻情绪信号指数衰减、短线半衰期 30 分钟~数小时——§2.4 事件衰减曲线（rising phase 后快速衰减）的工程参数参考
 
 ## 8. 修订记录
 
@@ -251,3 +277,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-09 | 1.2.2 | §7 前向引用旧名（design_memo_003/discussion_005-008）更新为段位名（21_stock_selection_engine/23-26） | 文档体系重排补遗：前向引用未随 1.2.1 改名同步更新 |
 | 2026-08-09 | 1.2.3 | §1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md` | 改名工程遗留断链修复（全量断链扫描发现） |
 | 2026-08-09 | 1.2.4 | 文档头统一：frontmatter 补 title/owner/language，H1 去"讨论·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
+| 2026-08-12 | 1.3.0 | ①新增 §2.7 已施工设施盘点（通用规则 #11）：打板四引擎/因子工厂/事件处理/position 三件套均 production，pf_core/strategies 空壳=3 策略 sleeve 策略类未施工（缺口登记 §6）；②§4.4 修正内部矛盾——正文"≥6 月"硬性表述改判据驱动（trade-count≥30 + PnL 偏离≤30% + rolling DSR），对齐 v1.2.0 修订记录声称；③§5 待裁定落地状态更新：2/3 号已由 30 号 v1.4.0 落地、4 号已由 28 号 v1.0.0 定型、1 号（charter 措辞）2026-08-12 核验仍未修订保持开放；④§7.5 补 2026-08 实证（炸板率 68% 游资生态 / JPM Factor Views 3Q26 / LVS 事件驱动下行保护 / quant67 情绪衰减）；⑤§7.1 补 28 号引用 | 多轮审查回填：设施盘点先行明确缺口、消除正文与修订记录矛盾、待裁定状态与引用方同步、最新实证入库（2026-08-12 三次并发回滚后重建并即时提交锁定） |
