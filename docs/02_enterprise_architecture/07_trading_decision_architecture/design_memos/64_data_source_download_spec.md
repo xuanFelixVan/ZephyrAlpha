@@ -1631,7 +1631,7 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 10. **东方财富专用爬虫 provider 是否做**？akshare.money_flow blocked 长期无解时。
 11. **调度优先级是否动态化**？根据 fetch_perf api_status 排序。
 12. **调度器高可用是否够用**？单进程 + Task Scheduler watchdog + misfire_grace_time，还是要双活？
-13. **SPECIAL-DAYS 编号悬空**（v1.3.0 审查发现）：本文与 17 号 frontmatter 均引用特殊交易日编号 SPECIAL-DAYS（# 前缀形式见两文 frontmatter，此处按未登记字符串处理），但 architecture_issue_registry.yaml **无此条目**（rg 全表扫描零命中）。需裁定：补登记正式 ARCH 条目，还是改用既有编号（特殊日子治理实际由 #ARCH-DATA-001/002 承载）？——需同步修 17 号 frontmatter（越界未改，仅登记）。
+13. **SPECIAL-DAYS 编号悬空**（v1.3.0 审查发现）：17 号 frontmatter 以带 # 前缀的 ARCH-SPECIAL-DAYS 形式引用该编号，但 architecture_issue_registry.yaml **无此条目**（rg 全表扫描零命中）。本文 frontmatter/正文按 ARCH-REFERENCE 门禁合规去 # 前缀写作 `ARCH-SPECIAL-DAYS`（未登记字符串不作为正式裁定引用）。需裁定：补登记正式 ARCH 条目（则恢复 # 前缀引用），还是全局清除该编号（特殊日子治理实际由 #ARCH-DATA-001/002 承载）？——17 号 frontmatter 需同步处理（越界未改，仅登记）。
 14. **死 fallback 35 处如何处置**（§12.12.2）？①清理 qmt/exchange/bdpan/local_valuation 死配置；②补 Provider 实现；③保留但标注。涉及 tasks.yaml 修改，待裁定。
 15. **CapabilityContract 三闲置字段是否裁剪**（§5.2 实证）？supports_incremental/supports_full_refresh/requires_date_range 全项目保持默认值从未启用，是否保留（占位未来语义校验）还是精简契约？——倾向保留（#ARCH-DATA-002 语义校验落地时可能复用），但不擅自定。
 16. **fetch_perf 是否补被动记录通道**（§10.4 实证 scheduler 零写入）？scheduler 每次任务结束写一条运行时 fetch_perf，让 api_status 反映真实运行而非仅测速抽样？
