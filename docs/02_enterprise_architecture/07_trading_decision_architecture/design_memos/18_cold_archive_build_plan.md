@@ -552,9 +552,9 @@ D 盘空间释放后，启动流水线：
 
 1. **铁律修订 YAML 落盘（用户决策项）**：§4 修订方案（INV-RET-001 改"永不丢弃"、INV-RET-003 补充手动归档豁免、changelog v1.1.0）经 v0.2.0 用户确认，但 data_retention_contract.yaml 仍为 v1.0.0 未落盘。当前处于"归档已执行、契约未同步"临时状态。契约是 human_gated 资产，需用户手动编辑落盘（或明确授权 AI 代编）。
 2. **治理登记补办**：ARCH-DATA-COLD-001 未登记 architecture_issue_registry.yaml；archiver.py 未登记 capability_canonical_file_registry.yaml（creation_token）与 module_translation_registry.yaml（plain_zh）。登记时 status 应反映实际（归档已执行，非 in_progress 施工态）。登记落盘后，本文相关处的无 # 前缀弱引用恢复为正式 #ARCH- 引用格式。
-3. **16号文档补全**：16_technical_indicator_build_plan.md 现为 47 行重建骨架（曾丢失），本文 §1.1/§2.4/§5/§6.4 的存储数字（198 GB/162 GiB/各周期行数）是其唯一真源——16号补全时应对齐引用本文数字，避免双源漂移。
+3. **16号文档补全**：[16_technical_indicator_build_plan.md](16_technical_indicator_build_plan.md) 现为 47 行重建骨架（曾丢失），本文 §1.1/§2.4/§5/§6.4 的存储数字（198 GB/162 GiB/各周期行数）是其唯一真源——16号补全时应对齐引用本文数字，避免双源漂移。
 4. **03_data_layer.md 同步**：03号三层定义（Warm=DuckDB+Parquet）与本文两层施工的关系需说明；03号把 daily_kline 划 Warm 层 vs 本文日 K 永久 Hot 的口径差异；03号 Cold"7 年合规"vs 本文"总保留 ≥5 年"的年限口径；03号未登记 archiver.py 的存在。以上归 03号作者侧同步。
-5. **ETF/LOF 5min+ 周期归档裁定**：kline_etf_5min/15min/30min/60min（2005 年起，~2.5 GiB）与 kline_lof_5min/15min/30min/60min（2010 年起，~1.3 GiB）的 2019 年前分区未归档（§2.5 清单只列了 etf/lof 1min）。合计仅 ~3.8 GiB，归档收益小；但分界线一致性受损（同为分钟 K 线，1min 归档而 5min+ 不归档）。待裁定：补归档（一致性优先）还是维持现状（收益/成本比优先）。另注：63号"归档"指表级生命周期退役，与本文分区级冷归档同名不同义，两文表计数口径差 1（102 vs 103），归 63号侧对齐。
+5. **ETF/LOF 5min+ 周期归档裁定**：kline_etf_5min/15min/30min/60min（2005 年起，~2.5 GiB）与 kline_lof_5min/15min/30min/60min（2010 年起，~1.3 GiB）的 2019 年前分区未归档（§2.5 清单只列了 etf/lof 1min）。合计仅 ~3.8 GiB，归档收益小；但分界线一致性受损（同为分钟 K 线，1min 归档而 5min+ 不归档）。待裁定：补归档（一致性优先）还是维持现状（收益/成本比优先）。另注：[63_data_utilization_audit.md](63_data_utilization_audit.md) 的"归档"指表级生命周期退役，与本文分区级冷归档同名不同义，两文表计数口径差 1（102 vs 103），归 63号侧对齐。
 6. **verify 机制强化（可选）**：当前 verify = 行数比对（±1 容差）+ 抽样可查性，未做 §3.6 设计的逐字段值比对，manifest 缺 rows/ch_size_bytes/compress_ratio/checksum_md5 字段，无独立 export CLI。候选强化：① Parquet 文件级 checksum_md5 写入 manifest（restore 前校验防静默腐坏，E 盘家用存储无 scrub）；② 抽样 100 行恢复字段值比对（symbol/OHLC/volume）；③ manifest 补 rows/compress_ratio（stats 更有用）。评估：已归档的 1865 分区行数全一致，风险敞口小，强化属"好上加好"非必须；若采纳需重跑历史分区补 checksum（成本高，可仅对新归档生效）。
 7. **technical_indicator 30min/15min/5min/1min 归档时机**：阶段 2 已归档 60min/120min 2019 年前；剩余 4 周期为滚动窗口（§5 步骤 5：30min 5 年/15min 3 年/5min 1 年/1min 90 天），其 2019 年前分区是否存在取决于回算最终范围——回算完成后用 `archive-range` 对 2019 年前残留分区收尾即可，无需新设计。
 
@@ -567,6 +567,7 @@ D 盘空间释放后，启动流水线：
 - **口径统一**：§1.3 腾出目标 135 GB/218 GB+ → 147.8 GiB/~231 GB（与 §2.5 一致）；§5 步骤 4 "241 GB"→"231 GB"；§8.1 ARCH 条目 "157.9 GiB"→"147.8 GiB"；§1.1 补 GB/GiB 单位口径说明
 - **治理缺口披露**：§4 铁律修订未落盘（YAML 仍 v1.0.0）；§8.1 ARCH-DATA-COLD-001 未登记；§8.2 两项模块登记未落盘——均转入新增 §10 开放问题（7 项：YAML 落盘/治理登记补办/16号补全/03号同步/ETF-LOF 5min+ 归档裁定/verify 强化/tech_ind 剩余周期归档时机）
 - **§6 验证方法回填**：§6.1 四条验证标准标注实测状态（行数容差/抽样可查性弱化/清单完整性✅/分区删除✅）；§6.2 补实测列
+- **§7 行业实践印证（2026-08-12 WebSearch）**：分区级归档+行数验证方案与 ClickHouse 社区工作流（oneuptime 2026-03 Strategy 3）一致；机构 TTL TO DISK 自动方案因铁律与无 S3 约束不适用，手动 archiver.py 是硬边界内正确取舍
 - **§7 行业实践印证（2026-08-12 WebSearch）**：分区级归档+行数验证方案与 ClickHouse 社区工作流（oneuptime 2026-03 Strategy 3）一致；机构 TTL TO DISK 自动方案因铁律与无 S3 约束不适用，手动 archiver.py 是硬边界内正确取舍
 - **§7 行业实践印证（2026-08-12 WebSearch）**：分区级归档+行数验证方案与 ClickHouse 社区工作流（oneuptime 2026-03 Strategy 3）一致；机构 TTL TO DISK 自动方案因铁律与无 S3 约束不适用，手动 archiver.py 是硬边界内正确取舍
 

@@ -232,7 +232,7 @@ Phase 2 执行 → 4 项独立判定
 
 1. ✅ **A2 "准确率"定义**：已关闭（按方案 A 施工）。a2_hmm_overfitting.py 实现交叉解码一致率为主指标、KL 散度为补充指标（两者同报）；标签对齐采用 **Hungarian 全特征最优匹配**（scipy linear_sum_assignment，欧氏距离矩阵），scipy 不可用时回退单特征（vol_pct）排序——比本节初稿"按态均值排序"更强。
 2. ✅ **B1 "实际态"标签**：已关闭（按方案 A 的务实变体施工）。代码未做"12 态→收益区间"固定映射，改为**按态分组算平均后续收益的 sign 推断预期方向**（数据驱动，|mean|<0.5% 的态跳过）——避免无监督 HMM 的标签语义依赖，自洽且无需领域知识标定。
-3. ✅ **B4 历史事件库**：已落盘 `validation_cases/historical_events.yaml`（8 事件：4 S1 + 4 S2；BREAKOUT 未标注，2008 两事件超出数据范围实际 6 事件参与判定）。后续 14号诊断裁定 S2 事件 design_match=false 排除（见 §11.3）。
+3. ✅ **B4 历史事件库**：已落盘 `validation_cases/historical_events.yaml`（8 事件：4 S1 + 4 S2；BREAKOUT 未标注，2008 两事件超出数据范围实际 6 事件参与判定）。后续 [14号](14_regime_s2_diagnosis.md) 诊断裁定 S2 事件 design_match=false 排除（见 §11.3）。
 4. ✅ **MVP 范围**：已按"第一批 A1+B4、第二批 A2+B1"执行完毕（§9/§10），顺序无争议。
 5. ✅ **IS/OOS 分割点**：按 2018/2019 切分执行（IS 1918 样本 / OOS 1815 样本），两段各有极端事件，代表性均衡，未调整。
 
@@ -458,7 +458,7 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 
 ## 11. Phase 2 闭环与修复落盘（2026-08-12 审查回填）
 
-> 本节回填 §10.4"需复核"之后的实际演进：A2/B1/B4 三项 FAIL 的修复已全部落盘并经重验，Phase 2 于 2026-08-12 前闭环 PASS。真源：13号 §0.1/§2.1/§2.2、14号 §0/§5。
+> 本节回填 §10.4"需复核"之后的实际演进：A2/B1/B4 三项 FAIL 的修复已全部落盘并经重验，Phase 2 于 2026-08-12 前闭环 PASS。真源：[13_regime_phase3_engineering_plan.md](13_regime_phase3_engineering_plan.md) §0.1/§2.1/§2.2、[14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md) §0/§5。
 
 ### 11.1 已施工设施盘点（通用规则 #11）
 

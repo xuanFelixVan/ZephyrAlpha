@@ -686,8 +686,8 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 | Kelly 参数密度 PDF 降级触发条件细化 | 本备忘 §2.3.2 | 待 BM-SEL-13 接口契约明确后定 |
 | `sizing_basis` 输出字段补全（5 约束取最小 + 命名 binding constraint） | 本备忘 §2.3.4（2026-08-10 补充） | 待 MOD-POS-001 Kelly 精裁决施工时补 `sizing_basis` 到输出 dataclass，提升归因可观测性（deadeye-rs 2026-06 `sizing_basis` 模式） |
 | §2.3.3 前瞻 VaR_95 / CVaR_95 的**计算方法**未指定 | 本备忘 §2.3.3（2026-08-10 审查发现） | 当前代码 C4/C5 已实现 var_reduce_factor=0.8 / cvar_reduce_factor=0.7 的下调逻辑，但 VaR/CVaR **数值从何而来**未定型——候选：① 参数化（GARCH/EVT，假设分布形态，A 股厚尾下易失真）② 密度 PDF 积分（BM-SEL-13 就绪后，与 §2.3.2 Kelly 参数同源）③ **Conformal Prediction**（§5 待裁定，regime-weighted conformal，有限样本覆盖保证，与 regime 架构契合）④ **EVT-Based Tail Budgeting**（[stockalpha](https://stockalpha.ai/alpha-learning/evt-based-tail-budgeting-allocating-capital-by-expected-tail-loss) 2026-02-17：GPD 拟合尾部超限 + ETL=Expected Tail Loss 做 tail budget 分配，不依赖整体分布假设只拟合尾部，A 股厚尾场景理论最严谨；与 36号 VaR/ES 监控的 GPD 校准同源可复用）。需人决策：MVP 先用哪种（密度 PDF 未就绪时降级方案），远期演进为 conformal 的触发条件 |
-| 30号 §2.2 遗留描述待同步（StrategyBook"Kelly/risk parity/等权"旧文字与 §2.1"策略层不用 Kelly"矛盾；FirmRiskAggregator 链路缺 MOD-POS-001 Kelly 环节） | 2026-08-12 审查发现（30号 v2.5.0 §2.2，与其 §2.1/§7.2 及代码 size_positions 不符） | 归 30号作者侧修订，本备忘不越界改；与本备忘 §2.1/§2.7 引用一致性不受影响（31号引用的 30号 §2.1 分层裁定内容成立） |
-| 64_d_position.md 域文档滞后待重新生成（MOD-POS-020/021 标"设计态/骨架"，实际已 production 171 测试全绿；64号全文未引用本备忘） | 2026-08-12 审查发现（64号 date 2026-08-05 早于 08-10 三模块施工） | 归 auto-generator 重新生成；本备忘 §4.5 已盘点真实状态可作生成输入 |
+| [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) §2.2 遗留描述待同步（StrategyBook"Kelly/risk parity/等权"旧文字与 §2.1"策略层不用 Kelly"矛盾；FirmRiskAggregator 链路缺 MOD-POS-001 Kelly 环节） | 2026-08-12 审查发现（30号 v2.5.0 §2.2，与其 §2.1/§7.2 及代码 size_positions 不符） | 归 30号作者侧修订，本备忘不越界改；与本备忘 §2.1/§2.7 引用一致性不受影响（31号引用的 30号 §2.1 分层裁定内容成立） |
+| [64_d_position.md](../02_domain_architecture_docs/64_d_position.md) 域文档滞后待重新生成（MOD-POS-020/021 标"设计态/骨架"，实际已 production 171 测试全绿；64号全文未引用本备忘） | 2026-08-12 审查发现（64号 date 2026-08-05 早于 08-10 三模块施工） | 归 auto-generator 重新生成；本备忘 §4.5 已盘点真实状态可作生成输入 |
 
 ## 7. 引用
 
