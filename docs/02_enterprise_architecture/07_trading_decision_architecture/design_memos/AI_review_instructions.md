@@ -86,7 +86,7 @@ scope: 07_trading_decision_architecture
 | AI-16 | 2 | 24_daban_strategy_detail.md + 11_regime_backtest_validation_plan.md | 1853 | M+M |
 | AI-17 | 3 | 31_position_sizing.md + 18_cold_archive_build_plan.md + 12_regime_phase2_validation.md | 1802 | M+M+M |
 | AI-18 | 5 | 21_stock_selection_engine.md + 51_panel_experiment_history_mlflow_retirement.md + 23_strategy_correlation_validation.md + 17_special_trading_days_data_assets.md + 50_backtest_observability_workplan.md | 1918 | M+S×3 |
-| AI-19 | 5 | 20_first_batch_strategies.md + 19_northbound_hold_snapshot.md + 01_design_memo_management_spec.md + 28_sentiment_cycle_trading.md + 60_cross_cutting_cleanup.md | 771 | S×5 |
+| AI-19 | 6 | 20_first_batch_strategies.md + 19_northbound_hold_snapshot.md + 01_design_memo_management_spec.md + 28_sentiment_cycle_trading.md + 60_cross_cutting_cleanup.md + 65_git_safety_governance.md | 1386 | S×5+M |
 | AI-20 | 7 | 33_budget_change_handler.md + 55_monitoring_review.md + 52_backtest_framework_docking.md + 15_data_feature_layer_spec.md + 27_second_batch_strategies.md + 16_technical_indicator_catalog.md + 16_technical_indicator_build_plan.md | 472 | 骨架×7 |
 
 ### 特殊讨论文档 AI（AI-21 ~ AI-22，覆盖 2 篇文档）
@@ -96,7 +96,7 @@ scope: 07_trading_decision_architecture
 | AI-21 | 1 | 90_methodology_open_questions.md | 1068 | 特殊：深度调研+裁定+施工方案 |
 | AI-22 | 1 | 91_density_prediction.md | 45 | 特殊：深度调研+裁定+施工方案 |
 
-> 合计：20 个常规 AI 覆盖 44 篇 + 2 个特殊 AI 覆盖 2 篇 = 46 篇，22 个 AI，全覆盖。
+> 合计：20 个常规 AI 覆盖 45 篇 + 2 个特殊 AI 覆盖 2 篇 = 47 篇，22 个 AI，全覆盖。
 
 ---
 
@@ -1714,17 +1714,18 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 ---
 
-## AI-19 指令（负责 20_first_batch_strategies.md + 19_northbound_hold_snapshot.md + 01_design_memo_management_spec.md + 28_sentiment_cycle_trading.md + 60_cross_cutting_cleanup.md）
+## AI-19 指令（负责 20_first_batch_strategies.md + 19_northbound_hold_snapshot.md + 01_design_memo_management_spec.md + 28_sentiment_cycle_trading.md + 60_cross_cutting_cleanup.md + 65_git_safety_governance.md）
 
 ```
 你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
 
-【你的任务】审查并更新 5 篇文档：
+【你的任务】审查并更新 6 篇文档：
 1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\20_first_batch_strategies.md（首批3策略定义，active v1.2.4，253 行）
 2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\19_northbound_hold_snapshot.md（北向资金季度持仓快照 fetcher 施工计划，draft v0.1.0，213 行）
 3. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\01_design_memo_management_spec.md（管理规范，active v1.2.0，161 行）
 4. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\28_sentiment_cycle_trading.md（G21 情绪周期×交易决策，骨架 0.1.0，72 行）
 5. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\60_cross_cutting_cleanup.md（G27 冲突矩阵清理与事件总线，骨架 0.1.0，72 行）
+6. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\65_git_safety_governance.md（Git 安全治理体系——alias 失效修复与多层防护，draft v0.1.0，615 行）
 
 【背景知识】
 - 01 号规范是所有文档的管理规范——§4.1 段位编号制、§4.4 文档种类适配
@@ -1734,6 +1735,7 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 - 19 号与 25 号衔接：下游消费方（外资行为因子）
 - 28 号与 10 号衔接：情绪周期 vs regime 12 态分工边界
 - 28 号与 24 号衔接：情绪周期定位器
+- 65 号是 git clean 误删事件的治本方案——与 git_guard.py / lock_files.py / GitCommitGateway / session_worktree 相关，与 61 号生命周期多 AI 衔接
 - 60 号与 30 号衔接：§7.3 冲突仲裁 + 事件总线
 
 【工作清单——循环执行直到全部为零】

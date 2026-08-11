@@ -122,20 +122,111 @@ alias 失效不仅影响 clean——`reset`/`checkout`/`restore`/`stash`/`revert
 
 ### 4.1 设施清单
 
+#### A. Git 命令拦截层
+
 | # | 设施 | 文件 | 状态 | 问题 |
 |---|---|---|---|---|
 | 1 | git_guard.py alias 拦截 | scripts/git_guard.py | ⚠️ **全部失效** | alias 无法覆盖内置命令（7 个 DANGEROUS_SUBCOMMANDS 全失效） |
 | 2 | git_guard.py 直接调用 | scripts/git_guard.py | ✅ 代码层有效 | 但无人主动调用 `python scripts/git_guard.py` |
 | 3 | git_guard.py clean 自伤检测 | scripts/git_guard.py L499-565 | ✅ 已修复 | 仅直接调用时有效，alias 调用不生效 |
-| 4 | lock_files.py 文件锁 | scripts/lock_files.py（611行 v2.0.0） | ✅ 系统正常 | **无人使用**（registry.json 为空，最后更新 8月3日） |
-| 5 | concurrency_guard.py | src/zephyr/infrastructure/runtime/concurrency_guard.py（225行） | ✅ 系统正常 | 只读扫描 .ailocks，锁为空时全部放行 |
-| 6 | pre-commit hooks | .pre-commit-config.yaml | ✅ 正常运行 | 只拦 commit（GATE-WORKTREE-REQUIRED 等），**不拦 clean/reset/checkout** |
-| 7 | session_worktree | src/zephyr/gov_enforcement/rule_bridge/session_worktree.py | ✅ 系统正常 | AGENTS.md RULE-WORKTREE 要求但 **AI 未遵守**（直接在主工作区改文件） |
-| 8 | GitCommitGateway | src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py | ✅ 正常运行 | 7 gates commit 门禁，但不拦 clean |
-| 9 | post_checkout_guard.py | scripts/post_checkout_guard.py | ✅ 存在 | checkout 后扫描锁冲突，但 alias 不生效时不会被触发 |
-| 10 | AGENTS.md 规则 | AGENTS.md | ⚠️ 有 RULE-WORKTREE 但 **无 git clean 禁令** | 缺少 git 安全铁律 |
-| 11 | project_memory | memory/project_memory.md | ✅ 已记录灾难教训 | 需确认所有 AI 会读 |
-| 12 | AI_review_instructions §0 规则9/10 | AI_review_instructions.md | ✅ 已加入 | 仅覆盖审查指令中的 AI |
+| 4 | post_checkout_guard.py | scripts/post_checkout_guard.py | ✅ 存在 | checkout 后扫描锁冲突（只警告不阻断），alias 不生效时不触发 |
+| 5 | post_commit_guard.sh | scripts/governance/git_hooks/post_commit_guard.sh | ✅ 存在 | Shell post-commit 守卫（forged_gw_marker 检测原位置） |
+
+#### B. 文件锁与并发防护层
+
+| # | 设施 | 文件 | 状态 | 问题 |
+|---|---|---|---|---|
+| 6 | lock_files.py 文件锁 | scripts/lock_files.py（611行 v2.0.0） | ✅ 系统正常 | **无人使用**（registry.json 为空，最后更新 8月3日） |
+| 7 | concurrency_guard.py | src/zephyr/infrastructure/runtime/concurrency_guard.py（225行） | ✅ 系统正常 | 只读扫描 .ailocks，锁为空时全部放行 |
+| 8 | .ailocks/ 锁目录 | .ailocks/registry.json + hard_locks.json | ✅ 存在 | locks 为空，hard_locks 仅 1 条（launcher.py） |
+
+#### C. Commit 门禁层（80+ gates）
+
+| # | 设施 | 文件 | 状态 | 问题 |
+|---|---|---|---|---|
+| 9 | GitCommitGateway | src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py | ✅ 正常运行 | 全项目唯一合法 commit 入口，但只拦 commit 不拦 clean |
+| 10 | CommitGateRegistry | src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py | ✅ 正常运行 | 门禁注册表（架构债务 #AD-001 治本），43 个门禁注册 |
+| 11 | .pre-commit-config.yaml | .pre-commit-config.yaml（1026行，40+ hooks） | ✅ 正常运行 | 见下表安全相关 hook |
+| 12 | commit_gates/ 目录 | src/zephyr/gov_enforcement/commit_gates/（80+ gate 文件） | ✅ 正常运行 | 见下表 git 安全相关 gate |
+| 13 | rule_enforcement 注册表 | src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml | ✅ 正常运行 | 43 个门禁真源 |
+| 14 | emergency_commit | src/zephyr/gov_enforcement/rule_bridge/emergency_commit.py | ✅ 存在 | 紧急 commit（governance black hole，有一致性检查） |
+| 15 | batched_auto_committer | src/zephyr/gov_enforcement/rule_bridge/batched_auto_committer.py | ✅ 存在 | 批量自动提交器 |
+
+#### D. Worktree 隔离层
+
+| # | 设施 | 文件 | 状态 | 问题 |
+|---|---|---|---|---|
+| 16 | session_worktree | src/zephyr/gov_enforcement/rule_bridge/session_worktree.py | ✅ 系统正常 | AGENTS.md RULE-WORKTREE 要求但 **AI 未遵守** |
+| 17 | worktree_pool/manager/lifecycle | src/zephyr/gov_enforcement/rule_bridge/worktree_*.py | ✅ 存在 | worktree 生命周期管理 |
+| 18 | session_claim | src/zephyr/gov_enforcement/rule_bridge/session_claim.py | ✅ 存在 | session claim 管理（HELD-OVERLAP 原子 check-and-claim） |
+
+#### E. 受保护路径层
+
+| # | 设施 | 文件 | 状态 | 问题 |
+|---|---|---|---|---|
+| 19 | immutable_core.yaml | config/immutable_core.yaml（77行） | ✅ 正常运行 | 25 个禁止操作 + 26 个受保护路径（含 .git/**/AGENTS.md/.ailocks/ 等） |
+| 20 | check_protected_paths | scripts/governance/d6_security/check_protected_paths.py | ✅ 正常运行 | GATE-PROTECTED-PATHS Layer 2 + 手动工具 Layer 3 |
+| 21 | .gitignore 根目录白名单 | .gitignore L236-276 | ✅ 正常运行 | `/*` 忽略全部 + `!` 例外恢复 25 个合法根文件 |
+| 22 | .gitattributes | .gitattributes（59行） | ✅ 正常运行 | `* text=auto eol=lf` + 二进制文件 binary 标记 |
+| 23 | .editorconfig | .editorconfig（32行） | ✅ 正常运行 | `charset = utf-8` / `end_of_line = lf`（防编码损坏） |
+
+#### F. 规则与文档层
+
+| # | 设施 | 文件 | 状态 | 问题 |
+|---|---|---|---|---|
+| 24 | AGENTS.md 规则 | AGENTS.md | ⚠️ 有 RULE-WORKTREE + #ARCH-GIT-SELF-HARM-GUARD L1+L2 但 **无 RULE-GIT-SAFE** | 缺少 git clean 禁令 |
+| 25 | .trae/rules/ 规则 | .trae/rules/project_rules.md + onboarding_detail.md | ⚠️ 有 RULE-ZERO（文件锁）/RULE-TWENTY（写完即提交）但 **无 git 安全铁律** | Trae IDE 规则目录，AI 读这里获取规则 |
+| 26 | project_memory | memory/project_memory.md | ✅ 已记录灾难教训 | 需确认所有 AI 会读 |
+| 27 | AI_review_instructions §0 规则9/10 | AI_review_instructions.md | ✅ 已加入 | 仅覆盖审查指令中的 AI |
+| 28 | SECURITY.md | SECURITY.md | ✅ 存在 | 安全策略文档（漏洞报告流程） |
+
+#### G. 检测与审计层
+
+| # | 设施 | 文件 | 状态 | 问题 |
+|---|---|---|---|---|
+| 29 | echo-guard.yml | echo-guard.yml（43行） | ✅ 正常运行 | 重复代码检测（3+副本硬阻断） |
+| 30 | clone_guard.yml | clone_guard.yml | ✅ 正常运行 | 3 层检测（pre-commit/audit/compare） |
+| 31 | git_secrets_setup.sh | scripts/hooks/git_secrets_setup.sh | ✅ 存在 | git secrets 密钥扫描 hook 安装 |
+| 32 | MCP governance | config/mcp.json L76-87 | ✅ 正常运行 | governance.acquire_lock / check_lock / run_gate MCP 工具 |
+| 33 | behavioral_admission | src/zephyr/gov_enforcement/behavioral_admission/ | ✅ 存在 | 行为准入门禁控制器（admission_controller/verdict_engine） |
+| 34 | invariants 检查 | src/zephyr/gov_enforcement/rule_enforcement/invariants/ | ✅ 存在 | 零残留检查 + 循环依赖 + 契约兼容性 |
+
+#### H. Trae IDE 约束（关键）
+
+| # | 约束 | 说明 |
+|---|---|---|
+| 35 | **Trae IDE 不支持 PreToolUse hooks** | AGENTS.md L47 确认"Trae IDE 不可 hook"——无法在 AI 工具层拦截命令 |
+| 36 | **Trae IDE 终端为 PowerShell 5.1** | 所有 AI 通过 RunCommand 执行的命令都在 PowerShell 5.1 中运行——PowerShell `git()` 函数覆盖在此生效 |
+| 37 | **.trae/rules/ 是 AI 规则入口** | Trae IDE 的 AI 读 .trae/rules/project_rules.md 获取项目规则——RULE-GIT-SAFE 必须写入此文件 |
+
+#### .pre-commit-config.yaml 中与 git 安全直接相关的 hook
+
+| Hook ID | 行号 | 功能 | 与 git 安全的关系 |
+|---|---|---|---|
+| gate-commit-gw | L854-860 | 裸 commit 检测（always_run=true） | 强制所有 commit 走 GitCommitGateway |
+| gate-protected-paths | L101-107 | 受保护路径写入检测 Layer 2 | 保护 .gitignore/.gitattributes/AGENTS.md |
+| gate-worktree-required | L116-122 | 主工作区 commit 软门禁 L3.1 | 累计≥5 次主工作区 commit 升级阻断 |
+| gate-worktree-ops-telemetry | L715-722 | 主工作区擦除操作遥测审计 | 审计 git stash push / git restore / Path.unlink |
+| gate-encoding-safety | L836-844 | 编码安全（BOM/CRLF/mojibake）硬阻断 | 防编码损坏（本项目遇到过 BOM 导致 frontmatter 解析失败） |
+| gate-rules-integrity | L225-233 | 规则文件 golden hash 校验 | 防脚本自篡改 |
+| gate-no-commit-derived | L1018-1025 | 阻断派生产物 git add | 防派生产物入库 |
+| check-merge-conflict-marker | L79-85 | 检测合并冲突标记 | 防冲突标记入库 |
+| detect-private-key-local | L86-92 | 检测私钥 | 防密钥泄露 |
+
+#### commit_gates/ 中与 git 安全直接相关的 gate
+
+| Gate | 文件 | 功能 |
+|---|---|---|
+| WORKTREE-REQUIRED | worktree_required_gate.py (priority=44) | worktree 隔离强制 |
+| PROTECTED-PATHS | protected_paths_gate.py (priority=28) | 受保护路径写入检测 Layer 1（in-process，--no-verify 绕不过） |
+| FORGED-GW-MARKER | forged_gw_marker_gate.py | 防伪造 GW 标记 |
+| GIT-CALL-BUDGET | git_call_budget_gate.py (priority=105) | git 调用预算 warn-only |
+| HELD-OVERLAP | held_overlap_gate.py | 搭便车防护（文件级冲突阻断） |
+| CLAIM-REQUIRED | claim_required_gate.py | claim_files 前置检查 |
+| STASH-ACCUMULATION | stash_accumulation_gate.py | stash 堆积检测 |
+| DERIVED-FILE-DELETION | derived_file_deletion_gate.py | 派生文件删除检测 |
+| CREATE-GUARD | create_guard.py (priority=60) | 新建 .py 文件 creation_token 阻断 |
+| DIRECTORY-CONTRACT | directory_contract_gate.py (priority=30) | 目录契约校验（--no-verify 补偿） |
 
 ### 4.2 防护层失效分析
 
@@ -357,9 +448,13 @@ function git {
 
 **结论**：wrapper 对现有脚本的影响集中在 `session_worktree_abort`（checkout --）和 pre-commit 框架（stash）两个场景，需用逃生通道处理。其他脚本不受影响。
 
-### 7.2 施工项 2：AGENTS.md RULE-GIT-SAFE 永久规则（L3，P0）
+### 7.2 施工项 2：AGENTS.md + .trae/rules/ RULE-GIT-SAFE 永久规则（L3，P0）
 
-**目标**：在 AGENTS.md 中新增 `RULE-GIT-SAFE` 节，作为所有 AI 必须遵守的永久规则。
+**目标**：在 AGENTS.md 和 .trae/rules/project_rules.md 中新增 `RULE-GIT-SAFE` 节，作为所有 AI 必须遵守的永久规则。
+
+**为什么要写两个文件**：
+- AGENTS.md 是项目规则真源（所有 AI 工具通用）
+- .trae/rules/project_rules.md 是 **Trae IDE 的 AI 规则入口**——Trae IDE 的 AI 读此文件获取项目规则，如果不写入此文件，Trae IDE 的 AI 不会看到 RULE-GIT-SAFE
 
 **内容**：
 ```markdown
@@ -517,3 +612,4 @@ function git {
 | 2026-08-11 | 0.3.0 | 第2轮审查修复：新增 git rm 阻断（不带 --cached 删工作区文件）；新增 git checkout . 阻断（丢弃所有未暂存修改）；过度工程审查通过；开放问题完整性确认 | 过度工程+遗漏命令审查 |
 | 2026-08-11 | 0.4.0 | 第3轮审查修复：验证清单补充 git rm/checkout . 测试用例；AGENTS.md RULE-GIT-SAFE 禁令列表补充 git rm；交叉引用/规范符合性/引用纪律确认通过 | 交叉引用+规范符合性+文档质量审查 |
 | 2026-08-11 | 0.5.0 | 第4轮审查修复（全网搜索2026-08最新方案）：调研报告补充5个新开源项目（dcg 5.6k星/ai-agent-secure/SafeRun/git-safety-guard/OpenClaw审批系统）；阻断列表补充 git branch -D/git push --force/git reset --merge（参考 dcg）；放行列表修正 git clean -n dry-run（参考 git-safety-guard）；放行 git push --force-with-lease/git checkout -b/git checkout --orphan；验证清单补充8个测试用例；AGENTS.md 禁令列表同步更新 | 全网搜索2026年8月最新研究实践+更好方案对比+遗漏命令补充 |
+| 2026-08-11 | 0.6.0 | 第5轮审查修复（项目设施全量盘点）：§4.1 设施清单从12项扩展到37项（8层分类：Git命令拦截/文件锁/Commit门禁80+gates/Worktree隔离/受保护路径/规则文档/检测审计/Trae IDE约束）；补充pre-commit 9个安全hook详表；补充commit_gates 10个安全gate详表；新增§H Trae IDE约束节（3条关键约束）；§7.2 补充.trae/rules/规则写入要求 | 项目已有基础设施全量盘点+遗漏设施补充+Trae IDE开发约束强调 |
