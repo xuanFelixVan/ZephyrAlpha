@@ -5940,6 +5940,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- AI审查指令集（2026-08-10，24路并发审查回填指令，覆盖design_memos 42篇文档）---
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md"
+    token: "auto-ai-review-instructions-20260810"
+    created_by: "session-user-assisted"
+    capability: "ai_review_instructions"
   # --- Kimi3 整合指令文档（2026-08-04，battle_map_anchors 显化 + 循环审查指令）---
   - file: "docs/_working/kimi3_battle_map_merge_instructions.md"
     token: "auto-kimi3-battle-map-merge-20260804"
