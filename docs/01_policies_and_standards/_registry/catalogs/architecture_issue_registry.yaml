@@ -13663,40 +13663,6 @@ entries:
   created: '2026-08-10'
   last_updated: '2026-08-10'
 
-- issue_id: '#ARCH-SPECIAL-DAYS'
-  title: 'A股"特殊交易日"数据资产立项——除权/除夕/期货交割/月末/LPR/MSCI/IPO/ETF赎回等影响资金流出的特殊日子纳入 ClickHouse'
-  category: data_asset
-  severity: P2中
-  adjudication: |-
-    用户识别到 A 股存在大量会引发"资金避险 / 资金流出 / 价格异常"的"特殊日子"——
-    除权日、除夕、股指期货交割日、月末季末、LPR 公布日、MSCI 调整、新股申购、
-    ETF 赎回等。这些日子是回测与实盘信号的重要前向特征，需作为数据资产纳入
-    ClickHouse，让回测和信号系统能直接 JOIN。
-
-    裁定：全部纳入数据库，分三类落地——
-    ① 日历结构类（全市场事件，无 symbol）：月末/季末/年末/期货交割/期权行权/
-       LPR公布/港股通休市 → calendar_event 表（已派生）
-    ② 个股事件类（有 symbol）：除权除息/红利税节点/限售解禁/指数成分调整/
-       MSCI调整/融资融券标的调整/IPO申购上市 → 各专属表
-    ③ 派生 VIEW：红利税节点（由 rights_issue 派生，无独立存储）
-
-    完整清单与施工状态见 design_memo 17_special_trading_days_data_assets.md。
-    本议题为 umbrella，具体 bug/治理拆分为 #ARCH-DATA-001（hk_trade_calendar
-    语义错配即时止血）与 #ARCH-DATA-002（capability-API 语义对齐治本）。
-  impact:
-    - 'schemas/categories/market_calendar_event.py（日历结构事件表 DDL）'
-    - 'schemas/categories/market_dividend_tax_node.py（红利税节点 VIEW DDL）'
-    - 'schemas/categories/market_index_adjustment.py（指数成分调整事件 DDL）'
-    - 'schemas/categories/market_ipo_schedule.py（IPO 申购上市日历 DDL）'
-    - 'schemas/categories/market_margin_target_adjustment.py（融资融券标的调整 DDL）'
-    - 'schemas/categories/market_msci_adjustment.py（MSCI/FTSE 调整 DDL）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md（完整清单与治理方案）'
-  fix_phase: '6 张 schema 已落地；calendar_event 派生 + hk_trade_calendar 修复已完成；剩余事件类型待数据源接入'
-  status: decided
-  related_rules: '#ARCH-DATA-001（hk_trade_calendar 语义错配止血）; #ARCH-DATA-002（语义契约治本）; #ARCH-DATA-TI-001（技术指标计算模块）'
-  created: '2026-08-10'
-  last_updated: '2026-08-10'
-
 - issue_id: '#ARCH-DATA-001'
   title: 'hk_trade_calendar 数据源语义错配——akshare 用 A 股日历冒充港股日历'
   category: data_quality
