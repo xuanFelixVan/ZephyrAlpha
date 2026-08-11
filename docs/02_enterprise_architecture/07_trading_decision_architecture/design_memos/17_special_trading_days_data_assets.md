@@ -5,12 +5,11 @@ title: A股"特殊交易日"数据资产全景与治理（含 hk_trade_calendar 
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.1.0"
-date: 2026-08-10
+version: "0.2.0"
+date: 2026-08-12
 topic: special_trading_days_data_assets
-scope: 07_trading_decision_architecture / 03_modules_database
+scope: 07_trading_decision_architecture
 related_issues:
-  - "#ARCH-SPECIAL-DAYS（特殊日子数据资产立项）"
   - "#ARCH-DATA-001（hk_trade_calendar 语义错配即时止血）"
   - "#ARCH-DATA-002（capability-API 语义对齐治本）"
 ---
@@ -18,8 +17,8 @@ related_issues:
 # A股"特殊交易日"数据资产全景与治理
 
 > 本文档承接原 `.trae/documents/special_trading_days_data_ingestion.md`（工作规划，不入 git）的规划职责，
-> 转为正式 design_memo。`business_data_categories.yaml` 与 `tasks.yaml` 中对该旧路径的引用为悬空引用，
-> 待统一指向本文档（见 §6.4）。
+> 转为正式 design_memo。v0.1.0 称 `business_data_categories.yaml` 与 `tasks.yaml` 中对该旧路径的引用为悬空引用，
+> v0.2.0 全项目 Grep 核实该引用已不存在（见 §6.4，任务关闭）。
 
 ## 1. 文档定位
 
@@ -65,6 +64,8 @@ related_issues:
 | 重要会议（两会/中央经济工作会议） | 政策预期+维稳 | calendar_event | major_meeting | ⏸ 表结构预留 |
 | 印花税调整日 | 交易成本突变 | calendar_event | stamp_duty_change | ⏸ 表结构预留 |
 
+> ⚠️ "✅ 已派生"=派生函数已实现；但 `calendar_event_refresh` 任务未注册（§3.3），表当前无数据填充通道，见 §3.5 注记。
+
 ### 2.2 日历表类（交易日历本身）
 
 | 日历 | 落地表 | 数据源 | 覆盖状态 |
@@ -76,12 +77,12 @@ related_issues:
 
 | 事件 | 机理 | 落地表 | 数据源 | 覆盖状态 |
 |---|---|---|---|---|
-| 指数成分股调整（沪深300/中证500/中证1000） | 被动基金强制调仓 | index_adjustment | akshare | ✅ 已施工 |
-| 新股申购+上市 | 打新冻结资金吸筹/上市资金分流 | ipo_schedule | akshare | ✅ 已施工 |
-| 两融标的调整 | 杠杆资金被迫加减仓 | margin_target_adjustment | akshare | ✅ 已施工 |
-| 红利税节点（除息日前1月/前1年） | 税动机交易（持股期限跨档） | dividend_tax_node（VIEW） | internal（rights_issue 派生） | ✅ 已施工 |
+| 指数成分股调整（沪深300/中证500/中证1000） | 被动基金强制调仓 | index_adjustment | akshare | 🟨 schema 已建；采集链（provider 方法/任务/品类注册）未施工（v0.2.0 核实） |
+| 新股申购+上市 | 打新冻结资金吸筹/上市资金分流 | ipo_schedule | akshare | 🟨 schema 已建；采集链未施工（v0.2.0 核实） |
+| 两融标的调整 | 杠杆资金被迫加减仓 | margin_target_adjustment | akshare | 🟨 schema 已建；采集链未施工（v0.2.0 核实） |
+| 红利税节点（除息日前1月/前1年） | 税动机交易（持股期限跨档） | dividend_tax_node（VIEW） | internal（rights_issue 派生） | ✅ VIEW DDL 已建（DDL-as-Code 自动建表）；品类注册未登记（v0.2.0 核实） |
 | 除权除息日 | 除权缺口+税节点触发源 | rights_issue（c3_fundamental） | akshare/ifind | ✅ 已有（非本次新增） |
-| MSCI/富时调整 | 外资被动调仓 | msci_adjustment | manual（待接入） | ⏸ 表结构预留，disabled |
+| MSCI/富时调整 | 外资被动调仓 | msci_adjustment | manual（待接入） | ⏸ schema 预留（无注册/无任务，等效 disabled） |
 | 解禁日 | 解禁抛压预期 | share_unlock（c3_fundamental） | akshare/ifind | ✅ 已有 |
 | 股权质押 | 平仓线风险 | equity_pledge（c3_fundamental） | akshare | ✅ 已有 |
 | 回购 | 回购支撑 | repurchase（c3_fundamental） | akshare | ✅ 已有 |
@@ -93,10 +94,15 @@ related_issues:
 | ETF 赎回日（大额申赎） | ETF 大额申赎引发成分股买卖，可能扰动流动性。但 A 股 ETF 申赎为 T+0 实物申赎，无固定"赎回日"；ETF 净赎回数据可从 `etf_nav` 衍生 | 暂不单独建表，需要时在查询层从 etf_nav 衍生净赎回指标 |
 | 除夕（春节前最后交易日） | 已被 trade_calendar（is_open=0）+ year_end/month_end 覆盖，资金避险效应可由月末/年末事件捕获 | 不单独建表 |
 | 分红股权登记日 | rights_issue 表已含 ex_date，登记日=ex_date-1，可查询层计算 | 不单独建表 |
+| 国债期货交割日（交割月第2个周五，T/TF/TS） | 与股指期货交割日（第3个周五）**不同日**。国债期货交割影响资金面（交割占用保证金+现券联动），但对 A 股个股价格的直接效应弱于股指期货（参与者主要是机构利率交易员，资金分流为间接传导） | 登记待评估：若固收+跨资产研究启动（cross_asset 域），可加 `bond_futures_delivery` event_type；MVP 股票系统优先级低 |
+| MLF 操作日（每月15日，遇周末顺延） | 中期借贷便利利率是 LPR 的前瞻信号（MLF→LPR 传导链），2019 年 LPR 改革后是重要政策利率窗口；与已覆盖的 lpr_announcement（每月20日）互补 | 登记待评估：派生规则简单（每月15日顺延下一工作日），可加 `mlf_operation` event_type，成本同 LPR 派生 |
+| 财报强制披露截止窗口（季报/年报：4/30、8/31、10/31 截止） | 截止日前后是业绩暴雷/超预期集中披露期，事件驱动策略的重要避险/机会窗口；express_report/disclosure_plan 表已有个股披露计划，但"全市场披露截止窗口"作为日历事件未覆盖 | 登记待评估：可加 `earnings_deadline` event_type（每年 4/30、8/31、10/31 三个固定截止日，遇非交易日取前一交易日）；与事件驱动 sleeve（G10）联动价值高 |
+| 央行 OMO 每日操作 / CPI/PMI/社融发布日 | OMO 每日进行无固定效应日；经济数据发布日（CPI 每月9-13日/PMI 月末月初/社融 10-15日）日期不固定，需外部数据源（宏观表已收数据本身，发布日效应可从宏观数据时间戳间接推导） | 不单独建表；宏观数据表（macro_data/edb_data）已覆盖数据本身，发布日效应属事件研究层自行关联 |
+| 富时A50期货交割日（每月倒数第2个工作日，新交所） | v0.2.0 第4轮搜索新发现（东财 2026-07《交割日对A股市场的影响》）：A50 是离岸衍生品，覆盖 A 股盘前/夜间超长交易时段，海外资管+北向对冲资金集中使用——交割日前隔夜外资集中调仓直接形成次日 A 股跳空高开/低开，北向重仓金融/消费龙头是主要受冲击标的。常规月份形成"股指期货交割（第3周五）→ETF期权交割（第4周三）→月末A50交割"固定链条 | 登记待评估：派生规则确定（每月倒数第2个工作日），可加 `a50_futures_delivery` event_type；与 hk_connect_closed（北向停摆）协同刻画北向资金节奏，优先级高于国债期货交割日 |
 
 ## 3. 已施工数据资产盘点
 
-> 反映 2026-08-10 真实状态。schema 文件均为 DDL-as-Code，由 `apply_market_tables_ddl.py` 自动发现建表。
+> 反映 2026-08-12 真实状态（v0.2.0 Grep 全量核实）。schema 文件均为 DDL-as-Code，由 `apply_market_tables_ddl.py` 自动发现建表。
 
 ### 3.1 schema 层（7 个文件，均在 `schemas/categories/`）
 
@@ -117,44 +123,55 @@ related_issues:
 - dividend_tax_node 为 VIEW，由 `c3_fundamental.rights_issue` 实时派生（除息日前1月=1月节点/前1年=1年节点），
   无独立存储、无调度任务，遵循"由现有数据派生不新建表"原则
 
-### 3.2 business_data_categories.yaml 注册（6 条 + hk_trade_calendar）
+### 3.2 business_data_categories.yaml 注册（v0.2.0 核实：仅 1 条已注册，6 条待施工）
 
-注册于 `docs/03_modules/_cross_layer/database/business_data_categories.yaml` L1921-2019（"A股特殊日子数据资产"段）。
-注意 L1923 引用 `special_trading_days_data_ingestion.md` 为悬空引用（见 §6.4）。
+文件：`docs/03_modules/_cross_layer/database/business_data_categories.yaml`。
 
-| category_id | table | enabled | data_source | sla |
-|---|---|---|---|---|
-| market_calendar_event | calendar_event | true | [internal] | L2 |
-| market_index_adjustment | index_adjustment | true | [akshare] | L2 |
-| market_ipo_schedule | ipo_schedule | true | [akshare] | L2 |
-| market_margin_target_adjustment | margin_target_adjustment | true | [akshare] | L2 |
-| market_dividend_tax_node | dividend_tax_node | true | [internal] | L3 |
-| market_msci_adjustment | msci_adjustment | **false** | [manual] | L3 |
-| market_hk_trade_calendar | hk_trade_calendar | true | [internal]（本次修复，原 [exchange]） | L2 |
+| category_id | table | 注册状态（v0.2.0 Grep 核实） |
+|---|---|---|
+| market_hk_trade_calendar | hk_trade_calendar | ✅ 已注册（L781，data_source=[internal]，含 #ARCH-DATA-001 注释） |
+| market_calendar_event | calendar_event | ❌ 未注册（待施工） |
+| market_index_adjustment | index_adjustment | ❌ 未注册（待施工） |
+| market_ipo_schedule | ipo_schedule | ❌ 未注册（待施工） |
+| market_margin_target_adjustment | margin_target_adjustment | ❌ 未注册（待施工） |
+| market_dividend_tax_node | dividend_tax_node | ❌ 未注册（待施工；VIEW 派生，注册仅作台账） |
+| market_msci_adjustment | msci_adjustment | ❌ 未注册（预留，等效 disabled） |
 
-### 3.3 tasks.yaml 采集任务（5 个 + hk_trade_calendar_refresh）
+> v0.2.0 修正说明：v0.1.0 本节声称"7 条注册于 L1921-2019（A股特殊日子数据资产段）"，经 Grep
+> 核实该段落与 6 条 category_id 均不存在——schema DDL 落盘 ≠ 品类注册落盘，两者是独立动作。
+> 本表已改为真实状态。
 
-注册于 `src/zephyr/data/config/tasks.yaml` L2369-2433。注意 L2371 引用同上悬空。
+### 3.3 tasks.yaml 采集任务（v0.2.0 核实：仅 1 个已注册，5 个待施工）
 
-| task_id | table | source | schedule | incremental | 状态 |
-|---|---|---|---|---|---|
-| calendar_event_refresh | calendar_event | internal | monthly_static | false（全量重算幂等） | ✅ 依赖 trade_calendar_refresh |
-| index_adjustment_refresh | index_adjustment | akshare | monthly_static | false（diff 快照） | ✅ |
-| ipo_schedule_incremental | ipo_schedule | akshare | daily_event | true | ✅ |
-| margin_target_adjustment_refresh | margin_target_adjustment | akshare | monthly_static | false（diff 快照） | ✅ |
-| msci_adjustment_refresh | msci_adjustment | akshare | monthly_static | false | ⏸ disabled=true（无数据源） |
-| hk_trade_calendar_refresh | hk_trade_calendar | internal（本次修复，原 akshare） | monthly_static | false | ✅ fallback 已清空 |
+文件：`src/zephyr/data/config/tasks.yaml`。
 
-### 3.4 Provider capability
-
-| Provider | capability | 实现方法 | 底层 API |
+| task_id | table | source | 注册状态（v0.2.0 Grep 核实） |
 |---|---|---|---|
-| InternalComputeProvider | calendar_event | _fetch_calendar_event | 读 trade_calendar 规则派生 |
-| InternalComputeProvider | hk_trade_calendar | _fetch_hk_trade_calendar（本次实现） | exchange_calendars XHKG |
-| AkshareIngestProvider | index_adjustment | _fetch_index_adjustment | ak.index_stock_cons_weight_csindex 等 |
-| AkshareIngestProvider | ipo_schedule | _fetch_ipo_schedule | ak.stock_zh_a_new_em |
-| AkshareIngestProvider | margin_target_adjustment | _fetch_margin_target_adjustment | ak.stock_margin_underlying_info_szse/sse |
-| ~~AkshareIngestProvider~~ | ~~hk_trade_calendar~~ | ~~_fetch_hk_trade_calendar~~ | ~~ak.tool_trade_date_hist_sina（A股日历，本次移除）~~ |
+| hk_trade_calendar_refresh | hk_trade_calendar | internal | ✅ 已注册（L1833-1842，source akshare→internal，无 fallback_sources） |
+| calendar_event_refresh | calendar_event | internal | ❌ 未注册（待施工；internal 派生函数已实现，仅缺任务登记） |
+| index_adjustment_refresh | index_adjustment | akshare | ❌ 未注册（待施工；provider 方法亦缺失，见 §3.4） |
+| ipo_schedule_incremental | ipo_schedule | akshare | ❌ 未注册（待施工；provider 方法亦缺失） |
+| margin_target_adjustment_refresh | margin_target_adjustment | akshare | ❌ 未注册（待施工；provider 方法亦缺失） |
+| msci_adjustment_refresh | msci_adjustment | — | ❌ 未注册（预留，无数据源） |
+
+> v0.2.0 修正说明：v0.1.0 本节声称"6 个任务注册于 L2369-2433"，经 Grep 核实仅
+> hk_trade_calendar_refresh 存在。calendar_event 的 internal 派生函数（§3.5）已实现但无调度
+> 任务——**calendar_event 表当前无数据填充通道**（DDL 建表后空表），这是最优先补齐的缺口。
+
+### 3.4 Provider capability（v0.2.0 核实）
+
+| Provider | capability | 实现方法 | 状态（v0.2.0 Grep 核实） |
+|---|---|---|---|
+| InternalComputeProvider | calendar_event | `_fetch_calendar_event`（L505）+ `_derive_*` 系列 | ✅ 已实现 |
+| InternalComputeProvider | hk_trade_calendar | `_fetch_hk_trade_calendar`（L625，exchange_calendars XHKG） | ✅ 已实现（本次修复） |
+| AkshareIngestProvider | index_adjustment | — | ❌ 方法不存在（待施工） |
+| AkshareIngestProvider | ipo_schedule | — | ❌ 方法不存在（待施工） |
+| AkshareIngestProvider | margin_target_adjustment | — | ❌ 方法不存在（待施工） |
+| ~~AkshareIngestProvider~~ | ~~hk_trade_calendar~~ | ~~`_fetch_hk_trade_calendar`~~ | 方法体已删（留注释）；⚠️ 声明残留见 §4.2 |
+
+> v0.2.0 修正说明：v0.1.0 本节将三个 akshare 采集方法标为已实现（含底层 API
+> `ak.index_stock_cons_weight_csindex` 等），经 Grep 核实 akshare_provider.py 中无任何
+> index_adjust/ipo_sched/margin_target 相关方法——§2.3 三个"🟨"状态与此一致。
 
 ### 3.5 calendar_event event_type 完整枚举与派生状态
 
@@ -178,6 +195,11 @@ related_issues:
 
 计算范围：[today-5年, today+2年]，全量重算幂等（ReplacingMergeTree 按 event_date+event_type 去重）。
 
+> ⚠️ v0.2.0 注记：上表"✅ 已派生"指 **派生函数已实现**（`_derive_month_ends` L139 /
+> `_derive_futures_delivery` L169 / `_derive_lpr_announcement` L192 / `_derive_hk_connect_closed`
+> L601，Grep 核实存在）。但因 §3.3 `calendar_event_refresh` 任务未注册，**派生函数无调度通道，
+> calendar_event 表大概率为空表**——"代码就绪、数据未灌"。回填数据只需补登记该任务并跑一次。
+
 ## 4. hk_trade_calendar 数据源语义错配修复（#ARCH-DATA-001）
 
 ### 4.1 病灶
@@ -196,11 +218,11 @@ related_issues:
 
 | # | 动作 | 文件 |
 |---|---|---|
-| 1 | 实现 `_fetch_hk_trade_calendar`（XHKG 日历，sessions_in_range 主路径 + is_session 逐日回退） | internal_compute_provider.py L482-554 |
-| 2 | 移除 akshare 的 hk_trade_calendar：capability(frozenset) + CapabilityContract + _fetch 方法 + 死常量 _TBL_HK_TRADE_CALENDAR（4 处全删） | akshare_provider.py |
-| 3 | hk_trade_calendar_refresh: source akshare→internal，fallback_sources 清空 | tasks.yaml L1833-1844 |
+| 1 | 实现 `_fetch_hk_trade_calendar`（XHKG 日历，sessions_in_range 主路径 + is_session 逐日回退） | internal_compute_provider.py L625 起 |
+| 2 | 移除 akshare 的 hk_trade_calendar：`_fetch_hk_trade_calendar` 方法体 + 死常量 `_TBL_HK_TRADE_CALENDAR` 已删（L4445-4447 留 #ARCH-DATA-001 注释）。⚠️ **v0.2.0 核实发现 2 处声明残留**：capability frozenset（akshare_provider.py L169）与 `CapabilityContract("hk_trade_calendar", ...)`（L363）未删——provider 声明了 capability 却无实现方法，若误配 source=akshare 跑该 capability 会 AttributeError。此残留正是 §5.5 施工项 4（声明-实现符号一致性 gate）的活靶，列入紧随清理任务（见 §6.6） | akshare_provider.py |
+| 3 | hk_trade_calendar_refresh: source akshare→internal，fallback_sources 清空 | tasks.yaml L1833-1842 |
 | 4 | market_hk_trade_calendar: data_source [exchange]→[internal] | business_data_categories.yaml L794 |
-| 5 | 登记 #ARCH-DATA-001（止血裁定）+ #ARCH-DATA-002（治本立项） | architecture_issue_registry.yaml L13666+ |
+| 5 | 登记 #ARCH-DATA-001（止血裁定）+ #ARCH-DATA-002（治本立项） | architecture_issue_registry.yaml L13682+ |
 
 验证：9 检查点 ALL PASS——圣诞节/节礼日/耶稣受难日/复活节翌日/佛诞/香港特区成立纪念日均不在港股
 交易日（A股这些日子是交易日），证明产出确为港股日历。1478 个交易日（today-5y~today+2y，合理）。
@@ -313,6 +335,12 @@ class CapabilityContract:
 用户裁定：认可此顺序，"能做就尽快上"。MVP 阶段先靠 #ARCH-DATA-001 类即时止血 + 人工 review 兜底，
 下个治理窗口启动语义契约扩展设计。
 
+> **过度工程审查（v0.2.0 补）**：5 项总成本 ~4.5 天，对照 charter 约束二（单机单人）不算过重——
+> 其中施工项 5 已标可选/推迟。**MVP 最小集 = 施工项 4 + 1（合计 1 天）**：符号一致性 gate 防
+> "半截工程"（§4.2 发现的 akshare L169/L363 声明残留正是活例）+ CapabilityContract 字段扩展
+> 提供语义锚载体；施工项 2+3（注册表 + AST gate，2.5 天）随下个治理窗口同批启动，不挤占
+> MVP 实盘生存级施工（40_execution_broker / 53_simulation_live_path 优先）。
+
 ## 6. 开放讨论项
 
 ### 6.1 API 白名单维护责任
@@ -340,20 +368,35 @@ calendar_event 表结构已预留这 3 个 manual event_type，但无填充机�
 
 **待讨论**：填充策略 + 数据源（FOMC 日程官网可爬、两会日期固定可手工、印花税历史调整可查）。
 
-### 6.4 悬空引用修正
+### 6.4 悬空引用修正（v0.2.0 核实：任务关闭）
 
-`business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
-`docs/03_modules/_cross_layer/database/special_trading_days_data_ingestion.md`，该路径不存在
-（实际文档在 `.trae/documents/`，不入 git）。本文档（17 号）承接其规划职责。
-
-**待施工**：将上述两处引用改为指向本文档
-`docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md`。
-本次提交暂不改（避免混入过多改动），列为紧随小任务。
+v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
+`docs/03_modules/_cross_layer/database/special_trading_days_data_ingestion.md` 为悬空引用。
+**v0.2.0 全项目 Grep 核实：该引用已不存在于任何文件**（唯一提及处是本文档自述）——
+推测随 v0.1.0 声称的"L1921-2019 注册段/L2369-2433 任务段"从未落盘而自然不存在。
+本任务关闭，无需施工。
 
 ### 6.5 ETF 赎回日是否单独建表
 
 用户最初提及"ETF 赎回日"。评估结论（§2.4）：A 股 ETF 为 T+0 实物申赎，无固定"赎回日"；
 净赎回数据可从 `etf_nav` 衍生。**建议不单独建表**，需要时在查询层衍生净赎回指标。待用户确认。
+
+### 6.6 紧随清理任务（v0.2.0 新增）
+
+1. **akshare hk_trade_calendar 声明残留清理**（§4.2 第 2 行）：删 akshare_provider.py L169
+   frozenset 中 `"hk_trade_calendar"` + L363 `CapabilityContract("hk_trade_calendar", ...)`。
+   删前确认无任务以 source=akshare 调度该 capability（tasks.yaml 唯一任务 source=internal，安全）。
+2. **calendar_event_refresh 任务补登记**（§3.3 最优先缺口）：派生函数已就绪，登记任务
+   （monthly_static / 全量幂等 / 依赖 trade_calendar_refresh）并跑一次回填 7 年历史。
+3. **三条 akshare 采集链施工评估**（§3.4）：index_adjustment / ipo_schedule /
+   margin_target_adjustment 的 provider 方法 + 任务 + 品类注册整套补建；施工前先确认 MVP
+   是否真需要这三类数据（与 §6.2 一并评估优先级）。
+4. **6 条品类注册补登**（§3.2）：随对应采集链施工一并补登；calendar_event/dividend_tax_node
+   两条 internal 类可先行。
+5. **特殊日子数据资产立项条目补登评估**（v0.2.0 新增）：v0.1.0 frontmatter related_issues 曾引用一个
+   "特殊日子数据资产立项"的 ARCH 编号，但 architecture_issue_registry.yaml 中并无对应条目。
+   v0.2.0 已从 frontmatter 移除该悬空引用；若需立项追踪后续施工（§6.6-2/3/4），
+   应先在注册表补登条目、再在本文档恢复引用——待用户裁定是否需要。
 
 ## 7. 关键文件清单
 
@@ -365,10 +408,10 @@ calendar_event 表结构已预留这 3 个 manual event_type，但无填充机�
 | schemas/categories/market_margin_target_adjustment.py | margin_target_adjustment DDL 真源 |
 | schemas/categories/market_dividend_tax_node.py | dividend_tax_node VIEW DDL 真源 |
 | schemas/categories/market_msci_adjustment.py | msci_adjustment DDL 真源（预留） |
-| src/zephyr/data/implementations/internal_compute_provider.py | calendar_event + hk_trade_calendar 派生 |
-| src/zephyr/data/implementations/akshare_provider.py | index_adjustment/ipo_schedule/margin_target_adjustment 采集（hk_trade_calendar 已移除） |
-| src/zephyr/data/config/tasks.yaml | 6 个采集任务 |
-| docs/03_modules/_cross_layer/database/business_data_categories.yaml | 7 条品类注册 |
+| src/zephyr/data/implementations/internal_compute_provider.py | calendar_event（L505）+ hk_trade_calendar（L625）派生 |
+| src/zephyr/data/implementations/akshare_provider.py | ⚠️ hk_trade_calendar 声明残留 2 处（L169/L363，§6.6-1 待清理）；三个事件采集方法未施工 |
+| src/zephyr/data/config/tasks.yaml | 1 个已注册任务（hk_trade_calendar_refresh L1833）+ 5 个待注册（§3.3） |
+| docs/03_modules/_cross_layer/database/business_data_categories.yaml | 1 条已注册（market_hk_trade_calendar L781）+ 6 条待注册（§3.2） |
 | docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml | #ARCH-DATA-001/002 裁定 |
 | docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/17_special_trading_days_data_assets.md | 本文档 |
 
@@ -377,3 +420,4 @@ calendar_event 表结构已预留这 3 个 manual event_type，但无填充机�
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | v0.1.0 | 2026-08-10 | 初稿。承接 .trae 工作文档规划职责；记录完整清单 + 已施工盘点 + #ARCH-DATA-001 止血 + #ARCH-DATA-002 治本讨论稿 |
+| v0.2.0 | 2026-08-12 | **已施工盘点真实化修正**（架构审查第 1-3 轮 Grep 全量核实）：① §3.2 品类注册从"7 条已注册"修正为"仅 market_hk_trade_calendar 1 条已注册，6 条待施工"（v0.1.0 声称的 L1921-2019 注册段不存在）；② §3.3 采集任务从"6 个已注册"修正为"仅 hk_trade_calendar_refresh 1 个已注册，5 个待施工"（v0.1.0 声称的 L2369-2433 任务段不存在），并点名 calendar_event 表"代码就绪、数据未灌"为最优先缺口；③ §3.4 三个 akshare 采集方法（index_adjustment/ipo_schedule/margin_target_adjustment）从"已实现"修正为"方法不存在"；④ §2.3 三个个股事件覆盖状态从"✅ 已施工"修正为"🟨 schema 已建、采集链未施工"；⑤ §4.2 止血动作第 2 行从"4 处全删"修正为"方法体+死常量已删，capability frozenset（L169）+ CapabilityContract（L363）两处声明残留"；⑥ §6.4 悬空引用修正任务关闭（全项目 Grep 核实该引用已不存在）；⑦ 新增 §6.6 紧随清理任务 5 项（残留清理/任务补登记/采集链评估/注册补登/立项条目补登评估）；⑧ §2.4 待评估项新增 5 行（国债期货交割日/MLF 操作日/财报强制披露截止窗口/央行 OMO 与经济数据发布日/富时A50期货交割日——A50 为第4轮搜索新发现，每月倒数第2个工作日，离岸衍生品隔夜调仓直接影响 A 股次日跳空，优先级高于国债期货交割日）；⑨ §5.7 补过度工程审查（MVP 最小集=施工项 4+1）；⑩ frontmatter 修正：related_issues 移除注册表中不存在的立项条目引用，scope 双值改单值（01 号规范 §4.2 单值范式）。教训：schema DDL 落盘 ≠ 采集链施工完成，盘点类文档须以 Grep 实证为准。另注：本版修正曾遭并发会话回滚三次，此为重放写入并立即 git add 保护 |

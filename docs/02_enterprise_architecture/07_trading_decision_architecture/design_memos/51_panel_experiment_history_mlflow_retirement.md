@@ -5,8 +5,8 @@ title: Panel「实验历史」Tab + MLflow 退役施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.6"
-date: 2026-08-09
+version: "1.2.8"
+date: 2026-08-12
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
 parent: 50_backtest_observability_workplan.md
@@ -14,12 +14,21 @@ parent: 50_backtest_observability_workplan.md
 
 # Panel「实验历史」Tab + MLflow 退役施工计划
 
-> 状态: 工作计划（待施工，M2 实施计划；方向已由用户裁定）
+> 状态: 工作计划（**待施工**，M2 实施计划；方向已由用户裁定）
 > 日期: 2026-08-08
 > 作者: AI 提议，用户已裁定方向（Panel 集成 + MLflow 退役）
 > 关联: #ARCH-OBS-EXP-TRACK-001（实验跟踪体系）→ 50_backtest_observability_workplan（上游工作计划）→ 本施工计划
 > 前序: 50_backtest_observability_workplan（回测可观测性工作计划，M1 已完成）
 > 依据: 50_backtest_observability_workplan §3 ④（M2）+ 用户决策（完全卸载 MLflow / 自建 C1 对比视图）
+
+> **施工进度核验（v1.2.7，2026-08-12 Grep/Glob 实证）**：A/B/C 三工作流**均未启动**——
+> ① `_MLflowBackend`（experiment_tracker.py L137）、query.py mlflow 分支（L100/L170）、
+> config.py `tracking_uri`/`experiment_prefix`（L45-46）全部仍在；② `experiment_history.py` 未创建，
+> app_panel.py 仍 10 Tab（L300-310）无「实验历史」；③ `query.py` 无 `download_artifact`，
+> `_get_run_fallback`（L198-226）仍只取 `local_path`（§二.5 缺口仍在）；④ pyproject.toml 无 mlflow
+> 声明（§二.2 仍属实，环境级 `pip uninstall mlflow` 未执行）。**§二 Current State Analysis 与代码
+> 现状仍完全一致**，施工条件未变，可直接开工。治理侧：#ARCH-OBS-EXP-TRACK-001 注册表标题已含
+> "MLflow 退役"（C2-3 部分已做）；50 号 v1.1.0 已按本计划逆转收敛（MLflow 路线标失效）。
 
 ## 一、Summary（一句话目标）
 
@@ -378,8 +387,9 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 ### D. Panel Live Server（HoloViz 官方 MCP，开发期可视化验证）
 - **来源**：Panel Live Server（2026-06，HoloViz 官方 GSoC 项目）
 - **是什么**：HoloViz 官方 MCP server，AI 可直接在对话里渲染 Panel 可视化（validate→show→screenshot）。
+- **社区实现补充**（v1.2.8 补，2026-08-12 第4轮搜索）：除官方 Panel Live Server 外，2026-03 已出现三个社区 HoloViz MCP 实现——[panel-viz-mcp](https://github.com/AtharvaJaiswal005/panel-viz-mcp)（15 工具，FastMCP+hvPlot+Bokeh，双向通信）、[HoloViz-MCP-Server](https://github.com/SuMayaBee/HoloViz-MCP-Server)（27 工具，5 层安全校验管线+SQLite 持久化+iframe 渲染）、[holoviz-viz-mcp](https://github.com/ghostiee-11/holoviz-viz-mcp)（23 工具 v0.4.0，Panel embed 模式产出自包含交互 HTML，89 测试）。三者均为 MCP Apps Standard 实现，成熟度已超"官方 GSoC 演示"阶段——接入时可对比选型（官方 vs 社区），holoviz-viz-mcp 的 embed 模式（无服务器自包含 HTML）对本项目单机场景最贴合。
 - **对本项目的价值**：100% AI 开发场景下，AI 能在对话里直接渲染/截图验证 Panel Tab，不用用户手动开浏览器。
-- **建议**：**值得后续接入**（不阻塞当前 MVP）。理由：与项目"AI 可发现性"治理目标一致，且是 HoloViz 官方工具非外部依赖。登记为"Panel Tab 上线后评估接入 panel-live-server 做开发期可视化验证"。
+- **建议**：**值得后续接入**（不阻塞当前 MVP）。理由：与项目"AI 可发现性"治理目标一致，且是 HoloViz 官方工具非外部依赖。登记为"Panel Tab 上线后评估接入 panel-live-server 或社区实现做开发期可视化验证"。
 
 ### E. 过拟合检测体系（PBO / DSR / 多重检验校正）
 - **来源**：deflated-alpha v0.3.0（GitHub 0scarito，2026-07-26，MIT）+ Bailey et al. PBO/CSCV (2017) + marketmaker.cc 控制实验 (2026-07)
@@ -431,3 +441,5 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 2026-08-09 | 1.2.4 | 第七轮再审：补强 §八 E 过拟合检测论证 | 2 处补充（均落 §八 E 后续增强，不改施工计划）：①§八 E 补 DSR 有效试验数难题（marketmaker.cc 2026-07 受控实验：DSR fed raw trial count 错误拒绝真 edge，5 估计器跨 1.6-370.0，须 bootstrap sidestep）；②§八 E 补九大门控完整菜单（Student One 2026-06：Holdout/Walk-Forward/Purged K-Fold/PBO/Romano-Wolf/SPA/MC block-bootstrap/cluster stability/FDR，原记 5 种补全为 9 门禁）。验证表补 2 行留痕。第七轮全网搜索（PBO/DSR/多重检验/回测审计 2026-07/08）验证施工层（A/B/C + §七 10 项）算法完整无缺失，新发现 2 项均属验证方法论层，强化"MVP 不做"论证 |
 | 2026-08-09 | 1.2.5 | 文件名 discussion_022_panel_experiment_history_tab_and_mlflow_retirement.md → 51_panel_experiment_history_mlflow_retirement.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 1.2.6 | 文档头统一：frontmatter 补 title/owner/language，H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
+| 2026-08-12 | 1.2.7 | 施工进度核验块注入（头部） | 架构审查第 1-2 轮 Grep/Glob 全量实证：A/B/C 三工作流均未启动（_MLflowBackend/query.py mlflow 分支/config.py tracking_uri 仍在；experiment_history.py 未创建；app_panel 仍 10 Tab；download_artifact 未建；_get_run_fallback bytes artifact 缺口仍在；pip uninstall mlflow 未执行）。§二 Current State 与代码现状仍完全一致，施工条件未变。登记 50 号 v1.1.0 已按本计划逆转收敛 + #ARCH-OBS-EXP-TRACK-001 注册表标题已含"MLflow 退役"（C2-3 部分已做）。正文施工计划零变更。另注：本版修正曾遭并发会话回滚一次，此为重放写入 |
+| 2026-08-12 | 1.2.8 | §八.D 补三个社区 HoloViz MCP 实现（第4轮搜索） | 2026-08-12 第4轮 WebSearch 新发现：除官方 Panel Live Server 外，2026-03 已出现三个社区 HoloViz MCP 实现（panel-viz-mcp 15 工具/HoloViz-MCP-Server 27 工具/holoviz-viz-mcp 23 工具 v0.4.0 embed 模式 89 测试），成熟度超官方 GSoC 演示；holoviz-viz-mcp embed 模式（无服务器自包含 HTML）对本项目单机场景最贴合。登记性质增强（后续接入时对比选型），不改施工计划 |
