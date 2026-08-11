@@ -5,7 +5,7 @@ title: 策略生命周期与多 AI 协作
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.12.1"
+version: "2.12.2"
 date: 2026-08-12
 topic: lifecycle_multi_ai
 scope: 07_trading_decision_architecture
@@ -65,7 +65,7 @@ scope: 07_trading_decision_architecture
 | 多 AI 协作交接 | design_memo 产出物 + depgraph path + 00_index §7.3 占用表 | ✅ 运营中（人调度多会话） | §3.6 交接纪律的载体（无 agent 编排系统） |
 | 漂移检测/退役监控 | 本备忘 §3.3 Drift Observatory / §3.9 退役量化阈值 | ⚠️设计规范伪代码（mSPRT/四层编排/退役 5 步），代码待施工 | G28 核心设计产出，待 55 号（G26 骨架）定型后落地告警联动 |
 | 市场仿真域 | `simulation/` 15 模块（[71_d_simulation](../../02_domain_architecture_docs/71_d_simulation.md)） | ✅ production | §3.5 模拟阶段的市场仿真侧（what-if，≠paper trading；BM-SIM-05 数字孪生已降级 #ARCH-OE-010） |
-| 模拟→实盘迁移路径 | [53_simulation_live_path](53_simulation_live_path.md)（active v1.7.0）+ §2.4 设施盘点 | ✅ 已定稿 | §3.1 ④模拟→⑤实盘 的迁移路径承接（PARALLEL/SHADOW/GRAY_RAMP 门禁 + 灰度上线） |
+| 模拟→实盘迁移路径 | [53_simulation_live_path](53_simulation_live_path.md)（active）+ §2.4 设施盘点 | ✅ 已定稿 | §3.1 ④模拟→⑤实盘 的迁移路径承接（PARALLEL/SHADOW/GRAY_RAMP 门禁 + 灰度上线） |
 ## 3. 决策
 
 ### 3.1 策略生命周期 6 阶段状态机
@@ -313,7 +313,7 @@ scope: 07_trading_decision_architecture
    ```
    **施工要点**：① 四层权重 Layer 4 最高（0.40，可证覆盖非启发式）反映"数学保证 > 经验阈值"优先级；② 下游影响门控仅作用于 Layer 1（特征漂移多为良性），Layer 2-4 已直接关联模型行为不门控；③ CUSUM→calibration flush 复用 §3.3 残差漂移 CUSUM 基础设施（同一检测器既检残差漂移又触发 CP 校准集冲刷）；④ 分级响应阈值 0.20/0.40/0.60/0.80 对应 alert/reduce/stop/quarantine/retrain 五级，与 stockalpha staged responses 对齐；⑤ Layer 4 `coverage_breach`（可证覆盖破）直接触发 RETRAIN 绕过 composite 阈值——数学保证层的告警不可被其他层"稀释"
 
-   **downstream_impact_gate + trigger_retraining 施工伪代码**（2026-08-10 补充，施工算法缺失填补——上述 drift_observatory_orchestrate 在 L200 调用 `downstream_impact_gate(l1)` 和 L216 调用 `trigger_retraining(strategy_id)` 均为悬空 helper，与 54 号 v1.14.0 补全 get_sector/current_session_id/aggregate 同类跨文档悬空 helper 缺口；drift_observatory_orchestrate + BettingMartingaleCoverageMonitor 均已有施工伪代码，仅剩这两个 helper 未落地则四层 Drift Observatory 编排逻辑无法闭环执行）：
+   **downstream_impact_gate + trigger_retraining 施工伪代码**（2026-08-10 补充，施工算法缺失填补——上述 drift_observatory_orchestrate 在 L200 调用 `downstream_impact_gate(l1)` 和 L216 调用 `trigger_retraining(strategy_id)` 均为悬空 helper，与 54 号补全 get_sector/current_session_id/aggregate 同类跨文档悬空 helper 缺口；drift_observatory_orchestrate + BettingMartingaleCoverageMonitor 均已有施工伪代码，仅剩这两个 helper 未落地则四层 Drift Observatory 编排逻辑无法闭环执行）：
 
    ```python
    def downstream_impact_gate(l1):
@@ -678,7 +678,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.5 模拟阶段（BM-SIM）规范
 
-承接 [battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md) + [53_simulation_live_path](53_simulation_live_path.md)（三阶段迁移 + 4 级 Kill Switch + Alpha Decay，active v1.7.0）。本节锁定生命周期视角的模拟准入门禁与退出条件。
+承接 [battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md) + [53_simulation_live_path](53_simulation_live_path.md)（三阶段迁移 + 4 级 Kill Switch + Alpha Decay，active）。本节锁定生命周期视角的模拟准入门禁与退出条件。
 
 **核心纪律**：
 1. **paper → shadow → live 三阶段迁移**（53 号）：paper trading（虚拟撮合，验证逻辑）→ shadow mode（实盘行情 + 虚拟撮合，验证信号）→ live trading（实盘小额，验证执行）。每阶段有独立退出条件
@@ -749,7 +749,7 @@ scope: 07_trading_decision_architecture
 | **Equity curve 斜率丧失** | equity curve 平台或下降持续数周/数月（非单周，[arrowalgo 2026-05-14](https://arrowalgo.com/when-to-stop-a-trading-algorithm/)：flat or declining for a meaningful period — not a single week, but several weeks or months） | 净值曲线监控 |
 | **Half-life 预测** | 半衰期模型 `α(t) = α₀·e^(-λt)` 预测 alpha 已降至 transaction cost floor 以下（[mathandmarkets 2026-02-22](https://mathandmarkets.com/p/half-lives-of-alpha-why-every-strategy)：可用半衰期 = `-ln(cost_floor/α₀) / λ`） | §3.3 第 5 条 half-life 数学模型 |
 | **Regime 失配持续** | 当前 regime 与策略设计 regime 持续不匹配 + 该 regime 历史回测也表现差（[arrowalgo 2026-05-14](https://arrowalgo.com/when-to-stop-a-trading-algorithm/)：market regime has shifted and your strategy was not built to handle the new environment） | regime 检测器联动（10号 spec） |
-| **逻辑失效（结构性）** | 原始市场前提不再成立（如打板策略遇 2026 量化占比 35%+ + 程序化新规 + 连板炸板率 68%，[24_daban_strategy_detail](24_daban_strategy_detail.md)（active v1.9.7）已记录） | 人工判断 + 设计备忘登记 |
+| **逻辑失效（结构性）** | 原始市场前提不再成立（如打板策略遇 2026 量化占比 35%+ + 程序化新规 + 连板炸板率 68%，[24_daban_strategy_detail](24_daban_strategy_detail.md) 已记录） | 人工判断 + 设计备忘登记 |
 
 **退役流程**（与 G26 [55_monitoring_review](55_monitoring_review.md) 联动——⚠️55 号为 draft v0.1.0 骨架待讨论，监控告警 why 层未定稿；退役量化标准当前由本节承载，55 号定型后承接运营侧告警联动）：
 1. **触发**：Decay Detection 5 监控点（§3.3 第 5 条）任一持续告警 → 进入"观察"状态（D-SIGNAL-14 状态机映射）
@@ -898,7 +898,7 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 - [01_design_memo_management_spec.md](01_design_memo_management_spec.md) §2.2（三层协作流程）/ §4（命名与结构）/ §4.4（文档种类适配）
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) §5（暂缓项：多 Agent / 数字孪生）/ §2.5（Drawdown Protocol 退役相邻）
 - [52_backtest_framework_docking.md](52_backtest_framework_docking.md)（③ 回测阶段，⚠️draft v0.1.0 骨架待讨论——G23 why 层未定稿；回测门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)）
-- [53_simulation_live_path.md](53_simulation_live_path.md)（④ 模拟与实盘验证路径，active v1.7.0）
+- [53_simulation_live_path.md](53_simulation_live_path.md)（④ 模拟与实盘验证路径，active）
 - [55_monitoring_review.md](55_monitoring_review.md)（⑥ 退役标准运营侧承接，⚠️draft v0.1.0 骨架待讨论——G26 监控告警 why 层未定稿；退役量化标准当前由本备忘 §3.9 承载）
 
 ### 8.2 治理注册表
@@ -1035,3 +1035,4 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 | 2026-08-12 | 2.11.0 | 第二十二轮审查（幻觉引用清除 + 已施工设施盘点 + 版本漂移修复）：①**幻觉引用修正**——git log 实证 52/55 号从未离开 draft v0.1.0 骨架，但 v2.10.0 前 §3.4/§8.1 引用其"IS→WFA→OOS 门控 + 7-gate 审计 v1.7.3 / active v1.13.0"为虚构（00_index v2.5.0 批量同步错标 52-55 号 active 导致连环幻觉）：§3.4 承接行+核心纪律①②改为 battle_map_03 + 代码真源 `backtest/core/decision_gate.py`；§8.1 52/55 号条目改骨架待讨论标注；§3.3 双曲线段/容量段 2 处"55 号协同"补骨架标注；§3.9 退役流程 2 处 55 号联动补骨架标注并明确"退役量化标准当前由本备忘 §3.9 承载"；②**版本漂移修复**——53 号 v1.6.3→v1.7.0 / 24 号 v1.5.0→v1.9.7 / 54 号 v1.13.0→v1.14.0（body，修订记录历史不动）；③**新增 §2.4 已施工设施盘点**（通用规则 #11——14 行设施表：paper_live_transition / decision_gate / deflated_sharpe / look_ahead_bias_detector / experiment_tracking / 系统级 lifecycle_manager（⚠️澄清：进程级启动关闭≠策略生命周期）/ D-SIGNAL-14（设计态无代码）/ depgraph 脚本链 / 治理注册表 / strategy_archive（设计态未建）/ 多 AI 交接载体 / 漂移检测（伪代码待施工）/ simulation 域 / 53 号）；④§3.1 D-SIGNAL-14 补 battle_map_12 真源链接+无独立代码标注；⑤§3.8 三脚本补稳定路径；⑥§3.9 归档四件套④补 strategy_archive/ 设计态标注；⑦§2.1/§3.7 "38 篇"计数去漂移化（指向 00_index §0 台账）；⑧新增 §7.4 开放问题（00_index 四处漂移登记 + 52/55 骨架联动，不越界改）；⑨§8.1 补 battle_map_12 条目 | 通用规则 #11 已施工设施盘点 + 交叉引用实证审查：git log 证明 52/55 号从未有 active 版本（v1.7.3/v1.13.0 均为 00_index 错标后的连环幻觉）；代码核查确认 strategy_archive/ 未建、trading/lifecycle_manager.py 为系统进程级非策略级。⚠️施工备注：本次修订期间检测到并发会话（arch-review-g10-g06）worktree 操作导致工作区多次回滚，采用批量替换+立即提交固化 |
 | 2026-08-12 | 2.12.0 | 第二十三轮审查（缺失环节补齐）：①§3.6 交接纪律补第 5 条**并发文件级冲突纪律**（2026-08-12 实战教训：多会话并发共享主工作区 git index，未落分支的修改随时被并发会话 stash/reset 抹掉——本次审查过程中工作区修改被多次回滚实证；强制 `git_commit.py --claim-only` 前移声明 + GitCommitGateway 唯一 commit 入口 + `session_worktree.py` 物理隔离，#ARCH-WORKTREE-GATE-001）；②§3.2 补**策略规格产出物**承接（§3.1 ①孵化阶段退出条件"策略规格产出"原无承接定义，补 20 号 G04 首批范式：sleeve 定位/容量测算/持仓周期/风控参数四要素齐备方可进入 ② 训练阶段） | 第 3 轮缺失环节审查发现：①多 AI 协作交接纪律缺"并发文件级冲突"处置——治理设施（git_commit.py claim 协议 / session_worktree）已存在但本备忘 §3.6 未登记，AI 会话不知情则修改必丢；②孵化→训练准入的"策略规格产出"缺承接定义。53 号 v1.7.1 同步精简正文过渡文本（修改原则合规） |
 | 2026-08-12 | 2.12.1 | 第二十四轮审查（2026-08 最新研究搜索整合）：①§3.6 第 5 条补**行业背书**——CMU CAID（arXiv:2603.21489，2026-03）实证 branch-and-merge+git worktree 是多 agent 协作核心协调机制（PaperBench +26.7%/Commit0 +14.3%）；VS Code 2026-08-07 起 Copilot/Claude/Codex agent session 默认 git worktree 隔离（luonghongthuan 2026-08-10），"并发 agent 未提交修改被静默覆盖"为 2026-08 行业公认失败模式；②§8.3 补 CAID + VS Code worktree 2 条来源；③53 号侧 2026-08 搜索（paper→live 迁移 + canary deployment）确认现有三阶段+5 级 ramp+key_gates 与最新实践（x3algo/algovantis/futureagi 四阶段 gate/theneuralbase gradual rollout/metricgate shadow-canary 方差分析）一致，零新增内容需求 | 第 4 轮 2026-08 最新研究全网搜索：multi-AI collaboration 方向命中 CAID（CMU 学术实证）+ VS Code 官方 worktree 隔离（2026-08-07 上线）双重背书本备忘 §3.6 第 5 条；paper trading/canary deployment 方向确认 53 号现有设计与行业 SOTA 一致无缺口 |
+| 2026-08-12 | 2.12.2 | 第 5/6 轮审查（过度工程零发现 + 一致性去版本化）：①**过度工程审查零发现**——多 AI 协作规范（§3.6 五条均为已有治理设施的使用纪律非新建重型机制，§4.1 已拒绝 agent 编排）/ BM-RES+BM-MOD 规范（MVP 部分为 MLOps Level 2 行业标准最小集，20+ arXiv 重型候选全部标 Phase 2-5 远期不施工）/ 53 号三阶段灰度（比 nexusfi 7 阶段精简且有 paper_live_transition.py 代码承载，§5.3 已论证）/ 实盘差异监控（key_gates 8 维度为已定义代码门禁，日频滚动计算单机可承受）——全部符合硬边界约束，远期项标注合规不删；②**一致性去版本化**——body 中对 53 号（§2.4/§3.5/§8.1）/24 号（§3.9）/54 号（§3.3）的版本号引用全部去除（引文档用稳定 path 不带版本，修订记录保留历史版本），消除连环漂移源；③53 号与 01 号 §2.2/battle_map_01（33 环节 17 锚点）/battle_map_02（14 环节 10 锚点）/20 号 §4.4 四阶段交叉复核一致 | 第 5 轮过度工程审查对照 system_charter §2 硬边界逐项判定零发现（单 AI 多会话+单机 PC+小资金+T+1 约束下无超界机制）；第 6 轮一致性审查发现版本号引用是连环漂移源（53 号升版即致 61 号引用滞后），按 01 号规范"交叉引用全用稳定 path"去版本化 |
