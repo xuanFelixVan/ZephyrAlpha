@@ -367,9 +367,9 @@ scope: 07_trading_decision_architecture
 ## 8. 引用
 
 ### 8.1 相关设计备忘
-- [20_first_batch_strategies.md](20_first_batch_strategies.md) v1.5.10（G04 首批 3 策略定义，前置依赖，§2.2-2.4 施工回填为本备忘信号源依据）
-- [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) v2.2.0（多策略并发架构总纲，§2.2 StrategyBook/firm 层、§7.3 双引擎融合定位）
-- [31_position_sizing.md](31_position_sizing.md) v1.22.0（仓位算法 spec，§3.7 精仓位边界依据）
+- [20_first_batch_strategies.md](20_first_batch_strategies.md) v1.5.10（G04 首批 3 策略定义，前置依赖，§2.2-2.4 施工回填为本备忘信号源依据）⚠️ v1.1.19 注记：20 号 git HEAD frontmatter 当前显示 v1.2.4（并发会话回退/重写中间态，2026-08-12），本引用维持 v1.5.10 待 20 号稳定后核对
+- [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) v2.5.0（多策略并发架构总纲，§2.2 StrategyBook/firm 层、§7.3 双引擎融合定位）
+- [31_position_sizing.md](31_position_sizing.md) v1.23.0（仓位算法 spec，§3.7 精仓位边界依据）
 - [00_index_trading_decision.md](00_index_trading_decision.md) §3 G05（讨论要点来源）
 
 ### 8.2 相关作战地图
