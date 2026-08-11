@@ -196,7 +196,7 @@ v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲�
 | 5 可追溯性 | 作者/日期/验证/真源 | frontmatter depends_on + §11 修订记录 | ✅ 已覆盖 |
 | 6 新鲜度 | 每段更新节奏 | §7.0.4 timeliness 指数衰减（v0.6.0 升级） | ✅ v0.6.0 已覆盖 |
 
-**结论**：本审查已覆盖 6 轴中的 4 轴（2/4/5/6），轴 1 部分覆盖（L3 抽检），轴 3 不适用。**6 轴方法的轴 1（内部异常自动化检查）作为远期升级路径**——当 design_memos 文档量增长到 50+ 篇时，人工 L3 抽检成本上升，可引入自动化数值一致性检查（grep 文档内所有阈值/数值 + 跨章节交叉校验）。当前 42 篇文档规模下，L3 抽检 + §7.0.4 Q score 已够（§9 不过度工程）。
+**结论**：本审查已覆盖 6 轴中的 4 轴（2/4/5/6），轴 1 部分覆盖（L3 抽检），轴 3 不适用。**6 轴方法的轴 1（内部异常自动化检查）作为远期升级路径**——当 design_memos 文档量增长到 50+ 篇时，人工 L3 抽检成本上升，可引入自动化数值一致性检查（grep 文档内所有阈值/数值 + 跨章节交叉校验）。当前 47 篇文档规模下，L3 抽检 + §7.0.4 Q score 已够（§9 不过度工程）。
 
 **Preventive vs Detective 双层检测（v0.9.0 新增）**：
 
@@ -307,7 +307,7 @@ Detective 扫描（每周 cron 触发，融入 §3.4 extract/trace 循环）：
 ```
 
 **为何不当前采纳 paired-model 但记录为远期路径**（对齐 §9）：
-- **LLM 成本**：paired-model 需 2 次 LLM 调用/表——61 张缺口表 × 2 = 122 次 LLM 调用，与 DocAgent/Cascade 同量级（§9 已声明不采纳）
+- **LLM 成本**：paired-model 需 2 次 LLM 调用/表——59 张缺口表 × 2 = 118 次 LLM 调用，与 DocAgent/Cascade 同量级（§9 已声明不采纳）
 - **kappa=0.532 的启示**：两 LLM 一致性仅 75.8%——说明 LLM 在"文档-代码语义一致性"判断上仍有 24% 分歧，paired-model 不能完全替代人工 L3 抽检，仅能分流高置信案例
 - **temporal-validity safeguards 价值**：arXiv 2608.03500v1 的"时效性护栏"思想可简化融入 L3 抽检——抽检时先验证"文档描述的表用法在代码最近 N 次变更后是否仍成立"，再判断语义一致性
 - **远期触发条件**：当 design_memos 增长到 100+ 篇（与 DocAgent/Cascade 触发条件一致）或 L3 人工抽检不一致率 >15% 时，可引入 paired-model 分流高置信案例，人工仅复核分歧案例
@@ -628,9 +628,9 @@ time_criticality_factor =
 
 > RICE 量化"做多少价值"，但不区分"必须做"vs"做了更好"vs"无差异"。2026 多篇对比研究（[getperspective.ai 2026-05](https://getperspective.ai/blog/feature-prioritization-framework-using-ai-customer-research-to-rank-the-roadmap) / [m.zpedu.com 2026-07](https://m.zpedu.com/it/cpsj/39917.html) / [tempo.io 2026](https://www.tempo.io/guides/product-prioritization-techniques-product-managers)）推荐 **Kano + RICE 组合策略**："Kano 负责做正确的事（strategic），RICE 负责正确地做事（execution）"。本审查补入 Kano 分类层作为 RICE 的**前置过滤器**——基本型需求无论 RICE 分多低都必须补文档。
 
-**Kano 五类映射到 102 张表**（AI 可裁定，无需人决策——基于 project_memory 风险优先原则 + 代码引用性质）：
+**Kano 五类映射到 103 张表**（AI 可裁定，无需人决策——基于 project_memory 风险优先原则 + 代码引用性质）：
 
-| Kano 类型 | 定义 | 本审查映射 | 102 张表中的代表 | 施工策略 |
+| Kano 类型 | 定义 | 本审查映射 | 103 张表中的代表 | 施工策略 |
 |---|---|---|---|---|
 | **基本型**（Must-be） | 不满足会导致严重后果——风险红线、生存底线 | 风险/回撤/kill_switch 相关表（risk_module_flag=Y） | `restricted_shares` / `share_unlock` / `etf_nav` / `limit_up_down` / `margin_trading` | **无论 RICE 分多少必须补**——RICE 仅决定批次内顺序，不决定是否做 |
 | **期望型**（One-dimensional） | 满足度随覆盖度线性增长——核心 alpha 信号链 | 策略文档已显式消费但文档覆盖不足的表（code_ref≥10 + 已有策略文档） | `block_trade_detail` / `dragon_tiger` / `money_flow` / `concept_sector` / `index_constituent` | RICE 排序补文档，priority ≥ 1.5 进批次 B/C |
@@ -669,9 +669,9 @@ time_criticality_factor =
 **Consequence Ranking 的替代主张**：dualoop.coach 主张"对每项写明'如果做会怎样/如果不做会怎样'，按后果排序而非按公式打分"。
 
 **本审查的辩护与吸收**：
-- **保留 RICE 变体**：102 张表的批量排序需要可计算的公式——Consequence Ranking 需对每张表写"做/不做的后果"叙述，102 张表 × 2 段叙述 = 204 段人工写作，成本高于 RICE 公式打分。RICE 的"虚假精确性"（dualoop 批判）在 102 张表排序场景下是可接受的近似——priority=8.4 vs 7.5 的差异不决定"做不做"，只决定"先做谁"
+- **保留 RICE 变体**：103 张表的批量排序需要可计算的公式——Consequence Ranking 需对每张表写"做/不做的后果"叙述，103 张表 × 2 段叙述 = 206 段人工写作，成本高于 RICE 公式打分。RICE 的"虚假精确性"（dualoop 批判）在 102 张表排序场景下是可接受的近似——priority=8.4 vs 7.5 的差异不决定"做不做"，只决定"先做谁"
 - **吸收 Consequence Ranking 的优点**：§6.0 Kano 分类层已吸收"后果导向"思想——基本型（Must-be）的判定标准就是"不满足会导致严重后果"（风险红线），这正是 Consequence Ranking 的"如果不做会怎样"。Kano 前置过滤器 = Consequence Ranking 的轻量实现
-- **不全面采纳 Consequence Ranking 的理由**：dualoop.coach 的场景是"2-4 个战略选项的深度决策"（每项需写后果叙述），本审查是"102 张表的批量排序"（需公式化）。[pmtoolkit.ai 2026-02](https://pmtoolkit.ai/learn/prioritization/prioritization-frameworks-comparison) 的对比表也确认 RICE 适合"10-100 features"的批量排序，Consequence Ranking 适合"少数战略决策"
+- **不全面采纳 Consequence Ranking 的理由**：dualoop.coach 的场景是"2-4 个战略选项的深度决策"（每项需写后果叙述），本审查是"103 张表的批量排序"（需公式化）。[pmtoolkit.ai 2026-02](https://pmtoolkit.ai/learn/prioritization/prioritization-frameworks-comparison) 的对比表也确认 RICE 适合"10-100 features"的批量排序，Consequence Ranking 适合"少数战略决策"
 - **对基本型表补 Consequence 视角**：§6.0 Kano 基本型表的施工策略已写明"无论 RICE 分多少必须补"——这就是 Consequence Ranking 的"如果不做会导致风险红线失效"的后果叙述，已内化在 Kano 分类中
 
 **SQALE 技术债视角（v1.5.0 新增，参考 [technicaldebtcalculator.com 2026 SQALE Framework](https://technicaldebtcalculator.com/frameworks) + [CppDepend Smart Technical Debt Estimation](https://www.cppdepend.com/Doc/Smart_Technical_Debt_Estimation.pdf)）**：
@@ -693,9 +693,9 @@ time_criticality_factor =
 TDR = (Σ effort_score of 文档缺失表) / (Σ effort_score of 全部表) × 100
 
 当前状态（v1.5.0 估算）：
-- 文档缺失表 61 张，平均 effort≈5.0 → 缺失 effort ≈ 305
-- 已有文档表 41 张，平均 effort≈4.0 → 已有 effort ≈ 164
-- TDR = 305 / (305 + 164) × 100 ≈ 65%
+- 文档缺失表 59 张，平均 effort≈5.0 → 缺失 effort ≈ 295
+- 已有文档表 44 张，平均 effort≈4.0 → 已有 effort ≈ 176
+- TDR = 295 / (295 + 176) × 100 ≈ 63%
 → SQALE 评级 E（>50%，Severe——文档债务严重，需优先施工）
 ```
 
@@ -751,9 +751,9 @@ TDR = (Σ effort_score of 文档缺失表) / (Σ effort_score of 全部表) × 1
 
 | Cognitive Debt 维度 | 代码场景 | 本审查文档场景 |
 |---|---|---|
-| **生产速度 > 理解速度** | AI 生成代码快于团队 review | AI 反推文档快于人 L3 抽检——61 张表的草稿可能在数小时内生成，但 L3 抽检每波仅 2-3 张 |
+| **生产速度 > 理解速度** | AI 生成代码快于团队 review | AI 反推文档快于人 L3 抽检——59 张表的草稿可能在数小时内生成，但 L3 抽检每波仅 2-3 张 |
 | **心智模型侵蚀** | 团队对系统理解逐渐模糊 | 文档作者（AI）无心智模型，人仅通过 L3 抽检部分理解——未抽检的表文档人可能从未读过 |
-| **project-level 理解缺口** | 个别开发者理解局部但无人理解全局 | 无人能完整叙述 102 张表的文档覆盖状态——需 §7.0.9 看板 + §5.1 覆盖率指标做全局代理 |
+| **project-level 理解缺口** | 个别开发者理解局部但无人理解全局 | 无人能完整叙述 103 张表的文档覆盖状态——需 §7.0.9 看板 + §5.1 覆盖率指标做全局代理 |
 
 **AI-Generated Debt 度量指标**（[Exceeds AI 2026-06-09](https://blog.exceeds.ai/ai-technical-debt-tracking-workflow/) + [dupple.com 2026-04-03](https://dupple.com/blog/what-is-technical-debt-in-software-development)，引用 2026 MSR 研究 806 仓库 Cursor 采用使复杂度+41%；CodeRabbit 470 PR 研究 AI 代码安全漏洞 2.74x）：
 
@@ -1166,7 +1166,7 @@ v2.1.0 实测（§5.1 三层口径）：消费层缺口 = 103 - 37 消费层已�
 3. **增量上下文构建**：处理依赖模块时复用被依赖模块已生成的文档作为上下文——本审查 §7.0.2 当前无此机制（每张表独立反推），是潜在升级点
 
 **为何不当前采纳 DocAgent**：
-- **成本**：DocAgent 需 5 个 LLM 智能体协作，每张表生成需多次 LLM 调用——个人项目 61 张缺口表的 LLM 成本过高
+- **成本**：DocAgent 需 5 个 LLM 智能体协作，每张表生成需多次 LLM 调用——个人项目 59 张缺口表的 LLM 成本过高
 - **复杂度**：多智能体编排需额外基础设施（agent orchestrator + 状态管理）——本审查 PowerShell 脚本 + 人工复核已满足
 - **Truthfulness 已覆盖**：§7.0.6 L3 抽检 + §7.0.4 Q score 已覆盖 DocAgent Verifier 的功能，虽为人工但成本可接受（每批次 2 张抽检）
 - **远期触发条件**：当 design_memos 增长到 100+ 篇、L3 人工抽检成本上升时，可引入 DocAgent 自动化 Verifier 替代人工——列入远期升级路径，当前不施工
@@ -1242,7 +1242,7 @@ v2.1.0 实测（§5.1 三层口径）：消费层缺口 = 103 - 37 消费层已�
 
 | 算法 | 原理 | 复杂度 | 适用场景 | 本审查适用性 |
 |---|---|---|---|---|
-| **Louvain** | 模块度优化，迭代合并节点 | O(n·log²n) | 大规模网络，层次化社区 | ✅ 102 张表规模适中，模块度优化自动发现"指数族/板块族/ETF 族"等簇 |
+| **Louvain** | 模块度优化，迭代合并节点 | O(n·log²n) | 大规模网络，层次化社区 | ✅ 103 张表规模适中，模块度优化自动发现"指数族/板块族/ETF 族"等簇 |
 | **Leiden** | Louvain 改进版，解决分辨率限制 | 更快 | 需精确小社区 | ✅ 可调分辨率参数 γ——γ>1 倾向小社区（单表级），γ<1 倾向大社区（域级） |
 | Girvan-Newman | 边介数分裂 | O(n³) | 小网络，精确划分 | ❌ 102 表规模 O(n³) 可接受但不如 Louvain 高效 |
 | 谱聚类 | 拉普拉斯矩阵特征向量 | O(n³) | 社区结构清晰 | ❌ 需预设 k 个社区——本审查不想预设社区数 |
@@ -1254,7 +1254,7 @@ v2.1.0 实测（§5.1 三层口径）：消费层缺口 = 103 - 37 消费层已�
 
 ```
 1. 构建表间依赖图 G=(V, E)
-   V = 102 张表（节点）
+   V = 103 张表（节点）
    E = 依赖关系（边）：若 table_B 依赖 table_A（§7.0.3 依赖表），则添加边 A→B
    边权重 = 依赖强度（1=派生关系，2=外键关系，3=同族 DDL 继承）
 
@@ -1806,7 +1806,7 @@ h = 决策阈值（4σ，CUSUM 超过 h 则告警）
 ```
 Freshness SLI = (时间窗口内 timeliness ≥ 7.0 的表数 / 总表数) × 100%
 
-→ 示例：102 张表中 95 张 timeliness ≥ 7.0 → Freshness SLI = 95/102 = 93.1%
+→ 示例：103 张表中 95 张 timeliness ≥ 7.0 → Freshness SLI = 95/103 = 92.2%
 → 与 Q score timeliness 的关系：
    - Q score timeliness = 单表文档新鲜度连续值（0-10），回答"这张表文档多新鲜"
    - Freshness SLI = 全仓库文档新鲜度合规率（0-100%），回答"多少比例文档达标"
@@ -2178,8 +2178,8 @@ SCORE 项目的 Gap Detection 用 5 种互补策略识别文档覆盖缺口，�
 **为何不当前采纳 Cascade**：
 - **适用场景差异**：Cascade 针对"API 文档 vs 函数实现"的语义一致性（如 `startsWithAny` 的 case-sensitive vs insensitive）。本审查的 design_memos 是**架构文档**（why 层），不是 API 参考文档（what 层）——从"解禁前 30 日减仓"这类业务规则生成可执行测试的难度远高于从 API 签名生成测试
 - **测试执行环境成本**：Cascade 需可执行测试环境（运行代码 + 对比输出）。本审查的表消费涉及 ClickHouse 查询 + Python 数据处理 pipeline，搭建测试执行环境比 Java 单元测试复杂
-- **LLM 成本**：每张表需 2 次 LLM 调用（生成测试 + 生成代码）——61 张缺口表 × 2 = 122 次 LLM 调用，成本与 DocAgent 同量级
-- **L3 人工抽检已够**：当前 42 篇文档规模下，每批次 2 张人工抽检（~15 分钟/张）成本可接受。Cascade 的价值在文档量增长到 100+ 篇、人工抽检成本线性上升时才显著
+- **LLM 成本**：每张表需 2 次 LLM 调用（生成测试 + 生成代码）——59 张缺口表 × 2 = 118 次 LLM 调用，成本与 DocAgent 同量级
+- **L3 人工抽检已够**：当前 47 篇文档规模下，每批次 2 张人工抽检（~15 分钟/张）成本可接受。Cascade 的价值在文档量增长到 100+ 篇、人工抽检成本线性上升时才显著
 - **远期触发条件**：当 design_memos 增长到 100+ 篇（与 DocAgent 触发条件一致）或 L3 人工抽检发现不一致率 >15%（当前 DocPrism 基准 11%），可引入 Cascade 自动化全量检测替代人工抽检
 
 **Cascade 对本审查的验证价值**：
@@ -2595,7 +2595,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 不替换现有数据流 | 补文档是记录已有用法，不破坏现有策略 |
 | 不将 etf_nav 折溢价作为套利策略 | 个人系统无一级市场申赎资格（需 50-100 万份），仅作流动性危机监测信号 |
 | 不引入外部数据目录工具（DataHub/Amundsen/Atlan） | 个人项目过度工程——PowerShell 脚本 + CSV 矩阵已满足审查需求；[aiondata.io 2026](https://www.aiondata.io/blog/beyond-the-static-catalog-how-ai-powered-discovery-is-redefi) 的 AI-powered catalog 适合企业级多团队场景，个人项目无多消费者协作需求 |
-| 不用 AST 全量解析做代码引用性质分类 | §3.3 "代码层引用性质未区分"可用 AST 区分（活跃消费/模板继承/已弃用），但 AST 实现成本高于正则 10 倍——§3.5 已用正则 + 抽查替代，命中优先级 1-5 五级 Confidence 自动判定，覆盖 61 张缺口表的批量标注需求 |
+| 不用 AST 全量解析做代码引用性质分类 | §3.3 "代码层引用性质未区分"可用 AST 区分（活跃消费/模板继承/已弃用），但 AST 实现成本高于正则 10 倍——§3.5 已用正则 + 抽查替代，命中优先级 1-5 五级 Confidence 自动判定，覆盖 59 张缺口表的批量标注需求 |
 | 不将 CI 门禁设为阻断（exit 1） | 个人项目不强制 CI 阻断文档覆盖率低于 80%——降级为 warn 提醒，符合渐进式治理风格（[codex.danielvaughan.com 2026](https://codex.danielvaughan.com/2026/05/16/codex-cli-automated-code-documentation-generation-docstrings-jsdoc-sphinx-ci-pipelines/) 的 exit 1 模式适合团队协作，个人项目过重） |
 | 不用 LLM 做全量语义验证 | [DocPrism 2026](https://arxiv.org/pdf/2511.00215) 的 LCEF 方法可将假阳性从 98% 降到 14%，但需 LLM 逐函数调用——个人项目过重。§7.0.6 L3 语义抽检（每批次随机 2 张人工核实）是 lightweight 替代，覆盖"假覆盖"风险且无 LLM 成本 |
 | 不用 WSJF 替代 RICE（v0.5.0 新增） | WSJF 的 Time Criticality 因子适合多团队 portfolio 排序（[SAFe 2026-02](https://agility-at-scale.com/safe/wsjf-weighted-shortest-job-first/)），但个人项目无竞争压力、文档补齐无硬截止日——Time Criticality 退化为"风险模块优先"已由 W2=5.0 覆盖。§6.0 已对比说明，保留 RICE 变体 + 可选混合模型备选 |
@@ -2607,7 +2607,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 不强制统一多消费方语义（v0.6.0 新增） | §7.0.2 多消费方冲突解决算法明确"不强制统一"——同一表在风险文档（P0）和 alpha 文档（P1）的消费语义天然不同（如 `etf_nav` 风险视角=折溢价预警 vs alpha 视角=套利信号）。强制统一会导致 alpha 信号链被风险视角吞并，§7.0.2 用 ⚠️ 标注双语义替代强制统一 |
 | 不用 git reset --hard 回滚施工（v0.6.0 新增） | §7.0.7 回滚机制明确用 `git revert`（保留历史可追溯）而非 `git reset --hard`（破坏历史）——符合 git 安全协议。施工错误应可追溯根因，不应抹除痕迹 |
 | 不用 Milvus 乘法模型做 Q score timeliness（v0.7.0 新增） | [Milvus 2.6 Time-aware Ranking 2025-11](https://m.aitntnews.com/newDetail.html?newId=19523) 的 `final_score = similarity × decay_score` 乘法模型适合**检索排序**（旧文档归零沉底），但 Q score 度量的是**文档质量**非检索排名——旧文档的语义价值不应被时效性乘法归零（如 16 号技术指标文档 3 年未改仍有效）。§7.0.4 保留加法模型 `α × semantic + (1-α) × time_decay`，仅在 RAG 检索层（远期）用乘法模型 |
-| 不当前采纳 DocAgent 多智能体（v0.7.0 新增） | [DocAgent arXiv 2504.08725v3 Meta AI 2025-05](https://arxiv.org/html/2504.08725v3/) 的 5 智能体协作（Reader/Searcher/Writer/Verifier/Orchestrator）是学术界 SOTA，但需 5 个 LLM 智能体多次调用——个人项目 61 张缺口表的 LLM 成本过高。§7.0.2 单 pass grep + §7.0.6 L3 人工抽检是 lightweight 替代，核心思路（拓扑排序+Truthfulness 验证）与 DocAgent 一致。远期 design_memos 100+ 篇时再引入 |
+| 不当前采纳 DocAgent 多智能体（v0.7.0 新增） | [DocAgent arXiv 2504.08725v3 Meta AI 2025-05](https://arxiv.org/html/2504.08725v3/) 的 5 智能体协作（Reader/Searcher/Writer/Verifier/Orchestrator）是学术界 SOTA，但需 5 个 LLM 智能体多次调用——个人项目 59 张缺口表的 LLM 成本过高。§7.0.2 单 pass grep + §7.0.6 L3 人工抽检是 lightweight 替代，核心思路（拓扑排序+Truthfulness 验证）与 DocAgent 一致。远期 design_memos 100+ 篇时再引入 |
 | 不当前采纳 REFORGE 8 门漏斗（v0.7.0 新增） | [REFORGE 2026-07](https://ubos.tech/reforge-a-method-for-benchmarking-llms-reverse-engineering-capabilities-in-decompiled-binary-function-naming/) 的 8 门置信度漏斗需 AST + 控制流图 + 数据流分析工具链——比 §9 已排除的 AST 全量解析更重。§3.5 的 5 级正则 + 抽查已满足 61 张表的批量标注需求，远期正则误判率 >20% 时再引入 |
 | 不全面采纳 Consequence Ranking 替代 RICE（v0.7.0 新增） | [dualoop.coach 2026-03](https://www.dualoop.coach/blog/rice-vs-ice-vs-moscow-prioritization/) 的 Consequence Ranking 需对每项写"做/不做的后果"叙述——102 张表 × 2 段 = 204 段人工写作，成本高于 RICE 公式。§6.0 Kano 分类层已吸收"后果导向"思想（基本型=不做有严重后果），RICE 保留用于 102 表批量排序，Kano 前置过滤器承担 Consequence Ranking 的战略判断职能 |
 | 不当前采纳 Cascade 自动化语义验证（v0.8.0 新增） | [Cascade arXiv 2604.19400v1 FSE 2026 July](https://arxiv.org/pdf/2604.19400v1) 的双重条件检测（从文档生成测试+代码，执行对比）是学术界 SOTA，但 design_memos 是架构文档（why 层）非 API 参考文档——从"解禁前 30 日减仓"业务规则生成可执行测试的难度远高于 API 签名。需测试执行环境（ClickHouse+Python pipeline），61 表 × 2 LLM 调用成本与 DocAgent 同量级。§7.0.6 L3 人工抽检已够，远期 100+ 篇文档或抽检不一致率 >15% 时再引入。Cascade 的"双重条件"思想已简化融入 L3 抽检流程 |
