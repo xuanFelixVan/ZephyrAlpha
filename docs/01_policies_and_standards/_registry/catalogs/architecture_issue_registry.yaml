@@ -14795,3 +14795,1033 @@ entries:
   status: proposed
   created: '2026-08-11'
   last_updated: '2026-08-11'
+
+# === 第十二批：作战地图全景审查双清单（2026-08-12）===
+# 审查报告：.runtime/_temp_design_memos/battle_map_gap_oe_review.md v1.0.0
+# 范围：battle_map 337 环节 + 17 横切机制全量精读 + 机构/量化社区/AI-native 社区外部对标
+# 结构：#ARCH-OE-013~055（43 项过度工程裁剪）+ #ARCH-GAP-001~012（12 项真实缺口）
+# 计数说明：审查明细 44 项 OE，其中"世界模型 DreamerV3 推演"已被 #ARCH-OE-010 裁定覆盖去重，实际新增 43 项
+# 处置三分法：deprecated（彻底弃用留档防复建）/ candidate（转候选池 candidate_module_registry）/ redesign（环节保留、方案降级）
+# 施工顺序（用户 2026-08-12 确认）：先完成裁减类真源联动，再启动 GAP P0 设计备忘录
+# 状态：全部 decided（用户 2026-08-12 逐类复核 + 批量确认"其余全部同意"）
+# 用户复核修订记录：OE-021 候选池确认 / OE-027 做T改回设计态 / OE-046 凸优化保留 /
+#   OE-035 理由修正为验证带宽 / OE-036+053 Wind 产业链数据重估 / OE-038 三模型分工保留（详查修正） / OE-041 协方差保留（30-80只修正）
+# 灾难记录：本批次两次被 IDE 旧缓冲区覆盖丢失（文件回滚至 14797 行），第三次写入后立即 git add + commit 保护
+
+# --- A 类：机构合规设施（多人/监管才需要）---
+
+- issue_id: '#ARCH-OE-013'
+  title: 'BM-BUY-09 信息合规裁剪（隔离墙/通信监控非个人职责）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BUY-09（信息合规，当前判运营态）含信息隔离墙/通信监控/内幕交易深度防护——机构卖方合规设施，
+    个人自有资金无 MNPI 场景。裁定：隔离墙与通信监控 deprecated；保留"数据源使用条款自查"静态清单（redesign 降级）。
+  impact:
+    - 'BM-BUY-09 拆裁：隔离墙/监控 deprecated + 条款自查清单降级保留'
+    - 'battle_map_steps + module_translation_registry §battle_map 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-007; #ARCH-OE-008'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-014'
+  title: 'BM-BUY-13 EU AI Act 合规扩展正式弃用（修复状态标签打架）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BUY-13（EU AI Act 合规扩展）获取方式已标"⬜弃用"但环节状态仍为设计态，标签自相矛盾。
+    欧盟法规对境内个人 A 股系统无约束力。裁定：正式 deprecated，并修复真源状态标签一致性。
+  impact:
+    - 'BM-BUY-13 标 deprecated + 状态标签修复'
+    - 'battle_map_steps 真源联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-015'
+  title: 'BM-BUY-15 交易合规检测拆裁（保留程序化报备，去除操纵检测/微秒指标）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BUY-15 含两类性质不同内容：(a) 程序化交易报告义务+异常交易阈值自查——2026.4.7 新规下个人账户
+    真实监管义务，保留；(b) Wash Trade/Spoofing 市场操纵检测+50μs 报单停留时间锁——交易所/机构自营视角，
+    个人资金体量无操纵现实可能且 miniQMT 链路无法度量微秒。裁定：拆裁，(a) 保留 (b) deprecated。
+  impact:
+    - 'BM-BUY-15 拆裁：报备义务保留 + 操纵检测/50μs deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-023'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-016'
+  title: 'BM-EXE-04 Pre-Trade 合规闸拆裁（保留 A 股真实规则，去除机构指标）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-EXE-04（设计态，⛔门禁中）含涨跌停/停牌/持仓限额/T+1（A 股真实规则，保留）与
+    Wash Trade/Spoofing/参与率≤5%/50μs 时间锁（机构/HFT 设施，个人单笔占分钟成交量远低于阈值）。
+    裁定：拆裁，A 股规则保留为下单前硬闸，机构指标 deprecated。注意与 GAP-001 施工联动（该环节本就是 P0 缺口的一部分）。
+  impact:
+    - 'BM-EXE-04 拆裁：A 股规则保留 + 机构指标 deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-015; #ARCH-OE-023; #ARCH-GAP-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-017'
+  title: 'BM-RES-05-B 研究协作中心弃用（单人无团队）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RES-05-B（设计态）规划讨论区/代码评审/权限管理/活动流——多人协作设施，单人+AI 无此场景。
+    裁定：deprecated。研究留痕需求由既有 memory/topics + git 历史承接。
+  impact:
+    - 'BM-RES-05-B 标 deprecated'
+    - 'battle_map_steps 真源联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-018'
+  title: 'BM-RES-05-C 研究信息隔离墙弃用（个人资金无 MNPI）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RES-05-C（设计态）规划 MNPI chinese_wall 隔离研究与交易侧——机构卖方合规设施。
+    裁定：deprecated，与 #ARCH-OE-013（BUY-09 隔离墙）同源。
+  impact:
+    - 'BM-RES-05-C 标 deprecated'
+    - 'battle_map_steps 真源联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-013'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-019'
+  title: 'BM-RC-01-C 合规官审批流降级（无"官"角色）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RC-01-C 预警分级含"合规官审批放行"流程——预设多人多角色组织。裁定：redesign 降级为
+    AI 自治分级告警 + Owner 微信/前端确认通道，去除角色化审批流。与 99% AI 自治运维边界对齐。
+  impact:
+    - 'BM-RC-01-C 方案降级（环节保留）'
+    - 'module_translation_registry plain_zh 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; system_charter §2 约束一/六'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-020'
+  title: 'BM-REC-02-F 监管报告自动生成转候选池（AUM≥1000万门槛非当前场景）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-REC-02-F 自动生成程序化交易报告/异常交易自报/持仓/绩效四类报送，激活门槛 GATE-002 写明
+    AUM≥1000 万——与个人资金现实不符，当前手动填报已够用。裁定：转 candidate（candidate_module_registry 登记），
+    保留手动填报指引文档。
+  impact:
+    - 'BM-REC-02-F 标 candidate + CAND 条目登记'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-021'
+  title: 'BM-REC-05 多账户分仓管理转候选池（双账户配置隔离即可）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-REC-05 按 AUM 分仓+独立风控/独立PnL/独立报告——基金经理多账户场景。用户仅实盘+QMT模拟双账户，
+    本地账本配置隔离已够。裁定：转 candidate，独立核算体系远期再议；双账户隔离需求并入 GAP-002 本地账本设计。
+    用户复核（2026-08-12）：同意留候选池。
+  impact:
+    - 'BM-REC-05 标 candidate + CAND 条目登记'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12'
+  related_rules: '#ARCH-OE-001; #ARCH-GAP-002'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-022'
+  title: '境外监管口径清理（CC-10 MiFID II 5年保留 / RC-09 MAS 具名问责）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    CC-10 信号生命周期治理引用 MiFID II 5 年保留（欧盟）、BM-RC-09 Named Accountability 引用
+    ValidMind/新加坡 MAS 要求——境外监管框架对境内个人系统无约束力。裁定：去除境外监管口径引用（redesign 文案），
+    保留本地 append-only 日志与 AI 行为日志本体。
+  impact:
+    - 'CC-10 / BM-RC-09 文案降级（环节保留）'
+    - 'module_translation_registry plain_zh 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# --- B 类：高频/日内设施（与日频+3秒Tick+10笔/秒冲突）---
+
+- issue_id: '#ARCH-OE-023'
+  title: '微秒/毫秒级时延指标全域清理（50μs 锁 / <50ms 拦截 / <1ms 激活 / <100ms 一致性）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    散落多处的 HFT 级时延指标：BUY-15/EXE-04/RC-10-A 的 50μs 报单停留锁、RC-02 的 <50ms P99 拦截、
+    RC-03-A 的 AI<1ms/人工<100ms 激活、EXE-06 的订单→持仓<100ms——在 miniQMT 10笔/秒+3秒Tick 链路上
+    无法度量也无意义。裁定：统一去除绝对时延指标，规格改"3 秒 Tick 内完成"（redesign 文案）。
+  impact:
+    - 'BM-BUY-15 / BM-EXE-04 / BM-RC-10-A / BM-RC-02 / BM-RC-03-A / BM-EXE-06 文案降级'
+    - 'module_translation_registry plain_zh 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-015; #ARCH-OE-016; system_charter §2 约束三/四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-024'
+  title: 'BM-BT-05-H-D 延迟差异归因 100ms 门禁降级为秒级'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BT-05-H-D（设计态孙环节）设 100ms 延迟归因门禁、拆"券商链路/交易所排队延迟"——日内设施口径。
+    日频决策下有价值的是"信号→成交回报"秒级记录（喂 GAP-003 仿真-实盘偏差）。裁定：redesign 降级为秒级延迟记录。
+  impact:
+    - 'BM-BT-05-H-D 方案降级（环节保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-023; #ARCH-GAP-003'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-025'
+  title: 'BM-BT-03-B "秒级做T"表述修正（T+1 无秒级做T）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-BT-03-B 自报"Tick回放引擎（秒级做T，30秒/5秒级）"——T+1 制度下秒级做T 不可行，表述误导。
+    Tick 回放本身对事件驱动回测验证有价值。裁定：文案修正，去除"做T"表述，保留 Tick 回放能力定位。
+  impact:
+    - 'BM-BT-03-B 文案修正'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-023; system_charter §2 约束四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-026'
+  title: 'BM-SEL-27 "毫秒级感知"降级为 3 秒 Tick 粒度'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-27（盘中实时事件处理）自报"毫秒级感知+秒级响应"，与 3 秒 Tick 数据源错配两个数量级。
+    裁定：redesign 降级为 3 秒 Tick 粒度事件处理（与 CC-02 口径对齐）。
+  impact:
+    - 'BM-SEL-27 文案降级'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-023'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-027'
+  title: 'BM-SELL-08 做T日内套利保留设计态（用户裁定改回）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SELL-08（设计态，🔴自建）底仓 T0 在 A 股真实可行（先卖后买），但依赖分时因子管线（C-009），
+    与"策略根频率=日频及以上"硬边界存在张力。
+    原裁定：转 candidate 远期再议。
+    用户裁定（2026-08-12）：改回设计态保留——做T 真实可行且用户有意施工；
+    施工时需处理与日频边界的张力（底仓 T0 不算新开仓，频率例外由用户显式授权）。
+  impact:
+    - 'BM-SELL-08 保持设计态（不转候选池，无真源改动）'
+  fix_phase: '用户已裁定（2026-08-12），无真源联动动作'
+  status: decided
+  confirmed_by_user: '2026-08-12'
+  related_rules: '#ARCH-OE-001; system_charter §2 约束四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# --- C 类：分布式/集群模式（单机不需要）---
+
+- issue_id: '#ARCH-OE-028'
+  title: 'BM-RC-10-A 混沌工程/舱壁隔离裁剪（单机保留简单否决拦截）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RC-10-A（设计态）含混沌工程（定期注入故障验证不可绕过性）+舱壁隔离+Saga——分布式集群架构模式。
+    裁定：混沌工程/舱壁 deprecated；否决执行引擎保留为简单同步拦截（Kill Switch 多路径激活保留）。
+    注意：RC-10 否决权本身是风险红线缺口（见报告 §六-5），裁剪的是实现方案不是能力。
+  impact:
+    - 'BM-RC-10-A 方案降级：混沌/舱壁 deprecated + 简单拦截保留'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-023'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-029'
+  title: 'CC-15 事件溯源/CQRS 降级为 SQLite append-only + 配置快照'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    CC-15（设计态）Event Sourcing/CQRS/At-Least-Once 投递语义是企业分布式模式。单人单机用
+    SQLite append-only 日志+配置快照即可满足"出事能复盘+任意日决策可回放"。
+    裁定：redesign 降级，轻量化方案同时承接 GAP-009（四版本联合回放）。
+  impact:
+    - 'CC-15 方案降级（横切保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-GAP-009'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-030'
+  title: 'BM-EXE-06 Saga 编排/Redis Stream 降级为本地状态机+日志'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-EXE-06（设计态，⛔门禁中）规划 Saga 六步编排+补偿幂等+Redis Stream 持久化+≤5s 超时——
+    微服务分布式事务模式。单机进程内本地状态机+结构化日志即可。裁定：redesign 降级。
+    注意与 GAP-001/GAP-002 联动：该环节是 P0 缺口施工对象，降级的是架构方案。
+  impact:
+    - 'BM-EXE-06 方案降级（环节保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-029; #ARCH-GAP-001; #ARCH-GAP-002'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-031'
+  title: 'BM-SEL-01 L0 机构数据栈降级（Lakehouse/CDC/三层存储 → 现有 CH+文件缓存）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-01 L0 规划 Lakehouse+TSDB+Embedding 向量库+Redis热/ClickHouse温/Parquet冷三层+CDC 变更捕获——
+    机构数据平台，单机 64GB RAM 过重；现状 ClickHouse+Parquet 冷归档（18号文档）已覆盖需求。
+    裁定：redesign 降级为现有栈，去除 CDC 与 Lakehouse 定位。
+  impact:
+    - 'BM-SEL-01 方案降级（环节保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; design_memos/18_cold_archive_build_plan.md'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-032'
+  title: 'BM-SEL-01-C/D 故障切换/热插拔降级为手动切源+重启恢复'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-01-C（failover<3s检测/<5s切换）与 BM-SEL-01-D（热插拔注册即生效）——单人系统重启成本≈0，
+    自动 failover 与热插拔收益趋近于零。裁定：redesign 降级为手动切源+重启恢复（降级路径已有 iFind/akshare fallback 惯例）。
+  impact:
+    - 'BM-SEL-01-C / BM-SEL-01-D 方案降级（环节保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-031; 北向数据源 tushare/akshare fallback 先例'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-033'
+  title: 'BM-RES-04-A 工作流编排锁定单机 DAG（去除 Airflow 集群选项）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RES-04-A 提供 Prefect/Airflow 选型且 max_parallelism 至 16——单机 i7-12700KF 不需要集群编排器。
+    裁定：redesign 锁定 Prefect 单机版或自研轻量 DAG，去除集群选项（文案降级）。
+  impact:
+    - 'BM-RES-04-A 方案降级'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; system_charter §2 约束二'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# --- D 类：模型动物园/超验证带宽（6 族模型=6 套验证管线，单人审查不过来）---
+
+- issue_id: '#ARCH-OE-034'
+  title: 'BM-SIM-01 ABIDES 订单簿微观结构仿真弃用'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SIM-01（缺失态）内嵌 ABIDES 多 Agent 市场仿真+订单簿级微观结构模拟+逐Tick重放——机构微观结构
+    研究设施，与日频+3秒Tick 定位不匹配。裁定：ABIDES/订单簿仿真 deprecated；
+    SIM-01 基础入口保留为真缺口（#ARCH-OE-010 已注明"市场仿真器基础入口仍需补建"）。
+  impact:
+    - 'BM-SIM-01 内 ABIDES/微观结构部分 deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-010'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-035'
+  title: 'BM-SEL-13 密度预测模型堆叠收敛单一路线（Mamba/Kronos/xLSTM/KAN/QNN/扩散）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-13（设计态）挂载 Mamba/SSM+Kronos TSFM+xLSTM+KAN+QNN+归一化流/扩散六族模型。
+    理由修正（2026-08-12，用户指出盘后训练/盘中推理分时复用，且项目已有 GPU 显存调度预算
+    盘中33-42%/盘后33-50%/<90%硬上限）：算力不是真实约束，分时调度已覆盖；
+    真实约束是验证带宽——每族模型上线都要过 IS→WFA→OOS 门禁+漂移监控，6 族=6 套验证管线，
+    单人审查不过来，全上=全是未验证的半吊子。裁定维持：redesign 收敛单一路线
+    （轻量密度头或 Kronos-mini 二选一，选型见 91_density_prediction.md），其余移候选池。
+  impact:
+    - 'BM-SEL-13 方案收敛（环节保留）'
+    - 'module_translation_registry 文案改写 + 候选池登记'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-009; Mamba/SSM 过度工程评估先例'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-036'
+  title: 'BM-SEL-11 知识图谱 GNN 三件套+Causal RL 转候选池'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-11（设计态）含 RGCN/TGN/GAT 三件套+供应链 GNN+Causal RL（v9.0 门禁项）——研究级图学习设施。
+    裁定：转 candidate 远期再议；知识图谱轻量实体关联（如需）用普通关系表即可。
+    补充（2026-08-12）：用户将提供 Wind 产业链数据库（6631 节点/11 级/跨 7 市场）——数据落地后
+    "图谱遍历式事件传导"（非 GNN，普通图查询）可重新评估激活，GNN/Causal RL 部分仍留候选池。
+  impact:
+    - 'BM-SEL-11 标 candidate + CAND 条目登记'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-009'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-037'
+  title: 'BM-SEL-05-F 多方博弈纳什均衡模拟弃用'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-05-F 规划 7 类主力画像（散户/游资/机构/庄家）纳什均衡博弈矩阵——学术级博弈仿真，
+    工程 ROI 为负且无法验证。裁定：deprecated。主力行为感知保留 A/B/C/D/E 已建部分。
+  impact:
+    - 'BM-SEL-05-F 标 deprecated'
+    - 'battle_map_steps 真源联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-038'
+  title: 'BM-MT-01-B 三模型分工保留（详查修正），仅裁军事指挥链+涌现检测'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    原裁定：redesign 简化为单模型生成+AST+人审。
+    用户质疑（2026-08-12）："用途不一样所以使用多个模型，向量库和新闻分析就各有一个"——要求详查。
+    详查结论：用户是对的。三模型分工不是冗余而是按能力契约异质分工（trae_040_ai_model_routing.yaml）：
+    DeepSeek V4 Pro 代码编辑考试 F 级被禁代码生成、GLM-5.1 擅机械任务、Claude Opus 最贵只做终审；
+    且三者全是云端 API 零本地显存。旁证：VMS embedding 双模型按 Collection 路由（BGE-M3 精度域/
+    paraphrase-MiniLM 体量域）、新闻分析 Qwen2.5-7B-SFT（Mistral 中文 F1=0.5148 不达标切换）——
+    均为用途驱动的多模型。
+    修订裁定：三模型分工保留；仅裁"战略→战术→执行军事指挥链+涌现行为检测器"部分（机构级 Agent 架构）；
+    Judge(Claude Opus) 建议按需触发（仅 Generator/Critic 多轮不收敛时上裁判）以控 API 成本。
+  impact:
+    - 'BM-MT-01-B 方案修订（三模型保留 + 指挥链/涌现检测部分 deprecated）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-009; #ARCH-GAP-010; trae_040_ai_model_routing.yaml'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-039'
+  title: 'BM-MT-05 漂移栈堆叠简化为单一检测+触发重训'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-MT-05（缺失态）堆叠 DDM/EDDM/ADWIN+MAML+在线 EWC+Voyager 技能库+AutoSkill——前沿技术大杂烩，
+    MAML 元学习训练成本对单卡日频场景过重。裁定：redesign 简化为单一漂移检测（PSI 或 ADWIN 选一）+
+    触发重训；MT-05-A（EWC+伪回放，候选池 CAND-HARVEST-0922 已在池）维持候选不施工。
+  impact:
+    - 'BM-MT-05 方案降级（环节保留，需补锚点）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-009'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-040'
+  title: 'BM-SEL-02-J 58 信号模型库裁剪 + BM-SEL-26 幻觉检测三件套收敛'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SEL-02-J 挂载 58 个信号模型库清单（代码 planned）——超单人运维带宽，裁定裁剪至实际在用个位数，
+    其余移候选池。BM-SEL-26 幻觉检测三件套（VeNRA Double-Lock+Sentinel 3B SLM+Spectral Guardrails）
+    并行冗余——裁定收敛为一个轻量规则检查（redesign）。
+  impact:
+    - 'BM-SEL-02-J 模型库裁剪 + BM-SEL-26 方案降级'
+    - 'battle_map_steps + module_translation_registry + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-009'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# --- E 类：机构组合/风控工程（个人无对应合规义务；样本量已按 30-80 只修正）---
+
+- issue_id: '#ARCH-OE-041'
+  title: 'BM-POS-02 协方差工程保留（30-80 只修正），Copula-GARCH/核心-卫星转候选池'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    原裁定：redesign 降级（理由"N≤10 持仓用学术级配置"）。
+    修正（2026-08-12）：N≤10 仅打板 sleeve 约束（24号文档"小账本约束"）；多因子 sleeve 30-80 只
+    （25号文档持仓数 30-80 只）。30-80 只下协方差矩阵是真实需求（80 只=3160 个相关系数），但选型有轻重之分。
+    修订裁定：协方差工程保留，选型定为 Ledoit-Wolf 收缩/因子模型（行业标准）；
+    Copula-GARCH 与核心-卫星框架转候选池（远期多 sleeve 并行后再议）；PCA 体制监控降为可选。
+  impact:
+    - 'BM-POS-02 方案修订（协方差保留 + Copula-GARCH/核心-卫星候选池）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-042'
+  title: 'BM-RC-07-A VaR Phase3 Basel III 三角验证弃用'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RC-07-A VaR 三阶段演进的 Phase3（Basel III 三角验证+乘数因子+压力VaR）——银行监管框架，
+    个人无此合规义务；历史模拟 VaR 已足够。裁定：Phase3 deprecated，保留历史模拟+参数法
+    （GPU 蒙特卡洛可选不优先）。
+  impact:
+    - 'BM-RC-07-A Phase3 部分 deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-043'
+  title: 'BM-RC-06-B FRTB 尾部风险加价弃用'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RC-06-B 尾部风险监控含 FRTB（银行交易账户基本审查）加价——银行监管框架。裁定：FRTB 部分
+    deprecated；EVT/POT+Copula 尾部估计保留（既有 Lessons：先全建+全 log，实盘后裁未触发项）。
+  impact:
+    - 'BM-RC-06-B FRTB 部分 deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; VaR5级+7黑天鹅降级监控层先例'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-044'
+  title: 'BM-RC-11 独立风险数据管道弃用（机构二道防线设施）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RC-11 全家桶（独立源→独立清洗→独立计算→独立报告）是机构"风控独立于交易"二道防线设施，
+    单机单人维护两套管道运维成本翻倍。裁定：deprecated；风控数据用交易链路只读副本即可。
+  impact:
+    - 'BM-RC-11 / RC-11-A / RC-11-B 标 deprecated'
+    - 'battle_map_steps 真源联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-045'
+  title: 'BM-POS-10 哈希链防篡改降级为 append-only 日志'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-POS-10（运营态）含审批链+哈希链防篡改+D-GOVERNANCE 合规审计——个人资金无外部合规审计义务，
+    区块链式设施过重。裁定：redesign 降级为 append-only 日志（与 CC-15 降级方案共用存储，承接 GAP-009）。
+  impact:
+    - 'BM-POS-10 方案降级（环节保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-029; #ARCH-GAP-009'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-046'
+  title: 'BM-SEL-21-D 凸优化约束求解器保留（用户裁定，30-80 只修正）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    原裁定：redesign 降级（理由"N≤10 组合用不上凸优化"）。
+    修正（2026-08-12）：N≤10 只是打板 sleeve 约束（24号文档）；多因子 sleeve 设计持仓 30-80 只
+    （25号文档），30-80 只下约束求解器是真实需求。
+    用户裁定（2026-08-12）：保留——策略上到 20+ 只很有可能。
+    最终裁定：不裁剪，SEL-21-D 维持原设计；原审查理由作废（样本量判断错误）。
+  impact:
+    - '无真源改动（环节维持原状）'
+  fix_phase: '用户已裁定（2026-08-12），无动作'
+  status: decided
+  confirmed_by_user: '2026-08-12'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-041'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-047'
+  title: 'BM-SELL-04-C/D 高频/Carry 止损范式与止损期权定价裁剪'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SELL-04-C 含高频极紧止损/Carry 极宽范式（本系统无高频/对冲/Carry 业务）；BM-SELL-04-D 含
+    "止损=卖出隐含看跌期权"定价评估（个人无期权对冲设施）。裁定：该两部分 deprecated；
+    保留趋势宽止损/均值回归中止损范式与猎杀防护（偏移 1-2%+收盘确认）。
+  impact:
+    - 'BM-SELL-04-C 高频/Carry 部分 + BM-SELL-04-D 期权定价部分 deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; system_charter §2 约束四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-048'
+  title: 'BM-SELL-09 A/B 显著性检验降级 + BM-RC-08-D SR 26-2 口径去除'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SELL-09（设计态）A/B 测试 p<0.05——单组合样本量下统计显著性检验形同虚设，降级为简单准确率追踪。
+    BM-RC-08-D 引用美联储 SR 26-2 模型风险管理——银行监管口径去除，保留漂移检测本体（与 OE-039 简化联动）。
+    裁定：两项均 redesign 降级。
+  impact:
+    - 'BM-SELL-09 / BM-RC-08-D 方案降级（环节保留）'
+    - 'module_translation_registry 文案改写'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-039'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# --- F 类：其余 ---
+
+- issue_id: '#ARCH-OE-049'
+  title: 'BM-RES-01-C 联邦学习门禁弃用（多机构协作设施）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RES-01-C 标题内嵌"🆕联邦学习门禁：数据不出域的联邦学习需过安全门禁审批"——联邦学习解决
+    多机构数据协作，单人单机无此场景。裁定：联邦学习门禁部分 deprecated；研究沙箱本体保留。
+  impact:
+    - 'BM-RES-01-C 联邦学习部分 deprecated'
+    - 'battle_map_steps + module_translation_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-050'
+  title: 'BM-RES-02-D 复现包生成弃用（第三方复现定位）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RES-02-D（设计态）docker+conda 一键复现包面向"别人拿到包就能复现"+合规审计——单人无第三方
+    复现需求。裁定：deprecated；本地种子/依赖锁定已由 BM-RES-02-B 承接。
+  impact:
+    - 'BM-RES-02-D 标 deprecated'
+    - 'battle_map_steps 真源联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新 battle_map 真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-051'
+  title: 'BM-RES-11 多模态知识采集转候选池（音视频对日频边际价值低）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-RES-11（缺失态）含 Whisper 音频转写/视频 OCR/VLM 图表理解/TimesFM 骨干——单卡 3090 显存吃紧
+    且音视频对日频 A 股策略边际价值存疑。裁定：转 candidate 远期再议（文本新闻采集保留在 SEL-01 既有能力）。
+  impact:
+    - 'BM-RES-11 标 candidate + CAND 条目登记'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; system_charter §2 约束二'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-052'
+  title: 'BM-REC-03-D 元级迭代与二阶优化转候选池（15 维元优化研究属性）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-REC-03-D（设计态，⛔治理文档域）C-041 十五个优化维度的元优化+二阶反馈——研究性质浓、
+    验证困难，单人系统奢侈品。裁定：转 candidate 远期再议。
+  impact:
+    - 'BM-REC-03-D 标 candidate + CAND 条目登记'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-009'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-053'
+  title: 'BM-RC-12-B/C 拆分裁定（Wind 产业链数据落地重估）：传导映射保留/二阶建模候选池'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    原裁定：两者正式标 candidate 移候选池（无锚点+机构级宏观研究设施）。
+    用户新输入（2026-08-12）：后续将提供 Wind 产业链地图数据库（A股+美股+港股+韩股+日股+欧美股+
+    台股，6631 个细分产业节点+上下游关系+公司映射，11 级分类宏观到微观）。
+    重估：该数据让"跨市场传导"从空想变成可计算——隔夜外盘某产业链暴跌→沿产业链图谱映射到
+    A 股关联节点→盘前风险节流，这是日频系统真实可用的能力（图谱遍历即可，不需要 GNN）。
+    修订裁定：RC-12-B 拆分——产业链映射传导部分保留设计态（Wind 数据落地后激活，承接方建议挂
+    BM-SEL-06 跨市场传导感知）；二阶宏观建模部分（流动性挤兑/信用利差/反馈循环）维持候选池。
+    RC-12-C（流动性危机模拟）维持候选池不变（产业链数据不改变其性质，缺订单簿/资金数据）。
+  impact:
+    - 'BM-RC-12-B 拆分：传导映射保留设计态 + 二阶建模 candidate'
+    - 'BM-RC-12-C 标 candidate + CAND 条目登记'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '裁定性记录（无代码施工）；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001; #ARCH-OE-036'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-054'
+  title: 'BM-SELL-06 弃用环节残留流转边清理（生成器过滤规则）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-SELL-06 已 deprecated 但 SELL-02→06、SELL-08→06、06→09 三条流转边仍残留在图中——
+    弃用环节仍在流转路径上误导 AI。裁定：battle_map_edges 清理 + 生成器加规则
+    （两端含 deprecated 节点的流转边不渲染）。
+  impact:
+    - 'battle_map_edges 残留边清理'
+    - 'generate_battle_map_diagram.py 过滤规则（真源侧）'
+  fix_phase: '裁定性记录；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-001'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-OE-055'
+  title: '已弃用环节的肯定性文档描述清理（02 模型训练文件等）'
+  category: over_engineering_trim
+  severity: P2中
+  adjudication: |-
+    BM-MT-03/04/06 已 deprecated（#ARCH-OE-009）但 02 文件正文仍以"加速器/保鲜关键"等肯定语气描述——
+    AI 读文档会误判为活设计而复建。裁定：生成器规则（deprecated 环节自动加【已弃用】前缀）+
+    module_translation_registry 对应文案同步。
+  impact:
+    - 'generate_battle_map_diagram.py deprecated 前缀规则'
+    - 'module_translation_registry 文案同步'
+  fix_phase: '裁定性记录；联动更新真源'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-009; #ARCH-OE-054'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# --- GAP 类：真实缺口（裁减完成后按用户定序启动 P0）---
+
+- issue_id: '#ARCH-GAP-001'
+  title: '执行链中段空心化：BM-EXE-04/05/06 未建而下游 TCA/清算已"运营态"'
+  category: architecture_gap
+  severity: P0
+  adjudication: |-
+    机构与社区共识：成交→持仓→PnL 是数据主动脉起点。当前 BM-EXE-04（合规闸）、BM-EXE-05（拆单）、
+    BM-EXE-06（成交回报/费用/订单状态机）核心参数全 proposed，而下游 BM-EXE-03 TCA 与 BM-REC-01 清算
+    已判运营态——验证跑在数据前面。裁定：P0 缺口，裁减完成后启动设计备忘录（落点 40_execution_broker.md），
+    施工顺序 EXE-06 → EXE-04（OE-016 裁剪版）→ REC-01 → EXE-03。
+  impact:
+    - '40_execution_broker.md 设计备忘录修订（待起草）'
+    - '施工后 battle_map_steps 锚点补登'
+  fix_phase: '待设计备忘录 → 施工（裁减完成后启动，用户 2026-08-12 定序）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-016; #ARCH-OE-030; battle_map_gap_oe_review.md §四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-002'
+  title: '订单幂等键 + 断线重连状态补齐四步（miniQMT 社区公认第一坑）'
+  category: architecture_gap
+  severity: P0
+  adjudication: |-
+    miniQMT 社区公认：重连≠恢复，必须补做行情重订阅+query_stock_orders 委托全量同步+持仓同步+
+    策略状态恢复四步；重试不得产生重复单（幂等键=strategy_id+信号日期+标的）。作战地图无独立环节承载。
+    裁定：P0 缺口，并入 GAP-001 执行链设计备忘录；多策略共账户的本地账本隔离（社区方案）一并纳入。
+  impact:
+    - '40_execution_broker.md 设计备忘录修订（待起草）'
+    - '施工后 battle_map_steps 锚点补登'
+  fix_phase: '待设计备忘录 → 施工（裁减完成后启动）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-GAP-001; #ARCH-OE-021; #ARCH-OE-012（COD 保留先例）'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-003'
+  title: '仿真-实盘偏差度量（机构 pilot 核心产出，BT-05-H 四孙环节缺失）'
+  category: architecture_gap
+  severity: P1高
+  adjudication: |-
+    机构上线三步走（paper→shadow→小资金 pilot）的核心产出是 sim-live 偏差（滑点分布/成交率/信号→成交延迟），
+    用于校准成本模型。当前 decision_gate 仅 Sharpe 总值 ok/warn/retire 比较，BM-BT-05-H-A~D 四孙环节
+    全部缺失/设计态。裁定：P1 缺口，落点 53_simulation_live_path.md 或 54_reconciliation_attribution.md。
+  impact:
+    - '设计备忘录修订（待定落点）'
+    - '施工后 battle_map_steps 锚点补登'
+  fix_phase: '待设计备忘录 → 施工（P0 之后）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-024; battle_map_gap_oe_review.md §四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-004'
+  title: 'CC-06 四模式开关落码（回测=实盘同一决策代码路径，Lean 社区基准）'
+  category: architecture_gap
+  severity: P0
+  adjudication: |-
+    QuantConnect Lean 的核心承诺"回测=实盘同一份代码"是回测-实盘一致性地基。53_simulation_live_path.md
+    已有 5 态 FSM 设计但未落码。它不定，回测与仿真的一切结论无法无损传导到实盘。
+    裁定：P0 缺口，先于任何策略施工；落点 53 号文档代码化。
+  impact:
+    - '53_simulation_live_path.md 5 态 FSM 代码施工'
+    - '施工后 battle_map_cross_cutting 真源联动'
+  fix_phase: '待施工（裁减完成后启动，P0 批）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: 'battle_map_gap_oe_review.md §四/§六; 53_simulation_live_path.md'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-005'
+  title: '渐进放钱纪律无载体（paper→小资金→每次加仓≤50%→参数冻结）'
+  category: architecture_gap
+  severity: P1高
+  adjudication: |-
+    量化社区共识：新策略 paper→小资金→每次加仓≤50% 观察一周；参数上线即冻结，禁盘中动态调参
+    （防"实时过拟合"）。BM-BT-08（试运行与验证）仍设计态。裁定：P1 缺口，BT-08 内嵌为 EXE 前置门禁，
+    与本条加仓纪律合并落地。
+  impact:
+    - 'BM-BT-08 设计定稿 + 施工'
+    - 'battle_map_steps 联动（施工后）'
+  fix_phase: '待设计定稿 → 施工（P0 之后）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-GAP-004; battle_map_gap_oe_review.md §四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-006'
+  title: '策略死亡线/退役机制（BT-05-D planned + RC-05-C 挂候选池）'
+  category: architecture_gap
+  severity: P1高
+  adjudication: |-
+    社区共识"连续 6 月亏损或回撤超历史 1.5 倍即退役"（freqtrade Protections 同类）。当前
+    BM-BT-05-D（策略衰减监控）planned、BM-RC-05-C（亏损限额强制停盘）挂候选池 CAND-HARVEST-0135。
+    裁定：P1 缺口，两项合并施工为"策略健康度+死亡线"模块。
+  impact:
+    - '策略死亡线模块设计 + 施工'
+    - 'battle_map_steps + candidate_module_registry 联动'
+  fix_phase: '待设计 → 施工（P0 之后）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: 'battle_map_gap_oe_review.md §四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-007'
+  title: '容量约束缺失（单票持仓≤ADV 1-3%，单人版容量管理）'
+  category: architecture_gap
+  severity: P1中
+  adjudication: |-
+    冲击成本平方根定律对个人小市值票同样成立；机构容量管理的第一性部分不是 AUM 缩放而是
+    "单票持仓≤其 ADV 固定比例"。地图只有机构向参与率拆单侧，无持仓容量墙。
+    裁定：P1 缺口，落点 BM-POS-02 仓位裁决参数族（与 OE-041 降级同步）。
+  impact:
+    - 'BM-POS-02 参数族修订（容量墙）'
+    - 'module_translation_registry 文案联动'
+  fix_phase: '待参数定稿 → 施工（P0 之后）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-041; #ARCH-OE-001（容量/AUM 缩放不引入的边界）'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-008'
+  title: '研究孵化 7 个缺失态父环节分批补建（RES-03/04/05/08/09/10/11）'
+  category: architecture_gap
+  severity: P1中
+  adjudication: |-
+    研究侧是"无账本的工厂"：BM-RES-03（假设管理，SR 11-7 单人版模型清单地基）、RES-04（工作流编排）、
+    RES-05（Notebook 转生产）、RES-08~11（知识四层）全部缺失态。裁定：分批——RES-03 假设登记 P1
+    （多 AI 并发施工的研究输入登记处），RES-04 轻量 DAG P2，RES-05/08~11 候选池远期。
+  impact:
+    - 'RES-03 假设登记模块设计 + 施工（P1）'
+    - 'RES-05/08/09/10/11 转候选池登记'
+  fix_phase: '分批：RES-03 P1 / RES-04 P2 / 其余候选池'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-017; #ARCH-OE-018; #ARCH-OE-033; #ARCH-OE-050; #ARCH-OE-051'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-009'
+  title: '配置+参数+代码+数据四版本联合回放（SR 11-7 单人版模型清单）'
+  category: architecture_gap
+  severity: P1中
+  adjudication: |-
+    "AI 改参数视同模型变更需重新验证"（SR 11-7 重大变更条款单人版）当前无载体。裁定：轻量落地——
+    配置快照+git commit hash+数据分区号三元组落库（与 CC-15 降级方案 OE-029 共用存储），
+    支持任意交易日决策联合回放。
+  impact:
+    - '四版本快照表设计 + 施工（P1）'
+    - '与 CC-15 降级方案合并实施'
+  fix_phase: '待设计 → 施工（P0 之后）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-OE-029; #ARCH-OE-045; battle_map_gap_oe_review.md §四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-010'
+  title: 'AI 金融代码高敏区门禁（下单/资金/风控/成本四类人审+边界单测+包名核对）'
+  category: architecture_gap
+  severity: P0
+  adjudication: |-
+    CSA 2026 实证：45% AI 代码样本含 OWASP Top10 漏洞、漏洞率 2.74 倍、19.7% 概率幻觉不存在依赖包。
+    作战地图 337 环节无任何一处承载"AI 生成金融代码专项门禁"。裁定：P0——下单/资金计算/风控规则/
+    成本参数四类文件列入高敏区：AI 产出必须人审+边界单测（涨跌停/停牌/除权/T+1/断线重放）方可合并；
+    依赖安装前包名核对防 slopsquatting。落地守 I-GOV-3：升级现有 PROTECTED-PATHS 门禁不新增 gate。
+    附带：多对话并发写冲突用 git worktree 制度化（承接 git alias 失效教训）；memory/topics 写入过校验
+    防上下文中毒跨会话传播。
+  impact:
+    - 'PROTECTED-PATHS 门禁升级（高敏区路径+人审标记，不新增 gate 守 I-GOV-3）'
+    - '边界单测套件（涨跌停/停牌/除权/T+1/断线）'
+    - '依赖包名核对流程 + worktree 并发隔离制度化 + memory 写入校验'
+  fix_phase: '待设计 → 施工（裁减完成后启动，P0 批）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-GOV-BUDGET-001（I-GOV-3）; #ARCH-GIT-CLEAN-GUARD-FIX; battle_map_gap_oe_review.md §七'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-011'
+  title: '公司行动回测↔实盘复权映射一致性测试缺失'
+  category: architecture_gap
+  severity: P2中
+  adjudication: |-
+    社区公认对账差异高发源：回测用复权价、实盘用未复权价，除权日持仓数量/成本价映射错误表现为
+    "幽灵仓位"。BM-REC-01-B 有公司行为处理但无复权映射一致性专项测试。裁定：P2，落点为
+    54_reconciliation_attribution.md 增补测试用例族。
+  impact:
+    - '54_reconciliation_attribution.md 测试用例增补'
+    - '边界单测（除权日持仓/成本映射）'
+  fix_phase: '待用例设计 → 施工（P2 批）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: 'battle_map_gap_oe_review.md §四'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+- issue_id: '#ARCH-GAP-012'
+  title: 'Windows 假死心跳检测缺失（休眠/锁屏订阅失效进程空转）'
+  category: architecture_gap
+  severity: P2中
+  adjudication: |-
+    miniQMT 社区已知坑：Windows 休眠/锁屏导致行情订阅失效但进程空转（"假死"）。对应 system_charter
+    §2 约束五（运维容灾 RTO<5分钟）。作战地图无环节承载。裁定：P2，落点为进程心跳+订阅活性检测，
+    并入 55_monitoring_review.md 或 GAP-002 断线补齐设计。
+  impact:
+    - '心跳/订阅活性检测设计（并入 GAP-002 或 55号文档）'
+  fix_phase: '待设计 → 施工（P2 批）'
+  status: decided
+  confirmed_by_user: '2026-08-12（用户批量确认）'
+  related_rules: '#ARCH-GAP-002; system_charter §2 约束五'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
+
+# === 第十二批登记完毕（#ARCH-OE-013~055 共 43 项 + #ARCH-GAP-001~012 共 12 项，合计 55 条，全部 decided）===
+# 联动动作（真源侧执行）：
+#   1) battle_map_steps 状态更新（deprecated/candidate，经 apply_battle_map.py CLI）
+#   2) module_translation_registry §battle_map plain_zh 文案改写（redesign 类）
+#   3) candidate_module_registry 登记 CAND 条目（candidate 类）
+#   4) generate_battle_map_diagram.py 修复（OE-054 边过滤 / OE-055 弃用前缀 / 计数与截断 bug）
+#   5) 12 份环节文档重跑生成器生效
