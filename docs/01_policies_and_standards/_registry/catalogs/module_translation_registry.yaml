@@ -46165,7 +46165,7 @@ battle_map_cross_cutting:
 
     '
 - category: voting_first_multi_agent
-  name_zh: 投票优先多Agent协作（已降级-可选，#ARCH-OE-011）
+  name_zh: 投票优先多Agent协作
   name_en: Voting-First Multi-Agent Collaboration
   sketch_ref: 交易决策架构 v8.2（L433 升级注记 / L856 支撑层，§29.39 裁定17）
   source_ref: 交易决策架构.md v8.2 支撑层 + §29.39 裁定17

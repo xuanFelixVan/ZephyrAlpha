@@ -14685,3 +14685,97 @@ entries:
 # 将对应环节标 deprecated/wontfix
 # 裁剪分类：不引入（OE-001~006, OE-012）/ 裁剪已登记设计态环节（OE-007~011）
 # 先例：#ARCH-CH-032（异地副本不引入）、Mamba/SSM + SAC 过度工程评估、ADR 不引入
+
+# === 第十一批 65号 Git 安全治理 v1.5.0-v1.6.0 新增 ARCH 议题 ===
+
+- issue_id: '#ARCH-GIT-DEOBFUSCATOR'
+  title: 'Shell 反混淆归一化层——防 GuardFall 5 大绕过类'
+  category: git_safety
+  severity: P0
+  adjudication: |-
+    GuardFall（Adversa AI 2026-06-30）证明 10/11 开源 AI agent 可被 shell 注入绕过。
+    AgentTrust 论文提出 9 策略反混淆归一化层（变量展开/hex/八进制/alias/命令替换/ANSI-C quoting/相邻引号拼接/Base64/$IFS）。
+    65号 §7.18 施工项 18 已设计完整算法。
+  impact:
+    - '65号 §7.18 新增施工项 18'
+    - '防御层 L10 Shell 反混淆归一化层'
+  fix_phase: 'Phase 2 P1 深度防护'
+  status: proposed
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-GIT-VAR-COLLISION'
+  title: 'PowerShell 自动变量碰撞检测——防 Codex $home 事故重演'
+  category: git_safety
+  severity: P0
+  adjudication: |-
+    Codex Issue #32684（2026-07-13）：$home 赋值碰撞只读 $HOME → %USERPROFILE% 递归删除 67,959 文件。
+    65号 §7.17 施工项 17 已设计 30+ 只读自动变量清单 + _ZephyrCheckVarCollision 函数。
+  impact:
+    - '65号 §7.17 新增施工项 17'
+    - '防御层 L11 PowerShell 自动变量碰撞检测 + .git 永久阻断'
+  fix_phase: 'Phase 1 P0 生存级'
+  status: proposed
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-GIT-RISKCHAIN'
+  title: 'Session 级多步攻击链追踪——防 CFD 跨调用拆分攻击'
+  category: git_safety
+  severity: P1
+  adjudication: |-
+    CFD 攻击（arXiv:2606.09084）：per-call guardrail 无法防御跨调用拆分（+28pp jailbreak）。
+    AgentTrust RiskChain：order-aware session tracker 检测多步攻击链。
+    65号 §7.20 施工项 20 已设计 6 类可疑链模式 + 风险分阈值 50/80/100 三级响应。
+  impact:
+    - '65号 §7.20 新增施工项 20'
+    - '防御层 L13 RiskChain session 级攻击链追踪'
+  fix_phase: 'Phase 2 P1 深度防护'
+  status: proposed
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-GIT-CVE-2026-44244'
+  title: 'git config 注入防护（CVE-2026-44244/67326）'
+  category: git_safety
+  severity: P0
+  adjudication: |-
+    CVE-2026-44244（2026-05-06）+ CVE-2026-67326（2026-08-01）：GitPython set_value() 换行符注入
+    → core.hooksPath 重定向 → RCE。影响 GitPython < 3.1.50（DVC/MLflow/Kedro 依赖）。
+    65号 §7.23 施工项 23 已设计 git config core.hooksPath/fsmonitor 阻断 + CR/LF/NUL 校验。
+  impact:
+    - '65号 §7.23 新增施工项 23 git 专属危险命令阻断列表'
+  fix_phase: 'Phase 1 P0 生存级'
+  status: proposed
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-GIT-CVE-2026-55607'
+  title: 'git worktree 沙箱逃逸防护（CVE-2026-55607）'
+  category: git_safety
+  severity: P0
+  adjudication: |-
+    CVE-2026-55607（2026-07-10）：worktree 名为 .git → gitdir 混淆 → 符号链接操纵
+    → core.fsmonitor 执行 → 逃逸 macOS Seatbelt。Claude Code 2.1.38-2.1.162 受影响。
+    65号 §7.25 施工项 25 已设计 worktree 名含 .git 拒绝 + 强制 fsmonitor none + gitdir realpath 校验。
+  impact:
+    - '65号 §7.25 新增施工项 25 git hook 信任链 + worktree 安全 + reflog 不可变窗口'
+  fix_phase: 'Phase 2 P1 深度防护'
+  status: proposed
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
+
+- issue_id: '#ARCH-GIT-TOCTOU'
+  title: 'symlink/junction + TOCTOU 防护——wrapper 结构性缺陷修复'
+  category: git_safety
+  severity: P1
+  adjudication: |-
+    CVE-2026-23988：PowerShell 脚本 TOCTOU 提权（Test-Path + Remove-Item 窗口期可被 mklink 替换）。
+    65号 §7.24 施工项 24 已设计 Atomic Path Resolution 算法（P/Invoke CreateFile + FILE_FLAG_OPEN_REPARSE_POINT + handle 保留）。
+  impact:
+    - '65号 §7.24 新增施工项 24'
+    - '防御层 L14 symlink/junction + TOCTOU 防护'
+  fix_phase: 'Phase 2 P1 深度防护'
+  status: proposed
+  created: '2026-08-11'
+  last_updated: '2026-08-11'
