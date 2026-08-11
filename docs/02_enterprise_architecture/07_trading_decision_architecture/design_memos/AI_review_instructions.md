@@ -1,21 +1,22 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-title: 24路并发AI审查回填指令集
+title: 22路并发AI审查回填指令集
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-10
+version: "2.0.0"
+date: 2026-08-11
 topic: ai_review_instructions
 scope: 07_trading_decision_architecture
 ---
 
-# 26 路并发 AI 审查回填指令集
+# 22 路并发 AI 审查回填指令集
 
-> **用途**：本文档包含 26 个 AI 的完整指令，每个指令可一键复制到新 AI 对话中独立执行。
-> **任务**：对 `07_trading_decision_architecture/design_memos/` 下 44 篇文档进行回填、审查、扩展、更新、过度工程清理。
+> **用途**：本文档包含 22 个 AI 的完整指令，每个指令可一键复制到新 AI 对话中独立执行。
+> **任务**：对 `07_trading_decision_architecture/design_memos/` 下 46 篇文档进行回填、审查、扩展、更新、过度工程清理。
 > **创建日期**：2026-08-10
+> **更新日期**：2026-08-11（v2.0.0：26 路→22 路重组，44 篇→46 篇，按行数平衡重新分配）
 > **使用方式**：复制对应 AI 编号的指令块 → 开新对话 → 粘贴 → 执行
 
 ---
@@ -44,1247 +45,707 @@ scope: 07_trading_decision_architecture
 
 ---
 
-## 1. 26 个 AI 文档分配总表
+## 1. 22 个 AI 文档分配总表
 
-| AI | 文档数 | 负责文档 |
-|---|---|---|
-| AI-01 | 1 | 00_index_trading_decision.md（总索引，全局视角） |
-| AI-02 | 2 | 01_design_memo_management_spec.md + 15_data_feature_layer_spec.md |
-| AI-03 | 1 | 10_regime_detector_spec.md（184KB 超大 active） |
-| AI-04 | 2 | 11_regime_backtest_validation_plan.md + 12_regime_phase2_validation.md |
-| AI-05 | 2 | 13_regime_phase3_engineering_plan.md + 14_regime_s2_diagnosis.md |
-| AI-06 | 2 | 20_first_batch_strategies.md + 21_stock_selection_engine.md |
-| AI-07 | 2 | 22_sector_rotation_spec.md + 23_strategy_correlation_validation.md |
-| AI-08 | 2 | 24_daban_strategy_detail.md + 25_multifactor_strategy_detail.md |
-| AI-09 | 2 | 26_event_driven_strategy_detail.md + 27_second_batch_strategies.md |
-| AI-10 | 2 | 28_sentiment_cycle_trading.md + 30_multi_strategy_concurrency.md |
-| AI-11 | 2 | 31_position_sizing.md + 32_firm_risk_aggregator.md |
-| AI-12 | 2 | 33_budget_change_handler.md + 34_regime_meta_allocator.md |
-| AI-13 | 2 | 35_drawdown_protocol_impl.md + 36_var_es_monitoring.md |
-| AI-14 | 2 | 37_liquidity_crisis_protocol.md + 40_execution_broker.md |
-| AI-15 | 2 | 41_buy_flow.md + 42_sell_flow.md |
-| AI-16 | 2 | 50_backtest_observability_workplan.md + 51_panel_experiment_history_mlflow_retirement.md |
-| AI-17 | 2 | 52_backtest_framework_docking.md + 53_simulation_live_path.md |
-| AI-18 | 2 | 54_reconciliation_attribution.md + 55_monitoring_review.md |
-| AI-19 | 2 | 60_cross_cutting_cleanup.md + 61_lifecycle_multi_ai.md |
-| AI-20 | 2 | 90_methodology_open_questions.md + 91_density_prediction.md |
-| AI-21 | 1 | 62_business_registry_construction.md（业务资产注册表施工总案） |
-| AI-22 | 1 | 63_data_utilization_audit.md（业务数据资产利用率审查） |
-| AI-23 | 1 | 19_northbound_hold_snapshot.md（北向资金季度持仓快照 fetcher 施工计划） |
-| AI-24 | 1 | 17_special_trading_days_data_assets.md（A股特殊交易日数据资产全景与治理） |
-| AI-25 | 1 | 18_cold_archive_build_plan.md（冷数据归档施工图） |
-| AI-26 | 1 | 64_data_source_download_spec.md（数据源与下载体系规范） |
+### 常规审查 AI（AI-01 ~ AI-20，覆盖 44 篇文档）
 
-> 合计 8 个 AI 各 1 篇 + 18 个 AI 各 2 篇 = 44 篇，26 个 AI，全覆盖。
+| AI | 文档数 | 负责文档 | 合计行数 | 说明 |
+|---|---|---|---|---|
+| AI-01 | 1 | 62_business_registry_construction.md | 4317 | XL 独立 |
+| AI-02 | 1 | 10_regime_detector_spec.md | 3263 | XL 独立 |
+| AI-03 | 1 | 54_reconciliation_attribution.md | 2889 | XL 独立 |
+| AI-04 | 1 | 63_data_utilization_audit.md | 2637 | XL 独立 |
+| AI-05 | 1 | 35_drawdown_protocol_impl.md | 2456 | XL 独立 |
+| AI-06 | 1 | 36_var_es_monitoring.md | 2080 | XL 独立 |
+| AI-07 | 1 | 13_regime_phase3_engineering_plan.md | 1971 | L 独立 |
+| AI-08 | 1 | 64_data_source_download_spec.md | 1659 | L 独立 |
+| AI-09 | 2 | 40_execution_broker.md + 42_sell_flow.md | 1929 | L+M |
+| AI-10 | 2 | 37_liquidity_crisis_protocol.md + 41_buy_flow.md | 1805 | L+M |
+| AI-11 | 2 | 32_firm_risk_aggregator.md + 30_multi_strategy_concurrency.md | 1882 | L+M |
+| AI-12 | 2 | 34_regime_meta_allocator.md + 00_index_trading_decision.md | 1792 | L+M |
+| AI-13 | 2 | 26_event_driven_strategy_detail.md + 22_sector_rotation_spec.md | 1737 | L+M |
+| AI-14 | 2 | 61_lifecycle_multi_ai.md + 53_simulation_live_path.md | 1827 | L+M |
+| AI-15 | 2 | 14_regime_s2_diagnosis.md + 25_multifactor_strategy_detail.md | 1906 | M+M |
+| AI-16 | 2 | 24_daban_strategy_detail.md + 11_regime_backtest_validation_plan.md | 1853 | M+M |
+| AI-17 | 3 | 31_position_sizing.md + 18_cold_archive_build_plan.md + 12_regime_phase2_validation.md | 1802 | M+M+M |
+| AI-18 | 5 | 21_stock_selection_engine.md + 51_panel_experiment_history_mlflow_retirement.md + 23_strategy_correlation_validation.md + 17_special_trading_days_data_assets.md + 50_backtest_observability_workplan.md | 1918 | M+S×3 |
+| AI-19 | 5 | 20_first_batch_strategies.md + 19_northbound_hold_snapshot.md + 01_design_memo_management_spec.md + 28_sentiment_cycle_trading.md + 60_cross_cutting_cleanup.md | 771 | S×5 |
+| AI-20 | 7 | 33_budget_change_handler.md + 55_monitoring_review.md + 52_backtest_framework_docking.md + 15_data_feature_layer_spec.md + 27_second_batch_strategies.md + 16_technical_indicator_catalog.md + 16_technical_indicator_build_plan.md | 472 | 骨架×7 |
+
+### 特殊讨论文档 AI（AI-21 ~ AI-22，覆盖 2 篇文档）
+
+| AI | 文档数 | 负责文档 | 行数 | 说明 |
+|---|---|---|---|---|
+| AI-21 | 1 | 90_methodology_open_questions.md | 1068 | 特殊：深度调研+裁定+施工方案 |
+| AI-22 | 1 | 91_density_prediction.md | 45 | 特殊：深度调研+裁定+施工方案 |
+
+> 合计：20 个常规 AI 覆盖 44 篇 + 2 个特殊 AI 覆盖 2 篇 = 46 篇，22 个 AI，全覆盖。
 
 ---
 
-## AI-01 指令（负责 00_index_trading_decision.md）
+## AI-01 指令（负责 62_business_registry_construction.md）
 
 ```
 你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
 
-【你的任务】审查并更新 1 篇文档：d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\00_index_trading_decision.md
-
-【文档性质】这是 07_trading_decision_architecture 域的总索引+路线图（G01-G28 主题组），active v2.4.0。它不是骨架，是已定稿的导航文档。
-
-【工作清单】
-1. 读现状：读 00_index 全文 + 读 01_design_memo_management_spec §2/§4（三层分治与文档规范）+ 列出 design_memos 目录全部 38 篇的当前 frontmatter status/version（用 LS + Grep frontmatter）
-2. 一致性审查：
-   - §0 目录表的 38 篇状态是否与各文档 frontmatter 实际 status/version 一致
-   - §3 主题组 G01-G28 的"状态"列是否与对应文档实际状态一致
-   - §7.3 占用表的认领状态是否最新
-   - §9 开放问题汇总的"决策状态"是否与各文档实际一致
-   - §10 改名对照表是否有遗漏
-3. 完整性审查：
-   - G01-G28 主题组是否覆盖赚钱全流程所有环节（研究孵化→模型训练→回测→模拟→选股→买入→卖出→仓位→风控→执行→对账→跨切）
-   - 对照 battle_map_01~12 的 12 个阶段，是否每个阶段都有对应 G 主题组
-   - 对照 src/zephyr/ 下已施工的 domain（用 LS src/zephyr），是否有关键已施工模块没被任何 G 主题组覆盖
-4. 全网搜索：WebSearch 限定 2026 年，搜"quantitative trading system architecture 2026""multi-strategy portfolio framework 2026""algorithmic trading decision pipeline 2026"，看是否有更优的主题组划分范式
-5. 过度工程审查：§5 的 3 条并行轨道、§7 多 AI 分工指南是否对个人项目过重（如多 AI 协作流程是否需要简化）
-6. 结构调整：§0-§11 的顺序/内容是否需要调整；§4 依赖关系图是否准确反映当前依赖
-7. 循环：改完一轮后重新通读全文，再查一轮，直到连续 1 轮零改动
-
-【约束】
-- 这是索引文档，不写施工算法细节，只维护导航准确性
-- 改动升 version（v2.4.0→v2.5.0 小改 / v3.0.0 大改），修订记录补一行
-- 不破坏 38 篇文档的交叉引用链接
-- 不擅自新增/删除 G 主题组（需人决策的标在 §9 开放问题）
-- 持续改进，不要停下来询问，直到零问题
-```
-
----
-
-## AI-02 指令（负责 01_spec + 15_data_feature）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT，T+1，不能做空）。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\01_design_memo_management_spec.md（管理规范，active v1.2.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\15_data_feature_layer_spec.md（G01 数据与特征层规范，骨架 draft 0.1.0，需大量回填）
-
-【文档1：01_spec 工作清单】
-- 读全文，审查 §1-§7 是否与 38 篇文档实际现状一致（命名规则/段位编号/status 枚举/防飘移机制）
-- 审查 §4.4 文档种类适配是否覆盖所有实际文档种类
-- 全网搜索 2026 年"architecture decision record alternative 2026""design memo vs ADR 2026"，看规范本身是否需迭代
-- 过度工程审查：§2.2 三层协作流程、§5.3 修订规则是否对个人项目过重
-- 循环审查至零问题
-
-【文档2：15_data_feature 工作清单——重点回填】
-- 这是骨架，§2-§6 全空，需要回填项目已施工的数据/因子基础设施 why
-- 读项目代码：
-  - LS d:\ZephyrAlpha\src\zephyr\ 找 data/factor/feature/mkt_data 相关子包
-  - 读 d:\ZephyrAlpha\docs\02_enterprise_architecture\02_domain_architecture_docs\11_d_data.md（D_DATA 域 194 模块）+ 12_d_data_eng.md + 23_d_mkt_data.md + 46_d_factor.md（D_FACTOR 109 模块）了解已施工模块清单
-  - 读 d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\battle_map\battle_map_01_research_incubation.md + battle_map_02_model_training.md 了解数据/因子阶段现状
-- 回填讨论要点（§7 的 6 项）：
-  ① ClickHouse schema 规范——查 src/zephyr 下 clickhouse schema 定义，回填实际 schema 设计 why
-  ② miniQMT tick 接入契约——查 miniQMT 接入代码，回填实际契约
-  ③ PIT 铁律——查 AS OF JOIN/Embargo 实现，回填实际方案
-  ④ 特征仓库架构——查特征计算/缓存/版本实现，回填
-  ⑤ 因子工程总纲——查因子库/IC 评估/衰减监控/过拟合监控实现（BM-SEL-02），回填
-  ⑥ 数据质量门控——查数据质量检查实现，回填
-- 把骨架填成 active：补 §1 背景、§2 决策、§3 替代方案、§4 上限、§5 待裁定、§6 待定问题、§7 引用、§8 修订记录
-- 全网搜索 2026 年"feature store architecture 2026""factor IC evaluation 2026""point-in-time database 2026""alpha factory 2026"，找更好算法
-- 过度工程审查：特征仓库/因子工程是否对个人项目过重（如是否需要完整 Feature Store，还是轻量缓存即可）
-- 循环审查至零问题
-
-【约束】
-- 遵循 01_spec 自身的规范（frontmatter/修订记录/开放问题节）
-- 15 号从 draft 0.1.0 → active 1.0.0（填满后），修订记录记"骨架填空+回填已施工算法"
-- 不破坏交叉引用，引用代码用稳定 path
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-03 指令（负责 10_regime_detector_spec）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 1 篇文档（超大 active 文档）：
-d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\10_regime_detector_spec.md（regime 检测器 spec，active v1.3.1，184KB）
-
-【文档性质】这是已定稿的 regime 检测器 spec，12 态定稿，代码已施工。文档很大（184KB，超 Read 128KB 限制，需用 offset/limit 分段读，或用 Grep 定位章节）。
-
-【工作清单】
-1. 读现状：用 Read offset/limit 分段读全文（每段 1500 行），或用 Grep 定位 H2 章节逐段读；同时读 src/zephyr/regime/ 下全部代码（LS src/zephyr/regime + 读 core/regime_detector.py / features/ / validation/）
-2. 回填：把 src/zephyr/regime/ 已施工的算法（HMM 9态/12态、Shrinkage、overlay signals、synthetic VIX、walk-forward refit、Phase2 四验证器等）的 why 回填到文档（如已记录则审查完整性）
-3. 审查缺失：12 态转换路径/触发确认信号/置信度更新规则/主线识别是否完整；对照 12_regime_phase2_validation 的 A2/B1 FAIL 结果，文档是否已反映"模型需重设计"的后续
-4. 全网搜索 2026 年"regime detection HMM 2026""market state detection 2026""Gaussian HMM financial 2026""regime switching model 2026"，找更好算法（如非参数化/深度学习 regime）
-5. 过度工程审查：12 态是否过多（个人系统）；overlay signals 的 NLP/资金/板块维度是否过度（P2 待施工的是否应降级）
-6. 结构调整：184KB 是否应拆分（如验证部分拆到 11/12 号）；章节顺序是否合理
-7. 循环审查至零问题
-
-【约束】
-- active 文档改动升版本（v1.3.1→v1.4.0），重大决策修订需标待裁定
-- 不破坏与 11/12/13/14 号文档的交叉引用
-- 读取大文件用 offset/limit，不要一次性读
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-04 指令（负责 11_regime_backtest + 12_phase2_validation）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\11_regime_backtest_validation_plan.md（regime 回测验证方案，active）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\12_regime_phase2_validation.md（Phase 2 模型质量验证，active v0.2.2）
-
-【工作清单——文档1：11号】
-- 读全文 + 读 src/zephyr/regime/validation/（LS + 读 c1_comparator/c1_runner/phase2_runner）
-- 回填：Phase 1-5 验证方案的已执行结果（C1 已通过 commit 852457e9、Phase 2 已执行见 12 号）回填到 11 号的验收指南
-- 审查：Phase 1-5 各阶段验收标准是否完整；C1 Shrinkage 有效性已证，文档是否同步
-- 全网搜索 2026 年"regime backtest validation 2026""walk-forward validation 2026""deflated sharpe ratio 2026"
-- 过度工程审查：5 个 Phase 是否对个人项目过多
-- 循环至零问题
-
-【工作清单——文档2：12号】
-- 读全文（12 号已有第一批/第二批执行结果，含 A1/A2/B1/B4 真实数据）+ 读 src/zephyr/regime/validation/phase2/（a1/a2/b1/b4 四验证器代码）
-- 回填：把四验证器的实际算法/代码实现 why 补全（如 A2 标签对齐 Hungarian、B1 后续收益代理标签的 12 态映射）
-- 审查：A2 FAIL（OOS/IS=0.340）+ B1 FAIL（误差27.6%）的后续修复是否已落盘；§9.4/§10.4 的下一步优先级是否已执行
-- 全网搜索 2026 年"HMM overfitting detection 2026""probability calibration 2026""Viterbi label alignment 2026""reliability diagram 2026"
-- 过度工程审查：四验证器是否对个人项目过重
-- 循环至零问题
-
-【约束】
-- active 文档改动升版本，修订记录补行
-- 不破坏与 10/13/14 号的交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-05 指令（负责 13_phase3 + 14_s2_diagnosis）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\13_regime_phase3_engineering_plan.md（Phase 3 工程规划，draft）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\14_regime_s2_diagnosis.md（S2 算法错配诊断报告，draft）
-
-【工作清单——文档1：13号】
-- 读全文 + 读 src/zephyr/regime/（降态/校准/NLP/S2/T3 相关代码）
-- 回填：Phase 3 的降态（9→6）、校准器、NLP 管道、S2/T3 触发逻辑的已施工部分回填 why
-- 审查：§2.1 降维裁定、§2.2 校准器设计是否完整；与 12 号 A2/B1 FAIL 的修复方案是否对齐
-- 全网搜索 2026 年"HMM state reduction 2026""probability calibration isotonic 2026""NLP financial sentiment 2026"
-- 过度工程审查：NLP 管道/资金板块数据管道是否对个人项目过重（是否应降级远期）
-- 从 draft → active（如已施工完整）或保持 draft 补全
-- 循环至零问题
-
-【工作清单——文档2：14号】
-- 读全文 + 读 src/zephyr/regime/（S2 trigger 逻辑、overlay_signals_builder、bad_news_flat/policy stub）
-- 回填：S2 算法错配的根因诊断（thresholds 过高/NLP stub=0/合成 VIX 缺失）+ 修复方案（已修合成 VIX commit eb3db21bd8 + S1 门槛 commit 981d59d8cc）回填
-- 审查：诊断报告的因果时间线是否完整；S2 仍 0/3 的后续是否登记
-- 全网搜索 2026 年"crisis recovery detection 2026""market bottom identification 2026""capitulation signal 2026"
-- 过度工程审查：S2 的多维度触发是否过重
-- 循环至零问题
-
-【约束】
-- draft→active 升版本，修订记录补行
-- 不破坏与 10/11/12 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-06 指令（负责 20_first_batch + 21_stock_selection）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT，T+1，不能做空）。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\20_first_batch_strategies.md（首批3策略定义，active v1.2.4）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\21_stock_selection_engine.md（G05 选股引擎架构，骨架 draft 0.1.0）
-
-【工作清单——文档1：20号】
-- 读全文 + 读 src/zephyr/pf_core/strategies/ + battle_map_05_stock_selection.md（BM-SEL-22~27 打板链/因子工厂/事件处理）
-- 回填：3 策略（打板/多因子/事件驱动）已施工的 alpha 信号链 why 补全（打板链 BM-SEL-22~25、因子工厂 BM-SEL-02、事件处理 BM-SEL-27 的代码实现回填）
-- 审查：§2.5 差异化矩阵、§2.6 选股池交集、§4.4 灰度指引是否完整；§5 待裁定 4 项是否已落地
-- 全网搜索 2026 年"multi-strategy alpha 2026""daban limit-up strategy 2026""event-driven trading 2026""factor investing 2026"
-- 过度工程审查：§4.4 intake 四阶段是否对个人项目过重
-- 循环至零问题
-
-【工作清单——文档2：21号——重点回填】
-- 骨架，§2-§6 全空，需回填选股引擎已施工部分
-- 读 src/zephyr/（LS 找 selection/stock_selection/ashare_signal 相关）+ battle_map_05（BM-SEL-25 双引擎融合、L0→L1→L2-C 分层、量化强度评级）
-- 回填讨论要点（§7 的 6 项）：双引擎融合定位、L0→L1→L2-C 分层、量化强度评级、选股 pipeline 标准接口、候选池生成→过滤→排序→输出、与 StrategyBook 对接契约
-- 填成 active：补 §1-§8
-- 全网搜索 2026 年"stock selection engine 2026""alpha factory layered 2026""quant signal pipeline 2026"
-- 过度工程审查：L0→L1→L2-C 三层是否过重
-- 循环至零问题
-
-【约束】
-- 20 号 active 改动升版本；21 号 draft→active 1.0.0
-- 不破坏与 30/24/25/26 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-07 指令（负责 22_sector_rotation + 23_correlation）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\22_sector_rotation_spec.md（G06 板块轮动 spec，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\23_strategy_correlation_validation.md（G07 策略间相关性验证，骨架 0.1.0）
-
-【工作清单——文档1：22号——回填】
-- 读 battle_map_05（BM-SEL-08 板块强度 460 板块 880xxx K线、BM-SEL-09 调整周期追踪）+ src/zephyr/（LS 找 sector/rotation/plate 相关）
-- 回填讨论要点 7 项：板块强度算法、回踩质量 A/B/C、调整周期追踪、轮动序列、虹吸态、板块资金流、板块→个股传导
-- 填成 active
-- 全网搜索 2026 年"sector rotation strategy 2026""industry momentum 2026""A-share sector 2026"
-- 过度工程审查：460 板块全覆盖是否过重
-- 循环至零问题
-
-【工作清单——文档2：23号——回填】
-- 读 20_first_batch_strategies §2.5 差异化矩阵（已定）+ src/zephyr/（找 correlation/相关性验证代码，可能未施工）
-- 回填讨论要点 5 项：5 候选两两相关矩阵、按情绪周期分层、>0.6 重新审视、验证数据区间、验证报告模板
-- 若代码未施工，则填 why 决策（用什么方法：block-bootstrap/pearson/spearman/按情绪周期分层）+ 标"待施工"
-- 填成 active 或保持 draft（如纯待施工）
-- 全网搜索 2026 年"strategy correlation block bootstrap 2026""multi-strategy decorrelation 2026"
-- 过度工程审查：block-bootstrap 2000x 是否过重
-- 循环至零问题
-
-【约束】
-- 骨架→active 升版本 1.0.0
-- 不破坏与 20/30 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-08 指令（负责 24_daban + 25_multifactor）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\24_daban_strategy_detail.md（G08 打板策略细节，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\25_multifactor_strategy_detail.md（G09 多因子策略细节，骨架 0.1.0）
-
-【工作清单——文档1：24号——回填打板】
-- 读 battle_map_05（BM-SEL-22 短线评分卡7维、BM-SEL-23 游资接力6因子+情绪周期4+1、BM-SEL-24 量化强度6维、BM-SEL-25 双引擎融合6类决策）+ src/zephyr/（LS 找 daban/limit_up/board_ladder/ashare_signal 相关）
-- 回填讨论要点 7 项：连板梯队识别、情绪周期定位器、主升龙头识别、打板容量极小、双引擎融合内部、打板专用风控、T+1 时序
-- 填成 active
-- 全网搜索 2026 年"limit-up board strategy China 2026""游资打板 2026""consecutive limit-up 2026""dragon list 2026"
-- 过度工程审查：7 维评分卡+6 因子+6 维强度是否维度过多
-- 循环至零问题
-
-【工作清单——文档2：25号——回填多因子】
-- 读 battle_map_05（BM-SEL-02 因子计算/注册表/IC-IR/衰减/合成/治理）+ src/zephyr/factor/（LS + 读 core/factor_dag/dag.py 等）+ 02_domain_architecture_docs/46_d_factor.md（D_FACTOR 109 模块）
-- 回填讨论要点 6 项：因子组合方式（打分/IC加权/正交化）、行业中性化、因子衰减监控、多因子换手率、多因子容量、与打板相关性
-- 填成 active
-- 全网搜索 2026 年"multi-factor model 2026""factor combination IC weighting 2026""factor decay monitoring 2026""industry neutralization 2026"
-- 过度工程审查：因子治理生命周期是否过重
-- 循环至零问题
-
-【约束】
-- 骨架→active 1.0.0
-- 不破坏与 20/30 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-09 指令（负责 26_event_driven + 27_second_batch）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\26_event_driven_strategy_detail.md（G10 事件驱动策略细节，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\27_second_batch_strategies.md（G11 第二批次策略，骨架 0.1.0，暂缓）
-
-【工作清单——文档1：26号——回填事件驱动】
-- 读 battle_map_05（BM-SEL-27 盘中实时事件处理）+ src/zephyr/（LS 找 event/news/sentiment/announcement 相关）+ 02_domain_architecture_docs/09_d_alt_data.md（另类数据）
-- 回填讨论要点 6 项：事件源（公告/新闻/龙虎榜/异动）、事件分类、事件冲击衰减曲线、事件→选股映射、事件换手率、news_data 多源情绪
-- 填成 active
-- 全网搜索 2026 年"event-driven trading 2026""news sentiment alpha 2026""event impact decay 2026""Hawkes process finance 2026"（20号已引 Janus-Q/Yukka/Hawkes，看是否有更新）
-- 过度工程审查：多源 news_data 接入是否过重
-- 循环至零问题
-
-【工作清单——文档2：27号——暂缓文档】
-- 读 20_first_batch §4.2 演进路径（第三阶段上加第4/5策略）+ 30_multi_strategy §1.1
-- 本文档是暂缓骨架（首批 track record 后再讨论），不需要填满，但审查：
-  - 暂缓理由是否充分
-  - 价值反转/动量趋势的 alpha 信号预研方向是否登记
-  - 与首批 3 策略相关性的预判
-- 全网搜索 2026 年"value reversal strategy 2026""momentum trend following 2026""Fama French 2026"
-- 过度工程审查：暂缓文档是否应精简
-- 循环至零问题
-
-【约束】
-- 26 号骨架→active 1.0.0；27 号保持 draft 但补全暂缓说明
-- 不破坏与 20/30 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-10 指令（负责 28_sentiment + 30_multi_strategy）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\28_sentiment_cycle_trading.md（G21 情绪周期×交易决策，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\30_multi_strategy_concurrency.md（多策略并发架构总纲，active v1.3.3）
-
-【工作清单——文档1：28号——回填情绪周期】
-- 读 battle_map_05（BM-SEL-23-B 情绪周期4+1阶段：冰点/反核/主升/疯狂/退潮）+ src/zephyr/（LS 找 sentiment/cycle/emotion 相关）+ 10_regime_detector_spec（regime 12 态含情绪维度，分工边界）
-- 回填讨论要点 5 项：5 阶段买卖纪律、情绪周期定位器准确率评估、情绪周期与 regime 12 态映射、各策略不同情绪阶段部署、情绪周期作为隐形驱动
-- 重点：明确情绪周期（sleeve 内 alpha 择时）vs regime（市场级风险节流）的分工边界
-- 填成 active
-- 全网搜索 2026 年"market sentiment cycle 2026""游资情绪周期 2026""limit-up sentiment 2026""emotion cycle trading 2026"
-- 过度工程审查：4+1 阶段是否过细
-- 循环至零问题
-
-【工作清单——文档2：30号——active 总纲审查】
-- 读全文 + 读 src/zephyr/pf_core/ + pf_alloc/ + position/（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator/BudgetChangeHandler 已登记模块）
-- 回填：§2.2 三模块、§2.4 三级升级、§2.5 回撤 Protocol 的已施工部分 why 补全
-- 审查：§4.3 pod 误标是否已修正（20号 §5 待裁定-2 指出误标）；§5 待裁定 6 项是否需更新；§7.4 开源实证（Morwane 等）是否需补充 2026 新实证
-- 全网搜索 2026 年"multi-strategy portfolio 2026""independent book aggregation 2026""risk parity throttle 2026""pod vs unified framework 2026"
-- 过度工程审查：§2.5.4 VaR/ES、§2.5.5 Kill Switch 是否对个人项目过重
-- 循环至零问题
-
-【约束】
-- 28 号骨架→active 1.0.0；30 号 active 改动升版本 v1.3.3→v1.4.0+
-- 不破坏与 20/31/32/33/34 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-11 指令（负责 31_position + 32_firm_risk）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\31_position_sizing.md（G12 仓位算法 spec，active v1.2.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\32_firm_risk_aggregator.md（G13 FirmRiskAggregator 逻辑，骨架 0.1.0）
-
-【工作清单——文档1：31号——active 审查】
-- 读全文 + 读 src/zephyr/position/core/position_sizing_engine.py + 02_domain_architecture_docs/64_d_position.md（D_POSITION 28 模块）
-- 回填：分层裁定（策略层粗仓位 risk parity + firm 层 Kelly 精裁决）的已施工算法 why 补全
-- 审查：Kelly 参数估计来源、risk parity inverse-vol 公式、单票 8% 硬上限、现金管理是否完整
-- 全网搜索 2026 年"position sizing Kelly 2026""risk parity inverse vol 2026""Kelly criterion practical 2026"
-- 过度工程审查：Kelly 精裁决是否对个人项目过重（密度预测需求）
-- 循环至零问题
-
-【工作清单——文档2：32号——回填 FirmRiskAggregator】
-- 读 30_multi_strategy §2.2/§2.3/§3.1 + src/zephyr/position/core/firm_risk_aggregator.py（MOD-POS-021）+ battle_map_08_position_management.md
-- 回填讨论要点 7 项：按标的求和（自然叠加）、单票硬上限裁剪、行业/总仓位硬约束、冲突标的处理、不做 MVO、输出 firm_target_portfolio 契约、O(N) 复杂度
-- 填成 active
-- 全网搜索 2026 年"firm risk aggregator 2026""portfolio hard limit 2026""position aggregation 2026"
-- 过度工程审查：行业/总仓位硬约束是否过重
-- 循环至零问题
-
-【约束】
-- 31 号 active 升版本；32 号骨架→active 1.0.0
-- 不破坏与 30/33 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-12 指令（负责 33_budget + 34_regime_meta）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\33_budget_change_handler.md（G14 BudgetChangeHandler 三级升级，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\34_regime_meta_allocator.md（G15 RegimeMetaAllocator 参数，骨架 0.1.0，⚠️等 C1）
-
-【工作清单——文档1：33号——回填三级升级】
-- 读 30_multi_strategy §2.4（三级升级 Tier1/2/3）+ src/zephyr/position/core/budget_change_handler.py（MOD-POS-022）+ battle_map_08
-- 回填讨论要点 6 项：Tier1 封锁新仓、Tier2 rebalance_to_budget、Tier3 按比例强裁、convergence_window 差异化、rebalance 接口契约、每级 log/复盘
-- 填成 active
-- 全网搜索 2026 年"budget rebalance protocol 2026""position de-risking 2026""multi-strategy capital reallocation 2026"
-- 过度工程审查：三级升级是否过重（个人系统是否需 Tier2 策略自主）
-- 循环至零问题
-
-【工作清单——文档2：34号——回填 RegimeMetaAllocator】
-- 读 30_multi_strategy §2.2（分配公式 Base×Performance×Shrinkage）+ src/zephyr/pf_alloc/core/regime_meta_allocator.py（MOD-PA-007）+ 11_regime_backtest C1 验证结果（已通过）
-- ⚠️ 本文档前置门槛：参数须等 C1 验证通过 + 首批策略 PnL。C1 已通过（commit 852457e9），但策略 PnL 未有。回填框架 why，参数标"待策略 track record 后校准"
-- 回填讨论要点 7 项：分配公式、Base 先验、PerformanceScore 60日 Sharpe 映射、Shrinkage 四档、floor/cap、稀有态差异化、第二阶段时机
-- 保持 draft（参数未校准）或填框架→active 标参数待定
-- 全网搜索 2026 年"regime meta allocation 2026""performance score shrinkage 2026""dynamic capital allocation 2026"
-- 过度工程审查：四档 Shrinkage 是否过细
-- 循环至零问题
-
-【约束】
-- 33 号骨架→active 1.0.0；34 号保持 draft 或 active（参数待定）
-- 不破坏与 30/31/32 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-13 指令（负责 35_drawdown + 36_var_es）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\35_drawdown_protocol_impl.md（G16 回撤 Protocol 落地，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\36_var_es_monitoring.md（G17 VaR/ES 与波动率监控，骨架 0.1.0）
-
-【工作清单——文档1：35号——回填回撤 Protocol】
-- 读 30_multi_strategy §2.5（四级回撤阈值 8/15/20/25% + 恢复机制 + 分层风控 + Kill Switch）+ src/zephyr/risk/ + position/（LS 找 drawdown/kill_switch 相关）+ battle_map_09_risk_control.md（14万字）+ 02_domain_architecture_docs/66_d_risk.md（D_RISK 44 模块）
-- 回填讨论要点 8 项：四级阈值落到 StrategyBook、单策略 vs 组合分层、恢复机制、Kill Switch 触发执行、日度熔断、Kill Switch 不可覆盖、回撤基准净值口径、与 regime Shrinkage 协同
-- 填成 active
-- 全网搜索 2026 年"drawdown protocol 2026""kill switch trading 2026""max drawdown control 2026""recovery protocol 2026"
-- 过度工程审查：四级+日度熔断+Kill Switch 是否过重
-- 循环至零问题
-
-【工作清单——文档2：36号——回填 VaR/ES】
-- 读 30_multi_strategy §2.5.4（VaR_95/ES_95/波动率调整）+ src/zephyr/risk/（LS 找 var/es/volatility 相关）
-- 回填讨论要点 7 项：VaR_95 计算（历史模拟/参数法）、ES_95、入场基准、触发动作、30 日波动率调整、数据窗口、与回撤 Protocol 协同
-- 填成 active
-- 全网搜索 2026 年"VaR ES monitoring 2026""expected shortfall 2026""volatility adjusted position 2026"
-- 过度工程审查：VaR/ES 对个人系统是否过重（可降级远期）
-- 循环至零问题
-
-【约束】
-- 骨架→active 1.0.0
-- 不破坏与 30 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-14 指令（负责 37_liquidity + 40_execution）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道）。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\37_liquidity_crisis_protocol.md（G18 流动性危机处理，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\40_execution_broker.md（执行层下单对接，active v1.0.0，代码已施工）
-
-【工作清单——文档1：37号——回填流动性危机】
-- 读 30_multi_strategy §2.5.5（Kill Switch 流动性危机：买卖价差>5x 停开仓）+ src/zephyr/risk/（LS 找 liquidity/spread 相关）+ battle_map_09
-- 回填讨论要点 5 项：买卖价差监控、流动性危机→停开仓仅平仓、流动性指标定义、与 Kill Switch 关系、A 股涨跌停流动性失效
-- 填成 active
-- 全网搜索 2026 年"liquidity crisis protocol 2026""bid-ask spread monitoring 2026""A-share limit-up liquidity 2026"
-- 过度工程审查：流动性监控是否对个人系统过重（小资金容量小）
-- 循环至零问题
-
-【工作清单——文档2：40号——active 代码已施工审查】
-- 读全文 + 读 src/zephyr/ex_core/ + ex_sor/（LS + 读核心下单/撮合/滑点代码）+ 02_domain_architecture_docs/44_d_ex_core.md（43 模块）+ 45_d_ex_sor.md（18 模块）+ battle_map_10_execution.md
-- 回填：19 项决策的已施工代码实现 why 补全（miniQMT 接口/撮合/TWAP/VWAP/滑点/成本/订单状态机/失败重试/执行风控/集合竞价）
-- 审查：§7 降级/重构项是否已落地；滑点模型/成本模型参数是否校准
-- 全网搜索 2026 年"execution algorithm TWAP VWAP 2026""miniQMT API 2026""market impact model 2026""Almgren Chriss 2026"
-- 过度工程审查：TWAP/VWAP/IS 三种算法是否都需要
-- 循环至零问题
-
-【约束】
-- 37 号骨架→active 1.0.0；40 号 active 升版本
-- 不破坏与 30/35 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-15 指令（负责 41_buy_flow + 42_sell_flow）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（T+1，不能做空）。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\41_buy_flow.md（G19 买入流 spec，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\42_sell_flow.md（G20 卖出流 spec，骨架 0.1.0）
-
-【工作清单——文档1：41号——回填买入流】
-- 读 battle_map_06_buy_flow.md（BM-BUY-04 买入优先级依赖板块回踩质量 A/B/C）+ src/zephyr/（LS 找 buy/order_entry 相关）+ 22_sector_rotation（板块回踩）+ 31_position_sizing（仓位）+ 35_drawdown（风控）
-- 回填讨论要点 7 项：分批建仓、突破失败降级、买入时序、买入价格锚定、资金分配到多标的、与 budget 协同、T+1 约束
-- 填成 active
-- 全网搜索 2026 年"buy flow protocol 2026""scaling in position 2026""Wyckoff accumulation 2026""分批建仓 2026"
-- 过度工程审查：分批建仓 A/B/C 依赖是否过重
-- 循环至零问题
-
-【工作清单——文档2：42号——回填卖出流】
-- 读 battle_map_07_sell_flow.md + src/zephyr/sell_decision/（LS + 02_domain_architecture_docs/68_d_sell_decision.md 25 模块）+ 28_sentiment_cycle（退潮卖出）+ 35_drawdown（回撤联动）
-- 回填讨论要点 8 项：卖出时序、止损触发（固定%/移动/ATR）、止盈逻辑、情绪退潮卖出、破位卖出、分批卖出、T+1 卖出约束、与回撤 Protocol 联动
-- 填成 active
-- 全网搜索 2026 年"sell flow protocol 2026""stop loss ATR 2026""trailing stop 2026""O'Neil sell rules 2026"
-- 过度工程审查：止损/止盈/破位/分批四种是否全需要
-- 循环至零问题
-
-【约束】
-- 骨架→active 1.0.0
-- 不破坏与 22/31/35/28 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-16 指令（负责 50_observability + 51_panel）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\50_backtest_observability_workplan.md（回测可观测性工作计划，draft v1.0.2）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\51_panel_experiment_history_mlflow_retirement.md（Panel 实验历史 Tab + MLflow 退役，active）
-
-【工作清单——文档1：50号——draft 审查】
-- 读全文 + 读 src/zephyr/observability/ + frontend/dashboard/ + 02_domain_architecture_docs/07_d_infra_telemetry.md（11 模块）
-- 回填：六零件日志（C1/regime/特征/向量化/StrategyRunner/C2C3）的已施工部分 why；§2.3 命名冲突（zephyr.observability vs 4 处子域）的最终裁定
-- 审查：§9 待决策点（命名归属 A/B/C）是否已裁定；MLflow 方案是否已落地或退役（看 51 号）
-- 全网搜索 2026 年"MLflow 3.0 2026""experiment tracking 2026""backtest observability 2026""quant logging 2026"
-- 过度工程审查：MLflow + 薄包装层是否对个人项目过重（用户偏好集成现有 frontend 而非外部 UI）——重点审查是否符合"集成到现有 Panel dashboard"偏好
-- 循环至零问题
-
-【工作清单——文档2：51号——active 审查】
-- 读全文 + 读 src/zephyr/frontend/dashboard/（LS + 读 app_panel.py / experiment_history.py / backtest_performance.py）
-- 回填：Panel 实验历史 Tab 的已施工代码 why；掘金 5-Tab 复用的鸭子类型重建逻辑
-- 审查：MLflow 退役进度是否完成；§七 10 项施工算法 + §八 4 项后续增强的落地状态
-- 全网搜索 2026 年"Panel HoloViz dashboard 2026""experiment history visualization 2026"
-- 过度工程审查：实验历史 Tab 是否过重
-- 循环至零问题
-
-【约束】
-- 50 号 draft→active 或保持；51 号 active 升版本
-- 不破坏交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-17 指令（负责 52_backtest_docking + 53_simulation）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\52_backtest_framework_docking.md（G23 回测框架对接，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\53_simulation_live_path.md（G24 模拟与实盘验证路径，骨架 0.1.0）
-
-【工作清单——文档1：52号——回填回测框架】
-- 读 battle_map_03_backtest_validation.md（BM-BT-01~07 体系）+ src/zephyr/backtest/（LS + 读 core/engine_base.py / vectorized_engine）+ 02_domain_architecture_docs/35_d_backtest.md（51 模块）+ 11_regime_backtest §2.1（regime 对接范式）
-- 回填讨论要点 5 项：BM-BT-01~07 在策略验证用法、策略回测 vs regime 回测差异、上线门控 IS→WFA→OOS、过拟合检测三维度、Deflated Sharpe
-- 填成 active
-- 全网搜索 2026 年"backtest framework 2026""walk-forward analysis 2026""deflated sharpe 2026""purged k-fold 2026""overfitting detection 2026"
-- 过度工程审查：BM-BT-01~07 七环节是否过多
-- 循环至零问题
-
-【工作清单——文档2：53号——回填模拟实盘】
-- 读 battle_map_04_simulation_validation.md + src/zephyr/simulation/（LS + 02_domain_architecture_docs/71_d_simulation.md 15 模块）+ 20_first_batch §4.4（灰度指引）
-- 回填讨论要点 6 项：paper trading 环境、模拟时长、小资金实盘路径、实盘→模拟差异监控、上线决策门控、灰度上线
-- 填成 active
-- 全网搜索 2026 年"paper trading simulation 2026""live trading migration 2026""strategy deployment gating 2026"
-- 过度工程审查：灰度四阶段是否过重
-- 循环至零问题
-
-【约束】
-- 骨架→active 1.0.0
-- 不破坏与 11/20 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-18 指令（负责 54_reconciliation + 55_monitoring）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\54_reconciliation_attribution.md（G25 对账归因，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\55_monitoring_review.md（G26 监控告警与复盘，骨架 0.1.0）
-
-【工作清单——文档1：54号——回填对账归因】
-- 读 battle_map_11_reconciliation.md + src/zephyr/（LS 找 reconciliation/attribution/pnl 相关）+ 02_domain_architecture_docs/（找 reporting/audit 相关）+ 40_execution_broker（执行产出）+ 30_multi_strategy §2.2（StrategyBook 独立 PnL）
-- 回填讨论要点 6 项：PnL 归因分解、每日对账、归因维度、与 StrategyBook 对接、异常交易检测、报表生成
-- 填成 active
-- 全网搜索 2026 年"PnL attribution 2026""Barra factor attribution 2026""reconciliation trading 2026""trade ledger 2026"
-- 过度工程审查：Barra 归因是否过重
-- 循环至零问题
-
-【工作清单——文档2：55号——回填监控复盘】
-- 读 src/zephyr/observability/ + 02_domain_architecture_docs/07_d_infra_telemetry.md + 50_backtest_observability（衔接）
-- 回填讨论要点 6 项：系统健康监控、策略偏离监控、告警阈值通知、每日/每周/每月复盘、策略退役标准、复盘文档模板
-- 填成 active
-- 全网搜索 2026 年"trading system monitoring 2026""strategy deviation alert 2026""strategy retirement criteria 2026""quant review 2026"
-- 过度工程审查：三频复盘（日/周/月）是否过重
-- 循环至零问题
-
-【约束】
-- 骨架→active 1.0.0
-- 不破坏与 40/30/50 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-19 指令（负责 60_cross_cutting + 61_lifecycle）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\60_cross_cutting_cleanup.md（G27 冲突矩阵清理与事件总线，骨架 0.1.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\61_lifecycle_multi_ai.md（G28 策略生命周期与多 AI 协作，骨架 0.1.0）
-
-【工作清单——文档1：60号——回填跨切清理】
-- 读 battle_map_12_cross_cutting.md §16（31 条冲突仲裁）+ 30_multi_strategy §7.3（A 模型消失的冲突）+ src/zephyr/（LS 找 event_bus/signal_router 相关）
-- 回填讨论要点 6 项：31 条冲突仲裁大部分消失、仅留 firm-level 硬上限、事件总线/信号注入、实时计算节奏、配置驱动、多策略投票降级
-- 填成 active
-- 全网搜索 2026 年"event bus trading system 2026""signal routing 2026""config driven trading 2026"
-- 过度工程审查：事件总线是否对个人项目过重（个人系统是否需要微服务级信号路由）
-- 循环至零问题
-
-【工作清单——文档2：61号——回填生命周期】
-- 读 battle_map_01_research_incubation + battle_map_02_model_training + 01_design_memo_management_spec §2.2（三层协作）+ src/zephyr/（LS 找 lifecycle/strategy_factory 相关）
-- 回填讨论要点 6 项：策略生命周期（孵化→训练→回测→模拟→实盘→退役）、BM-RES 规范、BM-MOD 规范、多 AI 协作分工、文档治理、creation_token/depgraph 登记
-- 填成 active
-- 全网搜索 2026 年"MLOps lifecycle 2026""strategy factory 2026""model lifecycle management 2026""multi-AI collaboration 2026"
-- 过度工程审查：多 AI 协作规范是否过重（个人项目实际是多 AI 还是单 AI 多会话）
-- 循环至零问题
-
-【约束】
-- 骨架→active 1.0.0
-- 不破坏与 30/01 号交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-20 指令（负责 90_methodology + 91_density）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统。
-
-【你的任务】审查并更新 2 篇文档：
-1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\90_methodology_open_questions.md（方法论遗留提案 21 项，draft v1.9.0）
-2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\91_density_prediction.md（密度预测远期愿景（EWMA标准化conformal→Bayesian Kelly→Tail-Aware MDN/Lévy族→Info-Entropic DL+GP→GPD/Lévy-Flow/扩散→QNN 六阶段），draft v1.5.0）
-
-【工作清单——文档1：90号——遗留提案审查】
-- 读全文（21 项遗留提案，含策略类型/因子IC/组合构建/风险模型/成本/回测门禁/T+1预测/流动性/数据分层/密度/仓位/成功指标/基准/PIT/资产分级/行为边界/资产覆盖/大额下单/工程细节/做T方法论）
-- 逐项审查：每项与项目现状（30_multi_strategy / 10_regime / 已施工代码）的对齐状态——已过时的标❌废弃、已裁定的标✅、待讨论的保留
-- 重点：#7 T+1次日预测（8态→12态已过时）、#3 组合构建（risk budgeting→risk parity已裁定）、#4 风险模型（L1/L2/L3→4级回撤Protocol）、#6 回测门禁（V1-V6→BM-BT-01~07）、#11 仓位管理（C-047→MOD-POS-001）
-- 全网搜索 2026 年各项最新实践（量化方法论 2026）
-- 过度工程审查：21 项是否都需保留，已废弃的可否删除或标 deprecated
-- 循环至零问题
-
-【工作清单——文档2：91号——远期愿景审查】
-- 读全文（密度预测 QNN 远期愿景）+ 10_regime_detector_spec（12态 regime 已定稿，密度预测是否还有增量）
-- 审查：4 个待讨论问题（密度预测必需性/QNN 可行性/校准阈值/与风控关系）是否需更新；QNN 在单机 RTX 3090 的 2026 最新可行性
-- 全网搜索 2026 年"density prediction finance 2026""QNN quantum neural network 2026""probabilistic forecasting 2026""CRPS calibration 2026"
-- 过度工程审查：QNN 远期愿景是否应保留还是降级删除（个人项目算力限制）
-- 循环至零问题
-
-【约束】
-- draft 保持或→active/deprecated；改动升版本
-- 不破坏交叉引用
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-21 指令（负责 62_business_registry_construction.md）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT，T+1，不能做空）。
-
 【你的任务】审查并更新 1 篇文档：
-d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\62_business_registry_construction.md（业务资产注册表体系施工总案，active v1.0.0，2026-08-10 新建）
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\62_business_registry_construction.md（业务资产注册表体系施工总案，active v1.0.0）
 
-【文档性质】这是 12 个业务资产注册表（因子/策略/技术指标/图形形态/股票池/基准/成本模型/执行算法/风控限额/数据资产/字段字典/实验）的施工总案 + 审查底稿 + 调查索引。P0 已完成 3/12（universe/benchmark/cost_model），P1 待施工 7/12，P2 待施工 2/12。文档已 active 但 P1/P2 大量待施工，需深度审查 schema 设计合理性 + 数据来源准确性 + 过度工程。
-
-【工作清单】
-1. 读现状：读 62 号全文（723 行）+ 读以下关联资产了解已施工状态：
-   - P0 三件套已落盘 YAML：LS d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ 找 universe_registry.yaml / benchmark_registry.yaml / cost_model_registry.yaml，读其内容验证与 62 号 §5 登记是否一致
-   - registry_of_registries.yaml：读 tier_2 业务资产段，验证 3 个 P0 是否已登记 + entry_count 是否准确
-   - AGENTS.md（L150-153 RULE-REGISTRY 段）：验证业务资产速查是否已显化
-   - architecture_issue_registry.yaml #ARCH-BREG-001：验证施工进度登记
-
-2. P0 三件套审查（已完成，查质量）：
-   - §5.1 universe_registry：5 条登记是否覆盖项目所有股票池（打板连板梯队/全A可交易/沪深300/中证800/事件驱动）——反查 24/25/26 号文档是否有遗漏的池
-   - §5.2 benchmark_registry：4 条是否足够（沪深300/中证500/中证全指/绝对收益）——审查是否需补中证A500/万得全A（90号§13 提到基准选择待讨论）
-   - §5.3 cost_model_registry：3 条（标准/保守/零成本）——审查万3佣金/千1印花税/1bp滑点参数是否符合 2026 A股实际费率；square_root 冲击模型参数是否校准
-   - 全网搜索 2026 年"A-share trading cost 2026 佣金 印花税""market impact model calibration 2026"验证参数
-
-3. P1 七注册表 schema 审查（待施工，查设计）：
-   - §6.1.1 factor_registry：factor_class 10 类（Barra 6 + A股特色 4）是否合理——反查 src/zephyr/factor/ashare/ 15 子目录实际因子，验证分类覆盖；ic/ir/decay/turnover/capacity 性能字段是否够
-   - §6.1.2 strategy_registry：strategy_class 6 类是否完整——反查 20/24/25/26/27/22 号文档；variant 单向 variant_of 机制（裁定 S4）是否会有查询困难
-   - §6.1.3 technical_indicator_registry：5 大类 + 9 周期——反查 16 号文档 §2 + src/zephyr/factor/technical_indicators/，验证 40 指标/55 输出列覆盖；与 factor_registry 正交边界是否清晰
-   - §6.2.1 execution_algo_registry：6 算法（TWAP/VWAP/IS/AC/POV/Adaptive）——反查 40 号 + src/zephyr/ex_sor/
-   - §6.2.2 risk_limit_registry：9 种限额类型——反查 35/36/37/32 号 + src/zephyr/risk/ + config/risk_register.yaml；breach_action 对齐 reconciler 约束（warn/skip/fix-in-place，禁止 commit）
-   - §6.2.3 data_asset_registry：三实体（sources/datasets/jobs）——反查原 dataflow_graph_registry.yaml（DS-001~029）+ config/.env.qmt；改名裁定（文件名改+registry_id 保留）是否已在 ruling_registry 登记
-   - §6.2.4 chart_pattern_registry：8 大类（蜡烛图/经典图表/缠论/波浪/趋势线/支撑阻力/斐波那契/结构）——反查 src/zephyr/factor/technical_indicators/ + signal_ashare/；recognition_algorithm + algorithm_variant 双字段设计是否必要；subjectivity 字段（波浪=high→experimental）是否合理
-
-4. P2 两注册表审查：
-   - §7.1 field_dictionary：范围裁定（仅数据字段，不合并 frontmatter_field_registry）是否正确
-   - §7.2 experiment_registry：等 51 号 MLflow 退役后施工的时机是否合理；parent_experiment_id 迭代链设计
-
-5. 通用 Schema 设计原则审查（§4 八条）：
-   - frontmatter 对齐 frontmatter_field_registry 是否完整
-   - entry_schema 按 DB 表设计预留迁移是否合理
-   - 编号格式 REG-{NAME}-{NNN} / {PREFIX}-{DOMAIN}-{NNN} 是否与 module_id_registry allocation_rules 一致
-   - 状态机对齐 module_lifecycle_status_vocabulary 是否覆盖
-   - 半派生（手写真源入 git + 脚本反查补全）是否可执行
-
-6. 裁定审查（§8 八项核心裁定 + S1-S6 修正）：
-   - 逐项审查 8 裁定依据是否充分（variant 术语/数据源合并/YAML vs DB/16号降级/AGENTS.md 显化/onboarding/施工顺序/字段字典范围）
-   - S1-S6 修正是否已落实到各 schema
-
-7. 全网搜索 2026 年最新实践（重点）：
-   - "feature registry 2026""factor catalog 2026"（factor_registry 对标 WorldQuant Alpha Bank / qlib Alpha158）
-   - "strategy registry 2026""strategy lifecycle management 2026"（strategy_registry 对标 Numerai / QuantConnect）
-   - "technical indicator registry 2026"（对标 TA-Lib / backtrader / QuantConnect Indicators）
-   - "chart pattern recognition 2026"（对标 TA-Lib CDLPATTERN + 缠论 + 波浪）
-   - "risk limit registry 2026""risk register 2026"
-   - "data asset registry 2026""data lineage 2026"（对标 OpenLineage / DAMA-DMBOK）
-   - "experiment registry 2026"（对标 MLflow / Neptune.ai / Comet.ml）
-   - "field dictionary 2026""data dictionary 2026"（对标 dbt schema.yml）
-   - 找有没有更好的 schema 设计/分类法/字段集
-
-8. 过度工程审查（重点，个人项目红线）：
-   - 12 个注册表是否对个人项目过多——能否合并？（如 field_dictionary 是否可并入 data_asset_registry；experiment_registry 是否可暂缓用 MLflow/Panel 替代）
-   - YAML vs DB：现阶段 YAML 是否合理，还是直接上轻量 SQLite 更省事
-   - data_asset_registry 三实体（sources/datasets/jobs）是否过重——个人项目是否需要 OpenLineage 级血缘
-   - chart_pattern_registry 8 大类是否过多——MVP 是否应只做 2-3 类（蜡烛图+经典图表）
-   - risk_limit_registry 9 种限额是否过多——个人系统 4 级回撤 + Kill Switch 是否够
-   - variant 机制、性能指标字段（运行时可空）是否过度设计
-   - §11 YAML→DB 迁移路径是否过早规划（个人系统可能永不触发 500 因子阈值）
-
-9. 结构调整：
-   - §1-§12 顺序是否合理
-   - §10 数据来源映射表是否准确（反查代码验证 code_path）
-   - §12 下一步行动的 P1-A/P1-B/P2 顺序是否最优
-
-10. 循环审查：改完一轮后重新通读全文 + 重新反查代码/注册表，再查一轮，直到连续 1 轮零改动
-
-【约束】
-- active 文档改动升版本（v1.0.0→v1.1.0 小改 / v2.0.0 大改），修订记录补一行（§13 如无则新增）
-- 不破坏与 15/16/20/22/24/25/26/27/32/35/36/37/40/51/52 号文档的交叉引用
-- P0 已完成三件套的 YAML 如需改，同步改 catalogs/ 下对应文件 + registry_of_registries.yaml + AGENTS.md
-- 引用代码用稳定 path，禁止 node_id/edge_id
-- 需人决策的（如基准选择/费率校准/12表是否精简）标在「待定问题」节，不擅自拍板
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-22 指令（负责 63_data_utilization_audit.md）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT，T+1，不能做空）。
-
-【你的任务】审查并更新 1 篇文档：
-d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\63_data_utilization_audit.md（业务数据资产利用率审查与施工计划，draft v0.1.0，2026-08-10 新建）
-
-【文档性质】这是业务数据库 101 张表在 design_memos 42 篇文档中的引用审查底稿 + 闲置清单 + 分批接入施工计划。与 62 号配对——62 号建 12 注册表 schema，63 号盘点 101 张表实际利用率（57.4% 已用 / 42.6% 闲置）。draft 状态，审查后可能→active。核心结论：43 张闲置表分 P0-P4 五档，三波分批接入。
-
-【工作清单】
-1. 读现状：读 63 号全文（295 行）+ 读以下关联资产验证审查准确性：
-   - schemas/categories/：LS d:\ZephyrAlpha\schemas\categories\ 验证实际表数是否=101（数 .py 文件）
-   - 逐类核对 §4 八大类表清单（A股K线16/ETF可转债12/跨市场5/Tick4/元数据21/资金事件11/衍生品11/基本面宏观21/衍生2=101）是否与实际文件数一致
-   - 反查 §5.2 热度前 15 名表的引用次数是否准确：用 Grep 在 design_memos/*.md 搜表名验证 hit count
-   - 反查 §5.3 低频引用表（macro_data/industry_class/三大报表/disclosure_plan/kline_weekly/monthly）是否真的仅 1-2 次
-
-2. 利用率审查方法学审查（§3）：
-   - §3.2 双层校验（英文表名 + 中文别名）是否严谨——中文别名表是否穷尽（§3.3 自承"非穷尽"）
-   - §3.3 审查局限是否需补强：
-     * "tick 关键词过宽"——是否应改用精确正则 \btick\b 排除 ticker/TickTock
-     * "只覆盖 design_memos 不含 src/ 代码引用"——是否应补查代码层引用（用 Grep src/zephyr/ 搜表名），否则"闲置"判定可能误杀（代码在用但文档没写）
-   - 建议：补一轮代码层引用扫描，把"文档闲置但代码在用"的表从闲置清单移除
-
-3. 闲置表分档审查（§6，43 张 P0-P4）：
-   - 🔴 P0 高价值 8 张：逐张验证价值判断是否成立
-     * restricted_shares / share_unlock（解禁压力）——是否真是 alpha 信号金矿？全网搜索 2026 年"share unlock alpha 2026""解禁压力 信号 2026"
-     * block_trade_detail（大宗折价）——全网搜索"block trade signal 2026""大宗交易 折价 信号"
-     * cb_iv（可转债 IV）——是否适合个人系统（可转债套利容量/复杂度）
-     * etf_nav（ETF 折溢价）——流动性危机监测是否真需要
-     * edb_data（宏观 EDB）——regime 检测器是否真需宏观输入（10 号 regime 已有 12 态，宏观是否增量）
-   - 🟡 P1 跨市场 15 张：业务边界裁定项是否完整（A+H/美股/期货/ETF日内）——对照 90 号 §18 资产覆盖范围
-   - 🟠 P2 元数据 8 张：注册表治理待登记是否合理（sector_meta/concept_board/msci_adjustment 等）
-   - 🟢 P3 分钟级 12 张：后复权周/月线与 16 号三级时间框架栈不一致（§7.3/Q6）——重点审查这个矛盾，建议怎么修
-   - ⚪ P4 待归档 5 张：生猪期货 3 张 + LOF/ETF 分钟级——归档理由是否充分
-
-4. 三波施工计划审查（§7）：
-   - 第一波 P0 8 张（1-2 周）：7 步骤是否可执行；每张表接入目标文档是否正确；验证标准（至少 1 篇文档显式消费）是否够严
-   - 第二波 P1+P2（1 个月）：5 个业务边界决策项是否需人裁定——能否 AI 先给建议
-   - 第三波 P3/P4 归档：归档操作在数据采集脚本层，63 号只记录决策——是否需补"归档脚本位置"指引
-
-5. 与 12 注册表关联审查（§8）：
-   - data_asset_registry（REG-DATAFLOW-001）首批 66 张表登记清单是否准确
-   - factor_registry 候选清单（technical_indicator/money_flow/dragon_tiger/block_trade）是否合理
-   - benchmark_registry 扩展（etf_benchmark 闲置）是否应补
-   - universe_registry 扩展（convertible_bond_list/etf_list/lof_list 闲置）是否应补
-
-6. 全网搜索 2026 年最新实践：
-   - "data utilization audit 2026""data asset inventory 2026"（数据资产利用率审查方法论）
-   - "data lineage 2026""data catalog 2026"（对标 OpenLineage / Apache Atlas / Amundsen）
-   - "idle data archive 2026""data lifecycle management 2026"（闲置数据归档实践）
-   - "alternative data alpha 2026"（限售解禁/大宗交易/可转债 IV 的 alpha 价值实证）
-   - "macro regime detection 2026"（EDB 宏观数据对 regime 的增量价值）
-   - "ETF arbitrage 2026""ETF premium discount 2026"（ETF 折溢价套利可行性）
-   - 找有没有更好的利用率审查方法/闲置判定标准/分档逻辑
-
-7. 过度工程审查（重点，个人项目红线）：
-   - 101 张表是否本身就过多——个人系统是否需要覆盖 A股/港股/美股/期货/期权/可转债/生猪全品类
-   - 三波施工计划是否过重——个人项目是否应直接"归档为主，接入为辅"（43 闲置里大部分归档，只接 8 张 P0）
-   - data_asset_registry 首批 66 张登记是否过重——是否先登记 8 张 P0 + 58 张已用高频表，低频的暂缓
-   - §3 双层校验 + 代码层补查是否过度（个人项目是否需要这么严谨的利用率审查）
-   - 第二波 5 个业务边界决策项是否都需人定——能否 AI 按个人项目定位直接裁定（如生猪期货必然归档、A+H 必然暂缓）
-
-8. 结构调整：
-   - §1-§11 顺序是否合理（§9 不做什么 / §10 开放问题 8 项是否需合并精简）
-   - §10 八个开放问题是否都需人决策——Q4/Q5（LOF/生猪归档）AI 可否直接建议
-   - 是否应补「待定问题」节与 01_spec §4.4 对齐（63 号是审查清单+施工计划混合，属 §4.4 的"索引/规范/清单"种类）
-
-9. 准确性硬核验证（重点）：
-   - 用 Grep 实际扫描 design_memos/*.md，验证 §5.1 利用率数字（58 已用/43 闲置/57.4%）
-   - 用 Grep 实际扫描 src/zephyr/ 代码层，找出"文档闲置但代码在用"的表（修正闲置清单）
-   - 用 LS schemas/categories/ 验证 101 张表数
-   - 如发现数字不准，修正 §5.1 + §6 分档
-
-10. 循环审查：改完一轮后重新通读全文 + 重新 Grep 验证数字，再查一轮，直到连续 1 轮零改动
-
-【约束】
-- draft 文档审查后若数据准确+计划可行→升 active 1.0.0；若需大改保持 draft 升 0.2.0
-- 修订记录补行（§11 已有，追加即可）
-- 不破坏与 62/15/16/26/35/37/10/32/22/50 号文档的交叉引用
-- 引用表/代码用稳定 path（schemas/categories/xxx.py）
-- 需人决策的（业务边界扩张/归档确认）标在 §10 开放问题，AI 不擅自拍板——但 Q4/Q5 类明显可建议的，AI 给默认建议即可
-- 持续改进不停，循环至零问题
-```
-
----
-
-## AI-23 指令（负责 19_northbound_hold_snapshot.md）
-
-```
-你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
-
-【你的任务】审查并更新 1 篇文档：d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\19_northbound_hold_snapshot.md
-这是北向资金季度持仓快照 fetcher 施工计划（draft v0.1.0，10 节结构，§4.4 施工计划类）。北向日频数据 2024-08-19 港交所永久停发后，走 tushare hk_hold 季度快照替代。
+【文档性质】这是 12 个业务资产注册表（因子/策略/技术指标/图形形态/股票池/基准/成本模型/执行算法/风控限额/数据资产/字段字典/实验）的施工总案 + 审查底稿 + 调查索引。P0 已完成 3/12（universe/benchmark/cost_model），P1 待施工 7/12，P2 待施工 2/12。文档已 active 但 P1/P2 大量待施工，需深度审查 schema 设计合理性 + 数据来源准确性 + 过度工程。文档超大（4317 行），需用 offset/limit 分段读或 Grep 定位章节。
 
 【背景知识】
-- 01 号规范：§4.1 段位编号制（1x=地基/数据特征，19 空号无冲突）；§4.4 施工计划类按"目标→现状→改动→验证→不做"组织；两条硬约束（必须有修订记录+开放问题等价节）
-- 15 号数据特征层：19 号 depends_on 15 号（数据层总纲）
-- 62 号注册表：19 号 §5.4 要在 data_asset_registry 登记 northbound_hold_snapshot（REG-DATAFLOW-001 下）
-- 63 号数据利用率审查：101 张表盘点，northbound_hold_snapshot 是新建表
-- 25 号多因子策略：19 号下游潜在消费方（外资行为因子）
-- known_data_gaps.yaml：已登记 hk_connect_flow_source_discontinued + 3 个 akshare 失效接口
-- check_algo_quality.py：DEAD_DATA_SOURCES 已标死 4 个北向日频数据源，factor/strategy 无依赖
+- 01 号规范：§4.1 段位编号制（6x=跨切治理，62 空号无冲突）；§4.4 施工总案类按"目标→现状→改动→验证→不做"组织
+- 与 63 号配对：62 号建 12 注册表 schema，63 号盘点 101 张表实际利用率
+- 与 15/16/20/22/24/25/26/27/32/35/36/37/40/51/52 号文档有交叉引用
 
 【工作清单——循环执行直到全部为零】
 
 ■ 第 1 轮：读现状（只读不改）
-1. 完整读 19 号文档（10 节，~213 行）
-2. 核验 §3.1 akshare 1.18.75 实测表：6 个接口状态（stock_hsgt_hist_em 8-19后NaN / individual_em 仅历史 / individual_detail_em 仅历史 / hold_stock_em 失效 / board_rank_em 失效 / stock_statistics_em 失效）——跑 akshare 验证当前是否仍如此
-3. 核验 §3.2 tushare hk_hold 实测表：4 个查询日期（20240816/20240819/20260807/20240930/20251231）的北向/南向数字——用项目 tushare token 跑 pro.hk_hold 验证
-4. 核验 §5.2 落表 schema：7 列定义 + ORDER BY + 分区 是否符合项目 ClickHouse 建表规范
-5. 核验 depends_on（15号/62号）和 related_modules（akshare_provider.py/known_data_gaps.yaml）的 path 是否正确
+1. 用 Read offset/limit 分段读 62 号全文（每段 1500 行），或用 Grep 定位 H2 章节逐段读
+2. 核验 P0 三件套已落盘 YAML：LS d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ 找 universe_registry.yaml / benchmark_registry.yaml / cost_model_registry.yaml，读其内容验证与 62 号 §5 登记是否一致
+3. 读 registry_of_registries.yaml（tier_2 业务资产段）验证 3 个 P0 是否已登记 + entry_count 是否准确
+4. 读 AGENTS.md（RULE-REGISTRY 段）验证业务资产速查是否已显化
+5. 读 architecture_issue_registry.yaml #ARCH-BREG-001 验证施工进度登记
 
-■ 第 2 轮：数据源选型审查
-1. §4.1 四方案对比（A交易所直抓/B东财网页/C tushare/D付费）是否充分——有无遗漏的方案 E（如 akshare 其他接口/华泰中信等券商研报数据/第三方数据商如米筐/jqdata）
-2. §4.2 裁定走方案 C 的 4 条理由是否站得住——"工程量最小"是否是唯一考量（数据稳定性/频率/覆盖范围呢）
-3. 方案 A 作为 fallback 是否足够——如果 tushare 未来也断，交易所官网爬虫的工程量和维护成本评估
-4. 审查 §5.1 fetcher 设计：字段映射（code→src_code, vol→hold_share, ratio→hold_ratio）是否完整——有没有遗漏字段（如 hold_market_value 持股市值？name_change 证券更名？）
-5. 审查 §5.3 调度：每季度第 6 个沪深股通交易日跑——这个"第 6 个"如何计算？项目调度系统是否支持？回填 6 个季度是否够（2024Q3~2025Q4）？
+■ 第 2 轮：内容审查与回填
+1. P0 三件套审查（已完成，查质量）：
+   - §5.1 universe_registry：5 条登记是否覆盖项目所有股票池——反查 24/25/26 号文档是否有遗漏的池
+   - §5.2 benchmark_registry：4 条是否足够——审查是否需补中证A500/万得全A
+   - §5.3 cost_model_registry：万3佣金/千1印花税/1bp滑点参数是否符合 2026 A股实际费率；square_root 冲击模型参数是否校准
+2. P1 七注册表 schema 审查（待施工，查设计）：
+   - §6.1.1 factor_registry：factor_class 10 类（Barra 6 + A股特色 4）——反查 src/zephyr/factor/ashare/ 验证分类覆盖
+   - §6.1.2 strategy_registry：strategy_class 6 类——反查 20/24/25/26/27/22 号
+   - §6.1.3 technical_indicator_registry：5 大类 + 9 周期——反查 16 号文档 + src/zephyr/factor/technical_indicators/
+   - §6.2.1 execution_algo_registry：6 算法——反查 40 号 + src/zephyr/ex_sor/
+   - §6.2.2 risk_limit_registry：9 种限额——反查 35/36/37/32 号 + config/risk_register.yaml
+   - §6.2.3 data_asset_registry：三实体（sources/datasets/jobs）——反查 dataflow_graph_registry.yaml + config/.env.qmt
+   - §6.2.4 chart_pattern_registry：8 大类——反查 src/zephyr/factor/technical_indicators/ + signal_ashare/
 
-■ 第 3 轮：外资行为分析方法论审查（§6，核心审查点）
-1. §6.1 持市值变化分解：Δ持股市值 = 主动增减仓 + 股价变动效应。公式"主动增减仓 ≈ Δ持股数量 × 当季VWAP"是否准确——这里用 VWAP 近似成交均价，但外资实际成交价分布未必等于 VWAP，误差有多大？有无更精确的分解方法（如用龙虎榜/大宗交易数据辅助）？
-2. §6.2 行业超配/低配：超配比例 = 北向持有该行业市值占比 − 全A该行业市值占比。这里"市值占比"用流通市值还是总市值？行业分类用申万几级？是否需要做风格中性化（Barra 风格因子归因）？
-3. §6.3 个股增减持排名：按主动增减仓金额排序——是否需要做归一化（按持股市值占比变化而非绝对金额，避免大市值股永远排前面）？是否需要做显著性过滤（剔除噪声变动）？
-4. §6.4 板块切换能力评估：当季加仓行业 vs 下季该行业涨跌幅算相关性——样本量够吗（季度数据，一年才4个样本）？是否需要更长的回看窗口？是否应做滞后分析（加仓后 1/2/4 周而非下季）？
-5. §6.5 季度净流入估算：Σ(Δ持股数量 × 当季VWAP)——这是"准净流入"，但与真实净流入的偏差来源有哪些（区间内买卖时点/ VWAP近似误差/ 送转股除权影响）？有无学术文献做过这种估算的误差分析？
-6. §6.6 数据需求：季度末持股数量 + 当季VWAP + 申万行业 + 全A市值——这些项目都"已有"，核验是否真的已在 schemas/categories 里就绪（VWAP 计算逻辑、申万行业分类版本、全A市值是否含限售股）
-7. 审查是否有遗漏的分析维度：如外资集中度变化（HHI 指数）/ 外资持仓久期分析 / 外资与内资持仓差异 / 外资对个股的定价权测度 / 外资净流入与汇率/美债收益率的外生关联
+■ 第 3 轮：缺失环节与算法审查
+1. 通用 Schema 设计原则（§4 八条）审查：frontmatter 对齐/entry_schema DB 迁移预留/编号格式/状态机/半派生机制
+2. 裁定审查（§8 八项核心裁定 + S1-S6 修正）：逐项审查裁定依据是否充分，S1-S6 修正是否已落实到各 schema
+3. P2 两注册表审查：field_dictionary 范围裁定 / experiment_registry 施工时机
+4. §10 数据来源映射表准确性——反查代码验证 code_path
 
 ■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
-1. 搜"北向资金 替代数据 2026"——2024-08-19 断档后，业界主流替代方案是什么（季度快照/券商研报估算/另类数据）
-2. 搜"沪深港通 季度持仓 外资行为分析 2026"——最新外资行为分析研究方法
-3. 搜"northbound capital quarterly holdings analysis 2026"——英文学术文献
-4. 搜"tushare hk_hold 季度快照"——tushare 社区有无该接口的使用经验/坑/频率限制
-5. 搜"外资持股 行业超配 Barra归因 2026"——是否有人做过北向资金的 Barra 风格归因
-6. 搜"季度净流入 估算 误差分析"——学术界对低频净流入估算的精度研究
-7. 搜"沪深交易所 沪深股通 季度披露 2026"——官方披露规则是否有新变化（频率/内容/延迟）
-8. 审查搜到的最新方法是否有比 §6 六个公式更好的算法——如果有，回填到 §6 并在修订记录登记
+1. 搜"feature registry 2026""factor catalog 2026"（对标 WorldQuant Alpha Bank / qlib Alpha158）
+2. 搜"strategy registry 2026""strategy lifecycle management 2026"（对标 Numerai / QuantConnect）
+3. 搜"technical indicator registry 2026"（对标 TA-Lib / backtrader）
+4. 搜"chart pattern recognition 2026""risk limit registry 2026""data lineage 2026""experiment registry 2026""field dictionary 2026"
+5. 搜"A-share trading cost 2026 佣金 印花税""market impact model calibration 2026"验证参数
 
 ■ 第 5 轮：过度工程审查（个人项目标准）
-1. P2 优先级是否合理——19 号自标 P2（非 P0，无信号依赖）。审查：季度快照数据是否真的可以等？如果 25 号多因子策略想用外资因子，P2 是否应升 P1？
-2. fetcher 设计是否过度——是否需要支持增量/全量/回填三种模式？还是简单全量覆盖即可（季度数据量小，3300行×4季度/年=13200行/年，全量覆盖无压力）
-3. 外资行为分析方法论 6 节是否过度——个人项目是否需要做到 Barra 归因级别？还是先做简单的增减持排名 + 净流入估算即可，Barra 归因等外资因子立项时再做
-4. 落表是否应新建表——§9 开放问题 Q1"新表 vs 扩展 hk_connect_flow"，审查：新建表（颗粒度不同日频vs季度）vs 扩展现有表（加 period 列），哪种更符合项目惯例（参考 16 号技术指标单表设计 period 列的做法）
-5. 是否需要南向数据——§8 不做南向，审查：南向仍日频可用，是否应顺手采集（成本极低）还是坚持不做（聚焦北向，避免范围蔓延）
+1. 12 个注册表是否对个人项目过多——能否合并（如 field_dictionary 并入 data_asset_registry）
+2. YAML vs DB：现阶段 YAML 是否合理，还是直接上轻量 SQLite
+3. data_asset_registry 三实体是否过重——个人项目是否需要 OpenLineage 级血缘
+4. chart_pattern_registry 8 大类是否过多——MVP 是否只做 2-3 类
+5. risk_limit_registry 9 种限额是否过多——个人系统 4 级回撤 + Kill Switch 是否够
+6. variant 机制、性能指标字段（运行时可空）是否过度设计
+7. §11 YAML→DB 迁移路径是否过早规划
 
 ■ 第 6 轮：一致性与交叉引用审查
-1. 与 15 号数据特征层的一致性：19 号的数据源选型/落表规范是否符合 15 号定的数据层架构
-2. 与 62 号注册表的一致性：§5.4 登记的 data_asset_registry 字段是否符合 62 号 §3 第 9 项 schema
-3. 与 63 号数据利用率审查的一致性：northbound_hold_snapshot 新建表是否需要在 63 号 §4 八大类中登记（当前 101 张表不含此新表）
-4. 与 25 号多因子策略的一致性：§1 下游写"25号潜在消费方"，25 号是否真的有外资因子的规划——读 25 号确认
-5. 与 known_data_gaps.yaml 的一致性：19 号引用的 3 个 gap（akshare_hsgt_hold_stock_em_broken 等）是否已登记，path 是否正确
-6. 与 check_algo_quality.py 的一致性：DEAD_DATA_SOURCES 4 个死源是否与 19 号 §2.2 一致
+1. 与 63 号配对一致性：62 号建 schema vs 63 号盘点表
+2. 与 15/16 号一致性：factor_registry / technical_indicator_registry 与数据特征层/技术指标文档对齐
+3. 与 20/24/25/26/27 号一致性：strategy_registry 覆盖所有已定义策略
+4. 与 35/36/37/32 号一致性：risk_limit_registry 与风控限额文档对齐
+5. 与 40 号一致性：execution_algo_registry 与执行层文档对齐
+6. 与 51/52 号一致性：experiment_registry 与实验历史/回测框架对齐
 
 ■ 第 7 轮：文档质量与规范符合性
-1. frontmatter：ttl/doc_type/title/owner/language/status/version/date/topic/scope/depends_on/related_modules 是否齐全且合法（对齐 01 号 §4.2）
-2. §4.4 施工计划类结构：目标(§1-2)→现状(§3)→改动(§4-6)→验证(§7)→不做(§8)→开放问题(§9)→修订记录(§10)——是否完整
-3. §9 开放问题 4 项是否需增减——审查中发现的待人决策的新问题要补登
-4. §10 修订记录：本轮审查有改动则升 v0.2.0 并登记
-5. 交叉引用全用稳定 path（01 号 §5.2 引用纪律）——无 node_id/edge_id
-6. status=draft v0.1.0——审查后若方案定型可建议升 v0.2.0，但 fetcher 未实际施工前不建议升 active
+1. frontmatter：ttl/doc_type/title/owner/language/status/version/date/topic/scope 是否齐全合法
+2. §4.4 施工总案类结构是否完整合理
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path（禁止 node_id/edge_id）
+5. status=active v1.0.0——改动升 v1.1.0 小改 / v2.0.0 大改
 
 ■ 循环条件
 - 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
 - 若有未修复/新发现，进入下一轮
 - 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
-- 升版本号在 §10 修订记录登记（v0.1.0 → v0.2.0 小改，v1.0.0 大改/升 active）
+- 升版本号在修订记录登记
 
 ■ 约束
-- 只改 19 号本身，引用 15/62/63/25 号时只读不改
-- 如发现 15/62/63/25 号需同步改，记在 19 号 §9 开放问题，不越界改
-- 不擅自定决策（如"是否升 P1""是否做南向""新表vs扩展表"），标在 §9 待人决策
-- 不破坏与 15/62/63/25/known_data_gaps/check_algo_quality 的交叉引用
+- 只改 62 号本身，引用其他文档时只读不改
+- P0 已完成三件套的 YAML 如需改，同步改 catalogs/ 下对应文件 + registry_of_registries.yaml + AGENTS.md
+- 如发现其他文档需同步改，记在 62 号「待定问题」节，不越界改
+- 不擅自定决策（如基准选择/费率校准/12表是否精简），标在「待定问题」节
+- 引用代码用稳定 path
 - 持续改进不停，循环至零问题
 ```
 
 ---
 
-## AI-24 指令（负责 17_special_trading_days_data_assets.md）
+## AI-02 指令（负责 10_regime_detector_spec.md）
 
 ```
 你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
 
-【你的任务】审查并更新 1 篇文档：d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\17_special_trading_days_data_assets.md
-这是 A股"特殊交易日"数据资产全景与治理文档（draft v0.1.0，8 节结构）。承载三件事：特殊交易日完整清单 + 已施工数据资产盘点 + #ARCH-DATA-001/002 治理（港股日历语义错配修复 + 治本方案讨论稿）。
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\10_regime_detector_spec.md（regime 检测器 spec，active v1.3.1，3263 行超大文档）
+
+【文档性质】这是已定稿的 regime 检测器 spec，12 态定稿，代码已施工。文档很大（3263 行，超 Read 128KB 限制，需用 offset/limit 分段读，或用 Grep 定位章节）。
 
 【背景知识】
-- 01 号规范：§4.1 段位编号制（1x=地基/数据特征，17 空号无冲突）；§4.4 文档种类适配——17 号是"清单+诊断+讨论稿"混合体，结构按内容组织
-- #ARCH-DATA-001：hk_trade_calendar 用 A股日历冒充港股日历的即时止血（已完成验证）
-- #ARCH-DATA-002：capability 名↔API 数据语义对齐的系统性治本方案（5 个施工项，讨论稿）
-- related_issues 指向 architecture_issue_registry.yaml 的 3 个 ARCH 条目
-- 15 号数据特征层：数据层总纲，17 号是数据资产子项
-- 62 号注册表：special_trading_days 相关表需在 data_asset_registry 登记
-- 63 号数据利用率审查：calendar_event/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/hk_trade_calendar 等表在 101 张表盘点中
-- business_data_categories.yaml / tasks.yaml：7 条品类注册 + 6 个采集任务，有悬空引用待修
+- 01 号规范：§4.1 段位编号制（1x=地基/数据特征，10 号属 regime 系列）；§4.4 spec 类按对象内在结构组织
+- 与 11/12/13/14 号文档构成 regime 系列（检测器 spec→回测验证→Phase2 验证→Phase3 工程→S2 诊断）
+- 34 号 RegimeMetaAllocator 依赖 10 号 regime 状态做参数分配
 
 【工作清单——循环执行直到全部为零】
 
 ■ 第 1 轮：读现状（只读不改）
-1. 完整读 17 号文档（8 节，~378 行）
-2. 核验 §2 特殊交易日完整清单：4 大类（日历结构类 12 事件 / 日历表类 2 / 个股事件类 9 / 待评估项 3）——对照 schemas/categories/ 实际表确认覆盖状态标注是否准确
-3. 核验 §3 已施工盘点：7 个 schema 文件 / 7 条品类注册 / 6 个采集任务 / Provider capability——逐一 Grep 确认文件存在且内容与文档一致
-4. 核验 §3.5 calendar_event 12 个 event_type 枚举与派生状态——读 internal_compute_provider.py._fetch_calendar_event 确认 9 个已派生 + 3 个预留
-5. 核验 §4 #ARCH-DATA-001 修复：internal_compute_provider.py L482-554 的 _fetch_hk_trade_calendar 实现 + akshare_provider.py 的 4 处删除——确认代码与文档描述一致
-6. 核验 related_issues 3 个 ARCH 编号在 architecture_issue_registry.yaml 中是否存在
+1. 用 Read offset/limit 分段读全文（每段 1500 行），或用 Grep 定位 H2 章节逐段读
+2. 读 src/zephyr/regime/ 下全部代码（LS src/zephyr/regime + 读 core/regime_detector.py / features/ / validation/）
+3. 列出文档 frontmatter 的 status/version 确认当前版本
 
-■ 第 2 轮：特殊交易日清单完整性审查（核心审查点）
-1. §2.1 日历结构类 12 事件是否有遗漏——审查：国债期货交割日/股指期货最后交易日vs交割日（是否同一天？）/ 央行公开市场操作日 / 经济数据发布日（PMI/CPI/GDP/社融）/ 逆回购到期日 / 可转债申购日 / 转融通交易日 / 融券券源释放日 / 分红季集中期（6-8月/次年4-5月）
-2. §2.3 个股事件类 9 项是否有遗漏——审查：限售解禁已列但"定向增发解禁/首发原股东解禁/战略配售解禁"是否需细分 / 股权激励行权日 / 可转债转股开始日/赎回日/回售日 / 要约收购日 / 股东大会召开日（停牌一日）/ 退市风险警示*ST/ST 戴帽摘帽日 / 停牌复牌日
-3. §2.4 待评估项 3 项的评估结论是否合理——ETF赎回日"不单独建表"是否正确（T+0实物申赎无固定赎回日的判断）/ 除夕被month_end/year_end覆盖是否充分 / 分红股权登记日"查询层计算"是否够用
-4. 2026 年 A 股新增的特殊交易日机制——搜"2026 A股 特殊交易日 新规""2026 期权到期日规则变更""2026 股指期货交割日调整"确认有无新变化
-5. 审查 event_type 枚举是否需扩展——如果发现遗漏的特殊日子，评估是否需新增 event_type 或新建表
+■ 第 2 轮：内容审查与回填
+1. 把 src/zephyr/regime/ 已施工的算法（HMM 9态/12态、Shrinkage、overlay signals、synthetic VIX、walk-forward refit、Phase2 四验证器等）的 why 回填到文档
+2. 审查 12 态定义、转换路径、触发确认信号、置信度更新规则、主线识别是否完整
+3. 回填各章节的决策推理（why），确保 design_memo 只写 why 不写 what is
 
-■ 第 3 轮：#ARCH-DATA-001 修复正确性审查
-1. §4.1 病灶描述准确性——akshare 用 ak.tool_trade_date_hist_sina（A股日历）填充港股日历表，确认这个 API 确实返回沪深交易日而非港交所交易日
-2. §4.2 即时止血 5 步动作——逐一核验：①internal_compute L482-554 实现是否用 exchange_calendars XHKG ②akshare 4 处删除是否干净（capability frozenset / CapabilityContract / _fetch 方法 / 死常量 _TBL_HK_TRADE_CALENDAR）③tasks.yaml source 改 akshare→internal ④business_data_categories data_source [exchange]→[internal] ⑤ARCH 登记
-3. §4.2 验证 9 检查点——圣诞节/节礼日/耶稣受难日/复活节翌日/佛诞/香港特区成立纪念日 不在港股交易日，1478 个交易日——跑代码或 Grep 验证日志确认这些断言
-4. 修复是否引入新问题——hk_trade_calendar 改用 internal 后，下游 calendar_event.hk_connect_closed 派生（A股开盘且港股休市=北向停摆日）是否正确产出
+■ 第 3 轮：缺失环节与算法审查
+1. 对照 12_regime_phase2_validation 的 A2/B1 FAIL 结果，文档是否已反映"模型需重设计"的后续
+2. 12 态转换路径矩阵是否完整——有无遗漏的状态转换
+3. overlay signals 的 NLP/资金/板块维度是否已施工，未施工的标注状态
+4. synthetic VIX 构造方法的合理性
+5. walk-forward refit 的窗口/频率参数是否已校准
 
-■ 第 4 轮：#ARCH-DATA-002 治本方案审查（过度工程重点）
-1. §5.1 病根第一性原理——"capability 名↔API 数据语义"维度空白，与 #ARCH-CH-INDUSTRY-CLASS-MIGRATE 同类病——这个归因是否准确
-2. §5.2 施工项 1（CapabilityContract 扩展 expected_market/expected_variety）——向后兼容（字段可选）是否真的零迁移成本？现有 capability 不填则不校验，是否有 silently skip 风险
-3. §5.3 施工项 2（capability_semantic_registry.yaml）——"只对跨市场/跨品种易混淆 capability 强制登记"的过度工程防线是否合理？哪些 capability 算"易混淆"——需要一个判定标准，否则人工裁量空间太大
-4. §5.4 施工项 3（capability_validator AST gate）——AST 解析 _fetch 方法体提取外部 API 符号，技术可行性如何？ak.*/bs.*/xt.*/THS_* 的提取模式是否会漏（如动态调用 getattr(ak, name)）/ 误报
-5. §5.5 施工项 4（符号一致性 gate，优先施工）——校验 fetch 路由引用的 _fetch_xxx 是否真实定义，这是最基本的检查，确认是否已有类似 linter/pylint 规则可复用而非自建
-6. §5.6 施工项 5（运行时抽样校验，可选推迟）——声明时 gate 已覆盖大部分，本项推迟是否合理
-7. §5.7 施工顺序与优先级——施工项4先做（0.5天）→ 1+2+3 同批（3天）→ 5 可选（1天），总成本 4.5 天是否合理？个人项目是否需要全部 5 项，还是施工项 4 + 1 即可（MVP 先防"半截工程"和"语义错配"两大类）
-8. 过度工程审查：5 个施工项是否对个人项目过重——参考 project_memory "过度工程处理原则"，MVP 阶段是否应砍到施工项 4+1 两项，其余推迟
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"regime detection HMM 2026""market state detection 2026""Gaussian HMM financial 2026""regime switching model 2026"
+2. 搜"non-parametric regime detection 2026""deep learning regime 2026"
+3. 搜"synthetic VIX construction 2026""volatility regime 2026"
+4. 审查搜到的方法是否有比 12 态 HMM 更优的算法——如果有，登记到「考虑过的替代方案」或「前沿演进方向」节
 
-■ 第 5 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
-1. 搜"A股 特殊交易日 事件研究 2026"——学术界/业界对特殊日子的 event study 最新方法
-2. 搜"股指期货交割日效应 2026""期权到期日效应 2026"——交割日/到期日效应的量化研究更新
-3. 搜"MSCI 调整 A股 2026 被动资金"——MSCI 调整的数据获取路径与影响研究（§6.2 待讨论项）
-4. 搜"capability semantic validation data pipeline 2026"——数据管道 capability 语义校验的业界实践
-5. 搜"exchange_calendars XHKG 2026"——exchange_calendars 库港股日历的维护状态与已知问题
-6. 搜"A股 日历事件 回测前向特征 2026"——特殊日子作为回测前向特征的最佳实践
-7. 审查搜到的方法是否有比 §5 治本方案更好的算法——如果有更轻量的方案，回填到 §5 讨论
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 12 态是否过多（个人系统）——6 态或 9 态是否够用
+2. overlay signals 的 NLP/资金/板块维度是否过度——P2 待施工的是否应降级远期
+3. walk-forward refit 的频率是否过重
+4. 文档 3263 行是否应拆分（如验证部分拆到 11/12 号）
 
-■ 第 6 轮：开放讨论项审查（§6，5 项待人决策）
-1. §6.1 API 白名单维护责任——选项 A（强制登记）vs B（warn 不拦），文档倾向 A 但建议 MVP 用 B。审查：个人项目是否应该直接用 B（warn），A 的治理强度对单人不必要
-2. §6.2 msci_adjustment 数据源——3 条候选路径（爬虫/付费/手工），审查：2026 年有无新的免费 MSCI 数据源？个人项目是否真的需要 MSCI 调整数据（外资因子依赖度评估）
-3. §6.3 fomc_meeting/major_meeting/stamp_duty_change 手工填充——3 条候选（CSV/admin接口/SQL），审查：admin 接口已标"过度工程不推荐"是否正确，SQL 脚本是否最轻
-4. §6.4 悬空引用修正——business_data_categories.yaml L1923 + tasks.yaml L2371 指向不存在的 .trae 路径，待改为指向 17 号。审查：这是紧随小任务，是否应在本轮直接修复（只改2行引用，不越界改其他文档内容）
-5. §6.5 ETF 赎回日不单独建表——审查：T+0 实物申赎无固定赎回日的判断是否准确，净赎回从 etf_nav 衍生的查询层方案是否够用
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 11 号（回测验证方案）的一致性：验证结果是否已同步到 10 号
+2. 与 12 号（Phase2 验证）的一致性：A2/B1 FAIL 后续是否对齐
+3. 与 13 号（Phase3 工程）的一致性：降态/校准/NLP 是否对齐
+4. 与 14 号（S2 诊断）的一致性：S2 算法错配根因是否在 10 号反映
+5. 与 34 号（RegimeMetaAllocator）的一致性：12 态映射是否对齐
 
-■ 第 7 轮：一致性与交叉引用审查
-1. 与 15 号数据特征层的一致性：17 号的数据资产架构是否符合 15 号数据层规范
-2. 与 62 号注册表的一致性：special_trading_days 相关表（calendar_event/index_adjustment 等）是否已在 data_asset_registry 登记——若未登记，标在 §6 开放问题
-3. 与 63 号数据利用率审查的一致性：17 号涉及的表（calendar_event/hk_trade_calendar/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment）在 63 号 101 张表盘点中是否正确分类
-4. 与 19 号北向资金的一致性：17 号 calendar_event.hk_connect_closed（北向停摆日）与 19 号北向数据断档治理是否衔接——hk_connect_closed 依赖 hk_trade_calendar，而 19 号讨论北向日频断档
-5. 与 architecture_issue_registry.yaml 的一致性：#ARCH-SPECIAL-DAYS/#ARCH-DATA-001/#ARCH-DATA-002 三个条目的描述/状态/关联文档是否与 17 号一致
-6. 与 business_data_categories.yaml / tasks.yaml 的一致性：§3.2/§3.3 的 7 条品类 + 6 个任务是否与实际 YAML 内容一致——注意悬空引用（§6.4）
-
-■ 第 8 轮：文档质量与规范符合性
-1. frontmatter：ttl/doc_type/title/owner/language/status/version/date/topic/scope/related_issues 是否齐全合法——注意 scope 写了两个值（07_trading_decision_architecture / 03_modules_database），是否符合 01 号 §4.2（scope 应为单一值）
-2. 文档结构：17 号是"清单+诊断+讨论稿"混合体，§4.4 允许按内容组织——审查 8 节结构是否合理，是否有重复/遗漏
-3. §6 开放讨论项 5 项是否需增减——审查中发现的新待人决策问题要补登
-4. §8 修订记录：本轮审查有改动则升 v0.2.0 并登记
-5. 两条硬约束（§4.4）：有修订记录（§8 ✅）+ 有开放问题等价节（§6 ✅）
-6. 交叉引用全用稳定 path（§5.2 引用纪律）——无 node_id/edge_id
-7. status=draft v0.1.0——治本方案（§5）定稿后可转 active，但当前讨论稿态合理
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 spec 类结构是否合理
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. status=active v1.3.1——改动升 v1.4.0+
 
 ■ 循环条件
 - 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
 - 若有未修复/新发现，进入下一轮
 - 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
-- 升版本号在 §8 修订记录登记（v0.1.0 → v0.2.0 小改，v1.0.0 大改/转 active）
+- 升版本号在修订记录登记
 
 ■ 约束
-- 只改 17 号本身，引用 15/19/62/63 号及 architecture_issue_registry/business_data_categories/tasks.yaml 时只读不改
-- 例外：§6.4 悬空引用修正（business_data_categories.yaml L1923 + tasks.yaml L2371 改指向 17 号）可越界改，因这是文档自身承接的紧随任务且仅改 2 行引用——改后在 §8 登记并注明
-- 如发现 15/19/62/63 号需同步改，记在 17 号 §6 开放问题，不越界改
-- 不擅自定决策（如"API白名单A还是B""MSCI走哪条路径""治本方案砍到几项"），标在 §6 待人决策
-- 不破坏与 15/19/62/63/ARCH 注册表/YAML 的交叉引用
+- 只改 10 号本身，引用 11/12/13/14/34 号时只读不改
+- 读取大文件用 offset/limit，不要一次性读
+- 如发现其他文档需同步改，记在 10 号开放问题节，不越界改
+- 不擅自定决策（如 12 态是否减态），标在开放问题节
 - 持续改进不停，循环至零问题
 ```
 
 ---
 
-## AI-25 指令（负责 18_cold_archive_build_plan.md）
+## AI-03 指令（负责 54_reconciliation_attribution.md）
 
 ```
 你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
 
-【你的任务】审查并更新 1 篇文档：d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\18_cold_archive_build_plan.md
-这是冷数据归档施工图（active v0.2.0，9 节结构，§4.4 施工计划类）。解决 D 盘物理空间不足（83GB 可用 vs 198GB 回算需求），通过 ClickHouse→Parquet 归档腾出空间。
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\54_reconciliation_attribution.md（G25 对账归因，2889 行）
+
+【文档性质】这是对账归因体系的设计文档，覆盖 PnL 归因分解、每日对账、归因维度、异常交易检测、报表生成。
 
 【背景知识】
-- 01 号规范：§4.1 段位编号制（1x=地基/数据特征，18 空号无冲突）；§4.4 施工计划类按"目标→现状→改动→验证→不做"组织
-- data_retention_contract.yaml：INV-RET-001/002/003 三条铁律，本文修订 001/003 允许归档后 DROP PARTITION
-- 16 号技术指标回算：本文为其腾出存储空间（198GB 回算 → 缩减后 162GB）
-- 03_data_layer.md：Hot/Warm/Cold 三层定义，本文落地 Cold 层
-- archiver.py：三阶段原子操作（export→verify→drop），手动 CLI（INV-RET-002 铁律）
-- ClickHouse 在 Hyper-V VM，不能直接写 Windows E 盘
+- 01 号规范：§4.1 段位编号制（5x=运营/对账，54 号属对账归因）；§4.4 文档种类适配
+- 与 40 号（执行层）衔接：执行产出是对账输入
+- 与 30 号（多策略并发）衔接：StrategyBook 独立 PnL 是归因基础
+- 与 50 号（可观测性）衔接：日志/监控与对账数据互补
 
 【工作清单——循环执行直到全部为零】
 
 ■ 第 1 轮：读现状（只读不改）
-1. 完整读 18 号文档（9 节，~510 行）
-2. 核验 §1.1 空间数据：D 盘 83.2GB 可用 / ClickHouse 337GB / technical_indicator 压缩比 1.087 / 6 周期回算 198GB——跑脚本验证当前 D 盘实际可用空间
-3. 核验 §2.1 tick_data 分区大小表（2022: 7.67GiB / 2023: 23.9 / 2024: 61.46 / 2025: 69.78 / 2026: 41.34）——查 ClickHouse system.parts 验证
-4. 核验 §2.2 K 线各表大小表（kline_1min 88.69GiB 等 9 行）——查 ClickHouse 验证
-5. 核验 §3 archiver.py 施工方案：三阶段原子操作 / E 盘目录结构 / 归档清单格式 / CLI 接口 / 断点续传
-6. 核验 §4 铁律修订：INV-RET-001 修订措辞 / INV-RET-003 补充 / changelog v1.1.0
+1. 用 Read offset/limit 分段读 54 号全文
+2. 读 battle_map_11_reconciliation.md 了解对账阶段现状
+3. LS src/zephyr/ 找 reconciliation/attribution/pnl/reporting 相关代码
+4. 读 02_domain_architecture_docs/ 找 reporting/audit 相关域文档
 
-■ 第 2 轮：归档架构审查
-1. §2.1 Tick 归档分界线 2022-2024（保留 2025-2026 近 2 年 Hot）——审查：2 年 Hot 是否够做 T 回测？机构 kdb+ Hot 内存只放 1-3 月，但个人系统是否需要 2 年全在 Hot？是否应改为 1 年 Hot + 1 年 Warm？
-2. §2.2 K 线归档分界线 2019 年前（保留 2019-2026 近 8 年）——审查：一个牛熊周期（2019-2021 牛市 + 2022-2024 熊市 + 2025-2026 当前）的覆盖是否充分？2015 杠杆牛数据归档是否影响回测？
-3. §2.3 news_data 全量保留 Hot（21GiB 不归档）——审查：27 年 1408 万行新闻数据全量 Hot 是否合理？NLP 训练确实需要全量，但 21GiB 是否可通过列式压缩优化？
-4. §2.4 technical_indicator 逻辑一致化（分钟指标只算 2019 年后）——审查：与 16 号三级时间框架栈是否对齐？日线指标全量保留 vs 分钟指标 2019 年后的分界是否合理？
-5. §2.5 全部归档对象合计（阶段1: 147.8GiB / 阶段2: 36GiB / 总计 183.8GiB）——验算：93.0 + 40.4 + 13.1 + 1.3 = 147.8 ✓ / Parquet 压缩后 25-38GiB 是否合理
+■ 第 2 轮：内容审查与回填
+1. 回填已施工的对账/归因代码的 why——反查 src/zephyr/ 实际实现
+2. 审查 PnL 归因分解方法（Brinson/Fama/Barra）的选型决策推理
+3. 审查每日对账流程的完整性（交易对账/持仓对账/资金对账）
+4. 审查归因维度设计（策略层/标层/因子层/时间层）
+5. 审查异常交易检测规则
+6. 审查报表生成机制
 
-■ 第 3 轮：archiver.py 施工方案审查
-1. §3.2 三阶段原子操作（export→verify→drop）——审查：verify 阶段只比对行数 + 抽样 100 行字段值，是否够？是否需要 checksum（md5 已在清单格式里但 verify 代码没实现）？是否需要全量字段比对？
-2. §3.3 E 盘目录结构——审查：按月一个 Parquet 文件是否合理（tick_data 单月可能 5-7GiB，Parquet 文件过大影响查询性能）？是否应按日切分？
-3. §3.5 CLI 接口——审查：archive/archive-range/dry-run/export/list/restore/stats 7 个命令是否完整？是否需要 batch 命令（跨表批量归档）？
-4. §3.6 关键实现——审查：clickhouse-driver TCP 分批读取（<2GB 防 OOM）的批次大小是否合理？pyarrow Table.from_pandas() 是否有更高效的直写方式（如 clickhouse-driver 直接导出 Arrow）？verify 的随机抽样 ORDER BY rand() 在大表上性能如何？
-5. 断点续传边界——§变更历史提到"export 完成但 verify 失败时重跑删除旧 Parquet 重新 export"，审查这个逻辑是否健壮
+■ 第 3 轮：缺失环节与算法审查
+1. PnL 归因分解是否覆盖所有收益来源（选股/择时/行业/风格/交互）
+2. 对账差异容忍度/处理流程是否完整
+3. 归因基准选择（沪深300/中证500/自定义）是否合理
+4. T+1 约束下的对账时序是否正确
+5. 异常交易检测的阈值/规则是否校准
 
-■ 第 4 轮：铁律修订审查
-1. §4.1 INV-RET-001 修订（"永不删除"→"永不丢弃——只保留或归档"）——审查：措辞修订是否消除歧义？enforcement 字段（archiver.py 验证后才 DROP）是否足够约束？
-2. §4.2 INV-RET-003 补充（"永久保留"→"无自动删除，允许手动 DROP PARTITION 归档"）——审查：与 INV-RET-002（手动触发）的联动是否清晰？
-3. data_retention_contract.yaml 是否已实际修改（读文件验证）——如未修改，标在开放问题
-4. 全网搜索 2026 年"data retention policy trading 2026""cold archive parquet clickhouse 2026"——业界冷归档最佳实践
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"PnL attribution 2026""Brinson attribution 2026""Barra factor attribution 2026"
+2. 搜"reconciliation trading system 2026""trade ledger 2026"
+3. 搜"performance attribution quantitative 2026""multi-strategy PnL decomposition 2026"
+4. 搜"anomaly detection trading 2026"
 
-■ 第 5 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
-1. 搜"ClickHouse cold storage parquet 2026"——ClickHouse 官方是否已有原生 Cold 存储支持（如 S3/Tiered Storage）
-2. 搜"tick data archive parquet 2026"——业界 tick 数据归档实践
-3. 搜"quant data retention policy 2026"——量化系统数据保留策略
-4. 搜"pyarrow clickhouse export 2026"——pyarrow + ClickHouse 导出性能优化
-5. 搜"DuckDB parquet query 2026"——DuckDB 查询 Parquet 的最新性能基准
-6. 审查是否有比 archiver.py 三阶段原子操作更好的方案（如 ClickHouse 原生 BACKUP 命令 / freeze partition）
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. Barra 归因是否对个人项目过重——是否只需简单的选股/择时二分法
+2. 多维度归因（策略/标/因子/时间）是否过重
+3. 报表生成是否需要自动化 dashboard 还是手动检查即可
+4. 异常检测规则是否过多
 
-■ 第 6 轮：过度工程审查（个人项目标准）
-1. 两层归档架构是否过度——个人系统是否需要分 Tick 层和 K 线层？能否统一一个分界线简化？
-2. archiver.py 7 个 CLI 命令是否过度——个人项目是否只需要 archive + restore + stats 三个？
-3. 归档清单 archive_manifest.jsonl 的 checksum_md5 字段——是否需要 MD5 校验（增加导出时间）？还是行数 + 抽样够了？
-4. 断点续传机制是否过度——批量归档中断概率低，是否需要这么复杂的断点续传？
-5. 两阶段执行是否合理——阶段1（tick+kline）+ 阶段2（tech_ind 分钟指标）是否应合并？
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 40 号（执行层）一致性：执行产出格式与对账输入是否对齐
+2. 与 30 号（多策略并发）一致性：StrategyBook 独立 PnL 与归因对接
+3. 与 50 号（可观测性）一致性：日志与对账数据互补关系
+4. 与 55 号（监控复盘）一致性：对账结果驱动复盘
+5. 与 62 号（注册表）一致性：对账相关数据资产登记
 
-■ 第 7 轮：一致性与交叉引用审查
-1. 与 16 号技术指标回算的一致性：本文腾出空间给 16 号回算，回算量缩减（198→162GiB）是否与 16 号一致
-2. 与 15 号数据特征层的一致性：归档策略是否符合 15 号数据层架构
-3. 与 63 号数据利用率审查的一致性：归档的表是否在 63 号闲置清单中
-4. 与 17 号特殊交易日的一致性：calendar_event 等表不归档（体积小），是否与 17 号一致
-5. 与 data_retention_contract.yaml 的一致性：铁律修订是否已落到实际 YAML 文件
-6. 与 03_data_layer.md 的一致性：Hot/Warm/Cold 三层定义是否对齐
-
-■ 第 8 轮：文档质量与规范符合性
-1. frontmatter：ttl/doc_type/title/owner/language/status/version/date/topic/scope/depends_on 是否齐全合法
-2. §4.4 施工计划类结构：目标(§1-2)→现状(§2)→改动(§3-4)→验证(§5-6)→不做(§7)→执行(§5)——审查结构是否完整合理
-3. 开放问题/待定问题节——如没有需补（§4.4 硬约束）
-4. 修订记录/变更历史——§变更历史已有，本轮改动追加
-5. 交叉引用全用稳定 path
-6. status=active v0.2.0——审查后改动升 v0.3.0
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 升版本号在修订记录登记
 
 ■ 循环条件
 - 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
 - 若有未修复/新发现，进入下一轮
 - 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
-- 升版本号在变更历史登记
+- 升版本号在修订记录登记
 
 ■ 约束
-- 只改 18 号本身，引用 15/16/17/63 号及 data_retention_contract/03_data_layer 时只读不改
-- 如发现需同步改其他文档，记在 18 号开放问题，不越界改
-- 不擅自定决策（如归档分界线调整/铁律修订最终措辞），标在开放问题待人决策
-- 不破坏交叉引用
+- 只改 54 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在 54 号开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
 - 持续改进不停，循环至零问题
 ```
 
 ---
 
-## AI-26 指令（负责 64_data_source_download_spec.md）
+## AI-04 指令（负责 63_data_utilization_audit.md）
 
 ```
 你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
 
-【你的任务】审查并更新 1 篇文档：d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\64_data_source_download_spec.md
-这是数据源与下载体系规范（draft v1.2.1，spec/工程详设类）。覆盖 D_DATA 域数据获取基础设施的 why：Provider 体系/调度/落库/韧性/数据缺口治理。
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\63_data_utilization_audit.md（业务数据资产利用率审查与施工计划，draft v0.1.0，2637 行）
+
+【文档性质】这是业务数据库 101 张表在 design_memos 46 篇文档中的引用审查底稿 + 闲置清单 + 分批接入施工计划。与 62 号配对——62 号建 12 注册表 schema，63 号盘点 101 张表实际利用率（57.4% 已用 / 42.6% 闲置）。核心结论：43 张闲置表分 P0-P4 五档，三波分批接入。
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制（6x=跨切治理）；§4.4 审查清单+施工计划混合种类
+- 与 62 号强配对：62 号建 schema，63 号盘点表
+- 数据消费方遍布全链：10(regime)/22(板块)/24/25(策略)/26(事件)/28(情绪)/32(firm风险)/35(回撤)/37(流动性)/50(可观测)/52(回测)
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 用 Read offset/limit 分段读 63 号全文（2637 行）
+2. 核验 schemas/categories/：LS d:\ZephyrAlpha\schemas\categories\ 验证实际表数是否=101
+3. 逐类核对 §4 八大类表清单是否与实际文件数一致
+4. 反查 §5.2 热度前 15 名表的引用次数：用 Grep 在 design_memos/*.md 搜表名验证 hit count
+5. 反查 §5.3 低频引用表是否真的仅 1-2 次
+
+■ 第 2 轮：内容审查与回填
+1. 利用率审查方法学审查（§3）：双层校验（英文表名+中文别名）是否严谨
+2. §3.3 审查局限审查：
+   - "tick 关键词过宽"——是否应改用精确正则 \btick\b
+   - "只覆盖 design_memos 不含 src/ 代码引用"——是否应补查代码层引用
+3. 补一轮代码层引用扫描：用 Grep src/zephyr/ 搜表名，把"文档闲置但代码在用"的表从闲置清单移除
+4. 回填已施工的数据消费代码的 why
+
+■ 第 3 轮：缺失环节与算法审查
+1. 闲置表分档审查（§6，43 张 P0-P4）：
+   - 🔴 P0 高价值 8 张：逐张验证价值判断是否成立（restricted_shares/block_trade_detail/cb_iv/etf_nav/edb_data 等）
+   - 🟡 P1 跨市场 15 张：业务边界裁定项是否完整
+   - 🟠 P2 元数据 8 张：注册表治理待登记是否合理
+   - 🟢 P3 分钟级 12 张：后复权周/月线与 16 号三级时间框架栈不一致
+   - ⚪ P4 待归档 5 张：归档理由是否充分
+2. 三波施工计划审查（§7）：每波步骤是否可执行，验证标准是否够严
+3. 与 12 注册表关联审查（§8）：data_asset_registry 首批 66 张表登记清单是否准确
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"data utilization audit 2026""data asset inventory 2026"
+2. 搜"data lineage 2026""data catalog 2026"（对标 OpenLineage / Apache Atlas / Amundsen）
+3. 搜"idle data archive 2026""data lifecycle management 2026"
+4. 搜"alternative data alpha 2026"（限售解禁/大宗交易/可转债 IV 的 alpha 价值）
+5. 搜"macro regime detection 2026"（EDB 宏观数据对 regime 的增量价值）
+6. 搜"ETF arbitrage 2026""ETF premium discount 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 101 张表是否本身就过多——个人系统是否需要覆盖 A股/港股/美股/期货/期权/可转债全品类
+2. 三波施工计划是否过重——是否应直接"归档为主，接入为辅"
+3. data_asset_registry 首批 66 张登记是否过重——是否先登记 8 张 P0 + 58 张已用高频表
+4. §3 双层校验 + 代码层补查是否过度
+5. 第二波 5 个业务边界决策项是否都需人定——能否 AI 按个人项目定位直接裁定
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 62 号一致性：data_asset_registry schema 与 63 号表盘点对齐
+2. 与 10 号一致性：regime 数据源消费对齐
+3. 与 15/16 号一致性：数据特征层/技术指标消费对齐
+4. 与 22/24/25/26 号一致性：策略数据消费对齐
+5. 与 35/37 号一致性：风控数据消费对齐
+6. 与 50/52 号一致性：可观测性/回测数据消费对齐
+7. 与 64 号一致性："数据下得怎么样"vs"数据用得怎么样"互补不重叠
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 审查清单+施工计划混合种类结构是否合理
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path（schemas/categories/xxx.py）
+5. status=draft v0.1.0——审查后若数据准确+计划可行→升 active 1.0.0；若需大改保持 draft 升 0.2.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 63 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改（如 P0 表接入需改 26/35/37/10/32 号的数据源节），记在 63 号 §10 开放问题，不越界改
+- 不擅自定决策（业务边界扩张/归档确认），标在 §10 开放问题——但明显可建议的（如生猪期货归档），AI 给默认建议
+- 引用表/代码用稳定 path
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-05 指令（负责 35_drawdown_protocol_impl.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\35_drawdown_protocol_impl.md（G16 回撤 Protocol 落地，2456 行）
+
+【文档性质】这是回撤 Protocol 的落地实施文档，覆盖四级回撤阈值（8/15/20/25%）+ 恢复机制 + 分层风控 + Kill Switch。
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制（3x=风控/仓位，35 号属回撤 Protocol）；§4.4 文档种类适配
+- 与 30 号（多策略并发）衔接：§2.5 定义了四级回撤阈值 + Kill Switch
+- 与 36 号（VaR/ES）衔接：风控指标协同
+- 与 37 号（流动性危机）衔接：Kill Switch 流动性危机触发
+- 与 32 号（FirmRiskAggregator）衔接：firm 层风控联动
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 用 Read offset/limit 分段读 35 号全文（2456 行）
+2. 读 30_multi_strategy §2.5（四级回撤阈值 + Kill Switch 定义）
+3. LS src/zephyr/risk/ + position/ 找 drawdown/kill_switch 相关代码
+4. 读 battle_map_09_risk_control.md（14万字风控 battle map）
+5. 读 02_domain_architecture_docs/66_d_risk.md（D_RISK 域模块）
+
+■ 第 2 轮：内容审查与回填
+1. 回填已施工的回撤 Protocol 代码的 why——反查 src/zephyr/risk/ 实际实现
+2. 审查四级阈值落到 StrategyBook 的机制
+3. 审查单策略 vs 组合分层逻辑
+4. 审查恢复机制（分级恢复/全面恢复/条件恢复）
+5. 审查 Kill Switch 触发与执行逻辑
+6. 审查日度熔断机制
+7. 审查 Kill Switch 不可覆盖的设计
+8. 审查回撤基准净值口径
+9. 审查与 regime Shrinkage 协同
+
+■ 第 3 轮：缺失环节与算法审查
+1. 四级阈值（8/15/20/25%）的参数校准依据是否充分
+2. 恢复机制的触发条件/等待期/验证期是否完整
+3. Kill Switch 的触发条件（回撤/流动性/系统故障）是否覆盖全面
+4. 分层风控（策略层/firm 层/组合层）的职责边界是否清晰
+5. T+1 约束下的回撤处理时序是否正确
+6. 回撤期间的仓位管理（封锁新仓/仅平仓/按比例裁剪）是否完整
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"drawdown protocol 2026""max drawdown control 2026"
+2. 搜"kill switch trading 2026""circuit breaker trading 2026"
+3. 搜"recovery protocol trading 2026""de-risking strategy 2026"
+4. 搜"multi-level risk control 2026""portfolio drawdown management 2026"
+5. 搜"Calmar ratio 2026""MAR ratio 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 四级阈值 + 日度熔断 + Kill Switch 是否过重——个人系统是否只需 2 级 + Kill Switch
+2. 分层风控（策略/firm/组合三层）是否过重
+3. 恢复机制的多阶段设计是否过度
+4. Kill Switch 的多维度触发是否过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 30 号一致性：§2.5 定义与 35 号落地是否对齐
+2. 与 36 号一致性：回撤 vs VaR/ES 的协同/优先级
+3. 与 37 号一致性：Kill Switch 流动性危机触发与 37 号衔接
+4. 与 32 号一致性：firm 层风控与回撤 Protocol 联动
+5. 与 31 号一致性：仓位算法与回撤裁剪的接口
+6. 与 42 号一致性：卖出流与回撤 Protocol 联动
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 升版本号在修订记录登记
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 35 号本身，引用 30/36/37/32/31/42 号时只读不改
+- 如发现其他文档需同步改，记在 35 号开放问题节，不越界改
+- 不擅自定决策（如阈值调整/层级精简），标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-06 指令（负责 36_var_es_monitoring.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\36_var_es_monitoring.md（G17 VaR/ES 与波动率监控，2080 行）
+
+【文档性质】这是 VaR/ES 风险指标与波动率监控的设计文档，覆盖 VaR_95/ES_95 计算、入场基准、触发动作、30 日波动率调整、与回撤 Protocol 协同。
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制（3x=风控/仓位，36 号属 VaR/ES 监控）；§4.4 文档种类适配
+- 与 30 号（多策略并发）衔接：§2.5.4 定义了 VaR_95/ES_95/波动率调整
+- 与 35 号（回撤 Protocol）衔接：风控指标协同
+- 与 37 号（流动性危机）衔接：风险监控互补
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 用 Read offset/limit 分段读 36 号全文（2080 行）
+2. 读 30_multi_strategy §2.5.4（VaR_95/ES_95/波动率调整定义）
+3. LS src/zephyr/risk/ 找 var/es/volatility 相关代码
+4. 读 02_domain_architecture_docs/66_d_risk.md（D_RISK 域模块）
+
+■ 第 2 轮：内容审查与回填
+1. 回填已施工的 VaR/ES 计算代码的 why——反查 src/zephyr/risk/ 实际实现
+2. 审查 VaR_95 计算方法（历史模拟法/参数法/蒙特卡洛）的选型决策
+3. 审查 ES_95（Expected Shortfall）计算方法
+4. 审查入场基准（VaR/ES 阈值设定）
+5. 审查触发动作（仓位调整/止损/预警）
+6. 审查 30 日波动率调整机制
+7. 审查数据窗口选择
+8. 审查与回撤 Protocol 协同逻辑
+
+■ 第 3 轮：缺失环节与算法审查
+1. VaR 计算方法选型是否有充分的对比分析
+2. ES 的后验测试（backtesting）是否设计
+3. 波动率调整的频率/参数是否校准
+4. VaR/ES 与回撤 Protocol 的优先级/协同是否清晰
+5. 极端市场条件下的 VaR/ES 失效问题是否讨论
+6. T+1 约束下的 VaR/ES 时序是否正确
+7. 数据窗口长度对 VaR/ES 稳定性的影响
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"VaR ES monitoring 2026""expected shortfall 2026"
+2. 搜"historical simulation VaR 2026""parametric VaR 2026"
+3. 搜"volatility adjusted position 2026""volatility scaling 2026"
+4. 搜"VaR backtesting 2026""ES backtesting 2026"
+5. 搜"FRTB expected shortfall 2026"（巴塞尔 FRTB 框架最新进展）
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. VaR/ES 对个人系统是否过重——可降级远期？
+2. 历史模拟法 vs 参数法——个人项目是否只需简单参数法
+3. 30 日波动率调整是否需要——个人系统小资金容量小
+4. VaR/ES 的多维度计算（策略/标的/组合）是否过重
+5. 后验测试框架是否过度
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 30 号一致性：§2.5.4 定义与 36 号落地是否对齐
+2. 与 35 号一致性：VaR/ES vs 回撤 Protocol 协同/优先级
+3. 与 37 号一致性：VaR/ES vs 流动性危机监控互补
+4. 与 32 号一致性：firm 层风控与 VaR/ES 联动
+5. 与 31 号一致性：仓位算法与 VaR/ES 调整接口
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 升版本号在修订记录登记
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 36 号本身，引用 30/35/37/32/31 号时只读不改
+- 如发现其他文档需同步改，记在 36 号开放问题节，不越界改
+- 不擅自定决策（如 VaR 计算方法选型/降级远期），标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-07 指令（负责 13_regime_phase3_engineering_plan.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\13_regime_phase3_engineering_plan.md（Phase 3 工程规划，draft，1971 行）
+
+【文档性质】这是 regime 检测器 Phase 3 的工程规划，覆盖降态（9→6）、校准器设计、NLP 管道、S2/T3 触发逻辑。
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制（1x=地基/数据特征，13 号属 regime Phase3 工程）；§4.4 施工计划类
+- 与 10 号（regime spec）衔接：Phase 3 是 10 号的实施工程规划
+- 与 11 号（回测验证）衔接：Phase 1-5 验证体系的 Phase 3
+- 与 12 号（Phase2 验证）衔接：A2/B1 FAIL 后的修复方向
+- 与 14 号（S2 诊断）衔接：S2 算法错配的修复方案
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 用 Read offset/limit 分段读 13 号全文（1971 行）
+2. 读 src/zephyr/regime/（降态/校准/NLP/S2/T3 相关代码）
+3. 读 10 号 regime spec 相关章节
+4. 读 12 号 Phase2 验证的 A2/B1 FAIL 结果
+
+■ 第 2 轮：内容审查与回填
+1. 回填 Phase 3 的降态（9→6）、校准器、NLP 管道、S2/T3 触发逻辑的已施工部分 why
+2. 审查 §2.1 降维裁定的决策推理
+3. 审查 §2.2 校准器设计的完整性
+4. 审查 NLP 管道的接入方案
+5. 审查 S2/T3 触发逻辑的参数设计
+
+■ 第 3 轮：缺失环节与算法审查
+1. 降态（9→6）的映射规则是否完整——哪些态合并/删除
+2. 校准器（isotonic/Platt/temperature scaling）的选型依据
+3. NLP 管道的数据源/模型/延迟是否可行
+4. S2/T3 触发逻辑与 12 号 A2/B1 FAIL 的修复方案是否对齐
+5. Phase 3 各子项的优先级/依赖关系是否清晰
+6. 从 draft → active 的条件是否满足
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"HMM state reduction 2026""regime state merging 2026"
+2. 搜"probability calibration isotonic 2026""Platt scaling 2026""temperature scaling 2026"
+3. 搜"NLP financial sentiment 2026""financial BERT 2026"
+4. 搜"crisis recovery detection 2026""market bottom identification 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. NLP 管道/资金板块数据管道是否对个人项目过重——是否应降级远期
+2. 降态 9→6 是否必要——还是直接保持 12 态
+3. 校准器的三种方法是否都需实现
+4. S2/T3 的多维度触发是否过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 10 号一致性：Phase 3 规划与 regime spec 对齐
+2. 与 11 号一致性：Phase 3 与回测验证体系对齐
+3. 与 12 号一致性：A2/B1 FAIL 修复方向对齐
+4. 与 14 号一致性：S2 诊断与 Phase 3 S2 修复对齐
+5. 与 34 号一致性：降态后 RegimeMetaAllocator 参数映射是否需更新
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 施工计划类结构（目标→现状→改动→验证→不做）
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. status=draft——从 draft → active（如已施工完整）或保持 draft 补全
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 13 号本身，引用 10/11/12/14/34 号时只读不改
+- 如发现其他文档需同步改，记在 13 号开放问题节，不越界改
+- 不擅自定决策（如降态方案/NLP 是否降级远期），标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-08 指令（负责 64_data_source_download_spec.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 1 篇文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\64_data_source_download_spec.md（数据源与下载体系规范，draft v1.2.1，1659 行）
+
+【文档性质】这是 D_DATA 域数据获取基础设施的 spec，覆盖 Provider 体系/调度/落库/韧性/数据缺口治理。15 号偏"数据进来后怎么用"（PIT/特征仓库/因子工程），64 号偏"数据怎么进来"（Provider/调度/落库/韧性），互补不重叠。
 
 【背景知识】
 - 01 号规范：§4.1 段位编号制（6x=跨切治理，64 空号无冲突）；§4.4 spec 类按对象内在结构组织
-- 15 号数据特征层：15 号偏"数据进来后怎么用"（PIT/特征仓库/因子工程），64 号偏"数据怎么进来"（Provider/调度/落库/韧性），互补不重叠
-- 63 号数据利用率审查：63 号审"数据用得怎么样"，64 号审"数据下得怎么样"
-- data_source_integrator_blueprint.md：MOD-L00-004 what 层真源，64 号补 why
-- data_source_operation_manual.md：MOD-L00-002 API 操作唯一真源（怎么调用+参数坑）
+- 与 15 号互补：64 号"数据怎么进来" vs 15 号"数据进来后怎么用"
+- 与 63 号配套：64 号"数据下得怎么样" vs 63 号"数据用得怎么样"
+- 与 17/18/19 号衔接：#ARCH-DATA-001/002 修复 / 冷归档策略 / 北向数据断档
 - related_issues：#ARCH-IFIND-FAILOVER / #ARCH-CH-001~005 / #ARCH-CH-022 / #ARCH-CH-024 / #ARCH-CH-029 / #ARCH-DATA-001 / #ARCH-REALTIME-ACCUM / #ARCH-DATA-014 / #ARCH-SPECIAL-DAYS / #ARCH-EDB-EXPAND
-- D_DATA 域 183 模块（02_domain_architecture_docs/11_d_data.md）
 
 【工作清单——循环执行直到全部为零】
 
 ■ 第 1 轮：读现状（只读不改）
-1. 完整读 64 号文档（用 offset/limit 分段读，文档可能较大）
+1. 用 Read offset/limit 分段读 64 号全文（1659 行）
 2. 核验 §3-§10 八个对象分节：数据源 Provider 体系 / 下载调度 / ClickHouse 落库 / 数据质量校验 / 韧性与容错 / 数据缺口治理 / 实时行情 / 宏观数据
-3. 核验 depends_on 4 项和 related_issues 10 项的 path 是否正确
-4. 核验与 data_source_integrator_blueprint.md / data_source_operation_manual.md 的关系是否准确
-5. 读 11_d_data.md（D_DATA 域 183 模块）了解已施工模块清单
+3. 核验 depends_on 和 related_issues 的 path 是否正确
+4. 读 11_d_data.md（D_DATA 域 183 模块）了解已施工模块清单
 
-■ 第 2 轮：Provider 体系审查
-1. Provider 抽象层——审查 Provider base class / CapabilityContract / capability 声明机制是否完整。反查 src/zephyr/data/ 的 provider_base.py / akshare_provider.py / tushare_provider.py / baostock_provider.py / tickflow_provider.py / tdx_provider.py / internal_compute_provider.py
-2. #ARCH-CH-022 CapabilityContract——审查 supports_symbols_null/supports_incremental/supports_full_refresh/requires_date_range 四字段是否够用。与 17 号 #ARCH-DATA-002 治本方案（expected_market/expected_variety 扩展）是否衔接
-3. #ARCH-IFIND-FAILOVER iFind 降级——审查 iFind 试用到期后 fallback 链是否完整（主源→fallback 源→降级策略）
-4. #ARCH-DATA-014 L2 行情权限缺失——审查 L2 降级方案是否影响策略信号质量
-5. Provider capability 与 tasks.yaml 的一致性——反查 tasks.yaml 的 task_id→source 映射
+■ 第 2 轮：内容审查与回填
+1. Provider 体系审查：反查 src/zephyr/data/ 的 provider_base.py / akshare_provider.py / tushare_provider.py / baostock_provider.py / tickflow_provider.py / tdx_provider.py / internal_compute_provider.py
+2. #ARCH-CH-022 CapabilityContract 审查：四字段（supports_symbols_null/supports_incremental/supports_full_refresh/requires_date_range）是否够用
+3. #ARCH-IFIND-FAILOVER iFind 降级审查：fallback 链是否完整
+4. #ARCH-DATA-014 L2 行情权限缺失审查：降级方案是否影响策略信号质量
+5. 下载调度审查：5 档时段全量调度是否合理——反查 tasks.yaml
+6. #ARCH-CH-001~005 ClickHouse 写入五项裁定审查
+7. #ARCH-CH-029 known_data_gaps 审查：反查 known_data_gaps.yaml
 
-■ 第 3 轮：调度与落库审查
-1. 下载调度体系——审查 5 档时段全量调度（daily_static/daily_event/monthly_static/weekly/realtime）是否合理。反查 tasks.yaml 的 schedule 字段
-2. #ARCH-CH-001~005 ClickHouse 写入五项裁定——审查五项裁定的落地状态
-3. #ARCH-CH-024 business_data_categories.yaml 表名 SSoT——审查表名 SSoT 消费层是否完整
-4. #ARCH-REALTIME-ACCUM 时间敏感型数据每日积累——审查实时积累机制的实现状态
-5. 数据落库 schema 规范——审查与 schemas/categories/ 的对齐
+■ 第 3 轮：缺失环节与算法审查
+1. Provider capability 与 tasks.yaml 的一致性——反查 task_id→source 映射
+2. 韧性设计（Provider 级 fallback / 重试 / 超时 / 断线重连）是否完整
+3. 数据质量校验（integrity_checker / cross_source_validator）实现状态
+4. #ARCH-EDB-EXPAND EDB 宏观数据扩展接入计划
+5. #ARCH-REALTIME-ACCUM 时间敏感型数据每日积累机制
+6. 与 17 号 #ARCH-DATA-002 治本方案（capability 语义校验）的衔接
 
-■ 第 4 轮：韧性与数据缺口治理审查
-1. #ARCH-CH-029 known_data_gaps——审查 known_data_gaps.yaml 的 gap 登记是否完整（gap_type/status/root_cause/workaround）。反查 19 号北向数据断档 / 17 号 akshare 失效接口是否已登记
-2. 韧性设计——审查 Provider 级 fallback / 重试 / 超时 / 断线重连机制
-3. 数据质量校验——审查 integrity_checker / cross_source_validator 的实现状态
-4. #ARCH-EDB-EXPAND EDB 宏观数据扩展——审查 EDB 国际宏观数据的接入计划
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"akshare 2026 latest version""tushare 2026 API update"
+2. 搜"financial data provider comparison 2026"（akshare/tushare/baostock/Wind/iFind/同花顺）
+3. 搜"ClickHouse data ingestion best practice 2026"
+4. 搜"data pipeline resilience pattern 2026"
+5. 搜"financial data quality validation 2026"
+6. 搜"A-share alternative data 2026"
 
-■ 第 5 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
-1. 搜"akshare 2026 latest version""tushare 2026 API update"——数据源 SDK 最新版本和 API 变化
-2. 搜"financial data provider comparison 2026"——A股数据源对比（akshare/tushare/baostock/Wind/iFind/同花顺）
-3. 搜"ClickHouse data ingestion best practice 2026"——ClickHouse 数据写入最佳实践
-4. 搜"data pipeline resilience pattern 2026"——数据管道韧性设计模式
-5. 搜"financial data quality validation 2026"——金融数据质量校验方法
-6. 搜"A-share alternative data 2026"——A股另类数据源最新（舆情/龙虎榜/大宗/北向替代）
-
-■ 第 6 轮：过度工程审查（个人项目标准）
-1. Provider 抽象层是否过度——个人项目是否需要 8 个 Provider？能否精简到 3-4 个（akshare/tushare/internal_compute/miniQMT）
-2. CapabilityContract 四字段是否过度——个人项目是否需要这么正式的契约
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. Provider 抽象层是否过度——个人项目是否需要 8 个 Provider，能否精简到 3-4 个
+2. CapabilityContract 四字段是否过度——个人项目是否需要正式契约
 3. 5 档调度是否过度——个人项目是否需要 monthly_static + weekly + daily_static + daily_event + realtime 五档
-4. known_data_gaps 注册表是否过度——个人项目是否需要正式的 gap 登记机制
-5. cross_source_validator 是否过度——个人项目是否需要跨源校验（tick_data 专属）
-6. #ARCH-DATA-002 治本方案（17 号讨论的 5 个施工项）是否对 64 号有影响——64 号是否需要同步落地 capability 语义校验
+4. known_data_gaps 注册表是否过度
+5. cross_source_validator 是否过度（tick_data 专属）
+6. #ARCH-DATA-002 治本方案 5 个施工项是否对个人项目过重
 
-■ 第 7 轮：一致性与交叉引用审查
-1. 与 15 号的一致性：64 号"数据怎么进来" vs 15 号"数据进来后怎么用"边界是否清晰
-2. 与 63 号的一致性：64 号"数据下得怎么样" vs 63 号"数据用得怎么样"是否互补不重叠
-3. 与 17 号的一致性：#ARCH-DATA-001 hk_trade_calendar 修复 / #ARCH-DATA-002 治本方案 / #ARCH-SPECIAL-DAYS 特殊交易日是否在 64 号正确引用
-4. 与 19 号的一致性：北向数据断档治理 / known_data_gaps 是否在 64 号登记
-5. 与 18 号的一致性：冷归档策略与 64 号的数据保留策略是否对齐
-6. 与 architecture_issue_registry.yaml 的一致性：10 个 related_issues ARCH 编号是否存在且状态一致
+■ 第 6 轮：一致性与交叉引用审查
+1. 与 15 号一致性："数据怎么进来" vs "数据进来后怎么用"边界是否清晰
+2. 与 63 号一致性："数据下得怎么样" vs "数据用得怎么样"是否互补不重叠
+3. 与 17 号一致性：#ARCH-DATA-001/002 / #ARCH-SPECIAL-DAYS 是否正确引用
+4. 与 18 号一致性：冷归档策略与数据保留策略是否对齐
+5. 与 19 号一致性：北向数据断档治理 / known_data_gaps 是否登记
+6. 与 architecture_issue_registry.yaml 一致性：10 个 related_issues ARCH 编号是否存在且状态一致
 
-■ 第 8 轮：文档质量与规范符合性
+■ 第 7 轮：文档质量与规范符合性
 1. frontmatter：ttl/doc_type/title/owner/language/status/version/date/topic/scope/depends_on/related_issues 是否齐全合法
-2. §4.4 spec 类结构：按对象内在结构组织（§3-§10 八个对象分节）是否合理
-3. 两条硬约束：有修订记录 + 有开放问题等价节——如缺需补
-4. 交叉引用全用稳定 path——无 node_id/edge_id
+2. §4.4 spec 类结构：按对象内在结构组织是否合理
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
 5. status=draft v1.2.1——审查后若内容完整可建议升 active
 
 ■ 循环条件
@@ -1294,33 +755,1420 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 - 升版本号在修订记录登记
 
 ■ 约束
-- 只改 64 号本身，引用 15/17/18/19/63 号及 architecture_issue_registry/data_source_integrator_blueprint 时只读不改
-- 如发现需同步改其他文档，记在 64 号开放问题，不越界改
-- 不擅自定决策（如 Provider 精简/调度档位调整），标在开放问题待人决策
-- 不破坏交叉引用
+- 只改 64 号本身，引用 15/17/18/19/63 号及 architecture_issue_registry 时只读不改
+- 如发现其他文档需同步改，记在 64 号开放问题节，不越界改
+- 不擅自定决策（如 Provider 精简/调度档位调整），标在开放问题节
 - 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-09 指令（负责 40_execution_broker.md + 42_sell_flow.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\40_execution_broker.md（执行层下单对接，active v1.0.0，代码已施工，1269 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\42_sell_flow.md（G20 卖出流 spec，骨架 0.1.0，660 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 40 号与 42 号衔接：执行层是卖出流的落地通道
+- 与 30 号（多策略并发）衔接：Kill Switch 流动性危机
+- 与 35 号（回撤 Protocol）衔接：卖出流与回撤联动
+- 与 28 号（情绪周期）衔接：退潮卖出
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 40 号全文 + 读 42 号全文
+2. 读 src/zephyr/ex_core/ + ex_sor/（LS + 读核心下单/撮合/滑点代码）
+3. 读 02_domain_architecture_docs/44_d_ex_core.md（43 模块）+ 45_d_ex_sor.md（18 模块）
+4. 读 battle_map_10_execution.md + battle_map_07_sell_flow.md
+5. 读 src/zephyr/sell_decision/（LS + 02_domain_architecture_docs/68_d_sell_decision.md 25 模块）
+
+■ 第 2 轮：内容审查与回填
+1. 40 号——回填 19 项决策的已施工代码实现 why（miniQMT 接口/撮合/TWAP/VWAP/滑点/成本/订单状态机/失败重试/执行风控/集合竞价）
+2. 40 号——审查 §7 降级/重构项是否已落地；滑点模型/成本模型参数是否校准
+3. 42 号——⚠️ 这是骨架文档（660 行但大量待回填），重点回填已施工卖出逻辑的 why：
+   - 卖出时序（T+1 约束下的卖出时序）
+   - 止损触发（固定%/移动/ATR）
+   - 止盈逻辑
+   - 情绪退潮卖出（与 28 号衔接）
+   - 破位卖出
+   - 分批卖出
+   - T+1 卖出约束
+   - 与回撤 Protocol 联动（与 35 号衔接）
+4. 42 号——把骨架填成 active：补全各章节决策推理
+
+■ 第 3 轮：缺失环节与算法审查
+1. 40 号——TWAP/VWAP/IS 三种执行算法的参数/适用场景是否完整
+2. 40 号——miniQMT 接口契约的异常处理是否覆盖
+3. 42 号——止损/止盈/破位/分批四种卖出逻辑的触发优先级是否清晰
+4. 42 号——卖出信号与持仓状态的交互是否完整
+5. 42 号——T+1 约束下的卖出时序（当日买入不可卖）是否正确处理
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"execution algorithm TWAP VWAP 2026""market impact model 2026""Almgren Chriss 2026"
+2. 搜"miniQMT API 2026""QMT 迅投 接口 2026"
+3. 搜"sell flow protocol 2026""stop loss ATR 2026""trailing stop 2026"
+4. 搜"O'Neil sell rules 2026""profit taking strategy 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 40 号——TWAP/VWAP/IS 三种算法是否都需要——个人项目小资金是否只需 TWAP
+2. 40 号——滑点模型/成本模型的复杂度是否过重
+3. 42 号——止损/止盈/破位/分批四种是否全需要——个人项目是否只需 2 种
+4. 42 号——分批卖出的复杂度是否过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 40 号与 42 号一致性：执行层接口与卖出流对接
+2. 与 30 号一致性：Kill Switch 流动性危机与执行层
+3. 与 35 号一致性：回撤 Protocol 与卖出流联动
+4. 与 28 号一致性：情绪退潮卖出
+5. 与 41 号一致性：买入流与卖出流的对称性
+6. 与 54 号一致性：执行产出与对账归因
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 40 号 active 改动升版本；42 号骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 40/42 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-10 指令（负责 37_liquidity_crisis_protocol.md + 41_buy_flow.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\37_liquidity_crisis_protocol.md（G18 流动性危机处理，骨架 0.1.0，1253 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\41_buy_flow.md（G19 买入流 spec，骨架 0.1.0，552 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 37 号与 30 号衔接：§2.5.5 Kill Switch 流动性危机（买卖价差>5x 停开仓）
+- 37 号与 35 号衔接：风险 Protocol 协同
+- 41 号与 22 号衔接：买入优先级依赖板块回踩质量 A/B/C
+- 41 号与 31 号衔接：仓位算法
+- 41 号与 35 号衔接：风控
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 37 号全文 + 读 41 号全文
+2. 读 30_multi_strategy §2.5.5（Kill Switch 流动性危机）
+3. LS src/zephyr/risk/ 找 liquidity/spread 相关代码
+4. 读 battle_map_09_risk_control.md + battle_map_06_buy_flow.md
+5. 读 22_sector_rotation（板块回踩）+ 31_position_sizing（仓位）+ 35_drawdown（风控）
+
+■ 第 2 轮：内容审查与回填
+1. 37 号——⚠️ 回填已施工的流动性监控代码的 why（非"审查现有内容"，而是"回填已施工代码的 why"）：
+   - 买卖价差监控机制
+   - 流动性危机→停开仓仅平仓逻辑
+   - 流动性指标定义（价差倍数/深度/成交量）
+   - 与 Kill Switch 关系
+   - A 股涨跌停流动性失效场景
+2. 41 号——⚠️ 回填已施工的买入流代码的 why：
+   - 分批建仓逻辑
+   - 突破失败降级处理
+   - 买入时序（盘中/尾盘/集合竞价）
+   - 买入价格锚定
+   - 资金分配到多标的
+   - 与 budget 协同
+   - T+1 约束（当日买入不可卖）
+3. 两篇骨架文档都需填成 active：补全各章节决策推理
+
+■ 第 3 轮：缺失环节与算法审查
+1. 37 号——流动性指标的阈值/参数是否校准
+2. 37 号——流动性危机的分级响应是否完整
+3. 41 号——分批建仓 A/B/C 依赖板块回踩质量的逻辑是否完整
+4. 41 号——买入时序与 miniQMT 接口的对接是否正确
+5. 41 号——资金分配到多标的的优先级算法
+6. 两篇——T+1 约束的时序处理是否正确
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"liquidity crisis protocol 2026""bid-ask spread monitoring 2026"
+2. 搜"A-share limit-up liquidity 2026""涨跌停 流动性 2026"
+3. 搜"buy flow protocol 2026""scaling in position 2026"
+4. 搜"Wyckoff accumulation 2026""分批建仓 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 37 号——流动性监控是否对个人系统过重（小资金容量小，流动性几乎不是问题）
+2. 41 号——分批建仓 A/B/C 依赖是否过重
+3. 41 号——买入时序的多场景是否过多
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 37 号与 30 号一致性：Kill Switch 流动性危机定义对齐
+2. 37 号与 35 号一致性：风险 Protocol 协同
+3. 37 号与 36 号一致性：VaR/ES 与流动性监控互补
+4. 41 号与 22 号一致性：板块回踩质量 A/B/C
+5. 41 号与 31 号一致性：仓位算法接口
+6. 41 号与 35 号一致性：风控门控
+7. 41 号与 42 号一致性：买入流与卖出流对称性
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 37/41 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-11 指令（负责 32_firm_risk_aggregator.md + 30_multi_strategy_concurrency.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\32_firm_risk_aggregator.md（G13 FirmRiskAggregator 逻辑，骨架 0.1.0，1232 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\30_multi_strategy_concurrency.md（多策略并发架构总纲，active v1.3.3，650 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 30 号是多策略并发架构总纲，定义三模块（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator）+ 三级升级 + 回撤 Protocol
+- 32 号是 30 号 §2.2 的 FirmRiskAggregator 子文档
+- 与 31/33/34 号构成仓位风控体系
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 32 号全文 + 读 30 号全文
+2. 读 src/zephyr/position/core/firm_risk_aggregator.py（MOD-POS-021）+ src/zephyr/pf_core/ + pf_alloc/ + position/
+3. 读 battle_map_08_position_management.md
+4. 读 02_domain_architecture_docs/64_d_position.md（D_POSITION 28 模块）
+
+■ 第 2 轮：内容审查与回填
+1. 30 号——回填 §2.2 三模块、§2.4 三级升级、§2.5 回撤 Protocol 的已施工部分 why 补全
+2. 30 号——审查 §4.3 pod 误标是否已修正；§5 待裁定 6 项是否需更新；§7.4 开源实证是否需补充 2026 新实证
+3. 32 号——⚠️ 回填已施工的 FirmRiskAggregator 代码的 why：
+   - 按标的求和（自然叠加）
+   - 单票硬上限裁剪
+   - 行业/总仓位硬约束
+   - 冲突标的处理
+   - 不做 MVO 的决策推理
+   - 输出 firm_target_portfolio 契约
+   - O(N) 复杂度
+4. 32 号——把骨架填成 active
+
+■ 第 3 轮：缺失环节与算法审查
+1. 30 号——三模块的接口契约是否完整
+2. 30 号——三级升级（Tier1/2/3）的触发条件/执行逻辑是否完整
+3. 32 号——单票硬上限 8% 的参数校准依据
+4. 32 号——行业/总仓位硬约束的阈值是否合理
+5. 32 号——冲突标的处理规则是否覆盖所有场景
+6. 32 号——不做 MVO 的决策推理是否充分
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"multi-strategy portfolio 2026""independent book aggregation 2026"
+2. 搜"risk parity throttle 2026""pod vs unified framework 2026"
+3. 搜"firm risk aggregator 2026""portfolio hard limit 2026"
+4. 搜"position aggregation 2026""multi-strategy capital allocation 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 30 号——§2.5.4 VaR/ES、§2.5.5 Kill Switch 是否对个人项目过重
+2. 32 号——行业/总仓位硬约束是否过重
+3. 32 号——不做 MVO 是否正确——还是个人项目可以更简单（直接按比例）
+4. 30 号——三模块 + 三级升级是否过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 32 号与 30 号一致性：§2.2 定义与 32 号落地对齐
+2. 与 31 号一致性：仓位算法与 FirmRiskAggregator 接口
+3. 与 33 号一致性：BudgetChangeHandler 三级升级
+4. 与 34 号一致性：RegimeMetaAllocator 参数分配
+5. 与 35 号一致性：回撤 Protocol 联动
+6. 与 54 号一致性：StrategyBook 独立 PnL
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 30 号 active 改动升 v1.4.0+；32 号骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 32/30 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-12 指令（负责 34_regime_meta_allocator.md + 00_index_trading_decision.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\34_regime_meta_allocator.md（G15 RegimeMetaAllocator 参数，骨架 0.1.0，⚠️等 C1，1094 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\00_index_trading_decision.md（总索引+路线图，active v2.4.0，698 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 34 号与 30 号衔接：§2.2 分配公式 Base×Performance×Shrinkage
+- 34 号与 11 号衔接：C1 验证结果（已通过 commit 852457e9）
+- 34 号与 10 号衔接：12 态 regime 映射
+- 00 号是 07_trading_decision_architecture 域的总索引+路线图（G01-G28 主题组），不是骨架，是已定稿的导航文档
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 34 号全文 + 读 00 号全文
+2. 读 30_multi_strategy §2.2（分配公式 Base×Performance×Shrinkage）
+3. 读 src/zephyr/pf_alloc/core/regime_meta_allocator.py（MOD-PA-007）
+4. 读 11_regime_backtest C1 验证结果（已通过）
+5. 列出 design_memos 目录全部 46 篇的当前 frontmatter status/version（用 LS + Grep frontmatter）
+
+■ 第 2 轮：内容审查与回填
+1. 34 号——⚠️ 前置门槛：参数须等 C1 验证通过 + 首批策略 PnL。C1 已通过（commit 852457e9），但策略 PnL 未有。回填框架 why，参数标"待策略 track record 后校准"
+2. 34 号——回填讨论要点 7 项：分配公式、Base 先验、PerformanceScore 60日 Sharpe 映射、Shrinkage 四档、floor/cap、稀有态差异化、第二阶段时机
+3. 00 号——§0 目录表的 46 篇状态是否与各文档 frontmatter 实际 status/version 一致
+4. 00 号——§3 主题组 G01-G28 的"状态"列是否与对应文档实际状态一致
+5. 00 号——§7.3 占用表的认领状态是否最新
+6. 00 号——§9 开放问题汇总的"决策状态"是否与各文档实际一致
+
+■ 第 3 轮：缺失环节与算法审查
+1. 34 号——分配公式 Base×Performance×Shrinkage 的参数设计是否完整
+2. 34 号——Shrinkage 四档的阈值是否合理
+3. 34 号——floor/cap 的参数设置
+4. 34 号——稀有态差异化的逻辑
+5. 00 号——G01-G28 主题组是否覆盖赚钱全流程所有环节
+6. 00 号——对照 battle_map_01~12 的 12 个阶段，是否每个阶段都有对应 G 主题组
+7. 00 号——对照 src/zephyr/ 下已施工的 domain，是否有关键已施工模块没被任何 G 主题组覆盖
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"regime meta allocation 2026""dynamic capital allocation 2026"
+2. 搜"performance score shrinkage 2026""Kelly criterion allocation 2026"
+3. 搜"quantitative trading system architecture 2026""multi-strategy portfolio framework 2026"
+4. 搜"algorithmic trading decision pipeline 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 34 号——四档 Shrinkage 是否过细——个人项目是否只需 2 档
+2. 34 号——PerformanceScore 60 日 Sharpe 映射是否过重
+3. 00 号——§5 的 3 条并行轨道、§7 多 AI 分工指南是否对个人项目过重
+4. 00 号——多 AI 协作流程是否需要简化
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 34 号与 30 号一致性：§2.2 分配公式对齐
+2. 34 号与 10 号一致性：12 态映射对齐
+3. 34 号与 11 号一致性：C1 验证结果对齐
+4. 00 号——§0 目录表的 46 篇交叉引用链接是否完整不断裂
+5. 00 号——§4 依赖关系图是否准确反映当前依赖
+6. 00 号——§10 改名对照表是否有遗漏
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 34 号保持 draft（参数未校准）或填框架→active 标参数待定；00 号 active 改动升 v2.5.0+
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 34/00 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 00 号是索引文档，不写施工算法细节，只维护导航准确性
+- 不擅自新增/删除 G 主题组（需人决策的标在 §9 开放问题）
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-13 指令（负责 26_event_driven_strategy_detail.md + 22_sector_rotation_spec.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\26_event_driven_strategy_detail.md（G10 事件驱动策略细节，骨架 0.1.0，1030 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\22_sector_rotation_spec.md（G06 板块轮动 spec，骨架 0.1.0，707 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 26 号与 20 号衔接：首批 3 策略之一
+- 22 号与 20 号衔接：§2.5 差异化矩阵
+- 与 30 号衔接：多策略并发架构
+- 与 23 号衔接：策略间相关性验证
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 26 号全文 + 读 22 号全文
+2. 读 battle_map_05_stock_selection.md（BM-SEL-27 盘中实时事件处理 / BM-SEL-08 板块强度 460 板块 / BM-SEL-09 调整周期追踪）
+3. LS src/zephyr/ 找 event/news/sentiment/announcement/sector/rotation/plate 相关
+4. 读 02_domain_architecture_docs/09_d_alt_data.md（另类数据）
+
+■ 第 2 轮：内容审查与回填
+1. 26 号——⚠️ 回填已施工的事件驱动策略代码的 why（非"审查现有内容"，而是"回填已施工代码的 why"）：
+   - 事件源（公告/新闻/龙虎榜/异动）
+   - 事件分类
+   - 事件冲击衰减曲线
+   - 事件→选股映射
+   - 事件换手率
+   - news_data 多源情绪
+2. 22 号——⚠️ 回填已施工的板块轮动代码的 why：
+   - 板块强度算法（460 板块 880xxx K线）
+   - 回踩质量 A/B/C
+   - 调整周期追踪
+   - 轮动序列
+   - 虹吸态
+   - 板块资金流
+   - 板块→个股传导
+3. 两篇骨架文档都需填成 active
+
+■ 第 3 轮：缺失环节与算法审查
+1. 26 号——事件冲击衰减曲线的模型（Hawkes process / exponential decay）选型
+2. 26 号——事件→选股映射的规则是否完整
+3. 26 号——news_data 多源情绪的接入方案（Janus-Q/Yukka 等）
+4. 22 号——460 板块全覆盖是否必要——个人项目是否只需重点板块
+5. 22 号——板块→个股传导的机制是否完整
+6. 两篇——T+1 约束下的策略时序
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"event-driven trading 2026""news sentiment alpha 2026"
+2. 搜"event impact decay 2026""Hawkes process finance 2026"
+3. 搜"sector rotation strategy 2026""industry momentum 2026"
+4. 搜"A-share sector rotation 2026""板块轮动 量化 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 26 号——多源 news_data 接入是否过重——个人项目是否只需 1-2 个源
+2. 26 号——Hawkes process 衰减模型是否过重
+3. 22 号——460 板块全覆盖是否过重——MVP 是否只需 50-100 个重点板块
+4. 22 号——板块→个股传导的多层逻辑是否过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 26 号与 20 号一致性：首批 3 策略定义对齐
+2. 22 号与 20 号一致性：§2.5 差异化矩阵对齐
+3. 与 30 号一致性：多策略并发
+4. 与 23 号一致性：策略间相关性
+5. 与 41/42 号一致性：买入流/卖出流的事件/板块依赖
+6. 与 62 号一致性：strategy_registry / factor_registry 登记
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 26/22 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-14 指令（负责 61_lifecycle_multi_ai.md + 53_simulation_live_path.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\61_lifecycle_multi_ai.md（G28 策略生命周期与多 AI 协作，骨架 0.1.0，1002 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\53_simulation_live_path.md（G24 模拟与实盘验证路径，骨架 0.1.0，825 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 61 号与 01 号衔接：§2.2 三层协作流程
+- 61 号与 battle_map_01/02 衔接：研究孵化→模型训练
+- 53 号与 20 号衔接：§4.4 灰度指引
+- 53 号与 52 号衔接：回测→模拟→实盘路径
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 61 号全文 + 读 53 号全文
+2. 读 01_design_memo_management_spec §2.2（三层协作）
+3. 读 battle_map_01_research_incubation + battle_map_02_model_training + battle_map_04_simulation_validation
+4. LS src/zephyr/ 找 lifecycle/strategy_factory/simulation 相关
+5. 读 02_domain_architecture_docs/71_d_simulation.md（15 模块）
+6. 读 20_first_batch_strategies §4.4（灰度指引）
+
+■ 第 2 轮：内容审查与回填
+1. 61 号——⚠️ 回填已施工的生命周期管理代码的 why：
+   - 策略生命周期（孵化→训练→回测→模拟→实盘→退役）
+   - BM-RES 规范
+   - BM-MOD 规范
+   - 多 AI 协作分工
+   - 文档治理
+   - creation_token/depgraph 登记
+2. 53 号——⚠️ 回填已施工的模拟/实盘代码的 why：
+   - paper trading 环境
+   - 模拟时长
+   - 小资金实盘路径
+   - 实盘→模拟差异监控
+   - 上线决策门控
+   - 灰度上线
+3. 两篇骨架文档都需填成 active
+
+■ 第 3 轮：缺失环节与算法审查
+1. 61 号——策略生命周期的各阶段准入/准出标准是否完整
+2. 61 号——多 AI 协作分工的边界是否清晰
+3. 61 号——creation_token/depgraph 登记机制是否可执行
+4. 53 号——paper trading 环境与实盘的差异清单是否完整
+5. 53 号——灰度上线的阶段/条件/验证标准
+6. 53 号——实盘→模拟差异监控的指标/阈值
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"MLOps lifecycle 2026""strategy lifecycle management 2026"
+2. 搜"model lifecycle management 2026""multi-AI collaboration 2026"
+3. 搜"paper trading simulation 2026""live trading migration 2026"
+4. 搜"strategy deployment gating 2026""canary deployment trading 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 61 号——多 AI 协作规范是否过重——个人项目实际是多 AI 还是单 AI 多会话
+2. 61 号——BM-RES / BM-MOD 规范是否过重
+3. 53 号——灰度四阶段是否过重——个人项目是否只需 2 阶段
+4. 53 号——实盘→模拟差异监控是否过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 61 号与 01 号一致性：§2.2 三层协作对齐
+2. 61 号与 battle_map_01/02 一致性：研究孵化/模型训练规范
+3. 53 号与 20 号一致性：§4.4 灰度指引对齐
+4. 53 号与 52 号一致性：回测→模拟→实盘路径衔接
+5. 53 号与 50 号一致性：可观测性与模拟监控
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 61/53 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-15 指令（负责 14_regime_s2_diagnosis.md + 25_multifactor_strategy_detail.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\14_regime_s2_diagnosis.md（S2 算法错配诊断报告，draft，998 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\25_multifactor_strategy_detail.md（G09 多因子策略细节，骨架 0.1.0，908 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 14 号与 10 号衔接：S2 是 regime 12 态之一
+- 14 号与 12 号衔接：A2/B1 FAIL 的 S2 诊断
+- 14 号与 13 号衔接：S2 修复方案
+- 25 号与 20 号衔接：首批 3 策略之一
+- 25 号与 15/46 号衔接：因子工程
+- 25 号与 62 号衔接：factor_registry
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 14 号全文 + 读 25 号全文
+2. 读 src/zephyr/regime/（S2 trigger 逻辑、overlay_signals_builder、bad_news_flat/policy stub）
+3. 读 battle_map_05（BM-SEL-02 因子计算/注册表/IC-IR/衰减/合成/治理）
+4. 读 src/zephyr/factor/（LS + 读 core/factor_dag/dag.py 等）
+5. 读 02_domain_architecture_docs/46_d_factor.md（D_FACTOR 109 模块）
+
+■ 第 2 轮：内容审查与回填
+1. 14 号——回填 S2 算法错配的根因诊断（thresholds 过高/NLP stub=0/合成 VIX 缺失）+ 修复方案（已修合成 VIX commit eb3db21bd8 + S1 门槛 commit 981d59d8cc）why
+2. 14 号——审查诊断报告的因果时间线是否完整；S2 仍 0/3 的后续是否登记
+3. 25 号——⚠️ 回填已施工的多因子策略代码的 why：
+   - 因子组合方式（打分/IC加权/正交化）
+   - 行业中性化
+   - 因子衰减监控
+   - 多因子换手率
+   - 多因子容量
+   - 与打板相关性
+4. 25 号——把骨架填成 active
+
+■ 第 3 轮：缺失环节与算法审查
+1. 14 号——S2 的多维度触发逻辑是否完整
+2. 14 号——S2 修复后的验证结果是否落盘
+3. 25 号——因子组合方式的选型依据（打分 vs IC加权 vs 正交化）
+4. 25 号——行业中性化的方法（简单行业减均值 vs Barra 风格中性化）
+5. 25 号——因子衰减监控的指标/阈值
+6. 25 号——多因子换手率的控制机制
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"crisis recovery detection 2026""market bottom identification 2026""capitulation signal 2026"
+2. 搜"multi-factor model 2026""factor combination IC weighting 2026"
+3. 搜"factor decay monitoring 2026""industry neutralization 2026"
+4. 搜"qlib alpha158 2026""WorldQuant alpha 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 14 号——S2 的多维度触发是否过重
+2. 25 号——因子治理生命周期是否过重——个人项目是否只需 IC/IR 评估
+3. 25 号——行业中性化是否过重——是否只需简单行业减均值
+4. 25 号——正交化是否需要——个人项目是否只需 IC 加权
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 14 号与 10 号一致性：S2 在 12 态中的定义对齐
+2. 14 号与 12 号一致性：A2/B1 FAIL 的 S2 诊断对齐
+3. 14 号与 13 号一致性：S2 修复方案对齐
+4. 25 号与 20 号一致性：首批 3 策略定义对齐
+5. 25 号与 15 号一致性：因子工程总纲对齐
+6. 25 号与 62 号一致性：factor_registry 登记
+7. 25 号与 23 号一致性：策略间相关性
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 14 号 draft→active 或保持；25 号骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 14/25 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-16 指令（负责 24_daban_strategy_detail.md + 11_regime_backtest_validation_plan.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 2 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\24_daban_strategy_detail.md（G08 打板策略细节，骨架 0.1.0，942 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\11_regime_backtest_validation_plan.md（regime 回测验证方案，active，911 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 24 号与 20 号衔接：首批 3 策略之一
+- 24 号与 28 号衔接：情绪周期定位器
+- 11 号与 10 号衔接：regime spec 的回测验证
+- 11 号与 12 号衔接：Phase 2 验证
+- 11 号与 13 号衔接：Phase 3 工程
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 24 号全文 + 读 11 号全文
+2. 读 battle_map_05（BM-SEL-22 短线评分卡7维、BM-SEL-23 游资接力6因子+情绪周期4+1、BM-SEL-24 量化强度6维、BM-SEL-25 双引擎融合6类决策）
+3. LS src/zephyr/ 找 daban/limit_up/board_ladder/ashare_signal 相关
+4. 读 src/zephyr/regime/validation/（LS + 读 c1_comparator/c1_runner/phase2_runner）
+
+■ 第 2 轮：内容审查与回填
+1. 24 号——⚠️ 回填已施工的打板策略代码的 why：
+   - 连板梯队识别
+   - 情绪周期定位器
+   - 主升龙头识别
+   - 打板容量极小
+   - 双引擎融合内部
+   - 打板专用风控
+   - T+1 时序
+2. 24 号——把骨架填成 active
+3. 11 号——回填 Phase 1-5 验证方案的已执行结果（C1 已通过 commit 852457e9、Phase 2 已执行见 12 号）到 11 号的验收指南
+4. 11 号——审查 Phase 1-5 各阶段验收标准是否完整；C1 Shrinkage 有效性已证，文档是否同步
+
+■ 第 3 轮：缺失环节与算法审查
+1. 24 号——7 维评分卡+6 因子+6 维强度是否维度过多——各维度的权重/阈值是否校准
+2. 24 号——连板梯队识别的算法是否完整
+3. 24 号——打板专用风控的规则（容量/流动性/涨跌停）
+4. 11 号——Phase 1-5 各阶段的验收标准/通过条件是否完整
+5. 11 号——C1 Shrinkage 有效性验证的方法学
+6. 11 号——walk-forward 的窗口/频率参数
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"limit-up board strategy China 2026""游资打板 2026""consecutive limit-up 2026""dragon list 2026"
+2. 搜"regime backtest validation 2026""walk-forward validation 2026"
+3. 搜"deflated sharpe ratio 2026""purged k-fold 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 24 号——7 维评分卡+6 因子+6 维强度是否维度过多——个人项目是否只需 3-4 维
+2. 24 号——双引擎融合 6 类决策是否过重
+3. 11 号——5 个 Phase 是否对个人项目过多——是否只需 3 个
+4. 11 号——C1 Shrinkage 验证的复杂度
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 24 号与 20 号一致性：首批 3 策略定义对齐
+2. 24 号与 28 号一致性：情绪周期定位器
+3. 24 号与 41/42 号一致性：买入流/卖出流的打板依赖
+4. 11 号与 10 号一致性：regime spec 的验证方案对齐
+5. 11 号与 12 号一致性：Phase 2 验证结果对齐
+6. 11 号与 13 号一致性：Phase 3 工程规划对齐
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 24 号骨架→active 1.0.0；11 号 active 改动升版本
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 24/11 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-17 指令（负责 31_position_sizing.md + 18_cold_archive_build_plan.md + 12_regime_phase2_validation.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 3 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\31_position_sizing.md（G12 仓位算法 spec，active v1.2.0，832 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\18_cold_archive_build_plan.md（冷数据归档施工图，active v0.2.0，509 行）
+3. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\12_regime_phase2_validation.md（Phase 2 模型质量验证，active v0.2.2，461 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 31 号与 30 号衔接：分层裁定（策略层粗仓位 risk parity + firm 层 Kelly 精裁决）
+- 31 号与 32/33 号衔接：仓位风控体系
+- 18 号与 16 号衔接：为技术指标回算腾出存储空间
+- 18 号与 63 号衔接：归档表清单
+- 12 号与 10/11/13 号衔接：regime 验证系列
+- 12 号与 14 号衔接：A2/B1 FAIL 诊断
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 31 号全文 + 读 18 号全文 + 读 12 号全文
+2. 读 src/zephyr/position/core/position_sizing_engine.py + 02_domain_architecture_docs/64_d_position.md（28 模块）
+3. 读 src/zephyr/regime/validation/phase2/（a1/a2/b1/b4 四验证器代码）
+4. 读 data_retention_contract.yaml（INV-RET-001/002/003 三条铁律）
+5. 读 03_data_layer.md（Hot/Warm/Cold 三层定义）
+6. 读 archiver.py（三阶段原子操作）
+
+■ 第 2 轮：内容审查与回填
+1. 31 号——回填分层裁定（策略层粗仓位 risk parity + firm 层 Kelly 精裁决）的已施工算法 why
+2. 31 号——审查 Kelly 参数估计来源、risk parity inverse-vol 公式、单票 8% 硬上限、现金管理是否完整
+3. 18 号——回填 archiver.py 三阶段原子操作（export→verify→drop）的已施工 why
+4. 18 号——审查 §2 归档分界线（Tick 2022-2024 / K线 2019 年前）是否合理
+5. 18 号——审查 §4 铁律修订（INV-RET-001/003）是否已落到实际 YAML
+6. 12 号——回填四验证器的实际算法/代码实现 why（A2 标签对齐 Hungarian、B1 后续收益代理标签的 12 态映射）
+7. 12 号——审查 A2 FAIL（OOS/IS=0.340）+ B1 FAIL（误差27.6%）的后续修复是否已落盘
+
+■ 第 3 轮：缺失环节与算法审查
+1. 31 号——Kelly 精裁决是否需要密度预测（91 号远期愿景）
+2. 31 号——单票 8% 硬上限的参数校准依据
+3. 18 号——归档分界线是否合理——Tick 2 年 Hot 是否够，K线 8 年是否够
+4. 18 号——verify 阶段（行数+抽样 100 行）是否够——是否需要 checksum
+5. 12 号——A2/B1 FAIL 的修复方案是否完整
+6. 12 号——§9.4/§10.4 的下一步优先级是否已执行
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"position sizing Kelly 2026""risk parity inverse vol 2026""Kelly criterion practical 2026"
+2. 搜"ClickHouse cold storage parquet 2026""tick data archive parquet 2026"
+3. 搜"data retention policy trading 2026""cold archive best practice 2026"
+4. 搜"HMM overfitting detection 2026""probability calibration 2026""Viterbi label alignment 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 31 号——Kelly 精裁决是否对个人项目过重（密度预测需求）
+2. 31 号——risk parity 是否过重——个人项目是否只需等权
+3. 18 号——两层归档架构是否过度——能否统一一个分界线
+4. 18 号——7 个 CLI 命令是否过度——是否只需 archive + restore + stats
+5. 18 号——断点续传机制是否过度
+6. 12 号——四验证器是否对个人项目过重
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 31 号与 30 号一致性：分层裁定对齐
+2. 31 号与 32/33 号一致性：仓位风控体系
+3. 18 号与 16 号一致性：技术指标回算空间需求
+4. 18 号与 63 号一致性：归档表清单
+5. 18 号与 data_retention_contract.yaml 一致性：铁律修订已落盘
+6. 12 号与 10/11/13 号一致性：regime 验证系列对齐
+7. 12 号与 14 号一致性：A2/B1 FAIL 诊断对齐
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 31 号 active 升版本；18 号 active 升 v0.3.0；12 号 active 升版本
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 31/18/12 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策（如归档分界线调整/铁律修订措辞），标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-18 指令（负责 21_stock_selection_engine.md + 51_panel_experiment_history_mlflow_retirement.md + 23_strategy_correlation_validation.md + 17_special_trading_days_data_assets.md + 50_backtest_observability_workplan.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 5 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\21_stock_selection_engine.md（G05 选股引擎架构，骨架 draft 0.1.0，457 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\51_panel_experiment_history_mlflow_retirement.md（Panel 实验历史 Tab + MLflow 退役，active，433 行）
+3. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\23_strategy_correlation_validation.md（G07 策略间相关性验证，骨架 0.1.0，385 行）
+4. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\17_special_trading_days_data_assets.md（A股特殊交易日数据资产全景与治理，draft v0.1.0，379 行）
+5. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\50_backtest_observability_workplan.md（回测可观测性工作计划，draft v1.0.2，264 行）
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 21 号与 20 号衔接：首批 3 策略的选股引擎
+- 21 号与 24/25/26 号衔接：策略选股池交集
+- 51 号与 50 号衔接：MLflow 退役与可观测性衔接
+- 23 号与 20 号衔接：§2.5 差异化矩阵
+- 17 号与 62/63 号衔接：数据资产注册表/利用率审查
+- 17 号与 19 号衔接：hk_connect_closed 北向停摆日
+- 50 号与 51 号衔接：可观测性与实验历史
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 21 号全文 + 读 51 号全文 + 读 23 号全文 + 读 17 号全文 + 读 50 号全文
+2. 读 battle_map_05（BM-SEL-25 双引擎融合、L0→L1→L2-C 分层、量化强度评级）
+3. LS src/zephyr/ 找 selection/stock_selection/ashare_signal 相关
+4. 读 src/zephyr/frontend/dashboard/（LS + 读 app_panel.py / experiment_history.py / backtest_performance.py）
+5. 读 20_first_batch_strategies §2.5 差异化矩阵
+6. 读 src/zephyr/observability/ + 02_domain_architecture_docs/07_d_infra_telemetry.md（11 模块）
+7. 核验 17 号 §3 已施工盘点：7 个 schema 文件 / 7 条品类注册 / 6 个采集任务——逐一 Grep 确认
+8. 核验 17 号 §4 #ARCH-DATA-001 修复代码
+
+■ 第 2 轮：内容审查与回填
+1. 21 号——⚠️ 骨架文档，重点回填已施工的选股引擎代码的 why：
+   - 双引擎融合定位
+   - L0→L1→L2-C 分层
+   - 量化强度评级
+   - 选股 pipeline 标准接口
+   - 候选池生成→过滤→排序→输出
+   - 与 StrategyBook 对接契约
+2. 51 号——回填 Panel 实验历史 Tab 的已施工代码 why；掘金 5-Tab 复用的鸭子类型重建逻辑
+3. 51 号——审查 MLflow 退役进度是否完成；§七 10 项施工算法 + §八 4 项后续增强的落地状态
+4. 23 号——⚠️ 骨架文档，回填已施工的相关性验证代码的 why（若未施工，则填 why 决策 + 标"待施工"）：
+   - 5 候选两两相关矩阵
+   - 按情绪周期分层
+   - >0.6 重新审视
+   - 验证数据区间
+   - 验证报告模板
+5. 17 号——审查 §2 特殊交易日完整清单（4 大类）是否有遗漏
+6. 17 号——审查 §4 #ARCH-DATA-001 修复正确性 + §5 #ARCH-DATA-002 治本方案
+7. 50 号——回填六零件日志（C1/regime/特征/向量化/StrategyRunner/C2C3）的已施工部分 why
+8. 50 号——审查 §2.3 命名冲突 + §9 待决策点
+
+■ 第 3 轮：缺失环节与算法审查
+1. 21 号——L0→L1→L2-C 三层是否过重——各层的职责/接口是否清晰
+2. 51 号——实验历史 Tab 的功能是否完整
+3. 23 号——block-bootstrap 2000x 是否过重——方法选型（pearson/spearman/block-bootstrap）
+4. 17 号——特殊交易日清单是否有遗漏（国债期货交割日/股指期货最后交易日/央行操作日/经济数据发布日等）
+5. 17 号——#ARCH-DATA-002 治本方案 5 个施工项是否对个人项目过重
+6. 50 号——MLflow + 薄包装层是否对个人项目过重——是否符合"集成到现有 Panel dashboard"偏好
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"stock selection engine 2026""alpha factory layered 2026""quant signal pipeline 2026"
+2. 搜"Panel HoloViz dashboard 2026""experiment history visualization 2026"
+3. 搜"strategy correlation block bootstrap 2026""multi-strategy decorrelation 2026"
+4. 搜"A股 特殊交易日 事件研究 2026""股指期货交割日效应 2026""MSCI 调整 A股 2026"
+5. 搜"MLflow 3.0 2026""experiment tracking 2026""backtest observability 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 21 号——L0→L1→L2-C 三层是否过重——个人项目是否只需 2 层
+2. 51 号——实验历史 Tab 是否过重
+3. 23 号——block-bootstrap 2000x 是否过重——是否只需 500x
+4. 17 号——#ARCH-DATA-002 治本方案 5 项是否过重——MVP 是否只需施工项 4+1
+5. 50 号——MLflow 是否应彻底退役而非保留薄包装
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 21 号与 20/24/25/26 号一致性：选股引擎与策略定义
+2. 21 号与 30 号一致性：与 StrategyBook 对接
+3. 51 号与 50 号一致性：可观测性与实验历史衔接
+4. 23 号与 20 号一致性：§2.5 差异化矩阵
+5. 17 号与 15 号一致性：数据层架构
+6. 17 号与 62/63 号一致性：数据资产登记/利用率
+7. 17 号与 19 号一致性：hk_connect_closed 北向停摆日
+8. 17 号与 architecture_issue_registry.yaml 一致性：#ARCH-SPECIAL-DAYS/#ARCH-DATA-001/#ARCH-DATA-002
+9. 50 号与 51 号一致性：MLflow 退役进度
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性（注意 17 号 scope 是否为单一值）
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 21/23 号骨架→active 1.0.0；51 号 active 升版本；17 号 draft 保持或转 active；50 号 draft→active 或保持
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 21/51/23/17/50 号本身，引用其他文档时只读不改
+- 例外：17 号 §6.4 悬空引用修正（business_data_categories.yaml + tasks.yaml 各 1 行改指向 17 号）可越界改，因这是文档自身承接的紧随任务且仅改引用行
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-19 指令（负责 20_first_batch_strategies.md + 19_northbound_hold_snapshot.md + 01_design_memo_management_spec.md + 28_sentiment_cycle_trading.md + 60_cross_cutting_cleanup.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 5 篇文档：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\20_first_batch_strategies.md（首批3策略定义，active v1.2.4，253 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\19_northbound_hold_snapshot.md（北向资金季度持仓快照 fetcher 施工计划，draft v0.1.0，213 行）
+3. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\01_design_memo_management_spec.md（管理规范，active v1.2.0，161 行）
+4. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\28_sentiment_cycle_trading.md（G21 情绪周期×交易决策，骨架 0.1.0，72 行）
+5. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\60_cross_cutting_cleanup.md（G27 冲突矩阵清理与事件总线，骨架 0.1.0，72 行）
+
+【背景知识】
+- 01 号规范是所有文档的管理规范——§4.1 段位编号制、§4.4 文档种类适配
+- 20 号与 24/25/26 号衔接：首批 3 策略（打板/多因子/事件驱动）
+- 20 号与 21/22 号衔接：选股引擎/板块轮动
+- 19 号与 15/62/63 号衔接：数据层/注册表/利用率审查
+- 19 号与 25 号衔接：下游消费方（外资行为因子）
+- 28 号与 10 号衔接：情绪周期 vs regime 12 态分工边界
+- 28 号与 24 号衔接：情绪周期定位器
+- 60 号与 30 号衔接：§7.3 冲突仲裁 + 事件总线
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读 20 号全文 + 读 19 号全文 + 读 01 号全文 + 读 28 号全文 + 读 60 号全文
+2. 读 src/zephyr/pf_core/strategies/ + battle_map_05_stock_selection.md（BM-SEL-22~27）
+3. 核验 19 号 §3.1 akshare 实测表 + §3.2 tushare hk_hold 实测表
+4. 读 10_regime_detector_spec（regime 12 态含情绪维度）
+5. 读 30_multi_strategy §7.3（A 模型消失的冲突）
+6. LS src/zephyr/ 找 sentiment/cycle/emotion/event_bus/signal_router 相关
+
+■ 第 2 轮：内容审查与回填
+1. 20 号——回填 3 策略（打板/多因子/事件驱动）已施工的 alpha 信号链 why 补全（打板链 BM-SEL-22~25、因子工厂 BM-SEL-02、事件处理 BM-SEL-27）
+2. 20 号——审查 §2.5 差异化矩阵、§2.6 选股池交集、§4.4 灰度指引是否完整；§5 待裁定 4 项是否已落地
+3. 19 号——审查 §4.1 四方案对比 + §4.2 裁定走方案 C 的理由
+4. 19 号——审查 §5 fetcher 设计 + §6 外资行为分析方法论 6 节
+5. 01 号——审查 §1-§7 是否与 46 篇文档实际现状一致（命名规则/段位编号/status 枚举/防飘移机制）
+6. 01 号——审查 §4.4 文档种类适配是否覆盖所有实际文档种类
+7. 28 号——⚠️ 骨架文档（72 行），重点回填已施工的情绪周期代码的 why（非"审查现有内容"）：
+   - 5 阶段买卖纪律（冰点/反核/主升/疯狂/退潮）
+   - 情绪周期定位器准确率评估
+   - 情绪周期与 regime 12 态映射
+   - 各策略不同情绪阶段部署
+   - 情绪周期作为隐形驱动
+   - 重点：明确情绪周期（sleeve 内 alpha 择时）vs regime（市场级风险节流）的分工边界
+8. 60 号——⚠️ 骨架文档（72 行），重点回填已施工的事件总线/信号路由代码的 why：
+   - 31 条冲突仲裁大部分消失
+   - 仅留 firm-level 硬上限
+   - 事件总线/信号注入
+   - 实时计算节奏
+   - 配置驱动
+   - 多策略投票降级
+
+■ 第 3 轮：缺失环节与算法审查
+1. 20 号——§4.4 intake 四阶段是否对个人项目过重
+2. 19 号——§6.1 持市值变化分解公式准确性；§6.4 板块切换能力评估样本量
+3. 01 号——§2.2 三层协作流程、§5.3 修订规则是否对个人项目过重
+4. 28 号——4+1 阶段是否过细
+5. 60 号——事件总线是否对个人项目过重
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"multi-strategy alpha 2026""daban limit-up strategy 2026""event-driven trading 2026""factor investing 2026"
+2. 搜"北向资金 替代数据 2026""沪深港通 季度持仓 外资行为分析 2026""tushare hk_hold 季度快照"
+3. 搜"architecture decision record alternative 2026""design memo vs ADR 2026"
+4. 搜"market sentiment cycle 2026""游资情绪周期 2026""limit-up sentiment 2026"
+5. 搜"event bus trading system 2026""signal routing 2026""config driven trading 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 20 号——§4.4 intake 四阶段是否过重
+2. 19 号——外资行为分析方法论 6 节是否过度——是否先做简单增减持排名 + 净流入估算
+3. 19 号——fetcher 设计是否过度——是否只需简单全量覆盖
+4. 01 号——三层协作流程是否过重——个人项目是否需要
+5. 28 号——4+1 阶段是否过细——是否只需 3 阶段
+6. 60 号——事件总线是否过重——个人系统是否需要微服务级信号路由
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 20 号与 24/25/26 号一致性：首批 3 策略定义对齐
+2. 20 号与 21/22 号一致性：选股引擎/板块轮动
+3. 20 号与 30 号一致性：多策略并发
+4. 19 号与 15 号一致性：数据层架构
+5. 19 号与 62/63 号一致性：数据资产登记/利用率
+6. 19 号与 known_data_gaps.yaml/check_algo_quality.py 一致性
+7. 01 号与 46 篇文档一致性：规范是否被实际遵循
+8. 28 号与 10 号一致性：情绪周期 vs regime 分工边界
+9. 28 号与 24 号一致性：情绪周期定位器
+10. 60 号与 30 号一致性：§7.3 冲突仲裁
+11. 60 号与 01 号一致性：三层协作
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 20 号 active 升版本；19 号 draft 保持或升 v0.2.0；01 号 active 升版本；28/60 号骨架→active 1.0.0
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 20/19/01/28/60 号本身，引用其他文档时只读不改
+- 01 号是管理规范，改动需特别谨慎（影响所有文档）——如改规范本身，需评估对 46 篇文档的影响
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-20 指令（负责 33_budget_change_handler.md + 55_monitoring_review.md + 52_backtest_framework_docking.md + 15_data_feature_layer_spec.md + 27_second_batch_strategies.md + 16_technical_indicator_catalog.md + 16_technical_indicator_build_plan.md）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并更新 7 篇文档（全部是骨架/空模板文档，重点回填已施工代码的 why）：
+1. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\33_budget_change_handler.md（G14 BudgetChangeHandler 三级升级，骨架 0.1.0，74 行）
+2. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\55_monitoring_review.md（G26 监控告警与复盘，骨架 0.1.0，72 行）
+3. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\52_backtest_framework_docking.md（G23 回测框架对接，骨架 0.1.0，72 行）
+4. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\15_data_feature_layer_spec.md（G01 数据与特征层规范，骨架 draft 0.1.0，71 行）
+5. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\27_second_batch_strategies.md（G11 第二批次策略，骨架 0.1.0，暂缓，71 行）
+6. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\16_technical_indicator_catalog.md（技术指标目录，骨架 0.1.0，65 行）
+7. d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\16_technical_indicator_build_plan.md（技术指标回算施工计划，骨架 0.1.0，47 行）
+
+【⚠️ 重要提示——骨架文档回填原则】
+以上 7 篇全部是骨架文档（47-74 行的空模板），§2-§6 基本全空。你的核心任务不是"审查现有内容"（因为没有内容），而是：
+1. **回填已施工代码的 why**——读项目代码，把已施工的算法/模块/基础设施的决策推理回填到文档
+2. **把骨架填成 active**——补 §1 背景、§2 决策、§3 替代方案、§4 上限、§5 待裁定、§6 待定问题、§7 引用、§8 修订记录
+3. 如果代码未施工，则填 why 决策（用什么方法/为什么选这个方法）+ 标"待施工"
+
+【背景知识】
+- 01 号规范：§4.1 段位编号制；§4.4 文档种类适配
+- 33 号与 30 号衔接：§2.4 三级升级 Tier1/2/3
+- 55 号与 50 号衔接：可观测性衔接
+- 52 号与 11 号衔接：regime 对接范式
+- 15 号与 64 号衔接：15 号"数据进来后怎么用" vs 64 号"数据怎么进来"
+- 27 号与 20 号衔接：§4.2 演进路径
+- 16 号与 62 号衔接：technical_indicator_registry
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状（只读不改）
+1. 读全部 7 篇文档（每篇 47-74 行，可一次读完）
+2. 读项目代码：
+   - LS d:\ZephyrAlpha\src\zephyr\ 找 data/factor/feature/mkt_data 相关子包
+   - 读 d:\ZephyrAlpha\docs\02_enterprise_architecture\02_domain_architecture_docs\11_d_data.md + 12_d_data_eng.md + 23_d_mkt_data.md + 46_d_factor.md 了解已施工模块清单
+   - 读 src/zephyr/position/core/budget_change_handler.py（MOD-POS-022）
+   - 读 src/zephyr/observability/ + 02_domain_architecture_docs/07_d_infra_telemetry.md
+   - 读 src/zephyr/backtest/（LS + 读 core/engine_base.py / vectorized_engine）+ 02_domain_architecture_docs/35_d_backtest.md
+   - 读 src/zephyr/factor/technical_indicators/（LS + 读实际指标实现）
+   - 读 battle_map_01~12 相关章节
+3. 读 30_multi_strategy §2.4（三级升级）+ §2.2（三模块）
+4. 读 20_first_batch_strategies §4.2（演进路径）
+
+■ 第 2 轮：内容审查与回填（核心——回填已施工代码的 why）
+1. 33 号——回填已施工的 BudgetChangeHandler 代码的 why：
+   - Tier1 封锁新仓
+   - Tier2 rebalance_to_budget
+   - Tier3 按比例强裁
+   - convergence_window 差异化
+   - rebalance 接口契约
+   - 每级 log/复盘
+2. 55 号——回填已施工的监控/复盘代码的 why：
+   - 系统健康监控
+   - 策略偏离监控
+   - 告警阈值通知
+   - 每日/每周/每月复盘
+   - 策略退役标准
+   - 复盘文档模板
+3. 52 号——回填已施工的回测框架代码的 why：
+   - BM-BT-01~07 在策略验证用法
+   - 策略回测 vs regime 回测差异
+   - 上线门控 IS→WFA→OOS
+   - 过拟合检测三维度
+   - Deflated Sharpe
+4. 15 号——回填已施工的数据/因子基础设施 why：
+   - ClickHouse schema 规范——查 src/zephyr 下 clickhouse schema 定义，回填实际 schema 设计 why
+   - miniQMT tick 接入契约——查 miniQMT 接入代码，回填实际契约
+   - PIT 铁律——查 AS OF JOIN/Embargo 实现，回填实际方案
+   - 特征仓库架构——查特征计算/缓存/版本实现，回填
+   - 因子工程总纲——查因子库/IC 评估/衰减监控/过拟合监控实现，回填
+   - 数据质量门控——查数据质量检查实现，回填
+5. 27 号——暂缓骨架（首批 track record 后再讨论），不需要填满，但审查：
+   - 暂缓理由是否充分
+   - 价值反转/动量趋势的 alpha 信号预研方向是否登记
+   - 与首批 3 策略相关性的预判
+6. 16 号 catalog——回填已施工的技术指标 why：
+   - 5 大类 + 9 周期——反查 src/zephyr/factor/technical_indicators/，验证 40 指标/55 输出列覆盖
+   - 与 factor_registry 正交边界
+7. 16 号 build_plan——回填技术指标回算施工计划 why：
+   - 198GB 回算需求（缩减后 162GB）
+   - 6 周期回算的优先级/依赖
+   - 与 18 号冷归档的衔接（腾出存储空间）
+
+■ 第 3 轮：缺失环节与算法审查
+1. 33 号——三级升级的触发条件/参数是否完整
+2. 55 号——三频复盘（日/周/月）是否过重
+3. 52 号——BM-BT-01~07 七环节是否过多
+4. 15 号——PIT 铁律的实现是否正确（AS OF JOIN/Embargo）
+5. 15 号——特征仓库是否需要完整 Feature Store，还是轻量缓存即可
+6. 27 号——暂缓文档是否应精简
+7. 16 号 catalog——40 指标/55 输出列是否完整
+8. 16 号 build_plan——6 周期回算的可行性/优先级
+
+■ 第 4 轮：2026 年 8 月最新研究搜索（全网 WebSearch）
+1. 搜"budget rebalance protocol 2026""position de-risking 2026""multi-strategy capital reallocation 2026"
+2. 搜"trading system monitoring 2026""strategy deviation alert 2026""strategy retirement criteria 2026"
+3. 搜"backtest framework 2026""walk-forward analysis 2026""deflated sharpe 2026""purged k-fold 2026"
+4. 搜"feature store architecture 2026""factor IC evaluation 2026""point-in-time database 2026""alpha factory 2026"
+5. 搜"value reversal strategy 2026""momentum trend following 2026"
+6. 搜"technical indicator catalog 2026""TA-Lib 2026""technical analysis indicator 2026"
+
+■ 第 5 轮：过度工程审查（个人项目标准）
+1. 33 号——三级升级是否过重——个人系统是否需 Tier2 策略自主
+2. 55 号——三频复盘是否过重——个人项目是否只需周复盘
+3. 52 号——BM-BT-01~07 七环节是否过多——是否只需 3-4 环节
+4. 15 号——特征仓库/因子工程是否对个人项目过重——是否只需轻量缓存
+5. 15 号——PIT 铁律是否过重——个人项目是否只需 AS OF JOIN
+6. 27 号——暂缓文档是否应精简
+7. 16 号——40 指标是否过多——MVP 是否只需 15-20 个核心指标
+8. 16 号 build_plan——6 周期全回算是否过重——是否先回算日线+1分钟
+
+■ 第 6 轮：一致性与交叉引用审查
+1. 33 号与 30 号一致性：§2.4 三级升级对齐
+2. 33 号与 32 号一致性：FirmRiskAggregator 联动
+3. 55 号与 50 号一致性：可观测性衔接
+4. 55 号与 54 号一致性：对账结果驱动复盘
+5. 52 号与 11 号一致性：regime 对接范式
+6. 52 号与 53 号一致性：回测→模拟→实盘路径
+7. 15 号与 64 号一致性："数据进来后怎么用" vs "数据怎么进来"
+8. 15 号与 62 号一致性：factor_registry / data_asset_registry
+9. 27 号与 20 号一致性：§4.2 演进路径
+10. 16 号与 62 号一致性：technical_indicator_registry
+11. 16 号 build_plan 与 18 号一致性：冷归档腾出空间
+
+■ 第 7 轮：文档质量与规范符合性
+1. frontmatter 完整性合法性
+2. §4.4 文档种类适配
+3. 两条硬约束：有修订记录 + 有开放问题等价节
+4. 交叉引用全用稳定 path
+5. 骨架→active 1.0.0（27 号保持 draft 但补全暂缓说明）
+
+■ 循环条件
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
+- 若有未修复/新发现，进入下一轮
+- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+- 升版本号在修订记录登记
+
+■ 约束
+- 只改 33/55/52/15/27/16/16 号本身，引用其他文档时只读不改
+- 如发现其他文档需同步改，记在负责文档的开放问题节，不越界改
+- 骨架文档的核心是"回填已施工代码的 why"，不是"审查现有内容"
+- 不擅自定决策，标在开放问题节
+- 持续改进不停，循环至零问题
+```
+
+---
+
+## AI-21 指令（负责 90_methodology_open_questions.md — 特殊讨论文档）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】对 1 篇讨论文档进行深度调研、分析和裁定：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\90_methodology_open_questions.md（方法论遗留提案 21 项，draft v1.9.0，1068 行）
+
+【文档性质】这是讨论文档（不是常规审查文档），包含 21 项方法论遗留提案（策略类型/因子IC/组合构建/风险模型/成本/回测门禁/T+1预测/流动性/数据分层/密度/仓位/成功指标/基准/PIT/资产分级/行为边界/资产覆盖/大额下单/工程细节/做T方法论）。需要你以客观专业架构师身份进行深度调研、分析裁定和施工方案设计。
+
+【工作清单】
+
+■ 第 1 阶段：通读与问题梳理
+1. 完整读 90 号全文（1068 行，21 项遗留提案）
+2. 列出所有 21 项待讨论问题/开放问题
+3. 读所有相关文档（用 Grep/SearchCodebase 找交叉引用）：
+   - 30_multi_strategy（多策略并发总纲）
+   - 10_regime_detector_spec（regime 12 态）
+   - 已施工代码（src/zephyr/）
+4. 重点对照已过时项：
+   - #7 T+1次日预测（8态→12态已过时）
+   - #3 组合构建（risk budgeting→risk parity已裁定）
+   - #4 风险模型（L1/L2/L3→4级回撤Protocol）
+   - #6 回测门禁（V1-V6→BM-BT-01~07）
+   - #11 仓位管理（C-047→MOD-POS-001）
+
+■ 第 2 阶段：第一性原理调研
+对每个问题，从第一性原理出发：
+1. 这个问题的本质是什么？为什么存在？
+2. 业界（专业机构）怎么做的？标准实践是什么？
+3. 量化社区（QuantConnect/Numerai/WorldQuant/qlib）怎么做的？
+4. 氛围编程社区（AI-driven dev/vibe coding）怎么做的？
+5. 个人+100%AI 项目应该怎么做？（不是机构级、不是团队级）
+6. 长远期战略考虑：3年后这个决策是否仍然合理？
+
+■ 第 3 阶段：全网调研
+用 WebSearch 搜 2026 年最新：
+- 每个问题的最新学术研究/业界实践
+- 2026 年新出现的方法/工具/框架
+- 是否有更好的替代方案
+- 搜索方向：
+  * "quantitative methodology 2026""factor investing best practice 2026"
+  * "portfolio construction risk parity 2026""risk model layered 2026"
+  * "backtest gating 2026""T+1 prediction 2026"
+  * "data layering PIT 2026""position sizing 2026"
+  * "benchmark selection 2026""asset classification 2026"
+
+■ 第 4 阶段：分析过程与裁定
+对每个问题：
+1. 列出所有候选方案
+2. 逐方案分析优缺点（对个人+100%AI 项目的适配性）
+3. 给出裁定结果（采纳/拒绝/暂缓/远期/已过时废弃）
+4. 裁定理由（引用第一性原理+业界实践+个人项目约束）
+5. 逐项审查：每项与项目现状（30_multi_strategy / 10_regime / 已施工代码）的对齐状态——已过时的标❌废弃、已裁定的标✅、待讨论的保留
+
+■ 第 5 阶段：治本施工方案
+对每个裁定为"采纳"的方案：
+1. 施工步骤（具体到文件和函数）
+2. 过度工程审查（个人项目是否需要这么复杂）
+3. 与现有架构的集成点
+4. 验证方法
+5. 风险与缓解
+
+■ 第 6 阶段：文档更新
+1. 把调研报告、分析过程、裁定结果、施工方案写入文档
+2. 21 项是否都需保留，已废弃的可标 deprecated 或删除
+3. 从 draft 升级为 active（如果裁定完整）或保持 draft
+4. 升版本号（v1.9.0→v2.0.0 大改）
+5. 修订记录登记
+
+■ 循环条件
+- 每个问题都要有明确的裁定结果
+- 每个裁定都要有第一性原理支撑
+- 每个施工方案都要有过度工程审查
+- 连续一轮零新增内容 = 任务结束
+
+■ 约束
+- 你是客观专业架构师，不是辩护人——如果问题本身不合理，直接说
+- 裁定基于个人+100%AI 项目约束，不是机构级标准
+- 不擅自定决策（需用户确认的标"待用户裁定"）
+- 持续改进不停，循环至零问题
+- 只改 90 号本身，引用其他文档时只读不改
+- 不破坏交叉引用
+```
+
+---
+
+## AI-22 指令（负责 91_density_prediction.md — 特殊讨论文档）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】对 1 篇讨论文档进行深度调研、分析和裁定：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\91_density_prediction.md（密度预测远期愿景，draft v1.5.0，45 行）
+
+【文档性质】这是讨论文档（不是常规审查文档），包含密度预测的六阶段远期愿景（EWMA标准化conformal→Bayesian Kelly→Tail-Aware MDN/Lévy族→Info-Entropic DL+GP→GPD/Lévy-Flow/扩散→QNN）。文档很短（45 行骨架），但涉及深度技术决策。需要你以客观专业架构师身份进行深度调研、分析裁定和施工方案设计。
+
+【工作清单】
+
+■ 第 1 阶段：通读与问题梳理
+1. 完整读 91 号全文（45 行）
+2. 列出所有待讨论问题/开放问题（密度预测必需性/QNN 可行性/校准阈值/与风控关系）
+3. 读所有相关文档：
+   - 10_regime_detector_spec（12态 regime 已定稿，密度预测是否还有增量）
+   - 31_position_sizing（Kelly 精裁决是否需要密度预测）
+   - 36_var_es_monitoring（VaR/ES 是否需要密度预测）
+   - 35_drawdown_protocol_impl（回撤 Protocol 是否需要密度预测）
+4. 读项目代码（用 Glob/LS 找相关实现）
+
+■ 第 2 阶段：第一性原理调研
+对每个问题，从第一性原理出发：
+1. 密度预测的本质是什么？为什么个人+100%AI 项目需要（或不需要）？
+2. 业界（专业机构）怎么做的？标准实践是什么？
+3. 量化社区（QuantConnect/Numerai/WorldQuant/qlib）怎么做的？
+4. 氛围编程社区（AI-driven dev/vibe coding）怎么做的？
+5. 个人+100%AI 项目应该怎么做？（不是机构级、不是团队级）
+6. 长远期战略考虑：3年后这个决策是否仍然合理？
+7. 六阶段远期愿景的每一阶段：
+   - EWMA标准化conformal——个人项目是否需要？
+   - Bayesian Kelly——与 31 号 Kelly 精裁决的关系
+   - Tail-Aware MDN/Lévy族——复杂度是否合理
+   - Info-Entropic DL+GP——个人项目算力是否够
+   - GPD/Lévy-Flow/扩散——远期可行性
+   - QNN（量子神经网络）——2026 年单机 RTX 3090 的可行性
+
+■ 第 3 阶段：全网调研
+用 WebSearch 搜 2026 年最新：
+- "density prediction finance 2026""probabilistic forecasting 2026"
+- "QNN quantum neural network 2026""quantum machine learning finance 2026"
+- "CRPS calibration 2026""conformal prediction 2026"
+- "Bayesian Kelly criterion 2026""tail risk modeling 2026"
+- "MDN mixture density network finance 2026""Lévy process finance 2026"
+- "GPD generalized Pareto distribution 2026""diffusion model finance 2026"
+- 2026 年新出现的方法/工具/框架
+- 是否有更好的替代方案
+
+■ 第 4 阶段：分析过程与裁定
+对每个问题/每个阶段：
+1. 列出所有候选方案
+2. 逐方案分析优缺点（对个人+100%AI 项目的适配性）
+3. 给出裁定结果（采纳/拒绝/暂缓/远期/删除）
+4. 裁定理由（引用第一性原理+业界实践+个人项目约束）
+5. 重点裁定：
+   - 密度预测对个人项目是否必需——还是 regime 12 态 + Kelly 标量已够
+   - QNN 远期愿景是否应保留还是降级删除（个人项目算力限制）
+   - 六阶段路线图是否合理——是否有阶段应砍掉/合并
+
+■ 第 5 阶段：治本施工方案
+对每个裁定为"采纳"的方案：
+1. 施工步骤（具体到文件和函数）
+2. 过度工程审查（个人项目是否需要这么复杂）
+3. 与现有架构的集成点
+4. 验证方法
+5. 风险与缓解
+6. 特别审查：QNN 在单机 RTX 3090 的 2026 最新可行性——如不可行，明确建议删除还是保留远期标注
+
+■ 第 6 阶段：文档更新
+1. 把调研报告、分析过程、裁定结果、施工方案写入文档
+2. 把 45 行骨架填成完整讨论文档
+3. 从 draft 升级为 active（如果裁定完整）或保持 draft
+4. 升版本号
+5. 修订记录登记
+
+■ 循环条件
+- 每个问题都要有明确的裁定结果
+- 每个裁定都要有第一性原理支撑
+- 每个施工方案都要有过度工程审查
+- 连续一轮零新增内容 = 任务结束
+
+■ 约束
+- 你是客观专业架构师，不是辩护人——如果问题本身不合理，直接说
+- 裁定基于个人+100%AI 项目约束，不是机构级标准
+- 不擅自定决策（需用户确认的标"待用户裁定"）
+- 持续改进不停，循环至零问题
+- 只改 91 号本身，引用其他文档时只读不改
+- 不破坏交叉引用
 ```
 
 ---
 
 ## 使用说明
 
-1. **开新对话**：在 Trae/CLI 中开 26 个新对话窗口（或分批开，如每批 5-7 个并行）
+1. **开新对话**：在 Trae/CLI 中开 22 个新对话窗口（或分批开，如每批 5-7 个并行）
 2. **复制指令**：从本文档复制对应 AI 编号的指令块（` ``` ` 之间的内容）
 3. **粘贴执行**：粘贴到新对话，AI 会自动开始读取文件、回填、审查、搜索、循环
 4. **监控进度**：每个 AI 独立工作，互不通信，通过修改的文档文件交接
-5. **冲突处理**：若两个 AI 改同一交叉引用（如 30 号被 AI-10 负责，但 AI-06/11/12/13/14 都引用），各 AI 只改自己负责的文档，引用对方文档时只读不改
+5. **冲突处理**：若两个 AI 改同一交叉引用（如 30 号被 AI-11 负责，但 AI-05/06/09/10/11/12/13/15/16 都引用），各 AI 只改自己负责的文档，引用对方文档时只读不改
 
-> **注意**：26 个 AI 并发可能产生资源竞争（同时读同一文件 OK，但同时写不同文档时注意 git 冲突）。建议每个 AI 独立 commit，或全部完成后统一 review 合并。
->
-> **AI-21 特殊提示**：62 号文档是 12 个业务注册表的施工总案，与 AI-02(15号数据特征层)/AI-06(20/21号策略选股)/AI-08(24/25号打板多因子)/AI-13(35/36号风控)/AI-14(40号执行)/AI-16(51号实验)/AI-17(52号回测) 都有交叉引用。AI-21 只改 62 号本身，引用其他文档时只读不改；如发现其他文档需同步改，记在 62 号「待定问题」节，不越界改。
->
-> **AI-22 特殊提示**：63 号文档是 101 张业务表利用率审查，与 AI-02(15号数据特征层)/AI-03(10号regime)/AI-07(22号板块轮动)/AI-08(24/25号策略)/AI-09(26号事件驱动)/AI-10(28号情绪)/AI-11(32号firm风险)/AI-12(33号预算变更)/AI-13(35号回撤)/AI-14(37号流动性)/AI-16(50号可观测)/AI-17(52号回测)/AI-21(62号注册表) 都有交叉引用（数据消费方遍布全链）。AI-22 只改 63 号本身，引用其他文档时只读不改；如发现其他文档需同步改（如 P0 表接入需改 26/35/37/10/32 号的数据源节），记在 63 号 §10 开放问题/§7 施工计划，不越界改。AI-22 与 AI-21 强配对（62 号建 schema、63 号盘点表），两 AI 可对齐协作但各自只改自己负责的文档。
->
-> **AI-23 特殊提示**：19 号文档是北向资金季度持仓快照 fetcher 施工计划，与 AI-02(15号数据特征层，上游总纲)/AI-08(25号多因子策略，下游消费方)/AI-21(62号注册表，数据资产登记)/AI-22(63号数据利用率审查，新建表登记) 有交叉引用。AI-23 只改 19 号本身，引用 15/25/62/63 号及 known_data_gaps.yaml/check_algo_quality.py 时只读不改；如发现上游/下游需同步改（如 63 号需补登 northbound_hold_snapshot 新表、62 号需在 data_asset_registry 补登记），记在 19 号 §9 开放问题，不越界改。
->
-> **AI-24 特殊提示**：17 号文档是特殊交易日数据资产全景与治理，与 AI-02(15号数据特征层，上游总纲)/AI-21(62号注册表，数据资产登记)/AI-22(63号数据利用率审查，6张表分类)/AI-23(19号北向资金，hk_connect_closed 衔接) 有交叉引用。AI-24 只改 17 号本身，引用 15/19/62/63 号及 architecture_issue_registry/business_data_categories/tasks.yaml 时只读不改。例外：§6.4 悬空引用修正（business_data_categories.yaml + tasks.yaml 各 1 行改指向 17 号）可越界改，因这是文档自身承接的紧随任务且仅改引用行。如发现其他文档需同步改，记在 17 号 §6 开放问题，不越界改。AI-24 与 AI-23 弱关联（17 号 hk_connect_closed 依赖 hk_trade_calendar，19 号讨论北向断档），两 AI 各自只改自己负责的文档。
->
-> **AI-25 特殊提示**：18 号文档是冷数据归档施工图，与 AI-02(15号数据特征层)/AI-22(63号数据利用率审查，归档表清单)/AI-24(17号特殊交易日，calendar_event 不归档) 有交叉引用。AI-25 只改 18 号本身，引用 15/16/17/63 号及 data_retention_contract/03_data_layer 时只读不改；如发现需同步改，记在 18 号开放问题，不越界改。
->
-> **AI-26 特殊提示**：64 号文档是数据源与下载体系规范，与 AI-02(15号数据特征层，互补不重叠)/AI-22(63号数据利用率审查，配套)/AI-23(19号北向数据断档)/AI-24(17号#ARCH-DATA-001/002)/AI-25(18号冷归档策略对齐) 有交叉引用。AI-26 只改 64 号本身，引用 15/17/18/19/63 号及 architecture_issue_registry/data_source_integrator_blueprint 时只读不改；如发现需同步改，记在 64 号开放问题，不越界改。
+> **注意**：22 个 AI 并发可能产生资源竞争（同时读同一文件 OK，但同时写不同文档时注意 git 冲突）。建议每个 AI 独立 commit，或全部完成后统一 review 合并。
+
+> **AI-01 特殊提示**：62 号文档是 12 个业务注册表的施工总案，与 AI-04(63号)/AI-08(64号)/AI-13(26/22号)/AI-15(25号)/AI-16(24号)/AI-18(21/17/50/51/23号)/AI-19(20/19/28/60号)/AI-20(15/27/16/52/55/33号)/AI-05(35号)/AI-06(36号)/AI-10(37号)/AI-11(32号)/AI-09(40号) 都有交叉引用。AI-01 只改 62 号本身，引用其他文档时只读不改；如发现其他文档需同步改，记在 62 号「待定问题」节，不越界改。
+
+> **AI-02 特殊提示**：10 号文档是 regime 检测器 spec，与 AI-07(13号)/AI-15(14号)/AI-16(11号)/AI-17(12号)/AI-04(63号)/AI-12(34号) 有交叉引用。AI-02 只改 10 号本身，引用其他文档时只读不改。
+
+> **AI-03 特殊提示**：54 号文档是对账归因，与 AI-09(40号)/AI-11(30号)/AI-18(50号) 有交叉引用。AI-03 只改 54 号本身，引用其他文档时只读不改。
+
+> **AI-04 特殊提示**：63 号文档是 101 张业务表利用率审查，数据消费方遍布全链，与 AI-01(62号)/AI-02(10号)/AI-08(64号)/AI-13(22/26号)/AI-15(25号)/AI-16(24号)/AI-17(18号)/AI-18(17/50号)/AI-19(19号)/AI-20(15/16/52号) 等几乎所有 AI 都有交叉引用。AI-04 只改 63 号本身，引用其他文档时只读不改；如发现其他文档需同步改（如 P0 表接入需改 26/35/37/10/32 号的数据源节），记在 63 号 §10 开放问题，不越界改。AI-04 与 AI-01 强配对（62 号建 schema、63 号盘点表），两 AI 可对齐协作但各自只改自己负责的文档。
+
+> **AI-05 特殊提示**：35 号文档是回撤 Protocol 落地，与 AI-06(36号)/AI-10(37号)/AI-11(30/32号)/AI-09(42号)/AI-10(41号) 有交叉引用。AI-05 只改 35 号本身，引用其他文档时只读不改。
+
+> **AI-06 特殊提示**：36 号文档是 VaR/ES 监控，与 AI-05(35号)/AI-11(30号) 有交叉引用。AI-06 只改 36 号本身，引用其他文档时只读不改。
+
+> **AI-07 特殊提示**：13 号文档是 Phase 3 工程规划，与 AI-02(10号)/AI-15(14号)/AI-16(11号)/AI-17(12号)/AI-12(34号) 有交叉引用。AI-07 只改 13 号本身，引用其他文档时只读不改。
+
+> **AI-08 特殊提示**：64 号文档是数据源与下载体系规范，与 AI-04(63号)/AI-18(17号)/AI-17(18号)/AI-19(19号)/AI-20(15号) 有交叉引用。AI-08 只改 64 号本身，引用其他文档时只读不改。
+
+> **AI-09 特殊提示**：40/42 号文档是执行层+卖出流，与 AI-03(54号)/AI-11(30号)/AI-05(35号)/AI-19(28号)/AI-10(37号) 有交叉引用。AI-09 只改 40/42 号本身，引用其他文档时只读不改。
+
+> **AI-10 特殊提示**：37/41 号文档是流动性危机+买入流，与 AI-05(35号)/AI-06(36号)/AI-11(30号)/AI-13(22号)/AI-17(31号)/AI-09(42号) 有交叉引用。AI-10 只改 37/41 号本身，引用其他文档时只读不改。
+
+> **AI-11 特殊提示**：32/30 号文档是 FirmRiskAggregator+多策略并发总纲，30 号被大量 AI 引用（AI-05/06/09/10/12/13/15/16/17/18/19/20）。AI-11 只改 32/30 号本身，引用其他文档时只读不改。
+
+> **AI-12 特殊提示**：34/00 号文档是 RegimeMetaAllocator+总索引，00 号是全局导航文档，与几乎所有 AI 有交叉引用。AI-12 只改 34/00 号本身，引用其他文档时只读不改。00 号是索引文档，不写施工算法细节，只维护导航准确性。
+
+> **AI-13 特殊提示**：26/22 号文档是事件驱动+板块轮动策略，与 AI-19(20号)/AI-11(30号)/AI-18(23号)/AI-16(24号)/AI-15(25号)/AI-01(62号) 有交叉引用。AI-13 只改 26/22 号本身，引用其他文档时只读不改。
+
+> **AI-14 特殊提示**：61/53 号文档是生命周期+模拟实盘路径，与 AI-19(01/20号)/AI-11(30号)/AI-16(11号) 有交叉引用。AI-14 只改 61/53 号本身，引用其他文档时只读不改。
+
+> **AI-15 特殊提示**：14/25 号文档是 S2 诊断+多因子策略，与 AI-02(10号)/AI-07(13号)/AI-16(11号)/AI-17(12号)/AI-19(20号)/AI-11(30号)/AI-01(62号) 有交叉引用。AI-15 只改 14/25 号本身，引用其他文档时只读不改。
+
+> **AI-16 特殊提示**：24/11 号文档是打板策略+regime 回测验证，与 AI-02(10号)/AI-07(13号)/AI-17(12号)/AI-19(20号)/AI-11(30号)/AI-01(62号) 有交叉引用。AI-16 只改 24/11 号本身，引用其他文档时只读不改。
+
+> **AI-17 特殊提示**：31/18/12 号文档是仓位算法+冷归档+Phase2 验证，与 AI-11(30/32号)/AI-12(34号)/AI-02(10号)/AI-07(13号)/AI-16(11号)/AI-20(15/16号)/AI-04(63号) 有交叉引用。AI-17 只改 31/18/12 号本身，引用其他文档时只读不改。
+
+> **AI-18 特殊提示**：21/51/23/17/50 号文档是选股引擎+Panel+相关性+特殊交易日+可观测性，5 篇文档交叉引用广泛。与 AI-19(20号)/AI-13(26/22号)/AI-16(24号)/AI-15(25号)/AI-11(30号)/AI-08(64号)/AI-01(62号)/AI-04(63号)/AI-17(18号)/AI-19(19号)/AI-09(40号)/AI-03(54号) 有交叉引用。AI-18 只改自己负责的 5 篇，引用其他文档时只读不改。例外：17 号 §6.4 悬空引用修正（business_data_categories.yaml + tasks.yaml 各 1 行）可越界改。
+
+> **AI-19 特殊提示**：20/19/01/28/60 号文档是首批策略+北向资金+管理规范+情绪周期+跨切清理。01 号是所有文档的管理规范（影响 46 篇），20 号是首批策略总纲（被 24/25/26/21/22/30 号引用），28/60 号与 AI-02(10号)/AI-11(30号) 有交叉引用。AI-19 只改自己负责的 5 篇，引用其他文档时只读不改。01 号改动需特别谨慎——如改规范本身，需评估对 46 篇文档的影响。
+
+> **AI-20 特殊提示**：33/55/52/15/27/16/16 号全部是骨架文档（47-74 行空模板），核心任务是"回填已施工代码的 why"而非"审查现有内容"。与 AI-11(30号)/AI-12(34号)/AI-17(31号)/AI-09(40号)/AI-08(64号)/AI-01(62号)/AI-04(63号)/AI-19(20号)/AI-13(22号)/AI-16(24号)/AI-15(25号)/AI-13(26号)/AI-19(27号)/AI-17(18号) 有交叉引用。AI-20 只改自己负责的 7 篇，引用其他文档时只读不改。
+
+> **AI-21 特殊提示**：90 号文档是方法论遗留提案 21 项（讨论文档），使用特殊的"深度调研+裁定+施工方案"指令模板（非常规 8 轮审查）。21 项提案涉及全项目方法论，与几乎所有文档有交叉引用。AI-21 只改 90 号本身，引用其他文档时只读不改。AI-21 是客观专业架构师，不是辩护人——如果问题本身不合理，直接说。
+
+> **AI-22 特殊提示**：91 号文档是密度预测远期愿景（讨论文档，45 行骨架），使用特殊的"深度调研+裁定+施工方案"指令模板（非常规 8 轮审查）。与 AI-02(10号)/AI-17(31号)/AI-06(36号)/AI-05(35号) 有交叉引用。AI-22 只改 91 号本身，引用其他文档时只读不改。重点裁定 QNN 在单机 RTX 3090 的 2026 可行性——如不可行，明确建议删除还是保留远期标注。
