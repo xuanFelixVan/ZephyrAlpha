@@ -5,7 +5,7 @@ title: 打板策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
+version: "1.9.7"
 date: 2026-08-10
 topic: daban_strategy_detail
 scope: 07_trading_decision_architecture
@@ -13,995 +13,930 @@ scope: 07_trading_decision_architecture
 
 # 打板策略细节
 
-> **性质**：由 [00_index_trading_decision](00_index_trading_decision.md) G08 主题组派生，将打板策略的讨论要点落地为可施工的 spec + 伪代码。
-> **施工图纪律**：本文档 status=active，对应模块允许施工。
-> **2026-08 研究整合**：2026-08 游资生态报告（炸板率 40%→68%、打板次日溢价 4.2%→1.7%）；黄一鸣 2026-04 量化连板接力四维标准；雪球 2026-04/07 情绪周期+龙头战法四模式；WyckoffTradingAgent 2026-07 板块状态分类（共识高潮/派发风险等）；2026-04 程序化交易新规（多账户联动实时监控）；**v1.1.0 新增**：疯牛 v2.0 四维评分体系（资金强度40+连板辨识度30+技术形态20+量波共振10，回测TOP20次日+4.94%/上涨率80%）；Smart Money Profiler 席位画像（quantskills 2026-06，机构/游资/北向身份标签+跨期行为画像）；连板强度公式+一进二连板率 BK_ZT2LBRatio（<10%停止打板）；龙虎榜净买率回测（>12%次日+3.10%/20日+5.11%）+合力型vs独食型+假机构陷阱识别。
+> **性质**：已定型（active）。由 [00_index_trading_decision](00_index_trading_decision.md) G08 主题组派生，8 项讨论要点已逐项对齐落入 §3 决策。
+> **施工图纪律**：本文档定型后才允许对应模块施工；流程见 [01_design_memo_management_spec](01_design_memo_management_spec.md) §2.2。
+> **v1.9.2 补**：施工算法完整性深度审查——7 项施工算法缺失补全（次日出场完整决策 + 打板专用瞬时风控 + 龙虎榜PIT处理 + CUSUM信号失效监控 + 打板vs反核切换 + 分笔建仓算法 + 反核二次出场）+ 2026-08 arXiv 最新研究整合（liquidation cascade 炸板级联 + Public Trader Identity 量游博弈 + 微结构均值回归执行）。
+> **v1.9.3 补**：第三轮施工算法深度审查——5 项缺口补全（打板信号前置质量评估 + 持仓期间微结构监控 + PIT安全回测框架 + 打板时点决策 + 容量动态测算）+ §3.13#4 DabanExecution 升级（passive market impact 指数填充概率衰减理论背书）+ §3.13#6 SignalDecayMonitor 升级（two-type classification 内生vs外生级联）+ §3.2 理论背书补（北大打板理性预期模型）+ 2026-08-08/09/10 arXiv 最新研究整合（latent microstructure regime + SaR 滑点风险 + 7-event cascade 异质性 + A股价格笼子政策实证）。
+> **v1.9.4 补**：第四轮最新研究整合——§5.2 Phase 5 补 Siamese LOB 架构（arXiv:2505.22678 A股14军工股 ask-bid 对称性+MHA-LSTM）+ Du 开盘信号分布混合模型（arXiv:2506.06356 A股5模块框架 15.2%年化/Sharpe 1.87）+ 国泰海通高频因子周报 2026-08-10（开盘后买入意愿强度因子 2026 多空 16.29%+尾盘成交占比 13.58%，打板竞价+尾盘时段行为因子实证背书）。12 项施工算法已完整覆盖全流程，本轮无新施工算法缺口。
+> **v1.9.5 补**：第五轮最新研究整合——§5.2 Phase 5 补 QFCQT 混沌门控 Quantformer（arXiv:2608.07363 A股股指直接测试，Lee振荡器+平滑-混沌门控融合，高波动场景 MSE 相对 HAT 提升 43.9%，适合情绪周期突变检测）+ §3.13#4 DabanExecution 理论背书补 Hawkes 长记忆核（arXiv:2608.02002 Volterra-Riccati 近似，封单 Hawkes 动力学一般核建模，与 arXiv:2607.28323 Passive Impact 同作者）+ §6 待裁定补 QLoRA 情感因子负面结果警示（arXiv:2608.04200：28个模型-期限组合 Newey-West+FDR 校正后无一显著，情感分类准≠可交易）。12 项施工算法仍完整，本轮无新施工算法缺口。
+> **v1.9.6 补**：第六轮字段填充断裂点审查——§3.13#1 NextDayExitDecision 补 `classify_position_status()` 方法，形式化 `consecutive_board`（连板晋级判断：T+1日涨停收盘+封单存在+梯队非孤板）和 `exploded`（炸板判断：T+1日盘中触及涨停但未封住）两字段的填充逻辑。decide() 依赖此两字段但此前无填充算法——本方法补全断裂点。与§3.1梯队健康度联动+§3.13#2瞬时风控联动。
+> **v1.9.7 补**：第七轮最新研究整合——§5.2 Phase 5 补速度域签名封板真伪判断（arXiv:2608.05373 速度而非水平域检测 pump-and-crash，A股连板炸板率70%环境下速度签名比传统封单量/换手率更鲁棒，SHAP可解释归因）+ §3.13#4 DabanExecution 理论背书补扩散价格动力学悖论（arXiv:2608.00988 平方根冲击律+Lévy-walk精确可解，证明可预测订单流下拆单不泄露信息，为批量入场拆单提供理论依据）。12项施工算法仍完整，本轮无新施工算法缺口。
 
 ## 1. 主题组信息
 
 | 项 | 内容 |
 |---|---|
 | 主题组 | G08 打板策略细节 |
-| 所属 | 作战地图 05（BM-SEL-22~25）+ 30_multi_strategy_concurrency §4.3 |
-| 依赖 | G04、G05、G06 |
-| 对标 | 游资打板体系（龙虎榜/连板梯队/情绪周期）/ 量化社区连板策略 |
-| 正交性 | ✅ 与 regime 正交 |
-| 优先级 | P2 |
-| 状态 | ✅ active — 连板梯队+情绪周期+龙头识别+四维接力+风控参数已定稿 |
+| 所属 | 作战地图 05（BM-SEL-25 打板 sleeve） |
+| 依赖 | G04（[20_first_batch_strategies](20_first_batch_strategies.md) §2.2 打板 sleeve）、G05（信号工坊）、G21（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 情绪周期）、G22（40_execution_broker 执行层） |
+| 对标 | 雪球炸板率统计 2026-07 / 华安证券涨停板 Alpha 2026-03 / caifuhao 连板复盘 2026-08 / IG507 涨停统计分析 2026-08 / legulegu 首封时间线性映射 2026-07 |
+| 正交 | ✅ 与 regime 正交（[28 §3.4]）：打板读情绪周期不读 regime，情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，两者正交 |
+| 优先级 | P1（高换手、小容量、高频 alpha） |
+| 状态 | active 1.9.7（8 项讨论要点已对齐 + 12 项施工算法完整覆盖信号→定位→入场→封板→出场→风控→容量全流程 + §3.13 7项+§3.14 5项施工算法形式化 + §3.13#1 补 classify_position_status 字段填充断裂点 + §5.2 Phase 5 ML增强：Siamese LOB+Du开盘信号混合模型+QFCQT混沌门控+速度域签名封板真伪判断 + 国泰海通8/10高频因子实证背书 + 2026-08 arXiv 最新研究整合：latent regime+SaR+7-event cascade+liquidation cascade+Public Trader Identity+北大理性预期+价格笼子政策实证+Hawkes长记忆核+QLoRA情感因子负面警示+扩散价格动力学悖论） |
 
 ## 2. 背景
 
 ### 2.1 项目处境
 
-打板策略是 A 股独有的短线策略，核心逻辑：在个股涨停（触及涨跌停板上限）时买入，赌次日溢价或连板。2026 年打板生态发生剧变——量化成交占全市场 35%+，中小盘题材股超 50%，量化已用 ML 完整复刻游资盘口特征，传统打板套路失效。
+ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策略（打板/多因子/事件驱动）已在 [20 §2.2-2.4] 定义为差异化 sleeve。打板 sleeve 定位为"高换手、小容量、打板首板/连板的突击 sleeve"，承载小资金高 alpha。
+
+**2026 打板效益崩塌硬数据**（caifuhao 2026-08-03 游资换打法 + caifuhao 2026-08-02 复盘1200只连板）：
+- 次日溢价：4.2%→1.7%（腰斩）
+- 炸板率：68%（2026 vs 2023 的 ~30%）
+- 量化占比：35%（2026 vs 2023 的 <10%）
+- 涨停时间分层炸板率：早盘<20% / 尾盘>50%
+
+打板 sleeve 仍在存活的原因：情绪周期定位器在退潮期强制空仓（[28 §3.2]），规避大部分炸板风险；主升/疯狂期打板次日高开溢价概率仍高。但效益崩塌要求更精细的信号识别和风控。
 
 ### 2.2 核心问题
 
-1. **炸板率飙升**：2023 年 40% → 2026 年 68%，打板次日溢价从 4.2% 降至 1.7%（高位科技涨停次日溢价中位数为负）。
-2. **量化破解游资套路**：量化微秒级捕捉点火大单、封板挂单、分时脉冲；游资 T+1 受限，量化可融券 T+0 套利砸板。
-3. **监管收紧**：2026-04 程序化交易新规落地，实时监控多账户联动、大额对倒、频繁撤单——暴力抱团高位龙头模式不复存在。
-4. **连板高度下降**：2026 新特点——连板高度下降、趋势龙重要性上升、监管介入使"断板反包/趋势上行/容量中军"取代连续顶一字。
-5. **容量极小**：打板单票几万~几十万，必须小账本独立运行。
+1. **连板梯队如何识别**——连板股按高度分梯队，梯队健康度决定打板安全性。
+2. **情绪周期如何定位**——4+1 阶段（冰点/反核/主升/疯狂/退潮），退潮为条件触发。
+3. **主升龙头如何识别**——三引擎共振（情绪+技术+资金）。
+4. **打板容量极小**——单票几万~几十万，13 项约束链常触发。
+5. **双引擎融合在此策略内部**——60/40 基准+情绪周期自适应，7 类决策。
+6. **打板专用风控参数**——三层风控+第四层瞬时风控。
+7. **T+1 约束下的打板时序**——T日打板→T+1日卖出，2026程序化新规额外约束。
+8. **助攻梯队权重真源裁定**——解决 [28 §6] 口径漂移。
 
 ### 2.3 约束条件
 
-- **T+1 约束**：当日打板买入次日才能卖出，无法日内止损
-- **涨跌停板**：涨停封板时买不进，需排队或开板瞬间抢入
-- **容量极小**：单票几万~几十万，不适合大资金
-- **2026-04 新规**：多账户联动实时监控，禁止暴力抱团
-- **必须小账本**：打板策略独立运行，不与多因子/事件驱动混账
+- **单票仓位**：≤5% NAV（C12），实际受 C6/C11 制约远小于此
+- **sleeve 容量**：单票几万~几十万，sleeve 整体 50-200 万（待实盘校准）
+- **持仓周期**：1-3 天（T+1 约束 + 情绪周期）
+- **并发持仓数**：≤10 只（小账本约束）
+- **PIT 铁律**：INV-004——龙虎榜数据 T 日盘后公布，T 日盘中决策只能用 T-1 日及之前龙虎榜（§3.13 缺失#5 PIT 处理补全）
+- **T+1 结算**：买入当日扣减可用，卖出 T+1 结算，资金周转 2 天起
+- **程序化新规**：内部限频 ≤15 笔/秒（安全垫，远低于法定 300 笔/秒）+ 撤单率 ≤15% 硬限
 
 ## 3. 决策
 
-### 3.1 架构定义
+### 3.1 讨论要点①：连板梯队识别
 
-打板策略由市场情绪层、标的筛选层、执行层三层构成：
+**裁定**：复用 22-C-1 + 23-A-1 + 25-C-3，不单独建模块。连板梯队按高度分档，梯队健康度四档判定。
 
-```
-市场情绪层: 涨停家数/连板晋级率/情绪周期定位 → 市场可交易性判定
-                                        ↓
-标的筛选层: 连板梯队识别 → 龙头识别 → 四维接力筛选 → 候选标的
-                                        ↓
-执行层: 封板排队/开板抢入/低吸 → T+1 卖出 → 打板专用风控
-```
+**连板梯队分档**：
 
-### 3.2 情绪周期定位算法
+| 梯队 | 高度 | 特征 | 打板安全性 |
+|---|---|---|---|
+| 首板 | 1 板 | 试探性涨停，次日溢价方差最大 | 中（需三引擎共振确认） |
+| 2 板 | 2 板 | 确认性涨停，晋级率 ~50% | 高（主升期最佳打板标的） |
+| 3 板+ | 3 板以上 | 龙头确认，但炸板率随高度递增 | 中（需梯队健康度确认） |
+| 孤板 | 1 板无梯队 | 无跟风、无板块效应 | 低（炸板率 58%） |
 
-```python
-from enum import Enum
-from dataclasses import dataclass
-import numpy as np
+**梯队健康度四档判定**（`classify_echelon_health`，v1.5.0 补施工算法）：PERFECT（梯队完整）/ FRACTURE（断层）/ LONE_DRAGON（孤龙）/ COLLAPSE（崩塌）。退潮预警条件③④新增——中位断层/畸形孤龙时强制降仓。
 
-class SentimentPhase(Enum):
-    """情绪周期五阶段（雪球 2026-04/07）。"""
-    FREEZING = "冰点"     # 涨停<20，连板晋级率<30%
-    STARTING = "启动"     # 涨停 20-40，连板晋级率 30-50%
-    FERMENTING = "发酵"   # 涨停 40-60，连板晋级率 50-65%
-    CONSENSUS = "一致"    # 涨停>60，连板晋级率>65%（高位风险）
-    EBING = "退潮"        # 涨停骤降，炸板率飙升
+**炸板率板块地位分层**（v1.9.0 补）：龙头 8% / 跟风 32% / 孤板 58%（7 倍差距，caifuhao 2026-08-02 复盘1200只）。修正系数：龙头 ×1.2/跟风 ×1.0/孤板 ×0.5。
 
+**分级梯队晋级率**（v1.7.0 补）：1进2 ~50% / 2进3 ~30% / 3进4 ~15% / 4进5 ~0%（退潮前兆）。
 
-@dataclass
-class MarketSentiment:
-    """市场情绪状态。"""
-    phase: SentimentPhase
-    limit_up_count: int          # 涨停家数
-    limit_down_count: int        # 跌停家数
-    consecutive_ladder: dict     # 连板梯队 {2板: N, 3板: N, ...}
-    promotion_rate: float        # 连板晋级率 = 晋级家数 / 连板家数
-    explosion_rate: float        # 炸板率 = 炸板数 / (炸板数 + 涨停数)
-    is_tradable: bool            # 市场可交易性
-    position_scale: float        # 仓位缩放系数
+**中位股死亡池**（`score_consecutive_height_with_death_pool`，v1.5.0 补）：梯队断层/孤龙时 3-4 板扣 40/30 分，完美梯队维持原评分。
 
+### 3.2 讨论要点②：情绪周期定位器
 
-def evaluate_market_sentiment(
-    limit_up_count: int,
-    limit_down_count: int,
-    consecutive_ladder: dict,     # {2: 10, 3: 5, 4: 2, 5: 1}
-    yesterday_consecutive: dict,  # 昨日连板梯队
-    explosion_count: int,         # 炸板数
-) -> MarketSentiment:
-    """情绪周期定位——五阶段判定市场可交易性。
+**裁定**：复用 23-B（情绪周期定位器），4+1 阶段，退潮为条件触发。准确率回测施工前必做（[30 §6.3]）。
 
-    雪球 2026-04 投科投资《量化时代情绪龙头战法》：
-    - 冰点 → 启动 → 发酵 → 一致 → 退潮
-    - 2026 新特点：连板高度下降、趋势龙重要性上升
+**4+1 阶段**：
 
-    黄一鸣 2026-04 四维筛选第一维：
-    - 涨停家数 ≥ 30
-    - 连板晋级率 ≥ 50%
-    """
-    # 连板晋级率 = 今日晋级家数 / 昨日连板家数
-    yesterday_consecutive_total = sum(yesterday_consecutive.values()) if yesterday_consecutive else 0
-    today_promoted = sum(consecutive_ladder.get(k + 1, 0) for k in yesterday_consecutive)
-    promotion_rate = today_promoted / yesterday_consecutive_total if yesterday_consecutive_total > 0 else 0.0
+| 阶段 | 评分阈值 | 仓位上限 | 特征 |
+|---|---|---|---|
+| 冰点 | ≤20 | 0~极轻 | 跌停>涨停，连板≤3 |
+| 反核 | 20-40 | ≤2-3 成 | 跌停板反抽出现 |
+| 主升 | 40-65 | 3-5 成 | 涨停>跌停，晋级率>50% |
+| 疯狂 | 65-85 | 2-3 成（减仓） | 连板≥20，首封时间<10:00 |
+| 退潮 | 条件触发 | ≤1 成（清仓） | 4进5=0% / 中位断层 / 龙头炸板 |
 
-    # 炸板率
-    explosion_rate = explosion_count / (explosion_count + limit_up_count) if (explosion_count + limit_up_count) > 0 else 0.0
+**退潮条件触发**：①4进5晋级率=0%；②中位股断层；③龙头首次炸板；④连板数骤降。四条件任一触发。
 
-    # 五阶段判定
-    if limit_up_count < 20 and promotion_rate < 0.30:
-        phase = SentimentPhase.FREEZING
-    elif limit_up_count < 40 and promotion_rate < 0.50:
-        phase = SentimentPhase.STARTING
-    elif limit_up_count < 60 and promotion_rate < 0.65:
-        phase = SentimentPhase.FERMENTING
-    elif limit_up_count >= 60 and promotion_rate >= 0.65:
-        phase = SentimentPhase.CONSENSUS  # 高位风险
-    else:
-        phase = SentimentPhase.EBING
+**机理层理论背书**（v1.8.0+v1.9.2+v1.9.3 补）：
+- **羊群 agent-based "超调→反转"微观机理**（[arXiv:2607.27063](https://arxiv.org/abs/2607.27063)）：信息扩散+社会强化分离机制解释情绪周期超调与反转。31 页 16 图 7 表，A 股实证，Johnson SU 变换尾部羊群指标。
+- **Liquidation cascade 炸板级联机理**（[arXiv:2608.03616](https://arxiv.org/abs/2608.03616) 2026-08-05 Seuma）：清算级联亚临界分支——封单崩塌时持有者止损触发更多止损，形成局部级联。88% 级联卖出在 30 分钟内完成，63% 被做市商吸收。解释§3.10 三次炸板回封级联机理，与§3.13 缺失#2 瞬时风控直接相关。
+- **打板理性预期模型（v1.9.3 补，北大 Jiang & Li）**：动态理性预期模型证明涨跌停规则通过阻碍信息完全纳入诱发涨停后跳空——知情交易者将价格推至涨停，未知情交易者推断信息未完全纳入→次日开盘推高。实证：封死涨停平均隔夜收益 +2.43%（打板者利润），打开涨停平均回撤 -5.25%（亏损为利润 2 倍+）。2020 创业板改革（±10%→±20%）自然实验提供因果证据：放宽涨跌停缓解投机扭曲。**这是 24 号文档的理论根基**——解释为何打板 alpha 存在（信息未完全纳入）+ 为何炸板亏损>涨停利润（回撤不对称性），为 §3.4 13 约束链 + §3.13#1 NextDayExitDecision 提供理论背书。
 
-    # 可交易性判定（黄一鸣标准：涨停≥30 + 晋级率≥50%）
-    if phase == SentimentPhase.FERMENTING:
-        is_tradable = True
-        position_scale = 1.0
-    elif phase == SentimentPhase.STARTING:
-        is_tradable = limit_up_count >= 30 and promotion_rate >= 0.50
-        position_scale = 0.7  # 启动期仓位缩窄
-    elif phase == SentimentPhase.CONSENSUS:
-        is_tradable = True  # 可交易但高度警惕
-        position_scale = 0.5  # 一致期仓位减半（退潮风险）
-    elif phase == SentimentPhase.FREEZING:
-        is_tradable = False
-        position_scale = 0.0
-    else:  # EBING
-        is_tradable = False
-        position_scale = 0.0
+**准确率兜底**（[28 §3.2]）：置信度<60% 保守降仓，<40% 强制空仓。
 
-    return MarketSentiment(
-        phase=phase,
-        limit_up_count=limit_up_count,
-        limit_down_count=limit_down_count,
-        consecutive_ladder=consecutive_ladder,
-        promotion_rate=promotion_rate,
-        explosion_rate=explosion_rate,
-        is_tradable=is_tradable,
-        position_scale=position_scale,
-    )
-```
+### 3.3 讨论要点③：主升龙头识别
 
-### 3.3 连板梯队识别算法
+**裁定**：复用 25-C-1 三引擎共振打分。
 
-```python
-@dataclass
-class ConsecutiveLadder:
-    """连板梯队状态。"""
-    ladder: dict[int, list[str]]   # {连板数: [股票代码列表]}
-    highest_consecutive: int       # 当前最高连板数
-    is_complete: bool              # 梯队是否完整无断层
-    leader_stocks: list[str]       # 龙头标的
+**三引擎共振**：情绪引擎 40%（连板梯队健康度+晋级率+情绪周期阶段）+ 技术引擎 30%（量价突破+MA排列+换手率）+ 资金引擎 30%（主力净流入+龙虎榜游资席位+封单质量）。三引擎均≥70 分且情绪周期在主升/疯狂期→打板信号确认。
 
+### 3.4 讨论要点④：打板容量极小
 
-def identify_consecutive_ladder(
-    stocks_consecutive_count: dict[str, int],  # {股票代码: 连板数}
-) -> ConsecutiveLadder:
-    """连板梯队识别——检测梯队完整性和断层。
+**裁定**：13 项约束链（C1-C13），C6/C11 常触发。小账本（单票几万~几十万），sleeve 整体 50-200 万。
 
-    黄一鸣 2026-04：
-    - 当前市场最高连板/梯队前列（3 板+，或 2 板核心龙头）
-    - 梯队完整无断层
+**关键约束**：C6 封单量（封单≥流通盘 0.5%）/ C11 封成比（>10）/ C9 换手率（3%-15%）/ C8 涨停时间（首封≤10:00）/ C10 连板高度（≤5 板）。C6/C11 是最高频触发约束——封流比<0.5% 或封成比<10 时直接否决打板信号。
 
-    断层判定：如 5板→3板→1板（缺 4板和 2板）= 严重断层
-    完整梯队：如 5板→4板→3板→2板→1板 = 健康
-    """
-    # 按连板数分组
-    ladder = {}
-    for stock, count in stocks_consecutive_count.items():
-        if count not in ladder:
-            ladder[count] = []
-        ladder[count].append(stock)
+### 3.5 讨论要点⑤：双引擎融合在此策略内部
 
-    if not ladder:
-        return ConsecutiveLadder(ladder={}, highest_consecutive=0, is_complete=False, leader_stocks=[])
+**裁定**：60/40 基准（情绪引擎60%+技术引擎40%）+ 情绪周期自适应，7 类决策（v1.9.2 补第7类 REFLUSH_DIVE）。`dual_engine_fusion_decision_engine.py`（BM-SEL-25）已 production。
 
-    highest = max(ladder.keys())
+**v1.8.2 伪代码-源码同步修正**：v1.8.1 文档伪代码为简化单阈值版，v1.8.2 修正为多维条件版匹配 production `classify_decision`。
 
-    # 断层检测
-    is_complete = True
-    for n in range(highest, 0, -1):
-        if n not in ladder or len(ladder[n]) == 0:
-            is_complete = False
-            break
+**7 类决策**（v1.9.2 补第7类）：
 
-    # 龙头识别：最高连板标的
-    leader_stocks = ladder.get(highest, [])
+| 决策 | 条件 | 动作 |
+|---|---|---|
+| BOARD | 情绪≥阈值+技术≥60（主升/疯狂） | 打板买入 |
+| CONTINUE | 情绪≥阈值×0.8+技术≥70 | 持仓续板 |
+| INVERSE_BOARD | 情绪≥60+技术≥75 | 地天反包（非反核） |
+| REFLUSH_DIVE | 冰点/反核+跌停板反抽+情绪≥40+技术≥60 | **反核入场**（v1.9.2 补） |
+| WATCH | 情绪≥40+技术≥50 | 观望 |
+| REJECT | 默认 | 否决 |
+| WAIT | 情绪<20 | 冰点等待 |
 
-    return ConsecutiveLadder(
-        ladder=ladder,
-        highest_consecutive=highest,
-        is_complete=is_complete,
-        leader_stocks=leader_stocks,
-    )
-```
+> **§3.13 缺失#3 补充**：第7类 REFLUSH_DIVE + 情绪周期门控切换——主升/疯狂→打板路径，冰点/反核→反核路径。
 
-### 3.4 四维量化接力筛选算法
+### 3.6 讨论要点⑥：打板专用风控参数
+
+**裁定**：打板 sleeve 风控分四层——sleeve 内情绪周期仓位上限 + StrategyBook 账户级回撤 Protocol + firm 层 budget 裁剪 + **打板专用瞬时风控**（v1.9.2 补第四层，见 §3.13 缺失#2）。
+
+**第一层：sleeve 内情绪周期仓位上限**：冰点 0~极轻 / 反核 ≤2-3 成 / 主升 3-5 成 / 疯狂 2-3 成（减仓）/ 退潮 ≤1 成（清仓）。
+
+**第二层：StrategyBook 账户级回撤 Protocol**（[30 §2.5]，已 production）：Level 1 警告（回撤>8%，单笔风险降至1.5%）/ Level 2 减仓（>15%，仓位缩至75%）/ Level 3 停仓（>20%）/ Level 4 清仓（>25%）/ 日度熔断（单日亏损>4%）/ 单策略熔断（>5%）/ Kill Switch（单日>6%/回撤>25%/连5亏/流动性危机）。
+
+**第三层：firm 层 budget 三级裁剪**（[30 §2.4]）：Tier 1 封锁新仓 / Tier 2 策略自选砍仓（1-2天收敛）/ Tier 3 按比例裁剪。
+
+**第四层：打板专用瞬时风控**（§3.13 缺失#2，v1.9.2 补）：`DabanInstantCircuitBreaker`——三触发器（封单崩塌30%/梯队断层/量化席位hard 70%）→ 瞬时熔断卖出。与 Kill Switch 并列但优先级更高——Kill Switch 是日度熔断，DabanInstantCircuitBreaker 是盘中瞬时熔断。
+
+**施工状态**：`budget_change_handler.py`（MOD-POS-022）骨架待填充。回撤 Protocol 相关模块（drawdown_controller/tracker/var_calculator/kill_switch）已 production。
+
+### 3.7 讨论要点⑦：T+1 约束下的打板时序
+
+**裁定**：T+1 结算由 `cash_manager.py` 真实实现，打板时序以"打板次日卖出为主，连板晋级者持有至分歧/破板"为核心。
+
+**T+1 结算机制**（`cash_manager.py` POS-06）：买入当日扣减可用；卖出 T+1 结算进 `pending_settlement`，次日释放。`available_cash = total_cash - pending_settlement`。
+
+**打板时序**：T日盘中打板买入→T日收盘持仓不可卖→T+1日开盘竞价观察（高开溢价→卖出；低开闷杀→止损）→T+1日盘中连板晋级者持有→T+2日资金可用。
+
+> **§3.13 缺失#1 补充**：T+1日开盘行仅有定性描述，v1.9.2 补 `next_day_exit_decision()` 完整函数（见 §3.13）。
+
+**2026 程序化交易新规约束**：官方高频认定 ≥300笔/秒 OR ≥20000笔/日（中基协2026-07权威确认）。"15笔/秒"是市场误传。本项目内部限频 ≤15笔/秒（安全垫）+ 撤单率 ≤15% 硬限。`ProgramTradingComplianceGuard` 令牌桶限流+撤单率滚动监控。
+
+**施工状态**：✅ [40号](40_execution_broker.md) v2.6.0 已实现 CancelRateGuard+ProgrammaticTradingGuard。
+
+### 3.8 助攻梯队权重真源裁定（解决 [28 §6] 待裁定项）
+
+**裁定**：**源码 10 分/sum 95 为真源**，battle_map 待修正。6 因子助攻梯队评分：连板梯队健康度 20 + 晋级率 15 + 封单质量 15 + 龙虎榜游资席位 15 + 首封时间 15 + 换手率 15 = 95（差额 5 分为情绪周期阶段加减分）。
+
+### 3.9 竞价三维 100 分打分体系 + 执行纪律（v1.6.0 新增）
+
+**裁定**：集合竞价三维 100 分——大盘 30 分+板块 30 分+个股 40 分。`score_auction_3d` 9:25 集合竞价定格后调用。总分≥80 打板确认，60-80 观望，<60 否决。纸老虎识别 `detect_auction_paper_tiger`（竞价涨幅 7-8% 但匹配量<总量 3%=主力演戏，一票否决，IC 胜率 95%+）。
+
+### 3.10 量化 vs 游资博弈新格局——三次炸板回封模型（v1.7.0 新增）
+
+**裁定**：2026 量化占比 35%，量化 vs 游资博弈新格局需要三次炸板回封模型。第一次炸板→回封（量化止损/游资吸筹，中）；第二次（量化继续出货/游资加仓，低）；第三次（量化大量出货/游资力竭，极低=承接崩塌前兆）。
+
+**Public Trader Identity 量游博弈理论背书**（[arXiv:2608.04373](https://arxiv.org/abs/2608.04373) 2026-08-06 Zhai）：公开交易者身份本身具有信号价值——量化席位占比升高=逆向选择风险升高=收益可预测性下降。为§3.11 `detect_quant_seat_warning` 提供理论背书。
+
+**退潮检测三信号**：①龙头滞涨；②龙虎榜量化席位占比异常升高+知名游资减少；③跟风股无差别破位下跌。
+
+### 3.11 封单结构双指标 + 次日溢价三维预测 + 回封生死线决策 + 量化席位双阈值预警（v1.8.0 新增）
+
+**裁定**：4 个施工算法补全封板质量评估。
+
+**①封单结构双指标**（`score_seal_structure`）：封流比≥5%稳定/<2%薄弱 + 封成比>10稳定/<1不牢。
+
+**②次日溢价三维预测**（`forecast_next_day_premium`）：封板时间×量能×封单→预期溢价区间+操作建议。> **§3.13 缺失#1 补充**：只输出预测不做决策，v1.9.2 补 `next_day_exit_decision()`。
+
+**③回封生死线决策**（`classify_reflush_board`）：15分钟内回封+封单递增=良性；20-30分钟无法回封=承接崩塌。
+
+**④龙虎榜量化席位双阈值预警**（`detect_quant_seat_warning`）：hard 70%降权30%+预警 / soft 58%降权15%。> **§3.13 缺失#5 补充**：无PIT处理边界，v1.9.2 补 `get_dragon_tiger_pit()` as_of_date断言。
+
+### 3.12 跌停板反抽/反核策略（v1.9.0 新增）
+
+**裁定**：涨停端 alpha 衰减背景下跌停端反抽成为辅助 alpha。复用 `dual_engine_fusion` + 23-B 情绪周期门控，纯增量 ~60 行。入场=跌停板打开+冰点/反核阶段+主力净流入转正。止损 3-5%，时间止盈 2-5 日，仓位 ≤2 成。
+
+> **§3.13 缺失#3/#7 补充**：v1.9.2 补第7类 REFLUSH_DIVE 切换门控 + `reflush_next_day_exit_decision()` 二次出场决策。
+
+### 3.13 施工算法 7 项缺失补全（v1.9.2 新增，施工算法完整性深度审查）
+
+> 2026-08-10 施工算法完整性深度审查识别出 7 项缺失（3 高+3 中+1 低）。本节集中补全形式化施工算法，填补"信号识别→情绪定位→打板入场→封板判断→次日出场→风控熔断→容量管理"七大环节断裂点。
+
+#### 缺失#1：次日出场完整决策算法（高优先级，T+1 闭环断裂修复）
+
+**问题**：§3.7 T+1时序表仅有定性描述，§3.11 `forecast_next_day_premium` 只预测不决策。20号有退出三档算法但本号未形式化。
 
 ```python
 @dataclass
-class DabanRelaySignal:
-    """打板接力四维筛选信号。"""
-    symbol: str
-    market_sentiment_pass: bool     # 维度1：市场情绪
-    ladder_pass: bool               # 维度2：连板梯队
-    stock_quality_pass: bool        # 维度3：标的自身
-    capital_flow_pass: bool         # 维度4：资金面
-    all_pass: bool                  # 四维全部满足
-    risk_flags: list[str]           # 风险标记
-    suggested_position: float       # 建议仓位（成）
+class NextDayExitDecision:
+    """次日出场完整决策（v1.9.2 补，整合 forecast_next_day_premium + 20号三档退出）"""
+    hard_exit_premium_low: float = -0.05    # 低开≥5%→硬止损全卖（核按钮闷杀）
+    hard_exit_consecutive_loss: int = 3      # 连续3板未晋级→硬退出
+    soft_exit_divergence: float = 0.5        # 分歧度>0.5→软退出
+    take_profit_tier1: float = 0.03          # 高开≥3%→竞价卖50%
+    take_profit_tier2: float = 0.05          # 高开≥5%→全卖
+    max_holding_days: int = 3                # 持仓≥3天未晋级→硬退出
 
+    def decide(self, position: dict, auction_data: dict,
+               forecast: dict, holding_days: int) -> dict:
+        open_premium = auction_data['open_price'] / position['cost_basis'] - 1
+        # 硬退出①：低开闷杀
+        if open_premium <= self.hard_exit_premium_low:
+            return {'action': 'STOP_LOSS', 'qty_ratio': 1.0,
+                    'reason': f'核按钮闷杀 open={open_premium:.1%}'}
+        # 硬退出②：持仓超时
+        if holding_days >= self.max_holding_days and not position.get('consecutive_board', False):
+            return {'action': 'SELL_ALL', 'qty_ratio': 1.0,
+                    'reason': f'持仓{holding_days}天未晋级→时间退出'}
+        # 硬退出③：炸板+退潮
+        if position.get('exploded', False) and forecast.get('phase') == '退潮':
+            return {'action': 'SELL_ALL', 'qty_ratio': 1.0,
+                    'reason': '炸板+退潮→硬退出'}
+        # 高开止盈：分批
+        if open_premium >= self.take_profit_tier2:
+            return {'action': 'SELL_ALL', 'qty_ratio': 1.0,
+                    'reason': f'高开{open_premium:.1%}≥5%→全卖'}
+        if open_premium >= self.take_profit_tier1:
+            return {'action': 'SELL_HALF', 'qty_ratio': 0.5,
+                    'reason': f'高开{open_premium:.1%}≥3%→竞价卖50%'}
+        # 软退出：分歧度高
+        if forecast.get('divergence', 0) > self.soft_exit_divergence:
+            return {'action': 'SELL_HALF', 'qty_ratio': 0.5,
+                    'reason': f'分歧度>0.5→分批退'}
+        # 连板晋级者持有
+        if position.get('consecutive_board', False) and open_premium > 0:
+            return {'action': 'HOLD', 'qty_ratio': 0.0,
+                    'reason': '连板晋级+高开→持有'}
+        return {'action': 'HOLD', 'qty_ratio': 0.0,
+                'reason': '等盘中确认'}
 
-def evaluate_daban_relay(
-    symbol: str,
-    sentiment: MarketSentiment,         # 市场情绪
-    ladder: ConsecutiveLadder,          # 连板梯队
-    # 标的自身维度
-    float_mkt_cap: float,               # 流通市值（亿）
-    turnover_rate: float,               # 换手率
-    volume_ratio_vs_avg: float,         # 量比（ vs 历史均量）
-    consecutive_count: int,             # 当前连板数
-    # 资金面维度
-    seal_amount: float,                 # 封单金额（亿）
-    main_net_inflow: float,             # 主力净流入（亿）
-    northbound_net_inflow: float,       # 北向净流入（亿）
-    dragon_tiger_inst_ratio: float,     # 龙虎榜游资+机构买入占比
-    cancel_rate: float,                 # 撤单率
-) -> DabanRelaySignal:
-    """打板接力四维量化筛选——黄一鸣 2026-04。
+    @staticmethod
+    def classify_position_status(position: dict, t1_data: dict, echelon_status: str) -> dict:
+        """持仓状态分类（v1.9.6 补，填充 consecutive_board/exploded 字段）
 
-    四维全部满足方可接力：
-    1. 市场情绪：涨停≥30 + 晋级率≥50%
-    2. 连板梯队：3板+或2板核心龙头，梯队完整无断层
-    3. 标的自身：流通市值50-200亿 + 换手5%-15% + 价涨量增
-    4. 资金面：封单≥1亿且占流通市值≥1% + 无大额撤单 + 主力+北向净流入 + 龙虎榜占比≥60%
+        decide() 依赖 consecutive_board（连板晋级）和 exploded（炸板）字段，
+        但两字段的填充逻辑此前未形式化——本方法补全断裂点。
 
-    分阶段策略：
-    - 2板接力（中性/强势市场）：仓位0.3-0.5成
-    - 3板+接力（仅强势市场）：仓位0.2-0.3成
-    """
-    risk_flags = []
+        连板晋级判断：T+1日涨停 + 在连板梯队中（非孤板）
+        炸板判断：T日封板后 T+1日盘中打开（封单崩塌或价格跌破涨停价）
+        与 §3.1 classify_echelon_health 联动——梯队健康度影响晋级有效性。
+        与 §3.13#2 DabanInstantCircuitBreaker 联动——炸板触发瞬时风控。
+        """
+        t1_close = t1_data.get('close', 0)
+        t1_high = t1_data.get('high', 0)
+        limit_up_price = t1_data.get('limit_up_price', 0)
+        t1_seal_ratio = t1_data.get('seal_ratio', 0)  # T+1日封流比（0=无封单）
 
-    # 维度 1：市场情绪
-    market_pass = (
-        sentiment.is_tradable and
-        sentiment.limit_up_count >= 30 and
-        sentiment.promotion_rate >= 0.50
-    )
-    if not market_pass:
-        risk_flags.append(f"market_sentiment_fail(phase={sentiment.phase.value})")
+        # ① 连板晋级：T+1日收盘涨停 + 封单存在 + 梯队非孤板
+        is_limit_up_close = (limit_up_price > 0 and abs(t1_close - limit_up_price) < 0.01)
+        has_seal = t1_seal_ratio > 0.001  # 封流比>0.1%
+        is_in_echelon = echelon_status not in ('LONE_DRAGON', 'COLLAPSE')
+        consecutive_board = is_limit_up_close and has_seal and is_in_echelon
 
-    # 维度 2：连板梯队
-    ladder_pass = (
-        consecutive_count >= 2 and
-        ladder.highest_consecutive >= 3 and
-        ladder.is_complete
-    )
-    if not ladder_pass:
-        risk_flags.append(f"ladder_fail(consecutive={consecutive_count}, highest={ladder.highest_consecutive})")
+        # ② 炸板：T日封板后 T+1日盘中触及涨停但未封住（最高价=涨停价但收盘<涨停价）
+        #    或 T+1日封单崩塌（DabanInstantCircuitBreaker 触发后标记）
+        touched_limit = (limit_up_price > 0 and t1_high >= limit_up_price * 0.999)
+        not_sealed_close = not is_limit_up_close
+        exploded = touched_limit and not_sealed_close
 
-    # 维度 3：标的自身
-    stock_pass = True
-    if not (50 <= float_mkt_cap <= 200):
-        stock_pass = False
-        risk_flags.append(f"mkt_cap_out_of_range({float_mkt_cap:.0f}亿)")
-    if not (0.05 <= turnover_rate <= 0.15):
-        stock_pass = False
-        if turnover_rate > 0.20:
-            risk_flags.append(f"turnover_too_high({turnover_rate:.1%})_爆量排除")
-        else:
-            risk_flags.append(f"turnover_out_of_range({turnover_rate:.1%})")
-    if volume_ratio_vs_avg < 1.0:
-        stock_pass = False
-        risk_flags.append(f"volume_ratio_low({volume_ratio_vs_avg:.1f})")
-
-    # 维度 4：资金面
-    capital_pass = True
-    seal_ratio = seal_amount / float_mkt_cap if float_mkt_cap > 0 else 0.0
-    if seal_amount < 1.0 or seal_ratio < 0.01:
-        capital_pass = False
-        risk_flags.append(f"seal_insufficient({seal_amount:.1f}亿, {seal_ratio:.2%})")
-    if cancel_rate > 0.30:
-        capital_pass = False
-        risk_flags.append(f"cancel_rate_high({cancel_rate:.1%})")
-    if main_net_inflow < 0 or northbound_net_inflow < 0:
-        capital_pass = False
-        risk_flags.append(f"capital_outflow(main={main_net_inflow:.1f}亿, north={northbound_net_inflow:.1f}亿)")
-    if dragon_tiger_inst_ratio < 0.60:
-        capital_pass = False
-        risk_flags.append(f"dragon_tiger_low({dragon_tiger_inst_ratio:.1%})")
-
-    all_pass = market_pass and ladder_pass and stock_pass and capital_pass
-
-    # 建议仓位
-    if not all_pass:
-        suggested_position = 0.0
-    elif consecutive_count == 2:
-        suggested_position = 0.4  # 2板接力 0.3-0.5成
-    elif consecutive_count >= 3:
-        # 3板+仅强势市场（涨停≥40、晋级率≥60%）
-        if sentiment.limit_up_count >= 40 and sentiment.promotion_rate >= 0.60:
-            suggested_position = 0.25  # 3板+接力 0.2-0.3成
-        else:
-            suggested_position = 0.0
-            risk_flags.append("3board_requires_strong_market")
-    else:
-        suggested_position = 0.0
-
-    # 情绪仓位缩放
-    suggested_position *= sentiment.position_scale
-
-    return DabanRelaySignal(
-        symbol=symbol,
-        market_sentiment_pass=market_pass,
-        ladder_pass=ladder_pass,
-        stock_quality_pass=stock_pass,
-        capital_flow_pass=capital_pass,
-        all_pass=all_pass,
-        risk_flags=risk_flags,
-        suggested_position=suggested_position,
-    )
+        # ③ 更新 position 字段
+        position['consecutive_board'] = consecutive_board
+        position['exploded'] = exploded
+        return {
+            'consecutive_board': consecutive_board,
+            'exploded': exploded,
+            'reason': (f'连板晋级={consecutive_board}（涨停收盘={is_limit_up_close}'
+                       f'+封单={has_seal}+梯队={is_in_echelon}），'
+                       f'炸板={exploded}（触涨停={touched_limit}+未封收={not_sealed_close}）')
+        }
 ```
 
-### 3.5 龙头识别算法
+#### 缺失#2：打板专用瞬时风控（高优先级，盘中瞬时熔断缺失）
+
+**问题**：§3.6 三层风控全部仓位级/日度级，无盘中瞬时熔断。2026炸板率68%背景下封单崩塌/梯队断层需瞬时熔断。
 
 ```python
 @dataclass
-class LeaderPattern:
-    """龙头战法模式（雪球 2026-04/07）。"""
-    pattern: str           # "主线启动龙" / "弱转强龙" / "换手龙" / "分歧转一致"
-    confidence: float      # [0, 1]
-    entry_timing: str      # 入场时机描述
+class DabanInstantCircuitBreaker:
+    """打板专用瞬时风控（v1.9.2 补，三触发器→瞬时熔断卖出）
 
-
-def identify_leader_pattern(
-    consecutive_count: int,
-    is_first_board: bool,          # 是否首板
-    yesterday_turnover: float,     # 昨日换手率
-    today_open_premium: float,     # 今日竞价溢价
-    today_pullback_to_avg: bool,   # 今日回踩均价线
-    volume_shrink_today: bool,     # 今日缩量
-    divergence_today: bool,        # 今日是否分歧日
-    consensus_from_divergence: bool,  # 分歧转一致
-) -> LeaderPattern:
-    """龙头识别——四种模式判定（雪球 2026-04/07 投科投资/溪江随笔）。
-
-    2026 新特点：连板高度下降、趋势龙重要性上升、监管介入使
-    "断板反包/趋势上行/容量中军"取代连续顶一字。
-
-    四种龙头模式：
-    1. 主线启动龙（首板/一进二）：首板质量+次日一进二确认
-       买点：竞价有溢价但不过度一致、开盘换手分歧迅速回封
-    2. 弱转强龙（二板/三板确认）：昨日充分换手板+今日竞价高开不虚高
-       买点：开盘回踩不破均价线快速拉回封板
-    3. 换手龙（市场总龙头）：分歧中不断换手淘汰持筹者
-       买点：第一次大分歧日而非连续缩量加速日
-    4. 分歧转一致（二波/反包）：分歧转一致时介入
-       买点：非一致高潮尾端
+    与 §3.6 Kill Switch 并列——Kill Switch 是账户级日度熔断，
+    本类是 sleeve 级盘中瞬时熔断。
+    理论背书：arXiv:2608.03616 liquidation cascade 亚临界分支——
+    封单崩塌时止损触发更多止损，需在级联扩散前卖出。
     """
-    # 模式 1：主线启动龙
-    if is_first_board or consecutive_count == 1:
-        if 0 < today_open_premium < 0.05 and today_pullback_to_avg:
-            return LeaderPattern(
-                pattern="主线启动龙",
-                confidence=0.7,
-                entry_timing="竞价有溢价但不一致+开盘分歧回封"
-            )
+    seal_collapse_threshold: float = 0.30    # 封单瞬间消失30%即熔断
+    echelon_fracture_actions = {'FRACTURE', 'LONE_DRAGON', 'COLLAPSE'}
+    quant_seat_hard_threshold: float = 0.70  # 量化席位买入占比>70%
 
-    # 模式 2：弱转强龙
-    if consecutive_count in (2, 3):
-        if yesterday_turnover > 0.10 and 0 < today_open_premium < 0.03:
-            if today_pullback_to_avg:
-                return LeaderPattern(
-                    pattern="弱转强龙",
-                    confidence=0.8,
-                    entry_timing="竞价高开不虚高+回踩均价线快速回封"
-                )
-
-    # 模式 3：换手龙
-    if consecutive_count >= 3 and divergence_today:
-        if not volume_shrink_today:  # 非缩量加速
-            return LeaderPattern(
-                pattern="换手龙",
-                confidence=0.65,
-                entry_timing="第一次大分歧日（非连续缩量加速日）"
-            )
-
-    # 模式 4：分歧转一致
-    if consensus_from_divergence:
-        return LeaderPattern(
-            pattern="分歧转一致",
-            confidence=0.6,
-            entry_timing="分歧转一致时（非一致高潮尾端）"
-        )
-
-    return LeaderPattern(pattern="无龙头模式", confidence=0.0, entry_timing="")
+    def check_instant_break(self, position: dict, live_data: dict,
+                            echelon_status: str, quant_seat_ratio: float) -> dict:
+        # 触发器①：封单崩塌
+        seal_ratio = live_data.get('current_seal', 0) / max(live_data.get('initial_seal', 1), 1)
+        if seal_ratio < (1 - self.seal_collapse_threshold):
+            return {'trigger': 'SEAL_COLLAPSE', 'action': 'INSTANT_SELL', 'qty_ratio': 1.0,
+                    'reason': f'封单崩塌{(1-seal_ratio):.0%}≥30%→瞬时熔断'}
+        # 触发器②：梯队断层
+        if echelon_status in self.echelon_fracture_actions:
+            return {'trigger': 'ECHELON_FRACTURE', 'action': 'INSTANT_SELL', 'qty_ratio': 1.0,
+                    'reason': f'梯队{echelon_status}→瞬时熔断清仓'}
+        # 触发器③：量化席位hard预警
+        if quant_seat_ratio > self.quant_seat_hard_threshold:
+            return {'trigger': 'QUANT_SEAT_HARD', 'action': 'INSTANT_SELL', 'qty_ratio': 1.0,
+                    'reason': f'量化席位{quant_seat_ratio:.0%}>70%→瞬时熔断'}
+        return {'trigger': None, 'action': 'MONITOR'}
 ```
 
-### 3.6 打板专用风控参数
+#### 缺失#3：打板 vs 反核切换门控（中优先级，第7类决策）
+
+**问题**：§3.5 INVERSE_BOARD 是"地天反包"非"反核"，§3.12 反核无显式切换逻辑。
+
+```python
+def classify_decision_v192(emotion_score: float, tech_score: float,
+                            phase: str, is_limit_down_rebound: bool = False) -> str:
+    """双引擎融合 7 类决策（v1.9.2 补第7类 REFLUSH_DIVE + 情绪周期门控切换）"""
+    # 情绪周期门控：冰点/反核→反核路径
+    if phase in ('冰点', '反核') and is_limit_down_rebound:
+        if emotion_score >= 40 and tech_score >= 60:
+            return 'REFLUSH_DIVE'  # 反核入场
+        return 'WAIT'
+    # 打板路径（主升/疯狂期，原6类不变）
+    threshold = PHASE_THRESHOLDS[phase]
+    if emotion_score >= threshold and tech_score >= 60:
+        return 'BOARD' if phase in ('主升', '疯狂') else 'WATCH'
+    elif emotion_score >= threshold * 0.8 and tech_score >= 70:
+        return 'CONTINUE'
+    elif emotion_score >= 60 and tech_score >= 75:
+        return 'INVERSE_BOARD'
+    elif emotion_score >= 40 and tech_score >= 50:
+        return 'WATCH'
+    elif emotion_score < 20:
+        return 'WAIT'
+    else:
+        return 'REJECT'
+```
+
+#### 缺失#4：分笔建仓算法（中优先级，容量管理执行层）
+
+**问题**：§3.4 有容量约束但无分笔建仓算法——涨停板流动性极差，必须小账本+分笔建仓。
+
+**v1.9.3 理论升级**：原 v1.9.2 用启发式 queue_decay_rate=0.15，v1.9.3 接入 [arXiv:2607.28323](https://arxiv.org/abs/2607.28323)（Barzykin 2026-07-30 Passive Market Impact）的理论框架——限价单填充概率随距 midprice 距离指数衰减 `λ(d)=λ₀·exp(-κd)`，价格对订单流不平衡的短期响应线性 `ΔP = η·OFI`。该框架在 NASDAQ+FX 实证校准，A 股涨停板场景可直接套用（涨停板=极限距 midprice 场景）。同时整合 [arXiv:2603.09164](https://arxiv.org/abs/2603.09164)（SaR Slippage-at-Risk）的前瞻性流动性风险度量——在分笔建仓前先用 SaR 评估当前订单簿可承受的冲击量。
 
 ```python
 @dataclass
-class DabanRiskParams:
-    """打板专用风控参数——容量极小、T+1 约束、炸板率高。"""
-    max_single_position: float       # 单票最大仓位（成），默认 0.5
-    max_total_position: float        # 总仓位上限（成），默认 3.0
-    stop_loss_next_day: float        # 次日止损线（低开≥3%且无大单抢筹无条件离场）
-    stop_profit_3pct: bool           # 冲高3%-5%止盈
-    stop_profit_5pct_volatility: bool  # 冲高≥5%且放量滞涨立即止盈
-    forced_exit_30min: bool          # 打板30分钟内开板且无快速回封立即止损
-    max_consecutive_loss: int        # 连续亏损上限（触发暂停）
+class DabanExecutionAlgorithm:
+    """打板分笔建仓（v1.9.2 补，v1.9.3 升级 passive impact 理论背书，v1.9.5 补 Hawkes 长记忆核）
 
+    依赖 G22 执行层。
+    理论背书（v1.9.3 升级）：
+    - arXiv:2608.00885 微结构均值回归最优执行（v1.9.2 原引）
+    - arXiv:2607.28323 Passive Market Impact 指数填充概率衰减（v1.9.3 新增）
+    - arXiv:2603.09164 SaR 前瞻性流动性风险（v1.9.3 新增）
+    理论背书（v1.9.5 补）：
+    - arXiv:2608.02002 Hawkes 长记忆核 Volterra-Riccati 近似——封单增减是自激励点过程
+      （封单吸引更多封单），一般 Hawkes 核建模封单队列爆发与衰减，补充指数核的长记忆衰减
+    理论背书（v1.9.7 补）：
+    - arXiv:2608.00988 扩散价格动力学悖论精确可解模型——平方根冲击律+Lévy-walk 框架，
+      严格证明可预测订单流下价格仍扩散（拆单不泄露信息），为批量入场拆单提供理论依据
+    """
+    # v1.9.3 升级：从启发式 0.15 改为理论校准的指数衰减率
+    fill_decay_kappa: float = 0.20       # 填充概率指数衰减率（被动 impact 校准）
+    fill_base_lambda: float = 1.0        # 基础填充强度（涨停板=封单强，基础高）
+    price_impact_eta: float = 0.001      # 线性响应系数（OFI→ΔP）
+    sar_alpha: float = 0.95              # SaR 分位数（95% 滑点风险）
+    first_batch_ratio: float = 0.6       # 封板瞬间首批60%
+    reflush_batch_ratio: float = 0.3     # 回封补量30%
+    cancel_timeout_sec: int = 30         # 30秒未成交考虑撤单
 
-def get_daban_risk_params(market_sentiment: MarketSentiment) -> DabanRiskParams:
-    """根据市场情绪调整打板风控参数。"""
-    base = DabanRiskParams(
-        max_single_position=0.5,
-        max_total_position=3.0,
-        stop_loss_next_day=0.03,
-        stop_profit_3pct=True,
-        stop_profit_5pct_volatility=True,
-        forced_exit_30min=True,
-        max_consecutive_loss=3,
-    )
+    def estimate_fill_probability(self, queue_position: int, seal_volume: int,
+                                   order_volume: int, distance_to_mid: float = 0.0) -> float:
+        """v1.9.3 升级：指数填充概率衰减（passive impact 理论）"""
+        # 基础填充强度（封单量/订单量比）
+        base_prob = min(seal_volume / max(order_volume * 10, 1), 1.0)
+        # v1.9.3: 距 midprice 指数衰减（涨停板 distance_to_mid≈涨停幅度）
+        distance_decay = math.exp(-self.fill_decay_kappa * distance_to_mid)
+        # 队列位置衰减（保留 v1.9.2 启发式，作为补充）
+        position_decay = (1 - 0.15) ** queue_position
+        return base_prob * distance_decay * position_decay
 
-    # 一致期（退潮风险高）收紧风控
-    if market_sentiment.phase == SentimentPhase.CONSENSUS:
-        base.max_single_position = 0.3
-        base.max_total_position = 2.0
-        base.stop_loss_next_day = 0.02  # 更紧止损
+    def estimate_sar(self, order_book: dict, order_volume: int) -> float:
+        """v1.9.3 新增：Slippage-at-Risk 前瞻性滑点评估"""
+        # SaR(α) = 模拟订单簿吸收 order_volume 的滑点分位数
+        # 简化版：用订单簿深度+集中度估算
+        depth = sum(level['volume'] for level in order_book.get('bid_levels', [])[:5])
+        concentration = max(level['volume'] for level in order_book.get('bid_levels', [])) / max(depth, 1)
+        # 集中度高→脆弱流动性→SaR 大
+        sar = (order_volume / max(depth, 1)) * (1 + concentration) * self.price_impact_eta
+        return sar
 
-    # 启动期放宽
-    if market_sentiment.phase == SentimentPhase.STARTING:
-        base.max_total_position = 2.0  # 启动期仓位较保守
+    def build_execution_plan(self, target_volume: int, seal_volume: int,
+                             queue_position: int, order_book: dict = None) -> list[dict]:
+        plan = []
+        # v1.9.3: 前置 SaR 检查——若 SaR 超阈值则削减 target_volume
+        if order_book:
+            sar = self.estimate_sar(order_book, target_volume)
+            if sar > 0.02:  # 滑点>2% 削减
+                target_volume = int(target_volume * 0.7)
+                plan.append({'batch': 'SAR_TRIM', 'qty': target_volume, 'reason': f'SaR={sar:.3f}>2%→削30%'})
 
-    return base
+        first_qty = int(target_volume * self.first_batch_ratio)
+        plan.append({'batch': 'FIRST', 'qty': first_qty, 'timing': 'SEAL_INSTANT',
+                     'fill_prob': self.estimate_fill_probability(queue_position, seal_volume, first_qty)})
+        reflush_qty = int(target_volume * self.reflush_batch_ratio)
+        plan.append({'batch': 'REFLUSH', 'qty': reflush_qty, 'timing': 'RESEAL',
+                     'fill_prob': self.estimate_fill_probability(queue_position + 5, seal_volume, reflush_qty)})
+        reserve_qty = target_volume - first_qty - reflush_qty
+        plan.append({'batch': 'RESERVE', 'qty': reserve_qty, 'timing': 'OPPORTUNISTIC', 'fill_prob': 0.3})
+        return plan
 ```
 
-### 3.7 板块状态分类算法（WyckoffTradingAgent 2026-07）
+#### 缺失#5：龙虎榜 PIT 处理（高优先级，未来函数致命缺陷修复）
+
+**问题**：龙虎榜盘后17:00公布，T日盘中决策若用T日龙虎榜=未来函数=回测虚高+实盘失效。
 
 ```python
-def classify_sector_state(
-    sector_returns: dict[str, float],     # 当日各板块收益率
-    sector_volumes: dict[str, float],     # 当日各板块成交量
-    sector_prev_returns: dict[str, float],# 前日各板块收益率
-) -> dict[str, str]:
-    """板块状态分类——WyckoffTradingAgent 2026-07。
+def get_dragon_tiger_pit(symbol: str, as_of_date: date, db_session) -> list[dict]:
+    """龙虎榜PIT安全查询（v1.9.2 补，as_of_date 边界断言）
 
-    A 股板块轮动实测（2025-10 至 2026-04, 申万一级 31 个行业）：
-    - Top3 板块次日重合率 14.8%（85% 概率换热门）
-    - Top3 完全不同的天数 63.2%
-    - 板块领涨只持续 1 天 46.6%
-
-    五种板块状态：
-    | 状态 | 特征 | 系统反应 |
-    | 共识高潮 | 多板块同时暴涨 | 重扣 -0.15（后3日下跌>2%概率29.8%）|
-    | 分歧回调 | 涨跌分化，领涨回调 | 微加分 +0.01 |
-    | 健康主线 | 一条明确主线持续领涨 | 加分 +0.03 |
-    | 派发风险 | 领涨板块高位放量滞涨 | 重扣 -0.10（最危险）|
-    | 中性混沌 | 涨跌互现无序 | 0 |
-
-    板块强度公式（改进版）：
-    score = 0.4×q20 + 0.3×q5 + 0.3×q3
-    （q3=3日动量，快速感知方向变化；hot_bonus 从0.05降至0.02）
+    龙虎榜盘后17:00公布，T日盘中决策只能用T-1日及之前龙虎榜。
     """
-    n_sectors = len(sector_returns)
-    if n_sectors == 0:
-        return {}
-
-    # 统计涨跌分布
-    up_count = sum(1 for r in sector_returns.values() if r > 0.02)
-    down_count = sum(1 for r in sector_returns.values() if r < -0.02)
-    flat_count = n_sectors - up_count - down_count
-
-    # 排序找领涨/领跌
-    sorted_sectors = sorted(sector_returns.items(), key=lambda x: x[1], reverse=True)
-    top_sectors = sorted_sectors[:3]
-    bottom_sectors = sorted_sectors[-3:]
-
-    # 状态判定
-    result = {}
-    for sector, ret in sector_returns.items():
-        prev_ret = sector_prev_returns.get(sector, 0)
-        vol = sector_volumes.get(sector, 0)
-        avg_vol = sum(sector_volumes.values()) / n_sectors
-
-        # 共识高潮：多板块同时暴涨
-        if up_count > n_sectors * 0.6 and ret > 0.03:
-            result[sector] = "共识高潮"
-
-        # 派发风险：领涨板块高位放量滞涨
-        elif prev_ret > 0.03 and abs(ret) < 0.01 and vol > avg_vol * 1.5:
-            result[sector] = "派发风险"
-
-        # 分歧回调：前日领涨今日回调
-        elif prev_ret > 0.03 and ret < -0.01:
-            result[sector] = "分歧回调"
-
-        # 健康主线：持续领涨
-        elif ret > 0.03 and prev_ret > 0.02:
-            result[sector] = "健康主线"
-
-        # 中性混沌
-        else:
-            result[sector] = "中性混沌"
-
-    return result
+    latest_available = as_of_date - timedelta(days=1)
+    rows = db_session.execute(
+        "SELECT * FROM dragon_tiger WHERE symbol = :symbol AND trade_date <= :latest "
+        "ORDER BY trade_date DESC LIMIT 5",
+        {'symbol': symbol, 'latest': latest_available}
+    ).fetchall()
+    # PIT断言
+    for row in rows:
+        assert row.trade_date < as_of_date, \
+            f"PIT VIOLATION: dragon_tiger trade_date={row.trade_date} >= as_of_date={as_of_date}"
+    return [dict(row) for row in rows]
 ```
 
-### 3.8 疯牛 v2.0 四维评分算法（2026-08 回测校准）
+**施工建议**：在 `youzi_relay_emotion_engine.py` 的 `score_youzi_relay` 和 `detect_quant_seat_warning` 增加 `as_of_date` 参数+PIT断言。**首批策略实盘前必须修复**。
+
+#### 缺失#6：CUSUM 信号失效监控（中优先级，信号质量持续监控）
+
+**问题**：全文档无CUSUM信号失效监控。§3.2 准确率兜底和§3.6 Kill Switch 都是事后熔断，非持续监控。2026效益崩塌背景下信号失效风险高。
+
+**v1.9.3 理论升级**：原 v1.9.2 用 CUSUM+PSI 双检测器，但 [arXiv:2607.27070](https://arxiv.org/abs/2607.27070)（Seuma 2026-07-29 7-event cascade study）证明 critical slowing down 仅在 5/7 内生级联有效，2/7 外生冲击（政策/新闻）无前置信号——**单一指标无法跨所有事件预警**。唯一跨 6/7 事件的规律：级联前 taker buy/sell ratio 方差压缩（"安静的市场订单波动"）。v1.9.3 据此新增方差压缩检测器+two-type classification（内生 vs 外生），CUSUM 保留用于内生型，方差压缩用于外生型兜底。同时整合 [arXiv:2604.20949](https://arxiv.org/abs/2604.20949)（Hiremath 2026-04 Latent Microstructure Regime）的 trigger-based detector——三态因果 DGP（stable→latent build-up→stress）+ MAX 聚合 + rising-edge + 自适应阈值，平均领先 +18.6 步且 precision=1.0。
 
 ```python
 @dataclass
-class FengniuScore:
-    """疯牛 v2.0 四维评分结果——基于回测重构的涨停捕捉模型。
+class SignalDecayMonitor:
+    """打板信号失效监控（v1.9.2 补 CUSUM+PSI，v1.9.3 升级 two-type classification+方差压缩+latent regime）
 
-    回测基础（2026-04-29→04-30，100 只涨停股）：
-    - TOP20 平均次日涨幅 +4.94%
-    - TOP20 上涨率 80.0%
-    - 触发止损率(< -5%) 0%
-    - 最强预测因子：资金强度（有信号连板率 32.7% vs 无信号 3.9%）
-
-    四维评分体系（总分 100）：
-    | 维度 | 权重 | 回测依据 |
-    | 资金强度 | 40 | 最强预测因子，有信号连板率 32.7% vs 无 3.9% |
-    | 连板辨识度 | 30 | 有连板记录连板率 26.4% vs 纯首板 8.5% |
-    | 技术形态 | 20 | 均线/布林/60日线突破综合 |
-    | 量波共振 | 10 | 量比/换手/封板时间综合 |
+    参考（v1.9.3 升级）：
+    - mathandmarkets 2026-02 CUSUM（k=0.5σ/h=4σ）——内生型级联
+    - stockalpha.ai 2026-02 Concept Drift（分级响应）
+    - arXiv:2607.27070 7-event cascade：critical slowing down 仅 5/7 有效，方差压缩跨 6/7（v1.9.3 新增）
+    - arXiv:2604.20949 latent microstructure regime：三态 DGP+trigger detector，领先 +18.6 步（v1.9.3 新增）
+    分级响应：OK→REDUCE→STOP
     """
-    symbol: str
-    capital_strength_score: float      # 维度1：资金强度（满分40）
-    consecutive_identity_score: float  # 维度2：连板辨识度（满分30）
-    technical_pattern_score: float     # 维度3：技术形态（满分20）
-    volume_wave_score: float           # 维度4：量波共振（满分10）
-    total_score: float                 # 总分（满分100）
-    signal_level: str                  # "strong" / "medium" / "weak"
-    sub_scores: dict[str, float]       # 各子项明细
+    cusum_k: float = 0.5       # 偏移容差（0.5σ）——内生型
+    cusum_h: float = 4.0       # 触发阈值（4σ）
+    cusum_S: float = 0.0       # 累积和
+    psi_alert: float = 0.1     # 轻微漂移
+    psi_critical: float = 0.25 # 严重漂移
+    # v1.9.3 新增：方差压缩检测器（外生型兜底）
+    variance_compression_threshold: float = 0.6  # 方差压缩至历史 60% 触发预警
+    variance_window: deque = field(default_factory=lambda: deque(maxlen=60))
+    baseline_window: deque = field(default_factory=lambda: deque(maxlen=30))
+    # v1.9.3 新增：two-type classification
+    cascade_type: str = 'UNKNOWN'  # ENDOGENOUS / EXOGENOUS / UNKNOWN
 
-
-def compute_fengniu_score(
-    symbol: str,
-    # 维度1：资金强度（40分）
-    main_net_inflow: float,            # 主力净流入（万）
-    capital_flow_ratio: float,         # 资金流占比（%）
-    expma_breakthrough: float,         # EXPMA成本线突破幅度（%）
-    # 维度2：连板辨识度（30分）
-    consecutive_count: int,            # 连板数
-    has_history_within_30d: bool,      # 30日内是否有涨停记录
-    # 维度3：技术形态（20分）
-    ma_aligned: bool,                  # 5>10>20 均线多头排列且收盘站上
-    boll_breakthrough: float,          # 布林上轨突破幅度（1.06×上轨=满分）
-    break_60d_line: float,             # 60日线（妖股线）突破幅度（%）
-    # 维度4：量波共振（10分）
-    volume_ratio: float,               # 量比
-    turnover_rate: float,              # 换手率
-    seal_time_minutes: float,          # 封板时间（开盘后分钟数）
-) -> FengniuScore:
-    """疯牛 v2.0 四维评分——基于回测数据重构的涨停捕捉模型。
-
-    数据来源：疯牛 v2.0（2026-05-04 发布，2026-04-29→30 回测校准）
-    核心改进 vs v1.0：移除"二次启动"（95%无效）+ 新增"连板辨识度"
-
-    信号等级：
-    - strong（≥80分）：重点关注，可介入
-    - medium（60-79分）：一般关注，盘中确认
-    - weak（<60分）：观望
-    """
-    # ===== 维度1：资金强度（40分）— 最强预测因子 =====
-    # 主力净流入（20分）
-    if main_net_inflow > 1000:
-        s_main = 20.0
-    elif main_net_inflow > 500:
-        s_main = 15.0
-    else:
-        s_main = 5.0
-
-    # 资金流占比（10分）
-    if capital_flow_ratio > 15:
-        s_flow = 10.0
-    elif capital_flow_ratio > 10:
-        s_flow = 7.0
-    else:
-        s_flow = 3.0
-
-    # EXPMA成本线突破（10分）
-    if expma_breakthrough > 5:
-        s_expma = 10.0
-    elif expma_breakthrough > 3:
-        s_expma = 7.0
-    else:
-        s_expma = 3.0
-
-    capital_score = s_main + s_flow + s_expma  # 满分40
-
-    # ===== 维度2：连板辨识度（30分）=====
-    # 连板数等级（25分）
-    if consecutive_count >= 3:
-        s_consec = 25.0
-    elif consecutive_count == 2:
-        s_consec = 20.0
-    else:  # 首板
-        s_consec = 8.0
-
-    # 涨停历史（5分）：非首板（30日内有记录）12分，纯首板3分
-    # 注意：回测显示有连板记录连板率 26.4% vs 纯首板 8.5%
-    s_history = 5.0 if has_history_within_30d else 1.0
-
-    consecutive_score = s_consec + s_history  # 满分30
-
-    # ===== 维度3：技术形态（20分）=====
-    # 均线多头排列（8分）
-    s_ma = 8.0 if ma_aligned else 0.0
-
-    # 突破布林上轨（6分）：突破 1.06×布林上轨得满分
-    s_boll = 6.0 if boll_breakthrough >= 1.06 else (3.0 if boll_breakthrough >= 1.0 else 0.0)
-
-    # 突破60日线/妖股线（6分）：突破3%以上
-    s_60d = 6.0 if break_60d_line >= 3 else (3.0 if break_60d_line > 0 else 0.0)
-
-    technical_score = s_ma + s_boll + s_60d  # 满分20
-
-    # ===== 维度4：量波共振（10分）=====
-    # 量比（4分）
-    if volume_ratio > 3:
-        s_vr = 4.0
-    elif volume_ratio > 2:
-        s_vr = 3.0
-    else:
-        s_vr = 1.0
-
-    # 换手率（3分）：3%-8%为理想区间
-    if 0.03 <= turnover_rate <= 0.08:
-        s_turn = 3.0
-    elif turnover_rate > 0.08:
-        s_turn = 1.5  # 过高换手有分歧风险
-    else:
-        s_turn = 0.5
-
-    # 封板时间（3分）：开盘即封板3分，10:30前2分
-    if seal_time_minutes <= 0:
-        s_seal = 3.0  # 开盘即封板
-    elif seal_time_minutes <= 60:  # 10:30前
-        s_seal = 2.0
-    else:
-        s_seal = 0.5  # 尾盘封板质量差
-
-    volume_score = s_vr + s_turn + s_seal  # 满分10
-
-    # ===== 总分与信号等级 =====
-    total = capital_score + consecutive_score + technical_score + volume_score
-
-    if total >= 80:
-        level = "strong"
-    elif total >= 60:
-        level = "medium"
-    else:
-        level = "weak"
-
-    return FengniuScore(
-        symbol=symbol,
-        capital_strength_score=capital_score,
-        consecutive_identity_score=consecutive_score,
-        technical_pattern_score=technical_score,
-        volume_wave_score=volume_score,
-        total_score=total,
-        signal_level=level,
-        sub_scores={
-            "main_net_inflow": s_main,
-            "capital_flow_ratio": s_flow,
-            "expma_breakthrough": s_expma,
-            "consecutive_count": s_consec,
-            "history": s_history,
-            "ma_aligned": s_ma,
-            "boll_breakthrough": s_boll,
-            "break_60d": s_60d,
-            "volume_ratio": s_vr,
-            "turnover": s_turn,
-            "seal_time": s_seal,
-        },
-    )
+    def update(self, win: bool, premium: float, taker_bs_ratio_var: float = None) -> dict:
+        self.baseline_window.append(premium)
+        # CUSUM：监控胜率累积偏移（内生型）
+        mu, sigma = 0.55, 0.5
+        self.cusum_S = max(0, self.cusum_S + ((1.0 if win else 0.0) - mu - self.cusum_k * sigma))
+        if self.cusum_S > self.cusum_h * sigma:
+            self.cascade_type = 'ENDOGENOUS'
+            return {'level': 'REDUCE', 'type': 'ENDOGENOUS',
+                    'reason': f'CUSUM={self.cusum_S/sigma:.1f}σ>4σ→仓位减半'}
+        # v1.9.3 新增：方差压缩检测器（外生型兜底，跨 6/7 事件）
+        if taker_bs_ratio_var is not None and len(self.variance_window) >= 30:
+            self.variance_window.append(taker_bs_ratio_var)
+            hist_var = np.var(list(self.variance_window)[:-10])
+            curr_var = np.var(list(self.variance_window)[-10:])
+            if curr_var < hist_var * self.variance_compression_threshold:
+                self.cascade_type = 'EXOGENOUS'
+                return {'level': 'REDUCE', 'type': 'EXOGENOUS',
+                        'reason': f'方差压缩{curr_var/hist_var:.0%}<60%→外生冲击预警+仓位减半'}
+        # PSI：监控次日溢价分布漂移
+        if len(self.baseline_window) >= 30:
+            psi = self._compute_psi()
+            if psi > self.psi_critical:
+                return {'level': 'STOP', 'reason': f'PSI={psi:.2f}>0.25→停止打板+重新校准'}
+            elif psi > self.psi_alert:
+                return {'level': 'REDUCE', 'reason': f'PSI={psi:.2f}>0.1→仓位减半'}
+        return {'level': 'OK', 'reason': '信号质量正常'}
 ```
 
-### 3.9 Smart Money 席位画像算法（quantskills 2026-06）
+#### 缺失#7：反核二次出场决策算法（低优先级，Phase 5 候选）
+
+**问题**：§3.12 有静态出场参数但缺反核后次日不同走势的分别出场决策。
 
 ```python
-from dataclasses import dataclass, field
-from enum import Enum
-
-
-class SeatType(Enum):
-    """龙虎榜席位身份标签（quantskills 2026-06 Smart Money Profiler）。"""
-    INSTITUTIONAL = "机构专用"      # 公募/社保/保险/券商自营，中长线
-    NORTHBOUND = "沪深股通"          # 北向资金，近年游资化但仍偏好龙头
-    HOT_MONEY_RETAIL = "游资营业部"  # 知名游资/散户集中营
-    QUANT = "量化席位"              # 如华鑫上海分公司
-    UNKNOWN = "未识别"
-
-
-@dataclass
-class SeatProfile:
-    """席位画像——跨期行为档案。
-
-    quantskills Smart Money Profiler（2026-06-29）核心能力：
-    把交易行为还原成"有名有姓的资金主体"，每个席位累积可持久化画像。
-
-    画像字段（基于龙虎榜历史数据累积）：
-    - 上榜频次：该席位历史出现次数
-    - 累计净买卖：历史净买入/净卖出总额
-    - 上榜后5/10/20日胜率：该席位买入后标的5/10/20日正收益比例
-    - 平均持有/退出周期：估计的持仓天数
-    - 偏好板块：该席位最常操作的行业
-    - 风格标签：合力型/独食型/一日游/假机构
-    """
-    seat_name: str                       # 席位名称
-    seat_type: SeatType                  # 身份标签
-    appearance_count: int                # 上榜频次
-    cumulative_net_buy: float            # 累计净买入（万）
-    win_rate_5d: float                   # 上榜后5日胜率
-    win_rate_10d: float                  # 上榜后10日胜率
-    win_rate_20d: float                  # 上榜后20日胜率
-    avg_hold_days: int                   # 平均持有天数
-    preferred_sectors: list[str]         # 偏好板块
-    style_tags: list[str]                # 风格标签
-
-
-@dataclass
-class DragonTigerAnalysis:
-    """龙虎榜分析结果——资金结构与席位画像综合。"""
-    symbol: str
-    # 资金结构
-    total_buy: float                     # 买方前五总额
-    total_sell: float                    # 卖方前五总额
-    net_buy: float                       # 净买入额
-    net_buy_ratio: float                 # 净买率 = 净买入 / 当日成交额
-    buy_sell_ratio: float                # 买方总额 / 卖方总额
-    # 席位分析
-    buyer_profiles: list[SeatProfile]    # 买方席位画像
-    seller_profiles: list[SeatProfile]   # 卖方席位画像
-    # 结构判定
-    structure_type: str                  # "合力型" / "独食型" / "分歧型"
-    is_fake_institutional: bool          # 是否假机构陷阱
-    smart_money_signal: str              # "strong" / "medium" / "weak" / "avoid"
-    risk_flags: list[str]                # 风险标记
-
-
-def analyze_dragon_tiger(
-    symbol: str,
-    total_turnover: float,               # 当日成交额
-    buyer_seats: list[dict],             # [{seat_name, seat_type, buy_amount, sell_amount, profile}]
-    seller_seats: list[dict],            # [{seat_name, seat_type, buy_amount, sell_amount, profile}]
-) -> DragonTigerAnalysis:
-    """龙虎榜资金结构分析——席位画像+合力型/独食型/假机构识别。
-
-    2026-08 研究整合：
-    - 净买率回测（东方财富 2026-08）：净买率>12% → 次日+3.10%，20日+5.11%
-    - 合力型 vs 独食型：买一至买五金额分布均匀（合力型）优于买一占比>50%（独食型）
-      独食型次日易因单一资金砸盘而低开
-    - 假机构陷阱特征：买入金额整齐（如888万）、尾盘突击买入、次日快速出货
-    - Smart Money Profiler（quantskills 2026-06）：席位身份标签+跨期行为画像
-
-    强势信号标准（综合）：
-    - 买方前五总额 ≥ 卖方 1.5倍
-    - 净买入额占当日成交额 > 3%
-    - 净买率 > 12% → 次日显著正收益
-
-    危险信号：
-    - 卖榜为空（可能主力拆单出货）
-    - 同一席位同时出现在买卖榜（对倒嫌疑）
-    - 量化席位扎堆（走势反人性）
-    - 假机构陷阱（整齐买入金额+尾盘突击）
-    """
-    total_buy = sum(s.get("buy_amount", 0) for s in buyer_seats)
-    total_sell = sum(s.get("sell_amount", 0) for s in seller_seats)
-    net_buy = total_buy - total_sell
-    net_buy_ratio = net_buy / total_turnover if total_turnover > 0 else 0.0
-    buy_sell_ratio = total_buy / total_sell if total_sell > 0 else float("inf")
-
-    risk_flags = []
-
-    # ===== 结构判定：合力型 / 独食型 / 分歧型 =====
-    buy_amounts = [s.get("buy_amount", 0) for s in buyer_seats]
-    top1_buy = max(buy_amounts) if buy_amounts else 0
-    top1_ratio = top1_buy / total_buy if total_buy > 0 else 0
-
-    if top1_ratio > 0.50:
-        structure_type = "独食型"
-        risk_flags.append(f"solo_buyer_dominant(top1={top1_ratio:.1%})_次日易低开")
-    elif buy_sell_ratio >= 1.5:
-        structure_type = "合力型"  # 买方分布均匀且总额显著大于卖方
-    else:
-        structure_type = "分歧型"
-        risk_flags.append(f"buy_sell_ratio_low({buy_sell_ratio:.2f})")
-
-    # ===== 假机构陷阱识别 =====
-    is_fake_inst = False
-    for seat in buyer_seats:
-        if seat.get("seat_type") == SeatType.INSTITUTIONAL:
-            buy_amt = seat.get("buy_amount", 0)
-            # 假机构特征：买入金额整齐（如888万、666万等吉利数字）
-            if buy_amt > 0:
-                # 检查是否为"整齐"金额（万元级别取整到吉利数字）
-                amt_wan = buy_amt / 10000
-                is_tidy = any(
-                    abs(amt_wan - nice) < 1.0
-                    for nice in [888, 666, 999, 520, 1314, 168]
-                )
-                # 尾盘突击：需配合时间数据，此处简化用画像标签
-                is_late_rush = "尾盘突击" in seat.get("profile", SeatProfile).style_tags if isinstance(seat.get("profile"), SeatProfile) else False
-                if is_tidy or is_late_rush:
-                    is_fake_inst = True
-                    risk_flags.append(f"fake_institutional({seat['seat_name']}, amt={amt_wan:.0f}万)")
-                    break
-
-    # ===== 危险信号检测 =====
-    # 卖榜为空（可能主力拆单出货）
-    if total_sell == 0:
-        risk_flags.append("empty_sell_list_可能拆单出货")
-
-    # 同一席位同时出现在买卖榜（对倒嫌疑）
-    buyer_names = {s["seat_name"] for s in buyer_seats}
-    seller_names = {s["seat_name"] for s in seller_seats}
-    overlap = buyer_names & seller_names
-    if overlap:
-        risk_flags.append(f"wash_trade_suspect(overlap={overlap})")
-
-    # 量化席位扎堆
-    quant_count = sum(1 for s in buyer_seats if s.get("seat_type") == SeatType.QUANT)
-    if quant_count >= 2:
-        risk_flags.append(f"quant_cluster({quant_count}席)_走势反人性")
-
-    # ===== Smart Money 信号综合判定 =====
-    if net_buy_ratio > 0.12 and buy_sell_ratio >= 1.5 and structure_type == "合力型":
-        signal = "strong"  # 净买率>12% + 合力型 → 次日显著正收益
-    elif net_buy_ratio > 0.03 and buy_sell_ratio >= 1.2:
-        signal = "medium"
-    elif is_fake_inst or "wash_trade_suspect" in str(risk_flags):
-        signal = "avoid"
-    else:
-        signal = "weak"
-
-    return DragonTigerAnalysis(
-        symbol=symbol,
-        total_buy=total_buy,
-        total_sell=total_sell,
-        net_buy=net_buy,
-        net_buy_ratio=net_buy_ratio,
-        buy_sell_ratio=buy_sell_ratio,
-        buyer_profiles=[s.get("profile") for s in buyer_seats if s.get("profile")],
-        seller_profiles=[s.get("profile") for s in seller_seats if s.get("profile")],
-        structure_type=structure_type,
-        is_fake_institutional=is_fake_inst,
-        smart_money_signal=signal,
-        risk_flags=risk_flags,
-    )
+def reflush_next_day_exit_decision(position: dict, auction_data: dict, holding_days: int) -> dict:
+    """反核二次出场决策（v1.9.2 补，Phase 5 候选）"""
+    open_premium = auction_data['open_price'] / position['cost_basis'] - 1
+    if open_premium >= 0.05:
+        return {'action': 'SELL_ALL', 'qty_ratio': 1.0, 'reason': f'反核后高开≥5%→止盈'}
+    if -0.03 < open_premium < 0.05:
+        if holding_days >= 5:
+            return {'action': 'SELL_ALL', 'qty_ratio': 1.0, 'reason': '反核持有5天→时间止盈'}
+        return {'action': 'HOLD', 'qty_ratio': 0.0, 'reason': '低开>-3%→观察等反抽'}
+    if open_premium <= -0.03:
+        return {'action': 'STOP_LOSS', 'qty_ratio': 1.0, 'reason': f'低开≤-3%→止损'}
+    if auction_data.get('is_limit_down', False):
+        return {'action': 'HOLD', 'qty_ratio': 0.0, 'reason': '继续跌停→持有等反抽'}
+    return {'action': 'HOLD', 'qty_ratio': 0.0, 'reason': '观察'}
 ```
 
-### 3.10 连板强度与一进二连板率算法
+### 3.14 施工算法第三轮深度审查补全（v1.9.3 新增，5 项缺口）
+
+> 2026-08-10 第三轮施工算法深度审查 + 8 月 8-10 日 arXiv 最新研究整合。v1.9.2 的 7 项补全覆盖了"信号识别→情绪定位→打板入场→封板判断→次日出场→风控熔断→容量管理"七大环节的**显式断裂点**，但第三轮审查发现七环节之间仍存在 5 项**隐式断裂点**——前置质量评估、持仓期间监控、回测 PIT 框架、打板时点决策、容量动态测算。本节集中补全。
+
+#### 缺失#8：打板信号前置质量评估算法（高优先级，信号识别→情绪定位断裂点）
+
+**问题**：§3.1 连板梯队识别后直接跳到 §3.2 情绪周期定位，缺少"当前连板梯队是否值得打板"的前置质量评估门控。即：低质量梯队（孤板/断层）即使情绪周期在主升期也不应打板。理论背书：[arXiv:2607.27063](https://arxiv.org/abs/2607.27063) 羊群 agent-based 模型证明——信息扩散+社会强化分离机制下，无梯队跟风的孤板属于"信息扩散不充分"，超调反转概率高。
 
 ```python
-def calc_consecutive_strength(
-    close_price: float,
-    close_price_n_days_ago: float,    # N日前收盘价
-    volume: float,                     # 当日成交量
-    sentiment_factor: float,           # 情绪因子（涨停家数/连板晋级率综合）
-    n: int = 5,                        # N日回看窗口
-) -> float:
-    """连板强度指标——量化辅助决策。
+def pre_validate_daban_signal(echelon_health: str, echelon_height: int,
+                               sector_resonance: float, follow_count: int) -> dict:
+    """打板信号前置质量评估（v1.9.3 补，梯队质量→yes/no门控）
 
-    公式（2026-04 连板算法）：
-    连板强度 = (当日收盘价 - N日前收盘价) × 成交量 × 情绪因子
-
-    用途：
-    - 衡量连板标的的动量强度
-    - 横截面排序选择最强连板标的
-    - 与疯牛评分互补：疯牛评分是离散分类，连板强度是连续排序
-
-    情绪因子计算：
-    sentiment_factor = 涨停家数 / 50 × 连板晋级率
-    （涨停50家为中性基准，晋级率反映接力意愿）
+    在 §3.2 情绪周期定位器之前调用。理论背书：arXiv:2607.27063 羊群信息扩散——
+    孤板=信息扩散不充分，超调反转概率高，不应打板。
     """
-    price_change = close_price - close_price_n_days_ago
-    strength = price_change * volume * sentiment_factor
-    return strength
+    score = 0
+    reasons = []
+    # 梯队健康度权重 40
+    health_scores = {'PERFECT': 40, 'FRACTURE': 15, 'LONE_DRAGON': 5, 'COLLAPSE': 0}
+    score += health_scores.get(echelon_health, 0)
+    if echelon_health in ('LONE_DRAGON', 'COLLAPSE'):
+        reasons.append(f'梯队{echelon_health}→质量极低')
+    # 连板高度权重 20（2板最优，>5板风险递增）
+    if echelon_height == 2:
+        score += 20
+    elif echelon_height == 1:
+        score += 10
+    elif 3 <= echelon_height <= 4:
+        score += 15
+    else:
+        score += 5
+        reasons.append(f'{echelon_height}板高度风险')
+    # 板块共振权重 20（板块跟风度）
+    score += int(sector_resonance * 20)
+    if sector_resonance < 0.3:
+        reasons.append('板块共振不足→孤板风险')
+    # 跟风股数量权重 20
+    score += min(follow_count * 4, 20)
+    if follow_count < 3:
+        reasons.append(f'跟风股{follow_count}只<3→梯队单薄')
+    # 门控决策
+    if score >= 70:
+        return {'pass': True, 'score': score, 'reason': '梯队质量合格→进入情绪周期定位'}
+    elif score >= 50:
+        return {'pass': 'CONDITIONAL', 'score': score, 'reason': f'梯队质量中等({";".join(reasons)})→降仓50%'}
+    else:
+        return {'pass': False, 'score': score, 'reason': f'梯队质量不合格({";".join(reasons)})→否决打板'}
+```
 
+#### 缺失#9：持仓期间微结构监控算法（高优先级，封板判断→次日出场断裂点）
 
-def calc_zt2lb_ratio(
-    today_2board_count: int,           # 今日二板家数（一进二成功）
-    yesterday_1board_count: int,       # 昨日首板家数
-) -> float:
-    """一进二连板率（BK_ZT2LBRatio）——市场短线情绪温度计。
+**问题**：§3.11 封板判断在 T 日盘中封板瞬间，§3.13#1 NextDayExitDecision 在 T+1 日开盘，中间 T 日封板后到收盘的持仓期间监控缺失。§3.13#2 DabanInstantCircuitBreaker 是瞬时熔断（封单崩塌 30%），非持续监控。理论背书：[arXiv:2604.20949](https://arxiv.org/abs/2604.20949) latent microstructure regime 三态 DGP（stable→latent build-up→stress）+ [arXiv:2603.09164](https://arxiv.org/abs/2603.09164) SaR 前瞻性滑点——封板后订单簿微结构变化可提前 18.6 步预警封单崩塌。
 
-    定义：BK_ZT2LBRatio = 今日二板家数 / 昨日首板家数
+```python
+@dataclass
+class HoldingPeriodMicrostructureMonitor:
+    """持仓期间微结构监控（v1.9.3 补，封板后→收盘持续监控）
 
-    2026-04 连板算法实证：
-    - 该比率骤降（如低于10%）说明市场短线情绪极差
-    - 低于10%时应停止任何打板操作
-
-    与情绪周期五阶段的关系：
-    - 冰点期：BK_ZT2LBRatio < 10%，停止打板
-    - 启动期：10%-30%
-    - 发酵期：30%-50%
-    - 一致期：>50%（但需警惕退潮）
+    理论背书：
+    - arXiv:2604.20949 latent regime：三态 DGP+trigger detector，领先 +18.6 步
+    - arXiv:2603.09164 SaR：前瞻性滑点风险，订单簿微结构领先指标
+    与 §3.13#2 DabanInstantCircuitBreaker 互补——后者是瞬时熔断，本类是持续监控+渐进降仓。
     """
-    if yesterday_1board_count == 0:
-        return 0.0
-    return today_2board_count / yesterday_1board_count
+    sar_threshold_alert: float = 0.01    # SaR>1% 预警
+    sar_threshold_reduce: float = 0.02   # SaR>2% 降仓
+    ofi_window: deque = field(default_factory=lambda: deque(maxlen=20))
+    latent_buildup_detected: bool = False
 
+    def monitor(self, position: dict, order_book: dict, seal_data: dict) -> dict:
+        # ① SaR 前瞻性滑点评估
+        depth = sum(l['volume'] for l in order_book.get('bid_levels', [])[:5])
+        concentration = max(l['volume'] for l in order_book.get('bid_levels', [])) / max(depth, 1)
+        sar = (position['qty'] / max(depth, 1)) * (1 + concentration) * 0.001
+        # ② 订单流不平衡（OFI）latent build-up 检测
+        ofi = order_book.get('ofi', 0)
+        self.ofi_window.append(ofi)
+        if len(self.ofi_window) >= 10:
+            ofi_trend = np.mean(list(self.ofi_window)[-5:]) - np.mean(list(self.ofi_window)[:-5])
+            if ofi_trend < -0.3:  # OFI 持续下降=latent build-up
+                self.latent_buildup_detected = True
+        # ③ 封单持续监控
+        seal_ratio = seal_data.get('current', 0) / max(seal_data.get('initial', 1), 1)
+        # 分级响应
+        if sar > self.sar_threshold_reduce or (self.latent_buildup_detected and seal_ratio < 0.5):
+            return {'action': 'REDUCE_50', 'reason': f'SaR={sar:.3f}>2%或latent+封单<50%→降仓50%'}
+        if sar > self.sar_threshold_alert or self.latent_buildup_detected:
+            return {'action': 'ALERT', 'reason': f'SaR={sar:.3f}>1%或latent build-up→预警'}
+        if seal_ratio < 0.7:
+            return {'action': 'ALERT', 'reason': f'封单剩余{seal_ratio:.0%}<70%→监控'}
+        return {'action': 'MONITOR', 'reason': '持仓微结构正常'}
+```
 
-def should_halt_daban(zh2lb_ratio: float, explosion_rate: float) -> tuple[bool, str]:
-    """打板熔断判定——综合一进二连板率与炸板率。
+#### 缺失#10：PIT 安全回测框架算法（高优先级，回测验证基础设施）
 
-    返回 (是否停止打板, 原因)
+**问题**：§6 待裁定提到"情绪周期准确率回测"但无具体 PIT 安全回测框架算法。§3.13#5 仅处理龙虎榜 PIT，其他数据源（情绪周期评分、连板梯队、封单数据）的 PIT 安全回测框架缺失。理论背书：[北大 Jiang & Li 理性预期模型](https://www.cfrn.com.cn/uploads/master/paper/20250709/686e72d8373a5.pdf)——打板 alpha 来自信息未完全纳入，回测必须严格 PIT 否则虚高。
 
-    熔断条件：
-    1. BK_ZT2LBRatio < 10%：市场短线情绪极差，停止打板
-    2. 炸板率 > 70%：炸板率过高，打板胜率崩塌
-    3. 两者同时触发：强制停止并复盘
+```python
+class DabanPITBacktestFramework:
+    """打板 PIT 安全回测框架（v1.9.3 补，全数据源 PIT 断言）
+
+    扩展 §3.13#5 龙虎榜 PIT 到全数据源。
+    理论背书：北大理性预期模型——打板 alpha 来自信息未完全纳入，PIT 违规=虚高 alpha。
     """
-    if zh2lb_ratio < 0.10 and explosion_rate > 0.70:
-        return True, f"dual_halt(zh2lb={zh2lb_ratio:.1%}, explosion={explosion_rate:.1%})"
-    if zh2lb_ratio < 0.10:
-        return True, f"zh2lb_too_low({zh2lb_ratio:.1%}<10%)"
-    if explosion_rate > 0.70:
-        return True, f"explosion_too_high({explosion_rate:.1%}>70%)"
-    return False, ""
+    PIT_RULES = {
+        'dragon_tiger': {'publish_time': 'T日17:00', 'available_for': 'T+1日盘中'},  # §3.13#5
+        'emotion_cycle_score': {'publish_time': '实时计算', 'available_for': 'T日盘中'},  # 当日实时可用
+        'echelon_data': {'publish_time': '实时', 'available_for': 'T日盘中'},  # 连板梯队实时
+        'seal_data': {'publish_time': '实时', 'available_for': 'T日盘中'},  # 封单实时
+        'next_day_auction': {'publish_time': 'T+1日9:25', 'available_for': 'T+1日9:25后'},  # 次日竞价
+        'news_sentiment': {'publish_time': '实时', 'available_for': 'T日盘中'},  # 新闻实时
+    }
+
+    @staticmethod
+    def assert_pit(data_source: str, data_date: date, decision_date: date) -> None:
+        """PIT 断言（v1.9.3 补，全数据源）"""
+        rule = DabanPITBacktestFramework.PIT_RULES.get(data_source)
+        if not rule:
+            return
+        # 龙虎榜：决策日只能用 T-1 日及之前
+        if data_source == 'dragon_tiger':
+            assert data_date < decision_date, \
+                f"PIT VIOLATION: dragon_tiger {data_date} >= decision {decision_date}"
+        # 次日竞价：决策日 T+1 只能用 T+1 日 9:25 后数据
+        if data_source == 'next_day_auction':
+            assert data_date <= decision_date, \
+                f"PIT VIOLATION: next_day_auction {data_date} > decision {decision_date}"
+
+    def run_backtest(self, strategy_config: dict, start: date, end: date) -> dict:
+        """PIT 安全回测主循环（v1.9.3 补）"""
+        results = []
+        for decision_date in self._trading_days(start, end):
+            # ① 数据加载+PIT 断言
+            dragon_tiger = self._load('dragon_tiger', decision_date)
+            self.assert_pit('dragon_tiger', dragon_tiger['date'], decision_date)
+            emotion = self._load('emotion_cycle_score', decision_date)
+            echelon = self._load('echelon_data', decision_date)
+            # ② 前置质量评估（§3.14 缺失#8）
+            pre_val = pre_validate_daban_signal(
+                echelon['health'], echelon['height'], echelon['sector_resonance'], echelon['follow_count'])
+            if not pre_val['pass']:
+                continue
+            # ③ 情绪周期定位（§3.2）
+            phase = emotion['phase']
+            if phase in ('退潮',) and not pre_val['pass'] == True:
+                continue
+            # ④ 双引擎决策（§3.5）
+            decision = classify_decision_v192(emotion['score'], echelon['tech_score'], phase)
+            if decision not in ('BOARD', 'CONTINUE'):
+                continue
+            # ⑤ 次日出场（§3.13#1）
+            next_day = self._next_trading_day(decision_date)
+            auction = self._load('next_day_auction', next_day)
+            self.assert_pit('next_day_auction', auction['date'], next_day)
+            exit_dec = NextDayExitDecision().decide(
+                {'cost_basis': echelon['price']}, auction, emotion, holding_days=1)
+            results.append({'date': decision_date, 'decision': decision, 'exit': exit_dec})
+        return self._summarize(results)
+```
+
+#### 缺失#11：打板时点决策算法（中优先级，入场→封板判断断裂点）
+
+**问题**：§3.5 双引擎决策输出 BOARD，但何时具体下单？是封板瞬间追板（aggressive）还是板前埋伏（passive）？§3.9 竞价三维只管 9:25 集合竞价，盘中打板时点决策缺失。理论背书：[arXiv:2607.28323](https://arxiv.org/abs/2607.28323) Passive Market Impact——限价单填充概率随距 midprice 距离指数衰减，涨停板=极限距离场景，需在"追板成交概率"vs"板前埋伏等待时间"间权衡。
+
+```python
+@dataclass
+class DabanTimingDecision:
+    """打板时点决策（v1.9.3 补，追板 vs 埋伏权衡）
+
+    理论背书：arXiv:2607.28323 passive impact——涨停板=极限距 midprice，
+    追板=市价单确定性高但冲击大，埋伏=限价单成本低但填充概率低。
+    """
+    chase_threshold: float = 0.85       # 封板概率>85%→追板（市价单）
+    ambush_threshold: float = 0.50      # 封板概率50-85%→板前埋伏（限价单）
+    max_ambush_wait_sec: int = 120      # 埋伏最长等待120秒
+    seal_strength_required: float = 0.05  # 封流比>5%才追板
+
+    def decide_timing(self, near_limit: bool, seal_strength: float,
+                      volume_surge: float, time_to_close_min: int) -> dict:
+        """打板时点决策（v1.9.3 补）"""
+        # 封板概率估算
+        seal_prob = self._estimate_seal_probability(near_limit, seal_strength, volume_surge)
+        # 决策
+        if seal_prob >= self.chase_threshold and seal_strength >= self.seal_strength_required:
+            return {'action': 'CHASE', 'order_type': 'MARKET',
+                    'reason': f'封板概率{seal_prob:.0%}>85%+封流比{seal_strength:.1%}>5%→追板'}
+        if seal_prob >= self.ambush_threshold:
+            return {'action': 'AMBUSH', 'order_type': 'LIMIT',
+                    'limit_price': '涨停价-0.01',
+                    'max_wait': self.max_ambush_wait_sec,
+                    'reason': f'封板概率{seal_prob:.0%}50-85%→板前埋伏'}
+        if time_to_close_min < 30 and seal_prob < self.ambush_threshold:
+            return {'action': 'WAIT', 'reason': f'封板概率{seal_prob:.0%}<50%+临近收盘→观望'}
+        return {'action': 'WAIT', 'reason': f'封板概率{seal_prob:.0%}<50%→观望'}
+
+    def _estimate_seal_probability(self, near_limit, seal_strength, volume_surge):
+        # 简化概率模型
+        prob = 0.5
+        if near_limit: prob += 0.2
+        prob += min(seal_strength * 5, 0.2)
+        prob += min(volume_surge * 0.1, 0.15)
+        return min(prob, 0.95)
+```
+
+#### 缺失#12：容量动态测算算法（中优先级，容量管理执行层）
+
+**问题**：§3.4 有 13 约束链但都是静态阈值，缺少基于实时流动性（封单量、委买队列、换手率）动态测算可下仓量的算法。§3.13#4 DabanExecution 是分笔建仓执行，但前置的"可下多少仓"动态测算缺失。理论背书：[arXiv:2603.09164](https://arxiv.org/abs/2603.09164) SaR——前瞻性滑点风险可直接映射到容量上限。
+
+```python
+@dataclass
+class DynamicCapacityCalculator:
+    """打板容量动态测算（v1.9.3 补，实时流动性→可下仓量）
+
+    理论背书：arXiv:2603.09164 SaR——SaR 直接映射容量上限。
+    与 §3.4 13 约束链（静态阈值）互补——本类提供动态测算。
+    """
+    max_sar_tolerance: float = 0.015        # SaR 容忍度 1.5%
+    max_seal_ratio: float = 0.10            # 单票不超过封单量 10%
+    max_float_turnover: float = 0.02        # 单票不超过流通盘 2%
+    nav_ratio_cap: float = 0.05             # C12 单票 ≤5% NAV
+
+    def calculate(self, nav: float, seal_volume: int, float_shares: int,
+                  order_book: dict, price: float) -> dict:
+        """动态测算可下仓量（v1.9.3 补）"""
+        # ① SaR 约束——滑点风险反推容量
+        depth = sum(l['volume'] for l in order_book.get('bid_levels', [])[:5])
+        concentration = max(l['volume'] for l in order_book.get('bid_levels', [])) / max(depth, 1)
+        # SaR(q) = (q/depth) * (1+concentration) * eta <= max_sar_tolerance
+        # → q <= max_sar_tolerance * depth / ((1+concentration) * eta)
+        eta = 0.001
+        sar_capacity = int(self.max_sar_tolerance * depth / max((1 + concentration) * eta, 0.001))
+        # ② 封单量约束
+        seal_capacity = int(seal_volume * self.max_seal_ratio)
+        # ③ 流通盘约束
+        float_capacity = int(float_shares * self.max_float_turnover)
+        # ④ NAV 约束（C12）
+        nav_capacity = int(nav * self.nav_ratio_cap / price)
+        # 取最小值
+        capacities = {
+            'sar': sar_capacity, 'seal': seal_capacity,
+            'float': float_capacity, 'nav': nav_capacity
+        }
+        binding = min(capacities, key=capacities.get)
+        return {
+            'max_qty': capacities[binding],
+            'binding_constraint': binding,
+            'all_constraints': capacities,
+            'reason': f'binding={binding}({capacities[binding]})→可下{capacities[binding]}股'
+        }
 ```
 
 ## 4. 考虑过的替代方案
 
-| 方案 | 描述 | 拒绝理由 |
-|---|---|---|
-| **传统打板** | 不筛选情绪周期，逢板就打 | 2026 炸板率 68%，传统打板胜率崩塌 |
-| **高频打板** | 微秒级 ML 捕捉盘口特征 | 2026-04 新规监控多账户联动；需 co-location+Level-2，MVP 不可行 |
-| **融券 T+0 砸板** | 量化融券 T+0 套利 | 2024-2025 限融政策约束；A 股融券标的有限 |
-| **大资金打板** | 打板策略承载主资金 | 容量极小（单票几万~几十万），必须小账本独立运行 |
-| **连续顶一字** | 连续涨停板排队 | 2026 连板高度下降，监管介入使"断板反包/趋势上行"取代连续顶一字 |
+### 4.1 过度工程审查：7 维评分卡 + 6 因子 + 6 维强度是否维度过多
+
+**裁定**：不过度工程。19 维通过三引擎共振 AND 逻辑降维，非加法堆叠。**辛普森悖论警示**（华安证券 2026-03，32,615 样本，年化 18.21%）：单因子有效≠多因子组合有效。首批策略回测时做多因子联合检验。
+
+### 4.2 替代方案：单引擎 vs 双引擎
+
+| 方案 | 结论 |
+|---|---|
+| 单引擎（纯情绪） | 不采用——情绪信号噪声大 |
+| **双引擎（情绪+技术）** | **采用**——互验降噪 |
+| 三引擎（+资金） | §3.3 三引擎共振用于龙头识别，非全量打板 |
+
+### 4.3 替代方案：情绪周期阶段数
+
+**采用 4+1 阶段**（冰点捕捉+退潮条件触发），3 阶段粒度不够，6+阶段过拟合风险。
 
 ## 5. 上限定义
 
-| 上限 | 值 | 理由 |
+### 5.1 系统上限
+
+| 维度 | 上限 | 依据 |
 |---|---|---|
-| **单票仓位** | ≤ 0.5 成 | 容量极小 + 炸板率高 |
-| **总仓位** | ≤ 3 成 | 打板是小账本策略，不超过总资金的 30% |
-| **次日止损** | 低开≥3% 且无大单抢筹 → 离场 | 黄一鸣 2026-04 通用规则 |
-| **30 分钟开板止损** | 打板 30 分钟内开板且无快速回封 → 立即止损 | 黄一鸣 2026-04 |
-| **连续亏损暂停** | 3 次连续亏损 → 暂停打板 1 天 | 防止情绪化连续打板 |
+| 单票仓位 | ≤5% NAV（C12） | `position_sizing_engine.py` |
+| sleeve 容量 | 50-200 万（待校准） | [20 §2.2] + 流动性约束 |
+| 持仓周期 | 1-3 天 | T+1 约束 + 情绪周期 |
+| 并发持仓数 | ≤10 只 | 小账本约束 |
+| 回撤上限 | 25% 清仓（Level 4） | [30 §2.5] |
+| 单日亏损上限 | 4% 组合 / 5% 单策略 / 6% Kill Switch | [30 §2.5] |
+
+### 5.2 演进路径
+
+- **Phase 1（当前，production）**：7 维评分卡 + 6 因子情绪 + 6 维强度 + 双引擎融合
+- **Phase 2（回测微调+合规增强）**：情绪周期准确率回测 + 助攻梯队权重修正 + 涨停时间分层 + 换手率黄金标准 + ✅程序化新规合规层（40号v2.6.0已闭合）+ 中位股死亡池 + 梯队健康度四档 + 量化接力阈值矩阵
+- **Phase 3（容量校准+分笔建仓）**：sleeve 容量校准 + convergence_window 实测 + 分笔建仓算法（§3.13 缺失#4，依赖G22）+ 容量动态测算（§3.14 缺失#12，SaR 反推容量上限）
+- **Phase 4（最终升级）**：模型学权重（参考 fibalgo 47 特征路线）
+- **Phase 5（跌停端反抽+ML破板预测+量游共振协同）**：跌停板反抽/反核（§3.12+§3.13缺失#3/#7）+ CatBoost Tick 级破板预测 ML + 量游共振协同视角 + Level2 订单簿不平衡封单分析（§3.11 封单双指标升级路径）+ **v1.9.4 补**：Siamese LOB 架构（[arXiv:2505.22678](https://arxiv.org/abs/2505.22678) Yang et al. 2025，A 股 14 军工股实证，利用 ask-bid 对称性+MHA-LSTM，超 75% 基线提升）+ Du 开盘信号分布混合模型（[arXiv:2506.06356](https://arxiv.org/abs/2506.06356) Du 2026 USTC，A 股 5 模块框架 15.2% 年化/Sharpe 1.87，开盘竞价 mixture model 识别套利+市值流动性动态仓位+grid-search 止盈止损）+ **v1.9.5 补**：QFCQT 混沌门控 Quantformer（[arXiv:2608.07363](https://arxiv.org/abs/2608.07363) Lin et al. 2026-08-07，Lee 振荡器激活模块+平滑-混沌门控融合，8 族 Lee 振荡器软叠加，A 股股指直接测试，高波动场景 ETTh2 MSE 相对 HAT 提升 43.9%，适合情绪周期冰点→主升→退潮突变检测，远期 ML 架构候选）+ **v1.9.7 补**：速度域签名封板真伪判断（[arXiv:2608.05373](https://arxiv.org/abs/2608.05373) Chen & Hybinette 2026-08-05，速度而非水平域检测 pump-and-crash 模式，price velocity 签名区分"真封板"vs"诱多封"，HMM regime 条件检测+SHAP 可解释归因，印度 BANKNIFTY 10/10 操纵日恢复+AUC=0.91。A 股连板炸板率 70% 环境下速度签名比传统封单量/换手率水平指标更鲁棒，填补"盘中封板质量实时评估"缺口。负面结果启示：HMM regime 用于条件检测是用召回率换精确率，单纯状态划分不够需结合速度签名条件触发）
+- **Phase 6（v1.9.3 新增：施工算法深度补全+微结构升级）**：打板信号前置质量评估（§3.14 缺失#8）+ 持仓期间微结构监控（§3.14 缺失#9，latent regime+SaR）+ PIT 安全回测框架（§3.14 缺失#10）+ 打板时点决策（§3.14 缺失#11，追板vs埋伏）+ §3.13#4 DabanExecution 升级 passive impact 指数填充概率 + §3.13#6 SignalDecayMonitor 升级 two-type classification+方差压缩检测器
+
+### 5.3 为何是上限
+
+打板容量上限由 A 股连板标的流动性决定（大资金进场即冲击成本爆炸）。持仓周期上限由 T+1 + 情绪周期退潮检测决定。回撤上限取行业基准下限因打板波动远大于多因子。
 
 ## 6. 待裁定
 
-| 项 | 暂缓理由 | 重评条件 |
+| 暂缓项 | 暂缓理由 | 重评条件 |
 |---|---|---|
-| **量化 ML 盘口特征** | 2026-04 新规监控多账户联动 | Phase 2+ 合规框架就绪后 |
-| **趋势龙模式** | 2026 新特点但模式未定型 | 积累 3 月实盘数据后评估 |
-| **板块强度 0.4q20+0.3q5+0.3q3** | WyckoffTradingAgent 实测有效 | MVP 阶段先用，实盘后校准权重 |
+| 情绪周期定位器准确率回测 | production 跑但未做历史准确率评估 | G07 + [30 §6.3] 施工前必做 |
+| 打板×事件驱动相关性实测 | 退潮期相关性可能飙升 | G07 施工前必做（[28 §3.5]） |
+| sleeve 容量精确测算 | 当前为估算值 | 首批策略实盘后校准 |
+| 助攻梯队权重 battle_map 修正 | 源码10分/battle_map 15分 | reconciler fix-in-place |
+| `budget_change_handler.py` 填充 | 骨架待填充 | 首批 pipeline 就绪后施工 |
+| 涨停时间分层量化 | 22-C 封板时间未按时段分层 | 首批策略回测后实施 |
+| 换手率黄金标准 | 22-C 未含换手率维度 | 首批策略回测后实施 |
+| ✅程序化新规合规层 | 40号 v2.6.0 已闭合 | 24号交叉引用同步 |
+| ✅中位股死亡池修正 | v1.5.0 已补 | 首批策略回测验证 |
+| ✅梯队健康度四档判定 | v1.5.0 已补 | 准确率回测时评估 |
+| 量化接力阈值矩阵 | 无市场情绪绝对阈值前置门控 | 首批策略回测后校准 |
+| ✅龙虎榜量化席位过滤 | v1.7.0 已补 | 首批策略回测后校准 |
+| ✅纸老虎识别 | v1.7.0 已补 | 首批策略回测后校准 |
+| ✅分级梯队晋级率 | v1.7.0 已补 | 准确率回测时评估 |
+| 2026-07-06交易新规阈值更新 | ±12%→±20% | G22 执行层施工时同步 |
+| ✅封单结构双指标 | v1.8.0 已补 | 首批策略回测后校准 |
+| ✅次日溢价三维预测 | v1.8.0 已补 | 首批策略回测后校准 |
+| ✅回封生死线决策 | v1.8.0 已补 | 首批策略回测后校准 |
+| ✅龙虎榜量化席位双阈值 | v1.8.0 已补 | 首批策略回测后校准 |
+| legulegu 六指标情绪评分 | 首封时间线性映射 | 远期参考 |
+| ✅炸板率板块地位分层 | v1.9.0 已补 | 首批策略回测验证 |
+| 跌停板反抽/反核策略 | §3.12+§3.13缺失#3/#7 | Phase 5 候选 |
+| 辛普森悖论多因子联合检验 | §4.1 补 | 首批策略回测时做 |
+| CatBoost Tick 级破板预测 | Phase 5 候选 | 需 Tick 数据基础设施 |
+| 量游共振退潮三信号 | Phase 5 候选 | 首批策略回测验证 |
+| ✅次日出场完整决策 | §3.13缺失#1 v1.9.2补 | **首批实盘前必做** |
+| ✅打板专用瞬时风控 | §3.13缺失#2 v1.9.2补 | **首批实盘前必做** |
+| ✅龙虎榜PIT处理 | §3.13缺失#5 v1.9.2补 | **首批实盘前必须修复** |
+| ✅CUSUM信号失效监控 | §3.13缺失#6 v1.9.2补 | 首批实盘后即需 |
+| ✅打板vs反核切换 | §3.13缺失#3 v1.9.2补 | Phase 5 |
+| 分笔建仓算法 | §3.13缺失#4 v1.9.2补 | 依赖G22，Phase 3 |
+| ✅反核二次出场 | §3.13缺失#7 v1.9.2补 | Phase 5 |
+| Liquidation cascade 机理 | §3.2 v1.9.2补 arXiv:2608.03616 | 远期理论参考 |
+| Public Trader Identity | §3.10 v1.9.2补 arXiv:2608.04373 | 与量化席位预警联动 |
+| 微结构均值回归执行 | §3.13缺失#4 v1.9.2补 arXiv:2608.00885 | 与分笔建仓联动 |
+| ✅打板理性预期理论根基 | §3.2 v1.9.3补 北大Jiang&Li | 远期理论参考 |
+| ✅Passive impact 指数填充概率 | §3.13#4 v1.9.3升级 arXiv:2607.28323 | 与分笔建仓联动 |
+| ✅SaR 前瞻性滑点风险 | §3.13#4+§3.14#9/#12 v1.9.3补 arXiv:2603.09164 | 与持仓监控+容量测算联动 |
+| ✅Two-type classification 级联 | §3.13#6 v1.9.3升级 arXiv:2607.27070 | 与CUSUM信号失效监控联动 |
+| ✅Latent microstructure regime | §3.14#9 v1.9.3补 arXiv:2604.20949 | 与持仓期间监控联动 |
+| ✅7-event cascade 异质性 | §3.13#6 v1.9.3补 arXiv:2607.27070 | 与方差压缩检测器联动 |
+| ✅打板信号前置质量评估 | §3.14#8 v1.9.3补 | **首批实盘前必做** |
+| ✅持仓期间微结构监控 | §3.14#9 v1.9.3补 | **首批实盘前必做** |
+| ✅PIT 安全回测框架 | §3.14#10 v1.9.3补 | **首批回测前必做** |
+| 打板时点决策 | §3.14#11 v1.9.3补 | Phase 3 |
+| 容量动态测算 | §3.14#12 v1.9.3补 | Phase 3 |
+| A股价格笼子政策实证 | §3.7 v1.9.3补 Frontiers Physics 2025 | 与40号价格笼子联动 |
+| ✅QFCQT 混沌门控 Quantformer | §5.2 Phase 5 v1.9.5补 arXiv:2608.07363 | 远期ML架构候选，A股股指测试 |
+| ✅Hawkes 长记忆核封单动力学 | §3.13#4 理论背书 v1.9.5补 arXiv:2608.02002 | 与Passive Impact联动 |
+| ✅QLoRA 情感因子负面结果警示 | §6 v1.9.5补 arXiv:2608.04200 | 情感因子需经济验证非语言学指标 |
+| ✅速度域签名封板真伪判断 | §5.2 Phase 5 v1.9.7补 arXiv:2608.05373 | 速度域优于水平域，填补盘中封板质量评估缺口 |
+| ✅扩散价格动力学悖论 | §3.13#4 理论背书 v1.9.7补 arXiv:2608.00988 | 拆单不泄露信息的精确理论依据 |
 
-## 7. 待定问题（讨论要点对齐）
+## 7. 待定问题（讨论要点）
 
-- [x] ① 连板梯队识别 → §3.3 `identify_consecutive_ladder`
-- [x] ② 情绪周期定位器（BM-SEL-23-B）→ §3.2 `evaluate_market_sentiment` 五阶段
-- [x] ③ 主升龙头识别 → §3.5 `identify_leader_pattern` 四种模式
-- [x] ④ 打板容量极小（单票几万~几十万）→ §5 上限 + 必须小账本
-- [x] ⑤ 双引擎融合在此策略内部（BM-SEL-25）→ §3.4 四维筛选+§3.7 板块状态分类
-- [x] ⑥ 打板专用风控参数 → §3.6 `get_daban_risk_params`
-- [x] ⑦ T+1 约束下的打板时序 → §3.4 分阶段策略（2板/3板+）+ 次日止盈止损
+- [x] ① 连板梯队识别 → §3.1
+- [x] ② 情绪周期定位器 → §3.2
+- [x] ③ 主升龙头识别 → §3.3
+- [x] ④ 打板容量极小 → §3.4
+- [x] ⑤ 双引擎融合 → §3.5（7类决策）
+- [x] ⑥ 打板专用风控 → §3.6（四层风控+§3.13瞬时风控）
+- [x] ⑦ T+1 时序 → §3.7（+§3.13完整出场决策）
+- [x] ⑧ 助攻梯队权重 → §3.8
 
 ## 8. 引用
 
 - [00_index_trading_decision](00_index_trading_decision.md) §3 G08
-- [20_first_batch_strategies](20_first_batch_strategies.md)（G04 产出物，必先读）
-- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §4.3 / §6.3
-- [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md)（G21 情绪周期）
-- battle_map_05_stock_selection（BM-SEL-22~25 当前状态快照）
-- **2026-08 研究引用**：
-  - 东方财富 (2026-08-03) "8 月游资彻底换打法" — 炸板率 68%、次日溢价 1.7%
-  - 黄一鸣 (2026-04-20) "龙头战法｜量化连板接力规则" — 四维筛选标准
-  - 投科投资 (2026-04-22) 雪球 "量化时代情绪龙头战法完整指南" — 五阶段+四模式
-  - 溪江随笔 (2026-07-08) 雪球 "龙头股投资的细节把握"
-  - YoungCan-Wang/WyckoffTradingAgent Wiki (2026-07-23) — 板块状态分类+板块强度公式
-  - 2026-04 程序化交易新规 — 多账户联动实时监控
+- [20_first_batch_strategies](20_first_batch_strategies.md) §2.2 打板 sleeve
+- [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) §3.1-3.4/§5.2/§6
+- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.4/§2.5/§6.3/§7.3
+- [40_execution_broker](40_execution_broker.md) §决策⑫（v2.6.0）
+- [41_buy_flow](41_buy_flow.md) §5.2 / [42_sell_flow](42_sell_flow.md) §3.8
+- [15_data_feature_layer_spec](15_data_feature_layer_spec.md)
+- battle_map_05_stock_selection（BM-SEL-22~25）
+- **arXiv**：2607.27063 羊群agent-based / 2608.03616 liquidation cascade / 2608.04373 Public Trader Identity / 2608.00885 微结构均值回归 / 2607.05141 Square-Root Impact / 2607.28323 Passive Market Impact（v1.9.3补）/ 2603.09164 SaR Slippage-at-Risk（v1.9.3补）/ 2607.27070 7-event cascade two-type（v1.9.3补）/ 2604.20949 Latent Microstructure Regime（v1.9.3补）/ 1503.03548 A股价格限制统计性质（v1.9.3补）/ 2505.22678 Siamese LOB A股实证（v1.9.4补）/ 2506.06356 Du A股5模块框架15.2%年化（v1.9.4补）/ 2608.07363 QFCQT 混沌门控 Quantformer A股股指测试（v1.9.5补）/ 2608.02002 Hawkes 长记忆核 Volterra-Riccati 封单动力学（v1.9.5补）/ 2608.04200 QLoRA 情感因子负面结果 28组合无一显著（v1.9.5补）/ **2608.05373 速度域签名封板真伪判断 AUC=0.91（v1.9.7补）/ 2608.00988 扩散价格动力学悖论 Lévy-walk 精确可解（v1.9.7补）**
+- **券商/社区**：雪球炸板率2026-07 / 华安涨停板Alpha2026-03 / caifuhao连板复盘2026-08 / 头条量化vs游资2026-08 / CSDN集合竞价2026-08 / 叩富问财封单避坑2026-07 / legulegu情绪评分2026-07 / mathandmarkets CUSUM2026-02 / stockalpha.ai Concept Drift2026-02 / quant67执行算法2026-05 / **国泰海通高频选股因子周报2026-08-10（v1.9.4补，开盘后买入意愿强度因子2026多空16.29%+尾盘成交占比13.58%，打板竞价+尾盘时段行为因子实证背书）**
+- **学术期刊**：北大Jiang&Li打板理性预期模型（v1.9.3补）/ Frontiers in Physics 2025-07 A股价格笼子政策实证（v1.9.3补）/ Journal of Forecasting 2025-03 A股价格限制可预测性 ML 66%（v1.9.3补）
 
 ## 9. 修订记录
 
-| 日期 | 版本 | 改动 | 理由 |
-|---|---|---|---|
-| 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行 |
-| 2026-08-10 | 1.0.0 | 落地 spec 定稿 | 情绪周期五阶段+连板梯队+龙头四模式+四维接力筛选+板块状态分类+专用风控算法化；整合 2026-08 研究（炸板率68%/黄一鸣四维/情绪周期/WyckoffTradingAgent 板块分类） |
-| 2026-08-10 | 1.1.0 | 新增 §3.8-§3.10 | 疯牛v2.0四维评分（资金强度40+连板辨识度30+技术形态20+量波共振10，回测TOP20次日+4.94%）；Smart Money席位画像（quantskills 2026-06，合力型/独食型/假机构识别）；连板强度公式+一进二连板率BK_ZT2LBRatio（<10%停止打板）；龙虎榜净买率回测（>12%次日+3.10%） |
+| 日期 | 版本 | 变更摘要 |
+|---|---|---|
+| 2026-08-09 | 0.1.0 | 骨架创建 |
+| 2026-08-10 | 1.0.0 | 8 项讨论要点全部对齐落定，status→active |
+| 2026-08-10 | 1.5.0 | §3.1 classify_echelon_health 四档 + score_consecutive_height_with_death_pool |
+| 2026-08-10 | 1.6.0 | §3.9 竞价三维100分 |
+| 2026-08-10 | 1.7.0 | §3.10 量化vs游资三次炸板回封+纸老虎+分级晋级率 |
+| 2026-08-10 | 1.8.0 | §3.2 羊群agent-based机理 + §3.5 v1.8.2 伪代码同步 + §3.11 封单双指标+预测+回封+席位预警 |
+| 2026-08-10 | 1.9.0 | §2.1 效益崩塌硬数据 + §3.1 炸板率分层 + §3.12 反核策略 + §4.1 辛普森悖论 + §5.2 Phase 5 |
+| 2026-08-10 | 1.9.1 | 状态行版本同步 + §6 程序化新规交叉引用（40号v2.6.0已闭合） |
+| 2026-08-10 | 1.9.2 | **施工算法完整性深度审查——7项缺失补全**：§3.13 新增①next_day_exit_decision() ②DabanInstantCircuitBreaker ③classify_decision_v192 第7类REFLUSH_DIVE ④DabanExecutionAlgorithm ⑤get_dragon_tiger_pit() PIT断言 ⑥SignalDecayMonitor CUSUM+PSI ⑦reflush_next_day_exit_decision()。§3.2补liquidation cascade(arXiv:2608.03616)。§3.10补Public Trader Identity(arXiv:2608.04373)。§3.13缺失#4补微结构均值回归(arXiv:2608.00885)。全网搜索8月3-10日92篇arXiv q-fin：无A股涨停板专门新论文。延续轻量优先+不替换已定决策原则 |
+| 2026-08-10 | 1.9.3 | **第三轮施工算法深度审查——5项缺口补全+2项算法升级+理论背书补**：§3.14 新增⑧pre_validate_daban_signal 前置质量评估 ⑨HoldingPeriodMicrostructureMonitor 持仓期间微结构监控 ⑩DabanPITBacktestFramework 全数据源PIT回测框架 ⑪DabanTimingDecision 打板时点决策（追板vs埋伏）⑫DynamicCapacityCalculator 容量动态测算。§3.13#4 DabanExecution 升级 passive impact 指数填充概率(arXiv:2607.28323)+SaR(arXiv:2603.09164)。§3.13#6 SignalDecayMonitor 升级 two-type classification(arXiv:2607.27070)+方差压缩检测器+latent regime(arXiv:2604.20949)。§3.2补北大Jiang&Li打板理性预期理论根基+liquidation cascade 88%/30min/63%实证细节。全网搜索8月8-10日arXiv q-fin+学术期刊：新增5篇arXiv+3篇学术期刊。延续轻量优先+不替换已定决策原则 |
+| 2026-08-10 | 1.9.4 | **第四轮最新研究整合——Phase 5 ML增强+A股行为因子实证背书**：§5.2 Phase 5 补 Siamese LOB 架构（arXiv:2505.22678 A股14军工股 ask-bid 对称性+MHA-LSTM 超75%基线提升）+ Du 开盘信号分布混合模型（arXiv:2506.06356 A股5模块框架 15.2%年化/Sharpe 1.87，开盘竞价mixture model+市值流动性动态仓位+grid-search止盈止损）。§8 引用补国泰海通高频因子周报2026-08-10（开盘后买入意愿强度因子2026多空16.29%+尾盘成交占比13.58%，打板竞价+尾盘时段行为因子实证背书）。12项施工算法已完整覆盖信号→定位→入场→封板→出场→风控→容量全流程，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
+| 2026-08-10 | 1.9.5 | **第五轮最新研究整合——Phase 5 ML架构+封单动力学+情感因子警示**：§5.2 Phase 5 补 QFCQT 混沌门控 Quantformer（arXiv:2608.07363 A股股指直接测试，Lee振荡器+平滑-混沌门控融合，高波动场景MSE相对HAT提升43.9%，适合情绪周期突变检测，远期ML架构候选）。§3.13#4 DabanExecution 理论背书补 Hawkes 长记忆核（arXiv:2608.02002 Volterra-Riccati近似，封单Hawkes动力学一般核建模，与arXiv:2607.28323 Passive Impact同作者，补充长记忆衰减）。§6 待裁定补 QLoRA情感因子负面结果警示（arXiv:2608.04200：28个模型-期限组合Newey-West+FDR校正后无一显著，情感分类准≠可交易，A股情感因子需经济验证非语言学指标）。12项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
+| 2026-08-10 | 1.9.6 | **第六轮字段填充断裂点审查——§3.13#1 NextDayExitDecision 补 classify_position_status() 方法**：decide() 依赖 consecutive_board（连板晋级）和 exploded（炸板）两字段但此前无填充算法。本方法形式化：①连板晋级判断=T+1日涨停收盘+封单存在(封流比>0.1%)+梯队非孤板(LONE_DRAGON/COLLAPSE排除) ②炸板判断=T+1日盘中触及涨停(最高价≥涨停价×0.999)但未封住(收盘<涨停价)。与§3.1 classify_echelon_health联动(梯队健康度影响晋级有效性)+§3.13#2 DabanInstantCircuitBreaker联动(炸板触发瞬时风控)。延续轻量优先+不替换已定决策原则 |
+| 2026-08-10 | 1.9.7 | **第七轮最新研究整合——速度域签名封板真伪判断+扩散价格动力学悖论**：§5.2 Phase 5 补速度域签名封板真伪判断（arXiv:2608.05373 Chen&Hybinette 2026-08-05，速度而非水平域检测pump-and-crash，price velocity签名区分"真封板"vs"诱多封"，HMM regime条件检测+SHAP可解释归因，印度BANKNIFTY 10/10操纵日恢复+AUC=0.91，A股连板炸板率70%环境下速度签名比传统封单量/换手率水平指标更鲁棒，填补"盘中封板质量实时评估"缺口。负面结果启示：HMM regime用于条件检测是用召回率换精确率，单纯状态划分不够需结合速度签名条件触发）。§3.13#4 DabanExecution理论背书补扩散价格动力学悖论（arXiv:2608.00988 Sato et al. 2026-08-02，平方根冲击律+Lévy-walk框架精确可解，严格证明可预测订单流下价格仍扩散=拆单不泄露信息，为批量入场拆单提供理论依据）。12项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |

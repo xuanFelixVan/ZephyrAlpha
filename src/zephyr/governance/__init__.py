@@ -51,7 +51,6 @@ Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
 注意：phase_check_registry 和 phase_manager 由调用方直接导入，不从 __init__ 重导出（避免循环依赖）。
 """
 
-
 try:
     import zephyr.gov_drift.drift_detector as drift_detector_mod
 except (ImportError, RuntimeError):
@@ -61,7 +60,6 @@ try:
 except (ImportError, RuntimeError):
     escalation_protocol = None
 try:
-    from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
     from zephyr.gov_enforcement.behavioral_admission.admission_response import (
         AdmissionResponse,
         AdmissionResponseBuilder,
@@ -73,6 +71,7 @@ try:
         Learning,
         ProposedUpdate,
     )
+    from zephyr.governance.architecture_governance.path_resolver import PathResolution, PathResolver
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（behavioral_admission -> audit_trail 循环链）
     pass
@@ -81,19 +80,23 @@ except (ImportError, RuntimeError):
 # 需要 zephyr.governance.event_hook 和 zephyr.governance.drift_fix 模块路径。
 # 通过 sys.modules 注册别名指向 canonical 真源（ops_governance/infrastructure）。
 import sys as _sys_for_shim
+
 try:
     from zephyr.governance.ops_governance import event_hook as _event_hook_shim
-    _sys_for_shim.modules['zephyr.governance.event_hook'] = _event_hook_shim
+
+    _sys_for_shim.modules["zephyr.governance.event_hook"] = _event_hook_shim
 except (ImportError, RuntimeError):
     pass
 try:
     from zephyr.infrastructure.rollback import drift_fix as _drift_fix_shim
-    _sys_for_shim.modules['zephyr.governance.drift_fix'] = _drift_fix_shim
+
+    _sys_for_shim.modules["zephyr.governance.drift_fix"] = _drift_fix_shim
 except (ImportError, RuntimeError):
     pass
 try:
     from zephyr.governance.escalation import result_types as _result_types_shim
-    _sys_for_shim.modules['zephyr.governance.result_types'] = _result_types_shim
+
+    _sys_for_shim.modules["zephyr.governance.result_types"] = _result_types_shim
 except (ImportError, RuntimeError):
     pass
 
@@ -118,51 +121,51 @@ def __getattr__(name):
 # ARCH-036: 路径漂移防御——部分模块已被重构到子目录，直接 import 可能失败。
 # 用 try/except 包裹避免单个 import 失败阻塞整个包初始化（符合 __getattr__ 延迟导入设计）。
 try:
-    from zephyr.gov_audit.agent_signer import AgentSigner
-    from zephyr.governance.data_governance.akshare_provider import AkshareQuoteProvider
-    from zephyr.factor.factor_base import FactorMeta
-    from zephyr.gov_code_quality.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
-    from zephyr.governance.capability_lookup import CapabilityLookup
-    from zephyr.gov_code_quality.code_dedup.canary_manager import CanaryFile
-    from zephyr.gov_audit.changelog_manager import ChangeImpact
-    from zephyr.infrastructure.asset_inventory.classifier import Classifier
-    from zephyr.gov_code_quality.code_dedup.cli import main
     import zephyr.gov_code_quality.code_dedup.cli as cli
+    from zephyr.factor.factor_base import FactorMeta
+    from zephyr.gov_audit.agent_signer import AgentSigner
+    from zephyr.gov_audit.changelog_manager import ChangeImpact
     from zephyr.gov_audit.code_archaeology import BlameRecord
-    from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
     from zephyr.gov_audit.compliance_map import ComplianceFramework
-    from zephyr.governance.architecture_governance.construction_verifier import ConstructionVerifier
     from zephyr.gov_audit.corporate_actions import CorporateActionType
-    from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
-    from zephyr.governance.persistence.database_service import DatabaseService
-    from zephyr.infrastructure.asset_inventory.dependency import DependencyNode
-    from zephyr.gov_enforcement.rule_enforcement.dlq_retry_policy import RetryResult
     from zephyr.gov_audit.dora_metrics import DORATargets
     from zephyr.gov_audit.feedback_self_audit import FeedbackNode
     from zephyr.gov_audit.finding_ingest import IngestResult
-    from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
-    from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
     from zephyr.gov_audit.glossary_matrix import GlossaryEntry
-    from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
     from zephyr.gov_audit.kb_gate import KBWriteCheckResult
-    from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
-    from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
-    from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
-    from zephyr.infrastructure.asset_inventory.models import AssetType
-    from zephyr.gov_code_quality.code_dedup.phase_executor import PhaseStatus
-    from zephyr.governance.engine.pipeline_base import ExperimentConfig
     from zephyr.gov_audit.privacy import PIICategory
-    from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
-    from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryParseError
     from zephyr.gov_audit.sbom_generator import LicenseType
-    from zephyr.governance.semantic_audit.self_healer import SelfHealError
-    from zephyr.governance.semantic_audit.self_health import SLIResult
-    from zephyr.governance.audit.snapshot_manager import SnapshotError
     from zephyr.gov_audit.spec_auditor import record_agent_spec
     from zephyr.gov_audit.supply_chain import PackageRecord
-    from zephyr.governance.ops_governance.token_budget import PoolLevel
-    from zephyr.infrastructure.asset_inventory.trust_anchor import TrustLevel
     from zephyr.gov_audit.wqa_scorer import WQAScore
+    from zephyr.gov_code_quality.code_dedup.canary_manager import CanaryFile
+    from zephyr.gov_code_quality.code_dedup.cli import main
+    from zephyr.gov_code_quality.code_dedup.phase_executor import PhaseStatus
+    from zephyr.gov_code_quality.code_dedup.trackers.blind_spot_tracker import BlindSpotStatus
+    from zephyr.gov_enforcement.behavioral_admission.gate_event_adapter import GateEventAdapter
+    from zephyr.gov_enforcement.rule_enforcement.dlq_retry_policy import RetryResult
+    from zephyr.governance.architecture_governance.construction_verifier import ConstructionVerifier
+    from zephyr.governance.architecture_governance.llm_impact_analyzer import RiskLevel
+    from zephyr.governance.audit.snapshot_manager import SnapshotError
+    from zephyr.governance.capability_lookup import CapabilityLookup
+    from zephyr.governance.data_governance.akshare_quote_provider import AkshareQuoteProvider  # noqa: import-integrity  git rename staging boundary false-positive, file exists at line 69
+    from zephyr.governance.engine.pipeline_base import ExperimentConfig
+    from zephyr.governance.ops_governance.token_budget import PoolLevel
+    from zephyr.governance.persistence.database_service import DatabaseService
+    from zephyr.governance.semantic_audit.fix_result_prioritizer import PrioritizedFixResult
+    from zephyr.governance.semantic_audit.self_healer import SelfHealError
+    from zephyr.governance.semantic_audit.self_health import SLIResult
+    from zephyr.infrastructure.asset_inventory.classifier import Classifier
+    from zephyr.infrastructure.asset_inventory.dashboard import Dashboard
+    from zephyr.infrastructure.asset_inventory.dependency import DependencyNode
+    from zephyr.infrastructure.asset_inventory.index_generator import IndexGenerator
+    from zephyr.infrastructure.asset_inventory.lifecycle import Lifecycle
+    from zephyr.infrastructure.asset_inventory.metadata import GitCommitInfo
+    from zephyr.infrastructure.asset_inventory.models import AssetType
+    from zephyr.infrastructure.asset_inventory.reconciler import Reconciler
+    from zephyr.infrastructure.asset_inventory.registry_adapter import RegistryParseError
+    from zephyr.infrastructure.asset_inventory.trust_anchor import TrustLevel
+    from zephyr.infrastructure.rollback.complexity_budget import ComplexityReport
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（importlib._bootstrap._DeadlockError 是 RuntimeError 子类）
     pass
@@ -171,6 +174,63 @@ except (ImportError, RuntimeError):
 # 5 个大写符号（HookResult 等）定义在 behavioral_admission/post_process.py
 # 55 个小写模块名（22 根目录 + 33 子目录）此前只在 __all__ 声明但从未 import
 try:
+    import zephyr.gov_drift.detector_core.benchmark_integrity as benchmark_integrity
+    import zephyr.gov_drift.detector_core.model_drift_monitor as model_drift_monitor
+    import zephyr.gov_drift.detector_core.performance_baseline as performance_baseline
+    import zephyr.gov_drift.detector_core.regime_detector as regime_detector
+
+    # 子目录模块（33个）
+    import zephyr.gov_enforcement.behavioral_admission.admission_response as admission_response
+    import zephyr.gov_enforcement.behavioral_admission.ai_code_standards as ai_code_standards
+    import zephyr.gov_enforcement.behavioral_admission.code_review_ai as code_review_ai
+    import zephyr.gov_enforcement.behavioral_admission.mcp_result_push as mcp_result_push
+    import zephyr.gov_enforcement.behavioral_admission.post_process as post_process
+    import zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
+    import zephyr.governance.architecture_governance.architecture_contracts as architecture_contracts
+    import zephyr.governance.architecture_governance.architecture_principles as architecture_principles
+    import zephyr.governance.architecture_governance.cross_env_consistency as cross_env_consistency
+    import zephyr.governance.architecture_governance.dependency_manager as dependency_manager
+    import zephyr.governance.architecture_governance.local_first_arch as local_first_arch
+    import zephyr.governance.architecture_governance.path_resolver as path_resolver
+    import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio  # noqa: import-integrity  module may not exist yet, wrapped in try/except
+    import zephyr.governance.context_governance.context_manager as context_manager
+    import zephyr.governance.context_governance.context_recycling as context_recycling
+    import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
+    import zephyr.governance.data_governance.data_classification as data_classification
+    import zephyr.governance.data_governance.data_lifecycle as data_lifecycle
+    import zephyr.governance.data_governance.data_quality as data_quality
+    import zephyr.governance.data_governance.data_source_reliability as data_source_reliability
+    import zephyr.governance.data_governance.realtime_streaming as realtime_streaming
+    import zephyr.governance.escalation.consequence_manager as consequence_manager
+    import zephyr.governance.escalation.incident_response as incident_response
+    import zephyr.governance.escalation.spof_checker as spof_checker
+    import zephyr.governance.financial_governance.financial_compliance as financial_compliance
+    import zephyr.governance.financial_governance.fsm_verifier as fsm_verifier
+    import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
+    import zephyr.governance.financial_governance.oms_risk_engine as oms_risk_engine
+    import zephyr.governance.intelligence_governance.agent_debate as agent_debate
+    import zephyr.governance.intelligence_governance.ai_self_diagnosis as ai_self_diagnosis
+    import zephyr.governance.intelligence_governance.multi_model_consensus as multi_model_consensus
+    import zephyr.governance.lifecycle_governance.migration_strategy as migration_strategy
+    import zephyr.governance.lifecycle_governance.paper_live_transition as paper_live_transition
+    import zephyr.governance.lifecycle_governance.post_live_verification as post_live_verification
+    import zephyr.governance.ops_governance.agent_dispatch as agent_dispatch
+
+    # 根目录模块（22个）
+    import zephyr.governance.ops_governance.bandwidth_optimizer as bandwidth_optimizer
+    import zephyr.governance.ops_governance.environment_manager as environment_manager
+    import zephyr.governance.ops_governance.ops_foundation as ops_foundation
+    import zephyr.governance.ops_governance.phase_check_registry as phase_check_registry
+    import zephyr.governance.ops_governance.phase_manager as phase_manager
+    import zephyr.governance.ops_governance.startup_shutdown_cli as startup_shutdown_cli
+    import zephyr.governance.resilience_governance.broker_resilience as broker_resilience
+    import zephyr.governance.resilience_governance.bus_factor_defense as bus_factor_defense
+    import zephyr.governance.resilience_governance.decision_fatigue as decision_fatigue
+    import zephyr.governance.resilience_governance.decision_fatigue_cli as decision_fatigue_cli
+    import zephyr.governance.resilience_governance.fault_tolerance as fault_tolerance
+    import zephyr.governance.resilience_governance.offline_autonomy as offline_autonomy
+    import zephyr.governance.resilience_governance.offline_resilience as offline_resilience
+    import zephyr.infrastructure.runtime.startup_shutdown as startup_shutdown
     from zephyr.gov_enforcement.behavioral_admission.post_process import (
         HookResult,
         HookStrategy,
@@ -178,61 +238,6 @@ try:
         PostProcessHook,
         PostProcessPipeline,
     )
-    # 根目录模块（22个）
-    import zephyr.governance.ops_governance.bandwidth_optimizer as bandwidth_optimizer
-    import zephyr.governance.resilience_governance.broker_resilience as broker_resilience
-    import zephyr.governance.escalation.consequence_manager as consequence_manager
-    import zephyr.governance.context_governance.context_manager as context_manager
-    import zephyr.governance.context_governance.context_recycling as context_recycling
-    import zephyr.governance.data_governance.data_lifecycle as data_lifecycle
-    import zephyr.governance.data_governance.data_quality as data_quality
-    import zephyr.governance.resilience_governance.decision_fatigue as decision_fatigue
-    import zephyr.governance.resilience_governance.decision_fatigue_cli as decision_fatigue_cli
-    import zephyr.governance.resilience_governance.fault_tolerance as fault_tolerance
-    import zephyr.governance.financial_governance.financial_compliance as financial_compliance
-    import zephyr.governance.financial_governance.fsm_verifier as fsm_verifier
-    import zephyr.governance.escalation.incident_response as incident_response
-    import zephyr.governance.ops_governance.ops_foundation as ops_foundation
-    import zephyr.governance.lifecycle_governance.paper_live_transition as paper_live_transition
-    import zephyr.governance.ops_governance.phase_check_registry as phase_check_registry
-    import zephyr.governance.ops_governance.phase_manager as phase_manager
-    import zephyr.governance.lifecycle_governance.post_live_verification as post_live_verification
-    import zephyr.governance.data_governance.realtime_streaming as realtime_streaming
-    import zephyr.governance.escalation.spof_checker as spof_checker
-    import zephyr.infrastructure.runtime.startup_shutdown as startup_shutdown
-    import zephyr.governance.ops_governance.startup_shutdown_cli as startup_shutdown_cli
-    # 子目录模块（33个）
-    import zephyr.gov_enforcement.behavioral_admission.admission_response as admission_response
-    import zephyr.governance.intelligence_governance.agent_debate as agent_debate
-    import zephyr.governance.ops_governance.agent_dispatch as agent_dispatch
-    import zephyr.gov_enforcement.behavioral_admission.ai_code_standards as ai_code_standards
-    import zephyr.governance.intelligence_governance.ai_self_diagnosis as ai_self_diagnosis
-    import zephyr.governance.architecture_governance.architecture_contracts as architecture_contracts
-    import zephyr.governance.architecture_governance.architecture_principles as architecture_principles
-    import zephyr.gov_drift.detector_core.benchmark_integrity as benchmark_integrity
-    import zephyr.governance.resilience_governance.bus_factor_defense as bus_factor_defense
-    import zephyr.gov_enforcement.behavioral_admission.code_review_ai as code_review_ai
-    import zephyr.governance.architecture_governance.cross_env_consistency as cross_env_consistency
-    import zephyr.governance.data_governance.data_classification as data_classification
-    import zephyr.governance.data_governance.data_source_reliability as data_source_reliability
-    import zephyr.governance.architecture_governance.dependency_manager as dependency_manager
-    import zephyr.governance.ops_governance.environment_manager as environment_manager
-    import zephyr.governance.architecture_governance.local_first_arch as local_first_arch
-    import zephyr.gov_enforcement.behavioral_admission.mcp_result_push as mcp_result_push
-    import zephyr.governance.financial_governance.microstructure_defense as microstructure_defense
-    import zephyr.governance.lifecycle_governance.migration_strategy as migration_strategy
-    import zephyr.gov_drift.detector_core.model_drift_monitor as model_drift_monitor
-    import zephyr.governance.intelligence_governance.multi_model_consensus as multi_model_consensus
-    import zephyr.governance.resilience_governance.offline_autonomy as offline_autonomy
-    import zephyr.governance.resilience_governance.offline_resilience as offline_resilience
-    import zephyr.governance.financial_governance.oms_risk_engine as oms_risk_engine
-    import zephyr.governance.architecture_governance.path_resolver as path_resolver
-    import zephyr.gov_drift.detector_core.performance_baseline as performance_baseline
-    import zephyr.gov_enforcement.behavioral_admission.post_process as post_process
-    import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
-    import zephyr.gov_drift.detector_core.regime_detector as regime_detector
-    import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio  # noqa: import-integrity  wrapped in try/except, module may not exist yet
-    import zephyr.gov_enforcement.behavioral_admission.vibe_coding_enforcer as vibe_coding_enforcer
 except (ImportError, RuntimeError):
     # RuntimeError: 捕获循环 import _DeadlockError（同上）
     pass

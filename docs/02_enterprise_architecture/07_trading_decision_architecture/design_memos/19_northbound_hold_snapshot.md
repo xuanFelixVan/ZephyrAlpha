@@ -1,0 +1,213 @@
+---
+ttl: permanent
+doc_type: architecture_view
+title: 北向资金季度持仓快照 fetcher 施工计划
+owner: ZephyrAlpha-Owner
+language: zh
+status: draft
+version: "0.1.0"
+date: 2026-08-10
+topic: northbound_hold_snapshot
+scope: 07_trading_decision_architecture
+depends_on:
+  - 15_data_feature_layer_spec
+  - 62_business_registry_construction
+related_modules:
+  - src/zephyr/data/implementations/akshare_provider.py
+  - src/zephyr/data/config/known_data_gaps.yaml
+---
+
+# 北向资金季度持仓快照 fetcher 施工计划
+
+> 本备忘是北向资金数据断档（2024-08-19 港交所停止公布日频）后的**替代数据源选型 + 季度持仓快照 fetcher 施工计划 + 外资行为分析方法论**。
+> 性质：**施工计划文档**（§4.4 施工计划类），按"目标→现状→改动→验证→不做"组织。
+> 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；数据资产注册表见 [62_business_registry_construction](62_business_registry_construction.md) §3 第 9 项（REG-DATAFLOW-001）。
+> 关联：[15_data_feature_layer_spec](15_data_feature_layer_spec.md)（数据层总纲）｜ [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml)（数据缺口登记）
+
+## 1. 主题组信息
+
+| 项 | 内容 |
+|---|---|
+| 主题组 | G19 北向资金季度持仓快照（数据地基层子项） |
+| 创建 | 2026-08-10 |
+| 优先级 | P2（非 P0——[check_algo_quality.py](../../../../scripts/governance/d5_architecture/checkers/check_algo_quality.py) 已确认 factor/strategy 无北向日频信号依赖，非数据黑洞） |
+| 状态 | draft（方案已验证，待施工） |
+| 上游 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md)｜[62_business_registry_construction](62_business_registry_construction.md) |
+| 下游 | 外资行为因子（待立项）｜[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md)（潜在消费方） |
+
+## 2. 背景
+
+### 2.1 数据断档事件
+
+- **2024-05-13**：沪深港通盘中实时交易信息停止披露（第一阶段）
+- **2024-08-19**：沪深港通日终数据停止披露（第二阶段），北向资金日频净流入/净买入永久停发
+- **调整后只剩**：每个交易日收市后公布成交总额/总笔数/ETF 成交额/前十大活跃证券；**每季度第 5 个沪深股通交易日**公布上季度末单只证券沪深股通投资者合计持有数量
+
+### 2.2 项目已有治理（前瞻性）
+
+项目在数据断档治理上已先行：
+
+- [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) `hk_connect_flow_source_discontinued`（L84）标 `status: accepted`，root_cause 记明"港交所 2024-08-16 停止公布日频明细"
+- [akshare_provider.py](../../../../src/zephyr/data/implementations/akshare_provider.py) `_fetch_hk_connect_flow`（L2596）注释"有效数据范围 2014-11-17~2024-08-16，NaN 行自动过滤"
+- [check_algo_quality.py](../../../../scripts/governance/d5_architecture/checkers/check_algo_quality.py) `DEAD_DATA_SOURCES`（L99-116）登记 `northbound_flow`/`northbound_capital`/`hk_connect_daily`/`stock_connect_flow` 四个死数据源（停发 2024-08-19），AST+正则双检测
+- **factor/strategy 无实盘信号依赖北向日频净流入**（2026-08-10 排查确认）
+
+### 2.3 核心问题
+
+日频净流入永久消失，但**季度持仓快照仍可用**（交易所每季度发布）。问题转化为：如何获取季度快照 + 如何用季度快照做外资行为分析。
+
+## 3. 现状（数据源实测）
+
+### 3.1 akshare 1.18.75 实测（2026-08-10 三轮验证）
+
+| 接口 | 状态 | 说明 |
+|---|---|---|
+| stock_hsgt_hist_em | ⚠️ 8-19 后净流入全 NaN | 仅领涨股/沪深300 有值 |
+| stock_hsgt_individual_em | ✅ 仅历史 | 单股日频持股，~2024-08-16 |
+| stock_hsgt_individual_detail_em | ✅ 仅历史 | 单股按机构明细，~2024-09-30 |
+| stock_hsgt_hold_stock_em | ❌ 接口失效 | NoneType（本应是季度快照来源）|
+| stock_hsgt_board_rank_em | ❌ 接口失效 | NoneType |
+| stock_hsgt_stock_statistics_em | ❌ 接口失效 | NoneType |
+
+三条失效接口已登记 [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) L158-210（`akshare_hsgt_hold_stock_em_broken` 等，gap_type=interface_broken）。
+
+### 3.2 tushare hk_hold 实测（2026-08-10）
+
+| 查询日期 | 北向(SH+SZ) | 南向(HK) | 说明 |
+|---|---|---|---|
+| 20240816（8-16 前）| 3337 | 791 | 完整 |
+| 20240819（8-19 当天）| 0 | 792 | 北向归零 |
+| 20260807（最新日频）| 0 | 955 | 北向仍无 |
+| 20240930（季度末）| 3540 | 0 | **北向季度快照完整** |
+| 20251231（季度末）| 3325 | 875 | **北向季度快照完整** |
+
+**关键结论**：tushare `pro.hk_hold(trade_date=季度末)` 能返回完整北向持股快照，20251231 返回 3325 只，京东方A 27.6 亿股（与官方公布 27.05 亿吻合）。
+
+## 4. 方案选型
+
+### 4.1 候选方案
+
+| 方案 | 来源 | 频率 | 成本 | 实测可行性 |
+|---|---|---|---|---|
+| A | 沪深交易所官网直抓 | 季度 | 免费 | 可行但工程量大（爬虫+反爬）|
+| B | 东方财富网页 | 季度 | 免费 | akshare 接口已断，需自写爬虫 |
+| C | tushare pro.hk_hold | 季度 | 已有 token | ✅ **实测可行** |
+| D | Wind/Choice/iFind | 季度 | 付费 | 未测 |
+
+### 4.2 裁定：走方案 C
+
+理由：
+1. 实测验证——季度末日期能返回完整北向持股，数据质量与官方一致
+2. 项目已有 tushare 集成基础（token 已配，1.4.29）
+3. 工程量最小——无需写爬虫、无需处理反爬
+4. 方案 A/B 工程量大且不稳定（网页改版风险），方案 D 需付费
+
+方案 A 作为 fallback（若 tushare 未来也断，再走交易所官网）。
+
+## 5. 施工改动
+
+### 5.1 新建 fetcher
+
+在 tushare_provider 新增 `_fetch_northbound_hold_snapshot`：
+
+- 接口：`pro.hk_hold(trade_date=季度末)`
+- 过滤：`exchange in ('SH', 'SZ')`（仅北向，剔除 HK 南向）
+- 字段映射：code→src_code, trade_date→trade_date, ts_code→ts_code, name→name, vol→hold_share, ratio→hold_ratio, exchange→exchange
+
+### 5.2 落表 schema
+
+新建 `c1_market.northbound_hold_snapshot`（季度颗粒）：
+
+| 列 | 类型 | 说明 |
+|---|---|---|
+| trade_date | Date | 季度末日期 |
+| ts_code | String | 证券代码（带交易所后缀）|
+| name | String | 证券名称 |
+| hold_share | UInt64 | 持股数量（股）|
+| hold_ratio | Float32 | 持股数量占 A 股百分比 |
+| exchange | LowCardinality(String) | SH/SZ |
+| data_source | LowCardinality(String) | tushare |
+| ingested_at | DateTime | 入库时间 |
+
+ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
+
+### 5.3 调度
+
+- 频率：每季度第 6 个沪深股通交易日跑一次（官方第 5 个交易日发布，留 1 天缓冲）
+- 回填：从 2024-09-30 开始按季度回填到最新（2024Q3/2024Q4/2025Q1/2025Q2/2025Q3/2025Q4）
+- 历史补充：8-16 前的日频数据已在 hk_connect_flow 表，不重复采集
+
+### 5.4 注册表登记
+
+- [data_asset_registry.yaml](../../../../01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml) 登记 `northbound_hold_snapshot` 数据资产（62 号 §3 第 9 项 REG-DATAFLOW-001 下）
+- [field_dictionary.yaml](../../../../01_policies_and_standards/_registry/catalogs/field_dictionary.yaml) 登记新字段（若 62 号 P2 字段字典施工已启动）
+
+## 6. 外资行为分析方法论
+
+基于季度快照的外资行为分析（参考东证期货《北向资金跟踪系列》框架）：
+
+### 6.1 持市值变化分解
+
+```
+Δ持股市值 = 主动增减仓 + 股价变动效应
+主动增减仓 ≈ Δ持股数量 × 当季成交量加权均价(VWAP)
+股价变动效应 ≈ 期末持股数 × Δ股价
+```
+主动增减仓才是外资真实意图，股价效应是被动浮盈浮亏。
+
+### 6.2 行业超配/低配（存量结构）
+
+```
+超配比例 = 北向持有该行业市值占比 − 全A该行业市值占比
+```
+
+### 6.3 个股增减持排名（流量信号）
+
+按"主动增减仓金额"排序，取 top 加仓/top 减仓。
+
+### 6.4 板块切换能力评估（择时验证）
+
+当季加仓行业 vs 下季该行业涨跌幅，算相关性。
+
+### 6.5 季度净流入估算（总量）
+
+```
+季度净流入 ≈ Σ_all_stocks(Δ持股数量 × 当季VWAP)
+```
+这是现在唯一能算出的"准北向净流入"（季度颗粒度）。
+
+### 6.6 数据需求
+
+季度末持股数量（本 fetcher）+ 当季个股 VWAP（项目已有）+ 申万行业分类（项目已有）+ 全 A 市值（项目已有）。
+
+## 7. 验证
+
+- 数据完整性：每季度末日期返回 ~3300-3800 只北向持股，与官方公布 top10（京东方A/工商银行/紫金矿业等）核对
+- 与历史衔接：2024-08-16 前 hk_connect_flow 日频数据 vs 2024-09-30 季度快照，持股数量应连续（无突变）
+- 字段质量：hold_share > 0，hold_ratio ∈ [0, 100]
+
+## 8. 不做什么
+
+| 不做 | 理由 |
+|---|---|
+| 不试图恢复日频净流入 | 上游永久停发，不可逆 |
+| 不在 factor/strategy 里依赖日频北向信号 | check_algo_quality 已标死数据源 |
+| 不走方案 A 爬交易所官网 | 方案 C 已验证可行，工程量更小 |
+| 不做外资行为因子开发（本备忘） | 因子开发单独立项，本备忘只到"数据就绪" |
+| 不采集南向（HK）数据 | 本备忘聚焦北向；南向仍日频可用，另议 |
+
+## 9. 开放问题
+
+| 问题 | 决策状态 |
+|---|---|
+| 落表用新表 northbound_hold_snapshot 还是扩展 hk_connect_flow | 倾向新表（颗粒度不同：日频 vs 季度），待施工时确认 |
+| 是否同步采集南向季度快照 | 本备忘暂不做，待外资行为因子需要时再议 |
+| 外资行为因子何时立项 | 待本 fetcher 落地 + 数据积累 2-3 个季度后评估 |
+| tushare hk_hold 单次返回上限 4200 行，季度末 ~3300 行无分页问题；若未来北向标的超 4200 需分页 | 当前无风险，监控 |
+
+## 10. 修订记录
+
+| 日期 | 版本 | 改动 | 理由 |
+|---|---|---|---|
+| 2026-08-10 | 0.1.0 | 初稿 | 北向日频断档后，实测 akshare 失效/tushare 可行，建立季度快照 fetcher 施工计划 + 外资行为分析方法论 |
+| 2026-08-11 | 0.1.1 | 文件被 git clean 误删后从对话历史重建 | #ARCH-GIT-CLEAN-GUARD-FIX：git alias 无法覆盖内置 clean 命令，文件物理删除 |

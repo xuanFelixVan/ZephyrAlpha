@@ -73,7 +73,7 @@ def _is_network_available() -> bool:
         sock.connect(("push2his.eastmoney.com", 80))
         sock.close()
         _NETWORK_OK = True
-    except Exception:
+    except Exception:  # noqa: BLE001
         _NETWORK_OK = False
     return _NETWORK_OK
 
@@ -88,7 +88,7 @@ def _is_akshare_installed() -> bool:
             import akshare  # noqa: F401
 
         _AKSHARE_OK = True
-    except Exception:
+    except Exception:  # noqa: BLE001
         _AKSHARE_OK = False
     return _AKSHARE_OK
 
@@ -107,14 +107,14 @@ def _akshare_has_usable_bar_data() -> bool:
     try:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
-            from zephyr.governance.data_governance.akshare_provider import AkshareQuoteProvider
+            from zephyr.governance.data_governance.akshare_quote_provider import AkshareQuoteProvider
 
             provider = AkshareQuoteProvider()
             end = datetime.now(UTC)
             start = end - timedelta(days=120)
             df = provider.fetch_historical("600519", start=start, end=end)
             _AKSHARE_BARS_OK = df is not None and len(df) >= 10
-    except Exception:
+    except Exception:  # noqa: BLE001
         _AKSHARE_BARS_OK = False
     return _AKSHARE_BARS_OK
 

@@ -330,6 +330,35 @@ def _get_dirty_tracked_files() -> set[str] | None:
     return dirty
 
 
+def _get_untracked_files() -> set[str] | None:
+    """获取 untracked 文件集合（git clean 的删除目标）。
+
+    Returns:
+        set[str] = untracked 文件集合（可能为空集）
+        None = git status 失败（fail-open，调用方应跳过自伤检测）
+    """
+    try:
+        r = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=all"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+    except Exception:  # noqa: BLE001 — fail-open
+        print("[GIT-GUARD] git status 失败，clean 自伤检测跳过（fail-open）", file=sys.stderr)
+        return None
+    if r.returncode != 0:
+        return None
+    untracked: set[str] = set()
+    for line in r.stdout.splitlines():
+        line = line.rstrip()
+        if line.startswith("??"):
+            fname = line[3:]
+            if fname:
+                untracked.add(fname)
+    return untracked
+
+
 def _audit_self_harm(
     action: str,
     had_uncommitted: bool,
@@ -492,6 +521,75 @@ def _check_self_harm_files(
         forced=False,
         file_count=len(at_risk),
         dirty_files=at_risk[:10],
+    )
+    return 1
+
+
+def _check_self_harm_clean(git_args: list[str]) -> int | None:
+    """git clean 自伤检测（#ARCH-GIT-CLEAN-GUARD-FIX，2026-08-11）。
+
+    根因：_EXTRACTORS 没有 clean 条目 → extractor=None → 直接 passthrough，
+    等于零拦截。clean 删除 untracked 文件，完全绕过 .ailocks/ 锁系统
+    （untracked 文件不在锁管辖范围）。2026-08-11 灾难：AI 执行 git clean -fd
+    误删 AI_review_instructions.md 等多个 untracked 文件。
+
+    防护策略：有 untracked 文件 + 未授权 → fail-closed 阻断。
+    授权（ZEPHYR_FORCE_STASH / ZEPHYR_COMMIT_GATEWAY）或无 untracked → 放行。
+
+    Returns:
+        None = 放行（无 untracked 或已授权）
+        1 = 阻断
+    """
+    # 只读子命令直接放行
+    args = git_args[1:]  # 去掉 'clean'
+    if args and args[0] in {"-n", "--dry-run"}:
+        return None  # dry-run 只列出不删除
+
+    # 获取 untracked 文件
+    untracked_files = _get_untracked_files()
+    if untracked_files is None:
+        return None  # fail-open（git status 失败）
+
+    has_untracked = len(untracked_files) > 0
+    authorized = _is_gateway_authorized()
+
+    if authorized or not has_untracked:
+        _audit_self_harm(
+            action="clean",
+            had_uncommitted=has_untracked,
+            forced=authorized,
+            file_count=len(untracked_files),
+            dirty_files=sorted(untracked_files)[:10],
+        )
+        if authorized and has_untracked:
+            print(
+                f"[GIT-GUARD] clean 授权放行（{FORCE_STASH_ENV}|{GATEWAY_ENV}），"
+                f"将删除 {len(untracked_files)} 个 untracked 文件",
+                file=sys.stderr,
+            )
+        return None  # 放行
+
+    # 阻断
+    print("", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+    print("[GIT-GUARD] git clean 被阻断——会删除 untracked 文件（自伤防护）", file=sys.stderr)
+    print(f"  untracked 文件 ({len(untracked_files)}):", file=sys.stderr)
+    for f in sorted(untracked_files)[:10]:
+        print(f"    {f}", file=sys.stderr)
+    if len(untracked_files) > 10:
+        print(f"    ... 及其他 {len(untracked_files) - 10} 个文件", file=sys.stderr)
+    print("", file=sys.stderr)
+    print("  解决方案:", file=sys.stderr)
+    print("    1. 先 commit 或 git add 你的文件", file=sys.stderr)
+    print(f"    2. 强制 clean（确认删除）：{FORCE_STASH_ENV}=1 git clean -fd", file=sys.stderr)
+    print("=" * 70, file=sys.stderr)
+
+    _audit_self_harm(
+        action="clean",
+        had_uncommitted=True,
+        forced=False,
+        file_count=len(untracked_files),
+        dirty_files=sorted(untracked_files)[:10],
     )
     return 1
 
@@ -787,6 +885,16 @@ def check_and_execute(git_args: list[str]) -> int:
     # mv 特殊处理：目录重命名时检测未跟踪文件
     if subcommand == "mv":
         return handle_mv(git_args)
+
+    # clean 自伤检测（#ARCH-GIT-CLEAN-GUARD-FIX，2026-08-11）
+    # 根因：clean 在 DANGEROUS_SUBCOMMANDS 但 _EXTRACTORS 无 clean 条目，
+    # 走到 L891 extractor=None → 直接 passthrough，等于零拦截。
+    # 2026-08-11 灾难：AI 执行 git clean -fd 误删多个 untracked 文件。
+    if subcommand == "clean":
+        rc = _check_self_harm_clean(git_args)
+        if rc is not None:
+            return rc
+        return _passthrough(git_args)
 
     # 危险命令，提取文件范围
     extractor = _EXTRACTORS.get(subcommand)

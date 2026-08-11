@@ -10,6 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] autodiscover 导入失败→跳过该指标不抛；注册表空→返回空 dict
 # [TESTS] tests/zephyr/factor/technical_indicators/
 # [A_module] module_id=MOD-L02-TI | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent

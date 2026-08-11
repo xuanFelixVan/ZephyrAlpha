@@ -10,6 +10,8 @@
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] human_only
+# [ERROR_CONTRACT] DDL与DB不一致->apply_market_tables_ddl.py --verify退出码1
+# [TESTS] python scripts/ch/apply_market_tables_ddl.py --verify
 # [TTL] permanent
 """technical_indicator 表 DDL-as-Code（category_id: market_technical_indicator, calc_mode: preload）。
 

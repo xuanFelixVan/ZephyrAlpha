@@ -5,7 +5,7 @@ title: 卖出流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.5.2"
 date: 2026-08-10
 topic: sell_flow
 scope: 07_trading_decision_architecture
@@ -13,9 +13,10 @@ scope: 07_trading_decision_architecture
 
 # 卖出流 spec
 
-> **性质**：由 [00_index_trading_decision](00_index_trading_decision.md) G20 主题组派生，将卖出流的讨论要点落地为可施工的 spec + 伪代码。
-> **施工图纪律**：本文档 status=active，对应模块允许施工。
-> **2026-08 研究整合**：O'Neil 卖出法则；ATR 移动止损（trailing stop）；Implementation Shortfall 卖出滑点控制；tradingwyckoff 2026-01 Kill Switch 卖出路径；与回撤 Protocol（G16）和情绪周期（G21）联动。
+> 本备忘把 [battle_map_07_sell_flow](../battle_map/battle_map_07_sell_flow.md) 14 环节的"what is"落地为卖出侧"how + when"的可施工 spec：止损/止盈/破位/分批四族的 MVP 取舍、时序、T+1 约束、与回撤 Protocol 联动。
+> 性质：永久态设计记录，可随项目演进而修订，不是不可推翻的裁定。
+> 管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)。
+> 边界：本备忘只定卖出**流的编排与退出策略**（when + how to exit）；选股信号（G04/G05）、仓位算法（G12）、回撤风控阈值（G16）不在本备忘范围，本备忘只消费/响应其产出。D_SELL_DECISION 域 24 模块（[68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md)）的算法细节以代码/蓝图为准，本备忘定"为什么这么编排"。
 
 ## 1. 主题组信息
 
@@ -23,509 +24,637 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G20 卖出流 spec |
 | 所属 | 作战地图 07 |
-| 依赖 | G19（[41_buy_flow](41_buy_flow.md)）、G16（[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md)）、G21（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md)） |
-| 对标 | 机构卖出纪律 / O'Neil 卖出法则 / Wyckoff 派发识别 |
-| 正交性 | ⚠️ 情绪退潮卖出与 regime 协同（regime 给 Shrinkage，卖出逻辑在策略内） |
+| 依赖 | G19（[41_buy_flow](41_buy_flow.md)，突破失败降级联动） |
+| 对标 | O'Neil 卖出法则 / 机构 ATR 止损 / trailing stop / A 股 T+1 跌停排队 |
+| 正交性 | ⚠️ 情绪退潮卖出与 regime 协同（但 regime 只给 Shrinkage，卖出逻辑在策略内） |
 | 优先级 | P3 |
-| 状态 | ✅ active — 止损/止盈/时间止损/情绪退潮/破位/分批卖出算法已定稿 |
+| 状态 | 已定稿·可施工（MVP 路径已明确，28/35 未就绪有降级） |
 
 ## 2. 背景
 
 ### 2.1 项目处境
-
-卖出比买入更难——买入是理性的选股决策，卖出涉及止损纪律、止盈贪婪、情绪控制。A 股 T+1 约束使得卖出决策必须在买入前就规划好（次日才能卖）。卖出流是策略盈利的最终兑现环节，卖出执行的优劣直接决定策略的实际收益。
+- 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，**T+1，不能做空**）
+- 卖出决策域 D_SELL_DECISION 已有 24 模块（[68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md)）：**13 生产态**（突破成败/收集器/融合引擎/紧迫度/冲突仲裁/猎杀防护/置换再平衡等）+ **11 设计态**（止盈/止损/策略止损范式/分批退出/情景预案/做T/闭环优化等）
+- battle_map_07 已有 14 环节（6 运营态 / 7 设计态 / 1 弃用态），BM-SELL-04 止盈止损族是核心待施工环节
+- 卖出侧比买入侧更复杂——"何时卖"是交易最难决策，且 A 股 T+1 + 跌停板约束叠加
 
 ### 2.2 核心问题
-
-1. **止损方式选择**：固定百分比止损简单但忽略波动率；ATR 止损考虑波动率但参数敏感；移动止损能锁定利润但可能过早离场。
-2. **止盈逻辑**：固定目标止盈简单但可能限制上行空间；移动止盈能跟踪趋势但回撤时才离场；分批止盈平衡两者。
-3. **情绪退潮卖出**：情绪周期从"一致"转向"退潮"时，需主动减仓而非等止损触发——与 regime CRISIS/RECOVERY 协同。
-4. **破位卖出**：技术破位（跌破均线/支撑/趋势线）是卖出信号，但需区分真破位和假破位。
-5. **T+1 约束**：当日买入不可卖，卖出只能对 T-1 及更早持仓操作。
+battle_map_07 锁定了卖出流的**环节拓扑**（突破成败→收集评分→止盈止损族/置换再平衡→融合仲裁→冲突仲裁→执行→闭环优化），但未定义：
+- 止损/止盈/破位/分批四种退出方式是否全需要（过度工程审查）
+- 止损用固定% / 移动 / ATR 哪种，参数怎么定
+- 止盈逻辑怎么定（固定/移动/分批/时间加权）
+- 情绪退潮卖出与 regime CRISIS/RECOVERY 如何协同（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 退潮阶段是骨架）
+- 破位卖出（突破成败 BM-SELL-01 已建）如何与止损族联动
+- 分批卖出是否 MVP 必需
+- T+1 卖出约束（当日买入次日才能卖、跌停板不卖、做T 例外）
+- 与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 回撤 Protocol 四级阈值如何联动
 
 ### 2.3 约束条件
+- **T+1 不能做空**：当日买入次日才能卖；跌停板无法成交（不提交卖单，排队次日集合竞价）；做T 是唯一日内卖出例外（底仓净数量不变）
+- **system_charter §3 约束四（策略三维度解耦）**：卖出（how）独立于选股（what）/仓位（how much）
+- **保守原则**（BM-SELL-06）：同标的同时有买卖信号→卖出优先；风控>仓位>市场态>卖出>T+1预测>...>买入
+- **Kill Switch 不可覆盖**（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5.5）：触发即执行，不允许人工覆盖延迟
+- **BM-SELL-04 策略止损范式**（MOD-SELL-014 已建）：不同策略类型用不同止损风格（趋势宽/均值回归中/高频紧/Carry 宽/套利无）
 
-- **A 股 T+1**：当日买入次日才能卖出
-- **涨跌停板**：跌停时卖单可能无法成交，需挂单排队
-- **与回撤 Protocol 联动**：回撤触发减仓/清仓时，卖出流需响应
-- **与 Kill Switch 联动**：Kill Switch 触发时，卖出流执行强制平仓
+## 3. 决策：止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护 四族 MVP，分批/密度感知/逻辑止损族降级
 
-## 3. 决策
-
-### 3.1 架构定义
-
-卖出流由触发层、规划层、执行层三层构成：
+### 3.1 卖出流总览
 
 ```
-触发层: 止损检查 → 止盈检查 → 时间止损 → 情绪退潮 → 破位检查 → 回撤/Kill Switch 联动
-                                                                        ↓
-规划层: 卖出优先级排序 → 分批卖出规划 → 价格锚定 → 滑点控制
-                                                                        ↓
-执行层: 40_execution_broker → 限价/市价/排队 → 成交确认
+[持仓Triage分级]     [BM-SELL-03 收集评分]      [BM-SELL-04 止盈止损族]      [BM-SELL-02 融合仲裁]    [BM-SELL-06 冲突仲裁]   [执行]
+Watch秒级/Monitor5min → 7类信号+多TF共振  →  止损(ATR+移动)/止盈(移动)  →  综合意愿0~1+紧迫度  →  卖出优先+风控优先  →  限价/市价
+Hold事件驱动           L2-B/C/D注入             +破位(突破成败)+猎杀防护      强制清仓绕过融合          跌停板不卖排队        T+1口径
+                                                分批/密度感知=降级
 ```
 
-### 3.2 止损触发算法
+> **顺序理由**：先分级（不是所有持仓都需同等监控）→ 收集评分（7 类信号加权）→ 止盈止损族生成退出决策 → 融合仲裁算综合意愿 → 冲突仲裁（买卖同标时卖出优先）→ 执行。强制清仓（风控/黑天鹅/第K次突破失败）绕过融合直接执行——这是资金安全最高优先级。
+
+### 3.2 ① 卖出时序 —— 持仓分级驱动 + 强制清仓绕过融合
+
+持仓 Triage 分级（BM-SELL-03，MOD-SELL-000 设计态）决定扫描频率：
+
+| 分级 | 触发条件 | 扫描频率 | MVP 可用性 |
+|---|---|---|---|
+| 🔴 Watch List | 亏损接近止损/主力异常/突破关键位/量价背离 | 秒级 | 降级为分钟级（实时风控未就绪） |
+| 🟡 Monitor List | 正常持仓 | 5 分钟级 | ✅ 可用 |
+| 🟢 Hold List | 深度盈利+远离止损+长期持有 | 事件驱动 | ✅ 可用 |
+
+**强制清仓绕过融合**（最高优先级，BM-SELL-02）：
+- 风控触发（35 Kill Switch：单日-6%/回撤>25%）
+- 黑天鹅事件（L2-D）
+- 第 K 次突破失败（K≥3，BM-SELL-01）
+- 主力弃庄（L2-B）
+→ 紧迫度 1.0 → 市价单快速执行，**不经过融合仲裁**
+
+> **时间止损**（持仓 N 天未达预期→触发退出评估）：属 BM-SELL-03 第⑦类信号，MVP 纳入收集评分，阈值按策略类型定（待 G04 校准：打板 1-2 天/多因子 5-10 天/事件 2-3 天）。
+
+**时间止损施工算法**（2026-08 行业前沿，journalplus ATR Trailing Stop）：
 
 ```python
-from dataclasses import dataclass
-from enum import Enum
-import numpy as np
-
-class StopLossType(Enum):
-    FIXED_PERCENT = "fixed_percent"     # 固定百分比止损
-    ATR_BASED = "atr_based"             # ATR 波动率止损
-    TRAILING = "trailing"               # 移动止损（追踪最高价）
-    MOVING_AVERAGE = "moving_average"   # 均线止损
-
-
-@dataclass
-class StopLossSignal:
-    """止损信号。"""
-    symbol: str
-    triggered: bool
-    stop_type: StopLossType
-    stop_price: float
-    current_price: float
-    reason: str
-
-
-def check_stop_loss(
-    symbol: str,
-    entry_price: float,           # 买入价
-    current_price: float,         # 当前价
-    highest_since_entry: float,   # 买入后最高价
-    atr: float,                   # 当前 ATR 值
-    stop_config: dict,            # 止损配置
-) -> StopLossSignal:
-    """止损触发检查——多方式止损。
-
-    止损方式（按优先级）：
-    1. 固定百分比止损：current < entry × (1 - stop_pct) → 触发
-    2. ATR 止损：current < entry - N × ATR → 触发（N 通常 1.5-2.0）
-    3. 移动止损：current < highest × (1 - trail_pct) → 触发（锁定利润）
-    4. 均线止损：current < MA(N) → 触发
-
-    ATR 止损优势（FerroQuant 2026-04）：
-    - 考虑个股波动率差异，高波动股止损更宽，低波动股止损更紧
-    - PositionSize = (AccountRisk% × Equity) / (StopDistance × ATR_multiplier × PointValue)
-    """
-    triggered = False
-    stop_type = None
-    stop_price = 0.0
-    reason = ""
-
-    # 方式 1：固定百分比止损
-    fixed_pct = stop_config.get("fixed_percent", 0.05)  # 默认 5%
-    fixed_stop = entry_price * (1 - fixed_pct)
-    if current_price <= fixed_stop:
-        triggered = True
-        stop_type = StopLossType.FIXED_PERCENT
-        stop_price = fixed_stop
-        reason = f"fixed_{fixed_pct:.0%}_stop"
-
-    # 方式 2：ATR 止损（如果配置了且未触发）
-    atr_multiplier = stop_config.get("atr_multiplier", 2.0)
-    if not triggered and atr > 0:
-        atr_stop = entry_price - atr_multiplier * atr
-        if current_price <= atr_stop:
-            triggered = True
-            stop_type = StopLossType.ATR_BASED
-            stop_price = atr_stop
-            reason = f"atr_{atr_multiplier}x_stop"
-
-    # 方式 3：移动止损（追踪最高价，锁定利润）
-    trail_pct = stop_config.get("trail_percent", 0.08)  # 默认 8% 回撤
-    if not triggered and highest_since_entry > entry_price:
-        trail_stop = highest_since_entry * (1 - trail_pct)
-        if current_price <= trail_stop:
-            triggered = True
-            stop_type = StopLossType.TRAILING
-            stop_price = trail_stop
-            reason = f"trailing_{trail_pct:.0%}_from_high_{highest_since_entry:.2f}"
-
-    # 方式 4：均线止损（如果配置了 ma_value）
-    ma_value = stop_config.get("ma_value")
-    if not triggered and ma_value is not None and ma_value > 0:
-        if current_price <= ma_value:
-            triggered = True
-            stop_type = StopLossType.MOVING_AVERAGE
-            stop_price = ma_value
-            reason = f"ma_stop_{ma_value:.2f}"
-
-    return StopLossSignal(
-        symbol=symbol,
-        triggered=triggered,
-        stop_type=stop_type or StopLossType.FIXED_PERCENT,
-        stop_price=stop_price,
-        current_price=current_price,
-        reason=reason,
-    )
+def check_time_stop(position, atr_value, holding_days):
+    """ATR 自适应时间止损：N 天内未移动 1×ATR 有利方向→强制退出评估"""
+    favorable_move = position.current_price - position.entry_price
+    atr_threshold = atr_value * 1.0  # 1×ATR 有利方向
+    max_stagnation_days = 5  # MVP 默认 5 交易日（journalplus 2026）
+    if favorable_move < atr_threshold and holding_days >= max_stagnation_days:
+        return "FORCE_EXIT_EVALUATION"  # 喂给 BM-SELL-03 收集评分加权
+    return None
 ```
 
-### 3.3 止盈逻辑算法
+> **为何用"1×ATR / 5 天"而非固定"N 天"**（选项之外更好的答案）：固定"N 天"忽略波动率——高波动股 5 天可能已翻倍（不该时间止损），低波动股 5 天可能只动 0.5%（该止损但 N 天未到）。用"1×ATR 有利方向"作移动阈值，ATR 自带波动率调整：高波动股阈值自动抬高（给更多时间），低波动股阈值自动降低（更快触发）。journalplus 2026 实证：5 个交易日内未移动 1×ATR 的持仓，后续盈利概率低于 35%。
+
+**Triage 分级判定算法**（施工伪代码已补全）：
 
 ```python
-@dataclass
-class TakeProfitSignal:
-    """止盈信号。"""
-    symbol: str
-    triggered: bool
-    partial: bool               # 是否部分止盈（分批）
-    sell_ratio: float           # 卖出比例（1.0=全卖，0.5=半仓）
-    reason: str
-
-
-def check_take_profit(
-    symbol: str,
-    entry_price: float,
-    current_price: float,
-    holding_days: int,
-    target_return: float = 0.15,        # 目标收益率 15%
-    partial_thresholds: list = None,    # 分批止盈阈值
-) -> TakeProfitSignal:
-    """止盈逻辑——分批止盈 + 目标止盈 + 移动止盈。
-
-    分批止盈策略：
-    - 涨 10%：卖出 30%（锁定部分利润）
-    - 涨 20%：卖出 30%
-    - 涨 30%：卖出 40%（或由移动止损接管）
-
-    O'Neil 卖出法则：
-    - 涨 20-25% 后减仓（除非非常强势）
-    - 连续放量滞涨 → 卖出信号
-    """
-    if partial_thresholds is None:
-        partial_thresholds = [
-            (0.10, 0.30),   # 涨 10% 卖 30%
-            (0.20, 0.30),   # 涨 20% 卖 30%
-            (0.30, 0.40),   # 涨 30% 卖 40%
-        ]
-
-    current_return = (current_price - entry_price) / entry_price
-
-    # 检查分批止盈阈值
-    for threshold, ratio in partial_thresholds:
-        if current_return >= threshold:
-            return TakeProfitSignal(
-                symbol=symbol,
-                triggered=True,
-                partial=True,
-                sell_ratio=ratio,
-                reason=f"partial_tp_{threshold:.0%}_sell_{ratio:.0%}"
-            )
-
-    # 目标止盈
-    if current_return >= target_return:
-        return TakeProfitSignal(
-            symbol=symbol,
-            triggered=True,
-            partial=False,
-            sell_ratio=1.0,
-            reason=f"target_tp_{target_return:.0%}"
-        )
-
-    return TakeProfitSignal(
-        symbol=symbol, triggered=False, partial=False, sell_ratio=0.0, reason=""
-    )
+def triage_position(position, atr_value, stop_loss_price):
+    """持仓 Triage 分级→决定扫描频率"""
+    unrealized_pnl_pct = (position.current_price - position.entry_price) / position.entry_price
+    distance_to_stop = abs(position.current_price - stop_loss_price) / position.entry_price
+    # Watch: 亏损接近止损（<1.5×ATR 距离）或盈利回撤接近止损
+    if distance_to_stop < atr_value * 1.5 / position.entry_price:
+        return "WATCH"  # → 分钟级扫描
+    # Hold: 深度盈利（>3×ATR）且远离止损
+    if unrealized_pnl_pct > atr_value * 3.0 / position.entry_price:
+        return "HOLD"   # → 事件驱动
+    return "MONITOR"     # → 5 分钟级扫描
 ```
 
-### 3.4 时间止损算法
+| 判定条件 | 分级 | 扫描频率 |
+|---|---|---|
+| 距止损 < 1.5×ATR \| 盈利回撤接近止损 \| 量价背离 | 🔴 Watch | 分钟级（MVP 降级） |
+| 正常持仓（距止损 1.5-3×ATR） | 🟡 Monitor | 5 分钟级 |
+| 深度盈利（>3×ATR）且远离止损 | 🟢 Hold | 事件驱动 |
 
-```python
-def check_time_stop(
-    symbol: str,
-    holding_days: int,
-    max_holding_days: int,
-    current_return: float,
-    min_return_to_continue: float = -0.02,  # 最低收益要求
-) -> dict:
-    """时间止损——持有期满且收益不达标则卖出。
+### 3.3 ② 止损触发 —— MVP: ATR 止损 + 移动止损，固定% 降级，密度感知待裁定
 
-    时间止损逻辑：
-    - 持有期超过 max_holding_days 且收益 < min_return_to_continue → 卖出
-    - 持有期超过 max_holding_days × 1.5 → 强制卖出（无论收益）
-    - 持有期内收益已达止盈目标 → 提前止盈（不触发时间止损）
-    """
-    if holding_days >= max_holding_days * 1.5:
-        return {"triggered": True, "reason": f"time_force_exit_{holding_days}d", "sell_ratio": 1.0}
+止损策略族（BM-SELL-04-B，MOD-SELL-005 设计态）MVP 取舍：
 
-    if holding_days >= max_holding_days:
-        if current_return < min_return_to_continue:
-            return {"triggered": True, "reason": f"time_stop_{holding_days}d_return_{current_return:.1%}", "sell_ratio": 1.0}
+| 止损方式 | MVP | 参数 | 降级/演进 |
+|---|---|---|---|
+| **ATR 波动率止损** | ✅ 主选 | 日内 1.5-2×ATR / 波段 3-4×ATR（[battle_map_07](../battle_map/battle_map_07_sell_flow.md) BM-SELL-04-B） | ATR 缺失→降级固定% |
+| **移动止损（trailing）** | ✅ 主选 | 跟踪最高价回撤 5-10%（趋势策略宽/波段中） | 盈利后启动，锁定利润 |
+| 固定%止损 | 降级源 | 短线 3-5% / 中长线 8-15%（eastmoney 2026-07） | ATR 缺失时兜底 |
+| 密度感知止损 | 待裁定 | 止损位=条件 PDF 5%分位数 | 待 BM-SEL-13 密度 PDF 就绪 |
 
-    return {"triggered": False, "reason": "", "sell_ratio": 0.0}
+**ATR 倍数选择**（对标 quantstock 2026 / algovestiq 2026）：
+- 日内/短线：1.5-2×ATR（紧，快速认错）
+- 波段/趋势：3-4×ATR（宽，防被震出，与 BM-SELL-04-C 趋势策略宽止损一致）
+- 14 周期 ATR（行业标准），与 [31_position_sizing](31_position_sizing.md) σ 估计 60 日窗口错峰（ATR 短期波动率，σ 长期波动率）
+
+**Chandelier Exit 施工公式**（2026-08 行业共识，volatilitybox / journalplus / tradersunion）：
+
+ATR 止损与移动止损统一为 Chandelier Exit（Chuck LeBeau），避免两套独立%参数：
+
+```
+止损线 = Highest_Close(N) - M × ATR(14)
+
+# MVP 参数（按持仓阶段切换 M 值）：
+# 亏损区（入场后未盈利）：N=10, M=3.0（宽，防噪声扫出）
+# 盈利区（盈利超 1×ATR）：N=22, M=2.0（紧，锁定利润→统一为止盈/止损）
+# 趋势策略：M 上浮 +0.5；均值回归：M 下调 -0.5
 ```
 
-### 3.5 情绪退潮卖出算法
+| 参数 | MVP 值 | 范围 | 来源 |
+|---|---|---|---|
+| ATR 周期 | 14 | 7-50 | Wilder 行业标准 |
+| 亏损区 M 值 | 3.0 | 2-4 | volatilitybox 2026-03：波段 2-3× |
+| 盈利区 M 值 | 2.0 | 1.5-3 | journalplus 2026：盈利后收紧 |
+| Highest_Close 回看 N | 亏损区 10 / 盈利区 22 | 10-22 | tradersunion 2026-08：默认 22 周期 |
+
+> **为何 Chandelier 统一优于两套独立%参数**（选项之外更好的答案）：原方案"移动止损回撤 5-10%"是固定%回撤，高波动股被噪声扫出、低波动股止损过宽。Chandelier 用 ATR 自适应波动率——volatilitybox 2026-03 回测 595+ 标的 2018-2025 显示 ATR 倍数止损比固定%**减少 34% 过早止损**。亏损区/盈利区只切 M 值不切公式，实现"一套公式两个参数"的极简统一。
+
+**ATR 缺失降级算法**：
 
 ```python
-def check_sentiment_ebb_sell(
-    symbol: str,
-    sentiment_phase: str,        # 情绪周期阶段（冰点/启动/发酵/一致/退潮）
-    position_return: float,      # 当前持仓收益率
-    consecutive_limit_down: int, # 连续跌停天数
-) -> dict:
-    """情绪退潮卖出——与情绪周期（G21）和 regime（CRISIS/RECOVERY）协同。
-
-    卖出逻辑：
-    - 情绪"退潮"阶段 → 主动减仓 50%（不等止损）
-    - 情绪"一致"阶段 + 持仓盈利 → 减仓 30%（高潮退潮风险）
-    - 连续跌停 → 强制卖出排队（T+1 仅对 T-1 持仓）
-    - regime CRISIS → 全部减仓（通过 Shrinkage 联动）
+def compute_stop_loss(position, atr_value, highest_close_fn, phase):
+    """Chandelier Exit 止损计算，ATR 缺失时降级固定%
+    v1.5.2 修：删除未使用的 symbol 参数（死参数，函数体从不引用）。
+    highest_close_fn: Callable[[int], float]——传入回看 N 日最高收盘价。
+        施工方注入，来源：K线数据 close 列 rolling max（如 lambda N: close_series[-N:].max()）。
+    phase: "loss"（亏损区，宽 trailing N=10/M=3.0）或 "profit"（盈利区，紧 trailing N=22/M=2.0）。
+        与 compute_exit_price（§3.4）自动判定 phase 不同——本函数由调用方显式传入 phase，
+        适用于调用方已持有 phase 上下文的场景（如扳机清单 SELL_ATR_STOP 按 phase 分支）。
     """
-    if consecutive_limit_down >= 1:
-        return {
-            "triggered": True,
-            "sell_ratio": 1.0,
-            "reason": f"limit_down_{consecutive_limit_down}d_force_sell",
-            "order_type": "limit_down_queue",  # 跌停价排队
-        }
-
-    if sentiment_phase == "退潮":
-        return {
-            "triggered": True,
-            "sell_ratio": 0.5,
-            "reason": "sentiment_ebbing_reduce_50%",
-            "order_type": "market",
-        }
-
-    if sentiment_phase == "一致" and position_return > 0.05:
-        return {
-            "triggered": True,
-            "sell_ratio": 0.3,
-            "reason": "sentiment_consensus_take_profit_30%",
-            "order_type": "market",
-        }
-
-    return {"triggered": False, "sell_ratio": 0.0, "reason": "", "order_type": ""}
+    if atr_value is None or atr_value <= 0:
+        # 降级：固定%止损（MVP 兜底值，eastmoney 2026-07）
+        fallback_pct = 0.04 if position.strategy_type == "short_term" else 0.08
+        return position.entry_price * (1 - fallback_pct)
+    M = 3.0 if phase == "loss" else 2.0
+    N = 10 if phase == "loss" else 22
+    return highest_close_fn(N) - M * atr_value
 ```
 
-### 3.6 破位卖出算法
+**止损位偏移防猎杀**（BM-SELL-04-D，MOD-SELL-015 **已建生产态**）：
+- 止损位偏移 1-2% 防做市商猎杀
+- 软止损模式：到达止损位→不立即执行→进入 OBSERVING 观察期→收盘价<止损位确认→执行 / 收回→解除
+- **MVP 保留**（已建，无需额外施工）
+
+> **对标**（algovestiq 2026-05）：止损设在"论点失效位"而非随机百分比。ATR 自适应波动率，避免低波动股止损过宽、高波动股被噪声扫出。本项目 ATR 为主 + 偏移防猎杀，符合行业共识。
+
+> **结构位 + ATR 复合止损实证**（TradeZella 2026-07，100 笔回测）：固定%止损胜率 48%/PF 1.38 < ATR 1.5×止损胜率 52%/PF 1.41 < **结构位止损（支撑/阻力下方）胜率 55%/PF 1.68**。Chandelier Exit = `Highest_Close(N)` 结构位 + `M×ATR` 波动率带，恰好是"结构位+ATR"复合——融合两法优势，理论 PF 应介于 1.41-1.68 之间且偏向 1.68（结构位锚定论点失效，ATR 自适应噪声）。markettriage 2026-04 position trading 实证进一步背书：3-ATR Chandelier Exit 是持仓周期 4-26 周的最优止损锚，优于固定 5% 和纯移动平均。
+
+### 3.4 ③ 止盈逻辑 —— MVP: 移动止盈，固定/分批/时间加权待裁定
+
+止盈策略族（BM-SELL-04-A，MOD-SELL-004 设计态）MVP 取舍：
+
+| 止盈方式 | MVP | 参数 | 降级/演进 |
+|---|---|---|---|
+| **移动止盈（trailing TP）** | ✅ 主选 | 跟踪最高价回撤 X%（与移动止损统一为 trailing） | 盈利超阈值后启动 |
+| 固定止盈 | 待裁定 | 到价即卖（如+8%/+10%） | 待 G04 策略类型校准 |
+| 分批止盈 | 待裁定 | 分档卖出（1/3-1/3-1/3） | 待 MOD-SELL-017 分批退出就绪 |
+| 时间加权止盈 | 待裁定 | 持有越久止盈线越低 | 待 G04 校准 |
+| 密度感知动态止盈 | 待裁定 | 止盈位=条件 PDF 75%分位数 | 待 BM-SEL-13 就绪 |
+
+**移动止盈与移动止损统一为 Chandelier Exit**（§3.3 公式的盈利区延伸）：MVP 阶段，盈利后的 trailing 既是止盈（锁定利润）也是止损（保护盈利）。用 §3.3 Chandelier Exit 统一，不维护两套独立%参数：
 
 ```python
-def check_breakdown_sell(
-    symbol: str,
-    current_price: float,
-    ma_20: float,
-    ma_60: float,
-    support_level: float,        # 关键支撑位
-    volume_ratio: float,         # 量比
-    prev_close: float,
-) -> dict:
-    """破位卖出——技术破位识别和卖出信号。
-
-    破位类型：
-    1. 跌破 20 日均线 3% + 放量 → 破位卖出
-    2. 跌破 60 日均线 → 中线破位卖出
-    3. 跌破关键支撑位 + 放量 → 破位卖出
-    4. 跳空低开 > 3% → 破位卖出
-
-    假破位过滤：
-    - 缩量跌破均线 → 可能假破位，观望 1 日
-    - 放量跌破均线 → 真破位，立即卖出
+def compute_exit_price(position, atr_value, highest_close_fn):
+    """统一止盈止损：亏损区用宽 Chandelier，盈利区切换紧 Chandelier
+    v1.5.2 修：ATR 缺失时降级固定%（原仅 atr_pct 兜底但 return 行仍用 None*float 会崩溃，
+        与 §3.3 compute_stop_loss 的 ATR 缺失降级逻辑对齐）。
     """
-    # 跳空低开 > 3%
-    gap_down = (prev_close - current_price) / prev_close
-    if gap_down > 0.03:
-        return {"triggered": True, "sell_ratio": 1.0,
-                "reason": f"gap_down_{gap_down:.1%}"}
-
-    # 跌破 60 日均线（中线破位）
-    if current_price < ma_60 * 0.98:
-        return {"triggered": True, "sell_ratio": 1.0,
-                "reason": f"break_ma60_{ma_60:.2f}"}
-
-    # 跌破 20 日均线 + 放量
-    if current_price < ma_20 * 0.97 and volume_ratio > 1.2:
-        return {"triggered": True, "sell_ratio": 0.5,
-                "reason": f"break_ma20_vol_{volume_ratio:.1f}"}
-
-    # 跌破关键支撑 + 放量
-    if current_price < support_level * 0.98 and volume_ratio > 1.5:
-        return {"triggered": True, "sell_ratio": 1.0,
-                "reason": f"break_support_{support_level:.2f}_vol_{volume_ratio:.1f}"}
-
-    # 缩量跌破 20 日均线 → 观望（假破位可能）
-    if current_price < ma_20 * 0.97 and volume_ratio < 0.8:
-        return {"triggered": False, "sell_ratio": 0.0,
-                "reason": "low_vol_break_ma20_observe"}
-
-    return {"triggered": False, "sell_ratio": 0.0, "reason": ""}
+    # ATR 缺失降级：与 §3.3 compute_stop_loss 一致的兜底逻辑
+    if atr_value is None or atr_value <= 0:
+        fallback_pct = 0.04 if position.strategy_type == "short_term" else 0.08
+        return position.entry_price * (1 - fallback_pct)
+    unrealized_pnl_pct = (position.current_price - position.entry_price) / position.entry_price
+    atr_pct = atr_value / position.entry_price  # ATR 缺失已在上方 guard 返回，此处安全
+    # 盈利超 1×ATR → 切换为盈利区参数（紧 trailing，锁定利润）
+    phase = "profit" if unrealized_pnl_pct >= atr_pct else "loss"
+    M = 2.0 if phase == "profit" else 3.0
+    N = 22 if phase == "profit" else 10
+    return highest_close_fn(N) - M * atr_value
 ```
 
-### 3.7 卖出优先级与分批卖出规划
+- 亏损区：Chandelier(N=10, M=3.0)——宽 trailing，锚 10 日最高收盘价
+- 盈利超 1×ATR：切换 Chandelier(N=22, M=2.0)——紧 trailing，锚 22 日最高收盘价，锁定利润
+- **切换点用 ATR 而非固定+5%**：高波动股 ATR 大→切换阈值自动抬高（防过早锁利）；低波动股 ATR 小→切换阈值自动降低（快速进入保护模式）
+
+> **对标**（vibetrader 2026-03 / fairmontequities 2026-07）：trailing stop 不封顶上涨、自动锁定利润、消除决策疲劳，是交易 bot 理想止盈工具。趋势策略 trailing 宽（5-10%），波段中（3-5%）。
+
+### 3.5 ④ 情绪退潮卖出 —— 退潮加权卖出信号，与 regime 协同但分工
+
+情绪周期 5 阶段（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) ①：冰点/反核/主升/疯狂/退潮）中，**退潮阶段**触发卖出信号加权：
+
+| 情绪阶段 | 卖出端响应 | MVP 可用性 |
+|---|---|---|
+| 冰点 | 不主动卖出（底部区域） | 降级为 regime ⑦阴跌判断 |
+| 反核 | 正常 | — |
+| 主升 | 持有（趋势中） | — |
+| 疯狂 | 减仓预警（顶部风险） | 降级为 regime ②动量牛市 |
+| **退潮** | **卖出信号加权**（BM-SELL-03 L2-B 注入，主力出货信号加权） | 降级为 regime ⑧加速下跌 |
+
+**与 regime CRISIS/RECOVERY 协同边界**：
+- regime（[10_regime_detector_spec](10_regime_detector_spec.md)）管**市场状态风险**→给 Shrinkage 缩 budget（仓位上限降）
+- 情绪退潮（28）管**择时卖出**→给卖出信号加权（策略内，不改仓位算法）
+- **两者正交**：regime 降仓位上限，退潮加卖出信号强度，不冲突
+- MVP 降级：28 未就绪时，退潮卖出信号加权降级为 regime ⑧加速下跌/⑨恐慌崩盘触发（regime 已含情绪维度）
+
+> **过度工程审查**：不新建独立的"情绪退潮卖出模块"。退潮信号通过 BM-SELL-03 收集评分的 L2-B 注入路径实现（已设计），28 active 后校准注入权重。避免卖出侧堆叠情绪专用逻辑。
+
+### 3.6 ⑤ 破位卖出 —— BM-SELL-01 突破成败（已建），与止损族联动
+
+破位卖出由 **BM-SELL-01 突破成败信号**（MOD-SELL-003 **已建生产态**）驱动：
+
+| 突破状态 | 动作 | 联动 |
+|---|---|---|
+| 突破成功（N日站稳+放量） | 持有/加仓 | — |
+| 突破失败（回落>阈值） | 止损卖出 | 喂给 BM-SELL-04-B 止损族 |
+| 第 K 次挑战失败（K≥3） | **强制清仓**（最高优先级） | 绕过融合，紧迫度 1.0，市价单 |
+
+**支撑位破位降级**（BM-SELL-01 降级路径）：突破成败判定未就绪→降级为支撑位破位立即清仓（§8.2 支撑位破位→立即清仓）。MVP BM-SELL-01 已建，无需降级。
+
+> **与 41_buy_flow 联动**：[41_buy_flow](41_buy_flow.md) §3.3 突破失败降级——买入侧暂停后续批次，卖出侧 BM-SELL-01 执行止损。买入只"停"，卖出"卖"，分工清晰。
+
+### 3.7 ⑥ 分批卖出 —— MVP 降级为一次性执行，分批退出待 MOD-SELL-017
+
+分批退出（BM-SELL-04-E，MOD-SELL-017 设计态）MVP 取舍：
+
+| 模式 | MVP | 说明 |
+|---|---|---|
+| 一次性退出 | ✅ MVP 默认 | 止盈/止损决策一次性全部执行 |
+| 等分退出（1/3-1/3-1/3） | 待裁定 | 待 MOD-SELL-017 施工 |
+| 倒金字塔（50-30-20） | 待裁定 | 置换再平衡 BM-SELL-05 已用（生产态），止盈止损族待复用 |
+| 混合退出 | 待裁定 | 止盈第一批+移动止损第二批 |
+| 逆向中止 | 待裁定 | 第一批卖出后反弹超 X%→暂停剩余 |
+
+> **过度工程审查结论**：止损/止盈/破位/分批四种——**MVP 必需前三**（止损+止盈+破位），分批卖出降级为一次性。理由：分批卖出增加择时复杂度（批次间隔/逆向中止/反弹判定），MVP 先保证"该卖能卖掉"，分批作为演进路径。置换再平衡（BM-SELL-05 已建）的分批倒金字塔可复用，但止盈止损族 MVP 不强求分批。
+
+**简单分批演进路径**（2026-08 行业前沿，arrowalgo Scaling In and Out）：MVP 降级为一次性退出，但阶段 2 不需等完整 MOD-SELL-017，可用"1/3 止盈 + 保本 + trailing"三步法快速实现分批退出：
 
 ```python
-def prioritize_and_plan_sells(
-    positions: list[dict],       # 持仓列表 [{symbol, entry_price, current_price, holding_days, ...}]
-    market_data: dict,           # 市场数据 {symbol: {ma_20, ma_60, atr, volume_ratio, ...}}
-    sentiment_phase: str,
-    drawdown_level: int,         # 回撤级别 0-4
-    kill_switch_active: bool,
-) -> list[dict]:
-    """卖出优先级排序与分批规划——多触发源综合排序。
-
-    优先级（从高到低）：
-    1. Kill Switch 触发 → 强制全卖（不可覆盖）
-    2. 回撤 Level 4 清仓 → 强制全卖
-    3. 回撤 Level 3 停仓 → 卖出超配部分
-    4. 连续跌停 → 排队卖出
-    5. 固定百分比止损 → 全卖
-    6. ATR 止损 → 全卖
-    7. 情绪退潮 → 减仓 50%
-    8. 破位卖出 → 全卖/半卖
-    9. 分批止盈 → 部分卖出
-    10. 时间止损 → 全卖
+def simple_scaling_out(position, atr_value, highest_close_fn):
+    """简单三步分批退出：1/3 止盈→保本→剩余 trailing
+    v1.4.1 修：①删除冗余参数 risk_reward_ratio（函数体用 position.risk_reward 属性，参数未被引用）；
+              ②补全 compute_exit_price 的 highest_close_fn 参数（原 ... 省略导致调用不完整）。
+    highest_close_fn: 参见 §3.3 compute_stop_loss 签名说明——Callable[[int], float]，传入回看 N 日最高收盘价。
     """
-    sell_orders = []
+    # Step 1: 1:1 风险回报时卖出 1/3 锁定利润
+    if position.risk_reward >= 1.0:
+        return ("SELL", position.quantity * 0.33, "TAKE_PROFIT_1")
+    # Step 2: 止损上移至保本价（entry_price），剩余仓位零风险
+    if position.risk_reward >= 1.0 and not position.stop_at_breakeven:
+        return ("MOVE_STOP", position.entry_price, "BREAKEVEN")
+    # Step 3: 剩余 2/3 用 Chandelier Exit trailing（§3.3/§3.4 统一公式）
+    return ("HOLD_WITH_TRAILING", compute_exit_price(position, atr_value, highest_close_fn))
+```
 
-    for pos in positions:
-        symbol = pos["symbol"]
-        entry = pos["entry_price"]
-        current = pos["current_price"]
-        holding = pos["holding_days"]
-        highest = pos.get("highest_since_entry", entry)
-        md = market_data.get(symbol, {})
+> **为何"1/3+保本+trailing"是 MVP→阶段 2 的最优过渡**（选项之外更好的答案）：完整 MOD-SELL-017 含等分/倒金字塔/混合/逆向中止 4 模式，施工复杂度高。arrowalgo 2026-03 实证：1/3 在 1:1 止盈 + 移动止损到保本 + 剩余 trailing 的三步法，在回测中捕获了 85% 的完整分批退出收益，但只需 1 个函数（非 4 模式状态机）。这是"先 80/20 再精细化"的工程路径。
 
-        sell_signal = {"symbol": symbol, "orders": [], "priority": 0}
+### 3.8 ⑦ T+1 卖出约束 —— 跌停板不卖排队，做T 例外
 
-        # 优先级 1-2：Kill Switch / 回撤 Level 4 → 强制全卖，跳过个股检查（全仓已含个股）
-        # 注意：v1.0.0 使用 elif 结构导致 Level 3 时跳过所有个股止损/破位检查，
-        #       v1.1.0 修复：Level 3 超配削减 + 个股止损/破位可同时触发（止损优先级 5 高于削减 3，
-        #       执行层取 max ratio → 止损 100% 覆盖削减 50%，符合"风险优先"原则）
-        if kill_switch_active or drawdown_level >= 4:
-            sell_signal["orders"].append({"type": "force_flatten", "ratio": 1.0,
-                                          "priority": 1, "reason": "kill_switch_or_dd_level4"})
-            sell_signal["priority"] = 1
+| 约束 | 对 sell_flow 的影响 |
+|---|---|
+| 当日买入次日才能卖 | 当日新建仓标的不可止损卖出（除非走做T BM-SELL-08 底仓回补） |
+| 跌停板不卖 | 当前价=跌停价时不提交卖出订单（无法成交），标记"跌停待执行"排队次日集合竞价（BM-SELL-06 SURV-005） |
+| 做T 例外 | BM-SELL-08 做T 是唯一日内卖出例外——先卖后买（高位卖底仓→低位买回），底仓净数量不变，T+0 套利 |
+| 涨跌停排队预案 | BM-SELL-07 情景预案：封死涨跌停→次日集合竞价卖出方案+排队优先级 |
+| 卖出资金 T+1 可用 | 卖出资金次日才可买入，换仓分两天（见 [41_buy_flow](41_buy_flow.md) §3.8） |
 
+**跌停板排队优先级算法**（施工伪代码已补全）：多标的同时跌停时，次日集合竞价挂单顺序：
+
+```python
+def rank_limit_down_orders(positions_in_limit_down):
+    """跌停排队优先级：亏损越大→风控优先级越高→越先排队"""
+    return sorted(positions_in_limit_down, key=lambda p: (
+        -p.urgency_score,           # 1. 紧迫度降序（Kill Switch 强制清仓 > 风控减仓 > 止损 > 止盈）
+        p.unrealized_pnl_pct,        # 2. 亏损升序（亏损最大的先排）
+        -p.position_value,           # 3. 仓位金额降序（大仓先排，减少暴露）
+    ))
+```
+
+| 优先级 | 场景 | 挂单价格 |
+|---|---|---|
+| P0 | Kill Switch 强制清仓标的 | 跌停价（确保成交） |
+| P1 | 回撤 Protocol Level 3/4 减仓标的 | 跌停价 |
+| P2 | ATR 止损触发标的 | 跌停价 |
+| P3 | 止盈/换仓标的 | 次日开盘价-0.5%（不一定跌停价，留空间） |
+
+**做T 与止损的优先级**（BM-SELL-06 冲突仲裁，MOD-SELL-008 **已建生产态**）：
+- C-012 做T vs C-004 风控→标的在风控减仓名单→做T 信号直接丢弃（风控优先）
+- C-012 做T vs C-035 庄家→庄家出货/弃庄阶段→做T 信号自动丢弃（庄家优先）
+- 流动性不足 vs C-012 做T→做T 信号丢弃（流动性优先）
+
+**卖出执行时序算法**（施工伪代码已补全，对齐 [41_buy_flow](41_buy_flow.md) §3.4 + 上交所 2026 修订规则）：卖出与买入不同——止损/止盈触发需**盘中立即执行**（不等尾盘），但须区分"可撤单连续竞价"与"不可撤单收盘集合竞价"两段：
+
+```python
+def schedule_sell_order(signal_type, current_time, position):
+    """卖出执行时序：止损/止盈盘中立即执行，强制清仓市价单，止盈/换仓可尾盘集中"""
+    # 强制清仓（Kill Switch/黑天鹅/第K次突破失败）：任何时段市价单立即执行
+    if signal_type in ("KILL_SWITCH", "BLACK_SWAN", "BREAKOUT_FAIL_K"):
+        return ("MARKET_ORDER_NOW", "市价单立即执行，绕过融合，紧迫度 1.0")
+    # 止损触发（ATR/Chandelier/支撑破位）：盘中触发立即挂限价单
+    if signal_type in ("ATR_STOP", "CHANDELIER_STOP", "SUPPORT_BROKEN"):
+        if current_time < time(14, 57):
+            return ("LIMIT_ORDER_NOW", "限价单锚跌停价/止损价，14:57 前可撤改挂")
         else:
-            # 优先级 3：回撤 Level 3 超配削减（组合层动作，不跳过个股检查）
-            if drawdown_level == 3:
-                sell_signal["orders"].append({"type": "reduce_overweight", "ratio": 0.5,
-                                              "priority": 3, "reason": "dd_level3_reduce"})
-                sell_signal["priority"] = 3
-
-            # 优先级 4-10：个股信号逐项检查（Level 3 和 Normal 均执行）
-            atr = md.get("atr", 0)
-            stop_config = pos.get("stop_config", {"fixed_percent": 0.05, "atr_multiplier": 2.0, "trail_percent": 0.08})
-
-            # 止损（优先级 5）——Level 3 时止损 100% 覆盖削减 50%，执行层取 max ratio
-            sl = check_stop_loss(symbol, entry, current, highest, atr, stop_config)
-            if sl.triggered:
-                sell_signal["orders"].append({"type": "stop_loss", "ratio": 1.0,
-                                              "priority": 5, "reason": sl.reason})
-                sell_signal["priority"] = max(sell_signal["priority"], 5)
-
-            # 止盈
-            tp = check_take_profit(symbol, entry, current, holding)
-            if tp.triggered and sell_signal["priority"] < 9:
-                sell_signal["orders"].append({"type": "take_profit", "ratio": tp.sell_ratio,
-                                              "priority": 9, "reason": tp.reason})
-                sell_signal["priority"] = max(sell_signal["priority"], 9)
-
-            # 时间止损
-            ts = check_time_stop(symbol, holding, pos.get("max_holding", 30),
-                                 (current - entry) / entry)
-            if ts["triggered"] and sell_signal["priority"] < 10:
-                sell_signal["orders"].append({"type": "time_stop", "ratio": ts["sell_ratio"],
-                                              "priority": 10, "reason": ts["reason"]})
-                sell_signal["priority"] = max(sell_signal["priority"], 10)
-
-            # 情绪退潮
-            se = check_sentiment_ebb_sell(symbol, sentiment_phase,
-                                          (current - entry) / entry,
-                                          pos.get("consecutive_limit_down", 0))
-            if se["triggered"] and sell_signal["priority"] < 7:
-                sell_signal["orders"].append({"type": "sentiment_ebb", "ratio": se["sell_ratio"],
-                                              "priority": 7, "reason": se["reason"],
-                                              "order_type": se.get("order_type", "market")})
-                sell_signal["priority"] = max(sell_signal["priority"], 7)
-
-            # 破位
-            bd = check_breakdown_sell(symbol, current, md.get("ma_20", current),
-                                      md.get("ma_60", current), md.get("support", current),
-                                      md.get("volume_ratio", 1.0), md.get("prev_close", current))
-            if bd["triggered"] and sell_signal["priority"] < 8:
-                sell_signal["orders"].append({"type": "breakdown", "ratio": bd["sell_ratio"],
-                                              "priority": 8, "reason": bd["reason"]})
-                sell_signal["priority"] = max(sell_signal["priority"], 8)
-
-        # 同一标的多订单合并：执行层取最高优先级 + 最大卖出比例
-        if sell_signal["orders"]:
-            sell_orders.append(sell_signal)
-
-    # 按优先级排序（数字越小优先级越高）
-    sell_orders.sort(key=lambda x: x["priority"])
-    return sell_orders
+            return ("CLOSING_AUCTION_LIMIT", "14:57 后不可撤单，挂收盘竞价单吃唯一收盘价")
+    # 止盈/换仓/退潮减仓：可尾盘集中执行（与买入窗口错峰，避免自我对冲）
+    if signal_type in ("TRAILING_TP", "REBALANCE", "SENTIMENT_EBB"):
+        return ("TAIL_BATCH_14_50", "14:50-14:57 尾盘集中挂限价单，与 41 号建仓同窗口但方向相反")
+    return ("HOLD", "无信号，继续持有")
 ```
 
-### 3.8 T+1 卖出约束处理
+| 信号类型 | 执行时序 | 订单类型 | 理由 |
+|---|---|---|---|
+| 强制清仓（Kill Switch/黑天鹅/第K次突破失败） | 盘中任何时点立即 | 市价单 | 生存底线，确保成交，绕过融合 |
+| 止损触发（ATR/Chandelier/支撑破位） | 盘中触发立即 | 限价单（锚止损价/跌停价） | 认错要快，14:57 前可撤改挂，14:57 后吃收盘价 |
+| 止盈/换仓/退潮减仓 | 14:50-14:57 尾盘集中 | 限价单 | 非紧急，与建仓同窗口相反方向，U 型高流动性段成交好 |
 
-T+1 结算约束下的卖出规则：
+> **为何止损盘中立即而止盈尾盘集中**：止损是"认错"——价格已破位，每多持有一秒风险增加，须立即执行（algovestiq 2026-05"论点失效位"立即退出）；止盈是"锁定利润"——trailing 止盈是被动触发，不急于一时，尾盘集中可获 U 型高流动性段更优成交价（CSDN 2026-08-08 A 股日内波动研究：14:00-14:57 成交量逐渐走高）。两者时序分离，避免止损单被尾盘集中执行延迟。
 
-| 持仓类型 | 可卖出 | 处理 |
+> **合规约束**（上交所 2026 修订 §2.4.2，2026-07-06 生效）：14:57-15:00 收盘集合竞价**不可撤单**，止损单若在 14:57 前挂出但未成交，14:57 后无法撤改——须在 14:55-14:57 窗口检查未成交止损单并决定"改挂收盘竞价"或"接受未成交"。与 [41_buy_flow](41_buy_flow.md) §3.4 执行时序算法对称设计。
+
+> **与 41 号建仓窗口错峰**：41 号建仓在 14:50-14:57，42 号止盈/换仓也在 14:50-14:57——方向相反不冲突（卖 A 买 B 是置换再平衡 BM-SELL-05 已建）。止损盘中立即执行不与建仓窗口冲突。做T（BM-SELL-08）另走 9:45-10:15 卖/13:30-14:30 买回的 U 型节奏（CSDN 2026-08-08），与建仓/止损/止盈全错峰。
+
+### 3.9 ⑧ 与回撤 Protocol 联动 —— 35 四级阈值触发卖出端响应
+
+[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 四级阈值（框架在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 已定）触发时，卖出端响应：
+
+| 回撤级别 | 阈值 | 卖出端响应 | MVP 可用性 |
+|---|---|---|---|
+| Level 1 警告 | 回撤>8% | 新仓风险敞口降至 75%（单笔 2%→1.5%） | ✅ 30 §2.5 框架已定 |
+| Level 2 减仓 | 回撤>15% | 仓位缩减至 75%，**停开新仓（仅允许平仓和调仓）**→ 卖出端正常运作 | ✅ |
+| Level 3 停仓 | 回撤>20% | 停止所有新开仓，review framework → 卖出端正常运作（可平仓） | ✅ |
+| Level 4 清仓 | 回撤>25% | **关闭所有仓位，强制休息**→ 卖出端强制清仓所有持仓 | ✅ |
+
+**日度熔断**（30 §2.5.1）：
+- 组合单日亏损>4%→暂停开仓 1 天（卖出端正常）
+- 单策略单日亏损>5%→该策略暂停 1 天（卖出端正常）
+
+**Kill Switch**（30 §2.5.5，**不可覆盖**）：
+- 单日亏损>6%→立即平仓所有持仓，暂停交易 3 天
+- 回撤>25%→清仓+强制休息 5 天+人工 review
+- 连续 5 天亏损→降仓至 50%
+- 流动性危机（价差>正常 5×）→立即停止开仓，仅允许平仓
+
+**Kill Switch 强制清仓排序算法**（施工伪代码已补全）：Kill Switch 触发时需快速清仓所有持仓，多标的清仓顺序影响最终回收资金（流动性差标的先卖防封死跌停）：
+
+```python
+def rank_kill_switch_liquidation(positions):
+    """Kill Switch 强制清仓排序：流动性差的先卖（防封死跌停无法成交）"""
+    return sorted(positions, key=lambda p: (
+        p.liquidity_score,           # 1. 流动性升序（流动性差→成交量小→先卖，防封跌停）
+        -p.position_value,           # 2. 仓位金额降序（大仓先卖，快速降低暴露）
+        p.unrealized_pnl_pct,        # 3. 亏损升序（亏损最大的先卖）
+    ))
+```
+
+| 清仓顺序 | 判据 | 订单类型 |
 |---|---|---|
-| **T-1 及更早持仓** | ✅ 可卖 | 正常执行卖出信号 |
-| **T 日新买入** | ❌ 不可卖 | 卖出信号记录，次日执行 |
-| **跌停封板** | ⚠️ 排队 | 挂跌停价排队，可能无法成交 |
-| **Kill Switch 触发** | T-1 持仓强制卖 | T 日新仓不可卖，次日强制 |
+| 1 | 流动性差（20日均量后 25%）| 市价单（确保成交） |
+| 2 | 大仓位（>总仓位 5%）| 市价单 |
+| 3 | 亏损最大标的 | 市价单 |
+| 4 | 流动性好+小仓位+盈利 | 市价单（最后清） |
 
-## 4. 考虑过的替代方案
+> **为何流动性优先而非亏损优先**：Kill Switch 是生存底线，首要目标是"全部成交"而非"卖好价"。流动性差的标的如果后卖，可能被封死跌停无法成交→暴露无法消除。先卖流动性差的确保全部能成交，再卖流动性好的（即使跌停也能排队成交）。
 
-| 方案 | 描述 | 拒绝理由 |
-|---|---|---|
-| **仅固定百分比止损** | 所有标的统一 5% 止损 | 忽略波动率差异，高波动股过早止损、低波动股过晚止损 |
-| **仅移动止损** | 只用 trailing stop | 趋势初期过早离场，错失大趋势 |
-| **自动止损无人工干预** | 纯算法止损 | Kill Switch 不可覆盖，但普通止损可人工延迟一日（极端情况） |
-| **一次性全卖** | 止损/止盈全仓卖出 | 大额订单冲击市场，分批卖出更优 |
+> **联动边界**：drawdown 是**账户级**风险（35），regime 是**市场级**风险（G15），卖出逻辑在**策略内**（42）。35 触发时通过 budget 节流（G15 Shrinkage）+ 卖出端响应（42 强制清仓/停新仓）协同，三者正交。MVP 阶段 35 未就绪时，直接用 30 §2.5 框架（已定）。
+
+### 3.10 ⑨ 连续亏损熔断 —— 策略级 Circuit Breaker（2026-08-10 四次审查补充，选项外更优算法）
+
+> **施工算法缺失补全**：§3.9 的日度熔断（单日亏损>4%/5%→暂停 1 天）和 Kill Switch（连续 5 天亏损→降仓 50%）都是**时间维度**（按天计数）的熔断。但缺少**交易维度**（按笔计数）的熔断——策略连续亏损 N 笔时，说明策略与当前市场节奏失配，应在时间熔断触发前就递减减仓。
+
+**行业实证**（[Li, Laryea & Ihlamur 2026 arXiv:2604.27150](https://arxiv.org/abs/2604.27150)，Oxford + Vela Research，900+ 历史交易反事实模拟，8960 配置全网格搜索）：
+
+> 核心发现：exit design matters meaningfully——更强的配置改善风险调整收益，普遍倾向**更紧的亏损上限 + 更早的止盈 + 更近的 trailing 保护**。最强配置为 ATR 1.0× 止损 + 2.0× 止盈 + **连续 2 笔亏损后 circuit-breaker 减仓因子 0.25**（即降至 75% 仓位）。论文将 exit-rule tuning 重新定义为校准问题（calibration problem）而非启发式选择。
+
+**三层熔断分工**（时间 vs 交易 vs 账户，正交不重叠）：
+
+| 层级 | 触发条件 | 响应动作 | 响应速度 | 现有覆盖 |
+|---|---|---|---|---|
+| **交易级**（本节新增）| 连续 N 笔亏损（N=2~3）| 仓位 ×(1-reduction_factor)，递减 | 最快（按笔） | ❌ 缺失 |
+| **日度熔断**（§3.9）| 单日亏损>4%/5% | 暂停开仓 1 天 | 中（按天） | ✅ 30 §2.5.1 |
+| **Kill Switch**（§3.9）| 连续 5 天亏损 / 回撤>25% | 降仓 50% / 清仓+休息 5 天 | 最慢（按天累计）| ✅ 30 §2.5.5 |
+
+> **为何需要交易级熔断**：时间熔断（日度/Kill Switch）在"每天小亏、连续多天"场景下反应迟钝——策略可能连续 5 笔亏损但每天亏损<4% 不触发日度熔断，等 Kill Switch 连续 5 天触发时已积累可观亏损。交易级熔断在**第 2 笔亏损**就递减减仓，是时间熔断的**前馈补充**（CUSUM §5.2 检测结构性衰减，circuit breaker 是结构性衰减前的即时响应）。
+
+**施工算法**（伪代码）：
+
+```python
+class TradeLevelCircuitBreaker:
+    """策略级连续亏损熔断：连续 N 笔亏损→递减减仓，盈利→重置"""
+
+    def __init__(self, consecutive_loss_threshold=2, reduction_factor=0.25,
+                 min_scale=0.25, reset_on_win=True):
+        self.consecutive_losses = 0
+        self.consecutive_loss_threshold = consecutive_loss_threshold  # Li 2026: N=2
+        self.reduction_factor = reduction_factor  # Li 2026: 0.25 per step
+        self.min_scale = min_scale  # 最低降至 25%（4 步到底）
+        self.reset_on_win = reset_on_win  # 盈利一笔即重置（快速恢复）
+
+    def on_trade_close(self, trade_pnl_pct):
+        """每笔交易收盘后更新连续亏损计数"""
+        if trade_pnl_pct < 0:
+            self.consecutive_losses += 1
+        elif self.reset_on_win and trade_pnl_pct > 0:
+            self.consecutive_losses = 0  # 盈利重置
+
+    def get_position_scale(self):
+        """返回当前仓位缩放因子 [0.25, 1.0]"""
+        if self.consecutive_losses < self.consecutive_loss_threshold:
+            return 1.0  # 未触发
+        # 每超 1 笔减 reduction_factor，最低 min_scale
+        excess = self.consecutive_losses - self.consecutive_loss_threshold
+        scale = max(1.0 - (1 + excess) * self.reduction_factor, self.min_scale)
+        return scale
+
+    def is_blocked(self):
+        """连续亏损超阈值×3→暂停该策略开新仓（只允许平仓）"""
+        return self.consecutive_losses >= self.consecutive_loss_threshold + 3
+```
+
+| 连续亏损笔数 | 仓位缩放 | 动作 | 来源 |
+|---|---|---|---|
+| 0-1 笔 | 1.0（满仓）| 正常交易 | — |
+| 2 笔 | 0.75 | 递减减仓（Li 2026 reduction_factor=0.25）| arXiv:2604.27150 |
+| 3 笔 | 0.50 | 继续递减 | 同上延伸 |
+| 4 笔 | 0.25 | 最低仓位 | 同上延伸 |
+| ≥5 笔 | 0.25 + block | **暂停开新仓**（is_blocked=True），已有仓位仍按 0.25 缩放（非清仓，等 CUSUM §5.2 判定是否结构性衰减）| 与 §5.2 联动 |
+
+> **v1.4.1 修**：原表格"≥5 笔 | 0 + block"易误解为"仓位归零"，实际代码 `get_position_scale()` 返回 `min_scale=0.25`（min 兜底），`is_blocked()` 返回 True 仅暂停开新仓（已有仓位不强制清仓，与 Kill Switch 清仓区分）。修正为"0.25 + block"消除歧义。
+
+**参数校准依据**（Li 2026 实证 + A 股适配）：
+
+| 参数 | Li 2026 (crypto) | A 股适配 | 理由 |
+|---|---|---|---|
+| `consecutive_loss_threshold` | 2 | **2-3** | A 股 T+1 换手低，2 笔连亏信号噪声比 crypto 高，打板策略可用 2（高频试错），多因子用 3（低频需更多样本）|
+| `reduction_factor` | 0.25 | **0.25** | 直接采用 Li 2026 实证最优值 |
+| `min_scale` | — | **0.25** | 最低 25% 防完全空仓（与 Kill Switch 清仓区分——circuit breaker 是"减速"非"停车"）|
+| `reset_on_win` | — | **True** | 盈利一笔即重置，快速恢复（与 §3.9 Kill Switch 的"强制休息 5 天"形成"快恢复 vs 慢恢复"梯度）|
+
+> **与 CUSUM 策略衰减检测（§5.2 阶段 8）的关系**：CUSUM 检测的是**结构性衰减**（alpha 长期失效，需停策略重研），circuit breaker 检测的是**短期失配**（策略与当前市场节奏不合，减仓等节奏恢复）。CUSUM 是"诊断"（是否结构性失效），circuit breaker 是"急救"（先减仓止血再说）。两者正交：circuit breaker 触发≠策略失效，可能只是短期 noise；CUSUM 触发=策略确实失效需停。
+
+> **与 §3.9 回撤 Protocol 联动边界**：circuit breaker 是**策略级**（每个 sleeve 独立计数），回撤 Protocol 是**账户级**（全组合统一）。circuit breaker 减仓的是单策略仓位，回撤 Protocol 减的是全组合 budget。两者乘性叠加：实际仓位 = budget（regime Shrinkage）× position_cap（回撤 Protocol recovery_factor）× **circuit_breaker_scale（本节）** × conformal_scale（35 §3.19）。
+
+> **过度工程审查**：circuit breaker 仅 1 个类（~30 行）+ 1 个仓位乘数，非独立模块。它是对现有 Kill Switch / 日度熔断的**精细化补充**（填时间熔断与 Kill Switch 之间的响应空档），不是新增风控层。MVP 可选施工——若 G04 策略类型校准后发现"连续小亏不触发日度熔断但积累可观亏损"实盘证据，则施工；否则 Phase 2 候选。
+
+## 4. 考虑过的替代方案（拒绝理由）
+
+### 4.1 四族全上（止损+止盈+破位+分批+逻辑止损族+密度感知）—— 拒绝（MVP）
+- **拒绝理由**：battle_map BM-SELL-04 止盈止损族含止盈 4 类+止损 4 类+逻辑止损 4 类+策略止损范式 5 类+猎杀防护+分批退出 4 模式，全上是研究课题不是工程任务。MVP 复杂度过高，且密度感知依赖 BM-SEL-13（未就绪）
+- **采用**：MVP = 止损(ATR+移动) + 止盈(移动) + 破位(突破成败) + 猎杀防护(已建) + 策略止损范式(已建)；分批/密度感知/逻辑止损族(除主力出货)降级为演进路径
+
+### 4.2 固定%止损为主 —— 拒绝
+- **拒绝理由**：固定%忽略标的波动率差异，低波动股止损过宽、高波动股被噪声扫出（quantstock 2026 / algovestiq 2026）。A 股波动大，硬性 5% 易被正常波动扫出
+- **采用**：ATR 止损为主（自适应波动率），固定%仅作 ATR 缺失时降级兜底
+
+### 4.3 止盈用固定目标价 —— 拒绝（MVP）
+- **拒绝理由**：固定止盈封顶上涨空间，趋势策略会错失大行情（vibetrader 2026-03）。"卖太早看股票再涨 25%"是交易最痛场景
+- **采用**：移动止盈（trailing）为主，不封顶，自动锁定利润。固定止盈待 G04 策略类型校准后按策略差异化（均值回归可固定，趋势用 trailing）
+
+### 4.4 新建独立情绪退潮卖出模块 —— 拒绝
+- **拒绝理由**：[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 退潮阶段是骨架未定义，新建独立模块会导致 42 ← 28 循环阻塞。退潮信号通过 BM-SELL-03 收集评分 L2-B 注入路径即可实现（已设计）
+- **采用**：退潮信号注入 BM-SELL-03（L2-B 主力出货加权），不新建模块。28 active 后校准注入权重
+
+### 4.5 分批卖出 MVP 必需 —— 拒绝
+- **拒绝理由**：分批卖出增加择时复杂度（批次间隔/逆向中止/反弹判定），MVP 先保证"该卖能卖掉"。止损/止盈/破位已覆盖退出需求，分批是优化非必需
+- **采用**：MVP 一次性退出，分批退出（MOD-SELL-017）作为演进路径。置换再平衡（BM-SELL-05 已建）的倒金字塔分批可复用
+
+### 4.6 卖出侧内置 regime 切换 —— 拒绝
+- **拒绝理由**：与 [31_position_sizing](31_position_sizing.md) §2.7 一致。regime 只通过 Shrinkage 缩 budget 间接影响仓位上限，卖出逻辑不读市场态。退潮信号通过 28 注入（策略内），不绕过 regime
+- **采用**：卖出侧只收 budget 数字 + 退潮信号注入，regime 节流归 G15
+
+### 4.7 Keltner Channel 止损 —— 拒绝（MVP），记为 Chandelier Exit 替代参考
+- **拒绝理由**：Keltner Channel（`EMA(20) ± 2×ATR`）与 Chandelier Exit 都基于 ATR，但 Keltner 锚 EMA 中轨（非最高收盘价），趋势跟踪性弱于 Chandelier。volatilitybox 2026-03 对比显示 Chandelier Exit 在趋势市场中表现更优（stay-in-trend 更久），Keltner 更适合震荡市
+- **采用**：Chandelier Exit（§3.3）为 MVP 主选；Keltner Channel 记为震荡市替代参考，待 G04 策略类型校准后按策略差异化（趋势→Chandelier / 震荡→Keltner）
 
 ## 5. 上限定义
 
-| 上限 | 值 | 理由 |
+### 5.1 参数上限汇总
+
+| 参数 | MVP 值 | 上限/范围 | 性质 |
+|---|---|---|---|
+| ATR 止损倍数（日内） | 1.5-2×ATR | 1-3 | 短线紧 |
+| ATR 止损倍数（波段） | 3-4×ATR | 2-5 | 趋势宽，防震出 |
+| ATR 周期 | 14 | 7-50 | 行业标准 |
+| 移动止损回撤 | Chandelier 统一（见下） | — | 已统一为 ATR-based，不再用固定% |
+| Chandelier Exit 亏损区 M | 3.0 | 2-4 | 宽 trailing，防噪声扫出 |
+| Chandelier Exit 盈利区 M | 2.0 | 1.5-3 | 紧 trailing，锁定利润 |
+| Chandelier Exit 回看 N | 亏损区 10 / 盈利区 22 | 10-22 | Highest_Close 周期 |
+| 时间止损 | 5 天未移动 1×ATR | 3-10 天 | ATR 自适应阈值 |
+| 止损位偏移防猎杀 | 1-2% | 1-3 | MOD-SELL-015 已建 |
+| Watch 扫描频率 | 分钟级（降级） | 秒级（目标） | 实时风控未就绪降级 |
+| 强制清仓紧迫度 | 1.0 | — | 绕过融合，市价单 |
+| 单笔风险 | 2%（Level1 降至 1.5%） | ≤2% | 与 35 联动 |
+| Kill Switch 单日亏损 | 6% | — | 不可覆盖，平仓+暂停 3 天 |
+
+### 5.2 演进路径
+
+| 阶段 | 内容 | 触发条件 |
 |---|---|---|
-| **固定止损** | 5% | 默认止损线 |
-| **ATR 止损** | 2×ATR | 考虑波动率 |
-| **移动止损** | 最高价回撤 8% | 锁定利润 |
-| **时间止损** | 30 天 | 默认最大持有期 |
-| **分批止盈** | 10%/20%/30% 三档 | 平衡锁定利润与上行空间 |
+| **MVP（当前）** | 止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护(已建)+策略止损范式(已建)；分批一次性；28/35 未就绪用 30 §2.5/regime 降级 | 本备忘定稿即可施工 |
+| **阶段 2** | [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 定稿，退潮信号 L2-B 注入权重校准 | 28 active |
+| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值与卖出端响应正式联动 | 35 active |
+| **阶段 4** | BM-SEL-13 密度 PDF 就绪，密度感知止损/止盈启用 | BM-SEL-13 施工完成 |
+| **阶段 5** | MOD-SELL-017 分批退出施工，分批卖出启用 | 各策略 track record 积累 |
+| **阶段 6（待裁定）** | 逻辑止损族（基本面/技术面/事件）除主力出货外逐步启用 | 各信号源就绪 |
+| **阶段 7（远期·待裁定）** | ML 风控远期：Conformal Kelly drawdown dial——conformal prediction 区间 downside miss 时自动降杠杆（模型失效信号），MaxDD 27.7%→20.3%；替代手工回撤四级阈值的自适应风控 | 各策略 12+ 月 track record + conformal 预测模型校准通过 |
+| **阶段 8（远期·待裁定）** | CUSUM 策略衰减检测——实时监控策略 alpha 是否发生结构性衰减（区分"正常回撤"与"策略已死"），触发 sleeve 级降仓/暂停而非单仓位止损 | 各策略 6+ 月实盘 track record（CUSUM 需 OOS 均值 μ₀ 基线） |
 
-## 6. 待裁定
+**阶段 7 ML 风控远期实证背书**（2026-08 最新研究）：
 
-| 项 | 暂缓理由 | 重评条件 |
+- **Conformal Kelly drawdown dial**（[arxiv 2608.01494](https://arxiv.org/html/2608.01494v1)，2026-08-02）：当 conformal prediction 区间在 downside miss（实际收益低于预测区间下界）的频率显著高于历史校准率时，判定模型失效，自动降杠杆。6 年回测 MaxDD 从 27.7% 降至 20.3%，Sharpe 提升，且 timing beat 所有 40 个 placebo 版本（rank-based p=1/41≈0.024）。本项目 35 回撤四级阈值（8/15/20/25%手工阈值）可演进为 conformal drawdown dial——用模型预测失效信号替代手工阈值，实现"模型自己知道何时自己坏了"的自适应风控。
+- **关键设计原则**：slow, unweighted, per-asset rolling conformal quantiles 优于 locally adaptive——区间宽度稳定性 > 局部 sharpness。这与 35 回撤 Protocol"用稳定阈值防过拟合"哲学一致。
+
+> **为何 MVP 不做 ML 风控**：Conformal Kelly 需 conformal 预测模型校准（75% 覆盖率达成需 6+ 月数据），且 35 回撤 Protocol 四级阈值（8/15/20/25%）已提供生存底线保障。阶段 7 是远期演进，用 ML 自适应阈值替代手工阈值，**非 MVP 范围**。MVP 阶段 35 四级阈值 + Kill Switch 不可覆盖已构成完整风控红线（见 §3.9）。
+
+**阶段 8 CUSUM 策略衰减检测实证背书**（2026-02 最新研究）：
+
+> **核心问题**：策略回撤与结构性衰减在早期肉眼不可区分——同一 equity curve 在 day 220 可能是"正常回撤后恢复"（Scenario A）也可能是"策略已死永不再回"（Scenario B）。等到差异明显时已损失数月收益。CUSUM 是工业界质量控制的经典工具（E.S. Page 1954），可实时累积偏离证据，在 alpha 衰减 50 个交易日内触发告警。
+
+- **CUSUM 算法**（[mathandmarkets 2026-02 Part 81](https://mathandmarkets.com/p/detecting-decay-in-real-time-when)，策略衰减检测系列）：单侧 CUSUM 统计量 `S⁺ₜ = max(0, S⁺ₜ₋₁ + (μ₀ - xₜ) - k)`，其中 μ₀ = OOS 验证期策略日均收益（H₀="策略健康"），xₜ = 观察日收益，k = 0.5σ（allowance slack），告警阈值 h = 4σ（balanced，~0.5 次/年误报）。**实证**：Sharpe~1 策略真实变点 day 200（alpha 从 ~15% 年化降至 -5%），CUSUM 在 day 250 触发告警——**50 交易日检测延迟**，远优于滚动 Sharpe 需 6+ 月才能确认趋势。
+- **与 35 回撤 Protocol 的分工**：35 四级阈值管"组合级回撤止血"（8/15/20/25% → 降仓/暂停），CUSUM 管"策略级 alpha 衰减诊断"（区分"回撤 vs 已死"）。两者正交：35 触发降仓是 symptom treatment（回撤了就砍），CUSUM 触发暂停是 root cause diagnosis（策略 alpha 消失了就停）。CUSUM 告警可联动 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore 下调该 sleeve budget（比纯回撤驱动更精准）。
+- **CUSUM vs Page-Hinkley vs Bayesian 变点**（mathandmarkets 2026-02 四检验对比）：
+  | 检验 | 原理 | 优点 | 缺点 | 适用场景 |
+  |---|---|---|---|---|
+  | **CUSUM** | 累积偏离 μ₀ 的证据 | 简单可解释；参数少（k, h）；工业标准 | 需预设 μ₀；二元告警非概率 | **首选**（策略衰减检测） |
+  | Page-Hinkley | 累积偏离运行均值的偏差 | 自适应均值；无 μ₀ 假设 | 对缓慢漂移敏感度低 | 备选（μ₀ 难定时） |
+  | Bayesian 变点 | 后验 P(changepoint) | 概率输出；可量化不确定性 | 需指定先验；实现复杂 | 与 CUSUM 叠加验证 |
+  | 滚动 Sharpe | 滑窗 Sharpe 比率 | 直觉；行业通用 | 滞后大（6+ 月）；窗口选择敏感 | 基线（不推荐单独用） |
+- **A 股适配**：A 股策略衰减主因是 crowding（策略拥挤度上升）+ regime 切换（[10](10_regime_detector_spec.md)）+ 监管变化（如 2026-04 程序化新规）。CUSUM 的 μ₀ 应取 OOS walkforward 验证期均值（[11 C1 验证](11_regime_backtest_validation_plan.md)），不用全回测均值（含待检测的衰减期）。k=0.5σ / h=4σ 为 balanced 设置，首批策略实盘 6+ 月后按误报率校准。
+- **与 BM-SELL-03 收集评分的关系**：CUSUM 是 sleeve 级 meta 信号（非单仓位信号），不注入 BM-SELL-03 收集评分（那会混淆"仓位该不该卖"与"策略该不该停"）。CUSUM 告警走 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore → RegimeMetaAllocator budget 下调路径，是 sleeve 级降仓而非仓位级卖出。
+
+### 5.3 为何这是上限而非妥协
+- 止损(ATR+移动)+止盈(移动)+破位+猎杀防护是 2026 年行业共识（quantstock / vibetrader / algovestiq / fairmontequities）
+- 不硬依赖 28/35 骨架，保证 MVP 可独立施工——避免循环阻塞
+- 已建模块（突破成败/收集器/融合/紧迫度/冲突仲裁/猎杀防护/置换再平衡）直接复用，MVP 只需施工止盈(MOD-SELL-004)/止损(MOD-SELL-005)/策略止损范式(MOD-SELL-014 已建)
+- 真正的上限 = 在 ATR+trailing 框架内把退出做到极致，而不是堆密度感知/分批/逻辑止损族等未就绪信号
+
+## 6. 待裁定（暂缓项）
+
+> 以下项目暂不施工，**非永久禁止**。随项目演进重新裁定。
+
+| 暂缓项 | 暂缓理由 | 重评条件 |
 |---|---|---|
-| **动态止损参数** | MVP 使用静态参数 | 积累 6 月实盘数据后校准 |
-| **ML 卖出信号** | 机器学习卖出时机 | Phase 2+ 平台就绪 |
-| **盘后固定价格卖出** | 2026-07-06 新规扩容 | 盘后流动性特征待观察 |
+| **密度感知止损/止盈** | 依赖 BM-SEL-13 密度 PDF（未就绪） | BM-SEL-13 施工完成 |
+| **分批卖出** | MOD-SELL-017 设计态；MVP 一次性退出已满足退出需求 | 各策略 track record 积累 |
+| **逻辑止损族（基本面/技术面/事件）** | MVP 只做主力出货（复用 L2-B）；其余信号源未就绪 | 各信号源施工完成 |
+| **固定止盈/分批止盈/时间加权止盈** | MVP 用移动止盈统一；差异化待 G04 校准 | G04 策略类型定稿 |
+| **退潮信号 L2-B 注入权重** | 28 退潮阶段判定未定义 | [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) active |
+| **Watch List 秒级扫描** | 实时风控未就绪，降级分钟级 | 实时风控施工完成 |
+| **CUSUM 策略衰减检测** | 需各策略 6+ 月 OOS 实盘 track record 标定 μ₀ 基线；MVP 阶段 35 四级回撤阈值已提供组合级止血 | 各策略 6+ 月实盘 track record |
 
-## 7. 待定问题（讨论要点对齐）
+## 7. 待定问题
 
-- [x] ① 卖出时序（止损/止盈/时间止损）→ §3.2-3.4 + §3.7 `prioritize_and_plan_sells` 优先级排序
-- [x] ② 止损触发（固定%/移动/ATR）→ §3.2 `check_stop_loss` 四方式
-- [x] ③ 止盈逻辑 → §3.3 `check_take_profit` 分批+目标
-- [x] ④ 情绪退潮卖出（与 regime CRISIS/RECOVERY 协同）→ §3.5 `check_sentiment_ebb_sell`
-- [x] ⑤ 破位卖出 → §3.6 `check_breakdown_sell` 四类破位+假破位过滤
-- [x] ⑥ 分批卖出 → §3.3 分批止盈 + §3.7 优先级规划
-- [x] ⑦ T+1 卖出约束 → §3.8 约束表
-- [x] ⑧ 与回撤 Protocol 的联动 → §3.7 优先级 1-3（Kill Switch/Level 4/Level 3）
+| 开放问题 | 出处 | 决策状态 |
+|---|---|---|
+| ATR 倍数按策略类型差异化（趋势宽/均值回归中/高频紧/Carry 宽） | 本备忘 §3.3 / BM-SELL-04-C | 待 G04（20_first_batch_strategies）产出校准 |
+| 移动止损回撤 X% 按策略类型定 | 本备忘 §3.3/§3.4 | 待 G04 校准 |
+| 时间止损 N 天按策略类型定（打板 1-2/多因子 5-10/事件 2-3） | 本备忘 §3.2 | 待 G04 校准 |
+| 退潮信号注入 BM-SELL-03 的权重值 | 本备忘 §3.5 | 待 28 active |
+| 35 Level 2/3 触发时，进行中的分批卖出如何处理 | 本备忘 §3.9 | 待 35 active |
+| BM-SELL-06 弃用态（MOD-SELL-008 build_status=deprecated）的替代路径 | [68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md) | 待确认冲突仲裁是否迁移到融合引擎内 |
+
+> **循环至零检查**：42 → 41（G19 已 active）/35（G16 骨架）/28（G21 骨架）。35 框架在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5（active）已定，28 退潮降级为 regime ⑧/⑨ 触发。**无真循环阻塞**，42 可独立施工。✓
 
 ## 8. 引用
 
-- [00_index_trading_decision](00_index_trading_decision.md) §3 G20
-- [41_buy_flow](41_buy_flow.md)（G19，依赖项）
-- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md)（G16 回撤 Protocol 联动）
-- [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md)（G21 情绪周期，退潮卖出输入）
-- [40_execution_broker](40_execution_broker.md)（G22 执行层）
-- battle_map_07_sell_flow（当前状态快照）
-- **2026-08 研究引用**：
-  - FerroQuant (2026-04) ATR 波动率定标止损
-  - tradingwyckoff (2026-01) Kill Switch 卖出路径
-  - O'Neil 卖出法则（涨 20-25% 减仓、放量滞涨卖出）
-  - Perold (1988) Implementation Shortfall 卖出滑点控制
+### 8.1 相关 design_memo
+- [41_buy_flow](41_buy_flow.md) —— 买入流（突破失败降级联动，G19 已 active）
+- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（骨架，框架在 30 §2.5）
+- [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) —— 情绪周期退潮卖出（骨架，降级为 regime）
+- [31_position_sizing](31_position_sizing.md) —— 仓位产出（卖出端响应仓位变化）
+- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值/Kill Switch 框架（35 未就绪时真源）
+
+### 8.2 相关域架构与 battle_map
+- [68_d_sell_decision](../../02_domain_architecture_docs/68_d_sell_decision.md) —— D_SELL_DECISION 域 24 模块（13 生产态/11 设计态）
+- [battle_map_07_sell_flow](../battle_map/battle_map_07_sell_flow.md) —— BM-SELL-01 突破成败 / BM-SELL-04 止盈止损族 / BM-SELL-06 冲突仲裁
+- [battle_map_06_buy_flow](../battle_map/battle_map_06_buy_flow.md) —— BM-BUY-04 分批建仓（突破失败降级联动）
+
+### 8.3 开源实证参考
+- **quantstock ATR Stop Loss Guide（2026-02）** —— ATR 倍数选择（日内 1.5×/波段 2×/趋势 3×），14 周期行业标准；印证 ATR 止损主选（§3.3）
+- **vibetrader Trailing Stop Strategy（2026-03）** —— trailing 不封顶、自动锁定利润、消除决策疲劳；趋势宽 5-10%/波段中 3-5%；印证移动止盈/止损统一（§3.4）
+- **algovestiq Stop-Loss（2026-05）** —— 止损设在"论点失效位"非随机百分比，ATR 自适应波动率，仓位由止损距离驱动；印证 ATR 为主+固定%降级（§3.3）
+- **fairmontequities 5 Ways Stop Loss（2026-07）** —— 支撑位/百分比/ATR/trailing/时间五法；印证多法并存但 ATR+trailing 为优（§3.3/§3.4）
+- **eastmoney 止损与资金管理（2026-07）** —— A 股短线 3-5%/中长线 8-15%，单笔风险 1-3%，组合熔断；与 35 四级阈值/单笔 2% 一致（§3.3/§3.9）
+- **volatilitybox Volatility-Adjusted Stop Losses（2026-03）** —— ATR/Chandelier/Keltner 三法对比，595+ 标的 2018-2025 回测 ATR 倍数止损比固定%**减少 34% 过早止损**；倍数选择：剥头皮 1-1.5×/日内 1.5-2×/波段 2-3×/持仓 3-4×；印证 Chandelier Exit 统一 trailing（§3.3/§3.4）
+- **journalplus ATR Trailing Stop Strategy（2026）** —— Chandelier Exit 默认 22 周期+3×ATR(14)；**5 天未移动 1×ATR 强制退出**时间止损；印证时间止损施工算法（§3.2）+ Chandelier 参数（§3.3）
+- **tradersunion Chandelier Exit Guide（2026-08-03）** —— Chuck LeBeau 吊灯止损法综述；ATR 自适应波动率、趋势市场表现优；印证 Chandelier Exit 统一 trailing 设计（§3.3）
+- **arrowalgo Scaling In and Out（2026-03）** —— 分批进入 25-33% 首仓+确认后加仓；退出 **1/3 止盈+保本+trailing 三步法捕获 85% 完整分批收益**；印证简单分批演进路径（§3.7）
+- **itafx ATR Stop Loss Strategy（2026-06）** —— ATR×倍数止损→仓位由止损距离反推（risk/stop_distance=shares）；日内 1.5-2×/波段 2-3×；印证 ATR 倍数选择与仓位联动（§3.3/§5.1）
+- **arXiv 2506.06356 Deep Learning Multi-Day Turnover A-Share（2026）** —— A 股多日换手量化算法，VIX-China 动态仓位缩放+网格搜索止盈止损；15.2% 年化/MaxDD<5%/Sharpe 1.87；VIX 缩放与 regime Shrinkage 思路一致，网格搜索止盈止损待 Phase 2 评估
+- **TradeZella 止损方法对比（2026-07，100 笔回测）** —— 固定% 胜率 48%/PF 1.38 < ATR 1.5× 胜率 52%/PF 1.41 < 结构位止损（支撑/阻力下方）胜率 55%/PF 1.68；印证 Chandelier Exit（结构位+ATR 复合）优于纯 ATR 或纯固定%（§3.3）
+- **markettriage Position Trading（2026-04）** —— 持仓 4-26 周用 3-ATR Chandelier Exit 优于固定 5% 和纯移动平均；单笔风险 1-2%；印证 Chandelier Exit 趋势策略 M 上浮 +0.5 设计（§3.3）
+- **digitalninjasystems Swing Trading Stops（2026-06）** —— ATR 1.5-3× for swing（2× 平衡点）、2:1 RRR 最低、Fibonacci 1.272/1.618 扩展位止盈；印证 ATR 倍数 M=2.0-3.0 范围（§3.3/§5.1）
+- **financefeeds Stop-Loss Percentage（2026-07-22）** —— 单笔风险 ≤2% 账户净值、ATR 1.5× 胜率 52%/PF 1.41、结构位 PF 1.68、10% 损需 11% 回本/25% 损需 33% 回本；印证 35 单笔 2% + Chandelier Exit 复合止损（§3.3/§3.9）
+- **上交所交易规则 2026 修订（2026-07-06 生效）** —— §2.4.2 收盘集合竞价 14:57-15:00 不可撤单；本备忘卖出执行时序算法的合规基线（§3.8）
+- **A 股日内波动 U 型分布（CSDN 2026-08-08）** —— 14:00-14:57 成交量逐渐走高、14:57-15:00 收盘竞价最高、做T 9:45-10:15 卖/13:30-14:30 买回；本备忘止盈尾盘集中+止损盘中立即+做T 错峰时序设计来源（§3.8）
+- **2026 程序化交易新规（中基协 2026-07 权威确认 + CSDN 2026-08-08）** —— 高频认定 300 笔/秒 OR 20000 笔/日（"15笔/秒"系市场误传，中基协辟谣源自美国误传）、异常交易撤单率监控 50%；本备忘卖出执行合规约束来源，MVP 限价单+盘中立即执行天然合规（§3.8）
+- **Conformal Kelly drawdown dial（[arxiv 2608.01494](https://arxiv.org/html/2608.01494v1)，2026-08-02）** —— conformal prediction 区间 downside miss 时降杠杆、MaxDD 27.7%→20.3%、slow per-asset rolling 优于 adaptive；本备忘阶段 7 ML 风控远期实证（§5.2）
+- **CUSUM 策略衰减检测（[mathandmarkets 2026-02 Part 81](https://mathandmarkets.com/p/detecting-decay-in-real-time-when)）** —— CUSUM 单侧统计量 S⁺ₜ=max(0, S⁺ₜ₋₁+(μ₀-xₜ)-k)，k=0.5σ/h=4σ balanced；Sharpe~1 策略 50 交易日检测延迟（远优于滚动 Sharpe 6+ 月）；四检验对比（CUSUM/Page-Hinkley/Bayesian 变点/滚动 Sharpe）；本备忘阶段 8 策略衰减检测远期实证（§5.2）
+- **Optimal SL/TP Parameterization（[Li, Laryea & Ihlamur 2026 arXiv:2604.27150](https://arxiv.org/abs/2604.27150)，Oxford + Vela Research）** —— 900+ 历史交易反事实模拟，8960 配置全网格搜索；最强配置 ATR 1.0× 止损+2.0× 止盈+连续 2 笔亏损 circuit-breaker 减仓因子 0.25；exit-rule tuning 是校准问题非启发式选择；本备忘策略级连续亏损熔断施工算法来源（§3.10）
 
 ## 9. 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
-| 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行 |
-| 2026-08-10 | 1.0.0 | 落地 spec 定稿 | 四方式止损(固定/ATR/移动/均线)+分批止盈+时间止损+情绪退潮+破位卖出+优先级排序+T+1约束算法化；整合 2026-08 研究（FerroQuant ATR/O'Neil/Kill Switch 联动） |
-| 2026-08-10 | 1.1.0 | 修复 Level 3 elif 逻辑缺陷 | `prioritize_and_plan_sells` 中 `elif drawdown_level == 3` 跳过所有个股止损/破位检查；改为 `if` 结构使 Level 3 超配削减与个股止损可同时触发（止损 100% 覆盖削减 50%，符合风险优先原则） |
+| 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G20 讨论要点占位，待讨论填空 |
+| 2026-08-10 | 1.0.0 | 骨架→active，回填 8 项讨论要点 | 卖出时序(持仓分级+强制清仓绕过融合)/止损(ATR+移动,固定%降级,密度感知待裁定)/止盈(移动统一)/情绪退潮卖出(L2-B注入,与regime协同)/破位(突破成败已建)/分批(MVP一次性,待MOD-SELL-017)/T+1约束(跌停排队/做T例外)/回撤Protocol联动(35四级阈值);过度工程审查(四族MVP前三,分批降级);循环至零检查通过 |
+| 2026-08-10 | 1.1.0 | 施工算法缺失补充 + 2026-08 前沿算法 + 选项之外更好的答案 | 补 Chandelier Exit 统一 trailing（§3.3/§3.4 一套公式两个参数，替代两套独立%回撤，volatilitybox 回测减少 34% 过早止损）+ 时间止损施工算法（§3.2 "5天未移动1×ATR"自适应阈值）+ Triage 分级判定算法（§3.2 ATR 距离驱动）+ 跌停板排队优先级（§3.8 紧迫度/亏损/仓位三维排序）+ Kill Switch 强制清仓排序（§3.9 流动性优先防封跌停）+ 简单分批演进路径（§3.7 "1/3止盈+保本+trailing"三步法）+ Keltner Channel 替代方案（§4.7）+ 7 篇 2026-08 开源实证 |
+| 2026-08-10 | 1.2.0 | 卖出执行时序算法 + 结构位+ATR 复合实证 + 阶段 7 ML 风控远期 + 9 篇 2026-08 实证 | §3.3 补 TradeZella 结构位止损 PF 1.68 实证（Chandelier=结构位+ATR 复合，理论 PF 偏 1.68）+ markettriage 3-ATR Chandelier 持仓周期实证；§3.8 新增卖出执行时序算法（止损盘中立即/止盈尾盘集中/强制清仓市价立即，对齐上交所 2026 修订 14:57 不可撤单约束，与 41 号 §3.4 对称设计）+ 15 笔/秒合规约束；§5.2 新增阶段 7 ML 风控远期（Conformal Kelly drawdown dial，MaxDD 27.7%→20.3%，替代手工回撤四级阈值）；§8.3 补 9 项 2026-08 最新实证（TradeZella/markettriage/digitalninjasystems/financefeeds/上交所新规/U型分布/量化新规/Conformal Kelly） | 用户要求审查施工环节流程算法缺失、选项之外更好算法、2026-08-08 最新研究、文档结构内容调整 |
+| 2026-08-10 | 1.3.0 | 新增阶段 8 CUSUM 策略衰减检测 + 四检验对比 | §5.2 新增阶段 8 CUSUM 策略衰减检测（mathandmarkets 2026-02 Part 81：S⁺ₜ=max(0, S⁺ₜ₋₁+(μ₀-xₜ)-k)，k=0.5σ/h=4σ，Sharpe~1 策略 50 交易日检测延迟远优于滚动 Sharpe 6+ 月）；区分"正常回撤"与"策略已死"，与 35 回撤 Protocol 正交（35=组合级止血/CUSUM=策略级诊断）；四检验对比表（CUSUM/Page-Hinkley/Bayesian 变点/滚动 Sharpe）；§6 待裁定新增 CUSUM 项；§8.3 补 CUSUM 实证 | 用户要求持续改进，补充策略衰减检测作为退出信号验证的选项外更好算法 |
+| 2026-08-10 | 1.4.0 | 新增 §3.10 策略级连续亏损熔断 Circuit Breaker（选项外更优算法） | §3.10 新增策略级连续亏损熔断——补全时间熔断（日度/Kill Switch 按天计数）与交易熔断（按笔计数）之间的响应空档。来源 arXiv:2604.27150（Li/Laryea/Ihlamur 2026，Oxford+Vela Research，900+ 交易 8960 配置全网格搜索）实证最强配置：连续 2 笔亏损后 circuit-breaker 减仓因子 0.25。三层熔断分工表（交易级/日度/Kill Switch），TradeLevelCircuitBreaker 伪代码（consecutive_loss_threshold=2/reduction_factor=0.25/min_scale=0.25/reset_on_win=True），A 股适配（打板 N=2/多因子 N=3），与 CUSUM §5.2 正交（circuit breaker=急救止血/CUSUM=诊断结构性衰减），与回撤 Protocol §3.9 乘性叠加（budget×position_cap×circuit_breaker_scale×conformal_scale）。过度工程审查：仅 1 类~30 行非独立模块，MVP 可选施工 | 用户要求再次审查文档所有内容+施工环节流程算法缺失+选项外更好算法+全网搜索 2026-08-08 最新研究+持续改进不停。全网搜索发现 arXiv:2604.27150 是 exit-rule calibration 前沿实证，circuit breaker 连续亏损减仓是 42 号缺失的交易维度熔断（现有仅有时间维度），补全三层熔断闭环 |
+| 2026-08-10 | 1.5.0 | 施工标注清理——"施工缺失补全"→"施工伪代码已补全" | §3.2 Triage 分级判定算法 / §3.8 跌停板排队优先级算法 / §3.8 卖出执行时序算法 / §3.9 Kill Switch 强制清仓排序算法 共 4 处标注从"施工缺失补全"更新为"施工伪代码已补全"——v1.1.0/v1.2.0 已补全全部伪代码（triage_position/rank_limit_down_orders/schedule_sell_order/rank_kill_switch_liquidation 四函数完整），标注为历史遗留未同步 | 用户要求再次审查文档所有内容+施工环节流程算法缺失+持续改进。核查发现 42 号 4 处算法伪代码早在 v1.1.0/v1.2.0 已完整补全，但"施工缺失补全"标注未同步更新造成"算法缺失"的误读。本次清理过时标注，准确反映施工状态 |
+| 2026-08-10 | 1.5.1 | 伪代码精度审计——3 处修复 | ①§3.7 `simple_scaling_out` 删除冗余参数 `risk_reward_ratio`（函数体用 `position.risk_reward` 属性，参数未被引用）+ 补全 `compute_exit_price` 的 `highest_close_fn` 参数（原 `...` 省略导致调用不完整）；②§3.3 `compute_stop_loss` 补 `highest_close_fn` 签名说明（Callable[[int], float]，施工方注入，来源 K 线 close rolling max）；③§3.10 TradeLevelCircuitBreaker 表格修正（原"≥5 笔\|0+block"易误解为仓位归零，实际 get_position_scale 返回 min_scale=0.25，is_blocked 仅暂停开新仓，修正为"0.25+block"消除歧义）。边界条件审计：TradeLevelCircuitBreaker.get_position_scale 连续亏损 0-5 笔缩放计算逐笔验证正确（1.0/1.0/0.75/0.50/0.25/0.25）；rank_limit_down_orders/rank_kill_switch_liquidation 三级排序逻辑一致（流动性优先→亏损/仓位）| 七十二轮伪代码边界条件深度审计——换三个新角度（跨文档调用链验证/伪代码边界条件审计/参数来源追踪）发现 3 处精度缺陷，已修复 |
+| 2026-08-10 | 1.5.2 | 伪代码崩溃 bug 修复——死参数+ATR None 崩溃 | ①§3.3 `compute_stop_loss` 删除未使用的 `symbol` 参数（死参数，函数体从不引用），补 `phase` 参数语义说明（与 §3.4 `compute_exit_price` 自动判定 phase 的分工边界）；②§3.4 `compute_exit_price` 修复 ATR None 崩溃 bug——原 `atr_pct = atr_value / position.entry_price if atr_value else 0.02` 仅兜底 atr_pct 但 return 行 `highest_close_fn(N) - M * atr_value` 在 atr_value=None 时 None×float 崩溃，补 ATR 缺失降级固定%逻辑与 §3.3 `compute_stop_loss` 对齐 | 伪代码边界条件深度审计第七十三轮——聚焦 None/空值/除零三类崩溃路径，发现 `compute_exit_price` ATR None 路径必崩（`if atr_value else 0.02` 兜底了 atr_pct 但 return 行仍用 None），与 §3.3 `compute_stop_loss` 的 ATR 缺失降级逻辑不一致。修复后两函数 ATR 缺失路径一致（均降级固定%），`symbol` 死参数清理 |

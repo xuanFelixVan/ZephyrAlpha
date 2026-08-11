@@ -60,6 +60,7 @@ __all__ = [
     "factor_base",
     "momentum_factor",
     "value_factor",
+    "technical_indicators",
 'bus_factor_defense']
 
 # CODEGEN-GUARD: __init__-manual-exports

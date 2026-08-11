@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS c1_market.industry_class
     symbol_canonical String MATERIALIZED if(position(symbol, '.') > 0, symbol, concat(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''), '.', exchange)) COMMENT 'canonical身份键(TRAE-082 universal,跨表JOIN用)'
 )
 ENGINE = ReplacingMergeTree
--- ORDER BY 含 industry_level：一只股票有多级行业分类（level 1/2/3），
+-- 排序键含 industry_level：一只股票有多级行业分类（level 1/2/3），
 -- 单独以 symbol 为排序键会导致 ReplacingMergeTree merge 时同 symbol 多行塌缩丢数据
 -- （#ARCH-CH-INDUSTRY-CLASS-MIGRATE 治本，2026-08-03，FINAL 实证 000001 丢 level=3）
 ORDER BY (symbol, industry_level)

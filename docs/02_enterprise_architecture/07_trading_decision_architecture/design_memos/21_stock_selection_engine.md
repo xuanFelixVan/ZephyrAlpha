@@ -5,1729 +5,453 @@ title: 选股引擎架构
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.0"
-date: 2026-08-11
+version: "1.1.18"
+date: 2026-08-10
 topic: stock_selection_engine
 scope: 07_trading_decision_architecture
 ---
 
 # 选股引擎架构
 
-> **性质**：由 [00_index_trading_decision](00_index_trading_decision.md) G05 主题组派生，将选股引擎的讨论要点落地为可施工的 spec + 伪代码。
-> **施工图纪律**：本文档 status=active，对应模块允许施工。
-> **2026-08 研究整合**：A 股 mask-first 设计（arXiv:2507.07107，可交易性掩码前置，避免 alpha 污染与回测失真）；WorldQuant Alpha 工厂分层（Region→Universe→Data→Expression→Operators→Decay→Neutralization→Tests）；首批 3 策略（[20_first_batch_strategies](20_first_batch_strategies.md)）差异化候选池；打板双引擎融合（[24_daban_strategy_detail](24_daban_strategy_detail.md) BM-SEL-22~25）内部化定位（对齐 [30_multi_strategy_concurrency §7.3](30_multi_strategy_concurrency.md)）。
+> 本备忘定义多策略并发架构（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A）下选股引擎的分层架构、双引擎融合定位、pipeline 标准接口与 StrategyBook 对接契约。
+> 性质：永久态讨论记录，可随项目演进而修订。
+> 管理规范见 [01_design_memo_management_spec.md](01_design_memo_management_spec.md)。
+> 路线图定位见 [00_index_trading_decision](00_index_trading_decision.md) G05（L1·Alpha 选股层，P1）。
+> 前置依赖：[20_first_batch_strategies](20_first_batch_strategies.md) v1.5.10（首批 3 策略定义已定稿）。
 
 ## 1. 主题组信息
 
 | 项 | 内容 |
 |---|---|
 | 主题组 | G05 选股引擎架构 |
-| 所属 | 作战地图 05 |
-| 依赖 | G04（策略定义，[20_first_batch_strategies](20_first_batch_strategies.md) 已定稿 v1.2.4） |
-| 对标 | WorldQuant Alpha 工厂分层 / qstobody 多引擎 |
-| 正交性 | ✅ 与 regime 正交 |
+| 所属 | 作战地图 05（[battle_map_05_stock_selection](../battle_map/battle_map_05_stock_selection.md)） |
+| 依赖 | G04（策略定义，[20_first_batch_strategies](20_first_batch_strategies.md) v1.5.10 已定稿） |
+| 对标 | WorldQuant Alpha 工厂分层 / qstobody 多引擎 / Medallion Architecture |
+| 正交性 | ✅ 与 regime 正交（选股不读 regime 输出，[20 §1.4](20_first_batch_strategies.md)） |
 | 优先级 | P1 |
-| 状态 | ✅ active — L0→L1→L2-C 分层 pipeline + 标准接口 + 候选池生成 + mask-first 过滤 + 量化强度评级 + StrategyBook 对接契约已定稿 |
+| 状态 | ✅ 已定稿 v1.1.18 |
 
 ## 2. 背景
 
 ### 2.1 项目处境
-
-[20_first_batch_strategies](20_first_batch_strategies.md) 已定稿首批 3 策略（打板+多因子+事件驱动），三策略在信号源/换手率/容量/选股池/持仓周期五维差异化。3 个策略各有独立 StrategyBook（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A），选股引擎是 StrategyBook 的"选股维度"（what）的统一载体——charter §3 约束四明确"策略=选股信号×组合权重×执行方式，独立优化"，本讨论只定义选股信号维度，不越界到仓位/执行。
-
-打板链已建 production（BM-SEL-22 短线评分卡7维 / BM-SEL-23 游资接力6因子+情绪周期4+1 / BM-SEL-24 量化强度6维 / BM-SEL-25 双引擎融合6类决策），因子工厂已建 production（BM-SEL-02 因子计算/注册表/IC-IR评估/多因子合成），事件处理已建 production（BM-SEL-27 盘中实时事件处理）。但三策略的选股 pipeline 缺乏统一接口与分层架构——各策略各自为政会产生接口碎片化，下游 StrategyBook/FirmRiskAggregator 无法统一消费。
-
-作战地图 05 已有 4 层漏斗雏形（BM-SEL-16 分级指标过滤 → BM-SEL-17 初筛漏斗 → BM-SEL-18 精筛评分 → BM-SEL-19 事件驱动分布筛选，约 7000→1200→300→50→30），但该漏斗是设计态、未与多策略 Model A 的 StrategyBook 接口对齐。本讨论将漏斗重构为 L0→L1→L2-C 分层 pipeline，与 StrategyBook 对接契约对齐。
+- 个人 + 100% AI 开发的 A 股量化系统（miniQMT，T+1，不能做空）—— [20 §1.1](20_first_batch_strategies.md)
+- 多策略并发架构已定稿为 Model A（独立账本 + firm 聚合 + regime 风险节流），首批 3 策略 = 打板 + 多因子 + 事件驱动（[20 §2](20_first_batch_strategies.md)）
+- 三策略的 alpha 信号源链已不同程度施工（[20 §2.2-2.4 施工回填](20_first_batch_strategies.md)）：打板链 4 模块全 production/stable、因子工厂治理层全 production/stable、事件链仅数据底座
+- 选股阶段作战地图（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）已有 BM-SEL-01~27 共 27 环节，分属 L0/L1/L2-C 三层，混合 production/design 态
+- **缺口的 why**：30_multi_strategy_concurrency 锁了"组合层"why，20_first_batch_strategies 锁了"3 策略是什么"why，但"选股引擎如何分层、双引擎融合落在哪、pipeline 标准接口长什么样、如何对接 StrategyBook"的 why 层此前空白（骨架）
 
 ### 2.2 核心问题
-
-1. **三策略选股池差异极大**：打板=连板梯队窄池（高换手、容量小）；多因子=全市场（低换手、大容量）；事件驱动=动态事件池（中换手）。如何用统一 pipeline 架构承载差异化候选池？
-2. **A 股可交易性约束前置**：ST/*ST/退市风险警示/次新/停牌/涨跌停封板/流动性失效等约束在 alpha 生成前就应过滤——若 alpha 算完才发现标的不可交易，浪费算力且污染信号（arXiv:2507.07107 mask-first 设计的核心论点）。
-3. **量化强度评级缺乏统一框架**：BM-SEL-22（打板7维）/ BM-SEL-24（量化6维）/ 多因子因子打分各自评分，缺乏跨策略可比较的强度评级——而 firm 层自然叠加需要各 sleeve 输出可比较的 target_portfolio。
-4. **双引擎融合的层级归属**：BM-SEL-25 双引擎融合（游资60%+量化40%，情绪周期自适应权重）是跨策略层还是打板策略内部？[30_multi_strategy_concurrency §7.3](30_multi_strategy_concurrency.md) 已裁定为打板内部，本讨论需确认边界并落入 spec。
-5. **与 StrategyBook 的对接契约**：选股引擎输出什么数据结构？StrategyBook 如何消费？仓位算法（[31_position_sizing](31_position_sizing.md)）如何从 target_portfolio 导出粗仓位？
+1. 三策略的选股信号来自不同源（打板=盘中实时游资情绪、多因子=盘后横截面因子、事件驱动=离散事件），如何用**统一的分层架构**承载而非三套割裂管线？
+2. 双引擎融合（BM-SEL-25）是跨策略层还是策略内部？定位不清会导致架构层次混乱
+3. 选股 pipeline 的标准接口是什么？输入（信号/因子）→ 输出（target_portfolio）的契约如何定义才能让 3 个 sleeve 对接同一 StrategyBook？
+4. 候选池从全市场如何收敛到可交易标的？生成→过滤→排序→输出的漏斗如何设计？
 
 ### 2.3 约束条件
+- charter §3 约束四三维度解耦：选股（what）× 组合权重（how much）× 执行（how）独立优化——选股引擎**只产出 target_portfolio 候选与信号**，不越界到仓位与执行（[20 §1.4](20_first_batch_strategies.md)）
+- charter §3 约束五少而精：个人系统分层不能过重，L0→L1→L2-C 三层须论证必要性（见 §5 过度工程审查）
+- T+1 结算：选股信号盘后/盘中产出，次日开盘执行，pipeline 须容忍"信号产出→执行"跨日时滞
+- A 股不能做空：选股只产多头候选，不产空头信号
+- 与 regime 正交：选股不读 regime 输出，只收 budget 数字（[20 §1.4](20_first_batch_strategies.md)）
 
-- **A 股不能做空** → 选股只做多，不做多空对冲式优化
-- **T+1 结算** → 选股信号盘后生成，次日才能执行，不支持日内翻转
-- **涨跌停板** → 涨停封板时买不进，需在候选池生成/过滤阶段就标记封板状态
-- **ST/*ST/退市风险警示** → 不可交易，必须 mask 掉
-- **次新股波动大** → 上市 <60 天的标的流动性不稳定，多因子 sleeve 排除（打板/事件驱动保留，因次新连板与事件触发次新是常见标的）
-- **容量差异**：打板单票几万~几十万（[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)），多因子承载主资金——选股引擎输出不携带最终仓位，仓位由 StrategyBook 粗仓位+firm 层 Kelly 精裁决决定（[31_position_sizing](31_position_sizing.md) 分层裁定）
-- **AI 开发** → 接口标准化是生存项，非优化项——三策略 pipeline 统一接口才能并行迭代
+## 3. 决策：L0→L1→L2-C 三层选股引擎架构
 
-## 3. 决策
+### 3.1 分层总览
 
-### 3.1 架构定义：L0→L1→L2-C 分层选股 pipeline
+选股引擎按数据→因子→特色信号三层组织，对应作战地图 BM-SEL 环节的层归属：
 
-选股引擎采用 4 层分层 pipeline（对标 WorldQuant Alpha 工厂分层 Region→Universe→Data→Expression→Operators→Decay→Neutralization→Tests，以及作战地图 05 已有 BM-SEL-16~19 漏斗雏形）：
+| 层 | 职责 | 对应 BM-SEL 环节 | 施工态 | 输出 |
+|---|---|---|---|---|
+| **L0 数据接入层** | miniQMT Tick(3s) + 盘前定时，把行情/新闻/另类数据经事件总线写入分层时序存储（Redis 热+ClickHouse 温+Parquet 冷） | BM-SEL-01 等 | 🟦 production | 标准化行情/因子原料 |
+| **L1 因子工厂层** | 盘前全量+盘中增量双模计算，产出因子池（设计容量≥150，运行≤64），叠加分布特征工程 | BM-SEL-02 等 | 🟦 production | 因子池 + FactorSignal |
+| **L2-C A股特色信号层** | A 股特有的游资情绪/量化强度/双引擎融合/板块轮动/Survival 等特色信号（C=Characteristic/China） | BM-SEL-22~27 | 🟦 production（打板链）+ 🟧 design（板块/Survival 等） | SynthesizedSignal + 决策分类 |
+
+> **层间数据流接口契约（v1.1.1 补，施工环节算法补全）**：三层之间通过标准接口契约解耦，每层只消费上层的标准化输出：
+>
+> | 接口 | 上游→下游 | 契约签名 | 触发条件 |
+> |---|---|---|---|
+> | L0→L1 | 数据接入→因子工厂 | `FactorMaterial(as_of_date, symbol, fields: dict)` 写入分层时序存储 | Tick 3s 实时 + 盘前定时批量 |
+> | L1→L2-C | 因子工厂→A股特色信号 | `FactorSignal(symbol, factor_id, value, rank, ic_lag, timestamp)` 经事件总线发布 | 盘前全量 + 盘中增量（IC 衰减触发） |
+> | L2-C→sleeve | A股特色信号→StrategyBook | `SynthesizedSignal(symbol, score, confidence, decision_class, metadata)` 写入 sleeve StrategyBook | sleeve 频率（打板盘中/多因子盘后/事件触发） |
+>
+> **降级链路触发判据**：L0 数据源断流（连续 3 个 Tick 缺失）→ L1 降级为硬编码均线规则；L1 因子层全失效（活跃因子 IC 均值 < 0.01 持续 5 日）→ L2-C 降级为仅游资情绪引擎（MOD-SIG-033 单引擎）；L2-C 双引擎融合失效 → 打板 sleeve 降级为仅短线评分卡（MOD-SIG-023）。降级是 sleeve 内部行为，不破坏 firm 层统一风险框架。
+
+> **L2-C 板块轮动→SynthesizedSignal.score 映射（v1.1.16 补，跨文档算法交接完整性审查——链路 1 缺口修复）**：
+>
+> [22号](22_sector_rotation_spec.md) 板块轮动输出 RRG 四象限信号（Leading/Improving/Weakening/Lagging）+ 板块强度评分（0-100）+ 回踩质量 A/B/C，但 L2-C→sleeve 接口契约 `SynthesizedSignal(symbol, score, confidence, decision_class, metadata)` 中的 `score` 如何从 RRG 象限+强度分推导此前未形式化。现补全映射公式：
+>
+> ```
+> # 板块轮动 sleeve 的 score 映射（G06 板块轮动激活后适用，当前 design 态）
+> SECTOR_QUADRANT_BASE = {
+>     "Leading":   0.8,   # 领先象限：板块相对强度上行+动量上行
+>     "Improving": 0.6,   # 改善象限：板块相对强度下行+动量上行（触底回升）
+>     "Weakening": 0.3,   # 减弱象限：板块相对强度上行+动量下行（见顶回落）
+>     "Lagging":   0.1,   # 滞后象限：板块相对强度下行+动量下行
+> }
+> PULLBACK_QUALITY_BONUS = {"A": 0.15, "B": 0.05, "C": -0.05}  # 回踩质量加成
+>
+> score = clamp(SECTOR_QUADRANT_BASE[quadrant] + strength_score/100 * 0.2 + PULLBACK_QUALITY_BONUS[quality], 0.0, 1.0)
+> # strength_score/100 * 0.2：板块强度分 0-100 归一化后乘 0.2 系数，使强度在象限基准上微调（±0.1）
+> # 例：Leading(0.8) + 强度 80(0.16) + 回踩 A(0.15) = 1.11 → clamp → 1.0（满配）
+> # 例：Improving(0.6) + 强度 50(0.10) + 回踩 B(0.05) = 0.75
+> ```
+>
+> - **score 语义**：[0,1] 区间的板块轮动综合评分，Leading 象限+高强度+优质回踩 → score 接近 1.0（强买入信号），Lagging 象限+低强度+差回踩 → score 接近 0.1（弱信号/回避）。与打板 sleeve 的双引擎融合 score（6 类决策映射）和多因子 sleeve 的因子打分 score 在 SynthesizedSignal 中统一为 [0,1] 语义
+> - **板块 overlay 降级影响**：[30号](30_multi_strategy_concurrency.md) §2.5.1 定义 `sector_overlay_active=False`（板块轮动 overlay 未激活）时，行业偏离约束从 ±15% 收紧为 ±10%。此时 L2-C 板块轮动 sleeve 不产出 SynthesizedSignal（板块轮动属 design 态，overlay 未激活=不参与选股打分），行业偏离由 firm 层 [32号](32_firm_risk_aggregator.md) §2.5.1 用 ±10% 硬约束兜底。板块轮动激活后（G06 定型+实盘校准），行业偏离放宽至 ±15%，L2-C 产出 SynthesizedSignal 喂入选股评分
+> - **当前施工态**：板块轮动属 🟧 design（G06 待定型），上述映射公式为 **G06 定型时的施工参考**，参数（象限基准值/强度系数/回踩加成）待 G06 回测校准后最终确定
+
+> **why 三层而非两层或四层**：L0/L1 是通用量化地基（数据→因子，任何市场都需），L2-C 是 A 股特色差异化层（游资打板/连板梯队/情绪周期是 A 股独有，海外 alpha 工厂无此层）。三层 = "通用地基 + 本土特色"的最低完整切分；两层（数据+信号）会让因子计算与特色信号混杂、归因不清；四层（再拆"组合信号层"）会与 StrategyBook/firm 层职责重叠（违反 charter 约束四）。实证支撑：Medallion Architecture 三层（Bronze/Silver/Gold）"splitting into 3 layers makes debugging fast"——三层是调试效率与切分清晰度的甜点（[lukastymo 2026-05](https://lukastymo.com/posts/029-software-engineer-value-investing-magic-formula/)）。**2026 前沿趋势印证（v1.0.1 补）**：[国联民生金工 2026-07-16 AAAI/ICLR 综述](https://finance.sina.com.cn/wm/2026-07-16/doc-inihyyvy4515788.shtml)——AI 量化研究重心从"调用通用模型"转向"围绕金融约束重构模型"，延迟/回测有效性/非平稳性/交易成本/风险约束/可解释性成硬约束；分层架构正是"金融约束重构"的工程落地——L0 处理延迟（Tick 3s 接入）、L1 处理非平稳性（因子衰减监控+生命周期治理）、L2-C 处理本土特色（A 股游资/情绪周期），三层各司其职而非通用模型一把梭。
+
+### 3.2 决策①：双引擎融合定位 = 打板策略内部融合，非跨策略层
+
+> 对齐 [00_index G05 讨论要点①](00_index_trading_decision.md) / [30 §7.3](30_multi_strategy_concurrency.md) / [20 §2.2](20_first_batch_strategies.md)
+
+**裁定**：双引擎融合（BM-SEL-25，MOD-SIG-035 `dual_engine_fusion_decision_engine.py`）是**打板策略 sleeve 内部**的融合，**不是**跨策略层的统一融合器。
+
+**why**：
+- 双引擎 = 游资接力情绪引擎（MOD-SIG-033）+ 量化短线强度引擎（MOD-SIG-034），两者都是**短线/盘中**信号，服务打板 sleeve 的高换手场景
+- 多因子 sleeve（盘后横截面因子）与事件驱动 sleeve（离散事件）的信号频率/持仓周期与双引擎不匹配——把双引擎抬到跨策略层会强行统一三种异构信号，违反 charter 约束五（禁止堆砌相似策略制造多策略假象的反面：禁止强行统一异构策略）
+- 跨策略层的统一在 firm 层（MOD-POS-021 FirmRiskAggregator 求和+裁剪），不在选股层——选股层各 sleeve 独立产 alpha，firm 层做风险聚合（[30 §2.2/§4.2](30_multi_strategy_concurrency.md)）
+
+**边界**：双引擎融合的输出（6 类决策：主升龙头/二进三/跟风/复苏/伪强/地天反包）作为打板 sleeve 的 alpha 信号喂给打板 StrategyBook，不喂给多因子/事件 sleeve。
+
+### 3.3 决策②：L0→L1→L2-C 分层 = 通用地基 + A股特色
+
+> 对齐 [00_index G05 讨论要点②](00_index_trading_decision.md) / [battle_map_05](../battle_map/battle_map_05_stock_selection.md) 层归属
+
+**L0 数据接入层**（production）：
+- 触发：每 3 秒 miniQMT Tick + 盘前定时
+- 数据流：外部源（miniQMT/iFind/tushare/BaoStock）→ 事件总线 → 分层时序存储（Redis 热+ClickHouse 温+Parquet 冷）
+- 事件契约：TickEvent / SignalEvent / DecisionEvent / ExecutionEvent / RiskEvent / SystemEvent 统一
+- 降级：数据源断流→仅执行卖出指令（不新增仓位）
+
+**L1 因子工厂层**（production）：
+- 触发：盘前全量 + 盘中增量双模计算
+- 因子治理：池容量 n_max=64（活跃 60+休眠 4）、入池 min_ic_to_enter=0.02、IC 末位淘汰、生命周期 8 状态机（[20 §2.3 施工回填](20_first_batch_strategies.md)）
+- 分布特征工程：滞后项/交互项/滚动统计量/签名方法 Signature，喂密度预测模型
+- 降级：因子层全失效→硬编码均线规则
+
+> **L1 因子配比与衰减监控施工补全（v1.1.0 补，施工环节算法补全）**：
+>
+> **① 因子配比——人工为主 + 衍生为辅**：[私募札记 因子重本源 2026](http://m.toutiao.com/group/7669707690368565795/) 保守型量化投研框架实证——因子挖掘长期维持 **85%-90% 人工挖掘 + 10%-15% 衍生补充** 固定配比，人工因子逻辑清晰、行情失效时可快速定位归因；衍生因子执行月度复盘，收益衰减直接替换下线。因子权重分层：**75% 高频量价因子**（捕捉短期资金交易行为）+ **15% 基本面因子**（排雷规避基本面恶化）+ **10% 另类情绪因子**（辅助补充）。**对本项目 L1 的施工启示**：[20 §2.3](20_first_batch_strategies.md) "少而精 8-15 个因子"应进一步明确配比——建议人工因子为主（逻辑可解释、失效可归因），LLM/RL 衍生因子为辅（[20 §6 待定问题"LLM alpha 挖掘闭环"](20_first_batch_strategies.md) 产出的因子进衍生池，月度复盘替换），与 8 状态生命周期治理（research→...→retired）天然契合。[华泰证券金工 2026-08-02](https://m.hibor.com.cn/wap_detail.aspx?id=5dc71a9949bce52f3398c30caaf270dd) 机构级实证：**全频段融合因子**（量价+基本面+另类多频段融合）TOP 层年化超额 27.37%、5 日 RankIC 均值 11.2%，AI 中证 1000 指增年化超额 20.33%、IR 3.10——印证 L1 因子工厂层"全频段融合"是机构级 alpha 主源（非单一频段）。
+>
+> **② IC 衰减四参数监控框架**：当前 `ic_decay.py`（MOD-L02-004）已实现 IC 衰减曲线 + 半衰期计算，[CSDN 2026-07-11](https://blog.csdn.net/wencaitouzi/article/details/148829424) / [gs-quant IC 衰减曲线](https://blog.csdn.net/gitblog_00055/article/details/151774547) 给出完整四参数框架应作为 L1 衰减监控的标准指标：
+> - **初始 IC 值**（IC at lag=1）：衡量因子短期预测能力
+> - **半衰期**（IC 衰减至初始值 50% 所需天数，线性插值）：衡量因子持续性
+> - **衰减斜率**（曲线平均下降速率）：衡量衰减速度
+> - **长期 IC 均值**（如 60 日平均 IC）：衡量因子长期有效性
+>
+> 四参数联动判据：半衰期<10 天 → 缩短调仓周期（动态持仓周期 `min(half_life, 5)`，夏普 1.2→1.8 实证）；初始 IC>0.05 但长期 IC 均值<0.02 → 因子拥挤告警（[20 §2.3 microalphas](20_first_batch_strategies.md) arbitrage/crowding 机制）；衰减斜率突变（CUSUM >2σ）→ 进入观察态。此四参数框架是对 [20 §2.3](20_first_batch_strategies.md) 因子衰减监控的 L1 层落地细化。
+
+> **盘中增量双模计算触发条件与 Signature 方法（v1.1.1 补，施工环节算法补全）**：
+>
+> **① 盘中增量双模计算触发条件**：当前 §3.3 只写"盘前全量 + 盘中增量双模计算"，未明确增量触发条件。触发判据：① 因子新鲜度衰减——因子 `current_ic < initial_ic * 0.7`（[CSDN 2026-07-11](https://blog.csdn.net/wencaitouzi/article/details/148829424) 新鲜度监控阈值）时触发盘中增量重算；② 价格冲击——标的日内涨幅 >3% 或成交量 >5 日均值 2 倍时触发该标的因子增量重算；③ 事件触发——事件源（[20 §2.4](20_first_batch_strategies.md) 事件源）发布事件时触发相关标的因子增量重算。增量计算只重算受影响标的（非全市场），算力节省 80%+。
+>
+> **② Signature 签名方法解释**：当前 §3.3 写"分布特征工程：滞后项/交互项/滚动统计量/签名方法 Signature，喂密度预测模型"但未解释 Signature 是什么。**Signature 方法** = 路径签名（Path Signature），源自粗路径理论（rough path theory）——将时间序列路径编码为不变量序列（签名变换），捕捉路径的几何特征（水平/面积/体积等），不依赖时间对齐。金融应用：将价格/成交量路径转为签名特征向量，喂密度预测模型（[91_density_prediction](91_density_prediction.md)）预测次日 8 态走势。优势：① 可变长路径编码为定长向量；② 捕捉高阶交互（传统滞后项只捕一阶）；③ 对时间扭曲鲁棒。工程实现参考 `signatory` 库（PyTorch 签名计算）。
+>
+> **③ 25 号多因子细节算法交叉引用**：[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) v1.9.0 已登记四项选项之外更好算法（IC 半衰期加权/GAN_GRU/Bayesian 变点/Bootstrap CI），与本备忘 §3.3 L1 因子工厂层的演进路径闭合——详见 [20 §2.3 25 号交叉引用](20_first_batch_strategies.md)。L1 因子工厂层的 production 基线（因子池 n_max=64 + 8 状态生命周期 + IC 衰减四参数监控）已施工，远期演进（Hubble AST 沙箱 + AlphaEvolve MAP Elites，见 [20 §2.4 LLM alpha 挖掘新框架](20_first_batch_strategies.md)）登记为 §6 待裁定-7。
+
+> **④ 2026-08 LLM alpha 挖掘新框架（v1.1.4 补，选项之外更好算法——当前 §6 待裁定-7 仅引 Hubble/AlphaEvolve/XAlpha，缺 2026-08 新出的 AlphaMemo/FactorMiner/MAGE/AlphaAgent 四框架）**：
+>
+> **AlphaMemo SSPM（结构化搜索过程记忆）**（[arXiv 2606.20625, 2026-05-26](https://arxiv.org/pdf/2606.20625)）：不只记忆最终因子或完整轨迹，而是记录 **edit motif 级别**的可复用证据（哪些编辑模式在特定父因子上下文下有效/失败）；从 AST 差异提取 edit motifs；置信度门控残差记忆（在 search-ledger 先验之上）；**非对称否决控制**（高置信负模式可否决，正模式仅软提升）；CSI 500 和 S&P 500 验证。**对 L1 因子工厂的启示**：AlphaMemo 是 XAlpha 记忆层的精细化升级——XAlpha 的 A/B/C 三层分类（OHLCV 资格/机制家族/研究原型）是粗粒度记忆，AlphaMemo 的 edit motif 级记忆可复用"哪些因子编辑操作（如加滞后项/取对数/交互项）在何种上下文下有效"，比 XAlpha 更精细。与 [CogAlpha](https://arxiv.org/html/2511.18850v4) 多 agent 质量检查互补——AlphaMemo 提供"失败模式记忆"，CogAlpha 提供"质量校验"。
+>
+> **FactorMiner Ralph Loop（retrieve-generate-evaluate-distill）**（[ICLR 2026](https://openreview.net/pdf?id=TTsecyqrW3)）：Ralph Loop 范式 + 模块化 Skill 架构（封装 IC 筛选/相关性检查/去重/全验证为可执行工具）+ 结构化经验记忆（成功模式 + **禁区**——与现有库高互相关的因子家族）；**全局因子库视角**：候选因子如何补充现有库而非孤立优化。**对 L1 因子工厂的启示**：FactorMiner 的"禁区"概念与本项目 [factor_pool_manager.py](20_first_batch_strategies.md)（MOD-L02-018）IC 末位淘汰 + n_max=64 容量上限天然契合——新因子入池前检查与现有 64 因子的相关性，高相关的因子家族进"禁区"不入池。这是对当前 IC 末位淘汰的**入池前预防**（当前是入池后 IC 衰减才淘汰，FactorMiner 是入池前相关性检查拦截）。
+>
+> **MAGE（MAP-Elites for Alpha Generation）**（[GitHub 2026-04-30](https://github.com/joconno2/MAGE)）：MAP-Elites 质量-多样性进化算法应用于 Alpha 生成——2D 行为网格（turnover × market correlation），每格保留该行为 profile 下最优 alpha；RL 奖励含个体 alpha 质量+"synergy"项鼓励生成集多样性；AlphaGen 在 S&P 500 Sharpe 3.96，CSI300 0.76。**对 L1 因子工厂的启示**：MAGE 是 AlphaEvolve MAP Elites 的金融场景聚焦版——AlphaEvolve 的行为维度是通用 metric，MAGE 明确用 turnover × market correlation 两维（低换手×低相关=最优区）。与本项目 charter 约束五"少而精+差异性"对齐——MAGE 的 2D 网格可直接映射为因子的"换手率×相关性"筛选器。
+>
+> **AlphaAgent 三大正则化**（[arXiv 2502.16789, KDD 2025](https://arxiv.org/pdf/2502.16789)）：**(i) 原创性强化**（基于 AST 相似度对现有 alpha 库，抗 alpha decay）、**(ii) 假设-因子对齐**（LLM 评估市场假设与生成因子的语义一致性，防"幸运因子"）、**(iii) 复杂度控制**（AST 结构约束防过拟合）；CSI 500 和 S&P 500 四年验证抗 decay 能力。**对 L1 因子工厂的启示**：AlphaAgent 三大正则化是残差代数（[20 §2.4 arXiv 2608.07349](20_first_batch_strategies.md)）思路的工程化升级——残差代数在合成层保持表示身份，AlphaAgent 在生成层就约束原创性/对齐/复杂度。与 [Beyond Prompting](https://arxiv.org/html/2603.14288v1) 经济正则化"幸运因子"过滤器互补。
+>
+> **AlphaSAGE 结构感知因子生成**（[arXiv 2509.25055v3, 2026-05-19](https://arxiv.org/pdf/2509.25055v3)）：RGCN（Relational Graph Convolutional Network）结构编码器捕捉因子 AST 的数学结构 + GFlowNet 生成策略（从空 AST 逐步施加 action 生成完整因子）+ 多维度奖励函数（`reward = r_ic + 0.2·r_sa + 0.3·r_nov`，IC 收益 + 结构对齐 + 新颖性）。**对 L1 因子工厂的启示**：AlphaSAGE 是 MAGE 的结构感知升级——MAGE 用 turnover×correlation 2D 行为网格做多样性，AlphaSAGE 用 RGCN 做 **AST 结构嵌入**多样性。两者互补：FactorMiner 禁区当前基于 IC 相关性检查（数值相关），AlphaSAGE 的 RGCN 编码器可补**结构相关**检查（两个因子 IC 不同但 AST 结构相似=同一思路换皮，应进禁区）。与 [CogAlpha](https://arxiv.org/html/2511.18850v4) 多 agent 质量检查互补——AlphaSAGE 在生成层约束结构多样性，CogAlpha 在校验层约束代码质量。
+>
+> **结论**：§6 待裁定-7 LLM alpha 挖掘闭环的工程路径在 2026-08 进一步丰富——Hubble（AST 沙箱 + curated 算子 + Maker vs Checker）+ AlphaEvolve（MAP Elites + Memory Bank）+ XAlpha（记忆/归因层）+ **AlphaMemo（edit motif 级搜索过程记忆 + 非对称否决）** + **FactorMiner（Ralph Loop + 禁区入池前预防）** + **MAGE（turnover×correlation 2D 网格）** + **AlphaAgent（原创性/对齐/复杂度三大正则化）** + **AlphaSAGE（RGCN 结构感知 + GFlowNet 多样性生成）** 构成完整工具链（八框架）。本项目远期演进应采 Hubble 架构为骨架（AST 沙箱确保可执行），FactorMiner 禁区机制接入 [factor_pool_manager.py](20_first_batch_strategies.md) 入池前相关性检查（IC 相关 + AlphaSAGE RGCN 结构相关双层），AlphaMemo edit motif 记忆接入因子治理层经验累积。详见 [20 §2.4 LLM alpha 挖掘新框架](20_first_batch_strategies.md)。
+>
+> **⑤ L1 深度学习 baseline 候选：Cross-Sectional LSTM（v1.1.6 补，施工环节算法补全——当前 §3.3 L1 因子工厂是"人工因子 + IC 评估 + 8 状态治理"纯线性框架，缺非线性深度学习预测 baseline 作为远期对照）**：[Cross-Sectional Heterogeneity LSTM arXiv 2608.05755 2026-08-07](https://arxiv.org/html/2608.05755v1)（Julius Döbelt）——在标准 LSTM 上加 **learnable sector embeddings**（捕获截面异质性，A 股行业轮动适配）+ 宏观金融协变量 + label smoothing/dropout/gradient clipping 正则。S&P 500 日频方向预测实证：超越 basic LSTM / Random Forest / buy-and-hold，预测信号由**短期反转因子 + 行业动量因子**驱动（与 A 股已知有效因子一致），可解释性通过潜空间可视化分析模型如何区分行业。**对 L1 因子工厂的启示**：当前 L1 是纯线性 IC 加权合成（[MOD-L03-001 signal_synthesizer](20_first_batch_strategies.md)），Cross-Sectional LSTM 可作 **Phase 3+ 非线性预测 baseline**——sector embedding 直接适配 A 股行业轮动（与 L2-C 板块轮动 G06 协同），短期反转+行业动量双因子结构与 [20 §2.3](20_first_batch_strategies.md) 因子族对齐。**过度工程审查**：LSTM 非线性预测属远期增强（当前 L1 production 线性框架已够 MVP），不纳入首批施工——登记为 §6 待裁定-9，G09 远期评估深度学习 baseline 接入 L1（须因子工厂治理层稳定运行 6+ 月后）。
+
+**L2-C A股特色信号层**（混合 production/design）：
+- **打板链**（🟦 production）：游资接力情绪（MOD-SIG-033，6 因子+情绪周期 4+1 阶段）→ 量化短线强度（MOD-SIG-034，6 维 A~E 评级）→ 双引擎融合（MOD-SIG-035，自适应权重+6 类决策）
+- **板块轮动**（🟧 design）：3×3×3 立方体（量能=第 3 维）+ 日历修饰器 + 体制转换检测 + 回踩质量 A/B/C 等级（BM-SEL-08/09，G06）
+- **Survival/密度预测**（🟧 design）：止盈止损时间预测、T+1 次日 8 态走势预测（远期，[91_density_prediction](91_density_prediction.md)）
+
+### 3.4 决策③：量化强度评级 = 打板 sleeve 的量化引擎输入
+
+> 对齐 [00_index G05 讨论要点③](00_index_trading_decision.md) / BM-SEL-24
+
+**裁定**：量化短线强度评级（MOD-SIG-034 `quant_short_term_strength_engine.py`，production/stable）是**打板 sleeve 双引擎融合的量化引擎输入**，6 维 0-100 分（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）+ A~E 五级评级 + 6 类输出。
+
+**why 独立评级而非直接用游资情绪**：游资情绪引擎（MOD-SIG-033）捕捉"人"的接力情绪，但对量化砸板（2026 年量化成游资最大对手盘，[20 §2.2 2026 市场语境](20_first_batch_strategies.md)）不敏感；量化强度评级用价格动量/资金/技术等客观维度补盲，两引擎融合权重由情绪周期阶段自适应（冰点时量化 70%、主升时游资 70%）——单一引擎都有盲区，融合是打板 alpha 的核心。
+
+**边界**：量化强度评级**仅服务打板 sleeve**，多因子 sleeve 用横截面因子打分（不共用此评级），事件 sleeve 用事件冲击信号。三 sleeve 的"强度"概念各自定义，不在选股层强行统一。
+
+> **6 维权重校准方法（v1.1.2 补，施工环节算法补全）**：当前 6 维权重（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）是经验设定，未说明校准方法。校准路径两条：
+> - **路径 A·IC 加权**（与 [20 §2.3](20_first_batch_strategies.md) 因子工厂 IC 加权合成对齐）：将 6 维各视为子因子，计算各自滚动 60 日 RankIC，按 `weight_i = IC_i / Σ|IC_j|` 归一化为权重——IC 高的维度自动获得更高权重，IC 衰减的维度自动降权。优势：与因子工厂治理层（MOD-L02-018）的 IC 末位淘汰逻辑一致，校准自动化。
+> - **路径 B·SHAP 归因**（机器学习反推）：用 LightGBM 训练"6 维→次日收益"模型，SHAP 值反推各维度贡献度作为权重。优势：捕捉非线性交互（IC 加权只捕线性），劣势：需离线训练+定期重训。
+> - **重校准频率**：月度（与 [21 §3.3 IC 衰减四参数](#) 半衰期监控对齐），CUSUM >2σ 触发即时重校准。
+> - **MVP 优先**：首版用经验权重（当前 20/15/20/15/20/10）+ 路径 A（IC 加权）作为 Phase 2 演进，路径 B（SHAP）为远期。登记为 §6 待裁定-8。
+
+### 3.5 决策④：选股 pipeline 标准接口
+
+> 对齐 [00_index G05 讨论要点④](00_index_trading_decision.md)
+
+**标准接口契约**（每个 sleeve 实现同一接口，差异化在内部）：
 
 ```
-L0 候选池生成（Candidate Pool Generation）
-   - 按策略类型生成差异化候选池
-   - 打板: 连板梯队池 | 多因子: 全市场池 | 事件驱动: 事件触发池
-   - 对标 WorldQuant Region + Universe
-                    ↓
-L1 量化过滤（Quantitative Filtering / Mask-First）
-   - A 股可交易性掩码前置（arXiv:2507.07107）
-   - ST/*ST/退市/次新/停牌/涨跌停封板/流动性失效 mask
-   - 对标 WorldQuant Data + Universe refinement
-                    ↓
-L2 量化强度评级与排序（Scoring & Ranking）
-   - 多维度打分: alpha信号强度 + 板块强度 + 情绪周期 + 资金面
-   - A~E 五级评级（BM-SEL-24-B）
-   - 对标 WorldQuant Expression + Operators + Decay + Neutralization
-                    ↓
-C 组合输出（Portfolio Composition）
-   - target_portfolio dataclass 输出
-   - 交给 StrategyBook 做粗仓位 → firm 层 Kelly 精裁决
-   - 对标 WorldQuant Tests + output
+输入：SignalInput(as_of_date, universe, regime_budget)   # regime_budget=数字，非 regime 状态
+处理：sleeve.select(SignalInput) → SelectionResult
+输出：SelectionResult(target_portfolio: list[TargetPosition], signals: list[Signal], confidence: float, metadata: dict)
 ```
 
-**分层裁定原则**（对齐 [30_multi_strategy_concurrency §2.1](30_multi_strategy_concurrency.md) 分层哲学）：
-- **L0 差异化**：候选池生成按策略类型分化，不强行统一——打板窄池/多因子宽池/事件动态池各有生成逻辑
-- **L1 统一化**：量化过滤 mask 跨策略共享（A 股可交易性约束与策略无关），避免重复实现；策略特定 mask（次新/涨停封板）按策略差异化
-- **L2 半统一**：评分框架统一（v1.2.0 升级为 6 维 BM-SEL-24），各维度内部按策略差异化（连板梯队/游资接力维度策略特定，情绪/板块/资金/技术维度可共享）
-- **C 标准化**：target_portfolio 输出接口完全统一，下游 StrategyBook/FirmRiskAggregator 无需感知策略类型
-
-### 3.2 选股 pipeline 标准接口
-
-```python
-from dataclasses import dataclass, field
-from datetime import date, datetime
-from enum import Enum
-from typing import Any
-
-
-class StrategyType(Enum):
-    """策略类型——决定 L0 候选池生成逻辑与 L1/L2 差异化参数。"""
-    DABAN = "daban"                 # 打板：连板梯队窄池
-    MULTIFACTOR = "multifactor"     # 多因子：全市场宽池
-    EVENT_DRIVEN = "event_driven"   # 事件驱动：动态事件池
-
-
-class SentimentPhase(Enum):
-    """情绪周期4+1阶段（BM-SEL-23-B，选股引擎只读不判）。"""
-    FREEZING = "冰点"
-    STARTING = "启动"
-    FERMENTING = "发酵"
-    CONSENSUS = "一致"
-    EBING = "退潮"
-
-
-class RatingGrade(Enum):
-    """量化强度评级 A~E 五级（BM-SEL-24-B，v1.2.0 阈值对齐 SignalQuality）。"""
-    A = "A"  # 最强（≥85分），直接追
-    B = "B"  # 较强（≥70分），可介入
-    C = "C"  # 中等（≥55分），观望
-    D = "D"  # 较弱（≥40分），不介入
-    E = "E"  # 最弱（<40分）或硬风险，剔除
-
-
-class SignalQuality(Enum):
-    """信号质量 A~E 五级（v1.2.0 从早期 A/B/C 三级升级）。
-
-    与 RatingGrade 阈值对齐：
-    - ≥85 → A（优秀，强信号）
-    - ≥70 → B（良好，可执行）
-    - ≥55 → C（中等，观望）
-    - ≥40 → D（较弱，不介入）
-    - <40 或硬风险（ST/停牌/封板/流动性失效）→ E（剔除）
-
-    硬风险标的直接判 E，不参与评分——对齐 mask-first 设计（§3.3.1）。
-    """
-    A = "A"  # 优秀（≥85）
-    B = "B"  # 良好（≥70）
-    C = "C"  # 中等（≥55）
-    D = "D"  # 较弱（≥40）
-    E = "E"  # 最弱（<40）或硬风险
-
-
-@dataclass
-class SelectionContext:
-    """选股上下文——pipeline 的统一输入。
-
-    封装选股所需的所有外部信号：
-    - 交易日期与策略标识
-    - alpha 信号（策略特定的原始信号，如因子打分/连板结构/事件冲击）
-    - 情绪周期阶段（来自 BM-SEL-23-B，选股引擎只读不判）
-    - 板块强度（来自 G06 板块轮动）
-    - 资金面数据（主力净流入/北向/龙虎榜）
-    - budget 占比（来自 RegimeMetaAllocator，选股引擎只收数字不读 regime 输出）
-
-    对齐 charter §3 约束三：选股不读 regime 输出，只收 budget 数字。
-    """
-    trading_date: date                          # 交易日期
-    strategy_id: str                            # 策略标识（如 "daban_sleeve_1"）
-    strategy_type: StrategyType                 # 策略类型
-    alpha_signals: dict[str, dict[str, Any]]    # {symbol: {signal_name: value}} 策略特定 alpha 信号
-    sentiment_phase: SentimentPhase             # 情绪周期阶段（BM-SEL-23-B 输出，市场级）
-    sector_strength: dict[str, float]           # {sector: strength_score} 板块强度（G06 输出）
-    capital_flow: dict[str, dict[str, float]]   # {symbol: {main_net_inflow, northbound, net_buy_ratio...}}
-    budget_ratio: float                         # 当前 sleeve 的 budget 占比 [0,1]（来自 RegimeMetaAllocator）
-    universe_snapshot: dict[str, dict]          # {symbol: {is_st, is_suspended, list_days, adv, limit_status...}}
-    mask_policy: "TradabilityMaskPolicy" = None  # 可交易性掩码策略（§3.3.1，默认 MODERATE；None→MODERATE）
-
-
-@dataclass
-class CandidatePool:
-    """L0 候选池输出。
-
-    按策略类型生成的差异化候选池。
-    候选池只含 symbol 列表 + 生成元数据，不做任何过滤（过滤在 L1）。
-    """
-    strategy_type: StrategyType
-    symbols: list[str]                          # 候选标的列表
-    pool_source: str                            # 候选池来源（"consecutive_ladder" / "full_market" / "event_triggered"）
-    generated_at: datetime
-    pool_meta: dict[str, Any] = field(default_factory=dict)  # 候选池元数据（如连板梯队结构/事件类型）
-
-
-@dataclass
-class FilteredUniverse:
-    """L1 过滤后 universe。
-
-    A 股 mask-first 设计（arXiv:2507.07107）：
-    可交易性掩码在 alpha 生成/评分前应用，确保 alpha 模型只见可交易标的。
-    """
-    symbols: list[str]                          # 过滤后可交易标的
-    rejected: dict[str, str]                    # {symbol: reject_reason} 被剔除的标的及原因
-    mask_applied: list[str]                     # 应用的掩码列表（如 ["st", "suspended", "limit_up_sealed"]）
-    filtered_at: datetime = field(default_factory=datetime.now)
-
-
-@dataclass
-class ScoredCandidate:
-    """L2 单标的评分结果。"""
-    symbol: str
-    total_score: float                          # 总分 [0, 100]
-    rating: RatingGrade                         # A~E 五级评级
-    score_breakdown: dict[str, float]           # 各维度得分明细（alpha/sector/sentiment/capital）
-    signal_source: str                          # alpha 信号来源描述
-    confidence: float                           # 信号置信度 [0, 1]（=total_score/100）
-    rank: int = 0                               # 排名（1=最强）
-
-
-@dataclass
-class TargetPosition:
-    """目标持仓——target_portfolio 的单标的条目。
-
-    注意：signal_weight 是选股引擎输出的"信号权重"（基于得分排序+评级分层），
-    不是最终仓位。最终仓位由 StrategyBook 粗仓位算法 + firm 层 Kelly 精裁决决定
-    （[31_position_sizing](31_position_sizing.md) 分层裁定）。
-    """
-    symbol: str
-    signal_weight: float                        # 信号权重 [0, 1]，基于得分排序+评级分层+归一化
-    score: float                                # 量化强度总分
-    rating: RatingGrade                         # 评级
-    score_breakdown: dict[str, float]           # 评分明细（供归因）
-    signal_source: str                          # 信号来源
-    confidence: float                           # 置信度
-
-
-@dataclass
-class TargetPortfolio:
-    """C 组合输出——选股引擎的最终输出，StrategyBook 的输入。
-
-    这是选股引擎与 StrategyBook 的对接契约（§3.8）。
-    target_portfolio 只含"买什么"（what），不含"买多少"（how much）——
-    后者由 StrategyBook 粗仓位 + firm 层 Kelly 决定。
-    """
-    strategy_id: str                            # 策略标识
-    strategy_type: StrategyType                 # 策略类型
-    trading_date: date                          # 交易日期
-    positions: list[TargetPosition]             # 目标持仓列表（按 signal_weight 降序）
-    cash_weight: float                          # 现金权重 [0, 1]（无信号时为 1.0）
-    pipeline_meta: dict[str, Any]               # pipeline 元数据（各层统计、掩码、评分分布等）
-    generated_at: datetime
-
-
-@dataclass
-class SelectionOutput:
-    """选股 pipeline 完整输出——含各层中间结果供归因与调试。"""
-    target_portfolio: TargetPortfolio           # 最终组合输出
-    candidate_pool: CandidatePool               # L0 候选池
-    filtered_universe: FilteredUniverse         # L1 过滤后 universe
-    scored_candidates: list[ScoredCandidate]    # L2 评分结果（排序后）
-```
-
-### 3.3 L0 候选池生成算法
-
-L0 按策略类型生成差异化候选池。三策略的候选池来源、生成逻辑、池大小完全不同。
-
-```python
-def generate_candidate_pool(ctx: SelectionContext) -> CandidatePool:
-    """L0 候选池生成——按策略类型分派。
-
-    三策略候选池差异化设计（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.5）：
-    - 打板：连板梯队窄池（高换手、容量小、情绪驱动）
-    - 多因子：全市场宽池（低换手、大容量、横截面选股）
-    - 事件驱动：动态事件池（中换手、中容量、离散事件触发）
-
-    候选池生成不做任何过滤（过滤在 L1 mask-first），
-    只负责"哪些标的进入选股视野"。
-    """
-    if ctx.strategy_type == StrategyType.DABAN:
-        return _generate_daban_pool(ctx)
-    elif ctx.strategy_type == StrategyType.MULTIFACTOR:
-        return _generate_multifactor_pool(ctx)
-    elif ctx.strategy_type == StrategyType.EVENT_DRIVEN:
-        return _generate_event_pool(ctx)
-    else:
-        raise ValueError(f"未知策略类型: {ctx.strategy_type}")
-
-
-def _generate_daban_pool(ctx: SelectionContext) -> CandidatePool:
-    """打板候选池生成——连板梯队窄池。
-
-    来源：BM-SEL-22~25 打板链的连板梯队识别
-    （[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.3 `identify_consecutive_ladder`）。
-    候选标的：当日涨停且连板数 ≥ 1 的标的（首板+连板梯队）。
-
-    池特征：
-    - 窄池：通常 10-50 只（涨停家数 20-60 范围）
-    - 高换手：1-2 天 convergence（[30_multi_strategy_concurrency §6.4](30_multi_strategy_concurrency.md)）
-    - 容量极小：单票几万~几十万
-
-    注意：候选池生成不判断情绪周期可交易性（那在策略内部执行层），
-    只负责收集连板梯队标的。情绪周期可交易性由 L2 评分的 sentiment 维度体现。
-    """
-    # 从 alpha_signals 中提取连板梯队（由 BM-SEL-23 上游填充）
-    consecutive_ladder = ctx.alpha_signals.get("__consecutive_ladder__", {})
-    # consecutive_ladder 示例: {1: ["000001"], 2: ["000002", "000003"], 3: ["600001"], ...}
-
-    symbols = []
-    for board_count, stock_list in consecutive_ladder.items():
-        if board_count >= 1:  # 首板及以上
-            symbols.extend(stock_list)
-
-    return CandidatePool(
-        strategy_type=StrategyType.DABAN,
-        symbols=symbols,
-        pool_source="consecutive_ladder",
-        generated_at=datetime.now(),
-        pool_meta={
-            "ladder_structure": consecutive_ladder,
-            "highest_board": max(consecutive_ladder.keys()) if consecutive_ladder else 0,
-            "pool_size": len(symbols),
-        },
-    )
-
-
-def _generate_multifactor_pool(ctx: SelectionContext) -> CandidatePool:
-    """多因子候选池生成——全市场宽池。
-
-    来源：BM-SEL-02 因子工厂（全市场因子计算，[battle_map_05](../battle_map/battle_map_05_stock_selection.md) BM-SEL-02-A~L）。
-    候选标的：沪深全 A 股（上证+深证+创业板+科创板）。
-
-    池特征：
-    - 宽池：约 5000 只（沪深 A 股全市场）
-    - 低换手：3-5 天 convergence（[30_multi_strategy_concurrency §6.4](30_multi_strategy_concurrency.md)）
-    - 大容量：承载主资金
-
-    注意：全市场池在 L1 会被 mask-first 过滤大幅缩减
-    （ST/次新/停牌/流动性不足等约占 20-30%）。
-    """
-    # 全市场 = universe_snapshot 中的所有标的
-    symbols = list(ctx.universe_snapshot.keys())
-
-    return CandidatePool(
-        strategy_type=StrategyType.MULTIFACTOR,
-        symbols=symbols,
-        pool_source="full_market",
-        generated_at=datetime.now(),
-        pool_meta={
-            "exchange_scope": "SH+SZ+CYB+KCB",
-            "pool_size": len(symbols),
-        },
-    )
-
-
-def _generate_event_pool(ctx: SelectionContext) -> CandidatePool:
-    """事件驱动候选池生成——动态事件触发池。
-
-    来源：BM-SEL-27 盘中实时事件处理（公告/新闻/龙虎榜/异动）。
-    候选标的：当日有事件触发的标的（非固定池，即生即灭）。
-
-    池特征：
-    - 动态池：通常 5-30 只（视当日事件密度）
-    - 中换手：2-3 天 convergence（[30_multi_strategy_concurrency §6.4](30_multi_strategy_concurrency.md)）
-    - 中容量
-
-    事件类型（[20_first_batch_strategies](20_first_batch_strategies.md) §2.4）：
-    - 业绩公告 / 并购重组 / 政策利好 / 突发事件 / 龙虎榜异动
-    """
-    # 从 alpha_signals 中提取事件触发标的（由 BM-SEL-27 上游填充）
-    event_triggers = ctx.alpha_signals.get("__event_triggers__", {})
-    # event_triggers 示例: {"000001": {"event_type": "业绩预增", "impact": 0.8}, ...}
-
-    symbols = list(event_triggers.keys())
-
-    return CandidatePool(
-        strategy_type=StrategyType.EVENT_DRIVEN,
-        symbols=symbols,
-        pool_source="event_triggered",
-        generated_at=datetime.now(),
-        pool_meta={
-            "event_types": {sid: evt.get("event_type") for sid, evt in event_triggers.items()},
-            "pool_size": len(symbols),
-        },
-    )
-```
-
-### 3.3.1 mask-first 可交易性掩码（TradabilityMaskPolicy）
-
-mask-first 设计（arXiv:2507.07107v2）的核心论点：A 股结构性不可交易标的（ST/停牌/涨跌停封板/流动性失效）必须在 alpha 生成/评分前 mask，否则会从两个方向污染 pipeline——
-
-1. **upstream contamination（上游污染）**：涨跌停封板标的的盘口/成交数据异常（封板期间无成交或成交价=涨跌停价），若进入 alpha 计算会污染因子横截面排名与 IC 评估，且污染会向下游传播（contamination upstream）。
-2. **row_filter 虚增 IC**：在 alpha 算完后用 `row_filter` 过滤不可交易标的，会人为剔除"低分且不可交易"的样本，导致 IC 虚增约 +18%、样本外 Sharpe 虚高 -0.44（即回测 Sharpe 比真实高 0.44，是回测失真的主要来源）。
-
-**mask-first 是单一最大贡献者**：在 ablation 研究中，从 row_filter 切换到 mask-first 单独贡献 +0.44 Sharpe（样本外），超过因子正交化（+0.18）与 IC-IR 加权（+0.12）等其他改进。因此 mask 贯穿 L0→L1→L2-C 全 pipeline：L0 候选池生成后立即应用 mask，L1 评分只在 mask 通过的标的上进行，L2-C 组合输出继承 mask 状态。
-
-```python
-class TradabilityMaskPolicy(Enum):
-    """可交易性掩码策略——控制 mask 严格程度（§3.3.1）。
-
-    三档策略对应不同 sleeve 的风险偏好与池特征：
-    - STRICT：所有掩码全开（含次新/涨停封板），最保守，适合多因子宽池
-    - MODERATE：共享掩码 + 策略特定掩码（默认，§3.4 表格），平衡
-    - PERMISSIVE：仅 ST + 停牌 + 流动性，最宽松，适合打板窄池
-    """
-    STRICT = "strict"            # 全掩码（次新/涨停封板对所有策略剔除）
-    MODERATE = "moderate"        # 默认：共享 + 策略特定（§3.4 _evaluate_reject）
-    PERMISSIVE = "permissive"    # 仅硬约束（ST + 停牌 + 流动性）
-```
-
-`mask_policy` 字段已加入 `SelectionContext`（§3.2），pipeline 在 L1 调用 `apply_mask_first_filter(pool, ctx, mask_policy=ctx.mask_policy or TradabilityMaskPolicy.MODERATE)` 时读取策略。`apply_mask_first_filter` 的 policy-aware 实现见 §3.4（已升级为接受 `mask_policy` 参数）；`TradabilityMask` dataclass（含 `is_tradable` + `mask_reason` 汇总字段）亦见 §3.4。
-
-**policy → 掩码集映射**：
-
-| Policy | ST | 停牌 | 次新 | 涨停封板 | 流动性 | 适用 |
-|---|---|---|---|---|---|---|
-| STRICT | ✓剔除 | ✓剔除 | ✓剔除 | ✓剔除 | ✓剔除 | 多因子宽池（最保守） |
-| MODERATE | ✓剔除 | ✓剔除 | 策略特定 | 策略特定 | ✓剔除 | 默认（三策略差异化，§3.4 表格） |
-| PERMISSIVE | ✓剔除 | ✓剔除 | ✗保留 | ✗保留 | ✓剔除 | 打板窄池（最宽松） |
-
-### 3.4 L1 量化过滤算法（A 股 mask-first 设计）
-
-L1 采用 A 股 mask-first 设计（arXiv:2507.07107）：可交易性掩码在 alpha 生成/评分前应用，确保 alpha 模型只见可交易标的。
-
-```python
-@dataclass
-class TradabilityMask:
-    """A 股可交易性掩码——mask-first 设计核心。
-
-    arXiv:2507.07107 核心思想：
-    A 股有大量结构性不可交易标的（ST/停牌/涨跌停封板/流动性失效），
-    若在 alpha 生成后才过滤，会导致：
-    1. alpha 模型浪费算力在不可交易标的
-    2. 不可交易标的的异常数据（如停牌期间的前收盘价）污染 alpha 信号
-    3. 回测失真（回测假设可交易但实际不可交易，导致收益虚高）
-
-    mask-first 方案：在 pipeline 最前端构建可交易性掩码，
-    后续所有 alpha 计算/评分只在 mask 通过的标的上进行。
-
-    跨策略共享：ST/停牌/流动性等约束与策略无关，mask 可复用。
-    策略特定：次新/涨停封板按策略差异化处理。
-    """
-    is_st: bool                 # ST/*ST/退市风险警示
-    is_suspended: bool          # 停牌
-    is_new_stock: bool          # 次新股（上市 <60 天）
-    is_limit_up_sealed: bool    # 涨停封板（买不进）
-    is_limit_down_sealed: bool  # 跌停封板（卖不出，T+1 不涉及但标记）
-    is_illiquid: bool           # 流动性不足（ADV < 阈值）
-    reject_reason: str = ""     # 首要剔除原因（策略特定，由 _evaluate_reject 填充）
-    is_tradable: bool = True    # 汇总：是否可交易（硬约束级，True=可进入 alpha 评分）
-    mask_reason: str = ""       # 汇总：首要不可交易原因（is_tradable=False 时非空，对齐 §3.3.1）
-
-
-def build_tradability_mask(
-    symbol: str,
-    snapshot: dict,             # universe_snapshot[symbol]
-    strategy_type: StrategyType,
-    adv_threshold: float = 5e6, # 流动性阈值（默认 500 万日均成交额）
-    new_stock_days: int = 60,   # 次新定义（上市 <60 天）
-) -> TradabilityMask:
-    """构建单标的可交易性掩码——mask-first。
-
-    策略差异化过滤（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.2-2.4 选股池范围）：
-    - 打板：不排除次新（次新连板是常见标的），但排除 ST/停牌；涨停封板是目标不 mask
-    - 多因子：排除次新（上市<60天因子不稳定）+ ST + 停牌 + 流动性不足 + 涨停封板（买不进）
-    - 事件驱动：不排除次新（事件可能触发次新），排除 ST + 停牌 + 涨停封板（买不进）
-
-    涨停封板特殊处理：
-    - 打板策略：涨停封板是目标状态（要打板），不 mask，但标记（执行层排队/抢入）
-    - 多因子/事件驱动：涨停封板买不进，mask 掉
-    """
-    is_st = snapshot.get("is_st", False) or snapshot.get("is_delisting_warning", False)
-    is_suspended = snapshot.get("is_suspended", False)
-    list_days = snapshot.get("list_days", 999)
-    is_new_stock = list_days < new_stock_days
-    adv = snapshot.get("adv", 0)
-    is_illiquid = adv < adv_threshold
-
-    # 涨跌停封板状态
-    limit_status = snapshot.get("limit_status", "normal")
-    is_limit_up_sealed = limit_status == "limit_up_sealed"
-    is_limit_down_sealed = limit_status == "limit_down_sealed"
-
-    # 汇总字段（硬约束级；策略特定原因由 _evaluate_reject 层叠加到 reject_reason）
-    is_tradable = not (is_st or is_suspended or is_illiquid)
-    mask_reason = ""
-    if is_st:
-        mask_reason = "st_or_delisting"
-    elif is_suspended:
-        mask_reason = "suspended"
-    elif is_illiquid:
-        mask_reason = "illiquid"
-
-    return TradabilityMask(
-        is_st=is_st,
-        is_suspended=is_suspended,
-        is_new_stock=is_new_stock,
-        is_limit_up_sealed=is_limit_up_sealed,
-        is_limit_down_sealed=is_limit_down_sealed,
-        is_illiquid=is_illiquid,
-        is_tradable=is_tradable,
-        mask_reason=mask_reason,
-    )
-
-
-def apply_mask_first_filter(
-    pool: CandidatePool,
-    ctx: SelectionContext,
-    mask_policy: TradabilityMaskPolicy = TradabilityMaskPolicy.MODERATE,
-) -> FilteredUniverse:
-    """L1 量化过滤——应用 mask-first 可交易性掩码（policy-aware，§3.3.1）。
-
-    mask_policy 控制掩码严格程度（§3.3.1）：
-    - STRICT：次新/涨停封板对所有策略剔除（最保守）
-    - MODERATE：共享掩码 + 策略特定掩码（默认，下表）
-    - PERMISSIVE：仅 ST + 停牌 + 流动性（最宽松）
-
-    MODERATE 过滤规则（按策略类型差异化）：
-    | 掩码 | 打板 | 多因子 | 事件驱动 |
-    |---|---|---|---|
-    | ST/*ST | ✗ 剔除 | ✗ 剔除 | ✗ 剔除 |
-    | 停牌 | ✗ 剔除 | ✗ 剔除 | ✗ 剔除 |
-    | 次新(<60天) | ✓ 保留 | ✗ 剔除 | ✓ 保留 |
-    | 涨停封板 | ✓ 保留(目标) | ✗ 剔除 | ✗ 剔除 |
-    | 流动性不足 | ✗ 剔除 | ✗ 剔除 | ✗ 剔除 |
-
-    共享掩码（跨策略）：ST + 停牌 + 流动性——所有策略剔除
-    策略特定掩码：次新/涨停封板——按策略差异化
-    """
-    rejected = {}
-    passed = []
-
-    for symbol in pool.symbols:
-        snapshot = ctx.universe_snapshot.get(symbol, {})
-        mask = build_tradability_mask(symbol, snapshot, pool.strategy_type)
-
-        reject_reason = _evaluate_reject(mask, pool.strategy_type, mask_policy)
-        if reject_reason:
-            rejected[symbol] = reject_reason
-        else:
-            passed.append(symbol)
-
-    mask_applied = ["st", "suspended", "new_stock", "limit_up_sealed", "illiquid"]
-
-    return FilteredUniverse(
-        symbols=passed,
-        rejected=rejected,
-        mask_applied=mask_applied,
-    )
-
-
-def _evaluate_reject(
-    mask: TradabilityMask,
-    strategy_type: StrategyType,
-    mask_policy: TradabilityMaskPolicy = TradabilityMaskPolicy.MODERATE,
-) -> str:
-    """评估掩码是否触发剔除——按策略 + policy 差异化。
-
-    返回空字符串=通过，非空=剔除原因。
-
-    policy 调制（§3.3.1）：
-    - STRICT：次新 + 涨停封板对所有策略剔除（最保守）
-    - MODERATE：共享 + 策略特定（默认）
-    - PERMISSIVE：仅 ST + 停牌 + 流动性（跳过次新/涨停封板）
-    """
-    # ===== 共享硬约束：ST + 停牌 + 流动性（所有 policy 剔除）=====
-    if mask.is_st:
-        return "st_or_delisting"
-    if mask.is_suspended:
-        return "suspended"
-
-    # PERMISSIVE：仅硬约束，跳过次新/涨停封板
-    if mask_policy == TradabilityMaskPolicy.PERMISSIVE:
-        if mask.is_illiquid:
-            return "illiquid"
-        return ""
-
-    # STRICT：次新 + 涨停封板对所有策略剔除
-    if mask_policy == TradabilityMaskPolicy.STRICT:
-        if mask.is_new_stock:
-            return "new_stock_strict"
-        if mask.is_limit_up_sealed:
-            return "limit_up_sealed_strict"
-        if mask.is_illiquid:
-            return "illiquid"
-        return ""
-
-    # ===== MODERATE：策略特定掩码 =====
-    if strategy_type == StrategyType.MULTIFACTOR:
-        # 多因子：排除次新（因子不稳定）+ 涨停封板（买不进）+ 流动性不足
-        if mask.is_new_stock:
-            return "new_stock_multifactor"
-        if mask.is_limit_up_sealed:
-            return "limit_up_sealed_unbuyable"
-        if mask.is_illiquid:
-            return "illiquid"
-
-    elif strategy_type == StrategyType.DABAN:
-        # 打板：保留次新（次新连板常见）+ 保留涨停封板（目标状态）
-        # 仅剔除流动性极度不足
-        if mask.is_illiquid:
-            return "illiquid_daban"
-
-    elif strategy_type == StrategyType.EVENT_DRIVEN:
-        # 事件驱动：保留次新（事件可能触发次新）+ 剔除涨停封板（买不进）+ 流动性不足
-        if mask.is_limit_up_sealed:
-            return "limit_up_sealed_unbuyable"
-        if mask.is_illiquid:
-            return "illiquid_event"
-
-    return ""
-
-
-def _loewin_orthogonalize(factor_matrix):
-    """Löwdin 对称正交化——消除因子共线性，保留因子方向。
-
-    公式：F_orth = F (F^T F)^{-1/2}
-
-    对比 Gram-Schmidt（非对称，顺序敏感）：
-    - Löwdin 对称正交化对所有因子平等对待，不依赖因子顺序
-    - 正交化后各因子两两不相关，IC 评估更纯净
-    - 保留因子的原始方向（旋转最小化），信息损失最小
-
-    用于 L1 多因子 sleeve 的因子预处理（BM-SEL-02-G 因子正交化）。
-    ablation 贡献：+0.18 Sharpe（仅次于 mask-first +0.44）。
-    """
-    import numpy as np
-    F = np.asarray(factor_matrix, dtype=float)
-    # 中心化（去均值）
-    F = F - F.mean(axis=0, keepdims=True)
-    # (F^T F)^{-1/2} via 对称特征分解：A = V Λ V^T → A^{-1/2} = V Λ^{-1/2} V^T
-    FtF = F.T @ F
-    eigvals, eigvecs = np.linalg.eigh(FtF)
-    eigvals = np.clip(eigvals, 1e-10, None)  # 防奇异
-    inv_sqrt = (eigvecs * (eigvals ** -0.5)) @ eigvecs.T
-    F_orth = F @ inv_sqrt
-    return F_orth
-
-
-def _compute_ic_ir_weights(
-    ic_history: dict[str, list[float]],  # {factor: [ic_t-Window..t-1]}
-    min_window: int = 20,
-) -> dict[str, float]:
-    """滚动 IC-IR 动态权重——按各因子的信息系数信息比分配权重。
-
-    IC-IR = mean(IC) / std(IC)（滚动窗口内）
-    权重 ∝ max(IC-IR, 0)，归一化到 [0, 1]。
-
-    对比等权（忽略因子质量差异）与 IC 加权（忽略 IC 稳定性）：
-    - IC-IR 同时考虑 IC 的水平与稳定性，高且稳的因子获更高权重
-    - 负 IC-IR 因子权重归零（剔除反向且不稳定的因子）
-    - 滚动窗口适应因子衰减（IC 随时间漂移）
-
-    ablation 贡献：+0.12 Sharpe。
-    """
-    positive_ir: dict[str, float] = {}
-    for factor, ics in ic_history.items():
-        if len(ics) < min_window:
-            continue
-        recent = ics[-min_window:]
-        mean_ic = sum(recent) / len(recent)
-        var_ic = sum((x - mean_ic) ** 2 for x in recent) / len(recent)
-        std_ic = (var_ic ** 0.5) or 1e-8
-        ir = mean_ic / std_ic
-        if ir > 0:
-            positive_ir[factor] = ir
-    total_ir = sum(positive_ir.values()) or 1.0
-    return {f: ir / total_ir for f, ir in positive_ir.items()}
-
-
-def score_l1_multifactor(
-    factor_values: dict[str, dict[str, float]],  # {symbol: {factor: value}}
-    ic_history: dict[str, list[float]],          # {factor: [ic...]}
-) -> dict[str, float]:
-    """L1 多因子合成评分——Löwdin 正交化 + IC-IR 加权。
-
-    pipeline：
-    1. 因子矩阵组装 → Löwdin 对称正交化（消除共线性）
-    2. IC-IR 动态权重计算（滚动窗口）
-    3. 正交化后因子 × IC-IR 权重 → 综合得分
-    4. 横截面排名归一化到 [0, 100]
-
-    对齐 BM-SEL-02-H 多因子合成（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）。
-    """
-    import numpy as np
-    symbols = list(factor_values.keys())
-    factors = list(ic_history.keys())
-    if not symbols or not factors:
-        return {s: 0.0 for s in symbols}
-
-    # 1. 组装因子矩阵 (N, K)
-    F = np.array([[factor_values[s].get(f, 0.0) for f in factors] for s in symbols])
-
-    # 2. Löwdin 正交化
-    F_orth = _loewin_orthogonalize(F)
-
-    # 3. IC-IR 权重
-    weights = _compute_ic_ir_weights(ic_history)
-    w_vec = np.array([weights.get(f, 0.0) for f in factors])
-
-    # 4. 加权合成 + 横截面归一化到 [0, 100]
-    composite = F_orth @ w_vec  # (N,)
-    lo, hi = composite.min(), composite.max()
-    if hi - lo > 1e-10:
-        composite = (composite - lo) / (hi - lo) * 100.0
-    else:
-        composite = np.full_like(composite, 50.0)
-    return {s: float(composite[i]) for i, s in enumerate(symbols)}
-```
-
-### 3.5 L2 量化强度评级算法
-
-L2 对过滤后的 universe 做多维度打分，输出 A~E 五级评级与排序。评分框架跨策略统一——v1.2.0 从 4 维升级为 **6 维 BM-SEL-24**（连板梯队/游资接力/情绪周期/板块强度/资金流向/技术形态），各维度内部按策略差异化。下方先给出 v1.0 4维简化版（`compute_strength_score`，保留兼容旧调用方），再给出 v1.2.0 6维生产路径（`compute_six_dim_strength`）。
-
-```python
-@dataclass
-class StrengthScore:
-    """量化强度评分——4 维度统一框架。
-
-    4 维度设计（跨策略统一框架，各维度内部策略差异化）：
-    1. alpha 信号强度（策略特定）：打板=游资接力6因子+连板潜力7维双引擎融合
-       / 多因子=因子综合得分 / 事件=事件冲击强度
-    2. 板块强度（跨策略共享）：来自 G06 板块轮动
-    3. 情绪周期（跨策略共享）：来自 BM-SEL-23-B 情绪周期4+1阶段
-    4. 资金面（跨策略共享）：主力净流入/北向/龙虎榜净买率
-
-    权重按策略类型差异化（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.5 差异化矩阵）：
-    - 打板：alpha 40% + 板块 15% + 情绪 25% + 资金 20%（情绪驱动型）
-    - 多因子：alpha 60% + 板块 15% + 情绪 5% + 资金 20%（alpha 主导型）
-    - 事件驱动：alpha 50% + 板块 10% + 情绪 15% + 资金 25%（事件+资金驱动型）
-    """
-    alpha_strength: float       # 维度1：alpha 信号强度 [0, 100]
-    sector_strength: float      # 维度2：板块强度 [0, 100]
-    sentiment_strength: float   # 维度3：情绪周期强度 [0, 100]
-    capital_strength: float     # 维度4：资金面强度 [0, 100]
-    total_score: float          # 加权总分 [0, 100]
-    weights: dict[str, float]   # 各维度权重
-
-
-def score_alpha_strength(
-    symbol: str,
-    ctx: SelectionContext,
-    strategy_type: StrategyType,
-) -> float:
-    """维度1：alpha 信号强度评分——策略特定。
-
-    打板（BM-SEL-23-A 游资接力6因子 + BM-SEL-22-C 连板潜力7维）：
-    - 复用打板链已建的评分卡，归一化到 [0, 100]
-    - 双引擎融合：游资60% + 量化40%（BM-SEL-25，打板内部融合，§3.7）
-    - 6因子：连板高度25 + 封单质量20 + 涨停时间15 + 开板次数15 + 竞价强度10 + 助攻梯队15
-
-    多因子（BM-SEL-02-H 多因子合成）：
-    - 因子综合得分（IC 加权/正交化后），横截面排名归一化到 [0, 100]
-    - 因子组合方式在 G09 多因子细节讨论
-
-    事件驱动（BM-SEL-27 事件冲击）：
-    - 事件冲击强度（事件类型×历史冲击幅度×衰减阶段），归一化到 [0, 100]
-    - 事件冲击衰减曲线在 G10 事件驱动细节讨论
-    """
-    signals = ctx.alpha_signals.get(symbol, {})
-
-    if strategy_type == StrategyType.DABAN:
-        # 打板：游资接力6因子评分（BM-SEL-23-A）
-        relay_score = signals.get("relay_6factor_score", 0)  # 已是 [0, 100]
-        # 连板潜力7维评分（BM-SEL-22-C）
-        potential_score = signals.get("limit_up_potential_score", 0)  # [0, 100]
-        # 双引擎融合：游资60% + 量化40%（BM-SEL-25，打板内部融合，§3.7）
-        # 注意：此处 alpha_strength 已是打板内部双引擎融合后的综合 alpha
-        # 情绪周期自适应权重（BM-SEL-25-B）在打板 sleeve 内部进一步调整，此处用基准权重
-        alpha_score = 0.6 * relay_score + 0.4 * potential_score
-        return alpha_score
-
-    elif strategy_type == StrategyType.MULTIFACTOR:
-        # 多因子：因子综合得分（BM-SEL-02-H 多因子合成）
-        composite_score = signals.get("factor_composite_score", 0)  # [0, 100]
-        return composite_score
-
-    elif strategy_type == StrategyType.EVENT_DRIVEN:
-        # 事件驱动：事件冲击强度（BM-SEL-27）
-        impact_score = signals.get("event_impact_score", 0)  # [0, 100]
-        return impact_score
-
-    return 0.0
-
-
-def score_sector_strength(
-    symbol: str,
-    ctx: SelectionContext,
-) -> float:
-    """维度2：板块强度评分——跨策略共享。
-
-    来自 G06 板块轮动（[22_sector_rotation_spec](22_sector_rotation_spec.md)）。
-    板块强度公式（WyckoffTradingAgent 2026-07，[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.7）：
-    score = 0.4×q20 + 0.3×q5 + 0.3×q3
-    （q3=3日动量，q5=5日动量，q20=20日动量）
-
-    标的板块强度 = 所属板块的板块强度评分，归一化到 [0, 100]。
-    板块状态分类（共识高潮/分歧回调/健康主线/派发风险/中性混沌）由 G06 输出。
-    """
-    sector = ctx.universe_snapshot.get(symbol, {}).get("sector", "unknown")
-    sector_score = ctx.sector_strength.get(sector, 50.0)  # 默认中性 50
-    return sector_score
-
-
-def score_sentiment_strength(ctx: SelectionContext) -> float:
-    """维度3：情绪周期强度评分——跨策略共享。
-
-    来自 BM-SEL-23-B 情绪周期4+1阶段（[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.2）。
-    选股引擎只读情绪周期阶段，不参与判定（判定在 BM-SEL-23-B 上游）。
-
-    情绪周期→强度映射（市场级，非标的级）：
-    - 发酵期：情绪最健康，强度 100
-    - 启动期：情绪上升，强度 70
-    - 一致期：情绪过热，强度 50（警惕退潮）
-    - 退潮期：情绪退潮，强度 30
-    - 冰点期：情绪冰点，强度 20
-
-    注意：情绪周期是市场级信号，同一天所有标的共享同一情绪强度。
-    差异化在 alpha 信号维度体现（如打板内部的情绪周期自适应权重 BM-SEL-25-B）。
-    """
-    phase_mapping = {
-        SentimentPhase.FERMENTING: 100.0,   # 发酵期最强
-        SentimentPhase.STARTING: 70.0,      # 启动期较强
-        SentimentPhase.CONSENSUS: 50.0,     # 一致期中等（退潮风险）
-        SentimentPhase.EBING: 30.0,         # 退潮期较弱
-        SentimentPhase.FREEZING: 20.0,      # 冰点期最弱
-    }
-    return phase_mapping.get(ctx.sentiment_phase, 50.0)
-
-
-def score_capital_strength(
-    symbol: str,
-    ctx: SelectionContext,
-) -> float:
-    """维度4：资金面强度评分——跨策略共享。
-
-    资金面数据：主力净流入 + 北向净流入 + 龙虎榜净买率。
-    归一化到 [0, 100]。
-
-    龙虎榜净买率回测（东方财富 2026-08，[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.9）：
-    - 净买率 >12% → 次日 +3.10%，20日 +5.11%
-    - 净买率 <0% → 资金流出，弱势
-
-    Smart Money 信号（quantskills 2026-06，[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.9）：
-    - strong: 净买率>12% + 合力型
-    - medium: 净买率>3% + 买方≥卖方1.2倍
-    - weak: 其他
-    """
-    flow = ctx.capital_flow.get(symbol, {})
-
-    main_net = flow.get("main_net_inflow", 0)       # 主力净流入（万）
-    northbound = flow.get("northbound_net", 0)       # 北向净流入（万）
-    net_buy_ratio = flow.get("net_buy_ratio", 0)     # 龙虎榜净买率
-
-    # 主力净流入评分（0-40分）
-    if main_net > 5000:
-        s_main = 40.0
-    elif main_net > 1000:
-        s_main = 30.0
-    elif main_net > 0:
-        s_main = 20.0
-    else:
-        s_main = 5.0  # 净流出
-
-    # 北向净流入评分（0-30分）
-    if northbound > 2000:
-        s_north = 30.0
-    elif northbound > 0:
-        s_north = 20.0
-    else:
-        s_north = 10.0
-
-    # 龙虎榜净买率评分（0-30分）
-    if net_buy_ratio > 0.12:
-        s_dt = 30.0  # 净买率>12% → 次日显著正收益
-    elif net_buy_ratio > 0.03:
-        s_dt = 20.0
-    elif net_buy_ratio > 0:
-        s_dt = 10.0
-    else:
-        s_dt = 5.0
-
-    return s_main + s_north + s_dt
-
-
-def compute_strength_score(
-    symbol: str,
-    ctx: SelectionContext,
-    strategy_type: StrategyType,
-) -> StrengthScore:
-    """L2 量化强度评级——4 维度加权总分（v1.0 简化版，保留兼容旧调用方）。
-
-    v1.2.0 生产路径改用 compute_six_dim_strength（6维 BM-SEL-24，见本节末尾）。
-    本函数保留以兼容尚未迁移到 6维的旧调用方，逻辑不变。
-
-    权重按策略类型差异化（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.5 差异化矩阵）。
-    """
-    # 各维度评分
-    alpha_s = score_alpha_strength(symbol, ctx, strategy_type)
-    sector_s = score_sector_strength(symbol, ctx)
-    sentiment_s = score_sentiment_strength(ctx)
-    capital_s = score_capital_strength(symbol, ctx)
-
-    # 权重配置（策略差异化）
-    if strategy_type == StrategyType.DABAN:
-        # 打板：情绪驱动型，alpha+情绪占 65%
-        weights = {"alpha": 0.40, "sector": 0.15, "sentiment": 0.25, "capital": 0.20}
-    elif strategy_type == StrategyType.MULTIFACTOR:
-        # 多因子：alpha 主导型，alpha 占 60%
-        weights = {"alpha": 0.60, "sector": 0.15, "sentiment": 0.05, "capital": 0.20}
-    else:  # EVENT_DRIVEN
-        # 事件驱动：事件+资金驱动型，alpha+资金占 75%
-        weights = {"alpha": 0.50, "sector": 0.10, "sentiment": 0.15, "capital": 0.25}
-
-    total = (
-        weights["alpha"] * alpha_s
-        + weights["sector"] * sector_s
-        + weights["sentiment"] * sentiment_s
-        + weights["capital"] * capital_s
-    )
-
-    return StrengthScore(
-        alpha_strength=alpha_s,
-        sector_strength=sector_s,
-        sentiment_strength=sentiment_s,
-        capital_strength=capital_s,
-        total_score=total,
-        weights=weights,
-    )
-
-
-def rating_from_score(total_score: float, hard_risk: bool = False) -> RatingGrade:
-    """总分→A~E 五级评级（v1.2.0 阈值对齐 SignalQuality）。
-
-    阈值：≥85→A / ≥70→B / ≥55→C / ≥40→D / <40→E。
-    硬风险（ST/停牌/封板/流动性失效）直接判 E，不参与评分
-    ——对齐 mask-first 设计（§3.3.1，硬风险标的在 L1 已被 mask）。
-    """
-    if hard_risk:
-        return RatingGrade.E
-    if total_score >= 85:
-        return RatingGrade.A
-    elif total_score >= 70:
-        return RatingGrade.B
-    elif total_score >= 55:
-        return RatingGrade.C
-    elif total_score >= 40:
-        return RatingGrade.D
-    else:
-        return RatingGrade.E
-
-
-def rank_and_filter_candidates(
-    filtered: FilteredUniverse,
-    ctx: SelectionContext,
-    strategy_type: StrategyType,
-    min_rating: RatingGrade = RatingGrade.C,  # 最低评级阈值
-    max_positions: int = 20,                   # 最大持仓数
-    crowding_days: dict[str, int] | None = None,  # v1.2.0 各维度因子拥挤天数（供 apply_factor_crowding_decay）
-) -> list[ScoredCandidate]:
-    """L2 排序与筛选——按评级阈值+最大持仓数截断。
-
-    v1.2.0：评分改用 6维 BM-SEL-24（compute_six_dim_strength + map_signals_to_six_dims
-    + apply_factor_crowding_decay）。旧 4维 compute_strength_score 保留兼容。
-
-    max_positions 按策略类型差异化（§3.8 `_get_max_positions`）：
-    - 打板：≤5 只（容量极小）
-    - 多因子：≤20 只（承载主资金，分散化）
-    - 事件驱动：≤10 只（中容量）
-    """
-    scored = []
-    for symbol in filtered.symbols:
-        # v1.2.0: 6维 BM-SEL-24 强度评级（取分→衰减→加权→分级）
-        strength = compute_six_dim_strength(symbol, ctx, strategy_type, crowding_days)
-        rating = strength.grade
-        confidence = strength.total_score / 100.0
-
-        scored.append(ScoredCandidate(
-            symbol=symbol,
-            total_score=strength.total_score,
-            rating=rating,
-            score_breakdown={
-                "consecutive_ladder": strength.consecutive_ladder,
-                "hot_money_relay": strength.hot_money_relay,
-                "sentiment_cycle": strength.sentiment_cycle,
-                "sector_strength": strength.sector_strength,
-                "capital_flow": strength.capital_flow,
-                "technical_pattern": strength.technical_pattern,
-                "total_raw": strength.total_raw,
-            },
-            signal_source=f"{strategy_type.value}_pipeline_v1.2",
-            confidence=confidence,
-        ))
-
-    # 按总分降序排序
-    scored.sort(key=lambda x: x.total_score, reverse=True)
-
-    # 评级过滤
-    rating_order = [RatingGrade.A, RatingGrade.B, RatingGrade.C, RatingGrade.D, RatingGrade.E]
-    min_idx = rating_order.index(min_rating)
-    valid_ratings = set(rating_order[:min_idx + 1])
-    scored = [s for s in scored if s.rating in valid_ratings]
-
-    # 最大持仓数截断
-    scored = scored[:max_positions]
-
-    # 填充排名
-    for i, s in enumerate(scored, 1):
-        s.rank = i
-
-    return scored
-```
-
-#### 3.5.1 6维 BM-SEL-24 强度评级（v1.2.0 生产路径）
-
-v1.2.0 将 L2 强度评级从 4 维升级为 6 维 BM-SEL-24：将 alpha 信号拆解为更细粒度的策略特定维度（连板梯队/游资接力），并新增技术形态维度。评分流程：**取分 → apply_factor_crowding_decay 双曲衰减 → DIMENSION_WEIGHTS 加权 → 分级**。
-
-```python
-# 6维 BM-SEL-24 维度标识
-SIX_DIMENSIONS = (
-    "consecutive_ladder",   # 连板梯队
-    "hot_money_relay",      # 游资接力
-    "sentiment_cycle",      # 情绪周期
-    "sector_strength",      # 板块强度
-    "capital_flow",         # 资金流向
-    "technical_pattern",    # 技术形态
-)
-
-# 各策略 6维权重（对齐 [20_first_batch_strategies](20_first_batch_strategies.md) §2.5 差异化矩阵）
-# - 打板：连板0.25 + 游资0.25（情绪驱动型，连板+游资占 50%）
-# - 多因子：资金0.25 + 技术0.30（alpha 主导型，资金+技术占 55%）
-# - 事件驱动：情绪0.20 + 资金0.20（事件+资金驱动型）
-DIMENSION_WEIGHTS: dict[StrategyType, dict[str, float]] = {
-    StrategyType.DABAN: {
-        "consecutive_ladder": 0.25,
-        "hot_money_relay": 0.25,
-        "sentiment_cycle": 0.15,
-        "sector_strength": 0.10,
-        "capital_flow": 0.15,
-        "technical_pattern": 0.10,
-    },
-    StrategyType.MULTIFACTOR: {
-        "consecutive_ladder": 0.05,
-        "hot_money_relay": 0.10,
-        "sentiment_cycle": 0.10,
-        "sector_strength": 0.20,
-        "capital_flow": 0.25,
-        "technical_pattern": 0.30,
-    },
-    StrategyType.EVENT_DRIVEN: {
-        "consecutive_ladder": 0.10,
-        "hot_money_relay": 0.15,
-        "sentiment_cycle": 0.20,
-        "sector_strength": 0.15,
-        "capital_flow": 0.20,
-        "technical_pattern": 0.20,
-    },
-}
-
-# 维度类型：机械型衰减，判断型不衰减（arXiv:2512.11913v1）
-MECHANICAL_DIMENSIONS = frozenset({
-    "consecutive_ladder", "hot_money_relay", "capital_flow", "technical_pattern",
-})
-JUDGMENT_DIMENSIONS = frozenset({
-    "sentiment_cycle", "sector_strength",
-})
-
-
-@dataclass
-class QuantitativeStrength:
-    """6维 BM-SEL-24 量化强度评级（v1.2.0 升级）。
-
-    从 v1.0 的 4 维（alpha/sector/sentiment/capital）升级为 6 维：
-    将 alpha 拆解为连板梯队 + 游资接力（策略特定），并新增技术形态维度。
-
-    6 维度：
-    1. consecutive_ladder（连板梯队）：连板高度/梯队位置/封单质量
-    2. hot_money_relay（游资接力）：游资席位合力/接力意愿
-    3. sentiment_cycle（情绪周期）：市场情绪阶段（BM-SEL-23-B）
-    4. sector_strength（板块强度）：所属板块动量（G06）
-    5. capital_flow（资金流向）：主力/北向/龙虎榜净买率
-    6. technical_pattern（技术形态）：量价/突破/形态
-
-    评分流程：取分 → apply_factor_crowding_decay 衰减 → DIMENSION_WEIGHTS 加权 → 分级。
-    """
-    consecutive_ladder: float              # 连板梯队 [0, 100]
-    hot_money_relay: float                # 游资接力 [0, 100]
-    sentiment_cycle: float                # 情绪周期 [0, 100]
-    sector_strength: float                # 板块强度 [0, 100]
-    capital_flow: float                   # 资金流向 [0, 100]
-    technical_pattern: float              # 技术形态 [0, 100]
-    total_raw: float                      # 衰减前总分（均值，供归因）
-    total_score: float                    # 衰减后加权总分 [0, 100]
-    grade: RatingGrade                    # A~E 等级（对齐 SignalQuality）
-    weights: dict[str, float]             # 各维度权重
-    decayed_dims: dict[str, float]        # 衰减后各维度得分（供归因）
-
-
-def apply_factor_crowding_decay(
-    dim_scores: dict[str, float],          # {dimension: raw_score}
-    crowding_days: dict[str, int],         # {dimension: days_since_crowded}
-    lambda_decay: float = 0.05,            # 双曲衰减系数
-) -> dict[str, float]:
-    """因子拥挤双曲衰减（arXiv:2512.11913v1）。
-
-    机械型维度（规则驱动，易被拥挤套利）按双曲衰减：
-        α(t) = K / (1 + λ·t)
-    其中 t = 拥挤天数，K = 原始得分，λ = 衰减系数。
-
-    判断型维度（情绪周期/板块强度，主观+宏观驱动）不衰减——
-    这类维度的"拥挤"难以量化且衰减模式不同，保持原值。
-
-    维度分类：
-    - 机械型（衰减）：consecutive_ladder / hot_money_relay / capital_flow / technical_pattern
-    - 判断型（不衰减）：sentiment_cycle / sector_strength
-
-    arXiv:2512.11913 实证：机械型因子拥挤后 IC 在 20-40 天衰减 30-50%，
-    双曲衰减（λ≈0.05）比线性衰减更贴合实测衰减曲线。
-    """
-    decayed: dict[str, float] = {}
-    for dim, score in dim_scores.items():
-        if dim in MECHANICAL_DIMENSIONS:
-            t = crowding_days.get(dim, 0)
-            decayed[dim] = score / (1.0 + lambda_decay * t)
-        else:
-            # 判断型维度不衰减
-            decayed[dim] = score
-    return decayed
-
-
-def map_signals_to_six_dims(
-    symbol: str,
-    ctx: SelectionContext,
-    strategy_type: StrategyType,
-) -> dict[str, float]:
-    """各策略 L1 信号差异化映射到 6 维。
-
-    不同策略的 alpha 信号来源不同，映射到 6 维的方式差异化：
-    - 打板：连板梯队 + 游资接力是主维度（来自 BM-SEL-22~23）
-    - 多因子：技术形态 + 资金流向是主维度（来自 BM-SEL-02 因子工厂）
-    - 事件驱动：情绪周期 + 资金流向是主维度（来自 BM-SEL-27 事件冲击）
-
-    跨策略共享维度（sentiment_cycle/sector_strength/capital_flow）复用本节上方
-    score_sentiment_strength/score_sector_strength/score_capital_strength。
-    """
-    signals = ctx.alpha_signals.get(symbol, {})
-    # 跨策略共享维度（复用 v1.0 共享评分函数）
-    sentiment_s = score_sentiment_strength(ctx)
-    sector_s = score_sector_strength(symbol, ctx)
-    capital_s = score_capital_strength(symbol, ctx)
-
-    if strategy_type == StrategyType.DABAN:
-        # 打板：连板梯队 + 游资接力为主（BM-SEL-22-C / BM-SEL-23-A）
-        return {
-            "consecutive_ladder": signals.get("limit_up_potential_score", 0.0),
-            "hot_money_relay": signals.get("relay_6factor_score", 0.0),
-            "sentiment_cycle": sentiment_s,
-            "sector_strength": sector_s,
-            "capital_flow": capital_s,
-            "technical_pattern": signals.get("technical_pattern_score", 50.0),
-        }
-    elif strategy_type == StrategyType.MULTIFACTOR:
-        # 多因子：技术形态 + 资金流向为主（BM-SEL-02-H 因子合成）
-        return {
-            "consecutive_ladder": signals.get("momentum_score", 50.0),
-            "hot_money_relay": signals.get("smart_money_score", 50.0),
-            "sentiment_cycle": sentiment_s,
-            "sector_strength": sector_s,
-            "capital_flow": capital_s,
-            "technical_pattern": signals.get("factor_composite_score", 0.0),
-        }
-    else:  # EVENT_DRIVEN
-        # 事件驱动：情绪周期 + 资金流向为主（BM-SEL-27 事件冲击）
-        return {
-            "consecutive_ladder": signals.get("momentum_score", 50.0),
-            "hot_money_relay": signals.get("smart_money_score", 50.0),
-            "sentiment_cycle": sentiment_s,
-            "sector_strength": sector_s,
-            "capital_flow": capital_s,
-            "technical_pattern": signals.get("event_impact_score", 0.0),
-        }
-
-
-def compute_six_dim_strength(
-    symbol: str,
-    ctx: SelectionContext,
-    strategy_type: StrategyType,
-    crowding_days: dict[str, int] | None = None,
-) -> QuantitativeStrength:
-    """6维 BM-SEL-24 量化强度评分主函数（v1.2.0 生产路径）。
-
-    流程：取分（map_signals_to_six_dims）→ apply_factor_crowding_decay 双曲衰减
-    → DIMENSION_WEIGHTS 加权 → rating_from_score 分级。
-
-    对齐 BM-SEL-24 量化强度6维（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）。
-    """
-    # 1. 取分——各策略 L1 信号差异化映射到 6 维
-    raw_dims = map_signals_to_six_dims(symbol, ctx, strategy_type)
-
-    # 2. 因子拥挤双曲衰减（机械型衰减，判断型不衰减）
-    crowding = crowding_days or {}
-    decayed = apply_factor_crowding_decay(raw_dims, crowding)
-
-    # 3. 加权
-    weights = DIMENSION_WEIGHTS[strategy_type]
-    total_raw = sum(raw_dims[d] for d in SIX_DIMENSIONS) / len(SIX_DIMENSIONS)
-    total = sum(weights[d] * decayed[d] for d in SIX_DIMENSIONS)
-
-    # 4. 分级（对齐 SignalQuality 阈值，硬风险在 L1 已被 mask）
-    grade = rating_from_score(total)
-
-    return QuantitativeStrength(
-        consecutive_ladder=raw_dims["consecutive_ladder"],
-        hot_money_relay=raw_dims["hot_money_relay"],
-        sentiment_cycle=raw_dims["sentiment_cycle"],
-        sector_strength=raw_dims["sector_strength"],
-        capital_flow=raw_dims["capital_flow"],
-        technical_pattern=raw_dims["technical_pattern"],
-        total_raw=total_raw,
-        total_score=total,
-        grade=grade,
-        weights=weights,
-        decayed_dims=decayed,
-    )
-```
-
-### 3.6 C 组合输出算法
-
-```python
-def compose_target_portfolio(
-    scored: list[ScoredCandidate],
-    ctx: SelectionContext,
-    strategy_type: StrategyType,
-    candidate_pool: CandidatePool,
-    filtered: FilteredUniverse,
-) -> SelectionOutput:
-    """C 组合输出——将评分结果转为 target_portfolio。
-
-    signal_weight 计算策略：评级分层+得分加权混合
-    - A 级：权重乘数 ×1.5
-    - B 级：权重乘数 ×1.0
-    - C 级：权重乘数 ×0.5
-    然后按得分在同级内加权，最后归一化。
-
-    注意：signal_weight 不是最终仓位！
-    最终仓位 = StrategyBook 粗仓位（risk parity/等权）× firm 层 Kelly 精裁决
-    （[31_position_sizing](31_position_sizing.md) 分层裁定）。
-    """
-    if not scored:
-        # 无信号→全现金
-        target = TargetPortfolio(
-            strategy_id=ctx.strategy_id,
-            strategy_type=strategy_type,
-            trading_date=ctx.trading_date,
-            positions=[],
-            cash_weight=1.0,
-            pipeline_meta={"reason": "no_valid_candidates"},
-            generated_at=datetime.now(),
-        )
-    else:
-        # 评级分层乘数
-        rating_multipliers = {
-            RatingGrade.A: 1.5,
-            RatingGrade.B: 1.0,
-            RatingGrade.C: 0.5,
-        }
-
-        # 计算原始权重 = 评级乘数 × 得分
-        raw_weights = []
-        for s in scored:
-            mult = rating_multipliers.get(s.rating, 0.5)
-            raw_weights.append(mult * s.total_score)
-
-        # 归一化到 [0, 1]，总和 = 1 - cash_buffer
-        cash_buffer = 0.05  # 预留 5% 现金缓冲
-        total_raw = sum(raw_weights)
-        if total_raw > 0:
-            signal_weights = [w / total_raw * (1 - cash_buffer) for w in raw_weights]
-        else:
-            signal_weights = [0] * len(scored)
-
-        positions = []
-        for s, w in zip(scored, signal_weights):
-            positions.append(TargetPosition(
-                symbol=s.symbol,
-                signal_weight=w,
-                score=s.total_score,
-                rating=s.rating,
-                score_breakdown=s.score_breakdown,
-                signal_source=s.signal_source,
-                confidence=s.confidence,
-            ))
-
-        target = TargetPortfolio(
-            strategy_id=ctx.strategy_id,
-            strategy_type=strategy_type,
-            trading_date=ctx.trading_date,
-            positions=positions,
-            cash_weight=cash_buffer,
-            pipeline_meta={
-                "n_candidates": len(candidate_pool.symbols),
-                "n_passed_mask": len(filtered.symbols),
-                "n_scored": len(scored),
-                "rating_distribution": _count_ratings(scored),
-                "mask_rejection_summary": _summarize_rejections(filtered.rejected),
-            },
-            generated_at=datetime.now(),
-        )
-
-    return SelectionOutput(
-        target_portfolio=target,
-        candidate_pool=candidate_pool,
-        filtered_universe=filtered,
-        scored_candidates=scored,
-    )
-
-
-def _count_ratings(scored: list[ScoredCandidate]) -> dict[str, int]:
-    """统计评级分布。"""
-    dist = {}
-    for s in scored:
-        dist[s.rating.value] = dist.get(s.rating.value, 0) + 1
-    return dist
-
-
-def _summarize_rejections(rejected: dict[str, str]) -> dict[str, int]:
-    """汇总掩码剔除原因分布。"""
-    summary = {}
-    for reason in rejected.values():
-        summary[reason] = summary.get(reason, 0) + 1
-    return summary
-```
-
-### 3.7 双引擎融合定位说明（BM-SEL-25 内部融合）
-
-**核心裁定**：BM-SEL-25 双引擎融合（游资情绪引擎 60% + 量化强度引擎 40%，情绪周期自适应权重）是**打板策略内部融合**，**非跨策略层**。
-
-**裁定依据**（对齐 [30_multi_strategy_concurrency §7.3](30_multi_strategy_concurrency.md)）：
-- BM-SEL-25 双引擎融合 → 保留，定位为"打板策略内部"融合，非跨策略层
-- BM-SEL-02-K 多策略投票加权 → 降级为策略内部机制（非跨策略层）
-
-**层级边界澄清**：
-
-| 层级 | 范围 | 机制 | 状态 |
+- **target_portfolio**：`list[TargetPosition(symbol, target_weight, signal_source, urgency)]`，urgency∈{immediate, next_open, gradual} 对应打板/多因子/事件的不同执行时序
+- **signals**：原始信号留痕，供归因与 G07 相关性验证
+- **confidence**：sleeve 自评置信度，喂 firm 层 PerformanceScore（[30 §2.2](30_multi_strategy_concurrency.md)）
+- **metadata**：sleeve 私有信息（如打板的情绪周期阶段、多因子的因子贡献度、事件的冲击衰减阶段）
+
+> **confidence 算法待裁定（v1.0.1 补）**：当前接口只定义 confidence∈[0,1] 的语义（sleeve 自评置信度），但**算法未定**。2026 前沿提供三条候选路径：① [AlphaSchema 2026-08-01](https://ubos.tech/alphaschema-exploring-the-space-of-trading-semantics-for-llm-based-alpha-mining/) surrogate model 预测 reward 的方差——surrogate learner 估计 schema 的预期 Sharpe，方差小=高 confidence；② [Janus-Q arXiv 2026-02](https://arxiv.org/html/2602.19919v2) 分层门控奖励建模——LLM 事件标签的 confidence 直接作为 gating 信号（错误解读如"否认收购"误读为利好是主要亏损源，[HF Trading Book 2026-06](https://hftradingbook.com/strategies/news-trading)）；③ 经验贝叶斯 shrinkage——sleeve 历史 hit rate × 当前信号强度 shrink 到先验均值。三条路径非互斥：打板 sleeve 可用②（情绪周期阶段 confidence）、多因子 sleeve 可用①（因子 surrogate variance）、事件 sleeve 可用②（LLM 事件 confidence gate）。具体算法登记为 §6 待裁定-5。
+>
+> **confidence 算法第四候选（v1.1.0 补，事件 sleeve 专属）**：[Vortex Capital 2026-05 PEAD Inversion](https://www.vortexcapitalgroup.com/post/the-mega-cap-pead-inversion-when-the-reaction-is-the-trade-and-when-it-is-the-trap)（[26 §2.4](26_event_driven_strategy_detail.md) 已详述）提供事件 sleeve confidence 的第四条路径——**极端反应 confidence 衰减**：事件日反应 |reaction|>3% 时，经典 PEAD 延续 confidence 应**衰减至接近 0**（因极端反应后 20 日中位 -5.58% 反转，非延续）；温和反应 |reaction|≤3% 时 confidence 维持正常 PEAD 延续水平。算法：`confidence = base_confidence * (1 if |reaction|<=0.03 else 0.1)`。这与候选②（LLM confidence gate）协同——LLM gate 防误读，PEAD Inversion gate 防极端反应追涨。四候选汇总：打板 sleeve ②（情绪周期阶段 confidence）、多因子 sleeve ①（因子 surrogate variance）、事件 sleeve ②+④（LLM gate + PEAD Inversion gate 双重门控）。
+
+> **SignalInput 字段与 urgency↔convergence_window 映射（v1.1.1 补，施工环节算法补全）**：
+>
+> **SignalInput 详细字段**（当前 §3.5 只写 `SignalInput(as_of_date, universe, regime_budget)`，未展开）：
+> ```
+> SignalInput:
+>   as_of_date: date              # 信号产出日
+>   universe: list[symbol]        # 候选池（漏斗①生成后）
+>   regime_budget: float          # regime 风险节流后的 budget 数字（非 regime 状态）
+>   signals: list[Signal]         # L2-C 产出的原始信号（打板=双引擎融合6类决策/多因子=因子打分/事件=事件冲击）
+>   metadata: dict                # sleeve 私有上下文（如打板情绪周期阶段、多因子因子贡献度、事件冲击衰减阶段）
+> ```
+>
+> **urgency↔convergence_window 映射**（当前 §3.5 定义 urgency∈{immediate, next_open, gradual} 但未与 convergence_window 对齐）：
+>
+> | urgency | 含义 | convergence_window | sleeve | 执行时序 |
+> |---|---|---|---|---|
+> | immediate | 盘中立即 | 1-2 天 | 打板 | T 日盘中买入，T+1 卖出 |
+> | next_open | 次日开盘 | 2-3 天 | 事件驱动 | T+1 开盘买入，2-3 天收敛 |
+> | gradual | 逐步建仓 | 3-5 天 | 多因子 | T+1 起 3-5 天逐步建仓 |
+>
+> urgency 由 sleeve 根据信号强度与持仓周期自决，convergence_window 在 StrategyBook（[30 §2.2](30_multi_strategy_concurrency.md) MOD-POS-020）持有并触发 BudgetChangeHandler（MOD-POS-022）三级升级。
+
+**why 统一接口**：3 sleeve 异构（信号源/频率/周期全不同，[20 §2.5 差异化矩阵](20_first_batch_strategies.md)），但须对接同一 firm 层（MOD-POS-021）——统一接口是 Model A"统一 firm 风险框架 + 差异化 sleeve"（[20 §1.4](20_first_batch_strategies.md)）的工程落地。差异化在接口实现内部，统一在接口签名。
+
+### 3.6 决策⑤：候选池生成→过滤→排序→输出（漏斗模型）
+
+> 对齐 [00_index G05 讨论要点⑤](00_index_trading_decision.md) / [battle_map_05 漏斗 L1→L2](../battle_map/battle_map_05_stock_selection.md)
+
+**四阶段漏斗**（各 sleeve 按自身频率执行，打板盘中实时、多因子盘后日频、事件触发不定期）：
+
+| 阶段 | 打板 sleeve | 多因子 sleeve | 事件 sleeve |
 |---|---|---|---|
-| **跨策略层（firm 层）** | 多 sleeve 之间 | FirmRiskAggregator 自然叠加（求和+裁剪，O(N) 加法） | [32_firm_risk_aggregator](32_firm_risk_aggregator.md) |
-| **策略内部层（sleeve 内）** | 单策略内多引擎融合 | 打板双引擎融合（BM-SEL-25，游资60%+量化40%） | [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.4 |
-| **选股引擎层（本讨论）** | 跨策略统一 pipeline | L0→L1→L2-C 分层 | 本文档 |
+| **① 候选池生成** | 全市场涨停标的 + 连板梯队（L0 涨停数据） | 全市场沪深 A 股（L1 universe） | 事件触发标的动态生成（L0 新闻/公告） |
+| **② 过滤** | 排除 ST/*ST/退市风险/流动性失效；流通市值 10-50 亿黄金区间（[20 §2.2](20_first_batch_strategies.md)） | 排除 ST/*ST/次新(<60天)/日均成交额低于阈值 | 排除 ST/流动性失效；事件置信度低于阈值过滤 |
+| **③ 排序** | 双引擎融合评分（MOD-SIG-035，6 类决策优先级） | 横截面因子打分（IC 加权/正交化，G09） | 事件冲击评分 × 衰减曲线阶段（[20 §2.4](20_first_batch_strategies.md)） |
+| **④ 输出** | target_portfolio（urgency=immediate/next_open，T+1 次日卖） | target_portfolio（urgency=gradual，3-5 天收敛） | target_portfolio（urgency=next_open，2-3 天收敛） |
 
-**双引擎融合在 pipeline 中的位置**：
-- BM-SEL-25 双引擎融合发生在**打板策略的 L2 评分阶段**（§3.5 `score_alpha_strength` 打板分支）
-- 具体而言：打板的 alpha 信号强度 = 0.6 × 游资接力6因子（BM-SEL-23-A）+ 0.4 × 连板潜力7维（BM-SEL-22-C）
-- 情绪周期自适应权重（BM-SEL-25-B：冰点量化70%/主升游资70%/退潮量化60%）在打板 sleeve 内部进一步调整 alpha 强度，**不**影响多因子/事件驱动 sleeve
-- 6类决策输出（BM-SEL-25-C：主升龙头/二进三/跟风/复苏/伪强/地天反包）是打板 sleeve 内部的决策分类，不跨策略
+**漏斗容量**（[battle_map_05](../battle_map/battle_map_05_stock_selection.md)）：全市场 ~5000 → L1 因子过滤 ~1200 → L2-C 精筛 300 → sleeve 排序输出 50 → firm 层裁剪后实仓（受 budget 约束）。
 
-**为何不是跨策略层**：
-1. **charter 约束二（统一框架派）**：跨策略层用 firm 层自然叠加（O(N) 加法），不用投票/融合（O(N²) 复杂度，[30_multi_strategy_concurrency §3.2](30_multi_strategy_concurrency.md) 拒绝 Model D）
-2. **归因清晰度**：双引擎融合是打板 alpha 的内部构成，归因到打板 sleeve；若提到跨策略层，会模糊"打板 alpha vs 多因子 alpha"的归因边界
-3. **差异化保护**：打板是情绪驱动型（游资60%），多因子是 alpha 主导型（因子60%），事件是事件驱动型——三者的引擎融合逻辑不同，强行统一跨策略融合会破坏差异化（违反 charter 约束五）
-4. **主升龙头并入打板**（[20_first_batch_strategies](20_first_batch_strategies.md) §2.1 裁定）：BM-SEL-25-C-1 主升龙头决策类是打板双引擎融合的最强输出，作为独立策略会产生 alpha 重叠，已并入打板 sleeve
+**why 漏斗而非全量**：全量 5000 只逐个跑双引擎/因子打分算力不可行（打板盘中实时要求秒级），漏斗逐级收敛用廉价过滤（市值/流动性）先砍量，昂贵评分（双引擎/因子合成）只跑精筛后标的——这是 alpha 工厂的标准做法（[AlphaFoundry 2026](https://github.com/Rayhanpatel/MSML-602-Final-Project-alphafoundry-ff5-sp500)：Top-K 等权；[jjjojoj/stock-team 2026-03](https://github.com/jjjojoj/stock-team/blob/main/docs/architecture_v3.md)：候选池→硬筛→软筛→排序→前 20）。
 
-**双引擎融合的可施工 spec**（v1.2.0 补齐，打板 sleeve 内部）：
+> **事件 sleeve 过滤阶段置信度阈值待裁定（v1.0.1 补）**：漏斗"② 过滤"对事件 sleeve 写"事件置信度低于阈值过滤"，但阈值未定。2026 前沿提示：错误解读（如"否认收购"误读为利好）是事件驱动主要亏损源（[HF Trading Book 2026-06](https://hftradingbook.com/strategies/news-trading)），confidence gate 是防误读主要防线。初拟阈值=0.7（LLM 事件标签 confidence<0.7 过滤），但须 G10 事件驱动细节讨论时按事件类型差异化校准（业绩/并购/政策/突发的误读成本不同）。登记为 §6 待裁定-6。
 
-```python
-class FusionStrategy(Enum):
-    """双引擎融合策略（BM-SEL-25，打板策略内部）。"""
-    WEIGHTED = "weighted"            # 加权融合（游资60%+量化40%，情绪周期自适应微调）
-    CONDITIONAL = "conditional"      # 条件融合（情绪周期门控：冰点/退潮期量化权重提升）
-    DECISION_TREE = "decision_tree"  # 6类决策树（BM-SEL-25-C）
+> **漏斗③排序优先级算法（v1.1.2 补，施工环节算法补全）**：漏斗"③ 排序"对打板 sleeve 写"双引擎融合评分（MOD-SIG-035，6 类决策优先级）"但未展开优先级排序算法，此处补全：
+>
+> **打板 sleeve 6 类决策优先级**（[20 §2.2 施工回填](20_first_batch_strategies.md) MOD-SIG-035 `dual_engine_fusion_decision_engine.py` 6 类输出）：
+>
+> | 优先级 | 决策类 | 含义 | 排序权重 |
+> |---|---|---|---|
+> | P0 | 主升龙头 | 双引擎最强输出，情绪周期主升/疯狂态龙头 | 1.0 |
+> | P1 | 二进三 | 连板梯队二进三晋级，情绪周期主升态 | 0.85 |
+> | P2 | 跟风 | 板块跟风标的，情绪周期发酵态 | 0.65 |
+> | P3 | 复苏 | 冰点/反核态复苏信号 | 0.50 |
+> | P4 | 伪强 | 量化诱导假强势（须警惕量化砸板） | 0.30 |
+> | P5 | 地天反包 | 地天板反包，极端反转 | 0.20 |
+>
+> **排序算法**：`final_score = fusion_score × priority_weight`，按 final_score 降序排列，受 budget 约束裁剪至 Top-N（打板 sleeve N≤10 受容量硬约束）。同类内按融合评分降序。**与连板/趋势切换协同**（[20 §2.2 v1.4.1 初拟算法](20_first_batch_strategies.md)）：连板模式下 P0-P1 优先级提升（连板接力信号权重 0.8），趋势模式下 P3-P4 优先级提升（趋势龙低吸+断板反包信号权重 0.8）。
+>
+> **多因子 sleeve 排序**：横截面因子打分降序（IC 加权/正交化，[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) G09），Top-N 受 budget 约束。
+> **事件 sleeve 排序**：`final_score = event_impact_score × decay_phase_factor`，事件冲击评分 × 衰减曲线阶段因子（rising phase day 0-5 factor=1.0→decay phase day 6-15 factor=0.3），降序排列。PEAD Inversion 修正：极端反应（|ORJ|>3%）事件降权（[20 §2.4 ORJ 算法骨架](20_first_batch_strategies.md)）。
 
+### 3.7 决策⑥：与 StrategyBook 对接契约
 
-@dataclass
-class EngineScore:
-    """单引擎评分——游资情绪引擎或量化强度引擎的输出。"""
-    engine_name: str             # "hot_money"（游资情绪）/ "quantitative"（量化强度）
-    score: float                 # 引擎评分 [0, 100]
-    confidence: float            # 置信度 [0, 1]
-    breakdown: dict[str, float]  # 引擎内部维度得分（供归因）
+> 对齐 [00_index G05 讨论要点⑥](00_index_trading_decision.md) / [30 §2.2](30_multi_strategy_concurrency.md)
 
+**对接契约**：选股引擎（sleeve）产出 `SelectionResult` → 写入对应 sleeve 的 StrategyBook（MOD-POS-020）→ StrategyBook 持有 target_portfolio + 粗仓位 → firm 层（MOD-POS-021）求和+裁剪 → BudgetChangeHandler（MOD-POS-022）三级升级收敛。
 
-@dataclass
-class FusedSignal:
-    """双引擎融合后信号——打板 alpha 的最终形态。"""
-    fused_score: float                 # 融合后综合分 [0, 100]
-    hot_money_component: float         # 游资引擎贡献（融合前原始分）
-    quantitative_component: float      # 量化引擎贡献（融合前原始分）
-    fusion_strategy: FusionStrategy    # 实际使用的融合策略
-    decision_class: str = ""           # 6类决策分类（BM-SEL-25-C，DECISION_TREE 时填充）
-    sentiment_adjusted: bool = False   # 是否经情绪周期自适应权重调整
+| 契约项 | 选股引擎职责 | StrategyBook 职责 | 边界 |
+|---|---|---|---|
+| target_portfolio | 产出（what） | 持有 + 粗仓位（how much 初拟） | 选股不越界到精仓位（Kelly 在 firm 层，[31_position_sizing](31_position_sizing.md)） |
+| convergence_window | 不涉及 | 持有 + 按换手率设（打板 1-2/多因子 3-5/事件 2-3 天） | 选股产 urgency，收敛窗口在仓位层 |
+| budget | 只收数字 | 持有 + 触发 rebalance | budget 来源在 RegimeMetaAllocator（G15，第二阶段） |
+| PnL 归因 | 产出 signals 留痕 | 独立 PnL 归因 | sleeve 独立账本（[20 §4.1](20_first_batch_strategies.md)） |
 
-
-def fuse_dual_engine(
-    hot_money: EngineScore,
-    quantitative: EngineScore,
-    sentiment_phase: SentimentPhase,
-    strategy: FusionStrategy = FusionStrategy.WEIGHTED,
-) -> FusedSignal:
-    """打板双引擎融合（BM-SEL-25，打板策略内部融合，非跨策略层）。
-
-    融合方式：
-    - WEIGHTED：基准权重 游资60% + 量化40%，情绪周期自适应微调
-      （BM-SEL-25-B：冰点量化70% / 主升游资70% / 退潮量化60%）
-    - CONDITIONAL：情绪周期门控——冰点/退潮期以量化引擎为主（游资信号失效）
-    - DECISION_TREE：6类决策分类（主升龙头/二进三/跟风/复苏/伪强/地天反包）
-
-    定位：打板 sleeve 内部（本节§3.7），非跨策略层。
-    对齐 [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.4 BM-SEL-25。
-    """
-    # 情绪周期自适应权重 (w_hot, w_quant)（BM-SEL-25-B）
-    phase_weights = {
-        SentimentPhase.FREEZING: (0.30, 0.70),    # 冰点：量化70%（游资信号失效）
-        SentimentPhase.STARTING: (0.50, 0.50),
-        SentimentPhase.FERMENTING: (0.60, 0.40),  # 发酵：基准 游资60%+量化40%
-        SentimentPhase.CONSENSUS: (0.65, 0.35),
-        SentimentPhase.EBING: (0.40, 0.60),       # 退潮：量化60%
-    }
-    w_hot, w_quant = phase_weights.get(sentiment_phase, (0.60, 0.40))
-
-    if strategy == FusionStrategy.WEIGHTED:
-        fused = w_hot * hot_money.score + w_quant * quantitative.score
-        return FusedSignal(
-            fused_score=fused,
-            hot_money_component=hot_money.score,
-            quantitative_component=quantitative.score,
-            fusion_strategy=strategy,
-            sentiment_adjusted=True,
-        )
-    elif strategy == FusionStrategy.CONDITIONAL:
-        # 情绪周期门控：冰点/退潮期以量化引擎为主
-        if sentiment_phase in (SentimentPhase.FREEZING, SentimentPhase.EBING):
-            fused = 0.30 * hot_money.score + 0.70 * quantitative.score
-        else:
-            fused = 0.60 * hot_money.score + 0.40 * quantitative.score
-        return FusedSignal(
-            fused_score=fused,
-            hot_money_component=hot_money.score,
-            quantitative_component=quantitative.score,
-            fusion_strategy=strategy,
-            sentiment_adjusted=True,
-        )
-    else:  # DECISION_TREE
-        fused = w_hot * hot_money.score + w_quant * quantitative.score
-        decision_class = _classify_daban_decision(fused, hot_money, quantitative, sentiment_phase)
-        return FusedSignal(
-            fused_score=fused,
-            hot_money_component=hot_money.score,
-            quantitative_component=quantitative.score,
-            fusion_strategy=strategy,
-            decision_class=decision_class,
-            sentiment_adjusted=True,
-        )
-
-
-def _classify_daban_decision(
-    fused: float,
-    hot_money: EngineScore,
-    quantitative: EngineScore,
-    sentiment_phase: SentimentPhase,
-) -> str:
-    """6类决策分类（BM-SEL-25-C）：主升龙头/二进三/跟风/复苏/伪强/地天反包。
-
-    分类逻辑（简化，完整规则见 [24_daban_strategy_detail](24_daban_strategy_detail.md) §3.4）：
-    - 主升龙头：fused≥85 + 游资≥80 + 发酵/一致期
-    - 二进三：连板高度≥2 + 游资接力强（fused≥70）
-    - 跟风：fused 60-75 + 板块强度高
-    - 复苏：冰点/退潮期 + 量化引擎转正（≥55）
-    - 伪强：游资高但量化<40（情绪虚高）
-    - 地天反包：跌停后反转（特殊形态，兜底）
-    """
-    if fused >= 85 and hot_money.score >= 80 and sentiment_phase in (
-        SentimentPhase.FERMENTING, SentimentPhase.CONSENSUS
-    ):
-        return "主升龙头"
-    if hot_money.score >= 70 and quantitative.score < 40:
-        return "伪强"
-    if sentiment_phase in (SentimentPhase.FREEZING, SentimentPhase.EBING) and quantitative.score >= 55:
-        return "复苏"
-    if 60 <= fused < 75:
-        return "跟风"
-    if fused >= 70:
-        return "二进三"
-    return "地天反包"
-```
-
-### 3.8 与 StrategyBook 的对接契约
-
-选股引擎的输出 `TargetPortfolio` 是 StrategyBook 的输入契约。
-
-```python
-def run_selection_pipeline(ctx: SelectionContext) -> SelectionOutput:
-    """选股 pipeline 主入口——L0→L1→L2-C 完整流程。
-
-    这是选股引擎对 StrategyBook 暴露的统一接口。
-    StrategyBook 调用此函数获取 target_portfolio，再做粗仓位。
-    """
-    # L0 候选池生成
-    pool = generate_candidate_pool(ctx)
-
-    # L1 mask-first 量化过滤
-    filtered = apply_mask_first_filter(pool, ctx)
-
-    # L2 量化强度评级与排序
-    scored = rank_and_filter_candidates(
-        filtered, ctx, ctx.strategy_type,
-        min_rating=RatingGrade.C,
-        max_positions=_get_max_positions(ctx.strategy_type),
-    )
-
-    # C 组合输出
-    output = compose_target_portfolio(scored, ctx, ctx.strategy_type, pool, filtered)
-
-    return output
-
-
-def _get_max_positions(strategy_type: StrategyType) -> int:
-    """各策略最大持仓数——按容量与换手率差异化。
-
-    - 打板：≤5 只（容量极小，单票几万~几十万，[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)）
-    - 多因子：≤20 只（承载主资金，分散化需求）
-    - 事件驱动：≤10 只（中容量）
-    """
-    if strategy_type == StrategyType.DABAN:
-        return 5
-    elif strategy_type == StrategyType.MULTIFACTOR:
-        return 20
-    else:  # EVENT_DRIVEN
-        return 10
-
-
-def _compute_vol_20d(returns: list[float]) -> float:
-    """计算 20 日收益波动率 σ_20d（供 inverse-vol risk parity）。"""
-    if len(returns) < 2:
-        return 1e-6  # 数据不足，给极小波动率（退化为等权时由调用方处理）
-    mean = sum(returns) / len(returns)
-    var = sum((r - mean) ** 2 for r in returns) / len(returns)
-    return max(var ** 0.5, 1e-6)
-
-
-def selection_to_target_portfolio(
-    output: SelectionOutput,
-    budget: float = 1.0,
-    market_data: dict[str, dict] | None = None,
-) -> TargetPortfolio:
-    """将选股输出转为 risk-parity 加权的 target_portfolio（v1.2.0 补齐实现）。
-
-    v1.2.0：补齐 inverse-vol risk parity 实现（原 v1.0 仅占位"实现见 31_position_sizing"）。
-
-    inverse-vol risk parity：
-        final_weight_i ∝ signal_weight_i × (1 / σ_i,20d)
-    其中 σ_i,20d 为标的 i 的 20 日收益波动率，归一化到 budget。
-    signal_weight 来自 §3.6 compose_target_portfolio 的评级分层+得分加权。
-
-    market_data=None 时退化为等权（无波动率数据）。
-
-    对齐 [31_position_sizing](31_position_sizing.md) 分层裁定：
-    - 此处是 StrategyBook 粗仓位层（risk parity，不用 Kelly）
-    - firm 层 Kelly 精裁决在 [32_firm_risk_aggregator](32_firm_risk_aggregator.md)
-    """
-    target = output.target_portfolio
-    positions = target.positions
-    if not positions:
-        return target
-
-    # 无 market_data → 退化为等权
-    if market_data is None:
-        n = len(positions)
-        eq = budget / n
-        for p in positions:
-            p.signal_weight = eq
-        return target
-
-    # inverse-vol: final_weight_i ∝ signal_weight_i × (1/σ_i)
-    raw: dict[str, float] = {}
-    for p in positions:
-        rets = market_data.get(p.symbol, {}).get("returns_20d", [])
-        sigma = _compute_vol_20d(rets)
-        raw[p.symbol] = p.signal_weight * (1.0 / sigma)
-
-    total_raw = sum(raw.values())
-    if total_raw <= 0:
-        # 全部 signal_weight=0 或数据异常 → 退化为等权
-        n = len(positions)
-        for p in positions:
-            p.signal_weight = budget / n
-    else:
-        for p in positions:
-            p.signal_weight = raw[p.symbol] / total_raw * budget
-
-    return target
-```
-
-**对接契约要点**：
-
-| 维度 | 选股引擎职责 | StrategyBook 职责 |
-|---|---|---|
-| **买什么（what）** | ✅ 输出 target_portfolio（symbol + signal_weight + rating） | 消费 target_portfolio |
-| **买多少（how much）** | ❌ 不输出最终仓位 | ✅ 粗仓位（risk parity/等权）× signal_weight |
-| **怎么买（how）** | ❌ 不参与执行 | 交给 G19 买入流（[41_buy_flow](41_buy_flow.md)） |
-| **budget 适配** | ❌ 不读 regime 输出 | ✅ 收 budget 数字，rebalance_to_budget（[33_budget_change_handler](33_budget_change_handler.md)） |
-| **PnL 归因** | 提供 score_breakdown（各维度得分） | ✅ 独立 PnL 归因 |
-
-**signal_weight → 最终仓位的转换**（StrategyBook 内部）：
-```
-final_position_i = signal_weight_i × strategy_budget × risk_parity_factor_i
-```
-其中：
-- `signal_weight_i`：选股引擎输出（本讨论 §3.6）
-- `strategy_budget`：RegimeMetaAllocator 分配的 sleeve 资金占比（[34_regime_meta_allocator](34_regime_meta_allocator.md)）
-- `risk_parity_factor_i`：StrategyBook 粗仓位算法（inverse-vol risk parity，[31_position_sizing](31_position_sizing.md)）
-
-**分层裁定对齐**（[30_multi_strategy_concurrency §2.1](30_multi_strategy_concurrency.md)）：
-- 选股引擎只管"选什么"——不越界到仓位/执行
-- 仓位决策分两层：StrategyBook 粗仓位（等权/risk parity，不用 Kelly）+ firm 层 Kelly 精裁决（MOD-POS-001）
-- 选股引擎的 signal_weight 是"信号强度排序"，不是"仓位建议"
+**why sleeve 不持精仓位**：charter 约束四三维度解耦——选股（what）与仓位（how much）独立优化，sleeve 只产"买什么+粗权重"，精仓位（Kelly/risk parity）在 firm 层统一裁决（[31_position_sizing §1](31_position_sizing.md)）。若 sleeve 自持精仓位会与 firm 层冲突，破坏 Model A 统一风险框架。
 
 ## 4. 考虑过的替代方案
 
-### 4.1 统一候选池（不分策略类型）—— 拒绝
+### 4.1 双引擎融合作为跨策略层统一融合器 —— 拒绝
+- **拒绝理由**：游资/量化双引擎都是短线盘中信号，服务打板 sleeve。把双引擎抬到跨策略层会强行统一打板（盘中实时）、多因子（盘后日频）、事件（不定期）三种异构信号，违反 charter 约束五（[20 §1.4](20_first_batch_strategies.md)）。跨策略统一在 firm 层做风险聚合（求和+裁剪），不在选股层做信号融合
+- **处置**：双引擎融合定位为打板 sleeve 内部（§3.2）
 
-- **方案描述**：三策略共用一个全市场候选池，在 L2 评分阶段用不同权重区分
-- **拒绝理由**：三策略选股池差异极大（打板窄池10-50只 vs 多因子宽池5000只），强行统一会导致：
-  1. 打板策略在全市场池中评分，连板梯队信号被稀释——打板 alpha 来自连板结构，全市场池中非连板标的无该信号
-  2. 多因子策略在连板窄池中评分，因子横截面排名失效——多因子需大样本横截面排序，窄池样本不足
-  3. 事件驱动策略的动态事件池无法用固定池承载——事件即生即灭，非固定池
-- **处置**：L0 差异化候选池（§3.3），L1/L2 半统一
+### 4.2 L0→L1→L2-C→L3 四层（拆"组合信号层"） —— 拒绝
+- **拒绝理由**：L3"组合信号层"会与 StrategyBook（MOD-POS-020）/ FirmRiskAggregator（MOD-POS-021）职责重叠——组合层是 30_multi_strategy_concurrency 的领域，选股层不应越界（charter 约束四）。四层会模糊选股与组合的边界，归因不清
+- **处置**：三层 L0→L1→L2-C（§3.1），组合信号在 firm 层
 
-### 4.2 跨策略双引擎融合（BM-SEL-25 提到 firm 层）—— 拒绝
+### 4.3 三 sleeve 共用单一选股 pipeline —— 拒绝
+- **拒绝理由**：三 sleeve 信号源/频率/周期全不同（[20 §2.5](20_first_batch_strategies.md)），共用单一 pipeline 会丢失差异化。正确做法是统一**接口**（§3.5）+ 差异化**实现**（各 sleeve 内部漏斗不同，§3.6）
+- **处置**：统一接口签名，差异化内部实现
 
-- **方案描述**：将打板双引擎融合（游资60%+量化40%）扩展为跨策略融合，在 firm 层融合打板+多因子+事件驱动
-- **拒绝理由**：
-  1. **charter 约束二**：跨策略层用自然叠加（O(N) 加法），不用融合/投票（[30_multi_strategy_concurrency §3.2](30_multi_strategy_concurrency.md) 拒绝 Model D 加权投票）
-  2. **归因纠缠**：跨策略融合会模糊"打板 alpha vs 多因子 alpha"的归因边界，违反 AI-dev 归因清晰度生存项（[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)）
-  3. **差异化破坏**：三策略的引擎融合逻辑不同（打板情绪驱动/多因子alpha主导/事件事件驱动），强行统一跨策略融合破坏差异化（违反 charter 约束五）
-- **处置**：BM-SEL-25 双引擎融合保留在打板策略内部（§3.7，对齐 [30_multi_strategy_concurrency §7.3](30_multi_strategy_concurrency.md)）
-
-### 4.3 不做 mask-first（alpha 算完再过滤）—— 拒绝
-
-- **方案描述**：先对全市场算 alpha，最后再过滤 ST/停牌/涨跌停封板
-- **拒绝理由**：
-  1. **算力浪费**：A 股约 20-30% 标的不可交易（ST/停牌/封板），alpha 计算浪费 20-30% 算力
-  2. **信号污染**：不可交易标的的异常数据（如停牌期间的前收盘价、ST股异常波动）污染 alpha 信号
-  3. **回测失真**：回测假设可交易但实际不可交易，导致回测收益虚高（arXiv:2507.07107 mask-first 核心论点）
-- **处置**：L1 mask-first 前置过滤（§3.4），在 alpha 评分前应用可交易性掩码
-
-### 4.4 选股引擎直接输出最终仓位 —— 拒绝
-
-- **方案描述**：选股引擎输出 final_position（含 Kelly 仓位），StrategyBook 直接执行
-- **拒绝理由**：
-  1. **违反分层裁定**（[30_multi_strategy_concurrency §2.1](30_multi_strategy_concurrency.md)）：仓位决策分两层——StrategyBook 粗仓位 + firm 层 Kelly 精裁决。选股引擎越界做仓位会破坏分层
-  2. **Kelly 需密度预测**：Kelly 仓位需估计预期收益/方差，这是组合层职责，不应在选股层重复（分层裁定第一性原理：Kelly 需密度预测不宜每策略重复）
-  3. **归因纠缠**：选股+仓位混在一起，亏钱时无法区分"选股错"还是"仓位错"
-- **处置**：选股引擎只输出 signal_weight（§3.8），仓位交给 StrategyBook + firm 层
+### 4.4 全量逐个评分（不漏斗） —— 拒绝
+- **拒绝理由**：全市场 5000 只逐个跑双引擎/因子打分，打板盘中实时算力不可行；多因子盘后全量虽可行但浪费算力。漏斗逐级收敛（廉价过滤先砍量，昂贵评分只跑精筛后）是 alpha 工厂标准做法
+- **处置**：四阶段漏斗（§3.6）
 
 ## 5. 上限定义
 
-| 上限 | 值 | 理由 |
+### 5.1 架构上限
+- 选股引擎 = L0→L1→L2-C 三层，不扩到四层（§4.2）
+- 双引擎融合 = 打板 sleeve 内部，不抬到跨策略层（§3.2）
+- 三 sleeve 各自实现 SelectionResult 接口，不强行统一内部实现（§3.5）
+
+### 5.2 演进路径
+- **第一阶段（当前）**：打板链全 production（L2-C 打板链闭环）、因子工厂治理层全 production（L1 闭环）、事件链仅数据底座（L0 news_collector design）。三 sleeve 载体（StrategyBook 实例化）均未注册，属 G08/G09/G10 细节
+- **第二阶段**：补事件链 NLP 管道（[ARCH-NLP-PIPELINE-001](../../05_architecture_issue_registry/architecture_issue_registry.yaml)）→ 事件 sleeve 信号链闭环
+- **第三阶段**：补板块轮动（G06）、Survival/密度预测（远期，[91_density_prediction](91_density_prediction.md)）→ L2-C 全闭环
+
+### 5.3 为何这是上限
+- 三层是"通用地基 + 本土特色"的最低完整切分，多于三层越界组合层（§4.2）
+- 三 sleeve 覆盖高/低/中换手率 + 小/大/中容量 + 情绪/横截面/事件三类 alpha（[20 §4.3](20_first_batch_strategies.md)），选股引擎承载这三类已完整
+- 个人系统算力/带宽有限，三层 + 三 sleeve 是少而精的平衡点（charter 约束五）
+
+### 5.4 过度工程审查：L0→L1→L2-C 三层是否过重
+
+> 对齐任务"过度工程审查：L0→L1→L2-C 三层是否对个人项目过重"
+
+**审查结论：三层不过重，是必要切分而非过度工程。**
+
+| 审查项 | 判断 | 理由 |
 |---|---|---|
-| **策略类型数** | 3（打板+多因子+事件驱动） | 对齐 [20_first_batch_strategies](20_first_batch_strategies.md) 首批3策略；第4/5策略在 G11 第二批次 |
-| **打板最大持仓** | ≤5 只 | 容量极小（单票几万~几十万，[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)） |
-| **多因子最大持仓** | ≤20 只 | 承载主资金，分散化需求 |
-| **事件驱动最大持仓** | ≤10 只 | 中容量，介于打板与多因子之间 |
-| **最低评级阈值** | C 级（≥55分，v1.2.0 对齐 SignalQuality） | D/E 级标的剔除，保证最低信号质量 |
-| **L1 共享掩码** | ST + 停牌 + 流动性 | 跨策略共享，所有策略剔除 |
-| **L1 策略特定掩码** | 次新/涨停封板 | 按策略差异化（§3.4） |
-| **cash_buffer** | 5% | 预留现金缓冲，防极端情况 |
+| L0/L1/L2-C 三层本身 | ✅ 不过重 | L0（数据）/L1（因子）是任何量化系统的通用地基，L2-C 是 A 股特色差异化层——三层是"通用+本土"最低切分，非仪式性分层。Medallion 三层架构实证"splitting into 3 layers makes debugging fast"（[lukastymo 2026-05](https://lukastymo.com/posts/029-software-engineer-value-investing-magic-formula/)） |
+| 四阶段漏斗 | ✅ 不过重 | 候选池→过滤→排序→输出是 alpha 工厂标准（[jjjojoj 2026-03](https://github.com/jjjojoj/stock-team/blob/main/docs/architecture_v3.md)、[AlphaFoundry 2026](https://github.com/Rayhanpatel/MSML-602-Final-Project-alphafoundry-ff5-sp500)），每阶段有明确算力/质量目的，非冗余 |
+| 双引擎融合 | ✅ 不过重 | 仅打板 sleeve 内部，非跨策略层（§3.2），不增加其他 sleeve 复杂度 |
+| 统一接口 SelectionResult | ✅ 不过重 | 接口签名轻量（4 字段），差异化在内部，是 Model A 统一 firm 框架的必要对接契约 |
+| 板块轮动 3×3×3 立方体 + Survival | ⚠️ 远期，暂不施工 | 属 L2-C design 态，P1 增强环节，激活条件未满足前不施工——已通过"演进路径分阶段"控制，不构成当前过重 |
 
-### 演进路径
+**对比反例（过重才需警惕）**：若把双引擎融合抬到跨策略层（§4.1）、或拆 L3 组合信号层（§4.2）、或全量逐个评分（§4.4）——这些才是过度工程，均已拒绝。三层 + 漏斗 + 统一接口 = charter 约束五少而精下的必要复杂度。
 
-- **第一阶段（立即施工）**：3 策略 L0→L1→L2-C pipeline 落地，signal_weight 评级分层+得分加权输出，StrategyBook 粗仓位用等权
-- **第二阶段（各 sleeve 有 3-6 个月实盘 PnL 后）**：L2 评分权重校准（基于各维度 IC 衰减实测），StrategyBook 粗仓位转 inverse-vol risk parity
-- **第三阶段（首批 track record 后）**：上加第 4/5 策略（价值反转/动量趋势，G11），pipeline 扩展 StrategyType 枚举 + L0 候选池生成
-
-### 为何这是上限而非妥协
-
-- 3 策略已覆盖高/低/中换手率 + 小/大/中容量 + 情绪/横截面/事件三类 alpha 来源（[20_first_batch_strategies](20_first_batch_strategies.md) §2.5）
-- pipeline 架构可扩展（新增策略只需扩展 StrategyType 枚举 + L0 候选池生成 + L2 权重配置），上限不在架构而在策略数
-- 多于 3 策略会稀释研究带宽（charter §3 约束五：单人+AI+资金小，少而精是唯一可行路径）
+> **过度工程审查补充·LLM 边界（v1.0.1 补）**：2026-08 LLM alpha 挖掘前沿（[AlphaSchema](https://ubos.tech/alphaschema-exploring-the-space-of-trading-semantics-for-llm-based-alpha-mining/)/[CogAlpha](https://arxiv.org/html/2511.18850v4)/[QuantaAlpha](https://arxiv.org/html/2602.07085v3)/[Beyond Prompting](https://arxiv.org/html/2603.14288v1)）密集突破，但 [TiMi ICLR 2026](https://arxiv.org/html/2602.07085v3) 与 [国联民生金工 2026-07-16 综述](https://finance.sina.com.cn/wm/2026-07-16/doc-inihyyvy4515788.shtml) 明确：LLM 适合**离线研发/因子生成/语义校验**，不进入**在线低延迟交易执行**。本选股引擎的复杂度边界由此清晰：① L0/L1/L2-C 三层 + 漏斗 + 统一接口是**在线选股层**（须秒级/盘后日频响应），**不引入 LLM 推理**；② LLM 驱动 alpha 挖掘闭环（生成→评估→治理→扩展）是**离线研发层**，产出固化因子/事件标签 schema 写入因子池与事件库，在线层只消费固化产物——这与 TiMi"离线策略研发 + 在线分钟级执行"分离模式完全一致。若把 LLM 推理塞进在线选股层（如盘中实时跑 LLM 事件分类），会引入不可控延迟与成本，是过度工程；离线研发层用 LLM 是必要演进方向（登记为 §6 待裁定-7）。结论：三层架构的"不过重"判定在 v1.0.1 得到 2026 前沿的进一步支撑——复杂度边界由"在线/离线分离"锁定。
 
 ## 6. 待裁定
 
+> 以下项目暂不施工，非永久禁止。随项目演进重新裁定。
+
 | 暂缓项 | 暂缓理由 | 重评条件 | 责任方 |
 |---|---|---|---|
-| L2 评分权重精确校准 | 当前权重（打板0.4/0.15/0.25/0.20 等）基于先验，未经 IC 衰减实测 | 首批策略实盘 3 月后，用各维度 IC 衰减数据校准 | G05 后续 |
-| 多因子因子组合方式 | IC 加权/正交化/打分待定 | G09 多因子细节讨论 | G09 |
-| 事件冲击衰减曲线 | 事件类型×冲击幅度×衰减阶段待定 | G10 事件驱动细节讨论 | G10 |
-| max_positions 精确值 | 打板5/多因子20/事件10为先验 | 各策略容量精确测算后校准 | G08/G09/G10 |
-| mask-first 次新阈值 | 当前 60 天，未实测最优 | 多因子 sleeve 实盘后校准 | G09 |
-| BM-SEL-16~19 漏斗与 L0→L1→L2-C 对齐 | 作战地图已有4层漏斗雏形（BM-SEL-16分级过滤→17初筛→18精筛→19事件筛选），与本 pipeline 关系待澄清 | G05 施工时与作战地图 owner 对齐 | G05 + battle_map owner |
+| 1. 事件链 NLP 管道接入 | 事件 sleeve 信号链未闭环（仅 news_collector 数据底座），NLP/事件分类/映射/衰减全链路待建 | [ARCH-NLP-PIPELINE-001](../../05_architecture_issue_registry/architecture_issue_registry.yaml) Phase 1 落地 | G10 |
+| 2. 板块轮动 L2-C 全闭环 | 3×3×3 立方体 + 回踩质量 A/B/C 等级属 design 态，BM-SEL-08/09 proposed | G06 板块轮动 spec 定型 | G06 |
+| 3. Survival/密度预测 | 止盈止损时间预测、T+1 次日 8 态属远期愿景 | 密度预测模型验证通过 | [91_density_prediction](91_density_prediction.md) |
+| 4. 三 sleeve StrategyBook 实例化 | 打板/多因子/事件 sleeve 载体均未注册（当前仅 DefaultEquityStrategy） | G08/G09/G10 细节讨论定型 | G08/G09/G10 |
+| 5. SelectionResult.confidence 算法（v1.0.1 新增） | 接口只定义 confidence∈[0,1] 语义，算法未定。2026 前沿三候选：① AlphaSchema surrogate variance ② Janus-Q LLM confidence gate ③ 经验贝叶斯 shrinkage。三 sleeve 可差异化（打板②/多因子①/事件②） | G08/G09/G10 细节讨论时按 sleeve 差异化选定 | G08/G09/G10 |
+| 6. 事件 sleeve 过滤置信度阈值（v1.0.1 新增） | 漏斗"② 过滤"对事件 sleeve 写"置信度低于阈值过滤"，阈值未定。初拟 0.7，须按事件类型差异化（业绩/并购/政策/突发误读成本不同） | G10 事件驱动细节讨论时校准 | G10 |
+| 7. LLM 驱动 alpha 挖掘闭环作为 L1 因子工厂远期演进（v1.0.1 新增，v1.1.4 更新，v1.1.6 补 AlphaSAGE） | 当前因子工厂是"人工定义因子 + IC 评估 + 8 状态生命周期治理"，远期可演进为"LLM 生成因子假设 + schema 引导搜索 + 经济正则化 + 多重检验 + 生命周期治理"闭环。须离线运行（TiMi 模式），不进入在线低延迟路径。2026-08 工程路径已清晰：Hubble（AST 沙箱）+ AlphaEvolve（MAP Elites）+ XAlpha（记忆/归因）+ AlphaMemo（edit motif 记忆）+ FactorMiner（禁区入池前预防）+ MAGE（turnover×correlation 2D 网格）+ AlphaAgent（三大正则化）+ AlphaSAGE（RGCN 结构感知 + GFlowNet 多样性生成）构成八框架完整工具链（详见 §3.3 ④） | G09 多因子细节讨论 + 因子工厂治理层 production 稳定运行 3-6 月后 | G09 远期 |
+| 8. 6 维权重校准方法（v1.1.2 新增） | 当前 6 维权重（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）是经验设定，补两条校准路径——路径 A·IC 加权（6 维各视为子因子按 IC 归一化）+ 路径 B·SHAP 归因（LightGBM+SHAP 反推非线性贡献）+ 月度重校准 + CUSUM>2σ 即时重校准；MVP 用经验权重→IC 加权 Phase 2→SHAP 远期 | G08 打板细节讨论 | G08 |
+| 9. L1 深度学习 baseline 候选 Cross-Sectional LSTM（v1.1.6 新增） | 当前 L1 是纯线性 IC 加权合成，缺非线性深度学习预测 baseline。Cross-Sectional LSTM（arXiv 2608.05755）加 learnable sector embeddings 捕获截面异质性，短期反转+行业动量双因子驱动，适配 A 股行业轮动。属 Phase 3+ 远期增强（当前 L1 production 线性框架已够 MVP），不纳入首批施工 | G09 多因子细节讨论 + 因子工厂治理层稳定运行 6+ 月后 | G09 远期 |
 
 ## 7. 待定问题（讨论要点对齐）
 
-- [x] ① 双引擎融合（BM-SEL-25，30_multi_strategy_concurrency 定位为"打板策略内部融合"，非跨策略层）→ §3.7 双引擎融合定位说明
-- [x] ② L0→L1→L2-C 分层 → §3.1 架构定义 + §3.3-§3.6 各层算法
-- [x] ③ 量化强度评级 → §3.5 L2 量化强度评级算法（6维 BM-SEL-24 + apply_factor_crowding_decay 双曲衰减 + map_signals_to_six_dims 差异化映射 + A~E 五级）
-- [x] ④ 选股 pipeline 标准接口（输入信号→输出 target_portfolio）→ §3.2 dataclass 定义（SelectionContext→TargetPortfolio）
-- [x] ⑤ 候选池生成→过滤→排序→输出 → §3.3 L0 候选池生成 + §3.4 L1 mask-first 过滤 + §3.5 L2 评级排序 + §3.6 C 组合输出
-- [x] ⑥ 与 StrategyBook 的对接契约 → §3.8 对接契约（target_portfolio 接口规范 + signal_weight→最终仓位转换 + 分层裁定对齐）
+> 以下 6 项来自 [00_index §3 G05 讨论要点](00_index_trading_decision.md)，本版已逐项对齐落入 §3 决策。
+
+- [x] ① 双引擎融合定位 → §3.2（打板 sleeve 内部融合，非跨策略层）
+- [x] ② L0→L1→L2-C 分层 → §3.1/§3.3（通用地基 + A 股特色，三层最低切分）
+- [x] ③ 量化强度评级 → §3.4（打板 sleeve 量化引擎输入，6 维 A~E 评级）
+- [x] ④ 选股 pipeline 标准接口 → §3.5（SelectionResult 统一接口 + 差异化内部实现）
+- [x] ⑤ 候选池生成→过滤→排序→输出 → §3.6（四阶段漏斗，各 sleeve 按频率差异化）
+- [x] ⑥ 与 StrategyBook 对接契约 → §3.7（选股产 target_portfolio+粗仓位，精仓位在 firm 层）
 
 ## 8. 引用
 
 ### 8.1 相关设计备忘
-- [00_index_trading_decision](00_index_trading_decision.md) §3 G05
-- [20_first_batch_strategies](20_first_batch_strategies.md)（G04 产出物，首批3策略定义，必先读）
-- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.1（分层裁定）/ §3.2（拒绝 Model D 投票）/ §7.3（BM-SEL-25 内部融合定位）
-- [24_daban_strategy_detail](24_daban_strategy_detail.md)（G08 打板细节，BM-SEL-22~25 打板链）
-- [31_position_sizing](31_position_sizing.md)（G12 仓位算法，signal_weight→最终仓位转换）
-- [32_firm_risk_aggregator](32_firm_risk_aggregator.md)（G13 FirmRiskAggregator，跨策略自然叠加）
-- [33_budget_change_handler](33_budget_change_handler.md)（G14 BudgetChangeHandler，budget 适配）
-- [34_regime_meta_allocator](34_regime_meta_allocator.md)（G15 RegimeMetaAllocator，budget 来源）
-- [22_sector_rotation_spec](22_sector_rotation_spec.md)（G06 板块轮动，板块强度输入）
-- [41_buy_flow](41_buy_flow.md)（G19 买入流，target_portfolio 下游消费者）
+- [20_first_batch_strategies.md](20_first_batch_strategies.md) v1.5.10（G04 首批 3 策略定义，前置依赖，§2.2-2.4 施工回填为本备忘信号源依据）
+- [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) v2.2.0（多策略并发架构总纲，§2.2 StrategyBook/firm 层、§7.3 双引擎融合定位）
+- [31_position_sizing.md](31_position_sizing.md) v1.22.0（仓位算法 spec，§3.7 精仓位边界依据）
+- [00_index_trading_decision.md](00_index_trading_decision.md) §3 G05（讨论要点来源）
 
 ### 8.2 相关作战地图
-- [battle_map_05_stock_selection.md](../battle_map/battle_map_05_stock_selection.md)（选股阶段）
-  - BM-SEL-02：因子计算与信号生成（多因子 sleeve 依赖，BM-SEL-02-A~L 全链）
-  - BM-SEL-16~19：4层漏斗雏形（分级指标过滤→初筛漏斗→精筛评分→事件驱动分布筛选，与本 pipeline 对齐待裁定）
-  - BM-SEL-22~25：打板链（短线评分卡7维 / 游资接力6因子+情绪周期4+1 / 量化强度6维 / 双引擎融合6类决策）
-  - BM-SEL-27：盘中实时事件处理（事件驱动 sleeve 依赖）
+- [battle_map_05_stock_selection.md](../battle_map/battle_map_05_stock_selection.md)（选股阶段 27 环节，L0/L1/L2-C 层归属与施工态）
+  - BM-SEL-01：L0 数据接入（production）
+  - BM-SEL-02：L1 因子工厂（production）
+  - BM-SEL-22~25：L2-C 打板链（production，MOD-SIG-023/033/034/035）
+  - BM-SEL-08/09：L2-C 板块轮动（design，G06）
+  - BM-SEL-27：L2-C 事件处理（design/proposed，G10）
 
 ### 8.3 depgraph 模块（引用稳定 path / blueprint_id）
-| 模块 | blueprint_id | path | 本讨论关系 |
-|---|---|---|---|
-| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | target_portfolio 的消费者 |
-| FirmRiskAggregator | MOD-POS-021 | `src/zephyr/position/core/firm_risk_aggregator.py` | 跨策略自然叠加（求和+裁剪） |
-| RegimeMetaAllocator | MOD-PA-007 | `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | budget 来源（第二阶段） |
-| BudgetChangeHandler | MOD-POS-022 | `src/zephyr/position/core/budget_change_handler.py` | budget 适配三级升级 |
+| 模块 | blueprint_id | path | 层 | 本讨论关系 |
+|---|---|---|---|---|
+| ShortTermStockSelector | MOD-SIG-023 | `src/zephyr/signal_ashare/short_term_stock_selector.py` | L2-C | 打板短线评分卡 |
+| YouziRelayEmotionEngine | MOD-SIG-033 | `src/zephyr/signal_ashare/youzi_relay_emotion_engine.py` | L2-C | 打板游资情绪引擎 |
+| QuantShortTermStrengthEngine | MOD-SIG-034 | `src/zephyr/signal_ashare/quant_short_term_strength_engine.py` | L2-C | 打板量化强度评级 |
+| DualEngineFusionDecisionEngine | MOD-SIG-035 | `src/zephyr/signal_ashare/dual_engine_fusion_decision_engine.py` | L2-C | 打板双引擎融合 |
+| FactorPoolManager | MOD-L02-018 | `src/zephyr/factor/governance/factor_pool_manager.py` | L1 | 因子池容量管理（n_max=64） |
+| LifecycleStateMachine | MOD-L02-013 | `src/zephyr/factor/governance/lifecycle_state_machine.py` | L1 | 因子生命周期 8 状态 |
+| FactorGovernanceEngine | MOD-L02-017 | `src/zephyr/factor/governance/engine.py` | L1 | 因子治理引擎主入口 |
+| SignalSynthesizer | MOD-L03-001 | `src/zephyr/signal_fundamental/synth/signal_synthesizer.py` | L1 | 多因子加权聚合 |
+| NewsCollector | MOD-DATA-NEWS-001 | `src/zephyr/data/news_collector.py` | L0 | 事件链数据底座（design） |
+| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | 组合层 | sleeve 载体（对接契约 §3.7） |
+| FirmRiskAggregator | MOD-POS-021 | `src/zephyr/position/core/firm_risk_aggregator.py` | 组合层 | 统一风险框架（求和+裁剪） |
 
-### 8.4 开源实证参考
-- arXiv:2507.07107 — A 股 mask-first 设计：可交易性掩码前置，避免 alpha 污染与回测失真。本讨论 §3.3.1/§3.4 L1 mask-first 过滤的直接依据（row_filter 虚增 IC +18%/Sharpe -0.44，mask-first 单一最大贡献者 +0.44 Sharpe）
-- arXiv:2512.11913 — 因子拥挤双曲衰减：机械型因子 α(t)=K/(1+λt) 衰减，判断型不衰减。本讨论 §3.5 apply_factor_crowding_decay 的依据
-- WorldQuant Alpha 工厂分层 — Region→Universe→Data→Expression→Operators→Decay→Neutralization→Tests 八层架构。本讨论 L0→L1→L2-C 分层 pipeline 的对标范式
-- quantskills (2026-06) Smart Money Profiler — 席位画像+合力型/独食型识别。§3.5 资金面评分依据（[24_daban_strategy_detail](24_daban_strategy_detail.md) §3.9 已整合）
-- 东方财富 (2026-08) 龙虎榜净买率回测 — 净买率>12% 次日+3.10%/20日+5.11%。§3.5 资金面评分阈值依据
+### 8.4 下游交接
+- G06 板块轮动（`22_sector_rotation_spec`）：L2-C 板块轮动层定型
+- G07 策略间相关性验证（`23_strategy_correlation_validation`）：§3.5 SelectionResult.signals 为相关性验证输入
+- G08/G09/G10（`24-26`）：三 sleeve StrategyBook 实例化与信号消费接线
+- G23 回测框架对接（`52_backtest_framework_docking`）：选股 pipeline 的回测验证
+
+### 8.5 开源实证参考
+- [lukastymo — Magic Formula + Medallion Architecture (2026-05)](https://lukastymo.com/posts/029-software-engineer-value-investing-magic-formula/)：Bronze/Silver/Gold 三层架构，"splitting into 3 layers makes debugging fast"。支撑 §3.1 三层切分与 §5.4 过度工程审查
+- [jjjojoj/stock-team — 三层架构 (2026-03)](https://github.com/jjjojoj/stock-team/blob/main/docs/architecture_v3.md)：选股→预测→交易三层，候选池→硬筛→软筛→排序→前 20。支撑 §3.6 四阶段漏斗
+- [AlphaFoundry — Factor-Based Quantitative Strategy Engine (2026)](https://github.com/Rayhanpatel/MSML-602-Final-Project-alphafoundry-ff5-sp500)：Fama-French 5 因子 + XGBoost Ranker，walk-forward 防泄漏，Top-K 等权。支撑 L1 因子工厂 + 漏斗 Top-K 输出
+- [arXiv 2409.06289 — Automate Strategy Finding with LLM (2025-11)](https://arxiv.org/html/2409.06289v4)：Seed Alpha Factory + 多 agent 评估 + 权重优化，SSE50 53.17% 收益。支撑分层 alpha 工厂 + 多 agent 决策方向
+- [dananalytics — Quant Signals Complement TA (2026-03)](https://dananalytics.com/en/quant-signals-complement-ta/)：TA 模式生成→量化回测过滤→执行三层框架，30+ 样本最小。支撑分层 pipeline + 统计判据
+- [BraveOldMan — A-Share L2 Strong Stock Strategy (2026-06)](https://github.com/BraveOldMan/a-share-l2-strong-stock-strategy)：universe_filter.py + T+1 状态机回测，A 股 L2 强势股。支撑 L2-C A 股特色层 + T+1 约束适配
+- [WorldQuant Alpha 工厂](https://github.com/Morwane/multi-strategy-alpha-book)：分层 alpha 工厂对标来源（[00_index G05 对标](00_index_trading_decision.md)）
+
+**2026-08 LLM alpha 挖掘前沿与因子衰减诊断（v1.0.1 补，支撑 §3.1 三层切分 / §3.5 confidence 算法 / §5.4 LLM 边界 / §6 待裁定 5-7）**
+- [国联民生金工 — 2026 AAAI/ICLR 前沿论文综述 (2026-07-16)](https://finance.sina.com.cn/wm/2026-07-16/doc-inihyyvy4515788.shtml)：AI 量化从"调用通用模型"转向"围绕金融约束重构模型"；TiMi 离线研发+在线执行分离；LLM 适合离线研发/因子生成/语义校验。§3.1 三层切分 2026 前沿印证 + §5.4 LLM 边界依据
+- [AlphaSchema — LLM-Based Alpha Mining (2026-08-01)](https://ubos.tech/alphaschema-exploring-the-space-of-trading-semantics-for-llm-based-alpha-mining/)：五字段 schema（Event/Context/Qualities/Direction/Output）+ surrogate model + Acquisition 函数；20 因子 Sharpe 1.85（vs 手工 1.42、随机 1.05）；68% 评估分配到 top-10。§3.5 confidence 算法候选① + §6 待裁定-7 LLM alpha 挖掘闭环
+- [CogAlpha — Cognitive Alpha Mining via LLM-Driven Code-Based Evolution (arXiv 2511.18850)](https://arxiv.org/html/2511.18850v4)：七层 agent 层级 + 多 agent 质量检查器（代码质量/修复/裁决/逻辑改进/数值稳定性/时间泄漏单测）+ 思维进化。§6 待裁定-7 多 agent 校验架构参考
+- [QuantaAlpha — Evolutionary Framework for LLM-Driven Alpha Mining (arXiv 2602.07085, 2026-05)](https://arxiv.org/html/2602.07085v3)：假设生成→可控因子构造→因子评估→自进化；市场风格转换×因子语义对齐。§6 待裁定-7 因子工厂远期演进
+- [Beyond Prompting — Autonomous Framework for Systematic Factor Investing via Agentic AI (arXiv 2603.14288, 2026-03)](https://arxiv.org/html/2603.14288v1)：Agentic AI 闭环（生成→评估→治理→扩展）+ 经济正则化"幸运因子"过滤器 + 多重检验调整。§6 待裁定-7 因子治理防 publication bias
+- [microalphas — Factor Decay: Why Published Factor Premia Fade (2026-06-02)](https://microalphas.com/factor-decay/)：因子衰减三机制（arbitrage/crowding + data mining + structural change）；OOS decay vs post-publication decay 诊断；Harvey-Liu-Zhu t-stat 3.0。§3.3 L1 因子衰减监控 + §3.4 量化强度评级 why 补充
+- [CSDN — Python量化：因子时效性评估 (2026-07-11)](https://blog.csdn.net/wencaitouzi/article/details/148829424)：IC 衰减曲线 + 半衰期 + 动态持仓周期（夏普 1.2→1.8）+ 混合频率因子组合 + 新鲜度监控阈值 0.7。§3.3 L1 因子衰减监控工程实现
+
+**2026-08 LLM alpha 挖掘新框架五项（v1.1.4 补，v1.1.6 补 AlphaSAGE，支撑 §3.3 ④ LLM alpha 挖掘闭环远期演进）**
+- [AlphaMemo — Structured Search-Process Memory (arXiv 2606.20625, 2026-05-26)](https://arxiv.org/pdf/2606.20625)：edit motif 级搜索过程记忆（从 AST 差异提取可复用编辑模式）+ 置信度门控残差记忆 + 非对称否决控制（高置信负模式否决/正模式软提升）；CSI 500 和 S&P 500 验证。§3.3 ④ XAlpha 记忆层精细化升级
+- [FactorMiner — Self-Evolving Agent with Skills and Experience Memory (arXiv 2602.14670, ICLR 2026)](https://arxiv.org/pdf/2602.14670v1)：Ralph Loop（retrieve-generate-evaluate-distill）+ 模块化 Skill 架构 + 结构化经验记忆（成功模式+禁区——与现有库高互相关因子家族）+ 全局因子库视角；CSI500 top-40 IC 8.25%/ICIR 0.77；GitHub 2026-08-01 更新 ledger-backed 严格准入。§3.3 ④ 禁区入池前预防（与 factor_pool_manager.py IC 末位淘汰协同）
+- [MAGE — MAP-Elites for Alpha Generation (GitHub, 2026-04-30)](https://github.com/joconno2/MAGE)：MAP-Elites 质量-多样性进化算法 + 2D 行为网格（turnover × market correlation）+ RL synergy 奖励；AlphaGen S&P 500 Sharpe 3.96/CSI300 0.76。§3.3 ④ AlphaEvolve 金融场景聚焦版（turnover×correlation 筛选器）
+- [AlphaAgent — LLM-Driven Alpha Mining with Regularized Exploration (arXiv 2502.16789, KDD 2025)](https://arxiv.org/pdf/2502.16789)：三大正则化（AST 相似度原创性强化 + 假设-因子语义对齐 + 复杂度控制防过拟合）；CSI 500/S&P 500 四年抗 decay 验证。§3.3 ④ 残差代数工程化升级（生成层约束）
+- [AlphaSAGE — Structure-Aware Alpha Generation (arXiv 2509.25055v3, 2026-05-19)](https://arxiv.org/pdf/2509.25055v3)：RGCN 结构编码器捕捉因子 AST 数学结构 + GFlowNet 生成策略 + 多维度奖励（IC+结构对齐+新颖性）。§3.3 ④ MAGE 结构感知升级（FactorMiner 禁区补 AST 结构相关检查）
+
+**2026-08 L1 深度学习 baseline 候选（v1.1.6 补，支撑 §3.3 ⑤ Cross-Sectional LSTM 远期增强）**
+- [Cross-Sectional Heterogeneity LSTM (arXiv 2608.05755, 2026-08-07)](https://arxiv.org/html/2608.05755v1)：learnable sector embeddings 捕获截面异质性 + 宏观金融协变量 + label smoothing/dropout/gradient clipping 正则；短期反转+行业动量双因子驱动；超越 basic LSTM/RF/buy-and-hold。§3.3 ⑤ L1 Phase 3+ 非线性预测 baseline（sector embedding 适配 A 股行业轮动）
 
 ## 9. 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G05 讨论要点占位，待讨论填空 |
-| 2026-08-10 | 1.0.0 | 落地 spec 定稿 | L0→L1→L2-C 分层 pipeline + 标准接口（SelectionContext→TargetPortfolio dataclass）+ 候选池生成（打板连板梯队/多因子全市场/事件驱动动态池三策略差异化）+ mask-first 过滤（arXiv:2507.07107，ST/次新/停牌/涨跌停封板/流动性按策略差异化）+ 量化强度评级（4维度 alpha+板块+情绪+资金，A~E五级，策略差异化权重）+ 双引擎融合内部化定位（对齐 30_multi_strategy_concurrency §7.3，BM-SEL-25 是打板内部融合非跨策略层）+ StrategyBook 对接契约（target_portfolio 接口规范 + signal_weight→最终仓位转换 + 分层裁定对齐）；整合 2026-08 研究（A 股 mask-first / WorldQuant Alpha 工厂分层 / 龙虎榜净买率回测）；4 个替代方案拒绝（统一候选池/跨策略融合/不做mask-first/选股直接输出仓位） |
-| 2026-08-10 | 1.1.0 | 补齐 mask-first 设计（arXiv:2507.07107v2） | §3.3.1 新增 TradabilityMaskPolicy 枚举（STRICT/MODERATE/PERMISSIVE）+ policy→掩码集映射表；apply_mask_first_filter 升级为 policy-aware（接受 mask_policy 参数）；_evaluate_reject 增补 STRICT/PERMISSIVE 分支；TradabilityMask 增补 is_tradable/mask_reason 汇总字段；SelectionContext 增 mask_policy 字段；实证：row_filter 虚增 IC +18%/Sharpe -0.44，mask-first 单一最大贡献者 +0.44 Sharpe；涨跌停板 upstream contamination 防护；mask 贯穿 L0→L1→L2-C pipeline |
-| 2026-08-11 | 1.2.0 | 6维 BM-SEL-24 + 因子拥挤衰减 + risk_parity 补齐 | §3.5/§3.6 从 4维升级为 6维 BM-SEL-24（连板梯队/游资接力/情绪周期/板块强度/资金流向/技术形态）：新增 QuantitativeStrength dataclass + DIMENSION_WEIGHTS（三策略各自权重，打板连板0.25+游资0.25 / 多因子资金0.25+技术0.30 / 事件驱动情绪0.20+资金0.20）+ apply_factor_crowding_decay 因子拥挤双曲衰减（arXiv:2512.11913v1，机械型 α(t)=K/(1+λt) 衰减/判断型不衰减）+ map_signals_to_six_dims 各策略差异化映射 + compute_six_dim_strength 6维评分主函数（取分→衰减→加权→分级）；§3.4 增补 Löwdin 对称正交化 _loewin_orthogonalize + IC-IR 加权 _compute_ic_ir_weights + score_l1_multifactor；SignalQuality 升级为 A~E 五级（≥85/≥70/≥55/≥40/<40，硬风险→E）+ rating_from_score 阈值对齐；§3.7 增补 EngineScore/FusedSignal/FusionStrategy/fuse_dual_engine 双引擎融合可施工 spec（WEIGHTED/CONDITIONAL/DECISION_TREE + 6类决策分类）；§3.8 risk_parity inverse-vol 实现补齐 + selection_to_target_portfolio(market_data=None)；§7 讨论要点③更新；§8 引用增补 arXiv:2512.11913 |
+| 2026-08-10 | 1.0.0 | 骨架→active 全填 | 逐项对齐 G05 讨论要点 6 项落入 §3 决策：①双引擎融合定位（打板 sleeve 内部，非跨策略层，§3.2）②L0→L1→L2-C 分层（通用地基+A股特色三层最低切分，§3.1/3.3）③量化强度评级（打板 sleeve 量化引擎输入，§3.4）④选股 pipeline 标准接口（SelectionResult 统一接口+差异化实现，§3.5）⑤候选池生成→过滤→排序→输出（四阶段漏斗，§3.6）⑥与 StrategyBook 对接契约（选股产 target_portfolio+粗仓位，精仓位在 firm 层，§3.7）；补 §2 背景/§4 替代方案 4 项/§5 上限+L0→L1→L2-C 过度工程审查（结论三层不过重）/§6 待裁定 4 项/§8 引用含 6 条 2026 实证；核对源码施工态：打板链 MOD-SIG-023/033/034/035 全 production、因子工厂 MOD-L02-017/018/013 全 production、事件链 MOD-DATA-NEWS-001 design；不破坏与 20/30/31 号交叉引用 |
+| 2026-08-10 | 1.0.1 | 2026-08 最新算法实践补全 + 施工环节算法缺失审查 | ① §3.1 补"2026 前沿趋势印证"块：国联民生金工(2026-07-16) AAAI/ICLR 综述——AI 量化从"调用通用模型"转向"围绕金融约束重构模型"，分层架构是"金融约束重构"工程落地（L0 处理延迟/L1 处理非平稳性/L2-C 处理本土特色）；② §3.5 补"confidence 算法待裁定"块：接口只定义 confidence∈[0,1] 语义但算法未定，2026 前沿三候选（AlphaSchema surrogate variance / Janus-Q LLM confidence gate / 经验贝叶斯 shrinkage），三 sleeve 可差异化；③ §3.6 补"事件 sleeve 过滤置信度阈值待裁定"：初拟 0.7，须 G10 按事件类型差异化校准；④ §5.4 补"过度工程审查·LLM 边界"块：TiMi 离线研发+在线执行分离→三层架构是"在线选股层"不引入 LLM 推理，LLM alpha 挖掘闭环是"离线研发层"产出固化因子/事件标签 schema，复杂度边界由"在线/离线分离"锁定；⑤ §6 新增 3 项待裁定（item5 confidence 算法/item6 事件置信度阈值/item7 LLM alpha 挖掘闭环作为 L1 远期演进）；⑥ §8.5 补 7 条 2026-08 实证（国联民生金工综述+AlphaSchema+CogAlpha+QuantaAlpha+Beyond Prompting+microalphas+CSDN） |
+| 2026-08-10 | 1.1.0 | L1 因子配比与 IC 衰减四参数监控 + confidence 第四候选 | ① §3.3 补"L1 因子配比与衰减监控施工补全"块：私募札记 85-90% 人工+10-15% 衍生配比+75%/15%/10% 权重分层+华泰全频段融合年化超额 27.37%；IC 衰减四参数框架（初始 IC/半衰期/衰减斜率/长期 IC 均值）+联动判据（半衰期<10 天缩短调仓/IC 拥挤告警/CUSUM 观察态）；② §3.5 补"confidence 算法第四候选"块：PEAD Inversion 极端反应 confidence 衰减（\|reaction\|>3% confidence 衰减至 0.1），事件 sleeve ②+④双重门控 |
+| 2026-08-10 | 1.1.1 | 再次深度审查施工算法缺失 + 选项之外更好算法交叉引用 | ① §3.1 补"层间数据流接口契约"块：L0→L1→L2-C→sleeve 三接口签名（FactorMaterial/FactorSignal/SynthesizedSignal）+降级链路触发判据（Tick 缺失/IC 均值<0.01/双引擎失效）；② §3.3 补"盘中增量双模计算触发条件与 Signature 方法"块：增量触发三判据（新鲜度衰减 0.7/价格冲击 >3%/事件触发）+Signature 路径签名解释（粗路径理论+signatory 库）+25 号多因子细节算法交叉引用（IC 半衰期加权/GAN_GRU/Bayesian 变点/Bootstrap CI）；③ §3.5 补"SignalInput 字段与 urgency↔convergence_window 映射"块：SignalInput 5 字段展开+urgency（immediate/next_open/gradual）↔convergence_window（1-2/2-3/3-5 天）↔sleeve（打板/事件/多因子）三向映射表；④ 修复 v1.1.0 修订记录缺失 drift |
+| 2026-08-10 | 1.1.2 | 施工环节算法补全：6 维权重校准方法 + 漏斗③排序优先级算法 | ① §3.4 补"6 维权重校准方法"块：当前 6 维权重（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）是经验设定，补两条校准路径——路径 A·IC 加权（将 6 维各视为子因子，按 weight_i=IC_i/Σ\|IC_j\| 归一化，与 20 §2.3 因子工厂 IC 加权合成对齐）+ 路径 B·SHAP 归因（LightGBM 训练"6 维→次日收益"模型，SHAP 值反推贡献度作为权重，捕非线性交互）+ 重校准频率（月度+CUSUM>2σ 触发即时）+ MVP 优先（经验权重→IC 加权 Phase 2→SHAP 远期），登记 §6 待裁定-8；② §3.6 补"漏斗③排序优先级算法"块：打板 sleeve 6 类决策优先级表（P0 主升龙头 1.0/P1 二进三 0.85/P2 跟风 0.65/P3 复苏 0.50/P4 伪强 0.30/P5 地天反包 0.20）+ 排序算法 final_score=fusion_score×priority_weight 降序+budget 约束裁剪 Top-N（N≤10）+ 连板/趋势切换协同（连板模式 P0-P1 提升权重 0.8/趋势模式 P3-P4 提升 0.8）+ 多因子 sleeve 横截面因子打分降序 + 事件 sleeve final_score=event_impact_score×decay_phase_factor（含 PEAD Inversion 极端反应降权） |
+| 2026-08-10 | 1.1.3 | §1 状态版本漂移修复 + 修订记录补全 | §1 主题组信息状态 v1.0.0→v1.1.3（frontmatter 已为 1.1.3 但 §1 状态未同步，属 v1.1.1-v1.1.2 增量编辑累积漂移）；补 v1.1.2/v1.1.3 修订记录缺失 drift |
+| 2026-08-10 | 1.1.4 | LLM alpha 挖掘新框架四项补全 + §1 状态同步 | ① §3.3 补"④ 2026-08 LLM alpha 挖掘新框架"块：AlphaMemo SSPM（edit motif 级搜索过程记忆+非对称否决，XAlpha 记忆层精细化升级）+ FactorMiner Ralph Loop（retrieve-generate-evaluate-distill+禁区入池前预防，与 factor_pool_manager.py IC 末位淘汰协同）+ MAGE（MAP-Elites 2D 行为网格 turnover×market correlation，AlphaEvolve 金融场景聚焦版）+ AlphaAgent 三大正则化（AST 相似度原创性+假设-因子对齐+复杂度控制，残差代数工程化升级）；七框架完整工具链=Hubble+AlphaEvolve+XAlpha+AlphaMemo+FactorMiner+MAGE+AlphaAgent；② §6 待裁定-7 更新：补充四新框架工程路径，远期演进采 Hubble 架构为骨架+FactorMiner 禁区接入入池前相关性检查+AlphaMemo edit motif 记忆接入因子治理层；③ §8.5 补 4 条 2026-08 LLM alpha 挖掘新框架实证（AlphaMemo arXiv 2606.20625+FactorMiner ICLR 2026+MAGE GitHub+AlphaAgent arXiv 2502.16789 KDD 2025）；④ §1 状态 v1.1.3→v1.1.4 同步 |
+| 2026-08-10 | 1.1.5 | 版本号漂移修复（3 处交叉引用同步） | 修复 §8.1 相关设计备忘中 3 处版本号漂移：①20 号 v1.3.0→v1.4.5（首批 3 策略定义已升版）；②30 号 v1.4.0→v2.0.0（多策略并发架构已升版）；③31 号 v1.3.0→v1.12.0（仓位算法已升版）；同步修复 §1 前置依赖行 20 号 v1.3.0→v1.4.5 | 循环至零复查发现版本号漂移 |
+| 2026-08-10 | 1.1.6 | 2026-08-08 最新研究补全 + 施工环节算法缺失补全（AlphaSAGE/Cross-Sectional LSTM） | ① §3.3 ④ 补"AlphaSAGE 结构感知因子生成"块：arXiv 2509.25055v3 RGCN 结构编码器+GFlowNet 生成策略+多维度奖励（IC+结构对齐+新颖性），MAGE 结构感知升级（FactorMiner 禁区补 AST 结构相关检查）；八框架完整工具链=Hubble+AlphaEvolve+XAlpha+AlphaMemo+FactorMiner+MAGE+AlphaAgent+AlphaSAGE；② §3.3 补"⑤ L1 深度学习 baseline 候选 Cross-Sectional LSTM"块：arXiv 2608.05755 learnable sector embeddings+短期反转+行业动量双因子，Phase 3+ 远期增强（过度工程审查：当前 L1 production 线性框架已够 MVP，不纳入首批施工）；③ §6 待裁定-7 更新补 AlphaSAGE（八框架）+ 新增 item8 6 维权重校准（修复 §3.4 §6 待裁定-8 引用 drift，原文本引用但 §6 表无对应行）+ 新增 item9 Cross-Sectional LSTM baseline；④ §8.5 补 AlphaSAGE+Cross-Sectional LSTM 2 条实证 + FactorMiner 引用补 arXiv 2602.14670 ID 与 CSI500 IC 8.25% 实证 + GitHub 8月1日更新；⑤ §1 状态 v1.1.4→v1.1.6 同步 |
+| 2026-08-10 | 1.1.7 | 交叉引用版本同步（20 号 v1.4.5→v1.4.6） | 同步 3 处 20 号交叉引用版本号 v1.4.5→v1.4.6（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.4.6 新增 Diffusion Copulas 尾部依赖建模+earnings acceleration 动量/反转二象性两块内容 |
+| 2026-08-10 | 1.1.8 | 交叉引用版本同步（20 号 v1.4.6→v1.5.0） | 同步 3 处 20 号交叉引用版本号 v1.4.6→v1.5.0（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.0 新增打板4项升级（5维诱多评分/梯队4类结构/盈亏分档+动态凯利除数/T+1参数订正）+多因子3项（Mittag-Leffler衰减/SUE+EAR双因子/t≥3.0门槛）+事件1项（Omori律三段衰减）+组合2项（Bayesian Kelly/Path Portfolio）共10项 2026-08-08 最新算法 |
+| 2026-08-10 | 1.1.9 | 交叉引用版本同步（20 号 v1.5.0→v1.5.2，跨 v1.5.1 两版合并同步）+ 修复 §8.1 漂移 | 同步 3 处 20 号交叉引用版本号至 v1.5.2（§前置依赖 v1.5.1→v1.5.2 / §1 主题组信息依赖行 v1.5.1→v1.5.2 / §8.1 相关设计备忘 v1.5.0→v1.5.2 修复跨版漂移），对齐 20 号 v1.5.1（封成比指标/多因子sleeve仓位分配+退出调仓/EFS RMT去噪/事件sleeve仓位分配共5项）+ v1.5.2（封板率连板率模型/打板战法硬阈值/TSPS隔夜跳空建模/快数字慢语言分离/quantskills因子衰减Skill共5项）新增10项施工算法与2026-08最新算法 |
+| 2026-08-10 | 1.1.10 | 交叉引用版本同步（20 号 v1.5.2→v1.5.3） | 同步 3 处 20 号交叉引用版本号 v1.5.2→v1.5.3（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.3 新增打板3项（板块联动五条退潮回避铁律/板块Z-score标准化封单占比/连板高度自适应差异化仓位）+多因子4项（因子合成算法/因子中性化分场景决策/换手率控制双目标优化/CFA算法市场假说）共7项施工算法与2026-08最新算法 |
+| 2026-08-10 | 1.1.11 | 交叉引用版本同步（20 号 v1.5.3→v1.5.4） | 同步 3 处 20 号交叉引用版本号 v1.5.3→v1.5.4（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.4 新增事件驱动5项（异动雷达事件簇/PEAD.txt纯文本盈余惊喜/Qwen3两阶段事件去重/Beyond Sentiment 6维结构化抽取/神经自激点过程）共5项2026-08最新算法 |
+| 2026-08-10 | 1.1.12 | 交叉引用版本同步（20 号 v1.5.4→v1.5.5） | 同步 3 处 20 号交叉引用版本号 v1.5.4→v1.5.5（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.5 新增打板3项（Tick 68维 CatBoost 破板预测模型/本地逐笔真实封单特征工程/EasyQMT 五步漏斗+灵敏撤单6模式）共3项2026-08最新算法+施工算法补全 |
+| 2026-08-10 | 1.1.13 | 交叉引用版本同步（20 号 v1.5.5→v1.5.6） | 同步 3 处 20 号交叉引用版本号 v1.5.5→v1.5.6（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.6 新增组合层2项（HRP-μ/HRP-Σμ/CRISP 信号感知分层组合/双层动态风险预算模型）共2项2026-08最新算法+施工算法补全 |
+| 2026-08-10 | 1.1.14 | 交叉引用版本同步（20 号 v1.5.6→v1.5.7） | 同步 3 处 20 号交叉引用版本号 v1.5.6→v1.5.7（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.7 打板sleeve实证校准数据（疯牛v2.0回测校准+2026量化绞杀游资市场结构数据，非新增待定问题仅校准现有项参数+强化市场语境） |
+| 2026-08-10 | 1.1.15 | frontmatter 版本漂移修复 + 交叉引用同步（20 号 v1.5.7→v1.5.8） | ① 修复 20 号 frontmatter 版本漂移（body 含 §4.2 MINGLE ⑩块/§6 表/§6 intro 共76项/§9 修订记录均已为 v1.5.8，仅 frontmatter 漏更 v1.5.7→v1.5.8）；② 同步 3 处 20 号交叉引用版本号 v1.5.7→v1.5.8（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.8 组合层 MINGLE 因子暴露度图多样化（arXiv 2608.06618 升级 HRP-μ 图构造层，exposure-similarity graph 替代 correlation-based graph，相关性结构失效 stress regime 时图拓扑崩塌弱点修复） |
+| 2026-08-10 | 1.1.17 | 交叉引用同步（20 号 v1.5.8→v1.5.9） | 同步 3 处 20 号交叉引用版本号 v1.5.8→v1.5.9（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.9 打板 sleeve 两项 2026 实证校准与因子交互警示——① 辛普森悖论因子交互警示（华安证券 2026-03-20，32615 首板样本，单变量有效→多因子逆转，须 v1.5.3 ① 因子合成施工时内建交互效应检验）；② 多维炸板率经验校准表（雪球 2026-02-25，板型×地位×情绪周期×流通盘四维查表校准现有炸板率项）；两项均为 2026-08-10 全网搜索三 agent 交叉验证的项目级新发现（MFCCA/Non-Gaussian Drawdown/arXiv:2507.07107/AlphaSchema 等均已在前轮整合）。注：v1.1.16 由并发会话添加（§3.1 板块轮动 score 映射公式链路 1 缺口修复），本版顺延 v1.1.17 避免版本冲突 |
+| 2026-08-10 | 1.1.18 | 交叉引用同步（20 号 v1.5.9→v1.5.10）+ §8.1 版本漂移修复（30号 v2.0.0→v2.2.0、31号 v1.21.0→v1.22.0） | ① 同步 3 处 20 号交叉引用版本号 v1.5.9→v1.5.10（§前置依赖/§1 主题组信息依赖行/§8.1 相关设计备忘），对齐 20 号 v1.5.10 辛普森悖论防御施工流程形式化——§2.3 补"⑤ 辛普森悖论防御：因子合成交互效应检验施工流程"块（forward_stepwise_ic_test 前向逐步 IC 检验伪代码，v1.5.9 警示的施工落地，与 v1.5.0 ⑩ t≥3.0 正交补组合层假阳性防御，流水线顺序：去噪⑬→正交化⑦→交互效应检验⑤→IC加权合成①）；② §8.1 修复版本漂移：30号 v2.0.0→v2.2.0（30号 frontmatter 实际 v2.2.0，含 SentimentStageSignal 退潮加权+target_portfolio 权重口径声明）、31号 v1.21.0→v1.22.0（31号 frontmatter 实际 v1.22.0）；③ frontmatter v1.1.17→v1.1.18；④ 2026-08-10 第四十六轮审查：搜索 agent 确认 8月10日 arxiv q-fin 21条目无新增可整合算法，8月11日列表未发布 |
+| 2026-08-10 | 1.1.16 | §3.1 补 L2-C 板块轮动→SynthesizedSignal.score 映射公式（跨文档算法交接完整性审查——链路 1 缺口修复） | 后台 agent 6 链路审查发现链路 1（22→21 板块轮动→选股）缺口：21号 §3.1 L2-C→sleeve 接口契约 `SynthesizedSignal(symbol, score, confidence, decision_class, metadata)` 中的 `score` 如何从 22号 RRG 四象限（Leading/Improving/Weakening/Lagging）+板块强度评分(0-100)+回踩质量(A/B/C)推导此前未形式化。本次补全映射公式 `score = clamp(SECTOR_QUADRANT_BASE[quadrant] + strength_score/100 * 0.2 + PULLBACK_QUALITY_BONUS[quality], 0.0, 1.0)` + 板块 overlay 降级影响说明（sector_overlay_active=False 时板块轮动不参与选股打分，行业偏离由 firm 层 ±10% 硬约束兜底）。参数待 G06 回测校准。缺口性质="接口契约未显式文档化"非"算法逻辑断裂"，严重性中等 |
