@@ -84,6 +84,50 @@ class AlgorithmSummary:
     source_line_range: str = ""  # "L18-L55" 行号锚点
     blueprint_ref: str = ""  # blueprint.md 相对路径（运营态也显示作对照）
     quality_issue: str = ""  # 质量评估（✅完整/⚠低质量/❌缺失 + 原因）
+    algo_flow: AlgoFlowData | None = None  # ALGO_FLOW 结构化推导流程（§4.16，仅运营态代码有标记时）
+
+
+# ── ALGO_FLOW 结构化数据（§4.16，算法全景图推导流程）──────────
+
+@dataclass
+class AlgoFlowNode:
+    """ALGO_FLOW 推导流程节点（§4.14 五类节点统一结构）。
+
+    layer 取值：输入/特征/指标/算法/输出。不同 layer 用不同字段子集渲染。
+    """
+
+    id: str
+    layer: str = ""  # 输入/特征/指标/算法/输出
+    name_zh: str = ""  # 输入层用 name 字段映射到此
+    name_en: str = ""
+    intro: str = ""  # 一句话简介
+    formula: str = ""  # 公式（特征/指标/算法）
+    code: str = ""  # 代码位置 file.py L行号 / 输入层代码标识
+    registry: str = ""  # factor_registry 状态 / 指标表状态（断点判断）
+    is_break: bool = False  # 是否断点节点（连入的边=断点边）
+    inputs: str = ""  # 算法节点输入
+    outputs: str = ""  # 算法节点输出
+    invariant: str = ""  # 不变量
+    downstream: str = ""  # 输出节点下游去向
+    fields: str = ""  # 输入层节点字段说明
+    desc: str = ""  # 算法节点算法描述
+
+
+@dataclass
+class AlgoFlowEdge:
+    """ALGO_FLOW 推导流程边（§4.15 断点边规范）。"""
+
+    src: str
+    dst: str
+    is_break: bool = False  # True=断点边（红色虚线+断点标签），False=正常边（黑色实线）
+
+
+@dataclass
+class AlgoFlowData:
+    """ALGO_FLOW 解析结果：节点列表 + 边列表。"""
+
+    nodes: list[AlgoFlowNode] = field(default_factory=list)
+    edges: list[AlgoFlowEdge] = field(default_factory=list)
 
 
 # ── 内部工具 ──────────────────────────────────────────────────
@@ -287,6 +331,9 @@ def extract_algorithm_from_code(
 
         quality = "✅ 完整" if (summary and algo_steps) else "⚠ docstring 结构不完整"
 
+        # ALGO_FLOW 结构化推导流程（§4.16，运营态代码有标记时解析；无标记返回 None）
+        algo_flow_data = parse_algo_flow(docstring)
+
         # 截断策略：纵览 truncate=True 按 MAX_* 截断（防爆）；域文档 truncate=False 保留完整
         if truncate:
             _name, _sum, _algo, _inv = (
@@ -309,6 +356,7 @@ def extract_algorithm_from_code(
             source_line_range=line_range,
             blueprint_ref=blueprint_ref,
             quality_issue=quality,
+            algo_flow=algo_flow_data,
         )
     except Exception as e:  # noqa: BLE001 — 降级不抛
         return _empty(module_id, blueprint_ref, f"提取异常: {type(e).__name__}: {e}")
@@ -456,3 +504,141 @@ def clear_blueprint_cache() -> None:
     """清缓存（测试用）。"""
     global _BLUEPRINT_CACHE
     _BLUEPRINT_CACHE = None
+
+
+# ── ALGO_FLOW 解析（§4.16，算法全景图推导流程标记）──────────────
+
+_ALGO_FLOW_START = "# [ALGO_FLOW]"
+_ALGO_FLOW_END = "# [/ALGO_FLOW]"
+
+# 节点字段名 → AlgoFlowNode 属性（§4.16.2 YAML 风格标记）
+_ALGO_NODE_FIELD_MAP = {
+    "name": "name_zh",      # 输入层用 name（中文名+数据类型）
+    "fields": "fields",
+    "name_zh": "name_zh",
+    "name_en": "name_en",
+    "intro": "intro",
+    "formula": "formula",
+    "code": "code",
+    "registry": "registry",
+    "inputs": "inputs",
+    "outputs": "outputs",
+    "invariant": "invariant",
+    "downstream": "downstream",
+    "desc": "desc",
+    "is_break": "is_break",
+}
+
+# 边定义正则：# SRC -.->|断点| DST  或  # SRC --> DST  或  # SRC -->|label| DST
+_ALGO_EDGE_RE = re.compile(
+    r"^#\s*([A-Za-z0-9_]+)\s+(-\.->|-->)(\|[^|]*\|)?\s+([A-Za-z0-9_]+)"
+)
+
+# 节点字段行：key: value（key 含字母数字下划线）
+_ALGO_FIELD_RE = re.compile(r"^(\w+)\s*:\s*(.*)$")
+
+
+def parse_algo_flow(docstring: str) -> AlgoFlowData | None:
+    """解析 module docstring 里的 ``# [ALGO_FLOW]`` 块（§4.16）。
+
+    扫描 ``# [ALGO_FLOW]`` 到 ``# [/ALGO_FLOW]`` 块解析节点（按"层:"分组），
+    再从该块及后续 ``边:`` 段解析边定义。无 ALGO_FLOW 标记返回 None
+    （生成器回退文字卡片）。
+
+    解析规则（§4.16.3）：
+      1. 扫描 [ALGO_FLOW] 块 → 解析节点（按"层:"分组，YAML 风格字段）
+      2. 解析"边:"部分（src -.->|断点| dst 或 src --> dst）
+      3. 无标记返回 None
+
+    :param docstring: module docstring 文本
+    :return: AlgoFlowData 或 None（无标记/无节点）
+    """
+    if not docstring or _ALGO_FLOW_START not in docstring:
+        return None
+
+    start_idx = docstring.index(_ALGO_FLOW_START)
+    block_start = start_idx + len(_ALGO_FLOW_START)
+    if _ALGO_FLOW_END in docstring[block_start:]:
+        block_end = docstring.index(_ALGO_FLOW_END, block_start)
+    else:
+        block_end = len(docstring)
+    node_block = docstring[block_start:block_end]
+
+    nodes = _parse_algo_flow_nodes(node_block)
+    if not nodes:
+        return None
+
+    # 边可定义在 ALGO_FLOW 块内或块后的"边:"段——从 [ALGO_FLOW] 起扫描到 docstring 末尾
+    scan_region = docstring[start_idx:]
+    edges = _parse_algo_flow_edges(scan_region)
+
+    return AlgoFlowData(nodes=nodes, edges=edges)
+
+
+def _parse_algo_flow_nodes(block: str) -> list[AlgoFlowNode]:
+    """解析 ALGO_FLOW 块内的节点定义（按"层:"分组，YAML 风格）。
+
+    每行去掉 ``# `` 前缀后按 ``层: <name>`` 切换当前层、``- id: <id>`` 起新节点、
+    ``key: value`` 填字段。
+    """
+    nodes: list[AlgoFlowNode] = []
+    current_layer = ""
+    current: AlgoFlowNode | None = None
+
+    for raw in block.splitlines():
+        line = raw.strip()
+        if not line:
+            continue
+        # 去掉 "# " 前缀（块内每行以 # 开头）
+        content = line[1:].lstrip() if line.startswith("#") else line
+
+        # 层切换：层: <name>
+        m_layer = re.match(r"^层\s*:\s*(.+)$", content)
+        if m_layer:
+            if current is not None:
+                nodes.append(current)
+            current_layer = m_layer.group(1).strip()
+            current = None
+            continue
+
+        # 节点起点：- id: <id>
+        m_id = re.match(r"^-\s+id\s*:\s*(.+)$", content)
+        if m_id:
+            if current is not None:
+                nodes.append(current)
+            current = AlgoFlowNode(id=m_id.group(1).strip(), layer=current_layer)
+            continue
+
+        # 字段：key: value
+        m_field = _ALGO_FIELD_RE.match(content)
+        if m_field and current is not None:
+            key = m_field.group(1)
+            value = m_field.group(2).strip()
+            attr = _ALGO_NODE_FIELD_MAP.get(key)
+            if attr is None:
+                continue
+            if attr == "is_break":
+                setattr(current, attr, value.lower() in ("true", "yes", "1"))
+            else:
+                setattr(current, attr, value)
+            continue
+
+    if current is not None:
+        nodes.append(current)
+    return nodes
+
+
+def _parse_algo_flow_edges(scan_region: str) -> list[AlgoFlowEdge]:
+    """解析边定义行（``# SRC -.->|断点| DST`` 或 ``# SRC --> DST``）。
+
+    断点边判定：箭头为 ``-.->`` 或边标签含"断点"。
+    """
+    edges: list[AlgoFlowEdge] = []
+    for raw in scan_region.splitlines():
+        m = _ALGO_EDGE_RE.match(raw.rstrip())
+        if not m:
+            continue
+        src, arrow, label, dst = m.group(1), m.group(2), (m.group(3) or ""), m.group(4)
+        is_break = arrow == "-.->" or "断点" in label
+        edges.append(AlgoFlowEdge(src=src, dst=dst, is_break=is_break))
+    return edges

@@ -5,7 +5,7 @@
 # [CONSUMERS] 人工查看 docs/02_enterprise_architecture/08_algorithm_overview/index.md; reconciler 触发重生成
 # [STARTUP] event_driven
 # [MATURITY] production
-# [INVARIANTS] 输出幂等(相同输入→相同输出); 只读 depgraph+battle_map; 三档源优先级(code>blueprint>empty); 不改受治 reader(用公共API); 输出离库到 08_algorithm_overview/; 按作战环节拆分多文件(battle_map.anchors SSoT); 跨环节模块在各环节文件中重复出现
+# [INVARIANTS] 输出幂等(相同输入→相同输出); 只读 depgraph+battle_map; 三档源优先级(code>blueprint>empty); 不改受治 reader(用公共API); 输出离库到 08_algorithm_overview/; 按作战环节拆分多文件(battle_map.anchors SSoT); 跨环节模块在各环节文件中重复出现; ALGO_FLOW标记→Mermaid推导图(§4.16,无标记回退文字卡片,渐进式向后兼容); stages顶部环节总图+卡片下模块关联图(depgraph自动派生,§4.3节点+§4.15断点边)
 # [MODIFY-GUARD] 修改需同步更新 tests/governance/test_generate_module_algorithm_overview.py
 # [STABILITY] evolving
 # [SAFETY] L
@@ -13,6 +13,7 @@
 # [ERROR_CONTRACT] depgraph不可用→exit 1; 单模块提取失败→降级empty不阻断; battle_map不可用→全部归未锚定
 # [TESTS] tests/governance/test_generate_module_algorithm_overview.py
 # [TTL] permanent
+# noqa: m11-perm-manual-legitimate  M11豁免: 生成器由 reconciler/人工按需显式触发（非 cron/daemon 常驻服务），对齐 generate_code_wiki_stats.py 豁免模式
 """算法全景图生成器（按作战环节拆分，自动派生，离库）。
 
 从代码 .py docstring + header（运营态）或 blueprint.md（设计态）提取每个模块的核心
@@ -58,6 +59,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -73,11 +75,17 @@ if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
 from _common import DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402
-from zoomable_html import HTML_SUBDIR  # noqa: E402  — 仅用于清理旧 HTML 产物
+from zoomable_html import HTML_SUBDIR, emit_zoomable_html  # noqa: E402
 from domain_name_mapping import get_domain_name_zh  # noqa: E402
-from _shared.module_translation_loader import get_module_name_bilingual  # noqa: E402
+from _shared.module_translation_loader import (  # noqa: E402
+    derive_name_from_path,
+    get_module_name_bilingual,
+    get_module_plain,
+)
 from _shared.code_algorithm_extractor import (  # noqa: E402
     AlgorithmSummary,
+    AlgoFlowData,
+    AlgoFlowNode,
     build_blueprint_index,
     extract_algorithm_from_blueprint,
     extract_algorithm_from_code,
@@ -288,6 +296,10 @@ def build_module_summaries(
 
         bi_name = get_module_name_bilingual(path) if path else ""
 
+        # ALGO_FLOW 推导流程（§4.16，仅运营态代码 docstring 有 # [ALGO_FLOW] 标记时非 None；
+        # 设计态/缺失态恒为 None → 回退文字卡片，渐进式向后兼容）
+        algo_flow = summary.algo_flow
+
         rows.append({
             "module_id": mid,
             "path": path,
@@ -298,6 +310,7 @@ def build_module_summaries(
             "bp_ref": bp_ref,
             "summary": summary,
             "bi_name": bi_name,
+            "algo_flow": algo_flow,
         })
     return rows
 
@@ -482,13 +495,226 @@ def _build_consumers(edges: list[dict]) -> dict[str, list[str]]:
     return dict(consumers)
 
 
+# ── 环节总图 + 模块关联图（2026-08-12 增强，§4.3 节点格式 + §4.15 断点边）──
+
+# tier → §4.3 成熟度行
+_TIER_MATURITY = {
+    "operational": "生产态 / production",
+    "design": "设计态 / design",
+    "missing": "缺失态 / missing",
+}
+
+# 断点边/正常边颜色（§4.15.3）
+_BREAK_COLOR = "#c62828"   # 暗红 Material Red 900
+_NORMAL_COLOR = "#333333"  # 近黑深灰
+
+
+def _mod_node_id(module_id: str) -> str:
+    """module_id → Mermaid 节点 ID（§4.4：只留字母数字下划线）。"""
+    nid = re.sub(r"[^A-Za-z0-9_]", "_", module_id)
+    nid = re.sub(r"_+", "_", nid).strip("_")
+    return nid or "MOD_UNKNOWN"
+
+
+def _build_providers(edges: list[dict]) -> dict[str, list[str]]:
+    """上游依赖图：from_module_id -> [to_module_id, ...]（M import 谁）。"""
+    providers: dict[str, list[str]] = defaultdict(list)
+    for e in edges:
+        providers[e["from_module_id"]].append(e["to_module_id"])
+    return dict(providers)
+
+
+def _build_rel_context(rows: list[dict], edges: list[dict], consumers: dict[str, list[str]]) -> dict:
+    """构建模块关联上下文：providers（M import 谁）+ consumers（谁 import M）+ row 索引。
+
+    depgraph 边方向：from_module import to_module（from 依赖 to）。
+    """
+    return {
+        "providers": _build_providers(edges),
+        "consumers": consumers,
+        "row_by_id": {r["module_id"]: r for r in rows},
+    }
+
+
+def _render_dep_edges(edge_tuples: list[tuple[str, str, bool]]) -> tuple[list[str], str]:
+    """渲染依赖边（断点边在前）+ linkStyle（§4.15 复现）。
+
+    :param edge_tuples: (src_nid, dst_nid, is_break)；is_break=True → 红色虚线+断点标签。
+    :return: (edge_lines, link_style_str)
+    """
+    # 确定性排序（depgraph DB 行序不稳定，2026-08-12 幂等性修复）：断点边/正常边各按 (src,dst) 排序
+    breaks = sorted((t for t in edge_tuples if t[2]), key=lambda t: (t[0], t[1]))
+    normals = sorted((t for t in edge_tuples if not t[2]), key=lambda t: (t[0], t[1]))
+    ordered = breaks + normals
+    edge_lines: list[str] = []
+    break_idx: list[int] = []
+    normal_idx: list[int] = []
+    for i, (s, d, brk) in enumerate(ordered):
+        if brk:
+            edge_lines.append(f"    {s} -.->|断点| {d}")
+            break_idx.append(i)
+        else:
+            edge_lines.append(f"    {s} --> {d}")
+            normal_idx.append(i)
+    link_lines: list[str] = []
+    if break_idx:
+        link_lines.append(
+            f"    linkStyle {','.join(str(i) for i in break_idx)} "
+            f"stroke:{_BREAK_COLOR},stroke-width:2px,color:{_BREAK_COLOR}"
+        )
+    if normal_idx:
+        link_lines.append(
+            f"    linkStyle {','.join(str(i) for i in normal_idx)} "
+            f"stroke:{_NORMAL_COLOR},stroke-width:2px,color:{_NORMAL_COLOR}"
+        )
+    return edge_lines, "\n".join(link_lines)
+
+
+def _module_display_name(r: dict | None) -> str:
+    """模块显示名：翻译真源双语名 → docstring 首行 → 路径派生。"""
+    if not r:
+        return ""
+    name = (r.get("bi_name") or "").strip()
+    if not name:
+        name = (r["summary"].module_name or "").strip()
+    if not name:
+        name = derive_name_from_path(r.get("path") or r["module_id"])
+    return name
+
+
+def _stage_node_label(r: dict) -> str:
+    """环节总图节点标签（§4.3 域内节点四要素：成熟度+双语名+大白话+文件路径）。"""
+    mat = _TIER_MATURITY.get(r["tier"], r["tier"])
+    name = _module_display_name(r)
+    plain = get_module_plain(r.get("path") or "") or (r["summary"].summary or "")[:50]
+    parts = (r.get("path") or "").replace("\\", "/").split("/")
+    file_seg = "/".join(parts[-2:]) if len(parts) >= 2 else (r.get("path") or "")
+    label = f"({mat}) {name}<br/>{plain}<br/>文件: {file_seg}"
+    # 转义 + 预折行（复用算法图同款护栏）
+    rendered: list[str] = []
+    for seg in label.split("<br/>"):
+        seg = seg.strip()
+        if seg:
+            rendered.append(_wrap_label_text(_sanitize_algo_label(seg), max_units=40))
+    return "<br/>".join(rendered)
+
+
+def render_stage_overview_mermaid(stage_rows: list[dict], edges: list[dict]) -> str:
+    """环节总图 Mermaid：该环节全部模块 + 环节内 depgraph 依赖边（§4.3 节点 + §4.15 断点边）。
+
+    边规则：两端都在本环节才画；任一端非运营态 → 断点边（红色虚线+断点标签），否则黑色实线。
+    """
+    mids = {r["module_id"] for r in stage_rows}
+    tier_of = {r["module_id"]: r["tier"] for r in stage_rows}
+
+    lines = ["```mermaid", _ALGO_MERMAID_THEME, "flowchart TD"]
+    for r in sorted(stage_rows, key=lambda x: (_layer_sort_key(x["layer"]), x["module_id"])):
+        nid = _mod_node_id(r["module_id"])
+        lines.append(f'    {nid}["{_stage_node_label(r)}"]')
+
+    seen: set[tuple[str, str]] = set()
+    edge_tuples: list[tuple[str, str, bool]] = []
+    for e in edges:
+        f, t = e["from_module_id"], e["to_module_id"]
+        if f not in mids or t not in mids or (f, t) in seen:
+            continue
+        seen.add((f, t))
+        is_break = tier_of.get(f) != "operational" or tier_of.get(t) != "operational"
+        edge_tuples.append((_mod_node_id(f), _mod_node_id(t), is_break))
+
+    if edge_tuples:
+        edge_lines, link_style = _render_dep_edges(edge_tuples)
+        lines.append("")
+        lines.append("    %% 断点边（红色虚线+断点标签）在前，正常边（黑色实线）在后")
+        lines.extend(edge_lines)
+        if link_style:
+            lines.append("")
+            lines.append("    %% 边样式：断点边=红色虚线，正常边=黑色实线")
+            lines.append(link_style)
+
+    lines.append("  classDef default fill:#eef,stroke:#336,stroke-width:1px,color:#003;")
+    lines.append("```")
+    return "\n".join(lines)
+
+
+def _render_module_relation_mermaid(r: dict, rel: dict) -> str:
+    """模块上下游关联图（卡片下）：上游依赖 → 本模块 → 下游消费者（§4.15 断点边）。
+
+    数据从 depgraph 边自动提取（自动全量）；任一端非运营态的连线用红色虚线断点边。
+    上游/下游各最多显示 8 个（防爆），超出在图例注明。
+    """
+    mid = r["module_id"]
+    row_by_id = rel["row_by_id"]
+    ups_all = sorted(set(rel["providers"].get(mid, [])))
+    downs_all = sorted(set(rel["consumers"].get(mid, [])))
+    if not ups_all and not downs_all:
+        return ""
+    ups, downs = ups_all[:8], downs_all[:8]
+
+    def _node_label(module_id: str, is_center: bool = False) -> str:
+        rr = row_by_id.get(module_id)
+        emoji = STATUS_EMOJI.get(rr["tier"], "⬜") if rr else "⬜"
+        name = _module_display_name(rr) if rr else derive_name_from_path(module_id)
+        star = "⭐ " if is_center else ""
+        text = f"{star}{emoji} {module_id}<br/>{name}"
+        rendered: list[str] = []
+        for seg in text.split("<br/>"):
+            seg = seg.strip()
+            if seg:
+                rendered.append(_wrap_label_text(_sanitize_algo_label(seg), max_units=40))
+        return "<br/>".join(rendered)
+
+    lines = ["```mermaid", _ALGO_MERMAID_THEME, "flowchart LR"]
+    center_nid = _mod_node_id(mid)
+    for u in ups:
+        lines.append(f'    {_mod_node_id(u)}["{_node_label(u)}"]')
+    lines.append(f'    {center_nid}["{_node_label(mid, is_center=True)}"]')
+    for d in downs:
+        lines.append(f'    {_mod_node_id(d)}["{_node_label(d)}"]')
+
+    def _is_break(x: str) -> bool:
+        rr = row_by_id.get(x)
+        return (rr is None) or rr["tier"] != "operational"
+
+    edge_tuples: list[tuple[str, str, bool]] = []
+    for u in ups:  # 上游 → 本模块（上游未实现=断点）
+        edge_tuples.append((_mod_node_id(u), center_nid, _is_break(u)))
+    for d in downs:  # 本模块 → 下游（下游未实现=断点）
+        edge_tuples.append((center_nid, _mod_node_id(d), _is_break(d)))
+
+    edge_lines, link_style = _render_dep_edges(edge_tuples)
+    lines.append("")
+    lines.extend(edge_lines)
+    if link_style:
+        lines.append("")
+        lines.append(link_style)
+    lines.append("  classDef default fill:#eef,stroke:#336,stroke-width:1px,color:#003;")
+    lines.append("```")
+
+    more: list[str] = []
+    if len(ups_all) > 8:
+        more.append(f"上游 +{len(ups_all) - 8}")
+    if len(downs_all) > 8:
+        more.append(f"下游 +{len(downs_all) - 8}")
+    more_txt = f"（{'，'.join(more)}）" if more else ""
+    legend = (
+        f"\n> **上下游关联图**（depgraph 自动派生{more_txt}）："
+        f"上游依赖 {len(ups_all)} 个 ｜ 下游消费者 {len(downs_all)} 个。"
+        f"红色虚线=对端未实现（设计态/缺失）。\n"
+    )
+    return legend + "\n".join(lines) + "\n"
+
+
+
 def _render_cards_by_layer(
     rows: list[dict],
     consumers: dict[str, list[str]],
+    rel: dict | None = None,
 ) -> str:
     """渲染模块卡片，按 layer（L0→L3）分组。
 
     用于环节文件和系统基础文件——两者内部都按 layer 二级分组。
+    rel：模块关联上下文（providers/consumers/row_by_id），传入时每个卡片追加上下游关联图。
     """
     parts: list[str] = []
     present_layers = [l for l in LAYER_ORDER if any(r["layer"] == l for r in rows)]
@@ -502,7 +728,7 @@ def _render_cards_by_layer(
         parts.append(f"### {LAYER_EMOJI[layer]} {layer} — {LAYER_NAME_ZH[layer]}（{len(lrows)} 模块）")
         parts.append("")
         for r in lrows:
-            parts.append(_render_module_card(r, consumers))
+            parts.append(_render_module_card(r, consumers, rel))
 
     if has_unlayered:
         urows = sorted(
@@ -514,7 +740,7 @@ def _render_cards_by_layer(
         parts.append("> 这些模块的 architecture_layer 为空，未归入 L0–L3。建议在 depgraph 补 layer。")
         parts.append("")
         for r in urows:
-            parts.append(_render_module_card(r, consumers))
+            parts.append(_render_module_card(r, consumers, rel))
 
     return "\n".join(parts)
 
@@ -596,9 +822,33 @@ def render_quality_report(
     return "\n".join(lines)
 
 
-def _render_module_card(r: dict, consumers: dict[str, list[str]]) -> str:
+def _render_module_card(r: dict, consumers: dict[str, list[str]], rel: dict | None = None) -> str:
     """单模块算法详情卡片。"""
     s: AlgorithmSummary = r["summary"]
+    algo_flow = r.get("algo_flow")
+    if algo_flow is not None:
+        return _render_module_card_with_flow(r, consumers, s, algo_flow, rel)
+    return _render_module_card_text(r, consumers, s, rel)
+
+
+def _render_module_card_text(
+    r: dict,
+    consumers: dict[str, list[str]],
+    s: AlgorithmSummary,
+    rel: dict | None = None,
+) -> str:
+    """单模块算法详情卡片（文字版，无 ALGO_FLOW 标记时的回退）。"""
+    out = _module_card_header_lines(r, s)
+    out.extend(_module_card_body_lines(r, consumers, s))
+    card = "\n".join(out)
+    # 模块上下游关联图（depgraph 自动全量，§4.15 断点边）
+    if rel is not None:
+        card += _render_module_relation_mermaid(r, rel)
+    return card
+
+
+def _module_card_header_lines(r: dict, s: AlgorithmSummary) -> list[str]:
+    """卡片头部：锚点 + 标题行（emoji/双语名/layer·域 标签）。"""
     emoji = STATUS_EMOJI[r["tier"]]
     name = r["bi_name"] or s.module_name or r["module_id"]
     dom_id = r["domain_id"] or ""
@@ -609,8 +859,12 @@ def _render_module_card(r: dict, consumers: dict[str, list[str]]) -> str:
     # 稳定 HTML 锚点（module_id 小写），供 battle_map/域文档深链接跳转。
     # 不依赖 GitHub 自动锚点（标题含 emoji/中文/特殊字符，自动锚点脆弱）。
     anchor_id = r["module_id"].lower()
-    out: list[str] = [f'<a id="{anchor_id}"></a>', f"#### {emoji} {r['module_id']} {name} {layer_tag}", ""]
+    return [f'<a id="{anchor_id}"></a>', f"#### {emoji} {r['module_id']} {name} {layer_tag}", ""]
 
+
+def _module_card_body_lines(r: dict, consumers: dict[str, list[str]], s: AlgorithmSummary) -> list[str]:
+    """卡片正文：真源/概述/算法步骤/不变量/被依赖/质量。"""
+    out: list[str] = []
     # 真源行
     src_parts = []
     if s.source_path:
@@ -642,7 +896,336 @@ def _render_module_card(r: dict, consumers: dict[str, list[str]]) -> str:
 
     out.append(f"> **质量**：{s.quality_issue}")
     out.append("")
-    return "\n".join(out)
+    return out
+
+
+# ── ALGO_FLOW 推导流程图渲染（§4.14/§4.15/§4.16）─────────────────
+
+# Mermaid 灰色主题头（clusterBkg 透明，与样本 regime_detector_drilldown_sample.md 对齐）
+_ALGO_MERMAID_THEME = (
+    "%%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#eaeaea', "
+    "'primaryTextColor': '#333333', 'primaryBorderColor': '#666666', "
+    "'lineColor': '#333333', 'secondaryColor': '#eaeaea', 'tertiaryColor': '#eaeaea', "
+    "'clusterBkg': 'transparent', 'clusterBorder': 'transparent', "
+    "'fontSize': '14px'}}}%%"
+)
+
+# 5 层 subgraph 定义（顺序固定：输入→特征→指标→算法→输出）
+# (layer_name, subgraph_id, subgraph_title_prefix)
+_ALGO_LAYERS: list[tuple[str, str, str]] = [
+    ("输入", "sg_input", "📥 输入层"),
+    ("特征", "sg_feat", "🔬 特征层"),
+    ("指标", "sg_indi", "📈 技术指标"),
+    ("算法", "sg_algo", "⚙️ 算法层"),
+    ("输出", "sg_out", "📤 输出层"),
+]
+
+# classDef 样式（5 类：input/feature/break/algo/output）
+_ALGO_CLASS_DEFS = [
+    "    classDef input fill:#e3f2fd,stroke:#01579b,stroke-width:2px,color:#000",
+    "    classDef feature fill:#e0f2f1,stroke:#00695c,stroke-width:2px,color:#000",
+    "    classDef break fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000",
+    "    classDef algo fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000",
+    "    classDef output fill:#fce4ec,stroke:#c62828,stroke-width:2px,color:#000",
+]
+
+
+def _wrap_label_text(text: str, max_units: int = 48) -> str:
+    """将长节点标签文本按显示宽度预折行（Mermaid 节点内显示用，§4.10 铁律）。
+
+    折行规则：显示宽度（CJK=2/ASCII=1）超 max_units 断行（48 ≈ 24 个汉字）；
+    优先在空格/下划线之后、左括号/斜杠之前软断（保持英文词完整），否则硬断。
+    原样复制自 visualization_view_template.md §4.10。
+    """
+    if not text:
+        return ""
+    lines: list[str] = []
+    remaining = text.strip()
+    while remaining:
+        width = 0
+        cut = 0
+        soft = -1
+        for i, ch in enumerate(remaining):
+            u = 2 if ord(ch) > 0x2E7F else 1
+            if width + u > max_units:
+                break
+            width += u
+            cut = i + 1
+            if ch in " _":
+                soft = i + 1
+            elif ch in "（(/":
+                soft = i if i > 0 else -1
+        if cut >= len(remaining):
+            lines.append(remaining)
+            break
+        if soft >= 8:
+            cut = soft
+        line = remaining[:cut].rstrip()
+        if line:
+            lines.append(line)
+        remaining = remaining[cut:].lstrip(" ")
+    return "<br/>".join(lines)
+
+
+def _sanitize_algo_label(text: str) -> str:
+    """转义 Mermaid 节点标签特殊字符（§4.9）。
+
+    节点标签在 ``["..."]`` 内，需转义 ``"``（闭合标签）和 ``[`` ``]``（破坏语法）。
+    半角括号在双引号标签内安全，保留（样本公式含 (C-Ln) 等正常渲染）。
+    """
+    return text.replace('"', "'").replace("[", "（").replace("]", "）")
+
+
+def _algo_node_class(node: AlgoFlowNode) -> str:
+    """节点 CSS 类名：断点节点→break，否则按层着色。"""
+    if node.is_break:
+        return "break"
+    layer = node.layer
+    if layer == "输入":
+        return "input"
+    if layer == "输出":
+        return "output"
+    if layer == "算法":
+        return "algo"
+    return "feature"  # 特征/指标 非断点
+
+
+def _algo_node_title(node: AlgoFlowNode) -> str:
+    """节点标题行（中文名前英文后，§4.14.3 铁律1）。
+
+    各层标题组装规则不同（样本 regime_detector_drilldown_sample.md）：
+      - 输入：name_zh（不含 id，如"沪深300 日线数据"）
+      - 特征：id name_zh name_en（如"F1 已实现波动率分位 realized_vol_pct"）
+      - 指标：id name_zh（name_en 与 id 相同时去重）
+      - 算法：name_zh name_en（不含 id A1，编号①②在 name_zh 内）
+      - 输出：name_zh name_en（不含 id O1）
+    """
+    layer = node.layer
+    if layer == "输入":
+        return node.name_zh or node.id
+    if layer == "特征":
+        parts = [p for p in (node.id, node.name_zh, node.name_en) if p]
+    elif layer == "指标":
+        parts = _indicator_title_parts(node)
+    elif layer == "算法":
+        parts = [p for p in (node.name_zh, node.name_en) if p and p != node.id]
+    elif layer == "输出":
+        parts = [p for p in (node.name_zh, node.name_en) if p]
+    else:
+        parts = [p for p in (node.id, node.name_zh, node.name_en) if p]
+    return " ".join(parts) or node.id
+
+
+def _indicator_title_parts(node: AlgoFlowNode) -> list[str]:
+    """指标层标题部件：id + name_zh（+ name_en 与 id 不同名时追加）。"""
+    parts = [p for p in (node.id, node.name_zh) if p]
+    if node.name_en and node.name_en != node.id:
+        parts.append(node.name_en)
+    return parts
+
+
+def _label_lines_input(node: AlgoFlowNode) -> list[str]:
+    lines = [_algo_node_title(node)]
+    if node.fields:
+        lines.append(node.fields)
+    if node.code:
+        lines.append(f"代码 {node.code}")
+    return lines
+
+
+def _label_lines_feature(node: AlgoFlowNode) -> list[str]:
+    lines = [_algo_node_title(node)]
+    if node.intro:
+        lines.append(node.intro)
+    if node.formula:
+        lines.append(f"公式: {node.formula}")
+    if node.code:
+        lines.append(f"代码: {node.code}")
+    if node.registry:
+        lines.append(node.registry)
+    return lines
+
+
+def _label_lines_algo(node: AlgoFlowNode) -> list[str]:
+    lines = [_algo_node_title(node)]
+    if node.intro:
+        lines.append(node.intro)
+    if node.desc:
+        lines.append(node.desc)
+    elif node.formula:
+        lines.append(node.formula)
+    if node.inputs:
+        lines.append(f"输入: {node.inputs}")
+    if node.outputs:
+        lines.append(f"输出: {node.outputs}")
+    if node.invariant:
+        lines.append(f"不变量: {node.invariant}")
+    return lines
+
+
+def _label_lines_output(node: AlgoFlowNode) -> list[str]:
+    lines = [_algo_node_title(node)]
+    if node.intro:
+        lines.append(node.intro)
+    if node.invariant:
+        lines.append(f"不变量: {node.invariant}")
+    if node.downstream:
+        lines.append(f"→ {node.downstream}")
+    return lines
+
+
+def _render_algo_node_label(node: AlgoFlowNode) -> str:
+    """渲染单节点标签（§4.14.2 五类节点格式，<br/> 分隔多行）。"""
+    builders = {
+        "输入": _label_lines_input,
+        "特征": _label_lines_feature,
+        "指标": _label_lines_feature,
+        "算法": _label_lines_algo,
+        "输出": _label_lines_output,
+    }
+    builder = builders.get(node.layer)
+    if builder is not None:
+        lines = builder(node)
+    else:
+        lines = [_algo_node_title(node)]
+        if node.intro:
+            lines.append(node.intro)
+
+    # 转义 + 预折行（§4.9 + §4.10）。字段内可能含手动 <br/>，逐段折行。
+    rendered: list[str] = []
+    for ln in lines:
+        for seg in ln.split("<br/>"):
+            seg = seg.strip()
+            if seg:
+                rendered.append(_wrap_label_text(_sanitize_algo_label(seg)))
+    return "<br/>".join(rendered)
+
+
+def _render_algo_edges(edges: list) -> tuple[list[str], str]:
+    """渲染边定义（断点边在前）+ linkStyle 语句（§4.15）。
+
+    :return: (edge_lines, link_style_str)
+    """
+    # 断点边在前（linkStyle 按出现顺序索引），各自组内保持原序
+    breaks = [e for e in edges if e.is_break]
+    normals = [e for e in edges if not e.is_break]
+    ordered = breaks + normals
+
+    edge_lines: list[str] = []
+    break_idx: list[int] = []
+    normal_idx: list[int] = []
+    for i, e in enumerate(ordered):
+        if e.is_break:
+            edge_lines.append(f"    {e.src} -.->|断点| {e.dst}")
+            break_idx.append(i)
+        else:
+            edge_lines.append(f"    {e.src} --> {e.dst}")
+            normal_idx.append(i)
+
+    link_lines: list[str] = []
+    if break_idx:
+        link_lines.append(
+            f"    linkStyle {','.join(str(i) for i in break_idx)} "
+            f"stroke:{_BREAK_COLOR},stroke-width:2px,color:{_BREAK_COLOR}"
+        )
+    if normal_idx:
+        link_lines.append(
+            f"    linkStyle {','.join(str(i) for i in normal_idx)} "
+            f"stroke:{_NORMAL_COLOR},stroke-width:2px,color:{_NORMAL_COLOR}"
+        )
+    return edge_lines, "\n".join(link_lines)
+
+
+def render_algo_flow_mermaid(algo_flow: AlgoFlowData) -> str:
+    """按 ALGO_FLOW 数据生成 Mermaid 推导流程图（§4.14/§4.15/§4.16）。
+
+    结构：灰色主题头 + flowchart TD + 5 层 subgraph + 节点定义 +
+    边定义（断点边在前）+ linkStyle + classDef + class 绑定。
+    参考 regime_detector_drilldown_sample.md 的 Mermaid 块格式。
+    """
+    # 按 layer 分组
+    by_layer: dict[str, list[AlgoFlowNode]] = defaultdict(list)
+    for n in algo_flow.nodes:
+        by_layer[n.layer].append(n)
+
+    lines = ["```mermaid", _ALGO_MERMAID_THEME, "flowchart TD"]
+
+    # subgraph 分层渲染（顺序固定）
+    for layer_name, sg_id, sg_title in _ALGO_LAYERS:
+        layer_nodes = by_layer.get(layer_name, [])
+        if not layer_nodes:
+            continue
+        lines.append(f'    subgraph {sg_id} ["{sg_title}（{len(layer_nodes)} 节点）"]')
+        for n in layer_nodes:
+            label = _render_algo_node_label(n)
+            lines.append(f'        {n.id}["{label}"]:::{_algo_node_class(n)}')
+        lines.append("    end")
+        lines.append("")
+
+    # 边定义（断点边在前）+ linkStyle
+    if algo_flow.edges:
+        edge_lines, link_style = _render_algo_edges(algo_flow.edges)
+        if edge_lines:
+            lines.append("    %% 断点边（红色虚线+断点标签）在前，正常边（黑色实线）在后")
+            lines.extend(edge_lines)
+            lines.append("")
+        if link_style:
+            lines.append("    %% 边样式：断点边=红色虚线，正常边=黑色实线")
+            lines.append(link_style)
+            lines.append("")
+
+    # classDef 样式定义
+    lines.extend(_ALGO_CLASS_DEFS)
+    lines.append("")
+
+    # class 绑定（按类分组节点 ID）
+    class_groups: dict[str, list[str]] = defaultdict(list)
+    for n in algo_flow.nodes:
+        class_groups[_algo_node_class(n)].append(n.id)
+    for cls in ("input", "feature", "break", "algo", "output"):
+        ids = class_groups.get(cls, [])
+        if ids:
+            lines.append(f"    class {','.join(ids)} {cls}")
+
+    lines.append("```")
+    return "\n".join(lines)
+
+
+def _render_module_card_with_flow(
+    r: dict,
+    consumers: dict[str, list[str]],
+    s: AlgorithmSummary,
+    algo_flow: AlgoFlowData,
+    rel: dict | None = None,
+) -> str:
+    """单模块算法详情卡片（含 ALGO_FLOW 推导流程图）。
+
+    文字卡片 + 追加 Mermaid 推导图块（§4.16 渐进式：有标记才追加）。
+    """
+    # 复用文字卡片渲染（真源/概述/算法步骤/不变量/被依赖/质量 + 上下游关联图）
+    text_card = _render_module_card_text(r, consumers, s, rel)
+    # 追加 Mermaid 推导图块
+    mermaid_block = render_algo_flow_mermaid(algo_flow)
+
+    # 断点统计（图例说明）
+    break_nodes = [n for n in algo_flow.nodes if n.is_break]
+    break_edges = [e for e in algo_flow.edges if e.is_break]
+    legend_lines = [
+        "",
+        "> **推导流程图 / ALGO_FLOW**（`# [ALGO_FLOW]` 标记自动解析，§4.16）：",
+        "> 图例：**红色虚线 + 断点标签** = 断点边（连到断点节点）｜ **黑色实线** = 正常边。",
+    ]
+    if break_nodes:
+        break_names = ", ".join(
+            f"{n.id}（{n.name_zh or n.name_en or '未命名'}）" for n in break_nodes
+        )
+        legend_lines.append(
+            f"> 断点节点 {len(break_nodes)} 个：{break_names}｜断点边 {len(break_edges)} 条。"
+        )
+    legend_lines.append("")
+    legend = "\n".join(legend_lines)
+
+    return text_card + legend + mermaid_block + "\n"
 
 
 def render_index_doc(
@@ -707,8 +1290,12 @@ def render_stage_doc(
     stage_rows: list[dict],
     edges: list[dict],
     consumers: dict[str, list[str]],
+    rel: dict | None = None,
 ) -> str:
-    """组装单个作战环节文件（stages/XX_stage.md）。"""
+    """组装单个作战环节文件（stages/XX_stage.md）。
+
+    结构：头部 + 环节总图（§4.3 节点 + §4.15 断点边，depgraph 自动派生）+ 算法详情卡片。
+    """
     ts = idempotent_timestamp(_THIS_FILE)
     zh = STAGE_ID_TO_NAME[stage_id]
     file_rel = STAGE_ID_TO_FILE[stage_id]
@@ -726,7 +1313,13 @@ def render_stage_doc(
 > **三档**：🟦运营 {op} ｜ 🟧设计 {de} ｜ ⬜缺失 {mi}
 
 """
-    body = _render_cards_by_layer(stage_rows, consumers)
+    overview = (
+        "## 环节总图（depgraph 自动派生）\n\n"
+        "> 本环节全部模块及环节内依赖关系。红色虚线+断点标签 = 对端未实现（设计态/缺失）。\n\n"
+        + render_stage_overview_mermaid(stage_rows, edges)
+        + "\n\n"
+    )
+    body = _render_cards_by_layer(stage_rows, consumers, rel)
     footer = f"""
 
 ---
@@ -734,13 +1327,14 @@ def render_stage_doc(
 > 环节 `{stage_id}`（{zh}）｜ {len(stage_rows)} 模块 ｜ 生成时间 {ts}（幂等）。
 > 跨环节模块（同时属于多个环节）在本文件中重复出现——intentional，检修时需看到该环节涉及的全部模块。
 """
-    return header + "## 算法详情\n\n" + body + footer
+    return header + overview + "## 算法详情\n\n" + body + footer
 
 
 def render_system_foundation_doc(
     unanchored_rows: list[dict],
     edges: list[dict],
     consumers: dict[str, list[str]],
+    rel: dict | None = None,
 ) -> str:
     """组装系统基础文件（system_foundation.md，未锚定模块）。"""
     ts = idempotent_timestamp(_THIS_FILE)
@@ -759,7 +1353,7 @@ def render_system_foundation_doc(
 > **三档**：🟦运营 {op} ｜ 🟧设计 {de} ｜ ⬜缺失 {mi}
 
 """
-    body = _render_cards_by_layer(unanchored_rows, consumers)
+    body = _render_cards_by_layer(unanchored_rows, consumers, rel)
     footer = f"""
 
 ---
@@ -833,6 +1427,7 @@ def main() -> None:
 
     print("[5/5] 渲染多文件输出（index + 11 stages + system_foundation）...")
     consumers = _build_consumers(edges)
+    rel = _build_rel_context(rows, edges, consumers)
     written: list[tuple[str, int]] = []
 
     # index.md
@@ -846,14 +1441,14 @@ def main() -> None:
         stage_rows = anchored_by_stage.get(stage_id, [])
         if not stage_rows:
             continue
-        stage_md = render_stage_doc(stage_id, stage_rows, edges, consumers)
+        stage_md = render_stage_doc(stage_id, stage_rows, edges, consumers, rel)
         stage_path = out_dir / STAGE_ID_TO_FILE[stage_id]
         _atomic_write(stage_path, stage_md)
         written.append((STAGE_ID_TO_FILE[stage_id], len(stage_md)))
 
     # system_foundation.md
     if unanchored_rows:
-        sf_md = render_system_foundation_doc(unanchored_rows, edges, consumers)
+        sf_md = render_system_foundation_doc(unanchored_rows, edges, consumers, rel)
         sf_path = out_dir / "system_foundation.md"
         _atomic_write(sf_path, sf_md)
         written.append(("system_foundation.md", len(sf_md)))
@@ -877,10 +1472,22 @@ def main() -> None:
             print(f"[CLEANUP] 删除过时环节文件: {rel}")
 
     print(f"\n[OK] 生成 {len(written)} 个文件：")
-    for rel, size in written:
-        print(f"  {rel:45s} {size:>8,} 字符")
+    for rel_, size in written:
+        print(f"  {rel_:45s} {size:>8,} 字符")
     total_chars = sum(s for _, s in written)
     print(f"  {'合计':45s} {total_chars:>8,} 字符")
+
+    # 联动生成可缩放 HTML（mermaid 渲染验证用，离库派生不入 git）
+    html_cnt = 0
+    for rel_, _s in written:
+        md_path = out_dir / rel_
+        try:
+            html_path = emit_zoomable_html(md_path, md_path.read_text(encoding="utf-8"))
+            if html_path is not None:
+                html_cnt += 1
+        except Exception as e:  # noqa: BLE001 — HTML 派生失败不阻断主产物
+            print(f"  [WARN] HTML 生成失败 {rel_}: {type(e).__name__}: {e}")
+    print(f"[OK] 可缩放 HTML {html_cnt} 个（{HTML_SUBDIR}/）")
 
 
 if __name__ == "__main__":
