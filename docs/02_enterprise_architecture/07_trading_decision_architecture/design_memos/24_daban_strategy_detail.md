@@ -5,8 +5,8 @@ title: 打板策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.7"
-date: 2026-08-10
+version: "1.10.0"
+date: 2026-08-12
 topic: daban_strategy_detail
 scope: 07_trading_decision_architecture
 ---
@@ -30,9 +30,50 @@ scope: 07_trading_decision_architecture
 | 所属 | 作战地图 05（BM-SEL-25 打板 sleeve） |
 | 依赖 | G04（[20_first_batch_strategies](20_first_batch_strategies.md) §2.2 打板 sleeve）、G05（信号工坊）、G21（[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 情绪周期）、G22（40_execution_broker 执行层） |
 | 对标 | 雪球炸板率统计 2026-07 / 华安证券涨停板 Alpha 2026-03 / caifuhao 连板复盘 2026-08 / IG507 涨停统计分析 2026-08 / legulegu 首封时间线性映射 2026-07 |
-| 正交 | ✅ 与 regime 正交（[28 §3.4]）：打板读情绪周期不读 regime，情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，两者正交 |
+| 正交 | ✅ 与 regime 正交（[28 §3.4](28_sentiment_cycle_trading.md) 与 regime 的正交性 + [20 §2.2](20_first_batch_strategies.md) 打板 sleeve 表）：打板读情绪周期不读 regime，情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，两者正交 |
 | 优先级 | P1（高换手、小容量、高频 alpha） |
-| 状态 | active 1.9.7（8 项讨论要点已对齐 + 12 项施工算法完整覆盖信号→定位→入场→封板→出场→风控→容量全流程 + §3.13 7项+§3.14 5项施工算法形式化 + §3.13#1 补 classify_position_status 字段填充断裂点 + §5.2 Phase 5 ML增强：Siamese LOB+Du开盘信号混合模型+QFCQT混沌门控+速度域签名封板真伪判断 + 国泰海通8/10高频因子实证背书 + 2026-08 arXiv 最新研究整合：latent regime+SaR+7-event cascade+liquidation cascade+Public Trader Identity+北大理性预期+价格笼子政策实证+Hawkes长记忆核+QLoRA情感因子负面警示+扩散价格动力学悖论） |
+| 状态 | active 1.10.0（8 项讨论要点已对齐 + 12 项施工算法完整覆盖信号→定位→入场→封板→出场→风控→容量全流程 + §3.13 7项+§3.14 5项施工算法形式化 + §3.13#1 补 classify_position_status 字段填充断裂点 + §5.2 Phase 5 ML增强：Siamese LOB+Du开盘信号混合模型+QFCQT混沌门控+速度域签名封板真伪判断 + 国泰海通8/10高频因子实证背书 + 2026-08 arXiv 最新研究整合：latent regime+SaR+7-event cascade+liquidation cascade+Public Trader Identity+北大理性预期+价格笼子政策实证+Hawkes长记忆核+QLoRA情感因子负面警示+扩散价格动力学悖论 + **§1.1 已施工设施盘点（通用规则#11）+ §3.5 两层分类法澄清/术语对齐（v1.10.0）**） |
+
+### 1.1 已施工设施盘点（通用规则 #11，2026-08-12 代码侧真源审计）
+
+> 本节盘点打板 sleeve 相关的全部已建设施（代码/测试真源，grep 级核实），作为 §3 各裁定"复用而非新建"的事实基座。✅=已落码 production，🟧=骨架/文档态未落码，⚠️=术语或分类法消歧。
+
+**① 打板信号链四引擎（`src/zephyr/signal_ashare/`，全部 production 且有测试）**
+
+| 设施 | 真源路径 | 状态 | 本文档消费点 |
+|---|---|---|---|
+| 短线选股评分卡 7 维（BM-SEL-22） | `short_term_stock_selector.py`（`score_limitup_potential`：连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度 7 维 100 分）+ `tests/signal_ashare/test_short_term_stock_selector.py` | ✅ production | §3.1 连板梯队评分基座 / §3.4 容量约束输入 |
+| 游资接力情绪引擎 6 因子+情绪周期 4+1（BM-SEL-23） | `youzi_relay_emotion_engine.py`（`YouziRelayEmotionEngine`：`score_consecutive_height`/`score_seal_quality`/`score_seal_time`/`score_open_board`/`score_auction_strength`/`score_assist_echelon` 6 因子 + `determine_emotion_phase` 阶段定位 + `map_strategy` 策略映射）+ 对应测试 | ✅ production | §3.2 情绪周期定位器（why：6 因子权重 25/20/15/15/10/10 sum=95，阶段阈值 20/40/65/85——§3.8 已裁定源码为真源） |
+| 量化短线强度引擎 6 维（BM-SEL-24） | `quant_short_term_strength_engine.py`（价格动量 Z-score/行业强度/相对强度/资金/技术/风险 6 维 + A~E 五级评级 + `StockCategory` 分类）+ 对应测试 | ✅ production | §3.3 主升龙头识别的量化引擎输入 |
+| 双引擎融合决策（BM-SEL-25） | `dual_engine_fusion_decision_engine.py`（`DualEngineFusionDecisionEngine`：`determine_adaptive_weights` 情绪周期自适应权重 5 档 + `classify_decision` + `extract_pdf_signal` 4 维 PDF 信号）+ 对应测试 | ✅ production | §3.5 双引擎融合——⚠️ production 输出为 **6 类标的分类**（主升龙头/二进三/跟风/复苏/伪强/地天反包 + NEUTRAL 兜底），基准权重**游资 60%/量化 40%**，与 battle_map BM-SEL-25 一致；见下方消歧④ |
+
+**② 打板支撑设施（执行/资金/风控/合规）**
+
+| 设施 | 真源路径 | 状态 | 本文档消费点 |
+|---|---|---|---|
+| T+1 现金结算 | `src/zephyr/position/core/cash_manager.py`（POS-06：`available_cash = total_cash - pending_settlement`，卖出 T+1 结算次日释放） | ✅ production | §3.7 T+1 时序（why：T+1 结算是打板"次日才能卖"的资金面硬约束实现） |
+| 单票仓位上限 | `src/zephyr/position/core/position_sizing_engine.py`（C12 ≤5% NAV） | ✅ production | §2.3 约束条件 / §5.1 系统上限 |
+| 账户级回撤 Protocol | `src/zephyr/position/core/drawdown_controller.py` + `src/zephyr/risk/core/drawdown_tracker.py` / `var_calculator.py` + kill_switch 系列 | ✅ production（[30 §2.5]） | §3.6 第二层风控（why：打板波动远大于多因子，账户级四级回撤+Kill Switch 是生存红线） |
+| firm 层 budget 裁剪 | `src/zephyr/position/core/budget_change_handler.py`（MOD-POS-022） | 🟧 骨架待填充（§6 已登记） | §3.6 第三层风控 |
+| 程序化交易合规 | `src/zephyr/ex_core/cancel_rate_guard.py`（撤单率滚动监控 ≤15%）+ `price_cage.py`（价格笼子） | ✅ production（[40号](40_execution_broker.md) v2.6.0 已闭合） | §3.7 2026 程序化新规约束 |
+| 执行层（G22） | `src/zephyr/ex_core/execution_engine.py` / `order_execution_saga.py` / `fill_handler.py` 等 | ✅ production | §3.13#4 分笔建仓依赖 / §3.14#11 打板时点决策落地层 |
+| 板块/资金/机构行为分析 | `sector_analyzer.py` / `capital_flow_pattern_analyzer.py` / `institutional_behavior_analyzer.py` / `market_sentiment_analyzer.py` / `intraday_buy_sell_point_analyzer.py`（均 signal_ashare/） | ✅ production | §3.1 梯队板块共振 / §3.3 资金引擎 / §3.14#8 前置质量评估的数据源 |
+
+**③ 文档态形式化算法（🟧 全部未落码——2026-08-12 grep 全 `src/` 零命中，属"文档已定型、代码待施工"）**
+
+| 算法 | 文档位置 | 施工时点 |
+|---|---|---|
+| §3.13 七项：NextDayExitDecision（含 classify_position_status）/ DabanInstantCircuitBreaker / classify_decision_v192（第7类 REFLUSH_DIVE）/ DabanExecutionAlgorithm / get_dragon_tiger_pit / SignalDecayMonitor / reflush_next_day_exit_decision | §3.13 | 首批实盘前必做（#1/#2/#5）/ Phase 3-5（其余） |
+| §3.14 五项：pre_validate_daban_signal / HoldingPeriodMicrostructureMonitor / DabanPITBacktestFramework / DabanTimingDecision / DynamicCapacityCalculator | §3.14 | 首批实盘/回测前必做（#8/#9/#10）/ Phase 3（#11/#12） |
+| v1.5.0~v1.9.0 增补具名函数：classify_echelon_health / score_consecutive_height_with_death_pool / score_auction_3d / detect_auction_paper_tiger / score_seal_structure / forecast_next_day_premium / classify_reflush_board / detect_quant_seat_warning | §3.1/§3.9/§3.11 | 同上——§6 待裁定表"已补"指**文档算法补全**，非代码已 production，阅读时勿误读 |
+
+**④ ⚠️ 术语与分类法消歧**
+
+1. **引擎命名**：本文 §3.5 原表述"情绪引擎/技术引擎"= battle_map 与源码的"**游资情绪引擎**（BM-SEL-23）/**量化强度引擎**（BM-SEL-24）"。v1.10.0 起正文统一用 battle_map canonical 名。
+2. **决策分类法两层架构**：battle_map BM-SEL-25 与 production `classify_decision` 输出 **6 类标的分类**（主升龙头/二进三/跟风/复苏/伪强/地天反包）；本文 §3.5 表的 7 类（BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT）是**交易动作层**分类法（标的分类→买卖动作的映射），其中第 7 类 REFLUSH_DIVE 为 v1.9.2 设计态新增、代码未落。v1.8.2 修订记录中"伪代码修正为多维条件版匹配 production `classify_decision`"的表述**不准确**——两者分类语义不同层，不存在逐行匹配关系；v1.10.0 已修正 §3.5 表述。两层映射的最终统一裁定见 §6 待裁定新增条目。
+3. **正交引用**：[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 已于 2026-08-12 填充定型（active 1.0.0，commit `0db887c9e7`，按引用方锚点重建），本文 `[28 §x.x]` 前向引用已全部落地——§3.2 5 阶段买卖纪律 / §3.4 与 regime 的正交性 / §3.5 退潮加权机制（§6 待裁定对应行已核销）。
+
+**盘点结论**：打板 sleeve 的信号识别链（BM-SEL-22→23→24→25）四引擎与支撑设施（T+1 结算/仓位上限/回撤 Protocol/程序化合规/执行层）**全部 production 且有测试**，这是 §3.1-3.7 各裁定"复用已建打板链"的事实基座。未落码的是 v1.9.2/v1.9.3 两轮施工算法审查补全的 12 项形式化算法 + 8 个具名函数——它们是从"信号→定位→入场→封板→出场→风控→容量"全流程的断裂点补全，施工时点已在 §6 逐条登记（首批实盘前/Phase 3/Phase 5）。**先清楚有什么 → 才能知道怎么改 → 才知道该退役什么**：当前无需退役项。
 
 ## 2. 背景
 
@@ -88,6 +129,8 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 **炸板率板块地位分层**（v1.9.0 补）：龙头 8% / 跟风 32% / 孤板 58%（7 倍差距，caifuhao 2026-08-02 复盘1200只）。修正系数：龙头 ×1.2/跟风 ×1.0/孤板 ×0.5。
 
+> **独立印证（v1.10.0 补）**：雪球 2026-02-25《A股打板开板率深度量化分析》（2021-2025 全市场回测）给出**完全相同的三层数字**——龙头 8%/跟风 32%/孤板 58%，并补板型分层：一字缩量板 8%（散户买不到，买到即炸板节点，当日回撤普遍>10%）/ 6板+ 12% / 3-5板中位 18% / 2板 21% / 首板 26% / 尾盘偷袭板（14:30后）52%；炸板口径区分"临时开板（回封不计入）vs 有效开板（未回封才计入）"。两套独立数据源同值互证，§3.1 分层可信。另：一字龙"零换手买不到"特性已被 §3.4 C9 换手率 3-15% 隐式拒入（一字板换手≈0），无需新增板型。
+
 **分级梯队晋级率**（v1.7.0 补）：1进2 ~50% / 2进3 ~30% / 3进4 ~15% / 4进5 ~0%（退潮前兆）。
 
 **中位股死亡池**（`score_consecutive_height_with_death_pool`，v1.5.0 补）：梯队断层/孤龙时 3-4 板扣 40/30 分，完美梯队维持原评分。
@@ -129,21 +172,25 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 ### 3.5 讨论要点⑤：双引擎融合在此策略内部
 
-**裁定**：60/40 基准（情绪引擎60%+技术引擎40%）+ 情绪周期自适应，7 类决策（v1.9.2 补第7类 REFLUSH_DIVE）。`dual_engine_fusion_decision_engine.py`（BM-SEL-25）已 production。
+**裁定**：60/40 基准（**游资情绪引擎 60% + 量化强度引擎 40%**，即 BM-SEL-23/BM-SEL-24 双引擎）+ 情绪周期自适应（冰点量化 70% / 主升游资 70% / 退潮量化 60% 等 5 档，`determine_adaptive_weights`）。`dual_engine_fusion_decision_engine.py`（BM-SEL-25）已 production。
 
-**v1.8.2 伪代码-源码同步修正**：v1.8.1 文档伪代码为简化单阈值版，v1.8.2 修正为多维条件版匹配 production `classify_decision`。
+**两层分类法架构（v1.10.0 澄清，修正 v1.8.2 不实同步声明）**：
 
-**7 类决策**（v1.9.2 补第7类）：
+- **第一层：6 类标的分类（production 已实现）**——`classify_decision` 输出 主升龙头/二进三/跟风/复苏/伪强/地天反包（+NEUTRAL 兜底），与 battle_map BM-SEL-25-C 一致。这是"标的角色"判定。
+- **第二层：7 类交易动作（本文档设计态，代码未落）**——下表 BOARD/CONTINUE/INVERSE_BOARD/REFLUSH_DIVE/WATCH/REJECT/WAIT 是"标的角色→打板 sleeve 买卖动作"的 sleeve 内映射层，其中第 7 类 REFLUSH_DIVE 为 v1.9.2 新增（§3.13 缺失#3）。
+- **v1.8.2 声明修正**：v1.8.2 修订记录称"伪代码修正为多维条件版匹配 production `classify_decision`"——经 2026-08-12 代码侧审计，两者分类语义不同层（标的分类 vs 交易动作），不存在逐行匹配关系，该声明不准确。两层映射的统一裁定（动作层是否吸收进 production 引擎）见 §6 待裁定新增条目。
 
-| 决策 | 条件 | 动作 |
+**7 类交易动作决策**（v1.9.2 补第7类，设计态伪代码见 §3.13 缺失#3 `classify_decision_v192`）：
+
+| 决策 | 条件（游资=游资情绪引擎分，量化=量化强度引擎分） | 动作 |
 |---|---|---|
-| BOARD | 情绪≥阈值+技术≥60（主升/疯狂） | 打板买入 |
-| CONTINUE | 情绪≥阈值×0.8+技术≥70 | 持仓续板 |
-| INVERSE_BOARD | 情绪≥60+技术≥75 | 地天反包（非反核） |
-| REFLUSH_DIVE | 冰点/反核+跌停板反抽+情绪≥40+技术≥60 | **反核入场**（v1.9.2 补） |
-| WATCH | 情绪≥40+技术≥50 | 观望 |
+| BOARD | 游资≥阈值+量化≥60（主升/疯狂） | 打板买入 |
+| CONTINUE | 游资≥阈值×0.8+量化≥70 | 持仓续板 |
+| INVERSE_BOARD | 游资≥60+量化≥75 | 地天反包（非反核） |
+| REFLUSH_DIVE | 冰点/反核+跌停板反抽+游资≥40+量化≥60 | **反核入场**（v1.9.2 补） |
+| WATCH | 游资≥40+量化≥50 | 观望 |
 | REJECT | 默认 | 否决 |
-| WAIT | 情绪<20 | 冰点等待 |
+| WAIT | 游资<20 | 冰点等待 |
 
 > **§3.13 缺失#3 补充**：第7类 REFLUSH_DIVE + 情绪周期门控切换——主升/疯狂→打板路径，冰点/反核→反核路径。
 
@@ -896,6 +943,11 @@ class DynamicCapacityCalculator:
 | ✅QLoRA 情感因子负面结果警示 | §6 v1.9.5补 arXiv:2608.04200 | 情感因子需经济验证非语言学指标 |
 | ✅速度域签名封板真伪判断 | §5.2 Phase 5 v1.9.7补 arXiv:2608.05373 | 速度域优于水平域，填补盘中封板质量评估缺口 |
 | ✅扩散价格动力学悖论 | §3.13#4 理论背书 v1.9.7补 arXiv:2608.00988 | 拆单不泄露信息的精确理论依据 |
+| 双引擎两层分类法统一裁定 | §3.5 v1.10.0 澄清：production 6 类标的分类 vs 本文档 7 类交易动作不同层 | 首批实盘前裁定——动作层是否吸收进 `dual_engine_fusion_decision_engine.py`（落码 REFLUSH_DIVE 时一并处理） |
+| ✅28 号前向引用落地 | 28 号 2026-08-12 已填充定型（active 1.0.0，commit `0db887c9e7`），本文 [28 §3.2/3.4/3.5] 引用核对存在 | 已核销（v1.10.0 复核） |
+| 42 号时间止损口径校准 | [42 §3.2] 打板时间止损 1-2 天 vs 本文 §3.13#1 `max_holding_days=3`（§2.3 持仓周期 1-3 天） | 首批策略回测时统一（42 号侧亦标"待 G04 校准"，属跨文档校准项，不擅自改） |
+| battle_map BM-SEL-23-A-6 修正 | §3.8 已裁定源码 10 分/sum 95 为真源，battle_map 仍写 15 分 | reconciler fix-in-place（他文档，不越界改） |
+| C9 换手率按流通盘分层校准 | §3.4 C9 当前单一区间 3%-15%；雪球 2026-02-25 给出分层最优：50亿下 8-15%（炸板率12%）/ 50-200亿 5-10%（10%）/ 200亿上 3-6%（8%），且缩量加速板（<前日50%换手）炸板率翻倍 | 首批策略回测时用项目自有数据验证分层区间后修订 C9 |
 
 ## 7. 待定问题（讨论要点）
 
@@ -940,3 +992,4 @@ class DynamicCapacityCalculator:
 | 2026-08-10 | 1.9.5 | **第五轮最新研究整合——Phase 5 ML架构+封单动力学+情感因子警示**：§5.2 Phase 5 补 QFCQT 混沌门控 Quantformer（arXiv:2608.07363 A股股指直接测试，Lee振荡器+平滑-混沌门控融合，高波动场景MSE相对HAT提升43.9%，适合情绪周期突变检测，远期ML架构候选）。§3.13#4 DabanExecution 理论背书补 Hawkes 长记忆核（arXiv:2608.02002 Volterra-Riccati近似，封单Hawkes动力学一般核建模，与arXiv:2607.28323 Passive Impact同作者，补充长记忆衰减）。§6 待裁定补 QLoRA情感因子负面结果警示（arXiv:2608.04200：28个模型-期限组合Newey-West+FDR校正后无一显著，情感分类准≠可交易，A股情感因子需经济验证非语言学指标）。12项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
 | 2026-08-10 | 1.9.6 | **第六轮字段填充断裂点审查——§3.13#1 NextDayExitDecision 补 classify_position_status() 方法**：decide() 依赖 consecutive_board（连板晋级）和 exploded（炸板）两字段但此前无填充算法。本方法形式化：①连板晋级判断=T+1日涨停收盘+封单存在(封流比>0.1%)+梯队非孤板(LONE_DRAGON/COLLAPSE排除) ②炸板判断=T+1日盘中触及涨停(最高价≥涨停价×0.999)但未封住(收盘<涨停价)。与§3.1 classify_echelon_health联动(梯队健康度影响晋级有效性)+§3.13#2 DabanInstantCircuitBreaker联动(炸板触发瞬时风控)。延续轻量优先+不替换已定决策原则 |
 | 2026-08-10 | 1.9.7 | **第七轮最新研究整合——速度域签名封板真伪判断+扩散价格动力学悖论**：§5.2 Phase 5 补速度域签名封板真伪判断（arXiv:2608.05373 Chen&Hybinette 2026-08-05，速度而非水平域检测pump-and-crash，price velocity签名区分"真封板"vs"诱多封"，HMM regime条件检测+SHAP可解释归因，印度BANKNIFTY 10/10操纵日恢复+AUC=0.91，A股连板炸板率70%环境下速度签名比传统封单量/换手率水平指标更鲁棒，填补"盘中封板质量实时评估"缺口。负面结果启示：HMM regime用于条件检测是用召回率换精确率，单纯状态划分不够需结合速度签名条件触发）。§3.13#4 DabanExecution理论背书补扩散价格动力学悖论（arXiv:2608.00988 Sato et al. 2026-08-02，平方根冲击律+Lévy-walk框架精确可解，严格证明可预测订单流下价格仍扩散=拆单不泄露信息，为批量入场拆单提供理论依据）。12项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
+| 2026-08-12 | 1.10.0 | **第八轮架构审查（通用规则#11 设施盘点+文档-代码一致性修正+2026-08 最新研究对照）**：①新增 §1.1「已施工设施盘点」——grep 级代码侧真源审计：打板信号链四引擎（short_term_stock_selector/youzi_relay_emotion_engine/quant_short_term_strength_engine/dual_engine_fusion_decision_engine）+支撑设施（cash_manager/position_sizing_engine/drawdown_controller/cancel_rate_guard/price_cage/ex_core）全部 production 且有测试；明确 §3.13/§3.14 十二项形式化算法与 v1.5.0~v1.9.0 八个具名函数（classify_echelon_health/score_auction_3d 等）**全部未落码**（文档已定型、代码待施工），消除"已补=已 production"误读。②§3.5 修正——术语对齐 battle_map canonical 名（游资情绪引擎/量化强度引擎，替换情绪/技术引擎）；澄清两层分类法架构（production 6 类标的分类 vs 本文 7 类交易动作映射层）；**修正 v1.8.2"伪代码匹配 production classify_decision"不实声明**（两者分类语义不同层）。③§1 正交行引用修正——审查时 [28 §3.4] 悬空（28 号骨架），先改指 [20 §2.2] 真源；审查期间 28 号填充定型（active 1.0.0），最终恢复 [28 §3.4] 为主引用 + [20 §2.2] 互证。④§3.1 炸板率分层补雪球 2026-02-25 独立印证（龙头8%/跟风32%/孤板58% 两源同值互证 + 板型分层 + 一字龙已被 C9 隐式拒入）。⑤§6 待裁定新增 5 条：两层分类法统一裁定/28 号前向引用回填/42 号时间止损口径（1-2天 vs max_holding_days=3）校准/battle_map BM-SEL-23-A-6 15分修正/C9 换手率按流通盘分层校准（雪球分层最优区间，首批回测验证后修订）。⑥28 号同步——28 号 2026-08-12 已填充定型（active 1.0.0），§1 正交行恢复 [28 §3.4] 为主引用 + §6 对应待裁定行核销。延续轻量优先+不替换已定决策原则 |

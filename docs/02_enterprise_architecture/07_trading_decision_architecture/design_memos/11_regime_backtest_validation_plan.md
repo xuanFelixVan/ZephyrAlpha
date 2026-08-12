@@ -5,9 +5,9 @@ title: regime 检测器回测验证方案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.2"
+version: "1.6.0"
 date: 2026-08-06
-last_updated: 2026-08-08
+last_updated: 2026-08-12
 topic: regime_backtest_validation_plan
 scope: 07_trading_decision_architecture
 parent: 10_regime_detector_spec.md
@@ -15,7 +15,7 @@ parent: 10_regime_detector_spec.md
 
 # regime 检测器回测验证方案
 
-> 本文档定义 regime 检测器（10_regime_detector_spec v1.3.1 spec）的回测验证方案。
+> 本文档定义 regime 检测器（[10_regime_detector_spec.md](10_regime_detector_spec.md) spec）的回测验证方案。
 > 性质：**已定稿（v1.0.0，2026-08-06），交接给施工对话作为模块实现的验收指南**。等 regime 检测器骨架+实现就绪后，按本方案执行回测验证。
 > 关联：[10_regime_detector_spec.md](10_regime_detector_spec.md)（regime spec 真源）｜ [battle_map_03_backtest_validation.md](../battle_map/battle_map_03_backtest_validation.md)（现有回测框架）
 >
@@ -35,8 +35,8 @@ parent: 10_regime_detector_spec.md
 | **Phase 0** | regime 检测器实现（HMM 9态 + D-SIGNAL-68 + Shrinkage） | ✅ 完成（**4 态非 9 态**） | `regime_detector.py` 618 行 + `regime_feature_builder.py` + features/* |
 | **Phase 1** | C1 开/关对比（核心一票否决） | ✅ 完成 — **四项全通过** | `c1_comparator.py` + `c1_runner.py` + `shrinkage_engine.py` |
 | **Phase 2** | A1/A2/B1/B4 模型质量 | ✅ 完成 — **四项全 PASS** | `phase2/` 4 验证器 + `confidence_calibrator.py` |
-| **Phase 3** | D1-D4 参数阈值校准 | 🟧 部分完成 — D2/D4 完成，D1 部分，D3 未验证 | A2/A3 升级验证覆盖 D2/D4 |
-| **Phase 4** | E1-E4 鲁棒性 | 🟧 部分完成 — E1 walk-forward 已实现，E2/E3/E4 未验证 | `_smoke_walkforward.py` |
+| **Phase 3** | D1-D4 参数阈值校准 | 🟧 部分完成 — D2/D4 完成，D1 部分，D3 未验证（13号 P1 数据层 2026-08-12 已全部完成：T3 激活 ✅ + NLP 关键词 MVP 数据层 ✅；S2 算法重设计 P1-E9 未施工，见 §0.5.4 B4-S2 同步） | A2/A3 升级验证覆盖 D2/D4 |
+| **Phase 4** | E1-E4 鲁棒性 | 🟧 部分完成 — E1 walk-forward 已实现，E2/E3/E4 未验证 | `scripts/tests/_smoke_walkforward.py` |
 | **Phase 5** | 决策门控（BM-BT-07） | ❌ 未完成 | — |
 | A3/A4/B2/B3/C2/C3/C4 | 未明确归入 Phase | 🟧/❌ 多数未完成 | A3 部分覆盖，其余未实现 |
 
@@ -103,7 +103,8 @@ src/zephyr/backtest/
 #### C1 开/关对比（Phase 1，核心一票否决）— ✅ 四项全通过
 
 > 数据：10 大盘股 2015-01-01~2026-06-30，walk-forward 46 季度 HMM refit，1886 万行 ClickHouse
-> 报告：`logs/c1_repro/c1_repro_report.md` + `c1_metrics.json`
+> 施工 commit：`852457e9`（feat(regime): Phase 1b C1 验证施工——特征管道/Shrinkage接入/对比器 三模块落地）
+> 报告：`logs/c1_repro/c1_repro_report.md` + `c1_metrics.json`（⚠️ logs/ 为运行时派生产物、不入 git，可随时由 `scripts/tests/run_c1_shrinkage_validation.py` + `dump_c1_repro_artifacts.py` 重跑复现；**耐久证据 = 下方 ARCH 注册表条目 + 本节结果表**）
 > ARCH：#ARCH-REGIME-VALIDATION-001 + #ARCH-REGIME-C1-RUNNER-001
 
 | 指标 | 关（基准） | 开（实验） | 门槛 | 判定 |
@@ -118,14 +119,17 @@ src/zephyr/backtest/
 #### Phase 2 模型质量 — ✅ 四项全 PASS
 
 > ARCH：#ARCH-REGIME-FEATURE-BUILDER-001 + #ARCH-CALIBRATOR-001 + #ARCH-REGIME-OVERLAY-001 + #ARCH-REGIME-CONFIDENCE-FIX-001
-> 报告：`logs/c1_repro/a2_a3_validation_report.md`
+> 闭环 commit：`0c5ea28bb1` / `83c94c4f` / `e4fd931a`（见 [13_regime_phase3_engineering_plan](13_regime_phase3_engineering_plan.md) §1）
+> 报告：`logs/c1_repro/a2_a3_validation_report.md`（⚠️ 同上，ephemeral 派生产物，耐久证据 = ARCH 条目 + 本节结果表）
 
 | 验证项 | 结果 | 关键指标 | 门槛 |
 |---|---|---|---|
 | **A1 样本充足性** | ✅ PASS | 3733 样本，4 态最少 r3=555 天 | ≥50 天/态 |
 | **A2 HMM 过拟合** | ✅ PASS | OOS/IS=1.042，KL=13.05（9态时仅0.340） | OOS/IS≥0.7 |
 | **B1 概率校准度** | ✅ PASS | ECE=4.2%，60-80%桶 n=221 误差 3.7% | 校准误差<10% |
-| **B4 转换触发准确性** | ✅ PASS | S1 3/3 命中；S2 data_ready=False 不计分母（需NLP+high/low） | ≥6/8 事件吻合 |
+| **B4 转换触发准确性** | ✅ PASS | S1 3/3 命中；S2 data_ready=False 不计分母 | ≥6/8 事件吻合 |
+
+> **B4-S2 状态同步（2026-08-12，v1.6.0 补）**：S2 未激活的根因经 [14 号](14_regime_s2_diagnosis.md) 诊断为**算法时点错配**（非单纯数据缺失）。当前 NLP 关键词 MVP 数据层（bad_news_flat/policy 指标）已完成，T3 资金主线已激活（[13号](13_regime_phase3_engineering_plan.md) P1-E4/E5 ✅）；**剩余阻塞项 = P1-E9 S2 评分算法重设计**（14 号 v0.4.5 详设已就绪、未施工）。原"需NLP+high/low"表述据此修正——high/low 缺失影响的是 RiskSignal #9 KDJ 降级（§0.5.5），与 S2 阻塞项不同。
 
 **B1 校准器**（#ARCH-CALIBRATOR-001）：两阶段——Stage 1 Temperature Scaling（全局降温）+ Stage 2 Isotonic Regression（局部修正），四级降级（full→temperature-only→isotonic-only→identity），仅对 HMM 基态生效，PIT 防泄漏。
 
@@ -283,6 +287,8 @@ src/zephyr/backtest/
 | algovantis（2026-04） | Stationary Bootstrap / Purged k-fold | 随机块长保平稳性 |
 | trendsandbreakouts VIX-Regime（2026-05） | regime 仓位缩放 | = 我们的 Shrinkage |
 | Dheur 博士论文（2025-12） | post-hoc 校准 | post-hoc 一致优于内嵌 |
+| rpubs/Majumder HMM walk-forward（2026-04，SPY 2态20年） | 训练窗口+信号离散化是一阶设计决策 | **expanding 窗口+硬切换 OOS 失败**（仅 ~20% 时间持仓）；rolling 窗口+后验概率软仓位纠正——直接背书本项目 train_years=5 rolling + Shrinkage 软缩放（非硬切换）设计（v1.6.0 补） |
+| Pagliaro《Regime-Aware LightGBM》Electronics MDPI（2026-03，NASDAQ-100 2015-2026） | walk-forward 100 folds + 10日 purge（=预测期限）+ per-fold scaler + block bootstrap 10,000×(b=20) + DSR | purge/per-fold scaler 与本案 PIT+季度 refit 实践一致；**DSR=0.69 多重检验后不显著的诚实负面结果**——强化 C4 Deflated Sharpe 必跑论点（v1.6.0 补） |
 
 ### 0.6.6 补充发现：HMM 引擎升级路径（2026-08 二次搜索）
 
@@ -682,6 +688,13 @@ regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = Confidence
 - **关注点**：实际转移频率是否符合 spec 预期（如 CRISIS→RECOVERY 是否高频，Bull-Low→Bull-High 是否罕见）
 - **判定**：spec 定义的转移路径覆盖实际转移的 ≥ 80%
 
+#### A4 特征重要性（v1.6.0 补方法定义——原方案只有验证项无方法节）
+
+- **方法**：双轨制（§0.6.6 升级路径 3 裁定）——①**Permutation Importance 主轨**：在 walk-forward 各季度窗口内对 6 维 HMM 特征（F1/F2a/F2b/F3/F4/F5）做滚动排列重要性（严格按滚动窗口防 look-ahead，禁全样本洗牌）；②**SHAP 审计轨**：仅作 concept drift 监控工具，不作因果证明（mental-momentum 2026-06 警示：SHAP 测相关性非因果性；相关特征需 Group Shapley 防归因稀释）
+- **关注点**：①特征排名跨 46 季度窗口是否稳定（真实驱动 vs 窗口噪声）；②是否复现 mathandmarkets 2026-01"特征>模型"论断（realized_vol 类波动率特征应居首，其单特征重要性 ~28%）
+- **判定**：top-2 特征在 ≥70% 季度窗口内保持 top-2（排名稳定）；无任何特征重要性长期 <1%（存在则入 D 类降维候选）
+- **远期升级**：Feature Saliency HMM（EM 训练中学习 state-discriminating 特征，第一性原理方案）——优先级 4，见 §0.6.6
+
 ### 4.2 B 类：概率分布质量
 
 #### B1 概率校准度（可靠性曲线）
@@ -696,6 +709,13 @@ regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = Confidence
 - **方法**：算 regime 概率分布的 CRPS（Continuous Ranked Probability Score），对比 climatology 基准（长期平均频率）
 - **判定**：CRPS < climatology CRPS（比"永远预测平均频率"好）
 - **对接**：BM-BT-03-E
+
+#### B3 置信度合理性（v1.6.0 补方法定义——原方案只有验证项无方法节）
+
+- **方法**：统计 walk-forward 全区间 max(P)（最高态概率）的分布——均值/中位数/分位数（P10/P25/P50/P75/P90）+ 四档桶（<60%/60-80%/80-95%/>95%）天数占比，对照 ConfidenceSignal 四档映射（<60%→0.3 / 60-80%→0.6 / 80-95%→0.85 / >95%→1.0）检查档位利用率
+- **关注点**：①是否长期低置信度（max(P)<60% 天数占比过高 → Shrinkage 一直强收缩 0.3，等效长期空仓，节流器变急停器）；②是否长期高置信度（>95% 占比过高 → ConfidenceSignal 形同虚设，校准器可能过度自信）
+- **判定**：max(P)<60% 天数占比 < 40%（非长期强收缩）且 >95% 天数占比 < 50%（非长期虚设）；四档均有实际使用（无死档）
+- **对接**：BM-BT-03-E 密度预测验证（新建分析器）
 
 #### B4 转换触发准确性
 
@@ -738,6 +758,13 @@ regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = Confidence
 - **关注点**：CRISIS 触发时 Shrinkage 是否及时收缩？保护了多少回撤？
 - **判定**：CRISIS 时段 MaxDD 改善 ≥ 5 个百分点
 
+#### C3 节流归因（v1.6.0 补方法定义——原方案只有验证项无方法节）
+
+- **方法**：对 C1 实验组（开）回测做逐日归因——按 Viterbi 主导态（r1-r4）+ overlay 态（CRISIS/RECOVERY/BREAKOUT）分组，统计各态：①天数占比；②平均 Shrinkage 值；③该态期间的组合日收益贡献与回撤贡献（对比基准组同时段）；④MaxDD 改善的态分解（哪个态贡献了 7.4pp 改善的多大份额）
+- **关注点**：节流收益是否来自预期的防御态——r4 熊市阴跌 + CRISIS 应贡献 MaxDD 改善的主体（>60%）；若改善主要来自 r3 牛市态则说明收缩方向错误（该收缩时没缩、不该缩时乱缩）
+- **判定**：r4+CRISIS 两态贡献 MaxDD 改善 ≥ 60%；r3 牛市态平均 Shrinkage ≥ 0.85（牛市基本不缩）
+- **对接**：新建分析器（基于 C1 既有回测产物，零新回测成本）
+
 #### C4 统计显著性（block-bootstrap）
 
 - **方法**：block-bootstrap 2000×（21-day blocks，对照 Morwane），算 Shrinkage 效果的置信区间
@@ -759,8 +786,9 @@ regime 检测器输出 12 维灰度概率分布，驱动 `Shrinkage = Confidence
 #### E1 Walk-Forward
 
 - **方法**：季度重拟合 HMM（对照 Morwane），滚动窗口跑 2015-2026，统计各窗口 OOS 的 Shrinkage 效果
+- **production 窗口/频率参数**（v1.6.0 回填，`regime_feature_builder.py::build_shrinkage_schedule` 真源）：训练窗口 `train_years=5`（每季度边界 q 用 [q−5年, q] 拟合）/ 重拟合频率 `refit_freq="QE"`（季末锚点，2015-2026 共 46 个季度边界）/ detect 用 trailing `detect_window=60` 日特征窗口（给 HMM 序列上下文）/ PIT 保证 = 特征 `shift(1)`（t 日决策只用 ≤t−1 特征）
 - **判定**：各窗口 MaxDD 改善的变异系数（CV）< 0.5（稳定）
-- **对接**：BM-BT-06 Walk-Forward
+- **对接**：BM-BT-06 Walk-Forward（`src/zephyr/backtest/core/walk_forward.py`）
 
 #### E4 交易成本敏感性
 
@@ -895,6 +923,17 @@ Phase 5：决策门控（对接 BM-BT-07）
 
 > **与另一个 AI 施工对话的协调**（2026-08-06）：另一对话正在落盘 4 个多策略模块 blueprint（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator/BudgetChangeHandler）+ regime 检测器 blueprint + 代码骨架。本验证方案（11_regime_backtest_validation_plan）是这些模块的"验收指南"——等骨架就绪后，按本方案执行回测验证。另一对话施工时应参考本方案 §4，确保 regime 检测器接口满足验证需求（输出概率分布供 CRPS、可开关 Shrinkage 供 C1 对比）。
 
+## 10.5 待裁定与开放问题（2026-08-12 v1.6.0 补，规范 §4.4 硬约束#2）
+
+> 以下事项需用户决策，AI 不擅自定夺。§0.5.7 待完成项表是"验证项缺口"清单，本节是"需人拍板"清单。
+
+| # | 待裁定项 | 背景 | AI 建议（非裁定） |
+|---|---|---|---|
+| 1 | Phase 3-5 剩余验证是否继续推进 | §0.5.7 列 15 项缺口（D1/D3/E1正式统计/E2/E3/E4/A3正式统计/A4/B2/B3/C2/C3/C4/Phase 5）；§0.6.4 已给施工优先级建议（C4 零开发立跑 → E2/E3/E4 → Conformal/CPCV → D1/D3/C2/C3/Phase 5） | 按 §0.6.4 优先级 1-2 先行（C4 Deflated Sharpe 零开发 + E2 stationary bootstrap + E3/E4 敏感性），优先级 3-4 待首批策略回测资源排期 |
+| 2 | 13 条升级路径是否采纳 | §0.6.6-0.6.10 五轮搜索产出 13 条升级路径（层次 HMM/TVTP/Shannon entropy/Staggered bounds/BOCPD/Wasserstein HMM/Student-t 发射/Feature Saliency/动态调制矩阵/RARP/regime-conditional/NLP-regime 连接/Causal-TS），全部标"备查"未裁定 | NLP→regime 连接（§0.6.10 发现 1，连接现有组件零新算法）与层次 HMM（伪转移 -28.6%）价值最高；其余维持备查 |
+| 3 | A4/B3/C3 方法阈值确认 | v1.6.0 补的三项验证方法（§4.1 A4 / §4.2 B3 / §4.3 C3）判定阈值为 AI 首版设定（top-2 稳定 ≥70% 窗口 / 低置信占比 <40% / r4+CRISIS 贡献 ≥60%） | 执行首批验证后按实测分布校准阈值 |
+| 4 | 验证报告持久化方式 | logs/c1_repro/ 为 ephemeral 派生产物（不入 git，符合派生产物禁令）；当前耐久证据 = ARCH 注册表条目 + §0.5.4 结果表 | 维持现状（ARCH+文档表），如需更长审计链可将 c1_metrics.json 摘要登记 experiment_registry |
+
 ## 11. 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
@@ -909,3 +948,4 @@ Phase 5：决策门控（对接 BM-BT-07）
 | 2026-08-08 | 1.5.0 | 新增 §0.6.10 第五轮发现（NLP情感→regime最关键缺失——FinBERT比纯时序+73%准确率/+110% F1；Bloomberg Causal-TS因果发现；Autoencoder+RL自适应阈值）；§0.6.11 五轮总结论；升级路径从11条增至13条 | 用户要求第五轮审查；NLP-regime连接是五轮中最可操作的发现（连接现有组件即可，不需新算法） |
 | 2026-08-09 | 1.5.1 | 文件名 discussion_002_regime_backtest_validation_plan.md → 11_regime_backtest_validation_plan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 1.5.2 | 文档头统一：frontmatter 补 title/owner/language，H1 去"讨论文档·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
+| 2026-08-12 | 1.6.0 | ①§0.5.4 回填施工 commit 溯源（C1=`852457e9`，Phase 2 闭环=`0c5ea28bb1`/`83c94c4f`/`e4fd931a`）+ 标注 logs/c1_repro/ 为 ephemeral 派生产物（耐久证据=ARCH 注册表+文档结果表）；②§0.5.4 B4-S2 状态同步 13/14 号最新诊断（S2 根因=算法时点错配，NLP 关键词 MVP 数据层已完成，剩余阻塞=P1-E9 S2 算法重设计）；③§0.5.1 Phase 3/4 行同步 13 号 2026-08-12 P1 数据层完成状态 + `_smoke_walkforward.py` 全路径；④§4.1 A4/§4.2 B3/§4.3 C3 补验证方法节（原方案三项只有验证项清单无方法/判定阈值）；⑤§4.5 E1 回填 production walk-forward 参数（train_years=5/refit QE/detect_window=60/shift(1) PIT）；⑥新增 §10.5 待裁定与开放问题（规范 §4.4 硬约束#2：Phase 3-5 推进/13 条升级路径采纳/新阈值确认/报告持久化 4 项待用户拍板）；⑦文头去 10 号 stale 版本钉（v1.3.1→稳定 path 引用）；⑧§0.6.5 研究来源索引补 2026 新证据（rpubs 2026-04 rolling窗口+软仓位背书本案设计；Pagliaro MDPI 2026-03 purge/per-fold scaler 一致+DSR 负面结果强化 C4 必跑） | 第八轮架构审查：验收指南与实际执行溯源对齐 + 缺失验证方法补全 + 规范硬约束补齐 + 2026-08 最新研究对照 |
