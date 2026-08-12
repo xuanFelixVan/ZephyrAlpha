@@ -5,7 +5,7 @@ title: 模拟与实盘验证路径
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.3"
+version: "1.7.4"
 date: 2026-08-12
 topic: simulation_live_path
 scope: 07_trading_decision_architecture
@@ -117,6 +117,8 @@ scope: 07_trading_decision_architecture
 | ③ 滑点建模 | 决策价 → 成交价加滑点：linear/square-root/Almgren-Chriss 模型；参与率 > 5% 触发冲击成本非线性放大 | A 股小盘股 5% 滑点（[BigQuant 2026-03](https://bigquant.com/wiki/doc/muD2XDiJRG) 实证）须建模 | `ex_sor/slippage_analyzer`（BM-BT-05-H-A） |
 | ④ 佣金/印花税/过户费 | 佣金 ≤ 0.03%（双边）/ 印花税 0.05%（卖单）/ 过户费 0.001%（双边） | A 股费率硬编码，过户费仅沪深交易所 | backtest 引擎费率配置（`backtest/implementations/vectorized_engine.py` `commission_rate` 万三默认 + `event_driven_engine.py`），paper 撮合复用同一费率常量 |
 | ⑤ 部分成交 | 大单按 TWAP/VWAP 拆单，逐笔模拟部分成交；未成交订单按 5/10/30 分钟超时转限价或撤销 | 适配 2026-07 新规 15 笔/秒 + 15% 撤单率 | [40_execution_broker](40_execution_broker.md) §2.4 拆单算法 |
+
+**作战地图锚定**：Step② 涨跌停撮合 + 下方公式② 涨跌停成交概率估算 = **BM-SIM-08 Paper Matching 涨跌停排队引擎**（作战地图 04，design 态待施工——§2.4 盘点"涨跌停排队撮合 待新建 ❌ 待施工"行；排队规则对齐 [40_execution_broker](40_execution_broker.md) §2.4 OrderManager）。
 
 > **撮合算法公式补全**（v1.6.1 补，代码验证 `slippage_analyzer.py` `SquareRootImpactPredictor` + 2026-08 研究）：上表 5 步仅列 what，以下补 how（伪代码/公式/参数）——
 >
@@ -312,6 +314,7 @@ scope: 07_trading_decision_architecture
 |---|---|---|---|
 | BM-BT-05-D | 策略衰减监控 | §3.5 漂移检测施工公式（PSI/CUSUM/Page-Hinkley 三函数+μ₀ 取 WFA OOS 期均值）+ 退役决策矩阵（三档 DD/PF/胜率）；上线后监控联动 [55_monitoring_review](55_monitoring_review.md) §3.4 偏离度量 | production已建（漂移检测公式层） |
 | BM-BT-05-H-B | 数据滞后偏差归因 | §3.5 偏差分类表（数据偏差类）+ 上表四因子偏差归因体系（本环节为四因子之一：滞后测量插桩 arrived_at−timestamp 待 v2.0）；暂缓裁定与重评条件见 §6 待裁定"BM-BT-05-H 四因子归因"行 | 暂缓裁定（总值门禁已建，归因分解待实盘数据） |
+| BM-SIM-08 | Paper Matching 涨跌停排队引擎 | §3.2 撮合 Step②（涨停板仅撮合 bid 队列按时间优先排队/跌停板仅撮合 ask 队列/市价触板转限价排队）+ §3.2 撮合公式②（成交概率估算 `P(fill)≈min(1, counter_volume/(queue_ahead+order_size))`）；§2.4 盘点"涨跌停排队撮合 待新建"行 | 设计态待施工 |
 
 > **执行对账**（nexusfi 2026 Execution Reconciliation）：策略内部成交记录 vs 券商回报成交逐一比对，检测记账错误/漏单/状态机 bug——A 股 miniQMT 通道须落地。对账落地复用 [54_reconciliation_attribution](54_reconciliation_attribution.md)（G25）的 SettlementReconciliation（MOD-TRADING-003，已 production 盘后结算对账）+ PositionReconciler（MOD-EX-056，每 5min 盘中持仓对账），不重造对账引擎——53 号定义门禁阈值（settlement_match 100% / signal_match ≥ 99.9%），54 号定义对账执行算法（三层匹配 exact/fuzzy/partial + 例外工单）。
 
@@ -887,3 +890,4 @@ def _state_idx(s: RollbackState) -> int:
 | 2026-08-12 | 1.7.1 | 十四次复审（正文合规精简）：§3.2 Step④ 复用代码列 / §8.1 55 号条目 / §8.4 purgedcv 条目去除"v1.6.6 前误引…已修正"过渡文本——正文直接修正为当前唯一真实值，变更理由与幻觉引用实证已在 v1.7.0 修订记录登记 | 项目修改原则合规（正文不留"之前为什么是错的"解释段，变更追溯走修订记录）；61 号 v2.12.0 同步补 §3.6 并发文件级冲突纪律 + §3.2 策略规格产出物承接 |
 | 2026-08-12 | 1.7.2 | 作战地图全覆盖补丁——闭合 BM-SIM-03 / BM-SIM-04 / BM-SIM-06 / BM-SIM-07：新增 §3.9 仿真域 why 层回填（仿真域 4 个 production 环节契约级设计）。BM-SIM-03 场景生成走历史回放+参数扰动双引擎、蒙特卡洛全量显式暂缓（对齐 36 号 §2.3 算力约束 + §4.26 Phase 2 口径）；BM-SIM-04 历史情景库 2008/2015/2020 三段+反向压力测试+单因子敏感性，并与 54 号 BM-RC-08-C 分工消歧（53=仿真验证域引擎 / 54=运营域报告通道）；BM-SIM-06 以回测偏离度统计检验为核心+SimulationResult 事件契约；BM-SIM-07 集成契约复用 36 号 VaR 内核 / 35 号回撤 Protocol / 本备忘 §3.8 熔断状态机三内核，不新造风险模型 | 作战地图 04 四环节代码已建（§2.4 盘点 simulation 域 15 模块 production）但设计文档缺失——按"定位 → 裁定（理由+重评条件）→ 契约/参数/接口"格式补 why 层 |
 | 2026-08-12 | 1.7.3 | 作战地图环节映射补强——锚定 BM-BT-05-D / BM-BT-05-H-B（§3.5 监控表末映射块）：05-D 策略衰减监控由 §3.5 漂移检测施工公式（PSI/CUSUM/Page-Hinkley）+退役决策矩阵承载（production）；05-H-B 数据滞后偏差归因纳入 §3.5 偏差分类表+§6 四因子归因暂缓裁定（总值门禁已建，归因分解待实盘数据） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
+| 2026-08-12 | 1.7.4 | 作战地图环节映射补强②——补锚 BM-SIM-08 Paper Matching 涨跌停排队引擎：§3.2 撮合 5 步表后加"作战地图锚定"行（Step② + 公式② = BM-SIM-08）+ §3.5 映射块补登记行（design 态待施工，§2.4 盘点"涨跌停排队撮合 待新建"） | PG `battle_map_steps` 全量核对（340 环节/19 deprecated/321 活跃）发现 BM-SIM-08 为 2026-08-12 新入作战地图 04 的活跃环节（source_ref 直指本篇 §3.2 步骤②）但正文未显式编号；语义早已覆盖，仅补编号级锚定，不改既有正文 |

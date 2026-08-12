@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.10.0"
+version: "2.10.1"
 date: 2026-08-12
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -23,7 +23,7 @@ scope: 07_trading_decision_architecture
 > 段位语义：**0x**=meta（规范与索引）｜**1x**=地基层（regime/数据特征）｜**2x**=Alpha 策略层｜**3x**=组合仓位与风控层｜**4x**=交易执行层｜**5x**=验证与可观测性层｜**6x**=跨切治理层｜**9x**=开放问题与远期愿景。
 > 命名规则见 §8；新旧名对照见 §10；占用登记见 §7.3。
 > **状态图例**：`active`=已定稿/已落地｜`draft`=草案/待讨论｜**骨架**=已建占位文档（frontmatter status=draft，仅含主题组信息与讨论要点清单，§2-§6 待填空；讨论定型后升 active）。
-> ⚠️ **2026-08-11 git 灾难影响标注**（v2.9.0 取证确认 + v2.9.1 重建联动更新）：15/16×2/28/33/52/55/60 号曾被本索引标记为 active 高版本，但 git 历史证明高版本内容**从未提交**（未提交内容被 `git clean -fd`/`git reset --hard` 清除）——其中 **7 篇已于 2026-08-12 04:32 重建**（commit 6a4f5392：33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建）；**仍骨架待重建：28号（v1.2.0 可从 commit a3750b90d1 恢复）+ 60号**；另 34号 测试套件（55 用例）丢失待重建。详见 §9 开放问题 #D1/#D2。本表"状态"列对齐 2026-08-12 工作树实际 frontmatter（当前有 22 路并发审查 session 正在更新各文档，版本可能再次漂移，下轮审查时重新核对）。
+> ⚠️ **2026-08-11 git 灾难影响标注**（v2.9.0 取证确认 + v2.9.1 重建联动更新）：15/16×2/28/33/52/55/60 号曾被本索引标记为 active 高版本，但 git 历史证明高版本内容**从未提交**（未提交内容被 `git clean -fd`/`git reset --hard` 清除）——其中 **7 篇已于 2026-08-12 04:32 重建**（commit 6a4f5392：33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建）；**28号已于 2026-08-12 从 commit a3750b90d1 恢复 v1.2.0（commit 16f119bd）；60号经核查 HEAD 已是 active v1.0.0 完整版（129行，8da7513309 提交，原"骨架"标注过时）**；另 34号 测试套件（55 用例）丢失待重建。详见 §9 开放问题 #D1/#D2。本表"状态"列对齐 2026-08-12 工作树实际 frontmatter（当前有 22 路并发审查 session 正在更新各文档，版本可能再次漂移，下轮审查时重新核对）。
 > 注：`AI_review_instructions.md`（22 路并发 AI 审查回填指令集，active v2.1.0）为审查操作手册，非设计备忘，不入本目录编号。
 
 | 文件 | 内容一句话 | 状态 |
@@ -45,11 +45,11 @@ scope: 07_trading_decision_architecture
 | [21_stock_selection_engine.md](21_stock_selection_engine.md) | G05 选股引擎架构 | active v1.1.18 |
 | [22_sector_rotation_spec.md](22_sector_rotation_spec.md) | G06 板块轮动 spec | active v1.8.0 |
 | [23_strategy_correlation_validation.md](23_strategy_correlation_validation.md) | G07 策略间相关性验证 | active v1.7.0 |
-| [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | active v1.9.7 |
+| [24_daban_strategy_detail.md](24_daban_strategy_detail.md) | G08 打板策略细节 | active v1.10.4 |
 | [25_multifactor_strategy_detail.md](25_multifactor_strategy_detail.md) | G09 多因子策略细节 | active v1.12.11 |
 | [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | active v1.8.0 |
 | [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | draft v0.2.0（暂缓说明已补） |
-| [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（⚠️内容丢失待重建，v1.2.0 可从 commit a3750b90d1 恢复） | 骨架 v0.1.0 |
+| [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（五阶段+定位器+regime分工+策略部署+隐形驱动验证） | active v1.2.0（2026-08-12 从 a3750b90d1 恢复，16f119bd） |
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.5.0 |
 | [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.23.0 |
 | [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.20 |
@@ -65,10 +65,10 @@ scope: 07_trading_decision_architecture
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
-| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 代码待落地 #ARCH-QUANT-003） | active v1.6.6 |
+| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 代码待落地 #ARCH-QUANT-003） | active v1.7.4 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.0.0（2026-08-12 重建） |
-| [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（⚠️内容丢失待重建） | 骨架 v0.1.0 |
+| [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.0.0 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 12业务注册表施工（registry_of_registries） | active v1.32.0 |
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
@@ -99,7 +99,7 @@ scope: 07_trading_decision_architecture
 | 01 | 研究孵化 | ✅ G28 策略生命周期（61号 active v2.13.1：知识流水线拍板+研究环境否定式裁定+远期候选登记）+ 51号实验体系 | — | — | **已覆盖**（2026-08-12 全覆盖补丁） |
 | 02 | 模型训练 | ✅ G28（61号 v2.13.1 含 MT-01-B/C 裁定） | — | — | **已覆盖**（2026-08-12 全覆盖补丁） |
 | 03 | 回测验证 | ✅ regime 验证（11号 active v1.5.2，C1 四项全通过）+ G23（52号 active v1.0.3 含辅助组件契约与映射锚定）+ 15/23/51/53 映射补强 | 🟧 shrinkage/c1_comparator | 另一AI | **已覆盖**（2026-08-12 全覆盖补丁） |
-| 04 | 模拟验证 | ✅ G24（53号 active v1.7.3，含 §3.9 仿真域 why 层回填） | 🟧 5 态 FSM 代码待落地（#ARCH-QUANT-003） | — | **已覆盖**（why 层已补齐，代码待落） |
+| 04 | 模拟验证 | ✅ G24（53号 active v1.7.4，含 §3.9 仿真域 why 层回填 + BM-SIM-08 锚定） | 🟧 5 态 FSM 代码待落地（#ARCH-QUANT-003） | — | **已覆盖**（why 层已补齐，代码待落） |
 | 05 | 选股 | ✅ G04-G10 全部定稿（20-26号 active）；G11 暂缓骨架；21/24/25/22/15 环节映射已锚定 | 🟧 BM-SEL-02/22-25 | — | **已覆盖**（7 主题组定稿+环节级锚定） |
 | 06 | 买入流 | ✅ G19（41号 active v1.6.0，含明日预案双层架构+上游四轨裁定）+ G30（43号 draft v0.1.0 合规纪律） | 🟧 5 算法伪代码已定型待落码 | — | **已覆盖** |
 | 07 | 卖出流 | ✅ G20（42号 active v1.6.2，含 §3.11 卖出闭环优化+双向反馈契约） | 🟧 5 算法伪代码已定型待落码 | — | **已覆盖** |
@@ -107,9 +107,9 @@ scope: 07_trading_decision_architecture
 | 09 | 风控 | ✅ 30号 §2.5 + G16-G18（35/36/37号 active）+ 62号 v1.34.2 限额注册表 why 层 + 61号运行时风险治理 + 55号操作/模型风险审计 | ✅ drawdown/var/kill_switch 已 production | — | **已覆盖** |
 | 10 | 执行 | ✅ 40_execution_broker active v2.10.1（§2.8 盘前检查链+订单层熔断两级） | ✅ 代码已施工（10 项 P0 gap 待落 #ARCH-EXEC-001） | G22-AI | ✅ 已定稿+代码已施工 |
 | 11 | 对账 | ✅ G25（54号 active v1.15.5，含压力测试/仓位审计/模型层反馈小节） | 🟧 3 项待落码 | — | **已覆盖** |
-| 12 | 跨切 | 🟧 G27（60号 骨架待重建）+ G29（64号 draft v1.3.1）+ 62/63/65/90/91号（90号 v2.0.1 补 5 条远期开放问题） | — | — | 60号待重建，其余已覆盖 |
+| 12 | 跨切 | 🟧 G27（60号 active v1.0.0）+ G29（64号 draft v1.3.1）+ 62/63/65/90/91号（90号 v2.0.1 补 5 条远期开放问题） | — | — | **已覆盖** |
 
-**结论**（2026-08-12 全覆盖补丁后更新）：12 个阶段的 why 层**全部覆盖**——2026-08-12 作战地图全覆盖工程以 PG `battle_map_steps` 339 环节为真源逐环节核对（19 弃用除外），320 个活跃环节全部在设计备忘中有载体（语义覆盖）且**逐编号显式锚定**（正文可检索 BM-XXX 编号至承载小节）：新建 43号（G30 合规与交易纪律），41/61/21/24/25/52/15/51/53/54/55/35/31/32/36/37/42/17/62/64/90/91/40/10/20/34/23 共 26 篇补环节设计或裁定，否定式裁定（不建设/暂缓+重评条件）与建设契约四要素齐全。git 灾难丢失文档**仅剩 60号 骨架待重建 + 28号 可从 commit a3750b90d1 恢复 v1.2.0**。遗留：battle_map 真源 3 处成熟度口径修正（BM-MT-01-B 标 production 实为 design、BM-SIM-03/06 production 标注 vs code_mapping planned、BM-BUY-02-A-1-c 待回写 90 §7 暂缓标注）已分别登记在 61 §7.5 / 52 §7，待治理流程回写 DB。
+**结论**（2026-08-12 全覆盖补丁后更新）：12 个阶段的 why 层**全部覆盖**——2026-08-12 作战地图全覆盖工程以 PG `battle_map_steps` 340 环节为真源逐环节核对（19 弃用除外），321 个活跃环节全部在设计备忘中有载体（语义覆盖）且**逐编号显式锚定**（正文可检索 BM-XXX 编号至承载小节）：新建 43号（G30 合规与交易纪律），41/61/21/24/25/52/15/51/53/54/55/35/31/32/36/37/42/17/62/64/90/91/40/10/20/34/23 共 26 篇补环节设计或裁定，否定式裁定（不建设/暂缓+重评条件）与建设契约四要素齐全。git 灾难丢失的 8 篇设计文档**全部就绪**（7 篇 04:32 重建 + 28号 v1.2.0 已从 a3750b90d1 恢复（16f119bd）+ 60号 active v1.0.0 已在 HEAD），仅剩 34号 测试套件（代码非文档）待重建。遗留：battle_map 真源 3 处成熟度口径修正（BM-MT-01-B 标 production 实为 design、BM-SIM-03/06 production 标注 vs code_mapping planned、BM-BUY-02-A-1-c 待回写 90 §7 暂缓标注）已分别登记在 61 §7.5 / 52 §7，待治理流程回写 DB。
 
 ## 3. 主题组全集（G01–G30）
 
@@ -588,10 +588,10 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | G15（RegimeMetaAllocator） | ⚠️ 消费者 | C1 已通过（852457e9）；等策略 PnL + D1 校准，第二阶段 |
 | G16-G18（风控） | ✅ 正交 | drawdown 是账户级，regime 是市场级（§2.5 定位） |
 | G19-G22（交易执行） | ✅ 正交 | |
-| G21（情绪周期） | ⚠️ 部分重叠 | regime 12 态含情绪维度，需明确分工边界（28号 骨架待重建后定） |
+| G21（情绪周期） | ⚠️ 部分重叠 | regime 12 态含情绪维度，分工边界已定（28号 v1.2.0 §2.2/§3：情绪周期=sleeve内alpha择时 vs regime=市场级风险节流） |
 | G23-G29（验证运营治理） | ✅ 正交 | |
 
-**结论**（2026-08-12 更新）：G15 的 C1 门槛已解除（剩策略 PnL + D1），G21 需重建文档后定分工边界；其余主题组全部可与 regime 并行。
+**结论**（2026-08-12 更新）：G15 的 C1 门槛已解除（剩策略 PnL + D1），G21 分工边界已定（28号 v1.2.0 §2.2/§3）；其余主题组全部可与 regime 并行。
 
 ## 7. 多 AI 分工认领指南
 
@@ -682,12 +682,12 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 |---|---|---|
 | 首批 3 策略确认（打板+多因子+事件驱动） | 30_multi_strategy_concurrency §6.1 / G04 | ✅ 已定 v1.2.4（20_first_batch_strategies；主升龙头并入打板，多因子新增） |
 | convergence_window 按换手率定（打板1-2/多因子3-5/事件2-3天） | 30_multi_strategy_concurrency §6.4 / G14 | 待首批策略定后校准 |
-| 情绪周期定位器准确率评估 | 30_multi_strategy_concurrency §6.3 / G21 | 待评估（28号 骨架待重建后重启） |
+| 情绪周期定位器准确率评估 | 30_multi_strategy_concurrency §6.3 / G21 | 待评估（28号 v1.2.0 已恢复，可重启评估） |
 | regime 检测器业务规则 spec | 30_multi_strategy_concurrency §6.6 / 10_regime_detector_spec | ✅ 已定 v1.5.1 |
 | 12 态×N 策略样本量 | 30_multi_strategy_concurrency §6.5 | ✅ 已决策（灰度+软分配） |
 | 第二批次策略上线时机 | G11 | 暂缓（首批 track record 后） |
 | G15 RegimeMetaAllocator 上线 | G15 | ✅ C1 已通过（852457e9）；待首批策略 3-6 月 PnL + D1 敏感性网格（11号 §0.5.7） |
-| **#D1 8 篇设计文档幻影版本事件（15/16×2/28/33/52/55/60号）——7 篇已重建** | 00号 v2.9.0 git 取证（2026-08-12）+ v2.9.1 重建联动 | 🟧 部分闭环：git 历史证明这些文档的"active 高版本"内容**从未提交**（2026-08-11 `git clean -fd`/`git reset --hard` 清除未提交内容；或 v2.5.0 同步时幻觉登记）。**7 篇已于 2026-08-12 04:32 重建**（commit 6a4f5392：33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建）。**仍待裁定**：① 28号 v1.2.0 可从 commit a3750b90d1 恢复（是否恢复）；② 60号 仍骨架 v0.1.0 待重建（G27 冲突矩阵清理，代码侧任务系统总线已 production） |
+| **#D1 8 篇设计文档幻影版本事件（15/16×2/28/33/52/55/60号）——全部就绪** | 00号 v2.9.0 git 取证（2026-08-12）+ v2.9.1/v2.9.2 重建联动 | ✅ 闭环：git 历史证明这些文档的"active 高版本"内容**从未提交**（2026-08-11 `git clean -fd`/`git reset --hard` 清除未提交内容；或 v2.5.0 同步时幻觉登记）。**7 篇已于 2026-08-12 04:32 重建**（commit 6a4f5392：33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建）；**28号已从 commit a3750b90d1 恢复 v1.2.0（16f119bd）；60号经核查 HEAD 已是 active v1.0.0 完整版（8da7513309，原"骨架"标注过时）** |
 | **#D2 34号 测试套件丢失（55 用例）** | 34号 §3.5 已施工设施盘点 / §6 待裁定 | ⚠️ 待用户裁定重建时机（建议首批策略上线前闭环）：`tests/pf_alloc/test_regime_meta_allocator.py` 从未提交、被 git clean 删除不可恢复，须按 34号 §3.4 伪代码 + MOD-PA-007 代码本体重建；重建后立即 git add + commit |
 | **#D3 30号 §2.2 对 34号 的引用过时** | 30号 §2.2（2026-08-10 快照） | ⚠️ 待 30号 维护方更新：30号称"34号 框架已 active v1.0.0、代码仍骨架（design 态）"，实际 34号 已 v2.8.1 + 代码 MOD-PA-007 production v1.0.0（含 CRISIS floor 降级 + water-filling 投影，55 测试待重建） |
 
@@ -838,3 +838,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-12 | 2.9.0 | **AI-12 审查轮：git 灾难取证 + 幻影版本更正 + 65号补登 + C1 状态全面刷新**——① **git 取证确认 8 篇幻影版本**（15/16×2/28/33/52/55/60号）：`git log --all -S` 证明其"active 高版本"内容从未在任何提交存在，2026-08-11 git 灾难（`git clean -fd`/`git reset --hard` 清除未提交内容）后当前均为骨架 v0.1.0，§0/§3/§7.3 三处同步更正并标"待重建"（28号 v1.2.0 可从 commit a3750b90d1 恢复；33/52/55/60号 代码均已 production 可依代码回建）；② **65_git_safety_governance 补登** §0 目录（44→47 篇）+ §7.3 + §0 头部注记 AI_review_instructions.md 为操作手册不入编号；③ **全表版本对齐 2026-08-12 工作树 frontmatter**（10号 v1.9.37→v1.5.1 / 11号 v1.10.0→v1.5.2 / 20号 v1.2.4 / 35号 v1.37.0 / 36号 v1.10.0 / 61号 v2.10.0 / 62号 v1.32.0 / 63号 v2.0.0 / 64号 v1.2.1 / 18号 active v0.2.0 等 20+ 处）；④ **§2 三层快照刷新**（8 阶段 why 已覆盖 / 4 部分覆盖 / 0 全空白）；⑤ **G15 全部"等 C1"标注更新**为"C1 已通过（852457e9），参数待策略 PnL + D1 校准"（§0/§3/§4/§5/§6/§7.3/§9 共 8 处）；⑥ **§3 标题 G01-G23→G01-G29 + 新增 G29**（64号 数据源下载体系，补全 §7.3 既有登记对应的主题组定义）；⑦ **§9.1 architecture_issue_registry.yaml 断链修复**（`../../../../` 多一级 → `../../../`）；⑧ **§9 新增 3 项待裁定**：#D1 文档丢失事件 / #D2 34号 测试套件丢失（55 用例未提交被删）/ #D3 30号 §2.2 对 34号 引用过时；⑨ **G15 讨论要点③"60 日 Sharpe"修正为"60 日 Sortino"**（对齐 34号 v1.2.0 起真源口径）；⑩ **§7.3 补登缺失行**（14/16×2/17/18/62/63/65号）+ 表头注明转为历史认领记录。frontmatter v2.8.2→v2.9.0 | AI-12 任务驱动审查（34/00号 双文档）：发现 v2.5.0 起多轮"版本同步"登记的 8 篇高版本为幻影（从未提交 git），C1 已于 08-08 通过但全索引 8 处仍标"等 C1"，65号（§9.1 已引用）未入目录，G15 讨论要点③仍写 Sharpe 与 34号 Sortino 真源矛盾，§9.1 注册表链接断裂。本轮为索引准确性大修，无主题组增删决策（G29 为 §7.3 既有登记的定义补全） |
 | 2026-08-12 | 2.9.1 | **7 篇骨架重建联动修正（循环审查第 2 轮新发现）**——另一 AI 会话于 04:32 提交 commit 6a4f5392 重建 7 篇骨架文档（33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建），本索引 v2.9.0 的"骨架待重建"标注随之部分过时。本轮同步：§0 目录 7 行（15/16×2/27/33/52/55号）+ §0 头部 ⚠️ 标注（7 篇已重建/仅剩 28+60号）+ §2 快照（03/08 行 + 结论）+ §3 状态（G01/G14/G15 v2.8.1/G23/G26）+ §7.3 同 7 行 + §9 #D1 改"部分闭环"（仍待裁定：28号恢复/60号重建）+ #D3 34号版本引用更新。**未变**：28号（可从 a3750b90d1 恢复 v1.2.0）与 60号（骨架）待重建、34号 测试套件（55 用例）丢失待重建。frontmatter v2.9.0→v2.9.1 | 循环审查自检发现：v2.9.0 提交准备期间，7 篇骨架已被另一 AI 重建提交（6a4f5392），索引须联动保持准确——本轮为重建联动修正，无新主题组/决策变更 |
 | 2026-08-12 | 2.10.0 | **作战地图全覆盖工程（BM 339 环节逐环节核对闭合）**——以 PG `battle_map_steps` 为真源全量核对 design_memos 覆盖：① **新建 43号**（G30 合规与交易纪律体系，draft v0.1.0，承载 BM-BUY-08-A/08-B/09/12/15）；② **26 篇补环节设计/裁定**：41号 v1.6.0（明日预案双层架构 BM-PLAN-01/02/03 + 上游四轨裁定）、61号 v2.13.1（研究知识流水线拍板+研究环境否定式裁定+运行时风险治理 BM-RC-09/04-F）、40号 v2.10.1（§2.8 盘前检查链 BM-RC-02/02-C）、53号 v1.7.3（§3.9 仿真域 why 回填 BM-SIM-03/04/06/07）、52号 v1.0.3（辅助组件契约+暂缓裁定）、42号 v1.6.2（§3.11 卖出闭环优化）、31号 v1.24.2（§2.8 持仓漂移与再平衡）、32号 v1.0.22（组合优化口径裁定）、35号 v1.38.2（否决执行引擎 BM-RC-10/10-A）、36/37/54/55/62/15/51/17/64/90/91/21/24/25/20/34/23/10 号同步补丁；③ **环节级锚定**：全部活跃环节（320/339，19 弃用除外）正文显式标注 BM 编号至承载小节，可检索可追溯；④ §0 目录 47→48 篇 + G30 主题组登记 + §2 快照 12 阶段全部"已覆盖"（60号 骨架待重建除外）+ §7.3 补登 43号。否定式裁定（不建设/暂缓+重评条件）经用户 2026-08-12 裁定认可。遗留：battle_map 真源 3 处成熟度口径修正登记在 61 §7.5 / 52 §7 待治理流程回写 DB | 用户裁定驱动：design_memos 须包含作战全景图全部环节流程供后续完整开发；四路语义审计（221 环节）发现 GAP 32 项+PARTIAL 72 项，按"能合并不新建"偏好仅新建 43 号一篇，其余全部并入现有备忘 |
+| 2026-08-12 | 2.10.1 | **全覆盖复核补锚 3 活跃环节 + 28/60号状态回归修正**——① PG `battle_map_steps` 复核（340 环节/19 deprecated/321 活跃，BM-SIM-08 新入库 +1）：发现 3 个活跃环节未逐编号锚定，补锚 24号 v1.10.4（BM-SEL-23-C 情绪周期策略映射→§3.5 门控切换/§3.6 仓位上限 5 档、BM-SEL-25-B 情绪周期自适应权重→§3.5 `determine_adaptive_weights`）+ 53号 v1.7.4（BM-SIM-08 Paper Matching 涨跌停排队引擎→§3.2 Step②/公式②），321 活跃环节恢复 0 缺口；② §2 快照口径更新 339→340 环节、320→321 活跃；③ 修正 v2.10.0 合并回归——28号/60号 状态误回退为"骨架待重建"，实际 28号 v1.2.0 已恢复（16f119bd）、60号 active v1.0.0 已在 HEAD（8da7513309），重放 v2.9.2 更正至 §0 头部注记/§0 目录×2/§2 快照行 12+结论/§6 G21 行+结论/§9 定位器评估行/#D1 闭环共 8 处；④ §0 目录版本对齐 24号 v1.10.4 / 53号 v1.7.4 | 全覆盖工程收口复核：以 DB 当前真源（340 环节）重扫发现 BM-SIM-08 等 3 个活跃环节漏锚（语义早已覆盖、编号未显式）；同时发现 v2.10.0 合并时 28/60号状态文本覆盖了 v2.9.2 的已恢复标注，一并修正 |
