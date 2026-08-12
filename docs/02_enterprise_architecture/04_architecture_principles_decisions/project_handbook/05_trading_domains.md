@@ -65,10 +65,10 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 456 |
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 430 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 459 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 435 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 243 |
-| `D_DATA` | 数据接入层 | L1_foundation | 196 |
+| `D_DATA` | 数据接入层 | L1_foundation | 203 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 195 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 177 |
 | `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 173 |
@@ -86,9 +86,9 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_INTEGRATION` | 管线路由 | L1_foundation | 71 |
 | `D_FBL_DETECTORS` | 反馈检测器 | L1_foundation | 65 |
 | `D_INFRA_RECOVERY` | 回滚恢复 | L0_infrastructure | 55 |
+| `D_EX_CORE` | 执行核心 | L2_domain | 52 |
 | `D_BACKTEST` | 回测 | L2_domain | 51 |
-| `D_RISK` | 风控 | L2_domain | 44 |
-| `D_EX_CORE` | 执行核心 | L2_domain | 43 |
+| `D_RISK` | 风控 | L2_domain | 46 |
 | `D_TRADING` | 交易运营 | L2_domain | 42 |
 | `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 37 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 36 |

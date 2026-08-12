@@ -647,6 +647,290 @@ label = "<br/>".join(_wrap_label_text(p) for p in parts)
 > **实现真源**：`generate_battle_map_diagram.py` 的 `_node_label()` 函数（节点卡徽标）+
 > `_format_step_detail()` 函数（详情区"获取方式"行）+ `_ACQUISITION_BADGE` 映射常量。
 
+### 4.14 算法地图节点格式（08_algorithm_overview 专属，2026-08-12 V1.7）
+
+> **适用范围铁律**：本节节点格式**仅适用于算法全景图（08_algorithm_overview）的推导流程图**——
+> 即"每个模块的推导全流程小图"（输入→特征/指标→算法步骤→输出）。
+> 域文档用 §4.3 域内节点格式，作战地图用 §4.3 作战地图节点格式，算法地图用本节格式。三者不混用。
+
+#### 4.14.1 为什么算法地图要单独一套节点格式
+
+算法地图的节点不是"模块"（域文档）也不是"环节"（作战地图），而是**算法推导流程的参与元素**：
+输入数据 / 特征因子 / 技术指标 / 算法步骤 / 输出。这些元素要展示的信息和模块/环节不同：
+
+| 信息 | 域文档 | 作战地图 | 算法地图（本节） |
+|---|---|---|---|
+| 成熟度（生产态/设计态） | ✅ 必须 | ✅ 必须 | ❌ 不要（算法步骤都是代码实现，不区分成熟度） |
+| acquisition徽标（🔴自建） | ❌ 无 | ✅ 设计态必须 | ❌ 不要（模块级属性，不是算法步骤级） |
+| 【】包裹标识 | ❌ 无 | ✅ 必须 | ❌ 不要（用 F1/① 等编号即可） |
+| 公式（怎么算） | ❌ 无 | ❌ 无 | ✅ **核心**（算法地图存在的意义） |
+| 代码位置（哪行代码） | ❌ 无 | ❌ 无 | ✅ 下钻真源 |
+| registry状态（登记没） | ❌ 无 | ❌ 无 | ✅ 下钻断点判断 |
+| 不变量（算法约束） | ❌ 无 | ❌ 无 | ✅ 算法地图特有 |
+| 一句话简介 | ✅ plain_zh | ✅ 大白话 | ✅ 一句话解释做什么 |
+
+#### 4.14.2 五类节点格式
+
+算法推导流程图按数据流分 5 层，每层节点格式不同，但**统一原则**：中文名（前）+ 英文标识（后）+ 一句话简介 + 该层特有字段。
+
+**① 输入层节点（数据源）**
+```
+    I1["中文名 数据类型<br/>字段说明<br/>代码/标识"]
+```
+示例：
+```
+    I1["沪深300 日线数据<br/>收盘价 + 成交量<br/>代码 000300"]
+```
+四要素：① 指数中文名 ② 数据类型（日线/分钟/Tick，中文）③ 字段（收盘价/成交量，中文）④ 代码
+
+**② 特征/因子节点（带公式 + registry状态）**
+```
+    F1["编号 中文名 英文标识<br/>一句话简介<br/>公式: ...<br/>代码: file.py L行号<br/>factor_registry: 有/无FCT条目"]
+```
+示例：
+```
+    F1["F1 已实现波动率分位 realized_vol_pct<br/>近20日波动率在250日的排名分位<br/>公式: r=log(C/C.shift1) → HV=r.rolling20.std×√252<br/>代码: market_features.py L45<br/>factor_registry: 无FCT条目"]
+```
+六要素：① 编号 ② 中文名 ③ 英文标识 ④ 一句话简介 ⑤ 公式 ⑥ 代码位置 ⑦ registry状态（断点判断）
+
+**③ 技术指标节点（带公式 + 指标表状态）**
+```
+    KDJ["指标中文名 英文缩写 参数<br/>一句话简介<br/>公式: ...<br/>代码: file.py L行号<br/>指标表: 有列/未引用"]
+```
+示例：
+```
+    KDJ["KDJ 随机指标 9,3,3<br/>判断超买超卖和短期转折信号<br/>公式: RSV=(C-Ln)/(Hn-Ln)×100<br/>代码: risk_features.py L338<br/>指标表有kdj列 但代码未读表"]
+```
+
+**④ 算法子模块节点（带输入/输出 + 不变量）**
+```
+    A1["编号 中文名 英文名<br/>一句话简介<br/>算法描述<br/>输入: ...<br/>输出: ...<br/>不变量: ..."]
+```
+示例：
+```
+    A1["① HMM隐马尔可夫 4态模型<br/>用4种市场状态概率分布判断大盘所处阶段<br/>BIC贝叶斯信息准则扫描定态数 + Viterbi维特比解码<br/>输入: F1 F2a F2b F3 F4 F5<br/>输出: 4维概率"]
+```
+
+**⑤ 输出层节点（带不变量 + 去向）**
+```
+    O1["中文名 英文名<br/>一句话简介<br/>不变量: ...<br/>→ 下游模块"]
+```
+示例：
+```
+    O1["7维灰度概率分布<br/>4个HMM态 + 3个覆盖层态的概率<br/>不变量: Σ=1.0<br/>不输出硬标签"]
+```
+
+#### 4.14.3 算法地图节点铁律
+
+1. **中文在前英文在后**：所有节点标题"中文名 + 英文标识"，禁止只有英文（如禁止"ConfidenceSignal"，必须"置信度信号 ConfidenceSignal"）
+2. **必须有一句话简介**：每个节点配一句话解释"做什么/解决什么"，进翻译真源（因子→factor_registry.name_zh / 指标→technical_indicator_registry / 模块→module_translation_registry.plain_zh）
+3. **不要成熟度/acquisition/【】**：这些是模块级/环节级属性，算法步骤级不用
+4. **公式必填**：特征/指标/算法节点必须有公式（算法地图的核心价值）
+5. **代码位置必填**：特征/指标/算法节点必须有 `代码: file.py L行号`（下钻真源）
+6. **registry状态必填**：特征节点标 factor_registry 状态，指标节点标指标表状态（断点判断依据）
+
+### 4.15 断点边展示规范（统一所有生成器，2026-08-12 V1.7）
+
+> **统一铁律**：所有生成器（算法全景图/域文档/作战地图/任意全景图）凡涉及"断点/缺失/未接通"概念，
+> **必须**用本节规范展示——红色虚线 + "断点"标签 vs 黑色实线。禁止用颜色/虚线只在节点边框上区分
+> （Mermaid 节点 stroke-dasharray 在 zoomable_html 渲染时不生效，§4.15.3 详述）。
+
+#### 4.15.1 为什么用边样式而不是节点样式
+
+**踩坑教训**：V1.6 及之前尝试用节点 classDef 的 `stroke-dasharray: 5 5` 给断点节点加虚线边框，
+但在 zoomable_html（mermaid.js 渲染）下**完全不生效**——所有节点都显示成实线，看不出断点。
+
+**根因**：mermaid.js 渲染节点时，`stroke-dasharray` 写在 CSS 里而非 SVG attribute，
+zoomable_html 的 CSS 优先级覆盖了 classDef 的虚线设置。节点边框虚线不可靠。
+
+**治本**：改用**边（线）的样式**表达断点——边样式 `stroke-dasharray` 在 mermaid.js 下稳定生效，
+且边上能加文字标签（"断点"），比节点边框更直观。
+
+#### 4.15.2 断点边 vs 正常边的 Mermaid 定义
+
+**断点边**（连到断点节点的线）：虚线 `-.->` + 标签"断点"
+```
+    I1 -.->|断点| F1
+```
+
+**正常边**（已接通的线）：实线 `-->`
+```
+    F1 --> A1
+```
+
+> **关键**：断点边必须放前面（先定义），正常边放后面——因为 linkStyle 按边出现顺序索引（§4.15.3）。
+
+#### 4.15.3 linkStyle 关键代码（复现必读）
+
+mermaid 的 `linkStyle` 按边定义的顺序索引（0-based）设置样式。断点边放前面，索引好数。
+
+**Mermaid 代码块末尾必须加 linkStyle**：
+```mermaid
+    %% 边样式：断点边=红色虚线，正常边=黑色实线
+    linkStyle 0,1,2,3,4,5,6,7,8 stroke:#c62828,stroke-width:2px,color:#c62828
+    linkStyle 9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33 stroke:#333333,stroke-width:2px,color:#333333
+```
+
+| 样式 | 值 | 含义 |
+|---|---|---|
+| `stroke:#c62828` | 暗红 Material Red 900 | 断点边颜色 |
+| `stroke:#333333` | 近黑深灰 | 正常边颜色 |
+| `stroke-width:2px` | 2px | 线宽（统一） |
+| `color:#c62828` | 暗红 | 边标签文字颜色（"断点"字样） |
+| `-.->` | 虚线箭头 | 断点边（mermaid 语法层就是虚线） |
+| `-->` | 实线箭头 | 正常边 |
+
+#### 4.15.4 生成器 Python 关键代码（断点边索引计算 + linkStyle 生成）
+
+其他 AI 复现断点边效果时，照搬这段 Python：
+
+```python
+def build_link_style(edges: list[dict]) -> str:
+    """生成 linkStyle 语句：断点边红色，正常边黑色。
+
+    Args:
+        edges: 边列表，每条含 src/dst/is_break 字段。is_break=True=断点边。
+               必须按定义顺序传入（linkStyle 按出现顺序索引）。
+    Returns:
+        linkStyle 语句字符串（多行）。
+    """
+    break_indices = []
+    normal_indices = []
+    for i, e in enumerate(edges):
+        if e.get("is_break"):
+            break_indices.append(i)
+        else:
+            normal_indices.append(i)
+
+    lines = []
+    if break_indices:
+        break_idx_str = ",".join(str(i) for i in break_indices)
+        lines.append(f"    linkStyle {break_idx_str} stroke:#c62828,stroke-width:2px,color:#c62828")
+    if normal_indices:
+        normal_idx_str = ",".join(str(i) for i in normal_indices)
+        lines.append(f"    linkStyle {normal_idx_str} stroke:#333333,stroke-width:2px,color:#333333")
+    return "\n".join(lines)
+
+
+def emit_edge(src: str, dst: str, is_break: bool, label: str = "") -> str:
+    """生成单条边的 mermaid 代码。
+
+    Args:
+        src/dst: 节点 ID。
+        is_break: True=断点边（虚线+断点标签），False=正常边（实线）。
+        label: 边标签（断点边强制"断点"，正常边可选）。
+    Returns:
+        mermaid 边代码字符串。
+    """
+    if is_break:
+        return f"    {src} -.->|断点| {dst}"
+    if label:
+        return f"    {src} -->|{label}| {dst}"
+    return f"    {src} --> {dst}"
+```
+
+**用法**：
+```python
+edges = [
+    {"src": "I1", "dst": "F1", "is_break": True},   # F1 是断点节点
+    {"src": "F1", "dst": "A1", "is_break": False},   # A1 正常
+]
+edge_lines = [emit_edge(e["src"], e["dst"], e["is_break"]) for e in edges]
+link_style = build_link_style(edges)
+mermaid_block = "\n".join(edge_lines) + "\n" + link_style
+```
+
+#### 4.15.5 断点判断逻辑（什么算断点）
+
+| 节点类型 | 断点条件 | 判断方式 |
+|---|---|---|
+| 特征/因子节点 | factor_registry 无对应 FCT 条目 | 查 factor_registry.yaml 的 factor_id/outputs 匹配 |
+| 技术指标节点 | 代码未引用 technical_indicator 表 | grep 代码是否查 c1_market.technical_indicator 表 |
+| 算法子模块节点 | 代码未实现（stub） | docstring 标注 / build_status=planned |
+| 输入/输出节点 | 永远不是断点（数据源/最终输出） | — |
+
+> **断点边定义**：连到断点节点的边 = 断点边。从断点节点出去的边 = 正常边（指向正常节点）。
+
+### 4.16 ALGO_FLOW docstring 结构化标记（算法地图专属，2026-08-12 V1.7）
+
+> **适用范围**：仅算法全景图生成器（generate_module_algorithm_overview.py）。
+> 域文档/作战地图不需要（它们画依赖关系，不画算法推导流程）。
+
+#### 4.16.1 为什么需要 ALGO_FLOW 标记
+
+算法全景图要给每个模块画"推导流程图"（输入→特征/指标→算法步骤→输出），但代码 docstring 是自由文本，
+生成器无法可靠解析出结构化的流程。**治本**：约定 docstring 用 `# [ALGO_FLOW]` 标记算法流程，
+生成器按标记解析，自动生成 Mermaid 推导图。
+
+#### 4.16.2 ALGO_FLOW 标记格式
+
+在 .py 文件的 module docstring 里，用 `# [ALGO_FLOW]` 块标注算法推导流程：
+
+```python
+"""
+模块概述：一句话说这个模块做什么。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 沪深300 日线数据
+#   fields: 收盘价 + 成交量
+#   code: 000300
+# 层: 特征
+# - id: F1
+#   name_zh: 已实现波动率分位
+#   name_en: realized_vol_pct
+#   intro: 近20日波动率在250日的排名分位
+#   formula: r=log(C/C.shift1) → HV=r.rolling20.std×√252 → HV.rolling250.rank(pct)
+#   code: market_features.py L45
+#   registry: factor_registry 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: HMM隐马尔可夫 4态模型
+#   name_en: HMM 4-state
+#   intro: 用4种市场状态概率分布判断大盘所处阶段
+#   inputs: F1 F2a F2b F3 F4 F5
+#   outputs: 4维概率
+#   invariant: Σ=1.0
+# 层: 输出
+# - id: O1
+#   name_zh: 7维灰度概率分布
+#   name_en: 7-dim gray probability
+#   intro: 4个HMM态+3个覆盖层态的概率
+#   invariant: Σ=1.0
+#   downstream: RegimeMetaAllocator MOD-PA-007
+# [/ALGO_FLOW]
+
+边:
+# I1 -.->|断点| F1   (is_break=true，F1未登记)
+# F1 --> A1          (正常)
+# A1 --> O1          (正常)
+"""
+```
+
+#### 4.16.3 生成器解析规则
+
+1. 扫描 module docstring 里的 `# [ALGO_FLOW]` 到 `# [/ALGO_FLOW]` 块
+2. 解析 YAML 风格的节点定义（id/name_zh/name_en/intro/formula/code/registry/is_break/inputs/outputs/invariant/downstream）
+3. 解析"边:"部分的边定义（src -.->|断点| dst 或 src --> dst）
+4. 按节点 layer 分组渲染 subgraph（输入/特征/指标/算法/输出）
+5. 断点边（is_break=true 的节点连入的边）用 `-.->|断点|` + linkStyle 红色
+6. 无 ALGO_FLOW 标记的模块，回退到文字卡片（现状，§4.16 之前的格式）
+
+> **渐进式落地**：生成器改一次支持 ALGO_FLOW，模块逐个补标记。没标记的模块仍显示文字卡片，
+> 有标记的模块显示推导流程图。不强制一次性补全 515 个模块。
+
+#### 4.16.4 翻译真源对齐
+
+ALGO_FLOW 标记里的 name_zh/intro 不是凭空写，**必须对齐翻译真源**：
+- 特征/因子节点的 name_zh + intro → 同步写入 `factor_registry.yaml` 的 `name_zh` + `alpha_source`
+- 技术指标节点 → 同步写入 `technical_indicator_registry.yaml`（待建）的 `name_zh` + `description`
+- 算法子模块节点 → 同步写入 `module_translation_registry.yaml` 的 `name_zh` + `plain_zh`
+
+> **铁律**：ALGO_FLOW 标记是"代码内嵌的算法流程描述"，翻译真源是"YAML 登记的正式翻译"，
+> 两者必须一致。改一处必须同步另一处（生成器可加 reconciler 检测漂移）。
+
 ## 五、完整 Mermaid 代码示例
 
 以下是一个完整的三视图 Mermaid 代码块（全景图），包含所有要素：
