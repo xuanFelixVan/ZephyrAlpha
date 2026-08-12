@@ -75,19 +75,52 @@ PROTECTED_PATTERNS = [
     (".gitattributes", "LFS 规则已移除（ARCH-MODEL-LIFECYCLE-001），修改须通过该流程审批"),
 ]
 
+# GAP-010（2026-08-12）：AI 金融代码高敏区——下单/资金/风控/成本四类文件
+# CSA 2026 实证：45% AI 代码含 OWASP Top10 漏洞、19.7% 概率幻觉不存在依赖包
+# 高敏区文件变更时输出 WARNING（不阻断——人审是软约束，阻断会卡住正常迭代）
+# 升级现有 gate 不新增 gate，守 I-GOV-3 gate ≤ 54
+HIGH_SENSITIVITY_PATTERNS = [
+    ("src/zephyr/ex_core/", "下单/执行层——AI 生成代码须人审+边界单测（涨跌停/停牌/除权/T+1/断线）"),
+    ("src/zephyr/trading/", "资金计算——AI 生成代码须人审+边界单测"),
+    ("src/zephyr/risk/", "风控规则——AI 生成代码须人审+边界单测"),
+    ("src/zephyr/ex_sor/services/transaction_cost_optimizer.py", "成本参数——AI 生成代码须人审"),
+    ("src/zephyr/ex_sor/services/slippage_analyzer.py", "滑点模型——AI 生成代码须人审"),
+    ("src/zephyr/backtest/core/matching_logic.py", "撮合逻辑（回测=实盘共用）——AI 生成代码须人审"),
+]
+
+
+def _normalize_repo_relative(target_path: str) -> str:
+    """归一化为仓库相对路径（正斜杠）。
+
+    相对路径（含 git status 输出的 . 前缀形式）锚定 REPO_ROOT 拼接后解析，
+    不依赖进程 CWD；绝对路径直接解析；不在仓库内（ValueError）保留原样。
+    """
+    try:
+        return str((REPO_ROOT / target_path).resolve().relative_to(REPO_ROOT)).replace("\\", "/")
+    except ValueError:
+        return target_path.replace("\\", "/")
+
+
+def check_high_sensitivity(target_path: str) -> list[str]:
+    """检查路径是否在高敏区（GAP-010）。
+
+    高敏区文件变更输出 WARNING（不阻断），提示人审+边界单测。
+    与 PROTECTED_PATTERNS 不同——高敏区不拦截只提示。
+    """
+    warnings = []
+    normalized = _normalize_repo_relative(target_path)
+    for pattern, reason in HIGH_SENSITIVITY_PATTERNS:
+        if pattern in normalized or normalized.startswith(pattern):
+            warnings.append(
+                f"GAP-010 WARN: 高敏区文件 '{target_path}' 匹配 '{pattern}' — {reason}"
+            )
+    return warnings
+
 
 def check_path(target_path: str) -> list[str]:
     """Check compliance and report findings."""
     findings = []
-    normalized = target_path.replace("\\", "/")
-    # 去除前导 ./（git status 有时输出 ./path）
-    if normalized.startswith("./"):
-        normalized = normalized[2:]
-    if not normalized.startswith("/"):
-        try:
-            normalized = str(Path(target_path).resolve().relative_to(REPO_ROOT)).replace("\\", "/")
-        except ValueError:
-            pass
+    normalized = _normalize_repo_relative(target_path)
     for pattern, reason in PROTECTED_PATTERNS:
         if pattern in normalized or normalized.startswith(pattern):
             findings.append(f"IRN-010 FAIL: path '{target_path}' matches protected pattern '{pattern}' — {reason}")
@@ -154,6 +187,9 @@ def check_staged() -> list[str]:
     findings: list[str] = []
     for rel in files:
         findings.extend(check_path(rel))
+        # GAP-010：高敏区 WARNING（不阻断，输出到 stderr）
+        for w in check_high_sensitivity(rel):
+            print(w, file=sys.stderr)
     return findings
 
 
