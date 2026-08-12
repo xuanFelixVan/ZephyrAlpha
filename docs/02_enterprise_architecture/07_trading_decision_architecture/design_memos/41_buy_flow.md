@@ -5,8 +5,8 @@ title: 买入流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.5.1"
-date: 2026-08-10
+version: "1.6.0"
+date: 2026-08-12
 topic: buy_flow
 scope: 07_trading_decision_architecture
 ---
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构分批建仓 / Wyckoff 吸筹时序 / A 股 T+1 集合竞价惯例 |
 | 正交性 | ✅ 与 regime 正交（buy_flow 只消费 budget 数字，不读市场态） |
 | 优先级 | P3 |
-| 状态 | 已定稿·可施工（MVP 路径已明确，22/35 未就绪有降级） |
+| 状态 | 已定稿·可施工（MVP 路径已明确；22 v1.8.0 / 35 v1.37.0 均已 active，回踩 A/B/C 代码 BM-SEL-08 未施工走 sector_quality=None 降级） |
 
 ## 2. 背景
 
@@ -41,7 +41,7 @@ scope: 07_trading_decision_architecture
 ### 2.2 核心问题
 battle_map_06 锁定了买入流的**环节拓扑**（多情景对策→四轨融合→决策编排→分批建仓→纪律闸→执行），但未定义：
 - 分批建仓的批次划分、间隔、放行条件怎么定（BM-BUY-04 参数只给范围未定值）
-- 板块回踩质量 A/B/C（[22_sector_rotation_spec](22_sector_rotation_spec.md) ②）目前是骨架，分批建仓是否硬依赖它
+- 板块回踩质量 A/B/C（[22_sector_rotation_spec](22_sector_rotation_spec.md) ②，spec 已 active v1.8.0 但 BM-SEL-08 代码未施工），分批建仓是否硬依赖它
 - 买入在盘中什么时点执行（集合竞价 / 连续竞价 / 尾盘），如何避开开盘波动与尾盘操纵检测窗口
 - 买入价格锚什么（限价锚压力位/支撑位/VWAP？市价仅应急？）
 - 多标的资金如何分配到单（由 31 算好的权重如何落到订单）
@@ -54,6 +54,27 @@ battle_map_06 锁定了买入流的**环节拓扑**（多情景对策→四轨�
 - **31_position_sizing §2.7 边界**：仓位算法不内置 regime 切换，只收 budget 数字 → buy_flow 同理，不读市场态
 - **BM-BUY-08 交易纪律闸**：买入下单前必须过四项严禁检测（追高/补仓/骄傲/报复），buy_flow 不得绕过
 - **打板容量极小**（单票几万~几十万）：打板策略建仓必须小账本、限价单、避免冲击
+
+### 2.4 已施工设施盘点（通用规则 #11 全量扫描）
+
+> **核心结论**：**买入流本体未施工**（BM-BUY-04 分批建仓 / BM-BUY-08 纪律闸均为设计态），本备忘 §3 的伪代码是施工蓝本而非已施工代码的 why 回填。但**上游仓位产出与下游执行基础设施已 production**——buy_flow 是"夹在两个 production 之间的设计态编排层"，施工时无需新建执行/仓位设施，只需实现编排逻辑。
+
+| 层次 | 设施 | path / 出处 | 状态 | 与 buy_flow 的关系 |
+|---|---|---|---|---|
+| **买入流本体** | BM-BUY-04 分批建仓 / BM-BUY-08 纪律闸 | [battle_map_06](../battle_map/battle_map_06_buy_flow.md) | 🟧 设计态（代码待实现） | 本备忘 §3.2 分批方案 + §3.9 扳机清单即其施工蓝本 |
+| 上游·仓位产出 | FirmRiskAggregator（MOD-POS-021） | `src/zephyr/position/core/firm_risk_aggregator.py` | 🟦 production | 产出 `FirmTargetPortfolio`（§3.6 直接消费）；内含 LIQUIDITY 10%/20% ADV 容量裁剪——buy_flow 收到的权重已过流动性容量闸 |
+| 上游·板块回踩 | BM-SEL-08 回踩 A/B/C | [22号 §3.1②](22_sector_rotation_spec.md) / battle_map_05 | 🟧 缺失态-未实现 | §3.2.1 `sector_quality=None` 降级兼容已预留接口 |
+| 下游·执行引擎 | ExecutionEngine | `src/zephyr/ex_core/execution_engine.py` | 🟦 production | 限价/市价单执行落地层（§3.5 锚定价格的物理执行） |
+| 下游·券商适配 | miniQMT broker adapter | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | 🟦 production | miniQMT 通道下单（§3.4 尾盘窗口的通道承载） |
+| 下游·挂单价 | PricingPolicy | `src/zephyr/ex_core/pricing_policy.py` | 🟦 production | 子单挂单价决策（§3.5 限价锚定的执行层细化，TWAP/VWAP 拆单最后一公里） |
+| 下游·价格笼子 | PriceCage | `src/zephyr/ex_core/price_cage.py` | 🟦 production | ±2% 价格笼子合规校验（§3.5 限价单的价格合法性闸） |
+| 下游·撤单率 | CancelRateGuard | `src/zephyr/ex_core/cancel_rate_guard.py` | 🟦 production | 滚动撤单率监控（§3.4 14:55-14:57 撤改挂窗口的合规闸，内部 15% 保守线） |
+| 下游·交易时段 | TradingSession | `src/zephyr/ex_core/trading_session.py` | 🟦 production | 集合竞价/连续竞价时段判定（§3.4 执行窗口的时段真源） |
+| 治理规则 | G7 单标的流动性检查 | `src/zephyr/gov_enforcement/rule_enforcement/g7_position_limits.yaml` | 🟦 production | `single_stock_liquidity_check` 单标的 ≤5% ADV——§3.6 资金分配到单标的的容量硬顶 |
+| 风控门控 | 四级回撤 + Kill Switch | `src/zephyr/position/core/drawdown_controller.py` + `src/zephyr/risk/` | 🟦 production | §3.9 扳机清单 RISK_* 触发器的实际执行者（35号 active v1.37.0） |
+| 流动性危机 | MOD-RK-10 LIQUIDITY_CRISIS | `src/zephyr/risk/core/ashare_systemic_risk_detector.py` | 🟦 production | §3.9 扳机 `RISK_LIQUIDITY_CRISIS`（priority=2）触发时 HALT_NEW_BUY——买入流被动响应方 |
+
+> **施工含义**：buy_flow 的新增代码量集中在**编排层**——`compute_batch_split`（§3.2.1）/ `detect_breakout_failure`（§3.3）/ `schedule_buy_orders`（§3.4）/ `compute_anchor_price`（§3.5）/ `clip_to_available_capital` + `rank_buy_orders`（§3.6）六个函数 + TriggerList 注册（§3.9），全部消费上表现有 production 设施的产出，不新建数据管道或执行通道。
 
 ## 3. 决策：分批建仓 + 尾盘集中执行 + 限价锚定 + budget 数字驱动
 
@@ -95,7 +116,7 @@ def compute_batch_split(confidence_score_c031, strategy_type, sector_quality=Non
         A→置信度+0.1（浅回踩38.2-50%+缩量+板块强≥70，激进建仓倾向）
         B→置信度±0.0（深回踩50-61.8%+混合量能+板块中40-70，中性）
         C→置信度-0.1（破位>61.8%+放量+板块弱<40，分批或放弃倾向）
-        None→不调整（22号未就绪降级，MVP 兼容，与§4.2 过度工程审查一致）
+        None→不调整（22号 spec 已 active 但 BM-SEL-08 代码未就绪降级，MVP 兼容，与§4.2 过度工程审查一致）
     """
     # A/B/C 板块回踩质量调节置信度（22号 v1.8.0 active 后启用，v1.4.0 集成）
     quality_adjustment = {"A": 0.1, "B": 0.0, "C": -0.1}.get(sector_quality, 0.0)
@@ -201,6 +222,8 @@ def detect_breakout_failure(position, lookback_days=10, confirm_bars=2):
 | 连续竞价 09:30-14:45 | 自动+人工 | 自动策略信号盘前生成，但**不在早盘执行**（避开开盘波动+尾盘操纵检测前置窗口） | 可撤单 |
 | 尾盘连续竞价 14:50-14:57 | **自动策略主执行窗口** | MVP 默认：14:50-14:55 集中下限价单，14:55-14:57 检查未成交并撤单改挂 | 可撤单 |
 | 收盘集合竞价 14:57-15:00 | 补单/未成交兜底 | 14:57 前挂好收盘竞价单，14:57 后**不可撤单**，吃唯一收盘价 | **不可撤单** |
+
+> ⚠️ **与 40 号窗口冲突（v1.6.0 核验发现，未裁定）**：40_execution_broker 决策⑧明确"MVP 仅参与连续竞价，不碰集合竞价"，决策⑪明确"14:55 尾盘清退——任意非终态订单 14:55 转入收盘集合竞价或放弃，**MVP 选放弃→撤单**"。本备忘 §3.4 的"14:55-14:57 撤改挂 + 14:57-15:00 收盘竞价补单"与 40 号 MVP 口径直接冲突（40 号 14:55 即清退撤单，买入单活不到 14:57；且 40 号 MVP 不使用收盘集合竞价）。两个备忘需对齐其一：① 41 让步——MVP 买入 14:55 未成交即随 40 号清退撤单，次日尾盘再挂（T+1 下代价=建仓延后 1 日）；② 40 让步——buy_flow 尾盘单豁免 14:55 清退并允许收盘竞价补单（需改 40 号决策⑧⑪）。已记 §7 待定问题，裁定前以 40 号现行口径为准（14:55 清退撤单、不用收盘竞价）。
 
 **尾盘集中执行理由**：
 - A 股 T+1，尾盘买入次日即可卖，资金时间成本最低
@@ -446,9 +469,9 @@ class TriggerEntry:
 
 | 阶段 | 内容 | 触发条件 |
 |---|---|---|
-| **MVP（当前）** | 2 批分批 + 尾盘集中 + 限价锚定 + C-031 置信度驱动；22/35 未就绪用降级 | 本备忘定稿即可施工 |
-| **阶段 2** | [22_sector_rotation_spec](22_sector_rotation_spec.md) 定稿，A/B/C→置信度映射注入 C-031 | 22 active |
-| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值联动建仓节奏（Level1 新仓风险降 75%） | 35 active |
+| **MVP（当前）** | 2 批分批 + 尾盘集中 + 限价锚定 + C-031 置信度驱动；22/35 spec 已 active，BM-SEL-08 代码未施工用降级 | 本备忘定稿即可施工 |
+| **阶段 2** | ~~[22_sector_rotation_spec](22_sector_rotation_spec.md) 定稿，A/B/C→置信度映射注入 C-031~~ ✅ **已达成**（v1.4.0：22 active v1.8.0，±0.1 映射已注入 `compute_batch_split`）；剩余=BM-SEL-08 代码施工后接入真实 A/B/C 数据 + C1 实盘校准映射值 | BM-SEL-08 代码施工完成 |
+| **阶段 3** | ~~[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值联动建仓节奏~~ ✅ **已达成**（35 active v1.37.0；§3.9 扳机清单 RISK_DRAWDOWN_L3 priority=2 → HALT_NEW_BUY 暂停后续批次）；剩余=联动参数实盘校准 | 35 active ✅（联动参数待实盘校准） |
 | **阶段 4** | 盘中实时分散下单 + TWAP/VWAP 拆单（需实时信号+实时风控+大资金规模就绪） | G15 + 实时风控 + 资金规模施工完成 |
 | **阶段 5（待裁定）** | 动态分批数（按策略类型/波动率自适应选 2-4 批） | 各策略 6+ 月实盘 track record |
 | **阶段 6（远期·待裁定）** | ML 加仓决策：Conformal Kelly 用 75% 预测区间宽度作 fractional Kelly scale（区间宽→缩首仓，区间窄→加首仓）+ PACE LLM 分层执行（长Horizon规划+短Horizon执行，超越 TWAP/AC） | 各策略 12+ 月 track record + conformal 预测模型校准通过 |
@@ -478,7 +501,7 @@ class TriggerEntry:
 
 ### 5.3 为何这是上限而非妥协
 - 2 批分批 + 尾盘集中 + 限价锚定是 A 股 T+1 个人量化的实务共识（10jqka 2026-06 / eastmoney 2026-07）
-- 不硬依赖 22/35 骨架，保证 MVP 可独立施工——这是"骨架先行"纪律下避免循环阻塞的关键
+- 不硬依赖 22/35 代码就绪度（两者 spec 均已 active），保证 MVP 可独立施工——这是"骨架先行"纪律下避免循环阻塞的关键
 - 真正的上限 = 在 C-031 置信度驱动框架内把分批节奏做到极致，而不是堆 A/B/C/密度感知等未就绪信号
 
 ## 6. 待裁定（暂缓项）
@@ -500,18 +523,19 @@ class TriggerEntry:
 | 首仓/确认仓比例按策略类型差异化（打板 vs 多因子 vs 事件） | 本备忘 §3.2.1 | 待 G04（20_first_batch_strategies）产出校准 |
 | 14:50 执行窗口对打板策略不适用，打板时点自定义 | 本备忘 §3.4 | 待 [24_daban_strategy_detail](24_daban_strategy_detail.md) 定稿 |
 | 换仓 T+1 延后买 B 的批次排期与 budget 变化冲突时如何处理 | 本备忘 §3.8 | G14 已定稿 v1.0.0（[33_budget_change_handler](33_budget_change_handler.md)），可对齐 §3.8 |
-| 35 四级回撤阈值触发时，进行中的分批建仓是否立即暂停 | 与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 联动 | 待 35 active |
+| ~~35 四级回撤阈值触发时，进行中的分批建仓是否立即暂停~~ | 与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 联动 | ✅ **已解决**（v1.6.0）：35 已 active v1.37.0；本备忘 §3.9 扳机清单已定——RISK_DRAWDOWN_L3（回撤>15%，priority=2）→ `HALT_NEW_BUY` 暂停后续批次放行（pending batch 不再 PLACE_ORDER），L4（>20%）清新仓，L1/L2 不暂停仅降风险预算 |
+| **§3.4 尾盘窗口与 40 号决策⑧⑪冲突**（v1.6.0 核验新增）：40 号 MVP"仅连续竞价+14:55 清退撤单" vs 本备忘"14:55-14:57 撤改挂+14:57-15:00 收盘竞价补单"。方案①41 让步（14:55 未成交随清退撤单，次日再挂）/方案②40 让步（buy_flow 尾盘单豁免清退+允许收盘竞价，需改 40 号） | 与 [40_execution_broker](40_execution_broker.md) 决策⑧⑪联动 | **待用户裁定**；裁定前以 40 号现行口径为准 |
 
-> **循环至零检查**：41 → 22（G06 骨架）/35（G16 骨架）/31（G12 active）。22/35 的框架在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)（active）已有定义（35 §2.5 四级阈值已定），MVP 降级路径明确（22 未就绪→C-031 兜底；35 未就绪→30 §2.5 框架）。**无真循环阻塞**，41 可独立施工。✓
+> **循环至零检查**：41 → 22（G06，active v1.8.0，BM-SEL-08 代码待施工）/35（G16，active v1.37.0）/31（G12 active v1.23.0）。降级路径明确（BM-SEL-08 代码未就绪→sector_quality=None 纯 C-031 兜底；35 联动参数未校准→§3.9 扳机清单默认阈值）。**无真循环阻塞**，41 可独立施工。✓
 
 ## 8. 引用
 
 ### 8.1 相关 design_memo
 - [31_position_sizing](31_position_sizing.md) —— 仓位产出（FirmTargetPortfolio）来源，buy_flow 消费其权重
-- [22_sector_rotation_spec](22_sector_rotation_spec.md) —— 板块回踩质量 A/B/C（骨架，增强输入）
-- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（骨架，框架在 30 §2.5）
+- [22_sector_rotation_spec](22_sector_rotation_spec.md) —— 板块回踩质量 A/B/C（active v1.8.0，BM-SEL-08 代码待施工，§3.2.1 已集成 sector_quality 调节因子）
+- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（active v1.37.0，§3.9 扳机清单 RISK_* 触发器执行者）
 - [42_sell_flow](42_sell_flow.md) —— 卖出流（突破失败降级联动）
-- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值框架（35 未就绪时真源）
+- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值框架（35 active 前的原始真源，现由 35 v1.37.0 承接）
 
 ### 8.2 相关 battle_map
 - [battle_map_06_buy_flow](../battle_map/battle_map_06_buy_flow.md) —— BM-BUY-04 分批建仓 / BM-BUY-08 纪律闸 / BM-BUY-02 四轨融合
@@ -550,3 +574,4 @@ class TriggerEntry:
 | 2026-08-10 | 1.4.0 | A/B/C 板块回踩质量集成 + 扳机清单统一条件触发执行队列 | ①§3.2.1 `compute_batch_split` 新增 `sector_quality` 参数（A→+0.1/B→±0/C→-0.1 置信度调节，22号 v1.8.0 active 后启用，`None` 降级兼容）；②§3.2.2 A/B/C 定位从"增强非硬门"升级为"置信度调节因子，已集成"；③§3.9 新增⑧条件触发执行队列（扳机清单）—— 买入/卖出/执行/风控触发器统一注册 TriggerEntry（trigger_id/source/condition/action/priority/scope/cooldown）+ MVP 15 条扳机清单按优先级 1-5 排序 + 优先级仲裁规则（Kill Switch 覆盖一切/止损优先于加仓/同源去重）+ 与三维度解耦关系（编排层不改变 what/how much/how 解耦）+ 过度工程审查（设计模式非新模块，MVP 可降级为独立轮询）；④§6 待裁定 A/B/C→置信度映射表从暂缓升级为已实施（待 C1 校准） | 用户要求审查施工环节流程算法缺失+文档结构内容调整+持续改进。22号 v1.8.0 active 使 A/B/C 集成解锁——原 v1.0.0 设计为"A/B/C 增强"避免 41←22 循环阻塞，现 22 active 可正式注入 `sector_quality`。扳机清单解决多模块触发器冲突无人仲裁+重复检测问题（如确认仓放行 vs 回撤 Level2 暂停同时触发），是编排层设计模式非新模块，MVP 可降级为独立轮询 |
 | 2026-08-10 | 1.5.0 | 施工标注清理——"施工缺失补全"→"施工伪代码已补全" | §3.3 突破失败检测算法 / §3.4 执行时序算法 / §3.6 资金不足 pro-rata 削减算法 / §3.6 多标的下单排序算法 共 4 处标注从"施工缺失补全"更新为"施工伪代码已补全"——v1.1.0 已补全全部伪代码（detect_breakout_failure/schedule_buy_orders/clip_to_available_capital/rank_buy_orders 四函数完整），标注为历史遗留未同步 | 用户要求再次审查文档所有内容+施工环节流程算法缺失+持续改进。核查发现 41 号 4 处算法伪代码早在 v1.1.0 已完整补全，但"施工缺失补全"标注未同步更新造成"算法缺失"的误读。本次清理过时标注，准确反映施工状态 |
 | 2026-08-10 | 1.5.1 | 伪代码精度审计——uniform 导入补全 + 跨文档调用链验证 | §3.5 `compute_anchor_price` 补 `from random import uniform` 导入语句（原伪代码直接调用 `uniform()` 未声明导入，施工方可能遗漏）。跨文档调用链验证：41 号扳机清单 14 条 TriggerEntry 的 condition 函数来源均已确认（detect_breakout_failure 在 41§3.3 定义、triage_position 在 42§3.2 定义、has_volume_confirmation 在 26§2.5 定义），无悬空函数。边界条件审计：clip_to_available_capital 有 target_invest<=available_cash 保护 + pro-rata 削减逻辑正确；compute_batch_split 有 sector_quality=None 降级兼容；detect_breakout_failure 有连续 2 根确认防假跌破 | 七十二轮伪代码边界条件深度审计——换三个新角度（跨文档调用链验证/伪代码边界条件审计/参数来源追踪）发现 1 处导入缺失，已修复 |
+| 2026-08-12 | 1.6.0 | §2.4 新增「已施工设施盘点」节 + 跨文档冲突登记 + 过时状态清理 | 架构审查（37/41 联合审查任务）三项改动：① **§2.4 新增「已施工设施盘点」**（通用规则 #11 全量扫描）：买入流本体未施工（BM-BUY-04/08 设计态），但上游 MOD-POS-021 与下游 ex_core 执行设施（execution_engine/miniqmt_broker/PricingPolicy/PriceCage ±2% 笼子/CancelRateGuard 12%预警-15%冻结/TradingSession，均 production）已就绪——buy_flow 是"夹在两个 production 之间的设计态编排层"，新增代码集中编排层 6 函数 + TriggerList 注册。引用设施参数已与源码逐一核验一致。② **§3.4 与 40 号窗口冲突登记**（未裁定）：40 号决策⑧"MVP 仅连续竞价"+决策⑪"14:55 尾盘清退 MVP 选放弃→撤单"与本备忘"14:55-14:57 撤改挂+14:57-15:00 收盘竞价补单"直接冲突，§3.4 补 ⚠️ 行 + §7 新增待定问题（方案①41 让步/方案②40 让步，裁定前以 40 号现行口径为准）。③ **过时状态清理**：22/35 已由骨架升 active（22 v1.8.0 / 35 v1.37.0），更新 §1 状态行/§2.2 核心问题/§3.2.1 docstring/§5.2 MVP+阶段2+阶段3 行（阶段 2/3 标记已达成）/§7 循环至零检查/§8.1 引用共 8 处；§7"35 四级回撤触发是否暂停分批建仓"标记已解决（§3.9 扳机清单 RISK_DRAWDOWN_L3→HALT_NEW_BUY 即答案） |

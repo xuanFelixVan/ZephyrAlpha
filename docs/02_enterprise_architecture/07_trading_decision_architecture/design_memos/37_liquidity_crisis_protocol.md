@@ -5,8 +5,8 @@ title: 流动性危机处理
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.16"
-date: 2026-08-10
+version: "1.0.17"
+date: 2026-08-12
 topic: liquidity_crisis_protocol
 scope: 07_trading_decision_architecture
 ---
@@ -24,11 +24,11 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G18 流动性危机处理 |
 | 所属 | 作战地图 09 + 30_multi_strategy_concurrency §2.5.5 |
-| 依赖 | G16（[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md)，active v1.0.0，§3.5 Kill Switch 触发条件已填，含流动性危机行反向引用本备忘） |
+| 依赖 | G16（[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md)，active v1.37.0，§3.5 Kill Switch 触发条件已填，含流动性危机行反向引用本备忘） |
 | 对标 | tradingwyckoff Kill Switch / 机构流动性风控 |
 | 正交性 | ✅ 与 regime 正交 |
 | 优先级 | P3 |
-| 状态 | active 1.0.13（5 项讨论要点已定型 + G16 对齐已解决 + 涨跌停算法断裂修复 + 逃生执行器补全 + 2026-08 实证对齐 + 危机恢复算法补全 + sell_pressure/spread/涨跌停形式化 + Hawkes/VPIN/Crumbling Labeler 2026 前沿评估 + §3.7.4 SaR 前瞻性框架评估（选项之外更好算法） + §3.7.5 Latent Microstructure Regime Detection 隐含微结构 regime 转变检测（选项之外更好算法，正 lead-time 优于 CUSUM/BOCPD/HMM） + §3.8 盘中流动性监控循环施工流程总览 + §2.4 指数熔断澄清 + §3.7.1 Hawkes 2026-08 最新研究更新（A股直接实证 arXiv:2512.08000 + 图熵领先7-12天预警 An&Dai 2026-08-06 + 2026-07 A股量化危机活体验证，预警时间从分钟级升级到日级）+ §2.4 v1.0.9 新增 2026-07-31 交易所 LAN 通道关闭交叉引用（流动性结构影响 + 三方对齐 33号/40号/00_index）+ §3.7.6 ExsdHawkes 状态消失扩展（v1.0.10 Kimura arXiv:2604.23961 KKT 分离估计+物理约束避免爆炸分支比）+ §3.7.7 Liquidation Cascade 三因子框架（v1.0.10 Garcia Seuma arXiv:2608.03616 推翻临界级联假设，severity=冲击×路径×流动性撤回）+ §3.7.7.1 临界性预警异质性（v1.0.11 Garcia Seuma Part I arXiv:2607.27070 39配置系统测试，无事件不变量+吃单订单流方差压缩群体级前兆+冲击类型识别约束）+ §3.7.8 Multiplex Network Hawkes 系统性风险（v1.0.10 Zelvyte&Griffin arXiv:2606.15755 多层网络通道分离）+ §3.7.9 Weng A股羊群效应 Johnson S_U 变换（v1.0.11 arXiv:2607.27063 A股专属agent-based网络+Johnson S_U消除牛熊偏差，时间×截面双维度预警互补Hawkes）+ §3.7.10 Zhou 平方根冲击操纵周期（v1.0.11 arXiv:2607.05141 A股专属±10%涨跌停+T+1+隐形分配，平方根冲击是内生操纵周期必要条件，§3.7.x系列统一理论支撑）+ §4.7 Karimi 流动性-信贷联合破产边界（v1.0.10 arXiv:2607.17381 HJB 联合边界凸性，LEVEL_3 联动理论支撑）+ §5.2 Residual Supply 被迫卖出压力信号（v1.0.12 arXiv:2605.30672 全市场吸收能力紧张 premium 翻倍，A 股适配用公募赎回/北向净流出/融资余额近似）+ §3.7.11 LRISK 系统性流动性风险前瞻指标（v1.0.13 SSRN 7110978 Jourde/Saillard/Van Dijk 三大放大通道流量共振+组合重叠+流动性螺旋，提前1-2季度预测市场承压，§3.7.x系列补系统级前瞻预警层）+ §3.7.12 欧洲 ML 流动性预测对比（v1.0.13 SSRN 7125463 Arakelia等 动态面板不输XGBoost/SVR，流动性高持续+三驱动因子为Phase 1.5阈值校准提供方法学）+ §3.7.13 AdjPIN 订单流信息/流动性分解（v1.0.13 SSRN 7119388 Park 信息成分+PSOS流动性成分，§3.7.2 VPIN拒绝后补"信息驱动vs纯流动性"区分路径，优化§3.3 LEVEL响应）） |
+| 状态 | active 1.0.17（5 项讨论要点已定型 + G16 对齐已解决 + 涨跌停算法断裂修复 + 逃生执行器补全 + 2026-08 实证对齐 + 危机恢复算法补全 + sell_pressure/spread/涨跌停形式化 + Hawkes/VPIN/Crumbling Labeler 2026 前沿评估 + §3.7.4-§3.7.15 前沿算法储备系列 + §3.8 盘中流动性监控循环施工流程总览 + §2.4 指数熔断澄清 + §2.4 LAN 通道关闭（上交所 7-31/深交所 8-07）交叉引用 + §3.2a IPO 流动性抽离预警 + §2.2 关联设施盘点扩全（v1.0.17）+ §3.8 跨文档引用订正（v1.0.17）+ ST ±10% 并轨更新（v1.0.17）） |
 
 ## 2. 背景
 
@@ -46,6 +46,20 @@ scope: 07_trading_decision_architecture
 | Kill Switch | （BM-RC-03） | `src/zephyr/risk/stop_loss.py` 等 | 🟦 production | 回撤/VaR/Owner 触发，冷却 30 分钟 |
 | 盘前拦截 | BM-RC-02-E | `src/zephyr/risk/implementations/` | 🟦 production | Kill Switch 状态检查，拉闸时拒新单 |
 
+**关联流动性设施**（v1.0.17 通用规则 #11 全量扫描补登——主题相关但非 G18 直接对齐对象，避免重复造轮子或口径冲突）：
+
+| 层次 | 模块 | path | 状态 | 与 G18 的关系 |
+|---|---|---|---|---|
+| 容量裁剪 | FirmRiskAggregator（MOD-POS-021） | `src/zephyr/position/core/firm_risk_aggregator.py` | 🟦 production | 持仓 >10% ADV 削半 / >20% ADV 削到 20%（LIQUIDITY_MODERATE/SEVERE_PCT）——**自身容量**视角，与 G18 **市场级危机**视角正交互补 |
+| 执行算法选择 | AlgoExecutionSelector（MOD-XS-011） | `src/zephyr/ex_sor/core/algo_execution_selector.py` | 🟦 production | liquidity_score [0,1] 作为执行算法选择特征——执行层消费流动性评分，非危机检测 |
+| 闪崩守卫 | FlashCrashGuard（MOD-INF-022） | `src/zephyr/governance/financial_governance/flash_crash_guard.py` | 🟦 production | price_drop/velocity/bid_ask_spread_pct 三输入跳闸——治理域独立跳闸器，与 MOD-RK-10 双条件 AND 不同源（多一层 fail-closed 兜底） |
+| 微结构防御 | MicrostructureDefense（MOD-INF-018） | `src/zephyr/security/access_control/microstructure_defense.py` | 🟦 production | SPREAD_EXPLOIT 价差操纵对抗（防对抗 agent 操纵 spread 猎杀本系统止损单）——安全域视角，G18 检测"市场自发危机"，本模块防"人为操纵" |
+| 治理规则 | G7 单标的流动性检查 | `src/zephyr/gov_enforcement/rule_enforcement/g7_position_limits.yaml` | 🟦 production | `single_stock_liquidity_check`：策略配置单标的 ≤5% ADV（Almgren-Chriss 冲击模型对齐）——盘前配置闸，事前防容量超限 |
+| 策略侧评分 | ShortTermStockSelector | `src/zephyr/signal_ashare/short_term_stock_selector.py` | 🟦 production | 流动性评分入选股（机构评分 10% 权重 / 连板评分 15% 市值流动性）——选股侧流动性偏好，非风控 |
+| 单元测试 | 3 个测试文件 | `tests/risk/core/test_liquidity_monitor.py` / `tests/risk/core/test_orchestrator_liquidity_integration.py` / `tests/risk/test_ashare_systemic_risk_detector.py` | 🟦 production | MOD-RK-08 单测 + 编排器流动性集成测试 + MOD-RK-10 单测 |
+
+> **边界澄清**：上表"关联设施"均**不承担**流动性危机检测职责——危机检测唯一真相源是 MOD-RK-10 LIQUIDITY_CRISIS 信号（§3.1），避免多真相源歧义。容量裁剪（MOD-POS-021）/治理闸（G7 yaml）管"自身订单 vs 市场容量"，G18 管"市场级流动性枯竭"，两者正交。
+
 ### 2.3 核心问题
 流动性危机要回答 5 个问题（§7 讨论要点）：
 1. 买卖价差怎么监控（>正常 5x 触发）？
@@ -57,10 +71,10 @@ scope: 07_trading_decision_architecture
 ### 2.4 约束条件
 - **§2.5.5 spec**（30_multi_strategy_concurrency）：流动性危机（买卖价差 > 正常 5x）→ 立即停止开仓，仅允许平仓。Kill Switch 原则：宁可错杀不可漏放，触发即执行不允许人工覆盖延迟。
 - **A 股涨跌停流动性失效**：涨停板买单堆积排不上、卖单稀缺；跌停板卖单堆积卖不出、买单稀缺——涨跌停时盘口退化为单价位，spread 监控失效。
-- **A 股无市场级指数熔断**：A 股指数熔断机制于 2016 年 1 月 7 日暂停实施（仅运行 4 个交易日因磁吸效应加剧暴跌而废止），现行波动控制依赖**个股涨跌停板**（主板±10%、创业板/科创板±20%、北交所±30%、ST±5%）及**盘中临时停牌**（新股上市首日/盘中异常波动）。本协议中的"熔断"（如 BM-RC-03 Kill Switch 熔断）指**策略级**流动性危机响应，非市场级指数熔断——策略须自建断路器而非依赖交易所熔断机制。
+- **A 股无市场级指数熔断**：A 股指数熔断机制于 2016 年 1 月 7 日暂停实施（仅运行 4 个交易日因磁吸效应加剧暴跌而废止），现行波动控制依赖**个股涨跌停板**（主板±10%、创业板/科创板±20%、北交所±30%；**主板 ST/*ST 自 2026-07-06 起由 ±5% 放宽至 ±10% 与主板并轨**，原 5% 制度实施近 30 年后废止，波及 150 余只风险警示股——涨跌停价计算须按新规则取交易所日度 limit_up/limit_down 字段，禁止硬编码 5%）及**盘中临时停牌**（新股上市首日/盘中异常波动）。本协议中的"熔断"（如 BM-RC-03 Kill Switch 熔断）指**策略级**流动性危机响应，非市场级指数熔断——策略须自建断路器而非依赖交易所熔断机制。
 - **个人小资金**：多数订单远小于 1% ADV，自身交易不构成流动性冲击；流动性危机是**市场级**事件（融资盘平仓潮/量化踩踏），不是自身容量问题。
 - **AI 开发**：故障隔离是生存项——流动性危机检测必须有兜底，不能依赖单一数据源。
-- **2026-07-31 交易所 LAN 通道关闭（v1.0.9 新增交叉引用）**：上交所正式关闭机房内局域网交易行情线路，统一切换广域网，核心硬约束：广域网线路双向时延不得低于 2ms（含存量+新增线路）。物理链路层抹平微秒级抢跑优势（旧机房内网直连 0.13ms-10μs → 新广域网最低 2ms）。首日成交从 2.56 万亿缩至 2.01 万亿（缩 5488 亿），纯超高频量化超额从 14% 回落至 3% 以内，量化行业从"拼网速"→"拼研究"时代。**对流动性的直接影响**：① 流动性收缩使大额强裁冲击成本上升——建议将 [33_budget_change_handler](33_budget_change_handler.md) §3.2.3 的 `TWAP_LARGE_ORDER_THRESHOLD` 从总资产 5% 下调至 3-4%（保守自限，留流动性冲击余量）；② 高频做市商超额收益压缩退场，盘口深度可能变薄——§3.1.2 Quoted Spread 阈值 0.5% 须在上线后 3 个月重新校准（旧阈值基于高频做市商活跃的盘口，新结构下 spread 中枢可能上移）；③ §3.7 Hawkes 自激励过程的"高活跃期延续趋势"判定（[arXiv:2512.08000](https://arxiv.org/abs/2512.08000) A 股实证）需在新流动性结构下重新拟合基线。与 [00_index §3 G22⑨](00_index_trading_decision.md) + [40_execution_broker](40_execution_broker.md) + [33_budget_change_handler §3.2.3](33_budget_change_handler.md) 三方对齐。
+- **2026-07-31 交易所 LAN 通道关闭（v1.0.9 新增交叉引用）**：上交所正式关闭机房内局域网交易行情线路，统一切换广域网，核心硬约束：广域网线路双向时延不得低于 2ms（含存量+新增线路）。物理链路层抹平微秒级抢跑优势（旧机房内网直连 0.13ms-10μs → 新广域网最低 2ms）。首日成交从 2.56 万亿缩至 2.01 万亿（缩 5488 亿），纯超高频量化超额从 14% 回落至 3% 以内，量化行业从"拼网速"→"拼研究"时代。**深交所 2026-08-07 收盘后跟进切换广域网专线**（澎湃 2026-08 报道，v1.0.17 补：沪深两所均已关闭机房局域网接入，所有机构行情在物理链路上拉到同一起跑线，两毫秒物理延迟管控已落地沪深+期货交易所）。**对流动性的直接影响**：① 流动性收缩使大额强裁冲击成本上升——建议将 [33_budget_change_handler](33_budget_change_handler.md) §3.2.3 的 `TWAP_LARGE_ORDER_THRESHOLD` 从总资产 5% 下调至 3-4%（保守自限，留流动性冲击余量）；② 高频做市商超额收益压缩退场，盘口深度可能变薄——§3.1.2 Quoted Spread 阈值 0.5% 须在上线后 3 个月重新校准（旧阈值基于高频做市商活跃的盘口，新结构下 spread 中枢可能上移）；③ §3.7 Hawkes 自激励过程的"高活跃期延续趋势"判定（[arXiv:2512.08000](https://arxiv.org/abs/2512.08000) A 股实证）需在新流动性结构下重新拟合基线。与 [00_index §3 G22⑨](00_index_trading_decision.md) + [40_execution_broker](40_execution_broker.md) + [33_budget_change_handler §3.2.3](33_budget_change_handler.md) 三方对齐。
 
 ## 3. 决策
 
@@ -363,7 +377,7 @@ def detect_limit_status(last_price: float, limit_up_price: float,
     return "normal"
 ```
 
-**涨跌停价获取**：miniQMT `xtdata.get_full_tick` 返回的 tick 数据含 `limit_up` / `limit_down` 字段（交易所每日计算 = 前收盘价 × (1±涨跌幅限制)），ST/*ST 股 ±5%、主板 ±10%、创业板/科创板 ±20%、北交所 ±30%。
+**涨跌停价获取**：miniQMT `xtdata.get_full_tick` 返回的 tick 数据含 `limit_up` / `limit_down` 字段（交易所每日计算 = 前收盘价 × (1±涨跌幅限制)），主板 ±10%、创业板/科创板 ±20%、北交所 ±30%、**主板 ST/*ST 自 2026-07-06 起 ±10%（原 ±5% 废止，v1.0.17 更新）**。
 
 **与 §3.1.1/§3.1.2 的联动**：
 
@@ -1067,7 +1081,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 **与 35 号 §3.13 / 36 号 §3.12 的对齐**：
 
 - **35 号 §3.13 盘中实时风控循环**：30 秒轮询回撤/VaR/仓位——37 号本循环与 35 号**并行**（同一 poll tick 内先跑 35 号回撤风控、再跑 37 号流动性风控），两者通过 `recovery_state` 状态共享（35 号 KILL 态禁止 37 号恢复，37 号 LEVEL_3 触发 35 号 Kill Switch）
-- **36 号 §3.12 盘中 VaR/ES 重算**：三触发条件之一是"流动性危机"——37 号本循环检测到 LEVEL_2+ 时触发 36 号盘中重算（流动性恶化→VaR 失效→重算）
+- **36 号 §3.12 盘中 VaR/ES 重算**：7 条触发条件之一"涨跌停潮"与 G18 §3.5 涨跌停检测协同——37 号本循环阶段 1 `detect_limit_status` 检出批量近跌停/跌停潮时，36 号同步重算 VaR/ES（流动性恶化→VaR 失效→重算）。⚠️ v1.0.17 核验订正：原文"三触发条件之一是流动性危机"与 36 号 §3.12 实际 **7 条**触发条件不符（7 条中无"流动性危机"独立条目，与 G18 直接协同者为第 3 条"涨跌停潮"），已订正；"37 号 LEVEL_2+ 流动性危机"是否增补为 36 号第 8 条触发条件，记 §7 开放问题（不越界改 36）
 - **三循环编排**：35 号回撤风控（仓位上限）→ 36 号 VaR/ES（风险度量重算）→ 37 号流动性（执行约束）——三者乘性叠加，37 号是执行层最后一道门
 
 **A 股 T+1 约束对循环的影响**：
@@ -1187,11 +1201,17 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 - [x] ⑧ 施工流程算法总览（v1.0.4 新增）→ **§3.8 盘中流动性监控循环**：四阶段编排（涨跌停检测→危机检测→响应执行→恢复判定）伪代码 + 编排顺序设计理由表 + 与 35 号 §3.13/36 号 §3.12 三循环并行对齐 + A 股 T+1 约束影响。补齐 35/36 号均有日度循环+盘中循环+总览时序但 37 号 缺编排总览的施工流程 gap
 - [x] ⑨ SaR 前瞻性框架评估（v1.0.6 新增）→ **§3.7.4 Slippage-at-Risk**：arXiv:2603.09164 Sepper 2026-03 提出的前瞻性流动性风险框架，含 SaR(α)/ESaR(α)/TSaR(α) 三度量 + 集中度调整（HHI 弹性 η≈1.5）。与现有双条件 AND（回溯性、布尔触发、不感知结构）维度互补：SaR 是前瞻性 + 连续分位数 + 感知集中度。判定 Phase 2 储备，与 Hawkes 叠加为双层前瞻预警
 
+
+**跨文档开放问题**（v1.0.17 新增——本备忘不越界改其他文档，登记待对齐项）：
+
+- [ ] ⑩ **36 号 §3.12 盘中重算触发条件增补建议**：v1.0.17 核验发现 36 号 §3.12 实际为 7 条触发条件，其中无"流动性危机"独立条目（与 G18 直接协同者为第 3 条"涨跌停潮"）。建议 36 号评估增补第 8 条触发条件"37 号 LEVEL_2+ 流动性危机触发"（流动性恶化→VaR 估计失效→重算）。决策权归 36 号 owner，本备忘仅登记。
+- [ ] ⑪ **§3.8 编排伪代码 `classify_crisis_level` 与生产代码口径差异**：§3.8 伪代码用 `classify_crisis_level(sell_pressure, effective_spread, limit_status)` 做流动性单信号分级，但生产代码 MOD-RK-10 `_determine_level` 按**全 5 信号计数**分级（1/2/≥3 信号 → LEVEL_1/2/3）。伪代码是编排示意（仅展示流动性链路），施工时级别判定必须走 MOD-RK-10 的信号计数路径，不得以伪代码的单信号分级替代。是否将 §3.8 伪代码改写为显式调用 `AshareSystemicRiskDetector.check()` 的真实签名，待施工时裁定。
+
 ## 8. 引用
 
 ### 8.1 相关设计备忘
 - [30_multi_strategy_concurrency §2.5.5](30_multi_strategy_concurrency.md) Kill Switch 流动性危机触发条件（买卖价差 > 正常 5x → 立即停止开仓仅允许平仓）
-- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.5（G16，active v1.0.0，Kill Switch 触发与执行路径——流动性危机行反向引用本备忘）
+- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.5（G16，active v1.37.0，Kill Switch 触发与执行路径——流动性危机行反向引用本备忘）
 - [40_execution_broker](40_execution_broker.md) 决策⑥⑭⑮（涨跌停拒单/挂单价/临时停牌——执行层协同）
 - [00_index_trading_decision §3 G18](00_index_trading_decision.md) 流动性危机处理主题组定义
 - [01_design_memo_management_spec §4.3](01_design_memo_management_spec.md) 设计备忘推荐章节结构
@@ -1228,6 +1248,8 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 - [arXiv:2603.09164](https://arxiv.org/abs/2603.09164) Sepper 2026-03 SepperLabs "Slippage-at-Risk (SaR): A Forward-Looking Liquidity Risk Framework"——§3.7.4 SaR 前瞻性框架来源：SaR(α)/ESaR(α)/TSaR(α) 三度量 + 集中度调整（Concentration Haircut，HHI 弹性 η≈1.5），从当前盘口微结构推导前瞻性清算执行风险，区别于 VaR 等回溯性指标。Hyperliquid 2025-10-10 清算级联实证 SaR 作为系统性压力领先指标的有效性
 - [arXiv:2608.03616](https://arxiv.org/abs/2608.03616) 2026-08 强制平仓级联群组分析——§3.7.4 实证支撑：7 起加密货币强平级联（2022-2025）揭示级联起始突变性（order parameter 跳变 1.6-4.4σ）+ 两类型分类（内生累积型有前兆 vs 外生冲击型无前兆），为"Hawkes + SaR 双层前瞻预警"提供理论框架
 - [arXiv:2604.20949](https://arxiv.org/abs/2604.20949) Hiremath & Hiremath 2026-04 "Early Detection of Latent Microstructure Regimes in Limit Order Books"——§3.7.5 Latent build-up 检测来源：三 regime 因果 DGP（stable → latent build-up → stress）+ trigger-based detector（MAX 聚合 + rising-edge + 自适应阈值）+ depth erosion + HMM 熵触发通道。核心洞察：OFI/spread/volatility 按构造是反应性的（negative lead-time），latent build-up 是可识别的前兆。仿真 lead-time +18.6 timesteps / 实数据 +38 秒，优于 CUSUM/BOCPD/HMM thresholding
+- 澎湃新闻/头条 2026-08 交易所行情接入统一换线——深交所 2026-08-07 收盘后由局域网切换广域网专线（继上交所 2026-07-31 后沪深均完成），两毫秒物理延迟管控落地沪深+期货交易所；§2.4 LAN 关闭段落 v1.0.17 补充来源
+- 中安在线/新浪财经 2026-07-06 A 股交易规则更新——主板 ST/*ST 涨跌幅 ±5%→±10% 与主板并轨（实施近 30 年 5% 制度废止，波及 150 余只风险警示股约 6500 亿市值），保留单日单只买入≤50 万股风控底线；§2.4/§3.5.1 涨跌停幅度 v1.0.17 更新来源
 
 ## 9. 修订记录
 
@@ -1251,3 +1273,4 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 2026-08-10 | 1.0.14 | §3.7 新增 2 项 2026-07 前沿算法（§3.7.14 Signed Order Flow Kyle λ 有向订单流价格冲击 + §3.7.15 流动性尾部风险与价格发现大单非信息场景） | 二十八次审查全网搜索 2026-08-08 最新流动性微结构研究，登记 2 篇高价值论文：① **§3.7.14 Signed Order Flow Kyle λ**（[arXiv:2607.01377](https://arxiv.org/abs/2607.01377) Aldridge 2026-07-01 "Liquidity Premium and Investment Horizons"）——从日度股票订单流估计 Kyle (1985) 价格冲击系数 λ̂ = Cov(ΔP, OF_signed)/Var(OF_signed)，CRSP 2020-2025 Fama-MacBeth 回归证明**有向订单流**强预测当期与未来一月收益（无向成交量波动则降低价格发现精度）。与 §3.1 Amihud ILLIQ（无向 \|r\|/V）形成维度互补：Kyle λ 恢复方向性信息含量，Amihud 仅流动性成本。A 股适配：Level-2 tick 数据 Lee-Ready 规则重建 signed OF，散户占比高噪声方差大尤其适配"噪声扩大 λ 降低价格发现"洞察。Phase 2 候选因需 tick 级买卖分类数据管道 + 与 §3.7.13 AdjPIN 重叠（两者都需 tick 级买卖分类，Phase 2 可同时引入）。② **§3.7.15 流动性尾部风险与价格发现**（[arXiv:2607.01198](https://arxiv.org/abs/2607.01198) Çetin/Lin/Livieri 2026-07-21 LSE "When large trades are not (automatically) news"）——重尾流动性需求下大额交易在更宽深度范围内仍"合理地非知情"，**压平价格冲击、减缓学习**。核心洞察"大单 ≠ 信息"颠覆 Easley-O'Hara 传统假设，对 A 股尤其重要（大单常源于机构调仓/融资盘平仓/公募赎回非信息驱动）。为 §3.3 LEVEL 响应提供理论支撑：重尾流动性需求下倾向"等待恢复"而非"跟随减仓"。与 §3.7.13 AdjPIN 互补（AdjPIN 从订单流分解角度区分，Çetin 从价格发现学习速度角度区分）。Phase 2 候选因理论性较强需不动点方程数值化 + 与 AdjPIN 功能重叠 AdjPIN 更工程化。施工算法完整性结论：37 号施工流程算法闭环无缺失独立环节，2 项均为远期候选登记非施工算法缺失——Kyle λ 补方向性价格冲击维度、Çetin 补大单非信息理论支撑，与 §3.7.13 AdjPIN 形成"订单流分解+价格冲击+价格发现学习"三维信息/流动性分离框架 |
 | 2026-08-10 | 1.0.15 | §3.2a 新增 IPO 流动性抽离预警 | final_report_0724 交叉对照发现 37 号无 IPO 驱动的流动性抽离预警——长鑫科技 688825 科创板上市募资 579-666 亿可能吸金 500 亿+，此类事件型流动性抽离无法被 Amihud/spread/sell_pressure 事后检测捕获。新增 §3.2a 前瞻性 IPO 流动性抽离预警算法（drain_ratio = 未来5日IPO募资总额/全市场日均成交额，4 级 drain_level→position_cap_adjustment），与 26 号 §2.5a IPO 虹吸效应算法联动（26 号管 alpha 方向+仓位策略，37 号管流动性检测+仓位上限节流）。与 §3.2 Amihud 的事后检测正交：§3.2a 事前预警（IPO 上市日前已知），§3.2 事后检测（上市后实际恶化） |
 | 2026-08-10 | 1.0.16 | §3.6 `check_recovery` 签名对齐修复——定义与调用点签名不一致 + 真值检查 bug | 伪代码完整性审计发现 §3.6 恢复算法存在两处缺陷：① **签名不一致**——`check_recovery` 定义用硬编码阈值 positional 参数 `(current_state, signals, spread, sell_pressure, time_since_trigger, recovery_window=5)`，但 §3.6 编排伪代码 `intraday_liquidity_loop` 调用点用参数化阈值关键字参数 `(current_spread, current_sell_pressure, trigger_threshold_spread, recovery_threshold_spread, trigger_threshold_pressure, recovery_threshold_pressure, min_hold_minutes, elapsed)`，两者完全不匹配无法调用。统一为参数化签名（阈值/最短持续时间作为参数注入，支持实盘校准外部调整，对齐 §6 "待校准"要求，消除两处真相源），新增 `current_level`/`active_signals` 参数。② **真值检查 bug**——`check_recovery` 返回 `target_level`（int 0/1/2 或 None），但调用点用 `if recovered:` 真值检查，当 target_level=0（LEVEL_1→正常态）时为 falsy，**会跳过 LEVEL_1 恢复到正常态**。改为 `if recovered is not None:` 并在 docstring 显式标注警告。调用点补 `active_signals` 计数（§3.1 双条件计数 sell_pressure 超阈值 + spread 超阈值，范围 0-2）+ `recovery_state.exit_crisis(target_level=recovered)` 传递目标级别。 |
+| 2026-08-12 | 1.0.17 | §2.2 现有资产盘点扩全 + §3.8 跨文档引用订正 + 2026-08 两项市场规则事实更新 | 架构审查（37/41 联合审查任务）三类改动：① **§2.2 盘点扩全**（通用规则 #11）：补登 7 项关联流动性设施（MOD-POS-021 容量裁剪/MOD-XS-011 执行算法流动性评分/MOD-INF-022 闪崩守卫/MOD-INF-018 价差操纵防御/G7 5% ADV 治理规则/策略侧流动性评分/3 个测试文件），拆分核心 vs 关联设施并补边界澄清（危机检测唯一真相源=MOD-RK-10）；② **§3.8 订正**：36号 §3.12 实际为 7 条触发条件（非原文"三触发"且无"流动性危机"独立条目），§7 新增跨文档开放问题⑩⑪；③ **2026-08 市场规则事实更新**（WebSearch）：深交所 2026-08-07 跟进上交所切换广域网 + 主板 ST/*ST 2026-07-06 起 ±5%→±10% 并轨（涨跌停价禁止硬编码 5% 须取交易所日度字段）；§8.4 补 2 条参考。代码-文档一致性核验通过：MOD-RK-08/10 源码与 §3.1/§3.2 描述完全吻合 |
