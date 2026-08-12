@@ -1,7 +1,9 @@
 # [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-011 | docs/03_modules/_domain_knowledge/vector_memory/blueprint.md
 # [TTL] permanent
-"""Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0
+"""
+
+Vector Memory Service (VMS) — MOD-INF-011 · v0.7.0
 =============================================================
 
     全系统统一向量记忆体 — 可审计 · 可自愈 · 可持续
@@ -46,6 +48,43 @@
 SSoT     : architecture_model/layers/b_vector_memory.yaml
 ADR      : ADR-0019(FLE单向依赖) + ADR-0031(ChromaDB选型) + ADR-0016(BGE-M3嵌入契约)
 审计     : 四轮80盲点全覆盖（R1:33/R2:22/R3:19/R4:6）— 蓝图纸面~95-96/100
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 统一记忆 API
+#   fields: UnifiedMemoryAPI / get_unified_memory_api（intelligence 层组合真源）
+#   code: unified_memory_api L54
+# - id: I2
+#   name: 进程内向量记忆实现与适配器
+#   fields: InProcessVectorMemory / UnifiedVectorMemoryAdapter / VectorBridge / OllamaEmbedder
+#   code: in_process_vector_memory / delegated_vector_memory / vector_bridge / ollama_embedding L55-63
+# - id: I3
+#   name: 接口抽象与数据模型
+#   fields: VectorMemoryBase / EmbeddingEngineBase / MemoryEntry
+#   code: interface L57-61
+# 层: 算法
+# - id: A1
+#   name_zh: ① 组合层符号聚合再导出
+#   name_en: __init__ 再导出
+#   intro: 把八大 Collection 向量记忆的实现/接口/适配器汇成全系统统一入口
+#   desc: 直接 import + __all__ 声明（6 个类符号 + get_unified_memory_api + 30 余个子模块名引用）
+#   inputs: I1 I2 I3
+#   outputs: VMS 包公共 API 命名空间
+#   invariant: ADR-0019 FLE 单向依赖；存储 SSoT=ChromaDB data/vector_db/；双嵌入维度 BGE-M3 1024d / bge-small-zh 512d
+# 层: 输出
+# - id: O1
+#   name_zh: 向量记忆服务公共 API
+#   name_en: __all__
+#   intro: 全系统统一向量记忆体（可审计/可自愈/可持续）的访问入口
+#   downstream: zephyr 包懒加载入口 MOD-INF-002（register_lazy "vector-memory"）及全系统记忆消费者
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
