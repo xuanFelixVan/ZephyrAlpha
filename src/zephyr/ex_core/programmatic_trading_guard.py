@@ -92,13 +92,22 @@ class ProgrammaticTradingGuardError(Exception):
 
 
 class TradingMode(str, Enum):
-    """交易模式——决定是否触发报备校验。
+    """交易模式——决定是否触发报备校验，以及执行路径选择（GAP-004 四模式开关）。
 
-    PAPER: 纸面/回测，不接券商，豁免
-    SIMULATION: 模拟盘，模拟 broker，豁免
+    BACKTEST: 回测（历史数据，不接 broker，豁免）
+    PAPER: 纸面/模拟盘，实时行情模拟撮合，不接 broker，豁免
+    SIMULATION: 影子账户，模拟 broker，豁免
     LIVE: 实盘，必须报备
+
+    四模式对应 CC-06 横切开关：决策代码路径同构（generate_signal → portfolio_optimize →
+    risk_check → execute），区别仅在 execute 层：
+    - BACKTEST: MatchingLogic 撮合（历史 Tick 回放）
+    - PAPER: paper matching 引擎（实时行情模拟撮合）
+    - SIMULATION: MiniQmtBroker 真实下单但小仓位
+    - LIVE: MiniQmtBroker 真实下单全量
     """
 
+    BACKTEST = "backtest"
     PAPER = "paper"
     SIMULATION = "simulation"
     LIVE = "live"

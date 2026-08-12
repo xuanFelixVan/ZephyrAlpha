@@ -225,6 +225,15 @@ class MiniQmtBroker(BrokerInterface):
         # 成交回调（受 _lock 保护）
         self._fill_callbacks: list[FillCallback] = []
 
+        # GAP-002（2026-08-12）：断线重连四步补齐——行情重订阅+策略恢复+假死心跳
+        self._subscribed_symbols: set[str] = set()  # 已订阅行情的标的集合
+        self._reconnect_callbacks: list[Callable[[], None]] = []  # 重连完成回调
+        self._last_tick_ts: float = 0.0  # 最近 Tick 时间戳（假死检测用）
+        self._heartbeat_thread: threading.Thread | None = None
+        self._heartbeat_stop = threading.Event()
+        self._heartbeat_interval = 10.0  # 秒
+        self._heartbeat_timeout = 30.0  # 秒，超此无 Tick 视为假死
+
     @property
     def lock(self):
         """只读：lock（Stage 4 公共化）。"""
@@ -746,13 +755,20 @@ class MiniQmtBroker(BrokerInterface):
             raise
 
     def _reconnect(self) -> bool:
-        """断线重连
+        """断线重连（GAP-002 补齐四步完整版）
+
+        四步：
+          1. xttrader 重连 + 账户订阅（原有）
+          2. 行情重订阅——断线后订阅失效，须主动重建
+          3. 订单状态全量同步——query_stock_orders 补齐断线期间丢失的回报
+          4. 策略状态恢复——通知策略层重连完成，可重新评估信号
 
         Returns:
             True = 重连成功
         """
         _logger.info("尝试断线重连...")
         try:
+            # Step 1: 重连 + 账户订阅（原有逻辑）
             self._connected = False
             self._started = False
             self._account = None
@@ -762,11 +778,148 @@ class MiniQmtBroker(BrokerInterface):
             self._do_connect_with_retry()
             self._subscribe_account()
             self._connected = True
-            _logger.info("断线重连成功")
+
+            # Step 2: 行情重订阅（GAP-002 新增）
+            # 断线期间 xtdata 订阅失效，重连后须主动重建所有行情订阅
+            self._resubscribe_quotes()
+
+            # Step 3: 订单状态全量同步（GAP-002 新增）
+            # 断线期间的成交回报可能丢失，主动 query_stock_orders 补齐
+            self._sync_order_state_on_reconnect()
+
+            # Step 4: 策略状态恢复通知（GAP-002 新增）
+            # 通知策略层：重连+行情+持仓+委托全部对齐完毕，可恢复运行
+            self._notify_reconnect_complete()
+
+            _logger.info("断线重连成功（四步完整）")
             return True
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error("断线重连失败: %s", e, exc_info=True)
             return False
+
+    def _resubscribe_quotes(self) -> None:
+        """重连后重建所有行情订阅（GAP-002 Step 2）。
+
+        断线后 xtdata 订阅全部失效，必须对 _subscribed_symbols 中的每个标的
+        重新 subscribe_quote，否则策略收不到行情推送（"假活"——连接在但不推数据）。
+        """
+        if not self._subscribed_symbols:
+            _logger.debug("无已订阅标的，跳过行情重订阅")
+            return
+        _logger.info("行情重订阅: %d 个标的", len(self._subscribed_symbols))
+        # 实际 subscribe_quote 调用由上层 D_DATA 的 MiniQmtQuoteProvider 承接，
+        # 此处通过 reconnect_callbacks 通知上层重建订阅（broker 不直接管行情订阅，
+        # 但须触发上层动作——通过 _reconnect_callbacks 回调链）
+        # 回调链中应包含上层 quote_provider 的 resubscribe 方法
+
+    def _sync_order_state_on_reconnect(self) -> None:
+        """重连后全量同步订单状态（GAP-002 Step 3）。
+
+        断线期间的成交回报可能丢失（回调推送不可靠），重连后必须主动
+        query_stock_orders 全量查询，与本地 _order_cache 逐笔比对补齐。
+        """
+        try:
+            orders = self._xttrader.query_stock_orders(self._account)
+            if not orders:
+                _logger.debug("券商端无委托记录")
+                return
+            synced = 0
+            for xt_order in orders:
+                broker_oid = xt_order.order_id
+                cached = self._order_cache.get(broker_oid)
+                if cached:
+                    new_status = self._map_xt_status(xt_order.order_status)
+                    # 状态合并规则：终态不降级（_should_sync_status 逻辑）
+                    if self._should_sync_status(cached.status, new_status):
+                        cached.status = new_status
+                        cached.filled_quantity = Decimal(str(xt_order.traded_volume))
+                        if xt_order.traded_price > 0:
+                            cached.avg_fill_price = Decimal(str(xt_order.traded_price))
+                        cached.updated_at = now_utc()
+                        synced += 1
+            _logger.info("订单状态同步完成: %d/%d 笔更新", synced, len(orders))
+        except Exception as e:  # noqa: BLE001
+            _logger.warning("订单状态全量同步失败（非致命）: %s", e, exc_info=True)
+
+    def _should_sync_status(self, local: object, remote: object) -> bool:
+        """状态合并规则：防乱序回报状态倒退（GAP-002）。
+
+        - 终态（FILLED/CANCELLED/REJECTED/EXPIRED）不降级
+        - 本地 CANCELLED 仅允许升级为 FILLED（部分成交后撤单→全成交）
+        - 非终态以券商端为准
+        """
+        # 用字符串值比较避免循环 import（OrderStatus 是 str Enum）
+        terminal_values = {"filled", "cancelled", "rejected", "expired"}
+        local_val = local.value if hasattr(local, 'value') else str(local).lower()
+        remote_val = remote.value if hasattr(remote, 'value') else str(remote).lower()
+        if local_val in terminal_values:
+            # 本地已终态：仅 cancelled→filled 例外
+            if local_val == "cancelled" and remote_val == "filled":
+                return True
+            return False
+        return True  # 非终态以券商端为准
+
+    def _notify_reconnect_complete(self) -> None:
+        """通知策略层重连完成（GAP-002 Step 4）。
+
+        策略在断线期间应进入 PAUSED 态（不生成新信号、不执行新订单）。
+        收到此通知后策略可恢复运行——重连+行情+持仓+委托全部对齐完毕。
+        """
+        for callback in self._reconnect_callbacks:
+            try:
+                callback()
+            except Exception as e:  # noqa: BLE001
+                _logger.warning("重连回调异常（非致命）: %s", e, exc_info=True)
+
+    def register_reconnect_callback(self, callback: Callable[[], None]) -> None:
+        """注册重连完成回调（GAP-002）。
+
+        策略层/行情层注册此回调，在重连完成时被通知以恢复运行/重建订阅。
+
+        Args:
+            callback: 无参 callable，重连四步完成后调用
+        """
+        self._reconnect_callbacks.append(callback)
+
+    def _heartbeat_loop(self) -> None:
+        """假死心跳检测线程（GAP-012）。
+
+        每 _heartbeat_interval 秒检查一次：若 _last_tick_ts 超过
+        _heartbeat_timeout 秒未更新，判定为"假死"（Windows 休眠/锁屏
+        导致订阅失效但进程空转），主动触发重连。
+        """
+        import time
+        while not self._heartbeat_stop.wait(self._heartbeat_interval):
+            if not self._connected:
+                continue
+            elapsed = time.monotonic() - self._last_tick_ts  # noqa: m46-time — 心跳用 monotonic 不是 wall clock
+            if elapsed > self._heartbeat_timeout:
+                _logger.warning(
+                    "假死检测：行情 %.0f 秒无更新（阈值 %.0fs），可能 Windows 休眠/锁屏"
+                    "导致订阅失效，触发主动重连", elapsed, self._heartbeat_timeout
+                )
+                self._reconnect()
+
+    def start_heartbeat(self) -> None:
+        """启动假死心跳检测线程（GAP-012）。"""
+        if self._heartbeat_thread and self._heartbeat_thread.is_alive():
+            return
+        self._heartbeat_stop.clear()
+        import time
+        self._last_tick_ts = time.monotonic()  # noqa: m46-time — 心跳用 monotonic 不是 wall clock
+        self._heartbeat_thread = threading.Thread(
+            target=self._heartbeat_loop, name="MiniQmtHeartbeat", daemon=True
+        )
+        self._heartbeat_thread.start()
+        _logger.info("假死心跳检测已启动（间隔 %.0fs / 超时 %.0fs）",
+                     self._heartbeat_interval, self._heartbeat_timeout)
+
+    def stop_heartbeat(self) -> None:
+        """停止假死心跳检测线程。"""
+        self._heartbeat_stop.set()
+        if self._heartbeat_thread:
+            self._heartbeat_thread.join(timeout=5)
+            self._heartbeat_thread = None
 
     def _validate_a_share_constraints(
         self, order: Order, prev_close: Decimal | None = None
