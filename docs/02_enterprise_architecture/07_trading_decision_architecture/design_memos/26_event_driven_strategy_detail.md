@@ -5,8 +5,8 @@ title: 事件驱动策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.8.0"
-date: 2026-08-10
+version: "1.9.5"
+date: 2026-08-12
 topic: event_driven_strategy_detail
 scope: 07_trading_decision_architecture
 ---
@@ -33,10 +33,34 @@ scope: 07_trading_decision_architecture
 
 ### 1.3 约束条件
 - A 股不能做空 → 事件做空信号（如利空事件）只能用于"剔除/回避"，不能开空仓；alpha 集中在事件利好方向的多头
-- T+1 结算 → 盘中突发事件的实时感知与次日开盘反应之间存在时滞，事件冲击的"实时"是相对的
+- T+1 结算 → 盘中突发事件的实时感知与次日开盘反应之间存在时滞，事件冲击的"实时"是相对的。**T+1 事件→交易时序显式映射**（v1.9.0 收拢，散见各节的 T+1 约束单点声明）：①盘后事件（业绩公告/政策，T 日 15:00 后披露）→ T+1 日开盘才能行动（ORJ 即此窗口的市场第一反应）→ 买入仓最早 T+2 日可卖；②盘中事件（T 日交易时段突发）→ 当日可买但买入仓当日**不可卖**——`should_exit` 的 `holding_days >= 1` 条件（EXTREME_REACTION 线）已隐含此约束，即极端反转退出最早也要买入次日；③`holding_days` 计数约定：买入当日 = 0（T+1 不可卖），买入次日 = 1（可卖起点）；④衰减表的"day 0-5 rising phase"对盘后事件实际可捕捉窗口是 day 1-5（day 0 收盘才知情），rising 半衰期利用率天然折损一日——§2.4 各事件类 rising 半衰期含此折损，不再另调
 - 事件冲击衰减快（rising phase day 0-5，decay phase day 6-15，[Beyond the Event Horizon 2025](https://www.preprints.org/manuscript/202506.0079)）→ 持仓以 rising phase 为主，T+1 下需提前布局退出
 - 情绪周期是隐形驱动 → 事件驱动与打板相关性风险（[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)）
 - AI 开发 → 故障隔离与归因清晰度是生存项；事件链路长（数据源→分类→情绪→衰减→选股），任一环节失效须可降级不阻塞
+
+### 1.4 已施工设施盘点（通用规则 #11，2026-08-12 代码侧真源审计）
+
+> 本节盘点与本主题相关的全部已建设施（代码/schema/调度任务真源），作为 §2"复用而非新建"裁定的事实基座。✅=已落盘可消费，🟧=在建未落盘，⚠️=同名消歧。
+
+| 设施 | 真源路径 / 表 | 状态 | 本备忘消费点 |
+|---|---|---|---|
+| 东方财富新闻源 | `src/zephyr/data/implementations/eastmoney_news_provider.py` | ✅ production（[11_d_data](../../02_domain_architecture_docs/11_d_data.md)） | §2.2 新闻事件源 |
+| 财联社快讯源 | `src/zephyr/data/implementations/cls_provider.py` | ✅ production（同上） | §2.2 新闻事件源 |
+| 海外 RSS 源 | `src/zephyr/data/implementations/rss_provider.py`（BBC/CNBC/NYT/Guardian/Bloomberg） | ✅ production（同上） | §2.2 新闻事件源 / §2.5b 地缘事件源 |
+| 新闻采集器 | `src/zephyr/data/news_collector.py`（MOD-DATA-NEWS-001）→ ClickHouse `fund_news_data` 表 | ✅ production（11_d_data 标注"P1-E3 NLP 管道 Phase 1"） | §2.7 情绪数据基座 |
+| 跨源去重 | `src/zephyr/data/news_dedup.py` | ✅ production | §2.7 标准化层 |
+| 龙虎榜双表 | `c1_market.dragon_tiger` + `c1_market.dragon_tiger_seat`（AKShare `stock_lhb_detail_em` / `stock_lhb_stock_detail_em`，tasks.yaml `dragon_tiger_incremental` / `dragon_tiger_seat_incremental` 盘后调度） | ✅ production | §2.2 龙虎榜事件源 / §2.5 席位类型差异化校准（**席位类型字段在 `dragon_tiger_seat` 表**，Top5 买卖席位合并去重） |
+| 公司行动处理 | `src/zephyr/trading/corporate_action_processor.py`（MOD-TRADING-004） | ✅ production | §2.2 除权日防误异动（非 alpha 源） |
+| 熔断模式集成 | `src/zephyr/feedback_loop/collectors/market_event_integrator.py`（`MarketMode.EMERGENCY` 已确认落码） | ✅ production | §2.5 熔断期停止开仓 |
+| 盘中买卖点分析 | `src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py`（BM-SEL-05-C） | ✅ production | §2.5 异动识别复用基础 |
+| 市场情绪分析 | `src/zephyr/signal_ashare/market_sentiment_analyzer.py`（BM-SEL-03-A） | ✅ production | §2.7 情绪分数基础 |
+| NLP 推理 | `src/zephyr/nlp/nlp_inference.py`（Qwen2.5-7B） | ✅ 已落盘（#ARCH-NLP-PIPELINE-001 Phase 0/1） | §2.7 情绪分数源 |
+| 情绪聚合器 | `sentiment_aggregator.py`（#ARCH-NLP-PIPELINE-001 登记工程范围） | 🟧 **未落盘**（`src/zephyr/nlp/` 当前仅 `nlp_inference.py` + `__init__.py`） | §2.7 情绪聚合——就绪前 sentiment_score 用单条推理输出降级 |
+| 盘中实时事件处理 | BM-SEL-27 锚点 MOD-RUNTIME_INTRADAY（`src/zephyr/runtime/intraday_main.py`） | ✅ 运营态（battle map 有效状态；环节自报 design，事件流水线细化待施工） | §2.5 盘中事件感知 |
+| IPO 数据源 | `akshare_provider` `stock_ipo_info` 接口（production） | ✅ production | §2.5a IPO 虹吸系数 |
+| ⚠️ 同名消歧：Tick 回测引擎 | `src/zephyr/backtest/implementations/event_driven_engine.py` | ✅ production，但**与本文无关**——该引擎是 Tick 级回测内核（做T专用，逐 Tick 撮合），"事件驱动"指回测架构范式（tick-event-driven），非本备忘的"新闻/公告事件驱动 alpha"。引用时勿混淆 | 不消费 |
+
+**盘点结论**：事件驱动 sleeve 所需的四类事件源（公告/新闻/龙虎榜/异动）数据链路全部 production，唯一未落盘的是 NLP 管道的 `sentiment_aggregator.py`——§2.7 已裁定 sentiment_score 作事件方向触发而非截面排序，单条 `nlp_inference.py` 输出即可降级承载，不阻塞 MVP。真正待新建的 sleeve 内部组件仅两项：异动识别器（§2.5）与事件影响评分（§2.5 首版公式），与 §3.1"复用全部已有基础设施"裁定一致。
 
 ## 2. 决策：事件驱动 sleeve 定义
 
@@ -59,14 +83,14 @@ scope: 07_trading_decision_architecture
 
 | 事件源 | 数据内容 | 已建模块（状态） | 角色 |
 |---|---|---|---|
-| **公告** | 业绩预告/快报、并购重组、增减持、分红送转、政策公告 | `tushare_provider` / `akshare_provider`（production，见 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md)） | 结构化事件主源（时间戳明确、PIT 严格） |
+| **公告** | 业绩预告/快报、并购重组、增减持、分红送转、政策公告 | `tushare_provider` / `akshare_provider`（production，见 [11_d_data](../../02_domain_architecture_docs/11_d_data.md)） | 结构化事件主源（时间戳明确、PIT 严格） |
 | **新闻** | 财经新闻、政策解读、行业动态 | `eastmoney_news_provider` / `cls_provider`（财联社）/ `rss_provider`（BBC/CNBC/NYT/Guardian/Bloomberg，production） | 非结构化情绪事件源 |
 | **龙虎榜** | 游资/机构席位买卖明细 | `akshare_provider`（[BM-SEL-05-A 机构行为分析](../battle_map/battle_map_05_stock_selection.md)，production） | 资金面事件（主力行为佐证） |
 | **异动** | 盘中价格/成交量相对基准的异常偏离 | 国盛证券异动雷达方法（[2026-03 国盛金工](http://stock.finance.sina.com.cn/stock/view/paper.php?autocallup=no&isfromsina=no&reportid=826626291912&symbol=sh000001)）；复用 `signal_ashare/intraday_buy_sell_point_analyzer`（[BM-SEL-05-C](../battle_map/battle_map_05_stock_selection.md)，production）+ `market_sentiment_analyzer`（[BM-SEL-03-A](../battle_map/battle_map_05_stock_selection.md)，production） | 量价异动事件（需新建识别器，见 §2.5） |
 
 **关键区分**：`corporate_action_processor`（[MOD-TRADING-004](../../../03_modules/_domain_trading/corporate_action_processor/blueprint.md)，production）处理的是除权除息/分红/送股/配股/拆股等**持仓调整类**公司行动——它是持仓数量与均价的机械调整，不产生 alpha 信号，**不归入事件源**，但事件驱动 sleeve 须消费其事件以避免在除权日误判异动（见 §2.5 降级）。
 
-> **⚠️ 龙虎榜事件源 2026 信号失效提示（v1.8.0 补，与 [24 号 §3.5 v1.8.2](24_daban_strategy_detail.md) 同步）**：龙虎榜作为四类事件源之一（上表"资金面事件/主力行为佐证"），其"机构净买入=利好佐证"假设已于 2026 年反向失效——[24 号 v1.8.2 实证](24_daban_strategy_detail.md)机构净买入次日胜率从 2018-2023 的 62-68% 暴跌至 **45.7%（低于 50% 随机）**。事件驱动 sleeve 消费龙虎榜作事件佐证同样受影响，event_score 须同步校准——详见 §2.5 [龙虎榜 2026 机构信号失效校准](#25-事件信号选股映射讨论要点④)。
+> **⚠️ 龙虎榜事件源 2026 信号失效提示（v1.8.0 补，与 [24 号 §3.5 v1.8.2](24_daban_strategy_detail.md) 同步）**：龙虎榜作为四类事件源之一（上表"资金面事件/主力行为佐证"），其"机构净买入=利好佐证"假设已于 2026 年反向失效——[24 号 v1.8.2 实证](24_daban_strategy_detail.md)机构净买入次日胜率从 2018-2023 的 62-68% 暴跌至 **45.7%（低于 50% 随机）**。事件驱动 sleeve 消费龙虎榜作事件佐证同样受影响，event_score 须同步校准——详见 §2.5"龙虎榜 2026 机构信号失效校准"块。
 
 ### 2.3 事件分类（讨论要点②）
 
@@ -81,7 +105,7 @@ scope: 07_trading_decision_architecture
 | **IPO/再融资**（v1.6.0 新增） | 大型 IPO 上市（科创板/创业板）、定增/配股解禁 | 看虹吸方向（IPO 上市→存量板块流动性抽离，利空存量；IPO 标的本身→前 5 日无涨跌幅限制博弈） | 高（科创板最大 IPO 募资 579-666 亿可吸金 500 亿+） | IPO 上市前→完成主仓位布局+保留现金；上市后→存量板块降仓避险 |
 | **地缘/宏观**（v1.6.0 新增） | 战争/制裁/贸易摩擦/汇率冲击/大宗商品价格异动 | 看传导链方向（中东冲突→油气/黄金/军工多；贸易战→稀土/农业多；汇率贬值→出口导向多） | 高-极高（持续性强于业绩/并购） | rising phase 持有 + 板块传导链跟踪 |
 
-**细分类预留**：[Janus-Q（arXiv 2026-02）](https://arxiv.org/html/2602.19919v2) 标注 10 fine-grained event types（含 sentiment label 与关联股票），其 event-to-CAR（Cumulative Abnormal Return）建模范式可作 sleeve 内部增强方向（见 §6 待裁定-2）。首版不引入 10 类细分（避免 NLP 标注带宽过重），用六类粗分类 + 情绪分数维度承载。
+**细分类预留**：[Janus-Q（arXiv 2026-02）](https://arxiv.org/html/2602.19919v2) 标注 10 fine-grained event types（含 sentiment label 与关联股票），其 event-to-CAR（Cumulative Abnormal Return）建模范式可作 sleeve 内部增强方向（见 §5 待裁定-2）。首版不引入 10 类细分（避免 NLP 标注带宽过重），用六类粗分类 + 情绪分数维度承载。
 
 ### 2.4 事件冲击衰减曲线（讨论要点③）
 
@@ -154,7 +178,7 @@ def check_selling_pressure_absorbed(symbol, day2_3_data, baseline_volume_ratio=1
 ```
 
 **为何 CVD 转正是吸收判据**：极端负反应后 day 2-3 若 CVD 转正，意味着买方主动成交量超过卖方——聪明资金在低位接货，卖压被消化。结合量能放大（放量消化）与价格企稳（跌幅收窄），三者共振才是'吸收卖压'确认。这是 PEAD Inversion 极端负反应'等 day 2-3 确认再决策'的具体施工算法。CVD 是 order flow 分析的标准工具，与 [22 板块轮动](22_sector_rotation_spec.md) 量能维度同源。
-- **A 股适配**：mega-cap tech 实证需 A 股回测验证（大盘股 vs 小盘股信息扩散速度不同），登记为 §6 待裁定-5
+- **A 股适配**：mega-cap tech 实证需 A 股回测验证（大盘股 vs 小盘股信息扩散速度不同），登记为 §5 待裁定-5
 
 **PEAD.txt 文本惊喜（2026 关键发现）**：[费城联储 PEAD.txt 论文](https://marketmaker.cc/en/blog/post/llm-alpha-mining-earnings-calls/)（Meursault et al.）构建纯文本版 SUE（SUE.txt）——**不使用任何数值盈余数据**，仅从公告文本提取。结果：SUE.txt 产生的漂移**是经典数值 PEAD 的 2 倍**；近年来经典数值 PEAD 已几乎消失（市场学会了处理数字），但**文本漂移仍然显著**。**结论**：事件驱动 sleeve 的 NLP 文本信号比数值惊喜更有 alpha 价值（支撑 §2.7 NLP 复用裁定）。
 
@@ -173,22 +197,22 @@ def check_selling_pressure_absorbed(symbol, day2_3_data, baseline_volume_ratio=1
 > - **dReport × ORJ**：dReport（披露时点）是 PEAD 的事件时点扩展——dReport 大幅提前 + ORJ>3% = 强信号叠加（"靓女先嫁"+开盘确认双重利好）
 > - **Jump on PEAD × ORJ**：Jump on PEAD（5 日窗口跳跃）是 ORJ（单日跳空）的冲击强度扩展——ORJ 即时确认，Jump on PEAD 滚动跟踪
 > - **隔夜趋势 × ORJ**：隔夜趋势（日常隔夜）是 ORJ（事件日隔夜）的时序扩展——事件日 ORJ>3% + 近 20 日隔夜趋势为正 = 强信号叠加
-> - **AStockEvent × §2.3 事件分类**：AStockEvent 的 13 类比四类粗分类更细，可作 [Janus-Q 10 类细分类](#23-事件分类讨论要点②) 的 A 股本土化映射，直接驱动 dReport 计算
+> - **AStockEvent × §2.3 事件分类**：AStockEvent 的 13 类比六类粗分类更细，可作 Janus-Q 10 类细分类（§2.3 细分类预留）的 A 股本土化映射，直接驱动 dReport 计算
 >
 > **施工优先级**：dReport（年化超额 4.88%）与 Jump on PEAD（IC 10.96%）有 10 年/5 日窗口实证，优先级最高——可作为 NLP 管道（[#ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）未就绪前的数值 alpha 补充（与 ORJ 同属降级算法，不依赖 NLP）。隔夜趋势作为日常 alpha 因子接入因子工厂。AStockEvent 作为 NLP 管道工程化候选，远期评估。
 >
-> **对 §3.6 漏斗③ event_impact_score 的施工落地**：六因子矩阵为 §3.6 事件驱动漏斗第三层"事件影响评分排序"提供具体因子——`event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_PEAD_z + w4·overnight_trend_z + PEAD_inversion_gate`（权重待 G10 校准，PEAD Inversion 作门控非加权项）。详见 [20 §2.4 v1.4.4 六因子矩阵](20_first_batch_strategies.md)。
+> **对 [21 号 §3.6](21_stock_selection_engine.md) 漏斗③ event_impact_score 的施工落地**：六因子矩阵为 [21 号 §3.6](21_stock_selection_engine.md) 事件驱动漏斗第三层"事件影响评分排序"提供具体因子——`event_impact_score = w1·ORJ_z + w2·dReport_z + w3·Jump_on_PEAD_z + w4·overnight_trend_z + PEAD_inversion_gate`（权重待 G10 校准，PEAD Inversion 作门控非加权项）。详见 [20 §2.4 v1.4.4 六因子矩阵](20_first_batch_strategies.md)。（v1.9.4 修正：此前裸写"§3.6"在本备忘内悬空——本备忘 §3 无 3.6 节，真源是 21 号 §3.6 漏斗模型）
 
 **Hawkes 自激发建模（暂缓前沿）**：[Hawkes Processes for Investors 2026-02](https://stockalpha.ai/alpha-learning/hawkes-processes-for-investors-modeling-self-exciting-volatility-bursts) 用自激发点过程建模事件聚类（branching ratio n=α/β，n→1 近临界=事件簇爆发）。2026 新实证：
 - [中国股市传染分析（arXiv 2512.08000）](https://arxiv.org/html/2512.08000v1/) 用时空 Hawkes 建模 A 股板块轮动——高交易活跃期板块延续趋势，低活跃期板块轮动加剧，与本项目板块轮动（[G06](22_sector_rotation_spec.md)）天然契合
 - [Price Discovery 物理（arXiv 2601.11602）](https://arxiv.org/html/2601.11602v2) 用 Hawkes 区分外生（新闻驱动）vs 内生（反馈驱动）资金流——外资/机构流驱动永久价格发现，散户流为恐慌驱动近爆炸自激发
 - [Persia 2026-06 金融传染](https://proceedings.systemdynamics.org/2026/papers/P1265.pdf) 多元 Hawkes 跟踪 VIX，与 DCC-GARCH 竞争性，可作系统性风险监控工具
-- **[Transfer-Entropy + Hawkes 跨境风险传染（MDPI Entropy 2026-08-06）](https://www.mdpi.com/1099-4300/28/8/887)**：两层框架（transfer entropy + 多元 Hawkes），Hawkes 激发分量在 COVID-19/2022 能源危机期间将传染强度放大 35-58%；**Von Neumann 图熵在峰值回撤前 7-12 交易日达到历史极值**——可作为 firm 层系统性风险预警信号（支撑 §6 待裁定-1 Hawkes 留给风控层的裁定）
+- **[Transfer-Entropy + Hawkes 跨境风险传染（MDPI Entropy 2026-08-06）](https://www.mdpi.com/1099-4300/28/8/887)**：两层框架（transfer entropy + 多元 Hawkes），Hawkes 激发分量在 COVID-19/2022 能源危机期间将传染强度放大 35-58%；**Von Neumann 图熵在峰值回撤前 7-12 交易日达到历史极值**——可作为 firm 层系统性风险预警信号（支撑 §5 待裁定-1 Hawkes 留给风控层的裁定）
 - **[Hawkes-Driven OTC Market Making（arXiv 2608.02002, 2026-08-03）](https://arxiv.org/html/2608.02002v1)**：用一般 Hawkes 核建模 RFQ 到达，开发 Volterra–Riccati 近似层级处理路径依赖（指数核可精确 Markovian lifting，混合指数/长记忆核需近似）。**关键发现**：幂律 RFQ 记忆下，方向性 RFQ 突发改变未来流量条件预测 → 通过 continuation-value 影子价转为持续性报价偏斜 → 内生 OTC 报价影响继承 RFQ 预测响应的长记忆衰减。此为 Hawkes 在做市/流动性层（而非 sleeve alpha 层）的最新 8 月实证，进一步支撑"Hawkes 留给风控层"裁定——其长记忆+内生影响特性适合 G18 流动性危机的订单流建模
 
 **Hawkes 实操参考（若未来启用）**：[MetricGate 2026-06 实操指南](https://metricgate.com/blogs/hawkes-self-exciting-process-r/) 给出完整校准流程——MLE 估计 μ/α/β → 计算 branching ratio n=α/β（n<1 稳定，n→1 近临界爆发）→ 通过经验拟合的 transfer function 将 intensity λ(t) 转为波动率 → 定义升级触发器（intensity 倍数阈值/短期期望事件数/delta VaR 阈值）。此流程可作为 G17/G18 firm 层风控的参考实现路径。
 
-> 裁定：Hawkes 建模作为 sleeve 内部增强方向登记为暂缓（§6 待裁定-2）。首版不引入——经验衰减曲线 + 极端反应反转修正已能承载 rising/decay 持仓纪律，Hawkes 的 branching ratio 监控更适合 firm 层风险（[G17 VaR/ES](36_var_es_monitoring.md) / [G18 流动性危机](37_liquidity_crisis_protocol.md)），留给风控层评估。MDPI 2026-08 的"图熵提前 7-12 天预警"发现进一步强化此裁定方向。
+> 裁定：Hawkes 建模作为 sleeve 内部增强方向登记为暂缓（§5 待裁定-2）。首版不引入——经验衰减曲线 + 极端反应反转修正已能承载 rising/decay 持仓纪律，Hawkes 的 branching ratio 监控更适合 firm 层风险（[G17 VaR/ES](36_var_es_monitoring.md) / [G18 流动性危机](37_liquidity_crisis_protocol.md)），留给风控层评估。MDPI 2026-08 的"图熵提前 7-12 天预警"发现进一步强化此裁定方向。
 
 ### 2.5 事件信号→选股映射（讨论要点④）
 
@@ -242,7 +266,7 @@ event_score = (
 > 1. **机构净买入佐证降权**：龙虎榜机构净买入作为事件佐证（confirmation）的权重砍半或归零——当事件（业绩/并购/政策利好）伴随龙虎榜机构净买入时，不再自动强化 event_score，等首批策略实盘 3-6 月后用本项目持仓数据重新校准
 > 2. **净买率极端值硬阈值门控**：新增 `dragon_tiger_corroboration_modifier`——净买率≥12% → 佐证加分（×1.2），<12% → 不加分（×1.0），用 12% 硬阈值替代"机构净买入=加分"软评分
 > 3. **席位类型差异化**：外资席位（高盛/瑞银/摩根大通）≠ 量化机构席位 ≠ 传统游资席位——量化机构席位触发 [24 号 §3.10/§3.11 量化席位过滤](24_daban_strategy_detail.md) 降权（≥3 量化席位+买入占比>30% → 佐证无效化），与 23-A 校准口径一致
-> 4. **数据源**：龙虎榜数据已入库（`dragon_tiger` 表，c1_market，2026-08-07 最新，5,145 条/170,789 行），席位类型字段可直接消费
+> 4. **数据源**：龙虎榜数据已入库双表——`c1_market.dragon_tiger`（每日上榜汇总，AKShare `stock_lhb_detail_em`）+ `c1_market.dragon_tiger_seat`（**席位明细**，AKShare `stock_lhb_stock_detail_em` Top5 买卖席位合并去重），tasks.yaml `dragon_tiger_incremental` / `dragon_tiger_seat_incremental` 盘后调度（v1.9.0 代码侧审计确认，见 §1.4）。**席位类型字段消费自 `dragon_tiger_seat` 表**，量化席位/外资席位/游资席位分类在此表落地
 >
 > **event_score 佐证修正因子（施工算法）**：
 >
@@ -497,9 +521,9 @@ def event_score_triple_factor(event):
 > | **隔夜趋势**（日常隔夜） | 20 日隔夜收益率均值/动量 | 西部证券 2026-04 Rank IC=-0.1687/中证2000 年化超额 7.97% | ORJ 时序扩展（**待补**） |
 > | **AStockEvent Feed**（事件结构化） | 13+ 类公告结构化事件 Feed | GitHub 2026-06-13 | NLP 管道工程化候选（**待补**） |
 >
-> **施工优先级**：dReport（年化超额 4.88%）与 Jump on PEAD（IC 10.96%）有 10 年/5 日窗口实证，**优先级最高**，可作为 NLP 管道（[ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）未就绪前的数值 alpha 补充（与 ORJ 同属降级算法）。隔夜趋势与 ORJ 正交可叠加（事件日 ORJ>3% + 近 20 日隔夜趋势为正 = 强信号叠加）。AStockEvent 是 NLP 管道的工程化落地候选，13 类比 §2.3 四类粗分类更细，可作 Janus-Q 10 类细分类的 A 股本土化映射。
+> **施工优先级**：dReport（年化超额 4.88%）与 Jump on PEAD（IC 10.96%）有 10 年/5 日窗口实证，**优先级最高**，可作为 NLP 管道（[ARCH-NLP-PIPELINE-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)）未就绪前的数值 alpha 补充（与 ORJ 同属降级算法）。隔夜趋势与 ORJ 正交可叠加（事件日 ORJ>3% + 近 20 日隔夜趋势为正 = 强信号叠加）。AStockEvent 是 NLP 管道的工程化落地候选，13 类比 §2.3 六类粗分类更细，可作 Janus-Q 10 类细分类的 A 股本土化映射。
 >
-> **与 §2.4 PEAD 衰退根因的协同**：[20 §2.4 v1.4.3](20_first_batch_strategies.md) 引 Subrahmanyam (UCLA) 2026-03 实证——2000 年后 all-but-microcaps 无 PEAD 证据，主因是"盈余信息含量下降"。六因子矩阵正是对此的应对：① PEAD 聚焦"信息含量高"事件类（并购重组>业绩预告>政策受益）；② SUE.txt 文本惊喜比数值 SUE 更有 alpha（捕捉信息含量而非数字）；③ dReport 提前披露本身是信息含量信号（业绩好才提前披露）。登记为 §6 待裁定（事件类），G10 校准六因子矩阵权重。
+> **与 §2.4 PEAD 衰退根因的协同**：[20 §2.4 v1.4.3](20_first_batch_strategies.md) 引 Subrahmanyam (UCLA) 2026-03 实证——2000 年后 all-but-microcaps 无 PEAD 证据，主因是"盈余信息含量下降"。六因子矩阵正是对此的应对：① PEAD 聚焦"信息含量高"事件类（并购重组>业绩预告>政策受益）；② SUE.txt 文本惊喜比数值 SUE 更有 alpha（捕捉信息含量而非数字）；③ dReport 提前披露本身是信息含量信号（业绩好才提前披露）。登记为 §5 待裁定（事件类），G10 校准六因子矩阵权重。
 
 - **BM-SEL-11 知识图谱增强（待就绪）**：复用 [BM-SEL-11 知识图谱与因果推演](../battle_map/battle_map_05_stock_selection.md)（design）的传导链 + 因子区分。知识图谱就绪后，可升级为 [LLM 增强动态金融知识图谱（arXiv 2607.10932, 2026-07）](https://arxiv.org/pdf/2607.10932) 范式——LLM 将非结构化文档转为结构化经济状态变化事件 + 提取实体间关系构建动态图谱 + 社区感知信号传播（λ_in > λ_out，事件信号在经济社区内传播强于跨社区）。其 Community Information Surprise（CIS）与 Propagated Information Surprise（PIS）因子在模拟中 rank IC 与 long-short Sharpe 均优于纯情绪/直接事件信号（Fama-MacBeth t-stat ≈ 3.7）。**此为 BM-SEL-11 的 2026 最新对标方向**
 - **BM-SEL-19 开通条件**：事件数据源 + 知识图谱 + NLP 就绪（见漏斗 6 件套③）。**未开通则跳过本层，第三层（精筛）直接进第五层**——降级不阻塞，符合 AI 开发故障隔离纪律
@@ -622,7 +646,9 @@ def has_volume_confirmation(symbol, days=1, min_ratio=1.5):
     return recent_vol.mean() >= min_ratio * baseline_vol
 ```
 
-> **补全说明**：① `event_score_single_factor` 把 §2.5 首版内联公式封装为函数，供 `compute_event_score` 调度；② `compute_event_score` 是 `should_enter`/`should_enter_with_confirmation` 的统一评分入口，业绩类走双因子、其他五类走单因子；③ `decay_exit_window` 是 §2.4 衰减曲线表的程序化形态，`should_exit` 第一道线 DECAY_TIMEOUT 查表；④ `has_contradictory_event` 查 `event_store` 近 5 日反向事件，支撑第三道线；⑤ `has_volume_confirmation` 是确认型入场第三分支的量能判据，`event_store`/`volume_series`/`volume_ma` 复用 D_FEED 域已建数据接口。5 项补全后 should_enter/should_exit/should_enter_with_confirmation 三个函数的所有被调用符号均有定义，进出场触发算法施工闭环。
+> **补全说明**：① `event_score_single_factor` 把 §2.5 首版内联公式封装为函数，供 `compute_event_score` 调度；② `compute_event_score` 是 `should_enter`/`should_enter_with_confirmation` 的统一评分入口，业绩类走双因子、其他五类走单因子；③ `decay_exit_window` 是 §2.4 衰减曲线表的程序化形态，`should_exit` 第一道线 DECAY_TIMEOUT 查表；④ `has_contradictory_event` 查 `event_store` 近 5 日反向事件，支撑第三道线；⑤ `has_volume_confirmation` 是确认型入场第三分支的量能判据。5 项补全后 should_enter/should_exit/should_enter_with_confirmation 三个函数的所有被调用符号均有定义，进出场触发算法施工闭环。
+>
+> **⚠️ 接口契约精确化（v1.9.0 代码侧审计修正）**：`event_store` / `volume_series` / `volume_ma` / `trading_days_ago` 四者是**接口契约（待落码）而非已建函数**——v1.9.0 全仓扫描确认 `src/zephyr/` 无此四个函数定义（已有 `EventStore` 类在 `gov_audit`/`infrastructure` 域，是治理/系统事件存储，非市场事件存储，勿混用）。落码路径：市场事件存储基于 `fund_news_data` 表 + 事件分类落库（§2.3）实现 `event_store.query(symbol, since)`；`volume_series`/`volume_ma` 基于个股日K 表（pit_query PIT 查询基座，[11_d_data](../../02_domain_architecture_docs/11_d_data.md) production）一行封装；`trading_days_ago` 复用交易日历（hk_trade_calendar 同域日历设施）。**数据基座全部具备，缺的仅是这四个薄封装函数**——登记为事件驱动 sleeve 代码施工时的前置小项（工程量 < 1 天），不阻塞设计闭环
 
 **多层架构对标（2026 最新实践）**：[Closelook Pattern Engine 2026-04](https://closelook.net/reports/post-earnings-drift/) 采用三层递进架构——①regime 层（当前市场态是否支持 drift）→ ②trend 层（个股趋势是否支持延续）→ ③pattern 层（事件惊喜幅度是否足够）。事件驱动 sleeve 的多层协同与此一致：regime 节流（[30 §2.2](30_multi_strategy_concurrency.md) Shrinkage）→ BM-SEL-19 漏斗（trend+pattern）→ event_score（pattern 精度）。Closelook 实证：top quintile earnings surprise 相对 bottom quintile 年化超额 ~13%。
 
@@ -744,7 +770,9 @@ def ipo_siphon_position_adjustment(ipo_event, current_positions, siphon_level):
 
 **与 [37_liquidity_crisis_protocol §3.2](37_liquidity_crisis_protocol.md) 的联动**：IPO 虹吸是**前瞻性**流动性预警（上市日前已知），不同于 Amihud/spread 的事后检测。37 号 §3.2 日频结构性流动性监控新增"IPO 流动性抽离预警"维度——基于未来 N 日 IPO 募资规模/全市场成交额比值，提前调整仓位上限。两者互补：37 号负责"检测+响应"，26 号负责"alpha 方向+仓位策略"。
 
-**数据源**：IPO 上市日历/募资规模来自 `akshare_provider`（`stock_ipo_info` 接口，production），已在 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md) 登记。前 5 日无涨跌幅限制是科创板/创业板规则硬编码。
+**数据源**：IPO 上市日历/募资规模来自 `akshare_provider`（`stock_ipo_info` 接口，production），provider 清单见 [11_d_data](../../02_domain_architecture_docs/11_d_data.md)。前 5 日无涨跌幅限制是科创板/创业板规则硬编码。
+
+**进行时案例（v1.9.0 补，2026-08-11 实盘）**：宇树科技（"人形机器人第一股"）科创板 IPO 申购——[2026-08-10 披露网上中签率 0.018% 创科创板历史新低，978 万户申购、有效申购倍数 8288 倍](https://cbgc.scol.com.cn/news/7840749)；同周创业板新股超纯应材上市首日盘中涨 740%。机器人板块 2026-08-11 午后直线拉升（巨轮智能 1 分钟涨停），印证 IPO 事件对**存量同题材板块**的双向效应：申购期资金分流（虹吸）+ 上市前题材预热（板块异动）——`compute_ipo_siphon_coefficient` 的输入应包含"申购倍数/中签率"作为市场关注度代理变量（募资额固定时，申购热度决定实际资金冻结规模），登记为 §5 暂缓项 8 候选增强
 
 **注意**：虹吸态概念在 [22_sector_rotation_spec §3.1⑤](22_sector_rotation_spec.md) 已存在，但那是**板块间虹吸**（强势板块吸金致其余缺血），非 IPO 驱动的**全市场流动性虹吸**——两者机制不同。IPO 虹吸是**事件型、全局性、可预知的**流动性抽离，板块间虹吸是**持续性、局部性、事后才能检测的**资金迁移。
 
@@ -849,7 +877,7 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 东方财富 | `eastmoney_news_provider` | 国内财经新闻 | production |
 | 财联社 | `cls_provider` | 国内快讯 | production |
 | 海外 RSS | `rss_provider`（BBC/CNBC/NYT/Guardian/Bloomberg） | 海外财经新闻 | production |
-| ClickHouse | `news_collector`（MOD-DATA-NEWS-001）→ `fund_news_data` 表 | PIT 严格查询 | design→production（[09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md)） |
+| ClickHouse | `news_collector`（MOD-DATA-NEWS-001）→ `fund_news_data` 表 | PIT 严格查询 | production（[11_d_data](../../02_domain_architecture_docs/11_d_data.md)） |
 | 去重 | `news_dedup` | 跨源去重 | production |
 
 **NLP 情感管道（在建，复用）**：
@@ -862,6 +890,8 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 - **事件感知情绪因子正交性**：[Event-Aware Sentiment Factors（arXiv 2508.07408, 2025-08）](https://arxiv.org/html/2508.07408v1/) 用 LLM 对高情绪强度金融推文做多标签事件分类，对齐 1-7 日 forward returns。发现：某些事件类（如"rumor/speculation"）是**强逆向指标**（Sharpe 低至 -0.38，IC > 0.05，95% 显著），且事件因子预测力**正交于市场 beta**——支撑事件驱动 alpha 与 regime 正交的架构裁定
 - **LLM 财报电话会议分析**：[Lopez-Lira & Tang 2026](https://marketmaker.cc/en/blog/post/llm-alpha-mining-earnings-calls/) 证明通用 LLM 对新闻标题的评估可预测次日收益（~90% 方向命中率），尤其对小盘股和负面新闻；[FinCall-Surprise（arXiv 2510.03965）](https://arxiv.org/html/2510.03965v1/) 进一步引入多模态（文本+音频+PPT）——**音频语调揭示管理层信心/不确定性**（纯文本转录丢失此信号）。首版仅用文本（#ARCH-NLP-PIPELINE-001 范围），多模态登记为远期增强
 - **LLM 金融预测综述**：[The New Quant（arXiv 2510.05533, 2025-10）](https://arxiv.org/html/2510.05533v1/) 综述 50+ 研究，提出任务分类法：情绪/事件提取→数值推理→多模态→RAG→时序提示→agentic 系统。事件驱动 sleeve 的 NLP 管道（事件分类+情绪方向）对应其"情绪/事件提取"层，未来可沿此分类法演进
+- **跨源情绪集成（v1.9.0 补，多源 news_data 的组合方法论）**：[RavenPack × Financial Times 2026-03](https://www.ravenpack.com/research/unlocking-alpha-in-g7-currency-markets-with-financial-times) 跨源情绪集成实证——两独立新闻源（RavenPack Core + FT）平均秩相关仅 10-14%（真正交），经 cross-validated ensemble + tanh 软投票（强化跨源一致信号、压制低置信信号）后 IR 0.48→0.81、年化超额 +108bps、双周价差 ~260bps。**对本项目含义**：东财/财联社/RSS 三源同样异质（国内媒体/快讯/海外），`sentiment_aggregator`（待落盘，§1.4）落码时应采用**跨源一致性投票**而非简单均值——仅当 ≥2 源情绪方向一致时才输出强 sentiment_score，单源孤证降级为弱信号。这是 §2.7"复用多源"裁定的组合层方法论补全
+- **情绪分类≠截面 alpha 的又一独立印证（v1.9.0 补）**：[Burchi & Regni, *Cogent Economics & Finance* 2026-07](https://www.tandfonline.com/doi/full/10.1080/23322039.2026.2703376) 用 BERTweet/RoBERTa/FinBERT 对 25 只大盘股推文做情绪→交易信号：**方向准确率接近随机，但信号能捕捉大幅波动**从而改善风险调整收益——"分类指标与经济价值的鸿沟"与 §2.7 QLoRA 负结果（F1 0.88 vs rank IC 0.0143 不显著）互为印证：情绪信号的价值在**事件方向触发+波动捕捉**，不在截面排序
 
 > **⚠️ QLoRA LLM 情绪 OOS 经济性弱警示（v1.5.0 补，2026-08-04 最新负结果——反平衡上述正面实证）**：[QLoRA Benchmark（Luo et al., arXiv:2608.04200, 2026-08-04）](https://arxiv.org/html/2608.04200v1) 在五大金融文本数据集上对比 TF-IDF NB / FinBERT / Financial-RoBERTa / zero-shot Qwen2.5-7B / QLoRA 微调 Qwen2.5-7B·LLaMA3-8B·Mistral-7B。**分类性能强**：Mistral-7B QLoRA 准确率 0.8840、macro-F1 0.8771（QLoRA 将 Qwen2.5 的 F1 从 0.7274 提升至 0.8615）。**但 OOS 经济性弱**：2019 Benzinga S&P 100 样本外评估，所有 7 模型 1 日 rank IC 均为正但极小（最大 FinBERT 0.0143），**28 个模型×期限组合经 False Discovery Rate 多重检验后无统计显著**。
 >
@@ -891,11 +921,11 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 
 ### 3.2 首版即引入 Hawkes 自激发建模 —— 拒绝（暂缓）
 - **拒绝理由**：Hawkes 建模是研究前沿，参数估计（μ/α/β + branching ratio）需充分事件样本与校准带宽；首版经验衰减曲线已能承载 rising/decay 两阶段持仓纪律。Hawkes 的 branching ratio 监控更适合 firm 层系统性风险（G17/G18），非 sleeve alpha
-- **处置**：登记为暂缓前沿（§6 待裁定-2），首版用经验衰减曲线
+- **处置**：登记为暂缓前沿（§5 待裁定-2），首版用经验衰减曲线
 
 ### 3.3 首版即引入 Janus-Q 10 类细分类 + 端到端 LLM 决策 —— 拒绝（暂缓）
 - **拒绝理由**：[Janus-Q](https://arxiv.org/html/2602.19919v2) 将事件从辅助信号升为主决策单元（LLM + 分层门控奖励建模），需 62,400 篇标注语料 + 模型微调。个人+AI 项目无此标注带宽，首版引入属过度工程
-- **处置**：首版四类粗分类 + 情绪分数维度承载；Janus-Q 范式登记为 sleeve 内部增强方向（§6 待裁定-2）
+- **处置**：首版六类粗分类 + 情绪分数维度承载；Janus-Q 范式登记为 sleeve 内部增强方向（§5 待裁定-2）
 
 ### 3.4 事件做空信号开空仓 —— 拒绝（A 股约束）
 - **拒绝理由**：A 股不能做空，利空事件（如业绩暴雷、ST）只能用于"剔除已有持仓/回避入池"，不能开空仓
@@ -911,12 +941,17 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 ### 4.2 演进路径
 - **第一阶段（立即施工）**：复用已建多源 news_data + 经验衰减曲线 + BM-SEL-19 漏斗（待开通）。NLP 管道（#ARCH-NLP-PIPELINE-001）就绪后接入情绪分数维度
 - **第二阶段（sleeve 有 3-6 月实盘 PnL 后）**：上叠 RegimeMetaAllocator（[MOD-PA-007](../../../03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md)）按 PerformanceScore × Shrinkage 动态调资金占比（[30 §4.2](30_multi_strategy_concurrency.md)）
-- **第三阶段（前沿增强，暂缓）**：Hawkes 自激发建模 / Janus-Q 细分类（见 §6 待裁定-2）
+- **第三阶段（前沿增强，暂缓）**：Hawkes 自激发建模 / Janus-Q 细分类（见 §5 待裁定-2）
 
 ### 4.3 为何这是上限而非妥协
 - 事件源四类（公告/新闻/龙虎榜/异动）已覆盖 A 股主要事件维度，多于四类会稀释 NLP 标注带宽
 - 复用而非自建——sleeve 边界清晰（事件→候选→评分→注入漏斗），不向数据源层与漏斗层蔓延
 - 与打板的相关性风险（情绪隐形驱动）是上限的真实约束——若 G07 实测相关性 >0.6，需重新审视 sleeve 组合（[20 §2.5](20_first_batch_strategies.md)）
+
+> **过度工程审查回执（v1.9.2，2026-08-12 第 5 轮，判定基准=[system_charter §2 硬边界](../04_architecture_principles_decisions/system_charter.md)）**：
+> ①**多源 news_data 是否过重（个人项目是否只需 1-2 个源）**——**裁定：不过重**。东财/财联社/RSS 三源是已 production 的存量设施（§1.4 盘点真源确认），复用存量 ≠ 新增负担；RavenPack×FT 2026-03 实证（§2.7）跨源集成 IR 0.48→0.81，多源恰是 alpha 来源而非成本。但**反向边界**：再新增社交源（微博/雪球/股吧）属过重——非结构化社交文本清洗成本高、噪声大，个人项目不扩源
+> ②**Hawkes 衰减模型是否过重**——**裁定：当前形态不过重**（§2.4 经验衰减曲线承载，Hawkes 登记 §5 暂缓项 1 留给 firm 层风控）。Hawkes 若首版引入 sleeve alpha 层则过重（参数估计需充分事件样本+校准带宽，单机 64GB RAM 可算但标注/校准人力不足）——本备忘自 v1.0.0 起即拒绝首版引入，持续成立
+> ③**其余重机制分布**：Janus-Q 10 类细分类（§5 暂缓项 2，62,400 篇标注带宽）、CNN 可视化盈余（§5 暂缓项 7，GPU 视觉路径）、LLM 动态知识图谱（§5 暂缓项 6）、Data Funnel 双阶段（§2.7 远期候选）——全部显式标注暂缓/远期，按审查规则"远期工程不算过度工程"予以保留
 
 ## 5. 待裁定（暂缓）
 
@@ -925,12 +960,13 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 暂缓项 | 暂缓理由 | 重评条件 | 责任方 |
 |---|---|---|---|
 | 1. Hawkes 自激发事件冲击建模 | 经验衰减曲线+极端反应修正已承载 rising/decay 纪律；Hawkes 参数估计需校准带宽，branching ratio 监控更适合 firm 层风险。MDPI 2026-08 图熵提前 7-12 天预警进一步强化留给风控层 | sleeve 有 3 月 track record + 事件样本充分（>1000 事件）+ firm 层风控（G17/G18）评估认为需要事件聚类监控 | G10 sleeve owner + G17/G18 |
-| 2. Janus-Q 10 类细分类 + 端到端 LLM 决策 | 需 62,400 篇标注语料 + 模型微调，个人+AI 项目无此带宽；首版四类粗分类+情绪分数已承载 | NLP 管道（#ARCH-NLP-PIPELINE-001）成熟 + 标注带宽获得（如 TRAPE AI 运行时可自动标注） | G10 sleeve owner + G28 |
+| 2. Janus-Q 10 类细分类 + 端到端 LLM 决策 | 需 62,400 篇标注语料 + 模型微调，个人+AI 项目无此带宽；首版六类粗分类+情绪分数已承载 | NLP 管道（#ARCH-NLP-PIPELINE-001）成熟 + 标注带宽获得（如 TRAPE AI 运行时可自动标注） | G10 sleeve owner + G28 |
 | 3. 异动识别器算法定型 | 国盛证券异动雷达方法（相关系数+超额方向）已实证有效，但 A 股参数（窗口/阈值/基准）需 G23 回测校准 | G23 回测框架对接就绪 + 历史异动样本可回测 | G10 + G23 |
 | 4. 事件衰减曲线参数按事件类校准 | 初拟半衰期表（§2.4）需实盘/回测验证；衰减速度 regime-dependent 需后验 | sleeve 有 3 月 track record + PerformanceScore 分 regime 校准 | G10 + G07 |
 | 5. 极端反应反转（PEAD Inversion）A 股适配 | Vortex 2026-05 实证基于 mega-cap US tech，A 股大盘/小盘信息扩散速度不同需验证；3% 阈值可能 A 股不适配 | G23 回测 + A 股历史事件样本（业绩公告日 reaction 分布）可回测 | G10 + G23 |
 | 6. LLM 增强动态知识图谱 + 社区传播 | arXiv 2607.10932（2026-07）CIS/PIS 因子优于纯情绪/直接事件，但需 LLM 事件抽取 + 动态图谱 + 社区检测基础设施，首版无此带宽 | BM-SEL-11 知识图谱就绪 + NLP 管道（#ARCH-NLP-PIPELINE-001）成熟 + 标注带宽 | G10 + G06（BM-SEL-11）|
 | 7. CNN 可视化盈余 PEAD 预测（v1.2.0 新增） | [Garfinkel/Hribar/Hsiao 2024](https://www.biz.uiowa.edu/faculty/jgarfinkel/working/CNN.pdf) 将季度盈余转柱状图，CNN 提取漂移预测特征，OOS 显著优于传统 PEAD 预测器（RET[-1,1]）。属深度学习视觉路径，需 GPU 推理+图像化预处理，个人+AI 项目首版过重 | G23 回测框架就绪 + GPU 推理资源 + 双因子（SUE+EAR）已验证基线后评估增量 | G10 + G23 |
+| 8. IPO 虹吸系数引入申购热度代理变量（v1.9.0 新增） | §2.5a `compute_ipo_siphon_coefficient` 当前仅用募资额/市场成交额；宇树科技案例（中签率 0.018%/申购 8288 倍）显示申购热度决定实际资金冻结规模，募资额固定时热度才是虹吸强度 proxy。数据源（申购倍数/中签率）需 akshare 新股申购接口验证可得性 | IPO 数据源接口字段核实 + 首个大型 IPO 实盘事件复盘后 | G10 sleeve owner |
 
 ## 6. 待定问题
 
@@ -944,6 +980,9 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | convergence_window 实盘校准（事件 2-3 天） | [30 §6.4](30_multi_strategy_concurrency.md) / [G14](33_budget_change_handler.md) | 待首批策略实盘后校准 |
 | 事件驱动六因子矩阵权重校准（dReport/Jump on PEAD/隔夜趋势接入） | §2.4 | 待 G10 校准，dReport 与 Jump on PEAD 优先级最高（有 10 年/5 日实证） |
 | 龙虎榜 2026 机构信号失效校准参数实盘复核 | §2.2/§2.5（v1.8.0 与 24 号 v1.8.2 同步） | 待首批策略实盘 3-6 月后用本项目持仓数据重新校准——机构净买入佐证降权系数/净买率 12% 硬阈值/量化席位双阈值，与 23-A 校准口径一致 |
+| **20 号 §2.4 事件分类表述同步（四类→六类）** | 本备忘 §2.3 v1.6.0 已升级为六类（+IPO/再融资+地缘/宏观），但 [20 §2.4](20_first_batch_strategies.md) 仍写"事件分类（业绩/并购/政策/突发）"四类——跨文档版本漂移（v1.9.0 审查发现） | 待 20 号 owner 下次修订时同步为"六类（业绩/并购/政策/突发/IPO/地缘，详见 26 号 §2.3）"。按审查约束不越界改 20 号，登记于此 |
+| **`sentiment_aggregator.py` 落盘时序** | §1.4 盘点：`src/zephyr/nlp/` 当前仅 `nlp_inference.py` + `__init__.py`，#ARCH-NLP-PIPELINE-001 登记的 sentiment_aggregator 未落盘 | 待 #ARCH-NLP-PIPELINE-001 Phase 1 完成；就绪前 sentiment_score 用单条推理输出降级（§2.7 已裁定非截面排序用途，不阻塞） |
+| **30 号 §2.4 引 "[20 §6.4]" 为失效锚点** | v1.9.2 第 6 轮一致性审查发现：[30_multi_strategy_concurrency §2.4](30_multi_strategy_concurrency.md) L227 引"打板高换手 1-2 天自然收敛，[20 §6.4]"，但 20 号无 §6.4 节（§6 为待定问题，convergence_window 真源在 20 号 §2.2-2.4 各节"换手率特征"行 + 30 号 §6.4 自身） | 待 30 号 owner 修正锚点（建议改引 20 号 §2.2 或自引 §6.4）。按审查约束不越界改 30 号，登记于此 |
 
 ## 7. 引用
 
@@ -977,7 +1016,7 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | AI 舆情分析器（候选） | CAND-AISA-001 | 候选库 | 待四问评估（自建 vs TRAPE AI） |
 | 事件漏斗 L4 | MOD-SIG-049 | BM-SEL-19 | 事件影响评分+条件PDF修正+传导链（design） |
 
-> news_data 多源：`rss_provider.py` / `eastmoney_news_provider.py` / `cls_provider.py` / `news_dedup.py` 均为 production（见 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md)）。
+> news_data 多源：`rss_provider.py` / `eastmoney_news_provider.py` / `cls_provider.py` / `news_dedup.py` 均为 production（见 [11_d_data](../../02_domain_architecture_docs/11_d_data.md)；v1.9.0 修正：此前误引 09_d_alt_data——该文档仅含 alt_data 域 7 个包入口，provider 真实登记在 11_d_data D_DATA 域）。
 
 ### 7.4 开源实证与 2026 行业参考
 - [Janus-Q — End-to-End Event-Driven Trading（arXiv 2026-02）](https://arxiv.org/html/2602.19919v2)：LLM + 分层门控奖励建模，10 fine-grained event types + 62,400 篇标注，event-to-CAR 建模。[20 §7.5](20_first_batch_strategies.md) 已引；本讨论 §2.3/§3.3 引为细分类暂缓前沿
@@ -1028,3 +1067,9 @@ def map_geopolitical_event_to_sectors(event_nlp_tag, sentiment_score):
 | 2026-08-10 | 1.7.0 | 施工算法补全：should_enter/should_exit 被调用未定义的 5 项辅助函数与数据结构 | 用户要求持续改进。审计 §2.5 进出场触发算法发现 should_enter / should_exit / should_enter_with_confirmation 三个函数调用了 5 项辅助函数/数据结构但未给出定义，补全后施工闭环：① event_score_single_factor——首版内联公式（§2.5 L215-222）封装为函数，供 compute_event_score 调度；② compute_event_score——评分调度器，业绩类走 SUE+EAR 双因子（event_score_dual_factor）、其他五类（并购/政策/突发/IPO/地缘）走单因子，should_enter 统一调用本函数；③ decay_exit_window——§2.4 衰减曲线表程序化形态（6 类事件 rising+decay 总长 = 持仓天数上限），should_exit 第一道线 DECAY_TIMEOUT 查表；④ has_contradictory_event——查 event_store 近 5 日反向事件，支撑 should_exit 第三道线 CONTRADICTION；⑤ has_volume_confirmation——确认型入场第三分支量能判据（事件后量比≥1.5 倍 20 日均量），NexusFi 2026-06 confirmation-based entry 施工化。5 项补全后 should_enter/should_exit/should_enter_with_confirmation 所有被调用符号均有定义，event_store/volume_series/volume_ma 复用 D_FEED 域已建接口。施工算法完整性结论：进出场触发算法施工闭环，无新算法缺失 |
 | 2026-08-10 | 1.7.1 | event_score_dual_factor 裸变量修复（actual_eps/consensus_eps 未定义） | 第五十五轮审查。审计 v1.7.0 新增 5 项辅助函数内部闭合性时发现 `event_score_dual_factor`（§2.5 v1.2.0 双因子，降级默认）L237 使用裸变量 `actual_eps` / `consensus_eps` 但函数签名 `event_score_dual_factor(event)` 内未定义这两个变量——而同节三因子主选版 `event_score_triple_factor`（L398-399）正确使用 `event.actual_eps` + `expectation_gap_with_revision_momentum(...)`，`expectation_gap_with_revision_momentum`（L362/367-368）正确使用 `wind_consensus_eps(symbol, event_date)`。属 v1.2.0 遗留伪代码精度缺陷，非 v1.7.0 引入。修复：L239 统一为 `sue = (event.actual_eps - wind_consensus_eps(event.symbol, event.date)) / rolling_std_surprise(event.symbol)`，与三因子版 + 预期差函数口径一致。修复后双因子降级默认版与三因子主选版 SUE 分量计算口径统一，代码施工时无双轨歧义 |
 | 2026-08-10 | 1.8.0 | **龙虎榜 2026 机构信号失效校准（与 24 号 v1.8.2 同步）** | 用户再次审查要求全网搜索 2026-08-08 最新研究+施工环节算法缺失+持续改进。24 号 v1.8.2 已实证龙虎榜生态 2026 结构性变化（机构净买入次日胜率 62-68%→45.7% < 50% 随机，信号反向失效），并明确要求 26 号 §2.5 event_score 同步校准。本次补：①§2.2 新增龙虎榜事件源 2026 信号失效提示（指向 §2.5 校准）；②§2.5 新增龙虎榜 2026 机构信号失效校准块——4 维度退化表（机构净买胜率/净买率极端值/外资占比/拉萨天团退潮）+ 4 项施工建议（机构净买佐证降权/净买率 12% 硬阈值门控/席位类型差异化/数据源就绪）+ `dragon_tiger_corroboration_modifier()` 施工算法（乘法修正因子 ∈[0.7,1.2]，净买率≥12% 加分/量化席位 hard×0.7 soft×0.85）+ 与 24 号口径一致性说明（共用 dragon_tiger 表+12% 阈值+detect_quant_seat_warning 双阈值）；③§6 新增待定问题（校准参数实盘复核）。确保打板 sleeve（23-A）与事件驱动 sleeve（event_score）对龙虎榜信号解读口径一致，避免跨 sleeve 信号歧义 |
+| 2026-08-12 | 1.9.0 | **已施工设施盘点节新增 + 交叉引用真源修正（通用规则 #11 审查）** | 架构审查第 1-2 轮（读现状+代码侧真源审计+回填）：①新增 §1.4「已施工设施盘点」——14 项设施逐项核对代码/schema/tasks.yaml 真源（新闻三源/news_collector/news_dedup/龙虎榜双表/corporate_action_processor/market_event_integrator EMERGENCY 落码确认/intraday_buy_sell_point_analyzer/market_sentiment_analyzer/nlp_inference/IPO stock_ipo_info），盘点结论：四类事件源数据链路全部 production，真正待新建仅异动识别器+事件影响评分两项 sleeve 内部组件；②交叉引用修正：§2.2/§2.5a/§2.7/§7.3 共 4 处误引 09_d_alt_data（该文档仅含 alt_data 域 7 个包入口，无 provider 描述）→ 改引 11_d_data（D_DATA 域，provider 真实登记处）；③§2.5 龙虎榜数据源声明精确化——双表（dragon_tiger 汇总 + dragon_tiger_seat 席位明细），席位类型字段消费自 seat 表；④同名消歧：backtest/event_driven_engine.py 是 Tick 级回测内核（做T专用），与本备忘"新闻/公告事件驱动 alpha"同名不同义，盘点节标注勿混淆；⑤§6 新增 2 项开放问题：20 号 §2.4 事件分类四类→六类跨文档漂移（不越界改 20 号，登记待同步）+ sentiment_aggregator.py 未落盘时序。⚠️ 本轮编辑在主工作区曾两次被并发 session git 操作回滚丢失，改用 session_worktree 物理隔离后重放恢复（#ARCH-GIT-CLEAN-GUARD-FIX 教训实证） |
+| 2026-08-12 | 1.9.1 | **缺失环节审查补全 + 2026-08-10/11 最新研究（第 3-4 轮）** | ①§1.3 新增 T+1 事件→交易时序显式映射（盘后事件 T→T+1 开盘行动→T+2 可卖；盘中事件当日买入不可卖，should_exit holding_days>=1 隐含此约束；holding_days 计数约定；rising phase 盘后事件可捕捉窗口折损一日）——收拢散见 §1.3/§2.4/ORJ/should_exit 的 T+1 约束为单点声明；②§2.5 补全说明接口契约精确化——event_store/volume_series/volume_ma/trading_days_ago 全仓扫描确认无已定义函数（已有 EventStore 类在 gov_audit/infrastructure 域是治理事件存储勿混用），修正 v1.7.0"复用 D_FEED 域已建接口"表述为"接口契约待落码"，落码路径明确（fund_news_data+pit_query+交易日历基座全部具备，仅缺薄封装，工程量<1天）；③§2.7 新增跨源情绪集成方法论（RavenPack×FT 2026-03：两源秩相关仅10-14%真正交，tanh 软投票集成 IR 0.48→0.81/+108bps——sentiment_aggregator 落码应采跨源一致性投票非简单均值，≥2 源同向才出强信号）+ Burchi&Regni 2026-07 独立印证（情绪方向准确率近随机但捕捉大幅波动，与 QLoRA 负结果互证"分类性能≠经济价值"）；④§2.5a 新增进行时案例（宇树科技科创板 IPO 中签率 0.018% 历史新低/8288 倍申购，2026-08-11 机器人板块异动）+ §5 暂缓项 8（IPO 虹吸系数引入申购热度代理变量） |
+| 2026-08-12 | 1.9.2 | **过度工程审查回执（第 5 轮）** | §4.3 新增过度工程审查回执，逐项对照 charter §2 硬边界判定：①多源 news_data 不过重——东财/财联社/RSS 是 production 存量设施非新增负担，RavenPack 跨源实证多源是 alpha 来源；反向边界明确——再新增社交源（微博/雪球/股吧）属过重不扩源；②Hawkes 当前形态不过重——经验衰减承载 sleeve 层，Hawkes 登记暂缓项 1 留 firm 层风控，若首版引入 sleeve alpha 层则过重（自 v1.0.0 起即拒绝，持续成立）；③Janus-Q/CNN 视觉/LLM 动态图谱/Data Funnel 双阶段全部显式暂缓/远期，按"远期工程不算过度工程"规则保留 |
+| 2026-08-12 | 1.9.3 | **一致性与交叉引用审查 + 文档质量复核（第 6-7 轮）** | 第 6 轮：①与 20 号一致性——§2.1 定位表六维与 20 §2.4 逐项对齐 ✅，四类→六类漂移已登记 §6；②与 30 号一致性——convergence_window 2-3 天引 30 §6.4（锚点真实存在）✅，但发现 30 号 §2.4 反引"[20 §6.4]"为失效锚点（20 号无 §6.4 节），登记 §6 待 30 号 owner 修正；③与 23 号 G07 相关性验证引用闭环 ✅；④与 62 号一致性——strategy_registry 6 类含 event_driven ✅、62 号 UNI-RULE-002 事件驱动池引本备忘 ✅；⑤§7.3 全部 blueprint 链接目标（strategy_book/firm_risk_aggregator/regime_meta_allocator/corporate_action_processor）逐一验证存在 ✅。第 7 轮：frontmatter 字段完整合法（doc_type=architecture_view/status=active/ttl=permanent 均在受控词表）✅；§4.4 文档种类适配（讨论记录范式：背景/决策/替代方案/上限/待裁定/待定问题/引用/修订记录八段齐全）✅；两条硬约束（修订记录+开放问题节）✅；交叉引用全稳定相对 path ✅ |
+| 2026-08-12 | 1.9.4 | **确认轮内部锚点审计修复** | 循环自检发现 3 类内部引用失效并修复：①"§6 待裁定-N"×7 处误指——待裁定（暂缓项）表真源在 §5，§6 为待定问题，replace_all 修正为 §5 待裁定；②"§3.6 漏斗③"裸写悬空——本备忘 §3 无 3.6 节，真源为 21 号 §3.6 漏斗模型，补全链接；③v1.6.0 四类→六类升级的三处残留（§2.4 六因子协同块/§2.5 施工优先级块/§5 暂缓项 2 理由中"四类粗分类"）统一为六类 |
+| 2026-08-12 | 1.9.5 | **确认轮 C：页内锚点加固** | 零发现确认轮中仅见 2 处渲染器脆弱的页内锚点（#23-事件分类讨论要点② / #25-事件信号选股映射讨论要点④——GitHub/CommonMark 渲染会剥离 ②④ 特殊字符致锚点失效），改为稳健文字引用（"§2.3 细分类预留"/"§2.5 龙虎榜 2026 机构信号失效校准块"），符合"交叉引用全用稳定 path"规范；并校正 §2.4 六因子块内版本标注（v1.9.3 修正→v1.9.4 修正，与实际修订行对齐） |
