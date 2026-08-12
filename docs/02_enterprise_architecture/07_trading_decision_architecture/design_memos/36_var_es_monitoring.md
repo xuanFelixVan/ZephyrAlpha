@@ -5,8 +5,8 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.10.0"
-date: 2026-08-10
+version: "1.11.0"
+date: 2026-08-12
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 赢牛资管 VaR-ES / Sina 量化风控 / MetricGate VaR/ES / Pomegra VaR vs CVaR / Man Numeric CVaR / Nystrup-Boyd HMM+MPC |
 | 正交性 | ✅ 与 regime 正交（VaR 是组合风险度量，regime 是市场状态） |
 | 优先级 | P3（风险相关模块先于策略模块施工至 production，符合风险优先原则） |
-| 状态 | ✅ 已定稿 v1.10.0（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 最新研究远期登记 28 节 + §4.21 论文细节补全（6 协同机制+Bellman 残差 -85%+OOS Sharpe 0.9281+伪代码）+ §4.28 Geodesic Execution Slippage 新增 + §5.2 演进路径与 §4.x 全量对齐） |
+| 状态 | ✅ 已定稿 v1.11.0（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 最新研究远期登记 28 节 + §4.21 论文细节补全 + §4.28 Geodesic Execution Slippage + §5.2 演进路径与 §4.x 全量对齐 + **v1.11.0 基础设施盘点与代码实测校正**：§3.20 已施工设施盘点（5 组件+4 测试+注册表+11 项设计态伪代码清单）+ §3.11 daily_auditor v0.2.0→v0.1.0 校正（run_var_backtest 等设计态）+ §3.5 双注解（30号 §2.5.4 相对触发替代裁决 + §2.5.6 监控层定位）+ §3.9 13→15 法框架（补登 #14 Bivariate OP + 新增 #15 Multinomial）+ §3.9.3 监管更新（Fed 2026-03 取消 dual stack → SA as cap）+ §3.16 QbSD 来源（arXiv:2603.02357）+ §6 待裁定 3 项新增 + §6.1 跨文档同步登记 5 项） |
 
 ## 2. 背景
 
@@ -90,6 +90,7 @@ VaR_95 = max(VaR_param, VaR_hist)
 3. **每阶段独立可用**：Phase 1 完成即可上线风控（设计真源 §6 VaR 三阶段演进）
 4. **Phase 2 远期**：蒙特卡洛法（GPU CuPy/PyTorch）+ MCS forecast combination 替代 max（→ §4.26，≥4 法候选池后 Fissler-Ziegel 联合损失 + SSM 加权组合）
 5. **Phase 3 远期**：Basel III 三角验证 + 乘数因子 + 压力 VaR
+6. **外部实证佐证**（v1.11.0 补）：Basel 交通灯回测实证中历史模拟 2 超限（GREEN 区）vs 参数法 6 超限（YELLOW 区）——正态假设低估厚尾被独立复现，印证取 max 的保守设计；arXiv:2505.05646 三法对比（HS/GARCH-N/GARCH-FHS）显示 HS 在 regime 突变期失准、FHS 最稳健——印证 §3.16 FHS 作为 Christoffersen 独立性失败首选替代的排序
 
 **配置参数**（C 类可调）：
 
@@ -196,6 +197,15 @@ ES_pot = VaR · (1 + (ξ - β/u) · (1-ξ)^(-1))
 ### §3.5 触发动作（5 级系统性风险 + BlackSwanSignal API）
 
 **决策**：VaR/ES breach 不直接触发减仓，而是通过 `drawdown_controller` 的 5 级系统性风险分级 + 黑天鹅模式信号产出分级响应指令。
+
+> **与 30号 §2.5.4 相对触发的替代裁决**（v1.11.0 补——原 §7 ④ 直接映射未解释差异）：
+> 30号 §2.5.4 框架定义**相对触发**（VaR > 1.2×入场 VaR → 减仓 20%；ES > 1.3×入场 ES → 再减仓 20%）。本节落地为**绝对阈值 5 级**（VaR 2%/4%/6% + CVaR 10%），替代理由：
+> 1. **锚点稳定性**：多策略并发下各策略入场时点分散，"入场 VaR"锚点随换手漂移，相对阈值基准不稳定；绝对阈值无锚点依赖，口径统一
+> 2. **可解释性优先**（§2.3）："VaR 4.5% → ORANGE 级"比"VaR 是 37 天前入场时的 1.23 倍"更易向业主解释与审计
+> 3. **与回撤 Protocol 同构**：35号四级回撤也是绝对阈值（8/15/20/25%），绝对阈值体系使两风控轴的裁决逻辑同构，取最严（§3.8）时无量纲混淆
+> 4. **相对恶化检测未丢失**：由 35号 §3.16 回撤归因的 `current_var vs entry_var`（ratio > 1.5 → 减仓）保留——相对触发从"实时节流器" relocated 为"归因诊断器"，1.2×/1.3× 阈值升格为 1.5×（更迟钝、防抖动）
+>
+> **与 30号 §2.5.6 定位裁定的一致性**（v1.11.0 补）：30号 §2.5.6 过度工程审查裁定——**VaR 5 级 + 7 黑天鹅 = 监控层（先全建+全 log，实盘 6-12 月后裁剪未触发项），活跃节流以 35号四级回撤为主节流轴，VaR 5 级为辅助参考**。本节 5 级分级的落地定位据此澄清：计算与告警全量保留（监控仪表盘价值），但作为自动节流触发器时是 35号四级回撤的**辅助轴**而非主轴——`drawdown_controller.evaluate()` 内回撤状态机与 VaR 5 级取最严（§3.8），确保主节流轴失效时 VaR 轴仍可独立兜底。
 
 **源码**：`src/zephyr/position/core/drawdown_controller.py` v0.1.0（production, MOD-POS-008）
 
@@ -361,9 +371,9 @@ VaR/ES 监控 (36号)                回撤 Protocol (35号)
 - 36号 §3.1/§3.2 计算 entry_var/entry_es → 35号 §3.11 持久化
 - 35号 §3.16 回撤归因消费 entry_var 判断风险恶化（current_var vs entry_var）
 
-### §3.9 回测验证（13 法框架，MVP 4 法已施工）
+### §3.9 回测验证（15 法框架，MVP 4 法已施工）
 
-**决策**：13 法回测框架，MVP 4 法已施工至 production。
+**决策**：15 法回测框架，MVP 4 法已施工至 production。
 
 **源码**：`src/zephyr/risk/core/var_backtester.py` v0.1.0（evolving, MOD-RK-05B）
 
@@ -411,7 +421,7 @@ class ChristoffersenResult:
 - 95% VaR 250 天：Green ≤16, Yellow 17-20, Red ≥21（期望 12.5）
 - 样本不足 250 天时按比例缩放
 
-#### §3.9.2 远期 9 法（未施工）
+#### §3.9.2 远期 11 法（未施工）
 
 | # | 方法 | 来源 | 说明 |
 |---|---|---|---|
@@ -424,12 +434,15 @@ class ChristoffersenResult:
 | 11 | ES 精度极限诊断 | Pele 2026-06 | (nα)^{-1/2} 信息极限防伪精度 |
 | 12 | Feature-Aware Auditing | arXiv:2607.11653 | 特征级误校准归因 |
 | 13 | Latent-Regime Bias Auditing | - | Phase 3 |
+| 14 | Bivariate Orthogonal Polynomials ES 回测 | SSC 2026-06 Lu/Sullivan/Hurlin（§4.11） | duration × severity 联合，model-free Wald test；v1.11.0 补登（§4.11 已承诺入表但遗漏） |
+| 15 | Multinomial VaR Backtests | arXiv:1611.04851 Kratz/Lok/McNeil | 多水平 VaR 超限联合检验（N≥4 检验力显著强于二项 Kupiec），ES 隐含回测；Pearson/Nass/LRT 卡方实现简单，适合个人系统；v1.11.0 新增 |
 
-#### §3.9.3 2026-08 监管认知更新
+#### §3.9.3 2026-08 监管认知更新（v1.11.0 修订——Fed 2026-03 修订提案推翻 dual stack）
 
-- **CP9/26 PRA IMA**：ES 97.5% IMA 基准
-- **US Basel III Endgame NPR**：traffic light 三区国际标尺
-- **"SA 并行 IMA"→双轨映射**：标准化法 + 内部模型法并行
+- **CP9/26 PRA IMA（2026-06-19 咨询）**：ES 97.5% IMA 基准不变；go-live 2028-01-01（比 Basel 3.1 整体晚一年）；PLAT 监控期延长至 3 年（过渡期内 PLAT 失败不强制转 ASA）；RFET 阈值放宽（illiquid 风险因子 24→16 可验证报价）；新增 NMRF 中间类别（Type 1 定性通过/定量失败 → 部分留 ES 内）
+- **US Basel III Endgame 修订提案（Fed/OCC/FDIC 2026-03-19，v1.11.0 更新）**：**取消 2023 版 "dual stack"（SA 并行 IMA）**，改为 **SA 作为 IMA 资本上限**（SA as cap，非并行计算）——v1.10.0 及之前本节"SA 并行 IMA→双轨映射"表述已过时；PLAT 简化（移除 Spearman 相关，仅留 KS 检验且 3 年过渡期非约束）；NMRF 重定标（100 观测→24 观测/年 liquid、16 观测其他；NMRF 拆 Type A 轻资本 / Type B 原 SES）；交通灯三区国际标尺不变
+- **EU**：CRR III 内 FRTB 推迟至 2027-01，另咨询临时乘数（最长 3 年中性化资本影响）——全球三区监管时间表分化（US 2027 / EU 2027 / UK IMA 2028）
+- **对本项目的意义**：监管框架适用银行业，个人系统无合规义务；登记价值在于——① Basel 交通灯三区（§3.9.1）仍是国际标尺未变；② PLAT 收敛到 **KS 单一度量**与 §3.3 Uehara 双门控的 GPD 拟合优度 KS 检验（p≥0.05）同族，监管与工程实践交叉印证；③ "SA as cap" 思路（简单法作为复杂法上限）与 §3.1 conservative_max（简单历史模拟作为参数法保守上界）设计哲学同构
 
 ### §3.10 校准/重构/恢复子流程
 
@@ -499,9 +512,11 @@ class ChristoffersenResult:
 
 ### §3.11 回测验证端到端施工流程（daily_auditor 集成）
 
-**源码**：`src/zephyr/risk/core/daily_auditor.py` v0.2.0（production, MOD-RK-20）
+**源码**：`src/zephyr/risk/core/daily_auditor.py` v0.1.0（production, MOD-RK-20）+ `src/zephyr/risk/core/var_backtester.py` v0.1.0（evolving, MOD-RK-05B）
 
-**端到端流程**：
+> **⚠️ 施工状态（v1.11.0 校正）**：`daily_auditor.py` 实际版本为 **v0.1.0**（PnL 对账 `reconcile_pnl` / 归因偏差 `detect_attribution_bias` / 合规检查 `run_compliance_check` / 日终 checklist / `audit` / `generate_risk_metrics_report`），**不含**本节伪代码的 `run_var_backtest()` / `log_entry_var()` / `log_baseline()` / `log_recalibration()` / `compute_clean_pnl()` / `compute_dirty_pnl()`——全 src 检索零命中，属**设计态待施工**。当前已施工的是 `var_backtester.py full_report()`（4 法 + Basel 交通灯，`overall_reject` 汇总），其 docstring 声明"供 daily_auditor 日终调用"但调用侧未落地。此前版本（v1.0.0-v1.10.0）本节声称 daily_auditor v0.2.0 已含上述方法，与实际代码不符，本次校正。
+
+**端到端流程**（设计态编排伪代码，调用侧待施工）：
 
 ```python
 # daily_auditor.py DailyAuditor.run_var_backtest()
@@ -540,17 +555,19 @@ def log_recalibration(self, trade_date, action: str, reason: str) -> Recalibrati
     """记录模型校准/重构事件（RECALIBRATE/REBUILD 审计追溯）。"""
 ```
 
-**代码差距列表**（v1.0.0 当前状态）：
+**代码差距列表**（v1.11.0 校正——统一迁移至 §3.20「已施工设施盘点」维护，此处保留摘要）：
 
 | 组件 | 状态 | 说明 |
 |---|---|---|
 | var_calculator.py | ✅ production v0.1.0 | 参数法 + 历史模拟 + conservative_max |
 | tail_risk_monitor.py | ✅ production v0.1.0 | ES + POT GPD + 跳跃检测 + FRTB |
-| var_backtester.py | ✅ evolving v0.1.0 | MVP 4 法 + Basel traffic light |
-| daily_auditor.py | ✅ production v0.2.0 | run_var_backtest + 3 审计日志方法 |
-| drawdown_controller.py | ✅ production v0.1.0 | 5 级 + 7 黑天鹅 + BlackSwanSignal API |
+| var_backtester.py | ✅ evolving v0.1.0 | MVP 4 法 + Basel traffic light + full_report |
+| daily_auditor.py | ⚠️ production v0.1.0（部分） | PnL 对账/归因/合规/audit 已施工；`run_var_backtest` + 3 审计日志方法 + clean/dirty P&L **设计态待施工** |
+| drawdown_controller.py | ⚠️ production v0.1.0（部分） | 5 级 + 7 黑天鹅 + BlackSwanSignal API 已施工；`var_breach_state` 参数 + `force_static_mode()` **设计态待施工** |
 | backtest_store | ⚠️ 待施工 | 回测结果持久化层 |
 | clean P&L 双轨记录 | ⚠️ 待施工 | clean/dirty P&L 区分 |
+
+> 完整盘点（含设计态伪代码清单、注册表登记状态、测试配套）见 §3.20。
 
 ### §3.12 盘中重算触发
 
@@ -1022,6 +1039,8 @@ def should_switch_to_fhs(backtest_report, state_store) -> bool:
 
 **Quantile-based Scale Dynamics (QbSD)**（远期 Phase 3）：
 
+**来源**（v1.11.0 补）：arXiv:2603.02357 Liu & Luger 2026-03 "Quantile-based modeling of scale dynamics in financial returns for VaR and ES forecasting"——restricted quantile regression 建模条件尺度（两分位数差），分布自由、捕捉偏度/厚尾/杠杆效应，多国股指含 COVID 期间实证优于 GARCH 与联合 VaR-ES 条件分位数基准。
+
 **算法概要**：分位数回归（quantile regression）捕捉不同置信水平下尾部的动态尺度变化——与 §3.1 参数法（假设正态分布，单一 σ 描述整个分布）不同，QbSD 对多个分位数（如 95%/99%/99.5%）分别建模，允许不同尾部有不同动态尺度。
 
 **触发条件**（何时从 MVP 升级到 QbSD）：
@@ -1116,7 +1135,7 @@ def should_switch_to_fhs(backtest_report, state_store) -> bool:
 5. **§3.10 → §3.18**：校准/重构动作执行完成后 → 触发 §3.18 盘后持久化（VarBreachState + intraday_recalc_log + clean/dirty P&L + var_model_status）
 6. **§3.18 → §3.19**：盘后持久化标记可加载 → 次日 §3.19 据此恢复而非冷启动
 
-> **与 35号文档的关系**：本备忘的 5 流程闭环与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 的 6 流程闭环共享 `RiskOrchestrator`（§6.5 待裁定）。VaR/ES 是 35号 §3.10 日度循环盘前段 + 35号 §3.13 盘中循环的**子步骤**（喂入 drawdown_controller），不是独立流程。§3.18 盘后持久化与 35号 §3.18 共享 `state_store` 持久化层。
+> **与 35号文档的关系**：本备忘的 5 流程闭环与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 的 6 流程闭环共享 `RiskOrchestrator`（设计态角色，代码未施工，见 §6 待裁定表 + §3.20.4）。VaR/ES 是 35号 §3.10 日度循环盘前段 + 35号 §3.13 盘中循环的**子步骤**（喂入 drawdown_controller），不是独立流程。§3.18 盘后持久化与 35号 §3.18 共享 `state_store` 持久化层。
 
 ### §3.18 盘后状态持久化流程
 
@@ -1301,6 +1320,55 @@ def premarket_initialization_var(trade_date):
 5. **无 `state_store.save_intraday_recalc_log` 接口**——盘中重算日志未持久化
 
 > **裁决**：盘前初始化 + 盘后持久化暂缓为 §6 待裁定施工项，与 35号 §3.15/§3.18 同步落地（共享 state_store 基础设施）。最小补丁：① VarBreachStateMachine 持久化到 DB（复用 daily_auditor 已有持久化）；② var_model_status 持久化（REBUILD 标记需跨日）；③ clean/dirty P&L 双轨持久化（回测验证依赖 clean P&L 历史）。
+
+### §3.20 已施工设施盘点（2026-08-12 全量扫描）
+
+> 通用规则 #11 要求：全面扫描项目代码/配置/注册表/测试/文档引用，统一盘点与本文档主题相关的已建设施与配套。本节为 VaR/ES 监控主题的**单一真源盘点**。
+
+#### §3.20.1 已施工代码组件（5 个，src 实测）
+
+| 组件 | 模块 ID | 版本 | 本文档章节 | 实测核对（2026-08-12） |
+|---|---|---|---|---|
+| `var_calculator.py` | MOD-RK-05 | v0.1.0 production | §3.1 | ✅ 一致 |
+| `tail_risk_monitor.py` | MOD-RK-15 | v0.1.0 production | §3.2 | ✅ 一致 |
+| `var_backtester.py` | MOD-RK-05B | v0.1.0 evolving | §3.9 | ✅ 一致（full_report 已施工） |
+| `daily_auditor.py` | MOD-RK-20 | v0.1.0 production | §3.11 | ⚠️ 部分：run_var_backtest 等设计态 |
+| `drawdown_controller.py` | MOD-POS-008 | v0.1.0 production | §3.5 | ⚠️ 部分：var_breach_state/force_static_mode 设计态 |
+
+#### §3.20.2 测试配套（4 个）
+
+| 测试文件 | 对应组件 | 状态 |
+|---|---|---|
+| `tests/risk/test_var_calculator.py` | MOD-RK-05 | ✅ |
+| `tests/risk/test_tail_risk_monitor.py` | MOD-RK-15 | ✅ |
+| `tests/risk/test_var_backtester.py` | MOD-RK-05B | ✅ |
+| `tests/risk/test_daily_auditor.py` | MOD-RK-20 | ✅ |
+
+#### §3.20.3 注册表登记状态
+
+| 模块 ID | blueprint_registry | module_translation_registry | path_ownership_map | 结论 |
+|---|---|---|---|---|
+| MOD-RK-05/15/20/POS-008 | ✅ | ✅ | ✅ | 已登记 |
+| MOD-RK-05B | ❌ | ❌ | ❌ | **未登记** → §6.1 #1 |
+
+#### §3.20.4 设计态伪代码清单（11 项，src 零命中）
+
+VarBreachStateMachine / intraday_var_recalc / build_black_swan_signal / postmarket_persist_var / premarket_initialization_var / state_store 5 接口 / RiskOrchestrator / force_static_mode / daily_auditor.run_var_backtest+3 审计日志+clean/dirty P&L / backtest_store / FHS 引擎
+
+#### §3.20.5 文档/治理配套
+
+| 配套 | 状态 |
+|---|---|
+| 30号 §2.5.4/§2.5.6/§2.5.7 | ✅ 已对齐（§3.5 双注解） |
+| 35号跨文档契约（v1.31.0） | ✅ 引用有效 |
+| 00_index G17 登记 v1.8.0 | ⚠️ 漂移 → §6.1 #2 |
+| 31号 §2.3.3 单标的 VaR/CVaR | ✅ 正交（§3.20.6） |
+| 32号引用"§4.13 MFCCA" | ⚠️ 错误（应为 §4.6）→ §6.1 #3 |
+
+#### §3.20.6 层级边界声明
+
+- **31号（单标的级）vs 本号（组合级）**：31号前瞻 VaR/CVaR 是单标的仓位约束（MOD-POS-001 C4/C5）；本号是组合 NAV 级风险度量。独立计算、互不消费。
+- **32号 FirmRiskAggregator**：30号 §2.5.7 裁定 EVT 输出 → 32号监控信号。消费契约待 32号落地时显式化。
 
 ## 4. 考虑过的替代方案
 
@@ -1897,7 +1965,7 @@ def curvature_topology_alert(win, base_I, base_betti, tda_fn):
 |---|---|---|
 | VaR 方法 | 参数法 + 历史模拟（取 max） | Phase 1，蒙特卡洛/GARCH 远期 |
 | ES 方法 | 历史模拟 + POT | 联合动态估计远期 |
-| 回测方法 | 4 法 MVP（13 法框架） | 9 法远期 |
+| 回测方法 | 4 法 MVP（15 法框架） | 11 法远期 |
 | 黑天鹅模式 | 7 模式 | 框架固定 |
 | 系统性风险级别 | 5 级 | 框架固定 |
 | 数据窗口 | 60 交易日（回测 250） | A 股平衡稳定性与时效性 |
@@ -1913,7 +1981,7 @@ Phase 1 (当前): 参数法 + 历史模拟 + POT + 4 法回测 + 5 级 + 7 黑�
 Phase 2 (远期):
   ├─ 风险度量族: + FHS + 蒙特卡洛 + Vol-Targeting
   ├─ conformal 族: + Conformal (RWC/TWC) + Fuzzy CP Sets (§4.13) + 自适应 conformal 组合选择 (§4.19)
-  ├─ 回测族: + 9 法回测
+  ├─ 回测族: + 11 法回测（v1.11.0 同步：13→15 法框架）
   ├─ 预报组合: + MCS forecast combination (§4.26，≥4 法候选池后替代 max)
   ├─ p/e 桥接: + P2E Calibrator (§4.25)
   └─ 轻量提取: + 对称 KL 散度漂移 + 形状漂移监控 (§4.27 Information-Geometric 轻量版，<30 行)
@@ -1958,6 +2026,19 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | Bayesian EVT Hawkes | 模型复杂度极高 | Phase 4 鲁棒性阶段 |
 | 期权隐含 ES bounds | 期权数据接入待建 | 50ETF/300ETF 期权数据管道就绪 |
 | OCE Risk Minimization | 理论框架，落地需工程化 | Phase 2+ 需平滑 CVaR 变体时 |
+| RiskOrchestrator 编排角色施工（v1.11.0 新增） | 设计态角色，src 零命中；35号/36号双侧伪代码均以其为编排者 | 35号 state_store 就绪 + 5 流程闭环联调 |
+| 30 日波动率调整斜率校准（v1.11.0 新增） | §3.6 斜率来源单一（LedgerMind 2026-05），未 A 股实证 | G04 首批策略 50+ trades 后校准 |
+| 5 级 position_cap 非单调（YELLOW 0.5 < ORANGE 0.7）语义裁定（v1.11.0 新增） | 代码与 §3.5.1 一致但非单调：YELLOW cap 比 ORANGE 更严，疑语义本为"新开仓增量减半"而非"总仓位上限" | 业主裁定后同步代码+文档（越界 §6.1 #4） |
+
+### §6.1 跨文档同步登记（越界事项，不在本号修改）
+
+| # | 事项 | 位置 | 建议处理 |
+|---|---|---|---|
+| 1 | MOD-RK-05B 注册表缺口 | blueprint/module_translation/path_ownership/capability_canonical 4 个 yaml | 补登记 |
+| 2 | 00_index 36号版本漂移 | 00_index L57/L604 登记 v1.8.0 | 更新为 v1.11.0 |
+| 3 | 32号两处错误引用 | 32_firm_risk_aggregator.md "36号 §4.13 MFCCA" | 改为 §4.6 |
+| 4 | drawdown_controller 5 级 cap 非单调 | src drawdown_controller.py `_RISK_LEVEL_CAP` | 业主裁定后修代码 |
+| 5 | 32号消费本号产出契约 | 32_firm_risk_aggregator.md | 32号落地时补契约表 |
 
 ## 7. 待定问题（讨论要点）
 
@@ -1966,7 +2047,7 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 - [x] ① VaR_95 计算（历史模拟/参数法）→ §3.1 取 max
 - [x] ② ES_95 计算 → §3.2 历史模拟 + POT
 - [x] ③ 入场 VaR/ES 基准 → §3.4 开仓日盘前快照
-- [x] ④ 触发动作（VaR>1.2×减仓20%/ES>1.3×再减20%）→ §3.5 5 级系统性风险 + BlackSwanSignal API
+- [x] ④ 触发动作（VaR>1.2×减仓20%/ES>1.3×再减20%）→ §3.5 5 级系统性风险 + BlackSwanSignal API（v1.11.0 注：30号 §2.5.4 相对触发已由绝对 5 级阈值替代，相对恶化检测 relocated 至 35号 §3.16 归因 1.5×，替代裁决见 §3.5 双注解）
 - [x] ⑤ 30 日波动率调整（每增10%→仓位减20%）→ §3.6 z-score 法
 - [x] ⑥ 数据窗口 → §3.7 60 交易日（回测 250）
 - [x] ⑦ 与回撤 Protocol 的协同 → §3.8 取最严不累乘
@@ -1981,9 +2062,11 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 - [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md)（G18，涨跌停潮协同）
 - `src/zephyr/risk/core/var_calculator.py` v0.1.0（MOD-RK-05）
 - `src/zephyr/risk/core/tail_risk_monitor.py` v0.1.0（MOD-RK-15）
-- `src/zephyr/risk/core/var_backtester.py` v0.1.0（MOD-RK-05B）
-- `src/zephyr/risk/core/daily_auditor.py` v0.2.0（MOD-RK-20）
-- `src/zephyr/position/core/drawdown_controller.py` v0.1.0（MOD-POS-008）
+- `src/zephyr/risk/core/var_backtester.py` v0.1.0（MOD-RK-05B；⚠️ 注册表未登记 → §6.1 #1）
+- `src/zephyr/risk/core/daily_auditor.py` v0.1.0（MOD-RK-20；⚠️ v1.11.0 校正：run_var_backtest 等设计态待施工）
+- `src/zephyr/position/core/drawdown_controller.py` v0.1.0（MOD-POS-008；⚠️ var_breach_state/force_static_mode 设计态 → §3.20.4）
+- [31_position_sizing](31_position_sizing.md) §2.3.3（单标的级前瞻 VaR/CVaR，与本号组合级正交 → §3.20.6）
+- [32_firm_risk_aggregator](32_firm_risk_aggregator.md)（firm 层聚合，EVT 监控信号消费契约待显式化 → §6.1 #5）
 - battle_map_09_risk_control（当前状态快照）
 
 ### 8.2 学术引用
@@ -1998,7 +2081,9 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 - arXiv:2511.05840 Jiao/Wang/Zhao 2025-11 Standard and comparative e-backtests for general risk measures（→ §4.22，标准+比较双向 e-backtest，expectile 回测）
 - Pele 2026-06 ES 精度极限 (nα)^{-1/2}
 - arXiv:2607.11653 Feature-Aware Auditing
-- ICML 2026 Alami/Zakharia/Ben Taieb Set-Preserving Calibration from Conformal P-Values to E-Values（→ §4.25，p→e 桥接，多回测证据合并）
+- ICML 2026 Alami/Zakharia/Ben Taieb Set-Preserving Calibration from Conformal P-Values to E-Values（→ §4.25）
+- arXiv:1611.04851 Kratz/Lok/McNeil Multinomial VaR Backtests（→ §3.9.2 第 15 法；v1.11.0 新增）
+- SSC 2026-06 Lu/Sullivan/Hurlin Bivariate Orthogonal Polynomials ES 回测（→ §3.9.2 第 14 法 + §4.11；v1.11.0 补登入表）
 
 #### Conformal Risk Control
 
@@ -2054,12 +2139,18 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 #### 预报组合（Forecast Combination）
 
 - arXiv:2406.06235v2 Amendola/Candila/Naimoli/Storti 2026 "Combining VaR and ES forecasts via the MCS"（Int. J. Forecasting, 2026）（→ §4.26，MCS 等价性检验 + SSM 加权组合，Fissler-Ziegel 联合损失，9 指数 2.5%/1% 实证）
-- arXiv:2508.16919v2 Taylor & Wang 2026-05 "Combining a Large Pool of Forecasts of VaR and ES"（Oxford Saïd + Sydney）（→ §4.26，90 法大池 trimmed mean/mixtures/performance-weighted，6 法多样性小池+性能加权最优）
+- arXiv:2508.16919v2 Taylor & Wang 2026-05 "Combining a Large Pool of Forecasts of VaR and ES"
+
+#### 半参数分位数动态
+
+- arXiv:2603.02357 Liu & Luger 2026-03 Quantile-based modeling of scale dynamics（QbSD）（→ §3.16；v1.11.0 补来源）
+- arXiv:2505.05646 Xin 2025-05 VaR 三法对比（HS/GARCH-N/GARCH-FHS）（→ §3.1 佐证 #6；v1.11.0 新增）
 
 #### 监管
 
-- CP9/26 PRA IMA（ES 97.5% IMA 基准）
-- US Basel III Endgame NPR
+- CP9/26 PRA IMA（2026-06-19：go-live 2028-01-01；PLAT 3 年过渡；RFET 24→16；v1.11.0 更新）
+- US Basel III Endgame 修订提案（Fed/OCC/FDIC 2026-03-19：取消 dual stack → SA as IMA cap；v1.11.0 更新）
+- EU CRR III FRTB 推迟 2027-01 + 临时乘数咨询（v1.11.0 新增）
 - FSB 2026-06-10 AI 稳健实践咨询报告
 
 ## 9. 修订记录
@@ -2077,4 +2168,5 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-10 | 1.7.0 | §4.26 VaR/ES Forecast Combination via MCS 新增 + §5.2 演进路径 Phase 2 增 MCS + §8.2 新增"预报组合"引用分类 + §1 状态行更新 + frontmatter v1.7.0 | 持续改进：用户要求再次审查文档所有内容+施工环节流程算法缺失+选项之外更好算法+全网搜索 2026-08 今天最新研究+文档结构顺序内容调整+持续改进不停。全网搜索发现 §3.1 conservative_max（取 max）的"选项之外更好算法"——[arXiv:2406.06235v2](https://arxiv.org/abs/2406.06235) Amendola et al. 2026（Int. J. Forecasting）MCS-based VaR/ES forecast combination + [arXiv:2508.16919v2](https://arxiv.org/abs/2508.16919) Taylor & Wang 2026-05（Oxford+Sydney）large pool combination。核心洞察：max 是 MCS 组合的退化特例（2 法权重{0,1}赢者通吃），MCS 用 Fissler-Ziegel 联合损失评估模型质量→SSM 筛选→性能加权组合，替代 max 的"无脑选保守者"；Taylor & Wang 实证"6 法多样性小池+性能加权 > 90 法大池任意组合"。Phase 1 轻量提取：审计日志记录两法分叉度 divergence=\|VaR_param-VaR_hist\|/VaR_95，持续>20% 标记 MODEL_DIVERGENCE_HIGH 供 Phase 2 MCS 评估。Phase 2 远期：≥4 法候选池（参数法/HS/FHS/MC）后 MCS 落地替代 max，method 配置扩展 conservative_max\|mcs_combination\|performance_weighted。§4.1-§4.26 共 26 节替代方案远期登记。施工算法完整性结论：36号 5 流程闭环无缺失独立环节，本次为 §3.1 max 的"选项之外更好算法"远期登记非施工算法缺失 |
 | 2026-08-10 | 1.8.0 | §4.27 Information-Geometric Bayesian 风险监控新增（arXiv:2608.01294，全网搜 2026-08 唯一未收录新论文）+ §1 状态行 26→27 节 + frontmatter v1.8.0 | 持续改进：用户要求"再次审查文档所有内容+施工环节流程算法有缺失+选项之外更好的答案算法+全网搜 2026年8月今天最新研究+文档结构顺序内容调整+持续改进不要停下来询问"。后台 agent 全网搜 2026-08 最新量化算法返回 5 领域 15 篇候选论文，交叉验证（grep 全 design_memos 目录）确认 14 篇已收录（DASC/Conditional CTM/Changepoint/MPC/Microstructure/Diffusive/CVaR Tail/Three Matrices/EFS/Alpha Decay/FactorEngine/Unstructured Regime/MS-GARCH/Wasserstein HMM），**仅 arXiv:2608.01294 Information-Geometric Bayesian 未收录**。决策：§4.27 新增 Quirini 2026-08-04 信息几何贝叶斯风险监控框架（Fisher 度量/KL 散度/统计流形测地距离 regime 检测 + 曲率风险集中识别）。与本项目关系：①§3.11 VaR 校准第三种触发（测地距离漂移，比周期性及时比违规驱动早）；②§3.6 漂移检测的流形空间补充（欧氏 PSI/KS vs 流形测地距离，对高阶矩漂移更敏感）；③与 10 号 regime 检测正交（隐式分布漂移 vs 显式状态标签）。A 股适用性中低（需分布族 Fisher 矩阵解析推导+数值测地线 ODE）。过度工程审查：**Phase 4+ 远期登记，与 Mamba/SSM 同类过度工程**（微分几何背景+数值测地线+研究密集型），Phase 1-2 仅采纳轻量化提取（对称 KL 散度漂移监测 scipy.stats.entropy + 偏度/峰度形状漂移 SHAPE_DRIFT 标志，<30 行无第三方库）。§4.1-§4.27 共 27 节替代方案远期登记。施工算法完整性结论：36号 5 流程闭环无缺失独立环节，本次为全网搜唯一新论文远期登记非施工算法缺失。同步 54号 v1.14.0 新增 §3.14 MCR/CCR 风险分解（与 36号 VaR 监控正交：36号管"组合风险多少"54号管"谁贡献了风险"） |
 | 2026-08-10 | 1.9.0 | §5.2 演进路径与 §4.1-§4.27 全量对齐——11 项远期登记缺口补全 + 六类族重组 + 5 项正交定位澄清 | 持续改进：用户要求"再次审查文档所有内容+施工环节流程算法有缺失+选项之外更好的答案算法+全网搜 2026年8月今天最新研究+文档结构顺序内容调整+持续改进不要停下来询问"。文档结构一致性审查发现 §5.2 演进路径与 §4.x 替代方案存在同步缺口——此前 §5.2 仅列代表性方法（Phase 2: FHS/MC/Vol-Targeting/Conformal/9法/P2E/MCS；Phase 3: QbSD/CAESar/Bayesian EVT/EVaR/OCE/Lambda/DMM/Lévy/Comparative e-backtests），但 §4.8/§4.11-§4.14/§4.16-§4.20/§4.27 共 11 项远期登记未在路径中体现（§4.8 Preference-Robust Distortion / §4.11 Bivariate Polynomials ES 回测 / §4.12 ERCIM 145 e-values 审计 / §4.13 Fuzzy CP Sets / §4.14 E-backtesting v6 GRO/GREE/GREL / §4.16 TailRisk-Trans / §4.17 ReSGA / §4.18 D'Innocenzo / §4.19 Jia&Han / §4.20 Fu / §4.27 Information-Geometric）。本次按"风险度量族/回测族/conformal 族/深度学习族/半参数族/审计族"六类重组 Phase 2/3/4+ 路径，确保每项 §4.x 远期登记可追溯到 Phase；新增"不在 VaR/ES 演进路径的 §4.x 项"小节澄清 5 项正交定位（§4.5 Phase 4+ 鲁棒性 / §4.6 regime 检测登记 35号 / §4.9 组合配置层 / §4.15 理论界证明 / §4.21 RL alpha 层）。**施工算法完整性结论**：36号 5 流程闭环无缺失独立环节，本次为文档结构一致性修复（§5.2 ↔ §4.x 全量对齐）非施工算法缺失 |
-| 2026-08-10 | 1.10.0 | §4.21 论文细节补全（6 协同机制+Bellman 残差 -85% 实证+OOS Sharpe 0.9281+伪代码+§4.27 关系+Phase 4 对齐）+ §4.28 Geodesic Execution Slippage 新增 + §1 状态行 27→28 节 + "不在路径"清单增 §4.28 + frontmatter v1.10.0 | 持续改进：整合两篇 2026-08 风险/执行滑点新研究。**论文1** arXiv:2608.04305v1（Yifan Wu / Junjie Lei / Wenjie Huang，ICAIF '26 Milan）"Adaptive Finite-Budget Training for CVaR Risk-Aware Q-Learning"——经核验与既有 §4.21（v1.2.0 浅登记同一 arXiv ID）为**同一论文**，故**就地补全 §4.21** 而非新建重复章节：补 ICAIF '26 venue+作者、RaQL model-free 双时间尺度估计器、关键设计原则（保留原 CVaR 估计器与 Bellman 不动点仅重设计训练过程）、**6 协同机制**（per-cell sizing / outer-rate-matched decay / early correction / coverage-first-then-greedy / suffix aggregation / data-driven calibration）、Bellman 残差降 85%（MeanBEQ 1.2202→0.1854; MeanBEV 1.1624→0.0535）、OOS Sharpe 0.9281 maxDD 6.46%（含成本）vs buy-hold 波动率 47.93%/9.57%、伪代码（#1/#2/#4/#5 四机制<50 行）、与 §4.27 关系（前者分布形状漂移检测 vs 本节 CVaR 估计训练稳定性）、Phase 3+→Phase 4 鲁棒性阶段定位。**论文2** Entropy 2026 28(6) 705 / arXiv:2605.0757（Moroke & Metsileng）"Geodesic Execution Slippage: A Statistical Physics Framework for Cryptocurrency Liquidity Risk"——全新登记 §4.28：执行滑点=MS-GARCH 最大熵模型 Fisher 信息流形测地弧长+联合曲率-TDA 拓扑碎片化告警；5 加密市场（BTC/ETH/XRP/LTC/BCH）2,253 日观测全部最低预测误差+MCS 10% 显著性唯一保留模型（vs Amihud/Kyle λ/Almgren-Chriss 等 6 基线）；4 次危机（Terra 2022-05/FTX 2022-11）中位数提前 2 天告警（早于价格型 circuit breaker）——直接服务于 35 号回撤 Protocol 早期预警；连接 36 号风险监控→35 号回撤 Protocol 触发；Phase 5+ 远期候选（需 Fisher 流形估计+TDA 工具栈，与 §4.27 共享微分几何工具栈）；伪代码（Fisher 度量+测地弧长+曲率-拓扑告警<50 行）。§4.1-§4.28 共 28 节替代方案远期登记。**施工算法完整性结论**：36号 5 流程闭环无缺失独立环节，本次为既有 §4.21 论文细节补全+§4.28 全新研究远期登记（执行/告警层，与 VaR/ES 监控计算正交）非施工算法缺失 |
+| 2026-08-10 | 1.10.0 | §4.21 论文细节补全（6 协同机制+Bellman 残差 -85% 实证+OOS Sharpe 0.9281+伪代码+§4.27 关系+Phase 4 对齐）+ §4.28 Geodesic Execution Slippage 新增 + §1 状态行 27→28 节 + "不在路径"清单增 §4.28 + frontmatter v1.10.0 | 持续改进：整合两篇 2026-08 风险/执行滑点新研究。**论文1** arXiv:2608.04305v1（Yifan Wu / Junjie Lei / Wenjie Huang，ICAIF '26 Milan）"Adaptive Finite-Budget Training for CVaR Risk-Aware Q-Learning"——经核验与既有 §4.21（v1.2.0 浅登记同一 arXiv ID）为**同一论文**，故**就地补全 §4.21** 而非新建重复章节：补 ICAIF '26 venue+作者、RaQL model-free 双时间尺度估计器、关键设计原则（保留原 CVaR 估计器与 Bellman 不动点仅重设计训练过程）、**6 协同机制**（per-cell sizing / outer-rate-matched decay / early correction / coverage-first-then-greedy / suffix aggregation / data-driven calibration）、Bellman 残差降 85%（MeanBEQ 1.2202→0.1854; MeanBEV 1.1624→0.0535）、OOS Sharpe 0.9281 maxDD 6.46%（含成本）vs buy-hold 波动率 47.93%/9.57%、伪代码（#1/#2/#4/#5 四机制<50 行）、与 §4.27 关系（前者分布形状漂移检测 vs 本节 CVaR 估计训练稳定性）、Phase 3+→Phase 4 鲁棒性阶段定位。**论文2** Entropy 2026 28(6) 705 / arXiv:2605.0757（Moroke & Metsileng）"Geodesic Execution Slippage: A Statistical Physics Framework for Cryptocurrency Liquidity Risk"——全新登记 §4.28：执行滑点=MS-GARCH 最大熵模型 Fisher 信息流形测地弧长+联合曲率-TDA 拓扑碎片化告警；5 加密市场（BTC/ETH/XRP/LTC/BCH）2,253 日观测全部最低预测误差+MCS 10% 显著性唯一保留模型（vs Amihud/Kyle λ/Almgren-Chriss 等 6 基线）；4 次危机（Terra 2022-05/FTX 2022-11）中位数提前 2 天告警（早于价格型 circuit breaker）——直接服务于 35 号回撤 Protocol 早期预警；连接 36 号风险监控→35 号回撤 Protocol 触发；Phase 5+ 远期候选（需 Fisher 流形估计+TDA 工具栈，与 §4.27 共享微分几何工具栈）；伪代码（Fisher 度量+测地弧长+曲率-拓扑告警<50 行）。§4.1-§4.28 共 28 节替代方案远期登记。**施工算法完整性结论**：36号 5 流程闭环无缺失独立环节，本次为既有 §4.21 论文细节补全+§4.28 全新研究远期登记非施工算法缺失 |
+| 2026-08-12 | 1.11.0 | §3.20 已施工设施盘点（通用规则#11）+ 代码实测校正 5 项（daily_auditor v0.2.0→v0.1.0 等）+ §3.5 双注解（30号§2.5.4 替代裁决+§2.5.6 监控层定位）+ §3.9 13→15 法框架 + §3.9.3 监管更新（Fed 2026-03 SA as cap）+ §3.16 QbSD 来源 + §6 待裁定 3 项 + §6.1 跨文档同步登记 5 项 + frontmatter v1.11.0 |
