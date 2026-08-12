@@ -1,22 +1,22 @@
 ---
 ttl: permanent
 doc_type: architecture_view
-title: 22路并发AI审查回填指令集
+title: 23路并发AI审查回填指令集
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.0.0"
-date: 2026-08-11
+version: "2.1.0"
+date: 2026-08-12
 topic: ai_review_instructions
 scope: 07_trading_decision_architecture
 ---
 
-# 22 路并发 AI 审查回填指令集
+# 23 路并发 AI 审查回填指令集
 
-> **用途**：本文档包含 22 个 AI 的完整指令，每个指令可一键复制到新 AI 对话中独立执行。
-> **任务**：对 `07_trading_decision_architecture/design_memos/` 下 46 篇文档进行回填、审查、扩展、更新、过度工程清理。
+> **用途**：本文档包含 23 个 AI 的完整指令，每个指令可一键复制到新 AI 对话中独立执行。
+> **任务**：对 `07_trading_decision_architecture/design_memos/` 下 48 篇文档进行回填、审查、扩展、更新、过度工程清理。
 > **创建日期**：2026-08-10
-> **更新日期**：2026-08-11（v2.0.0：26 路→22 路重组，44 篇→46 篇，按行数平衡重新分配）
+> **更新日期**：2026-08-12（v2.1.0：新增 AI-23 负责 66 号提交队列串行化，47 篇→48 篇；通用规则 #5/#7 升级并同步内嵌全部 23 个指令块——过度工程判定基准锚定 system_charter §2 硬边界+「1 人在 TRAE 上多 AI 多对话并发施工」方式，远期工程不算；循环审查加入 git 提交闭环，退出条件改为问题数量=0 且缺失功能/模块数量=0）
 > **使用方式**：复制对应 AI 编号的指令块 → 开新对话 → 粘贴 → 执行
 
 ---
@@ -27,9 +27,9 @@ scope: 07_trading_decision_architecture
 2. **文档规范**：遵循 `01_design_memo_management_spec §4`——frontmatter 字段集（ttl/doc_type/title/owner/language/status/version/date/topic/scope）、末尾必须有「修订记录」节、必须有「开放问题/待定问题/待裁定」等价节
 3. **不破坏交叉引用**：含 `#L行号` 锚点的引用不得断裂；章节编号不强制统一；不为"结构统一"重排已有章节
 4. **修订升版本**：改动后升 version（小改 1.x.0→1.x.1，大改→1.(x+1).0），修订记录补一行（日期+版本+改了什么+为什么改）
-5. **过度工程红线**：本项目是个人+100%AI 开发，凡是"需要多人协作才能用""为了团队协作而设计""需要外部对接/文档交付"的机制一律砍掉或降级为远期愿景；远期愿景（标注 P4/P5/待裁定）可保留
+5. **过度工程红线（判定基准：system_charter §2 硬边界 + 施工方式）**：以 [system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式为唯一判定基准——①约束一人力：1 人全栈开发+AI 协作者，代码 100% AI 生成；②施工方式：1 人在 TRAE 编译器上用多 AI 多对话并发施工；③约束二硬件：单机 PC 工作站（i7-12700KF / RTX 3090 24GB 显存<90% / 64GB RAM / 30Mbps 网络），无集群/K8s；④约束三资金：个人资金双账户（实盘+QMT 模拟），miniQMT 10笔/秒、Tick=3秒；⑤约束四规则：T+1、涨跌停、融券受限、日频及以上根频率；⑥约束五运维：单机部署无热备家用环境，RTO<5分钟；⑦约束六范式：AI 生成代码需交叉验证+依赖锁定+自治熔断。凡是超出这些硬边界的机制/设计（需多人协作才能用、为团队协作而设计、需集群/多机/热备、需外部对接/文档交付、超出单机算力/显存/资金/运维能力）= 过度工程，一律从文档中去掉或降级；**远期工程不算过度工程**——已显式标注 P4/P5/远期愿景/待裁定的予以保留，但远期属性必须在文档中明确可见
 6. **搜索约束**：WebSearch 限定 2026 年（尤其 2026-07/08），找最新研究/实践/开源实证；找到的更好算法登记到文档「考虑过的替代方案」或新增「前沿演进方向」节，不直接替换已定决策（已定决策修订需升版本+记理由）
-7. **循环审查**：每轮做完整闭环（回填→审查→搜索→调整→过度工程清理），做完不停，重新通读全文再查一轮，直到连续 1 轮零改动需求 = 任务完成
+7. **循环审查（含 git 提交闭环）**：每轮做完整闭环（回填→审查→搜索→调整→过度工程清理），发现的问题/缺失**更新修复后立即提交 git**（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁），提交后重新通读全文再查一轮；如此循环，直到**问题数量=0 且缺失功能/模块数量=0**（连续 1 轮零改动需求确认）= 任务完成
 8. **不擅自定决策**：需人决策的开放问题标在「待定问题」节，AI 不替人拍板；已 active 的定稿决策如要推翻，必须升大版本+写推翻理由+标「待裁定」
 9. **⚠️ Git 安全铁律（#ARCH-GIT-CLEAN-GUARD-FIX，2026-08-11 灾难教训）**：
    - **每轮修改后立即 `git add <你修改的文件>`**——staged 文件不会被 `git clean -fd` 删除。这是防止文件丢失的第一道防线，每完成一轮修改必须执行，不可跳过
@@ -67,7 +67,7 @@ scope: 07_trading_decision_architecture
 
 ---
 
-## 1. 22 个 AI 文档分配总表
+## 1. 23 个 AI 文档分配总表
 
 ### 常规审查 AI（AI-01 ~ AI-20，覆盖 44 篇文档）
 
@@ -101,7 +101,13 @@ scope: 07_trading_decision_architecture
 | AI-21 | 1 | 90_methodology_open_questions.md | 1068 | 特殊：深度调研+裁定+施工方案 |
 | AI-22 | 1 | 91_density_prediction.md | 45 | 特殊：深度调研+裁定+施工方案 |
 
-> 合计：20 个常规 AI 覆盖 45 篇 + 2 个特殊 AI 覆盖 2 篇 = 47 篇，22 个 AI，全覆盖。
+### 新增治理文档 AI（AI-23，覆盖 1 篇文档）
+
+| AI | 文档数 | 负责文档 | 行数 | 说明 |
+|---|---|---|---|---|
+| AI-23 | 1 | 66_commit_queue_serialization.md | 260 | 新增治理 draft：提交队列串行化（决策备忘+施工计划），首版待审查裁定 |
+
+> 合计：20 个常规 AI 覆盖 45 篇 + 2 个特殊 AI 覆盖 2 篇 + 1 个新增治理 AI 覆盖 1 篇 = 48 篇，23 个 AI，全覆盖。
 
 ---
 
@@ -157,7 +163,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 搜"chart pattern recognition 2026""risk limit registry 2026""data lineage 2026""experiment registry 2026""field dictionary 2026"
 5. 搜"A-share trading cost 2026 佣金 印花税""market impact model calibration 2026"验证参数
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 12 个注册表是否对个人项目过多——能否合并（如 field_dictionary 并入 data_asset_registry）
 2. YAML vs DB：现阶段 YAML 是否合理，还是直接上轻量 SQLite
 3. data_asset_registry 三实体是否过重——个人项目是否需要 OpenLineage 级血缘
@@ -181,10 +188,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path（禁止 node_id/edge_id）
 5. status=active v1.0.0——改动升 v1.1.0 小改 / v2.0.0 大改
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -239,7 +246,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"synthetic VIX construction 2026""volatility regime 2026"
 4. 审查搜到的方法是否有比 12 态 HMM 更优的算法——如果有，登记到「考虑过的替代方案」或「前沿演进方向」节
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 12 态是否过多（个人系统）——6 态或 9 态是否够用
 2. overlay signals 的 NLP/资金/板块维度是否过度——P2 待施工的是否应降级远期
 3. walk-forward refit 的频率是否过重
@@ -259,10 +267,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. status=active v1.3.1——改动升 v1.4.0+
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -321,7 +329,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"performance attribution quantitative 2026""multi-strategy PnL decomposition 2026"
 4. 搜"anomaly detection trading 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. Barra 归因是否对个人项目过重——是否只需简单的选股/择时二分法
 2. 多维度归因（策略/标/因子/时间）是否过重
 3. 报表生成是否需要自动化 dashboard 还是手动检查即可
@@ -341,10 +350,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 升版本号在修订记录登记
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -407,7 +416,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 5. 搜"macro regime detection 2026"（EDB 宏观数据对 regime 的增量价值）
 6. 搜"ETF arbitrage 2026""ETF premium discount 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 101 张表是否本身就过多——个人系统是否需要覆盖 A股/港股/美股/期货/期权/可转债全品类
 2. 三波施工计划是否过重——是否应直接"归档为主，接入为辅"
 3. data_asset_registry 首批 66 张登记是否过重——是否先登记 8 张 P0 + 58 张已用高频表
@@ -430,10 +440,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path（schemas/categories/xxx.py）
 5. status=draft v0.1.0——审查后若数据准确+计划可行→升 active 1.0.0；若需大改保持 draft 升 0.2.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -499,7 +509,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 搜"multi-level risk control 2026""portfolio drawdown management 2026"
 5. 搜"Calmar ratio 2026""MAR ratio 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 四级阈值 + 日度熔断 + Kill Switch 是否过重——个人系统是否只需 2 级 + Kill Switch
 2. 分层风控（策略/firm/组合三层）是否过重
 3. 恢复机制的多阶段设计是否过度
@@ -520,10 +531,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 升版本号在修订记录登记
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -586,7 +597,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 搜"VaR backtesting 2026""ES backtesting 2026"
 5. 搜"FRTB expected shortfall 2026"（巴塞尔 FRTB 框架最新进展）
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. VaR/ES 对个人系统是否过重——可降级远期？
 2. 历史模拟法 vs 参数法——个人项目是否只需简单参数法
 3. 30 日波动率调整是否需要——个人系统小资金容量小
@@ -607,10 +619,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 升版本号在修订记录登记
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -669,7 +681,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"NLP financial sentiment 2026""financial BERT 2026"
 4. 搜"crisis recovery detection 2026""market bottom identification 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. NLP 管道/资金板块数据管道是否对个人项目过重——是否应降级远期
 2. 降态 9→6 是否必要——还是直接保持 12 态
 3. 校准器的三种方法是否都需实现
@@ -689,10 +702,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. status=draft——从 draft → active（如已施工完整）或保持 draft 补全
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -755,7 +768,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 5. 搜"financial data quality validation 2026"
 6. 搜"A-share alternative data 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. Provider 抽象层是否过度——个人项目是否需要 8 个 Provider，能否精简到 3-4 个
 2. CapabilityContract 四字段是否过度——个人项目是否需要正式契约
 3. 5 档调度是否过度——个人项目是否需要 monthly_static + weekly + daily_static + daily_event + realtime 五档
@@ -778,10 +792,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. status=draft v1.2.1——审查后若内容完整可建议升 active
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -846,7 +860,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"sell flow protocol 2026""stop loss ATR 2026""trailing stop 2026"
 4. 搜"O'Neil sell rules 2026""profit taking strategy 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 40 号——TWAP/VWAP/IS 三种算法是否都需要——个人项目小资金是否只需 TWAP
 2. 40 号——滑点模型/成本模型的复杂度是否过重
 3. 42 号——止损/止盈/破位/分批四种是否全需要——个人项目是否只需 2 种
@@ -867,10 +882,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 40 号 active 改动升版本；42 号骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -940,7 +955,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"buy flow protocol 2026""scaling in position 2026"
 4. 搜"Wyckoff accumulation 2026""分批建仓 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 37 号——流动性监控是否对个人系统过重（小资金容量小，流动性几乎不是问题）
 2. 41 号——分批建仓 A/B/C 依赖是否过重
 3. 41 号——买入时序的多场景是否过多
@@ -961,10 +977,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1027,7 +1043,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"firm risk aggregator 2026""portfolio hard limit 2026"
 4. 搜"position aggregation 2026""multi-strategy capital allocation 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 30 号——§2.5.4 VaR/ES、§2.5.5 Kill Switch 是否对个人项目过重
 2. 32 号——行业/总仓位硬约束是否过重
 3. 32 号——不做 MVO 是否正确——还是个人项目可以更简单（直接按比例）
@@ -1048,10 +1065,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 30 号 active 改动升 v1.4.0+；32 号骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1112,7 +1129,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"quantitative trading system architecture 2026""multi-strategy portfolio framework 2026"
 4. 搜"algorithmic trading decision pipeline 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 34 号——四档 Shrinkage 是否过细——个人项目是否只需 2 档
 2. 34 号——PerformanceScore 60 日 Sharpe 映射是否过重
 3. 00 号——§5 的 3 条并行轨道、§7 多 AI 分工指南是否对个人项目过重
@@ -1133,10 +1151,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 34 号保持 draft（参数未校准）或填框架→active 标参数待定；00 号 active 改动升 v2.5.0+
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1207,7 +1225,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"sector rotation strategy 2026""industry momentum 2026"
 4. 搜"A-share sector rotation 2026""板块轮动 量化 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 26 号——多源 news_data 接入是否过重——个人项目是否只需 1-2 个源
 2. 26 号——Hawkes process 衰减模型是否过重
 3. 22 号——460 板块全覆盖是否过重——MVP 是否只需 50-100 个重点板块
@@ -1228,10 +1247,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1301,7 +1320,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"paper trading simulation 2026""live trading migration 2026"
 4. 搜"strategy deployment gating 2026""canary deployment trading 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 61 号——多 AI 协作规范是否过重——个人项目实际是多 AI 还是单 AI 多会话
 2. 61 号——BM-RES / BM-MOD 规范是否过重
 3. 53 号——灰度四阶段是否过重——个人项目是否只需 2 阶段
@@ -1321,10 +1341,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1390,7 +1410,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"factor decay monitoring 2026""industry neutralization 2026"
 4. 搜"qlib alpha158 2026""WorldQuant alpha 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 14 号——S2 的多维度触发是否过重
 2. 25 号——因子治理生命周期是否过重——个人项目是否只需 IC/IR 评估
 3. 25 号——行业中性化是否过重——是否只需简单行业减均值
@@ -1412,10 +1433,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 14 号 draft→active 或保持；25 号骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1479,7 +1500,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 2. 搜"regime backtest validation 2026""walk-forward validation 2026"
 3. 搜"deflated sharpe ratio 2026""purged k-fold 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 24 号——7 维评分卡+6 因子+6 维强度是否维度过多——个人项目是否只需 3-4 维
 2. 24 号——双引擎融合 6 类决策是否过重
 3. 11 号——5 个 Phase 是否对个人项目过多——是否只需 3 个
@@ -1500,10 +1522,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 24 号骨架→active 1.0.0；11 号 active 改动升版本
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1568,7 +1590,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 3. 搜"data retention policy trading 2026""cold archive best practice 2026"
 4. 搜"HMM overfitting detection 2026""probability calibration 2026""Viterbi label alignment 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 31 号——Kelly 精裁决是否对个人项目过重（密度预测需求）
 2. 31 号——risk parity 是否过重——个人项目是否只需等权
 3. 18 号——两层归档架构是否过度——能否统一一个分界线
@@ -1592,10 +1615,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 31 号 active 升版本；18 号 active 升 v0.3.0；12 号 active 升版本
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1678,7 +1701,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 搜"A股 特殊交易日 事件研究 2026""股指期货交割日效应 2026""MSCI 调整 A股 2026"
 5. 搜"MLflow 3.0 2026""experiment tracking 2026""backtest observability 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 21 号——L0→L1→L2-C 三层是否过重——个人项目是否只需 2 层
 2. 51 号——实验历史 Tab 是否过重
 3. 23 号——block-bootstrap 2000x 是否过重——是否只需 500x
@@ -1703,10 +1727,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 21/23 号骨架→active 1.0.0；51 号 active 升版本；17 号 draft 保持或转 active；50 号 draft→active 或保持
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1790,7 +1814,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 搜"market sentiment cycle 2026""游资情绪周期 2026""limit-up sentiment 2026"
 5. 搜"event bus trading system 2026""signal routing 2026""config driven trading 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 20 号——§4.4 intake 四阶段是否过重
 2. 19 号——外资行为分析方法论 6 节是否过度——是否先做简单增减持排名 + 净流入估算
 3. 19 号——fetcher 设计是否过度——是否只需简单全量覆盖
@@ -1818,10 +1843,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 20 号 active 升版本；19 号 draft 保持或升 v0.2.0；01 号 active 升版本；28/60 号骨架→active 1.0.0
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -1937,7 +1962,8 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 5. 搜"value reversal strategy 2026""momentum trend following 2026"
 6. 搜"technical indicator catalog 2026""TA-Lib 2026""technical analysis indicator 2026"
 
-■ 第 5 轮：过度工程审查（个人项目标准）
+■ 第 5 轮：过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
 1. 33 号——三级升级是否过重——个人系统是否需 Tier2 策略自主
 2. 55 号——三频复盘是否过重——个人项目是否只需周复盘
 3. 52 号——BM-BT-01~07 七环节是否过多——是否只需 3-4 环节
@@ -1967,10 +1993,10 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 交叉引用全用稳定 path
 5. 骨架→active 1.0.0（27 号保持 draft 但补全暂缓说明）
 
-■ 循环条件
-- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？
-- 若有未修复/新发现，进入下一轮
-- 若本轮零发现零修复，再跑一轮确认——连续两轮零发现，任务结束
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现的问题？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- 若本轮零发现零修复，再跑一轮确认——**问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现），任务结束
 - 升版本号在修订记录登记
 
 ■ 约束
@@ -2042,7 +2068,7 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 ■ 第 5 阶段：治本施工方案
 对每个裁定为"采纳"的方案：
 1. 施工步骤（具体到文件和函数）
-2. 过度工程审查（个人项目是否需要这么复杂）
+2. 过度工程审查（判定基准：[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 1 人在 TRAE 编译器上多 AI 多对话并发施工——超出硬边界的复杂度 = 过度工程 → 去掉或降级为远期；已显式标注 P4/P5/远期愿景/待裁定的远期工程不算，予以保留）
 3. 与现有架构的集成点
 4. 验证方法
 5. 风险与缓解
@@ -2054,11 +2080,12 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 升版本号（v1.9.0→v2.0.0 大改）
 5. 修订记录登记
 
-■ 循环条件
+■ 循环条件（含 git 提交闭环）
 - 每个问题都要有明确的裁定结果
 - 每个裁定都要有第一性原理支撑
-- 每个施工方案都要有过度工程审查
-- 连续一轮零新增内容 = 任务结束
+- 每个施工方案都要有过度工程审查（判定基准：system_charter.md §2 硬边界 + 1 人多 AI 并发施工，远期标注除外）
+- 每轮裁定/施工方案落盘后立即 `git add` + `git commit`（提交信息注明本轮裁定/修复内容，禁止 `--no-verify` 绕过门禁），提交后再进入下一轮审查
+- **问题数量=0 且缺失功能/模块数量=0**（连续一轮零新增内容确认）= 任务结束
 
 ■ 约束
 - 你是客观专业架构师，不是辩护人——如果问题本身不合理，直接说
@@ -2135,7 +2162,7 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 ■ 第 5 阶段：治本施工方案
 对每个裁定为"采纳"的方案：
 1. 施工步骤（具体到文件和函数）
-2. 过度工程审查（个人项目是否需要这么复杂）
+2. 过度工程审查（判定基准：[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 1 人在 TRAE 编译器上多 AI 多对话并发施工——超出硬边界的复杂度 = 过度工程 → 去掉或降级为远期；已显式标注 P4/P5/远期愿景/待裁定的远期工程不算，予以保留）
 3. 与现有架构的集成点
 4. 验证方法
 5. 风险与缓解
@@ -2148,11 +2175,12 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 4. 升版本号
 5. 修订记录登记
 
-■ 循环条件
+■ 循环条件（含 git 提交闭环）
 - 每个问题都要有明确的裁定结果
 - 每个裁定都要有第一性原理支撑
-- 每个施工方案都要有过度工程审查
-- 连续一轮零新增内容 = 任务结束
+- 每个施工方案都要有过度工程审查（判定基准：system_charter.md §2 硬边界 + 1 人多 AI 并发施工，远期标注除外）
+- 每轮裁定/施工方案落盘后立即 `git add` + `git commit`（提交信息注明本轮裁定/修复内容，禁止 `--no-verify` 绕过门禁），提交后再进入下一轮审查
+- **问题数量=0 且缺失功能/模块数量=0**（连续一轮零新增内容确认）= 任务结束
 
 ■ 约束
 - 你是客观专业架构师，不是辩护人——如果问题本身不合理，直接说
@@ -2165,15 +2193,102 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 
 ---
 
+## AI-23 指令（负责 66_commit_queue_serialization.md — 新增治理文档）
+
+```
+你是 ZephyrAlpha 项目的架构审查 AI。项目是个人+100%AI 开发的 A 股量化交易系统（miniQMT 通道，T+1，不能做空）。
+
+【你的任务】审查并裁定 1 篇新增治理文档：
+d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\66_commit_queue_serialization.md（提交队列串行化——多 AI 并发施工的集成层总案，draft v0.1.0，260 行）
+
+【文档性质】这是 2026-08-12 新增的**决策备忘 + 施工计划**（首版 draft，待审查）。背景：当日 23 会话并发施工发生互冲/吞稿/搭便车/连坐阻断事故链，文档提出"会话提交=快照入队即返回，后台单写者 Serializer 按序串行落盘"的治本方案——对标 Transactional Outbox + GitHub Merge Queue + LMAX Disruptor 单写者定序 + Kafka Log Compaction + DLQ 死信的组装。核心机制：plumbing 直写（GIT_INDEX_FILE 独立 index + hash-object + commit-tree + update-ref，不碰工作区）、同键覆盖 compaction、门禁出队端执行、死信 task_board 闭环、worktree 从必须降级为可选。你的核心任务是**审查裁定这个新方案的合理性与可施工性**，不是回填既有内容。
+
+【背景知识】
+- 65 号 git 安全治理是上游护栏层（git_guard.py 拦截、逃生通道审计、worktree 纪律）——66 号 §4.5 把 worktree 从"必须"降级为"可选"，与 65 号现行纪律存在口径冲突，需裁定对齐方式
+- 61 号生命周期多 AI 定义会话注册/锁/提交协议；60 号跨切清理；01 号管理规范 §4.1 段位编号制（6x=跨切治理）
+- AGENTS.md §10「多会话并发防护铁律」（改完立即 add + 禁全区恢复命令）——66 号 §4.6 提出演化为"改完立即入队"
+- 关联 ARCH 议题：#ARCH-GIT-CLEAN-GUARD-FIX（8-11 git clean 灾难）/ #ARCH-AICOLLAB-001（Worktree+FileLock+TaskBoard 三件套）/ #ARCH-WORKTREE-GATE-001（WORKTREE-REQUIRED 门禁）/ I-GOV-3 v2 三纪律（待登记 ARCH 编号）
+- 网关现况：`python scripts/git_commit.py --session <id>` 是唯一提交入口（GATE-COMMIT-GW 拦裸 commit）；pre-commit 框架有全树 stash 周期（23 会话下互踩实证）
+
+【工作清单——循环执行直到全部为零】
+
+■ 第 1 轮：读现状 + 基础设施盘点（只读不改）
+> ⚠️ 通用规则 #11 要求：全面扫描项目代码/配置/schema/注册表/测试/脚本/前端/治理规则/文档引用，找出与本文档主题相关的所有已建设施和配套，在文档中新增或更新「已施工设施盘点」节。先清楚有什么→才能知道怎么改→才能知道该删除/退役什么。
+1. 完整读 66 号全文（260 行）
+2. 读全部关联代码（真实实现 vs 文档假设逐条核对）：
+   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（串行锁/门禁链/逃生通道现状）
+   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
+   - scripts/git_commit.py + scripts/git_guard.py + scripts/lock_files.py + scripts/task_board.py
+   - scripts/governance/test_concurrent_safety.ps1（66 号 §11 复用的压测脚本是否真实存在）
+   - .pre-commit-config.yaml（stash 周期触发条件）
+3. 读关联文档：65_git_safety_governance（护栏层全貌）+ 61_lifecycle_multi_ai（会话协议）+ 60_cross_cutting_cleanup + 55_monitoring_review（§8 防饥饿告警对接点）+ 01 号规范
+4. 查 architecture_issue_registry.yaml 中 #ARCH-GIT-CLEAN-GUARD-FIX / AICOLLAB-001 / WORKTREE-GATE-001 / GOV-BUDGET-002 的 status 与 adjudication
+5. 检查 .runtime/ 目录现状（commit_queue 是否已有任何施工痕迹）+ AGENTS.md §10 现行文本
+
+■ 第 2 轮：方案裁定审查（核心——逐条裁定 66 号 §4 六项裁定）
+对每项裁定给出"采纳/修正/拒绝+理由"：
+1. **快照入队+单写者串行**：对比更简单的替代方案（如单全局互斥锁串行化 commit、文件锁扩展到提交期、git worktree 强制隔离升硬）——队列方案对个人+100%AI 项目是否过度工程？23 会话并发是否是常态还是一次性事件？（若并发回降到 3-5 会话，队列是否是杀鸡用牛刀）
+2. **plumbing 直写（不碰工作区）**：在 Windows + git 2.48.1 上实测验证技术可行性——GIT_INDEX_FILE 独立 index + read-tree + hash-object -w + update-index --cacheinfo + write-tree + commit-tree + update-ref 全链是否可跑通（用测试仓库实测，不动主仓）
+3. **同键覆盖 compaction**：(session_id, path) 键设计是否会丢"同会话有意保留的中间态"？快照整体替换 vs diff 的存储成本
+4. **门禁出队端执行**：GitCommitGateway 现门禁链哪些依赖工作区文件/共享 index，挪到临时 index 上跑的适配清单（66 号 §12 开放问题 1——给出实证答案）
+5. **worktree 降级为可选**：与 65 号纪律、AGENTS.md §10 铁律的冲突如何收口——两文档口径必须一致，裁定改哪边（注意：你只改 66 号，65 号改不动则记在 66 号开放问题）
+6. **死信+级联标记**：DLQ 闭环对个人项目是否可运维——死信堆积谁清理？task_board.py schema 现状能否承载（读真实代码核对）
+
+■ 第 3 轮：2026 年最新实践搜索（全网 WebSearch）
+1. 搜 "GitHub Merge Queue 2026""merge queue monorepo 2026""Bors Zuul 2026"——主干保护最新实践
+2. 搜 "transactional outbox pattern 2026""single writer principle 2026"——模式演进
+3. 搜 "AI agent concurrent git 2026""multi-agent coding git conflict 2026""vibe coding parallel agents git 2026"——多 AI 并发提交的最新社区方案（是否有比队列更轻量的新实践）
+4. 搜 "git plumbing commit-tree automation 2026"——直写造 commit 的业界实证
+5. 找到的更好方案登记到 66 号「考虑过的替代方案」（没有则新增该节），不直接替换已定决策
+
+■ 第 4 轮：施工计划与过度工程审查（判定基准：system_charter §2 硬边界 + 施工方式）
+> 判定基准（[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式）：①1 人全栈开发+AI 协作者、代码 100% AI 生成（约束一）；②1 人在 TRAE 编译器上用多 AI 多对话并发施工；③单机 PC 工作站——i7-12700KF / RTX 3090 24GB（显存<90% 硬上限）/ 64GB RAM / 30Mbps 网络，无集群/K8s（约束二）；④个人资金双账户，miniQMT 10笔/秒、Tick=3秒（约束三）；⑤T+1、涨跌停、融券受限、日频及以上根频率（约束四）；⑥单机无热备家用运维、RTO<5分钟（约束五）；⑦AI 代码需交叉验证+依赖锁定+自治熔断（约束六）。**凡是超出以上硬边界的机制/设计 = 过度工程 → 必须从文档中去掉（或降级为远期愿景并显式标注）；远期工程不算过度工程——已明确标注 P4/P5/远期愿景/待裁定的予以保留不删。**
+1. §10 施工分期 MVP/P1/P2 的验收标准是否可执行——"3 会话并发 50 提交零丢失"如何自动化断言
+2. MVP 最小集能否再砍——v0.1 是否可以先只做"串行化"（全局互斥）不做"队列持久化+compaction+死信"，验证止血后再迭代？（止血优先 vs 一步到位，给出裁定）
+3. §8 故障恢复表——Serializer 单进程 watchdog 在 Windows 的常驻方案（计划任务？守护脚本？）是否写清
+4. §9 不做什么 5 条边界是否合理——有无该砍未砍/该做未做
+5. §12 四项开放问题逐项给出建议裁定（标"待用户裁定"，不擅自定）
+6. 前置条件（3 个 WIP 文件过门禁 + WORKTREE-REQUIRED 升硬 _THRESHOLD 5→0）——核验现状是否仍阻塞
+
+■ 第 5 轮：一致性与交叉引用审查
+1. 66 号 vs 65 号：worktree 纪律口径、逃生通道口径、pre-commit stash 处置是否一致
+2. 66 号 vs 61 号：会话注册/锁协议与入队协议是否冲突（.ailocks 保留的分工边界）
+3. 66 号 vs AGENTS.md §10："改完立即 add"→"改完立即入队"的演化——AGENTS.md 未改前 66 号措辞必须是"提案"而非"已生效"
+4. 66 号 vs 01 号规范：frontmatter/修订记录/开放问题节是否合规
+5. related_modules 路径全部真实存在性核验
+
+■ 第 6 轮：文档质量与规范符合性
+1. frontmatter 完整性（ttl/doc_type/title/owner/language/status/version/date/topic/scope）
+2. 修订记录 + 开放问题节双硬约束
+3. 交叉引用全用稳定 path（禁 node_id/edge_id）
+4. 审查完成后：draft 保持（如开放问题未裁定）或升 v0.2.0（重大修订）/ v1.0.0 active（如裁定全部闭环且用户确认）——升版本+修订记录登记
+
+■ 循环条件（含 git 提交闭环）
+- 每轮结束后自检：本轮发现的问题是否全部修复？是否有新发现？是否有新发现的缺失功能/模块？
+- 若有未修复/新发现：更新修复 → 提交 git（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁）→ 进入下一轮审查
+- **问题数量=0 且缺失功能/模块数量=0**（连续两轮零发现零修复），任务结束
+
+■ 约束
+- 只改 66 号本身，引用其他文档（65/61/60/55/01/AGENTS.md）时只读不改；发现需同步改的记在 66 号开放问题节
+- 你是客观专业架构师，不是辩护人——如果队列方案对个人项目过度工程，直接说并给出更轻量替代
+- 不擅自定决策（需用户确认的标"待用户裁定"，尤其：方案整体采纳与否、worktree 降级、AGENTS.md §10 演化）
+- plumbing 实测只能用测试仓库（如 `Test-Path $env:TEMP` 下建临时 repo），禁止在主仓做任何写操作
+- 遵守通用规则 #9 git 安全铁律：每轮修改后立即 `git add` 66 号文件；禁止全区恢复命令
+- 遵守通用规则 #10：修改前先 `python scripts/lock_files.py acquire <file> AI-23` 加锁，完成后 release
+- 持续改进不停，循环至零问题
+```
+
+---
+
 ## 使用说明
 
-1. **开新对话**：在 Trae/CLI 中开 22 个新对话窗口（或分批开，如每批 5-7 个并行）
+1. **开新对话**：在 Trae/CLI 中开 23 个新对话窗口（或分批开，如每批 5-7 个并行）
 2. **复制指令**：从本文档复制对应 AI 编号的指令块（` ``` ` 之间的内容）
 3. **粘贴执行**：粘贴到新对话，AI 会自动开始读取文件、回填、审查、搜索、循环
 4. **监控进度**：每个 AI 独立工作，互不通信，通过修改的文档文件交接
 5. **冲突处理**：若两个 AI 改同一交叉引用（如 30 号被 AI-11 负责，但 AI-05/06/09/10/11/12/13/15/16 都引用），各 AI 只改自己负责的文档，引用对方文档时只读不改
 
-> **注意**：22 个 AI 并发可能产生资源竞争（同时读同一文件 OK，但同时写不同文档时注意 git 冲突）。建议每个 AI 独立 commit，或全部完成后统一 review 合并。
+> **注意**：23 个 AI 并发可能产生资源竞争（同时读同一文件 OK，但同时写不同文档时注意 git 冲突）。建议每个 AI 独立 commit，或全部完成后统一 review 合并。
 
 > **AI-01 特殊提示**：62 号文档是 12 个业务注册表的施工总案，与 AI-04(63号)/AI-08(64号)/AI-13(26/22号)/AI-15(25号)/AI-16(24号)/AI-18(21/17/50/51/23号)/AI-19(20/19/28/60号)/AI-20(15/27/16/52/55/33号)/AI-05(35号)/AI-06(36号)/AI-10(37号)/AI-11(32号)/AI-09(40号) 都有交叉引用。AI-01 只改 62 号本身，引用其他文档时只读不改；如发现其他文档需同步改，记在 62 号「待定问题」节，不越界改。
 
@@ -2218,3 +2333,5 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 > **AI-21 特殊提示**：90 号文档是方法论遗留提案 21 项（讨论文档），使用特殊的"深度调研+裁定+施工方案"指令模板（非常规 8 轮审查）。21 项提案涉及全项目方法论，与几乎所有文档有交叉引用。AI-21 只改 90 号本身，引用其他文档时只读不改。AI-21 是客观专业架构师，不是辩护人——如果问题本身不合理，直接说。
 
 > **AI-22 特殊提示**：91 号文档是密度预测远期愿景（讨论文档，45 行骨架），使用特殊的"深度调研+裁定+施工方案"指令模板（非常规 8 轮审查）。与 AI-02(10号)/AI-17(31号)/AI-06(36号)/AI-05(35号) 有交叉引用。AI-22 只改 91 号本身，引用其他文档时只读不改。重点裁定 QNN 在单机 RTX 3090 的 2026 可行性——如不可行，明确建议删除还是保留远期标注。
+
+> **AI-23 特殊提示**：66 号文档是提交队列串行化（2026-08-12 新增治理 draft，决策备忘+施工计划），核心任务是**审查裁定新方案**而非回填——逐条裁定 §4 六项裁定，重点裁定队列方案对个人+100%AI 项目是否过度工程（vs 全局互斥锁等轻量替代）、plumbing 直写在 Windows git 2.48.1 的可行性（只许测试仓库实测，禁碰主仓）、worktree 降级与 65 号口径冲突的收口方式。与 AI-19(65/60/01号)/AI-14(61号)/AI-20(55号) 有交叉引用。AI-23 只改 66 号本身，引用其他文档时只读不改；发现 65 号/AGENTS.md §10 需同步改的，记在 66 号开放问题节标"待用户裁定"，不越界改。

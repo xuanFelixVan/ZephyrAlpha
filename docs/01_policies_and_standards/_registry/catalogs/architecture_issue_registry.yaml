@@ -15825,3 +15825,19 @@ entries:
 #   3) candidate_module_registry 登记 CAND 条目（candidate 类）
 #   4) generate_battle_map_diagram.py 修复（OE-054 边过滤 / OE-055 弃用前缀 / 计数与截断 bug）
 #   5) 12 份环节文档重跑生成器生效
+
+# --- #ARCH-SPECIAL-DAYS: 特殊交易日数据资产注册（17/19 号文档引用）---
+- issue_id: '#ARCH-SPECIAL-DAYS'
+  title: 特殊交易日数据资产注册表——hk_connect_closed/dividend_tax_node 等事件型日历
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    背景：17 号特殊交易日数据资产文档引用 #ARCH-SPECIAL-DAYS，
+    涉及港股通休市日标记、红利税节点等事件型日历数据的注册表登记。
+    19 号北向资金快照文档亦引用此议题。
+    议题待用户确认后补充完整裁定。
+  fix_phase: '待裁定'
+  status: proposed
+  related_rules: ''
+  created: '2026-08-12'
+  last_updated: '2026-08-12'
