@@ -60,6 +60,7 @@ from zephyr.backtest.core.matching_logic import (
     MatchOrderInput,
     OrderBookSnapshot,
 )
+from zephyr.ex_core.board_lot import AShareBoard, classify_board
 from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import (
     BrokerInterface,
@@ -107,6 +108,15 @@ _XT_PRICE_TYPE = {
 # xttrader 方向常量（XtOrder.order_type 字段值，参考 xtquant 文档）
 _XT_BUY_ORDER_TYPES = {23, 25, 27, 29}  # 买限价/买市价/买开/买平
 _XT_SELL_ORDER_TYPES = {24, 26, 28, 30}  # 卖限价/卖市价/卖开/卖平
+
+# 板块涨跌停幅度（2026-07-06 规则修订：ST 与主板统一 ±10%）
+# 真源分类：ex_core.board_lot.classify_board；UNKNOWN 回退主板 10%
+_BOARD_PRICE_LIMIT_PCT: Final[dict[AShareBoard, Decimal]] = {
+    AShareBoard.MAIN: Decimal("0.10"),
+    AShareBoard.CHINEXT: Decimal("0.20"),  # 创业板 ±20%
+    AShareBoard.STAR: Decimal("0.20"),     # 科创板 ±20%
+    AShareBoard.BSE: Decimal("0.30"),      # 北交所 ±30%
+}
 
 
 class MiniQmtBrokerError(Exception):
@@ -849,9 +859,11 @@ class MiniQmtBroker(BrokerInterface):
         - 非终态以券商端为准
         """
         # 用字符串值比较避免循环 import（OrderStatus 是 str Enum）
+        # 统一 lower()——OrderStatus.value 是大写（"FILLED"），不 lower 会导致
+        # 终态保护静默失效（边界单测 test_status_merge_* 捕获）
         terminal_values = {"filled", "cancelled", "rejected", "expired"}
-        local_val = local.value if hasattr(local, 'value') else str(local).lower()
-        remote_val = remote.value if hasattr(remote, 'value') else str(remote).lower()
+        local_val = (local.value if hasattr(local, 'value') else str(local)).lower()
+        remote_val = (remote.value if hasattr(remote, 'value') else str(remote)).lower()
         if local_val in terminal_values:
             # 本地已终态：仅 cancelled→filled 例外
             if local_val == "cancelled" and remote_val == "filled":
@@ -985,9 +997,13 @@ class MiniQmtBroker(BrokerInterface):
             if pos.stock_code != symbol:
                 continue
             # xttrader 的 XtPosition 有 can_sell_volume 字段（可用卖出，已扣T+1）
-            can_sell = getattr(pos, "can_sell_volume", None) \
-                or getattr(pos, "avail_volume", None) \
-                or getattr(pos, "available", None)
+            # 显式 None 判断——can_sell_volume=0（当日买入全锁）是合法值，
+            # 用 `or` 链会把 0 当 falsy 跳过检查（边界单测 test_same_day_buy_cannot_sell 捕获）
+            can_sell = getattr(pos, "can_sell_volume", None)
+            if can_sell is None:
+                can_sell = getattr(pos, "avail_volume", None)
+            if can_sell is None:
+                can_sell = getattr(pos, "available", None)
             if can_sell is not None and can_sell < sell_qty:
                 raise MiniQmtBrokerError(
                     f"T+1锁定或可用不足: {symbol} 可卖={can_sell} 卖出={sell_qty}",
@@ -1002,9 +1018,10 @@ class MiniQmtBroker(BrokerInterface):
         side: OrderSide,
         prev_close: Decimal | None = None,
     ) -> None:
-        """涨跌停检查
+        """涨跌停检查（板块差异化）
 
-        A股涨跌停板: ±10%（ST股 ±5%，当前简化统一用10%）
+        A股涨跌停板（2026-07-06 规则修订）: 主板/ST ±10%，创业板/科创板 ±20%，
+        北交所 ±30%（板块分类真源：board_lot.classify_board）
         买入涨停价 = 拒绝，卖出跌停价 = 拒绝
 
         Args:
@@ -1022,8 +1039,9 @@ class MiniQmtBroker(BrokerInterface):
             )
             return
 
-        upper_limit = prev_close * (Decimal("1") + self.PRICE_LIMIT_PCT)
-        lower_limit = prev_close * (Decimal("1") - self.PRICE_LIMIT_PCT)
+        limit_pct = _BOARD_PRICE_LIMIT_PCT.get(classify_board(symbol), self.PRICE_LIMIT_PCT)
+        upper_limit = prev_close * (Decimal("1") + limit_pct)
+        lower_limit = prev_close * (Decimal("1") - limit_pct)
 
         if side is OrderSide.BUY and price >= upper_limit:
             raise MiniQmtBrokerError(
