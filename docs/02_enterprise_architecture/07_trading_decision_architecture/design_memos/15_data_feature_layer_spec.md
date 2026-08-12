@@ -5,7 +5,7 @@ title: 数据与特征层规范
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.0.2"
 date: 2026-08-12
 topic: data_feature_layer_spec
 scope: 07_trading_decision_architecture
@@ -54,11 +54,28 @@ scope: 07_trading_decision_architecture
 8. **复权 NULL 语义**——`adj_factor Nullable`，NULL=缺失 / 1=无复权（#ARCH-ADJFACTOR-NULL-001）；
 9. **calc_mode 三态**——preload（日K 回测全内存）/ lazy（分钟线按需）/ replay（tick 逐条回放=实盘一致）。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-01-E | 原始数据缓存 | §3.1（落库原始表 schema：ReplacingMergeTree 保留原始行 + 治理四列 `ingest_ts`/`recorded_time` 审计） | production已建 |
+| BM-SEL-01-F | 标准化行情产出 | §3.1（`exchange`+`symbol_canonical` MATERIALIZED 派生列身份统一、复权 NULL 语义）/ §3.6（质量门控四条单行级门禁产出带 quality_flag 的标准行情） | production已建 |
+| BM-BT-03-B | Tick回放引擎 | §3.1 第 9 条 calc_mode 三态之 replay（tick 逐条回放=实盘一致） | production已建 |
+
 ### 3.2 要点② miniQMT tick 接入契约（已施工，双轨）
 
 **轨 A 生产链路**（D_DATA 域，大规模运行）：`data/implementations/miniqmt_provider.py` 封装 xtquant 对接 40+ 表（单线程模型、方法内 import 防硬依赖）；`data/tick_subscriber.py` 常驻订阅——**tick 契约 15 字段**（trade_date/timestamp/recorded_time/symbol/market_type/price/volume/amount/direction/data_source/bid/ask 价量/quality_flag），callback 线程只 put_nowait → flush 线程批量 500 条 → WAL 先落盘再异步 drain CH（#ARCH-CH-013）；`redundant_source/` 主备容灾（PRIMARY→BACKUP 状态机 30 秒防抖切回 + TDX 备源）。`governance/data_governance/miniqmt_provider.py` 的 `MiniQmtQuoteProvider` 是另一类（Tick 18 字段含 5 档盘口），供实盘行情与 ex_core 共用 xtquant 连接——UTC→北京时间治本转换有专门事故教训注释。
 **轨 B 厂商抽象**（D_MKT_DATA 域，MOD-MKT-001~006）：VendorRegistry + Connector 6 态状态机 + FailoverManager（PRIORITY/ROUND_ROBIN 双策略、切换原子性、ALL_FAILED 兜底）——为将来多厂商统一定价/切换准备的干净抽象。
+**轨 B 自动加载契约（BM-SEL-01-D，production，MOD-MKT-005 autoload）**：启动时自动加载行情模块——**启动加载 SLA <10s 完成全部模块加载**；流程=配置读取 → 模块发现（VendorRegistry 扫描已注册 connector）→ 依赖注入 → 实例化（Connector 状态机置初态）；配置热刷新生效路径=配置管理写回 → autoload 监听刷新 → 重建 connector 实例 → 路由规则热更新（不中断在途订阅）；自动加载失败→降级手动加载+告警。**与 64 号 §9.2 消歧**：本文 autoload 管**模块级**加载/配置热刷新（进程启动与配置变更时"装什么"），64 号 §9.2 冗余源热切换管**运行态进程级**主备源零中断切换（tick 推送"跑着换"）——分工不重叠。
 why 双轨：轨 A 在 xtquant 单线程约束下求生（任务制下载+常驻订阅+WAL），轨 B 是 A 类基础设施先建。**缺口**：两轨未合流（轨 B 无 miniQMT connector 实现）——登记 §7。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-01-A | 供应商注册与适配器 | §3.2 轨B（VendorRegistry 厂商注册 + Connector 抽象） | production已建 |
+| BM-SEL-01-B | 行情连接器管理 | §3.2 轨B（Connector 6 态状态机） | production已建 |
+| BM-SEL-01-C | 故障切换与Failover | §3.2（轨B FailoverManager PRIORITY/ROUND_ROBIN 双策略+ALL_FAILED 兜底；轨A redundant_source 主备容灾 30 秒防抖切回） | production已建 |
 
 ### 3.3 要点③ PIT 铁律（已施工，双层）
 
@@ -68,9 +85,19 @@ why 双轨：轨 A 在 xtquant 单线程约束下求生（任务制下载+常驻
 - **因子评估层**：`factor/core/evaluation/backtest.py` 自动注入 FINAL 去重、前向收益 shift 仅限评估、禁用 ingested_at 只用 trade_date 截面对齐（INV-004）。
 why 双层：回测在 pandas 里跑（可单测、不连库），取数在 SQL 里跑（性能）——两层语义显式对齐（pit_query.py docstring 17-31 声明映射关系）。**缺口**：行情表无 available_at 列（多版本对齐仅财报可用，行情靠 ReplacingMergeTree FINAL）；Embargo 用 BDay 近似非真交易日历——登记 §7。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-BT-02-E | 幸存者偏差防护 | §3.3（`check_survivorship_bias()` 退市股覆盖率 + `survivorship_universe()` stock_list SCD-2 时点过滤含未来退市股） | design待施工 |
+| BM-BT-04-A | PIT三公理与AS OF JOIN | §3.3（铁律表述 + `as_of_join()` 泄漏防护/版本对齐 + `pit_query.py` `LIMIT 1 BY` AS OF JOIN 语义） | production已建 |
+| BM-BT-04-B | Embargo期管理 | §3.3（`apply_embargo()` 默认 5 个交易日 BDay 近似；BDay→真交易日历待决策登记 §7） | production已建 |
+
 ### 3.4 要点④ 特征仓库架构（选型已定，实现待施工）
 
 **已施工的相关件**：FactorDAG（`factor/core/factor_dag/dag.py`：pydantic 节点/环检测/Kahn 分层，从 FactorMeta.dependencies 自动建图）+ 双执行器（ThreadPool 层内并行 / ProcessPool 绕 GIL）+ `FactorBase.incremental_compute`（盘中只重算新增点拼接缓存）+ FactorSignal 流转契约（z-score+rank_pct+NaN 处理，批量缓冲输出给 D_SIGNAL/D_RISK/D_PF_CORE）。
+
+**FactorSignal NaN 填充裁定（BM-BT-03-D，design→口径已定）**：①**前值填充（ffill）为默认策略**；②**禁用向后填充与插值**——backfill/线性插值都引入未来数据=前视偏差（违反 §3.3 PIT 铁律），横截面均值填充稀释截面排序信息，一并禁用；③**指标预热期剔除**——窗口期内 NaN（如 MA60 前 59 点）不填充、整段剔除出回测样本，防预热期伪信号污染 IS 段指标。why 登记于此而非另建服务：NaN 语义是 FactorSignal 流转契约的一部分，独立服务化（真源 BT-26 services/nan_processor.py planned）暂无必要；重评条件=出现消费方要求差异化填充策略（如事件驱动策略盘口快照 NaN 语义）时再独立成服务。
 
 **选型裁定（个人单机轻量路线）**：不引入 Feast/Tecton 等 Feature Store 框架（64 号 §2.3 已排除；2026 年行情：Feast/Tecton 规模化部署需 4-6 FTE + 月 $15k-40k 云成本，对单人是纯过度工程），采用三层轻量架构：
 1. **计算层**——FactorDAG + incremental_compute（已施工）；
@@ -91,6 +118,7 @@ why 这套总纲：因子是消耗品——IC 衰减是必然，治理流水线�
 2. **领域抽象门**：DataQualityGate ABC——quality_score<0.7 必须抛错、停牌 MUST 显式标记禁静默跳过、每种 failure 给 recovery_hint（RETRY/SKIP_SYMBOL/SWITCH_SOURCE/HALT）；
 3. **DQ 八维体系**：完整性/准确性/异常/一致性/新鲜度/时效/唯一/有效，方向感知打分；
 4. **配套**：cross_source_validator（主备源交叉校验落 cross_validation_log 表）/ known_data_gaps.yaml（已知缺口注册表 #ARCH-CH-029）/ backtest 前置 data_quality_checker。
+5. **backtest 前置检查器绑定（BM-BT-02-D，design）**：回测数据加载后自动检查的前置门——定位是回测域的**消费引用方**而非新建检查器：检查逻辑复用本要点第 1 条单行级门禁的批次版 + DQ_SPECS 八维 check_func 既有登记（§6 待裁定项实现绑定后自动生效），backtest 侧只做"加载后调用 → 按 quality_flag 过滤 → 阻断/告警报告"。阈值/规则绑定：单标的缺失率 >5% 阻断、截面缺失率 >1% 告警；异常检测规则与写入路径四条门禁同口径（OHLC 结构/涨跌幅≤20%/振幅≤30%/adj_factor 区间）。暂缓理由：数据层门控已覆盖写入路径，回测前置是二道防线；重评条件=首批策略回测因数据质量问题致结论返工 ≥2 次。
 why "保留不丢弃"：坏行也是证据——丢弃会让缺口不可见，quality_flag=0 保留后既可过滤又可审计缺口分布。
 
 ## 4. 考虑过的替代方案
@@ -145,3 +173,5 @@ why "保留不丢弃"：坏行也是证据——丢弃会让缺口不可见，qu
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G01 讨论要点占位，待讨论填空 |
 | 2026-08-12 | 1.0.0 | 骨架→active：六要点全部回填（五项已施工汇总 why + 特征仓库轻量三层选型）；登记双轨合流等 4 项新发现 | 完整版（v1.21.2）曾丢失，按已施工代码重建；设计决策汇总成统一规范供 AI 并发施工读真源；特征仓库不擅自施工，选型定后人裁定 |
+| 2026-08-12 | 1.0.1 | 作战地图全覆盖补丁——闭合 BM-BT-02-D（§3.6 第 5 条 backtest 前置检查器绑定 DQ 八维）、BM-BT-03-D（§3.4 FactorSignal NaN 填充裁定：ffill 默认/禁向后插值/预热期剔除）、BM-SEL-01-D（§3.2 轨B autoload 契约+与 64 §9.2 消歧） | 数据/选股域 3 环节补丁：补契约与裁定口径，不新施工 |
+| 2026-08-12 | 1.0.2 | 作战地图环节映射补强——锚定 BM-SEL-01-A/01-B/01-C/01-E/01-F、BM-BT-02-E/03-B/04-A/04-B（§3.1/§3.2/§3.3 末各增映射块） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |

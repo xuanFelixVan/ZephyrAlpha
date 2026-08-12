@@ -5,7 +5,7 @@ title: 业务资产注册表体系施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.34.0"
+version: "1.34.2"
 date: 2026-08-12
 topic: business_registry_construction
 scope: 07_trading_decision_architecture
@@ -2222,6 +2222,12 @@ Layer 6（依赖全部）: experiment
 
 > ⚠️ **个人项目适用性**（避免过度工程）：YAML 阶段 git diff 天然提供字节级 diff（Step1 的 BLAKE3 用 `git diff --quiet` 替代），Step2-3 的字段级分类是**纯 Python dict 比较**（<50 行代码），Step4 semver 映射是一张查表。**不需要 AST 语义分析**——YAML 阶段无代码重命名等逻辑等价场景，字段值就是字符串/数字直接比较。AST 语义 diff（对标 AI Agent Schema Diff）是 DB 阶段 + 代码资产（如 formula 表达式 AST）的增强项，YAML 阶段字段值比较足够。**MVP 实现**：`git diff` + dict diff + 查表三步即可，无需第三方库。DB 阶段升级为 SQL row diff + AST（formula 表达式）语义分析。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RES-01-D | 研究资产版本化 | 因子/策略/指标注册表版本字段 + §4.9 EVOLVE_ENTRY / §4.13 PROMOTE_ENTRY / §4.14 ROLLBACK_ENTRY / §4.18 DIFF_ENTRY 横切算法 | design 待施工 |
+
 ### 4.19 第二轮缺口审计与对标（v1.13.0 新增）
 
 v1.12.0 §4.17 补充了 8 项第一轮研究对标。本轮（v1.13.0）针对"12 算法体系是否仍有施工环节流程算法缺口"做第二轮全网搜索（2026-08-10），覆盖 10 个候选缺口领域，**逐项映射现有覆盖或显式 defer**——避免无节制新增算法导致过度工程（project_memory 过度工程处理原则），同时确保缺口有据可查、defer 决策有理可循。
@@ -3495,6 +3501,48 @@ entry_schema:
 >
 > **个人项目映射**（避免过度工程）：6 角色对个人+100%AI 项目映射为 **2 主体 4 职能**——Human Owner（人）承担 Threshold Approver + Board Reporting Owner（阈值审批+最终上报），AI Agent 承担 Metric Owner + Data Owner + Escalation Recipient + Action Owner（指标计算+数据采集+告警升级+执行行动）。**关键约束落地**：risk_limit 的 `threshold_value` 变更（尤其放宽）MUST 走 §4.9 EVOLVE_ENTRY 的 schema_sig 变更分类（触发版本快照 + 人工审批），禁止 AI 自行放宽阈值——这通过 `breach_action` enum 约束（warn/skip/fix-in-place/halt 均非"放宽阈值"）+ EVOLVE_ENTRY 人工门禁双重保证。持续违约协议映射：`current_consumption` 超 `threshold_value` 持续 ≥2 个 `kri_frequency` 周期 → §4.12 ADAPT_STRATEGY 升级 + 人工审查（对标 risktemplate "persistent breach without remediation = governance failure"）。schema 无需新增字段（`owner` + `kri_frequency` + `review_cycle` + `breach_action` 已覆盖），v1.6.0 仅补治理流程约束。
 
+> 🧭 **BM-RC-01 作战地图环节 why 层补登（v1.34.1 作战地图全覆盖补丁）**：作战地图 BM-RC-01（风控策略与限额管理，L4，production：RK-01 risk_manager + RK-06 default_position_limit_checker）及其三个子环节在本注册表章节的显式映射如下——回答"§2 自注的『9 种限额散落代码+config』缺口是怎么被本表闭合的"。
+>
+> **① BM-RC-01-B 九种限额类型与消耗追踪（MOD-L04-001，`risk/risk_limits.py`）**
+>
+> 9 种限额类型语义表（以作战地图登记口径为准，与本表 `limit_type` enum 映射）：
+>
+> | 作战地图限额类型 | 语义 | 本表 limit_type 映射 |
+> |---|---|---|
+> | SINGLE_INSTRUMENT | 单标的仓位限额（单票敞口上限） | position |
+> | SECTOR | 行业/板块敞口限额（申万一级聚合） | concentration |
+> | GROSS | 总敞口限额（多空绝对值合计） | position（scope=portfolio） |
+> | NET | 净敞口限额（多-空净值，A 股现货无做空≈GROSS） | position（scope=portfolio） |
+> | VAR_95 / VAR_99 | 在险价值 95%/99% 置信度限额 | var（§6.2.2 schema `var_calibration_method`，v1.34.0 K4 补登 RLM-VAR-001~005） |
+> | MAX_DD | 最大回撤限额（四级回撤 Protocol 8/15/20/25%） | drawdown（RLM-DRAWDOWN-001~008） |
+> | LEVERAGE | 杠杆倍数限额（个人 A 股现货无杠杆，登记为合规兜底） | leverage |
+> | FACTOR | 因子暴露限额（单因子/因子簇敞口） | concentration（factor 维度） |
+>
+> **消耗追踪模型（LimitConsumption 口径）**：限额消耗=**notional 占用口径**——每条限额实时维护 `current_consumption`（本表 schema 运行时字段），计量该限额约束维度上已被占用的名义额度（如单票持仓市值/单行业合计市值/组合 VaR 估计值），与 `threshold_value` 的比值即消耗率。运行时装配点与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.13 盘中实时风控循环衔接——`intraday_risk_loop` 内 `LimitConsumption()` 实例逐 tick 更新（A 股 2026 新规口径：每秒 15 笔申报/撤单率 15% 亦走同一消耗追踪），消耗率达预警阈值即触发 BM-RC-01-C。YAML 阶段 `current_consumption` 为空（仅台账），DB 阶段落库。
+>
+> **② BM-RC-01-C 预警分级与审批流（MOD-L04-001，`risk/risk_manager.py`）**
+>
+> 预警分级（消耗率触发）：**WARNING（黄）/ CRITICAL（橙）/ EMERGENCY（红）** 三级，AI 自治分级处置——
+>
+> | 级别 | 消耗率参考 | 处置 | 通知通道（与 [55_monitoring_review §3.1B](55_monitoring_review.md) 三级告警衔接） |
+> |---|---|---|---|
+> | 黄 WARNING | 接近阈值（如 ≥80%） | AI 自治：记录+降速开仓评估，不打断 | YELLOW → {log} |
+> | 橙 CRITICAL | 触及阈值（≥100%） | AI 自治：按 `breach_action` 执行（warn/skip/fix-in-place）+ 通知 | ORANGE → {log, email} |
+> | 红 EMERGENCY | 硬边界突破（Kill Switch 级） | **Owner 确认制**：`halt` + 人工审批后方可恢复（审批流"合规官放行"在个人项目映射为 Owner 本人，与上节 KRI 2 主体 4 职能一致） | RED → {log, email, wechat} |
+>
+> 审批流降级：审批流不可用 → 保守拒单待人工（宁停不错）。红色级别的 Owner 确认与 §6.2.2 上节"阈值放宽需更高级别签批"约束同源——AI 可执行处置动作，但**恢复与阈值变更必须过人**。
+>
+> **③ BM-RC-01-A 风控策略 CRUD 与版本管理（C-004 自适应风控三层体系：预判层+监控层+熔断层+B-001~B-006 硬边界）**
+>
+> 策略 CRUD 状态机与版本管理规则——**改了能追溯、出问题能回滚**：
+>
+> - **状态机**：复用本表 `stage` enum（active/deprecated/disabled 三态，v1.22.0 对标 Apicurio）+ `status` 字段——新限额草稿→active 生效→deprecated 宽限（新策略不引用、存量继续）→disabled 硬禁用；退役走 §4.10 RETIRE_ENTRY（90 天宽限+审计保留）。
+> - **版本管理**：任何限额/策略变更走 §4.9 EVOLVE_ENTRY——`change_type` 分类（metadata/schema_sig/code_ref/status）+ 自动版本快照（改了能追溯：git commit 时间戳 + SHA256 manifest）；阈值放宽 MUST 触发人工审批门禁（§6.2.2 KRI 治理约束）。
+> - **回滚**：出问题走 §4.14 ROLLBACK_ENTRY——任一版本快照可回滚（YAML 阶段=git revert + entry version 回指），回滚动作本身也登记版本（可追溯"回滚了什么"）。
+> - **与 C-004 三层体系的映射**：预判层=盘前限额装配（BM-RC-02 消费 CTR-003 RiskLimits）；监控层=盘中消耗追踪（①）；熔断层=红色 EMERGENCY `halt`（②）。B-001~B-006 硬边界登记为 kill_switch 类限额条目（v1.34.0 K4 补登 RLM-KILL-SWITCH-001）。
+>
+> **裁定（production 补 why 层，非新建）**：BM-RC-01 三子环节代码均为 production/stable（RK-01/RK-06/MOD-L04-001），本补丁仅闭合"作战地图环节 ↔ 注册表 schema ↔ 代码锚点"的显式映射，无新增建设项。**重评条件**：v1.34.0 K4（var/es/kill_switch 条目补登）与 P1-B Step4-8 施工完成时复核本映射与落盘条目一致性；limit_type enum 如需新增 FACTOR 独立类型（当前并入 concentration），走 §4.11 EVOLVE_SCHEMA。
+
 #### 6.2.3 data_asset_registry.yaml（数据资产，REG-DATAFLOW-001 改名扩展）
 
 **Schema**（三实体，对标 OpenLineage Source/Dataset/Job）：
@@ -4165,6 +4213,8 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 
 | 版本 | 日期 | 修订内容 | 审查依据 |
 |---|---|---|---|
+| v1.34.2 | 2026-08-12 | 作战地图环节映射补强——锚定 BM-RES-01-D | §4.18 末尾补映射块，环节级可追溯 |
+| v1.34.1 | 2026-08-12 | **作战地图全覆盖补丁——BM-RC-01 / BM-RC-01-A / BM-RC-01-B / BM-RC-01-C / BM-RES-01-A / BM-RES-03-C**：① §6.2.2 风控限额注册表补 BM-RC-01 系列 why 层显式映射（production 补 why，非新建）——9 种限额类型语义表（SINGLE_INSTRUMENT/SECTOR/GROSS/NET/VAR_95/VAR_99/MAX_DD/LEVERAGE/FACTOR ↔ 本表 limit_type enum 映射）+ 消耗追踪模型（LimitConsumption notional 占用口径，current_consumption/threshold_value=消耗率，与 35 号 §3.13 盘中循环 LimitConsumption() 衔接，2026 新规 15 笔/秒+撤单率 15% 同口径）+ 预警分级 WARNING 黄/CRITICAL 橙/EMERGENCY 红→AI 自治分级处置（红色 Owner 确认制，与 55 号 §3.1B 三级告警 RED/ORANGE/YELLOW 通道衔接）+ 策略 CRUD 状态机（stage active/deprecated/disabled）与版本管理规则（EVOLVE_ENTRY 变更快照=改了能追溯 / ROLLBACK_ENTRY=出问题能回滚 / 阈值放宽 MUST 人工审批）；② §14 新增 L1（BM-RES-01-A 已闭合裁定：不建独立数据集快照/回滚——SemVer+git commit+PIT 多版本已为个人项目上限，15 号不建独立特征版本服务+50 号否决 DVC 为据；血缘=§6.2.3 三实体，字段级血缘 Phase 3+）+ L2（BM-RES-03-C 已闭合裁定：目录层已建=12 注册表 tags+§4.6 交叉引用矩阵+§4.7 E1-E20 查询算法；语义搜索/引用图谱/推荐器登记 Phase 3+ 候选，条目>1000 重评） | 作战地图 14 环节全覆盖施工：BM-RC-01 系列环节定义（C-004 三层体系/9 限额/LimitConsumption/三级预警）+ BM-RES-01-A/03-C 环节定义（versioning_mode/search_engine 候选） |
 | v1.34.0 | 2026-08-12 | **P0/P1 内容审查 + 跨文档一致性修复（架构审查 AI 第 2 轮，2 个子代理反查 12 篇文档）**：① **悬空引用修正 4 处**——52 号 §G1（52 号 v1.7.4 曾丢失、重建版无 §G1，§2 现状表/§5.3 数据来源/§10 映射表/cost_model YAML doc_ref 同步改指 62 号 §5.3 费率校准真源）+ 25 号"§CSI300实证"（章节不存在，CSI300 仅见于 §3.7 归因伪代码 benchmark 默认值，§5.1/§5.2 数据来源 + universe/benchmark YAML doc_ref 同步修正）+ 16 号清单章节（§2→§6.1-6.5，§2 是周期说明非清单，§6.1.3/§9.4/§10 同步）；② **16 号列数修正**——~55 输出列→58 列（测试契约 _EXPECTED_COLUMN_TOTAL=58 锁定）；③ **E1 待定问题关闭**——51 号 v1.2.7 确认用户已裁定"mlflow 完全卸载"（方向已定、施工未启动），62 号原"建议保留 MLflow"与用户裁定冲突予以撤回，experiment_registry 定位更新为"实验元数据唯一登记处"（非 MLflow 索引层），mlflow_run_id 字段施工时改 fallback_ref/panel_experiment_ref，§8.3 O3 同步收敛；④ **§14 新增 K4**（risk_limit 42 条 limit_type 分布失衡：drawdown×8/position×21/concentration×6/firm_risk×5/leverage×1/turnover×1，**var/es/kill_switch 三类为 0 条**——36 号 VaR 5 级+35 号 Kill Switch 多源触发未反查登记，无文档依据的 leverage/turnover 反而各 1 条）**+ K5**（22 号板块推送池 582 只板块指数 universe 扩展候选，MVP 不施工）；⑤ **K2 扩展**——momentum_trend 桶混入 33 条潘潘课程规则条目（STR-MOMENTUM-TREND-001~033，非 G11 机构式策略，27 号 §3 语义澄清）；⑥ **D1 转移 K1**（裁定#223 方向反转）；⑦ universe 覆盖完整性确认（24/25/26/20/27/22 号反查：5 条个股池无遗漏，22 号板块层 gate 无个股池，27 号复用全市场池）；⑧ 40 号 6 算法+价格笼子+CancelRateGuard 15% 阈值验证通过（内部 15% 保守阈值 vs 官方 50% 监控线，§4.20② 15 笔/秒现行有效）；⑨ **第 4 轮 2026-08 最新搜索**：A 股费率全网核验（华泰 2026-08/cofool 2026/金融界公示）与登记一致，补佣金全佣/净佣口径说明（万3 全佣含经手费万0.341+证管费万0.2≈万0.541，§5.3 新增口径注释）；feature registry/strategy lifecycle 搜索无超出既有 21 轮对标的新发展；⑩ **第 5 轮过度工程复核**：§8.3 O1-O12 裁定全部维持（12 表/YAML/三实体/9 限额/variant/迁移预留均符合个人项目硬边界）；⑪ **第 6 轮 63 号配对核验**：发现 63 号两处漂移（"P1 待施工 9 件套"口径与 62 号 P1=7+P2=2 不符 + line 47 硬编码引用"62 号 line 1715"已漂移），记 K6 由 63 号侧修复 | 架构审查循环第 2 轮：2 个 search 子代理精读 24/25/26/20/27/22 号（股票池/策略覆盖）+ 16/40/35/36/37/32/51/52 号（指标/算法/限额/MLflow/成本），risk_limit YAML limit_type 分布 grep 实证 |
 | v1.33.0 | 2026-08-12 | **治理假闭环修复 + P0 YAML 硬错误修复 + 文档内部一致性审查（架构审查 AI 第 1 轮）**：① **治理假闭环实际补齐**——v1.0.0 §9.1/§9.2 声称"ROOR 已登记 3 条 + AGENTS.md:150-153 已显化"，全量 grep 验证**实际从未做**（ROOR 无业务注册表条目、AGENTS.md 150-153 行为 RULE-SSOT 段），本轮实际完成：ROOR tier_2 段登记 6 条（P0 三件套 active + factor/strategy/risk_limit draft）+ summary 52→58/tier_2 12→18 + AGENTS.md RULE-REGISTRY 段补业务资产速查；② **P0 三件套 YAML 硬错误修复**——related_arch 旧引用（不存在的 ARCH 编号）→'#ARCH-BREG-001'（3 文件）；universe_registry 补 v1.24.0 生存偏差三字段（entry_schema+5 条 entry，version 1.0.0→1.1.0），UNI-INDEX-001/002 发现 components_ref（data/index_constituents/*.csv）**未落盘**→诚实标注 pit=false/survivorship_free=false（待定问题 K3）；③ **文档内部一致性修复 9 处**——§1 状态行过期（P1 三表已落盘未反映）/§3 表格 6 个 P1 表 tier_1→tier_2（与落盘 YAML tier_2_data_runtime 一致）/§2 写死"52 个注册表"→引用 ROOR 动态值/§4.5 Step6 明细补 E14-E20（原标题 E1-E20 但明细只到 E13）/§4.6 FK 矩阵补 5 条遗漏（factor.benchmark_id、experiment.benchmark_id、experiment.cost_model_ref、data_asset.produced_by_source、data_asset.consumed_by_jobs）+"26 条"计数→32 条（3 处）/§4.8 "lifecycle_status 7 态"→8 态/§4.13 G2 entry.strategy_type→strategy_class（schema 无 strategy_type 字段且 mean_reversion 不在 6 类枚举）+G3 entry.risk_limit_id→risk_rules 列表+kill_switch_config 改为 kill_switch 类限额检查（schema 无此二字段）/§4.14 ROLLBACK_ENTRY 补运行时动态字段说明注释（baseline_version/new_position_blocked/active_version/last_rollback_at/rollback_count/rollback_reason 6 字段 schema 未声明）/§4.16 "E1-E13"→E1-E20；④ **§9.4 D1 状态修正**——裁定#223（2026-08-10）已登记 data_asset 改名但**方向写反**（登记为 data_asset→dataflow_graph，S6 裁定为 dataflow_graph→data_asset），且裁定#223 声称"62 号 §9.4 D1 已标记完成"实际未标记（三方漂移），转待定问题 K1；⑤ **§12 下一步行动按真实进度重写**（P1 三表 Step1-3 已完成，Step4-8 待做）；⑥ §14 待定问题补 K1（裁定#223 方向反转）/K2（strategy YAML 缺 v1.5.0 三字段 + distilled_to_code=false 与 origin=human 矛盾，P1 Step4-8 修复）/K3（UNI-INDEX-001/002 成分股文件未落盘，回测 CSI300/800 实证前 MUST 补 PIT 历史成分）。**施工事故备注**：主工作区两轮修改先后被并发会话 git restore 与 pre-commit stash 恢复机制冲掉（staged 亦不保险），本轮在 .worktrees/arch-review-62 物理隔离 worktree 内重放全部修改并经 GitCommitGateway 提交 | 架构审查循环第 1 轮：ROOR/AGENTS.md/catalogs YAML 全量 grep 核验 + §4 算法体与 schema 交叉一致性审查 + code_path 存在性验证（Glob/Grep 实证） |
 | v1.0.0 | 2026-08-10 | 初版创建，P0 三件套落盘，12 注册表 schema 定稿，8 核心裁定 + S1-S6 修正 | business_registry_consolidation_plan.md 施工方案 |
@@ -4360,3 +4410,5 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 | K4 | risk_limit_registry 缺 var/es/kill_switch 三类条目（v1.34.0 新增） | 落盘 risk_limit_registry.yaml 42 条 limit_type 分布：drawdown×8 / position×21 / concentration×6 / firm_risk×5 / leverage×1 / turnover×1——**var/es/kill_switch 三类为 0 条**。36 号 VaR 5 级（GREEN/YELLOW/ORANGE/RED/BLACK）+ 35 号 §3.5 Kill Switch 多源触发（回撤/单日亏损>6%/连续5天亏损/流动性危机/黑天鹅BS-007）+ 36 号 ES 明明有设计，Step1-3 反查时漏登记；反而无文档依据的 leverage/turnover 各有 1 条（35/36/37/32 号无对应条款，个人 A 股现货无杠杆）。project_memory"VaR 5级+7黑天鹅降级监控层（先全建+全log）"的"全建"未落实 | P1-B Step4-8 施工时处理：① 从 36 号补登 VaR 5 级限额条目（RLM-VAR-001~005）+ ES 条目（RLM-ES-001）；② 从 35 号 §3.5 补登 kill_switch 多源触发条目（RLM-KILL-SWITCH-001）；③ leverage/turnover 两条孤条目补文档依据或标 candidate 待 35/36/37 号联动评估；④ 补登后 §6.2.2 的"9 种限额类型"描述与实际条目对齐 |
 | K5 | 板块推送池是否纳入 universe_registry（v1.34.0 新增，可选候选） | 22 号行业轮动有"板块推送池"（880xxx/881xxx，582 只板块指数，22 号 §5.1）——板块层 universe 而非个股池。universe_registry 当前 5 条全为个股池，板块层无登记 | 可选扩展（非阻塞）：若 sector_rotation 策略施工推进，可补 UNI-SECTOR-001（板块推送池，universe_type=rule_based，component 为板块指数非个股）。MVP 阶段不施工，22 号策略落地时再裁定 |
 | K6 | 63 号配对文档的两处漂移（v1.34.0 新增，63 号侧修复不越界） | 63 号 line 46 写"62 号已定稿 12 个业务注册表 schema（P0 完成三件套，**P1 待施工 9 件套**）"——口径与 62 号不符（62 号 P1=7 表 + P2=2 表，且 factor/strategy/risk_limit 已落盘 Step1-3）；63 号 line 47 引用"62 号 **line 1715** 记录 dataflow DS-001~076"——硬编码行号引用，62 号 v1.33.0/v1.34.0 编辑后该行已是 §4.13 PROMOTE_ENTRY 内容（引用目标漂移）。01 号规范要求交叉引用用稳定 path，行号引用脆弱 | 不越界改 63 号，由其下一轮审查时修复：① "P1 待施工 9 件套"改为"P1 7 表+P2 2 表，其中 factor/strategy/risk_limit 已 Step1-3 落盘"；② 行号引用改为稳定章节引用（62 号 §6.2.3 数据来源段） |
+| L1 | BM-RES-01-A 数据集版本化与血缘追踪（v1.34.1 作战地图全覆盖补丁，**已闭合裁定**） | 作战地图 BM-RES-01-A（L0，design 态）：原始数据 → Git-like 版本管理→数据快照→回滚→血缘追踪（来源→变换→去向）→质量评分→生命周期管理，versioning_mode 候选 git-like/snapshot | **裁定：不建独立数据集快照/回滚服务**——SemVer + git commit（充 immutable，§4 原则 9 + R34）+ ClickHouse 财报表 PIT 多版本（`available_at` 保留全版本物理设计，15 号 §3 双层 PIT 已施工）已为个人项目上限；15 号已明示"不建独立特征版本服务"，50 号已否决 DVC（"管数据集版本，不是结果日志"另一层）。**血缘=§6.2.3 data_asset_registry 三实体**（sources/datasets/jobs + produced_by/consumed_by 自引用，对标 OpenLineage Source/Dataset/Job）——数据集级血缘随 P1-B 施工闭合；**字段级血缘（column-level）登记 Phase 3+ 远期候选**（§6.2.3 已裁定个人项目不需要 RunEvent/column-level）。重评条件：出现跨源对账错数且数据集级血缘无法定位时，重评字段级血缘 |
+| L2 | BM-RES-03-C 研究目录与搜索引擎（v1.34.1 作战地图全覆盖补丁，**已闭合裁定**） | 作战地图 BM-RES-03-C（L0，design 态）：研究资产元数据 → 搜索引擎→标签系统→引用图谱→推荐器→访问控制 → 研究目录（可搜索/可引用），search_engine 候选 keyword/semantic/hybrid | **裁定：目录层已建**——12 注册表体系即研究资产目录真源：各表 `tags` 字段（标签系统）+ §4.6 交叉引用矩阵（32 条 FK，引用图谱的结构化替代）+ §4.7 E1-E20 验证审计算法（横切查询）。**语义搜索/引用图谱可视化/推荐器登记 Phase 3+ 候选**——个人项目研究资产总量（因子 111/策略 59/限额 42）下关键词+tags+FK 遍历已够，语义搜索的边际价值随资产规模增长。重评条件：注册表条目总量 >1000 或研究员检索失败率成为痛点时，评估 hybrid（关键词+向量）搜索层；访问控制不建（单 Owner 系统无多租户） |

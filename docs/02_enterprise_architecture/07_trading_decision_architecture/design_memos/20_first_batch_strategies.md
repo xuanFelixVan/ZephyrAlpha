@@ -5,7 +5,7 @@ title: 首批 3 策略定义
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.0"
+version: "1.3.1"
 date: 2026-08-12
 topic: first_batch_strategies
 scope: 07_trading_decision_architecture
@@ -150,6 +150,13 @@ scope: 07_trading_decision_architecture
 
 **关键缺口与 why**：三策略的"信号链组件"（打板四引擎 / 因子工厂 / 事件处理）均 production，但把组件组装为 StrategyBook sleeve 的**策略类代码**未落地——这是从"组件就绪"到"首批上线"的最后一公里。组装依赖 G08/G09/G10 细节讨论定型与 G05 选股引擎标准接口（21 号），在此之前本文档的 3 策略定义停留在"架构定义已闭环、代码实例未闭环"状态。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-21-A | 策略引擎 | §2 首批 3 策略 sleeve 定义（§2.2-§2.4 策略 A/B/C + §2.7 已施工设施） | production 已建 |
+| BM-SEL-21-F | 量化策略集 | §2 策略集成员与权重定义 + §4.4 intake/incubation 灰度门禁（ABS001 上线门禁 `abs001_gate.py` 由 25 号承载） | production 已建 |
+
 ## 3. 考虑过的替代方案
 
 ### 3.1 主升龙头作为独立策略 —— 拒绝
@@ -278,3 +285,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-09 | 1.2.3 | §1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md` | 改名工程遗留断链修复（全量断链扫描发现） |
 | 2026-08-09 | 1.2.4 | 文档头统一：frontmatter 补 title/owner/language，H1 去"讨论·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 1.3.0 | ①新增 §2.7 已施工设施盘点（通用规则 #11）：打板四引擎/因子工厂/事件处理/position 三件套均 production，pf_core/strategies 空壳=3 策略 sleeve 策略类未施工（缺口登记 §6）；②§4.4 修正内部矛盾——正文"≥6 月"硬性表述改判据驱动（trade-count≥30 + PnL 偏离≤30% + rolling DSR），对齐 v1.2.0 修订记录声称；③§5 待裁定落地状态更新：2/3 号已由 30 号 v1.4.0 落地、4 号已由 28 号 v1.0.0 定型、1 号（charter 措辞）2026-08-12 核验仍未修订保持开放；④§7.5 补 2026-08 实证（炸板率 68% 游资生态 / JPM Factor Views 3Q26 / LVS 事件驱动下行保护 / quant67 情绪衰减）；⑤§7.1 补 28 号引用 | 多轮审查回填：设施盘点先行明确缺口、消除正文与修订记录矛盾、待裁定状态与引用方同步、最新实证入库（2026-08-12 三次并发回滚后重建并即时提交锁定） |
+| 2026-08-12 | 1.3.1 | 作战地图环节映射补强——锚定 BM-SEL-21-A、BM-SEL-21-F | §2.7 末尾补映射块，环节级可追溯 |

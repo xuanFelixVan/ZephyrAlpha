@@ -5,7 +5,7 @@ title: 卖出流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
+version: "1.6.2"
 date: 2026-08-12
 topic: sell_flow
 scope: 07_trading_decision_architecture
@@ -233,6 +233,30 @@ def compute_stop_loss(position, atr_value, highest_close_fn, phase):
 > **对标**（algovestiq 2026-05）：止损设在"论点失效位"而非随机百分比。ATR 自适应波动率，避免低波动股止损过宽、高波动股被噪声扫出。本项目 ATR 为主 + 偏移防猎杀，符合行业共识。
 
 > **结构位 + ATR 复合止损实证**（TradeZella 2026-07，100 笔回测）：固定%止损胜率 48%/PF 1.38 < ATR 1.5×止损胜率 52%/PF 1.41 < **结构位止损（支撑/阻力下方）胜率 55%/PF 1.68**。Chandelier Exit = `Highest_Close(N)` 结构位 + `M×ATR` 波动率带，恰好是"结构位+ATR"复合——融合两法优势，理论 PF 应介于 1.41-1.68 之间且偏向 1.68（结构位锚定论点失效，ATR 自适应噪声）。markettriage 2026-04 position trading 实证进一步背书：3-ATR Chandelier Exit 是持仓周期 4-26 周的最优止损锚，优于固定 5% 和纯移动平均。
+
+**卖出阈值双向反馈契约（BM-POS-09 卖出仓位反馈链路，MOD-POS-016，v1.6.1 作战地图全覆盖补丁补登）**：
+
+- **定位**：BM-POS-09 是卖出侧与仓位侧的**双向链路**（L3.5）——卖出决策到达 / 买入后即时验证窗口 / 仓位状态变更三类触发下，仓位域把持仓盈亏状态回灌给 D-SELL-DECISION，使卖出阈值随盈亏动态调整（"盈利放宽 / 亏损收紧"）。链路 source_ref：D-POSITION §1.4 POS-16 Sell-Position Bidirectional Link(v6.0)。
+- **裁定（采纳既有设计，补 why 层）**：止损/止盈阈值不是静态参数——持仓处于盈利状态时放宽卖出阈值（给利润奔跑空间，防过早止盈），处于亏损状态时收紧卖出阈值（快速认错，防过晚止损）。**理由**：① 与 §3.3/§3.4 Chandelier 双 M 值设计同源——亏损区 M=3.0（宽）/盈利区 M=2.0（紧）本质是"阈值随盈亏分区切换"的离散实现，本契约是其连续化/显式化表达，二者不冲突（Chandelier 管退出价位计算，本契约管信号触发阈值松紧）；② 行为金融学背书——处置效应（disposition effect）使人/策略倾向过早止盈过晚止损，双向反馈用规则强制反向校正；③ 个人系统无人工盯盘，阈值松紧必须由仓位状态机自动驱动而非盘感。**重评条件**：若实盘复盘发现双向反馈导致"亏损收紧"与 §3.10 连续亏损熔断叠加过度减仓（同因双重惩罚），则评估将收紧幅度与 circuit_breaker_scale 解耦。
+- **契约**（PositionStateFeedback → D-SELL-DECISION 阈值动态调整，字段与方向规则）：
+
+| 字段 | 类型 | 方向规则 |
+|---|---|---|
+| `pnl_state` | enum(profit/breakeven/loss) | 盈利→卖出信号触发阈值**放宽**（如综合意愿阈值 0.6→0.65，需更强信号才卖）；亏损→**收紧**（0.6→0.55，更弱信号即卖） |
+| `unrealized_pnl_pct` | float | 幅度调制输入：盈利越深放宽越多（封顶，防"永远不卖"）；亏损越深收紧越多（封底，防"一跌就割"噪声扫出） |
+| `threshold_delta` | float ∈ [-0.10, +0.10] | 最终阈值调整量，消费方=D-SELL-DECISION 融合意愿触发线；正值=放宽，负值=收紧 |
+| `feedback_window` | enum(intraday/daily) | 盘中即时验证窗口（见下）走 intraday；日终盈亏状态走 daily |
+| `source_position_id` | str | 关联 BM-POS-01/03 仓位状态机持仓实例 |
+
+  **方向规则汇总**：`profit → +delta（放宽）` / `loss → -delta（收紧）` / `breakeven → 0（不动）`；`|delta|` 随 `|unrealized_pnl_pct|` 单调递增但**硬封顶 ±0.10**（防阈值漂移出可解释范围）；风控强制清仓（§3.2 强制清仓绕过融合）**不经本契约**——生存底线不接受阈值放宽。
+- **买入后即时验证窗口**（本链路 intraday 分支，参数以作战地图登记为准）：5min 跌破买入价 >1% 且放量 → 转入 OBSERVING 观察期（与本节软止损四态机衔接）；15min 跌破分时均线 → 减仓 50%；30min 反向运动 >2ATR → 全部止损。三级递进与本节软止损/猎杀防护共用四态机，不新建状态机。
+- **降级**：双向链路未就绪 → 卖出阈值固定不随盈亏调整（退回 §3.3/§3.4 静态 Chandelier 参数，可能过早止盈或过晚止损）。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RC-05-A | 六种A股止损模式 | §2.4 已施工设施盘点（止损 4 法：trailing/time_based/volatility/固定%兜底）+ §3.3 ATR/Chandelier 止损 | production 已建 |
 
 ### 3.4 ③ 止盈逻辑 —— MVP: 移动止盈，固定/分批/时间加权待裁定
 
@@ -530,6 +554,21 @@ class TradeLevelCircuitBreaker:
 
 > **过度工程审查**：circuit breaker 仅 1 个类（~30 行）+ 1 个仓位乘数，非独立模块。它是对现有 Kill Switch / 日度熔断的**精细化补充**（填时间熔断与 Kill Switch 之间的响应空档），不是新增风控层。MVP 可选施工——若 G04 策略类型校准后发现"连续小亏不触发日度熔断但积累可观亏损"实盘证据，则施工；否则 Phase 2 候选。
 
+### 3.11 ⑩ 卖出闭环优化（BM-SELL-09）—— 复盘编排复用 55 §3.6，显著性复用 54 §3.9
+
+> **作战地图全覆盖补丁（v1.6.1 补登）**。BM-SELL-09 是 battle_map_07 拓扑的收口环节（卖出执行→复盘→回调权重），MOD-SELL-010+011+012 设计态（草图§1.4 SELL-10/11/12 + §7第四层）。本备忘前文各环节定"怎么卖"，本节定"卖完怎么评、评完怎么改"。
+
+- **定位**：卖出执行完成 N 天后，用"卖出后价格走势"反评卖出决策质量——信号准不准、执行好不好、权重该不该调。触发=卖出执行完成 + 复盘窗口到达；消费=卖出执行回报（BM-EXE-02）+ 卖出决策记录（BM-SELL-02）+ 卖出后 N 天价格（BM-SEL-01）；下游=D-REPORTING → 学习系统 → BM-SELL-03 信号权重 / BM-SELL-04 策略参数 / BM-EXE 执行策略。
+- **裁定（采纳既有设计，补 why 层）**：卖出是交易最难决策，没有事后度量的卖出系统永远无法自我修正。四件套：① **卖后 N 天价格追踪窗口**——记录卖出后 N 日价格路径，回答"卖对了没有"（卖后继续大涨=过早，卖后继续大跌=正确，横盘=中性）；② **按信号类型 × 策略分组的准确率统计**——ATR 止损/Chandelier 止盈/破位清仓/退潮减仓 × 打板/多因子/事件，分组样本独立统计（不分组的汇总准确率会被主导组掩盖）；③ **A/B 显著性检验（p<0.05）**——权重/参数调整必须过统计门槛才生效，防"按噪声调参"；④ **执行质量评分**——卖出滑点/排队成交率/跌停未成交率喂回执行层。**理由**：与 §3.10 交易级熔断、§5.2 阶段 8 CUSUM 同一哲学——"exit-rule tuning 是校准问题非启发式选择"（Li 2026）；个人系统无投研团队复盘，闭环必须自动化。**重评条件**：首批策略 6+ 月实盘 track record 积累后，校准复盘窗口 N 与显著性检验的分组最小样本量；若分组样本长期不足（格子稀疏），降级为仅信号类型单维分组。
+- **契约/参数**（建设项，待施工）：
+  - 复盘窗口：N 天（默认 5 交易日，校准项；与 §3.2 时间止损 5 天窗口口径对齐，便于"该卖未卖"与"卖错"两类误差对照）
+  - 分组维度：信号类型 × 策略类型（两组各 3-4 桶，单格样本 <30 时该格不出调整建议）
+  - 显著性阈值：p<0.05（A/B 检验，对照组=调整前权重）
+  - 产出契约 **E-SELL-04 SellLoopFeedback**：`{signal_type, strategy_type, window_n, accuracy_post_sell, avg_opportunity_cost, exec_quality_score, weight_adjustment, significance_p, verdict}` → 回调 **BM-SELL-03 信号权重**（weight_adjustment 仅在 significance_p<0.05 时生效，且单次调整幅度 ±20% 封顶防振荡）
+  - 降级：闭环未就绪 → 跳过复盘，卖出策略参数保持静态不动态调整
+- **调度与框架复用（不新造）**：① **调度复用 [55_monitoring_review](55_monitoring_review.md) §3.6 复盘编排器**——卖出复盘作为一个复盘源挂入 daily→weekly→monthly 链路，产出走 ReportPublisher 归档（周复盘"阈值与参数变更"段消费），不自建调度；② **显著性框架复用 [54_reconciliation_attribution](54_reconciliation_attribution.md) §3.9 deflated-alpha**——`audit()` 4 类检验 + LIKELY_REAL/INCONCLUSIVE/LIKELY_OVERFIT 三态判定直接复用为"信号权重调整建议是否可信"的验证层，日常轻量检验（p<0.05）+ 月/季重量检验（deflated-alpha）分层，与 54 号月/季归因同节奏。
+- **边界**：BM-SELL-09 调的是**卖出侧权重/参数**（BM-SELL-03/04 与执行策略），不调仓位（归 BM-POS 族）、不调选股（归 G04/G05）；与 §5.2 阶段 8 CUSUM 的分工——CUSUM 管 sleeve 级"策略该不该停"，本环节管信号级"卖出权重该不该调"，粒度不同不重叠。
+
 ## 4. 考虑过的替代方案（拒绝理由）
 
 ### 4.1 四族全上（止损+止盈+破位+分批+逻辑止损族+密度感知）—— 拒绝（MVP）
@@ -705,3 +744,5 @@ class TradeLevelCircuitBreaker:
 | 2026-08-10 | 1.5.1 | 伪代码精度审计——3 处修复 | ①§3.7 `simple_scaling_out` 删除冗余参数 `risk_reward_ratio`（函数体用 `position.risk_reward` 属性，参数未被引用）+ 补全 `compute_exit_price` 的 `highest_close_fn` 参数（原 `...` 省略导致调用不完整）；②§3.3 `compute_stop_loss` 补 `highest_close_fn` 签名说明（Callable[[int], float]，施工方注入，来源 K 线 close rolling max）；③§3.10 TradeLevelCircuitBreaker 表格修正（原"≥5 笔\|0+block"易误解为仓位归零，实际 get_position_scale 返回 min_scale=0.25，is_blocked 仅暂停开新仓，修正为"0.25+block"消除歧义）。边界条件审计：TradeLevelCircuitBreaker.get_position_scale 连续亏损 0-5 笔缩放计算逐笔验证正确（1.0/1.0/0.75/0.50/0.25/0.25）；rank_limit_down_orders/rank_kill_switch_liquidation 三级排序逻辑一致（流动性优先→亏损/仓位）| 七十二轮伪代码边界条件深度审计——换三个新角度（跨文档调用链验证/伪代码边界条件审计/参数来源追踪）发现 3 处精度缺陷，已修复 |
 | 2026-08-10 | 1.5.2 | 伪代码崩溃 bug 修复——死参数+ATR None 崩溃 | ①§3.3 `compute_stop_loss` 删除未使用的 `symbol` 参数（死参数，函数体从不引用），补 `phase` 参数语义说明（与 §3.4 `compute_exit_price` 自动判定 phase 的分工边界）；②§3.4 `compute_exit_price` 修复 ATR None 崩溃 bug——原 `atr_pct = atr_value / position.entry_price if atr_value else 0.02` 仅兜底 atr_pct 但 return 行 `highest_close_fn(N) - M * atr_value` 在 atr_value=None 时 None×float 崩溃，补 ATR 缺失降级固定%逻辑与 §3.3 `compute_stop_loss` 对齐 | 伪代码边界条件深度审计第七十三轮——聚焦 None/空值/除零三类崩溃路径，发现 `compute_exit_price` ATR None 路径必崩（`if atr_value else 0.02` 兜底了 atr_pct 但 return 行仍用 None），与 §3.3 `compute_stop_loss` 的 ATR 缺失降级逻辑不一致。修复后两函数 ATR 缺失路径一致（均降级固定%），`symbol` 死参数清理 |
 | 2026-08-12 | 1.6.0 | 已施工设施盘点新增 + MOD-SELL-014 状态订正 + 35 号状态订正 + 交叉引用补全 + O'Neil/LeBeau 对标展开 | 架构审查（通用规则 #11 基础设施盘点 + 一致性审查）：①**§2.4 新增「已施工设施盘点」**——sell_decision 域已施工 7 模块（突破成败 003/收集器 001/融合 007/紧迫度 009/冲突仲裁 008/猎杀防护 015/置换再平衡 006）+ 跨域可复用设施（risk 域 default_stop_loss_engine trailing/time_based/volatility 三方法 + position 域 TriageLevel 消费方）+ 未施工清单（9 项伪代码状态全标注）+ 与 40 号执行层落地边界；②**MOD-SELL-014 策略止损范式状态硬错误订正**（4 处：§2.3/§4.1/§5.2/§5.3）——此前版本标"已建"，源码核实三方分裂：68 域文档 planned 无代码无蓝图/battle_map generated 仅包入口/源码目录无实现文件，以 68 域文档为准=设计态待施工，MVP 用 Chandelier 阶段切换替代；③**35 号状态全面订正**（7 处：§1/§3.9/§5.2/§5.3/§7/§8.1/循环至零检查）——35 已 active 1.37.0（此前版本标"骨架/未就绪"已过时），阶段 3 触发条件已满足，§3.9 四级阈值与 30 §2.5 外层口径一致无需改数值，补 35 §3.2 内层代码 5/10/15% 双轨说明；④**§2.1 "13 生产态"精确化**——6 个为 __init__.py 包入口占位，真实业务生产态 7 个；⑤**§7 待定问题补 2 项**——MOD-SELL-008 三方分裂源码核实补记（源码 production 无 deprecated 字样）+ risk 域止损引擎与本 spec 替换/并存关系裁定请求；⑥**§8.1 补 40/37 号交叉引用**（40=落地通道/37=流动性危机检测真源）；⑦**§3.3 补 O'Neil 卖出法则对比论证 + LeBeau 一手出处**——§1 对标项"O'Neil 卖出法则"此前只有标题未展开，补 7-8% 固定止损/+20-25% 止盈/8 周例外三规则的不搬用论证（A 股 T+1+涨跌停缺口）+ LeBeau 退出优先级四层与"利润越大止盈越紧"是 Chandelier 双 M 值设计的一手原型；§8.3 补 LeBeau 演讲 PDF + O'Neil 三源条目。⑧**2026-08 最新研究五次复查**——WebSearch 确认 journalplus/volatilitybox/fxglory Chandelier 参数与 §3.3 一致、Li 2026 circuit breaker 已登记、miniQMT/执行算法无新内容，无新硬错误 |
+| 2026-08-12 | 1.6.1 | 作战地图全覆盖补丁——BM-SELL-09 / BM-POS-09 | ①新增 §3.11 卖出闭环优化（BM-SELL-09）——卖后 N 天价格追踪窗口（默认 5 交易日校准项）/按信号类型×策略分组准确率统计/A-B 显著性检验 p<0.05（单格样本<30 不出建议）/执行质量评分，产出 E-SELL-04 SellLoopFeedback 回调 BM-SELL-03 信号权重（仅 p<0.05 生效、单次 ±20% 封顶）；调度复用 55 号 §3.6 复盘编排器（daily→weekly→monthly 链路+ReportPublisher 归档），显著性框架复用 54 号 §3.9 deflated-alpha（日常轻量 p 检验+月/季重量 audit() 分层）；②§3.3 扩展卖出阈值双向反馈契约（BM-POS-09）——PositionStateFeedback→D-SELL-DECISION 阈值动态调整五字段（pnl_state/unrealized_pnl_pct/threshold_delta∈±0.10 硬封顶/feedback_window/source_position_id）+方向规则（盈利放宽/亏损收紧/breakeven 不动，强制清仓不经本契约）+买入后即时验证窗口三级递进（5min 跌破>1% 放量→OBSERVING/15min 破分时均线→减仓 50%/30min 反向>2ATR→全部止损，与软止损共用四态机不新建）。均补定位→裁定（理由+重评条件）→契约/参数→降级四层 |
+| 2026-08-12 | 1.6.2 | 作战地图环节映射补强——锚定 BM-RC-05-A | §3.3 末尾补映射块，环节级可追溯 |

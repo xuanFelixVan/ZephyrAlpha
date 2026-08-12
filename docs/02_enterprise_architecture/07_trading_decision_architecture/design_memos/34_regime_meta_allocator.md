@@ -5,7 +5,7 @@ title: RegimeMetaAllocator 参数
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.8.1"
+version: "2.8.2"
 date: 2026-08-12
 topic: regime_meta_allocator
 scope: 07_trading_decision_architecture
@@ -743,6 +743,12 @@ def _normalize_and_clip(
 
 **盘点结论**：代码链路（上游 regime → 本模块 → 下游 position 三模块）完整且全部 production；**唯一缺口 = 本模块测试套件丢失待重建**。无需退役/删除的设施——同域 3 个配套模块功能边界清晰不重叠。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-20-B | 多策略资金分配 | §3 三因子乘法分配（§3.1 分配公式 / §3.4 allocate 伪代码 / §3.5 已施工设施） | production 已建 |
+
 ## 4. 考虑过的替代方案（拒绝理由）
 
 ### 4.1 RegimeScore（regime 做 alpha 择时，重定向资金）—— 拒绝
@@ -1122,3 +1128,4 @@ def _normalize_and_clip(
 | 2026-08-10 | 2.7.0 | **十九次审查·代码施工完成**——[regime_meta_allocator.py](../../../../src/zephyr/pf_alloc/core/regime_meta_allocator.py) MOD-PA-007 从骨架（MATURITY=design, v0.1.0）升级到 **production（v1.0.0）**。**施工内容**：① `allocate()` 主入口 5 步流程（PerformanceScore → global_shrinkage → raw_allocation → normalize+clip → effective_budget）完整实现；② `_compute_shrinkage()` 含 ConfidenceSignal 四档 × RiskSignal + CRISIS 态 floor 降级（0.09→0.05，§3.4 施工要点 #12）；③ `_compute_confidence_signal()` max(P) 四档映射；④ `_compute_risk_signal()` 13 参数占位接口（实际逻辑归 [10号]）；⑤ `_compute_raw_allocation()` Base×PerformanceScore（不含全局 Shrinkage，§3.4 施工要点 #4）；⑥ `_normalize_and_clip()` **water-filling 投影算法**（原伪代码"裁剪+全局再归一化"在 N=2/cap 受限场景收敛失败，升级为固定越界值+按比例重分配未越界部分，避免被裁剪值在再归一化时拉回越界区间）；⑦ `compute_performance_score()` 静态方法（60 日 Sortino + MAR=Rf + downside 样本量门槛 + gap 监控，供上游计算）；⑧ `_apply_cold_start_neutral()` 冷启动校验（<30 交易日强制中性，防上游误传）。**55 测试用例全绿**（0.75s）：TestConfidenceSignal(8) + TestRiskSignal(4) + TestShrinkage(7) + TestNormalizeAndClip(8) + TestRawAllocation(3) + TestAllocate(9) + TestComputePerformanceScore(8) + TestEdgeCases(8)。AllocationError(ZA-PA-0007) 自定义异常已实现。§3.1 代码映射更新为 v1.0.0 production。frontmatter v2.6.0→v2.7.0 | 价值增长点转向代码施工——文档审查 18 轮后边际价值极低，§3.4 伪代码已覆盖全场景。本轮完成 RegimeMetaAllocator 代码施工，是 MOD-PA-007 从设计到 production 的里程碑。water-filling 算法是施工中发现的伪代码改进——原"裁剪+全局再归一化"在 N=2 + cap=40% 无解场景迭代 5 次后 alloc 被扭曲到 0.5/0.5（应在放宽 cap 后恢复 0.75/0.25），water-filling 通过固定越界值+只重分配未越界部分避免此问题。CRISIS 态 floor 降级（施工要点 #12）已实现。冷启动校验防上游误传非中性值。 |
 | 2026-08-12 | 2.8.0 | **二十次审查（AI-12 任务驱动：34/00号 双文档架构审查 + 2026-08-12 全网搜索）**——5 项核心改动：① **§3.5 新增「已施工设施盘点」**（通用规则 #11）——全面扫描代码/蓝图/测试/上下游/depgraph 11 项设施，结论：代码链路完整全部 production，**唯一缺口 = 测试套件丢失**；② **测试丢失事件取证与标注**——`tests/pf_alloc/test_regime_meta_allocator.py`（55 用例）经 git 取证确认**从未提交**（`git log --all` 无记录），2026-08-11 被 `git clean -fd` 删除不可恢复，§3.1 代码映射"55 测试用例全绿"修正为"曾全绿+待重建"，§6 待裁定新增 P0 重建项（重建依据 §3.4 伪代码 + 代码本体）；③ **33号 幻影引用修复**——33号 设计文档实为骨架 v0.1.0（git 灾难丢失/从未提交高版本内容），§3.3 两处引用（三级升级 + budget 变动防抖 §6）标注临时真源（30号 §2.4 + MOD-POS-022 production 代码），§6 待裁定新增重建依赖项；④ **§8.1 新增 5 条 2026-08-12 搜索引用**——marketmaker.cc 目标函数口径受控实验（印证 PerformanceScore 全时间线口径 + conf_k=n/(n+k) 连续收缩登记为四档远期替代）/ Whelan fractional Kelly 单位资本回报（Shrinkage 折扣哲学学术背书）/ FinRL-X 风险覆盖层独立（架构印证）/ Candriam 机构 regime 动态分配（行业印证）/ cluttmann 个人系统退役 regime 模块（**反例弱证据诚实登记**，不据此改 MVP）；⑤ **§6 待裁定新增 3 项**（测试套件重建 P0 / 33号 重建依赖 / conf_k 连续置信收缩远期候选）。**审查结论**：C1 回填与 7 项讨论要点在前 19 轮已完成；分配公式参数设计完整（公式/Base/PerformanceScore/Shrinkage 四档/floor·cap/稀有态/第二阶段时机 + §3.4 完整伪代码）；四档 Shrinkage 与 60 日 Sortino 经过度工程复审**维持不过度**（C1 实证 + 1uptick 60% 阈值 + BestFolio cap 40% 外部印证）；本轮搜索未发现需更换 MVP 基线的证据。frontmatter v2.7.0→v2.8.0 | 用户任务驱动审查发现：① 测试套件丢失是 08-11 git 灾难在本模块的遗留创伤（代码幸存但无回归防护网）；② 33号 引用指向已丢失内容；③ 已施工设施从未系统盘点（通用规则 #11 要求）；④ 2026-08-12 最新研究 5 条均印证现有设计，conf_k 连续收缩是唯一值得登记的增量备选 |
 | 2026-08-12 | 2.8.1 | **二十一次审查·33号重建联动修正**——① §3.3 两处标注更新：33号 已于 2026-08-12 重建为 **active v1.0.0**（commit 6a4f5392，另一 AI 依 MOD-POS-022 production 代码回建，含 §3.2 三级升级 + §3.3 防抖双层 + §3.7 已施工设施盘点），原"骨架待重建"临时真源标注改为精确锚点引用（三级升级→33号 §3.2 / budget 变动防抖→33号 §3.3）；② §3.5 盘点表 33号 行同步更新；③ §6 待裁定"33号 文档重建依赖"标记 ✅ 已解决。**遗留未变**：测试套件重建（P0）仍为开放缺口——33号 重建只解决了文档侧，tests/pf_alloc/test_regime_meta_allocator.py（55 用例）仍丢失待重建。frontmatter v2.8.0→v2.8.1 | 二十次审查完成后，另一 AI 会话于 04:32 提交 6a4f5392 重建 7 篇骨架文档（含 33号），本备忘对 33号 的"骨架"引用随之过时，本轮联动修正保持交叉引用准确性（循环审查第 2 轮新发现修复） |
+| 2026-08-12 | 2.8.2 | 作战地图环节映射补强——锚定 BM-SEL-20-B | §3.5 末尾补映射块，环节级可追溯 |

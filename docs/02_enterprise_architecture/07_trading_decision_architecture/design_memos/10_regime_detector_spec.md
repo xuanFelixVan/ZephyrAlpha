@@ -5,7 +5,7 @@ title: regime 检测器完整 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
+version: "1.6.1"
 date: 2026-08-12
 topic: regime_detector_full_spec
 scope: 07_trading_decision_architecture
@@ -415,6 +415,13 @@ D-SIGNAL-68（特殊态覆盖层）→ 检查 CRISIS/RECOVERY/BREAKOUT 触发条
 | 12 | BREAKOUT | 突破模式——从震荡转向趋势的关键转折 | 箱体突破+量能配合+主线苗头 | **高** |
 
 > 特殊态优先级高于基础 3×3 网格（D-SIGNAL-68）。当 CRISIS/RECOVERY/BREAKOUT 被触发时，覆盖基础网格判定。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-BUY-02-A-1-a | 3×3矩阵分类 | §2.6 3×3 九宫格作用与设计理由 / §3.1 基础 9 态 | design 待施工（v1.4.0 已降为 4 态实现，本节保留设计意图） |
+| BM-BUY-02-A-1-b | 2叠加态检测 | §3.2 特殊 3 态 / §2.8 特殊态覆盖层 | design 待施工 |
 
 ### 3.3 与情绪周期 4+1 阶段的关系
 
@@ -2402,6 +2409,7 @@ RiskSignal = clamp[ 0.30,  RiskBase × 共振惩罚 + 机会恢复,  1.00 ]
 | 2026-08-10 | 1.5.0 | **第四轮算法调研：深度学习/SSM/A 股实证**：①§9.15 新增第四轮算法调研 8 篇 2026 新研究——HSMM 显式持续时间（Liu&Wang A 股 Sharpe 1.14★新增高优）/HARQ+MS-GJR-GARCH+XGBoost 中国 CSI 300 高频实证（定位背书★）/Mamba-SSM 长序列（RAMK/CMDMamba/Mamba-3 远期不采纳）/Autoencoder-Gated Dual Transformers+SAC RL（远期不采纳）/LSTM-FIGARCH 早期预警（FIGARCH 补 GJR-GARCH 长记忆+S1 5 日窗口）/Ensemble-HMM Voting+DTW Clustering（多模型投票+时序模式匹配）/Velocity 操纵检测负面结果（★反向验证 regime 做 Shrinkage 非 alpha 定位）；②§9.11 待裁定项扩充至 15 项（新增 #11 HSMM/#12 Ensemble Voting/#13 DTW/#14 FIGARCH/#15 S1 5 日窗口）；③§9.15.8 综合优先级表；④§9 修订记录补 v1.4.2/v1.5.0 | 架构审查 AI 四次审查：用户要求"选项之外更好的答案算法+全网搜 2026 年 8 月 8 日最新研究实践算法+文档结构顺序内容调整更新+持续改进"。全网搜发现 HSMM（A 股实证 Sharpe 1.14）解决 HMM 几何持续时间缺陷，与 Student-t HMM+自适应 Kalman 并列最高优先级；Velocity 负面结果反向验证本方案"regime 做风险节流不做 alpha"定位正确 |
 | 2026-08-10 | 1.5.1 | **第五轮算法调研：贝叶斯非参数/流式/鲁棒/多尺度/Conformal+sticky prior 施工 why 回填**：①§9.16 新增第五轮算法调研 7 篇 2026 新研究——RED-HDP-HMM ICML 2026 贝叶斯非参数自动状态数+观察依赖持续时间（RED>sticky 远期候选）/Streaming HMM beam search 流式增量避免季度重训（O(S·K) 固定内存）/BR-iHMM ICML 2026 双重鲁棒离群点+模型误设定（预测误差-67% 远期候选）/Hierarchical HMM 多时间尺度周级条件化日级★新增最高优（状态持续时间+38.5% 工程量小）/Sticky HMM+PCA Absorption Ratio F3 升级（多资产共振整体性）/Conformal Prediction 分布无关覆盖保证★新增最高优（B1 经验 ECE→P≥1-α 数学保证 mapie 库）；②§9.12.1 回填已施工 sticky Dirichlet 先验（regime_detector.py:518 _apply_sticky_prior post-hoc πₖ~Dir(α·1+κ·eₖ) 抑制 regime chatter 引用 Nkamga 2026+Wang 2026 Adaptive Sticky）；③§9.11 待裁定项扩充至 22 项（新增 #16-22：Hierarchical HMM/Conformal/PCA Absorption/RED-HDP-HMM/Streaming/BR-iHMM/sticky κ 校准）；④§9.16.7 综合优先级表+Phase 4 评估矩阵 10 项 | 架构审查 AI 五次审查：用户要求"持续改进不要停下来询问"。对照 src/zephyr/regime/ 代码发现 sticky prior 已施工但 spec 完全未记录（关键缺口）；全网搜 2026-08 发现 ICML 2026 两篇（RED-HDP-HMM/BR-iHMM）+ Oxford Streaming HMM + AlgoGators Hierarchical HMM（持续时间+38.5%）+ UChicago Conformal macro-coverage（数学保证层）。Hierarchical HMM+Conformal 与 Student-t HMM+HSMM+自适应 Kalman 并列 Phase 4 最高优先级 |
 | 2026-08-12 | 1.6.0 | **B4/Phase 2 闭环状态回填 + 已施工设施盘点 + 第四批算法 why 回填 + 第六轮算法调研**：①§9.1 表格 B4 行+结论、文档头横幅 Phase 2 行更新——S2 三事件 design_match=false 排除后 B4 回 PASS(3/3)，**Phase 2 已于 2026-08-08 闭环**（commit 93a25890），S2 算法重设计仍待 P1-E9；②§9.7 重写——回填 14 号诊断精确结论（capitulation 当日值 vs 过程 / valuation 价格回撤 vs 基本面 / spring 跨日 vs 同日 三维度时点错配 + capitulation z>1、valuation min_periods=20 两个 P0 bug 修复）+ design_match 语义隔离裁定（验证器不驱动算法设计的第一性原理）；③§9.12.7 新增——risk_features 9 系数函数（#1 逐档复刻 Phase 1 危机地板 / #2 移除放量滞涨的 C1 修正 / #8 仅 HHI 降级 / #9 KDJ-J 顶背离+多分时共振）、risk_signal_builder 组装降级（_fb_call/仅 HHI/分钟聚合日线）、overlay_features 8 转换评分族（S2 NLP 关键词字典 MVP 已落码）、regime_data_loader（TSV 协议/会话缓存/涨跌停派生降级 70% 覆盖/multiSearchAny 服务端关键词聚合）的 why 回填；④§9.17 新增「已施工设施盘点」（通用规则 #11：核心代码 13 文件/回测验证包/16 测试文件/脚本与验证用例/蓝图/9 条 ARCH 条目/注册表登记/下游消费与同名辨析）；⑤§9.9.2 NLP 施工状态更新（关键词字典 MVP 已落码，完整版 NLP 保留 P2）；⑥§9.18 新增第六轮算法调研——Cornell CHMM 厚尾发射族（arXiv:2606.23492，Student-t 第二独立证据★+HSMM 边界澄清+4 态第三佐证）/A 股 VIX 完整 CBOE 方差互换+IV Spread 方向性偏度（synthetic_vix 升级路径⭐⭐）/RPubs rolling+软仓位定位验证/粗糙路径签名+GraphTM+VIX 4 档期限结构记录级；⑦§9.11 待裁定项扩充至 25 项（新增 #23 12 号待同步 / #24 synthetic VIX 升级 / #25 HSMM 评估指标） | 架构审查 AI 六次审查：①通用规则 #11 要求盘点已施工设施，发现本文档缺「已施工设施盘点」节；②对照 architecture_issue_registry 发现 B4 经 design_match 排除回 PASS(3/3)、Phase 2 已闭环（2026-08-08 #ARCH-REGIME-S2-ALGORITHM-001）未回填本文档（§9.1/§9.7 仍停"FAIL 待重设计"状态）；③对照 src/zephyr/regime/ 代码发现 risk_features/risk_signal_builder/overlay_features/regime_data_loader 四个文件算法 why 未记录；④发现 S2 NLP 关键词字典 MVP（s2_policy_score/s2_bad_news_flat_score/load_news_sentiment）已落码但 §9.9.2 仍标"P1 待施工"；⑤第六轮全网搜发现 Cornell CHMM（Student-t 第二证据）+ A 股 VIX 完整方法（synthetic_vix 升级路径）两项增量 |
+| 2026-08-12 | 1.6.1 | 作战地图环节映射补强——锚定 BM-BUY-02-A-1-a、BM-BUY-02-A-1-b | §3.2 末尾补映射块，环节级可追溯 |
 
 ---
 

@@ -5,7 +5,7 @@ title: Panel「实验历史」Tab + MLflow 退役施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.8"
+version: "1.2.11"
 date: 2026-08-12
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
@@ -138,6 +138,13 @@ parent: 50_backtest_observability_workplan.md
 - `render_experiment_history`（pn=None）：返回 dict payload，断言含 runs 列表。
 - `_render_c1_comparison` 纯函数：构造 `C1ComparisonView` → 断言 plotly figure 含 2 条 trace（baseline/experiment）。
 - 用 monkeypatch `load_config` 指向 tmp_path fallback_dir，避免污染 logs/。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RES-02-A | 实验记录与对比 | 工作流 B 实验历史 Tab（B1-B4：list_runs 列表 + 多选横向对比）+ 工作流 A 单一 JSON FallbackBackend 存储（实验记录落盘）+ B2 C1 对比视图（`_render_c1_comparison` 双净值叠加 + verdict 对比 + 指标 diff） | design 待施工 |
+| BM-BT-07-G | 回测结果对比 | §七.P1-4 多 run 横向对比视图（指标表格行=run 列=sharpe/maxdd/calmar/turnover/passed + 可选雷达图）+ B2 C1ComparisonView 双净值叠加对比 | design 待施工 |
 
 ### 工作流 C：数据重生 + 治理 + 提交
 
@@ -428,7 +435,26 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | DSR 有效试验数难题（2026-07）：DSR fed raw trial count 错误拒绝真 edge（Sharpe 3.92 被判 0.748<0.95）；5 估计器跨 1.6-370.0；正确做法用 bootstrap-based（White's RC/SPA）sidestep | marketmaker.cc 受控实验 | 进一步支持 §八 E "MVP 不做"——DSR 有效试验数估计本身是开放问题，非"调一个 audit() 就行" |
 | 九大门控完整菜单（2026-06）：Holdout/Walk-Forward/Purged K-Fold/PBO/Romano-Wolf/SPA/MC block-bootstrap/cluster stability/FDR，9 门禁各针对不同过拟合失效模式；PBO 最贵（0.45× cost） | Student One | §八 E 原记 5 种补全为 9 门禁；C1 verdict 体系升级时按此菜单逐项评估，MVP 仍不做 |
 
-## 九、修订记录
+## 九、实验域环节裁定补遗（BM-RES-02-B / BM-RES-02-C）
+
+> 作战地图全覆盖补丁（2026-08-12）：研究孵化域 L0 两个 design 环节在此闭合，与 §六"不做"边界、§八 E"MVP 不做"纪律同一条线。
+
+### 9.1 BM-RES-02-C 实验异常检测（design）
+
+- **定位**：实验 run 指标超限时的异常检测→分类→响应（真源默认方案 isolation_forest，产出 E-RS-05 ExperimentAnomaly）。
+- **裁定**：🔨 轻量路线——复用现有零件对实验 run 指标做异常检测：**PSI**（因子治理漂移监控既有口径，factor_registry `drift_psi` 字段）+ **CUSUM**（61 号 §3.3 漂移检测既有分量）+ **阈值注册表**（实验指标静态阈值，仿 C1 verdict 四门禁模式）。**显式不上 isolation forest**——理由：单人项目实验量级（当前 run 个位数，MVP 后日增 <10），孤立森林需百级样本才有统计意义，且引入 sklearn 级依赖违反"向内收"（与 §八 E 同一纪律）。
+- **降级方案**：检测不可用时 = **Panel 实验历史 Tab 人工巡检**——本计划工作流 B 的多选横向对比表（§七.P1-4）即是人肉异常检测器。
+- **重评条件**：日均实验 run ≥50（人工巡检失效、统计量足以支撑 ML 检测器）。
+- **契约（设计）**：输入=FallbackBackend run 的 metrics JSON；输出=异常报告（run_id/指标名/观测值/阈值/判定/建议动作）；响应=**标记不暂停**（实验非实盘，无"实验暂停"硬动作）。
+
+### 9.2 BM-RES-02-B 可复现性管理（design）
+
+- **定位**：复现请求→环境快照+依赖锁定+种子管理→结果校验→复现报告（真源默认 env_snapshot=container）。
+- **裁定**：复现报告 = **四要素**（超参 + 数据版本 + 代码 commit + 随机种子——[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) §3.2 核心纪律 3 已定为一键复现硬门禁）+ **pip freeze 依赖锁定**，二者合并即为一键复现包；**不建容器级环境快照**（真源默认 container 不采纳）——与 65 号"不引入沙箱/容器隔离（Docker/WSL 对量化交易开发过重）"裁定呼应；单机 Windows + 单开发者场景，git commit + pip freeze 已可完整重建环境。真源降级口径（环境快照不可用→降级环境记录）在本裁定下即常态路径。
+- **重评条件**：出现复现失败实例（同 commit 同种子跑不出同结果）或跨机器迁移需求真实出现时，再评容器/conda-pack 级快照。
+- **契约（设计）**：复现包落盘=FallbackBackend run 目录内 `repro_manifest.json`（params / data_version / git_commit / seed / pip_freeze_hash 五字段）；复现校验=重跑后核心指标（sharpe/maxdd）逐位相等。
+
+## 十、修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
@@ -443,3 +469,6 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 2026-08-09 | 1.2.6 | 文档头统一：frontmatter 补 title/owner/language，H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 1.2.7 | 施工进度核验块注入（头部） | 架构审查第 1-2 轮 Grep/Glob 全量实证：A/B/C 三工作流均未启动（_MLflowBackend/query.py mlflow 分支/config.py tracking_uri 仍在；experiment_history.py 未创建；app_panel 仍 10 Tab；download_artifact 未建；_get_run_fallback bytes artifact 缺口仍在；pip uninstall mlflow 未执行）。§二 Current State 与代码现状仍完全一致，施工条件未变。登记 50 号 v1.1.0 已按本计划逆转收敛 + #ARCH-OBS-EXP-TRACK-001 注册表标题已含"MLflow 退役"（C2-3 部分已做）。正文施工计划零变更。另注：本版修正曾遭并发会话回滚一次，此为重放写入 |
 | 2026-08-12 | 1.2.8 | §八.D 补三个社区 HoloViz MCP 实现（第4轮搜索） | 2026-08-12 第4轮 WebSearch 新发现：除官方 Panel Live Server 外，2026-03 已出现三个社区 HoloViz MCP 实现（panel-viz-mcp 15 工具/HoloViz-MCP-Server 27 工具/holoviz-viz-mcp 23 工具 v0.4.0 embed 模式 89 测试），成熟度超官方 GSoC 演示；holoviz-viz-mcp embed 模式（无服务器自包含 HTML）对本项目单机场景最贴合。登记性质增强（后续接入时对比选型），不改施工计划 |
+| 2026-08-12 | 1.2.9 | 作战地图全覆盖补丁——闭合 BM-RES-02-C（§9.1 实验异常检测轻量裁定：PSI/CUSUM/阈值注册表，不上 isolation forest，重评=日均 run≥50）、BM-RES-02-B（§9.2 可复现性管理：四要素+pip freeze 即一键复现包，不建容器快照）；新增 §九，原 §九 修订记录顺延为 §十 | 实验域 2 环节补裁定，复用既有零件不新增依赖；施工计划 A/B/C 零变更 |
+| 2026-08-12 | 1.2.10 | 作战地图环节映射补强——锚定 BM-RES-02-A | 工作流 B 末尾补映射块，环节级可追溯 |
+| 2026-08-12 | 1.2.11 | 作战地图环节映射补强②——锚定 BM-BT-07-G 回测结果对比（§七.P1-4 多 run 横向对比 + C1ComparisonView 双净值） | 映射块补一行，环节级可追溯；不改既有正文 |

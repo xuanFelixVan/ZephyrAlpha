@@ -5,8 +5,8 @@ title: 流动性危机处理
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.16"
-date: 2026-08-10
+version: "1.0.18"
+date: 2026-08-12
 topic: liquidity_crisis_protocol
 scope: 07_trading_decision_architecture
 ---
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | tradingwyckoff Kill Switch / 机构流动性风控 |
 | 正交性 | ✅ 与 regime 正交 |
 | 优先级 | P3 |
-| 状态 | active 1.0.13（5 项讨论要点已定型 + G16 对齐已解决 + 涨跌停算法断裂修复 + 逃生执行器补全 + 2026-08 实证对齐 + 危机恢复算法补全 + sell_pressure/spread/涨跌停形式化 + Hawkes/VPIN/Crumbling Labeler 2026 前沿评估 + §3.7.4 SaR 前瞻性框架评估（选项之外更好算法） + §3.7.5 Latent Microstructure Regime Detection 隐含微结构 regime 转变检测（选项之外更好算法，正 lead-time 优于 CUSUM/BOCPD/HMM） + §3.8 盘中流动性监控循环施工流程总览 + §2.4 指数熔断澄清 + §3.7.1 Hawkes 2026-08 最新研究更新（A股直接实证 arXiv:2512.08000 + 图熵领先7-12天预警 An&Dai 2026-08-06 + 2026-07 A股量化危机活体验证，预警时间从分钟级升级到日级）+ §2.4 v1.0.9 新增 2026-07-31 交易所 LAN 通道关闭交叉引用（流动性结构影响 + 三方对齐 33号/40号/00_index）+ §3.7.6 ExsdHawkes 状态消失扩展（v1.0.10 Kimura arXiv:2604.23961 KKT 分离估计+物理约束避免爆炸分支比）+ §3.7.7 Liquidation Cascade 三因子框架（v1.0.10 Garcia Seuma arXiv:2608.03616 推翻临界级联假设，severity=冲击×路径×流动性撤回）+ §3.7.7.1 临界性预警异质性（v1.0.11 Garcia Seuma Part I arXiv:2607.27070 39配置系统测试，无事件不变量+吃单订单流方差压缩群体级前兆+冲击类型识别约束）+ §3.7.8 Multiplex Network Hawkes 系统性风险（v1.0.10 Zelvyte&Griffin arXiv:2606.15755 多层网络通道分离）+ §3.7.9 Weng A股羊群效应 Johnson S_U 变换（v1.0.11 arXiv:2607.27063 A股专属agent-based网络+Johnson S_U消除牛熊偏差，时间×截面双维度预警互补Hawkes）+ §3.7.10 Zhou 平方根冲击操纵周期（v1.0.11 arXiv:2607.05141 A股专属±10%涨跌停+T+1+隐形分配，平方根冲击是内生操纵周期必要条件，§3.7.x系列统一理论支撑）+ §4.7 Karimi 流动性-信贷联合破产边界（v1.0.10 arXiv:2607.17381 HJB 联合边界凸性，LEVEL_3 联动理论支撑）+ §5.2 Residual Supply 被迫卖出压力信号（v1.0.12 arXiv:2605.30672 全市场吸收能力紧张 premium 翻倍，A 股适配用公募赎回/北向净流出/融资余额近似）+ §3.7.11 LRISK 系统性流动性风险前瞻指标（v1.0.13 SSRN 7110978 Jourde/Saillard/Van Dijk 三大放大通道流量共振+组合重叠+流动性螺旋，提前1-2季度预测市场承压，§3.7.x系列补系统级前瞻预警层）+ §3.7.12 欧洲 ML 流动性预测对比（v1.0.13 SSRN 7125463 Arakelia等 动态面板不输XGBoost/SVR，流动性高持续+三驱动因子为Phase 1.5阈值校准提供方法学）+ §3.7.13 AdjPIN 订单流信息/流动性分解（v1.0.13 SSRN 7119388 Park 信息成分+PSOS流动性成分，§3.7.2 VPIN拒绝后补"信息驱动vs纯流动性"区分路径，优化§3.3 LEVEL响应）） |
+| 状态 | active 1.0.18（5 项讨论要点已定型 + G16 对齐已解决 + 涨跌停算法断裂修复 + 逃生执行器补全 + 2026-08 实证对齐 + 危机恢复算法补全 + sell_pressure/spread/涨跌停形式化 + Hawkes/VPIN/Crumbling Labeler 2026 前沿评估 + §3.7.4 SaR 前瞻性框架评估（选项之外更好算法） + §3.7.5 Latent Microstructure Regime Detection 隐含微结构 regime 转变检测（选项之外更好算法，正 lead-time 优于 CUSUM/BOCPD/HMM） + §3.8 盘中流动性监控循环施工流程总览 + §2.4 指数熔断澄清 + §3.7.1 Hawkes 2026-08 最新研究更新（A股直接实证 arXiv:2512.08000 + 图熵领先7-12天预警 An&Dai 2026-08-06 + 2026-07 A股量化危机活体验证，预警时间从分钟级升级到日级）+ §2.4 v1.0.9 新增 2026-07-31 交易所 LAN 通道关闭交叉引用（流动性结构影响 + 三方对齐 33号/40号/00_index）+ §3.7.6 ExsdHawkes 状态消失扩展（v1.0.10 Kimura arXiv:2604.23961 KKT 分离估计+物理约束避免爆炸分支比）+ §3.7.7 Liquidation Cascade 三因子框架（v1.0.10 Garcia Seuma arXiv:2608.03616 推翻临界级联假设，severity=冲击×路径×流动性撤回）+ §3.7.7.1 临界性预警异质性（v1.0.11 Garcia Seuma Part I arXiv:2607.27070 39配置系统测试，无事件不变量+吃单订单流方差压缩群体级前兆+冲击类型识别约束）+ §3.7.8 Multiplex Network Hawkes 系统性风险（v1.0.10 Zelvyte&Griffin arXiv:2606.15755 多层网络通道分离）+ §3.7.9 Weng A股羊群效应 Johnson S_U 变换（v1.0.11 arXiv:2607.27063 A股专属agent-based网络+Johnson S_U消除牛熊偏差，时间×截面双维度预警互补Hawkes）+ §3.7.10 Zhou 平方根冲击操纵周期（v1.0.11 arXiv:2607.05141 A股专属±10%涨跌停+T+1+隐形分配，平方根冲击是内生操纵周期必要条件，§3.7.x系列统一理论支撑）+ §4.7 Karimi 流动性-信贷联合破产边界（v1.0.10 arXiv:2607.17381 HJB 联合边界凸性，LEVEL_3 联动理论支撑）+ §5.2 Residual Supply 被迫卖出压力信号（v1.0.12 arXiv:2605.30672 全市场吸收能力紧张 premium 翻倍，A 股适配用公募赎回/北向净流出/融资余额近似）+ §3.7.11 LRISK 系统性流动性风险前瞻指标（v1.0.13 SSRN 7110978 Jourde/Saillard/Van Dijk 三大放大通道流量共振+组合重叠+流动性螺旋，提前1-2季度预测市场承压，§3.7.x系列补系统级前瞻预警层）+ §3.7.12 欧洲 ML 流动性预测对比（v1.0.13 SSRN 7125463 Arakelia等 动态面板不输XGBoost/SVR，流动性高持续+三驱动因子为Phase 1.5阈值校准提供方法学）+ §3.7.13 AdjPIN 订单流信息/流动性分解（v1.0.13 SSRN 7119388 Park 信息成分+PSOS流动性成分，§3.7.2 VPIN拒绝后补"信息驱动vs纯流动性"区分路径，优化§3.3 LEVEL响应）+ §3.7.16 跨市场传导与传染模型（v1.0.17 作战地图全覆盖补丁：BM-RC-12-B 登记远期+激活条件裁定，父环节 BM-RC-12 随之闭合——7 模式库已由 36号 §3.5.2 覆盖、跨市场传染由 §3.7.16 承载、流动性危机模拟由本备忘 §3.1-§3.6 覆盖）） |
 
 ## 2. 背景
 
@@ -161,6 +161,12 @@ def bid_ask_spread(bid_price: float, ask_price: float) -> float | None:
 - 跌停板：`ask_price` 存在（跌停价卖单），`bid_price` 可能缺失（无买单）→ spread 置 **1.0**（大值，使 AND 条件可满足）
 - 涨停板：`bid_price` 存在（涨停价买单），`ask_price` 可能缺失（无卖单）→ spread 置 **None**（跳过检查，涨停不触发流动性危机）
 - 停牌：两者均缺失 → spread 置 None（跳过检查）
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RC-06-A | 五大信号扫描 | §3.1 决策① 盘内流动性危机检测（MOD-RK-10 五信号扫描+三级警报） | production 已建 |
 
 ### 3.2 决策②：日频结构性流动性监控——复用 MOD-RK-08 LiquidityMonitor
 
@@ -978,6 +984,21 @@ def concentration_adjusted_sar(sar_base: float, hhi: float, eta: float = 1.5) ->
 
 **重评条件**：① §3.3 LEVEL 响应实盘发现大单后"跟随减仓 vs 等待恢复"决策失误频繁；② §3.7.13 AdjPIN 上线后若信息/流动性分离仍不充分；③ 需要大单冲击的定量预测模型（而非仅定性区分）
 
+#### 3.7.16 跨市场传导与传染模型（作战地图 BM-RC-12-B / BM-RC-12 闭合，design）
+
+> **v1.0.17 新增**：作战地图全覆盖补丁——BM-RC-12-B（跨市场传导与传染模型，L4 风控域，design，planned D_RISK/D_CROSS_ASSET 域）在 §3.7 前沿算法区落地，父环节 BM-RC-12（极端事件与黑天鹅，design）随之闭合。
+
+**定位**：BM-RC-12-B——黑天鹅事件发生后预测跨市场传导与二阶效应以提前防御：**一阶传导**（股市→债市/汇率/商品）+ **二阶效应**（流动性挤兑/信用利差走阔/波动率反馈循环）+ **传染强度与时滞估计**（Hawkes 多元版）。数据流：黑天鹅事件信号（RC-12-A）→ 传导路径预测 → 二阶效应评估 → 防御建议（对冲/降仓）→ RC-12-C 流动性危机模拟。
+
+**裁定：登记远期 + 激活条件（不就地施工）**。理由：① **传染强度/时滞的定量估计是 §3.7.1 Hawkes 的跨市场扩展**——Hawkes 已登记 Phase 1.5 储备（单资产自激励），多元 Hawkes（跨资产相互激发）依赖跨市场行情数据管道（债/汇/商品指数日频），该管道当前不存在，就地施工无数据承载；② **MVP 已有布尔级覆盖**——跨市场传导的黑天鹅判定由 [36号 §3.5.2](36_var_es_monitoring.md) `EVENT_TO_BS_MODE["CONTAGION"] → BS005_CONTAGION` 事件映射承载（"有没有传导"的布尔信号 → drawdown_controller 分级响应），BM-RC-12-B 的增量价值是"传导多强、多快"的定量层，属精度提升非生存底线；③ **与本备忘主线正交**——本备忘 §3.1-§3.6 管"传导到达本市场后怎么响应"，传染模型管"传导会不会到达、以多强到达"，后者是预警层远期增强。**激活条件（重评条件）**：① 跨市场行情数据管道就绪（国债期货/汇率/商品指数日频接入）；② §3.7.1 Hawkes 单资产版上推 Phase 1.5 时同步评估多元扩展（共享事件流基础设施与 μ/α/β 拟合管线）；③ 实盘出现跨市场传导误判（BS-005 触发但实际无传导，或未触发但组合受外围冲击）≥2 次。
+
+**远期设计要点（登记，激活后细化）**：
+- **一阶传导路径**：股市（组合持仓/沪深300）→ 债市（10Y 国债期货收益率异动）、汇市（USDCNH 波动）、商品（南华商品指数）——路径判定用跨市场日频收益的相关性突变（对齐 32号 §2.10.5 B 相关性突变检测层：short vs long window ρ 偏离度 shrinkage）
+- **二阶效应**：流动性挤兑（本备忘 §3.1/§3.2 信号在关联市场的同步触发）、信用利差走阔（信用债指数-国债利差，数据源待建）、波动率反馈循环（波动率飙升 → 风险平价类资金减仓 → 进一步波动，对齐 §3.7.1 2026-07 A 股量化危机活体验证）
+- **Hawkes 传染强度/时滞估计**：多元 Hawkes 交叉激发项 α_ij（市场 j 事件对市场 i 的强度贡献）+ 时滞核（指数衰减 β 或幂律核），拟合样本 = 历史黑天鹅事件窗口（2015 股灾/2016 熔断/2020 疫情/2024 政策，BM-RC-12-A 模式库样本复用）；**退化策略** = 传染模型失效时按最坏情况假设（全市场同向下跌，BM-RC-12-B degradation 原值）
+
+**父环节 BM-RC-12（极端事件与黑天鹅，design）随之闭合说明**：BM-RC-12 三子环节映射全部落地——① **BM-RC-12-A 黑天鹅模式库**（股灾/熔断/流动性危机/政策突变 7 模式）已由 [36号 §3.5.2](36_var_es_monitoring.md) BlackSwanMode 七模式（BS001-BS007）+ `EVENT_TO_BS_MODE` 事件映射覆盖（36号 production）；② **BM-RC-12-B 跨市场传导与传染模型**由本节承载（登记远期 + 激活条件明确）；③ **BM-RC-12-C 流动性危机模拟**由本备忘主体覆盖（§3.1 盘内检测 / §3.3 LEVEL 响应 / §3.5 涨跌停处理 / §3.6 危机恢复，MVP 已 production，§3.7.x 系列为前瞻增强层）。父环节无遗留未映射子环节，闭合。
+
 ### 3.8 施工流程算法总览（盘中流动性监控循环）
 
 > **持续改进补全**：35 号 §3.13 有"盘中实时风控循环 30 秒轮询"伪代码，36 号 §3.12 有"盘中 VaR/ES 重算触发"伪代码，37 号 之前只有各决策（§3.1 检测 / §3.3 响应 / §3.6 恢复）的独立算法，**缺一个编排总览**将检测→响应→恢复→涨跌停处理串成单循环。补齐此 gap 使三篇风控文档施工流程对齐（均有日度循环 + 盘中循环 + 总览时序）。
@@ -1251,3 +1272,5 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 2026-08-10 | 1.0.14 | §3.7 新增 2 项 2026-07 前沿算法（§3.7.14 Signed Order Flow Kyle λ 有向订单流价格冲击 + §3.7.15 流动性尾部风险与价格发现大单非信息场景） | 二十八次审查全网搜索 2026-08-08 最新流动性微结构研究，登记 2 篇高价值论文：① **§3.7.14 Signed Order Flow Kyle λ**（[arXiv:2607.01377](https://arxiv.org/abs/2607.01377) Aldridge 2026-07-01 "Liquidity Premium and Investment Horizons"）——从日度股票订单流估计 Kyle (1985) 价格冲击系数 λ̂ = Cov(ΔP, OF_signed)/Var(OF_signed)，CRSP 2020-2025 Fama-MacBeth 回归证明**有向订单流**强预测当期与未来一月收益（无向成交量波动则降低价格发现精度）。与 §3.1 Amihud ILLIQ（无向 \|r\|/V）形成维度互补：Kyle λ 恢复方向性信息含量，Amihud 仅流动性成本。A 股适配：Level-2 tick 数据 Lee-Ready 规则重建 signed OF，散户占比高噪声方差大尤其适配"噪声扩大 λ 降低价格发现"洞察。Phase 2 候选因需 tick 级买卖分类数据管道 + 与 §3.7.13 AdjPIN 重叠（两者都需 tick 级买卖分类，Phase 2 可同时引入）。② **§3.7.15 流动性尾部风险与价格发现**（[arXiv:2607.01198](https://arxiv.org/abs/2607.01198) Çetin/Lin/Livieri 2026-07-21 LSE "When large trades are not (automatically) news"）——重尾流动性需求下大额交易在更宽深度范围内仍"合理地非知情"，**压平价格冲击、减缓学习**。核心洞察"大单 ≠ 信息"颠覆 Easley-O'Hara 传统假设，对 A 股尤其重要（大单常源于机构调仓/融资盘平仓/公募赎回非信息驱动）。为 §3.3 LEVEL 响应提供理论支撑：重尾流动性需求下倾向"等待恢复"而非"跟随减仓"。与 §3.7.13 AdjPIN 互补（AdjPIN 从订单流分解角度区分，Çetin 从价格发现学习速度角度区分）。Phase 2 候选因理论性较强需不动点方程数值化 + 与 AdjPIN 功能重叠 AdjPIN 更工程化。施工算法完整性结论：37 号施工流程算法闭环无缺失独立环节，2 项均为远期候选登记非施工算法缺失——Kyle λ 补方向性价格冲击维度、Çetin 补大单非信息理论支撑，与 §3.7.13 AdjPIN 形成"订单流分解+价格冲击+价格发现学习"三维信息/流动性分离框架 |
 | 2026-08-10 | 1.0.15 | §3.2a 新增 IPO 流动性抽离预警 | final_report_0724 交叉对照发现 37 号无 IPO 驱动的流动性抽离预警——长鑫科技 688825 科创板上市募资 579-666 亿可能吸金 500 亿+，此类事件型流动性抽离无法被 Amihud/spread/sell_pressure 事后检测捕获。新增 §3.2a 前瞻性 IPO 流动性抽离预警算法（drain_ratio = 未来5日IPO募资总额/全市场日均成交额，4 级 drain_level→position_cap_adjustment），与 26 号 §2.5a IPO 虹吸效应算法联动（26 号管 alpha 方向+仓位策略，37 号管流动性检测+仓位上限节流）。与 §3.2 Amihud 的事后检测正交：§3.2a 事前预警（IPO 上市日前已知），§3.2 事后检测（上市后实际恶化） |
 | 2026-08-10 | 1.0.16 | §3.6 `check_recovery` 签名对齐修复——定义与调用点签名不一致 + 真值检查 bug | 伪代码完整性审计发现 §3.6 恢复算法存在两处缺陷：① **签名不一致**——`check_recovery` 定义用硬编码阈值 positional 参数 `(current_state, signals, spread, sell_pressure, time_since_trigger, recovery_window=5)`，但 §3.6 编排伪代码 `intraday_liquidity_loop` 调用点用参数化阈值关键字参数 `(current_spread, current_sell_pressure, trigger_threshold_spread, recovery_threshold_spread, trigger_threshold_pressure, recovery_threshold_pressure, min_hold_minutes, elapsed)`，两者完全不匹配无法调用。统一为参数化签名（阈值/最短持续时间作为参数注入，支持实盘校准外部调整，对齐 §6 "待校准"要求，消除两处真相源），新增 `current_level`/`active_signals` 参数。② **真值检查 bug**——`check_recovery` 返回 `target_level`（int 0/1/2 或 None），但调用点用 `if recovered:` 真值检查，当 target_level=0（LEVEL_1→正常态）时为 falsy，**会跳过 LEVEL_1 恢复到正常态**。改为 `if recovered is not None:` 并在 docstring 显式标注警告。调用点补 `active_signals` 计数（§3.1 双条件计数 sell_pressure 超阈值 + spread 超阈值，范围 0-2）+ `recovery_state.exit_crisis(target_level=recovered)` 传递目标级别。 |
+| 2026-08-12 | 1.0.17 | 作战地图全覆盖补丁——BM-RC-12-B / BM-RC-12 | §3.7.16 新增跨市场传导与传染模型（BM-RC-12-B，design）——一阶传导（股→债/汇/商品，相关性突变路径判定对齐 32号 §2.10.5 B）+二阶效应（流动性挤兑/信用利差走阔/波动率反馈循环）+Hawkes 传染强度与时滞估计（多元 Hawkes 交叉激发 α_ij+时滞核，模式库样本复用）；**裁定：登记远期+激活条件（不就地施工）**——跨市场数据管道不存在无承载，MVP 布尔级覆盖已由 36号 §3.5.2 CONTAGION→BS005 映射承载，激活条件=①跨市场管道就绪②§3.7.1 Hawkes Phase 1.5 上推同步评估③实盘传导误判≥2 次；退化=最坏情况假设（全市场同向下跌）；父环节 BM-RC-12 随之闭合（RC-12-A 七模式库由 36号 §3.5.2 覆盖/RC-12-B 本节承载/RC-12-C 本备忘 §3.1-§3.6 MVP 已 production）；§1 状态行版本漂移修复（1.0.13→1.0.17）+ frontmatter date 2026-08-10→2026-08-12 |
+| 2026-08-12 | 1.0.18 | 作战地图环节映射补强——锚定 BM-RC-06-A | §3.1 末尾补映射块，环节级可追溯 |

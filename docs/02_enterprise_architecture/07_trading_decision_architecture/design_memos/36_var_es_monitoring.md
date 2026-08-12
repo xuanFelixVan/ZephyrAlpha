@@ -5,8 +5,8 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.10.0"
-date: 2026-08-10
+version: "1.10.2"
+date: 2026-08-12
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 赢牛资管 VaR-ES / Sina 量化风控 / MetricGate VaR/ES / Pomegra VaR vs CVaR / Man Numeric CVaR / Nystrup-Boyd HMM+MPC |
 | 正交性 | ✅ 与 regime 正交（VaR 是组合风险度量，regime 是市场状态） |
 | 优先级 | P3（风险相关模块先于策略模块施工至 production，符合风险优先原则） |
-| 状态 | ✅ 已定稿 v1.10.0（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 最新研究远期登记 28 节 + §4.21 论文细节补全（6 协同机制+Bellman 残差 -85%+OOS Sharpe 0.9281+伪代码）+ §4.28 Geodesic Execution Slippage 新增 + §5.2 演进路径与 §4.x 全量对齐） |
+| 状态 | ✅ 已定稿 v1.10.2（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 最新研究远期登记 28 节 + §4.21 论文细节补全（6 协同机制+Bellman 残差 -85%+OOS Sharpe 0.9281+伪代码）+ §4.28 Geodesic Execution Slippage 新增 + §5.2 演进路径与 §4.x 全量对齐 + v1.10.1 作战地图全覆盖补丁：§3.20 盘中因子暴露与相关性矩阵（BM-RC-04-C）+ §3.1 BM-RC-07-A 演进口径对齐） |
 
 ## 2. 背景
 
@@ -103,6 +103,8 @@ VaR_95 = max(VaR_param, VaR_hist)
 
 **最小样本约束**：`min_history=30`，不足时抛 `InsufficientVaRHistoryError`。A 股约 1.5 个月数据。
 
+> **BM-RC-07-A 口径对齐（v1.10.1 补，作战地图全覆盖补丁）**：作战地图 BM-RC-07-A"VaR 三阶段演进"（L4，production，MOD-RK-05）定义为"Phase1 参数法+历史模拟 → Phase2 蒙特卡洛（GPU） → Phase3 Basel III 三角验证"，与本备忘 §5.2 演进路径（Phase 1 参数法+历史模拟+POT → Phase 2 FHS/蒙特卡洛/Conformal(RWC) → Phase 3 QbSD/CAESar/Basel III 三角）口径不完全一致——BM 三阶段缺 FHS/QbSD/CRC 中间层。**裁定：VaR 演进口径以本备忘路线为准**——本文是 VaR/ES 主题备忘（G17 权威真源），FHS（Filtered Historical Simulation）/QbSD/CRC 是参数法→蒙特卡洛之间已评估登记的中间形态（§3.16 施工规约 + §4.1 CRC），跳级到 GPU 蒙特卡洛不符合风险优先原则的渐进演进；BM"三阶段演进"定义建议同步修订，登记 §6 待裁定（开放问题，留作战地图维护批次处理，本备忘不越界改 BM 真源）。
+
 ### §3.2 ES_95 计算（历史模拟 + POT 厚尾拟合）
 
 **决策**：ES_95 双轨计算——历史模拟法为主，POT 模型厚尾拟合为辅（厚尾检测结果）。
@@ -175,6 +177,13 @@ ES_pot = VaR · (1 + (ξ - β/u) · (1-ξ)^(-1))
 **远期演进：Belzile & Davison 2026-06 EVT 阈值选择程序系统综述**（arXiv:2606.28540）：
 - 40+ 阈值选择程序全景比较
 - 当 Uehara 双门控拒绝外推时的替代程序参考
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RC-06-B | 尾部风险监控 | §3.2 ES_95 计算（历史模拟+POT）/ §3.3 EVT 阈值选择 | production 已建 |
+| BM-RC-07 | 风险预算与VaR | §3.1 VaR_95 计算 / §3.2 ES_95 计算 | production 已建 |
 
 ### §3.4 入场 VaR/ES 基准
 
@@ -657,6 +666,12 @@ def intraday_var_recalc(trade_date, current_nav, current_returns, trigger: Intra
 - 盘中重算的 VaR/ES 结果记录为 `intraday_recalc_log`（持久化到 state_store，§3.18 盘后持久化）
 - 日终审计时 daily_auditor 对比盘前基线与盘中重算，若差异 > 20% → 标记 `intraday_recalc_significant`
 - 回测验证（§3.9）消费 `intraday_recalc_log`：若盘中重算显著且次日回测 RECALIBRATE → 说明盘前 VaR 模型对盘中波动率 regime shift 响应不足 → 触发 §3.10 RECALIBRATE 动作 4（切 FHS）
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RC-04-A | VaR实时计算 | §3.1 VaR_95 计算 / §3.12 盘中重算触发 | production 已建 |
 
 ### §3.13 clean/dirty P&L 区分
 
@@ -1301,6 +1316,27 @@ def premarket_initialization_var(trade_date):
 5. **无 `state_store.save_intraday_recalc_log` 接口**——盘中重算日志未持久化
 
 > **裁决**：盘前初始化 + 盘后持久化暂缓为 §6 待裁定施工项，与 35号 §3.15/§3.18 同步落地（共享 state_store 基础设施）。最小补丁：① VarBreachStateMachine 持久化到 DB（复用 daily_auditor 已有持久化）；② var_model_status 持久化（REBUILD 标记需跨日）；③ clean/dirty P&L 双轨持久化（回测验证依赖 clean P&L 历史）。
+
+### §3.20 盘中因子暴露与相关性矩阵（作战地图 BM-RC-04-C 闭合，production 补强）
+
+> **v1.10.1 新增**：作战地图全覆盖补丁——BM-RC-04-C（因子暴露与相关性矩阵，L4 风控域，production，MOD-RK-16 `core/risk_decomposition.py`）的盘中实时计算设计在本备忘落地。
+
+**定位**：BM-RC-04 盘中持仓风控监控的子环节——VaR（§3.1/§3.2）与回撤（35 号）之外的风险维度：firm 层**因子暴露矩阵 + 相关性矩阵**的盘中定时计算，输出暴露矩阵（CTR-P1-008 契约）→ BM-RC-04-D 告警生成（E-RK-01/E-RK-03）→ BM-RC-03 Kill Switch 判定。
+
+**裁定**：盘中因子暴露监控**以 firm 层定时计算形态补强，不新建独立模块**——复用 MOD-RK-16（risk_decomposition.py）计算内核，盘中定时驱动，超限额走既有告警链。理由：① 因子暴露是 VaR 的结构性补充——VaR 答"组合风险多少"，因子暴露答"风险集中在哪些因子上"，CTR-P1-008 暴露矩阵是前端 RiskDashboardSnapshot 与告警链的共同契约；② 盘中**定时**（非每 Tick）即可——因子载荷日频更新（D-FACTOR 供给），盘中变化来自持仓与价格，计算频率对齐 §3.12 盘中重算节奏（事件驱动联动 + 定时全量兜底）；③ production 补强非新设计——MOD-RK-16 已建，本节补的是"盘中实时计算"的设计契约落点（此前环节定义仅有"盘中定时"触发条件，无计算设计承载文档）。**重评条件**：① D-FACTOR 因子载荷盘中更新频率升级（日频→盘中多次）时，暴露矩阵计算频率同步升级；② 因子数据缺失降级（跳过检查）实盘频发时，评估独立风险数据管道重建（BM-RC-11 已 deprecated 的替代方案）。
+
+**契约/参数/接口**：
+
+| 项 | 裁决值 | 来源 |
+|---|---|---|
+| 触发 | 盘中定时（兜底全量）+ §3.12 七条重算触发联动（事件驱动） | BM-RC-04-C trigger"盘中定时" |
+| 阈值 | FACTOR_EXPOSURE 限额（单因子暴露上限，配置注入不硬编码） | BM-RC-04-C threshold |
+| 输入 | 因子暴露（D-FACTOR）+ 持仓（D-EX-CORE 持仓快照） | BM-RC-04-C consumes |
+| 输出 | 暴露矩阵（CTR-P1-008）→ BM-RC-04-D 告警判定 | BM-RC-04-C data_flow |
+| 计算内容 | firm 层因子暴露矩阵（组合权重 × 因子载荷 → 各因子净暴露）+ 持仓相关性矩阵（组合内标的两两相关，供 corr<0.7 监控口径消费——注意：此为**监控层**相关性矩阵，与 30号 §3.1 拒绝的**决策层**协方差估计不同，监控不进入下单优化链路） | BM-RC-04-C process |
+| 降级 | 因子数据缺失 → 跳过因子暴露检查（告警留痕，不阻断交易） | BM-RC-04-C degradation |
+
+**与 25 号 §3.7#8 策略级暴露监控的层级分工**：[25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) §3.7#8 HoldingDriftMonitor 是**策略级**暴露/偏差监控（单策略内部"当前持仓 vs 目标权重"的因子暴露+行业偏离，盘后每日调用，critical 时触发 RebalanceTrigger 强制换仓）；本节是 **firm 层**聚合暴露矩阵（跨策略求和后的组合因子暴露，盘中定时，超限额走 BM-RC-04-D 告警）。层级链：策略级（25 号 #8，盘后，策略内纠偏）⊂ firm 级（本节，盘中，组合级告警）→ 告警（BM-RC-04-D）→ Kill Switch 判定（BM-RC-03）。两层不重复计算：策略级管"策略自己有没有跑偏"，firm 级管"全组合加起来会不会撞因子限额"。
 
 ## 4. 考虑过的替代方案
 
@@ -1958,6 +1994,7 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | Bayesian EVT Hawkes | 模型复杂度极高 | Phase 4 鲁棒性阶段 |
 | 期权隐含 ES bounds | 期权数据接入待建 | 50ETF/300ETF 期权数据管道就绪 |
 | OCE Risk Minimization | 理论框架，落地需工程化 | Phase 2+ 需平滑 CVaR 变体时 |
+| BM-RC-07-A"三阶段演进"口径修订建议（开放问题，v1.10.1 登记） | BM 定义"参数法+历史模拟→蒙特卡洛(GPU)→Basel III 三角"缺 FHS/QbSD/CRC 中间层，与本备忘 §5.2 演进路径口径不一致；裁定 VaR 演进口径以本备忘路线为准（§3.1 口径对齐注），本备忘不越界改 BM 真源 | 作战地图维护批次同步修订 BM-RC-07-A 环节定义 |
 
 ## 7. 待定问题（讨论要点）
 
@@ -2078,3 +2115,5 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-10 | 1.8.0 | §4.27 Information-Geometric Bayesian 风险监控新增（arXiv:2608.01294，全网搜 2026-08 唯一未收录新论文）+ §1 状态行 26→27 节 + frontmatter v1.8.0 | 持续改进：用户要求"再次审查文档所有内容+施工环节流程算法有缺失+选项之外更好的答案算法+全网搜 2026年8月今天最新研究+文档结构顺序内容调整+持续改进不要停下来询问"。后台 agent 全网搜 2026-08 最新量化算法返回 5 领域 15 篇候选论文，交叉验证（grep 全 design_memos 目录）确认 14 篇已收录（DASC/Conditional CTM/Changepoint/MPC/Microstructure/Diffusive/CVaR Tail/Three Matrices/EFS/Alpha Decay/FactorEngine/Unstructured Regime/MS-GARCH/Wasserstein HMM），**仅 arXiv:2608.01294 Information-Geometric Bayesian 未收录**。决策：§4.27 新增 Quirini 2026-08-04 信息几何贝叶斯风险监控框架（Fisher 度量/KL 散度/统计流形测地距离 regime 检测 + 曲率风险集中识别）。与本项目关系：①§3.11 VaR 校准第三种触发（测地距离漂移，比周期性及时比违规驱动早）；②§3.6 漂移检测的流形空间补充（欧氏 PSI/KS vs 流形测地距离，对高阶矩漂移更敏感）；③与 10 号 regime 检测正交（隐式分布漂移 vs 显式状态标签）。A 股适用性中低（需分布族 Fisher 矩阵解析推导+数值测地线 ODE）。过度工程审查：**Phase 4+ 远期登记，与 Mamba/SSM 同类过度工程**（微分几何背景+数值测地线+研究密集型），Phase 1-2 仅采纳轻量化提取（对称 KL 散度漂移监测 scipy.stats.entropy + 偏度/峰度形状漂移 SHAPE_DRIFT 标志，<30 行无第三方库）。§4.1-§4.27 共 27 节替代方案远期登记。施工算法完整性结论：36号 5 流程闭环无缺失独立环节，本次为全网搜唯一新论文远期登记非施工算法缺失。同步 54号 v1.14.0 新增 §3.14 MCR/CCR 风险分解（与 36号 VaR 监控正交：36号管"组合风险多少"54号管"谁贡献了风险"） |
 | 2026-08-10 | 1.9.0 | §5.2 演进路径与 §4.1-§4.27 全量对齐——11 项远期登记缺口补全 + 六类族重组 + 5 项正交定位澄清 | 持续改进：用户要求"再次审查文档所有内容+施工环节流程算法有缺失+选项之外更好的答案算法+全网搜 2026年8月今天最新研究+文档结构顺序内容调整+持续改进不要停下来询问"。文档结构一致性审查发现 §5.2 演进路径与 §4.x 替代方案存在同步缺口——此前 §5.2 仅列代表性方法（Phase 2: FHS/MC/Vol-Targeting/Conformal/9法/P2E/MCS；Phase 3: QbSD/CAESar/Bayesian EVT/EVaR/OCE/Lambda/DMM/Lévy/Comparative e-backtests），但 §4.8/§4.11-§4.14/§4.16-§4.20/§4.27 共 11 项远期登记未在路径中体现（§4.8 Preference-Robust Distortion / §4.11 Bivariate Polynomials ES 回测 / §4.12 ERCIM 145 e-values 审计 / §4.13 Fuzzy CP Sets / §4.14 E-backtesting v6 GRO/GREE/GREL / §4.16 TailRisk-Trans / §4.17 ReSGA / §4.18 D'Innocenzo / §4.19 Jia&Han / §4.20 Fu / §4.27 Information-Geometric）。本次按"风险度量族/回测族/conformal 族/深度学习族/半参数族/审计族"六类重组 Phase 2/3/4+ 路径，确保每项 §4.x 远期登记可追溯到 Phase；新增"不在 VaR/ES 演进路径的 §4.x 项"小节澄清 5 项正交定位（§4.5 Phase 4+ 鲁棒性 / §4.6 regime 检测登记 35号 / §4.9 组合配置层 / §4.15 理论界证明 / §4.21 RL alpha 层）。**施工算法完整性结论**：36号 5 流程闭环无缺失独立环节，本次为文档结构一致性修复（§5.2 ↔ §4.x 全量对齐）非施工算法缺失 |
 | 2026-08-10 | 1.10.0 | §4.21 论文细节补全（6 协同机制+Bellman 残差 -85% 实证+OOS Sharpe 0.9281+伪代码+§4.27 关系+Phase 4 对齐）+ §4.28 Geodesic Execution Slippage 新增 + §1 状态行 27→28 节 + "不在路径"清单增 §4.28 + frontmatter v1.10.0 | 持续改进：整合两篇 2026-08 风险/执行滑点新研究。**论文1** arXiv:2608.04305v1（Yifan Wu / Junjie Lei / Wenjie Huang，ICAIF '26 Milan）"Adaptive Finite-Budget Training for CVaR Risk-Aware Q-Learning"——经核验与既有 §4.21（v1.2.0 浅登记同一 arXiv ID）为**同一论文**，故**就地补全 §4.21** 而非新建重复章节：补 ICAIF '26 venue+作者、RaQL model-free 双时间尺度估计器、关键设计原则（保留原 CVaR 估计器与 Bellman 不动点仅重设计训练过程）、**6 协同机制**（per-cell sizing / outer-rate-matched decay / early correction / coverage-first-then-greedy / suffix aggregation / data-driven calibration）、Bellman 残差降 85%（MeanBEQ 1.2202→0.1854; MeanBEV 1.1624→0.0535）、OOS Sharpe 0.9281 maxDD 6.46%（含成本）vs buy-hold 波动率 47.93%/9.57%、伪代码（#1/#2/#4/#5 四机制<50 行）、与 §4.27 关系（前者分布形状漂移检测 vs 本节 CVaR 估计训练稳定性）、Phase 3+→Phase 4 鲁棒性阶段定位。**论文2** Entropy 2026 28(6) 705 / arXiv:2605.0757（Moroke & Metsileng）"Geodesic Execution Slippage: A Statistical Physics Framework for Cryptocurrency Liquidity Risk"——全新登记 §4.28：执行滑点=MS-GARCH 最大熵模型 Fisher 信息流形测地弧长+联合曲率-TDA 拓扑碎片化告警；5 加密市场（BTC/ETH/XRP/LTC/BCH）2,253 日观测全部最低预测误差+MCS 10% 显著性唯一保留模型（vs Amihud/Kyle λ/Almgren-Chriss 等 6 基线）；4 次危机（Terra 2022-05/FTX 2022-11）中位数提前 2 天告警（早于价格型 circuit breaker）——直接服务于 35 号回撤 Protocol 早期预警；连接 36 号风险监控→35 号回撤 Protocol 触发；Phase 5+ 远期候选（需 Fisher 流形估计+TDA 工具栈，与 §4.27 共享微分几何工具栈）；伪代码（Fisher 度量+测地弧长+曲率-拓扑告警<50 行）。§4.1-§4.28 共 28 节替代方案远期登记。**施工算法完整性结论**：36号 5 流程闭环无缺失独立环节，本次为既有 §4.21 论文细节补全+§4.28 全新研究远期登记（执行/告警层，与 VaR/ES 监控计算正交）非施工算法缺失 |
+| 2026-08-12 | 1.10.1 | 作战地图全覆盖补丁——BM-RC-04-C / BM-RC-07-A | ① §3.20 新增盘中因子暴露与相关性矩阵（BM-RC-04-C，production 补强）——firm 层因子暴露矩阵+持仓相关性矩阵（CTR-P1-008 契约）盘中定时计算+§3.12 七条重算触发事件联动，复用 MOD-RK-16 不新建模块，FACTOR_EXPOSURE 限额→BM-RC-04-D 告警链，降级跳过检查；与 25号 §3.7#8 策略级 HoldingDriftMonitor 层级分工（策略级盘后纠偏 ⊂ firm 级盘中告警），监控层相关性矩阵与 30号 §3.1 拒绝的决策层协方差边界显式标注；② §3.1 补 BM-RC-07-A 口径对齐（production）——VaR 演进口径以本文 FHS/QbSD/CRC 路线为准（G17 权威真源），BM"三阶段演进"定义（参数法+历史模拟→蒙特卡洛→Basel III 三角）缺中间层建议同步修订，登记 §6 待裁定开放问题留 BM 维护批次；frontmatter date 2026-08-10→2026-08-12 |
+| 2026-08-12 | 1.10.2 | 作战地图环节映射补强——锚定 BM-RC-04-A、BM-RC-06-B、BM-RC-07 | §3.3/§3.12 末尾补映射块，环节级可追溯 |

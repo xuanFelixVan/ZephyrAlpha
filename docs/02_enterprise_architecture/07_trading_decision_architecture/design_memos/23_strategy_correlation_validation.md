@@ -5,7 +5,7 @@ title: 策略间相关性验证
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.0"
+version: "1.7.1"
 date: 2026-08-10
 topic: strategy_correlation_validation
 scope: 07_trading_decision_architecture
@@ -135,6 +135,12 @@ scope: 07_trading_decision_architecture
    - **风险大小**（risk sizing）：价值反转 → 是否独立于前两者？
    - 判定：① 若三维度都被同一隐性因子（情绪周期）驱动 → 组合退化，需引入正交新策略 ② 若至少两维度独立 → 组合有效 ③ 与 §3.1⑤ 结论"情绪 beta 穿多件衣服"互验（两结论一致则稳健，不一致则以正交性维度为准——维度退化是更深层的过拟合）
    - 对照 [20 §2.5](20_first_batch_strategies.md) 五维差异化矩阵（信号源/持仓周期/选股池/容量/容量约束）—— 本节是从数学正交性角度补强差异化矩阵
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-BT-05-I | 组合级过拟合检测 | §3.1⑤ 报告模板第 6 部分过拟合检测矩阵（DSR/PBO/OOS 退化斜率/PDR/PSI/DFR 六列+综合 verdict，§3.3 算法 why）+ 第 7 部分正交性验证（维度退化=组合层过拟合判定） | design 待施工（报告矩阵 v1.6.0 定型，计算模块待建） |
 
 ### 3.2 方法选型（why 决策，待施工）
 
@@ -383,3 +389,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-10 | 1.6.0 | 过拟合检测算法施工环节补全（2026-07 最新研究整合） | §2.2 核心问题扩展（多重检验/过拟合检测/正交维度三问题）；§3.1⑤ 报告模板新增第 6 部分（过拟合检测矩阵 DSR+PBO+OOS 退化斜率+PDR/PSI/DFR+verdict）与第 7 部分（策略组合正交性验证，趋势方向/执行时机/风险大小三正交维度）；§3.2 方法选型表补 8 行（DSR 完整版/PBO-CSCV/OOS 退化斜率/PDR-PSI-DFR/Harvey-Liu haircuts/White RC+Hansen SPA/deflated-alpha v0.3.0 工具/PBO+SRD+DSR 三维交叉验证矩阵）；新增 §3.3 过拟合检测算法 why 决策（必要性/算法分层/与情绪周期分层正交/effective trials 争议/与漂移监控关系）；新增 §4.5 纯解析 DSR vs deflated-alpha 工具集成替代方案；§5.1 系统上限加过拟合检测工作量；§5.2 演进路径加过拟合检测为施工前必做；§5.3 过度工程审查加 deflated-alpha 工具集成不构成过度工程论证；§6 待裁定加 4 项（deflated-alpha vendor 评估/effective trials 估计器/PBO-CSCV block 数 S/四家 verdict 不一致决策规则）；§7 待定问题加 5 项（PBO 与 block-bootstrap 关系/effective N 估计器分歧/正交性维度可操作定义/参数搜索 history 留存/deflated-alpha 与 A 股 T+1 适配）；§8.2 depgraph 加过拟合检测引擎行；§8.3 开源实证参考加 12 条（deflated-alpha v0.3.0/Soloviov DSR & PBO controlled studies/marketmaker DSR & PBO/usekeel PBO/Bailey-López de Prado DSR/Bailey-Borwein-López de Prado-Zhu PBO/Harvey-Liu haircuts/White RC+Hansen SPA/mental-momentum/dhawal/digitalninjasystems/backtrex/CSDN PBO 三维/dmitridefreitas DSR 实战/Keystone/backtest-audit/KinSushi）。整合 2026-07 deflated-alpha v0.3.0 四家过拟合审计工具与 DSR/PBO controlled studies 实证 |
 | 2026-08-10 | 1.6.1 | 引用去重+scope 边界系统化 | §8.3 tickerly 重复引用合并（v1.6.0 外部编辑引入的重复条目）；§4.5 KinSushi 孤儿引用修复（标注 §4.5 但 §4.5 未提及→加 KinSushi 作 deflated-alpha 零依赖备选）；§5.3 新增失败模式覆盖边界（Student One 2026-06 四模式分类法：G07 覆盖①选择过拟合+④路径依赖、②参数过拟合+③泄漏归策略开发者 20 §4.4），将原 ad-hoc"不做"列表系统化为②③范畴或①④冗余变体；§8.3 加 Student One 引用 |
 | 2026-08-10 | 1.7.0 | 因子衰减与拥挤度建模（2026-08 最新理论研究） | §5.5 新增因子衰减与拥挤度建模远期候选——① Meng & Chen 2026-05 arXiv:2605.23905 Alpha半衰期定理（NYU，三大衰减通道：Signal Crowding/Performative Erosion/Red Queen Race，半衰期从5-7年压缩至18个月，13F机构组合趋同度+42%）；② Lee 2025-12 arXiv:2512.11913 双曲衰减因子拥挤度模型（KAIST，博弈论Nash均衡推导α(t)=K/(1+λt)，动量因子R²=0.65优于线性/指数，机械因子符合双曲衰减而判断型因子不符合，crowding预测尾部风险而非均值→作风控信号非alpha信号）。与§5.4 CUSUM/PSI症状监控互补——从"症状监控"到"根因建模"的演进路径。登记为远期候选，MVP维持CUSUM/PSI，Phase 2+实盘12月后评估双曲衰减拟合 | 用户要求全网搜索2026-08-08最新研究+选项之外更好算法。因子衰减与拥挤度是相关性漂移的根因，此前§5.4仅监控症状（CUSUM/PSI），缺乏根因理论模型。Meng半衰期定理+Lee双曲衰减填补"为什么相关性会漂移"的理论空白，且Lee的"crowding预测尾部风险"洞察与35号回撤Protocol可直接联动（拥挤→崩盘概率↑→预防性减仓） |
+| 2026-08-12 | 1.7.1 | 作战地图环节映射补强——锚定 BM-BT-05-I 组合级过拟合检测（§3.1⑤ 报告模板末映射块：第 6 部分过拟合检测矩阵 DSR/PBO/PDR/PSI/DFR+verdict + 第 7 部分正交性验证承载） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |

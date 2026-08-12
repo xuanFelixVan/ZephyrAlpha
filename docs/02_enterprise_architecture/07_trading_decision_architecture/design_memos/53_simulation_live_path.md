@@ -5,7 +5,7 @@ title: 模拟与实盘验证路径
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.1"
+version: "1.7.3"
 date: 2026-08-12
 topic: simulation_live_path
 scope: 07_trading_decision_architecture
@@ -305,6 +305,13 @@ scope: 07_trading_decision_architecture
 | 执行时延 | `latency < 100ms` | 延迟差异归因（BM-BT-05-H-D，复用 `ex_sor/execution_quality_scorer`） |
 | 回撤 | `drawdown < 1% / ramp 步` | —（触发即停止放大） |
 | 日损 | `daily_loss < 3%` | —（触发 circuit_breaker） |
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-BT-05-D | 策略衰减监控 | §3.5 漂移检测施工公式（PSI/CUSUM/Page-Hinkley 三函数+μ₀ 取 WFA OOS 期均值）+ 退役决策矩阵（三档 DD/PF/胜率）；上线后监控联动 [55_monitoring_review](55_monitoring_review.md) §3.4 偏离度量 | production已建（漂移检测公式层） |
+| BM-BT-05-H-B | 数据滞后偏差归因 | §3.5 偏差分类表（数据偏差类）+ 上表四因子偏差归因体系（本环节为四因子之一：滞后测量插桩 arrived_at−timestamp 待 v2.0）；暂缓裁定与重评条件见 §6 待裁定"BM-BT-05-H 四因子归因"行 | 暂缓裁定（总值门禁已建，归因分解待实盘数据） |
 
 > **执行对账**（nexusfi 2026 Execution Reconciliation）：策略内部成交记录 vs 券商回报成交逐一比对，检测记账错误/漏单/状态机 bug——A 股 miniQMT 通道须落地。对账落地复用 [54_reconciliation_attribution](54_reconciliation_attribution.md)（G25）的 SettlementReconciliation（MOD-TRADING-003，已 production 盘后结算对账）+ PositionReconciler（MOD-EX-056，每 5min 盘中持仓对账），不重造对账引擎——53 号定义门禁阈值（settlement_match 100% / signal_match ≥ 99.9%），54 号定义对账执行算法（三层匹配 exact/fuzzy/partial + 例外工单）。
 
@@ -679,6 +686,30 @@ def _state_idx(s: RollbackState) -> int:
 >
 > **Bharath 5 阶段通过标准**（[Bharath 2026-04](https://bharathshiksha.com/articles-html/08-paper-trading-to-live-capital) 2026-04-25）：晋级须同时满足——①实现 PnL 在模拟交易分布的 **2 个标准误以内**；②**零未解释对账差异**；③**零 kill-switch 触发**；④**零人工干预**；⑤**仪式遵守率 ≥90% sessions**。任一不满足→留级。
 
+### 3.9 仿真域 why 层回填（作战地图 04 production 环节契约级设计，v1.7.2 补）
+
+> 背景：作战地图 04（[battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md)）7 环节中 **BM-SIM-03/04/06/07 为 production**（代码已建，见 §2.4 盘点 simulation 域 15 模块），但设计文档缺失——代码真源存在而 why 层/契约层未定。本节回填四环节的契约级设计，口径与 battle_map_04 环节定义逐项对齐；格式统一为"定位 → 裁定（含理由+重评条件）→ 契约/参数/接口"。
+
+**BM-SIM-03 场景生成与蒙特卡洛（production）**
+- **定位**：L13 仿真验证域，BM-SIM-02 策略仿真后/研究员配置触发；消费 BM-SIM-02 仿真结果+场景定义，产出场景路径集 → BM-SIM-06 分析。代码映射 D-SIMULATION-05/06（planned）。
+- **裁定**：场景生成走**历史回放 + 参数扰动**双引擎，**蒙特卡洛全量路径模拟显式暂缓**。理由：对齐 [36_var_es_monitoring](36_var_es_monitoring.md) §2.3 约束（个人系统算力有限，不能跑蒙特卡洛 GPU 模拟）与其 §4.26 口径（蒙特卡洛法为 Phase 2 远期，待 ≥4 法候选池 + GPU 条件后评估）——环节定义名义上的"蒙特卡洛百万路径"超出个人单机 CPU 算力上限；历史回放（极端区间重放）+ 参数扰动（波动率缩放 / 流动性压缩 / 跳空缺口注入的确定性组合）已覆盖策略边界探测的生存需求，且场景可复现、可审计。路径数默认值：历史情景库 3 段 + 参数扰动网格 ≤ 数百场景（CPU 可承受），**百万级 MC 路径非默认值**。重评条件：GPU 算力接入 + 首批策略 track record 需分布统计（当前场景集合非分布）时，随 36 号 §4.26 蒙特卡洛远期一并评估。
+- **契约/参数/接口**：场景定义 Schema `{scenario_id, type: historical_replay | param_perturbation, params: {vol_scale, liquidity_scale, gap_injection, replay_window}}`；产出 ScenarioPathSet（downstream BM-SIM-06）。降级：蒙特卡洛未就绪→少量场景手动跑（无统计意义，环节定义原口径保留）。
+
+**BM-SIM-04 压力测试引擎（production）**
+- **定位**：L13，BM-SIM-03 场景生成后/定时压力测试触发；消费极端场景+历史极端事件库，产出策略压力表现 → BM-SIM-06 分析 + D-RISK 风控参数调整。代码映射 D-SIMULATION-04（testing）+ D-SIMULATION-10（planned）。
+- **裁定**：**历史情景库（2008 全球金融危机 / 2015 A 股股灾 / 2020 疫情熔断三段）+ 反向压力测试 + 单因子敏感性**为仿真验证域压力引擎的 MVP 上限。理由：三段历史情景覆盖 A 股三类极端（系统性危机 / 杠杆牛崩塌 / 跳空熔断）；反向压力测试（给定破产阈值反推冲击幅度）回答"多大冲击会死"；单因子敏感性回答"对哪个参数最脆弱"。**与 54 号 BM-RC-08-C 的分工消歧**：本环节（53 号 BM-SIM-04）是**仿真验证域引擎**——造假市场喂策略、验证策略行为边界的 what-if 实验；54 号 BM-RC-08-C 是**运营域报告通道**——真实持仓 × 情景、盘后产出压力报告走其 §3.7 周度报告通道。同一情景库两边复用，**引擎在 53、报告在 54，互不重造**。重评条件：传染效应/跨市场级联（环节定义含传染效应参数）待多市场接入（港股通/跨品种）后评估。
+- **契约/参数/接口**：StressScenario `{scenario_id, historical_window | hypothetical_shock, reverse_threshold}`；产出 StressTestResult `{strategy_pnl_path, max_dd, breach_flags}` 供 BM-SIM-06 消费。降级：极端事件仿真器未就绪→仅历史重放（无黑天鹅模拟）。
+
+**BM-SIM-06 仿真结果分析（production）**
+- **定位**：L13，BM-SIM-01~05 仿真完成后触发；消费仿真成交+PnL+场景结果，产出 SimulationResult 事件 → D-RISK 风控参数 + D-PF-CORE 组合参考。代码映射 D-SIMULATION-12（planned）。
+- **裁定**：统计检验以**与回测对比的偏离度**为核心（非独立绝对指标）+ 可视化产物 + SimulationResult 事件契约。理由：仿真结果本身无基准，必须锚定回测分布才有判读意义——偏离度检验复用 §3.5 漂移检测器体系（PSI/CUSUM，μ₀ 取 WFA OOS 期均值）与 `backtest/core/decision_gate.py` `monitor_backtest_live_deviation` 阈值体系（warn>30% / retire>50%），不重造统计栈。可视化产物（PnL 分布直方图 / 场景热力图 / 偏离时序）服务人工评审。重评条件：偏离告警首次真实触发后按需补归因分解（对齐 §6 BM-BT-05-H 四因子归因待裁定项）。
+- **契约/参数/接口**：SimulationResult 事件 `{sim_run_id, scenario_set_ref, pnl_distribution: {p50, p90, p99}, deviation_vs_backtest, verdict}`（verdict 阈值同 decision_gate warn/retire）。降级：结果分析器未就绪→原始仿真数据人工分析（无统计检验）。
+
+**BM-SIM-07 风控仿真器（production）**
+- **定位**：L13，BM-SIM-03 场景生成完成/风控参数调整后触发；消费仿真市场+场景路径，产出 VaR/回撤/熔断评估 → BM-SIM-06 分析 + D-RISK 风控参数。代码映射 MOD-SIM-003 `risk_simulator.py`（stable）。
+- **裁定**：**集成契约——不新造风险模型，三内核复用**：①VaR 分析内核复用 [36_var_es_monitoring](36_var_es_monitoring.md)（参数法+历史模拟取 max，Phase 1 CPU 口径）；②回撤模拟复用 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 回撤 Protocol（drawdown_controller 状态机）；③熔断模拟复用本备忘 §3.8 降级/回退 5 态状态机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）。理由：风控仿真是"把已定型的风控规则放到假市场里跑"，价值在集成验证而非新风险模型；三个内核均已定型且有代码/文档真源，仿真器只做编排与结果收集，重复造风险模型违反不重造原则。重评条件：36 号 Phase 2 蒙特卡洛 VaR 落地后，仿真器 VaR 内核跟随升级（同 36 号 §4.26 触发条件）。
+- **契约/参数/接口**：RiskSimInput `{market_paths, position_plan, risk_params}`；产出 RiskSimReport `{var_breach_freq, dd_path_max, circuit_breaker_trigger_count}` → BM-SIM-06。降级：风控仿真器未就绪→仅历史 VaR（无场景 VaR）。
+
 ## 4. 考虑过的替代方案
 
 ### 4.1 回测直接上实盘（跳过模拟盘） —— 拒绝
@@ -854,3 +885,5 @@ def _state_idx(s: RollbackState) -> int:
 | 2026-08-10 | 1.6.6 | 十二次复审（calibrate_slippage 崩溃 bug 修复）：①§3.2 `calibrate_slippage` 空数组 guard——`live_fills` 为空时 `np.percentile([], 50)` 崩溃，补 guard 返回 `INSUFFICIENT` verdict（未达统计地板不计算分位数，不影响 GRAY_RAMP 推进）；②§3.2 `calibrate_slippage` 除零 guard——`backtest_assumed_bps=0` 时 `calibration_ratio` 除零，补 guard 返回 `FAIL`+`float('inf')`+reason；③§3.2 `import numpy as np` 移至模块顶层（原函数内 import 不规范）；④§3.2 补 `order_price≤0` 异常 fill 跳过 + 二次 guard（过滤后可能为空）；⑤校准结果处置补 `INSUFFICIENT` verdict 说明（继续 SHADOW 观察至满 14 天+≥30 笔后重试） | 伪代码边界条件深度审计——聚焦 None/空值/除零三类崩溃路径。`calibrate_slippage` 原代码在 SHADOW 初期（fills 未达 30 笔前）或回测配置异常（slippage_bps=0）时必崩。修复后函数在边界条件下优雅降级返回 INSUFFICIENT/FAIL 而非崩溃，符合 fail-closed 原则 |
 | 2026-08-12 | 1.7.0 | 十三次复审（幻觉引用清除 + 已施工设施盘点 + 版本漂移修复）：①**幻觉引用修正**——git log 实证 52/55 号从未离开 draft v0.1.0 骨架（仅 3 个 commit），但 v1.6.6 前 body 引用其"§3.4/§3.6 章节、active v1.7.3/v1.13.0 版本"为虚构（00_index v2.5.0 批量同步时错标 52-55 号 active 导致连环幻觉）：全部 14 处 52 号引用改为代码真源（`backtest/core/decision_gate.py` IS→WFA→OOS+`monitor_backtest_live_deviation` / `simulation/deflated_sharpe_calculator.py` MOD-SIM-024）或 battle_map_03 + 骨架状态标注；55 号 5 处引用去虚构章节（§3.5 LiveBacktestParityMonitor——组件代码核查不存在 / §3.9 / §3.2）改骨架待讨论标注；②**张冠李戴修正**——"50 号 experiment_tracking"×4 处：50 号实为 backtest_observability_workplan（回测可观测性工作计划 draft v1.0.2），experiment_tracking 是代码目录；§3.2 Step④ + 撮合引擎复用原则"CorporateActionProcessor（MOD-TRADING-004）"×2 处：该类不存在且公司行动（分红送股）≠费率，改为 backtest 引擎 `commission_rate` 费率配置；③**版本漂移修复**——20 号 v1.4.4→v1.2.4（frontmatter 实证，v1.6.1 时对齐的是 00_index 错标记录）/ 35 号 v1.2.0→v1.37.0 且 Ghost Position 为"已设计 4 层架构、detect_ghost_positions 代码待施工（其 §6.11）"非"已建端到端" / Alpha Decay 表 30 号/10+34 号/25 号版本号去除防再漂移 / BM-SIM-01~06→01~07×4 处 + BM-SIM-05 数字孪生已降级（#ARCH-OE-010）+ BM-SIM-01 缺失态注记；④**新增 §2.4 已施工设施盘点**（通用规则 #11——16 行设施表：paper_live_transition / decision_gate / deflated_sharpe / slippage_analyzer / execution_quality_scorer / look_ahead_bias_detector / settlement_reconciliation / position_reconciler / backtest 费率配置 / ex_core 执行硬约束 / simulation 域 15 模块 / battle_map_12 四模式开关 + 3 项待施工标注）；⑤§7 新增 2 项开放问题（52/55 号骨架联动影响 + 00_index 五处漂移登记——不越界改）；⑥§8.2 补 battle_map_12 条目 + §8.3 代码真源补 decision_gate/settlement_reconciliation/position_reconciler 3 项 | 通用规则 #11 已施工设施盘点 + 交叉引用实证审查：git log 证明 52/55 号从未有 active 版本（v1.7.3/v1.13.0/v1.21.0 均为 00_index 错标后的连环幻觉）；代码核查发现 LiveBacktestParityMonitor / CorporateActionProcessor 不存在；50 号 topic 实为 backtest_observability_workplan；battle_map_04 实为 BM-SIM-01~07 且 BM-SIM-05 已降级。⚠️施工备注：本次修订期间检测到并发会话（arch-review-g10-g06 等 6 个活跃 session）git 操作导致工作区多次回滚，改为全量写入+Gateway 提交固化 |
 | 2026-08-12 | 1.7.1 | 十四次复审（正文合规精简）：§3.2 Step④ 复用代码列 / §8.1 55 号条目 / §8.4 purgedcv 条目去除"v1.6.6 前误引…已修正"过渡文本——正文直接修正为当前唯一真实值，变更理由与幻觉引用实证已在 v1.7.0 修订记录登记 | 项目修改原则合规（正文不留"之前为什么是错的"解释段，变更追溯走修订记录）；61 号 v2.12.0 同步补 §3.6 并发文件级冲突纪律 + §3.2 策略规格产出物承接 |
+| 2026-08-12 | 1.7.2 | 作战地图全覆盖补丁——闭合 BM-SIM-03 / BM-SIM-04 / BM-SIM-06 / BM-SIM-07：新增 §3.9 仿真域 why 层回填（仿真域 4 个 production 环节契约级设计）。BM-SIM-03 场景生成走历史回放+参数扰动双引擎、蒙特卡洛全量显式暂缓（对齐 36 号 §2.3 算力约束 + §4.26 Phase 2 口径）；BM-SIM-04 历史情景库 2008/2015/2020 三段+反向压力测试+单因子敏感性，并与 54 号 BM-RC-08-C 分工消歧（53=仿真验证域引擎 / 54=运营域报告通道）；BM-SIM-06 以回测偏离度统计检验为核心+SimulationResult 事件契约；BM-SIM-07 集成契约复用 36 号 VaR 内核 / 35 号回撤 Protocol / 本备忘 §3.8 熔断状态机三内核，不新造风险模型 | 作战地图 04 四环节代码已建（§2.4 盘点 simulation 域 15 模块 production）但设计文档缺失——按"定位 → 裁定（理由+重评条件）→ 契约/参数/接口"格式补 why 层 |
+| 2026-08-12 | 1.7.3 | 作战地图环节映射补强——锚定 BM-BT-05-D / BM-BT-05-H-B（§3.5 监控表末映射块）：05-D 策略衰减监控由 §3.5 漂移检测施工公式（PSI/CUSUM/Page-Hinkley）+退役决策矩阵承载（production）；05-H-B 数据滞后偏差归因纳入 §3.5 偏差分类表+§6 四因子归因暂缓裁定（总值门禁已建，归因分解待实盘数据） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
