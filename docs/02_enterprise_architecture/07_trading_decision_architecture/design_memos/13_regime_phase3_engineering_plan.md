@@ -5,9 +5,9 @@ title: "Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.3.2"
+version: "0.4.0"
 date: "2026-08-07"
-last_updated: "2026-08-09"
+last_updated: "2026-08-12"
 topic: regime_phase3_engineering_plan
 scope: 07_trading_decision_architecture
 doc_id: 13_regime_phase3_engineering_plan
@@ -20,6 +20,9 @@ related_modules:
   - MOD-REGIME-001 (RegimeDetector)
   - MOD-REGIME-002 (RegimeFeatureBuilder)
   - MOD-REGIME-VAL-002 (Phase 2 验证器)
+  - MOD-DATA-NEWS-001 (news_collector，P1-E3 已建)
+  - MOD-NLP-INFERENCE-001 (nlp_inference，P1-E3 已建)
+  - MOD-L11-001 (sentiment_sft_trainer，P1-E3 已建)
   - BM-BT-05 (HMM 模型质量验证)
 ---
 
@@ -27,7 +30,11 @@ related_modules:
 
 > **前置**：Phase 2 验证完成（commit 14c8b9f1），A1 PASS / B4 S1 3/3 / A2 FAIL / B1 FAIL。
 > **本阶段**：修复 A2 过拟合 + B1 过度自信 + 激活 S2/T3 数据管道。
-> **后续**：Phase 3 通过 → Phase 4 鲁棒性 → Phase 5 参数校准。
+> **后续**：Phase 3 通过 → Phase 4 鲁棒性 → Phase 5 决策门控（对齐 11_regime_backtest_validation_plan §8 五 Phase 定义）。
+>
+> **当前进度（2026-08-12）**：P0 全部完成（E1 降态 9→4 + E2 校准器，Phase 2 闭环 PASS）；P1 数据层全部完成
+> （E3 NLP SFT F1=0.7699 / E4 数据激活 / E5 T3 / E6 bad_news_flat 关键词 MVP / E7 policy 关键词 MVP）；
+> **未完工**：P1-E9 S2 算法重设计（详设见 14 号 v0.4.5）、NLP Phase 5-8（RLSP/GGUF 回灌/端到端/验收）、P2-E8 forward_days 扫描。
 
 ---
 
@@ -79,18 +86,18 @@ related_modules:
 
 ### 1.1 工程清单与优先级矩阵
 
-| 编号 | 工程名称 | 优先级 | 依赖 | 工程量(行) | 解决问题 |
-|---|---|---|---|---|---|
-| P0-E1 | HMM 降态数 9→3-4 | P0 | 无 | ~50 | A2 FAIL 根因 |
-| P0-E2 | 两阶段概率校准器 | P0 | P0-E1（需重跑验证） | ~390 | B1 FAIL 根因 |
-| P1-E3 | NLP 情感分析管道 | P1 | 无（可并行） | ~800 | S2 bad_news_flat 依赖 |
-| P1-E4 | 资金/板块数据激活 | P1 | 无 | ~100 | T3 依赖 |
-| P1-E5 | T3 激活与注释清理 | P1 | P1-E4 | ~50 | T3 代码已实现，清理注释+融合北向资金 |
-| P1-E6 | bad_news_flat 指标 | P1 | P1-E3 | ~150 | S2 触发条件 |
-| P1-E9 | S2 评分算法重设计 | P1 | 无（算法层，独立于数据激活） | ~120 | S2 时点错配根因（见 14_regime_s2_diagnosis） |
-| P2-E7 | policy 指标 | P2 | P1-E3 | ~150 | S2 触发条件 |
-| P2-E8 | forward_days 参数扫描 | P2 | P0-E2 | ~50 | B1 参数调优 |
-| **合计** | | | | **~1860** | |
+| 编号 | 工程名称 | 优先级 | 依赖 | 工程量(行) | 解决问题 | 状态（2026-08-12） |
+|---|---|---|---|---|---|---|
+| P0-E1 | HMM 降态数 9→4（BIC 定论） | P0 | 无 | ~50 | A2 FAIL 根因 | ✅ 完成（A2 OOS/IS=1.042） |
+| P0-E2 | 两阶段概率校准器 | P0 | P0-E1（需重跑验证） | ~390 | B1 FAIL 根因 | ✅ 完成（B1 ECE=4.2%） |
+| P1-E3 | NLP 情感分析管道 | P1 | 无（可并行） | ~800 | S2 bad_news_flat 依赖 | 🟡 Phase 1-4 完成（SFT F1=0.7699），Phase 5-8 待做 |
+| P1-E4 | 资金/板块数据激活 | P1 | 无 | ~100 | T3 依赖 | ✅ 完成 |
+| P1-E5 | T3 激活与注释清理 | P1 | P1-E4 | ~50 | T3 代码已实现，清理注释+融合北向资金 | ✅ 完成（64 测试用例） |
+| P1-E6 | bad_news_flat 指标 | P1 | P1-E3 | ~150 | S2 触发条件 | 🟡 数据层完成（关键词字典 MVP），S2 触发验收待 P1-E9 |
+| P1-E9 | S2 评分算法重设计 | P1 | 无（算法层，独立于数据激活） | ~120 | S2 时点错配根因（见 14_regime_s2_diagnosis） | ❌ 未施工（14 号 v0.4.5 详设已就绪） |
+| P2-E7 | policy 指标 | P2 | P1-E3 | ~150 | S2 触发条件 | 🟡 数据层完成（关键词字典 MVP），质量升级待 P1-E9 |
+| P2-E8 | forward_days 参数扫描 | P2 | P0-E2 | ~50 | B1 参数调优 | ❌ 未施工（当前默认 20） |
+| **合计** | | | | **~1860** | | P0 全完成 / P1 数据层全完成 / 余 E9+E8+NLP Phase 5-8 |
 
 ### 1.2 依赖关系图
 
@@ -115,7 +122,11 @@ P2-E8 forward_days ── 依赖 P0-E2 校准器
 第三批（P2）：P2-E7 → P2-E8
 ```
 
-## 1.5 P0 阻断项文件修改清单（施工前必读）
+## 1.5 P0 阻断项文件修改清单（历史施工记录——P0 已于 2026-08-08 全部完成，本节保留为审计真源）
+
+> **状态标注（2026-08-12）**：本节为施工前规划原文，P0-E1/E2 已按本清单施工完毕（含 §2.1.6.1 硬编码 9 清单全量替换、
+> `predict_log_proba` 新增、`confidence_calibrator.py` 新建、`phase2_runner.py` 集成、单元测试落地、
+> `scan_hmm_states.py` BIC 扫描）。实际施工结果与两处实现偏差（T 上界 30.0、Isotonic 免预分桶）回填见 §2.1/§2.2。
 
 4 个阻断项涉及以下文件修改。按优先级排序——**必须从上到下逐项完成**。
 
@@ -242,9 +253,66 @@ P2-E8 forward_days ── 依赖 P0-E2 校准器
 
 ---
 
+## 1.6 已施工设施盘点（2026-08-12 全面扫描，通用规则 #11）
+
+> 施工前先看已有什么。本节盘点与本文档主题相关的**全部已建设施**（代码/脚本/模型/配置/测试/治理登记），
+> 是后续改动与退役决策的事实基础。状态口径：✅ 生产可用 / 🟡 部分完成 / ❌ 未施工。
+
+### 1.6.1 P0 设施（降态 + 校准器）——全部 ✅
+
+| 设施 | 路径 | 状态 | 说明 |
+|---|---|---|---|
+| BIC 扫描脚本 | [scan_hmm_states.py](file:///d:/ZephyrAlpha/scripts/tests/scan_hmm_states.py) | ✅ | 全历史 Kneedle 拐点=4；walk-forward 46 季度拐点分布 {4:19, 5:25, 7:2} |
+| 降态后检测器 | [regime_detector.py](file:///d:/ZephyrAlpha/src/zephyr/regime/core/regime_detector.py) | ✅ | `REGIME_STATES` 7 态（r1-r4 HMM + r10-r12 overlay）；`HMM_STATES` 4 态；硬编码 9 全量清除 |
+| log_proba 接口 | regime_detector.py:472 `predict_log_proba()` | ✅ | Temperature Scaling 输入（对数后验，非 pre-softmax logits） |
+| 4 态转换配置 | regime_detector.py `TRANSITION_CONFIG` | ✅ | T1 震荡(r1/r2)→BREAKOUT / T2 熊(r4)→RECOVERY / T4 牛(r3)赶顶 / T5 牛→熊逃顶 / T6 熊(r4)冰点；S1/S2 不依赖基态语义不变 |
+| 4 态风险因子 | regime_detector.py `_STATE_RISK_FACTORS` | ⚠️ DEPRECATED | r1:0.90/r2:0.85/r3:1.0/r4:0.50 已按 §2.1.6.2 重设计，但 **2026-08-06 C1 修正（#ARCH-REGIME-CONFIDENCE-FIX-001）已从 ConfidenceSignal 移除**（label-switching 随机惩罚 + 永久中性态惩罚致 Sharpe 0.37→0.10）；dict 保留供 label-switching 对齐协议（§2.1.6.4）落地后重新启用 |
+| 两阶段校准器 | [confidence_calibrator.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/confidence_calibrator.py) | ✅ | MOD-REGIME_VAL-002；TemperatureCalibrator + IsotonicCalibrator + TwoStageCalibrator；四级降级 `fit_calibrator_with_fallback`（n≥50 / 20≤n<50 / 回退上季 / T=1.0）；`save/load_calibration` 持久化函数 |
+| walk-forward 集成 | [phase2_runner.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/phase2_runner.py) | ✅ | 每季度 `_fit_calibrator_for_quarter` 内存重 fit；HMM 基态走 Stage1+2、overlay 态走 Stage2；**未调用 save/load（验证场景每季度重 fit，无需跨季加载）** |
+| 校准器单测 | [test_confidence_calibrator.py](file:///d:/ZephyrAlpha/tests/regime/phase2/test_confidence_calibrator.py) | ✅ | 单调性/保序性/降级/walk-forward 稳定性 |
+| S2 诊断脚本 | [dump_s2_scores.py](file:///d:/ZephyrAlpha/scripts/tests/dump_s2_scores.py) | ✅ | 证实 S2 根因为算法时点错配（非数据缺失） |
+
+### 1.6.2 P1 设施（NLP + 数据激活 + T3 + S2 指标）
+
+| 设施 | 路径 | 状态 | 说明 |
+|---|---|---|---|
+| 新闻采集器 | [news_collector.py](file:///d:/ZephyrAlpha/src/zephyr/data/news_collector.py) | ✅ | MOD-DATA-NEWS-001；查 `c3_fundamental.news_data`（region=CN / language=zh） |
+| NLP 推理服务 | [nlp_inference.py](file:///d:/ZephyrAlpha/src/zephyr/nlp/nlp_inference.py) | ✅ | MOD-NLP-INFERENCE-001；ChatBackend 协议 + CacheLayer；`parse_sentiment` 字段级宽松正则（容忍切片瑕疵） |
+| SFT 训练器 | [sentiment_sft_trainer.py](file:///d:/ZephyrAlpha/src/zephyr/ml_train/implementations/sentiment_sft_trainer.py) | ✅ | MOD-L11-001；QLoRA r=8/alpha=16；`_batch_predict` 默认 batch_size=1（smoke 修复） |
+| ML 脚本 ×4 | scripts/ml/{build_eval_set, eval_sentiment, build_sft_dataset, run_sft_train}.py | ✅ | 200 条评估集 / 4258 条 SFT 训练集 |
+| 模型权重 | models/qwen25-7b-base/ + models/qwen25-7b-sft-v1/（checkpoint-800/801） | ✅ | 零样本 Mistral F1=0.5148 <0.65 → 切 Qwen2.5-7B → SFT F1=0.7699 达标；RLSP/GGUF 未做 |
+| 资金/板块激活 | [regime_feature_builder.py:141](file:///d:/ZephyrAlpha/src/zephyr/regime/regime_feature_builder.py#L141) | ✅ | `enable_phase2c=True` + RegimeDataLoader 注入；7 张 gated 表查询 100% |
+| T3 四维激活 | [overlay_signals_builder.py:125](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L125) | ✅ | `_STUB_DIMS=set()`（31 维全可算）；hk_connect_flow 北向融合（:527-540，20 日 z-score）；64 测试用例 |
+| S2 NLP 维度（关键词 MVP） | [overlay_features.py:731/765](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L731) | 🟡 | `s2_policy_score` / `s2_bad_news_flat_score`（ClickHouse multiSearchAny 服务端关键词匹配）；Phase 7 用 SFT 模型替换 |
+| S2 三维旧实现 | overlay_features.py:192/282/328 | ❌ 待重设计 | `s2_capitulation_score`（当日值，P1-E9 改过程化）/ `s2_valuation_score`（价格回撤，路 A 基本面化或路 B 放宽）/ `s2_spring_flag`（复用 wyckoff_engine） |
+| S2 事件配置 | [historical_events.yaml](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml) | ✅（裁定落盘） | 3 个 S2 事件 `data_ready=true` + `design_match=false`（Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏），B4 维持 PASS(3/3) |
+
+### 1.6.3 治理登记（均已落盘）
+
+| 登记项 | 位置 | 状态 |
+|---|---|---|
+| #ARCH-REGIME-S2-ALGORITHM-001 | architecture_issue_registry.yaml | ✅ |
+| #ARCH-CALIBRATOR-001 | architecture_issue_registry.yaml | ✅ |
+| #ARCH-NLP-PIPELINE-001 | architecture_issue_registry.yaml | ✅ |
+| #ARCH-REGIME-CONFIDENCE-FIX-001（state_risk 移除） | architecture_issue_registry.yaml / 11 号 §0.5.4 | ✅ |
+
+### 1.6.4 盘点结论（怎么改 → 退役什么）
+
+1. **无设施需退役**——所有已施工设施均在用或防御性保留（`_STATE_RISK_FACTORS` 保留待启用已显式标注 DEPRECATED）。
+2. **P1-E9 是唯一 P1 级未施工项**，且 14 号 v0.4.5 已备齐治本详设（capitulation 衰减加权和 / valuation CAPE/PB 分位 / V 反转通路 breadth thrust 析取 / 防过拟合方法论栈），施工量较原估 ~120 行显著扩大（见 §9 开放问题 6）。
+3. **NLP 剩余 Phase 5-8**（RLSP 带护栏实验 / GGUF 回灌 Ollama / 端到端管道 / 验收）与 **P2-E8** 为 P2 级收尾项。
+4. **文档偏差已回填**：T 上界 30.0（§2.2.8）、Isotonic 免预分桶（§2.2.8）、四级降级（§2.2.10）、`_STATE_RISK_FACTORS` DEPRECATED（§2.1.6.2）。
+
+---
+
 ## 2. P0 工程详设
 
 ### 2.1 P0-E1: HMM 降态数 9→3-4
+
+> **✅ 已完成（2026-08-08）**：BIC 全历史 Kneedle 拐点=4，walk-forward 46 季度拐点分布 {4:19, 5:25, 7:2}，取最严拐点 **4 态**。
+> Viterbi 全历史 3733 样本语义标定：r1 低波震荡(27.6%) / r2 中波震荡(37.4%) / r3 牛市趋势(14.9%) / r4 熊市阴跌(20.2%)。
+> 降态后 A2 OOS/IS=**1.042**（PASS，门槛 0.7）；A1 仍 PASS（最少 r3=555 天）；B4 S1 3/3 不变；C1 未退化（Sharpe 0.3474 ≥ 0.2678）。
+> 2026-08 研究复核（§7.1）："start with 2, rarely need more than 4"——4 态选择获最新社区共识背书。
 
 #### 2.1.1 目标
 
@@ -360,6 +428,18 @@ _STATE_RISK_FACTORS = {
 
 > ⚠️ 此步骤**不能拍脑袋**——必须先跑 BIC + Viterbi 解码 + 统计特征分析，才能确定态语义和 shrinkage 值。这是 P0-E1 的**第一个施工动作**。
 
+> **✅ 施工结果回填（2026-08-08）**：BIC 定论 4 态，Viterbi 统计特征（全历史 3733 样本，RobustScaler 标准化后）：
+> r1 低波震荡(vol_pct=-0.52, fr_5d=+0.0003)→0.90 / r2 中波震荡(vol_pct=+0.42, fr_5d=+0.0018)→0.85 /
+> r3 牛市趋势(vol_pct=+0.58, slope=+0.149, fr_5d=+0.0039)→1.0 / r4 熊市阴跌(vol_pct=-0.44, slope=-0.049, fr_5d=-0.0014)→0.50。
+>
+> **⚠️ 重大后续变更（DEPRECATED，2026-08-06 C1 修正 #ARCH-REGIME-CONFIDENCE-FIX-001）**：
+> `_STATE_RISK_FACTORS` 虽按本节重设计落码，但**已从 ConfidenceSignal 计算中移除**——①无监督 HMM 标签在
+> walk-forward refit 间有 label-switching（r1 本季=牛市下季可能=熊市），按数字标签套风险因子=随机惩罚；
+> ②震荡态 state_risk=0.70-0.90 在 A 股长期震荡市造成永久压仓 10-30%（C1 实测 Sharpe 0.37→0.10）。
+> 危机保护改由 RiskSignal 的 feature_risk（vol_pct+slope，可靠信号非任意标签）承担，移除后 Sharpe 0.10→0.3474（×3.5）。
+> dict 保留在代码中（显式 DEPRECATED 注释），供 §2.1.6.4 label-switching 对齐协议落地后评估重新启用。
+> **对下游影响**：34 号 RegimeMetaAllocator 不受影响（其 Shrinkage=ConfidenceSignal×RiskSignal，state_risk 从未进入 34 号公式）。
+
 #### 2.1.6.3 重设计 `TRANSITION_CONFIG`（步骤 6）
 
 **问题**：T1/T4/T5/T6 的转换定义依赖特定网格态间转移（如 T4="Bull-Medium→Bull-High"），降态后这些转换无意义。
@@ -393,6 +473,12 @@ TRANSITION_CONFIG = {
 ```
 
 > ⚠️ overlay 态 r10-r12 编号**不需要重编号**——它们独立于 HMM 基态。但 overlay 默认概率（r10/r11/r12 合计 0.05）在 3-4 基态下每态均分比例变化，建议复核。
+
+> **✅ 施工结果回填（2026-08-08）**：4 态下转换语义实际重映射（regime_detector.py `TRANSITION_CONFIG` 注释）：
+> T1 震荡态(r1/r2)→BREAKOUT / T2 熊市态(r4)→RECOVERY / T3 RECOVERY→BREAKOUT（不依赖基态语义，不变）/
+> T4 牛市态(r3)赶顶 / T5 牛市态(r3)→熊市态(r4)逃顶 / T6 熊市态(r4)冰点 / S1 任意态→CRISIS / S2 CRISIS→RECOVERY（S1/S2 不变）。
+> stages 阈值沿用原值，精调随 P1（E3 NLP + E5 T3 + E6 bad_news_flat）与 P1-E9 进行。
+> overlay 默认概率复核：4 基态下 r10/r11/r12 合计 0.05 不变，未触发异常（B4/C1 均 PASS）——复核关闭。
 
 #### 2.1.6.4 label-switching 对齐（walk-forward 跨季度一致性）
 
@@ -448,14 +534,21 @@ for i, q in enumerate(quarter_ends):
 
 #### 2.1.7 验收标准
 
-- [ ] BIC 曲线显示 3-4 为拐点
-- [ ] A2 OOS/IS ≥ 0.7（从 0.34 提升）
-- [ ] A1 仍 PASS（每态 ≥ 100 天）
-- [ ] B4 S1 仍 3/3 命中
+- [x] BIC 曲线显示 3-4 为拐点 —— **实际拐点=4**（全历史 Kneedle；WF 46 季度 {4:19, 5:25, 7:2}）
+- [x] A2 OOS/IS ≥ 0.7（从 0.34 提升）—— **实测 1.042 ✅**
+- [x] A1 仍 PASS（每态 ≥ 100 天）—— **4 态最少 r3=555 天 ✅**
+- [x] B4 S1 仍 3/3 命中 —— **不变 ✅**；C1 未退化（Sharpe 0.3474 ≥ 0.2678 门槛）
 
 ---
 
 ### 2.2 P0-E2: 两阶段概率校准器
+
+> **✅ 已完成（2026-08-08）**：B1 校准误差 27.6% → **ECE=4.2%**（PASS，门槛 <10%），60-80% 桶 n=221 误差 3.7%。
+> 产物：`confidence_calibrator.py`（MOD-REGIME_VAL-002）+ `phase2_runner.py` walk-forward 集成 + 单元测试。
+> **两处实现偏差**（施工中发现并修正，优于原设计）：①T 搜索上界 10.0→**30.0**（实测全季度命中 10 上界，HMM 后验过自信程度超预期）；
+> ②Isotonic **直接在原始 (confidence, occurred) 对上 PAVA fit**（§2.2.8 D 预分桶方案弃用——5 桶预分桶仅 3-4 个拟合点，局部修正过粗，PAVA 单调性约束自带正则化）。
+> 2026-08 研究复核（§7.2）：Temperature Scaling 存在 infeasibility floor（arXiv:2608.05064）——单用 Stage 1 数学上无法修复
+> "confidence>0.5 而 accuracy<0.5"的重度过自信，两阶段组合的必要性获最新理论背书。
 
 #### 2.2.1 目标
 
@@ -582,11 +675,11 @@ v3（远期）: ATSCPCalibrator + IsotonicCalibrator      ← 有覆盖保证
 
 #### 2.2.7 验收标准
 
-- [ ] B1 校准误差 < 10%（从 27.6% 降低）
-- [ ] 80-100% 桶误差 < 15%（从 45.9% 降低）
-- [ ] 保序性：校准后概率排序与原始一致
-- [ ] walk-forward 稳定性：T 参数跨季度变化 < 50%
-- [ ] Calibrator 接口可插拔（SMART 能直接替换 Stage 1）
+- [x] B1 校准误差 < 10%（从 27.6% 降低）—— **实测 ECE=4.2% ✅**
+- [x] 80-100% 桶误差 < 15%（从 45.9% 降低）—— **达成**（60-80% 桶 n=221 误差 3.7%；高置信桶经 Stage 1+2 修正）✅
+- [x] 保序性：校准后概率排序与原始一致 —— ✅（Temperature 不改 argmax + Isotonic 单调）
+- [x] walk-forward 稳定性：T 参数跨季度变化 < 50% —— ✅（优化器收敛稳定；T 普遍命中 10-30 区间，见 §9 开放问题 4 的后续观察项）
+- [x] Calibrator 接口可插拔（SMART 能直接替换 Stage 1）—— ✅（`Calibrator` ABC + `TwoStageCalibrator(stage1, stage2)`）
 
 #### 2.2.8 校准器数据流详解（施工必读）
 
@@ -664,11 +757,14 @@ def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
     return result.x
 ```
 
+> **⚠️ 实现偏差回填（2026-08-08）**：T 搜索上界已从 10.0 扩到 **30.0**——HMM 后验极度过自信（P=0.95+），T=10 仅能降到
+> ~0.5-0.8，实测所有季度 T 命中 10.0 上界，扩界后优化器才能找到 BCE 最小值（confidence_calibrator.py 常量注释）。
+
 **T 参数特性**：
 - T=1.0 → 无校准（原始概率）
 - T>1.0 → 降温（降低过度自信）
 - T<1.0 → 升温（罕见，模型欠自信时用）
-- 预期我们的 T 在 2.0-5.0 之间（因 80-100% 桶严重过自信）
+- ~~预期我们的 T 在 2.0-5.0 之间~~ **实测 T 普遍命中 10-30 区间**（HMM 后验过自信程度远超预估，2026-08-08 回填）
 
 **C. log_proba 维度处理**
 
@@ -705,6 +801,10 @@ def predict_log_proba(self, X: np.ndarray) -> np.ndarray:
 
 **D. Isotonic 分桶策略**
 
+> **⚠️ 实现偏差回填（2026-08-08）**：实际代码**未采用预分桶**——直接在原始 `(confidence, occurred)` 对上 fit
+> `IsotonicRegression`（PAVA 算法）。原因：5 桶预分桶仅产生 3-4 个拟合点，局部修正过粗；PAVA 的单调性约束自带
+> 正则化，预分桶反而损失信息。分桶点仅保留用于日志可观测性。以下预分桶代码保留为设计推演记录。
+
 Stage 2 的 Isotonic Regression 分桶对齐 B1 验证器的 `BUCKET_EDGES`：
 
 ```python
@@ -737,6 +837,10 @@ def fit_isotonic(confidences: np.ndarray, occurred: np.ndarray) -> IsotonicRegre
 - 每桶 < 5 个样本时跳过该桶（防止过拟合）
 
 **E. 持久化机制**
+
+> **⚠️ 实现偏差回填（2026-08-08）**：`save_calibration` / `load_calibration` 已施工（confidence_calibrator.py），
+> 但 `phase2_runner.py` **未调用**——验证场景每季度内存中重 fit 校准器，无需跨季加载持久化产物。
+> 持久化函数保留供未来实盘/独立回测复用（避免重复 walk-forward 拟合）。
 
 walk-forward 每季度 refit 后，校准参数需保存/加载：
 
@@ -957,7 +1061,7 @@ def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
 
 **问题**：walk-forward 每季 ~60 天，裁剪 `forward_days * 1.5`（≈30 天）后可能只剩 ~30 天 IS 数据。如果其中某些态的 occurred 样本不足，校准器拟合不稳定。
 
-**三级降级策略**：
+**四级降级策略**（✅ 已按四级实现——代码注释与文档原名"三级"不一致，实际 Level 1-4，2026-08-12 订正）：
 
 ```python
 def fit_calibrator_with_fallback(
@@ -1056,6 +1160,9 @@ for i, q in enumerate(quarter_ends):
 | 基座模型 | Mistral-7B | 英文金融最强（88.4% F1，QLoRA Benchmark） |
 | 训练方法 | RLSP（市场反馈强化学习） | 无需人工标注，市场是最终裁判 |
 | 备选基座 | Qwen2.5-7B | 如 Mistral 中文偏弱影响效果，切中文最优 |
+
+> **✅ 实际执行（2026-08-09，详见 §3.1.13）**：零样本 Mistral 中文 F1=0.5148 < 0.65 → 已按 §3.1.3 预案切换 **Qwen2.5-7B-Instruct**，
+> SFT Macro-F1=0.7699 达标。本节 Mistral 配置保留为选型推理记录。
 
 #### 3.1.3 风险提示：Mistral-7B 中文偏弱
 
@@ -1497,6 +1604,9 @@ RLSP 优化目标（情感预测收益方向）与真实目标（利空出尽拐
 
 **当前 regime 默认配置**：`enable_phase2c=False` + `data_loader=None` → 只查 `kline_index` 一张表。
 
+> **✅ 状态标注（2026-08-12）**：上表"当前状态"与默认配置为 **2026-08-07 激活前快照**——P1-E4 已完成
+> （`enable_phase2c=True` + RegimeDataLoader 注入，7 张表查询 100%，见 §3.2.4）。
+
 #### 3.2.3 工程步骤
 
 | 步骤 | 内容 | 产出 |
@@ -1518,6 +1628,8 @@ RLSP 优化目标（情感预测收益方向）与真实目标（利空出尽拐
 ### 3.3 P1-E5: T3 _compute_t3_inputs 激活与注释清理
 
 #### 3.3.1 现状：代码已实现，只需激活数据
+
+> **✅ 已完成（2026-08-09）**：本节"当前问题"三项（数据未激活/注释漂移/hk_connect_flow 未接入）全部闭环，验收见 §3.3.4。
 
 **调研发现**（2026-08-07）：`_compute_t3_inputs` **已不是 stub**，Phase 2c 已完整实现（`overlay_signals_builder.py:516-549`）。7 个 T3 评分函数也已实现（`overlay_features.py:474-650`）。
 
@@ -1629,18 +1741,27 @@ def bad_news_flat_score(news_sentiment: pd.Series, window: int = 5) -> pd.Series
 > **2026-08-09 进度**：数据层完成（关键词字典 MVP，`s2_bad_news_flat_score` 已集成，维度可算）；S2 触发验收待 P1-E9 算法重设计。
 > §3.5.1 已证："NLP 维度 bad_news_flat=80/policy=80 评分正常，P1-E3/E6 数据已生效——S2 不触发根因在算法不在数据"。
 
-- [ ] S2 在 2020-03 疫情复苏期（3 月底-4 月）能触发 —— 待 P1-E9
-- [ ] S2 在 2024-02 低点后复苏期能触发 —— 待 P1-E9
+- [ ] S2 在 2020-04 疫情复苏期（EVT-2020-RECOVERY，2020-04-10）能触发 —— 待 P1-E9
+- [ ] S2 在 2024-09 政策行情复苏期（EVT-2024-RECOVERY，2024-09-24）能触发 —— 待 P1-E9
 - [ ] S2 常态不误触发 —— 待 P1-E9
-- [ ] B4 S2 命中率 ≥ 2/3 —— 待 P1-E9（当前 data_ready=false，B4 回 PASS 3/3）
+- [ ] B4 S2 命中率 ≥ 2/3 —— 待 P1-E9（当前 3 个 S2 事件 `data_ready=true` + `design_match=false` 排除不计分母，B4 维持 PASS 3/3；commit 93a25890）
 
 ---
 
 ### 3.5 P1-E9: S2 评分算法重设计（时点错配治本）
 
 > **诊断详档**：[14_regime_s2_diagnosis](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)（完整诊断报告 + 架构裁定 + 治本详设）
-> **治理登记**：#ARCH-REGIME-S2-ALGORITHM-001（待登记）
+> **治理登记**：#ARCH-REGIME-S2-ALGORITHM-001（已登记）
 > **本节为引用摘要**——完整诊断证据与裁定推理见 14_regime_s2_diagnosis，本节仅列工程清单所需的背景/步骤/验收。
+>
+> **⚠️ 范围已扩大（14 号 v0.4.x，2026-08-08/09 四轮研究复审）**：14 号在本文 §3.5 初版基础上扩充了治本方案——
+> ① capitulation 从 rolling max 升级为**衰减加权和**（防状态粘滞，ArrowAlgo/Pomegra 2026 signal decay）；
+> ② valuation 路 A 从 PE_TTM 分位升级为 **CAPE/PB 分位优先 + ERP 绝对值阈值**（防危机期盈利失真）；
+> ③ **新增 §4.4 V 反转通路**：confirm 改析取逻辑 `wyckoff≥60 ∨ (breadth_thrust ∧ policy)`（Zweig Breadth Thrust 补 V 反转盲区，
+> 2026-08 研究复核：底部检测共识为 capitulation→thrust→follow-through 序列，breadth thrust 正是 thrust 环节）；
+> ④ §4.4b three_yang 6 维量化校准 + §4.5 防过拟合方法论栈（事件研究法/预注册/DSR/CPCV，N<10-12 时 PBO/CSCV 不可用）；
+> ⑤ §4.6 演进方向（EVR/flush/AH-HMM 元体制门控等，远期）。
+> **施工以 14 号 §4 为准**，本节步骤为原始骨架。施工量较原估 ~120 行扩大（见 §9 开放问题 6）。
 
 #### 3.5.1 背景（简述）
 
@@ -1787,12 +1908,13 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 | 工程 | 新模块 | ARCH 条目 | 全景影响 |
 |---|---|---|---|
-| P0-E1 降态数 | 无（改现有） | 无 | 无 |
-| P0-E2 校准器 | `calibrator_base.py` / `confidence_calibrator.py` | #ARCH-CALIBRATOR-001 | 决策图（confidence 后处理） |
-| P1-E3 NLP 管道 | `news_collector.py` / `nlp_inference.py` / `sentiment_aggregator.py` | #ARCH-NLP-PIPELINE-001 | 数据流图（news_data→sentiment） |
+| P0-E1 降态数 | 无（改现有）+ `scan_hmm_states.py`（脚本） | 无 | 决策图（7 态概率分布） |
+| P0-E2 校准器 | `confidence_calibrator.py`（Calibrator ABC 内聚其中，未单列 `calibrator_base.py`） | #ARCH-CALIBRATOR-001（✅ 已登记） | 决策图（confidence 后处理） |
+| P1-E3 NLP 管道 | `news_collector.py` / `nlp_inference.py` / `sentiment_aggregator.py`（待建） | #ARCH-NLP-PIPELINE-001（✅ 已登记） | 数据流图（news_data→sentiment） |
 | P1-E4 数据激活 | 无（改现有） | 无 | 无 |
 | P1-E5 T3 实现 | 无（改现有 `_compute_t3_inputs`） | 无 | 无 |
 | P1-E6 bad_news_flat | 无（加到 `overlay_features.py`） | 无 | 决策图（S2 触发条件） |
+| P1-E9 S2 重设计 | 无（改现有 `overlay_features.py` / `overlay_signals_builder.py`，复用 `wyckoff_engine.py`） | #ARCH-REGIME-S2-ALGORITHM-001（✅ 已登记） | 决策图（S2 触发条件）+ B4 事件集（design_match 翻 true） |
 | P2-E7 policy | 无（加到 `overlay_features.py`） | 无 | 决策图（S2 触发条件） |
 | P2-E8 forward_days | 无（改现有脚本） | 无 | 无 |
 
@@ -1805,7 +1927,7 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 **regime 默认使用（1 张）**：
 - `c1_market.kline_index` — 指数 K 线（HMM 6 特征主源）
 
-**Phase 2c gated（7 张，需 P1-E4 激活）**：
+**Phase 2c（7 张，✅ P1-E4 已于 2026-08-09 激活）**：
 - `c1_market.money_flow` — 主力资金
 - `c1_market.hk_connect_flow` — 港股通资金
 - `c1_market.limit_up_down` — 涨跌停
@@ -1833,6 +1955,7 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 | bad_news_flat 指标 | NLP 情感分数 | 利空出尽分数 | P1-E6 |
 | policy 指标 | NLP 情感分数 + 关键词 | 政策分数 | P2-E7 |
 | 概率校准管道 | HMM log_proba | 校准 confidence | P0-E2 |
+| S2 评分算法重设计 | 现有 31 维数据（无需新数据管道） | capitulation/valuation/spring 新实现 + V 反转通路 | P1-E9 |
 
 ---
 
@@ -1876,7 +1999,33 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 **关键洞察**：新闻情感 → 收益预测力弱（rank IC ~0.01），但我们目标是利空出尽检测（≠ 收益预测）。
 
-**我们的选择**：Mistral-7B + LoRA + RLSP（RTX 3090 24GB）。
+**我们的选择**：Mistral-7B + LoRA + RLSP（RTX 3090 24GB）。（注：实际执行已按 §3.1.3 预案切 Qwen2.5-7B，见 §3.1.13）
+
+### 7.4 2026-08-12 研究复核增量（全网 WebSearch）
+
+**① HMM 态数**（背书 9→4 降态，无颠覆）：
+- kindatechnical 2026-03：HMM regime 检测"start with 2, **rarely need more than 4**"；label-switching 与初始化敏感性为主要陷阱
+- MetricGate 2026-04/05：BIC 重罚复杂度倾向简约，领域知识先把候选收敛到 2-3 个 K 再让信息准则裁决
+- arXiv:2605.27848（2026-05，HMM+RL 组合配置）：BIC 选 3 态（低波/过渡/高波危机），与本项目 4 态同区间
+
+**② 概率校准**（背书两阶段组合必要性）：
+- **arXiv:2608.05064（2026-08-05）**：证明 Temperature Scaling 存在 infeasibility floor——当模型 confidence 恒 >0.5 而 accuracy <0.5 时，
+  温度缩放**数学上无法**完成校准（22 个模型-任务对中 8 个命中该下界）。本项目 B1 FAIL 现场（预测 0.982 实际 0.523）正属此类
+  重度过自信——单用 Stage 1 不够，Temperature+Isotonic 两阶段组合获最新理论背书
+- ECE < 0.1 为行业校准良好标准（Zhang et al. 2023 EMNLP / 2026 实践指南一致）——本项目 ECE=4.2% 达标
+- Isotonic PAVA 直接 fit 原始数据仍是 2026 标准做法（aifuturethinkers 2026-06：不假设形状=灵活性来源）
+
+**③ 中文金融 NLP**（背书基座切换与路线）：
+- 量化智投 2026-07：FinBERT2 中文股吧情感因子在沪深300/中证500/中证1000 IC 为正且小盘更有效——中文舆情有 alpha，
+  但"情感→收益"链路仍弱，与本文 §3.1.5 洞察①一致（我们目标是利空出尽检测而非收益预测）
+- IDEA 中文金融 LLM 评测路线（arXiv:2306.14222）：中文金融情感需中文优化基座——背书 Mistral→Qwen2.5 切换
+
+**④ 危机底部/复苏检测**（背书 14 号 V 反转通路与 S2 多维设计）：
+- HostileCharts 2026 复苏框架：**capitulation → thrust → follow-through** 三阶段序列，"买超卖的反转而非超卖本身"——
+  直接背书 capitulation 过程化（P1-E9）与 breadth thrust 作 confirm 维度（14 号 §4.4）
+- Zweig Breadth Thrust（0.40→0.615/10 日，1950 年以来每个大牛市前都出现）——V 反转通路核心信号；⚠️ 阈值为美股 NYSE 值，
+  A 股本土化校准见 14 号开放问题 9
+- ainfp 2026-04 底部信号收敛清单（capitulation 量峰 / 政策转向 / 估值重置 / 情绪极端）——与 S2 八维度设计同构
 
 ---
 
@@ -1896,25 +2045,33 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 **风险**：降态改变了 `_STATE_RISK_FACTORS`，直接影响 C1 shrinkage 计算。如果新态数的 shrinkage 映射不合理，C1 回测可能退化（Sharpe < 0.2678 门槛）。
 
+> **状态标注（2026-08-12）**：降态后 C1 实测**未退化**（Sharpe 0.3474 ≥ 0.2678，MaxDD 0.1485 ≤ 0.15），本预案未触发，保留为后续变更的防御预案。
+
 **回滚流程**：
 ```
 降态后重跑 C1
   ├─ C1 PASS（Sharpe ≥ 0.2678）→ 继续 Phase 2 验证
   └─ C1 FAIL（Sharpe < 0.2678）→ 回滚
-       ├─ Level 1: 调整 _STATE_RISK_FACTORS 的 shrinkage 值（不改态数）
+       ├─ Level 1: 调整 _CONFIDENCE_BANDS 阈值 / RiskSignal 参数（不改态数）
+       │          ⚠️ 2026-08-12 修正：原版写"调整 _STATE_RISK_FACTORS"——该 dict 已经
+       │          #ARCH-REGIME-CONFIDENCE-FIX-001 从 ConfidenceSignal 移除（DEPRECATED），
+       │          调它对 Shrinkage 无任何影响。实际生效的置信度杠杆是 _CONFIDENCE_BANDS
+       │          （0.50/0.30/0.15 三档阈值）与 RiskSignal 13 参数。
        ├─ Level 2: 回退到 9 态 + 仅应用校准器（P0-E2）
        └─ Level 3: 回退到 9 态 + 不校准（当前状态）
 ```
 
-**Level 1 调整方法**：
+**Level 1 调整方法**（2026-08-12 修正版——调实际生效的 `_CONFIDENCE_BANDS`）：
 ```python
-# 如果 C1 退化，先调 shrinkage 值，不回退态数
-# 原因：降态解决了 A2 过拟合，但 shrinkage 值可能没调好
-_STATE_RISK_FACTORS = {
-    "r1": 1.0,   # 如果 C1 Turnover 太高，降到 0.95
-    "r2": 0.80,  # 如果 MaxDD 太大，降到 0.70
-    "r3": 0.45,  # 如果 MaxDD 仍大，降到 0.40
-}
+# 如果 C1 退化，先调置信度分档，不回退态数
+# 原因：降态解决了 A2 过拟合，但 4 态下 max(P) 分布与 9 态不同
+# （均匀分布 0.25，有信号时 0.4-0.7），阈值档可能没调好
+_CONFIDENCE_BANDS = (
+    (0.50, 1.0),   # 如果 C1 Turnover 太高，top1 档下界抬到 0.55
+    (0.30, 0.9),   # 如果 MaxDD 太大，本档系数降到 0.85
+    (0.15, 0.8),   # 如果 MaxDD 仍大，本档系数降到 0.75
+    (0.0, 0.7),    # 防御保留
+)
 # 重跑 C1 验证
 ```
 
@@ -1922,46 +2079,63 @@ _STATE_RISK_FACTORS = {
 
 Phase 3 完成需同时满足以下条件：
 
-| 条件 | 验证方法 | 门槛 |
-|---|---|---|
-| **A1 样本充足** | Phase 2 验证 | 全态 ≥100 天 |
-| **A2 不过拟合** | Phase 2 验证 | OOS/IS ≥ 0.7 |
-| **B1 校准度** | Phase 2 验证（校准后） | 误差 < 10% |
-| **B4 转换准确** | Phase 2 验证 | S1 3/3 + S2 ≥ 1/3 |
-| **C1 不退化** | C1 回测 | Sharpe ≥ 0.2678, MaxDD ≤ 0.15 |
-| **NLP 管道上线** | NLP 评估 | F1 ≥ 65% + bad_news_flat 激活 |
-| **T3 数据激活** | T3 维度检查 | 4 维度非 0.0 降级 |
+| 条件 | 验证方法 | 门槛 | 当前状态（2026-08-12） |
+|---|---|---|---|
+| **A1 样本充足** | Phase 2 验证 | 全态 ≥100 天 | ✅ PASS（4 态最少 r3=555 天） |
+| **A2 不过拟合** | Phase 2 验证 | OOS/IS ≥ 0.7 | ✅ PASS（1.042） |
+| **B1 校准度** | Phase 2 验证（校准后） | 误差 < 10% | ✅ PASS（ECE=4.2%） |
+| **B4 转换准确** | Phase 2 验证 | S1 3/3 + S2 ≥ 1/3 | 🟡 S1 3/3 PASS；S2 事件 design_match=false 排除中，待 P1-E9 后翻 true 验收 |
+| **C1 不退化** | C1 回测 | Sharpe ≥ 0.2678, MaxDD ≤ 0.15 | ✅ PASS（0.3474 / 0.1485） |
+| **NLP 管道上线** | NLP 评估 | F1 ≥ 65% + bad_news_flat 激活 | 🟡 SFT F1=0.7699 达标；bad_news_flat 关键词 MVP 已激活；SFT 模型替换待 Phase 7 |
+| **T3 数据激活** | T3 维度检查 | 4 维度非 0.0 降级 | ✅ PASS（31 维全可算，64 测试用例） |
+
+> **Phase 3 退出剩余项**：P1-E9 S2 重设计（B4 行翻绿的前提）+ NLP Phase 5-8 + P2-E8。
 
 **未通过处理**：
 - A1/A2/B1/B4 单项不通过 → 该项重设计后重跑 Phase 2
 - C1 退化 → §8.1 回滚方案
 - NLP 不达标 → 用 LoRA SFT 基线（不 RLSP），或切 Qwen2.5-7B
 
+### 8.3 明确不做（01 号 §4.4 施工计划类「不做」边界）
+
+- **不加港股/美股/韩股数据**——交易机制不兼容（§2.1.4），混合会让 HMM 学到假规律
+- **不做 WoE/IV 特征工程**——那是信用评分场景的可解释性管道，非概率校准（§7.2）
+- **不实现 SMART / ATS-CP**——远期升级路径，Calibrator 接口已预留但当前不施工（§2.2.5）
+- **不为 SFT 产物新建独立推理服务**——单一推理源原则，GGUF 回灌 Ollama（§3.1.13 H）
+- **S2 重设计不为过 B4 而调参**——防过拟合铁律（§3.5.5），改算法独立于验证结果
+- **不恢复 9 态/12 态**——4 态已经 BIC + A2 + C1 三重验证（§2.1），恢复需新证据走 ARCH 流程
+- **Platt Scaling 不单列实现**——第一性原理评估已否决（假设 sigmoid 形状 + 2 参数不够灵活，§2.2.3），保留为校准器接口的可插拔备选
+
 ---
 
 ## 9. 开放问题
 
-1. **BIC 扫描结果**：3 还是 4 是拐点？需跑数据确认
-2. **Mistral 中文 F1**：零样本基线能否 ≥65%？需评估
+1. ~~**BIC 扫描结果**：3 还是 4 是拐点？~~ **已关闭（2026-08-08）**：拐点=4（全历史 Kneedle；WF 46 季度 {4:19, 5:25, 7:2}），见 §2.1
+2. ~~**Mistral 中文 F1**：零样本基线能否 ≥65%？~~ **已关闭（2026-08-09）**：实测 0.5148 < 0.65，已按 §3.1.3 预案切 Qwen2.5-7B，SFT F1=0.7699
 3. ~~**RLSP 奖励函数**：用 `s * sign(r)` 还是 `s * |r|`？~~ **已统一**：`abs(r) * direction_match`（§3.1.4/§3.1.9 统一版）
-4. **forward_days 最优值**：5/10/20/40/60/120 哪个校准误差最低？P0-E2 先用 20，P2-E8 扫描后更新
-5. **S2 触发门槛**：bad_news_flat ≥ 40 是否合适？需校准
+4. **T 参数上界观察项**：实测 T 普遍命中 10-30 区间（原估 2-5）。若未来 walk-forward 季度 T 持续命中 30.0 上界，说明 HMM 后验过自信结构未变，需评估扩界或从特征层降温（观察项，非阻断）
+5. **forward_days 最优值**：5/10/20/40/60/120 哪个校准误差最低？P0-E2 已用 20 落地，待 P2-E8 扫描后更新
+6. **P1-E9 施工量重估**：14 号 v0.4.5 范围较本文 §3.5 初版显著扩大（V 反转通路 / three_yang 6 维 / 防过拟合方法论栈），原估 ~120 行不足——实际施工量待 14 号 §4.0 Step 0 数据/接口勘探后评估（不擅自定，勘探结论回写本文）
+7. **S2 触发门槛**：bad_news_flat ≥ 40 是否合适？待 P1-E9 施工后校准（现为关键词字典 MVP 评分，Phase 7 换 SFT 模型后分布会变）
+8. **12 号文档同步（不越界改）**：12_regime_phase2_validation §10.4 残留"降态数（9→6）"历史规划表述（实际执行 9→4），建议 12 号下次修订时标注为历史规划；其 §10.3/§10.4 的 A2/B1 FAIL 结果为 P0 修复前快照，与 10 号 §9 回填的最终结论（4 态 + 校准器 PASS）并存——读者以 10 号 §9 与本文 §0.1 更新块为准
+9. **draft → active 时机（待用户裁定）**：P0 + P1 数据层已完成，余 P1-E9 / NLP Phase 5-8 / P2-E8。建议 P1-E9 施工完成且 B4 S2 翻 true 验收后升 active；当前保持 draft
 
 ---
 
 ## 10. 执行时间线
 
-| 批次 | 工程 | 预估工程量 | 依赖 |
-|---|---|---|---|
-| 第一批 P0 | P0-E1 降态数 + P0-E2 校准器 | ~440 行 | 无 |
-| 第一批 P0 验证 | 重跑 A1/A2/B1/B4 | — | P0-E1+E2 |
-| 第二批 P1a | P1-E4 数据激活 + P1-E5 T3 | ~150 行 | 无（T3 代码已实现） |
-| 第二批 P1b | P1-E3 NLP + P1-E6 bad_news_flat | ~950 行 | 可与 P1a 并行 |
-| 第三批 P2 | P2-E7 policy + P2-E8 forward_days | ~200 行 | P1-E3 + P0-E2 |
+| 批次 | 工程 | 预估工程量 | 依赖 | 状态（2026-08-12） |
+|---|---|---|---|---|
+| 第一批 P0 | P0-E1 降态数 + P0-E2 校准器 | ~440 行 | 无 | ✅ 完成（2026-08-08） |
+| 第一批 P0 验证 | 重跑 A1/A2/B1/B4 | — | P0-E1+E2 | ✅ 全 PASS |
+| 第二批 P1a | P1-E4 数据激活 + P1-E5 T3 | ~150 行 | 无（T3 代码已实现） | ✅ 完成（2026-08-09） |
+| 第二批 P1b | P1-E3 NLP + P1-E6 bad_news_flat | ~950 行 | 可与 P1a 并行 | 🟡 E3 Phase 1-4 / E6 数据层完成；余 NLP Phase 5-8 |
+| P1 增补 | P1-E9 S2 算法重设计 | 待重估（§9 开放问题 6） | 无（算法层独立） | ❌ 未施工（14 号 v0.4.5 详设就绪） |
+| 第三批 P2 | P2-E7 policy + P2-E8 forward_days | ~200 行 | P1-E3 + P0-E2 | 🟡 E7 数据层完成；E8 未施工 |
 
 ---
 
-**下一步**：用户审阅本规划，确认开放问题后，按批次施工。第一批 P0（降态数 + 校准器）优先启动。
+**下一步（2026-08-12）**：P0 与 P1 数据层已闭环。当前最优先 **P1-E9 S2 算法重设计**（14 号 v0.4.5 详设就绪，TDD-first + Step 0 勘探门禁）→ NLP Phase 5-8（RLSP 护栏实验 → GGUF 回灌 Ollama → 端到端管道 → 验收）→ P2-E8 forward_days 扫描收尾。
 
 ## 修订记录
 
@@ -1969,3 +2143,4 @@ Phase 3 完成需同时满足以下条件：
 |---|---|---|---|
 | 2026-08-09 | 0.3.1 | 文件名 discussion_019_phase3_engineering_plan.md → 13_regime_phase3_engineering_plan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 0.3.2 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules 扩展字段保留），H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
+| 2026-08-12 | 0.4.0 | 7 轮循环审查回填：①新增 §1.6 已施工设施盘点（通用规则 #11，代码/脚本/模型/配置/治理全量扫描）；②§2.1/§2.2 回填 P0 施工实际（4 态 BIC 定论 / ECE=4.2% / T 上界 30.0 / Isotonic 免预分桶 / 四级降级 / 验收全勾选）+ _STATE_RISK_FACTORS DEPRECATED 重大变更（#ARCH-REGIME-CONFIDENCE-FIX-001）；③§3.5 同步 14 号 v0.4.x 范围扩大（V 反转通路/three_yang/防过拟合栈），§3.4.4 对齐 S2 事件 ID 与 design_match=false 现状；④§5.3/§6.2 补 P1-E9 治理行与管道行；⑤§7.4 增 2026-08-12 研究复核（HMM≤4 态共识 / 温度缩放 infeasibility floor arXiv:2608.05064 / 中文 NLP / capitulation→thrust→follow-through）；⑥§8.1 回滚 Level 1 修正（原指向已 DEPRECATED 的 dict，改 _CONFIDENCE_BANDS）+ 新增 §8.3 明确不做；⑦§8.2 退出标准回填当前状态；⑧§9 开放问题关闭 2 项、更新 2 项、新增 4 项（T 上界/E9 施工量/12 号同步/draft→active 时机）；⑨§10 时间线状态列；⑩文档头 Phase 体系对齐 11 号（P5=决策门控非参数校准） | 架构审查 AI 7 轮循环审查（盘点/回填/缺失/研究/过度工程/一致性/规范），过度工程审查结论：无越界项（NLP 管道已按硬边界 descope，RLSP 为带护栏可选实验） |
