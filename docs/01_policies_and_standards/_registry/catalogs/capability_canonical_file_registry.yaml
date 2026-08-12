@@ -8553,6 +8553,12 @@ creation_tokens:
     created_by: "session-registry-v130"
     capability: "business_registry_construction"
 
+  # --- 66号提交队列串行化（2026-08-12，三层防护方案决策备忘 v1.0.0 active）---
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md"
+    token: "auto-66-commit-queue-serialization-20260812"
+    created_by: "session-AI-23"
+    capability: "commit_queue_serialization"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

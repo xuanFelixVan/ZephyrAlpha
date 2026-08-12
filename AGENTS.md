@@ -961,6 +961,33 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 1. `python scripts/git_guard.py add src/x.py`
 2. `python scripts/git_guard.py commit -F _tmp.txt --no-verify`
 
+### 10.0 改完立即入队铁律（66 号 v1.0.0，2026-08-12）
+
+> **来源**：[66_commit_queue_serialization](docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md) §4 裁定 6——用户已确认。
+> **背景**：2026-08-12 23 会话并发事故证明"改完统一 add"在多会话 stash 周期下不保险（dangling blob 恢复实战）。队列方案落地后，会话提交 = 快照入队即返回，add 只是暂存保护、入队才是内容落袋。
+
+**铁律**：AI 每完成一个文件的编辑（Edit/Write），**立即**将该文件入队（enqueue）到提交队列。不等"一批改完再统一入队"——多会话并发下，未入队的修改随时可能被其他会话的 stash/restore/read-tree 抹掉。
+
+**过渡期纪律**（队列 MVP 落地前）：改完立即 `python scripts/git_guard.py add <file>`（staged 文件 git clean 不删，提供第一层保护）。队列 MVP 落地后，改完立即 `python scripts/commit_queue.py enqueue --session <sid> --files <file> --message <msg>`（快照落袋，工作区后续被冲无损）。
+
+**禁止**：
+- 禁止"一批改完再统一 add"——多会话下等价于裸奔（8-12 实证 6 文件被冲 2 次）
+- 禁止全区恢复命令（`git restore .`/`git checkout -- .`/`git clean`/`git reset --hard`/`git stash`）——会清空其他会话未入队的修改
+
+### 10.0.1 plumbing 命令禁止（66 号 v1.0.0 §4 裁定 7）
+
+> **来源**：66 号 §4 裁定 7——事故 6（`git read-tree HEAD` 隐形重置共享 index）根因。
+
+**铁律**：AI 禁止直接执行以下 git plumbing 命令（会操纵共享 index/对象库，绕过所有门禁）：
+- `git read-tree` — 重置 index 到指定树（事故 6 根因，清空所有 staged 元数据）
+- `git update-index` — 直接修改 index 条目
+- `git write-tree` — 从 index 生成树对象
+- `git hash-object` — 直接写入对象库
+
+**例外**：Serializer 专用 worktree 内通过 `ZEPHYR_SERIALIZER_MODE=1` 环境变量白名单放行（66 号 §6.3）。
+
+**注**：`git commit-tree`/`git update-ref` 不在此列——由 REFERENCE-TRANSACTION-GUARD（§10.1.1）专管，且 emergency_commit.py 合法使用 commit-tree 需保留通道。
+
 ### 10.1 POST-COMMIT-GUARD：--no-verify 的 post-commit 层闭环（#ARCH-050）
 
 **病根**：`--no-verify` 绕过 pre-commit hook，导致 GitCommitGateway 的 in-process gates + pre-commit 检查全部被绕过，产生 non-GW commit（commit message 无 `[GW:` 标记）。`commit_gw_audit` reconciler 事后审计为 warn-only，不阻断，无法有效约束并发 AI 对话。
