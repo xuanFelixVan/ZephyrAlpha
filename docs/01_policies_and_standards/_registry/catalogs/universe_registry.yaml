@@ -9,13 +9,16 @@ description: >-
   支持 static（固定成分股）/ dynamic（每日生成，如打板连板梯队）/ rule_based（规则过滤，如剔ST/低流动性）。
   对标 MSCI Index Universe / Bloomberg Universe Management。
   治本"回测不知道在哪些股票上跑"硬缺口。business_registry_consolidation_plan §8.7d。
+# v1.1.0 changelog(2026-08-12): related_arch 旧引用（不存在的ARCH编号）→'#ARCH-BREG-001'；
+#   entry_schema+5条entry补62号v1.24.0生存偏差三字段（pit_constituent_construction/delisted_handling/survivorship_free）；
+#   UNI-INDEX-001/002 发现 components_ref（data/index_constituents/*.csv）未落盘→pit=false/survivorship_free=false诚实标注。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-10'
-related_arch: '#ARCH-BUSINESS-REGISTRY'
+last_updated: '2026-08-12'
+related_arch: '#ARCH-BREG-001'
 unique_key:
 - universe_id
 
@@ -41,6 +44,10 @@ entry_schema:
   created_at: date
   updated_at: date
   owner: str
+  # 生存偏差治理三字段（62号 v1.24.0 schema，2026-08-12 补落地，E14 c 维度审计）
+  pit_constituent_construction: bool  # 成分股是否按 point-in-time 构造（true=每个调仓日只用当时可得成分；false=用当前成分回溯=生存偏差；null=未声明）
+  delisted_handling: str           # include/exclude/unknown，退市股票处理（include=含退市至退市日，回测 MUST；exclude=仅存活=生存偏差）
+  survivorship_free: bool          # universe 是否无生存偏差（true=含退市+PIT构造；false=仅存活股）
 
 universes:
   - universe_id: UNI-DYNAMIC-001
@@ -68,8 +75,11 @@ universes:
     status: active
     version: 1.0.0
     created_at: '2026-08-10'
-    updated_at: '2026-08-10'
+    updated_at: '2026-08-12'
     owner: MOD-SIGNAL-ASHARE
+    pit_constituent_construction: true   # 每日用当日涨停/过滤数据重建（动态池日频重建天然 PIT）
+    delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活，回测需注意
+    survivorship_free: false             # exclude 退市=有生存偏差，打板短周期影响小但须声明
 
   - universe_id: UNI-RULE-001
     name: Tradable A-Share Universe
@@ -96,8 +106,11 @@ universes:
     status: active
     version: 1.0.0
     created_at: '2026-08-10'
-    updated_at: '2026-08-10'
+    updated_at: '2026-08-12'
     owner: MOD-EX-CORE
+    pit_constituent_construction: true   # 过滤规则（ST状态/上市天数/成交额）均用当日可得数据
+    delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活，回测需注意
+    survivorship_free: false             # exclude 退市=有生存偏差，多因子长周期回测须评估影响
 
   - universe_id: UNI-INDEX-001
     name: CSI300 Index Constituents
@@ -113,13 +126,16 @@ universes:
     used_by_strategies: []
     data_source: SRC-AKSHARE-001
     module_id: MOD-MKT-DATA
-    doc_ref: 25_multifactor_strategy_detail.md §CSI300实证
+    doc_ref: 25_multifactor_strategy_detail.md §3.7（基准引用，非成分股实证——v1.34.0 修正，原"§CSI300实证"章节不存在）
     code_path: src/zephyr/data/implementations/akshare_provider.py
     status: active
     version: 1.0.0
     created_at: '2026-08-10'
-    updated_at: '2026-08-10'
+    updated_at: '2026-08-12'
     owner: MOD-MKT-DATA
+    pit_constituent_construction: false  # ⚠️ components_ref（data/index_constituents/csi300.csv）未落盘，当前无 PIT 历史成分文件，用当前成分回溯=生存偏差
+    delisted_handling: unknown           # 指数成分自然含调出股，但本项目无历史成分文件=未确认
+    survivorship_free: false             # 无 PIT 成分文件=有生存偏差，回测 CSI300 实证前 MUST 补历史成分
 
   - universe_id: UNI-INDEX-002
     name: CSI800 Index Constituents
@@ -135,13 +151,16 @@ universes:
     used_by_strategies: []
     data_source: SRC-AKSHARE-001
     module_id: MOD-MKT-DATA
-    doc_ref: 25_multifactor_strategy_detail.md §CSI800实证
+    doc_ref: 25_multifactor_strategy_detail.md §3.7（基准引用，非成分股实证——v1.34.0 修正，原"§CSI800实证"章节不存在）
     code_path: src/zephyr/data/implementations/akshare_provider.py
     status: active
     version: 1.0.0
     created_at: '2026-08-10'
-    updated_at: '2026-08-10'
+    updated_at: '2026-08-12'
     owner: MOD-MKT-DATA
+    pit_constituent_construction: false  # ⚠️ components_ref（data/index_constituents/csi800.csv）未落盘，当前无 PIT 历史成分文件
+    delisted_handling: unknown           # 指数成分自然含调出股，但本项目无历史成分文件=未确认
+    survivorship_free: false             # 无 PIT 成分文件=有生存偏差，回测 CSI800 实证前 MUST 补历史成分
 
   - universe_id: UNI-RULE-002
     name: Event-Driven Pool
@@ -167,5 +186,8 @@ universes:
     status: candidate
     version: 1.0.0
     created_at: '2026-08-10'
-    updated_at: '2026-08-10'
+    updated_at: '2026-08-12'
     owner: MOD-SIGNAL-ASHARE
+    pit_constituent_construction: true   # 事件触发+过滤规则均用当日可得数据（candidate 池，回测验证后确认）
+    delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活
+    survivorship_free: false             # exclude 退市=有生存偏差，须声明

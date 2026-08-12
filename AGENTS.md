@@ -147,6 +147,15 @@
 > - API 接口契约：[`interface_contract_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml)（ARCH-053 新增）
 > - 跨模块依赖：[`cross_module_dependency_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 > - 能力→真源文件反查：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
+>
+> **业务资产 registry 速查**（#ARCH-BREG-001，12 表体系，施工总案=design_memos/62_business_registry_construction.md；✅=P0 完成，🔄=P1 Step1-3 落盘待审计）：
+> - ✅ 股票池：[`universe_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml)（5 条，回测 MUST 指定 universe_id）
+> - ✅ 基准：[`benchmark_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml)（4 条，回测 MUST 指定 benchmark_id）
+> - ✅ 交易成本模型：[`cost_model_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml)（3 条，回测 MUST 扣成本）
+> - 🔄 因子库：[`factor_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（111 条/10 类）
+> - 🔄 策略库：[`strategy_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml)（59 条/6 类）
+> - 🔄 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（42 条/9 类）
+> - ⏳ 待施工：技术指标/执行算法/数据资产/图形形态（P1）+ 字段字典/实验（P2）——Schema 见 62 号文档 §6/§7
 
 ## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
 
