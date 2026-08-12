@@ -5,8 +5,8 @@ title: 多策略并发架构
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.5.0"
-date: 2026-08-10
+version: "2.6.0"
+date: 2026-08-12
 topic: multi_strategy_concurrency
 scope: 07_trading_decision_architecture
 ---
@@ -85,10 +85,11 @@ scope: 07_trading_decision_architecture
 
 ### 2.2 三个核心模块
 
-> **施工状态（2026-08-10 核对源码，v2.4.0 更新）**：**三模块全部施工至 production**——StrategyBook（MOD-POS-020，70 测试）+ FirmRiskAggregator（MOD-POS-021，54 测试）+ BudgetChangeHandler（MOD-POS-022，47 测试），共 171 测试全绿。为何先定接口后填实现：A 模型一旦落地难回改，接口契约是跨 sleeve/firm/meta 三层的协作边界，先冻结边界再填实现可防归因纠缠（AI-dev 下接口漂移=返工雪球）。
+> **施工状态（2026-08-12 核对源码，v2.6.0 更新）**：**四模块全部施工至 production**——StrategyBook（MOD-POS-020，680 行）+ FirmRiskAggregator（MOD-POS-021，651 行）+ BudgetChangeHandler（MOD-POS-022，572 行）+ RegimeMetaAllocator（MOD-PA-007，594 行，v2.5.0 误记为 design 骨架，本轮核对源码修正——34 号 v2.7.0 已先行确认 production）。为何先定接口后填实现：A 模型一旦落地难回改，接口契约是跨 sleeve/firm/meta 三层的协作边界，先冻结边界再填实现可防归因纠缠（AI-dev 下接口漂移=返工雪球）。
 > - ~~StrategyBook / FirmRiskAggregator / BudgetChangeHandler：第一阶段施工目标，等首批 3 策略（[20](20_first_batch_strategies.md)）选股 pipeline 就绪~~ → **三模块全部于 v2.3.0~v2.4.0 施工完成（production），A 模型核心数据流 StrategyBook→FirmRiskAggregator→MOD-POS-001 已贯通**
-> - RegimeMetaAllocator：**框架已 active**（[34](34_regime_meta_allocator.md) v1.0.0），**C1 验证已通过**（commit 852457e9，Shrinkage 节流有效：MaxDD 改善 +7.36pp，Calmar +27%），但代码仍骨架（`regime_meta_allocator.py` design态）；参数（Base权重/PerformanceScore映射/四档阈值/floor·cap）待首批策略 3-6 月 PnL 后校准，故上线仍为第二阶段（P3）
-> - §2.5 回撤 Protocol 相关模块（drawdown_controller / drawdown_tracker / var_calculator / kill_switch）**已先于三模块施工至 production**（见 §2.5 why 补全）
+> - RegimeMetaAllocator：**代码已 production**（MOD-PA-007 v1.0.0，`allocate()`/`_compute_shrinkage()`/`_normalize_and_clip()`/`compute_performance_score()` 全实现，FLOOR=5%/CAP=40% 硬约束在位，0 处 NotImplementedError）；**C1 验证已通过**（commit 852457e9，Shrinkage 节流有效：MaxDD 改善 +7.36pp，Calmar +27%）。**"代码 production"≠"上线"**：参数（Base 权重/PerformanceScore 映射/四档阈值）仍待首批策略 3-6 月 PnL 后校准，故实际上线仍为第二阶段（P3）
+> - §2.5 回撤 Protocol 相关模块（drawdown_controller 603 行 / drawdown_tracker 332 行 / var_calculator 394 行 / kill_switch 归 D-RISK）**已先于三模块施工至 production**（见 §2.5 why 补全）
+> - ⚠️ **测试文件丢失（2026-08-11 git clean 灾难，#ARCH-GIT-CLEAN-GUARD-FIX）**：`tests/position/test_strategy_book.py`（70 测试）/ `test_firm_risk_aggregator.py`（54 测试）/ `test_budget_change_handler.py`（47 测试）/ `tests/pf_alloc/test_regime_meta_allocator.py`（55 测试）于 2026-08-10 创建后未 `git add`，2026-08-11 `git clean -fd` 被删且 git 历史无记录（`git log --all` 为空）——此前版本声称的"171+55 测试全绿"**当前工作区无法复现**，测试重建登记 §6.8。教训印证 project_memory 防护规则①：新建文件必须立即 `git add`
 
 #### StrategyBook（N 个，N=3~5）
 - 输入：策略自己的 alpha 信号 + 情绪周期阶段信号（[28号](28_sentiment_cycle_trading.md) §3.5，见下方接口契约）
@@ -112,7 +113,9 @@ scope: 07_trading_decision_architecture
 >
 > **② target_portfolio 权重口径声明**（[32号](32_firm_risk_aggregator.md) → 30号 交接，链路 6 缺口 1 修复）：`target_portfolio` 中每个 `TargetPosition.target_weight` 是**相对各自 strategy_budget 的占比**（非相对总资金的绝对权重）。[32号](32_firm_risk_aggregator.md) §2.2 据此做 budget 口径归一化：`account_weight = tp_weight × budget_used / total_budget`。若 StrategyBook 实现者误输出绝对权重（相对总资金），将导致 32号 budget 口径统一 double-count。**施工注记**：`strategy_book.py`（MOD-POS-020）施工时须在 `target_portfolio` 输出注释中显式声明此口径
 >
-> **③ score→weight 转换接口**（[25号](25_multifactor_strategy_detail.md) IC 加权合成 → [21号](21_stock_selection_engine.md) 选股 → 30号 StrategyBook 仓位算法，链路 6 缺口 2 文档化）：25号 IC 加权合成产出复合因子评分（[21号 §3.3](21_stock_selection_engine.md) 归一化[-3,3]），非 target_portfolio 权重。评分→权重的转换在 StrategyBook 内部完成（三维度解耦设计：选股=评分排序 top-N / 仓位=Kelly·risk_parity·等权 / 风控=独立参数）。转换接口契约由 StrategyBook 施工时定义——当前 StrategyBook 骨架态（`MATURITY=design`），此转换接口待首批策略施工时形式化，登记为 §6.7 冷启动执行比例的配套施工项
+> **⚠️ 字段名三方漂移（2026-08-12 代码核对，v2.6.0 补）**：代码真源 `TargetPortfolio` dataclass（strategy_book.py）字段为 **`positions: dict[str, TargetWeight]` + `budget`**（非本文档伪代码的 `target_portfolio` / `budget_used`，且 `positions` 值是 `TargetWeight` 对象非裸 float）；`firm_risk_aggregator.py` 的 `_sum_by_symbol()` 按 `target_portfolio`/`budget_used` duck-typing 取值——**直接传入 TargetPortfolio 对象会静默取空默认值得出全现金组合**（断裂不报错）。权重口径声明本身已在代码落实（`TargetWeight` docstring 明示"相对 strategy_budget 的占比"），但字段名对齐属 P0 接口修复项，登记 [32号 §6](32_firm_risk_aggregator.md) 开放问题
+>
+> **③ score→weight 转换接口**（[25号](25_multifactor_strategy_detail.md) IC 加权合成 → [21号](21_stock_selection_engine.md) 选股 → 30号 StrategyBook 仓位算法，链路 6 缺口 2 文档化）：25号 IC 加权合成产出复合因子评分（[21号 §3.3](21_stock_selection_engine.md) 归一化[-3,3]），非 target_portfolio 权重。评分→权重的转换在 StrategyBook 内部完成（三维度解耦设计：选股=评分排序 top-N / 仓位=Kelly·risk_parity·等权 / 风控=独立参数）。转换接口契约由 StrategyBook 施工时定义——StrategyBook 代码已 production（v2.6.0 核对，`size_positions()` 实现 equal_weight/risk_parity/custom），但 score→weight 的**显式转换函数**（composite_score[-3,3] → 仓位权重映射）随 `select_stocks` 抽象接口留给策略子类，待首批策略施工时形式化，登记为 §6.7 冷启动执行比例的配套施工项
 
 #### FirmRiskAggregator（1 个，O(N) 复杂度）
 - 输入：所有 StrategyBook 的 target_portfolio
@@ -211,7 +214,7 @@ scope: 07_trading_decision_architecture
 - 每级是独立事件，可 log 可复盘
 - 三级升级而非直接强砍：尊重策略自主权（决定砍哪个）+ 避免随机时刻强制卖出的高成本
 
-> **施工状态（2026-08-10 核对源码，v2.4.0+ 文档-代码一致性修复）**：✅ `budget_change_handler.py`（MOD-POS-022）**已施工 production**——`MATURITY=production`，`TierLevel` 枚举 + `FreezeNewPositions`/`RebalanceRequest`/`ForcedTrim` 三个指令 dataclass + `TierState` 状态机 + `handle_budget_change`/`check_convergence` 及三级指令生成方法（`_trigger_three_tier_escalation`/`_check_tier2_convergence_or_escalate`/`_escalate_to_tier3`/`_retarget_in_convergence`）**全部实现**，481 行 0 处 NotImplementedError，47 单元测试全绿（0.58s）。`convergence_windows` 默认值已按 [20 §6.4](20_first_batch_strategies.md) 预置（打板 2 天 / 多因子 4 天 / 事件驱动 3 天）。为何三级而非直接强砍（why）：直接强砍=随机时刻卖出高成本+剥夺策略归因；三级让策略在窗口内自选砍哪个（保留归因），超时才 firm 层 dumb-but-safe 兜底（保生存）。该模块依赖 StrategyBook 的 `rebalance_to_budget` 接口（亦已 production）。**v2.4.0 之前版本曾描述为"骨架（MATURITY=design）"——v2.4.0 代码施工完成后描述已修正，与 [33号 v2.10.0](33_budget_change_handler.md) 文档-代码一致性审查结论一致**。
+> **施工状态（2026-08-10 核对源码，v2.4.0+ 文档-代码一致性修复）**：✅ `budget_change_handler.py`（MOD-POS-022）**已施工 production**——`MATURITY=production`，`TierLevel` 枚举 + `FreezeNewPositions`/`RebalanceRequest`/`ForcedTrim` 三个指令 dataclass + `TierState` 状态机 + `handle_budget_change`/`check_convergence` 及三级指令生成方法（`_trigger_three_tier_escalation`/`_check_tier2_convergence_or_escalate`/`_escalate_to_tier3`/`_retarget_in_convergence`）**全部实现**，481 行 0 处 NotImplementedError，47 单元测试全绿（0.58s）。`convergence_windows` 默认值已按 [20 §6.4](20_first_batch_strategies.md) 预置（打板 2 天 / 多因子 4 天 / 事件驱动 3 天）。为何三级而非直接强砍（why）：直接强砍=随机时刻卖出高成本+剥夺策略归因；三级让策略在窗口内自选砍哪个（保留归因），超时才 firm 层 dumb-but-safe 兜底（保生存）。该模块依赖 StrategyBook 的 `rebalance_to_budget` 接口（亦已 production）。**v2.4.0 之前版本曾描述为"骨架（MATURITY=design）"——v2.4.0 代码施工完成后描述已修正。⚠️ 2026-08-12 核对修正：本文此前引用的"[33号 v2.10.0](33_budget_change_handler.md)"已失效——33 号在 2026-08-11 git 灾难中内容丢失、回退至骨架 v0.1.0（v2.10.0 定稿内容 git 历史无记录），G14 设计真源待重建；当前三级升级接口契约以 `budget_change_handler.py` 头部 docstring（INVARIANTS/TierLevel/收敛检测三条件）为临时真源**，重建事项登记 §6.8。
 >
 > **Tier 2→Tier 3 收敛检测算法（2026-08-10 补充）**：`check_convergence()` 须定义"策略是否在窗口内收敛"的判定标准。算法：
 >
@@ -431,8 +434,8 @@ scope: 07_trading_decision_architecture
 |---|---|---|
 | firm 层统一 MVO 优化器 | 协方差估计是研究课题；放大噪声；归因纠缠 | 协方差估计方案成熟（如因子模型+shrinkage 验证有效） |
 | firm 层跨策略选股投票 | A 的自然叠加已等价实现；O(N²) 冲突是技术债 | 策略数显著增加（>8）且自然叠加不足 |
-| 数字孪生 / 世界模型 DreamerV3 / TD-MPC2 | 研究前沿，非生产工具；投入产出比对个人系统极低 | 算力充裕（GPU≥48GB）且模型成熟度达到生产级 |
-| LLM 多 Agent 辩论 / R&D-Agent 自进化策略搜索 | 研究议题，作战地图之外；AI 写 AI 的失控风险高 | 可控性方案（沙箱+审批+回滚）验证可靠 |
+| ~~数字孪生 / 世界模型 DreamerV3 / TD-MPC2~~ → **已裁定裁剪（#ARCH-OE-010，decided 2026-08-11 用户确认）** | ~~研究前沿，非生产工具；投入产出比对个人系统极低~~ → 裁定：BM-SIM-05 降级为"依赖图快照"（保留拓扑可视化去推演）；世界模型推演裁剪（**远期不采纳**，solo 硬件 GPU 24GB 不满足 ≥48GB 门槛） | 不重评（远期不采纳已定性） |
+| LLM 多 Agent 辩论 / R&D-Agent 自进化策略搜索 | 研究议题，作战地图之外；AI 写 AI 的失控风险高 | 可控性方案（沙箱+审批+回滚）验证可靠。**关联裁定**：CC-14 投票优先多 Agent 协作已 decided 降级为可选模式（#ARCH-OE-011，2026-08-11）——solo 单 session 主导用单 Agent 决策+red_blue_validator 承接 |
 | 60 个活跃因子 / 150 设计容量 | 个人系统 8-15 个因子足够；多了是过拟合温床 | AUM 增长到需要更多因子分散 |
 | 56 条硬边界一视同仁 | 砍到 10 条真红线（Fail-Closed）+ 其余降为指导原则 | 团队扩大或合规要求升级 |
 
@@ -504,6 +507,27 @@ regime 检测器须输出 12 维灰度概率分布（非硬标签）。业务规
 
 > **施工指导**：RegimeMetaAllocator.allocate() 须增加 `cold_start_ratio` 参数（默认 1.0=满仓，冷启动期设 0.3/0.6），在 §3.4 allocate 伪代码的"effective_budget 缩放"步骤后乘以 cold_start_ratio。cold_start_ratio 由 StrategyBook 维护，按上线天数自动晋升（1 月→0.3→0.6，2 月→1.0），PerformanceScore 稳定后锁定 1.0。
 
+### 6.8 灾后重建事项（2026-08-11 git clean 灾难，#ARCH-GIT-CLEAN-GUARD-FIX）
+
+> 以下 4 项均为 2026-08-11 git 灾难（`git clean -fd` 等内置命令绕过 git_guard.py alias 拦截）造成的资产丢失/治理缺口，**属"需重建/补登记"事实记录，非架构决策**。重建施工不属于本备忘范围，登记于此供治理调度。
+
+| 事项 | 现状 | 丢失/缺口内容 | 重建建议 |
+|---|---|---|---|
+| **4 个测试文件丢失** | `tests/position/test_strategy_book.py`（70 测试）/ `test_firm_risk_aggregator.py`（54）/ `test_budget_change_handler.py`（47）/ `tests/pf_alloc/test_regime_meta_allocator.py`（55）于 2026-08-10 创建未 `git add`，2026-08-11 被 `git clean -fd` 删除，git 历史无记录 | 226 个测试用例（4 模块代码均 production 在位，仅测试丢失） | 按各模块 blueprint + 代码头部 [TESTS] 声明重建；重建后立即 `git add`（防护规则①） |
+| **33 号 BudgetChangeHandler 设计文档骨架化** | 当前工作区 33 号=骨架 v0.1.0（draft，2026-08-09）；2026-08-10 全天升级的 v2.10.0 定稿内容在 git 历史中无记录，彻底丢失 | G14 三级升级设计真源（§3.4 handle_budget_change 伪代码 / §3.2.6 TierState / 防抖 5 规则等） | 以 `budget_change_handler.py`（production，572 行）头部 docstring + 本备忘 §2.4 + 32 号 §2.1 degraded 契约为临时真源重建 33 号；重建后 30/32 号交叉引用版本号需回填 |
+| **capability_canonical_file_registry 未登记** | MOD-POS-020/021/022 + MOD-PA-007 均未在 `capability_canonical_file_registry.yaml` 登记（该 registry 仅有 MOD-POS-009 一条 D_POSITION 记录） | 硬约束"模块创建必须生成 creation_token 并登记"违例 | 补 4 条登记（creation_token 追溯生成或按补救流程登记） |
+| **depgraph maturity 滞后** | depgraph（PostgreSQL）中 4 模块仍 design——[64_d_position.md](../../02_domain_architecture_docs/64_d_position.md)（自动生成）将 MOD-POS-020/021/022 标"设计态" | 自动生成文档与代码状态脱节 | depgraph DB 更新 maturity=production 后重新生成 64 号文档；battle_map_08 锚点状态联动核对 |
+
+### 6.9 并存旧体系与 Model A 的关系裁定（需人决策）
+
+> 全量设施盘点（§7.5）发现 pf_alloc / pf_core 存在与 Model A 功能重叠的已施工旧体系模块，**谁是真源、是否退役需人裁定**，本备忘不擅自定。
+
+| 旧体系模块 | 状态 | 与 Model A 的重叠点 | 待裁定 |
+|---|---|---|---|
+| MOD-PA-003 multi_strategy_capital_allocator（`pf_alloc/core/`，production v0.1.0） | 已施工 | 容量截断 + MaxDD>15% 全线减仓 50% + 冷启动 ×30% + 再平衡 ≤1 次/日——与 RegimeMetaAllocator（MOD-PA-007）的"Base×PerformanceScore×Shrinkage + floor/cap"功能部分重叠（都是策略级资金分配+缩放）；冷启动 ×30% 与 §6.7 策略级冷启动三段式（×30%→×60%→×100%）重叠 | PA-003 是否降级为 MOD-PA-007 的内部组件，或标记 deprecated |
+| MOD-PA-002 signal_synthesis_combiner / MOD-PA-004 strategy_correlation_gate（`pf_alloc/core/`，均 production） | 已施工 | BM-SEL-20-A（信号合成）/ BM-SEL-20-C（相关性门禁）旧投票体系残留——Model A §3.2 已否决跨策略投票，§7.3 已将 BM-SEL-20 标记 rejected | 两模块是否随 BM-SEL-20 rejected 同步退役，或保留为策略内部机制（§7.3 对 BM-SEL-02-K 的降级先例） |
+| pf_core 旧体系 5 示例策略 + portfolio_optimizer / constraint_solver / rebalance_scheduler / performance_attribution_engine / strategy_engine | 均 production | §7.3 已记录 MOD-PF-002 暂缓弃用（rebalance_scheduler 有活跃依赖）；5 示例策略（default_equity / topn_momentum / vwap_reversion / intraday_surge_fall / orderbook_imbalance）与 StrategyBook 体系的关系未定义 | 首批 3 策略（20 号）上线时，示例策略是迁入 StrategyBook 还是退役 |
+
 ## 7. 引用
 
 ### 7.1 相关作战地图
@@ -511,15 +535,15 @@ regime 检测器须输出 12 维灰度概率分布（非硬标签）。业务规
 - [battle_map_12_cross_cutting.md](../battle_map/battle_map_12_cross_cutting.md)（§16 冲突矩阵大部分将因 A 架构而消失）
 - [battle_map_10_execution.md](../battle_map/battle_map_10_execution.md)（执行阶段，FirmRiskAggregator 输出在此下单）
 
-### 7.2 depgraph 模块（已登记 2026-08-05，2026-08-10 状态更新）
-以下模块原登记到 depgraph 设计态（build_status=planned, design_maturity=design）——**2026-08-10 文档-代码一致性核验更新**：前三个模块已施工完成升级到 `MATURITY=production`，仅 RegimeMetaAllocator 仍处 design（C1 验证已通过但代码仍骨架）：
+### 7.2 depgraph 模块（已登记 2026-08-05，2026-08-12 状态更新）
+以下模块原登记到 depgraph 设计态（build_status=planned, design_maturity=design）——**2026-08-12 文档-代码一致性核验更新（v2.6.0）**：**四模块全部已施工完成升级到 `MATURITY=production`**（v2.5.0 误记 RegimeMetaAllocator 仍 design，本轮核对源码修正）；⚠️ 但 4 个测试文件在 2026-08-11 git clean 灾难中丢失（详见 §2.2 施工状态 ⚠️ 标注 + §6.8），且 depgraph（PostgreSQL）中 4 模块 maturity 仍登记为 design（64_d_position.md 自动生成文档佐证滞后），治理登记缺口登记 §6.8：
 
-| 模块 | blueprint_id | path | domain_id | 说明 | 当前状态（2026-08-10 核对源码） |
+| 模块 | blueprint_id | path | domain_id | 说明 | 当前状态（2026-08-12 核对源码） |
 |---|---|---|---|---|---|
-| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | D_POSITION | 独立策略账本，自带选股+仓位+风控 | ✅ production（v1.0.0，70 测试） |
-| FirmRiskAggregator | MOD-POS-021 | `src/zephyr/position/core/firm_risk_aggregator.py` | D_POSITION | firm 层求和+硬上限裁剪，不做 MVO | ✅ production（v1.0.0，54 测试） |
-| RegimeMetaAllocator | MOD-PA-007 | `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | D_PF_ALLOC | regime 灰度概率→Shrinkage 风险节流，第二阶段上 | ⚠️ design（C1 验证已通过 commit 852457e9，代码仍骨架） |
-| BudgetChangeHandler | MOD-POS-022 | `src/zephyr/position/core/budget_change_handler.py` | D_POSITION | 三级升级（封锁→自平衡→强裁），执行 budget 变动 | ✅ production（v1.0.0，47 测试） |
+| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | D_POSITION | 独立策略账本，自带选股+仓位+风控 | ✅ production（v1.0.0，680 行）⚠️ 测试丢失（70） |
+| FirmRiskAggregator | MOD-POS-021 | `src/zephyr/position/core/firm_risk_aggregator.py` | D_POSITION | firm 层求和+硬上限裁剪，不做 MVO | ✅ production（v1.0.0，651 行）⚠️ 测试丢失（54） |
+| RegimeMetaAllocator | MOD-PA-007 | `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | D_PF_ALLOC | regime 灰度概率→Shrinkage 风险节流，第二阶段上 | ✅ production（v1.0.0，594 行）⚠️ 测试丢失（55）；参数待 PnL 校准，上线仍 P3 |
+| BudgetChangeHandler | MOD-POS-022 | `src/zephyr/position/core/budget_change_handler.py` | D_POSITION | 三级升级（封锁→自平衡→强裁），执行 budget 变动 | ✅ production（v1.0.0，572 行）⚠️ 测试丢失（47）+ 33 号文档骨架化 |
 
 > Soft-Assignment Performance Tracker：RegimeScore 移除后降级为归因可选工具（非分配器依赖），暂缓登记。
 
@@ -625,6 +649,53 @@ OOS 2013-2026（扣除 2bps/turnover）：
 - [youcanbuildthings — Multi Strategy Trading Bot Python: Risk Parity Allocator (2026-05)](https://youcanbuildthings.com/articles/multi-strategy-trading-bot-python)：多策略 bot 4 大机制——risk-parity capital sizing（60 日 inverse-vol）+ 90 天滚动相关性 drop rule（>0.70 持续 30 天→drop 低 Sharpe）+ per-strategy drawdown circuit breaker（15% half / 25% zero）+ intent netting before broker。$98K 总资金 6 策略分配示例。**支撑 §6.2 G07 相关性验证施工算法**（correlation drop rule 具体 Python 实现 + 三级响应阈值 0.6 审视/0.6-0.7 监控/>0.7 暂停部署）+ **印证 §2.5 四级回撤 Protocol**（15% half / 25% zero 与本项目 15% 减仓 / 25% 清仓一致）
 - [Regime-Adaptive Meta-Policies for Hierarchical Portfolio Agents (Kou et al. 2026-05, preprints 202605.0517)](https://www.preprints.org/manuscript/202605.0517)：提出三操作点架构——direct optimizer / routed consensus / alpha-augmented optimizer，rolling adaptive meta-policy 按近期表现选择操作模式。**关键发现**："routing helps when dispersion/decorrelation is high；direct optimization is safer in low-signal settings"——**印证 Model A "加法替代优化器"在 A 股低信号环境下的适用性**（direct optimization=simpler+safer in low-signal），同时提供"何时 Model A 需要升级到 routing"的评估条件（当策略间分散度高/dispersion 高时 routing 可能优于简单叠加）。论文核心洞察"the key is not to find one universally best configuration, but to characterize when each mode is most effective"——为 §4.2 演进路径提供"何时升级"的 regime-conditional 评估框架。**不采纳为当前方案**（Model A 已裁定不做 routing/consensus，§3.2 拒绝 Model D 投票），但记为远期评估条件：当策略数 >8 且分散度高时重新评估
 
+#### 2026 年 8 月六次审查实证补充（v2.6.0 新增）
+
+> 以下 2026-08-12 全网搜索新获 2 条机构实证，为 §1.1"3-5 策略少而精"与 §4.3"Model A=统一风险框架+独立 sleeve"提供支撑。
+
+- [Paloma Partners 重组（Bloomberg via Hedgeweek 2026-07-17）](https://www.hedgeweek.com/paloma-overhauls-multi-strategy-platform-with-fewer-teams-and-renewed-focus-on-arbitrage/)：Donald Sussman 的 Paloma（1981 年创立，曾早期支持 DE Shaw）砍 PM 团队**一半至 ~10 个**，聚焦固收套利+系统化策略（短久期 G7 国债套利/可转债套利/相对价值信用/系统化期货）——理由是"underperforming teams offset gains generated elsewhere"+量化策略在拥挤市场超额能力存疑（AUM 从 2023 年 $4B 跌至 2025 末 $1.1B，2026H1 约 -3%）。**印证 §1.1"少而精 3-5 策略"与 charter §3 约束五**：即便是多策略鼻祖级平台也在 2026 拥挤化环境下主动收敛到高确信少数策略；同时印证 §2.3 A 股 2026 超额衰减警示是全球性现象（量化策略拥挤→超额衰减→砍团队聚焦）。
+- [Candriam L Alternative Multi-Strategies（CAMS，The Hedge Fund Journal Issue 178，2026-06-25）](https://thehedgefundjournal.com/candriam-l-alternative-multi-strategies-cams/)：欧洲 UCITS 版内部多策略——4 主观策略（Global Macro/Carry/EMN Index/RV Arbitrage）+ 4 量化策略（CTA/系统化选股/EMN ML/EMN 多因子），**"all strategies are aggregated into a single trading book"**（所有策略聚合进单一交易账本），交易/融资/运营成本集中管理（对比 pod 平台 pass-through 高成本），按 risk-on/transitory/risk-off 三态 regime 评估做策略组间动态再配置。**印证 §4.3 Model A 定位**：CAMS 是"统一风险框架+单一账本聚合+非 pod 组织"的又一机构案例（与 Morwane/resonanzcapital systematic multi-strategy 同谱系）；其三态 regime（risk-on/transitory/risk-off）比 12 态简洁——间接支持 [10号](10_regime_detector_spec.md) 12 态设计"状态数宜少"的方向（与 §7.4 firestrand "n_regimes>3 过拟合"实证呼应）。
+
+### 7.5 已施工设施盘点（2026-08-12 全量核对，通用规则 #11）
+
+> 盘点范围：position / pf_alloc / pf_core / risk 四域中与本备忘主题（多策略并发 + firm 风险聚合 + 回撤 Protocol）相关的全部已施工设施。**先清楚有什么 → 才知道怎么改 → 才知道该删除/退役什么**。发现的重叠/缺口已分别登记 §6.8（灾后重建）与 §6.9（旧体系裁定）。
+
+#### A. Model A 核心链（§2.2 三模块 + meta 层，均 production）
+
+| 模块 | path | 行数 | 测试 | 备注 |
+|---|---|---|---|---|
+| MOD-POS-020 StrategyBook | `src/zephyr/position/core/strategy_book.py` | 680 | ⚠️ 丢失（70） | `select_stocks` 为子类抽象接口（2 处 NotImplementedError 属模板方法正常设计，非骨架） |
+| MOD-POS-021 FirmRiskAggregator | `src/zephyr/position/core/firm_risk_aggregator.py` | 651 | ⚠️ 丢失（54） | 两段拆分 pre_kelly_aggregate/post_kelly_clip 已实现，0 处 NotImplementedError |
+| MOD-POS-022 BudgetChangeHandler | `src/zephyr/position/core/budget_change_handler.py` | 572 | ⚠️ 丢失（47） | 0 处 NotImplementedError；33 号设计文档骨架化（§6.8） |
+| MOD-PA-007 RegimeMetaAllocator | `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | 594 | ⚠️ 丢失（55） | 0 处 NotImplementedError；参数待 PnL 校准，上线仍第二阶段 |
+
+#### B. 回撤 Protocol 链（§2.5，均 production 且测试在位）
+
+| 模块 | path | 行数 | 测试 |
+|---|---|---|---|
+| MOD-POS-008 drawdown_controller（5 级 VaR 风险 + Soft/Hard 策略止损 + 7 黑天鹅 BS-001~007） | `src/zephyr/position/core/drawdown_controller.py` | 603 | ✅ `tests/position/test_drawdown_controller.py` |
+| drawdown_tracker | `src/zephyr/risk/core/drawdown_tracker.py` | 332 | ✅ `tests/risk/test_drawdown_tracker.py` |
+| MOD-RK-05 var_calculator（Phase 1 参数法+历史模拟取 max） | `src/zephyr/risk/core/var_calculator.py` | 394 | ✅ `tests/risk/test_var_calculator.py` |
+| Kill Switch 执行 | 归 D-RISK 域（drawdown_controller 仅产出 `kill_switch_advised` 建议，KS-L4 由 stop_loss 触发执行——代码 INVARIANTS 明示边界） | — | ✅ |
+
+#### C. 仓位域其余已施工（与本备忘数据流直接相关，均 production 且测试在位）
+
+- MOD-POS-001 `position_sizing_engine.py`（881 行，Kelly 精裁决层——§2.1 分层裁定步骤③的消费者，`tests/position/test_position_sizing_engine.py` 在位）
+- MOD-POS-010 `position_limit_enforcer.py`（5% NAV 最终硬限兜底，32 号 §2.4 三层口径之一）
+- `position_state_machine` / `position_drift_monitor` / `rebalance_engine` / `cash_manager` / `capital_curve_manager` / `calendar_position_constraint` / `sell_position_link` / `position_audit_logger` / `position_reconciler`——均 production，测试在位
+
+#### D. 并存旧体系（功能重叠，裁定登记 §6.9）
+
+- MOD-PA-003 `multi_strategy_capital_allocator.py`（production）——与 MOD-PA-007 功能重叠
+- MOD-PA-002 `signal_synthesis_combiner.py` / MOD-PA-004 `strategy_correlation_gate.py`（均 production）——BM-SEL-20-A/C 旧投票体系残留
+- pf_core 旧体系：`portfolio_optimizer` / `constraint_solver` / `rebalance_scheduler` / `performance_attribution_engine` / `strategy_engine` + 5 示例策略（均 production）——§7.3 已记 MOD-PF-002 暂缓弃用
+
+#### E. 治理/文档设施缺口（登记 §6.8）
+
+- `capability_canonical_file_registry.yaml`：4 模块未登记（仅 MOD-POS-009 一条 D_POSITION 记录）
+- depgraph（PostgreSQL）：4 模块 maturity 仍 design → [64_d_position.md](../../02_domain_architecture_docs/64_d_position.md)（自动生成）标"设计态"滞后
+- 测试：4 个测试文件丢失（见上表 ⚠️）
+
 ## 8. 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
@@ -648,3 +719,4 @@ OOS 2013-2026（扣除 2bps/turnover）：
 | 2026-08-10 | 2.3.0 | **StrategyBook（MOD-POS-020）代码施工完成**：`strategy_book.py` 从骨架（MATURITY=design, v0.1.0）升级到 production（v1.0.0）。实现内容：① `build_target_portfolio()` 主入口——选股+粗仓位+budget裁剪+回撤Protocol+情绪周期信号缓存+cash_ratio 计算；② `rebalance_to_budget()` budget 适配——上调保留仓位现金拖累可接受/下调按 confidence 降序砍最不自信仓位（§2.4 Tier 2）；③ `compute_performance_score()` 60 日滚动 Sortino→[0.5,1.5] 映射（§2.2 口径对齐 34号 §3.1）；④ `size_positions()` equal_weight/risk_parity（inverse-vol，Morwane 实证）/custom 降级等权；⑤ 回撤 Protocol 四级（Level 1 8%/Level 2 15%/Level 3 20%/Level 4 25%+强制休息 5 天，§2.5.1 行业基准）；⑥ `SentimentStageSignal` 接口（28号→30号 链路2，退潮加权打板1.5/事件1.3/多因子1.2+降级路径 confidence<0.6 回退1.0）。测试 70 个用例全绿（0.15s）。同步：§2.2 施工状态从"三模块骨架"更新为"StrategyBook+FirmRiskAggregator 已 production，BudgetChangeHandler 待施工" | 代码施工路径规划推荐 32号 FirmRiskAggregator 后转 30号 StrategyBook（32号 DEPENDENCIES 上游）。StrategyBook 是 A 模型核心实体——每个策略自洽选股+粗仓位+独立风控，输出 target_portfolio 交 FirmRiskAggregator。施工完成填补策略层代码真空，与已完成的 FirmRiskAggregator（54 测试）形成完整数据流：StrategyBook→FirmRiskAggregator→MOD-POS-001。三模块中仅剩 BudgetChangeHandler（MOD-POS-022）待施工 |
 | 2026-08-10 | 2.4.0 | **BudgetChangeHandler（MOD-POS-022）代码施工完成 + 三模块全部 production 里程碑**：`budget_change_handler.py` 从骨架（MATURITY=design, v0.1.0）升级到 production（v1.0.0）。实现内容：① `handle_budget_change()` 主入口——5 规则优先级（上调不防抖/收敛中re-target/<5%防抖/≥5%触发/累计>10%强制触发）+ 三级升级编排（Tier1封锁→Tier2 rebalance→Tier3超时强裁）；② `check_convergence()` 收敛检测——ε_pos=5%+ε_days=1+超时升级Tier3（trim_ratio=(exposure-target)/exposure）；③ `_retarget_in_convergence()` 收敛中再变动——上调停止Tier3强裁/下调更新target重置窗口；④ 防抖机制——日内<5%忽略+日间累计>10%强制+新交易日重置；⑤ 三级指令生成（FreezeNewPositions/RebalanceRequest/ForcedTrim）——纯逻辑层不直接调用broker，调用者负责执行。测试 47 用例全绿（0.12s）。**三模块全部施工完成里程碑**：StrategyBook(70)+FirmRiskAggregator(54)+BudgetChangeHandler(47) = 171 测试全绿，A 模型核心数据流 StrategyBook→FirmRiskAggregator→MOD-POS-001 完全贯通。设计决策：circuit breaker/大宗交易/TWAP 等执行层交互作为可选 hook 不在本模块实现（归 D-EX-CORE 执行层），本模块只生成指令保持纯逻辑可单元测试 | 三模块最后一个骨架 BudgetChangeHandler 施工完成。设计文档 §3.4 伪代码含完整 circuit breaker/大宗交易/TWAP/2026-07-07 A股新规等执行层细节，但代码实现聚焦核心三级升级状态机（可纯单元测试），执行层交互归 D-EX-CORE。三模块全部 production 标志 A 模型仓位管理 sleeve 层→firm 层→budget 变动处理层完整贯通 |
 | 2026-08-10 | 2.5.0 | **文档-代码一致性修复**（六十五轮）：§2.4 施工状态行 L214（"budget_change_handler.py 当前骨架 MATURITY=design"）+§7.2 depgraph 模块登记表（"已登记到 depgraph 设计态 build_status=planned, design_maturity=design"）2 处描述滞后修复——对照实际源码 budget_change_handler.py / strategy_book.py / firm_risk_aggregator.py 全部 `MATURITY=production`，仅 regime_meta_allocator.py 仍 design。§7.2 模块登记表新增"当前状态（2026-08-10 核对源码）"列明示每个模块 production/design 状态，与 [33号 v2.10.0](33_budget_change_handler.md) + [32号 v1.0.20](32_firm_risk_aggregator.md) 文档-代码一致性审查结论对齐 | 六十五轮文档-代码一致性深度审查扩展到 30号——发现 30号 §2.4 L214（v2.3.0 之前描述，v2.4.0 修订记录已说明施工完成但 L214 漏改）+§7.2 模块登记表（v1.0.0 时期历史登记）两处描述滞后。**方法论价值**：本轮证明即使文档自身已在修订记录正确登记施工里程碑，正文描述行仍可能滞后未同步——"修订记录正确≠正文描述正确"，是文档-代码一致性审查的次要新角度（应同时核验"正文状态描述行"与"修订记录条目"） |
+| 2026-08-12 | 2.6.0 | **灾后全量设施盘点 + 文档-代码-测试三方一致性修复**：① §2.2 施工状态修正——RegimeMetaAllocator 实际已 production（MOD-PA-007 v1.0.0，594 行，0 处 NotImplementedError，34 号 v2.7.0 先行确认），v2.5.0"代码仍骨架 design 态"误记修正；"代码 production≠上线"（参数待 PnL 校准仍 P3）；② ⚠️ 披露 2026-08-11 git clean 灾难（#ARCH-GIT-CLEAN-GUARD-FIX）测试丢失——4 个测试文件（70/54/47/55 共 226 测试）创建未 `git add` 被删且 git 历史无记录，此前"171+55 测试全绿"当前无法复现；③ §2.4 对 [33号 v2.10.0](33_budget_change_handler.md) 引用修正——33 号内容丢失回退骨架 v0.1.0，G14 真源待重建（临时真源=代码 docstring）；④ §5 待裁定更新——数字孪生/世界模型行改为 #ARCH-OE-010 已 decided 裁剪（2026-08-11 用户确认，远期不采纳），LLM 多 Agent 行补 #ARCH-OE-011 关联裁定（CC-14 降级可选）；⑤ §6.8 新增灾后重建事项 4 项（测试重建/33 号重建/capability registry 补登记/depgraph maturity 滞后）；⑥ §6.9 新增并存旧体系裁定 3 项（MOD-PA-003 与 PA-007 功能重叠/MOD-PA-002+PA-004 旧投票体系残留/pf_core 5 示例策略关系未定）；⑦ §7.2 表四模块全 production 更新+测试丢失标注；⑧ §7.5 新增已施工设施盘点（规则 #11：position/pf_alloc/pf_core/risk 四域全量）；⑨ §2.2 接口契约②补字段名三方漂移 P0 标注（TargetPortfolio.positions/budget vs 伪代码 target_portfolio/budget_used，直接传对象会静默产出全现金组合）+ ③骨架态措辞修正 | 架构审查任务（30/32 号）第 1-3 轮：读现状+全量基础设施盘点发现 7 类问题（RegimeMetaAllocator 状态滞后/33 号骨架化引用悬空/测试丢失/registry 未登记/depgraph 滞后/PA-003 重叠/§5 与 ARCH-OE decided 不一致），第 3 轮算法审查新发现 StrategyBook→FirmRiskAggregator 接口字段名三方漂移 P0 断裂风险。按"事实性漂移修复 + 决策类登记开放问题不擅自定"原则处置。**施工方式**：worktree 隔离（主区并发会话持续回退致修改 3 次丢失，用户裁定改 worktree 施工）。**第 4-6 轮续**：④ 第 4 轮 2026-08-12 全网搜索——§7.4 新增"六次审查实证补充"2 条（Paloma 2026-07-17 砍半数 PM 团队聚焦高确信策略=机构级"少而精"印证+量化拥挤超额衰减全球现象；Candriam CAMS 2026-06-25 单一交易账本聚合+三态 regime 动态再配置=Model A 同构机构案例）；⑤ 第 5 轮过度工程审查**零新发现**——§2.5.6（VaR/ES+Kill Switch 分级降级）与 32 号 §4.4（行业/总仓位硬约束必需非过重）既有裁定充分，三模块+三级升级已施工代码量适度（651/680/572 行）无过度；⑥ 第 6 轮一致性审查**零新修复**——与 31 号接口一致/33 号骨架化已处置/34 号 RegimeMetaAllocator 已对齐/35 号口径分裂双向承认（映射归 35 号 §3.2）/54 号引用正确 |
