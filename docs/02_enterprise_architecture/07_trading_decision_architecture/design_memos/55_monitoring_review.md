@@ -5,7 +5,7 @@ title: 监控告警与复盘
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.0.1"
 date: 2026-08-12
 topic: monitoring_review
 scope: 07_trading_decision_architecture
@@ -26,7 +26,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构 PM 周报 / 风控周报 |
 | 正交性 | ✅ 与 regime 正交 |
 | 优先级 | P5 |
-| 状态 | ✅ active v1.0.0（复用资产已 production；三块新设计标"待施工"） |
+| 状态 | ✅ active v1.0.1（复用资产已 production；三块新设计标"待施工"） |
 
 ## 2. 背景
 
@@ -69,9 +69,21 @@ scope: 07_trading_decision_architecture
 | ReportPublisher 唯一出口（12 类源 + 哈希链归档防篡改） | reporting/report_publisher.py L64-95 | 复盘文档的归档与分发通道 |
 | PLV 上线后验证规约（Paper vs Live 订单量 ±1% 等 5 项） | governance/lifecycle_governance/post_live_verification.py | 最接近"实盘 vs 模拟偏离"的已施工规约 |
 
-### 3.2 决策一：系统健康监控 = 编排现有资产，不新造
+### 3.2 决策一：系统健康监控 + 操作风险审计 = 编排现有资产，不新造
 
 把 HealthMonitor（组件）+ MetricsRegistry/alert_rules（数据链路）+ alert_generator（风险）三路汇入统一"系统健康总览"看板（frontend/dashboard 持仓监控 Tab 旁扩展）。**缺口待施工**：miniQMT 下单链路专门探针（连接状态/下单延迟/回报延迟）——40_execution_broker P0 缺口清单已含断线重连，探针随其一并施工，不单独立项。
+
+**操作风险审计扩展（BM-RC-08-E，design，v1.0.1 补）**：
+
+- **定位**：L4 风控域 BM-RC-08 子环节，盘后/事件驱动触发；消费系统日志+操作记录+Agent 行为（D-INFRA / D-AUTONOMY）；数据流：系统日志+操作记录→系统故障检测+人为错误识别+Agent 失控检测+级联失败分析→操作风险报告 → BM-RES 策略迭代。代码映射：depgraph 无实现（设计态），本节为其补 why 层。
+- **裁定**：**四类审计分类**——①**系统故障**（数据链路中断/引擎崩溃/下单链路超时，证据复用 §3.1A HealthMonitor 压力四级+自动重启≤3 次记录、MetricsRegistry RED 指标、alert_rules 6 条数据链路告警）；②**人为错误**（手工干预/配置误改/阈值手工覆盖，证据复用告警升级链 alert_escalation 认领记录 + §3.3 阈值注册表变更审计）；③**Agent 失控**（AI 生成指令越权/频率异常/目标漂移，证据复用 53 号 §3.8 降级回退 5 态状态机触发记录 + kill switch 触发日志）；④**级联失败**（单点故障沿依赖链放大，证据复用 depgraph 依赖拓扑 + HealthMonitor 组件存活时序做传播路径回放）。理由：健康监控回答"现在活不活着"（实时探针），操作风险审计回答"过去为什么出事"（事后归因）——同一批 §3.1 已盘点资产（HealthMonitor/审计链/告警链）双流复用，不新造监控探头，与本备忘"复用优先、新造最少"总立场一致。降级：操作风险审计未就绪→人工巡检（环节定义原口径）。重评条件：首批策略上线 + §3.3 阈值注册表施工后，四类分类的自动归规则（当前人工归类为主）再评估自动化。
+- **契约/参数/接口**：审计报告产物 OperationalRiskReport `{report_id, period, category: system_fault | human_error | agent_runaway | cascade_failure, events: [...], root_cause, action_items}`——事件驱动即时产出 + 周度汇总走 ReportPublisher 归档，并入 §3.6 周复盘"偏离与告警事件"段。
+
+### 3.2B 决策一扩展：模型风险审计（BM-RC-08-D，design，v1.0.1 补）
+
+- **定位**：L4 风控域 BM-RC-08 子环节，盘后/定时触发；消费模型预测+实际收益（D-ML-SERVE / D-REPORTING）；数据流：模型预测+实际→SR 26-2 模型风险管理+5 类漂移检测（数据/概念/预测/标签/特征）+CUSUM 变点+过拟合检测+训练-服务一致性验证→模型风险报告 → BM-RES 策略迭代 / 因果链"模型漂移→降级"。代码映射：depgraph 无实现（设计态），本节为其补 why 层。
+- **裁定**：**对标 SR 26-2（美联储模型风险管理框架）的轻量版**——三支柱裁剪为个人系统可承受口径：①**上线前验证**复用 [23_strategy_correlation_validation](23_strategy_correlation_validation.md) §3.3 过拟合检测引擎（参数稳定指数/PBO/CSCV，防"上线即过拟合"）；②**持续监控**复用 23 号 §5.4 上线后漂移监控（CUSUM on rolling correlation + PSI 持续追踪，防"上线后漂移到过拟合"）+ 本备忘 §3.4 实盘 vs 回测偏离度量；③**结果校准审计**复用 [36_var_es_monitoring](36_var_es_monitoring.md) §3.10 校准/重构/恢复子流程（Christoffersen 回测验证 + RECALIBRATE/REBUILD 动作链，VaR 模型侧校准证据）。**5 类漂移体系统一口径**：数据漂移 / 概念漂移 / 预测漂移 / 标签漂移 / 特征漂移——检测器分工：特征/数据漂移用 PSI（边际分布比较），概念/标签漂移用 CUSUM（残差持续偏移），预测漂移用 rolling IC/Sharpe 衰减（25 号衰减监控三层 + [61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) §3.3 Drift Observatory 多方法组合）；阈值统一登记到本备忘 §3.3 阈值注册表（PSI>0.2 关注 / >0.4 高度，CUSUM h=4σ）。理由：模型风险审计不是新建检测器栈，而是把散落在 23/25/36/61 号的过拟合/漂移/校准资产**统编为一盘审计视图**——与 §3.2"编排不新造"同哲学；SR 26-2 机构全量形态（独立模型风险管理部门/年度审计）对个人系统是过度工程，轻量版保留"验证→监控→校准"三闭环即达生存需求。降级：模型风险审计未就绪→人工抽检（环节定义原口径）。重评条件：首批策略 3 个月 track record + 本备忘 §3.4 偏离度量施工后，5 类漂移阈值用实盘数据回归校准。
+- **契约/参数/接口**：ModelRiskReport `{model_id, period, drift_findings: [{type, detector, value, threshold, verdict}], validation_ref（23 号过拟合报告）, calibration_ref（36 号 VaR 校准状态）, recommendation: continue | recalibrate | retrain_gate}`——`retrain_gate` 结论衔接 [54_reconciliation_attribution](54_reconciliation_attribution.md) §3.1.1 BM-REC-03-C 模型层反馈（重训练信号须过 C-003 回测门禁再回 BM-SEL-02），形成"审计→重训练→门禁→上线"链路。周度经 ReportPublisher 归档，并入 §3.6 周复盘议程。
 
 ### 3.3 决策二：告警阈值统编为注册表，阈值不集中即不可审计
 
@@ -153,3 +165,4 @@ scope: 07_trading_decision_architecture
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G26 讨论要点占位，待讨论填空 |
 | 2026-08-12 | 1.0.0 | 骨架→active：回填已施工监控/告警/报告设施盘点；定五项决策（复用编排/阈值统编/偏离度量/退役双判据/复盘分层）；六要点逐项对齐；补 2026 研究锚点 | 完整版（v1.21.0）曾丢失，按已施工代码重建；新设计限最小三块并全标"待施工"；不擅自定参数，阈值候选入 §7 待人裁定 |
+| 2026-08-12 | 1.0.1 | 作战地图全覆盖补丁——闭合 BM-RC-08-E / BM-RC-08-D：①§3.2 扩展为"系统健康+操作风险审计"（BM-RC-08-E design：四类审计分类——系统故障/人为错误/Agent 失控/级联失败 + OperationalRiskReport 产物，证据复用 §3.1 已盘点 HealthMonitor/MetricsRegistry/告警链/审计链资产，不新造探头）；②新增 §3.2B 模型风险审计（BM-RC-08-D design：对标 SR 26-2 轻量版"验证→监控→校准"三闭环 + 5 类漂移体系统一口径与检测器分工，串联 23 号 §3.3 过拟合检测 / 23 号 §5.4 CUSUM-PSI 漂移监控 / 36 号 §3.10 VaR 校准审计，recommendation=retrain_gate 衔接 54 号 §3.1.1 BM-REC-03-C 的 C-003 回测门禁链路） | 风控域两个 design 环节（depgraph 无实现）补 why 层，按"定位 → 裁定（理由+重评条件）→ 契约/参数/接口"格式回填；延续"复用优先、新造最少"总立场 |

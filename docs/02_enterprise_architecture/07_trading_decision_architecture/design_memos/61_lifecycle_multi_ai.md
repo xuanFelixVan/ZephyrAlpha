@@ -5,7 +5,7 @@ title: 策略生命周期与多 AI 协作
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.12.2"
+version: "2.13.1"
 date: 2026-08-12
 topic: lifecycle_multi_ai
 scope: 07_trading_decision_architecture
@@ -106,6 +106,23 @@ scope: 07_trading_decision_architecture
 
 **当前状态**：BM-RES-01（数据特征存储）已运营态；BM-RES-02/06/07 设计态待施工；BM-RES-03/04/05/08/09/10/11 缺失态（无锚点，BM-INV-001 违例）。
 
+**研究知识流水线拍板**（2026-08-12 作战地图全覆盖补丁，一次拍板闭合 §7.2 登记的 BM-RES-03/08/09 缺失态待定问题）：
+
+1. **BM-RES-03-B 研究发现知识库**（design）→ **轻量建设：Markdown+Git+frontmatter 标签检索**。定位：假设被接受/研究发现产出后的知识沉淀环节（下游 D-KNOWLEDGE）。裁定：不上 SQLite/Neo4j/ChromaDB 独立知识库——个人项目知识条目量级（数十至数百条）用 Markdown 文件 + Git 版本化 + frontmatter 标签检索足够，呼应 §7.2"Markdown+Git 替代独立系统"既定思路；向量检索属过度工程，重评条件：知识条目 >500 且关键词检索失效。契约（建设项）：知识条目以单文件 Markdown 存于研究知识目录，frontmatter 模板四字段必填——`hypothesis`（假设陈述）/ `evidence`（证据列表：回测结果/数据切片/文献出处）/ `conclusion`（接受/拒绝+理由）/ `tags`（关联因子/策略标签，对接 §3.2 第 2 条假设状态机）；条目生命周期随假设状态机流转（提出→验证→接受/拒绝 全程留痕即知识沉淀）。
+2. **BM-RES-08 知识清洗与结构化 + BM-RES-08-A 知识清洗流水线**（design）→ **轻量建设：LLM 单次抽取 + Markdown 结构化模板承载**。定位：原始研究材料（论文/研报/新闻文本）→清洗→结构化→沉淀 BM-RES-03 假设。裁定：不上独立 NLP 清洗栈（实体抽取/关系抽取/语义去重工程对个人项目过重）；清洗四动作（去重/去噪/实体链接/质量评分）由"LLM 单次抽取 + Markdown 结构化模板"承载——LLM 一次性输出结构化条目，人工复核后入库；重评条件：日采集量 >50 篇且人工复核成为瓶颈。契约（建设项）：Markdown 结构化模板字段——`source`（来源+时间+置信度元数据）/ `dedup_key`（标题哈希，承载去重）/ `entities`（实体链接：关联因子/策略/标的标签）/ `quality_score`（LLM 自评 1-5 + 人工复核标记）；去重=标题哈希比对（Git 已有历史），去噪=quality_score <3 不入库，与 BM-RES-03-B 条目模板共用 frontmatter 规范。
+3. **BM-RES-09 知识分类与策略提取 + BM-RES-09-A 知识类型分类体系**（design）→ **轻量建设：frontmatter 标签承载 5 类知识**。定位：结构化知识→按类型分类→策略提取→BM-RES-07 策略迭代。裁定：知识类型分类体系（原定义 5 类：事实型/规则型/策略型/案例型/元知识型）由 frontmatter `knowledge_type` 单字段承载，不建独立分类模型/置信度体系；策略提取=人工阅读 `knowledge_type=strategy` 条目后走 §3.2 第 2 条假设登记进入状态机——分类体系与假设状态机直接衔接，无中间层。重评条件：知识条目 >500 且人工分类不一致。契约（建设项）：frontmatter `knowledge_type` 枚举 `fact/rule/strategy/case/meta` 必填；策略提取产出物=假设登记条目（`knowledge_type=strategy` 条目引用 + 假设陈述），走 §3.2 第 2 条状态机。
+
+**研究环境否定式裁定**（2026-08-12 作战地图全覆盖补丁，否定式裁定闭合 4 个 BM-RES 环境/编排环节）：
+
+1. **BM-RES-01-C 研究数据沙箱**（design）→ **裁定不建设容器沙箱**。定位：研究隔离环境（container/vm/process 三级隔离原设计）。裁定：研究隔离 = venv/目录级隔离 + 审计日志——与 [65_git_safety_governance](65_git_safety_governance.md) §9"不引入沙箱/容器隔离"裁定呼应（Windows 无 macOS Seatbelt 等效物，Docker/WSL 对量化交易开发过重）；个人单研究员无多租户隔离需求，venv 依赖隔离 + 研究目录与生产目录物理分离 + Git 审计日志已覆盖"数据隔离+代码隔离"诉求；资源隔离（CPU/内存限额）无需求（单机研究任务错峰人工调度）。重评条件：引入不可信第三方代码/数据需隔离执行时。
+2. **BM-RES-05-A Notebook 集成与一键转生产**（design）→ **裁定不建设**。定位：JupyterLab + papermill 参数化执行 + 一键转生产管线。裁定：研究环境 = VSCode + 纯 Python 脚本，不建 JupyterLab/papermill——个人项目现实：AI 会话直接产出 .py 脚本（非交互式 notebook 探索），"一键转生产"诉求由 §3.8 模块创建 4 步（创建→注册→接入→验证）承载，脚本即生产形态无需转换层。BM-RES-05 父环节（Notebook 与协作）协作侧由 §3.6 多 AI 协作分工承载（design_memo 产出物 + depgraph path 交接，"AI 间不直接通信"纪律），notebook_backend/collaboration_mode 参数随之消解。重评条件：无（除非研究模式转向交互式探索驱动）。
+3. **BM-RES-04 研究工作流编排 + BM-RES-04-A DAG 编排与任务调度**（production/design）→ **裁定不建 Prefect 级编排**。定位：假设接受后触发研究工作流 DAG（任务调度/依赖解析/重试/并行）。裁定：研究工作流 = 人工串联 + [64_data_source_download_spec](64_data_source_download_spec.md) §6.4 调度基座复用——APScheduler 常驻进程 + task_queue DAG 依赖管理 + 指数退避重试 + 降级告警已是 production（数据下载域 15 时段条目运营中），研究侧定时任务（如论文追踪定时爬取）直接复用该基座登记新 DAG 节点即可，不另建 Prefect/Airflow 级编排；§4.2 已拒绝 KFP 企业级编排栈，本节补研究域的完整闭环（拒绝理由同 §4.2：个人项目无 K8s 运维能力）。重评条件：研究工作流 >10 节点且人工串联成为瓶颈。
+4. **BM-RES-06-B 论文追踪**（design）→ **远期候选登记**。定位：arXiv/SSRN 爬取→去重→摘要→趋势检测→下游 LLM 研究助手。裁定：arXiv 爬取 + 标题/DOI 去重 + LLM 摘要的轻量版 <200 行可标 Phase 3 立项（复用 64 号 §6.4 APScheduler 调度基座 + BM-RES-08 清洗模板）；当前 interim 载体 = [90_methodology_open_questions](90_methodology_open_questions.md)/[91_density_prediction](91_density_prediction.md) 的人工文献整合实践（18 轮 arXiv 审查已产出 20+ 候选登记，人工检索+LLM 精读模式已运转有效，无自动化爬取刚需）。重评条件：Phase 3 且周新增相关论文 >20 篇人工精读成为瓶颈。
+
+**BM-RES-06-A LLM 研究助手**（design）：Phase 5+ 重评条件本节"LLM 驱动 alpha 挖掘远期候选"已写明（因子库扩张 + LLM 能力成熟后评估，§2.3"不做 agent 编排系统"约束），确认无需动作。
+
+**BM-RES-07-A 策略进化与因子挖掘**（design）：当前承载 = 人工 + §3.2 第 2 条假设状态机 + [62_business_registry_construction](62_business_registry_construction.md) §4.12 ADAPT_STRATEGY 衰减后适应算法（归因回流→权重调整→升级方案需审批）；FactorMiner Experience Memory（成功模式+失败约束可检索 memory）与 AlphaMemo APV（失败路径不对称否决）为 Phase 3 轻量契合点（可脱离 LLM 独立实现，<100 行，见本节远期候选登记）；LLM 化（CogAlpha/Hubble 式自主挖掘）为 Phase 5+ 远期候选，与 §2.3 约束一致不立即施工。
+
 **LLM 驱动 alpha 挖掘远期候选**（2026-08 补充，00_index G28 讨论要点回填）：本项目 100% AI 开发模式天然契合"量化行业从因子竞争转向智能体竞争"趋势，但当前手动因子研究足够，以下 LLM 驱动自动化方案记为远期候选，待因子库扩张 + LLM 能力成熟后评估：
 - **QuantEvolver RFT（Reinforcement Fine-Tuning）——下一代方向**（[arXiv:2605.15412, 2026-05-14](https://arxiv.org/pdf/2605.15412)，[代码 github.com/QuantLLM/QuantEvolver](https://github.com/QuantLLM/QuantEvolver)）：用 **RFT 强化微调**替代标准 LLM"generate-evaluate-feedback"提示词循环——将可执行量化评估转化为**策略更新**（policy updates），Miner LLM 通过参数学习内化因子挖掘经验，而非在提示词中追加膨胀的历史候选/反馈。**核心架构优势**：① 逃离上下文窗口限制（prompt-loop 的历史累积导致 context explosion + feedback drift + search stagnation，RFT 把学习信号移入 LLM 权重彻底绕过）；② 组件：Factor DSL 生成 + Regime Backtest + Diversity-Complementarity Reward + Mined Factor Database；③ 三大真实市场基准验证持续优于 LLM-based baseline。**与 QuantaAlpha 的本质区别**：QuantaAlpha 是 prompt 级**轨迹进化**（evolves trajectories，不更新权重），QuantEvolver 是权重级**策略内化**（evolves the model's policy via RFT）——RFT 比 trajectory evolution 更深一层，是 LLM alpha 挖掘的下一代范式
 - **QuantaAlpha LLM-driven Alpha Mining**（[arXiv:2602.07085, 2026-02](https://arxiv.org/abs/2602.07085)）：LLM 用进化算法挖掘 alpha 因子，trajectory-level evolution，diversified planning initialization + trajectory quality + semantic anchoring + experience transfer 四组件，比 RD-Agent/AlphaAgent 更高 IC
@@ -177,6 +194,13 @@ scope: 07_trading_decision_architecture
     ```
   - **本项目定位**：十一篇均记为 Phase 5+ 远期候选（LLM alpha mining 整体是远期候选，当前手动因子研究足够）。**评估优先级**：AlphaSchema > FactorMiner > AlphaMemo > Hubble > AlphaCrafter > XALPHA > EFS——AlphaSchema 的"schema 解耦 + LLM 鲁棒性"最模块化（可先实现 schema 词汇表辅助人工因子研究）；FactorMiner 的"Ralph Loop + Experience Memory"最轻量（Modular Skill 可先实现评估工具辅助人工，Experience Memory 是"经验沉淀"非 LLM 自主生成）；**Hubble 的"exec-free AST 沙盒 + 负 RAG"是 LLM alpha 挖掘安全施工的最低门槛**（AST 沙盒<200 行可先于 LLM 施工，负 RAG 与 AlphaAgent AST 相似度同期评估）；AlphaCrafter 全栈闭环最完整但与 30 号"LLM 多 Agent 辩论暂缓"约束冲突最直接；XALPHA 的"闭环研究过程"最完整但最重；EFS 的"portfolio level 优化"最贴近实盘但依赖因子库成熟。**不过度工程审查**：六篇均涉及 LLM 自主生成因子代码，与 §2.3 约束一致——记为远期候选不立即施工，待因子库扩张 + LLM 能力成熟后评估。**防同质化正则化补充**——[AlphaAgent](https://arxiv.org/abs/2502.16789)（arXiv:2502.16789, KDD 2025, 中山大学）的三机制（AST 相似度原创性强制 + 假设-因子语义对齐 + AST 结构复杂度控制）防因子同质化，在 CSI 500 + S&P 500 验证抗 alpha decay——其 **AST 相似度正则化独立于 LLM**，可用于传统因子挖掘阶段检测新生成因子与已有因子库的同质化程度，与五骑士 ① Crowding 41% 直接对应（资本涌入→信号被套利→价差压缩的本质就是因子同质化），Phase 2 候选评估（因子库 >20 时用 AST 相似度防同质化，<50 行代码无需 LLM）。**FactorMiner Experience Memory 与本项目的轻量契合点**：FactorMiner 的"经验沉淀"思想（成功模式+失败约束）可脱离 LLM 独立实现——本项目因子孵化阶段（§3.2）已有"假设驱动+证据挂载"状态机，FactorMiner 的 Experience Memory 是该状态机的"跨假设经验累积"层（Phase 3 候选：因子库 >20 时将已验证假设的成功/失败模式结构化为可检索 memory，辅助人工因子研究，<100 行代码无需 LLM）。**AlphaMemo APV 与本项目的轻量契合点**：AlphaMemo 的"失败否决不对称性"可脱离 LLM 独立实现——将假设验证的"拒绝路径"（失败）结构化为可检索的否决 memory，辅助人工因子研究避免重复试错（Phase 3 候选，<80 行代码无需 LLM，与 FactorMiner Experience Memory 正交可叠加：FactorMiner 记忆"什么方向有前景"，AlphaMemo 记忆"什么编辑模式会失败"）。**Hubble AST 沙盒的轻量契合点**：Hubble 的 exec-free AST 验证沙盒可脱离 LLM 独立实现——本项目因子孵化阶段若引入 LLM 生成因子代码，须先部署 AST 白名单（仅允许算术/时序/截面/逻辑算子节点，拒绝 import/open/exec/eval 等危险节点）+ 复杂度控制（深度≤10/节点数≤50）+ 语义校验（算子名匹配因子算子注册表），是 LLM alpha 挖掘的安全前提（Phase 5 候选，<200 行代码，可先于 LLM 施工作为安全基础设施）
 - **统一理论框架参照**（[arXiv:2608.01789, 2026-08-03](https://arxiv.org/html/2608.01789v1)，上海大学+西交利物浦）：综述论文提出自主公式化 alpha 发现的**六组件统一框架**——① Representation（定义搜索空间）/ ② Variation（生成候选 alpha）/ ③ Fitness Evaluation（评估 alpha 质量）/ ④ Selection（更新因子池）/ ⑤ Memory（累积验证经验）/ ⑥ Adaptation（响应市场 regime 变化）。系统综述了方法演化谱系（人工公式库→GP/EA→RL→Pool-Aware→Distributional→Graph-Based→MCTS→LLM→Agentic 九代），并给出未来路线图（可靠 Fitness/经济多样性/可解释性/多目标/代理辅助/验证记忆/人在环/可复现基准）。**对本项目的价值**：六组件框架可作为上述九篇候选的**统一分类视角**——QuantaAlpha=Variation+Selection+Memory（轨迹进化）/ QuantEvolver=Variation+Adaptation（RFT 权重内化）/ AlphaSchema=Representation+Selection（语义空间探索）/ FactorMiner=Memory+Adaptation（经验沉淀+Ralph Loop）/ AlphaCrafter=全六组件（全栈闭环）/ XALPHA=全六组件（闭环研究过程）/ EFS=Fitness+Selection（portfolio level 优化）/ EvoQuant=Variation+Fitness+Memory（策略代码优化+经验蒸馏）/ CogAlpha=Representation+Variation+Fitness+Selection+Adaptation（代码级表示+7层21Agent深度探索）/ **Hubble=Representation+Fitness+Selection（DSL 受限表示+确定性评估+family-aware 选择，独特贡献是 Representation 组件的安全约束——exec-free AST 沙盒是其他九篇均未建模的"安全表示"维度）** / **AlphaMemo=Memory+Selection+Variation（结构化搜索过程记忆+不对称过程否决+AST-diff 编辑模体，独特贡献是 Memory 组件的过程级记忆——记忆搜索过程含残差/决策/AST 差异非仅结果，是候选中 Memory 维度最强的显式建模）**。**关键洞见 1**：候选在 Memory 组件上覆盖最薄弱——仅 FactorMiner（Experience Memory）、EvoQuant（经验蒸馏）和 AlphaMemo（Structured Search-Process Memory）三者显式建模，其余均为"生成-评估"范式无跨试验经验累积。**AlphaMemo 是 Memory 维度最强的显式建模**——不仅记忆结果（FactorMiner）或蒸馏经验（EvoQuant），而是记忆完整搜索过程（残差/决策/AST 差异），"过程记忆 > 结果记忆"是 Memory 组件的范式升级。FactorMiner Experience Memory 和 AlphaMemo APV 均可在无 LLM 条件下独立实现（Phase 3 轻量契合点，两者正交可叠加）。**关键洞见 2**：九篇候选在 Representation 的**安全约束**上覆盖最薄弱——仅 Hubble 显式建模 exec-free AST 沙盒，其余均允许 LLM 生成任意代码/公式无安全验证。这印证 Hubble AST 沙盒作为 Phase 5 安全基础设施的**独特价值**——它是 LLM alpha 挖掘从研究原型到生产部署的安全门槛。综述登记为理论参照非新算法，不改变 Phase 5+ 远期候选评估优先级，但六组件框架揭示的两个覆盖薄弱点（Memory+安全表示）分别由 FactorMiner、AlphaMemo（Memory 维度过程级记忆强化——"过程记忆 > 结果记忆"是 Memory 组件范式升级）和 Hubble（安全表示）填补
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RES-03-A | 假设生命周期管理 | §3.2 纪律 2 假设驱动（状态机 提出→验证→接受/拒绝 全程留痕） | design 待施工 |
+| BM-RES-10-A | 模块工厂架构 | §3.2 纪律 4 模块工厂 + §3.8 creation_token/depgraph 登记 4 步流程 | design 待施工 |
 
 ### 3.3 模型训练阶段（BM-MOD）规范
 
@@ -661,6 +685,11 @@ scope: 07_trading_decision_architecture
 
 **个人项目简化**：不上 KFP/KServe/K8s 编排；用 MLflow Model Registry alias 管理生命周期 + 手动审批门禁。BM-MT-02 已有 ExperimentTracker（stable），BM-MT-02-A/B 设计态待施工。
 
+**模型训练两环节裁定**（2026-08-12 作战地图全覆盖补丁）：
+
+1. **BM-MT-01-B AI 辅助代码生成与分析师 Agent 反馈**（battle_map 标 production，实际仅 AST 沙箱落地）→ **登记裁定：生成-反馈闭环并入 §3.2 远期候选**。定位：ModuleRequirementSpec→LLM 生成→Critic 审查→反馈收敛→AST 沙箱→人工审核注册。裁定：Generator/Critic/Judge 生成-反馈闭环 + 分析师 Agent 与 §2.3"不做 agent 编排系统"约束冲突，并入 §3.2 LLM 驱动 alpha 挖掘远期候选（Hubble/EvoQuant 已登记同类范式，Phase 5+ 重评）；**安全栈已落地**——[62_business_registry_construction](62_business_registry_construction.md) §4.34② factor_registry schema `llm_safety_stack` 5 字段（ast_validation/dsl_constrained/complexity_control/dual_channel_rag/family_aware_selection）已承载 Hubble AST 验证沙箱契约，Phase 2+ 启用 LLM 因子生成时 MUST 声明全 true。同时登记**battle_map 成熟度标注倒挂真源修正建议**：BM-MT-01-B 标 production 但 `ml_train/ai_operator/` 仅 AST 沙箱部分落地、生成-反馈闭环未施工，成熟度应 production→design，写入 §7 待定项由 battle_map owner 会话裁决。
+2. **BM-MT-01-C 策略数字孪生**（design）→ **裁定不做镜像副本**。定位：每策略实时镜像副本→策略健康评估+衰减预警。裁定：不建策略行为镜像副本——"策略健康评估+衰减预警"诉求已由 §3.9 退役 8 维量化阈值（Rolling Sharpe/Drawdown 超历史/profit factor/Win rate+expectancy/Equity curve 斜率/Half-life 预测/Regime 失配/逻辑失效）+ §3.3 Drift Observatory 五类漂移四层架构完整承载，镜像副本属重复建设且单机维护一份实时镜像的仿真成本高。**与 #ARCH-OE-010 边界消歧**：#ARCH-OE-010 裁的是 SIM 域数字孪生 + 世界模型 DreamerV3（市场仿真侧，BM-SIM-05 已降级），本环节是策略行为镜像，两者正交——本裁定不触碰 SIM 域既有裁定。重评条件：策略数 >10 且 8 维阈值+Drift Observatory 出现系统性误报/漏报时。
+
 ### 3.4 回测阶段（BM-BT）规范
 
 承接 [battle_map_03_backtest_validation](../battle_map/battle_map_03_backtest_validation.md)（BM-BT-01~07 环节视图）+ [52_backtest_framework_docking](52_backtest_framework_docking.md)（⚠️G23 设计备忘 draft v0.1.0 骨架待讨论——回测门控 why 层未定稿；IS→WFA→OOS 门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py`）。本节锁定生命周期视角的回测准入门禁与退出条件。
@@ -701,6 +730,20 @@ scope: 07_trading_decision_architecture
 3. **三层分治**（01_spec §2）：生成器管 what is / design_memo 管 why / depgraph 管 what will be——AI 不得越层（生成器不写 why，备忘不写 what is 细节，depgraph 不写 why）
 4. **段位编号**（01_spec §4.1）：新文档按业务域入段（0x-9x），段内取下一个空号，不预留坑位——AI 认领时在 00_index §7.3 占用表登记，避免编号撞车
 5. **并发文件级冲突纪律**（2026-08-12 实战教训补，#ARCH-WORKTREE-GATE-001）：多会话并发施工共享主工作区 git index——未 commit 到分支的修改随时可能被并发会话的 stash/reset/checkout 抹掉（**未落分支的修改不算完成**）。强制：①Edit 前先 `python scripts/git_commit.py --claim-only` 前移声明持有（搭便车防护）；②commit 唯一入口 `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（GitCommitGateway 串行锁+stash 隔离，裸 git commit 被 GATE-COMMIT-GW 阻断）；③检测到其他活跃 session 时 WORKTREE gate 阻断主工作区 commit，须 `python scripts/session_worktree.py create/exec/merge` 物理隔离（本备忘 v2.11.0 修订即经此流程落地）。**行业背书**（2026-08）：CMU CAID（[arXiv:2603.21489](https://arxiv.org/pdf/2603.21489)，2026-03）实证 branch-and-merge + git worktree 是多 agent 协作的核心协调机制（PaperBench +26.7% / Commit0 +14.3%）；VS Code 2026-08-07 起为 Copilot/Claude/Codex agent session 默认启用 git worktree 隔离（[luonghongthuan 2026-08-10](https://luonghongthuan.com/en/blog/vscode-copilot-agent-worktree-isolation-2026/)）——"并发 agent 未提交修改被静默覆盖"是 2026-08 行业公认失败模式，worktree 隔离是其标准解法
+
+**运行时风险治理小节**（2026-08-12 作战地图全覆盖补丁，与 §3.6 多 AI 协作衔接——多会话 AI 开发模式下的 AI/Agent 行为治理两环节设计）：
+
+> 本项目"多 AI = 人调度多会话"（§3.6），AI 会话通过 git/脚本/depgraph 等工具链作用于代码库与文档库——**AI 行为的运行时风险治理**是"人调度"模式的必要配套：会话产出物（代码修改/注册表变更/文档修订）须在有界自治边界内运行，越界即熔断。以下两环节设计不改变"AI 间不直接通信、所有交接落盘"的既有纪律，而是在纪律之上加运行时护栏。
+
+1. **BM-RC-09 AI/Agent 风险治理**（design）→ **设计三件套：有界自治边界 + 治理漂移防护 + ARS 双轨结算裁定**。定位：Agent 自治行为发生时的治理基线（原定义：有界自治 Bounded Autonomy / 保障缺口管理 / 治理漂移防护 / Agent 行为监控 / ARS 双轨结算模型）。设计：
+   - **有界自治边界**（自治动作白名单 + 额度）：AI 会话可自治执行的动作收敛为白名单——①文档读写（design_memos/域文档）；②脚本执行（scripts/ 下已登记治理脚本）；③注册表变更（capability/translation/ARCH 登记，经 §3.8 4 步流程）。**额度**：单会话单次任务修改文件数 ≤10（超出须拆任务）、禁止动作黑名单（删除 production 代码文件/修改治理 gate 脚本本身/绕过 git_commit.py 裸 commit——后者已被 GATE-COMMIT-GW 硬阻断）。白名单外动作一律升级人工审批，对应 BM-RC-09 原"保障缺口管理"——白名单覆盖的动作即"保障内"，黑名单+未列举动作即"保障缺口"须人工兜底。
+   - **治理漂移防护**（规则版本锁定 + 变更审计）：治理规则（gate 脚本/阈值 yaml/白名单本身）是"治理的治理"——规则文件随 Git 版本锁定，任何变更走 §3.8 登记 + 修订记录留痕（变更审计），防止"AI 会话逐步放宽约束"的治理漂移（如修改阈值让门禁通过）。与 §3.2 纪律的关系：§3.2 假设状态机管"研究内容"的提出→验证→接受/拒绝留痕，本节管"AI 行为"的白名单→额度→熔断留痕——内容治理与行为治理双层并行，共用 Git 落盘载体。
+   - **ARS 双轨结算裁定**：AI 会话产出物的结算分双轨——**快轨**（白名单内 + 额度内 + gate 全过 → 会话自治结算，commit 即生效）/ **慢轨**（白名单外/额度超/gate 不过 → 人工审批结算，审批通过前修改不落分支）。裁定：当前"人调度多会话"模式下慢轨占比高属正常（个人项目人工即用户本人），不设自动化结算比例指标；重评条件：会话数 >5 且慢轨人工审批成为瓶颈时，评估扩大白名单（而非降低门禁）。
+   - **与 VR-009 AI 自治熔断器的关系**：[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §2.4 已落地 VR-009（`security/access_control/kill_switch.py`，MOD-INF-018）——Agent 越界/模型漂移 PSI/自治等级跳变/资源消耗/连续否决 5 条件触发 NORMAL/TRIPPED/COOLDOWN 状态机，human_gated。本节白名单+额度是 **VR-009 的上游预防层**（边界内运行减少熔断触发），VR-009 是 **本节的下游兜底**（边界被突破时机械熔断）；BM-RC-09 原"漂移超限→触发 BM-RC-03 Kill Switch 熔断"降级链即 VR-009 承载。
+2. **BM-RC-04-F AI/Agent 风险监控**（design）→ **设计三件套：行为基线+异常告警 + OWASP 映射检查表 + 告警通道衔接**。定位：盘中持续的 AI 风险监控（原定义：OWASP Agentic Security Top10 扫描 + AST 对抗测试 + MCP 协议安全映射，depgraph 无实现）。设计：
+   - **Agent 行为基线 + 异常告警**：从 Git 提交历史/会话日志统计 AI 会话行为基线——操作频率（单会话 commit 次数/小时）、操作类型分布（文档 vs 代码 vs 注册表修改占比）、涉及模块分布；偏离基线（如单会话突增 10× commit 频率、首次触碰从未涉及的 production 模块）即异常告警。实现轻量：复用 §3.6 第 5 条 git_commit.py 会话登记日志 + depgraph 变更记录，统计脚本 <150 行，无独立监控服务。
+   - **OWASP Agentic Top10 映射检查表**：OWASP Agentic Security Top10（ASI01 目标操纵/ASI02 工具滥用/ASI03 权限妥协/ASI04 资源过载/ASI05 供应链/ASI06 提示注入/ASI07 不安全输出/ASI08 拒绝服务/ASI09 记忆污染/ASI10 多 agent 信任）逐项映射本项目控制点——ASI02 工具滥用→白名单（BM-RC-09 本节）；ASI03 权限妥协→GATE-COMMIT-GW 硬阻断；ASI06 提示注入→65_git_safety_governance wrapper 命令过滤；ASI07 不安全输出→62 §4.34② llm_safety_stack AST 沙箱；ASI10 多 agent 信任→§3.6"AI 间不直接通信"纪律。检查表随新会话认领时人工过一遍（非自动化扫描），对应原定义"OWASP ASI+AST+MCP 完整映射"阈值的个人项目轻量替代。
+   - **与 55_monitoring_review 告警通道衔接**：AI 行为异常告警复用 G26 监控告警通道（[55_monitoring_review](55_monitoring_review.md)，⚠️draft v0.1.0 骨架待讨论——告警通道 why 层未定稿，本节登记的告警需求待 55 号定型后承接落地，与 §3.9 退役告警同一衔接模式）；当前 interim 载体 = 会话日志人工审查 + git_guard 审计输出。重评条件：55 号定型且会话数 >5 时自动化告警通道。
 
 ### 3.7 文档治理（段位编号体系）
 
@@ -868,7 +911,7 @@ def retirement_workflow(strategy_id):
 |---|---|---|
 | LLM 多 Agent 辩论 / R&D-Agent 自进化策略搜索 | 30_multi_strategy §5 已暂缓；AI 写 AI 失控风险高 | 可控性方案（沙箱+审批+回滚）验证可靠 |
 | 独立 Lifecycle Manager 服务（完整 7 状态机编排） | 当前 6 阶段用文档+注册表标记足够 | 策略数 >5 且手动状态管理成为负担 |
-| BM-RES-03/04/05/08/09/10/11 缺失态环节施工 | 7 个环节无锚点（BM-INV-001 违例），是研究孵化域的最大空白 | G01 数据特征层规范讨论定型后（15_data_feature_layer_spec） |
+| BM-RES-03/08/09 缺失态环节施工（✅ 已解决，v2.13.0 §3.2 研究知识流水线拍板落地） | 原 7 个缺失态环节中 03/08/09 已由 §3.2"研究知识流水线拍板"轻量闭合（Markdown+Git+frontmatter）；04/05 已由 §3.2"研究环境否定式裁定"闭合（不建编排/Notebook）；10 模块工厂已由 §3.8 4 步承载；11 多模态采集随 08/09 轻量方案消解 | —（已拍板，仅余 BM-RES-06-B 论文追踪 Phase 3 远期候选） |
 | 企业级 MLOps 编排栈（KFP+KServe+K8s） | 个人项目无 K8s 运维能力 | 团队扩大或模型数显著增加（>10 并行训练） |
 
 ## 7. 待定问题
@@ -876,8 +919,8 @@ def retirement_workflow(strategy_id):
 ### 7.1 退役标准量化（✅ 已解决，v1.3.0 §3.9 落地）
 ⑥ 退役阶段的"连续跑输 / 逻辑失效"原为定性描述，已于 **§3.9 退役阶段量化标准**（v1.3.0 起）升级为量化体系——**三选一决策矩阵**（Reoptimize / Pause-Cut / Retire）+ **8 维退役量化阈值表**（Rolling Sharpe<0 持续 2 窗口 / Drawdown 超历史×1.5 / profit factor 滑向 1.0 / Win rate+expectancy 同时下降 / Equity curve 斜率丧失 / Half-life 预测退至 cost floor / Regime 失配持续 / 逻辑失效结构性）+ **退役流程 5 步施工伪代码**（触发≥10 日持续告警→诊断 6 月回测+同类对比→三选一决策→归档四件套→五骑士归因）+ **触发式移除纪律**（机械执行消除沉没成本/损失厌恶/过度自信心理陷阱）+ **策略归档机制**（MLflow @archived + design_memo deprecated + depgraph retired + strategy_archive/ 目录）。与回撤 Protocol（30_multi_strategy §2.5，8/15/20/25% 风控阈值）的边界已在 §3.9 明确：回撤是短期防御（临时降级），退役是长期判决（edge 结构性失效归档）。
 
-### 7.2 BM-RES 缺失态环节的施工优先级（需人决策）
-battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点），是研究孵化域最大空白。需决定是否施工还是用更轻量方案（如 BM-RES-03 假设管理用 Markdown + Git 替代独立系统）。
+### 7.2 BM-RES 缺失态环节的施工优先级（✅ 已解决，v2.13.0 §3.2 拍板落地）
+battle_map_01 原有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点），曾是研究孵化域最大空白。**v2.13.0 已一次拍板闭合**：① BM-RES-03-B/08/08-A/09/09-A 由 §3.2"研究知识流水线拍板"轻量建设闭合（Markdown+Git+frontmatter 标签检索，即本节原登记的"Markdown+Git 替代独立系统"思路的正式落地）；② BM-RES-01-C/04/04-A/05-A 由 §3.2"研究环境否定式裁定"闭合（不建容器沙箱/Prefect 编排/JupyterLab，venv+目录隔离+64 号 §6.4 APScheduler 调度基座复用）；③ BM-RES-10 模块工厂已由 §3.8 模块创建 4 步承载；④ BM-RES-11 多模态采集随 08/09 轻量方案消解（LLM 单次抽取即采集后处理）；⑤ BM-RES-06-B 论文追踪登记 Phase 3 远期候选（interim 载体=90/91 号人工文献整合实践）。仅余 BM-RES-06-B 一项远期候选待 Phase 3 评估。
 
 ### 7.3 多 AI 会话的上下文交接模板（需人决策）
 当前交接靠"认领前置阅读"纪律，但缺少标准化的交接模板。是否需要定义一份"AI 会话交接 brief"模板（包含：前序产出物路径 / 当前状态 / 待决问题 / 不可越的硬约束）？还是依赖 design_memo frontmatter（status/depends_on/related_issues）足够？
@@ -887,6 +930,9 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 - **00_index 待同步**（其 owner 会话处理）：①§3 G26 行标 55 号"active v1.21.0"、§0 目录标 52 号"active v1.7.4"/55 号"active v1.21.0"——git log 实证 52/55 号从未离开 draft v0.1.0 骨架（仅 3 个 commit），均为虚构版本；②§0 目录标本备忘 v2.9.1 滞后（实际 v2.10.0+）；③§2 三层快照标 01/02/04 阶段"why 层空白"滞后（本备忘 §3.2/§3.3/§3.5 已承载）；④§3 G24 行标 53 号"待讨论"且产出物名误为 `53_simulation_live_path_simulation_live_path.md`（topic 重复）。
 
 - **52/55 号骨架联动**：52 号（G23 回测 why 层）/55 号（G26 监控告警 why 层）均为 draft v0.1.0 骨架待讨论。本备忘 §3.4/§3.9 已先行承载生命周期侧设计（回测准入门禁、退役量化标准），引用均已标注骨架状态；52/55 号定型后须回填双向联动并复核本备忘 §3.4/§3.9 边界。
+
+### 7.5 BM-MT-01-B battle_map 成熟度标注倒挂（真源修正建议，battle_map owner 会话裁决）
+BM-MT-01-B（AI 辅助代码生成与分析师 Agent 反馈）在 battle_map_02 标 **production**，但代码实证 `src/zephyr/ml_train/ai_operator/` 仅 AST 沙箱部分落地、Generator/Critic/Judge 生成-反馈闭环未施工——成熟度标注倒挂，建议真源修正 production→design。本备忘不越界改 battle_map，登记待 battle_map owner 会话裁决（与 §7.4 00_index 漂移登记同一"不越界改仅登记"模式）。
 
 ## 8. 引用
 
@@ -899,7 +945,11 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) §5（暂缓项：多 Agent / 数字孪生）/ §2.5（Drawdown Protocol 退役相邻）
 - [52_backtest_framework_docking.md](52_backtest_framework_docking.md)（③ 回测阶段，⚠️draft v0.1.0 骨架待讨论——G23 why 层未定稿；回测门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)）
 - [53_simulation_live_path.md](53_simulation_live_path.md)（④ 模拟与实盘验证路径，active）
-- [55_monitoring_review.md](55_monitoring_review.md)（⑥ 退役标准运营侧承接，⚠️draft v0.1.0 骨架待讨论——G26 监控告警 why 层未定稿；退役量化标准当前由本备忘 §3.9 承载）
+- [55_monitoring_review.md](55_monitoring_review.md)（⑥ 退役标准运营侧承接，⚠️draft v0.1.0 骨架待讨论——G26 监控告警 why 层未定稿；退役量化标准当前由本备忘 §3.9 承载；§3.6 运行时风险治理小节 AI 行为异常告警通道亦待其定型承接）
+- [62_business_registry_construction.md](62_business_registry_construction.md) §4.12（ADAPT_STRATEGY 衰减后适应——BM-RES-07-A 当前承载之一）/ §4.34②（factor_registry `llm_safety_stack` 5 字段——BM-MT-01-B 安全栈已落地契约）
+- [64_data_source_download_spec.md](64_data_source_download_spec.md) §6.4（APScheduler + task_queue DAG 调度基座——BM-RES-04 研究工作流编排复用真源）
+- [65_git_safety_governance.md](65_git_safety_governance.md) §9（不引入沙箱/容器裁定——BM-RES-01-C 研究数据沙箱否定式裁定呼应）
+- [90_methodology_open_questions.md](90_methodology_open_questions.md) / [91_density_prediction.md](91_density_prediction.md)（BM-RES-06-B 论文追踪 interim 载体——18 轮 arXiv 人工文献整合实践）
 
 ### 8.2 治理注册表
 - `capability_canonical_file_registry.yaml`（模块 canonical file 登记）
@@ -1036,3 +1086,5 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 | 2026-08-12 | 2.12.0 | 第二十三轮审查（缺失环节补齐）：①§3.6 交接纪律补第 5 条**并发文件级冲突纪律**（2026-08-12 实战教训：多会话并发共享主工作区 git index，未落分支的修改随时被并发会话 stash/reset 抹掉——本次审查过程中工作区修改被多次回滚实证；强制 `git_commit.py --claim-only` 前移声明 + GitCommitGateway 唯一 commit 入口 + `session_worktree.py` 物理隔离，#ARCH-WORKTREE-GATE-001）；②§3.2 补**策略规格产出物**承接（§3.1 ①孵化阶段退出条件"策略规格产出"原无承接定义，补 20 号 G04 首批范式：sleeve 定位/容量测算/持仓周期/风控参数四要素齐备方可进入 ② 训练阶段） | 第 3 轮缺失环节审查发现：①多 AI 协作交接纪律缺"并发文件级冲突"处置——治理设施（git_commit.py claim 协议 / session_worktree）已存在但本备忘 §3.6 未登记，AI 会话不知情则修改必丢；②孵化→训练准入的"策略规格产出"缺承接定义。53 号 v1.7.1 同步精简正文过渡文本（修改原则合规） |
 | 2026-08-12 | 2.12.1 | 第二十四轮审查（2026-08 最新研究搜索整合）：①§3.6 第 5 条补**行业背书**——CMU CAID（arXiv:2603.21489，2026-03）实证 branch-and-merge+git worktree 是多 agent 协作核心协调机制（PaperBench +26.7%/Commit0 +14.3%）；VS Code 2026-08-07 起 Copilot/Claude/Codex agent session 默认 git worktree 隔离（luonghongthuan 2026-08-10），"并发 agent 未提交修改被静默覆盖"为 2026-08 行业公认失败模式；②§8.3 补 CAID + VS Code worktree 2 条来源；③53 号侧 2026-08 搜索（paper→live 迁移 + canary deployment）确认现有三阶段+5 级 ramp+key_gates 与最新实践（x3algo/algovantis/futureagi 四阶段 gate/theneuralbase gradual rollout/metricgate shadow-canary 方差分析）一致，零新增内容需求 | 第 4 轮 2026-08 最新研究全网搜索：multi-AI collaboration 方向命中 CAID（CMU 学术实证）+ VS Code 官方 worktree 隔离（2026-08-07 上线）双重背书本备忘 §3.6 第 5 条；paper trading/canary deployment 方向确认 53 号现有设计与行业 SOTA 一致无缺口 |
 | 2026-08-12 | 2.12.2 | 第 5/6 轮审查（过度工程零发现 + 一致性去版本化）：①**过度工程审查零发现**——多 AI 协作规范（§3.6 五条均为已有治理设施的使用纪律非新建重型机制，§4.1 已拒绝 agent 编排）/ BM-RES+BM-MOD 规范（MVP 部分为 MLOps Level 2 行业标准最小集，20+ arXiv 重型候选全部标 Phase 2-5 远期不施工）/ 53 号三阶段灰度（比 nexusfi 7 阶段精简且有 paper_live_transition.py 代码承载，§5.3 已论证）/ 实盘差异监控（key_gates 8 维度为已定义代码门禁，日频滚动计算单机可承受）——全部符合硬边界约束，远期项标注合规不删；②**一致性去版本化**——body 中对 53 号（§2.4/§3.5/§8.1）/24 号（§3.9）/54 号（§3.3）的版本号引用全部去除（引文档用稳定 path 不带版本，修订记录保留历史版本），消除连环漂移源；③53 号与 01 号 §2.2/battle_map_01（33 环节 17 锚点）/battle_map_02（14 环节 10 锚点）/20 号 §4.4 四阶段交叉复核一致 | 第 5 轮过度工程审查对照 system_charter §2 硬边界逐项判定零发现（单 AI 多会话+单机 PC+小资金+T+1 约束下无超界机制）；第 6 轮一致性审查发现版本号引用是连环漂移源（53 号升版即致 61 号引用滞后），按 01 号规范"交叉引用全用稳定 path"去版本化 |
+| 2026-08-12 | 2.13.0 | 作战地图全覆盖补丁——研究知识流水线拍板+研究环境否定式裁定+运行时风险治理小节（BM-RES-01-C/03-B/04/05/06/07/08/09/11 关联、BM-MT-01-B/C、BM-RC-09/04-F）：①§3.2 新增**研究知识流水线拍板**（BM-RES-03-B 研究发现知识库/BM-RES-08+08-A 知识清洗/BM-RES-09+09-A 知识分类——轻量方案 Markdown+Git+frontmatter 标签检索，闭合 §7.2 登记的缺失态待定问题）；②§3.2 新增**研究环境否定式裁定**（BM-RES-01-C 不建容器沙箱=venv/目录隔离+65 号 §9 呼应 / BM-RES-05-A 不建 JupyterLab+papermill / BM-RES-04+04-A 不建 Prefect 编排=人工串联+64 号 §6.4 APScheduler 调度基座复用 / BM-RES-06-B 论文追踪 Phase 3 远期候选，interim=90/91 号人工文献整合）；③§3.2 补 BM-RES-06-A/07-A 定位句（Phase 5+ 重评已写明确认无需动作 / 当前=人工+假设状态机+62 §4.12 ADAPT_STRATEGY，FactorMiner/AlphaMemo Phase 3 轻量契合点）；④§3.3 新增**模型训练两环节裁定**（BM-MT-01-B 生成-反馈闭环并入 §3.2 远期候选+62 §4.34② llm_safety_stack 5 字段安全栈已落地+battle_map 成熟度标注倒挂真源修正建议登记 §7.5 / BM-MT-01-C 策略数字孪生裁定不做镜像副本=§3.9 退役 8 维+Drift Observatory 承载，与 #ARCH-OE-010 边界消歧）；⑤§3.6 新增**运行时风险治理小节**（BM-RC-09 有界自治边界白名单+额度/治理漂移防护规则版本锁定+变更审计/ARS 双轨结算裁定，与 35 §2.4 VR-009 AI 自治熔断器上/下游关系 / BM-RC-04-F Agent 行为基线+异常告警/OWASP Agentic Top10 映射检查表/55 号告警通道衔接）；⑥§6 待裁定表 BM-RES 缺失态行标记已解决；⑦§7.2 标记已解决+新增 §7.5（BM-MT-01-B 成熟度倒挂登记）；⑧§8.1 补 62/64/65/90/91 号引用 | 作战地图 16 个环节（研究孵化域 12 + 模型训练域 2 + 风控域 2）在 61 号 why 层无定位/裁定/契约记录——研究孵化域 7 缺失态环节（BM-INV-001 违例）是最大空白，本次按"轻量拍板+否定式裁定+远期登记"三模式一次闭合；AI 风险治理两环节（BM-RC-09/04-F）随多会话 AI 开发模式实战化（§3.6 第 5 条并发冲突纪律落地后）需运行时护栏配套 |
+| 2026-08-12 | 2.13.1 | 作战地图环节映射补强——锚定 BM-RES-03-A、BM-RES-10-A | §3.2 末尾补映射块，环节级可追溯 |

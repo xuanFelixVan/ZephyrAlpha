@@ -5,7 +5,7 @@ title: 打板策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.10.0"
+version: "1.10.3"
 date: 2026-08-12
 topic: daban_strategy_detail
 scope: 07_trading_decision_architecture
@@ -32,7 +32,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 雪球炸板率统计 2026-07 / 华安证券涨停板 Alpha 2026-03 / caifuhao 连板复盘 2026-08 / IG507 涨停统计分析 2026-08 / legulegu 首封时间线性映射 2026-07 |
 | 正交 | ✅ 与 regime 正交（[28 §3.4](28_sentiment_cycle_trading.md) 与 regime 的正交性 + [20 §2.2](20_first_batch_strategies.md) 打板 sleeve 表）：打板读情绪周期不读 regime，情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，两者正交 |
 | 优先级 | P1（高换手、小容量、高频 alpha） |
-| 状态 | active 1.10.0（8 项讨论要点已对齐 + 12 项施工算法完整覆盖信号→定位→入场→封板→出场→风控→容量全流程 + §3.13 7项+§3.14 5项施工算法形式化 + §3.13#1 补 classify_position_status 字段填充断裂点 + §5.2 Phase 5 ML增强：Siamese LOB+Du开盘信号混合模型+QFCQT混沌门控+速度域签名封板真伪判断 + 国泰海通8/10高频因子实证背书 + 2026-08 arXiv 最新研究整合：latent regime+SaR+7-event cascade+liquidation cascade+Public Trader Identity+北大理性预期+价格笼子政策实证+Hawkes长记忆核+QLoRA情感因子负面警示+扩散价格动力学悖论 + **§1.1 已施工设施盘点（通用规则#11）+ §3.5 两层分类法澄清/术语对齐（v1.10.0）**） |
+| 状态 | active 1.10.1（8 项讨论要点已对齐 + 12 项施工算法完整覆盖信号→定位→入场→封板→出场→风控→容量全流程 + §3.13 7项+§3.14 5项施工算法形式化 + §3.13#1 补 classify_position_status 字段填充断裂点 + §5.2 Phase 5 ML增强：Siamese LOB+Du开盘信号混合模型+QFCQT混沌门控+速度域签名封板真伪判断 + 国泰海通8/10高频因子实证背书 + 2026-08 arXiv 最新研究整合：latent regime+SaR+7-event cascade+liquidation cascade+Public Trader Identity+北大理性预期+价格笼子政策实证+Hawkes长记忆核+QLoRA情感因子负面警示+扩散价格动力学悖论 + **§1.1 已施工设施盘点（通用规则#11）+ §3.5 两层分类法澄清/术语对齐（v1.10.0）**） |
 
 ### 1.1 已施工设施盘点（通用规则 #11，2026-08-12 代码侧真源审计）
 
@@ -46,6 +46,8 @@ scope: 07_trading_decision_architecture
 | 游资接力情绪引擎 6 因子+情绪周期 4+1（BM-SEL-23） | `youzi_relay_emotion_engine.py`（`YouziRelayEmotionEngine`：`score_consecutive_height`/`score_seal_quality`/`score_seal_time`/`score_open_board`/`score_auction_strength`/`score_assist_echelon` 6 因子 + `determine_emotion_phase` 阶段定位 + `map_strategy` 策略映射）+ 对应测试 | ✅ production | §3.2 情绪周期定位器（why：6 因子权重 25/20/15/15/10/10 sum=95，阶段阈值 20/40/65/85——§3.8 已裁定源码为真源） |
 | 量化短线强度引擎 6 维（BM-SEL-24） | `quant_short_term_strength_engine.py`（价格动量 Z-score/行业强度/相对强度/资金/技术/风险 6 维 + A~E 五级评级 + `StockCategory` 分类）+ 对应测试 | ✅ production | §3.3 主升龙头识别的量化引擎输入 |
 | 双引擎融合决策（BM-SEL-25） | `dual_engine_fusion_decision_engine.py`（`DualEngineFusionDecisionEngine`：`determine_adaptive_weights` 情绪周期自适应权重 5 档 + `classify_decision` + `extract_pdf_signal` 4 维 PDF 信号）+ 对应测试 | ✅ production | §3.5 双引擎融合——⚠️ production 输出为 **6 类标的分类**（主升龙头/二进三/跟风/复苏/伪强/地天反包 + NEUTRAL 兜底），基准权重**游资 60%/量化 40%**，与 battle_map BM-SEL-25 一致；见下方消歧④ |
+
+> **作战地图子环节契约补注（v1.10.1 补，BM-SEL-22-A/22-B/25-D 闭合）**：上表两个引擎的作战地图子环节——BM-SEL-22-A 机构选股评分器（`short_term_stock_selector.py`，MOD-SIG-023 内一支）、BM-SEL-22-B 强庄股识别器（同模块内一支）、BM-SEL-25-D PDF 分布信号提取（`extract_pdf_signal`，MOD-SIG-035 内一支）——此前仅登记级提及，契约描述已补全于 **§3.5 后附段**（3 支均为 ✅ production 有测试，本次为文档补记，无代码变更）。
 
 **② 打板支撑设施（执行/资金/风控/合规）**
 
@@ -74,6 +76,19 @@ scope: 07_trading_decision_architecture
 3. **正交引用**：[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 已于 2026-08-12 填充定型（active 1.0.0，commit `0db887c9e7`，按引用方锚点重建），本文 `[28 §x.x]` 前向引用已全部落地——§3.2 5 阶段买卖纪律 / §3.4 与 regime 的正交性 / §3.5 退潮加权机制（§6 待裁定对应行已核销）。
 
 **盘点结论**：打板 sleeve 的信号识别链（BM-SEL-22→23→24→25）四引擎与支撑设施（T+1 结算/仓位上限/回撤 Protocol/程序化合规/执行层）**全部 production 且有测试**，这是 §3.1-3.7 各裁定"复用已建打板链"的事实基座。未落码的是 v1.9.2/v1.9.3 两轮施工算法审查补全的 12 项形式化算法 + 8 个具名函数——它们是从"信号→定位→入场→封板→出场→风控→容量"全流程的断裂点补全，施工时点已在 §6 逐条登记（首批实盘前/Phase 3/Phase 5）。**先清楚有什么 → 才能知道怎么改 → 才知道该退役什么**：当前无需退役项。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-22-C | 连板潜力评分卡 | §1.1①（`score_limitup_potential` 7 维 100 分表行）/ §3.1（裁定复用 22-C-1，连板梯队评分基座+中位股死亡池） | production已建 |
+| BM-SEL-22-C-1 / BM-SEL-22-C-2 / BM-SEL-22-C-3 / BM-SEL-22-C-4 / BM-SEL-22-C-5 / BM-SEL-22-C-6 / BM-SEL-22-C-7 | 七维度（连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度） | §1.1①（评分卡 7 维逐维列出）/ §3.1（梯队分档与健康度四档判定消费） | production已建 |
+| BM-SEL-22-D | 连板分歧程度评估器 | §1.1①（评分卡"分歧程度"维）/ §3.13 缺失#1（`soft_exit_divergence` 分歧度>0.5→软退出） | production已建 |
+| BM-SEL-23-A | 6因子游资接力评分 | §1.1①（游资接力情绪引擎 6 因子行）/ §3.2（情绪周期定位器评分输入）/ §3.8（6 因子权重 25/20/15/15/10/10 sum=95 源码真源裁定） | production已建 |
+| BM-SEL-23-A-1 / BM-SEL-23-A-2 / BM-SEL-23-A-3 / BM-SEL-23-A-4 / BM-SEL-23-A-5 / BM-SEL-23-A-6 | 六因子（连板高度/封单质量/涨停时间/开板次数/竞价强度/助攻梯队） | §1.1①（6 因子函数逐支列名）/ §3.8（助攻梯队因子权重真源裁定；battle_map A-6 分值修正登记 §6） | production已建 |
+| BM-SEL-24-A | 6维度量化强度评分 | §1.1①（量化短线强度引擎 6 维行）/ §3.3（主升龙头识别的量化引擎输入）；架构定位与 6 维权重校准归 [21_stock_selection_engine](21_stock_selection_engine.md) §3.4——分工：21 号管三层选股架构中"量化引擎输入"的定位/边界/权重校准方法，本篇管打板 sleeve 内逐维构成与消费点 | production已建 |
+| BM-SEL-24-A-1 / BM-SEL-24-A-2 / BM-SEL-24-A-3 / BM-SEL-24-A-4 / BM-SEL-24-A-5 / BM-SEL-24-A-6 | 六维度（价格动量Z-score/行业强度/相对强度/资金/技术/风险） | §1.1①（6 维逐维列出）；维度权重 20/15/20/15/20/10 与 IC 加权/SHAP 校准路径见 21 号 §3.4 | production已建 |
+| BM-SEL-24-B | A~E五级评级 | §1.1①（强度引擎行：A~E 五级评级 + `StockCategory` 分类） | production已建 |
 
 ## 2. 背景
 
@@ -193,6 +208,31 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 | WAIT | 游资<20 | 冰点等待 |
 
 > **§3.13 缺失#3 补充**：第7类 REFLUSH_DIVE + 情绪周期门控切换——主升/疯狂→打板路径，冰点/反核→反核路径。
+
+> **作战地图子环节契约补全（v1.10.1 补，BM-SEL-22-A/22-B/25-D 闭合——3 支均 production，本文档补记契约，无代码变更）**：
+>
+> **① BM-SEL-22-A 机构选股评分器（production，MOD-SIG-023 `short_term_stock_selector.py` 内一支）**：
+> - **定位**：短线选股评分卡（BM-SEL-22）内的机构视角评分维度，盘前全量+盘中增量触发，输出机构选股评分（0-100）汇入 BM-SEL-22 评分卡汇总。
+> - **裁定**：契约以作战地图 indicators 为真源定型——**4 维加权 100 分：目标价空间 40%（消费 L1/L2 基本面）+ 基本面评分 30%（L1/L2 财务）+ 技术趋势 20%（L2-A 因子）+ 流动性 10%（L0 行情）**；降级=基本面数据缺失→跳过机构评分维度，仅技术面。
+> - **重评条件**：首批策略回测时按 A 股实际数据校准 4 维权重（40/30/20/10 为经验设定）。
+>
+> **② BM-SEL-22-B 强庄股识别器（production，MOD-SIG-023 同模块内一支）**：
+> - **定位**：短线选股评分卡的强庄股加分维度，盘前全量+盘中增量触发，输出强庄股标签+置信度喂 BM-SEL-22 评分卡加分。
+> - **裁定**：三特征识别规则定型——**走势独立性**（与大盘相关性低于独立性阈值，走势独立=有庄控盘）+ **换手率异常**（换手率偏离常态倍数超阈）+ **盘口神秘大单**（L0 盘口大单识别规则命中），**三特征同时命中**→强庄股标签成立；降级=盘口数据缺失→跳过强庄维度。
+> - **重评条件**：独立性阈值/换手率偏离倍数/大单识别规则三项参数待首批策略回测校准。
+>
+> **③ BM-SEL-25-D PDF 分布信号提取（production，MOD-SIG-035 `extract_pdf_signal`）**：
+> - **定位**：双引擎融合决策（BM-SEL-25）内的分布信号出口——消费条件 PDF（L2-A 密度预测）+ 融合决策分数（BM-SEL-25-A），产出 4 维 PDF 分布信号喂 BM-SEL-21 组合优化。
+> - **裁定**：`extract_pdf_signal` 4 维语义定型——**方向**（分布均值/众数给出的多空方向）+ **置信度**（分布集中度/峰度换算的置信水平）+ **尾部风险**（分布左尾分位数，前瞻 VaR 语义）+ **相对价值**（当前价格相对分布中枢的偏离度）；降级=密度预测未就绪→跳过 PDF 信号（当前 [91_density_prediction](91_density_prediction.md) 属远期，本支以融合分数为主输入运行）。
+> - **重评条件**：密度预测模型（[91号](91_density_prediction.md)）验证通过后，校准 4 维信号的分布口径与尾部风险阈值。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-24-C | 双引擎基准权重配置 | §3.5（基准权重 60/40 游资 60%+量化 40%，5 档情绪周期自适应权重裁定） | production已建 |
+| BM-SEL-25-C | 6类决策输出 | §3.5（第一层 `classify_decision` 6 类标的分类：主升龙头/二进三/跟风/复苏/伪强/地天反包） | production已建 |
+| BM-SEL-25-C-1 / BM-SEL-25-C-2 / BM-SEL-25-C-3 / BM-SEL-25-C-4 / BM-SEL-25-C-5 / BM-SEL-25-C-6 | 六决策类（主升龙头/二进三/跟风/复苏/伪强/地天反包） | §3.5（`classify_decision` 6 类标的分类逐类展开；消歧④区分标的角色 vs 交易动作 7 类映射层） | production已建 |
 
 ### 3.6 讨论要点⑥：打板专用风控参数
 
@@ -993,3 +1033,6 @@ class DynamicCapacityCalculator:
 | 2026-08-10 | 1.9.6 | **第六轮字段填充断裂点审查——§3.13#1 NextDayExitDecision 补 classify_position_status() 方法**：decide() 依赖 consecutive_board（连板晋级）和 exploded（炸板）两字段但此前无填充算法。本方法形式化：①连板晋级判断=T+1日涨停收盘+封单存在(封流比>0.1%)+梯队非孤板(LONE_DRAGON/COLLAPSE排除) ②炸板判断=T+1日盘中触及涨停(最高价≥涨停价×0.999)但未封住(收盘<涨停价)。与§3.1 classify_echelon_health联动(梯队健康度影响晋级有效性)+§3.13#2 DabanInstantCircuitBreaker联动(炸板触发瞬时风控)。延续轻量优先+不替换已定决策原则 |
 | 2026-08-10 | 1.9.7 | **第七轮最新研究整合——速度域签名封板真伪判断+扩散价格动力学悖论**：§5.2 Phase 5 补速度域签名封板真伪判断（arXiv:2608.05373 Chen&Hybinette 2026-08-05，速度而非水平域检测pump-and-crash，price velocity签名区分"真封板"vs"诱多封"，HMM regime条件检测+SHAP可解释归因，印度BANKNIFTY 10/10操纵日恢复+AUC=0.91，A股连板炸板率70%环境下速度签名比传统封单量/换手率水平指标更鲁棒，填补"盘中封板质量实时评估"缺口。负面结果启示：HMM regime用于条件检测是用召回率换精确率，单纯状态划分不够需结合速度签名条件触发）。§3.13#4 DabanExecution理论背书补扩散价格动力学悖论（arXiv:2608.00988 Sato et al. 2026-08-02，平方根冲击律+Lévy-walk框架精确可解，严格证明可预测订单流下价格仍扩散=拆单不泄露信息，为批量入场拆单提供理论依据）。12项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
 | 2026-08-12 | 1.10.0 | **第八轮架构审查（通用规则#11 设施盘点+文档-代码一致性修正+2026-08 最新研究对照）**：①新增 §1.1「已施工设施盘点」——grep 级代码侧真源审计：打板信号链四引擎（short_term_stock_selector/youzi_relay_emotion_engine/quant_short_term_strength_engine/dual_engine_fusion_decision_engine）+支撑设施（cash_manager/position_sizing_engine/drawdown_controller/cancel_rate_guard/price_cage/ex_core）全部 production 且有测试；明确 §3.13/§3.14 十二项形式化算法与 v1.5.0~v1.9.0 八个具名函数（classify_echelon_health/score_auction_3d 等）**全部未落码**（文档已定型、代码待施工），消除"已补=已 production"误读。②§3.5 修正——术语对齐 battle_map canonical 名（游资情绪引擎/量化强度引擎，替换情绪/技术引擎）；澄清两层分类法架构（production 6 类标的分类 vs 本文 7 类交易动作映射层）；**修正 v1.8.2"伪代码匹配 production classify_decision"不实声明**（两者分类语义不同层）。③§1 正交行引用修正——审查时 [28 §3.4] 悬空（28 号骨架），先改指 [20 §2.2] 真源；审查期间 28 号填充定型（active 1.0.0），最终恢复 [28 §3.4] 为主引用 + [20 §2.2] 互证。④§3.1 炸板率分层补雪球 2026-02-25 独立印证（龙头8%/跟风32%/孤板58% 两源同值互证 + 板型分层 + 一字龙已被 C9 隐式拒入）。⑤§6 待裁定新增 5 条：两层分类法统一裁定/28 号前向引用回填/42 号时间止损口径（1-2天 vs max_holding_days=3）校准/battle_map BM-SEL-23-A-6 15分修正/C9 换手率按流通盘分层校准（雪球分层最优区间，首批回测验证后修订）。⑥28 号同步——28 号 2026-08-12 已填充定型（active 1.0.0），§1 正交行恢复 [28 §3.4] 为主引用 + §6 对应待裁定行核销。延续轻量优先+不替换已定决策原则 |
+| 2026-08-12 | 1.10.1 | **作战地图全覆盖补丁——闭合 BM-SEL-22-A / BM-SEL-22-B / BM-SEL-25-D（3 环节）**：① §1.1 设施表 ① 补「作战地图子环节契约补注」（3 支 production 子环节此前仅登记级提及，指针到 §3.5 后附段）；② §3.5 补「作战地图子环节契约补全」后附段——BM-SEL-22-A 机构选股评分器 4 维加权契约（目标价空间 40%/基本面 30%/技术趋势 20%/流动性 10%，以作战地图 indicators 为真源核对）；BM-SEL-22-B 强庄股识别器三特征识别规则（走势独立性/换手率异常倍数/盘口神秘大单，三特征同时命中）；BM-SEL-25-D PDF 分布信号提取 `extract_pdf_signal` 4 维语义展开（方向/置信度/尾部风险/相对价值）。3 支均 ✅ production 有测试，本次为文档契约补记（定位→裁定→契约→重评条件四要素），无代码变更。延续轻量优先+不替换已定决策原则 |
+| 2026-08-12 | 1.10.2 | 作战地图环节映射补强——锚定 BM-SEL-22-C（+22-C-1~7）/22-D、BM-SEL-23-A（+23-A-1~6）、BM-SEL-24-A（+24-A-1~6）/24-B（§1.1 末映射块）、BM-SEL-24-C、BM-SEL-25-C（+25-C-1~6）（§3.5 末映射块）；24-A 行注明与 21 号 §3.4 分工（21 号管量化引擎输入定位与权重校准，本篇管打板 sleeve 逐维构成与消费点）：语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
+| 2026-08-12 | 1.10.3 | 作战地图环节映射补强②——子维度编号全枚举：§1.1/§3.5 映射块中 4 行区间记法（22-C-1~7 / 23-A-1~6 / 24-A-1~6 / 25-C-1~6）展开为逐编号显式列出（BM-SEL-22-C-1...C-7 / BM-SEL-23-A-1...A-6 / BM-SEL-24-A-1...A-6 / BM-SEL-25-C-1...C-6），修复编号级可追溯性扫描漏匹配；不改既有正文 |

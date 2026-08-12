@@ -5,7 +5,7 @@ title: FirmRiskAggregator 逻辑（组合层风险聚合）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.21"
+version: "1.0.22"
 date: 2026-08-12
 topic: firm_risk_aggregator
 scope: 07_trading_decision_architecture
@@ -30,7 +30,7 @@ scope: 07_trading_decision_architecture
 | 对标 | Citadel pod 模型 firm 层风险聚合 / Morwane risk-parity-throttle |
 | 正交性 | ✅ 与 regime 正交（regime 只缩 budget，不调聚合逻辑） |
 | 优先级 | P2 |
-| 状态 | ✅ 已定稿 v1.0.21（§2.1 pre_kelly/post_kelly 两段伪代码缺陷修复 A-G 闭环；§2.10.7 Fassino Cauchy 不动点 + §2.10.8 Kakinaga MFCCA + §2.10.9 Hsieh Certified Wasserstein DRO LP 三项远期候选登记（协方差/风险泛函演进三级路径 Fassino→Kakinaga→Hsieh）；§2.10.5 E 补 Absorption Ratio 经典基线背书 + Hammond 2026 实证 + VRC Fragility Score 理论参照；v1.0.20 文档-代码一致性修复（§1.2 L39+§2.1 L76"骨架/待拆分"→"已施工 production"）；**v1.0.21（2026-08-12）灾后修复**：33 号骨架化交叉引用修正 4 处 + §4.2 演进路径三阶段状态更新 + §6 拆分行关闭/字段名三方漂移 P0/T+1 可卖口径/测试丢失/registry 未登记/depgraph 滞后六行 + §7.2 表补状态列 + §7.6 新增已施工设施盘点 + §9 补 v1.0.20 漏记条目。历史细节见 §9 修订记录） |
+| 状态 | ✅ 已定稿 v1.0.22（§2.1 pre_kelly/post_kelly 两段伪代码缺陷修复 A-G 闭环；§2.10.7 Fassino Cauchy 不动点 + §2.10.8 Kakinaga MFCCA + §2.10.9 Hsieh Certified Wasserstein DRO LP 三项远期候选登记（协方差/风险泛函演进三级路径 Fassino→Kakinaga→Hsieh）；§2.10.5 E 补 Absorption Ratio 经典基线背书 + Hammond 2026 实证 + VRC Fragility Score 理论参照；v1.0.20 文档-代码一致性修复（§1.2 L39+§2.1 L76"骨架/待拆分"→"已施工 production"）；**v1.0.21（2026-08-12）灾后修复**：33 号骨架化交叉引用修正 4 处 + §4.2 演进路径三阶段状态更新 + §6 拆分行关闭/字段名三方漂移 P0/T+1 可卖口径/测试丢失/registry 未登记/depgraph 滞后六行 + §7.2 表补状态列 + §7.6 新增已施工设施盘点 + §9 补 v1.0.20 漏记条目；**v1.0.22（2026-08-12）作战地图全覆盖补丁**：§2.11 新增口径裁定小节（BM-SEL-21 组合优化/BM-RC-07-B 风险预算优化求解/BM-RC-07-C 风险贡献与再平衡三环节闭合）。历史细节见 §9 修订记录） |
 
 ### 1.2 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1，不能做空）
@@ -1004,6 +1004,32 @@ t-Copula(ν, ρ):   λ_L = 2·t_{ν+1}(-√((ν+1)(1-ρ)/(1+ρ)))  > 0  （ν越
 
 **过度工程审查（演进方向 D-6 Hsieh Certified Wasserstein DRO LP）**：Hsieh LP 仍是多项式凸优化（无 MVO/多 agent），但 Wasserstein DRO + LP 逼近 + 误差证书三层抽象对 MVP/Phase 4 属过度工程。列为 Phase 5+ 远期（晚于 Fassino/Kakinaga），仅当协方差感知配置（§2.10.7/§2.10.8）证实边际收益显著且策略/资产规模扩展到 LP 优势显现时评估。MVP 用 inverse-vol 已够。
 
+### 2.11 作战地图组合优化口径裁定（BM-SEL-21 / BM-RC-07-B / BM-RC-07-C 闭合）
+
+> **v1.0.22 新增**：作战地图全覆盖补丁——作战地图三个环节的定义口径与本备忘 §2.6/§3.4 已裁定路线存在冲突或链路缺口，本节给出明确二选一裁定与链路补全。
+
+#### 2.11.1 BM-SEL-21 组合优化（design 父环节）——口径冲突裁定：维持"自然叠加+Kelly+硬裁剪"
+
+**定位**：BM-SEL-21 组合优化（L3，design，MOD-PF-002）——BM 环节定义假设统一优化引擎：`max Σ(w×score) s.t. 仓位/容量/行业/风格/相关性(corr<0.7)/拥挤`，输入投票输出 ~30 只 → 输出 N 只下单清单+权重（60 秒级，30→N≤10 只）。
+
+**裁定**：**维持本备忘路线（默认项）**——自然叠加（O(N) 加法）+ firm 层半 Kelly 精裁决 + 三级硬裁剪，**不建 maxΣ(w×score) 统一优化引擎**。BM 环节定义修订建议登记（见下）。理由：① 30号 §3.1 已裁定不做 MVO/不估协方差，BM-SEL-21 的"corr<0.7 约束 + 拥挤度约束 + maxΣ(w×score)"本质是受约束均值-方差变体，与该裁定直接冲突；② [31号 §3.6](31_position_sizing.md) 实证（Conformal Kelly §6.4）：硬上限约束下 per-asset Kelly 优于 multivariate 解（"under a binding gross cap only the direction survives"），BM 假设的优化器增益在 3-5 策略小规模下被协方差估计噪声吞没；③ 行业/相关性/拥挤约束已由"硬裁剪（§2.5）+ §2.10.5 相关性管理演进 + §2.10.6 拥挤度检测"以**裁剪与监控**形态覆盖，无需优化器形态。**重评条件**：① 策略数 >8 且标的数 >50；② §2.10.5 相关性估计成熟运行 ≥6 月；③ 实盘 ≥1 年——届时按 §2.10.7 Fassino（Phase 4）→ §2.10.8 MFCCA（Phase 4）→ §2.10.9 Hsieh DRO（Phase 5+）三级路径评估优化器引入，而非直接上 maxΣ(w×score)。
+
+**BM 环节定义修订建议登记**：建议将 BM-SEL-21 的 process 描述从"maxΣ(w×score) s.t. 仓位/容量/行业/风格/相关性/拥挤"修订为"自然叠加 + Kelly 精裁决 + 硬裁剪（31/32 号已定稿路线）"；子环节 BM-SEL-21-B（组合优化器，MOD-PF-002，production）的"均值方差优化→风险预算→约束求解"描述同步对齐为"Kelly 约束（只减不增）+ 硬裁剪求解"；corr<0.7 / 拥挤度约束映射到 §2.10.5 / §2.10.6 监控层。本登记不擅自改 BM 真源，留作战地图维护批次处理。
+
+#### 2.11.2 BM-RC-07-B 风险预算优化求解（production）——同上冲突裁定：Kelly 上限+风险预算消费，优化求解登记 Phase 4
+
+**定位**：BM-RC-07-B 风险预算优化求解（L4 风控域，production，MOD-RK-08 `core/risk_budget_allocator.py`）——BM 环节定义假设"风险预算优化求解器分配 + 风险贡献计算器"，VaR 产出后分配各资产风险预算 → BM-RC-07-C 再平衡。
+
+**裁定**：与 §2.11.1 同一冲突的风控域投影——**当前生效路线 = Kelly 上限 + 风险预算消费**（[25_multifactor_strategy_detail §2.1](25_multifactor_strategy_detail.md) 风险预算框架：预算由 34 号 RegimeMetaAllocator 分配、策略消费预算、Kelly 只减不增做上限精裁），**不建独立风险预算优化求解器**；BM 定义的"优化求解"登记 **Phase 4 演进**（§2.10.7 Fassino 远期候选——Cauchy 不动点已解决 §3.4 拒绝理由②求解复杂度，但理由①协方差需求未解决，拒绝裁定维持）。理由：① 风险预算的"分配"在 34 号已落地（budget 数字驱动），"优化求解"是对分配结果的二次精调，3-5 策略小规模下边际收益不显著；② BM-RC-07-B degradation"求解器未收敛→等比例预算（保守）"恰好说明当前自然叠加基线就是其降级形态——当前实现等价于"永远处于降级态的求解器"，稳定性反而更高。**重评条件**：同 §2.11.1 三条件 + 34 号 budget 分配实盘显示等权/线性分配不足（风险贡献严重失衡）时启动 Fassino 评估。
+
+#### 2.11.3 BM-RC-07-C 风险贡献与再平衡（production）——"预算 vs 实际→再平衡触发"链路补全
+
+**定位**：BM-RC-07-C 风险贡献与再平衡（L4，production，MOD-RK-08）——风险预算 vs 实际暴露 → 风险贡献计算 + 再平衡触发 + 约束处理 → BM-POS 仓位调整。
+
+**裁定**：链路两段**分层承载**——① **监控层（风险贡献计算）**：引用 [54_reconciliation_attribution](54_reconciliation_attribution.md) §3.14 MCR/CCR 风险分解（Euler 齐次函数定理：MCR_i=(Σw)_i/σ_p，CCR_i=w_i×MCR_i，求和不变量 ΣCCR=σ_p，Phase 2.5 候选）作为"预算 vs 实际"偏离的度量层——Brinson 管"谁赚了钱"，MCR/CCR 管"谁贡献了风险"，预算（目标风险贡献）与实际 CCR 的偏离即 BM-RC-07-C"预算偏离阈值"的判定输入；② **执行层（再平衡触发）**：偏离超阈值后的再平衡触发**联动走 [31号 §2.8.2](31_position_sizing.md)**（BM-POS-07 漂移/日历双驱动执行链 + 成本-收益门槛），本备忘（G13）只产出 FirmTargetPortfolio，不重复建再平衡触发器。理由：风险贡献监控是归因域职责（54 号），再平衡执行是仓位域职责（31 号），G13 聚合器保持单一职责；MCR/CCR 需经验协方差矩阵与 §2.6"不估协方差"的张力已由 54 号定位为 Phase 2.5 候选消解——**监控层**用协方差做事后归因 ≠ **决策层**用协方差做下单优化，归因不进入交易链路。**重评条件**：54 号 MCR/CCR 上线后，若"预算 vs 实际"偏离频发但 31号 §2.8.2 成本-收益门槛全部拦截（纠偏不经济），评估偏离阈值与再平衡门槛的联合校准。
+
+**契约/参数**：BM-RC-07-C 触发条件 = |实际 CCR_i − 预算 CCR_i| / 预算 CCR_i > 偏离阈值（具体数值待 54 号 Phase 2.5 施工时校准，BM 定义"再平衡触发阈值"未定值）；输入 = 风险预算（BM-RC-07-B / 34 号 budget）+ 实际暴露（BM-RC-04 盘中监控）；输出 = 再平衡信号 → 31号 §2.8.2 执行链；降级 = 再平衡器异常 → 人工再平衡（BM-RC-07-C degradation 原值）。
+
 ## 3. 考虑过的替代方案（拒绝理由）
 
 ### 3.1 firm 层统一 MVO 优化器 —— 拒绝
@@ -1273,3 +1299,4 @@ t-Copula(ν, ρ):   λ_L = 2·t_{ν+1}(-√((ν+1)(1-ρ)/(1+ρ)))  > 0  （ν越
 | 2026-08-10 | 1.0.19 | pre_kelly/post_kelly 两段伪代码缺陷修复 A-G 闭环 + 交叉引用版本漂移修复（31号 v1.18.0→v1.22.0、33号 v2.4.0→v2.9.0 共 3 处） | 用户要求持续改进。审计 32号 §2.1.1 施工伪代码发现 7 项缺陷闭环修复：A——constraint_checks 初始化缺 liquidity_cap 键致 Step 1b 流动性裁剪 KeyError，补 `{"triggered": False, "cuts": []}`；B——degraded 降级条件遗漏 liquidity_cap 触发，G14 BudgetChangeHandler 无法感知流动性降级，补 `or constraint_checks["liquidity_cap"]["triggered"]`；C——Step 1b 引用未定义变量 adv_data/sector_adv_median，改为 adv_data 作参数传入 + sector_adv_median 从 adv_data 派生；D——Step 1b 用 total_capital 但函数签名是 total_budget，口径统一为 total_budget；E——Step 1b 流动性 ADV 裁剪施工算法补全（severe 档 >20% ADV 削到 20% + moderate 档 >10% ADV 削半 + ADV 缺失降级同行业中位数）；F——contributions 数据流断裂（归因数据丢失）：PreKellyResult 仅 3 字段未含 contributions，pre_kelly_aggregate 内部构建 contributions 却未通过 return 传出，post_kelly_clip 的 contributions 参数永远 None 致 firm_positions[symbol]["contributions"] 写空 dict——修复：PreKellyResult 增 contributions 字段 + pre_kelly_aggregate return 带上 contributions + 施工要点 1 补 contributions 数据传递说明；G——sector_overlay_active 参数注释澄清（原"当前未消费"易误判为死代码，实为 §2.5.1 行业偏离裁剪 overlay 档 ±15% vs ±10% 的接口前向兼容预留，待 D-FACTOR 行业分类确认后连同偏离裁剪一起消费）。§1.1 状态行 v1.0.18→v1.0.19 + 补 A-G 修复说明。交叉引用版本漂移：§1.1 依赖 31号 v1.18.0→v1.22.0、§4.2 阶段3 + §6 开放问题表 33号 v2.4.0→v2.9.0（3 处 stale 引用，系并发会话持续升级 31/33号 frontmatter 后 32号交叉引用未同步）。施工算法完整性结论：A-G 修复后 §2.1.1 pre_kelly_aggregate + post_kelly_clip 两段伪代码数据流完整闭环（contributions 归因链路贯通 + degraded 5 条件全覆盖 + 流动性裁剪可执行），无新施工算法缺失 |
 | 2026-08-10 | 1.0.20 | （补录）文档-代码一致性修复：§1.2 L39+§2.1 L76 代码状态描述从"骨架/待拆分"更新为"已施工 production" | 六十五轮文档-代码一致性审查：MOD-POS-021 实际已施工完成（两段拆分 pre_kelly_aggregate+post_kelly_clip 已实现、aggregate 便捷入口串联、54 单元测试全绿 0.09s、MATURITY=production），§1.2/§2.1 两处描述滞后修正。**本条目当时漏记入修订记录，v1.0.21 补录**——教训：frontmatter 版本号与 §1.1 状态行升级时必须同步写修订记录，否则出现"版本号前进但修订记录断档" |
 | 2026-08-12 | 1.0.21 | 灾后修复 + 全量设施盘点 + 第 3 轮算法审查新发现：① **33 号骨架化交叉引用修正 4 处**——33_budget_change_handler 在 2026-08-11 git clean 灾难（#ARCH-GIT-CLEAN-GUARD-FIX）中内容丢失回退骨架 v0.1.0（v2.x 定稿内容 git 历史无记录），§4.2 阶段 3 + §6 接口契约行/dead-band 行/lot 对齐行引用全部修正为"代码 docstring 为临时真源"；② **§4.2 演进路径三阶段状态更新**——MVP/阶段 2 标记已完成（2026-08-12 核对源码在位），阶段 3 标"代码就绪/文档待重建"；③ **§6 开放问题**：拆分行关闭（✅ 已完成）、新增 6 行——**⚠️ P0 字段名三方漂移**（代码核对发现：`TargetPortfolio.positions`/`budget` vs `_sum_by_symbol` duck-typing 取 `target_portfolio`/`budget_used`，直接传对象静默产出全现金组合不报错；修复归代码施工+补 TargetPortfolio 输入路径回归测试）+ **T+1 可卖持仓口径假设**（§2.3 净额截断 current_holdings 应为 T+1 口径可卖权重，供数方 position_reconciler 需按此口径）+ 测试丢失重建/registry 未登记/depgraph 滞后三行；④ **§7.2 表补"当前状态（2026-08-12 核对源码）"列**；⑤ **§7.6 新增已施工设施盘点**（规则 #11）：G13 数据流核心链 5 模块 + 参数供给方 + 代码-文档契约核对结论（§2.1.1 A-G 修复与代码全部一致/§2.7 契约字段一致/INVARIANTS 一致，唯一不一致=字段名漂移）；⑥ §9 补录 v1.0.20 漏记条目；⑦ §1.1 依赖 31号 v1.18.0→v1.23.0 版本漂移修复 | 架构审查任务（30/32 号）第 1-3 轮：盘点发现 33 号骨架化致 4 处引用悬空、§4.2 表滞后、修订记录缺 v1.0.20、§7.2 无状态列、缺设施盘点节；第 3 轮算法审查新发现字段名三方漂移 P0 断裂风险 + T+1 可卖口径假设未明示。按"事实性漂移修复+决策类登记开放问题"原则处置。**施工方式**：worktree 隔离（主区并发会话持续回退致修改 2 次丢失，用户裁定改 worktree 施工） |
+| 2026-08-12 | 1.0.22 | 作战地图全覆盖补丁——BM-SEL-21 / BM-RC-07-B / BM-RC-07-C | §2.11 新增作战地图组合优化口径裁定小节（3 环节闭合）：① §2.11.1 BM-SEL-21（design 父环节）二选一裁定——BM 假设 maxΣ(w×score) s.t. corr<0.7/拥挤统一优化引擎 vs 本文 §3.4 已裁定路线冲突，裁定维持"自然叠加+Kelly 精裁决+硬裁剪"（默认项），BM 环节定义修订建议登记（process 描述对齐 31/32 号路线+SEL-21-B 描述对齐+约束映射监控层，留 BM 维护批次不擅自改真源）；② §2.11.2 BM-RC-07-B（production）同上冲突裁定——当前=Kelly 上限+风险预算消费（25号 §2.1 框架，预算 34号分配/Kelly 只减不增精裁），优化求解登记 Phase 4 演进（§2.10.7 Fassino Cauchy 不动点远期，拒绝理由①协方差需求未解决裁定维持）；③ §2.11.3 BM-RC-07-C（production）"预算 vs 实际→再平衡触发"链路补全——监控层引用 54号 §3.14 MCR/CCR 风险贡献分解（Euler 分解 Phase 2.5 候选）为偏离度量层，执行层联动 31号 §2.8.2 再平衡执行链，G13 保持单一职责不建再平衡触发器 |

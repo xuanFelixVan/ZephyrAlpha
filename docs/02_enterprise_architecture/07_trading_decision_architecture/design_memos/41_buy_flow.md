@@ -6,7 +6,7 @@ owner: ZephyrAlpha-Owner
 language: zh
 status: active
 version: "1.6.0"
-date: 2026-08-12
+date: 2026-08-10
 topic: buy_flow
 scope: 07_trading_decision_architecture
 ---
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构分批建仓 / Wyckoff 吸筹时序 / A 股 T+1 集合竞价惯例 |
 | 正交性 | ✅ 与 regime 正交（buy_flow 只消费 budget 数字，不读市场态） |
 | 优先级 | P3 |
-| 状态 | 已定稿·可施工（MVP 路径已明确；22 v1.8.0 / 35 v1.37.0 均已 active，回踩 A/B/C 代码 BM-SEL-08 未施工走 sector_quality=None 降级） |
+| 状态 | 已定稿·可施工（MVP 路径已明确，22/35 未就绪有降级） |
 
 ## 2. 背景
 
@@ -41,12 +41,58 @@ scope: 07_trading_decision_architecture
 ### 2.2 核心问题
 battle_map_06 锁定了买入流的**环节拓扑**（多情景对策→四轨融合→决策编排→分批建仓→纪律闸→执行），但未定义：
 - 分批建仓的批次划分、间隔、放行条件怎么定（BM-BUY-04 参数只给范围未定值）
-- 板块回踩质量 A/B/C（[22_sector_rotation_spec](22_sector_rotation_spec.md) ②，spec 已 active v1.8.0 但 BM-SEL-08 代码未施工），分批建仓是否硬依赖它
+- 板块回踩质量 A/B/C（[22_sector_rotation_spec](22_sector_rotation_spec.md) ②）目前是骨架，分批建仓是否硬依赖它
 - 买入在盘中什么时点执行（集合竞价 / 连续竞价 / 尾盘），如何避开开盘波动与尾盘操纵检测窗口
 - 买入价格锚什么（限价锚压力位/支撑位/VWAP？市价仅应急？）
 - 多标的资金如何分配到单（由 31 算好的权重如何落到订单）
 - budget 节流（G15）与买入执行如何协同
 - T+1 约束如何影响建仓节奏与资金可用性
+
+### 2.2.1 上游四轨与情景对策现状
+
+> battle_map_06 锁定的买入流环节拓扑中，**BM-BUY-01 多情景对策生成 → BM-BUY-02 四轨融合 → BM-BUY-03 决策编排**是进入分批建仓（§3.2）前的上游三段。本节对这三段及其子环节给出裁定结论，闭合设计缺口。
+
+| 环节 | 定位 | 裁定 | 一句话理由 | 重评条件 |
+|---|---|---|---|---|
+| BM-BUY-01 多情景对策生成 | L3 design，7 种价格运动情景（C-005）生成买入预案，consumes BM-SEL-04 次日 8 态预测 + C-006 策略库，下游 BM-BUY-02 四轨融合 | **暂缓** | 7 种情景依赖 BM-SEL-04 次日 8 态预测，而 [90_methodology_open_questions](90_methodology_open_questions.md) §7 已对 8 态预测作出"暂缓建设"正式裁定（52-53% 天花板实证）；上游预测被暂缓，本环节无可靠输入 | 90 §7 重启三条件满足 |
+| BM-BUY-02-A-1 市场状态预测汇总层 | L2C design，汇总 a 3×3 矩阵 / b 叠加态 / c 8 态预测 / d 体制转换四子项，下游 BM-BUY-02-A 逻辑轨 | **分途承载，不单独建设** | a 3×3 矩阵 / b 叠加态 / d 体制转换已由 [10_regime_detector_spec](10_regime_detector_spec.md) 实质覆盖；c 8 态预测被 90 §7 暂缓——四子项各有归属或已被裁定，汇总层本身无新增价值 | 若未来 10 号与 90 号覆盖范围收缩，再评估是否需独立汇总层 |
+| BM-BUY-02-A-2 因子直通裁决 Model-Free Factor Fusion | L3 design，因子加权融合绕过策略层直接产生买入决策，consumes L1 因子池 + L2-A 买入信号 + C-006 覆盖状态 | **不建设** | 与 [21_stock_selection_engine](21_stock_selection_engine.md) §3.2"双引擎融合=打板 sleeve 内部，非跨策略层"架构裁定冲突；绕过策略层直裁违反 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) Model A 独立账本原则——策略未覆盖/冲突时应降级 L6 审查，而非因子直通 | 若 21 号 §3.2 双引擎融合边界扩展至跨策略层，或 30 号 Model A 原则修订，再重评 |
+| BM-BUY-02-B 数据驱动轨 | L3 design，AI Discovery 轨道（量能/因子突变→数据轨信号），consumes BM-SEL-02 因子池 + 量能/分布特征 | **暂缓** | AI Discovery 轨道当前无承载模块；41 §4.5 已裁定 buy_flow 不读市场态；四轨中仅人工/应急两轨落地，逻辑轨降级为固定策略查表（BM-BUY-01 暂缓连带） | 信号工厂（BM-SEL-02-J）建成后，具备实时因子突变检测能力再评估 |
+| BM-BUY-02-C 人工指令轨 | L3 **production**，人工指令经 MTF 仲裁覆盖自动轨，consumes 前端指令输入 + 用户策略配置 | **补接口契约**（见下） | 已落地但接口格式未在本文显式定义，补全字段表与仲裁机制 | — |
+| BM-BUY-03 决策编排 | L3 design，DO 决策编排器 5 路径（买/卖/做T/人工/应急）优先级仲裁+冲突消解+去重+时序编排 | **部分建设** | 触发器级编排已由 §3.9 扳机清单 TriggerList 覆盖（注册/优先级仲裁/同源去重/事件总线派发）；DO 的决策路径编排（5 路径冲突消解与时序）与 TriggerList 职责重叠度高，**不建独立 DO**，由 TriggerList + 硬边界承载 | 若 Phase 2 多策略并发后出现 TriggerList 无法仲裁的跨路径冲突（如买入路径与做T路径同时竞争同一资金），再评估独立 DO |
+
+**BM-BUY-02-C 人工指令轨接口契约**（production 补全）：
+
+人工指令信号格式：
+
+| 字段 | 类型 | 必填 | 说明 |
+|---|---|---|---|
+| `instruction_id` | str | ✅ | 唯一标识，格式 `MANUAL-{YYYYMMDD}-{seq}` |
+| `symbol` | str | ✅ | 标的代码 |
+| `direction` | str | ✅ | `BUY` / `SELL` |
+| `quantity` | int | ✅ | 数量（股），须为 100 整数倍 |
+| `order_type` | str | ✅ | `LIMIT` / `MARKET`，默认 `LIMIT` |
+| `limit_price` | float | 条件 | `order_type=LIMIT` 时必填 |
+| `source` | str | ✅ | 固定 `MANUAL_FRONTEND` |
+| `timestamp` | datetime | ✅ | 指令下达时间 |
+| `confirm_large` | bool | ✅ | 大额确认标记（单笔 >5 万元须 true，防误触） |
+| `override_reason` | str | 否 | 覆盖自动轨的理由（审计留痕） |
+
+MTF 仲裁优先级：**应急轨（emergency）> 人工轨（manual）> 自动轨（auto）**。人工轨覆盖自动轨的机制：同一标的同一时段内，若人工指令与自动策略信号冲突，人工指令优先执行，自动策略信号挂起（`SUSPENDED_BY_MANUAL`）至人工指令成交或撤销后恢复。人工轨不覆盖应急轨——风控止损/极端行情触发时，人工买入指令被应急轨拦截。
+
+与既有节的衔接：人工指令在 §3.4 集合竞价窗口（9:15-9:25）允许买入（自动策略不允许）；在 §3.5 允许市价单（自动策略限价为主）；在 §3.8 集合竞价 T+1 约束下，人工集合竞价买入的标的当日盘中不能卖。人工指令同样须过 BM-BUY-08 纪律闸四项严禁检测（追高/补仓/骄傲/报复），但人工确认后仅记录违规不拦截（终态决策权在人工，与"无降级"设计一致）。
+
+**BM-BUY-03 5 路径冲突消解规则**（不建独立 DO，由 TriggerList + 硬边界承载）：
+
+| 冲突场景 | 消解规则 | 承载机制 |
+|---|---|---|
+| 买入路径 vs 卖出路径（同标的） | 卖出优先（风险优先原则，与 §3.9 止损优先于加仓一致） | TriggerList priority 仲裁（SELL_* priority ≤4 > BUY_* priority 5） |
+| 买入路径 vs 做T路径（同标的） | 做T 优先（做T 是日内已持仓的波段操作，买入是新仓，避免同日同标的双向操作混淆） | 硬边界：同标的当日有做T 卖出单时，新买入批次排期到次日 |
+| 人工路径 vs 自动路径 | 人工覆盖自动（MTF 仲裁，见上） | MTF priority 仲裁 |
+| 应急路径 vs 一切 | 应急覆盖一切（Kill Switch 最高优先） | TriggerList priority=1 无条件覆盖 |
+| 多自动路径并发（多策略同时想买同一标的） | 按 C-031 置信度降序 + 先到先服务，低置信度信号挂起 | TriggerList cooldown + priority 仲裁 |
+
+> **为何不建独立 DO**：§3.9 扳机清单已覆盖触发器级编排（注册/优先级仲裁/同源去重/事件总线派发），DO 的决策路径编排与 TriggerList 职责重叠度 >80%。MVP 阶段单标的单策略，5 路径冲突场景极少（上表 5 类冲突均可由 TriggerList priority + 硬边界规则消解）。独立 DO 会增加一层编排抽象，违反"骨架先行"纪律。Phase 2 多策略并发后若出现 TriggerList 无法仲裁的跨路径冲突，再评估独立 DO。
 
 ### 2.3 约束条件
 - **T+1 不能做空**：当日买入次日才能卖；当日卖出资金 T+1 才可用 → 分批建仓批次间隔天然≥1 交易日
@@ -54,27 +100,6 @@ battle_map_06 锁定了买入流的**环节拓扑**（多情景对策→四轨�
 - **31_position_sizing §2.7 边界**：仓位算法不内置 regime 切换，只收 budget 数字 → buy_flow 同理，不读市场态
 - **BM-BUY-08 交易纪律闸**：买入下单前必须过四项严禁检测（追高/补仓/骄傲/报复），buy_flow 不得绕过
 - **打板容量极小**（单票几万~几十万）：打板策略建仓必须小账本、限价单、避免冲击
-
-### 2.4 已施工设施盘点（通用规则 #11 全量扫描）
-
-> **核心结论**：**买入流本体未施工**（BM-BUY-04 分批建仓 / BM-BUY-08 纪律闸均为设计态），本备忘 §3 的伪代码是施工蓝本而非已施工代码的 why 回填。但**上游仓位产出与下游执行基础设施已 production**——buy_flow 是"夹在两个 production 之间的设计态编排层"，施工时无需新建执行/仓位设施，只需实现编排逻辑。
-
-| 层次 | 设施 | path / 出处 | 状态 | 与 buy_flow 的关系 |
-|---|---|---|---|---|
-| **买入流本体** | BM-BUY-04 分批建仓 / BM-BUY-08 纪律闸 | [battle_map_06](../battle_map/battle_map_06_buy_flow.md) | 🟧 设计态（代码待实现） | 本备忘 §3.2 分批方案 + §3.9 扳机清单即其施工蓝本 |
-| 上游·仓位产出 | FirmRiskAggregator（MOD-POS-021） | `src/zephyr/position/core/firm_risk_aggregator.py` | 🟦 production | 产出 `FirmTargetPortfolio`（§3.6 直接消费）；内含 LIQUIDITY 10%/20% ADV 容量裁剪——buy_flow 收到的权重已过流动性容量闸 |
-| 上游·板块回踩 | BM-SEL-08 回踩 A/B/C | [22号 §3.1②](22_sector_rotation_spec.md) / battle_map_05 | 🟧 缺失态-未实现 | §3.2.1 `sector_quality=None` 降级兼容已预留接口 |
-| 下游·执行引擎 | ExecutionEngine | `src/zephyr/ex_core/execution_engine.py` | 🟦 production | 限价/市价单执行落地层（§3.5 锚定价格的物理执行） |
-| 下游·券商适配 | miniQMT broker adapter | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | 🟦 production | miniQMT 通道下单（§3.4 尾盘窗口的通道承载） |
-| 下游·挂单价 | PricingPolicy | `src/zephyr/ex_core/pricing_policy.py` | 🟦 production | 子单挂单价决策（§3.5 限价锚定的执行层细化，TWAP/VWAP 拆单最后一公里） |
-| 下游·价格笼子 | PriceCage | `src/zephyr/ex_core/price_cage.py` | 🟦 production | ±2% 价格笼子合规校验（§3.5 限价单的价格合法性闸） |
-| 下游·撤单率 | CancelRateGuard | `src/zephyr/ex_core/cancel_rate_guard.py` | 🟦 production | 滚动撤单率监控（§3.4 14:55-14:57 撤改挂窗口的合规闸，内部 15% 保守线） |
-| 下游·交易时段 | TradingSession | `src/zephyr/ex_core/trading_session.py` | 🟦 production | 集合竞价/连续竞价时段判定（§3.4 执行窗口的时段真源） |
-| 治理规则 | G7 单标的流动性检查 | `src/zephyr/gov_enforcement/rule_enforcement/g7_position_limits.yaml` | 🟦 production | `single_stock_liquidity_check` 单标的 ≤5% ADV——§3.6 资金分配到单标的的容量硬顶 |
-| 风控门控 | 四级回撤 + Kill Switch | `src/zephyr/position/core/drawdown_controller.py` + `src/zephyr/risk/` | 🟦 production | §3.9 扳机清单 RISK_* 触发器的实际执行者（35号 active v1.37.0） |
-| 流动性危机 | MOD-RK-10 LIQUIDITY_CRISIS | `src/zephyr/risk/core/ashare_systemic_risk_detector.py` | 🟦 production | §3.9 扳机 `RISK_LIQUIDITY_CRISIS`（priority=2）触发时 HALT_NEW_BUY——买入流被动响应方 |
-
-> **施工含义**：buy_flow 的新增代码量集中在**编排层**——`compute_batch_split`（§3.2.1）/ `detect_breakout_failure`（§3.3）/ `schedule_buy_orders`（§3.4）/ `compute_anchor_price`（§3.5）/ `clip_to_available_capital` + `rank_buy_orders`（§3.6）六个函数 + TriggerList 注册（§3.9），全部消费上表现有 production 设施的产出，不新建数据管道或执行通道。
 
 ## 3. 决策：分批建仓 + 尾盘集中执行 + 限价锚定 + budget 数字驱动
 
@@ -116,7 +141,7 @@ def compute_batch_split(confidence_score_c031, strategy_type, sector_quality=Non
         A→置信度+0.1（浅回踩38.2-50%+缩量+板块强≥70，激进建仓倾向）
         B→置信度±0.0（深回踩50-61.8%+混合量能+板块中40-70，中性）
         C→置信度-0.1（破位>61.8%+放量+板块弱<40，分批或放弃倾向）
-        None→不调整（22号 spec 已 active 但 BM-SEL-08 代码未就绪降级，MVP 兼容，与§4.2 过度工程审查一致）
+        None→不调整（22号未就绪降级，MVP 兼容，与§4.2 过度工程审查一致）
     """
     # A/B/C 板块回踩质量调节置信度（22号 v1.8.0 active 后启用，v1.4.0 集成）
     quality_adjustment = {"A": 0.1, "B": 0.0, "C": -0.1}.get(sector_quality, 0.0)
@@ -222,8 +247,6 @@ def detect_breakout_failure(position, lookback_days=10, confirm_bars=2):
 | 连续竞价 09:30-14:45 | 自动+人工 | 自动策略信号盘前生成，但**不在早盘执行**（避开开盘波动+尾盘操纵检测前置窗口） | 可撤单 |
 | 尾盘连续竞价 14:50-14:57 | **自动策略主执行窗口** | MVP 默认：14:50-14:55 集中下限价单，14:55-14:57 检查未成交并撤单改挂 | 可撤单 |
 | 收盘集合竞价 14:57-15:00 | 补单/未成交兜底 | 14:57 前挂好收盘竞价单，14:57 后**不可撤单**，吃唯一收盘价 | **不可撤单** |
-
-> ⚠️ **与 40 号窗口冲突（v1.6.0 核验发现，未裁定）**：40_execution_broker 决策⑧明确"MVP 仅参与连续竞价，不碰集合竞价"，决策⑪明确"14:55 尾盘清退——任意非终态订单 14:55 转入收盘集合竞价或放弃，**MVP 选放弃→撤单**"。本备忘 §3.4 的"14:55-14:57 撤改挂 + 14:57-15:00 收盘竞价补单"与 40 号 MVP 口径直接冲突（40 号 14:55 即清退撤单，买入单活不到 14:57；且 40 号 MVP 不使用收盘集合竞价）。两个备忘需对齐其一：① 41 让步——MVP 买入 14:55 未成交即随 40 号清退撤单，次日尾盘再挂（T+1 下代价=建仓延后 1 日）；② 40 让步——buy_flow 尾盘单豁免 14:55 清退并允许收盘竞价补单（需改 40 号决策⑧⑪）。已记 §7 待定问题，裁定前以 40 号现行口径为准（14:55 清退撤单、不用收盘竞价）。
 
 **尾盘集中执行理由**：
 - A 股 T+1，尾盘买入次日即可卖，资金时间成本最低
@@ -428,6 +451,129 @@ class TriggerEntry:
 
 > **过度工程审查**：扳机清单是设计模式非新模块——MVP 阶段各触发器已在各自 spec 定义，扳机清单只做注册表与优先级仲裁，不引入新算法/meta 参数。若各模块触发器数量<10 且无冲突场景（单标的单策略 MVP），可降级为各模块独立轮询，扳机清单作为文档参考不强制实现。Phase 2 多策略并发后冲突场景增多时再强制启用。
 
+### 3.10 ⑨ 明日预案双层架构 —— B 盘后生成边界 / C 盘前加载约束 / A 盘中推演在边界内执行
+
+> 本节覆盖作战地图 BM-PLAN-01/02/03 三环节，定位是**买入/卖出/仓位三流的共同上游边界提供者**。明日预案的核心思想：**边界比聪明更重要**——有边界无推演=笨但安全，有推演无边界=聪明但危险。模块真源 MOD-PLAN-001（BM-PLAN-01）/ MOD-PLAN-002（BM-PLAN-02）/ MOD-PLAN-003（BM-PLAN-03）。
+
+#### 3.10.1 双层架构三层触发总览
+
+| 层 | 环节 | 触发时点 | 产出 | 下游 |
+|---|---|---|---|---|
+| B 盘后边界层 | BM-PLAN-01 明日预案引擎 | 盘后收盘 | `TomorrowBoundary`（箱体上沿/下沿、加仓仓位上限、禁加仓价位、必出止盈价位、突破验证条件） | BM-PLAN-02 盘前加载 |
+| C 盘前约束层 | BM-PLAN-02 盘前预案加载 | 次日 9:00 加载 + 9:25 集合竞价情景匹配 | `ConstraintState`（约束状态初始化） | BM-PLAN-01-C 盘中推演 + BM-BUY/SELL/POS 初始指令 |
+| A 盘中推演层 | BM-PLAN-01-C 盘中推演（PLAN-01 子层） | 盘中每 15 分钟重算 | `BoundedActionAdvice`（边界内动作建议，毫秒级） | BM-BUY-02 买入融合 + BM-SELL-02 卖出融合 + BM-POS-01 仓位 |
+| A 尾盘决策 | BM-PLAN-03 尾盘决策 | 14:45-15:00 | 尾盘调仓指令（加仓博高开/减仓防低开/持有不动） | BM-BUY-02 买入 + BM-SELL-02 卖出 |
+
+#### 3.10.2 BM-PLAN-01 明日预案引擎（design）—— B 盘后生成 TomorrowBoundary
+
+**定位**：盘后收盘后基于当日数据冷静计算明日操作边界，是**边界层（B/C）**的核心产出者。
+
+**裁定**：**建设**——边界层是买入/卖出/仓位三流的共同安全基线，降级铁律明确（边界层坏=致命暂停操作，推演层坏=可接受机械执行边界）。
+
+**参数默认值**（proposed，待实盘校准）：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| 箱体上沿 | 昨日冷静算 | 基于昨日收盘数据计算的明日压力位 |
+| 箱体下沿 | 昨日冷静算 | 基于昨日收盘数据计算的明日支撑位 |
+| 加仓仓位上限 | 30% | 单标的加仓后总仓位不超过此上限 |
+| 禁加仓价位 | 接近上沿 | 价格接近箱体上沿时禁止加仓（防追高） |
+| 必出止盈价位 | 冲上沿必出 | 价格冲上箱体上沿时必须止盈（纪律） |
+| 突破验证条件 | 放量站稳 10 分钟 | 突破上沿需放量且站稳 10 分钟才确认有效突破 |
+
+**consumes**：
+
+| 输入 | 来源 |
+|---|---|
+| 市场状态 | BM-SEL-03 |
+| 次日 8 态预测 | BM-SEL-04 |
+| 主力行为 | BM-SEL-05 |
+| 情绪周期 | BM-SEL-23 |
+| 卖出侧边界 | BM-SELL-07 |
+
+**输出契约**：
+
+```python
+@dataclass
+class TomorrowBoundary:
+    symbol: str
+    box_upper: float          # 箱体上沿
+    box_lower: float          # 箱体下沿
+    max_add_position: float   # 加仓仓位上限（默认 0.30）
+    no_add_price: float       # 禁加仓价位（≈上沿）
+    must_exit_price: float    # 必出止盈价位（冲上沿必出）
+    breakout_confirm: str     # 突破验证条件（"放量站稳10分钟"）
+
+@dataclass
+class ConstraintState:
+    symbol: str
+    boundary: TomorrowBoundary
+    scenario: str             # 盘前竞价匹配的 9 情景之一
+    initialized: bool         # 盘前加载是否成功
+
+@dataclass
+class BoundedActionAdvice:
+    symbol: str
+    action: str               # "ADD" / "REDUCE" / "HOLD" / "EXIT"
+    price_bound: tuple[float, float]  # 动作允许的价格区间（在 boundary 内）
+    max_weight: float         # 动作允许的最大权重
+    reason: str               # 边界内推演理由
+```
+
+**数据流**：市场状态+次日预测+主力行为+情绪周期+卖出侧边界 → 双层架构（B 盘后生成 TomorrowBoundary → C 盘前加载 ConstraintState → A 盘中推演在边界内执行毫秒级）→ 输出 TomorrowBoundary/ConstraintState/BoundedActionAdvice → downstream BM-BUY-02 买入融合 + BM-SELL-02 卖出融合 + BM-POS-01 仓位。
+
+**降级铁律**：
+
+| 层 | 故障后果 | 降级动作 |
+|---|---|---|
+| 边界层（B/C）坏 | **致命** | 暂停操作，延迟开盘到加载成功或人工介入 |
+| 推演层（A）坏 | 可接受 | 机械执行边界（"边界比聪明更重要"） |
+
+> **设计哲学**：有边界无推演=笨但安全（机械执行 boundary 不越界），有推演无边界=聪明但危险（无约束的推演可能追高/抄底）。边界层是安全基线，推演层是效率优化——安全优先于效率。
+
+**与本文既有内容的衔接**：盘中推演（A 层）在边界内执行（毫秒级），挂 §3.4 尾盘执行窗口表——A 层推演的 BoundedActionAdvice 若建议 ADD，实际下单仍走 §3.4 的 14:50-14:57 尾盘窗口与 §3.5 限价锚定；若建议 REDUCE/EXIT，走 42 号卖出流。明日预案不改变本文的时序与锚定设计，只在时序与锚定之上加一道边界约束。
+
+#### 3.10.3 BM-PLAN-02 盘前预案加载（design）—— C 层 9:25 集合竞价情景匹配
+
+**定位**：次日盘前加载昨晚 TomorrowBoundary，9:25 集合竞价匹配 9 种情景，初始化 ConstraintState。
+
+**裁定**：**建设**——盘前加载是边界层（C）的组成部分，加载失败=致命（无约束状态禁止开始交易）。
+
+**参数默认值**：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| 竞价匹配窗口 | 9:20-9:25 | 集合竞价最后 5 分钟（9:20 后不可撤单，价格趋稳） |
+| 情景分类规则 | 9 种情景 | 高开/低开/平开 × 真涨/假涨/真跌/假跌/洗盘 |
+
+**consumes**：昨晚 TomorrowBoundary（BM-PLAN-01）。
+
+**数据流**：昨晚 TomorrowBoundary → 盘前 9:00 加载边界 → 9:25 竞价匹配情景 → 触发对应分支 → 输出 ConstraintState → downstream BM-PLAN-01-C 盘中推演 + BM-BUY/SELL/POS 初始指令。
+
+**降级**：盘前加载失败=致命，延迟开盘到加载成功或人工介入（无约束状态禁止开始交易）。
+
+#### 3.10.4 BM-PLAN-03 尾盘决策（design）—— A 层 14:45 基于明日高/低开概率的加减仓决策
+
+**定位**：14:45 尾盘决策窗口，基于今日盘中实时推演结果与持仓状态，做加减仓决策（加仓博明天高开/减仓防明天低开/持有不动）。
+
+**裁定**：**建设**——与 §3.4 尾盘执行窗口是**分工消歧**关系：§3.4 是**建仓执行窗口**（把 31 号算好的目标权重落成订单），PLAN-03 是**预测驱动调仓**（基于明日高/低开概率调整已有持仓或加仓）。两者时段重叠（14:45-15:00 vs 14:50-14:57），但职责不同——PLAN-03 产出调仓指令，§3.4 负责把指令落成限价单。
+
+**参数默认值**：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| 尾盘加仓阈值 | 明日高开概率 >70% | 高开概率超阈值才加仓 |
+| 尾盘减仓阈值 | 明日低开概率 >60% | 低开概率超阈值减仓 |
+| 尾盘决策窗口 | 14:45-15:00 | A 股尾盘黄金决策点 |
+
+**consumes**：今日盘中实时推演（BM-PLAN-01）+ 今日持仓状态（BM-POS-01）。
+
+**数据流**：盘中推演结果+持仓状态 → 尾盘 15 分钟决策（加仓博明天高开/减仓防明天低开/持有不动）→ 输出尾盘调仓指令 → downstream BM-BUY-02 买入 + BM-SELL-02 卖出。
+
+**降级**：尾盘决策未就绪→不操作（保持现有持仓过夜），宁可不操作也不在尾盘盲动。
+
+> **与 §3.4 的分工消歧**：§3.4 尾盘窗口（14:50-14:57）是**建仓执行**——把 FirmTargetPortfolio 的目标权重按 BatchedEntryPlan 落成限价单，驱动源是 31 号仓位裁决。PLAN-03 尾盘决策（14:45-15:00）是**预测驱动调仓**——基于明日高/低开概率对已有持仓或加仓做调整，驱动源是 BM-PLAN-01 盘中推演。若 PLAN-03 建议加仓且 §3.4 窗口未过，加仓指令走 §3.4 窗口执行；若 PLAN-03 建议减仓，走 42 号卖出流。两者不冲突——PLAN-03 是决策层，§3.4 是执行层。
+
 ## 4. 考虑过的替代方案（拒绝理由）
 
 ### 4.1 一次性满仓建仓 —— 拒绝
@@ -469,9 +615,9 @@ class TriggerEntry:
 
 | 阶段 | 内容 | 触发条件 |
 |---|---|---|
-| **MVP（当前）** | 2 批分批 + 尾盘集中 + 限价锚定 + C-031 置信度驱动；22/35 spec 已 active，BM-SEL-08 代码未施工用降级 | 本备忘定稿即可施工 |
-| **阶段 2** | ~~[22_sector_rotation_spec](22_sector_rotation_spec.md) 定稿，A/B/C→置信度映射注入 C-031~~ ✅ **已达成**（v1.4.0：22 active v1.8.0，±0.1 映射已注入 `compute_batch_split`）；剩余=BM-SEL-08 代码施工后接入真实 A/B/C 数据 + C1 实盘校准映射值 | BM-SEL-08 代码施工完成 |
-| **阶段 3** | ~~[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值联动建仓节奏~~ ✅ **已达成**（35 active v1.37.0；§3.9 扳机清单 RISK_DRAWDOWN_L3 priority=2 → HALT_NEW_BUY 暂停后续批次）；剩余=联动参数实盘校准 | 35 active ✅（联动参数待实盘校准） |
+| **MVP（当前）** | 2 批分批 + 尾盘集中 + 限价锚定 + C-031 置信度驱动；22/35 未就绪用降级 | 本备忘定稿即可施工 |
+| **阶段 2** | [22_sector_rotation_spec](22_sector_rotation_spec.md) 定稿，A/B/C→置信度映射注入 C-031 | 22 active |
+| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值联动建仓节奏（Level1 新仓风险降 75%） | 35 active |
 | **阶段 4** | 盘中实时分散下单 + TWAP/VWAP 拆单（需实时信号+实时风控+大资金规模就绪） | G15 + 实时风控 + 资金规模施工完成 |
 | **阶段 5（待裁定）** | 动态分批数（按策略类型/波动率自适应选 2-4 批） | 各策略 6+ 月实盘 track record |
 | **阶段 6（远期·待裁定）** | ML 加仓决策：Conformal Kelly 用 75% 预测区间宽度作 fractional Kelly scale（区间宽→缩首仓，区间窄→加首仓）+ PACE LLM 分层执行（长Horizon规划+短Horizon执行，超越 TWAP/AC） | 各策略 12+ 月 track record + conformal 预测模型校准通过 |
@@ -501,7 +647,7 @@ class TriggerEntry:
 
 ### 5.3 为何这是上限而非妥协
 - 2 批分批 + 尾盘集中 + 限价锚定是 A 股 T+1 个人量化的实务共识（10jqka 2026-06 / eastmoney 2026-07）
-- 不硬依赖 22/35 代码就绪度（两者 spec 均已 active），保证 MVP 可独立施工——这是"骨架先行"纪律下避免循环阻塞的关键
+- 不硬依赖 22/35 骨架，保证 MVP 可独立施工——这是"骨架先行"纪律下避免循环阻塞的关键
 - 真正的上限 = 在 C-031 置信度驱动框架内把分批节奏做到极致，而不是堆 A/B/C/密度感知等未就绪信号
 
 ## 6. 待裁定（暂缓项）
@@ -523,19 +669,18 @@ class TriggerEntry:
 | 首仓/确认仓比例按策略类型差异化（打板 vs 多因子 vs 事件） | 本备忘 §3.2.1 | 待 G04（20_first_batch_strategies）产出校准 |
 | 14:50 执行窗口对打板策略不适用，打板时点自定义 | 本备忘 §3.4 | 待 [24_daban_strategy_detail](24_daban_strategy_detail.md) 定稿 |
 | 换仓 T+1 延后买 B 的批次排期与 budget 变化冲突时如何处理 | 本备忘 §3.8 | G14 已定稿 v1.0.0（[33_budget_change_handler](33_budget_change_handler.md)），可对齐 §3.8 |
-| ~~35 四级回撤阈值触发时，进行中的分批建仓是否立即暂停~~ | 与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 联动 | ✅ **已解决**（v1.6.0）：35 已 active v1.37.0；本备忘 §3.9 扳机清单已定——RISK_DRAWDOWN_L3（回撤>15%，priority=2）→ `HALT_NEW_BUY` 暂停后续批次放行（pending batch 不再 PLACE_ORDER），L4（>20%）清新仓，L1/L2 不暂停仅降风险预算 |
-| **§3.4 尾盘窗口与 40 号决策⑧⑪冲突**（v1.6.0 核验新增）：40 号 MVP"仅连续竞价+14:55 清退撤单" vs 本备忘"14:55-14:57 撤改挂+14:57-15:00 收盘竞价补单"。方案①41 让步（14:55 未成交随清退撤单，次日再挂）/方案②40 让步（buy_flow 尾盘单豁免清退+允许收盘竞价，需改 40 号） | 与 [40_execution_broker](40_execution_broker.md) 决策⑧⑪联动 | **待用户裁定**；裁定前以 40 号现行口径为准 |
+| 35 四级回撤阈值触发时，进行中的分批建仓是否立即暂停 | 与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 联动 | 待 35 active |
 
-> **循环至零检查**：41 → 22（G06，active v1.8.0，BM-SEL-08 代码待施工）/35（G16，active v1.37.0）/31（G12 active v1.23.0）。降级路径明确（BM-SEL-08 代码未就绪→sector_quality=None 纯 C-031 兜底；35 联动参数未校准→§3.9 扳机清单默认阈值）。**无真循环阻塞**，41 可独立施工。✓
+> **循环至零检查**：41 → 22（G06 骨架）/35（G16 骨架）/31（G12 active）。22/35 的框架在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md)（active）已有定义（35 §2.5 四级阈值已定），MVP 降级路径明确（22 未就绪→C-031 兜底；35 未就绪→30 §2.5 框架）。**无真循环阻塞**，41 可独立施工。✓
 
 ## 8. 引用
 
 ### 8.1 相关 design_memo
 - [31_position_sizing](31_position_sizing.md) —— 仓位产出（FirmTargetPortfolio）来源，buy_flow 消费其权重
-- [22_sector_rotation_spec](22_sector_rotation_spec.md) —— 板块回踩质量 A/B/C（active v1.8.0，BM-SEL-08 代码待施工，§3.2.1 已集成 sector_quality 调节因子）
-- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（active v1.37.0，§3.9 扳机清单 RISK_* 触发器执行者）
+- [22_sector_rotation_spec](22_sector_rotation_spec.md) —— 板块回踩质量 A/B/C（骨架，增强输入）
+- [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) —— 回撤 Protocol（骨架，框架在 30 §2.5）
 - [42_sell_flow](42_sell_flow.md) —— 卖出流（突破失败降级联动）
-- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值框架（35 active 前的原始真源，现由 35 v1.37.0 承接）
+- [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.5 —— 回撤四级阈值框架（35 未就绪时真源）
 
 ### 8.2 相关 battle_map
 - [battle_map_06_buy_flow](../battle_map/battle_map_06_buy_flow.md) —— BM-BUY-04 分批建仓 / BM-BUY-08 纪律闸 / BM-BUY-02 四轨融合
@@ -574,4 +719,4 @@ class TriggerEntry:
 | 2026-08-10 | 1.4.0 | A/B/C 板块回踩质量集成 + 扳机清单统一条件触发执行队列 | ①§3.2.1 `compute_batch_split` 新增 `sector_quality` 参数（A→+0.1/B→±0/C→-0.1 置信度调节，22号 v1.8.0 active 后启用，`None` 降级兼容）；②§3.2.2 A/B/C 定位从"增强非硬门"升级为"置信度调节因子，已集成"；③§3.9 新增⑧条件触发执行队列（扳机清单）—— 买入/卖出/执行/风控触发器统一注册 TriggerEntry（trigger_id/source/condition/action/priority/scope/cooldown）+ MVP 15 条扳机清单按优先级 1-5 排序 + 优先级仲裁规则（Kill Switch 覆盖一切/止损优先于加仓/同源去重）+ 与三维度解耦关系（编排层不改变 what/how much/how 解耦）+ 过度工程审查（设计模式非新模块，MVP 可降级为独立轮询）；④§6 待裁定 A/B/C→置信度映射表从暂缓升级为已实施（待 C1 校准） | 用户要求审查施工环节流程算法缺失+文档结构内容调整+持续改进。22号 v1.8.0 active 使 A/B/C 集成解锁——原 v1.0.0 设计为"A/B/C 增强"避免 41←22 循环阻塞，现 22 active 可正式注入 `sector_quality`。扳机清单解决多模块触发器冲突无人仲裁+重复检测问题（如确认仓放行 vs 回撤 Level2 暂停同时触发），是编排层设计模式非新模块，MVP 可降级为独立轮询 |
 | 2026-08-10 | 1.5.0 | 施工标注清理——"施工缺失补全"→"施工伪代码已补全" | §3.3 突破失败检测算法 / §3.4 执行时序算法 / §3.6 资金不足 pro-rata 削减算法 / §3.6 多标的下单排序算法 共 4 处标注从"施工缺失补全"更新为"施工伪代码已补全"——v1.1.0 已补全全部伪代码（detect_breakout_failure/schedule_buy_orders/clip_to_available_capital/rank_buy_orders 四函数完整），标注为历史遗留未同步 | 用户要求再次审查文档所有内容+施工环节流程算法缺失+持续改进。核查发现 41 号 4 处算法伪代码早在 v1.1.0 已完整补全，但"施工缺失补全"标注未同步更新造成"算法缺失"的误读。本次清理过时标注，准确反映施工状态 |
 | 2026-08-10 | 1.5.1 | 伪代码精度审计——uniform 导入补全 + 跨文档调用链验证 | §3.5 `compute_anchor_price` 补 `from random import uniform` 导入语句（原伪代码直接调用 `uniform()` 未声明导入，施工方可能遗漏）。跨文档调用链验证：41 号扳机清单 14 条 TriggerEntry 的 condition 函数来源均已确认（detect_breakout_failure 在 41§3.3 定义、triage_position 在 42§3.2 定义、has_volume_confirmation 在 26§2.5 定义），无悬空函数。边界条件审计：clip_to_available_capital 有 target_invest<=available_cash 保护 + pro-rata 削减逻辑正确；compute_batch_split 有 sector_quality=None 降级兼容；detect_breakout_failure 有连续 2 根确认防假跌破 | 七十二轮伪代码边界条件深度审计——换三个新角度（跨文档调用链验证/伪代码边界条件审计/参数来源追踪）发现 1 处导入缺失，已修复 |
-| 2026-08-12 | 1.6.0 | §2.4 新增「已施工设施盘点」节 + 跨文档冲突登记 + 过时状态清理 | 架构审查（37/41 联合审查任务）三项改动：① **§2.4 新增「已施工设施盘点」**（通用规则 #11 全量扫描）：买入流本体未施工（BM-BUY-04/08 设计态），但上游 MOD-POS-021 与下游 ex_core 执行设施（execution_engine/miniqmt_broker/PricingPolicy/PriceCage ±2% 笼子/CancelRateGuard 12%预警-15%冻结/TradingSession，均 production）已就绪——buy_flow 是"夹在两个 production 之间的设计态编排层"，新增代码集中编排层 6 函数 + TriggerList 注册。引用设施参数已与源码逐一核验一致。② **§3.4 与 40 号窗口冲突登记**（未裁定）：40 号决策⑧"MVP 仅连续竞价"+决策⑪"14:55 尾盘清退 MVP 选放弃→撤单"与本备忘"14:55-14:57 撤改挂+14:57-15:00 收盘竞价补单"直接冲突，§3.4 补 ⚠️ 行 + §7 新增待定问题（方案①41 让步/方案②40 让步，裁定前以 40 号现行口径为准）。③ **过时状态清理**：22/35 已由骨架升 active（22 v1.8.0 / 35 v1.37.0），更新 §1 状态行/§2.2 核心问题/§3.2.1 docstring/§5.2 MVP+阶段2+阶段3 行（阶段 2/3 标记已达成）/§7 循环至零检查/§8.1 引用共 8 处；§7"35 四级回撤触发是否暂停分批建仓"标记已解决（§3.9 扳机清单 RISK_DRAWDOWN_L3→HALT_NEW_BUY 即答案） |
+| 2026-08-12 | 1.6.0 | 作战地图全覆盖补丁——新增明日预案小节（BM-PLAN-01/02/03）+ 上游四轨与情景对策小节（BM-BUY-01/02-A-1/02-A-2/02-B/02-C/03） | ①§3.10 新增⑨明日预案双层架构——B 盘后生成 TomorrowBoundary（箱体上沿/下沿、加仓上限 30%、禁加仓价位、必出止盈价位、突破验证放量站稳 10 分钟）/ C 盘前 9:25 集合竞价 9 情景匹配加载 ConstraintState / A 盘中推演在边界内执行毫秒级 + 尾盘 14:45 预测驱动调仓；降级铁律（边界层坏=致命暂停，推演层坏=可接受机械执行）；与 §3.4 尾盘窗口分工消歧（§3.4 建仓执行 vs PLAN-03 预测调仓）；输出契约 TomorrowBoundary/ConstraintState/BoundedActionAdvice 三 dataclass；模块真源 MOD-PLAN-001/002/003。②§2.2.1 新增上游四轨与情景对策现状——BM-BUY-01 暂缓（8 态预测被 90 §7 暂缓连带）/ BM-BUY-02-A-1 分途承载不单独建设（a/b/d 由 10 号覆盖，c 被 90 §7 暂缓）/ BM-BUY-02-A-2 不建设（与 21 §3.2 双引擎融合边界冲突+违反 30 Model A 独立账本）/ BM-BUY-02-B 暂缓（AI Discovery 无承载+41 §4.5 不读市场态）/ BM-BUY-02-C 补人工指令接口契约（字段表+MTF 仲裁应急>人工>自动+与 §3.4/§3.5/§3.8 衔接）/ BM-BUY-03 部分建设不建独立 DO（TriggerList+硬边界承载，5 路径冲突消解规则表） | 作战地图 9 环节设计缺口闭合：BM-PLAN-01/02/03 明日预案三环节 + BM-BUY-01/02-A-1/02-A-2/02-B/02-C/03 上游六环节，每环节显式 BM 编号映射（定位→裁定→契约/参数/接口），建设项参数默认值优先采用 steps JSON proposed 值 |

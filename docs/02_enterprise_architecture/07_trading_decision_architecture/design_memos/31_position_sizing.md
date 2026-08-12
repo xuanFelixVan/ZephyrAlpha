@@ -5,7 +5,7 @@ title: 仓位算法（分层裁定落地）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.24.0"
+version: "1.24.2"
 date: 2026-08-12
 topic: position_sizing
 scope: 07_trading_decision_architecture
@@ -291,6 +291,13 @@ MOD-POS-001 对求和后每个标的输出 `kelly_adjusted_weight`（= f_i^norm�
 - **口径**：按持仓权重按行业归类求和（只需持仓权重 + 行业映射，**不估协方差**）
 - 来源：battle_map BM-POS-04（与 30_multi_strategy_concurrency §3.1 不估协方差一致）
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-RC-02-A | 仓位限额检查 | §2.4.1 单票硬上限 8%（总资金口径） | production 已建 |
+| BM-RC-02-B | 行业集中度检查 | §2.4.2 行业硬约束（偏离 ±10%/±15%、绝对上限 30%） | production 已建 |
+
 #### 2.4.3 总仓位硬约束（regime Shrinkage 节流后）
 
 总仓位上限由 regime Shrinkage 节流后给定（G15 RegimeMetaAllocator 定参数，firm 层执行裁剪）：
@@ -463,6 +470,41 @@ class FirmTargetPortfolio:                 # firm 层最终输出（权威定义
 | **不做 MVO / 不估协方差** | firm 层只求和+Kelly+裁剪，不做 MVO，不估协方差矩阵 | 30_multi_strategy_concurrency §3.1：协方差估计是研究课题，放大噪声，归因纠缠 |
 | **仓位算法不内置 regime 切换** | 仓位算法（等权/inverse-vol/Kelly）本身不随 regime 变；regime 只通过 Shrinkage 缩 budget 间接影响仓位上限 | 30_multi_strategy_concurrency §2.2：策略不知道市场态，只收到 budget 数字。system_charter §3 约束二"状态切换权重"的张力已由 30_multi_strategy_concurrency 移除 RegimeScore 裁定收敛（regime 不做 alpha 择时，只做风险节流） |
 | **不做 G13/G14/G15 的事** | FirmRiskAggregator 求和/裁剪执行逻辑（G13）、BudgetChangeHandler 三级升级（G14）、RegimeMetaAllocator 参数（G15）不在本备忘 | 00_index_trading_decision 主题组分工 |
+
+### 2.8 持仓漂移与再平衡（作战地图 BM-POS-03 / BM-POS-07 / BM-SEL-21-C 闭合）
+
+> **v1.24.1 新增**：作战地图全覆盖补丁——仓位算法（how much 的建仓口径）之外，持仓**存续期**的漂移检测与再平衡执行三环节在本备忘落地。本节边界：只定漂移阈值、再平衡触发与成本-收益裁决的**算法与参数口径**；持仓状态机（MOD-POS-002/003）与再平衡引擎（MOD-POS-004）、PF-CORE 调度器（MOD-PF-003）的工程实现不在本节范围。
+
+#### 2.8.1 BM-POS-03 持仓状态机漂移（design）
+
+**定位**：BM-POS-03 持仓状态机漂移（L3.5 持仓管理，design，MOD-POS-002 状态机 + MOD-POS-003 漂移监控）——持仓状态（NONE/BUILDING/ACTIVE/OBSERVING/REDUCING/EXITING/CLOSED 七态）迁移 + 仓位漂移检测 + 再平衡评估（执行/解除），下游 BM-POS-02 标级仓位调整 / BM-SELL-05 置换再平衡。
+
+**裁定**：采用**持仓域统一状态机迁移设计 + 双档漂移阈值裁决**——漂移触发评估阈值：**组合 ±2% / 单标的 ±3%**（BM-POS-03 params 默认值，与 BM-POS-07 trigger 阈值"组合±2%/单标的±3%"口径一致，两环节共享同一参数面）。理由：① 双档口径区分"组合整体偏离"（系统性漂移，±2% 更紧）与"单标的偏离"（个股波动噪声大，±3% 稍宽防 thrashing）；② 阈值是"触发**评估**"而非"触发**执行**"——评估后是否执行走 §2.8.2 成本-收益门槛，避免阈值驱动机械调仓；③ 统一状态机迁移（七态）是漂移检测的语义基础——漂移只在 ACTIVE/REDUCING 态有意义，BUILDING/OBSERVING 态的偏差由建仓流程自身管理。**重评条件**：实盘 ≥6 月后按换手率与漂移触发频次校准（周频换手率 >50% 说明阈值过紧；漂移超 5% 未触发评估说明过松）。
+
+**边界澄清（同名 OBSERVING 防混淆 + 层级分工）**：
+- 本节持仓状态机的 **OBSERVING**（MOD-POS-002，`position_state_machine.py` 已实现 `observing_confirm_minutes=15` + 观察期禁止新开仓）是**持仓域生命周期状态**——持仓进入观察期，收盘前 15 分钟超时确认。
+- [42_sell_flow](42_sell_flow.md) §3.3 的 **OBSERVING 四态机**（NORMAL/OBSERVING/CONFIRMED/CLEARED，MOD-SELL-015 猎杀防护软止损）是**卖出侧止损确认状态机**——到达止损位不立即执行，进入观察期等收盘确认。两者同名不同域：本节管"这只持仓处于什么生命周期阶段"，42 号管"这个止损信号是否确认"；状态机是否合并归代码施工裁定，本节只确立语义边界。
+- 与 [25_multifactor_strategy_detail](25_multifactor_strategy_detail.md) §3.7#8 HoldingDriftMonitor 的层级分工：25 号是**策略级**偏差监控（多因子策略内部"当前持仓 vs 目标权重"的因子暴露/行业偏离，盘后每日调用，critical 触发 RebalanceTrigger 强制换仓）；本节是**持仓域/firm 级**统一状态机（跨策略聚合后的组合漂移 + 生命周期迁移）。层级链：策略级（25 号 #8，盘后，策略内纠偏）⊂ 持仓域（本节，统一状态机+漂移评估）→ 再平衡执行（§2.8.2）。
+
+**契约/参数**：漂移评估输入 = 持仓状态（BM-POS-01）+ 当前权重（BM-POS-01）+ 目标权重（BM-POS-02）+ 漂移幅度（BM-POS-01）；输出 = 再平衡评估结果（执行/解除）；已实现参数 = OBSERVING 超时 15 分钟 + 观察期禁止新买入（MOD-POS-002 production）；待实现参数 = 组合 ±2% / 单标的 ±3% 漂移评估 + 再平衡收益改善门槛（>2×交易成本，见 §2.8.2）；降级 = 状态机未就绪时全部按 ACTIVE 处理，漂移监控退化为日终对账（BM-POS-03 degradation 原值）。
+
+#### 2.8.2 BM-POS-07 再平衡执行（design）
+
+**定位**：BM-POS-07 再平衡执行（L3.5，design，MOD-POS-004）——漂移/周频日历双驱动的组合级再平衡执行链：漂移检测结果（BM-POS-03）+ 交易成本（BM-EXE-03 TCA）+ 市场状态（BM-SEL-03/C-021）+ 当前持仓（D-EX-CORE CTR-006）→ 成本-收益决策 → `RebalanceTriggered` + 调仓指令 → BM-POS-02 标级仓位调整 / BM-POS-10 仓位审计。
+
+**裁定**：采用**双驱动 + 成本-收益门槛**执行链——① 触发双驱动：漂移触发（§2.8.1 组合 ±2%/单标的 ±3%）+ 周频日历强制评估（每周一次，BM-POS-07"周频强制再平衡评估"已实现口径）；② 执行门槛：**预期收益改善 > 2×交易成本**才执行（BM-POS-03/POS-07 params 一致口径）；③ 收紧规则：恶化市场环境（市场状态 ⑦⑧⑨）**成本系数 ×1.5**（即门槛等效升为收益改善 > 3×名义成本）；④ 收敛标准：再平衡后组合仓位偏差 **<1%**。理由：成本-收益门槛是"漂移≠调仓"的防过度交易闸门——A 股 T+1 + 双边成本下，无门槛的阈值触发会把漂移监控变成换手率放大器；恶化市场 ×1.5 收紧与 33 号 budget 变更防抖（5%/10% 双阈值）同一保守哲学——市场环境差时交易不确定性上升，要求更高的预期收益补偿。**重评条件**：首批策略实盘 3 月后按实测交易成本（BM-EXE-03 TCA 产出）校准 2× 系数；恶化市场 ×1.5 系数与 34 号 regime Shrinkage 参数同步重评。
+
+**与 33 号 budget 驱动三级再平衡的分工**：[33_budget_change_handler](33_budget_change_handler.md)（G14）管**预算变更驱动**的再平衡（regime Shrinkage/budget 数字变化 → 三级升级 + 防抖双层 + convergence_window，§3.6 `rebalance_to_budget` 接口"策略不能说我不卖"）；本节管**漂移/日历驱动**的再平衡（目标权重未变但实际持仓因价格变动偏离 → 成本-收益裁决是否纠偏）。两者触发源正交：budget 驱动 = 输入变了；漂移驱动 = 输入没变但市场动了。两条链共用执行层（调仓指令 → buy/sell_flow），不重复建设。
+
+**契约/参数**：`RebalanceTriggered` 事件契约 = {trigger_source（drift/calendar/event/risk）, drift_snapshot（组合/单标的漂移幅度）, expected_improvement, estimated_cost, market_state, cost_multiplier（1.0/1.5）, decision（EXECUTE/SKIP）, rebalance_orders（调仓指令列表）, post_drift_target（<1%）}；降级 = 再平衡引擎未就绪时仅机会成本驱动置换（BM-SELL-05 置换再平衡），跳过权重偏离再平衡（保守原则，BM-POS-07 degradation 原值）。
+
+#### 2.8.3 BM-SEL-21-C 再平衡调度（production，补 why 层）
+
+**定位**：BM-SEL-21-C 再平衡调度（L3 PF-CORE 层，production，MOD-PF-003 Rebalance Scheduler）——TargetPortfolio（CTR-007，BM-SEL-21-B 产出）+ 当前持仓 → 漂移检测 → 触发判定 → 成本感知 → 再平衡决策 → 再平衡指令 → BM-SEL-21-D 约束求解。代码已建 MOD-PF 系，本节补设计契约的 why 层与口径统一。
+
+**裁定**：PF-CORE 层统一再平衡调度的三口径**以本节数值为唯一真源**——① **偏离阈值**：组合 ±2% / 单标的 ±3%（同 §2.8.1，BM-SEL-21-C trigger"阈值触发(±2%/±3%)"与 BM-POS-03/POS-07 三处环节定义口径一致，本节确认为统一值）；② **频率**：阈值触发 + 日历触发（**每周五**）+ 事件触发 + 风控触发四路（BM-SEL-21-C trigger 原值），日历触发落周五——对齐 A 股周频复盘节奏（周末出复盘报告，下周一执行调仓）；③ **成本口径**：收益改善 > 2×成本才执行，市场状态 ⑦⑧⑨ 成本系数 ×1.5（同 §2.8.2）。理由：MOD-PF-003 已 production，但"阈值/频率/成本"三口径散落在 BM-POS-03/POS-07/SEL-21-C 三个环节定义中，若不统一真源会出现"调度器按一套阈值、漂移监控按另一套"的口径漂移——本节确立 PF-CORE 调度器与持仓域再平衡执行（§2.8.2）**共享同一参数面**，一次校准两处生效。**重评条件**：与 §2.8.2 同步（同一参数面，单次校准双处生效）。
+
+**契约/参数**：输入 = TargetPortfolio（CTR-007）+ 当前持仓；处理 = 漂移检测 → 触发判定 → 成本感知 → 再平衡决策；输出 = 再平衡指令 → BM-SEL-21-D 约束求解；降级 = 调度异常时延后到下一交易日（不阻断当日交易，漂移风险由日终对账兜底，BM-SEL-21-C degradation 原值）。
 
 ## 3. 考虑过的替代方案（拒绝理由）
 
@@ -855,3 +897,5 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 | 2026-08-10 | 1.22.0 | §3.10 补 **路径依赖警示——"凸性才创造价值"**（Noguer i Alonso arXiv:2608.02355 2026-08-03 Path Portfolio Optimization） | 三十三轮审查+后台搜索 agent 返回 2026-08-01~08 窗口 7 领域 13 篇论文，经覆盖检查 11/13 已整合，仅 2 项未整合（Noguer Path Portfolio + Garcia Seuma 临界性异质性）。§3.10 DCVaR RNN 章节补 Noguer i Alonso 2026-08-03 arXiv:2608.02355"Path Portfolio Optimization: Defect, Lift, and the Price of Path Complexity"路径签名（path signature）张量代数组合优化——核心发现"路径复杂性本身不创造价值，凸性才创造价值"（全部增益在对称块=终端增量凸性，非路径依赖块）；实证：期望签名已知时 2 资产确定性等价提升 11 倍/20 资产截面提升 60 倍，但估计时未正则策略在样本约 6 观测/参数前严重为负（过拟合风险极高）。**对 DCVaR RNN 的直接警示**：RNN 学到的"路径依赖"可能部分是过拟合，真正信号在对称凸性结构。Phase 4 评估 DCVaR RNN 时须验证：① RNN 捕获的路径依赖信号是否在对称化（去除路径信息）后消失（若消失则信号在凸性非路径）；② 与 Noguer 签名方法的对称块做 ablation 对比（若对称块已捕获大部分增益，RNN 的路径建模复杂度不值得）。此警示不改变 DCVaR RNN 的 Phase 4 远期候选定位，但为评估提供"路径依赖 vs 凸性"验证维度。**施工算法完整性结论**：31 号施工算法完整性闭合，本次为路径依赖方法论警示非新施工算法 |
 | 2026-08-10 | 1.23.0 | §2.6 FirmTargetPortfolio 跨文档数据结构同步修复（31号 4 字段过时定义 → 32号 §2.7 权威 10 字段定义） | 六十一轮审查。自动化跨文档数据结构字段一致性审计发现 `FirmTargetPortfolio` 在 31号 §2.6（L423）与 32号 §2.7（L602）定义完全不一致：31号 4 字段（holdings/kelly_adjustments/clip_log/timestamp）为 v1.0.0 遗留简化版，32号 10 字段（firm_positions/total_exposure/total_budget/cash_ratio/constraint_checks/conflicts_resolved/degraded/created_at/idempotency_key/schema_version）为 v1.0.x 演进后权威版——两者字段集零交集，31号 缺 constraint_checks/conflicts_resolved/degraded/contributions 等施工关键字段，代码施工若依 31号 旧定义将产出不完整 FirmTargetPortfolio。修复：31号 §2.6 FirmTargetPortfolio 定义替换为 32号 §2.7 权威版（含 FirmTarget 子结构 target_weight/contributions/cut_ratio），补字段映射说明（旧 holdings→firm_positions、旧 kelly_adjustments→degraded+kelly_param_source、旧 clip_log→constraint_checks+cut_ratio、旧 timestamp→created_at+idempotency_key+schema_version），契约纪律"holdings 权重和=1.0"更新为"firm_positions 权重和+cash_ratio=total_budget"。StrategyTarget 定义两文档一致无需同步。**施工算法完整性结论**：跨文档数据结构漂移修复填补施工契约缺口，非新算法 |
 | 2026-08-12 | 1.24.0 | 新增 §4.5 已施工设施盘点 + §6 两项跨文档同步待定问题 | 架构审查回填（通用规则 #11 已施工设施盘点要求）：① §4.5 盘点分层裁定全链路代码资产——MOD-POS-001（881 行 production，C1-C13+POS-006/007/017 全约束链，与本备忘 §2.3/§2.4.3 映射一致）+ MOD-POS-020/021/022 三模块 production（171 测试全绿，30号 v2.5.0 §2.2 印证）；登记 4 项"设计已定代码未施工"演进项（C10 偏度峰度/sizing_basis 显式输出/ADV 三档与 C6 参与率否决的口径差异警示/inverse-vol σ_i 异常 4 检查链）；② §6 新增 2 项跨文档同步待定问题（30号 §2.2 遗留矛盾描述待修订、64_d_position.md 域文档滞后待重新生成——均不越界改）；全网施工状态核查确认 §2 决策链已完整落地可施工 |
+| 2026-08-12 | 1.24.1 | 作战地图全覆盖补丁——BM-POS-03 / BM-POS-07 / BM-SEL-21-C | §2.8 新增"持仓漂移与再平衡"小节（3 环节闭合）：① §2.8.1 BM-POS-03 持仓域统一状态机迁移设计+双档漂移阈值裁决（组合 ±2%/单标的 ±3%，以 steps JSON 默认值核对一致，design），边界澄清——与 42号 §3.3 卖出侧 OBSERVING 四态机同名不同域（持仓生命周期 vs 止损确认）+与 25号 §3.7#8 HoldingDriftMonitor 层级分工（策略级盘后纠偏 ⊂ 持仓域统一状态机）；② §2.8.2 BM-POS-07 漂移/周频日历双驱动组合级再平衡执行链（成本-收益门槛：预期收益改善>2×交易成本/恶化市场⑦⑧⑨×1.5 收紧/再平衡后偏差<1%，RebalanceTriggered 事件契约，design），与 33号 budget 驱动三级再平衡分工（33=预算变更驱动/本节=漂移日历驱动，触发源正交共用执行层）；③ §2.8.3 BM-SEL-21-C PF-CORE 统一再平衡调度 why 层补全（production，MOD-PF-003 已建——偏离阈值±2%/±3%+周五日历+事件+风控四路触发/成本口径>2×与§2.8.2 同一参数面，唯一真源防口径漂移） |
+| 2026-08-12 | 1.24.2 | 作战地图环节映射补强——锚定 BM-RC-02-A、BM-RC-02-B | §2.4.2 末尾补映射块，环节级可追溯 |

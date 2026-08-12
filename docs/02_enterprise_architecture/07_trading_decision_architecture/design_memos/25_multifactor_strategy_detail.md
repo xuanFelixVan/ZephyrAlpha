@@ -5,7 +5,7 @@ title: 多因子策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.13.1"
+version: "1.13.3"
 date: 2026-08-12
 topic: multifactor_strategy_detail
 scope: 07_trading_decision_architecture
@@ -36,7 +36,7 @@ scope: 07_trading_decision_architecture
 | 对标 | WorldQuant Alpha 工厂 / Numerai 多因子 / 华泰金工多因子 / BigQuant ICIR 加权合成（2026-07） |
 | 正交 | ✅ 与 regime 正交（[28 §3.4]）：多因子不读情绪周期，不读 regime，纯横截面选股 |
 | 优先级 | P2（承载主力资金的低频基石） |
-| 状态 | active 1.13.1（6 项讨论要点已对齐 + §3.7 施工算法 8 项补全：合成降级链+约束冲突仲裁+衰减动作生命周期(6态状态机含NEW冷启动+RETIRED退役)+MVP归因+**拥挤实时监控MVP必做**+**换仓触发MVP即做+Inaction Cost成本门控**+**PIT回测框架**+**持仓偏差监控** + Mask-First 可交易性掩码（Phase 4.1 arXiv:2507.07107 mask 单一最大贡献者+0.44）+ §3.3 A股高频因子2026实证（国泰海通8/10行为因子多空12-16%）+ §3.3 A股拥挤崩盘实证（57只量化基金7月踩雷）+ Phase 4.1-4.20 远期候选栈 20 子项含 Dynamic-β reward+Wasserstein鲁棒组合+CVaR RaQL自适应训练+MFCCA多尺度组合配置+平稳模糊性训练+Conformal Kelly完整实证+QUBO换仓调度优化 + 2026-08 arXiv 最新研究整合 + **v1.13.x 名实相符修正：§2.4 已施工设施盘点+4处误写校正（decay_monitor MOD-L02-009/池容量60+4/MOD-PF-002/约束链注记）+23号错链修正**） |
+| 状态 | active 1.13.2（6 项讨论要点已对齐 + §3.7 施工算法 8 项补全：合成降级链+约束冲突仲裁+衰减动作生命周期(6态状态机含NEW冷启动+RETIRED退役)+MVP归因+**拥挤实时监控MVP必做**+**换仓触发MVP即做+Inaction Cost成本门控**+**PIT回测框架**+**持仓偏差监控** + Mask-First 可交易性掩码（Phase 4.1 arXiv:2507.07107 mask 单一最大贡献者+0.44）+ §3.3 A股高频因子2026实证（国泰海通8/10行为因子多空12-16%）+ §3.3 A股拥挤崩盘实证（57只量化基金7月踩雷）+ Phase 4.1-4.20 远期候选栈 20 子项含 Dynamic-β reward+Wasserstein鲁棒组合+CVaR RaQL自适应训练+MFCCA多尺度组合配置+平稳模糊性训练+Conformal Kelly完整实证+QUBO换仓调度优化 + 2026-08 arXiv 最新研究整合 + **v1.13.x 名实相符修正：§2.4 已施工设施盘点+4处误写校正（decay_monitor MOD-L02-009/池容量60+4/MOD-PF-002/约束链注记）+23号错链修正**） |
 
 ## 2. 背景
 
@@ -106,6 +106,16 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 
 **§3.7 八项施工算法落码状态**（全部为本文档形式化伪代码，grep 实证未落码，禁止误判为已建）：#1 SynthesisDegradationChain ❌ / #2 ConstraintArbitration ❌ / #3 DecayActionLifecycle（6 态）❌ / #4 SimpleFactorAttribution ❌ / #5 CrowdingRealTimeMonitor ❌ / #6 RebalanceTrigger（含 Inaction Cost）❌ / #7 MultifactorPITBacktestFramework ❌ / #8 HoldingDriftMonitor ❌。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-02-A | 因子计算引擎 | §2.4（`core/factor_dag/dag.py` + `dag_manager/executor.py` 依赖拓扑+双执行器，D-FACTOR-04） | production已建 |
+| BM-SEL-02-B | 因子注册表与池管理 | §2.4（factor_registry.yaml REG-FCT-001 111 条目 + `factor_pool_manager.py` ADR-FAC-006 n_max=64/active=60/dormant=4） | production已建 |
+| BM-SEL-02-C | 因子管线双模调度 | §2.4（因子 DAG 行：双模调度——盘前全量/盘中增量） | production已建 |
+| BM-SEL-02-D | 因子评估-IC/IR体系 | §2.4（`ic_ir_calc.py` ANA-01 / `ic_ir_evaluator.py` ANA-02 / `three_level_judgment.py` ANA-07 / `layered_backtest.py` ANA-06） | production已建 |
+| BM-SEL-02-I | 因子治理-生命周期与门禁 | §2.4 因子治理表（lifecycle_state_machine 8 态 + abs001_gate 上线门禁 + grayscale_rollout 阶梯 + six_step_flow/engine 编排） | production已建 |
+
 ## 3. 决策
 
 ### 3.1 讨论要点①：因子组合方式（打分→IC 加权/正交化）
@@ -123,6 +133,24 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 **正交化不实现理由**：当前因子池 ≤30 个，因子间相关性已通过因子筛选阶段控制（D_FACTOR 域因子工程时已做相关性清洗），正交化在当前规模下收益小于实现成本。远期因子池扩张到 50+ 时重新评估。
 
 **A 股 XGBoost+TreeSHAP 实证背书（v1.12.4 补）**：[arXiv:2606.12843](https://arxiv.org/abs/2606.12843)（Han et al. 2026-06）在 3,632 只 A 股（2009-2019）上用 XGBoost+TreeSHAP 做可解释因子分解——rank IC=0.119、ICIR=1.12（t=8.26）、top quintile 56.4% 超越截面中位数、+2.38%/月 long-short spread（Newey-West t=5.94，年化 Sharpe 2.23）、Carhart 四因子 alpha +2.31%/月（t=7.48）。**关键发现**：行为因子（换手率+动量）贡献 58.2% 预测归因 vs 估值因子仅 10.7%，50 行业组一致。**对 25 号的启示**：① 验证 IC 加权合成方法在 A 股有效（rank IC=0.119 远超 0.05 有效阈值）② 行为因子>估值因子的发现支持当前因子池以技术/动量因子为主的设计 ③ SHAP 可解释分解为 Phase 4.5 KTD-Fin Barra 归因提供 A 股实证基础。
+
+> **BM-SEL-02-E LLM 语义去重处置裁定（v1.13.2 补，作战地图全覆盖补丁——production 环节的 LLM 支线收口）**：
+> - **定位**：BM-SEL-02-E（因子评估-相关性与语义去重，L1）含两支——数值相关性去重（`analysis/correlation_dedup.py`，D-FACTOR-ANA-05，✅ production，数值相关性 >0.85 丢弃）+ LLM 语义去重（作战地图 trigger"逻辑等价→保留 IC 高者"，未建）。
+> - **裁定**：LLM 语义去重一支**登记远期候选，当前不施工**。理由：① 数值相关性去重已 production 且当前因子池规模（≤64）下够用——语义等价但数值低相关的因子对在当前"少而精"池内极少；② 与 21 号 §5.4"LLM 不进入在线路径、只做离线研发"边界一致，LLM 语义判定属离线因子治理增强；③ 作战地图已内建降级路径（"LLM 语义判断不可用→仅数值去重，标记待人工复核"）——**现状即降级态运行**，无断裂。
+> - **契约（远期候选登记）**：相关矩阵→聚类→LLM 语义等价判断→逻辑等价时保留 IC 高者，输出=去重后因子集+语义冗余标记，下游=BM-SEL-02-F 分层回测。
+> - **重评条件**：因子池扩张到 50+（与正交化重评同门槛）且出现"数值低相关但逻辑同构"的伪异质因子实例 ≥2 例时，激活 LLM 语义去重一支。
+>
+> **BM-SEL-02-M 因果因子验证层（DoWhy/DML）处置裁定（v1.13.2 补，design 态显式收口）**：
+> - **定位**：BM-SEL-02-M（L1，MOD-SIG-054 `causal_factor_validator.py` planned）——新因子入库前+盘前全量评估时做因果验证，区分相关因子 vs 因果因子→因果因子加权提升。
+> - **裁定**：**登记远期 Phase 4（因子入库前因果验证），当前不施工**。关键消歧——#ARCH-OE-009 裁剪的是 **BM-MT-04 因子发现与因果发现（PC/LiNGAM/时滞因果图）**（模型训练域研究级组件），**本环节（BM-SEL-02-M，选股域因子入库前 DoWhy/DML 因果验证）未被 #ARCH-OE-009 裁剪**，两者域不同、工具链不同（PC/LiNGAM 因果发现 ≠ DoWhy/DML 因果验证）。本裁定与 [11_regime_backtest_validation_plan](11_regime_backtest_validation_plan.md) §0.6.10 发现 2（Bloomberg Causal-TS 库，DoWhy 集成+regime 内独立因果发现）的评估结论呼应——因果工具链登记远期、按需激活。
+> - **契约（远期登记）**：候选因子+L2-D 预计算因果图→DoWhy/DML 因果验证→因果因子加权→因子池；降级=因果图未就绪→仅统计评估（IC/IR），跳过因果加权——**现状即降级态**。
+> - **重评条件（激活门槛）**：因子库出现**伪相关惨案 ≥1 例**（入库因子被实证实为伪相关/数据挖掘产物并造成实亏）→ 激活 Phase 4 因果验证层施工评估。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-02-H | 多因子合成与优化 | §3.1（IC 加权默认/等权降级兜底/回归可选三方法 `synthesize` 统一入口 + `factor_optimization.py` max_ir 合成权重优化，ANA-10/ANA-11） | production已建 |
 
 ### 3.2 讨论要点②：行业中性化层级
 
@@ -153,6 +181,12 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 **A 股高频因子 2026 实证（v1.12.6 补，国泰海通 2026-08-10 周报）**：国泰海通证券高频选股因子周报（2026-08-10）披露 A 股高频因子 2026 年多空收益实证——**行为/微结构因子全面领先**：开盘后买入意愿强度因子 16.29% / 日内下行波动占比因子 14.94% / 日内高频偏度因子 14.53% / 尾盘成交占比因子 13.58% / 开盘后买入意愿占比因子 12.60% / 日内收益因子 7.75%。**多粒度模型**（5 日标签）2026 年多空收益 28.18%、多头超额 8.43%；多粒度模型（10 日标签）2026 年多空 25.52%、多头超额 6.67%。**对 25 号的启示**：① 验证 §3.1 行为因子>估值因子结论（arXiv:2606.12843 58.2% vs 10.7%）——A 股高频行为因子 2026 年多空 12-16%，远超传统估值因子 ② 多粒度模型 28% 多空收益验证 Phase 4.4 STAR CrossAttention 混频融合方向的 A 股有效性 ③ 日内微结构因子（开盘后买入意愿/尾盘成交占比）可与打板 sleeve §3.9 竞价三维体系跨 sleeve 复用。
 
 **A 股因子拥挤崩盘 2026 实证（v1.12.6 补，中国基金报 2026-08）**：2026 年 7 月 A 股科技板块骤跌，**57 只主动量化基金单月净值跌幅超 20%**，15 只超 30%——根因是上半年超配科技成长（动量/景气因子拥挤），7 月风格极致切换时拥挤因子迅速失效，量化模型基于历史数据训练的信号存在天然滞后性，无法在风格骤反时及时降仓。8 月初 5 日修复反弹超 10%。工银量化策略逆市上涨 8.46%（侧重质量价值风格，均衡配置）。**对 25 号的启示**：① 这正是 §3.3 Hyperbolic 衰减"拥挤预测崩溃 1.7-1.8x"的 A 股实时验证——57 只基金踩雷=拥挤因子崩盘 ② **因子拥挤实时监控是 MVP 必做项**（非远期候选）——§3.7#5 补 `CrowdingRealTimeMonitor` 施工算法 ③ 均衡配置（工银案例）验证 §3.5 7 约束链 C2 行业暴露约束的价值——单行业拥挤是崩盘放大器。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-02-G | 因子衰减监控与归因 | §3.3（三层衰减监控：半衰期追踪/CUSUM 预警/自动淘汰，`decay_monitor.py` ANA-08 + `factor_attribution.py` ANA-09 归因；CUSUM 层+自动淘汰层落码缺口登记 §6） | production已建 |
 
 ### 3.4 讨论要点④：多因子换手率与容量
 
@@ -519,6 +553,12 @@ class CrowdingRealTimeMonitor:
 ```
 
 > **施工建议**：在 `factor_decay_monitor.py` 增加拥挤度检测通道，与现有 CUSUM 并列。纯增量 ~40 行。**MVP 必做**（非远期候选）——2026-07 A 股 57 只量化基金踩雷证明拥挤监控是生存级需求。输入：ETF 持仓数据（公开）+ 因子收益相关性（已有）+ 龙虎榜量化席位占比（§3.11 detect_quant_seat_warning 复用）。
+
+> **BM-RC-06-D 拥挤度检测深度增强扩展（v1.13.2 补，作战地图全覆盖补丁——design 态环节收口）**：
+> - **定位**：BM-RC-06-D（拥挤度检测，L4 风控域，design 态）= 因子拥挤 + **策略拥挤**双支的拥挤度预警环节，输出喂 BM-RC-06-C 三级警报。本小节承接其**因子/策略持仓侧**的拥挤代理计算（多因子 sleeve 消费侧），三级警报与组合级去杠杆裁决属风控域（L4）职责，不在本篇越界。
+> - **裁定**：上述 `CrowdingRealTimeMonitor` 三个代理指标（ETF 持仓/因子相关性/量化席位）为 **MVP 必做基线（不变）**；作战地图 indicators 要求的三个深度增强项**登记 design 远期**——① **策略逻辑相似度检测**（跨策略信号逻辑同构度，防"不同策略同一拥挤交易"）；② **去杠杆路径预案**（拥挤触发时的降杠杆顺序/节奏预登记，避免临场无序砍仓）；③ **拥挤悖论防护**（"人人躲拥挤=新拥挤"——全员同质规避拥挤交易本身形成反向拥挤，须对拥挤规避动作做二阶监控）。理由：三项均依赖多策略并发实盘数据（当前 sleeve 未上线，无策略持仓横截面可算），提前施工是无输入的空转组件（charter 约束五）。
+> - **契约（远期登记）**：输入=因子暴露+策略持仓（D-FACTOR/D-PF-CORE），输出=拥挤度预警（因子拥挤分+策略相似度分+去杠杆预案触发标记），降级=拥挤度检测未就绪→跳过拥挤度检查（作战地图内建降级，现状即降级态）。
+> - **重评条件**：首批策略上线产生横截面策略持仓数据后，激活①策略逻辑相似度检测；发生首次拥挤触发的去杠杆事件后，校准②去杠杆路径预案；③拥挤悖论防护随①上线后一并评估（需规避动作的分布数据）。
 
 #### 缺失#6：换仓触发决策算法（中优先级，v1.12.6 新增——convergence_window 执行断裂点）
 
@@ -928,6 +968,9 @@ class HoldingDriftMonitor:
 | DecayActionLifecycle 6 态 ↔ factor_registry status 5 态映射 | 运行时 6 态（NEW/ACTIVE/OBSERVE/DORMANT/RECOVERY/RETIRED）vs registry 治理 5 态（candidate/experimental/active/deprecated/retired）双轨，DORMANT/OBSERVE 在 registry 应标什么未定义 | §3.7#3 落码时定义映射规则并回写 62 号 |
 | G01 因子工程总纲（15 号）仍为 draft 骨架 | 本文档因子治理参数无上游 why 层背书；因子 10 类真源实际在 62 号 §6.1.1 + factor_registry.yaml | 15 号定稿后回填对齐（由 AI-20 负责 15 号） |
 | 00_index 版本显示同步 | 00_index §0 目录/L215/L600 仍显示 v1.12.11，本文档已 1.13.1 | 由 AI-12 负责 00_index 同步（不越界改） |
+| BM-RC-06-D 拥挤度深度增强三项 | §3.7#5 v1.13.2 补：策略逻辑相似度检测+去杠杆路径预案+拥挤悖论防护登记 design 远期（依赖多策略并发实盘数据，当前无输入） | 首批策略上线产生横截面策略持仓数据后激活①；首次去杠杆事件后校准②；③随①上线评估 |
+| BM-SEL-02-E LLM 语义去重 | §3.1 v1.13.2 补：登记远期候选——数值相关性去重（correlation_dedup.py ANA-05）已 production 够用，现状即作战地图降级态 | 因子池扩张到 50+ 且"数值低相关但逻辑同构"伪异质因子实例 ≥2 例 |
+| BM-SEL-02-M 因果因子验证层（DoWhy/DML） | §3.1 v1.13.2 补：登记远期 Phase 4——#ARCH-OE-009 裁的是 BM-MT-04（PC/LiNGAM 因果发现），本环节未被裁剪；与 11 号 §0.6.10 发现 2 Causal-TS 评估呼应 | 因子库伪相关惨案 ≥1 例（入库因子实证为伪相关并造成实亏） |
 
 ## 7. 引用
 
@@ -965,3 +1008,6 @@ class HoldingDriftMonitor:
 | 2026-08-10 | 1.12.10 | **第九轮最新研究整合+文档完整性修复——Phase 4 新增 MFCCA 多尺度组合配置（Phase 4.18）+ 平稳模糊性训练原则（Phase 4.19）**：①Phase 4.18 MFCCA（arXiv:2608.04987 Kakinaka&Umeno 2026-08-05）——多重分形互相关分析带符号涨落函数作为风险泛函，保留局部去趋势协方差符号（同向与反向因子以相反符号贡献风险），q=2退化为均值-方差，符号保留对尾部风险降低贡献>跨阶聚合，突破"等权/IC/ICIR三种加权接近"瓶颈（中信建投2026-06研报确认）②Phase 4.19 Stationary Ambiguity（arXiv:2608.04832 Mueller et al. 2026-08-05）——标准鲁棒训练致命缺陷=策略推断潜在参数后模糊性系统性衰减→特化→丧失regime-shift鲁棒性，平稳模糊性原则构建模拟器使模糊性随状态变化但不随时间系统性衰减，从训练源头延缓因子衰减（比事后IC监控退役更上游）③文档完整性修复：§6待裁定补Phase 4.18/4.19条目+§7引用补arXiv:2608.04832。8项施工算法仍完整，本轮无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
 | 2026-08-10 | 1.12.11 | **第十轮施工算法断裂点修复+最新研究——§3.7#6 RebalanceTrigger 补 Inaction Cost 成本感知门控 + Phase 4.20 QUBO 换仓调度优化**：①§3.7#6 RebalanceTrigger 的 cost_aware 参数 v1.12.6 声明但未实现——本轮补 Perold (1988) Implementation Shortfall 框架的成本-收益门控：漂移/信号触发器命中后，额外检查 Inaction Cost (drift×daily_alpha×expected_days) > Action Cost (transaction_cost_rate×drift) 才真正换仓，时间触发器（保底）不受成本门控。A 股 0.4% 往返成本 break-even 8 天，convergence_window_max=5 < 8 提供安全垫——窗口内漂移/信号触发时若距保底仅剩 1-2 天，inaction cost 不足以覆盖 action cost → 等保底触发省交易成本。新增 _is_rebalance_worthwhile() 方法+transaction_cost_rate/daily_alpha_estimate 参数。②Phase 4.20 QUBO 换仓调度优化（arXiv:2603.16904 Weinberg 2026-03）——换仓时序建模为 QUBO 组合优化（边际 Sharpe 增益-交易成本惩罚-过频惩罚指数衰减交互项），S&P 500 实证 8 次换仓 vs 日历 24 次（成本降 44.5%），Sharpe 0.588 vs 0.575。QAOA 可用经典 QUBO 求解器替代，n=5 天窗口经典可秒解。作为 RebalanceTrigger+Inaction Cost 的远期全局优化升级路径。8项施工算法仍完整（本轮修复#6内部断裂点非新增算法），无新施工算法缺口。延续轻量优先+不替换已定决策原则 |
 | 2026-08-12 | 1.13.0 | **第十一轮名实相符审查（AI-15，通用规则 #11 基础设施盘点）**：① 新增 §2.4 已施工设施盘点——D_FACTOR 域 65 production 模块逐个对号（合成/评估/治理/DAG）+ pf_core 组合优化 + factor_registry（111 条目）+ BM-SEL-02，§3.7 八项施工算法 grep 实证全部未落码（禁止误判为已建）；② 名实不符修正 4 处：§3.3 衰减监控文件名/MOD ID 误写（实 decay_monitor.py MOD-L02-009/ANA-08，CUSUM+自动淘汰层代码不存在）/ §2.3+§5.1 池容量误写 30/8（实 60/4）/ §3.2+§3.5 MOD ID 误写（实 MOD-PF-002/MOD-PF-006）/ §3.5 7 约束链与代码实际约束参数不一致注记；③ §3.6 错链修正（G07 真源 23 号非 28 号）+ §7 补 23 号引用 + 46_d_factor 相对路径断链修复；④ §6 待裁定新增 4 行（CUSUM+自动淘汰落码 / C1-C7↔MOD-PF-006 对齐 / 6 态↔5 态映射 / 15 号骨架依赖倒挂）。决策内容零变更，全部为事实性校正与缺口登记 |
+| 2026-08-12 | 1.13.1 | （补录）第十二轮缺失环节+最新研究整合（AI-15）——① §4.3 补 Barra 风格中性化替代方案行（选型谱系补齐：简单行业减均值 vs Barra vs 组合约束层）；② §3.3 补信号衰减双时标框架（Alphanume 2026-06：intra-signal horizon decay vs secular alpha decay）实证半衰期监控与拥挤监控的正交分工 + gs-quant 2026-07 行业标准确认；③ 并发会话覆盖修复（§3.3/§3.5 两处 v1.13.0 修正被并发 session 回退后重补）；④ 全网搜索（2026-08-12）确认因子加权/因子挖掘方向无新决策缺口。本行系 v1.13.2 施工时补录（原 revision 行缺失 drift） |
+| 2026-08-12 | 1.13.2 | **作战地图全覆盖补丁——闭合 BM-RC-06-D / BM-SEL-02-E / BM-SEL-02-M（3 环节）**：① §3.7#5 补「BM-RC-06-D 拥挤度检测深度增强扩展」——现有三代理指标（ETF 持仓/因子相关性/量化席位）维持 MVP 必做基线，三个深度增强项（策略逻辑相似度检测/去杠杆路径预案/拥挤悖论防护"人人躲拥挤=新拥挤"二阶监控）登记 design 远期（依赖多策略并发实盘数据）；② §3.1 补「BM-SEL-02-E LLM 语义去重处置裁定」——数值相关性去重（correlation_dedup.py ANA-05）production 够用，LLM 语义去重一支登记远期候选（逻辑等价→保留 IC 高者），现状即作战地图降级态；③ §3.1 补「BM-SEL-02-M 因果因子验证层处置裁定」——显式消歧 #ARCH-OE-009 裁的是 BM-MT-04 因子发现与因果发现（PC/LiNGAM），本环节未被裁剪，登记远期 Phase 4（因子入库前 DoWhy/DML 因果验证），与 11 号 §0.6.10 发现 2 Causal-TS 评估呼应，激活条件=因子库伪相关惨案 ≥1 例；④ §6 待裁定新增 3 行对应登记。三环节均按定位→裁定→契约→重评条件四要素显式映射 |
+| 2026-08-12 | 1.13.3 | 作战地图环节映射补强——锚定 BM-SEL-02-A/02-B/02-C/02-D/02-I（§2.4 末映射块）、BM-SEL-02-H（§3.1 末）、BM-SEL-02-G（§3.3 末）：语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |

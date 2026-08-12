@@ -5,7 +5,7 @@ title: 板块轮动 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.5"
+version: "1.9.6"
 date: 2026-08-12
 topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
@@ -80,6 +80,12 @@ scope: 07_trading_decision_architecture
 | 待施工（已登记） | 轮动序列 RRG / 回踩 A/B/C 评级 / 调整周期进度（MOD-SIG-040 planned）/ 虹吸态 HHI / q3 加权 / 5 状态分类 / 三级门槛 / 水温映射 | 🟧 proposed/planned | §3.1②③④⑤⑧⑨⑩⑪——算法已在 §3.1 逐项定型，代码未落盘 |
 
 **盘点结论**：①采集层（快照+K线+成分股+资金流+元数据）全部 production，**待施工 8 项全部是计算/逻辑层纯函数**，无新增数据源需求；②q 因子与 RRG 的日频序列数据源是 `market_kline_sector_880`（K 线）而非 `sector_snapshot`（实时快照）——两表分工：快照管实时截面，K 线管多日序列；③板块→个股传导的归属关系已有 SCD-2 成分股表承载，v1.8.0 两项补全算法（涨停比归一化/资金性质聚合）的数据依赖均已具备。
+
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-08-A | 板块分析器 | §2.5（板块分析器 `sector_analyzer.py` MOD-SIG-026 盘点行）/ §3.1①（裁定复用 `evaluate_strength` 结构强度维：涨停数+梯队完整性+板块指数趋势 40%/30%/30%） | production已建 |
 
 ## 3. 决策：复用 production + 补 8 项待施工
 
@@ -739,3 +745,4 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | 2026-08-12 | 1.9.3 | **一致性与交叉引用审查 + 文档质量复核（第 6-7 轮）** | 第 6 轮：①与 20 号一致性——v1.9.0 已修正§2.5 矩阵引用并登记板块维度行补登；②与 30 号一致性——§1 正交性声明与 30 §2.2 firm 层边界一致 ✅；③与 41 号一致性——发现 41 号 L130"调整周期到位"标 BM-SEL-03 应为 BM-SEL-09（ID 笔误）+ L44/L511 称回踩 A/B/C"目前是骨架"表述过期（v1.6.0 起已是公式级量化算法），登记 §7 待 41 号 owner 修正（不越界改）；④与 62 号一致性——strategy_registry 6 类含 sector_rotation ✅、62 号§4 引本 spec Top3 次日重合率 14.8% 作板块轮动校准依据 ✅；⑤BM-SEL-08/09 状态与 battle map 逐项核对（BM-SEL-08 有效状态运营态=锚点 MOD-SIG-026 production，代码映射缺失态-未实现；BM-SEL-09 MOD-SIG-040 planned）✅。第 7 轮：frontmatter 完整合法 ✅；§4.4 文档种类适配（spec 范式九段齐全）✅；两条硬约束 ✅；交叉引用全稳定相对 path（§8.3 depgraph 表 blueprint 目标验证存在）✅ |
 | 2026-08-12 | 1.9.4 | **确认轮内部锚点审计修复** | 循环自检发现 §2.2/§3.1⑦ 两处"§2.4 一日游实证"锚点不精确——Top3 次日重合率 14.8% 的真源出处是 §2.3 约束末条（WyckoffTradingAgent 链接所在），§2.4 为 2026-08 市场实证对照节，修正为 §2.3 |
 | 2026-08-12 | 1.9.5 | **确认轮 §3.1⑥ 资金流数据源精确化** | 循环自检深挖发现 §3.1⑥"板块资金流——复用现有字段"裁定含两处真源偏差：①"snapshot_collector 采集 26 字段含资金数据"——schema 真源确认 snapshot 表 18 采集字段且无 inflow 类字段，collector 不采集资金流；②全仓扫描无任何 `SectorData(` 实例化代码——analyzer 是纯函数库，数据装配调用方未落码。修正：板块级 net_inflow 正确来源 = money_flow（个股级五层净流入 production）× sector_constituent（SCD-2 成分股）聚合，与 v1.8.0 资金性质聚合同路径，聚合器待施工（纯函数无新数据源）；§2.5 盘点表 snapshot 行同步补"无资金流字段"注记。SectorData.net_inflow 字段本身存在（代码确认 L88），裁定结论"不新建资金流采集管道"不变，仅数据源路径精确化 |
+| 2026-08-12 | 1.9.6 | 作战地图环节映射补强——锚定 BM-SEL-08-A 板块分析器（§2.5 末映射块：MOD-SIG-026 `sector_analyzer.py`，§2.5 盘点行 + §3.1① `evaluate_strength` 复用裁定，production） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |

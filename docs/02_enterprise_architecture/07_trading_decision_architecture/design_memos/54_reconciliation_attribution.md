@@ -5,7 +5,7 @@ title: 对账归因
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.15.3"
+version: "1.15.5"
 date: 2026-08-12
 topic: reconciliation_attribution
 scope: 07_trading_decision_architecture
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构中后台对账 / Brinson 归因（非 Barra 因子风险归因） |
 | 正交性 | ✅ 与 regime 正交（归因是事后解释，不参与事前决策） |
 | 优先级 | P5 |
-| 状态 | active 1.15.3 |
+| 状态 | active 1.15.5 |
 
 ## 2. 背景
 
@@ -85,6 +85,7 @@ scope: 07_trading_decision_architecture
 3. **报告发送渠道未通**：ReportPublisher 的 WEBHOOK/EMAIL 仅落 PENDING 不实际发送——§3.7"双渠道发布"当前是框架能力非运营事实。
 4. **双实现未收敛**：归因引擎（reporting 桩 vs pf_core 实现）、PositionReconciler（ex_core vs position 事件驱动版）、公司行为（trading processor vs ex_core adjuster）三对并存，canonical 归属与口径统一待裁定（§6/§7）。
 5. **BM-REC-02-B 阻塞标注已部分过时**：battle_map 标"⛔ CTR-P1-007/CTR-ERR-005 未就绪暂不可建"——两契约 codegen 文件已落盘（`shared/contracts/execution_report.py` / `errors/execution_rejection_error.py`），残余阻塞是 CTR-P1-007 产出逻辑未施工（execution_core blueprint GAP-L06-003，P0 待施工）+ 归因计算实现缺失（本备忘 §3.2/§3.5 施工算法即为此备）。
+6. **微信入站指令解析未施工（BM-BUY-07 登记）**：出站方向已有 ReportPublisher 微信 Webhook 告警（当前仅落 PENDING 不实发，见缺口 #3）；入站方向——用户微信消息 → D-TRADING-06 解析/路由为标准指令（自然语言解析 + 多人通知列表，source_ref C-019 微信多人互动）——**全仓无实现**。入站指令解析与出站 Webhook 告警共用微信通道但方向相反、生命周期独立：出站是报告/告警分发（本备忘 §3.7），入站是交易指令入口（buy_flow 域，下游 BM-BUY-06 外部指令盯盘→执行结果→微信推送）。处置=**登记远期**：入站指令涉及资金操作，解析错误代价高，须待出站渠道实发（缺口 #3 闭合）+ 指令鉴权/确认机制设计后再评估，不在本备忘施工范围（归属 buy_flow 域备忘）。
 
 ## 3. 决策
 
@@ -122,6 +123,12 @@ scope: 07_trading_decision_architecture
         ↓
 [闭环反馈] BM-REC-03 因子层/信号层/模型层反馈 → 反向闭环到 BM-SEL-02
 ```
+
+#### 3.1.1 闭环反馈补述：模型层反馈（BM-REC-03-C，design）
+
+- **定位**：L5 闭环优化反馈层的模型层反馈（BM-REC-03 子环节，父 BM-REC-03）；触发=复盘报告就绪；消费 BM-REC-03-B 信号反馈 + BM-REC-02-D 复盘报告；数据流：复盘报告→漂移检测→模型重训练信号→C-003 回测门禁→BM-SEL-02（反向闭环）。参数口径：`drift_threshold = PSI>0.2`、`retrain_gate = C-003 回测门禁`；代码映射 C-007 模型层反馈（未完整实现）+ C-003 回测门禁。
+- **裁定**：①**漂移检测与分级重训练复用 [61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) §3.3**——多方法 Drift Observatory（PSI 只抓边际特征漂移，须组合多变量联合分布/概念漂移检测）+ 重训练触发分级逻辑（定时盘后增量保底 / 性能触发分级响应，不直接跳重训练），本环节不另造漂移检测器。②**门禁衔接裁定：模型重训练信号必须过 C-003 回测门禁（DecisionGate IS→WFA→OOS）后才允许回 BM-SEL-02 重新选股上线**——重训练≠可直接上线，新模型与策略新参数同级对待。理由：漂移触发的重训练若绕过回测门禁直接上线，等于把"检测到漂移"误当"修复已完成"——重训练产物本身可能引入新过拟合，必须经 IS→WFA→OOS 门控验证（门禁当前真源为代码 `backtest/core/decision_gate.py`；[52_backtest_framework_docking](52_backtest_framework_docking.md) ⚠️骨架 draft 待讨论，定型后回填 why 层衔接）。③**降级**：漂移检测不可用→人工评估模型质量（环节定义原口径）。
+- **契约/参数/接口**：重训练信号 `{model_id, drift_evidence: {psi, cusum_alarm, ...}, retrain_scope}` → DecisionGate 评审 → 通过后经 [61 号](61_lifecycle_multi_ai.md) §3.3 Champion-Challenger 晋升通道（mSPRT + 95/5 流量切分）回 BM-SEL-02；未过门禁→信号驳回并留痕复盘报告。重评条件：61 号 §3.3 设计规范伪代码施工落地（当前代码待施工）+ 52 号骨架定型后，补双向小节号对齐。
 
 ### 3.2 决策①：PnL 归因——Brinson 3 因子为主，Barra 拒绝
 
@@ -1231,6 +1238,12 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 - MVP 盘中每 5min 持仓对账已覆盖实盘生存需求（差异早发现早冻结）
 - 盘后全量对账（券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、未成交订单日终转 EXPIRED）需要券商对账单数据接入，MVP 先用 `get_positions` 查询兜底
 - 见 [40_execution_broker](40_execution_broker.md) §5 待裁定"盘后全量对账" + §6.1 gap 10
+
+**审计证据链扩展：仓位审计追溯（BM-POS-10，design，v1.15.4 补）**：
+
+- **定位**：L3.5 仓位管理层横切环节——任意仓位变更事件（裁决/Kelly/漂移/再平衡/缩放/日历/合并）触发；消费 BM-POS-01~09 全部环节的仓位变更事件 + D-RISK C-004 审批链 + D-EX-CORE 执行结果；产出 **PositionAuditReport** → D-REPORTING 归档 / D-GOVERNANCE 合规审计。代码映射 MOD-POS-009（D-POSITION §1.3 POS-09 Position Audit Logger）。
+- **裁定**：①**字段口径**——每次仓位变更全记录：`{position_id, symbol, qty_before, qty_after, change_source(BM-POS-01~09 环节编号), trigger_event_id, decision_ref, approval_chain_ref, execution_fill_ids, timestamp}`；②**审批链语义**——决策→裁决→风控→执行全链路引用（非内嵌拷贝），审批链本体由 D-RISK C-004 供给，本环节只记引用键防口径漂移；③**哈希链防篡改**——前一条记录哈希链接（与 §3.3 三阶段审计轨迹同构的线性 hash 链，tamper-evident 可检测口径，对齐 #ARCH-OE-007 声明——机构级不可篡改属 BM-BUY-10 已裁剪范围）；④**与 30 号衔接**——仓位审计 logger 已在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §7.5 设施盘点登记为 production（`position_audit_logger`），本节为其补 why 层与产出物契约，**不新造审计器**；⑤**降级（保守原则）**——审计日志器未就绪→**仓位决策阻断**（审计是合规底线，无审计不允许执行，fail-closed，与本备忘对账"双边冻结不可误判一致"同哲学）。
+- **契约/参数/接口**：产出物 PositionAuditReport `{report_id, period, change_count, records: [...], chain_head_hash, chain_integrity_check: PASS|FAIL}`，日报频率走 §3.7 报告通道归档（ReportPublisher）。重评条件：外部资金引入/合规升级时，哈希链随 §3.3 Merkle tree Phase 2 升级路径一并升级。
 
 ### 3.4 决策③：归因维度——策略/标的/时段为主，因子维度暂缓
 
@@ -2733,6 +2746,22 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 
 > Holtes 2026-07 指出 MCR/CCR（Euler 分解）的结构性弱点：在**最终持仓点**评估边际贡献，会给相互对冲的持仓对分配大额正负抵消贡献（数学正确但掩盖"哪笔决策驱动了风险"）。FPRO（Funded-Path Random-Order）把每次调仓视为从基准出发的离散决策步，在随机排序上求期望边际风险贡献（Shapley 思想），每步用对冲腿或现金腿保持满仓——精确 reconcile 到总主动风险且消除符号抵消伪影。**对本项目的适用性评估**：A 股不能做空 + 3-5 策略，机构组合的对冲对场景有限；但 30 号 firm 层"多策略同标的叠加/求和裁剪"可能产生跨策略同标的对冲（打板买入 vs 多因子减仓同一标的），届时 MCR/CCR 的 CCR_pct 会失真。**登记为 Phase 2.5+ 远期候选**：与 §3.14 MCR/CCR 同期评估——若归因报告显示同标跨策略对冲显著（single_name_cap 频繁 binding + CCR 符号抵消），启用 FPRO 替代 Euler 分解；MVP/Phase 2.5 仍用 MCR/CCR（O(n²) 闭式解足够）。
 
+**作战地图环节映射**
+
+| BM 环节 | 环节名 | 本篇承载小节 | 状态 |
+|---|---|---|---|
+| BM-SEL-21-E | 绩效归因引擎 | §3.2 Brinson 3 因子 + §3.5 策略贡献分解 | production 已建 |
+| BM-RC-08-A | 日终PnL对账与合规报告 | §3.3 三层对账 + §3.7 四类报告 | production 已建 |
+| BM-RC-08-B | 风险归因分解 | §3.2 + §3.14 MCR/CCR 风险分解 | production 已建 |
+
+### 3.15 决策⑭：压力测试（BM-RC-08-C，production 补强，v1.15.4 补）
+
+> battle_map 风控域 BM-RC-08 子环节，production（MOD-RK-12 `core/stress_test_engine.py`），本备忘为其补 why 层决策记录。
+
+- **定位**：L4 风控域，盘后/合规要求触发（历史情景 2008/2015/2020）；消费持仓（D-EX-CORE）+ 情景数据（D-DATA）；数据流：持仓+情景→压力报告（历史情景+假设情景+反向压力测试+敏感性+传染效应）→ BM-RES-07 策略迭代。
+- **裁定**：①**历史情景库三段**——2008 全球金融危机 / 2015 A 股股灾 / 2020 疫情熔断，覆盖系统性危机、杠杆牛崩塌、跳空熔断三类 A 股极端形态；②**反向压力测试**——给定组合不可承受阈值（如单日回撤 >8% 或触及 35 号回撤 Protocol HARD_HALT 线）反推所需市场冲击幅度，回答"多大冲击会击穿风控"；③**敏感性分析**——单因子扰动（指数 ±5%/±10%、行业板块冲击、流动性折价）定位最脆弱敞口；④**传染效应**——登记为远期（跨市场/跨品种级联需多市场数据接入，当前 A 股单市场从简）。理由：压力测试是风控参数的事前验证——Brinson 归因（§3.2）回答"过去亏在哪"，压力测试回答"未来极端行情会亏多少"，两者构成事后/事前闭环；引擎代码已 production，本节补口径与通道裁定。**产出物通道裁定**：压力测试报告走 §3.7 周度报告通道——RiskReportEngine 的 WeeklyRiskDeep 已含压力测试板块（§3.7 四类报告体系），产出经 ReportPublisher 归档（渠道当前仅 PENDING 落库，见 §2.4 横向缺口 #3），日报不承载（频率过重）。**与 53 号 BM-SIM-04 的分工消歧**：53 号 BM-SIM-04 是**仿真验证域引擎**（造假市场喂策略、探策略行为边界的 what-if 实验）；本环节是**运营域报告通道**（真实持仓 × 情景、盘后产出压力报告供 owner 评审与风控参数调整）——同一历史情景库两边复用，引擎在 53、报告在 54，互不重造。
+- **契约/参数/接口**：StressTestReport `{report_id, as_of, scenario_results: [{scenario_id, portfolio_pnl, max_dd, worst_position}], reverse_stress: {threshold, implied_shock}, sensitivity: [{factor, delta_pnl}]}`，周度经 ReportPublisher 归档。降级：压力测试引擎未就绪→跳过压力测试（环节定义原口径，周度报告该板块标"未生成"）。重评条件：传染效应维度待跨市场接入（港股通/跨品种）后评估；报告渠道实发随 §2.4 缺口 #3（Email/WeChat sender 注入）一并落地。
+
 ## 4. 考虑过的替代方案（拒绝理由）
 
 ### 4.1 Barra 因子风险归因 —— 拒绝（过度工程）
@@ -2997,4 +3026,6 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 | 2026-08-12 | 1.15.1 | 55 号引用校准覆盖面扩展 + v1.12.0 记录-正文漂移勘误 + frontmatter/§1 状态同步 | 确认轮复核发现 2 项遗留：①§3.6 stale-value 节"Hampel 鲁棒增强（55 号 §3.10）"等引用落在 §3.9 校准注记覆盖面（原仅"本节及 §3.10"）之外——扩展注记范围为"§3.6/§3.10/§5.1/§5.2/§8.1 等处"，55 号全部小节级引用统一按设计预留口径理解；②v1.12.0 修订记录声称"§3.13 GLS 设计矩阵已改 BF 公式（X[t,0]=(w_p−w_b)(r_b−R_b)、X[t,1]=w_p(r_p−r_b)）"，但正文实为 BHB（X[t,0]=(w_p−w_b)·r_b、X[t,1]=w_b(r_p−r_b)）——记录-正文漂移勘误：v1.15.0 起**纯 BHB 为本备忘唯一口径**（与 pf_core MOD-PF-007 生产实现 + §3.2 表格 + GLS 骨架三方一致），v1.12.0 条目的 BF 方向声明作废，以本条为准；且 v1.12.0 所述 BF 组合（BF-alloc + w_p-selection + BHB-interaction）即 v1.15.0 修复的守恒 bug 形态，作废正当时。 |
 | 2026-08-12 | 1.15.2 | MOD-RPT-015 报告模板 §4 表头 Sharpe→Sortino 口径跟随修正 + frontmatter/§1 状态同步 | 确认轮二复核发现：§3.12 MOD-RPT-015 报告模板第 4 节"策略贡献分解"表头仍为"60 日滚动 Sharpe"——v1.15.0 已将 PerformanceScore 修正为 Sortino 口径（30 号 §2.2 / 34 号 §3.1 契约），模板表头跟随修正为"60 日滚动 Sortino"，消除正文-模板口径分叉。 |
 | 2026-08-12 | 1.15.3 | §3.14 MCR/CCR 联动段 PerformanceScore Sharpe→Sortino 口径跟随修正 + frontmatter/§1 状态同步 | 确认轮三复核发现：§3.14"与 30 号 RegimeMetaAllocator 的联动"段首行仍写"PerformanceScore=60日滚动Sharpe"（v1.14.0 新增节遗留），随 v1.15.0 Sortino 口径修正跟随更新。至此全文 PerformanceScore 口径零残留（修订记录历史条目除外）。 |
+| 2026-08-12 | 1.15.4 | 作战地图全覆盖补丁——闭合 BM-RC-08-C / BM-POS-10 / BM-REC-03-C / BM-BUY-07：①新增 §3.15 决策⑭压力测试（BM-RC-08-C production 补强：历史情景库 2008/2015/2020 三段+反向压力测试+敏感性分析+传染效应远期登记，产出物走 §3.7 周度报告通道 WeeklyRiskDeep 压力测试板块，与 53 号 BM-SIM-04 分工消歧——53=仿真验证域引擎/54=运营域报告通道）；②§3.3 审计证据链扩展仓位审计追溯（BM-POS-10 design：全记录字段口径+审批链引用语义+哈希链防篡改+PositionAuditReport 契约，与 30 号 §7.5 position_audit_logger production 登记衔接，降级=仓位决策阻断 fail-closed）；③§3.1 新增 §3.1.1 模型层反馈子节（BM-REC-03-C design：漂移检测/分级重训练复用 61 号 §3.3 Drift Observatory，门禁衔接裁定——重训练信号须过 C-003 回测门禁 DecisionGate IS→WFA→OOS 再回 BM-SEL-02，真源 `backtest/core/decision_gate.py`）；④§2.4 横向缺口新增第 6 行（BM-BUY-07 design：微信入站指令解析 D-TRADING-06 与出站 Webhook 告警的关系登记为缺口项——出站仅落 PENDING 不实发/入站全仓无实现，处置=登记远期，归属 buy_flow 域备忘） | 作战地图四环节补 why 层/缺口登记——按"定位 → 裁定（理由+重评条件）→ 契约/参数/接口"格式回填 |
+| 2026-08-12 | 1.15.5 | 作战地图环节映射补强——锚定 BM-SEL-21-E、BM-RC-08-A、BM-RC-08-B | §3.14 末尾补映射块，环节级可追溯 |
 
