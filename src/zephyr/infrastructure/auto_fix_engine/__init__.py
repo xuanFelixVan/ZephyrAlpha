@@ -11,6 +11,42 @@
 # [ERROR_CONTRACT] ImportError on missing sub-module
 # [TESTS] tests/auto-fix-engine/
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 修复器子模块符号
+#   fields: 22 个子模块的修复器/引擎类（AlignmentSyncer…SelfHealAgent）+ models 的 14 个数据模型（FixReport/FixStatus/BlastRadius 等）
+#   code: import 块 L14-51
+# - id: I2
+#   name: 引擎主类
+#   fields: AutoFixEngine（可选导入，ImportError 时置 None）
+#   code: engine L147-150
+# 层: 算法
+# - id: A1
+#   name_zh: ① 公共符号聚合再导出
+#   name_en: __init__ 再导出
+#   intro: 把各自修复子模块的类集中到包命名空间统一出口
+#   desc: 直接 import + __all__ 声明；注意 __all__ 含 FixBudget/FixReliability/FixSafety/Models/StateMachine/ZombieCleaner 等未实际导入的符号，与 [INVARIANTS]「__all__ MUST 匹配实际导出」存在偏差
+#   inputs: I1 I2
+#   outputs: 包公共 API 命名空间
+#   invariant: 所有公共符号 MUST 再导出；__all__ MUST 匹配实际导出（[INVARIANTS] 头）
+# 层: 输出
+# - id: O1
+#   name_zh: 自动修复引擎公共 API
+#   name_en: __all__
+#   intro: 修复执行/预算/安全/调度等能力的统一入口
+#   downstream: 自动修复消费方 MOD-INF-027 / MOD-INF-023 / MOD-INF-029 / MOD-INF-028 / MOD-INF-022（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 from zephyr.infrastructure.auto_fix_engine.alignment_syncer import AlignmentSyncer
 from zephyr.infrastructure.auto_fix_engine.all_completer import AllCompleter
 from zephyr.infrastructure.auto_fix_engine.batch_fixer import BatchFixer

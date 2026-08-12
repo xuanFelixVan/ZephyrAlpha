@@ -1,0 +1,182 @@
+ttl: permanent
+schema_version: 0.1.0
+registry_id: REG-TECHNICAL-INDICATOR-001
+name: 技术指标注册表（算法地图同步种子版）
+description: 技术指标 name_zh/description 真源（§4.16.4）。种子数据由 algo_flow_translation_sync.py 从 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。
+owner: ZephyrAlpha-Owner
+tier: business
+status: active
+version: 0.1.0
+created: '2026-08-12'
+last_updated: '2026-08-12'
+unique_key:
+- name_en
+indicators:
+- indicator_id: IND-ALGOMAP-001
+  name_zh: 真实波幅ATR 14
+  name_en: ATR
+  description: 真实波幅的简单平均，度量价格波动剧烈程度
+  formula: TR=max(H-L,|H-Cp|,|L-Cp|) → ATR=MA14(TR)（通达信用 MA，非 Wilder's RMA）
+  table_status: '指标表: 有atr_14列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-022
+  source_path: src/zephyr/factor/technical_indicators/volatility.py
+- indicator_id: IND-ALGOMAP-002
+  name_zh: 布林带BOLL 20,2
+  name_en: BOLL
+  description: 均线上下各两倍标准差形成通道，BandWidth/%B 也基于它
+  formula: MID=MA20(C)；STD=rolling20.std(ddof=0)；UPPER=MID+2STD；LOWER=MID-2STD（ddof=0 对齐通达信）
+  table_status: '指标表: 有boll_upper/boll_middle/boll_lower列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-022
+  source_path: src/zephyr/factor/technical_indicators/volatility.py
+- indicator_id: IND-ALGOMAP-003
+  name_zh: 布林带突破 20,2
+  name_en: BOLLBreakout
+  description: 收盘价突破布林上轨发正信号、破下轨发负信号，复用 volatility._boll_bands
+  formula: (upper,_,lower)=_boll_bands(C,20,2) → C>upper→1；C<lower→-1；否则0
+  table_status: '指标表: 有boll_breakout列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-020
+  source_path: src/zephyr/factor/technical_indicators/reversal.py
+- indicator_id: IND-ALGOMAP-004
+  name_zh: K线形态识别
+  name_en: CandlestickPattern
+  description: 按实体/影线比例识别锤子、吞没、启明星、黄昏星、十字星并编码
+  formula: 'body=|C-O|；doji: body/(H-L)<0.1→5；hammer: 下影/实体>2 且上影<0.3实体→1；吞没±2（2bar）；启明/黄昏星 3/4（3bar）'
+  table_status: '指标表: 有candle_pattern列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-020
+  source_path: src/zephyr/factor/technical_indicators/reversal.py
+- indicator_id: IND-ALGOMAP-005
+  name_zh: 顺势指标CCI 14
+  name_en: CCI
+  description: 典型价偏离均线的程度，用平均绝对偏差标准化
+  formula: TP=(H+L+C)/3 → CCI=(TP-MA14(TP))/(0.015×AVEDEV14(TP))，AVEDEV=mean(|x-mean(x)|)
+  table_status: '指标表: 有cci_14列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-021
+  source_path: src/zephyr/factor/technical_indicators/trend.py
+- indicator_id: IND-ALGOMAP-006
+  name_zh: 蔡金资金流CMF 20
+  name_en: CMF
+  description: 收盘价在当日振幅中的位置乘以成交量，度量资金流入流出
+  formula: CLV=(2C-H-L)/(H-L)（H=L时取0）→ CMF=Σ20(CLV×V)/Σ20(V)
+  table_status: '指标表: 有cmf_20列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-019
+  source_path: src/zephyr/factor/technical_indicators/momentum.py
+- indicator_id: IND-ALGOMAP-007
+  name_zh: 趋向指标DMI/ADX 14
+  name_en: DMI/ADX
+  description: 多空方向移动量对比，ADX 度量趋势强度不分方向
+  formula: TR/±DM 滚动 SUM 平滑 → ±DI=±DM×100/TR → DX=|+DI--DI|/(+DI+-DI)×100 → ADX=MA14(DX)
+  table_status: '指标表: 有adx_14/pdi_14/mdi_14列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-021
+  source_path: src/zephyr/factor/technical_indicators/trend.py
+- indicator_id: IND-ALGOMAP-008
+  name_zh: 历史波动率HistVol 20
+  name_en: HistVol
+  description: 对数收益率的标准差年化，金融行业标准波动率
+  formula: r=log(C/C.shift1) → HV=r.rolling20.std(ddof=1)×√252×100
+  table_status: '指标表: 有histvol_20列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-022
+  source_path: src/zephyr/factor/technical_indicators/volatility.py
+- indicator_id: IND-ALGOMAP-009
+  name_zh: 随机指标KDJ 9,3,3
+  name_en: KDJ
+  description: 用最高最低价衡量收盘价所处位置，判断超买超卖
+  formula: RSV=(C-LL9)/(HH9-LL9)×100 → K=SMA(RSV,3,1) → D=SMA(K,3,1) → J=3K-2D（SMA=ewm alpha=1/N 对齐通达信）
+  table_status: '指标表: 有kdj_k/kdj_d/kdj_j列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-019
+  source_path: src/zephyr/factor/technical_indicators/momentum.py
+- indicator_id: IND-ALGOMAP-010
+  name_zh: 肯特纳通道Keltner 20,10,2
+  name_en: Keltner
+  description: EMA 中轨加 ATR 倍数构成通道，比布林带更平滑
+  formula: MID=EMA20(C)（复用 trend._ema adjust=False）；UPPER=MID+2×MA10(TR)；LOWER=MID-2×MA10(TR)
+  table_status: '指标表: 有kc_upper/kc_middle/kc_lower列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-022
+  source_path: src/zephyr/factor/technical_indicators/volatility.py
+- indicator_id: IND-ALGOMAP-011
+  name_zh: 异同移动平均MACD 12,26,9
+  name_en: MACD
+  description: 快慢 EMA 差值及其再平滑，判断趋势强弱与金叉死叉
+  formula: DIF=EMA12(C)-EMA26(C) → DEA=EMA9(DIF) → HIST=2×(DIF-DEA)（全 ewm adjust=False 对齐通达信）
+  table_status: '指标表: 有macd_dif/macd_dea/macd_hist列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-021
+  source_path: src/zephyr/factor/technical_indicators/trend.py
+- indicator_id: IND-ALGOMAP-012
+  name_zh: 资金流量指标MFI 14
+  name_en: MFI
+  description: 类似 RSI 但用典型价×成交量加权，度量资金买卖力度
+  formula: TP=(H+L+C)/3；MF=TP×V → 按 TP 涨跌拆正负 MF → MFI=100-100/(1+Σ14正MF/Σ14负MF)
+  table_status: '指标表: 有mfi_14列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-023
+  source_path: src/zephyr/factor/technical_indicators/volume.py
+- indicator_id: IND-ALGOMAP-013
+  name_zh: 能量潮OBV
+  name_en: OBV
+  description: 涨日加量跌日减量的累积线，量能先行验证价格趋势
+  formula: direction=sign(ΔC)（首值填0）→ OBV=cumsum(direction×V)
+  table_status: '指标表: 有obv列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-023
+  source_path: src/zephyr/factor/technical_indicators/volume.py
+- indicator_id: IND-ALGOMAP-014
+  name_zh: 相对强弱RSI 6/12/24 + 随机RSI
+  name_en: RSI/StochRSI
+  description: 涨跌幅平滑比值衡量多空力量，StochRSI 再对 RSI 做归一化
+  formula: RSI=100×SMA(up,N)/(SMA(up,N)+SMA(down,N))；StochRSI=(RSI-min14(RSI))/(max14(RSI)-min14(RSI))
+  table_status: '指标表: 有rsi_6/rsi_12/rsi_24/stochrsi列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-019
+  source_path: src/zephyr/factor/technical_indicators/momentum.py
+- indicator_id: IND-ALGOMAP-015
+  name_zh: RSI背离 12,20
+  name_en: RSIDivergence
+  description: 价格趋势与 RSI 趋势反向即背离信号，复用 momentum._rsi
+  formula: 'rsi=_rsi(C,12) → 顶背离: Δ20C>0 且 Δ20rsi<0 → 1；底背离: Δ20C<0 且 Δ20rsi>0 → -1'
+  table_status: '指标表: 有rsi_divergence列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-020
+  source_path: src/zephyr/factor/technical_indicators/reversal.py
+- indicator_id: IND-ALGOMAP-016
+  name_zh: 抛物线指标SAR
+  name_en: SAR
+  description: 逐根K线递推止损反转点，趋势翻转时加速因子重置
+  formula: SAR(t+1)=SAR(t)+AF×(EP-SAR(t))，AF 从 0.02 递增至 0.2，翻转时 SAR=EP 且 AF 重置
+  table_status: '指标表: 有sar列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-021
+  source_path: src/zephyr/factor/technical_indicators/trend.py
+- indicator_id: IND-ALGOMAP-017
+  name_zh: 终极指标UOS 7/14/28
+  name_en: UOS
+  description: 三个周期买卖压力加权合成，减少单一周期假信号
+  formula: BP=C-min(L,Cp)；TR=max(H,Cp)-min(L,Cp)；AvgN=ΣN(BP)/ΣN(TR)；UOS=(4Avg7+2Avg14+Avg28)/7×100
+  table_status: '指标表: 有uos列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-019
+  source_path: src/zephyr/factor/technical_indicators/momentum.py
+- indicator_id: IND-ALGOMAP-018
+  name_zh: 量价背离 10
+  name_en: VolumePriceDivergence
+  description: 价升量缩为顶背离、价跌量增为底背离
+  formula: '顶背离: Δ10C>0 且 Δ10V<0 → 1；底背离: Δ10C<0 且 Δ10V>0 → -1；否则0'
+  table_status: '指标表: 有vol_price_div列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-020
+  source_path: src/zephyr/factor/technical_indicators/reversal.py
+- indicator_id: IND-ALGOMAP-019
+  name_zh: 容量比率VR 26
+  name_en: VR
+  description: 上涨日成交量与下跌日成交量的比值，平盘量两侧各计一半
+  formula: VR=100×(2×Σ26up_vol+Σ26flat_vol)/(2×Σ26down_vol+Σ26flat_vol)（通达信口径）
+  table_status: '指标表: 有vr_26列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-023
+  source_path: src/zephyr/factor/technical_indicators/volume.py
+- indicator_id: IND-ALGOMAP-020
+  name_zh: 成交量加权均价
+  name_en: vwap
+  description: 当日成交额除以成交量，量额为0时用典型价降级
+  formula: vwap=amount/volume；volume或amount≤0→(O+H+L+C)/4
+  table_status: '指标表: 有vwap列 但代码未读表'
+  source_module: MOD-REGIME-005
+  source_path: src/zephyr/regime/features/chip_distribution_engine.py
+- indicator_id: IND-ALGOMAP-021
+  name_zh: 威廉变异离散量WVAD 24
+  name_en: WVAD
+  description: 实体占振幅比例乘成交量滚动求和，量价配合度
+  formula: ratio=(C-O)/(H-L)（H=L时取0）→ WVAD=Σ24(ratio×V)
+  table_status: '指标表: 有wvad_24列 但代码未读表（本模块即指标计算实现）'
+  source_module: MOD-L02-023
+  source_path: src/zephyr/factor/technical_indicators/volume.py

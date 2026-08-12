@@ -121,6 +121,17 @@ repos:
         always_run: false
         description: "检测 commit 是否在 session worktree 内——主工作区 commit warn+计数，累计>=5次升级阻断（Layer 2 pre-commit；Layer 1 in-process gate WORKTREE-REQUIRED 管 gateway 路径）"
 
+      # ── GATE-ALGO-FLOW: 算法地图 ALGO_FLOW 标记门禁（§4.16，2026-08-12 全量落地后转强制）──
+      # 目的：防止运营态模块回退/新增缺失 # [ALGO_FLOW] docstring 标记——该标记是算法全景图
+      # （08_algorithm_overview）推导流程图的唯一结构化真源。416/416 已补标记，转硬门禁。
+      - id: gate-algo-flow-marker
+        name: "GATE-ALGO-FLOW: src/zephyr 模块必须含 ALGO_FLOW docstring 标记（§4.16）"
+        entry: python scripts/governance/d5_architecture/checkers/check_algo_flow.py
+        language: system
+        pass_filenames: true
+        always_run: false
+        description: "检测 staged 的 src/zephyr/**/*.py module docstring 是否含 # [ALGO_FLOW] 标记（算法全景图推导流程图真源），缺失则阻断"
+
       - id: ruff
         name: "Ruff Lint"
         entry: python -m ruff check --no-cache

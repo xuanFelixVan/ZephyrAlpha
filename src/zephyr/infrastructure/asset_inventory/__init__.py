@@ -11,6 +11,8 @@
 # [TESTS]
 # [TTL] permanent
 """
+
+
 asset-inventory — MOD-INF-026 · 资产盘点系统：发现->分类->登记->对账->生命周期
 ==============================================================================
 蓝图 v0.3.0 · Phase 1 construction · P0 核心模块
@@ -39,6 +41,33 @@ asset-inventory — MOD-INF-026 · 资产盘点系统：发现->分类->登记->
   - Safe-by-Default: 所有变更操作默认 --dry-run
   - Self-Referential: 盘点系统通过盘点自己来证明自己存在
   - RULE-ZERO~EIGHT 全合规
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包内子模块符号映射
+#   fields: 42 个公共符号 → 13 个子模块路径（scanner/classifier/reconciler/dashboard/index_generator/lifecycle/metadata/dependency/telemetry/trust_anchor/registry_adapter/models/__main__）
+#   code: _LAZY_IMPORTS L97-137 / _SUBMODULES L139-154
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包级懒加载路由
+#   name_en: __getattr__
+#   intro: 首次访问符号时才 import 对应子模块并缓存，避免重资产扫描模块冷启动
+#   desc: 命中 _LAZY_IMPORTS → importlib.import_module + getattr 取符号并写入 globals() 缓存；命中 _SUBMODULES → 导入子模块；否则抛 AttributeError
+#   inputs: I1
+#   outputs: 符号对象 / 子模块对象
+#   invariant: SSoT=unified-asset-index.yaml；变更操作默认 --dry-run（包文档声明）
+# 层: 输出
+# - id: O1
+#   name_zh: 资产盘点公共 API 命名空间
+#   name_en: __all__
+#   intro: 五层架构（发现→分类→登记→对账→生命周期）的统一导出入口
+#   downstream: 无下游/内部使用（[CONSUMERS] 头未登记；由包内 __main__ CLI 与 mcp_server 使用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 __all__ = [

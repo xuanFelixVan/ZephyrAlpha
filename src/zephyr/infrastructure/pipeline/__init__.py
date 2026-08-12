@@ -1,9 +1,93 @@
 # [A_module] module_id=MOD-INF-pipeline | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md
 # [TTL] permanent
-"""ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层数据路由
+"""
+
+
+ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framework + 跨层数据路由
 A区（M1-M5）生产管线 + B区（M6-M11）审计管线。
 GOV-AI-002 v2.0.0 决策树 + 插件化路由 + Agent 桥接 + Schema 校验。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: backpressure_manager 子模块符号 6个
+#   fields: BackpressureManager / BpState / BpSymbolState / emit_pause / emit_resume / emit_throttle
+#   code: zephyr.infrastructure.pipeline.backpressure_manager
+# - id: I2
+#   name: circuit_breaker_manager 子模块符号 1个
+#   fields: CircuitBreakerManager
+#   code: zephyr.infrastructure.pipeline.circuit_breaker_manager
+# - id: I3
+#   name: cost_tracker 子模块符号 1个
+#   fields: CostTracker
+#   code: zephyr.infrastructure.pipeline.cost_tracker
+# - id: I4
+#   name: ct_pipe_routing 子模块符号 6个
+#   fields: CtPipeRoutingHints / PipelineRoutingInputsError / ct_pipe_hints_from_task_card / enforce_affinity / modules_slice_from_node / resolve_ct_pipe_orc001
+#   code: zephyr.infrastructure.pipeline.ct_pipe_routing
+# - id: I5
+#   name: dead_letter_queue 子模块符号 1个
+#   fields: DeadLetterQueue
+#   code: zephyr.infrastructure.pipeline.dead_letter_queue
+# - id: I6
+#   name: model_router 子模块符号 1个
+#   fields: ModelRouter
+#   code: zephyr.infrastructure.pipeline.model_router
+# - id: I7
+#   name: models 子模块符号 45个
+#   fields: A_DAG / AFFINITY_CONSTRAINTS / B_DAG / M_MODULE_SPECS / M_MODULES / ABExperimentRoute 等45个
+#   code: zephyr.infrastructure.pipeline.models
+# - id: I8
+#   name: pipeline_agent_bridge 子模块符号 4个
+#   fields: M_TO_ROLE / PipelineAgentBridge / domain_for_pipeline / role_for_module
+#   code: zephyr.infrastructure.pipeline.pipeline_agent_bridge
+# - id: I9
+#   name: pipeline_lock 子模块符号 6个
+#   fields: FileLockBackend / LockBackend / LockResult / LockStatus / MemoryLockBackend / PipelineLock
+#   code: zephyr.infrastructure.pipeline.pipeline_lock
+# - id: I10
+#   name: pipeline_roadmap 子模块符号 62个
+#   fields: PIPELINE_DEPENDENCIES / PIPELINE_DEPENDENCIES_MAP / PIPELINE_VERSION_MAP / PROFILES / AdversarialDeceptionProtocol / AlertEscalationTracker 等62个
+#   code: zephyr.infrastructure.pipeline.pipeline_roadmap
+# - id: I11
+#   name: preemption_manager 子模块符号 1个
+#   fields: PreemptionManager
+#   code: zephyr.infrastructure.pipeline.preemption_manager
+# - id: I12
+#   name: routing_plugins 子模块符号 5个
+#   fields: DEFAULT_PLUGINS / NoEligibleNodeError / PipelineRouter / RoutingContext / RoutingPlugin
+#   code: zephyr.infrastructure.pipeline.routing_plugins
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包级聚合再导出
+#   name_en: zephyr.infrastructure.pipeline.__init__
+#   intro: ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framew
+#   desc: MOD-INF-009 包入口，包级聚合再导出并声明 __all__（125项）
+#   inputs: I1 I2 I3 I4 I5 I6 I7 I8 I9 I10 I11 I12
+#   outputs: zephyr.infrastructure.pipeline 包级公共命名空间
+#   invariant: 包级导出以 __all__ 声明为准（125项）
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.infrastructure.pipeline 包公共 API
+#   name_en: __all__ 125项
+#   intro: ZephyrAlpha Pipeline 模块 — M1-M11 双管线 + K8s Scheduling Framew——对外统一出口
+#   downstream: 见蓝图头 [CONSUMERS] 声明
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# I5 --> A1
+# I6 --> A1
+# I7 --> A1
+# I8 --> A1
+# I9 --> A1
+# I10 --> A1
+# I11 --> A1
+# I12 --> A1
+# A1 --> O1
 """
 
 from zephyr.infrastructure.pipeline.backpressure_manager import (

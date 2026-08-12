@@ -2,6 +2,41 @@
 # [TTL] permanent
 # [A_module] module_id=MOD-SHR-shared | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: typing 子模块符号 1个
+#   fields: Any
+#   code: typing
+# - id: I2
+#   name: __version__ 子模块符号 1个
+#   fields: __version__
+#   code: zephyr.shared.__version__
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包级聚合再导出
+#   name_en: zephyr.shared.__init__
+#   intro: 5.93.3 治本（R102 EXECUTE）：PEP 562 __getattr__ 惰性导出。
+#   desc: MOD-GOVERNANCE 包入口，包级聚合再导出并声明 __all__（88项）
+#   inputs: I1 I2
+#   outputs: zephyr.shared 包级公共命名空间
+#   invariant: 包级导出以 __all__ 声明为准（88项）
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.shared 包公共 API
+#   name_en: __all__ 88项
+#   intro: 5.93.3 治本（R102 EXECUTE）：PEP 562 __getattr__ 惰性导出。——对外统一出口
+#   downstream: 见蓝图头 [CONSUMERS] 声明
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+"""
+
 __all__ = [
     "MIN_COMPATIBLE_SHARED_VERSION",
     "AdaptiveSampler",

@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-08T18:05:39Z'
+generated_at: '2026-08-12T15:08:21Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 146
+total_gates: 147
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -24,6 +24,16 @@ gates:
   entry: python scripts/governance/d11_compliance/validate_worktree_required.py
   description: 检测 commit 是否在 session worktree 内——主工作区 commit warn+计数，累计>=5次升级阻断（Layer
     2 pre-commit；Layer 1 in-process gate WORKTREE-REQUIRED 管 gateway 路径）
+  files_trigger: ''
+  always_run: false
+  category: unknown
+  status: active
+  source: pre-commit
+- gate_id: GATE-ALGO-FLOW
+  name: 'GATE-ALGO-FLOW: src/zephyr 模块必须含 ALGO_FLOW docstring 标记（§4.16）'
+  entry: python scripts/governance/d5_architecture/checkers/check_algo_flow.py
+  description: '检测 staged 的 src/zephyr/**/*.py module docstring 是否含 # [ALGO_FLOW]
+    标记（算法全景图推导流程图真源），缺失则阻断'
   files_trigger: ''
   always_run: false
   category: unknown
@@ -1208,10 +1218,9 @@ gates:
   status: active
   source: commit-gate
 - gate_id: RULE-EXECUTION-PAIRING
-  name: 'RULE-EXECUTION-PAIRING: 规则-执行配对门禁（RULE-EXECUTION-PAIRING，Phase 3.5）（CommitGate,
-    priority=61）'
+  name: 'RULE-EXECUTION-PAIRING: RULE-EXECUTION-PAIRING（CommitGate, priority=61）'
   entry: in-process (GitCommitGateway)
-  description: 规则-执行配对门禁（RULE-EXECUTION-PAIRING，Phase 3.5）
+  description: RULE-EXECUTION-PAIRING
   files_trigger: ''
   always_run: false
   category: commit_gate

@@ -610,6 +610,16 @@ tiers:
         description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）42 条已落盘。注意：P1-B Step1-3 已完成，Step4-8 待做。#ARCH-BREG-001 P1-B
         owned_by: governance
 
+      - registry_id: REG-TECHNICAL-INDICATOR-001
+        name: 技术指标注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
+        format: yaml
+        maintenance: auto（scripts/governance/_shared/algo_flow_translation_sync.py 种子派生，后续手动扩充）
+        entry_count: 22
+        status: draft
+        description: 技术指标 name_zh/description 真源（§4.16.4）——22 条种子条目由 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。算法地图全量落地配套（2026-08-12）。
+        owned_by: governance
+
 # ============================================================
 # AI 使用指南
 # ============================================================

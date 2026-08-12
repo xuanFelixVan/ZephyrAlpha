@@ -12,6 +12,8 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: threading.Timer用于一次性超时/延迟执行，非周期时间触发
 """
+
+
 ZephyrAlpha 核心包索引 + 模块懒加载器 (M-04)
 
 C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
@@ -21,6 +23,91 @@ C 轨 — 14 层业务脊柱 | B 轨 — 10 横切平台能力
   门禁检查:        from zephyr.gov_enforcement.rule_enforcement import gate_engine
   上下文构建:      from zephyr.autonomy_core.context.context_management import intent_parser
   向量记忆服务:    from zephyr.integration.vector_memory import InProcessVectorMemory
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: .env 环境变量文件
+#   fields: KEY=VALUE 文本行（# 开头为注释）
+#   code: REPO_ROOT/.env L64
+# - id: I2
+#   name: 包版本元数据
+#   fields: importlib.metadata("zephyralpha") 或 pyproject.toml 的 version 字段（PEP 621）
+#   code: L99-114
+# - id: I3
+#   name: 特性开关配置
+#   fields: auto_bootstrap 等 flag（config/flags.yaml，经 global_flag_registry）
+#   code: _feature_flag_enabled L168-180
+# - id: I4
+#   name: 懒加载注册条目
+#   fields: 别名 → 模块路径（register_lazy 调用，如 vector-memory/autopilot/ml_train）
+#   code: register_lazy L247-263
+# 层: 算法
+# - id: A1
+#   name_zh: ① Python 3.10 标准库兼容补丁
+#   name_en: datetime.UTC / typing.Self 回填
+#   intro: 给标准库打最小补丁，一处修复全项目生效
+#   desc: hasattr 检查缺失则回填 datetime.UTC=timezone.utc、typing.Self=typing_extensions.Self 或 TypeVar（ARCH-PYCOMPAT-001）
+#   inputs: 无（进程级标准库环境）
+#   outputs: 补丁后的标准库别名
+# - id: A2
+#   name_zh: ② .env 加载
+#   name_en: _load_dotenv
+#   intro: 启动时把 .env 的键值对注入进程环境变量
+#   desc: 优先 python-dotenv（override=False）；无库时手工解析并 os.environ.setdefault；非源码树环境直接跳过
+#   inputs: I1
+#   outputs: os.environ 环境变量
+# - id: A3
+#   name_zh: ③ 包版本号解析
+#   name_en: __version__ 解析
+#   intro: 从已安装包元数据或 pyproject.toml 读出唯一版本号
+#   desc: importlib.metadata.version("zephyralpha") → 回退 pyproject.toml 正则提取 → 兜底 "0.0.0+unknown"
+#   inputs: I2
+#   outputs: __version__ 字符串
+#   invariant: 版本真源唯一 SSoT=pyproject.toml，禁止硬编码
+# - id: A4
+#   name_zh: ④ 包级懒加载路由
+#   name_en: register_lazy / _LazyModule / __getattr__（PEP 562）
+#   intro: 首次访问子模块时才真正 import，加快冷启动
+#   desc: 别名命中注册表则返回 _LazyModule 代理并 setattr 缓存；__getattr__ 防 _module 未初始化递归；未知名抛 AttributeError
+#   inputs: I4
+#   outputs: 懒加载模块代理
+# - id: A5
+#   name_zh: ⑤ 延迟引导编排
+#   name_en: _deferred_bootstrap / _deferred_service_registration
+#   intro: 后台 daemon Timer 里做遥测注入、密钥轮换和服务注册
+#   desc: flag 守护（fail-open）→ auto_bootstrap monkey-patch → secret_rotation.auto_configure → service_registration；atexit 取消未完成 Timer
+#   inputs: I3
+#   outputs: 进程级副作用（遥测/轮换/注册）
+#   invariant: try/except 保活——任何引导失败都不阻断 import zephyr
+# 层: 输出
+# - id: O1
+#   name_zh: 包版本常量
+#   name_en: __version__
+#   intro: zephyralpha 包版本号，运行时可查询
+#   downstream: 全项目（import zephyr 的任何模块）
+# - id: O2
+#   name_zh: 懒加载包命名空间
+#   name_en: _LazyModule 代理
+#   intro: import zephyr 后按需加载的子模块入口
+#   downstream: 全项目子包消费者（[CONSUMERS] 头未登记具体 MOD）
+# - id: O3
+#   name_zh: 进程级启动副作用
+#   name_en: bootstrap side effects
+#   intro: 环境变量注入 + 全模块遥测 patch + 密钥轮换调度 + D-DATA 服务注册
+#   downstream: system_telemetry MOD-INF-015 / ServiceRegistry 消费方
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A2
+# I2 --> A3
+# I3 --> A5
+# I4 --> A4
+# A1 --> O3
+# A2 --> O3
+# A3 --> O1
+# A4 --> O2
+# A5 --> O3
 """
 
 import atexit
