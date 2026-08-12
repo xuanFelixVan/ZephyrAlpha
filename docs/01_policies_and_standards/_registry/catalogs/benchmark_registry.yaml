@@ -14,8 +14,8 @@ tier: tier_2_data_runtime
 status: active
 version: 1.0.0
 created: '2026-08-10'
-last_updated: '2026-08-10'
-related_arch: '#ARCH-BUSINESS-REGISTRY'
+last_updated: '2026-08-12'
+related_arch: '#ARCH-BREG-001'
 unique_key:
 - benchmark_id
 
@@ -68,7 +68,7 @@ benchmarks:
     data_source: SRC-AKSHARE-001
     used_by_strategies: [STR-MULTIFACTOR-001]
     module_id: MOD-MKT-DATA
-    doc_ref: 25_multifactor_strategy_detail.md §CSI300实证
+    doc_ref: 25_multifactor_strategy_detail.md §3.7（归因基准伪代码默认值——v1.34.0 修正，原"§CSI300实证"章节不存在）
     code_path: src/zephyr/data/implementations/akshare_provider.py
     status: active
     version: 1.0.0

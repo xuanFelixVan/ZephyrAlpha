@@ -545,6 +545,71 @@ tiers:
         status: active
         description: 全项目状态机实例的 canonical 登记——fsm_id/states/transitions/owner_module。MOD-INF-038
 
+      # ── 业务资产注册表（#ARCH-BREG-001，2026-08-12 补登记）──
+      # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
+      # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
+      # P1 被测对象/交易风控 7 表中 factor/strategy/risk_limit 已落盘（Step1-3 schema+条目完成，Step4-8 交叉引用/半派生/审计/治理同步待做），
+      # indicator/execution_algo/data_asset/chart_pattern 待施工；P2（field_dictionary/experiment）待施工。
+      - registry_id: REG-UNI-001
+        name: 股票池登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 5
+        status: active
+        description: 股票池/标的池唯一真源（SSoT）——打板连板梯队池/全A可交易池/CSI300/CSI800/事件驱动池 5 条。回测必需输入：每次回测 MUST 指定 universe_id。#ARCH-BREG-001 P0
+        owned_by: governance
+
+      - registry_id: REG-BMK-001
+        name: 基准登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 4
+        status: active
+        description: 交易基准唯一真源（SSoT）——沪深300/中证500/中证全指/绝对收益零基准 4 条。回测必需输入：每次回测 MUST 指定 benchmark_id 计算超额收益。#ARCH-BREG-001 P0
+        owned_by: governance
+
+      - registry_id: REG-CST-001
+        name: 交易成本模型登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 3
+        status: active
+        description: 交易成本模型唯一真源（SSoT）——A股标准（万3佣金/万5印花税/万0.1过户费/1bp滑点）/保守/零成本 3 条。回测必需输入：MUST 指定 cost_model_id 扣成本。#ARCH-BREG-001 P0
+        owned_by: governance
+
+      - registry_id: REG-FCT-001
+        name: 因子登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 111
+        status: draft
+        description: 交易因子唯一真源（SSoT）——10 类（Barra 6 + A股特色 4）111 条已落盘。注意：P1-A Step1-3 已完成（schema+条目），Step4-8（交叉引用校验/半派生补全/一致性审计/循环审查）待做，条目性能字段运行时可空。#ARCH-BREG-001 P1-A
+        owned_by: governance
+
+      - registry_id: REG-STR-001
+        name: 策略登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 59
+        status: draft
+        description: 交易策略唯一真源（SSoT）——6 类（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）59 条已落盘。注意：P1-A Step1-3 已完成，Step4-8 待做（code_path 待半派生补全）。#ARCH-BREG-001 P1-A
+        owned_by: governance
+
+      - registry_id: REG-RLM-001
+        name: 风控限额登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 42
+        status: draft
+        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）42 条已落盘。注意：P1-B Step1-3 已完成，Step4-8 待做。#ARCH-BREG-001 P1-B
+        owned_by: governance
+
 # ============================================================
 # AI 使用指南
 # ============================================================
@@ -581,11 +646,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 52
+  total_registries: 58
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 12
     tier_1_governance: 28
-    tier_2_runtime: 12
+    tier_2_runtime: 18

@@ -10,15 +10,15 @@ description: >-
   高频策略成本可能吃掉全部 alpha，回测不扣成本=自欺欺人。
   治本"回测不扣成本结果失真"硬缺口。business_registry_consolidation_plan §8.7f。
   注意：现有 cost_estimator.py 是 AI token 成本，非交易成本。
-  成本参数来源：52_backtest_framework_docking.md §G1（万三佣金/5元最低/1bp滑点）。
+  成本参数来源：62_business_registry_construction.md §5.3（2026 费率校准真源；原引 52 号 §G1 悬空——52 号重建版无 §G1，v1.34.0 修正）。
 # v1.1.0 changelog: 印花税千1→万5（2023-08-28减半延续至2026），过户费沪市only→沪深双向（中国结算统一标准）。依据62号文档v1.1.0 R1修正。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
 version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-10'
-related_arch: '#ARCH-BUSINESS-REGISTRY'
+last_updated: '2026-08-12'
+related_arch: '#ARCH-BREG-001'
 unique_key:
 - cost_model_id
 
@@ -78,7 +78,7 @@ cost_models:
     propagator_config: null
     used_by_strategies: [STR-DABAN-001, STR-MULTIFACTOR-001, STR-EVENT-001]
     module_id: MOD-EX-CORE
-    doc_ref: 52_backtest_framework_docking.md §G1
+    doc_ref: 62_business_registry_construction.md §5.3（2026 费率校准真源；原引 52 号 §G1 悬空，v1.34.0 修正）
     code_path: src/zephyr/backtest/core/engine_base.py
     status: active
     version: 1.1.0
@@ -139,7 +139,7 @@ cost_models:
     propagator_config: null
     used_by_strategies: []
     module_id: MOD-EX-CORE
-    doc_ref: 52_backtest_framework_docking.md §成本敏感性
+    doc_ref: 62_business_registry_construction.md §5.3（原引 52 号 §成本敏感性 悬空，v1.34.0 修正）
     code_path: src/zephyr/backtest/core/engine_base.py
     status: active
     version: 1.1.0
