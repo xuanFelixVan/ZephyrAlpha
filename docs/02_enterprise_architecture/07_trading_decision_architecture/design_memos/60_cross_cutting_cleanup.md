@@ -5,7 +5,7 @@ title: 冲突矩阵清理与事件总线
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.0.1"
 date: 2026-08-12
 topic: cross_cutting_cleanup
 scope: 07_trading_decision_architecture
@@ -64,7 +64,7 @@ related_modules:
 
 1. **防御永远优先于进攻**：风控（C-004 族）高于一切 alpha 信号
 2. **仓位上限是硬约束**：firm 层求和后超上限即裁剪（FirmRiskAggregator，MOD-POS-021，production），不协商、不投票
-3. **卖比买紧急**：同一标的同时出现买卖信号时，卖出（风险释放）优先执行
+3. **卖比买紧急**：同一标的同时出现买卖信号时，卖出（风险释放）优先执行——执行点为 `src/zephyr/sell_decision/core/sell_conflict_arbitrator.py`（MOD-SELL-008，production：强冲突 0 延迟立即执行/弱冲突延迟 1 Tick 观察，仲裁优先级 风控>C-047>市场状态>卖出>买入；注：depgraph build_status=deprecated 与源码 production 标注分裂，见 42 号 §7）
 
 **遗留动作**：battle_map_12 §16 的 31 条清单仍按旧设计陈列，与本文裁定不一致——作战地图是生成器派生物，待下一轮 sync 重生成时收敛（见 §6，不手工改生成物）。
 
@@ -150,6 +150,7 @@ why：跨策略投票的本质是"多个弱信号合成一个强信号"，前提
 | ④ 实时计算节奏（盘中 vs 盘后） | ✅ 已裁定 | §3.4（三档节奏） |
 | ⑤ 配置驱动（参数热更新/AB 测试） | ✅ 已裁定 | §3.5（config 化保留，热更新远期） |
 | ⑥ 多策略投票降级 | ✅ 已裁定 | §3.3（BM-SEL-20 rejected / 02-K 内部化 / 25 打板内部） |
+| ⑦ firm_risk_aggregator 测试缺口 | ⚠️ 待补 | §3.1 第 2 条硬上限执行模块 `firm_risk_aggregator.py`（MOD-POS-021）头标声明测试 `tests/position/test_firm_risk_aggregator.py` 不存在，需补建（B13 盘点发现） |
 
 ## 8. 引用
 
@@ -175,3 +176,4 @@ why：跨策略投票的本质是"多个弱信号合成一个强信号"，前提
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G27 讨论要点占位，待讨论填空 |
 | 2026-08-12 | 1.0.0 | 骨架→active 定型回填 | 核心裁定均已在 30 号 §7.3 落地，本文回填 why 并划边界：§3.1 冲突矩阵 31 条→3 条 firm-level 硬上限；§3.2 事件总线定位（任务系统总线 production+交易信号链直连，核验 ex_core 零引用 event_bus）；§3.3 多策略投票降级；§3.4 三档计算节奏（已施工设施盘点）；§3.5 配置驱动边界（config 化保留/热更新远期）；§4 替代方案（微服务总线/全量仲裁/统一路由层均拒绝）；2026 行业实证（Nautilus 进程内 EDA、风控层独立铁律）入 §8.3。G27 六个讨论要点全部闭合（2026-08-12 三次并发回滚后重建） |
+| 2026-08-12 | 1.0.1 | §3.1 澄清 sell_conflict_arbitrator 归属 + §7 登记 firm_risk_aggregator 测试缺口 | AI-19 深度审查：基础设施盘点发现 ①sell_conflict_arbitrator.py（MOD-SELL-008）是 §3.1 第 3 条"卖比买紧急"硬上限执行点，原未明确归属；②firm_risk_aggregator.py 声明测试 tests/position/test_firm_risk_aggregator.py 不存在（B13 测试缺口）。本次 §3.1 补执行点澄清 + §7 补测试缺口登记。无裁定变更 |

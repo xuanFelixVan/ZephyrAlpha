@@ -5,8 +5,8 @@ title: 情绪周期×交易决策
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.0"
-date: 2026-08-11
+version: "1.2.1"
+date: 2026-08-12
 topic: sentiment_cycle_trading
 scope: 07_trading_decision_architecture
 ---
@@ -2030,6 +2030,7 @@ def get_strategy_deployment_by_phase(
 | HMM/模型学权重（Phase 3） | 静态映射跑通 + 数据充足 + 发现明显不够用后升级 | [10_regime §2.5.4](10_regime_detector_spec.md) Phase 3 触发条件 | G21/G02 |
 | BM-SEL-23-B 输出契约变更 | 当前 production 输出 4+1 硬标签，若改 5 维灰度概率需评估对 BM-SEL-25 双引擎融合消费的影响 | 设计态准入时处理 | G05/G08 |
 | 情绪周期暴露硬上限 | §3.7.3 验证若分层后相关性 0.3-0.6 需加硬上限 | G07 验证结果 | G13/G21 |
+| #ARCH-ASHARE-002 情绪周期 6 阶段标准化+4 盘面指标检测（proposed，P1） | 6 阶段标准化需先证伪五阶段不足；4 盘面指标 sentiment_4indicator.py 待新建 | 用户裁定 #ARCH-ASHARE-002 后 | G21 |
 
 ## 7. 待定问题（讨论要点对齐）
 
@@ -2073,3 +2074,4 @@ def get_strategy_deployment_by_phase(
 | 2026-08-10 | 1.0.0 | 落地 spec 定稿 | 五阶段情绪周期定义（FREEZING冰点→STARTING反核→FERMENTING主升→CONSENSUS疯狂→EBING退潮）+ 各阶段市场特征指标；BM-SEL-23-B 定位器算法升级（多维指标评分+贝叶斯更新+兜底机制+灰度概率输出）；各阶段买卖纪律算法（position_scale/throttle_factor/allow_new_open/策略亲和性）；情绪周期与 regime 12 态映射关系（正交分工裁定+软影响映射表）；各策略在不同情绪阶段部署策略（打板主升重仓/多因子冰点布局/事件驱动跨阶段）；情绪周期作为"隐形驱动"的验证方法（分层相关性测试）；整合 2026-08 研究（eastmoney 情绪周期实操体系/yueniuzq 炸板率评分模型/龙虎榜情绪温度/55188 五段循环口诀） |
 | 2026-08-10 | 1.1.0 | 补充 §3.10 标准函数签名契约 | 新增 §3.10：8 个标准函数签名（classify_sentiment_phase/compute_sentiment_temperature/locate_sentiment_phase/detect_phase_transition/get_phase_trading_discipline/evaluate_locator_accuracy/map_sentiment_to_regime/get_strategy_deployment_by_phase），薄包装委托到 §3.2-§3.7 实现函数；修复递归包装 bug（wrapper 不调用自身） |
 | 2026-08-11 | 1.2.0 | 补全 8 算法 + 修复递归包装 bug | 新增 compute_sentiment_temperature（7 维 A 股情绪温度→[0,100] 综合评分：涨停广度/跌停恐惧/连板高度/炸板背离/封板共识/涨跌比/梯队完整度）+ detect_phase_transition（阶段转换检测：底反转 FREEZING→STARTING + 顶背离 CONSENSUS→EBING，先行指标+确认信号双重判定）；§3.5.4 软影响算法（apply_sentiment_soft_influence 仓位版 + combine_sentiment_regime 乘法叠加 + SENTIMENT_REGIME_MAPPING 5×12 映射表 + CombinedTradingDirective + 60 有效组合 + get_effective_combinations）；§3.6.1 策略部署算法（StrategyDeploymentPolicy 3×5 矩阵 + compute_strategy_deployment）；§3.7.4 Hawkes 自激发（SentimentHawkesParams λ₀/α/β + compute_hawkes_intensity + estimate_hawkes_branching_ratio 分支比 + compute_sentiment_correlation_driver + analyze_sentiment_driven_correlation block-bootstrap 2000 次）；§3.8 2026-08-06 板块性跌停潮案例实证（5 关键发现）；§3.9 与 regime 协同机制（正交分工+软影响映射+协同工作流） |
+| 2026-08-12 | 1.2.1 | §6 补登 #ARCH-ASHARE-002 proposed 议题 | AI-19 深度审查：基础设施盘点发现 #ARCH-ASHARE-002（情绪周期 6 阶段标准化+4 盘面指标，proposed P1）未在本文登记，按通用规则 #12 补登 §6 待裁定。无算法变更 |
