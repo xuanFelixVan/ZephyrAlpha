@@ -5,8 +5,8 @@ title: 策略生命周期与多 AI 协作
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.10.0"
-date: 2026-08-10
+version: "2.12.2"
+date: 2026-08-12
 topic: lifecycle_multi_ai
 scope: 07_trading_decision_architecture
 ---
@@ -35,7 +35,7 @@ scope: 07_trading_decision_architecture
 - 个人 + 100% AI 开发：用户开启多个 AI 会话，每个会话认领一个主题组（G01-G28）并行推进
 - 当前"多 AI"实质是 **单 AI 多会话** + **另一 AI 独立做 regime**——不是多 agent 运行时编排系统
 - 策略从想法到退役要跨 6 个作战地图阶段（01 孵化→02 训练→03 回测→04 模拟→10 实盘→11 对账退役），每阶段有独立的 why 层空白
-- 00_index 已建立段位编号制（0x-9x）与骨架先行工作流（38 篇 = 15 active/draft + 23 骨架），需在本备忘锁定生命周期各阶段的文档治理衔接
+- 00_index 已建立段位编号制（0x-9x）与骨架先行工作流（最新篇数与状态台账以 [00_index_trading_decision](00_index_trading_decision.md) §0 目录为准——v2.3.0 时 38 篇 = 15 active/draft + 23 骨架，后续有新增占用），需在本备忘锁定生命周期各阶段的文档治理衔接
 
 ### 2.2 核心问题
 策略生命周期 6 阶段跨越多个作战地图，每阶段都有"准入门禁→运行监控→降级/晋升→退出"的流转，但缺少一份跨阶段的总纲把 6 阶段串成一条状态机。同时多 AI 协作需要明确分工与交接纪律，防止"AI 间不直接通信"原则下出现交接断裂。
@@ -46,11 +46,31 @@ scope: 07_trading_decision_architecture
 - 治理硬约束：模块创建必须生成 creation_token + 登记 capability_canonical_file_registry.yaml + module_translation_registry.yaml + architecture_issue_registry.yaml（ARCH 条目）
 - 不做 agent 编排系统：30_multi_strategy §5 已暂缓"LLM 多 Agent 辩论 / R&D-Agent 自进化策略搜索"，多 AI 协作是"人调度多会话"非"agent 自治"
 
+### 2.4 已施工设施盘点
+
+> 通用规则 #11：先清楚有什么 → 才能知道怎么改 → 才能知道该删除/退役什么。本节盘点与本备忘主题（策略生命周期 + 多 AI 协作）相关的全部已建设施与配套（代码/注册表验证 2026-08-12）。
+
+| 设施 | 路径 / 位置 | 施工状态 | 与本备忘关系 |
+|---|---|---|---|
+| 三阶段迁移门禁 | `src/zephyr/governance/lifecycle_governance/paper_live_transition.py`（MOD-GOVERNANCE） | ✅ production | §3.1 状态机 ④模拟→⑤实盘 的阶段门禁承载（PARALLEL/SHADOW/GRAY_RAMP，53 号 G24 真源） |
+| 回测门控 + 偏差监控 | `src/zephyr/backtest/core/decision_gate.py` | ✅ production | §3.4 回测阶段准入门禁（IS→WFA→OOS + 参数悬崖检测 + `monitor_backtest_live_deviation` warn>30%/retire>50%） |
+| rolling DSR | `src/zephyr/simulation/deflated_sharpe_calculator.py`（MOD-SIM-024） | ✅ production | §3.3 漂移 vs 过拟合鉴别（DSR 排除过拟合）+ §3.4 过拟合检测维度 |
+| 前瞻偏差检测 | `src/zephyr/simulation/look_ahead_bias_detector.py`（MOD-SIM-022） | ✅ production | §3.2 PIT 铁律 + §3.4 回测可信硬底线的检测层 |
+| 实验追踪 | `src/zephyr/experiment_tracking/`（config/models/query）+ [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（draft v1.0.2，MLflow 体系调研已定） | 代码已有，体系 draft | §3.2 第 3 条可复现性（四要素记录）+ §3.3 Champion-Challenger 的 MLflow alias 生命周期（@champion/@challenger/@archived） |
+| 系统级生命周期管理器 | `src/zephyr/trading/lifecycle_manager.py`（BootReport/ShutdownReport） | ✅ production | ⚠️是**系统启动/关闭**生命周期（进程级），**非策略生命周期**——与 D-SIGNAL-14 7 状态无对应关系，勿混淆 |
+| D-SIGNAL-14 策略状态机 | [battle_map_12](../battle_map/battle_map_12_cross_cutting.md) 横切条目（研发/测试/灰度/生产/观察/废弃/归档） | 设计态（无独立代码） | §3.1 状态机映射真源；个人项目用 design_memo status + depgraph build_status 双字段替代（§4.3） |
+| depgraph 治理脚本 | `scripts/governance/apply_depgraph.py` / `sync_panorama_module.py` / `d5_architecture/generators/align_panoramas.py` | ✅ production（含 commit gate：depgraph_pre_registration_gate / depgraph_freshness_gate / panorama_alignment_gate 等） | §3.8 模块创建 4 步的执行工具链 |
+| 治理注册表 | `capability_canonical_file_registry.yaml` / `module_translation_registry.yaml` / `architecture_issue_registry.yaml` / `candidate_module_registry.yaml` | ✅ 运营中 | §3.8 creation_token 登记 + ARCH/CAND 分流纪律的载体 |
+| 退役归档目录 | `strategy_archive/<strategy_id>/` | ❌ 设计态（未建，待首个退役策略触发时施工） | §3.9 归档四件套第④条的物理终点 |
+| 多 AI 协作交接 | design_memo 产出物 + depgraph path + 00_index §7.3 占用表 | ✅ 运营中（人调度多会话） | §3.6 交接纪律的载体（无 agent 编排系统） |
+| 漂移检测/退役监控 | 本备忘 §3.3 Drift Observatory / §3.9 退役量化阈值 | ⚠️设计规范伪代码（mSPRT/四层编排/退役 5 步），代码待施工 | G28 核心设计产出，待 55 号（G26 骨架）定型后落地告警联动 |
+| 市场仿真域 | `simulation/` 15 模块（[71_d_simulation](../../02_domain_architecture_docs/71_d_simulation.md)） | ✅ production | §3.5 模拟阶段的市场仿真侧（what-if，≠paper trading；BM-SIM-05 数字孪生已降级 #ARCH-OE-010） |
+| 模拟→实盘迁移路径 | [53_simulation_live_path](53_simulation_live_path.md)（active）+ §2.4 设施盘点 | ✅ 已定稿 | §3.1 ④模拟→⑤实盘 的迁移路径承接（PARALLEL/SHADOW/GRAY_RAMP 门禁 + 灰度上线） |
 ## 3. 决策
 
 ### 3.1 策略生命周期 6 阶段状态机
 
-> 一个策略从想法到退役，经历 6 个阶段，每阶段有准入门禁与退出条件。状态机对齐 D-SIGNAL-14 Lifecycle Manager 的 7 状态（研发/测试/灰度/生产/观察/废弃/归档）。
+> 一个策略从想法到退役，经历 6 个阶段，每阶段有准入门禁与退出条件。状态机对齐 D-SIGNAL-14 Lifecycle Manager 的 7 状态（研发/测试/灰度/生产/观察/废弃/归档，真源条目见 [battle_map_12_cross_cutting](../battle_map/battle_map_12_cross_cutting.md) §跨切横切表；⚠️当前无独立代码实现，个人项目用 design_memo status + depgraph build_status 双字段替代，见 §4.3 简化方案）。
 
 | 阶段 | 作战地图 | 状态机映射 | 准入门禁 | 退出条件 | 关键环节 |
 |---|---|---|---|---|---|
@@ -81,6 +101,8 @@ scope: 07_trading_decision_architecture
 2. **假设驱动**（BM-RES-03）：研究不是瞎试——每个想法写成假设挂证据，状态机 提出→验证→接受/拒绝 全程留痕，防止灵感流失与重复造轮子
 3. **可复现性**（BM-RES-02）：超参 + 数据版本 + 代码 commit + 随机种子四要素完整记录，是一键复现的硬门禁
 4. **模块工厂**（BM-RES-10）：研究发现映射到现有模块（复用），找不到则标准 4 步创建（创建→注册→接入→验证），不手动搬代码
+
+> **策略规格产出物**（§3.1 ①孵化阶段退出条件"策略规格产出"的承接）：以 [20_first_batch_strategies](20_first_batch_strategies.md)（G04，active）为首批范式——sleeve 定位 / 容量测算 / 持仓周期 / 风控参数四要素齐备才算"规格产出"，方可进入 ② 训练阶段。
 
 **当前状态**：BM-RES-01（数据特征存储）已运营态；BM-RES-02/06/07 设计态待施工；BM-RES-03/04/05/08/09/10/11 缺失态（无锚点，BM-INV-001 违例）。
 
@@ -291,7 +313,7 @@ scope: 07_trading_decision_architecture
    ```
    **施工要点**：① 四层权重 Layer 4 最高（0.40，可证覆盖非启发式）反映"数学保证 > 经验阈值"优先级；② 下游影响门控仅作用于 Layer 1（特征漂移多为良性），Layer 2-4 已直接关联模型行为不门控；③ CUSUM→calibration flush 复用 §3.3 残差漂移 CUSUM 基础设施（同一检测器既检残差漂移又触发 CP 校准集冲刷）；④ 分级响应阈值 0.20/0.40/0.60/0.80 对应 alert/reduce/stop/quarantine/retrain 五级，与 stockalpha staged responses 对齐；⑤ Layer 4 `coverage_breach`（可证覆盖破）直接触发 RETRAIN 绕过 composite 阈值——数学保证层的告警不可被其他层"稀释"
 
-   **downstream_impact_gate + trigger_retraining 施工伪代码**（2026-08-10 补充，施工算法缺失填补——上述 drift_observatory_orchestrate 在 L200 调用 `downstream_impact_gate(l1)` 和 L216 调用 `trigger_retraining(strategy_id)` 均为悬空 helper，与 54 号 v1.13.0 补全 get_sector/current_session_id/aggregate 同类跨文档悬空 helper 缺口；drift_observatory_orchestrate + BettingMartingaleCoverageMonitor 均已有施工伪代码，仅剩这两个 helper 未落地则四层 Drift Observatory 编排逻辑无法闭环执行）：
+   **downstream_impact_gate + trigger_retraining 施工伪代码**（2026-08-10 补充，施工算法缺失填补——上述 drift_observatory_orchestrate 在 L200 调用 `downstream_impact_gate(l1)` 和 L216 调用 `trigger_retraining(strategy_id)` 均为悬空 helper，与 54 号补全 get_sector/current_session_id/aggregate 同类跨文档悬空 helper 缺口；drift_observatory_orchestrate + BettingMartingaleCoverageMonitor 均已有施工伪代码，仅剩这两个 helper 未落地则四层 Drift Observatory 编排逻辑无法闭环执行）：
 
    ```python
    def downstream_impact_gate(l1):
@@ -550,7 +572,7 @@ scope: 07_trading_decision_architecture
      | **双曲线衰减** | `K/(1+λt)` | **0.65** | **博弈论 Nash 均衡** | **机械因子**（动量/反转） |
      | 线性衰减 | `α₀·(1-λt)` | 0.51 | 最简近似 | 短期粗估 |
 
-     **与本项目对齐**：本项目首批 3 策略中，**打板**（[24 号](24_daban_strategy_detail.md)）和**事件驱动**（[26 号](26_event_driven_strategy_detail.md)）属机械因子（价量驱动、规则明确、易被套利），应优先采用双曲线衰减模型预测其 alpha 寿命；**多因子**（[25 号](25_multifactor_strategy_detail.md)）含价值/质量等判断型因子，指数衰减仍可适用。**裁定**：Phase 1 退役门禁仍用指数衰减（简单、通用、已在 §3.3 Decay Detection 实施）；**双曲线衰减记为 Phase 2 候选**——用于机械因子策略的退役时机精算（双曲线比指数衰减更准确地预测"alpha 何时退至 cost floor 以下"）。升级条件：首批策略 6+ 月 PnL 后，对比指数 vs 双曲线模型的预测残差，若双曲线显著优于指数（OOS 拟合 R² 差 >0.05）则升级。**与 [55 号](55_monitoring_review.md) 协同**：Decay Detection 5 监控点的 half-life 估算可切换衰减模型（当前指数，Phase 2 双曲线），无需重写监控框架
+     **与本项目对齐**：本项目首批 3 策略中，**打板**（[24 号](24_daban_strategy_detail.md)）和**事件驱动**（[26 号](26_event_driven_strategy_detail.md)）属机械因子（价量驱动、规则明确、易被套利），应优先采用双曲线衰减模型预测其 alpha 寿命；**多因子**（[25 号](25_multifactor_strategy_detail.md)）含价值/质量等判断型因子，指数衰减仍可适用。**裁定**：Phase 1 退役门禁仍用指数衰减（简单、通用、已在 §3.3 Decay Detection 实施）；**双曲线衰减记为 Phase 2 候选**——用于机械因子策略的退役时机精算（双曲线比指数衰减更准确地预测"alpha 何时退至 cost floor 以下"）。升级条件：首批策略 6+ 月 PnL 后，对比指数 vs 双曲线模型的预测残差，若双曲线显著优于指数（OOS 拟合 R² 差 >0.05）则升级。**与 [55 号](55_monitoring_review.md) 协同**（⚠️55 号为 draft v0.1.0 骨架待讨论，G26 监控告警 why 层未定稿）：Decay Detection 5 监控点的 half-life 估算可切换衰减模型（当前指数，Phase 2 双曲线），无需重写监控框架
 
    - **选项之外更好的答案算法：策略容量理论（break-even capacity + profit-maximising size）**（2026-08-10 算法审查补充，[hftradingbook 2026-06-04](https://hftradingbook.com/performance/capacity-and-alpha-decay) + Gatheral 2010 "No-dynamic-arbitrage and market impact"）：alpha 衰减不只有时间维度，还有**规模维度**——容量（capacity）是策略在市场冲击吃掉 alpha 前能承载的最大资金。基于平方根律 `impact = Y·σ·√(Q/V)`：
 
@@ -565,7 +587,7 @@ scope: 07_trading_decision_architecture
 
      **核心洞察**：利润最大化的资金量仅为 break-even capacity 的 **4/9（44%）**——远在达到容量天花板之前就该停止加仓，因为每多投入一单位资金边际收益递减而冲击成本递增。**反直觉**：`total_net_PnL = g·Q - c·Q^(3/2)` 对 Q 求导 = 0 得 Q_max = 4/9·Q*，而非 Q*。
 
-     **与本项目对齐**：① [31 号仓位算法](31_position_sizing.md) 的 Kelly 精裁决产出 f_i 后，FirmRiskAggregator 裁剪到单票 8% 上限——但 8% 上限是**风险约束**非**容量约束**。容量理论提示：打板策略（24 号）单票容量极小（几万~几十万），实际可部署资金可能远低于 8% 上限，应按 `Q_max = 4/9·Q*` 估算策略级容量天花板；② [55 号监控](55_monitoring_review.md) Decay Detection 第 4 监控点"Execution cost drift"正是容量饱和的信号——实际滑点/冲击成本相对回测假设漂移 = 策略接近 break-even capacity。**裁定**：MVP 阶段不实施容量理论形式化（打板策略容量天然受限，8% 上限已足够保守）；**记为 Phase 2 候选**——多因子/事件驱动策略资金规模扩大后，用 `Q_max=4/9·Q*` 精算策略级容量上限，避免"资金超容量部署导致 net edge 归零"。升级条件：单策略 AUM > 50 万 或 实际冲击成本持续 > 回测假设 1.5× 时触发评估
+     **与本项目对齐**：① [31 号仓位算法](31_position_sizing.md) 的 Kelly 精裁决产出 f_i 后，FirmRiskAggregator 裁剪到单票 8% 上限——但 8% 上限是**风险约束**非**容量约束**。容量理论提示：打板策略（24 号）单票容量极小（几万~几十万），实际可部署资金可能远低于 8% 上限，应按 `Q_max = 4/9·Q*` 估算策略级容量天花板；② [55 号监控](55_monitoring_review.md)（⚠️draft v0.1.0 骨架待讨论，监控告警 why 层未定稿）Decay Detection 第 4 监控点"Execution cost drift"正是容量饱和的信号——实际滑点/冲击成本相对回测假设漂移 = 策略接近 break-even capacity。**裁定**：MVP 阶段不实施容量理论形式化（打板策略容量天然受限，8% 上限已足够保守）；**记为 Phase 2 候选**——多因子/事件驱动策略资金规模扩大后，用 `Q_max=4/9·Q*` 精算策略级容量上限，避免"资金超容量部署导致 net edge 归零"。升级条件：单策略 AUM > 50 万 或 实际冲击成本持续 > 回测假设 1.5× 时触发评估
    - **Edge Decay 五骑士分类法 + 实证数据**（[smartfinancedata 2026-08](https://www.smartfinancedata.com/is-your-trading-edge-fading-signs-of-historical-edge-decay/) 127 策略追踪）：策略衰减有五种根因机制，按影响占比排序——
 
      | 衰减骑士 | 影响占比 | 机制 | 经典案例 |
@@ -641,11 +663,11 @@ scope: 07_trading_decision_architecture
 
 ### 3.4 回测阶段（BM-BT）规范
 
-承接 [battle_map_03_backtest_validation](../battle_map/battle_map_03_backtest_validation.md) + [52_backtest_framework_docking](52_backtest_framework_docking.md)（IS→WFA→OOS 门控 + 7-gate 审计 v1.7.3）。本节不重复 52 号的施工细节，仅锁定生命周期视角的回测准入门禁与退出条件。
+承接 [battle_map_03_backtest_validation](../battle_map/battle_map_03_backtest_validation.md)（BM-BT-01~07 环节视图）+ [52_backtest_framework_docking](52_backtest_framework_docking.md)（⚠️G23 设计备忘 draft v0.1.0 骨架待讨论——回测门控 why 层未定稿；IS→WFA→OOS 门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py`）。本节锁定生命周期视角的回测准入门禁与退出条件。
 
 **核心纪律**：
-1. **IS→WFA→OOS 三段式门控**（52 号 BM-BT-01~07）：In-Sample 训练 → Walk-Forward Analysis 滚动验证 → Out-of-Sample 样本外验证，三段全过才准入模拟阶段。**WFA 是核心**——固定参数 IS 训练 + 滚动窗口 OOS 验证，模拟"参数不知道未来"的真实场景，防止参数过拟合
-2. **过拟合检测三维度**（52 号 + [kagels-trading 2026-08-01](https://www.kagels-trading.de/trading-edge/)）：
+1. **IS→WFA→OOS 三段式门控**（battle_map_03 BM-BT-01~07 + 代码 `decision_gate.py`）：In-Sample 训练 → Walk-Forward Analysis 滚动验证 → Out-of-Sample 样本外验证，三段全过才准入模拟阶段。**WFA 是核心**——固定参数 IS 训练 + 滚动窗口 OOS 验证，模拟"参数不知道未来"的真实场景，防止参数过拟合
+2. **过拟合检测三维度**（battle_map_03 BM-BT-05 + [kagels-trading 2026-08-01](https://www.kagels-trading.de/trading-edge/)）：
    - **Deflated Sharpe Ratio**（DSR）：调整回测 Sharpe 反映"多次试错后的最佳结果"（multiple testing penalty），DSR 仍显著 > 0 才算真 edge（与 §3.3 第 4 条漂移检测的 DSR 鉴别复用同一方法）
    - **PBO（Probability of Backtest Overfitting）**：Combinatorially Symmetric Cross-Validation 计算"过拟合概率"，PBO > 50% 则策略大概率过拟合（11号文档已降级为 perturbation PBO 替代）
    - **参数稳定性**：邻近参数产生相似结果（非孤立最优），若轻微调参就性能剧变 = 过拟合
@@ -656,7 +678,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.5 模拟阶段（BM-SIM）规范
 
-承接 [battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md) + [53_simulation_live_path](53_simulation_live_path.md)（三阶段迁移 + 4 级 Kill Switch + Alpha Decay v1.6.3）。本节锁定生命周期视角的模拟准入门禁与退出条件。
+承接 [battle_map_04_simulation_validation](../battle_map/battle_map_04_simulation_validation.md) + [53_simulation_live_path](53_simulation_live_path.md)（三阶段迁移 + 4 级 Kill Switch + Alpha Decay，active）。本节锁定生命周期视角的模拟准入门禁与退出条件。
 
 **核心纪律**：
 1. **paper → shadow → live 三阶段迁移**（53 号）：paper trading（虚拟撮合，验证逻辑）→ shadow mode（实盘行情 + 虚拟撮合，验证信号）→ live trading（实盘小额，验证执行）。每阶段有独立退出条件
@@ -678,13 +700,14 @@ scope: 07_trading_decision_architecture
 2. **认领前置阅读**：认领 G05 必须先读 G04 产出物；认领 G12 必须先读 30_multi_strategy §2.1；所有 AI 必读 30_multi_strategy + 00_index
 3. **三层分治**（01_spec §2）：生成器管 what is / design_memo 管 why / depgraph 管 what will be——AI 不得越层（生成器不写 why，备忘不写 what is 细节，depgraph 不写 why）
 4. **段位编号**（01_spec §4.1）：新文档按业务域入段（0x-9x），段内取下一个空号，不预留坑位——AI 认领时在 00_index §7.3 占用表登记，避免编号撞车
+5. **并发文件级冲突纪律**（2026-08-12 实战教训补，#ARCH-WORKTREE-GATE-001）：多会话并发施工共享主工作区 git index——未 commit 到分支的修改随时可能被并发会话的 stash/reset/checkout 抹掉（**未落分支的修改不算完成**）。强制：①Edit 前先 `python scripts/git_commit.py --claim-only` 前移声明持有（搭便车防护）；②commit 唯一入口 `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（GitCommitGateway 串行锁+stash 隔离，裸 git commit 被 GATE-COMMIT-GW 阻断）；③检测到其他活跃 session 时 WORKTREE gate 阻断主工作区 commit，须 `python scripts/session_worktree.py create/exec/merge` 物理隔离（本备忘 v2.11.0 修订即经此流程落地）。**行业背书**（2026-08）：CMU CAID（[arXiv:2603.21489](https://arxiv.org/pdf/2603.21489)，2026-03）实证 branch-and-merge + git worktree 是多 agent 协作的核心协调机制（PaperBench +26.7% / Commit0 +14.3%）；VS Code 2026-08-07 起为 Copilot/Claude/Codex agent session 默认启用 git worktree 隔离（[luonghongthuan 2026-08-10](https://luonghongthuan.com/en/blog/vscode-copilot-agent-worktree-isolation-2026/)）——"并发 agent 未提交修改被静默覆盖"是 2026-08 行业公认失败模式，worktree 隔离是其标准解法
 
 ### 3.7 文档治理（段位编号体系）
 
 承接 00_index §8 + 01_spec §4：
 
 - **段位语义**：0x=meta｜1x=地基（regime/数据特征）｜2x=Alpha 策略｜3x=组合仓位与风控｜4x=交易执行｜5x=验证与可观测性｜6x=跨切治理｜9x=开放问题与远期
-- **骨架先行工作流**（00_index v2.3.0，2026-08-09）：design_memos 共 38 篇 = 15 篇 active/draft + 23 篇骨架（frontmatter status=draft，仅含 §1 主题组信息 + §7 讨论要点清单）。工作流：先逐篇讨论填空（骨架→active）再施工对应模块
+- **骨架先行工作流**（00_index v2.3.0，2026-08-09）：design_memos 骨架先行（最新篇数台账以 00_index §0 目录为准——v2.3.0 时 38 篇 = 15 active/draft + 23 骨架，后续有新增占用；frontmatter status=draft，仅含 §1 主题组信息 + §7 讨论要点清单）。工作流：先逐篇讨论填空（骨架→active）再施工对应模块
 - **status 枚举**：active（已定稿/已落地）/ draft（草案/待讨论/待施工）/ deprecated（废弃）
 - **文档种类适配**（01_spec §4.4）：决策备忘按八节模板；spec/工程详设按对象内在结构；诊断报告按因果时间线；施工计划按施工流程；索引/规范/清单按职能。两条硬约束：必须有修订记录 + 必须有开放问题等价节
 
@@ -693,9 +716,9 @@ scope: 07_trading_decision_architecture
 承接 01_spec §2.2 三层协作流程 + 项目治理硬约束：
 
 **模块创建 4 步**（对齐 BM-RES-10 模块工厂）：
-1. **创建**：写 design_memo（why）→ 用 apply_depgraph.py 登记模块到 depgraph 设计态（what will be，build_status=planned）→ **生成 creation_token**
+1. **创建**：写 design_memo（why）→ 用 `scripts/governance/apply_depgraph.py` 登记模块到 depgraph 设计态（what will be，build_status=planned）→ **生成 creation_token**
 2. **注册**：在 `capability_canonical_file_registry.yaml` 登记模块的 canonical file 路径；在 `module_translation_registry.yaml` 登记 plain_zh 翻译条目
-3. **接入**：sync_panorama_module.py 自动派生其余 3 图，align_panoramas.py 验证五图对齐
+3. **接入**：`scripts/governance/sync_panorama_module.py` 自动派生其余 3 图，`scripts/governance/d5_architecture/generators/align_panoramas.py` 验证五图对齐
 4. **验证**：施工后 build_status 从 planned → production；生成器（battle_map 等）从 depgraph 派生当前状态视图（what is）
 
 **ARCH 登记纪律**（项目治理硬约束）：
@@ -726,19 +749,19 @@ scope: 07_trading_decision_architecture
 | **Equity curve 斜率丧失** | equity curve 平台或下降持续数周/数月（非单周，[arrowalgo 2026-05-14](https://arrowalgo.com/when-to-stop-a-trading-algorithm/)：flat or declining for a meaningful period — not a single week, but several weeks or months） | 净值曲线监控 |
 | **Half-life 预测** | 半衰期模型 `α(t) = α₀·e^(-λt)` 预测 alpha 已降至 transaction cost floor 以下（[mathandmarkets 2026-02-22](https://mathandmarkets.com/p/half-lives-of-alpha-why-every-strategy)：可用半衰期 = `-ln(cost_floor/α₀) / λ`） | §3.3 第 5 条 half-life 数学模型 |
 | **Regime 失配持续** | 当前 regime 与策略设计 regime 持续不匹配 + 该 regime 历史回测也表现差（[arrowalgo 2026-05-14](https://arrowalgo.com/when-to-stop-a-trading-algorithm/)：market regime has shifted and your strategy was not built to handle the new environment） | regime 检测器联动（10号 spec） |
-| **逻辑失效（结构性）** | 原始市场前提不再成立（如打板策略遇 2026 量化占比 35%+ + 程序化新规 + 连板炸板率 68%，[24_daban_strategy_detail v1.5.0](24_daban_strategy_detail.md) 已记录） | 人工判断 + 设计备忘登记 |
+| **逻辑失效（结构性）** | 原始市场前提不再成立（如打板策略遇 2026 量化占比 35%+ + 程序化新规 + 连板炸板率 68%，[24_daban_strategy_detail](24_daban_strategy_detail.md) 已记录） | 人工判断 + 设计备忘登记 |
 
-**退役流程**（与 G26 55_monitoring_review 联动）：
+**退役流程**（与 G26 [55_monitoring_review](55_monitoring_review.md) 联动——⚠️55 号为 draft v0.1.0 骨架待讨论，监控告警 why 层未定稿；退役量化标准当前由本节承载，55 号定型后承接运营侧告警联动）：
 1. **触发**：Decay Detection 5 监控点（§3.3 第 5 条）任一持续告警 → 进入"观察"状态（D-SIGNAL-14 状态机映射）
 2. **诊断**：跑最近 3-6 个月数据回测 + 检查策略日志 + 对比其他策略（区分"单策略坏"还是"全策略同时坏=regime 切换"，[arrowalgo 2026-05-14](https://arrowalgo.com/when-to-stop-a-trading-algorithm/)）
 3. **决策**：按三选一矩阵裁定（Reoptimize / Pause-Cut / Retire）
 4. **退役执行**：仓位减半→暂停新建仓→平掉存量→归档到策略归档区（详见下方"策略归档机制"）+ D-SIGNAL-14 废弃审批 + design_memo status 改 deprecated + depgraph build_status 改 retired
 5. **复盘**：归因退役原因按**五骑士分类法**（§3.3 第 5 条）分类——① Crowding 拥挤（41%）→ 换策略/降低拥挤度/寻找新 alpha 源；② Regime Change 状态切换（28%）→ 等待 regime 回归或适配新 regime；③ Overfitting 过拟合（18%）→ 回 §3.2 孵化阶段重新假设；④ Technology Evolution 技术演进（9%）→ 降级或退役；⑤ Regulatory Change 监管变更（4%）→ 退役。归因结论沉淀到 90_methodology_open_questions 防止同类策略再被孵化
 
-**触发式移除纪律**（[quanthedgeai 2026-07-13](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)）：**"希望不是策略；触发式移除才是"**——防止操作者靠希望持有亏损策略。退役流程须**预定义触发器并在触发时机械执行**，不允许"再观察一下"/"可能是暂时回撤"/"下个月再说"等人为延迟。**心理防线**：操作者面对亏损策略的常见心理陷阱是"沉没成本谬误"（已投入大量研究时间）+ "损失厌恶"（不愿实现亏损）+ "过度自信"（相信会回归）——触发式移除用机械规则消除人为判断的偏差。**触发器实现**：在 55_monitoring_review 的监控告警中硬编码退役阈值（§3.9 退役量化阈值表），阈值触发即自动进入"观察"状态并通知，不允许人工抑制（人工只能审批"延长观察"或"加速退役"，不能"取消退役"）
+**触发式移除纪律**（[quanthedgeai 2026-07-13](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)）：**"希望不是策略；触发式移除才是"**——防止操作者靠希望持有亏损策略。退役流程须**预定义触发器并在触发时机械执行**，不允许"再观察一下"/"可能是暂时回撤"/"下个月再说"等人为延迟。**心理防线**：操作者面对亏损策略的常见心理陷阱是"沉没成本谬误"（已投入大量研究时间）+ "损失厌恶"（不愿实现亏损）+ "过度自信"（相信会回归）——触发式移除用机械规则消除人为判断的偏差。**触发器实现**：在 G26 监控告警中硬编码退役阈值（§3.9 退役量化阈值表）——⚠️55 号为 draft v0.1.0 骨架待讨论，告警硬编码落地待其定型；当前阈值真源为本备忘本节。阈值触发即自动进入"观察"状态并通知，不允许人工抑制（人工只能审批"延长观察"或"加速退役"，不能"取消退役"）
 
 **策略归档机制**（2026-08-10 补充，修复断裂交叉引用）：原引用"策略墓地（30_multi_strategy §3.1 #8 A/B 并行统计保留）"经核实为**断裂引用**——30 号 §3.1 实际是"Model B 拒绝"不含"A/B 并行统计保留"内容；60 号（跨切清理）§3.1 已将"#8 A/B 并行统计"列为 A 模型消除项**删除**（A 模型自然叠加等价实现，无需跨策略仲裁）；"策略墓地"一词全局搜索无任何文档定义。退役策略的归档终点须在本节明确定义，不再依赖已删除的 30 号 #8：
-- **归档四件套**：① MLflow Model Registry model version 移至 `@archived` alias（与 @champion/@challenger 并列，[PAASUP 2026-06](https://ideas.paasup.io/global/mlops-pipeline-en/)：MLflow alias 生命周期 @champion/@challenger/@archived）；② design_memo `status` 改 `deprecated`；③ depgraph `build_status` 改 `retired`；④ 策略产物（PnL 曲线 + 参数快照 + training_run_id + 退役原因五骑士归因）归档到 `strategy_archive/<strategy_id>/` 目录
+- **归档四件套**：① MLflow Model Registry model version 移至 `@archived` alias（与 @champion/@challenger 并列，[PAASUP 2026-06](https://ideas.paasup.io/global/mlops-pipeline-en/)：MLflow alias 生命周期 @champion/@challenger/@archived）；② design_memo `status` 改 `deprecated`；③ depgraph `build_status` 改 `retired`；④ 策略产物（PnL 曲线 + 参数快照 + training_run_id + 退役原因五骑士归因）归档到 `strategy_archive/<strategy_id>/` 目录（⚠️设计态：目录未建，待首个退役策略触发时施工——代码核查 2026-08-12 `strategy_archive/` 不存在）（⚠️设计态：目录未建，待首个退役策略触发时施工——代码核查 2026-08-12 `strategy_archive/` 不存在）
 - **保留统计的意义**（替代已删除的"A/B 并行统计保留"）：归档非"丢弃"，保留退役策略的历史表现作为**基准线**——新策略孵化时须对比"是否优于已退役的同类型策略"（如新动量策略须优于已退役动量策略的 PnL 曲线），避免重新孵化已失败的策略模式（与 §3.2 第 2 条"假设驱动"呼应：已退役策略的失败假设不再重复验证）。A 模型定型后无需跨策略 A/B 投票仲裁（30 号 §3.1 #8 已删），但"同类型策略历史基准对比"仍是有价值的归档用途
 - **复活机制**：退役策略归档后不永久封存——若 regime 检测器确认五骑士 ② Regime Change 类退役的 regime 已回归，可经 §3.2 孵化阶段重新评估复活可行性（须重新走训练→回测→模拟→实盘全流程，非直接重启）
 
@@ -859,17 +882,24 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 ### 7.3 多 AI 会话的上下文交接模板（需人决策）
 当前交接靠"认领前置阅读"纪律，但缺少标准化的交接模板。是否需要定义一份"AI 会话交接 brief"模板（包含：前序产出物路径 / 当前状态 / 待决问题 / 不可越的硬约束）？还是依赖 design_memo frontmatter（status/depends_on/related_issues）足够？
 
+### 7.4 00_index 漂移与 52/55 号骨架联动登记（2026-08-12 审查新增，不越界改仅登记）
+
+- **00_index 待同步**（其 owner 会话处理）：①§3 G26 行标 55 号"active v1.21.0"、§0 目录标 52 号"active v1.7.4"/55 号"active v1.21.0"——git log 实证 52/55 号从未离开 draft v0.1.0 骨架（仅 3 个 commit），均为虚构版本；②§0 目录标本备忘 v2.9.1 滞后（实际 v2.10.0+）；③§2 三层快照标 01/02/04 阶段"why 层空白"滞后（本备忘 §3.2/§3.3/§3.5 已承载）；④§3 G24 行标 53 号"待讨论"且产出物名误为 `53_simulation_live_path_simulation_live_path.md`（topic 重复）。
+
+- **52/55 号骨架联动**：52 号（G23 回测 why 层）/55 号（G26 监控告警 why 层）均为 draft v0.1.0 骨架待讨论。本备忘 §3.4/§3.9 已先行承载生命周期侧设计（回测准入门禁、退役量化标准），引用均已标注骨架状态；52/55 号定型后须回填双向联动并复核本备忘 §3.4/§3.9 边界。
+
 ## 8. 引用
 
 ### 8.1 相关作战地图与备忘
 - [battle_map_01_research_incubation.md](../battle_map/battle_map_01_research_incubation.md)（孵化阶段 33 环节，BM-RES 规范真源）
 - [battle_map_02_model_training.md](../battle_map/battle_map_02_model_training.md)（训练阶段 14 环节，BM-MOD 规范真源，Champion-Challenger）
+- [battle_map_12_cross_cutting.md](../battle_map/battle_map_12_cross_cutting.md)（D-SIGNAL-14 Lifecycle Manager 7 状态真源条目 + 四模式开关——§3.1 状态机映射与 §3.5 模拟阶段 paper/shadow 模式的横切依据）
 - [00_index_trading_decision.md](00_index_trading_decision.md) §3 G28 / §5（三轨道）/ §7（多 AI 分工）/ §8（命名规范）
 - [01_design_memo_management_spec.md](01_design_memo_management_spec.md) §2.2（三层协作流程）/ §4（命名与结构）/ §4.4（文档种类适配）
 - [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) §5（暂缓项：多 Agent / 数字孪生）/ §2.5（Drawdown Protocol 退役相邻）
-- [52_backtest_framework_docking.md](52_backtest_framework_docking.md)（③ 回测阶段，active v1.7.3）
-- [53_simulation_live_path.md](53_simulation_live_path.md)（④ 模拟与实盘验证路径，active v1.6.3）
-- [55_monitoring_review.md](55_monitoring_review.md)（⑥ 退役标准，active v1.13.0）
+- [52_backtest_framework_docking.md](52_backtest_framework_docking.md)（③ 回测阶段，⚠️draft v0.1.0 骨架待讨论——G23 why 层未定稿；回测门控当前真源为代码 `src/zephyr/backtest/core/decision_gate.py` + [battle_map_03](../battle_map/battle_map_03_backtest_validation.md)）
+- [53_simulation_live_path.md](53_simulation_live_path.md)（④ 模拟与实盘验证路径，active）
+- [55_monitoring_review.md](55_monitoring_review.md)（⑥ 退役标准运营侧承接，⚠️draft v0.1.0 骨架待讨论——G26 监控告警 why 层未定稿；退役量化标准当前由本备忘 §3.9 承载）
 
 ### 8.2 治理注册表
 - `capability_canonical_file_registry.yaml`（模块 canonical file 登记）
@@ -973,6 +1003,8 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 - [Conditional Test Martingales via Model Polling](https://arxiv.org/abs/2602.13848)（arXiv:2602.13848v2, Shaer et al., ICML 2026, 2026-06-12）—— 固定参考集避免 test-time contamination；鲁棒 betting function 显式建模有限参考集估计误差；anytime type-I + power-one + 有界检测延迟；betting martingale 覆盖率监测的污染修复
 - [Betting on Moments: Legendre Jumper Martingales](https://arxiv.org/abs/2606.20859)（arXiv:2606.20859v2, Szabadváry, 2026-07-12）—— 移位 Legendre 多项式 betting function 将 Simple Jumper 扩展到高阶矩（k=2 方差/k=3 偏度）；Variational Legendre Jumper 常数时间更新；betting martingale 一阶矩→高阶矩漂移检测升级
 - [Auditing Conformal Prediction Coverage for Subgroups](https://arxiv.org/abs/2608.04254)（arXiv:2608.04254, 2026-08-06）—— 有限样本保证的子组欠覆盖审计；预定义子组（regime/行业/市值分位）检测实际覆盖显著低于名义水平；FWER 控制；Layer 4 边际覆盖→条件覆盖的静默失效诊断
+- [CAID: Centralized Asynchronous Isolated Delegation](https://arxiv.org/pdf/2603.21489)（arXiv:2603.21489, CMU Geng & Neubig, 2026-03）—— 多 agent 异步协作三核心 SWE 原语：centralized task delegation + asynchronous execution + **isolated workspaces（git worktree）**；实证 branch-and-merge 是多 agent 协作的核心协调机制，PaperBench +26.7% / Commit0 +14.3%——本备忘 §3.6 第 5 条并发文件级冲突纪律的学术背书
+- [VS Code Agent Sessions Git-Worktree Isolation](https://luonghongthuan.com/en/blog/vscode-copilot-agent-worktree-isolation-2026/)（luonghongthuan, 2026-08-10）—— GitHub 2026-08-07 起为 Copilot/Claude/Codex agent session 默认启用 git worktree 隔离（每 session 独立工作目录+index，共享 .git 对象库）；"并发 agent 未提交修改被静默覆盖"是行业公认失败模式——本备忘 §3.6 第 5 条的行业标准背书
 
 ## 9. 修订记录
 
@@ -1000,3 +1032,7 @@ battle_map_01 有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点
 | 2026-08-10 | 2.8.0 | 第十九轮审查施工环节流程算法完整性+悬空 helper 补全：①§3.3 第 4 条补 **downstream_impact_gate 施工伪代码**（Layer 1 特征漂移的下游影响门控——四步检查 regime 解释+IC 衰减+Sharpe 退化+残差膨胀，复合判定"regime 可解释 AND IC/Sharpe/残差均无退化=良性漂移降级，否则保留告警"，IC 阈值 0.05/Sharpe 阈值 0.7/残差阈值 1.3 与 §3.3 第 5 条 Decay Detection + §3.3 第 7 条回滚阈值对齐非独立标定，与 SHAP Drift Attribution/ARM 变点归因在"是否漂移→哪些维度→业务影响"链路分工，施工算法缺失填补——drift_observatory_orchestrate L200 调用 downstream_impact_gate(l1) 悬空 helper 无定义则四层 Drift Observatory 编排逻辑无法闭环执行，与 54 号 v1.13.0 补全 get_sector/current_session_id/aggregate 同类跨文档悬空 helper 缺口）；②§3.3 第 4 条补 **trigger_retraining 施工伪代码**（重训练触发分级逻辑——三触发策略定时/性能/数据量+分级决策突发漂移 composite≥0.80/coverage_breach 全量重训练 vs 渐进/定时/数据量增量重训练+回滚保险 SBS 纪律对比基线维护态 Champion+晋升门禁 §3.3 第 9 条 OOS Sharpe≥Champion×0.9/profit factor>1.5/MaxDD≤Champion×1.2/子周期一致性/Sortino+Calmar 三角验证，Phase 3 渐进漂移可升级 knowledge distillation 比全量重训练成本低 5-10x，施工算法缺失填补——drift_observatory_orchestrate L216 调用 trigger_retraining(strategy_id) 悬空 helper 无定义则 RETRAIN 响应无法执行）；③两个函数复用 drift_observatory/ic_tracker/performance_tracker/loss_tracker/regime_detector/training_pipeline/mlflow/promotion_gate/rollback_manager 现有组件无新基础设施符合 MVP 分批原则 | 施工环节流程算法完整性审查发现 2 处悬空 helper 缺口：①downstream_impact_gate 在 drift_observatory_orchestrate L200 被调用但无定义——Layer 1 特征漂移的下游影响门控是"statistical significance ≠ business significance"纪律（llmops.report 2026-04-27）的落地，缺失则所有统计显著的特征漂移都告警导致告警疲劳；②trigger_retraining 在 drift_observatory_orchestrate L216 被调用但无定义——重训练触发是 §3.3 第 8 条三策略（定时/性能/数据量）的落地，缺失则 RETRAIN 响应无法执行。两个悬空 helper 与 54 号 v1.13.0 补全的 get_sector/current_session_id/aggregate 同属跨文档悬空 helper 缺口，drift_observatory_orchestrate + BettingMartingaleCoverageMonitor 均已有施工伪代码仅剩这两个未落地则四层 Drift Observatory 编排逻辑无法闭环执行。两项均为施工算法闭环必需 |
 | 2026-08-10 | 2.9.0 | 第二十轮审查文档结构/顺序/内容+2026-08 最新研究补充（全网搜索 2026-08 命中）：①§3.2 LLM alpha 挖掘远期候选补 **AlphaCrafter 全栈多 Agent 框架**（arXiv:2605.05580，Miner Agent 因子挖掘+周期复验剪枝 / Screener Agent regime-conditioned 因子集成 / Trader Agent 策略构造执行 三 Agent 闭环，动态因子管理对抗 alpha decay 优于静态因子集，与 QuantaAlpha 单一 Miner 环节区别是全栈闭环，与 30 号"LLM 多 Agent 辩论暂缓"约束冲突最直接记为 Phase 5+ 远期候选）；②§3.2 补 **FactorMiner 自进化 Agent + Ralph Loop**（arXiv:2602.14670 Tsinghua，Modular Skill Architecture 可执行评估工具 + Experience Memory 成功模式+失败约束 + Ralph Loop retrieve→generate→evaluate→distill，110 因子全 A 股因子库低冗余实证，与 AlphaAgent AST 相似度正交——AST 事中过滤 vs Memory 事前引导，**FactorMiner Experience Memory 与本项目的轻量契合点**：经验沉淀思想可脱离 LLM 独立实现，本项目因子孵化 §3.2 已有"假设驱动+证据挂载"状态机，Experience Memory 是该状态机的"跨假设经验累积"层，Phase 3 候选因子库 >20 时将已验证假设的成功/失败模式结构化为可检索 memory 辅助人工因子研究 <100 行代码无需 LLM）；③§3.2 本项目定位从"三篇"升级为"五篇"，评估优先级更新为 AlphaSchema > FactorMiner > AlphaCrafter > XALPHA > EFS（FactorMiner 的 Ralph Loop+Experience Memory 最轻量可先实现评估工具辅助人工）；④§8.3 行业实证补充 2 条 2026 来源（AlphaCrafter arXiv:2605.05580 / FactorMiner arXiv:2602.14670） | 2026-08-10 全网搜索发现 §3.2 LLM alpha 挖掘远期候选列表缺 AlphaCrafter 和 FactorMiner 两篇 2026 最新研究：①AlphaCrafter 是唯一覆盖"因子挖掘→regime 适配→策略执行"全链路的三 Agent 闭环框架（QuantaAlpha/EvoQuant/QuantEvolver/AlphaSchema/XALPHA/EFS 均只覆盖其中一环），缺失则远期候选评估无全栈闭环参照；②FactorMiner 的 Ralph Loop+Experience Memory 是唯一"经验沉淀"范式（其他均为"生成-评估"范式无跨试验经验累积），且其 Experience Memory 可脱离 LLM 独立实现（<100 行代码）与本项目 §3.2 假设驱动状态机天然契合是 Phase 3 可施工的轻量增强。两项均为 2026 最新 LLM alpha 挖掘研究，AlphaCrafter 为全栈闭环参照，FactorMiner 为经验沉淀范式+Phase 3 轻量契合点 |
 | 2026-08-10 | 2.10.0 | 第二十一轮审查施工算法完整性+2026-08 最新研究补充（全网搜索 2026-05 命中）：①§3.2 LLM alpha 挖掘远期候选补 **AlphaMemo 结构化搜索过程记忆的自进化 alpha 挖掘 agent**（[arXiv:2606.20625](https://arxiv.org/abs/2606.20625), Yu et al. 2026-05-26, University of Sydney + University of Edinburgh）——4 大组件（Parent-Edit Action Space 父代邻域编辑动作空间 / Structured Search-Process Memory 残差过程记忆教师修正 / AST-diff Edit Motifs 编辑模体 / Asymmetric Process Veto 不对称过程否决），核心创新是记忆整个搜索过程（含残差/决策/AST 差异）非仅结果，关键洞见"过程记忆 > 结果记忆"+"失败否决不对称性"；②§3.2 六组件统一框架映射补 AlphaMemo=Memory+Selection+Variation（强化 Memory 维度——过程级记忆是 Memory 组件范式升级），关键洞见 1 更新 Memory 维度覆盖从 FactorMiner+EvoQuant 扩展到含 AlphaMemo 三者；③§3.2 本项目定位评估优先级补 AlphaMemo（AlphaSchema > FactorMiner > AlphaMemo > Hubble > ...），补 AlphaMemo APV 轻量契合点（失败否决不对称性可脱离 LLM 独立实现 Phase 3 候选 <80 行代码，与 FactorMiner Experience Memory 正交可叠加）；④§8.3 行业实证补充 AlphaMemo arXiv:2606.20625 | 2026-08-10 全网搜索发现 §3.2 LLM alpha 挖掘远期候选缺 AlphaMemo（arXiv:2606.20625 2026-05-26）——AlphaMemo 的结构化搜索过程记忆是唯一显式建模"过程级 Memory"的候选（FactorMiner 记忆语义级经验洞见，EvoQuant 蒸馏经验，AlphaMemo 记忆完整搜索过程含残差/决策/AST 差异），且其 APV 不对称否决可脱离 LLM 独立实现（Phase 3 候选 <80 行代码），与 FactorMiner Experience Memory 正交可叠加（FactorMiner 记忆"什么方向有前景"，AlphaMemo 记忆"什么编辑模式会失败"）。AlphaMemo 为 2026-05 最新 LLM alpha 挖掘研究，填补六组件框架 Memory 维度的过程级记忆空白 |
+| 2026-08-12 | 2.11.0 | 第二十二轮审查（幻觉引用清除 + 已施工设施盘点 + 版本漂移修复）：①**幻觉引用修正**——git log 实证 52/55 号从未离开 draft v0.1.0 骨架，但 v2.10.0 前 §3.4/§8.1 引用其"IS→WFA→OOS 门控 + 7-gate 审计 v1.7.3 / active v1.13.0"为虚构（00_index v2.5.0 批量同步错标 52-55 号 active 导致连环幻觉）：§3.4 承接行+核心纪律①②改为 battle_map_03 + 代码真源 `backtest/core/decision_gate.py`；§8.1 52/55 号条目改骨架待讨论标注；§3.3 双曲线段/容量段 2 处"55 号协同"补骨架标注；§3.9 退役流程 2 处 55 号联动补骨架标注并明确"退役量化标准当前由本备忘 §3.9 承载"；②**版本漂移修复**——53 号 v1.6.3→v1.7.0 / 24 号 v1.5.0→v1.9.7 / 54 号 v1.13.0→v1.14.0（body，修订记录历史不动）；③**新增 §2.4 已施工设施盘点**（通用规则 #11——14 行设施表：paper_live_transition / decision_gate / deflated_sharpe / look_ahead_bias_detector / experiment_tracking / 系统级 lifecycle_manager（⚠️澄清：进程级启动关闭≠策略生命周期）/ D-SIGNAL-14（设计态无代码）/ depgraph 脚本链 / 治理注册表 / strategy_archive（设计态未建）/ 多 AI 交接载体 / 漂移检测（伪代码待施工）/ simulation 域 / 53 号）；④§3.1 D-SIGNAL-14 补 battle_map_12 真源链接+无独立代码标注；⑤§3.8 三脚本补稳定路径；⑥§3.9 归档四件套④补 strategy_archive/ 设计态标注；⑦§2.1/§3.7 "38 篇"计数去漂移化（指向 00_index §0 台账）；⑧新增 §7.4 开放问题（00_index 四处漂移登记 + 52/55 骨架联动，不越界改）；⑨§8.1 补 battle_map_12 条目 | 通用规则 #11 已施工设施盘点 + 交叉引用实证审查：git log 证明 52/55 号从未有 active 版本（v1.7.3/v1.13.0 均为 00_index 错标后的连环幻觉）；代码核查确认 strategy_archive/ 未建、trading/lifecycle_manager.py 为系统进程级非策略级。⚠️施工备注：本次修订期间检测到并发会话（arch-review-g10-g06）worktree 操作导致工作区多次回滚，采用批量替换+立即提交固化 |
+| 2026-08-12 | 2.12.0 | 第二十三轮审查（缺失环节补齐）：①§3.6 交接纪律补第 5 条**并发文件级冲突纪律**（2026-08-12 实战教训：多会话并发共享主工作区 git index，未落分支的修改随时被并发会话 stash/reset 抹掉——本次审查过程中工作区修改被多次回滚实证；强制 `git_commit.py --claim-only` 前移声明 + GitCommitGateway 唯一 commit 入口 + `session_worktree.py` 物理隔离，#ARCH-WORKTREE-GATE-001）；②§3.2 补**策略规格产出物**承接（§3.1 ①孵化阶段退出条件"策略规格产出"原无承接定义，补 20 号 G04 首批范式：sleeve 定位/容量测算/持仓周期/风控参数四要素齐备方可进入 ② 训练阶段） | 第 3 轮缺失环节审查发现：①多 AI 协作交接纪律缺"并发文件级冲突"处置——治理设施（git_commit.py claim 协议 / session_worktree）已存在但本备忘 §3.6 未登记，AI 会话不知情则修改必丢；②孵化→训练准入的"策略规格产出"缺承接定义。53 号 v1.7.1 同步精简正文过渡文本（修改原则合规） |
+| 2026-08-12 | 2.12.1 | 第二十四轮审查（2026-08 最新研究搜索整合）：①§3.6 第 5 条补**行业背书**——CMU CAID（arXiv:2603.21489，2026-03）实证 branch-and-merge+git worktree 是多 agent 协作核心协调机制（PaperBench +26.7%/Commit0 +14.3%）；VS Code 2026-08-07 起 Copilot/Claude/Codex agent session 默认 git worktree 隔离（luonghongthuan 2026-08-10），"并发 agent 未提交修改被静默覆盖"为 2026-08 行业公认失败模式；②§8.3 补 CAID + VS Code worktree 2 条来源；③53 号侧 2026-08 搜索（paper→live 迁移 + canary deployment）确认现有三阶段+5 级 ramp+key_gates 与最新实践（x3algo/algovantis/futureagi 四阶段 gate/theneuralbase gradual rollout/metricgate shadow-canary 方差分析）一致，零新增内容需求 | 第 4 轮 2026-08 最新研究全网搜索：multi-AI collaboration 方向命中 CAID（CMU 学术实证）+ VS Code 官方 worktree 隔离（2026-08-07 上线）双重背书本备忘 §3.6 第 5 条；paper trading/canary deployment 方向确认 53 号现有设计与行业 SOTA 一致无缺口 |
+| 2026-08-12 | 2.12.2 | 第 5/6 轮审查（过度工程零发现 + 一致性去版本化）：①**过度工程审查零发现**——多 AI 协作规范（§3.6 五条均为已有治理设施的使用纪律非新建重型机制，§4.1 已拒绝 agent 编排）/ BM-RES+BM-MOD 规范（MVP 部分为 MLOps Level 2 行业标准最小集，20+ arXiv 重型候选全部标 Phase 2-5 远期不施工）/ 53 号三阶段灰度（比 nexusfi 7 阶段精简且有 paper_live_transition.py 代码承载，§5.3 已论证）/ 实盘差异监控（key_gates 8 维度为已定义代码门禁，日频滚动计算单机可承受）——全部符合硬边界约束，远期项标注合规不删；②**一致性去版本化**——body 中对 53 号（§2.4/§3.5/§8.1）/24 号（§3.9）/54 号（§3.3）的版本号引用全部去除（引文档用稳定 path 不带版本，修订记录保留历史版本），消除连环漂移源；③53 号与 01 号 §2.2/battle_map_01（33 环节 17 锚点）/battle_map_02（14 环节 10 锚点）/20 号 §4.4 四阶段交叉复核一致 | 第 5 轮过度工程审查对照 system_charter §2 硬边界逐项判定零发现（单 AI 多会话+单机 PC+小资金+T+1 约束下无超界机制）；第 6 轮一致性审查发现版本号引用是连环漂移源（53 号升版即致 61 号引用滞后），按 01 号规范"交叉引用全用稳定 path"去版本化 |
