@@ -549,7 +549,8 @@ tiers:
       # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
       # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
       # P1 被测对象/交易风控 7 表中 factor/strategy/risk_limit 已落盘（Step1-3 schema+条目完成，Step4-8 交叉引用/半派生/审计/治理同步待做），
-      # indicator/execution_algo/data_asset/chart_pattern 待施工；P2（field_dictionary/experiment）待施工。
+      # technical_indicator 2026-08-13 全新施工完成（REG-IND-001，40 条目，Step1-6 含 E1-E20 审计 PASS）；
+      # execution_algo/data_asset/chart_pattern 待施工；P2（field_dictionary/experiment）待施工。
       - registry_id: REG-UNI-001
         name: 股票池登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml
@@ -610,14 +611,14 @@ tiers:
         description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）42 条已落盘。注意：P1-B Step1-3 已完成，Step4-8 待做。#ARCH-BREG-001 P1-B
         owned_by: governance
 
-      - registry_id: REG-TECHNICAL-INDICATOR-001
+      - registry_id: REG-IND-001
         name: 技术指标注册表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
         format: yaml
-        maintenance: auto（scripts/governance/_shared/algo_flow_translation_sync.py 种子派生，后续手动扩充）
-        entry_count: 22
+        maintenance: manual
+        entry_count: 40
         status: draft
-        description: 技术指标 name_zh/description 真源（§4.16.4）——22 条种子条目由 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。算法地图全量落地配套（2026-08-12）。
+        description: 技术指标唯一真源（SSoT）——5 大类（trend/momentum/volatility/volume/reversal）40 指标 58 输出列已落盘，条目与代码 TechnicalIndicatorRegistry 全字段比对零漂移（E5），覆盖 9 周期。注意：P1-A Step1-6 已完成（schema+条目+审计），used_by_factors 反向回填待 factor_registry Step4-8。原 REG-TECHNICAL-INDICATOR-001（ALGOMAP 种子版 21 条）2026-08-13 并入本表，翻译职能由 name_zh/aliases 吸收。#ARCH-BREG-001 P1-A
         owned_by: governance
 
 # ============================================================

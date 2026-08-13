@@ -1,182 +1,861 @@
+# [A_config] module_id=REG-IND-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: 0.1.0
-registry_id: REG-TECHNICAL-INDICATOR-001
-name: 技术指标注册表（算法地图同步种子版）
-description: 技术指标 name_zh/description 真源（§4.16.4）。种子数据由 algo_flow_translation_sync.py 从 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。
-owner: ZephyrAlpha-Owner
-tier: business
+schema_version: '1.0'
+registry_id: REG-IND-001
+name: Technical Indicator Registry
+name_zh: 技术指标注册表
+description: >-
+  技术指标唯一真源（SSoT）。登记全部纯 OHLCV 计算指标（编号/公式/参数/输入输出列/预热期/状态/代码位置），
+  5 大类 40 指标 58 输出列（对齐 16 号 §6.1-6.5 + 代码 src/zephyr/factor/technical_indicators/ 6 个 .py，
+  数值正确性由 243 测试用例 + Registry↔DDL 双向交叉校验锁定）。
+  全指标覆盖 9 周期（1min/5min/15min/30min/60min/120min/日/周/月，120min 由 60min 两根聚合），
+  存储单表 c1_market.technical_indicator 按 (period, toYYYYMM(trade_date)) 分区。
+  与 factor_registry 正交：技术指标=OHLCV 确定性变换（计算工具，无 alpha 断言），因子=alpha 来源。
+  2026-08-13 全新施工（62 号 §4.5 CONSTRUCT_REGISTRY 8 步）：原 ALGOMAP 种子版（REG-TECHNICAL-INDICATOR-001，
+  21 条 IND-ALGOMAP 派生种子）历史使命完成，name_zh/description 翻译职能已被本表 40 条正式条目吸收，
+  algo_flow_translation_sync.py 同步加保护不再覆写本表。对标 QuantConnect Indicators / backtrader.indicators。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
 status: active
-version: 0.1.0
-created: '2026-08-12'
-last_updated: '2026-08-12'
+version: 1.0.0
+created: '2026-08-13'
+last_updated: '2026-08-13'
+related_arch: '#ARCH-BREG-001'
 unique_key:
-- name_en
+- indicator_id
+entry_count: 40
+
+entry_schema:
+  indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
+  name: str                      # 英文标准名
+  name_zh: str                   # 中文名（对齐代码 meta.name + ALGO_FLOW 翻译真源）
+  aliases: list                  # 别名（含原 ALGOMAP name_en，保翻译反查兼容）
+  indicator_class: str           # trend/momentum/volatility/volume/reversal（5 类对齐 16 号 §6）
+  formula: str                   # 公式（数学表达式，通达信口径）
+  params: obj                    # 默认参数字典（对齐代码 meta.params）
+  inputs: list                   # 输入字段（OHLCV 子集，forward-ref field_dictionary P2 待施工）
+  outputs: list                  # 输出列名（对齐代码 meta.output_columns + DDL 列）
+  warmup_period: int             # 预热周期（首个有效值约需 K 线根数，回测须丢弃前 N 根；预热期输出 NULL 不前填，防前视）
+  computation_mode: str          # vectorized（代码现状：纯 pandas/numpy 向量化批算；streaming 预留）
+  module_id: str                 # depgraph 模块号（MOD-L02-019~023）
+  doc_ref: str                   # 16_technical_indicator_catalog.md §6.x
+  code_path: str                 # 稳定文件 path
+  used_by_factors: list          # 反向关联 factor_id（factor_registry Step4-8 完成后回填，当前置空）
+  status: str                    # candidate/experimental/active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+
 indicators:
-- indicator_id: IND-ALGOMAP-001
-  name_zh: 真实波幅ATR 14
-  name_en: ATR
-  description: 真实波幅的简单平均，度量价格波动剧烈程度
-  formula: TR=max(H-L,|H-Cp|,|L-Cp|) → ATR=MA14(TR)（通达信用 MA，非 Wilder's RMA）
-  table_status: '指标表: 有atr_14列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-022
-  source_path: src/zephyr/factor/technical_indicators/volatility.py
-- indicator_id: IND-ALGOMAP-002
-  name_zh: 布林带BOLL 20,2
-  name_en: BOLL
-  description: 均线上下各两倍标准差形成通道，BandWidth/%B 也基于它
-  formula: MID=MA20(C)；STD=rolling20.std(ddof=0)；UPPER=MID+2STD；LOWER=MID-2STD（ddof=0 对齐通达信）
-  table_status: '指标表: 有boll_upper/boll_middle/boll_lower列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-022
-  source_path: src/zephyr/factor/technical_indicators/volatility.py
-- indicator_id: IND-ALGOMAP-003
-  name_zh: 布林带突破 20,2
-  name_en: BOLLBreakout
-  description: 收盘价突破布林上轨发正信号、破下轨发负信号，复用 volatility._boll_bands
-  formula: (upper,_,lower)=_boll_bands(C,20,2) → C>upper→1；C<lower→-1；否则0
-  table_status: '指标表: 有boll_breakout列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-020
-  source_path: src/zephyr/factor/technical_indicators/reversal.py
-- indicator_id: IND-ALGOMAP-004
-  name_zh: K线形态识别
-  name_en: CandlestickPattern
-  description: 按实体/影线比例识别锤子、吞没、启明星、黄昏星、十字星并编码
-  formula: 'body=|C-O|；doji: body/(H-L)<0.1→5；hammer: 下影/实体>2 且上影<0.3实体→1；吞没±2（2bar）；启明/黄昏星 3/4（3bar）'
-  table_status: '指标表: 有candle_pattern列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-020
-  source_path: src/zephyr/factor/technical_indicators/reversal.py
-- indicator_id: IND-ALGOMAP-005
-  name_zh: 顺势指标CCI 14
-  name_en: CCI
-  description: 典型价偏离均线的程度，用平均绝对偏差标准化
-  formula: TP=(H+L+C)/3 → CCI=(TP-MA14(TP))/(0.015×AVEDEV14(TP))，AVEDEV=mean(|x-mean(x)|)
-  table_status: '指标表: 有cci_14列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-021
-  source_path: src/zephyr/factor/technical_indicators/trend.py
-- indicator_id: IND-ALGOMAP-006
-  name_zh: 蔡金资金流CMF 20
-  name_en: CMF
-  description: 收盘价在当日振幅中的位置乘以成交量，度量资金流入流出
-  formula: CLV=(2C-H-L)/(H-L)（H=L时取0）→ CMF=Σ20(CLV×V)/Σ20(V)
-  table_status: '指标表: 有cmf_20列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-019
-  source_path: src/zephyr/factor/technical_indicators/momentum.py
-- indicator_id: IND-ALGOMAP-007
-  name_zh: 趋向指标DMI/ADX 14
-  name_en: DMI/ADX
-  description: 多空方向移动量对比，ADX 度量趋势强度不分方向
-  formula: TR/±DM 滚动 SUM 平滑 → ±DI=±DM×100/TR → DX=|+DI--DI|/(+DI+-DI)×100 → ADX=MA14(DX)
-  table_status: '指标表: 有adx_14/pdi_14/mdi_14列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-021
-  source_path: src/zephyr/factor/technical_indicators/trend.py
-- indicator_id: IND-ALGOMAP-008
-  name_zh: 历史波动率HistVol 20
-  name_en: HistVol
-  description: 对数收益率的标准差年化，金融行业标准波动率
-  formula: r=log(C/C.shift1) → HV=r.rolling20.std(ddof=1)×√252×100
-  table_status: '指标表: 有histvol_20列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-022
-  source_path: src/zephyr/factor/technical_indicators/volatility.py
-- indicator_id: IND-ALGOMAP-009
-  name_zh: 随机指标KDJ 9,3,3
-  name_en: KDJ
-  description: 用最高最低价衡量收盘价所处位置，判断超买超卖
-  formula: RSV=(C-LL9)/(HH9-LL9)×100 → K=SMA(RSV,3,1) → D=SMA(K,3,1) → J=3K-2D（SMA=ewm alpha=1/N 对齐通达信）
-  table_status: '指标表: 有kdj_k/kdj_d/kdj_j列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-019
-  source_path: src/zephyr/factor/technical_indicators/momentum.py
-- indicator_id: IND-ALGOMAP-010
-  name_zh: 肯特纳通道Keltner 20,10,2
-  name_en: Keltner
-  description: EMA 中轨加 ATR 倍数构成通道，比布林带更平滑
-  formula: MID=EMA20(C)（复用 trend._ema adjust=False）；UPPER=MID+2×MA10(TR)；LOWER=MID-2×MA10(TR)
-  table_status: '指标表: 有kc_upper/kc_middle/kc_lower列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-022
-  source_path: src/zephyr/factor/technical_indicators/volatility.py
-- indicator_id: IND-ALGOMAP-011
-  name_zh: 异同移动平均MACD 12,26,9
-  name_en: MACD
-  description: 快慢 EMA 差值及其再平滑，判断趋势强弱与金叉死叉
-  formula: DIF=EMA12(C)-EMA26(C) → DEA=EMA9(DIF) → HIST=2×(DIF-DEA)（全 ewm adjust=False 对齐通达信）
-  table_status: '指标表: 有macd_dif/macd_dea/macd_hist列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-021
-  source_path: src/zephyr/factor/technical_indicators/trend.py
-- indicator_id: IND-ALGOMAP-012
-  name_zh: 资金流量指标MFI 14
-  name_en: MFI
-  description: 类似 RSI 但用典型价×成交量加权，度量资金买卖力度
-  formula: TP=(H+L+C)/3；MF=TP×V → 按 TP 涨跌拆正负 MF → MFI=100-100/(1+Σ14正MF/Σ14负MF)
-  table_status: '指标表: 有mfi_14列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-023
-  source_path: src/zephyr/factor/technical_indicators/volume.py
-- indicator_id: IND-ALGOMAP-013
-  name_zh: 能量潮OBV
-  name_en: OBV
-  description: 涨日加量跌日减量的累积线，量能先行验证价格趋势
-  formula: direction=sign(ΔC)（首值填0）→ OBV=cumsum(direction×V)
-  table_status: '指标表: 有obv列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-023
-  source_path: src/zephyr/factor/technical_indicators/volume.py
-- indicator_id: IND-ALGOMAP-014
-  name_zh: 相对强弱RSI 6/12/24 + 随机RSI
-  name_en: RSI/StochRSI
-  description: 涨跌幅平滑比值衡量多空力量，StochRSI 再对 RSI 做归一化
-  formula: RSI=100×SMA(up,N)/(SMA(up,N)+SMA(down,N))；StochRSI=(RSI-min14(RSI))/(max14(RSI)-min14(RSI))
-  table_status: '指标表: 有rsi_6/rsi_12/rsi_24/stochrsi列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-019
-  source_path: src/zephyr/factor/technical_indicators/momentum.py
-- indicator_id: IND-ALGOMAP-015
-  name_zh: RSI背离 12,20
-  name_en: RSIDivergence
-  description: 价格趋势与 RSI 趋势反向即背离信号，复用 momentum._rsi
-  formula: 'rsi=_rsi(C,12) → 顶背离: Δ20C>0 且 Δ20rsi<0 → 1；底背离: Δ20C<0 且 Δ20rsi>0 → -1'
-  table_status: '指标表: 有rsi_divergence列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-020
-  source_path: src/zephyr/factor/technical_indicators/reversal.py
-- indicator_id: IND-ALGOMAP-016
-  name_zh: 抛物线指标SAR
-  name_en: SAR
-  description: 逐根K线递推止损反转点，趋势翻转时加速因子重置
-  formula: SAR(t+1)=SAR(t)+AF×(EP-SAR(t))，AF 从 0.02 递增至 0.2，翻转时 SAR=EP 且 AF 重置
-  table_status: '指标表: 有sar列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-021
-  source_path: src/zephyr/factor/technical_indicators/trend.py
-- indicator_id: IND-ALGOMAP-017
-  name_zh: 终极指标UOS 7/14/28
-  name_en: UOS
-  description: 三个周期买卖压力加权合成，减少单一周期假信号
-  formula: BP=C-min(L,Cp)；TR=max(H,Cp)-min(L,Cp)；AvgN=ΣN(BP)/ΣN(TR)；UOS=(4Avg7+2Avg14+Avg28)/7×100
-  table_status: '指标表: 有uos列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-019
-  source_path: src/zephyr/factor/technical_indicators/momentum.py
-- indicator_id: IND-ALGOMAP-018
-  name_zh: 量价背离 10
-  name_en: VolumePriceDivergence
-  description: 价升量缩为顶背离、价跌量增为底背离
-  formula: '顶背离: Δ10C>0 且 Δ10V<0 → 1；底背离: Δ10C<0 且 Δ10V>0 → -1；否则0'
-  table_status: '指标表: 有vol_price_div列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-020
-  source_path: src/zephyr/factor/technical_indicators/reversal.py
-- indicator_id: IND-ALGOMAP-019
-  name_zh: 容量比率VR 26
-  name_en: VR
-  description: 上涨日成交量与下跌日成交量的比值，平盘量两侧各计一半
-  formula: VR=100×(2×Σ26up_vol+Σ26flat_vol)/(2×Σ26down_vol+Σ26flat_vol)（通达信口径）
-  table_status: '指标表: 有vr_26列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-023
-  source_path: src/zephyr/factor/technical_indicators/volume.py
-- indicator_id: IND-ALGOMAP-020
+# ══════════════ 趋势类 trend（10 指标 / 18 列，MOD-L02-021 trend.py，doc §6.1）══════════════
+- indicator_id: IND-TREND-001
+  name: MA
+  name_zh: 简单移动平均
+  aliases: ["SMA", "均线"]
+  indicator_class: trend
+  formula: MA=N 日收盘价算术平均（rolling mean）
+  params: {periods: [5, 10, 20, 60]}
+  inputs: [close]
+  outputs: [ma_5, ma_10, ma_20, ma_60]
+  warmup_period: 60
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-002
+  name: EMA
+  name_zh: 指数移动平均
+  aliases: ["EXPMA"]
+  indicator_class: trend
+  formula: EMA=ewm(span=N, adjust=False)，种子=首值无预热 NaN
+  params: {periods: [12, 26]}
+  inputs: [close]
+  outputs: [ema_12, ema_26]
+  warmup_period: 26
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-003
+  name: WMA
+  name_zh: 加权移动平均
+  aliases: []
+  indicator_class: trend
+  formula: WMA=N 日收盘价线性加权平均（权重 1..N，近期权重高）
+  params: {period: 10}
+  inputs: [close]
+  outputs: [wma_10]
+  warmup_period: 10
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-004
+  name: DEMA
+  name_zh: 双指数移动平均
+  aliases: []
+  indicator_class: trend
+  formula: DEMA=2×EMA−EMA(EMA)，减少 EMA 滞后，adjust=False 对齐通达信
+  params: {period: 12}
+  inputs: [close]
+  outputs: [dema_12]
+  warmup_period: 24
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-005
+  name: MACD
+  name_zh: 异同移动平均
+  aliases: []
+  indicator_class: trend
+  formula: DIF=EMA12(C)−EMA26(C)；DEA=EMA9(DIF)；HIST=2×(DIF−DEA)，全 ewm adjust=False 对齐通达信
+  params: {fast: 12, slow: 26, signal: 9}
+  inputs: [close]
+  outputs: [macd_dif, macd_dea, macd_hist]
+  warmup_period: 35
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-006
+  name: ADX
+  name_zh: 平均趋向指数
+  aliases: ["DMI/ADX"]
+  indicator_class: trend
+  formula: DX=|+DI−(−DI)|/(+DI+(−DI))×100；ADX=MA14(DX)，DI 用 SUM 平滑对齐通达信
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [adx_14]
+  warmup_period: 28
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-007
+  name: DMI
+  name_zh: 趋向指标
+  aliases: ["PDI/MDI", "+DI/-DI"]
+  indicator_class: trend
+  formula: TR/±DM 滚动 SUM 平滑（非 EMA）→ ±DI=±DM×100/MTR
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [pdi_14, mdi_14]
+  warmup_period: 15
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-008
+  name: CCI
+  name_zh: 顺势指标
+  aliases: []
+  indicator_class: trend
+  formula: TP=(H+L+C)/3；CCI=(TP−MA14(TP))/(0.015×AVEDEV14(TP))，AVEDEV=平均绝对偏差
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [cci_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-009
+  name: SAR
+  name_zh: 抛物线指标
+  aliases: ["抛物线转向"]
+  indicator_class: trend
+  formula: SAR(t+1)=SAR(t)+AF×(EP−SAR(t))，AF 从 0.02 递增至 0.2，趋势翻转时 SAR=EP 且 AF 重置
+  params: {af_step: 0.02, af_max: 0.2}
+  inputs: [high, low]
+  outputs: [sar]
+  warmup_period: 2
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-TREND-010
+  name: TRIX
+  name_zh: 三重指数平滑平均
+  aliases: []
+  indicator_class: trend
+  formula: TR=EMA(EMA(EMA(C,N)))；TRIX=100×(TR−REF(TR,1))/REF(TR,1)；TRMA=MA(TRIX,N)
+  params: {period: 12}
+  inputs: [close]
+  outputs: [trix, trma]
+  warmup_period: 48
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: 16_technical_indicator_catalog.md §6.1
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+
+# ══════════════ 动量类 momentum（10 指标 / 15 列，MOD-L02-019 momentum.py，doc §6.2）══════════════
+- indicator_id: IND-MOM-001
+  name: KDJ
+  name_zh: 随机指标
+  aliases: ["Stochastic"]
+  indicator_class: momentum
+  formula: RSV=(C−LL9)/(HH9−LL9)×100；K=SMA(RSV,3,1)；D=SMA(K,3,1)；J=3K−2D（SMA=ewm alpha=1/N 对齐通达信）
+  params: {period: 9, k_smooth: 3, d_smooth: 3}
+  inputs: [high, low, close]
+  outputs: [kdj_k, kdj_d, kdj_j]
+  warmup_period: 9
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-002
+  name: RSI
+  name_zh: 相对强弱指标
+  aliases: ["RSI/StochRSI"]
+  indicator_class: momentum
+  formula: RSI=100×SMA(up,N)/(SMA(up,N)+SMA(down,N))，SMA 平滑对齐通达信
+  params: {periods: [6, 12, 24]}
+  inputs: [close]
+  outputs: [rsi_6, rsi_12, rsi_24]
+  warmup_period: 24
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-003
+  name: WR
+  name_zh: 威廉指标
+  aliases: ["Williams %R", "W%R"]
+  indicator_class: momentum
+  formula: WR=(HH14−C)/(HH14−LL14)×100，0=超买 100=超卖
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [wr_14]
+  warmup_period: 14
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-004
+  name: ROC
+  name_zh: 变动率
+  aliases: ["Rate of Change"]
+  indicator_class: momentum
+  formula: ROC=(C/C12−1)×100，百分比变动率
+  params: {period: 12}
+  inputs: [close]
+  outputs: [roc_12]
+  warmup_period: 12
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-005
+  name: MTM
+  name_zh: 动量指标
+  aliases: ["Momentum"]
+  indicator_class: momentum
+  formula: MTM=C−C12；MTMMA=MA(MTM,6)，绝对差值非百分比
+  params: {period: 12, ma_period: 6}
+  inputs: [close]
+  outputs: [mtm_12, mtmma_12]
+  warmup_period: 18
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-006
+  name: CMF
+  name_zh: 蔡金资金流
+  aliases: ["Chaikin Money Flow"]
+  indicator_class: momentum
+  formula: CLV=(2C−H−L)/(H−L)（H=L 时取 0）；CMF=Σ20(CLV×V)/Σ20(V)
+  params: {period: 20}
+  inputs: [high, low, close, volume]
+  outputs: [cmf_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-007
+  name: UOS
+  name_zh: 终极指标
+  aliases: ["Ultimate Oscillator"]
+  indicator_class: momentum
+  formula: BP=C−min(L,Cp)；TR=max(H,Cp)−min(L,Cp)；AvgN=ΣN(BP)/ΣN(TR)；UOS=(4×Avg7+2×Avg14+Avg28)/7×100
+  params: {p1: 7, p2: 14, p3: 28}
+  inputs: [high, low, close]
+  outputs: [uos]
+  warmup_period: 28
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-008
+  name: AO
+  name_zh: 震荡指标
+  aliases: ["Awesome Oscillator"]
+  indicator_class: momentum
+  formula: AO=MA((H+L)/2,5)−MA((H+L)/2,34)
+  params: {fast: 5, slow: 34}
+  inputs: [high, low]
+  outputs: [ao]
+  warmup_period: 34
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-009
+  name: CMO
+  name_zh: 钱德动量摆动
+  aliases: ["Chande Momentum Oscillator"]
+  indicator_class: momentum
+  formula: CMO=(Su−Sd)/(Su+Sd)×100，Su=Σ14(涨)，Sd=Σ14(|跌|)
+  params: {period: 14}
+  inputs: [close]
+  outputs: [cmo_14]
+  warmup_period: 15
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-MOM-010
+  name: StochRSI
+  name_zh: 随机RSI
+  aliases: ["Stochastic RSI"]
+  indicator_class: momentum
+  formula: StochRSI=(RSI−min14(RSI))/(max14(RSI)−min14(RSI))，复用 RSI 辅助函数
+  params: {rsi_period: 14, stoch_period: 14}
+  inputs: [close]
+  outputs: [stochrsi]
+  warmup_period: 27
+  computation_mode: vectorized
+  module_id: MOD-L02-019
+  doc_ref: 16_technical_indicator_catalog.md §6.2
+  code_path: src/zephyr/factor/technical_indicators/momentum.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+
+# ══════════════ 波动类 volatility（8 指标 / 13 列，MOD-L02-022 volatility.py，doc §6.3）══════════════
+- indicator_id: IND-VOL-001
+  name: ATR
+  name_zh: 真实波幅
+  aliases: ["Average True Range"]
+  indicator_class: volatility
+  formula: TR=max(H−L,|H−Cp|,|L−Cp|)；ATR=MA14(TR)（通达信 MA 口径，非 Wilder's RMA）
+  params: {period: 14}
+  inputs: [high, low, close]
+  outputs: [atr_14]
+  warmup_period: 15
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-002
+  name: BOLL
+  name_zh: 布林带
+  aliases: ["Bollinger Bands"]
+  indicator_class: volatility
+  formula: MID=MA20(C)；UPPER=MID+2×STD；LOWER=MID−2×STD（STD ddof=0 对齐通达信）
+  params: {period: 20, nbdev: 2}
+  inputs: [close]
+  outputs: [boll_upper, boll_middle, boll_lower]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-003
+  name: Keltner
+  name_zh: 肯特纳通道
+  aliases: ["KC", "Keltner Channel"]
+  indicator_class: volatility
+  formula: MID=EMA20(C)（adjust=False）；UPPER=MID+2×ATR10；LOWER=MID−2×ATR10
+  params: {period: 20, atr_period: 10, mult: 2}
+  inputs: [high, low, close]
+  outputs: [kc_upper, kc_middle, kc_lower]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-004
+  name: Donchian
+  name_zh: 唐奇安通道
+  aliases: ["DC", "Donchian Channel"]
+  indicator_class: volatility
+  formula: UPPER=max(H,20)；LOWER=min(L,20)，含当前 bar
+  params: {period: 20}
+  inputs: [high, low]
+  outputs: [dc_upper, dc_lower]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-005
+  name: STDDEV
+  name_zh: 标准差
+  aliases: ["Standard Deviation"]
+  indicator_class: volatility
+  formula: N 日收盘价标准差，ddof=0 对齐通达信 STD 函数
+  params: {period: 20}
+  inputs: [close]
+  outputs: [stddev_20]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-006
+  name: BandWidth
+  name_zh: 布林带宽度
+  aliases: ["BOLL带宽", "boll_bw"]
+  indicator_class: volatility
+  formula: BW=(UPPER−LOWER)/MID，基于 BOLL 三轨
+  params: {period: 20, nbdev: 2}
+  inputs: [close]
+  outputs: [boll_bw]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-007
+  name: PercentB
+  name_zh: 布林带%B
+  aliases: ["%B", "boll_pctb"]
+  indicator_class: volatility
+  formula: "%B=(C−LOWER)/(UPPER−LOWER)，基于 BOLL 三轨"
+  params: {period: 20, nbdev: 2}
+  inputs: [close]
+  outputs: [boll_pctb]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOL-008
+  name: HistVol
+  name_zh: 历史波动率
+  aliases: ["Historical Volatility", "HV"]
+  indicator_class: volatility
+  formula: HV=STD(log(C/Cp),20,ddof=1)×√252×100，年化波动率
+  params: {period: 20}
+  inputs: [close]
+  outputs: [histvol_20]
+  warmup_period: 21
+  computation_mode: vectorized
+  module_id: MOD-L02-022
+  doc_ref: 16_technical_indicator_catalog.md §6.3
+  code_path: src/zephyr/factor/technical_indicators/volatility.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+
+# ══════════════ 量能类 volume（7 指标 / 7 列，MOD-L02-023 volume.py，doc §6.4）══════════════
+- indicator_id: IND-VOLUME-001
+  name: OBV
+  name_zh: 能量潮
+  aliases: ["On Balance Volume"]
+  indicator_class: volume
+  formula: direction=sign(ΔC)（首值填 0）→ OBV=cumsum(direction×V)，对齐通达信 VA+SUM
+  params: {}
+  inputs: [close, volume]
+  outputs: [obv]
+  warmup_period: 2
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOLUME-002
+  name: MFI
+  name_zh: 资金流量指标
+  aliases: ["Money Flow Index"]
+  indicator_class: volume
+  formula: TP=(H+L+C)/3；MF=TP×V → 按 TP 涨跌拆正负 MF；MFI=100−100/(1+Σ14正MF/Σ14负MF)
+  params: {period: 14}
+  inputs: [high, low, close, volume]
+  outputs: [mfi_14]
+  warmup_period: 15
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOLUME-003
+  name: VWAP
   name_zh: 成交量加权均价
-  name_en: vwap
-  description: 当日成交额除以成交量，量额为0时用典型价降级
-  formula: vwap=amount/volume；volume或amount≤0→(O+H+L+C)/4
-  table_status: '指标表: 有vwap列 但代码未读表'
-  source_module: MOD-REGIME-005
-  source_path: src/zephyr/regime/features/chip_distribution_engine.py
-- indicator_id: IND-ALGOMAP-021
-  name_zh: 威廉变异离散量WVAD 24
-  name_en: WVAD
-  description: 实体占振幅比例乘成交量滚动求和，量价配合度
-  formula: ratio=(C-O)/(H-L)（H=L时取0）→ WVAD=Σ24(ratio×V)
-  table_status: '指标表: 有wvad_24列 但代码未读表（本模块即指标计算实现）'
-  source_module: MOD-L02-023
-  source_path: src/zephyr/factor/technical_indicators/volume.py
+  aliases: ["vwap"]
+  indicator_class: volume
+  formula: VWAP=Σ(C×V)/Σ(V)，累积式（从首根 K 线开始；可传 period 滚动）
+  params: {}
+  inputs: [close, volume]
+  outputs: [vwap]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOLUME-004
+  name: VR
+  name_zh: 容量比率
+  aliases: ["Volume Ratio"]
+  indicator_class: volume
+  formula: VR=100×(2×Σ26涨量+Σ26平量)/(2×Σ26跌量+Σ26平量)，通达信平盘计两侧
+  params: {period: 26}
+  inputs: [close, volume]
+  outputs: [vr_26]
+  warmup_period: 27
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOLUME-005
+  name: AD
+  name_zh: 累积/派发线
+  aliases: ["A/D Line", "Accumulation/Distribution"]
+  indicator_class: volume
+  formula: CLV=(2C−H−L)/(H−L)（H=L 时 CLV=0）；AD=cumsum(CLV×V)
+  params: {}
+  inputs: [high, low, close, volume]
+  outputs: [ad]
+  warmup_period: 1
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOLUME-006
+  name: PVT
+  name_zh: 价量趋势
+  aliases: ["Price Volume Trend"]
+  indicator_class: volume
+  formula: PVT=cumsum(V×(C−Cp)/Cp)，累积式
+  params: {}
+  inputs: [close, volume]
+  outputs: [pvt]
+  warmup_period: 2
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-VOLUME-007
+  name: WVAD
+  name_zh: 威廉变异离散量
+  aliases: ["Williams Variable Accumulation Distribution"]
+  indicator_class: volume
+  formula: ratio=(C−O)/(H−L)（H=L 时取 0）；WVAD=Σ24(ratio×V)
+  params: {period: 24}
+  inputs: [open, high, low, close, volume]
+  outputs: [wvad_24]
+  warmup_period: 24
+  computation_mode: vectorized
+  module_id: MOD-L02-023
+  doc_ref: 16_technical_indicator_catalog.md §6.4
+  code_path: src/zephyr/factor/technical_indicators/volume.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+
+# ══════════════ 反转类 reversal（5 指标 / 5 列，MOD-L02-020 reversal.py，doc §6.5）══════════════
+# 信号列约定 Float64：0=无 / 1=正（看涨/顶背离）/ −1=负（16 号 §2）
+- indicator_id: IND-REV-001
+  name: CandlestickPattern
+  name_zh: K线形态
+  aliases: ["K线形态识别", "Candlestick"]
+  indicator_class: reversal
+  formula: 按实体/影线比例识别 6 形态并编码：0=无/1=锤子/±2=吞没/3=启明星/4=黄昏星/5=十字星
+  params: {patterns: all}
+  inputs: [open, high, low, close]
+  outputs: [candle_pattern]
+  warmup_period: 3
+  computation_mode: vectorized
+  module_id: MOD-L02-020
+  doc_ref: 16_technical_indicator_catalog.md §6.5
+  code_path: src/zephyr/factor/technical_indicators/reversal.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-REV-002
+  name: RSIDivergence
+  name_zh: RSI背离
+  aliases: []
+  indicator_class: reversal
+  formula: rsi=RSI12(C) → 顶背离 Δ20C>0 且 Δ20rsi<0 → 1；底背离 Δ20C<0 且 Δ20rsi>0 → −1（简化趋势对比）
+  params: {rsi_period: 12, lookback: 20}
+  inputs: [close]
+  outputs: [rsi_divergence]
+  warmup_period: 32
+  computation_mode: vectorized
+  module_id: MOD-L02-020
+  doc_ref: 16_technical_indicator_catalog.md §6.5
+  code_path: src/zephyr/factor/technical_indicators/reversal.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-REV-003
+  name: MACDDivergence
+  name_zh: MACD背离
+  aliases: []
+  indicator_class: reversal
+  formula: 价格趋势 vs MACD HIST(12/26/9) 趋势对比 → 顶背离 1/底背离 −1（简化趋势对比）
+  params: {lookback: 20, fast: 12, slow: 26, signal: 9}
+  inputs: [close]
+  outputs: [macd_divergence]
+  warmup_period: 55
+  computation_mode: vectorized
+  module_id: MOD-L02-020
+  doc_ref: 16_technical_indicator_catalog.md §6.5
+  code_path: src/zephyr/factor/technical_indicators/reversal.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-REV-004
+  name: BOLLBreakout
+  name_zh: 布林带突破
+  aliases: ["布林带突破 20,2"]
+  indicator_class: reversal
+  formula: C>上轨(20,2)→1；C<下轨→−1；否则 0，复用 BOLL 三轨
+  params: {period: 20, nbdev: 2}
+  inputs: [close]
+  outputs: [boll_breakout]
+  warmup_period: 20
+  computation_mode: vectorized
+  module_id: MOD-L02-020
+  doc_ref: 16_technical_indicator_catalog.md §6.5
+  code_path: src/zephyr/factor/technical_indicators/reversal.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+- indicator_id: IND-REV-005
+  name: VolumePriceDivergence
+  name_zh: 量价背离
+  aliases: ["vol_price_div"]
+  indicator_class: reversal
+  formula: 顶背离 Δ10C>0 且 Δ10V<0 → 1；底背离 Δ10C<0 且 Δ10V>0 → −1；否则 0
+  params: {lookback: 10}
+  inputs: [close, volume]
+  outputs: [vol_price_div]
+  warmup_period: 11
+  computation_mode: vectorized
+  module_id: MOD-L02-020
+  doc_ref: 16_technical_indicator_catalog.md §6.5
+  code_path: src/zephyr/factor/technical_indicators/reversal.py
+  used_by_factors: []
+  status: active
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
