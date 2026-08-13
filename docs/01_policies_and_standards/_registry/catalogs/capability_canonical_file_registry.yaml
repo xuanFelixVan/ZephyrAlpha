@@ -5913,6 +5913,26 @@ capabilities:
       解决发现性：新 AI 搜 "技术指标/KDJ/MACD/RSI/technical_indicator" 可定位真源。
       解决防重建：check_file_canonical() 反查。
 
+  # --------------------------------------------------------------------------
+  - capability_id: liquidity_crisis_manager
+    aliases:
+      - LiquidityCrisisManager
+      - liquidity_crisis_protocol
+      - sell_pressure
+      - detect_limit_status
+      - check_recovery
+      - intraday_liquidity_check
+      - ipo_liquidity_drain
+    description: >-
+      流动性危机管理能力（D_RISK 域，MOD-RK-21，37号设计备忘 G18 施工落地）。
+      canonical = src/zephyr/risk/core/liquidity_crisis_manager.py。承载 37号 memo
+      已定义未落码的 6 项算法：OBI 反转卖压/Quoted Spread/涨跌停五状态检测/
+      跌停 spread 置 1.0 算法断裂修复/hysteresis 危机恢复/盘中单遍编排/IPO 抽离前瞻预警。
+      检测真源唯一——危机判定委托 MOD-RK-10（import 复用不重复造轮子，37号 §4.1）。
+      无内部轮询，由盘中风控循环 30s tick 逐 tick 驱动（事件驱动）。
+      解决发现性：新 AI 搜 "流动性危机/卖压/涨跌停/IPO 抽离/危机恢复" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -8574,6 +8594,24 @@ creation_tokens:
     token: "auto-reg-chart-pattern-20260813"
     created_by: "session-AI-REG-PAT-001"
     capability: "business_registry_construction"
+
+  # --- 流动性危机管理器（2026-08-13，37号 G18 Protocol 施工，MOD-RK-21）---
+  - file: "src/zephyr/risk/core/liquidity_crisis_manager.py"
+    token: "auto-risk-liquidity-crisis-manager-20260813"
+    created_by: "AI-LIQ-001"
+    capability: "liquidity_crisis_manager"
+  - file: "docs/03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md"
+    token: "auto-risk-liquidity-crisis-manager-bp-20260813"
+    created_by: "AI-LIQ-001"
+    capability: "liquidity_crisis_manager"
+  - file: "tests/risk/core/test_liquidity_crisis_manager.py"
+    token: "auto-risk-liquidity-crisis-manager-test-20260813"
+    created_by: "AI-LIQ-001"
+    capability: "liquidity_crisis_manager"
+  - file: "docs/_working/audit/architecture-reviews/2026-08-13-liquidity-crisis-utils.md"
+    token: "auto-risk-liquidity-crisis-manager-review-20260813"
+    created_by: "AI-LIQ-001"
+    capability: "liquidity_crisis_manager"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
