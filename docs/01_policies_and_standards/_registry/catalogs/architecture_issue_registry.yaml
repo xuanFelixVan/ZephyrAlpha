@@ -15903,3 +15903,33 @@ entries:
   related_rules: '#ARCH-68'
   created: '2026-08-13'
   last_updated: '2026-08-13'
+
+# --- #ARCH-70: depgraph 双态转换死锁修复（design→production 同身份 UPDATE）---
+- issue_id: '#ARCH-70'
+  title: depgraph 双态转换死锁——文件落地后 design 预登记节点卡死（INSERT 撞 idx_nodes_path 静默跳过），同身份 UPDATE 治本 + 门禁提示文案漂移修复
+  severity: P1高
+  category: governance
+  adjudication: |-
+    背景（2026-08-13 algo_flow_translation_reconciler 登记实证 + 56 个存量病态节点排查）：
+    ① NEW-FILE-DEPGRAPH 门禁提示文案三处漂移（--module/--path 参数实际不存在；
+    --transition-to-production 不存在；裸跑 generate_project_depgraph.py 只扫描不写库）；
+    ② add_design_node 只写 path 不写 file_path，门禁查 file_path 列 → 方案①成死路；
+    ③ 核心死锁：全量重建 DELETE 保护 design 行 + 内存 merge 后节点 INSERT 撞
+    idx_nodes_path 唯一索引 → SAVEPOINT 静默跳过 → 文件落地后 design 节点永远卡死
+    （56 个存量病态：EXCORE PLACEHOLDER×9、plan_engine×4、sell_decision×4、
+    strategy_book/regime_detector 等已投产模块被全景图误显"设计态"）。
+    裁定（2026-08-14 用户确认 decided）：同身份 UPDATE 治本——INSERT 前预查保留的
+    design 行，命中则 UPDATE（同 node_id，edges FK 不断链；删行会 CASCADE 丢 design 边，
+    故禁止"删旧插新"）；UPDATE 只写扫描字段，build_status 尊重手动提升保护
+    （testing/stable/deprecated 保留，planned 转扫描推导值）；
+    add-design-node file 粒度 file_path 同写；门禁提示文案对齐实际 CLI。
+  impact:
+    - 'scripts/governance/generate_project_depgraph.py（_SQL_CONVERT_DESIGN_NODE 同身份 UPDATE 通道）'
+    - 'scripts/governance/apply_depgraph.py（add_design_node file 粒度 file_path 同写）'
+    - 'src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py（提示文案对齐实际 CLI）'
+    - 'tests/governance/generators/test_depgraph_design_conversion.py（PG 集成测试）'
+  fix_phase: 'P0 施工（同身份 UPDATE 通道 + 文案修复 + 存量 56 病态节点重扫收敛验证）'
+  status: decided
+  related_rules: '#ARCH-69; #ARCH-DEP-001; #ARCH-MM-002'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'

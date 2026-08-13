@@ -154,6 +154,14 @@ SQL_DELETE_DOMAIN_BY_ID = "DELETE FROM domains WHERE domain_id=%s"
 SQL_UPDATE_NODE_PATH_BY_ID = "UPDATE nodes SET path=%s, file_path=%s WHERE node_id=%s"
 # 5.179 治本（2026-07-13）：add_design_node UPDATE 提取为常量，消除 NO-BARE-SQL gate 违规
 SQL_UPDATE_DESIGN_NODE_BY_ID = "UPDATE nodes SET blueprint_id=%s, domain_id=%s, build_status=%s, blueprint_path=%s, granularity=%s, node_type=%s WHERE node_id=%s"
+# #ARCH-70：add_design_node INSERT 提取为常量（NO-BARE-SQL §5.160.2 合规）；
+# file 粒度 file_path 同写 path——NEW-FILE-DEPGRAPH 门禁查 file_path 列，
+# 只写 path 会导致"设计态预登记"永远过不了门禁（2026-08-13 死锁实证）
+SQL_INSERT_DESIGN_NODE = (
+    "INSERT INTO nodes (node_type, path, file_path, granularity, domain_id, blueprint_id, "
+    "build_status, design_maturity, blueprint_path, can_build) "
+    "VALUES (%s, %s, %s, %s, %s, %s, %s, 'design', %s, 1) RETURNING node_id"
+)
 
 # Phase 7c-2: 重复 f-string SQL 提取为 .format() 模板（2026-07-09）
 SQL_UPDATE_TBL_REPLACE_LIKE = "UPDATE {tbl} SET {col}=REPLACE({col}, %s, %s) WHERE {col} LIKE %s"
@@ -997,7 +1005,7 @@ def add_design_node(
 
             # 检查是否已存在同path的设计态节点
             existing = conn.execute(
-                "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'", (path,)
+                SQL_SELECT_NODE_BY_PATH_DESIGN, (path,)
             ).fetchone()
             if existing:
                 print(f"WARNING: path '{path}' 已有设计态节点 node_id={existing['node_id']}，执行UPDATE", file=sys.stderr)
@@ -1010,12 +1018,11 @@ def add_design_node(
                 return existing["node_id"]
 
             # 插入新节点（granularity/node_type 参数化，消除硬编码 trae_060 §2）
+            # #ARCH-70：file 粒度同写 file_path=path（SQL_INSERT_DESIGN_NODE 常量注释有完整病根）
             cur = conn.execute(
-                """INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id,
-                   build_status, design_maturity, blueprint_path, can_build)
-                   VALUES (%s, %s, %s, %s, %s, %s, 'design', %s, 1)
-                   RETURNING node_id""",
-                (node_type, path, granularity, domain_id, blueprint_id, build_status, blueprint_path),
+                SQL_INSERT_DESIGN_NODE,
+                (node_type, path, path if granularity != "directory" else "",
+                 granularity, domain_id, blueprint_id, build_status, blueprint_path),
             )
             node_id = cur.fetchone()["node_id"]
             conn.commit()

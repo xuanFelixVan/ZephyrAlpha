@@ -47,6 +47,8 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
+from zephyr.shared.utils.time_utils import now_utc
+
 import yaml
 
 # P2 PG 迁移：删除 import sqlite3；导入 PG 连接入口
@@ -401,6 +403,45 @@ DESIGN_STATE_FIELDS = (
     "blueprint_id",  # blueprint reference
     "module_id",  # module reference
 )
+
+
+# ── #ARCH-70 双态转换（design→production 同身份 UPDATE）──────────────
+# 病根（2026-08-13 实证，56 个存量病态节点）：全量重建 DELETE 保护 design 行
+# （WHERE design_maturity != 'design'），内存 merge 后的扫描节点 INSERT 撞
+# idx_nodes_path 唯一索引 → SAVEPOINT 静默跳过 → 文件落地后 design 节点永远卡死
+# （file_path 空、imports/content_hash 永不入库、全景图误显"设计态"）。
+# 治本：INSERT 前预查保留的 design 行，命中则走同身份 UPDATE（同 node_id，
+# edges FK 不断链——删行会 CASCADE 丢 design 边，故禁止"删旧插新"）。
+_SQL_DESIGN_ROWS_BY_PATH = (
+    "SELECT node_id, path, build_status FROM nodes WHERE design_maturity = 'design'"
+)
+
+# UPDATE 只写扫描字段；不碰 owner/trust_zone/license/drive_direction/gate_reason/
+# hard_boundary_ref/consumed_interfaces（手工维护 / nodes_metadata 保护字段）。
+# build_status 参数化：手动提升值（testing/stable/deprecated）原样保留，
+# planned 等默认值转为扫描推导值（与 STATUS-PRESERVE 快照口径一致）。
+_SQL_CONVERT_DESIGN_NODE = (
+    "UPDATE nodes SET node_type=%s, granularity=%s, domain_id=%s, subdomain_id=%s, "
+    "blueprint_id=%s, belongs_to=%s, change_policy=%s, impact_level=%s, "
+    "modification_permission=%s, file_header_score=%s, tags=%s, architecture_layer=%s, "
+    "design_maturity='production', deployment_lifecycle=%s, type_specific_data=%s, "
+    "last_verified=%s, node_name=%s, file_path=%s, can_build=%s, build_status=%s, "
+    "content_hash=%s, public_api=%s "
+    "WHERE node_id=%s AND design_maturity='design'"
+)
+
+_PRESERVED_BUILD_STATUS = frozenset({"testing", "stable", "deprecated"})
+
+
+def _resolve_converted_build_status(design_build_status: str, scanned_build_status: str) -> str:
+    """#ARCH-70 双态转换 build_status 取值。
+
+    手动提升值（testing/stable/deprecated，STATUS-PRESERVE 口径）原样保留；
+    planned 等默认/占位值转为扫描推导值（与全新 INSERT 节点的口径一致）。
+    """
+    if design_build_status in _PRESERVED_BUILD_STATUS:
+        return design_build_status
+    return scanned_build_status or "generated"
 
 
 def merge_design_fields(new_node: dict, old_node: dict) -> dict:
@@ -3541,6 +3582,10 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 治本 2026-07-02 (ARCH-033 Phase 2.1): 逐节点SAVEPOINT，失败时ROLLBACK TO SAVEPOINT
         # 防御性设计：即使预过滤通过，仍可能有其他DB约束冲突（如CHECK constraint）
         # 用SAVEPOINT确保单节点失败不影响其他合规节点
+        # ── #ARCH-70：快照 DELETE 后保留的 design 行（同身份 UPDATE 通道的命中表）──
+        cursor.execute(_SQL_DESIGN_ROWS_BY_PATH)
+        _design_rows_by_path = {r["path"]: dict(r) for r in cursor.fetchall()}
+        converted_design_count = 0
         _sp_counter = 0
         for node_id, node in nodes.items():
             # Skip design-state nodes (already in DB)
@@ -3592,6 +3637,43 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
             _sp_name = f"sp_node_{_sp_counter}"
             try:
                 cursor.execute(f"SAVEPOINT {_sp_name}")
+                # ── #ARCH-70 同身份 UPDATE：path 命中保留的 design 行 → 转换，不 INSERT ──
+                _drow = _design_rows_by_path.get(node.get("path", ""))
+                if _drow is not None:
+                    _conv_bs = _resolve_converted_build_status(
+                        _drow["build_status"], node.get("build_status", "generated")
+                    )
+                    cursor.execute(
+                        _SQL_CONVERT_DESIGN_NODE,
+                        (
+                            node.get("type", "module"),
+                            node.get("granularity", "file"),
+                            node.get("domain_id") or None,
+                            node.get("subdomain_id") or None,
+                            bp_id,
+                            node.get("belongs_to", ""),
+                            node.get("change_policy", "evolving"),
+                            node.get("impact_level", "M"),
+                            node.get("modification_permission", "ai_modifiable"),
+                            node.get("file_header_score", 0),
+                            tags_json,
+                            node.get("architecture_layer", ""),
+                            node.get("deployment_lifecycle", "stable"),
+                            type_specific_json,
+                            datetime.now().isoformat(),  # noqa: m46-time — last_verified 时间戳语义，对齐下方 INSERT 分支存量口径（时区整改属独立议题）
+                            node.get("node_name", ""),
+                            node.get("file_path", node.get("path", "")),
+                            can_build,
+                            _conv_bs,
+                            node.get("content_hash", ""),
+                            node.get("public_api", ""),
+                            _drow["node_id"],
+                        ),
+                    )
+                    cursor.execute(f"RELEASE SAVEPOINT {_sp_name}")
+                    converted_design_count += 1
+                    gen_node_id_to_path[node_id] = node.get("path", "")
+                    continue
                 cursor.execute(
                     """INSERT INTO nodes (
                     node_type, path, granularity, domain_id, subdomain_id, blueprint_id,
@@ -3626,7 +3708,7 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
                         node.get("license", "Internal"),
                         node.get("drive_direction", "bottom_up"),
                         type_specific_json,
-                        datetime.now().isoformat(),
+                        now_utc().isoformat(),
                         node.get("node_name", ""),
                         node.get("file_path", node.get("path", "")),
                         node.get("build_status", "generated"),  # 裁定#178：删除draft默认值，改用推导值
@@ -3666,6 +3748,11 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         if skipped_invalid_blueprint > 0:
             print(
                 f"[DEPGRAPH-DB] Phase 2.2 预过滤: 跳过 {skipped_invalid_blueprint} 个不合规blueprint_id节点"
+            )
+        if converted_design_count > 0:
+            print(
+                f"[DEPGRAPH-DB] #ARCH-70 双态转换: {converted_design_count} 个 design 节点"
+                f"同身份 UPDATE 转 production（file_path/扫描字段回填，node_id 不变 edges 不断链）"
             )
         if failed_insert_count > 0:
             print(

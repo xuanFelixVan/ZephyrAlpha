@@ -41368,6 +41368,13 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 每次提交后自动体检：代码 docstring 里 ALGO_FLOW 标记的中文名/简介，和 factor_registry、module_translation_registry 两个 YAML 翻译真源是否一致，不一致就告警提醒人工对齐，防止算法全景图和注册表各说各话（#ARCH-69）。
+- module_path: tests/governance/depgraph/test_depgraph_design_conversion.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: depgraph双态转换测试
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 验证"设计态预登记→文件落地→全量重扫"的同身份 UPDATE 转换：节点 ID 不变、file_path 回填、手动提升的构建状态不丢、门禁提示文案和真实命令行参数一致（#ARCH-70）。
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
