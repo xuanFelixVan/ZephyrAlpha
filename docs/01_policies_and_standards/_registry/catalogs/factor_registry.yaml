@@ -1,9 +1,11 @@
 # [A_config] module_id=REG-FCT-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # module_id: MOD-GOVERNANCE
+module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '1.1'
 registry_id: REG-FCT-001
 name: 因子登记表
+name_zh: 因子登记表
 description: >-
   交易因子唯一真源（SSoT）。登记所有alpha因子（value/quality/momentum/volatility/size/liquidity/event/intraday/technical/sentiment 10类）。
   因子=alpha来源，与技术指标（OHLCV计算工具）正交。
@@ -12,9 +14,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-10'
+last_updated: '2026-08-13'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - factor_id
@@ -113,6 +115,8 @@ entry_schema:
                                   # dual_channel_rag=双通道 RAG（positive 鼓励探索 + negative 控制 crowded）
                                   # family_aware_selection=family-aware 选择（crowding/similarity/family concentration 惩罚）
                                   # discovery_agent=human 时填 null
+  version_pin: str               # v1.2.0新增：可选，回滚到历史版本（如 "v2"），Feast FeatureView version 模式
+  code_commit: str               # v1.4.0新增：可选，git commit hash（DB 阶段 MUST，对标 beefed.ai compute_git + §4 原则9 Immutable）
 
 factors:
 # ============================================================
@@ -153,7 +157,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -171,6 +182,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-002"
   name: "Sharp Decline Inevitable Rebound"
@@ -206,7 +219,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -224,6 +244,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-003"
   name: "Selling Pressure Exhaustion"
@@ -259,7 +281,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -277,6 +306,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-004"
   name: "Dragonfly False Breakdown"
@@ -312,7 +343,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -330,6 +368,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-005"
   name: "Anchoring Point First New High"
@@ -365,7 +405,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -383,6 +430,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-006"
   name: "Intraday Price-Volume Divergence"
@@ -418,7 +467,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -436,6 +492,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-007"
   name: "MA Suppression Three Strikes"
@@ -471,7 +529,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -489,6 +554,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-008"
   name: "Yellow-White Line Deviation >5pts"
@@ -524,7 +591,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -542,6 +616,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-009"
   name: "Intraday Top Divergence"
@@ -577,7 +653,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -595,6 +678,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-010"
   name: "Bullish Engulfing Two Bears"
@@ -630,7 +715,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -648,6 +740,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-011"
   name: "Multi-Timeframe Coverage"
@@ -683,7 +777,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -701,6 +802,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-012"
   name: "First 30-Min Volume Share"
@@ -736,7 +839,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -754,6 +864,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-013"
   name: "Auction Validation 9:25-9:30"
@@ -789,7 +901,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -807,6 +926,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-INTRADAY-014"
   name: "VWAP Position"
@@ -842,7 +963,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -860,6 +988,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F2 K线/均线技术因子 (technical) — 23 candidates
@@ -899,7 +1029,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -917,6 +1054,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-002"
   name: "Volume Breakout MA20 +30%"
@@ -952,7 +1091,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -970,6 +1116,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-003"
   name: "Red More Green Less Accumulation"
@@ -1005,7 +1153,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1023,6 +1178,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-004"
   name: "Bald Bearish Candle Must Sell"
@@ -1058,7 +1215,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1076,6 +1240,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-005"
   name: "Single Day -7% Break MA20"
@@ -1111,7 +1277,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1129,6 +1302,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-006"
   name: "Bad Limit-Up No Chase"
@@ -1164,7 +1339,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1182,6 +1364,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-007"
   name: "Monthly MACD Death Cross Suspense"
@@ -1217,7 +1401,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1235,6 +1426,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-008"
   name: "Consecutive Doji Bottoming"
@@ -1270,7 +1463,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1288,6 +1488,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-009"
   name: "Historical Extreme Volume Panic"
@@ -1323,7 +1525,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1341,6 +1550,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-010"
   name: "Five Consecutive Green +30% Take Profit"
@@ -1376,7 +1587,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1394,6 +1612,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-011"
   name: "W Bottom / Double Bottom"
@@ -1429,7 +1649,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1447,6 +1674,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-012"
   name: "Island Reversal"
@@ -1482,7 +1711,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1500,6 +1736,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-013"
   name: "Declining Slope Slowdown"
@@ -1535,7 +1773,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1553,6 +1798,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-014"
   name: "MA Arrangement Full Classification"
@@ -1588,7 +1835,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1606,6 +1860,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-015"
   name: "Daily Deviation ±15% Extreme"
@@ -1641,7 +1897,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1659,6 +1922,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-016"
   name: "KDJ Stalling"
@@ -1694,7 +1959,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1712,6 +1984,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-017"
   name: "Bollinger Band Squeeze/Expansion"
@@ -1747,7 +2021,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1765,6 +2046,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-018"
   name: "ATR14 Daily True Range"
@@ -1800,7 +2083,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1818,6 +2108,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-019"
   name: "Fibonacci Retracement Levels"
@@ -1853,7 +2145,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1871,6 +2170,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-020"
   name: "RSI Extreme Oversold"
@@ -1906,7 +2207,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1924,6 +2232,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-021"
   name: "Double Bottom Right-Side Four Conditions"
@@ -1959,7 +2269,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -1977,6 +2294,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-022"
   name: "MACD Zero Axis Position"
@@ -2012,7 +2331,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2030,6 +2356,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-023"
   name: "Range Position Percentile"
@@ -2065,7 +2393,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2083,6 +2418,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F3 量能因子 (liquidity) — 8 candidates
@@ -2122,7 +2459,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2140,6 +2484,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-002"
   name: "Extreme Low Volume"
@@ -2175,7 +2521,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2193,6 +2546,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-003"
   name: "Panic Two-Wave Escape"
@@ -2228,7 +2583,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2246,6 +2608,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-004"
   name: "Half-Day Volume vs 5-Day Average"
@@ -2281,7 +2645,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2299,6 +2670,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-005"
   name: "ETF Premium/Discount"
@@ -2334,7 +2707,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2352,6 +2732,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-006"
   name: "ETF Subscription/Redemption Flow"
@@ -2387,7 +2769,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2405,6 +2794,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-007"
   name: "Sky-High Turnover Chip Exhaustion"
@@ -2440,7 +2831,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2458,6 +2856,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-008"
   name: "Turnover Rate Percentile"
@@ -2493,7 +2893,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2511,6 +2918,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F4 形态/结构因子 (technical) — 19 candidates
@@ -2550,7 +2959,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2568,6 +2984,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-025"
   name: "15min Bottom Divergence"
@@ -2603,7 +3021,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2621,6 +3046,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-026"
   name: "Large-Level Base Breakout"
@@ -2656,7 +3083,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2674,6 +3108,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-027"
   name: "Overhead Trapped Chips Resistance"
@@ -2709,7 +3145,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2727,6 +3170,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-028"
   name: "Shrink Volume Pullback Washout"
@@ -2762,7 +3207,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2780,6 +3232,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-029"
   name: "False Breakout (Downtrend)"
@@ -2815,7 +3269,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2833,6 +3294,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-030"
   name: "Insufficient Adjustment Breakout Failure"
@@ -2868,7 +3331,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2886,6 +3356,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-031"
   name: "High-Position Amplitude Expansion"
@@ -2921,7 +3393,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2939,6 +3418,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-032"
   name: "Accelerated Top"
@@ -2974,7 +3455,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -2992,6 +3480,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-033"
   name: "High-Position Volume Drop Dark Cloud"
@@ -3027,7 +3517,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3045,6 +3542,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-034"
   name: "Triple Failure at Resistance Double Top"
@@ -3080,7 +3579,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3098,6 +3604,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-035"
   name: "Top Pattern Full Classification"
@@ -3133,7 +3641,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3151,6 +3666,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-036"
   name: "Continuation Pattern"
@@ -3186,7 +3703,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3204,6 +3728,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-037"
   name: "Candlestick Language Full Classification"
@@ -3239,7 +3765,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3257,6 +3790,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-038"
   name: "Trendline Support/Resistance"
@@ -3292,7 +3827,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3310,6 +3852,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-039"
   name: "Channel System Triple Classification"
@@ -3345,7 +3889,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3363,6 +3914,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-040"
   name: "Spring / False Breakdown Recovery"
@@ -3398,7 +3951,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3416,6 +3976,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-041"
   name: "V-Shaped Reversal Bottom"
@@ -3451,7 +4013,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3469,6 +4038,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-042"
   name: "Unfilled Downside Gap Signal"
@@ -3504,7 +4075,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3522,6 +4100,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F5 板块/市场结构因子 (technical) — 12 candidates
@@ -3561,7 +4141,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3579,6 +4166,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-044"
   name: "Tech-Traditional Separation Signal"
@@ -3614,7 +4203,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3632,6 +4228,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-045"
   name: "Semiconductor Leads Index"
@@ -3667,7 +4265,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3685,6 +4290,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-046"
   name: "Sector Linkage Effect"
@@ -3720,7 +4327,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3738,6 +4352,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-047"
   name: "Institutional Market Cap vs Retail Limit-Up"
@@ -3773,7 +4389,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3791,6 +4414,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-048"
   name: "All-A Equal-Weight vs Cap-Weight"
@@ -3826,7 +4451,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3844,6 +4476,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-049"
   name: "Sector Advance-Decline Coverage"
@@ -3879,7 +4513,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3897,6 +4538,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-050"
   name: "New High Factor (No Overhead Resistance)"
@@ -3932,7 +4575,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -3950,6 +4600,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-051"
   name: "Relative Strength RS"
@@ -3985,7 +4637,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4003,6 +4662,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-052"
   name: "Single-Day Relative Strength Alpha"
@@ -4038,7 +4699,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4056,6 +4724,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-053"
   name: "Composite RS Score (IC-Weighted)"
@@ -4091,7 +4761,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4109,6 +4786,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-TECH-054"
   name: "Sub-Sector Equal-Weight Index"
@@ -4144,7 +4823,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4162,6 +4848,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F6 事件驱动/择时因子 (event) — 15 candidates
@@ -4201,7 +4889,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4219,6 +4914,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-002"
   name: "Tech Giant Earnings (Microsoft/Meta)"
@@ -4254,7 +4951,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4272,6 +4976,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-003"
   name: "US Stock Overnight Spillover"
@@ -4307,7 +5013,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4325,6 +5038,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-004"
   name: "Korea Tech Linkage"
@@ -4360,7 +5075,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4378,6 +5100,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-005"
   name: "Spot Price Transmission"
@@ -4413,7 +5137,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4431,6 +5162,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-006"
   name: "Month-End Last Two Trading Days"
@@ -4466,7 +5199,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4484,6 +5224,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-007"
   name: "Central Bank Reverse Repo / Net Injection"
@@ -4519,7 +5261,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4537,6 +5286,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-008"
   name: "Crude Oil Dark Market"
@@ -4572,7 +5323,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4590,6 +5348,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-009"
   name: "A50 Futures Overnight Performance"
@@ -4625,7 +5385,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4643,6 +5410,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-010"
   name: "July Seasonal Effect (Decade Worst Month)"
@@ -4678,7 +5447,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4696,6 +5472,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-011"
   name: "International Linkage Indicators"
@@ -4731,7 +5509,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4749,6 +5534,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-012"
   name: "Interest Rate and FX Triple Indicators"
@@ -4784,7 +5571,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4802,6 +5596,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-013"
   name: "Fed Path Expectation"
@@ -4837,7 +5633,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4855,6 +5658,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-014"
   name: "IPO Drain Effect"
@@ -4890,7 +5695,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4908,6 +5720,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-EVT-015"
   name: "Gold Safe Haven Factor"
@@ -4943,7 +5757,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -4961,6 +5782,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F7 情绪面因子 (sentiment) — 5 candidates
@@ -5000,7 +5823,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5018,6 +5848,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-SENT-002"
   name: "Limit-Up Break Rate + Consecutive Height + Re-Seal Time"
@@ -5053,7 +5885,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5071,6 +5910,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-SENT-003"
   name: "Market Breadth (Advance/Decline Ratio)"
@@ -5106,7 +5947,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5124,6 +5972,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-SENT-004"
   name: "Limit-Up/Down Panic Clearing Sequence"
@@ -5159,7 +6009,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5177,6 +6034,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-SENT-005"
   name: "Panic Index Proxy"
@@ -5212,7 +6071,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5230,6 +6096,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 # ============================================================
 # F8 资金面因子 (liquidity) — 15 candidates
@@ -5269,7 +6137,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5287,6 +6162,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-010"
   name: "ETF Share Surge (Passive Build)"
@@ -5322,7 +6199,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5340,6 +6224,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-011"
   name: "ETF Bottom Volume (Blood Chips)"
@@ -5375,7 +6261,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5393,6 +6286,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-012"
   name: "Insider Buying Signal"
@@ -5428,7 +6323,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5446,6 +6348,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-013"
   name: "Money Flow 5-Tier Decomposition"
@@ -5481,7 +6385,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5499,6 +6410,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-014"
   name: "Tick-Level Large Order Decomposition"
@@ -5534,7 +6447,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5552,6 +6472,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-015"
   name: "5-Day/10-Day Cumulative Net Inflow"
@@ -5587,7 +6509,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5605,6 +6534,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-016"
   name: "Dragon Tiger List Seats"
@@ -5640,7 +6571,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5658,6 +6596,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-017"
   name: "Large-Cap Large-Order 50% Discount"
@@ -5693,7 +6633,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5711,6 +6658,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-018"
   name: "Up-Market Small-Order Contrarian Discount"
@@ -5746,7 +6695,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5764,6 +6720,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-019"
   name: "IRCF Factor (Institutional Retail Contrarian Flow)"
@@ -5799,7 +6757,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5817,6 +6782,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-020"
   name: "Order Count Over Amount Principle"
@@ -5852,7 +6819,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5870,6 +6844,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-021"
   name: "Small-Order Sell Over Buy Principle"
@@ -5905,7 +6881,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5923,6 +6906,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-022"
   name: "Margin Trading Balance Change"
@@ -5958,7 +6943,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -5976,6 +6968,8 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null
 
 - factor_id: "FCT-LIQ-023"
   name: "Big Money Chases Big Caps"
@@ -6011,7 +7005,14 @@ factors:
   turnover: null
   capacity: null
   last_evaluated_at: null
-  data_quality_policy: {}
+  data_quality_policy:
+    null_rate: {threshold: 0.02, window: "1d"}
+    drift_method: "psi"
+    drift_threshold: 0.2
+    freshness: {staleness_sla: "2d"}
+    semantic_contract:
+      null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+      default_fill_policy: "none"
   null_rate: null
   drift_psi: null
   drift_ks_pvalue: null
@@ -6029,3 +7030,5 @@ factors:
   discovery_agent: "human"
   liquidity_metric: null
   llm_safety_stack: null
+  version_pin: null
+  code_commit: null

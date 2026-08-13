@@ -548,7 +548,7 @@ tiers:
       # ── 业务资产注册表（#ARCH-BREG-001，2026-08-12 补登记）──
       # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
       # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
-      # P1 被测对象/交易风控 7 表中 factor/strategy/risk_limit 已落盘（Step1-3 schema+条目完成，Step4-8 交叉引用/半派生/审计/治理同步待做），
+      # P1 被测对象/交易风控 7 表中 factor/strategy/risk_limit Step1-8 全部完成（2026-08-13 Step4-8 补齐：拓扑序确认+FK 交叉引用零 dangling+schema 对齐 62 号+E1-E20 审计 errors=0），
       # indicator/execution_algo/data_asset/chart_pattern 待施工；P2（field_dictionary/experiment）待施工。
       - registry_id: REG-UNI-001
         name: 股票池登记表
@@ -586,8 +586,8 @@ tiers:
         format: yaml
         maintenance: manual
         entry_count: 111
-        status: draft
-        description: 交易因子唯一真源（SSoT）——10 类（Barra 6 + A股特色 4）111 条已落盘。注意：P1-A Step1-3 已完成（schema+条目），Step4-8（交叉引用校验/半派生补全/一致性审计/循环审查）待做，条目性能字段运行时可空。#ARCH-BREG-001 P1-A
+        status: active
+        description: 交易因子唯一真源（SSoT）——10 类（Barra 6 + A股特色 4）111 条已落盘。Step1-8 全部完成（2026-08-13 Step4-8：E1-E20 审计 errors=0/warnings=0，FK 交叉引用零 dangling，schema 对齐 62 号 §6.1.1 补 version_pin/code_commit + data_quality_policy E11/E13 合规化）。条目全 candidate 态，code_path 待代码实现后/PROMOTE G5 前补（pending 合法），性能字段运行时可空。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-STR-001
@@ -596,8 +596,8 @@ tiers:
         format: yaml
         maintenance: manual
         entry_count: 59
-        status: draft
-        description: 交易策略唯一真源（SSoT）——6 类（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）59 条已落盘。注意：P1-A Step1-3 已完成，Step4-8 待做（code_path 待半派生补全）。#ARCH-BREG-001 P1-A
+        status: active
+        description: 交易策略唯一真源（SSoT）——6 类（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）59 条已落盘。Step1-8 全部完成（2026-08-13 Step4-8：E1-E20 审计 errors=0/warnings=0，schema 对齐 62 号 §6.1.2 补 16 字段；K2 已修复——补 baseline_trade_frequency/decay_cause/decay_scan_frequency + distilled_to_code=true（origin=human）+ momentum_trend 33 条标 entry_series=panpan_course_rules）。条目全 candidate 态，code_path 待半派生补全（pending 合法）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-RLM-001
@@ -606,8 +606,8 @@ tiers:
         format: yaml
         maintenance: manual
         entry_count: 42
-        status: draft
-        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）42 条已落盘。注意：P1-B Step1-3 已完成，Step4-8 待做。#ARCH-BREG-001 P1-B
+        status: active
+        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）42 条已落盘。Step1-8 全部完成（2026-08-13 Step4-8：E1-E20 审计 errors=0/warnings=0，schema 与 62 号 §6.2.2 零漂移）。注意 K4 未闭合：var/es/kill_switch 三类 0 条目（36 号 VaR 5 级+35 号 Kill Switch 待反查补登 RLM-VAR-001~005/RLM-ES-001/RLM-KILL-SWITCH-001，新数据施工项）。条目全 candidate 态，code_path 待补（pending 合法）。#ARCH-BREG-001 P1-B
         owned_by: governance
 
       - registry_id: REG-TECHNICAL-INDICATOR-001

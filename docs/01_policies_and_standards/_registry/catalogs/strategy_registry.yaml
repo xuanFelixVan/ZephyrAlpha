@@ -1,9 +1,11 @@
 # [A_config] module_id=REG-STR-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # module_id: MOD-GOVERNANCE
+module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '1.1'
 registry_id: REG-STR-001
 name: 策略登记表
+name_zh: 策略登记表
 description: >-
   交易策略唯一真源（SSoT）。登记所有alpha策略（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation 6类）。
   策略=入场+出场+仓位+风控的完整交易逻辑。
@@ -12,9 +14,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-10'
+last_updated: '2026-08-13'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - strategy_id
@@ -76,6 +78,23 @@ entry_schema:
   capacity_aum_limit: float       # 策略可承载最大 AUM（资金量），按 5% ADV 估算
   participation_rate_limit: float # 最大参与率上限（≤0.05-0.10，占 ADV 比例）
   market_impact_model: str        # square_root/linear/none（市场冲击模型）
+  baseline_trade_frequency: float # 基线交易频率（trades/month，决定 trade-count vs calendar 窗口选择，v1.5.0）
+  decay_cause: str               # crowding/regime/overfitting/tech/depletion/unknown（v1.5.0，MVP 填 unknown）
+  decay_scan_frequency: str      # 扫描频率 monthly/weekly/daily（v1.5.0）：active/live=monthly, monitoring=weekly, decayed=daily
+  sharpe: float                  # 性能字段（运行时可空）
+  max_drawdown: float
+  annual_return: float
+  capacity: float
+  turnover: float
+  last_evaluated_at: date
+  code_commit: str               # 可选，git commit hash（DB 阶段 MUST，v1.4.0）
+  data_quality_policy: obj       # 数据质量监控（E11 审计检查，factor/strategy MUST 声明，v1.4.0）
+  null_rate: float               # 运行时：当前空值率
+  drift_psi: float               # 运行时：PSI 分布漂移
+  drift_ks_pvalue: float         # 运行时：KS 检验 p-value
+  range_bounds: obj              # {min,max} 训练期范围
+  last_quality_scan_at: date     # 上次数据质量扫描时间
+  entry_series: str              # 条目系列标记（v1.34.0 K2③：panpan_course_rules=潘潘课程规则条目，与机构式策略区分；机构式填 null）
 
 strategies:
   # ============================================================
@@ -120,10 +139,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-002"
     name: "Swing Stock Selection (Four-Step)"
@@ -164,10 +207,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-003"
     name: "Stock Pool Whitelist Enforcement"
@@ -208,10 +275,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-004"
     name: "No Selection in Downtrend"
@@ -252,10 +343,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-005"
     name: "Mid-Cap Leader Selection (Highest Volume)"
@@ -296,10 +411,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-006"
     name: "Full Adjustment Condition (30% or 2 Months)"
@@ -340,10 +479,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-007"
     name: "Industry Imagination Space"
@@ -384,10 +547,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-008"
     name: "Sector Capacity Filter"
@@ -428,10 +615,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-009"
     name: "No Acceleration Before Launch"
@@ -472,10 +683,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-010"
     name: "Leader Strategy / Sector Mid-Cap"
@@ -516,10 +751,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-011"
     name: "Isolated Rally Avoidance (Manipulated Stocks)"
@@ -560,10 +819,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-012"
     name: "Valuation Percentile Not for Cyclical Stocks"
@@ -604,10 +887,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-013"
     name: "Nine-Stage Stock Selection SOP"
@@ -648,10 +955,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-014"
     name: "Unbiased Full-Market Scan"
@@ -692,10 +1023,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-015"
     name: "Tradable Pool Exclusion Rules"
@@ -736,10 +1091,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-016"
     name: "Short-Term Pool 5-Point Scoring"
@@ -780,10 +1159,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-017"
     name: "Swing Pool 5-Point Scoring"
@@ -824,10 +1227,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-018"
     name: "Dual-Strategy 5-Point (Range Top-3 + Counter-Trend Capital)"
@@ -868,10 +1295,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-019"
     name: "Three-Dimensional Resonance Check"
@@ -912,10 +1363,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-020"
     name: "Earnings Dimension Factors"
@@ -956,10 +1431,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-021"
     name: "Stabilization Blue Chips != Offensive Targets"
@@ -1000,10 +1499,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-022"
     name: "Diluted Hot Concept Warning"
@@ -1044,10 +1567,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-023"
     name: "Stock Outperformance vs Sector Index"
@@ -1088,10 +1635,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-024"
     name: "ETF Multi-Comparison Four-Dimensional Selection"
@@ -1132,10 +1703,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-025"
     name: "Research Report Classification System"
@@ -1176,10 +1771,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   - strategy_id: "STR-MULTIFACTOR-026"
     name: "50% Pullback Trend Breakdown Threshold"
@@ -1220,10 +1839,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: null
 
   # ============================================================
   # S10 买点策略 (momentum_trend) — STR-MOMENTUM-TREND-001 ~ 018
@@ -1267,10 +1910,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-002"
     name: "Pullback Confirmation Second Buy Point (5 Elements)"
@@ -1311,10 +1978,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-003"
     name: "Acceleration Third Buy Point (Risk Point - No Buy)"
@@ -1355,10 +2046,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-004"
     name: "Scale-In / Pyramid Position Building"
@@ -1399,10 +2114,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-005"
     name: "Risk-Reward Ratio Game"
@@ -1443,10 +2182,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-006"
     name: "ETF DCA / Buy The Dip"
@@ -1487,10 +2250,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-007"
     name: "Dual-Strategy Resonance Buy Signal"
@@ -1531,10 +2318,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-008"
     name: "Resonance Trigger Condition Matrix"
@@ -1575,10 +2386,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-009"
     name: "Sector-Stock Consistency Check"
@@ -1619,10 +2454,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-010"
     name: "A/B/C Three-Tier Buy Point Classification"
@@ -1663,10 +2522,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-011"
     name: "Buy Point Three-Level Verdict"
@@ -1707,10 +2590,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-012"
     name: "Risk-Reward < 2:1 No Trade"
@@ -1751,10 +2658,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-013"
     name: "Stop-Loss Width Rule (>=1.5x Daily Volatility)"
@@ -1795,10 +2726,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-014"
     name: "Rebound Probability Grading"
@@ -1839,10 +2794,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-015"
     name: "Three Opening Scenarios Response Matrix"
@@ -1883,10 +2862,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-016"
     name: "Full Position Four Hard Conditions"
@@ -1927,10 +2930,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-017"
     name: "Pre-Market Auction Three Verification"
@@ -1971,10 +2998,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-018"
     name: "Primary + Backup Dual Scenario Response"
@@ -2015,10 +3066,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   # ============================================================
   # S11 卖点策略 (momentum_trend) — STR-MOMENTUM-TREND-019 ~ 031
@@ -2062,10 +3137,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-020"
     name: "Stock First Sell Point (Break 20-Day Line)"
@@ -2106,10 +3205,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-021"
     name: "Stock Second Sell Point (High Volume Stall)"
@@ -2150,10 +3273,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-022"
     name: "Intraday Quick Reaction Sell"
@@ -2194,10 +3341,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-023"
     name: "Pressure Level Three Failures Double Top"
@@ -2238,10 +3409,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-024"
     name: "One Stock One Settlement"
@@ -2282,10 +3477,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-025"
     name: "Trend-Corresponding Sell Point"
@@ -2326,10 +3545,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-026"
     name: "Scale-Out Selling Method"
@@ -2370,10 +3613,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-027"
     name: "Anchor Selling Method (Core Strategy)"
@@ -2414,10 +3681,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-028"
     name: "Sector Top Four Warning Signs"
@@ -2458,10 +3749,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-029"
     name: "Resonance Sell Signal (Resonance Exit)"
@@ -2502,10 +3817,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-030"
     name: "Position Disposition Rules (Weak Position Clearing)"
@@ -2546,10 +3885,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-031"
     name: "Weak Asset Rotation"
@@ -2590,10 +3953,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   # ============================================================
   # S13 做T策略 (momentum_trend) — STR-MOMENTUM-TREND-032 ~ 033
@@ -2637,10 +4024,34 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
 
   - strategy_id: "STR-MOMENTUM-TREND-033"
     name: "T-Trading Two Disciplines (No Add + Node Required)"
@@ -2681,7 +4092,31 @@ strategies:
     combination_strategy: {}
     meta_labeling_config: {}
     origin: "human"
-    distilled_to_code: false
+    distilled_to_code: true
     capacity_aum_limit: null
     participation_rate_limit: 0.05
     market_impact_model: "square_root"
+    baseline_trade_frequency: null
+    decay_cause: "unknown"
+    decay_scan_frequency: "monthly"
+    sharpe: null
+    max_drawdown: null
+    annual_return: null
+    capacity: null
+    turnover: null
+    last_evaluated_at: null
+    code_commit: null
+    data_quality_policy:
+      null_rate: {threshold: 0.02, window: "1d"}
+      drift_method: "psi"
+      drift_threshold: 0.2
+      freshness: {staleness_sla: "2d"}
+      semantic_contract:
+        null_semantics: "null=未计算/未产生（非零值），禁止零填充"
+        default_fill_policy: "none"
+    null_rate: null
+    drift_psi: null
+    drift_ks_pvalue: null
+    range_bounds: {}
+    last_quality_scan_at: null
+    entry_series: "panpan_course_rules"
