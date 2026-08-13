@@ -14,7 +14,9 @@
 # [TESTS] tests/feedback/test_actors_init.py
 # [A_module] module_id=MOD-FEEDBACK_LOOP | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""alert_router.py — Severity-based alert channel router.
+"""
+
+alert_router.py — Severity-based alert channel router.
 
 Routes AlertEvent instances to appropriate channels based on severity:
   - CRITICAL/HIGH: paging + immediate_notification
@@ -22,6 +24,41 @@ Routes AlertEvent instances to appropriate channels based on severity:
   - LOW: log_only
 
 Decouples alert production (alert_dispatcher) from alert consumption (channels).
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 告警事件 AlertEvent
+#   fields: event_id + severity（枚举或字符串均可，duck-typing 读取）
+#   code: alert_router.py L85 route(alert) 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 严重度归一化
+#   name_en: severity normalize（AlertRouter.route 内联）
+#   intro: 不管severity是枚举还是字符串，统一掰成全大写字符串，缺了算UNKNOWN
+#   desc: 有.value取枚举值；否则str().upper()；None→"UNKNOWN"（alert_router.py L91-99）
+#   inputs: I1
+#   outputs: severity 大写字符串
+# - id: A2
+#   name_zh: ② 严重度渠道映射路由
+#   name_en: AlertRouter.route
+#   intro: 按严重度查表分渠道：危重呼叫+即推，中档slack+邮件，低档只记日志
+#   desc: _SEVERITY_CHANNELS 查表：CRITICAL/HIGH→paging+immediate_notification；MEDIUM→slack+email_digest；LOW/INFO→log_only；未知→空渠道+routed=False+warning日志（L54-60, L100-115）
+#   inputs: A1
+#   outputs: AlertRoutingDecision（channels/routed/reason）
+#   invariant: route() never raises；未知severity返回空渠道列表 routed=False
+# 层: 输出
+# - id: O1
+#   name_zh: 告警路由决策 AlertRoutingDecision
+#   name_en: alert routing decision
+#   intro: 一条告警该发往哪些渠道的结论，带没路由上的原因
+#   downstream: alert_dispatcher.route_alert 同模块 MOD-FEEDBACK_LOOP 内部；终端渠道 paging/slack/email_digest/log_only
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations
@@ -31,7 +68,7 @@ from dataclasses import dataclass, field
 
 logger = logging.getLogger(__name__)
 
-__all__ = [
+__all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定且本文件运行时动态append，Final标注不适用
     "AlertChannel",
     "AlertRoutingDecision",
     "AlertRouter",
