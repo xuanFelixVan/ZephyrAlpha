@@ -140,3 +140,202 @@ class TestProcessPoolStats:
         pool.get_or_create("r1")
         stats = pool.get_stats()
         assert stats.reuse_count == 2
+
+
+class TestSpawnJobEscape:
+    """#ARCH-SPAWN-JOB-KILL-001：detached spawn 的 Job Object 逃逸。
+
+    IDE 终端把命令跑在 KILL_ON_JOB_CLOSE Job 内——子进程不逃逸会随父命令
+    退出被连坐杀死（spawn 返回 PID 但进程从未真实运行的病根）。
+    """
+
+    def test_creationflags_include_breakaway_on_nt(self, monkeypatch):
+        """Windows detached spawn 必须带 CREATE_BREAKAWAY_FROM_JOB（逃逸首选通道）。"""
+        import subprocess
+
+        import zephyr.shared.infra.process_pool as pp
+
+        captured: dict = {}
+
+        class _FakePopen:
+            def __init__(self, cmd, **kwargs):
+                captured.update(kwargs)
+                self.pid = 43210
+
+        monkeypatch.setattr(pp.os, "name", "nt")
+        monkeypatch.setattr(subprocess, "Popen", _FakePopen)
+        proc = pp.spawn_python_hidden([sys.executable, "-c", "pass"])
+        assert proc.pid == 43210
+        assert captured["creationflags"] & pp._CREATE_BREAKAWAY_FROM_JOB, (
+            f"creationflags 缺 CREATE_BREAKAWAY_FROM_JOB：{captured['creationflags']:#x}"
+        )
+        # 无闪窗铁律不破：CREATE_NO_WINDOW 仍在
+        assert captured["creationflags"] & 0x08000000
+
+    def test_permission_error_falls_back_to_wmi(self, monkeypatch):
+        """job 禁 breakaway（WinError 5）→ 降级 _spawn_detached_via_wmi。"""
+        import subprocess
+
+        import zephyr.shared.infra.process_pool as pp
+
+        def _denied_popen(cmd, **kwargs):
+            raise PermissionError(5, "拒绝访问", None, 5)
+
+        sentinel = object()
+        monkeypatch.setattr(pp.os, "name", "nt")
+        monkeypatch.setattr(subprocess, "Popen", _denied_popen)
+        monkeypatch.setattr(pp, "_spawn_detached_via_wmi", lambda cmd, **kw: sentinel)
+        assert pp.spawn_python_hidden([sys.executable, "-c", "pass"]) is sentinel
+
+    def test_permission_error_reraised_on_posix(self, monkeypatch):
+        """POSIX 无 Job Object 语义——PermissionError 不降级，直接抛。"""
+        import subprocess
+
+        import pytest
+
+        import zephyr.shared.infra.process_pool as pp
+
+        def _denied_popen(cmd, **kwargs):
+            raise PermissionError(13, "Permission denied")
+
+        monkeypatch.setattr(pp.os, "name", "posix")
+        monkeypatch.setattr(subprocess, "Popen", _denied_popen)
+        with pytest.raises(PermissionError):
+            pp.spawn_python_hidden([sys.executable, "-c", "pass"])
+
+
+class TestWmiSpawnHelpers:
+    """_spawn_detached_via_wmi / _ps_single_quote 纯逻辑单测（mock powershell 出口）。"""
+
+    def test_ps_single_quote_escapes(self):
+        from zephyr.shared.infra.process_pool import _ps_single_quote
+
+        assert _ps_single_quote("abc") == "'abc'"
+        assert _ps_single_quote("it's") == "'it''s'"
+        assert _ps_single_quote("") == "''"
+
+    def _fake_completed(self, stdout: str):
+        import subprocess
+
+        return subprocess.CompletedProcess(args=[], returncode=0, stdout=stdout, stderr="")
+
+    def test_wmi_spawn_parses_sentinel(self, monkeypatch):
+        import zephyr.shared.infra.process_pool as pp
+
+        monkeypatch.setattr(
+            pp, "run_subprocess_hidden",
+            lambda cmd, **kw: self._fake_completed("ZEPHYR_WMI_SPAWN|0|4242\r\n"),
+        )
+        proc = pp._spawn_detached_via_wmi(["python.exe", "-c", "pass"], env={"A": "1"})
+        assert isinstance(proc, pp._WmiDetachedProcess)
+        assert proc.pid == 4242
+
+    def test_wmi_spawn_nonzero_return_value_raises(self, monkeypatch):
+        import pytest
+
+        import zephyr.shared.infra.process_pool as pp
+
+        monkeypatch.setattr(
+            pp, "run_subprocess_hidden",
+            lambda cmd, **kw: self._fake_completed("ZEPHYR_WMI_SPAWN|9|\r\n"),
+        )
+        with pytest.raises(RuntimeError, match="ReturnValue=9"):
+            pp._spawn_detached_via_wmi(["python.exe", "-c", "pass"])
+
+    def test_wmi_spawn_missing_sentinel_raises(self, monkeypatch):
+        import pytest
+
+        import zephyr.shared.infra.process_pool as pp
+
+        monkeypatch.setattr(
+            pp, "run_subprocess_hidden",
+            lambda cmd, **kw: self._fake_completed("some powershell error"),
+        )
+        with pytest.raises(RuntimeError, match="sentinel missing"):
+            pp._spawn_detached_via_wmi(["python.exe", "-c", "pass"])
+
+    def test_wmi_spawn_script_contents(self, monkeypatch):
+        """脚本契约：ShowWindow=SW_HIDE（无闪窗）、env 全量显式传递、cwd 落 CurrentDirectory。"""
+        import zephyr.shared.infra.process_pool as pp
+
+        captured: dict = {}
+
+        def _fake_run(cmd, **kw):
+            captured["script"] = cmd[-1]
+            return self._fake_completed("ZEPHYR_WMI_SPAWN|0|1\n")
+
+        monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
+        pp._spawn_detached_via_wmi(
+            ["python.exe", "-m", "foo"], cwd="d:/work", env={"ZW_TEST": "v1", "QUOTE": "it's"},
+        )
+        script = captured["script"]
+        assert "$startup.ShowWindow = [uint16]0" in script
+        assert "CreateFlags" not in script  # WMI 拒 CreateFlags（RV=21 实证）
+        assert "'ZW_TEST=v1'" in script
+        assert "'QUOTE=it''s'" in script  # 单引号双写转义
+        assert "CurrentDirectory = 'd:/work'" in script
+
+
+class TestWmiDetachedProcessShim:
+    """_WmiDetachedProcess 的 Popen 兼容语义（真实进程集成验证）。"""
+
+    def test_poll_wait_terminate_lifecycle(self):
+        import subprocess
+
+        import zephyr.shared.infra.process_pool as pp
+
+        if pp.os.name != "nt":
+            import pytest
+
+            pytest.skip("shim 仅 Windows 语义")
+        real = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+        try:
+            shim = pp._WmiDetachedProcess(real.pid)
+            assert shim.poll() is None  # 存活
+            shim.terminate()
+            rc = shim.wait(timeout=10)
+            assert rc is not None
+            assert shim.poll() == rc  # 退出码缓存
+        finally:
+            real.wait(timeout=10)  # 回收真实句柄
+
+    def test_wait_timeout_raises(self):
+        import subprocess
+
+        import pytest
+
+        import zephyr.shared.infra.process_pool as pp
+
+        if pp.os.name != "nt":
+            pytest.skip("shim 仅 Windows 语义")
+        real = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)"])
+        try:
+            shim = pp._WmiDetachedProcess(real.pid)
+            with pytest.raises(subprocess.TimeoutExpired):
+                shim.wait(timeout=0.2)
+        finally:
+            real.terminate()
+            real.wait(timeout=10)
+
+    def test_poll_dead_pid_returns_minus_one(self):
+        import zephyr.shared.infra.process_pool as pp
+
+        if pp.os.name != "nt":
+            import pytest
+
+            pytest.skip("shim 仅 Windows 语义")
+        shim = pp._WmiDetachedProcess(99999999)  # 不存在
+        assert shim.poll() == -1
+        assert shim.wait(timeout=1) == -1  # 幂等（缓存）
+
+    def test_no_resource_warning_on_gc(self):
+        """shim 无 CreateProcess 句柄——GC 回收不触发 Popen.__del__ ResourceWarning。"""
+        import warnings
+
+        import zephyr.shared.infra.process_pool as pp
+
+        with warnings.catch_warnings(record=True) as caught:
+            warnings.simplefilter("always")
+            shim = pp._WmiDetachedProcess(99999999)
+            del shim
+        assert not [w for w in caught if issubclass(w.category, ResourceWarning)]

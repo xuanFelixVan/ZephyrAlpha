@@ -1024,6 +1024,138 @@ class TestSweepStaleWorkers:
         assert sweep_stale_workers(empty_repo) == 0
 
 
+class TestSweepPendingDead:
+    """#ARCH-SPAWN-JOB-KILL-001：pending 即死检测（spawn 传输层失败的兜底观测）。
+
+    spawn 成功的 worker 数秒内翻 running；pending 超 120s + pid 已死 =
+    spawn 即死（Job Object kill-on-close 连坐实证场景），必须标 stale 可见。
+    """
+
+    def test_pending_dead_pid_swept_to_stale(self, tmp_repo):
+        """pending + 超阈值 + pid 已死 → 改写 stale（errors 含 spawn_dead_pending）。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_PENDING,
+            STATUS_STALE,
+            read_status_file,
+            sweep_stale_workers,
+            write_status_file,
+        )
+
+        old = int(time.time()) - 300  # 5 分钟前（超 120s 阈值）
+        write_status_file(
+            tmp_repo, "pending_dead_sha", STATUS_PENDING,
+            session_id="sess-pending-dead", started_at=old, worker_pid=99999999,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 1
+        data = read_status_file(tmp_repo, "pending_dead_sha")
+        assert data is not None
+        assert data["status"] == STATUS_STALE
+        assert any("spawn_dead_pending" in e for e in data["errors"])
+
+    def test_pending_young_not_swept(self, tmp_repo):
+        """pending 未超阈值（worker 可能正在启动）→ 不改写。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_PENDING,
+            read_status_file,
+            sweep_stale_workers,
+            write_status_file,
+        )
+
+        young = int(time.time()) - 30  # 30s（阈值 120s 内）
+        write_status_file(
+            tmp_repo, "pending_young_sha", STATUS_PENDING,
+            session_id="sess-pending-young", started_at=young, worker_pid=99999999,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 0
+        data = read_status_file(tmp_repo, "pending_young_sha")
+        assert data is not None
+        assert data["status"] == STATUS_PENDING
+
+    def test_pending_live_pid_not_swept(self, tmp_repo):
+        """pending + 超阈值 + pid 存活（PID 复用边界）→ 不改写。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_PENDING,
+            read_status_file,
+            sweep_stale_workers,
+            write_status_file,
+        )
+
+        old = int(time.time()) - 300
+        write_status_file(
+            tmp_repo, "pending_live_sha", STATUS_PENDING,
+            session_id="sess-pending-live", started_at=old, worker_pid=os.getpid(),
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 0
+        data = read_status_file(tmp_repo, "pending_live_sha")
+        assert data is not None
+        assert data["status"] == STATUS_PENDING
+
+    def test_pending_no_pid_swept(self, tmp_repo):
+        """pending + 超阈值 + 无 pid（极端残留）→ 标 stale（无法自证存活的 pending 不可信）。"""
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_PENDING,
+            STATUS_STALE,
+            read_status_file,
+            sweep_stale_workers,
+            write_status_file,
+        )
+
+        old = int(time.time()) - 300
+        write_status_file(
+            tmp_repo, "pending_npid_sha", STATUS_PENDING,
+            session_id="sess-pending-npid", started_at=old, worker_pid=0,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 1
+        data = read_status_file(tmp_repo, "pending_npid_sha")
+        assert data is not None
+        assert data["status"] == STATUS_STALE
+        assert any("spawn_dead_pending" in e for e in data["errors"])
+
+    def test_pending_dead_logs_clean_not_critical_warn(self, tmp_repo):
+        """死孤儿语义对齐 #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001：
+        pending 即死收割记 clean（收割即自愈），不记 critical_warn。
+        """
+        import sqlite3
+        from zephyr.governance.audit.reconcile_runner import (
+            STATUS_PENDING,
+            sweep_stale_workers,
+            write_status_file,
+        )
+        from zephyr.governance.audit.reconciliation_registry import (
+            _governance_db_path,
+        )
+
+        (tmp_repo / "data" / "databases").mkdir(parents=True, exist_ok=True)
+        old = int(time.time()) - 300
+        write_status_file(
+            tmp_repo, "pending_clean_sha", STATUS_PENDING,
+            session_id="sess-pending-clean", started_at=old, worker_pid=99999999,
+        )
+        n = sweep_stale_workers(tmp_repo)
+        assert n == 1
+
+        db_path = _governance_db_path(tmp_repo)
+        conn = sqlite3.connect(db_path, timeout=10.0)
+        try:
+            cur = conn.execute(
+                "SELECT action, gate_id FROM reconcile_execution_log "
+                "WHERE gate_id='RECONCILE-WORKER-STALE' ORDER BY logged_at DESC LIMIT 1"
+            )
+            row = cur.fetchone()
+        finally:
+            conn.close()
+        assert row is not None, "pending 即死收割应写 RECONCILE-WORKER-STALE DB 记录"
+        action, gate_id = row
+        assert action == "clean", (
+            f"pending 即死属死孤儿（收割即自愈），应记 clean，实际 action={action}"
+        )
+        assert gate_id == "RECONCILE-WORKER-STALE"
+
+
 class TestIsPidAlive:
     """_is_pid_alive 跨平台进程探活（真源：process_pool.is_pid_alive 别名）。"""
 

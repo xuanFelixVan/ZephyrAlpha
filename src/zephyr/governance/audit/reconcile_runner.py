@@ -77,8 +77,8 @@ Worker 入口
 # - id: A1
 #   name_zh: ① 孤儿 worker 清扫
 #   name_en: sweep_stale_workers
-#   intro: 扫描所有 running 状态文件，进程已死的改写为 stale，超龄终态文件顺带删除
-#   desc: running 且超 30min：PID 死→改 stale+落 DB 记 clean（自愈），PID 活→仅落 DB 记 critical_warn 不改文件；done/failed/stale 超 7d 删除
+#   intro: 扫描 running/pending 状态文件，进程已死的改写为 stale，超龄终态文件顺带删除
+#   desc: running 且超 30min：PID 死→改 stale+落 DB 记 clean（自愈），PID 活→仅落 DB 记 critical_warn 不改文件；pending 超 120s 且 PID 死→改 stale（spawn 即死兜底观测，#ARCH-SPAWN-JOB-KILL-001）；done/failed/stale 超 7d 删除
 #   inputs: I2
 #   outputs: 本次 sweep 标记 stale 的文件数
 # - id: A2
@@ -191,6 +191,12 @@ STATUS_UNKNOWN: str = "unknown"      # status file 不存在（commit 早于 P2-
 
 # 僵尸判定阈值（秒）——running 状态超此时长视为 stale
 _STALE_THRESHOLD_SECONDS: int = 1800  # 30 分钟
+
+# #ARCH-SPAWN-JOB-KILL-001（2026-08-14）：pending 即死检测阈值。
+# spawn 成功的 worker 应在数秒内把 status 翻为 running；超 120s 仍 pending
+# 且 worker_pid 已死 = spawn 传输层失败（如 Job Object kill-on-close 连坐）。
+# 120s 对齐"worker 启动 + import zephyr 依赖链"的最坏耗时，避免误判慢启动。
+_PENDING_DEAD_THRESHOLD_SECONDS: int = 120
 
 # #ARCH-RECONCILER-WORKER-SESSION-001 Phase C（2026-07-22）：
 # 并发 worker 上限——防止每次 commit spawn 一个 worker 导致资源耗尽。
@@ -472,6 +478,11 @@ def sweep_stale_workers(project_root: Path | str) -> int:
     2. 进程已死 → 改写 status file 为 ``stale``（errors 含 ``orphaned_worker_dead``）+ 落 DB
     3. 进程存活但心跳超时 → 不改写（live worker 正在执行慢 reconciler，误判会破坏正在运行的 worker）
 
+    #ARCH-SPAWN-JOB-KILL-001（2026-08-14）增补 pending 分支：
+    pending 超 ``_PENDING_DEAD_THRESHOLD_SECONDS`` 且 worker_pid 已死 → 改写 stale
+    （errors 含 ``spawn_dead_pending``）+ 落 DB——spawn 传输层失败（Job Object
+    kill-on-close 连坐等）的兜底观测，消除"pending 永驻不可见"静默缺失。
+
     在 ``launch_reconcile_async`` 入口调用（每次新 commit 顺带清扫，O(n) n 小）。
 
     Returns:
@@ -488,6 +499,41 @@ def sweep_stale_workers(project_root: Path | str) -> int:
         try:
             data = json.loads(status_path.read_text(encoding="utf-8"))
         except (OSError, json.JSONDecodeError):
+            continue
+        if data.get("status") == STATUS_PENDING:
+            # #ARCH-SPAWN-JOB-KILL-001 治本（2026-08-14）：pending 即死检测。
+            # spawn 传输层失败（Job Object kill-on-close 连坐等）时 worker 从未
+            # 启动，status 永驻 pending——原 sweep 只扫 running，此类失败完全
+            # 不可见（2026-08-13~14 实证 10+ commit 静默缺失）。此处兜底观测：
+            # pending 超阈值 + worker_pid 已死 → 标 stale + 落 DB（死孤儿=clean
+            # 自愈语义，#ARCH-RECONCILE-WORKER-STALE-SEVERITY-001）。
+            pending_started = data.get("started_at", 0)
+            if not pending_started or now - pending_started <= _PENDING_DEAD_THRESHOLD_SECONDS:
+                continue  # 无时间基准 / 未超阈值（worker 可能正在启动），跳过
+            pending_pid = data.get("worker_pid", 0)
+            if pending_pid and _is_pid_alive(pending_pid):
+                continue  # PID 存活（含 PID 复用）——不碰
+            pending_sha = data.get("commit_sha", "")
+            pending_errors = list(data.get("errors", []))
+            pending_errors.append(
+                f"spawn_dead_pending: worker never flipped to running, "
+                f"pid={pending_pid} dead, started={pending_started}, "
+                f"pending_threshold={_PENDING_DEAD_THRESHOLD_SECONDS}s"
+            )
+            write_status_file(
+                project_root, pending_sha, STATUS_STALE,
+                session_id=data.get("session_id", ""),
+                started_at=pending_started,
+                finished_at=now,
+                reconcilers_total=data.get("reconcilers_total", 0),
+                reconcilers_warn=data.get("reconcilers_warn", 0),
+                reconcilers_auto_committed=data.get("reconcilers_auto_committed", 0),
+                errors=pending_errors,
+                trigger_source=data.get("trigger_source", "post_commit_async"),
+                worker_pid=pending_pid,
+            )
+            swept += 1
+            _log_stale_to_db(project_root, pending_sha, pending_started, data)
             continue
         if data.get("status") != STATUS_RUNNING:
             continue

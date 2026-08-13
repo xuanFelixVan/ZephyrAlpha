@@ -16198,3 +16198,58 @@ entries:
   related_rules: '#ARCH-AICOLLAB-001; #ARCH-RECONCILER-WORKTREE-RACE; #ARCH-WORKTREE-002; #ARCH-MERGE-PATH-GAP-001; 65 号 §11.3.1'
   created: '2026-08-14'
   last_updated: '2026-08-14'
+# --- #ARCH-SPAWN-JOB-KILL-001: detached spawn 被 IDE 终端 Job Object 连坐杀死——spawn 返回 PID 但 worker 从未启动（2026-08-14）---
+- issue_id: '#ARCH-SPAWN-JOB-KILL-001'
+  title: 'spawn_python_hidden detached 语义在禁 breakaway 的 Job Object 下失效——worker/daemon spawn 即死，post-commit reconcile 静默缺失'
+  severity: P1高
+  category: governance
+  adjudication: |-
+    2026-08-14 立项（sess-spawnjob-0814 会话根因探针实证后登记；用户遗留上报指令"继续调查处理"）。
+    病根（第一性，探针铁证）：
+    Trae IDE 终端把每条 AI 命令跑在 Windows Job Object 内（IsProcessInJob=true 实测），
+    命令退出即拆掉 job、连坐杀死 job 内全部成员进程。spawn_python_hidden 的
+    "detached" 语义（CREATE_NO_WINDOW|CREATE_NEW_PROCESS_GROUP）只隔离控制台/进程组，
+    对 job 成员身份无效——job 成员身份无条件继承。逃逸需 CREATE_BREAKAWAY_FROM_JOB，
+    但该 job 未开 BREAKAWAY_OK/SILENT_BREAKAWAY_OK → CreateProcess 直接
+    ERROR_ACCESS_DENIED（WinError 5，探针实测）。
+    事故链：git_commit_gateway 提交成功 → launch_reconcile_async spawn worker
+    → CreateProcess 成功返回合法 PID → gateway 退出 → 终端拆 job → worker
+    在 python 解释器初始化/读 payload 前被杀 → status 永驻 pending、payload 残留、
+    无人知晓（静默缺失）。实证：2026-08-13 23:27~08-14 03:35 共 10+ commit 的
+    worker 全部 spawn 即死（status+payload 双残留），停摆期间全项目 post-commit
+    reconcile 静默缺失；手动补跑（worker 即命令本体，job 存活至其完成）全部正常。
+    受害面：spawn_python_hidden 全部 detached 消费者——reconcile worker、
+    session_worktree heartbeat daemon、ollama serve、shadow canary。
+    裁定（两层治本）：
+    L1 传输层修复（process_pool.spawn_python_hidden 内聚修复，真源唯一，全部消费者
+      一次性受益）：Windows detached spawn 先尝试追加 CREATE_BREAKAWAY_FROM_JOB
+      （job 允许时零依赖逃逸；不在 job 中该 flag 为空操作）；捕获 PermissionError
+      （WinError 5=job 禁 breakaway）降级 WMI Win32_Process.Create——进程由 WMI
+      服务在调用方 job 外创建，天然逃逸（探针实证子进程存活跨越父命令退出），
+      环境变量经 Win32_ProcessStartup.EnvironmentVariables 全量显式传递，
+      CreateFlags=CREATE_NO_WINDOW 保持 TRAE-067 无闪窗铁律。WMI 路径返回
+      _WmiDetachedProcess（Popen 兼容 shim：pid/poll/wait/terminate/kill 经
+      ctypes OpenProcess 实现，无 GC ResourceWarning）。
+    L2 观测兜底（reconcile_runner.sweep_stale_workers 增补 pending 即死检测）：
+      原 sweep 只扫 running；pending 永驻不可见。增补：pending 超 120s 且
+      worker_pid 已死 → 标 stale（errors 含 spawn_dead_pending）+ 落 DB（沿用
+      #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001 死孤儿=clean 自愈语义）。
+      任何未来未知传输层失败从"静默缺失"转"可见可追责"。
+    不实施项：
+    - 不做自动补跑（reconciler auto-commit 有副作用，补跑决策留人工/后续裁定）
+    - 不改回同步 reconcile（P2-3 异步化是为解 30s-2min 阻塞超时，方向正确）
+    - 不引入 supervisor/计划任务（纯标准库+系统既有 WMI 服务，遵循项目原则）
+  impact:
+    变更文件：
+    - 'src/zephyr/shared/infra/process_pool.py（spawn_python_hidden breakaway 优先 + _spawn_detached_via_wmi 降级 + _WmiDetachedProcess shim）'
+    - 'src/zephyr/governance/audit/reconcile_runner.py（sweep_stale_workers 增补 pending 即死检测分支）'
+    - 'tests/resource/test_process_pool.py（WMI 降级/shim/breakaway flag 单测）'
+    - 'tests/governance/audit/test_reconcile_async.py（pending 即死 sweep 单测）'
+    关联文档：
+    - 'src/zephyr/governance/audit/reconcile_runner.py 模块 docstring（P2-3 异步化设计裁定）'
+  fix_phase: '探针实证（IsProcessInJob=true / breakaway WinError 5 / 父退子亡 gle=87 / WMI 逃逸存活 / WMI 环境变量传递 OK）→ L1+L2 落地 → 单测 + 真环境 E2E（job 内 spawn→父退→子活）。'
+  status: decided
+  confirmed_by_user: '2026-08-14 用户遗留上报指令"继续调查处理"'
+  related_rules: '#ARCH-RECONCILE-WORKER-HEARTBEAT-001; #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001; #ARCH-RECONCILER-WORKER-SESSION-001; TRAE-067（无闪窗铁律）; Ruling-100PCT-AI-GOVERNANCE-P2-3'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'

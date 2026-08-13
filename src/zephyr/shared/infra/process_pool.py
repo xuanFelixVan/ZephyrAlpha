@@ -60,6 +60,12 @@ logger = logging.getLogger(__name__)
 # 创建新控制台；CREATE_NO_WINDOW(0x08000000) 才真正无窗口。两者互斥
 # （MSDN 明确），故 hidden helper 用 CREATE_NO_WINDOW 替代 DETACHED_PROCESS。
 #
+# Job Object 逃逸（#ARCH-SPAWN-JOB-KILL-001，2026-08-14 探针实证）：
+# IDE 终端把每条命令跑在 KILL_ON_JOB_CLOSE Job Object 内，命令退出拆 job
+# 连坐杀死成员进程——detached spawn（worker/daemon）必须逃逸 job：
+# 首选 CREATE_BREAKAWAY_FROM_JOB（job 允许时零依赖）；WinError 5（job 禁
+# breakaway）降级 WMI Win32_Process.Create（WMI 服务在 job 外创建进程）。
+#
 # 调用方（真源唯一，禁止重复造轮子）：
 #   - reconciliation_registry._run_subprocess（36 处 reconciler subprocess 统一入口）
 #   - reconcile_runner.launch_reconcile_async（worker spawn）
@@ -84,6 +90,168 @@ def _hidden_creationflags() -> int:
             subprocess, "CREATE_NEW_PROCESS_GROUP", 0x00000200
         )
     return 0
+
+
+# ============================================================================
+# Job Object 逃逸（#ARCH-SPAWN-JOB-KILL-001，2026-08-14）
+# ============================================================================
+# 病根：IDE 终端把每条命令跑在 Windows Job Object 内，命令退出拆 job 时
+# 连坐杀死全部成员进程。CREATE_NO_WINDOW/CREATE_NEW_PROCESS_GROUP 只隔离
+# 控制台/进程组，对 job 成员身份无效（无条件继承）。逃逸须
+# CREATE_BREAKAWAY_FROM_JOB，且需 job 开了 BREAKAWAY_OK 才合法；
+# 禁 breakaway 的 job（Trae 终端实测 WinError 5）只能走 WMI
+# Win32_Process.Create——进程由 WMI 服务在调用方 job 外创建，天然逃逸。
+# ============================================================================
+
+_CREATE_BREAKAWAY_FROM_JOB = 0x01000000  # Win32: 子进程脱离父 Job Object
+
+_PROCESS_QUERY_LIMITED_INFORMATION = 0x1000
+_PROCESS_TERMINATE = 0x0001
+_SYNCHRONIZE = 0x00100000
+_STILL_ACTIVE = 259
+_WAIT_OBJECT_0 = 0
+_WAIT_TIMEOUT = 0x00000102
+_INFINITE = 0xFFFFFFFF
+
+
+class _WmiDetachedProcess:
+    """Popen 兼容 shim（WMI 降级路径）——WMI 创建的进程只有 PID 可观测。
+
+    poll/wait/terminate/kill 经 ctypes OpenProcess 实现；不持有 CreateProcess
+    句柄，不存在 Popen.__del__ ResourceWarning。stdio 不可继承（WMI 路径等价
+    全 DEVNULL——CREATE_NO_WINDOW 下无控制台），调用方需输出请写日志文件。
+    """
+
+    def __init__(self, pid: int, args: object = None) -> None:
+        self.pid = pid
+        self.args = args
+        self.returncode: int | None = None
+
+    def _open(self, access: int) -> int:
+        import ctypes
+
+        handle = ctypes.windll.kernel32.OpenProcess(access, False, self.pid)
+        if not handle:
+            raise ProcessLookupError(f"pid={self.pid} gle={ctypes.GetLastError()}")
+        return handle
+
+    def poll(self) -> int | None:
+        """对齐 Popen.poll：运行中返回 None，已退出返回退出码（不可取码时 -1）。"""
+        if self.returncode is not None:
+            return self.returncode
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        try:
+            handle = self._open(_PROCESS_QUERY_LIMITED_INFORMATION)
+        except ProcessLookupError:
+            self.returncode = -1  # 进程已消失且退出码不可取
+            return self.returncode
+        exit_code = ctypes.c_ulong(0)
+        kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
+        kernel32.CloseHandle(handle)
+        if exit_code.value == _STILL_ACTIVE:
+            return None
+        self.returncode = exit_code.value
+        return self.returncode
+
+    def wait(self, timeout: float | None = None) -> int:
+        """对齐 Popen.wait：阻塞至退出或超时（超时抛 subprocess.TimeoutExpired）。"""
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        if self.returncode is not None:
+            return self.returncode
+        try:
+            handle = self._open(_SYNCHRONIZE | _PROCESS_QUERY_LIMITED_INFORMATION)
+        except ProcessLookupError:
+            self.returncode = -1
+            return self.returncode
+        timeout_ms = _INFINITE if timeout is None else max(0, int(timeout * 1000))
+        rc = kernel32.WaitForSingleObject(handle, timeout_ms)
+        if rc == _WAIT_TIMEOUT:
+            kernel32.CloseHandle(handle)
+            raise subprocess.TimeoutExpired(self.args, timeout)
+        exit_code = ctypes.c_ulong(0)
+        kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code))
+        kernel32.CloseHandle(handle)
+        self.returncode = exit_code.value if rc == _WAIT_OBJECT_0 else -1
+        return self.returncode
+
+    def terminate(self) -> None:
+        """对齐 Popen.terminate；进程已死时静默（best-effort）。"""
+        import ctypes
+
+        kernel32 = ctypes.windll.kernel32
+        try:
+            handle = self._open(_PROCESS_TERMINATE)
+        except ProcessLookupError:
+            return
+        kernel32.TerminateProcess(handle, 1)
+        kernel32.CloseHandle(handle)
+
+    def kill(self) -> None:
+        """Windows 上与 terminate 等价（对齐 Popen.kill 语义）。"""
+        self.terminate()
+
+
+def _ps_single_quote(value: str) -> str:
+    """PowerShell 单引号字符串字面量（内嵌单引号双写转义）。"""
+    return "'" + value.replace("'", "''") + "'"
+
+
+def _spawn_detached_via_wmi(
+    cmd: list[str],
+    *,
+    cwd: str | None = None,
+    env: dict[str, str] | None = None,
+) -> _WmiDetachedProcess:
+    """WMI Win32_Process.Create 降级 spawn（job 禁 breakaway 时的逃逸通道）。
+
+    进程由 WMI 服务（Winmgmt）创建，不属于调用方所在 Job Object——父命令
+    退出拆 job 时不被连坐（#ARCH-SPAWN-JOB-KILL-001 探针实证）。
+
+    - 环境变量经 Win32_ProcessStartup.EnvironmentVariables 全量显式传递
+      （env=None 时物化当前 os.environ，对齐 Popen 继承语义）
+    - ShowWindow=SW_HIDE 保持 TRAE-067 无闪窗铁律（CreateFlags 被 WMI 拒
+      ReturnValue=21；ShowWindow 是 WMI 合法通道，探针实证）
+    - WMI ReturnValue != 0 → RuntimeError（2=access denied / 9=path not found /
+      21=invalid parameter 等，见 MSDN Win32_Process.Create）
+    """
+    env_dict = dict(os.environ) if env is None else dict(env)
+    cmdline = subprocess.list2cmdline(list(cmd))
+    env_lines = "\n".join(
+        _ps_single_quote(f"{key}={value}") for key, value in env_dict.items()
+    )
+    ps_script = (
+        "$cls = Get-CimClass -ClassName Win32_ProcessStartup\n"
+        "$startup = New-CimInstance -CimClass $cls -ClientOnly\n"
+        f"$startup.EnvironmentVariables = [string[]]@(\n{env_lines}\n)\n"
+        "$startup.ShowWindow = [uint16]0\n"  # SW_HIDE（TRAE-067 无闪窗）
+        "$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{\n"
+        f"  CommandLine = {_ps_single_quote(cmdline)}\n"
+        f"  CurrentDirectory = {_ps_single_quote(cwd or os.getcwd())}\n"
+        "  ProcessStartupInformation = $startup\n"
+        "}\n"
+        'Write-Output "ZEPHYR_WMI_SPAWN|$($r.ReturnValue)|$($r.ProcessId)"\n'
+    )
+    completed = run_subprocess_hidden(
+        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", ps_script],
+        timeout=60,
+    )
+    for line in (completed.stdout or "").splitlines():
+        if line.startswith("ZEPHYR_WMI_SPAWN|"):
+            _, return_value, pid_text = line.strip().split("|", 2)
+            if return_value == "0" and pid_text.isdigit():
+                return _WmiDetachedProcess(int(pid_text), args=cmd)
+            raise RuntimeError(
+                f"WMI Win32_Process.Create failed: ReturnValue={return_value} "
+                f"(cmd={cmdline[:120]})"
+            )
+    raise RuntimeError(
+        "WMI spawn probe sentinel missing; "
+        f"stdout={(completed.stdout or '')[:200]!r} stderr={(completed.stderr or '')[:200]!r}"
+    )
 
 
 def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
@@ -129,6 +297,15 @@ def spawn_python_hidden(
     1. Windows 下用 CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP（无窗口 + 独立进程组）
     2. 默认 stdin/stdout/stderr 重定向到 DEVNULL（daemon 无 IO 依赖）
     3. close_fds=True（子进程不继承父 FD，detached 语义）
+    4. Job Object 逃逸（#ARCH-SPAWN-JOB-KILL-001）：detached spawn 追加
+       CREATE_BREAKAWAY_FROM_JOB——IDE 终端等把命令跑在 KILL_ON_JOB_CLOSE
+       Job Object 内时，不加此 flag 的子进程会随父命令退出被连坐杀死
+       （job 成员身份无条件继承，CREATE_NO_WINDOW 等控制台 flag 无效）。
+       job 允许 breakaway 或不在 job 中时该 flag 为空操作（零成本）；
+       job 禁 breakaway（WinError 5）→ 降级 WMI Win32_Process.Create
+       （WMI 服务在 job 外创建进程，天然逃逸），返回 _WmiDetachedProcess
+       shim（pid/poll/wait/terminate/kill 对齐 Popen；stdio 不可继承，
+       等价全 DEVNULL，stdout_to_devnull=False 的调试诉求在降级路径失效）。
 
     Args:
         cmd: 命令列表（如 [sys.executable, "-m", "zephyr.foo.daemon", sid])
@@ -139,7 +316,7 @@ def spawn_python_hidden(
         stderr_to_devnull: True 则 stderr=subprocess.DEVNULL
 
     Returns:
-        subprocess.Popen（已启动，pid 可读）
+        subprocess.Popen（已启动，pid 可读）；WMI 降级路径返回 _WmiDetachedProcess
     """
     popen_kwargs: dict = {
         "close_fds": True,
@@ -153,10 +330,21 @@ def spawn_python_hidden(
     if stderr_to_devnull:
         popen_kwargs["stderr"] = subprocess.DEVNULL
     if os.name == "nt":
-        popen_kwargs["creationflags"] = _hidden_creationflags()
+        popen_kwargs["creationflags"] = _hidden_creationflags() | _CREATE_BREAKAWAY_FROM_JOB
     else:
         popen_kwargs["start_new_session"] = True  # POSIX: 新 session（setsid）
-    return subprocess.Popen(cmd, **popen_kwargs)
+    try:
+        return subprocess.Popen(cmd, **popen_kwargs)
+    except PermissionError:
+        if os.name != "nt":
+            raise
+        # WinError 5：父进程在禁 breakaway 的 Job Object 内（IDE 终端
+        # KILL_ON_JOB_CLOSE 实测）——CreateProcess 无法逃逸 job，降级 WMI。
+        logger.warning(
+            "spawn_python_hidden: CREATE_BREAKAWAY_FROM_JOB denied (job object "
+            "forbids breakaway), falling back to WMI Win32_Process.Create"
+        )
+        return _spawn_detached_via_wmi(cmd, cwd=cwd, env=env)
 
 
 def is_pid_alive(pid: int) -> bool:
