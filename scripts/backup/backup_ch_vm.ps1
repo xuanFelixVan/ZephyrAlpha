@@ -203,7 +203,7 @@ if ($AutoCheck) {
                     version = $version; config_hash = $hash
                 }
                 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
-                $report | ConvertTo-Json -Depth 3 | Out-File $LogFile -Encoding UTF8
+                $report | ConvertTo-Json -Depth 3 | Out-File $LogFile -Encoding utf8
                 Write-Host "  Log: $LogFile" -ForegroundColor White
                 exit 0
             } else {
@@ -295,7 +295,7 @@ if ($rcExit -ge 8) {
     Write-Warn "Attempting to restart VM despite copy failure..."
     Start-VM -Name $VmName -ErrorAction SilentlyContinue
     $report = @{timestamp=(Get-Date).ToString("o"); steps=$steps; success=$false; error="robocopy exit $rcExit"}
-    $report | ConvertTo-Json -Depth 4 | Out-File $LogFile -Encoding UTF8
+    $report | ConvertTo-Json -Depth 4 | Out-File $LogFile -Encoding utf8
     exit 1
 }
 $copiedDataGB = [math]::Round((Get-Item (Join-Path $BackupRoot "data.vhdx")).Length / 1GB, 2)
@@ -420,7 +420,7 @@ $report = @{
     ch_config_hash = $recordedHash
 }
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
-$report | ConvertTo-Json -Depth 4 | Out-File $LogFile -Encoding UTF8
+$report | ConvertTo-Json -Depth 4 | Out-File $LogFile -Encoding utf8
 
 # Update backup_state.json with VM backup timestamp + version/hash baseline
 Set-StateField "last_ch_vm_backup_time" (Get-Date).ToString("o")

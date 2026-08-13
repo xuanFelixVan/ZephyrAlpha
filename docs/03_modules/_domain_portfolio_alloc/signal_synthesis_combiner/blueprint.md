@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.1.1"
 design_maturity: design
-build_status: stable
+build_status: generated
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc

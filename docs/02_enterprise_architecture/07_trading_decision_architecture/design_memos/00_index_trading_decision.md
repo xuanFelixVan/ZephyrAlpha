@@ -54,7 +54,7 @@ scope: 07_trading_decision_architecture
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.5.0 |
 | [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.23.0 |
 | [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.20 |
-| [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active v1.0.0（2026-08-12 依 MOD-POS-022 production 代码重建，6a4f5392） |
+| [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
 | [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator 参数（框架 active + 代码 production v1.0.0；C1 已通过；参数待首批策略 PnL 校准） | active v2.8.1 |
 | [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active v1.37.0 |
 | [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active v1.10.0 |
@@ -654,7 +654,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 30_multi_strategy_concurrency | 多策略并发架构 | ✅ 已定稿 | active v2.5.0 |
 | 31_position_sizing | G12 仓位算法 | ✅ 已定稿 | active v1.23.0 |
 | 32_firm_risk_aggregator | G13 FirmRiskAggregator | ✅ 已定稿 | active v1.0.20 |
-| 33_budget_change_handler | G14 BudgetChangeHandler | ✅ 已定稿 | active v1.0.0（2026-08-12 依 MOD-POS-022 production 代码重建，6a4f5392） |
+| 33_budget_change_handler | G14 BudgetChangeHandler | ✅ 已定稿 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
 | 34_regime_meta_allocator | G15 RegimeMetaAllocator | ✅ 已定稿 | active v2.8.1（C1 已通过；参数待策略 PnL 校准） |
 | 41_buy_flow | G19 买入流 | ✅ 已定稿 | active v1.6.0 |
 | 42_sell_flow | G20 卖出流 | ✅ 已定稿 | active v1.6.2 |

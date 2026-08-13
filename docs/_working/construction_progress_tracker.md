@@ -44,7 +44,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 任务方向 | 状态 |
 |---|---|---|
-| 16 | 待分配（33 号 BudgetChange 受 33 号文档骨架化影响，见遗留项 §7-P1） | ⏳ 等裁定 |
+| 16 | 33 号 BudgetChange（AI-BGT-001，含 33 号文档重建核实+行号漂移修正 v1.1.0+MOD-POS-022 四瑕疵修复） | ✅ 完工待 merge（3 commits：1e78d0d20e/1b8a774ad5/15b1e40f8a，33 测试 2 轮全绿） |
 | 17 | 待分配 | ⏳ 等裁定 |
 | 18 | 待分配 | ⏳ 等裁定 |
 
@@ -81,6 +81,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 - [AI-REG-K4-001]：补登 20 条（var 5 / es 3 / kill_switch 12），E1-E20 0 ERROR，闭环第一批遗留#6。
 - [AI-REG-EXP-001]：反馈正文截断未给 hash，统筹经 git log 实证 4b92a41a。4 项遗留（见 §7）。
 - [AI-BUY-001] 2026-08-13 20:34：83 测试 2 轮全绿，12 节全 PASS。2 项遗留（见 §7）。
+- [AI-BGT-001] 2026-08-14：第三批 1/3。3 commits（1e78d0d20e/1b8a774ad5/15b1e40f8a）统筹已核验。关键修正：33 号文档非骨架（2026-08-12 已由 6a4f539214 重建 active v1.0.0），阶段 A 实为重建质量核实——ALGO_FLOW 标记 commit e5a6632c71 致文档行号引用系统性漂移 +68，已逐处修正（v1.1.0）。33号 §7 新发现 4 项闭环（re-target 窗口硬编码/fail-closed 声明/错误码撞号/补 33 测试）。Step 1 PASS + Step 6 十四节 PASS（A.13 ⚠️ 存量阻断：9 幽灵锚点经实证为存量）。33 测试 2 轮全绿。worktree 保留待 merge。⚠️ merge 注意：①BGT worktree 内 tracker 副本有编辑，与 dev 重建版必冲突——以 dev 版为准（其 #34-37 已并入 dev 版 §六）；②worktree 内 2 份他域 blueprint frontmatter sync 派生物未提交，merge 时甄别。4 项遗留（见 §六 #34-37）。 |
 
 ## 五、施工批次规划（当前）
 
@@ -117,11 +118,11 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 10 | dangling FK：UNI-BASKET-001（regime 验证 10 大盘股篮子未登记 universe_registry） | AI-REG-EXP-001 | 需补登 universe_registry 或修正引用 | ⏳ |
 | 11 | 16 号文档 8 大类指标 vs 代码实际 5 大类（trend/momentum/volatility/volume/reversal）不一致 | AI-REG-IND-001 | 文档需对齐代码现实 | ⏳ |
 | 12 | data_asset 注册表 13 个 E5 告警（旧 dataflow 注册表锚点漂移） | AI-REG-EXE-001 | 锚点漂移治理 | ⏳ |
-| 13 | field_dictionary source_system 3 个值 pending（当时 data_asset_registry 未就绪；现已建成） | AI-REG-FLD-001 | 重跑 E4 FK 检查复核 | 🔥 可复核 |
+| 13 | field_dictionary source_system 3 个值 pending（当时 data_asset_registry 未就绪；现已建成） | AI-REG-FLD-001 | 重跑 E4 FK 检查复核 | ✅ 已闭环（2026-08-14 统筹复核：SRC-QMT-001/AKSHARE-001/INTERNAL-001 在 data_asset_registry L114/136/422 实证存在，pending 标注清零，commit f0ebfdd5） |
 | 14 | 52 号 §7 DSR 双实现未统编（阈值 0.5 vs 0.95），影响 dsr_value 字段语义 | AI-REG-EXP-001 | 需裁定统一阈值 | ⏳ 等裁定 |
 | 15 | BUY 队 5 个新文件 token 与既有 capability 名称重叠 | AI-BUY-001 | 命名冲突需消解 | ⏳ |
 | 16 | MOD-PLAN-001/002/003 域不一致 | AI-BUY-001 | depgraph 域归属修正 | ⏳ |
-| 17 | 33 号文档骨架化，直接影响第三批 33 BudgetChange 施工 | AI-FRA-001 | 第三批开工前需先充实 33 号文档 | ⏳ 阻塞第三批 |
+| 17 | 33 号文档骨架化，直接影响第三批 33 BudgetChange 施工 | AI-FRA-001 | 第三批开工前需先充实 33 号文档 | ✅ 已闭环（实际 2026-08-12 批二回填 6a4f539214 已重建为 active v1.0.0；AI-BGT-001 核实重建质量并修行号漂移→v1.1.0） |
 
 ### P1-补 · 第二统筹会话补登（2026-08-13）
 
@@ -129,11 +130,22 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 29 | AI-BUY-001 新建 6 模块（MOD-PA-006/TRIG-001/PLAN-001~003）未创建 blueprint.md | AI-BUY-001 | SOP Step 4 要点 1 必做项（新建模块按 blueprint_construction_template.md 建蓝图），施工时遗漏；用户 2026-08-13 裁定"登记遗留项 merge 后统一补"。merge 已完成，条件解除 | 🔥 可处理（建议与 #15 token 重叠消解 + #16 域不一致统一同批处理） |
+| 29 | AI-BUY-001 新建 6 模块（MOD-PA-006/TRIG-001/PLAN-001~003）未创建 blueprint.md | AI-BUY-001 | SOP Step 4 要点 1 必做项（新建模块按 blueprint_construction_template.md 建蓝图），施工时遗漏；用户 2026-08-13 裁定"登记遗留项 merge 后统一补"。merge 已完成，条件解除 | ✅ 已闭环（2026-08-14 统筹补建 5 蓝图 448-496 行，合规 72/72 全 PASS；blueprint_registry 153→158；creation_token 5 条已登记；commit f0ebfdd5） |
 | 30 | T+1 可卖持仓口径（current_holdings 应为 T+1 口径可卖权重） | AI-FRA-001 | 供数方需按 T+1 口径供数，供数口径对齐后关闭 | ⏳ |
 | 31 | 62 号 E1 文案瑕疵（写"14 字段"实为 15 字段含 name_zh） | AI-REG-FLD-001 | 文档文案滞后，62 号负责会话顺手修正 | ⏳ |
 | 32 | chart_pattern used_by_factors 回填 | AI-REG-PAT-001 | factor_registry 尚未施工形态因子，形态因子施工后回填 | ⏳ |
 | 33 | 62 号 §12 P2-9 状态同步未做 | AI-REG-EXP-001 | 避免热文档冲突，留 62 号负责会话同步 | ⏳ |
+
+### P1-补2 · 第三批 AI-BGT-001 登记（2026-08-14）
+
+> 来源：AI-BGT-001 反馈 §7。原登记在 BGT worktree tracker 副本（merge 时以 dev 版为准），由统筹并入本表。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 34 | 幽灵锚点 9 个存量硬阻断（BM-INV-002） | AI-BGT-001 | 经主工作区 2026-08-13 16:04 报告实证为存量，非施工引入；统筹走 battle_map 治理，非施工队范围 | ⏳ 统筹治理项 |
+| 35 | 37 份蓝图 §11 代码索引漂移（含 MOD-POS-022 仍标"❌ 未实现"） | AI-BGT-001 | 统筹统一跑 sync_blueprint_code_index.py（单队跑会搭便车 36 份他域文件） | ⏳ 统筹统一执行 |
+| 36 | 30 号表述漂移（"47 单测全绿"/"481 行"/不存在方法名） | AI-BGT-001 | 越界项，留 30 号负责会话 | ⏳ 30 号会话 |
+| 37 | 00_index 对 33 号版本登记滞后（现已 v1.1.0） | AI-BGT-001 | 登记时 bm-fill 占用 00_index；现已释放，统筹可直接同步 | ✅ 已闭环（2026-08-14 统筹同步 00_index L57/L657 至 v1.1.0；v1.1.0 内容在 BGT worktree commit 1b8a774ad5，随第三批统一 merge 生效） |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
@@ -148,7 +160,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 |---|---|---|---|
 | 20 | 6/7 批二反馈仍用旧版 12 节长清单 | 第三批起统一用 SOP v1.3.0 的 14 节版 | ⏳ 第三批执行 |
 | 21 | `ai/bm-fill/task-battlemap-coverage` 分支未 merge | 17 个 ai/* 分支中唯一未合入；需确认内容是否还需 | ⏳ 等裁定 |
-| 22 | 17 个已 merge 的 ai/* 分支待删除 | git branch -d 清理 | 🔥 可处理 |
+| 22 | 17 个已 merge 的 ai/* 分支待删除 | git branch -d 清理 | ✅ 已闭环（2026-08-14 统筹执行，16 个施工分支全部 git branch -d 安全删除；ai/bm-fill 分支按用户裁定留另一 AI 处理，见 #21） |
 | 23 | scripts/session_worktree.py 此前从未被 git 跟踪（merge 清理中丢失的根因） | 已从 stash@{1} 恢复（sha256 与 asset index 一致 BBCACD36…），本次随交接文件一并 commit 落地 | 🔥 本次处理 |
 | 24 | 交接文件防丢机制失效：原 tracker/handoff 仅靠 staged+.runtime 备份，未 commit | 本重建版直接 commit 到 dev；后续统筹会话每个里程碑必须经 GitCommitGateway 落地 tracker | 🔥 本次处理 |
 
@@ -173,3 +185,4 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 2026-08-13 晚 | **文件重建**（原文件未 commit 丢失）+ 遗留项按 P0/P1/P2 重分类 + 状态逐项实证 | 本会话 |
 | 2026-08-13 晚 | SOP 迁家（02/67→01/sop 专区）+ 遗留 #5 闭环（AGENTS.md 速查，Owner 批准 f15de056）+ #9 部分闭环 | 本会话（sess-recovery-0813） |
 | 2026-08-13 晚 | 补登 5 项遗漏遗留（#29-33），其中 #29 蓝图补建因 merge 完成转 🔥 可处理 | 第二统筹会话（用户裁定蓝图遗留登记） |
+| 2026-08-14 | P0 八项统筹闭环（#1-5/#13/#22/#29，commit f0ebfdd5 等）；AI-BGT-001 核验 PASS（33 测试统筹独立复跑确认）；#17/#37 闭环；#34-37 并入 §六 | 第三统筹会话 |

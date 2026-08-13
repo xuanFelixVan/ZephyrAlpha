@@ -280,6 +280,13 @@ if ($Mode -eq "code") {
         }
         if ($chDeleteFiles.Count -gt 0) { Write-OK "Removed previous file(s): $($chDeleteFiles -join ', ')" }
 
+        # 3b. Self-heal: clear stale *.zip.lock (#ARCH-BACKUP-LOCK-STALE, 2026-08-13)
+        # Root cause: on abnormal BACKUP abort, inc.zip deleted but inc.zip.lock remains,
+        # causing subsequent BACKUP to fail-fast with BACKUP_ALREADY_EXISTS.
+        # Unconditionally clean before firing new BACKUP (idempotent; rm -f silent if no lock).
+        & python $ChSshHelper --cmd "rm -f /mnt/chbackup_local/*.zip.lock" --sudo 2>&1 | Out-Null
+        Write-OK "Self-heal: cleared stale *.zip.lock (if any)"
+
         # 4. Fire async BACKUP
         if ($chMode -eq "full") {
             $backupQuery = "BACKUP DATABASE c1_market, DATABASE c3_fundamental TO Disk('backups', '$chTarget') ASYNC"
@@ -386,7 +393,7 @@ $report = @{
 }
 
 New-Item -ItemType Directory -Path "$ProjectRoot\logs" -Force | Out-Null
-$report | ConvertTo-Json -Depth 5 | Out-File $LogFile -Encoding UTF8
+$report | ConvertTo-Json -Depth 5 | Out-File $LogFile -Encoding utf8
 Write-OK "Report saved: $LogFile"
 
 # Update state file

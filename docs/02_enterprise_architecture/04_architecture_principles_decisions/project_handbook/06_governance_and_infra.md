@@ -75,10 +75,10 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py  # 五�
 | d5_architecture | 架构合规（最大） / Architecture compliance (largest) | 13 |
 | d6_security | 安全扫描 / Security scan | 15 |
 | d7_code | d7_code / d7_code | 41 |
-| d8_doc_sync | 文档一致性 / Doc consistency | 12 |
+| d8_doc_sync | 文档一致性 / Doc consistency | 13 |
 | d9_knowledge | 知识库 / Knowledge base | 2 |
 | data_quality | data_quality / data_quality | 2 |
-| **合计** | **Total** | **171** |
+| **合计** | **Total** | **172** |
 <!-- AUTO-END:governance_script_counts -->
 
 ## 7. 基础设施件（永久系统）

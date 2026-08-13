@@ -4,8 +4,8 @@ title: "Budget变动处理器蓝图 — 三级升级落地+convergence_window+�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: generated
 ttl: permanent
 layer: L03_position
 layer_name: position

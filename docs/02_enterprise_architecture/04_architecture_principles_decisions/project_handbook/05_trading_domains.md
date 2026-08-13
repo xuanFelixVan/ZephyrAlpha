@@ -65,8 +65,8 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 459 |
-| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 435 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 458 |
+| `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 436 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 243 |
 | `D_DATA` | 数据接入层 | L1_foundation | 203 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 195 |
@@ -88,17 +88,17 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 | `D_INFRA_RECOVERY` | 回滚恢复 | L0_infrastructure | 55 |
 | `D_EX_CORE` | 执行核心 | L2_domain | 52 |
 | `D_BACKTEST` | 回测 | L2_domain | 51 |
+| `D_TRADING` | 交易运营 | L2_domain | 47 |
 | `D_RISK` | 风控 | L2_domain | 46 |
-| `D_TRADING` | 交易运营 | L2_domain | 42 |
 | `D_ASHARE_SIGNAL` | A股特色信号 | L2_domain | 37 |
 | `D_GOV_RULE` | 规则治理 | L2_domain | 36 |
 | `D_INTELLIGENCE` | 上下文管理 | L2_domain | 33 |
 | `D_REGIME` | 市场状态 | L2_domain | 31 |
-| `D_POSITION` | 仓位管理 | L2_domain | 28 |
 | `D_GOV_DOCS` | 架构文档治理 | L2_domain | 27 |
 | `D_INFRASTRUCTURE` | 跨层契约基础设施 | L0_infrastructure | 26 |
 | `D_MKT_DATA` | 行情数据 | L1_foundation | 26 |
-| `D_SELL_DECISION` | 卖出决策 | L2_domain | 25 |
+| `D_POSITION` | 仓位管理 | L2_domain | 26 |
+| `D_SELL_DECISION` | 卖出决策 | L2_domain | 26 |
 | `D_FRONTEND` | 前端 | L2_domain | 24 |
 | `D_DATA_ENG` | 数据工程 | L1_foundation | 20 |
 | `D_REPORTING` | 报告 | L1_foundation | 20 |
