@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-RK-011 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] zephyr.risk.core.var_backtester
 # [DOMAIN] D_RISK
 # [DEPENDENCIES] numpy; scipy; zephyr.shared.foundation.errors
