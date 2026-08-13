@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.async_fill_dispatcher
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib; zephyr.ex_core.fill_handler; zephyr.shared.contracts.fill; zephyr.shared.contracts.order

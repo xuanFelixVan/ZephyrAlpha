@@ -5,8 +5,8 @@
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] IS=commission+spread+market_impact+timing_risk四桶分解;DECISION基准(决策价)为主滑点基准;BUY正=买贵成本/SELL正=卖便宜成本
+# [MODIFY-GUARD] 40_execution_broker.md §2.4 决策③
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -14,6 +14,15 @@
 # [TESTS]
 # [A_module] module_id=MOD-L07-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [ALGO_FLOW]
+# I1: Fill(成交回报: fill_price/filled_quantity/commission/fill_timestamp) + Order(原始委托: limit_price/quantity/side)
+# I2: benchmark_price_source(DECISION/ARRIVAL/VWAP/TWAP/PREV_CLOSE，默认DECISION)
+# F1: _calc_slippage_bps(方向感知滑点: BUY=(fill-intended)/intended, SELL=(intended-fill)/intended, ×10000)
+# F2: _calc_is_decomposition(IS四桶: commission+spread+market_impact+timing_risk)
+# A1: analyze(单笔TCA: 滑点+佣金+IS四桶分解→ExecutionReport)
+# A2: analyze_batch(批量TCA: 逐笔analyze→list[ExecutionReport])
+# O1: ExecutionReport(slippage_bps/commission/is_decomposition/algo_type)
+# [/ALGO_FLOW]
 
 # ---
 # domain: reporting
@@ -54,20 +63,23 @@ class DefaultTCAEngine(TCAEngineBase):
 
     __tca_id__ = __tca_id__
 
-    def __init__(self, benchmark_price_source: str = "arrival"):
+    def __init__(self, benchmark_price_source: str = "decision"):
         self._benchmark_source = benchmark_price_source
 
     def analyze(self, fill: Fill, order: Order, idempotency_key: str) -> ExecutionReport:
         intended_price = order.limit_price or Decimal("100")
         fill_price = fill.fill_price
 
-        slippage_bps = Decimal("0")
-        if intended_price > 0:
-            slippage_bps = (fill_price - intended_price) / intended_price * Decimal("10000")
+        # 方向感知滑点（40_execution_broker §2.4 决策③）
+        # BUY 正 = 买贵了 = 成本 / SELL 正 = 卖便宜了 = 成本
+        slippage_bps = self._calc_slippage_bps(fill_price, intended_price, order.side)
 
         commission = fill.commission or Decimal("0")
 
         direction = "BUY" if (order.side and order.side.name == "BUY") else "SELL"
+
+        # IS 4 桶分解（40_execution_broker §2.4 决策③）
+        is_decomposition = self._calc_is_decomposition(fill, order, slippage_bps)
 
         return ExecutionReport(
             order_id=order.order_id,
@@ -102,8 +114,52 @@ class DefaultTCAEngine(TCAEngineBase):
         _logger.info("Batch TCA: %d fills -> %d reports", len(fills), len(reports))
         return reports
 
+    def _calc_slippage_bps(
+        self, fill_price: Decimal, intended_price: Decimal, side: object,
+    ) -> Decimal:
+        """方向感知滑点计算（40_execution_broker §2.4 决策③）。
+
+        BUY 正 = 买贵了 = 成本 / SELL 正 = 卖便宜了 = 成本。
+        """
+        if intended_price <= 0:
+            return Decimal("0")
+        raw = (fill_price - intended_price) / intended_price * Decimal("10000")
+        # SELL 侧取反：卖便宜了 → (intended - fill) / intended > 0
+        if side and getattr(side, "name", "") == "SELL":
+            return -raw
+        return raw
+
+    def _calc_is_decomposition(
+        self, fill: Fill, order: Order, slippage_bps: Decimal,
+    ) -> dict[str, Decimal]:
+        """IS 4 桶分解（40_execution_broker §2.4 决策③，Perold 1988）。
+
+        IS = commission + spread + market_impact + timing_risk
+        当前 MVP 口径：
+          - commission: 券商佣金+印花税+过户费（Fill.commission 已含）
+          - spread: half-spread 估计（MVP 用 0，Phase 1.5 接盘口数据）
+          - market_impact: 市场冲击（MVP 归入 slippage_bps 总额）
+          - timing_risk: 时机风险 = slippage_bps - market_impact（MVP 为残差）
+
+        Phase 1.5 应将 delay cost 从 timing_risk 独立报告（Plexus: delay 占 IS 54%）。
+        """
+        commission = fill.commission or Decimal("0")
+        # MVP: spread 无法从 Fill 获取，置 0；Phase 1.5 接盘口 half-spread
+        spread = Decimal("0")
+        # MVP: market_impact 归入总 slippage，timing_risk 为残差
+        market_impact = slippage_bps  # 简化：全部滑点视为冲击
+        timing_risk = slippage_bps - market_impact  # 残差（MVP=0）
+
+        return {
+            "commission": commission,
+            "spread": spread,
+            "market_impact": market_impact,
+            "timing_risk": timing_risk,
+            "total_is_bps": slippage_bps,
+        }
+
     def _calc_shortfall(self, fill: Fill, order: Order) -> Decimal:
-        """计算 Implementation Shortfall"""
+        """计算 Implementation Shortfall（DECISION 基准）"""
         decision_price = order.limit_price or Decimal("0")
         if decision_price == 0:
             return Decimal("0")

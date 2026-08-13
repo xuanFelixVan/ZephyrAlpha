@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 constitutional_update.py —— 宪法自愈（Phase 14 | 盲点 B27）

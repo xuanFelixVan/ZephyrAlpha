@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.corporate_action_adjuster
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib
