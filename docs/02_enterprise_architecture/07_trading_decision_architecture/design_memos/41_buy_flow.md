@@ -5,8 +5,8 @@ title: 买入流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
-date: 2026-08-10
+version: "1.7.0"
+date: 2026-08-13
 topic: buy_flow
 scope: 07_trading_decision_architecture
 ---
@@ -131,7 +131,7 @@ MTF 仲裁优先级：**应急轨（emergency）> 人工轨（manual）> 自动�
 
 > **对标**（10jqka 2026-06 分批入场实战）：首仓试探法则首批 20-30% 验证方向，符合预期再拉满，反转则立即止损——与本项目"首仓试单+确认仓"一致。倒金字塔（10/20/30/40）属左侧逆势加仓，本项目趋势/突破策略不用，仅价值反转策略可选（待 G04 校准）。
 
-**C-031 置信度→批次比例映射算法**（施工缺失补全）：
+**C-031 置信度→批次比例映射算法**（**已施工** `src/zephyr/pf_alloc/batched_position_builder.py` MOD-PA-006）：
 
 ```python
 def compute_batch_split(confidence_score_c031, strategy_type, sector_quality=None):
@@ -210,7 +210,7 @@ class Batch:
 | 跌破前低（支撑破位） | 暂停全部后续批次 | 触发 [BM-SELL-04-B 止损族](../battle_map/battle_map_07_sell_flow.md) → 止损卖出 |
 | 纪律闸拦截（追高/补仓） | 取消后续批次 | BM-BUY-08 Hard Block，记录违规 |
 
-**突破失败检测算法**（施工伪代码已补全）：
+**突破失败检测算法**（**已施工** `src/zephyr/pf_alloc/batched_position_builder.py` MOD-PA-006）：
 
 ```python
 def detect_breakout_failure(position, lookback_days=10, confirm_bars=2):
@@ -269,7 +269,7 @@ def detect_breakout_failure(position, lookback_days=10, confirm_bars=2):
 
 > **为何 MVP 选 14:50-14:57 而非机构 VWAP 的 10:30/13:30**：10:30/13:30 是机构大单拆执行的峰值，散户/小资金在峰值时段易成对手盘被动方；14:50-14:57 成交量已走高且价格趋稳，限价单锚 VWAP 滑点可控，又能赶在 14:57 收盘竞价前完成挂单。做T 策略（BM-SELL-08）另走 9:45-10:15 卖/13:30-14:30 买回的 U 型节奏（CSDN 2026-08-08 A 股做T 研究），与建仓尾盘窗口错峰。
 
-**执行时序算法**（施工伪代码已补全）：
+**执行时序算法**（**已施工** `src/zephyr/pf_alloc/batched_position_builder.py` MOD-PA-006）：
 
 ```python
 def schedule_buy_orders(batched_plan, current_time):
@@ -340,7 +340,7 @@ FirmTargetPortfolio.holdings = {"600519": 0.08, "000858": 0.06, ..., "CASH": 0.2
 - 31 §2.5 已定 T+1 结算约束：仓位决策按 T+1 可用资金计算，buy_flow 遵循同一口径
 - 多标的 pro-rata 归一化在 31 Kelly 层做（§2.3.5），buy_flow 收到的权重和已≤总仓位上限
 
-**资金不足时 pro-rata 削减算法**（施工伪代码已补全）：实盘中账户可用资金可能因前日卖出未到账/冻结/手续费占用而**小于** FirmTargetPortfolio 的目标权重和。buy_flow 不重算仓位，但须做兜底削减：
+**资金不足时 pro-rata 削减算法**（**已施工** `src/zephyr/pf_alloc/batched_position_builder.py` MOD-PA-006）：实盘中账户可用资金可能因前日卖出未到账/冻结/手续费占用而**小于** FirmTargetPortfolio 的目标权重和。buy_flow 不重算仓位，但须做兜底削减：
 
 ```python
 def clip_to_available_capital(target_holdings, available_cash, total_account_value):
@@ -358,7 +358,7 @@ def clip_to_available_capital(target_holdings, available_cash, total_account_val
 
 > **为何 pro-rata 而非按优先级截断**：与 [32_firm_risk_aggregator](32_firm_risk_aggregator.md) §2.4 单票硬上限裁剪哲学一致——按比例削保持各标的相对权重不变，归因不被扭曲；优先级截断会抹零低优先级标的，归因失真。资金可用性是执行层约束，不应改变策略层的相对偏好。
 
-**多标的下单排序算法**（施工伪代码已补全）：MVP 尾盘 14:50-14:57 窗口集中下单多标的，下单顺序影响成交质量——**流动性差的标的先挂**（防尾盘挂单后无人接单），高置信度标的先挂（防错过窗口）：
+**多标的下单排序算法**（**已施工** `src/zephyr/pf_alloc/batched_position_builder.py` MOD-PA-006）：MVP 尾盘 14:50-14:57 窗口集中下单多标的，下单顺序影响成交质量——**流动性差的标的先挂**（防尾盘挂单后无人接单），高置信度标的先挂（防错过窗口）：
 
 ```python
 def rank_buy_orders(target_holdings, confidence_scores, liquidity_scores):
@@ -720,3 +720,4 @@ class BoundedActionAdvice:
 | 2026-08-10 | 1.5.0 | 施工标注清理——"施工缺失补全"→"施工伪代码已补全" | §3.3 突破失败检测算法 / §3.4 执行时序算法 / §3.6 资金不足 pro-rata 削减算法 / §3.6 多标的下单排序算法 共 4 处标注从"施工缺失补全"更新为"施工伪代码已补全"——v1.1.0 已补全全部伪代码（detect_breakout_failure/schedule_buy_orders/clip_to_available_capital/rank_buy_orders 四函数完整），标注为历史遗留未同步 | 用户要求再次审查文档所有内容+施工环节流程算法缺失+持续改进。核查发现 41 号 4 处算法伪代码早在 v1.1.0 已完整补全，但"施工缺失补全"标注未同步更新造成"算法缺失"的误读。本次清理过时标注，准确反映施工状态 |
 | 2026-08-10 | 1.5.1 | 伪代码精度审计——uniform 导入补全 + 跨文档调用链验证 | §3.5 `compute_anchor_price` 补 `from random import uniform` 导入语句（原伪代码直接调用 `uniform()` 未声明导入，施工方可能遗漏）。跨文档调用链验证：41 号扳机清单 14 条 TriggerEntry 的 condition 函数来源均已确认（detect_breakout_failure 在 41§3.3 定义、triage_position 在 42§3.2 定义、has_volume_confirmation 在 26§2.5 定义），无悬空函数。边界条件审计：clip_to_available_capital 有 target_invest<=available_cash 保护 + pro-rata 削减逻辑正确；compute_batch_split 有 sector_quality=None 降级兼容；detect_breakout_failure 有连续 2 根确认防假跌破 | 七十二轮伪代码边界条件深度审计——换三个新角度（跨文档调用链验证/伪代码边界条件审计/参数来源追踪）发现 1 处导入缺失，已修复 |
 | 2026-08-12 | 1.6.0 | 作战地图全覆盖补丁——新增明日预案小节（BM-PLAN-01/02/03）+ 上游四轨与情景对策小节（BM-BUY-01/02-A-1/02-A-2/02-B/02-C/03） | ①§3.10 新增⑨明日预案双层架构——B 盘后生成 TomorrowBoundary（箱体上沿/下沿、加仓上限 30%、禁加仓价位、必出止盈价位、突破验证放量站稳 10 分钟）/ C 盘前 9:25 集合竞价 9 情景匹配加载 ConstraintState / A 盘中推演在边界内执行毫秒级 + 尾盘 14:45 预测驱动调仓；降级铁律（边界层坏=致命暂停，推演层坏=可接受机械执行）；与 §3.4 尾盘窗口分工消歧（§3.4 建仓执行 vs PLAN-03 预测调仓）；输出契约 TomorrowBoundary/ConstraintState/BoundedActionAdvice 三 dataclass；模块真源 MOD-PLAN-001/002/003。②§2.2.1 新增上游四轨与情景对策现状——BM-BUY-01 暂缓（8 态预测被 90 §7 暂缓连带）/ BM-BUY-02-A-1 分途承载不单独建设（a/b/d 由 10 号覆盖，c 被 90 §7 暂缓）/ BM-BUY-02-A-2 不建设（与 21 §3.2 双引擎融合边界冲突+违反 30 Model A 独立账本）/ BM-BUY-02-B 暂缓（AI Discovery 无承载+41 §4.5 不读市场态）/ BM-BUY-02-C 补人工指令接口契约（字段表+MTF 仲裁应急>人工>自动+与 §3.4/§3.5/§3.8 衔接）/ BM-BUY-03 部分建设不建独立 DO（TriggerList+硬边界承载，5 路径冲突消解规则表） | 作战地图 9 环节设计缺口闭合：BM-PLAN-01/02/03 明日预案三环节 + BM-BUY-01/02-A-1/02-A-2/02-B/02-C/03 上游六环节，每环节显式 BM 编号映射（定位→裁定→契约/参数/接口），建设项参数默认值优先采用 steps JSON proposed 值 |
+| 2026-08-13 | 1.7.0 | 施工落地——6 算法+6 dataclass+15 TriggerList 落码 | ①§3.2.1 `compute_batch_split` → `src/zephyr/pf_alloc/batched_position_builder.py`（MOD-PA-006）；②§3.3 `detect_breakout_failure` → 同上（算法顺序修正：支撑破位优先于突破失败检查，因收盘<前低必然也<入场价）；③§3.4 `schedule_buy_orders` → 同上；④§3.5 `compute_anchor_price` → 同上；⑤§3.6 `clip_to_available_capital` + `rank_buy_orders` → 同上；⑥§3.2.3 `Batch`/`BatchedEntryPlan` dataclass → 同上；⑦§3.9 `TriggerEntry` dataclass + 15 条 MVP 扳机清单 → `src/zephyr/trading/trigger_registry.py`（MOD-TRIG-001）；⑧§3.10.2 `TomorrowBoundary`/`ConstraintState`/`BoundedActionAdvice` dataclass → `src/zephyr/plan_engine/`（MOD-PLAN-001/002/003）。83 测试连续 2 轮全部通过 | AI-BUY-001 施工：验证 6 算法伪代码落码完整性+6 个 dataclass 契约+15 条 TriggerList。detect_breakout_failure 算法顺序修正（SUPPORT_BROKEN 优先于 BREAKOUT_FAILED 检查）——原伪代码先检查 BREAKOUT_FAILED 导致 SUPPORT_BROKEN 永远不会触发（收盘<前低必然也<入场价），修正为先检查更严重的支撑破位 |
