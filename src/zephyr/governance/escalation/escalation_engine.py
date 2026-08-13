@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Escalation Engine — MOD-INF-022
 
 Core escalation engine: rule matching, level determination, auto-escalation with circuit breaker
@@ -35,6 +37,88 @@ table-driven dispatch 循环（McCabe≈4）。行为等价契约：每个 hook 
   - DriftDetector hook 访问 engine._recent_escalations（通过 engine 参数传入）
   - 原始 CredentialGuard/ClockGuard 用 logger.debug，重构后统一 logger.warning
     （异常路径日志级别差异，无测试覆盖，行为等价）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 升级事件入参 evaluate()
+#   fields: category 规则类别 + description 描述 + owner_id 责任人 + source_event_id 来源事件
+#   code: escalation_engine.py L295
+# - id: I2
+#   name: 默认升级规则集 规则表
+#   fields: DEFAULT_ESCALATION_RULES 各规则 category/priority/target_level/cooldown_seconds/max_escalations_per_hour
+#   code: escalation_models.DEFAULT_ESCALATION_RULES L53
+# - id: I3
+#   name: 扩展检测器组 动态加载类
+#   fields: 18 个 detector 类（循环/劝说/死锁/凭证/时钟/漂移/反弹/SLO 等）importlib 动态实例化
+#   code: _load_extension_detectors L478
+# - id: I4
+#   name: LSG 安全网关 外部扫描服务
+#   fields: scan_input 判定结果 allow/block
+#   code: lsg_scan_input L533
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入安全扫描
+#   name_en: lsg_scan_input
+#   intro: 升级描述先过 LSG 安全网关，拦截恶意输入
+#   desc: run_sync(gateway.scan_input(description))，decision 非 allow 抛 PermissionError；ImportError 降级放行
+#   inputs: I1 I4
+#   outputs: 放行或 PermissionError
+# - id: A2
+#   name_zh: ② 扩展钩子表驱动分发
+#   name_en: _run_extension_hooks/_HOOK_DISPATCH
+#   intro: 12 个 hook 按 dict 顺序就地标注事件，可抬升升级等级
+#   desc: 循环检测→L2、死锁环→L3、奖励黑客反弹→L4、劝说/凭证/时钟/命令链/置信度/漂移/Merkle/SLO 标注 description
+#   inputs: I1 I3
+#   outputs: 标注后事件
+#   invariant: hook 按 _HOOK_DISPATCH dict 保序执行；detector 缺失则 skip；异常吞掉仅 warning
+# - id: A3
+#   name_zh: ③ 双闸门拦截评估
+#   name_en: evaluate
+#   intro: 断路器熔断与经济守卫预算任一不过则直接 REJECTED
+#   desc: CircuitBreaker.call() 失败置 circuit_breaker_triggered；EconomicGuard.can_proceed() 失败置 economic_guard_passed=False
+#   inputs: A2
+#   outputs: 放行事件或 REJECTED 事件
+# - id: A4
+#   name_zh: ④ 最优规则匹配与冷却限频
+#   name_en: _find_best_rule/_check_cooldown
+#   intro: 按类别+启用过滤规则取优先级最高者，冷却窗口内同类超限则拒
+#   desc: category 匹配不到回退 CUSTOM；priority 降序取首；cooldown_seconds 窗口内同类事件数 ≥ max_escalations_per_hour 拒
+#   inputs: I2 A3
+#   outputs: 定级事件（target_level）
+# - id: A5
+#   name_zh: ⑤ 自动升级与委派
+#   name_en: escalate
+#   intro: 规则允许自动升级则抬一级并封顶 L4，按类别成本扣预算，需要委派置 DELEGATED
+#   desc: retry_count<max_retries 时 level+1 封顶 L4_EMERGENCY；CATEGORY_COST 扣 economic_guard；delegate_strategy 非 NONE 置 DELEGATED 并生成建议文本
+#   inputs: A4
+#   outputs: 升级结果
+#   invariant: new_level ≤ L4_EMERGENCY
+# 层: 输出
+# - id: O1
+#   name_zh: 升级事件 EscalationEvent
+#   name_en: EscalationEvent
+#   intro: 带最终 level/state/description 标注的事件记录，EVALUATING 或 REJECTED
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 升级结果 EscalationResult
+#   name_en: EscalationResult
+#   intro: escalated/new_level/delegated_to/suggestion 四元组结论
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I4 --> A1
+# I1 --> A2
+# I3 --> A2
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# I2 --> A4
+# A4 --> A5
+# A4 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

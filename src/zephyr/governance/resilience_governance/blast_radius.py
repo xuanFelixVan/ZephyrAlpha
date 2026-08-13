@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 blast_radius — MOD-INF-028 §3.1 Stage 9
 ========================================
 影响爆炸半径分析器：基于 depgraph 计算修复操作的影响范围。
@@ -25,6 +27,95 @@ blast_radius — MOD-INF-028 §3.1 Stage 9
 - 传递依赖数: 沿依赖链逐层传播后，所有受影响的文件数量
 - 受影响文件列表: 完整的下游消费者路径清单
 - 级联深度: 最长传播链的深度
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: depgraph 依赖图 YAML文件
+#   fields: nodes 字典（每节点 path + imports 列表）
+#   code: depgraph_path 参数 L116 / _load_depgraph L163
+# - id: I2
+#   name: 语义审计发现 数据对象
+#   fields: finding_id + source_location（含文件路径）+ module
+#   code: SemanticAuditFinding analyze(finding) L279
+# - id: I3
+#   name: 最大搜索深度 配置参数
+#   fields: max_depth 传递依赖 BFS 层数上限
+#   code: max_depth=5 L117
+# - id: I4
+#   name: 优先级修复结果 列表数据
+#   fields: PrioritizedFixResult 列表（.fix.finding 链式属性）
+#   code: integrate_with_pipeline L361
+# 层: 算法
+# - id: A1
+#   name_zh: ① depgraph 加载与反向索引构建
+#   name_en: _load_depgraph
+#   intro: 读 depgraph YAML，把"谁 import 谁"翻转成"谁被谁 import"的反向索引
+#   desc: yaml.safe_load → 校验 nodes 键 → 逐节点建 path_to_id/id_to_path；按 imports 累成 _reverse_deps（模块→引用它的文件列表）；YAML 非法/缺 nodes 抛 DepgraphLoadError
+#   inputs: I1
+#   outputs: 反向依赖索引 + 路径映射
+#   invariant: depgraph_path 必传，无默认路径（防路径污染）；延迟加载只建一次
+# - id: A2
+#   name_zh: ② 源文件路径解析
+#   name_en: _resolve_source_path
+#   intro: 从审计发现的 source_location 文本里抠出真正的文件路径
+#   desc: source_location 按空白拆词，取第一个含 / 或 \\ 或以 .py 结尾的词，统一成正斜杠；抠不出返回空串（analyze 直接给 LOW 空报告）
+#   inputs: I2
+#   outputs: source_path（可能为空）
+# - id: A3
+#   name_zh: ③ 直接依赖查找
+#   name_en: _find_direct_dependents
+#   intro: 查反向索引，找出直接 import 源文件的下游文件清单
+#   desc: source_path→node_id→模块路径（剥 src/ 前缀、去 .py、/转点）→ _reverse_deps 查；查不到再用推断模块路径兜底；dict.fromkeys 去重保序
+#   inputs: A1 A2
+#   outputs: 直接下游文件列表
+# - id: A4
+#   name_zh: ④ BFS 传递依赖扩散
+#   name_en: _find_transitive_dependents
+#   intro: 从源文件出发一层层往外扩，算所有被波及的文件和最长传播链深度
+#   desc: BFS 逐层扩 reverse_deps，visited 集合防环；depth 1..max_depth，无新节点即停；返回全部受影响文件 + max_reached_depth
+#   inputs: A3 I3
+#   outputs: affected_files + cascade_depth
+#   invariant: max_depth>=1
+# - id: A5
+#   name_zh: ⑤ 风险等级判定
+#   name_en: _compute_risk_level
+#   intro: 按波及面大小和链条长短给修复操作定四档风险
+#   desc: transitive>=20 或 depth>=4→CRITICAL；>=10 或 >=3→HIGH；>=3 或 >=2→MEDIUM；其余 LOW
+#   inputs: A4
+#   outputs: risk_level LOW/MEDIUM/HIGH/CRITICAL
+# - id: A6
+#   name_zh: ⑥ Stage9 管道集成
+#   name_en: integrate_with_pipeline
+#   intro: 接 FixPrioritizer 的输出列表，逐个解包 finding 做爆炸半径分析
+#   desc: 逐 pf 取 .fix.finding（SemanticAuditFinding 才收）→ analyze → 汇总报告列表
+#   inputs: I4 A2
+#   outputs: BlastRadiusReport 列表
+# 层: 输出
+# - id: O1
+#   name_zh: 爆炸半径分析报告
+#   name_en: BlastRadiusReport
+#   intro: 直接/传递依赖数 + 受影响文件清单 + 级联深度 + 四档风险等级
+#   downstream: fix_prioritizer.py（[CONSUMERS]）
+# - id: O2
+#   name_zh: 批量爆炸半径报告
+#   name_en: list[BlastRadiusReport]
+#   intro: 与输入发现一一对应的报告列表，供修复排序参考波及面
+#   downstream: fix_prioritizer.py / Stage 9 管道
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> A4
+# I3 --> A4
+# A4 --> A5
+# I4 --> A6
+# A6 --> A2
+# A5 --> O1
+# A6 --> O2
 """
 
 from __future__ import annotations

@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.
+"""
+
+GovernanceAutoRunner — 治理脚本自动运行/自动关闭调度器.
 
 基于 phase_manager 调度和 event_driven 触发自动执行 7 维度治理 gate。
 执行完成后自动释放资源、清理临时文件、记录审计日志、关闭 session。
@@ -24,6 +26,76 @@
 - 自动运行: 按 PHASE_SEQUENCE 顺序执行 7 维度 gate_checks
 - 自动关闭: 资源释放 + 临时文件清理 + 审计日志 + session 关闭
 - 事件驱动: 基于 depgraph 中 event_driven 字段触发对应脚本
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 治理阶段门禁序列 内存常量
+#   fields: PHASE_SEQUENCE 各 ConstructionPhase 的 gate_checks 清单（7 维度治理 gate）
+#   code: phase_manager.PHASE_SEQUENCE L135
+# - id: I2
+#   name: depgraph PostgreSQL gates 表
+#   fields: gate_id + event_driven + status + auto_start 列
+#   code: depgraph_schema.get_depgraph_pg_connection L38
+# - id: I3
+#   name: 待清理资源登记 运行时对象
+#   fields: register_resource 可关闭资源 + register_temp_file 临时文件路径
+#   code: auto_runner.py L259
+# 层: 算法
+# - id: A1
+#   name_zh: ① 按阶段顺序执行门禁
+#   name_en: _run_gates/_execute_gate
+#   intro: 遍历全部阶段逐条跑 gate check，GREEN 算通过，异常按 fail-closed 记失败
+#   desc: run_check(gate_name) 返 GateResult.GREEN 则 passed+1；异常或非 GREEN 记 failed 并收集错误；未执行记 skipped
+#   inputs: I1
+#   outputs: 通过/失败/跳过计数
+#   invariant: fail-closed——gate 异常不静默放行
+# - id: A2
+#   name_zh: ② 事件触发门禁查询
+#   name_en: get_gates_by_event/get_all_event_types
+#   intro: 按 event_driven 类型从 PG gates 表查出该触发的 gate 列表
+#   desc: SELECT gate_id WHERE event_driven=%s AND status='active' AND auto_start=1；DB 不可用返回空列表
+#   inputs: I2
+#   outputs: gate_id 列表
+# - id: A3
+#   name_zh: ③ 自动关闭清理
+#   name_en: _auto_close
+#   intro: 无论门禁成败都释放资源、删临时文件、写审计日志
+#   desc: 遍历资源 close() → 临时文件 unlink() → 写审计 → cleanup_done=True；单点异常仅记 error 不中断
+#   inputs: I3 A1
+#   outputs: 清理完成标志
+#   invariant: auto_close 必须释放所有登记资源
+# - id: A4
+#   name_zh: ④ 审计日志落库
+#   name_en: _write_audit_log
+#   intro: 把本轮运行结果写进 PG governance_audit_logs 表
+#   desc: INSERT 七列（timestamp/total/passed/failed/skipped/success/errors 前 10 条）；失败 rollback 记 error
+#   inputs: A3 I2
+#   outputs: 审计记录行
+# 层: 输出
+# - id: O1
+#   name_zh: 自动运行结果 AutoRunnerResult
+#   name_en: AutoRunnerResult
+#   intro: total/passed/failed/skipped/errors 汇总，success=无失败且清理且审计完成
+#   invariant: run() 成功路径 MUST exit 0
+#   downstream: phase_manager; gate_engine; session_manager（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 治理审计日志行 governance_audit_logs
+#   name_en: governance_audit_logs
+#   intro: PG 审计表一行，含成功标志与错误摘要供复盘
+#   downstream: 治理审计复盘（内部使用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A3
+# A1 --> A3
+# A3 --> A4
+# I2 --> A4
+# A1 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

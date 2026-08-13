@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Anti-Automation Bias — D-022-09 mandatory human oversight enforcement.
+"""
+
+Anti-Automation Bias — D-022-09 mandatory human oversight enforcement.
 
 Actively counters Owner automation bias through:
 1. Forced random sampling — 5% of autonomous operations paused for review
@@ -25,6 +27,117 @@ Actively counters Owner automation bias through:
 
 Reference: Georgetown CSET automation bias report, EU AI Act Art.14,
 Anthropic Sycophancy 58.19%, UPenn Cialdini six principles.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 操作评估请求 参数组
+#   fields: operation_id + is_autonomous 是否自主操作 + actor_identity + operation_content
+#   code: evaluate() L164
+# - id: I2
+#   name: 人工审查记录 运行时数据
+#   fields: decision 审查决定 + response_time_s 响应耗时
+#   code: record_review() L212
+# - id: I3
+#   name: 审计反馈 运行时数据
+#   fields: operation_id + actually_unsafe 事后审计是否真不安全
+#   code: record_audit_feedback() L237
+# - id: I4
+#   name: 谄媚探针输入 参数组
+#   fields: operation_content + framing_a/b 两种措辞 + decision_a/b 两版决策
+#   code: probe_sycophancy() L259 / verify_consistency() L412
+# - id: I5
+#   name: 监督配置 参数组
+#   fields: forced_review_ratio 强制抽查比例（默认0.05，钳位0.01~0.20）+ review_timeout_s 超时
+#   code: __init__ L101 / forced_review_ratio.setter L151
+# 层: 算法
+# - id: A1
+#   name_zh: ① 人工监督评估决策矩阵
+#   name_en: AntiAutomationBias.evaluate
+#   intro: 每个自主操作过一道闸：疲劳就拦、机械确认就查、再按5%随机抽查
+#   desc: 非自主→PASS；FATIGUED→BLOCK_AND_NOTIFY；ELEVATED→FORCE_REVIEW；连续确认≥10（机械确认）→FORCE_REVIEW；random()<ratio 随机命中→FORCE_REVIEW；否则 PASS
+#   inputs: I1 I5 A2
+#   outputs: OversightResult（action+reason+forced_review+timeout_s）
+#   invariant: 强制抽查比例钳位 0.01~0.20
+# - id: A2
+#   name_zh: ② 审查记录与疲劳度更新
+#   name_en: record_review + _update_fatigue_level
+#   intro: 记下每次人工审查的耗时和决定，据此判断 Owner 是不是看累了
+#   desc: 追加 ReviewRecord；响应时间窗留最近20条；CONFIRMED_SAFE→连续确认+1 否则清零；疲劳度：近半/前半均值比>1.5→FATIGUED、>1.25→ELEVATED，否则近20条放行率<0.3→ELEVATED 否则 NORMAL
+#   inputs: I2
+#   outputs: _fatigue_level + _consecutive_confirms 状态
+# - id: A3
+#   name_zh: ③ 响应耗时趋势
+#   name_en: _compute_response_trend
+#   intro: 对比最近一半和之前一半的平均响应时间，看 Owner 是不是越审越慢
+#   desc: 样本<4→insufficient_data；recent_avg/older_avg：>1.5→growing_significantly、>1.15→growing_slightly、<0.85→improving、其余 stable（除零用 epsilon 防护）
+#   inputs: A2
+#   outputs: 趋势字符串
+# - id: A4
+#   name_zh: ④ 审查质量漏检率
+#   name_en: evaluate_review_quality
+#   intro: 拿事后审计结果对账，算人工确认放过去的不安全操作比例
+#   desc: 筛 confirmed_safe 且有审计结论的记录 → miss_rate=misses/reviewed，目标 ≤1%
+#   inputs: I3 A2
+#   outputs: miss_rate + total_reviewed + misses
+# - id: A5
+#   name_zh: ⑤ 谄媚探针与不一致率
+#   name_en: probe_sycophancy + get_sycophancy_rate
+#   intro: 同一段内容换两种措辞看决策变不变，变越多说明引擎越谄媚
+#   desc: content_hash=sha256(content)[:16]；consistent=(decision_a==decision_b)；sycophancy_rate=inconsistent/total
+#   inputs: I4
+#   outputs: SycophancyProbe + sycophancy_rate
+# - id: A6
+#   name_zh: ⑥ 反谄媚输入过滤
+#   name_en: AntiSycophancyFilter
+#   intro: 把操作人的身份头衔和情绪化措辞从升级输入里剥掉，引擎只看内容本身
+#   desc: strip_identity 删7个身份键；detect_emotional_markers 匹配14个情绪词；normalize_framing 用 re.sub 把情绪词替换为 [FILTERED]；verify_consistency 对多措辞变体跑 decision_fn 比对一致性
+#   inputs: I4
+#   outputs: 清洗后 metadata/content + probe 列表
+#   invariant: 引擎忽略 actor 身份/情绪，只看内容
+# - id: A7
+#   name_zh: ⑦ 监督监控聚合
+#   name_en: get_review_monitoring / summary
+#   intro: 把确认率、响应趋势、疲劳度、漏检率、谄媚率汇总成一张监控报表
+#   desc: confirmation_rate=blocked/confirmed；avg_response=响应窗均值；汇总 trend/quality/sycophancy_rate/总操作数/总审查数
+#   inputs: A2 A3 A4 A5
+#   outputs: 监控指标 dict
+# 层: 输出
+# - id: O1
+#   name_zh: 人工监督裁决
+#   name_en: OversightResult
+#   intro: pass/force_review/block_and_notify 三档裁决，带理由和超时
+#   invariant: action ∈ {PASS, FORCE_REVIEW, BLOCK_AND_NOTIFY}
+#   downstream: 无下游/内部使用（escalation_protocol 升级管道集成点，蓝图 MOD-INF-022）
+# - id: O2
+#   name_zh: 审查监控报告
+#   name_en: monitoring dict (summary)
+#   intro: 确认率/趋势/疲劳/漏检/谄媚率一揽子指标给治理看板
+#   downstream: 无下游/内部使用
+# - id: O3
+#   name_zh: 反谄媚过滤产物
+#   name_en: 清洗输入 + SycophancyProbe 列表
+#   intro: 剥掉身份和情绪后的干净输入，供升级引擎做无偏决策
+#   downstream: 无下游/内部使用（escalation 引擎）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I5 --> A1
+# A2 --> A1
+# I2 --> A2
+# A2 --> A3
+# I3 --> A4
+# A2 --> A4
+# I4 --> A5
+# I4 --> A6
+# A2 --> A7
+# A3 --> A7
+# A4 --> A7
+# A5 --> A7
+# A1 --> O1
+# A7 --> O2
+# A6 --> O3
 """
 
 from __future__ import annotations
