@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 D-SIGNAL-06 — 信号审计日志
 
 4组件审计日志系统：
@@ -25,7 +27,78 @@ D-SIGNAL-06 — 信号审计日志
   4. 合规报告生成器（ComplianceReportGenerator）— 合规报告生成
 
 合规要求: MiFID II 交易审计 / SEC 记录保留(5年+) / WORM 合规强制
-设计真源: D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §1 D-SIGNAL-06
+设计真源: D:\临时工作区\依赖图-D-SIGNAL-信号域.md §1 D-SIGNAL-06
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 信号审计事件 SignalAuditEvent
+#   fields: 事件类型(生成/撤销/过期/降级/消费) + signal_id + 标的 + 时间戳 + 严重级别 + 描述 + metadata + 来源模块 + 操作人 + trace_id
+#   code: SignalAuditEvent L63
+# - id: I2
+#   name: 审计日志配置 AuditLogConfig
+#   fields: log_dir(空=内存模式) + 单文件上限10MB + 保留5年(SEC合规) + 是否启用链式哈希
+#   code: AuditLogConfig L92
+# - id: I3
+#   name: 审计查询条件
+#   fields: symbol/signal_id/event_type/severity/source_module/起止时间/limit 多条件过滤
+#   code: query L318
+# 层: 算法
+# - id: A1
+#   name_zh: ① WORM追加写入器
+#   name_en: WormWriter.write
+#   intro: 事件只追加不修改不删除，逐条算SHA256并链成哈希链
+#   desc: entry_id单调递增 → JSON序列化(sort_keys) → sha256(content) → 链式sha256(prev_hash+content_hash) → 内存列表+追加写audit_YYYYMMDD.log
+#   inputs: I1 I2
+#   outputs: AuditLogEntry(含content_hash/prev_hash)
+#   invariant: append-only; entry_id单调递增; 写入后不可变
+# - id: A2
+#   name_zh: ② 链式完整性验证
+#   name_en: WormWriter.verify_chain
+#   intro: 重放全部条目重算哈希，逐一比对防篡改
+#   desc: 从创世哈希(64个0)起逐条重算content_hash与链式hash，任一不符即False
+#   inputs: A1 I2
+#   outputs: 完整性布尔值
+# - id: A3
+#   name_zh: ③ 多条件查询接口
+#   name_en: SignalAuditLogger.query
+#   intro: 按标的/信号/事件类型/严重级别/时间窗等组合过滤日志
+#   desc: 遍历内存条目逐一匹配过滤条件，命中即收集，达limit截断
+#   inputs: I3 A1
+#   outputs: AuditLogEntry列表
+# - id: A4
+#   name_zh: ④ 合规报告生成器
+#   name_en: generate_compliance_report
+#   intro: 汇总事件类型/严重级别/标的分布并附链完整性结论
+#   desc: query全量 → 按event_type/severity/symbol计数 → top20标的 → verify_chain → 组装报告dict
+#   inputs: A3 A2 I2
+#   outputs: 合规报告dict
+# 层: 输出
+# - id: O1
+#   name_zh: 审计日志条目与WORM日志文件
+#   name_en: AuditLogEntry / audit_YYYYMMDD.log
+#   intro: 内存条目列表 + 文件模式逐行追加的WORM日志，供全信号域埋点
+#   invariant: WORM只增不改; 链式哈希可验证
+#   downstream: zephyr.signal_ashare.* 全部信号模块（[CONSUMERS]）
+# - id: O2
+#   name_zh: 合规报告
+#   name_en: compliance report dict
+#   intro: 含总量/分类统计/top20标的/链完整性/保留策略的合规报表
+#   downstream: 无下游/内部使用（合规审计读取）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I2 --> A2
+# I2 --> A4
+# A1 --> A2
+# A1 --> A3
+# I3 --> A3
+# A3 --> A4
+# A2 --> A4
+# A1 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations
