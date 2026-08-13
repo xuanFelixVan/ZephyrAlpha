@@ -63,7 +63,7 @@ D-SIGNAL-33 A股游资接力情绪引擎
 #   intro: 连板越多游资接力情绪越强，满分25
 #   formula: score=min(1+(连板数-1)×5, 25)，无连板=0
 #   code: youzi_relay_emotion_engine.py L277-291
-#   registry: factor_registry: 有FCT条目 FCT-SENT-002（情绪三件套含连板高度）
+#   registry: factor_registry: 有FCT条目 FCT-SENT-002（分量：连板高度——情绪三件套之一，节点为分量计算步骤，§4.16.4 分量引用）
 #   is_break: false
 # - id: F2
 #   name_zh: 封单质量评分

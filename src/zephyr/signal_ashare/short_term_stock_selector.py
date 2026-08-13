@@ -72,7 +72,7 @@ D-SIGNAL-23 A股短线选股引擎
 #   intro: 连板越多分越高，但5板以上因高位风险反降分
 #   formula: 映射表{0:0, 1:40, 2:70, 3:90, 4:100, ≥5:80}
 #   code: short_term_stock_selector.py L401
-#   registry: factor_registry: 有FCT条目 FCT-SENT-002
+#   registry: factor_registry: 有FCT条目 FCT-SENT-002（分量：连板高度——情绪三件套之一，节点为分量计算步骤，§4.16.4 分量引用）
 #   is_break: false
 # 层: 算法
 # - id: A1

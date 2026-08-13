@@ -931,6 +931,21 @@ ALGO_FLOW 标记里的 name_zh/intro 不是凭空写，**必须对齐翻译真�
 > **铁律**：ALGO_FLOW 标记是"代码内嵌的算法流程描述"，翻译真源是"YAML 登记的正式翻译"，
 > 两者必须一致。改一处必须同步另一处（生成器可加 reconciler 检测漂移）。
 
+**整体引用与分量引用**（component reference——分量引用：节点是因子某个分量的计算步骤而非因子整体）：
+
+特征节点经 `registry` 字段引用 factor_registry 条目时，按引用粒度分两级（#ARCH-70 裁定1，2026-08-14）：
+
+| 引用级别 | registry 格式 | 语义 | reconciler 校验强度 |
+|---|---|---|---|
+| 整体引用 | `factor_registry: 有FCT条目 FCT-XXX-NNN` | 节点=因子整体，name_zh/intro 必须与 YAML 的 name_zh/alpha_source 一致 | 强对比，漂移报 WARN |
+| 分量引用 | `factor_registry: 有FCT条目 FCT-XXX-NNN（分量：分量名）` | 节点=因子分量的计算步骤，name_zh/intro 描述分量本身 | 只做存在性校验（FCT 条目必须存在），不做文案强对比 |
+
+> 判据自问：节点输出的列就是因子的 outputs → 整体引用；节点只承担因子 formula 的一部分计算 → 分量引用。
+> 分量引用漏标"（分量：…）"→ 按整体引用强对比 → 分量名与因子整体名不等触发 WARN——
+> 该 WARN 是"请补分量标注"的正确信号（实证：FCT-SENT-002 连板高度分量 F1/F3 节点），补标后即消除。
+> 两级引用统一要求 FCT 条目存在：引用不存在的 FCT 编号 = 悬空引用（dangling reference——
+> 引用了注册表里不存在的条目），reconciler 报 WARN。
+
 ## 五、完整 Mermaid 代码示例
 
 以下是一个完整的三视图 Mermaid 代码块（全景图），包含所有要素：

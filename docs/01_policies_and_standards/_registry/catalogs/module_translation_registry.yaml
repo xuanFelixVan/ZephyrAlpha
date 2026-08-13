@@ -41375,6 +41375,13 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 验证"设计态预登记→文件落地→全量重扫"的同身份 UPDATE 转换：节点 ID 不变、file_path 回填、手动提升的构建状态不丢、门禁提示文案和真实命令行参数一致（#ARCH-70）。
+- module_path: tests/scripts/governance/d8_doc_sync/test_algo_flow_translation_reconciler.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: ALGO_FLOW翻译漂移对账器测试
+  name_en: ''
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: 验证两级引用校验口径——因子整体引用必须和注册表文案一致、分量引用只查条目存在、引用不存在的条目会报悬空（§4.16.4，#ARCH-69/70）。
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

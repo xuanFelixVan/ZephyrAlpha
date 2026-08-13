@@ -88,6 +88,18 @@ _GOV_SHARED_DIR = _project_root / "scripts" / "governance" / "_shared"
 
 _FCT_RE = re.compile(r"(FCT-[A-Z]+-\d+)")
 
+# 分量引用标注（§4.16.4，#ARCH-70 裁定1）：registry 字段含"分量"/"component" →
+# 节点是因子某个分量的计算步骤（如 FCT-SENT-002 三件套的"连板高度"），
+# 其 name_zh/intro 描述分量本身，与 YAML 因子整体 name_zh/alpha_source 语义层级不同——
+# 只做存在性校验（FCT 条目必须存在），不做文案一致性强对比（强对比=粒度失配误报）。
+_COMPONENT_MARKERS = ("分量", "component")
+
+
+def _is_component_ref(registry: str) -> bool:
+    """分量引用判定（§4.16.4 分量约定）。"""
+    r = (registry or "").lower()
+    return any(mk in r for mk in _COMPONENT_MARKERS)
+
 # 触发文件：翻译真源 YAML（相对路径用 "/".join 拼接构造，避免完整字符串字面量触发
 # VOCAB-CHAIN gate——对齐 metric_count_drift_reconciler L80-84 先例）
 _FACTOR_REGISTRY_REL = "/".join([
@@ -214,7 +226,13 @@ def _check_module(rel_path: str, factors: dict[str, dict],
                 continue
             entry = factors.get(m.group(1))
             if entry is None:
+                findings.append(
+                    f"{label}: registry 引用 {m.group(1)} 在 factor_registry 无条目"
+                    f"（悬空引用——存在性校验失败，§4.16.4）"
+                )
                 continue
+            if _is_component_ref(node.registry):
+                continue  # 分量引用：存在性校验已过，文案强对比跳过（§4.16.4 分量约定）
             _check_drift(findings, label, node.name_zh,
                          entry.get("name_zh", ""), "name_zh")
             _check_drift(findings, label, node.intro,

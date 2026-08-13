@@ -15898,11 +15898,12 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（algo_flow_parse/algo_flow_mermaid_render/algo_flow_translation_drift 三 capability + creation_token）'
     - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（plain_zh 条目）'
     - 'scripts/governance/meta/validate_rules_integrity.py（算法地图 4 核心文件入 golden hash 保护清单）'
-  fix_phase: '已施工（reconciler 落盘+gateway 注册，warn-only 运行）'
+    - 'P2 追加（2026-08-14）：visualization_view_template.md §4.16.4 增补整体/分量引用两级语法；reconciler 分量降级+悬空引用检测；F1/F3 标记补分量标注（FCT-SENT-002 的 4 处 WARN 清零，全量扫描 clean）；tests/scripts/governance/d8_doc_sync/test_algo_flow_translation_reconciler.py 9 用例'
+  fix_phase: '已施工（reconciler 落盘+gateway 注册+P2 分量引用语义分级，全量扫描零漂移）'
   status: decided
-  related_rules: '#ARCH-68'
+  related_rules: '#ARCH-68; #ARCH-70'
   created: '2026-08-13'
-  last_updated: '2026-08-13'
+  last_updated: '2026-08-14'
 
 # --- #ARCH-70: depgraph 双态转换死锁修复（design→production 同身份 UPDATE）---
 - issue_id: '#ARCH-70'
