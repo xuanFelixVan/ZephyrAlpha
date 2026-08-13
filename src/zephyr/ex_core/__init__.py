@@ -10,10 +10,44 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298)
+"""
+
+
+D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298)
 
 All modules have been migrated to zephyr.execution_core.core.
 This package re-exports for backward compatibility.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: typing 子模块符号 1个
+#   fields: Final
+#   code: typing
+# - id: I2
+#   name: ex_core 子模块符号 1个
+#   fields: multi_contract_adapter
+#   code: zephyr.ex_core
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包级聚合再导出
+#   name_en: zephyr.ex_core.__init__
+#   intro: D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298
+#   desc: MOD-L06-001 包入口，包级聚合再导出并声明 __all__（12项）
+#   inputs: I1 I2
+#   outputs: zephyr.ex_core 包级公共命名空间
+#   invariant: 包级导出以 __all__ 声明为准（12项）
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.ex_core 包公共 API
+#   name_en: __all__ 12项
+#   intro: D_EXECUTION_CORE Trade Execution — Re-export wrapper (DM-298——对外统一出口
+#   downstream: 见蓝图头 [CONSUMERS] 声明
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
