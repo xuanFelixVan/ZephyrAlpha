@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪包（MLflow 薄包装 + 降级）。
+"""
+
+L_INFRA_TELEMETRY — 实验跟踪包（MLflow 薄包装 + 降级）。
 
 统一实验跟踪入口：所有"零件"（C1 / regime_detector / 特征管道 / 回测引擎 / 全链路）的运行
 记录到本地 MLflow（SQLite），人和 AI 都能通过 query 接口或 ``mlflow ui`` 查询、对比、追溯。
@@ -33,6 +35,34 @@
 
 依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 实验跟踪使用方导入请求 模块导入
+#   fields: 跟踪器/配置/数据模型符号访问（ExperimentTracker/get_tracker/RunContext/load_config/RunSummary 等）
+#   code: zephyr.experiment_tracking L41-48
+# 层: 算法
+# - id: A1
+#   name_zh: ① 公共 API 汇聚重导出
+#   name_en: __init__ re-export
+#   intro: 把 config/tracker/models 三个子模块的公共符号汇成统一入口
+#   desc: from config/experiment_tracker/models 导入 8 个符号并列入 __all__，调用方只认包名不认子模块
+#   inputs: I1
+#   outputs: 统一公共 API 符号表
+#   invariant: lazy import mlflow（未装→FallbackBackend 同接口）；enable_tracking=False→NullBackend；tracking 失败只记 stderr 不抛
+# 层: 输出
+# - id: O1
+#   name_zh: 统一实验跟踪入口
+#   name_en: experiment_tracking public API
+#   intro: 所有零件（C1/regime_detector/特征管道/回测引擎）记录运行到本地 MLflow(SQLite) 的统一入口
+#   invariant: 降级不崩业务（ERROR_CONTRACT: 失败仅 stderr warning）
+#   downstream: zephyr.backtest.regime_validation.c1_runner；zephyr.frontend.dashboard.components.experiment_history；AI/人查询（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 from __future__ import annotations
 

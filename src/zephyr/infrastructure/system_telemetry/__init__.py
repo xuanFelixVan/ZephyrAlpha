@@ -10,7 +10,9 @@
 # [ERROR_CONTRACT] ValueError; OSError; RuntimeError
 # [TESTS] tests/infrastructure/test_telemetry_facade.py; tests/infrastructure/test_auto_telemetry_bootstrap.py
 # [TTL] permanent
-"""system-telemetry — 系统遥测模块（MOD-INF-015 v2.1.0）.
+"""
+
+system-telemetry — 系统遥测模块（MOD-INF-015 v2.1.0）.
 
 9 子系统: metrics | logs | traces | ai_behavior | health | profiles | alerts | schema | archive
 
@@ -25,6 +27,47 @@
 
 Watchdog 独立进程:
     python -m zephyr.infrastructure.system_telemetry.watchdog --id wd-1 --interval 10
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 调用方模块标识与运行模式 参数
+#   fields: 模块名 module_name + test_mode 开关（True 静默全部外发）
+#   code: Telemetry("my_module", test_mode=False) L19 / register_module("MOD-INF-XXX") L24
+# - id: I2
+#   name: Watchdog 命令行 参数
+#   fields: --id 实例标识 + --interval 心跳间隔秒
+#   code: python -m ...watchdog --id wd-1 --interval 10 L27
+# 层: 算法
+# - id: A1
+#   name_zh: ① 9子系统公共API聚合导出
+#   name_en: __init__ 聚合导出
+#   intro: 把遥测9个子系统的类与函数集中到一个包入口对外提供
+#   desc: 从 metrics/logs/traces/ai_behavior/health/profiles/alerts/schema/archive 9 子系统 import 并汇总 __all__（L30-132）
+#   inputs: I2
+#   outputs: 统一公共符号面（Telemetry/HealthSubsystem/AlertSubsystem/Watchdog 等）
+# - id: A2
+#   name_zh: ② 零代码注册与全局门面入口
+#   name_en: auto_bootstrap.register_module / facade.Telemetry
+#   intro: 模块注册即拿遥测实例，后台自动跑flush/alert/health/archive四个循环
+#   desc: register_module 注册模块返回 Telemetry；后台自动 flush(60s)/alert(30s)/health(10s)/archive(300s)（L17-27）
+#   inputs: I1
+#   outputs: Telemetry 实例（test_mode=True 时全部外发静默）
+#   invariant: fail-closed on write; shutdown() 按初始化逆序关闭
+# 层: 输出
+# - id: O1
+#   name_zh: 系统遥测公共API面
+#   name_en: Telemetry + 9子系统符号集
+#   intro: 对外暴露 Telemetry 门面与各子系统类，供全库模块接入遥测
+#   downstream: zephyr.__init__ / zephyr.security.access_control / zephyr.security.budget_enforcement（# [CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A2
+# I2 --> A1
+# A1 --> A2
+# A1 --> O1
+# A2 --> O1
 """
 
 from zephyr.infrastructure.system_telemetry.ai_behavior import (
