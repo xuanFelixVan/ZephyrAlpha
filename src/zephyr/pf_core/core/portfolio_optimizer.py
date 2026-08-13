@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Portfolio Optimizer — 组合优化器 (MOD-PF-002)
 
 D-PF-CORE §1.2 L2 组合构建核心模块。将策略目标权重 (PC-01) + 风险限额 (CTR-003) +
@@ -31,9 +33,110 @@ D-PF-CORE §1.2 L2 组合构建核心模块。将策略目标权重 (PC-01) + �
     4. 产出 TargetPortfolio (CTR-007): 不可变快照 + drift_pct + idempotency_key
 
 属 A 类纯基础设施 (凸优化+约束投影+契约装配), 策略意图由 PC-01 candidate_weights 注入。
-依据: D:\\临时工作区\\依赖图\\05-D-PF-CORE-组合核心域.md §1.2 PC-02, §3.3 CTR-007
+依据: D:\临时工作区\依赖图-D-PF-CORE-组合核心域.md §1.2 PC-02, §3.3 CTR-007
 SSoT: depgraph MOD-PF-002
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 策略候选权重 candidate_weights
+#   fields: {symbol: weight}（PC-01 注入的策略意图，long-only 非负，非空）
+#   code: portfolio_optimizer.py L229 optimize 参数
+# - id: I2
+#   name: 风险限额 RiskLimits（CTR-003）
+#   fields: max_single_position / max_gross_leverage 等限额
+#   code: portfolio_optimizer.py L230 optimize 参数
+# - id: I3
+#   name: 协方差矩阵 covariance + 资产列表 assets
+#   fields: cov (N,N) 对角非负，顺序同 assets
+#   code: portfolio_optimizer.py L231-232 optimize 参数
+# - id: I4
+#   name: 期望收益向量 expected_returns（可选）
+#   fields: μ (N,)，均值方差与 Kelly 截断用
+#   code: portfolio_optimizer.py L234 optimize 参数
+# - id: I5
+#   name: 当前持仓权重 current_weights（可选）
+#   fields: {symbol: weight}，drift_pct 漂移计算用
+#   code: portfolio_optimizer.py L233 optimize 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验
+#   name_en: _validate_inputs
+#   intro: 把输入合法性一次查完：非空、维度匹配、对角非负、long-only
+#   desc: L443-479 candidate 非空；cov.shape==(N,N) 且 diag≥0；candidate≥0；expected_returns.shape==(N,)；不合法抛 InvalidOptimizationInputError
+#   inputs: I1 I3 I4
+#   outputs: (assets, candidate_arr)
+# - id: A2
+#   name_zh: ② 基础权重计算（三方法）
+#   name_en: _compute_base_weights
+#   intro: 主选风险预算复用 RK-08，备选均值方差，兜底等权 1/N
+#   desc: L345-405 risk_budget: 候选作预算目标→allocate_by_budget(cov,budgets)，全非正/失败→等权；mean_variance: w=(1/λ)Σ⁻¹μ clip≥0 归一，缺 μ/失败→等权
+#   inputs: A1 I3 I4
+#   outputs: base_weights（归一化 long-only）
+# - id: A3
+#   name_zh: ③ Kelly 截断（只减不增）
+#   name_en: _apply_kelly_cap
+#   intro: 用半 Kelly 上限压住单标的权重，只往下压不往上抬
+#   desc: L409-439 kelly_i=μ_i/σ_i²×fraction(0.5)（σ²>1e-12 且 μ>0 才算）；capped=min(kelly,w)，kelly=0 不限制；最后归一化
+#   inputs: A2 I4 I3
+#   outputs: capped_weights + kelly_applied
+#   invariant: Kelly 只减不增
+# - id: A4
+#   name_zh: ④ 约束求解（复用 PC-04）
+#   name_en: ConstraintSolver.solve
+#   intro: 把 Kelly 后权重交给约束求解器强制满足 CTR-003 限额
+#   desc: L292-297 solve(weights, risk_limits, assets)→ConstraintSolveResult（裁剪后权重+违规清单+收敛标志）
+#   inputs: A3 I2
+#   outputs: post_weights（合规权重）
+# - id: A5
+#   name_zh: ⑤ 漂移计算
+#   name_en: _compute_drift / needs_rebalance
+#   intro: 目标与当前持仓的加权漂移超 2% 就标记需要再平衡
+#   desc: L481-495 drift=Σ|target_i-current_i|/2；needs_rebalance: drift>drift_threshold(0.02)
+#   inputs: A4 I5
+#   outputs: drift_pct + 再平衡布尔
+# - id: A6
+#   name_zh: ⑥ 目标组合装配（optimize 主流程）
+#   name_en: optimize
+#   intro: 串联校验→优化→Kelly→约束→漂移，产出不可变 TargetPortfolio 快照
+#   desc: L227-332 丢弃 ≤1e-9 权重；组装 TargetPortfolio(CTR-007) 含 drift_pct/risk_limits/rebalance_reason/uuid4 幂等键
+#   inputs: A4 A5 I5
+#   outputs: OptimizationResult
+#   invariant: TargetPortfolio 不可变；幂等键防重复
+# 层: 输出
+# - id: O1
+#   name_zh: 优化结果 OptimizationResult（含 TargetPortfolio CTR-007）
+#   name_en: OptimizationResult / TargetPortfolio
+#   intro: 目标组合不可变快照 + 方法/Kelly 标记 + 约束前后权重 + 收敛标志
+#   invariant: Σtarget≤max_gross_leverage；单标的≤max_single_position
+#   downstream: MOD-PF-003 Rebalance Scheduler 触发重优化；D_EX_CORE 消费 TargetPortfolio；D_POSITION；D_REPORTING（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 再平衡判定 needs_rebalance
+#   name_en: needs_rebalance bool
+#   intro: drift_pct 超阈值返回 True，供调度器决定是否触发重优化
+#   downstream: MOD-PF-003 Rebalance Scheduler（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# I3 --> A2
+# I4 --> A2
+# A2 --> A3
+# I4 --> A3
+# I3 --> A3
+# A3 --> A4
+# I2 --> A4
+# A4 --> A5
+# I5 --> A5
+# A4 --> A6
+# A5 --> A6
+# I5 --> A6
+# A6 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

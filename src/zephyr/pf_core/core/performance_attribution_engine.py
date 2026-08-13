@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Performance Attribution Engine — 绩效归因引擎 (MOD-PF-007 / PC-10)
 
 D-PF-CORE §1.2 盘后归因核心模块。将组合收益分解为可归因的成分, 供 D_REPORTING
@@ -34,9 +36,122 @@ D-PF-CORE §1.2 盘后归因核心模块。将组合收益分解为可归因的�
 
 属 A 类基础设施 (数学归因模型, 无策略决策), 归因结果供 D_REPORTING 消费。
 降级/拥挤检测结果仅标记建议, 由 PC-01 执行实际权重调整。
-依据: D:\\临时工作区\\依赖图\\05-D-PF-CORE-组合核心域.md §1.2 PC-10
+依据: D:\临时工作区\依赖图-D-PF-CORE-组合核心域.md §1.2 PC-10
 SSoT: depgraph MOD-PF-007
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Brinson 分组收益数据 list[SegmentReturn]
+#   fields: segment 分组名 + portfolio_weight w_p + benchmark_weight w_b + portfolio_return r_p + benchmark_return r_b（权重≥0，非空）
+#   code: performance_attribution_engine.py L118-134 SegmentReturn
+# - id: I2
+#   name: 因子归因数据（可选）
+#   fields: weights {symbol: w} + factor_exposures {symbol: {factor: e}} + factor_returns {factor: r}
+#   code: performance_attribution_engine.py L356-360 factor_attribute 参数
+# - id: I3
+#   name: 风险归因数据（可选）
+#   fields: covariance 协方差矩阵 (N,N) + weights + assets 资产代码列表
+#   code: performance_attribution_engine.py L385-390 risk_attribute 参数
+# - id: I4
+#   name: 策略 IC 序列
+#   fields: baseline_ic 历史均值 IC + recent_ic 近期 IC
+#   code: performance_attribution_engine.py L419-423 detect_degradation 参数
+# - id: I5
+#   name: 策略相关性字典
+#   fields: correlations {other_strategy_id: correlation}
+#   code: performance_attribution_engine.py L482-485 detect_crowding 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① Brinson-Fachler 三因子分解
+#   name_en: brinson_attribute
+#   intro: 把超额收益拆成配置/选择/交互三份，三者相加恒等于超额收益
+#   desc: L292-352 allocation=Σ(w_p-w_b)×r_b；selection=Σw_b×(r_p-r_b)；interaction=Σ(w_p-w_b)×(r_p-r_b)；空分段/负权重抛 AttributionDataIncompleteError
+#   inputs: I1
+#   outputs: BrinsonResult（三效应+excess_return+组合/基准总收益）
+#   invariant: excess_return=allocation+selection+interaction（守恒，is_close 1e-9 校验）
+# - id: A2
+#   name_zh: ② 因子归因
+#   name_en: factor_attribute
+#   intro: 每个因子对收益的贡献=权重×暴露×因子收益的总和
+#   desc: L356-381 contribution[k]=Σ_i w_i×exposure_{i,k}×factor_return_k
+#   inputs: I2
+#   outputs: {factor_id: contribution}
+# - id: A3
+#   name_zh: ③ 风险归因（复用风险分解器）
+#   name_en: risk_attribute
+#   intro: 直接转调 MOD-RK-16 RiskDecomposer 做因子/残差+MCR/CCR 分解
+#   desc: L385-415 dict 权重转向量→decompose(cov, w, assets)；失败抛 RiskDecompositionUnavailable，由 attribute_full 捕获降级跳过
+#   inputs: I3
+#   outputs: DecompositionResult
+# - id: A4
+#   name_zh: ④ 策略降级检测（IC 衰减）
+#   name_en: detect_degradation
+#   intro: 近期 IC 相对历史均值衰减超 50% 就建议权重归零
+#   desc: L419-478 ic_decay=(baseline-recent)/baseline；>threshold(0.5)→degraded=True、recommended_weight=0；baseline≤0 直接标记降级
+#   inputs: I4
+#   outputs: DegradationDetection（degraded+recommended_weight）
+#   invariant: 仅标记建议不修改权重
+# - id: A5
+#   name_zh: ⑤ 策略拥挤检测
+#   name_en: detect_crowding
+#   intro: 与其他策略最大相关性超 0.8 建议减半、超 0.9 建议归零
+#   desc: L482-537 max|ρ|；ρ>0.9→SEVERE scale=0；ρ>0.8→WARN scale=0.5；否则 NONE scale=1.0（阈值复用 MOD-PA-004 体系）
+#   inputs: I5
+#   outputs: CrowdingDetection（level+recommended_weight_scale）
+#   invariant: 仅标记建议不修改权重
+# - id: A6
+#   name_zh: ⑥ 完整归因编排
+#   name_en: attribute_full / attribute
+#   intro: 编排 Brinson+因子+风险+交易成本，产出 CTR-P1-009 标准报告
+#   desc: L586-659 total_return=excess_return-transaction_cost_drag（≥0 校验）；因子/风险可选，风险失败降级跳过；attribute() 走 set_context 注入的 OCP 契约
+#   inputs: A1 A2 A3
+#   outputs: PerformanceAttributionReport
+#   invariant: transaction_cost_drag≥0；实现 AttributionEngineBase OCP 契约
+# - id: A7
+#   name_zh: ⑦ 多期归因链式链接
+#   name_en: attribute_multi_period
+#   intro: 把多期 Brinson 结果算术累加成汇总归因
+#   desc: L663-697 各期 allocation/selection/interaction/excess 直接求和（算术链接，简化乘法链接）
+#   inputs: A1
+#   outputs: 汇总 BrinsonResult
+# 层: 输出
+# - id: O1
+#   name_zh: 绩效归因报告 PerformanceAttributionReport
+#   name_en: PerformanceAttributionReport (CTR-P1-009)
+#   intro: 期间总收益+三因子效应+成本拖累+因子贡献+幂等键+schema_version
+#   invariant: total_return=excess_return-cost_drag；excess=三效应之和
+#   downstream: D_REPORTING 归因报告消费；D_GOV_ENFORCEMENT 降级检测审计（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 降级/拥挤检测建议
+#   name_en: DegradationDetection / CrowdingDetection
+#   intro: 策略退化与拥挤的标记+建议权重，只建议不执行
+#   invariant: recommended_weight∈{0,1}；weight_scale∈{0,0.5,1.0}
+#   downstream: MOD-PF-001 PC-01 策略引擎消费降级/拥挤建议并执行实际权重调整（[CONSUMERS] 头）
+# - id: O3
+#   name_zh: Brinson 三因子结果
+#   name_en: BrinsonResult
+#   intro: 单期或多期链式汇总的三效应分解结果
+#   invariant: 守恒 is_consistent
+#   downstream: 内部 attribute_full / attribute_multi_period 复用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A3
+# I4 --> A4
+# I5 --> A5
+# A1 --> A6
+# A2 --> A6
+# A3 --> A6
+# A1 --> A7
+# A6 --> O1
+# A4 --> O2
+# A5 --> O2
+# A7 --> O3
+# A1 --> O3
 """
 
 from __future__ import annotations

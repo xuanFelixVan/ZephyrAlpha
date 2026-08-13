@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Strategy Engine — 策略引擎 (MOD-PF-001)
 
 D-PF-CORE §1.2 L2 组合构建核心模块。策略生命周期管理 + 冷启动协议 + 四维决策聚合。
@@ -30,9 +32,111 @@ D-PF-CORE §1.2 L2 组合构建核心模块。策略生命周期管理 + 冷启�
     5. 策略退化检测: IC 衰减 > 50% → 自动降级(权重归 0 / 转 DEPRECATED)
 
 属 A 类纯基础设施(状态机+协议+聚合框架), 策略逻辑由 StrategyBase 子类(B 类)注入。
-依据: D:\\临时工作区\\依赖图\\05-D-PF-CORE-组合核心域.md §1.2 PC-01, §3.3 OCP-002
+依据: D:\临时工作区\依赖图-D-PF-CORE-组合核心域.md §1.2 PC-01, §3.3 OCP-002
 SSoT: depgraph MOD-PF-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 策略实现 StrategyBase 子类（B 类策略逻辑）
+#   fields: meta() 提供 StrategyMeta（strategy_id/version）；generate_target_weights(universe, signals, constraints) 产出原始权重
+#   code: strategy_engine.py L315 register / L483 evaluate 调用
+# - id: I2
+#   name: 生命周期转换请求
+#   fields: strategy_id + to 目标状态 + reason + performance_snapshot 绩效快照
+#   code: strategy_engine.py L368-373 transition 参数
+# - id: I3
+#   name: 决策输入
+#   fields: universe 选股宇宙 + signals {symbol: strength}（正买负卖）+ constraints 透传约束
+#   code: strategy_engine.py L441-446 evaluate 参数
+# - id: I4
+#   name: IC 历史序列 ic_history
+#   fields: list[float] 旧→新，退化检测用
+#   code: strategy_engine.py L546 detect_degradation 参数
+# - id: I5
+#   name: 引擎配置 StrategyEngineConfig
+#   fields: cold_start_factor=0.3 / cold_start_days=7 / max_strategies=20 / min_testing_days=7 / ic_decay_threshold=0.5 / 归一容差 1e-6
+#   code: strategy_engine.py L125-143 StrategyEngineConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 策略注册与版本控制
+#   name_en: register
+#   intro: 注册新策略为 REGISTERED，同 ID 换版本就把旧版本归档废弃
+#   desc: L315-366 取 meta（实例 _meta 优先）；同 ID 同版本报错；版本变更→旧记录 _archive_record 转 DEPRECATED；活跃数≥max_strategies 拒绝
+#   inputs: I1 I5
+#   outputs: 注册生命周期事件 + StrategyRecord
+# - id: A2
+#   name_zh: ② 生命周期状态机
+#   name_en: transition
+#   intro: 六条合法边单调推进状态，DEPRECATED 是终态不可复活
+#   desc: L267-274 _VALID_TRANSITIONS 六条转换边；L368-426 跳级/复活抛 StrategyLifecycleError；TESTING→ACTIVE 须满 min_testing_days(7) 门禁；同状态幂等 no-op
+#   inputs: I2 I5
+#   outputs: 新状态 + 生命周期事件
+#   invariant: 生命周期单调推进，DEPRECATED 不可复活
+# - id: A3
+#   name_zh: ③ 冷启动判定
+#   name_en: _in_cold_start
+#   intro: ACTIVE 且激活未满 7 天就算冷启动期
+#   desc: L631-640 status==ACTIVE 且 activated_at 非空且 now-activated_at < cold_start_days(7)
+#   inputs: A2 I5
+#   outputs: cold_start 布尔
+# - id: A4
+#   name_zh: ④ 四维决策聚合
+#   name_en: evaluate
+#   intro: 调策略算权重→冷启动打三折→归一化→拆买卖信号，汇总成决策
+#   desc: L440-539 可运行校验(TESTING/ACTIVE)→strategy.generate_target_weights→滤宇宙外/非正→冷启动×0.3→_normalize_weights(Σw=1，全零返空)→direction>0 买/<0 卖→StrategyDecision+uuid 幂等键
+#   inputs: I1 I3 A3 I5
+#   outputs: StrategyDecision
+#   invariant: 冷启动期权重×0.3；target_weights 归一化 Σw=1
+# - id: A5
+#   name_zh: ⑤ 策略退化检测（IC 衰减）
+#   name_en: detect_degradation
+#   intro: 前半段平均 IC 相比最新 IC 衰减过半就判退化
+#   desc: L543-576 baseline=前 len//2 段均值；decay=(baseline-recent)/baseline；>ic_decay_threshold(0.5)→True；baseline≤0 或样本<2 → False
+#   inputs: I4 I5
+#   outputs: degraded 布尔
+# - id: A6
+#   name_zh: ⑥ 自动降级
+#   name_en: auto_degrade
+#   intro: 退化且还在 ACTIVE 的策略自动转 DEPRECATED 并记事件
+#   desc: L578-599 detect_degradation=True 且 status==ACTIVE→transition(DEPRECATED, snapshot={ic_decay})；否则返回 None
+#   inputs: A5
+#   outputs: 生命周期事件或 None
+# 层: 输出
+# - id: O1
+#   name_zh: 策略决策 StrategyDecision
+#   name_en: StrategyDecision
+#   intro: 目标权重+选股宇宙+买/卖信号列表+冷启动标记+幂等键
+#   invariant: 幂等键防重复；冷启动权重已打折
+#   downstream: MOD-PF-002 Portfolio Optimizer 消费 target_weights；MOD-PF-010 Performance Attribution 消费决策+IC（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 生命周期事件 StrategyLifecycleEvent
+#   name_en: StrategyLifecycleEvent (CTR-P1-006)
+#   intro: 注册/转换/降级/归档全量审计事件，进 lifecycle_log 只读视图
+#   invariant: 幂等键防重复生命周期事件
+#   downstream: lifecycle_log 审计；MOD-PF-010 消费（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I5 --> A1
+# I2 --> A2
+# I5 --> A2
+# A1 --> A2
+# A2 --> A3
+# I5 --> A3
+# I1 --> A4
+# I3 --> A4
+# A3 --> A4
+# I5 --> A4
+# I4 --> A5
+# I5 --> A5
+# A5 --> A6
+# A4 --> O1
+# A1 --> O2
+# A2 --> O2
+# A6 --> O2
 """
 
 from __future__ import annotations

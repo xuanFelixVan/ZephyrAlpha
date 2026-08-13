@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Rebalance Scheduler — 再平衡调度器 (MOD-PF-003)
 
 D-PF-CORE §1.2 L2 组合构建核心模块。组合级再平衡调度: 决定是否重跑组合优化器 (PC-02)。
@@ -34,9 +36,112 @@ D-PF-CORE §1.2 L2 组合构建核心模块。组合级再平衡调度: 决定�
     - 执行条件: benefit > 2 × cost (improvement_ratio)
 
 属 A 类纯基础设施 (触发判定+成本公式+调度决策), 阈值为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\05-D-PF-CORE-组合核心域.md §1.2 PC-03, §10.1 组合降级
+依据: D:\临时工作区\依赖图-D-PF-CORE-组合核心域.md §1.2 PC-03, §10.1 组合降级
 SSoT: depgraph MOD-PF-003
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 当前持仓权重 current_weights
+#   fields: {symbol: weight}（非负，与 target 不全空）
+#   code: rebalance_scheduler.py L245 evaluate 参数
+# - id: I2
+#   name: 目标权重 target_weights
+#   fields: {symbol: weight}（上次 PC-02 优化产出，非负）
+#   code: rebalance_scheduler.py L246 evaluate 参数
+# - id: I3
+#   name: 市场状态码 market_state
+#   fields: int；7/8/9 为压力市场（成本×1.5）
+#   code: rebalance_scheduler.py L247 evaluate 参数
+# - id: I4
+#   name: 触发标志位
+#   fields: risk_alert 风控告警（E-RK-01 VaR 突破 / E-RK-03 回撤熔断）+ event_trigger 外部事件
+#   code: rebalance_scheduler.py L249-250 evaluate 参数
+# - id: I5
+#   name: 重优化输入（可选）
+#   fields: covariance 协方差矩阵 + risk_limits CTR-003 + strategy_id/portfolio_id
+#   code: rebalance_scheduler.py L251-254 evaluate 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 权重校验
+#   name_en: _validate_weights
+#   intro: 当前与目标权重不全空且全部非负，否则直接报错
+#   desc: L443-458 双全空/任一负权重抛 InvalidRebalanceInputError
+#   inputs: I1 I2
+#   outputs: 校验通过
+# - id: A2
+#   name_zh: ② 漂移计算
+#   name_en: _compute_drift
+#   intro: 算组合总漂移和单标的最大漂移两个数
+#   desc: L424-441 portfolio_drift=Σ|current-target|/2；max_single_drift=max|Δw_i|（并集符号逐票算）
+#   inputs: I1 I2
+#   outputs: (portfolio_drift, max_single_drift)
+# - id: A3
+#   name_zh: ③ 四触发源评估
+#   name_en: _check_triggers
+#   intro: 风控>漂移>事件>日历，按优先级返回最高触发源
+#   desc: L333-355 risk_alert→RISK_BREACH；组合漂移>2%或单标的>3%→DRIFT_THRESHOLD；event_trigger→EVENT；周五(weekday==4)→CALENDAR；否则 NONE
+#   inputs: A2 I4
+#   outputs: trigger_source + triggered
+#   invariant: 四触发源任一满足即 triggered
+# - id: A4
+#   name_zh: ④ 成本收益分析（复用 POS-004 公式）
+#   name_en: _compute_cost_benefit
+#   intro: 收益是消除的漂移，成本是换手×费率，压力市场成本加五成
+#   desc: L359-387 turnover=Σ|Δw|；cost=turnover×cost_rate(0.001)×（状态∈{7,8,9}→1.5 否则 1.0)；benefit=portfolio_drift；passed=benefit>2×cost
+#   inputs: I1 I2 I3 A2
+#   outputs: (cost, benefit, cost_benefit_passed)
+# - id: A5
+#   name_zh: ⑤ 调度决策合成
+#   name_en: evaluate 决策段
+#   intro: 没触发就跳过，触发了但成本不划算也跳过，都过才真正再平衡
+#   desc: L296-301 未触发→SKIP_NO_TRIGGER；成本收益不过→SKIP_COST_BENEFIT；否则→REBALANCE
+#   inputs: A3 A4
+#   outputs: decision
+#   invariant: benefit>2×cost 才执行
+# - id: A6
+#   name_zh: ⑥ 重优化（调 PC-02）
+#   name_en: _reoptimize
+#   intro: 决策通过且输入齐备时调组合优化器重跑，失败降级为不执行
+#   desc: L391-420 仅 decision==REBALANCE 且 optimizer/covariance/risk_limits 齐备→optimizer.optimize(candidate=target_weights)；异常→None 降级
+#   inputs: A5 I5 I2 I1
+#   outputs: new_target_portfolio（TargetPortfolio CTR-007 或 None）
+# 层: 输出
+# - id: O1
+#   name_zh: 再平衡评估 RebalanceEvaluation
+#   name_en: RebalanceEvaluation
+#   intro: 触发源+决策+成本收益+双漂移+新目标组合+uuid 幂等键的完整评估快照
+#   invariant: decision 单调（无触发→成本不过→执行 三态）；should_rebalance=decision==REBALANCE
+#   downstream: MOD-PF-002 触发重优化；D_POSITION 持仓级执行 POS-004 复用成本判定（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 新目标组合 new_target_portfolio
+#   name_en: TargetPortfolio (CTR-007)
+#   intro: 重优化产出的不可变目标组合，未执行再平衡时为 None
+#   downstream: D_POSITION 持仓级执行（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I1 --> A2
+# I2 --> A2
+# A2 --> A3
+# I4 --> A3
+# A2 --> A4
+# I1 --> A4
+# I2 --> A4
+# I3 --> A4
+# A3 --> A5
+# A4 --> A5
+# A5 --> A6
+# I5 --> A6
+# I2 --> A6
+# I1 --> A6
+# A5 --> O1
+# A6 --> O1
+# A6 --> O2
 """
 
 from __future__ import annotations

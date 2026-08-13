@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Constraint Solver — 约束求解器 (MOD-PF-006)
 
 D-PF-CORE §1.2 L2 组合构建核心模块。将风险限额 (CTR-003) 和拥挤检测转化为
@@ -33,9 +35,119 @@ D-PF-CORE §1.2 L2 组合构建核心模块。将风险限额 (CTR-003) 和拥�
 
 属 A 类纯基础设施 (数学约束投影, 无策略决策), 阈值来源 RiskLimits (CTR-003)。
 策略级相关性门禁 (MOD-PA-004) 由上层 Portfolio Optimizer 在调用本求解器前执行。
-依据: D:\\临时工作区\\依赖图\\12-D-PF-CORE-组合构建域.md §1.2 PC-04
+依据: D:\临时工作区\依赖图
+-D-PF-CORE-组合构建域.md §1.2 PC-04
 SSoT: depgraph MOD-PF-006
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 候选权重 weights
+#   fields: dict{symbol: weight} 或 np.ndarray（long-only，非负，非空）
+#   code: constraint_solver.py L247 solve(weights)
+# - id: I2
+#   name: 风险限额 RiskLimits（CTR-003）
+#   fields: max_single_position/min_single_position/max_gross_leverage/max_sector_concentration/symbol_overrides
+#   code: constraint_solver.py L250 risk_limits
+# - id: I3
+#   name: 行业映射与基准
+#   fields: sector_mapping {symbol: sector} + benchmark_sector_weights {sector: weight}
+#   code: constraint_solver.py L252-253
+# - id: I4
+#   name: 相关性与暴露数据
+#   fields: correlation_matrix (N,N) + style_exposures + market_cap_exposures {symbol: σ}
+#   code: constraint_solver.py L254-256
+# - id: I5
+#   name: 求解器配置 ConstraintSolverConfig
+#   fields: max_iter=100 / tol=1e-6 / 拥挤阈值0.8/0.9 / max_correlation=0.7 / 暴露σ=0.3 / 行业偏移±0.10
+#   code: constraint_solver.py L88 ConstraintSolverConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 7 约束链迭代投影主循环
+#   name_en: ConstraintSolver.solve
+#   intro: 迭代投影法：逐约束裁剪 → 归一化 → 收敛判定，最多 max_iter 次
+#   desc: L306-383：w_{i+1}=normalize(project_Ci(w_i))；||Δw||∞<tol 收敛；全零权重直接返回；不收敛返回最后迭代+converged=False
+#   inputs: I1 I5 A2 A3 A4 A5 A6 A7
+#   outputs: 收敛权重 w + violations + scaling + iterations
+#   invariant: Σw≤max_gross_leverage；w_i≤max_single_position；输出与输入同维度
+# - id: A2
+#   name_zh: ② 单标的仓位投影 C7
+#   name_en: _project_single_position
+#   intro: 每个标的权重裁剪到 [min_pos, 个票override或max_pos] 区间
+#   desc: L387-412：w_i>limit → 记违规并 clip；w_i<min_pos → 抬到 min_pos
+#   inputs: I1 I2
+#   outputs: 裁剪后 w + C7 违规记录
+# - id: A3
+#   name_zh: ③ 行业集中度投影 C1/C2
+#   name_en: _project_sector_absolute / _project_sector_relative
+#   intro: 行业聚合权重超上限等比缩放；相对基准偏移超 ±10% 裁到边界
+#   desc: L414-480：sector_w>max_sector → 组内 ×(max_sector/sector_w)；|sw_pct-bw|>max_dev → 组内 ×(target_w/sw)
+#   inputs: I1 I2 I3
+#   outputs: 裁剪后 w + C1/C2 违规记录
+# - id: A4
+#   name_zh: ④ 暴露约束投影 C3/C6
+#   name_en: _project_market_cap / _project_style
+#   intro: 组合加权市值/风格暴露超 0.3σ 时，同向标的按比例压缩
+#   desc: L482-588：weighted_exp=Σw_i·exp_i/Σw；|E|>max_exp → 同向标的 ×(max_exp/|E|)
+#   inputs: I1 I4 I5
+#   outputs: 裁剪后 w + C3/C6 违规记录
+# - id: A5
+#   name_zh: ⑤ 相关性裁剪 C5
+#   name_en: _project_correlation
+#   intro: 标的相关性 |ρ|>0.7 时降权权重较大者
+#   desc: L516-554：高相关对中 w 大者 ×max(1-(ρ-0.7), 0.5)；矩阵形状不符抛 CorrelationGateFailure
+#   inputs: I1 I4 I5
+#   outputs: 裁剪后 w + C5 违规记录
+# - id: A6
+#   name_zh: ⑥ 拥挤检测
+#   name_en: _apply_crowding
+#   intro: ρ>0.9 仅保留权重较大者（另一清零）；ρ>0.8 双方权重减半
+#   desc: L590-636：硬拥挤 w 小者=0；软拥挤双方 ×crowding_scale(0.5)
+#   inputs: I1 I4 I5
+#   outputs: 裁剪后 w + CROWD 违规记录
+# - id: A7
+#   name_zh: ⑦ 杠杆投影与归一化
+#   name_en: _project_leverage / _normalize
+#   intro: 总权重超杠杆上限时整体缩放到 max_gross_leverage
+#   desc: L638-708：Σw>max_lev → w×(max_lev/Σw)；归一化到 [0, max_leverage]
+#   inputs: I1 I2
+#   outputs: 缩放后 w + LEV 违规记录
+# 层: 输出
+# - id: O1
+#   name_zh: 约束求解结果 ConstraintSolveResult
+#   name_en: ConstraintSolveResult
+#   intro: 求解后权重 + 违规清单 + 全局缩放因子 + 收敛标志 + 迭代次数
+#   invariant: Σw≤max_gross_leverage；不收敛时 converged=False 仍返回最后迭代
+#   downstream: MOD-PF-002 Portfolio Optimizer（约束输入，[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I5 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I3 --> A3
+# I1 --> A4
+# I4 --> A4
+# I5 --> A4
+# I1 --> A5
+# I4 --> A5
+# I5 --> A5
+# I1 --> A6
+# I4 --> A6
+# I5 --> A6
+# I1 --> A7
+# I2 --> A7
+# A2 --> A1
+# A3 --> A1
+# A4 --> A1
+# A5 --> A1
+# A6 --> A1
+# A7 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations
