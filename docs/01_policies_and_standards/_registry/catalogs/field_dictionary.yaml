@@ -1,0 +1,6289 @@
+# [A_config] module_id=REG-FLD-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-FLD-001
+name: Field Dictionary Registry
+name_zh: 字段字典登记表
+description: >-
+  数据字段唯一真源（SSoT）。登记数据层字段（行情/资金流/情绪广度/技术指标/宏观/因子信号/合成信号/委托/成交/持仓/
+  组合配置/风险/绩效/执行/实验/模型服务 16 域）的 type/unit/source/复权口径/PIT 性质/质量规则。
+  真源反查自 cross_layer_contracts.yaml（18 个业务数据契约 SSoT）+ factor_registry inputs（111 个因子声明输入字段）。
+  职责边界（裁定 8）：仅管数据层字段语义，不合并 frontmatter_field_registry.yaml（文档元数据）；FK 消费方=
+  factor.inputs / technical_indicator.inputs（62号 §4.6）。对标 DAMA-DMBOK / dbt schema.yml（2026 补
+  sensitivity/freshness/notes 三字段）。source_system FK → data_asset_registry（P1-B 未施工，全部 pending 待回填）。
+  business_registry_construction §7.1。施工：AI-REG-FLD-001（2026-08-13，62号 §4.5 八步算法）。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-13'
+last_updated: '2026-08-13'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- field_id
+
+entry_schema:
+  field_id: str                  # FLD-{DOMAIN}-{NNN}；DOMAIN ∈ {MKT,MFLOW,SENT,IND,MACRO,FCT,SIG,ORD,FILL,POS,PORT,RISK,PERF,EXEC,EXP,ML}
+  field_name: str                # 字段名（snake_case，对齐契约/注册表引用名）
+  name_zh: str                   # 中文名
+  business_definition: str       # 业务定义
+  data_type: str                 # int/float/str/datetime/bool/dict/list/obj（扩展：契约含 Dict/List 容器类型）
+  unit: str                      # 元/股/份/%(小数)/倍/点/毫秒/天/交易日/笔/只/板/个/bps/美元|桶|盎司/亿元/分(0-10)/none
+  allowed_values: list[str]      # 枚举合法值；非枚举=null
+  source_system: str             # FK → data_asset_registry source_id（SRC-QMT-001/SRC-AKSHARE-001/SRC-INTERNAL-001，pending 待 P1-B 回填）
+  adjust_method: str             # 前复权/后复权/不复权/none
+  pit_property: str              # point_in_time/look_ahead_risk
+  quality_rules: list[str]       # 质量规则（值域/一致性/格式）
+  steward: str                   # 数据责任人
+  sensitivity: str               # 敏感标记（dbt 2026 对标）：none/internal/pii
+  freshness: str                 # 更新频率（dbt 2026 对标）：tick/15min/daily/weekly/monthly/event/realtime/on_demand
+  notes: str                     # caveats/gotchas（dbt 2026 对标）
+  module_id: str                 # 关联模块（契约字段=MOD-INF-016，数据层字段=MOD-MKT-DATA）
+  doc_ref: str                   # 关联设计备忘节号
+  code_path: str                 # 契约文件路径（注册表声明字段=null，E10 豁免 REG-FLD-001）
+  status: str                    # candidate/experimental/active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+
+fields:
+- field_id: FLD-MKT-001
+  field_name: symbol
+  name_zh: 证券代码
+  business_definition: 标准化证券代码（证券代码.交易所，如 600519.SH；跨表 JOIN 用 symbol_canonical 派生列，trae_082）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 格式 <裸码>.<SH|SZ|HK|US|CFFEX>
+  - 非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '跨 6 个契约共享的主键字段；裸码 000001 存在平安银行/上证指数碰撞，JOIN MUST 带 exchange｜来源: 契约 CTR-001:NormalizedMarketData,CTR-002:FactorSignal,CTR-004:Order,CTR-005:Fill,CTR-P1-007:ExecutionReport,CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-002
+  field_name: trade_date
+  name_zh: 交易日
+  business_definition: 交易日（YYYY-MM-DD，A股交易日历）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 格式 YYYY-MM-DD
+  - 落在交易日历内
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-EVT-006,FCT-EVT-010）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-003
+  field_name: timestamp
+  name_zh: 数据时间戳
+  business_definition: 数据时间戳（UTC）；截面对齐 MUST 用 timestamp 而非 ingested_at
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UTC 时区
+  - 非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData,CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-004
+  field_name: time
+  name_zh: 盘中时间
+  business_definition: 盘中交易时间（intraday 因子的时间轴）
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 落在交易时段 09:30-11:30/13:00-15:00
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（盘中）
+  notes: '来源: 因子引用 n=2（如 FCT-INTRADAY-002,FCT-INTRADAY-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-005
+  field_name: data_source
+  name_zh: 数据源标识
+  business_definition: 数据源标识（如 akshare/qmt/wind），行情字段血缘追溯入口
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空
+  - 已登记数据源白名单
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData,CTR-P1-002:MacroFactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-006
+  field_name: ingested_at
+  name_zh: 入库时间
+  business_definition: 数据入库时间；≠timestamp（数据时间戳），用于新鲜度审计
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - ingested_at ≥ timestamp
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-007
+  field_name: quality_score
+  name_zh: 数据质量分
+  business_definition: 质量门禁评分 0.0-1.0；<0.7 标低置信度，下游可忽略
+  data_type: float
+  unit: 分(0-1)
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（随行情）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-008
+  field_name: is_suspended
+  name_zh: 停牌标记
+  business_definition: 停牌标记；True 时禁止基于该数据生成信号
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（盘中状态）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-009
+  field_name: open
+  name_zh: 开盘价
+  business_definition: 开盘价（未复权原始价；复权价=price×adj_factor 派生）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - low≤open≤high
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData; 因子引用 n=10（如 FCT-INTRADAY-001,FCT-INTRADAY-005,FCT-INTRADAY-010）'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-010
+  field_name: high
+  name_zh: 最高价
+  business_definition: 最高价（未复权原始价）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - high≥low
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData; 因子引用 n=21（如 FCT-INTRADAY-010,FCT-TECH-004,FCT-TECH-006）'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-011
+  field_name: low
+  name_zh: 最低价
+  business_definition: 最低价（未复权原始价）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - low≤high
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData; 因子引用 n=21（如 FCT-INTRADAY-010,FCT-TECH-004,FCT-TECH-006）'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-012
+  field_name: close
+  name_zh: 收盘价
+  business_definition: 收盘价（未复权原始价）；被 43 个因子引用，最高频字段
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - low≤close≤high
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData; 因子引用 n=43（如 FCT-INTRADAY-010,FCT-LIQ-003,FCT-LIQ-007）'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-013
+  field_name: prev_close
+  name_zh: 前收盘价
+  business_definition: 前一交易日收盘价（涨跌停基准价）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-INTRADAY-001,FCT-TECH-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-014
+  field_name: vwap
+  name_zh: 成交量加权均价
+  business_definition: 成交量加权平均价 VWAP=成交额/成交量
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '分子分母同期；成交额缺失时不可算｜来源: 因子引用 n=3（如 FCT-INTRADAY-001,FCT-INTRADAY-007,FCT-INTRADAY-008）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-015
+  field_name: volume
+  name_zh: 成交量
+  business_definition: 成交量（24 个因子引用）；量复权方向与价复权相反，本字段为原始量
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData; 因子引用 n=24（如 FCT-INTRADAY-001,FCT-INTRADAY-003,FCT-INTRADAY-004）'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-016
+  field_name: amount
+  name_zh: 成交额
+  business_definition: 成交额（A股必填）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - amount≈vwap×volume 容差校验
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 契约 CTR-001:NormalizedMarketData'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-017
+  field_name: adj_factor
+  name_zh: 复权因子
+  business_definition: 复权因子；前复权价=原始价×adj_factor
+  data_type: float
+  unit: 倍
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: look_ahead_risk
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '前复权因子依赖未来除权除息信息→回测 MUST 用后复权或 PIT 快照，防前视偏差｜来源: 契约 CTR-001:NormalizedMarketData'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/market_data.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-018
+  field_name: prev_volume
+  name_zh: 前成交量
+  business_definition: 前一交易日成交量（量比计算基准）
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-INTRADAY-013,FCT-LIQ-004）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-019
+  field_name: volume_intraday
+  name_zh: 盘中实时成交量
+  business_definition: 盘中实时累计成交量（intraday 因子用）
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（盘中）
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-020
+  field_name: price_tick
+  name_zh: 逐笔价格
+  business_definition: 逐笔成交价格流（tick 级，10 个盘中/流动性因子引用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: tick(3s)
+  notes: '来源: 因子引用 n=10（如 FCT-INTRADAY-001,FCT-INTRADAY-002,FCT-INTRADAY-003）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-021
+  field_name: tick_data
+  name_zh: 逐笔数据流
+  business_definition: 逐笔 tick 数据流（订单流因子输入）
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: tick(3s)
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-014）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-022
+  field_name: auction_price
+  name_zh: 集合竞价价
+  business_definition: 开盘集合竞价成交/参考价
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（09:25 集合竞价）
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-023
+  field_name: auction_volume
+  name_zh: 集合竞价量
+  business_definition: 开盘集合竞价成交量
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（09:25 集合竞价）
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-024
+  field_name: sector_leader_auction
+  name_zh: 板块龙头竞价强度
+  business_definition: 板块龙头集合竞价强度（打板竞价因子输入）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（09:25 集合竞价）
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-025
+  field_name: limit_up_price
+  name_zh: 涨停价
+  business_definition: 当日涨停价（主板±10%/创业板±20%，由 prev_close 派生）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - ≈prev_close×(1+涨停幅度) 容差
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-006）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-026
+  field_name: historical_low
+  name_zh: 历史最低价
+  business_definition: 上市以来历史最低价（流动性/安全边际因子用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-009）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-027
+  field_name: key_levels
+  name_zh: 关键价位
+  business_definition: 关键价位水平集合（支撑/压力位，3 个因子引用）
+  data_type: list
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - 均为正数
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=3（如 FCT-INTRADAY-003,FCT-INTRADAY-004,FCT-TECH-004）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-028
+  field_name: resistance_level
+  name_zh: 阻力位
+  business_definition: 阻力位价格
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-034）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-029
+  field_name: box_lower
+  name_zh: 箱体下沿
+  business_definition: 箱体震荡下沿价格
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - box_lower≤box_upper
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-040）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-030
+  field_name: close_15min
+  name_zh: 15分钟收盘价
+  business_definition: 15min 周期收盘价（多周期共振因子用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: 15min
+  notes: '来源: 因子引用 n=2（如 FCT-TECH-024,FCT-TECH-025）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-031
+  field_name: high_15min
+  name_zh: 15分钟最高价
+  business_definition: 15min 周期最高价
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: 15min
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-024）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-032
+  field_name: low_15min
+  name_zh: 15分钟最低价
+  business_definition: 15min 周期最低价
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: 15min
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-024）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-033
+  field_name: close_monthly
+  name_zh: 月收盘价
+  business_definition: 月线收盘价（月线级趋势因子用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: monthly
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-007）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-034
+  field_name: ohlc_daily
+  name_zh: 日K线OHLC
+  business_definition: 日线 OHLC 数据集（多周期对齐因子输入）
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 含 open/high/low/close 四键
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-035
+  field_name: ohlc_minute
+  name_zh: 分钟K线OHLC
+  business_definition: 分钟线 OHLC 数据集
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 含 open/high/low/close 四键
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: 1min
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-036
+  field_name: ohlc_weekly
+  name_zh: 周K线OHLC
+  business_definition: 周线 OHLC 数据集
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 含 open/high/low/close 四键
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: weekly
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-037
+  field_name: ohlc_monthly
+  name_zh: 月K线OHLC
+  business_definition: 月线 OHLC 数据集
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 含 open/high/low/close 四键
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: monthly
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-038
+  field_name: a_share_open
+  name_zh: A股开盘价
+  business_definition: A股开盘价格（跨市场事件因子的 A 股开盘观测，3 因子引用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（09:30）
+  notes: '来源: 因子引用 n=3（如 FCT-EVT-003,FCT-EVT-009,FCT-EVT-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-039
+  field_name: market_close
+  name_zh: 市场收盘价
+  business_definition: 市场收盘价（事件日市场反应观测）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-001）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-040
+  field_name: spot_price
+  name_zh: 现货价格
+  business_definition: 现货价格（期现联动事件因子用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（盘中）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-041
+  field_name: market_volume
+  name_zh: 市场成交量
+  business_definition: 全市场成交量（市场级流动性因子输入）
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-LIQ-001,FCT-LIQ-002）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-042
+  field_name: turnover_rate
+  name_zh: 换手率
+  business_definition: 换手率=成交量/流通股本
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - v≤1 软告警（单日换手>100% 需复核）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-LIQ-007,FCT-LIQ-008）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-043
+  field_name: actual_turnover_rate
+  name_zh: 实际换手率
+  business_definition: 实际换手率（自由流通股本口径）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '与 turnover_rate 差异在股本口径：实际=自由流通股本｜来源: 因子引用 n=1（如 FCT-LIQ-007）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-044
+  field_name: float_shares
+  name_zh: 流通股本
+  business_definition: 流通股本数量
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 不复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '股本变动事件驱动更新，日频快照｜来源: 因子引用 n=1（如 FCT-LIQ-008）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-045
+  field_name: market_cap
+  name_zh: 总市值
+  business_definition: 总市值=收盘价×总股本
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-LIQ-023,FCT-TECH-047）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-046
+  field_name: market_return
+  name_zh: 市场收益率
+  business_definition: 市场基准收益率（单期，如沪深300 日收益）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - '|v|≤0.11 熔断软告警（指数单日±10% 限）'
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=3（如 FCT-LIQ-018,FCT-LIQ-019,FCT-LIQ-021）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-047
+  field_name: market_returns
+  name_zh: 市场收益率序列
+  business_definition: 市场收益率时间序列（6 因子引用）
+  data_type: list
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 序列非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=6（如 FCT-EVT-006,FCT-EVT-007,FCT-EVT-010）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-048
+  field_name: stock_returns
+  name_zh: 个股收益率
+  business_definition: 个股收益率（4 因子引用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - '|v|≤0.21 软告警（20cm 涨停限）'
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=4（如 FCT-EVT-005,FCT-SENT-001,FCT-TECH-046）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-049
+  field_name: equity_returns
+  name_zh: 权益市场收益率
+  business_definition: 权益市场收益率（股金联动事件因子用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-015）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-050
+  field_name: index_returns
+  name_zh: 指数收益率
+  business_definition: 指数收益率（相对强度因子基准）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-045）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-051
+  field_name: sector_returns
+  name_zh: 板块收益率
+  business_definition: 板块收益率（6 因子引用，板块轮动/事件传导用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=6（如 FCT-EVT-002,FCT-TECH-043,FCT-TECH-044）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-052
+  field_name: sector_index_return
+  name_zh: 行业指数收益率
+  business_definition: 行业指数收益率（行业宽度因子用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-049）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-053
+  field_name: oil_sector_returns
+  name_zh: 石油板块收益率
+  business_definition: 石油板块收益率（油价事件传导因子用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-008）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-054
+  field_name: a_share_tech_returns
+  name_zh: A股科技板块收益率
+  business_definition: A股科技板块收益率（韩科技股联动因子对照）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-004）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-055
+  field_name: index_close
+  name_zh: 指数收盘点位
+  business_definition: 指数收盘点位（市场情绪因子用）
+  data_type: float
+  unit: 点
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-056
+  field_name: cap_weight_index
+  name_zh: 市值加权指数
+  business_definition: 市值加权指数值（宽度背离因子对照基准）
+  data_type: float
+  unit: 点
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-048）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-057
+  field_name: equal_weight_index
+  name_zh: 等权指数
+  business_definition: 等权指数值（宽度背离因子：等权 vs 市值加权背离=真实宽度）
+  data_type: float
+  unit: 点
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-048）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-058
+  field_name: sector_mapping
+  name_zh: 板块映射表
+  business_definition: 个股→板块映射表（3 因子引用，板块聚合基础数据）
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 键为合法 symbol
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '映射口径（申万/中信/自定义）MUST 单一真源，防双口径漂移｜来源: 因子引用 n=3（如 FCT-TECH-046,FCT-TECH-047,FCT-TECH-054）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-059
+  field_name: constituent_flag
+  name_zh: 成分股标记
+  business_definition: 指数成分股标记（是否属于目标指数成分）
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-017）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MKT-060
+  field_name: earnings_result
+  name_zh: 财报业绩结果
+  business_definition: 财报业绩结果（业绩超预期/预减等定性标记）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: look_ahead_risk
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: 'MUST 用公告日（announce_date）对齐，禁用报告期（period）对齐——否则前视偏差｜来源: 因子引用 n=1（如 FCT-EVT-002）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-001
+  field_name: money_flow_super_large
+  name_zh: 超大单资金流
+  business_definition: 超大单资金净流入（单笔>100万）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '档位划分阈值 MUST 与数据源口径一致（东财/通达信口径不同）｜来源: 因子引用 n=1（如 FCT-LIQ-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-002
+  field_name: money_flow_large
+  name_zh: 大单资金流
+  business_definition: 大单资金净流入
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-003
+  field_name: money_flow_medium
+  name_zh: 中单资金流
+  business_definition: 中单资金净流入
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-004
+  field_name: money_flow_small
+  name_zh: 小单资金流
+  business_definition: 小单资金净流入
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-005
+  field_name: main_flow
+  name_zh: 主力资金流
+  business_definition: 主力资金净流入（超大单+大单合计）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-021）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-006
+  field_name: large_order_flow
+  name_zh: 大单资金流向
+  business_definition: 大单资金流向（流动性冲击因子输入）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=2（如 FCT-LIQ-017,FCT-LIQ-019）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-007
+  field_name: small_order_flow
+  name_zh: 小单资金流向
+  business_definition: 小单资金流向（散户行为代理）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=2（如 FCT-LIQ-018,FCT-LIQ-019）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-008
+  field_name: daily_net_inflow
+  name_zh: 日度净流入额
+  business_definition: 日度资金净流入额
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-015）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-009
+  field_name: net_buy_amount
+  name_zh: 净买入金额
+  business_definition: 净买入金额（龙虎榜/席位口径）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-016）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-010
+  field_name: order_direction
+  name_zh: 订单方向
+  business_definition: 订单方向（订单流因子输入）
+  data_type: str
+  unit: none
+  allowed_values:
+  - BUY
+  - SELL
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: tick(3s)
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-014）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-011
+  field_name: order_size
+  name_zh: 订单规模
+  business_definition: 订单规模/金额（订单流因子输入）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: tick(3s)
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-014）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-012
+  field_name: order_count_ratio
+  name_zh: 订单数量比率
+  business_definition: 订单数量比率（大小单结构因子用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-020）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-013
+  field_name: amount_ratio
+  name_zh: 成交额比率
+  business_definition: 成交额比率（大小单金额结构因子用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-020）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-014
+  field_name: small_order_buy_ratio
+  name_zh: 小单买入占比
+  business_definition: 小单买入金额占比（散户情绪代理）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-021）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-015
+  field_name: small_order_sell_ratio
+  name_zh: 小单卖出占比
+  business_definition: 小单卖出金额占比
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-021）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-016
+  field_name: dragon_tiger_seats
+  name_zh: 龙虎榜席位
+  business_definition: 龙虎榜席位净买入（知名席位跟踪）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（盘后 17:00 交易所披露）
+  notes: '披露口径=盘后，当日盘中不可用——信号生成 MUST 用 T 日盘后数据 T+1 生效｜来源: 因子引用 n=1（如 FCT-LIQ-016）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-017
+  field_name: insider_buying
+  name_zh: 内部人增持
+  business_definition: 内部人（董监高）增持金额
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: look_ahead_risk
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '披露滞后（公告制），MUST 按公告日对齐｜来源: 因子引用 n=1（如 FCT-LIQ-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-018
+  field_name: shareholder_holding_change
+  name_zh: 股东持股变动
+  business_definition: 大股东持股变动数量
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: look_ahead_risk
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '披露滞后（公告制），MUST 按公告日对齐｜来源: 因子引用 n=1（如 FCT-LIQ-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-019
+  field_name: margin_balance
+  name_zh: 融资余额
+  business_definition: 融资余额（杠杆资金情绪，3 因子引用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=3（如 FCT-LIQ-009,FCT-LIQ-022,FCT-TECH-021）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-020
+  field_name: short_balance
+  name_zh: 融券余额
+  business_definition: 融券余额（A股融券受限，量级小，注意稀疏性）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: 'A股融券大面积暂停/受限，长期近零值→质量规则需容忍稀疏｜来源: 因子引用 n=1（如 FCT-LIQ-022）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-021
+  field_name: etf_price
+  name_zh: ETF价格
+  business_definition: ETF 二级市场价格
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（盘中）
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-022
+  field_name: etf_iopv
+  name_zh: ETF IOPV
+  business_definition: ETF 基金份额参考净值（盘中每 15 秒刷新）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: intraday(15s)
+  notes: '折溢价=etf_price/etf_iopv-1，IOPV 延迟→盘中套利信号需扣延迟｜来源: 因子引用 n=1（如 FCT-LIQ-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-023
+  field_name: etf_volume
+  name_zh: ETF成交量
+  business_definition: ETF 成交量
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-024
+  field_name: etf_volume_ma
+  name_zh: ETF成交量均值
+  business_definition: ETF 成交量移动均值（量能基线）
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-025
+  field_name: etf_shares
+  name_zh: ETF份额
+  business_definition: ETF 总份额
+  data_type: float
+  unit: 份
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-010）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-026
+  field_name: etf_share_change
+  name_zh: ETF份额变动
+  business_definition: ETF 份额变动（申赎资金流代理）
+  data_type: float
+  unit: 份
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-010）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-027
+  field_name: etf_subscription
+  name_zh: ETF申购份额
+  business_definition: ETF 申购份额
+  data_type: float
+  unit: 份
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-006）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-028
+  field_name: etf_redemption
+  name_zh: ETF赎回份额
+  business_definition: ETF 赎回份额
+  data_type: float
+  unit: 份
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-006）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MFLOW-029
+  field_name: fund_size
+  name_zh: 基金规模
+  business_definition: 基金规模（ETF/公募，流动性容量因子用）
+  data_type: float
+  unit: 亿元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-LIQ-023）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-001
+  field_name: market_sentiment
+  name_zh: 市场情绪值
+  business_definition: 市场情绪综合值（情绪周期因子核心输入）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-001）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-002
+  field_name: advancing_count
+  name_zh: 上涨家数
+  business_definition: 全市场上涨家数（市场宽度）
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - v≤universe 总数
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=2（如 FCT-SENT-003,FCT-TECH-049）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-003
+  field_name: declining_count
+  name_zh: 下跌家数
+  business_definition: 全市场下跌家数（市场宽度）
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - v≤universe 总数
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=2（如 FCT-SENT-003,FCT-TECH-049）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-004
+  field_name: limit_up_count
+  name_zh: 涨停家数
+  business_definition: 当日涨停家数（情绪温度计）
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=2（如 FCT-SENT-002,FCT-TECH-047）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-005
+  field_name: limit_down_count
+  name_zh: 跌停家数
+  business_definition: 当日跌停家数（3 因子引用）
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=3（如 FCT-SENT-002,FCT-SENT-003,FCT-SENT-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-006
+  field_name: limit_up_count_series
+  name_zh: 涨停家数序列
+  business_definition: 涨停家数历史序列（情绪周期阶段判定）
+  data_type: list
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 序列非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-004）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-007
+  field_name: limit_down_count_series
+  name_zh: 跌停家数序列
+  business_definition: 跌停家数历史序列
+  data_type: list
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 序列非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-004）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-008
+  field_name: broken_limit_count
+  name_zh: 炸板家数
+  business_definition: 当日炸板（涨停打开）家数（打板情绪退潮信号）
+  data_type: int
+  unit: 只
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - v≤limit_up_count+broken_limit_count 自洽
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-002）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-009
+  field_name: max_consecutive_limit_up
+  name_zh: 最高连板数
+  business_definition: 市场最高连板数（打板梯队高度，情绪周期锚）
+  data_type: int
+  unit: 板
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-002）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-010
+  field_name: rs_score
+  name_zh: 相对强度分
+  business_definition: 相对强度评分（个股 vs 市场，欧奈尔 RS 口径）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤100 软告警
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-053）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-011
+  field_name: structure_score
+  name_zh: 市场结构评分
+  business_definition: 市场结构评分（趋势结构健康度）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-053）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SENT-012
+  field_name: daily_alpha
+  name_zh: 日度超额收益
+  business_definition: 日度超额收益（个股收益-市场收益）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-053）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-001
+  field_name: ma5
+  name_zh: 5日均线
+  business_definition: 5 日移动平均价
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: 'FK → technical_indicator_registry（IND-ALGOMAP 族），指标计算 MUST 基于前复权价｜来源: 因子引用 n=1（如 FCT-TECH-015）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-002
+  field_name: ma20
+  name_zh: 20日均线
+  business_definition: 20 日移动平均价（3 因子引用）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=3（如 FCT-TECH-005,FCT-TECH-015,FCT-TECH-029）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-003
+  field_name: ma60
+  name_zh: 60日均线
+  business_definition: 60 日移动平均价
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-015）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-004
+  field_name: ma_250
+  name_zh: 250日均线
+  business_definition: 250 日移动平均价（年线，牛熊分界）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-SENT-005）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-005
+  field_name: macd
+  name_zh: MACD值
+  business_definition: MACD 指标值（DIF/DEA/MACD 柱，默认 12,26,9）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=2（如 FCT-INTRADAY-009,FCT-TECH-035）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-006
+  field_name: macd_15min
+  name_zh: 15分钟MACD
+  business_definition: 15min 周期 MACD 值（多周期共振因子用）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: 15min
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-025）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-007
+  field_name: macd_monthly
+  name_zh: 月线MACD
+  business_definition: 月线 MACD 值（长周期趋势因子用）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: monthly
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-007）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-008
+  field_name: rsi
+  name_zh: RSI值
+  business_definition: RSI 相对强弱指标（默认 14 期）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤100
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（1min~月9周期）
+  notes: '来源: 因子引用 n=1（如 FCT-INTRADAY-009）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-IND-009
+  field_name: rsi_15min
+  name_zh: 15分钟RSI
+  business_definition: 15min 周期 RSI 值
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: 前复权
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤100
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: 15min
+  notes: '来源: 因子引用 n=1（如 FCT-TECH-025）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-001
+  field_name: macro_regime
+  name_zh: 宏观状态
+  business_definition: 宏观状态机值
+  data_type: str
+  unit: none
+  allowed_values:
+  - expansion
+  - contraction
+  - neutral
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: monthly
+  notes: '来源: 契约 CTR-P1-002:MacroFactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/macro_factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-002
+  field_name: release_lag_days
+  name_zh: 发布滞后天数
+  business_definition: 宏观数据发布滞后天数（PIT 对齐关键参数）
+  data_type: int
+  unit: 天
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '宏观因子 MUST 按 发布日=统计期+release_lag_days 对齐，禁用统计期直接对齐（前视偏差）｜来源: 契约 CTR-P1-002:MacroFactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/macro_factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-003
+  field_name: bond_yield_10y
+  name_zh: 10年期国债收益率
+  business_definition: 10 年期国债收益率（利率锚）
+  data_type: float
+  unit: '%'
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤20 软告警
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-004
+  field_name: dxy
+  name_zh: 美元指数
+  business_definition: 美元指数 DXY
+  data_type: float
+  unit: 点
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-005
+  field_name: usdcnh
+  name_zh: 美元离岸人民币
+  business_definition: 美元/离岸人民币汇率（北向资金情绪代理）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-012）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-006
+  field_name: gold_price
+  name_zh: 黄金价格
+  business_definition: 国际黄金价格（避险资产锚）
+  data_type: float
+  unit: 美元/盎司
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-015）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-007
+  field_name: crude_oil_price
+  name_zh: 国际原油价格
+  business_definition: 国际原油价格（WTI/Brent，通胀与油板块传导）
+  data_type: float
+  unit: 美元/桶
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-008）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-008
+  field_name: fed_decision
+  name_zh: 美联储议息决议
+  business_definition: 美联储议息决议结果（加息/降息/维持+幅度）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（每年8次FOMC）
+  notes: '决议公布时间为美东 14:00=北京凌晨，A股当日开盘已可得→T 日可用｜来源: 因子引用 n=1（如 FCT-EVT-001）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-009
+  field_name: fed_funds_rate_expectation
+  name_zh: 联邦基金利率预期
+  business_definition: 联邦基金利率市场预期（CME FedWatch 隐含概率）
+  data_type: float
+  unit: '%'
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-013）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-010
+  field_name: central_bank_repo
+  name_zh: 央行公开市场净投放
+  business_definition: 央行公开市场操作净投放（OMO/MLF，流动性阀门）
+  data_type: float
+  unit: 亿元
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（09:20 公告）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-007）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-011
+  field_name: ipo_size
+  name_zh: IPO募资规模
+  business_definition: IPO 募资规模（抽血效应事件因子用）
+  data_type: float
+  unit: 亿元
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-014）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-012
+  field_name: market_liquidity
+  name_zh: 市场流动性指标
+  business_definition: 市场流动性综合指标（资金面宽紧）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-014）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-013
+  field_name: a50_futures_overnight
+  name_zh: A50期货隔夜涨跌
+  business_definition: 富时 A50 期货隔夜涨跌幅（A股开盘前瞻）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（隔夜）
+  notes: 'A50 期货新加坡交易，先于 A股开盘收盘→隔夜涨跌是合法的开盘前可得信息｜来源: 因子引用 n=1（如 FCT-EVT-009）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-014
+  field_name: us_market_returns
+  name_zh: 美股收益率
+  business_definition: 美股收益率（隔夜外盘传导）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（隔夜）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-003）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-015
+  field_name: overseas_index_returns
+  name_zh: 海外指数收益率
+  business_definition: 海外主要指数收益率（外盘传导）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（隔夜）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-011）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-MACRO-016
+  field_name: korea_index_returns
+  name_zh: 韩国指数收益率
+  business_definition: 韩国市场指数收益率（韩科技股联动因子用）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-AKSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（隔夜）
+  notes: '来源: 因子引用 n=1（如 FCT-EVT-004）'
+  module_id: MOD-MKT-DATA
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-001
+  field_name: factor_id
+  name_zh: 因子ID
+  business_definition: 因子唯一 ID（FK → factor_registry.factor_id）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 存在于 factor_registry
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal,CTR-P1-001:FactorMonitorReport,CTR-P1-002:MacroFactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-002
+  field_name: factor_version
+  name_zh: 因子版本
+  business_definition: 因子实现版本（信号可复现性锚）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-003
+  field_name: as_of_date
+  name_zh: 截面日期
+  business_definition: 信号计算截面日期（截面对齐锚）
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal,CTR-P1-002:MacroFactorSignal,CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-004
+  field_name: raw_value
+  name_zh: 因子原始值
+  business_definition: 因子原始计算结果
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-005
+  field_name: normalized_value
+  name_zh: 截面标准化值
+  business_definition: 截面标准化 z-score（对 universe 截面）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - '|v|≤5 软告警（截尾）'
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-006
+  field_name: rank_pct
+  name_zh: 分位数排名
+  business_definition: 截面分位数排名 0-1
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-007
+  field_name: confidence
+  name_zh: 信号置信度
+  business_definition: 信号置信度 0.0-1.0；<0.5 下游可忽略（跨 5 契约共享）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal,CTR-P1-002:MacroFactorSignal,CTR-P1-005:ModelServingResponse,CTR-P1-014:ExperimentResult,CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-008
+  field_name: is_valid
+  name_zh: 信号有效标记
+  business_definition: 信号有效性；False 时下游 MUST 跳过
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-009
+  field_name: extra
+  name_zh: 扩展字段
+  business_definition: 非标准化扩展数据（禁滥用——能用标准字段就用标准字段）
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-002:FactorSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-010
+  field_name: ic_mean
+  name_zh: IC均值
+  business_definition: 信息系数均值（近 N 期，因子有效性监控）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-011
+  field_name: ic_std
+  name_zh: IC标准差
+  business_definition: IC 时间序列标准差
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-012
+  field_name: ic_ir
+  name_zh: ICIR
+  business_definition: ICIR=IC_mean/IC_std（因子稳定性）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-013
+  field_name: rank_ic
+  name_zh: Rank IC
+  business_definition: Rank IC（Spearman 秩相关，抗离群值）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - -1≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-014
+  field_name: is_effective
+  name_zh: 因子有效标记
+  business_definition: True=IC 显著 + ICIR>0.5（监控判定输出）
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-015
+  field_name: decay_alert
+  name_zh: 因子衰减告警
+  business_definition: True=因子衰减告警（DECAY_SCAN 输出）
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily（衰减扫描后）
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-016
+  field_name: half_life_days
+  name_zh: 因子半衰期
+  business_definition: 因子 alpha 半衰期（天）
+  data_type: int
+  unit: 天
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-017
+  field_name: evaluation_date
+  name_zh: 评估日期
+  business_definition: 因子评估日期 YYYY-MM-DD
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 格式 YYYY-MM-DD
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FCT-018
+  field_name: evaluation_window
+  name_zh: 评估窗口
+  business_definition: 评估窗口（交易日数）
+  data_type: int
+  unit: 交易日
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-001:FactorMonitorReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/factor_monitor_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-001
+  field_name: signal_id
+  name_zh: 信号ID
+  business_definition: 全局唯一信号 ID（UUID）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UUID 格式
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-002
+  field_name: signal_direction
+  name_zh: 信号方向
+  business_definition: 合成信号方向
+  data_type: str
+  unit: none
+  allowed_values:
+  - LONG
+  - SHORT
+  - NEUTRAL
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: 'A股不能做空→SHORT 信号仅作减仓/回避语义，不下空单｜来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-003
+  field_name: signal_value
+  name_zh: 信号值
+  business_definition: 标准化信号值（-3 到 3）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - -3≤v≤3
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-P1-002:MacroFactorSignal,CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/macro_factor_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-004
+  field_name: suggested_position_pct
+  name_zh: 建议仓位百分比
+  business_definition: 建议仓位百分比
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-005
+  field_name: contributing_factors
+  name_zh: 贡献因子权重
+  business_definition: '贡献因子权重 {factor_id: weight}'
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 权重和=1 容差校验
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-006
+  field_name: regime
+  name_zh: 市场状态
+  business_definition: 市场状态（regime 标签，市场级风险节流用）
+  data_type: str
+  unit: none
+  allowed_values:
+  - trending
+  - mean_reverting
+  - high_volatility
+  - low_volatility
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: 'regime=市场级节流（多谨慎）≠情绪周期=sleeve 内择时（买卖什么），两者正交（项目既定边界）｜来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-007
+  field_name: is_degraded
+  name_zh: 降级标记
+  business_definition: 是否降级信号（上游数据缺失时的诚实标注）
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-SIG-008
+  field_name: generation_latency_ms
+  name_zh: 信号合成耗时
+  business_definition: 信号合成耗时（毫秒）
+  data_type: int
+  unit: 毫秒
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/synthesized_signal.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-001
+  field_name: order_id
+  name_zh: 委托ID
+  business_definition: 全局唯一委托 ID（UUID，跨 3 契约共享）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UUID 格式
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order,CTR-005:Fill,CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-002
+  field_name: strategy_id
+  name_zh: 策略ID
+  business_definition: 来源策略 ID（FK → strategy_registry.strategy_id）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 存在于 strategy_registry
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order,CTR-005:Fill,CTR-007:TargetPortfolio,CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-003
+  field_name: order_type
+  name_zh: 委托类型
+  business_definition: 委托类型
+  data_type: str
+  unit: none
+  allowed_values:
+  - MARKET
+  - LIMIT
+  - STOP
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: 'miniQMT 实盘 MUST 用限价单（市价单 A股不支持/滑点不可控）｜来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-004
+  field_name: side
+  name_zh: 委托方向
+  business_definition: 买卖方向
+  data_type: str
+  unit: none
+  allowed_values:
+  - BUY
+  - SELL
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: 'T+1 约束：当日买入不可当日卖出，SELL 校验可用持仓｜来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-005
+  field_name: quantity
+  name_zh: 委托数量
+  business_definition: 目标数量（股数）
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - 100 股整数倍（A股整手）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-006
+  field_name: limit_price
+  name_zh: 限价
+  business_definition: 限价（LIMIT 单必填）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - 涨跌停范围内
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-007
+  field_name: filled_quantity
+  name_zh: 已成交数量
+  business_definition: 已成交数量（部分成交累计）
+  data_type: float
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤quantity
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order,CTR-005:Fill'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-008
+  field_name: avg_fill_price
+  name_zh: 平均成交价
+  business_definition: 加权平均成交价
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-009
+  field_name: status
+  name_zh: 委托状态
+  business_definition: 委托状态机（单向不可逆：FILLED/CANCELLED/REJECTED 为终态）
+  data_type: str
+  unit: none
+  allowed_values:
+  - PENDING
+  - SUBMITTED
+  - PARTIAL
+  - FILLED
+  - CANCELLED
+  - REJECTED
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-010
+  field_name: broker_order_id
+  name_zh: 券商委托号
+  business_definition: 券商侧委托号（回报回填）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-011
+  field_name: created_at
+  name_zh: 创建时间
+  business_definition: 委托创建时间
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 合法时间戳
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order,CTR-007:TargetPortfolio'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ORD-012
+  field_name: updated_at
+  name_zh: 更新时间
+  business_definition: 委托最近更新时间
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - updated_at≥created_at
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-004:Order'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/order.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FILL-001
+  field_name: fill_id
+  name_zh: 成交ID
+  business_definition: 全局唯一成交 ID
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UUID 格式
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-005:Fill'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/fill.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FILL-002
+  field_name: broker_fill_id
+  name_zh: 券商成交ID
+  business_definition: 券商侧成交 ID（对账锚）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-005:Fill'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/fill.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FILL-003
+  field_name: fill_price
+  name_zh: 成交价格
+  business_definition: 成交价格
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - 涨跌停范围内
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-005:Fill'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/fill.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FILL-004
+  field_name: fill_timestamp
+  name_zh: 成交时间
+  business_definition: 成交时间
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 合法时间戳
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-005:Fill'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/fill.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FILL-005
+  field_name: commission
+  name_zh: 佣金
+  business_definition: 佣金费用（万3 双边，见 cost_model_registry）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '来源: 契约 CTR-005:Fill,CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/fill.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-FILL-006
+  field_name: slippage
+  name_zh: 滑点
+  business_definition: 滑点（实际成交价 vs 预期价差）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（事件驱动）
+  notes: '正=不利滑点；回填成本模型校准｜来源: 契约 CTR-005:Fill'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/fill.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-001
+  field_name: portfolio_id
+  name_zh: 组合ID
+  business_definition: 组合 ID（跨 5 契约共享）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot,CTR-007:TargetPortfolio,CTR-P1-008:RiskDashboardSnapshot,CTR-P1-009:PerformanceAttributionReport,CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-002
+  field_name: as_of_timestamp
+  name_zh: 快照时间戳
+  business_definition: 持仓/信号快照时间戳（跨 2 契约共享）
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UTC 时区
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot,CTR-P1-015:SynthesizedSignal'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-003
+  field_name: holdings
+  name_zh: 持仓明细
+  business_definition: '持仓映射 {symbol: quantity}'
+  data_type: dict
+  unit: 股
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 数量均≥0（A股不能做空）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-004
+  field_name: market_values
+  name_zh: 持仓市值明细
+  business_definition: '持仓市值映射 {symbol: market_value}'
+  data_type: dict
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 市值均≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-005
+  field_name: cash
+  name_zh: 现金
+  business_definition: 可用现金
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0 软告警（透支检查）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-006
+  field_name: total_market_value
+  name_zh: 总市值
+  business_definition: 持仓总市值；total_market_value+cash=组合总资产
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-POS-007
+  field_name: gross_leverage
+  name_zh: 总杠杆
+  business_definition: 总杠杆=总敞口/净资产（两融账户>1）
+  data_type: float
+  unit: 倍
+  allowed_values: null
+  source_system: SRC-QMT-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - v≤2 硬约束（两融上限）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（快照）
+  notes: '来源: 契约 CTR-006:PositionSnapshot,CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/position.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-001
+  field_name: target_weights
+  name_zh: 目标权重
+  business_definition: '目标权重 {symbol: weight}'
+  data_type: dict
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 权重和≤1
+  - 单权重≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-007:TargetPortfolio'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/target_portfolio.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-002
+  field_name: current_weights
+  name_zh: 当前权重
+  business_definition: '当前权重 {symbol: weight}'
+  data_type: dict
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 权重和≤1+现金
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-007:TargetPortfolio'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/target_portfolio.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-003
+  field_name: drift_pct
+  name_zh: 权重漂移
+  business_definition: 加权权重漂移百分比（再平衡触发度量）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-007:TargetPortfolio'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/target_portfolio.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-004
+  field_name: rebalance_reason
+  name_zh: 再平衡原因
+  business_definition: 再平衡触发原因
+  data_type: str
+  unit: none
+  allowed_values:
+  - drift_threshold
+  - calendar
+  - event
+  - risk_breach
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-007:TargetPortfolio'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/target_portfolio.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-005
+  field_name: rebalance_threshold
+  name_zh: 再平衡阈值
+  business_definition: 触发再平衡的权重漂移阈值
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0<v<1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-P1-003:CapitalAllocationResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/capital_allocation_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-006
+  field_name: risk_limits
+  name_zh: 风险限额引用
+  business_definition: 本次优化遵循的风险限额（CTR-003 对象引用，FK → risk_limit_registry）
+  data_type: obj
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-007:TargetPortfolio'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/target_portfolio.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-007
+  field_name: allocation_date
+  name_zh: 配置日期
+  business_definition: 资本配置日期
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 格式 YYYY-MM-DD
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-P1-003:CapitalAllocationResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/capital_allocation_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-008
+  field_name: allocation_method
+  name_zh: 配置方法
+  business_definition: 策略间资本配置方法
+  data_type: str
+  unit: none
+  allowed_values:
+  - equal_weight
+  - sharpe_weight
+  - risk_parity
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-P1-003:CapitalAllocationResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/capital_allocation_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-009
+  field_name: strategy_allocations
+  name_zh: 策略资金分配
+  business_definition: '策略资金分配 {strategy_id: capital_weight}'
+  data_type: dict
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 权重和=1 容差校验
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-P1-003:CapitalAllocationResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/capital_allocation_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PORT-010
+  field_name: total_allocated_weight
+  name_zh: 总分配权重
+  business_definition: 总权重（通常=1.0）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（再平衡驱动）
+  notes: '来源: 契约 CTR-P1-003:CapitalAllocationResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/capital_allocation_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-001
+  field_name: var_1d_95
+  name_zh: 日度95%VaR
+  business_definition: 日度 95% VaR（在险价值）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-002
+  field_name: var_1d_99
+  name_zh: 日度99%VaR
+  business_definition: 日度 99% VaR
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  - var_1d_99≥var_1d_95
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-003
+  field_name: cvar_1d_95
+  name_zh: 日度95%CVaR
+  business_definition: 日度 95% CVaR（尾部期望损失）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥var_1d_95
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-004
+  field_name: cvar_1d_99
+  name_zh: 日度99%CVaR
+  business_definition: 日度 99% CVaR
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥var_1d_99
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-005
+  field_name: volatility_1d
+  name_zh: 日度波动率
+  business_definition: 日度波动率
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-006
+  field_name: volatility_1m
+  name_zh: 月度波动率
+  business_definition: 月度波动率
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-007
+  field_name: beta
+  name_zh: Beta系数
+  business_definition: Beta 系数（对市场基准）
+  data_type: float
+  unit: 倍
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-008
+  field_name: sharpe_ratio
+  name_zh: 夏普比率
+  business_definition: 夏普比率（风险调整后收益，跨 2 契约共享）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport,CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-009
+  field_name: sortino_ratio
+  name_zh: 索提诺比率
+  business_definition: 索提诺比率（下行风险调整）
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-010
+  field_name: max_drawdown
+  name_zh: 最大回撤
+  business_definition: 最大回撤（历史峰值到谷值）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport,CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-011
+  field_name: current_drawdown
+  name_zh: 当前回撤
+  business_definition: 当前回撤（距最近净值高点）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-012
+  field_name: max_drawdown_current
+  name_zh: 当前区间最大回撤
+  business_definition: 当前区间最大回撤（仪表板快照）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-013
+  field_name: portfolio_var_1d
+  name_zh: 组合日度VaR
+  business_definition: 组合日度 VaR（仪表板）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-014
+  field_name: top_position_concentration
+  name_zh: 最大单仓集中度
+  business_definition: 最大单仓集中度
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-015
+  field_name: sector_concentrations
+  name_zh: 行业集中度
+  business_definition: '行业集中度 {sector: weight}'
+  data_type: dict
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 权重和≤1+杠杆
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-016
+  field_name: overall_risk_score
+  name_zh: 综合风险分
+  business_definition: 综合风险分 0-10
+  data_type: float
+  unit: 分(0-10)
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤10
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-017
+  field_name: active_alerts
+  name_zh: 激活告警列表
+  business_definition: 当前激活的风险告警 rule_id 列表（FK → risk_limit_registry）
+  data_type: list
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-018
+  field_name: snapshot_time
+  name_zh: 快照时间
+  business_definition: 风险快照时间 ISO 8601 UTC
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-008:RiskDashboardSnapshot'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_dashboard_snapshot.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-019
+  field_name: calculation_method
+  name_zh: 风险计算方法
+  business_definition: VaR/ES 计算方法
+  data_type: str
+  unit: none
+  allowed_values:
+  - historical
+  - parametric
+  - monte_carlo
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-020
+  field_name: confidence_level
+  name_zh: 置信水平
+  business_definition: 风险计量置信水平
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0.9≤v≤0.999
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-RISK-021
+  field_name: lookback_period
+  name_zh: 回看期
+  business_definition: 风险计量回看期（交易日）
+  data_type: int
+  unit: 交易日
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥20 软告警（统计有效性）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-011:RiskMetricsReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/risk_metrics.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-001
+  field_name: total_return
+  name_zh: 总收益率
+  business_definition: 总收益率（跨 2 契约共享）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport,CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-002
+  field_name: allocation_effect
+  name_zh: 配置效应
+  business_definition: 配置效应（Brinson 归因：超配行业×行业超额）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-003
+  field_name: selection_effect
+  name_zh: 选股效应
+  business_definition: 选股效应（Brinson 归因：行业内个股超额）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-004
+  field_name: interaction_effect
+  name_zh: 交互效应
+  business_definition: 交互效应（Brinson 归因残差项）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-005
+  field_name: factor_contributions
+  name_zh: 因子贡献度
+  business_definition: '因子贡献 {factor_id: contribution}'
+  data_type: dict
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-006
+  field_name: transaction_cost_drag
+  name_zh: 交易成本拖累
+  business_definition: 交易成本拖累（收益侵蚀度量）
+  data_type: float
+  unit: bps
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-007
+  field_name: period_start
+  name_zh: 归因期开始
+  business_definition: 归因期开始 YYYY-MM-DD
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 格式 YYYY-MM-DD
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-PERF-008
+  field_name: period_end
+  name_zh: 归因期结束
+  business_definition: 归因期结束 YYYY-MM-DD
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - period_end≥period_start
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: daily
+  notes: '来源: 契约 CTR-P1-009:PerformanceAttributionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/performance_attribution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-001
+  field_name: execution_start
+  name_zh: 执行开始时间
+  business_definition: 执行开始时间 ISO 8601 UTC
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-002
+  field_name: execution_end
+  name_zh: 执行结束时间
+  business_definition: 执行结束时间 ISO 8601 UTC
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - execution_end≥execution_start
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-003
+  field_name: broker_id
+  name_zh: 执行券商
+  business_definition: 执行券商标识
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-004
+  field_name: algo_type
+  name_zh: 执行算法类型
+  business_definition: 执行算法类型
+  data_type: str
+  unit: none
+  allowed_values:
+  - TWAP
+  - VWAP
+  - NONE
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-005
+  field_name: direction
+  name_zh: 执行方向
+  business_definition: 执行买卖方向
+  data_type: str
+  unit: none
+  allowed_values:
+  - BUY
+  - SELL
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-006
+  field_name: intended_price
+  name_zh: 意图价格
+  business_definition: 意图价格（决策价，滑点基准）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-007
+  field_name: intended_quantity
+  name_zh: 意图数量
+  business_definition: 意图成交数量
+  data_type: int
+  unit: 股
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-008
+  field_name: actual_quantity
+  name_zh: 实际成交数量
+  business_definition: 实际成交数量
+  data_type: int
+  unit: 股
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤intended_quantity
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-009
+  field_name: vwap_price
+  name_zh: 实际成交VWAP
+  business_definition: 实际成交 VWAP（执行质量基准对比）
+  data_type: float
+  unit: 元
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXEC-010
+  field_name: slippage_bps
+  name_zh: 滑点基点
+  business_definition: 滑点（基点，执行质量核心 KPI）
+  data_type: float
+  unit: bps
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: event（执行完成）
+  notes: '正=不利滑点；IS=vwap_price vs intended_price 口径 MUST 统一｜来源: 契约 CTR-P1-007:ExecutionReport'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/execution_report.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-001
+  field_name: experiment_id
+  name_zh: 实验ID
+  business_definition: 全局唯一实验 ID（UUID）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UUID 格式
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-002
+  field_name: experiment_name
+  name_zh: 实验名称
+  business_definition: 人类可读实验名称
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-003
+  field_name: experiment_type
+  name_zh: 实验类型
+  business_definition: 实验类型
+  data_type: str
+  unit: none
+  allowed_values:
+  - ab_test
+  - factor_ablation
+  - strategy_variant
+  - parameter_sweep
+  - custom
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-004
+  field_name: hypothesis
+  name_zh: 实验假设
+  business_definition: 实验假设（先验声明，防 HARKing）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-005
+  field_name: variant_a_description
+  name_zh: 对照组描述
+  business_definition: A 组描述（对照组）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-006
+  field_name: variant_b_description
+  name_zh: 实验组描述
+  business_definition: B 组描述（实验组）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-007
+  field_name: variant_b_improvement
+  name_zh: 实验组改善幅度
+  business_definition: B 组相对 A 组的改善（%）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-008
+  field_name: metrics
+  name_zh: 实验指标集
+  business_definition: '关键指标 {metric_name: value}'
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-009
+  field_name: p_value
+  name_zh: 统计显著性p值
+  business_definition: 统计显著性 p-value
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-010
+  field_name: sample_size
+  name_zh: 样本量
+  business_definition: 样本数量
+  data_type: int
+  unit: 个
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-011
+  field_name: conclusion
+  name_zh: 实验结论
+  business_definition: 实验结论
+  data_type: str
+  unit: none
+  allowed_values:
+  - supported
+  - rejected
+  - inconclusive
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-012
+  field_name: affected_factor_ids
+  name_zh: 受影响因子ID
+  business_definition: 受影响的因子 ID 列表
+  data_type: list
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-013
+  field_name: affected_strategy_ids
+  name_zh: 受影响策略ID
+  business_definition: 受影响的策略 ID 列表
+  data_type: list
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-014
+  field_name: actionable_suggestions
+  name_zh: 可操作建议
+  business_definition: 下游可操作建议列表
+  data_type: list
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 结构合法
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-015
+  field_name: archived_to_kms
+  name_zh: KMS归档标记
+  business_definition: 实验产物已归档到 KMS
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-016
+  field_name: start_timestamp
+  name_zh: 实验开始时间
+  business_definition: 实验开始时间（UTC）
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 合法时间戳
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-017
+  field_name: end_timestamp
+  name_zh: 实验结束时间
+  business_definition: 实验结束时间（UTC）
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - end_timestamp≥start_timestamp
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-014:ExperimentResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/experiment_result.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-018
+  field_name: start_date
+  name_zh: 回测开始日期
+  business_definition: 回测起始日期
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 合法时间戳
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-019
+  field_name: end_date
+  name_zh: 回测结束日期
+  business_definition: 回测结束日期
+  data_type: datetime
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - end_date≥start_date
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-020
+  field_name: annual_return
+  name_zh: 年化收益率
+  business_definition: 年化收益率（小数）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-021
+  field_name: win_rate
+  name_zh: 胜率
+  business_definition: 胜率 0.0-1.0
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤1
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-022
+  field_name: trades_count
+  name_zh: 交易笔数
+  business_definition: 总交易笔数
+  data_type: int
+  unit: 笔
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-023
+  field_name: benchmark_symbol
+  name_zh: 基准标的代码
+  business_definition: 回测基准标的代码
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: 'FK → benchmark_registry（语义对齐）｜来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-EXP-024
+  field_name: overfitting_flag
+  name_zh: 过拟合标记
+  business_definition: True=检测到过拟合（PBO/DSR 综合判定）
+  data_type: bool
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 布尔值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: on_demand
+  notes: '与 experiment_registry 的 is_overfit/pbo_value/dsr_value 联动（62号 §7.2）｜来源: 契约 CTR-P1-016:BacktestResult'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/backtest/core/engine_base.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-001
+  field_name: model_id
+  name_zh: 模型ID
+  business_definition: 已注册模型 ID
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-004:ModelServingRequest,CTR-P1-005:ModelServingResponse'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_request.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-002
+  field_name: model_version
+  name_zh: 模型版本
+  business_definition: 模型版本（推理可复现性锚）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-004:ModelServingRequest'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_request.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-003
+  field_name: request_id
+  name_zh: 推理请求ID
+  business_definition: 推理请求 UUID（异步匹配）
+  data_type: str
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - UUID 格式
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-004:ModelServingRequest,CTR-P1-005:ModelServingResponse'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_request.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-004
+  field_name: input_features
+  name_zh: 输入特征集
+  business_definition: 特征名→特征值映射
+  data_type: dict
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 特征名 ∈ 模型注册特征集
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-004:ModelServingRequest'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_request.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-005
+  field_name: prediction
+  name_zh: 预测值
+  business_definition: 模型预测值
+  data_type: float
+  unit: none
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 有限数值
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-005:ModelServingResponse'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_response.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-006
+  field_name: prediction_type
+  name_zh: 预测类型
+  business_definition: 预测输出类型
+  data_type: str
+  unit: none
+  allowed_values:
+  - factor_value
+  - return
+  - probability
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 非空字符串
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-005:ModelServingResponse'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_response.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner
+- field_id: FLD-ML-007
+  field_name: inference_ms
+  name_zh: 推理耗时
+  business_definition: 推理耗时（毫秒）
+  data_type: int
+  unit: 毫秒
+  allowed_values: null
+  source_system: SRC-INTERNAL-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v≥0
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: realtime（推理请求）
+  notes: '来源: 契约 CTR-P1-005:ModelServingResponse'
+  module_id: MOD-INF-016
+  doc_ref: 62_business_registry_construction.md §7.1
+  code_path: src/zephyr/shared/contracts/model_serving_response.py
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-13'
+  updated_at: '2026-08-13'
+  owner: ZephyrAlpha-Owner

@@ -6052,6 +6052,11 @@ creation_tokens:
     token: "auto-technical-indicator-registry-20260812"
     created_by: "session-ai-algo-flow-rollout-20260812"
     capability: "algo_flow_rollout_toolchain"
+  # --- 字段字典注册表（2026-08-13，62号 §4.5 八步施工，REG-FLD-001 业务资产 12 表体系 P2）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml"
+    token: "auto-field-dictionary-20260813"
+    created_by: "session-AI-REG-FLD-001"
+    capability: "business_registry_construction"
 
   # --- 翻译覆盖率门禁配套四件套（2026-08-02，TRANSLATION-COVERAGE 四层防御）---
   # 写入工具（Layer 0 入口）+ 提交门禁（Layer 2 阻断）+ 存量对账 reconciler（Layer 4）
