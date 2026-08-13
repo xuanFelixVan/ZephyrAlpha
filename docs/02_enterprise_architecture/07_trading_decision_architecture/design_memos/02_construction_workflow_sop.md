@@ -673,7 +673,7 @@ python scripts/session_worktree.py cleanup <sid>
 **产出物**：worktree 清理确认
 **铁律**：
 - 1 任务 = 1 start + 多次 Edit/Write + 1 commit + 1 merge（worktree 君子协定）
-- held_files 重叠走逃生通道（`--allow-overlap` 不当正门用）
+- held_files 重叠走逃生通道（2026-08-13 裁定更新：`--allow-overlap` AI 可默认使用，前置=已读对方改动按 [67 号](67_merge_conflict_resolution_sop.md)三分法判定非互斥；[GW:<sid>:overlap] 留痕 + trae_069 阈值监控兜底，替代原"不当正门用"的事前禁用口径）
 **worktree base 新鲜度全生命周期**（[trae_074_worktree_base_freshness.yaml](../../../../docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml)）：
 - 三阶段检测：start(fail-open warning)/commit(fail-closed 阻断)/merge(fail-closed 阻断，薛定谔的回退高发点)
 - emergency_commit 主工作区 vs HEAD 一致性检查（warn-only）+reflog 审计标记
