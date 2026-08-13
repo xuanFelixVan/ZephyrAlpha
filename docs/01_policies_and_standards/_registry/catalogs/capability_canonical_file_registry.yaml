@@ -5940,6 +5940,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- experiment_registry.yaml（2026-08-13，P2 业务资产注册表：实验/回测目录 SSoT，62 号 §7.2 + §4.5 施工，session AI-REG-EXP-001 worktree 隔离）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml"
+    token: "auto-experiment-registry-20260813"
+    created_by: "session-AI-REG-EXP-001"
+    capability: "experiment_registry"
   # --- AI审查指令集（2026-08-10，24路并发审查回填指令，覆盖design_memos 42篇文档）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md"
     token: "auto-ai-review-instructions-20260810"
