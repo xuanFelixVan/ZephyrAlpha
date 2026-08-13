@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-13T11:26:58Z
+# 自动生成于 2026-08-13T18:26:59Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-13T11:26:58Z'
+generated_at: '2026-08-13T18:26:59Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 401
+total_scripts: 402
 with_manifest: 325
-missing_manifest: 76
+missing_manifest: 77
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -22,7 +22,7 @@ categories:
   governance:d5_architecture: 111
   governance:d6_security: 15
   governance:d7_code: 41
-  governance:d8_doc_sync: 12
+  governance:d8_doc_sync: 13
   governance:d9_knowledge: 2
   governance:data_quality: 2
   governance:generators: 11
@@ -3403,6 +3403,16 @@ scripts:
   description: 未使用导入检测——AST 级扫描，检查 import 了但未引用的模块
   tags:
   - Critical
+- name: d8_doc_sync/algo_flow_translation_reconciler.py
+  owner: governance:d8_doc_sync
+  dimensions: []
+  priority: P2
+  timeout_seconds: 60
+  args: []
+  warn_only: false
+  description: ⚠ __manifest__ 缺失——请添加元数据块
+  tags: []
+  _manifest_missing: true
 - name: d8_doc_sync/audit_rename_completeness.py
   owner: governance:d8_doc_sync
   dimensions:

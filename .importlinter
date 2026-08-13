@@ -51,6 +51,7 @@ forbidden_modules =
     zephyr.orchestrator
     zephyr.pf_alloc
     zephyr.pf_core
+    zephyr.plan_engine
     zephyr.position
     zephyr.red_blue_validator
     zephyr.regime

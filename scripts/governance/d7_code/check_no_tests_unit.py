@@ -71,6 +71,11 @@ _EXEMPT_PATH_PATTERNS = [
     re.compile(r"^docs/01_policies_and_standards/rules/trae_0(28|34)_"),
     re.compile(r"^\.pre-commit-config\.yaml$"),
     re.compile(r"^AGENTS\.md$"),
+    # 派生清单逐字引用各 gate 自述（含本 gate 描述中的 tests/unit/ 字面量），
+    # 非旧路径引用——不自引用误伤（2026-08-14 script_manifest 重生成被本 gate 自咬实证）
+    re.compile(r"^scripts/governance/script_manifest\.yaml$"),
+    # 检测器自身必须字面含检测模式（正则/docstring/报错文案），自豁免
+    re.compile(r"^scripts/governance/d7_code/check_no_tests_unit\.py$"),
 ]
 
 
