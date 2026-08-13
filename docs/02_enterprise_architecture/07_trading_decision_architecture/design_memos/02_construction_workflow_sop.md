@@ -5,7 +5,7 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-08-12
 topic: construction_workflow_sop
 scope: 07_trading_decision_architecture
@@ -395,6 +395,7 @@ pytest tests/path/to/test_xxx.py -v
 **通过判据**：12 节全部 PASS / FAIL 项已就地修复并自检通过
 **不通过处置**：FAIL 项无法就地修复 → 回 Step 4 修复 → 重审该节
 **产出物**：审查结论（对话内）+ 跳过条款清单+跳过理由（来自 0.5 分类）
+**遗留项登记**（防止遗忘）：审查中发现的遗留项（如文件被其他会话占用无法同步、无法访问 worktree 验证等）MUST 登记到统筹会话的 `docs/_working/construction_progress_tracker.md` §七遗留项登记表，含：遗留项描述/来源施工队/原因/待办条件/状态。bm-fill 或其他会话释放后逐项闭环。**禁止不登记就跳过——未登记的遗留项=必忘项**
 **方法论根因分析**（[trae_024_methodology_diagnosis.yaml](../../../../docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) MTH-006）：修复问题时修改既有产物即触发——追问到底+诊断反转验证，禁第一个为什么就停（治本关键）；标准先行（查专业框架映射表）+架构上下文自检（文件操作前定位架构层）+决策质量四问（埋雷/容量/对标/建议）+SSoT 冲突裁决（时序/职责/先例）+补漏与终止双检
 **漂移检测套件**（[trae_016_arch_drift_detection.yaml](../../../../docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml) + 脚本）：
 - 契约代码漂移：`scripts/governance/d2_links/check_contract_code_drift.py`
@@ -409,7 +410,7 @@ pytest tests/path/to/test_xxx.py -v
 ### Step 7 · 更新施工文档
 
 **何时触发**：Step 6 长清单审查通过
-**前置条件**：审查无遗留
+**前置条件**：审查遗留项已登记到 construction_progress_tracker.md §七（不要求零遗留，但要求已登记）
 **操作摘要**：设计备忘 frontmatter 升版 + 正文施工完毕标注 + 已施工设施盘点补模块路径 + 00_index 同步
 **引用真源**：[01_design_memo_management_spec.md](01_design_memo_management_spec.md) §5.3 + [trae_052_cross_blueprint_change_cleanup.yaml](../../../01_policies_and_standards/rules/trae_052_cross_blueprint_change_cleanup.yaml) §rule_eleven（跨蓝图变更通知）
 **执行要点**：
@@ -734,6 +735,7 @@ python scripts/session_worktree.py cleanup <sid>
 |---|---|---|---|
 | 2026-08-12 | 1.0.0 | 初稿落盘 | 端到端 15 步施工闭环 SOP 初版，整合 18 项盲点（Session 冷启动/创建前搜索/架构评审门控/五图对齐/模块准入/文件头/双轨/git 预算/跨蓝图通知/三方对齐/临时文件分类/force merge/commit 持久性/stash 生命周期/pre-commit 增量/54 维度/模块创建 10 phase/任务卡 33 字段）；附录 A 全文收录用户提供的长清单审查 12 节 |
 | 2026-08-12 | 1.1.0 | 第三轮扫描补充 22 项盲点 | 补充：handoff 交接包/ABS 绝对禁止清单/SECRETS.md 密钥管理/设计意图真源/向内收三原则/架构变更分级 L1-L4/治理顺序因果链/八指标机械门/并行执行原子事务/防幻觉四件套/代码组织类型导入/数据库破坏性操作三步验证/RunCommand 命令纯洁性/Symbol 约定/方法论根因分析/漂移检测套件/文档规格化三清单/删除安全门禁/架构版本化/工作区治理+回滚系统/commit 四件套/临时文件放置 5 铁律/worktree base 新鲜度+分支策略；附录 B 补充 d2/d4/d9 检测脚本 |
+| 2026-08-13 | 1.2.0 | Step 6 补遗留项登记机制 | AI-STD-001 审查实践发现：审查遗留项（如文件被占用无法同步）不登记=必忘项。Step 6 新增"遗留项登记"铁律（MUST 登记到 construction_progress_tracker.md §七）；Step 7 前置条件从"审查无遗留"改为"审查遗留项已登记"（不要求零遗留，但要求已登记） |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 
