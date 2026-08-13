@@ -14,7 +14,9 @@
 # [TESTS] tests/ex_sor/test_market_context_provider.py
 # [A_module] module_id=MOD-XS-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Market Context Provider — 市场上下文提供器 (MOD-XS-006)
+"""
+
+Market Context Provider — 市场上下文提供器 (MOD-XS-006)
 
 D-EX-SOR §2.2 XS-05 配套: 为 AlgoTradingEngine.generate_plan 提供 MarketContext。
 
@@ -41,6 +43,95 @@ D-EX-SOR §2.2 XS-05 配套: 为 AlgoTradingEngine.generate_plan 提供 MarketCo
 
 SSoT: depgraph MOD-XS-006
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Redis tick 最新快照 Hash
+#   fields: price/bid1/ask1（tick:{symbol}:latest，QMT格式key，repr存储）
+#   code: tick_latest_key(symbol) hgetall (market_context_provider.py L193-207)
+# - id: I2
+#   name: ClickHouse 日K线数据
+#   fields: timestamp/volume/close/is_suspended（近35自然日窗口）
+#   code: load_kline (market_context_provider.py L222)
+# - id: I3
+#   name: 默认日内成交量分布
+#   fields: §13.2 日内分布 volume_profile 默认配置
+#   code: algo_trading_engine.DEFAULT_VOLUME_PROFILE (market_context_provider.py L54-58)
+# - id: I4
+#   name: 标的代码 symbol
+#   fields: 600519/600519.SH/QMT格式三种均可
+#   code: get_context(symbol) (market_context_provider.py L154)
+# 层: 特征
+# - id: F1
+#   name_zh: 日均成交量 ADV
+#   name_en: adv
+#   intro: 近20个非停牌交易日成交量均值，是切片上限检查的流动性基准
+#   formula: 拉35自然日日K→按timestamp升序→滤is_suspended且volume>0→取最近20日→adv=Σvolume/20
+#   code: market_context_provider.py L230-241
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 符号格式归一化
+#   name_en: _to_qmt_symbol
+#   intro: 推断交易所后缀把symbol统一成QMT格式，三种写法通吃
+#   desc: 已带后缀原样返回；0/3开头→.SZ；6/5/9开头→.SH；无法判定兜底.SH（L79-101）
+#   inputs: I4
+#   outputs: QMT格式symbol
+#   invariant: symbol格式双向兼容
+# - id: A2
+#   name_zh: ② Redis tick 读取与降级
+#   name_en: _read_tick
+#   intro: best-effort读tick Hash，故障或QMT key查不到再用原始symbol补查，都不行返回空dict降级K线
+#   desc: hgetall(tick_latest_key(qmt))，异常→warning+{}；空且qmt≠原symbol→原key再查一次（L193-207）
+#   inputs: I1 A1
+#   outputs: tick dict（可空）
+# - id: A3
+#   name_zh: ③ ADV 与最近收盘价计算
+#   name_en: _compute_adv_and_close
+#   intro: 从日K算ADV并取最新close，ClickHouse故障降级返回(None,None)不阻断
+#   desc: load_kline(近35自然日)→升序排序→滤停牌/零量→最近20日均量=adv，ordered[-1].close=latest_close（L211-242）
+#   inputs: I2
+#   outputs: (adv, latest_close)（可None）
+# - id: A4
+#   name_zh: ④ MarketContext 组装
+#   name_en: RedisKlineMarketContextProvider.get_context
+#   intro: tick优先K线兜底定last_price，校验adv>0，组装出算法交易引擎要的市场上下文
+#   desc: last_price=tick.price或K线close，bid/ask仅来自tick；无价格源或无ADV→raise AlgoError（L154-189）
+#   inputs: A2 A3 F1 I3 I4
+#   outputs: MarketContext
+#   invariant: last_price>0；adv>0（无K线raise AlgoError）；tick缺失用最近K线close兜底
+# - id: A5
+#   name_zh: ⑤ 静态测试提供器
+#   name_en: StaticMarketContextProvider
+#   intro: 测试用固定上下文，不访问Redis/ClickHouse，symbol不一致时按订单重建
+#   desc: 构造注入固定MarketContext；get_context时symbol不同则复制重建对齐订单（L245-289）
+#   inputs: I4
+#   outputs: MarketContext（固定）
+# 层: 输出
+# - id: O1
+#   name_zh: 市场上下文 MarketContext
+#   name_en: MarketContext
+#   intro: 含last_price/adv/volume_profile/bid/ask，供generate_plan生成TWAP/VWAP真实切片
+#   invariant: last_price>0 且 adv>0
+#   downstream: MOD-L06-001 ExecutionEngine（注入构造 MarketContext 供 generate_plan）
+# [/ALGO_FLOW]
+#
+# 边:
+# I4 --> A1
+# I1 --> A2
+# A1 --> A2
+# I2 --> A3
+# I2 -.->|断点| F1
+# F1 --> A4
+# A2 --> A4
+# A3 --> A4
+# I3 --> A4
+# I4 --> A4
+# I4 --> A5
+# A4 --> O1
+# A5 --> O1
 """
 
 from __future__ import annotations

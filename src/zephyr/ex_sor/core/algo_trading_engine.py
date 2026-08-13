@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Algo Trading Engine — 算法交易引擎 (MOD-XS-005)
 
 D-EX-SOR §2.2 XS-05: 算法注册表 + TWAP/VWAP/ICEBERG/POV/IS/ALT 引擎 + 参数优化器。
@@ -45,6 +47,127 @@ D-EX-SOR §2.2 XS-05: 算法注册表 + TWAP/VWAP/ICEBERG/POV/IS/ALT 引擎 + �
 
 SSoT: depgraph MOD-XS-005
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托指令 Order
+#   fields: order_id + symbol + side + quantity + limit_price
+#   code: Order (CTR-004)
+# - id: I2
+#   name: 算法参数 AlgoParams
+#   fields: algo_type + participation_rate≤5% + time_horizon_minutes + max_slice_count + display_quantity + urgency
+#   code: AlgoParams L218
+# - id: I3
+#   name: 市场上下文 MarketContext
+#   fields: last_price + adv日均量 + volume_profile时段分布 + bid/ask
+#   code: MarketContext L177
+# 层: 算法
+# - id: A1
+#   name_zh: ① 计划生成与守恒校验
+#   name_en: AlgoTradingEngine.generate_plan
+#   intro: 校验参数→查15%ADV上限→选策略切片→守恒检查→产出执行计划
+#   desc: validate_params → adv_fraction≤15% → strategy.generate_slices → Σslices==quantity → estimated_participation=max_slice/adv
+#   inputs: I1 I2 I3 A2 A3 A4 A5 A6 A7
+#   outputs: AlgoExecutionPlan切片方案
+#   invariant: 切片数量和=订单总量(Decimal守恒); 参与率≤5%(§10.1); 单笔≤15%ADV(§13.1)
+# - id: A2
+#   name_zh: ② TWAP时间加权切片
+#   name_en: TwapStrategy
+#   intro: 把订单等量切成n片, 被动中间价挂单, λ=0的AC特例
+#   desc: n=min(max_slice_count,horizon) → 等量分配lot对齐余数补末片 → PASSIVE价
+#   inputs: I1 I2 I3
+#   outputs: 等量切片列表
+# - id: A3
+#   name_zh: ③ VWAP成交量分布切片
+#   name_en: VwapStrategy
+#   intro: 按日内成交量分布(开盘20/上午25/午盘10/尾盘45%)占比切片
+#   desc: 取volume_profile占比top-n时段 → 按权重分配lot对齐 → PASSIVE价
+#   inputs: I1 I2 I3
+#   outputs: 加权切片列表
+# - id: A4
+#   name_zh: ④ ICEBERG冰山切片
+#   name_en: IcebergStrategy
+#   intro: 每片只显示小额display_quantity, 隐藏大单真实意图
+#   desc: 循环切display量(末片取余量) → 片数≤max_slice_count → 余量补末片守恒
+#   inputs: I1 I2 I3
+#   outputs: 显示量切片列表
+# - id: A5
+#   name_zh: ⑤ POV参与率切片
+#   name_en: PovStrategy
+#   intro: 每片量=预期窗口成交量×参与率, 跟随市场实时量
+#   desc: 窗口量=ADV×(horizon/240)/n → q=min(窗口量×rate,剩余) lot对齐 → 余量补末片
+#   inputs: I1 I2 I3
+#   outputs: 参与率切片列表
+#   invariant: 参与率≤5%(§10.1监管硬约束)
+# - id: A6
+#   name_zh: ⑥ IS实施差额AC轨迹
+#   name_en: ImplementationShortfallStrategy
+#   intro: urgency越高越前置加载, 权重按exp(-λt)衰减的Almgren-Chriss轨迹
+#   desc: w_i=exp(-λ×i/(n-1))归一化 → 按权重分配 → MID价, λ>0.5前置加载
+#   inputs: I1 I2 I3
+#   outputs: AC轨迹切片列表
+# - id: A7
+#   name_zh: ⑦ ALT激进流动性摄取
+#   name_en: AggressiveLiquidityTakingStrategy
+#   intro: 少量大单(2~3片)直接打对手价快速吃单
+#   desc: n=min(max_slice_count,3)等量 → BUY取ask/SELL取bid AGGRESSIVE价
+#   inputs: I1 I2 I3
+#   outputs: 激进吃单切片列表
+# - id: A8
+#   name_zh: ⑧ 参数优化器
+#   name_en: AlgoParamOptimizer.optimize
+#   intro: 按订单大小规则推荐时间窗口/切片数/参与率/冰山显示量
+#   desc: adv_fraction分档→horizon 15/30/60min → slices=min(20,horizon/3) → rate=min(5%,frac×2) → display=min(总量/5,1%ADV)
+#   inputs: I1 I3
+#   outputs: 推荐AlgoParams
+# 层: 输出
+# - id: O1
+#   name_zh: 算法执行计划 AlgoExecutionPlan
+#   name_en: AlgoExecutionPlan
+#   intro: 完整切片方案(数量+价格策略+理由), 交时间调度执行
+#   invariant: Σslices==order.quantity
+#   downstream: MOD-XS-004(Execution Scheduler,消费 AlgoExecutionPlan); MOD-XS-002(Broker Adapter,提交子订单)
+# - id: O2
+#   name_zh: 算法注册表查询
+#   name_en: get_algo_types
+#   intro: 已注册6种算法列表, 供选择器遍历评分
+#   downstream: MOD-XS-011(Algo Selector,消费 AlgoType 注册表)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# I1 --> A3
+# I2 --> A3
+# I3 --> A3
+# I1 --> A4
+# I2 --> A4
+# I3 --> A4
+# I1 --> A5
+# I2 --> A5
+# I3 --> A5
+# I1 --> A6
+# I2 --> A6
+# I3 --> A6
+# I1 --> A7
+# I2 --> A7
+# I3 --> A7
+# A2 --> A1
+# A3 --> A1
+# A4 --> A1
+# A5 --> A1
+# A6 --> A1
+# A7 --> A1
+# I1 --> A8
+# I3 --> A8
+# A8 --> A1
+# A1 --> O1
+# A1 --> O2
 """
 
 from __future__ import annotations

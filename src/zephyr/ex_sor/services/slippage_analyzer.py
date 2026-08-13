@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Slippage Analyzer — 滑点分析器 (MOD-EX_SOR_EXT-001)
 
 D-EX-SOR §2.1 XS-EXT-01: 实际vs预期滑点 + 滑点归因 + 滑点预测 + 基准比较。
@@ -41,6 +43,84 @@ D-EX-SOR §2.1 XS-EXT-01: 实际vs预期滑点 + 滑点归因 + 滑点预测 + �
 
 SSoT: depgraph MOD-EX_SOR_EXT-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交记录列表 fills
+#   fields: 每笔成交价price + 数量quantity + 时间 + 方向side, 至少1笔
+#   code: SlippageFillRecord L132
+# - id: I2
+#   name: 基准价格映射 benchmarks
+#   fields: ARRIVAL到达价/VWAP/TWAP/PREV_CLOSE前收/DECISION决策价 → 价格
+#   code: SlippageBenchmark L115
+# - id: I3
+#   name: 归因预测参数
+#   fields: adv日均量 + volatility日波动率 + start/end_price执行起止价 + spread_bps价差
+#   code: analyze(...) L359
+# 层: 特征
+# - id: F1
+#   name_zh: 加权平均成交价
+#   name_en: avg_fill_price
+#   intro: 所有成交按数量加权的平均价格
+#   formula: avg_fill = Σ(price×qty) / Σqty, 保留4位
+#   code: slippage_analyzer.py L410
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 参与率
+#   name_en: participation
+#   intro: 成交量占日均量比例, 平方根冲击模型的核心输入
+#   formula: participation = total_qty / adv
+#   code: slippage_analyzer.py L509
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 多基准滑点计算
+#   name_en: SlippageAnalyzer._calc_slippage_bps
+#   intro: 平均成交价相对每个基准算出滑点基点, 正值都是成本
+#   desc: BUY: (avg_fill-bench)/bench×10000; SELL取反; 四舍五入4位; 遍历全部基准出SlippageMetric
+#   inputs: F1 I2
+#   outputs: 多基准SlippageMetric列表
+#   invariant: 滑点符号约定 BUY正=买贵成本, SELL正=卖便宜成本
+# - id: A2
+#   name_zh: ② 三因子滑点归因
+#   name_en: SlippageAnalyzer._attribute
+#   intro: 把总滑点拆成市场冲击+时机+价差三块, 剩下的进残差
+#   desc: impact=0.142×√participation×vol_bps; timing=(end-start)/start×10000按方向取号; spread=半价差; residual=总滑点-三因子
+#   inputs: A1 F2 I3
+#   outputs: SlippageAttribution三因子+残差
+#   invariant: 归因分量和≈总滑点(残差吸收误差)
+# - id: A3
+#   name_zh: ③ 平方根冲击滑点预测
+#   name_en: SquareRootImpactPredictor.predict
+#   intro: 用平方根法则预估这单大概会滑多少个基点
+#   desc: impact_bps=coeff(0.142)×√(order_size/adv)×volatility×10000 + 半价差 → 非负, 保留2位
+#   inputs: F2 I3
+#   outputs: predicted_slippage_bps
+#   invariant: 预测值为非负
+# 层: 输出
+# - id: O1
+#   name_zh: 滑点分析结果 SlippageResult
+#   name_en: SlippageResult
+#   intro: 多基准滑点+三因子归因+预测滑点的完整分析, 并留历史记录
+#   downstream: MOD-EX_SOR_EXT-002(ExecutionQualityScorer,消费 SlippageResult); MOD-EX-CORE(执行质量报告)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I3 -.->|断点| F2
+# F1 --> A1
+# I2 --> A1
+# A1 --> A2
+# F2 --> A2
+# I3 --> A2
+# F2 --> A3
+# I3 --> A3
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

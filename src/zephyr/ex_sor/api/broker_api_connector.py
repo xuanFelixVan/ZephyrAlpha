@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Broker API Connector — 券商 API 连接器 (MOD-XS-013)
 
 D-EX-SOR §2.2 XS-13: REST/FIX 4.2+ 连接 + 心跳 + 消息序列化 + 重连 + API 版本迁移适配。
@@ -34,6 +36,94 @@ D-EX-SOR §2.2 XS-13: REST/FIX 4.2+ 连接 + 心跳 + 消息序列化 + 重连 +
 
 SSoT: depgraph MOD-XS-013
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托指令 Order
+#   fields: order_id + symbol + side + quantity + 价格
+#   code: Order (CTR-004)
+# - id: I2
+#   name: 连接配置 ConnectionConfig
+#   fields: heartbeat_interval=30s + max_missed=3 + session_timeout=1800s + reconnect_max_attempts=3 + circuit_failure_threshold=5
+#   code: ConnectionConfig L168
+# - id: I3
+#   name: 券商协议层 BrokerProtocol
+#   fields: REST/FIX4.2+抽象 connect/heartbeat/submit_order_raw/cancel_order_raw/query_position_raw
+#   code: BrokerProtocol L212
+# - id: I4
+#   name: 四级限速器
+#   fields: 所有出站API调用先过限速检查
+#   code: ApiRateLimiter (MOD-XS-014)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 连接状态机
+#   name_en: BrokerApiConnector._transition
+#   intro: 连接状态只能按合法表单向流转, 非法跳转直接抛错
+#   desc: DISCONNECTED→CONNECTING→CONNECTED→DISCONNECTING→DISCONNECTED + RECONNECTING/CIRCUIT_OPEN分支校验
+#   inputs: I3
+#   outputs: ConnectionState状态流转
+#   invariant: 状态机单向不可逆
+# - id: A2
+#   name_zh: ② 心跳管理
+#   name_en: HeartbeatManager
+#   intro: 每30秒发一次心跳, 连续3次没响应就判定断开
+#   desc: is_due到点发心跳 → 成功清零missed_count / 失败累加 → ≥max_missed触发HeartbeatTimeoutError+断开
+#   inputs: I2 I3
+#   outputs: 心跳健康状态
+#   invariant: 心跳3次失败→断开
+# - id: A3
+#   name_zh: ③ 指数退避重连
+#   name_en: ReconnectPolicy
+#   intro: 断线后按1/2/4秒指数退避重连, 最多3次, 耗尽触发熔断
+#   desc: backoff=base×2^attempt → should_retry循环connect → 耗尽record_failure→熔断
+#   inputs: I2 I3
+#   outputs: 重连成功或熔断
+# - id: A4
+#   name_zh: ④ 熔断器
+#   name_en: CircuitBreaker
+#   intro: 失败满5次就熔断拒单, 必须人工manual_reset才能恢复
+#   desc: record_failure计数≥threshold→OPEN拒绝所有请求 → manual_reset人工CLOSED (HB-06)
+#   inputs: I2 A3
+#   outputs: 熔断状态
+#   invariant: 熔断需人工恢复(HB-06)
+# - id: A5
+#   name_zh: ⑤ 下单零重试提交
+#   name_en: BrokerApiConnector.submit_order
+#   intro: 先过熔断和限速检查再提交券商, 失败绝不自动重试防重复单
+#   desc: ensure_connected→circuit.check→rate_limiter.check(P0)→submit_order_raw→失败直接抛BrokerSubmitError (HB-07)
+#   inputs: I1 I3 I4 A1 A4
+#   outputs: broker_order_id或异常
+#   invariant: 下单零重试(HB-07); 所有API调用经XS-014限速
+# 层: 输出
+# - id: O1
+#   name_zh: 下单/撤单/查询结果
+#   name_en: broker_order_id
+#   intro: 提交返回券商订单ID, 撤单返bool, 持仓查询返字典列表
+#   downstream: MOD-XS-002(Broker Adapter,协议层消费者); MOD-XS-005(Algo Trading Engine,下单通道)
+# - id: O2
+#   name_zh: 成交回报分发
+#   name_en: on_fill_received
+#   intro: 收到券商成交回报后分发到所有注册的Fill回调
+#   downstream: MOD-XS-002(Broker Adapter,Fill回调链)
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# I2 --> A2
+# I3 --> A2
+# I2 --> A3
+# I3 --> A3
+# I2 --> A4
+# A3 --> A4
+# A2 --> A1
+# I1 --> A5
+# I3 --> A5
+# I4 --> A5
+# A1 --> A5
+# A4 --> A5
+# A5 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

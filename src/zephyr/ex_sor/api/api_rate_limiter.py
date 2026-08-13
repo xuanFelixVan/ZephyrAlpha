@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Exchange API Rate Limiter — 交易所 API 限速器 (MOD-XS-014)
 
 D-EX-SOR §12.5 四级限流架构:
@@ -25,9 +27,73 @@ D-EX-SOR §12.5 四级限流架构:
     L4 优先级: 优先级队列, 交易>风控>行情>因子>通知, P0 不受非交易限流影响
 
 属 A 类基础设施 (令牌桶+滑动窗口标准算法, 阈值为 C 类可调参数)。
-依据: D:\\临时工作区\\依赖图\\09-D-EX-SOR-执行路由域.md §12.5
+依据: D:/临时工作区/依赖图/09-D-EX-SOR-执行路由域.md §12.5
 SSoT: depgraph MOD-XS-014
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 限流请求参数
+#   fields: system外部系统名 + session交易时段 + priority请求优先级
+#   code: check(system, session, priority)
+# - id: I2
+#   name: 四级限流配置 RateLimitConfig
+#   fields: l1_global_qps=50 + l2_system_tps=10 + l3各时段tps(15/5/8/15) + l3_off_hours_block
+#   code: RateLimitConfig L235
+# 层: 算法
+# - id: A1
+#   name_zh: ① L1全局滑动窗口限流
+#   name_en: SlidingWindowCounter
+#   intro: 1秒窗口内所有外部API合计请求数不能超过50次
+#   desc: deque存时间戳, 过期出队, 窗口内计数<limit才放行
+#   inputs: I1 I2
+#   outputs: 放行或L1阻断(重试1秒)
+#   invariant: sliding_window_count<=limit
+# - id: A2
+#   name_zh: ② L2系统级令牌桶限流
+#   name_en: TokenBucket per system
+#   intro: 每个外部系统(如miniQMT)独立令牌桶, 每秒最多10次
+#   desc: 按system隔离建桶, 按refill_rate匀速补令牌, try_consume扣令牌
+#   inputs: I1 I2
+#   outputs: 放行或L2阻断(带等待秒数)
+#   invariant: 0<=tokens<=capacity
+# - id: A3
+#   name_zh: ③ L3操作级分时段限流
+#   name_en: L3 session TokenBucket
+#   intro: 盘前15/集合竞价5/盘中8/盘后15 TPS分时段令牌桶, 非交易时段直接阻断
+#   desc: 按TradingSession建桶, OFF_HOURS时段非P0一律阻断(retry=inf)
+#   inputs: I1 I2
+#   outputs: 放行或L3阻断
+#   invariant: P0交易不受L3非交易时段限流
+# - id: A4
+#   name_zh: ④ L4优先级裁决
+#   name_en: L4 priority gate
+#   intro: P0交易>P1风控>P2行情>P3因子>P4通知, P0跳过L3时段限流
+#   desc: is_p0_trading前置判断, L1→L2→L3顺序AND, 全通过才放行
+#   inputs: A1 A2 A3
+#   outputs: 最终放行决策
+#   invariant: L1~L4全通过才放行(AND)
+# 层: 输出
+# - id: O1
+#   name_zh: 限流决策 RateLimitDecision
+#   name_en: RateLimitDecision
+#   intro: 是否放行+被哪层阻断+建议重试秒数+原因, 可to_dict审计
+#   invariant: allowed=False时blocked_level非空
+#   downstream: MOD-XS-013(Broker API Connector,限流前置); MOD-XS-002(Broker Adapter,熔断联动)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I2 --> A1
+# I2 --> A2
+# I2 --> A3
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

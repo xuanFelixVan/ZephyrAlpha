@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Transaction Cost Optimizer — 交易成本优化器 (MOD-EX_SOR_EXT-003)
 
 D-EX-SOR §2.1 XS-EXT-03: 佣金费率 + 印花税 + 冲击成本 + 机会成本 → 总成本最小化。
@@ -38,6 +40,100 @@ A 股成本结构 (2023-08-28 印花税降后):
 
 SSoT: depgraph MOD-EX_SOR_EXT-003
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交数据
+#   fields: quantity成交数量 + avg_price平均成交价 + side买卖方向
+#   code: calculate(...) L353
+# - id: I2
+#   name: A股费率表 FeeSchedule
+#   fields: 佣金0.854bps(最低5元) + 印花税5bps(卖方) + 过户费0.1bps + 监管费0.2bps
+#   code: FeeSchedule L126
+# - id: I3
+#   name: 隐性成本参数
+#   fields: decision_price决策价 + unfilled_quantity未成交量 + adv日均量 + volatility日波动率
+#   code: calculate(...) L361
+# 层: 特征
+# - id: F1
+#   name_zh: 成交金额
+#   name_en: notional
+#   intro: 成交数量乘平均价得到的总金额, 一切费率的基数
+#   formula: notional = quantity × avg_price, 保留2位
+#   code: transaction_cost_optimizer.py L406
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 参与率
+#   name_en: participation
+#   intro: 成交量占日均量比例, 线性冲击估计的输入
+#   formula: participation = quantity / adv
+#   code: transaction_cost_optimizer.py L567
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 显性成本计算
+#   name_en: TransactionCostOptimizer._calc_explicit
+#   intro: 佣金+印花税+过户费+监管费四项法定费用逐项算金额
+#   desc: 佣金=max(notional×0.854bps,5元); 印花税=notional×5bps仅卖方; 过户=notional×0.1bps; 监管=notional×0.2bps
+#   inputs: F1 I2 I1
+#   outputs: 显性成本+四项明细
+#   invariant: 印花税仅卖方; 佣金有最低收费
+# - id: A2
+#   name_zh: ② 隐性成本计算
+#   name_en: TransactionCostOptimizer._calc_implicit
+#   intro: 冲击成本看成交价相对决策价的偏离, 没成交部分再算机会成本
+#   desc: 冲击=±(avg_price-decision)×qty(负归0), 无决策价时用线性估计impact_bps=5×participation×vol_bps; 机会=unfilled×decision×0.001
+#   inputs: I1 I3 F1 F2
+#   outputs: 隐性成本+两项明细
+#   invariant: 成本非负
+# - id: A3
+#   name_zh: ③ 总成本汇总
+#   name_en: TransactionCostOptimizer.calculate
+#   intro: 显性加隐性得总成本, 再折算成相对成交金额的基点
+#   desc: total=explicit+implicit → total_cost_bps=total/notional×10000 → 留历史
+#   inputs: A1 A2 F1
+#   outputs: TransactionCostResult
+#   invariant: 总=显性+隐性
+# - id: A4
+#   name_zh: ④ 成本优化建议
+#   name_en: TransactionCostOptimizer.advise
+#   intro: 找金额最大的成本项, 给出对应的降本建议和预估节省
+#   desc: max(breakdown.amount)定主驱动 → 建议映射(协商费率/降换手/拆单/提成交率) → saving=total_bps×ratio
+#   inputs: A3
+#   outputs: OptimizationAdvice
+# 层: 输出
+# - id: O1
+#   name_zh: 交易成本分析结果 TransactionCostResult
+#   name_en: TransactionCostResult
+#   intro: 六项成本分解+总成本(元/bps), 完整呈现这一单花了多少钱
+#   downstream: MOD-EX_SOR_EXT-002(ExecutionQualityScorer,消费 TransactionCostResult); MOD-EX-CORE(成本报告)
+# - id: O2
+#   name_zh: 成本优化建议 OptimizationAdvice
+#   name_en: OptimizationAdvice
+#   intro: 主成本驱动项+降本建议+预估节省bps
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I3 -.->|断点| F2
+# F1 --> A1
+# I2 --> A1
+# I1 --> A1
+# I1 --> A2
+# I3 --> A2
+# F1 --> A2
+# F2 --> A2
+# A1 --> A3
+# A2 --> A3
+# F1 --> A3
+# A3 --> A4
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

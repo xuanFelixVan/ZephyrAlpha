@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Execution Quality Scorer — 执行质量评分器 (MOD-EX_SOR_EXT-002)
 
 D-EX-SOR §2.1 XS-EXT-02: 价格/时间/成本/市场影响多维评估 + 历史追踪。
@@ -43,6 +45,58 @@ D-EX-SOR §2.1 XS-EXT-02: 价格/时间/成本/市场影响多维评估 + 历史
 
 SSoT: depgraph MOD-EX_SOR_EXT-002
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 原始执行指标
+#   fields: slippage_bps滑点 + duration_seconds耗时 + total_cost_bps成本 + impact_bps冲击, 至少给一项
+#   code: score(...) L322; 可来自EXT-001 SlippageResult/EXT-003 TransactionCostResult
+# - id: I2
+#   name: 质量评分权重 QualityWeights
+#   fields: 价格0.35 + 时间0.25 + 成本0.25 + 影响0.15, 和必须=1.0
+#   code: QualityWeights L134
+# - id: I3
+#   name: 最差阈值基准
+#   fields: 滑点50bps + 耗时300s + 成本30bps + 冲击20bps (达到即0分)
+#   code: DefaultBenchmarkProvider L252
+# 层: 算法
+# - id: A1
+#   name_zh: ① 单维度归一评分
+#   name_en: ExecutionQualityScorer._score_dimension
+#   intro: 每个维度按离最差阈值的比例折算成0~1分, 越小越好
+#   desc: score=max(0, 1-raw/threshold), 对PRICE/TIME/COST/IMPACT四维分别计算, 保留4位
+#   inputs: I1 I3
+#   outputs: ExecutionDimensionScore单维评分
+#   invariant: 各维度评分∈[0,1]
+# - id: A2
+#   name_zh: ② 四维加权汇总评定
+#   name_en: ExecutionQualityScorer._calc_overall+_verdict
+#   intro: 四维分按权重加权平均得总分, 再定good/acceptable/poor三档
+#   desc: overall=Σ(score×w)/Σw → good≥0.8 / acceptable≥0.5 / poor<0.5 → 留历史
+#   inputs: A1 I2
+#   outputs: overall_score + verdict
+#   invariant: 权重和=1.0; overall=Σ(score_i×weight_i)
+# 层: 输出
+# - id: O1
+#   name_zh: 执行质量评分结果 ExecutionQualityResult
+#   name_en: ExecutionQualityResult
+#   intro: 总分+评定+各维度明细, 衡量这一单执行得好不好
+#   downstream: MOD-EX-CORE(执行质量报告); MOD-XS-011(算法选择器反馈环)
+# - id: O2
+#   name_zh: 历史评分趋势
+#   name_en: average_score/get_history
+#   intro: 历史评分可按标的/最低分过滤并算平均分, 供趋势分析
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

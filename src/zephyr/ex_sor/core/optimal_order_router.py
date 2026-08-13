@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Optimal Order Router — 智能订单路由 (MOD-XS-001)
 
 D-EX-SOR §2.2 XS-01: 延迟/成交率/费用三维加权 → 最优券商选择。
@@ -39,6 +41,66 @@ D-EX-SOR §2.2 XS-01: 延迟/成交率/费用三维加权 → 最优券商选择
 
 SSoT: depgraph MOD-XS-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托指令 Order
+#   fields: order_id + symbol + side + quantity
+#   code: Order (CTR-004)
+# - id: I2
+#   name: 券商指标数据
+#   fields: latency_ms延迟 + fill_rate成交率 + cost_bps费用, Phase 1静态默认值
+#   code: DefaultMetricsProvider L253
+# - id: I3
+#   name: 可用券商列表与路由权重
+#   fields: available_brokers(已连接未熔断) + RouteWeights(0.3/0.4/0.3)
+#   code: BrokerAdapterManager (MOD-XS-002) + RouteWeights L140
+# 层: 算法
+# - id: A1
+#   name_zh: ① 单券商三维评分
+#   name_en: OptimalOrderRouter.score_broker
+#   intro: 把券商的延迟/成交率/费用各归一成0~1分, 越快越省分越高
+#   desc: latency_score=1/(1+ms/10); fill_rate_score=clip(fill_rate,0,1); cost_score=1/(1+bps/5)
+#   inputs: I2
+#   outputs: RouteScore三维评分
+#   invariant: 各维评分∈[0,1]
+# - id: A2
+#   name_zh: ② 加权选最优券商
+#   name_en: OptimalOrderRouter.route
+#   intro: 可用券商按0.3延迟+0.4成交率+0.3费用加权求总分, 选最高的下单
+#   desc: 过滤available → weighted_total=Σscore×weight → max选最优 → 非active则switch_broker → 记录RouteDecision审计
+#   inputs: A1 I3
+#   outputs: RouteDecision最优券商+理由
+#   invariant: 路由决策可审计(§6.4); 权重和=1.0; SOR不做风控判断(§6.1)
+# - id: A3
+#   name_zh: ③ 提交与故障转移委托
+#   name_en: BrokerAdapterManager.submit_order
+#   intro: 把订单交给券商适配器管理器提交, 熔断自动切备选券商
+#   desc: mgr.submit_order(order,session) → BrokerSelection, 失败包装RoutingError
+#   inputs: I1 A2
+#   outputs: BrokerSelection提交结果
+# 层: 输出
+# - id: O1
+#   name_zh: 路由结果 RouteResult
+#   name_en: RouteResult
+#   intro: 路由决策+券商订单ID+是否故障转移, 一次路由的完整产物
+#   downstream: MOD-EX-CORE(OMS,订单路由入口); MOD-XS-004(Execution Scheduler,调度后路由)
+# - id: O2
+#   name_zh: 路由决策审计日志
+#   name_en: RouteDecision history
+#   intro: 每条SOR决策留痕(评分/权重/理由/时间), 支持事后复盘
+#   downstream: 无下游/内部使用 (内存审计, Phase 1)
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# A1 --> A2
+# I3 --> A2
+# I1 --> A3
+# A2 --> A3
+# A3 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

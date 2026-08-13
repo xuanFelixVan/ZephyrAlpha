@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Broker Adapter Manager — 多券商统一适配器 (MOD-XS-002)
 
 D-EX-SOR §2.2 XS-02: 多券商API统一适配 + 接口抽象 + 事务一致性 + 连接熔断 + 故障转移。
@@ -38,6 +40,82 @@ D-EX-SOR §2.2 XS-02: 多券商API统一适配 + 接口抽象 + 事务一致性 
 
 SSoT: depgraph MOD-XS-002
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托指令 Order
+#   fields: order_id + symbol + side + quantity
+#   code: Order (CTR-004)
+# - id: I2
+#   name: 券商适配器注册表
+#   fields: BrokerAdapter列表(封装MOD-XS-013连接器) + 故障转移优先级顺序
+#   code: BrokerAdapter L108
+# - id: I3
+#   name: 交易时段参数 session
+#   fields: TradingSession枚举, 限速检查用, 默认INTRADAY
+#   code: TradingSession (MOD-XS-014)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 多券商注册与连接管理
+#   name_en: BrokerAdapterManager.register_adapter
+#   intro: 注册多家券商适配器并维护优先级队列, 首个primary设为活跃券商
+#   desc: register_adapter登记+primary置active → connect_all逐一连接(失败仅告警)
+#   inputs: I2
+#   outputs: 活跃券商+优先级队列
+# - id: A2
+#   name_zh: ② 下单与自动故障转移
+#   name_en: BrokerAdapterManager.submit_order
+#   intro: 先用活跃券商下单, 它熔断了就自动切到下一个可用券商再试一次
+#   desc: active.submit → 捕CircuitBreakerOpenError/BrokerSubmitError且确认熔断 → 按优先级遍历备选首次尝试 → 全失败抛FailoverExhaustedError
+#   inputs: I1 I2 I3 A1
+#   outputs: BrokerSelection(券商+订单ID+是否转移)
+#   invariant: 故障转移自动(同券商熔断仍需人工恢复HB-06); 非重试是转移后首次尝试
+# - id: A3
+#   name_zh: ③ Feature Toggle运行时切券商
+#   name_en: BrokerAdapterManager.switch_broker
+#   intro: 不重启服务直接切换活跃券商, 切换零中断
+#   desc: 校验已注册 → active=新券商 (§6.5)
+#   inputs: I2
+#   outputs: 新活跃券商
+#   invariant: 运行时券商切换零中断
+# - id: A4
+#   name_zh: ④ 全局Fill回调链
+#   name_en: register_fill_callback
+#   intro: 注册一次回调自动挂到所有现有和未来券商适配器上
+#   desc: 回调存全局列表 → 逐个adapter.register_fill_callback → Fill沿回调链上传
+#   inputs: I2
+#   outputs: Fill回调分发
+#   invariant: Fill通过回调链传递至D-EX-CORE
+# 层: 输出
+# - id: O1
+#   name_zh: 下单结果 BrokerSelection
+#   name_en: BrokerSelection
+#   intro: 记录实际用了哪家券商+券商订单ID+是否经过故障转移
+#   downstream: MOD-XS-001(Optimal Order Router,路由后下单)
+# - id: O2
+#   name_zh: 成交回报回调链
+#   name_en: Fill callback chain
+#   intro: 成交回报沿回调链传递至OMS
+#   downstream: MOD-EX-CORE(OMS,Fill回调链)
+# - id: O3
+#   name_zh: 券商状态摘要
+#   name_en: get_broker_status
+#   intro: 各券商连接/可用/熔断/活跃状态字典, 诊断用
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# A1 --> A2
+# I2 --> A3
+# I2 --> A4
+# A2 --> O1
+# A4 --> O2
+# A1 --> O3
 """
 
 from __future__ import annotations

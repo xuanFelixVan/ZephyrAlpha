@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Algo Execution Selector — 算法执行选择器 (MOD-XS-011)
 
 D-EX-SOR §2.2 XS-11: 订单特征(大小/紧急度/流动性) → 自动选择最优算法 + 算法推荐 + 效果评估。
@@ -42,6 +44,96 @@ D-EX-SOR §2.2 XS-11: 订单特征(大小/紧急度/流动性) → 自动选择�
 
 SSoT: depgraph MOD-XS-011
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托指令 Order
+#   fields: order_id + symbol + side + quantity + limit_price
+#   code: Order (CTR-004)
+# - id: I2
+#   name: 市场上下文 MarketContext
+#   fields: last_price + adv日均量 + bid_price + ask_price
+#   code: MarketContext (MOD-XS-005)
+# - id: I3
+#   name: 紧急度参数 urgency
+#   fields: 0~1小数, 0=不急 1=最急, 默认0.5
+#   code: urgency
+# - id: I4
+#   name: 算法注册表
+#   fields: 已注册AlgoType列表 (TWAP/VWAP/ICEBERG/POV/IS/ALT)
+#   code: engine.get_algo_types()
+# - id: I5
+#   name: 执行结果 ExecutionOutcome
+#   fields: decision_price + avg_fill_price + quantity_filled + duration_seconds
+#   code: ExecutionOutcome L270
+# 层: 特征
+# - id: F1
+#   name_zh: 订单ADV占比
+#   name_en: adv_fraction
+#   intro: 订单量占日均成交量的比例, 衡量订单大小
+#   formula: adv_frac = order.quantity / ctx.adv
+#   code: algo_execution_selector.py L166
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 买卖价差基点
+#   name_en: spread_bps
+#   intro: 买卖一口价差的基点数, 衡量流动性, 缺失记-1
+#   formula: spread_bps = (ask-bid)/last_price×10000
+#   code: algo_execution_selector.py L168
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 三维适配度评分
+#   name_en: _score_algo
+#   intro: 对每种算法按订单大小/紧急度/流动性三个维度打0~1分
+#   desc: size分档阈值(0.1%/1%/5%ADV) + urgency钟形/线性偏好 + liquidity价差分档(<5/<15/≥15bps)
+#   inputs: F1 F2 I3 I4
+#   outputs: AlgoScoreBreakdown评分明细
+#   invariant: 各维度评分∈[0,1]
+# - id: A2
+#   name_zh: ② 加权汇总选最优
+#   name_en: AlgoExecutionSelector.select
+#   intro: 三维分按0.4/0.35/0.25加权求总分, 选最高分算法并留痕审计
+#   desc: total=0.4×size+0.35×urgency+0.25×liquidity → max → AlgoSelection + 内存审计日志
+#   inputs: A1
+#   outputs: 选中的AlgoType+理由
+#   invariant: 权重和=1.0; 选可审计
+# - id: A3
+#   name_zh: ③ 执行效果评估
+#   name_en: DefaultAlgoEvaluator.evaluate
+#   intro: 用实施差额IS基点给算法执行效果打分, ≤5bps为good
+#   desc: IS_bps=|avg_fill-decision|/decision×10000 → efficiency=1-min(IS/50,1) → good/acceptable/poor
+#   inputs: I5
+#   outputs: AlgoEvaluationResult
+# 层: 输出
+# - id: O1
+#   name_zh: 算法选择结果 AlgoSelection
+#   name_en: AlgoSelection
+#   intro: 选中的算法+全部候选评分明细+选择理由, 可to_dict审计
+#   invariant: 评分归一[0,1]; 选最高分算法
+#   downstream: MOD-XS-005(Algo Engine,消费 AlgoSelection 执行); D-EX-CORE(OMS,算法推荐入口)
+# - id: O2
+#   name_zh: 算法评估结果 AlgoEvaluationResult
+#   name_en: AlgoEvaluationResult
+#   intro: IS基点+成交率+效率评分+评定等级
+#   downstream: 无下游/内部使用 (Phase 1 内存评估)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I2 -.->|断点| F1
+# I2 -.->|断点| F2
+# F1 --> A1
+# F2 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# A2 --> O1
+# I5 --> A3
+# A3 --> O2
 """
 
 from __future__ import annotations

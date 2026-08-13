@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Execution Scheduler — 执行调度器 (MOD-XS-004)
 
 D-EX-SOR §2.2 XS-04: 时间切片器 + TWAP/VWAP 调度器 + 自适应调度器 + 优先级队列 + 执行进度监控。
@@ -42,6 +44,78 @@ D-EX-SOR §2.2 XS-04: 时间切片器 + TWAP/VWAP 调度器 + 自适应调度器
 
 SSoT: depgraph MOD-XS-004
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 算法执行计划 AlgoExecutionPlan
+#   fields: slices切片列表 + total_quantity + params(time_horizon_minutes)
+#   code: AlgoExecutionPlan (MOD-XS-005)
+# - id: I2
+#   name: 调度时间窗口
+#   fields: start_time + end_time(默认start+horizon分钟)
+#   code: schedule(start_time, end_time)
+# - id: I3
+#   name: 自适应节奏反馈 PacingFeedback
+#   fields: current_participation实时参与率 + window_volume + strategy_filled_window
+#   code: PacingFeedback L265
+# 层: 算法
+# - id: A1
+#   name_zh: ① 时间切片调度
+#   name_en: ExecutionScheduler.schedule
+#   intro: 把切片方案等距排到时间窗口里, 并给每片赋优先级
+#   desc: send_at=start+span×i/n 等距 → ALT全P0/首片P1/尾片(TWAP,IS)P3/其余P2 → 守恒校验
+#   inputs: I1 I2
+#   outputs: ExecutionSchedule子订单时间表
+#   invariant: 子订单量和=计划总量(Decimal守恒)
+# - id: A2
+#   name_zh: ② 优先级队列出队
+#   name_en: ExecutionSchedule.next_due
+#   intro: 已调度且到点的子订单里, 挑优先级最高且最早到点的先发送
+#   desc: 过滤SCHEDULED且send_at<=now → 按(priority,send_at)升序取min
+#   inputs: A1
+#   outputs: 下一个应发送子订单
+#   invariant: 优先级队列P0>P1>P2>P3
+# - id: A3
+#   name_zh: ③ 自适应降速
+#   name_en: ExecutionScheduler.adjust_pacing
+#   intro: 实时参与率超4%就拖慢下一片30秒, 超5%全部推迟60秒并告警
+#   desc: is_over_limit(>5%)→未发送片全延迟60s+抛OverParticipationError; is_near_limit(>4%)→下一片延迟30s
+#   inputs: I3 A1
+#   outputs: 被延迟的子订单数
+#   invariant: 参与率≤5%(§10.1自适应降速)
+# - id: A4
+#   name_zh: ④ 子订单状态机
+#   name_en: mark_sent/mark_filled/mark_cancelled
+#   intro: 子订单按SCHEDULED→SENT→PARTIAL/FILLED流转, 发送失败直接取消不重试
+#   desc: 状态合法性校验 → 成交累加filled_quantity(防超填) → 终态FILLED/CANCELLED不可逆 (HB-07)
+#   inputs: A2
+#   outputs: 子订单状态流转
+#   invariant: 下单零重试(HB-07); 终态不可回退
+# 层: 输出
+# - id: O1
+#   name_zh: 执行调度方案 ExecutionSchedule
+#   name_en: ExecutionSchedule
+#   intro: 一个订单全部子订单的发送时刻+优先级+状态, 供路由提交
+#   invariant: 子订单量和=计划总量
+#   downstream: MOD-XS-001(Optimal Order Router,路由子订单); MOD-XS-002(Broker Adapter,提交子订单)
+# - id: O2
+#   name_zh: 调度进度报告 ScheduleProgress
+#   name_en: ScheduleProgress
+#   intro: 已调度/已发/已成交/已取消计数+完成率, 供OMS查询进度
+#   downstream: D-EX-CORE(OMS,调度进度查询)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I3 --> A3
+# A1 --> A3
+# A2 --> A4
+# A3 --> A2
+# A1 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations
