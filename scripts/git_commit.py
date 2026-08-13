@@ -25,8 +25,8 @@
 
     # 含中文/特殊字符的 message——用 --message-file 避免 PowerShell 编码问题（治本）：
     python scripts/git_commit.py --session sess-001 --files src/a.py --message-file .runtime/_commit_msg.txt
-    # --message-file 用完即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）：commit 流程
-    # 结束（无论成功/失败/early return）自动 unlink。诊断场景用 --keep-message-file 保留。
+    # --message-file 成功即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）：commit 成功
+    # （exit 0）自动 unlink；失败（exit≠0）保留供重试。诊断场景用 --keep-message-file 保留。
 
 对标: scripts/git_guard.py（git 命令透传封装），区别：
 - git_guard.py 透传 git 子命令（绕过 Trae 弹窗）
@@ -70,7 +70,8 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
     CommitStatus.PROMOTION_BLOCKED: (
         3,
         "PROMOTION_BLOCKED: {message}",
-        "  如确认晋升到永久区，请在终端手动添加 --allow-promote 重新执行。",
+        "  如确认晋升到永久区，添加 --allow-promote 重新执行"
+        "（2026-08-13 裁定：AI 可默认使用，前置=creation_token 已登记，审计留痕）。",
         False,
     ),
     CommitStatus.SSOT_VIOLATION: (
@@ -83,7 +84,8 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         5,
         "HELD_OVERLAP_VIOLATION: {message}",
         "  目标文件被其他活跃 session 持有（搭便车防护）。"
-        "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+        "  先读对方改动按 67 号冲突三分法判定（叠加型→合并都留/迭代型→取新+说明/互斥型→禁自行放行升级用户），"
+        "  确认非互斥后添加 --allow-overlap 重新执行（2026-08-13 裁定：AI 可默认使用，[GW:<sid>:overlap] 留痕）。",
         False,
     ),
     CommitStatus.CLAIM_REQUIRED_VIOLATION: (
@@ -91,7 +93,8 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "CLAIM_REQUIRED_VIOLATION: {message}",
         "  session 已注册但目标文件未 claim_files（红蓝对抗红攻1治本）。"
         "  commit 前 MUST 调 claim_files 声明工作范围（AGENTS.md §8 L284）。"
-        "  如确认需提交，请在终端手动添加 --allow-overlap 重新执行。",
+        "  如确认需提交，添加 --allow-overlap 重新执行"
+        "（2026-08-13 裁定：AI 可默认使用，留痕审计；冲突处置按 67 号三分法）。",
         False,
     ),
     CommitStatus.WORKTREE_VIOLATION: (
@@ -99,7 +102,8 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "WORKTREE_VIOLATION: {message}",
         "  非 worktree 并发 commit 被阻断（#ARCH-WORKTREE-GATE-001 治本）。"
         "  治本：使用 session_worktree_start() 创建物理隔离 worktree。"
-        "  如确认需提交，请在终端手动添加 --allow-non-worktree 重新执行。",
+        "  确认 gateway --pathspec-from-file 只提交本 claim 文件、不搭便车他人 WIP 后，"
+        "  添加 --allow-non-worktree 重新执行（2026-08-13 裁定：AI 可默认使用，[GW:<sid>:non-worktree] 留痕）。",
         False,
     ),
     CommitStatus.COMMIT_SCOPE_VIOLATION: (
@@ -107,8 +111,8 @@ _COMMIT_RESULT_MAP: dict[CommitStatus, tuple[int, str, str | None, bool]] = {
         "COMMIT_SCOPE_VIOLATION: {message}",
         "  commit 跨越多个功能域（13a5e1d512 混合提交事故治本）。"
         "  请拆分为多个 commit，每个域一个（AGENTS.md「一个任务=1次commit」原则）。"
-        "  如确认需跨域提交（跨域重构/域注册表变更），请在终端手动添加"
-        " --allow-multi-domain 重新执行。",
+        "  如确认需跨域提交（跨域重构/域注册表变更），添加 --allow-multi-domain 重新执行"
+        "（2026-08-13 裁定：AI 可默认使用，[GW:<sid>:multi-domain] 留痕）。",
         False,
     ),
 }
@@ -360,8 +364,8 @@ def _parse_message(args) -> tuple[int | None, str, bool]:
     return None, message, False
 
 
-def _cleanup_message_file(args) -> None:
-    """方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 用完即删。
+def _cleanup_message_file(args, exit_code: int | None = None) -> None:
+    """方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 成功即删。
 
     对标 gateway 内部 tempfile.mkstemp + finally os.remove 范式
     （git_commit_gateway.py:1642-1666）。CLI 层 --message-file 是给 AI 的
@@ -369,13 +373,15 @@ def _cleanup_message_file(args) -> None:
     .runtime/_commit_msg_*.txt 永久残留（治本代码自身成为残留的递归问题，
     对标 AGENTS.md:747 _cleanup_orphan_draft_scripts 同型病根）。
 
-    治本：commit 流程结束（无论成功/失败/early return）自动 unlink。
+    治本：commit 成功（exit_code=0）后自动 unlink；失败时保留供重试，
+    避免"重建 message-file 再重跑"的重复劳动（sess-recovery-0813 踩坑）。
     删除失败不阻断（warn-only，对标本模块错误契约）。
     --keep-message-file opt-out 诊断场景保留。
 
     args=None 兜底：argparse 解析失败（参数格式错误，exit 2）时 args 未定义，
     从 sys.argv 手动提取 --message-file / --keep-message-file，确保即使参数
     错误也不残留临时文件（parse_args 移入 try 块后覆盖此场景）。
+    exit_code=None 兜底：未执行到 commit 时（参数错误等）也删除。
     """
     if args is None:
         # argparse 失败兜底：从 sys.argv 手动提取（parse_args 抛 SystemExit 时）
@@ -392,6 +398,13 @@ def _cleanup_message_file(args) -> None:
         msg_file = args.message_file
         keep = args.keep_message_file
     if keep or not msg_file:
+        return
+    # 成功（0）或未执行到 commit（None，参数错误等）才删除；gate 拦截等失败保留供重试
+    if exit_code not in (0, None):
+        print(
+            f"INFO: message-file 保留（commit 失败 exit={exit_code}），修正后可直接重跑同一命令: {msg_file}",
+            file=sys.stderr,
+        )
         return
     try:
         Path(msg_file).unlink(missing_ok=True)
@@ -432,8 +445,8 @@ def main() -> int:
         "--message-file",
         help="从 UTF-8 文件读取 commit message（治本 PowerShell 中文编码问题）。"
              "提供时优先于 --message。文件内容原样作为 message（不含 GW 标记）。"
-             "用完即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）——commit 流程"
-             "结束（无论成功/失败/early return）自动 unlink，消除 .runtime/_commit_msg_*.txt 残留。",
+             "成功即删（方案 A 治本 #ARCH-MSG-FILE-RESIDUE-001）——commit 成功"
+             "（exit 0）自动 unlink；失败（exit≠0）保留供重试。",
     )
     parser.add_argument(
         "--keep-message-file",
@@ -452,7 +465,8 @@ def main() -> int:
         action="store_true",
         default=False,
         help="批准新文件晋升到永久区（docs/01_policies/、02_enterprise_architecture/、"
-             "03_modules/、08_knowledge/）。AI 不得自行使用——须用户终端手动指定。",
+             "03_modules/、08_knowledge/）。2026-08-13 用户裁定：AI 可默认使用——"
+             "前置：creation_token 已登记 capability_canonical_file_registry.yaml；审计留痕。",
     )
     parser.add_argument(
         "--allow-overlap",
@@ -460,7 +474,8 @@ def main() -> int:
         default=False,
         help="搭便车防护逃生通道——目标文件被其他活跃 session 持有时放行"
              "（HELD_OVERLAP_VIOLATION）。commit message 追加 [GW:<sid>:overlap] 标记"
-             "供审计追踪。AI 不得自行使用——须用户终端手动指定。",
+             "供审计追踪。2026-08-13 用户裁定：AI 可默认使用——前置：已读对方改动并按 67 号"
+             "冲突三分法判定非互斥（叠加型合并都留/迭代型取新+说明/互斥型禁自行放行升级用户）。",
     )
     parser.add_argument(
         "--allow-non-worktree",
@@ -468,8 +483,8 @@ def main() -> int:
         default=False,
         help="worktree 阻断逃生通道（#ARCH-WORKTREE-GATE-001 治本）——非 worktree commit "
              "且有其他活跃 session 时放行 WORKTREE-REQUIRED gate。commit message 追加 "
-             "[GW:<sid>:non-worktree] 标记供审计追踪。AI 不得自行使用——须用户终端手动指定"
-             "（对称 --allow-overlap 治理）。",
+             "[GW:<sid>:non-worktree] 标记供审计追踪。2026-08-13 用户裁定：AI 可默认使用——"
+             "前置：确认 gateway 只提交本 claim 文件、不搭便车他人 WIP（对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
         "--allow-multi-domain",
@@ -478,7 +493,7 @@ def main() -> int:
         help="COMMIT_SCOPE_VIOLATION 治本通道（13a5e1d512 混合提交事故治本）——跨域提交"
              "场景放行 COMMIT-SCOPE gate。commit message 追加 [GW:<sid>:multi-domain] "
              "标记供审计追踪。合理场景：跨域重构/域注册表本身变更/裁定引用+registry 同 commit。"
-             "AI 不得自行使用——须用户终端手动指定（对称 --allow-overlap 治理）。",
+             "2026-08-13 用户裁定：AI 可默认使用（留痕审计，对称 --allow-overlap 治理）。",
     )
     parser.add_argument(
         "--adopt-prior-work",
@@ -499,7 +514,7 @@ def main() -> int:
              "派生文件退库等合法删除场景放行 DERIVED-FILE-DELETION-PROTECTION gate。"
              "受保护派生文件（blueprint_registry.yaml / path_ownership_map.yaml 等）"
              "删除会导致 20+ 消费方静默降级，默认硬阻断；本旗标显式声明合法删除。"
-             "AI 不得自行使用——须用户终端手动指定（对称 --allow-overlap 治理）。",
+             "2026-08-13 用户裁定：AI 可默认使用——前置：确认目标确为可再生成派生物（审计留痕）。",
     )
     parser.add_argument(
         "--claim-only",
@@ -531,13 +546,15 @@ def main() -> int:
         help="reconciler-verify 模式下放行其他活跃 session 检查（逃生通道）。"
              "默认硬阻断——验证前必须无其他活跃 session，确保单 session 诊断场景无搭便车窗口。",
     )
-    # 方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 用完即删契约
+    # 方案 A 治本（#ARCH-MSG-FILE-RESIDUE-001）：--message-file 成功即删契约
     # 对标 gateway 内部 tempfile.mkstemp + finally os.remove 范式
     # （git_commit_gateway.py:1642-1666）。try/finally 覆盖 parse_args 到
-    # commit 返回的全流程，确保任何退出路径（含 argparse 失败/early return/
-    # 成功/失败）都清理临时 message 文件，消除 .runtime/_commit_msg_*.txt 残留
-    # （治本代码自身成为残留的递归问题，对标 AGENTS.md:747 _cleanup_orphan_draft_scripts）。
+    # commit 返回的全流程。commit 成功（exit 0）才清理 message 文件；
+    # commit 执行后失败（gate 拦截等，exit≠0）保留文件供重试——避免
+    # "重建 message-file 再重跑"（sess-recovery-0813 踩坑）；early return
+    # （参数/环境错误，未执行 commit，exit_code=None）仍删除，不残留。
     args = None
+    exit_code: int | None = None
     try:
         args = parser.parse_args()
         # message 解析（claim-only / release-only 时不需要 message）
@@ -604,9 +621,10 @@ def main() -> int:
         finally:
             gw.release_files(args.session, claimed)
 
-        return _format_commit_result(result)
+        exit_code = _format_commit_result(result)
+        return exit_code
     finally:
-        _cleanup_message_file(args)
+        _cleanup_message_file(args, exit_code)
 
 
 if __name__ == "__main__":
