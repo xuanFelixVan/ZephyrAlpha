@@ -14,6 +14,8 @@
 # [TESTS] tests/test_db_auto_ops.py
 # [TTL] permanent
 """
+
+
 DatabaseCRUDMixin: 共享的 governance.db + depgraph CRUD 方法
 
 P-PLAN 专项工程：抽取两个 DatabaseService 类（governance/persistence 版 + infrastructure 版）
@@ -41,6 +43,81 @@ P-PLAN 专项工程：抽取两个 DatabaseService 类（governance/persistence 
 [AI_AUTONOMY] ai_modifiable
 [ERROR_CONTRACT] ConnectionError; ValueError
 [TESTS] tests/test_db_auto_ops.py
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 任务数据参数
+#   fields: task_id / task_data(dict) / status
+#   code: database_crud_mixin.py L58/L76/L90
+# - id: I2
+#   name: 规则执行日志参数
+#   fields: rule_id / operation / target / result / details
+#   code: database_crud_mixin.py L96 log_rule_enforcement
+# - id: I3
+#   name: 图查询参数
+#   fields: node_id / domain_id / node_type / function_name / from_node
+#   code: database_crud_mixin.py L111-148
+# - id: I4
+#   name: 宿主类数据库连接
+#   fields: get_governance_conn(read_only)→sqlite3 governance.db；get_depgraph_conn(read_only)→psycopg2 depgraph
+#   code: 宿主类契约（[INVARIANTS] 头）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 列名白名单校验
+#   name_en: _TASK_COLUMNS 校验
+#   intro: create_task 前用 37 列白名单拦截非法列名，阻断 f-string SQL 注入
+#   desc: L65-83：set(task_data.keys()) - _TASK_COLUMNS 非空即 raise ValueError（5.66.1 治本）
+#   inputs: I1
+#   outputs: 校验通过的 task_data
+#   invariant: 白名单外列名必抛 ValueError
+# - id: A2
+#   name_zh: ② governance.db 任务 CRUD
+#   name_en: get_task / create_task / update_task_status
+#   intro: 任务的查询、参数化插入、状态更新三操作
+#   desc: L58-94：SELECT * WHERE task_id=?；INSERT INTO tasks 占位符参数化；UPDATE status + updated_at=datetime('now')
+#   inputs: A1 I1 I4
+#   outputs: 任务行 dict / task_id / None
+# - id: A3
+#   name_zh: ③ 规则执行日志写入
+#   name_en: log_rule_enforcement
+#   intro: 向 rule_enforcement_log 表写入一条规则执行记录
+#   desc: L96-105：INSERT 五字段 + enforced_at=datetime('now') + enforced_by='DatabaseService'
+#   inputs: I2 I4
+#   outputs: 写库副作用（commit）
+# - id: A4
+#   name_zh: ④ depgraph 图查询五方法
+#   name_en: get_node / get_nodes_by_domain / get_nodes_by_type / get_rule_bindings_by_function / get_edges_from_node
+#   intro: PostgreSQL depgraph 的节点、域、类型、规则绑定、出边五类只读查询
+#   desc: L111-148：psycopg2 cursor + %s 占位符；RealDictCursor 行 dict(row) 兼容原 sqlite3.Row 用法
+#   inputs: I3 I4
+#   outputs: dict / list[dict] / None
+# 层: 输出
+# - id: O1
+#   name_zh: 查询结果集
+#   name_en: dict / list[dict] / None
+#   intro: 任务行、图节点、规则绑定、出边等查询结果
+#   downstream: zephyr.governance.persistence.database_service；zephyr.infrastructure.database_service（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 写库副作用
+#   name_en: tasks / rule_enforcement_log 行写入 + commit
+#   intro: 任务创建/状态更新与规则日志落库
+#   downstream: zephyr.infrastructure.database_service（唯一真源宿主，MODIFY-GUARD 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I1 --> A2
+# I4 --> A2
+# I2 --> A3
+# I4 --> A3
+# I3 --> A4
+# I4 --> A4
+# A2 --> O1
+# A4 --> O1
+# A2 --> O2
+# A3 --> O2
 """
 
 from typing import Any

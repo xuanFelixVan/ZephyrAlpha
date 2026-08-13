@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B32）
 
 痛点修复：每次 AI session 的记录——prompts/decisions/tool_calls/costs/errors/outcomes。
@@ -35,6 +37,71 @@ SSoT: MOD-INF-016 §12 盲点 B32 + GOV-AI-007 Session Log Schema
 
 依赖倒置（5.174-M6）：全局审计写入由 governance 层经 register_audit_writer_provider()
 依赖注入——本模块不 import gov_audit（shared 层禁止向上依赖 L2 governance）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 会话事件数据 六类记录入参
+#   fields: prompts(role/content/token_count)、decisions、tool_calls、costs(provider/model/tokens/cost_usd)、errors、outcomes
+#   code: SessionRecord.add_* L183-L253
+# - id: I2
+#   name: 审计目录 audit_dir 路径
+#   fields: JSONL 审计文件根目录，默认 logs/session_audit/，构造时自动建目录
+#   code: audit_dir L337
+# - id: I3
+#   name: 全局审计写入器工厂 可选注入
+#   fields: governance 层经 register_audit_writer_provider 注入的 AuditWriter 工厂；未注册则跳过全局事件
+#   code: _audit_writer_provider L69
+# 层: 算法
+# - id: A1
+#   name_zh: ① 会话事件采集
+#   name_en: SessionRecord.add_prompt/add_decision/add_tool_call/add_cost/add_error/set_outcomes
+#   intro: 把六类会话事件逐条追加进内存 SessionRecord，长文本截200字预览
+#   desc: 每个 add_* 构造对应 Record（UTC时间戳），content/params/result 超200字截断；to_dict 汇总 counts 与 total_cost_usd=Σcost、total_tokens=Σ(input+output)、error_count、recovered_count=Σrecovered
+#   inputs: I1
+#   outputs: SessionRecord（内存态）
+# - id: A2
+#   name_zh: ② JSONL追加写入与全局事件转发
+#   name_en: append_record/_sanitize_session_id
+#   intro: session_id 消毒后定位 jsonl 文件，加锁追加一行，再经注入的 provider 转发全局审计
+#   desc: _sanitize_session_id 把 \ / .. 换成 _ 防路径穿越；to_dict 序列化后 RLock 保护下 append 一行 JSON；随后查 _audit_writer_provider，注册则 provider().write(session_record 事件)，未注册记 debug 跳过，写异常被吞仅 warning（best-effort）
+#   inputs: I2 I3
+#   outputs: jsonl 文件路径 + 全局审计事件
+#   invariant: JSONL 只追加不改写（不可变审计）
+# - id: A3
+#   name_zh: ③ 审计查询与汇总
+#   name_en: query/get_summary/list_sessions/export_jsonl
+#   intro: 按 session 读回全部 JSONL 行，聚合成本/token/错误/决策计数
+#   desc: query 逐行 json.loads；get_summary 对记录做 Σtotal_cost_usd/Σtotal_tokens/Σerror_count/Σdecisions_count 聚合；list_sessions 列目录 *.jsonl stem 排序；export_jsonl 原文返回
+#   inputs: I2
+#   outputs: list[dict] / summary dict
+# 层: 输出
+# - id: O1
+#   name_zh: 会话审计JSONL文件
+#   name_en: {session_id}.jsonl
+#   intro: audit_dir 下按消毒后 session_id 命名的不可变追加式审计日志文件
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 查询与汇总结果
+#   name_en: query/get_summary 返回字典
+#   intro: 读回的审计记录列表与按会话聚合的成本/token/错误/决策统计
+#   downstream: 无下游/内部使用
+# - id: O3
+#   name_zh: 全局审计事件
+#   name_en: AuditWriterProtocol.write
+#   intro: 经依赖注入 registry 转发给 L2 governance 审计写入器的 session_record 事件（best-effort）
+#   downstream: governance 层 zephyr.gov_audit.writer（运行时注入，非 import 依赖）
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# I3 --> A2
+# A2 --> O1
+# A2 --> O3
+# A2 --> A3
+# I2 --> A3
+# A3 --> O2
 """
 
 from __future__ import annotations

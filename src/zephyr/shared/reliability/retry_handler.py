@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。
 
 依据：
@@ -26,6 +28,46 @@ Retry Handler — 指数退避重试 + 可恢复/不可恢复错误分类。
     - 指数退避：base_delay=1s, max_delay=64s, max_retries=5
     - 可恢复错误（network/timeout）-> 重试
     - 不可恢复错误（ValueError/AssertionError）-> 立即失败
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 被保护函数 func 可调用对象
+#   fields: func 加 *args/**kwargs，execute 内被反复调用直至成功或耗尽重试
+#   code: execute(func, *args, **kwargs) L95
+# - id: I2
+#   name: 重试配置 RetryConfig 数据类
+#   fields: base_delay_s=1.0、max_delay_s=64.0、max_retries=5、backoff_multiplier=2.0、jitter=True
+#   code: RetryConfig L49-L55
+# 层: 算法
+# - id: A1
+#   name_zh: ① 错误可恢复性分类
+#   name_en: is_unrecoverable
+#   intro: 用 isinstance 对照六类不可恢复异常，决定立即失败还是继续重试
+#   desc: UNRECOVERABLE_EXCEPTIONS=(ValueError, TypeError, AssertionError, SyntaxError, ImportError, AttributeError)；命中即不可恢复；其余（如 network/timeout 类）视为可恢复
+#   inputs: I1
+#   outputs: bool 分类结果
+# - id: A2
+#   name_zh: ② 指数退避重试循环
+#   name_en: execute
+#   intro: 失败按指数退避睡眠后重试，不可恢复错误或次数耗尽立即收兵
+#   desc: for i in 0..max_retries：调 func 成功即记 RetryAttempt(success=True) 返回；异常先记尝试，再用 A1 分类——不可恢复或 i==max_retries 返回带 final_error 的失败；否则 delay=min(base_delay_s×backoff_multiplier^i, max_delay_s)，jitter 开启时 delay×=(0.5+random.random())，time.sleep(delay) 后进入下一轮
+#   inputs: I1 I2
+#   outputs: RetryResult
+#   invariant: 最多执行 max_retries+1 次；退避延迟封顶 max_delay_s
+# 层: 输出
+# - id: O1
+#   name_zh: 重试结果报告
+#   name_en: RetryResult
+#   intro: 含 success/逐次 RetryAttempt 明细/total_time_s/final_error 的重试全过程报告
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

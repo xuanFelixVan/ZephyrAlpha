@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 converters.py — 类型转换工具（消除 '' vs None 语义鸿沟）
 
 病根（Ruling:100PCT-AI-GOVERNANCE P1-1，2026-07-19）：
@@ -42,6 +44,33 @@ converters.py — 类型转换工具（消除 '' vs None 语义鸿沟）
 
 SSoT: MOD-SHR_converters
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 任意类型值 标量参数
+#   fields: 可能为 "" 空字符串 / None / 0 / False / 普通字符串等任意值（典型来源 weighted_domain_vote / min_maturity 的无值返回）
+#   code: normalize_to_none(value) 入参
+# 层: 算法
+# - id: A1
+#   name_zh: ① 空串归一化
+#   name_en: normalize_to_none
+#   intro: 只把空字符串转成 None 其他值一律原样返回
+#   desc: if value is None or value == "" → return None 否则原样返回 消除 '' vs None 语义鸿沟 对齐 PostgreSQL CHECK 约束（允许NULL禁止''）
+#   inputs: I1
+#   outputs: None 或原值
+#   invariant: normalize_to_none("") is None; normalize_to_none(0) == 0 不误转非空字符串的 falsy 值
+# 层: 输出
+# - id: O1
+#   name_zh: 归一化后的值
+#   name_en: normalized value
+#   intro: 空串变 None 让数据库写入 NULL 其余值原样透传
+#   downstream: scripts.governance.sync_panorama_module; scripts.governance.d5_architecture.generators.align_panoramas
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

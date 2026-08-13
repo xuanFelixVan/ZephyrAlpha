@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 ZephyrAlpha 蓝图拆解器
 =====================
 依据：MOD-TASK_SYSTEM v0.3.0 §5 TaskCard 接口契约
@@ -28,9 +30,79 @@ ZephyrAlpha 蓝图拆解器
   CS-*  -> STD     CP-* -> CP
   INFRA-* / SCRIPT-* -> OPS（基础设施与脚本治理并入 OPS 序号空间）
 
-task_id 真源：`schemas.Task` 要求 `^(KBG|CP|KE|STD|DW|SRC|OPS)-\\d+$`
+task_id 真源：`schemas.Task` 要求 `^(KBG|CP|KE|STD|DW|SRC|OPS)-\d+$`
 
 task_id 格式（§3.2.1）：{NAMESPACE}-{SEQ}（SQLite auto-increment 保证唯一性）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 治理蓝图文件 Markdown文档
+#   fields: YAML frontmatter（functional_domain/layer）+ 列表项（ADR/TD/CS/CP/INFRA/SCRIPT marker、模块名、描述、depends_on 行）
+#   code: blueprint_path
+# - id: I2
+#   name: 任务仓库 task_repo 可选SQLite仓储
+#   fields: next_seq(ns) 取号、create(task) 入库、transition 状态流转；为 None 时用内存序号
+#   code: task_repo
+# - id: I3
+#   name: 文档输出目录 docs_dir 可选路径
+#   fields: 指定时写 decomposition/decomposition_result.json 与 tasks/{task_id}.md
+#   code: docs_dir
+# 层: 算法
+# - id: A1
+#   name_zh: ① frontmatter解析与target_layer推断
+#   name_en: _parse_frontmatter/_infer_target_layer
+#   intro: 读蓝图头部 YAML，按功能域/架构层词表映射出 target_layer 域标识
+#   desc: 解析 --- 包裹的 YAML frontmatter；先查 functional_domain→D_* 映射表（13 域），再查 layer=L0_infrastructure 特例，命中即得 target_layer，否则 None
+#   inputs: I1
+#   outputs: target_layer 字符串或 None
+# - id: A2
+#   name_zh: ② 列表项抽取与TaskCard构建
+#   name_en: _extract_tasks/_build_task_card
+#   intro: 逐行扫蓝图，用正则抓任务条目并组装成带命名空间序号的 TaskCard
+#   desc: _ITEM_PATTERN/_UNIVERSAL_ITEM_PATTERN 匹配列表项得 marker+模块名+描述；marker→蓝图标签→TaskNamespace（ADR→KBG、TD→DW、CS→STD、INFRA/SCRIPT→OPS）；序号取 task_repo.next_seq 或内存自增；描述不足自动补齐根因/施工步骤/验收标准三段
+#   inputs: I1 I2
+#   outputs: TaskCard 列表 + unassigned + warnings
+#   invariant: task_id 满足 ^(KBG|CP|KE|STD|DW|SRC|OPS)-\d+$
+# - id: A3
+#   name_zh: ③ 依赖解析与依赖图构建
+#   name_en: _resolve_depends_on_ids/_build_dependency_graph/topology_sort
+#   intro: 把 depends_on 里的标题别名解析成 task_id，再建图并可拓扑排序
+#   desc: depends_on 条目依次按 task_id 精确、标题别名、TASK_ID_RE 正则解析；无显式依赖时默认串行依赖前一条；拓扑排序用 Kahn 入度法，检测到环则告警回退插入序
+#   inputs: I1
+#   outputs: dependency_graph 字典 / 排序后 TaskCard 列表
+# - id: A4
+#   name_zh: ④ 双向持久化入库与落盘
+#   name_en: _write_tasks/_write_task_companion_md
+#   intro: TaskCard 双向写入——SQLite 入库 + docs_dir 下 JSON/Markdown 同步产物
+#   desc: task_repo.create 逐卡入库（ValueError 记为门禁拒绝 warning），无依赖卡自动 PENDING→READY；docs_dir 指定时写 decomposition_result.json 与逐任务 companion md（含 SSoT 警告头）
+#   inputs: I2 I3
+#   outputs: SQLite 任务记录 + decomposition 目录文件
+# 层: 输出
+# - id: O1
+#   name_zh: 拆解结果 DecompositionResult
+#   name_en: DecompositionResult
+#   intro: 含 total_tasks/tasks/dependency_graph/unassigned_items/warnings 的拆解结果对象，decompose_blueprint 返回值
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: SQLite任务记录与companion文档
+#   name_en: task_repo.create/decomposition_result.json
+#   intro: 持久化产物——TaskRepository 库内任务卡（真源）与 docs_dir/decomposition/ 下 JSON 及逐任务 Markdown（human companion）
+#   invariant: Markdown 仅为同步产物，真源为 SQLite DB
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I1 --> A2
+# A1 --> A2
+# I2 --> A2
+# A2 --> A3
+# A3 --> A4
+# I2 --> A4
+# I3 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

@@ -16,11 +16,66 @@
 # [TTL] permanent
 
 """
+
+
 Dogfooding — 自举测试：用 TaskCard 管理 TaskCard 建设。
 
 依据：
     蓝图 MOD-TASK_SYSTEM §6.5.2 + v0.6.0
     任务卡 TASK-INF-0110 (Part 2/4)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 自测任务清单 DogfoodTask列表
+#   fields: 内置 DOGFOOD_TASKS 4 条（schema自校验/拆解器自测/MCP自测/生命周期自转），可用 register_dogfood_task 追加
+#   code: DOGFOOD_TASKS L53-L58
+# - id: I2
+#   name: 报告目录 data_dir 路径
+#   fields: 自测报告 JSON 落盘目录，默认 data/maintenance/dogfooding
+#   code: data_dir L62-L63
+# 层: 算法
+# - id: A1
+#   name_zh: ① 自测循环执行
+#   name_en: run_dogfood_cycle
+#   intro: 逐条跑自测任务统计通过数，全过则判自洽，最后落盘报告
+#   desc: 遍历 self._tasks 每条调 _test_task_card_schema，通过 passed+1 否则 findings 追加 FAILED 记录；self_consistent = (passed == len(tasks))；组 DogfoodReport（report_id=DOGFOOD-UTC时间戳）后 _save_report 并返回
+#   inputs: I1
+#   outputs: DogfoodReport
+#   invariant: self_consistent 当且仅当 通过数==任务总数
+# - id: A2
+#   name_zh: ② TaskCard模式自检
+#   name_en: _test_task_card_schema
+#   intro: 声明 TaskCard 13 个必备字段清单做自检基准，当前恒返回 True
+#   desc: required_fields 列 task_id/source_blueprint/title/description/priority/upstream_files/downstream_outputs/allowed_touch/forbidden_touch/depends_on/blocked_by/acceptance_criteria/status 共13项；函数体未做真实校验直接 return True（占位实现）
+#   inputs: I1
+#   outputs: bool（恒 True）
+# - id: A3
+#   name_zh: ③ 自测报告落盘
+#   name_en: _save_report
+#   intro: 把 DogfoodReport 序列化成 JSON 写进报告目录
+#   desc: 建目录后写 {report_id}.json，含 report_id/tasks_tested/tasks_passed/self_consistent/findings/timestamp_utc 六字段（ensure_ascii=False indent=2）
+#   inputs: I2
+#   outputs: DOGFOOD-*.json 文件
+# 层: 输出
+# - id: O1
+#   name_zh: 自测报告对象
+#   name_en: DogfoodReport
+#   intro: run_dogfood_cycle 返回值——测试数/通过数/自洽标志/失败发现清单/UTC时间戳
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 自测报告JSON文件
+#   name_en: DOGFOOD-*.json
+#   intro: data/maintenance/dogfooding/ 下按报告ID命名的持久化自测报告
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A3
+# A1 --> A3
+# A1 --> O1
+# A3 --> O2
 """
 
 from typing import Final

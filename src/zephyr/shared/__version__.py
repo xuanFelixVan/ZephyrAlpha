@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 __version__.py —— ZephyrAlpha Shared 模块版本常量
 
 Phase 6 新增（盲点 B8）——解决消费者无法在运行时得知 shared/ 版本、
@@ -37,6 +39,75 @@ Phase 9 增强（盲点 B21）——追加 SemVer 比较函数（版本兼容性
 
 SSoT: MOD-INF-016 §2.15 shared-version
 Version: 0.14.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: shared 层版本常量
+#   fields: __version__="0.14.0" / __version_info__=(0,14,0) / MIN_COMPATIBLE_SHARED_VERSION
+#   code: __version__.py L64-66
+# - id: I2
+#   name: 调用方传入的版本字符串参数
+#   fields: required（最低要求版本，如 "0.5.0"）/ a / b（SemVer 字符串 "x.y.z"）
+#   code: check_shared_version L89 / version_* L139-188 函数参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 版本字符串解析
+#   name_en: _parse_version / _parse_semver
+#   intro: 把 "x.y.z" 字符串拆成可比较的整数元组
+#   desc: split(".") 取纯数字段转 int 元组；或正则 ^(\d+)\.(\d+)\.(\d+) 提取 MAJOR/MINOR/PATCH，非法串抛 ValueError
+#   inputs: I2
+#   outputs: 整数版本元组 tuple[int,...]
+# - id: A2
+#   name_zh: ② 运行时版本校验
+#   name_en: check_shared_version
+#   intro: 比对当前 shared 版本是否满足消费者要求的最低版本
+#   desc: current >= needed 返回 True；不满足时 strict=True 抛 VersionMismatchError，否则 warning 日志后返回 False
+#   inputs: I1 A1
+#   outputs: bool 校验结果 / VersionMismatchError
+#   invariant: required 为 None 时回退 MIN_COMPATIBLE_SHARED_VERSION
+# - id: A3
+#   name_zh: ③ SemVer 比较运算族
+#   name_en: version_eq / version_lt / version_lte / version_gt / version_gte / version_compatible
+#   intro: 两个版本号的大小比较与 MAJOR 级兼容性判断
+#   desc: 解析后按元组字典序比较；compatible = 同 MAJOR 且 a >= b（cross_layer_contracts.yaml VER-R1）
+#   inputs: A1
+#   outputs: bool 比较结果
+# - id: A4
+#   name_zh: ④ 版本组件提取
+#   name_en: version_major / version_minor / version_patch
+#   intro: 取出版本号的主/次/补丁三段数字
+#   desc: _parse_semver 后按下标 0/1/2 返回对应 int
+#   inputs: A1
+#   outputs: int 版本组件
+# 层: 输出
+# - id: O1
+#   name_zh: 版本校验与比较结果
+#   name_en: bool
+#   intro: True 表示版本满足要求 / 比较成立 / MAJOR 兼容
+#   downstream: 全项目 shared 消费者启动时版本自检（[CONSUMERS] 头未登记具体 MOD）
+# - id: O2
+#   name_zh: 版本不匹配异常
+#   name_en: VersionMismatchError
+#   intro: strict 模式下版本不达标时的硬中断（error_code ZA-SH-0030）
+#   downstream: 调用方异常处理逻辑
+# - id: O3
+#   name_zh: 版本组件整数
+#   name_en: int
+#   intro: major/minor/patch 数值，供按段判断版本
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# A2 --> O1
+# A3 --> O1
+# A2 --> O2
+# A4 --> O3
 """
 
 from __future__ import annotations

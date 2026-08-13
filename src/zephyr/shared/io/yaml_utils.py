@@ -14,7 +14,9 @@
 # [TESTS] 手动测试：load_vocabulary_values("status_vocabulary.yaml") 返回3值
 # [A_module] module_id=MOD-SHR_IO_YAML | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源）
+"""
+
+yaml_utils.py — vocabulary YAML 加载公共工具（SSoT 真源）
 
 对标 SCRIPT-QUALITY-001 D-D-05（禁止跨脚本复制粘贴逻辑）
      trae_060 §2（词表唯一真源，直接消费不复制）
@@ -25,6 +27,86 @@
 
 capability_id: vocabulary_values_loader
 canonical: src/zephyr/shared/io/yaml_utils.py
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: vocabulary 词表YAML文件
+#   fields: 顶层values列表(entry含value/definition) + deprecated_values + decision_tree + 顶层列表段(如foundation_domains)
+#   code: docs/01_policies_and_standards/_registry/vocabularies/*_vocabulary.yaml
+# - id: I2
+#   name: 外部契约YAML criteria_source引用
+#   fields: 被decision_tree节点criteria_source引用的外部YAML(含path/section点分隔路径)
+#   code: directory_contract.yaml 等, 相对 REPO_ROOT
+# - id: I3
+#   name: TTL判定输入
+#   fields: rel_path相对路径(正斜杠) + frontmatter dict(含doc_type)
+#   code: evaluate_ttl(rel_path, frontmatter, decision_tree)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 词表路径解析与加载校验
+#   name_en: _resolve_vocab_path / _load_vocab_data
+#   intro: 拼好词表文件路径读YAML，strict模式文件没了直接崩，宽容模式安静返回None
+#   desc: 非绝对路径拼接vocab_dir(默认词表目录) → yaml.safe_load; strict=True时缺失/解析错/非dict均抛异常fail-fast, strict=False返回None
+#   inputs: I1
+#   outputs: 词表data dict 或 None
+#   invariant: strict=True fail-fast
+# - id: A2
+#   name_zh: ② 合法值与条目收集
+#   name_en: load_vocabulary_values / load_vocabulary_entries / load_all_vocabulary_values / load_vocabulary_section_list
+#   intro: 从values列表抠出合法值集合或值+定义列表，也能批量扫全部词表或读顶层列表段
+#   desc: 遍历data[values]取entry[value](缺则回退fallback_key)集合成set; entries版附definition; 批量版glob *_vocabulary.yaml跳过空词表; section_list版读顶层列表段裸字符串
+#   inputs: A1
+#   outputs: set[str]合法值 / list[dict]条目 / {vocab_name: set}
+#   invariant: load_vocabulary_values 是 vocabulary YAML 合法值加载的唯一真源
+# - id: A3
+#   name_zh: ③ 废弃值迁移映射加载
+#   name_en: load_vocabulary_deprecated_map / _collect_deprecated_map
+#   intro: 把废弃值到迁移目标的映射抠出来，多值或N/A的标None留人工判
+#   desc: 遍历deprecated_values取value→migrated_to; 单值字符串或单元素list→目标字符串; 多值/N/A开头→None
+#   inputs: I1
+#   outputs: {废弃值: 迁移目标|None}
+# - id: A4
+#   name_zh: ④ 决策树加载与criteria_source展开
+#   name_en: load_decision_tree / _expand_criteria_sources
+#   intro: 读decision_tree并把引用外部YAML的路径列表就地展开成criteria，消费者零感知
+#   desc: 取data[decision_tree] → 遍历nodes, 有criteria_source则读外部YAML按section点路径取list → node[criteria]=[{signal,value,operator}...] 原地展开
+#   inputs: I1 I2
+#   outputs: decision_tree dict(含root/nodes)
+# - id: A5
+#   name_zh: ⑤ TTL决策树判定
+#   name_en: evaluate_ttl / _eval_criterion
+#   intro: 拿文件路径和frontmatter沿判定树走，走到叶子得出permanent还是task_bound
+#   desc: 从root沿nodes走(visited防循环): criteria按match=any/all评估(path:startswith/contains, frontmatter.doc_type:equals) → yes/no分支(兼容PyYAML布尔键) → 终值须在ttl合法值集否则回退task_bound
+#   inputs: I3 A4
+#   outputs: "permanent" 或 "task_bound"
+#   invariant: 无判定树或终值非法时安全回退task_bound
+# 层: 输出
+# - id: O1
+#   name_zh: 词表合法值集合与结构
+#   name_en: set[str] / list[dict] / deprecated map / decision_tree
+#   intro: 词表合法值、值+定义条目、废弃迁移映射与决策树，是各治理脚本的词表唯一真源
+#   downstream: scripts/governance/_shared/yaml_utils.py(重新导出) ; 各治理检测脚本
+# - id: O2
+#   name_zh: TTL判定结果
+#   name_en: evaluate_ttl -> str
+#   intro: 文件生命周期判定permanent/task_bound，喂给ttl元数据回填与提交网关
+#   invariant: 返回值∈ttl_vocabulary.yaml合法值集
+#   downstream: 治理脚本(backfill_ttl_metadata / git_commit_gateway 等)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I1 --> A3
+# I1 --> A4
+# I2 --> A4
+# I3 --> A5
+# A4 --> A5
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

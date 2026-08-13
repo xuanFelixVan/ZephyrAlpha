@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Dependency Graph — 任务卡依赖关系管理。
 
 依据：
@@ -26,6 +28,68 @@ Dependency Graph — 任务卡依赖关系管理。
     - depends_on/blocked_by 格式校验
     - 环检测（DFS cycle detection）
     - 依赖浅深分析 + 硬杀伤链构建
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 任务依赖声明 字符串列表
+#   fields: task_id 加 depends_on/block blocked_by 任务ID列表，add_node 注册入图
+#   code: add_node(task_id, depends_on, blocked_by) L77
+# - id: I2
+#   name: 任务卡字典 task_card dict
+#   fields: 含 task_id/depends_on/blocked_by 键，供格式合法性校验
+#   code: validate_task_deps(task_card) L146
+# 层: 算法
+# - id: A1
+#   name_zh: ① 节点注册与传递依赖解析
+#   name_en: add_node/_resolve_all_deps
+#   intro: 把任务及其直接依赖注册进图，并递归算出全部传递依赖集合
+#   desc: 按 task_id 建/取 DependencyNode 写入 depends_on、blocked_by；_resolve_all_deps 带 visited 防重递归遍历 depends_on，all_deps 集合递归并集后 sorted，回填 node.all_dependencies
+#   inputs: I1
+#   outputs: DependencyNode（含 all_dependencies）
+# - id: A2
+#   name_zh: ② DFS环检测
+#   name_en: detect_cycles
+#   intro: 用访问集加栈内集双标记的深度搜索找依赖环并记录环路径
+#   desc: visited/in_stack/path 三态 DFS：命中 in_stack 即回边，path.index(tid) 起截环生成 CycleDetection(cycle_path+message)；全图逐未访节点起跑
+#   inputs: I1
+#   outputs: list[CycleDetection]
+#   invariant: 环路径首尾同节点，如 A -> B -> A
+# - id: A3
+#   name_zh: ③ 硬杀伤链构建
+#   name_en: build_kill_chain/_depth_first_path
+#   intro: 从某任务出发深搜依赖链，输出链深与直接/传递依赖计数
+#   desc: _depth_first_path 递归拼去重依赖路径；KillChain(task_id, chain_depth=len(path)-1, chain_path, direct_deps=len(depends_on), transitive_deps=len(全量依赖))
+#   inputs: I1
+#   outputs: KillChain 或 None
+# - id: A4
+#   name_zh: ④ 依赖格式校验
+#   name_en: validate_task_deps
+#   intro: 校验任务卡 depends_on/blocked_by 必须是列表、无自依赖、两表不冲突
+#   desc: isinstance 校验两者皆 list；任一 ID 等于 task_id 判自依赖失败；同 ID 同现 depends_on 与 blocked_by 判冲突失败；否则返回 (True, "Dependencies valid")
+#   inputs: I2
+#   outputs: (bool, 校验消息)
+# 层: 输出
+# - id: O1
+#   name_zh: 环检测报告
+#   name_en: list[CycleDetection]
+#   intro: 全图环检测结果列表，每项含 has_cycle/cycle_path/可读 message
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 杀伤链与校验结论
+#   name_en: KillChain/tuple[bool,str]
+#   intro: 单任务依赖链深度报告（build_kill_chain）与任务卡依赖合法性结论（validate_task_deps）
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I1 --> A2
+# A1 --> A3
+# I1 --> A3
+# I2 --> A4
+# A2 --> O1
+# A3 --> O2
+# A4 --> O2
 """
 
 from __future__ import annotations
