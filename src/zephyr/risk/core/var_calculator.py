@@ -35,7 +35,7 @@ Phase 3 (未实现): Basel III 三角验证 + 乘数因子 + 压力 VaR
     - 依赖 DuckDB+Parquet (已有, 本模块仅做计算, 数据读取由上层负责)
 
 属 A 类基础设施 (正态分位数 + 经验分位数, 数学逻辑明确), 置信度/持有期为 C 类可调参数。
-依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-05, §6 VaR三阶段演进
+依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-05, §6 VaR三阶段演进
 SSoT: depgraph MOD-RK-05
 Version: 0.1.0 (Phase 1)
 
@@ -243,6 +243,7 @@ class VaRResult:
         std_return: 样本标准差 (日频)
         sample_size: 历史样本数
         timestamp: 计算时间
+        annualization_factor: 年化因子 (来自 VaRConfig, 默认 252)
     """
 
     value: float
@@ -257,11 +258,12 @@ class VaRResult:
     timestamp: datetime
     parametric_var: float | None = None
     historical_var: float | None = None
+    annualization_factor: int = 252
 
     @property
     def annualized_vol(self) -> float:
         """年化波动率 = std_return * sqrt(annualization_factor)。"""
-        return float(self.std_return * np.sqrt(252.0))
+        return float(self.std_return * np.sqrt(float(self.annualization_factor)))
 
     def to_dict(self) -> dict[str, Any]:
         """转为字典 (供事件/日志)。"""
@@ -382,6 +384,7 @@ class VaRCalculator:
             timestamp=now,
             parametric_var=p_var,
             historical_var=h_var,
+            annualization_factor=self._config.annualization_factor,
         )
 
     def calculate_portfolio(
