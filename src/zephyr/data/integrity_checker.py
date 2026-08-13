@@ -44,6 +44,101 @@ _SQL_COUNT_TODAY = (
     "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
 )
 
+# 周末/月初才跑的 schedule——工作日对账时不应期待它们当天运行
+_NON_DAILY_SCHEDULES = frozenset({
+    "weekend_calibration", "monthly_static", "weekend_backfill",
+})
+
+# SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+_SQL_RUNS_SINCE = (
+    "SELECT task_id, status, started_at FROM task_runs WHERE started_at >= ? "
+    "ORDER BY started_at DESC"
+)
+
+
+def _should_run_today(tasks: list[dict]) -> dict[str, str]:
+    """筛出今日应跑任务（未禁用 + 每日类 schedule）。返回 {task_id: schedule}。"""
+    should_run: dict[str, str] = {}
+    for t in tasks:
+        tid = t.get("task_id", "")
+        if not tid:
+            continue
+        sched = t.get("schedule", "")
+        disabled = bool(t.get("disabled")) or bool(t.get("extra", {}).get("disabled"))
+        if disabled or sched in _NON_DAILY_SCHEDULES:
+            continue
+        should_run[tid] = sched
+    return should_run
+
+
+def _today_latest_status(store, today: datetime.date) -> dict[str, str]:
+    """查今日 task_runs 每个任务最新一次状态。返回 {task_id: status}。失败返回 {}。"""
+    # UTC 窗口：本地 today 00:00 = UTC today-1 16:00；task_runs.started_at 存 UTC ISO
+    day_start_utc = (
+        datetime.datetime.combine(today, datetime.time.min, tzinfo=datetime.timezone.utc)
+        - datetime.timedelta(hours=8)
+    ).isoformat()
+    try:
+        with store._lock:
+            cur = store._conn.execute(_SQL_RUNS_SINCE, (day_start_utc,))
+            runs = [dict(r) for r in cur.fetchall()]
+            cur.close()
+    except Exception as e:  # noqa: BLE001 — 对账失败不应中断主巡检
+        log.error("任务级对账查询 task_runs 失败: %s", e)
+        return {}
+
+    latest: dict[str, str] = {}
+    for r in runs:
+        tid = r["task_id"]
+        if tid not in latest:
+            latest[tid] = r.get("status") or "UNKNOWN"
+    return latest
+
+
+def _reconcile_task_runs(scheduler, today: datetime.date) -> dict:
+    """任务级对账：核对"今日应跑任务"在 task_runs 里是否有 SUCCESS 记录。
+
+    病根（#ARCH-DATA-RECONCILE-001，2026-08-13）：原巡检只查每张表"今天有多少行"，
+    用历史基线阈值判定。当某任务今天根本没跑（如调度器没拉起某批次），只要该表
+    昨天有数据把历史基线拉高/或阈值被拉低，就会误报"达标"——37 个任务漏跑零告警。
+
+    治本：除表级行数检查外，再做一层"声明 vs 实际"对账——
+      应跑 = tasks.yaml 中未禁用、且 schedule 属于"每日类"（排除周末/月初时段）的任务
+      实际 = task_runs 中今日（UTC 窗口）有 status='SUCCESS' 记录的任务
+      缺口 = 应跑 - 实际 → 告警
+
+    Args:
+        scheduler: IntegratorScheduler 实例（取 _tasks / _progress_store）
+        today: 检查日期（本地日）
+
+    Returns:
+        {"should_run": int, "succeeded": int, "missing": [...], "failed": [...]}
+    """
+    empty = {"should_run": 0, "succeeded": 0, "missing": [], "failed": []}
+    if scheduler is None:
+        return empty
+
+    store = getattr(scheduler, "_progress_store", None)
+    if store is None:
+        return empty
+
+    should_run = _should_run_today(getattr(scheduler, "_tasks", None) or [])
+    latest = _today_latest_status(store, today)
+
+    succeeded = {tid for tid in should_run if latest.get(tid) == "SUCCESS"}
+    missing = sorted(tid for tid in should_run if tid not in latest)
+    failed = sorted(
+        tid for tid in should_run
+        if tid in latest and latest[tid] != "SUCCESS"
+    )
+
+    return {
+        "should_run": len(should_run),
+        "succeeded": len(succeeded),
+        "missing": missing,
+        "failed": failed,
+    }
+
 
 def _check_table_today(info: dict, today: datetime.date) -> dict | None:
     """检查单张表当天数据行数是否达标。
@@ -125,14 +220,31 @@ def run_daily_check(scheduler=None) -> dict:
     unhealthy = [r for r in results if not r["healthy"]]
     healthy_count = total - len(unhealthy)
 
+    # 任务级对账（#ARCH-DATA-RECONCILE-001）：核对"今日应跑 vs 实际 SUCCESS"
+    # 补表级行数检查的盲区——任务没跑时表级可能因历史基线误报达标。
+    recon = _reconcile_task_runs(scheduler, today)
+    task_gaps = recon["missing"] + recon["failed"]
+
     # 告警
-    if scheduler is not None and unhealthy:
+    if scheduler is not None:
         try:
             alerter = scheduler._alerter
             for r in unhealthy:
                 alerter.notify(
                     f"integrity_check_{r['table']}",
                     f"表 {r['table']} 当日数据不达标: {r['count']} < {r['threshold']}",
+                    level="ERROR",
+                    source="integrity_check",
+                )
+            # 任务级缺口告警（漏跑/失败任务，聚合为一条避免刷屏）
+            if task_gaps:
+                alerter.notify(
+                    "integrity_check_task_reconcile",
+                    "任务级对账缺口: 应跑 %d, 成功 %d, 漏跑 %d, 失败 %d。漏跑=%s 失败=%s" % (
+                        recon["should_run"], recon["succeeded"],
+                        len(recon["missing"]), len(recon["failed"]),
+                        recon["missing"], recon["failed"],
+                    ),
                     level="ERROR",
                     source="integrity_check",
                 )
@@ -146,7 +258,7 @@ def run_daily_check(scheduler=None) -> dict:
                 "integrity_check_daily",
                 "integrity_check",
                 today.isoformat(),
-                "SUCCESS" if not unhealthy else "PARTIAL",
+                "SUCCESS" if (not unhealthy and not task_gaps) else "PARTIAL",
                 total,
             )
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
@@ -161,14 +273,24 @@ def run_daily_check(scheduler=None) -> dict:
             {"table": r["table"], "count": r["count"], "threshold": r["threshold"]}
             for r in unhealthy
         ],
-        "success": len(unhealthy) == 0,
+        # 任务级对账结果（新增维度）
+        "task_should_run": recon["should_run"],
+        "task_succeeded": recon["succeeded"],
+        "task_missing": recon["missing"],
+        "task_failed": recon["failed"],
+        "success": len(unhealthy) == 0 and not task_gaps,
     }
 
     log.info(
-        "巡检完成: %d 张表, %d 达标, %d 跳过(元数据), %d 不达标",
+        "巡检完成: %d 张表, %d 达标, %d 跳过(元数据), %d 不达标 | 任务级: 应跑 %d, 成功 %d, 漏跑 %d, 失败 %d",
         total, healthy_count, skipped_count, len(unhealthy),
+        recon["should_run"], recon["succeeded"], len(recon["missing"]), len(recon["failed"]),
     )
     if unhealthy:
         log.warning("不达标表: %s", [r["table"] for r in unhealthy])
+    if recon["missing"]:
+        log.warning("漏跑任务: %s", recon["missing"])
+    if recon["failed"]:
+        log.warning("失败任务: %s", recon["failed"])
 
     return summary

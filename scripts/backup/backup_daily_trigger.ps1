@@ -50,6 +50,55 @@ function Write-OK($msg)    { Write-Host "[OK] $msg" -ForegroundColor Green }
 function Write-Warn($msg)  { Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 function Write-Err($msg)   { Write-Host "[ERR] $msg" -ForegroundColor Red }
 
+# ==================== Backup SLO sentinel (#ARCH-BACKUP-SLO-001, 2026-08-13) ====================
+# Root cause: CH backup failed 2 days silently (failure only written to log file, no alert channel).
+# Fix: after daily backup, independently check backup_state.json CH SLO; on failure/stale write an
+#      alert file to logs/alerts/ for dashboard / AI inspection / user discovery.
+#      Does NOT depend on backup.ps1 success (runs even if backup.ps1 crashed).
+function Invoke-BackupSloCheck {
+    $stateFile = "$ProjectRoot\data\databases\backup_state.json"
+    $alertDir  = "$ProjectRoot\logs\alerts"
+    $sloMaxHours = 36   # CH backup SLO: must succeed within 36h (daily 06:00 + tolerance)
+
+    if (-not (Test-Path $stateFile)) {
+        $reason = "backup_state.json missing (backup never ran?)"
+    } else {
+        try {
+            $st = Get-Content $stateFile -Raw | ConvertFrom-Json
+            $chStatus = [string]$st.last_ch_backup_status
+            $chTime   = $st.last_ch_backup_time
+            $elapsedH = if ($chTime) { ((Get-Date) - [datetime]::Parse($chTime)).TotalHours } else { [double]::PositiveInfinity }
+            if ($chStatus -ne "ok") {
+                $chErr = [string]$st.last_ch_backup_error
+                $reason = "last_ch_backup_status=${chStatus} (error: ${chErr})"
+            } elseif ($elapsedH -gt $sloMaxHours) {
+                $elapsedRound = [math]::Round($elapsedH, 1)
+                $reason = "CH backup stale: last ok ${elapsedRound}h ago (> ${sloMaxHours}h SLO)"
+            } else {
+                $elapsedRound = [math]::Round($elapsedH, 1)
+                Write-OK "SLO check passed: last_ch_backup_status=ok, ${elapsedRound}h ago"
+                return
+            }
+        } catch {
+            $reason = "SLO check parse error: $($_.Exception.Message)"
+        }
+    }
+
+    # Write alert file (disk = alert channel; dashboard/AI can scan logs/alerts/)
+    New-Item -ItemType Directory -Path $alertDir -Force | Out-Null
+    $alertFile = Join-Path $alertDir ("backup_slo_{0}.json" -f (Get-Date -Format 'yyyyMMdd'))
+    $alert = @{
+        alert_id   = "backup_ch_slo"
+        level      = "ERROR"
+        source     = "backup_daily_trigger"
+        timestamp  = (Get-Date).ToString("o")
+        reason     = $reason
+        slo_hours  = $sloMaxHours
+    }
+    [System.IO.File]::WriteAllText($alertFile, ($alert | ConvertTo-Json -Depth 3), (New-Object System.Text.UTF8Encoding($false)))
+    Write-Err "SLO ALERT: $reason -> $alertFile"
+}
+
 # ==================== -TaskStatus ====================
 if ($TaskStatus) {
     Write-Stage "Scheduled task status: $TaskName"
@@ -158,4 +207,8 @@ try {
 }
 
 Write-Stage "Daily trigger finished at $(Get-Date -Format 'o'), backup.ps1 exit=$exitCode, log=$LogFile"
+
+# SLO sentinel: independently check CH backup health regardless of backup.ps1 exit code
+Invoke-BackupSloCheck
+
 exit $exitCode
