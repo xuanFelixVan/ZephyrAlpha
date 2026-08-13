@@ -104,7 +104,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 2 | 00_index §0 目录 17 号仍标 draft v0.1.0（L42/L645），实际已 active v1.0.0 | AI-STD-001 | 已实证 L42/L645 滞后 | 🔥 可处理 |
 | 3 | #ARCH-BREG-001 fix_phase 更新：factor/strategy/risk_limit Step4-8、indicator、chart_pattern、field_dictionary、experiment 均已完成，文本仍写"待施工/待做" | AI-REG-COMP/FLD | 已实证 fix_phase 文本滞后（last_updated 2026-08-13 但内容未含批一/批二完工态） | 🔥 可处理 |
 | 4 | 17 号文档路径引用/BOM/换行符补检（merge 后由统筹执行） | AI-STD-001 | merge 已完成，可执行补检 | 🔥 可处理 |
-| 5 | AGENTS.md 业务资产速查更新（17 号定稿 + 12 注册表建成后） | AI-STD-001 | AGENTS.md 已被多队 merge 更新，需复核速查表覆盖度 | 🔥 可处理 |
+| 5 | AGENTS.md 业务资产速查更新（17 号定稿 + 12 注册表建成后） | AI-STD-001 | ✅ 已闭环（2026-08-13，commit f15de056，Owner 批准 [ARCH-APPROVAL] 落地，12 注册表速查全量更新） | ✅ |
 
 ### P1 · 治理登记缺口/一致性问题
 
@@ -113,7 +113,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 6 | depgraph build_status 滞后：MOD-POS-020 节点状态异常 | AI-POS-001 | 模块已 production 落码，depgraph 未同步 | ⏳ |
 | 7 | depgraph MOD-POS-021 状态仍 design 滞后 | AI-FRA-001 | 同上 | ⏳ |
 | 8 | capability_canonical_file_registry 未登记 MOD-POS-021（违反硬约束） | AI-FRA-001 | 需补登记 | ⏳ |
-| 9 | AGENTS.md 显化修改被 PROTECTED-PATHS 门禁阻断，需 Owner 审批 | AI-REG-FLD-001 / EXP-001 | 两队同遇；走 Owner 审批流程 | ⏳ 等 Owner |
+| 9 | AGENTS.md 显化修改被 PROTECTED-PATHS 门禁阻断，需 Owner 审批 | AI-REG-FLD-001 / EXP-001 | 两队同遇；走 Owner 审批流程。**2026-08-13 进展**：12 注册表速查改动已获 Owner 批准落地（f15de056）；后续新增显化修改仍需逐个审批 | 🔄 部分闭环 |
 | 10 | dangling FK：UNI-BASKET-001（regime 验证 10 大盘股篮子未登记 universe_registry） | AI-REG-EXP-001 | 需补登 universe_registry 或修正引用 | ⏳ |
 | 11 | 16 号文档 8 大类指标 vs 代码实际 5 大类（trend/momentum/volatility/volume/reversal）不一致 | AI-REG-IND-001 | 文档需对齐代码现实 | ⏳ |
 | 12 | data_asset 注册表 13 个 E5 告警（旧 dataflow 注册表锚点漂移） | AI-REG-EXE-001 | 锚点漂移治理 | ⏳ |
@@ -171,4 +171,5 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 2026-08-13 20:46 | 第二批 7 队完工，遗留项 19→28，#6 闭环 | 第二统筹会话 |
 | 2026-08-13 21:05 | 全部 17 个 worktree merge 回 dev | merge 会话 |
 | 2026-08-13 晚 | **文件重建**（原文件未 commit 丢失）+ 遗留项按 P0/P1/P2 重分类 + 状态逐项实证 | 本会话 |
+| 2026-08-13 晚 | SOP 迁家（02/67→01/sop 专区）+ 遗留 #5 闭环（AGENTS.md 速查，Owner 批准 f15de056）+ #9 部分闭环 | 本会话（sess-recovery-0813） |
 | 2026-08-13 晚 | 补登 5 项遗漏遗留（#29-33），其中 #29 蓝图补建因 merge 完成转 🔥 可处理 | 第二统筹会话（用户裁定蓝图遗留登记） |
