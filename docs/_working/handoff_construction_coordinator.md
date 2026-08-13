@@ -68,7 +68,7 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 - **第一批 8 队 + 第二批 7 队**：全部完工 PASS，17 个 worktree 已全部 merge 回 dev（merge 会话 21:05 完成）。
 - **SOP**：v1.3.0 已在 dev。
 - **第三批**：3 个会话已分配待开工（33 BudgetChange 等；注意遗留项 #17——33 号文档骨架化需先充实）。
-- **遗留项**：tracker §六共 28 项登记，4 项已闭环，P0 级 5 项阻塞已解除可立即处理。
+- **遗留项**：tracker §六共 33 项登记，4 项已闭环，P0 级 5 项阻塞已解除可立即处理（#29-33 为第二统筹会话 2026-08-13 晚补登）。
 - **未 merge 分支**：仅 `ai/bm-fill/task-battlemap-coverage`（遗留项 #21，待裁定）。
 - **环境**：ALGO_FLOW runner 已完工（58/58），bm-fill 会话已结束，主工作区干净。
 
