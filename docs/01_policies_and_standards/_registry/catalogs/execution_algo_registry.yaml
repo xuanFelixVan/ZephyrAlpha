@@ -1,0 +1,304 @@
+# [A_config] module_id=REG-EXA-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-EXA-001
+name: Execution Algo Registry
+name_zh: 执行算法登记表
+description: >-
+  执行算法唯一真源（SSoT）。登记全部拆单/撮合执行算法（TWAP/VWAP/ICEBERG/POV/IS/ALT 6 种，
+  对齐 40 号文档 §2.3 实际代码实现，注册表模式零边际成本）。
+  编号 EXA-{NAME}-{NNN}。schema 见 62_business_registry_construction.md §6.2.1。
+  含 §4.20 监管合规 8 字段（程序化交易 15 笔/秒 + 撤单率 15% + 50µs 停留 + 盘后时段 + 广域网时延地板）
+  与 §4.23③ A 股微观结构 3 字段（价格笼子/T+1/涨跌停不可成交）——实盘合规 MUST，非可选。
+  自适应分档规则（小单直发/中单TWAP/大单VWAP/超大单IS）见 40 号 §2.3，本表登记算法资产本身。
+# v1.0.0 changelog(2026-08-13): P1-B 首建——40 号 §2.3 六算法真源反查落盘（EXA-TWAP/VWAP/ICEBERG/IS/POV/ALT-001），
+#   按 62 号 §4.5 CONSTRUCT_REGISTRY 8 步施工；cost_model_ref FK→CST-ASTOCK-001（REG-CST-001 已施工强 FK 验证通过）；
+#   module_id=MOD-XS-005（AlgoTradingEngine，depgraph 实证）；
+#   注：任务书口径"Smart/Aggressive"经真源反查对齐 40 号实际实现——Smart≈IS（指数衰减启发式近似 AC 轨迹），
+#   Aggressive=ALT（保留为别名，62 号 §6.2.1 v1.1.0 裁定）；40 号另有 ICEBERG 已实现，共 6 条。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-13'
+last_updated: '2026-08-13'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- execution_algo_id
+
+entry_schema:
+  execution_algo_id: str         # EXA-{NAME}-{NNN}，如 EXA-TWAP-001
+  name: str
+  name_zh: str
+  aliases: list
+  algo_class: str                # twap/vwap/iceberg/implementation_shortfall/percent_of_volume/alt（62号§6.2.1 v1.1.0 对齐40号实际6算法）
+  formula: str
+  params: obj
+  applicable_scenario: str       # 大单/小单/流动性差/急单
+  warmup_participation_rate: float  # 预热参与率（MVP 可空，Phase 1.5+ 校准，对标 MACE 2026）
+  cooling_period: int            # 冷却期分钟数（MVP 可空，Phase 1.5+ 校准）
+  anti_gaming: obj               # 反博弈随机化 {timing_randomization: poisson/uniform/none, size_jitter: 0-0.3}
+  tca_metrics: list              # TCA 双报告指标（vwap_slippage + implementation_shortfall 必报，iotdigitaltwinplm 2026-06）
+  market_impact_model: str       # 冲击模型引用（40号 propagator/Barzykin）
+  impact_model_type: str         # square_root/almgren_chriss/i_star/propagator/fixed_bps/pluggable（v1.30.0，MVP 默认 square_root）
+  cost_model_ref: str            # FK→cost_model_registry.cost_model_id
+  rl_policy_ref: str             # 可选，RL 策略引用（Phase 1.5+ 远期选项，MVP 填 null）
+  module_id: str
+  doc_ref: str
+  code_path: str
+  status: str                    # candidate/experimental/active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  # §4.20 监管合规字段（2026-07 生效，实盘合规 MUST，v1.14.0/v1.15.0）
+  max_orders_per_sec: int        # 高频认定下限 15 笔/秒，默认 14（留 1 笔余量）
+  max_daily_orders: int          # 单日申报撤单上限 20000，默认 19000
+  cancel_rate_limit: float       # 单日撤单率硬上限 0.15（对齐 40 号 CancelRateGuard）
+  min_order_interval_us: int     # 每笔报单最短停留 50 微秒
+  is_hft: bool                   # 是否高频（超阈值须报备）
+  after_hours_eligible: bool     # 盘后固定价格交易时段资格（15:05-15:30，MVP 不用=false）
+  latency_floor_ms: float        # 广域网双向时延地板 2.0ms（2026-07-31 局域网关闭）
+  network_type: str              # wan/lan，默认 wan
+  # §4.23③ A 股微观结构约束字段（v1.16.0）
+  price_cage_config: obj         # 价格笼子 {board, buy_ceiling_pct, sell_floor_pct, has_unit_floor, unit_floor_yuan}
+  t_plus_1: bool                 # A 股固定 true（信号当日不可执行，回测 MUST signal.shift(1)）
+  limit_up_down_untradable: bool # 涨跌停不可成交（回测 MUST 检查 abs(ret)<limit_pct）
+
+execution_algos:
+  - execution_algo_id: EXA-TWAP-001
+    name: Time-Weighted Average Price
+    name_zh: 时间加权平均价（等量切片被动挂单）
+    aliases: [TWAP, 等量切片]
+    algo_class: twap
+    formula: 总量 Q 按时间均匀切 N 片，每片 q_i=Q/N 等间隔被动挂单（Decimal 守恒：Σq_i==Q）
+    params:
+      slicing: time
+      bucket: 5min
+      price_strategy: PASSIVE     # 本方价挂单（PriceStrategy.PASSIVE）
+      adv_band: [0.01, 0.05]      # 中单 1-5% ADV 默认档（40号§2.3）
+      usage_frequency: 中频        # 建仓/调仓（40号§4.4：必需）
+    applicable_scenario: 中单（1-5% ADV）/可转债（盘口极薄，VWAP 量曲线预测失效）/流动性极差标的（无稳定日内分布）
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: poisson, size_jitter: 0.15}  # 62号§6.2.1：确定性时钟切片=节拍器被抢跑，MVP 建议 poisson+0.1~0.2
+    tca_metrics: [vwap_slippage, implementation_shortfall, fill_rate]
+    market_impact_model: square_root（40号§13.1，MVP 默认；propagator/I-Star Phase 1.5+）
+    impact_model_type: square_root
+    cost_model_ref: CST-ASTOCK-001
+    rl_policy_ref: null
+    module_id: MOD-XS-005
+    doc_ref: 40_execution_broker.md §2.3/§4.4
+    code_path: src/zephyr/ex_sor/core/algo_trading_engine.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-13'
+    updated_at: '2026-08-13'
+    owner: MOD-XS-005
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}  # 科创板纯102%/98%无0.1元兜底；北交所105%/95%（§4.23③）
+    t_plus_1: true
+    limit_up_down_untradable: true
+
+  - execution_algo_id: EXA-VWAP-001
+    name: Volume-Weighted Average Price
+    name_zh: 成交量加权平均价（按日内量能分布切片）
+    aliases: [VWAP, 量能切片]
+    algo_class: vwap
+    formula: 按日内成交量分布加权切片 w_i=V_i/ΣV（A股 U 型：开盘20%/上午25%/午盘10%/尾盘45%，DEFAULT_VOLUME_PROFILE 代码真源）
+    params:
+      volume_profile: {open: 0.20, morning: 0.25, midday: 0.10, tail: 0.45}  # algo_trading_engine.py DEFAULT_VOLUME_PROFILE
+      price_strategy: PASSIVE
+      adv_band: [0.05, 0.15]      # 大单 5-15% ADV 默认档（40号§2.3）
+      usage_frequency: 低频        # 打板集中买入（40号§4.4：必需）
+    applicable_scenario: 大单（5-15% ADV）/沪深股票ETF（U型成交分布，隐藏在自然成交量里）；可转债/流动性极差标的禁用（量曲线预测失效）
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: poisson, size_jitter: 0.15}
+    tca_metrics: [vwap_slippage, implementation_shortfall, fill_rate]
+    market_impact_model: square_root（40号§13.1）
+    impact_model_type: square_root
+    cost_model_ref: CST-ASTOCK-001
+    rl_policy_ref: null
+    module_id: MOD-XS-005
+    doc_ref: 40_execution_broker.md §2.3/§4.4
+    code_path: src/zephyr/ex_sor/core/algo_trading_engine.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-13'
+    updated_at: '2026-08-13'
+    owner: MOD-XS-005
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}
+    t_plus_1: true
+    limit_up_down_untradable: true
+
+  - execution_algo_id: EXA-ICEBERG-001
+    name: Iceberg
+    name_zh: 冰山算法（小额显示量隐藏大单）
+    aliases: [ICEBERG, 冰山, 隐藏大单]
+    algo_class: iceberg
+    formula: 母单拆小，每次仅暴露小额显示量（visible peak），成交后补充挂单，隐藏真实订单意图
+    params:
+      display_ratio: small        # 小额显示量（峰值可见部分）
+      price_strategy: PASSIVE
+      usage_frequency: 储备        # 40号§4.4：个人小资金几乎不触发（自身不影响市场），Phase 1.5 评估是否退役
+    applicable_scenario: 储备（需隐藏订单意图的大单场景；个人小资金自身无市场冲击，MVP 不触发）
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: none, size_jitter: 0.0}      # 显示量本身即反博弈（隐藏总量），MVP 不叠加随机化
+    tca_metrics: [vwap_slippage, implementation_shortfall, fill_rate]
+    market_impact_model: square_root（40号§13.1）
+    impact_model_type: square_root
+    cost_model_ref: CST-ASTOCK-001
+    rl_policy_ref: null
+    module_id: MOD-XS-005
+    doc_ref: 40_execution_broker.md §2.3/§4.4
+    code_path: src/zephyr/ex_sor/core/algo_trading_engine.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-13'
+    updated_at: '2026-08-13'
+    owner: MOD-XS-005
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}
+    t_plus_1: true
+    limit_up_down_untradable: true
+
+  - execution_algo_id: EXA-IS-001
+    name: Implementation Shortfall
+    name_zh: 实施差额（指数衰减启发式近似 AC 风险厌恶轨迹）
+    aliases: [IS, 实施差额, Smart]   # Smart=任务书口径，真源对齐=IS（指数衰减启发式）
+    algo_class: implementation_shortfall
+    formula: 切片权重 w_i∝exp(-λ·t_i) 指数衰减前置加载（启发式近似 Almgren-Chriss 风险厌恶轨迹；非完整 AC 均值-方差 QP，Phase 2 可上推闭合形式双曲正弦轨迹）
+    params:
+      decay_kernel: exponential
+      urgency_driven: true        # urgency 驱动前/后置加载
+      adv_band: [0.15, null]      # 超大单 >15% ADV 档；单笔硬上限 15% ADV（MAX_ADV_FRACTION，超则 OrderTooLargeError 否决+上游拆分）
+      usage_frequency: 储备        # 40号§4.4：个人资金极低频
+    applicable_scenario: 超大单（>15% ADV，平衡冲击成本与时机风险）；个人资金罕见触发，储备能力
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: none, size_jitter: 0.0}      # 指数衰减轨迹本身非等间隔，MVP 不叠加随机化
+    tca_metrics: [vwap_slippage, implementation_shortfall, fill_rate]
+    market_impact_model: almgren_chriss 启发式近似（40号§2.3 注：非完整 QP；I-Star/propagator Phase 1.5+）
+    impact_model_type: square_root
+    cost_model_ref: CST-ASTOCK-001
+    rl_policy_ref: null
+    module_id: MOD-XS-005
+    doc_ref: 40_execution_broker.md §2.3/§4.4
+    code_path: src/zephyr/ex_sor/core/algo_trading_engine.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-13'
+    updated_at: '2026-08-13'
+    owner: MOD-XS-005
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}
+    t_plus_1: true
+    limit_up_down_untradable: true
+
+  - execution_algo_id: EXA-POV-001
+    name: Percent of Volume
+    name_zh: 参与率算法（跟随市场成交量比例）
+    aliases: [POV, 参与率]
+    algo_class: percent_of_volume
+    formula: x_t=γ·V_t（跟随实时成交量）；内生性纠正 x=γ/(1-γ)·M（M=他人成交量，γ≤5% 时修正仅 5.3% 可忽略，γ≥0.5 定点发散）
+    params:
+      max_participation_rate: 0.05  # 监管参与率硬上限（MAX_PARTICIPATION_RATE=0.05，证监会程序化交易规定 40号§10.1；62号§6.2.1：MUST ≤0.10）
+      usage_frequency: 储备          # 40号§4.4：与 VWAP 重叠，Phase 1.5 自适应参与率时才用
+    applicable_scenario: 储备（参与率约束场景；Phase 1.5 自适应参与率启用）
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: none, size_jitter: 0.0}      # POV 押注实时成交量=交易理由，跟随市场本身非确定性时钟
+    tca_metrics: [vwap_slippage, implementation_shortfall, fill_rate]
+    market_impact_model: square_root（40号§13.1）
+    impact_model_type: square_root
+    cost_model_ref: CST-ASTOCK-001
+    rl_policy_ref: null
+    module_id: MOD-XS-005
+    doc_ref: 40_execution_broker.md §2.3/§4.4
+    code_path: src/zephyr/ex_sor/core/algo_trading_engine.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-13'
+    updated_at: '2026-08-13'
+    owner: MOD-XS-005
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}
+    t_plus_1: true
+    limit_up_down_untradable: true
+
+  - execution_algo_id: EXA-ALT-001
+    name: Aggressive Liquidity Taking
+    name_zh: 激进流动性摄取（对手价吃单，游资"狙击"量化版）
+    aliases: [ALT, aggressive, 激进吃单]   # 62号§6.2.1 v1.1.0：alt 保留 aggressive 作为别名（语义相同）
+    algo_class: alt
+    formula: 以对手价（PriceStrategy.AGGRESSIVE）主动吃单， urgency 高时快速成交优先于成本控制
+    params:
+      price_strategy: AGGRESSIVE  # 对手价吃单
+      usage_frequency: 中频        # 打板策略必需（40号§4.4）
+    applicable_scenario: 打板集中买入（urgency 高，需快速成交）/急单；可 VWAP 前置混合（40号§2.3 A股场景化规则）
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: none, size_jitter: 0.0}      # 激进吃单即时成交，无时钟切片可抢跑
+    tca_metrics: [vwap_slippage, implementation_shortfall, fill_rate]
+    market_impact_model: square_root（40号§13.1）
+    impact_model_type: square_root
+    cost_model_ref: CST-ASTOCK-001
+    rl_policy_ref: null
+    module_id: MOD-XS-005
+    doc_ref: 40_execution_broker.md §2.3/§4.4
+    code_path: src/zephyr/ex_sor/core/algo_trading_engine.py
+    status: active
+    version: 1.0.0
+    created_at: '2026-08-13'
+    updated_at: '2026-08-13'
+    owner: MOD-XS-005
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    after_hours_eligible: false
+    latency_floor_ms: 2.0
+    network_type: wan
+    price_cage_config: {board: main_gem, buy_ceiling_pct: 1.02, sell_floor_pct: 0.98, has_unit_floor: true, unit_floor_yuan: 0.1}
+    t_plus_1: true
+    limit_up_down_untradable: true

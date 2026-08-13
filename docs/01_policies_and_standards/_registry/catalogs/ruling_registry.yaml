@@ -1462,18 +1462,21 @@ entries:
   superseded_by: null
 
 - ruling_id: '裁定#223'
-  title: data_asset_registry → dataflow_graph_registry 改名登记（D1硬缺口闭合）
+  title: dataflow_graph_registry → data_asset_registry 改名登记（S6 方向，K1 修正）
   date: '2026-08-10'
   category: 治本
   status: active
   summary: >-
-    data_asset_registry 改名为 dataflow_graph_registry（D1 硬缺口闭合）。
-    病根：data_asset_registry 名称语义模糊（data_asset 既指数据资产又指数据流图），
-    与实际登记内容（76 条 datasets 的数据流图）不匹配。
-    治本：改名 data_asset_registry → dataflow_graph_registry，
-    同步更新 62 号文档 §6.1.3/§6.2.3/§9.4/§10 中所有 data_asset 引用。
-    62 号文档 §9.4 验收清单 D1 项标记为已完成。v1.25.0 修订记录引用本裁定。
+    【2026-08-13 K1 修正】原登记方向写反（误写为 data_asset→dataflow_graph），
+    按 S6 裁定正确方向为：dataflow_graph_registry.yaml → data_asset_registry.yaml（改名扩展，
+    registry_id REG-DATAFLOW-001/module_id 保留）。用户 2026-08-13 拍板 K1 选项①（维持 S6 方向），
+    本条目方向描述据此修正。
+    病根：dataflow_graph（数据流图）名称与扩展后三实体内容（sources/datasets/jobs 数据资产）名实不符。
+    治本：新建 data_asset_registry.yaml（sources 15 源 + datasets 76 条 + jobs 75 条，2026-08-13 落盘），
+    同步 62 号文档 §6.2.3/§9.4/§12 引用。过渡态：旧 dataflow_graph_registry.yaml 暂物理保留
+    （sync_yaml_to_depgraph.py/panorama_alignment_gate.py 等消费方按路径引用），全项目引用迁移+旧文件退役为后续跟进项。
   affected_files:
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\data_asset_registry.yaml
     - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\dataflow_graph_registry.yaml
     - d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\62_business_registry_construction.md
   related_arch:

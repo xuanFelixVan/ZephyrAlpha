@@ -5940,6 +5940,15 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- P1-B 业务注册表（2026-08-13，AI-REG-EXE-001，#ARCH-BREG-001 / 62号§4.5 CONSTRUCT_REGISTRY）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml"
+    token: "auto-execution-algo-registry-20260813"
+    created_by: "AI-REG-EXE-001"
+    capability: "execution_algo_registry"
+  - file: "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml"
+    token: "auto-data-asset-registry-20260813"
+    created_by: "AI-REG-EXE-001"
+    capability: "data_asset_registry"
   # --- AI审查指令集（2026-08-10，24路并发审查回填指令，覆盖design_memos 42篇文档）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md"
     token: "auto-ai-review-instructions-20260810"
