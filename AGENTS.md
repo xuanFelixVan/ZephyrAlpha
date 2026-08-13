@@ -152,11 +152,16 @@
 > - ✅ 股票池：[`universe_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml)（5 条，回测 MUST 指定 universe_id）
 > - ✅ 基准：[`benchmark_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml)（4 条，回测 MUST 指定 benchmark_id）
 > - ✅ 交易成本模型：[`cost_model_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml)（3 条，回测 MUST 扣成本）
-> - 🔄 因子库：[`factor_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（111 条/10 类）
-> - 🔄 策略库：[`strategy_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml)（59 条/6 类）
-> - 🔄 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（42 条/9 类）
-> - ✅ 字段字典：[`field_dictionary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml)（257 条/16 域，factor.inputs FK 全量可解析；条目 candidate 态）
-> - ⏳ 待施工：技术指标/执行算法/数据资产/图形形态（P1）+ 实验（P2）——Schema 见 62 号文档 §6/§7
+> - ✅ 因子库：[`factor_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（111 条/10 类，Step1-8 全量闭环）
+> - ✅ 策略库：[`strategy_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml)（59 条/6 类，Step1-8 全量闭环）
+> - ✅ 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（62 条/9 类，K4 补登 var/es/kill_switch 20 条后闭环）
+> - ✅ 技术指标：[`technical_indicator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml)（40 条/5 大类/58 输出列，9 周期覆盖）
+> - ✅ 执行算法：[`execution_algo_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml)（6 条：TWAP/VWAP/ICEBERG/POV/IS/ALT）
+> - ✅ 数据资产：[`data_asset_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml)（166 条=15 源+76 数据集+75 作业）
+> - ✅ 图形形态：[`chart_pattern_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml)（15 条/8 大类，6 个 code_path 已验证存在）
+> - ✅ 字段字典：[`field_dictionary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml)（257 条/16 域，factor.inputs FK 全量可解析）
+> - ✅ 实验：[`experiment_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml)（5 条可溯源实验记录）
+> - 备注：12 个注册表全部建成并登记 ROOR，状态以 ROOR `summary.total_registries` 为准
 
 ## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
 
