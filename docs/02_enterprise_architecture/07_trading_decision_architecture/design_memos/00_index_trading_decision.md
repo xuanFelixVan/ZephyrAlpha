@@ -75,6 +75,7 @@ scope: 07_trading_decision_architecture
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
 | [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | draft v1.2.1 |
 | [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12） | draft v2.1.1 |
+| [67_merge_conflict_resolution_sop.md](67_merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 | active v1.0.0（2026-08-13 新建） |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案 21 项（全部待讨论） | draft v1.18.1 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.2 |
 

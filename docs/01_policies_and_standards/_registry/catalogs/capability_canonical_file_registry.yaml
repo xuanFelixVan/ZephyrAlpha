@@ -6027,6 +6027,11 @@ creation_tokens:
     created_by: "session-ai-sop-001"
     capability: "construction_workflow_sop"
 
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/67_merge_conflict_resolution_sop.md"
+    token: "auto-67-merge-conflict-resolution-sop-20260813"
+    created_by: "session-sess-recovery-0813"
+    capability: "merge_conflict_resolution_sop"
+
   # --- 翻译覆盖率门禁配套四件套（2026-08-02，TRANSLATION-COVERAGE 四层防御）---
   # 写入工具（Layer 0 入口）+ 提交门禁（Layer 2 阻断）+ 存量对账 reconciler（Layer 4）
   - file: "scripts/governance/d3_metadata/add_module_translation.py"

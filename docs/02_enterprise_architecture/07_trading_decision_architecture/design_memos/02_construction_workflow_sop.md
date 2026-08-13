@@ -617,6 +617,7 @@ python scripts/session_worktree.py mark-completed <sid>
 **前置条件**：临时文件已清理
 **操作摘要**：session_worktree merge 回 dev + merge 成功后清理 worktree + 有风险暂保留逃生通道
 **引用真源**：[trae_078_force_merge_safety.yaml](../../../01_policies_and_standards/rules/trae_078_force_merge_safety.yaml) / [trae_076_worktree_commit_persistence.yaml](../../../01_policies_and_standards/rules/trae_076_worktree_commit_persistence.yaml) / [project_memory session_worktree 隔离施工可靠路径](file:///c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha--p2-1c552864b6a6a396cfb0\project_memory.md)
+**冲突处理**：merge 遇冲突 MUST 按 [67_merge_conflict_resolution_sop.md](67_merge_conflict_resolution_sop.md) 执行——冲突三分法（叠加型合并/迭代型取新/互斥型升级用户裁定）+标准 7 步流程，禁止盲选边
 **执行命令**：
 
 ```powershell
