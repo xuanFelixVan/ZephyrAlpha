@@ -13,12 +13,69 @@
 # [TESTS] tests/factor/test_lifecycle_state_machine.py
 # [A_module] module_id=MOD-L02-013 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-GOV-01 因子生命周期状态机——复用项目级 StateMachine 泛型基类。
+"""
+
+D-FACTOR-GOV-01 因子生命周期状态机——复用项目级 StateMachine 泛型基类。
 
 定义因子从研究到退役的8个状态和合法转换规则：
 research → development → backtest → paper → grayscale → production → deprecated → retired
 
 每个因子在生命周期中处于其中一个状态，只能按合法路径转换。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 项目级状态机框架 StateMachine
+#   fields: StateDefinition / Transition / StateMachineConfig / StateMachineRegistry 泛型基类
+#   code: zephyr.shared.lifecycle.state_machine（lifecycle_state_machine.py L26-32 import）
+# - id: I2
+#   name: 因子生命周期状态常量 str×8
+#   fields: research/development/backtest/paper/grayscale/production/deprecated/retired
+#   code: lifecycle_state_machine.py L37-44
+# 层: 算法
+# - id: A1
+#   name_zh: ① 生命周期配置构建
+#   name_en: _build_config
+#   intro: 摆好8个状态、画好10条合法转换线，组装成一台状态机配置
+#   desc: 8 StateDefinition（retired为终态）+ 10 Transition（线性推进+灰度回退纸面+废弃退役+异常回退research）→ StateMachineConfig(fsm_id=factor_lifecycle, initial=research)（L47-80）
+#   inputs: I1 I2
+#   outputs: StateMachineConfig[str]
+#   invariant: 状态转换必须合法；retired为唯一终态
+# - id: A2
+#   name_zh: ② 全局注册表登记
+#   name_en: register_factor_lifecycle
+#   intro: 把因子生命周期配置登记进全局注册表，重复注册自动跳过
+#   desc: get_state_machine_registry().register(config)，异常吞掉保幂等 → 返回 fsm_id（L83-96）
+#   inputs: A1
+#   outputs: fsm_id "factor_lifecycle"
+# - id: A3
+#   name_zh: ② 因子FSM实例创建
+#   name_en: create_factor_fsm
+#   intro: 每个因子发一台独立状态机，从 research 起跑
+#   desc: _build_config() → StateMachine(config) 新实例（L99-108）
+#   inputs: A1
+#   outputs: StateMachine[str] 实例（初始 research）
+# 层: 输出
+# - id: O1
+#   name_zh: 因子生命周期状态机实例 StateMachine
+#   name_en: factor lifecycle FSM
+#   intro: 因子从研究到退役的专属状态机，非法转换直接抛错
+#   invariant: 非法转换→InvalidTransitionError
+#   downstream: 六步流程 six_step_flow MOD-L02-016；治理引擎 engine MOD-L02-017
+# - id: O2
+#   name_zh: 状态机注册标识 fsm_id
+#   name_en: registered fsm_id
+#   intro: 全局注册表里的因子生命周期句柄 factor_lifecycle
+#   downstream: 无下游/内部使用（全局状态机注册表）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> A3
+# A2 --> O2
+# A3 --> O1
 """
 from __future__ import annotations
 

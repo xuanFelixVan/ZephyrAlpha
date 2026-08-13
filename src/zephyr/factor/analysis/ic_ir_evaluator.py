@@ -13,10 +13,58 @@
 # [TESTS] tests/factor/test_ic_ir_evaluator.py
 # [A_module] module_id=MOD-L02-003 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。
+"""
+
+D-FACTOR-ANA-02 多因子评估报告器——批量评估+格式化报告。
 
 封装 evaluate_factor，返回结构化 EvaluationResult 字典，并提供格式化报告输出。
 与 ic_ir_calc 的区别：ic_ir_calc 返回 DataFrame 表格，本模块返回结构化结果+文本报告。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 已注册因子ID列表 list[str]
+#   fields: 待批量评估的 factor_id
+#   code: factor_ids 函数参数
+# - id: I2
+#   name: 评估参数组
+#   fields: symbols 标的池 + start/end 回测区间 + horizon=5 + oos_ratio=0.3
+#   code: evaluate_multiple 函数参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 多因子批量评估
+#   name_en: evaluate_multiple
+#   intro: 逐个因子调 evaluate_factor 做全链路评估，单因子失败跳过不阻断
+#   desc: 循环 factor_ids 调 core.evaluation.backtest.evaluate_factor；KeyError记warning跳过，其他异常记日志继续（L51-59）
+#   inputs: I1 I2
+#   outputs: dict[factor_id, EvaluationResult]
+#   invariant: INV-004 PIT铁律——评估仅用已实现前向收益
+# - id: A2
+#   name_zh: ② 评估报告格式化
+#   name_en: format_report
+#   intro: 把评估结果排成78列宽的可读文本表格
+#   desc: 按 factor_id 排序输出 ic_mean/ic_std/ir/oos%/overfit/n 六列（L62-84）；空结果返回占位文本
+#   inputs: A1
+#   outputs: 多行文本报告 str
+# 层: 输出
+# - id: O1
+#   name_zh: 结构化评估结果映射
+#   name_en: dict[str, EvaluationResult]
+#   intro: factor_id→评估结果（含IC/IR/OOS正率/过拟合标记/样本数）
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 多因子评估文本报告
+#   name_en: formatted report str
+#   intro: 横向对比各因子IC/IR指标的格式化报告
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> O1
+# A2 --> O2
 """
 from __future__ import annotations
 

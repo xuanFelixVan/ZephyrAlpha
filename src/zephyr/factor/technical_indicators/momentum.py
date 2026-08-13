@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
+# [BLUEPRINT] MOD-L02-019 | (pending)
 # [MODULE] zephyr.factor.technical_indicators.momentum
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; pandas(pip); numpy(pip)
@@ -12,9 +12,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute 输入空 DataFrame→返回空 DataFrame 不抛；输入缺列→ValueError
 # [TESTS] tests/zephyr/factor/technical_indicators/test_momentum.py
-# [A_module] module_id=MOD-L02-TI-MOMENTUM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""动量类技术指标（10 个，v1.0.0 全部施工完成）。
+"""
+
+动量类技术指标（10 个，v1.0.0 全部施工完成）。
 
 指标清单：KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI
 
@@ -24,6 +26,94 @@
   - StochRSI 依赖 RSI 计算，复用 _rsi 辅助函数
 
 设计文档：16_technical_indicator_catalog.md §2.2
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 行情OHLCV数据 DataFrame
+#   fields: high/low/close/volume 列（各指标按 meta.input_columns 取用）
+#   code: compute(data: pd.DataFrame)
+# 层: 指标
+# - id: KDJ
+#   name_zh: 随机指标KDJ 9,3,3
+#   name_en: KDJ
+#   intro: 用最高最低价衡量收盘价所处位置，判断超买超卖
+#   formula: RSV=(C-LL9)/(HH9-LL9)×100 → K=SMA(RSV,3,1) → D=SMA(K,3,1) → J=3K-2D（SMA=ewm alpha=1/N 对齐通达信）
+#   code: momentum.py L84-96
+#   registry: 指标表: 有kdj_k/kdj_d/kdj_j列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: RSI
+#   name_zh: 相对强弱RSI 6/12/24 + 随机RSI
+#   name_en: RSI/StochRSI
+#   intro: 涨跌幅平滑比值衡量多空力量，StochRSI 再对 RSI 做归一化
+#   formula: RSI=100×SMA(up,N)/(SMA(up,N)+SMA(down,N))；StochRSI=(RSI-min14(RSI))/(max14(RSI)-min14(RSI))
+#   code: momentum.py L114-121 + L337-347
+#   registry: 指标表: 有rsi_6/rsi_12/rsi_24/stochrsi列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: CMF
+#   name_zh: 蔡金资金流CMF 20
+#   name_en: CMF
+#   intro: 收盘价在当日振幅中的位置乘以成交量，度量资金流入流出
+#   formula: CLV=(2C-H-L)/(H-L)（H=L时取0）→ CMF=Σ20(CLV×V)/Σ20(V)
+#   code: momentum.py L217-229
+#   registry: 指标表: 有cmf_20列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: UOS
+#   name_zh: 终极指标UOS 7/14/28
+#   name_en: UOS
+#   intro: 三个周期买卖压力加权合成，减少单一周期假信号
+#   formula: BP=C-min(L,Cp)；TR=max(H,Cp)-min(L,Cp)；AvgN=ΣN(BP)/ΣN(TR)；UOS=(4Avg7+2Avg14+Avg28)/7×100
+#   code: momentum.py L247-263
+#   registry: 指标表: 有uos列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 校验+参数合并+空表短路 compute统一契约
+#   name_en: TechnicalIndicatorBase.compute
+#   intro: 每个指标入口先校验列、空表直接返回空 DataFrame、再合并默认参数
+#   desc: validate(data) 缺列抛 ValueError → data.empty 返回空表 → get_params(**kwargs) 合并默认参数
+#   inputs: I1
+#   outputs: 校验通过的 data 与 params
+#   invariant: 空 DataFrame 输入→空 DataFrame 输出不抛异常
+# - id: A2
+#   name_zh: ② 通达信SMA平滑
+#   name_en: _sma
+#   intro: 通达信 SMA(X,N,1)，alpha=1/N 的指数平滑，KDJ的K/D和RSI都靠它
+#   desc: series.ewm(alpha=1/N, adjust=False).mean()，与标准 EMA(alpha=2/(N+1)) 不同
+#   inputs: I1
+#   outputs: 平滑后 Series
+# - id: A3
+#   name_zh: ③ RSI核心计算
+#   name_en: _rsi
+#   intro: 涨跌幅裁剪后双向 SMA 平滑求比值，RSI 与 StochRSI 复用
+#   desc: delta=close.diff() → up/down clip(0) → 100×_sma(up)/(_sma(up)+_sma(down))
+#   inputs: I1 A2
+#   outputs: RSI Series
+# 层: 输出
+# - id: O1
+#   name_zh: 动量指标 DataFrame（10指标多列）
+#   name_en: momentum indicators DataFrame
+#   intro: KDJ/RSI/WR/ROC/MTM/CMF/UOS/AO/CMO/StochRSI 共10个动量指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（kdj_k/d/j、rsi_6/12/24、wr_14、roc_12、mtm_12/mtmma_12、cmf_20、uos、ao、cmo_14、stochrsi）
+#   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# A2 --> A3
+# A1 -.->|断点| KDJ
+# A1 -.->|断点| RSI
+# A1 -.->|断点| CMF
+# A1 -.->|断点| UOS
+# A2 -.->|断点| KDJ
+# A2 -.->|断点| RSI
+# A3 -.->|断点| RSI
+# KDJ --> O1
+# RSI --> O1
+# CMF --> O1
+# UOS --> O1
 """
 
 from __future__ import annotations

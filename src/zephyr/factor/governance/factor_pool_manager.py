@@ -14,7 +14,9 @@
 # [TESTS] tests/factor/test_factor_pool_manager.py
 # [A_module] module_id=MOD-L02-018 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-08 因子池容量管理——活跃池/休眠池 + IC末位淘汰 + 批量裁剪。
+"""
+
+D-FACTOR-08 因子池容量管理——活跃池/休眠池 + IC末位淘汰 + 批量裁剪。
 
 管理因子池的容量控制，防止因子膨胀失控。
 核心规则（ADR-FAC-006）：
@@ -24,6 +26,72 @@
   - Batch Pruning: 全池≥N_max时，按IC从休眠池裁撤
 
 参数从 governance/_config.yaml 读取，不硬编码。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 新因子入池申请 tuple
+#   fields: factor_id + ic_mean + is_core（add_factor/ic_based_replace 参数）
+#   code: factor_pool_manager.py L112-113
+# - id: I2
+#   name: 因子池容量配置 dict
+#   fields: factor_pool.n_max=64 / active_capacity=60 / dormant_capacity=4 / min_ic_to_enter=0.02
+#   code: governance/_config.yaml L25-29
+# 层: 算法
+# - id: A1
+#   name_zh: ① 入池门槛与容量检查
+#   name_en: FactorPoolManager.add_factor
+#   intro: 新因子先查重再验IC，活跃池未满直接进，全池满先触发批量裁剪
+#   desc: 已在池→拒；|ic|<min_ic→拒；total≥n_max→batch_prune；active<cap→进活跃池；否则走IC替换（L125-144）
+#   inputs: I1 I2
+#   outputs: (success: bool, message: str)
+#   invariant: 活跃池≤active_capacity；全池≤n_max
+# - id: A2
+#   name_zh: ② IC末位淘汰替换
+#   name_en: FactorPoolManager._ic_based_replace
+#   intro: 活跃池满时新因子跟池内IC最低的非核心因子比，更高才换得下
+#   desc: 找活跃池|IC|最低非核心victim → |new_ic|≤|victim_ic|拒换 → victim降休眠池+新因子进活跃池（L207-229）
+#   inputs: I1 A1
+#   outputs: (success, message) 替换结果
+#   invariant: 核心因子 is_core=True 不参与末位淘汰
+# - id: A3
+#   name_zh: ③ 批量裁剪
+#   name_en: FactorPoolManager.batch_prune
+#   intro: 全池到顶64个时，按IC从休眠池往死里裁，腾地方给新因子
+#   desc: while total≥n_max：优先裁休眠池|IC|最低者；休眠空则把活跃池最低非核心降级休眠再裁（L167-180, L231-243）
+#   inputs: I2 A1
+#   outputs: 被裁撤 factor_id 列表
+# - id: A4
+#   name_zh: ④ 池状态摘要
+#   name_en: FactorPoolManager.get_pool_status
+#   intro: 数一数活跃池/休眠池各多少个，汇报容量水位
+#   desc: 统计 active/dormant/total → FactorPoolStatus（含 is_full=total≥n_max）（L192-205）
+#   inputs: I2
+#   outputs: FactorPoolStatus
+# 层: 输出
+# - id: O1
+#   name_zh: 入池/替换/裁剪操作结果 (bool, str)
+#   name_en: pool operation result
+#   intro: 成功失败加一句人话消息，说明进了哪个池或拒因
+#   downstream: 治理引擎 engine MOD-L02-017
+# - id: O2
+#   name_zh: 因子池状态 FactorPoolStatus
+#   name_en: pool status
+#   intro: 活跃/休眠/全池计数与容量水位摘要
+#   downstream: 治理引擎 engine MOD-L02-017
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# I2 --> A3
+# A1 --> A3
+# I2 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 from __future__ import annotations
 

@@ -13,9 +13,48 @@
 # [TESTS] tests/factor/test_factor_decay_monitor.py
 # [A_module] module_id=MOD-L02-009 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。
+"""
+
+D-FACTOR-ANA-08 衰减监控——监控因子 IC 衰减速度，半衰期低于阈值告警。
 
 计算因子的 IC 半衰期，若低于配置的 min_half_life（默认10），标记为衰减中。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 因子ID与预计算IC衰减序列
+#   fields: factor_id + ic_decay_series（可选，index=lag values=IC均值）
+#   code: monitor_decay 函数参数
+# - id: I2
+#   name: 评估参数组
+#   fields: symbols 标的池 + start/end 回测区间（无预计算序列时用于现算）
+#   code: symbols/start/end 函数参数
+# - id: I3
+#   name: 最小半衰期阈值配置 float
+#   fields: decay_monitor.min_half_life，默认 10（lag数）
+#   code: _config.yaml L12-13
+# 层: 算法
+# - id: A1
+#   name_zh: ① 因子衰减状态判定
+#   name_en: monitor_decay
+#   intro: 算IC半衰期并与阈值比较，低于阈值标记衰减过快
+#   desc: 无序列则调 ic_decay.compute_ic_decay 现算 → compute_half_life 得半衰期 → half_life<min_hl 判 is_decaying 并生成趋势描述（L70-81）
+#   inputs: I1 I2 I3
+#   outputs: DecayStatus(factor_id, half_life, is_decaying, trend)
+#   invariant: INV-004 PIT铁律——基于已实现IC衰减曲线；数据不足→half_life=0且is_decaying=True
+# 层: 输出
+# - id: O1
+#   name_zh: 因子衰减状态 DecayStatus
+#   name_en: DecayStatus
+#   intro: 冻结dataclass：因子ID/半衰期/是否衰减中/趋势描述
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
 """
 from __future__ import annotations
 

@@ -13,7 +13,9 @@
 # [TESTS] tests/factor/test_ic_ir_calc.py
 # [A_module] module_id=MOD-L02-002 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/IR 指标汇总表。
+"""
+
+D-FACTOR-ANA-01 IC/IR 批量计算器——多因子 IC/IR 指标汇总表。
 
 封装 evaluate_factor，对多个因子批量评估，返回含 factor_id/ic_mean/ic_std/ir/oos_rate
 的 DataFrame，便于横向对比。
@@ -22,6 +24,38 @@
 - 批量调用 evaluate_factor（复用 backtest.py 的数据加载+因子计算+IC计算全链路）
 - 汇总指标为 DataFrame 表格
 - 单因子失败不阻断其他因子（容错）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 已注册因子ID列表 list[str]
+#   fields: 待批量计算的 factor_id
+#   code: factor_ids 函数参数
+# - id: I2
+#   name: 评估参数组
+#   fields: symbols 标的池 + start/end 回测区间 + horizon=5 + oos_ratio=0.3
+#   code: compute_ic_ir_table 函数参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① IC/IR批量计算汇总
+#   name_en: compute_ic_ir_table
+#   intro: 循环调 evaluate_factor 全链路评估，把各因子指标汇总成一张表
+#   desc: 逐因子调 core.evaluation.backtest.evaluate_factor，收集 ic_mean/ic_std/ir/oos_positive_rate/is_overfitted/sample_size 七列；单因子失败该行指标置0不阻断（L59-86）
+#   inputs: I1 I2
+#   outputs: IC/IR指标汇总表 DataFrame
+#   invariant: INV-004 PIT铁律——IC/IR仅用同期因子值与已实现前向收益；失败行指标为0且is_overfitted=True
+# 层: 输出
+# - id: O1
+#   name_zh: 多因子IC/IR指标表 DataFrame
+#   name_en: ic_ir table DataFrame
+#   intro: columns=[factor_id, ic_mean, ic_std, ir, oos_positive_rate, is_overfitted, sample_size]，便于横向对比
+#   downstream: ic_ir_evaluator MOD-L02-003；multifactor_synthesis MOD-L02-011
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 from __future__ import annotations
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
+# [BLUEPRINT] MOD-L02-023 | (pending)
 # [MODULE] zephyr.factor.technical_indicators.volume
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; pandas(pip); numpy(pip)
@@ -12,9 +12,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute 输入空 DataFrame→返回空 DataFrame 不抛；输入缺列→ValueError
 # [TESTS] tests/zephyr/factor/technical_indicators/test_volume.py
-# [A_module] module_id=MOD-L02-TI-VOLUME | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""成交量类技术指标（7 个，v1.0.0 全部施工完成）。
+"""
+
+成交量类技术指标（7 个，v1.0.0 全部施工完成）。
 
 指标清单：OBV/MFI/VWAP/VR/AD/PVT/WVAD
 
@@ -25,6 +27,93 @@
   - WVAD 用 (C-O)/(H-L)×V 滚动求和，H=L 时该项为 0
 
 设计文档：16_technical_indicator_catalog.md §2.4
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 行情OHLCV数据 DataFrame
+#   fields: open/high/low/close/volume 列（各指标按 meta.input_columns 取用）
+#   code: compute(data: pd.DataFrame)
+# 层: 指标
+# - id: OBV
+#   name_zh: 能量潮OBV
+#   name_en: OBV
+#   intro: 涨日加量跌日减量的累积线，量能先行验证价格趋势
+#   formula: direction=sign(ΔC)（首值填0）→ OBV=cumsum(direction×V)
+#   code: volume.py L57-64
+#   registry: 指标表: 有obv列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: MFI
+#   name_zh: 资金流量指标MFI 14
+#   name_en: MFI
+#   intro: 类似 RSI 但用典型价×成交量加权，度量资金买卖力度
+#   formula: TP=(H+L+C)/3；MF=TP×V → 按 TP 涨跌拆正负 MF → MFI=100-100/(1+Σ14正MF/Σ14负MF)
+#   code: volume.py L82-97
+#   registry: 指标表: 有mfi_14列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: VR
+#   name_zh: 容量比率VR 26
+#   name_en: VR
+#   intro: 上涨日成交量与下跌日成交量的比值，平盘量两侧各计一半
+#   formula: VR=100×(2×Σ26up_vol+Σ26flat_vol)/(2×Σ26down_vol+Σ26flat_vol)（通达信口径）
+#   code: volume.py L148-163
+#   registry: 指标表: 有vr_26列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: WVAD
+#   name_zh: 威廉变异离散量WVAD 24
+#   name_en: WVAD
+#   intro: 实体占振幅比例乘成交量滚动求和，量价配合度
+#   formula: ratio=(C-O)/(H-L)（H=L时取0）→ WVAD=Σ24(ratio×V)
+#   code: volume.py L232-242
+#   registry: 指标表: 有wvad_24列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 校验+参数合并+空表短路 compute统一契约
+#   name_en: TechnicalIndicatorBase.compute
+#   intro: 每个指标入口先校验列、空表直接返回空 DataFrame、再合并默认参数
+#   desc: validate(data) 缺列抛 ValueError → data.empty 返回空表 → get_params(**kwargs) 合并默认参数
+#   inputs: I1
+#   outputs: 校验通过的 data 与 params
+#   invariant: 空 DataFrame 输入→空 DataFrame 输出不抛异常
+# - id: A2
+#   name_zh: ② 涨跌方向成交量拆分
+#   name_en: direction/vol split
+#   intro: 按收盘涨跌把成交量拆成涨/跌/平三份，OBV 与 VR 的共同第一步
+#   desc: diff=close.diff() → up_vol=vol.where(diff>0,0)、down_vol=vol.where(diff<0,0)、flat_vol=vol.where(diff==0,0)；OBV 用 np.sign(diff)
+#   inputs: I1
+#   outputs: 方向序列与分量成交量
+# - id: A3
+#   name_zh: ③ 除零防护
+#   name_en: zero-range guard
+#   intro: H=L 一字板时 CLV/ratio 置 0，避免除零产生 inf/NaN
+#   desc: ((2C-H-L)/(H-L)).where(hl_range!=0, 0.0)，AD 与 WVAD 共用此写法
+#   inputs: I1
+#   outputs: 防护后的比率序列
+# 层: 输出
+# - id: O1
+#   name_zh: 成交量指标 DataFrame（7指标多列）
+#   name_en: volume indicators DataFrame
+#   intro: OBV/MFI/VWAP/VR/AD/PVT/WVAD 共7个成交量指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（obv、mfi_14、vwap、vr_26、ad、pvt、wvad_24）；OBV/AD/PVT 为 cumsum 累积量首值为0
+#   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# A1 -.->|断点| OBV
+# A1 -.->|断点| MFI
+# A1 -.->|断点| VR
+# A1 -.->|断点| WVAD
+# A2 -.->|断点| OBV
+# A2 -.->|断点| VR
+# A3 -.->|断点| WVAD
+# OBV --> O1
+# MFI --> O1
+# VR --> O1
+# WVAD --> O1
 """
 
 from __future__ import annotations

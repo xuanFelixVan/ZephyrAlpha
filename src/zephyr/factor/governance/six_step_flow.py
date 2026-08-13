@@ -13,12 +13,79 @@
 # [TESTS] tests/factor/test_six_step_flow.py
 # [A_module] module_id=MOD-L02-016 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流程。
+"""
+
+D-FACTOR-GOV-04 六步流程编排——因子从研究到实盘的治理流程。
 
 六步：研究 → 开发 → 回测验证 → 纸面交易 → 灰度放量 → 实盘上线
 
 每步有准入门禁（进入条件）和准出门禁（推进条件）。准出门禁复用 ABS001。
 状态流转复用 lifecycle_state_machine 的 StateMachine。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 因子ID str
+#   fields: factor_id（submit/get_status/check_exit_gate/advance 参数）
+#   code: six_step_flow.py L81/L94/L110/L136
+# - id: I2
+#   name: 因子评估结果 EvaluationResult
+#   fields: ic_mean/ir/oos_positive_rate/is_overfitted（准出门禁检查用）
+#   code: six_step_flow.py L110 参数 eval_result
+# 层: 算法
+# - id: A1
+#   name_zh: ① 提交因子建档
+#   name_en: SixStepFlow.submit_factor
+#   intro: 给因子建一台专属状态机，初始状态 research
+#   desc: 无记录→create_factor_fsm() 存入 _factors → 返回当前态（L81-92）
+#   inputs: I1
+#   outputs: 初始状态名 research
+# - id: A2
+#   name_zh: ② 准出门禁检查
+#   name_en: SixStepFlow.check_exit_gate
+#   intro: 研究/开发两步随便走，回测及之后必须过ABS001质量门禁
+#   desc: current==RESEARCH/DEVELOPMENT→直通；backtest及之后→check_factor_quality(eval_result)（L110-134）
+#   inputs: I1 I2
+#   outputs: (passed, detail)
+#   invariant: 六步严格顺序推进；每步有准入/准出门禁
+# - id: A3
+#   name_zh: ③ 步骤推进
+#   name_en: SixStepFlow.advance
+#   intro: 过了准出门禁就把状态机推到下一步，到实盘封顶
+#   desc: 已到production→拒；check_exit_gate未过→保持；过→fsm.transition(next_step)（L136-160）
+#   inputs: I1 I2 A2
+#   outputs: (new_step, message)
+# - id: A4
+#   name_zh: ④ 流程状态查询
+#   name_en: SixStepFlow.get_status
+#   intro: 查因子现在六步里的哪一步、中文名叫啥、还能不能推
+#   desc: fsm.current_state→FlowStatus(step_index=SIX_STEPS.index, step_name=STEP_NAMES映射, can_advance)（L94-108）
+#   inputs: I1
+#   outputs: FlowStatus 或 None
+# 层: 输出
+# - id: O1
+#   name_zh: 六步流程状态 FlowStatus
+#   name_en: flow status
+#   intro: 当前步骤/中文名/步骤索引/可否推进四件套
+#   downstream: 治理引擎 engine MOD-L02-017
+# - id: O2
+#   name_zh: 提交/推进结果 (step, str)
+#   name_en: advance result
+#   intro: 新步骤名加一句人话消息，卡门禁时说明原因
+#   downstream: 治理引擎 engine MOD-L02-017
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# A2 --> A3
+# I1 --> A4
+# A1 --> O2
+# A3 --> O2
+# A4 --> O1
 """
 from __future__ import annotations
 

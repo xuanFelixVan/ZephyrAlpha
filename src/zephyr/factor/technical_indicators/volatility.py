@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
+# [BLUEPRINT] MOD-L02-022 | (pending)
 # [MODULE] zephyr.factor.technical_indicators.volatility
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; zephyr.factor.technical_indicators.trend; pandas(pip); numpy(pip)
@@ -12,9 +12,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute 输入空 DataFrame→返回空 DataFrame 不抛；输入缺列→ValueError
 # [TESTS] tests/zephyr/factor/technical_indicators/test_volatility.py
-# [A_module] module_id=MOD-L02-TI-VOLATILITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""波动类技术指标（8 个，v1.0.0 全部施工完成）。
+"""
+
+波动类技术指标（8 个，v1.0.0 全部施工完成）。
 
 指标清单：ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol
 
@@ -25,6 +27,93 @@
   - HistVol 用对数收益率样本标准差 ddof=1 × sqrt(252) 年化（金融行业标准）
 
 设计文档：16_technical_indicator_catalog.md §2.3
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 行情OHLC数据 DataFrame
+#   fields: high/low/close 列（各指标按 meta.input_columns 取用）
+#   code: compute(data: pd.DataFrame)
+# 层: 指标
+# - id: ATR
+#   name_zh: 真实波幅ATR 14
+#   name_en: ATR
+#   intro: 真实波幅的简单平均，度量价格波动剧烈程度
+#   formula: TR=max(H-L,|H-Cp|,|L-Cp|) → ATR=MA14(TR)（通达信用 MA，非 Wilder's RMA）
+#   code: volatility.py L85-93
+#   registry: 指标表: 有atr_14列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: BOLL
+#   name_zh: 布林带BOLL 20,2
+#   name_en: BOLL
+#   intro: 均线上下各两倍标准差形成通道，BandWidth/%B 也基于它
+#   formula: MID=MA20(C)；STD=rolling20.std(ddof=0)；UPPER=MID+2STD；LOWER=MID-2STD（ddof=0 对齐通达信）
+#   code: volatility.py L111-120（_boll_bands L58-67）
+#   registry: 指标表: 有boll_upper/boll_middle/boll_lower列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: KC
+#   name_zh: 肯特纳通道Keltner 20,10,2
+#   name_en: Keltner
+#   intro: EMA 中轨加 ATR 倍数构成通道，比布林带更平滑
+#   formula: MID=EMA20(C)（复用 trend._ema adjust=False）；UPPER=MID+2×MA10(TR)；LOWER=MID-2×MA10(TR)
+#   code: volatility.py L138-152
+#   registry: 指标表: 有kc_upper/kc_middle/kc_lower列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: HV
+#   name_zh: 历史波动率HistVol 20
+#   name_en: HistVol
+#   intro: 对数收益率的标准差年化，金融行业标准波动率
+#   formula: r=log(C/C.shift1) → HV=r.rolling20.std(ddof=1)×√252×100
+#   code: volatility.py L271-279
+#   registry: 指标表: 有histvol_20列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 校验+参数合并+空表短路 compute统一契约
+#   name_en: TechnicalIndicatorBase.compute
+#   intro: 每个指标入口先校验列、空表直接返回空 DataFrame、再合并默认参数
+#   desc: validate(data) 缺列抛 ValueError → data.empty 返回空表 → get_params(**kwargs) 合并默认参数
+#   inputs: I1
+#   outputs: 校验通过的 data 与 params
+#   invariant: 空 DataFrame 输入→空 DataFrame 输出不抛异常
+# - id: A2
+#   name_zh: ② 真实波幅TR
+#   name_en: _true_range
+#   intro: 三种波幅取最大，ATR 与 Keltner 通道共用
+#   desc: pd.concat([H-L, |H-C.shift1|, |L-C.shift1|]).max(axis=1)，首根K线 TR=H-L
+#   inputs: I1
+#   outputs: TR Series
+# - id: A3
+#   name_zh: ③ 布林三轨
+#   name_en: _boll_bands
+#   intro: 中轨+上下轨一次算出，BOLL/BandWidth/%B 三指标共用，reversal 模块也 import
+#   desc: MID=rolling(N).mean()；STD=rolling(N).std(ddof=0)；UPPER/LOWER=MID±nbdev×STD
+#   inputs: I1
+#   outputs: (upper, middle, lower) 三元组
+# 层: 输出
+# - id: O1
+#   name_zh: 波动指标 DataFrame（8指标多列）
+#   name_en: volatility indicators DataFrame
+#   intro: ATR/BOLL/Keltner/Donchian/STDDEV/BandWidth/%B/HistVol 共8个波动指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（atr_14、boll_*、kc_*、dc_upper/dc_lower、stddev_20、boll_bw、boll_pctb、histvol_20）
+#   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时；reversal.py 复用 _boll_bands
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# A1 -.->|断点| ATR
+# A1 -.->|断点| BOLL
+# A1 -.->|断点| KC
+# A1 -.->|断点| HV
+# A2 -.->|断点| ATR
+# A2 -.->|断点| KC
+# A3 -.->|断点| BOLL
+# ATR --> O1
+# BOLL --> O1
+# KC --> O1
+# HV --> O1
 """
 
 from __future__ import annotations

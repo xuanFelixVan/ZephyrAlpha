@@ -11,7 +11,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""ZephyrAlpha — D_FACTOR Alpha Factor Layer
+"""
+
+ZephyrAlpha — D_FACTOR Alpha Factor Layer
 
 SSoT: cross_layer_contracts.yaml v3.0
 
@@ -35,6 +37,37 @@ CTR 契约依赖声明（承重墙标记）
   - CTR-BP-001~003  Backpressure     -> D_DATA（背压信号——暂停/降速/恢复数据推送）
   - CTR-ERR-002  FactorComputationError -> D_SIGNAL
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: factor_base 子模块符号 4个
+#   fields: FactorBase / FactorMeta / FactorRegistry / autodiscover_factors（因子基类/元类/注册表/自动发现）
+#   code: zephyr.factor.factor_base L52
+# - id: I2
+#   name: bus_factor_defense 子模块符号 7个
+#   fields: BusFactorRisk / DecisionLog / ModuleOwnership / OpsRunbook / create_decision_log / evaluate_bus_factor / generate_runbook
+#   code: zephyr.factor.bus_factor_defense L43
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包级聚合再导出
+#   name_en: zephyr.factor.__init__
+#   intro: 把两个子模块的符号汇成 zephyr.factor 统一入口，并声明 __all__
+#   desc: import 两子模块 11 个符号 → __all__ 声明（含 4 个子模块名占位）；CODEGEN-GUARD 标记禁止重生成，factor_base 为 SSoT
+#   inputs: I1 I2
+#   outputs: zephyr.factor 包级公共命名空间
+#   invariant: 包级导出以 factor_base 为 SSoT（base.py shim 已消除）
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.factor 包公共 API
+#   name_en: __all__ 11项
+#   intro: 因子层对外统一出口，下游按 CTR-002 契约消费 FactorSignal
+#   downstream: D_SIGNAL / D_RISK / D_PORTFOLIO_CORE（CTR-002 FactorSignal 生产方）；D_DATA（CTR-BP-001~003 背压）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

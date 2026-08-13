@@ -13,10 +13,66 @@
 # [TESTS] tests/factor/test_factor_attribution.py
 # [A_module] module_id=MOD-L02-010 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。
+"""
+
+D-FACTOR-ANA-09 因子归因——按时间和行业维度分解因子表现。
 
 时间归因：将 IC 时间序列按月（或其他频率）聚合，看各月 IC 表现。
 行业归因：将因子值按行业分组，计算各行业的因子收益贡献。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: IC时间序列 pd.Series
+#   fields: index=datetime，values=各期IC值
+#   code: ic_series 函数参数
+# - id: I2
+#   name: 单截面因子值与前向收益 pd.Series
+#   fields: factor_values / forward_returns，index=symbol
+#   code: factor_values, forward_returns 函数参数
+# - id: I3
+#   name: 行业映射 dict[str, str]
+#   fields: symbol → 行业名称，缺省归入「未知」
+#   code: sector_map 函数参数
+# - id: I4
+#   name: 时间归因频率配置 str
+#   fields: factor_attribution.time_freq，默认 ME（月末）
+#   code: _config.yaml L15-16
+# 层: 算法
+# - id: A1
+#   name_zh: ① 时间维度归因
+#   name_en: attribute_by_time
+#   intro: 把IC序列按配置频率重采样取均值，看每个周期表现
+#   desc: index 转 datetime 后 s.resample(freq).mean()（L54-58）；空输入返回空Series
+#   inputs: I1 I4
+#   outputs: 周期IC均值 pd.Series
+# - id: A2
+#   name_zh: ② 行业维度归因
+#   name_en: attribute_by_sector
+#   intro: 因子值和收益按行业分组，算各行业平均因子/平均收益/样本数
+#   desc: 取因子与收益交集 → sector_map 贴行业标签 → groupby(sector).agg(mean/mean/count)（L78-89）
+#   inputs: I2 I3
+#   outputs: 行业归因表 DataFrame
+# 层: 输出
+# - id: O1
+#   name_zh: 时间归因结果 pd.Series
+#   name_en: time attribution Series
+#   intro: index=周期，values=该周期IC均值
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 行业归因表 DataFrame
+#   name_en: sector attribution DataFrame
+#   intro: index=行业，columns=[avg_factor, avg_return, count]
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I4 --> A1
+# A1 --> O1
+# I2 --> A2
+# I3 --> A2
+# A2 --> O2
 """
 from __future__ import annotations
 

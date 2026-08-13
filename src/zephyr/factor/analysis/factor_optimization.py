@@ -13,13 +13,79 @@
 # [TESTS] tests/factor/test_factor_optimization.py
 # [A_module] module_id=MOD-L02-012 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-11 因子优化——优化多因子合成权重以最大化目标函数。
+"""
+
+D-FACTOR-ANA-11 因子优化——优化多因子合成权重以最大化目标函数。
 
 提供两种优化目标：
 1. max_ir：最大化合成因子的信息比率 IR
 2. min_variance：最小化合成因子的收益方差
 
 用 scipy.optimize 网格搜索/约束优化求权重。权重非负且和为1。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 多因子值字典 dict[str, pd.Series]
+#   fields: factor_id → 因子值序列，组装成面板
+#   code: factor_values 函数参数
+# - id: I2
+#   name: 前向收益面板 DataFrame
+#   fields: index=date，columns=symbol 的已实现前向收益
+#   code: forward_returns 函数参数
+# - id: I3
+#   name: 优化目标配置 str
+#   fields: factor_optimization.default_objective，默认 max_ir
+#   code: _config.yaml L21-22
+# 层: 算法
+# - id: A1
+#   name_zh: ① 负IR损失函数
+#   name_en: _neg_ir
+#   intro: 用当前权重合成信号算IC序列和IR，取负号供最小化
+#   desc: synth=panel.fillna0@w → compute_ic_series(horizon=5) → compute_ir → -ir（L44-59）
+#   inputs: I1 I2
+#   outputs: -IR 标量
+#   invariant: INV-004 PIT铁律——仅用历史已实现收益
+# - id: A2
+#   name_zh: ② SLSQP约束权重优化
+#   name_en: optimize_weights
+#   intro: 在权重非负且和为1的约束下优化合成权重
+#   desc: scipy minimize(method=SLSQP)，约束Σw=1、0≤w≤1；max_ir走A1损失，min_variance走var(panel@w)；scipy缺失/不收敛/异常→等权兜底（L62-115）
+#   inputs: I1 I2 I3 A1
+#   outputs: 权重字典 dict[factor_id→weight]
+#   invariant: 权重非负且和为1；失败一律等权
+# - id: A3
+#   name_zh: ③ 组合信号合成
+#   name_en: evaluate_portfolio
+#   intro: 按给定权重把多因子面板加权成一条合成信号
+#   desc: 过滤有效因子 → 权重归一化（Σ<1e-10退等权）→ panel.fillna0@w（L118-143）
+#   inputs: I1 A2
+#   outputs: 合成信号 pd.Series
+# 层: 输出
+# - id: O1
+#   name_zh: 优化后因子权重
+#   name_en: dict[str, float]
+#   intro: factor_id→权重，非负和为1，优化失败返回等权
+#   invariant: Σw=1，w≥0
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 加权合成信号 pd.Series
+#   name_en: synthesized signal
+#   intro: 用指定权重合成的组合信号序列
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# A2 --> A3
+# I1 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 from __future__ import annotations
 

@@ -13,7 +13,9 @@
 # [TESTS] tests/factor/test_multifactor_synthesis.py
 # [A_module] module_id=MOD-L02-011 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号。
+"""
+
+D-FACTOR-ANA-10 多因子合成——将多个因子值合成为综合信号。
 
 提供三种合成方法：
 1. 等权合成（synthesize_equal_weight）：所有因子等权平均，最简单的基线
@@ -21,6 +23,70 @@
 3. 回归优化合成（synthesize_regression）：用历史前向收益回归求权重
 
 统一入口 synthesize() 通过 method 参数选择。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 多因子值字典 dict[str, pd.Series]
+#   fields: factor_id → 因子值序列（index 对齐）
+#   code: factor_values 函数参数
+# - id: I2
+#   name: IC权重字典 dict[str, float]
+#   fields: factor_id → 历史IC均值权重（ic_weighted 方法用）
+#   code: ic_weights 函数参数
+# - id: I3
+#   name: 前向收益 pd.Series
+#   fields: 已实现前向收益，index 与因子值对齐（regression 方法用）
+#   code: forward_returns 函数参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 等权合成
+#   name_en: synthesize_equal_weight
+#   intro: 所有因子等权平均，最简单的基线合成
+#   desc: panel=DataFrame(factor_values) → panel.mean(axis=1)（L46-49）；空输入返回空Series
+#   inputs: I1
+#   outputs: 合成信号 pd.Series
+# - id: A2
+#   name_zh: ② IC加权合成
+#   name_en: synthesize_ic_weighted
+#   intro: 按历史IC均值归一化分配权重后加权求和
+#   desc: 过滤零权重 → w/Σ|w| 归一化 → Σ wi·fi（L65-78）；无有效权重退等权
+#   inputs: I1 I2
+#   outputs: 合成信号 pd.Series
+#   invariant: 权重来自历史IC不引入未来函数；权重不匹配退等权
+# - id: A3
+#   name_zh: ③ 回归优化合成
+#   name_en: synthesize_regression
+#   intro: 用历史前向收益对因子面板做OLS回归，拿回归系数当权重
+#   desc: 取交集对齐 → w=(XᵀX)⁻¹Xᵀy 经 np.linalg.lstsq 求解 → panel@coeffs（L97-112）；数据不足/求解失败退等权
+#   inputs: I1 I3
+#   outputs: 合成信号 pd.Series
+# - id: A4
+#   name_zh: ④ 合成统一入口分发
+#   name_en: synthesize
+#   intro: 按method参数把调用分发到等权/IC加权/回归三种合成
+#   desc: method=equal_weight/ic_weighted/regression 分别调A1/A2/A3；未知方法或regression缺forward_returns退等权（L130-142）
+#   inputs: I1 I2 I3 A1 A2 A3
+#   outputs: 合成信号 pd.Series
+#   invariant: INV-004 PIT铁律——合成仅用同期因子值
+# 层: 输出
+# - id: O1
+#   name_zh: 多因子合成信号 pd.Series
+#   name_en: synthesized signal
+#   intro: 多因子合成后的综合信号序列，供信号提供与策略执行使用
+#   downstream: signal_providers MOD-L06-001；strategy_runner MOD-L05-001；factor_optimization MOD-L02-012
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I3 --> A3
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
 """
 from __future__ import annotations
 

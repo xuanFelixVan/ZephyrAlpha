@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L02-001 | docs/03_modules/_domain_factor/blueprint.md
+# [BLUEPRINT] MOD-L02-021 | (pending)
 # [MODULE] zephyr.factor.technical_indicators.trend
 # [DOMAIN] D_FACTOR
 # [DEPENDENCIES] zephyr.factor.technical_indicators.indicator_base; pandas(pip); numpy(pip)
@@ -12,9 +12,11 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] compute 输入空 DataFrame→返回空 DataFrame 不抛；输入缺列→ValueError
 # [TESTS] tests/zephyr/factor/technical_indicators/test_trend.py
-# [A_module] module_id=MOD-L02-TI-TREND | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-L02-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""趋势类技术指标（10 个，v1.0.0 全部施工完成）。
+"""
+
+趋势类技术指标（10 个，v1.0.0 全部施工完成）。
 
 指标清单：MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX
 
@@ -26,6 +28,100 @@
   - MACD HIST = 2×(DIF-DEA)，对齐通达信 MACD 柱
 
 设计文档：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/16_technical_indicator_catalog.md §2.1
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 行情OHLC数据 DataFrame
+#   fields: high/low/close 列（各指标按 meta.input_columns 取用）
+#   code: compute(data: pd.DataFrame)
+# 层: 指标
+# - id: MACD
+#   name_zh: 异同移动平均MACD 12,26,9
+#   name_en: MACD
+#   intro: 快慢 EMA 差值及其再平滑，判断趋势强弱与金叉死叉
+#   formula: DIF=EMA12(C)-EMA26(C) → DEA=EMA9(DIF) → HIST=2×(DIF-DEA)（全 ewm adjust=False 对齐通达信）
+#   code: trend.py L215-225
+#   registry: 指标表: 有macd_dif/macd_dea/macd_hist列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: ADX
+#   name_zh: 趋向指标DMI/ADX 14
+#   name_en: DMI/ADX
+#   intro: 多空方向移动量对比，ADX 度量趋势强度不分方向
+#   formula: TR/±DM 滚动 SUM 平滑 → ±DI=±DM×100/TR → DX=|+DI--DI|/(+DI+-DI)×100 → ADX=MA14(DX)
+#   code: trend.py L243-252 + L270-277（_di 辅助 L69-97）
+#   registry: 指标表: 有adx_14/pdi_14/mdi_14列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: CCI
+#   name_zh: 顺势指标CCI 14
+#   name_en: CCI
+#   intro: 典型价偏离均线的程度，用平均绝对偏差标准化
+#   formula: TP=(H+L+C)/3 → CCI=(TP-MA14(TP))/(0.015×AVEDEV14(TP))，AVEDEV=mean(|x-mean(x)|)
+#   code: trend.py L295-306
+#   registry: 指标表: 有cci_14列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# - id: SAR
+#   name_zh: 抛物线指标SAR
+#   name_en: SAR
+#   intro: 逐根K线递推止损反转点，趋势翻转时加速因子重置
+#   formula: SAR(t+1)=SAR(t)+AF×(EP-SAR(t))，AF 从 0.02 递增至 0.2，翻转时 SAR=EP 且 AF 重置
+#   code: trend.py L324-373
+#   registry: 指标表: 有sar列 但代码未读表（本模块即指标计算实现）
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 校验+参数合并+空表短路 compute统一契约
+#   name_en: TechnicalIndicatorBase.compute
+#   intro: 每个指标入口先校验列、空表直接返回空 DataFrame、再合并默认参数
+#   desc: validate(data) 缺列抛 ValueError → data.empty 返回空表 → get_params(**kwargs) 合并默认参数
+#   inputs: I1
+#   outputs: 校验通过的 data 与 params
+#   invariant: 空 DataFrame 输入→空 DataFrame 输出不抛异常
+# - id: A2
+#   name_zh: ② 通达信EMA指数平滑
+#   name_en: _ema
+#   intro: ewm(span=N, adjust=False)，种子=首值无预热 NaN，EMA/DEMA/MACD/TRIX 全靠它
+#   desc: 通达信 EMA(C,N)=(2C+(N-1)×EMA_prev)/(N+1)；禁用 adjust=True 的加权修正
+#   inputs: I1
+#   outputs: 平滑后 Series
+# - id: A3
+#   name_zh: ③ WMA线性加权均线
+#   name_en: _wma
+#   intro: 近期权重高的加权平均，最新值权重=N 最旧=1
+#   desc: rolling(N).apply(np.dot(x, 1..N)/（N(N+1)/2), raw=True)
+#   inputs: I1
+#   outputs: 加权均线 Series
+# - id: A4
+#   name_zh: ④ DMI方向移动量+DI/-DI
+#   name_en: _di
+#   intro: 拆出上下移动量与真实波幅，SUM 平滑（非 EMA）供 DMI/ADX 共用
+#   desc: TR=max(H-L,|H-Cp|,|L-Cp|)；±DM 条件置零 → 三者 rolling(N).sum() → ±DI=±DM_sum×100/TR_sum
+#   inputs: I1
+#   outputs: (pdi, mdi) 二元组
+# 层: 输出
+# - id: O1
+#   name_zh: 趋势指标 DataFrame（10指标多列）
+#   name_en: trend indicators DataFrame
+#   intro: MA/EMA/WMA/DEMA/MACD/ADX/DMI/CCI/SAR/TRIX 共10个趋势指标的多列输出，index 与输入对齐
+#   invariant: 输出列严格等于各 meta.output_columns（ma_5/10/20/60、ema_12/26、wma_10、dema_12、macd_*、adx_14、pdi_14/mdi_14、cci_14、sar、trix/trma）
+#   downstream: zephyr.data.implementations.internal_compute_provider（批量计算写入 c1_market.technical_indicator）；sleeve alpha 择时；volatility.py/reversal.py 复用 _ema
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I1 --> A4
+# A1 -.->|断点| MACD
+# A1 -.->|断点| ADX
+# A1 -.->|断点| CCI
+# A1 -.->|断点| SAR
+# A2 -.->|断点| MACD
+# A4 -.->|断点| ADX
+# MACD --> O1
+# ADX --> O1
+# CCI --> O1
+# SAR --> O1
 """
 
 from __future__ import annotations

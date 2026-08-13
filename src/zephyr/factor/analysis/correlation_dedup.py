@@ -13,10 +13,67 @@
 # [TESTS] tests/factor/test_correlation_dedup.py
 # [A_module] module_id=MOD-L02-006 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。
+"""
+
+D-FACTOR-ANA-05 因子相关性去重——基于相关性矩阵去除冗余因子。
 
 贪心算法：按 factor_values 的插入顺序遍历，若当前因子与已保留因子的相关性
 绝对值均低于阈值，则保留；否则丢弃（已被高相关因子覆盖）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 因子值字典 dict[str, pd.Series]
+#   fields: factor_id → 因子值序列（插入顺序即优先级）
+#   code: factor_values 函数参数
+# - id: I2
+#   name: 相关性阈值 float
+#   fields: 相关性绝对值阈值，默认 0.7
+#   code: threshold=0.7
+# 层: 算法
+# - id: A1
+#   name_zh: ① 因子相关性矩阵计算
+#   name_en: compute_factor_correlation
+#   intro: 调 correlation_analyzer 算出 N×N 因子相关系数矩阵
+#   desc: 对 factor_values 两两算相关系数（L43/L77 调用）；空矩阵走兜底分支
+#   inputs: I1
+#   outputs: N×N 相关性矩阵 DataFrame
+# - id: A2
+#   name_zh: ② 冗余因子对扫描
+#   name_en: find_redundant_pairs
+#   intro: 上三角扫描矩阵，揪出所有相关性绝对值超阈值的因子对
+#   desc: 遍历上三角，|corr|≥threshold 收集 (f1,f2,corr)，按 |corr| 降序排序（L46-54）
+#   inputs: A1 I2
+#   outputs: 冗余因子对列表 list[tuple]
+# - id: A3
+#   name_zh: ③ 贪心去重
+#   name_en: dedup_factors
+#   intro: 按插入顺序遍历，与已保留因子相关性都低于阈值才保留
+#   desc: 贪心保留先出现因子；当前因子与任一已保留因子 |corr|≥threshold 即丢弃（L80-89）
+#   inputs: A1 I2
+#   outputs: 保留因子ID列表 list[str]
+#   invariant: 纯函数无IO；保留先出现因子，删除后续高相关因子
+# 层: 输出
+# - id: O1
+#   name_zh: 冗余因子对列表
+#   name_en: list[tuple[str, str, float]]
+#   intro: (因子1, 因子2, 相关系数) 三元组，按相关性绝对值降序
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 去重后保留因子ID列表
+#   name_en: list[str]
+#   intro: 保持插入顺序的存活因子清单
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A1 --> A3
+# I2 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 from __future__ import annotations
 
