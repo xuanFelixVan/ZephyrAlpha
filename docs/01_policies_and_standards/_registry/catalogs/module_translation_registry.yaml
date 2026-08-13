@@ -41382,6 +41382,21 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 验证两级引用校验口径——因子整体引用必须和注册表文案一致、分量引用只查条目存在、引用不存在的条目会报悬空（§4.16.4，#ARCH-69/70）。
+- module_path: src/zephyr/risk/core/liquidity_crisis_manager.py
+  domain_id: D_RISK
+  name_zh: "流动性危机管理器"
+  name_en: "LiquidityCrisisManager"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘中实时监控单只股票是不是陷入流动性危机：看盘口卖方挂单占比和买卖价差有没有同时爆掉，涨跌停时按跌停等于卖不出特殊处理；真出危机先停新开仓，危机消了按比触发线更宽的恢复线加最短冷却时间确认稳住才放行，还能提前算未来几天大型IPO要抽走市场多少资金并自动下调仓位上限"
+- module_path: tests/risk/core/test_liquidity_crisis_manager.py
+  domain_id: D_RISK
+  name_zh: "流动性危机管理器单元测试"
+  name_en: "LiquidityCrisisManagerTests"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "验证流动性危机管理器的卖压计算、价差计算、涨跌停识别、危机恢复双阈值门控、IPO抽离预警和盘中编排全链路是否按37号设计备忘的算法正确工作"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow

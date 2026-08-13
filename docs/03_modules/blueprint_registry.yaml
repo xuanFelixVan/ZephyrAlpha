@@ -1808,6 +1808,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/daily_auditor/blueprint.md
+- module_id: MOD-RK-21
+  name: liquidity_crisis_manager
+  title: 流动性危机管理器蓝图 — 卖压/价差/涨跌停五状态/恢复 hysteresis/IPO 抽离预警（37号 G18 施工落地）
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md
 - module_id: MOD-RPT-003
   name: report_publisher
   title: 报告发布器蓝图 — 中心枢纽+归档+分发+哈希链审计(基础版)
