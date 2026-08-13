@@ -477,15 +477,43 @@ class FirmRiskAggregator:
         contributions: dict[str, dict[str, float]] = {}
 
         for tp in targets:
-            # 兼容 dict 和对象两种格式
+            # 兼容三种格式：TargetPortfolio 对象 / dict(positions/budget) / dict(target_portfolio/budget_used)
             if isinstance(tp, dict):
                 strategy_id = tp.get("strategy_id", "unknown")
-                budget_used = tp.get("budget_used", 0.0)
-                tp_portfolio = tp.get("target_portfolio", {})
+                # 支持两种 dict 键名：positions/budget（TargetPortfolio 风格）或 target_portfolio/budget_used（旧风格）
+                if "positions" in tp:
+                    budget_used = tp.get("budget", 0.0)
+                    tp_portfolio_raw = tp.get("positions", {})
+                    # positions 值可能是 TargetWeight 对象或裸 float
+                    tp_portfolio = {}
+                    for sym, val in tp_portfolio_raw.items():
+                        if hasattr(val, "target_weight"):
+                            tp_portfolio[sym] = val.target_weight
+                        elif isinstance(val, (int, float)):
+                            tp_portfolio[sym] = float(val)
+                        else:
+                            tp_portfolio[sym] = 0.0
+                else:
+                    budget_used = tp.get("budget_used", 0.0)
+                    tp_portfolio = tp.get("target_portfolio", {})
             else:
                 strategy_id = getattr(tp, "strategy_id", "unknown")
-                budget_used = getattr(tp, "budget_used", 0.0)
-                tp_portfolio = getattr(tp, "target_portfolio", {})
+                # TargetPortfolio 对象：positions/budget 字段
+                if hasattr(tp, "positions"):
+                    budget_used = getattr(tp, "budget", 0.0)
+                    tp_portfolio_raw = getattr(tp, "positions", {})
+                    # positions 值是 TargetWeight 对象，取 .target_weight
+                    tp_portfolio = {}
+                    for sym, val in tp_portfolio_raw.items():
+                        if hasattr(val, "target_weight"):
+                            tp_portfolio[sym] = val.target_weight
+                        elif isinstance(val, (int, float)):
+                            tp_portfolio[sym] = float(val)
+                        else:
+                            tp_portfolio[sym] = 0.0
+                else:
+                    budget_used = getattr(tp, "budget_used", 0.0)
+                    tp_portfolio = getattr(tp, "target_portfolio", {})
 
             scale = budget_used / total_budget if total_budget > 0 else 0.0
 
