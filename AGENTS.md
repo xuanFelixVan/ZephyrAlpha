@@ -155,7 +155,8 @@
 > - 🔄 因子库：[`factor_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（111 条/10 类）
 > - 🔄 策略库：[`strategy_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml)（59 条/6 类）
 > - 🔄 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（42 条/9 类）
-> - ⏳ 待施工：技术指标/执行算法/数据资产/图形形态（P1）+ 字段字典/实验（P2）——Schema 见 62 号文档 §6/§7
+> - 🔄 技术指标：[`technical_indicator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml)（REG-IND-001，40 条/5 类/58 输出列，9 周期，Step1-6 审计 PASS，used_by_factors 待回填）
+> - ⏳ 待施工：执行算法/数据资产/图形形态（P1）+ 字段字典/实验（P2）——Schema 见 62 号文档 §6/§7
 
 ## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
 
