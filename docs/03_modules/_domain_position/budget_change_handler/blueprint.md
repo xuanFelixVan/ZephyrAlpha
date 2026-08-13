@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.1.0"
 design_maturity: production
-build_status: generated
+build_status: stable
 ttl: permanent
 layer: L03_position
 layer_name: position

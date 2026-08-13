@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-13T11:27:19Z'
+generated_at: '2026-08-13T19:08:01Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 200
+total_files: 207
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1745,6 +1745,36 @@ files:
   tier: ''
   aliases: []
   section_count: 1
+- path: docs/01_policies_and_standards/sop/construction_workflow_sop.md
+  module_id: ''
+  title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工闭环
+  doc_type: policy
+  status: active
+  version: 1.4.0
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md
+  module_id: ''
+  title: Merge 冲突处理 SOP——冲突三分法 + 标准 7 步流程（不盲选边，逐个读内容，结果留痕）
+  doc_type: policy
+  status: active
+  version: 1.0.1
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/templates/blueprint_construction_template.md
   module_id: GOV-028
   title: Blueprint Construction Template
@@ -2045,6 +2075,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml
   module_id: MOD-GOVERNANCE
   title: ''
@@ -2066,6 +2111,21 @@ files:
   doc_type: register
   status: active
   version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
+  module_id: MOD-GOVERNANCE
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2165,6 +2225,36 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml
+  module_id: MOD-GOVERNANCE
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+  module_id: MOD-GOVERNANCE
+  title: ''
+  doc_type: ''
+  status: draft
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/external_contract_verification_registry.yaml
   module_id: REG-EXT-CONTRACT-001
   title: 外部契约验证登记表
@@ -2181,7 +2271,22 @@ files:
   aliases: []
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml
-  module_id: ''
+  module_id: MOD-GOVERNANCE
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml
+  module_id: MOD-GOVERNANCE
   title: ''
   doc_type: ''
   status: active
@@ -2470,7 +2575,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2571,11 +2676,11 @@ files:
   aliases: []
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml
-  module_id: ''
+  module_id: MOD-GOVERNANCE
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2605,7 +2710,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 0.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
