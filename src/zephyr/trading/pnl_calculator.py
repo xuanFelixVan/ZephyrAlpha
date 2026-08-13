@@ -14,7 +14,9 @@
 # [TESTS] tests/trading/test_pnl_calculator.py
 # [A_module] module_id=MOD-TRADING-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_TRADING — PnL Calculator (盈亏计算器)
+"""
+
+D_TRADING — PnL Calculator (盈亏计算器)
 
 交易后盈亏核算基础设施。从成交回报(Fill)和持仓均价计算已实现盈亏,
 从持仓+当前市价计算未实现盈亏, 含A股交易成本(佣金/印花税/过户费)核算。
@@ -32,6 +34,93 @@
 
 属 A 类基础设施（确定性数学计算），费率为 C 类可调参数(FeeConfig)。
 纯基础设施: 不决定"买什么/何时买"，只负责"算这笔交易赚了多少/花了多少成本"。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交回报 Fill（CTR-005 契约）
+#   fields: fill_price + filled_quantity + symbol（Decimal，不可变）
+#   code: zephyr.shared.contracts.fill.Fill
+# - id: I2
+#   name: 持仓均价 avg_cost（Decimal）
+#   fields: 卖出前持仓均价，来自 PositionTracker
+#   code: calculate_realized(avg_cost) L230
+# - id: I3
+#   name: 持仓与市价 positions
+#   fields: (symbol, quantity, avg_cost, current_price) 列表；quantity>0多头 <0空头
+#   code: calculate_portfolio(positions) L368
+# - id: I4
+#   name: A股费率配置 FeeConfig（C类可调参数）
+#   fields: 佣金0.025%最低¥5 / 印花税0.05%仅卖出 / 过户费0.001%双向
+#   code: FeeConfig L60
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验
+#   name_en: PnlCalculator 校验段
+#   intro: 检查成交价/数量为正、均价市价非负，非法抛错
+#   desc: fill_price<=0 / qty<=0 / avg_cost<0 / current_price<0 → InvalidPnlInputError(ZA-TR-0001)
+#   inputs: I1 I2 I3
+#   outputs: 校验通过或异常
+# - id: A2
+#   name_zh: ② A股费用核算
+#   name_en: AShareFeeCalculator.calculate
+#   intro: 按成交额算佣金/印花税/过户费三件套
+#   desc: commission=max(turnover×rate, min¥5)；stamp_duty=turnover×0.0005 仅SELL；transfer_fee=turnover×0.00001 双向
+#   inputs: A1 I1 I4
+#   outputs: FeeBreakdown（total=三项之和）
+# - id: A3
+#   name_zh: ③ 已实现盈亏
+#   name_en: calculate_realized
+#   intro: 卖出才算赚亏：价差乘数量减费用；买入只计费用不计毛盈亏
+#   desc: turnover=price×qty；SELL gross=(fill_price-avg_cost)×qty，BUY gross=0；net_pnl=gross-fees.total
+#   inputs: A1 A2 I1 I2
+#   outputs: RealizedPnl
+#   invariant: 净盈亏=毛盈亏-总费用恒成立；买入毛盈亏=0
+# - id: A4
+#   name_zh: ④ 未实现盈亏
+#   name_en: calculate_unrealized
+#   intro: 按当前市价给持仓估浮盈浮亏，多空方向相反
+#   desc: 多头 gross=(current_price-avg_cost)×qty；空头 gross=(avg_cost-current_price)×|qty|；零持仓=0
+#   inputs: A1 I3
+#   outputs: UnrealizedPnl
+# - id: A5
+#   name_zh: ⑤ 组合盈亏汇总
+#   name_en: calculate_portfolio
+#   intro: 批量算全部成交的已实现和全部持仓的未实现，加总成组合盈亏
+#   desc: total_pnl=Σnet_realized+Σgross_unrealized；total_fees=Σfees.total
+#   inputs: A3 A4
+#   outputs: PortfolioPnl
+# 层: 输出
+# - id: O1
+#   name_zh: 单笔已实现盈亏 RealizedPnl
+#   name_en: RealizedPnl
+#   intro: 毛盈亏+费用分解+净盈亏，frozen 不可变
+#   invariant: net_pnl = gross_pnl - fees.total
+#   downstream: calculate_portfolio 聚合（A5）
+# - id: O2
+#   name_zh: 组合盈亏 PortfolioPnl（CTR-TRD-01 费率/PnL数据）
+#   name_en: PortfolioPnl
+#   intro: 已实现净额+未实现毛额+费用合计，供报表域做盈亏分析
+#   downstream: zephyr.reporting（C-010 盈亏分析）；zephyr.ex_core；zephyr.position
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# I1 --> A2
+# I4 --> A2
+# A1 --> A3
+# A2 --> A3
+# I1 --> A3
+# I2 --> A3
+# A1 --> A4
+# I3 --> A4
+# A3 --> A5
+# A4 --> A5
+# A3 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

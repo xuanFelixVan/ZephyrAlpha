@@ -9,6 +9,74 @@
 # [UPDATED] 2026-07-20 | Task 5.150.7: God Class 拆分 — ActionDispatcher 分解为 1 外观 + 4 worker
 # [CONSUMERS] orchestrator.py | task_worker.py | test_action_dispatcher.py
 # [STABILITY] stable
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: TaskCard 已完成任务
+#   fields: capability / result / payload.text（经 TaskScheduler 完成队列）
+#   code: dispatch L335 / drain_results L373
+# - id: I2
+#   name: 4 个 worker 提取类
+#   fields: SearchReplaceEngine / FileLifecycleManager / AnnotationWriter / AuditLogWriter
+#   code: import L289-292
+# 层: 算法
+# - id: A1
+#   name_zh: ① capability 路由分发
+#   name_en: ActionDispatcher.dispatch
+#   intro: 按 capability 把推理结果路由到对应执行器回写源文件
+#   desc: 9 种 capability → annotate_py_file/tag_module/annotate_blueprint/search_replace_file/create_file/write_triage_log；空 result 或无执行器 → _skip；异常 → error 报告
+#   inputs: I1 I2
+#   outputs: ActionReport
+#   invariant: 构造函数与公共方法签名不变（5.150.7 God Class 拆分向后兼容）
+# - id: A2
+#   name_zh: ② 结果队列消费与统计
+#   name_en: ActionDispatcher.drain_results
+#   intro: 从 TaskScheduler 取已完成未处理任务逐个 dispatch 并累计统计
+#   desc: 标记 task.acted=True 防重；按 report.status 累加 _stats（dispatched/modified/created/deleted/search_replaced/skipped）
+#   inputs: I1 A1
+#   outputs: list[ActionReport] + stats 快照
+# - id: A3
+#   name_zh: ③ BRAIN 注释块文本编辑
+#   name_en: BrainBlockEditor
+#   intro: 纯文本构建/插入/更新 # BRAIN 注释块，无 I/O 无状态
+#   desc: build_block 逐键序列化加时间戳；insert 跳过 shebang/docstring 后落位；update 替换连续标记行区间
+#   inputs: 无（纯文本工具，被 worker 与外观别名调用）
+#   outputs: 编辑后文本
+# - id: A4
+#   name_zh: ④ 模块文件发现
+#   name_en: ModuleFileLocator
+#   intro: 把模块名/文本提示解析成磁盘上的 .py 或 YAML 文件
+#   desc: 剥离 11 种任务前缀取首行 80 字符为模块名；src/**/*.py glob 精确+模糊互配；capability card / blueprint 按 stem 互配查找
+#   inputs: 无（查找工具，被外观 wrapper 与 worker 调用）
+#   outputs: Path 或 None
+# 层: 输出
+# - id: O1
+#   name_zh: 动作分发器包公共 API
+#   name_en: ActionDispatcher / ActionReport / BrainBlockEditor / ModuleFileLocator
+#   intro: 推理结果直接回写源文件的外观入口（版本链 + 行级编辑 + 创建/删除）
+#   downstream: orchestrator.py / task_worker.py / test_action_dispatcher.py（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 动作执行副作用
+#   name_en: file mutations
+#   intro: 源文件改写/创建/删除（.brain_trash）与 .brain_backups 版本链备份、audit_logs 审计
+#   downstream: 无下游/内部使用（直接写盘）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A1 --> O2
+"""
+
 from __future__ import annotations
 
 """动作分发器: 推理结果 -> 直接回写源文件 (Phase 2: 版本链 + 行级编辑 + 创建/删除)。

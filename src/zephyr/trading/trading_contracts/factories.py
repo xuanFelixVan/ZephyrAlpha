@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-TRADING-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""trading-contracts/factories.py — 交易域数据契约工厂方法
+"""
+
+trading-contracts/factories.py — 交易域数据契约工厂方法
 
 从 shared/contracts/core/factories.py 迁移至此——工厂方法创建交易域对象，
 属于交易域而非基础设施层。消除 shared -> trading-contracts 的架构违规。
@@ -30,6 +32,76 @@ Phase D-3: 提供跨层数据转换的工厂方法，统一处理 float->Decimal
 
 SSoT: cross_layer_contracts.yaml v3.0
 Status: HAND-MAINTAINED — codegen disabled (Phase D)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 风险契约参数对象（RiskLimitsParams / RiskDashboardSnapshotParams / RiskMetricsReportParams）
+#   fields: frozen dataclass，字段与 5.150 前旧签名 1:1（如 max_single_position=0.10 / max_gross_leverage=1.0 / var_1d_95 等）
+#   code: RiskLimitsParams L77 / RiskDashboardSnapshotParams L96 / RiskMetricsReportParams L114
+# - id: I2
+#   name: 信号构造参数（make_factor_signal / make_synthesized_signal 关键字参数）
+#   fields: factor_id/symbol/raw_value/normalized_value/rank_pct；signal_id/signal_value/signal_direction/confidence/contributing_factors/generation_latency_ms
+#   code: make_factor_signal L206 / make_synthesized_signal L228
+# - id: I3
+#   name: 订单构造参数（make_order 参数）
+#   fields: order_id/symbol/side/order_type/quantity(Decimal)/strategy_id/limit_price
+#   code: make_order L258
+# 层: 算法
+# - id: A1
+#   name_zh: ① 工厂参数收口
+#   name_en: _coerce_params
+#   intro: params 对象优先，旧关键字参数经参数对象构造函数过渡，混用显式拒绝
+#   desc: params=None→params_cls(**kwargs)；params+kwargs 混用→TypeError；类型不符→TypeError
+#   inputs: I1
+#   outputs: 归一化后的参数对象
+# - id: A2
+#   name_zh: ② float→Decimal 边界转换
+#   name_en: _to_decimal / _optional_decimal
+#   intro: 跨层 float 统一经 str 转 Decimal，None 安全处理
+#   desc: Decimal 原样返回；float→Decimal(str(v))；None→Decimal("0") 或 None（optional 版）
+#   inputs: I1
+#   outputs: Decimal 值
+# - id: A3
+#   name_zh: ③ 风险契约工厂三件套
+#   name_en: make_risk_limits / make_risk_dashboard_snapshot / make_risk_metrics_report
+#   intro: 从参数对象创建 RiskLimits/风险快照/风险指标报告，自动补默认时间与幂等键
+#   desc: as_of_date/snapshot_time 默认 datetime.now(UTC)；idempotency_key 默认 limits-/snap-/metrics-+时间戳
+#   inputs: A1 A2
+#   outputs: RiskLimits / RiskDashboardSnapshot / RiskMetricsReport
+# - id: A4
+#   name_zh: ④ 信号契约工厂
+#   name_en: make_factor_signal / make_synthesized_signal
+#   intro: 创建因子信号/合成信号契约，补默认时间戳与幂等键
+#   desc: as_of_date 默认 now；idempotency_key 默认 fsig-{factor}-{symbol}-ts / ssig-{id}-ts
+#   inputs: I2
+#   outputs: FactorSignal / SynthesizedSignal
+# - id: A5
+#   name_zh: ⑤ 订单工厂
+#   name_en: make_order
+#   intro: 创建 Order 契约，created_at 打当前时间，幂等键默认 ord-{order_id}
+#   desc: 直接透传字段构造 Order；idempotency_key 空则自动生成
+#   inputs: I3
+#   outputs: Order
+# 层: 输出
+# - id: O1
+#   name_zh: 交易域契约实例（RiskLimits/快照/指标报告/FactorSignal/SynthesizedSignal/Order）
+#   name_en: trading contract instances
+#   intro: 工厂产出的不可变交易域数据契约，仅供 trading_contracts 包内类型
+#   invariant: 工厂方法仅创建 trading_contracts 内定义的类型实例
+#   downstream: 无下游/内部使用（header 注明原 consumers 均为幻影引用已清理）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# A1 --> A3
+# A2 --> A3
+# I2 --> A4
+# I3 --> A5
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
 """
 
 from __future__ import annotations

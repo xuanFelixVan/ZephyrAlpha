@@ -14,7 +14,9 @@
 # [TESTS] tests/trading/test_settlement_reconciliation.py
 # [A_module] module_id=MOD-TRADING-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_TRADING — Settlement & Reconciliation Engine (结算对账器)
+"""
+
+D_TRADING — Settlement & Reconciliation Engine (结算对账器)
 
 盘后交易级对账基础设施。每日 15:30 后自动比对系统交易记录(来自 D-EX-CORE
 的 Fill)与券商结算单(BrokerSettlementRecord), 逐笔检测价格/数量/佣金差异及
@@ -31,6 +33,86 @@
 蓝图: docs/03_modules/_domain_trading/settlement_reconciliation/blueprint.md
 
 属 A 类基础设施(确定性比对 + 容差检测), 纯消费层不修改 source 状态。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 系统侧交易记录 system_fills（list[Fill]，来自 D-EX-CORE）
+#   fields: broker_fill_id(优先配对键)/order_id(回退)/symbol/fill_price/filled_quantity/commission
+#   code: reconcile(system_fills) L203
+# - id: I2
+#   name: 券商结算单 broker_records（list[BrokerSettlementRecord]）
+#   fields: trade_id/order_id/symbol/settlement_price/settlement_quantity/commission/settlement_date
+#   code: BrokerSettlementRecord L94
+# - id: I3
+#   name: 对账容差配置 ReconciliationConfig（C类可调参数）
+#   fields: price_tolerance=0.01元 / quantity_tolerance=0(数量必须精确) / commission_tolerance=0.01元
+#   code: ReconciliationConfig L78
+# 层: 算法
+# - id: A1
+#   name_zh: ① 配对索引构建
+#   name_en: reconcile 索引段
+#   intro: 系统侧按 broker_fill_id 优先 order_id 回退建键，券商侧按 trade_id/order_id 建键
+#   desc: 两侧各建 dict 索引；券商记录结算日期与对账日期不一致仅告警不剔除
+#   inputs: I1 I2
+#   outputs: system_by_id + broker_by_id
+# - id: A2
+#   name_zh: ② 逐字段容差比较
+#   name_en: _compare_fields
+#   intro: 配对成功的逐笔比对价格/数量/佣金，超容差记差异
+#   desc: diff=system-broker；|diff|>tolerance → PRICE/QUANTITY/COMMISSION_MISMATCH；数量容差=0 必须精确
+#   inputs: A1 I3
+#   outputs: SettlementDrift 列表（MISMATCH 类）
+# - id: A3
+#   name_zh: ③ 缺失记录检测
+#   name_en: reconcile 缺失检测段
+#   intro: 系统有券商无、券商有系统无，分别记两种缺失差异
+#   desc: 未配对系统Fill→MISSING_IN_BROKER；未配对券商记录→MISSING_IN_SYSTEM
+#   inputs: A1
+#   outputs: SettlementDrift 列表（MISSING 类）
+# - id: A4
+#   name_zh: ④ 差异告警回调
+#   name_en: on_discrepancy trigger
+#   intro: 有差异时触发告警回调，回调异常只记日志不阻断对账
+#   desc: matched=(drifts为空)；False 时调 on_discrepancy(result)，异常 catch+log
+#   inputs: A2 A3
+#   outputs: E-TR-02 差异告警（阶段1回调模式）
+# - id: A5
+#   name_zh: ⑤ 结算报告生成（含哈希指纹）
+#   name_en: generate_report
+#   intro: 把对账结果打包成不可变报告，SHA-256 指纹防篡改
+#   desc: canonical_json(sorted keys)+SHA-256→report_hash；report_id=SR-+uuid12位
+#   inputs: A2 A3
+#   outputs: SettlementReport
+#   invariant: report_hash=SHA-256(canonical_json)
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconciliationResult
+#   name_en: ReconciliationResult
+#   intro: matched 标志+差异元组+两侧笔数/成功配对笔数，frozen 不可变
+#   invariant: reconcile 纯读不修改 source 状态
+#   downstream: generate_report（A5）；on_discrepancy 告警
+# - id: O2
+#   name_zh: 结算报告 SettlementReport（E-TR-01/E-TR-02 事件）
+#   name_en: SettlementReport
+#   intro: 含哈希指纹的盘后结算报告，供报表与治理域归档审计
+#   downstream: zephyr.reporting；zephyr.governance
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I3 --> A2
+# A1 --> A3
+# A2 --> A4
+# A3 --> A4
+# A2 --> A5
+# A3 --> A5
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

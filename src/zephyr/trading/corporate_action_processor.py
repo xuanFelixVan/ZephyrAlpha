@@ -14,7 +14,9 @@
 # [TESTS] tests/trading/test_corporate_action_processor.py
 # [A_module] module_id=MOD-TRADING-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_TRADING — Corporate Action & Fee Processor (公司行动处理器)
+"""
+
+D_TRADING — Corporate Action & Fee Processor (公司行动处理器)
 
 A股公司行动事件处理基础设施。处理除权除息/现金分红/送股/配股/拆股等公司行动
 事件, 自动调整持仓数量和均价, 产出 E-TR-03 CorporateActionAdjusted 事件通知
@@ -27,6 +29,106 @@ D-PF-CORE 更新组合目标。
 蓝图: docs/03_modules/_domain_trading/corporate_action_processor/blueprint.md
 
 属 A 类基础设施(确定性数学计算 + 规则驱动), 纯消费层不修改 source 状态。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 公司行动事件 CorporateAction（交易所公告）
+#   fields: action_id/symbol/action_type/ex_date + 按类型填 dividend_per_share / stock_dividend_ratio / rights_ratio+rights_price / split_ratio（全 Decimal）
+#   code: CorporateAction L70
+# - id: I2
+#   name: 当前持仓 quantity + avg_cost（Decimal）
+#   fields: 单持仓 process(quantity, avg_cost)；批量 apply(positions: symbol→(qty, cost))
+#   code: process L175 / apply L247
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验
+#   name_en: _validate
+#   intro: 校验 action_id/symbol 非空、数量均价非负、按类型必填参数齐全
+#   desc: 缺参数/负值 → 抛 InvalidCorporateActionError(ZA-TR-0004)
+#   inputs: I1 I2
+#   outputs: 校验通过或异常
+# - id: A2
+#   name_zh: ② 现金分红调整
+#   name_en: _cash_dividend
+#   intro: 分红后持仓数量不变、均价下调、现金流入
+#   desc: adj_cost=max(0, avg_cost-dps)；cash_delta=dps×qty
+#   inputs: A1 I1 I2
+#   outputs: (qty, adj_cost, cash)
+#   invariant: 均价调整后不为负
+# - id: A3
+#   name_zh: ③ 送股调整
+#   name_en: _stock_dividend
+#   intro: 白送的股票摊薄成本，数量增加、现金不变
+#   desc: factor=1+ratio；adj_qty=qty×factor；adj_cost=avg_cost/factor；cash=0
+#   inputs: A1 I1 I2
+#   outputs: (adj_qty, adj_cost, 0)
+#   invariant: 总市值不变
+# - id: A4
+#   name_zh: ④ 配股调整
+#   name_en: _rights_offering
+#   intro: 按配股价出资认购，数量增加、均价加权、现金流出
+#   desc: factor=1+ratio；adj_qty=qty×factor；adj_cost=(avg_cost+rights_price×ratio)/factor；cash=-rights_price×qty×ratio
+#   inputs: A1 I1 I2
+#   outputs: (adj_qty, adj_cost, cash<0)
+# - id: A5
+#   name_zh: ⑤ 拆股/缩股调整
+#   name_en: _stock_split
+#   intro: 数量和均价按拆分比反向调整，现金不变
+#   desc: adj_qty=qty×split_ratio（>1拆 <1并）；adj_cost=avg_cost/split_ratio；cash=0
+#   inputs: A1 I1 I2
+#   outputs: (adj_qty, adj_cost, 0)
+#   invariant: 总市值不变
+# - id: A6
+#   name_zh: ⑥ 除权除息复合处理
+#   name_en: _ex_rights
+#   intro: 复合事件按序叠加：现金分红→送股→配股→拆股，前者输出是后者输入
+#   desc: 各子步骤独立计算累加 cash；仅执行事件里填了参数的项
+#   inputs: A2 A3 A4 A5 I1
+#   outputs: (adj_qty, adj_cost, total_cash)
+# - id: A7
+#   name_zh: ⑦ 批量应用与事件回调
+#   name_en: apply
+#   intro: 对持仓字典批量套公司行动，同标的多个行动链式应用，完成后触发 E-TR-03 回调
+#   desc: 仅处理有持仓标的；position_state 链式更新；total_cash_delta=Σcash_delta；on_adjusted 异常 catch+log 不阻断
+#   inputs: I1 I2 A1
+#   outputs: CorporateActionResult + on_adjusted 回调
+# 层: 输出
+# - id: O1
+#   name_zh: 单条持仓调整 PositionAdjustment
+#   name_en: PositionAdjustment
+#   intro: 调整前后数量/均价/现金变动，frozen 不可变
+#   invariant: Decimal-only；process 纯计算不修改输入
+#   downstream: apply 聚合（A7）
+# - id: O2
+#   name_zh: 批量公司行动结果 CorporateActionResult（E-TR-03 事件）
+#   name_en: CorporateActionResult
+#   intro: 全部调整项+现金变动合计，经 on_adjusted 通知 PF 域更新组合目标
+#   downstream: zephyr.reporting；zephyr.pf_core（D-PF-CORE 更新组合目标）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# A1 --> A5
+# A2 --> A6
+# A3 --> A6
+# A4 --> A6
+# A5 --> A6
+# I1 --> A6
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
+# A6 --> O1
+# I1 --> A7
+# I2 --> A7
+# A1 --> A7
+# O1 --> A7
+# A7 --> O2
 """
 
 from __future__ import annotations
