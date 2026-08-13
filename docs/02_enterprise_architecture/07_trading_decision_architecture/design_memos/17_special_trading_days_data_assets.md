@@ -4,9 +4,9 @@ doc_type: architecture_view
 title: A股"特殊交易日"数据资产全景与治理（含 hk_trade_calendar 语义错配修复 #ARCH-DATA-001/002）
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.2.2"
-date: 2026-08-12
+status: active
+version: "1.0.0"
+date: 2026-08-13
 topic: special_trading_days_data_assets
 scope: 07_trading_decision_architecture
 related_issues:
@@ -39,9 +39,9 @@ related_issues:
 
 ### 1.2 本文档不做裁定
 
-- 不做新裁定（裁定落在 `architecture_issue_registry.yaml` 的 #ARCH-DATA-001/002）
-- 只做"现状盘点 + 待施工讨论"，供后续 AI/人认领施工
-- 治本方案的最终设计细节在 §5 讨论，定稿后回填本文档并转 active
+- 不做新治理裁定（裁定落在 `architecture_issue_registry.yaml` 的 #ARCH-DATA-001/002）
+- 治本方案设计定稿落在本文档 §5（v1.0.0 AI-STD-001 定稿，逐项结论见 §5.8），§6 讨论项已定夺并记录裁定
+- 后续施工追踪由 §6.6 台账承载（不单独补登立项条目，见 §6.6-5 定稿裁定）
 
 ## 2. 特殊交易日完整清单
 
@@ -252,7 +252,8 @@ related_issues:
 
 ## 5. 待施工：系统性治本方案（#ARCH-DATA-002）
 
-> 本节为"讨论稿"，定稿后转 active。用户已认可施工顺序：施工项4 先做，然后 1+2+3，施工项5 可选。
+> 本节已定稿（v1.0.0，AI-STD-001 定稿会话，2026-08-13）。施工顺序沿用用户裁定：施工项 4 先做，
+> 然后 1+2+3 同批，施工项 5 可选推迟；逐项定稿结论见 §5.8。
 
 ### 5.1 病根（第一性原理）
 
@@ -310,8 +311,9 @@ class CapabilityContract:
   allowed_apis: [THS_*, ifind 申万接口]   # mootdx client.block 不在此列 → 拒（防 INDUSTRY-CLASS 重演）
 ```
 
-维护责任（待讨论）：新增 capability 时强制登记（reconciler 拦），还是先由人工补登存量？
-倾向前者，但会让"新增 capability"流程变重一点。**待用户拍板**（见 §6.1）。
+维护责任（v1.0.0 已定稿，见 §6.1 裁定）：MVP 阶段执行选项 B——新增 capability 时 reconciler
+warn 不拦，存量易混淆 capability 随本施工项人工补登；满足升级触发条件后升级为选项 A
+（新增强制登记、reconciler 拦截）。
 
 ### 5.4 施工项 3：capability_validator AST gate（声明时拦截）
 
@@ -331,12 +333,14 @@ class CapabilityContract:
 针对缺陷：internal_compute 那边能出现"fetch 路由调用方法、方法却不存在"的状态并停留下来，说明没有
 编译期/提交期检查"路由引用的方法是否真实定义"。
 
-新增轻量 AST gate：
+新增轻量 AST gate（v1.0.0 定稿：**双向校验**）：
 - 解析 provider `fetch()` 里的路由调用（`self._fetch_xxx(payload)`）
 - 校验每个被引用的 `_fetch_xxx` 在类体内**真实定义**
-- 违例 → 拒提交
+- 反向校验：capability frozenset 与 `CapabilityContract(...)` 声明的每个 capability 必须有
+  对应 `_fetch_<cap>` 方法定义（防 §4.2 akshare L169/L363 式"声明残留"）
+- 同一 AST 扫描一次完成双向校验，违例 → 拒提交
 
-本次 bug 的 internal 侧（AttributeError 状态）能被此 gate 直接拦住。
+本次 bug 的 internal 侧（AttributeError 状态）与 akshare 侧（声明残留状态）均能被此 gate 直接拦住。
 
 ### 5.6 施工项 5：运行时抽样校验（可选/推迟）
 
@@ -364,7 +368,25 @@ class CapabilityContract:
 > 提供语义锚载体；施工项 2+3（注册表 + AST gate，2.5 天）随下个治理窗口同批启动，不挤占
 > MVP 实盘生存级施工（40_execution_broker / 53_simulation_live_path 优先）。
 
-## 6. 开放讨论项
+### 5.8 定稿结论（v1.0.0，AI-STD-001 定稿会话，2026-08-13）
+
+| 施工项 | 定稿结论 | 关键参数/边界 |
+|---|---|---|
+| 项 4 声明-实现符号一致性 gate | ✅ 采纳，**最优先施工** | 双向校验（§5.5 已回填）：路由引用方法必须真实定义 + capability 声明必须有对应 `_fetch_<cap>` 实现；同一 AST 扫描一次完成，违例拒提交 |
+| 项 1 CapabilityContract 语义字段 | ✅ 采纳，随项 4 紧随施工 | 字段定为 `expected_market` / `expected_variety`，可选、未填不校验、向后兼容零迁移 |
+| 项 2 capability_semantic_registry.yaml | ✅ 采纳，与项 3 同批（下个治理窗口） | 只对"跨市场/跨品种易混淆"capability 强制登记（hk_\*/us_\*/industry_\*/calendar 类）；初始登记 3 条：hk_trade_calendar / trade_calendar / industry_class；维护责任按 §6.1 裁定（MVP=选项 B warn 不拦） |
+| 项 3 capability_validator AST gate | ✅ 采纳，与项 2 同批 | 验收用例=须检出 #ARCH-DATA-001 与 #ARCH-CH-INDUSTRY-CLASS-MIGRATE 两个历史 bug；未登记 capability 不校验（过度工程防线保留）；违例 → reconciler fix-in-place 提示登记或换 API |
+| 项 5 运行时抽样校验 | ⏸ 推迟 | 启动条件（任一满足）：① 项 3 上线后发现漏检案例；② 日历类数据运行时语义漂移实证出现。届时扩展 cross_source_validator 抽样比对表内 is_open ↔ exchange_calendars is_session |
+
+施工路径定稿：**MVP 最小集 = 项 4 + 项 1（约 1 天）**；项 2 + 项 3（约 2.5 天）随下个治理窗口
+同批启动，不挤占实盘生存级施工（40_execution_broker / 53_simulation_live_path 优先）；项 5 推迟。
+本定稿不改变 #ARCH-DATA-002 在注册表的 decided 状态；注册表 fix_phase 回填（"设计已定稿，
+见 17 号 v1.0.0 §5.8"）待 bm-fill 会话释放 architecture_issue_registry.yaml 后执行（见 §6.6-5 定稿裁定）。
+
+## 6. 讨论项与定稿结论
+
+> v1.0.0（AI-STD-001，2026-08-13）：本节原"开放讨论项"均已定夺，定稿裁定逐条附于原讨论之后。
+> §6.4 已于 v0.2.0 关闭（全项目 Grep 核实悬空引用不存在）。
 
 ### 6.1 API 白名单维护责任
 
@@ -372,6 +394,7 @@ class CapabilityContract:
 - 选项 A：新增 capability 时强制登记（reconciler 拦截未登记）——治理强，但流程重
 - 选项 B：先人工补登存量易混淆 capability，新增时 warn 不拦——治理弱，但不阻塞
 - **倾向 A**，但需用户拍板。建议 MVP 阶段用 B（warn），积累一定存量后升级为 A（拦）
+- **定稿裁定（v1.0.0，AI-STD-001）**：采纳文内建议——MVP 阶段执行**选项 B**（新增时 warn 不拦 + 存量易混淆 capability 随施工项 2 人工补登）。升级为**选项 A**（新增强制登记、reconciler 拦截）的触发条件（任一满足即升级）：① 易混淆 capability 登记覆盖稳定运行一个完整治理窗口；② capability-API 语义错配同类 bug 再发生一次（不等治理窗口，立即升级）
 
 ### 6.2 msci_adjustment 数据源接入路径
 
@@ -382,6 +405,10 @@ akshare/tushare 均无 MSCI/富时调整直接接口。候选路径：
 
 **待讨论**：MVP 阶段是否需要 MSCI 调整数据？若需要，选哪条路径？当前表结构已预留，可空置等待。
 
+**定稿裁定（v1.0.0，AI-STD-001）**：MVP 阶段**不需要** MSCI 调整数据，表结构维持空置（等效 disabled）。
+未来事件驱动/外资流向研究启动时再审，届时路径优先级：**路径 2 优先**（第三方数据源——iFind 已在
+体系内，边际成本最低），路径 1（爬虫）仅作 fallback，路径 3（手工录入）用于补历史关键调整事件。
+
 ### 6.3 fomc_meeting / major_meeting / stamp_duty_change 手工填充策略
 
 calendar_event 表结构已预留这 3 个 manual event_type，但无填充机制。候选：
@@ -390,6 +417,11 @@ calendar_event 表结构已预留这 3 个 manual event_type，但无填充机�
 3. 直接 INSERT SQL 脚本（最轻）
 
 **待讨论**：填充策略 + 数据源（FOMC 日程官网可爬、两会日期固定可手工、印花税历史调整可查）。
+
+**定稿裁定（v1.0.0，AI-STD-001）**：采纳**方案 1（CSV 录入 + 一次性 IMPORT）**为标准填充路径——
+FOMC 每年 8 次、两会每年 1 次，属低频重复录入，CSV 作手工源数据台账可复查、可增量追加；
+方案 2（轻量 admin 接口）排除（过度工程）；方案 3（直接 INSERT SQL）仅作一次性应急补丁。
+填充时机：随 §6.6-2 `calendar_event_refresh` 任务补登记同批执行（同表同批，一次回填）。
 
 ### 6.4 悬空引用修正（v0.2.0 核实：任务关闭）
 
@@ -403,6 +435,9 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
 
 用户最初提及"ETF 赎回日"。评估结论（§2.4）：A 股 ETF 为 T+0 实物申赎，无固定"赎回日"；
 净赎回数据可从 `etf_nav` 衍生。**建议不单独建表**，需要时在查询层衍生净赎回指标。待用户确认。
+
+**定稿裁定（v1.0.0，AI-STD-001）**：采纳建议——ETF 赎回日**不单独建表**，需要时在查询层从
+`etf_nav` 衍生净赎回指标。本项关闭。
 
 ### 6.6 紧随清理任务（v0.2.0 新增）
 
@@ -418,6 +453,10 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
    margin_target_adjustment 的 provider 方法 + 任务 + 品类注册整套补建；施工前先确认 MVP
    是否真需要这三类数据（与 §6.2 一并评估优先级）。63 号 v2.1.0 亦将此 3 表列入
    "代码零引用但规划已登记"类别（交叉佐证）。
+   **定稿评估结论（v1.0.0，AI-STD-001）**：**暂缓施工**——MVP 阶段聚焦实盘生存级，三类数据
+   服务事件驱动/打新等 alpha 侧增强而非生存级，优先级让位 §6.6-2（calendar_event 回填为风险侧
+   BM-POS-08 日历仓位约束的数据基座，风险优先）；与 §6.2 MSCI 同批于下个数据资产窗口再审。
+   若届时确定启动，属未来功能：先登记 candidate_module_registry（CAND）再施工。
 4. **6 条品类注册补登**（§3.2）：随对应采集链施工一并补登；calendar_event/dividend_tax_node
    两条 internal 类可先行。注册表体系施工规范与 data_asset_registry 登记要求见
    [62_business_registry_construction](62_business_registry_construction.md)（G62 总案）。
@@ -425,6 +464,12 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
    "特殊日子数据资产立项"的 ARCH 编号，但 architecture_issue_registry.yaml 中并无对应条目。
    v0.2.0 已从 frontmatter 移除该悬空引用；若需立项追踪后续施工（§6.6-2/3/4），
    应先在注册表补登条目、再在本文档恢复引用——待用户裁定是否需要。
+
+   **定稿裁定（v1.0.0，AI-STD-001）**：**不单独补登立项条目**——后续施工（§6.6-1~4）由本文档
+   active 状态承载追踪（§6.6 即任务台账，修复/清理类问题已由 #ARCH-DATA-001/002 覆盖，功能类
+   按 §6.6-3 结论未来启动时登 CAND）。另：#ARCH-DATA-001/002 注册表条目的 fix_phase 回填
+   （"§5.8 设计定稿完成"）待 bm-fill 会话释放 architecture_issue_registry.yaml 后由后续会话
+   执行——本会话遵守多会话并发防护铁律，不触碰该文件。
 
 ## 7. 关键文件清单
 
@@ -451,3 +496,4 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
 | v0.2.0 | 2026-08-12 | **已施工盘点真实化修正**（架构审查第 1-3 轮 Grep 全量核实）：① §3.2 品类注册从"7 条已注册"修正为"仅 market_hk_trade_calendar 1 条已注册，6 条待施工"（v0.1.0 声称的 L1921-2019 注册段不存在）；② §3.3 采集任务从"6 个已注册"修正为"仅 hk_trade_calendar_refresh 1 个已注册，5 个待施工"（v0.1.0 声称的 L2369-2433 任务段不存在），并点名 calendar_event 表"代码就绪、数据未灌"为最优先缺口；③ §3.4 三个 akshare 采集方法（index_adjustment/ipo_schedule/margin_target_adjustment）从"已实现"修正为"方法不存在"；④ §2.3 三个个股事件覆盖状态从"✅ 已施工"修正为"🟨 schema 已建、采集链未施工"；⑤ §4.2 止血动作第 2 行从"4 处全删"修正为"方法体+死常量已删，capability frozenset（L169）+ CapabilityContract（L363）两处声明残留"；⑥ §6.4 悬空引用修正任务关闭（全项目 Grep 核实该引用已不存在）；⑦ 新增 §6.6 紧随清理任务 5 项（残留清理/任务补登记/采集链评估/注册补登/立项条目补登评估）；⑧ §2.4 待评估项新增 5 行（国债期货交割日/MLF 操作日/财报强制披露截止窗口/央行 OMO 与经济数据发布日/富时A50期货交割日——A50 为第4轮搜索新发现，每月倒数第2个工作日，离岸衍生品隔夜调仓直接影响 A 股次日跳空，优先级高于国债期货交割日）；⑨ §5.7 补过度工程审查（MVP 最小集=施工项 4+1）；⑩ frontmatter 修正：related_issues 移除注册表中不存在的立项条目引用，scope 双值改单值（01 号规范 §4.2 单值范式）。教训：schema DDL 落盘 ≠ 采集链施工完成，盘点类文档须以 Grep 实证为准。另注：本版修正曾遭并发会话回滚三次，此为重放写入并立即 git add 保护 |
 | v0.2.1 | 2026-08-12 | 第6轮一致性审查·交叉引用补全：§6.6-2 补 15 号下游依赖注记（15 号 PIT Embargo"BDay 近似换真交易日历"待决策项依赖 calendar_event 表有数据）+ 63 号 v2.1.0 交叉佐证（63 号已将 calendar_event 等 6 表列入"代码零引用但规划已登记"类别，与本版 §3.2/§3.3 核实结论互验）；§6.6-4 补 62 号引用（品类注册补登施工规范见 G62 总案） |
 | v0.2.2 | 2026-08-12 | 作战地图全覆盖补丁——BM-POS-08。新增 §2.5 日历→仓位约束规则：日历事件→临时仓位上限裁决表 6 条（期权交割日否决新开仓/4 月下旬年报截止 ST 清零/预告截止前 5 日否决新买入/微盘股信息空窗收紧 50%/交割日前后下调 5-10%/财报前 3 天降仓位+禁新建，参数以作战地图 indicators 为准核对），数据基座=本文既有 calendar_event 资产（§3.5 event_type 枚举）；输出 CalendarPositionAlert+临时仓位上限 → BM-POS-01/BM-POS-04 消费，与 regime Shrinkage/回撤 Protocol 乘性叠加取最紧；降级=日历数据缺失跳过约束（§3.3 空表即整体降级态）。补定位→裁定（理由+重评条件）→契约→降级四层 |
+| v1.0.0 | 2026-08-13 | **定稿转 active**（AI-STD-001 定稿会话）：① §5 治本方案逐项定稿，新增 §5.8 定稿结论表——项4 符号一致性 gate 采纳且最优先（定稿明确为**双向校验**：路由引用方法须真实定义 + capability 声明须有对应 `_fetch_<cap>` 实现，§5.5 已回填）；项1 CapabilityContract 语义字段（expected_market/expected_variety，可选零迁移）采纳紧随；项2 semantic_registry 采纳与项3同批（初始登记 hk_trade_calendar/trade_calendar/industry_class 3 条，仅易混淆类强制）；项3 AST gate 采纳（验收用例=检出 #ARCH-DATA-001 + #ARCH-CH-INDUSTRY-CLASS-MIGRATE）；项5 运行时抽样推迟并明确启动条件。MVP 最小集=项4+项1 维持不变；② §5.3 维护责任待拍板点落定（MVP=选项B warn不拦）；③ §6 讨论项定夺——§6.1 选项B+升级A触发条件（稳定运行一个治理窗口，或同类bug再现立即升级）；§6.2 MSCI 裁定MVP空置、未来优先iFind路径；§6.3 裁定CSV录入+一次性IMPORT为标准路径、随§6.6-2同批执行；§6.5 ETF赎回日不建表关闭；§6.6-3 三条akshare采集链暂缓施工（MVP聚焦实盘生存级，风险优先让位calendar_event回填；未来启动先登CAND）；§6.6-5 裁定不单独立项、本文档承载追踪；④ §1.2 阻塞表述解除（设计定稿落本文档§5.8，治理裁定仍在注册表）；⑤ frontmatter status draft→active、version 0.2.2→1.0.0、date→2026-08-13。注：#ARCH-DATA-001/002 注册表 fix_phase 回填因 bm-fill 会话占用 architecture_issue_registry.yaml 未同步，待释放后由后续会话执行（多会话并发防护铁律） |
