@@ -14,7 +14,9 @@
 # [TESTS] tests/data_governance/test_schema_registry.py
 # [A_module] module_id=MOD-DATA_GOV-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-DATA-GOV Schema Registry——表结构注册与查询。
+"""
+
+D-DATA-GOV Schema Registry——表结构注册与查询。
 
 提供内存级的 Schema 注册服务，记录表名、列名、类型、描述。
 与 data/table_registry.py 互补：table_registry 管理品类→表名映射，
@@ -28,6 +30,65 @@ schema_registry 管理表名→列结构映射。
     ])
     schema = reg.get_schema("market.kline_daily")
     assert reg.has_column("market.kline_daily", "symbol")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 表结构注册请求 函数入参
+#   fields: table_name全限定表名 + columns列定义列表 + description表描述
+#   code: register(table_name,columns,description)
+# - id: I2
+#   name: 结构查询请求 函数入参
+#   fields: table_name + column_name
+#   code: get_schema/has_column/get_column参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 幂等表结构注册
+#   name_en: ManagedSchemaRegistry.register
+#   intro: 把列定义列表拷贝封装成TableSchema按表名存内存字典，重复注册即更新
+#   desc: TableSchema(table_name, list(columns), description) → _schemas[table_name]=schema
+#   inputs: I1
+#   outputs: TableSchema
+#   invariant: 表名唯一; 注册幂等
+# - id: A2
+#   name_zh: ② 表结构查询
+#   name_en: get_schema/list_tables/has_table
+#   intro: 按表名取结构，未注册抛KeyError，或列出全部表名/判存在
+#   desc: table_name in _schemas判定 → 无则KeyError → list(keys)/in判存在
+#   inputs: I2
+#   outputs: TableSchema/表名列表/布尔
+# - id: A3
+#   name_zh: ③ 列级校验与取值
+#   name_en: has_column/get_column
+#   intro: 在表结构里线性扫描列名判断存在或取列定义
+#   desc: _schemas.get(table) → None则False/None → any(col.name==column_name)或循环匹配返回ColumnSchema
+#   inputs: I2
+#   outputs: 布尔/ColumnSchema或None
+# - id: A4
+#   name_zh: ④ 移除表注册
+#   name_en: remove
+#   intro: 按表名删除注册返回是否成功
+#   desc: 表名存在则del返回True否则False
+#   inputs: I2
+#   outputs: 布尔
+# 层: 输出
+# - id: O1
+#   name_zh: 表结构定义 TableSchema/ColumnSchema
+#   name_en: TableSchema
+#   intro: 表名→列结构映射的注册与查询结果，与table_registry品类映射互补
+#   invariant: ColumnSchema frozen; 列名在表内唯一
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 from __future__ import annotations
 

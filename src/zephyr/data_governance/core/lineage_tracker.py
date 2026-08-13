@@ -14,7 +14,9 @@
 # [TESTS] tests/data_governance/test_lineage_tracker.py
 # [A_module] module_id=MOD-DATA_GOV-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-DATA-GOV Lineage Tracker——数据血缘追踪。
+"""
+
+D-DATA-GOV Lineage Tracker——数据血缘追踪。
 
 记录数据流转路径：source → transformation → target。
 支持上下游查询和环检测（防止循环依赖）。
@@ -25,6 +27,65 @@
     tracker.add_edge("factor.momentum_20d", "signal.alpha_signal", "generate")
     upstream = tracker.get_upstream("signal.alpha_signal")
     # → ["factor.momentum_20d", "market.kline_daily"]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 血缘边注册请求 函数入参
+#   fields: source源节点 + target目标节点 + transformation变换描述
+#   code: add_edge(source,target,transformation)
+# - id: I2
+#   name: 节点查询请求 函数入参
+#   fields: node节点名(表名/因子ID/信号ID)
+#   code: get_upstream/get_downstream参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 加边与环检测
+#   name_en: add_edge+_would_create_cycle
+#   intro: 加source→target有向边前先BFS查target是否已是source上游，防循环依赖
+#   desc: 自环直接拒 → 从source沿_upstream反向BFS找target → 命中则ValueError → 否则写_edges/_downstream/_upstream三索引
+#   inputs: I1
+#   outputs: LineageEdge
+#   invariant: 边唯一(source,target); 有向无环; 幂等添加
+# - id: A2
+#   name_zh: ② 上游递归收集
+#   name_en: get_upstream/_collect_upstream
+#   intro: 沿上游索引BFS递归收集节点全部祖先，按拓扑序返回
+#   desc: deque从_upstream[node]出发 → visited去重 → 逐层extend父节点
+#   inputs: I2
+#   outputs: 上游节点列表
+# - id: A3
+#   name_zh: ③ 下游递归收集
+#   name_en: get_downstream/_collect_downstream
+#   intro: 沿下游索引BFS递归收集节点全部消费者，按拓扑序返回
+#   desc: deque从_downstream[node]出发 → visited去重 → 逐层extend子节点
+#   inputs: I2
+#   outputs: 下游节点列表
+# - id: A4
+#   name_zh: ④ 图元查询
+#   name_en: get_edges/get_nodes/get_direct_*
+#   intro: 返回全部边、排序后的全部节点、直接上下游集合
+#   desc: _edges.values() → 遍历边集合并set去重sorted → defaultdict直接取直接邻居
+#   inputs: I2
+#   outputs: 边列表/节点列表
+# 层: 输出
+# - id: O1
+#   name_zh: 血缘图查询结果 LineageEdge/节点列表
+#   name_en: LineageEdge
+#   intro: 数据流转路径source→transformation→target的边与上下游节点清单
+#   invariant: LineageEdge frozen不可变
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 from __future__ import annotations
 

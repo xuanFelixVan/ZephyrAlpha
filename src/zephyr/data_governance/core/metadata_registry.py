@@ -14,7 +14,9 @@
 # [TESTS] tests/data_governance/test_metadata_registry.py
 # [A_module] module_id=MOD-DATA_GOV-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-DATA-GOV Metadata Registry——元数据管理。
+"""
+
+D-DATA-GOV Metadata Registry——元数据管理。
 
 提供统一的元数据存储，支持按 key 注册、查询、前缀搜索。
 用于记录表/因子/策略/信号的描述性元数据。
@@ -26,6 +28,65 @@
     })
     meta = reg.get("table.market.kline_daily")
     tables = reg.search("table.")  # 前缀搜索
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 元数据注册请求 函数入参
+#   fields: key唯一键 + value元数据字典 + category分类
+#   code: register(key,value,category)
+# - id: I2
+#   name: 查询/搜索请求 函数入参
+#   fields: key / field / prefix / category
+#   code: get/get_value/search/list_by_category参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 幂等注册
+#   name_en: MetadataRegistry.register
+#   intro: 把元数据拷贝成frozen条目按key存进内存字典，重复注册即更新
+#   desc: MetadataEntry(key, dict(value), category) → _entries[key]=entry
+#   inputs: I1
+#   outputs: MetadataEntry
+#   invariant: key唯一; 注册幂等; 值不可变
+# - id: A2
+#   name_zh: ② 键查询与字段取值
+#   name_en: get/get_value/has
+#   intro: 按key查条目，未注册抛KeyError，单字段缺失可给默认值
+#   desc: key in _entries判定 → 无则KeyError/有则返回 → get_value取entry.value.get(field, default)
+#   inputs: I2
+#   outputs: MetadataEntry/字段值/布尔
+# - id: A3
+#   name_zh: ③ 前缀搜索与分类过滤
+#   name_en: search/list_by_category
+#   intro: 按key前缀或category过滤返回匹配条目列表
+#   desc: k.startswith(prefix) 或 e.category==category 列表推导过滤
+#   inputs: I2
+#   outputs: MetadataEntry列表
+# - id: A4
+#   name_zh: ④ 移除与计数
+#   name_en: remove/count
+#   intro: 按键删除条目返回是否成功，或返回总条目数
+#   desc: key存在则del返回True否则False → count=len(_entries)
+#   inputs: I2
+#   outputs: 布尔/整数
+# 层: 输出
+# - id: O1
+#   name_zh: 元数据条目及查询结果 MetadataEntry
+#   name_en: MetadataEntry
+#   intro: 表/因子/策略/信号的描述性元数据条目或条目列表
+#   invariant: frozen dataclass不可变
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 from __future__ import annotations
 
