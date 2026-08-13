@@ -5990,6 +5990,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- worktree wipe 事故裁定书（2026-08-14，AI-LIQ-001 六遗留项审查，统筹会话归档；收编补登）---
+  - file: "docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md"
+    token: "auto-worktree-wipe-incident-review-20260814"
+    created_by: "session-ai-sop-001"
+    capability: "worktree_wipe_incident_review"
   # --- AI审查指令集（2026-08-10，24路并发审查回填指令，覆盖design_memos 42篇文档）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md"
     token: "auto-ai-review-instructions-20260810"

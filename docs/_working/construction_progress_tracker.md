@@ -44,9 +44,9 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 任务方向 | 状态 |
 |---|---|---|
-| 16 | 33 号 BudgetChange（AI-BGT-001，含 33 号文档重建核实+行号漂移修正 v1.1.0+MOD-POS-022 四瑕疵修复） | ✅ 完工待 merge（3 commits：1e78d0d20e/1b8a774ad5/15b1e40f8a，33 测试 2 轮全绿） |
-| 17 | 待分配 | ⏳ 等裁定 |
-| 18 | 待分配 | ⏳ 等裁定 |
+| 16 | 33 号 BudgetChange（AI-BGT-001，含 33 号文档重建核实+行号漂移修正 v1.1.0+MOD-POS-022 四瑕疵修复） | ✅ 完工待 merge（3 commits：1e78d0d20e/1b8a774ad5/15b1e40f8a，33 测试 2 轮全绿；wipe 事故后统筹重建 worktree 复跑 33 passed 确认） |
+| 17 | 37 号流动性危机 Protocol（AI-LIQ-001，MOD-RK-21 六算法+54 测试+37号 v1.1.0） | ✅ 完工待 merge（4 commits：d53693a13e/16a089c812/db695f9d1c/3e39367c37，统筹独立复跑 54 passed；Step1/Step6 双 PASS，3 处文档缺陷修复落地 v1.1.0） |
+| 18 | 42 号卖出流（AI-SELL-001） | 🔄 施工中（分支 tip 87764ffb29；wipe 事故中 worktree 被清、已 blob 自救，未完工反馈未到） |
 
 ## 二、统筹会话与 merge 记录
 
@@ -147,6 +147,21 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 36 | 30 号表述漂移（"47 单测全绿"/"481 行"/不存在方法名） | AI-BGT-001 | 越界项，留 30 号负责会话 | ⏳ 30 号会话 |
 | 37 | 00_index 对 33 号版本登记滞后（现已 v1.1.0） | AI-BGT-001 | 登记时 bm-fill 占用 00_index；现已释放，统筹可直接同步 | ✅ 已闭环（2026-08-14 统筹同步 00_index L57/L657 至 v1.1.0；v1.1.0 内容在 BGT worktree commit 1b8a774ad5，随第三批统一 merge 生效） |
 
+### P0-事故 · 2026-08-14 worktree wipe 事故（AI-LIQ-001 裁定书）
+
+> 裁定书全文已归档：docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md
+> 事故：01:42-01:47 三 worktree（BGT/LIQ/SELL）tracked 文件被物理清空；后发现 .worktrees 目录整体二次删除。分支 ref 完好，committed 工作零损失。四层根因：R1 删除原语零拦截 / R2 worktree 隔离是君子协定 / R3 删除无审计 / R4 清理无 SOP。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 38 | S1 删除能力收敛（ops_guard 全原语删除拦截+审计）+ S2 worktree 清理四证 SOP | AI-LIQ-001 裁定书 | R1/R2/R4 治本，P0 治理施工，建议独立会话承接 | ⏳ 待立项 |
+| 39 | S4 网关 worktree 锚定缺陷（git_commit.py bootstrap 未插 src/ 致 REPO_ROOT 恒=主工作区） | AI-LIQ-001 裁定书 | P1；已修复 bug 在网关入口复发；过渡期 workaround=PYTHONPATH=<worktree>\src | ⏳ 待立项 |
+| 40 | S3 观测层补齐（reconcile worker stdio 落盘日志 + commit 后 worktree 快照审计） | AI-LIQ-001 裁定书 | P1；本次 4 个 worker 死因不可考直接原因=零日志 | ⏳ 待立项 |
+| 41 | AGENTS.md "179 条已声明能力"硬编码计数漂移（实际 341 条） | AI-LIQ-001 | 裁定：改动态表述（以 capability registry 实时查询为准），挂 #9 Owner 审批通道 | ⏳ 等 Owner 审批 |
+| 42 | 37 号蓝图 §5 两项跨会话排期：①编排层接入 35 号 §3.13 调用方 ②IPO 数据源接入（数据层） | AI-LIQ-001 | 非 37 号施工范围，分配给 35 号调用方会话/数据层会话 | ⏳ 待分配 |
+| 43 | SOP 文本章节号漂移（遗留项登记目标 §七 vs tracker 现状 §六） | AI-LIQ-001 裁定书 S6 | SOP 文本修正，下轮 SOP 维护时顺手 | ⏳ |
+| 44 | 00_index 37 号版本同步（v1.0.18→v1.1.0）+ MOD-RK-21 production 状态 | AI-LIQ-001 | 照 #37 先例：统筹同步 00_index，随 LIQ merge 生效 | 🔥 随 merge 执行 |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
@@ -186,3 +201,4 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 2026-08-13 晚 | SOP 迁家（02/67→01/sop 专区）+ 遗留 #5 闭环（AGENTS.md 速查，Owner 批准 f15de056）+ #9 部分闭环 | 本会话（sess-recovery-0813） |
 | 2026-08-13 晚 | 补登 5 项遗漏遗留（#29-33），其中 #29 蓝图补建因 merge 完成转 🔥 可处理 | 第二统筹会话（用户裁定蓝图遗留登记） |
 | 2026-08-14 | P0 八项统筹闭环（#1-5/#13/#22/#29，commit f0ebfdd5 等）；AI-BGT-001 核验 PASS（33 测试统筹独立复跑确认）；#17/#37 闭环；#34-37 并入 §六 | 第三统筹会话 |
+| 2026-08-14 | AI-LIQ-001 核验 PASS（54 测试独立复跑）；wipe 事故处置：.worktrees 整体二次消失但三分支 ref 完好零损失，BGT/LIQ worktree 已从分支重建；裁定书归档 audit/architecture-reviews；#38-44 登记（S1/S2/S3/S4 治本待立项） | 第三统筹会话 |
