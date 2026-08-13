@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 D-SIGNAL-26 — A股板块分析引擎
 
 6维度板块分析：
@@ -26,8 +28,92 @@ D-SIGNAL-26 — A股板块分析引擎
   5. 大盘成交额风格适配（大成交→趋势票/小成交→妖股）
   6. 抱团瓦解切换信号检测
 
-设计真源: D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §1 D-SIGNAL-26
+设计真源: D:\临时工作区\依赖图-D-SIGNAL-信号域.md §1 D-SIGNAL-26
 策略参数: 全部通过 SectorAnalysisConfig 可配置，默认值取自设计文档
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 板块数据 SectorData数据类
+#   fields: 涨停数 + 总股数 + 二板/三板数 + 板块指数涨跌幅 + 成交量变化 + 连续上涨天数 + 连续放量天数 + 龙头涨跌幅 + 龙头是否滞涨 + 净流入(亿) + 政策支持 + 订单落地 + 技术突破
+#   code: SectorData L67-L93
+# - id: I2
+#   name: 大盘成交额 标量
+#   fields: market_turnover 全市场成交额(万亿) 默认1.0
+#   code: analyze() L337 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 板块强度评估
+#   name_en: evaluate_strength
+#   intro: 涨停数量+梯队完整性+板块指数趋势三项加评估板块强不强
+#   desc: 涨停≥5→40分 ≥1→20分; 有三板→30 有二板→20; 指数涨≥3%→30 ≥0→15; 满分100 ≥70强 ≥40中 否则弱
+#   inputs: I1
+#   outputs: strength_status + strength_score
+# - id: A2
+#   name_zh: ② 板块延续性判断
+#   name_en: judge_continuity
+#   intro: 按连涨天数和资金深度区分短期题材还是趋势题材
+#   desc: 连涨≥5天→趋势题材 60+(天数-5)×5; ≤3天→短期题材 30+天数×5; 净流入≥10亿+10分
+#   inputs: I1
+#   outputs: theme_type + continuity_score
+# - id: A3
+#   name_zh: ③ 板块轮动预警
+#   name_en: warn_rotation
+#   intro: 连续大涨+放量+龙头滞涨三信号叠加 预警资金要切换板块
+#   desc: 连涨≥3天+30 连续放量≥2天+30 龙头滞涨+40 总分≥60触发预警
+#   inputs: I1
+#   outputs: rotation_warning + rotation_score
+# - id: A4
+#   name_zh: ④ 板块启动条件评估
+#   name_en: evaluate_launch_conditions
+#   intro: 技术突破+政策支持为必须条件 全满足才算启动就绪
+#   desc: 技术突破+40 政策支持+35 订单落地+25(配置非必须) 净流入>0+10 ready=必须条件全满足
+#   inputs: I1
+#   outputs: launch_ready + launch_score
+# - id: A5
+#   name_zh: ⑤ 大盘成交额风格适配
+#   name_en: adapt_market_style
+#   intro: 成交额大做趋势票 成交额小出妖股
+#   desc: ≥1.5万亿→趋势票 ≤0.8万亿→妖股 中间→混合
+#   inputs: I2
+#   outputs: market_style
+# - id: A6
+#   name_zh: ⑥ 抱团瓦解信号检测
+#   name_en: detect_breakdown
+#   intro: 龙头大跌伴随放量 或板块指数大跌 判定抱团瓦解
+#   desc: 龙头跌≥5% 且 放量≥2倍 → True; 板块指数跌≥5% → True
+#   inputs: I1
+#   outputs: breakdown_signal 布尔
+# - id: A7
+#   name_zh: ⑦ 综合评分与板块状态判定
+#   name_en: analyze + _determine_status
+#   intro: 6维分数加权成综合分 再按优先级定位6种板块状态
+#   desc: overall=强度×0.30+延续×0.20+启动×0.20+(100-轮动)×0.15+(瓦解?0:100)×0.15; 状态 瓦解→轮动(预警+强度≥70)→启动(就绪+强度<40)→高潮(≥90)/加速(≥70)/休眠(<20)
+#   inputs: A1 A2 A3 A4 A5 A6
+#   outputs: sector_status + overall_score
+# 层: 输出
+# - id: O1
+#   name_zh: 板块分析结果
+#   name_en: SectorAnalysisResult
+#   intro: 6维状态与评分+板块状态+综合分 一次输出
+#   invariant: strength_score in [0,100]; all sub-scores in [0,100]
+#   downstream: 量化短线强度引擎 MOD-SIG-034
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I1 --> A4
+# I1 --> A6
+# I2 --> A5
+# A1 --> A7
+# A2 --> A7
+# A3 --> A7
+# A4 --> A7
+# A5 --> A7
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

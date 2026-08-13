@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-23 A股短线选股引擎
 
 机构选股评分器(目标价空间40%+基本面30%+技术趋势20%+流动性10%)
@@ -33,9 +35,112 @@ D-SIGNAL-23 A股短线选股引擎
 理论依据：多因子选股 / 评分卡模型 / 行为金融学。
 
 设计文档默认值可配置——所有权重和阈值通过 ShortTermStockSelectorConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-23。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-23。
 
 依赖方向：D-SIGNAL-21(主力行为) + D-SIGNAL-22(资金线) -> D-SIGNAL-23 -> D-SIGNAL-24(日内买卖点)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 单只股票选股输入 StockSelectionInput
+#   fields: 目标价/现价/基本面分/技术趋势分/流动性分 + 大盘相关系数/换手率/大单占比 + 连板高度/封单金额/流通市值/板块热度/开板次数/封板时间/催化强度 + 上游主力阶段与资金形态上下文
+#   code: StockSelectionInput L121
+# - id: I2
+#   name: 选股器权重阈值配置 ShortTermStockSelectorConfig
+#   fields: 机构评分4维权重(40/30/20/10) + 强庄股3阈值 + 连板评分卡7维权重(和=100) + 潜力等级阈值
+#   code: ShortTermStockSelectorConfig L79
+# 层: 特征
+# - id: F1
+#   name_zh: 目标价空间评分
+#   name_en: target_space_score
+#   intro: 目标价相对现价的上涨空间越大分越高
+#   formula: upside=(target-current)/current×100 → clamp(upside/50×100, 0, 100)（50%空间=满分）
+#   code: short_term_stock_selector.py L302
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 封流比（封单强度）
+#   name_en: seal_ratio
+#   intro: 封单金额占流通市值的比例，越高说明封板越硬
+#   formula: seal_ratio=seal_amount/(float_cap×10000) → 分档: ≥1%→100 / ≥0.5%→90 / ≥0.1%→60 / >0→30
+#   code: short_term_stock_selector.py L415
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 连板高度评分
+#   name_en: height_score
+#   intro: 连板越多分越高，但5板以上因高位风险反降分
+#   formula: 映射表{0:0, 1:40, 2:70, 3:90, 4:100, ≥5:80}
+#   code: short_term_stock_selector.py L401
+#   registry: factor_registry: 有FCT条目 FCT-SENT-002
+#   is_break: false
+# 层: 算法
+# - id: A1
+#   name_zh: ① 机构选股评分器
+#   name_en: score_institutional
+#   intro: 目标价空间40%+基本面30%+技术趋势20%+流动性10%加权出机构评分
+#   desc: 4因子各自clamp到0~100后按配置权重加权，总分clamp到0~100
+#   inputs: F1 I1 I2
+#   outputs: 机构评分0~100 + 4维明细
+#   invariant: 4维权重和=100
+# - id: A2
+#   name_zh: ② 强庄股识别器
+#   name_en: identify_strong_stock
+#   intro: 走势独立+换手率异常+盘口神秘大单三条件累积分判强庄股
+#   desc: 相关系数<0.3加35分/换手≥10%加35分/大单占比≥15%加30分，≥70强庄 ≥40普通 否则弱势
+#   inputs: I1 I2
+#   outputs: 强庄类型 + 置信度0~100
+# - id: A3
+#   name_zh: ③ 连板潜力评分卡
+#   name_en: score_limitup_potential
+#   intro: 7维100分评分卡衡量连板接力潜力
+#   desc: 连板高度/封单强度/板块效应/分歧程度/市值流动性/封板时间/催化强度按7维权重加权
+#   inputs: F2 F3 I1 I2
+#   outputs: 连板评分0~100 + 7维明细 + 潜力等级
+#   invariant: 7维权重和=100
+# - id: A4
+#   name_zh: ④ 连板分歧程度评估器
+#   name_en: evaluate_divergence
+#   intro: 按开板次数判断分歧度，分歧越高走势越不确定
+#   desc: 无连板→无分歧；开板≥2→高分歧；开板≥1→中分歧；否则低分歧
+#   inputs: I1 I2
+#   outputs: 分歧度 高/中/低/无
+# - id: A5
+#   name_zh: ⑤ 综合评分与推荐
+#   name_en: _compute_overall_score + _make_recommendation
+#   intro: 机构40%+强庄30%+连板30%合成总分并给出操作建议
+#   desc: overall=inst×0.4+strong×0.3+limitup×0.3；≥80且强庄→强烈推荐，≥65且非高分歧→推荐，≥45→观望，否则回避
+#   inputs: A1 A2 A3 A4
+#   outputs: 综合评分0~100 + 推荐意见
+# 层: 输出
+# - id: O1
+#   name_zh: 短线选股结果 StockSelectionResult
+#   name_en: StockSelectionResult
+#   intro: 含机构评分/强庄类型/连板评分/分歧度/综合评分/推荐意见/审计轨迹的结果对象
+#   invariant: 评分均clamp在0~100；输入非法走降级结果is_degraded=true
+#   downstream: 无下游/内部使用（[CONSUMERS]为空；设计依赖方向指向D-SIGNAL-24日内买卖点）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 --> F3
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I1 --> A4
+# I2 --> A1
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# F1 --> A1
+# F2 --> A3
+# F3 --> A3
+# A1 --> A5
+# A2 --> A5
+# A3 --> A5
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

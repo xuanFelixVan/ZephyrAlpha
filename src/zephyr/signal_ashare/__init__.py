@@ -16,4 +16,34 @@
 # [TTL] permanent
 
 # signal_ashare domain package
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Python包导入请求
+#   fields: import zephyr.signal_ashare 触发的包初始化, 无数据输入
+#   code: signal_ashare/__init__.py
+# 层: 算法
+# - id: A1
+#   name_zh: ① 信号域包初始化
+#   name_en: signal_ashare package init
+#   intro: A股信号域的包标记文件，只声明域归属不导出任何符号，真正的实现都在子模块里
+#   desc: 仅含模块头元数据(BLUEPRINT/MODULE/DOMAIN=D_ASHARE_SIGNAL等治理标记) + __all__=[] 空导出列表
+#   inputs: I1
+#   outputs: 空包命名空间
+# 层: 输出
+# - id: O1
+#   name_zh: signal_ashare 包命名空间
+#   name_en: zephyr.signal_ashare
+#   intro: D_ASHARE_SIGNAL域包命名空间，子模块经其被导入，本身无导出符号
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 __all__ = []

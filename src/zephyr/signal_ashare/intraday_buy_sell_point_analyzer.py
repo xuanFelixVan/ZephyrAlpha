@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-24 A股日内买卖点引擎
 
 6种买入模式(突破买点/回调买点/逆向资金买点/竞价弱转强/分时突破/回封打板)
@@ -32,9 +34,117 @@ D-SIGNAL-24 A股日内买卖点引擎
 理论依据：技术分析 / 日内交易 / 分时分析。
 
 设计文档默认值可配置——所有阈值通过 IntradayBuySellConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-24。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-24。
 
 依赖方向：D-SIGNAL-21(主力行为) + D-SIGNAL-22(资金线) -> D-SIGNAL-24 -> 下游执行层
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 日内行情与资金明细 IntradayBuySellInput数据类
+#   fields: 现价/阻力位/均线价/量比/当日涨跌幅/资金净流入/开盘涨幅/竞价量比/前日烂板/前高/开板与回封/封单金额/流通市值/目标价/板块排名/连板数等
+#   code: IntradayBuySellInput L145
+# - id: I2
+#   name: 上游确认分 标量分数
+#   fields: 大盘情绪分(来自D-SIGNAL-25) + 板块强度分(来自D-SIGNAL-26/20) + 资金净流入(来自D-SIGNAL-22)
+#   code: market_sentiment_score/sector_strength_score/capital_flow_inflow L188-L190
+# 层: 特征
+# - id: F1
+#   name_zh: 突破涨幅
+#   name_en: breakout_pct
+#   intro: 现价相对阻力位涨了多少个百分点
+#   formula: (现价-阻力位)/阻力位×100 ≥2% 且量比≥1.5 才命中
+#   code: intraday_buy_sell_point_analyzer.py L355
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 回踩均线偏离度
+#   name_en: deviation_pct
+#   intro: 现价在均线上方但贴近均线的偏离百分比
+#   formula: (现价-均线价)/均线价×100 ∈(0,3%] 且回调量比≤0.7
+#   code: intraday_buy_sell_point_analyzer.py L376
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 封流比
+#   name_en: seal_ratio
+#   intro: 封单金额占流通市值的比例 衡量封板强度
+#   formula: 封单金额/(流通市值×10000) ≥5%
+#   code: intraday_buy_sell_point_analyzer.py L463
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 封单缩减比
+#   name_en: decrease_ratio
+#   intro: 当前封单相对初始封单还剩几成
+#   formula: 当前封单/初始封单 ≤0.5 触发
+#   code: intraday_buy_sell_point_analyzer.py L559
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F5
+#   name_zh: 板块排名降幅
+#   name_en: rank_drop
+#   intro: 个股在板块内的排名掉了几名
+#   formula: 当前板块排名-前次板块排名 ≥3 触发
+#   code: intraday_buy_sell_point_analyzer.py L573
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 6种买入模式检测
+#   name_en: detect_buy_points
+#   intro: 扫描突破/回调/逆向资金/竞价弱转强/分时突破/回封打板6类买点
+#   desc: 6条阈值规则逐条判定 命中生成BuySignal confidence=min(100, 基线50~60+涨幅与量比加权)
+#   inputs: I1 F1 F2 F3
+#   outputs: buy_signals 列表
+# - id: A2
+#   name_zh: ② 6种卖出模式检测
+#   name_en: detect_sell_points
+#   intro: 扫描目标价/趋势破位/利好兑现/封单减少/龙头丧失/强分歧6类卖点
+#   desc: 6条阈值规则逐条判定 命中生成SellSignal confidence=min(100, 基线+幅度加权)
+#   inputs: I1 F4 F5
+#   outputs: sell_signals 列表
+# - id: A3
+#   name_zh: ③ 3重确认
+#   name_en: check_confirmations
+#   intro: 大盘环境/板块强度/资金流向3道闸门 全过才放行买入
+#   desc: 大盘情绪≥40 且 板块强度≥60 且 资金净流入>0
+#   inputs: I2
+#   outputs: confirmations + all_passed
+# - id: A4
+#   name_zh: ④ 综合建议
+#   name_en: _make_recommendation
+#   intro: 卖出信号优先 买入需确认全过 否则等待或观望
+#   desc: sell_conf≥60且≥buy_conf→sell; 有买信号+确认全过+conf≥50→buy; 确认未过→wait(conf×0.5); 无信号→hold
+#   inputs: A1 A2 A3
+#   outputs: recommendation + overall_confidence
+# 层: 输出
+# - id: O1
+#   name_zh: 日内买卖点分析结果
+#   name_en: IntradayBuySellResult
+#   intro: 买卖信号清单+3重确认结果+综合建议 buy/sell/hold/wait
+#   invariant: 6买6卖模式枚举固定 3重确认全过才放行买入 降级路径必须有日志
+#   downstream: 无下游/内部使用（设计文档指向下游执行层）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 -.->|断点| F3
+# I1 -.->|断点| F4
+# I1 -.->|断点| F5
+# I1 --> A1
+# I1 --> A2
+# I2 --> A3
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# F4 --> A2
+# F5 --> A2
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

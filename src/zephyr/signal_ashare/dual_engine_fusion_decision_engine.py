@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-35 A股双引擎融合决策输出器
 
 游资引擎(D-SIGNAL-33) + 量化引擎(D-SIGNAL-34)信号融合：
@@ -34,9 +36,89 @@ D-SIGNAL-35 A股双引擎融合决策输出器
 理论依据：集成学习 / 贝叶斯融合 / 决策理论。
 
 设计文档默认值可配置——所有权重通过 FusionDecisionConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-35。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-35。
 
 依赖方向：D-SIGNAL-33(游资情绪) + D-SIGNAL-34(量化强度) -> D-SIGNAL-35 -> 下游执行层
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 游资情绪引擎输出 YouziEmotionResult数据类
+#   fields: total_score 游资情绪总分 + emotion_phase 情绪周期(冰点/反核/主升/疯狂/退潮)
+#   code: FusionDecisionInput.youzi_result L145 来自D-SIGNAL-33
+# - id: I2
+#   name: 量化强度引擎输出 QuantStrengthResult数据类
+#   fields: total_score 量化短线强度总分
+#   code: FusionDecisionInput.quant_result L146 来自D-SIGNAL-34
+# - id: I3
+#   name: 个股上下文 标量参数组
+#   fields: 连板数 + 是否主线龙头 + 个股涨幅% + 大盘涨幅% + 风险评分0-100
+#   code: FusionDecisionInput L148-L152
+# 层: 特征
+# - id: F1
+#   name_zh: 超额收益
+#   name_en: excess
+#   intro: 个股涨幅比大盘涨幅多出来多少 衡量相对价值
+#   formula: 个股涨幅% - 大盘涨幅% ≥5%→相对价值好 ≥0→中 <0→差
+#   code: dual_engine_fusion_decision_engine.py L376
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 情绪周期自适应权重
+#   name_en: determine_adaptive_weights
+#   intro: 按情绪周期查表定双引擎权重 冰点信量化 主升信游资
+#   desc: 冰点(0.3/0.7) 反核(0.5/0.5) 主升(0.7/0.3) 疯狂(0.8/0.2) 退潮(0.4/0.6) 未知默认基准(0.6/0.4)
+#   inputs: I1
+#   outputs: 游资权重 + 量化权重
+#   invariant: 双引擎权重和为1.0
+# - id: A2
+#   name_zh: ② 加权融合评分
+#   name_en: analyze Step2 fused score
+#   intro: 两个引擎分数按自适应权重加权合成一个融合分
+#   desc: fused = min(100, w_游资×游资分 + w_量化×量化分)
+#   inputs: I1 I2 A1
+#   outputs: fused_score 0-100
+# - id: A3
+#   name_zh: ③ 6类决策分类
+#   name_en: classify_decision
+#   intro: 按优先级把股票归入主升龙头/二进三/复苏/伪强/跟风/地天反包/中性
+#   desc: 地天反包(1板+涨≥9.5%+风险≥60)→主升龙头(融合≥80+双引擎≥70+主线)→二进三(融合≥65+连板≥2)→复苏(量化≥70+游资40-65)→伪强(游资≥60+量化<50)→跟风(融合50-65)→中性
+#   inputs: I1 I2 I3 A2
+#   outputs: 6+1类决策标签
+# - id: A4
+#   name_zh: ④ PDF分布信号提取
+#   name_en: extract_pdf_signal
+#   intro: 从融合分提取方向/置信度/尾部风险/相对价值4维信号
+#   desc: 方向 融合≥65做多 ≤35做空; 置信度=|融合-50|×2; 尾部风险 风险评分≥60高 ≥40或疯狂/退潮期 中; 相对价值按超额收益分档
+#   inputs: I1 I3 A2 F1
+#   outputs: PDFSignal 4维信号
+# 层: 输出
+# - id: O1
+#   name_zh: 双引擎融合决策结果
+#   name_en: FusionDecisionResult
+#   intro: 融合分+实际权重+6类决策+PDF信号+情绪周期 一次输出
+#   invariant: 双引擎权重和为1.0 情绪周期自适应权重不可跳过 降级路径必须有日志
+#   downstream: 无下游/内部使用（设计文档指向下游执行层）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# I1 --> A3
+# I2 --> A3
+# I3 --> A3
+# A2 --> A3
+# I3 -.->|断点| F1
+# F1 --> A4
+# I1 --> A4
+# I3 --> A4
+# A2 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations

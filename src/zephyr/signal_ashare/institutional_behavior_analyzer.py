@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-21 A股主力行为分析引擎
 
 主力行为学6阶段识别(建仓-洗盘-试盘-再洗盘-拉升-出货) + 洗盘vs出货识别
@@ -31,9 +33,128 @@ D-SIGNAL-21 A股主力行为分析引擎
 理论依据：主力行为学 / 市场微观结构 / 行为金融学。
 
 设计文档默认值可配置——所有阈值通过 InstitutionalBehaviorConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-21。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-21。
 
 依赖方向：D_DATA(行情数据) -> D-SIGNAL-21 -> D-SIGNAL-23(短线选股) / D-SIGNAL-24(日内买卖点)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 分时价量序列 列表数据
+#   fields: prices 价格序列 + volumes 成交量序列 + timestamps 时间戳序列（三者等长）
+#   code: InstitutionalBehaviorInput L165-L167
+# - id: I2
+#   name: 大单资金数据 列表数据
+#   fields: large_order_net 大单净流入(元) + large_order_count 大单笔数（单笔≥50万元为大单）
+#   code: InstitutionalBehaviorInput L168-L169
+# 层: 特征
+# - id: F1
+#   name_zh: 近期量比
+#   name_en: volume_ratio
+#   intro: 后半段均量除以前半段均量 看量能放大还是萎缩
+#   formula: mean(volumes[n//2:])/mean(volumes[:n//2])
+#   code: institutional_behavior_analyzer.py L603
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 区间涨跌幅
+#   name_en: price_change_pct
+#   intro: 序列末价相对首价涨了百分之几
+#   formula: (末价-首价)/首价×100
+#   code: institutional_behavior_analyzer.py L615
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 大单净方向
+#   name_en: large_order_direction
+#   intro: 大单净流入求和 正=主力在买 负=主力在卖
+#   formula: Σ large_order_net
+#   code: institutional_behavior_analyzer.py L621
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 价格波动率
+#   name_en: volatility_pct
+#   intro: 价格标准差除以均值 衡量走势剧烈程度
+#   formula: std(prices)/mean(prices)×100 归一化 min(波动/5,1)
+#   code: institutional_behavior_analyzer.py L627
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 6阶段主力行为识别
+#   name_en: identify_behavior_phase
+#   intro: 量比×涨幅×大单方向三维打分 从建仓到出货6阶段取最高
+#   desc: 建仓(量1.1-1.5倍+涨<2%+大单正) 洗盘(量<0.8+跌<5%+大单正) 试盘(量1.3-2.0+涨1-3%) 再洗盘(量<0.6+跌<3%) 拉升(量>2.0+涨>5%+大单正) 出货(量>1.5+滞涨<2%+大单负) argmax <20→未知
+#   inputs: F1 F2 F3
+#   outputs: current_phase + phase_confidence
+#   invariant: 6阶段状态机不可跳跃(建仓→洗盘→试盘→再洗盘→拉升→出货)
+# - id: A2
+#   name_zh: ② 洗盘vs出货判定
+#   name_en: distinguish_wash_vs_distribute
+#   intro: 缩量跌+大单未走=洗盘 放量滞涨+大单流出=出货
+#   desc: 双评分制 wash_score vs dist_score 各3项加分 高者≥50生效 否则中性
+#   inputs: F1 F2 F3 A1
+#   outputs: wash_distribute + confidence
+# - id: A3
+#   name_zh: ③ 诱多行为检测
+#   name_en: detect_bull_trap
+#   intro: 价格冲高≥3%后又反转跌≥2% 判定多头陷阱
+#   desc: rise_pct=(峰值-首价)/首价×100 ≥3 且 reversal_pct=(现价-峰值)/峰值×100 ≤-2 → 诱多 confidence按两幅度加权
+#   inputs: I1
+#   outputs: bull_trap_detected + confidence
+# - id: A4
+#   name_zh: ④ 主力游资打架胜负判断
+#   name_en: judge_main_force_vs_hot_money
+#   intro: 30分钟观察期 看大单持续净流入的主力强还是高波动的游资强
+#   desc: 主力主导度=大单正值占比×0.5+大单强度×0.5; 游资活跃度=min(波动率/5,1); 任一方≥0.6分胜负 否则僵持
+#   inputs: I2 F4
+#   outputs: conflict_winner + conflict_confidence
+# - id: A5
+#   name_zh: ⑤ 主力行为分时特征识别
+#   name_en: recognize_intraday_features
+#   intro: 按开盘/上午/午盘/尾盘4段统计成交量占比与价格变化
+#   desc: 时间段切分(9:30-10:00/10:00-11:30/13:00-14:00/14:00-15:00) 段内量占比=段量和/总量×100 段内价格变化%=(段末-段首)/段首×100
+#   inputs: I1
+#   outputs: intraday_features 字典
+# - id: A6
+#   name_zh: ⑥ 综合评分
+#   name_en: _compute_overall_score
+#   intro: 5维置信度加权成0-100综合分 诱多越明显分越低
+#   desc: score=阶段置信×0.30+洗出置信×0.25+(诱多则100-诱多置信否则100)×0.20+打架置信×0.25 clamp[0,100]
+#   inputs: A1 A2 A3 A4
+#   outputs: overall_score 0-100
+# 层: 输出
+# - id: O1
+#   name_zh: 主力行为分析结果
+#   name_en: InstitutionalBehaviorResult
+#   intro: 当前阶段+洗出判定+诱多检测+打架胜负+分时特征+综合分 一次输出
+#   invariant: 6阶段状态机不可跳跃 降级路径必须有日志
+#   downstream: 短线选股器 MOD-SIG-023; 日内买卖点引擎 MOD-SIG-024
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 -.->|断点| F4
+# I2 -.->|断点| F3
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# F1 --> A2
+# F2 --> A2
+# F3 --> A2
+# A1 --> A2
+# I1 --> A3
+# I2 --> A4
+# F4 --> A4
+# I1 --> A5
+# A1 --> A6
+# A2 --> A6
+# A3 --> A6
+# A4 --> A6
+# A5 --> O1
+# A6 --> O1
 """
 
 from __future__ import annotations

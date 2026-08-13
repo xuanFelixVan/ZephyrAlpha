@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-22 A股资金线形态分析引擎
 
 五类资金线形态识别(四线开花/机构独强/机构主力背离/弱势反弹/全线溃退)
@@ -31,10 +33,135 @@ D-SIGNAL-22 A股资金线形态分析引擎
 理论依据：资金流向分析 / 形态识别 / 多线共振。
 
 设计文档默认值可配置——所有阈值通过 CapitalFlowPatternConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-22。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-22。
 
 四线定义：主力资金线 / 机构资金线 / 散户资金线 / 游资资金线。
 依赖方向：D_DATA(资金流数据) -> D-SIGNAL-22 -> D-SIGNAL-23(短线选股) / D-SIGNAL-24(日内买卖点)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 四路资金净流入序列 万元
+#   fields: main_force主力 + institutional机构 + retail散户 + hot_money游资 净流入序列(正=净流入); market_sentiment_score字段存在但代码未消费
+#   code: CapitalFlowInput L119-129
+# - id: I2
+#   name: 价格序列 prices
+#   fields: 与资金线对应的价格序列, 弱势反弹判定用首尾价
+#   code: CapitalFlowInput.prices
+# - id: I3
+#   name: 形态阈值配置 CapitalFlowPatternConfig
+#   fields: 开花/独强/背离/弱反/溃退/散户狂热/机构分歧/共振全部阈值, 默认值取自设计文档§D-SIGNAL-22
+#   code: CapitalFlowPatternConfig L71-111
+# 层: 特征
+# - id: F1
+#   name_zh: 四线净流入合计
+#   name_en: lines / total / positive_count
+#   intro: 把四条资金线各自整段求和，再算总净流入和净流入线数
+#   formula: lines=[Σ主力,Σ机构,Σ散户,Σ游资] → total=Σlines, positive_count=count(x>0)
+#   code: capital_flow_pattern_analyzer.py L244-251
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 散户净流入占比
+#   name_en: retail_share
+#   intro: 散户资金占四路资金绝对量之和的比例，越高说明越是散户在接盘
+#   formula: retail_share=|Σ散户|/(|Σ主力|+|Σ机构|+|Σ散户|+|Σ游资|) ∈[0,1]
+#   code: capital_flow_pattern_analyzer.py L343-352
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 机构分歧度
+#   name_en: institutional_divergence
+#   intro: 机构资金买入时段和卖出时段哪边更小占总量多少，越大说明机构内部越分裂
+#   formula: div=min(Σ正流入,|Σ负流出|)/Σ|机构净流入| ∈[0,1]
+#   code: capital_flow_pattern_analyzer.py L376-385
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 区间价格涨幅
+#   name_en: rise
+#   intro: 序列首尾价格涨了多少个百分点，配合净流出识别诱多
+#   formula: rise=(prices[-1]-prices[0])/prices[0]×100 (%)
+#   code: capital_flow_pattern_analyzer.py L317-319
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验与降级
+#   name_en: analyze / _validate_input / _degraded_result
+#   intro: 四路资金线和价格序列有任何一路为空就打warning日志返回全零降级结果
+#   desc: 四路inflow与prices均非空才继续; 否则logger.warning+CapitalFlowPatternResult(未知形态, 全0, is_degraded=True)
+#   inputs: I1 I2
+#   outputs: 校验通过标志或降级结果
+#   invariant: 降级路径必须有日志
+# - id: A2
+#   name_zh: ② 五类资金线形态识别
+#   name_en: identify_pattern / _score_bloom / _score_solo / _score_divergence / _score_weak_rebound / _score_retreat
+#   intro: 给四线开花/机构独强/机构主力背离/弱势反弹/全线溃退各打个分，谁分高算谁
+#   desc: 五形态按阈值规则各自打0-100分(开花:4线正50+总流入正30+散户占比<30%得20; 独强:机构正40+主力散户负各30; 背离:|机构-主力|≥1且方向相反100; 弱反:总流出50+涨幅≥0.5%得50; 溃退:≤1线正50+总流出50) → 取最高分, <20或全零→未知
+#   inputs: F1 F4 I3
+#   outputs: 形态名 + pattern_confidence ∈[0,100]
+#   invariant: 五类形态互斥
+# - id: A3
+#   name_zh: ③ 散户狂热反向指标
+#   name_en: retail_frenzy_contrarian
+#   intro: 散户占比越高越狂热爱追高，超过一半就发反向卖出信号
+#   desc: frenzy=min(retail_share/0.5×100,100); share≥0.5→sell(反向卖出); share≤0.15→buy(冷清反向买入); 否则neutral
+#   inputs: F2 I3
+#   outputs: frenzy_score∈[0,100] + contrarian_signal(buy/sell/neutral)
+# - id: A4
+#   name_zh: ④ 机构分歧机会识别
+#   name_en: detect_institutional_divergence
+#   intro: 机构内部又买又卖分歧够大时，视作潜在机会标记出来
+#   desc: divergence≥institutional_divergence_min(0.3) → opportunity_detected=True
+#   inputs: F3 I3
+#   outputs: divergence∈[0,1] + opportunity布尔
+# - id: A5
+#   name_zh: ⑤ 多线共振分析
+#   name_en: analyze_resonance
+#   intro: 至少三条资金线同方向就算共振，线越多共振越强
+#   desc: 正线数≥3→score=正线数/4×100方向up; 负线数≥3→score=负线数/4×100方向down; 否则0 neutral
+#   inputs: F1 I3
+#   outputs: resonance_score∈[0,100] + direction(up/down/neutral)
+# - id: A6
+#   name_zh: ⑥ 综合评分
+#   name_en: _compute_overall_score
+#   intro: 形态置信、散户狂热、机构分歧、共振按权重揉成0-100总分
+#   desc: score=0.35×pattern_conf+0.20×(100-frenzy)+0.20×div×100+0.25×resonance → clamp[0,100]保留2位
+#   inputs: A2 A3 A4 A5
+#   outputs: overall_score ∈[0,100]
+# 层: 输出
+# - id: O1
+#   name_zh: 资金线形态分析结果 CapitalFlowPatternResult
+#   name_en: CapitalFlowPatternResult
+#   intro: 含五类形态+置信度+散户狂热度+反向信号+机构分歧+机会标记+共振强度方向+综合评分+审计轨迹，喂给短线选股
+#   invariant: 各分数∈[0,100]; 分歧度∈[0,1]
+#   downstream: zephyr.signal_ashare.short_term_stock_selector(D-SIGNAL-23短线选股)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 -.->|断点| F3
+# I2 -.->|断点| F4
+# I1 --> A1
+# I2 --> A1
+# F1 --> A2
+# F4 --> A2
+# I3 --> A2
+# F2 --> A3
+# I3 --> A3
+# F3 --> A4
+# I3 --> A4
+# F1 --> A5
+# I3 --> A5
+# A1 --> A2
+# A2 --> A6
+# A3 --> A6
+# A4 --> A6
+# A5 --> A6
+# A1 --> O1
+# A6 --> O1
 """
 
 from __future__ import annotations

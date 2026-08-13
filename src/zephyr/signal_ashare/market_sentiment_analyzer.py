@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 D-SIGNAL-25 — A股市场情绪分析引擎
 
 7维度市场情绪分析：
@@ -27,8 +29,122 @@ D-SIGNAL-25 — A股市场情绪分析引擎
   6. 封板率分析
   7. 昨日涨停表现追踪
 
-设计真源: D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §1 D-SIGNAL-25
+设计真源: D:\临时工作区\依赖图-D-SIGNAL-信号域.md §1 D-SIGNAL-25
 策略参数: 全部通过 MarketSentimentConfig 可配置，默认值取自设计文档
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 市场涨跌家数 MarketBreadthData数据类
+#   fields: 上涨家数 + 下跌家数 + 平盘家数 + 总家数
+#   code: MarketBreadthData L53
+# - id: I2
+#   name: 涨跌停数据 LimitUpDownData数据类
+#   fields: 涨停数 + 跌停数 + 接近涨停数(涨幅>9%) + 封住涨停数 + 曾涨停数(含炸板)
+#   code: LimitUpDownData L63
+# - id: I3
+#   name: 指数表现 IndexPerformanceData数据类
+#   fields: 指数名称 + 指数涨跌幅%
+#   code: IndexPerformanceData L74
+# - id: I4
+#   name: 昨日涨停今日表现 YesterdayLimitUpPerformance数据类
+#   fields: 昨日涨停数量 + 今日平均收益 + 今日正收益比例（可空）
+#   code: YesterdayLimitUpPerformance L82
+# 层: 特征
+# - id: F1
+#   name_zh: 上涨家数占比
+#   name_en: advance_ratio
+#   intro: 上涨股票占全市场的比例 ≥80%即二八分化
+#   formula: 上涨家数/总家数 ∈0,1
+#   code: market_sentiment_analyzer.py L203
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 下跌家数占比
+#   name_en: decline_ratio
+#   intro: 下跌股票占比 指数涨它却高=虚假繁荣
+#   formula: 下跌家数/总家数 ∈0,1
+#   code: market_sentiment_analyzer.py L281
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 封板率
+#   name_en: seal_rate
+#   intro: 曾涨停的股票里有多少最终封住 衡量打板资金诚意
+#   formula: 封住涨停数/曾涨停数 ∈0,1 ≥0.7好 ≤0.4差
+#   code: market_sentiment_analyzer.py L329
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 涨跌家数分析
+#   name_en: analyze_breadth
+#   intro: 检测二八分化/普涨/普跌/均衡并打分
+#   desc: 涨或跌占比≥0.8→二八分化 >0.6→普涨/普跌 否则均衡 分段线性映射0-100
+#   inputs: I1 F1 F2
+#   outputs: breadth_status + breadth_score
+# - id: A2
+#   name_zh: ② 涨跌停热情分析
+#   name_en: analyze_limit_activity
+#   intro: 看涨停跌停数量判断做多热情还是恐慌蔓延
+#   desc: 涨停≥50→做多热情 跌停≥20→恐慌蔓延 否则 score=50+(涨停-跌停)×2
+#   inputs: I2
+#   outputs: limit_zeal_status + limit_score
+# - id: A3
+#   name_zh: ③ 赚钱效应与市场士气评估
+#   name_en: evaluate_profit_effect + evaluate_morale
+#   intro: 用上涨占比分别评估赚钱强不强和散户跟随士气
+#   desc: 占比≥0.6→强/高涨 ≤0.3→弱/低迷 中间给50分 分段线性映射
+#   inputs: I1 F1
+#   outputs: profit_effect + morale 双评分
+# - id: A4
+#   name_zh: ④ 次日回调风险预警
+#   name_en: warn_next_day_risk
+#   intro: 指数涨但个股跌占比高→预警次日回调
+#   desc: 指数涨 且 跌占比≥0.3→高风险 ≥0.4→中风险 否则低风险
+#   inputs: I1 I3 F2
+#   outputs: next_day_risk_status + score
+# - id: A5
+#   name_zh: ⑤ 封板率分档与昨日涨停追踪
+#   name_en: analyze_seal_rate + track_yesterday_limit_up
+#   intro: 封板率分好中差 昨日涨停股今日均收益>3%好 <-2%差
+#   desc: seal_rate×100为分 昨涨停均收益阈值分档 无数据→"无数据"
+#   inputs: I2 I4 F3
+#   outputs: seal_rate_status + yesterday_lu_status
+# - id: A6
+#   name_zh: ⑥ 综合评分与情绪阶段定位
+#   name_en: analyze + _determine_phase
+#   intro: 6维分数加权成综合情绪分 再定位5档情绪阶段
+#   desc: overall=涨跌停0.20+赚钱效应0.20+士气0.15+封板率0.15+涨跌家数0.15+次日风险0.15 → <20冰点 <40反核 <60主升 <80疯狂 ≥80退潮
+#   inputs: A1 A2 A3 A4 A5
+#   outputs: overall_score + sentiment_phase
+# 层: 输出
+# - id: O1
+#   name_zh: 市场情绪分析结果
+#   name_en: MarketSentimentResult
+#   intro: 7维状态与评分+综合情绪分+情绪阶段 一次输出
+#   invariant: overall_sentiment_score in [0,100]; all sub-scores in [0,100]
+#   downstream: 游资接力情绪引擎 MOD-SIG-033; 双引擎融合决策引擎 MOD-SIG-035
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I2 -.->|断点| F3
+# F1 --> A1
+# F2 --> A1
+# F1 --> A3
+# F2 --> A4
+# F3 --> A5
+# I2 --> A2
+# I3 --> A4
+# I4 --> A5
+# A1 --> A6
+# A2 --> A6
+# A3 --> A6
+# A4 --> A6
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-33 A股游资接力情绪引擎
 
 游资接力情绪6因子0-100分评分(连板高度25分+封单质量20分+涨停时间15分
@@ -32,9 +34,142 @@ D-SIGNAL-33 A股游资接力情绪引擎
 理论依据：行为金融学 / 情绪周期 / 市场微观结构。
 
 设计文档默认值可配置——所有阈值通过 YouziEmotionConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-33。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-33。
 
 依赖方向：D_DATA(行情数据) -> D-SIGNAL-33 -> D-SIGNAL-35(双引擎融合决策)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 连板与封单 行情数据
+#   fields: consecutive_limit_ups 连板数 + seal_amount 封单金额 + float_market_cap 流通市值
+#   code: YouziEmotionInput L146-152
+# - id: I2
+#   name: 封板时间与开板 数据
+#   fields: seal_time 封板时间 + open_board_count 盘中开板次数
+#   code: YouziEmotionInput L154-157
+# - id: I3
+#   name: 竞价与板块 数据
+#   fields: auction_rise_pct 竞价涨幅 + auction_volume_ratio 竞价量比 + sector_limit_up_count 同板块涨停家数
+#   code: YouziEmotionInput L160-164
+# - id: I4
+#   name: 市场环境 数据
+#   fields: market_limit_up_count 全市场涨停家数 + market_breadth_ratio 涨跌家数比
+#   code: YouziEmotionInput L167-168
+# 层: 特征
+# - id: F1
+#   name_zh: 连板高度评分
+#   name_en: score_consecutive_height
+#   intro: 连板越多游资接力情绪越强，满分25
+#   formula: score=min(1+(连板数-1)×5, 25)，无连板=0
+#   code: youzi_relay_emotion_engine.py L277-291
+#   registry: factor_registry: 有FCT条目 FCT-SENT-002（情绪三件套含连板高度）
+#   is_break: false
+# - id: F2
+#   name_zh: 封单质量评分
+#   name_en: score_seal_quality
+#   intro: 封流比衡量封板强度，满分20
+#   formula: 封流比=封单金额/流通市值 → ≥10%→20分，≥5%→15分，≥2%→10分，否则 封流比/2%×10
+#   code: youzi_relay_emotion_engine.py L297-318
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 涨停时间评分
+#   name_en: score_seal_time
+#   intro: 越早封板情绪越强，满分15
+#   formula: ≤9:25→15分(一字板)，≤10:00→12，≤11:00→8，≤13:30→5，≤14:30→3，之后→1
+#   code: youzi_relay_emotion_engine.py L324-352
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 开板次数评分
+#   name_en: score_open_board
+#   intro: 开板越少封板越稳，满分15
+#   formula: 0次→15分，1次→8分，2次→3分，≥3次→0分
+#   code: youzi_relay_emotion_engine.py L358-374
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F5
+#   name_zh: 竞价强度评分
+#   name_en: score_auction_strength
+#   intro: 竞价高开加量比放大说明抢筹，满分10
+#   formula: 涨幅分(≥5%→7,≥3%→5,≥1%→3,否则按比例) + 量比分(≥2→3,否则 量比/2×3)，min(和,10)
+#   code: youzi_relay_emotion_engine.py L380-402
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F6
+#   name_zh: 助攻梯队评分
+#   name_en: score_assist_echelon
+#   intro: 同板块涨停家数越多梯队越完整，满分10
+#   formula: ≥5家→10分，≥3家→7分，≥1家→4分，否则0分
+#   code: youzi_relay_emotion_engine.py L408-424
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 6因子评分求和
+#   name_en: YouziRelayEmotionEngine.analyze（评分段）
+#   intro: 6个因子得分加总封顶100，得综合情绪评分
+#   desc: total=min(Σ6因子score, 100)，逐因子记 audit_trail（L227-254）
+#   inputs: F1 F2 F3 F4 F5 F6
+#   outputs: total_score 综合情绪评分 0-100
+#   invariant: 6因子评分满分100
+# - id: A2
+#   name_zh: ② 情绪周期4+1阶段定位
+#   name_en: determine_emotion_phase
+#   intro: 按评分分段定情绪阶段，再用市场广度/断板检测退潮
+#   desc: ≤20冰点/≤40反核/≤65主升/≤85疯狂；>85且广度<0.4 或 ≥4连板且≥3次开板→退潮；全市涨停≤5家且分≤40→冰点；置信度=距阶段中心越近越高 max(100-distance×30,50)（L430-479）
+#   inputs: A1 I1 I2 I4
+#   outputs: emotion_phase + phase_confidence
+#   invariant: 4+1阶段顺序不可跳跃（冰点→反核→主升→疯狂→退潮）
+# - id: A3
+#   name_zh: ③ 阶段策略映射
+#   name_en: map_strategy
+#   intro: 每个情绪阶段对应一条操作建议
+#   desc: 冰点→空仓/埋伏，反核→小仓试错，主升→核心仓做龙头，疯狂→只做龙头，退潮→空仓等冰点，未知→中性观望（L485-495）
+#   inputs: A2
+#   outputs: strategy_action 策略建议
+# - id: A4
+#   name_zh: ④ 输入校验与降级路径
+#   name_en: _validate_input / _degraded_result
+#   intro: 输入出现负值就返回全零降级结果并记日志
+#   desc: 连板/开板/市值/封单金额任一<0 → is_degraded=True 的降级结果 + warning 日志（L501-524）
+#   inputs: I1 I2
+#   outputs: 降级 YouziEmotionResult
+#   invariant: 降级路径必须有日志
+# 层: 输出
+# - id: O1
+#   name_zh: 游资接力情绪分析结果
+#   name_en: YouziEmotionResult
+#   intro: 综合评分+6因子明细+情绪阶段+置信度+策略建议+审计轨迹
+#   invariant: total_score ∈ 0-100
+#   downstream: zephyr.signal_ashare.dual_engine_fusion_decision_engine（D-SIGNAL-35 双引擎融合决策，# [CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> F1
+# I1 -.->|断点| F2
+# I2 -.->|断点| F3
+# I2 -.->|断点| F4
+# I3 -.->|断点| F5
+# I3 -.->|断点| F6
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# F4 --> A1
+# F5 --> A1
+# F6 --> A1
+# I1 --> A2
+# I2 --> A2
+# I4 --> A2
+# A1 --> A2
+# A2 --> A3
+# I1 --> A4
+# I2 --> A4
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations

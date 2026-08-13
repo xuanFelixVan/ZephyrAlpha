@@ -23,6 +23,8 @@
 # ---
 
 """
+
+
 D-SIGNAL-34 A股量化短线强度引擎
 
 量化短线6维度0-100分评分(价格动量Z-score+行业强度+相对强度+资金+技术+风险)
@@ -33,9 +35,83 @@ D-SIGNAL-34 A股量化短线强度引擎
 理论依据：多因子模型 / 评分卡 / 集成学习。
 
 设计文档默认值可配置——所有阈值通过 QuantStrengthConfig 调整，
-默认值取自 D:\\临时工作区\\依赖图\\04-D-SIGNAL-信号域.md §D-SIGNAL-34。
+默认值取自 D:\临时工作区\依赖图-D-SIGNAL-信号域.md §D-SIGNAL-34。
 
 依赖方向：D_DATA(行情数据) -> D-SIGNAL-34 -> D-SIGNAL-35(双引擎融合决策)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 量化强度输入 QuantStrengthInput数据类
+#   fields: 价格动量Z-score + 行业当日涨幅% + 个股涨幅% + 大盘涨幅% + 主力净流入(元) + 流通市值(元) + 技术形态综合分0-100 + 风险评分0-100
+#   code: QuantStrengthInput L157-L178
+# - id: I2
+#   name: 游资侧融合输入 标量参数组
+#   fields: youzi_emotion_score 游资情绪评分(来自D-SIGNAL-33) + 连板数 + 是否主线龙头
+#   code: QuantStrengthInput L181-L183
+# 层: 特征
+# - id: F1
+#   name_zh: 相对强度
+#   name_en: rs
+#   intro: 个股涨幅比大盘涨幅强多少个百分点
+#   formula: rs=个股涨幅%-大盘涨幅% ≥5%满分 ≥3%得15分 ≥1%得8分
+#   code: quant_short_term_strength_engine.py L338
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 净流入比
+#   name_en: capital_inflow_ratio
+#   intro: 主力净流入占流通市值的比例
+#   formula: ratio=主力净流入/流通市值 ≥5%满分 ≥2%得11分 ≥0得6分
+#   code: quant_short_term_strength_engine.py L365
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 6维度分项评分与总分合成
+#   name_en: analyze + score_* 系列
+#   intro: 动量/行业/相对/资金/技术/风险6维各按阈值打分再加总
+#   desc: 动量Z满分20(Z≥2满分 ≥1得15 ≥0得8) 行业满分15 相对满分20 资金满分15 技术满分20(≥80满分) 风险满分10反向(≤20满分) total=min(Σ6维,100)
+#   inputs: I1 F1 F2
+#   outputs: total_score + 6维 DimensionScore 明细
+#   invariant: 6维度评分满分100
+# - id: A2
+#   name_zh: ② A~E五级评级
+#   name_en: determine_grade
+#   intro: 把总分单调映射到A极强到E极弱5档
+#   desc: ≥80→A ≥65→B ≥50→C ≥35→D 否则→E
+#   inputs: A1
+#   outputs: grade A~E
+#   invariant: A~E五级评级单调
+# - id: A3
+#   name_zh: ③ 6类输出分类
+#   name_en: classify_category
+#   intro: 结合量化总分+游资情绪+连板+主线 把股票分进6+1类
+#   desc: 地天反包(1板+涨≥9.5%+风险≥60)→主升龙头(量化≥80+游资≥70+主线)→二进三(量化≥65+连板≥2)→复苏(量化≥70+游资40-65)→伪强(游资≥60+量化<50)→跟风(量化50-65+游资40-65)→中性
+#   inputs: I1 I2 A1
+#   outputs: category 6+1类标签
+# 层: 输出
+# - id: O1
+#   name_zh: 量化短线强度结果
+#   name_en: QuantStrengthResult
+#   intro: 综合强度分+6维明细+A~E评级+6类分类 供双引擎融合消费
+#   invariant: 6维度评分满分100 降级路径必须有日志
+#   downstream: 双引擎融合决策引擎 MOD-SIG-035
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 --> A1
+# F1 --> A1
+# F2 --> A1
+# A1 --> A2
+# A1 --> A3
+# I1 --> A3
+# I2 --> A3
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations
