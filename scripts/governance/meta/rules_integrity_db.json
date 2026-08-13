@@ -46,7 +46,7 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "559f76f119161e01",
+      "hash": "db38d944a00a2e3c",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
@@ -91,6 +91,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-13T20:16:20.913891+00:00",
+  "registered_at": "2026-08-13T20:30:52.763455+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
