@@ -207,6 +207,10 @@ def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
             continue
         if raw_line.startswith("+++"):
             continue
+        if raw_line.startswith("\\"):
+            # "\ No newline at end of file" 是 diff 元数据，不占新文件行号
+            # （2026-08-12 修复：整文件替换 diff 中该标记导致后续 added 行号 +1 偏移）
+            continue
         if raw_line.startswith("+"):
             result.append((current_line, raw_line[1:]))
             current_line += 1
