@@ -5,8 +5,8 @@ title: 卖出流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.2"
-date: 2026-08-12
+version: "1.7.0"
+date: 2026-08-13
 topic: sell_flow
 scope: 07_trading_decision_architecture
 ---
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | O'Neil 卖出法则 / 机构 ATR 止损 / trailing stop / A 股 T+1 跌停排队 |
 | 正交性 | ⚠️ 情绪退潮卖出与 regime 协同（但 regime 只给 Shrinkage，卖出逻辑在策略内） |
 | 优先级 | P3 |
-| 状态 | 已定稿·可施工（MVP 路径已明确，28/35 未就绪有降级） |
+| 状态 | 已定稿·MVP 已施工（AI-SELL-001：Triage/止损/止盈/执行编排 4 模块落码，28/35 未就绪有降级） |
 
 ## 2. 背景
 
@@ -96,6 +96,17 @@ battle_map_07 锁定了卖出流的**环节拓扑**（突破成败→收集评�
 | Kill Switch 清仓排序 | —（执行层落地） | §3.9 | ✅ 已补全（rank_kill_switch_liquidation） |
 
 > **与执行层（40 号）的落地边界**：本 spec 伪代码（止损/止盈/Triage/排队/排序）落地后产出卖出信号/目标权重，经 [40_execution_broker](40_execution_broker.md) §2.11 订单分解→§2.15 PricingPolicy 挂单价→MiniQmtBroker 发出；跌停板排队优先级与 Kill Switch 清仓排序的最终执行依赖 40 号 OpenOrderResolver/PricingPolicy（均已施工，40 号 §1.4）。
+
+**施工落地（v1.7.0，AI-SELL-001，2026-08-13）**：上表 9 项中 7 项已落码为 4 个模块（65 单元测试全绿，含既有 7 模块 162 测试无回归）：
+
+| 模块 | 路径 | 承载伪代码 | 测试 |
+|---|---|---|---|
+| MOD-SELL-000 持仓 Triage | `src/zephyr/sell_decision/core/position_triage.py` | §3.2 triage_position（含 BM-POS-09 threshold_delta 硬封顶 ±0.10；ATR 缺失降级 MONITOR 中间档） | tests/sell_decision/test_position_triage.py（14） |
+| MOD-SELL-005 止损策略族 | `src/zephyr/sell_decision/core/stop_loss_strategy.py` | §3.3 compute_stop_loss（Chandelier 统一，策略类型 M±0.5）+ §3.2 check_time_stop（第⑦类信号源） | tests/sell_decision/test_stop_loss_strategy.py（17） |
+| MOD-SELL-004 止盈策略族 | `src/zephyr/sell_decision/core/take_profit_strategy.py` | §3.4 compute_exit_price（自动 phase 判定，委托 005 核心真源唯一） | tests/sell_decision/test_take_profit_strategy.py（10） |
+| MOD-SELL-019 卖出执行编排（新登记） | `src/zephyr/sell_decision/core/sell_execution_planner.py` | §3.8 schedule_sell_order（含 T+1/跌停硬约束落地）+ rank_limit_down_orders + §3.9 rank_kill_switch_liquidation | tests/sell_decision/test_sell_execution_planner.py（24） |
+
+施工对 spec 伪代码的三处工程修正（均数学等价或补 spec 未覆盖路径，不改变 spec 决策语义）：①triage 改绝对价格距离比较（与伪代码同乘 entry 消去除法，消浮点尾差）；②triage ATR 缺失降级 MONITOR（spec 未给降级参数，取 §3.2"正常持仓"最保守中间档）；③schedule_sell_order 落地 §3.8 表格的 T+1/跌停硬约束（伪代码未覆盖：当日买入任何信号 BLOCKED_T1——含 Kill Switch（交易所物理约束），非强制清仓遇跌停 LIMIT_DOWN_QUEUE 排队次日）。未施工 3 项维持 spec 裁定：MOD-SELL-014（MVP 用 005 phase 切换+M±0.5 替代）/ MOD-SELL-017（MVP 一次性退出）/ TradeLevelCircuitBreaker（Phase 2 候选，G04 未校准）。施工登记见 #ARCH-SELL-001。commit 清单见 §9 修订记录 v1.7.0 行。
 
 ## 3. 决策：止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护 四族 MVP，分批/密度感知/逻辑止损族降级
 
@@ -746,3 +757,4 @@ class TradeLevelCircuitBreaker:
 | 2026-08-12 | 1.6.0 | 已施工设施盘点新增 + MOD-SELL-014 状态订正 + 35 号状态订正 + 交叉引用补全 + O'Neil/LeBeau 对标展开 | 架构审查（通用规则 #11 基础设施盘点 + 一致性审查）：①**§2.4 新增「已施工设施盘点」**——sell_decision 域已施工 7 模块（突破成败 003/收集器 001/融合 007/紧迫度 009/冲突仲裁 008/猎杀防护 015/置换再平衡 006）+ 跨域可复用设施（risk 域 default_stop_loss_engine trailing/time_based/volatility 三方法 + position 域 TriageLevel 消费方）+ 未施工清单（9 项伪代码状态全标注）+ 与 40 号执行层落地边界；②**MOD-SELL-014 策略止损范式状态硬错误订正**（4 处：§2.3/§4.1/§5.2/§5.3）——此前版本标"已建"，源码核实三方分裂：68 域文档 planned 无代码无蓝图/battle_map generated 仅包入口/源码目录无实现文件，以 68 域文档为准=设计态待施工，MVP 用 Chandelier 阶段切换替代；③**35 号状态全面订正**（7 处：§1/§3.9/§5.2/§5.3/§7/§8.1/循环至零检查）——35 已 active 1.37.0（此前版本标"骨架/未就绪"已过时），阶段 3 触发条件已满足，§3.9 四级阈值与 30 §2.5 外层口径一致无需改数值，补 35 §3.2 内层代码 5/10/15% 双轨说明；④**§2.1 "13 生产态"精确化**——6 个为 __init__.py 包入口占位，真实业务生产态 7 个；⑤**§7 待定问题补 2 项**——MOD-SELL-008 三方分裂源码核实补记（源码 production 无 deprecated 字样）+ risk 域止损引擎与本 spec 替换/并存关系裁定请求；⑥**§8.1 补 40/37 号交叉引用**（40=落地通道/37=流动性危机检测真源）；⑦**§3.3 补 O'Neil 卖出法则对比论证 + LeBeau 一手出处**——§1 对标项"O'Neil 卖出法则"此前只有标题未展开，补 7-8% 固定止损/+20-25% 止盈/8 周例外三规则的不搬用论证（A 股 T+1+涨跌停缺口）+ LeBeau 退出优先级四层与"利润越大止盈越紧"是 Chandelier 双 M 值设计的一手原型；§8.3 补 LeBeau 演讲 PDF + O'Neil 三源条目。⑧**2026-08 最新研究五次复查**——WebSearch 确认 journalplus/volatilitybox/fxglory Chandelier 参数与 §3.3 一致、Li 2026 circuit breaker 已登记、miniQMT/执行算法无新内容，无新硬错误 |
 | 2026-08-12 | 1.6.1 | 作战地图全覆盖补丁——BM-SELL-09 / BM-POS-09 | ①新增 §3.11 卖出闭环优化（BM-SELL-09）——卖后 N 天价格追踪窗口（默认 5 交易日校准项）/按信号类型×策略分组准确率统计/A-B 显著性检验 p<0.05（单格样本<30 不出建议）/执行质量评分，产出 E-SELL-04 SellLoopFeedback 回调 BM-SELL-03 信号权重（仅 p<0.05 生效、单次 ±20% 封顶）；调度复用 55 号 §3.6 复盘编排器（daily→weekly→monthly 链路+ReportPublisher 归档），显著性框架复用 54 号 §3.9 deflated-alpha（日常轻量 p 检验+月/季重量 audit() 分层）；②§3.3 扩展卖出阈值双向反馈契约（BM-POS-09）——PositionStateFeedback→D-SELL-DECISION 阈值动态调整五字段（pnl_state/unrealized_pnl_pct/threshold_delta∈±0.10 硬封顶/feedback_window/source_position_id）+方向规则（盈利放宽/亏损收紧/breakeven 不动，强制清仓不经本契约）+买入后即时验证窗口三级递进（5min 跌破>1% 放量→OBSERVING/15min 破分时均线→减仓 50%/30min 反向>2ATR→全部止损，与软止损共用四态机不新建）。均补定位→裁定（理由+重评条件）→契约/参数→降级四层 |
 | 2026-08-12 | 1.6.2 | 作战地图环节映射补强——锚定 BM-RC-05-A | §3.3 末尾补映射块，环节级可追溯 |
+| 2026-08-13 | 1.7.0 | MVP 施工落地——4 模块 65 测试全绿（AI-SELL-001） | §2.4 未施工清单 9 项中 7 项落码：MOD-SELL-000 持仓Triage（§3.2 triage_position，import 消费方 MOD-POS-003 TriageLevel 真源唯一，ATR缺失降级MONITOR，threshold_delta 硬封顶±0.10）/ MOD-SELL-005 止损族（§3.3 Chandelier 统一+策略M±0.5+§3.2 时间止损第⑦类源）/ MOD-SELL-004 止盈族（§3.4 自动phase判定委托005）/ MOD-SELL-019 执行编排（新登记，§3.8 时序+T+1/跌停硬约束+§3.9 Kill Switch清仓排序）；3 处工程修正（triage绝对距离比较消浮点尾差/ATR缺失降级MONITOR/执行编排落地表格约束）；MOD-SELL-014/017/circuit breaker 维持 spec 裁定不施工；三登记齐备（depgraph 节点+边/creation_token×12/plain_zh×4/ARCH-SELL-001） |

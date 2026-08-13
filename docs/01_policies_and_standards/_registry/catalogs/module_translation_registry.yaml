@@ -17112,11 +17112,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/sell_decision/core/position_triage.py
   domain_id: D_SELL_DECISION
-  name_zh: 持仓Triage
-  name_en: Position Triage
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
+  name_zh: "持仓分级判定器"
+  name_en: "Position Triage"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "按持仓盈亏和止损距离把持仓分成Watch/Monitor/Hold三级，决定卖出扫描盯盘频率——快触止损的盯紧点，深度盈利的躺平，正常的5分钟看一次"
 - module_path: tests/governance/commit_gates/test_empty_handler_gate.py
   domain_id: D_GOV_ENFORCEMENT
   name_zh: EMPTY-HANDLER 门禁单测
@@ -26079,11 +26079,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/sell_decision/core/stop_loss_strategy.py
   domain_id: D_SELL_DECISION
-  name_zh: 止损亏损策略
-  name_en: Stop Loss Strategy
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
+  name_zh: "止损策略族"
+  name_en: "Stop Loss Strategy"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "用吊灯止损法算卖出止损价——亏损时放宽防被震荡洗出去，盈利后收紧锁定利润，波动大的股票自动给更宽的缓冲，ATR数据缺失时退回固定百分比兜底"
 - module_path: src/zephyr/risk/risk_manager.py
   domain_id: D_RISK
   name_zh: 校验单标的权重是否合规
@@ -36173,11 +36173,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/sell_decision/core/take_profit_strategy.py
   domain_id: D_SELL_DECISION
-  name_zh: 止盈止盈策略
-  name_en: Take Profit Strategy
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
+  name_zh: "止盈策略族"
+  name_en: "Take Profit Strategy"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "算移动止盈退出价——盈利超过一倍ATR后自动切换成紧跟踪模式锁定利润，让利润继续奔跑但回撤到吊灯线就离场，与止损共用同一套公式"
 - module_path: src/zephyr/shared/contracts/synthesized_signal.py
   domain_id: D_INFRASTRUCTURE
   name_zh: Synthesized信号
@@ -41368,6 +41368,14 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: 每次提交后自动体检：代码 docstring 里 ALGO_FLOW 标记的中文名/简介，和 factor_registry、module_translation_registry 两个 YAML 翻译真源是否一致，不一致就告警提醒人工对齐，防止算法全景图和注册表各说各话（#ARCH-69）。
+- module_path: src/zephyr/sell_decision/core/sell_execution_planner.py
+  domain_id: D_SELL_DECISION
+  name_zh: "卖出执行编排器"
+  name_en: "Sell Execution Planner"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "决定卖出单什么时候下、怎么排队——止损盘一触即发立即挂限价单，止盈等尾盘集中成交，强制清仓不管什么时候都市价单先跑，跌停板卖不掉就按亏损大小排队等次日竞价"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
