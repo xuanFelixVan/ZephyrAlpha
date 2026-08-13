@@ -5,7 +5,7 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.0"
+version: "1.3.0"
 date: 2026-08-12
 topic: construction_workflow_sop
 scope: 07_trading_decision_architecture
@@ -736,6 +736,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 2026-08-12 | 1.0.0 | 初稿落盘 | 端到端 15 步施工闭环 SOP 初版，整合 18 项盲点（Session 冷启动/创建前搜索/架构评审门控/五图对齐/模块准入/文件头/双轨/git 预算/跨蓝图通知/三方对齐/临时文件分类/force merge/commit 持久性/stash 生命周期/pre-commit 增量/54 维度/模块创建 10 phase/任务卡 33 字段）；附录 A 全文收录用户提供的长清单审查 12 节 |
 | 2026-08-12 | 1.1.0 | 第三轮扫描补充 22 项盲点 | 补充：handoff 交接包/ABS 绝对禁止清单/SECRETS.md 密钥管理/设计意图真源/向内收三原则/架构变更分级 L1-L4/治理顺序因果链/八指标机械门/并行执行原子事务/防幻觉四件套/代码组织类型导入/数据库破坏性操作三步验证/RunCommand 命令纯洁性/Symbol 约定/方法论根因分析/漂移检测套件/文档规格化三清单/删除安全门禁/架构版本化/工作区治理+回滚系统/commit 四件套/临时文件放置 5 铁律/worktree base 新鲜度+分支策略；附录 B 补充 d2/d4/d9 检测脚本 |
 | 2026-08-13 | 1.2.0 | Step 6 补遗留项登记机制 | AI-STD-001 审查实践发现：审查遗留项（如文件被占用无法同步）不登记=必忘项。Step 6 新增"遗留项登记"铁律（MUST 登记到 construction_progress_tracker.md §七）；Step 7 前置条件从"审查无遗留"改为"审查遗留项已登记"（不要求零遗留，但要求已登记） |
+| 2026-08-13 | 1.3.0 | 附录 A 升级：新增 A.13 五图对齐验证 + A.14 代码质量专项 | 用户提出审查清单老化。对比 trae_081 的 54 维度发现附录 A 12 节未覆盖五图对齐验证和代码质量具体检查点。新增 A.13（五图对齐 7 项，引用 trae_080）+ A.14（代码质量 10 项，从 54 维度选取最关键的 10 个）。附录 A 从 12 节升级到 14 节 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 
@@ -869,6 +870,37 @@ A/D/E 类修改文件若原本无表头则 N/A。
 - A.12.2 结论必须包含：
   - 本会话工作完成度总览（已完成/部分完成/未完成项数）
   - 本次跳过条款清单+跳过理由（来自 0.5 分类）
+
+### A.13 五图对齐验证 [全类·当改动涉及模块/依赖/路径/蓝图时]
+
+> 五图对齐是项目治本铁律（[trae_080](../../../../docs/01_policies_and_standards/rules/trae_080_panorama_alignment.yaml)），施工后 MUST 验证五图一致。
+
+- A.13.1 **depgraph**（依赖全景图）：改动模块的 design_maturity/build_status/domain_id 是否与代码现状一致？apply_depgraph 查询本模块节点是否 production
+- A.13.2 **dataflowgraph**（数据流向全景图）：sync_panorama_module 是否已从 depgraph 单向派生？数据流 job 是否与代码实际 dataflow 一致
+- A.13.3 **decisiongraph**（决策流全景图）：sync 派生的 decision_layer 是否与代码实际决策路径一致
+- A.13.4 **blueprint.md**（蓝图）：物理 blueprint.md frontmatter 4 字段（module_id/responsibility_domain/design_maturity/build_status）是否与 depgraph 一致
+- A.13.5 **battle_map**（作战全景图）：改动涉及 BM-XXX 环节时，battle_map_anchors 是否与前四图双向校验通过
+- A.13.6 **对齐验证命令**：`python scripts/governance/d5_architecture/generators/align_all.py` exit 0
+- A.13.7 **硬阻断条件**：domain_mismatches>0 / ghost_anchors>0 直接阻断施工闭环
+
+不涉及模块/依赖/路径/蓝图改动的纯文档修改一行 N/A。
+
+### A.14 代码质量专项 [仅 B/C 类·当改动涉及代码文件时]
+
+> 从 [trae_081_audit_dimensions_framework.yaml](../../../../docs/01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml) 54 维度中选取 10 个最关键的代码质量检查点。按改动特性选用，非全量必做。
+
+- A.14.1 **状态机正确性**（5.41）：有无转换校验？有无锁？force_state 是否绕过终态？
+- A.14.2 **类型注解准确性**（5.94/5.145）：public API 有无注解？Any 滥用（>5 处/文件）？返回类型与实际不符？
+- A.14.3 **函数复杂度**（5.97/5.140）：文件≤300 行/函数≤50 行/类≤200 行？圈复杂度<15？
+- A.14.4 **变量遮蔽**（5.101）：参数是否遮蔽 id/字段是否遮蔽内置名/模块名是否冲突标准库？
+- A.14.5 **序列化/反序列化安全**（5.147）：joblib.load 有无校验？Content-Length 有无上限？json.dumps 有无 default=str 类型丢失？
+- A.14.6 **全局状态管理**（5.165）：模块级单例有无锁 double-check？import 时有无启 Timer？asyncio+全局状态冲突？
+- A.14.7 **文件句柄/资源泄漏**（5.169）：fd 有无泄漏？urlopen 有无 close？sqlite3 有无 try/finally？os.open 有无泄漏？
+- A.14.8 **导入循环/模块耦合**（5.174/5.138）：shared 有无退化代理壳？有无双向耦合？有无延迟导入堆叠？
+- A.14.9 **时间与时区处理**（5.46）：time.time() 是否用于 TTL？naive/aware datetime 是否混用？
+- A.14.10 **资源清理顺序**（5.144）：核心关闭路径有无异常隔离？sqlite 清理有无 finally？子进程管道关闭顺序对不对？
+
+A/D/E 类不涉及代码时一行 N/A。
 
 ## 附录 B：验证脚本索引（scripts/governance/）
 
