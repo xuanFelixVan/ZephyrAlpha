@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 RegimeMetaAllocator — Regime元分配器 (MOD-PA-007)
 
 A 模型（30_multi_strategy_concurrency §2.2）的 meta 层。消费 regime 检测器 (MOD-REGIME-001) 的
@@ -44,6 +46,92 @@ MaxDD −10.3%；regime 做 alpha-timing Sharpe +0.87（降）。数据印证：
       + 34_regime_meta_allocator §3.4（施工算法伪代码）+ blueprint §2.3
 SSoT: depgraph MOD-PA-007
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: regime 概率向量 regime_probabilities
+#   fields: MOD-REGIME-001 HMM 输出的状态概率向量（取 max(P)）
+#   code: allocate L195 / _compute_confidence_signal L365
+# - id: I2
+#   name: 各策略 PerformanceScore
+#   fields: {strategy_id: score∈[0.5,1.5]}（60日 Sortino 映射，冷启动传 1.0）
+#   code: allocate L196 / compute_performance_score L493
+# - id: I3
+#   name: RiskSignal 13 参数输入
+#   fields: risk_base + resonance_penalty + opportunity_recovery
+#   code: _compute_risk_signal L384-386
+# - id: I4
+#   name: 先验权重 + 样本天数 + CRISIS 开关
+#   fields: base_weights（缺省等权1/N）+ strategy_sample_days（<30天冷启动）+ is_crisis
+#   code: allocate L194-199
+# 层: 算法
+# - id: A1
+#   name_zh: ① ConfidenceSignal 四档映射
+#   name_en: _compute_confidence_signal
+#   intro: HMM 最大概率越大越敢投，分四档给出置信度系数
+#   desc: max(P)<0.6→0.30；<0.8→0.60；<0.95→0.85；≥0.95→1.00（L88-93 阈值表，L365-371 映射）
+#   inputs: I1
+#   outputs: confidence_signal ∈{0.3,0.6,0.85,1.0}
+# - id: A2
+#   name_zh: ② RiskSignal 聚合裁剪
+#   name_en: _compute_risk_signal
+#   intro: 风险基底乘共振惩罚加机会恢复，钳在 0.30~1.00
+#   desc: raw = risk_base×resonance_penalty + opportunity_recovery → clamp[0.30, 1.00]（L387-388）
+#   inputs: I3
+#   outputs: risk_signal ∈[0.30,1.00]
+# - id: A3
+#   name_zh: ③ global_shrinkage 风险节流
+#   name_en: _compute_shrinkage
+#   intro: 置信度×风险得到全局资金收缩比例，只减不增，危机态地板降到 5%
+#   desc: raw=confidence×risk；final=max(floor, min(1.0, raw))，floor 常规 0.09 / is_crisis 0.05（L331-335）；shrinkage_enabled=False 时全 1.0（C1 验证开关，L319-327）
+#   inputs: A1 A2 I4
+#   outputs: global_shrinkage ∈[0.05,1.0]（ShrinkageDetail）
+#   invariant: Shrinkage≤1.0 只减不增；全局共用一个值
+# - id: A4
+#   name_zh: ④ Base×Perf 后验乘法
+#   name_en: _compute_raw_allocation
+#   intro: 先验权重乘绩效得分决定各策略相对占比，Shrinkage 全局归一化时约掉不参与
+#   desc: raw_i = base_i × perf_i（L403）；base 缺失按等权 1/N 补齐（L269-278）；<30 交易日冷启动 perf 强制 1.0 中性（L280-304）
+#   inputs: I2 I4
+#   outputs: raw_allocation
+#   invariant: regime 只回答"多谨慎"不回答"偏向谁"
+# - id: A5
+#   name_zh: ⑤ 归一化 + floor/cap 迭代裁剪
+#   name_en: _normalize_and_clip
+#   intro: 归一化到 Σ=1 后按 5% 地板 40% 顶做 water-filling 投影，越界固定余量重分
+#   desc: alloc=raw/Σ；N×cap<1 无解兜底放宽 cap=1-(N-1)×floor；≤floor 或 ≥cap 的固定，free 策略按比例 scale 重分，最多 5 轮迭代（L421-489）
+#   inputs: A4
+#   outputs: allocations（Σ=1.0，5%≤alloc≤40%）
+#   invariant: floor≥5% 防饿死 cap≤40% 防集中；Σ=1.0
+# - id: A6
+#   name_zh: ⑥ effective_budget 缩放
+#   name_en: allocate（Step 4）
+#   intro: 相对占比乘全局收缩因子得到各策略实收预算
+#   desc: effective_budget_i = allocation_i × global_shrinkage（L254-257），组装 BudgetAllocation 返回
+#   inputs: A3 A5
+#   outputs: effective_budgets
+# 层: 输出
+# - id: O1
+#   name_zh: 资金预算分配 BudgetAllocation
+#   name_en: BudgetAllocation
+#   intro: 各策略相对占比+全局节流因子+实收预算，下发给 StrategyBook 并触发预算变更事件
+#   invariant: allocation Σ=1.0；effective_budget = allocation × global_shrinkage
+#   downstream: MOD-POS-020 StrategyBook（消费 BudgetAllocation）; MOD-POS-022 BudgetChangeHandler（收 BudgetChanged 事件）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A2
+# A1 --> A3
+# A2 --> A3
+# I4 --> A3
+# I2 --> A4
+# I4 --> A4
+# A4 --> A5
+# A5 --> A6
+# A3 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

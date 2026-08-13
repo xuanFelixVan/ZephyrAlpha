@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD-PA-003)
 
 在策略权重基础上施加: 容量约束 + MaxDDLimit减仓 + 冷启动缩放 + 再平衡频率控制,
@@ -29,9 +31,95 @@ Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD-PA-003)
     - 风险预算 ∝ 权重
 
 属A类基础设施(权重规整+阈值缩放+频率控制, 逻辑明确), 策略权重本身(B类)为外部输入。
-依据: D:\\临时工作区\\依赖图\\06-D-PF-ALLOC-组合分配域.md §1 PA-03, §1.1
+依据: D:\临时工作区\依赖图-D-PF-ALLOC-组合分配域.md §1 PA-03, §1.1
 SSoT: depgraph MOD-PA-003
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 策略分配请求列表 StrategyAllocationRequest
+#   fields: strategy_id + signal_weight(来自PA-01/PA-02的策略权重,正数) + capacity(容量上限∈0,1)
+#   code: multi_strategy_capital_allocator.py L114 allocate(requests)
+# - id: I2
+#   name: 组合最大回撤 max_drawdown
+#   fields: 正数浮点 如0.12=12%
+#   code: allocate(max_drawdown) L190
+# - id: I3
+#   name: 冷启动已过交易日数 cold_start_days_elapsed
+#   fields: int 可选
+#   code: allocate(cold_start_days_elapsed) L191
+# - id: I4
+#   name: 再平衡日期上下文
+#   fields: last_rebalance_date 上次再平衡日期 + today 今日日期(频率控制)
+#   code: allocate(last_rebalance_date, today) L192-193
+# - id: I5
+#   name: 分配配置 AllocationConfig
+#   fields: MaxDD阈值15%/减仓50%/冷启动30%×5日/冷启动上限50%/频率≤1次日/总风险预算1.0
+#   code: AllocationConfig L74-106
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入合法性校验
+#   name_en: _validate
+#   intro: 权重必须为正、容量∈(0,1]、回撤与冷启动天数非负，否则抛错
+#   desc: 逐项校验 requests/max_drawdown/cold_start_days_elapsed，非法抛 InvalidAllocationInputError
+#   inputs: I1 I2 I3
+#   outputs: 校验通过或抛 InvalidAllocationInputError
+# - id: A2
+#   name_zh: ② 再平衡频率控制
+#   name_en: _can_rebalance
+#   intro: 每交易日最多再平衡1次，超限返回空分配让调用方沿用上次
+#   desc: _rebalance_count按日计数 < max_rebalance_per_day(L282-284)
+#   inputs: I4 I5
+#   outputs: rebalance_allowed 布尔
+# - id: A3
+#   name_zh: ③ 容量截断+归一化
+#   name_en: capacity cap + normalize
+#   intro: 单策略权重截断到容量上限后全体归一，权重和=1.0
+#   desc: w=min(signal_weight,capacity) → normalized=w/Σw (L230-238)
+#   inputs: I1
+#   outputs: 归一权重(和=1.0)
+#   invariant: Σtarget_weight=1.0
+# - id: A4
+#   name_zh: ④ MaxDD减仓+冷启动缩放
+#   name_en: reduction factor
+#   intro: MaxDD>15%全线减仓50%，冷启动5日内仓位×30%且上限≤正常50%
+#   desc: reduction=1 → ×0.50(若MaxDD触发) → ×0.30并min(·,0.50)(若冷启动) (L241-253)
+#   inputs: I2 I3 I5
+#   outputs: reduction_factor 整体缩放系数
+#   invariant: reduction_factor≤1.0 只减不增
+# - id: A5
+#   name_zh: ⑤ 生成分配与风险预算
+#   name_en: build allocations
+#   intro: 每策略产出最终权重+风险预算(∝权重)，组装 AllocationResult
+#   desc: risk_budget=normalized×total_risk_budget (L256-278)
+#   inputs: A1 A2 A3 A4
+#   outputs: AllocationResult
+#   invariant: 风险预算∝权重
+# 层: 输出
+# - id: O1
+#   name_zh: 资金分配结果 AllocationResult
+#   name_en: AllocationResult
+#   intro: 最终权重表(和=1.0)+风险预算+整体缩放系数+MaxDD/冷启动/再平衡状态标记
+#   invariant: total_weight=1.0; reduction_factor≤1.0
+#   downstream: MOD-PA-006(仓位计算) ; D-PF-CORE(TargetPortfolio) ; D-POSITION
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A2
+# I5 --> A2
+# I1 --> A3
+# I2 --> A4
+# I3 --> A4
+# I5 --> A4
+# A1 --> A5
+# A2 --> A5
+# A3 --> A5
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
