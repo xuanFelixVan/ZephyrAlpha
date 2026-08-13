@@ -5,8 +5,8 @@ title: 下单对接与撮合（执行层）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.10.1"
-date: 2026-08-12
+version: "2.11.0"
+date: 2026-08-13
 topic: execution_broker
 scope: 07_trading_decision_architecture
 ---
@@ -1118,6 +1118,8 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 
 ### 6.1 代码 gap
 
+> **v2.11.0 施工完毕确认**（2026-08-13，AI-EXEC-001 会话）：§6.1 全部 10 项 P0 gap 落码完整性验证 + IS 4 桶分解核查 + 盘前检查链+订单层熔断代码完整性验证，全部 PASS。施工内容：①9 个 v2.5.0-v2.6.0 新增模块补 [BLUEPRINT] 头；②TradingSession 补资金预占算法+CancelRateGuard 接入+ALGO_FLOW 标记；③DefaultTCAEngine 补 IS 4 桶分解+DECISION 基准默认+方向感知滑点+ALGO_FLOW 标记；④修复 2 个 pre-existing 语法错误（constitutional_update.py/rule_patterns.py docstring 缺 r 前缀）。pytest 连续 2 轮 1332/1332 全通过。长清单审查 9/12 全量 PASS（3 项轻微 FAIL 均为 pre-existing）。
+>
 > **v2.6.0 代码审计**（2026-08-10）：v2.5.0 后施工 gap 18，并核验 gap 7/8/11/13/17 实际已完成但文档未同步（重大漂移修复）。**全部 13 项实盘生存级 gap 已闭合**（gap 6-18，除 gap 10/16 为 Phase 2/1.5 暂缓项）。以下为最新状态：
 > - ✅ gap 6 未成交续接：[OpenOrderResolver](file:///d:/ZephyrAlpha/src/zephyr/ex_core/open_order_resolver.py) 已实现（Make-or-Take/PARTIAL补单/尾盘清退/幂等，21测试全绿）
 > - ✅ gap 7 撤单率控制：[CancelRateGuard](file:///d:/ZephyrAlpha/src/zephyr/ex_core/cancel_rate_guard.py) 已实现（滚动500笔窗口/>12%只挂不撤/>15%冻结/15笔秒限频/可注入clock，23测试全绿）；已接入 [TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 的 `can_place_order`/`can_submit_now`/`record_submit`
@@ -1310,6 +1312,7 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-13 | 2.11.0 | 施工完毕标注：AI-EXEC-001 会话执行 §6.1 全部 10 项 P0 gap 落码完整性验证 + IS 4 桶分解核查 + 盘前检查链+订单层熔断代码完整性验证。施工内容：①9 个 v2.5.0-v2.6.0 新增模块（OpenOrderResolver/CancelRateGuard/PricingPolicy/price_cage/AsyncFillDispatcher/TradingHaltResolver/CorporateActionAdjuster/board_lot/ProgrammaticTradingGuard）算法全部 PASS，补 [BLUEPRINT] 头；②TradingSession 补资金预占算法（串行扣减+卖出释放+提交前拦截+拒单回滚+estimated_cost_rate=0.003）+ CancelRateGuard 接入（can_place_order/can_submit_now/record_submit）+ ALGO_FLOW 标记；③DefaultTCAEngine 补 IS 4 桶分解（_calc_is_decomposition）+ DECISION 基准默认 + 方向感知滑点（_calc_slippage_bps SELL 取反）+ ALGO_FLOW 标记；④修复 2 个 pre-existing 语法错误（constitutional_update.py/rule_patterns.py docstring 缺 r 前缀）。pytest 连续 2 轮 1332/1332 全通过，0 错误。长清单审查 9/12 全量 PASS，3 项轻微 FAIL 均为 pre-existing。 | AI-EXEC-001 会话施工完毕确认 |
 | 2026-08-08 | 1.0.0 | 初稿 | G22 下单对接与撮合执行层 spec 定型：10 要点决策（撮合自适应/滑点DECISION/佣金万0.854/7态机/拒单分类/订单层熔断4%-10-50/集合竞价MVP不碰/T+1查持仓/差额下单先卖后买）+ 现有 production 资产 why 层补全 + 5 项代码 gap 标注 |
 | 2026-08-08 | 1.1.0 | 施工环节流程补全 | 审查发现 4 个施工环节流程算法缺失（实盘生存项）：⑪未成交续接（Make-or-Take/PARTIAL补单/尾盘清退）、⑫撤单率控制（滚动监控降级/2026新规每秒≤15笔）、⑬资金预占（串行扣减/提交前拦截）、⑭挂单价算法（被动档买一卖一/主动档对手价）。补 §2.4 Gatheral 无套利理论依据。补 Phase 1.5 演进路径（自适应参与率/peg盘口/TCA规则闭环/coeff校准）。补 2026 最新执行 RL 研究引用。v1.0.0 的 5 项代码 gap 已施工（commit 015826ae），新增 v1.1.0 gap 6-10 待施工。 |
 | 2026-08-08 | 1.1.1 | 文档-代码漂移对账 | 逐项核查 §6.1 五项 v1.0.0 gap 对照实码：gap 4（拒单分类）由 ✅ 修正为 ⚠️ 部分实现——分类映射(`_REJECTION_ACTIONS`/`classify_rejection`)+`_handle_rejection` 日志已实现，RETRY/冻结/对账实际动作待 Saga 接管。修正 §2.5/§2.6/§2.7 三处 stale 内联"代码 gap"标注（佣金费率/先卖后买已施工，拒单分类标为部分实现）。 |
