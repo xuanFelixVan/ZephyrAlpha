@@ -13588,13 +13588,15 @@ entries:
     - 'docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml（新建，5个股票池）'
     - 'docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml（新建，4个基准）'
     - 'docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml（新建，3个成本模型）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml（新建，6个执行算法，2026-08-13）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml（新建，S6改名扩展：15源+76数据集+75作业，2026-08-13）'
     - 'docs/registry_of_registries.yaml（编辑，tier_2加3个业务资产注册表条目）'
     - 'AGENTS.md（编辑，RULE-REGISTRY段加业务资产速查显化）'
     - 'docs/_working/business_registry_consolidation_plan.md（新建，施工方案文档）'
-  fix_phase: 'P0（2026-08-10完成）：universe/benchmark/cost_model 3个回测必需注册表；P1待施工：factor/strategy/indicator/pattern/execution/risk/data_asset 7个；P2待施工：field_dictionary/experiment 2个'
+  fix_phase: 'P0（2026-08-10完成）：universe/benchmark/cost_model 3个回测必需注册表；P1-A：factor(111)/strategy(59) Step1-3 落盘（Step4-8待做），indicator 待施工；P1-B：risk_limit(42) Step1-3 落盘（Step4-8待做），execution_algo(6)/data_asset(166=sources15+datasets76+jobs75) 2026-08-13 完成 8 步施工（E1-E20 审计 errors=0，AI-REG-EXE-001 worktree 施工），chart_pattern 待施工；P2待施工：field_dictionary/experiment 2个'
   status: decided
   created: '2026-08-10'
-  last_updated: '2026-08-10'
+  last_updated: '2026-08-13'
 
 
 - issue_id: '#ARCH-DATA-UTIL'
