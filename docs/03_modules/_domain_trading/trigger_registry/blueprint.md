@@ -21,8 +21,8 @@ ssot_claims:
   - {claim: "优先级仲裁与同源去重规则唯一真源", scope: "module"}
   - {claim: "MVP 15 条扳机清单唯一真源", scope: "module"}
 responsibility_domain: 
-design_maturity: design
-build_status: generated
+design_maturity: production
+build_status: stable
 language: zh
 generation: 1
 summary: "41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发器统一注册 TriggerEntry，priority 1-5 仲裁+scope 排序+同源去重+冷却期，MVP 15 条清单预注册"

@@ -4,8 +4,8 @@ title: "Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: generated
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc

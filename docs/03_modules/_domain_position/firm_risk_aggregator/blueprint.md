@@ -4,8 +4,8 @@ title: "Firm层风险聚合器蓝图 — 求和+硬上限裁剪+冲突净额（A
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ttl: permanent
 layer: L03_position
 layer_name: position

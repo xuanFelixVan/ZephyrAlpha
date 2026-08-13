@@ -20,8 +20,8 @@ ssot_claims:
   - {claim: "BoundedActionAdvice 数据契约唯一真源", scope: "module"}
   - {claim: "尾盘决策阈值与规则（加仓>70%高开/减仓>60%低开/否则HOLD）唯一真源", scope: "module"}
 responsibility_domain: 
-design_maturity: design
-build_status: generated
+design_maturity: production
+build_status: stable
 language: zh
 generation: 1
 summary: "BM-PLAN-03 尾盘决策：14:45-15:00 基于今日盘中推演与持仓状态，明日高开概率>70%→ADD/低开概率>60%→REDUCE/否则HOLD；与 §3.4 尾盘窗口分工：本模块是预测驱动调仓决策层，§3.4 是建仓执行层"

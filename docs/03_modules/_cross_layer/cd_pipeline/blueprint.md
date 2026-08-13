@@ -45,7 +45,7 @@ ssot_claims:
   - {claim: "Shadow Canary 部署运行器编排逻辑SSoT", scope: "module"}
   - {claim: "CD 流水线 job 依赖图SSoT", scope: "module"}
 responsibility_domain: 
-design_maturity: design
+design_maturity: production
 build_status: generated
 ---
 

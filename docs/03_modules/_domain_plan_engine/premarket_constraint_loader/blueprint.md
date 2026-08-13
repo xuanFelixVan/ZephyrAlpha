@@ -20,8 +20,8 @@ ssot_claims:
   - {claim: "ConstraintState 数据契约唯一真源", scope: "module"}
   - {claim: "9:25 集合竞价 9 情景匹配规则唯一真源", scope: "module"}
 responsibility_domain: 
-design_maturity: design
-build_status: generated
+design_maturity: production
+build_status: stable
 language: zh
 generation: 1
 summary: "BM-PLAN-02 盘前预案加载：次日 9:00 加载昨晚 TomorrowBoundary，9:25 集合竞价匹配 9 情景初始化 ConstraintState；加载失败=致命，无约束状态禁止开始交易"

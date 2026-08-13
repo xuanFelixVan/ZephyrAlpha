@@ -4,8 +4,8 @@ title: "独立策略账本蓝图 — 选股+粗仓位+独立风控+budget适配�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
-build_status: planned
+design_maturity: production
+build_status: stable
 ttl: permanent
 layer: L03_position
 layer_name: position

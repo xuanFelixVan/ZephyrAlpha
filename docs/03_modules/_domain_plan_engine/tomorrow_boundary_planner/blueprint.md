@@ -20,8 +20,8 @@ ssot_claims:
   - {claim: "TomorrowBoundary 数据契约唯一真源", scope: "module"}
   - {claim: "盘后边界计算规则（箱体上沿/下沿/加仓上限/禁加仓/必出/突破验证）唯一真源", scope: "module"}
 responsibility_domain: 
-design_maturity: design
-build_status: generated
+design_maturity: production
+build_status: stable
 language: zh
 generation: 1
 summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静计算明日操作边界 TomorrowBoundary，边界层（B/C）核心产出者，边界层坏=致命暂停操作"

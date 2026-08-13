@@ -4,7 +4,7 @@ title: "Regime检测器蓝图 — 12态灰度概率+8转换评分+Shrinkage产�
 doc_type: blueprint
 status: Active
 version: "0.1.0"
-design_maturity: design
+design_maturity: production
 build_status: generated
 ttl: permanent
 layer: L2_domain

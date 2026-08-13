@@ -22,8 +22,8 @@ ssot_claims:
   - {claim: "买入时序调度+限价锚定+资金pro-rata削减+多标的排序算法唯一真源", scope: "module"}
   - {claim: "Batch/BatchedEntryPlan 数据契约唯一真源", scope: "module"}
 responsibility_domain: 
-design_maturity: design
-build_status: generated
+design_maturity: production
+build_status: stable
 language: zh
 generation: 1
 summary: "BM-BUY-04 分批建仓引擎：消费 31 号 FirmTargetPortfolio，C-031 置信度驱动 2 批/激进 1 批，尾盘 14:50-14:57 集中执行，限价锚定，资金 pro-rata 兜底，突破失败降级联动 42 号"
