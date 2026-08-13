@@ -5,7 +5,7 @@
 # [CONSUMERS] MOD-POS-021(FirmRiskAggregator消费TargetPortfolio); MOD-PA-007(RegimeMetaAllocator收PerformanceScore反馈)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] total_weight≤budget(粗仓位不经Kelly); sizing_method∈{equal_weight,risk_parity,custom}禁用Kelly/MVO; 策略不知道市场态只收budget数字; rebalance_to_budget必须返回适配portfolio(策略不能说"我不卖"); DrawdownProtocol四级回撤触发独立收缩; target_portfolio权重口径=相对strategy_budget占比(非绝对总资金权重)
+# [INVARIANTS] total_weight≤budget(粗仓位不经Kelly); sizing_method∈{equal_weight,risk_parity,custom}禁用Kelly/MVO; 策略不知道市场态只收budget数字; rebalance_to_budget必须返回适配portfolio(策略不能说"我不卖"); DrawdownProtocol四级回撤触发独立收缩; target_portfolio权重口径=相对strategy_budget占比(非绝对总资金权重); σ_i异常(缺失/样本<30/>150%/上市<60日)→该标的部分降级等权w=1/N(31号§2.2.2,其余标的仍inverse-vol)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -40,7 +40,70 @@ A 模型（30_multi_strategy_concurrency §2.1）的核心实体。每个策略�
 
 依据: 30_multi_strategy_concurrency §2.2/§2.4/§2.5 + blueprint §2.3
 SSoT: depgraph MOD-POS-020
-Version: 1.0.0
+Version: 1.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: alpha 选股信号 alpha_signals
+#   fields: 策略 specific 信号字典（子类定义格式）
+#   code: build_target_portfolio L294
+# - id: I2
+#   name: 波动率输入 volatility_data
+#   fields: symbol → 年化波动率 float 或 VolatilityInfo(sigma/valid_samples/listing_days)
+#   code: VolatilityInfo L159
+# - id: I3
+#   name: 资金预算 budget（RegimeMetaAllocator 分配）+ 策略 PnL 历史 + 情绪周期信号
+#   fields: budget 占比 / pnl 日收益序列 / SentimentStageSignal(stage/confidence/retreat_weight)
+#   code: build_target_portfolio L294
+# 层: 特征
+# - id: F1
+#   name_zh: inverse-vol 权重
+#   name_en: inverse_vol_weight
+#   intro: w_i=(1/σ_i)/Σ(1/σ_j)，只估 σ 不估协方差（30号 §3.1 拒绝 MVO）
+#   formula: w_i = budget × (1/σ_i) / Σ_j(1/σ_j)，σ_i=60日年化波动率
+#   code: _size_risk_parity L628
+#   registry: 无
+# - id: F2
+#   name_zh: σ_i 异常判定 4 检查链
+#   name_en: sigma_anomaly_check
+#   intro: 任一触发→该标的部分降级等权（缺失/样本<30/年化>150%/上市<60日），非阻断
+#   formula: σ∈{NaN,None,≤0} ∨ valid_samples<30 ∨ σ>1.50 ∨ listing_days<60 → 降级
+#   code: _is_vol_anomaly L699
+#   registry: 无
+# - id: F3
+#   name_zh: 60 日滚动 Sortino 绩效分
+#   name_en: performance_score
+#   intro: Sortino→[0.5,1.5] 线性映射，供 RegimeMetaAllocator 后验分配
+#   formula: Sortino=mean(excess)×252/(downside_dev×√252) → clip([0.5,1.5])
+#   code: compute_performance_score L474
+#   registry: 无
+# 层: 算法
+# - id: A1
+#   name_zh: 粗仓位三段流水线
+#   name_en: sizing_pipeline
+#   intro: 选股→粗仓位(等权/inverse-vol)→回撤Protocol缩放→budget裁剪
+#   formula: positions=size_positions(selected)→×L1/L2 scalar→pro-rata clip(Σ≤budget)
+#   code: build_target_portfolio L294
+# - id: A2
+#   name_zh: σ_i 异常部分降级
+#   name_en: partial_equal_weight_fallback
+#   intro: 异常标的取等权份额 budget/N，正常标的按 inverse-vol 瓜分剩余 budget×N_ok/N
+#   formula: w_bad=budget/N; w_ok=budget×(N_ok/N)×(1/σ_j)/Σ_ok(1/σ)
+#   code: _size_risk_parity L628
+# - id: A3
+#   name_zh: 四级回撤 Protocol
+#   name_en: drawdown_protocol
+#   intro: 回撤>8/15/20/25% → L1缩放/L2减仓/L3停仓/L4清仓+强制休息5天
+#   formula: dd≥0.08→×0.75新仓; dd≥0.15→×0.75全部; dd≥0.20→停新开; dd≥0.25→清仓+休息5日
+#   code: _update_drawdown_level L776
+# 层: 输出
+# - id: O1
+#   name: TargetPortfolio 策略目标组合（CTR-POS-020）
+#   fields: strategy_id/positions(symbol→TargetWeight)/total_weight/budget/cash_ratio/sizing_method/idempotency_key
+#   code: TargetPortfolio L185
+#   consumers: MOD-POS-021 FirmRiskAggregator 求和→MOD-POS-001 Kelly 精裁决
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations
@@ -84,6 +147,25 @@ SENTIMENT_DEGRADE_THRESHOLD = 0.6  # confidence < 0.6 触发降级（28号 §3.5
 
 # 单策略单日亏损熔断（§2.5.1 日度熔断补充）
 STRATEGY_DAILY_LOSS_HALT = 0.05  # 单策略单日亏损 > 5% → 暂停 1 天
+
+# σ_i 异常判定阈值（31_position_sizing §2.2.2，2026-08-10 施工流程补充）
+VOL_WINDOW_DAYS = 60             # inverse-vol 波动率窗口（60 日，与 RegimeMetaAllocator 口径对齐）
+MIN_VALID_SAMPLES = 30           # 规则2 样本量门控：窗口内有效交易日 < 30 → 降级
+SIGMA_EXTREME_CAP = 1.50         # 规则3 极端值检查：年化波动率 > 150% → 降级
+MIN_LISTING_DAYS = 60            # 规则4 新股冷启：上市 < 60 个交易日 → 降级
+
+
+@dataclass(frozen=True)
+class VolatilityInfo:
+    """波动率元数据（31号 §2.2.2 σ_i 异常判定输入）。
+
+    sigma 必填；valid_samples / listing_days 为 None 时对应规则不判定
+    （元数据缺失≠异常，信息不足不降级，仅规则1/3始终可判）。
+    """
+
+    sigma: float                      # 年化波动率（60 日窗口，日收益标准差×√252）
+    valid_samples: int | None = None  # 60 日窗口内有效交易日数（None=未知，跳过规则2）
+    listing_days: int | None = None   # 上市交易日数（None=未知，跳过规则4）
 
 
 @dataclass(frozen=True)
@@ -216,7 +298,7 @@ class StrategyBook:
         budget: float | None = None,
         sentiment_signal: SentimentStageSignal | None = None,
         strategy_pnl_history: list[float] | None = None,
-        volatility_data: dict[str, float] | None = None,
+        volatility_data: dict[str, float | VolatilityInfo] | None = None,
     ) -> TargetPortfolio:
         """主入口：选股 + 粗仓位 + budget 裁剪 + 回撤 Protocol → TargetPortfolio。
 
@@ -501,7 +583,7 @@ class StrategyBook:
     def size_positions(
         self,
         symbols: list[str],
-        volatility_data: dict[str, float] | None = None,
+        volatility_data: dict[str, float | VolatilityInfo] | None = None,
     ) -> dict[str, TargetWeight]:
         """粗仓位计算（equal_weight/risk_parity/custom，不用 Kelly）。
 
@@ -509,7 +591,9 @@ class StrategyBook:
 
         Args:
             symbols: 选中的标的列表
-            volatility_data: symbol → 年化波动率（risk_parity 用）
+            volatility_data: symbol → 年化波动率（risk_parity 用）。
+                float 纯波动率或 VolatilityInfo（含样本量/上市天数元数据，
+                触发 31号 §2.2.2 σ_i 异常判定 4 检查链部分降级）
 
         Returns:
             symbol → TargetWeight
@@ -542,40 +626,96 @@ class StrategyBook:
         }
 
     def _size_risk_parity(
-        self, symbols: list[str], volatility_data: dict[str, float] | None
+        self, symbols: list[str], volatility_data: dict[str, float | VolatilityInfo] | None
     ) -> dict[str, TargetWeight]:
         """Risk parity 粗仓位：inverse-volatility 加权（不用协方差，不用 MVO）。
+
+        σ_i 异常判定 4 检查链（31号 §2.2.2，2026-08-10 施工流程补充）：
+        任一触发 → 该标的**部分降级**为等权份额 budget/N（非阻断整个策略），
+        其余标的仍按 inverse-vol 瓜分剩余 budget×N_ok/N：
+            1. 缺失检查：σ_i = NaN/None/≤0（方差非正）→ 降级
+            2. 样本量门控：60 日窗口内有效交易日 < 30 → 降级（元数据缺失时不判）
+            3. 极端值检查：σ_i 年化 > 150%（新股/事件冲击期极端波动）→ 降级
+            4. 新股冷启：上市 < 60 个交易日 → 降级（元数据缺失时不判）
 
         arXiv:2603.26893 Water-Filling 在 minimax 意义下更优，但 Phase 1 用
         inverse-vol（Morwane risk-parity 实证，与 A 模型"加法替代优化器"一致）。
         Phase 2 候选升级到 Clipped Water-Filling（若 inverse-vol 显示信号失真）。
         """
         if not volatility_data:
-            # 无波动率数据：降级为等权
+            # 无波动率数据：整体降级为等权
             return self._size_equal_weight(symbols)
 
-        # inverse-volatility 权重
-        inv_vols: dict[str, float] = {}
-        total_inv_vol = 0.0
+        n = len(symbols)
+        degraded_reasons: dict[str, str] = {}  # 异常标的 → 降级原因（审计归因）
+        inv_vols: dict[str, float] = {}        # 正常标的 → 1/σ
+        sigmas: dict[str, float] = {}          # 正常标的 → σ（reason 展示用）
+
         for sym in symbols:
-            vol = volatility_data.get(sym, 0.0)
-            if vol <= 0:
-                vol = 0.30  # 缺失波动率默认 30%（A 股个股中位数）
-            inv_vol = 1.0 / vol
-            inv_vols[sym] = inv_vol
-            total_inv_vol += inv_vol
+            info = self._parse_vol_info(volatility_data.get(sym))
+            reason = self._is_vol_anomaly(info)
+            if reason is not None:
+                degraded_reasons[sym] = reason
+            else:
+                inv_vols[sym] = 1.0 / info.sigma  # type: ignore[union-attr]
+                sigmas[sym] = info.sigma          # type: ignore[union-attr]
 
-        if total_inv_vol == 0:
+        # 边界：全部异常 → 整体等权（与"无波动率数据"语义一致）
+        if not inv_vols:
             return self._size_equal_weight(symbols)
 
-        return {
-            sym: TargetWeight(
-                target_weight=self._current_budget * (inv_vols[sym] / total_inv_vol),
-                reason=f"risk_parity(inv_vol={volatility_data.get(sym, 0.30):.3f})",
-                confidence=0.5,
-            )
-            for sym in symbols
-        }
+        # 部分降级（31号 §2.2.2）：异常标的取等权份额 budget/N，
+        # 正常标的按 inverse-vol 瓜分剩余 budget×N_ok/N，总和 = budget
+        equal_share = self._current_budget / n
+        ok_pool = self._current_budget * (n - len(degraded_reasons)) / n
+        total_inv_vol = sum(inv_vols.values())
+
+        result: dict[str, TargetWeight] = {}
+        for sym in symbols:
+            if sym in degraded_reasons:
+                result[sym] = TargetWeight(
+                    target_weight=equal_share,
+                    reason=f"risk_parity降级等权({degraded_reasons[sym]})",
+                    confidence=0.5,
+                )
+            else:
+                result[sym] = TargetWeight(
+                    target_weight=ok_pool * (inv_vols[sym] / total_inv_vol),
+                    reason=f"risk_parity(inv_vol,σ={sigmas[sym]:.3f})",
+                    confidence=0.5,
+                )
+        return result
+
+    @staticmethod
+    def _parse_vol_info(raw: float | VolatilityInfo | None) -> VolatilityInfo | None:
+        """解析波动率输入：float → VolatilityInfo（无元数据），None → None。"""
+        if raw is None:
+            return None
+        if isinstance(raw, VolatilityInfo):
+            return raw
+        return VolatilityInfo(sigma=float(raw))
+
+    @staticmethod
+    def _is_vol_anomaly(info: VolatilityInfo | None) -> str | None:
+        """σ_i 异常判定 4 检查链（31号 §2.2.2）。返回降级原因，None=正常。
+
+        规则2/4 在元数据缺失（None）时不判定——信息不足≠异常。
+        """
+        # 规则1 缺失检查：σ_i = NaN/None/≤0（方差非正）
+        if info is None:
+            return "σ缺失"
+        if math.isnan(info.sigma) or info.sigma <= 0:
+            return "σ非正/NaN"
+        # 规则3 极端值检查：σ_i 年化 > 150%
+        if info.sigma > SIGMA_EXTREME_CAP:
+            return f"σ极端({info.sigma:.2f}>{SIGMA_EXTREME_CAP})"
+        # 规则2 样本量门控：60 日窗口内有效交易日 < 30
+        if info.valid_samples is not None and info.valid_samples < MIN_VALID_SAMPLES:
+            return f"样本不足({info.valid_samples}<{MIN_VALID_SAMPLES})"
+        # 规则4 新股冷启：上市 < 60 个交易日
+        if info.listing_days is not None and info.listing_days < MIN_LISTING_DAYS:
+            return f"新股冷启({info.listing_days}<{MIN_LISTING_DAYS}日)"
+        return None
 
     def _apply_drawdown_protocol(
         self, positions: dict[str, TargetWeight]
