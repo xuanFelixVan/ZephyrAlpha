@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 constitutional_update.py —— 宪法自愈（Phase 14 | 盲点 B27）
 
 痛点修复：AGENTS.md 是静态的——AI 无法把"犯错-学到"写回宪法。
@@ -33,6 +35,83 @@ AI 施工约定：
   - propose_update() MUST 输出人类可审查的 diff——再 apply_update()
 
 SSoT: DOM-GOV-001 §12 盲点 B27
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session 审计轨迹
+#   fields: errors（type/message/recovered/recovery）+ decisions（id/summary/rationale）记录
+#   code: logs/session_audit/（SessionAuditTrail.query L104）
+# - id: I2
+#   name: session_id 会话标识
+#   fields: 单个 session_id 字符串或 session_ids 列表
+#   code: extract_learnings(session_id) L102
+# - id: I3
+#   name: AGENTS.md 宪法文件
+#   fields: markdown 全文，含/不含 Auto-Generated Learnings 段
+#   code: AGENTS.md（agents_path L97）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 提取学习条目
+#   name_en: ConstitutionalAutoUpdate.extract_learnings
+#   intro: 从一次 session 的报错和决策里挑出值得固化的经验，同一 pattern 只记一次
+#   desc: 遍历 records：recovered 的 error → recovery 类 Learning（L-RECOVER 前缀）；id 以 D-RISK 开头的 decision → decision 类 Learning（severity=warn）；seen_patterns 集合去重
+#   inputs: I1 I2
+#   outputs: Learning 列表
+# - id: A2
+#   name_zh: ② 跨 session 聚合
+#   name_en: extract_cross_session
+#   intro: 把多个 session 的 learnings 合并，按 pattern_id 全局去重
+#   desc: 逐 sid 调 extract_learnings，pattern_id 未见过的才并入总表
+#   inputs: A1
+#   outputs: 去重后 Learning 列表
+# - id: A3
+#   name_zh: ③ 生成更新提案
+#   name_en: propose_update
+#   intro: 把 learnings 排成 markdown 表格提案，带人类可审查的 diff
+#   desc: 空 learnings 返回 None；否则拼「## Auto-Generated Learnings」头 + 四列表格（Pattern ID/Category/Summary/Severity）；ProposedUpdate.diff 属性生成 ---/+++ /@@ 风格 diff
+#   inputs: A2
+#   outputs: ProposedUpdate
+# - id: A4
+#   name_zh: ④ 安全写回宪法
+#   name_en: apply_update
+#   intro: 先备份再原子写入 AGENTS.md，写挂了自动恢复原文件
+#   desc: backup_and_rollback + 写 .md.backup-时间戳；已有 Learnings 段则定位段界替换，没有则文末追加；atomic_write 失败时写回原文返回 False
+#   inputs: I3 A3
+#   outputs: True=写入成功 / False=失败已回滚
+#   invariant: 写入前 MUST 备份
+# - id: A5
+#   name_zh: ⑤ 解析已有学习
+#   name_en: get_existing_learnings
+#   intro: 用正则从 AGENTS.md 的 Learnings 段里读出已存在的 pattern_id
+#   desc: 定位「## Auto-Generated Learnings」到下一个二级标题区间，re.findall(r"\| (L-\w+-\d+) \|") 提取
+#   inputs: I3
+#   outputs: pattern_id 列表
+# 层: 输出
+# - id: O1
+#   name_zh: 学习条目与更新提案
+#   name_en: Learning / ProposedUpdate
+#   intro: 提取出的经验条目和可审查 diff 提案，供人审后再决定是否写回
+#   downstream: 无下游/内部使用（# [CONSUMERS] 头为空）
+# - id: O2
+#   name_zh: AGENTS.md 写入结果
+#   name_en: apply_update bool
+#   intro: 宪法自愈写回成功与否，备份文件留在原目录
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# I3 --> A4
+# A3 --> A4
+# I3 --> A5
+# A1 --> O1
+# A3 --> O1
+# A4 --> O2
+# A5 --> A3
 """
 
 from __future__ import annotations
@@ -232,7 +311,7 @@ class ConstitutionalAutoUpdate:
         return pattern_ids
 
 
-__all__ = [
+__all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定且本文件运行时动态append，Final标注不适用
     "ConstitutionalAutoUpdate",
     "Learning",
     "ProposedUpdate",

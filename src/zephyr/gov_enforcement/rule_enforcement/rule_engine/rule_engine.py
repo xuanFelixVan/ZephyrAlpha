@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 RuleLoader — 规则加载核心 API
 =============================
 通过 depgraph rule_bindings 索引查找 rule_id -> 读取 YAML 文件 -> 返回规则字典。
@@ -28,6 +30,85 @@ RuleLoader — 规则加载核心 API
     loader = RuleLoader()
     rules = loader.load_for_operation("file_write")
     critical = loader.get_critical_rules()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 触发源查询参数
+#   fields: op_name 操作名 / skill_id / gate_id / rule_id 字符串
+#   code: load_for_operation(op_name) L156
+# - id: I2
+#   name: depgraph PG rule_bindings 索引表
+#   fields: rule_id / function_name / trigger_type / trigger_id；nodes 表 impact_level
+#   code: rule_bindings（PostgreSQL，L96-110 探测）
+# - id: I3
+#   name: 规则 YAML 文件
+#   fields: rule_id / title / layer / severity / scope / metadata.impact_level
+#   code: docs/01_policies_and_standards/rules/*.yaml L56
+# 层: 算法
+# - id: A1
+#   name_zh: ① PG 可用性探测
+#   name_en: RuleLoader._get_conn
+#   intro: 连 PG 查 rule_bindings 表在不在、有没有数据，任何异常都降级走 YAML 扫描
+#   desc: information_schema.tables 查表存在 → COUNT(*)>0 查有数据；PgError/OSError 等一律 _db_available=False 回退；结果缓存避免重复探测
+#   inputs: I2
+#   outputs: PG 连接或 None
+# - id: A2
+#   name_zh: ② 按触发源查 rule_id
+#   name_en: load_for_operation / load_for_skill / load_for_gate
+#   intro: 用 SQL 从索引表捞出某操作/技能/门挂的所有 rule_id
+#   desc: SELECT DISTINCT rule_id FROM rule_bindings WHERE function_name=%s 或 trigger_type+trigger_id 匹配；无结果返回空列表
+#   inputs: I1 A1
+#   outputs: rule_id 列表
+# - id: A3
+#   name_zh: ③ YAML 读取与缓存
+#   name_en: _read_yaml / _rule_id_to_filename
+#   intro: rule_id 映射成文件名读 YAML 并缓存，读不到只告警不抛异常
+#   desc: rule_id 转 lower/upper 两种候选文件名；yaml.safe_load 解析；dict _cache 按 rule_id 缓存；缺文件 warnings.warn 返回 None
+#   inputs: I3
+#   outputs: 规则字典
+#   invariant: YAML 是内容 SSoT，depgraph 只是索引
+# - id: A4
+#   name_zh: ④ 目录扫描回退
+#   name_en: _scan_rules_dir
+#   intro: PG 不可用时直接全量扫 rules 目录下所有 YAML
+#   desc: sorted(glob("*.yaml")) 逐文件 _read_yaml，汇成规则列表
+#   inputs: I3 A3
+#   outputs: 全量规则列表
+# - id: A5
+#   name_zh: ⑤ 高危规则筛选
+#   name_en: get_critical_rules
+#   intro: 挑出 impact_level=H 的高危规则，PG 查不到就扫 YAML 元数据过滤
+#   desc: 优先 nodes 表 WHERE node_type='rule' AND impact_level='H'；失败或空结果回退 _scan_rules_dir 后按 metadata.impact_level=='H' 过滤
+#   inputs: A1 A4
+#   outputs: 高危规则列表
+# 层: 输出
+# - id: O1
+#   name_zh: 规则字典列表
+#   name_en: list[dict] rules
+#   intro: 按操作/技能/门/高危维度返回规则内容，缺数据返回空列表绝不抛异常
+#   invariant: 缺规则返回空列表；同步方向 YAML→DB
+#   downstream: SkillLoader；GateEngine；cold_start sequence；AI sessions（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: 规则摘要列表
+#   name_en: list_all_rules summaries
+#   intro: 只含 rule_id/title/layer/severity/scope 五字段的轻量清单
+#   downstream: 治理审计与展示（内部使用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# I3 --> A3
+# I3 --> A4
+# A3 --> A4
+# A1 --> A5
+# A4 --> A5
+# A2 --> A3
+# A3 --> O1
+# A5 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations
