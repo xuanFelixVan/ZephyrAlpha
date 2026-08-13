@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 MOD-INF-019: Agent Spec — Skill Attention Management
 Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
 Author: factory-agent
@@ -23,6 +25,66 @@ Version: 0.2.0
 
 Skill 注意力管理 —— 上下文窗口预算分配与裁剪。
 在多 Skill 并发注入时，按优先级 + freshness 动态分配 token 配额。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Skill 候选列表 字典列表
+#   fields: skill_id + priority(默认0.5) + freshness_score(默认50.0)
+#   code: allocate(skill_candidates) L79
+# - id: I2
+#   name: 窗口预算参数 整数
+#   fields: window_size（L2 token 预算，默认 800）+ max_skills（最多注入数，默认 6）
+#   code: DEFAULT_L2_TOKEN_BUDGET/DEFAULT_MAX_SKILLS L74-75
+# - id: I3
+#   name: Skill 正文 字典
+#   fields: {skill_id: body 文本}
+#   code: inject_context(skill_bodies) L122
+# 层: 算法
+# - id: A1
+#   name_zh: ① 加权评分排序筛选
+#   name_en: SkillAttention.allocate（评分段）
+#   intro: 按 优先级×新鲜度 给每个 Skill 打分，高的留下，多的进溢出名单
+#   desc: score=priority×freshness_score/100 → 降序排序 → 取前 max_n 个，其余记 overflow_skills；空候选直接返回空 plan
+#   inputs: I1 I2
+#   outputs: 入选名单 + 溢出名单
+# - id: A2
+#   name_zh: ② 预算按比例分配
+#   name_en: SkillAttention.allocate（分配段）
+#   intro: 按分数权重瓜分 token 预算，每个最少保底 50
+#   desc: allocated = max(50, int(budget × weight / total_weight))，逐 slot 累计 total_allocated
+#   inputs: I1 I2 A1
+#   outputs: AttentionPlan（slots/total_budget/total_allocated/overflow_skills）
+# - id: A3
+#   name_zh: ③ 上下文拼装注入
+#   name_en: SkillAttention.inject_context
+#   intro: 按配额截断各 Skill 正文，拼成一段注入上下文
+#   desc: body[:allocated×4] 截断 + "[Skill: id | budget=N tokens]" 头，"\n\n---\n\n" 连接
+#   inputs: I3 A2
+#   outputs: 注入上下文字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 注意力分配方案
+#   name_en: AttentionPlan
+#   intro: 各 Skill 的 token 配额与溢出名单（可 to_dict 序列化）
+#   downstream: 无下游/内部使用（Agent Spec 技能注入流程内部调用，[CONSUMERS] 头为空）
+# - id: O2
+#   name_zh: 注入上下文字符串
+#   name_en: injected context str
+#   intro: 拼好可直接塞进提示词的多 Skill 上下文文本
+#   downstream: 无下游/内部使用（Agent 提示词组装环节）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# I3 --> A3
+# A2 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations
