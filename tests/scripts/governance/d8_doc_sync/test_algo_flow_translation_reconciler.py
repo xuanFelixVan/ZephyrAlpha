@@ -113,3 +113,26 @@ class TestTwoTierReference:
             {"FCT-SENT-002": _FCT_ENTRY},
         )
         assert findings == []
+
+
+class TestFactoryPathReassign:
+    """make_ 工厂 project_root 重设路径回归（2026-08-14 worker 环境导入失败实证）。
+
+    病根：模块级 _GOV_SHARED_DIR 指向 scripts/governance/_shared（正确），
+    但工厂重设分支漏改为 scripts/governance（旧值）——gateway/worker 环境
+    必传 project_root → 重设覆盖 → extractor 导入失败 → reconcile 永远 warn。
+    """
+
+    def test_factory_reassign_keeps_shared_suffix(self):
+        spec = rec.make_algo_flow_translation_reconciler(_REPO_ROOT)
+        assert spec.gate_id == "GATE-ALGO-FLOW-TRANSLATION-DRIFT"
+        assert rec._GOV_SHARED_DIR.name == "_shared", (
+            f"工厂重设后 _GOV_SHARED_DIR 必须以 _shared 结尾，实际: {rec._GOV_SHARED_DIR}"
+        )
+        assert (rec._GOV_SHARED_DIR / "code_algorithm_extractor.py").exists()
+
+    def test_extractor_importable_after_factory_reassign(self):
+        """工厂重设后提取器必须可导入（worker/gateway 环境的真实路径）。"""
+        rec.make_algo_flow_translation_reconciler(_REPO_ROOT)
+        func = rec._get_extractor()
+        assert callable(func)

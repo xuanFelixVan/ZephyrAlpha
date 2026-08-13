@@ -343,7 +343,7 @@ def make_algo_flow_translation_reconciler(project_root: Path | None = None):
         _FACTOR_REGISTRY = _CATALOGS / "factor_registry.yaml"
         _MTR = _CATALOGS / "module_translation_registry.yaml"
         _MODULES_JSON = _project_root / ".trae" / "documents" / "_operational_modules.json"
-        _GOV_SHARED_DIR = _project_root / "scripts" / "governance"
+        _GOV_SHARED_DIR = _project_root / "scripts" / "governance" / "_shared"
 
     try:
         from zephyr.governance.audit.reconciliation_registry import ReconcilerSpec

@@ -15877,6 +15877,49 @@ entries:
   created: '2026-08-12'
   last_updated: '2026-08-12'
 
+# --- #ARCH-SELL-001: G20 卖出流——42_sell_flow 四模块施工（2026-08-13）---
+- issue_id: '#ARCH-SELL-001'
+  title: G20 卖出流——持仓Triage/止损/止盈/执行编排 四模块施工（42_sell_flow §2.4 未施工清单）
+  severity: P3低
+  category: architecture
+  adjudication: |-
+    2026-08-13 立项+施工（AI-SELL-001，worktree 隔离）。按 42_sell_flow §2.4 未施工清单
+    与 §5.2/§5.3 MVP 边界，施工 4 模块（65 单元测试）：
+    (1) MOD-SELL-000 position_triage.py——持仓Triage分级生产方（§3.2），
+        import 复用消费方 MOD-POS-003 TriageLevel 枚举（真源唯一），
+        ATR缺失降级MONITOR中间档，threshold_delta 双向反馈契约硬封顶±0.10
+    (2) MOD-SELL-005 stop_loss_strategy.py——Chandelier Exit 统一止损（§3.3，
+        亏损区N=10/M=3.0宽trailing/盈利区N=22/M=2.0紧trailing，策略类型M±0.5），
+        + ATR自适应时间止损第⑦类信号源（§3.2，5天未移动1×ATR）
+    (3) MOD-SELL-004 take_profit_strategy.py——移动止盈自动phase判定（§3.4，
+        盈利超1×ATR切profit紧trailing），委托005 Chandelier核心（真源唯一）
+    (4) MOD-SELL-019 sell_execution_planner.py（新登记）——执行时序映射（§3.8，
+        止损盘中立即/止盈尾盘集中/强制清仓市价立即，落地T+1与跌停硬约束）
+        + 跌停排队优先级（紧迫度→亏损→仓位）+ Kill Switch清仓排序（流动性优先）
+    设计决策：MOD-SELL-014/017 不施工（§5.3 MVP用005 phase切换替代/§3.7 MVP一次性退出）；
+    TradeLevelCircuitBreaker Phase 2 候选（§3.10，G04未校准）；
+    施工对 spec 伪代码的三处工程修正：①triage改绝对价格距离比较（消浮点尾差，
+    与伪代码数学等价）②triage ATR缺失降级MONITOR（spec未给降级参数，取最保守中间档）
+    ③执行编排器落地T+1/跌停表格约束（§3.8表格约束伪代码未覆盖）。
+  impact:
+    变更文件：
+    - 'src/zephyr/sell_decision/core/position_triage.py（新建，MOD-SELL-000）'
+    - 'src/zephyr/sell_decision/core/stop_loss_strategy.py（新建，MOD-SELL-005）'
+    - 'src/zephyr/sell_decision/core/take_profit_strategy.py（新建，MOD-SELL-004）'
+    - 'src/zephyr/sell_decision/core/sell_execution_planner.py（新建，MOD-SELL-019 新登记）'
+    - 'tests/sell_decision/test_position_triage.py / test_stop_loss_strategy.py / test_take_profit_strategy.py / test_sell_execution_planner.py（新建，65 测试）'
+    - 'docs/03_modules/_domain_sell_decision/{position_triage,stop_loss_strategy,take_profit_strategy,sell_execution_planner}/blueprint.md（新建）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（12 条 creation_token）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（4 条 plain_zh）'
+    depgraph：'MOD-SELL-019 planned 节点登记；设计态边 004→005 / 005→000 / 000→MOD-POS-003（design）；planned→stable+production 流转待 merge 回 dev 后执行（merge 前流转会被主工作区磁盘锚定的 regenerate 清除运营态节点，2026-08-13 实证）'
+    关联文档：
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/42_sell_flow.md'
+  fix_phase: '代码已施工（worktree AI-SELL-001），65 测试通过。待 merge 回 dev 后 planned→production 流转。'
+  status: decided
+  related_rules: '42_sell_flow; construction_workflow_sop; trae_080'
+  created: '2026-08-13'
+  last_updated: '2026-08-13'
+
 # --- #ARCH-69: ALGO_FLOW 标记 ↔ 翻译真源双真源漂移检测 reconciler（算法地图落地遗留问题1）---
 - issue_id: '#ARCH-69'
   title: ALGO_FLOW 标记 name_zh/intro 与 factor_registry/module_translation_registry 翻译真源的双真源漂移检测（post-commit reconciler，warn-only）
@@ -16084,7 +16127,7 @@ entries:
     - 'scripts/governance/git_hooks/post_commit_guard.sh L195 豁免正则修正'
     - 'scripts/git_commit.py / git_commit_gateway.py merge finalize 模式'
     - 'integrity 基线 4 文件重基线（需 reconciler 模式通道）'
-  fix_phase: '待立项（建议治理 Owner 会话承接）；本次 merge 已用 "merge " 前缀 + --no-verify 绕行并留痕'
+  fix_phase: '①②已落地（2026-08-14 sess-batch-cleanup-0814：guard 改 2+ parents 主判定 + 网关 MERGE_HEAD 检测强制全量 commit）；③网关 post-commit 自动重基线实证自愈 3/4（401387f6cb），剩余 1 文件为 SELL 活跃 WIP 待其提交后自动收敛'
   status: decided
   confirmed_by_user: ''
   related_rules: '#ARCH-050（POST-COMMIT-GUARD 原裁定）; #ARCH-GIT-CLEAN-GUARD-FIX'

@@ -1683,23 +1683,34 @@ class GitCommitGateway:
     ) -> tuple[str | None, str]:
         """统一 commit 入口。pathspec_file=None 时强制无 pathspec 模式；检测到 staged rename 自动切换无 pathspec。返回 (commit_hash, error)，hash 为 None 表示失败。"""
         use_pathspec = pathspec_file is not None
+        # 2026-08-14 修复（#ARCH-MERGE-PATH-GAP-001②）：merge finalize 场景。
+        # git 禁止 merge 期间 partial commit（fatal: cannot do a partial commit during
+        # a merge），且 staged 区合法持有 merge 结果（冲突解决内容），绝不能按
+        # target_files 做 staged-clean 校验/自动 unstage（会毁掉 merge 现场）。
+        # 检测 MERGE_HEAD → 强制全量 commit（无 pathspec）+ 跳过 staged-clean。
+        merge_in_progress = (self.project_root / ".git" / "MERGE_HEAD").exists()
+        if merge_in_progress:
+            use_pathspec = False
         if use_pathspec and target_files and self._has_staged_renames(target_files):
             use_pathspec = False
         if not use_pathspec:
             if not target_files:
                 return None, "无 pathspec commit 需要 target_files 参数"
-            clean, err, non_target = self._verify_staged_is_clean(target_files)
-            if not clean:
-                # 治本：自动 unstage 非目标文件后重新验证，避免并发 session
-                # 污染 staging 区导致 commit 卡死（此前需调用方手动 git reset HEAD）
-                unstage_ok, unstage_err = self._unstage_non_target_files(non_target)
-                if not unstage_ok:
-                    return None, (
-                        f"staged 区不干净且自动清理失败: {err} | unstage error: {unstage_err}"
-                    )
-                clean, err, _ = self._verify_staged_is_clean(target_files)
+            if merge_in_progress:
+                logger.info("检测到 MERGE_HEAD：merge finalize 走全量 commit，跳过 staged-clean 校验")
+            else:
+                clean, err, non_target = self._verify_staged_is_clean(target_files)
                 if not clean:
-                    return None, f"staged 区不干净，自动 unstage 后仍不干净: {err}"
+                    # 治本：自动 unstage 非目标文件后重新验证，避免并发 session
+                    # 污染 staging 区导致 commit 卡死（此前需调用方手动 git reset HEAD）
+                    unstage_ok, unstage_err = self._unstage_non_target_files(non_target)
+                    if not unstage_ok:
+                        return None, (
+                            f"staged 区不干净且自动清理失败: {err} | unstage error: {unstage_err}"
+                        )
+                    clean, err, _ = self._verify_staged_is_clean(target_files)
+                    if not clean:
+                        return None, f"staged 区不干净，自动 unstage 后仍不干净: {err}"
         # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001: gw_commit_msg_*.txt 是进程内 IPC
         # token（git -F 传 commit message），零持久价值。真源唯一/责任唯一：进程临时文件
         # 的规范真源是 OS temp dir（由 OS 管理生命周期/清理/隔离）。不传 dir= 即用

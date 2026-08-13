@@ -179,8 +179,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 23 | scripts/session_worktree.py 此前从未被 git 跟踪（merge 清理中丢失的根因） | 已从 stash@{1} 恢复（sha256 与 asset index 一致 BBCACD36…），本次随交接文件一并 commit 落地 | 🔥 本次处理 |
 | 24 | 交接文件防丢机制失效：原 tracker/handoff 仅靠 staged+.runtime 备份，未 commit | 本重建版直接 commit 到 dev；后续统筹会话每个里程碑必须经 GitCommitGateway 落地 tracker | 🔥 本次处理 |
 | 25 | scripts/task_board.py 丢失（66 号队列 MVP 前置条件，曾 untracked WIP） | wipe/并发期间从磁盘消失且从未入 git，不可恢复；66 号施工时按 66 memo §2.4 #9 schema（.runtime/task_board.db SQLite WAL+CAS）重建 | ⏳ 随 66 号施工 |
-| 26 | ai/AI-BGT-001 + ai/AI-LIQ-001 分支已 merge（7ccc296d1e/885cddc3af）待删 | 被 02:40 活跃重建的同名 worktree 占用（git branch -d 被挡），待属主释放后 git branch -d | ⏳ 待 worktree 释放 |
-| 27 | integrity 基线漂移 4 文件 + merge 落盘路径 gap | 已登记 #ARCH-MERGE-PATH-GAP-001（guard '^merge ' 正则/网关 finalize merge/基线重登记通道三修复方向） | ⏳ 治理 Owner |
+| 26 | ai/AI-BGT-001 + ai/AI-LIQ-001 分支已 merge（7ccc296d1e/885cddc3af）待删 | ✅ 已闭环（2026-08-14 sess-batch-cleanup-0814：重建者会话已死（session registry 无注册），worktree 内容实证为 CRLF 幻影+审计日志，worktree 已 remove、分支已 git branch -d） |
+| 27 | integrity 基线漂移 4 文件 + merge 落盘路径 gap | ✅ ①②已修复落地（#ARCH-MERGE-PATH-GAP-001：guard parents 判定 + 网关 merge finalize）；③自愈 3/4，残 1 为 SELL 活跃 WIP 待其提交收敛 |
 
 ### ✅ 已闭环（备查）
 
