@@ -44,8 +44,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 任务方向 | 状态 |
 |---|---|---|
-| 16 | 33 号 BudgetChange（AI-BGT-001，含 33 号文档重建核实+行号漂移修正 v1.1.0+MOD-POS-022 四瑕疵修复） | ✅ 完工待 merge（3 commits：1e78d0d20e/1b8a774ad5/15b1e40f8a，33 测试 2 轮全绿；wipe 事故后统筹重建 worktree 复跑 33 passed 确认） |
-| 17 | 37 号流动性危机 Protocol（AI-LIQ-001，MOD-RK-21 六算法+54 测试+37号 v1.1.0） | ✅ 完工待 merge（4 commits：d53693a13e/16a089c812/db695f9d1c/3e39367c37，统筹独立复跑 54 passed；Step1/Step6 双 PASS，3 处文档缺陷修复落地 v1.1.0） |
+| 16 | 33 号 BudgetChange（AI-BGT-001，含 33 号文档重建核实+行号漂移修正 v1.1.0+MOD-POS-022 四瑕疵修复） | ✅ 已 merge（7ccc296d1e，2026-08-14 sess-batch-cleanup-0814；3 commits：1e78d0d20e/1b8a774ad5/15b1e40f8a，33 测试 2 轮全绿；wipe 事故后统筹重建 worktree 复跑 33 passed 确认） |
+| 17 | 37 号流动性危机 Protocol（AI-LIQ-001，MOD-RK-21 六算法+54 测试+37号 v1.1.0） | ✅ 已 merge（885cddc3af，2026-08-14 sess-batch-cleanup-0814；4 commits：d53693a13e/16a089c812/db695f9d1c/3e39367c37，统筹独立复跑 54 passed；Step1/Step6 双 PASS，3 处文档缺陷修复落地 v1.1.0） |
 | 18 | 42 号卖出流（AI-SELL-001） | 🔄 施工中（分支 tip 87764ffb29；wipe 事故中 worktree 被清、已 blob 自救，未完工反馈未到） |
 
 ## 二、统筹会话与 merge 记录
@@ -174,10 +174,13 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | # | 遗留项 | 说明 | 状态 |
 |---|---|---|---|
 | 20 | 6/7 批二反馈仍用旧版 12 节长清单 | 第三批起统一用 SOP v1.3.0 的 14 节版 | ⏳ 第三批执行 |
-| 21 | `ai/bm-fill/task-battlemap-coverage` 分支未 merge | 17 个 ai/* 分支中唯一未合入；需确认内容是否还需 | ⏳ 等裁定 |
+| 21 | `ai/bm-fill/task-battlemap-coverage` 分支未 merge | 17 个 ai/* 分支中唯一未合入；需确认内容是否还需 | ✅ 已闭环（2026-08-14 sess-batch-cleanup-0814 仪式性 merge 273a229499：23 冲突 hunk 逐读全 B类迭代型，dev 已吸收全量且迭代至 v2.10.1，净零差异实证；分支已删） |
 | 22 | 17 个已 merge 的 ai/* 分支待删除 | git branch -d 清理 | ✅ 已闭环（2026-08-14 统筹执行，16 个施工分支全部 git branch -d 安全删除；ai/bm-fill 分支按用户裁定留另一 AI 处理，见 #21） |
 | 23 | scripts/session_worktree.py 此前从未被 git 跟踪（merge 清理中丢失的根因） | 已从 stash@{1} 恢复（sha256 与 asset index 一致 BBCACD36…），本次随交接文件一并 commit 落地 | 🔥 本次处理 |
 | 24 | 交接文件防丢机制失效：原 tracker/handoff 仅靠 staged+.runtime 备份，未 commit | 本重建版直接 commit 到 dev；后续统筹会话每个里程碑必须经 GitCommitGateway 落地 tracker | 🔥 本次处理 |
+| 25 | scripts/task_board.py 丢失（66 号队列 MVP 前置条件，曾 untracked WIP） | wipe/并发期间从磁盘消失且从未入 git，不可恢复；66 号施工时按 66 memo §2.4 #9 schema（.runtime/task_board.db SQLite WAL+CAS）重建 | ⏳ 随 66 号施工 |
+| 26 | ai/AI-BGT-001 + ai/AI-LIQ-001 分支已 merge（7ccc296d1e/885cddc3af）待删 | 被 02:40 活跃重建的同名 worktree 占用（git branch -d 被挡），待属主释放后 git branch -d | ⏳ 待 worktree 释放 |
+| 27 | integrity 基线漂移 4 文件 + merge 落盘路径 gap | 已登记 #ARCH-MERGE-PATH-GAP-001（guard '^merge ' 正则/网关 finalize merge/基线重登记通道三修复方向） | ⏳ 治理 Owner |
 
 ### ✅ 已闭环（备查）
 
