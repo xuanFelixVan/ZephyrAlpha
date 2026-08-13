@@ -5,12 +5,12 @@
 # [CONSUMERS] MOD-POS-020(StrategyBook收rebalance指令); MOD-POS-021(FirmRiskAggregator收ForcedTrim); RegimeMetaAllocator(收BudgetChangeHandled反馈)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只处理budget下调(上调简单直接抬高上限); 三级升级Tier1封锁→Tier2策略自主→Tier3强裁; 策略不能说"我不卖"(rebalance_to_budget必返回适配portfolio); convergence_window按换手率差异化; 每级独立事件可log可复盘; fail-closed(TierState读取失败假设Tier1封锁)
+# [INVARIANTS] 只处理budget下调(上调简单直接抬高上限); 三级升级Tier1封锁→Tier2策略自主→Tier3强裁; 策略不能说"我不卖"(rebalance_to_budget必返回适配portfolio); convergence_window按换手率差异化; 每级独立事件可log可复盘; state缺失=无活跃升级返回NO_ACTION(进程内缓存语义; Phase2 DB持久化后读取失败场景适用fail-closed假设Tier1封锁)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] BudgetChangeError(ZA-POS-0022); TierEscalationTimeout(ZA-POS-0024)
+# [ERROR_CONTRACT] BudgetChangeError(ZA-POS-0040); RebalanceTimeoutError(ZA-POS-0042)
 # [TESTS] tests/position/test_budget_change_handler.py
 # [A_module] module_id=MOD-POS-022 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -52,24 +52,24 @@ StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 �
 
 依据: 30_multi_strategy_concurrency §2.4 + 33_budget_change_handler §3.4 + blueprint §3
 SSoT: depgraph MOD-POS-022
-Version: 1.0.0
+Version: 1.0.1
 
 # [ALGO_FLOW]
 # 层: 输入
 # - id: I1
 #   name: budget 变动事件
 #   fields: strategy_id + old_budget + new_budget + strategy_type（打板/多因子/事件驱动）
-#   code: handle_budget_change L217-223
+#   code: handle_budget_change L286-292
 # - id: I2
 #   name: 策略当前实际暴露 current_exposure
 #   fields: 策略实际总仓位占比（收敛检查用）
-#   code: check_convergence L296-299
+#   code: check_convergence L365-368
 # 层: 算法
 # - id: A1
 #   name_zh: ① 防抖裁决（五条规则）
 #   name_en: handle_budget_change
 #   intro: budget 变动先过防抖筛子：上调直接放行、小抖动忽略、大下调才触发升级
-#   desc: 规则1 上调→NO_ACTION 不防抖；规则2 收敛中→re-target；规则3 下调<5% 且累计<10%→DEBOUNCE 忽略；规则4/5 ≥5% 或日间累计>10%→触发三级升级（L251-294）
+#   desc: 规则1 上调→NO_ACTION 不防抖；规则2 收敛中→re-target；规则3 下调<5% 且累计<10%→DEBOUNCE 忽略；规则4/5 ≥5% 或日间累计>10%→触发三级升级（L320-363）
 #   inputs: I1
 #   outputs: BudgetChangeResult（动作+状态+指令）
 #   invariant: 只处理 budget 下调（上调直接抬高上限）
@@ -77,7 +77,7 @@ Version: 1.0.0
 #   name_zh: ② 三级升级触发 Tier1+Tier2
 #   name_en: _trigger_three_tier_escalation
 #   intro: 立即发 Tier1 封锁新仓指令 + Tier2 策略自主 rebalance 请求（含收敛窗口）
-#   desc: Tier1 FreezeNewPositions（撤买单留卖单）→ Tier2 RebalanceRequest（new_budget+convergence_window 打板2天/多因子4天/事件驱动3天），状态机置 TIER_2_REBALANCE 记窗口截止（L399-450）
+#   desc: Tier1 FreezeNewPositions（撤买单留卖单）→ Tier2 RebalanceRequest（new_budget+convergence_window 打板2天/多因子4天/事件驱动3天），状态机置 TIER_2_REBALANCE 记窗口截止（L468-520）
 #   inputs: A1
 #   outputs: FreezeNewPositions + RebalanceRequest 指令
 #   invariant: 策略不能说"我不卖"（rebalance_to_budget 必返回适配 portfolio）
@@ -85,7 +85,7 @@ Version: 1.0.0
 #   name_zh: ③ 收敛检查
 #   name_en: check_convergence
 #   intro: 窗口内查实际仓位是否贴近新预算：差<5%且连续1日算收敛，否则超时升 Tier3
-#   desc: |exposure−target|/target<5% → 持续计数+1 ≥1日 → CONVERGED；未收敛重置计数；now≥window_end → 升级 Tier3（L336-377）
+#   desc: |exposure−target|/target<5% → 持续计数+1 ≥1日 → CONVERGED；未收敛重置计数；now≥window_end → 升级 Tier3（L404-445）
 #   inputs: I2
 #   outputs: CONVERGED / WAITING / 升级 Tier3
 #   invariant: 收敛需仓位差收敛+持续性+无新违例
@@ -93,7 +93,7 @@ Version: 1.0.0
 #   name_zh: ④ Tier3 按比例强裁
 #   name_en: _escalate_to_tier3
 #   intro: 超时未收敛就按统一比例硬砍所有仓位，dumb but safe
-#   desc: trim_ratio=(exposure−target)/exposure（L525）；exposure≤0 或已≤target 直接 CONVERGED；否则发 ForcedTrim（L500-542）
+#   desc: trim_ratio=(exposure−target)/exposure（L595）；exposure≤0 或已≤target 直接 CONVERGED；否则发 ForcedTrim（L562-612）
 #   inputs: A3
 #   outputs: ForcedTrim 指令（trim_ratio）
 # 层: 输出
@@ -221,6 +221,7 @@ class TierState:
     cumulative_budget_change: float = 0.0  # 累计 budget 变动（防抖"日间趋势"判定用）
     last_budget_change_date: str = ""       # 上次 budget 变动日期（YYYY-MM-DD，日内防抖重置用）
     convergence_days_satisfied: int = 0     # 连续满足收敛条件的天数（§2.4 ε_days）
+    strategy_type: str = "多因子"           # 策略类型（打板/多因子/事件驱动），re-target 重置窗口查询用
     instructions_issued: list[dict[str, Any]] = field(default_factory=list)  # 已发出的指令记录
 
     def is_in_convergence(self) -> bool:
@@ -479,6 +480,7 @@ class BudgetChangeHandler:
         """
         state.old_budget = old_budget
         state.target_budget = new_budget
+        state.strategy_type = strategy_type  # 记录策略类型（re-target 重置窗口用，修复硬编码"多因子"）
         instructions: list[dict[str, Any]] = []
 
         # ── Tier 1：封锁新仓（瞬时）──
@@ -546,9 +548,9 @@ class BudgetChangeHandler:
                 instructions=[],
             )
         else:
-            # 下调：更新 target，重置收敛窗口（给策略更多时间）
+            # 下调：更新 target，按策略自身类型重置收敛窗口（给策略更多时间）
             state.convergence_window_end = datetime.now() + self.convergence_windows.get(
-                "多因子", timedelta(days=3)
+                state.strategy_type, timedelta(days=3)
             )
             state.convergence_days_satisfied = 0
             return BudgetChangeResult(
