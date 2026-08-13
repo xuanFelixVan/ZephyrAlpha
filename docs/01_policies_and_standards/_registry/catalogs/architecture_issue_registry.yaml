@@ -16132,11 +16132,18 @@ entries:
        但机制上存在"抢收他人 merge"路径。建议治理 Owner 排期：merge 发起者归属校验
        （如 merge 发起时写 .runtime/merge_owner 状态文件，finalize 时比对 session_id），
        或网关 finalize 前强制提示 merge 来源。
+    ④落地（2026-08-14 sess-spawnjob-0814，用户遗留上报"merge finalize 强制全量提交的
+       搭便车效应"）：staged 区合法持有别会话 WIP 时，finalize 全量 commit 将其静默
+       收编——机制不可避免（git 禁 merge 期间 partial commit），落地可见性兜底：
+       finalize 前调 _verify_staged_is_clean 列出非目标 staged 文件并 logger.warning
+       显式预警（"staged 不等于你的"从静默收编转可见可追责）。merge 发起者归属校验
+       （问题B）仍待治理 Owner 排期，不在本项。
   impact:
     - 'scripts/governance/git_hooks/post_commit_guard.sh L195 豁免正则修正'
     - 'scripts/git_commit.py / git_commit_gateway.py merge finalize 模式'
     - 'integrity 基线 4 文件重基线（需 reconciler 模式通道）'
     - 'merge 发起者归属校验/提示（问题B 抢收盲区，待治理 Owner 排期）'
+    - 'git_commit_gateway.py merge finalize 非目标 staged 收编预警（④可见性兜底）+ tests/git/test_git_commit_gateway.py TestMergeFinalizeForeignStaged'
   fix_phase: '②已落地（a337e0f54c，网关 MERGE_HEAD 检测强制全量 commit）；①首次落地被外来 merge 冲掉（03:27 事故），同日重打落地（本条登记同步 commit）；③网关 post-commit 自动重基线实证有效（401387f6cb 自愈 3/4），剩余漂移随相关会话提交自动收敛'
   status: decided
   confirmed_by_user: ''

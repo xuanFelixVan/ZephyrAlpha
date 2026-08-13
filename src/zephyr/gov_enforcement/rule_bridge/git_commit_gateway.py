@@ -1698,6 +1698,17 @@ class GitCommitGateway:
                 return None, "无 pathspec commit 需要 target_files 参数"
             if merge_in_progress:
                 logger.info("检测到 MERGE_HEAD：merge finalize 走全量 commit，跳过 staged-clean 校验")
+                # #ARCH-MERGE-PATH-GAP-001④（2026-08-14 用户遗留上报立项）：
+                # merge finalize 全量 commit 会把非目标 staged 文件一并收编（git 禁
+                # merge 期间 partial commit，机制不可避免）——可见性兜底：收编前显式
+                # 列出非目标 staged 文件，"staged 不等于你的"从静默收编转可见可追责。
+                _, _, foreign_staged = self._verify_staged_is_clean(target_files)
+                if foreign_staged:
+                    logger.warning(
+                        "merge finalize 全量 commit 将收编 %d 个非目标 staged 文件"
+                        "（git 禁 merge 期间 partial commit，机制设计如此）: %s",
+                        len(foreign_staged), foreign_staged,
+                    )
             else:
                 clean, err, non_target = self._verify_staged_is_clean(target_files)
                 if not clean:

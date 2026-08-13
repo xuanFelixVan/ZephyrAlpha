@@ -1466,3 +1466,97 @@ class TestGitAddIndexLockRetry:
             f"应返回 COMMIT_FAILED，实际 {result.status}"
         )
         assert sleep_calls == [], "非 index.lock 错误不应重试（不应 sleep）"
+
+
+class TestMergeFinalizeForeignStaged:
+    """#ARCH-MERGE-PATH-GAP-001④：merge finalize 收编非目标 staged 文件的可见性兜底。
+
+    机制背景（用户遗留上报 2026-08-14）：git 禁 merge 期间 partial commit，
+    merge finalize 只能全量 commit——别会话 staged 的 WIP 会被静默收编。
+    机制不可避免，但必须可见：finalize 前显式 warning 列出非目标 staged 文件。
+    """
+
+    @staticmethod
+    def _git_env() -> dict:
+        env = os.environ.copy()
+        env["GIT_AUTHOR_NAME"] = "Test"
+        env["GIT_AUTHOR_EMAIL"] = "test@test.com"
+        env["GIT_COMMITTER_NAME"] = "Test"
+        env["GIT_COMMITTER_EMAIL"] = "test@test.com"
+        return env
+
+    def _stage_merge_scene(self, repo: Path) -> None:
+        """构造 merge 现场：MERGE_HEAD 指向当前 HEAD（合法第二父），两文件已 staged。"""
+        env = self._git_env()
+        subprocess.run(
+            ["git", "add", "a.py", "b.py"], cwd=str(repo),
+            capture_output=True, env=env, check=True,
+        )
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(repo),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        # write_bytes 防 Windows 文本模式 \n→\r\n 翻译（\r 会致 git 报 Corrupt MERGE_HEAD）
+        (repo / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
+
+    def test_merge_finalize_warns_on_foreign_staged(self, tmp_path: Path, caplog) -> None:
+        """merge finalize + 存在非目标 staged 文件 → commit 成功（全量收编）+ warning 可见。"""
+        import logging
+
+        _init_git_repo(tmp_path)
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")  # 本 session 目标
+        _write_file(tmp_path, "b.py", "y = 1\n")       # 别会话 staged WIP（将被收编）
+        self._stage_merge_scene(tmp_path)
+        gw = GitCommitGateway(project_root=tmp_path)
+        with caplog.at_level(logging.WARNING):
+            result = gw.commit(
+                session_id="sess-merge",
+                files=[str(fa)],
+                allow_overlap=True,
+                message="merge: finalize",
+            )
+        assert result.status == CommitStatus.OK, (
+            f"merge finalize 应成功: {result.status} {result.message}"
+        )
+        warn_msgs = [r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING]
+        assert any("收编" in m and "b.py" in m for m in warn_msgs), (
+            f"应有收编预警且列出 b.py，实际 warnings={warn_msgs}"
+        )
+        # 机制实证：b.py 确被全量 commit 收编
+        show = subprocess.run(
+            ["git", "show", "--name-only", "--format=", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=self._git_env(), check=True,
+        ).stdout
+        assert "a.py" in show and "b.py" in show, f"两文件都应被收编: {show}"
+
+    def test_merge_finalize_no_foreign_staged_no_warning(self, tmp_path: Path, caplog) -> None:
+        """merge finalize + staged 区只有目标文件 → 无收编预警（不误报）。"""
+        import logging
+
+        _init_git_repo(tmp_path)
+        fa = _write_file(tmp_path, "a.py", "x = 1\n")
+        env = self._git_env()
+        subprocess.run(
+            ["git", "add", "a.py"], cwd=str(tmp_path),
+            capture_output=True, env=env, check=True,
+        )
+        head = subprocess.run(
+            ["git", "rev-parse", "HEAD"], cwd=str(tmp_path),
+            capture_output=True, text=True, encoding="utf-8", env=env, check=True,
+        ).stdout.strip()
+        (tmp_path / ".git" / "MERGE_HEAD").write_bytes((head + "\n").encode("ascii"))
+        gw = GitCommitGateway(project_root=tmp_path)
+        with caplog.at_level(logging.WARNING):
+            result = gw.commit(
+                session_id="sess-merge-clean",
+                files=[str(fa)],
+                allow_overlap=True,
+                message="merge: finalize clean",
+            )
+        assert result.status == CommitStatus.OK, (
+            f"merge finalize 应成功: {result.status} {result.message}"
+        )
+        warn_msgs = [r.getMessage() for r in caplog.records if r.levelno >= logging.WARNING]
+        assert not any("收编" in m for m in warn_msgs), (
+            f"staged 区干净不应有收编预警，实际={warn_msgs}"
+        )
