@@ -16,14 +16,106 @@
 # [TTL] permanent
 
 """
+
+
 Calendar Position Constraint — 日历仓位约束 (MOD-POS-017)
 
 根据A股风险日历事件, 生成临时仓位上限调整和否决指令。
 覆盖7类日历事件: 期权交割/期货交割/年报预告/年报截止/半年报预告/股东空窗/财报发布。
 
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.5 POS-17 + §7.4
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.5 POS-17 + §7.4
 SSoT: depgraph MOD-POS-017
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 当前日期 current_date
+#   fields: date（自然日计算，不做交易日历调整；非 date 类型抛 InvalidCalendarInputError）
+#   code: calendar_position_constraint.py L181-198 check 参数
+# - id: I2
+#   name: 持仓标的元数据 positions
+#   fields: list[PositionInfo(symbol/is_st/market_cap_yi 亿元/has_forecast/earnings_release_date)]，可选
+#   code: calendar_position_constraint.py L96-104 PositionInfo
+# 层: 算法
+# - id: A1
+#   name_zh: ① 股指期权交割日检查
+#   name_en: _check_option_expiry
+#   intro: 每月第四个周三交割，当天禁开新仓，前后窗口期仓位上限打九折
+#   desc: L216-239 第四个周三=_fourth_wednesday(首周三+21天, L357-362)；当天→BLOCK_NEW；前2天~后1天→REDUCE_CAP cap=0.9
+#   inputs: I1
+#   outputs: 0~1 条 CalendarConstraint
+# - id: A2
+#   name_zh: ② 年报预告截止检查
+#   name_en: _check_annual_forecast_deadline
+#   intro: 1 月 26-31 日截止窗口内，没出业绩预告的个股不准新买入
+#   desc: L243-259 month==1 且 day≥26；筛 has_forecast=False 标的→BLOCK_NEW（标的级）
+#   inputs: I1 I2
+#   outputs: 0~1 条 CalendarConstraint
+# - id: A3
+#   name_zh: ③ 年报截止 ST 清零检查
+#   name_en: _check_annual_report_deadline
+#   intro: 4 月 20-30 日年报截止窗口内，ST 股仓位强制清零
+#   desc: L263-279 month==4 且 day≥20；筛 is_st 标的→FORCE_CLEAR cap=0.0
+#   inputs: I1 I2
+#   outputs: 0~1 条 CalendarConstraint
+# - id: A4
+#   name_zh: ④ 半年报预告截止检查
+#   name_en: _check_interim_forecast_deadline
+#   intro: 7 月 10-15 日截止窗口内，没出预告的个股不准新买入
+#   desc: L283-299 month==7 且 day≥10；筛 has_forecast=False 标的→BLOCK_NEW（标的级）
+#   inputs: I1 I2
+#   outputs: 0~1 条 CalendarConstraint
+# - id: A5
+#   name_zh: ⑤ 股东信息空窗期检查
+#   name_en: _check_shareholder_blackout
+#   intro: 11 月到次年 4 月底空窗期内，微盘股仓位上限收紧一半
+#   desc: L303-330 month∈{11,12,1,2,3} 或 (4 月且 day≤30)；筛 0<market_cap_yi<50 亿→TIGHTEN_CAP cap=0.5
+#   inputs: I1 I2
+#   outputs: 0~1 条 CalendarConstraint
+# - id: A6
+#   name_zh: ⑥ 财报发布前检查
+#   name_en: _check_earnings_release
+#   intro: 个股财报发布前 3 天内禁止新建仓且上限打九折
+#   desc: L334-352 0<(earnings_release_date-d).days≤3 → BLOCK_NEW cap=0.9（逐标的）
+#   inputs: I1 I2
+#   outputs: 0~N 条 CalendarConstraint
+# - id: A7
+#   name_zh: ⑦ 约束聚合成预警
+#   name_en: check
+#   intro: 把六类日历检查的结果汇总成一份仓位预警
+#   desc: L181-212 六个 _check_* 顺序 extend 合并；派生 overall_cap_adjustment=min(cap)、block_new_positions=any(全标的 BLOCK_NEW)、block_new/force_clear_symbols 集合
+#   inputs: A1 A2 A3 A4 A5 A6
+#   outputs: CalendarPositionAlert
+#   invariant: overall_cap=min(各约束 cap)；block_new=any(全标的 BLOCK_NEW)；无约束 cap=1.0
+# 层: 输出
+# - id: O1
+#   name_zh: 日历仓位预警 CalendarPositionAlert
+#   name_en: CalendarPositionAlert
+#   intro: 检查日期+生效约束清单，附综合上限调整/全面禁新/标的级禁新/强清集合四个派生判定
+#   invariant: overall_cap_adjustment∈[0,1]
+#   downstream: MOD-POS-010 限仓执行器；MOD-POS-001 仓位决策引擎（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I1 --> A4
+# I2 --> A4
+# I1 --> A5
+# I2 --> A5
+# I1 --> A6
+# I2 --> A6
+# A1 --> A7
+# A2 --> A7
+# A3 --> A7
+# A4 --> A7
+# A5 --> A7
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Sell-Position Bidirectional Link — 卖出-仓位双向链接 (MOD-POS-016)
 
 在卖出决策域与仓位管理域之间建立双向反馈通道:
@@ -28,9 +30,81 @@ Sell-Position Bidirectional Link — 卖出-仓位双向链接 (MOD-POS-016)
     - 30min: 反向运动>2×ATR → FULL_STOP
 
 属A类基础设施(盈亏判定+阈值缩放+时间窗口验证, 逻辑明确), 缩放因子与阈值为C类可调参数。
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.4 POS-16
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.4 POS-16
 SSoT: depgraph MOD-POS-016
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 卖出阈值调整请求
+#   fields: symbol + sell_threshold原始阈值 + pnl_ratio盈亏比例
+#   code: adjust_sell_threshold() 入参
+# - id: I2
+#   name: 买入后行情快照
+#   fields: entry_price + current_price + minutes_since_entry + volume_ratio + intraday_ma + current_ma + atr
+#   code: validate_post_buy() 入参
+# - id: I3
+#   name: 链接可调参数 构造入参
+#   fields: 盈利放宽1.2 亏损收紧0.8 持平容差0.1% 跌破阈值1% 放量比1.5 减仓窗口15min ATR倍数2.0
+#   code: SellPositionLink.__init__ L206
+# 层: 算法
+# - id: A1
+#   name_zh: ① 盈亏状态分类
+#   name_en: _classify_pnl
+#   intro: 把盈亏比例分成盈利/亏损/持平三态
+#   desc: pnl>+0.1%→PROFIT；pnl<-0.1%→LOSS；其余→BREAKEVEN
+#   inputs: I1 I3
+#   outputs: PositionPnLState
+# - id: A2
+#   name_zh: ② 卖出阈值动态调整
+#   name_en: adjust_sell_threshold
+#   intro: 盈利放宽卖出阈值拿住利润，亏损收紧阈值快点止损
+#   desc: 盈利×1.2(LOOSEN)；亏损×0.8(TIGHTEN)；持平×1.0(HOLD)；adjusted=max(0,threshold×factor)
+#   inputs: I1 I3 A1
+#   outputs: SellThresholdAdjustment
+#   invariant: profit_loosen_factor>=1.0；loss_tighten_factor<=1.0；调整后阈值>=0
+# - id: A3
+#   name_zh: ③ 买入后三级窗口验证
+#   name_en: validate_post_buy
+#   intro: 买入后5/15/30分钟三个窗口逐级检查走势是否走坏
+#   desc: 30min反向运动>2×ATR→FULL_STOP；15min跌破分时均线且反弹无力→REDUCE_50；5min跌破买入价>1%且放量→OBSERVE；按优先级从高到低先判
+#   inputs: I2 I3
+#   outputs: PostBuyValidation
+#   invariant: FULL_STOP>REDUCE_50>OBSERVE>NORMAL；多窗口取最高级别
+# - id: A4
+#   name_zh: ④ 反馈汇总分发
+#   name_en: build_feedback
+#   intro: 把阈值调整和验证结果打包，有告警才广播
+#   desc: 汇总adjustments+validations为PositionStateFeedback；has_alerts为真时_emit给订阅者
+#   inputs: A2 A3
+#   outputs: PositionStateFeedback
+# 层: 输出
+# - id: O1
+#   name_zh: 仓位状态反馈
+#   name_en: PositionStateFeedback
+#   intro: 阈值调整+买入后验证的打包反馈，附最高告警级别
+#   downstream: D-SELL-DECISION卖出决策域
+# - id: O2
+#   name_zh: 单条调整/验证结果
+#   name_en: SellThresholdAdjustment/PostBuyValidation
+#   intro: 正向调整与反向验证的单条返回值
+#   downstream: 无下游/内部使用(调用方汇总用)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I3 --> A1
+# I3 --> A2
+# I3 --> A3
+# I2 --> A3
+# A1 --> A2
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
+# A2 --> O2
+# A3 --> O2
 """
 
 from __future__ import annotations

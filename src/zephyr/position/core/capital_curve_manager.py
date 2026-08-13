@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Capital Curve Manager — 资金曲线管理器 (MOD-POS-007)
 
 跟踪已实现盈亏驱动的净值曲线, 根据回撤分级动态调整仓位上限,
@@ -33,9 +35,105 @@ Capital Curve Manager — 资金曲线管理器 (MOD-POS-007)
 本金 = 当前净值 (天然复利)
 
 属A类基础设施(回撤计算+分级+缩放系数, 逻辑明确), 阈值与扩张步长为C类可调参数。
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.3 POS-07, §4 E-POS-04
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.3 POS-07, §4 E-POS-04
 SSoT: depgraph MOD-POS-007
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 最新净值 net_value
+#   fields: float（已实现盈亏后的本金基准，必须为正，否则抛错）
+#   code: capital_curve_manager.py L251-265 record(net_value)
+# - id: I2
+#   name: 初始本金与框架硬上限
+#   fields: initial_capital>0（净值/峰值起点）+ framework_hard_cap∈(0,1]（总仓位硬顶，默认 1.0）
+#   code: capital_curve_manager.py L205-217 __init__ 参数
+# - id: I3
+#   name: 资金曲线配置 CapitalCurveConfig
+#   fields: 分级阈值 5%/10%/15% + 仓位上限 100/80/50/30% + 扩张步长 5% + 扩张硬上限 2x + 收缩 10%/20%
+#   code: capital_curve_manager.py L93-114 CapitalCurveConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 创新高判定与盈利扩张
+#   name_en: record 扩张段
+#   intro: 净值每次创新高，扩张因子加 5%，封顶 2 倍硬上限
+#   desc: L269-276 is_new_high=net_value>peak；expansion_factor=min(+0.05, 2.0)；peak 刷新（peak 单调非减）；回撤期不削减扩张因子
+#   inputs: I1 I2 I3
+#   outputs: is_new_high + expansion_factor + 新 peak
+#   invariant: peak 单调非减
+# - id: A2
+#   name_zh: ② 回撤计算
+#   name_en: record 回撤段
+#   intro: 当前净值相对历史峰值的有符号回撤，恒不大于零
+#   desc: L278-279 drawdown=(net_value-peak)/peak（peak>0 否则 0）
+#   inputs: A1 I1
+#   outputs: drawdown ≤ 0
+#   invariant: drawdown≤0
+# - id: A3
+#   name_zh: ③ 回撤分级
+#   name_en: _classify
+#   intro: 按回撤深度分四档：正常/警告/严重/紧急
+#   desc: L328-338 |dd|≥15%→EMERGENCY；≥10%→CRITICAL；≥5%→WARNING；否则 NORMAL
+#   inputs: A2 I3
+#   outputs: DrawdownLevel
+# - id: A4
+#   name_zh: ④ 仓位上限映射
+#   name_en: _cap_for_level + min(framework_hard_cap)
+#   intro: 分级直接决定仓位上限，盈利再好也不放大，且不破框架硬顶
+#   desc: L284-285+L340-348 NORMAL 1.0/WARNING 0.8/CRITICAL 0.5/EMERGENCY 0.3；position_cap=min(level_cap, framework_hard_cap)
+#   inputs: A3 I2 I3
+#   outputs: position_cap ∈[0.3,1.0]
+#   invariant: position_cap 仅由 drawdown_level 决定，不可被盈利放大
+# - id: A5
+#   name_zh: ⑤ 亏损收缩与折扣合成
+#   name_en: _contraction_factor + discount 合成
+#   intro: 回撤期打一个瞬时收缩乘子，和累计扩张因子相乘得缩放系数
+#   desc: L287-290+L350-363 |dd|>10%→×0.8；>5%→×0.9；否则 1.0；discount=expansion_factor×contraction；净值回峰值自动解除收缩
+#   inputs: A1 A2 I3
+#   outputs: capital_curve_discount
+# - id: A6
+#   name_zh: ⑥ 快照装配与事件发布
+#   name_en: record 装配段 + _emit
+#   intro: 组装资金曲线快照并广播 E-POS-04 事件，监听器故障不传染
+#   desc: L294-320 CapitalCurveSnapshot（含 defensive_only=level==EMERGENCY）；L365-370 逐监听器回调，异常隔离记日志
+#   inputs: A3 A4 A5 A1
+#   outputs: CapitalCurveSnapshot + CapitalCurveUpdatedEvent
+#   invariant: EMERGENCY 级 defensive_only=True 禁止新开仓
+# 层: 输出
+# - id: O1
+#   name_zh: 资金曲线快照 CapitalCurveSnapshot
+#   name_en: CapitalCurveSnapshot
+#   intro: 净值/峰值/回撤/分级/仓位上限/缩放系数/是否新高/仅防御/扩张因子十字段快照
+#   invariant: position_cap∈[0.3,1.0]；expansion_factor≥1 且 ≤2.0
+#   downstream: MOD-POS-001 仓位上限联动；MOD-POS-008 回撤控制器；D-RISK；D-PF-CORE（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: E-POS-04 资金曲线更新事件
+#   name_en: CapitalCurveUpdatedEvent
+#   intro: 快照+上下文的事件，推给所有 on_capital_curve_updated 订阅者
+#   downstream: 事件订阅者（MOD-POS-001 / MOD-POS-008 等经 on_capital_curve_updated 注册）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# I1 --> A2
+# A2 --> A3
+# I3 --> A3
+# A3 --> A4
+# I2 --> A4
+# I3 --> A4
+# A1 --> A5
+# A2 --> A5
+# I3 --> A5
+# A3 --> A6
+# A4 --> A6
+# A5 --> A6
+# A1 --> A6
+# A6 --> O1
+# A6 --> O2
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Position State Machine — 仓位状态机 (MOD-POS-002)
 
 仓位裁决中心的状态根——管理单标的仓位生命周期状态转换。
@@ -41,9 +43,81 @@ Position State Machine — 仓位状态机 (MOD-POS-002)
     - 配置参数(observing_confirm_minutes/cooldown_days/graduation_stage_days)为可调默认值,
       属C类(框架AI建, 参数用户校准)
 
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.1 POS-02, §4 E-POS-05
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.1 POS-02, §4 E-POS-05
 SSoT: depgraph MOD-POS-002
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 仓位状态变更指令 方法调用事件
+#   fields: 指令类型(建仓/观察/减仓/清仓/平仓) + 时间戳now + 观察原因ObservingReason
+#   code: start_building/enter_observing/start_reducing/start_exiting/close 方法入参
+# - id: I2
+#   name: 状态机可调配置 PositionStateMachineConfig
+#   fields: observing_confirm_minutes=15 + cooldown_trading_days=5 + graduation_stage_days=5
+#   code: PositionStateMachineConfig L162
+# 层: 算法
+# - id: A1
+#   name_zh: ① 转换合法性校验
+#   name_en: StateMachine.transition
+#   intro: 复用共享状态机基类，用转换矩阵拦截非法状态跳转
+#   desc: 7状态15条合法转换 NONE→BUILDING→ACTIVE→OBSERVING→REDUCING→EXITING→CLOSED，非法抛InvalidTransitionError
+#   inputs: I1
+#   outputs: 合法的新状态
+#   invariant: 状态转换必须合法
+# - id: A2
+#   name_zh: ② 观察期管理
+#   name_en: enter_observing/exit_observing
+#   intro: 软止损/异常开盘/暴跌触发观察期，15分钟确认窗口内决定执行或解除
+#   desc: 记录observing_since/reason/confirm_by=now+15min；confirm=True→REDUCING，False→ACTIVE
+#   inputs: I1 I2
+#   outputs: OBSERVING状态及确认截止时间
+#   invariant: OBSERVING期间禁止新买入 can_buy=False
+# - id: A3
+#   name_zh: ③ 冷却期管理
+#   name_en: close/can_rebuild
+#   intro: 平仓后N个交易日内禁止重新建仓
+#   desc: close写cooldown_until(缺省now+5日)；can_rebuild判断now>=cooldown_until
+#   inputs: I1 I2
+#   outputs: cooldown_until冷却截止时间
+#   invariant: CLOSED冷却期内禁止重新建仓
+# - id: A4
+#   name_zh: ④ 灰度发布推进
+#   name_en: advance_graduation
+#   intro: 建仓期按5%→20%→50%→100%四阶段单调放量
+#   desc: 每阶段需持满graduation_stage_days=5天；满仓STAGE_4_100PCT自动转ACTIVE
+#   inputs: I1 I2
+#   outputs: 灰度权重0.05→1.0
+#   invariant: 灰度阶段只能单调推进
+# 层: 输出
+# - id: O1
+#   name_zh: 状态变更事件 E-POS-05
+#   name_en: StateChangedEvent
+#   intro: 每次状态转换广播from/to状态、原因和上下文快照
+#   downstream: MOD-POS-003漂移监控 MOD-POS-009审计 MOD-POS-016卖仓联动 D-SELL-DECISION
+# - id: O2
+#   name_zh: 仓位上下文只读查询
+#   name_en: PositionContext
+#   intro: 对外提供can_buy/can_rebuild/graduation_weight/is_in_cooldown等查询
+#   downstream: MOD-POS-016卖仓联动 内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I1 --> A4
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A1 --> O2
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 FirmRiskAggregator — Firm层风险聚合器 (MOD-POS-021)
 
 A 模型（30_multi_strategy_concurrency §2.2）的组合汇总层。消费所有 StrategyBook 的
@@ -34,6 +36,98 @@ TargetPortfolio，**按标的求和（自然叠加）+ 组合级硬上限裁剪 
 依据: 30_multi_strategy_concurrency §2.2/§2.3/§3.1 + 32_firm_risk_aggregator §2.1.1
 SSoT: depgraph MOD-POS-021
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 各策略目标 StrategyTarget 列表
+#   fields: strategy_id + target_portfolio({symbol:weight}) + budget_used
+#   code: pre_kelly_aggregate L214 / _sum_by_symbol L370
+# - id: I2
+#   name: T-1 持仓快照 position_snapshot
+#   fields: {symbol: weight} 当前持仓权重（冲突净额截断必需）
+#   code: aggregate L174-181
+# - id: I3
+#   name: 行业映射 + ADV 流动性数据
+#   fields: industry_map(symbol→行业) + adv_data(symbol→adv_20d_p25)
+#   code: post_kelly_clip L260-264
+# - id: I4
+#   name: Kelly 精裁决后权重 kelly_adjusted
+#   fields: {symbol: weight}（MOD-POS-001 中间产物，f_i^norm）
+#   code: post_kelly_clip L256-258
+# 层: 算法
+# - id: A1
+#   name_zh: ① 按标的求和 自然叠加
+#   name_en: _sum_by_symbol
+#   intro: 各策略权重先归一到总资金口径再按 symbol 相加，同票仓位自然叠加
+#   desc: account_weight = tp_weight × budget_used/total_budget（L396-402），CASH 不参与求和；同时记录 contributions {symbol:{strategy_id:贡献}} 归因（正=买负=卖）
+#   inputs: I1
+#   outputs: raw_summed + contributions
+#   invariant: 自然叠加（S1给3%+S2给5%=8%）；O(N) 复杂度
+# - id: A2
+#   name_zh: ② 冲突标的净额处理
+#   name_en: _resolve_conflicts
+#   intro: 一策略买一策略卖同一票时按净额处理，净额为负截断防做空
+#   desc: has_buy&has_sell 判冲突；net<0 → final=max(0, net+holdings_weight) 截断并记录 truncated_amount（L426-456）；非冲突直接用求和值
+#   inputs: A1 I2
+#   outputs: summed_weights + conflicts（PreKellyResult）
+#   invariant: 冲突标的按净额处理；A股不能做空
+# - id: A3
+#   name_zh: ③ 单票硬上限裁剪 8%
+#   name_en: _clip_single_name
+#   intro: 单票超 8% 总资金一律削到 8%，按比例削不按策略优先级截断
+#   desc: w>cap → cut_ratio=1-cap/w, w=cap（L473-484）；CASH 豁免裁剪
+#   inputs: I4
+#   outputs: 裁剪后权重 + cut_ratios
+#   invariant: 按比例削保持各策略相对贡献不变
+# - id: A4
+#   name_zh: ④ 流动性裁剪 ADV 口径
+#   name_en: _clip_liquidity
+#   intro: 持仓金额占 ADV 超 20% 削到 20%，超 10% 削半，ADV 缺失取同行业中位数
+#   desc: adv_pct=w×budget/adv_20d_p25；>0.20→w×0.20/adv_pct；>0.10→w×0.5（L518-553）；ADV≤0 降级取 sector_adv_median（L506-522）
+#   inputs: A3 I3
+#   outputs: 裁剪后权重
+# - id: A5
+#   name_zh: ⑤ 行业绝对上限裁剪 30%
+#   name_en: _clip_sector
+#   intro: 同行业权重加总超 30% 硬顶，行业内各票等比缩放到 30%
+#   desc: 按 industry_map 归类求和 sector_weights；>cap → scale=cap/w，行业内每票 w×scale（L569-591）；偏离基准 ±10%/±15% 待 D-FACTOR 未实现
+#   inputs: A4 I3
+#   outputs: 裁剪后权重
+# - id: A6
+#   name_zh: ⑥ 总仓位裁剪 + 现金管理
+#   name_en: _clip_total_exposure + 现金残差
+#   intro: 总暴露超 regime_cap 等比缩放，剩余差额记为 CASH 现金
+#   desc: sum>regime_cap → 全部 w×regime_cap/sum（L607-615）；cash_weight=total_budget−total_exposure（负值兜底 0）写入 CASH（L327-333）；再按 5 条件组装 degraded 降级标记（L346-353）
+#   inputs: A5
+#   outputs: firm_positions + constraint_checks + degraded
+#   invariant: 级联每步只减不增单调收敛；总暴露 ≤ regime_cap
+# 层: 输出
+# - id: O1
+#   name_zh: 组合级汇总目标 FirmTargetPortfolio
+#   name_en: FirmTargetPortfolio
+#   intro: 裁剪后的组合级粗仓位（含贡献归因/裁剪比例/约束检查/degraded），交 Kelly 精裁决下游
+#   invariant: total_exposure ≤ regime_cap；cash_ratio = budget − exposure
+#   downstream: MOD-POS-001 position_sizing_engine（消费 FirmTargetPortfolio）
+# - id: O2
+#   name_zh: Kelly 前聚合结果 PreKellyResult
+#   name_en: PreKellyResult
+#   intro: 求和+净额后的权重与冲突记录，作为 MOD-POS-001 Kelly 合成规则的 w_i^sum 输入
+#   downstream: MOD-POS-001（Kelly 精裁决）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> O2
+# I4 --> A3
+# A3 --> A4
+# I3 --> A4
+# A4 --> A5
+# I3 --> A5
+# A5 --> A6
+# A6 --> O1
 """
 
 from __future__ import annotations

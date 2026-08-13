@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 StrategyBook — 独立策略账本 (MOD-POS-020)
 
 A 模型（30_multi_strategy_concurrency §2.1）的核心实体。每个策略是一个自洽的 StrategyBook，
@@ -41,6 +43,147 @@ A 模型（30_multi_strategy_concurrency §2.1）的核心实体。每个策略�
 依据: 30_multi_strategy_concurrency §2.2/§2.4/§2.5 + blueprint §2.3
 SSoT: depgraph MOD-POS-020
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 策略 alpha 信号 alpha_signals
+#   fields: 策略specific信号dict，子类select_stocks消费定义格式
+#   code: build_target_portfolio(alpha_signals) (strategy_book.py L214)
+# - id: I2
+#   name: 资金预算 budget
+#   fields: RegimeMetaAllocator下发的预算占比，None=用_current_budget（默认1.0占位）
+#   code: budget/_current_budget (strategy_book.py L216/L197)
+# - id: I3
+#   name: 策略 PnL 历史 strategy_pnl_history
+#   fields: 日度收益率list（回撤四级判定与60日Sortino用）
+#   code: strategy_pnl_history/pnl_history (strategy_book.py L218/L393)
+# - id: I4
+#   name: 标的年化波动率 volatility_data
+#   fields: symbol→年化波动率（risk_parity用），None降级等权
+#   code: volatility_data (strategy_book.py L219)
+# - id: I5
+#   name: 情绪周期信号 SentimentStageSignal
+#   fields: 5阶段stage（冰点/反核/主升/疯狂/退潮）+ confidence + retreat_weight（28号链路2）
+#   code: SentimentStageSignal (strategy_book.py L124)
+# 层: 特征
+# - id: F1
+#   name_zh: 策略当前回撤
+#   name_en: current_drawdown
+#   intro: 从PnL累计净值算当前回撤比例，是四级回撤协议的触发输入
+#   formula: cumulative=Π(1+r)逐日累乘 → peak=max(cumulative) → dd=(peak−cumulative)/peak
+#   code: strategy_book.py L645-656
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 60日滚动 Sortino 比率
+#   name_en: sortino
+#   intro: 只惩罚下行波动的风险调整收益，映射PerformanceScore供后验分配
+#   formula: excess=r−rf → downside_dev=√(Σmin(0,e)²/N) → Sortino=mean(excess)×252/(downside_dev×√252)；无下行波动且均值正→inf
+#   code: strategy_book.py L416-430
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 退潮加权系数
+#   name_en: retreat_weight
+#   intro: 退潮阶段按策略类型放大卖出权重，非退潮或低置信回退1.0不加权
+#   formula: stage=退潮且confidence≥0.6 → 打板1.5/事件驱动1.3/多因子1.2（默认1.5）；否则1.0
+#   code: strategy_book.py L461-481
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 目标组合构建主流程
+#   name_en: build_target_portfolio
+#   intro: 选股+粗仓位+回撤缩放+budget裁剪，产出策略想买什么的TargetPortfolio
+#   desc: 更新budget/缓存情绪信号→回撤检查（L4清仓+休息5天/L3停仓返空仓）→select_stocks→size_positions→回撤协议缩放→budget裁剪→算cash_ratio（L212-302）
+#   inputs: I1 I2 I3 I5 F1
+#   outputs: TargetPortfolio
+#   invariant: total_weight≤budget；策略不知道市场态只收budget数字
+# - id: A2
+#   name_zh: ② 粗仓位计算（禁用Kelly/MVO）
+#   name_en: size_positions / _size_equal_weight / _size_risk_parity
+#   intro: 等权budget/N或逆波动率加权，A模型只做粗仓位不碰优化器
+#   desc: equal_weight: w=budget/N；risk_parity: w=budget×(1/vol)/Σ(1/vol)，vol缺失默认0.30，无波动率数据降级等权；custom默认降级等权（L501-578）
+#   inputs: I2 I4
+#   outputs: symbol→TargetWeight
+#   invariant: sizing_method∈{equal_weight,risk_parity,custom}禁用Kelly/MVO
+# - id: A3
+#   name_zh: ③ 四级回撤协议
+#   name_en: _update_drawdown_level / _apply_drawdown_protocol
+#   intro: 回撤8/15/20/25%四级触发，独立收缩仓位与开仓权限
+#   desc: dd≥8%→L1新仓×0.75；≥15%→L2全仓×0.75停新仓；≥20%→L3停所有新开仓；≥25%→L4清仓+强制休息5天（L580-612/L636-668）
+#   inputs: F1
+#   outputs: 缩放后仓位 + 回撤级别
+#   invariant: DrawdownProtocol四级回撤触发独立收缩
+# - id: A4
+#   name_zh: ④ budget 等比裁剪
+#   name_en: _clip_to_budget
+#   intro: 总权重超budget时pro-rata等比缩回，保持各票相对比例
+#   desc: total>budget → scale=budget/total，每票w×scale并记录理由（L614-634）
+#   inputs: I2
+#   outputs: 裁剪后仓位
+#   invariant: Σtarget_weight≤budget（粗仓位不经Kelly）
+# - id: A5
+#   name_zh: ⑤ budget 适配再平衡
+#   name_en: rebalance_to_budget
+#   intro: 上调不强制买入（现金拖累可接受），下调按confidence从最不自信砍起，策略不能说不卖
+#   desc: 新budget≥旧→仅更新budget仓位留待下次build；下调→按confidence降序保留，超限仓位部分保留remaining>0.001否则全砍（L304-390）
+#   inputs: I2
+#   outputs: 适配新budget的TargetPortfolio
+#   invariant: rebalance_to_budget必须返回适配portfolio
+# - id: A6
+#   name_zh: ⑥ PerformanceScore 映射
+#   name_en: compute_performance_score
+#   intro: 60日Sortino线性映射到[0.5,1.5]，floor防饿死cap防集中
+#   desc: Sortino≤0→0.5，≥2→1.5，中间线性插值，最后clamp到[0.5,1.5]；样本<2返回floor（L392-443）
+#   inputs: F2 I3
+#   outputs: PerformanceScore∈[0.5,1.5]
+#   invariant: 0.5≤score≤1.5
+# 层: 输出
+# - id: O1
+#   name_zh: 单策略目标组合 TargetPortfolio
+#   name_en: TargetPortfolio
+#   intro: 策略想买什么（标的+粗权重+cash_ratio），未经Kelly，交组合汇总层硬裁剪
+#   invariant: total_weight≤budget；权重口径=相对strategy_budget占比（非绝对总资金权重）
+#   downstream: MOD-POS-021 FirmRiskAggregator（消费TargetPortfolio）
+# - id: O2
+#   name_zh: 策略绩效分 PerformanceScore
+#   name_en: PerformanceScore
+#   intro: [0.5,1.5]反馈给RegimeMetaAllocator做后验budget分配
+#   downstream: MOD-PA-007 RegimeMetaAllocator（收PerformanceScore反馈）
+# - id: O3
+#   name_zh: 状态查询接口 DrawdownLevel/retreat_weight
+#   name_en: get_drawdown_level / get_retreat_weight
+#   intro: 暴露当前回撤级别（0-4+动作描述）与退潮加权系数供外部查询
+#   downstream: 无下游/内部使用（监控与28号情绪链路查询）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I5 --> A1
+# I3 -.->|断点| F1
+# I3 -.->|断点| F2
+# I5 -.->|断点| F3
+# F1 --> A1
+# F1 --> A3
+# A1 --> A2
+# I2 --> A2
+# I4 --> A2
+# A2 --> A3
+# A3 --> A4
+# I2 --> A4
+# A4 --> A1
+# I2 --> A5
+# F2 --> A6
+# I3 --> A6
+# A1 --> O1
+# A5 --> O1
+# A6 --> O2
+# A3 --> O3
+# F3 --> O3
 """
 
 from __future__ import annotations

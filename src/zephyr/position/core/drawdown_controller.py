@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Drawdown Controller — 回撤控制器 (MOD-POS-008)
 
 消费组合回撤 + VaR/CVaR 系统性风险分级 + 黑天鹅模式信号, 产出分级响应指令
@@ -32,9 +34,98 @@ Drawdown Controller — 回撤控制器 (MOD-POS-008)
 委托 stop_loss 执行, 本模块不直接触发。
 
 属 A 类基础设施(阈值判定+分级响应), 5 级阈值与黑天鹅处置为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.3 POS-08, §14.3 黑天鹅模式
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.3 POS-08, §14.3 黑天鹅模式
 SSoT: depgraph MOD-POS-008
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 组合回撤信息 DrawdownInfo
+#   fields: drawdown_pct(≤0) + peak_nav + current_nav + recovered_pct回补比例
+#   code: evaluate() 参数 drawdown_info，来自POS-07 Capital Curve Manager
+# - id: I2
+#   name: VaR/CVaR系统性风险指标 VarCvarMetrics
+#   fields: var_95 + cvar_95(cvar≥var)
+#   code: evaluate() 参数 var_cvar，来自D-RISK risk_limits
+# - id: I3
+#   name: 黑天鹅模式信号 BlackSwanSignal
+#   fields: active_modes 触发的BS-001~BS-007模式集合
+#   code: evaluate() 参数 black_swan，来自D-RISK/D-SIGNAL
+# - id: I4
+#   name: 策略级PnL列表
+#   fields: [{strategy_id, drawdown_pct(≤0)}]
+#   code: evaluate() 参数 strategy_pnls，来自D-PF-CORE
+# - id: I5
+#   name: 回撤控制可调配置 DrawdownControllerConfig
+#   fields: soft_stop=5% hard_stop=10% var黄2%/橙4%/红6% cvar黑10% 回补触发50% 每步25%
+#   code: DrawdownControllerConfig L287
+# 层: 算法
+# - id: A1
+#   name_zh: ① 系统性风险5级判定
+#   name_en: _evaluate_risk_level
+#   intro: 用VaR/CVaR把市场风险分成绿黄橙红黑5级
+#   desc: CVaR>10%→BLACK；VaR>6%→RED、>4%→ORANGE、>2%→YELLOW、否则GREEN；对应仓位上限1.0/0.5/0.7/0.5/0.0
+#   inputs: I2 I5
+#   outputs: SystemicRiskLevel及仓位上限系数
+# - id: A2
+#   name_zh: ② 策略级止损判定
+#   name_en: _evaluate_strategy_stops
+#   intro: 单策略回撤超5%砍仓、超10%直接关闭策略
+#   desc: |dd|>hard_stop→HARD关闭策略；|dd|>soft_stop→SOFT砍仓；否则NONE
+#   inputs: I4 I5
+#   outputs: StrategyStopLoss列表
+# - id: A3
+#   name_zh: ③ 黑天鹅处置
+#   name_en: _evaluate_black_swan
+#   intro: 多模式同触发视为BS-007系统性风险，建议Kill Switch
+#   desc: ≥2模式或显式BS-007→cap=0+kill_advised；单模式查_BLACK_SWAN_CAP表取最严，-1=外部决定不参与取严
+#   inputs: I3 I5
+#   outputs: (cap系数, 动作列表, kill_advised)
+#   invariant: BS-007→KillSwitch建议非直接触发，委托stop_loss执行
+# - id: A4
+#   name_zh: ④ 回撤回补恢复系数
+#   name_en: _evaluate_recovery
+#   intro: 回撤回补过半后按每步25%逐步放开仓位上限
+#   desc: 无回撤或回补<50%→1.0；回补≥50%→steps=int(recovered/0.25)×0.25封顶1.0
+#   inputs: I1 I5
+#   outputs: recovery_factor 0.25~1.0
+# - id: A5
+#   name_zh: ⑤ 取最严合成分级响应
+#   name_en: evaluate
+#   intro: 把风险级/黑天鹅/恢复系数取最严合成最终响应指令
+#   desc: position_cap=clamp(min(caps)×recovery,0,1)；reduce_ratio=1-cap；汇总动作列表
+#   inputs: A1 A2 A3 A4
+#   outputs: DrawdownResponse
+#   invariant: 取最严(黑天鹅>系统性风险>策略止损)；响应级别单调不减；不覆盖KS-L4风控熔断
+# 层: 输出
+# - id: O1
+#   name_zh: 分级响应指令
+#   name_en: DrawdownResponse
+#   intro: 风险级别+仓位上限+减仓比例+动作列表+策略止损清单
+#   downstream: MOD-POS-001仓位上限调整 D-EX-CORE执行减仓 D-REPORTING审计
+# - id: O2
+#   name_zh: Kill Switch建议
+#   name_en: kill_switch_advised
+#   intro: BS-007触发时置True，委托D-RISK stop_loss执行熔断
+#   downstream: D-RISK stop_loss
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A4
+# I2 --> A1
+# I3 --> A3
+# I4 --> A2
+# I5 --> A1
+# I5 --> A2
+# I5 --> A3
+# I5 --> A4
+# A1 --> A5
+# A2 --> A5
+# A3 --> A5
+# A4 --> A5
+# A5 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

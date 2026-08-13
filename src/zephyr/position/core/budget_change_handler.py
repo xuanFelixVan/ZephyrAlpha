@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 BudgetChangeHandler — Budget变动处理器 (MOD-POS-022)
 
 A 模型（30_multi_strategy_concurrency §2.4）的执行层。当 RegimeMetaAllocator 产出新
@@ -51,6 +53,72 @@ StrategyBook**——三级升级（Tier 1 封锁 → Tier 2 自主 → Tier 3 �
 依据: 30_multi_strategy_concurrency §2.4 + 33_budget_change_handler §3.4 + blueprint §3
 SSoT: depgraph MOD-POS-022
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: budget 变动事件
+#   fields: strategy_id + old_budget + new_budget + strategy_type（打板/多因子/事件驱动）
+#   code: handle_budget_change L217-223
+# - id: I2
+#   name: 策略当前实际暴露 current_exposure
+#   fields: 策略实际总仓位占比（收敛检查用）
+#   code: check_convergence L296-299
+# 层: 算法
+# - id: A1
+#   name_zh: ① 防抖裁决（五条规则）
+#   name_en: handle_budget_change
+#   intro: budget 变动先过防抖筛子：上调直接放行、小抖动忽略、大下调才触发升级
+#   desc: 规则1 上调→NO_ACTION 不防抖；规则2 收敛中→re-target；规则3 下调<5% 且累计<10%→DEBOUNCE 忽略；规则4/5 ≥5% 或日间累计>10%→触发三级升级（L251-294）
+#   inputs: I1
+#   outputs: BudgetChangeResult（动作+状态+指令）
+#   invariant: 只处理 budget 下调（上调直接抬高上限）
+# - id: A2
+#   name_zh: ② 三级升级触发 Tier1+Tier2
+#   name_en: _trigger_three_tier_escalation
+#   intro: 立即发 Tier1 封锁新仓指令 + Tier2 策略自主 rebalance 请求（含收敛窗口）
+#   desc: Tier1 FreezeNewPositions（撤买单留卖单）→ Tier2 RebalanceRequest（new_budget+convergence_window 打板2天/多因子4天/事件驱动3天），状态机置 TIER_2_REBALANCE 记窗口截止（L399-450）
+#   inputs: A1
+#   outputs: FreezeNewPositions + RebalanceRequest 指令
+#   invariant: 策略不能说"我不卖"（rebalance_to_budget 必返回适配 portfolio）
+# - id: A3
+#   name_zh: ③ 收敛检查
+#   name_en: check_convergence
+#   intro: 窗口内查实际仓位是否贴近新预算：差<5%且连续1日算收敛，否则超时升 Tier3
+#   desc: |exposure−target|/target<5% → 持续计数+1 ≥1日 → CONVERGED；未收敛重置计数；now≥window_end → 升级 Tier3（L336-377）
+#   inputs: I2
+#   outputs: CONVERGED / WAITING / 升级 Tier3
+#   invariant: 收敛需仓位差收敛+持续性+无新违例
+# - id: A4
+#   name_zh: ④ Tier3 按比例强裁
+#   name_en: _escalate_to_tier3
+#   intro: 超时未收敛就按统一比例硬砍所有仓位，dumb but safe
+#   desc: trim_ratio=(exposure−target)/exposure（L525）；exposure≤0 或已≤target 直接 CONVERGED；否则发 ForcedTrim（L500-542）
+#   inputs: A3
+#   outputs: ForcedTrim 指令（trim_ratio）
+# 层: 输出
+# - id: O1
+#   name_zh: rebalance 指令（FreezeNewPositions/RebalanceRequest）
+#   name_en: rebalance instructions
+#   intro: Tier1/Tier2 指令交调用者发给 StrategyBook 执行，本模块不直接碰执行层
+#   invariant: 只生成指令不执行（与 D-EX-CORE 解耦）
+#   downstream: MOD-POS-020 StrategyBook（收 rebalance 指令）
+# - id: O2
+#   name_zh: 强裁指令 ForcedTrim + 处理反馈
+#   name_en: ForcedTrim + BudgetChangeHandled
+#   intro: Tier3 等比裁剪指令给 Firm 层执行，处理结果反馈分配器
+#   downstream: MOD-POS-021 FirmRiskAggregator（收 ForcedTrim）; RegimeMetaAllocator MOD-PA-007（收 BudgetChangeHandled 反馈）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# I2 --> A3
+# A3 --> A4
+# A2 --> O1
+# A4 --> O2
+# A3 --> O1
 """
 
 from __future__ import annotations

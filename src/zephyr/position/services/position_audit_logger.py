@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-POS-009 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Position Audit Logger — 仓位审计记录器 (MOD-POS-009)
+"""
+
+Position Audit Logger — 仓位审计记录器 (MOD-POS-009)
 
 D-POSITION 域审计基础设施: 监听仓位变更事件(E-POS-01/02/03/05),
 全量记录 + 哈希链防篡改 + 可追溯, 产出仓位审计报告。
@@ -34,6 +36,100 @@ D-POSITION 域审计基础设施: 监听仓位变更事件(E-POS-01/02/03/05),
 
 SSoT: depgraph MOD-POS-009
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: E-POS-05 状态变更事件
+#   fields: StateChangedEvent(from_state/to_state/reason/timestamp)
+#   code: on_state_changed() L271，来自MOD-POS-002
+# - id: I2
+#   name: E-POS-02 漂移检测事件
+#   fields: DriftDetectedEvent(组合/标的告警列表)
+#   code: on_drift_detected() L292，来自MOD-POS-003
+# - id: I3
+#   name: E-POS-03 再平衡触发事件
+#   fields: RebalanceTriggeredEvent(decision含orders/成本/改善比)
+#   code: on_rebalance_triggered() L331，来自MOD-POS-004
+# - id: I4
+#   name: E-POS-01 仓位计划
+#   fields: PositionSizingPlan(positions/total_exposure/degraded等)
+#   code: log_position_sized() L363，POS-001 size()返回后直接调用
+# - id: I5
+#   name: 持久化路径(可选)
+#   fields: persist_path JSONL文件路径，None=仅内存
+#   code: PositionAuditLogger.__init__ L248
+# 层: 算法
+# - id: A1
+#   name_zh: ① 事件接收与详情提取
+#   name_en: on_*/log_position_sized
+#   intro: 四个入口把各类仓位事件拍平成审计detail，异常只记日志不阻断主流程
+#   desc: StateChanged/Drift/Rebalance走listener接口，PositionSized由POS-001直接调用；degraded计划标记EMERGENCY来源
+#   inputs: I1 I2 I3 I4
+#   outputs: (event_type, symbol, source, detail, timestamp)
+#   invariant: listener异常不阻断主流程
+# - id: A2
+#   name_zh: ② 哈希链记录生成与追加
+#   name_en: _create_record/_append
+#   intro: 每笔变更生成frozen不可变记录，哈希串成防篡改链
+#   desc: record_hash=SHA256(record_id|timestamp|event_type|symbol|source|detail_json|prev_hash)；prev_hash取链尾last_hash，首条为ZERO_HASH
+#   inputs: A1
+#   outputs: PositionAuditRecord
+#   invariant: 全记录不可跳过；哈希链防篡改；frozen record不可变
+# - id: A3
+#   name_zh: ③ 条件查询
+#   name_en: query
+#   intro: 按标的/事件类型/时间范围检索历史记录
+#   desc: symbol子串匹配+event_type精确匹配+start/end时间窗过滤，按时间升序返回
+#   inputs: A2
+#   outputs: 匹配记录列表
+# - id: A4
+#   name_zh: ④ 报告生成与链校验
+#   name_en: generate_report/verify_chain
+#   intro: 统计三类维度摘要，并逐条重算哈希验证链没被篡改
+#   desc: by_event_type/by_symbol/by_source计数；verify_chain核对prev_hash链接+重算record_hash，断链返回record_id
+#   inputs: A2 A3
+#   outputs: PositionAuditReport
+# - id: A5
+#   name_zh: ⑤ JSONL持久化
+#   name_en: flush/load
+#   intro: 记录写临时文件再原子替换落盘，启动时可加载恢复
+#   desc: flush写.jsonl.tmp再replace成.jsonl；load逐行解析重建记录列表；失败仅记日志best-effort
+#   inputs: I5 A2
+#   outputs: JSONL文件
+# 层: 输出
+# - id: O1
+#   name_zh: 审计记录链
+#   name_en: PositionAuditRecord列表
+#   intro: 内存中的全量不可变审计记录，可查询
+#   downstream: 无下游/内部使用(query查询)
+# - id: O2
+#   name_zh: 仓位审计报告
+#   name_en: PositionAuditReport
+#   intro: 统计摘要+链完整性校验结果的定期报告
+#   downstream: D-REPORTING D-GOVERNANCE
+# - id: O3
+#   name_zh: JSONL持久化文件
+#   name_en: persist_path.jsonl
+#   intro: 每行一条JSON记录的落盘文件，重启可load恢复
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# I5 --> A5
+# A1 --> A2
+# A2 --> A3
+# A2 --> A4
+# A3 --> A4
+# A2 --> A5
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
+# A5 --> O3
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Rebalance Engine — 再平衡引擎 (MOD-POS-004)
 
 消费 E-POS-02 DriftDetected 事件, 在交易成本/预期收益判定通过后产出
@@ -32,9 +34,90 @@ E-POS-03 RebalanceTriggered 事件及调仓指令列表, 驱动组合回归目�
     - 压力市场状态(7/8/9) 成本系数 ×1.5
 
 属A类基础设施(漂移→成本收益判定→调仓指令生成, 逻辑明确), 成本系数与改善比阈值为C类可调参数。
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.1 POS-04, §4 E-POS-03
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.1 POS-04, §4 E-POS-03
 SSoT: depgraph MOD-POS-004
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 漂移检测事件 E-POS-02(可空)
+#   fields: DriftDetectedEvent 含组合/标的漂移告警，CALENDAR触发时传None
+#   code: evaluate() 参数 drift_event，来自MOD-POS-003
+# - id: I2
+#   name: 实际/目标持仓权重 字典对
+#   fields: actual_weights + target_weights {symbol: weight∈[0,1]}
+#   code: evaluate() 参数 actual_weights/target_weights
+# - id: I3
+#   name: 市场状态码
+#   fields: market_state int，7/8/9为压力市场
+#   code: evaluate() 参数 market_state
+# - id: I4
+#   name: 再平衡触发类型
+#   fields: CALENDAR周频强制 / DEVIATION偏离驱动 / EVENT外部事件
+#   code: evaluate() 参数 trigger
+# - id: I5
+#   name: 引擎可调参数 构造入参
+#   fields: cost_rate=0.001 改善比阈值2.0 压力成本×1.5 再平衡后容差1%
+#   code: RebalanceEngine.__init__ L171
+# 层: 算法
+# - id: A1
+#   name_zh: ① 调仓指令生成
+#   name_en: _compute_orders
+#   intro: 按目标减实际的差值生成买卖指令，超配卖低配买
+#   desc: delta=target-actual；delta>0→BUY，<0→SELL；Σ|Δ|=总换手率
+#   inputs: I2
+#   outputs: RebalanceOrder列表
+#   invariant: Δ符号：超配→SELL/低配→BUY；Σ|Δ|=总换手率
+# - id: A2
+#   name_zh: ② 交易成本计算
+#   name_en: transaction cost
+#   intro: 换手率乘成本率，压力市场成本系数乘1.5
+#   desc: transaction_cost=turnover×cost_rate×multiplier；market_state∈{7,8,9}→multiplier=1.5否则1.0
+#   inputs: I3 I5 A1
+#   outputs: transaction_cost
+# - id: A3
+#   name_zh: ③ 预期收益改善估计
+#   name_en: _compute_improvement
+#   intro: 用漂移平方和近似消除漂移带来的收益改善
+#   desc: improvement=Σ(drift²)，优先取drift_event告警的abs_drift，降级用(target-actual)²
+#   inputs: I1 I2
+#   outputs: expected_improvement
+# - id: A4
+#   name_zh: ④ 成本收益判定与事件分发
+#   name_en: evaluate
+#   intro: 成本比改善还贵就不调仓，改善够2倍成本才执行
+#   desc: cost>improvement→跳过；ratio=improvement/cost<2.0→跳过(CALENDAR强制放宽仍执行并记录)；通过后发E-POS-03；再平衡后偏差校验返回0占位(残余偏差由执行层算)
+#   inputs: I4 I5 A1 A2 A3
+#   outputs: RebalanceDecision
+#   invariant: 交易成本>预期收益改善时MUST跳过；改善比<阈值时MUST跳过
+# 层: 输出
+# - id: O1
+#   name_zh: 再平衡评估结果
+#   name_en: RebalanceDecision
+#   intro: 是否执行+调仓指令列表+成本/改善/改善比+原因
+#   downstream: D-EX-CORE执行调仓 D-PF-CORE
+# - id: O2
+#   name_zh: 再平衡触发事件 E-POS-03
+#   name_en: RebalanceTriggeredEvent
+#   intro: 判定通过时广播，含触发类型/换手率/指令数快照
+#   downstream: D-EX-CORE执行调仓 D-PF-CORE D-GOVERNANCE审计
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A3
+# I2 --> A3
+# I3 --> A2
+# I5 --> A2
+# I5 --> A4
+# I4 --> A4
+# A1 --> A2
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

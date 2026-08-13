@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Position Drift Monitor — 仓位漂移监控器 (MOD-POS-003)
 
 监控实际持仓权重与目标权重的偏离, 超阈值产出 E-POS-02 DriftDetected 事件。
@@ -30,9 +32,83 @@ Position Drift Monitor — 仓位漂移监控器 (MOD-POS-003)
     - HOLD(绿): 仅重大事件(深度盈利长期持有)
 
 属A类基础设施(漂移计算+阈值判定+分级, 逻辑明确), 阈值为C类可调参数。
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.1 POS-03, §4 E-POS-02
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.1 POS-03, §4 E-POS-02
 SSoT: depgraph MOD-POS-003
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 实际持仓权重 字典
+#   fields: {symbol: weight} 权重∈[0,1]
+#   code: check() 参数 actual_weights
+# - id: I2
+#   name: 目标持仓权重 字典
+#   fields: {symbol: weight} 权重∈[0,1]，标的必须都在actual中
+#   code: check() 参数 target_weights
+# - id: I3
+#   name: 持仓分级 字典(可选)
+#   fields: {symbol: TriageLevel} WATCH红秒级/MONITOR黄5分钟/HOLD绿重大事件，来自SELL-00
+#   code: check() 参数 triage_levels
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入合法性校验
+#   name_en: _validate
+#   intro: 检查权重越界和标的集合不一致，非法直接抛错
+#   desc: 权重必须∈[0,1]；target的标的必须都在actual中，否则抛InvalidDriftInputError
+#   inputs: I1 I2
+#   outputs: 校验通过或异常
+# - id: A2
+#   name_zh: ② 组合级漂移检测
+#   name_en: portfolio drift check
+#   intro: 总实际仓位减总目标仓位，偏离超±2%就告警
+#   desc: portfolio_drift=Σactual-Σtarget；|drift|>0.02触发组合级告警，默认WATCH级
+#   inputs: I1 I2
+#   outputs: 组合级DriftAlert(可空)
+#   invariant: 组合漂移>±2%触发再平衡评估
+# - id: A3
+#   name_zh: ③ 标的级漂移检测
+#   name_en: symbol drift check
+#   intro: 逐个标的算实际减目标权重，偏离超±3%就告警
+#   desc: drift=actual-target；|drift|>0.03触发标的级告警，按triage_levels分级缺省MONITOR
+#   inputs: I1 I2 I3
+#   outputs: 标的级DriftAlert列表
+#   invariant: 单标的漂移>±3%触发标的级评估
+# - id: A4
+#   name_zh: ④ 漂移事件分发
+#   name_en: _emit
+#   intro: 检测到任何超阈值漂移才广播事件，监听器异常不阻断主流程
+#   desc: has_drift为真时构造DriftDetectedEvent(含漂移快照)分发给订阅者
+#   inputs: A2 A3
+#   outputs: E-POS-02事件
+# 层: 输出
+# - id: O1
+#   name_zh: 漂移检测结果
+#   name_en: DriftResult
+#   intro: 组合级+标的级告警列表，附时间戳
+#   downstream: MOD-POS-004再平衡引擎消费
+# - id: O2
+#   name_zh: 漂移检测事件 E-POS-02
+#   name_en: DriftDetectedEvent
+#   intro: 超阈值漂移时广播给订阅者
+#   downstream: MOD-POS-004再平衡引擎 D-PF-CORE D-GOVERNANCE审计
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I3 --> A3
+# A1 --> A2
+# A1 --> A3
+# A2 --> A4
+# A3 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

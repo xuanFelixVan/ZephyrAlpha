@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Position Limit Enforcer — 限仓执行器 (MOD-POS-010)
 
 仓位方案硬约束检查器: 单票/行业/总仓位/亏损加仓/压力测试, 产出 5 级否决裁决+违规告警。
@@ -32,9 +34,120 @@ Position Limit Enforcer — 限仓执行器 (MOD-POS-010)
     - 压力测试: 情景最大亏损 > 15% → 收紧上限
 
 属A类基础设施(约束检查+阈值判定+5级裁决, 逻辑明确), 阈值为C类可调参数。
-依据: D:\\临时工作区\\依赖图\\07-D-POSITION-仓位管理域.md §1.3 POS-10
+依据: D:\临时工作区\依赖图-D-POSITION-仓位管理域.md §1.3 POS-10
 SSoT: depgraph MOD-POS-010
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 仓位方案 PositionPlan
+#   fields: positions list[PositionEntry(symbol/weight∈[0,1]/sector/action OPEN·ADD·HOLD·REDUCE/existing_pnl_pct)] + sector_baselines 行业基准权重
+#   code: position_limit_enforcer.py L149-169 PositionEntry/PositionPlan
+# - id: I2
+#   name: Kill Switch 激活标志
+#   fields: kill_switch_active bool（True 直接 P0 短路）
+#   code: position_limit_enforcer.py L242 check 参数
+# - id: I3
+#   name: 压力测试情景最大亏损 stress_loss
+#   fields: 占 NAV 比例，正数
+#   code: position_limit_enforcer.py L243 check 参数
+# - id: I4
+#   name: 限仓配置 PositionLimitConfig
+#   fields: 单票 5% / 行业绝对 30% / 行业基准偏离 ±10% / 总仓位 1.0 / 亏损加仓阈值 8% / 压力阈值 15%
+#   code: position_limit_enforcer.py L120-129 PositionLimitConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 方案校验
+#   name_en: _validate_plan
+#   intro: 每条持仓权重必须在 0 到 1 之间、动作必须合法
+#   desc: L341-348 weight∉[0,1] 或 action 非法 → 抛 InvalidPositionPlanError
+#   inputs: I1
+#   outputs: 校验通过
+# - id: A2
+#   name_zh: ② Kill Switch 短路 P0
+#   name_en: check P0 段
+#   intro: 总开关一拉直接全否决，其他约束看都不看
+#   desc: L262-274 kill_switch_active=True → 记 P0_KILL_SWITCH 违规并立即返回（不再检查其他约束）
+#   inputs: I2
+#   outputs: P0 裁决（短路）
+#   invariant: KillSwitch 激活短路 P0；硬边界不可绕过
+# - id: A3
+#   name_zh: ③ 总仓位检查 P1
+#   name_en: check P1 段
+#   intro: 全部仓位加起来超过总上限就强制减仓
+#   desc: L276-283 total=Σweight；>total_position_cap(1.0) → P1_FORCE_REDUCE
+#   inputs: I1 I4
+#   outputs: P1 违规（可选）
+# - id: A4
+#   name_zh: ④ 单票上限检查 P2
+#   name_en: check P2 单票段
+#   intro: 新开仓或加仓的单票权重超 5% NAV 就否决
+#   desc: L285-292 action∈{OPEN,ADD} 且 weight>single_instrument_cap(0.05) → P2_BLOCK_NEW
+#   inputs: I1 I4
+#   outputs: P2 违规（可选）
+#   invariant: 单票约束只对 OPEN/ADD 生效
+# - id: A5
+#   name_zh: ⑤ 行业集中度检查 P2
+#   name_en: check P2 行业段
+#   intro: 行业合计权重超 30% 或偏离基准超 ±10% 都否决新开仓
+#   desc: L294-311 按 sector 聚合 Σweight；>sector_absolute_cap(0.30)→P2；|w-baseline|>sector_baseline_deviation(0.10)→P2
+#   inputs: I1 I4
+#   outputs: P2 违规（可选）
+# - id: A6
+#   name_zh: ⑥ 亏损加仓阻断 P3
+#   name_en: check P3 段
+#   intro: 已亏超 8% 的标的再加仓，直接硬性否决这一笔
+#   desc: L313-320 action==ADD 且 existing_pnl_pct < -loss_add_block_threshold(0.08) → P3_BLOCK_TRADE
+#   inputs: I1 I4
+#   outputs: P3 违规（可选）
+# - id: A7
+#   name_zh: ⑦ 压力测试告警 P4
+#   name_en: check P4 段
+#   intro: 压力情景亏损超 15% NAV 给建议性告警
+#   desc: L322-328 stress_loss > stress_loss_threshold(0.15) → P4_WARN
+#   inputs: I3 I4
+#   outputs: P4 违规（可选）
+# - id: A8
+#   name_zh: ⑧ 整体裁决合成
+#   name_en: LimitVerdict.worst
+#   intro: 整体裁决取所有违规里最严重的那一档
+#   desc: L90-101+L330-336 severity PASS0<P4<P3<P2<P1<P0；worst=max(severity)；空违规→PASS
+#   inputs: A2 A3 A4 A5 A6 A7
+#   outputs: overall_verdict
+#   invariant: 整体裁决=max(违规)按严重度
+# 层: 输出
+# - id: O1
+#   name_zh: 限仓检查结果 LimitCheckResult
+#   name_en: LimitCheckResult
+#   intro: 整体裁决+全部违规明细+Kill Switch 标记；blocked=≥P3、force_reduce=≥P1
+#   invariant: 硬边界不可绕过
+#   downstream: MOD-POS-001 仓位决策；D-RISK；D-GOVERNANCE 审计（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> O1
+# A2 --> A3
+# I1 --> A3
+# I4 --> A3
+# I1 --> A4
+# I4 --> A4
+# I1 --> A5
+# I4 --> A5
+# I1 --> A6
+# I4 --> A6
+# I3 --> A7
+# I4 --> A7
+# A2 --> A8
+# A3 --> A8
+# A4 --> A8
+# A5 --> A8
+# A6 --> A8
+# A7 --> A8
+# A8 --> O1
 """
 
 from __future__ import annotations
