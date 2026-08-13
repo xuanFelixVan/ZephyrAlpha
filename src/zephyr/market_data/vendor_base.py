@@ -14,7 +14,9 @@
 # [TESTS] tests/market_data/test_vendor_base.py
 # [A_module] module_id=MOD-MKT-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_MKT_DATA — Vendor Base (行情数据源基类)
+"""
+
+D_MKT_DATA — Vendor Base (行情数据源基类)
 
 定义所有行情数据 vendor 的统一抽象接口。提供状态管理(ACTIVE/INACTIVE/
 DEGRADED/ERROR)、能力声明(支持K线/Tick/Level2/实时)和健康检查接口,
@@ -24,6 +26,57 @@ DEGRADED/ERROR)、能力声明(支持K线/Tick/Level2/实时)和健康检查接�
 
 设计真源: depgraph MOD-MKT-002
 蓝图: docs/03_modules/_domain_mkt_data/vendor_base/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Vendor 子类实现参数
+#   fields: vendor_id/capabilities/fetch_daily_kline/health_check 由子类实现
+#   code: MarketDataVendor ABC L74
+# - id: I2
+#   name: 目标运行状态
+#   fields: VendorStatus 4 级枚举（ACTIVE/INACTIVE/DEGRADED/ERROR）
+#   code: VendorStatus L51 / set_status L124
+# 层: 算法
+# - id: A1
+#   name_zh: ① Vendor 状态机管理
+#   name_en: MarketDataVendor.set_status
+#   intro: 线程安全地切换数据源运行状态并记录变更日志
+#   desc: Lock 保护读写 _status；初始 INACTIVE；状态变化时 logger.info 记录 old→new
+#   inputs: I2
+#   outputs: 当前 VendorStatus
+#   invariant: 状态变更加 Lock 线程安全
+# - id: A2
+#   name_zh: ② 能力声明契约
+#   name_en: VendorCapabilities
+#   intro: 不可变声明该数据源支持日K/Tick/Level2/实时哪几类数据
+#   desc: frozen dataclass 4 项布尔能力位；供 Registry 与 Connectors 选源时参考
+#   inputs: I1
+#   outputs: VendorCapabilities 实例
+#   invariant: frozen 不可变
+# - id: A3
+#   name_zh: ③ 抽象接口契约定义
+#   name_en: MarketDataVendor.fetch_daily_kline/health_check
+#   intro: 规定所有行情数据源必须实现的取数与健康检查接口
+#   desc: ABC 抽象方法：fetch_daily_kline 返回按时间升序的 NormalizedMarketData 列表（失败 raise VendorError ZA-MKT-0002）；health_check 返回 bool
+#   inputs: I1
+#   outputs: 统一接口签名
+#   invariant: ABC 不可直接实例化
+# 层: 输出
+# - id: O1
+#   name_zh: 统一 Vendor 抽象接口
+#   name_en: MarketDataVendor
+#   intro: 所有行情数据源（tushare/akshare/wind 等）的统一基类与状态/能力契约
+#   downstream: vendor_registry MOD-MKT-001；connectors MOD-MKT-003（#[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# I1 --> A3
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations
