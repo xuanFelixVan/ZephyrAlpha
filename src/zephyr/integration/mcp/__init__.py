@@ -1,7 +1,9 @@
 # [A_module] module_id=MOD-INF-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md
 # [TTL] permanent
-"""ZephyrAlpha MCP (Model Context Protocol) 子包。
+"""
+
+ZephyrAlpha MCP (Model Context Protocol) 子包。
 
 八个 MCP 服务端通过 stdio 协议对外暴露内部系统能力：
 
@@ -19,6 +21,46 @@
 依赖地跑 tools；任务管理 MCP 后因多工具注册冲突与 SDK 成熟度，改用官方 ``FastMCP``。
 两条路径均 speak MCP over stdio——属**有意的渐进迁移**，而非实现漏做；新 server 如无强
 约束可优先 FastMCP，旧 server 保持稳定即可。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 蓝图检索文本 参数
+#   fields: task_description 任务描述字符串
+#   code: search_blueprints(task_description) L95
+# - id: I2
+#   name: 返回条数 参数
+#   fields: num_results 默认3
+#   code: num_results=3 L95
+# 层: 算法
+# - id: A1
+#   name_zh: ① 双栈MCP服务符号聚合
+#   name_en: __init__ 聚合导出
+#   intro: 把自研JSON-RPC栈与FastMCP栈的全部server类和错误码集中到包入口
+#   desc: 聚合 BaseMCPServer 自研栈 + FastMCP 栈共 8+ server 类与 9 个 ERR_* 错误码（L24-88）；双栈并存是有意的渐进迁移（L18-21）
+#   inputs: I1
+#   outputs: MCP Server 类集 + 错误码集
+# - id: A2
+#   name_zh: ② 蓝图检索捷径
+#   name_en: search_blueprints
+#   intro: 不走MCP stdio RPC，进程内直接检索相关蓝图
+#   desc: 实例化 BlueprintSearchServer 调 _find_relevant_blueprint，返回 results 列表（L95-107）
+#   inputs: I1 I2
+#   outputs: list[dict]（blueprint_id/blueprint_level/relevance_score/priority）
+# 层: 输出
+# - id: O1
+#   name_zh: MCP服务面与蓝图检索结果
+#   name_en: MCP servers + search_blueprints results
+#   intro: 对外暴露8个MCP server入口与蓝图检索捷径
+#   downstream: 无下游/内部使用（AI agent / Pipeline orchestrator 运行时调用，docstring L98）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> O1
+# A2 --> O1
 """
 
 from zephyr.integration.mcp._base_server import (
