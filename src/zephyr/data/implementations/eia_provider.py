@@ -108,6 +108,24 @@ _EIA_SERIES: Final = [
 ]
 
 
+def _detect_local_proxy(port: int = 10808, timeout: float = 1.0) -> str | None:
+    """探测本地代理端口（v2rayN 10808 HTTP/SOCKS5 双协议）。
+
+    VPN 开启时端口在监听，返回 http 代理 URL；关闭时 1s 内返回 None。
+    与 rss_provider._is_vpn_ready 同一探测模式（2026-08-14 对齐）。
+    """
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    try:
+        s.connect(("127.0.0.1", port))
+        return f"http://127.0.0.1:{port}"
+    except OSError:
+        return None
+    finally:
+        s.close()
+
+
 class EiaProvider(IngestProviderBase):
     """EIA 能源数据 Provider。
 
@@ -134,9 +152,10 @@ class EiaProvider(IngestProviderBase):
     def __init__(self):
         super().__init__()
         self._eia_key: str | None = None
-        # 代理配置：海外站点，若环境变量设了 HTTPS_PROXY 则启用（VPN 场景）
+        # 代理配置：海外站点，若环境变量设了 HTTPS_PROXY 则启用（VPN 场景）；
+        # 2026-08-14 增强：env 未设时探测本地代理端口 10808（同 fred_provider）
         self._proxies: dict | None = None
-        proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
+        proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY") or _detect_local_proxy()
         if proxy:
             self._proxies = {"https": proxy, "http": proxy}
 

@@ -563,10 +563,8 @@ tasks:
     description: "财经新闻增量（RSS 爬虫）"
 
   fallback_sources:
-  - source: akshare
-    capability: news_data
-  - source: ifind
-    capability: news_data
+  - source: akshare           # 修复假fallback(2026-08-14): akshare无news_data能力，改用news_stock(财新快讯,同写news_data表)
+    capability: news_stock
 - task_id: share_unlock_incremental
   table: c3_fundamental.share_unlock
   source: akshare
@@ -1203,10 +1201,8 @@ tasks:
     description: "财联社电报增量（HTTP直连 cls.cn/nodeapi/updateTelegraphList）"
 
   fallback_sources:
-  - source: akshare
-    capability: news_data
-  - source: ifind
-    capability: news_data
+  - source: akshare           # 修复假fallback(2026-08-14): akshare无news_data能力，改用news_stock
+    capability: news_stock
 - task_id: news_eastmoney_incremental
   table: c3_fundamental.news_data
   source: eastmoney_news
@@ -1221,10 +1217,8 @@ tasks:
     description: "东方财富7x24快讯增量（HTTP直连 np-listapi.eastmoney.com）"
 
   fallback_sources:
-  - source: akshare
-    capability: news_data
-  - source: ifind
-    capability: news_data
+  - source: akshare           # 修复假fallback(2026-08-14): akshare无news_data能力，改用news_stock
+    capability: news_stock
 - task_id: news_rss_incremental
   table: c3_fundamental.news_data
   source: rss
@@ -1239,10 +1233,8 @@ tasks:
     description: "RSS财经新闻增量（36氪/钛媒体/华尔街见闻/东方财富5类研报/第一财经/财新网/36氪快讯/金十数据）"
 
   fallback_sources:
-  - source: akshare
-    capability: news_data
-  - source: ifind
-    capability: news_data
+  - source: akshare           # 修复假fallback(2026-08-14): akshare无news_data能力，改用news_stock
+    capability: news_stock
 - task_id: news_stock_em_incremental
   table: c3_fundamental.news_data
   source: akshare
@@ -1340,10 +1332,8 @@ tasks:
 
   # --- 限售股明细增量（2026-07-11 新增）---
   fallback_sources:
-  - source: akshare
-    capability: news_data
-  - source: ifind
-    capability: news_data
+  - source: akshare           # 修复假fallback(2026-08-14): akshare无news_data能力，改用news_stock
+    capability: news_stock
 - task_id: restricted_shares_incremental
   table: c3_fundamental.restricted_shares
   source: akshare
@@ -1636,9 +1626,7 @@ tasks:
   extra:
     description: "港股日K线增量（miniQMT get_market_data_ex，盘中实时下载）"
 
-  fallback_sources:
-  - source: akshare
-    capability: hk_kline
+  # 2026-08-14 移除假fallback akshare/hk_kline：akshare无hk_kline能力(仅kline_hk_daily写另一张表)，fallback只会报错且不会填本表
 - task_id: kline_us_daily_qmt_incremental
   table: c1_market.kline_us_daily
   source: miniqmt
@@ -1807,16 +1795,18 @@ tasks:
     capability: etf_list
 - task_id: lof_list_refresh
   table: c1_market.lof_list
-  source: akshare
+  source: tushare          # 东财反爬治本(2026-08-14): akshare fund_lof_spot_em 持续 RemoteDisconnected，tushare fund_basic(market=E) 升主源
   schedule: monthly_static
   incremental: false
   dependencies: []
   capability: lof_list
   symbols:
   extra:
-    description: "LOF基金列表全量刷新（AKShare fund_lof_spot_em）"
+    description: "LOF基金列表全量刷新（tushare fund_basic 场内基金过滤LOF；原东财 fund_lof_spot_em 被反爬）"
 
   fallback_sources:
+  - source: akshare           # 东财源降为fallback（反爬解除后可恢复主源）
+    capability: lof_list
   - source: ifind
     capability: lof_list
 - task_id: hk_stock_list_refresh
@@ -2077,9 +2067,7 @@ tasks:
   extra:
     description: "港股日K线全量刷新（miniQMT，5年历史回补）"
 
-  fallback_sources:
-  - source: akshare
-    capability: hk_kline
+  # 2026-08-14 移除假fallback akshare/hk_kline：同上，akshare仅kline_hk_daily(写另一张表)
 - task_id: analyst_forecast_full_refresh
   table: c3_fundamental.analyst_forecast
   source: akshare

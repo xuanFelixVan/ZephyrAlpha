@@ -12042,6 +12042,75 @@ entries:
   last_updated: '2026-08-05'
 
 # --- #ARCH-VALUATION-IFIND-PRIMARY: 估值数据 ifind 主源切换（2026-08-05 补登记） ---
+- issue_id: '#ARCH-VALUATION-IFIND-PRIMARY'
+  title: 估值数据 ifind 主源切换 + akshare fallback 并行抓取治本（孤儿条目重建）
+  severity: P1高
+  category: data_quality
+  adjudication: |-
+    2026-08-05 施工时仅留下分节注释、条目正文缺失（孤儿引用），2026-08-14 提交门禁
+    ARCH-REFERENCE 原子性校验拦截 akshare_provider.py 提交时发现，按代码现场重建正文。
+    背景：daily_valuation 原 ifind 主源（THS_BasicData 批量 200只/次），ifind 试用到期后
+    降级为 fallback，akshare 升主源（裁定 #ARCH-IFIND-FAILOVER 系列）。
+    治本点：akshare 估值 fallback 路径原串行 5000只×4指标+1秒限流需数小时，
+    改 ThreadPoolExecutor(max_workers=4) 并行抓取，限流由 SourcePolicy 兜底
+    （去掉 per-symbol wait(1.0)——并行下它阻塞 worker 退化为串行）。
+  fix_phase: |-
+    已完成（2026-08-05）：akshare_provider._fetch_daily_valuation 并行化改造落地。
+    2026-08-14 补登本条正文，消除孤儿引用。
+  impact:
+    - 'src/zephyr/data/implementations/akshare_provider.py（_fetch_daily_valuation 并行抓取，#ARCH-VALUATION-IFIND-PRIMARY）'
+    - 'src/zephyr/data/config/tasks.yaml（daily_valuation 主备源标记）'
+  status: decided
+  created: '2026-08-05'
+  last_updated: '2026-08-14'
+
+# --- #ARCH-DATA-FALLBACK-REPAIR-001: 数据源修复包——假fallback/东财LOF替代源/外网代理自探测/ETF日期哨兵（2026-08-14） ---
+- issue_id: '#ARCH-DATA-FALLBACK-REPAIR-001'
+  title: 数据源修复包——news假fallback链、东财LOF换tushare主源、FRED/EIA本地代理自探测、etf_list空日期哨兵
+  severity: P1高
+  category: data_quality
+  adjudication: |-
+    2026-08-14 全数据源体检实证（3天 task_runs 分析 + 逐源网络/SDK 实测）：
+    1. 假 fallback 链：5 个新闻任务 fallback 配置 akshare/news_data，但 akshare provider
+       无 news_data capability（路由集与 meta 均无），主源一挂 fallback 必报
+       "unsupported capability: news_data"——news_data/news_rss 两任务 3 天各 x1003 失败。
+       根因：capability_validator 只校验主源 capability，不覆盖 fallback_sources（机制盲区）。
+       修复：fallback 改 akshare/news_stock（财新快讯，同写 news_data 表）；
+       ifind/news_data 双重假（源到期+能力不存在）条目移除。
+       另移除 2 处 akshare/hk_kline 假 fallback（akshare 仅 kline_hk_daily 且写另一张表，
+       fallback 只会报错且不会填 hk_kline 表，留着误导排障）。
+    2. 东财反爬（用户裁定换主源）：fund_lof_spot_em/stock_zh_a_spot_em 等东财 push2
+       集群接口持续 RemoteDisconnected（绕过代理直连亦间歇断连，属 IP 级限流）。
+       lof_list 表空 → 5 个 LOF 分钟K任务全挂（x42/任务/3天）。
+       实证替代源：miniqmt 无 LOF 板块（板块查询返回 0）；tushare fund_basic(market=E)
+       371 只 LOF 可用且 ts_code 自带交易所后缀（miniQMT 直用）。
+       裁定：lof_list_refresh 主源 akshare→tushare，akshare 降 fallback（反爬解除可恢复）；
+       tushare_provider 新增 lof_list capability。
+    3. FRED/EIA 外网源：provider 只读 HTTPS_PROXY env（从未设置）→ 直连 api.stlouisfed.org
+       超时，macro_fred_incremental 3天 x75 JSON 解析失败。实证 FRED/EIA API 经本地代理
+       127.0.0.1:10808 全通。修复：provider 增加本地代理端口自探测（对齐
+       rss_provider._is_vpn_ready 模式），env 未设时自动走 10808。
+    4. etf_list 长期空表根因：sina fund_etf_category_sina 多数基金无成立/上市日期（空串），
+       CH setup_date/list_date 为非空 Date 列 → Code 38 整批拒写落盘。修复：空日期
+       → 1970-01-01 哨兵。修复后 etf_list_refresh 1628 行成功入 CH，etf_nav_refresh 解锁。
+    遗留：东财 push2 实时行情类接口（realtime_snapshot/stock_news_em/research_report_em
+    等）仍受反爬影响，间歇可用；#ARCH-IFIND-FAILOVER 系列 ifind 待续费。
+    capability_validator 覆盖 fallback_sources 的治本扩展另行登记施工。
+  fix_phase: |-
+    已落地（2026-08-14）：tasks.yaml 5+2 处 fallback 修复；tushare_provider lof_list 能力；
+    fred/eia provider _detect_local_proxy；akshare _parse_etf_list_row 日期哨兵。
+    实测：lof_list_refresh 371 行、kline_lof_1min 端到端解锁、etf_list_refresh 1628 行、
+    provider 测试 131 全过、RSSHub 重建恢复（dist 布局漂移 rebuild + 计划任务拉起）。
+  impact:
+    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list主源切换）'
+    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list capability）'
+    - 'src/zephyr/data/implementations/fred_provider.py（_detect_local_proxy）'
+    - 'src/zephyr/data/implementations/eia_provider.py（_detect_local_proxy）'
+    - 'src/zephyr/data/implementations/akshare_provider.py（_parse_etf_list_row 日期哨兵）'
+  status: decided
+  related_rules: '#ARCH-IFIND-FAILOVER（ifind到期系列切换）; #ARCH-DATA-RECONCILE-001（任务级对账，互补）; #ARCH-AKSHARE-ANTICRAWLER-001（东财反爬既有裁定）'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'
 
 # --- #ARCH-REGEN-CONCURRENCY-001: reconciler 跨进程串行锁——CPU 爆炸事故治本（2026-08-05）---
 - issue_id: '#ARCH-REGEN-CONCURRENCY-001'

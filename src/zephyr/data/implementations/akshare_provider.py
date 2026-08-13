@@ -4370,7 +4370,11 @@ class AkshareIngestProvider(IngestProviderBase):
 
     @staticmethod
     def _parse_etf_list_row(r) -> tuple:
-        """解析单行ETF列表数据。"""
+        """解析单行ETF列表数据。
+
+        2026-08-14 修复：sina 源多数基金无成立/上市日期（空串），CH 表 setup_date/list_date
+        为非空 Date 列，空串触发 Code 38 写入失败整批落盘。空日期改用 1970-01-01 哨兵。
+        """
         return (
             str(r.get("代码", "") or ""),
             str(r.get("名称", "") or ""),
@@ -4378,8 +4382,8 @@ class AkshareIngestProvider(IngestProviderBase):
             str(r.get("全称", "") or ""),
             str(r.get("跟踪指数代码", "") or ""),
             str(r.get("跟踪指数名称", "") or ""),
-            AkshareIngestProvider._norm_date_str(r.get("成立日期")),
-            AkshareIngestProvider._norm_date_str(r.get("上市日期")),
+            AkshareIngestProvider._norm_date_str(r.get("成立日期")) or "1970-01-01",
+            AkshareIngestProvider._norm_date_str(r.get("上市日期")) or "1970-01-01",
             str(r.get("上市状态", "") or ""),
             str(r.get("交易市场", "") or ""),
             str(r.get("管理人", "") or ""),

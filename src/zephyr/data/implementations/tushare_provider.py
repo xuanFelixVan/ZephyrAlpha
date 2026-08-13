@@ -53,6 +53,8 @@ _TBL_NEWS_DATA = get_registry().table("fund_news_data")
 # #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
 _TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 _TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
+# 2026-08-14 东财反爬治本：LOF 列表替代源（fund_lof_spot_em 持续 RemoteDisconnected）
+_TBL_LOF_LIST = get_registry().table("market_lof_list")
 
 
 class TushareProvider(IngestProviderBase):
@@ -70,7 +72,7 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data", "industry_class", "industry_class_suppl"],
+        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -126,6 +128,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_industry_class(payload, policy)
         elif capability == "industry_class_suppl":
             yield from self._fetch_industry_class_suppl(payload, policy)
+        elif capability == "lof_list":
+            yield from self._fetch_lof_list(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
@@ -411,6 +415,48 @@ class TushareProvider(IngestProviderBase):
                 rows.append((symbol, full_path, None, 0, "tushare"))
 
         self._log.info(f"industry_class_suppl: {len(rows)} 行（tushare 替代 iFind）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=today_str, elapsed_sec=seconds_since(t0),
+        )
+
+    # ---- LOF 基金列表（2026-08-14 东财反爬替代源） ----
+
+    def _fetch_lof_list(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """LOF 基金列表全量刷新，写入 c1_market.lof_list。
+
+        东财反爬治本：akshare fund_lof_spot_em（东财 push2 集群）持续 RemoteDisconnected，
+        改用 tushare pro.fund_basic(market="E", status="L") 场内上市基金，按名称含 "LOF" 过滤。
+        ts_code 自带交易所后缀（如 160643.SZ），miniQMT _load_symbols_from_table 原样透传即用。
+
+        表 schema: (code, name)
+        """
+        table = _TBL_LOF_LIST
+        columns = ["code", "name"]
+        today_str = datetime.date.today().isoformat()
+        t0 = now_utc()
+
+        try:
+            df = self._call_with_policy(
+                self._pro.fund_basic, policy, market="E", status="L",
+                fields="ts_code,name",
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=seconds_since(t0), error=str(e),
+            )
+            return
+
+        rows: list[tuple] = []
+        if df is not None and not df.empty:
+            lof = df[df["name"].str.contains("LOF", na=False)]
+            for _, r in lof.iterrows():
+                rows.append((str(r.get("ts_code", "") or ""), str(r.get("name", "") or "")))
+
+        self._log.info(f"lof_list: {len(rows)} 只 LOF（tushare 替代东财）")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=today_str, elapsed_sec=seconds_since(t0),

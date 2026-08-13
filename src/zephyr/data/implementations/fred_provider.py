@@ -238,6 +238,24 @@ _WORLD_BANK_INDICATORS: Final = [
 _WB_COUNTRIES = "all"  # all=所有国家；也可指定 "CN;US;JP;DE;IN;GB;FR;BR;RU;KR"
 
 
+def _detect_local_proxy(port: int = 10808, timeout: float = 1.0) -> str | None:
+    """探测本地代理端口（v2rayN 10808 HTTP/SOCKS5 双协议）。
+
+    VPN 开启时端口在监听，返回 http 代理 URL；关闭时 1s 内返回 None。
+    与 rss_provider._is_vpn_ready 同一探测模式（2026-08-14 对齐）。
+    """
+    import socket
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.settimeout(timeout)
+    try:
+        s.connect(("127.0.0.1", port))
+        return f"http://127.0.0.1:{port}"
+    except OSError:
+        return None
+    finally:
+        s.close()
+
+
 class FredProvider(IngestProviderBase):
     """FRED + 世界银行 宏观数据 Provider。
 
@@ -263,9 +281,11 @@ class FredProvider(IngestProviderBase):
     def __init__(self):
         super().__init__()
         self._fred_key: str | None = None
-        # 代理配置：海外站点，若环境变量设了 HTTPS_PROXY 则启用（VPN 场景）
+        # 代理配置：海外站点，若环境变量设了 HTTPS_PROXY 则启用（VPN 场景）；
+        # 2026-08-14 增强：env 未设时探测本地代理端口 10808（v2rayN HTTP/SOCKS5 双协议端口），
+        # 在监听则自动走代理——此前 env 未设导致直连 api.stlouisfed.org 超时/JSON 解析失败（x75/3天）
         self._proxies: dict | None = None
-        proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY")
+        proxy = os.environ.get("HTTPS_PROXY") or os.environ.get("HTTP_PROXY") or _detect_local_proxy()
         if proxy:
             self._proxies = {"https": proxy, "http": proxy}
         # 世界银行真实国家 iso3 代码缓存（首次调用时从 country API 加载）
