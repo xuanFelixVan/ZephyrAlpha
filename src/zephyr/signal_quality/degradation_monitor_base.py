@@ -22,7 +22,9 @@
 # created: "2026-07-06"
 # ---
 
-"""D_SIGQC — Signal Quality Degradation Monitor Base
+"""
+
+D_SIGQC — Signal Quality Degradation Monitor Base
 
 信号质量降级监视器抽象基类（OCP 扩展点 D_SIGQC-DEG）。
 
@@ -34,6 +36,33 @@
 契约对齐：CTR-ERR-003（SignalDegradationWarning 出站）-> D_RISK, D_PORTFOLIO_CORE
 
 当检测到信号质量下降时发布警告——不阻断流水线，但下游应据此降级处理。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 批量合成信号 list[SynthesizedSignal]
+#   fields: 合成信号列表（信号质量降级评估对象）
+#   code: zephyr.shared.contracts.synthesized_signal.SynthesizedSignal
+# 层: 算法
+# - id: A1
+#   name_zh: ① 信号质量降级评估（抽象扩展点）
+#   name_en: DegradationMonitorBase.evaluate
+#   intro: 接收一批合成信号评估质量，返回降级警告——基类仅定义契约，子类实现
+#   desc: 抽象方法（OCP扩展点D_SIGQC-DEG），函数体为...占位；实现者要求不阻断流水线仅发降级通知，degradation_level分MILD/MODERATE/SEVERE
+#   inputs: I1
+#   outputs: SignalDegradationWarning列表
+#   is_break: true
+# 层: 输出
+# - id: O1
+#   name_zh: 信号降级警告列表
+#   name_en: list[SignalDegradationWarning]
+#   intro: 出站降级警告（契约CTR-ERR-003），下游据此降级处理但不阻断流水线
+#   downstream: signal_fundamental / risk / pf_core（[CONSUMERS]；契约CTR-ERR-003 → D_RISK, D_PORTFOLIO_CORE）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| A1
+# A1 --> O1
 """
 
 from __future__ import annotations
