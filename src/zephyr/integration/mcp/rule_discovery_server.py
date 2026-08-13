@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-INF-014 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 无时间触发
-"""RuleDiscoveryServer — MCP Server for rule discovery（#ARCH-GOV-CONVERGENCE-META Phase 3.2b）
+"""
+
+RuleDiscoveryServer — MCP Server for rule discovery（#ARCH-GOV-CONVERGENCE-META Phase 3.2b）
 
 病根2（规则可发现性）治本：64条 trae 规则分散在各 YAML 文件中，AI 无法在施工前
 快速查询"我即将做的操作命中哪些规则"。Phase 3.2a 建立了 rule_ai_perception_index.yaml
@@ -35,6 +37,70 @@ Registered Tools
     Input: operation/scope/domain/gate_id/tags/rule_id（均可选，至少一个）
     Output: matching rules list with rule_id/title/scope/operations/gate_ids/rule_file
     Source: ``docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml``
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: MCP 查询过滤条件
+#   fields: operation/gate_id/scope/domain/tags/rule_id + session_id（均可选）
+#   code: rule_discovery.discover_applicable_rules input_schema
+# - id: I2
+#   name: 规则感知索引 YAML 数据
+#   fields: rules 列表（rule_id/title/scope/domain/operations/gate_ids/tags/rule_file）
+#   code: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
+# 层: 算法
+# - id: A1
+#   name_zh: ① 索引加载与 TTL 缓存
+#   name_en: _load_index
+#   intro: 读感知索引 YAML 并用 30 秒 TTL 缓存减少重复 IO
+#   desc: yaml.safe_load 读 rules 列表；缓存命中直接返回；文件缺失/解析失败返回 None（fail-open）
+#   inputs: I2
+#   outputs: rules 列表 或 None
+#   invariant: 只读不写；缓存 TTL=30s
+# - id: A2
+#   name_zh: ② AND 多条件规则匹配
+#   name_en: _matches_rule
+#   intro: 按操作/门禁/作用域/域/标签多条件过滤出适用规则
+#   desc: 标量匹配(rule_id/scope/domain) + 列表包含(operation∈operations, gate_id∈gate_ids) + tags AND 匹配，全部大小写不敏感；无任何过滤条件时返回前 20 条
+#   inputs: I1 A1
+#   outputs: 命中的 rule 列表
+# - id: A3
+#   name_zh: ③ 规则摘要构建
+#   name_en: _build_rule_summary
+#   intro: 把命中规则裁成轻量摘要防止输出过大
+#   desc: 抽取 rule_id/title/scope/domain/severity/operations/gate_ids/paired_gate_id/rule_file，剔除完整 aliases
+#   inputs: A2
+#   outputs: 规则摘要列表
+# - id: A4
+#   name_zh: ④ 查询审计日志写入
+#   name_en: write_lookup_audit_log
+#   intro: 把本次查询追加写进 session 级 jsonl 审计日志供门禁消费
+#   desc: 写 .runtime/lookup_audit/<session_id>.jsonl（ts/tool/query/result_count/rule_ids）；best-effort 失败仅 warning 不抛异常；session_id 无效则跳过
+#   inputs: I1 A3
+#   outputs: 审计日志条目
+#   invariant: fail-open 不影响查询结果
+# 层: 输出
+# - id: O1
+#   name_zh: 适用规则查询结果
+#   name_en: discover_applicable_rules 返回 dict
+#   intro: results+count+total_rules_in_index+filters+hint，YAML 缺失时返回空结果+error 字段
+#   downstream: AI session 冷启动；CAPABILITY-LOOKUP-REQUIRED gate（Phase 3.4a）
+# - id: O2
+#   name_zh: lookup 审计日志 jsonl
+#   name_en: lookup_audit_log
+#   intro: session 级审计流水，证明 AI 施工前查过规则
+#   downstream: CAPABILITY-LOOKUP-REQUIRED gate（Phase 3.4a）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# A2 --> A3
+# I1 --> A4
+# A3 --> A4
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations
