@@ -16123,11 +16123,21 @@ entries:
     ① guard 正则改 `^merge[( ]`（或检测 2+ parents，与 reference_transaction_guard.sh L125 对齐）；
     ② 网关支持 merge finalize 模式（检测 MERGE_HEAD 时走全量 commit 路径）；
     ③ post-commit 重基线覆盖 RULES_MANIFEST 全量文件（或提供白名单人工重基线通道）。
+    落地后新发现（2026-08-14 第二轮审查实证，问题B）：
+    4. ②的 merge finalize 无法区分"本会话的 merge"与"他人进行中的 merge"——03:27 外来
+       进程在主工作区发起 SELL 分支 merge（MERGE_HEAD 待收尾），sess-batch-cleanup-0814
+       的常规网关提交（a337e0f54c）撞上 MERGE_HEAD，按②逻辑切全量 commit，
+       意外成为该 merge 的收尾人（22 文件 +2571 行），且 merge 机器收尾前回写工作区
+       冲掉了①的首次落地。本次内容结果良性（SELL 42号 MVP 完整入 dev、零冲突残留），
+       但机制上存在"抢收他人 merge"路径。建议治理 Owner 排期：merge 发起者归属校验
+       （如 merge 发起时写 .runtime/merge_owner 状态文件，finalize 时比对 session_id），
+       或网关 finalize 前强制提示 merge 来源。
   impact:
     - 'scripts/governance/git_hooks/post_commit_guard.sh L195 豁免正则修正'
     - 'scripts/git_commit.py / git_commit_gateway.py merge finalize 模式'
     - 'integrity 基线 4 文件重基线（需 reconciler 模式通道）'
-  fix_phase: '①②已落地（2026-08-14 sess-batch-cleanup-0814：guard 改 2+ parents 主判定 + 网关 MERGE_HEAD 检测强制全量 commit）；③网关 post-commit 自动重基线实证自愈 3/4（401387f6cb），剩余 1 文件为 SELL 活跃 WIP 待其提交后自动收敛'
+    - 'merge 发起者归属校验/提示（问题B 抢收盲区，待治理 Owner 排期）'
+  fix_phase: '②已落地（a337e0f54c，网关 MERGE_HEAD 检测强制全量 commit）；①首次落地被外来 merge 冲掉（03:27 事故），同日重打落地（本条登记同步 commit）；③网关 post-commit 自动重基线实证有效（401387f6cb 自愈 3/4），剩余漂移随相关会话提交自动收敛'
   status: decided
   confirmed_by_user: ''
   related_rules: '#ARCH-050（POST-COMMIT-GUARD 原裁定）; #ARCH-GIT-CLEAN-GUARD-FIX'

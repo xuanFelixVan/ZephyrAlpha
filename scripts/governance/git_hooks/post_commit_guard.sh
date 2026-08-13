@@ -191,8 +191,17 @@ if echo "$commit_msg" | grep -q '\[GW:'; then
 fi
 
 # 检查是否是 merge commit（merge commit 豁免）
+# 2026-08-14 修复（#ARCH-MERGE-PATH-GAP-001①）：原仅 '^merge ' subject 正则，
+# 误杀 conventional 格式 'merge(scope): ...'（首版 bm-fill merge commit 被 reset 实证）。
+# 主判定改为 2+ parents（与 reference_transaction_guard.sh L122-127 对齐，语义级），
+# subject 前缀放宽为 '^merge[( :]' 作兜底。
+parent_line=$(git log -1 --format=%P)
+parent_count=$(echo "$parent_line" | wc -w)
+if [ "$parent_count" -ge 2 ]; then
+    exit 0
+fi
 subject=$(git log -1 --format=%s)
-if echo "$subject" | grep -qi '^merge '; then
+if echo "$subject" | grep -qi '^merge[( :]'; then
     exit 0
 fi
 
