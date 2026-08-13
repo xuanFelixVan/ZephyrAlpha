@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_halt_resolver
 # [DOMAIN] D_EX_CORE
 # [DEPENDENCIES] stdlib

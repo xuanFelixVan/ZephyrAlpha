@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort；权重驱动非订单驱动
+# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard；权重驱动非订单驱动；资金预占串行扣减+拒单回滚
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
@@ -14,6 +14,16 @@
 # [TESTS] tests/ex_core/test_trading_session.py
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# [ALGO_FLOW]
+# I1: target_weights(策略目标权重) + positions(持仓快照cash/holdings/total_market_value) + prices(当前价格)
+# I2: risk_limits(风控限额) + config(熔断阈值/资金费率) + CancelRateGuard(撤单率状态)
+# F1: _compute_order_deltas(差额下单: 目标qty-当前qty, 先卖后买排序, 板块整手取整)
+# F2: _is_blocked_by_circuit_breaker(订单层熔断: 单票单笔≤4%/单票≤10笔日/全账户≤50笔日)
+# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚)
+# A2: CancelRateGuard(can_place_order冻结拦截+can_submit_now限频+record_submit计数)
+# A3: _handle_rejection(拒单分类: 涨跌停/资金/持仓不重试, 价格/连接重试1次)
+# O1: submitted_orders(已提交订单) + blocked_orders(已拦截订单) + session_report(统计)
+# [/ALGO_FLOW]
 """D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器
 
 连接 行情→策略→风控→下单→持仓跟踪 的实时编排器，使盘中模拟盘可运行。
@@ -38,6 +48,7 @@ from datetime import datetime, timezone
 from decimal import Decimal
 from typing import Any
 
+from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
 from zephyr.ex_core.order_manager import OrderManager, RejectionAction
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
@@ -102,6 +113,8 @@ class TradingSessionConfig:
     max_single_order_pct: Decimal = Decimal("0.04")  # 单票单笔≤4%账户市值
     max_symbol_orders_per_day: int = 10  # 单票≤10笔/日
     max_total_orders_per_day: int = 50  # 全账户≤50笔/日
+    # 资金预占（40_execution_broker §2.14 决策⑬）
+    estimated_cost_rate: Decimal = Decimal("0.003")  # 千三含佣金+印花+过户+滑点（偏保守多预留）
 
 
 class TradingSession:
@@ -127,6 +140,7 @@ class TradingSession:
         price_provider: PriceProvider,
         order_manager: OrderManager,
         config: TradingSessionConfig,
+        cancel_rate_guard: CancelRateGuard | None = None,
     ) -> None:
         self._broker = broker
         self._strategy = strategy
@@ -135,6 +149,7 @@ class TradingSession:
         self._price_provider = price_provider
         self._order_manager = order_manager
         self._config = config
+        self._cancel_rate_guard = cancel_rate_guard or CancelRateGuard()
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
         self._running = False
@@ -303,25 +318,90 @@ class TradingSession:
         target_weights: dict[str, float],
         positions: PositionSnapshot,
     ) -> list[Order]:
-        """逐单风控验证 + 创建并提交订单。返回已提交订单列表。
+        """逐单风控验证 + 资金预占 + 创建并提交订单。返回已提交订单列表。
 
-        执行顺序：先卖后买——卖出释放 T+0 资金再买入，避免资金不足（error_code=54）。
-        A 股 T+0 资金：当日卖出回笼资金可立即用于当日买入（40_execution_broker §2.6）。
+        执行顺序（40_execution_broker §2.1 架构总览）：
+          盘前检查链（风控）→ 资金预占预校验 → 订单层熔断 → 提交 broker。
+        先卖后买——卖出释放 T+0 资金再买入，避免资金不足（error_code=54）。
+        A 股 T+0 资金：当日卖出回笼资金可立即用于当日买入（§2.6 决策⑤）。
+        资金预占（§2.14 决策⑬）：串行扣减 available_cash，提交前本地拦截，
+        拒单时回滚预占额度。
         """
         # 先卖后买：SELL 排前释放资金，BUY 排后利用释放资金
         # （Python sorted 稳定，保持同侧内相对顺序不变）
         sorted_deltas = sorted(deltas, key=lambda o: 0 if o.side is OrderSide.SELL else 1)
         current_holdings_float = {s: float(q) for s, q in positions.holdings.items()}
         submitted: list[Order] = []
+
+        # ── 资金预占初始化（§2.14 决策⑬）──
+        available_cash = positions.cash
+        pending_release = Decimal("0")  # 待成交卖出单的预估净回笼资金
+        cost_rate = self._config.estimated_cost_rate
+
         for order in sorted_deltas:
+            # ── 盘前检查链 Step 1-3: 风控检查（仓位/行业/杠杆/Kill Switch）──
             target_weight = float(target_weights.get(order.symbol, 0.0))
             if self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float):
                 self._blocked_orders.append(order)
                 continue
-            if self._is_blocked_by_circuit_breaker(order, positions):
+
+            # ── 盘前检查链 Step 4: 撤单率冻结检查（§2.13 决策⑫）──
+            if not self._cancel_rate_guard.can_place_order():
+                _logger.error(
+                    "CancelRateGuard FROZEN: 拒单 symbol=%s cancel_rate=%.2f%%",
+                    order.symbol,
+                    self._cancel_rate_guard.cancel_rate * 100,
+                )
                 self._blocked_orders.append(order)
                 continue
+
+            # ── 资金预占预校验（§2.14 决策⑬）──
+            if order.side is OrderSide.SELL:
+                # 卖出：预占=0，预估回笼累加到 pending_release（T+0 资金可立即用于买入）
+                estimated_release = order.quantity * (order.limit_price or Decimal("0")) * (1 - cost_rate)
+                pending_release += estimated_release
+            else:
+                # 买入：预估占用 = 数量 × 价格 × (1 + 费率)
+                estimated_cost = order.quantity * (order.limit_price or Decimal("0")) * (1 + cost_rate)
+                if estimated_cost > available_cash + pending_release:
+                    _logger.warning(
+                        "资金预占拦截: symbol=%s 预估占用=%s > 可用现金=%s + 待回笼=%s",
+                        order.symbol,
+                        estimated_cost,
+                        available_cash,
+                        pending_release,
+                    )
+                    self._blocked_orders.append(order)
+                    continue
+                # 串行扣减可用资金
+                available_cash -= estimated_cost
+
+            # ── 订单层熔断（§2.8.3）──
+            if self._is_blocked_by_circuit_breaker(order, positions):
+                # 熔断拦截：回滚资金预占
+                if order.side is OrderSide.SELL:
+                    pending_release -= order.quantity * (order.limit_price or Decimal("0")) * (1 - cost_rate)
+                else:
+                    available_cash += order.quantity * (order.limit_price or Decimal("0")) * (1 + cost_rate)
+                self._blocked_orders.append(order)
+                continue
+
+            # ── 提交订单 ──
             try:
+                # 限频检查（§2.13 决策⑫）
+                if not self._cancel_rate_guard.can_submit_now():
+                    _logger.warning(
+                        "CancelRateGuard 限频: symbol=%s 15笔/秒已满，稍后重试",
+                        order.symbol,
+                    )
+                    # 回滚资金预占
+                    if order.side is OrderSide.SELL:
+                        pending_release -= order.quantity * (order.limit_price or Decimal("0")) * (1 - cost_rate)
+                    else:
+                        available_cash += order.quantity * (order.limit_price or Decimal("0")) * (1 + cost_rate)
+                    self._blocked_orders.append(order)
+                    continue
+
                 registered = self._order_manager.create_order(
                     symbol=order.symbol,
                     strategy_id=self._config.strategy_id,
@@ -332,9 +412,15 @@ class TradingSession:
                     broker_id=self._config.broker_id,
                 )
                 self._order_manager.submit_order(registered.order_id, self._config.broker_id)
+                self._cancel_rate_guard.record_submit()
                 self._submitted_orders.append(registered)
                 submitted.append(registered)
             except Exception as exc:  # noqa: BLE001 — 拒单分类处理，不阻断后续订单
+                # 拒单回滚资金预占（§2.14 决策⑬）
+                if order.side is OrderSide.SELL:
+                    pending_release -= order.quantity * (order.limit_price or Decimal("0")) * (1 - cost_rate)
+                else:
+                    available_cash += order.quantity * (order.limit_price or Decimal("0")) * (1 + cost_rate)
                 self._handle_rejection(order, exc)
         return submitted
 
