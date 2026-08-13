@@ -3,6 +3,47 @@
 # [MODULE] zephyr.compliance.behavioral_auditor
 # [DOMAIN] D_COMPLIANCE
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: gov_drift 子模块群 Python模块
+#   fields: 40+个子模块的类/函数符号(absence_manager/drift_engine/drift_models/canary_controller等)
+#   code: zephyr.gov_drift.*
+# 层: 算法
+# - id: A1
+#   name_zh: ① 子模块符号聚合再导出
+#   name_en: from-import重导出块
+#   intro: 把gov_drift几十个治理子模块的公开符号集中到本包命名空间统一导出
+#   desc: 逐模块from zephyr.gov_drift.X import 符号 → 汇总进__all__约270项 → DriftState/DriftEvent用canonical版消歧
+#   inputs: I1
+#   outputs: __all__导出清单
+#   invariant: 检测器注册表不可绕过; DriftType唯一定义源events
+# - id: A2
+#   name_zh: ② 子模块惰性加载兜底
+#   name_en: __getattr__
+#   intro: 访问未显式导入的子模块名时按需importlib加载，避免eager导入开销
+#   desc: importlib.import_module(zephyr.gov_drift.<name>) → 写入globals缓存 → ImportError转AttributeError
+#   inputs: I1
+#   outputs: 子模块对象
+# 层: 输出
+# - id: O1
+#   name_zh: 统一包命名空间 behavioral_auditor
+#   name_en: zephyr.compliance.behavioral_auditor
+#   intro: 对外暴露行为审计/漂移检测全套类与函数的统一入口
+#   invariant: 漂移检测结果不可伪造; 基线不可被污染
+#   downstream: zephyr.integration.runtime_core ; zephyr.security.access_control ; zephyr.infrastructure.pipeline
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# A1 --> O1
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
 """[BLUEPRINT] MOD-INF-033 | docs/03_modules/_cross_layer/behavioral-auditor/blueprint.md
