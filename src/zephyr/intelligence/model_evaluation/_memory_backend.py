@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Backend protocol & shared data classes for the unified memory layer.
 =====================================================
 Extracted from unified_memory_api.py to break the circular dependency:
@@ -31,6 +33,72 @@ This module must NOT import from unified_memory_api.py or vms_memory_backend.py.
 迁移说明 (2026-07-19)：本文件原位于 zephyr.gov_kb.storage._backend_protocol，
 KBG 系统删除时随同 UnifiedMemoryAPI 一起迁移到 intelligence.model_evaluation，
 内容未变。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 记忆写入记录
+#   fields: chunk_id/topic/content/score/written_at/metadata（pydantic 校验，extra=forbid）
+#   code: MemoryRecord L61
+# - id: I2
+#   name: 检索/列表查询请求
+#   fields: query_text/k/topic（query 可按 topic 过滤）
+#   code: query() L115 / list_by_topic() L109
+# 层: 算法
+# - id: A1
+#   name_zh: ① 后端协议契约
+#   name_en: MemoryBackend Protocol
+#   intro: 定义 write/list_by_topic/query/count 四方法签名统一所有记忆后端
+#   desc: runtime_checkable Protocol；为打破 unified_memory_api 与 vms_memory_backend 循环依赖而抽出的公共契约层
+#   inputs: I1 I2
+#   outputs: 统一接口签名
+#   invariant: 签名变更必须同步所有实现方
+# - id: A2
+#   name_zh: ② 内存后端读写与排序
+#   name_en: InMemoryMemoryBackend.write/list_by_topic
+#   intro: 纯 Python dict 兜底后端，测试与降级路径使用
+#   desc: dict+RLock 存储；write 记录写入序号；list_by_topic 按 (written_at, 写入序号) 倒序取 top-k
+#   inputs: I1 A1
+#   outputs: chunk_id / 按时间倒序的记录列表
+# - id: A3
+#   name_zh: ③ 简易分词器
+#   name_en: _simple_tokens
+#   intro: 最小分词：英文数字成词、中文逐字成词
+#   desc: 非字母数字字符切分 ASCII 词；CJK 字符逐字成 token；全小写化
+#   inputs: I2
+#   outputs: token 列表
+# - id: A4
+#   name_zh: ④ 词重叠相似度检索
+#   name_en: InMemoryMemoryBackend.query
+#   intro: 用查询与内容的词集合重叠率当相似度打分检索
+#   desc: score=|q_tokens∩r_tokens|/|q_tokens|（上限 1.0），score≤0 丢弃；可按 topic 过滤；按 score 倒序取 top-k 并重打分
+#   inputs: A2 A3
+#   outputs: 带 score 的 MemoryRecord 列表
+# 层: 输出
+# - id: O1
+#   name_zh: 检索/列表结果记录集
+#   name_en: list[MemoryRecord]
+#   intro: query/list_by_topic 返回的统一记录列表，score∈[0,1]
+#   invariant: score∈[0,1]；top-k 截断
+#   downstream: unified_memory_api；vms_memory_backend（#[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 写入返回 chunk_id
+#   name_en: write 返回 str
+#   intro: 写入成功返回后端唯一 chunk_id 供后续溯源
+#   downstream: unified_memory_api；vms_memory_backend（#[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# I2 --> A3
+# A2 --> A4
+# A3 --> A4
+# A2 --> O1
+# A4 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations
@@ -40,7 +108,7 @@ from typing import Any, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field
 
-__all__ = [
+__all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定且本文件运行时动态append，Final标注不适用
     "InMemoryMemoryBackend",
     "MemoryBackend",
     "MemoryBackendError",
