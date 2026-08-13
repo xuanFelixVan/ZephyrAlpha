@@ -18,6 +18,8 @@
 
 # AI-generated: T-3-11 Agent Health Monitor
 """
+
+
 AgentHealthMonitor · Agent 健康监控（三态 + 5 项 SLO）
 ======================================================
 
@@ -44,6 +46,54 @@ safety_level: M
    - 生成 HealthStatus 供上层决策
 
 零外部依赖：仅 pydantic + 标准库。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: OrchestrationResult 编排结果事件流
+#   fields: latency_ms / success / hallucination / token_used / token_budget
+#   code: zephyr.orchestrator.agent_orchestrator.OrchestrationResult（record L216 消费）
+# - id: I2
+#   name: SLO 阈值配置
+#   fields: 5 项 SLO 硬/软阈值（latency_p99/error_rate/throughput/hallucination_rate/context_utilization）
+#   code: SLOConfig L77-89
+# 层: 算法
+# - id: A1
+#   name_zh: ① 滑动窗口指标聚合
+#   name_en: AgentHealthMonitor.record / evaluate
+#   intro: 用最近 N 次编排结果算出 p99 延迟、错误率、吞吐、幻觉率、上下文利用率
+#   desc: deque(maxlen=window) 收集样本；p99=排序后按 rank 取值；rate/ctx_util=均值；throughput=统计窗口内完成数 ×(60/窗口秒)
+#   inputs: I1
+#   outputs: 5 项 SLO 实测值
+# - id: A2
+#   name_zh: ② 硬软阈值违规判定
+#   name_en: _check_slo_threshold
+#   intro: 逐项 SLO 检查是否越过硬阈值或软阈值并记录违规
+#   desc: 越硬阈值 → 记 hard 违规且 hard_count+1 并提前返回；否则越软阈值 → 记 soft 违规；throughput/context_utilization 需窗口满才判 hard
+#   inputs: A1 I2
+#   outputs: violations 列表 + hard_count
+# - id: A3
+#   name_zh: ③ 三态健康映射
+#   name_en: evaluate 状态判定
+#   intro: 有硬违规判 UNHEALTHY，仅软违规判 DEGRADED，全达标判 HEALTHY
+#   desc: hard_count>0 → UNHEALTHY；violations 非空 → DEGRADED；否则 HEALTHY；结果四舍五入后封装 HealthStatus
+#   inputs: A2
+#   outputs: HealthStatus
+#   invariant: HEALTHY / DEGRADED / UNHEALTHY 三态互斥
+# 层: 输出
+# - id: O1
+#   name_zh: Agent 健康状态报告
+#   name_en: HealthStatus
+#   intro: 三态 + 违规明细 + 5 项实测值 + 样本数，供上层做降级/告警决策
+#   downstream: agent_orchestrator 上层决策（T-3-10 集成；[CONSUMERS] 头未登记 MOD 号）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations
