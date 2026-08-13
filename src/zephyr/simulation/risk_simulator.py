@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_risk_simulator.py
 # [A_module] module_id=MOD-SIM-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Risk Simulator (风控仿真器)
+"""
+
+D_SIMULATION — Risk Simulator (风控仿真器)
 
 VaR(风险价值)模拟 + 回撤模拟 + 熔断模拟。基于收益率序列计算多方法 VaR/CVaR、
 最大回撤及恢复期、熔断触发判定, 供风控评估和压力测试使用。
@@ -23,6 +25,109 @@ VaR(风险价值)模拟 + 回撤模拟 + 熔断模拟。基于收益率序列计
 
 设计真源: depgraph MOD-SIM-003
 蓝图: docs/03_modules/_domain_simulation/risk_simulator/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 收益率序列 returns
+#   fields: 每期收益率 list[float]（空序列/样本<2拒绝）
+#   code: calculate_var(returns) L191
+# - id: I2
+#   name: 风控仿真配置 RiskConfig
+#   fields: VaR置信水平(95%/99%) + 蒙特卡洛路径数10000 + 固定随机种子42 + 年化频率252
+#   code: RiskConfig L60
+# - id: I3
+#   name: 仿真参数
+#   fields: VaR计算方法method(historical/parametric/monte_carlo) + 熔断触发阈值trigger_level(默认-10%)
+#   code: run_full_simulation(method, trigger_level) L408
+# 层: 算法
+# - id: A1
+#   name_zh: ① 历史法VaR
+#   name_en: _historical_var
+#   intro: 用经验分位数直接数尾部损失
+#   desc: 排序收益率 → var=-sorted[floor((1-conf)·n)] → CVaR=尾部均值(正数=损失)
+#   inputs: I1 I2
+#   outputs: VaRResult(VaR/CVaR)
+#   invariant: VaR/CVaR正数=损失
+# - id: A2
+#   name_zh: ② 参数法VaR
+#   name_en: _parametric_var
+#   intro: 假设收益率正态分布，用均值方差推VaR
+#   desc: var=-μ+z·σ（z=Φ⁻¹(conf)，如95%→1.645）；CVaR=-μ+σ·φ(z)/(1-α)；σ=0时退化var=max(0,-μ)
+#   inputs: I1 I2
+#   outputs: VaRResult(VaR/CVaR)
+# - id: A3
+#   name_zh: ③ 蒙特卡洛VaR
+#   name_en: _monte_carlo_var
+#   intro: 拟合正态N(μ,σ)后用固定种子模拟万条路径再算分位数
+#   desc: rng=Random(seed=42) → gauss(μ,σ)×10000路径 → 走历史法分位数 → 改标MONTE_CARLO方法
+#   inputs: I1 I2
+#   outputs: VaRResult(VaR/CVaR)
+#   invariant: 固定seed可复现
+# - id: A4
+#   name_zh: ④ 回撤模拟
+#   name_en: simulate_drawdown
+#   intro: 复利财富指数跟踪峰谷，算最大回撤/持续期/恢复期
+#   desc: wealth逐期×(1+r) → 跟踪峰值 → dd=(wealth-peak)/peak取最小 → 持续期=峰到谷，恢复期=谷后重回峰值期数，当前回撤相对全局峰
+#   inputs: I1
+#   outputs: DrawdownResult
+#   invariant: max_drawdown≤0
+# - id: A5
+#   name_zh: ⑤ 熔断模拟
+#   name_en: simulate_circuit_breaker
+#   intro: 逐点回撤越过阈值即记一次熔断触发（连续段计1次）
+#   desc: 重算逐点回撤序列 → dd≤trigger_level的连续段数=hit_count → triggered=(max_drawdown≤阈值)
+#   inputs: I1 I3 A4
+#   outputs: CircuitBreakerResult
+# - id: A6
+#   name_zh: ⑥ 全量风控仿真编排
+#   name_en: run_full_simulation
+#   intro: 一次跑齐VaR+回撤+熔断并打包结果
+#   desc: calculate_var(按method三选一) + simulate_drawdown + simulate_circuit_breaker → RiskSimulationResult
+#   inputs: I1 I3 A1 A2 A3 A4 A5
+#   outputs: RiskSimulationResult
+# - id: A7
+#   name_zh: ⑦ 审计摘要生成
+#   name_en: audit_summary
+#   intro: 把风控仿真结果格式化成人类可读审计文本
+#   desc: 样本数/方法行 + 各置信水平VaR/CVaR + 回撤4指标 + 熔断状态/阈值/次数
+#   inputs: A6
+#   outputs: 审计摘要字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 全量风控仿真结果 RiskSimulationResult
+#   name_en: RiskSimulationResult
+#   intro: 打包各置信水平VaR/CVaR+回撤+熔断结果的不可变对象
+#   invariant: frozen不可变；VaR/CVaR正数=损失；max_drawdown≤0
+#   downstream: zephyr.simulation.result_analyzer（[CONSUMERS]）
+# - id: O2
+#   name_zh: 风控审计摘要文本
+#   name_en: audit summary str
+#   intro: 人类可读的风控仿真审计报告
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I1 --> A4
+# I1 --> A5
+# I3 --> A5
+# A4 --> A5
+# I1 --> A6
+# I3 --> A6
+# A1 --> A6
+# A2 --> A6
+# A3 --> A6
+# A4 --> A6
+# A5 --> A6
+# A6 --> O1
+# A6 --> A7
+# A7 --> O2
 """
 
 from __future__ import annotations

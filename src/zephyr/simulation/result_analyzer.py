@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_result_analyzer.py
 # [A_module] module_id=MOD-SIM-012 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Simulation Result Analyzer (仿真结果分析器)
+"""
+
+D_SIMULATION — Simulation Result Analyzer (仿真结果分析器)
 
 对多个 SimulationResult(跨场景, 来自 SIM-02)执行聚合统计分析+分布检验+可视化数据准备,
 输出 SimulationAnalysisReport。是仿真流水线分析终点(策略仿真→结果分析)。
@@ -26,6 +28,106 @@
 设计真源: D-SIMULATION-12 "仿真结果分析+统计检验+可视化 | 与D-FRONTEND联动"
 蓝图: docs/03_modules/_domain_simulation/result_analyzer/blueprint.md
 SSoT: depgraph MOD-SIM-012
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 跨场景仿真结果列表 list[SimulationResult]
+#   fields: 各场景equity_curve(时间戳+权益) + total_return + trades_count（来自SIM-02策略仿真器）
+#   code: analyze(results) L219
+# - id: I2
+#   name: 分析配置 AnalysisConfig
+#   fields: 置信水平0.95 + 无风险利率 + 年化因子252 + 直方图10桶 + JB临界值5.99
+#   code: AnalysisConfig L75
+# 层: 特征
+# - id: F1
+#   name_zh: 收益率偏度
+#   name_en: skew
+#   intro: 全场景bar收益率分布的不对称程度
+#   formula: skew=mean(((r-μ)/σ)³)；σ=0时取0
+#   code: result_analyzer.py L410
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 收益率超额峰度
+#   name_en: kurt
+#   intro: 全场景bar收益率分布的厚尾程度（正态=0）
+#   formula: kurt=mean(((r-μ)/σ)⁴)-3；σ=0时取0
+#   code: result_analyzer.py L411
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 单场景指标计算
+#   name_en: _compute_scenario_metrics
+#   intro: 从权益曲线算出单场景7项业绩指标
+#   desc: returns=Δeq/eq[:-1](剔除非有限值) → 年化=(1+total_ret)^(252/bars)-1 → vol=std×√252 → sharpe=(年化-rf)/vol → max_dd=min((eq-峰值)/峰值) → win_rate=mean(returns>0)
+#   inputs: I1 I2
+#   outputs: ScenarioMetrics(7指标)
+# - id: A2
+#   name_zh: ② 跨场景聚合统计
+#   name_en: _aggregate
+#   intro: 对7项指标跨场景算均值/标准差/分位数/置信区间
+#   desc: 每指标取各场景值 → mean/std(ddof=1)/min/max/p5~p95 → CI=mean±z·std/√n（N<2时CI=None）；空列表→空聚合
+#   inputs: A1 I2
+#   outputs: AggregateAnalysis
+#   invariant: 空列表→空聚合；单场景CI退化None
+# - id: A3
+#   name_zh: ③ 收益分布正态性检验
+#   name_en: _analyze_distribution
+#   intro: 汇总全场景收益率做直方图+Jarque-Bera正态检验
+#   desc: 收集所有场景bar收益率 → np.histogram(10桶) → JB=n/6×(S²+K²/4) → is_normal=(JB<5.99)；样本<3返回空分布默认正态
+#   inputs: I1 I2 F1 F2
+#   outputs: DistributionAnalysis
+# - id: A4
+#   name_zh: ④ 可视化数据准备
+#   name_en: _build_visualization
+#   intro: 打包各场景权益曲线集合+指标均值摘要供前端画图
+#   desc: equity_curve_ensemble=各场景[(ts,equity)]列表 + metric_summary=各指标均值dict
+#   inputs: I1 A2
+#   outputs: VisualizationData
+# - id: A5
+#   name_zh: ⑤ 分析摘要生成
+#   name_en: _build_summary
+#   intro: 把聚合与分布结论拼成人类可读摘要
+#   desc: 场景数 + 平均总收益(std) + 95%置信区间 + 平均Sharpe + 正态性结论(JB/偏度)
+#   inputs: A2 A3 I2
+#   outputs: 摘要字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 仿真结果分析报告 SimulationAnalysisReport
+#   name_en: SimulationAnalysisReport
+#   intro: 含跨场景聚合+分布检验+可视化数据+摘要的不可变报告（仿真流水线分析终点）
+#   invariant: 全frozen不可变；不修改输入
+#   downstream: D_FRONTEND可视化 ; 人工审查 ; C-007 AI自治进化闭环（[CONSUMERS]）
+# - id: O2
+#   name_zh: 单场景指标 ScenarioMetrics
+#   name_en: ScenarioMetrics
+#   intro: analyze_single公开API返回的单场景7项业绩指标
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# F1 --> A3
+# F2 --> A3
+# I1 --> A4
+# A2 --> A4
+# A2 --> A5
+# A3 --> A5
+# I2 --> A5
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
+# A1 --> O2
 """
 
 from __future__ import annotations

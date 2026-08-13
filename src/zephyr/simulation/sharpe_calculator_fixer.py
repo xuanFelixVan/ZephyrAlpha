@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_sharpe_calculator_fixer.py
 # [A_module] module_id=MOD-SIM-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Sharpe Calculator Fixer (Sharpe 计算修正器)
+"""
+
+D_SIMULATION — Sharpe Calculator Fixer (Sharpe 计算修正器)
 
 A股场景的 Sharpe 比率修正: 中国10Y国债无风险利率 + 样本量门禁 +
 非正态检测(Jarque-Bera)→Sortino + DSR修正 + 滚动Sharpe + 自动年化。
@@ -23,6 +25,94 @@ A股场景的 Sharpe 比率修正: 中国10Y国债无风险利率 + 样本量门
 
 设计真源: depgraph MOD-SIM-023
 蓝图: docs/03_modules/_domain_simulation/sharpe_calculator_fixer/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 收益率序列 returns（list[float] 每期）
+#   fields: 每期收益率；空序列抛 SimulationError(ZA-SIM-0023)
+#   code: calculate(returns) L178
+# - id: I2
+#   name: Sharpe 修正配置 SharpeConfig
+#   fields: min_samples=60 / periods_per_year=252 / risk_free_rate=0.025/252(中国10Y国债) / jb_critical=5.99 / dsr_threshold=0.95
+#   code: SharpeConfig L62
+# - id: I3
+#   name: 试次数 num_trials（int）
+#   fields: 多重测试次数，传给 DSR 修正
+#   code: calculate(num_trials) L181
+# 层: 算法
+# - id: A1
+#   name_zh: ① 样本量门禁
+#   name_en: min_samples gate
+#   intro: 样本不足 60 直接不算，method=INSUFFICIENT 全 None
+#   desc: n < min_samples → 返回 sharpe/sortino/dsr=None 的 SharpeResult
+#   inputs: I1 I2
+#   outputs: 门禁通过或 INSUFFICIENT 结果
+#   invariant: n<60 时 sharpe=None
+# - id: A2
+#   name_zh: ② Jarque-Bera 非正态检测
+#   name_en: _jarque_bera
+#   intro: 用偏度峰度算 JB 统计量，超 5.99 判定收益分布非正态
+#   desc: JB = n/6 × (γ² + κ²/4)；JB > 5.99(χ²(2) α=0.05) → is_non_normal
+#   inputs: A1 I1
+#   outputs: is_non_normal + skewness/kurtosis/jb_statistic
+# - id: A3
+#   name_zh: ③ 标准 Sharpe 计算
+#   name_en: sharpe calc
+#   intro: 超额收益均值除以标准差，年化乘 √252
+#   desc: sharpe=(mean-rf)/std(ddof=1)；sharpe_annual=sharpe×√periods_per_year；std=0→0
+#   inputs: A2 I1 I2
+#   outputs: sharpe + sharpe_annualized
+# - id: A4
+#   name_zh: ④ Sortino 替代（非正态时）
+#   name_en: _downside_std + sortino
+#   intro: 非正态时用下行标准差替代总波动算 Sortino
+#   desc: downside_std=√(mean(min(0,r-rf)²))；sortino=(mean-rf)/d_std；同样 ×√252 年化
+#   inputs: A2 A3 I1
+#   outputs: sortino + sortino_annualized
+# - id: A5
+#   name_zh: ⑤ DSR 多重测试偏差修正
+#   name_en: DeflatedSharpeCalculator.calculate
+#   intro: 调 MOD-SIM-024 的 DSR 修正试次偏差，失败仅告警跳过
+#   desc: dsr_calc.calculate(returns, num_trials, rf) → dsr；异常降级 dsr=None
+#   inputs: I1 I3 I2
+#   outputs: dsr
+# - id: A6
+#   name_zh: ⑥ 滚动窗口 Sharpe
+#   name_en: rolling_sharpe
+#   intro: 滑窗切片重复跑完整修正流程，窗口不足自动抬到 min_samples
+#   desc: effective_window=max(window,60)；逐窗 returns[i-w:i] 调 calculate
+#   inputs: I1 I2
+#   outputs: list[SharpeResult]（长度=len-w+1）
+# 层: 输出
+# - id: O1
+#   name_zh: Sharpe 修正结果 SharpeResult
+#   name_en: SharpeResult
+#   intro: sharpe/sortino/dsr + 年化 + method + 偏度峰度JB，frozen 不可变
+#   invariant: 样本<60 时 sharpe/sortino/dsr=None
+#   downstream: strategy_simulator MOD-SIM-002；result_analyzer MOD-SIM-012
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I1 --> A2
+# A2 --> A3
+# I1 --> A3
+# I2 --> A3
+# A2 --> A4
+# A3 --> A4
+# I1 --> A4
+# I1 --> A5
+# I3 --> A5
+# I2 --> A5
+# I1 --> A6
+# I2 --> A6
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
+# A6 --> O1
 """
 
 from __future__ import annotations

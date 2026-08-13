@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_deflated_sharpe_calculator.py
 # [A_module] module_id=MOD-SIM-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Deflated Sharpe Ratio Calculator (DSR 计算器)
+"""
+
+D_SIMULATION — Deflated Sharpe Ratio Calculator (DSR 计算器)
 
 多重测试偏差修正的 Sharpe 比率。基于 Bailey & López de Prado (2014) 论文,
 修正回测中"试了 N 次取最好"导致的 Sharpe 虚高。
@@ -23,6 +25,101 @@
 
 设计真源: depgraph MOD-SIM-024
 蓝图: docs/03_modules/_domain_simulation/deflated_sharpe_calculator/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 收益率序列 returns
+#   fields: 每期收益率 list[float]（非年化；空序列/样本<3拒绝）
+#   code: calculate(returns) L241
+# - id: I2
+#   name: 试次数 num_trials
+#   fields: 回测尝试的策略/参数组合数 N（≥1，默认1=无多重测试修正）
+#   code: calculate(num_trials) L244
+# - id: I3
+#   name: DSR配置 DSRConfig
+#   fields: 显著性阈值0.95 + 年化频率252 + 无风险利率rf
+#   code: DSRConfig L46
+# 层: 特征
+# - id: F1
+#   name_zh: 收益率偏度
+#   name_en: gamma
+#   intro: 收益率分布的不对称程度（Fisher-Pearson有偏估计）
+#   formula: γ=m3/m2^1.5，mk=(1/n)Σ(xi-mean)^k；n<3返回0
+#   code: deflated_sharpe_calculator.py L131
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 收益率超额峰度
+#   name_en: kappa
+#   intro: 收益率分布的厚尾程度（超额峰度）
+#   formula: κ=m4/m2²-3；n<4返回0
+#   code: deflated_sharpe_calculator.py L148
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: Sharpe估计量方差
+#   name_en: var_sr
+#   intro: 非正态修正下Sharpe比率估计量的方差
+#   formula: V[SR]=(1-γ·SR+(κ-1)/4·SR²)/(T-1)；T≤1返回0
+#   code: deflated_sharpe_calculator.py L188
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 多重测试期望最大值
+#   name_en: expected_max
+#   intro: 试N次取最好时Sharpe的期望虚高幅度（Euler-Maclaurin近似）
+#   formula: E[max(Z_N)]≈√(2lnN)-(lnπ+lnlnN)/(2√(2lnN))；N≤1返回0
+#   code: deflated_sharpe_calculator.py L164
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① DSR主计算
+#   name_en: DeflatedSharpeCalculator.calculate
+#   intro: 修正"试N次取最好"偏差后的Deflated Sharpe Ratio
+#   desc: SR=(mean-rf)/std → SR年=SR×√252 → SR*=SR/√V[SR]-E[max(Z_N)] → DSR=Φ(SR*)（Φ用math.erf实现）；var_sr≤0时DSR退化为1.0或0.5
+#   inputs: I1 I2 I3 F1 F2 F3 F4
+#   outputs: DSRResult（sharpe/年化sharpe/dsr/偏度/峰度/var_sr/expected_max/is_significant）
+#   invariant: DSR∈(0,1)；样本<3或N<1抛SimulationError(ZA-SIM-0024)
+# - id: A2
+#   name_zh: ② 滚动窗口DSR趋势追踪
+#   name_en: DeflatedSharpeCalculator.track_trend
+#   intro: 每个滚动窗口算一次DSR，形成DSR趋势序列
+#   desc: 从window-1位置起逐位取前window期收益率调calculate，收集DSRTrendPoint(index,dsr,年化sharpe)
+#   inputs: I1 I2 A1
+#   outputs: DSRTrendPoint列表（长度=len-window+1）
+# 层: 输出
+# - id: O1
+#   name_zh: DSR计算结果 DSRResult
+#   name_en: DSRResult
+#   intro: 含DSR值/显著性判断/全套中间统计量的不可变结果
+#   invariant: frozen不可变；DSR∈(0,1)
+#   downstream: zephyr.simulation.sharpe_calculator_fixer; zephyr.simulation.result_analyzer（[CONSUMERS]）
+# - id: O2
+#   name_zh: DSR趋势点序列
+#   name_en: list[DSRTrendPoint]
+#   intro: 滚动窗口DSR+年化Sharpe的时间序列，用于趋势追踪
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 -.->|断点| F3
+# I2 -.->|断点| F4
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# F4 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# A1 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

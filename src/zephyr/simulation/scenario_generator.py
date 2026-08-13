@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_scenario_generator.py
 # [A_module] module_id=MOD-SIM-005 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Scenario Generator (场景生成器)
+"""
+
+D_SIMULATION — Scenario Generator (场景生成器)
 
 生成 what-if 市场场景(SimulationScenario), 供 SIM-01/02/04/06 消费。
 三种模式: 蒙特卡洛(GBM) / 历史场景(切片) / 自定义场景(冲击叠加)。
@@ -26,6 +28,87 @@
 设计真源: D-SIMULATION-05 "场景生成器+蒙特卡洛+历史场景+自定义场景 | Monte Carlo"
 蓝图: docs/03_modules/_domain_simulation/scenario_generator/blueprint.md
 SSoT: depgraph MOD-SIM-005
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 蒙特卡洛参数 MonteCarloParams
+#   fields: 起始价/n_bars + 年化漂移率drift + 年化波动率volatility + 时间步dt=1/252 + seed=42 + symbol
+#   code: MonteCarloParams L89
+# - id: I2
+#   name: 历史场景参数 HistoricalParams
+#   fields: 真实OHLCV源数据source_data(DataFrame需含open/high/low/close/volume) + start_idx + n_bars(0=到末尾)
+#   code: HistoricalParams L123
+# - id: I3
+#   name: 自定义场景参数 CustomParams
+#   fields: 起始价/n_bars + 冲击序列shocks[(bar_idx,pct)] + 每期线性趋势trend + seed=42
+#   code: CustomParams L158
+# - id: I4
+#   name: 生成器配置 ScenarioGeneratorConfig
+#   fields: 默认seed=42 + 默认成交量10000
+#   code: ScenarioGeneratorConfig L190
+# 层: 算法
+# - id: A1
+#   name_zh: ① 蒙特卡洛GBM路径生成
+#   name_en: generate_monte_carlo
+#   intro: 用几何布朗运动生成随机价格路径（同seed可复现）
+#   desc: Z~N(0,1) → log_ret=(drift-0.5vol²)dt+vol√dt·Z → S_t=S_{t-1}·exp(log_ret)逐bar复利 → close序列
+#   inputs: I1 A4
+#   outputs: 蒙特卡洛场景（含参数快照）
+#   invariant: 同seed可复现
+# - id: A2
+#   name_zh: ② 历史场景切片
+#   name_en: generate_historical
+#   intro: 从真实历史数据切一段封装成可重放场景
+#   desc: iloc[start_idx:end].copy()切片 → 重建RangeIndex(0..n) → 封装（不修改源数据）
+#   inputs: I2
+#   outputs: 历史场景
+#   invariant: 历史场景不修改源数据
+# - id: A3
+#   name_zh: ③ 自定义冲击场景生成
+#   name_en: generate_custom
+#   intro: 基础随机游走+线性趋势+指定bar叠加百分比冲击的确定性what-if场景
+#   desc: noise=0.1%随机游走 → ret=trend+noise+shock_map[i]（命中冲击bar叠加pct） → price×=(1+ret)逐bar → close序列
+#   inputs: I3 A4
+#   outputs: 自定义场景（含参数快照）
+# - id: A4
+#   name_zh: ④ OHLCV数据框构建
+#   name_en: _build_ohlcv
+#   intro: 把close序列包装成OHLCV五列DataFrame
+#   desc: open=前收(close滚动1位) → high=max(open,close)×1.001 → low=min(open,close)×0.999 → volume=常数10000
+#   inputs: I4
+#   outputs: OHLCV market_data
+# - id: A5
+#   name_zh: ⑤ 场景类型分发
+#   name_en: generate
+#   intro: 按ScenarioType把参数对象分发到对应生成方法
+#   desc: MONTE_CARLO→A1 / HISTORICAL→A2 / CUSTOM→A3；参数类型不匹配抛ScenarioGenerationError(ZA-SIM-0005)
+#   inputs: I1 I2 I3
+#   outputs: 分发到A1/A2/A3
+# 层: 输出
+# - id: O1
+#   name_zh: 仿真场景 SimulationScenario
+#   name_en: SimulationScenario
+#   intro: 封装生成的OHLCV市场数据+元数据+参数快照的不可变Aggregate（仿真流水线起点）
+#   invariant: 全frozen不可变；params快照可精确复现
+#   downstream: MOD-SIM-002(strategy_simulator) ; SIM-01/SIM-04/SIM-06（[CONSUMERS]）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A5
+# I2 --> A5
+# I3 --> A5
+# A5 --> A1
+# A5 --> A2
+# A5 --> A3
+# I1 --> A1
+# I3 --> A3
+# I4 --> A4
+# A1 --> A4
+# A3 --> A4
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

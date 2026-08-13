@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_look_ahead_bias_detector.py
 # [A_module] module_id=MOD-SIM-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Look-Ahead Bias Detector (未来函数风险检测器)
+"""
+
+D_SIMULATION — Look-Ahead Bias Detector (未来函数风险检测器)
 
 检测回测中的 look-ahead bias(前瞻偏差), 确保所有判断仅基于当时已知数据。
 扫描特征矩阵(列名/尾部NaN/标签泄露/时间戳单调性) + 截断重算验证特征函数,
@@ -24,6 +26,75 @@
 
 设计真源: depgraph MOD-SIM-022
 蓝图: docs/03_modules/_domain_simulation/look_ahead_bias_detector/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 特征矩阵 df（pandas DataFrame）
+#   fields: 特征列(数值) + 标签列label_column + 时间戳列timestamp_column
+#   code: scan(df, feature_columns, label_column, timestamp_column) L191
+# - id: I2
+#   name: 特征函数与完整数据
+#   fields: func(接受list返回可索引序列) + data完整输入数据
+#   code: validate_function(func, data) L393
+# - id: I3
+#   name: 检测器配置 DetectorConfig
+#   fields: 前瞻列名模式(_fwd/_forward/_future/_lead/_next) + 目标列名模式(_target/_label/_y) + 截断采样点10 + 容差1e-9
+#   code: DetectorConfig L77
+# 层: 算法
+# - id: A1
+#   name_zh: ① 特征矩阵扫描
+#   name_en: LookAheadBiasDetector.scan
+#   intro: 对特征DataFrame做4项静态扫描揪出疑似未来数据
+#   desc: ①列名子串匹配前瞻/目标模式(MEDIUM/HIGH) ②标签列混入特征列=标签泄露(CRITICAL) ③尾部连续NaN且前部干净=疑似shift(-K)前瞻窗口(HIGH) ④时间戳非严格单调/重复(MEDIUM)
+#   inputs: I1 I3
+#   outputs: BiasIssue清单
+# - id: A2
+#   name_zh: ② 截断重算验证（金标准）
+#   name_en: validate_function
+#   intro: 用截断数据重算特征函数，与全样本值不一致即证明用了未来数据
+#   desc: 自动均匀采样测试点 → 逐点截断data[:idx+1]重算 → |全样本值-截断值|>容差1e-9即报TRUNCATION_MISMATCH(CRITICAL)，一处不一致即停
+#   inputs: I2 I3
+#   outputs: BiasIssue清单
+# - id: A3
+#   name_zh: ③ 检测结果汇总
+#   name_en: _build_result
+#   intro: 偏差清单按严重度降序排序并统计出不可变结果
+#   desc: 按CRITICAL>HIGH>MEDIUM>LOW排序 → 统计total/critical/max_severity → is_clean=(总数==0)
+#   inputs: A1 A2
+#   outputs: DetectionResult
+#   invariant: issues按严重度降序；is_clean==(total_issues==0)
+# - id: A4
+#   name_zh: ④ 审计摘要生成
+#   name_en: audit_summary
+#   intro: 把检测结果格式化成PASS/FAIL结论+逐条偏差证据的文本
+#   desc: 结论行+统计行+按严重度降序的偏差清单(类型/列/描述/证据)
+#   inputs: A3
+#   outputs: 审计摘要字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 前瞻偏差检测结果 DetectionResult
+#   name_en: DetectionResult
+#   intro: 含排序后偏差清单/是否干净/CRITICAL计数/最高严重度的不可变结果
+#   invariant: frozen不可变；is_clean==(total_issues==0)
+#   downstream: zephyr.simulation.strategy_simulator; zephyr.simulation.result_analyzer（[CONSUMERS]）
+# - id: O2
+#   name_zh: 审计摘要文本
+#   name_en: audit summary str
+#   intro: 人类可读的检测审计报告（结论+统计+证据清单）
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# I2 --> A2
+# I3 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> O1
+# A3 --> A4
+# A4 --> O2
 """
 
 from __future__ import annotations

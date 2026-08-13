@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_strategy_simulator.py
 # [A_module] module_id=MOD-SIM-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Strategy Simulator (策略仿真器/策略沙箱)
+"""
+
+D_SIMULATION — Strategy Simulator (策略仿真器/策略沙箱)
 
 在隔离沙箱中对模拟市场数据运行注入的策略, 仿真信号生成(L2)+组合构建(L3),
 产出 SimulationResult 供 SIM-012 结果分析器消费。
@@ -26,6 +28,81 @@
 设计真源: D-SIMULATION-02 "策略仿真器+策略沙箱+信号模拟+组合模拟" + 决策5 "SIM-02(L2+L3)"
 蓝图: docs/03_modules/_domain_simulation/strategy_simulator/blueprint.md
 SSoT: depgraph MOD-SIM-002
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模拟市场数据 market_data（OHLCV DataFrame）
+#   fields: 必需 open/close 列；单标的 date-indexed 或多标的 MultiIndex [symbol, date]
+#   code: run(market_data) 参数 L241
+# - id: I2
+#   name: 策略规格 StrategySpec（注入 signal_fn）
+#   fields: signal_fn: Callable[[SignalContext], list[Signal]]，策略决策由调用方注入
+#   code: StrategySpec L144
+# - id: I3
+#   name: 仿真配置 StrategySimulatorConfig
+#   fields: initial_capital / commission_rate万三 / min_commission5元 / slippage1bp / allow_short
+#   code: StrategySimulatorConfig L74
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验
+#   name_en: _validate
+#   intro: 检查 market_data 是 DataFrame、含 open/close 列、signal_fn 可调用
+#   desc: 非DataFrame/缺列/不可调用 → 抛 StrategySimulationError(ZA-SIM-0002)
+#   inputs: I1 I2
+#   outputs: 校验通过或异常
+# - id: A2
+#   name_zh: ② 标的切分与时间线并集
+#   name_en: _split_by_symbol + _build_timeline
+#   intro: 把多标的数据拆开，取全部标的的时间并集作为统一仿真时间线
+#   desc: MultiIndex 按 level0 groupby 拆分；timestamps=各标的索引并集排序
+#   inputs: I1
+#   outputs: bars列表 + timeline
+# - id: A3
+#   name_zh: ③ 逐bar PIT 信号调度主循环
+#   name_en: StrategySimulator.run
+#   intro: 逐 bar 构造无前瞻窗口调 signal_fn 生成信号，异常降级为空信号
+#   desc: market_window=data.iloc[:i]（PIT无前瞻）；signal_fn 抛异常仅告警
+#   inputs: A2 I2
+#   outputs: signal_log + 上下文 SignalContext
+#   invariant: signal_fn 只见 bar i 之前数据
+# - id: A4
+#   name_zh: ④ 信号撮合执行
+#   name_en: _execute_signal
+#   intro: 在 bar i 开盘价成交，BUY 按目标权重加仓、SELL 截断持仓，扣滑点佣金
+#   desc: exec_price=open×(1±slippage)；BUY目标量=w×equity/exec_price只加仓；资金不足按可用现金缩仓；佣金=max(rate×额, min)；禁做空SELL截断到持仓
+#   inputs: A3 I1 I3
+#   outputs: trade_log + 更新持仓/现金
+#   invariant: 禁做空时 SELL 量 ≤ 当前持仓
+# - id: A5
+#   name_zh: ⑤ 收盘盯市盈亏
+#   name_en: _mark_positions
+#   intro: 用每 bar 收盘价标记持仓市值，追加权益曲线点
+#   desc: positions_value=Σ holdings×close；total_equity=cash+positions_value；total_return=(final-initial)/initial
+#   inputs: A4 I1
+#   outputs: equity_curve + final_equity/total_return
+# 层: 输出
+# - id: O1
+#   name_zh: 策略仿真结果 SimulationResult
+#   name_en: SimulationResult
+#   intro: 权益曲线+成交日志+信号日志+汇总（总收益/交易数/仿真bar数），frozen 不可变
+#   invariant: 空单bar→仅初始资金 total_return=0
+#   downstream: 结果分析器 MOD-SIM-012
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# A2 --> A3
+# I2 --> A3
+# A3 --> A4
+# I1 --> A4
+# I3 --> A4
+# A4 --> A5
+# I1 --> A5
+# A5 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

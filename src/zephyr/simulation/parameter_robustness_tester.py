@@ -14,7 +14,9 @@
 # [TESTS] tests/simulation/test_parameter_robustness_tester.py
 # [A_module] module_id=MOD-SIM-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_SIMULATION — Parameter Robustness Tester (参数鲁棒性测试器)
+"""
+
+D_SIMULATION — Parameter Robustness Tester (参数鲁棒性测试器)
 
 寻找参数**稳定区间**而非最优值, 输出敏感性曲线 + 扰动测试 + 稳定区间标注 +
 过拟合风险评估。核心思想: 鲁棒参数在较宽范围内表现稳定, 过拟合参数仅在最优点
@@ -24,6 +26,101 @@
 
 设计真源: depgraph MOD-SIM-021
 蓝图: docs/03_modules/_domain_simulation/parameter_robustness_tester/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 目标函数 objective_func
+#   fields: 接受参数值返回目标值(如Sharpe，越大越好)的回调
+#   code: test_parameter(objective_func) L216
+# - id: I2
+#   name: 参数测试配置
+#   fields: 参数名param_name + 待测参数值序列param_values(≥2个) + 基准值baseline/baseline_value
+#   code: test_parameter(param_name, param_values, baseline) L217
+# - id: I3
+#   name: 鲁棒性配置 RobustnessConfig
+#   fields: 稳定阈值比0.9 + 低风险≥0.5/高风险<0.2 + 默认扰动±5%/±10% + 扰动稳定阈值0.1
+#   code: RobustnessConfig L57
+# 层: 算法
+# - id: A1
+#   name_zh: ① 敏感性曲线扫描
+#   name_en: test_parameter
+#   intro: 逐参数值跑目标函数，得到敏感性曲线和最优点
+#   desc: 各param_value调objective_func → ParameterPoint序列 → 最优点(argmax) + 总范围(max-min) + 目标值std(ddof=1)
+#   inputs: I1 I2
+#   outputs: 敏感性曲线points + 最优点 + total_range
+# - id: A2
+#   name_zh: ② 稳定区间检测
+#   name_en: _find_stable_region
+#   intro: 找目标值≥基准90%的最长连续参数区间（宽峰=鲁棒）
+#   desc: 按参数值排序 → 标记objective≥baseline×0.9 → 最长连续True run为稳定区间 → stability_ratio=width/total_range钳到[0,1]；无稳定点→None
+#   inputs: A1 I3
+#   outputs: StableRegion + stability_ratio
+#   invariant: stability_ratio∈[0,1]；无稳定区间时stable_region=None
+# - id: A3
+#   name_zh: ③ 过拟合风险分级
+#   name_en: _classify_risk
+#   intro: 稳定性比率越高风险越低，窄峰=过拟合高风险
+#   desc: ratio≥0.5→LOW；ratio<0.2→HIGH；其余→MEDIUM
+#   inputs: A2 I3
+#   outputs: OverfitRisk等级
+# - id: A4
+#   name_zh: ④ 扰动测试
+#   name_en: perturb_parameter
+#   intro: 对基准参数施加±5%/±10%扰动，量目标值最大退化幅度
+#   desc: 基准值×(1+ratio)逐扰动跑目标函数 → max_degradation=max|base-obj|/|base| → <0.1判稳定；baseline=0拒绝
+#   inputs: I1 I2 I3
+#   outputs: PerturbationResult
+# - id: A5
+#   name_zh: ⑤ 多参数汇总评估
+#   name_en: assess
+#   intro: 多参数稳定性取平均、总体风险取最差，定整体是否鲁棒
+#   desc: overall_stability=mean(stability_ratio) → overall_risk=按LOW<MEDIUM<HIGH取最高 → is_robust=(总体风险≠HIGH)
+#   inputs: A1
+#   outputs: RobustnessReport
+# - id: A6
+#   name_zh: ⑥ 审计摘要生成
+#   name_en: audit_summary
+#   intro: 输出PASS/FAIL结论+各参数稳定区间明细的审计文本
+#   desc: 结论行 + 总体稳定性/风险 + 逐参数ratio/risk/optimal/稳定区间
+#   inputs: A5
+#   outputs: 审计摘要字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 参数敏感性结果 ParameterSensitivity
+#   name_en: ParameterSensitivity
+#   intro: 单参数敏感性曲线+最优点+稳定区间+稳定性比率+过拟合风险
+#   invariant: frozen不可变；stability_ratio∈[0,1]
+#   downstream: zephyr.simulation.strategy_simulator（[CONSUMERS]）
+# - id: O2
+#   name_zh: 扰动测试结果 PerturbationResult
+#   name_en: PerturbationResult
+#   intro: 基准值+各扰动目标值+最大退化比例+是否稳定
+#   downstream: zephyr.simulation.strategy_simulator（[CONSUMERS]）
+# - id: O3
+#   name_zh: 鲁棒性汇总报告与审计摘要
+#   name_en: RobustnessReport / audit summary
+#   intro: 多参数总体稳定性+总体过拟合风险+是否鲁棒，附人类可读审计摘要
+#   downstream: zephyr.simulation.strategy_simulator（[CONSUMERS]）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I3 --> A2
+# A2 --> A3
+# I3 --> A3
+# I1 --> A4
+# I2 --> A4
+# I3 --> A4
+# A1 --> A5
+# A5 --> A6
+# A1 --> O1
+# A3 --> O1
+# A4 --> O2
+# A5 --> O3
+# A6 --> O3
 """
 
 from __future__ import annotations
