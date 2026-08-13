@@ -881,6 +881,19 @@ class GitCommitGateway:
         except ImportError as e:
             logger.warning("metric_count_drift_reconciler not registered: %s", e)
 
+        # 注册 ALGO_FLOW 标记 ↔ 翻译真源漂移检测 reconciler（MOD-algo_flow_translation_drift，#ARCH-69，2026-08-13 算法地图落地遗留问题1）
+        # 校验 src/zephyr 模块 docstring ALGO_FLOW 标记 name_zh/intro 与 factor_registry/mtr algo_submodules 一致
+        # 漂移时 warn 不阻断（翻译对齐方向需人工决策），priority=240 晚于 REQUIREMENTS-VERSION-SYNC(230)
+        try:
+            import sys as _sys
+            _doc_sync_dir = str(self.project_root / "scripts" / "governance" / "d8_doc_sync")
+            if _doc_sync_dir not in _sys.path:
+                _sys.path.insert(0, _doc_sync_dir)
+            from algo_flow_translation_reconciler import make_algo_flow_translation_reconciler
+            self._reconciliation_registry.register(make_algo_flow_translation_reconciler(self.project_root))
+        except ImportError as e:
+            logger.warning("algo_flow_translation_reconciler not registered: %s", e)
+
     # ------------------------------------------------------------------
     # 公开 API
     # ------------------------------------------------------------------

@@ -128,6 +128,29 @@ _STATIC_MANIFEST: list[dict] = [
         "critical": True,
         "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）",
     },
+    # 算法地图核心四件套入保护（2026-08-13，#ARCH-69 落地遗留问题2）——
+    # ALGO_FLOW 解析/渲染是 08_algorithm_overview 全景图唯一推导真源，篡改/误改
+    # 会直接污染 515 模块的算法流程图；tests/ 两文件是解析器行为锚点。
+    {
+        "path": "scripts/governance/_shared/code_algorithm_extractor.py",
+        "critical": True,
+        "desc": "ALGO_FLOW 标记解析器（parse_algo_flow/_strip_algo_flow_block，§4.16 全景图推导真源）",
+    },
+    {
+        "path": "scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py",
+        "critical": True,
+        "desc": "算法全景图生成器（render_algo_flow_mermaid/_render_module_card_with_flow，Mermaid 推导流程图）",
+    },
+    {
+        "path": "tests/governance/generators/test_generate_module_algorithm_overview.py",
+        "critical": False,
+        "desc": "算法全景图生成器测试锚点（行为契约防回归）",
+    },
+    {
+        "path": "tests/governance/shared/test_code_algorithm_extractor.py",
+        "critical": False,
+        "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）",
+    },
 ]
 
 # 动态条目：commit_gates/*.py 全量自动加载（治本3，防漏登）。

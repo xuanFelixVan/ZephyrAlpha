@@ -15876,3 +15876,30 @@ entries:
   related_rules: 'trae_035; trae_056; trae_080; AI_review_instructions; 65 号; 66 号'
   created: '2026-08-12'
   last_updated: '2026-08-12'
+
+# --- #ARCH-69: ALGO_FLOW 标记 ↔ 翻译真源双真源漂移检测 reconciler（算法地图落地遗留问题1）---
+- issue_id: '#ARCH-69'
+  title: ALGO_FLOW 标记 name_zh/intro 与 factor_registry/module_translation_registry 翻译真源的双真源漂移检测（post-commit reconciler，warn-only）
+  severity: P1高
+  category: governance
+  adjudication: |-
+    背景：算法全景图 ALGO_FLOW 全量落地（515 模块/417 运营态，#ARCH-68）后，name_zh/intro
+    存在双真源——代码 docstring 标记 vs YAML 翻译注册表（factor_registry.name_zh/alpha_source
+    + mtr.algo_submodules.name_zh/plain_zh）。algo_flow_translation_sync.py 只做"只回填空缺"
+    一次性同步，代码侧改标记后 YAML 不更新，静默漂移致全景图与注册表显示不一致。
+    裁定：建立 algo_flow_translation_reconciler.py（d8_doc_sync，priority=240，
+    gate_id=GATE-ALGO-FLOW-TRANSLATION-DRIFT），post-commit 检测漂移报 warn 不 auto-fix
+    （对齐方向需人工决策：代码为准改 YAML，或 YAML 为准改 docstring）。
+    指标层不对比（technical_indicator_registry 已升级 REG-IND-001 手工 SSoT，sync 已跳过覆写）。
+    长期方向：收敛单真源+派生缓存（后续立项，本议题只管漂移检测兜底）。
+  impact:
+    - 'scripts/governance/d8_doc_sync/algo_flow_translation_reconciler.py（新建，MOD-algo_flow_translation_drift）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册 GATE-ALGO-FLOW-TRANSLATION-DRIFT，priority=240）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（algo_flow_parse/algo_flow_mermaid_render/algo_flow_translation_drift 三 capability + creation_token）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml（plain_zh 条目）'
+    - 'scripts/governance/meta/validate_rules_integrity.py（算法地图 4 核心文件入 golden hash 保护清单）'
+  fix_phase: '已施工（reconciler 落盘+gateway 注册，warn-only 运行）'
+  status: decided
+  related_rules: '#ARCH-68'
+  created: '2026-08-13'
+  last_updated: '2026-08-13'

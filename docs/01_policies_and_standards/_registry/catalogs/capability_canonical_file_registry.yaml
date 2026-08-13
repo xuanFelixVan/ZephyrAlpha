@@ -5913,6 +5913,56 @@ capabilities:
       解决发现性：新 AI 搜 "技术指标/KDJ/MACD/RSI/technical_indicator" 可定位真源。
       解决防重建：check_file_canonical() 反查。
 
+  # --------------------------------------------------------------------------
+  - capability_id: algo_flow_parse
+    canonical_override: scripts/governance/_shared/code_algorithm_extractor.py
+    aliases:
+      - parse_algo_flow
+      - _strip_algo_flow_block
+      - AlgoFlowData
+      - AlgoFlowNode
+      - code_algorithm_extractor
+    description: >-
+      ALGO_FLOW 标记解析能力（§4.16，#ARCH-68/69 算法地图）。parse_algo_flow() 解析
+      module docstring 的 # [ALGO_FLOW] 块为 AlgoFlowData（节点+边，L592）；
+      _strip_algo_flow_block() 把标记块（含边段）整块剥离防止泄漏进文字字段（L283）。
+      canonical = scripts/governance/_shared/code_algorithm_extractor.py（scripts/ 不在
+      auto 派生扫描范围，用 canonical_override 显式指定）。
+      解决发现性：新 AI 搜 "parse_algo_flow/ALGO_FLOW 解析/算法流程标记" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+
+  # --------------------------------------------------------------------------
+  - capability_id: algo_flow_mermaid_render
+    canonical_override: scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py
+    aliases:
+      - render_algo_flow_mermaid
+      - _render_module_card_with_flow
+      - generate_module_algorithm_overview
+    description: >-
+      ALGO_FLOW → Mermaid 推导流程图渲染能力（§4.14/4.15/4.16，#ARCH-68）。
+      render_algo_flow_mermaid() 把 AlgoFlowData 渲染为 Mermaid flowchart（断点红色虚线，
+      节点中文名+一句话简介，L1316）；_render_module_card_with_flow() 生成含流程图的
+      模块卡片（L1371）。canonical = scripts/governance/d5_architecture/generators/
+      generate_module_algorithm_overview.py（scripts/ 用 canonical_override 显式指定）。
+      解决发现性：新 AI 搜 "render_algo_flow_mermaid/算法全景图/算法流程图" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+
+  # --------------------------------------------------------------------------
+  - capability_id: algo_flow_translation_drift
+    canonical_override: scripts/governance/d8_doc_sync/algo_flow_translation_reconciler.py
+    aliases:
+      - make_algo_flow_translation_reconciler
+      - algo_flow_translation_reconciler
+      - GATE-ALGO-FLOW-TRANSLATION-DRIFT
+    description: >-
+      ALGO_FLOW 标记 ↔ 翻译真源漂移检测 reconciler（§4.16.4，#ARCH-69，2026-08-13）。
+      post-commit 触发，对比代码 docstring 标记 name_zh/intro 与 factor_registry.yaml
+      （name_zh/alpha_source）+ module_translation_registry.yaml algo_submodules
+      （name_zh/plain_zh），漂移报 warn 不 auto-fix（对齐方向需人工决策）。
+      canonical = scripts/governance/d8_doc_sync/algo_flow_translation_reconciler.py。
+      解决发现性：新 AI 搜 "algo_flow 翻译漂移/双真源漂移/翻译真源校验" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -8574,6 +8624,34 @@ creation_tokens:
     token: "auto-reg-chart-pattern-20260813"
     created_by: "session-AI-REG-PAT-001"
     capability: "business_registry_construction"
+
+  # --- ALGO_FLOW 翻译漂移 reconciler（2026-08-13，#ARCH-69 算法地图落地遗留问题1）---
+  - file: "scripts/governance/d8_doc_sync/algo_flow_translation_reconciler.py"
+    token: "auto-algo-flow-translation-drift-20260813"
+    created_by: "sess-algoflow-legacy-0813-k3m"
+    capability: "algo_flow_translation_drift"
+
+  # --- BUY 41号买入流 5 模块蓝图回填（2026-08-13，遗留#29，AI-SOP-001 统筹补建）---
+  - file: "docs/03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md"
+    token: "auto-buy-pa006-blueprint-20260813"
+    created_by: "session-AI-SOP-001"
+    capability: "buy_flow_batched_entry"
+  - file: "docs/03_modules/_domain_trading/trigger_registry/blueprint.md"
+    token: "auto-buy-trig001-blueprint-20260813"
+    created_by: "session-AI-SOP-001"
+    capability: "trigger_list_registry"
+  - file: "docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md"
+    token: "auto-buy-plan001-blueprint-20260813"
+    created_by: "session-AI-SOP-001"
+    capability: "tomorrow_plan_engine"
+  - file: "docs/03_modules/_domain_plan_engine/premarket_constraint_loader/blueprint.md"
+    token: "auto-buy-plan002-blueprint-20260813"
+    created_by: "session-AI-SOP-001"
+    capability: "tomorrow_plan_engine"
+  - file: "docs/03_modules/_domain_plan_engine/closing_session_decision/blueprint.md"
+    token: "auto-buy-plan003-blueprint-20260813"
+    created_by: "session-AI-SOP-001"
+    capability: "tomorrow_plan_engine"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
