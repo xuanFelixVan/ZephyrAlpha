@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-RK-08 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_RISK — Liquidity Monitor (MOD-RK-08)
+"""
+
+D_RISK — Liquidity Monitor (MOD-RK-08)
 
 流动性监控器——计算 Amihud 非流动性指标 + 成交量萎缩比率，产出
 LiquidityMetrics。属 A 类基础设施（纯机制零参数）。
@@ -39,6 +41,77 @@ CTR 契约:
   生产者 — LiquidityMetrics (CTR-P1-018)
 
 SSoT: depgraph MOD-RK-08 | blueprint.md §3 核心规则
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: OHLCV行情数据 DataFrame
+#   fields: 需close列+volume或amount列(优先amount成交额, 元) CTR-006标准化行情
+#   code: assess() ohlcv L246 / _extract_ohlcv L392-416
+# - id: I2
+#   name: 买卖价差 浮点数可选
+#   fields: bid_ask_spread外部提供, 仅透出不参与is_illiquid判定
+#   code: assess() bid_ask_spread L247
+# - id: I3
+#   name: 阈值窗口参数 配置
+#   fields: amihud_threshold默认1e-8 + volume_shrinkage_threshold默认0.5 + window默认20交易日
+#   code: __init__() L122-130
+# 层: 特征
+# - id: F1
+#   name_zh: Amihud非流动性
+#   name_en: amihud_illiq
+#   intro: 单位成交额推动的收益幅度, 越大越不流动
+#   formula: r_d=close.pct_change; ILLIQ_d=|r_d|/V_d(剔零成交额); ILLIQ=tail(N).mean
+#   code: liquidity_monitor.py L164-189
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 成交量萎缩比率
+#   name_en: volume_shrinkage_ratio
+#   intro: 最新成交额相对前N日均量缩了多少
+#   formula: V_ratio=V_t/MA(V[:-1].tail(N)); <1=萎缩 >1=放量; 数据<2点→1.0
+#   code: liquidity_monitor.py L222-239
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 流动性综合评估
+#   name_en: LiquidityMonitor.assess
+#   intro: Amihud超阈值或成交量萎缩即判非流动性恶化
+#   desc: is_illiquid=amihud>amihud_threshold OR shrinkage<shrinkage_threshold; 数据<2点WARNING并返回零值快照(不判定)
+#   inputs: I1 I2 I3 F1 F2
+#   outputs: LiquidityMetrics快照
+#   invariant: is_illiquid=Amihud超阈值 OR 成交量萎缩
+# - id: A2
+#   name_zh: ② 风控检查结果转换
+#   name_en: to_risk_check_result
+#   intro: 流动性快照转RiskCheckResult供编排器聚合
+#   desc: passed=!is_illiquid; limit=amihud_threshold; actual=amihud_illiq; severity非流动=HALT否则info
+#   inputs: A1
+#   outputs: RiskCheckResult
+# 层: 输出
+# - id: O1
+#   name_zh: 流动性指标快照
+#   name_en: LiquidityMetrics
+#   intro: 单标的Amihud+萎缩比率+综合判定的不可变快照(CTR-P1-018生产契约)
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001(流动性评估); AshareSystemicRiskDetector MOD-RK-09(LIQUIDITY_CRISIS输入)
+# - id: O2
+#   name_zh: 风控检查结果
+#   name_en: RiskCheckResult
+#   intro: 供风控编排器统一聚合的流动性检查结果
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# F1 --> A1
+# F2 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> O1
+# A1 --> A2
+# A2 --> O2
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Concentration Risk Monitor — 集中度风险监控器 (MOD-RK-07)
 
 D-RISK §1.2 L1 Pre-Trade + L2 Real-Time 双线使用。计算持仓集中度三大指标:
@@ -29,9 +31,94 @@ D-RISK §1.2 L1 Pre-Trade + L2 Real-Time 双线使用。计算持仓集中度三
 实时计算 + 三级告警 (NONE/WARNING/CRITICAL), 供 RK-02 Pre-Trade Hard Block + RK-03 监控。
 
 属 A 类基础设施 (权重归一化 + 平方和 + 分组聚合, 数学逻辑明确), 阈值为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-07, §7.5 行业集中度
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-07, §7.5 行业集中度
 SSoT: depgraph MOD-RK-07
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 持仓权重 字典
+#   fields: {symbol: weight}权重≥0且总和>0自动归一化; 负权重抛InvalidConcentrationInputError
+#   code: update() weights L239
+# - id: I2
+#   name: 行业映射 字典
+#   fields: {symbol: industry_name}可选; 无映射symbol归入__UNCLASSIFIED__; 不提供则跳过行业暴露
+#   code: update() industry_mapping L240
+# - id: I3
+#   name: 集中度阈值配置 ConcentrationConfig
+#   fields: hhi_warning0.10/hhi_critical0.18/max_single_weight0.10/max_industry_weight0.30/warning_ratio0.8
+#   code: ConcentrationConfig L92-110
+# 层: 特征
+# - id: F1
+#   name_zh: HHI赫芬达尔指数
+#   name_en: hhi
+#   intro: 个股权重平方和, 越高说明组合越集中
+#   formula: HHI=Σw_i² ∈[1/N,1] (w为归一化权重)
+#   code: concentration_monitor.py L337-339
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 最大个股权重
+#   name_en: max_single_weight
+#   intro: 权重最大那只票占组合多少
+#   formula: max_single=max(w_i); 空仓返回(None,0)
+#   code: concentration_monitor.py L341-347
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 最大行业权重
+#   name_en: max_industry_weight
+#   intro: 按行业聚合权重后取占比最高的行业
+#   formula: industry_w[ind]=Σ_{s∈ind} w_s → max_industry=max(industry_w)
+#   code: concentration_monitor.py L349-358 + L270-271
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 三级告警判定
+#   name_en: _classify
+#   intro: 三大指标各自比阈值, 取最严重级别并记录触发原因
+#   desc: HHI≥0.18或个股>0.10或行业>0.30→CRITICAL; 达warning线(HHI0.10/个股80%限额/行业80%限额)→WARNING; 否则NONE; 逐级append breach_reasons
+#   inputs: F1 F2 F3 I3
+#   outputs: 告警级别 + breach_reasons列表
+#   invariant: 告警级别由当前集中度唯一决定
+# - id: A2
+#   name_zh: ② 快照装配与事件去抖
+#   name_en: ConcentrationMonitor.update
+#   intro: 归一化权重算三大指标出快照, 级别变化才发射告警事件
+#   desc: _normalize_weights校验归一化→算HHI/个股/行业→_classify→装ConcentrationSnapshot; level≠_last_level才构造ConcentrationAlertedEvent并_emit通知监听器
+#   inputs: I1 I2 A1
+#   outputs: ConcentrationSnapshot + 级别变化时发ConcentrationAlertedEvent
+#   invariant: 事件去抖(连续相同级别不重复发射)
+# 层: 输出
+# - id: O1
+#   name_zh: 集中度快照
+#   name_en: ConcentrationSnapshot
+#   intro: 含HHI/最大个股/最大行业/告警级别/触发原因的不可变快照
+#   invariant: HHI∈[0,1]; weights归一化Σ=1
+#   downstream: Pre-Trade Checker MOD-RK-02(集中度Hard Block); Portfolio Risk Monitor MOD-RK-03(实时监控); Crowding Monitor MOD-RK-13
+# - id: O2
+#   name_zh: 集中度告警事件
+#   name_en: ConcentrationAlertedEvent
+#   intro: 级别变化时经on_concentration_alerted订阅链路发给监听器的告警事件
+#   downstream: Pre-Trade Checker MOD-RK-02; Portfolio Risk Monitor MOD-RK-03(经监听器订阅)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F2
+# I1 -.->|断点| F3
+# I2 -.->|断点| F3
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# I3 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# A2 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

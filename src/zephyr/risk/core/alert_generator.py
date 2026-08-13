@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-RK-06 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_RISK — Alert Generator (MOD-RK-06)
+"""
+
+D_RISK — Alert Generator (MOD-RK-06)
 
 告警生成器——消费 RiskReport，将原始违规项按严重程度分为三级
 （黄/橙/红），按级别路由到不同通道（日志/邮件/微信），并对同源
@@ -40,6 +42,62 @@ CTR 契约:
   生产者 — Alert → 日志/邮件/微信通道
 
 SSoT: depgraph MOD-RK-06 | blueprint.md §3 核心规则
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 风控报告 RiskReport
+#   fields: portfolio_id/kill_switch_active/failed_checks(含severity与limit/actual)/active_alerts字符串列表
+#   code: process() report L374 / risk_manager_base.RiskReport
+# - id: I2
+#   name: 去重窗口与通道配置 参数
+#   fields: dedup_window默认5分钟 + channels{log/email/wechat}(邮件微信默认no-op可注入sender)
+#   code: __init__() L191-202
+# 层: 算法
+# - id: A1
+#   name_zh: ① 三级告警分级
+#   name_en: classify
+#   intro: 按报告字段把原始违规项分成黄橙红三级告警
+#   desc: RED=kill_switch_active或有HALT级违规; ORANGE=非HALT级违规(同源已有RED跳过); YELLOW=active_alerts(取冒号前缀为source); 每source取最高适用级别
+#   inputs: I1
+#   outputs: list[Alert]三级告警列表
+# - id: A2
+#   name_zh: ② 时间窗去重
+#   name_en: deduplicate
+#   intro: 去重窗口内同源同消息的告警只派发一次
+#   desc: key=source:message; (alert.timestamp−last_seen)<dedup_window→抑制(WARNING日志); 顺带清理过期缓存防无限增长
+#   inputs: A1 I2
+#   outputs: 去重后list[Alert]
+#   invariant: 去重窗口内同源同消息只派发一次
+# - id: A3
+#   name_zh: ③ 多通道路由
+#   name_en: route
+#   intro: 按级别硬编码映射把告警推到日志/邮件/微信通道
+#   desc: RED→log+email+wechat; ORANGE→log+email; YELLOW→log; 日志通道必达; 邮件/微信best-effort失败仅WARNING/ERROR不阻断
+#   inputs: A2 I2
+#   outputs: 各通道派发结果
+#   invariant: 日志通道必达; 邮件/微信best-effort不阻断
+# 层: 输出
+# - id: O1
+#   name_zh: 派发告警列表
+#   name_en: list[Alert]
+#   intro: process返回的实际派发告警(去重后, 含溯源幂等键)
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001(告警统一出口)
+# - id: O2
+#   name_zh: 通道告警外发
+#   name_en: channel dispatch
+#   intro: 经Log/Email/WeChat三通道外发的告警(日志必达, 邮件微信注入sender后生效)
+#   downstream: 无下游/内部使用(外部日志/邮件/微信通道)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> A3
+# I2 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

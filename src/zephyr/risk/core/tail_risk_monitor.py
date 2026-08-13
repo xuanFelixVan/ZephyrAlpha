@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Tail Risk Monitor — 尾部风险监控器 (MOD-RK-15)
 
 D-RISK §1.2 L2 Real-Time 盘中监控核心模块。尾部风险度量与监控:
@@ -31,9 +33,103 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。尾部风险度量与监控
     5. FRTB 尾部风险加价: 基于 shape 的资本加价
 
 属 A 类基础设施 (统计拟合 + 阈值判定, 数学逻辑明确), 阈值为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
 SSoT: depgraph MOD-RK-15
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 收益率序列 np.ndarray
+#   fields: 1维收益率数组(负=亏损), NaN自动剔除, 需>=30样本
+#   code: assess() returns L265
+# - id: I2
+#   name: 组合价值 标量
+#   fields: portfolio_value 组合价值(默认1.0=比率), 用于把比率换算成金额
+#   code: assess() portfolio_value L266
+# - id: I3
+#   name: 尾部风险配置 TailRiskConfig
+#   fields: confidence置信度0.95 + POT阈值分位0.90 + 跳跃3σ + shape厚尾0.2/严重0.5 + ES/VaR比1.5 + FRTB乘数3.0 + min_samples30
+#   code: TailRiskConfig L94
+# 层: 算法
+# - id: A1
+#   name_zh: ① 历史模拟VaR
+#   name_en: compute_var
+#   intro: 取收益率分布的左尾分位数当作在险价值
+#   desc: VaR=-quantile(returns, 1-confidence), 结果clamp到>=0
+#   inputs: I1 I3
+#   outputs: var_pct VaR比率
+#   invariant: VaR>=0
+# - id: A2
+#   name_zh: ② 期望短缺ES/CVaR
+#   name_en: compute_expected_shortfall
+#   intro: 比VaR更惨的那部分尾巴的平均亏损
+#   desc: q=quantile(returns,1-c); tail=returns[returns<=q]; ES=-mean(tail), clamp>=0
+#   inputs: I1 I3
+#   outputs: es_pct ES比率 + es_var_ratio=ES/VaR
+#   invariant: ES>=VaR
+# - id: A3
+#   name_zh: ③ POT广义帕累托拟合
+#   name_en: fit_pot
+#   intro: 对最差的10%亏损拟合GPD分布看尾巴有多厚
+#   desc: losses=-r[r<0]; u=quantile(losses,0.9); 超额losses>u部分用scipy.genpareto.fit(floc=0)估shape ξ/scale β; tail_index=1/ξ; 样本不足返回None
+#   inputs: I1 I3
+#   outputs: PotFitResult(shape/scale/threshold/n_exceedances/tail_index)
+#   invariant: ξ>0=厚尾; tail_index=1/ξ
+# - id: A4
+#   name_zh: ④ 跳跃检测
+#   name_en: detect_jumps
+#   intro: 收益率绝对值超过3倍标准差记一次跳跃
+#   desc: threshold=std(r)×3σ; jump_count=sum(|r|>threshold); std<1e-12近零保护返回0
+#   inputs: I1 I3
+#   outputs: jump_count 跳跃次数
+#   invariant: jump_count单调非减(窗口内)
+# - id: A5
+#   name_zh: ⑤ 尾部告警级别判定
+#   name_en: _determine_alert
+#   intro: shape超线/ES-VaR比超线/跳跃频繁三路合成告警级别
+#   desc: shape>=0.5或ES/VaR>=2.0或jump>=10→EMERGENCY; shape>=0.2或ES/VaR>=1.5或jump>=5→CRITICAL; 有原因但不达标→WARNING; 无原因→NONE
+#   inputs: A2 A3 A4 I3
+#   outputs: (alert_level, reason)
+# - id: A6
+#   name_zh: ⑥ FRTB尾部风险加价
+#   name_en: _compute_frtb_addon
+#   intro: 按厚尾程度在VaR基础上加资本加价
+#   desc: base=VaR×portfolio_value×3.0; 厚尾时 base×(1+2×shape)
+#   inputs: A1 A3 I2 I3
+#   outputs: frtb_addon 资本加价额
+#   invariant: FRTB加价>=0
+# 层: 输出
+# - id: O1
+#   name_zh: 尾部风险综合快照
+#   name_en: TailRiskSnapshot
+#   intro: 含VaR/ES/POT/跳跃/告警级别/FRTB加价的frozen快照对象
+#   invariant: EMERGENCY级别联动Kill Switch
+#   downstream: MOD-RK-03(Portfolio Risk Monitor 尾部告警); MOD-RK-17(Kill Switch 极值触发)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I1 --> A4
+# I2 --> A6
+# I3 --> A1
+# I3 --> A3
+# I3 --> A5
+# I3 --> A6
+# A1 --> A5
+# A2 --> A5
+# A3 --> A5
+# A4 --> A5
+# A1 --> A6
+# A3 --> A6
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
+# A6 --> O1
 """
 
 from __future__ import annotations

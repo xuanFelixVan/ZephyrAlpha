@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-RK-18 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_RISK — Model Risk Auditor (MOD-RK-18)
+"""
+
+D_RISK — Model Risk Auditor (MOD-RK-18)
 
 模型风险审计器——交易预测模型的漂移/衰退/偏差综合审计。
 
@@ -42,6 +44,100 @@
   - DEBUG: 逐检测器原始输出
 
 SSoT: depgraph MOD-RK-18 | blueprint.md §3 核心规则
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模型输出样本 列表
+#   fields: list[dict]如{"pred": 0.1}; 调用前需先establish_baseline否则检测器返回drift_detected=False
+#   code: audit() model_outputs L288
+# - id: I2
+#   name: IC衰减曲线 字典
+#   fields: {lag: ic_value}预计算的各lag IC值(调用方经factor域compute_ic_decay获得)
+#   code: audit() ic_data L289
+# - id: I3
+#   name: 预测偏差分数 浮点数可选
+#   fields: bias_score显式偏差分; None则bias_detected随drift_detected
+#   code: audit() bias_score L290
+# - id: I4
+#   name: 阈值参数 配置
+#   fields: drift_threshold默认取ModelDriftDetector.DIVERGENCE_THRESHOLD(0.15) + ic_decay_threshold0.50 + bias_threshold0.15
+#   code: __init__() L124-150
+# 层: 特征
+# - id: F1
+#   name_zh: JS散度漂移分
+#   name_en: divergence_score
+#   intro: 模型输出分布相对基线的漂移程度(JS散度)
+#   formula: JS散度(复用intelligence域ModelDriftDetector.detect_drift); 检测器异常降级为drift=False,score=0
+#   code: model_risk_audit.py L172-190
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: IC衰减百分比
+#   name_en: ic_decay_pct
+#   intro: 首尾IC绝对值衰减了多少比例
+#   formula: ic_decay_pct=max(0, (|ic₀|−|ic_N|)/|ic₀|); |ic₀|<1e-10→0
+#   code: model_risk_audit.py L218-224
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: IC半衰期
+#   name_en: ic_half_life
+#   intro: IC衰减到一半需要的lag数(线性插值)
+#   formula: 复用factor域compute_half_life(ic_series)线性插值; 失败降级0.0
+#   code: model_risk_audit.py L226-232
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 综合审计组装
+#   name_en: ModelRiskAuditor.audit
+#   intro: 组装漂移检测+IC衰减+bias判定, 产出审计指标集
+#   desc: _compute_drift跑漂移(异常不阻断降级no-drift); _compute_ic_decay算衰减与半衰期; bias显式score优先否则随drift; 无输入跳过对应检测
+#   inputs: I1 I2 I3 I4 F1 F2 F3
+#   outputs: 审计指标集(drift/decay/half_life/bias)
+# - id: A2
+#   name_zh: ② 双维风险等级映射
+#   name_en: _compute_risk_level
+#   intro: drift×ic_decay双维矩阵映射low/medium/high/critical
+#   desc: drift且decay≥0.7→critical; drift且0.5≤decay<0.7→high; 其余drift→medium; 无drift时decay≥0.7→high/0.5-0.7→medium/<0.5→low
+#   inputs: A1 F2
+#   outputs: risk_level等级字符串
+#   invariant: risk_level=drift+ic_decay双维度映射
+# - id: A3
+#   name_zh: ③ 风控检查结果转换
+#   name_en: to_risk_check_result
+#   intro: 审计报告转RiskCheckResult供编排器聚合
+#   desc: critical/high→HALT; medium→warning; low→info; passed=(risk_level==low)
+#   inputs: A2
+#   outputs: RiskCheckResult
+# 层: 输出
+# - id: O1
+#   name_zh: 模型风险审计报告
+#   name_en: ModelRiskAuditReport
+#   intro: 含漂移标志/散度/IC衰减/半衰期/偏差/综合风险等级的不可变审计报告
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001(模型风险评估)
+# - id: O2
+#   name_zh: 风控检查结果
+#   name_en: RiskCheckResult
+#   intro: 供风控编排器统一聚合的模型风险检查结果
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I2 -.->|断点| F2
+# I2 -.->|断点| F3
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> A2
+# F2 --> A2
+# A2 --> O1
+# A2 --> A3
+# A3 --> O2
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Stress Test Engine — 压力测试引擎 (MOD-RK-12)
 
 D-RISK §1.2 分析引擎核心模块。压力测试四类场景:
@@ -31,9 +33,92 @@ D-RISK §1.2 分析引擎核心模块。压力测试四类场景:
     - 反向压力: 二分搜索 shock_scale 使 loss >= target_loss
 
 属 A 类基础设施 (情景叠加 + 二分搜索, 逻辑明确), 历史情景幅度为 C 类不可改真源。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-12, §2 依赖(RK-05→RK-12)
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-12, §2 依赖(RK-05→RK-12)
 SSoT: depgraph MOD-RK-12
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 组合权重与市值
+#   fields: weights{symbol/sector: weight}非负自动归一化 + portfolio_value>0
+#   code: run_historical() L265-267
+# - id: I2
+#   name: 历史情景库 HISTORICAL_SCENARIOS
+#   fields: 2008金融危机/2015股灾/2020疫情三套8板块单日shock真源(负=下跌, 不可改)
+#   code: HISTORICAL_SCENARIOS L93-134
+# - id: I3
+#   name: 自定义shock向量 字典
+#   fields: shocks{symbol: shock_pct}负=下跌; 须覆盖全部持仓symbol
+#   code: run_hypothetical() shocks L297
+# - id: I4
+#   name: 相关性矩阵与传染系数
+#   fields: correlation_matrix(N,N)方阵 + assets行列对齐 + contagion_factor∈[0,1]
+#   code: run_with_contagion() L447-449
+# - id: I5
+#   name: VaR基准 浮点数可选
+#   fields: default_var_baseline(RK-05 VaR基准); 损失金额>基准则var_exceeded
+#   code: __init__() L259-260
+# 层: 算法
+# - id: A1
+#   name_zh: ① 情景应用与损失计算
+#   name_en: _apply_scenario
+#   intro: 权重归一后逐资产叠加shock, 算组合损失占比和金额
+#   desc: loss_pct=Σw_i·shock_i; loss_value=loss_pct×portfolio_value; asset_losses逐资产; |loss_pct|×value>VaR基准→var_exceeded; loss≤-5%记severe(WARNING日志)
+#   inputs: I1 I5
+#   outputs: StressTestResult
+#   invariant: 压力损失=Σ(w_i·shock_i)
+# - id: A2
+#   name_zh: ② 反向压力二分搜索
+#   name_en: run_reverse
+#   intro: 给定目标亏损, 二分搜索shock放大倍数找出致损情景
+#   desc: base_shocks默认等权-1%; scale∈[0,max_scale=10]二分迭代50次使loss_pct≤target_loss_pct; 放大后构造REVERSE情景走_apply_scenario
+#   inputs: I1 I3
+#   outputs: 放大后的REVERSE情景结果
+#   invariant: 反向压力测试二分搜索收敛
+# - id: A3
+#   name_zh: ③ 单因子敏感性分析
+#   name_en: sensitivity_analysis
+#   intro: 单因子在shock范围内等距采样, 看组合PnL影响曲线
+#   desc: shock_levels=linspace(range,steps=21); impact=w_factor×shock×portfolio_value逐点计算
+#   inputs: I1
+#   outputs: SensitivityResult(shock水平-PnL影响序列)
+# - id: A4
+#   name_zh: ④ 传染效应放大
+#   name_en: run_with_contagion
+#   intro: 冲击经相关性矩阵放大后再叠加到组合
+#   desc: contagion=corr@shock_vec×contagion_factor; shocked=shock+contagion; 转HYPOTHETICAL情景走_apply_scenario
+#   inputs: I1 I3 I4
+#   outputs: 传染放大后的情景结果
+#   invariant: 传染效应单调递增
+# 层: 输出
+# - id: O1
+#   name_zh: 压力测试结果
+#   name_en: StressTestResult
+#   intro: 单情景组合损失占比/金额/逐资产损失/是否超VaR基准/是否严重
+#   invariant: 历史情景shock幅度固定不可改
+#   downstream: Portfolio Risk Monitor MOD-RK-03(压力告警); Black Swan Library MOD-RK-14(情景匹配)
+# - id: O2
+#   name_zh: 敏感性分析结果
+#   name_en: SensitivityResult
+#   intro: 单因子shock_levels与pnl_impacts对应序列
+#   downstream: Portfolio Risk Monitor MOD-RK-03
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I5 --> A1
+# I2 --> A1
+# I1 --> A2
+# I3 --> A2
+# I1 --> A3
+# I1 --> A4
+# I3 --> A4
+# I4 --> A4
+# A2 --> A1
+# A4 --> A1
+# A1 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

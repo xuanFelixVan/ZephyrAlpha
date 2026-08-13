@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Risk Decomposition Engine — 风险分解引擎 (MOD-RK-16)
 
 D-RISK §1.2 L3 Post-Trade 盘后审计核心模块。将组合风险分解为可归因的成分:
@@ -33,9 +35,76 @@ D-RISK §1.2 L3 Post-Trade 盘后审计核心模块。将组合风险分解为�
 供 RK-08 风险预算分配 (复用 CCR) + RK-20 日终归因报告。
 
 属 A 类基础设施 (矩阵运算 + 偏导, 数学逻辑明确), 因子模型为 B 类可选输入。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-16, §2 依赖(RK-05→RK-16)
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-16, §2 依赖(RK-05→RK-16)
 SSoT: depgraph MOD-RK-16
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 协方差矩阵 np.ndarray
+#   fields: cov (N,N)资产收益协方差矩阵, 对称半正定, 应≈BΣ_fB'+diag(ε)
+#   code: decompose() cov L182
+# - id: I2
+#   name: 权重向量 np.ndarray
+#   fields: weights (N,)持仓权重, 拒绝负权重(long-only), 自动归一化Σw=1
+#   code: decompose() weights L183
+# - id: I3
+#   name: 因子模型三件套 np.ndarray
+#   fields: factor_loadings B(N,K)因子载荷 + factor_cov Σ_f(K,K)因子协方差 + residual_var ε(N,)残差方差
+#   code: decompose_with_factors() L224-226
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验与权重归一化
+#   name_en: _validate
+#   intro: 检查协方差方阵维度匹配权重非负再归一化
+#   desc: cov必须2D方阵; weights维度=N且全非负且和>0; weights/=Σw
+#   inputs: I1 I2
+#   outputs: 归一化后的(cov, weights)
+#   invariant: 权重归一化Σw=1
+# - id: A2
+#   name_zh: ② 组合总风险
+#   name_en: decompose
+#   intro: 矩阵二次型算组合方差和标准差
+#   desc: total_var=w'Σw; total_risk=√total_var
+#   inputs: A1
+#   outputs: total_variance + total_risk σ_p
+# - id: A3
+#   name_zh: ③ 因子残差方差分解
+#   name_en: decompose_with_factors
+#   intro: 把总方差拆成因子能解释的和个股特异的两块
+#   desc: Bw=B'w; factor_var=Bw'Σ_f Bw; resid_var=Σ ε_i w_i²(对角残差); 校验B/Σ_f/ε维度
+#   inputs: A1 I3
+#   outputs: factor_variance + residual_variance
+#   invariant: factor_risk+residual_risk=total_risk(平方和守恒)
+# - id: A4
+#   name_zh: ④ 边际与成分风险贡献
+#   name_en: _contributions
+#   intro: 算每个资产对总风险的边际贡献和成分贡献
+#   desc: MCR=(Σw)/σ_p; CCR=w⊙MCR; pct=CCR/σ_p; σ_p<=0时全零
+#   inputs: A1 A2
+#   outputs: mcr + ccr + pct_contribution 向量
+#   invariant: ΣCCR=σ_p; Σpct=1
+# 层: 输出
+# - id: O1
+#   name_zh: 风险分解结果
+#   name_en: DecompositionResult
+#   intro: 含总风险/因子残差分解/MCR/CCR/百分比贡献的frozen结果对象
+#   invariant: factor_risk²+residual_risk²=total_risk²
+#   downstream: MOD-RK-08(Risk Budget Allocator 风险贡献复用); MOD-RK-20(Daily Auditor 归因报告)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A3
+# A1 --> A2
+# A1 --> A3
+# A2 --> A4
+# A1 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations

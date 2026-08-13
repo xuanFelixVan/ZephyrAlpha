@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 A-Share Stop-Loss Rule Engine — A股止损规则引擎 (MOD-RK-09)
 
 D-RISK §1.2 L2 Real-Time 盘中监控核心模块。A股特色止损规则检测:
@@ -34,9 +36,83 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。A股特色止损规则检�
 
 本模块产出 StopLossSignal / LossLimitAlert, 由 RK-04 Stop Loss Engine 执行实际止损动作。
 属 A 类基础设施 (规则检测 + 阈值判定, 逻辑明确), 阈值为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-09, §6 决策记录(亏损限额三级)
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-09, §6 决策记录(亏损限额三级)
 SSoT: depgraph MOD-RK-09
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 持仓价格 浮点数对
+#   fields: entry_price买入价 + current_price当前价(均须>0否则抛InvalidStopLossInputError)
+#   code: check_position() L326-328
+# - id: I2
+#   name: 技术位参考 浮点数可选
+#   fields: support_level关键支撑位/vwap分时均价/prev_low前低(None跳过对应检测, vwap优先于prev_low)
+#   code: check_position() L330-332
+# - id: I3
+#   name: 市场环境信号 可选参数
+#   fields: sector_momentum板块动量/logic_valid买入逻辑标志/auction_expected_price+auction_actual_price竞价价格对
+#   code: check_position() L333-336
+# - id: I4
+#   name: 账户三周期盈亏率 浮点数
+#   fields: daily_pnl_pct/weekly_pnl_pct/monthly_pnl_pct(负数=亏损)
+#   code: check_loss_limit() L424-426
+# - id: I5
+#   name: 止损阈值配置 AshareStopLossConfig
+#   fields: fixed_pct7%/日限2%/周限5%/月限10%/停盘1-2-3天/竞价折扣2%/分时破位1%/板块退潮-2%
+#   code: AshareStopLossConfig L117-145
+# 层: 特征
+# - id: F1
+#   name_zh: 持仓亏损率
+#   name_en: loss_pct
+#   intro: 从买入价到现价亏了多少比例
+#   formula: loss_pct=(entry_price−current_price)/entry_price
+#   code: ashare_stop_loss_engine.py L511
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 六种止损模式检测
+#   name_en: check_position
+#   intro: 固定比例-7%/支撑破位/逻辑失效/竞价不及预期/分时破位/板块退潮六种模式逐一检测
+#   desc: 每种模式独立判定(未提供输入的模式跳过不报错); 触发即产StopLossSignal(WARNING软止损/CRITICAL硬止损); 结果按严重级别降序返回
+#   inputs: I1 I2 I3 I5 F1
+#   outputs: list[StopLossSignal](按严重级降序)
+#   invariant: 6种止损模式互斥检测(各模式独立判定)
+# - id: A2
+#   name_zh: ② 亏损限额三级检测
+#   name_en: check_loss_limit
+#   intro: 日亏2%/周亏5%/月亏10%三级递进, 取最高触发级定强制停盘天数
+#   desc: loss=|min(pnl,0)|取亏损绝对值; 月≥10%→MONTHLY停3天(EMERGENCY), 周≥5%→WEEKLY停2天, 日≥2%→DAILY停1天; 取最高级别
+#   inputs: I4 I5
+#   outputs: LossLimitAlert(触发级别+停盘天数)
+#   invariant: 亏损限额日<周<月递进; 停盘天数随级别递增
+# 层: 输出
+# - id: O1
+#   name_zh: 止损信号列表
+#   name_en: list[StopLossSignal]
+#   intro: 单标的触发的止损信号(CRITICAL及以上须RK-04执行止损, EMERGENCY联动Kill Switch)
+#   invariant: EMERGENCY级必须触发RK-04执行
+#   downstream: Portfolio Risk Monitor MOD-RK-03(实时告警); Stop Loss Engine MOD-RK-04(执行止损)
+# - id: O2
+#   name_zh: 亏损限额告警
+#   name_en: LossLimitAlert
+#   intro: 含日/周/月亏损率/触发级别/强制停盘天数的账户级告警(INV-003)
+#   downstream: Stop Loss Engine MOD-RK-04(执行); Portfolio Risk Monitor MOD-RK-03
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# F1 --> A1
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I5 --> A1
+# I4 --> A2
+# I5 --> A2
+# A1 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

@@ -10,7 +10,9 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""D_RISK Risk Management
+"""
+
+D_RISK Risk Management
 =====================================
 
 域量化架构 · D_RISK 风险管理层
@@ -50,6 +52,41 @@ CTR 契约依赖声明（承重墙标记）
 --------
 LPC 双轨架构 C 轨（业务脊柱 · 带 l<NN>_ 前缀）
 架构决策： 目录双轨治理
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 子模块属性访问请求 字符串
+#   fields: 属性名 name（如 "cross_asset"）
+#   code: __getattr__(name) L69
+# 层: 算法
+# - id: A1
+#   name_zh: ① 子模块导出清单
+#   name_en: __all__
+#   intro: 声明本包对外暴露的 6 个风险子模块名
+#   desc: __all__ = [cross_asset, risk_limits, risk_manager, risk_manager_base, risk_validator, stop_loss]，仅做符号声明不触发导入
+#   inputs: I1
+#   outputs: 可导入子模块名单
+# - id: A2
+#   name_zh: ② 懒加载导入
+#   name_en: __getattr__
+#   intro: 只有访问 cross_asset 时才真正 import，其他属性名直接报错
+#   desc: name=="cross_asset" → importlib.import_module(".cross_asset")；否则 raise AttributeError
+#   inputs: I1
+#   outputs: 子模块对象
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.risk 包命名空间
+#   name_en: package namespace
+#   intro: 风控域包入口，提供止损/风险限额/风险校验等子模块访问
+#   downstream: 无下游/内部使用（[CONSUMERS] 头为空，子模块被 D_PORTFOLIO_CORE 等业务域直接 import）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# A1 --> O1
+# A2 --> O1
 """
 
 from __future__ import annotations

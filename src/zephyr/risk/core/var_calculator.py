@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 VaR Calculator — 风险价值计算器 (MOD-RK-05, Phase 1)
 
 D-RISK §1.2 L2 Real-Time 盘中监控核心模块。Phase 1 实现两种方法并发计算(取max):
@@ -33,9 +35,84 @@ Phase 3 (未实现): Basel III 三角验证 + 乘数因子 + 压力 VaR
     - 依赖 DuckDB+Parquet (已有, 本模块仅做计算, 数据读取由上层负责)
 
 属 A 类基础设施 (正态分位数 + 经验分位数, 数学逻辑明确), 置信度/持有期为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-05, §6 VaR三阶段演进
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-05, §6 VaR三阶段演进
 SSoT: depgraph MOD-RK-05
 Version: 0.1.0 (Phase 1)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 日收益序列 np.ndarray
+#   fields: 1维日收益率数组, NaN自动过滤, 需>=min_history(30)样本
+#   code: calculate() returns L241
+# - id: I2
+#   name: 组合价值 标量
+#   fields: portfolio_value 当前组合价值(NAV元), 必须为正
+#   code: calculate() portfolio_value L242
+# - id: I3
+#   name: VaR配置 VaRConfig
+#   fields: confidence_level置信水平 + holding_period_days持有期 + method计算方法 + min_history + annualization_factor252
+#   code: VaRConfig L102
+# - id: I4
+#   name: 多资产收益矩阵与权重 np.ndarray
+#   fields: asset_returns(T,N)资产收益矩阵 + weights(N,)权重向量
+#   code: calculate_portfolio() L311-313
+# 层: 算法
+# - id: A1
+#   name_zh: ① 参数法VaR 方差-协方差
+#   name_en: _parametric
+#   intro: 假设收益正态分布用z分位点算VaR
+#   desc: z_α=|norm.ppf(1-c)|; VaR=(z_α×σ-μ)×V×√T; (zσ-μ)为负时取0下限
+#   inputs: I1 I2 I3
+#   outputs: parametric_var 参数法VaR金额
+#   invariant: VaR>=0
+# - id: A2
+#   name_zh: ② 历史模拟法VaR
+#   name_en: _historical
+#   intro: 直接取历史收益的经验分位数当VaR
+#   desc: q=quantile(returns,1-c); VaR=-q×V×√T, 取0下限
+#   inputs: I1 I2 I3
+#   outputs: historical_var 历史法VaR金额
+#   invariant: VaR>=0
+# - id: A3
+#   name_zh: ③ 保守取大VaR
+#   name_en: calculate
+#   intro: 参数法和历史法并发算完取大的当最终结果
+#   desc: method=CONSERVATIVE_MAX时 value=max(parametric,historical); value_pct=value/portfolio_value; 样本不足抛InsufficientVaRHistoryError
+#   inputs: A1 A2 I3
+#   outputs: 最终VaR值+占比
+#   invariant: conservative_max=max(parametric,historical)
+# - id: A4
+#   name_zh: ④ 多资产组合收益合成
+#   name_en: calculate_portfolio
+#   intro: 多资产收益矩阵乘权重合成单条组合收益再算VaR
+#   desc: portfolio_returns = asset_returns @ weights, 校验维度对齐后复用calculate
+#   inputs: I4 I2 I3
+#   outputs: 组合日收益序列
+# 层: 输出
+# - id: O1
+#   name_zh: VaR计算结果
+#   name_en: VaRResult
+#   intro: 含最终VaR/两法分项/均值/标准差/样本数的frozen结果对象
+#   invariant: VaR>=0(损失额非负)
+#   downstream: MOD-RK-03(Portfolio Risk Monitor 实时监控); MOD-RK-16(Risk Decomposition 残差分析); MOD-RK-12(Stress Test); MOD-RK-15(Tail Risk)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A1
+# I2 --> A2
+# I3 --> A1
+# I3 --> A2
+# I3 --> A3
+# A1 --> A3
+# A2 --> A3
+# I4 --> A4
+# I2 --> A4
+# I3 --> A4
+# A4 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

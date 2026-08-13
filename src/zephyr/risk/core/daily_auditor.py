@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Post-Trade Daily Auditor — 日终审计器 (MOD-RK-20)
 
 D-RISK §1.2 L3 Post-Trade 盘后审计核心模块。每个交易日收盘后执行:
@@ -31,9 +33,100 @@ D-RISK §1.2 L3 Post-Trade 盘后审计核心模块。每个交易日收盘后�
     6. CTR-P1-011 AuditRiskMetricsReport: 产出报告契约供 D-REPORTING
 
 属 A 类基础设施 (对账 + 报告装配, 逻辑确定), 不参与热路径。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-20, §2 依赖(RK-03/RK-06/RK-16→RK-20)
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-20, §2 依赖(RK-03/RK-06/RK-16→RK-20)
 SSoT: depgraph MOD-RK-20
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 持仓快照对 列表
+#   fields: positions_prev(提供前收)+positions_now(提供当收/开仓价) AuditPositionSnapshot{symbol,qty,avg_entry_price,close_price}拒绝NaN
+#   code: AuditRequest L502-503
+# - id: I2
+#   name: 当日成交记录 列表
+#   fields: FillRecord{symbol,qty(正买负卖),price,realized_pnl,cost佣金滑点}
+#   code: AuditRequest fills L504
+# - id: I3
+#   name: 限额消耗 列表
+#   fields: LimitConsumption{limit_type,value上限,consumed已消耗}来自RK-06; 拒绝NaN/负消耗
+#   code: AuditRequest consumptions L506
+# - id: I4
+#   name: 风险分解与实际因子PnL
+#   fields: DecompositionResult(RK-16, None=不检测归因) + actual_factor_pnl + actual_residual_pnl
+#   code: AuditRequest L507-509
+# - id: I5
+#   name: 组合状态参数
+#   fields: nav组合净值/kill_switch_state(Kill Switch状态)/data_completeness数据完整性
+#   code: AuditRequest L505 + L510-511
+# 层: 算法
+# - id: A1
+#   name_zh: ① PnL对账
+#   name_en: reconcile_pnl
+#   intro: 资产负债表恒等式对账预期vs账面PnL, 检测资金缺口
+#   desc: expected=(MV_now−MV_prev)−trade_cash; total_pnl=realized+unrealized(未实现按prev_close→close, 新仓用avg_entry); gap=expected−total; gap_pct=gap/|nav|; |gap_pct|≤0.001容差→MATCH否则MISMATCH
+#   inputs: I1 I2 I5
+#   outputs: PnLReconciliation(含gap/gap_pct/status)
+#   invariant: total_pnl=realized+unrealized; gap=expected−total_pnl
+# - id: A2
+#   name_zh: ② 归因偏差检测
+#   name_en: detect_attribution_bias
+#   intro: 预测因子贡献占比vs实际因子PnL占比算归因偏差
+#   desc: actual_pct=factor_pnl/(|factor_pnl|+|residual_pnl|); bias=predicted−actual; |bias|>0.1→BIASED; 无分解或分母=0→NOT_APPLICABLE/ALIGNED
+#   inputs: I4
+#   outputs: AttributionBias
+#   invariant: 归因占比分母=|factor_pnl|+|residual_pnl|
+# - id: A3
+#   name_zh: ③ 限额合规检查
+#   name_en: run_compliance_check
+#   intro: 逐项限额算利用率分OK/WARNING/BREACHED再汇总整体状态
+#   desc: utilization=consumed/value; >1.0→BREACHED; >0.8→WARNING; 否则OK; value≤0有消耗→BREACHED; 有BREACHED→FAIL, 有WARNING→PASS_WITH_WARNINGS
+#   inputs: I3
+#   outputs: ComplianceReport
+#   invariant: 任一BREACHED→整体FAIL
+# - id: A4
+#   name_zh: ④ 日终审计聚合
+#   name_en: DailyAuditor.audit
+#   intro: 串起对账+归因+合规+5项检查清单聚成总报告并自动登记问题
+#   desc: 5项清单(持仓/PnL/限额/KillSwitch终态CLOSED/数据完整性); 失败项自动登记IssueRecord(根因/修正待人工); 任一FAIL→FAIL有WARNING→PASS_WITH_WARNINGS
+#   inputs: A1 A2 A3 I1 I5
+#   outputs: DailyAuditReport(含issues)
+#   invariant: 任一FAIL→整体FAIL; 报告幂等(同日同组合等价)
+# - id: A5
+#   name_zh: ⑤ 风险指标报告生成
+#   name_en: generate_risk_metrics_report
+#   intro: 从审计报告抽关键指标产出CTR-P1-011契约报告
+#   desc: report_id=RMR-{portfolio_id}-{trading_date}; 汇总total_pnl/gap_pct/合规与审计状态/issues数/HIGH严重度数
+#   inputs: A4
+#   outputs: AuditRiskMetricsReport
+# 层: 输出
+# - id: O1
+#   name_zh: 日终审计报告
+#   name_en: DailyAuditReport
+#   intro: 含PnL对账/归因偏差/合规报告/检查清单/问题追溯/整体状态的完整日终审计报告
+#   invariant: 报告幂等(同日同组合等价)
+#   downstream: 无下游/内部使用(经A5转为契约报告外发)
+# - id: O2
+#   name_zh: 审计风险指标报告
+#   name_en: AuditRiskMetricsReport
+#   intro: CTR-P1-011产出契约, 供报表域消费的审计指标报告
+#   downstream: D-REPORTING(CTR-P1-011 AuditRiskMetricsReport)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I5 --> A1
+# I4 --> A2
+# I3 --> A3
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# I1 --> A4
+# I5 --> A4
+# A4 --> O1
+# A4 --> A5
+# A5 --> O2
 """
 
 from __future__ import annotations

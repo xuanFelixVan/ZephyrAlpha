@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-RK-13 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_RISK — Crowding Monitor (MOD-RK-13)
+"""
+
+D_RISK — Crowding Monitor (MOD-RK-13)
 
 拥挤度监控器——检测跨参与者因子拥挤。衡量"全市场多少策略挤在
 同一因子/同一批股票上"，与 concentration_monitor (MOD-RK-07)
@@ -39,6 +41,77 @@ CTR 契约:
   生产者 — CrowdingMetrics (CTR-P1-020)
 
 SSoT: depgraph MOD-RK-13 | blueprint.md §3 核心规则
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 多策略持仓快照 嵌套字典
+#   fields: {strategy_id: {symbol: weight}}需≥2个策略(CTR-P1-019消费契约)
+#   code: assess() strategy_positions L223
+# - id: I2
+#   name: 因子暴露 字典
+#   fields: {strategy_id: exposure_value}可选; 未提供或<2个则consensus=0
+#   code: assess() factor_exposures L224
+# - id: I3
+#   name: 拥挤度阈值 浮点数
+#   fields: crowding_threshold默认0.6, >此值判定为拥挤
+#   code: __init__() L122-124
+# 层: 特征
+# - id: F1
+#   name_zh: 持仓重叠度
+#   name_en: position_overlap
+#   intro: 各标的逐策略取最小权重和比最大权重和, 衡量持仓撞车程度(加权Jaccard)
+#   formula: overlap=Σ_s min(w_s)/Σ_s max(w_s) ∈[0,1]; 1=所有策略持仓完全相同
+#   code: crowding_monitor.py L162-181
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 方向一致性
+#   name_en: direction_consensus
+#   intro: 各策略因子暴露符号加总, 看多少策略挤在同一方向
+#   formula: consensus=|Σ sign(exp_i)|/n_strategies ∈[0,1]; 1=全同向 0=完全对冲
+#   code: crowding_monitor.py L207-217
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 拥挤度综合评估
+#   name_en: CrowdingMonitor.assess
+#   intro: 重叠度和方向一致性各半加权算拥挤分, 超阈值判拥挤
+#   desc: crowding=0.5×overlap+0.5×consensus; is_crowded=crowding>threshold; 策略数<2直接返回零分快照(WARNING日志)
+#   inputs: I1 I2 I3 F1 F2
+#   outputs: CrowdingMetrics快照
+#   invariant: crowding=0.5×overlap+0.5×consensus
+# - id: A2
+#   name_zh: ② 风控检查结果转换
+#   name_en: to_risk_check_result
+#   intro: 拥挤度快照转RiskCheckResult供编排器聚合
+#   desc: passed=!is_crowded; limit=threshold; actual=crowding_score; severity拥挤=HALT否则info
+#   inputs: A1
+#   outputs: RiskCheckResult
+# 层: 输出
+# - id: O1
+#   name_zh: 拥挤度快照
+#   name_en: CrowdingMetrics
+#   intro: 单因子跨策略拥挤度评分快照(CTR-P1-020生产契约)
+#   invariant: crowding_score∈[0,1]
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001(拥挤度评估); ConcentrationMonitor MOD-RK-07
+# - id: O2
+#   name_zh: 风控检查结果
+#   name_en: RiskCheckResult
+#   intro: 供风控编排器统一聚合的拥挤度检查结果
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I2 -.->|断点| F2
+# F1 --> A1
+# F2 --> A1
+# I3 --> A1
+# A1 --> O1
+# A1 --> A2
+# A2 --> O2
 """
 
 from __future__ import annotations

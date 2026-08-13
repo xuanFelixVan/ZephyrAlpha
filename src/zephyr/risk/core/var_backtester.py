@@ -15,6 +15,7 @@
 # [TTL] permanent
 
 """
+
 VaR/ES Backtester — VaR/ES 模型回测验证器 (MOD-RK-05B, 36号 §3.9 施工)
 
 36_var_es_monitoring.md §3.9 定义的 13 法回测，本模块实现 MVP 4 法（选型优先级最高）：
@@ -41,6 +42,90 @@ Phase 3 (未实现): Latent-Regime Bias Auditing / Comparative e-backtests / ES 
 依据: 36_var_es_monitoring.md §3.9, §3.11 回测验证端到端施工流程
 SSoT: 36_var_es_monitoring.md §3.9
 Version: 0.1.0 (MVP 4 法)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 回测观测序列 list[BacktestObservation]
+#   fields: date交易日 + var_forecast预测VaR(≥0正数=损失) + es_forecast预测ES(≥var) + realized_return实际收益(负=亏)
+#   code: var_backtester.py L92-122 单个观测校验ES≥VaR、is_violation判定；L313-340 序列校验≥30样本并转numpy数组
+# - id: I2
+#   name: 置信度参数 confidence_level
+#   fields: confidence_level∈(0,1) 默认0.95 → alpha名义超限率=1-confidence
+#   code: var_backtester.py L291-298 构造器校验区间并算alpha
+# 层: 算法
+# - id: A1
+#   name_zh: ① Kupiec POF 覆盖率检验
+#   name_en: Kupiec POF
+#   intro: 数实际超限次数，看超限频率和名义α对不对得上
+#   desc: 似然比检验 LR_UC=-2(lnL(α)-lnL(p̂))，p̂=N/T为MLE（L369-371，eps=1e-12截断防log(0)），p=1-χ²₁.cdf(LR_UC)（L374），p<0.05拒绝
+#   inputs: I1 I2
+#   outputs: KupiecResult(n_violations/p_hat/lr_uc/p_value/reject)
+#   invariant: LR_UC≥0 且 p_value∈[0,1]
+# - id: A2
+#   name_zh: ② Christoffersen 条件覆盖率检验
+#   name_en: Christoffersen CC
+#   intro: 看超限是不是扎堆出现（独立性）外加覆盖率一起验
+#   desc: 逐日转移矩阵n_00/n_01/n_10/n_11（L406-416）；LR_ind=-2(lnL_uncond-lnL_cond)（L446-457，单状态时取0）；LR_cc=LR_UC+LR_ind~χ²(2)（L459-460）
+#   inputs: I1 I2
+#   outputs: ChristoffersenResult(lr_uc/lr_ind/lr_cc/p_value/reject/转移矩阵)
+#   invariant: LR_cc=LR_UC+LR_ind 且 p_value∈[0,1]
+# - id: A3
+#   name_zh: ③ Acerbi-Szekely Z2 ES直接回测
+#   name_en: Acerbi-Szekely Z2
+#   intro: 只盯超限日，看实际亏损幅度和ES预测是否一致
+#   desc: Z2=(1/N)Σ超限日 realized_return/es_forecast（L497-500，比值均<0）；E[Z2]=-1；MVP简化判定 z2<-1且N≥5→reject（L505，需≥1超限否则报错）
+#   inputs: I1 I2
+#   outputs: AcerbiSzekelyResult(z2/expected=-1/violation_ratios/reject)
+#   invariant: 原假设E[Z2]=-1，Z2<-1意味ES低估
+# - id: A4
+#   name_zh: ④ E-backtesting GREM在线累积
+#   name_en: E-backtesting GREM
+#   intro: 每天乘一个因子累积e-value，任何时点超过1/α就否决模型
+#   desc: b_s=1{超限}-α（L553，校准时E[b]=0）；GREM自适应λ*=(p̂_rolling-α)/(α(1-α))截断[0,0.5/α]（L557-578）；e_t=Π(1+λ_s·b_s)（L582-589）；阈值1/α，log刻度四级告警green/yellow/red/black（L592-605）
+#   inputs: I1 I2
+#   outputs: EBacktestResult(e_value/e_process/lambda_series/alert_level/reject)
+#   invariant: e_value≥0乘性累积单调非降方向由b_s定；anytime-valid阈值=1/α
+# - id: A5
+#   name_zh: ⑤ Basel Traffic Light 三区制
+#   name_en: Basel Traffic Light
+#   intro: 巴塞尔红绿灯，按超限次数相对期望的倍数划绿黄红区
+#   desc: 期望超限=T·α（L637）；Green≤1.28×期望 / Yellow≤1.6× / Red>1.6×（L639-644，近似95%VaR250天16/20阈值的比例化）
+#   inputs: I1 I2
+#   outputs: dict(zone/n_violations/expected_violations/violation_ratio)
+# 层: 输出
+# - id: O1
+#   name_zh: 四项单项检验结果对象
+#   name_en: Per-test Results
+#   intro: Kupiec/Christoffersen/Z2/E-backtest各自的dataclass结果含统计量p值和reject判定
+#   downstream: full_report汇总；MOD-RK-05 VaR Calculator回测验证；MOD-RK-15 Tail Risk ES回测
+# - id: O2
+#   name_zh: 全量回测报告字典
+#   name_en: full_report dict
+#   intro: 4法+Basel红绿灯+overall_reject综合判定的日终报告，单项样本不足降级为error字段
+#   invariant: overall_reject=任一检验reject即告警
+#   downstream: daily_auditor日终回测报告（36号§3.11端到端流程）
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I1 --> A4
+# I2 --> A4
+# I1 --> A5
+# I2 --> A5
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A1 --> O2
+# A2 --> O2
+# A3 --> O2
+# A4 --> O2
+# A5 --> O2
 """
 
 from __future__ import annotations

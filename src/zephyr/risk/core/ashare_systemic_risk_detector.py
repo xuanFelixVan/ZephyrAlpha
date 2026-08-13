@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 A-Share Systemic Risk Detector — A股系统性风险检测器 (MOD-RK-10)
 
 D-RISK §1.2 L2 Real-Time 盘中监控核心模块。A股系统性风险检测:
@@ -34,9 +36,90 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。A股系统性风险检测:
 
 本模块产出 SystemicRiskAlert, LEVEL_3 时联动 RK-17 Kill Switch。
 属 A 类基础设施 (信号扫描 + 阈值判定, 逻辑明确), 阈值为 C 类可调参数。
-依据: D:\\临时工作区\\依赖图\\11-D-RISK-风控域.md §1.2 RK-10, §6 决策记录(A股系统性风险5信号)
+依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-10, §6 决策记录(A股系统性风险5信号)
 SSoT: depgraph MOD-RK-10
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 两融与涨跌停数据 标量参数
+#   fields: margin_balance_change 融资余额变化率(负=降) + limit_down_count 跌停股数
+#   code: check() L289-290
+# - id: I2
+#   name: 指数与成交量数据 标量参数
+#   fields: index_change_pct 指数涨跌幅 + volume_surge_ratio 成交量激增倍数
+#   code: check() L291-292
+# - id: I3
+#   name: 盘口流动性数据 标量参数
+#   fields: sell_pressure 卖盘压力(0~1) + bid_ask_spread 买卖价差
+#   code: check() L293-294
+# - id: I4
+#   name: 政策外围情绪数据 标量参数
+#   fields: policy_shift_flag 政策转向标志 + external_market_change 外围涨跌幅 + sentiment_index 情绪指数
+#   code: check() L295-297
+# - id: I5
+#   name: 检测器配置 AshareSystemicRiskConfig
+#   fields: 9项信号阈值 + 情绪断路器阈值 + LEVEL_2/3 仓位上限
+#   code: AshareSystemicRiskConfig L106
+# 层: 算法
+# - id: A1
+#   name_zh: ① 5大信号互斥扫描
+#   name_en: AshareSystemicRiskDetector.check
+#   intro: 融资平仓潮/量化踩踏/流动性危机/政策转向/外围冲击五路独立阈值检测
+#   desc: 每对输入与配置阈值比较, 双双越限才产 SystemicRiskSignal; 缺输入的信号跳过不报错
+#   inputs: I1 I2 I3 I4 I5
+#   outputs: 触发信号列表 signals
+#   invariant: 5大信号互斥; 未提供输入的信号跳过
+# - id: A2
+#   name_zh: ② 三级警报递进判定
+#   name_en: _determine_level
+#   intro: 按触发信号数定警报级别和仓位上限
+#   desc: 0信号=NONE, 1=LEVEL_1停开仓, 2=LEVEL_2降仓至70%, ≥3=LEVEL_3清仓+Kill Switch
+#   inputs: A1 I5
+#   outputs: (alert_level, action, position_cap, kill_switch)
+#   invariant: 三级按信号数递进; LEVEL_3必须联动RK-17
+# - id: A3
+#   name_zh: ③ 情绪断路器强制升级
+#   name_en: check 情绪断路器段
+#   intro: 情绪指数超阈值直接把警报抬到LEVEL_3
+#   desc: sentiment_index >= 0.85 且当前非LEVEL_3 → 强制LEVEL_3 + position_cap=0 + kill_switch=True
+#   inputs: A2 I4
+#   outputs: 升级后的级别/仓位/动作描述
+#   invariant: 情绪断路器超阈值→强制升级
+# - id: A4
+#   name_zh: ④ 逃生执行器
+#   name_en: build_escape_directive
+#   intro: LEVEL_3告警转清仓撤单暂停的逃生指令
+#   desc: 非LEVEL_3抛InvalidSystemicRiskInputError; 否则产 liquidate_all + cancel_pending_orders + halt_new_orders 指令字典
+#   inputs: A3
+#   outputs: 逃生指令字典
+#   invariant: 仅LEVEL_3可产逃生指令
+# 层: 输出
+# - id: O1
+#   name_zh: 系统性风险综合告警
+#   name_en: SystemicRiskAlert
+#   intro: 含触发信号/警报级别/仓位上限/是否联动Kill Switch的frozen告警对象
+#   invariant: LEVEL_3时 kill_switch_required=True
+#   downstream: MOD-RK-03(Portfolio Risk Monitor 实时告警); MOD-RK-17(Kill Switch LEVEL_3清仓触发)
+# - id: O2
+#   name_zh: 逃生指令
+#   name_en: escape directive dict
+#   intro: 清仓+撤单+暂停新单的执行指令, 供Kill Switch执行
+#   downstream: MOD-RK-17(Kill Switch 执行逃生)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# I5 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+# A3 --> A4
+# A4 --> O2
 """
 
 from __future__ import annotations

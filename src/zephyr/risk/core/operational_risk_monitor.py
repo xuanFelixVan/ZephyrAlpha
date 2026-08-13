@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-RK-19 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_RISK — Operational Risk Monitor (MOD-RK-19)
+"""
+
+D_RISK — Operational Risk Monitor (MOD-RK-19)
 
 操作风险审计阈值解释层——在 MOD-EX-003 `compute_operational_risk_stats()`
 产出的纯统计数据之上构建薄解释层，将统计转换为风险评估 + 告警。
@@ -43,6 +45,53 @@
   - 纯延迟（时间差）不依赖 TCA（MOD-EX-012）
 
 SSoT: depgraph MOD-RK-19 | blueprint.md §3 核心规则
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 操作风险统计 OperationalRiskStats
+#   fields: failure_rate失败率 + latency_p95_ms延迟p95 + submission_count提交数 + rejection_count拒绝数 + latency_count延迟样本数, 来自MOD-EX-003审计日志
+#   code: assess() stats L144
+# - id: I2
+#   name: 告警阈值参数 标量
+#   fields: failure_rate_threshold失败率阈值0.05 + latency_p95_threshold_ms延迟阈值500ms, 严重度倍数2×
+#   code: __init__ L128-131; _SEVERE_MULTIPLIER L75
+# 层: 算法
+# - id: A1
+#   name_zh: ① 阈值突破与严重度判定
+#   name_en: OperationalRiskMonitor.assess
+#   intro: 不重算统计只拿现成统计和阈值比大小定严重度
+#   desc: breached=实际>阈值; severe=实际>=2×阈值; 任一severe或双维度齐破→HALT, 单破→warning, 未破→info; 附带人类可读findings
+#   inputs: I1 I2
+#   outputs: 突破标记+overall_severity+findings
+#   invariant: 阈值解释层不重算统计; overall_severity=max(failure,latent); 纯机制零参数
+# - id: A2
+#   name_zh: ② 风控检查结果转换
+#   name_en: to_risk_check_result
+#   intro: 把评估结果包装成编排器能聚合的RiskCheckResult
+#   desc: HALT/warning→passed=False, info→passed=True; limit_value=失败率阈值, actual_value=实际失败率, message汇总双维度对比
+#   inputs: A1
+#   outputs: RiskCheckResult
+# 层: 输出
+# - id: O1
+#   name_zh: 操作风险评估结果
+#   name_en: OperationalRiskAssessment
+#   intro: 含原始统计+双维度突破/严重标记+综合严重度+findings的frozen对象
+#   invariant: stats原样包装不修改
+#   downstream: MOD-L04-001(DefaultRiskManagerOrchestrator 操作风险评估)
+# - id: O2
+#   name_zh: 风控检查结果
+#   name_en: RiskCheckResult
+#   intro: 供风控编排器聚合的标准检查结果, 含passed/severity/message
+#   downstream: MOD-L04-001(DefaultRiskManagerOrchestrator 聚合并发)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> O1
+# A1 --> A2
+# A2 --> O2
 """
 
 from __future__ import annotations

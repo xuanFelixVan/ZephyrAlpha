@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-RK-14 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_RISK — AI/Agent Risk Monitor (MOD-RK-14)
+"""
+
+D_RISK — AI/Agent Risk Monitor (MOD-RK-14)
 
 AI/Agent 行为越界监控器——检测交易 Agent 的 ASI/AST/MCP 隐性串谋
 和自治边界违反。
@@ -38,6 +40,91 @@ D_AUTONOMY_CORE，本模块将其**组装+聚焦**为 risk/core/ 内面向交易
   - DEBUG: 逐检测器原始输出
 
 SSoT: depgraph MOD-RK-14 | blueprint.md §3 核心规则
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Agent行为指标 字典数据
+#   fields: {metric_name: value}如agent_a_latency, 供涌现检测器累积metric_history(≥5点才出相关性)
+#   code: assess() agent_metrics L210
+# - id: I2
+#   name: 轨迹异常数量 整数
+#   fields: 预计算轨迹异常数(调用方经AgentTrajectoryAnomalyDetector.detect_trajectory_anomalies获得)
+#   code: assess() trajectory_anomaly_count L211
+# - id: I3
+#   name: 行为指纹偏差 浮点数
+#   fields: 预计算偏差[0,1](A2ABehaviorFingerprint.compare相似度取1-similarity)
+#   code: assess() fingerprint_deviation L212
+# - id: I4
+#   name: 阈值参数 配置
+#   fields: risk_threshold默认0.6(>则越界) + correlation_threshold默认0.70(高相关对判定)
+#   code: __init__() L124-127
+# 层: 特征
+# - id: F1
+#   name_zh: 涌现行为评分
+#   name_en: emergence_score
+#   intro: 把涌现检测器的状态映射成0~1分
+#   formula: STABLE=0.0/CORRELATING=0.5/HYSTERETIC=0.7/CRITICAL=1.0 状态映射查表
+#   code: ai_agent_monitor.py L65-70 + L234
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 轨迹异常评分
+#   name_en: trajectory_score
+#   intro: 轨迹异常个数按5个封顶归一化到0~1
+#   formula: min(anomaly_count/5.0, 1.0)
+#   code: ai_agent_monitor.py L235
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 指纹偏差评分
+#   name_en: fingerprint_score
+#   intro: 行为指纹偏差截断到[0,1]直接用
+#   formula: clamp(float(fingerprint_deviation), 0.0, 1.0); None→0.0
+#   code: ai_agent_monitor.py L203 + L236
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 多检测器组装综合评分
+#   name_en: AiAgentMonitor.assess
+#   intro: 组装涌现检测器加轨迹指纹三路评分, 0.4/0.3/0.3加权算综合风险分并判越界
+#   desc: __init__创建有状态EmergentBehaviorDetector跨调用复用; record_metrics→detect_emergence得state; risk_score=0.4×emergence+0.3×trajectory+0.3×fingerprint; is_breached=risk>threshold OR state==CRITICAL
+#   inputs: I1 I2 I3 I4 F1 F2 F3
+#   outputs: AiAgentRiskMetrics快照
+#   invariant: risk_score=0.4×emergence+0.3×trajectory+0.3×fingerprint
+# - id: A2
+#   name_zh: ② 风控检查结果转换
+#   name_en: to_risk_check_result
+#   intro: 把风险快照转成编排器可聚合的RiskCheckResult
+#   desc: passed=!is_breached; limit=0.6; actual=risk_score; severity越界=HALT否则info
+#   inputs: A1
+#   outputs: RiskCheckResult
+# 层: 输出
+# - id: O1
+#   name_zh: AI/Agent风险快照
+#   name_en: AiAgentRiskMetrics
+#   intro: 含涌现状态/高相关对数/异常数/指纹偏差/综合风险分/越界标志的不可变快照
+#   invariant: risk_score∈[0,1]保留4位小数
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001(AI/Agent风险评估)
+# - id: O2
+#   name_zh: 风控检查结果
+#   name_en: RiskCheckResult
+#   intro: 供风控编排器统一聚合的AI/Agent风险检查结果
+#   downstream: DefaultRiskManagerOrchestrator MOD-L04-001
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I2 -.->|断点| F2
+# I3 -.->|断点| F3
+# F1 --> A1
+# F2 --> A1
+# F3 --> A1
+# I4 --> A1
+# A1 --> O1
+# A1 --> A2
+# A2 --> O2
 """
 
 from __future__ import annotations
