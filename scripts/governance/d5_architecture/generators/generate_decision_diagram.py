@@ -63,7 +63,7 @@ _GENERATORS_DIR = str(Path(__file__).resolve().parent)
 if _GENERATORS_DIR not in sys.path:
     sys.path.insert(0, _GENERATORS_DIR)
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import DOC_HTTP_BASE, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
 try:
@@ -200,7 +200,8 @@ _LEGEND_MD = (
 
 # 本地 doc HTTP server 前缀（§14 铁律：MD 顶部 HTML 跳转链接必须用 http:// 绝对链接，
 # 相对路径 / file:// 会在 IDE 编辑器内打开源码而非浏览器渲染）。
-_DOC_HTTP_BASE = "http://localhost:8765"
+# 真源：_shared.constants.DOC_HTTP_BASE（MOD-INF-005 SSoT），不再此处硬编码。
+_DOC_HTTP_BASE = DOC_HTTP_BASE
 
 # 功能域英文→中文映射（双语标题/节点标签用）
 # 真源：terminology_glossary.yaml 的 decision_domain_short 类别（经 _shared.terminology_loader 加载）

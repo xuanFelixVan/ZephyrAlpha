@@ -67,7 +67,7 @@ _THIS_DIR = str(Path(__file__).resolve().parent)
 if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
-from _shared.constants import EXIT_ERROR, EXIT_PASS
+from _shared.constants import DOC_HTTP_BASE, EXIT_ERROR, EXIT_PASS
 
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_category_map
@@ -104,7 +104,8 @@ OUTPUT_PATH = (
 
 # 本地 HTTP 文档服务器基址（模板 §14：HTML 跳转链接必须 http:// 绝对路径）
 # 启动：python -m http.server 8765 --bind 127.0.0.1 （仓库根目录执行）
-_DOC_HTTP_BASE = "http://localhost:8765"
+# 真源：_shared.constants.DOC_HTTP_BASE（MOD-INF-005 SSoT），不再此处硬编码。
+_DOC_HTTP_BASE = DOC_HTTP_BASE
 # HTML 集中子文件夹相对于仓库根的 posix 路径（用于拼 http 链接）
 _HTML_REL_POSIX = (OUTPUT_PATH.parent.relative_to(_REPO_ROOT) / HTML_SUBDIR).as_posix()
 

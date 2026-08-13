@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GOV_GENERATE_ALGO_OVERVIEW | docs/03_modules/_cross_layer/gov_scripts/blueprint.md
 # [MODULE] scripts.governance.d5_architecture.generators.generate_module_algorithm_overview
 # [DOMAIN]
-# [DEPENDENCIES] scripts.governance._shared.code_algorithm_extractor; zephyr.governance.persistence.depgraph_reader; zephyr.governance.persistence.battle_map_reader; scripts.governance.d5_architecture.generators._common; scripts.governance.d5_architecture.generators.domain_name_mapping
+# [DEPENDENCIES] scripts.governance._shared.code_algorithm_extractor; scripts.governance._shared.constants; zephyr.governance.persistence.depgraph_reader; zephyr.governance.persistence.battle_map_reader; scripts.governance.d5_architecture.generators._common; scripts.governance.d5_architecture.generators.domain_name_mapping
 # [CONSUMERS] 人工查看 docs/02_enterprise_architecture/08_algorithm_overview/index.md; reconciler 触发重生成
 # [STARTUP] event_driven
 # [MATURITY] production
@@ -91,6 +91,7 @@ from _shared.code_algorithm_extractor import (  # noqa: E402
     extract_algorithm_from_blueprint,
     extract_algorithm_from_code,
 )
+from _shared.constants import DOC_HTTP_BASE  # noqa: E402
 from zephyr.governance.persistence.depgraph_reader import DepgraphReader  # noqa: E402
 from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
@@ -107,14 +108,12 @@ warn_only: false
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "08_algorithm_overview"
 DOC_BASENAME = "module_algorithm_overview.md"
 
-# 本地 HTTP 文档服务器基址（可缩放 HTML 跳转链接用，对齐 generate_domain_doc.py 约定）：
+# 本地 HTTP 文档服务器基址（可缩放 HTML 跳转链接用）：
 # IDE 预览面板对 file:/// 和相对路径链接会在编辑器内打开源码，仅 http:// 链接交给
-# 外部浏览器渲染。需本地 http server（scripts/serve_docs_http.bat，端口变更时同步改这里）。
-# host/port 拼装 + 环境变量覆盖（对齐 DEFAULT_OLLAMA_URL 的 os.getenv 模式，
-# NO-HARDCODED-URL gate 禁单行硬编码 localhost URL 字面量，§5.160.9）。
-_DOC_HTTP_HOST = "localhost"
-_DOC_HTTP_PORT = 8765
-_DOC_HTTP_BASE = os.environ.get("ZEPHYR_DOC_HTTP_BASE") or f"http://{_DOC_HTTP_HOST}:{_DOC_HTTP_PORT}"
+# 外部浏览器渲染。需本地 http server（scripts/serve_docs_http.bat）。
+# 真源：_shared.constants.DOC_HTTP_BASE（MOD-INF-005 SSoT，含 ZEPHYR_DOC_HTTP_BASE 环境变量覆盖），
+# 6 个 D5 生成器统一引用，不再各自硬编码（治本 NO-HARDCODED-URL 存量）。
+_DOC_HTTP_BASE = DOC_HTTP_BASE
 
 
 def _zoomable_html_url(md_rel: str) -> str:

@@ -23,10 +23,14 @@ constants.py — 审计脚本共享常量
 
 所有脚本通过 from _shared.constants import REPO_ROOT 引用，
 不再各自硬编码 parents[N] 或 .parent 链。
+
+另含 DOC_HTTP_BASE（文档 HTTP server 地址 SSoT）——6 个 D5 生成器统一引用，
+不再各自硬编码 localhost:8765（治本 NO-HARDCODED-URL 存量）。
 """
 
 from __future__ import annotations
 
+import os
 import sys
 from pathlib import Path
 from typing import Any
@@ -276,6 +280,13 @@ GATES_DIR: Path = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcemen
 
 # DB_PATH 真源为 zephyr.shared.io.paths（上方 import），本模块 re-export。
 # 治理脚本不得各自硬编码库文件名。
+
+# 文档 HTTP server 地址（SSoT）：生成器生成 MD 里"可缩放 HTML 版"链接的前缀。
+# 对齐 generate_module_algorithm_overview.py 的 getenv 模式：环境变量优先，默认 localhost:8765。
+# 为什么集中这里：6 个生成器共用同一地址，硬编码分散会漂移（治本 NO-HARDCODED-URL 存量）。
+DOC_HTTP_HOST = "localhost"
+DOC_HTTP_PORT = 8765
+DOC_HTTP_BASE = os.environ.get("ZEPHYR_DOC_HTTP_BASE") or f"http://{DOC_HTTP_HOST}:{DOC_HTTP_PORT}"
 
 # depgraph.db 路径——供 sync_yaml_to_depgraph.py 等治理脚本引用（裁定#206 / Bug H 修复）
 # 治本（2026-06-27）：删除 DEPGRAPH_DB_PATH: Path = REPO_ROOT / "data" / "databases" / "depgraph.db"。

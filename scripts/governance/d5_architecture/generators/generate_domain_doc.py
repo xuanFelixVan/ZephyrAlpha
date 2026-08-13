@@ -49,7 +49,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import cleanup_stale_files, DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402
+from _common import cleanup_stale_files, DB_DISPLAY_NAME, idempotent_date, idempotent_timestamp  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
 
 __manifest__ = f"""
 args: []
@@ -70,9 +70,15 @@ from datetime import datetime
 
 import yaml
 
-from _shared.constants import EXIT_ERROR, EXIT_FINDINGS, EXIT_PASS, PgConnExecuteWrapper  # 治本 #ARCH-TOOL-HEALTH-V1：PgConnExecuteWrapper 用于类型注解（8 处使用）
+from _shared.constants import (  # noqa: E402  # 零漂移真源（MOD-INF-005）
+    DOC_HTTP_BASE,
+    EXIT_ERROR,
+    EXIT_FINDINGS,
+    EXIT_PASS,
+    PgConnExecuteWrapper,
+)
 
-from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402
+from domain_name_mapping import get_domain_name_zh, get_domain_name_zh_strict, get_domain_name_en, get_layer_name_bilingual, get_domain_desc_zh  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
 from _shared.module_translation_loader import (  # noqa: E402 — 模块级翻译真源（#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级缺口）
     get_module_translation,
     get_module_name_bilingual,
@@ -90,17 +96,13 @@ from _shared.code_algorithm_extractor import (  # noqa: E402 — 模块核心算
 )
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 from zephyr.governance.depgraph_schema import get_depgraph_pg_connection  # Bug 6 fix: L1370 uses but not imported
-from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）
+from zoomable_html import emit_zoomable_html, HTML_SUBDIR  # noqa: E402 — 可缩放 HTML 联动生成（md→_zoomable_html/ 子文件夹同步，reconciler 刷新 md 即刷新 HTML）  # noqa: import-integrity  sys.path动态加载的本地模块
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "02_domain_architecture_docs"
 
 # 本地 HTTP 文档服务器基址（用于生成可缩放 HTML 的浏览器跳转链接）
-# 原理：Trae/VS Code 预览面板对 file:/// 和相对路径链接会在编辑器内打开源码，
-# 只有 http:// 链接会交给外部浏览器渲染。因此需要本地起一个 http server 服务仓库根目录：
-#   python -m http.server 8765 --bind 127.0.0.1   （在仓库根目录执行）
-# 启动脚本：scripts/serve_docs_http.bat（双击即可，gitignore 为 dev-local 工具）。端口变更时同步修改此处。
-# 注意：.html 文件本身已 gitignore（dev-local 衍生产物），故链接仅在生成端开发机可用，这是预期行为。
-_DOC_HTTP_BASE = "http://localhost:8765"
+# 真源：_shared.constants.DOC_HTTP_BASE（MOD-INF-005 SSoT），不再此处硬编码。
+_DOC_HTTP_BASE = DOC_HTTP_BASE
 
 # 层级排序：编号按此顺序分组分配（build_numbering_map 按 LAYER_ORDER 给域编号）
 LAYER_ORDER = ["L0_infrastructure", "L1_foundation", "L1_platform", "L2_domain"]  # noqa: gate-vocab  显示排序用，含历史遗留 L1_platform（layer_vocabulary v2.0.0 已移除，保留仅为兼容旧域文档分组）

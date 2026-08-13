@@ -69,7 +69,7 @@ from zephyr.governance.persistence.dataflowgraph_schema import (  # noqa: E402
     init_dataflow_db,
 )
 from _shared.yaml_utils import load_vocabulary_values  # noqa: E402  词表合法值加载 SSoT（D-D-05）
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
+from _shared.constants import DOC_HTTP_BASE, EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
 # 术语翻译真源（SSoT：terminology_glossary.yaml，禁止硬编码中文字典）
 from _shared.terminology_loader import get_flat_map
 # 域中文名真源（#ARCH-SSOT-GLOSSARY-MERGE-001）：functional_domain_registry.yaml 经 domain_name_mapping 加载
@@ -91,7 +91,8 @@ OUTPUT_DIR = _REPO_ROOT / "docs" / "02_enterprise_architecture" / "05_dataflow_a
 
 # 本地 HTTP 文档服务器基址（模板 §14：HTML 跳转链接必须 http:// 绝对路径）
 # 启动：python -m http.server 8765 --bind 127.0.0.1 （仓库根目录执行）
-_DOC_HTTP_BASE = "http://localhost:8765"
+# 真源：_shared.constants.DOC_HTTP_BASE（MOD-INF-005 SSoT），不再此处硬编码。
+_DOC_HTTP_BASE = DOC_HTTP_BASE
 # HTML 集中子文件夹相对于仓库根的 posix 路径（用于拼 http 链接）
 _HTML_REL_POSIX = (
     OUTPUT_DIR.relative_to(_REPO_ROOT) / HTML_SUBDIR

@@ -72,7 +72,7 @@ if _THIS_DIR not in sys.path:
     sys.path.insert(0, _THIS_DIR)
 
 from _common import idempotent_date  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
-from _shared.constants import REPO_ROOT  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
+from _shared.constants import DOC_HTTP_BASE, REPO_ROOT  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
 from _shared.module_translation_loader import (  # noqa: E402  # noqa: import-integrity  sys.path动态加载的本地模块
     get_cross_cutting_all,
     get_step_indicators_zh,
@@ -211,7 +211,8 @@ _ACQUISITION_BADGE: dict[str, str] = {
 }
 
 # 本地文档 HTTP server 前缀（模板 §14：HTML 链接必须 http:// 绝对路径，IDE 才会交外部浏览器）。
-_HTML_SERVER_PREFIX = "http://localhost:8765/"
+# 真源：_shared.constants.DOC_HTTP_BASE（MOD-INF-005 SSoT），不再此处硬编码。
+_HTML_SERVER_PREFIX = DOC_HTTP_BASE + "/"
 
 
 # ---------------------------------------------------------------------------
