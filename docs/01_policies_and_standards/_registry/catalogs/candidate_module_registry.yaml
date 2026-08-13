@@ -2596,6 +2596,77 @@ entries:
   next_review_date: '2027-08-02'
   review_frequency: yearly
   last_review_outcome: "rejected,q2无需求驱动+q1已由H1RedisReader.get_online_features覆盖。depgraph node7964707已deprecated。除非D_SIGNAL信号域启动且批量截面读性能不达标,否则不再评估"
+- id: CAND-SELL-001
+  name: Trade-Level Circuit Breaker / 连续亏损熔断
+  aliases:
+  - TradeLevelCircuitBreaker
+  - 连续亏损熔断
+  domain: D_SELL_DECISION
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: 横切
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: 42_sell_flow §3.10 伪代码已定型但 §2.4 自标"未登记"，无 depgraph 节点
+  description: >-
+    连续亏损交易级熔断（42_sell_flow §3.10）：连续 N 笔亏损触发减仓系数
+    （consecutive_loss_threshold=2 / reduction_factor=0.25 / min_scale=0.25 /
+    reset_on_win=True），A 股适配打板 N=2、多因子 N=3。MVP 未施工（§3.10 裁定：
+    无实盘证据前不建）。
+  capability: ''
+  problem_it_solves: 连续小亏单笔不触发日度熔断但积累可观亏损的回撤场景
+  trigger_signals:
+  - G04 首批策略按策略类型参数校准产出（42 §7 三项待定问题的同一依赖）
+  - 实盘证据：连续小亏不触发日度熔断但积累可观亏损（42 §3.10 裁定原文）
+  keywords:
+  - 连续亏损熔断
+  - TradeLevelCircuitBreaker
+  - 42_sell_flow §3.10
+  upstream_deps:
+  - G04 首批 3 策略参数校准（20_first_batch_strategies）
+  downstream_consumers:
+  - 35_drawdown_protocol（回撤 Protocol 联动，42 §3.10）
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - G04 参数校准产出 + 实盘亏损形态证据（双条件，缺一不可）
+  design_admission:
+    q1_implemented:
+      result:
+      evidence: 待复核
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-14'
+  promoted_to: ''
+  source_draft: 42_sell_flow.md §3.10
+  source_section: §3.10 连续亏损熔断
+  original_id: ''
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: 伪代码已定型（42 §3.10 L500-530）；MVP 可选施工裁定见 §3.10 末段
+  risks:
+  - 触发条件挂在 G04 校准（无负责方跟踪）上，可能长期沉睡——已由 00_index G04 跟踪行缓解
+  alternatives: 日度熔断（已建，35 号回撤 Protocol 四级阈值）覆盖单日大亏，不覆盖连续小亏积累
+  tags:
+  - 孤儿决策补登
+  - layer:横切
+  search_terms:
+  - 连续亏损熔断
+  - TradeLevelCircuitBreaker
+  - circuit breaker
+  related_candidates: []
+  enables: []
+  blocked_by:
+  - G04 首批策略参数校准未产出
+  next_review_date: ''
+  review_frequency: quarterly
+  last_review_outcome: 2026-08-14 补登（#ARCH-SELL-001 遗留项治本，原"只在 spec 里存在"的孤儿决策）
+  acquisition_method: self_build
+  acquisition_source: ''
 - id: CAND-BUY-001
   name: External Order Monitoring / 外部指令盯盘
   aliases:

@@ -111,8 +111,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 6 | depgraph build_status 滞后：MOD-POS-020 节点状态异常 | AI-POS-001 | 模块已 production 落码，depgraph 未同步 | ⏳ |
-| 7 | depgraph MOD-POS-021 状态仍 design 滞后 | AI-FRA-001 | 同上 | ⏳ |
+| 6 | depgraph build_status 滞后：MOD-POS-020 节点状态异常 | AI-POS-001 | 模块已 production 落码，depgraph 未同步 | ✅ 已闭环（2026-08-14 AI-SELL-001 实证：merge 后 #ARCH-70 同身份 UPDATE 通道自动转换，当前 stable+production） |
+| 7 | depgraph MOD-POS-021 状态仍 design 滞后 | AI-FRA-001 | 同上 | ✅ 已闭环（2026-08-14 同 #6，stable+production 实证） |
 | 8 | capability_canonical_file_registry 未登记 MOD-POS-021（违反硬约束） | AI-FRA-001 | 需补登记 | ⏳ |
 | 9 | AGENTS.md 显化修改被 PROTECTED-PATHS 门禁阻断，需 Owner 审批 | AI-REG-FLD-001 / EXP-001 | 两队同遇；走 Owner 审批流程。**2026-08-13 进展**：12 注册表速查改动已获 Owner 批准落地（f15de056）；后续新增显化修改仍需逐个审批 | 🔄 部分闭环 |
 | 10 | dangling FK：UNI-BASKET-001（regime 验证 10 大盘股篮子未登记 universe_registry） | AI-REG-EXP-001 | 需补登 universe_registry 或修正引用 | ⏳ |
@@ -161,6 +161,10 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 42 | 37 号蓝图 §5 两项跨会话排期：①编排层接入 35 号 §3.13 调用方 ②IPO 数据源接入（数据层） | AI-LIQ-001 | 非 37 号施工范围，分配给 35 号调用方会话/数据层会话 | ⏳ 待分配 |
 | 43 | SOP 文本章节号漂移（遗留项登记目标 §七 vs tracker 现状 §六） | AI-LIQ-001 裁定书 S6 | SOP 文本修正，下轮 SOP 维护时顺手 | ⏳ |
 | 44 | 00_index 37 号版本同步（v1.0.18→v1.1.0）+ MOD-RK-21 production 状态 | AI-LIQ-001 | 照 #37 先例：统筹同步 00_index，随 LIQ merge 生效 | 🔥 随 merge 执行 |
+| 45 | AI-SELL-001 depgraph 流转遗留（4 节点 design 待 merge 后转换） | AI-SELL-001 | 42 号卖出流 4 模块已 merge（a337e0f54c 含 87764ffb29）；重建后 MOD-SELL-000/004/005/019 全部 stable+production、边升级 active 不断链（#ARCH-70 通道实证）；SOP Step 8 已改写"只登记不流转+merge 后自动转换"分流口径 | ✅ 已闭环（2026-08-14 实证） |
+| 46 | MOD-SELL-014/017 不施工（MVP 决策）+ TradeLevelCircuitBreaker Phase 2 | AI-SELL-001 | 014/017 维持 spec 裁定；42 v1.7.1 补阶段 5b+触发条件勘正；CircuitBreaker 孤儿决策补登 CAND-SELL-001（trigger=G04 参数校准+连续小亏实盘证据）；battle_map_07 BM-SELL-04-C 文案分裂——派生文件不入 git，depgraph 014=planned 为真源，随下一次 battle_map 重生成自动订正 | ✅ 已闭环（2026-08-14，42 v1.7.1 + CAND-SELL-001） |
+| 47 | worktree 环境断层（PYTHONPATH/.env.postgres/lookup_audit 三件套） | AI-SELL-001 | #ARCH-WORKTREE-ENV-001 落地：session_worktree create 自动备环境 + strip_session_worktree/audit 锚定/双机制检测治本（a2163c1b）；.gitignore 显式登记（5e61c9b7） | ✅ 已闭环（2026-08-14）；关联 #39 部分缓解（CLI bootstrap 未插 src 子项仍 ⏳） |
+| 48 | G04 参数校准动作无负责方/无跟踪（42 号 §6/§7 三项触发条件共同依赖） | AI-SELL-001 审查发现 | 已挂 00_index G04 行跟踪（P1-6 同批）；校准本身依赖首批策略回测/实盘，非施工队范围 | ⏳ 统筹跟踪项 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

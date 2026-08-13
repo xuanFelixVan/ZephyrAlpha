@@ -438,17 +438,37 @@ pytest tests/path/to/test_xxx.py -v
 
 ---
 
-### Step 8 · 全景图状态流转（planned→production）
+### Step 8 · 全景图状态流转（design→production）
 
-**何时触发**：Step 7 文档更新完成
+**何时触发**：Step 7 文档更新完成（**仅限主工作区直接施工场景**；worktree 隔离施工见下方分流）
 **前置条件**：文档已对齐
 **操作摘要**：apply_depgraph 状态流转 + 重生成 battle_map + 重生成 path_tree + 三方对齐验证 + diagnose
 **引用真源**：[trae_080_panorama_alignment.yaml](../rules/trae_080_panorama_alignment.yaml) §panorama_alignment（转正流程） / [trae_056_module_creation_workflow.yaml](../rules/trae_056_module_creation_workflow.yaml) §phase_10 / [trae_035_task_construction_verification.yaml](../rules/trae_035_task_construction_verification.yaml) §task_003_panorama_alignment
-**执行命令**：
+
+**场景分流（2026-08-14 裁定，#ARCH-SELL-001 / #ARCH-70 实证）**：
+
+- **worktree 隔离施工（默认，#ARCH-AICOLLAB-001）**：会话内**只登记不流转**——
+  `apply_depgraph.py --add-design-node/--add-design-edge` 登记 design 态节点与设计态边
+  （design 行被全量重建 DELETE 豁免保护），并在完工反馈登记遗留项。
+  **禁止会话内流转 production**：运营态节点以主工作区磁盘为锚，worktree 内流转后
+  下一次 GATE-DEPGRAPH-OPS 重建会把节点 DELETE（文件不在主工作区磁盘）。
+  merge 回 dev 后无需手工动作——#ARCH-70 同身份 UPDATE 通道在第一次重建时自动
+  转 production（node_id 不变、edges 不断链、build_status 按"production+test→stable"
+  推导）。**merge 执行人职责**：重建后实证核验节点双态 + 闭环 tracker 遗留项
+  （2026-08-14 SELL 4 节点 + POS-020/021 实证通过）。
+- **主工作区直接施工（非 worktree）**：手工流转用合法命令——
+  `python scripts/governance/apply_depgraph.py --transition-design-maturity <NODE_ID> production`。
+  ⚠️ 旧写法 `--transition-build-status <NODE_ID> production` **必然失败**（exit 4）：
+  `build_status` 合法值仅 planned/generated/testing/stable/deprecated 五态
+  （单调推进链，trae_054 §build_status），`production` 是 `design_maturity` 字段的值，
+  两字段正交——design_maturity 管"纸面 vs 物理存在"，build_status 管生命周期成熟度。
+  稳定度提升用 `--transition-build-status <NODE_ID> testing|stable`。
+
+**执行命令**（主工作区场景）：
 
 ```powershell
-# 1. depgraph 状态流转 planned→production
-python scripts/governance/apply_depgraph.py --transition-build-status NODE_ID production
+# 1. depgraph 双态流转 design→production（合法命令，2026-08-14 勘正）
+python scripts/governance/apply_depgraph.py --transition-design-maturity NODE_ID production
 
 # 2. sync 自动把 production 状态同步到其余三图
 python scripts/governance/sync_panorama_module.py --all
@@ -466,7 +486,7 @@ python scripts/governance/d5_architecture/generators/align_all.py
 python scripts/governance/diagnose_depgraph.py
 ```
 
-**通过判据**：depgraph status=production / 五图对齐通过 / path_tree 无旧引用 / diagnose exit 0
+**通过判据**：depgraph design_maturity=production / 五图对齐通过 / path_tree 无旧引用 / diagnose exit 0
 **不通过处置**：对齐失败 → 回 Step 7 修正 / diagnose 错误 → 修复后重跑
 **产出物**：全景图对齐通过报告
 **禁止**：架构升级期运行 `generate_project_depgraph.py --force`（会覆盖 depgraph 全景图，详见 [trae_005_modification_governance.yaml](../rules/trae_005_modification_governance.yaml)）

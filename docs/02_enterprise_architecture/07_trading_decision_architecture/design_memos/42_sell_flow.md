@@ -5,8 +5,8 @@ title: 卖出流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.0"
-date: 2026-08-13
+version: "1.7.1"
+date: 2026-08-14
 topic: sell_flow
 scope: 07_trading_decision_architecture
 ---
@@ -638,7 +638,8 @@ class TradeLevelCircuitBreaker:
 | **阶段 2** | [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 定稿，退潮信号 L2-B 注入权重校准 | 28 active |
 | **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值与卖出端响应正式联动 | ~~35 active~~ **已满足**（35 已 active 1.37.0，v1.6.0 订正）——35 §3.2 三层映射（外层 8/15/20/25% + 内层代码 5/10/15%）与 §3.9 卖出端响应可直接对接，联动代码施工后本阶段关闭 |
 | **阶段 4** | BM-SEL-13 密度 PDF 就绪，密度感知止损/止盈启用 | BM-SEL-13 施工完成 |
-| **阶段 5** | MOD-SELL-017 分批退出施工，分批卖出启用 | 各策略 track record 积累 |
+| **阶段 5** | MOD-SELL-017 分批退出施工，分批卖出启用 | 各策略 track record 积累（量化口径随 G04 校准产出补录，v1.7.1） |
+| **阶段 5b（v1.7.1 补登）** | MOD-SELL-014 策略止损范式施工，按策略类型差异化止损（趋势宽/均值回归中/高频紧/Carry 宽/套利无）启用 | G04 按策略类型的参数校准产出（同 §7 三项待定问题依赖） |
 | **阶段 6（待裁定）** | 逻辑止损族（基本面/技术面/事件）除主力出货外逐步启用 | 各信号源就绪 |
 | **阶段 7（远期·待裁定）** | ML 风控远期：Conformal Kelly drawdown dial——conformal prediction 区间 downside miss 时自动降杠杆（模型失效信号），MaxDD 27.7%→20.3%；替代手工回撤四级阈值的自适应风控 | 各策略 12+ 月 track record + conformal 预测模型校准通过 |
 | **阶段 8（远期·待裁定）** | CUSUM 策略衰减检测——实时监控策略 alpha 是否发生结构性衰减（区分"正常回撤"与"策略已死"），触发 sleeve 级降仓/暂停而非单仓位止损 | 各策略 6+ 月实盘 track record（CUSUM 需 OOS 均值 μ₀ 基线） |
@@ -681,7 +682,7 @@ class TradeLevelCircuitBreaker:
 | **密度感知止损/止盈** | 依赖 BM-SEL-13 密度 PDF（未就绪） | BM-SEL-13 施工完成 |
 | **分批卖出** | MOD-SELL-017 设计态；MVP 一次性退出已满足退出需求 | 各策略 track record 积累 |
 | **逻辑止损族（基本面/技术面/事件）** | MVP 只做主力出货（复用 L2-B）；其余信号源未就绪 | 各信号源施工完成 |
-| **固定止盈/分批止盈/时间加权止盈** | MVP 用移动止盈统一；差异化待 G04 校准 | G04 策略类型定稿 |
+| **固定止盈/分批止盈/时间加权止盈** | MVP 用移动止盈统一；差异化待 G04 校准 | G04 按策略类型的参数校准产出（非"策略类型定稿"——20 号已 active，校准依赖首批回测/实盘，v1.7.1 措辞勘正） |
 | **退潮信号 L2-B 注入权重** | 28 退潮阶段判定未定义 | [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) active |
 | **Watch List 秒级扫描** | 实时风控未就绪，降级分钟级 | 实时风控施工完成 |
 | **CUSUM 策略衰减检测** | 需各策略 6+ 月 OOS 实盘 track record 标定 μ₀ 基线；MVP 阶段 35 四级回撤阈值已提供组合级止血 | 各策略 6+ 月实盘 track record |
@@ -758,3 +759,4 @@ class TradeLevelCircuitBreaker:
 | 2026-08-12 | 1.6.1 | 作战地图全覆盖补丁——BM-SELL-09 / BM-POS-09 | ①新增 §3.11 卖出闭环优化（BM-SELL-09）——卖后 N 天价格追踪窗口（默认 5 交易日校准项）/按信号类型×策略分组准确率统计/A-B 显著性检验 p<0.05（单格样本<30 不出建议）/执行质量评分，产出 E-SELL-04 SellLoopFeedback 回调 BM-SELL-03 信号权重（仅 p<0.05 生效、单次 ±20% 封顶）；调度复用 55 号 §3.6 复盘编排器（daily→weekly→monthly 链路+ReportPublisher 归档），显著性框架复用 54 号 §3.9 deflated-alpha（日常轻量 p 检验+月/季重量 audit() 分层）；②§3.3 扩展卖出阈值双向反馈契约（BM-POS-09）——PositionStateFeedback→D-SELL-DECISION 阈值动态调整五字段（pnl_state/unrealized_pnl_pct/threshold_delta∈±0.10 硬封顶/feedback_window/source_position_id）+方向规则（盈利放宽/亏损收紧/breakeven 不动，强制清仓不经本契约）+买入后即时验证窗口三级递进（5min 跌破>1% 放量→OBSERVING/15min 破分时均线→减仓 50%/30min 反向>2ATR→全部止损，与软止损共用四态机不新建）。均补定位→裁定（理由+重评条件）→契约/参数→降级四层 |
 | 2026-08-12 | 1.6.2 | 作战地图环节映射补强——锚定 BM-RC-05-A | §3.3 末尾补映射块，环节级可追溯 |
 | 2026-08-13 | 1.7.0 | MVP 施工落地——4 模块 65 测试全绿（AI-SELL-001） | §2.4 未施工清单 9 项中 7 项落码：MOD-SELL-000 持仓Triage（§3.2 triage_position，import 消费方 MOD-POS-003 TriageLevel 真源唯一，ATR缺失降级MONITOR，threshold_delta 硬封顶±0.10）/ MOD-SELL-005 止损族（§3.3 Chandelier 统一+策略M±0.5+§3.2 时间止损第⑦类源）/ MOD-SELL-004 止盈族（§3.4 自动phase判定委托005）/ MOD-SELL-019 执行编排（新登记，§3.8 时序+T+1/跌停硬约束+§3.9 Kill Switch清仓排序）；3 处工程修正（triage绝对距离比较消浮点尾差/ATR缺失降级MONITOR/执行编排落地表格约束）；MOD-SELL-014/017/circuit breaker 维持 spec 裁定不施工；三登记齐备（depgraph 节点+边/creation_token×12/plain_zh×4/ARCH-SELL-001） |
+| 2026-08-14 | 1.7.1 | 遗留登记完备性补修（#ARCH-SELL-001 治本方案 P1-4） | §5.2 补阶段 5b（MOD-SELL-014 启用触发=G04 参数校准产出，原仅散见 §2.3/§5.3/§7）+ 阶段 5 触发条件补量化口径注记；§6 "G04 策略类型定稿"措辞勘正为"G04 按策略类型的参数校准产出"（20 号已 active，字面误读风险）；TradeLevelCircuitBreaker 补登 CAND-SELL-001（孤儿决策收口）；battle_map_07 BM-SELL-04-C 文案三方分裂——派生文件不入 git，depgraph MOD-SELL-014=planned 为真源，随下一次 battle_map 重生成自动订正 |
