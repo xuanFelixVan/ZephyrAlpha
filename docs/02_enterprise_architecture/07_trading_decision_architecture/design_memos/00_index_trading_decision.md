@@ -52,16 +52,16 @@ scope: 07_trading_decision_architecture
 | [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | draft v0.2.0（暂缓说明已补） |
 | [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（五阶段+定位器+regime分工+策略部署+隐形驱动验证） | active v1.2.0（2026-08-12 从 a3750b90d1 恢复，16f119bd） |
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.5.0 |
-| [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.23.0 |
-| [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.20 |
+| [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.25.0 |
+| [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.22 |
 | [33_budget_change_handler.md](33_budget_change_handler.md) | G14 BudgetChangeHandler 三级升级 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
 | [34_regime_meta_allocator.md](34_regime_meta_allocator.md) | G15 RegimeMetaAllocator 参数（框架 active + 代码 production v1.0.0；C1 已通过；参数待首批策略 PnL 校准） | active v2.8.1 |
-| [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active v1.37.0 |
-| [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active v1.10.0 |
-| [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | active v1.0.16 |
+| [35_drawdown_protocol_impl.md](35_drawdown_protocol_impl.md) | G16 回撤 Protocol 落地 | active v1.39.0 |
+| [36_var_es_monitoring.md](36_var_es_monitoring.md) | G17 VaR/ES 与波动率监控 | active v1.10.2 |
+| [37_liquidity_crisis_protocol.md](37_liquidity_crisis_protocol.md) | G18 流动性危机处理 | active v1.1.0（2026-08-14 AI-LIQ-001 施工完毕，MOD-RK-21 production，885cddc3af merge） |
 | [40_execution_broker.md](40_execution_broker.md) | 执行层下单对接（19项决策+代码已施工；§2.8 盘前检查链+订单层熔断两级） | active v2.10.1 |
-| [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.6.0 |
-| [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.0 |
+| [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
+| [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
 | [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | draft v0.1.0（2026-08-12 新建，作战地图全覆盖补丁） |
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
@@ -314,7 +314,7 @@ scope: 07_trading_decision_architecture
 | 产出物 | `35_drawdown_protocol_impl.md` |
 | 对标 | ARKA / LedgerMind / Sina 量化FOF / tradingwyckoff（§2.5 已引） |
 | 正交性 | ✅ 与 regime 正交（drawdown 是账户级，regime 是市场级） |
-| 状态 | ✅ active v1.37.0 |
+| 状态 | ✅ active v1.39.0 |
 | 优先级 | P2（与 G12 并行） |
 
 #### G17 VaR/ES 与波动率监控
@@ -326,7 +326,7 @@ scope: 07_trading_decision_architecture
 | 产出物 | `36_var_es_monitoring.md` |
 | 对标 | 赢牛资管 VaR-ES / Sina 量化风控 |
 | 正交性 | ✅ 与 regime 正交 |
-| 状态 | ✅ active v1.10.0 |
+| 状态 | ✅ active v1.10.2 |
 | 优先级 | P3 |
 
 #### G18 流动性危机处理
@@ -631,9 +631,9 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 25_multifactor_strategy_detail | G09 多因子细节 | ✅ 已定稿 | active v1.12.11（6 要点+8 施工算法+Phase 4 栈） |
 | 26_event_driven_strategy_detail | G10 事件驱动 | ✅ 已定稿 | active v1.8.0 |
 | 27_second_batch_strategies | G11 第二批次 | （待认领） | draft v0.2.0（暂缓讨论，说明已补） |
-| 35_drawdown_protocol_impl | G16 回撤落地 | ✅ 已定稿 | active v1.37.0 |
-| 36_var_es_monitoring | G17 VaR/ES | ✅ 已定稿 | active v1.10.0 |
-| 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.0.16 |
+| 35_drawdown_protocol_impl | G16 回撤落地 | ✅ 已定稿 | active v1.39.0 |
+| 36_var_es_monitoring | G17 VaR/ES | ✅ 已定稿 | active v1.10.2 |
+| 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.1.0（2026-08-14 AI-LIQ-001 施工完毕，MOD-RK-21 production） |
 | 28_sentiment_cycle_trading | G21 情绪周期 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失（v1.2.0 可从 a3750b90d1 恢复） |
 | 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
 | 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.6.6 |
@@ -653,12 +653,12 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 91_density_prediction | 密度预测远期愿景（工程文档，非G主题） | 已提议 | draft v0.1.2 |
 | 51_panel_experiment_history_mlflow_retirement | Panel 实验历史 Tab + mlflow 退役施工计划（工程文档，非G主题，50_backtest_observability_workplan M2 下游） | ✅ 已定稿 | active v1.2.6 |
 | 30_multi_strategy_concurrency | 多策略并发架构 | ✅ 已定稿 | active v2.5.0 |
-| 31_position_sizing | G12 仓位算法 | ✅ 已定稿 | active v1.23.0 |
-| 32_firm_risk_aggregator | G13 FirmRiskAggregator | ✅ 已定稿 | active v1.0.20 |
+| 31_position_sizing | G12 仓位算法 | ✅ 已定稿 | active v1.25.0 |
+| 32_firm_risk_aggregator | G13 FirmRiskAggregator | ✅ 已定稿 | active v1.0.22 |
 | 33_budget_change_handler | G14 BudgetChangeHandler | ✅ 已定稿 | active v1.1.0（2026-08-14 AI-BGT-001 行号漂移修正+§7 四项闭环，1b8a774ad5） |
 | 34_regime_meta_allocator | G15 RegimeMetaAllocator | ✅ 已定稿 | active v2.8.1（C1 已通过；参数待策略 PnL 校准） |
-| 41_buy_flow | G19 买入流 | ✅ 已定稿 | active v1.6.0 |
-| 42_sell_flow | G20 卖出流 | ✅ 已定稿 | active v1.7.0 |
+| 41_buy_flow | G19 买入流 | ✅ 已定稿 | active v1.7.0 |
+| 42_sell_flow | G20 卖出流 | ✅ 已定稿 | active v1.7.1 |
 | 43_compliance_discipline | G30 合规与交易纪律体系（交易流层子项，D_COMPLIANCE 域） | ✅ 已落盘 | draft v0.1.0（2026-08-12 作战地图全覆盖补丁新建） |
 | 40_execution_broker | G22 下单对接 | G22-AI | ✅ v2.10.1 + 代码已施工 |
 | 54_reconciliation_attribution | G25 对账归因 | ✅ 已定稿 | active v1.14.0 |

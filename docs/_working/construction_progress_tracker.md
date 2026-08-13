@@ -46,7 +46,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 |---|---|---|
 | 16 | 33 号 BudgetChange（AI-BGT-001，含 33 号文档重建核实+行号漂移修正 v1.1.0+MOD-POS-022 四瑕疵修复） | ✅ 已 merge（7ccc296d1e，2026-08-14 sess-batch-cleanup-0814；3 commits：1e78d0d20e/1b8a774ad5/15b1e40f8a，33 测试 2 轮全绿；wipe 事故后统筹重建 worktree 复跑 33 passed 确认） |
 | 17 | 37 号流动性危机 Protocol（AI-LIQ-001，MOD-RK-21 六算法+54 测试+37号 v1.1.0） | ✅ 已 merge（885cddc3af，2026-08-14 sess-batch-cleanup-0814；4 commits：d53693a13e/16a089c812/db695f9d1c/3e39367c37，统筹独立复跑 54 passed；Step1/Step6 双 PASS，3 处文档缺陷修复落地 v1.1.0） |
-| 18 | 42 号卖出流（AI-SELL-001） | 🔄 施工中（分支 tip 87764ffb29；wipe 事故中 worktree 被清、已 blob 自救，未完工反馈未到） |
+| 18 | 42 号卖出流（AI-SELL-001，MVP 4 模块 MOD-SELL-000/004/005/019） | ✅ 完工已 merge（分支 87764ffb29 经 a337e0f54c 回 dev；depgraph 重建后 4 节点 stable+production 实证；sell_decision 227 测试全绿；42 号 v1.7.1） |
 
 ## 二、统筹会话与 merge 记录
 
@@ -160,7 +160,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 41 | AGENTS.md "179 条已声明能力"硬编码计数漂移（实际 341 条） | AI-LIQ-001 | 裁定：改动态表述（以 capability registry 实时查询为准），挂 #9 Owner 审批通道 | ⏳ 等 Owner 审批 |
 | 42 | 37 号蓝图 §5 两项跨会话排期：①编排层接入 35 号 §3.13 调用方 ②IPO 数据源接入（数据层） | AI-LIQ-001 | 非 37 号施工范围，分配给 35 号调用方会话/数据层会话 | ⏳ 待分配 |
 | 43 | SOP 文本章节号漂移（遗留项登记目标 §七 vs tracker 现状 §六） | AI-LIQ-001 裁定书 S6 | SOP 文本修正，下轮 SOP 维护时顺手 | ⏳ |
-| 44 | 00_index 37 号版本同步（v1.0.18→v1.1.0）+ MOD-RK-21 production 状态 | AI-LIQ-001 | 照 #37 先例：统筹同步 00_index，随 LIQ merge 生效 | 🔥 随 merge 执行 |
+| 44 | 00_index 37 号版本同步（v1.0.18→v1.1.0）+ MOD-RK-21 production 状态 | AI-LIQ-001 | 照 #37 先例：统筹同步 00_index，随 LIQ merge 生效 | ✅ 已闭环（2026-08-14 LIQ 已 merge，00_index L61/L636 同步 v1.1.0；顺手同步第一二批全部滞后版本：31→1.25.0/32→1.0.22/35→1.39.0/36→1.10.2/41→1.7.0/42→1.7.1） |
 | 45 | AI-SELL-001 depgraph 流转遗留（4 节点 design 待 merge 后转换） | AI-SELL-001 | 42 号卖出流 4 模块已 merge（a337e0f54c 含 87764ffb29）；重建后 MOD-SELL-000/004/005/019 全部 stable+production、边升级 active 不断链（#ARCH-70 通道实证）；SOP Step 8 已改写"只登记不流转+merge 后自动转换"分流口径 | ✅ 已闭环（2026-08-14 实证） |
 | 46 | MOD-SELL-014/017 不施工（MVP 决策）+ TradeLevelCircuitBreaker Phase 2 | AI-SELL-001 | 014/017 维持 spec 裁定；42 v1.7.1 补阶段 5b+触发条件勘正；CircuitBreaker 孤儿决策补登 CAND-SELL-001（trigger=G04 参数校准+连续小亏实盘证据）；battle_map_07 BM-SELL-04-C 文案分裂——派生文件不入 git，depgraph 014=planned 为真源，随下一次 battle_map 重生成自动订正 | ✅ 已闭环（2026-08-14，42 v1.7.1 + CAND-SELL-001） |
 | 47 | worktree 环境断层（PYTHONPATH/.env.postgres/lookup_audit 三件套） | AI-SELL-001 | #ARCH-WORKTREE-ENV-001 落地：session_worktree create 自动备环境 + strip_session_worktree/audit 锚定/双机制检测治本（a2163c1b）；.gitignore 显式登记（5e61c9b7） | ✅ 已闭环（2026-08-14）；关联 #39 部分缓解（CLI bootstrap 未插 src 子项仍 ⏳） |
