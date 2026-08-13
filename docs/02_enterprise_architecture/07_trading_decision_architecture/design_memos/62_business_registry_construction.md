@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 临时工作文档 | [business_registry_consolidation_plan.md](../../../_working/business_registry_consolidation_plan.md)（施工方案+调研报告+裁定+schema 草案） |
 | 真源入口 | [registry_of_registries.yaml](../../../registry_of_registries.yaml) tier_2 业务资产段 |
 | 创建 | 2026-08-10 |
-| 状态 | P0 已完成 3/12；P1 部分完成 3/7（factor 111 条 / strategy 59 条 / risk_limit 42 条已落盘，Step1-3 完成、Step4-8 待做），其余 4 表待施工；P2 待施工 2/12（2026-08-12 更新） |
+| 状态 | P0 已完成 3/12；P1 部分完成 3/7（factor 111 条 / strategy 59 条 / risk_limit 62 条已落盘——含 2026-08-13 K4 补登 var/es/kill_switch 20 条，Step1-3 完成、Step4-8 待做），其余 4 表待施工；P2 待施工 2/12（2026-08-13 更新） |
 
 ## 2. 背景与问题诊断
 
@@ -61,7 +61,7 @@ scope: 07_trading_decision_architecture
 | 5 | 策略库 | REG-STR-001 | `catalogs/strategy_registry.yaml` | tier_2 | P1-A | 🔄 Step1-3 已完成 | 59 |
 | 6 | 技术指标 | REG-IND-001 | `catalogs/technical_indicator_registry.yaml` | tier_2 | P1-A | ⏳ 待施工 | — |
 | 7 | 执行算法 | REG-EXA-001 | `catalogs/execution_algo_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
-| 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | 🔄 Step1-3 已完成 | 42 |
+| 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | 🔄 Step1-3 已完成 | 62 |
 | 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ⏳ 待施工 | — |
 | 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
 | 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ⏳ 待施工 | — |

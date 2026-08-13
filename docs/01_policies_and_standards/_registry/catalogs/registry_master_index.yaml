@@ -237,7 +237,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 0
+  entry_count: 62
   status: active
 - registry_id: PS-REG-020
   name: 规则AI感知索引（trae 规则→operations/gate_ids 映射）

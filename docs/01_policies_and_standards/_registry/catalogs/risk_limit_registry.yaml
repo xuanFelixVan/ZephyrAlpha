@@ -13,9 +13,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-10'
+last_updated: '2026-08-13'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - risk_limit_id
@@ -1219,6 +1219,551 @@ risk_limits:
     version: "1.0.0"
     created_at: "2026-08-10"
     updated_at: "2026-08-10"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  # ============================================================
+  # VAR（VaR类）— 5条（K4遗留补登 2026-08-13，AI-REG-K4-001）
+  # 36号 §3.5.1 5级系统性风险3条 + 30号 §2.5.4 框架规则1条 + 36号 §3.6 波动率调整1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-VAR-001"
+    name: "Systemic Risk Level YELLOW (VaR 2%)"
+    name_zh: "系统性风险黄级（VaR_95≥2%）"
+    limit_type: "var"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 2.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "VaR_95∈[2%,4%)触发黄级：新开仓减半（position_cap=0.5）；<2%为GREEN正常区（cap=1.0）；代码DrawdownControllerConfig var_yellow=0.02"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-POS-008"
+    doc_ref: "36_var_es_monitoring.md §3.5.1"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    var_calibration_method: "historical"
+    risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+
+  - risk_limit_id: "RLM-VAR-002"
+    name: "Systemic Risk Level ORANGE (VaR 4%)"
+    name_zh: "系统性风险橙级（VaR_95≥4%）"
+    limit_type: "var"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 4.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "VaR_95∈[4%,6%)触发橙级：禁止新开仓+减仓30%（position_cap=0.7）；代码var_orange=0.04"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-POS-008"
+    doc_ref: "36_var_es_monitoring.md §3.5.1"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    var_calibration_method: "historical"
+    risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+
+  - risk_limit_id: "RLM-VAR-003"
+    name: "Systemic Risk Level RED (VaR 6%)"
+    name_zh: "系统性风险红级（VaR_95≥6%）"
+    limit_type: "var"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 6.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "VaR_95>6%触发红级：减仓50%+只平不开（position_cap=0.5）；代码var_red=0.06"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-POS-008"
+    doc_ref: "36_var_es_monitoring.md §3.5.1"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    var_calibration_method: "historical"
+    risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+
+  - risk_limit_id: "RLM-VAR-004"
+    name: "Entry VaR 1.2x Framework Rule"
+    name_zh: "入场VaR 1.2倍框架规则（减仓20%）"
+    limit_type: "var"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 1.2
+    threshold_unit: "x"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "VaR>1.2×入场VaR（entry_var盘前快照）→减仓20%；30号§2.5.4框架规则，36号§3.5落地为5级系统性风险体系（RLM-VAR-001~003/RLM-ES-001承载执行）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RK-05"
+    doc_ref: "30_multi_strategy_concurrency.md §2.5.4 + 36_var_es_monitoring.md §3.4/§3.5"
+    code_path: "src/zephyr/risk/core/var_calculator.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    var_calibration_method: "historical"
+    risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+
+  - risk_limit_id: "RLM-VAR-005"
+    name: "30-Day Volatility Z-Score Adjustment"
+    name_zh: "30日波动率调整（每增10%仓位减20%）"
+    limit_type: "var"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 1.1
+    threshold_unit: "x"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "vol_30d/vol_60d_mean>1.10→每增10%仓位减20%（vol_adjustment=1-0.2×(ratio-1)/0.10，下限0）；与35号回撤Protocol取最严不累乘；决策已定（36号§3.6），z-score算法代码待施工"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RK-05"
+    doc_ref: "36_var_es_monitoring.md §3.6 + 30_multi_strategy_concurrency.md §2.5.4"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    var_calibration_method: "historical"
+    risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+
+  # ============================================================
+  # ES（期望短缺类）— 3条（K4遗留补登 2026-08-13，AI-REG-K4-001）
+  # 36号 §3.5.1 黑级1条 + 30号 §2.5.4 框架规则1条 + 36号 §3.2 POT厚尾告警1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-ES-001"
+    name: "Systemic Risk Level BLACK (CVaR 10%)"
+    name_zh: "系统性风险黑级（CVaR/ES>10%）"
+    limit_type: "es"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 10.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "CVaR(=ES)>10%触发黑级：全部清仓（position_cap=0.0）；代码cvar_black=0.10"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-POS-008"
+    doc_ref: "36_var_es_monitoring.md §3.5.1"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-ES-002"
+    name: "Entry ES 1.3x Framework Rule"
+    name_zh: "入场ES 1.3倍框架规则（再减仓20%）"
+    limit_type: "es"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 1.3
+    threshold_unit: "x"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "ES>1.3×入场ES（entry_es盘前快照）→再减仓20%；30号§2.5.4框架规则，与RLM-VAR-004联动，36号§3.5落地为5级系统性风险体系"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RK-15"
+    doc_ref: "30_multi_strategy_concurrency.md §2.5.4 + 36_var_es_monitoring.md §3.4/§3.5"
+    code_path: "src/zephyr/risk/core/tail_risk_monitor.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-ES-003"
+    name: "POT Heavy Tail Alert (GPD Shape 0.2)"
+    name_zh: "POT厚尾告警（GPD形状参数ξ>0.2）"
+    limit_type: "es"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 0.2
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "POT拟合GPD形状参数ξ>0.2→厚尾(Fréchet)告警+POT修正ES诊断/FRTB加价参考；代码heavy_tail_shape_threshold=0.2"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RK-15"
+    doc_ref: "36_var_es_monitoring.md §3.2"
+    code_path: "src/zephyr/risk/core/tail_risk_monitor.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "accept"
+
+  # ============================================================
+  # KILL_SWITCH（熔断类）— 12条（K4遗留补登 2026-08-13，AI-REG-K4-001）
+  # 35号 §3.2 四级生存边界链4条 + §3.5 多源触发3条 + §3.6 日/周/月熔断4条 + 系统故障1条
+  # ============================================================
+
+  - risk_limit_id: "RLM-KILL-SWITCH-001"
+    name: "Drawdown Protocol Level 1 Warning 8%"
+    name_zh: "回撤Protocol Level1警告（框架8%）"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 8.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "框架级L1=组合回撤8%（外层生存边界）；代码内层早预警更紧：5% WARNING告警+仓位上限降至80%（drawdown_tracker+capital_curve_manager）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RK-011"
+    doc_ref: "35_drawdown_protocol_impl.md §3.2 + 30_multi_strategy_concurrency.md §2.5.1"
+    code_path: "src/zephyr/risk/core/drawdown_tracker.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-002"
+    name: "Drawdown Protocol Level 2 De-risk 15%"
+    name_zh: "回撤Protocol Level2减仓（框架15%）"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 15.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "框架级L2=组合回撤15%；代码内层10%：CRITICAL告警+仓位上限降至50%+问题策略Hard Stop关闭（drawdown_tracker+capital_curve_manager+drawdown_controller）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-POS-007"
+    doc_ref: "35_drawdown_protocol_impl.md §3.2 + 30_multi_strategy_concurrency.md §2.5.1"
+    code_path: "src/zephyr/position/core/capital_curve_manager.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-003"
+    name: "Drawdown Protocol Level 3 Halt 20%"
+    name_zh: "回撤Protocol Level3停仓（框架20%）"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 20.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "框架级L3=组合回撤20%停仓；代码内层15%：EMERGENCY告警+仓位上限30%+仅防御禁新开仓。注：15%EMERGENCY是否直触Kill Switch系开放问题（35号§7㉓），当前代码实际仅告警不全清"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RK-011"
+    doc_ref: "35_drawdown_protocol_impl.md §3.2 + 30_multi_strategy_concurrency.md §2.5.1"
+    code_path: "src/zephyr/risk/core/drawdown_tracker.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-004"
+    name: "Drawdown Protocol Level 4 Clearance 25%"
+    name_zh: "回撤Protocol Level4清仓（25% Kill Switch）"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 25.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "组合回撤>25%（或BS-007系统性）→全部清仓+Kill Switch锁定新开仓+强制休息5交易日+人工review复位（requires_manual_reset，不可覆盖）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-POS-008"
+    doc_ref: "35_drawdown_protocol_impl.md §3.2/§3.5/§3.7 + 30_multi_strategy_concurrency.md §2.5.5"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-005"
+    name: "Single Day Loss 6% Kill Switch"
+    name_zh: "单日亏损6%紧急熔断"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 6.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单日亏损>6%→立即平仓所有持仓+暂停交易3天（30号§2.5.5框架）；与RLM-KILL-SWITCH-006日度熔断4%分层：4%停新开仓、6%全平暂停"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-L04-001"
+    doc_ref: "30_multi_strategy_concurrency.md §2.5.5 + 35_drawdown_protocol_impl.md §3.5"
+    code_path: "src/zephyr/risk/stop_loss.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-006"
+    name: "Portfolio Daily Circuit Breaker 4%"
+    name_zh: "组合日度熔断4%（停开仓1天）"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 4.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "组合单日亏损>4%→暂停开仓1天（35号§3.6裁决采用§2.5.1框架值）；daily_pnl_check通用机制配置注入。内层更紧口径并存取最严：trading_kill_switch DAILY_LOSS 3%（交易域）/ashare_stop_loss_engine 2%（单标的层）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-RISK"
+    doc_ref: "35_drawdown_protocol_impl.md §3.6"
+    code_path: "src/zephyr/risk/risk_manager_base.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-007"
+    name: "Single Strategy Daily Loss 5% Halt"
+    name_zh: "单策略日亏5%暂停1天"
+    limit_type: "kill_switch"
+    scope: "strategy"
+    scope_strategy: null
+    threshold_value: 5.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单策略单日亏损>5%→该策略暂停1天；由drawdown_controller策略级止损承载（StrategyPnl+Soft Stop 5%砍仓），不影响其他策略"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-POS-008"
+    doc_ref: "35_drawdown_protocol_impl.md §3.6 + 30_multi_strategy_concurrency.md §2.5.1"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-008"
+    name: "Weekly Loss 5% Trading Halt 2 Days"
+    name_zh: "周累计亏损5%停开仓2天"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 5.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "自然周累计亏损>5%→停开仓2天+强制升级人工周复盘（不可裁剪）；35号§3.6 v1.38.1裁定（BM-RC-05-C，design态），承载机制=trading_kill_switch扩展WEEKLY_LOSS类型（DISABLE_NEW+cooldown），待施工"
+    kri_frequency: "weekly"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-INF-016"
+    doc_ref: "35_drawdown_protocol_impl.md §3.6（v1.38.1）"
+    code_path: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-009"
+    name: "Monthly Loss 10% Trading Halt 3 Days"
+    name_zh: "月累计亏损10%停开仓3天"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 10.0
+    threshold_unit: "%"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "自然月累计亏损>10%→停开仓3天+人工月复盘+回撤归因报告后经ResetConfirmation确认链方可恢复（视同软Kill Switch复位）；35号§3.6 v1.38.1裁定（design态），MONTHLY_LOSS扩展待施工；日/周/月三级取最严停盘天数取max"
+    kri_frequency: "monthly"
+    review_cycle: "quarterly"
+    breach_action: "skip"
+    module_id: "MOD-INF-016"
+    doc_ref: "35_drawdown_protocol_impl.md §3.6（v1.38.1）"
+    code_path: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-010"
+    name: "BS-007 Systemic Risk Kill Switch Advice"
+    name_zh: "BS-007系统性风险Kill Switch建议"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "黑天鹅≥2模式同触发或显式BS-007→is_systemic=True→drawdown_controller产出kill_switch_advised=True，委托stop_loss执行Kill Switch（非直接触发）；7模式=流动性蒸发/相关性崩塌/波动率爆发/融资盘踩踏/跨市场传导/政策黑天鹅/系统性"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-POS-008"
+    doc_ref: "36_var_es_monitoring.md §3.5.2 + 35_drawdown_protocol_impl.md §3.5"
+    code_path: "src/zephyr/position/core/drawdown_controller.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-011"
+    name: "System Failure Circuit Breaker"
+    name_zh: "系统故障熔断（执行域5级）"
+    limit_type: "kill_switch"
+    scope: "firm"
+    scope_strategy: null
+    threshold_value: null
+    threshold_unit: null
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "CIRCUIT_BREAKER=连续拒单≥5或价格偏离>5%；SECOND_LEVEL=延迟>1000ms或成交率<50%；API_TIMEOUT=broker API超时>10s或心跳丢失≥3；执行域trading_kill_switch注册表承载，与风控域Kill Switch经RiskOrchestrator汇聚取最严"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "halt"
+    module_id: "MOD-INF-016"
+    doc_ref: "35_drawdown_protocol_impl.md §3.5（v1.38.0）"
+    code_path: "src/zephyr/trading/trading_contracts/risk/trading_kill_switch.py"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "avoid"
+
+  - risk_limit_id: "RLM-KILL-SWITCH-012"
+    name: "Consecutive 5-Day Loss De-risk 50%"
+    name_zh: "连续5天亏损降仓至50%"
+    limit_type: "kill_switch"
+    scope: "portfolio"
+    scope_strategy: null
+    threshold_value: 5.0
+    threshold_unit: "天"
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "连续5天亏损→降仓至50%+review策略有效性（30号§2.5.5框架/35号§3.5触发表）；待实现（35号§6.2待裁定）"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "30_multi_strategy_concurrency.md §2.5.5 + 35_drawdown_protocol_impl.md §3.5"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
     owner: "MOD-GOVERNANCE"
     current_consumption: null
     stage: "active"
