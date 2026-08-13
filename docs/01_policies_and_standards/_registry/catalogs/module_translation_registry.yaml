@@ -32953,11 +32953,11 @@ entries:
   plain_zh: ''
 - module_path: src/zephyr/pf_alloc/batched_position_builder.py
   domain_id: D_PF_ALLOC
-  name_zh: Batched持仓构建器
-  name_en: Batched Position Builder
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
+  name_zh: "分批建仓引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "消费31号产出的FirmTargetPortfolio，把目标权重拆成分批节奏/时序/价格锚定/资金协同的买入订单计划"
 - module_path: src/zephyr/risk/implementations/default_risk_limits_calculator.py
   domain_id: D_RISK
   name_zh: 默认风险Limits计算器
@@ -41326,6 +41326,42 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: pre-commit 门禁：staged 的 src/zephyr 模块必须含 ALGO_FLOW docstring 标记（算法全景图推导流程图真源），缺失则阻断提交。
+- module_path: src/zephyr/trading/trigger_registry.py
+  domain_id: D_TRADING
+  name_zh: "扳机清单注册表"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "买入/卖出/执行/风控触发器统一注册表，按优先级仲裁冲突、消除重复检测，由事件总线统一派发"
+- module_path: src/zephyr/plan_engine/tomorrow_boundary_planner.py
+  domain_id: D_TRADING
+  name_zh: "明日预案引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盘后收盘后基于当日数据冷静计算明日操作边界（箱体上沿/下沿/加仓上限/禁加仓价位/必出止盈价位）"
+- module_path: src/zephyr/plan_engine/premarket_constraint_loader.py
+  domain_id: D_TRADING
+  name_zh: "盘前预案加载器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "次日盘前加载昨晚TomorrowBoundary，9:25集合竞价匹配9种情景，初始化ConstraintState"
+- module_path: src/zephyr/plan_engine/closing_session_decision.py
+  domain_id: D_TRADING
+  name_zh: "尾盘决策引擎"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "14:45尾盘决策窗口，基于今日盘中推演与持仓状态做加减仓决策（加仓博高开/减仓防低开/持有不动）"
+- module_path: src/zephyr/plan_engine/__init__.py
+  domain_id: D_TRADING
+  name_zh: "明日预案引擎包入口"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "plan_engine包入口，导出明日预案三模块（边界计算/盘前加载/尾盘决策）"
+
 battle_map_steps:
 - step_id: BM-BUY-04
   flow_stage: buy_flow
