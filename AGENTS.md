@@ -155,9 +155,8 @@
 > - 🔄 因子库：[`factor_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（111 条/10 类）
 > - 🔄 策略库：[`strategy_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml)（59 条/6 类）
 > - 🔄 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（42 条/9 类）
-> - ✅ 执行算法：[`execution_algo_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml)（6 条 TWAP/VWAP/ICEBERG/POV/IS/ALT，含 §4.20 监管 8 字段+价格笼子 3 字段，2026-08-13 施工完成）
-> - ✅ 数据资产：[`data_asset_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml)（166 条=sources 15+datasets 76+jobs 75，S6 改名扩展落地，2026-08-13 施工完成）
-> - ⏳ 待施工：技术指标/图形形态（P1）+ 字段字典/实验（P2）——Schema 见 62 号文档 §6/§7
+> - ✅ 字段字典：[`field_dictionary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml)（257 条/16 域，factor.inputs FK 全量可解析；条目 candidate 态）
+> - ⏳ 待施工：技术指标/执行算法/数据资产/图形形态（P1）+ 实验（P2）——Schema 见 62 号文档 §6/§7
 
 ## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
 

@@ -5,8 +5,8 @@ title: 业务资产注册表体系施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.34.2"
-date: 2026-08-12
+version: "1.34.3"
+date: 2026-08-13
 topic: business_registry_construction
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 临时工作文档 | [business_registry_consolidation_plan.md](../../../_working/business_registry_consolidation_plan.md)（施工方案+调研报告+裁定+schema 草案） |
 | 真源入口 | [registry_of_registries.yaml](../../../registry_of_registries.yaml) tier_2 业务资产段 |
 | 创建 | 2026-08-10 |
-| 状态 | P0 已完成 3/12；P1 部分完成 3/7（factor 111 条 / strategy 59 条 / risk_limit 42 条已落盘，Step1-3 完成、Step4-8 待做），其余 4 表待施工；P2 待施工 2/12（2026-08-12 更新） |
+| 状态 | P0 已完成 3/12；P1 部分完成 3/7（factor 111 条 / strategy 59 条 / risk_limit 42 条已落盘，Step1-3 完成、Step4-8 待做），其余 4 表待施工；P2 已完成 1/2（field_dictionary 257 条 Step1-8 全做，2026-08-13） |
 
 ## 2. 背景与问题诊断
 
@@ -64,7 +64,7 @@ scope: 07_trading_decision_architecture
 | 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | 🔄 Step1-3 已完成 | 42 |
 | 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ✅ 已完成（2026-08-13 全 8 步，K1 用户拍板选项①） | 166 |
 | 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
-| 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ⏳ 待施工 | — |
+| 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ✅ Step1-8 已完成 | 257 |
 | 12 | 实验/回测目录 | REG-EXP-001 | `catalogs/experiment_registry.yaml` | tier_2 | P2 | ⏳ 待施工 | — |
 
 > 路径前缀：`docs/01_policies_and_standards/_registry/`
@@ -3704,6 +3704,8 @@ entry_schema:
 
 ### 7.1 field_dictionary.yaml（字段字典，REG-FLD-001）
 
+> **已施工**（2026-08-13，AI-REG-FLD-001，§4.5 八步算法全做）：257 条目/16 域落盘，E1-E20 审计 0 错误（3 项 pending=source_system FK 待 data_asset_registry 施工后回填）；条目均 candidate 态，PROMOTE 走 §4.13。dbt 对标 sensitivity/freshness/notes 三字段已补入 schema。
+
 **Schema**：
 
 ```yaml
@@ -4204,7 +4206,7 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 7. `chart_pattern_registry.yaml` — ⏳ 未施工：MVP 先做 candlestick_pattern + chart_pattern 2 类（O6 裁剪），8 大类 schema 保留按需填充
 
 ### P2（数据治理 + 实验）
-8. `field_dictionary.yaml` — ⏳ 未施工：contracts/ 提取数据字段，补 sensitivity/freshness/notes 三字段（2026 dbt 对标）
+8. `field_dictionary.yaml` — ✅ 已施工（2026-08-13，AI-REG-FLD-001）：257 条/16 域（MKT 60/MFLOW 29/EXP 24/RISK 21/FCT 18/MACRO 16/SENT 12/ORD 12/PORT 10/EXEC 10/IND 9/SIG 8/PERF 8/POS 7/ML 7/FILL 6），真源=cross_layer_contracts.yaml 18 业务契约 + factor_registry inputs 111 字段，sensitivity/freshness/notes 三字段已补（2026 dbt 对标），E1-E20 审计 0 错误 + factor.inputs 282 处引用全量解析；条目 candidate 态；source_system FK pending（data_asset 未施工）
 9. `experiment_registry.yaml` — ⏳ 等 51 号 MLflow 退役决策（待定 E1）后施工
 
 每批施工同步：registry_of_registries 登记 + AGENTS.md 显化 + ARCH-BREG-001 进度更新（fix_phase 字段）。
@@ -4213,6 +4215,7 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 
 | 版本 | 日期 | 修订内容 | 审查依据 |
 |---|---|---|---|
+| v1.34.3 | 2026-08-13 | **field_dictionary（REG-FLD-001，P2）施工完成**：§4.5 八步算法全做——真源反查 cross_layer_contracts.yaml 18 业务数据契约 + factor_registry inputs 111 声明字段 → 257 候选去重；16 域编号（FLD-{MKT/MFLOW/SENT/IND/MACRO/FCT/SIG/ORD/FILL/POS/PORT/RISK/PERF/EXEC/EXP/ML}-{NNN}）无重号；schema 含 §7.1 全字段 + dbt 2026 对标 sensitivity/freshness/notes 三字段（施工要点兑现）；Step4 交叉引用 factor.inputs 282 处全量解析 + source_system FK 3 值 pending（data_asset_registry 未施工，§9.4 弱 FK 规则允许）；Step6 E1-E20 审计 0 错误 0 警告（E11-E20 因子/策略/实验专属 N/A）；Step7 治理同步 ROOR 登记（58→59）+ AGENTS.md 速查显化；条目均 candidate 态（PROMOTE 走 §4.13）。§3 注册表总表 #11 + §1 状态行 + §7.1 施工标注同步 | AI-REG-FLD-001 施工会话（worktree 隔离）：extract_fields.py 真源反查 + audit_field_dictionary.py E1-E20 实证 |
 | v1.34.2 | 2026-08-12 | 作战地图环节映射补强——锚定 BM-RES-01-D | §4.18 末尾补映射块，环节级可追溯 |
 | v1.34.1 | 2026-08-12 | **作战地图全覆盖补丁——BM-RC-01 / BM-RC-01-A / BM-RC-01-B / BM-RC-01-C / BM-RES-01-A / BM-RES-03-C**：① §6.2.2 风控限额注册表补 BM-RC-01 系列 why 层显式映射（production 补 why，非新建）——9 种限额类型语义表（SINGLE_INSTRUMENT/SECTOR/GROSS/NET/VAR_95/VAR_99/MAX_DD/LEVERAGE/FACTOR ↔ 本表 limit_type enum 映射）+ 消耗追踪模型（LimitConsumption notional 占用口径，current_consumption/threshold_value=消耗率，与 35 号 §3.13 盘中循环 LimitConsumption() 衔接，2026 新规 15 笔/秒+撤单率 15% 同口径）+ 预警分级 WARNING 黄/CRITICAL 橙/EMERGENCY 红→AI 自治分级处置（红色 Owner 确认制，与 55 号 §3.1B 三级告警 RED/ORANGE/YELLOW 通道衔接）+ 策略 CRUD 状态机（stage active/deprecated/disabled）与版本管理规则（EVOLVE_ENTRY 变更快照=改了能追溯 / ROLLBACK_ENTRY=出问题能回滚 / 阈值放宽 MUST 人工审批）；② §14 新增 L1（BM-RES-01-A 已闭合裁定：不建独立数据集快照/回滚——SemVer+git commit+PIT 多版本已为个人项目上限，15 号不建独立特征版本服务+50 号否决 DVC 为据；血缘=§6.2.3 三实体，字段级血缘 Phase 3+）+ L2（BM-RES-03-C 已闭合裁定：目录层已建=12 注册表 tags+§4.6 交叉引用矩阵+§4.7 E1-E20 查询算法；语义搜索/引用图谱/推荐器登记 Phase 3+ 候选，条目>1000 重评） | 作战地图 14 环节全覆盖施工：BM-RC-01 系列环节定义（C-004 三层体系/9 限额/LimitConsumption/三级预警）+ BM-RES-01-A/03-C 环节定义（versioning_mode/search_engine 候选） |
 | v1.34.0 | 2026-08-12 | **P0/P1 内容审查 + 跨文档一致性修复（架构审查 AI 第 2 轮，2 个子代理反查 12 篇文档）**：① **悬空引用修正 4 处**——52 号 §G1（52 号 v1.7.4 曾丢失、重建版无 §G1，§2 现状表/§5.3 数据来源/§10 映射表/cost_model YAML doc_ref 同步改指 62 号 §5.3 费率校准真源）+ 25 号"§CSI300实证"（章节不存在，CSI300 仅见于 §3.7 归因伪代码 benchmark 默认值，§5.1/§5.2 数据来源 + universe/benchmark YAML doc_ref 同步修正）+ 16 号清单章节（§2→§6.1-6.5，§2 是周期说明非清单，§6.1.3/§9.4/§10 同步）；② **16 号列数修正**——~55 输出列→58 列（测试契约 _EXPECTED_COLUMN_TOTAL=58 锁定）；③ **E1 待定问题关闭**——51 号 v1.2.7 确认用户已裁定"mlflow 完全卸载"（方向已定、施工未启动），62 号原"建议保留 MLflow"与用户裁定冲突予以撤回，experiment_registry 定位更新为"实验元数据唯一登记处"（非 MLflow 索引层），mlflow_run_id 字段施工时改 fallback_ref/panel_experiment_ref，§8.3 O3 同步收敛；④ **§14 新增 K4**（risk_limit 42 条 limit_type 分布失衡：drawdown×8/position×21/concentration×6/firm_risk×5/leverage×1/turnover×1，**var/es/kill_switch 三类为 0 条**——36 号 VaR 5 级+35 号 Kill Switch 多源触发未反查登记，无文档依据的 leverage/turnover 反而各 1 条）**+ K5**（22 号板块推送池 582 只板块指数 universe 扩展候选，MVP 不施工）；⑤ **K2 扩展**——momentum_trend 桶混入 33 条潘潘课程规则条目（STR-MOMENTUM-TREND-001~033，非 G11 机构式策略，27 号 §3 语义澄清）；⑥ **D1 转移 K1**（裁定#223 方向反转）；⑦ universe 覆盖完整性确认（24/25/26/20/27/22 号反查：5 条个股池无遗漏，22 号板块层 gate 无个股池，27 号复用全市场池）；⑧ 40 号 6 算法+价格笼子+CancelRateGuard 15% 阈值验证通过（内部 15% 保守阈值 vs 官方 50% 监控线，§4.20② 15 笔/秒现行有效）；⑨ **第 4 轮 2026-08 最新搜索**：A 股费率全网核验（华泰 2026-08/cofool 2026/金融界公示）与登记一致，补佣金全佣/净佣口径说明（万3 全佣含经手费万0.341+证管费万0.2≈万0.541，§5.3 新增口径注释）；feature registry/strategy lifecycle 搜索无超出既有 21 轮对标的新发展；⑩ **第 5 轮过度工程复核**：§8.3 O1-O12 裁定全部维持（12 表/YAML/三实体/9 限额/variant/迁移预留均符合个人项目硬边界）；⑪ **第 6 轮 63 号配对核验**：发现 63 号两处漂移（"P1 待施工 9 件套"口径与 62 号 P1=7+P2=2 不符 + line 47 硬编码引用"62 号 line 1715"已漂移），记 K6 由 63 号侧修复 | 架构审查循环第 2 轮：2 个 search 子代理精读 24/25/26/20/27/22 号（股票池/策略覆盖）+ 16/40/35/36/37/32/51/52 号（指标/算法/限额/MLflow/成本），risk_limit YAML limit_type 分布 grep 实证 |
