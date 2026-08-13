@@ -257,6 +257,15 @@ def test_result_annualized_vol():
     assert result.annualized_vol == pytest.approx(result.std_return * np.sqrt(252))
 
 
+def test_result_annualized_vol_uses_config_factor():
+    """annualization_factor 配置必须被 annualized_vol 消费 (默认 252, 可调如 244)。"""
+    calc = VaRCalculator(VaRConfig(method=VaRMethod.PARAMETRIC, annualization_factor=244))
+    returns = np.random.normal(0.0, 0.01, 200)
+    result = calc.calculate(returns, NAV, now=T0)
+    assert result.annualization_factor == 244
+    assert result.annualized_vol == pytest.approx(result.std_return * np.sqrt(244))
+
+
 def test_result_to_dict_contains_all_fields():
     calc = VaRCalculator()
     returns = np.random.normal(0.0, 0.01, 200)
