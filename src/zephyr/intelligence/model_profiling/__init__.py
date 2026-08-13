@@ -12,6 +12,8 @@
 # [TTL] permanent
 
 """
+
+
 Model Profiling — 本地 + 远程模型性能基准测试
 ==============================================
 自动发现 Ollama 本地模型和远程 API 模型，
@@ -39,6 +41,62 @@ Quickstart
     # 写入结果到 registry
     from zephyr.intelligence.model_profiling.results_writer import write_benchmark_results
     write_benchmark_results(results, "data/model_profiles/")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 模型发现 请求
+#   fields: 本地 Ollama 模型清单 + 远程 API 模型清单
+#   code: ModelDiscovery().discover_all() L27
+# - id: I2
+#   name: 单模型评测 请求
+#   fields: 模型名（如 qwen3:8b）
+#   code: profiler.quick_profile("qwen3:8b") L32
+# 层: 算法
+# - id: A1
+#   name_zh: ① 模型自动发现
+#   name_en: ModelDiscovery.discover_all
+#   intro: 扫描本地Ollama和远程API，列出全部可用模型
+#   desc: 返回 DiscoveredModel(name, source, size_gb) 列表（docstring L26-28）
+#   inputs: I1
+#   outputs: 可用模型清单
+# - id: A2
+#   name_zh: ② 7维26项基准评测
+#   name_en: ModelProfiler.quick_profile / profile_ollama_only
+#   intro: 对模型跑标准化benchmark，算综合评分与延迟
+#   desc: 跑 ALL_BENCHMARK_CASES（7维度26项）→ ModelProfile(average_score, latency_p50_ms)（L17-19, L31-37）
+#   inputs: I2 A1
+#   outputs: ModelProfile 评测结果
+# - id: A3
+#   name_zh: ③ 结果排名与写库
+#   name_en: print_ranking / results_writer.write_benchmark_results
+#   intro: 生成性能排名和最佳模型推荐，结果落盘
+#   desc: print_ranking 打印排名；write_benchmark_results 写入 data/model_profiles/（L37-41）
+#   inputs: A2
+#   outputs: 排名结果 + registry 文件
+# - id: A4
+#   name_zh: ④ 子模块懒加载导出
+#   name_en: __getattr__ importlib 懒加载
+#   intro: 10个子模块按需import，避免包导入时全量加载
+#   desc: __getattr__ 命中 _SUBMODULES 即 importlib.import_module 并缓存到 globals（L58-65）
+#   inputs: I1
+#   outputs: 子模块符号（benchmark_suite/profiler/model_discovery 等）
+# 层: 输出
+# - id: O1
+#   name_zh: 模型评测公共API与评测结果
+#   name_en: ModelProfiler/ModelDiscovery + ModelProfile
+#   intro: 对外暴露模型发现、基准评测、能力护照等能力
+#   downstream: MOD-INF-009 / MOD-INF-036（# [CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A4
+# I2 --> A2
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
+# A4 --> O1
 """
 
 _SUBMODULES = [
