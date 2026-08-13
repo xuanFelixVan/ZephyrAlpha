@@ -143,7 +143,7 @@ import threading
 import time
 from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import REPO_ROOT, strip_session_worktree
 
 logger = logging.getLogger(__name__)
 
@@ -283,6 +283,8 @@ class WorktreeManager:
         if not (self.repo_root / ".git").exists():
             raise WorktreeError(f"Not a git repository: {self.repo_root}")
         self._drafts_dir = self.repo_root / ".aidrafts"
+        # 第二代机制 session worktree 根（scripts/session_worktree.py，#ARCH-AICOLLAB-001）
+        self._session_worktrees_dir = self.repo_root / ".worktrees"
 
     # ------------------------------------------------------------------
     # 内部辅助
@@ -631,20 +633,31 @@ class WorktreeManager:
     def get_current_worktree(self) -> str | None:
         """获取当前所在 worktree 的 session_id。
 
-        通过检查当前工作目录是否落在 .aidrafts/{session_id}/ 下判定。
+        通过检查当前工作目录是否落在 .aidrafts/{session_id}/ 或
+        .worktrees/{session_id}/ 下判定（后者=第二代机制，
+        scripts/session_worktree.py，#ARCH-AICOLLAB-001；长期盲区导致
+        WORKTREE-REQUIRED gate 在 .worktrees 内误判"非 worktree"，收口
+        #ARCH-RECONCILER-WORKTREE-RACE 在新机制下的复发，#ARCH-WORKTREE-ENV-001）。
         若不在任何 session worktree 内返回 None。
 
         Returns:
             session_id 或 None。
         """
         cwd = Path.cwd().resolve()
-        try:
-            rel = cwd.relative_to(self._drafts_dir.resolve())
-        except ValueError:
-            return None
-        if not rel.parts:
-            return None
-        return rel.parts[0]
+        # repo_root 可能是 worktree 自身（PYTHONPATH 激活后 zephyr 解析到 worktree src），
+        # 此时 session worktree 基目录必须锚定主仓库才能命中 cwd
+        main_root = strip_session_worktree(self.repo_root)
+        bases = [self._drafts_dir, self._session_worktrees_dir]
+        if main_root != self.repo_root:
+            bases += [main_root / ".aidrafts", main_root / ".worktrees"]
+        for base in bases:
+            try:
+                rel = cwd.relative_to(base.resolve())
+            except ValueError:
+                continue
+            if rel.parts:
+                return rel.parts[0]
+        return None
 
     def is_in_worktree(self) -> bool:
         """检测当前是否在 git worktree 内（非主工作目录）。

@@ -140,7 +140,7 @@ class TestExemptions:
         files = [str(tmp_path / "docs" / "foo.md")]
         # patch REPO_ROOT to tmp_path to avoid cross-drive relpath issues
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             passed, msg = spec.check(gw, files, session_id="sess-test")
@@ -279,7 +279,7 @@ class TestAuditLog:
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ), patch(
             "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
@@ -300,7 +300,7 @@ class TestAuditLog:
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         # 模拟 audit log 目录存在但 session log 文件不存在
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ), patch(
             "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.audit_log_dir_exists",
@@ -329,7 +329,7 @@ class TestAuditLog:
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         # patch REPO_ROOT 让 gate 找到 tmp_path 下的 audit log
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             spec = make_capability_lookup_required_gate()
@@ -349,7 +349,7 @@ class TestAuditLog:
         log_path.write_text("not a valid json line\n", encoding="utf-8")
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             spec = make_capability_lookup_required_gate()
@@ -369,7 +369,7 @@ class TestAuditLog:
         log_path.write_text("\n  \n", encoding="utf-8")  # 仅空行
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             spec = make_capability_lookup_required_gate()
@@ -393,7 +393,7 @@ class TestSessionIdMissing:
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         spec = make_capability_lookup_required_gate()
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             passed, msg = spec.check(gw, files, session_id="")
@@ -457,7 +457,7 @@ class TestEndToEnd:
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             spec = make_capability_lookup_required_gate()
@@ -484,7 +484,7 @@ class TestEndToEnd:
         gw = _make_zephyr_gateway(tmp_path)
         files = [str(tmp_path / "src" / "zephyr" / "foo.py")]
         with patch(
-            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.REPO_ROOT",
+            "zephyr.gov_enforcement.commit_gates.capability_lookup_required_gate.MAIN_REPO_ROOT",
             tmp_path,
         ):
             spec = make_capability_lookup_required_gate()

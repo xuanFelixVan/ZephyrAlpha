@@ -66,20 +66,26 @@ REPO_ROOT: Final[Path] = find_repo_root()
 
 
 def strip_session_worktree(root: Path) -> Path:
-    """若 root 位于 session worktree（.aidrafts/<session>/）内，剥离回主仓库根。
+    """若 root 位于 session worktree（.aidrafts/<session>/ 或 .worktrees/<session>/）内，剥离回主仓库根。
 
     GATE-DEPGRAPH-OPS 治本 Phase 3（观测库单一定位）：
     worktree 进程内 REPO_ROOT 解析为 worktree 根，观测数据写入 worktree 而分裂。
     观测数据必须锚定主仓库——worktree merge/abort 后即删除。
+
+    #ARCH-WORKTREE-ENV-001（2026-08-14）：扩展识别 .worktrees/<session>/——
+    第二代机制（scripts/session_worktree.py，#ARCH-AICOLLAB-001）2026-08-11 落地后
+    本函数长期未同步，导致 .worktrees 进程内 MAIN_REPO_ROOT == REPO_ROOT（指向
+    worktree 自身），"观测数据锚定主仓库"对新机制完全失效。
     """
     parts = root.parts
-    if ".aidrafts" in parts:
-        return Path(*parts[: parts.index(".aidrafts")])
+    for marker in (".aidrafts", ".worktrees"):
+        if marker in parts:
+            return Path(*parts[: parts.index(marker)])
     return root
 
 
 # 主仓库根（观测数据锚定点）：主仓库进程 MAIN_REPO_ROOT == REPO_ROOT；
-# worktree 进程剥离 .aidrafts/<session> 前缀回主仓库。
+# worktree 进程剥离 .aidrafts/<session> 或 .worktrees/<session> 前缀回主仓库。
 MAIN_REPO_ROOT: Final[Path] = strip_session_worktree(REPO_ROOT)
 
 # 治本(2026-07-19): PROJECT_ROOT 作为 REPO_ROOT 的语义别名（canonical SSoT 定义点）。

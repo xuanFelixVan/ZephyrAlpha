@@ -183,7 +183,7 @@ from pathlib import Path
 from typing import Final
 
 from zephyr.shared.infra.process_pool import run_subprocess_hidden
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
+from zephyr.shared.io.paths import MAIN_REPO_ROOT, REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
 
 # ---------------------------------------------------------------------------
 # 路径常量
@@ -200,7 +200,7 @@ REGISTRY_YAML: Final[Path] = (
 # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S3 Phase 2: 审计日志目录与 rule_discovery_server 对称
 # CAPABILITY-LOOKUP-REQUIRED gate 消费此目录的 JSONL 日志（capability_lookup_required_gate.py:81）
 # 病根 G3：原 find() 不写审计日志，Phase 3.4a "同步扩展" 半成品——本次治本补齐
-LOOKUP_AUDIT_DIR: Final[Path] = REPO_ROOT / ".runtime" / "lookup_audit"
+LOOKUP_AUDIT_DIR: Final[Path] = MAIN_REPO_ROOT / ".runtime" / "lookup_audit"  # 观测数据锚主仓库（#ARCH-WORKTREE-ENV-001）
 
 # session_id 环境变量（与 rule_discovery_server.SESSION_ID_ENV_VAR 对齐）
 SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"

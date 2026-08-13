@@ -115,7 +115,7 @@ from typing import Any, Final
 import yaml
 
 from zephyr.integration.mcp._base_server import BaseMCPServer
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import MAIN_REPO_ROOT, REPO_ROOT
 
 __all__ = ["RuleDiscoveryServer", "main", "write_lookup_audit_log"]
 
@@ -139,7 +139,9 @@ PERCEPTION_INDEX_PATH: Final[Path] = (
 )
 
 # Phase 3.4a: audit log 目录——CAPABILITY-LOOKUP-REQUIRED gate 消费
-LOOKUP_AUDIT_DIR: Final[Path] = REPO_ROOT / ".runtime" / "lookup_audit"
+# 观测数据锚 MAIN_REPO_ROOT（#ARCH-WORKTREE-ENV-001）：worktree 进程内 REPO_ROOT=worktree 根，
+# 审计证据写 worktree 会随 abort 丢失且与门禁读端分裂
+LOOKUP_AUDIT_DIR: Final[Path] = MAIN_REPO_ROOT / ".runtime" / "lookup_audit"
 
 # session_id 环境变量（与 session_worktree 启动时设置的 env 对齐）
 SESSION_ID_ENV_VAR: Final[str] = "ZEPHYR_SESSION_ID"

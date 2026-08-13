@@ -52,6 +52,58 @@ WORKTREE_ROOT = REPO_ROOT / ".worktrees"
 BRANCH_PREFIX = "ai/"
 
 
+def _provision_worktree_env(wt_path: Path) -> list[str]:
+    """环境三件套备置（#ARCH-WORKTREE-ENV-001 P2-8，2026-08-14 裁定）。
+
+    病根：site-packages .pth 把 import zephyr 硬锚主仓 src，worktree 内跑网关/治理
+    脚本时规则数据（翻译注册表）/配置（.env.postgres）/审计目录（lookup_audit）
+    全部锚定错位（2026-08-14 AI-LIQ-001/AI-SELL-001 两会话同日踩坑实证）。
+    create 时一次性备置，任一步失败仅告警不阻断 worktree 创建（环境治理不挡施工）：
+
+    1. config/.env.postgres 复制（depgraph_schema._PG_ENV_PATH 锚进程 REPO_ROOT）
+    2. .runtime/lookup_audit/ 初始化（CAPABILITY-LOOKUP-REQUIRED fail-closed 目录检查）
+    3. activate_env.ps1 生成（$env:PYTHONPATH=<worktree>\\src，网关提交前激活，
+       使 zephyr 解析回 worktree 自身 src）
+    """
+    notes: list[str] = []
+
+    # 1. PG 连接配置复制
+    pg_src = REPO_ROOT / "config" / ".env.postgres"
+    pg_dst = wt_path / "config" / ".env.postgres"
+    try:
+        if pg_src.exists():
+            pg_dst.parent.mkdir(parents=True, exist_ok=True)
+            pg_dst.write_bytes(pg_src.read_bytes())
+            notes.append("PG 配置已复制 config/.env.postgres")
+        else:
+            notes.append("WARN: 主仓 PG 配置 config/.env.postgres 不存在，跳过（depgraph 操作将不可用）")
+    except OSError as e:
+        notes.append(f"WARN: PG 配置复制失败: {e}")
+
+    # 2. lookup_audit 目录初始化
+    try:
+        (wt_path / ".runtime" / "lookup_audit").mkdir(parents=True, exist_ok=True)
+        notes.append("审计目录已初始化 .runtime/lookup_audit/")
+    except OSError as e:
+        notes.append(f"WARN: lookup_audit 目录创建失败: {e}")
+
+    # 3. activate 脚本生成（worktree 根目录平铺文件被 .gitignore /* 白名单自动豁免，零污染）
+    activate = wt_path / "activate_env.ps1"
+    try:
+        activate.write_text(
+            "# AI session worktree 环境激活（session_worktree.py create 自动生成，勿手改）\n"
+            "# 用法: . .\\activate_env.ps1 后跑网关/治理脚本（import zephyr 解析回 worktree src）\n"
+            f"$env:PYTHONPATH = '{wt_path}\\src'\n"
+            f"Set-Location '{wt_path}'\n",
+            encoding="utf-8",
+        )
+        notes.append("激活脚本已生成 activate_env.ps1（网关提交前: . .\\activate_env.ps1）")
+    except OSError as e:
+        notes.append(f"WARN: activate 脚本生成失败: {e}")
+
+    return notes
+
+
 def _run_git(args: list[str], cwd: str | Path | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
     """执行 git 命令（run_subprocess_hidden 统一入口，无窗口闪现，不受 PowerShell wrapper 影响）。"""
     cmd = ["git"] + args
@@ -120,6 +172,8 @@ def cmd_create(args: argparse.Namespace) -> int:
             print(result.stderr, file=sys.stderr, end="")
             return 1
         print(f"[WORKTREE] 创建成功")
+        for note in _provision_worktree_env(wt_path):
+            print(f"  {note}")
         print(f"  进入 worktree: cd {wt_path}")
         return 0
     except Exception as e:

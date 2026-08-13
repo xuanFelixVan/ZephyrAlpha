@@ -91,13 +91,16 @@ from zephyr.gov_enforcement.commit_gates.capability_lookup_bypass_policy import 
     is_exempt_reason,
 )
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec, is_test_exempt
-from zephyr.shared.io.paths import REPO_ROOT
+from zephyr.shared.io.paths import MAIN_REPO_ROOT, REPO_ROOT
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["make_capability_lookup_required_gate", "LOOKUP_AUDIT_DIR_REL"]
 
-# audit log 目录（相对 REPO_ROOT）
+# audit log 目录（相对 MAIN_REPO_ROOT——观测数据锚定主仓库，#ARCH-WORKTREE-ENV-001：
+# worktree 进程内 REPO_ROOT=worktree 根，用 REPO_ROOT 会把审计证据分裂到
+# worktree 并随 abort 丢失；门禁读端与写入端统一锚 MAIN_REPO_ROOT，从根上
+# 消除"从主仓复制 audit jsonl 进 worktree 过门禁"的 workaround 语义稀释）
 LOOKUP_AUDIT_DIR_REL = ".runtime/lookup_audit"
 
 # 业务代码前缀——commit 含此前缀的 .py 变更才触发本 gate
@@ -114,7 +117,7 @@ _DOC_ONLY_EXTENSIONS = (".md", ".rst", ".txt")
 
 def _get_audit_log_path(session_id: str) -> Path:
     """构造 session 的 audit log 文件路径。"""
-    return REPO_ROOT / LOOKUP_AUDIT_DIR_REL / f"{session_id}.jsonl"
+    return MAIN_REPO_ROOT / LOOKUP_AUDIT_DIR_REL / f"{session_id}.jsonl"
 
 
 def _audit_log_dir_exists() -> bool:
@@ -123,23 +126,27 @@ def _audit_log_dir_exists() -> bool:
     目录不存在视为"AI session 启动 smoke test 失败"——fail-closed 阻断。
     红蓝攻击向量：删目录绕过 audit log 检查。
     """
-    return (REPO_ROOT / LOOKUP_AUDIT_DIR_REL).is_dir()
+    return (MAIN_REPO_ROOT / LOOKUP_AUDIT_DIR_REL).is_dir()
 
 
-def _has_business_code_changes(files: list[str]) -> bool:
+def _has_business_code_changes(files: list[str], root: Path | str | None = None) -> bool:
     """检测 commit 是否含 src/zephyr/**/*.py 业务代码变更（非 tests/）。
 
     Args:
         files: commit 文件绝对路径列表。
+        root: 文件分类锚定根（默认 REPO_ROOT=进程工作区；网关调用方传
+            gateway.project_root——commit 文件所在工作区，worktree 场景下
+            两者不同，#ARCH-WORKTREE-ENV-001）。
 
     Returns:
         True 表示含业务代码变更（需触发本 gate）。
     """
+    anchor = str(root) if root is not None else str(REPO_ROOT)
     for f in files:
         if is_test_exempt(f):
             continue
         try:
-            rel = os.path.relpath(f, str(REPO_ROOT)).replace("\\", "/")
+            rel = os.path.relpath(f, anchor).replace("\\", "/")
         except (ValueError, OSError):
             continue
         if rel.startswith(_BUSINESS_CODE_PREFIX) and rel.endswith(".py"):
@@ -147,16 +154,18 @@ def _has_business_code_changes(files: list[str]) -> bool:
     return False
 
 
-def _is_doc_only_commit(files: list[str]) -> bool:
+def _is_doc_only_commit(files: list[str], root: Path | str | None = None) -> bool:
     """检测 commit 是否仅含 .md/.rst/.txt 文档变更（无 .py 业务代码）。
 
     纯文档变更不涉及业务逻辑，无需规则适用性检查。
+    root 语义同 _has_business_code_changes。
     """
     if not files:
         return False
+    anchor = str(root) if root is not None else str(REPO_ROOT)
     for f in files:
         try:
-            rel = os.path.relpath(f, str(REPO_ROOT)).replace("\\", "/")
+            rel = os.path.relpath(f, anchor).replace("\\", "/")
         except (ValueError, OSError):
             return False
         if not rel.lower().endswith(_DOC_ONLY_EXTENSIONS):
@@ -244,7 +253,7 @@ def _check_bypass(commit_msg: str | None) -> tuple[bool, str] | None:
     return None
 
 
-def _check_exemptions(files: list[str]) -> tuple[bool, str] | None:
+def _check_exemptions(files: list[str], root: Path | str | None = None) -> tuple[bool, str] | None:
     """检查豁免场景（空 files / doc-only / tests-only / 无业务代码）。
 
     Returns:
@@ -253,12 +262,12 @@ def _check_exemptions(files: list[str]) -> tuple[bool, str] | None:
     """
     if not files:
         return True, "no files to check"
-    if _is_doc_only_commit(files):
+    if _is_doc_only_commit(files, root):
         return True, "doc-only commit exempt"
     non_test_files = [f for f in files if not is_test_exempt(f)]
     if not non_test_files:
         return True, "tests-only commit exempt"
-    if not _has_business_code_changes(files):
+    if not _has_business_code_changes(files, root):
         return True, "no src/zephyr/**/*.py business code changes"
     return None
 
@@ -276,7 +285,7 @@ def _check_audit_log(session_id: str) -> tuple[bool, str]:
     if not audit_log_dir_exists():
         return False, (
             f"CAPABILITY-LOOKUP-REQUIRED: audit log 目录缺失 "
-            f"({REPO_ROOT / LOOKUP_AUDIT_DIR_REL})。"
+            f"({MAIN_REPO_ROOT / LOOKUP_AUDIT_DIR_REL})。"
             f"修复：mkdir {LOOKUP_AUDIT_DIR_REL} 或确认 .runtime/ 未被误删。"
             f"病根3治本：删目录绕过是红蓝攻击向量，fail-closed 阻断。"
         )
@@ -322,7 +331,9 @@ def make_capability_lookup_required_gate() -> GateSpec:
             return bypass_result
 
         # 豁免检查（空 / doc-only / tests-only / 无业务代码）
-        exempt = _check_exemptions(files)
+        # 文件分类锚定 gateway.project_root（commit 文件所在工作区，worktree 场景
+        # 与模块级 REPO_ROOT 不同，#ARCH-WORKTREE-ENV-001）
+        exempt = _check_exemptions(files, gateway.project_root)
         if exempt is not None:
             return exempt
 
