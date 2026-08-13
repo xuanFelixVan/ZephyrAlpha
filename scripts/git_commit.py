@@ -453,7 +453,7 @@ def main() -> int:
         action="store_true",
         default=False,
         help="保留 --message-file 文件不删除（诊断场景 opt-out）。"
-             "默认 False（用完即删，对标 gateway tempfile + os.remove 范式）。",
+             "默认 False（成功即删，对标 gateway tempfile + os.remove 范式；失败保留供重试）。",
     )
     parser.add_argument(
         "--project-root",
