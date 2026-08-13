@@ -5,8 +5,8 @@ title: 业务资产注册表体系施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.34.3"
-date: 2026-08-13
+version: "1.34.2"
+date: 2026-08-12
 topic: business_registry_construction
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 临时工作文档 | [business_registry_consolidation_plan.md](../../../_working/business_registry_consolidation_plan.md)（施工方案+调研报告+裁定+schema 草案） |
 | 真源入口 | [registry_of_registries.yaml](../../../registry_of_registries.yaml) tier_2 业务资产段 |
 | 创建 | 2026-08-10 |
-| 状态 | P0 已完成 3/12；P1 部分完成 3/7（factor 111 条 / strategy 59 条 / risk_limit 42 条已落盘，Step1-3 完成、Step4-8 待做），其余 4 表待施工；P2 已完成 1/2（field_dictionary 257 条 Step1-8 全做，2026-08-13） |
+| 状态 | P0 已完成 3/12；P1 部分完成 3/7（factor 111 条 / strategy 59 条 / risk_limit 62 条已落盘——含 2026-08-13 K4 补登 var/es/kill_switch 20 条，Step1-3 完成、Step4-8 待做），其余 4 表待施工；P2 待施工 2/12（2026-08-13 更新） |
 
 ## 2. 背景与问题诊断
 
@@ -60,11 +60,11 @@ scope: 07_trading_decision_architecture
 | 4 | 因子库 | REG-FCT-001 | `catalogs/factor_registry.yaml` | tier_2 | P1-A | 🔄 Step1-3 已完成 | 111 |
 | 5 | 策略库 | REG-STR-001 | `catalogs/strategy_registry.yaml` | tier_2 | P1-A | 🔄 Step1-3 已完成 | 59 |
 | 6 | 技术指标 | REG-IND-001 | `catalogs/technical_indicator_registry.yaml` | tier_2 | P1-A | ⏳ 待施工 | — |
-| 7 | 执行算法 | REG-EXA-001 | `catalogs/execution_algo_registry.yaml` | tier_2 | P1-B | ✅ 已完成（2026-08-13 全 8 步） | 6 |
-| 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | 🔄 Step1-3 已完成 | 42 |
-| 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ✅ 已完成（2026-08-13 全 8 步，K1 用户拍板选项①） | 166 |
+| 7 | 执行算法 | REG-EXA-001 | `catalogs/execution_algo_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
+| 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | 🔄 Step1-3 已完成 | 62 |
+| 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ⏳ 待施工 | — |
 | 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
-| 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ✅ Step1-8 已完成 | 257 |
+| 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ⏳ 待施工 | — |
 | 12 | 实验/回测目录 | REG-EXP-001 | `catalogs/experiment_registry.yaml` | tier_2 | P2 | ⏳ 待施工 | — |
 
 > 路径前缀：`docs/01_policies_and_standards/_registry/`
@@ -3704,8 +3704,6 @@ entry_schema:
 
 ### 7.1 field_dictionary.yaml（字段字典，REG-FLD-001）
 
-> **已施工**（2026-08-13，AI-REG-FLD-001，§4.5 八步算法全做）：257 条目/16 域落盘，E1-E20 审计 0 错误（3 项 pending=source_system FK 待 data_asset_registry 施工后回填）；条目均 candidate 态，PROMOTE 走 §4.13。dbt 对标 sensitivity/freshness/notes 三字段已补入 schema。
-
 **Schema**：
 
 ```yaml
@@ -4141,7 +4139,7 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 - [ ] capability_lookup.py 扩展扫描范围覆盖 12 业务注册表
 - [ ] session_log_schema.yaml 加"必读注册表"检查项
 - [ ] 16 号文档 §6 清单迁注册表并降级为 why 层（注意第5类 reversal 非 structure；清单在 §6.1-6.5 非 §2，v1.34.0 修正）
-- [x] dataflow_graph_registry.yaml 改名 + sources 段扩展（DS 实际 76 条 DS-001~076，v1.1.1 全量确认）——2026-08-13 完成：data_asset_registry.yaml 落盘（15 源+76 数据集+75 作业），裁定#223 方向修正；旧文件引用迁移为遗留跟进项
+- [ ] dataflow_graph_registry.yaml 改名 + sources 段扩展（DS 实际 76 条 DS-001~076，v1.1.1 全量确认）
 - [ ] P1/P2 施工时 entry 变更走 §4.9 EVOLVE_ENTRY，衰减适应走 §4.12 ADAPT_STRATEGY，退役走 §4.10 RETIRE_ENTRY，schema 演进走 §4.11 EVOLVE_SCHEMA，上线晋升走 §4.13 PROMOTE_ENTRY，回滚走 §4.14 ROLLBACK_ENTRY，依赖解析走 §4.15 DEPENDENCY_RESOLVE，YAML→DB 迁移走 §4.16 MIGRATE_REGISTRY（v1.11.0 算法体系完整闭环），版本对比/兼容性判定走 §4.18 DIFF_ENTRY（v1.13.0 横切查询），上线后渐进式部署走 §4.13 Shadow→Canary→Full（v1.10.0）
 
 ## 10. 数据来源映射表
@@ -4200,13 +4198,13 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 3. `technical_indicator_registry.yaml` — ⏳ 未施工：16 号 §2 迁入（第5类 reversal 非 structure），16 号降级 why 层
 
 ### P1-B（交易/风控/数据/图形）
-4. `execution_algo_registry.yaml` — ✅ 2026-08-13 完成全 8 步施工（6 条：EXA-TWAP/VWAP/ICEBERG/IS/POV/ALT-001，40 号 §2.3 真源反查，E1-E20 审计 errors=0）。§4.20 监管 8 字段 + §4.23③ 价格笼子/T+1/涨跌停 3 字段已落地；cost_model_ref→CST-ASTOCK-001 强 FK 验证通过
+4. `execution_algo_registry.yaml` — ⏳ 未施工：40 号 6 算法提取（TWAP/VWAP/ICEBERG/POV/IS/ALT，v1.1.0修正），**MUST 预留 §4.20 监管 6 字段 + §4.23③ 价格笼子/T+1/涨跌停 3 字段**
 5. `risk_limit_registry.yaml` — 🔄 Step1-3 已完成（42 条）。**下一步 Step4-8**（scope_strategy FK 校验 + src/zephyr/risk/ code_path 半派生 + 审计）
-6. `data_asset_registry.yaml` — ✅ 2026-08-13 完成全 8 步施工（166 条=sources 15+datasets 76+jobs 75，E1-E20 审计 errors=0）。**K1 已闭合**：用户 2026-08-13 拍板选项①（维持 S6 改名方向），裁定#223 方向描述已修正。**遗留跟进**：旧 dataflow_graph_registry.yaml 暂物理保留（sync_yaml_to_depgraph.py/panorama_alignment_gate.py 按路径引用），全项目引用迁移+旧文件退役后续跟进；13 条存量锚点漂移（2026-07-06 快照遗留，非本次引入）待修
+6. `data_asset_registry.yaml` — ⏳ 未施工：改名 + sources 段扩展（DS 实际 76 条 DS-001~076，v1.1.1 全量确认）+ **ruling_registry 裁定#223 方向反转须先修正（待定问题 K1）**
 7. `chart_pattern_registry.yaml` — ⏳ 未施工：MVP 先做 candlestick_pattern + chart_pattern 2 类（O6 裁剪），8 大类 schema 保留按需填充
 
 ### P2（数据治理 + 实验）
-8. `field_dictionary.yaml` — ✅ 已施工（2026-08-13，AI-REG-FLD-001）：257 条/16 域（MKT 60/MFLOW 29/EXP 24/RISK 21/FCT 18/MACRO 16/SENT 12/ORD 12/PORT 10/EXEC 10/IND 9/SIG 8/PERF 8/POS 7/ML 7/FILL 6），真源=cross_layer_contracts.yaml 18 业务契约 + factor_registry inputs 111 字段，sensitivity/freshness/notes 三字段已补（2026 dbt 对标），E1-E20 审计 0 错误 + factor.inputs 282 处引用全量解析；条目 candidate 态；source_system FK pending（data_asset 未施工）
+8. `field_dictionary.yaml` — ⏳ 未施工：contracts/ 提取数据字段，补 sensitivity/freshness/notes 三字段（2026 dbt 对标）
 9. `experiment_registry.yaml` — ⏳ 等 51 号 MLflow 退役决策（待定 E1）后施工
 
 每批施工同步：registry_of_registries 登记 + AGENTS.md 显化 + ARCH-BREG-001 进度更新（fix_phase 字段）。
@@ -4215,7 +4213,6 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 
 | 版本 | 日期 | 修订内容 | 审查依据 |
 |---|---|---|---|
-| v1.34.3 | 2026-08-13 | **field_dictionary（REG-FLD-001，P2）施工完成**：§4.5 八步算法全做——真源反查 cross_layer_contracts.yaml 18 业务数据契约 + factor_registry inputs 111 声明字段 → 257 候选去重；16 域编号（FLD-{MKT/MFLOW/SENT/IND/MACRO/FCT/SIG/ORD/FILL/POS/PORT/RISK/PERF/EXEC/EXP/ML}-{NNN}）无重号；schema 含 §7.1 全字段 + dbt 2026 对标 sensitivity/freshness/notes 三字段（施工要点兑现）；Step4 交叉引用 factor.inputs 282 处全量解析 + source_system FK 3 值 pending（data_asset_registry 未施工，§9.4 弱 FK 规则允许）；Step6 E1-E20 审计 0 错误 0 警告（E11-E20 因子/策略/实验专属 N/A）；Step7 治理同步 ROOR 登记（58→59）+ AGENTS.md 速查显化；条目均 candidate 态（PROMOTE 走 §4.13）。§3 注册表总表 #11 + §1 状态行 + §7.1 施工标注同步 | AI-REG-FLD-001 施工会话（worktree 隔离）：extract_fields.py 真源反查 + audit_field_dictionary.py E1-E20 实证 |
 | v1.34.2 | 2026-08-12 | 作战地图环节映射补强——锚定 BM-RES-01-D | §4.18 末尾补映射块，环节级可追溯 |
 | v1.34.1 | 2026-08-12 | **作战地图全覆盖补丁——BM-RC-01 / BM-RC-01-A / BM-RC-01-B / BM-RC-01-C / BM-RES-01-A / BM-RES-03-C**：① §6.2.2 风控限额注册表补 BM-RC-01 系列 why 层显式映射（production 补 why，非新建）——9 种限额类型语义表（SINGLE_INSTRUMENT/SECTOR/GROSS/NET/VAR_95/VAR_99/MAX_DD/LEVERAGE/FACTOR ↔ 本表 limit_type enum 映射）+ 消耗追踪模型（LimitConsumption notional 占用口径，current_consumption/threshold_value=消耗率，与 35 号 §3.13 盘中循环 LimitConsumption() 衔接，2026 新规 15 笔/秒+撤单率 15% 同口径）+ 预警分级 WARNING 黄/CRITICAL 橙/EMERGENCY 红→AI 自治分级处置（红色 Owner 确认制，与 55 号 §3.1B 三级告警 RED/ORANGE/YELLOW 通道衔接）+ 策略 CRUD 状态机（stage active/deprecated/disabled）与版本管理规则（EVOLVE_ENTRY 变更快照=改了能追溯 / ROLLBACK_ENTRY=出问题能回滚 / 阈值放宽 MUST 人工审批）；② §14 新增 L1（BM-RES-01-A 已闭合裁定：不建独立数据集快照/回滚——SemVer+git commit+PIT 多版本已为个人项目上限，15 号不建独立特征版本服务+50 号否决 DVC 为据；血缘=§6.2.3 三实体，字段级血缘 Phase 3+）+ L2（BM-RES-03-C 已闭合裁定：目录层已建=12 注册表 tags+§4.6 交叉引用矩阵+§4.7 E1-E20 查询算法；语义搜索/引用图谱/推荐器登记 Phase 3+ 候选，条目>1000 重评） | 作战地图 14 环节全覆盖施工：BM-RC-01 系列环节定义（C-004 三层体系/9 限额/LimitConsumption/三级预警）+ BM-RES-01-A/03-C 环节定义（versioning_mode/search_engine 候选） |
 | v1.34.0 | 2026-08-12 | **P0/P1 内容审查 + 跨文档一致性修复（架构审查 AI 第 2 轮，2 个子代理反查 12 篇文档）**：① **悬空引用修正 4 处**——52 号 §G1（52 号 v1.7.4 曾丢失、重建版无 §G1，§2 现状表/§5.3 数据来源/§10 映射表/cost_model YAML doc_ref 同步改指 62 号 §5.3 费率校准真源）+ 25 号"§CSI300实证"（章节不存在，CSI300 仅见于 §3.7 归因伪代码 benchmark 默认值，§5.1/§5.2 数据来源 + universe/benchmark YAML doc_ref 同步修正）+ 16 号清单章节（§2→§6.1-6.5，§2 是周期说明非清单，§6.1.3/§9.4/§10 同步）；② **16 号列数修正**——~55 输出列→58 列（测试契约 _EXPECTED_COLUMN_TOTAL=58 锁定）；③ **E1 待定问题关闭**——51 号 v1.2.7 确认用户已裁定"mlflow 完全卸载"（方向已定、施工未启动），62 号原"建议保留 MLflow"与用户裁定冲突予以撤回，experiment_registry 定位更新为"实验元数据唯一登记处"（非 MLflow 索引层），mlflow_run_id 字段施工时改 fallback_ref/panel_experiment_ref，§8.3 O3 同步收敛；④ **§14 新增 K4**（risk_limit 42 条 limit_type 分布失衡：drawdown×8/position×21/concentration×6/firm_risk×5/leverage×1/turnover×1，**var/es/kill_switch 三类为 0 条**——36 号 VaR 5 级+35 号 Kill Switch 多源触发未反查登记，无文档依据的 leverage/turnover 反而各 1 条）**+ K5**（22 号板块推送池 582 只板块指数 universe 扩展候选，MVP 不施工）；⑤ **K2 扩展**——momentum_trend 桶混入 33 条潘潘课程规则条目（STR-MOMENTUM-TREND-001~033，非 G11 机构式策略，27 号 §3 语义澄清）；⑥ **D1 转移 K1**（裁定#223 方向反转）；⑦ universe 覆盖完整性确认（24/25/26/20/27/22 号反查：5 条个股池无遗漏，22 号板块层 gate 无个股池，27 号复用全市场池）；⑧ 40 号 6 算法+价格笼子+CancelRateGuard 15% 阈值验证通过（内部 15% 保守阈值 vs 官方 50% 监控线，§4.20② 15 笔/秒现行有效）；⑨ **第 4 轮 2026-08 最新搜索**：A 股费率全网核验（华泰 2026-08/cofool 2026/金融界公示）与登记一致，补佣金全佣/净佣口径说明（万3 全佣含经手费万0.341+证管费万0.2≈万0.541，§5.3 新增口径注释）；feature registry/strategy lifecycle 搜索无超出既有 21 轮对标的新发展；⑩ **第 5 轮过度工程复核**：§8.3 O1-O12 裁定全部维持（12 表/YAML/三实体/9 限额/variant/迁移预留均符合个人项目硬边界）；⑪ **第 6 轮 63 号配对核验**：发现 63 号两处漂移（"P1 待施工 9 件套"口径与 62 号 P1=7+P2=2 不符 + line 47 硬编码引用"62 号 line 1715"已漂移），记 K6 由 63 号侧修复 | 架构审查循环第 2 轮：2 个 search 子代理精读 24/25/26/20/27/22 号（股票池/策略覆盖）+ 16/40/35/36/37/32/51/52 号（指标/算法/限额/MLflow/成本），risk_limit YAML limit_type 分布 grep 实证 |
@@ -4407,7 +4404,7 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 | J3 | CPCV 实施时机 + 价格笼子 schema 对齐策略（v1.16.0 补） | §7.2 CPCV 升级六方法 + §4.23③ 价格笼子 schema 引出新决策点：① CPCV 的 `cpcv_n_groups`/`cpcv_k_test` 默认值 N=10/k=2 适合 A 股日频数据量（5 年约 1200 交易日 → 每组 120 日）还是需按策略持仓周期调整（分钟级策略数据量大，N 可更大）；② §4.13 G2 的 catastrophic-veto 阈值 `cpcv_worst_max_dd > 0.15` 是否与 G1 的 `oos_max_drawdown > 0.15` 冲突（G1 检查平均回撤，G2 检查最差切分回撤，两者阈值相同但语义不同——G1=OOS 整体回撤，G2=任何切分回撤）；③ 价格笼子 `price_cage_config` 是按板块硬编码（main/gem/star/bse 四套）还是按 symbol 动态查询（universe_registry 已有 board 字段）——硬编码简单但板块迁移时需手动更新，动态查询灵活但增加运行时开销 | ① CPCV 参数：MVP 用 N=10/k=2 默认值（日频足够），Phase 1.5+ 分钟级策略按数据量调整 N（经验公式 N ≈ T/120，T=交易日数）；② catastrophic-veto 阈值：G2 的 0.15 是"任何切分最差回撤"硬红线，G1 的 0.15 是"OOS 整体回撤"——两者不冲突但语义须文档明确（G1=整体，G2=最差切分，G2 更保守）；③ 价格笼子：建议按 symbol 动态查询 universe_registry 的 board 字段（避免硬编码板块迁移问题），MVP 阶段可硬编码四套作为 fallback。MVP 阶段 schema 字段预留=合规底线，实际参数校准=Phase 1.5+ |
 | J4 | 仓位管理 sizing_method 选择 + A 股高频因子纳入时机（v1.17.0 补） | §4.24 仓位管理 3 项对标 + A 股特色数据 2 项对标引出新决策点：① strategy_registry 的 `sizing_method` 默认值——fixed_fraction（最简单）/kelly（理论最优但参数敏感）/risk_parity（波动率反比）/conformal_kelly（Phase 2+），个人项目 MVP 用哪个；② A 股高频因子（日内收益/开盘后大单/尾盘占比）依赖 Level-2 数据，MVP 阶段用 AKShare（日线）还是采购商业 Level-2（Wind/iFinD），AKShare 声明仅学术用途——个人项目实盘是否触发商业授权要求；③ §4.24① Conformal Kelly 的核心发现"最简单方法最佳"（宽度稳定性>局部锐度）是否推广到其他模块——即 ZephyrAlpha 是否应遵循"简单优先"原则选择 sizing/drift-detection/risk-model 等模块的方法 | ① sizing_method：MVP 用 fixed_fraction（最简单，Conformal Kelly 论文也证明简单方法最佳），Phase 1.5+ 评估 fractional Kelly，Phase 2+ 评估 Conformal Kelly；② 高频因子：MVP 用日线因子（AKShare 日线可商用研究），Level-2 商业源采购=Phase 1.5+ AUM 增长后评估，个人项目实盘前须法律确认 AKShare 条款；③ 简单优先原则：建议在 project_memory 补一条"模块方法选择遵循简单优先——先 fixed_fraction/simple covariance/walk-forward，Phase 1.5+ 按实证数据升级复杂方法"（待用户确认后登记，与 Conformal Kelly 论文反直觉发现一致）。MVP 阶段 sizing=fixed_fraction + 因子=日线，Phase 1.5+ 按数据驱动升级 |
 | O6 | chart_pattern MVP 范围 | 8 大类全做可能过度 | MVP 先做 candlestick_pattern + chart_pattern 2 类，其余按代码反查按需补 |
-| K1 | ~~ruling_registry 裁定#223 改名方向反转~~（2026-08-13 **已闭合**） | 用户 2026-08-13 拍板**选项①**（维持 S6 方向：文件改名 data_asset_registry.yaml），裁定#223 summary 方向已修正，data_asset_registry.yaml 已落盘（15 源+76 数据集+75 作业） | 已闭合。遗留跟进：旧 dataflow_graph_registry.yaml 物理文件+全项目引用迁移（sync_yaml_to_depgraph.py / panorama_alignment_gate.py / generate_dataflow_diagram.py 等按路径引用），迁移完成后旧文件退役 |
+| K1 | ruling_registry 裁定#223 改名方向反转（v1.33.0 补） | S6 裁定：dataflow_graph_registry.yaml → data_asset_registry.yaml（改名扩展）；但裁定#223（2026-08-10）登记内容为"data_asset_registry → dataflow_graph_registry 改名"——**方向完全写反**，且裁定#223 声称"62 号 §9.4 D1 项标记为已完成"实际未标记（v1.25.0 R70 声称 D1 闭合但 §9.4/§14 未同步，三方漂移）。物理文件名仍为 dataflow_graph_registry.yaml（76 条 DS） | 二选一待用户裁定：① 维持 S6 方向（文件改名 data_asset_registry.yaml）→ 修正裁定#223 的 summary 方向描述；② 采纳裁定#223 字面方向（维持 dataflow_graph_registry.yaml 文件名不改，仅扩展 sources 段）→ 撤销 S6，62 号 §6.2.3 全局回改 data_asset→dataflow_graph 引用。从名实相符看 ① 更优（三实体扩展后内容远超"数据流图"），但需改物理文件名+全项目引用 |
 | K2 | strategy_registry.yaml schema-YAML 漂移（v1.33.0 补，v1.34.0 扩展） | 62 号 §6.1.2 schema（v1.5.0 R33）声明 baseline_trade_frequency/decay_cause/decay_scan_frequency 三字段，但落盘 strategy_registry.yaml 的 entry_schema 与 59 条 entry **均未含此三字段**（v1.25.0 R70 声称"批量补全"未覆盖）；且 59 条 entry 全部 `distilled_to_code: false` 与 §6.1.2 schema 注释"human 策略天然 distilled_to_code=true（代码即原码）"矛盾。E12/G4 检查引用 baseline_trade_frequency 将对 59 条全量误报。**v1.34.0 扩展发现**：momentum_trend 桶混入 33 条潘潘课程买/卖/做T规则条目（STR-MOMENTUM-TREND-001~033，code_path 空、distilled_to_code=false，27 号 §3 L46 语义澄清它们**不是** G11 机构式动量趋势策略）——6 类分类下的条目语义混杂，Step4-8 需区分"课程规则 candidate"与"机构式策略" | P1-A Step4-8 施工时修复（P1 表 YAML 改动随 Step4-8 一并做，本轮不越界单改）：① entry_schema + 59 条 entry 补三字段（decay_cause MVP 填 unknown，decay_scan_frequency 按 lifecycle 填 monthly/weekly/daily）；② distilled_to_code 统一改 true（origin=human）或澄清语义；③ momentum_trend 33 条课程规则条目补 subtype/series 标记（如 `entry_series: panpan_course_rules`）与机构式策略区分 |
 | K3 | UNI-INDEX-001/002 成分股文件未落盘（v1.33.0 补） | universe_registry.yaml 的 UNI-INDEX-001（CSI300）/UNI-INDEX-002（CSI800）components_ref 指向 `data/index_constituents/csi300.csv` / `csi800.csv`，2026-08-12 Glob 验证**该目录不存在**——指数成分股从未落盘。E5 审计级硬错误。v1.33.0 已在 YAML 诚实标注 pit=false/survivorship_free=false。**v1.34.0 补充**：25 号文档**无 CSI300/CSI800 成分股实证章节**（CSI300 仅见于 §3.7 归因伪代码 benchmark 默认值），两指数池的文档锚点仅为基准用途 | 回测 CSI300/CSI800 实证前 MUST 补齐：① 接入中证指数官方季度调整历史成分文件（PIT 快照序列，非单当前快照）；② 或改用 akshare index_stock_cons 历史接口按调仓日重建 PIT 成分；③ 落盘后回改 YAML 三字段为 true/include/true。MVP 阶段 multifactor 回测可先用 UNI-RULE-001 全A可交易池替代（已标 pit=true） |
 | K4 | risk_limit_registry 缺 var/es/kill_switch 三类条目（v1.34.0 新增） | 落盘 risk_limit_registry.yaml 42 条 limit_type 分布：drawdown×8 / position×21 / concentration×6 / firm_risk×5 / leverage×1 / turnover×1——**var/es/kill_switch 三类为 0 条**。36 号 VaR 5 级（GREEN/YELLOW/ORANGE/RED/BLACK）+ 35 号 §3.5 Kill Switch 多源触发（回撤/单日亏损>6%/连续5天亏损/流动性危机/黑天鹅BS-007）+ 36 号 ES 明明有设计，Step1-3 反查时漏登记；反而无文档依据的 leverage/turnover 各有 1 条（35/36/37/32 号无对应条款，个人 A 股现货无杠杆）。project_memory"VaR 5级+7黑天鹅降级监控层（先全建+全log）"的"全建"未落实 | P1-B Step4-8 施工时处理：① 从 36 号补登 VaR 5 级限额条目（RLM-VAR-001~005）+ ES 条目（RLM-ES-001）；② 从 35 号 §3.5 补登 kill_switch 多源触发条目（RLM-KILL-SWITCH-001）；③ leverage/turnover 两条孤条目补文档依据或标 candidate 待 35/36/37 号联动评估；④ 补登后 §6.2.2 的"9 种限额类型"描述与实际条目对齐 |
