@@ -14,7 +14,9 @@
 # [TESTS] tests/infrastructure/test_git_batcher.py
 # [A_module] module_id=MOD-INF-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGET P2.2，2026-07-19）
+"""
+
+git_batcher.py — Git 命令批量化工具（ARCH-GIT-CALL-BUDGET P2.2，2026-07-19）
 
 将 N 次独立 git 子进程调用合并为 1 次批量调用，消除逐文件 git 调用反模式
 （N 文件 = N subprocess → 1 subprocess）。
@@ -63,6 +65,76 @@ Usage::
     # 批量还原 N 个文件到 HEAD（1 次 git restore 替代 N 次）
     restored = batcher.git_restore_batch(["src/foo.py", "src/bar.py"])
     # restored == ["src/foo.py", "src/bar.py"]（成功）或 []（失败 fail-open）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: project_root 仓库根目录
+#   fields: git 仓库绝对路径
+#   code: GitCommandBatcher.__init__ L89
+# - id: I2
+#   name: 批量 git 查询参数
+#   fields: ref 引用 / files 相对路径列表 / ref_spec 区间 / staged 标志 / timeout 秒
+#   code: git_show_batch(ref, files) L102
+# - id: I3
+#   name: git CLI 子进程输出
+#   fields: git archive tar 字节流 / diff --name-only / ls-files / restore 的 stdout
+#   code: run_subprocess_hidden L125（cwd=repo，timeout 默认 60s）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 批量取文件内容
+#   name_en: git_show_batch
+#   intro: 一次 git archive 拿 N 个文件内容，替代 N 次 git show
+#   desc: git archive --format=tar <ref> -- <files> 单次调用；超时/异常/rc≠0 全返回空 dict（fail-open）
+#   inputs: I2 I3
+#   outputs: {文件路径: 内容字节} 字典
+#   invariant: N 文件 = 1 次 subprocess；失败返回空容器不抛异常
+# - id: A2
+#   name_zh: ② tar 流式解析
+#   name_en: _parse_tar_archive
+#   intro: 把 archive 的 tar 字节流拆成逐文件的内容字典
+#   desc: tarfile.open(mode="r|") 流式遍历 member，isfile 才 extractfile 读出 bytes；TarError 返回空 dict
+#   inputs: A1
+#   outputs: {file_path: content}
+# - id: A3
+#   name_zh: ③ 批量取文件名列表
+#   name_en: git_diff_cached_names / git_diff_names / git_ls_files_tracked
+#   intro: 一次命令拿全部 staged/diff/tracked 文件名，按行拆分返回
+#   desc: git diff --cached --name-only / git diff --name-only <ref_spec> / git ls-files，可拼 pathspec 限定范围；stdout 按行 strip 成列表
+#   inputs: I2 I3
+#   outputs: 文件相对路径列表
+# - id: A4
+#   name_zh: ④ 批量还原文件
+#   name_en: git_restore_batch
+#   intro: 一次 git restore 还原 N 个文件，失败不逐个重试防崩溃放大
+#   desc: git restore [--staged] -- <files>；rc=0 返回全部 files；失败返回空列表，交给下次 post-commit 事件兜底
+#   inputs: I2 I3
+#   outputs: 成功还原的文件列表
+#   invariant: 禁止逐个重试（GIT-BUDGET-INV-002）
+# 层: 输出
+# - id: O1
+#   name_zh: 批量文件内容与文件名
+#   name_en: dict[str, bytes] / list[str]
+#   intro: 文件内容字典和各类文件名列表，给收集器和门禁做批量 diff 分析
+#   downstream: session_worktree（collector 批量化）；commit_gates.*（diff helpers）；workspace_hygiene_reconciler（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: 批量还原结果
+#   name_en: restored list
+#   intro: auto-sync restore 批量化的成功清单，空列表表示失败待兜底
+#   downstream: workspace_hygiene_reconciler（auto-sync restore 批量化）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# I2 --> A3
+# I3 --> A3
+# I2 --> A4
+# I3 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

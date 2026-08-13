@@ -14,7 +14,9 @@
 # [TESTS] tests/zephyr/runtime/test_intraday_main.py
 # [A_module] module_id=MOD-RUNTIME_INTRADAY | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""盘中运行时编排器——单进程串起 tick_subscriber + IntradayFactorLoop。
+"""
+
+盘中运行时编排器——单进程串起 tick_subscriber + IntradayFactorLoop。
 
 把 D-DATA (tick_subscriber) → H1 Redis (tick_redis_cache) → D-FACTOR
 (intraday_factor_loop) 串成端到端盘中数据流::
@@ -42,6 +44,81 @@
     python -m zephyr.runtime.intraday_main              # 交易日自动运行
     python -m zephyr.runtime.intraday_main --force      # 非交易日强制运行
     python -m zephyr.runtime.intraday_main --symbols 000001.SZ 600000.SH
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 命令行参数 argv
+#   fields: --force 非交易日强制运行 + --symbols 订阅标的列表 + --cycle-seconds 因子循环周期（默认3.0秒）
+#   code: main L248-270
+# - id: I2
+#   name: 交易日历状态
+#   fields: is_trading_day() 今日是否交易日 bool
+#   code: start L132（zephyr.data.trading_calendar.is_trading_day）
+# - id: I3
+#   name: Redis 连接（H1 实例）
+#   fields: redis.Redis 连接句柄（None 时经 DatabaseService 获取，测试可注入）
+#   code: start L139-141
+# - id: I4
+#   name: QMT 全市场 tick 推送流
+#   fields: TickSubscriber 订阅的 (symbol, tick dict) 推送 + subscribed_symbols 实际订阅标的
+#   code: start L162-167（TickSubscriber.start）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 交易日守卫
+#   name_en: IntradayRuntime.start（守卫段）
+#   intro: 非交易日且未加 --force 就拒绝启动，防止空跑
+#   desc: 已在运行直接返回 True；not force and not is_trading_day() 则 warning 并 return False（L127-136）
+#   inputs: I1 I2
+#   outputs: 启动许可 bool
+# - id: A2
+#   name_zh: ② 组件装配与按序启动
+#   name_en: IntradayRuntime.start（编排段）
+#   intro: 先起 tick 订阅预热 Redis，再起因子循环读 tick 算因子，失败回滚
+#   desc: 取 Redis 连接→建 TickRedisCache→建 HeartbeatMonitor+Alerter+TickSubscriber 并 start（预热首个 tick）→取 subscribed_symbols→建 IntradayFactorLoop 并 start，因子循环启动失败则回滚停 subscriber 返回 False（L138-196）；显式 import intraday_snapshot_factors 触发因子注册（L66）
+#   inputs: I1 I3 I4 A1
+#   outputs: 运行中的 tick→Redis→因子→H1 双组件管线
+#   invariant: 启动顺序=先订阅tick再启因子循环
+# - id: A3
+#   name_zh: ③ 常驻主循环
+#   name_en: IntradayRuntime.run_forever
+#   intro: 挂 SIGINT/SIGTERM 处理器，每 60 秒打印一次聚合 stats 直到收到退出信号
+#   desc: start 失败直接返回 1；注册 _signal_handler 把信号转 KeyboardInterrupt；while _running 循环 sleep 60s + log stats()（聚合 subscriber+factor_loop 统计）（L219-245）
+#   inputs: A2
+#   outputs: 周期运行统计日志
+# - id: A4
+#   name_zh: ④ 优雅停止（反序）
+#   name_en: IntradayRuntime.stop
+#   intro: 先停因子循环再停 tick 订阅，保证 WAL flush 完整
+#   desc: _running=False→factor_loop.stop()→tick_subscriber.stop()（flush 残留 WAL+取消订阅）（L198-208）；在 run_forever 的 finally 中调用
+#   inputs: A3
+#   outputs: 停止完成 + 进程退出码 0/1
+#   invariant: 停止顺序=先停因子循环再停订阅（反序）
+# 层: 输出
+# - id: O1
+#   name_zh: 端到端盘中数据面贯通
+#   name_en: tick→Redis→因子→H1 管线
+#   intro: tick 双写 WAL/ClickHouse+Redis tick:{symbol}:latest，因子循环写 H1 feature:{symbol} 供信号/风控层 5ms 内读取
+#   downstream: 无 Python 导入下游（[CONSUMERS] 空，进程入口）；数据面供 D-SIGNAL/D-RISK 读 H1 feature
+# - id: O2
+#   name_zh: 进程退出码与运行统计
+#   name_en: exit code + stats dict
+#   intro: 0=优雅退出 1=启动失败；stats 聚合 tick_subscriber 与 factor_loop 计数
+#   invariant: tick_subscriber启动失败→退出码1；SIGINT/SIGTERM→优雅停止退出码0
+#   downstream: 无下游/内部使用（运维日志）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I3 --> A2
+# I4 --> A2
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A2 --> O1
+# A4 --> O2
 """
 from __future__ import annotations
 

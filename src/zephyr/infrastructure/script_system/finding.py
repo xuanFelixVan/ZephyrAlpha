@@ -23,6 +23,8 @@
 # created: "2026-05-04"
 # ---
 """
+
+
 Finding Schema — 审计发现标准化数据模型
 
 对照 ISO 19011 审计原则 + NASA-STD-8739.8 严重度分级。
@@ -50,6 +52,70 @@ Usage:
         remediation_action=RemediationAction.FIX,
         remediation_priority="P0",
     )
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Finding 构造参数
+#   fields: dimension/severity/category/target_file/description/evidence 等约 20 个参数
+#   code: finding.py L162 Finding.__init__
+# - id: I2
+#   name: 规则执行结果参数
+#   fields: rule_id / file_path / message / dimension / severity(默认 MEDIUM)
+#   code: finding.py L263 from_result_dict
+# 层: 算法
+# - id: A1
+#   name_zh: ① finding_id 稳定哈希生成
+#   name_en: Finding.__init__ id 段
+#   intro: 同内容发现生成同 ID：内容哈希前 12 位 + UTC 日期
+#   desc: L203-209：sha256(dimension|severity|target_file|description)[:12] → FIND-{D}-{YYYYMMDD}-{hash}；显式传 finding_id 则直接用
+#   inputs: I1 I2
+#   outputs: 带稳定 ID 的 Finding 实例
+#   invariant: 同 (dimension,severity,file,description) 幂等同 ID
+# - id: A2
+#   name_zh: ② Finding 序列化
+#   name_en: to_dict / to_json / to_jsonl_line
+#   intro: 序列化为嵌套 dict → JSON → JSONL 行，recommendation_block 条件附加
+#   desc: L211-252：target/impact/remediation/lifecycle/traceability 嵌套结构；三类 recommendation 字段任一非空才挂 recommendation_block
+#   inputs: A1
+#   outputs: JSONL 行字符串
+# - id: A3
+#   name_zh: ③ 集合过滤与统计
+#   name_en: FindingCollection 查询方法
+#   intro: 按维度/严重度过滤子集，汇总 by_severity + by_dimension 计数
+#   desc: L311-335：by_dimension/by_severity/critical_only 返回新集合；summary() 双维计数
+#   inputs: A1
+#   outputs: 过滤子集 / summary 统计 dict
+# - id: A4
+#   name_zh: ④ JSONL 原子写盘
+#   name_en: write_jsonl / append_jsonl
+#   intro: 先写 pid 临时文件再 os.replace 原子替换，权限失败时清理临时文件
+#   desc: L295-309：tmp={path}.{os.getpid()}.tmp → write → os.replace；PermissionError → 尝试 os.remove(tmp)
+#   inputs: A2
+#   outputs: findings.jsonl 文件
+# 层: 输出
+# - id: O1
+#   name_zh: findings.jsonl 审计发现行
+#   name_en: findings.jsonl
+#   intro: 一行一个 JSON 的统一审计发现落盘格式，供 SQLite 竖切查询
+#   invariant: LifecycleStatus 枚举 MUST 与 finding_state_machine.py 对齐（SSoT）
+#   downstream: 审计脚本统一输出；scripts/governance/meta/finding_state_machine.py（状态机消费枚举）
+# - id: O2
+#   name_zh: Finding/FindingCollection 对象与统计
+#   name_en: Finding / FindingCollection
+#   intro: 内存中的发现对象、过滤子集与 summary 统计
+#   downstream: 无下游/内部使用（[CONSUMERS] 头为空，审计脚本内部消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> A3
+# A2 --> A4
+# A4 --> O1
+# A2 --> O2
+# A3 --> O2
 """
 
 from __future__ import annotations
