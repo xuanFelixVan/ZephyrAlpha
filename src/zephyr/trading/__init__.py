@@ -71,5 +71,8 @@ __all__ = [
     "work_dag",
     "work_orchestrator",
     "zombie_scanner",
+    "trigger_registry",
     "__main__",
 ]
+
+from zephyr.trading import trigger_registry  # noqa: F401  # ORPHAN-MODULE: 新模块引用登记（41_buy_flow §3.9 MOD-TRIG-001）
