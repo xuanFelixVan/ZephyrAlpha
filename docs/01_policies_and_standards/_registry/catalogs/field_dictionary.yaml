@@ -11,7 +11,7 @@ description: >-
   真源反查自 cross_layer_contracts.yaml（18 个业务数据契约 SSoT）+ factor_registry inputs（111 个因子声明输入字段）。
   职责边界（裁定 8）：仅管数据层字段语义，不合并 frontmatter_field_registry.yaml（文档元数据）；FK 消费方=
   factor.inputs / technical_indicator.inputs（62号 §4.6）。对标 DAMA-DMBOK / dbt schema.yml（2026 补
-  sensitivity/freshness/notes 三字段）。source_system FK → data_asset_registry（P1-B 未施工，全部 pending 待回填）。
+  sensitivity/freshness/notes 三字段）。source_system FK → data_asset_registry（SRC-QMT-001/SRC-AKSHARE-001/SRC-INTERNAL-001 三值已回填，2026-08-13 AI-REG-FLD-001）。
   business_registry_construction §7.1。施工：AI-REG-FLD-001（2026-08-13，62号 §4.5 八步算法）。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
@@ -31,7 +31,7 @@ entry_schema:
   data_type: str                 # int/float/str/datetime/bool/dict/list/obj（扩展：契约含 Dict/List 容器类型）
   unit: str                      # 元/股/份/%(小数)/倍/点/毫秒/天/交易日/笔/只/板/个/bps/美元|桶|盎司/亿元/分(0-10)/none
   allowed_values: list[str]      # 枚举合法值；非枚举=null
-  source_system: str             # FK → data_asset_registry source_id（SRC-QMT-001/SRC-AKSHARE-001/SRC-INTERNAL-001，pending 待 P1-B 回填）
+  source_system: str             # FK → data_asset_registry source_id（SRC-QMT-001/SRC-AKSHARE-001/SRC-INTERNAL-001，已回填闭环）
   adjust_method: str             # 前复权/后复权/不复权/none
   pit_property: str              # point_in_time/look_ahead_risk
   quality_rules: list[str]       # 质量规则（值域/一致性/格式）

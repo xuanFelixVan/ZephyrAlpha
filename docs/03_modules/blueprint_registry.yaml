@@ -1,10 +1,10 @@
 registry:
-  version: 2.7.10
+  version: 2.7.14
   created: '2026-05-02'
-  last_updated: '2026-08-08'
-  total_blueprints: 153
+  last_updated: '2026-08-13'
+  total_blueprints: 158
   scope: 03_modules/
-  note: Auto-synced from 153 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 158 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
   generated_at: '2026-08-08'
   generated_by: sync_registry_from_blueprints.py
@@ -1236,6 +1236,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_portfolio_alloc/strategy_correlation_gate/blueprint.md
+- module_id: MOD-PA-006
+  name: batched_position_builder
+  title: 分批建仓引擎 — C-031置信度驱动分批建仓+尾盘集中执行+限价锚定+资金pro-rata兜底
+  summary: BM-BUY-04 分批建仓引擎——消费 31 号 FirmTargetPortfolio，C-031 置信度驱动 2 批/激进 1 批，尾盘 14:50-14:57 集中执行，限价锚定，资金 pro-rata 兜底，突破失败降级联动 42 号。6 算法+2 数据契约已施工，42 用例通过
+  layer: L2_domain
+  functional_domain: pf_alloc
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: 1
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md
 - module_id: MOD-PA-007
   name: regime_meta_allocator
   title: Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后验分配（A模型·meta层）
@@ -1314,6 +1327,45 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_portfolio_core/performance_attribution_engine/blueprint.md
+- module_id: MOD-PLAN-001
+  name: tomorrow_boundary_planner
+  title: 明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）
+  summary: BM-PLAN-01 明日预案引擎——盘后收盘基于当日数据冷静计算明日操作边界 TomorrowBoundary，边界层（B/C）核心产出者，边界层坏=致命暂停操作。已施工（MVP 骨架）
+  layer: L2_domain
+  functional_domain: plan_engine
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: 1
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md
+- module_id: MOD-PLAN-002
+  name: premarket_constraint_loader
+  title: 盘前预案加载器 — 9:00加载TomorrowBoundary+9:25集合竞价9情景匹配初始化ConstraintState
+  summary: BM-PLAN-02 盘前预案加载——次日 9:00 加载昨晚 TomorrowBoundary，9:25 集合竞价匹配 9 情景初始化 ConstraintState；加载失败=致命，无约束状态禁止开始交易。已施工（MVP ±2% 简化匹配）
+  layer: L2_domain
+  functional_domain: plan_engine
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: 1
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_plan_engine/premarket_constraint_loader/blueprint.md
+- module_id: MOD-PLAN-003
+  name: closing_session_decision
+  title: 尾盘决策引擎 — 14:45基于明日高/低开概率的加减仓决策（ADD/REDUCE/HOLD/EXIT）
+  summary: BM-PLAN-03 尾盘决策——14:45-15:00 基于盘中推演与持仓，高开概率>70%→ADD/低开概率>60%→REDUCE/否则 HOLD；与 41 §3.4 尾盘窗口分工：预测驱动调仓决策层 vs 建仓执行层。已施工
+  layer: L2_domain
+  functional_domain: plan_engine
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: 1
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_plan_engine/closing_session_decision/blueprint.md
 - module_id: MOD-POS-001
   name: position_sizing_engine
   title: 仓位决策引擎蓝图 — 四轨融合+半Kelly+13约束+分阶段施工
@@ -2108,6 +2160,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_trading/corporate_action_processor/blueprint.md
+- module_id: MOD-TRIG-001
+  name: trigger_registry
+  title: 扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重
+  summary: 41 §3.9 条件触发执行队列——买入/卖出/执行/风控触发器统一注册 TriggerEntry，priority 1-5 仲裁+scope 排序+同源去重+冷却期，MVP 15 条清单预注册。已施工，24 用例通过
+  layer: L2_domain
+  functional_domain: trading
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: 1
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_trading/trigger_registry/blueprint.md
 - module_id: SH-DB-001
   name: database
   title: Database 集成蓝图 — 2库职责划分(SQLite治理+PG架构) + 三层冷热架构定位
