@@ -8590,6 +8590,12 @@ creation_tokens:
     created_by: "session-registry-v130"
     capability: "business_registry_construction"
 
+  # --- 图形形态注册表（2026-08-13，#ARCH-BREG-001 P1-B，62号§6.2.4施工落盘）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml"
+    token: "auto-reg-chart-pattern-20260813"
+    created_by: "session-AI-REG-PAT-001"
+    capability: "business_registry_construction"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

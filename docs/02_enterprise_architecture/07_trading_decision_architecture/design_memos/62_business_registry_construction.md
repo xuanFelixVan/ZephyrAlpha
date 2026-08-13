@@ -63,7 +63,7 @@ scope: 07_trading_decision_architecture
 | 7 | 执行算法 | REG-EXA-001 | `catalogs/execution_algo_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
 | 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | 🔄 Step1-3 已完成 | 42 |
 | 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ⏳ 待施工 | — |
-| 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | ⏳ 待施工 | — |
+| 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | 🔄 Step1-6 已完成 | 15 |
 | 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ⏳ 待施工 | — |
 | 12 | 实验/回测目录 | REG-EXP-001 | `catalogs/experiment_registry.yaml` | tier_2 | P2 | ⏳ 待施工 | — |
 
@@ -4201,7 +4201,7 @@ ROOR summary 同步更新：total_registries 52→58，tier_2_runtime 12→18。
 4. `execution_algo_registry.yaml` — ⏳ 未施工：40 号 6 算法提取（TWAP/VWAP/ICEBERG/POV/IS/ALT，v1.1.0修正），**MUST 预留 §4.20 监管 6 字段 + §4.23③ 价格笼子/T+1/涨跌停 3 字段**
 5. `risk_limit_registry.yaml` — 🔄 Step1-3 已完成（42 条）。**下一步 Step4-8**（scope_strategy FK 校验 + src/zephyr/risk/ code_path 半派生 + 审计）
 6. `data_asset_registry.yaml` — ⏳ 未施工：改名 + sources 段扩展（DS 实际 76 条 DS-001~076，v1.1.1 全量确认）+ **ruling_registry 裁定#223 方向反转须先修正（待定问题 K1）**
-7. `chart_pattern_registry.yaml` — ⏳ 未施工：MVP 先做 candlestick_pattern + chart_pattern 2 类（O6 裁剪），8 大类 schema 保留按需填充
+7. `chart_pattern_registry.yaml` — 🔄 Step1-6 已完成（15 条：candlestick 6 active + chart_pattern 4 candidate + trendline 1 candidate + support_resistance 3 active + structure 1 active）。8 大类 schema 保留，chanlun/elliott_wave/fibonacci 3 类按需补充。**下一步 Step7-8**（治理同步已完成 ROOR 登记 + 62 号状态更新；循环审查待下轮确认）
 
 ### P2（数据治理 + 实验）
 8. `field_dictionary.yaml` — ⏳ 未施工：contracts/ 提取数据字段，补 sensitivity/freshness/notes 三字段（2026 dbt 对标）
