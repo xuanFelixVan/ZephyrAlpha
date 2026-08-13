@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_BLUEPRINT_STATUS_TRANSITION_RECONCILER | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 """
 

@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-11T20:56:37Z'
+generated_at: '2026-08-13T06:42:42Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 199
+total_files: 200
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2600,6 +2600,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: active
+  version: 0.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
   module_id: REG-TERMINOLOGY-001
   title: 架构文档术语词汇表（中英对照真源）
@@ -2650,7 +2665,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''

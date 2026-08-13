@@ -3,8 +3,8 @@
 #
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
-generated_at: '2026-08-09'
-total_scripts: 688
+generated_at: '2026-08-13'
+total_scripts: 698
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -232,8 +232,16 @@ scripts:
   dimensions: []
 - name: serve_docs.py
   path: serve_docs.py
-  description: 治本（#ARCH-GOV-BUDGET-001 / I-GOV-1，2026-08-05）：
+  description: 本地文档服务：按需重生成派生架构文档 + 启动 HTTP 服务器浏览。
   domain: serve_docs.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: session_worktree.py
+  path: session_worktree.py
+  description: Session Worktree — 每 AI 独立 checkout + 分支（§11.3.1 v2.1.0 简化版）
+  domain: session_worktree.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -250,6 +258,14 @@ scripts:
   path: setup_git_guard_aliases.py
   description: Setup/Remove Git Aliases for Git Guard — 自动化集成入口。
   domain: setup_git_guard_aliases.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: task_board.py
+  path: task_board.py
+  description: Task Board — SQLite-based 多 AI 任务协调板（v2.1.0 简化版）
+  domain: task_board.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -593,6 +609,14 @@ scripts:
 - name: ch/apply_timezone_migration.py
   path: ch/apply_timezone_migration.py
   description: 背景（audit_01_schema_review.md）：
+  domain: ch
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: ch/archiver.py
+  path: ch/archiver.py
+  description: 三阶段原子操作：export → verify → drop
   domain: ch
   execution_plane: warm-path
   status: registered
@@ -1096,7 +1120,7 @@ scripts:
   dimensions: []
 - name: governance/d11_compliance/check_generator_no_realtime_time.py
   path: governance/d11_compliance/check_generator_no_realtime_time.py
-  description: 治本：#ARCH-REGEN-NONIDEMPOTENT-001
+  description: 门禁：生成器禁止使用实时时间源（datetime.now / time.time / datetime.today）。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1104,7 +1128,7 @@ scripts:
   dimensions: []
 - name: governance/d11_compliance/check_no_commit_derived.py
   path: governance/d11_compliance/check_no_commit_derived.py
-  description: 治本：#ARCH-GOV-BUDGET-001 / I-GOV-1（2026-08-05）
+  description: 门禁：阻断对派生产物（已离库的生成器输出）的 git add。
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -1958,6 +1982,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/d5_architecture/checkers/check_algo_flow.py
+  path: governance/d5_architecture/checkers/check_algo_flow.py
+  description: 目的（D2 目的声明）：防止运营态模块回退/新增缺失 `# [ALGO_FLOW]` docstring 标记——
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/d5_architecture/checkers/check_algo_quality.py
   path: governance/d5_architecture/checkers/check_algo_quality.py
   description: 审计算法糊弄（algorithm fraud）的自动检测器，填补 60+ 现有 gate 的语义空白。
@@ -2337,6 +2369,14 @@ scripts:
 - name: governance/d5_architecture/generators/generate_integration_topology.py
   path: governance/d5_architecture/generators/generate_integration_topology.py
   description: '[BLUEPRINT] ARCHITECTURE-DIAGRAM-PLAN | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §4.4'
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/d5_architecture/generators/generate_module_algorithm_overview.py
+  path: governance/d5_architecture/generators/generate_module_algorithm_overview.py
+  description: 从代码 .py docstring + header（运营态）或 blueprint.md（设计态）提取每个模块的核心
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4486,9 +4526,49 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: governance/_shared/algo_flow_applier.py
+  path: governance/_shared/algo_flow_applier.py
+  description: 架构分工：AI 校准代理只产出「校准标记纯文本」（.trae/documents/algo_flow_calibrated/<safe>.txt），
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_shared/algo_flow_drafter.py
+  path: governance/_shared/algo_flow_drafter.py
+  description: 输入一个 .py 模块文件，用 AST 解析提取：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_shared/algo_flow_translation_sync.py
+  path: governance/_shared/algo_flow_translation_sync.py
+  description: 把 416 个运营态模块 ALGO_FLOW 标记里的 name_zh/intro 同步进翻译真源：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_shared/algo_flow_validate_marker.py
+  path: governance/_shared/algo_flow_validate_marker.py
+  description: 按 visualization_view_template.md §4.14/§4.15/§4.16 校验单个校准标记文件：
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: governance/_shared/base.py
   path: governance/_shared/base.py
   description: base.py — 审计脚本基类
+  domain: governance
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: governance/_shared/code_algorithm_extractor.py
+  path: governance/_shared/code_algorithm_extractor.py
+  description: 从代码 .py docstring + header，或 blueprint.md 章节，提取模块的核心算法描述，
   domain: governance
   execution_plane: warm-path
   status: registered
@@ -4816,7 +4896,7 @@ scripts:
   dimensions: []
 - name: ops/shadow_canary_deploy.py
   path: ops/shadow_canary_deploy.py
-  description: 把 4 个已有原语编排成一条命令，满足 EX-021 门禁的「CI/CD 灰度发布基础设施」半：
+  description: shadow_canary_deploy.py — Shadow Canary 部署运行器（簇C CI/CD 灰度发布基建）
   domain: ops
   execution_plane: warm-path
   status: registered

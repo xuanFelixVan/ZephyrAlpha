@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-021 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TTL] permanent
 # 代理包：将 zephyr.governance.escalation 重定向到实际模块
 # 测试文件导入 from zephyr.governance.escalation import EscalationEngine, RuleCategory, ...

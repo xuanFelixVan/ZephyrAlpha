@@ -1,12 +1,12 @@
-# 自动生成于 2026-08-09T10:15:47Z
+# 自动生成于 2026-08-13T06:42:24Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-09T10:15:47Z'
+generated_at: '2026-08-13T06:42:24Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 400
-with_manifest: 324
+total_scripts: 401
+with_manifest: 325
 missing_manifest: 76
 categories:
   governance:_sync: 4
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 26
   governance:d4_paths: 4
-  governance:d5_architecture: 110
+  governance:d5_architecture: 111
   governance:d6_security: 15
   governance:d7_code: 41
   governance:d8_doc_sync: 12
@@ -1444,6 +1444,20 @@ scripts:
   args: []
   warn_only: false
   description: 'CI Entry: Drift Detector E2E Pipeline Check'
+  tags:
+  - Critical
+- name: d5_architecture/checkers/check_algo_flow.py
+  owner: governance:d5_architecture
+  dimensions:
+  - D5
+  priority: P2
+  timeout_seconds: 30
+  args: []
+  warn_only: false
+  description: 'ALGO_FLOW 标记门禁：staged 的 src/zephyr/**/*.py 必须含 # [ALGO_FLOW] docstring
+    标记 （算法全景图推导流程图真源，§4.16，2026-08-12 全量落地后转强制）。
+
+    '
   tags:
   - Critical
 - name: d5_architecture/checkers/check_algo_quality.py
