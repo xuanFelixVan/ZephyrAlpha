@@ -13593,7 +13593,7 @@ entries:
     - 'docs/registry_of_registries.yaml（编辑，tier_2加3个业务资产注册表条目）'
     - 'AGENTS.md（编辑，RULE-REGISTRY段加业务资产速查显化）'
     - 'docs/_working/business_registry_consolidation_plan.md（新建，施工方案文档）'
-  fix_phase: 'P0（2026-08-10完成）：universe/benchmark/cost_model 3个回测必需注册表；P1-A：factor(111)/strategy(59) Step1-3 落盘（Step4-8待做），indicator 待施工；P1-B：risk_limit(42) Step1-3 落盘（Step4-8待做），execution_algo(6)/data_asset(166=sources15+datasets76+jobs75) 2026-08-13 完成 8 步施工（E1-E20 审计 errors=0，AI-REG-EXE-001 worktree 施工），chart_pattern 待施工；P2待施工：field_dictionary/experiment 2个'
+  fix_phase: 'P0（2026-08-10完成）：universe/benchmark/cost_model 3个回测必需注册表；P1-A（2026-08-13完成）：factor(111)/strategy(59) Step4-8 补全（AI-REG-COMP-001），technical_indicator(40条/5大类/58输出列，AI-REG-IND-001)；P1-B（2026-08-13完成）：risk_limit(42→62，Step4-8 补全+K4 var/es/kill_switch 补登20条，AI-REG-COMP-001/AI-REG-K4-001)，execution_algo(6)/data_asset(166=sources15+datasets76+jobs75，AI-REG-EXE-001)，chart_pattern(15条，AI-REG-PAT-001)；P2（2026-08-13完成）：field_dictionary(257条/16域，AI-REG-FLD-001)/experiment(5条，AI-REG-EXP-001)。12个业务注册表全部建成并登记 ROOR'
   status: decided
   created: '2026-08-10'
   last_updated: '2026-08-13'
@@ -13775,11 +13775,11 @@ entries:
     - 'src/zephyr/data/provider_base.py（CapabilityContract 扩展语义字段，待设计）'
     - 'docs/01_policies_and_standards/_registry/catalogs/capability_semantic_registry.yaml（新建，待规划）'
     - 'src/zephyr/governance/（capability_validator/cross_source_validator 扩展，待规划）'
-  fix_phase: '待规划（设计阶段）：MVP 阶段以即时止血+人工 review 兜底；下个治理窗口启动语义契约扩展设计'
+  fix_phase: '设计已定稿（2026-08-13，17号 v1.0.0 §5 治本方案裁定）：MVP 最小集=项4 符号一致性双向校验 gate + 项1 CapabilityContract 语义字段（expected_market/expected_variety）；项2 semantic_registry 与项3 AST gate 采纳同批施工（验收用例=检出 #ARCH-DATA-001）；项5 运行时抽样推迟。施工待立项'
   status: decided
   related_rules: '#ARCH-DATA-001（即时止血）; #ARCH-CH-022（CapabilityContract 行为契约）; #ARCH-CH-INDUSTRY-CLASS-MIGRATE（同类前例）; #ARCH-CH-004（蓝图-实现鸿沟）'
   created: '2026-08-10'
-  last_updated: '2026-08-10'
+  last_updated: '2026-08-13'
 
 # ===========================================================================
 # 2026-08-11 批量登记：第一性原理调研发现的 33 项缺失
@@ -15846,20 +15846,22 @@ entries:
 
 # --- #ARCH-CONSTRUCTION-SOP-001: 施工流程 SOP 端到端编排载体（02 号文档引用）---
 - issue_id: '#ARCH-CONSTRUCTION-SOP-001'
-  title: '07 域施工流程 SOP——端到端 15 步施工闭环编排层（02_construction_workflow_sop.md）'
+  title: '07 域施工流程 SOP——端到端 15 步施工闭环编排层（docs/01_policies_and_standards/sop/construction_workflow_sop.md）'
   severity: P1高
   category: process_governance
   adjudication: |
     背景：07_trading_decision_architecture 域施工流程此前散落在 84 个 trae_xxx 规则文件 + 48 个 design_memo 中，
-    无端到端编排载体。02_construction_workflow_sop.md 作为编排层真源，整合 33 项盲点（18 项初版+15 项扫描补充），
+    无端到端编排载体。construction_workflow_sop.md 作为编排层真源，整合 33 项盲点（18 项初版+15 项扫描补充），
     串联 Session 冷启动→文档审查→创建前搜索→架构评审→全景图登记→五图对齐→施工编码→单元测试→
     长清单审查→更新文档→全景图流转→文件完整性→GitCommitGateway→临时文件清理→worktree 合并共 15 步。
     附录 A 全文收录用户提供的长清单审查 12 节，附录 B 验证脚本索引，附录 C 40+ reconciler 清单。
     议题：SOP 已落盘，待后续施工实践验证流程完整性，可能需要迭代补充。
+    2026-08-13 搬迁：自 design_memos/02_construction_workflow_sop.md 迁至 01_policies_and_standards/sop/
+    （用户裁定——SOP 属永久规则，与施工图纸临时区生命周期分离；doc_type 转 policy/procedural）。
   impact:
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/02_construction_workflow_sop.md（新建，active v1.0.0）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（§0 目录新增 02 号登记行）'
-    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（creation_token 登记）'
+    - 'docs/01_policies_and_standards/sop/construction_workflow_sop.md（2026-08-13 迁入，active v1.4.0）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（§0 目录 02 行标记已迁出）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（creation_token 路径同步）'
   fix_phase: '已落盘（待实践验证）'
   status: decided
   related_rules: 'trae_035; trae_056; trae_080; AI_review_instructions; 65 号; 66 号'

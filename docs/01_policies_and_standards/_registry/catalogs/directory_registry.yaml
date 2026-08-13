@@ -486,6 +486,25 @@ directories:
     note: "7 个子目录"
 
 
+  - path: "docs/01_policies_and_standards/sop/"
+
+    responsibility: "SOP 专区——永久性标准作业规程（施工流程/冲突处理等），与 design_memos 施工图纸临时区生命周期分离"
+
+    parent: "docs/01_policies_and_standards/"
+
+    has_index: false
+
+    module_id: null
+
+    kb_ref: null
+
+    track: C
+
+    status: active
+
+    note: "2026-08-13 用户裁定设立；首批迁入 construction_workflow_sop.md（原 design_memos/02）+ merge_conflict_resolution_sop.md（原 design_memos/67）"
+
+
   - path: "docs/01_policies_and_standards/rules/"
 
     responsibility: "元层标准——规则生命周期/ 分类仲裁 / 术语映射 / 行为边界"

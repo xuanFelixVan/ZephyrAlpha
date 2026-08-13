@@ -10,7 +10,7 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 > **用途**：新统筹会话凭本文件 + [construction_progress_tracker.md](construction_progress_tracker.md) 恢复全部上下文，接手施工统筹工作。
 > **创建**：2026-08-13（第一统筹会话）
 > **重建说明**：⚠️ 本文件于 2026-08-13 晚重建。原文件从未 commit，会话关闭后丢失；本版依据会话记忆 + tracker 备份重建。
-> **关联 SOP**：[02_construction_workflow_sop.md](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/02_construction_workflow_sop.md) v1.3.0
+> **关联 SOP**：[construction_workflow_sop.md](../01_policies_and_standards/sop/construction_workflow_sop.md) v1.4.0（2026-08-13 自 design_memos/02 迁入 01/sop 专区）
 
 ## 一、统筹 AI 角色定位
 
@@ -28,7 +28,7 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 
 1. 读本文件（角色 + 铁律）。
 2. 读 [construction_progress_tracker.md](construction_progress_tracker.md)（施工队状态 + 遗留项）。
-3. 读 [02_construction_workflow_sop.md](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/02_construction_workflow_sop.md)（15 步施工流程 + 附录 A 长清单）。
+3. 读 [construction_workflow_sop.md](../01_policies_and_standards/sop/construction_workflow_sop.md)（15 步施工流程 + 附录 A 长清单）。
 4. 实证环境状态：
    ```powershell
    git branch --show-current          # 应为 dev

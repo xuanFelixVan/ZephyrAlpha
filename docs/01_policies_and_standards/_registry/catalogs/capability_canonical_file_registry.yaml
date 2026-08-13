@@ -6022,12 +6022,12 @@ creation_tokens:
     created_by: "session-bm-fill"
     capability: "compliance_discipline_memo"
 
-  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/02_construction_workflow_sop.md"
+  - file: "docs/01_policies_and_standards/sop/construction_workflow_sop.md"
     token: "auto-02-construction-workflow-sop-20260812"
     created_by: "session-ai-sop-001"
     capability: "construction_workflow_sop"
 
-  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/67_merge_conflict_resolution_sop.md"
+  - file: "docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md"
     token: "auto-67-merge-conflict-resolution-sop-20260813"
     created_by: "session-sess-recovery-0813"
     capability: "merge_conflict_resolution_sop"

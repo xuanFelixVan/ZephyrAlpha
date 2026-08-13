@@ -1137,7 +1137,7 @@ Python 层：`db.SetMaxOpenConns(1)` 防单进程内连接池争用。事务用 
 | check-merge-conflict-marker | L79-85 | 检测合并冲突标记 | 防冲突标记入库 |
 | detect-private-key-local | L86-92 | 检测私钥 | 防密钥泄露 |
 
-> 冲突产生后的解决方法论（冲突三分法：叠加型合并/迭代型取新/互斥型升级裁定 + 标准 7 步流程）见 [67_merge_conflict_resolution_sop.md](67_merge_conflict_resolution_sop.md)（2026-08-13 十七 worktree 大 merge 实战提炼）。
+> 冲突产生后的解决方法论（冲突三分法：叠加型合并/迭代型取新/互斥型升级裁定 + 标准 7 步流程）见 [merge_conflict_resolution_sop.md](../../01_policies_and_standards/sop/merge_conflict_resolution_sop.md)（2026-08-13 十七 worktree 大 merge 实战提炼；原 67 号，已迁至 01/sop 专区）。
 
 #### commit_gates/ 中与 git 安全直接相关的 gate
 

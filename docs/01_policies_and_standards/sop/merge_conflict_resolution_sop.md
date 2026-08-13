@@ -1,21 +1,23 @@
 ---
 ttl: permanent
-doc_type: architecture_view
+doc_type: policy
+rule_form: procedural
+verifiability: manual
 title: Merge 冲突处理 SOP——冲突三分法 + 标准 7 步流程（不盲选边，逐个读内容，结果留痕）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.0.1"
 date: 2026-08-13
 topic: merge_conflict_resolution
-scope: 07_trading_decision_architecture
+scope: global
 related_issues:
   - "#ARCH-AICOLLAB-001（Git Worktree + File Lock + Task Board 三件套）"
   - "#ARCH-GIT-CLEAN-GUARD-FIX（2026-08-11 git clean 灾难——多会话环境下一切清场式操作的前车之鉴）"
 depends_on:
   - 65_git_safety_governance
   - 66_commit_queue_serialization
-  - 02_construction_workflow_sop
+  - construction_workflow_sop
 related_modules:
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
   - src/zephyr/gov_enforcement/rule_bridge/session_worktree.py
@@ -26,7 +28,7 @@ related_modules:
 
 > 本备忘是全项目**冲突处理的唯一真源**，从 2026-08-13 "17 个 worktree 大 merge" 实战提炼：当日 4 处冲突全部按本文方法解决，零业务逻辑误判、零内容丢失。
 > 性质：**操作规范（SOP）**，任何 AI 遇到 git 冲突时必须遵循。
-> 关联：[65_git_safety_governance](65_git_safety_governance.md)（git 安全总案）｜[66_commit_queue_serialization](66_commit_queue_serialization.md)（提交队列）｜[02_construction_workflow_sop](02_construction_workflow_sop.md) Step 12（施工流程 merge 环节）
+> 关联：[65_git_safety_governance](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md)（git 安全总案）｜[66_commit_queue_serialization](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/66_commit_queue_serialization.md)（提交队列）｜[construction_workflow_sop](construction_workflow_sop.md) Step 12（施工流程 merge 环节）
 
 ## 1. 适用范围与触发场景
 
@@ -155,3 +157,4 @@ merge: <任务名> 完工 merge 回 dev
 | 版本 | 日期 | 变更 |
 |---|---|---|
 | v1.0.0 | 2026-08-13 | 初版：冲突三分法 + 标准 7 步流程 + 5 红线，源自当日 17 worktree 大 merge 实战（用户裁定立项："教科书级别处理方式写成标准 SOP"） |
+| v1.0.1 | 2026-08-13 | **搬迁**：从 design_memos/67_merge_conflict_resolution_sop.md 迁至 docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md（SOP 属永久规则，与施工图纸临时区生命周期分离）；doc_type→policy（rule_form: procedural）；去编号改名 |

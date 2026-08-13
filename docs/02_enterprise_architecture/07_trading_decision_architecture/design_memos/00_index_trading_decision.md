@@ -30,7 +30,7 @@ scope: 07_trading_decision_architecture
 |---|---|---|
 | [00_index_trading_decision.md](00_index_trading_decision.md) | 本文档：总目录 + G01-G29 主题组路线图 + 多 AI 分工认领 | active v2.9.0 |
 | [01_design_memo_management_spec.md](01_design_memo_management_spec.md) | 设计备忘管理规范（三层分治 / 命名 / 防飘移机制） | active v1.2.0 |
-| [02_construction_workflow_sop.md](02_construction_workflow_sop.md) | 07 域施工流程 SOP——端到端 15 步施工闭环（编排层，整合 18+15 盲点+附录 A 长清单审查 12 节+附录 B 验证脚本索引+附录 C 40+ reconciler 清单） | active v1.0.0（2026-08-12 新建） |
+| [02_construction_workflow_sop.md](../../01_policies_and_standards/sop/construction_workflow_sop.md) | 07 域施工流程 SOP——端到端 15 步施工闭环（编排层，整合 18+15 盲点+附录 A 长清单审查 12 节+附录 B 验证脚本索引+附录 C 40+ reconciler 清单）**→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md（SOP 属永久规则，与施工图纸临时区分离）** | active v1.4.0（已迁出本目录） |
 | [10_regime_detector_spec.md](10_regime_detector_spec.md) | regime 检测器完整 spec（12 态设计真源；实现态 4 态 HMM + 3 特殊态 overlay） | active v1.5.1 |
 | [11_regime_backtest_validation_plan.md](11_regime_backtest_validation_plan.md) | regime 回测验证方案（Phase 1-5 验收指南；C1 四项全通过） | active v1.5.2 |
 | [12_regime_phase2_validation.md](12_regime_phase2_validation.md) | Phase 2 模型质量验证（A1/A2/B1/B4 四验证器） | active v0.2.2 |
@@ -39,7 +39,7 @@ scope: 07_trading_decision_architecture
 | [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | active v1.0.0（2026-08-12 重建 6a4f5392） |
 | [16_technical_indicator_build_plan.md](16_technical_indicator_build_plan.md) | 技术指标施工计划（9周期覆盖+增量/全量调度） | active v1.0.0（2026-08-12 重建） |
 | [16_technical_indicator_catalog.md](16_technical_indicator_catalog.md) | 技术指标目录（8大类指标规范） | active v1.0.0（2026-08-12 重建） |
-| [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | A股特殊交易日数据资产全景与治理（完整清单+已施工盘点+hk_trade_calendar修复#ARCH-DATA-001+治本方案#ARCH-DATA-002） | draft v0.1.0 |
+| [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | A股特殊交易日数据资产全景与治理（完整清单+已施工盘点+hk_trade_calendar修复#ARCH-DATA-001+治本方案#ARCH-DATA-002） | active v1.0.0 |
 | [18_cold_archive_build_plan.md](18_cold_archive_build_plan.md) | 冷归档施工计划 | active v0.2.0 |
 | [19_northbound_hold_snapshot.md](19_northbound_hold_snapshot.md) | 北向资金季度持仓快照 fetcher 施工计划（日频断档替代方案，tushare hk_hold 已验证） | draft v0.1.0 |
 | [20_first_batch_strategies.md](20_first_batch_strategies.md) | 首批 3 策略定义（打板+多因子+事件驱动） | active v1.2.4 |
@@ -73,9 +73,9 @@ scope: 07_trading_decision_architecture
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 12业务注册表施工（registry_of_registries） | active v1.32.0 |
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
-| [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | draft v1.2.1 |
+| [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | active v1.4.0 |
 | [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12） | draft v2.1.1 |
-| [67_merge_conflict_resolution_sop.md](67_merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 | active v1.0.0（2026-08-13 新建） |
+| [67_merge_conflict_resolution_sop.md](../../01_policies_and_standards/sop/merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 **→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md** | active v1.0.1（已迁出本目录） |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案 21 项（全部待讨论） | draft v1.18.1 |
 | [91_density_prediction.md](91_density_prediction.md) | 密度预测与 QNN 远期愿景（待讨论） | draft v0.1.2 |
 
@@ -643,7 +643,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 14_regime_s2_diagnosis | S2 算法错配诊断（工程文档，非G主题） | 已提议 | draft v0.4.5 |
 | 16_technical_indicator_build_plan | 技术指标施工计划（数据地基层子项） | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
 | 16_technical_indicator_catalog | 技术指标目录（数据地基层子项） | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
-| 17_special_trading_days_data_assets | 特殊交易日数据资产（数据地基层子项） | 已提议 | draft v0.1.0 |
+| 17_special_trading_days_data_assets | 特殊交易日数据资产（数据地基层子项） | ✅ 已定稿 | active v1.0.0 |
 | 18_cold_archive_build_plan | 冷归档施工计划（数据地基层子项） | 已提议 | active v0.2.0 |
 | 62_business_registry_construction | 12 业务注册表施工（跨切治理层） | ✅ 已定稿 | active v1.32.0 |
 | 63_data_utilization_audit | 数据利用审计（跨切治理层） | 已提议 | draft v2.0.0 |
@@ -664,7 +664,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 60_cross_cutting_cleanup | G27 冲突矩阵清理 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失 |
 | 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.10.0 |
 | 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | 待施工 | draft v0.1.0 |
-| 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | 待讨论 | draft v1.2.1 |
+| 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.0 |
 
 ## 8. 产出物命名规范
 

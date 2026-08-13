@@ -11,7 +11,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 > **用途**：统筹会话记录并发施工队的分配/进度/反馈/核验，施工完毕后归档或删除。
 > **创建**：2026-08-12
 > **重建说明**：⚠️ 本文件于 2026-08-13 晚重建。原文件在施工统筹会话期间仅存于工作区/暂存区，**从未 commit**，会话关闭后丢失。本版基于 `.runtime/sessions/ai-sop-001/construction_progress_tracker_backup.md`（2026-08-13 17:33 快照）+ 各施工队/统筹会话记忆重建，个别遗留项的原始措辞可能与原版有出入，但事项内容已逐项实证核对。
-> **关联 SOP**：[02_construction_workflow_sop.md](../02_enterprise_architecture/07_trading_decision_architecture/design_memos/02_construction_workflow_sop.md) v1.3.0
+> **关联 SOP**：[construction_workflow_sop.md](../01_policies_and_standards/sop/construction_workflow_sop.md) v1.4.0（2026-08-13 自 design_memos/02 迁入 01/sop 专区）
 
 ## 一、施工队总览
 
@@ -52,10 +52,10 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | 项 | 内容 |
 |---|---|
-| 第一统筹会话 | AI-SOP-001（SOP 总统筹）：产出 02_construction_workflow_sop.md v1.0.0→v1.3.0，commits 6c99667d / 9e0c5141 等 |
+| 第一统筹会话 | AI-SOP-001（SOP 总统筹）：产出 construction_workflow_sop.md v1.0.0→v1.3.0（2026-08-13 迁 01/sop，现 v1.4.0），commits 6c99667d / 9e0c5141 等 |
 | 第二统筹会话 | 2026-08-13 19:16 接手（经交接包恢复上下文），核验第二批 7/7 PASS，登记遗留项 19→28，分配第三批 |
 | merge 会话 | 2026-08-13 21:05 完成全部 17 个 worktree merge 回 dev；3 处冲突（strategy_book.py / capability_canonical_file_registry.yaml / registry_master_index.yaml / AGENTS.md+ROOR）按"双方有价值则合并"原则解决 |
-| SOP 当前版本 | v1.3.0 已在 dev（merge commit 6612b002e2） |
+| SOP 当前版本 | v1.4.0 已在 dev（2026-08-13 迁至 docs/01_policies_and_standards/sop/construction_workflow_sop.md） |
 
 ## 三、并发环境状态（2026-08-13 晚重建时实测）
 
