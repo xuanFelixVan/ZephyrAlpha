@@ -100,10 +100,10 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 遗留项 | 来源 | 实证状态（2026-08-13 晚） | 状态 |
 |---|---|---|---|---|
-| 1 | #ARCH-DATA-002 fix_phase 回填"设计已定稿，见 17 号 v1.0.0 §5.8" | AI-STD-001 | 已实证 fix_phase 仍为"待规划（设计阶段）…"旧文本，未回填 | 🔥 可处理 |
-| 2 | 00_index §0 目录 17 号仍标 draft v0.1.0（L42/L645），实际已 active v1.0.0 | AI-STD-001 | 已实证 L42/L645 滞后 | 🔥 可处理 |
-| 3 | #ARCH-BREG-001 fix_phase 更新：factor/strategy/risk_limit Step4-8、indicator、chart_pattern、field_dictionary、experiment 均已完成，文本仍写"待施工/待做" | AI-REG-COMP/FLD | 已实证 fix_phase 文本滞后（last_updated 2026-08-13 但内容未含批一/批二完工态） | 🔥 可处理 |
-| 4 | 17 号文档路径引用/BOM/换行符补检（merge 后由统筹执行） | AI-STD-001 | merge 已完成，可执行补检 | 🔥 可处理 |
+| 1 | #ARCH-DATA-002 fix_phase 回填"设计已定稿，见 17 号 v1.0.0 §5.8" | AI-STD-001 | ✅ 已闭环（fix_phase 已更新为"设计已定稿（17号 §5 治本方案裁定）"，last_updated 2026-08-13；重建 tracker 时误标滞后，本次复核实证已更新） | ✅ |
+| 2 | 00_index §0 目录 17 号仍标 draft v0.1.0（L42/L645），实际已 active v1.0.0 | AI-STD-001 | ✅ 已闭环（L42 与 L645 均已实标 active v1.0.0；重建 tracker 时误标滞后，本次复核实证正确） | ✅ |
+| 3 | #ARCH-BREG-001 fix_phase 更新：factor/strategy/risk_limit Step4-8、indicator、chart_pattern、field_dictionary、experiment 均已完成，文本仍写"待施工/待做" | AI-REG-COMP/FLD | ✅ 已闭环（fix_phase 已详述批一/批二全部 12 注册表完工态；重建 tracker 时误标滞后，本次复核实证已更新） | ✅ |
+| 4 | 17 号文档路径引用/BOM/换行符补检（merge 后由统筹执行） | AI-STD-001 | ✅ 已闭环（补检全部 PASS：BOM 无/换行符统一 LF/frontmatter 完整/相对链接 0 断链） | ✅ |
 | 5 | AGENTS.md 业务资产速查更新（17 号定稿 + 12 注册表建成后） | AI-STD-001 | ✅ 已闭环（2026-08-13，commit f15de056，Owner 批准 [ARCH-APPROVAL] 落地，12 注册表速查全量更新） | ✅ |
 
 ### P1 · 治理登记缺口/一致性问题
