@@ -30,6 +30,7 @@ scope: 07_trading_decision_architecture
 |---|---|---|
 | [00_index_trading_decision.md](00_index_trading_decision.md) | 本文档：总目录 + G01-G29 主题组路线图 + 多 AI 分工认领 | active v2.9.0 |
 | [01_design_memo_management_spec.md](01_design_memo_management_spec.md) | 设计备忘管理规范（三层分治 / 命名 / 防飘移机制） | active v1.2.0 |
+| [02_construction_workflow_sop.md](02_construction_workflow_sop.md) | 07 域施工流程 SOP——端到端 15 步施工闭环（编排层，整合 18+15 盲点+附录 A 长清单审查 12 节+附录 B 验证脚本索引+附录 C 40+ reconciler 清单） | active v1.0.0（2026-08-12 新建） |
 | [10_regime_detector_spec.md](10_regime_detector_spec.md) | regime 检测器完整 spec（12 态设计真源；实现态 4 态 HMM + 3 特殊态 overlay） | active v1.5.1 |
 | [11_regime_backtest_validation_plan.md](11_regime_backtest_validation_plan.md) | regime 回测验证方案（Phase 1-5 验收指南；C1 四项全通过） | active v1.5.2 |
 | [12_regime_phase2_validation.md](12_regime_phase2_validation.md) | Phase 2 模型质量验证（A1/A2/B1/B4 四验证器） | active v0.2.2 |

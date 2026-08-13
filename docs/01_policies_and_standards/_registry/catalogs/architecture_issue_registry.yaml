@@ -15843,3 +15843,25 @@ entries:
   related_rules: ''
   created: '2026-08-12'
   last_updated: '2026-08-12'
+
+# --- #ARCH-CONSTRUCTION-SOP-001: 施工流程 SOP 端到端编排载体（02 号文档引用）---
+- issue_id: '#ARCH-CONSTRUCTION-SOP-001'
+  title: '07 域施工流程 SOP——端到端 15 步施工闭环编排层（02_construction_workflow_sop.md）'
+  severity: P1高
+  category: process_governance
+  adjudication: |
+    背景：07_trading_decision_architecture 域施工流程此前散落在 84 个 trae_xxx 规则文件 + 48 个 design_memo 中，
+    无端到端编排载体。02_construction_workflow_sop.md 作为编排层真源，整合 33 项盲点（18 项初版+15 项扫描补充），
+    串联 Session 冷启动→文档审查→创建前搜索→架构评审→全景图登记→五图对齐→施工编码→单元测试→
+    长清单审查→更新文档→全景图流转→文件完整性→GitCommitGateway→临时文件清理→worktree 合并共 15 步。
+    附录 A 全文收录用户提供的长清单审查 12 节，附录 B 验证脚本索引，附录 C 40+ reconciler 清单。
+    议题：SOP 已落盘，待后续施工实践验证流程完整性，可能需要迭代补充。
+  impact:
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/02_construction_workflow_sop.md（新建，active v1.0.0）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md（§0 目录新增 02 号登记行）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（creation_token 登记）'
+  fix_phase: '已落盘（待实践验证）'
+  status: decided
+  related_rules: 'trae_035; trae_056; trae_080; AI_review_instructions; 65 号; 66 号'
+  created: '2026-08-12'
+  last_updated: '2026-08-12'

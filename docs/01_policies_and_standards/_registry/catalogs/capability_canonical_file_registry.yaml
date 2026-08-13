@@ -5940,15 +5940,6 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
-  # --- P1-B 业务注册表（2026-08-13，AI-REG-EXE-001，#ARCH-BREG-001 / 62号§4.5 CONSTRUCT_REGISTRY）---
-  - file: "docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml"
-    token: "auto-execution-algo-registry-20260813"
-    created_by: "AI-REG-EXE-001"
-    capability: "execution_algo_registry"
-  - file: "docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml"
-    token: "auto-data-asset-registry-20260813"
-    created_by: "AI-REG-EXE-001"
-    capability: "data_asset_registry"
   # --- AI审查指令集（2026-08-10，24路并发审查回填指令，覆盖design_memos 42篇文档）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md"
     token: "auto-ai-review-instructions-20260810"
@@ -6035,37 +6026,6 @@ creation_tokens:
     token: "auto-02-construction-workflow-sop-20260812"
     created_by: "session-ai-sop-001"
     capability: "construction_workflow_sop"
-
-  # --- ALGO_FLOW 全量落地工具链五件套（2026-08-12，algorithm_map_rollout_plan 步骤①⑤，§4.16 标记真源）---
-  - file: "scripts/governance/_shared/algo_flow_drafter.py"
-    token: "auto-algo-flow-drafter-20260812"
-    created_by: "session-ai-algo-flow-rollout-20260812"
-    capability: "algo_flow_rollout_toolchain"
-  - file: "scripts/governance/_shared/algo_flow_applier.py"
-    token: "auto-algo-flow-applier-20260812"
-    created_by: "session-ai-algo-flow-rollout-20260812"
-    capability: "algo_flow_rollout_toolchain"
-  - file: "scripts/governance/_shared/algo_flow_validate_marker.py"
-    token: "auto-algo-flow-validate-marker-20260812"
-    created_by: "session-ai-algo-flow-rollout-20260812"
-    capability: "algo_flow_rollout_toolchain"
-  - file: "scripts/governance/_shared/algo_flow_translation_sync.py"
-    token: "auto-algo-flow-translation-sync-20260812"
-    created_by: "session-ai-algo-flow-rollout-20260812"
-    capability: "algo_flow_rollout_toolchain"
-  - file: "scripts/governance/d5_architecture/checkers/check_algo_flow.py"
-    token: "auto-check-algo-flow-20260812"
-    created_by: "session-ai-algo-flow-rollout-20260812"
-    capability: "algo_flow_rollout_toolchain"
-  - file: "docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml"
-    token: "auto-technical-indicator-registry-20260812"
-    created_by: "session-ai-algo-flow-rollout-20260812"
-    capability: "algo_flow_rollout_toolchain"
-  # --- 字段字典注册表（2026-08-13，62号 §4.5 八步施工，REG-FLD-001 业务资产 12 表体系 P2）---
-  - file: "docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml"
-    token: "auto-field-dictionary-20260813"
-    created_by: "session-AI-REG-FLD-001"
-    capability: "business_registry_construction"
 
   # --- 翻译覆盖率门禁配套四件套（2026-08-02，TRANSLATION-COVERAGE 四层防御）---
   # 写入工具（Layer 0 入口）+ 提交门禁（Layer 2 阻断）+ 存量对账 reconciler（Layer 4）
