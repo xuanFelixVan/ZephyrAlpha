@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-CD-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python3
 # [MODULE] scripts.session_worktree
 # [DOMAIN] D_GOVERNANCE

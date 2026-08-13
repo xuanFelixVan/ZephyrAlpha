@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.1.0"
 ttl: permanent
-design_maturity: design
+design_maturity: production
 layer: L03_sell_decision
 layer_name: sell_decision
 functional_domain: sell_decision
