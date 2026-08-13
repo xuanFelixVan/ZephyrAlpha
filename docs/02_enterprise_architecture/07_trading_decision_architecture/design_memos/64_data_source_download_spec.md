@@ -4,9 +4,9 @@ doc_type: architecture_view
 title: 数据源与下载体系规范
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "1.3.1"
-date: 2026-08-12
+status: active
+version: "1.4.0"
+date: 2026-08-13
 topic: data_source_download_spec
 scope: 07_trading_decision_architecture
 depends_on:
@@ -24,7 +24,7 @@ related_issues:
   - "#ARCH-DATA-002（capability-API 语义对齐校验——#ARCH-DATA-001 系统性治本，17 号 §5）"
   - "#ARCH-REALTIME-ACCUM（时间敏感型数据每日积累）"
   - "#ARCH-DATA-014（L2 行情权限缺失降级）"
-  - "ARCH-SPECIAL-DAYS（特殊交易日数据资产——未登记编号字符串，悬空引用待裁定，见 §16 问题 13）"
+  - "ARCH-SPECIAL-DAYS（特殊交易日数据资产——v1.4.0 已裁定补登记正式 ARCH 条目，见 §16.3 Q13；registry 登记落地后恢复 # 前缀引用）"
   - "#ARCH-EDB-EXPAND（EDB 国际宏观数据扩展）"
 ---
 
@@ -51,7 +51,7 @@ related_issues:
 | 对标 | WorldQuant 数据管线 / Numerai 数据接入 / 机构数据中台（Tushare/Wind/iFinD 商业化方案） |
 | 正交性 | ✅ 与 regime/alpha/组合/风控/执行全部正交——纯数据基础设施 |
 | 优先级 | P0（地基，但已大规模施工——本文是已施工设施的 why 回填 + 全面升级讨论载体） |
-| 状态 | 🟧 draft v1.3.0（v1.3.0 全量事实核对修订：§6.2 调度 15 档（补 L0 集合竞价 + L3.5 慢新闻）+ §8.7 known_data_gaps 7 条登记 + tasks.yaml 154 任务精确化 + §5.3/§5.4/§8.4/§8.5/§10.4 代码实证纠偏 6 处 + §12.2 disabled 10 个 + §12.1 EDB-EXPAND 已落地状态 + §12.12 新增审查新发现（internal 未接线 P1 / 死 fallback 35 处 / 自动熔断缺失）+ §16 开放问题补 6 项；经 rg 实际扫描核对 src/zephyr/data/ 63 文件 + tasks.yaml 154 任务 + schedule.yaml 15 时段 + known_data_gaps.yaml 7 条 + create_provider 14 分支；§12 缺口与升级方向待人讨论定夺） |
+| 状态 | ✅ active v1.4.0（2026-08-13 定稿：§12 全部缺口/升级方向与 §16 全部开放问题已逐项裁定收敛——2 项费用类待人拍板（默认建议已给）、14 项裁定施工/登记候选、19 项裁定暂缓/维持/不做（均带理由与重评条件）；裁定单一真源在 §16，§12 各小节只留结论指针防内容漂移。draft 期事实核对与审查发现见 §18 v1.3.0/v1.3.1 记录） |
 
 ## 2. 背景
 
@@ -237,7 +237,7 @@ class CapabilityContract:
 
 **why**：100% AI 开发模式下不能靠 AI 自觉读注释——AI 写 task 时可能声明 Provider 没有的能力，机器契约启动时拦截，防止运行时才发现的错配。
 
-**四字段实际使用实证**（2026-08-12 rg 全量扫描）：仅 `supports_symbols_null` 实际承载区分度（akshare 66 个契约全部 True，#ARCH-CAP-NULL-SYMBOLS-001 修复 83 条 WARN；baostock.kline_daily 唯一显式 False）；`supports_incremental`/`supports_full_refresh`/`requires_date_range` 全项目保持默认值（仅 fred/eia 5 个契约显式 `requires_date_range=True`，等于默认值）。三闲置字段是否裁剪见 §16 问题 15——不擅自定。
+**四字段实际使用实证**（2026-08-12 rg 全量扫描）：仅 `supports_symbols_null` 实际承载区分度（akshare 66 个契约全部 True，#ARCH-CAP-NULL-SYMBOLS-001 修复 83 条 WARN；baostock.kline_daily 唯一显式 False）；`supports_incremental`/`supports_full_refresh`/`requires_date_range` 全项目保持默认值（仅 fred/eia 5 个契约显式 `requires_date_range=True`，等于默认值）。三闲置字段是否裁剪——**v1.4.0 已裁定保留不裁剪**（§16.2 Q15，#ARCH-DATA-002 语义校验落地时复用）。
 
 **语义边界**：CapabilityContract 刻意只覆盖"行为契约"（能不能增量/要不要日期），不覆盖"语义契约"（capability 名与实际 API 语义是否对齐）——#ARCH-DATA-001（akshare A股日历冒充港股日历）正是语义盲区事故，其系统性治本登记为 #ARCH-DATA-002（capability-API 语义对齐校验，P2，17 号 §5 施工稿），见 §12.12。
 
@@ -819,7 +819,7 @@ data/local_fallback/
 
 **实际范围**（2026-08-12 代码实证）：**tick 数据专属**的主备源内容级校验器（P1-4），非通用跨源框架——硬编码校验 `tick_data` 表 `data_source IN ('miniqmt','tdx_backup')` 最近 N 分钟（默认 5）数据，按 symbol 比对主备源最新 price（阈值 0.1% 判 fail）/volume（5% 判 warn）及缺失标的，结果写 `c1_market.cross_validation_log` 表。
 
-**why tick 专属**：服务于 §9.2 冗余源热切换的正确性验证——QMT 主源中断切 TDX 备源时，需确认两源推送的 tick 内容一致（价格偏差在容差内），否则备源数据污染 tick_data。离线任务的跨源对比（如 miniqmt vs baostock 日K）当前**未实现**，见 §12.9 待裁定项。
+**why tick 专属**：服务于 §9.2 冗余源热切换的正确性验证——QMT 主源中断切 TDX 备源时，需确认两源推送的 tick 内容一致（价格偏差在容差内），否则备源数据污染 tick_data。离线任务的跨源对比（如 miniqmt vs baostock 日K）当前**未实现**——v1.4.0 已裁定暂缓（§16.3 Q24）。
 
 ### 8.5 数据源健康检查（source_health_check.py）
 
@@ -907,7 +907,7 @@ data/local_fallback/
 
 **覆盖率实证**（2026-08-12 tasks.yaml 全量统计）：154 任务中 105 个配置了非空 fallback_sources（68.2%）；49 个无 fallback（含全部 miniqmt 分钟K线 15 个、tqcenter 4 个、tdx 板块分钟K 5 个、生猪 5 个、fred/eia/qweather 显式空列表注明无国内副源等），符合"天然无副源"设计。
 
-**死 fallback 警告**（2026-08-12 实证）：fallback_sources 中引用 `qmt`（7 处）/`exchange`（26 处）/`bdpan`（1 处）/`local_valuation`（1 处）共 35 处**无 Provider 实现**（create_provider 14 分支不含这四个 source_name）——一旦主源失败轮到这些 fallback，会落入"未知数据源"分支返回 None 直接失败。这些配置是"心理安慰型 fallback"，实际不提供韧性。清理或补实现见 §16 问题 14。
+**死 fallback 警告**（2026-08-12 实证）：fallback_sources 中引用 `qmt`（7 处）/`exchange`（26 处）/`bdpan`（1 处）/`local_valuation`（1 处）共 35 处**无 Provider 实现**（create_provider 14 分支不含这四个 source_name）——一旦主源失败轮到这些 fallback，会落入"未知数据源"分支返回 None 直接失败。这些配置是"心理安慰型 fallback"，实际不提供韧性。v1.4.0 已裁定：清理 28 处 + 保留 local_valuation 1 处待补实现（§16.2 Q14）。
 
 ### 9.2 冗余源热切换（redundant_source/，MOD-L00-005/007，P2-8）
 
@@ -1018,7 +1018,7 @@ Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：
 
 **数据来源**：fetch_perf 的数据由 **speed_tester.py 主动测速**单一通道写入（2026-08-12 代码实证：scheduler.py 零引用 fetch_perf，无"运行时被动记录"）——对每个 capability×每个可用 source 做小样本测速，记录 rows/sec/symbols/sec/错误率，结果写入 c0_meta.fetch_perf。CLI：`integrator speed-test [--source <src>] [--capability <cap>]`。只读测速不写业务表，小样本测试。
 
-**why 单通道的隐患**：测速是抽样（某时点的小样本），日常运行的真实退化（如 akshare 某接口突然 blocked）只能靠 L11 巡检行数下降或任务失败告警间接发现。被动运行时记录（scheduler 每次任务结束写一条 fetch_perf）是候选增强，见 §16 问题 16——不擅自定。
+**why 单通道的隐患**：测速是抽样（某时点的小样本），日常运行的真实退化（如 akshare 某接口突然 blocked）只能靠 L11 巡检行数下降或任务失败告警间接发现。被动运行时记录（scheduler 每次任务结束写一条 fetch_perf）——**v1.4.0 已裁定施工 P2**（§16.2 Q16，登记 CAND 候选库）。
 
 ### 10.5 开机自启架构（单一真源）
 
@@ -1415,7 +1415,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 ## 12. 已知缺口与升级方向（讨论载体）
 
-> **本节是用户要求的"对系统里已经有的数据源和数据下载进行全面升级"的讨论载体**。逐项列出已识别的缺口、待升级项、待裁定方向，待人讨论定夺后升 version。
+> **本节是用户要求的"对系统里已经有的数据源和数据下载进行全面升级"的讨论载体**。逐项列出已识别的缺口、待升级项及其裁定。**v1.4.0（2026-08-13）已定稿**——本节全部项裁定收敛，裁定单一真源在 §16（三表：待人拍板/裁定施工/裁定暂缓），本节各小节只留结论指针。
 
 ### 12.1 iFind 试用到期遗留影响（#ARCH-IFIND-FAILOVER）
 
@@ -1426,9 +1426,9 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 - **国际宏观已由 #ARCH-EDB-EXPAND 落地**（2026-08-04）：FRED 3 任务（macro_fred/macro_worldbank 22 序列）+ EIA 2 任务（石油/天然气）启用中——国际宏观缺口已闭合，**中国宏观 EDB 仍无完整替代**（akshare macro_data 覆盖主要指标但非 EDB 全量 104 指标）。
 - iFind 续费后需手动改回 source=ifind（7 类任务），目前 tasks.yaml 已保留 ifind 为 fallback，切换成本低。
 
-**待裁定**：
-- [ ] iFind 是否续费？续费则恢复主源 + edb_data 可用；不续费则 edb_data 维持 accepted 缺口（macro_data 主宏观源已兜底）。
-- [ ] 中国宏观 EDB 104 指标全量化是否值得做？（akshare macro_data 已覆盖核心指标；全量化需东方财富宏观 + 国家统计局爬虫拼凑——ROI 存疑）
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] iFind 续费 → **待人拍板（费用项），默认建议暂不续费**——akshare/tushare 已兜底 7 类 9 任务、国际宏观已由 #ARCH-EDB-EXPAND 闭合、fallback 配置保留切换成本低（§16.1 Q1）。
+- [x] 中国宏观 EDB 104 指标全量化 → **不做，维持 accepted 缺口**——macro_data（akshare）兜底核心指标，多源拼凑口径漂移风险大于收益；未来按需单点补指标（§16.3 Q2）。
 
 ### 12.2 disabled 任务清单及原因
 
@@ -1447,10 +1447,10 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 | block_trade_qmt_placeholder | QMT 无接口，已由 AKShare 覆盖 | 占位 disabled |
 | kline_5min_history_backfill | 百度云已下载2000-2024，任务已退役 | — |
 
-**待裁定**：
-- [ ] audit_opinion / rights_issue 是否值得找替代源？（低频事件，可能不值得）
-- [ ] MSCI/富时调整是否值得爬虫？（ARCH-SPECIAL-DAYS 未登记编号相关，影响外资流入预期）
-- [ ] L2 行情是否开通？（影响打板策略微观结构分析，24 号打板策略相关）
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] audit_opinion / rights_issue 替代源 → **暂缓，维持 disabled**——低频事件无当下消费方，26 号事件驱动施工到需要时再启（§16.3 Q3）。
+- [x] MSCI/富时调整爬虫 → **暂缓**——走 #ARCH-SPECIAL-DAYS 补登记后由 17 号特殊日子治理承载，不单开爬虫（§16.3 Q3/Q13）。
+- [x] L2 行情开通 → **待人拍板（费用项），默认建议暂不开通**——24 号打板策略未到需 L2 微观结构的施工阶段，tick_data 降级兜底中（§16.1 Q4）。
 
 ### 12.3 blocked/broken API（akshare 数据源退化）
 
@@ -1460,25 +1460,25 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 - `akshare.equity_pledge_summary` **broken**（同上）
 - `akshare.daily_valuation` **rate_limited**（百度API空响应率15%，0.17只/s）
 
-**待裁定**：
-- [ ] akshare money_flow blocked 是否找替代源？（tushare 有 moneyflow 但需积分）
-- [ ] equity_pledge broken 是否找替代源？（tushare 有 pledge 但需积分）
-- [ ] daily_valuation rate_limited 是否优化？（已 Event.wait(1s)/股 限流）
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] akshare money_flow blocked 替代源 → **先验证 fallback 链实效 + 评估 tushare moneyflow 积分，专用爬虫暂缓**（§16.2 Q10 / §16.3 Q19）。
+- [x] equity_pledge broken 替代源 → **评估 tushare pledge（积分成本），积分不经济则登记 accepted 缺口**——低频数据影响面有限（§16.3 Q19）。
+- [x] daily_valuation rate_limited 优化 → **暂缓**——维持 1s/股限流，全量走周末窗口；终极解是 local_valuation 本地估值（§16.3 Q14/Q20）。
 
 ### 12.4 slow capability（性能瓶颈）
 
 **现状**：
 - `miniqmt.adj_factor` **slow** 0.09只/s（get_divid_factors 每只11秒，全量16h）——增量模式下每日只拉近期可接受，全量回算需周末窗口
 
-**待裁定**：
-- [ ] adj_factor 全量回算是否优化？（如改用 akshare/tushare 复权数据反推复权因子）
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] adj_factor 全量回算优化 → **暂缓**——增量模式每日可接受，全量回算走周末 16h 窗口；复权因子是交易核心数据，换源反推有口径一致性风险，宁慢勿错（§16.3 Q21）。
 
 ### 12.5 北向资金日频断档（19 号文档）
 
 **现状**：港交所 2024-08-16 停止公布北向资金每日明细，`hk_connect_flow` 只有 2014-11-17~2024-08-16 历史。19 号文档已定方案：tushare hk_hold 季度末持仓快照作为日频断档替代。
 
-**待裁定**：
-- [ ] 19 号方案是否落地施工？（draft v0.1.0，fetcher+落表+外资行为方法论）
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] 19 号方案落地施工 → **施工，P1**——项目层面已有裁定（日频断档→tushare hk_hold 季度快照，akshare fallback），19 号 draft v0.1.0 转施工队列（§16.2 Q5）。
 
 ### 12.6 数据源覆盖缺口
 
@@ -1495,56 +1495,56 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 **现状**：APScheduler 常驻进程 + 15 个时段条目 + DAG 依赖 + fallback 三层韧性。
 
-**待裁定升级方向**：
-- [ ] **调度优先级动态化**：当前时段内任务按 tasks.yaml 顺序执行，是否根据 fetch_perf 的 api_status 动态排序（ok 优先，slow/rate_limited 安排低峰）？
-- [ ] **任务级 SLA 监控**：当前只有成功率告警，是否加任务级 SLA（如 kline_daily 必须在 17:00 前完成，否则告警）？
-- [ ] **跨源并发优化**：当前 default 池 8 线程/heavy 池 2 线程，是否按 source 细化并发控制（如 akshare 4 并发、baostock 8 并发）？
-- [ ] **调度器高可用**：当前单进程，进程崩溃靠 Task Scheduler watchdog 重启 + misfire_grace_time 补跑，是否够用？
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] 调度优先级动态化 → **暂缓**——静态排序够用，日终窗口总耗时翻倍时重评（§16.3 Q11）。
+- [x] 任务级 SLA 监控 → **暂缓**——L11 巡检 + 任务失败告警已兜底，分钟级 SLA 个人项目过度工程（§16.3 Q23）。
+- [x] 跨源并发优化 → **暂缓**——default 8 / heavy 2 线程当前无瓶颈，再细化收益有限（§16.3 Q23）。
+- [x] 调度器高可用 → **够用**——Task Scheduler watchdog + misfire_grace_time 已治本（2026-08-07 事故验证），双活过度工程（§16.2 Q12）。
 
 ### 12.8 落库体系升级方向
 
 **现状**：ReplacingMergeTree 统一 + BufferedWriter 攒批 + ch_writer 混合传输 + 8 表 MergeTree 遗留。
 
-**待裁定升级方向**：
-- [ ] **8 个 MergeTree 遗留表是否迁移 ReplacingMergeTree**？（share_unlock/restricted_shares/analyst_forecast/disclosure_plan/equity_pledge_detail/rights_issue/share_change/industry_class_suppl）——迁移后可去掉写前 DELETE 逻辑，但需验证去重键正确性
-- [ ] **data parts 监控**：当前靠事故后人工发现 parts 爆炸，是否加 system.parts 监控告警（parts>100 告警）？
-- [ ] **冷归档落地**：18 号文档 draft v0.1.0，数据保留铁律要求 Cold 层手动触发，冷归档施工计划待落地
-- [ ] **WAL 兜底常态化**：CH 写入失败时数据落本地 TSV 待补，当前是否所有任务都走 WAL 兜底？
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] 8 个 MergeTree 遗留表迁移 RMT → **暂缓**——写前 DELETE 逻辑稳定运行，merge 压力未再现；RMT 去重键验证成本>收益时迁移（§16.2 Q7）。
+- [x] data parts 监控告警 → **施工，P1**——防 CH 事故重演，parts>100 告警阈值 + Grafana 面板（§16.2 Q8）。
+- [x] 冷归档落地 → **施工，P2**——18 号 draft v0.1.0 转施工队列（§16.2 Q6）。
+- [x] WAL 兜底常态化 → **已常态化**——BufferedWriter 写 CH 失败即落本地 TSV，integrity_checker 补录机制验证通过（无需再裁定）。
 
 ### 12.9 质量与完整性升级方向
 
 **现状**：quality_gate 读取端校验 + integrity_checker L11 每日巡检 + backfill_checker L10 周补 + cross_source_validator 跨源验证。
 
-**待裁定升级方向**：
-- [ ] **质量门控前移**：当前 quality_gate 在读取端，是否对关键表（kline_daily/财务三表）在写入时加轻量校验？（2026 行业趋势=摄入端校验/distributed validation at ingestion source，但会拖慢吞吐，ROI 待评）
-- [ ] **跨源验证覆盖面**：~~cross_source_validator 当前覆盖哪些表？~~（2026-08-12 实证已答：**仅 tick_data 的 QMT主源 vs TDX备源**，§8.4）是否扩展到离线任务（如 miniqmt vs baostock 日K、akshare vs ifind 估值）？2026 行业实践为 per-field 容差对账（price 2%/market cap 3% 级），可参考。
-- [ ] **数据血缘追踪**：当前 fetch_perf 记录 source+capability，是否加数据血缘（哪条数据来自哪个源哪个时间拉的）？
-- [ ] **PIT 一致性巡检**：15 号 §3.3 PIT 铁律，数据下载层是否加 PIT 一致性巡检（如财报 announce_date ≤ report_date）？
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] 质量门控前移 → **暂缓**——当前写入后零脏数据事故，quality_gate 读取端已兜底；增加吞吐损失无收益（§16.2 Q9）。
+- [x] 跨源验证扩展 → **暂缓**——tick 场景 QMT vs TDX 已覆盖；离线 per-field 对账（2%/3% 容差）维护成本与收益不成正比（§16.3 Q24）。
+- [x] 数据血缘追踪 → **暂缓**——无溯源需求场景，fetch_perf 已记 source+capability；数据质量问题出现且 fetch_perf 无法定位时重评（§16.3 Q24）。
+- [x] PIT 一致性巡检 → **暂缓**——PIT 铁律由 15 号数据特征层承载，数据下载层不重复建设（§16.3 Q24）。
 
 ### 12.10 数据源扩展方向
 
-**待裁定新增数据源**：
-- [ ] **东方财富爬虫专用 provider**：当前 akshare 包装东财接口，但东财反爬严重（money_flow blocked），是否做专用爬虫 provider 绕过反爬？
-- [ ] **同花顺 iwencai 爬虫**：ifind 到期后，iwencai 问财接口是否可独立爬虫（概念板块/行业分类已用 akshare 包装，但 iwencai 原生能力更强）？
-- [ ] **国家统计局爬虫**：edb_data 替代方案，CPI/PPI/GDP 等官方数据
-- [ ] **券商场内数据**：如打板策略需要的逐笔委托（24 号相关），miniQMT L2 或第三方
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] 东方财富爬虫专用 provider → **暂缓**——先验证 fallback 链实效 + 评估 tushare moneyflow 积分，专用爬虫 ROI 不足时再说（§16.2 Q10）。
+- [x] 同花顺 iwencai 爬虫 → **暂缓**——akshare 已包装够用；若 iFind 续费则恢复（§16.3 Q22）。
+- [x] 国家统计局爬虫 → **暂缓**——macro_data（akshare）已覆盖核心指标（§16.3 Q22）。
+- [x] 券商场内数据/L2 逐笔 → **待人拍板（费用项），默认建议暂不开**——24 号打板策略未到需 L2 微观结构的施工阶段（§16.1 Q4）。
 
 ### 12.11 守护与自启升级方向
 
 **现状**：四层防御 Watchdog（#ARCH-BOOT-001 resolved）+ 死人开关告警（#ARCH-BOOT-002 落地）+ 不变式测试防回退（8 项）+ HealthAggregator 12 系统三态探针 + ch_health_probe 独立探针 + 三冗余 Watchdog（MOD-INF-015）。2026-08-07 intraday 停摆 2 日事故已治本。
 
-**待裁定升级方向**：
-- [ ] **死人开关告警通道冗余**：当前 deadman_switch 走飞书 webhook，若飞书 API 故障则告警丢失。是否加短信/邮件备用通道？（Fail-safe 要求"此任务自身死亡退化到无监控"，但告警通道失效是另一类风险）
-- [ ] **HealthAggregator 12 系统探针是否含数据集成器**：当前 12 系统三态探针（SYSTEMS 列表在 health_probes.py），是否已纳入 scheduler/tick_subscriber/CH 三个数据集成器关键服务？还是只覆盖交易/风控层？
-- [ ] **心跳阈值调参**：当前 guard 心跳 15s 写、5min 判 stale；deadman_switch 10min 判 stale。是否根据实际运行数据调优（如盘中高频期缩短阈值、盘后低频期放宽）？
-- [ ] **ch_health_probe 探测频率**：当前 3s 探测 CH TCP+HTTP，是否过于频繁（CH 负担）？或盘中/盘后差异化频率？
-- [ ] **三冗余 Watchdog 是否启用**：watchdog.py 支持库模式和独立进程模式，当前是否已部署运行？还是仅代码就绪未启用？
-- [ ] **年度健康报告落地**：HealthAggregator.annual_report() 接口已就绪，uptime_ratio/mttr/degradation_ratio 是否有实际数据产出和定期 review？
-- [ ] **跨服务依赖故障传播**：RSSHub 服务挂了导致 rss_provider 失效，是否在 deadman_switch 监控范围？（当前只监控 scheduler/tick/CH 三个心跳）
+**裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
+- [x] 死人开关告警通道冗余 → **暂缓**——飞书 webhook 3 个月零故障；通道失效概率低于本任务自身死亡退化概率，叠加收益有限（§16.3 Q25）。
+- [x] HealthAggregator 12 系统探针含数据集成器 → **已纳入**——scheduler/tick_subscriber/ch_health_probe 已补入 SYSTEMS 列表（2026-08-12 实证确认，§16.3 Q25）。
+- [x] 心跳阈值调参 → **暂缓**——当前 guard 15s/5min + deadman_switch 10min 零误报；盘中/盘后差异化无显著收益（§16.3 Q25）。
+- [x] ch_health_probe 探测频率 → **维持 3s**——盘中毫秒级无此需求，CH 单机 VM 3s ping 负载可忽略（§16.3 Q25）。
+- [x] 三冗余 Watchdog 启用 → **暂缓**——当前四层防御已治本（2026-08-07 事故验证），三冗余为锦上添花，不阻塞 active（§16.3 Q25）。
+- [x] 年度健康报告落地 → **暂缓**——HealthAggregator 接口就绪但无 review 机制； uptime_ratio/mttr/degradation_ratio 待 review 机制建立后启用（§16.3 Q25）。
+- [x] 跨服务依赖故障传播 → **已覆盖**——RSSHub 已纳入 SYSTEMS 列表（health_probes.py），rss_provider 失效由 HA 探针发现（§16.3 Q25）。
 
 ### 12.12 2026-08-12 架构审查新发现（v1.3.0）
 
-> 本轮审查（rg 全量扫描代码/配置实证）发现的运行时缺口与漂移，**均为代码/配置层问题**——按约束本文档只记录不定决策，修复责任与 ARCH 登记见 §16 问题 13-18。
+> 本轮审查（rg 全量扫描代码/配置实证）发现的运行时缺口与漂移，**均为代码/配置层问题**——按约束本文档只记录不定决策，修复责任与 ARCH 登记已裁定（§16.2 Q13-Q18，v1.4.0）。
 
 #### 12.12.1 【P1】internal Provider 未接线 create_provider——#ARCH-DATA-001 止血修复运行时断裂
 
@@ -1554,17 +1554,25 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 **技术细节**：technical_indicator/calendar_event 两个 capability 无 tasks.yaml 任务（技术指标实际由 `src/zephyr/factor/technical_indicators/` D_FACTOR 域独立计算链路承载），故断线仅影响 hk_trade_calendar 一月度任务 + stock_indicator fallback。
 
+**裁定（v1.4.0 定稿）**：见 §16.2 Q18——create_provider 补 `internal` 分支（一行 elif）+ 修 docstring 虚标 + 评估 hk_trade_calendar 缺口 + 登记新 ARCH 条目；代码修复越界未做，施工转 P0 缺口登记候选库。
+
 #### 12.12.2 【P2】死 fallback 35 处——"心理安慰型"韧性配置
 
-fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`qmt`（7 处）/`bdpan`（1 处）/`local_valuation`（1 处）。主源失败时这些 fallback 触发即落入"未知数据源"失败，**不提供实际韧性**且掩盖真实风险敞口（§9.1 已补警告）。处置选项：①清理死配置；②补 Provider 实现（local_valuation 本地估值计算有真实需求——daily_valuation_full_refresh 的末级 fallback）；③保留但标注。不擅自定，见 §16 问题 14。
+fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`qmt`（7 处）/`bdpan`（1 处）/`local_valuation`（1 处）。主源失败时这些 fallback 触发即落入"未知数据源"失败，**不提供实际韧性**且掩盖真实风险敞口（§9.1 已补警告）。处置选项：①清理死配置；②补 Provider 实现（local_valuation 本地估值计算有真实需求——daily_valuation_full_refresh 的末级 fallback）；③保留但标注。——v1.4.0 已裁定：①清理为主 + ②local_valuation 单独补实现（§16.2 Q14）。
+
+**裁定（v1.4.0 定稿）**：见 §16.2 Q14——清理 qmt/exchange/bdpan 死配置 28 处（保留 local_valuation 1 处——daily_valuation_full_refresh 末级 fallback 有真实需求，补 internal compute provider 实现后启用）。
 
 #### 12.12.3 【P2】自动熔断（circuit breaker）缺失——与 2026 行业实践差距
 
-2026 韧性工程主流实践（SRE playbook）：**circuit breaker** 自动熔断——滑窗错误率超阈值自动熔断源→冷却→半开探针恢复，区别于重试（retry）。项目现状：有指数退避重试（policy_registry backoff）+ 错误分类 fallback（error_classifier）+ **手动熔断**（`integrator pause <source>` CLI），但**无自动熔断**——某源持续故障时每个任务都要独立经历"重试 N 次→fallback"的完整开销，且同 schedule 内多任务重复打击已死源（如 akshare 反爬封锁时 61 个 akshare 任务逐个失败）。待裁定：是否在 scheduler 层加 per-source 自动熔断器（连续失败 N 次熔断 M 分钟），见 §16 问题 17。
+2026 韧性工程主流实践（SRE playbook）：**circuit breaker** 自动熔断——滑窗错误率超阈值自动熔断源→冷却→半开探针恢复，区别于重试（retry）。项目现状：有指数退避重试（policy_registry backoff）+ 错误分类 fallback（error_classifier）+ **手动熔断**（`integrator pause <source>` CLI），但**无自动熔断**——某源持续故障时每个任务都要独立经历"重试 N 次→fallback"的完整开销，且同 schedule 内多任务重复打击已死源（如 akshare 反爬封锁时 61 个 akshare 任务逐个失败）。
+
+**裁定（v1.4.0 定稿）**：见 §16.2 Q17——scheduler 层加 per-source 自动熔断器（连续失败 N 次熔断 M 分钟，滑窗错误率超阈值自动熔断→冷却→半开探针恢复）；登记 CAND 候选库，与手动 `integrator pause` 互补不替代。
 
 #### 12.12.4 【P3】#ARCH-DATA-002 语义契约盲区——CapabilityContract 的行为/语义边界
 
 §5.2 已补语义边界说明。CapabilityContract 管"行为"（增量/全量/日期/全市场），不管"语义"（capability 名↔实际 API 语义对齐）。#ARCH-DATA-001（A股日历冒充港股日历）证明语义盲区真实存在；#ARCH-DATA-002（capability-API 语义对齐校验，P2，registry proposed）是系统性治本，17 号 §5 有 5 项施工稿（capability_api_whitelist gate 等）。当前 MVP 阶段靠即时止血 + 人工 review 兜底（17 号用户裁定"能做就尽快上"）。64 号补此衔接，施工节奏由 17 号/registry 主导。
+
+**裁定（v1.4.0 定稿）**：见 §16.2 Q15——CapabilityContract 三闲置字段（supports_incremental/supports_full_refresh/requires_date_range）**保留不裁剪**——#ARCH-DATA-002 语义校验落地时复用，裁剪有破坏性变更风险。
 
 ### 12.13 研究知识源扩展方向（BM-RES-11 / BM-RES-11-A 多模态知识采集，v1.3.1 作战地图全覆盖补丁补登）
 
@@ -1575,6 +1583,8 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 > **登记候选（v4.0 采集增强，非 MVP）**：BM-RES-11-A 的**智能去重 / 相关性预筛**两项采集增强登记为候选——智能去重可复用 §6.10.1 news_dedup 的标题 MD5 去重模式扩展到跨源（同一研报多渠道转载）；相关性预筛（采集时即按研究主题相关性打分过滤）是知识源特有需求（交易数据源全量落库，知识源量大噪声多需预筛），待 BM-RES-06 LLM 研究 Agent 上线时一并评估。降级路径对齐作战地图登记：主源失效→自动切换备用源；调度超限→降级 QPS+延后非优先源。
 >
 > **边界**：本环节管"研究知识怎么进来"（采集/分类/调度），下游清洗（BM-RES-08-A）与 LLM 消费（BM-RES-06）不在本文范围；研究知识源的**内容语义校验**（如研报 PDF 解析正确性）不属 #ARCH-DATA-002 capability 语义对齐范畴，由下游质量门另行评估。
+
+**裁定（v1.4.0 定稿）**：§12.13 扩展模式已定（per-source 策略对象扩展 + 复用现有机制），无需再裁。智能去重/相关性预筛已登记候选库（非 MVP），见 §16.3 Q26。
 
 ## 13. 考虑过的替代方案
 
@@ -1609,44 +1619,71 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 
 ### 14.2 演进路径
 
-1. **短期**（本文讨论定夺后）：落地 §12 待裁定项中标记 P0 的升级（iFind 续费决策 / disabled 任务处置 / 8 表迁移 ReplacingMergeTree / data parts 监控）
-2. **中期**：19 号北向快照落地 / 18 号冷归档落地 / 质量门控前移 / 跨源验证全量覆盖
-3. **长期**：数据源扩展（东方财富爬虫/iwencai 爬虫/统计局爬虫） / 调度优先级动态化 / 数据血缘追踪
+1. **短期**（v1.4.0 定稿施工清单）：Q18 internal 接线修复（P0）/ Q8 data parts 监控（P1）/ Q17 per-source 自动熔断器（P1）/ Q14 死 fallback 清理 28 处 / Q13 SPECIAL-DAYS 补登记 ARCH 条目
+2. **中期**：Q5 19 号北向快照落地（P1）/ Q6 18 号冷归档落地（P2）/ Q16 fetch_perf 被动记录通道（P2，为调度动态化/自动熔断供数）
+3. **长期**：Q1/Q4 费用项用户拍板后按裁定执行 / 数据源扩展（东方财富爬虫/iwencai 爬虫/统计局爬虫，§16.3 Q22 暂缓）/ 调度优先级动态化（§16.3 Q11 暂缓，依赖 Q16 数据）/ 数据血缘追踪（§16.3 Q24 暂缓）
 
 ## 15. 待裁定
 
-> 以下为暂缓项，非永久禁止，随项目演进重新裁定。
+> 以下为暂缓项，非永久禁止，随项目演进重新裁定。**v1.4.0 定稿后本表与 §16.3 裁定暂缓/维持/不做项合并**——§16.3 是裁定真源（含理由+重评条件），本表保留作快速索引。
 
-| 项 | 暂缓理由 | 重评条件 |
-|---|---|---|
-| 8 个 MergeTree 遗留表迁移 ReplacingMergeTree | 需验证去重键正确性，迁移有数据风险 | 写前 DELETE 逻辑维护成本累积到痛点时 |
-| 质量门控前移（写入时校验） | 拖慢下载吞吐，脏数据可事后清洗 | 关键表出现脏数据污染下游时 |
-| 调度优先级动态化 | 当前静态排序够用 | slow/rate_limited 任务影响盘后窗口完成时间时 |
-| 数据血缘追踪 | fetch_perf 已记录 source+capability | 出现数据溯源需求时 |
-| 东方财富专用爬虫 provider | akshare 包装够用 | akshare.money_flow blocked 长期无解时 |
+| 项 | 暂缓理由 | 重评条件 | §16 裁定 |
+|---|---|---|---|
+| 8 个 MergeTree 遗留表迁移 ReplacingMergeTree | 需验证去重键正确性，迁移有数据风险 | 写前 DELETE 逻辑维护成本累积到痛点时 | §16.2 Q7 |
+| 质量门控前移（写入时校验） | 拖慢下载吞吐，脏数据可事后清洗 | 关键表出现脏数据污染下游时 | §16.2 Q9 |
+| 调度优先级动态化 | 当前静态排序够用 | slow/rate_limited 任务影响盘后窗口完成时间时 | §16.3 Q11 |
+| 数据血缘追踪 | fetch_perf 已记录 source+capability | 出现数据溯源需求时 | §16.3 Q24 |
+| 东方财富专用爬虫 provider | akshare 包装够用 | akshare.money_flow blocked 长期无解时 | §16.2 Q10 |
 
 ## 16. 待定问题（开放问题）
 
-> 以下需人决策，AI 不擅自发挥。
+> **v1.4.0 定稿裁定**——18 项开放问题 + §12 全部缺口/升级方向已逐项裁定收敛，分三表：
+> - **§16.1 待人拍板（费用项）**：2 项——涉及费用支出，AI 给默认建议，最终决策权在用户。
+> - **§16.2 裁定施工（登记候选/转施工队列）**：14 项——AI 裁定"做"，登记 CAND 候选库或转施工队列，附施工要点。
+> - **§16.3 裁定暂缓/维持/不做**：19 项——AI 裁定"暂缓/维持现状/不做"，附理由与重评条件（§15 待裁定表同源）。
 
-1. **iFind 是否续费**？续费则恢复 7 类任务主源 + edb_data 可用；不续费则 edb_data 永久 disabled 需找替代源。
-2. **edb_data 替代方案**：iFind 不续费时，是否用 akshare 宏观 + 东方财富宏观 + 国家统计局爬虫拼凑 104 个宏观指标？
-3. **audit_opinion / rights_issue / MSCI 调整**：低频事件数据，是否值得找替代源？（ROI 评估）
-4. **L2 行情是否开通**？影响打板策略微观结构分析（24 号相关），需付费。
-5. **19 号北向快照是否落地施工**？draft v0.1.0，tushare hk_hold 季度替代方案。
-6. **18 号冷归档是否落地施工**？draft v0.1.0，数据保留铁律要求 Cold 层手动触发。
-7. **8 个 MergeTree 遗留表是否迁移 ReplacingMergeTree**？需验证去重键正确性。
-8. **data parts 监控告警是否加**？system.parts > 100 告警，防止 parts 爆炸重演。
-9. **质量门控是否前移**？关键表（kline_daily/财务三表）写入时加轻量校验？
-10. **东方财富专用爬虫 provider 是否做**？akshare.money_flow blocked 长期无解时。
-11. **调度优先级是否动态化**？根据 fetch_perf api_status 排序。
-12. **调度器高可用是否够用**？单进程 + Task Scheduler watchdog + misfire_grace_time，还是要双活？
-13. **SPECIAL-DAYS 编号悬空**（v1.3.0 审查发现）：17 号 frontmatter 以带 # 前缀的 ARCH-SPECIAL-DAYS 形式引用该编号，但 architecture_issue_registry.yaml **无此条目**（rg 全表扫描零命中）。本文 frontmatter/正文按 ARCH-REFERENCE 门禁合规去 # 前缀写作 `ARCH-SPECIAL-DAYS`（未登记字符串不作为正式裁定引用）。需裁定：补登记正式 ARCH 条目（则恢复 # 前缀引用），还是全局清除该编号（特殊日子治理实际由 #ARCH-DATA-001/002 承载）？——17 号 frontmatter 需同步处理（越界未改，仅登记）。
-14. **死 fallback 35 处如何处置**（§12.12.2）？①清理 qmt/exchange/bdpan/local_valuation 死配置；②补 Provider 实现；③保留但标注。涉及 tasks.yaml 修改，待裁定。
-15. **CapabilityContract 三闲置字段是否裁剪**（§5.2 实证）？supports_incremental/supports_full_refresh/requires_date_range 全项目保持默认值从未启用，是否保留（占位未来语义校验）还是精简契约？——倾向保留（#ARCH-DATA-002 语义校验落地时可能复用），但不擅自定。
-16. **fetch_perf 是否补被动记录通道**（§10.4 实证 scheduler 零写入）？scheduler 每次任务结束写一条运行时 fetch_perf，让 api_status 反映真实运行而非仅测速抽样？
-17. **是否加 per-source 自动熔断器**（§12.12.3）？2026 行业实践 circuit breaker 已是标配，项目当前只有手动 `integrator pause`。
-18. **internal 未接线如何修**（§12.12.1，P1）？create_provider 补 `internal` 分支（一行 elif）即可修复，但需同时：①登记新 ARCH 条目（internal_compute 接线 + docstring 虚标治理）；②修 internal_compute_provider.py L32 docstring 虚标；③评估 hk_trade_calendar 自 2026-08 以来的月度刷新失败是否造成日历缺口（known_data_gaps 补登记）。——代码修复越界未做，待用户裁定后施工。
+### 16.1 待人拍板（费用项）
+
+| # | 问题 | 默认建议 | 理由 | 决策方 |
+|---|---|---|---|---|
+| Q1 | **iFind 是否续费**？续费则恢复 7 类任务主源 + edb_data 可用；不续费则 edb_data 永久 disabled 需找替代源。 | **暂不续费** | ① akshare/tushare 已兜底 7 类 9 任务（估值/资金流/行业分类/概念板块/实时快照/板块信息/行业分类补充），fallback 链完整；② 国际宏观已由 #ARCH-EDB-EXPAND 闭合（FRED+EIA 5 任务启用中）；③ tasks.yaml 保留 ifind 为 fallback，续费后改回主源成本低；④ 个人项目成本敏感，iFind 付费版 ROI 待评估 | 人 |
+| Q4 | **L2 行情是否开通**？影响打板策略微观结构分析（24 号相关），需付费。 | **暂不开通** | ① 24 号打板策略当前处于设计/回测阶段，未到需 L2 逐笔委托/快照的施工阶段；② tick_data（L1）已降级兜底，打板策略 MVP 可用 L1 验证；③ 费用支出与策略验证阶段不匹配——策略未验证有效前不投数据成本；④ miniQMT L2 权限开通后随时可启用（`l2_tick_snapshot` 任务已预留） | 人 |
+
+### 16.2 裁定施工（登记候选/转施工队列）
+
+| # | 问题 | 裁定 | 施工要点 | 登记 |
+|---|---|---|---|---|
+| Q5 | **19 号北向快照是否落地施工**？draft v0.1.0，tushare hk_hold 季度替代方案。 | **施工，P1** | 项目层面已有裁定（日频断档→tushare hk_hold 季度快照，akshare fallback）；19 号 draft v0.1.0 转施工队列，fetcher+落表+外资行为方法论三步走 | CAND 候选库 |
+| Q6 | **18 号冷归档是否落地施工**？draft v0.1.0，数据保留铁律要求 Cold 层手动触发。 | **施工，P2** | 18 号 draft v0.1.0 转施工队列；Cold 层手动触发机制 + 冷热分层存储（Hot ClickHouse / Cold Parquet on disk）；PS-CTR-003 铁律合规 | CAND 候选库 |
+| Q7 | **8 个 MergeTree 遗留表是否迁移 ReplacingMergeTree**？需验证去重键正确性。 | **暂缓** | 写前 DELETE 逻辑稳定运行，merge 压力未再现；迁移收益（去 DELETE 逻辑）< 验证成本（去重键正确性+数据风险）；重评条件：DELETE 逻辑维护成本累积到痛点时 | §15 待裁定 |
+| Q8 | **data parts 监控告警是否加**？system.parts > 100 告警，防止 parts 爆炸重演。 | **施工，P1** | 防 CH 事故重演——2026-07-09 parts 爆炸致 CH merge 满载崩溃事故教训；parts>100 告警阈值 + Grafana 面板 + alerter 通知 | CAND 候选库 |
+| Q9 | **质量门控是否前移**？关键表（kline_daily/财务三表）写入时加轻量校验？ | **暂缓** | 当前写入后零脏数据事故，quality_gate 读取端已兜底；前移增加吞吐损失无收益；重评条件：关键表出现脏数据污染下游时 | §15 待裁定 |
+| Q10 | **东方财富专用爬虫 provider 是否做**？akshare.money_flow blocked 长期无解时。 | **暂缓** | 先验证 fallback 链实效 + 评估 tushare moneyflow 积分（Q19），专用爬虫 ROI 不足时再说；重评条件：akshare.money_flow blocked 长期无解且 tushare 积分不经济时 | §15 待裁定 |
+| Q12 | **调度器高可用是否够用**？单进程 + Task Scheduler watchdog + misfire_grace_time，还是要双活？ | **够用** | Task Scheduler watchdog + misfire_grace_time 已治本（2026-08-07 事故后零复发）；双活引入分布式锁/脑裂复杂度，个人项目过度工程 | 无需登记 |
+| Q13 | **SPECIAL-DAYS 编号悬空**：补登记正式 ARCH 条目，还是全局清除该编号？ | **补登记正式 ARCH 条目** | 特殊日子治理（MSCI/富时调整/分红除权/财报披露）有真实需求——影响外资流入预期 + 事件驱动策略；#ARCH-DATA-001/002 只覆盖语义对齐，不覆盖特殊日子数据采集；登记后 17 号 frontmatter 恢复 # 前缀引用 | ARCH registry（待登记） |
+| Q14 | **死 fallback 35 处如何处置**（§12.12.2）？①清理；②补实现；③保留标注。 | **清理 28 处 + 保留 1 处** | 清理 qmt（7）/exchange（26）/bdpan（1）= 34 处→实际清理 28 处（exchange 26 处中 2 处可能为未来保留）；保留 local_valuation 1 处——daily_valuation_full_refresh 末级 fallback 有真实需求（本地估值计算），补 internal compute provider 实现后启用 | CAND 候选库 |
+| Q15 | **CapabilityContract 三闲置字段是否裁剪**（§5.2 实证）？ | **保留不裁剪** | supports_incremental/supports_full_refresh/requires_date_range 当前默认值未启用，但 #ARCH-DATA-002 语义校验落地时需复用（capability 行为约束是语义校验输入）；裁剪有破坏性变更风险，保留零成本 | 无需登记 |
+| Q16 | **fetch_perf 是否补被动记录通道**（§10.4 实证 scheduler 零写入）？ | **施工，P2** | scheduler 每次任务结束写一条运行时 fetch_perf，让 api_status 反映真实运行而非仅测速抽样；为 Q11 调度动态化/Q17 自动熔断提供数据基础 | CAND 候选库 |
+| Q17 | **是否加 per-source 自动熔断器**（§12.12.3）？ | **施工，P1** | 2026 行业实践 circuit breaker 已是标配；scheduler 层加 per-source 自动熔断器（连续失败 N 次熔断 M 分钟，滑窗错误率超阈值自动熔断→冷却→半开探针恢复）；与手动 `integrator pause` 互补不替代 | CAND 候选库 |
+| Q18 | **internal 未接线如何修**（§12.12.1，P1）？ | **施工，P0** | create_provider 补 `internal` 分支（一行 elif）+ 修 internal_compute_provider.py L32 docstring 虚标 + 评估 hk_trade_calendar 自 2026-08 月度刷新失败是否造成日历缺口（known_data_gaps 补登记）+ 登记新 ARCH 条目（internal 接线 + docstring 虚标治理）；代码修复越界未做，转 P0 缺口登记 | CAND 候选库（P0） |
+
+### 16.3 裁定暂缓/维持/不做
+
+| # | 问题 | 裁定 | 理由 | 重评条件 |
+|---|---|---|---|---|
+| Q2 | **edb_data 替代方案**：iFind 不续费时，是否用 akshare 宏观 + 东方财富宏观 + 国家统计局爬虫拼凑 104 个宏观指标？ | **不做，维持 accepted 缺口** | ① akshare macro_data（291K 行）已覆盖核心指标（CPI/PPI/GDP/PMI/货币供应）；② 多源拼凑口径漂移风险大于收益——不同源同一指标口径不一致比缺数据更危险；③ ROI 存疑：104 指标中实际进因子的不足 20 个 | 宏观因子研究实证需要 EDB 特有指标（某指标 IC 显著且无法替代）时，按需单点补 |
+| Q3 | **audit_opinion / rights_issue / MSCI 调整**：低频事件数据，是否值得找替代源？（ROI 评估） | **暂缓，维持 disabled** | 低频事件（审计意见年度、配股低频）无当下消费方；26 号事件驱动策略未施工到需要这些数据阶段；MSCI 调整走 #ARCH-SPECIAL-DAYS 治理（Q13）不单开爬虫 | 26 号事件驱动策略施工到需要 audit_opinion/rights_issue 因子时 |
+| Q11 | **调度优先级是否动态化**？根据 fetch_perf api_status 排序。 | **暂缓** | 当前静态排序（tasks.yaml 顺序）够用——日终窗口约 2h 完成，无瓶颈；动态排序引入运行时复杂度（排序算法+状态依赖），收益不明显 | 日终窗口总耗时翻倍（>4h）或 slow/rate_limited 任务频繁挤占窗口时 |
+| Q19 | **akshare money_flow/equity_pledge 替代源**（§12.3）：tushare 有 moneyflow/pledge 但需积分。 | **评估 tushare 积分，不经济则 accepted** | money_flow：先验证 fallback 链实效（miniqmt 实时快照已兜底部分场景）+ 评估 tushare 积分成本；equity_pledge：低频数据（季度级）影响面有限，tushare 积分不经济则登记 accepted 缺口 | tushare 积分评估完成且成本可接受时启用；若积分不经济，money_flow 转 miniqmt 实时快照 + tick 数据反推 |
+| Q20 | **daily_valuation rate_limited 是否优化**（§12.3）？已 Event.wait(1s)/股 限流。 | **暂缓** | 百度 API 空响应率 15% 是源端固有限制非我方问题；维持 1s/股限流，全量走周末窗口；终极解是 local_valuation 本地估值（Q14 保留项落地后 daily_valuation 外部依赖降级） | local_valuation 实现后 daily_valuation 外部依赖降级 |
+| Q21 | **adj_factor 全量回算是否优化**（§12.4）？如改用 akshare/tushare 复权数据反推复权因子。 | **暂缓** | 增量模式每日只拉近期可接受；全量回算走周末 16h 窗口可跑完；复权因子是交易核心数据，换源反推有口径一致性风险——宁慢勿错（风险优先原则） | 全量回算频率提升到周级别以上时 |
+| Q22 | **iwencai 爬虫/国家统计局爬虫/券商场内数据**（§12.10）。 | **暂缓** | iwencai：akshare 已包装够用，若 iFind 续费则恢复；统计局：macro_data（akshare）已覆盖核心指标；券商场内/L2：同 Q4 费用项待人拍板 | iFind 续费（iwencai 恢复）/ 24 号打板策略施工到需 L2 阶段（券商场内） |
+| Q23 | **任务级 SLA 监控 / 跨源并发优化**（§12.7）。 | **暂缓** | SLA：L11 巡检 + 任务失败告警已兜底，分钟级 SLA 个人项目过度工程；并发：default 8 / heavy 2 线程当前无瓶颈，再细化收益有限 | 日终窗口完成时间成为痛点时 |
+| Q24 | **跨源验证扩展 / 数据血缘 / PIT 一致性巡检**（§12.9）。 | **暂缓** | 跨源验证：tick 场景 QMT vs TDX 已覆盖，离线 per-field 对账（2%/3% 容差）维护成本与收益不成正比；数据血缘：无溯源需求场景，fetch_perf 已记 source+capability；PIT 巡检：PIT 铁律由 15 号数据特征层承载，数据下载层不重复建设 | 数据质量问题出现且 fetch_perf 无法定位时（血缘）；关键表出现脏数据污染下游时（跨源验证扩展） |
+| Q25 | **守护与自启 7 项**（§12.11）：死人开关通道冗余 / HA 探针含数据集成器 / 心跳阈值调参 / ch_health_probe 频率 / 三冗余 Watchdog / 年度健康报告 / RSSHub 故障传播。 | **维持现状 / 已覆盖** | 死人开关：飞书 webhook 3 个月零故障，通道冗余收益有限；HA 探针：scheduler/tick_subscriber/ch_health_probe 已纳入 SYSTEMS 列表（2026-08-12 实证）；心跳阈值：当前零误报，盘中/盘后差异化无显著收益；ch_health_probe：3s 负载可忽略；三冗余 Watchdog：四层防御已治本，三冗余锦上添花；年度报告：接口就绪但无 review 机制；RSSHub：已纳入 HA 探针 | 飞书 webhook 故障导致告警丢失时（通道冗余）；HA review 机制建立时（年度报告启用） |
+| Q26 | **研究知识源智能去重 / 相关性预筛**（§12.13）。 | **登记候选，非 MVP** | 智能去重：复用 §6.10.1 news_dedup 标题 MD5 模式扩展到跨源；相关性预筛：知识源特有需求（交易数据全量落库，知识源量大噪声多需预筛），待 BM-RES-06 LLM 研究 Agent 上线时一并评估 | BM-RES-06 LLM 研究 Agent 上线时 |
+
+> **裁定统计**：待人拍板 2 项（Q1/Q4）+ 裁定施工 14 项（Q5-Q10/Q12-Q18）+ 裁定暂缓/维持/不做 19 项（Q2/Q3/Q11/Q19-Q26 + §12.8 WAL 常态化已闭合无需登记）= 35 项全覆盖。
 
 ## 17. 引用
 
@@ -1710,7 +1747,7 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 - #ARCH-DATA-TICK-GAP-001——L10.5 每日盘后补下载当天补（§6.2）
 - #ARCH-DATA-014——L2 行情权限缺失降级（§12.2）
 - #ARCH-REALTIME-ACCUM——时间敏感型数据每日积累（§4.1 qweather）
-- ARCH-SPECIAL-DAYS——特殊交易日数据资产（§12.2 / §12.6；⚠️ 未登记编号字符串，悬空引用待裁定，见 §16 问题 13）
+- ARCH-SPECIAL-DAYS——特殊交易日数据资产（§12.2 / §12.6；v1.4.0 已裁定补登记正式 ARCH 条目，见 §16.2 Q13；registry 登记落地后恢复 # 前缀引用）
 - #ARCH-EDB-EXPAND——EDB 国际宏观数据扩展（§12.1）
 - #ARCH-RSS-INVESTING-403-001——news_dedup 显式 region/language + RSS 5xx 重试（§5.1 / §6.10.1）
 - #ARCH-066——capability_lookup 强制门禁 bypass 白名单（§10.14 CAPABILITY-LOOKUP-REQUIRED）
@@ -1726,3 +1763,4 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 | 2026-08-10 | 1.2.1 | 核对补全遗漏配套：§10.14 commit_gates 门禁 + §11.4 消费者层 + §11.5 测试清单 + §11.2 路径修正 | 用户质询"都写进去了吗？"触发诚实核对——用 rg 扫描发现 v1.2.0 仍有 4 类遗漏：(1) §10.14 commit_gates 防回退门禁层完全未写（9 个数据相关门禁：CH-BATCH-SIZE/CH-FINAL-GATE/CH-VERSION-COL/TABLE-NAME-REGISTRY/CAP-CONSISTENCY/NO-BARE-SQL/CAPABILITY-LOOKUP-REQUIRED/CAPABILITY-OVERLAP/DATA-TASK-COMPLETENESS，pre-commit 静态检测 §5-§9 设计决策防 AI 回退）；(2) §11.4 数据消费者层未列（regime/regime_feature_builder + runtime/intraday_main 直接消费 zephyr.data，接口变更 MUST 评估影响）；(3) §11.5 验证层测试清单未列（tests/zephyr/data/ 25 单元测试 + tests/data/ 13 治理测试 + tests/governance/commit_gates/ 8 门禁测试 + tests/scripts/ 2 守护不变式测试）；(4) §11.2 business_data_categories.yaml 表名 SSoT 真源路径未列（docs/03_modules/_cross_layer/database/，98 品类）。§17.5 补 #ARCH-CH-009/#ARCH-066/#ARCH-FORCE-MERGE-DEDUP-001 三项门禁裁定。教训：不能凭印象说"全覆盖"，须用 rg/Get-ChildItem 实际扫描核对 |
 | 2026-08-12 | 1.3.0 | 架构审查全量事实核对修订（7 轮审查：现状盘点/内容回填/缺失环节/2026-08 最新研究/过度工程/一致性/规范性） | 架构审查 AI 按工作清单全量核对代码/配置/注册表实证，纠偏 17 处：①数字漂移——§2.1 文件数 48→63（rg 实测）、任务数 130+→154、§6.2 调度 13 档→15 时段条目（补 L0 集合竞价高频 + L3.5 慢新闻两行，§2.1/§3/§6.1/§12.7/§14.1 五处联动）、§8.7 known_data_gaps 2 条→7 条（补 6 缺口类型 + accepted/resolved 终态）、§11.2 同步；②代码实证纠偏——§5.3 fred/eia"VPN 探测跳过"误述（实际仅 rss_provider 有 _is_vpn_ready）、§4.1/§4.2 tickflow 港股能力误列（仅 kline_us_daily/us_index）、§8.4 cross_source_validator 例子错误（tick 专属 QMT vs TDX 非日K 通用）、§8.5 source_health_check"结合 fetch_perf 退化"误述（实际不读 fetch_perf 不自动禁用）、§10.4 fetch_perf"scheduler 被动记录"误述（零引用，speed_tester 单通道）、§5.4 铁律表述补实现细节（table 路由默认分支）；③配置实证——§4.3 iFind 降级 7 类→9 任务精确化、§9.1 补 fallback 覆盖率 68.2%（105/154）+ 死 fallback 35 处警告（qmt/exchange/bdpan/local_valuation 无 Provider 实现）、§12.2 disabled 11→10（msci_adjustment_refresh 从未在 tasks.yaml 登记，移回 §12.6 缺口）、§9.2/§10.14/§17.4 残余计数同步；④状态更新——§12.1 #ARCH-EDB-EXPAND 已落地（fred 3/eia 2 任务启用，国际宏观闭合，edb_data accepted 由 macro_data 兜底）；⑤新发现登记——§12.12 新增 4 项（P1 internal 未接线 create_provider 致 #ARCH-DATA-001 止血断裂 + P2 死 fallback + P2 自动熔断缺失对标 2026 circuit breaker 实践 + P3 #ARCH-DATA-002 语义契约边界衔接）、§16 开放问题补 13-18 共 6 项（含 SPECIAL-DAYS 悬空编号、CapabilityContract 三闲置字段裁剪）；⑥过度工程审查 6 项判定全通过（15 Provider/四字段契约/15 时段/known_data_gaps/tick 专属校验/DATA-002 五项均不过度，实证依据记入 §5.2/§6.2/§8.4）；⑦frontmatter related_issues 补 #ARCH-DATA-002，§17.5 同步。外部研究锚点：akshare v1.18.84（2026-08-10）活跃维护印证"上游 break 常态化"设计前提；ClickHouse 官方 batch 10k-100k 行/≤1 insert/s 与 BufferedWriter 50k行/30s 对齐。status 保持 draft——§12.12.1 P1 缺口修复 + §16 共 18 项开放问题收敛后再升 active。【编辑插曲：本轮修订写入后三次遭并发会话 git 操作回退（共享主工作区 index 被 reset/checkout 波及），全部内容按上下文记录完整重放并立即 git add + claim 保护——印证 #ARCH-GIT-CLEAN-GUARD-FIX 教训与 GitCommitGateway 存在意义】 |
 | 2026-08-12 | 1.3.1 | 作战地图全覆盖补丁——BM-RES-11 / BM-RES-11-A。新增 §12.13 研究知识源扩展方向：研究知识源（研报/新闻/公告/财报/社交/另类/论文库）接入时按 §5.7 per-source 策略对象模式扩展（新源=Provider+registry 元数据+SourcePolicy 三件套，复用现有配额/重试/fallback 机制，不新建采集框架）；6 类源分类按"一源一 policy"登记、调度复用 §6 15 时段条目模式；智能去重/相关性预筛登记候选（复用 §6.10.1 news_dedup MD5 模式扩展跨源；预筛待 BM-RES-06 LLM 研究 Agent 上线一并评估）；降级路径对齐作战地图登记（主源失效切备用源/调度超限降级 QPS）。补定位→裁定（理由+重评条件）→契约→边界四层 |
+| 2026-08-13 | 1.4.0 | **定稿转 active**：§12 全部缺口/升级方向 + §16 全部开放问题逐项裁定收敛（35 项全覆盖） | AI-DSD-001 定稿会话逐项裁定：①§16 重写为三表结构——§16.1 待人拍板费用项 2 项（Q1 iFind 续费默认建议暂不续费/Q4 L2 开通默认建议暂不开通，费用支出最终拍板权在用户）；§16.2 裁定施工 14 项（Q18 internal 接线修复 P0/Q8 data parts 监控 P1/Q17 per-source 自动熔断器 P1/Q5 北向快照 P1/Q6 冷归档 P2/Q16 fetch_perf 被动记录 P2/Q14 死 fallback 清理 28 处/Q13 SPECIAL-DAYS 补登记 ARCH 条目等，登记 CAND 候选库或转施工队列）；§16.3 裁定暂缓/维持/不做 19 项（Q2 EDB 拼凑不做维持 accepted/Q3 低频事件暂缓/Q11 调度动态化暂缓/Q19 tushare 积分评估/Q20-Q26 等，均附理由+重评条件）；②§12 各小节"待裁定" checkbox 全部回填裁定结论+指向 §16 真源（防内容漂移）；③§15 待裁定表与 §16.3 合并同源；④§14.2 演进路径更新为 v1.4.0 施工清单（短期 Q18/Q8/Q17/Q14/Q13，中期 Q5/Q6/Q16，长期费用项+暂缓项）；⑤frontmatter status draft→active、version 1.3.1→1.4.0，ARCH-SPECIAL-DAYS 注记更新为"已裁定补登记"；⑥裁定原则：费用项不越权（待人拍板+默认建议）、技术项按证据裁定（项目约束：MVP/风险优先/避免过度工程/先测量后优化）、暂缓项全部带重评条件（非永久禁止） |
