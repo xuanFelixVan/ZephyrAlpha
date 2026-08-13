@@ -116,7 +116,17 @@ def _sync_factor_registry(features: list[dict]) -> dict:
 
 
 def _sync_technical_indicator_registry(indicators: list[dict]) -> dict:
-    """指标节点 → technical_indicator_registry.yaml（待建注册表，按 name_en 去重）。"""
+    """指标节点 → technical_indicator_registry.yaml（待建注册表，按 name_en 去重）。
+
+    保护（2026-08-13，AI-REG-IND-001）：REG-IND-001 已全新施工（62 号 §4.5，
+    40 条目手工 SSoT），本函数检测到注册表已升级（registry_id 不再是种子版
+    REG-TECHNICAL-INDICATOR-001）时跳过覆写，防止派生种子冲掉手工真源。
+    翻译职能（name_zh/description）已由 REG-IND-001 正式条目吸收。
+    """
+    if _TI_REGISTRY.exists():
+        existing = yaml.safe_load(_TI_REGISTRY.read_text(encoding="utf-8")) or {}
+        if existing.get("registry_id") != "REG-TECHNICAL-INDICATOR-001":
+            return {"skipped": f"注册表已升级为 {existing.get('registry_id')}（手工 SSoT），种子覆写跳过"}
     seen: dict[str, dict] = {}
     for ind in indicators:
         key = (ind["name_en"] or ind["node_id"]).strip().lower()
