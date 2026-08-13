@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-TASK_SYSTEM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
+"""
+
+[BLUEPRINT] SH-DB-001 | docs/03_modules/_cross_layer/database/blueprint.md
 
 transition — 状态机转换 Mixin（从 task_repo.py 拆分，SRC-0066）
 
@@ -27,6 +29,98 @@ transition — 状态机转换 Mixin（从 task_repo.py 拆分，SRC-0066）
 
 Safety : H（状态机错误会影响整个任务流水线）
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 状态转换请求 参数组
+#   fields: task_id 目标任务 + to_status 目标状态 + session_id + waiting_for 等待原因 + note 备注
+#   code: transition() L91
+# - id: I2
+#   name: tasks 表任务行 SQLite数据
+#   fields: status 当前状态 + depends_on 依赖列表 + ready_at/completed_at/block_sessions_count
+#   code: tasks 表 _fetch_row L147
+# - id: I3
+#   name: 合法转换表 内置规则
+#   fields: _ALLOWED_TRANSITIONS 状态机允许转换对
+#   code: base_repo._is_valid_transition L160
+# - id: I4
+#   name: GateEngine 门禁引擎 外部组件
+#   fields: G1 启动门禁（→IN_PROGRESS）+ G7 完工门禁（→COMPLETED）
+#   code: self._gate_engine.evaluate L226
+# 层: 算法
+# - id: A1
+#   name_zh: ① 转换门禁评估 G1/G7
+#   name_en: _evaluate_transition_gate
+#   intro: 任务启动前查G1、完工前查G7，门禁不过就抛异常拦住转换
+#   desc: to_status=IN_PROGRESS→评估G1；=COMPLETED→评估G7；其他状态直接放行；未通过抛 GateViolationError，失败结果用独立连接持久化保证可审计
+#   inputs: I1 I2 I4
+#   outputs: 门禁通过/GateViolationError
+#   invariant: 门禁检查与状态转换在同一写事务内原子落盘
+# - id: A2
+#   name_zh: ② 状态机合法性校验
+#   name_en: _is_valid_transition
+#   intro: 查转换表确认 from→to 是允许的状态跳转，非法直接报错
+#   desc: 调 base_repo._is_valid_transition(from_status, to_status)，非法抛 InvalidTransitionError；状态机不可绕过
+#   inputs: A1 I3
+#   outputs: 合法转换确认
+# - id: A3
+#   name_zh: ③ 状态落盘 UPDATE
+#   name_en: _apply_status_update
+#   intro: 一条 UPDATE 把新状态写进 tasks 表，按目标状态顺带维护三个时间戳字段
+#   desc: UPDATE tasks SET status/session_id/waiting_for；READY→记 ready_at；COMPLETED/VERIFIED→记 completed_at；BLOCKED→block_sessions_count+1
+#   inputs: A2 I1
+#   outputs: tasks 行已更新
+# - id: A4
+#   name_zh: ④ 转换事件记录
+#   name_en: _record_event
+#   intro: 把这次 from→to 转换写进 events 表留痕审计
+#   desc: 记录 state_transition 事件（from/to/task_id/note）+ session_id
+#   inputs: A3
+#   outputs: state_transition 事件
+# - id: A5
+#   name_zh: ⑤ 父任务依赖重算
+#   name_en: _recalculate_dependent_status
+#   intro: 子任务状态变了就重算父任务：子全完成父解锁READY，任一失败父BLOCKED
+#   desc: 子任务 COMPLETED/VERIFIED/FAILED/CANCELLED 时触发；LIKE 查依赖方→遍历父任务 depends_on 汇总子状态；全完成且父在 BLOCKED/WAITING/PENDING→父READY；任一失败→父BLOCKED；幂等
+#   inputs: A4 I2
+#   outputs: 父任务状态联动更新 + 联动事件
+#   invariant: 依赖重算幂等
+# - id: A6
+#   name_zh: ⑥ 转换钩子广播
+#   name_en: hook_registry.fire
+#   intro: 转换完成后向注册的钩子广播 TransitionEvent，让外部模块感知状态变化
+#   desc: fire(TransitionEvent(task_id, from, to, note, session_id))
+#   inputs: A5
+#   outputs: TransitionEvent 广播
+# 层: 输出
+# - id: O1
+#   name_zh: 转换后的任务对象
+#   name_en: Task (_row_to_taskcard)
+#   intro: 转换落盘后重新读出的最新 Task 返回给调用方
+#   downstream: task_repo 组合入口; pipeline（[CONSUMERS]）
+# - id: O2
+#   name_zh: 状态转换审计事件
+#   name_en: state_transition events
+#   intro: events 表里的转换留痕（含父任务联动事件）与门禁失败持久化
+#   invariant: 门禁失败结果独立连接落盘，ROLLBACK 不丢审计
+#   downstream: events 表 / ops_governance.event_hook 订阅方
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I4 --> A1
+# A1 --> A2
+# I3 --> A2
+# A2 --> A3
+# I1 --> A3
+# A3 --> A4
+# A4 --> A5
+# I2 --> A5
+# A5 --> A6
+# A6 --> O1
+# A4 --> O2
+# A5 --> O2
 """
 
 from __future__ import annotations

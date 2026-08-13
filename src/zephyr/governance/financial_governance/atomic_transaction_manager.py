@@ -34,7 +34,9 @@
 
 
 
-"""AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
+"""
+
+AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
 
 
 
@@ -116,6 +118,75 @@ Usage::
 
         tx.write_file("docs/02_enterprise_architecture/architecture-rationale-log.md", content)
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: SQL 执行请求 参数化语句
+#   fields: sql 语句 + params 参数序列/字典（execute/executemany）
+#   code: TransactionScope.execute L481
+# - id: I2
+#   name: 文件写入请求 路径+内容
+#   fields: rel_path 相对 root 路径 + content str/bytes 内容
+#   code: TransactionScope.write_file L525
+# - id: I3
+#   name: SQLite 治理库 数据库文件
+#   fields: db_path（WAL 模式）+ tx_idempotency 幂等表（tx_id/status/时间戳）
+#   code: AtomicTransactionManager.__init__ L719
+# 层: 算法
+# - id: A1
+#   name_zh: ① 事务开启与幂等登记
+#   name_en: transaction
+#   intro: BEGIN IMMEDIATE 开事务并登记 PREPARED，重复 tx_id 直接拒绝
+#   desc: 生成 tx-<毫秒>-<hex8> → BEGIN IMMEDIATE → INSERT OR IGNORE tx_idempotency(PREPARED) → 状态非 PREPARED 则 ROLLBACK 抛重复；禁嵌套
+#   inputs: I3
+#   outputs: TransactionScope 事务作用域
+#   invariant: 同 tx_id 不可重复提交；不支持嵌套事务
+# - id: A2
+#   name_zh: ② 路径守卫与文件暂存
+#   name_en: write_file/_utf8_lf_bytes
+#   intro: 写文件先过 InputSanitizer 白名单，统一 UTF-8 无 BOM+LF 后写临时文件并 fsync
+#   desc: validate_path(write) → 规范化字节 → 旧文件转 .atm-tx.bak → 写 .atm-tx.tmp（权限 0o600）+ fsync → 记入 _staged_files
+#   inputs: I2
+#   outputs: staged 文件列表 (target,tmp,bak)
+# - id: A3
+#   name_zh: ③ 两阶段提交 2PC 简化版
+#   name_en: _commit/_apply_post_commit_file_renames
+#   intro: 先验证临时文件再 COMMIT 数据库，最后 rename 落目标文件
+#   desc: 预验证 tmp 存在且非空 → SQLite COMMIT → 标 COMMITTED → os.replace(tmp,target) → 目录 fsync（POSIX）→ 删 bak
+#   inputs: A1 A2 I1
+#   outputs: 提交完成
+#   invariant: 事务超时（默认 30s）自动 ROLLBACK
+# - id: A4
+#   name_zh: ④ 回滚与补偿
+#   name_en: _rollback/_write_compensation_event
+#   intro: 失败回滚数据库并清理临时文件恢复 bak；COMMIT 后 rename 失败写补偿事件
+#   desc: ROLLBACK + 标 ROLLED_BACK + 删 tmp + bak 还原 target；COMMIT 后 rename 失败写 events 表 compensation 并标 COMPENSATED
+#   inputs: A3
+#   outputs: 回滚/补偿完成
+# 层: 输出
+# - id: O1
+#   name_zh: 事务作用域 TransactionScope
+#   name_en: TransactionScope
+#   intro: with 块内统一执行 SQL 与文件写，退出自动提交或回滚
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 幂等状态记录 tx_idempotency
+#   name_en: tx_idempotency
+#   intro: PREPARED/COMMITTED/ROLLED_BACK/COMPENSATED 四态落库可追溯
+#   invariant: status ∈ 四态 CHECK 约束
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# I2 --> A2
+# A1 --> A3
+# A2 --> A3
+# I1 --> A3
+# A3 --> A4
+# A1 --> O1
+# A3 --> O2
+# A4 --> O2
 """
 
 

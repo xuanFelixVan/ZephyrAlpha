@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Escalation Adapter — MOD-INF-022 统一集成入口.
+"""
+
+Escalation Adapter — MOD-INF-022 统一集成入口.
 
 Provides a single import point for any module to integrate with the escalation protocol.
 Handles: level determination, circuit breaker, economic guard, delegation, audit.
@@ -32,6 +34,60 @@ Usage:
     )
     if result.should_block:
         raise EscalationBlocked(result.reason)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 升级评估参数（函数入参 str）
+#   fields: operation_type 操作类型 + description 描述 + owner_id 责任人 + source_event_id 来源事件
+#   code: adapter.py L119-124 escalate_if_needed 签名
+# - id: I2
+#   name: 操作审查参数（函数入参 str）
+#   fields: operation 操作字符串 + target_path 目标路径 + session_id 会话
+#   code: adapter.py L174-178 check_operation 签名
+# - id: I3
+#   name: EventBus 治理事件（事件对象）
+#   fields: GATE_FAILED / SCOPE_DRIFT / TASK_FAILED 三类事件的 event_type + task_id + payload
+#   code: adapter.py L206-210 事件映射表 + L244 订阅
+# 层: 算法
+# - id: A1
+#   name_zh: ① 升级引擎评估与决策组装
+#   name_en: escalate_if_needed
+#   intro: 把一次操作交给升级引擎定级，折算成「阻不阻塞/要不要升级/委不委派」的决定
+#   desc: 带锁懒加载 EscalationEngine 缓存（get_engine L94-111）→ OperationType 映射 RuleCategory（L136-137）→ engine.evaluate 定级 → 等级映射 should_block(L3/L4)/should_escalate/should_delegate(L2-L4)（L141-143）→ 拼 reason 含熔断与经济守卫状态（L148-152）→ 组装 EscalationDecision；引擎缺失或异常时透传不阻塞（L126-131, L165-171）
+#   inputs: I1 A2 A3
+#   outputs: EscalationDecision
+#   invariant: 引擎不可用/评估异常时 should_block=False 透传放行
+# - id: A2
+#   name_zh: ② 危险操作模式匹配归类
+#   name_en: check_operation
+#   intro: 扫操作字符串里的危险关键词，先归类操作类型再转交引擎评估
+#   desc: 12 条危险模式子串匹配（rm -rf/DROP/force_push/deadlock/budget:/timeout 等 L180-193），命中即归类 OperationType 否则 CUSTOM（L194-197），再调 escalate_if_needed（L199-203）
+#   inputs: I2
+#   outputs: 归类后转 A1 评估
+# - id: A3
+#   name_zh: ③ 事件总线自动订阅
+#   name_en: auto_subscribe_eventbus
+#   intro: 挂上 EventBus，3 类治理事件自动转成升级评估
+#   desc: 订阅 GATE_FAILED/SCOPE_DRIFT/TASK_FAILED（L244-245）→ 回调按映射表转 OperationType（L230-232）→ 取 payload.description 调 escalate_if_needed（L236-240）；一次性订阅防重（_auto_subscribed L217-218）；EventBus 缺失时静默跳过（L249-252）
+#   inputs: I3
+#   outputs: 事件订阅注册 + 转 A1 评估
+# 层: 输出
+# - id: O1
+#   name_zh: 升级决策结果
+#   name_en: EscalationDecision
+#   intro: 告诉调用方这个操作该不该拦、该不该升级给人审、建议委派给谁
+#   invariant: 引擎不可用或评估异常时 should_block=False 透传放行
+#   downstream: 治理域任意模块按需集成（MOD-INF-022 统一入口；文件头 [CONSUMERS] 为空）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A3
+# A2 --> A1
+# A3 --> A1
+# A1 --> O1
 """
 
 from __future__ import annotations

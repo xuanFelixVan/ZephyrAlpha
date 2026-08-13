@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV-015 升级)
 
 从文件存在性检查升级为实际沙箱拦截测试：
@@ -24,6 +26,70 @@ AISG Sandbox Testing — AI Security Gateway 沙箱验证 (INV-015 升级)
   - 验证 Audit Log 正确写入
 
 Phase B：将 FF-015 从此文件替换为实际调用入口。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 危险模式字典 内置常量
+#   fields: DANGEROUS_PATTERNS 12 项 模式子串→风险描述（eval/exec/subprocess/os.system/pickle.loads 等）
+#   code: aisg_sandbox.py L56
+# - id: I2
+#   name: 安全代码样本 内置常量
+#   fields: SAFE_SAMPLES 3 条正常代码（数据查询/因子计算/模型推理）
+#   code: aisg_sandbox.py L71
+# 层: 算法
+# - id: A1
+#   name_zh: ① 危险模式静态扫描
+#   name_en: AISGSandbox.scan_content
+#   intro: 对代码文本做子串匹配，命中危险模式即记录风险描述
+#   desc: 遍历 DANGEROUS_PATTERNS，pattern in content 则追加对应中文风险描述；纯静态不执行代码
+#   inputs: I1
+#   outputs: 风险标记列表 risk_flags
+# - id: A2
+#   name_zh: ② 危险样本拦截测试
+#   name_en: run_dangerous_pattern_tests
+#   intro: 给 12 种危险模式各造一条样本，期望全部 block
+#   desc: 期望 expected_action=block；scan_content 有命中则 actual=block，比对得 passed；累计 total_tests/tests_passed
+#   inputs: A1
+#   outputs: 危险样本测试结果列表
+# - id: A3
+#   name_zh: ③ 安全样本放行测试
+#   name_en: run_safe_pattern_tests
+#   intro: 3 条正常代码期望全部 allow，有误拦即 FAIL
+#   desc: 期望 expected_action=allow；scan_content 无命中则 actual=allow，比对得 passed
+#   inputs: A1 I2
+#   outputs: 安全样本测试结果列表
+# - id: A4
+#   name_zh: ④ 全量汇总判定
+#   name_en: main
+#   intro: 汇总 15 项测试打印 PASS/FAIL，有失败返回退出码 1
+#   desc: 打印每条结果与通过率；failures 非空打印 INV-015 拦截不完整并 return 1，否则 return 0
+#   inputs: A2 A3
+#   outputs: 进程退出码
+# 层: 输出
+# - id: O1
+#   name_zh: 沙箱测试结果 SandboxResult
+#   name_en: SandboxResult
+#   intro: 每项含 test_name/expected/actual/passed/risk_flags 的测试结论
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: CLI 退出码
+#   name_en: exit_code
+#   intro: 0=INV-015 拦截完整，1=存在漏拦或误报
+#   invariant: 全部通过才返回 0
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A3
+# I2 --> A3
+# A2 --> A4
+# A3 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

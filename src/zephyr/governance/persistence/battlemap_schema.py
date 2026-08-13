@@ -15,6 +15,8 @@
 # [TTL] permanent
 
 """
+
+
 battlemap Schema DDL + 不变量声明
 ==================================
 依据：battle_map_positioning.md V0.2（第四全景图 battlemap），作战地图与 depgraph 共享
@@ -76,6 +78,68 @@ pg_advisory_lock key
 
     init_battle_map_db()                          # 幂等，验证 3 张核心表存在
     conn = get_battle_map_pg_connection()         # 返回 PG 连接（与 depgraph 共享）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: PG 连接配置 环境配置
+#   fields: config/.env.postgres 连接串（SSoT 在 depgraph_schema）
+#   code: get_depgraph_pg_connection L83
+# - id: I2
+#   name: 受控词表常量 内置定义
+#   fields: flow_stage 11值 + target_graph 5值 + target_role 3值 + edge_type 3值 + design_maturity 3态
+#   code: _FLOW_STAGES L92 / _TARGET_GRAPHS L107 / _TARGET_ROLES L116 / _EDGE_TYPES L119 / _DESIGN_MATURITIES L123
+# - id: I3
+#   name: information_schema 元数据 PG系统表
+#   fields: information_schema.tables 表存在性查询结果
+#   code: information_schema.tables L292
+# 层: 算法
+# - id: A1
+#   name_zh: ① PG 连接委托
+#   name_en: get_battle_map_pg_connection
+#   intro: battlemap 不自己管连接配置，直接委托 depgraph 的连接函数保证 SSoT
+#   desc: 透传所有参数给 get_depgraph_pg_connection()，与 depgraph/decisiongraph 共享同一 PG 实例（同 DB 不同表）
+#   inputs: I1
+#   outputs: psycopg2 连接对象（autocommit=True）
+#   invariant: PG 配置 SSoT，无独立配置
+# - id: A2
+#   name_zh: ② 三表 DDL 对比真源定义
+#   name_en: _DDL_BATTLE_MAP_STEPS/ANCHORS/EDGES
+#   intro: 用 DDL 常量声明作战环节/锚点/流转边三张表的列名与 CHECK 约束，只做 drift 对比不执行
+#   desc: steps 13列（step_id PK + 父子嵌套 parent_step_id/depth）+ anchors 7列（UNIQUE step_id+target_graph+target_id）+ edges 6列（禁自环 CHECK）+ 7索引；CHECK 内联受控词表；真源 DDL 在 08_create_battlemap_schema.sql
+#   inputs: I2
+#   outputs: Python 侧列名/类型对比真源常量
+#   invariant: 本模块不执行 DDL/migration
+# - id: A3
+#   name_zh: ③ schema 健康幂等验证
+#   name_en: init_battle_map_db
+#   intro: 启动时查三张核心表在不在，缺表就报错提示去跑 DDL 脚本
+#   desc: information_schema.tables 逐表查存在性→缺表 raise RuntimeError（带 DDL 脚本路径）；echo=True 时每表 SELECT 1 LIMIT 1 轻量验证
+#   inputs: A1 I3
+#   outputs: 验证通过/RuntimeError
+#   invariant: init_db 幂等
+# 层: 输出
+# - id: O1
+#   name_zh: battlemap PG 连接
+#   name_en: psycopg2 connection
+#   intro: 给 battlemap 读写脚本用的共享 PG 连接
+#   downstream: apply_battle_map.py; battle_map_reader.py; align_battle_map.py; generate_battle_map_diagram.py（[CONSUMERS]）
+# - id: O2
+#   name_zh: schema 验证结论与 DDL 对比真源
+#   name_en: init_battle_map_db 结果 + _DDL 常量
+#   intro: 三表健康验证结论，以及供 verify 脚本做 drift 校验的列名真源
+#   invariant: BM-INV-001~006 承重墙不变量（应用层校验为主）
+#   downstream: verify drift 校验脚本; tests/test_battlemap_schema.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> A3
+# I3 --> A3
+# A1 --> O1
+# A2 --> O2
+# A3 --> O2
 """
 
 from __future__ import annotations

@@ -63,7 +63,9 @@
 
 
 
-"""rule_patterns.py — 治理规则正则 + 安全审计模式唯一真源 (SSoT)
+"""
+
+rule_patterns.py — 治理规则正则 + 安全审计模式唯一真源 (SSoT)
 
 
 
@@ -189,8 +191,51 @@ Usage::
 
     )
 
-
-
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: trae_028 命名规则真源
+#   fields: R5 数字后缀禁止（L1224-1228 gov_doc_003）+ DIM-5 规则文件名主题前缀 + module_id 字段格式
+#   code: trae_028_doc_structure_naming.yaml
+# - id: I2
+#   name: 安全审计模式定义（人工裁定）
+#   fields: PII 类别（email/phone/ssn/credit_card/api_key/ip_address/custom）+ KB 投毒指标 5 条 + PII 检测正则 6 类
+#   code: 原 security_patterns.py（ARCH-033 Phase7 已合并入本模块）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 治理正则编译
+#   name_en: DIGIT_SUFFIX_RE/RULE_NAME_RE/MODULE_ID_RE
+#   intro: 把三条治理命名规则编译成 re.Pattern 常量，全项目唯一真源禁止重定义
+#   desc: DIGIT_SUFFIX_RE=r"_\d+$"（L290）；RULE_NAME_RE=r"^trae_\d+_(.+)\.yaml$"（L310）；MODULE_ID_RE=r"^module_id:\s*(.+)$" MULTILINE（L334）
+#   inputs: I1
+#   outputs: 3 个编译后治理正则常量
+#   invariant: 正则变更 MUST 同步 trae_028 YAML 真源
+# - id: A2
+#   name_zh: ② 安全审计模式编译
+#   name_en: PIICategory/POISONING_INDICATORS/PII_PATTERNS
+#   intro: PII 类别枚举 + 投毒指示正则 + 按类别组织的 PII 正则字典
+#   desc: PIICategory(str,Enum) 7 类（L366）；POISONING_INDICATORS 5 条 IGNORECASE 正则（L422-458）；PII_PATTERNS dict 6 类 9 条正则（L478-562）
+#   inputs: I2
+#   outputs: PII 枚举 + 投毒指标列表 + PII 模式字典
+#   invariant: 安全模式变更 MUST 同步审计三包使用处
+# 层: 输出
+# - id: O1
+#   name_zh: 治理正则常量
+#   name_en: governance regex constants
+#   intro: 供 commit gate 与全量 validator 共同 import 的三条命名规则正则
+#   downstream: r5_digit_suffix_gate、create_guard（commit-time）；validate_directory_structure.py、validate_rule_frontmatter.py、generate_pathway_registry.py、generate_path_ownership_map.py（scripts 全量校验）
+# - id: O2
+#   name_zh: 安全审计模式常量
+#   name_en: security audit patterns
+#   intro: 供语义审计三包做 KB 投毒扫描与 PII 检测脱敏的模式常量
+#   downstream: semantic_auditor/semantic_audit/audit_trail 三包的 kb_gate.py 与 privacy.py
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> O1
+# A2 --> O2
 """
 
 

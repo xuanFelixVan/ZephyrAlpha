@@ -15,13 +15,68 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Blueprint-Code Consistency Gate — MOD-INF-022.
+"""
+
+Blueprint-Code Consistency Gate — MOD-INF-022.
 
 Validates that each blueprint decision (D-022-01 through D-022-30) has at least
 one corresponding code implementation or declared status.
 
 Run: python -m zephyr.governance.architecture_governance.blueprint_code_consistency [--json]
 Returns: 0 if consistent, 1 if drift detected.
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 蓝图决策映射表 DECISION_MAP
+#   fields: 26 条 DecisionMapping（decision_id/title/status/code_module/notes）
+#   code: blueprint_code_consistency.py L55-220
+# - id: I2
+#   name: 被验证代码模块
+#   fields: src/zephyr 下可导入 Python 模块路径
+#   code: importlib.import_module L227
+# 层: 算法
+# - id: A1
+#   name_zh: ① 模块存在性验证
+#   name_en: _verify_module_exists + _file_exists
+#   intro: 先试 importlib 真实导入，导入失败回退查 src/ 下文件是否存在
+#   desc: import_module 成功→True；ImportError→按模块路径拼 src/xx.py 查存在性；空路径→False
+#   inputs: I2
+#   outputs: 模块是否真实存在
+# - id: A2
+#   name_zh: ② 决策-代码一致性检查
+#   name_en: check_consistency
+#   intro: 遍历决策映射表，声明已实现但模块找不到的记为 drift 漂移
+#   desc: drift = (status==IMPLEMENTED 且 module_found==False)；BACKLOG 无模块不算 drift
+#   inputs: I1 A1
+#   outputs: (drift_count, results) 结果列表
+# - id: A3
+#   name_zh: ③ 结果汇总与退出码
+#   name_en: main
+#   intro: 统计各状态决策数并打印 drift 告警，有漂移返回退出码 1
+#   desc: implemented/in_progress/backlog/owner 分类计数；--json 输出完整 JSON；drift>0 → exit 1
+#   inputs: A2
+#   outputs: CLI 文本/JSON 报告 + 退出码
+# 层: 输出
+# - id: O1
+#   name_zh: 一致性检查结果
+#   name_en: (drift_count, results)
+#   intro: 每条决策的实现状态与模块存在性，drift 标记不一致项
+#   downstream: 无下游/内部使用（[CONSUMERS] 空，manual 手动运行门禁）
+# - id: O2
+#   name_zh: CLI 报告与退出码
+#   name_en: main 返回值
+#   intro: 0=蓝图与代码一致，1=检出漂移（DRIFT 行打印缺失模块）
+#   downstream: 无下游/内部使用（命令行人工/CI 查看）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A2
+# I2 --> A1
+# A1 --> A2
+# A2 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

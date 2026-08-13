@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 CapabilityLookup — 能力->真源文件反查注册表的查询 API + 扫描/派生逻辑（合一）
 ================================================================================
 
@@ -68,6 +70,102 @@ CLI:
     python -m zephyr.governance.capability_lookup --find "handoff"
     python -m zephyr.governance.capability_lookup --list-conflicts
     python -m zephyr.governance.capability_lookup --check-file src/zephyr/xxx.py
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 能力索引YAML真源
+#   fields: capabilities[].capability_id/aliases/description + 可选 canonical_override/duplicates_manual/removed_duplicates_manual
+#   code: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
+# - id: I2
+#   name: 磁盘源码文件头部
+#   fields: 前30行 [MODULE]/[A_module]/[BLUEPRINT]/[DOMAIN]/[MATURITY] + docstring 首行
+#   code: src/zephyr/**/*.py + scripts/governance/**/*.py（SCAN_ROOTS 双根）
+# - id: I3
+#   name: git 删除历史
+#   fields: git log --diff-filter=D --name-only 的 (path, commit) 记录
+#   code: git log -- src/zephyr/
+# - id: I4
+#   name: 查询/门禁入参
+#   fields: find(query) 关键词；check_*(new_py_files) 新增文件 (abs_path, rel_path) 列表
+#   code: find/get/check_ssot_conflicts/check_capability_duplicates 等 API 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 头部解析
+#   name_en: parse_header_from_text
+#   intro: 正则提取代码文件头部5字段+docstring首行，只读前30行省时
+#   desc: _RE_MODULE/_RE_BLUEPRINT/_RE_DOMAIN/_RE_MATURITY/_RE_MODULE_ID 逐行匹配 + docstring 状态机；磁盘扫描 rglob("*.py") 只收录有头部声明的文件
+#   inputs: I2
+#   outputs: path→HeaderInfo 映射（_disk_headers）
+# - id: A2
+#   name_zh: ② canonical派生+duplicates
+#   name_en: _derive_canonical_and_duplicates
+#   intro: basename 匹配能力 token，按 override>单候选>成熟度>import数 选出唯一真源文件
+#   desc: 候选=basename∈{capability_id}∪aliases；优先级 canonical_override > 单候选 > 成熟度(production>design) > import 数 > 打平标 AMBIGUOUS；其余候选记 duplicates（relation 由 blueprint 比对派生 conflicting/sibling）；canonical 是 __init__.py 时同目录文件算包组件非 duplicate
+#   inputs: I1 A1
+#   outputs: canonical_file/module_id/domain/maturity + duplicates
+#   invariant: canonical 等派生字段只运行时算，不持久化为第二真源
+# - id: A3
+#   name_zh: ③ removed_duplicates 惰性派生
+#   name_en: _derive_removed_duplicates
+#   intro: 首次查询时才跑 git 历史，找出已被删除的同 basename 旧实现
+#   desc: git log 删除记录 → basename 匹配 → git show {commit}^:{path} 读头部验证（防 basename 巧合误报）→ 排除已声明路径后追加；git 不可用降级为空不阻断
+#   inputs: I3 A2
+#   outputs: removed_duplicates 列表
+# - id: A4
+#   name_zh: ④ reconcile 合并
+#   name_en: _reconcile
+#   intro: 标记 canonical 死活、合并人工 manual 条目、发现 pending 重复候选
+#   desc: canonical_alive=文件在磁盘存在 → status alive/dead；duplicates_manual 去重合并；磁盘上同 module_id/module_path 但未收录的文件记入 pending_candidates（确凿重复信号）
+#   inputs: A2
+#   outputs: 完整的内存能力注册表
+# - id: A5
+#   name_zh: ⑤ 关键词搜索 find/get
+#   name_en: find/_token_match
+#   intro: 精确子串 + ASCII词AND + CJK≥3字符公共子串的语义搜索，并落审计日志
+#   desc: 退化守卫（<2字符返回[]）→ 精确子串 → token 包含匹配（ASCII AND；CJK 滑动窗口公共子串，阈值 _CJK_MIN_SUBSTRING=3）；find/get 命中后写 .runtime/lookup_audit/<session>.jsonl（fail-open）
+#   inputs: I4 A4 A3
+#   outputs: 能力条目 dict 列表 + 审计日志
+# - id: A6
+#   name_zh: ⑥ 四路门禁检测
+#   name_en: check_ssot_conflicts/check_capability_duplicates/check_module_id_conflicts/check_module_domain_consistency
+#   intro: L2 GitCommitGateway 与 L3 pre-commit hook 共用的 SSoT 防重复检测唯一真源
+#   desc: 同 module_path 硬碰撞；basename 撞已注册能力（复用派生 duplicates 状态，含 governance/ 根vs子目录碰撞补盲）；module_id 跨模块目录树重复（同树豁免）；[MODULE] 声明域与物理路径域一致性
+#   inputs: I4 A4
+#   outputs: SSoTConflict/CapabilityDuplicate/ModuleIdConflict/DomainMismatch 列表（空=ALLOW 非空=BLOCK）
+# 层: 输出
+# - id: O1
+#   name_zh: 能力反查结果 dict
+#   name_en: capability entry dict
+#   intro: find/get/list_all/list_ssot_conflicts/check_file_canonical 返回的能力条目（canonical_file/status/duplicates 等）
+#   downstream: AI sessions（能力真源反查）；scaffold（find_files_by_module_path）
+# - id: O2
+#   name_zh: 门禁阻断信号
+#   name_en: gate violation dataclasses
+#   intro: 四路 check_* 返回的冲突条目列表，非空即门禁 BLOCK
+#   downstream: GitCommitGateway（L2 check_ssot_conflicts/check_capability_duplicates）；check_ssot_gate（L3 pre-commit hook）
+# - id: O3
+#   name_zh: 查询审计日志 JSONL
+#   name_en: lookup audit log
+#   intro: 每次 find/get 落盘一行 JSONL（ts/tool/query/result_count/rule_ids），证明 AI 查过能力表
+#   downstream: capability_lookup_required_gate（CAPABILITY-LOOKUP-REQUIRED gate 消费 .runtime/lookup_audit/）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# A1 --> A2
+# I3 --> A3
+# A2 --> A3
+# A2 --> A4
+# I4 --> A5
+# A4 --> A5
+# A3 --> A5
+# I4 --> A6
+# A4 --> A6
+# A5 --> O1
+# A5 --> O3
+# A6 --> O2
 """
 
 from __future__ import annotations

@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_CHECK_NO_COMMIT_DERIVED | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  pre-commit hook脚本按需调用,非cron/daemon常驻服务
-"""门禁：阻断对派生产物（已离库的生成器输出）的 git add。
+"""
+
+门禁：阻断对派生产物（已离库的生成器输出）的 git add。
 
 治本：#ARCH-GOV-BUDGET-001 / I-GOV-1（2026-08-05）
 病根：派生产物（域文档、项目树）已 .gitignore + git rm --cached 离库，但 AI 可能
@@ -34,6 +36,43 @@
 [ERROR_CONTRACT] 无 staged 派生产物 → exit 0；违规 → exit 1
 [TESTS] tests/governance/d11_compliance/test_check_no_commit_derived.py
 [DOMAIN] D_GOVERNANCE
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: git staged 文件列表
+#   fields: git diff --cached --name-only --diff-filter=ACM 输出的文件路径（仅新增/复制/修改，不含删除）
+#   code: get_staged_files L61-75
+# 层: 算法
+# - id: A1
+#   name_zh: ① 派生产物路径判定
+#   name_en: is_derived
+#   intro: 用两条正则匹配 staged 路径是否属于已离库的生成器输出，README.md 豁免
+#   desc: DERIVED_PATTERNS 两条编译正则（域文档 73 篇 + 项目树 zh/en）逐一 search 路径；文件名在 EXEMPT_NAMES={README.md} 中直接放行；命中任一模式即判派生产物
+#   inputs: I1
+#   outputs: 每个 staged 路径的 是/否 判定
+#   invariant: 只读 staged 文件名，不修改工作树
+# - id: A2
+#   name_zh: ② 门禁二元判定
+#   name_en: main
+#   intro: 收集全部违规路径，命中则打印治本说明并 exit 1 硬阻断
+#   desc: violations=[f for f in staged if is_derived(f)]；空列表 exit 0，非空打印 GATE-NO-COMMIT-DERIVED 报告（病根/正确做法/违规清单）后 exit 1；fail-closed 无豁免
+#   inputs: A1
+#   outputs: 进程退出码 0/1
+#   invariant: fail-closed（违规必 exit 1，无例外豁免）
+# 层: 输出
+# - id: O1
+#   name_zh: 门禁退出码与违规报告
+#   name_en: exit code + violation report
+#   intro: exit 0 放行 / exit 1 阻断并打印违规派生产物路径清单
+#   invariant: 派生产物禁止入 git
+#   downstream: .pre-commit-config.yaml gate-no-commit-derived hook
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

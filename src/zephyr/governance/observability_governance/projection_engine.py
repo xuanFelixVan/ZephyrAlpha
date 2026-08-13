@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 ProjectionEngine — 事件折叠为当前状态（DW-0003）
 =================================================
 将 task_events 中的事件流折叠（fold）为任务的当前状态 dict。
@@ -27,6 +29,42 @@ ProjectionEngine — 事件折叠为当前状态（DW-0003）
 - FIELD_UPDATED: 更新任意字段（payload 中指定 field + value）
 
 未知事件类型：no-op（不修改状态，不报错）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 任务事件流 task_events 表
+#   fields: 按 task_id 回放的事件序列（event_type + payload JSON）
+#   code: EventStore.replay_events L129
+# 层: 算法
+# - id: A1
+#   name_zh: ① 事件流回放读取
+#   name_en: _get_event_store/replay_events
+#   intro: 懒加载 EventStore，按 task_id 取出全部历史事件
+#   desc: EventStore(db_path, auto_init=True) 懒初始化后 replay_events(task_id) 返回事件列表
+#   inputs: I1
+#   outputs: 事件列表
+# - id: A2
+#   name_zh: ② 处理器表驱动折叠
+#   name_en: fold_to_current_state/_HANDLERS
+#   intro: 四类事件各配一个 handler，按序把事件流折叠成任务当前状态
+#   desc: CREATED 初始化字段（task_id 不覆盖）/STATUS_CHANGED 改 status/PRIORITY_CHANGED 改 priority/FIELD_UPDATED 改任意 field；payload JSON 解析失败按空 dict；handler 异常抛 ProjectionError
+#   inputs: A1
+#   outputs: 当前状态 dict
+#   invariant: 同一事件序列折叠结果确定；未知事件类型 no-op
+# 层: 输出
+# - id: O1
+#   name_zh: 任务当前状态 dict
+#   name_en: current_state
+#   intro: 折叠后的任务状态字典，空事件流返回仅含 task_id 的 dict
+#   invariant: 确定性 fold；未知事件不报错
+#   downstream: zephyr.governance.persistence.task_repo; zephyr.governance.audit.snapshot_manager（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

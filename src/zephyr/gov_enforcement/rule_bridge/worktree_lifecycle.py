@@ -14,7 +14,9 @@
 # [TESTS] tests/governance/rule_bridge/test_worktree_lifecycle.py
 # [A_module] module_id=MOD-GOV_ENFORCEMENT_WORKTREE_LIFECYCLE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换）
+"""
+
+WorktreeLifecycle — worktree 生命周期状态机（5态 + 8转换）
 
 #ARCH-WORKTREE-LIFECYCLE-001 治本（2026-07-21）：
 原 SessionManager（MOD-INF-039，5态：idle/active/paused/completed/archived）是死代码
@@ -39,6 +41,93 @@ worktree 实际生命周期：
 持久化：
   JSON 文件，存于 .runtime/worktree_lifecycle/<session_id>.json。
   不依赖 DB，保持轻量；reconciler 通过扫描该目录发现异常状态。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session_id 与目标状态
+#   fields: session_id 字符串 + target_state（created/active/idle/quarantined/swept）+ detail 备注
+#   code: transition(session_id, target_state) L203
+# - id: I2
+#   name: 状态机配置 YAML
+#   fields: transitions 合法转换表 + timeout_rules 超时规则
+#   code: config/worktree_state_machine.yaml L70
+# - id: I3
+#   name: 生命周期记录 JSON
+#   fields: state / created_at / last_transition_at / history 转换历史
+#   code: .runtime/worktree_lifecycle/{session_id}.json L71
+# 层: 算法
+# - id: A1
+#   name_zh: ① 加载状态机配置
+#   name_en: load_state_machine_config / _load_config
+#   intro: 从 YAML 读合法转换表和超时规则，文件缺失就用内置默认转换表兜底
+#   desc: yaml.safe_load 读取；FileNotFoundError 时告警并留空，后续 _is_valid_transition 回退 _DEFAULT_TRANSITIONS
+#   inputs: I2
+#   outputs: transitions + timeout_rules
+# - id: A2
+#   name_zh: ② 注册新 session
+#   name_en: WorktreeLifecycle.register
+#   intro: 给新 session 建初始状态 created 的记录，已存在就直接返回当前状态
+#   desc: 幂等：读到已有记录则返回其 state；否则写 {state:created, created_at, history:[None→created]} JSON
+#   inputs: I1 I3
+#   outputs: WorktreeState.CREATED
+# - id: A3
+#   name_zh: ③ 合法转换校验
+#   name_en: _is_valid_transition
+#   intro: 对照转换表检查 from→to 是否合法，swept 是终态不许再转
+#   desc: 优先查 config transitions 逐条匹配 from/to；config 缺失时查内置 _DEFAULT_TRANSITIONS frozenset 表（L331）
+#   inputs: A1
+#   outputs: True/False
+#   invariant: swept 为终态（出边为空集）
+# - id: A4
+#   name_zh: ④ 执行状态转换
+#   name_en: WorktreeLifecycle.transition
+#   intro: 校验通过后改写状态、盖时间戳、追加历史，非法就抛 WorktreeTransitionError
+#   desc: RLock 保护；未注册抛 WorktreeLifecycleError；非法转换抛 WorktreeTransitionError(ZA-TR-0018)；写回 JSON 记录
+#   inputs: I1 I3 A3
+#   outputs: 目标 WorktreeState
+#   invariant: 转换必须合法；记录持久化到 .runtime/worktree_lifecycle/
+# - id: A5
+#   name_zh: ⑤ 隔离到期检查
+#   name_en: check_quarantine_expiry
+#   intro: 扫 quarantined 状态的 session，超过 72 小时没动就列入清理名单
+#   desc: elapsed_h=(now-last_transition_at)/3600 ≥ QUARANTINE_TTL_HOURS(72) → 加入 expired 列表
+#   inputs: I3
+#   outputs: 过期 session_id 列表
+# - id: A6
+#   name_zh: ⑥ swept 记录归档清理
+#   name_en: cleanup_swept
+#   intro: 把已 swept 终态的记录物理删除，最多一次清 100 条
+#   desc: list_by_state(SWEPT) 取前 max_count 条，逐条 _delete_record 删 JSON 文件
+#   inputs: I3
+#   outputs: 清理条数
+# 层: 输出
+# - id: O1
+#   name_zh: 当前状态与转换历史
+#   name_en: WorktreeState / history list
+#   intro: get_state/get_history/list_by_state 返回状态与轨迹，供 reconciler 发现异常 worktree
+#   downstream: session_worktree；git_performance_monitor_reconciler（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: 隔离到期名单
+#   name_en: expired session list
+#   intro: 超 72h 的 quarantined session 列表，供 sweep 流程物理清理
+#   downstream: session_worktree sweep 流程（内部使用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# I3 --> A2
+# A1 --> A3
+# I1 --> A4
+# I3 --> A4
+# A3 --> A4
+# I3 --> A5
+# I3 --> A6
+# A2 --> A4
+# A4 --> O1
+# A5 --> O2
+# A6 --> O1
 """
 
 from __future__ import annotations

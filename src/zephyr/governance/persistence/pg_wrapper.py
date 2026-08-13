@@ -13,7 +13,9 @@
 # [ERROR_CONTRACT] execute() 透传 psycopg2.Error 给调用方；close() 永不抛异常
 # [TESTS] tests/test_depgraph_db.py（间接 via DepgraphReader）
 # [TTL] permanent
-"""pg_wrapper.py — psycopg2 connection 的 sqlite3 兼容 execute() 包装器（单一规范副本）。
+"""
+
+pg_wrapper.py — psycopg2 connection 的 sqlite3 兼容 execute() 包装器（单一规范副本）。
 
 治本背景（#ARCH-DI-SEAM-001 / R3，2026-07-28）
 -----------------------------------------------
@@ -44,6 +46,55 @@ Usage::
     cursor = conn.execute("SELECT * FROM nodes WHERE node_id = %s", (node_id,))
     row = cursor.fetchone()
     conn.close()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: psycopg2 PG 连接 外部驱动对象
+#   fields: get_depgraph_pg_connection() 返回的原生 psycopg2 connection
+#   code: __init__(pg_conn) L76
+# - id: I2
+#   name: SQL 执行请求 参数组
+#   fields: sql 语句（%s 占位）+ params 参数元组
+#   code: execute(sql, params) L79
+# 层: 算法
+# - id: A1
+#   name_zh: ① sqlite3 兼容 execute 包装
+#   name_en: _PgConnExecuteWrapper.execute
+#   intro: 给没有 execute() 的 psycopg2 连接包一层，让老 SQLite 代码一行不改照跑
+#   desc: 每次调用新建 RealDictCursor → cur.execute(sql, params) → 返回游标；RealDictCursor 行等价 sqlite3.Row 的 dict(row)/row['col'] 用法
+#   inputs: I1 I2
+#   outputs: RealDictCursor 游标（fetchone/fetchall 取字典行）
+#   invariant: execute() 每次创建新 RealDictCursor；psycopg2.Error 透传给调用方
+# - id: A2
+#   name_zh: ② 连接状态与关闭管理
+#   name_en: closed 属性 + close()
+#   intro: 暴露底层连接是否已关，供 per-thread 连接池惰性重建；关闭透传底层
+#   desc: closed 属性读 self._pg_conn.closed（5.64.2 per-thread 重建依据）；close() 透传底层 close()，调用方 try/except 隔离异常
+#   inputs: I1
+#   outputs: closed 布尔 / 连接关闭
+#   invariant: close() 异常由调用方隔离
+# 层: 输出
+# - id: O1
+#   name_zh: 字典行查询游标
+#   name_en: RealDictCursor
+#   intro: 查询结果按字典行返回，与原 sqlite3.Row 用法完全等价
+#   downstream: depgraph_reader; decision_graph_reader; rule_engine（[CONSUMERS]）
+# - id: O2
+#   name_zh: PG 错误别名
+#   name_en: PgError
+#   intro: psycopg2.Error 的 DIP 重导出，业务模块靠它捕异常就不用顶层 import psycopg2
+#   invariant: isinstance 语义与 MRO 透传，零运行时开销
+#   downstream: rule_engine 等业务模块（DIP 抽象依赖）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# A1 --> O1
+# A2 --> O1
+# A1 --> O2
 """
 
 from __future__ import annotations
