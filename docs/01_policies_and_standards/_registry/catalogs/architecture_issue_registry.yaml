@@ -12102,6 +12102,14 @@ entries:
        实证 akshare 新浪期权链（option_sse_list/codes/daily_sina）可用 → 升主源；
        另修 volume 列 safe_float→safe_int（UInt64 拒收 "430606.0" 浮点串，Code 整批落盘）。
        修复后 option_kline 补回 7/30-8/13 共 2143 行。
+    7. futures_term_structure 换主源（2026-08-14 续）：QMT 模拟账户无期货板块权限，
+       _load_futures_symbols_from_sectors 返回 0 → 任务恒报"无 symbols 且 QMT 期货板块
+       加载失败"，futures_term_structure 表长期 0 行；fallback 配置的 exchange 源在
+       policies.yaml 不存在（假 fallback）。实证 tushare pro.fut_daily(trade_date)
+       全市场合约日行情可用（1074 合约/日）→ 升主源：按品种分组、到期月升序取相邻
+       前两合约构建 (front,next) 对，basis=front.close-next.close；tushare_provider
+       新增 futures_term_structure capability，miniqmt 降 fallback（QMT 期货权限
+       开通可恢复）。修复后补回 8/1-8/13 共 783 行（87 品种对/日）。
     遗留：东财 push2 实时行情类接口（realtime_snapshot/stock_news_em/research_report_em
     等）仍受反爬影响，间歇可用；#ARCH-IFIND-FAILOVER 系列 ifind 待续费。
     capability_validator 覆盖 fallback_sources 的治本扩展另行登记施工。
@@ -12110,9 +12118,11 @@ entries:
     fred/eia provider _detect_local_proxy；akshare _parse_etf_list_row 日期哨兵。
     实测：lof_list_refresh 371 行、kline_lof_1min 端到端解锁、etf_list_refresh 1628 行、
     provider 测试 131 全过、RSSHub 重建恢复（dist 布局漂移 rebuild + 计划任务拉起）。
+    续（2026-08-14）：tushare_provider futures_term_structure 能力 + tasks.yaml 主源切换
+    （miniqmt→tushare，移除假 exchange fallback），补回 8/1-8/13 共 783 行。
   impact:
-    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline主源切换）'
-    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list + money_flow capability）'
+    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline/futures_term_structure主源切换）'
+    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list + money_flow + futures_term_structure capability）'
     - 'src/zephyr/data/implementations/fred_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/eia_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/akshare_provider.py（_parse_etf_list_row 日期哨兵 + option_kline volume safe_int）'

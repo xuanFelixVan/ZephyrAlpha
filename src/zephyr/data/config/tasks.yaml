@@ -872,7 +872,7 @@ tasks:
     capability: convertible_bond_iv
 - task_id: futures_term_structure_incremental
   table: c1_market.futures_term_structure
-  source: miniqmt
+  source: tushare          # QMT期货板块为空治本(2026-08-14): 模拟账户无期货板块，tushare fut_daily 升主源(实测1074合约/日)
   schedule: intraday_realtime
   incremental: true
   date_col: trade_date
@@ -883,7 +883,7 @@ tasks:
     description: "期货期限结构增量（基差需自己计算）"
 
   fallback_sources:
-  - source: exchange
+  - source: miniqmt
     capability: futures_term_structure
 - task_id: tick_data_snapshot
   table: c1_market.tick_data

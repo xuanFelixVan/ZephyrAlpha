@@ -30,6 +30,7 @@ from __future__ import annotations
 
 import datetime
 import logging
+import re
 import threading
 import time
 from typing import Iterator
@@ -55,6 +56,11 @@ _TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 _TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
 # 2026-08-14 东财反爬治本：LOF 列表替代源（fund_lof_spot_em 持续 RemoteDisconnected）
 _TBL_LOF_LIST = get_registry().table("market_lof_list")
+# 2026-08-14 QMT期货板块为空治本：期限结构替代源（fut_daily 全市场合约日行情）
+_TBL_FUTURES_TERM = get_registry().table("market_futures_term")
+
+# 具体期货合约代码：品种字母 + 到期数字(3~4位) + 交易所后缀；连续合约(如 IC.CFX/TL0.CFX)无到期数字被剔除
+_FUT_CONTRACT_RE = re.compile(r"^([A-Za-z]{1,4})(\d{3,4})\.([A-Za-z]{2,5})$")
 
 
 class TushareProvider(IngestProviderBase):
@@ -72,7 +78,7 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow"],
+        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow", "futures_term_structure"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -132,6 +138,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_lof_list(payload, policy)
         elif capability == "money_flow":
             yield from self._fetch_money_flow(payload, policy)
+        elif capability == "futures_term_structure":
+            yield from self._fetch_futures_term_structure(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
@@ -547,6 +555,80 @@ class TushareProvider(IngestProviderBase):
                     ))
 
             self._log.info(f"money_flow {dstr}: {len(rows)} 行（tushare 替代东财）")
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=current.isoformat(), elapsed_sec=seconds_since(t0),
+            )
+            current += datetime.timedelta(days=1)
+
+    def _fetch_futures_term_structure(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """期货期限结构（近月/次月基差）增量，写入 c1_market.futures_term_structure。
+
+        QMT 模拟账户期货板块为空治本（2026-08-14）：miniqmt _load_futures_symbols_from_sectors
+        返回 0 导致任务恒失败，改用 tushare pro.fut_daily(trade_date) 全市场合约日行情
+        （实测 1074 合约/日）。按品种分组、到期月升序排序，取相邻前两合约构建
+        (front, next) 对，basis = front.close - next.close。连续合约代码
+        （IC.CFX/TL0.CFX 等，无到期数字）由 _FUT_CONTRACT_RE 自动剔除。
+
+        表 schema: (trade_date, symbol, front_contract, next_contract,
+                    front_price, next_price, basis, exchange, data_source)
+        symbol/front_contract 对齐 miniqmt 版语义（均填近月合约代码，不含交易所后缀）。
+        """
+        table = _TBL_FUTURES_TERM
+        columns = [
+            "trade_date", "symbol", "front_contract", "next_contract",
+            "front_price", "next_price", "basis", "exchange", "data_source",
+        ]
+        start = payload.start or datetime.date.today()
+        end = payload.end or datetime.date.today()
+
+        current = start
+        while current <= end:
+            t0 = now_utc()
+            dstr = current.strftime("%Y%m%d")
+            try:
+                df = self._call_with_policy(self._pro.fut_daily, policy, trade_date=dstr)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=current.isoformat(), elapsed_sec=seconds_since(t0), error=str(e),
+                )
+                current += datetime.timedelta(days=1)
+                continue
+
+            rows: list[tuple] = []
+            if df is not None and not df.empty:
+                groups: dict[str, list[tuple]] = {}
+                for _, r in df.iterrows():
+                    ts_code = str(r.get("ts_code", "") or "")
+                    m = _FUT_CONTRACT_RE.match(ts_code)
+                    if not m:
+                        continue
+                    variety = m.group(1).upper()
+                    expiry = m.group(2)
+                    exchange = m.group(3).upper()
+                    try:
+                        close = float(r.get("close"))
+                    except (ValueError, TypeError):
+                        continue
+                    code_no_exch = ts_code.split(".")[0].upper()
+                    groups.setdefault(variety, []).append((expiry, code_no_exch, close, exchange))
+
+                for variety, lst in groups.items():
+                    if len(lst) < 2:
+                        continue
+                    lst.sort(key=lambda x: x[0])
+                    _, front_code, front_price, front_exch = lst[0]
+                    _, next_code, next_price, _ = lst[1]
+                    basis = round(front_price - next_price, 4)
+                    rows.append((
+                        current.isoformat(), front_code, front_code, next_code,
+                        front_price, next_price, basis, front_exch, "tushare",
+                    ))
+
+            self._log.info(f"futures_term_structure {dstr}: {len(rows)} 品种对（tushare 替代 QMT）")
             yield FetchResult(
                 table=table, columns=columns, rows=rows,
                 last_key=current.isoformat(), elapsed_sec=seconds_since(t0),
