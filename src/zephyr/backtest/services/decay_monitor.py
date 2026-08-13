@@ -16,14 +16,80 @@
 # [TTL] permanent
 
 """
+
+
 Decay Monitor — 策略衰减监控告警器 (MOD-BT-018)
 
 跟踪策略性能指标随时间变化, 通过短期/长期均值对比和线性趋势检测识别衰减。
 4级告警: STABLE → WARNING → DECAYING → CRITICAL。
 
-依据: D:\\临时工作区\\依赖图\\32-D-BACKTEST-回测引擎域.md §1 BT-18
+依据: D:\临时工作区\依赖图-D-BACKTEST-回测引擎域.md §1 BT-18
 SSoT: depgraph MOD-BT-018
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 策略性能指标序列 float
+#   fields: Sharpe/收益率/胜率等 单值update增量或序列evaluate批量
+#   code: metric_value / metrics
+# - id: I2
+#   name: 衰减监控配置 DecayMonitorConfig frozen
+#   fields: short_window=20 + long_window=60 + warning_threshold=0.15 + critical_threshold=0.30 + trend_window=30
+#   code: DecayMonitorConfig L93-114
+# 层: 算法
+# - id: A1
+#   name_zh: ① 样本充足性闸门
+#   name_en: _analyze(样本检查段)
+#   intro: 样本不够短期窗口就直接判STABLE不瞎报
+#   desc: n<short_window返回STABLE报告 均值填充长短均值 样本为0补0.0（L218-234）
+#   inputs: I1 I2
+#   outputs: STABLE早退报告
+#   invariant: 样本不足返回STABLE; 指标值必须有限(NaN/Inf报错)
+# - id: A2
+#   name_zh: ② 短长期均值衰减比
+#   name_en: _analyze(衰减比段)
+#   intro: 短期均值比长期均值掉了多少，正数就是衰减
+#   desc: short=尾20均值 long=尾60均值 → decay_ratio=(long_mean-short_mean)/|long_mean| → 长期≈0时按短期符号给±1（L236-248）
+#   inputs: I1 I2
+#   outputs: decay_ratio+short/long_mean
+# - id: A3
+#   name_zh: ③ 最小二乘趋势斜率
+#   name_en: _compute_slope
+#   intro: 尾30个点线性拟合看指标在升还是在降
+#   desc: x=arange(n) → slope=Σ(x-x̄)(y-ȳ)/Σ(x-x̄)² → n<2或分母≈0返回0（L250-252, L295-308）
+#   inputs: I1 I2
+#   outputs: trend_slope
+# - id: A4
+#   name_zh: ④ 4级告警判定
+#   name_en: _analyze(级别判定段)
+#   intro: 按衰减阈值和下降趋势综合定STABLE/WARNING/DECAYING/CRITICAL
+#   desc: decay_ratio>30%或短期均值<0 → CRITICAL → >15%WARNING → 负斜率且幅度>5%均值DECAYING → worst取最严重（L254-293）
+#   inputs: A1 A2 A3 I2
+#   outputs: DecayLevel+报告message
+#   invariant: 级别取最严重
+# 层: 输出
+# - id: O1
+#   name_zh: 衰减分析报告 DecayReport
+#   name_en: DecayReport
+#   intro: 告警级别+衰减比+趋势斜率+样本数，供调度器和策略治理告警
+#   invariant: 指标值必须有限; update有状态evaluate无状态
+#   downstream: scheduler MOD-BT-017 ; 策略治理 D-GOVERNANCE
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# I2 --> A4
+# A1 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations

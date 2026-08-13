@@ -14,7 +14,9 @@
 # [TESTS] tests/backtest/test_report_generator.py
 # [A_module] module_id=MOD-BT-019 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_BACKTEST — Backtest Report Generator (回测报告生成器)
+"""
+
+D_BACKTEST — Backtest Report Generator (回测报告生成器)
 
 将回测结果(BacktestResult)转换为结构化 HTML 报告。
 包含汇总指标表、元数据、过拟合警告、可选的权益曲线 SVG 图和交易日志表。
@@ -24,6 +26,96 @@
 
 设计真源: depgraph MOD-BT-019
 蓝图: docs/03_modules/_domain_backtest/report_generator/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 回测结果字典 dict
+#   fields: strategy_id + annual_return + total_return + sharpe_ratio + max_drawdown + win_rate + trades_count + overfitting_flag + 时间区间/基准
+#   code: result
+# - id: I2
+#   name: 权益曲线 list[dict]
+#   fields: timestamp + equity
+#   code: equity_curve
+# - id: I3
+#   name: 交易日志 list[dict]
+#   fields: timestamp + symbol + side + price + quantity + commission
+#   code: trade_log
+# - id: I4
+#   name: 报告配置 ReportConfig frozen
+#   fields: format + include_equity_curve + include_trade_log + max_trades_display + chart_width/height
+#   code: ReportConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验与格式分发
+#   name_en: generate
+#   intro: 校验result必须是dict且有strategy_id，按配置分发HTML或TEXT渲染
+#   desc: isinstance校验 → strategy_id非空校验 → format==TEXT走文本否则走HTML
+#   inputs: I1 I2 I3 I4
+#   outputs: 报告字符串
+# - id: A2
+#   name_zh: ② HTML报告组装
+#   name_en: _generate_html
+#   intro: 拼自包含HTML：头部元信息+指标表+过拟合警告+可选SVG图和交易表
+#   desc: html.escape转义 → 汇总指标表6行 → overfitting_flag触发红色警告 → 内联CSS模板
+#   inputs: I1 I2 I3
+#   outputs: HTML字符串
+#   invariant: 缺失字段显示N/A不报错; UTF-8自包含
+# - id: A3
+#   name_zh: ③ 权益曲线SVG坐标映射
+#   name_en: _build_equity_svg
+#   intro: 把equity序列归一化映射成SVG折线坐标点
+#   desc: values=float(equity) → min/max归一化 → x=padding+i/(n-1)×plot_w, y反向映射plot_h → polyline
+#   inputs: I2 I4
+#   outputs: SVG片段
+# - id: A4
+#   name_zh: ④ 交易日志表截断渲染
+#   name_en: _build_trade_table
+#   intro: 交易日志截断到max_trades_display条渲染成HTML表
+#   desc: trade_log[:max] → 逐行转义填6列表 → 超出时附截断说明
+#   inputs: I3 I4
+#   outputs: 交易表HTML
+# - id: A5
+#   name_zh: ⑤ 数值格式化辅助
+#   name_en: _fmt_percent/_fmt_float/_fmt_int/_fmt_datetime
+#   intro: 百分比/浮点/整数/日期统一格式化，异常值兜底N/A
+#   desc: float(value)×100保留2位 / 保留4位小数 / int转换 / datetime strftime，异常返回N/A
+#   inputs: I1
+#   outputs: 格式化字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 回测报告字符串 HTML/TEXT
+#   name_en: report_str
+#   intro: 自包含HTML或纯文本报告，可直接离线打开
+#   invariant: HTML内联CSS; 缺失字段N/A
+#   downstream: 前端归档 ; 邮件分发 ; 人工审查
+# - id: O2
+#   name_zh: 落盘报告文件 Path
+#   name_en: save_report
+#   intro: 报告写入磁盘文件并返回Path
+#   downstream: 前端归档 ; 邮件分发
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A1
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# I2 --> A3
+# I4 --> A3
+# I3 --> A4
+# I4 --> A4
+# I1 --> A5
+# A1 --> A2
+# A2 --> A3
+# A2 --> A4
+# A2 --> A5
+# A2 --> O1
+# A1 --> O1
+# O1 --> O2
 """
 
 from __future__ import annotations

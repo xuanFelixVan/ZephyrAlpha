@@ -14,7 +14,9 @@
 # [TESTS] tests/backtest/test_anomaly_diagnoser.py
 # [A_module] module_id=MOD-BT-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_BACKTEST — Anomaly Diagnoser (回测异常诊断器)
+"""
+
+D_BACKTEST — Anomaly Diagnoser (回测异常诊断器)
 
 对回测结果指标执行异常检测, 输出诊断报告+修复建议。
 覆盖性能异常(高Sharpe/高胜率/深回撤/负收益)、统计异常(交易不足/周期过短)、
@@ -24,6 +26,67 @@
 
 设计真源: depgraph MOD-BT-023
 蓝图: docs/03_modules/_domain_backtest/anomaly_diagnoser/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 回测结果字典 dict
+#   fields: strategy_id + sharpe_ratio + win_rate + max_drawdown + annual_return + trades_count + start/end_date + benchmark_symbol
+#   code: result
+# - id: I2
+#   name: 异常检测配置 AnomalyConfig frozen
+#   fields: high_sharpe=3.0 + high_win_rate=0.80 + deep_drawdown=-0.50 + min_trades=30 + min_backtest_days=252 + high_return=0.20 + low_sharpe=0.5
+#   code: AnomalyConfig L55-90
+# 层: 算法
+# - id: A1
+#   name_zh: ① 性能异常检测
+#   name_en: diagnose(性能段)
+#   intro: 高Sharpe高胜率疑过拟合，深回撤直接ERROR，负收益WARN
+#   desc: sharpe>3.0记WARN → win_rate>80%记WARN → max_drawdown<-50%记ERROR → annual_return<0记WARN 每条附修复建议（L199-250）
+#   inputs: I1 I2
+#   outputs: 性能异常列表
+# - id: A2
+#   name_zh: ② 统计异常检测
+#   name_en: diagnose(统计段)+_calc_backtest_days
+#   intro: 交易次数太少或回测周期太短则统计上不显著
+#   desc: trades_count<30记WARN → |end_date-start_date|.days<252记WARN（L252-277, L342-359）
+#   inputs: I1 I2
+#   outputs: 统计异常列表
+# - id: A3
+#   name_zh: ③ 一致性异常检测
+#   name_en: diagnose(一致性段)
+#   intro: 高收益却低Sharpe的矛盾组合告警，缺基准给提示
+#   desc: annual_return>20%且sharpe<0.5记WARN → 无benchmark_symbol记INFO（L279-303）
+#   inputs: I1 I2
+#   outputs: 一致性异常列表
+# - id: A4
+#   name_zh: ④ 诊断报告聚合
+#   name_en: diagnose(聚合段)
+#   intro: 汇总全部异常，无ERROR级则诊断通过
+#   desc: total_checks计数 → passed=无ERROR级异常 → 组装DiagnosisReport（L305-319）
+#   inputs: A1 A2 A3
+#   outputs: DiagnosisReport
+#   invariant: passed=无ERROR级异常; 缺失字段跳过不报错; 纯阈值判定不改输入
+# 层: 输出
+# - id: O1
+#   name_zh: 异常诊断报告 DiagnosisReport
+#   name_en: DiagnosisReport
+#   intro: 异常列表每条附可操作修复建议，passed标识是否过诊断
+#   invariant: passed=无ERROR级异常
+#   downstream: report_generator MOD-BT-019 ; 人工审查
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

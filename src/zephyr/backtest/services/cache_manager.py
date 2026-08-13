@@ -14,7 +14,9 @@
 # [TESTS] tests/backtest/test_cache_manager.py
 # [A_module] module_id=MOD-BT-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_BACKTEST — Backtest Cache Manager (回测缓存管理器)
+"""
+
+D_BACKTEST — Backtest Cache Manager (回测缓存管理器)
 
 回测结果内存缓存与复用。基于策略ID+参数哈希+日期范围计算缓存键,
 LRU淘汰策略管理容量, 支持按键/按策略/全量失效, 提供命中率统计。
@@ -23,6 +25,75 @@ LRU淘汰策略管理容量, 支持按键/按策略/全量失效, 提供命中�
 
 设计真源: depgraph MOD-BT-020
 蓝图: docs/03_modules/_domain_backtest/cache_manager/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 缓存键要素 函数参数
+#   fields: strategy_id + params dict + start_date + end_date + benchmark_symbol可选
+#   code: compute_key L171-212
+# - id: I2
+#   name: 回测结果对象 object
+#   fields: 任意待缓存的回测结果value
+#   code: put L246-272
+# - id: I3
+#   name: 缓存配置 CacheConfig frozen
+#   fields: max_entries=256 + max_size_bytes=0(0=不限)
+#   code: CacheConfig L58-80
+# 层: 算法
+# - id: A1
+#   name_zh: ① 缓存键哈希计算
+#   name_en: compute_key
+#   intro: 参数JSON序列化后SHA256取前16位当指纹，同参必同键
+#   desc: strategy_id/日期非空校验 → json.dumps(sort_keys=True) → sha256.hexdigest()[:16] → 组装frozen CacheKey（L171-212）
+#   inputs: I1
+#   outputs: CacheKey
+#   invariant: 相同strategy_id+params_hash+日期范围必得相同CacheKey
+# - id: A2
+#   name_zh: ② LRU读写与淘汰
+#   name_en: get/put
+#   intro: 命中移到队尾标记最近用，容量超限从队头弹最旧条目
+#   desc: Lock内get命中move_to_end+hit_count+1未命中返回None → put插入移尾 → len>max_entries时popitem(last=False)淘汰（L217-272）
+#   inputs: A1 I2 I3
+#   outputs: 缓存值或None
+#   invariant: 未命中返回None不报错; Lock线程安全; Entry frozen不可变
+# - id: A3
+#   name_zh: ③ 缓存失效管理
+#   name_en: invalidate/invalidate_strategy/clear
+#   intro: 按键/按策略/全量三种粒度删缓存
+#   desc: invalidate删单键 → invalidate_strategy按strategy_id扫键批量删 → clear全量清空（L277-325）
+#   inputs: A1
+#   outputs: 删除条数
+# - id: A4
+#   name_zh: ④ 命中率统计快照
+#   name_en: stats
+#   intro: 汇总命中/未命中/淘汰计数出不可变快照
+#   desc: Lock内读计数器组装CacheStats → hit_rate=hits/(hits+misses)（L330-342, L137-141）
+#   inputs: A2
+#   outputs: CacheStats
+# 层: 输出
+# - id: O1
+#   name_zh: 缓存命中的回测结果 value或None
+#   name_en: cached_value
+#   intro: 命中直接复用回测结果，未命中返回None由调用方重算
+#   invariant: 未命中返回None不报错
+#   downstream: param_analyzer MOD-BT-021 ; result_comparator MOD-BT-024
+# - id: O2
+#   name_zh: 缓存统计快照 CacheStats
+#   name_en: CacheStats
+#   intro: 命中/未命中/淘汰/条目数+命中率，供调用方监控缓存效果
+#   downstream: param_analyzer MOD-BT-021 ; result_comparator MOD-BT-024
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# I3 --> A2
+# A1 --> A3
+# A2 --> A4
+# A2 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

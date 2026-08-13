@@ -14,7 +14,9 @@
 # [TESTS] tests/backtest/test_result_comparator.py
 # [A_module] module_id=MOD-BT-024 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_BACKTEST — Result Comparator (回测结果比较器)
+"""
+
+D_BACKTEST — Result Comparator (回测结果比较器)
 
 对两组回测结果执行差异分析, 输出结构化比较报告。
 覆盖三大维度: 绝对指标比较(年化/总收益/Sharpe/最大回撤/胜率/交易次数)
@@ -25,6 +27,82 @@
 设计真源: D-SIMULATION-53/64 "回测结果对比：多次回测结果的对比分析与差异展示+对比报告"
 蓝图: docs/03_modules/_domain_backtest/result_comparator/blueprint.md
 SSoT: depgraph MOD-BT-024
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 基线回测结果 dict
+#   fields: annual_return + total_return + sharpe_ratio + max_drawdown + win_rate + trades_count + 可选<key>_std
+#   code: baseline
+# - id: I2
+#   name: 候选回测结果 dict
+#   fields: 同基线字段集
+#   code: candidate
+# - id: I3
+#   name: 比较配置 ResultComparisonConfig frozen
+#   fields: significance_level + min_trades_for_significance + relative_threshold
+#   code: ResultComparisonConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 逐指标比较主循环
+#   name_en: ResultComparator.compare
+#   intro: 校验两个dict后按_METRICS清单6项指标逐一比较并计数
+#   desc: isinstance校验 → 遍历6指标(取值/差异/显著性/优劣) → 汇总better/worse/significant计数
+#   inputs: I1 I2 I3
+#   outputs: ResultComparison
+#   invariant: 不修改输入; 缺失字段→None不报错
+# - id: A2
+#   name_zh: ② 绝对/相对差异计算
+#   name_en: _compute_diffs
+#   intro: 算候选减基线的绝对差和相对差
+#   desc: abs_diff=c-b → rel_diff=abs_diff/|b| (b=0或缺失→None)
+#   inputs: I1 I2
+#   outputs: (absolute_diff, relative_diff)
+# - id: A3
+#   name_zh: ③ 均值z检验显著性判定
+#   name_en: _test_significance
+#   intro: 交易数够且有std时用双侧z检验判断差异是否统计显著
+#   desc: n<30→False → se=√(std_b²/n_b+std_c²/n_c) → |c-b| > z(α)×se → 显著
+#   inputs: I1 I2 I3
+#   outputs: is_significant布尔
+# - id: A4
+#   name_zh: ④ 差异报告组装
+#   name_en: generate_diff_report
+#   intro: 把比较结果拼成摘要+HTML表格+显著性说明的完整报告
+#   desc: compare → _build_summary计数摘要 → _build_html_table七列表 → _build_significance_notes显著/警告说明
+#   inputs: I1 I2 I3
+#   outputs: ComparisonReport
+# 层: 输出
+# - id: O1
+#   name_zh: 结构化比较结果 ResultComparison
+#   name_en: ResultComparison
+#   intro: 6项指标的逐项对比+更好/更差/显著计数
+#   invariant: frozen不可变
+#   downstream: 人工审查 ; MOD-BT-019(report_generator)
+# - id: O2
+#   name_zh: 差异报告 ComparisonReport
+#   name_en: ComparisonReport
+#   intro: 摘要文本+HTML对比表+显著性说明列表
+#   downstream: 人工审查 ; MOD-BT-019(report_generator)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I3 --> A3
+# A2 --> A1
+# A3 --> A1
+# I1 --> A4
+# I2 --> A4
+# I3 --> A4
+# A1 --> A4
+# A1 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

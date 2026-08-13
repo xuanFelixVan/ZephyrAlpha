@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Data Quality Checker — 回测数据质量检查器 (MOD-BT-022)
 
 回测前/后对 OHLCV 数据执行质量检查, 输出结构化质量报告。
@@ -24,10 +26,81 @@ Data Quality Checker — 回测数据质量检查器 (MOD-BT-022)
 属A类基础设施(纯pandas检查+阈值判定+报告生成, 逻辑明确), 阈值为C类可调参数。
 纯工具模块, 不依赖外部数据库, 数据由调用方传入。
 
-依据: D:\\临时工作区\\依赖图\\32-D-BACKTEST-回测引擎域.md §1 BT-22
+依据: D:\临时工作区\依赖图-D-BACKTEST-回测引擎域.md §1 BT-22
        docs/03_modules/_domain_backtest/blueprint.md §5.1 L697 (P1-13 数据质量检查)
 SSoT: depgraph MOD-BT-022
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: OHLCV行情数据 DataFrame
+#   fields: open/high/low/close/volume 单标的date索引或多标的MultiIndex[symbol,date]
+#   code: data
+# - id: I2
+#   name: 质量检查配置 DataQualityConfig frozen
+#   fields: price_anomaly_threshold=0.20 + volume_spike_multiplier=10 + max_gap_days=10 + adj_discontinuity_threshold=0.30 + required_columns
+#   code: DataQualityConfig L86-110
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入校验与分标的拆分
+#   name_en: _validate+_split_by_symbol
+#   intro: 校验必需列齐全，再按symbol把数据拆成一张张子表
+#   desc: isinstance+required_columns校验缺列报错 → MultiIndex按level0 groupby拆分 单标的记_default（L234-258）
+#   inputs: I1 I2
+#   outputs: [(symbol, df)]分组列表
+#   invariant: 空DataFrame直接返回passed=True
+# - id: A2
+#   name_zh: ② 缺失检测
+#   name_en: _check_missing
+#   intro: 查字段NaN和超10天的交易日断档
+#   desc: close/volume的NaN记ERROR其余列WARN → 相邻日期diff.days>max_gap_days记WARN（L262-290）
+#   inputs: A1 I2
+#   outputs: nan_value+trading_day_gap问题
+# - id: A3
+#   name_zh: ③ 异常检测
+#   name_en: _check_anomaly
+#   intro: 查负值/涨跌幅超限/零量/异常放量/OHLC逻辑违背
+#   desc: 负值ERROR → |close.pct_change|>20%记WARN → volume==0记WARN → volume>median×10记WARN → high<low等5条OHLC逻辑ERROR（L294-355）
+#   inputs: A1 I2
+#   outputs: 6类异常问题
+# - id: A4
+#   name_zh: ④ 前复权一致性检查
+#   name_en: _check_consistency
+#   intro: close单日跳变超30%疑似复权断裂
+#   desc: |close.pct_change(fill_method=None)|>adj_discontinuity_threshold记WARN（L359-375）
+#   inputs: A1 I2
+#   outputs: adj_continuity问题
+# - id: A5
+#   name_zh: ⑤ 报告聚合判定
+#   name_en: check
+#   intro: 汇总全部问题，只要有ERROR级就不过门禁
+#   desc: 三维度issues汇总 → passed=无ERROR级问题 → 统计total_bars/symbols_checked（L196-230）
+#   inputs: A2 A3 A4
+#   outputs: DataQualityReport
+#   invariant: passed=无ERROR级问题; 纯pandas只读不改输入
+# 层: 输出
+# - id: O1
+#   name_zh: 数据质量报告 DataQualityReport
+#   name_en: DataQualityReport
+#   intro: passed布尔+QualityIssue问题列表+检查统计，回测前质量门禁依据
+#   invariant: passed=无ERROR级问题
+#   downstream: scheduler MOD-BT-017(回测前质量门禁) ; param_analyzer MOD-BT-021
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# A2 --> A5
+# A3 --> A5
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

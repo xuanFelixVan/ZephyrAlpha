@@ -14,7 +14,9 @@
 # [TESTS]
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）
+"""
+
+backtest_result_sink · 回测结果数据落地模块（v1.3.0 新增，#ARCH-047）
 
 蓝图规格: docs/03_modules/_domain_backtest/blueprint.md §16.7
 数据源: D_BACKTEST core/engine_base.py BacktestResult(CTR-P1-016)
@@ -29,6 +31,56 @@
   - BacktestResult 字段映射必须与 CTR-P1-016 契约冻结字段对齐(15字段)
   - 转换幂等: 相同 BacktestResult 必须产生相同 BacktestSinkData
   - PIT 铁律: equity_curve/trade_log 数据不得引用时序点之后的信息
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 回测结果 BacktestResult dataclass
+#   fields: CTR-P1-016 冻结 15 字段（strategy_id/idempotency_key/start_date/end_date/total_return/annual_return/sharpe_ratio/max_drawdown/win_rate/trades_count/timestamp/overfitting_flag/benchmark_symbol/schema_version）
+#   code: zephyr.backtest.core.engine_base.BacktestResult L39
+# - id: I2
+#   name: 时序明细数据 字典列表
+#   fields: equity_curve/trade_log/drawdown_curve/benchmark_curve 四条可选时序（PIT 铁律：不得引用时序点之后信息）
+#   code: sink_backtest_result(4 个可选参数) L146-149
+# 层: 算法
+# - id: A1
+#   name_zh: ① 入参校验
+#   name_en: sink_backtest_result（校验段）
+#   intro: result 为空或关键字段缺失就抛错，不让脏数据落地
+#   desc: result is None / strategy_id 空 / idempotency_key 空 → raise BacktestResultSinkError(ZA-BT-0012)
+#   inputs: I1
+#   outputs: 校验通过/BacktestResultSinkError
+# - id: A2
+#   name_zh: ② 时序点转换
+#   name_en: sink_backtest_result（时序段）
+#   intro: 把四条时序的字典列表转成 frozen dataclass 元组
+#   desc: tuple(EquityPoint(**p) / TradeRecord(**p) / DrawdownPoint(**p) / BenchmarkPoint(**p))，None 按空列表处理
+#   inputs: I2
+#   outputs: 4 个不可变时序元组
+# - id: A3
+#   name_zh: ③ 汇总字段映射组装
+#   name_en: sink_backtest_result（组装段）
+#   intro: 把回测结果 15 字段一对一搬进可视化模型
+#   desc: run_id=idempotency_key，其余字段等值映射，拼上时序元组返回 BacktestSinkData
+#   inputs: I1 A1 A2
+#   outputs: BacktestSinkData
+#   invariant: 转换幂等（相同输入→相同输出）；纯转换不持久化
+# 层: 输出
+# - id: O1
+#   name_zh: 回测可视化数据模型
+#   name_en: BacktestSinkData
+#   intro: 含净值序列/绩效汇总/交易明细的前端渲染数据模型，附 to_metrics_dict 快照
+#   invariant: PIT 零前瞻；汇总字段与 CTR-P1-016 对齐
+#   downstream: zephyr.backtest.io.result_repository；zephyr.frontend.dashboard.components.backtest_results（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> A3
+# A2 --> A3
+# I1 --> A3
+# A3 --> O1
 """
 from __future__ import annotations
 

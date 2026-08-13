@@ -16,14 +16,77 @@
 # [TTL] permanent
 
 """
+
+
 NaN Processor — 指标NaN处理器 (MOD-BT-026)
 
 回测指标计算中NaN值的智能填充与清洗。提供6种填充策略 + 按比例清洗高NaN行/列。
 纯pandas工具, 不修改原始数据。
 
-依据: D:\\临时工作区\\依赖图\\32-D-BACKTEST-回测引擎域.md §1 BT-26
+依据: D:\临时工作区\依赖图-D-BACKTEST-回测引擎域.md §1 BT-26
 SSoT: depgraph MOD-BT-026
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 含NaN指标数据 DataFrame
+#   fields: 任意含NaN的回测指标表
+#   code: data
+# - id: I2
+#   name: NaN处理配置 NaNProcessorConfig frozen
+#   fields: fill_strategy=ffill + drop_all_nan_rows=True + drop_all_nan_cols=False + max_nan_ratio=0.5 + fill_limit=0
+#   code: NaNProcessorConfig L83-101
+# 层: 算法
+# - id: A1
+#   name_zh: ① 全NaN行列清洗
+#   name_en: process(全空清洗段)
+#   intro: 整行整列全是NaN的直接删掉
+#   desc: data.copy()副本 → isna().all(axis=1)删全NaN行 → all(axis=0)删全NaN列 各自计数（L179-208）
+#   inputs: I1 I2
+#   outputs: 中间df+dropped计数
+#   invariant: 不修改输入数据返回副本
+# - id: A2
+#   name_zh: ② 高NaN比例行列删除
+#   name_en: process(比例清洗段)
+#   intro: NaN占比超过50%的行或列按比例删掉
+#   desc: isna().mean(axis=1)>max_nan_ratio删行 → 非空再mean(axis=0)超阈值删列（L210-221）
+#   inputs: A1 I2
+#   outputs: 中间df
+# - id: A3
+#   name_zh: ③ 6策略NaN填充
+#   name_en: _fill
+#   intro: 前向/后向/均值/中位数/线性插值/填零六种策略挑一种补洞
+#   desc: ffill/bfill带limit → fillna(mean/median numeric_only) → interpolate(linear,forward) → fillna(0)（L244-263）
+#   inputs: A2 I2
+#   outputs: 填充后df
+#   invariant: fill_limit限制连续填充长度
+# - id: A4
+#   name_zh: ④ 处理报告生成
+#   name_en: process(报告段)
+#   intro: 数清填了多少删了多少还剩多少NaN出报告
+#   desc: filled_count=填充前后NaN差 → 组装NaNProcessReport → cleanup_ratio=1-after/before（L223-240, L122-127）
+#   inputs: A3
+#   outputs: NaNProcessReport
+#   invariant: filled+dropped+remaining=original_nan
+# 层: 输出
+# - id: O1
+#   name_zh: 清洗后DataFrame+处理报告 二元组
+#   name_en: (df, NaNProcessReport)
+#   intro: 返回清洗副本和处理统计，供指标计算与质量检查使用
+#   invariant: 不修改输入数据
+#   downstream: metrics MOD-BT-007 ; data_quality_checker MOD-BT-022
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> A3
+# I2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

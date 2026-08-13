@@ -14,7 +14,9 @@
 # [TESTS] tests/backtest/test_scheduler.py
 # [A_module] module_id=MOD-BT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。
+"""
+
+D-BACKTEST BT-17 回测自动调度器——批量+参数网格+队列管理+结果聚合。
 
 职责：
   - 参数网格展开：将 {param: [v1, v2, ...]} 展开为所有组合
@@ -27,6 +29,81 @@
     scheduler.submit_grid("strat_a", data, signals, {"horizon": [5, 10, 20]})
     results = scheduler.run_all(max_workers=4)
     summary = scheduler.get_summary("strat_a")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 回测行情数据 DataFrame
+#   fields: 引擎输入的行情数据
+#   code: data
+# - id: I2
+#   name: 交易信号数据 DataFrame
+#   fields: 引擎输入的信号数据
+#   code: signals
+# - id: I3
+#   name: 参数网格 dict[str,list]
+#   fields: {参数名: [候选值列表]} 待笛卡尔展开
+#   code: param_grid
+# - id: I4
+#   name: 引擎工厂 Callable
+#   fields: **params返回BacktestEngineBase实例 缺省用DefaultBacktestEngine
+#   code: engine_factory
+# 层: 算法
+# - id: A1
+#   name_zh: ① 参数网格展开
+#   name_en: _expand_param_grid
+#   intro: 把参数候选值做笛卡尔积铺成全部组合
+#   desc: itertools.product(*values)逐组合zip(keys,combo)成dict 空网格返回[{}]（L82-88）
+#   inputs: I3
+#   outputs: 参数组合列表
+#   invariant: 参数网格正确展开
+# - id: A2
+#   name_zh: ② FIFO任务入队
+#   name_en: submit/submit_grid
+#   intro: 每个参数组合生成任务按提交顺序排进队列
+#   desc: uuid4生成task-xxxxxxxx → BacktestTask入deque → task_meta记录(strategy_id,params)（L139-183）
+#   inputs: I1 I2 A1
+#   outputs: task_id列表
+#   invariant: FIFO队列
+# - id: A3
+#   name_zh: ③ 线程池并发执行
+#   name_en: run_all+_run_task
+#   intro: 线程池并发跑引擎，单个失败记日志跳过不拖垮整批
+#   desc: 清空队列 → ThreadPoolExecutor.submit(_run_task) → engine_factory造引擎run(data,signals) → as_completed收结果 异常log后continue（L185-213, L235-244）
+#   inputs: A2 I4
+#   outputs: BacktestResult列表(完成顺序)
+#   invariant: 空队列run_all返回空列表
+# - id: A4
+#   name_zh: ④ 结果聚合摘要
+#   name_en: get_summary+_build_summary
+#   intro: 按策略聚出最优最差参数和平均Sharpe收益
+#   desc: 按strategy_id过滤task_meta取结果 → max/min按sharpe_ratio → mean_sharpe/mean_return求均值（L91-114, L219-228）
+#   inputs: A3
+#   outputs: GridSearchSummary
+#   invariant: 结果按strategy_id聚合; 无结果返回空摘要
+# 层: 输出
+# - id: O1
+#   name_zh: 回测结果列表 list[BacktestResult]
+#   name_en: results
+#   intro: 完成顺序的批量回测结果，由调用方取用
+#   downstream: 无下游/内部使用
+# - id: O2
+#   name_zh: 网格搜索摘要 GridSearchSummary
+#   name_en: GridSearchSummary
+#   intro: 最优/最差参数+平均Sharpe/收益的网格搜索总览
+#   downstream: 无下游/内部使用
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# A2 --> A3
+# I4 --> A3
+# A3 --> A4
+# A3 --> O1
+# A4 --> O2
 """
 from __future__ import annotations
 
