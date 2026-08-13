@@ -128,6 +128,11 @@ def _zoomable_html_url(md_rel: str) -> str:
     except ValueError:  # output-dir 在仓库根之外（--output-dir 手动覆盖）时降级相对路径
         return f"{HTML_SUBDIR}/{p.stem}.html"
 
+
+def _zoomable_html_link_line(html_url: str) -> str:
+    """Mermaid 图块上方的可缩放 HTML 跳转链接行（blockquote 风格，与图例一致）。"""
+    return f"> **[📊 可缩放大图（HTML）]({html_url})**\n"
+
 # layer 顺序与中文名（#ARCH-005 权威 4 层；从 layer_vocabulary.yaml SSoT 动态加载，零漂移）
 import yaml as _yaml  # noqa: E402  # gate-vocab: 从 SSoT 动态加载 layer 值
 
@@ -453,6 +458,50 @@ def _blockquote(text: str) -> str:
     return "\n".join(f"> {ln}" if ln.strip() else ">" for ln in text.splitlines())
 
 
+# ALGO_FLOW 标记注释行（docstring 内 # 开头的 YAML 风格行）：起止标记 / 层:/边: 段头 /
+# - id: 节点起点 / key: value 字段行 / A1 --> B1 边行。这些是机器解析标记（§4.16 已解析成
+# 推导流程图），原样贴出字大难读——渲染「算法步骤」时剥离，只留人类可读文字。
+_ALGO_FLOW_LINE_RE = re.compile(
+    r"^#\s*(?:"
+    r"\[/?ALGO_FLOW\]"          # [ALGO_FLOW] / [/ALGO_FLOW] 起止标记
+    r"|-\s+id\s*:"              # - id: A1 节点起点
+    r"|\w+\s*:"                 # name_zh:/code:/层:/边: 等 key: 字段行（半角冒号）
+    r"|[A-Za-z0-9_]+\s+-{1,2}"  # I1 --> A1 / I1 -…（截断残行）边行
+    r"|$"                       # 裸 "#" 行
+    r")"
+)
+
+
+def _strip_algo_flow_comments(text: str) -> str:
+    """剥离算法步骤文本里的 ALGO_FLOW 标记注释行，返回剩余人类可读文字（可能为空）。"""
+    kept = [
+        ln.rstrip()
+        for ln in text.splitlines()
+        if ln.strip() and not _ALGO_FLOW_LINE_RE.match(ln.strip())
+    ]
+    return "\n".join(kept).strip()
+
+
+def _algo_steps_block_lines(r: dict, s: AlgorithmSummary) -> list[str]:
+    """「算法步骤」块：剥离 ALGO_FLOW 标记注释行后只显示人类可读文字。
+
+    整段都是标记（如包入口 docstring 全是 # [ALGO_FLOW] YAML 注释）或提取器剥离后
+    无纯文字（algo_steps 为空）时：有推导流程图 → 提示看下方图；无 → 省略该段
+    （不原样贴 # - id: 这种 YAML 注释）。
+    """
+    steps = (s.algo_steps or "").strip()
+    if not steps:
+        if r.get("algo_flow") is not None:
+            return ["> **算法步骤**：见下方推导流程图（步骤细节已由 ALGO_FLOW 推导图承载）。", ">"]
+        return []
+    readable = _strip_algo_flow_comments(steps)
+    if not readable:
+        if r.get("algo_flow") is not None:
+            return ["> **算法步骤**：见下方推导流程图（步骤细节已由 ALGO_FLOW 推导图承载）。", ">"]
+        return []
+    return ["> **算法步骤**：", _blockquote(readable), ">"]
+
+
 def _layer_sort_key(layer: str) -> tuple:
     """layer 排序键：L0→L3 在前，未知/空层置末。"""
     return (0, LAYER_ORDER.index(layer)) if layer in LAYER_ORDER else (1, layer)
@@ -464,7 +513,9 @@ def render_stats(rows: list[dict]) -> str:
     op = sum(1 for r in rows if r["tier"] == "operational")
     de = sum(1 for r in rows if r["tier"] == "design")
     mi = sum(1 for r in rows if r["tier"] == "missing")
-    covered = sum(1 for r in rows if r["summary"].algo_steps)
+    # 算法覆盖：有文字算法步骤，或有 ALGO_FLOW 推导图（提取器剥离标记块后纯标记
+    # docstring 的 algo_steps 为空，算法细节由推导图承载，不应误判为未覆盖）
+    covered = sum(1 for r in rows if r["summary"].algo_steps or r.get("algo_flow") is not None)
     cov_pct = (covered / total * 100) if total else 0.0
     ts = idempotent_timestamp(_THIS_FILE)
     dt = idempotent_date(_THIS_FILE)
@@ -779,11 +830,12 @@ def _rel_edge_tuples(
     return edge_tuples
 
 
-def _render_module_relation_mermaid(r: dict, rel: dict) -> str:
+def _render_module_relation_mermaid(r: dict, rel: dict, html_url: str = "") -> str:
     """模块上下游关联图（卡片下）：上游依赖 → 本模块 → 下游消费者（§4.15 断点边）。
 
     数据从 depgraph 边自动提取（自动全量）；任一端非运营态的连线用红色虚线断点边。
     上游/下游各最多显示 8 个（防爆），超出在图例注明。
+    html_url：本环节文件的可缩放 HTML 链接（非空时图块上方加跳转链接）。
     """
     mid = r["module_id"]
     row_by_id = rel["row_by_id"]
@@ -821,7 +873,8 @@ def _render_module_relation_mermaid(r: dict, rel: dict) -> str:
         f"上游依赖 {len(ups_all)} 个 ｜ 下游消费者 {len(downs_all)} 个。"
         f"红色虚线=对端未实现（设计态/缺失）。\n"
     )
-    return legend + "\n".join(lines) + "\n"
+    link = _zoomable_html_link_line(html_url) if html_url else ""
+    return legend + link + "\n".join(lines) + "\n"
 
 
 
@@ -829,11 +882,13 @@ def _render_cards_by_layer(
     rows: list[dict],
     consumers: dict[str, list[str]],
     rel: dict | None = None,
+    html_url: str = "",
 ) -> str:
     """渲染模块卡片，按 layer（L0→L3）分组。
 
     用于环节文件和系统基础文件——两者内部都按 layer 二级分组。
     rel：模块关联上下文（providers/consumers/row_by_id），传入时每个卡片追加上下游关联图。
+    html_url：本文件的可缩放 HTML 链接（传入时每个 Mermaid 图块上方加跳转链接）。
     """
     parts: list[str] = []
     present_layers = [l for l in LAYER_ORDER if any(r["layer"] == l for r in rows)]
@@ -847,7 +902,7 @@ def _render_cards_by_layer(
         parts.append(f"### {LAYER_EMOJI[layer]} {layer} — {LAYER_NAME_ZH[layer]}（{len(lrows)} 模块）")
         parts.append("")
         for r in lrows:
-            parts.append(_render_module_card(r, consumers, rel))
+            parts.append(_render_module_card(r, consumers, rel, html_url))
 
     if has_unlayered:
         urows = sorted(
@@ -859,7 +914,7 @@ def _render_cards_by_layer(
         parts.append("> 这些模块的 architecture_layer 为空，未归入 L0–L3。建议在 depgraph 补 layer。")
         parts.append("")
         for r in urows:
-            parts.append(_render_module_card(r, consumers, rel))
+            parts.append(_render_module_card(r, consumers, rel, html_url))
 
     return "\n".join(parts)
 
@@ -941,13 +996,18 @@ def render_quality_report(
     return "\n".join(lines)
 
 
-def _render_module_card(r: dict, consumers: dict[str, list[str]], rel: dict | None = None) -> str:
+def _render_module_card(
+    r: dict,
+    consumers: dict[str, list[str]],
+    rel: dict | None = None,
+    html_url: str = "",
+) -> str:
     """单模块算法详情卡片。"""
     s: AlgorithmSummary = r["summary"]
     algo_flow = r.get("algo_flow")
     if algo_flow is not None:
-        return _render_module_card_with_flow(r, consumers, s, algo_flow, rel)
-    return _render_module_card_text(r, consumers, s, rel)
+        return _render_module_card_with_flow(r, consumers, s, algo_flow, rel, html_url)
+    return _render_module_card_text(r, consumers, s, rel, html_url)
 
 
 def _render_module_card_text(
@@ -955,6 +1015,7 @@ def _render_module_card_text(
     consumers: dict[str, list[str]],
     s: AlgorithmSummary,
     rel: dict | None = None,
+    html_url: str = "",
 ) -> str:
     """单模块算法详情卡片（文字版，无 ALGO_FLOW 标记时的回退）。"""
     out = _module_card_header_lines(r, s)
@@ -962,7 +1023,7 @@ def _render_module_card_text(
     card = "\n".join(out)
     # 模块上下游关联图（depgraph 自动全量，§4.15 断点边）
     if rel is not None:
-        card += _render_module_relation_mermaid(r, rel)
+        card += _render_module_relation_mermaid(r, rel, html_url)
     return card
 
 
@@ -998,10 +1059,7 @@ def _module_card_body_lines(r: dict, consumers: dict[str, list[str]], s: Algorit
     if s.summary:
         out.append(f"> **概述**：{s.summary}")
         out.append(">")
-    if s.algo_steps:
-        out.append("> **算法步骤**：")
-        out.append(_blockquote(s.algo_steps))
-        out.append(">")
+    out.extend(_algo_steps_block_lines(r, s))
     if s.invariants:
         out.append(f"> **不变量**：{s.invariants}")
         out.append(">")
@@ -1316,13 +1374,14 @@ def _render_module_card_with_flow(
     s: AlgorithmSummary,
     algo_flow: AlgoFlowData,
     rel: dict | None = None,
+    html_url: str = "",
 ) -> str:
     """单模块算法详情卡片（含 ALGO_FLOW 推导流程图）。
 
     文字卡片 + 追加 Mermaid 推导图块（§4.16 渐进式：有标记才追加）。
     """
     # 复用文字卡片渲染（真源/概述/算法步骤/不变量/被依赖/质量 + 上下游关联图）
-    text_card = _render_module_card_text(r, consumers, s, rel)
+    text_card = _render_module_card_text(r, consumers, s, rel, html_url)
     # 追加 Mermaid 推导图块
     mermaid_block = render_algo_flow_mermaid(algo_flow)
 
@@ -1343,8 +1402,9 @@ def _render_module_card_with_flow(
         )
     legend_lines.append("")
     legend = "\n".join(legend_lines)
+    link = _zoomable_html_link_line(html_url) if html_url else ""
 
-    return text_card + legend + mermaid_block + "\n"
+    return text_card + legend + link + mermaid_block + "\n"
 
 
 def render_index_doc(
@@ -1360,13 +1420,14 @@ def render_index_doc(
     索引含：统计 + Mermaid 层级总览 + 按作战环节索引 + 质量报告 + 冲突提示。
     """
     ts = idempotent_timestamp(_THIS_FILE)
+    index_html_url = _zoomable_html_url('index.md')
     header = f"""# 算法全景图 — 索引（自动派生·离库·按作战环节拆分）
 
 > **真源**：代码 docstring + header ｜ blueprint.md §核心规则 ｜ {DB_DISPLAY_NAME}（nodes/edges）。
 > 改真源 → 重跑生成器 → 本文档自动更新（派生产物，不入 git，按需生成）。
 > **重生成命令**：`python scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py`
 > **生成时间**（幂等）：{ts}
-> **[可缩放 HTML 版 / Zoomable HTML]({_zoomable_html_url('index.md')})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML]({index_html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 > **三档状态**：🟦运营态（代码存在，以代码为准）｜🟧设计态（代码未落盘，以蓝图为准）｜⬜缺失（无代码无蓝图，需补）。
 > **检修入口**：先看「按作战环节索引」定位环节 → 进入环节文件看算法卡片 → 沿「被依赖」看影响面。
@@ -1394,6 +1455,8 @@ def render_index_doc(
         header
         + render_stats(rows)
         + "\n"
+        + _zoomable_html_link_line(index_html_url)
+        + "\n"
         + render_mermaid_layer_overview(rows, edges)
         + "\n\n"
         + render_battle_stage_index(anchored_by_stage, unanchored_rows)
@@ -1419,6 +1482,7 @@ def render_stage_doc(
     ts = idempotent_timestamp(_THIS_FILE)
     zh = STAGE_ID_TO_NAME[stage_id]
     file_rel = STAGE_ID_TO_FILE[stage_id]
+    html_url = _zoomable_html_url(file_rel)
 
     op = sum(1 for r in stage_rows if r["tier"] == "operational")
     de = sum(1 for r in stage_rows if r["tier"] == "design")
@@ -1427,7 +1491,7 @@ def render_stage_doc(
     header = f"""# 算法全景图 — 作战环节「{zh}」（{len(stage_rows)} 模块）
 
 > [← 返回索引](../index.md)
-> **[可缩放 HTML 版 / Zoomable HTML]({_zoomable_html_url(file_rel)})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 > **真源**：代码 docstring + header ｜ blueprint.md §核心规则 ｜ {DB_DISPLAY_NAME}
 > 自动派生，离库不入 git。改真源 → 重跑生成器 → 本文档自动更新。
 > **生成时间**（幂等）：{ts}
@@ -1436,11 +1500,13 @@ def render_stage_doc(
 """
     overview = (
         "## 环节总图（depgraph 自动派生）\n\n"
-        "> 本环节全部模块及环节内依赖关系。红色虚线+断点标签 = 对端未实现（设计态/缺失）。\n\n"
+        "> 本环节全部模块及环节内依赖关系。红色虚线+断点标签 = 对端未实现（设计态/缺失）。\n"
+        + _zoomable_html_link_line(html_url)
+        + "\n"
         + render_stage_overview_mermaid(stage_rows, edges)
         + "\n\n"
     )
-    body = _render_cards_by_layer(stage_rows, consumers, rel)
+    body = _render_cards_by_layer(stage_rows, consumers, rel, html_url)
     footer = f"""
 
 ---
@@ -1459,6 +1525,7 @@ def render_system_foundation_doc(
 ) -> str:
     """组装系统基础文件（system_foundation.md，未锚定模块）。"""
     ts = idempotent_timestamp(_THIS_FILE)
+    html_url = _zoomable_html_url('system_foundation.md')
 
     op = sum(1 for r in unanchored_rows if r["tier"] == "operational")
     de = sum(1 for r in unanchored_rows if r["tier"] == "design")
@@ -1467,7 +1534,7 @@ def render_system_foundation_doc(
     header = f"""# 算法全景图 — 系统基础（未锚定模块，{len(unanchored_rows)} 模块）
 
 > [← 返回索引](index.md)
-> **[可缩放 HTML 版 / Zoomable HTML]({_zoomable_html_url('system_foundation.md')})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
+> **[可缩放 HTML 版 / Zoomable HTML]({html_url})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 > **真源**：代码 docstring + header ｜ blueprint.md §核心规则 ｜ {DB_DISPLAY_NAME}
 > 这些模块未锚定到任何作战环节（基础设施/治理/安全/数据类），按 architecture_layer（L0→L3）内部分组。
 > 自动派生，离库不入 git。改真源 → 重跑生成器 → 本文档自动更新。
@@ -1475,7 +1542,7 @@ def render_system_foundation_doc(
 > **三档**：🟦运营 {op} ｜ 🟧设计 {de} ｜ ⬜缺失 {mi}
 
 """
-    body = _render_cards_by_layer(unanchored_rows, consumers, rel)
+    body = _render_cards_by_layer(unanchored_rows, consumers, rel, html_url)
     footer = f"""
 
 ---

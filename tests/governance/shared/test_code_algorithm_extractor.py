@@ -69,6 +69,55 @@ _PY_BROKEN_AST = '''def broken(
     # 缺少右括号和冒号
 '''
 
+# 真文字 + ALGO_FLOW 标记块（含 # 边: 段）混合的 docstring
+_PY_WITH_ALGO_FLOW = '''"""价格笼子校验模块。
+
+A 股价格笼子校验，超范围委托直接废单。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托限价 limit_price
+#   code: check_price_cage (price_cage.py L148)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 笼子边界计算
+#   name_en: check_price_cage
+#   inputs: I1
+#   outputs: PriceCageResult
+# 层: 输出
+# - id: O1
+#   name_zh: 校验结果
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
+# [MODULE] tests.test_algo_flow
+# [INVARIANTS] 超限夹到边界
+'''
+
+# 纯 ALGO_FLOW 标记的 docstring（包入口常见：除标记外无人类可读文字）
+_PY_ONLY_ALGO_FLOW = '''"""
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 包导入请求
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包级聚合再导出
+#   inputs: I1
+#   outputs: 包公共命名空间
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+"""
+
+# [MODULE] tests.test_only_flow
+'''
+
 _BLUEPRINT_MD = """\
 ---
 module_id: MOD-TEST-BP-001
@@ -169,6 +218,47 @@ def test_extract_from_code_broken_ast(tmp_path, monkeypatch):
 
     result = extract_algorithm_from_code(py, module_id="MOD-BROKEN")
     assert result.source_type == "empty"
+
+
+# ── ALGO_FLOW 标记块剥离（2026-08-13 泄漏修复回归）─────────────
+
+
+def test_algo_flow_markers_stripped_from_text_fields(tmp_path, monkeypatch):
+    """真文字+ALGO_FLOW 混合 docstring：概述/算法步骤不含标记行，推导图照常解析。"""
+    py = tmp_path / "flow_module.py"
+    py.write_text(_PY_WITH_ALGO_FLOW, encoding="utf-8")
+
+    import _shared.code_algorithm_extractor as ext
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+
+    result = extract_algorithm_from_code(py, module_id="MOD-FLOW-001")
+    assert result.source_type == "code"
+    for field_value in (result.summary, result.algo_steps, result.module_name):
+        assert "[ALGO_FLOW]" not in field_value, "文字字段不应含 ALGO_FLOW 起止标记"
+        assert "# 边" not in field_value, "文字字段不应含 # 边: 段残行"
+        assert "# - id:" not in field_value, "文字字段不应含节点定义行"
+        assert "name_zh:" not in field_value, "文字字段不应含字段行"
+    assert "价格笼子校验" in result.summary, "概述应为剥离标记后的纯文字"
+    assert result.algo_flow is not None, "ALGO_FLOW 块仍应解析成推导图数据"
+    assert {n.id for n in result.algo_flow.nodes} == {"I1", "A1", "O1"}
+    assert len(result.algo_flow.edges) == 2
+
+
+def test_algo_flow_only_docstring_yields_empty_text(tmp_path, monkeypatch):
+    """纯标记 docstring（包入口）：概述/算法步骤为空（生成器提示看图），质量仍 ✅。"""
+    py = tmp_path / "only_flow_pkg.py"
+    py.write_text(_PY_ONLY_ALGO_FLOW, encoding="utf-8")
+
+    import _shared.code_algorithm_extractor as ext
+    monkeypatch.setattr(ext, "REPO_ROOT", tmp_path)
+
+    result = extract_algorithm_from_code(py, module_id="MOD-FLOW-002")
+    assert result.source_type == "code"
+    assert result.summary == "", "纯标记 docstring 概述应为空，不得挤入 YAML 标记"
+    assert result.algo_steps == "", "纯标记 docstring 算法步骤应为空，不得截断残留「# 边…」"
+    assert "#" not in result.module_name, "模块名不应是 # 标记行"
+    assert result.algo_flow is not None
+    assert result.quality_issue.startswith("✅"), "有推导图的模块不应误报结构不完整"
 
 
 # ── extract_algorithm_from_blueprint ────────────────────────

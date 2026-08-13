@@ -31,10 +31,16 @@ for _p in (_GOV_DIR, _GEN_DIR):
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from _shared.code_algorithm_extractor import AlgorithmSummary  # noqa: E402
+from _shared.code_algorithm_extractor import (  # noqa: E402
+    AlgorithmSummary,
+    AlgoFlowData,
+    AlgoFlowNode,
+)
 from generate_module_algorithm_overview import (  # noqa: E402
     STATUS_EMOJI,
     STAGE_ID_TO_FILE,
+    _build_consumers,
+    _build_rel_context,
     build_module_to_file_map,
     classify_rows_by_stage,
     render_battle_stage_index,
@@ -370,3 +376,69 @@ def test_render_quality_report_layer_sort():
     pos_l1 = report.find("MOD-TEST-002")  # L1
     pos_l2 = report.find("MOD-TEST-003")  # L2
     assert pos_l0 < pos_l1 < pos_l2, f"layer 排序错误: L0={pos_l0} L1={pos_l1} L2={pos_l2}"
+
+
+# ── ALGO_FLOW 标记剥离 + 每图 HTML 链接（2026-08-13 回归）──
+
+
+def test_algo_steps_marker_lines_stripped_with_flow():
+    """算法步骤整段是 ALGO_FLOW 标记注释（# - id: 等）且有推导图：不原样贴 YAML，提示看图。"""
+    rows = _make_rows()
+    rows[0]["summary"].algo_steps = (
+        "# - id: A1\n"
+        "#   name_zh: ① canonical 路径映射表\n"
+        "#   name_en: _LAZY_IMPORTS / _SUBMODULES\n"
+        "#   inputs: I1\n"
+        "#   outputs: (module_path, attr_name)"
+    )
+    rows[0]["algo_flow"] = AlgoFlowData(
+        nodes=[AlgoFlowNode(id="A1", layer="算法", name_zh="① 测试算法")],
+        edges=[],
+    )
+    consumers = _build_consumers([])
+
+    doc = render_stage_doc("stock_selection", [rows[0]], [], consumers)
+
+    assert "# - id:" not in doc, "算法步骤不应原样贴 ALGO_FLOW YAML 注释"
+    assert "name_zh:" not in doc, "算法步骤不应含 ALGO_FLOW 字段行"
+    assert "见下方推导流程图" in doc, "整段是标记且有推导图时应提示看图"
+
+
+def test_algo_steps_human_text_kept_markers_stripped():
+    """算法步骤人读文字+标记混合：保留人读文字，剥离标记行（无推导图）。"""
+    rows = _make_rows()
+    rows[0]["summary"].algo_steps = (
+        "① 先做人读步骤\n"
+        "# - id: A1\n"
+        "#   name_zh: 机器标记\n"
+        "② 再做第二步"
+    )
+    consumers = _build_consumers([])
+
+    doc = render_stage_doc("stock_selection", [rows[0]], [], consumers)
+
+    assert "先做人读步骤" in doc, "人读文字应保留"
+    assert "再做第二步" in doc, "人读文字应保留"
+    assert "name_zh" not in doc, "标记行应剥离"
+
+
+def test_html_link_above_every_mermaid_block():
+    """环节文件每个 Mermaid 图块上方都有可缩放 HTML 跳转链接（环节总图/关联图/推导图）。"""
+    rows = _make_rows()
+    # 模块推导图：给 MOD-TEST-001 加 ALGO_FLOW
+    rows[0]["algo_flow"] = AlgoFlowData(
+        nodes=[AlgoFlowNode(id="A1", layer="算法", name_zh="① 测试算法")],
+        edges=[],
+    )
+    edges = _make_edges()
+    consumers = _build_consumers(edges)
+    rel = _build_rel_context(rows, edges, consumers)
+
+    doc = render_stage_doc("stock_selection", [rows[0]], edges, consumers, rel)
+
+    mermaid_cnt = doc.count("```mermaid")
+    link_cnt = doc.count("可缩放大图（HTML）")
+    # 环节总图 1 + 上下游关联图 1（MOD-TEST-002 是 001 下游） + 推导图 1
+    assert mermaid_cnt == 3, f"应含 3 个 Mermaid 图块，实际 {mermaid_cnt}"
+    assert link_cnt == mermaid_cnt, f"每个图块上方都应有 HTML 链接：图 {mermaid_cnt} 个，链接 {link_cnt} 个"
+    assert "_zoomable_html/05_stock_selection.html" in doc, "链接应指向本环节 HTML"

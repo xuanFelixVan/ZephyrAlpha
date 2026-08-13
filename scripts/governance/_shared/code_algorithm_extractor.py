@@ -5,7 +5,7 @@
 # [CONSUMERS] scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py; generate_domain_doc.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 降级不抛异常; 三档优先级(code>blueprint>empty); 截断长度上限; __init__.py回退扫描子文件; blueprint章节鲁棒匹配
+# [INVARIANTS] 降级不抛异常; 三档优先级(code>blueprint>empty); 截断长度上限; __init__.py回退扫描子文件; blueprint章节鲁棒匹配; ALGO_FLOW标记块(含边段)整块剥离不泄漏进文字字段
 # [MODIFY-GUARD] 修改需同步更新 tests/governance/test_code_algorithm_extractor.py
 # [STABILITY] evolving
 # [SAFETY] L
@@ -21,7 +21,7 @@
 
 [BLUEPRINT] MOD-GOV_ALGO_EXTRACTOR | gov_scripts/blueprint.md
 [MODULE] scripts.governance._shared.code_algorithm_extractor
-[INVARIANTS] 降级不抛异常; 三档优先级(code>blueprint>empty); 截断上限; __init__.py回退扫描子文件; blueprint章节鲁棒匹配
+[INVARIANTS] 降级不抛异常; 三档优先级(code>blueprint>empty); 截断上限; __init__.py回退扫描子文件; blueprint章节鲁棒匹配; ALGO_FLOW标记块(含边段)整块剥离
 [CONSUMERS] generate_module_algorithm_overview.py; generate_domain_doc.py
 [STABILITY] evolving
 [SAFETY] L
@@ -280,6 +280,43 @@ def _summary_from_docstring(docstring: str) -> str:
     return " ".join(first_para) if first_para else ""
 
 
+def _strip_algo_flow_block(docstring: str) -> str:
+    """剥离 docstring 里的 ALGO_FLOW 标记块，返回剩余人类可读文字。
+
+    剥离范围：``# [ALGO_FLOW]`` 起 → ``# [/ALGO_FLOW]`` 止的整块，以及紧随其后的
+    ``# 边:`` 边定义段（连续的空行或 ``#`` 开头注释行，直到首个非 # 内容行）。
+    无结束标记时剥到 docstring 末尾（与 parse_algo_flow 的块界定一致）。
+
+    这些 # 注释行是机器解析标记（§4.16 已由 parse_algo_flow 解析成推导流程图），
+    概述/算法步骤等文字字段不应含——整块剥离在截断之前，不会留下 ``# 边…``
+    这种截断残行（残行在 Markdown blockquote 里会被渲染成 H1 大字）。
+    """
+    if not docstring or _ALGO_FLOW_START not in docstring:
+        return docstring
+    out: list[str] = []
+    in_block = False
+    block_done = False  # [/ALGO_FLOW] 已过，正处于其后的边定义段
+    for line in docstring.splitlines():
+        stripped = line.strip()
+        if in_block:
+            if _ALGO_FLOW_END in stripped:
+                in_block = False
+                block_done = True
+            continue
+        if not block_done:
+            if _ALGO_FLOW_START in stripped:
+                in_block = True
+                continue
+            out.append(line)
+            continue
+        # 边定义段（# 边: / # X --> Y）：跳过空行和 # 注释行，首个真实内容行起恢复保留
+        if not stripped or stripped.startswith("#"):
+            continue
+        block_done = False
+        out.append(line)
+    return "\n".join(out)
+
+
 # ── 公开 API ──────────────────────────────────────────────────
 
 def extract_algorithm_from_code(
@@ -312,27 +349,41 @@ def extract_algorithm_from_code(
         if not docstring:
             return _empty(module_id, blueprint_ref, f"无 module docstring: {py_path.name}")
 
+        # ALGO_FLOW 标记块（含 # 边: 段）是机器解析标记（§4.16 由 parse_algo_flow 解析成
+        # 推导图承载），概述/算法步骤/不变量等文字字段先整块剥离——否则标记行会泄漏进
+        # 概述（整段 YAML 挤一行）或截断残留「# 边…」半行（blockquote 里渲染成 H1 大字）。
+        text_doc = _strip_algo_flow_block(docstring)
+        had_algo_flow = text_doc != docstring
+
         # header [INVARIANTS] / [BLUEPRINT] / [MODULE]
         header = parse_py_header_from_file(actual_path) or {}
-        invariants = header.get("invariants", "") or _extract_section_from_docstring(docstring, _INVARIANTS_KEYWORDS)
+        invariants = header.get("invariants", "") or _extract_section_from_docstring(text_doc, _INVARIANTS_KEYWORDS)
 
-        # module_name：docstring 首行 或 header module
-        first_line = docstring.splitlines()[0].strip() if docstring.splitlines() else ""
+        # module_name：docstring 首行（剥离标记后）或 header module
+        text_lines = [ln for ln in text_doc.splitlines() if ln.strip()]
+        first_line = text_lines[0].strip() if text_lines else ""
         module_name = first_line or header.get("module", "")
 
-        summary = _summary_from_docstring(docstring)
-        algo_steps = _extract_section_from_docstring(docstring, _ALGO_KEYWORDS)
-        # 若没找到算法步骤段，用整个 docstring（截断）——docstring 本身即算法描述
-        if not algo_steps:
-            algo_steps = docstring
+        summary = _summary_from_docstring(text_doc)
+        algo_steps = _extract_section_from_docstring(text_doc, _ALGO_KEYWORDS)
+        # 若没找到算法步骤段，用整个 docstring（截断）——docstring 本身即算法描述；
+        # 但 docstring 含 ALGO_FLOW 块时算法细节已由推导图承载，剥离后的残文本
+        # （多为包入口元信息行）不拿来凑数——留空，生成器会提示「见下方推导流程图」。
+        if not algo_steps and not had_algo_flow:
+            algo_steps = text_doc
 
         rel_path = str(actual_path.relative_to(REPO_ROOT)).replace("\\", "/")
         line_range = f"L{start_line}-L{end_line}" if start_line else ""
 
-        quality = "✅ 完整" if (summary and algo_steps) else "⚠ docstring 结构不完整"
-
         # ALGO_FLOW 结构化推导流程（§4.16，运营态代码有标记时解析；无标记返回 None）
         algo_flow_data = parse_algo_flow(docstring)
+
+        # 有 ALGO_FLOW 推导图的模块算法信息完整（由图承载），不因文字字段为空误报 ⚠
+        quality = (
+            "✅ 完整"
+            if ((summary and algo_steps) or algo_flow_data is not None)
+            else "⚠ docstring 结构不完整"
+        )
 
         # 截断策略：纵览 truncate=True 按 MAX_* 截断（防爆）；域文档 truncate=False 保留完整
         if truncate:
