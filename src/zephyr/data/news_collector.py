@@ -15,7 +15,9 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-NLP-PIPELINE-001 Phase 1
 
-"""MOD-DATA-NEWS-001 NewsCollector — 新闻数据采集器。
+"""
+
+MOD-DATA-NEWS-001 NewsCollector — 新闻数据采集器。
 
 从 ClickHouse ``fund_news_data`` 表按条件查询新闻，返回标准列 DataFrame。
 供 P1-E3 NLP 管道（评估集构建、批量推理）使用。
@@ -28,6 +30,62 @@
 依据: P1-E3_NLP管道架构裁定与施工方案.md Phase 1
 SSoT: depgraph MOD-DATA-NEWS-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 采集条件参数 函数入参
+#   fields: start_date + end_date(YYYY-MM-DD) + region + language + limit
+#   code: collect_news参数
+# - id: I2
+#   name: 基金新闻表 ClickHouse表
+#   fields: news_id + publish_time + title + content + source + region + language
+#   code: fund_news_data
+# - id: I3
+#   name: 新闻ID列表 list[str]
+#   fields: news_id字符串列表
+#   code: collect_news_by_ids参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 日期校验与PIT查询SQL拼装
+#   name_en: collect_news
+#   intro: 校验日期格式后拼WHERE条件SQL查新闻表，严格PIT不泄漏未来新闻
+#   desc: strptime校验YYYY-MM-DD → region/language过滤 + publish_time>=start 00:00:00 AND <=end 23:59:59 → ORDER BY publish_time → 可选LIMIT
+#   inputs: I1 I2
+#   outputs: TSV查询结果
+#   invariant: PIT严格 publish_time<=截止时间
+# - id: A2
+#   name_zh: ② TSV解析与类型规整
+#   name_en: parse_tsv+pd.DataFrame
+#   intro: 把ClickHouse返回的TSV文本解析成标准7列DataFrame
+#   desc: ch_reader.query拿TSV → parse_tsv按ncols=7切行 → DataFrame → publish_time列to_datetime(errors=coerce) → 空结果返回带列名空表
+#   inputs: I2
+#   outputs: 标准列DataFrame
+# - id: A3
+#   name_zh: ③ 按ID列表精确查询
+#   name_en: collect_news_by_ids
+#   intro: 用news_id IN语法精确回查新闻，供评估集回溯验证
+#   desc: 空列表直接返回空表 → 拼news_id IN (...) SQL → 同样走TSV解析规整
+#   inputs: I3 I2
+#   outputs: 标准列DataFrame
+# 层: 输出
+# - id: O1
+#   name_zh: 标准列新闻数据 DataFrame
+#   name_en: news_df
+#   intro: 7列标准新闻数据(news_id/publish_time/title/content/source/region/language)
+#   invariant: 列顺序对齐NEWS_DATA_COLUMNS; 空结果仍含列名
+#   downstream: scripts/ml/build_eval_set.py ; P1-E3 NLP 管道
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I2 --> A2
+# A1 --> A2
+# I3 --> A3
+# I2 --> A3
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

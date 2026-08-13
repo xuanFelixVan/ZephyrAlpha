@@ -14,7 +14,9 @@
 # [TESTS] tests/zephyr/data/test_providers.py::TestFredProvider
 # [A_module] module_id=MOD-DAT-fred_ingest | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""FredProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
+"""
+
+FredProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
 
 #ARCH-EDB-EXPAND（2026-08-04）：FRED + 世界银行免费宏观数据接入。
 
@@ -42,6 +44,97 @@ IngestProviderBase，提供国际宏观指标拉取能力，补充国内数据�
 - requests 直连 API，不依赖 pandas_datareader（避免版本兼容问题）
 - 海外站点，国内访问可能需 VPN；支持 HTTPS_PROXY 环境变量代理
 - 每个序列/指标作为一批，yield 一个 FetchResult，异常不抛出
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 拉取负载 FetchPayload
+#   fields: extra["capability"]路由键(macro_fred/macro_worldbank) + start/end日期范围 + table
+#   code: fetch(payload, policy) (fred_provider.py L259)
+# - id: I2
+#   name: 数据源策略 SourcePolicy
+#   fields: 限流/重试策略（_call_with_policy 包装 requests.get）
+#   code: policy_registry.SourcePolicy (fred_provider.py L59)
+# - id: I3
+#   name: FRED 宏观序列配置表
+#   fields: 22条序列（display_name, series_id, indicator_name带FRED_前缀, unit, frequency）
+#   code: _FRED_SERIES (fred_provider.py L93)
+# - id: I4
+#   name: 世界银行指标配置表
+#   fields: 12条指标（display_name, indicator_code, indicator_name带WB_前缀, unit, frequency=annual）
+#   code: _WORLD_BANK_INDICATORS (fred_provider.py L129)
+# - id: I5
+#   name: FRED_API_KEY 环境变量（可选）
+#   fields: 免费API key，无key限额120/min；HTTPS_PROXY代理可选
+#   code: get_secret_or_default("FRED_API_KEY") (fred_provider.py L190)
+# 层: 算法
+# - id: A1
+#   name_zh: ① capability 路由分发
+#   name_en: FredProvider.fetch
+#   intro: 按 payload.extra["capability"] 分发到 FRED 或世界银行拉取，未连接/未知capability yield error
+#   desc: macro_fred→_fetch_fred_data；macro_worldbank→_fetch_worldbank_data；其他→yield FetchResult(error)（L259-285）
+#   inputs: I1
+#   outputs: Iterator[FetchResult]
+# - id: A2
+#   name_zh: ② FRED 序列批量拉取
+#   name_en: _fetch_fred_data
+#   intro: 遍历22条FRED序列逐条拉取，每序列yield一批，单序列异常不阻断后续
+#   desc: start默认5年前/end默认今天；无API key→yield单条error即返；每序列try/except独立（L289-343）
+#   inputs: I1 I3 I5
+#   outputs: 每序列一批 FetchResult
+# - id: A3
+#   name_zh: ③ FRED 单序列获取与行转换
+#   name_en: _fetch_fred_series
+#   intro: 调FRED observations API拿JSON，跳过缺失值"."，转成macro_data表行
+#   desc: params带series_id/起止日期/api_key；observations逐条float解析，value="."跳过；行=(report_date, indicator_name, value, unit, freq, "fred")（L345-392）
+#   inputs: I2
+#   outputs: list[tuple]（macro_data行）
+# - id: A4
+#   name_zh: ④ 世界银行指标批量拉取
+#   name_en: _fetch_worldbank_data
+#   intro: 遍历12个WB指标逐指标拉取，固定用10年日期范围对冲WB数据1-2年滞后
+#   desc: date_range=近10年起止年；每指标try/except独立yield一批（L396-444）
+#   inputs: I4
+#   outputs: 每指标一批 FetchResult
+# - id: A5
+#   name_zh: ⑤ WB 单指标获取与区域聚合过滤
+#   name_en: _fetch_wb_indicator / _get_wb_real_country_iso3
+#   intro: 拉全部国家指标值，过滤AFE/EMU等区域聚合，indicator_name编码iso3国别
+#   desc: 年份转"YYYY-01-01"；iso3空或非真实国家（region.id="NA"集合）跳过；full_indicator=WB_xxx/ISO3；data_source="worldbank"（L446-566）
+#   inputs: I2
+#   outputs: list[tuple]（macro_data行）
+#   invariant: 区域聚合记录必须过滤，国家列表获取失败fail-open不过滤
+# 层: 输出
+# - id: O1
+#   name_zh: 宏观数据批次流 FetchResult 迭代器
+#   name_en: Iterator[FetchResult]
+#   intro: 每序列/指标一批行，写c1_market.macro_data表与akshare共表，靠FRED_/WB_前缀区分来源
+#   invariant: 写入c1_market.macro_data共表；列序=report_date/indicator_name/indicator_value/unit/frequency/data_source
+#   downstream: zephyr.data.scheduler
+# - id: O2
+#   name_zh: 错误批次 FetchResult(error)
+#   name_en: FetchResult error
+#   intro: 网络/解析异常不抛出，yield带error的空批次由调度器记录
+#   downstream: zephyr.data.scheduler（记录失败）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A4
+# I1 --> A2
+# I3 --> A2
+# I5 --> A2
+# A2 --> A3
+# I2 --> A3
+# I4 --> A4
+# A4 --> A5
+# I2 --> A5
+# A3 --> O1
+# A5 --> O1
+# A2 --> O2
+# A4 --> O2
+# A1 --> O2
 """
 
 from __future__ import annotations

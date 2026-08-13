@@ -16,7 +16,9 @@
 # [TTL] permanent
 # [ARCH-REF] #ARCH-NLP-PIPELINE-001 Phase 2
 
-"""MOD-NLP-INFERENCE-001 NLPImply — 新闻情感推理（零样本基线）。
+"""
+
+MOD-NLP-INFERENCE-001 NLPImply — 新闻情感推理（零样本基线）。
 
 复用 local_model 层（OllamaChat / DeepSeekChat），实现新闻情感分类：
 
@@ -31,6 +33,91 @@
 依据: docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md Phase 2
 SSoT: #ARCH-NLP-PIPELINE-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 新闻标题与内容 str
+#   fields: title（必填）/ content（可选，截断 max_content_chars=300）/ news_id（追踪，可选）
+#   code: nlp_inference.py L239-247 infer_sentiment(title, content, news_id)
+# - id: I2
+#   name: 推理后端 ChatBackend
+#   fields: OllamaChat / DeepSeekChat，协议方法 ask(prompt, system, temperature)
+#   code: nlp_inference.py L78-81 ChatBackend Protocol
+# - id: I3
+#   name: 查询缓存 CacheLayer（可选）
+#   fields: get_query_result / put_query_result，collection=news_sentiment
+#   code: nlp_inference.py L224 _CACHE_COLLECTION
+# - id: I4
+#   name: 推理配置 InferConfig
+#   fields: model_version（入缓存键）/ temperature=0.0 / max_content_chars=300
+#   code: nlp_inference.py L227-236 InferConfig
+# 层: 算法
+# - id: A1
+#   name_zh: ① 缓存命中判定
+#   name_en: infer_sentiment 缓存段
+#   intro: 模型版本+标题+内容截断拼键查缓存，命中直接返回不跑模型
+#   desc: L277-295 cache_key_text=f"[{model_version}]{title}\n{snippet}"；命中→SentimentResult(cached=True)；换模型版本缓存自动失效
+#   inputs: I1 I3 I4
+#   outputs: 命中 SentimentResult / 未命中转 A2
+# - id: A2
+#   name_zh: ② LLM 零样本情感推理
+#   name_en: chat.ask + SYSTEM_PROMPT/USER_TEMPLATE
+#   intro: 用 A 股情感专家 prompt 调本地大模型，要求只回 JSON
+#   desc: L56-70 prompt 模板（利好/利空/中性词表+JSON 输出契约）；L298-310 组 USER→chat.ask；后端异常降级 neutral(0.5) 不抛
+#   inputs: I1 I2 I4
+#   outputs: 模型原始文本 raw
+# - id: A3
+#   name_zh: ③ 输出解析 parse_sentiment
+#   name_en: parse_sentiment
+#   intro: 三级兜底从带噪文本里抠出 sentiment/score
+#   desc: L119-173 去<think>思考块/markdown围栏→json.loads→{...}对象正则→字段级正则（容忍缺"{"）；全失败降级 (neutral, 0.5)；score 裁剪 [0,1]
+#   inputs: A2
+#   outputs: (sentiment, score)
+# - id: A4
+#   name_zh: ④ 有向极性归一化
+#   name_en: sentiment_to_score
+#   intro: 把离散情感标签映射成 [-1,1] 连续极性分值
+#   desc: L202-219 positive→+score / negative→-score / neutral→0
+#   inputs: A3
+#   outputs: polarity ∈[-1,1]
+# - id: A5
+#   name_zh: ⑤ 批量推理 infer_batch
+#   name_en: infer_batch
+#   intro: 对新闻列表逐条顺序推理，结果与输入等长同序
+#   desc: L332-364 for item in news_items → infer_sentiment；单条失败降级不阻断整体
+#   inputs: I1 I2 I3 I4
+#   outputs: list[SentimentResult]
+# 层: 输出
+# - id: O1
+#   name_zh: 情感推理结果 SentimentResult
+#   name_en: SentimentResult
+#   intro: 七字段冻结 dataclass：sentiment/score/polarity/news_id/raw(截断500)/cached/error
+#   invariant: 推理/解析失败降级 neutral+0.5 不抛异常；polarity∈[-1,1]
+#   downstream: scripts/ml/eval_sentiment.py; P1-E3 NLP 管道 Phase 2/3（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 情感结果缓存写入
+#   name_en: cache.put_query_result(news_sentiment)
+#   intro: 推理结果按含模型版本的文本键写入查询缓存，避免重复推理
+#   downstream: CacheLayer（zephyr.integration.local_model.cache_layer），供后续 infer_sentiment 命中复用
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# I4 --> A1
+# A1 --> O1
+# A1 --> A2
+# I1 --> A2
+# I2 --> A2
+# I4 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+# A4 --> O2
+# I1 --> A5
+# I2 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

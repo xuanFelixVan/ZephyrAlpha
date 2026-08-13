@@ -1,7 +1,9 @@
 # [BLUEPRINT] MOD-L00-007 | docs/03_modules/_domain_data/redundant_source_blueprint.md
 # [A_module] module_id=MOD-L00-007 | layer=module | stability=evolving | safety=M
 # [TTL] permanent
-"""备源 Tick 轮询器——主源中断时自动切换到 TDX 备源（P1-3）。
+"""
+
+备源 Tick 轮询器——主源中断时自动切换到 TDX 备源（P1-3）。
 
 设计：
 - TDXBackupProvider 实现 SourceProvider 接口，封装 TDXProvider.fetch_tick_snapshot
@@ -22,6 +24,63 @@ Usage::
     backup = BackupTickPoller(tdx_provider, symbols, on_tick_callback)
     switcher = SourceSwitcher(QMTSourceAdapter(sub), backup, heartbeat)
     switcher.start()
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: TDX 备源 Provider 实例
+#   fields: tdx_provider——已连接或待连接的 TDXProvider，提供 fetch_tick_snapshot 拉实时快照
+#   code: BackupTickPoller.__init__ L79-94
+# - id: I2
+#   name: 订阅标的列表 symbols
+#   fields: QMT 格式标的列表，如 ["000001.SZ", "600000.SH"]
+#   code: BackupTickPoller.__init__ L82,95
+# - id: I3
+#   name: tick 回调函数
+#   fields: on_tick_callback，签名 (symbol: str, tick: dict) → None，喂入 TickSubscriber 队列
+#   code: BackupTickPoller.__init__ L83,96
+# - id: I4
+#   name: QMT 主源订阅器
+#   fields: subscriber——TickSubscriber 实例，适配器透传其 _running 状态
+#   code: QMTSourceAdapter.__init__ L51-52
+# 层: 算法
+# - id: A1
+#   name_zh: ① TDX 备源轮询
+#   name_en: BackupTickPoller
+#   intro: 主源中断时起后台线程每 3 秒从 TDX 拉快照，伪装成 QMT tick 喂进队列
+#   desc: start 先确保 TDX 已连接（未连则 connect，失败 return False）→起 daemon 线程 _poll_loop：fetch_tick_snapshot(symbols)→逐只 self._on_tick(symbol, tick)，回调异常只 log 不中断→按 max(0.1, interval-elapsed) 精确间隔 sleep（L104-156）；stop 只停线程 join 5s 不断 TDX 连接便于快速重启（L124-130）
+#   inputs: I1 I2 I3
+#   outputs: 备源 tick 流（经回调入队）
+#   invariant: 轮询间隔默认 3.0s；_running 标志 + 线程协调保证线程安全
+# - id: A2
+#   name_zh: ② QMT 主源被动适配
+#   name_en: QMTSourceAdapter
+#   intro: 把 TickSubscriber 包成 SourceProvider 接口给切换器用，stop 是空操作保持订阅
+#   desc: name()="qmt"；start() no-op 返回 True（QMT 订阅由 TickSubscriber.start 管理）；stop() no-op——保持 QMT 订阅活跃让 HeartbeatMonitor 检测主源恢复；is_running 透传 subscriber._running（L43-66）
+#   inputs: I4
+#   outputs: SourceProvider 接口视图（主源侧）
+#   invariant: stop=no-op，保持订阅用于恢复检测
+# 层: 输出
+# - id: O1
+#   name_zh: 备源 tick 喂入流
+#   name_en: on_tick(symbol, tick) 回调流
+#   intro: TDX 快照转成 QMT tick dict 喂进 TickSubscriber 队列，主源中断时数据面无缝接管
+#   downstream: zephyr.data.tick_subscriber MOD-L00-001（P1-3 接入点 L775-786）
+# - id: O2
+#   name_zh: SourceProvider 双源适配器
+#   name_en: BackupTickPoller + QMTSourceAdapter（SourceProvider 接口）
+#   intro: 备源轮询器与主源适配器成对提供给 SourceSwitcher 统一调度主备切换
+#   downstream: 同包 source_switcher.SourceSwitcher；zephyr.data.tick_subscriber MOD-L00-001
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A2
+# A1 --> O1
+# A1 --> O2
+# A2 --> O2
 """
 from __future__ import annotations
 
