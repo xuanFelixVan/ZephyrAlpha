@@ -14,7 +14,9 @@
 # [TESTS] tests/ex_core/test_position_reconciler.py
 # [A_module] module_id=MOD-EX-056 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EXECUTION_CORE — 盘中持仓对账器 (Position Reconciler)
+"""
+
+D_EXECUTION_CORE — 盘中持仓对账器 (Position Reconciler)
 
 定期比对"系统账"（PositionTracker，靠成交回报累计）与"外部账"（Broker 的
 get_positions 查询），差异 > tolerance → 告警 + 冻结该标的交易；恢复一致 → 解冻。
@@ -30,6 +32,58 @@ get_positions 查询），差异 > tolerance → 告警 + 冻结该标的交易�
 
 阶段2扩展（本次不实现，见蓝图 §3）:
   - 定时调度（每5分钟）/ miniQMT 实盘源 / D-L1 降级 / 对账历史持久化 / 恢复后强制对账 / 现金对账
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 系统账持仓快照（PositionTracker）
+#   fields: PositionSnapshot.holdings（symbol→Decimal数量，靠成交回报累计）
+#   code: system_source.get_positions() L146；PositionSource协议 L48-55
+# - id: I2
+#   name: 外部账持仓快照（Broker）
+#   fields: PositionSnapshot.holdings（券商 get_positions 查询结果）
+#   code: broker_source.get_positions() L147
+# - id: I3
+#   name: 对账容差 tolerance
+#   fields: Decimal，默认0（零容差）
+#   code: __init__ L124-136
+# 层: 算法
+# - id: A1
+#   name_zh: ① 双源持仓对账
+#   name_en: PositionReconciler.reconcile
+#   intro: 逐标的比系统账和外部账数量，差异超容差记drift并冻结该标的
+#   desc: 取两源symbol并集 → diff=system_qty-broker_qty → |diff|>tolerance 记 DriftItem → 冻结集全量重算=当前drift标的集（恢复一致即解冻）→ matched=False 触发 on_drift 告警（异常不阻断）
+#   inputs: I1 I2 I3
+#   outputs: ReconcileResult
+#   invariant: Decimal-only数量比较；冻结集每次全量重算非累加；reconcile纯读不改source状态
+# - id: A2
+#   name_zh: ② 冻结状态管理
+#   name_en: is_frozen / frozen_symbols / unfreeze
+#   intro: 交易线程下单前查标的是否被冻结，也支持人工手动解冻
+#   desc: threading.Lock 保护冻结集读写；unfreeze手动解冻后下次reconcile若仍有drift会重新冻结
+#   inputs: A1
+#   outputs: bool / frozenset[str]
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: 是否一致+差异项列表+冻结集+本次新增冻结/解冻的不可变结果
+#   invariant: frozen 不可变
+#   downstream: trading_session（D_EX_CORE）；simulation_broker（D_GOVERNANCE adapters）
+# - id: O2
+#   name_zh: 冻结标的集
+#   name_en: frozen_symbols
+#   intro: 有未解决持仓差异的标的集合，下单前检查拦截用
+#   downstream: ExecutionEngine 下单前检查（D_EX_CORE域内）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# A1 --> O1
+# A2 --> O2
 """
 from __future__ import annotations
 

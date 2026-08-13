@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-EX-057 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Order Execution Saga — 下单执行 Saga 编排器 (MOD-EX-057 / D-EX-CORE-57)
+"""
+
+Order Execution Saga — 下单执行 Saga 编排器 (MOD-EX-057 / D-EX-CORE-57)
 
 D_EXECUTION_CORE 域事务编排基础设施: 将单笔订单的执行封装为六步 Saga 事务,
 任何一步失败自动补偿回滚, 保证系统不会处于"半完成"的不一致状态。
@@ -38,6 +40,85 @@ D_EXECUTION_CORE 域事务编排基础设施: 将单笔订单的执行封装为�
 SSoT: depgraph MOD-EX-057
 设计真源: D-EX-CORE-57 §13
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 订单 Order + 买卖方向 side
+#   fields: order(symbol/quantity/limit_price/order_type/strategy_id) + OrderSide
+#   code: execute(order, side) L347
+# - id: I2
+#   name: 当前持仓快照 + 风控限额 RiskLimits
+#   fields: holdings + cash + total_market_value + max_single_position(0.10) + max_gross_leverage(1.0)
+#   code: _step1_risk_check L444-465；_default_risk_limits L334-343
+# - id: I3
+#   name: 成交回报 Fill 回调流
+#   fields: fill(fill_id/fill_price/filled_quantity/commission)，由 OrderManager fill callback 推送
+#   code: _FillCollector L192-219；_step4_fill_confirm L568
+# 层: 算法
+# - id: A1
+#   name_zh: ① 六步Saga主编排
+#   name_en: OrderExecutionSaga._run_saga
+#   intro: 把单笔订单执行封装成风控→信号→下单→成交→持仓→报告六步事务，失败自动补偿
+#   desc: 严格顺序调 step1~step6；任一步失败即返回；成交超时进 TIMEOUT 并触发撤单补偿；异常时按状态补偿；finally 清理 fill callback
+#   inputs: I1
+#   outputs: SagaResult（不可变）
+#   invariant: 六步严格顺序；≤5s超时；execute同步阻塞；每步审计不可跳过
+# - id: A2
+#   name_zh: ② 步骤1风控检查
+#   name_en: _step1_risk_check
+#   intro: 用当前持仓估算目标权重，调风控端口校验，HALT级违规直接拒单
+#   desc: target_weight=qty×limit_price/total_nav → risk_validator.validate_order → 有HALT违规则 RISK_REJECTED 写审计，否则 RISK_PASSED
+#   inputs: I2 A1
+#   outputs: RISK_PASSED / RISK_REJECTED
+# - id: A3
+#   name_zh: ③ 步骤3下单提交+步骤4成交确认
+#   name_en: _step3_order_submit / _step4_fill_confirm
+#   intro: 注册fill收集器防竞态后提交订单，阻塞等成交回报直到超时
+#   desc: 未注册订单先 create_order → submit前注册 _FillCollector(threading.Event) → submit_order → Event.wait(remaining_timeout) 等首个匹配 fill
+#   inputs: I3 A2
+#   outputs: ORDER_SUBMITTED + Fill / 超时None
+# - id: A4
+#   name_zh: ④ 步骤5持仓更新+步骤6报告
+#   name_en: _step5_position_update / _step6_report
+#   intro: 成交落地到持仓跟踪器并写审计，最后标记订单FILLED
+#   desc: position_tracker.apply_fill(fill, side) → 写 ORDER_FILLED 审计 → best-effort 标记订单 FILLED（失败不阻断）
+#   inputs: A3
+#   outputs: POSITION_UPDATED / COMPLETED
+# - id: A5
+#   name_zh: ⑤ 补偿回滚
+#   name_en: _compensate_order / _compensate_position
+#   intro: 撤单或反向apply_fill回滚持仓，幂等不重复补偿
+#   desc: 订单处于PENDING/SUBMITTED/PARTIAL才撤单（已成交忽略）；持仓回滚构造rollback-Fill反方向apply_fill（佣金为0）
+#   inputs: A3 A4
+#   outputs: COMPENSATED 状态
+#   invariant: 补偿幂等（已成交撤单忽略；回滚覆盖式）
+# 层: 输出
+# - id: O1
+#   name_zh: Saga执行结果 SagaResult
+#   name_en: SagaResult
+#   intro: 含最终状态/已完成步骤/成交/错误/是否补偿/耗时的不可变结果
+#   invariant: frozen 不可变
+#   downstream: D-PORTFOLIO（TradingSession可调用）；D-EX-CORE（ExecutionEngine可调用）
+# - id: O2
+#   name_zh: 执行审计事件流
+#   name_en: ExecutionAuditLogger.log
+#   intro: 每步向审计记录器写 ORDER_CREATED/SUBMITTED/FILLED/CANCELLED/EXPIRED 事件
+#   downstream: 审计记录器 MOD-EX-003
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A3
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A3 --> A5
+# A4 --> A5
+# A4 --> O1
+# A5 --> O1
+# A1 --> O2
 """
 
 from __future__ import annotations

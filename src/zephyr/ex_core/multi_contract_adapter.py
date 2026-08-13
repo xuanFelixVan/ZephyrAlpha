@@ -14,7 +14,9 @@
 # [TESTS] tests/ex_core/test_multi_contract_adapter.py
 # [A_module] module_id=MOD-EX-055 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EX_CORE — Multi-Contract Adapter (多契约生产适配器)
+"""
+
+D_EX_CORE — Multi-Contract Adapter (多契约生产适配器)
 
 D_EX_CORE 域的契约注册中心——管理 CTR-004 (Order) / CTR-005 (Fill) /
 CTR-006 (PositionSnapshot) 三份跨域契约的 Schema 元数据、版本演进、
@@ -26,6 +28,71 @@ CTR-006 (PositionSnapshot) 三份跨域契约的 Schema 元数据、版本演进
 设计真源: D-EX-CORE-55 "CTR-004/005/006 Schema+版本演进+消费者注册+变更通知"
 蓝图: docs/03_modules/_domain_execution_core/multi_contract_adapter/blueprint.md
 SSoT: depgraph MOD-EX-055
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 契约元数据 ContractSchema
+#   fields: contract_id + name + version + producer_domain + consumer_domains + frozen + ssot_path + contract_class_path
+#   code: register(schema) L149；预注册 CTR_004/005/006 L347-390
+# - id: I2
+#   name: 消费者回调 callback
+#   fields: Callable[[ContractSchema], None]（契约变更时通知）
+#   code: register_consumer(contract_id, callback) L177
+# - id: I3
+#   name: 版本升级请求
+#   fields: new_version + changelog_entry + force
+#   code: upgrade_version() L198-205
+# 层: 算法
+# - id: A1
+#   name_zh: ① 契约注册与消费者登记
+#   name_en: MultiContractRegistry.register / register_consumer
+#   intro: 把契约元数据登记进注册表，并为契约挂消费者回调
+#   desc: contract_id 查重（重复抛 ContractAlreadyRegisteredError）→ 建 _ContractEntry 写审计日志 → 消费者回调追加到 entry.consumer_callbacks
+#   inputs: I1 I2
+#   outputs: 已注册 ContractSchema
+#   invariant: 同一 contract_id 不可重复注册；审计日志全量记录
+# - id: A2
+#   name_zh: ② 版本演进与变更通知
+#   name_en: MultiContractRegistry.upgrade_version
+#   intro: 校验冻结与版本只升不降，生成新Schema并同步通知所有消费者
+#   desc: 冻结检查（force除外）→ _parse_version 元组比较禁止降级 → replace 生成新 Schema（changelog追加，force时解冻）→ 逐个调消费者回调（失败不阻断）→ 审计日志
+#   inputs: I3 A1
+#   outputs: 新版 ContractSchema
+#   invariant: 版本只升不降；冻结契约禁止升级（除非force）；变更通知同步推送
+# - id: A3
+#   name_zh: ③ 多维度查询
+#   name_en: get / list_by_producer / list_by_consumer / get_audit_log
+#   intro: 按契约ID、生产域、消费域查契约元数据和审计日志
+#   desc: _entries 字典直查 + 条件过滤；不存在抛 ContractNotFoundError
+#   inputs: A1 A2
+#   outputs: ContractSchema / list[ContractSchema] / audit_log
+# 层: 输出
+# - id: O1
+#   name_zh: 契约元数据快照 ContractSchema
+#   name_en: ContractSchema
+#   intro: CTR-004/005/006三份跨域契约的生产者/消费者/版本/冻结状态快照
+#   invariant: frozen 不可变；变更生成新实例
+#   downstream: D_EX_CORE域内模块；D_GOVERNANCE契约治理
+# - id: O2
+#   name_zh: 契约审计日志
+#   name_en: audit_log
+#   intro: REGISTER/CONSUMER_REGISTER/UPGRADE/NOTIFY 全量操作日志
+#   downstream: D_GOVERNANCE契约治理
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A2
+# A1 --> A2
+# A1 --> A3
+# A2 --> A3
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A1 --> O2
+# A2 --> O2
 """
 
 from __future__ import annotations

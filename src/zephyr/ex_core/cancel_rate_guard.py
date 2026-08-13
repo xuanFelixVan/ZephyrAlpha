@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_cancel_rate_guard.py
 # [TTL] permanent
 
-"""撤单率滚动监控降级（40_execution_broker §决策⑫ gap 7 施工）。
+"""
+
+撤单率滚动监控降级（40_execution_broker §决策⑫ gap 7 施工）。
 
 程序化交易监管合规生存项（《程序化交易管理实施细则》2025-07-07 全面实施）：
 - 滚动 500 笔窗口监控撤单率
@@ -26,6 +28,72 @@
 
 依据：40_execution_broker.md v2.3.0 §决策⑫
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 报单事件流水（提交/成交/撤单）
+#   fields: record_submit 提交时间戳 / record_fill 成交 / record_cancel 撤单
+#   code: record_submit/record_fill/record_cancel L167-L183
+# - id: I2
+#   name: 守卫配置参数 4项
+#   fields: window_size=500笔 / warn_threshold=0.12 / freeze_threshold=0.15 / rate_limit_per_sec=15
+#   code: CancelRateGuard dataclass L55-L72
+# 层: 算法
+# - id: A1
+#   name_zh: ① 滚动撤单率计算
+#   name_en: cancel_rate
+#   intro: 数最近500笔已完结报单里有多少是撤单，算出滚动撤单率
+#   desc: deque(maxlen=500) 存 "cancel"/"fill" → cancel_rate = cancels/len(resolved)；空窗口返回0.0
+#   inputs: I1 I2
+#   outputs: cancel_rate float（0~1）
+# - id: A2
+#   name_zh: ② 三档状态降级
+#   name_en: status
+#   intro: 撤单率过12%只挂不撤，过15%冻结全账户新下单
+#   desc: rate>freeze→FROZEN；rate>warn→WARN_ONLY_PLACE；否则NORMAL；12%预警留3%缓冲防滚动窗口滞后
+#   inputs: A1 I2
+#   outputs: CancelRateStatus（NORMAL/WARN_ONLY_PLACE/FROZEN）
+#   invariant: 撤单率>15%冻结新下单；>12%禁止撤单
+# - id: A3
+#   name_zh: ③ 下单/撤单许可判定
+#   name_en: can_place_order / can_cancel_order
+#   intro: 冻结状态不让下单，预警和冻结状态都不让撤单
+#   desc: FROZEN→can_place_order=False（告警人工介入）；FROZEN/WARN_ONLY_PLACE→can_cancel_order=False；判定失败均记日志
+#   inputs: A2
+#   outputs: bool 许可
+# - id: A4
+#   name_zh: ④ 每秒限频检查
+#   name_en: can_submit_now
+#   intro: 最近1秒内报单+撤单到15笔就不让再发，远低于法定300笔/秒
+#   desc: _submit_ts deque 清理1秒前时间戳 → len>=rate_limit_per_sec→False；撤单也消耗限频额度
+#   inputs: I1 I2
+#   outputs: bool 许可
+#   invariant: 内部限频15笔/秒（保守安全垫）
+# 层: 输出
+# - id: O1
+#   name_zh: 下单/撤单/限频许可 bool
+#   name_en: can_place_order / can_cancel_order / can_submit_now
+#   intro: 下单撤单前的三道许可闸门返回值
+#   downstream: ex_core.order_manager / ex_core.trading_session（提交与撤单前置调用）
+# - id: O2
+#   name_zh: 降级状态与告警日志
+#   name_en: CancelRateStatus
+#   intro: 当前监控状态，触发预警/冻结时打告警日志
+#   downstream: 人工介入告警 / 审计日志（D_EX_CORE）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> A3
+# I1 --> A4
+# I2 --> A4
+# A3 --> O1
+# A4 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

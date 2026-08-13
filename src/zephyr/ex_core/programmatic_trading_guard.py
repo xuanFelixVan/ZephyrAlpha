@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_programmatic_trading_guard.py
 # [TTL] permanent
 
-"""程序化交易报备合规守卫（40_execution_broker §决策⑱ gap 18 施工）。
+"""
+
+程序化交易报备合规守卫（40_execution_broker §决策⑱ gap 18 施工）。
 
 实盘生存项——"未报备就上实盘"是合规硬违规。2025-07-07《证券市场程序化交易管理
 实施细则》正式实施，明确程序化交易必须事前报备（策略/算法/服务器/风控），
@@ -50,6 +52,94 @@
       中基协私募委员会 2026-07 权威解读
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 守卫配置 ProgrammaticTradingGuardConfig
+#   fields: mode(PAPER/SIMULATION/LIVE) / live_broker_ids / enforce_on_start / enforce_on_submit / allow_drift_warning_only
+#   code: ProgrammaticTradingGuardConfig L194
+# - id: I2
+#   name: 报备信息 RegistrationInfo 入参
+#   fields: registration_id / strategy_id / algorithm_types / server_location / risk_config_hash / max_total_orders_per_day / cancel_rate_limit
+#   code: record_registration L331
+# - id: I3
+#   name: 当前风控配置 dict（运行时查询）
+#   fields: max_single_order_pct / max_symbol_orders_per_day / max_total_orders_per_day / cancel_rate_limit
+#   code: risk_config_provider() L265
+# - id: I4
+#   name: 券商标识 broker_id 字符串
+#   fields: 如 miniqmt（启动/下单校验对象）
+#   code: check_can_trade(broker_id) L413
+# 层: 算法
+# - id: A1
+#   name_zh: ① 风控配置哈希
+#   name_en: hash_risk_config
+#   intro: 把4项关键风控阈值拼成串算SHA-256，得到稳定可比对的指纹
+#   desc: 4项阈值格式化后按 key 字典序拼接 → SHA-256 → 64字符 hex；extra 项可扩展
+#   inputs: I3
+#   outputs: 风控配置 hash（64字符hex）
+#   code: hash_risk_config L221
+# - id: A2
+#   name_zh: ② 报备信息登记
+#   name_en: record_registration
+#   intro: 记录一次券商报备，生成不可变快照，旧的留审计历史
+#   desc: 参数合法性校验（id非空/笔数>0/撤单率∈(0,1]/算法列表非空）→ 生成 RegistrationInfo；重复调用旧实例入 _registration_history
+#   inputs: I2
+#   outputs: RegistrationInfo 不可变快照
+#   invariant: 报备信息变更需重新报备
+# - id: A3
+#   name_zh: ③ 配置漂移检测
+#   name_en: _detect_config_drift
+#   intro: 重算当前风控hash与报备时hash比对，不一致视为报备失效
+#   desc: 调 risk_config_provider 取当前配置 → hash_risk_config 重算 → 与报备 risk_config_hash 比对；未配置provider/未报备/查询异常 → None（保守放行）
+#   inputs: A1 A2
+#   outputs: 当前hash（漂移时）或 None
+#   invariant: 查询失败保守放行不阻断交易
+# - id: A4
+#   name_zh: ④ 五规则合规校验
+#   name_en: check_can_trade
+#   intro: 按优先级过5条规则：非实盘豁免、白名单、未报备、漂移、放行
+#   desc: 非LIVE→ALLOWED豁免 → broker不在live_broker_ids→BLOCKED_LIVE_BROKER保守拒 → 未报备→BLOCKED_UNREGISTERED → 漂移→BLOCKED_CONFIG_DRIFT（可配仅告警） → 全过→ALLOWED
+#   inputs: I1 I4 A2 A3
+#   outputs: CheckResult（outcome/reason/registration_id/config_hash_drift）
+#   invariant: 实盘+未报备=拒下单；CheckResult不可变
+# - id: A5
+#   name_zh: ⑤ 启动/下单双断言
+#   name_en: assert_can_start / assert_can_submit
+#   intro: 启动和每笔下单前各校验一次，被阻断就抛合规异常
+#   desc: 调 check_can_trade，is_blocked 且对应 enforce 开关开 → 抛 ProgrammaticTradingGuardError(ZA-EX-0010)；enforce 关则仅告警（宽松模式）
+#   inputs: A4
+#   outputs: CheckResult 或 ProgrammaticTradingGuardError
+#   invariant: 启动+下单双校验防绕过单点
+# 层: 输出
+# - id: O1
+#   name_zh: CheckResult 合规校验结果
+#   name_en: CheckResult
+#   intro: 不可变的校验结论（放行/拒因），供审计日志留存
+#   invariant: 不可变 frozen dataclass
+#   downstream: ex_core.trading_session（启动校验）/ ex_core.adapters.miniqmt_broker（下单校验）
+# - id: O2
+#   name_zh: 合规阻断异常 ZA-EX-0010
+#   name_en: ProgrammaticTradingGuardError
+#   intro: 实盘未报备或报备失效时抛出，硬阻断启动/下单
+#   downstream: 调用方捕获 → 审计/告警（D_EX_CORE）
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# I2 --> A2
+# A1 --> A2
+# A1 --> A3
+# A2 --> A3
+# I1 --> A4
+# I4 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> A5
+# A4 --> O1
+# A5 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

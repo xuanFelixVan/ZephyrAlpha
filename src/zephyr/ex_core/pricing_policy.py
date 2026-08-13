@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_pricing_policy.py
 # [TTL] permanent
 
-"""挂单价算法（40_execution_broker §决策⑭ gap 9 施工）。
+"""
+
+挂单价算法（40_execution_broker §决策⑭ gap 9 施工）。
 
 v1.0.0 拆单算法（TWAP/VWAP 切片）讲了"怎么拆"，但每个子单的具体挂单价未定义——
 这是 TWAP/VWAP 落地的最后一公里。本模块补全挂单价决策。
@@ -48,6 +50,85 @@ v1.0.0 拆单算法（TWAP/VWAP 切片）讲了"怎么拆"，但每个子单的�
 
 依据：40_execution_broker.md v2.4.0 §决策⑭
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 盘口上下文 PricingContext
+#   fields: symbol/side + ask1卖一/bid1买一/last_price最新价/prev_close前收盘/limit_up涨停价/limit_down跌停价（均可空）
+#   code: PricingContext (pricing_policy.py L96)
+# - id: I2
+#   name: 挂单档位 PricingTier 枚举
+#   fields: PASSIVE被动/ACTIVE主动/LIMIT_UP_SELL涨停卖/LIMIT_DOWN_BUY跌停买/ONE_TICK_INSIDE提1tick
+#   code: PricingTier (pricing_policy.py L82)
+# - id: I3
+#   name: 最小变动价位 PRICE_TICK 常量
+#   fields: 0.01元（A股tick，量化与提1tick用）
+#   code: price_cage.PRICE_TICK (pricing_policy.py L61)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 五档挂单价决策分发
+#   name_en: PricingPolicy.decide
+#   intro: 按档位分发到对应定价逻辑，结果统一量化到0.01 tick
+#   desc: LIMIT_UP_SELL/LIMIT_DOWN_BUY走涨跌停档；ACTIVE走对手价；ONE_TICK_INSIDE走提1tick；默认PASSIVE被动档；最终_round_to_tick量化（L177-214）
+#   inputs: I1 I2 I3
+#   outputs: PricingDecision（price/tier/fallback_used/reason）
+#   invariant: 被动档买一卖一/主动档对手价/涨停卖单挂涨停/跌停买单挂跌停
+# - id: A2
+#   name_zh: ② 盘口最优价解析
+#   name_en: _own_price / _opponent_price
+#   intro: 买单己方=买一对手=卖一，卖单反之，供各档选价
+#   desc: side=BUY→own=bid1,opponent=ask1；SELL反之（L341-353）
+#   inputs: I1
+#   outputs: 己方价own/对手价opponent（可None）
+# - id: A3
+#   name_zh: ③ 被动/主动档选价与回退链
+#   name_en: _pick_passive / _pick_active
+#   intro: 优先盘口己方/对手价，无盘口按last_price→prev_close回退，主动档最后兜底己方±1tick估算
+#   desc: 被动档取own，主动档取opponent；均无则last→prev_close；主动档仍无则own±1tick；全无→raise PricingPolicyError（L297-337）
+#   inputs: A2 I1
+#   outputs: (价格, 是否回退, 理由)
+#   invariant: 零价无盘口兜底前收盘
+# - id: A4
+#   name_zh: ④ 涨跌停档定价
+#   name_en: _decide_limit_up_sell / _decide_limit_down_buy
+#   intro: 涨停卖单挂涨停价、跌停买单挂跌停价，是唯一可成交的排队价位
+#   desc: limit_up/down_price缺失或<=0时用prev_close×(1±10%)估算；prev_close也无→raise PricingPolicyError（L218-261）
+#   inputs: I1
+#   outputs: 涨停/跌停挂单价
+#   invariant: 涨跌停价与prev_close均无→报错不瞎挂
+# - id: A5
+#   name_zh: ⑤ 提1tick中间档
+#   name_en: _decide_one_tick_inside
+#   intro: 买单买一+1tick、卖单卖一-1tick，极小成本换成交确定性
+#   desc: own缺失回退被动档逻辑；BUY→own+PRICE_TICK，SELL→own-PRICE_TICK（L263-295）
+#   inputs: A2 I3
+#   outputs: 提1tick挂单价
+# 层: 输出
+# - id: O1
+#   name_zh: 挂单价决策 PricingDecision
+#   name_en: PricingDecision
+#   intro: 含挂单价/生效档位/是否盘口回退/人类可读理由，调用方须再过价格笼子校验后下单
+#   invariant: price已量化到0.01 tick；挂单价仍须过price_cage校验
+#   downstream: ex_core.trading_session / ex_core.adapters.miniqmt_broker / ex_core.open_order_resolver
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I1 --> A2
+# A2 --> A3
+# I1 --> A3
+# A2 --> A5
+# I3 --> A5
+# I1 --> A4
+# A1 --> A3
+# A1 --> A4
+# A1 --> A5
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
 """
 
 from __future__ import annotations

@@ -16,7 +16,9 @@
 # [TTL] permanent
 # noqa: m03-duplicate  M03豁免: AI趋同演化(Facade模式天然聚合下游API),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-"""D_EX_CORE — Aggregate Root Manager (执行域聚合根管理器)
+"""
+
+D_EX_CORE — Aggregate Root Manager (执行域聚合根管理器)
 
 执行域的总调度台——把订单仓储、成交处理、持仓跟踪三个独立组件拧成一股绳。
 作为 Facade（门面模式）整合 FillHandler、PositionTracker 和 Repository，
@@ -33,6 +35,70 @@
 设计真源: D-EX-CORE-49 "Order/Position生命周期协调层"
 蓝图: docs/03_modules/_domain_execution_core/aggregate_root_manager/blueprint.md
 SSoT: depgraph MOD-EX-049
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 订单创建参数
+#   fields: symbol + strategy_id + side + order_type + quantity(Decimal) + limit_price
+#   code: create_order() L157-165
+# - id: I2
+#   name: 成交回报 Fill + 委托订单 Order
+#   fields: fill(fill_id/fill_price/filled_quantity/commission) + order(就地更新)
+#   code: process_fill(fill, order) L203
+# 层: 算法
+# - id: A1
+#   name_zh: ① 订单创建+持久化
+#   name_en: ExecutionAggregateManager.create_order
+#   intro: 生成UUID订单号构造PENDING状态Order并写入仓储
+#   desc: uuid4生成order_id → 构造Order(PENDING) → order_repo.save 持久化
+#   inputs: I1
+#   outputs: 新建 Order（状态PENDING，已持久化）
+#   invariant: quantity 全程 Decimal 禁止 float
+# - id: A2
+#   name_zh: ② 成交全链路编排
+#   name_en: ExecutionAggregateManager.process_fill
+#   intro: 一笔成交自动完成更新订单成交状态、更新持仓、持久化三步
+#   desc: 固定顺序 FillHandler.process_fill(累积/均价/状态) → PositionTracker.apply_fill(持仓/现金) → order_repo.save
+#   inputs: I2
+#   outputs: FillSummary 成交汇总
+#   invariant: 调用顺序固定 FillHandler→PositionTracker→repo.save；Facade不含业务计算
+# - id: A3
+#   name_zh: ③ 状态查询与快照持久化
+#   name_en: get_order_state / save_position_snapshot
+#   intro: 一次性查订单完整状态，或把当前持仓快照写入快照仓储
+#   desc: repo.get + fill_handler.get_summary 组装 OrderState；未注入快照仓储则抛 AggregateManagerError
+#   inputs: A1 A2
+#   outputs: OrderState / PositionSnapshot
+# 层: 输出
+# - id: O1
+#   name_zh: 订单及完整状态 Order/OrderState
+#   name_en: Order / OrderState
+#   intro: 订单本体加成交汇总的不可变快照，供上层一次性查询
+#   downstream: D_EX_CORE域内模块；Saga编排器 MOD-EX-057（阶段2集成）
+# - id: O2
+#   name_zh: 成交汇总 FillSummary
+#   name_en: FillSummary
+#   intro: 总量/已成交/剩余/均价/笔数/佣金的成交快照
+#   invariant: frozen 不可变
+#   downstream: D_EX_CORE域内模块
+# - id: O3
+#   name_zh: 持仓快照 PositionSnapshot
+#   name_en: PositionSnapshot
+#   intro: CTR-006持仓契约快照，可持久化到快照仓储
+#   downstream: D_RISK / D_REPORTING / D_ML（CTR-006消费域）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> A3
+# A2 --> A3
+# A1 --> O1
+# A2 --> O1
+# A2 --> O2
+# A3 --> O1
+# A3 --> O3
 """
 
 from __future__ import annotations

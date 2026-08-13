@@ -14,7 +14,9 @@
 # [TESTS] tests/ex_core/test_fill_handler.py
 # [A_module] module_id=MOD-EX-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EX_CORE — Fill Handler (部分成交处理器)
+"""
+
+D_EX_CORE — Fill Handler (部分成交处理器)
 
 D_EX_CORE 域的成交回报处理器——接收 Fill（CTR-005），累积到对应 Order（CTR-004），
 更新已成交数量、加权均价、佣金，并驱动成交相关状态转换（SUBMITTED→PARTIAL→FILLED）。
@@ -25,6 +27,63 @@ D_EX_CORE 域的成交回报处理器——接收 Fill（CTR-005），累积到�
 设计真源: D-EX-CORE-48 "部分成交状态更新与后续处理"
 蓝图: docs/03_modules/_domain_execution_core/fill_handler/blueprint.md
 SSoT: depgraph MOD-EX-001
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交回报 Fill（CTR-005）
+#   fields: fill_id + order_id + fill_price + filled_quantity + commission + fill_timestamp
+#   code: process_fill(fill, order) L143
+# - id: I2
+#   name: 委托订单 Order（CTR-004 可变）
+#   fields: order_id + quantity + filled_quantity + avg_fill_price + status
+#   code: process_fill(fill, order) L143
+# 层: 算法
+# - id: A1
+#   name_zh: ① 成交处理主流程
+#   name_en: FillHandler.process_fill
+#   intro: 校验+幂等拦截后累积成交量、算加权均价、驱动状态转换并生成汇总
+#   desc: 校验数量>0与order_id匹配 → fill_id幂等拦截 → new_filled=old+fill.qty → new_avg=(old_avg×old_filled+price×qty)/new_filled → 按累积量驱动SUBMITTED→PARTIAL→FILLED → 汇总佣金构建FillSummary → 回调通知
+#   inputs: I1 I2
+#   outputs: FillSummary + Order就地更新
+#   invariant: fill_id幂等；filled_quantity单调递增；Decimal全程计算
+# - id: A2
+#   name_zh: ② 成交状态转换
+#   name_en: FillHandler._try_transition
+#   intro: 按_FILL_TRANSITIONS表尝试状态跳转，非法转换只记警告不抛异常
+#   desc: 查 _FILL_TRANSITIONS 合法路径（PENDING不接受成交；SUBMITTED→PARTIAL/FILLED；PARTIAL→FILLED），非法仅 log 不阻断
+#   inputs: A1
+#   outputs: order.status 更新
+#   invariant: 状态转换遵循 _FILL_TRANSITIONS 合法路径
+# - id: A3
+#   name_zh: ③ 成交查询
+#   name_en: get_summary / get_fills / get_remaining
+#   intro: 按order_id查成交汇总、成交历史和剩余未成交量
+#   desc: 内存字典 _summaries/_fills 直查，无记录返回 None
+#   inputs: A1
+#   outputs: FillSummary / list[Fill] / Decimal
+# 层: 输出
+# - id: O1
+#   name_zh: 成交汇总 FillSummary
+#   name_en: FillSummary
+#   intro: 总量/已成交/剩余/加权均价/笔数/总佣金/是否完成的不可变快照
+#   invariant: frozen 不可变；remaining=max(total-filled,0)
+#   downstream: 聚合根管理器 MOD-EX-049；Fill Processor（D-EX-CORE-08 阶段2）
+# - id: O2
+#   name_zh: 订单就地更新 Order
+#   name_en: Order（就地修改）
+#   intro: filled_quantity/avg_fill_price/status/updated_at 被就地更新的订单对象
+#   downstream: D_EX_CORE域内模块
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> A3
+# A1 --> O1
+# A1 --> O2
+# A3 --> O1
 """
 
 from __future__ import annotations

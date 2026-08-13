@@ -14,7 +14,9 @@
 # [TESTS] tests/ex_core/test_position_tracker.py
 # [A_module] module_id=MOD-EX-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EXECUTION_CORE — Position Tracker (持仓跟踪器)
+"""
+
+D_EXECUTION_CORE — Position Tracker (持仓跟踪器)
 
 从 SimulationBroker 拆出的独立持仓跟踪模块。每笔成交（Fill）驱动持仓更新，
 任何时刻可产出 PositionSnapshot（CTR-006）供 D-RISK/D-PORTFOLIO/D-REPORTING 消费。
@@ -30,6 +32,48 @@
 
 阶段2扩展（本次不实现，见蓝图 §4）:
   - SQLite 持久化 / Redis 实时更新 / T+1 锁定 / FIFO-LIFO / unrealized_pnl
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交回报 Fill + 买卖方向 side
+#   fields: fill(symbol/fill_price/filled_quantity/commission) + OrderSide（Fill契约无side字段需显式传入）
+#   code: apply_fill(fill, side) L103
+# - id: I2
+#   name: 初始现金 initial_cash
+#   fields: Decimal，默认 1000000；另有 portfolio_id
+#   code: __init__ L70-80
+# 层: 算法
+# - id: A1
+#   name_zh: ① 平均成本法持仓更新
+#   name_en: PositionTracker.apply_fill
+#   intro: 每笔成交按买卖方向更新持仓数量、平均成本和现金余额
+#   desc: BUY: new_avg=(old_avg×old_qty+fill_price×fill_qty)/new_qty，cash-=qty×price+commission；SELL: qty减、avg_cost不变（成本锁定盈亏体现在现金端），cash+=qty×price-commission；threading.Lock保护；阶段1不做fill_id幂等去重
+#   inputs: I1 I2
+#   outputs: 内部持仓状态（holdings/avg_costs/cash）
+#   invariant: Decimal-only金额计算；apply_fill需显式side
+# - id: A2
+#   name_zh: ② 持仓快照产出
+#   name_en: PositionTracker.get_positions
+#   intro: 把内部持仓状态打包成CTR-006不可变快照供跨域消费
+#   desc: market_value=qty×avg_cost（阶段1用成本价非实时价）→ 过滤零持仓标的 → gross_leverage=total_mv/initial_cash → 构造 frozen PositionSnapshot
+#   inputs: A1
+#   outputs: PositionSnapshot（CTR-006）
+#   invariant: PositionSnapshot frozen不可变
+# 层: 输出
+# - id: O1
+#   name_zh: 持仓快照 PositionSnapshot（CTR-006）
+#   name_en: PositionSnapshot
+#   intro: 现金+持仓数量+市值+总杠杆的组合级快照，回测/模拟/实盘三态统一
+#   invariant: frozen 不可变；零持仓标的不出现在holdings中
+#   downstream: simulation_broker（D_GOVERNANCE adapters）；trading_session（D_EX_CORE）；D_RISK/D_REPORTING/D_ML（CTR-006消费域）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

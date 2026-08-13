@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_async_fill_dispatcher.py
 # [TTL] permanent
 
-"""成交回报异步派发器（40_execution_broker §决策① 工程约束1 gap 12 施工）。
+"""
+
+成交回报异步派发器（40_execution_broker §决策① 工程约束1 gap 12 施工）。
 
 XtQuant 实盘头号踩坑点：on_stock_order/on_stock_trade 回调在底层 C++ 线程执行，
 回调内绝对不能执行耗时操作（如数据库写入、复杂计算），否则会导致成交回报延迟
@@ -48,6 +50,95 @@ Queue.get()）。本模块实现这一模式，作为 FillHandler 的异步包�
 依据：40_execution_broker.md v2.4.0 §决策① 工程约束1
       2026 miniQMT 实盘避坑指南
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交回报 Fill
+#   fields: fill_id/order_id/成交价格数量（XtQuant C++线程回调推送）
+#   code: Fill (zephyr.shared.contracts.fill)
+# - id: I2
+#   name: 消费回调 consumer
+#   fields: (fill, order)->None，耗时处理逻辑（DB写/复杂计算在此执行）
+#   code: DispatchConsumer (async_fill_dispatcher.py L97)
+# - id: I3
+#   name: 订单查找函数 lookup_order_fn
+#   fields: fill → Order|None，解析成交对应订单
+#   code: OrderLookupFn (async_fill_dispatcher.py L100)
+# - id: I4
+#   name: 队列与去重配置
+#   fields: queue_maxsize=10000（背压上限）/dedup_window=10000（LRU去重窗口）
+#   code: __init__ (async_fill_dispatcher.py L142-177)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 回调内非阻塞入队
+#   name_en: AsyncFillDispatcher.enqueue
+#   intro: C++回调线程内只做去重+put_nowait，O(1)立即返回，零耗时防回报延迟
+#   desc: 停机后入队raise；重复fill_id去重返False；队列满丢弃并error（背压保护）；成功enqueued+1（L227-267）
+#   inputs: I1 I4
+#   outputs: bool（入队成功/去重/背压丢弃）
+#   invariant: 回调内只入队不处理
+# - id: A2
+#   name_zh: ② fill_id LRU 幂等去重
+#   name_en: _is_new_fill
+#   intro: set查询O(1)判重，超窗口淘汰最老fill_id防内存无限增长
+#   desc: fill_id=None视为新；加锁查_seen_fill_ids，命中→False；否则入集合并按LRU淘汰超出dedup_window的最老id（L321-343）
+#   inputs: I1 I4
+#   outputs: True=新/False=重复
+#   invariant: fill_id幂等（重复推送不双重计数）
+# - id: A3
+#   name_zh: ③ 消费线程主循环
+#   name_en: _consume_loop
+#   intro: daemon独立线程阻塞Queue.get逐笔处理，收到停机哨兵退出，单笔异常不中断循环
+#   desc: while running或队列非空→get(timeout=1.0)；哨兵→break；_dispatch_one异常→errors+1继续；finally task_done（L271-297）
+#   inputs: I4
+#   outputs: 消费循环（线程）
+#   invariant: 独立线程消费；线程安全（queue+lock）
+# - id: A4
+#   name_zh: ④ 单笔派发
+#   name_en: _dispatch_one
+#   intro: 查订单后调consumer回调，耗时操作在此线程不阻塞C++回调
+#   desc: lookup_order_fn(fill)→None则warning+errors+1跳过；否则consumer(fill, order)，成功后dispatched+1并刷新last_dispatch_at/queue_size（L299-317）
+#   inputs: I2 I3
+#   outputs: consumer(fill, order) 调用
+# - id: A5
+#   name_zh: ⑤ 优雅停机
+#   name_en: stop
+#   intro: 清running标志投哨兵，join等待消费线程排空退出
+#   desc: _running.clear→put_nowait(哨兵)（满则warning）→join(timeout)，返回是否已退出（L195-223）
+#   inputs: I4
+#   outputs: bool（线程已退出/超时）
+#   invariant: 优雅停机（join+sentinel）
+# 层: 输出
+# - id: O1
+#   name_zh: 派发的成交处理回调 (fill, order)
+#   name_en: DispatchConsumer 调用
+#   intro: 在独立线程执行FillHandler耗时成交处理，与XtQuant回调线程解耦
+#   invariant: 回调内只入队不处理；fill_id幂等；异常隔离不中断消费
+#   downstream: ex_core.adapters.miniqmt_broker / ex_core.trading_session
+# - id: O2
+#   name_zh: 派发统计 DispatchStats
+#   name_en: DispatchStats
+#   intro: enqueued/dispatched/deduplicated/errors/queue_size/last_dispatch_at快照供监控告警
+#   downstream: 无下游/内部使用（监控）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I4 --> A1
+# I1 --> A2
+# I4 --> A2
+# A2 --> A1
+# A1 --> A3
+# I4 --> A3
+# A3 --> A4
+# I2 --> A4
+# I3 --> A4
+# A5 --> A3
+# I4 --> A5
+# A4 --> O1
+# A3 --> O2
+# A1 --> O2
 """
 
 from __future__ import annotations

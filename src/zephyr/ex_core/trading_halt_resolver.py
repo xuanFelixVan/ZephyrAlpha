@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_trading_halt_resolver.py
 # [TTL] permanent
 
-"""临时停牌处理（40_execution_broker §决策⑮ gap 14 施工）。
+"""
+
+临时停牌处理（40_execution_broker §决策⑮ gap 14 施工）。
 
 实盘生存项——持仓票被停牌核查会锁住资金无法平仓，目标股停牌无法建仓，复牌后
 可能跌停（如爱丽家居 9 连板后停牌核查，复牌跌停风险）。缺失会导致系统对着停牌票
@@ -42,6 +44,75 @@ A 股临时停牌类型（上交所 2026 修订交易规则 §4.2）：
 
 依据：40_execution_broker.md v2.4.0 §决策⑮
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 停牌信息 HaltInfo（盘前/盘中批量拉取）
+#   fields: symbol + is_halted + halt_type(4类) + is_cross_day + expected_resume + can_place/cancel_order
+#   code: HaltInfo L91-113
+# - id: I2
+#   name: 目标权重 target_weights
+#   fields: {symbol: weight} 当日调仓目标
+#   code: filter_target_weights L210
+# - id: I3
+#   name: 当前持仓集合 held_symbols
+#   fields: 持仓 symbol 集合（判断持仓票跨日停牌释放预占用）
+#   code: filter_target_weights L213
+# 层: 算法
+# - id: A1
+#   name_zh: ① 停牌状态维护
+#   name_en: update_halt_status/batch_update/clear_resumed
+#   intro: 维护 symbol→HaltInfo 映射表，盘前批量更新，复牌的清出缓存
+#   desc: update_halt_status 单只写入 _halt_map；batch_update 批量；clear_resumed 清出 is_halted=False 的记录并返回复牌列表（L159-186）
+#   inputs: I1
+#   outputs: 停牌状态表 _halt_map
+# - id: A2
+#   name_zh: ② 下单前停牌检查
+#   name_en: check_order_allowed
+#   intro: 下单前查该票能否报单，跨日停牌要释放预占，盘中临停当日跳过
+#   desc: 无记录或未停牌→NORMAL；is_cross_day→HALTED_RELEASE_PREPAID；否则盘中临停→HALTED_REMOVE_FROM_TARGET（L190-208）
+#   inputs: A1
+#   outputs: HaltStatus 决策枚举
+#   invariant: 停牌期间不挂不撤等复牌
+# - id: A3
+#   name_zh: ③ 目标权重过滤
+#   name_en: filter_target_weights
+#   intro: 调仓前把停牌票从当日目标里剔除，跨日停牌的持仓票标记释放资金预占
+#   desc: 遍历 target_weights：正常/已复牌→保留（曾释放预占的复牌票标 RESUMED_REEVALUATE）；跨日停牌→移除+持仓票首次标 release_prepaid（_released_prepaid 防重复）；盘中临停→移除当日跳过（L210-272）
+#   inputs: A1 I2 I3
+#   outputs: (过滤后目标权重, HaltAction 动作列表)
+#   invariant: 跨日停牌移除目标+释放预占；无副作用返回新 dict
+# - id: A4
+#   name_zh: ④ 持仓票停牌检查
+#   name_en: check_position_halt
+#   intro: 持仓票盘中临停保留不动等复牌，跨日停牌标记释放预占
+#   desc: 未停牌→NORMAL；is_cross_day→HALTED_RELEASE_PREPAID；盘中临停→HALTED_KEEP_POSITION（L274-294）
+#   inputs: A1
+#   outputs: HaltStatus 决策枚举
+# 层: 输出
+# - id: O1
+#   name_zh: 停牌决策状态 HaltStatus
+#   name_en: HaltStatus
+#   intro: 5 态决策枚举（移除目标/保留持仓/释放预占/复牌重估/正常）供下单与持仓管理分支
+#   downstream: ex_core.trading_session ; ex_core.open_order_resolver
+# - id: O2
+#   name_zh: 过滤后目标权重 + 停牌动作列表
+#   name_en: filtered target_weights + HaltAction list
+#   intro: 剔除停牌票的目标权重和带理由的审计动作记录
+#   downstream: ex_core.trading_session
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# I2 --> A3
+# I3 --> A3
+# A2 --> O1
+# A4 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

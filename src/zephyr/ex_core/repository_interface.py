@@ -14,7 +14,9 @@
 # [TESTS] tests/ex_core/test_repository_interface.py
 # [A_module] module_id=MOD-EX-050 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EX_CORE — Repository Interface (执行域仓储接口)
+"""
+
+D_EX_CORE — Repository Interface (执行域仓储接口)
 
 D_EX_CORE 域的持久化抽象层——定义 Order (CTR-004) 和 PositionSnapshot (CTR-006)
 的仓储接口，提供内存实现供开发/测试使用。上层业务模块（OrderManager / PositionTracker）
@@ -25,6 +27,67 @@ D_EX_CORE 域的持久化抽象层——定义 Order (CTR-004) 和 PositionSnaps
 设计真源: D-EX-CORE-50 "Order/Position聚合根持久化仓储接口"
 蓝图: docs/03_modules/_domain_execution_core/repository_interface/blueprint.md
 SSoT: depgraph MOD-EX-050
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 订单聚合根 Order（CTR-004）
+#   fields: order_id + status + symbol + side + quantity + limit_price 等
+#   code: OrderRepository.save(order) L101
+# - id: I2
+#   name: 持仓快照 PositionSnapshot（CTR-006）
+#   fields: portfolio_id + as_of_timestamp + cash + holdings + market_values
+#   code: PositionSnapshotRepository.save(snapshot) L142
+# - id: I3
+#   name: 存储后端选择 backend
+#   fields: 字符串，当前仅支持 "memory"（阶段2扩展 sqlite/postgres）
+#   code: create_order_repository(backend) L266
+# 层: 算法
+# - id: A1
+#   name_zh: ① 仓储抽象接口定义
+#   name_en: OrderRepository / PositionSnapshotRepository（ABC）
+#   intro: 用抽象基类定义订单和持仓快照的存取契约，不含任何业务逻辑
+#   desc: DDD Repository模式：save/get/get_by_status/get_open_orders/delete/count 等抽象方法；仓储只负责聚合根存取，不负责状态转换/业务校验
+#   inputs: I1 I2
+#   outputs: 抽象接口契约
+#   invariant: ABC不可直接实例化；save幂等；仓储不负责业务校验
+# - id: A2
+#   name_zh: ② 内存仓储实现
+#   name_en: InMemoryOrderRepository / InMemoryPositionSnapshotRepository
+#   intro: 用字典实现开发/测试用的内存版仓储，快照按时间升序存历史
+#   desc: 订单 dict[order_id, Order] 同ID覆盖（幂等）；快照 dict[portfolio_id, list] 追加后按 as_of_timestamp 排序；get_open_orders 按 _OPEN_STATUSES(PENDING/SUBMITTED/PARTIAL) 过滤
+#   inputs: I1 I2 A1
+#   outputs: 查询结果（Order/快照 单个或列表）
+# - id: A3
+#   name_zh: ③ 仓储工厂函数
+#   name_en: create_order_repository / create_position_snapshot_repository
+#   intro: 按backend字符串创建仓储实例，不支持的backend抛异常
+#   desc: backend=="memory" 返回内存实现；否则抛 RepositoryError（阶段2扩展 sqlite/postgres）
+#   inputs: I3
+#   outputs: Repository 实例
+# 层: 输出
+# - id: O1
+#   name_zh: 订单查询结果
+#   name_en: Order / list[Order]
+#   intro: 按ID/状态/开放单/全量查到的订单，不存在返回None
+#   downstream: 聚合根管理器 MOD-EX-049（注入使用）；OrderManager（阶段2集成）
+# - id: O2
+#   name_zh: 持仓快照查询结果
+#   name_en: PositionSnapshot / list[PositionSnapshot]
+#   intro: 指定组合的最新快照或按时间升序的历史快照列表
+#   downstream: D_EX_CORE域内模块；PositionTracker（阶段2集成）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# I3 --> A3
+# A3 --> A2
+# A2 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations

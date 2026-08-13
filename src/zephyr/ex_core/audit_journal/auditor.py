@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-EX-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Execution Audit Logger — 执行审计记录器 (MOD-EX-003 / D-EX-CORE-15)
+"""
+
+Execution Audit Logger — 执行审计记录器 (MOD-EX-003 / D-EX-CORE-15)
 
 D_EXECUTION_CORE 域审计基础设施: 记录执行事件(E-EX-01~08)的哈希链审计日志,
 全量记录 + 哈希链防篡改 + 可追溯, 产出执行审计报告。
@@ -39,6 +41,77 @@ D_EXECUTION_CORE 域审计基础设施: 记录执行事件(E-EX-01~08)的哈希�
 
 SSoT: depgraph MOD-EX-003
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 执行审计事件
+#   fields: event_type(E-EX-01~08) + order_id + symbol + source(AUTO/SIMULATION/LIVE/MANUAL) + detail(JSON可序列化)
+#   code: log() L334-342；便捷方法 log_order_created 等 L374-452
+# - id: I2
+#   name: 统计周期参数
+#   fields: period_start + period_end（datetime）
+#   code: generate_report() L517；compute_operational_risk_stats() L565
+# 层: 算法
+# - id: A1
+#   name_zh: ① 哈希链审计记录
+#   name_en: ExecutionAuditLogger.log / _append / _compute_record_hash
+#   intro: 每笔执行事件生成SHA-256哈希链节点追加到链尾，防篡改可追溯
+#   desc: record_hash=SHA-256(record_id|timestamp|event_type|order_id|symbol|source|detail_json|prev_hash)，prev_hash=上一条record_hash（首条ZERO_HASH）；log内部异常catch不阻断主流程
+#   inputs: I1
+#   outputs: ExecutionAuditRecord（None=内部异常）
+#   invariant: 全记录不可跳过；哈希链防篡改；frozen record不可变
+# - id: A2
+#   name_zh: ② 多条件查询
+#   name_en: ExecutionAuditLogger.query
+#   intro: 按订单/标的/事件类型/时间范围过滤审计记录
+#   desc: 内存记录列表顺序扫描 + 精确匹配过滤，返回按时间升序列表
+#   inputs: A1
+#   outputs: list[ExecutionAuditRecord]
+# - id: A3
+#   name_zh: ③ 报告生成+链完整性校验
+#   name_en: generate_report / verify_chain
+#   intro: 按周期统计事件/标的/来源分布，并重放哈希链验证未被篡改
+#   desc: query取周期内记录 → 按event_type/symbol/source计数 → verify_chain逐条核对prev_hash链接+重算record_hash，输出断链位置
+#   inputs: I2 A2
+#   outputs: ExecutionAuditReport（含chain_valid/chain_break_at）
+# - id: A4
+#   name_zh: ④ 操作风险统计
+#   name_en: compute_operational_risk_stats
+#   intro: 聚合订单失败率和SUBMITTED→FILLED成交延迟分位数
+#   desc: failure_rate=rejected/submitted（无提交为0防除零）；同order_id首条SUBMITTED与首条FILLED配对算延迟ms；nearest-rank求p50/p95/max/mean；时钟偏移FILLED早于SUBMITTED跳过
+#   inputs: I2 A2
+#   outputs: OperationalRiskStats
+#   invariant: failure_rate/fill_rate ∈ [0.0,1.0]；纯统计无阈值告警
+# 层: 输出
+# - id: O1
+#   name_zh: 审计记录链 ExecutionAuditRecord
+#   name_en: ExecutionAuditRecord
+#   intro: 单条不可变审计记录，prev_hash链接成链，可flush持久化JSONL
+#   invariant: frozen 不可变；prev_hash链接连续
+#   downstream: D_EX_CORE域内（Saga MOD-EX-057 写入）
+# - id: O2
+#   name_zh: 执行审计报告 ExecutionAuditReport
+#   name_en: ExecutionAuditReport
+#   intro: 统计摘要+链完整性校验结果的定期报告
+#   downstream: D-REPORTING（消费ExecutionAuditReport）；D-GOVERNANCE（消费ExecutionAuditReport）
+# - id: O3
+#   name_zh: 操作风险统计 OperationalRiskStats
+#   name_en: OperationalRiskStats
+#   intro: 失败率/成交率/成交延迟p50/p95/max/mean的纯派生统计
+#   downstream: D-GOVERNANCE（G6/BM-RC-08-E薄聚合层）；阈值告警解释属 D_RISK
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A3
+# I2 --> A4
+# A1 --> A2
+# A2 --> A3
+# A2 --> A4
+# A1 --> O1
+# A3 --> O2
+# A4 --> O3
 """
 
 from __future__ import annotations

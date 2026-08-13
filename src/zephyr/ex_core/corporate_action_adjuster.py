@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_corporate_action_adjuster.py
 # [TTL] permanent
 
-"""除权除息日处理（40_execution_broker §决策⑯ gap 15 施工）。
+"""
+
+除权除息日处理（40_execution_broker §决策⑯ gap 15 施工）。
 
 A 股常规公司行动（每年年报季密集发生）。缺失后果：除权除息日系统仍用昨日收盘价
 算涨跌停价和价格笼子基准价，会与交易所调整后的新基准价不符→挂单价超笼子直接废单；
@@ -44,6 +46,67 @@ A 股常规公司行动（每年年报季密集发生）。缺失后果：除权
 
 依据：40_execution_broker.md v2.4.0 §决策⑯
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 公司行动信息 CorporateAction（盘前批量拉取除权除息列表）
+#   fields: symbol + ex_date + record_date + 每股现金红利 + 送转比例 + 登记日收盘价
+#   code: CorporateAction L85-103
+# - id: I2
+#   name: 原始前收盘价 original_prev_close
+#   fields: 昨日收盘价（Decimal）+ 涨跌幅限制 price_limit_pct（默认10%）
+#   code: get_adjusted_prev_close L253-257
+# - id: I3
+#   name: 当前持仓 current_qty + current_avg_cost
+#   fields: 持仓股数 + 持仓均价（Decimal）
+#   code: adjust_position L300-304
+# 层: 算法
+# - id: A1
+#   name_zh: ① 除权除息参考价计算
+#   name_en: compute_ex_dividend_price / ex_dividend_price
+#   intro: 按交易所公式算除权除息后的新基准价，量化到 0.01 元
+#   desc: 仅分红: record_close−红利；仅送转: record_close÷(1+送转比)；分红+送转: (record_close−红利)÷(1+送转比)（L126-140）；quantize(0.01, ROUND_HALF_UP)（L176-178）；record_close≤0 抛 CorporateActionAdjusterError
+#   inputs: I1
+#   outputs: 除权除息参考价（新前收盘价）
+#   invariant: 除权除息日调整前收盘价
+# - id: A2
+#   name_zh: ② 调整后涨跌停价重算
+#   name_en: get_adjusted_limit_prices
+#   intro: 用新前收盘价 ×（1±涨跌幅）重算涨跌停价，避免挂单价超笼子废单
+#   desc: limit_up=new_prev×(1+pct)、limit_down=new_prev×(1−pct)，均 quantize(0.01)（L291-298）
+#   inputs: A1 I2
+#   outputs: (涨停价, 跌停价)
+# - id: A3
+#   name_zh: ③ 持仓调整（送股+摊薄+红利）
+#   name_en: adjust_position
+#   intro: 送转增加股数、总成本减红利后按新股数摊薄均价、现金红利 T+1 到账
+#   desc: new_qty=qty×(1+送转比) 量化整数股（L323-325）；new_avg_cost=(qty×cost−qty×红利)/new_qty 量化 0.0001（L331-338）；cash_dividend_received=qty×每股红利（L332）
+#   inputs: A1 I3
+#   outputs: AdjustmentResult（新股数/新成本/红利/新前收盘价）
+#   invariant: 送股转增同步持仓股数；现金红利T+1到账
+# 层: 输出
+# - id: O1
+#   name_zh: 调整后前收盘价与涨跌停价
+#   name_en: adjusted prev_close + limit prices
+#   intro: 除权除息日替代昨收价的新基准，供涨跌停校验与价格笼子回退链使用
+#   downstream: ex_core.trading_session ; ex_core.price_cage ; ex_core.adapters.miniqmt_broker
+# - id: O2
+#   name_zh: 持仓调整结果 AdjustmentResult
+#   name_en: AdjustmentResult
+#   intro: 送股后新股数/摊薄成本/现金红利的不可变审计记录
+#   downstream: ex_core.trading_session
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A1 --> A3
+# I3 --> A3
+# A2 --> O1
+# A1 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

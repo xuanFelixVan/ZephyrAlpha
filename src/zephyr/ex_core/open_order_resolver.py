@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_open_order_resolver.py
 # [TTL] permanent
 
-"""未成交/部分成交订单续接处理（40_execution_broker §决策⑪ gap 6 施工）。
+"""
+
+未成交/部分成交订单续接处理（40_execution_broker §决策⑪ gap 6 施工）。
 
 实盘生存项——"信号发了但没成交"的直接落地点。v1.0.0 状态机只定义了 PARTIAL 的
 合法后继态，未定义"剩余量怎么决策"。本模块补全续接算法。
@@ -42,6 +44,82 @@ Make-or-Take 平衡：被动挂单优先（省 spread），超时才转对手价
 
 依据：40_execution_broker.md v2.4.0 §决策⑪
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 非终态订单列表 list[Order]
+#   fields: order_id / symbol / side / quantity / filled_quantity / status（SUBMITTED/PARTIAL/PENDING）
+#   code: order_manager.get_open_orders() L250
+# - id: I2
+#   name: 续接配置 OpenOrderResolverConfig
+#   fields: make_or_take_timeout_seconds=30 / partial_ignore_threshold=100股 / market_close_minutes=895(14:55) / default_urgency=LOW
+#   code: OpenOrderResolverConfig L115
+# - id: I3
+#   name: 对手价盘口 OpponentPriceProvider
+#   fields: (symbol, side) → BUY取卖一ask1 / SELL取买一bid1（Decimal 或 None）
+#   code: OpponentPriceProvider L141
+# - id: I4
+#   name: 时钟与当前时间注入
+#   fields: monotonic clock（超时计时）+ now_provider（尾盘判断，测试可注入）
+#   code: __init__ clock/now_provider L181
+# 层: 算法
+# - id: A1
+#   name_zh: ① 扫描续接主循环
+#   name_en: scan_and_resolve
+#   intro: 定时扫所有未成交订单，逐笔决策执行，单笔出错不拖累其他单
+#   desc: get_open_orders 取非终态订单 → 先算一次尾盘标志 → 逐笔 _resolve_and_execute → 收集 ResolveAction；终态动作成功后清理跟踪记录；单笔异常隔离记日志
+#   inputs: I1 I4
+#   outputs: list[ResolveAction]
+#   invariant: 幂等（终态订单跳过不重复处理）
+# - id: A2
+#   name_zh: ② 单笔分档决策
+#   name_en: _resolve_and_execute
+#   intro: 按优先级给一笔订单定策略：尾盘清退 > 未注册跳过 > 超时切换 > 剩余量分档
+#   desc: 14:55到→CLOSE_OUT；未注册→SKIP_NOT_REGISTERED；SUBMITTED且挂单≤T→WAIT、>T→Make-or-Take；PARTIAL剩余<100股→忽略转CANCELLED、urgency高→Make-or-Take补单、urgency低→LEAVE_OPEN留单
+#   inputs: I2 I4
+#   outputs: ResolveAction（决策+执行结果）
+# - id: A3
+#   name_zh: ③ Make-or-Take 切换
+#   name_en: _execute_make_or_take
+#   intro: 被动挂单超时就撤单，改挂对手价主动吃单保证成交
+#   desc: 撤单（失败=可能已成交，记录不报错）→ 查对手价（无provider/无盘口则撤单后跳过重挂）→ 对手价 LIMIT 重挂剩余量；默认走 create_order+submit_order，可注入 resubmit_callback
+#   inputs: I3
+#   outputs: 撤单请求 + 新限价单（new broker_order_id）
+#   invariant: 重挂单 urgency=LOW 防无限循环 Make-or-Take
+# - id: A4
+#   name_zh: ④ 碎片忽略与尾盘清退
+#   name_en: _execute_ignore_partial / _execute_close_out
+#   intro: 剩一点零头不值得留就撤掉，收盘前所有挂单主动清退
+#   desc: PARTIAL剩余<partial_ignore_threshold→撤单转CANCELLED（避免最低佣金5元）；到达market_close_minutes→所有非终态订单撤单（GFD防幽灵挂单占风控额度）
+#   inputs: I2
+#   outputs: 撤单请求
+# 层: 输出
+# - id: O1
+#   name_zh: 续接动作列表 list[ResolveAction]
+#   name_en: ResolveAction
+#   intro: 每笔订单一条不可变续接决策记录，供审计追溯
+#   invariant: 不可变 frozen dataclass；action_type∈7种枚举
+#   downstream: ex_core.trading_session（定时扫描消费）/ 审计日志
+# - id: O2
+#   name_zh: 撤单/重挂委托请求
+#   name_en: cancel_order / submit_order
+#   intro: 实际发到 OrderManager 的撤单和对手价新限价单
+#   downstream: ex_core.order_manager → miniqmt broker（D_EX_CORE）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I4 --> A1
+# A1 --> A2
+# I2 --> A2
+# I4 --> A2
+# A2 --> A3
+# I3 --> A3
+# A2 --> A4
+# A1 --> O1
+# A3 --> O2
+# A4 --> O2
 """
 
 from __future__ import annotations

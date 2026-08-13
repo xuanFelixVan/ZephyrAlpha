@@ -14,13 +14,64 @@
 # [TESTS]
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_EX_CORE adapters — 券商/风控适配器 re-export wrapper
+"""
+
+D_EX_CORE adapters — 券商/风控适配器 re-export wrapper
 
 聚合 trading.trading_contracts.broker_interface、governance.adapters.* 与
 ex_core.adapters.miniqmt_broker，提供统一 import 入口。
 
 真源: trading.trading_contracts.broker_interface（BrokerInterface 契约真源）
       ex_core.adapters.miniqmt_broker（MiniQmtBroker 实现真源）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 券商接口契约符号
+#   fields: BrokerInterface/FillCallback（契约真源）
+#   code: zephyr.trading.trading_contracts.broker_interface (adapters/__init__.py L27)
+# - id: I2
+#   name: 风控校验桥接符号
+#   fields: RiskValidationBridge/RiskValidationPort/RiskViolation
+#   code: zephyr.governance.adapters.risk_validation_bridge (adapters/__init__.py L28-32)
+# - id: I3
+#   name: 模拟券商 SimulationBroker
+#   fields: 仿真券商实现
+#   code: zephyr.governance.adapters.simulation_broker (adapters/__init__.py L33)
+# - id: I4
+#   name: MiniQMT 实盘券商适配器符号
+#   fields: MiniQmtBroker/MiniQmtBrokerError/XTTRADER_ERROR_CODES
+#   code: zephyr.ex_core.adapters.miniqmt_broker (adapters/__init__.py L37-41)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 适配器符号聚合 re-export
+#   name_en: ex_core.adapters 统一入口
+#   intro: 把券商契约/风控桥/模拟券商/MiniQMT聚成统一import入口，免去记canonical路径
+#   desc: 直接import各真源符号并列入__all__（9个符号）（L27-58）
+#   inputs: I1 I2 I3
+#   outputs: __all__ 9个导出符号
+# - id: A2
+#   name_zh: ② MiniQMT 容错导入
+#   name_en: try/except ImportError 兜底
+#   intro: MiniQMT适配器导入失败时置None兜底，避免循环导入或依赖缺失阻断整个包
+#   desc: try导入MiniQmtBroker三符号；ImportError→MiniQmtBroker=None/MiniQmtBrokerError=None/XTTRADER_ERROR_CODES={}（L36-45）
+#   inputs: I4
+#   outputs: MiniQMT符号（可空）
+# 层: 输出
+# - id: O1
+#   name_zh: 统一适配器入口 __all__
+#   name_en: __all__
+#   intro: 9个符号（BrokerInterface/FillCallback/风控桥三件套/SimulationBroker/MiniQMT三件套）供执行核心统一导入
+#   downstream: zephyr.ex_core.execution_engine / zephyr.ex_core.order_manager
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I4 --> A2
+# A2 --> A1
+# A1 --> O1
 """
 
 # ARCH-GOV-SHIM-001 阶段2：broker_interface import 迁移至 canonical 路径

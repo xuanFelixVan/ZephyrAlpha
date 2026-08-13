@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_price_cage.py
 # [TTL] permanent
 
-"""A 股价格笼子校验（40_execution_broker §决策⑭ gap 11 施工）。
+"""
+
+A 股价格笼子校验（40_execution_broker §决策⑭ gap 11 施工）。
 
 2026-07-06 最新规则（沪深北交易所交易规则修订）：
 - 价格笼子（有效申报价格范围）超范围委托**直接废单（拒单模式，不缓存不排队）**
@@ -32,6 +34,67 @@
       《深圳证券交易所交易规则（2026年修订）》§3.1.16
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托限价与方向 limit_price/side
+#   fields: 连续竞价限价单委托价（Decimal）+ 买卖方向OrderSide
+#   code: check_price_cage(side, limit_price) (price_cage.py L148-156)
+# - id: I2
+#   name: 盘口快照 ask1/bid1
+#   fields: 卖一价（买入基准第一优先）/买一价（卖出基准第一优先），无盘口传None
+#   code: ask1/bid1 参数 (price_cage.py L152-153)
+# - id: I3
+#   name: 回退价格 last_price/prev_close
+#   fields: 最新成交价（回退第二优先）/前收盘价（回退第三优先）
+#   code: last_price/prev_close 参数 (price_cage.py L154-155)
+# - id: I4
+#   name: 股票代码 symbol
+#   fields: 用于板块识别（主板/创业板/科创板/北交所差异化笼子）
+#   code: symbol → classify_board (price_cage.py L102-105)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 基准价回退链解析
+#   name_en: _resolve_base_price
+#   intro: 买入基准=卖一、卖出基准=买一（对手方最优价），无盘口依次回退最新价→前收盘
+#   desc: BUY取ask1/SELL取bid1，>0即用；否则last_price→prev_close；全无返回None（L118-145）
+#   inputs: I2 I3
+#   outputs: 基准价 base | None
+#   invariant: 买入基准价=ask1/卖出基准价=bid1；回退链ask1|bid1→last→prev_close
+# - id: A2
+#   name_zh: ② 板块笼子参数查询
+#   name_en: _get_cage_params
+#   intro: 主板/创业板±2%+0.1元兜底，科创板严格±2%无兜底，北交所±5%，未知板块回退主板最保守参数
+#   desc: classify_board(symbol)→_BOARD_CAGE_PARAMS查(pct, floor_yuan)（L91-105）
+#   inputs: I4
+#   outputs: (pct, floor_yuan)
+#   invariant: 板块差异化幅度
+# - id: A3
+#   name_zh: ③ 笼子边界计算与夹边校验
+#   name_en: check_price_cage
+#   intro: 买入上限max(base×1.02, base+0.1)向下取整tick，卖出下限min(base×0.98, base-0.1)向上取整tick，超限夹到边界不废单
+#   desc: base为None→UNKNOWN原价返回；BUY: limit≤upper_tick→IN_CAGE否则CLAMPED夹到upper_tick（ROUND_FLOOR）；SELL对称（ROUND_CEILING）（L148-253）
+#   inputs: I1 A1 A2
+#   outputs: PriceCageResult（status/base/bounds/clamped_price/was_clamped）
+#   invariant: 超限夹到边界（不废单）；夹边后价格不越笼子
+# 层: 输出
+# - id: O1
+#   name_zh: 价格笼子校验结果 PriceCageResult
+#   name_en: PriceCageResult
+#   intro: 含IN_CAGE/CLAMPED/UNKNOWN状态、基准价、笼子上下限与夹边后价格，供券商适配器提交前合规校验
+#   invariant: clamped_price量化到0.01 tick且落在笼子内
+#   downstream: ex_core.adapters.miniqmt_broker / ex_core.trading_session
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I3 --> A1
+# I4 --> A2
+# I1 --> A3
+# A1 --> A3
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

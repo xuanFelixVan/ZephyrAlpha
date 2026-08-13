@@ -13,7 +13,9 @@
 # [TESTS] tests/ex_core/test_board_lot.py
 # [TTL] permanent
 
-"""A 股板块识别与整手申报规则（40_execution_broker §决策⑰ gap 17 施工）。
+"""
+
+A 股板块识别与整手申报规则（40_execution_broker §决策⑰ gap 17 施工）。
 
 2026-07-06 最新规则（沪深北交易所交易规则修订）：
 - 沪深主板 / 创业板：100 股整数倍起买，100 股递增
@@ -25,6 +27,69 @@
       原 floor(qty,100) 全板块统一对科创板是废单级错误）
 
 Version: 1.0.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 股票代码 symbol
+#   fields: 支持 600000.SH / sh600000 / 600000 等格式（含交易所后缀或前缀）
+#   code: _strip_suffix L97-107
+# - id: I2
+#   name: 目标买入数量 qty
+#   fields: 原始目标买入股数（Decimal 正数）
+#   code: round_buy_qty L173
+# - id: I3
+#   name: 卖出数量 + 当前持仓
+#   fields: sell_qty 计划卖出股数 + current_qty 当前持仓股数
+#   code: adjust_sell_for_odd_lot L218-220
+# 层: 算法
+# - id: A1
+#   name_zh: ① 板块识别
+#   name_en: classify_board
+#   intro: 按代码前缀识别主板/创业板/科创板/北交所，3位前缀优先消歧
+#   desc: 688/689→STAR；300/301→CHINEXT；600/601/603/605、000/001→MAIN；920-923 及 83/43/87/92/93/94、4/8 开头→BSE；不识→UNKNOWN（L126-154）
+#   inputs: I1
+#   outputs: AShareBoard 板块枚举
+# - id: A2
+#   name_zh: ② 整手规则查表
+#   name_en: get_board_lot_rule
+#   intro: 按板块取整手规则（起买量+递增单位），未知板块回退主板规则并告警
+#   desc: _BOARD_LOT_RULES 表：主板/创业板/北交所 min_unit=100 increment=100；科创板 min_unit=200 increment=1（L78-91）；UNKNOWN→_FALLBACK_RULE 主板（L163-170）
+#   inputs: A1
+#   outputs: BoardLotRule
+# - id: A3
+#   name_zh: ③ 买入数量向下取整
+#   name_en: round_buy_qty
+#   intro: 买入量按板块规则向下取整到合法申报数，不足起买量返回 0
+#   desc: qty<min_unit→0；否则 min_unit + floor((qty−min_unit)/increment)×increment（L186-196）；科创板超 200 按 1 股递增
+#   inputs: A2 I2
+#   outputs: 合法买入申报数量（≥0）
+#   invariant: 买入数量按板块差异化向下取整
+# - id: A4
+#   name_zh: ④ 零股卖出一次性申报
+#   name_en: adjust_sell_for_odd_lot / is_odd_lot
+#   intro: 卖出后剩余不足一个最小申报单位时必须全部清仓，不可拆分
+#   desc: remaining=current−sell；0<remaining<min_unit → 返回 current_qty 全卖（L237-245）；is_odd_lot: qty<min_unit 判零股（L199-215）
+#   inputs: A2 I3
+#   outputs: 调整后卖出数量（=sell_qty 或 current_qty）
+#   invariant: 零股(<min_unit)卖出必须一次性申报
+# 层: 输出
+# - id: O1
+#   name_zh: 合法申报数量（买/卖）
+#   name_en: legal order quantity
+#   intro: 整手对齐后的买入量与零股调整后的卖出量，直接用于下单
+#   downstream: ex_core.trading_session ; ex_core.adapters.miniqmt_broker
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# I2 --> A3
+# A2 --> A4
+# I3 --> A4
+# A3 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations
