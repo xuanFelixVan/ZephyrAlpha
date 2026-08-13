@@ -52,6 +52,179 @@ RiskSignalInputs 缺失 → RiskSignal=1.0；OverlaySignals 缺失 → 退化为
 依据: 10_regime_detector_spec v1.3.1（原12态spec）/ 11_regime_backtest_validation_plan v1.0.0（验证方案）/ 13_regime_phase3_engineering_plan §2.1（4态降维）
 SSoT: depgraph MOD-REGIME-001
 Version: 0.3.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 沪深300 日线数据
+#   fields: 收盘价 + 成交量
+#   code: 000300
+# - id: I2
+#   name: 中证500 日线数据
+#   fields: 收盘价
+#   code: 000905
+# - id: I3
+#   name: 创业板指 日线数据
+#   fields: 收盘价
+#   code: 399006
+# - id: I4
+#   name: 深证综指 涨跌家数数据
+#   fields: 上涨家数 + 下跌家数
+#   code: 399106
+# 层: 特征
+# - id: F1
+#   name_zh: 已实现波动率分位
+#   name_en: realized_vol_pct
+#   intro: 近20日波动率在250日的排名分位
+#   formula: r=log(C/C.shift1) → HV=r.rolling20.std×√252 → HV.rolling250.rank(pct) ∈0,1
+#   code: market_features.py L45
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2a
+#   name_zh: 趋势持续性指数
+#   name_en: hurst_dfa
+#   intro: DFA法Hurst >0.5有趋势 <0.5均值回归
+#   formula: 累积和profile → 多窗口线性去趋势 → log-log回归斜率 ∈0,1
+#   code: trend_features.py L35
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2b
+#   name_zh: 卡尔曼趋势斜率
+#   name_en: kalman_slope
+#   intro: 卡尔曼滤波算自适应趋势斜率
+#   formula: s(t)=s(t-1)+w(t) 归一化 clamp(s/10×std(r),-1,1)
+#   code: trend_features.py L132
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 跨资产相关性
+#   name_en: cross_asset_corr
+#   intro: 沪深300/中证500/创业板三大指数相关度
+#   formula: 两两 rolling corr(60日)均值 ∈-1,1
+#   code: market_features.py L80
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 涨跌家数比
+#   name_en: ad_ratio
+#   intro: 全市场上涨家数vs下跌家数
+#   formula: tanh(log((涨+1)/(跌+1))) ∈-1,1
+#   code: market_features.py L116
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F5
+#   name_zh: 成交量异常度
+#   name_en: volume_anomaly
+#   intro: 成交量相对均值的异常程度
+#   formula: z=(vol-ma20)/std20
+#   code: market_features.py L147
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 指标
+# - id: KDJ
+#   name_zh: 随机指标 9,3,3
+#   name_en: KDJ
+#   intro: 判断超买超卖和短期转折信号
+#   formula: RSV=(C-Ln)/(Hn-Ln)×100 K=SMA(RSV,3,1) D=SMA(K,3,1) J=3K-2D
+#   code: risk_features.py L338 自实现ewm
+#   registry: 指标表有kdj列 但代码未读表
+#   is_break: true
+# - id: MA
+#   name_zh: 均线 5/20/60
+#   name_en: MA
+#   intro: 判断趋势方向和支撑压力位
+#   formula: close.rolling(N).mean
+#   code: overlay_features.py L495 pandas重算
+#   registry: 指标表有ma列 但代码未读表
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① HMM隐马尔可夫 4态模型
+#   name_en: HMM 4-state
+#   intro: 用4种市场状态概率分布判断大盘所处阶段
+#   desc: BIC贝叶斯信息准则扫描定态数 + Viterbi维特比解码
+#   inputs: F1 F2a F2b F3 F4 F5
+#   outputs: 4维概率
+#   invariant: Σ=1.0
+# - id: A2
+#   name_zh: ② 覆盖层规则 D-SIGNAL-68
+#   name_en: Overlay
+#   intro: 在HMM上叠加危机/复苏/突破3种特殊状态规则
+#   desc: 8转换31维度规则触发 CRISIS危机/RECOVERY复苏/BREAKOUT突破
+#   inputs: F1 F3 F5 KDJ MA
+#   outputs: 3维覆盖态概率
+# - id: A3
+#   name_zh: ③ 置信度信号
+#   name_en: ConfidenceSignal
+#   intro: 根据HMM最大概率映射4档置信度，稀有态打折扣
+#   desc: max(P) 4档映射 + 稀有态折扣
+#   inputs: A1 A2
+#   outputs: 置信度
+# - id: A4
+#   name_zh: ④ 风险信号 13参数
+#   name_en: RiskSignal
+#   intro: 13个风险维度聚合算风险系数，越低越危险
+#   desc: 9有效计算 + 4stub未实现
+#   inputs: F1 F2a F2b F3 F4 F5 KDJ
+#   outputs: 风险系数 0.30~1.00
+# - id: A5
+#   name_zh: ⑤ 风险节流因子
+#   name_en: Shrinkage
+#   intro: 置信度×风险=资金收缩比例，只减不增
+#   desc: value = Confidence × Risk
+#   inputs: A3 A4
+#   outputs: Shrinkage
+#   invariant: ≤1.0 只减不增
+# 层: 输出
+# - id: O1
+#   name_zh: 7维灰度概率分布
+#   name_en: 7-dim gray probability
+#   intro: 4个HMM态 + 3个覆盖层态的概率
+#   invariant: Σ=1.0
+#   downstream: 不输出硬标签
+# - id: O2
+#   name_zh: 风险节流因子 Shrinkage
+#   name_en: Shrinkage
+#   intro: 传给RegimeMetaAllocator做budget资金分配
+#   invariant: ≤1.0
+#   downstream: RegimeMetaAllocator MOD-PA-007
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 -.->|断点| F1
+# I1 -.->|断点| F5
+# I1 -.->|断点| F2a
+# I1 -.->|断点| F2b
+# I1 -.->|断点| KDJ
+# I1 -.->|断点| MA
+# I2 -.->|断点| F3
+# I3 -.->|断点| F3
+# I4 -.->|断点| F4
+# F1 --> A1
+# F2a --> A1
+# F2b --> A1
+# F3 --> A1
+# F4 --> A1
+# F5 --> A1
+# F1 --> A2
+# F3 --> A2
+# F5 --> A2
+# KDJ --> A2
+# MA --> A2
+# A1 --> A3
+# A2 --> A3
+# F1 --> A4
+# F2a --> A4
+# F2b --> A4
+# F3 --> A4
+# F4 --> A4
+# F5 --> A4
+# KDJ --> A4
+# A3 --> A5
+# A4 --> A5
+# A1 --> O1
+# A2 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

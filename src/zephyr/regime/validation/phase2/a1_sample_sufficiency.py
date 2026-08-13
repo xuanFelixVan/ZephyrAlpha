@@ -14,7 +14,9 @@
 # [TESTS] tests/regime/phase2/test_a1_sample_sufficiency.py
 # [TTL] permanent
 # [ARCH-REF] #12_regime_phase2_validation §2.1 #12_regime_phase2_validation §4.1 A1
-"""A1 样本充足性验证器（12_regime_phase2_validation §2.1，Phase 2 第一批 MVP）.
+"""
+
+A1 样本充足性验证器（12_regime_phase2_validation §2.1，Phase 2 第一批 MVP）.
 
 验证问题: HMM 4 态的稀有态够 HMM 学吗？
 
@@ -37,6 +39,86 @@ Overall:
 
 依据: 12_regime_phase2_validation §2.1
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 全历史特征矩阵 X (T,F) np.ndarray
+#   fields: regime 特征（波动率/趋势/相关性等，可含 warmup 期 NaN）
+#   code: X（来自 RegimeFeatureBuilder.build_features()）
+# - id: I2
+#   name: HMM 参数配置 dict
+#   fields: n_states=4 / covariance_type=full / n_iter=100 / n_init=3 / random_state=42
+#   code: hmm_params
+# - id: I3
+#   name: 预 fit 的 RegimeDetector（可选）
+#   fields: 已拟合 4 态 GaussianHMM（_hmm_model 非 None）
+#   code: detector（validate_with_fit_detector 参数）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 特征矩阵清理
+#   name_en: A1SampleSufficiency._clean_matrix
+#   intro: 把特征矩阵转 2D float，dropna 去 warmup 期 NaN 行并钳掉 inf 极端值
+#   desc: np.asarray→reshape2D→isfinite 行过滤→nan_to_num 钳 inf；dropna 后 <100 行抛 ZA-REGIME-0020
+#   inputs: I1
+#   outputs: 干净特征矩阵 X_clean
+#   invariant: dropna 去 warmup 期 NaN；样本 <100 行报错
+# - id: A2
+#   name_zh: ② RobustScaler 标准化
+#   name_en: RobustScaler.fit_transform
+#   intro: 用稳健缩放器标准化特征，与 walk-forward 训练口径保持一致
+#   desc: standardize=True 且 sklearn 可用时 RobustScaler().fit(X).transform(X)
+#   inputs: A1
+#   outputs: 标准化矩阵 X_fit
+# - id: A3
+#   name_zh: ③ HMM 4 态拟合
+#   name_en: RegimeDetector.fit
+#   intro: 在全量历史上新 fit 一个 4 态 GaussianHMM（shrinkage 关闭）
+#   desc: RegimeDetector(shrinkage_enabled=False).fit({"X":X,"lengths":None})；拟合失败置 degraded=True
+#   inputs: A2 I2
+#   outputs: 拟合好的 HMM 模型 + fit_log_likelihood
+#   invariant: A1 只读 detector/builder, 不改其状态(OCP)
+# - id: A4
+#   name_zh: ④ Viterbi 状态解码
+#   name_en: _hmm_model.predict
+#   intro: 用 hmmlearn 原生 Viterbi 解码全历史状态序列（0..n-1 标签）
+#   desc: hmm_model.predict(X)→(T,) 状态序列，hmm_model.score(X)→log-likelihood；解码失败走降级
+#   inputs: A3 I3
+#   outputs: 全历史状态序列 state_seq
+#   invariant: Viterbi 解码用同一拟合模型
+# - id: A5
+#   name_zh: ⑤ 各态天数统计与门槛判定
+#   name_en: A1SampleSufficiency._build_report/_judge_state
+#   intro: 统计 r1-r4 各态出现天数与占比，对照 100/50 天门槛给单态和整体判定
+#   desc: count=Σ(state_seq==i), freq=count/total；≥100 充足/50-100 中等/<50 不足；有不足→FAIL，有中等无不足→REVIEW，否则 PASS
+#   inputs: A4
+#   outputs: r1-r4 各态统计 + overall 判定
+# - id: A6
+#   name_zh: ⑥ 降级报告（均匀分布估计）
+#   name_en: A1SampleSufficiency._build_degraded_report
+#   intro: hmmlearn 不可用或拟合/解码失败时，按每态 T/4 均匀分布出降级报告
+#   desc: per_state=total//4，overall=REVIEW，degraded=True
+#   inputs: A4
+#   outputs: 降级 A1Report
+# 层: 输出
+# - id: O1
+#   name_zh: A1 样本充足性验证报告
+#   name_en: A1Report
+#   intro: 含各态天数/占比/判定、整体 PASS/REVIEW/FAIL、fit_log_likelihood 与降级标记的验证报告
+#   downstream: scripts.tests.run_phase2_validation; phase2_runner; BM-BT-05(HMM模型质量验证)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A3
+# I3 --> A4
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A4 --> A6
+# A5 --> O1
+# A6 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,9 @@
 # [TESTS] tests/regime/test_chip_distribution_engine.py
 # [A_module] module_id=MOD-REGIME-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""筹码分布引擎（MOD-REGIME-005）— 华泰2026前沿算法。
+"""
+
+筹码分布引擎（MOD-REGIME-005）— 华泰2026前沿算法。
 
 从 OHLCV 自建筹码分布（非换手率代理），供 regime 特征管道判断：
 - #12 筹码结构（健康/套牢/底部未堆积/高位派发）
@@ -26,6 +28,127 @@
 2. 换手递推 C_t = (1-τ)×C_{t-1} + τ×D_t
 3. 筹码龄分层（ultra_short/short/medium/long，衰减系数近似迁移）
 4. 32 相对网格映射（跨股比较）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: OHLCV日线数据 DataFrame
+#   fields: date + open + high + low + close + volume + amount
+#   code: compute() 参数 ohlcv_df
+# - id: I2
+#   name: 引擎参数 构造入参
+#   fields: n_grids=32网格 + lookback=250交易日 + avg_turnover=0.02平均换手假设
+#   code: ChipDistributionEngine.__init__ L267
+# 层: 特征
+# - id: F1
+#   name_zh: 长期筹码底部占比
+#   name_en: long_term_bottom_ratio
+#   intro: 长期筹码里堆在底部1/4网格的比例，>0.6算健康
+#   formula: long_layer[:n//4].sum / long_layer.sum
+#   code: chip_distribution_engine.py L239
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F2
+#   name_zh: 上方套牢峰强度
+#   name_en: upper_trap_peak
+#   intro: 顶部1/4网格里峰值超出均值的异常堆积，越高套牢盘越重
+#   formula: top_section.max - top_section.mean
+#   code: chip_distribution_engine.py L229
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F3
+#   name_zh: 底部堆积度
+#   name_en: bottom_accumulation
+#   intro: 总筹码分布中底部1/4网格的占比
+#   formula: dist[:n//4].sum / dist.sum
+#   code: chip_distribution_engine.py L223
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# - id: F4
+#   name_zh: 筹码迁移方向
+#   name_en: distribution_migration
+#   intro: 长期筹码顶部减底部占比，正=上移派发负=下移吸筹
+#   formula: (long_layer[n-n//4:].sum - long_layer[:n//4].sum) / long_layer.sum
+#   code: chip_distribution_engine.py L240
+#   registry: factor_registry: 无FCT条目
+#   is_break: true
+# 层: 指标
+# - id: VWAP
+#   name_zh: 成交量加权均价
+#   name_en: vwap
+#   intro: 当日成交额除以成交量，量额为0时用典型价降级
+#   formula: vwap=amount/volume；volume或amount≤0→(O+H+L+C)/4
+#   code: chip_distribution_engine.py L91 自实现
+#   registry: 指标表: 有vwap列 但代码未读表
+#   is_break: true
+# 层: 算法
+# - id: A1
+#   name_zh: ① 32相对网格构建
+#   name_en: build_grid_prices
+#   intro: 把最近250日最低价到最高价等分32格，跨股可比
+#   desc: grid=linspace(区间最低low, 区间最高high, 32)；网格0=最低价 网格31=最高价
+#   inputs: I1 I2
+#   outputs: grid_prices 长度32
+#   invariant: 网格0=最低价 网格31=最高价
+# - id: A2
+#   name_zh: ② VWAP中心三角分布
+#   name_en: compute_daily_distribution
+#   intro: 当日新增筹码按以VWAP为峰的三角分布撒到32网格上
+#   desc: 左半2(p-low)/(rng×(vwap-low)) 右半2(high-p)/(rng×(high-vwap))；离散化后归一化Σ=1得当日增量D_t
+#   inputs: I1 I2 VWAP A1
+#   outputs: 当日增量分布D_t Σ=1.0
+# - id: A3
+#   name_zh: ③ 换手递推+筹码龄分层
+#   name_en: turnover_recurse/_recurse_age_layers
+#   intro: 老筹码按换手率衰减换新，再按龄层迁移率往老层搬家
+#   desc: τ=clip(vol/(avg_vol/0.02),0,1)；C_t=(1-τ)C_{t-1}+τD_t；4层ultra_short/short/medium/long按迁移率0.5/0.125/0.02迁移并各层归一化
+#   inputs: I1 I2 A2
+#   outputs: 总分布C_t + 4层龄层分布
+#   invariant: total_distribution Σ=1.0；age_layers各层Σ=1.0
+# - id: A4
+#   name_zh: ④ 衍生指标计算
+#   name_en: compute_metrics
+#   intro: 从总分布和龄层里提炼4个可消费的筹码结构指标
+#   desc: 底部1/4占比→底部堆积度；顶部max-mean→套牢峰；长期层底部占比→健康度；长期层顶减底→迁移方向
+#   inputs: A3
+#   outputs: metrics字典(4指标)
+# 层: 输出
+# - id: O1
+#   name_zh: 筹码分布结果
+#   name_en: chip distribution result dict
+#   intro: 32网格总分布+4龄层+metrics指标的完整结果包
+#   invariant: total_distribution Σ=1.0
+#   downstream: MOD-REGIME-002 RegimeFeatureBuilder消费#12筹码结构/#5空间位置/S2底部筹码
+# - id: O2
+#   name_zh: 降级均匀分布结果
+#   name_en: _uniform_result
+#   intro: 空数据或停牌单价位时返回32网格各1/32的均匀分布兜底
+#   downstream: MOD-REGIME-002 RegimeFeatureBuilder
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 -.->|断点| VWAP
+# VWAP --> A2
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# A2 --> A3
+# I1 --> A3
+# I2 --> A3
+# A3 --> A4
+# A4 -.->|断点| F1
+# A4 -.->|断点| F2
+# A4 -.->|断点| F3
+# A4 -.->|断点| F4
+# F1 --> O1
+# F2 --> O1
+# F3 --> O1
+# F4 --> O1
+# A3 --> O1
+# A3 --> O2
+# I1 --> O2
 """
 
 from __future__ import annotations
