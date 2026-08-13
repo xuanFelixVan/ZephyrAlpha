@@ -1,9 +1,11 @@
 # [A_config] module_id=REG-RLM-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # module_id: MOD-GOVERNANCE
+module_id: MOD-GOVERNANCE
 ttl: permanent
 schema_version: '1.0'
 registry_id: REG-RLM-001
 name: 风控限额登记表
+name_zh: 风控限额登记表
 description: >-
   交易风控限额唯一真源（SSoT）。登记所有交易风控规则（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk 9类）。
   含止损策略、仓位管理、风险控制规则、心法改编风控规则。
@@ -13,9 +15,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.0.1
 created: '2026-08-10'
-last_updated: '2026-08-10'
+last_updated: '2026-08-13'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - risk_limit_id
