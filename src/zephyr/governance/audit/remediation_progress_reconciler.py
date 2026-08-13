@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-REMEDIATION_PROGRESS | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
-"""remediation_progress_reconciler.py — 治本进度持久化 + 新鲜度对账（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。
+"""
+
+remediation_progress_reconciler.py — 治本进度持久化 + 新鲜度对账（#ARCH-GOV-CONVERGENCE-META Phase 3.1）。
 
 治本动机
 --------
@@ -56,6 +58,63 @@ remediation_progress:
 - detail_json 完整记录（不截断）——治本诊断需要完整上下文
 - 90 天阈值——治本维度通常 1-3 个月有进展，>90 天无更新 = 遗忘/停滞
 - block_next 而非 critical_warn——治本停滞是架构债累积根源，必须强制干预
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: RemediationProgressRecord 治本进度记录 dataclass
+#   fields: dimension_id + dimension_kind + title + status + session_id + commit_sha + target_date + blocker_reason + details
+#   code: RemediationProgressRecord L85
+# - id: I2
+#   name: remediation_progress 表 SQLite
+#   fields: governance.db 中治本维度进度（dimension_id 主键 + status + last_updated 等 10 列）
+#   code: SQL_CREATE_REMEDIATION_PROGRESS L114
+# 层: 算法
+# - id: A1
+#   name_zh: ① 进度幂等写入
+#   name_en: record_remediation_progress
+#   intro: 记录或更新一条治本维度进度，枚举校验后 INSERT OR REPLACE 落库
+#   desc: dimension_kind/status 枚举校验 → details 序列化 JSON → 建表（IF NOT EXISTS）→ INSERT OR REPLACE（now_utc 时间戳）；异常降级 False
+#   inputs: I1 I2
+#   outputs: bool 成功标识 + 表记录
+#   invariant: 幂等（INSERT OR REPLACE）
+# - id: A2
+#   name_zh: ② 超期维度查询
+#   name_en: query_stale_dimensions / query_all_dimensions
+#   intro: 查 >90 天未更新且非 completed/deferred 的活跃维度；另供 AI 冷启动全量查询
+#   desc: cutoff=str(now_utc - 90d)（str 而非 isoformat 防 'T' 字符比较误判）→ SELECT WHERE status NOT IN completed/deferred AND last_updated < cutoff；fail-open 返回空列表
+#   inputs: I2
+#   outputs: stale 维度列表 / 全量维度列表
+# - id: A3
+#   name_zh: ③ 新鲜度对账硬阻断
+#   name_en: make_remediation_progress_reconciler
+#   intro: commit 后始终触发，有超期维度即 block_next 硬阻断下次 commit
+#   desc: trigger 恒 True（全局元检查）→ query_stale_dimensions → 无 stale=clean，有 stale=block_next（摘要前 5 条，提示 record_remediation_progress 或 resolve_blocks 修复）
+#   inputs: A2
+#   outputs: ReconcileResult
+#   invariant: stale>0 → block_next
+# 层: 输出
+# - id: O1
+#   name_zh: 新鲜度对账结果
+#   name_en: ReconcileResult
+#   intro: clean=全部维度新鲜；block_next=下次 commit 硬阻断强制更新进度
+#   invariant: block_next 需 resolve_blocks 清除
+#   downstream: GitCommitGateway（[CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway）
+# - id: O2
+#   name_zh: 治本进度持久化与全量查询
+#   name_en: remediation_progress / query_all_dimensions
+#   intro: 进度落 governance.db 供 M16 指标与 AI 冷启动零幻觉查询
+#   downstream: architecture_health_dashboard M16 指标 + AI 冷启动查询
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I2 --> A2
+# A2 --> A3
+# A3 --> O1
+# A1 --> O2
+# A2 --> O2
 """
 
 from __future__ import annotations

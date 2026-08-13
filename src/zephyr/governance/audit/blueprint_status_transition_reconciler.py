@@ -32,7 +32,9 @@
 
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""blueprint_status_transition_reconciler.py — 蓝图状态单调推进 reconciler（P1-d，2026-07-21）。
+"""
+
+blueprint_status_transition_reconciler.py — 蓝图状态单调推进 reconciler（P1-d，2026-07-21）。
 
 
 
@@ -82,7 +84,7 @@ post-commit reconciler 检测此类后向转换，warn + 持久化，AI 可查
 
 2. **正则提取头部标记**：``[STABILITY]`` / ``[MATURITY]`` 是文件头部注释标记，
 
-   正则 ``^#\\s*\\[(STABILITY|MATURITY)\\]\\s*(\\w+)`` 提取（不解析整文件 AST，
+   正则 ``^#\s*\[(STABILITY|MATURITY)\]\s*(\w+)`` 提取（不解析整文件 AST，
 
    快速且足够）。
 
@@ -134,6 +136,87 @@ Usage
 
     registry.register(make_blueprint_status_transition_reconciler(gateway))
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: post-commit 提交文件列表 committed_files
+#   fields: 本次 commit 的 staged 文件路径列表
+#   code: _reconcile(committed_files) L553
+# - id: I2
+#   name: 工作区新版源码头部标记
+#   fields: [STABILITY]/[MATURITY] 值（HEAD 状态全文）
+#   code: open(f) 读全文 L523-525
+# - id: I3
+#   name: HEAD~1 旧版源码
+#   fields: 旧版本文件全文（含旧头部标记）
+#   code: git_show_file(project_root, rel, "HEAD~1") L537
+# - id: I4
+#   name: 状态单调推进词表
+#   fields: STABILITY volatile0-evolving1-stable2-frozen3；MATURITY design0-production1
+#   code: _STABILITY_ORDER/_MATURITY_ORDER L193-215
+# 层: 算法
+# - id: A1
+#   name_zh: ① commit 触发判定
+#   name_en: _trigger
+#   intro: 只读每个 .py 前 20 行，含 STABILITY/MATURITY 头部标记才触发
+#   desc: _safe_relpath 归一化 + 读前 20 行 + _HEADER_RE 搜索；非 .py 与 OSError 跳过
+#   inputs: I1
+#   outputs: 是否触发 reconcile
+# - id: A2
+#   name_zh: ② 新旧版本头部标记提取
+#   name_en: _extract_status_markers + _check_single_file_markers
+#   intro: 正则提取新旧两版的 STABILITY/MATURITY 值，任一侧缺标记即跳过
+#   desc: 正则 ^#\s*\[(STABILITY|MATURITY)\]\s*(\w+) 取首匹配；新增文件/无标记返回 None
+#   inputs: I1 I2 I3
+#   outputs: (rel, old_markers, new_markers) 三元组
+# - id: A3
+#   name_zh: ③ 后向降级转换检测
+#   name_en: _detect_backward_transition + _check_field_transition
+#   intro: 用词表序号比对，新值序号小于旧值即判降级
+#   desc: order_map[new] < order_map[old] → 后向；值不在词表/同级/前向均不报
+#   inputs: A2 I4
+#   outputs: 降级描述字符串
+#   invariant: 状态单调推进禁止后向
+# - id: A4
+#   name_zh: ④ 降级事件持久化
+#   name_en: _persist_drift_finding
+#   intro: 命中降级写 governance.db drift_audit_findings 表 severity=HIGH
+#   desc: finding_id=bt-+uuid12，类型 BLUEPRINT_STATUS_BACKWARD；DB 异常仅记日志 fail-open
+#   inputs: A3
+#   outputs: drift_audit_findings 行记录
+# - id: A5
+#   name_zh: ⑤ reconcile 编排汇总
+#   name_en: _reconcile
+#   intro: 遍历全部提交文件按双字段检测，汇总为 warn/clean 结果
+#   desc: STABILITY+MATURITY 双字段循环；detail 截断前 3 条；任何异常降级 warn 永不抛出
+#   inputs: I1 A2 A3
+#   outputs: ReconcileResult(action=warn/clean)
+#   invariant: reconciler 永不抛异常
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: warn=检出后向降级（gate_id=GATE-BLUEPRINT-STATUS-TRANSITION），clean=无降级
+#   downstream: GitCommitGateway MOD-INF-035
+# - id: O2
+#   name_zh: 降级事件数据库记录
+#   name_en: drift_audit_findings 记录
+#   intro: 后向转换历史落库，供 AI 事后追溯降级原因
+#   downstream: governance.db drift_audit_findings 表（AI 查询）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# A2 --> A3
+# I4 --> A3
+# A3 --> A4
+# A3 --> A5
+# A1 --> A5
+# A4 --> O2
+# A5 --> O1
 """
 
 

@@ -14,7 +14,9 @@
 # [TESTS] tests/governance/audit/test_health_score_calculator.py
 # [A_module] module_id=MOD-GOV_HEALTH_SCORE_CALCULATOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）。
+"""
+
+health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）。
 
 将 abuse_monitor 的 6 维 metrics（warn_only/emergency/allow_overlap/forged/non_gw/force_merge）
 归一化为 0.0-1.0 综合评分，供 P3-3 的 critical_warn(>0.7)/block_next(>0.9) 判定使用。
@@ -44,6 +46,61 @@ Usage
     )
     print(health.score)  # 0.0-1.0
     print(health.dimension_scores)  # {"warn_only_24h": 0.6, ...}
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 滥用 6 维计数 metrics
+#   fields: warn_only_24h/emergency_commit_24h/allow_overlap_7d/forged_gw_marker_24h/non_gw_commit_24h/force_merge_7d
+#   code: calculate_health_score(metrics) L97
+# - id: I2
+#   name: 各维阈值 thresholds
+#   fields: 与 6 维同 key 的阈值（通常传 effective_thresholds）
+#   code: calculate_health_score(thresholds) L98
+# - id: I3
+#   name: 维度权重 weights
+#   fields: 可选自定义权重；默认 forged0.30/emergency0.20/warn_only0.15/allow_overlap0.15/non_gw0.10/force_merge0.10
+#   code: _DEFAULT_WEIGHTS L61-68
+# 层: 算法
+# - id: A1
+#   name_zh: ① 权重归一化
+#   name_en: calculate_health_score 权重预处理
+#   intro: 自定义权重总和不为 1 时自动归一化，异常回退默认权重
+#   desc: weight_sum<=0 → 回退 _DEFAULT_WEIGHTS；sum!=1.0 → 逐项除以 sum
+#   inputs: I3
+#   outputs: 归一化权重（总和=1.0）
+#   invariant: 权重总和=1.0
+# - id: A2
+#   name_zh: ② 单维归一化打分
+#   name_en: calculate_health_score 维度评分循环
+#   intro: 每维得分=min(计数/阈值, 1.0)，超阈值即满分并记入触发维度
+#   desc: dim_score=min(count/threshold,1.0)；threshold 非数字或<=0 → fail-safe 得 0 防除零；未知维度被 _NORMALIZE_DIM_NAMES 过滤
+#   inputs: I1 I2
+#   outputs: dimension_scores + triggered_dimensions
+#   invariant: 每维得分 ∈ [0.0, 1.0]
+# - id: A3
+#   name_zh: ③ 加权综合评分
+#   name_en: calculate_health_score 综合聚合
+#   intro: 各维得分按权重加权求和，钳制到 0-1 区间
+#   desc: total=Σ w_i×dim_i → max(0,min(1,total)) 防浮点误差
+#   inputs: A1 A2
+#   outputs: AbuseHealthScore(score+dimension_scores+weights+triggered)
+#   invariant: 综合评分 ∈ [0.0, 1.0]（0=健康 1=失控）
+# 层: 输出
+# - id: O1
+#   name_zh: 滥用健康度评分 AbuseHealthScore
+#   name_en: AbuseHealthScore
+#   intro: 6 维加权综合评分与逐维明细，供滥用监控做 critical_warn/block_next 分级判定
+#   downstream: commit_gateway_abuse_monitor_reconciler MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR（P3-3 综合评分判定）
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# I1 --> A2
+# I2 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

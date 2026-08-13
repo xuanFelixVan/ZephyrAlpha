@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_RECONCILE_WORKER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块由 launch_reconcile_async 事件触发（非 cron/manual）
-"""reconcile_worker.py — 异步 reconciler worker（Ruling:100PCT-AI-GOVERNANCE P2-3，2026-07-19）
+"""
+
+reconcile_worker.py — 异步 reconciler worker（Ruling:100PCT-AI-GOVERNANCE P2-3，2026-07-19）
 
 由 ``reconcile_runner.launch_reconcile_async`` spawn 为 detached subprocess，
 独立执行 post-commit reconciler 链路，结果写回 status file + reconcile_execution_log 表。
@@ -46,6 +48,73 @@ payload file JSON schema
    - 内部走 reconcile_for + _log_reconcile_results（与同步路径相同）
 5. 写 status=done（含 reconcilers_total/warn/auto_committed 统计）
 6. 异常→写 status=failed（含 errors）→ exit 1
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: payload JSON 文件 一次性任务载荷
+#   fields: commit_sha + session_id + project_root + committed_files + commit_message + started_at
+#   code: --payload CLI 参数 main L362 / _load_payload L62
+# 层: 算法
+# - id: A1
+#   name_zh: ① 载荷读取即焚
+#   name_en: _load_payload
+#   intro: 读 payload JSON 后立即删除文件，避免残留阻断下次 worker
+#   desc: 文件不存在抛 FileNotFoundError；json.loads 后 finally 中 unlink（解析失败也删）
+#   inputs: I1
+#   outputs: payload dict
+#   invariant: 读后即焚
+# - id: A2
+#   name_zh: ② status 状态机写入
+#   name_en: write_status_file
+#   intro: 按 pending→running→done/failed 流转写 status file，异常路径写 failed+errors
+#   desc: 执行前写 running（含 worker_pid）；成功写 done（含 reconcilers_total/warn/auto_committed 统计）；gateway 构造或 reconcile_for 异常写 failed
+#   inputs: A1
+#   outputs: status file 状态记录
+#   invariant: 状态流转 pending→running→done/failed
+# - id: A3
+#   name_zh: ③ worker 逻辑会话注册
+#   name_en: _register_worker_session / _unregister_worker_session
+#   intro: 把 worker 注册为 SessionRegistry 逻辑会话供并发控制，结束注销防泄漏
+#   desc: worker_sid=worker-{sha8}-{pid}；注册失败 non-fatal；finally 中注销保持 list_active 准确
+#   inputs: A2
+#   outputs: worker_session_id
+# - id: A4
+#   name_zh: ④ 同步执行 reconciler 链路
+#   name_en: gateway._run_post_commit_reconcile_sync_worker
+#   intro: 构造 GitCommitGateway 后直接走同步 reconciler 链路，不再递归 spawn worker
+#   desc: 注入 heartbeat 闭包（每 reconciler 执行前 write_heartbeat 刷新心跳，区分 live/死亡 worker）；走 reconcile_for + _log_reconcile_results
+#   inputs: A3
+#   outputs: reconcile_results 列表
+# - id: A5
+#   name_zh: ⑤ 告警自愈 clean 回写
+#   name_en: _write_boot_success_clean / _write_stale_healed_clean
+#   intro: worker 成功 boot / 超阈值后到达终态时，向 BOOT/STALE gate_id 写 clean 让历史 critical_warn 自动消解
+#   desc: boot 成功写 RECONCILE-WORKER-BOOT clean；elapsed > _STALE_THRESHOLD_SECONDS 才写 RECONCILE-WORKER-STALE clean（快 worker 不写避免噪音）
+#   inputs: A4
+#   outputs: clean 记录
+# 层: 输出
+# - id: O1
+#   name_zh: status file 与心跳
+#   name_en: status file
+#   intro: .runtime 下的 reconcile 状态与心跳文件，供外部观测 worker 存活与结果统计
+#   downstream: reconcile_runner.launch_reconcile_async（[CONSUMERS] spawn 方轮询）
+# - id: O2
+#   name_zh: reconcile_execution_log 兜底记录
+#   name_en: critical_warn / clean 记录
+#   intro: worker 启动失败写 RECONCILE-WORKER-BOOT critical_warn；成功写 clean，补全告警生命周期对称
+#   downstream: 内部治理告警生命周期（SQL_SELECT_ACTIVE_CRITICAL_WARNS）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A2 --> O1
+# A5 --> O2
+# A4 --> O1
 """
 
 from __future__ import annotations

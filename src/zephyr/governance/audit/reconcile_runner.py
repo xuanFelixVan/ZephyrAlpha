@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_RECONCILE_RUNNER | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块由 commit 事件触发（非 cron/manual）
-"""reconcile_runner.py — Reconciler 链路异步化（Ruling:100PCT-AI-GOVERNANCE P2-3，2026-07-19）
+"""
+
+reconcile_runner.py — Reconciler 链路异步化（Ruling:100PCT-AI-GOVERNANCE P2-3，2026-07-19）
 
 治本痛点
 --------
@@ -56,6 +58,93 @@ Worker 入口
 - 父 AI session 在 worker 完成前 unregister 会导致 worker auto-commit 被判为
   "session 未注册"（warn-only，仍记录到 reconcile_execution_log）。
 - worker crash 在 status file 未更新到 done/failed 时，下次 query 返回 "stale"。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: commit 上下文参数
+#   fields: project_root/commit_sha/session_id/committed_files/commit_message
+#   code: launch_reconcile_async 参数 L487-493
+# - id: I2
+#   name: reconcile 状态文件
+#   fields: .runtime/reconcile_reports/reconcile_status_*.json（status/started_at/last_heartbeat_at/worker_pid 等）
+#   code: _status_file_path L145
+# - id: I3
+#   name: SessionRegistry 活跃会话
+#   fields: worker-* 前缀的逻辑 session 列表
+#   code: _count_active_workers L470
+# 层: 算法
+# - id: A1
+#   name_zh: ① 孤儿 worker 清扫
+#   name_en: sweep_stale_workers
+#   intro: 扫描所有 running 状态文件，进程已死的改写为 stale，超龄终态文件顺带删除
+#   desc: running 且超 30min：PID 死→改 stale+落 DB 记 clean（自愈），PID 活→仅落 DB 记 critical_warn 不改文件；done/failed/stale 超 7d 删除
+#   inputs: I2
+#   outputs: 本次 sweep 标记 stale 的文件数
+# - id: A2
+#   name_zh: ② 并发闸门
+#   name_en: _count_active_workers
+#   intro: 活跃 worker 达到上限就跳过本次 spawn，防止进程爆炸
+#   desc: SessionRegistry.list_active() 数 worker-* 会话；>=MAX_CONCURRENT_WORKERS(2) → status=skipped 返回；查询失败 fail-open 归 0
+#   inputs: I1 I3
+#   outputs: 活跃 worker 计数
+# - id: A3
+#   name_zh: ③ 原子状态写入
+#   name_en: write_status_file
+#   intro: 用临时文件加原子替换写 status/payload，杜绝半写状态
+#   desc: tmp.write + os.replace 原子落盘；payload 文件路径含 commit_sha 保证唯一
+#   inputs: I1
+#   outputs: status/payload 文件路径
+#   invariant: status file 原子写入（tmp + os.replace）
+# - id: A4
+#   name_zh: ④ detached worker 启动
+#   name_en: launch_reconcile_async
+#   intro: commit 后立即返回，reconciler 链路丢给完全脱离的子进程后台跑
+#   desc: 先 sweep 再并发闸门 → 写 payload+pending → spawn_python_hidden 启动 reconcile_worker；ZEPHYR_RECONCILE_SYNC=1 + ZEPHYR_RECONCILE_WORKER=1 防递归重跑；spawn 失败改 failed 供调用方回退 sync
+#   inputs: I1 A1 A2 A3
+#   outputs: 启动结果 dict（ok/status/worker_pid/payload_file/status_file）
+#   invariant: 立即返回不阻塞；subprocess 完全 detached
+# - id: A5
+#   name_zh: ⑤ 僵尸判定读取
+#   name_en: read_status_file
+#   intro: 读状态文件时对超时 running 做死活判定，死孤儿改判 stale
+#   desc: reference=heartbeat 或 started_at 超 30min：PID 活→落 DB critical_warn 不改文件，PID 死→改 stale 落 DB clean；双 set 去重保自愈闭环
+#   inputs: I2
+#   outputs: ReconcileStatus（含 stale 改判）
+# - id: A6
+#   name_zh: ⑥ 执行状态查询
+#   name_en: query_reconcile_status
+#   intro: AI 查 reconciler 链路跑到哪了，不阻塞主流程
+#   desc: 读 status file 组装查询结果；elapsed=finished-started 或 now-started；文件缺失 fail-open 返回 status=unknown
+#   inputs: A5
+#   outputs: 状态查询结果 dict
+#   invariant: 查询失败 fail-open 返回 unknown
+# 层: 输出
+# - id: O1
+#   name_zh: 异步启动结果 dict
+#   name_en: launch_reconcile_async 返回值
+#   intro: ok/pending/skipped/failed 启动回执，commit 流程据此立即继续
+#   downstream: GitCommitGateway._run_post_commit_reconcile_async MOD-INF-035
+# - id: O2
+#   name_zh: 状态文件与查询结果
+#   name_en: reconcile_status_*.json / query_reconcile_status 返回值
+#   intro: status file 持久化运行时状态，payload 供 worker 读取后自删，AI 可查询进度
+#   downstream: reconcile_worker 子进程（读 payload 自删）+ AI 查询 reconcile 状态
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A2
+# I1 --> A3
+# I2 --> A1
+# I2 --> A5
+# I3 --> A2
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> O1
+# A3 --> O2
+# A5 --> A6
+# A6 --> O2
 """
 
 from __future__ import annotations

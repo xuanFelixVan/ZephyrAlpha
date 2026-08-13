@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_ERROR_PATTERN_CONSUMER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
-"""error_pattern_consumer_reconciler.py — AI 行为遥测 JSONL 错误事件聚合 consumer。
+"""
+
+error_pattern_consumer_reconciler.py — AI 行为遥测 JSONL 错误事件聚合 consumer。
 
 post-commit 事件触发，扫描 ``data/telemetry/prod/logs/telemetry_*.jsonl`` 下
 AI behavior events（``labels.__type == "ai_behavior_event"``），过滤含 ``error``
@@ -61,6 +63,69 @@ Usage
     )
 
     registry.register(make_error_pattern_consumer_reconciler(gateway))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: AI 行为遥测 JSONL
+#   fields: labels.__type=ai_behavior_event + error{error_type,persistence,source,expectation,severity} + ts
+#   code: _iter_error_events L119（data/telemetry/prod/logs/telemetry_*.jsonl）
+# - id: I2
+#   name: 聚合输出路径
+#   fields: .runtime/ai_error_patterns/aggregated_patterns.json
+#   code: _OUTPUT_SUBDIR/_OUTPUT_FILENAME L95-96
+# 层: 算法
+# - id: A1
+#   name_zh: ① 错误事件过滤迭代
+#   name_en: _iter_error_events + _is_ai_behavior_error_event
+#   intro: 逐行解析 JSONL，只留含 error_type 的 AI 行为事件
+#   desc: __type==ai_behavior_event 且 error.error_type 非空才 yield；坏行/坏文件跳过 fail-open
+#   inputs: I1
+#   outputs: 错误事件流
+# - id: A2
+#   name_zh: ② 错误模式指纹计算
+#   name_en: compute_error_pattern_id
+#   intro: 用错误三元组算稳定指纹作为模式 ID
+#   desc: pattern_id = EP- + sha1(error_type|persistence|source) 前 16 字符；expectation/severity 不计入指纹
+#   inputs: A1
+#   outputs: EP-xxxxxxxxxxxxxxxx 模式 ID
+# - id: A3
+#   name_zh: ③ 单事件聚合合并
+#   name_en: _merge_event_into_patterns
+#   intro: 把每条事件累进对应模式的计数与分布
+#   desc: count+1；first_seen 取最小 ts、last_seen 取最大 ts；expectation/severity 分布逐项 +1
+#   inputs: A1 A2
+#   outputs: patterns 聚合字典
+# - id: A4
+#   name_zh: ④ 全量聚合与持久化
+#   name_en: aggregate_error_patterns
+#   intro: 全量重扫所有遥测文件并覆盖写出聚合结果，保证幂等
+#   desc: 重新扫描全量 JSONL → result{version,last_updated,total_events,patterns} → 写 JSON；写失败仅 warning
+#   inputs: A3 I2
+#   outputs: 聚合结果 dict（落盘 + 返回）
+#   invariant: 幂等（全量重扫覆盖输出）
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: clean=聚合完成（含 N 模式 M 事件摘要），warn=聚合异常
+#   downstream: GitCommitGateway MOD-INF-035
+# - id: O2
+#   name_zh: 聚合错误模式库
+#   name_en: aggregated_patterns.json
+#   intro: 结构化错误模式库，供 P4-1 模式库消费回填 error_pattern_id
+#   downstream: ai_error_pattern_library（P4-1 消费，回填 reconcile_execution_log.error_pattern_id）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> A4
+# I2 --> A4
+# A4 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

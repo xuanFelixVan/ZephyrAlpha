@@ -16,7 +16,9 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""translation_coverage_reconciler.py — 翻译覆盖率存量对账 reconciler.
+"""
+
+translation_coverage_reconciler.py — 翻译覆盖率存量对账 reconciler.
 
 TRANSLATION-COVERAGE 四层防御的 Layer 4（post-commit 存量对账）：扫描 depgraph 全部
 节点（有 file_path 且在 src/zephyr/ 或 scripts/ 范围内）vs 翻译真源
@@ -49,6 +51,69 @@ Usage
     )
 
     registry.register(make_translation_coverage_reconciler(gateway))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: depgraph 节点表 PostgreSQL 只读数据
+#   fields: nodes.path + nodes.file_path（file_path 非空）
+#   code: _SQL_GET_NODES_WITH_FILE_PATH L89 / _query_depgraph_nodes L167
+# - id: I2
+#   name: 翻译注册表 YAML 真源
+#   fields: module_translation_registry.yaml 的 plain_zh + name_zh 条目
+#   code: module_translation_loader.get_module_translation（懒加载 L202）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 检测范围判定
+#   name_en: _is_in_scope
+#   intro: 判断 file_path 是否属于需大白话简介的能力模块，豁免测试/演示/归档
+#   desc: 仅 .py 且前缀 src/zephyr/ 或 scripts/；豁免 tests/ 路径段（is_test_exempt 懒加载防循环导入）、demos/、test_*.py/*_test.py、__init__.py、_archive/
+#   inputs: I1
+#   outputs: 范围内 file_path 列表
+# - id: A2
+#   name_zh: ② 三类漂移扫描
+#   name_en: _scan_drift
+#   intro: 全量比对 depgraph 节点 vs 翻译真源，分出 missing/short/generic 三类漂移
+#   desc: 无条目或 plain_zh 空→missing；CJK 字符数 <8→short；is_generic_plain_zh 或 is_generic_plain_suffix 命中→generic；单条异常跳过不中断
+#   inputs: A1 I2
+#   outputs: {missing, short, generic} 漂移 dict
+# - id: A3
+#   name_zh: ③ 漂移报告落盘
+#   name_en: _write_drift_report
+#   intro: 把三类漂移与计数摘要写 .runtime/translation_coverage/drift_report.json
+#   desc: report 含 gate_id + 三类清单 + summary 计数（missing/short/generic/total_drift）；写失败仅 warn（派生产物可重建）
+#   inputs: A2
+#   outputs: drift_report.json
+# - id: A4
+#   name_zh: ④ reconciler 装配触发
+#   name_en: make_translation_coverage_reconciler
+#   intro: src/*.py 或 scripts/*.py commit 时触发全扫，warn-only 不阻断
+#   desc: trigger 检测 committed_files 命中 .py 范围前缀 → reconcile 执行 A1-A3 → 有漂移 warn（detail 每类最多 5 条），无漂移 clean；DB/loader 不可达 fail-open
+#   inputs: A3
+#   outputs: ReconcileResult
+#   invariant: warn-only 永不抛异常
+# 层: 输出
+# - id: O1
+#   name_zh: 翻译覆盖对账结果
+#   name_en: ReconcileResult
+#   intro: 存量漂移 warn 报告（不阻断 commit），供 AI 追踪补齐翻译
+#   invariant: warn-only
+#   downstream: GitCommitGateway（[CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway）
+# - id: O2
+#   name_zh: 漂移报告文件
+#   name_en: drift_report.json
+#   intro: .runtime/translation_coverage/ 下的派生追踪产物，下次 commit 重建
+#   downstream: 无下游/内部使用（派生产物供人工/AI 查阅）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

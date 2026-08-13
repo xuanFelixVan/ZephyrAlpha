@@ -72,6 +72,36 @@
 # 根因: Python `import A.B.C` 先获取 C 的 module lock 再加载父包 A.B; A.B/__init__.py 中 import C
 # 会再次请求 C 的 lock -> deadlock。延迟导入让 __init__.py 只定义 __getattr__，访问时才 import 子模块。
 # 对标已有 STUB 模式(line 41-44 旧版 cli/audit_admission_controller)，统一扩展到全部子模块。
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Python 包导入请求
+#   fields: 无数据字段（解释器 import 机制触发，不读任何数据表）
+#   code: import zephyr.gov_audit
+# 层: 算法
+# - id: A1
+#   name_zh: ① 模块命名空间声明
+#   name_en: zephyr.gov_audit.__init__
+#   intro: audit_trail 模块地图（ARCH-042 阶段4裁定：强化发现性，不建物理子目录）
+#   desc: MOD-INF-020 包入口，模块命名空间声明并声明 __all__（14项）
+#   inputs: I1
+#   outputs: zephyr.gov_audit 包级公共命名空间
+#   invariant: 包级导出以 __all__ 声明为准（14项）
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.gov_audit 包公共 API
+#   name_en: __all__ 14项
+#   intro: audit_trail 模块地图（ARCH-042 阶段4裁定：强化发现性，不建物理子目录）——对外统一出口
+#   downstream: 见蓝图头 [CONSUMERS] 声明
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 import importlib
 
 # 名字 -> (模块路径, 属性名) 延迟导入映射表

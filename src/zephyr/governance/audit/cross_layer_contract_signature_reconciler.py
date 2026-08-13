@@ -32,7 +32,9 @@
 
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""cross_layer_contract_signature_reconciler.py — 跨层契约签名漂移检测 reconciler（P1-b，2026-07-21）。
+"""
+
+cross_layer_contract_signature_reconciler.py — 跨层契约签名漂移检测 reconciler（P1-b，2026-07-21）。
 
 
 
@@ -112,6 +114,80 @@ Usage
 
     registry.register(make_cross_layer_contract_signature_reconciler(gateway))
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 跨层契约真源 YAML
+#   fields: contracts[].physical_path 集合
+#   code: _CONTRACTS_YAML_REL L169（architecture_model/contracts/cross_layer_contracts.yaml）
+# - id: I2
+#   name: post-commit 提交文件列表 committed_files
+#   fields: 本次 commit 的 staged 文件路径列表
+#   code: _reconcile(committed_files) L647
+# - id: I3
+#   name: 契约文件新旧源码
+#   fields: 工作区新版全文 + git show HEAD~1 旧版全文
+#   code: open(new_abs) L601 / git_show_file L615
+# 层: 算法
+# - id: A1
+#   name_zh: ① 契约路径集合加载
+#   name_en: _load_contract_physical_paths
+#   intro: 从契约 YAML 读出所有 codegen 产物的物理路径集合
+#   desc: yaml.safe_load 提取 contracts[].physical_path 归一化为 POSIX 风格；缺失/解析失败返回空集 fail-open
+#   inputs: I1
+#   outputs: physical_path 集合
+# - id: A2
+#   name_zh: ② 触发与变更收集
+#   name_en: _trigger + _collect_changed_contracts
+#   intro: YAML 自身被改就全量重检，否则只检命中路径的 .py 文件
+#   desc: committed 命中 YAML → 检测全部 physical_path；命中单个契约 .py → 单文件检测
+#   inputs: A1 I2
+#   outputs: changed_contracts 文件列表
+# - id: A3
+#   name_zh: ③ dataclass 签名 AST 提取
+#   name_en: _extract_dataclass_signatures
+#   intro: AST 找出所有 @dataclass 类并提取字段名与类型注解
+#   desc: 识别 @dataclass 与 @dataclass(frozen=True)；AnnAssign 字段 unparse 注解；SyntaxError 返回空 dict
+#   inputs: A2 I3
+#   outputs: {类名: [(字段名, 类型注解)]} 新旧两份签名
+# - id: A4
+#   name_zh: ④ 签名差异比对
+#   name_en: _diff_signatures
+#   intro: 比对新旧签名，类删除/字段删除/类型变更算漂移
+#   desc: 删除类、删除字段、字段类型变化 → 差异；新增类/新增字段属兼容变更不报
+#   inputs: A3
+#   outputs: 差异描述列表
+# - id: A5
+#   name_zh: ⑤ 漂移持久化与编排
+#   name_en: _persist_drift_finding + _reconcile
+#   intro: 命中漂移写库并汇总 warn，全程异常降级不抛出
+#   desc: finding_id=cs-+uuid12，类型 CONTRACT_SIGNATURE_DRIFT severity=HIGH；detail 截断前 5 项；无路径→skip，无变更→clean
+#   inputs: A4
+#   outputs: ReconcileResult(warn/clean/skip) + drift_audit_findings 记录
+#   invariant: reconciler 永不抛异常；post-commit warn-only
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: warn=契约签名漂移（gate_id=GATE-CROSS-LAYER-CONTRACT-SIGNATURE），clean/skip=无漂移
+#   downstream: GitCommitGateway MOD-INF-035
+# - id: O2
+#   name_zh: 签名漂移数据库记录
+#   name_en: drift_audit_findings 记录
+#   intro: 契约签名漂移历史落库，供 AI 事后追溯手工改 codegen 产物事件
+#   downstream: governance.db drift_audit_findings 表（AI 查询）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> A3
+# I3 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
+# A5 --> O2
 """
 
 

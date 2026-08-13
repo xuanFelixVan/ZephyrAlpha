@@ -34,7 +34,9 @@
 
 # noqa: m10-time-trigger  M10豁免: "cron"在注释中说明reconciler是事件触发(非cron/manual)
 
-"""reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2-T1）
+"""
+
+reconciliation_registry.py — GitCommitGateway post-commit 漂移对账注册表（P2-T1）
 
 把 ``_post_commit_reconcile`` 单线硬编码升级为声明式 registry：每个被
 
@@ -104,6 +106,75 @@ Usage::
 
     # results == [ReconcileResult(action="clean", detail="ok")]
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: committed_files 提交文件清单 list[str]
+#   fields: 本次 commit 的文件相对路径列表
+#   code: reconcile_for(committed_files) L715
+# - id: I2
+#   name: session_id+commit_message 会话上下文 str
+#   fields: 会话标识 + 提交说明（3-arg reconciler 审计用）
+#   code: reconcile_for(session_id, commit_message) L717
+# - id: I3
+#   name: ReconcilerSpec 对账声明 dataclass
+#   fields: gate_id + trigger + reconcile + priority
+#   code: ReconcilerSpec L625
+# 层: 算法
+# - id: A1
+#   name_zh: ① 声明式注册 幂等排序
+#   name_en: ReconciliationRegistry.register
+#   intro: 每个被绕过的 pre-commit GATE 注册一个补偿 reconciler，同 gate_id 覆盖旧 spec
+#   desc: 去重（同 gate_id 移除旧 spec）→ append → 按 priority 升序排序
+#   inputs: I3
+#   outputs: 有序 _specs 列表
+#   invariant: 同 gate_id 幂等覆盖
+# - id: A2
+#   name_zh: ② 事件调度执行 异常降级
+#   name_en: ReconciliationRegistry.reconcile_for
+#   intro: commit 完成后按优先级遍历 spec，trigger 命中即执行 reconcile，永不抛异常
+#   desc: trigger 过滤 → heartbeat 刷新 → inspect.signature 检测 arity（3-arg 传 commit_message）→ 执行 → dict 结果防御转 ReconcileResult → 填充 gate_id；TimeoutExpired 升级 critical_warn，其余异常降级 warn
+#   inputs: I1 I2 A1
+#   outputs: list[ReconcileResult]
+#   invariant: 永不抛异常，单 reconciler 失败不阻断后续
+# - id: A3
+#   name_zh: ③ 对账结果落库
+#   name_en: _log_reconcile_results
+#   intro: 把每条对账结果写入 governance.db reconcile_log 表，供告警横幅和阻断查询
+#   desc: 锚定主库 governance.db（strip_session_worktree 防 worktree 分裂）→ 确保 ack/commit_message/error_pattern_id 列 → INSERT 结果行
+#   inputs: A2
+#   outputs: reconcile_log 表记录
+# - id: A4
+#   name_zh: ④ GATE 补偿器工厂族
+#   name_en: make_*_reconciler
+#   intro: 20+ 个工厂函数各为一个 pre-commit GATE 生成 trigger+reconcile 闭包 spec
+#   desc: manifest/path_tree/depgraph_ops/blueprint_frontmatter/drift_scan/drift_fix/yaml_sync/delete_audit/regenerate/rule_audit 等工厂，闭包捕获 gateway 与 project_root
+#   inputs: I3
+#   outputs: ReconcilerSpec 实例（交 A1 注册）
+# 层: 输出
+# - id: O1
+#   name_zh: ReconcileResult 结果列表
+#   name_en: list[ReconcileResult]
+#   intro: 每个命中 reconciler 的对账结论（skip/clean/auto_committed/warn/critical_warn/block_next）
+#   invariant: action 六枚举之一
+#   downstream: GitCommitGateway（[CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway）
+# - id: O2
+#   name_zh: reconcile_log SQLite 记录
+#   name_en: reconcile_log
+#   intro: 持久化对账历史，critical_warn/block_next 供下次 commit 前横幅与硬阻断
+#   downstream: 内部 _check_recent_critical_warns/_check_recent_blocks 与治理看板
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# I3 --> A4
+# I1 --> A2
+# I2 --> A2
+# A1 --> A2
+# A4 --> A1
+# A2 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

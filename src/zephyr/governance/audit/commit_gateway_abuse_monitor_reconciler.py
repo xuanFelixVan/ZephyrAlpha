@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_COMMIT_GATEWAY_ABUSE_MONITOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
-"""commit_gateway_abuse_monitor_reconciler.py — commit gateway 持续滥用监控（ARCH-TOOL-HEALTH-V1 Phase 5b，2026-07-19）。
+"""
+
+commit_gateway_abuse_monitor_reconciler.py — commit gateway 持续滥用监控（ARCH-TOOL-HEALTH-V1 Phase 5b，2026-07-19）。
 
 post-commit 事件触发，扫描 ``.runtime/reconcile_reports/`` 下 ``post_commit_guard_*``
 与 ``commit_gateway_audit_*`` 报告 + ``git log`` 中 emergency 标记，检测 **持续滥用模式**
@@ -75,6 +77,101 @@ Usage
     )
 
     registry.register(make_commit_gateway_abuse_monitor_reconciler(gateway))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 网关对账报告 JSON
+#   fields: post_commit_guard_*（7d）+ commit_gateway_audit_*（24h）报告
+#   code: read_json_reports L391（.runtime/reconcile_reports/）
+# - id: I2
+#   name: git log 提交信息
+#   fields: [GW:*:emergency] 标记 + [SCENARIO:] 场景标记（24h）
+#   code: count_emergency_commits L426
+# - id: I3
+#   name: gate 层逃生通道审计 JSONL
+#   fields: allow_overlap_usage.jsonl + force_merge_usage.jsonl（7d 时间戳计数）
+#   code: count_allow_overlap_usage L472 / count_force_merge_usage L505
+# - id: I4
+#   name: 滥用阈值真源 YAML
+#   fields: 6 维阈值（warn_only/emergency/allow_overlap/forged/non_gw/force_merge）
+#   code: load_thresholds_from_yaml L134（trae_069_commit_gateway_abuse_thresholds.yaml）
+# - id: I5
+#   name: 7d 滥用基线
+#   fields: 每日 6 维计数历史 daily_records
+#   code: load_baseline L242（.runtime/abuse_monitor/abuse_baseline.json）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 阈值加载 fail-open
+#   name_en: load_thresholds_from_yaml
+#   intro: 从 YAML 读 6 维阈值，缺失或非法值回退代码内默认值
+#   desc: SSoT 铁律：阈值真源是 YAML；逐维校验 int>=0，异常整体回退 DEFAULT_THRESHOLDS
+#   inputs: I4
+#   outputs: 6 维静态阈值 dict
+# - id: A2
+#   name_zh: ② 六维滥用计数采集
+#   name_en: read_json_reports + count_emergency_commits + count_allow_overlap_usage + count_force_merge_usage
+#   intro: 从报告/git log/审计 JSONL 三处采集 24h 与 7d 窗口的真实滥用计数
+#   desc: 报告按 timestamp 过滤；emergency 按 scenario!=production 豁免；审计 JSONL 逐行计时间窗内记录；全部 fail-open 归 0
+#   inputs: I1 I2 I3
+#   outputs: 6 维原始计数
+# - id: A3
+#   name_zh: ③ EWMA 自适应阈值计算
+#   name_en: compute_adaptive_thresholds
+#   intro: 用 7d 历史基线算自适应阈值，防止静态阈值掩盖渐进恶化
+#   desc: AdaptiveThreshold COUNT 模式 observe_count 逐日观测，阈值=EWMA×1.5；有效阈值=max(adaptive, static)
+#   inputs: I5 A1
+#   outputs: 6 维自适应阈值 dict
+# - id: A4
+#   name_zh: ④ 六维滥用分类判定
+#   name_en: classify_abuse
+#   intro: 逐维比对计数与有效阈值，超阈即记入触发维度
+#   desc: 有效阈值=max(adaptive,static)；non_gw 按 commit hash 去重计数；纯函数无副作用
+#   inputs: A2 A3 A1
+#   outputs: dimensions_triggered + details + metrics
+# - id: A5
+#   name_zh: ⑤ 基线滚动持久化
+#   name_en: record_daily_metrics
+#   intro: 把今日 6 维计数写回 baseline，同日覆盖并裁剪 7d 外旧记录
+#   desc: date 去重保留最新；timestamp>=now-7d 裁剪；写失败仅 warning 不阻断
+#   inputs: A4
+#   outputs: 更新后 daily_records（写回 abuse_baseline.json）
+# - id: A6
+#   name_zh: ⑥ 综合评分分级判定
+#   name_en: _reconcile
+#   intro: 健康度评分优先分级，post-commit 无法 block 一律降级为告警
+#   desc: health_score>0.9 → critical_warn（提示 PAUSE）；>0.7 → critical_warn；否则 forged 触发或 3+ 维 → critical_warn，1-2 维 → warn，0 维 → clean
+#   inputs: A4 A5
+#   outputs: ReconcileResult(clean/warn/critical_warn)
+#   invariant: reconciler 永不抛异常；post-commit 不能 block
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: clean/warn/critical_warn 三档结果（gate_id=GATE-COMMIT-GW-ABUSE-MONITOR）
+#   downstream: GitCommitGateway MOD-INF-035
+# - id: O2
+#   name_zh: 滥用监控报告与基线落盘
+#   name_en: commit_gateway_abuse_monitor 报告 + abuse_baseline.json
+#   intro: 每次 reconcile 落盘审计报告供趋势追踪，baseline 供次日自适应阈值自消费
+#   downstream: .runtime/reconcile_reports/（趋势追踪）+ 本模块 A3 自消费
+# [/ALGO_FLOW]
+#
+# 边:
+# I4 --> A1
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# I5 --> A3
+# A1 --> A3
+# A1 --> A4
+# A2 --> A4
+# A3 --> A4
+# A4 --> A5
+# A4 --> A6
+# A5 --> O2
+# A6 --> O1
+# A6 --> O2
 """
 
 from __future__ import annotations

@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_RUNTIME_VIOLATION_SNAPSHOT_RECONCILER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
-"""runtime_violation_snapshot_reconciler.py — trae_060 §5 evidence 运行时快照 post-commit reconciler。
+"""
+
+runtime_violation_snapshot_reconciler.py — trae_060 §5 evidence 运行时快照 post-commit reconciler。
 
 #ARCH-GOV-CONVERGENCE-META Phase 3.4b（病根1 治本）
 
@@ -60,6 +62,47 @@ Usage
     )
 
     registry.register(make_runtime_violation_snapshot_reconciler(gateway))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: committed_files 提交文件清单 list[str]
+#   fields: 本次 commit 文件路径（判定是否含 src/zephyr/ 或 scripts/governance/ 的 .py，或 trae_060 规则 yaml）
+#   code: _trigger L112 / _matches_trigger L92
+# - id: I2
+#   name: 快照生成器函数 同包依赖
+#   fields: runtime_violation_snapshot.generate_snapshot + save_snapshot
+#   code: import L74-77
+# 层: 算法
+# - id: A1
+#   name_zh: ① 触发路径匹配
+#   name_en: _matches_trigger
+#   intro: 判断提交文件是否命中业务代码或 trae_060 规则文件，命中才执行快照更新
+#   desc: 相对路径化（os.path.relpath，跨盘 ValueError 跳过）；非 .py 仅匹配 trae_060_inward_consolidation.yaml；.py 需以 src/zephyr/ 或 scripts/governance/ 前缀开头
+#   inputs: I1
+#   outputs: bool 触发判定
+# - id: A2
+#   name_zh: ② 快照生成与落盘
+#   name_en: _reconcile
+#   intro: 取 HEAD sha 后调 generate_snapshot 生成 live 快照并 save_snapshot 持久化
+#   desc: git rev-parse HEAD 取 sha（失败留空）→ generate_snapshot(project_root, session_id, commit_sha) → save_snapshot → 从 summary 取 drift_count/total_detected/total_claimed 组 detail；异常降级 warn
+#   inputs: A1 I2
+#   outputs: ReconcileResult（clean=快照已保存）
+#   invariant: 永不抛异常，快照失败不阻断 commit（warn-only）
+# 层: 输出
+# - id: O1
+#   name_zh: 快照对账结果
+#   name_en: ReconcileResult
+#   intro: clean 附带 drift_count/detected/claimed 摘要；warn=快照生成失败，均不阻断 commit
+#   invariant: warn-only（Phase 0）
+#   downstream: GitCommitGateway（[CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> O1
 """
 
 from __future__ import annotations

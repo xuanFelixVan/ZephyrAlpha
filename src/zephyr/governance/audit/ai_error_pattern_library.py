@@ -14,7 +14,9 @@
 # [TESTS] tests/governance/audit/test_ai_error_pattern_library.py
 # [A_module] module_id=MOD-GOV_ERROR_PATTERN_LIBRARY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""ai_error_pattern_library.py — AI 错误模式库（只读查询接口）。
+"""
+
+ai_error_pattern_library.py — AI 错误模式库（只读查询接口）。
 
 P4-1（#ARCH-PREVENTABILITY-LAYER-001 Phase 4，2026-07-20）
 ----------------------------------------------------------
@@ -51,6 +53,71 @@ P4-1（#ARCH-PREVENTABILITY-LAYER-001 Phase 4，2026-07-20）
 - **与 P4-1b 的关系**：本模块是 P4-1b 聚合输出的下游消费者，无写入
   职责。P4-1b 每次 commit 触发全量重扫，覆盖更新
   ``aggregated_patterns.json``；本模块的 ``reload()`` 重新从磁盘加载。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 错误模式聚合文件 JSON
+#   fields: total_events/last_updated/patterns[]（pattern_id/error_type/persistence/source/count/expectation_dist/severity_dist 等）
+#   code: .runtime/ai_error_patterns/aggregated_patterns.json L71-72
+# - id: I2
+#   name: 查询条件 参数组
+#   fields: pattern_id 或 (error_type, persistence, source) 三元组 / TopN 的 n
+#   code: get_pattern/find_patterns/match_pattern/top_patterns L284-332
+# 层: 算法
+# - id: A1
+#   name_zh: ① 失败开放加载建索引
+#   name_en: AIErrorPatternLibrary._load
+#   intro: 读聚合 JSON 容错解析成模式列表并建指纹索引，坏了就降级空库
+#   desc: 读文件→json.loads→逐条 ErrorPattern.from_dict（缺字段默认值/强转失败跳过）→无 pattern_id 脏数据跳过→建 {pid: pat} 索引；任何异常 return 空库
+#   inputs: I1
+#   outputs: 模式列表 + O(1) 索引
+#   invariant: 只读不改源文件；fail-open 降级为空库
+# - id: A2
+#   name_zh: ② 三元组指纹匹配
+#   name_en: match_pattern/is_known_pattern
+#   intro: 用 错误类型×持续性×来源 算指纹直接查表认熟人
+#   desc: compute_error_pattern_id(error_type, persistence, source) → dict.get O(1)，命中返回模式否则 None
+#   inputs: I2 A1
+#   outputs: ErrorPattern 或 None
+# - id: A3
+#   name_zh: ③ 属性过滤与 TopN
+#   name_en: find_patterns/top_patterns
+#   intro: 按维度过滤模式并按出现次数降序，或直接取前 N 名
+#   desc: 三维度可选过滤（None 不过滤）→ count 降序；top_patterns 排序后切前 n
+#   inputs: I2 A1
+#   outputs: ErrorPattern 列表
+# - id: A4
+#   name_zh: ④ 规则修复建议
+#   name_en: suggest_action/_suggest_action_for_pattern
+#   intro: 按持续性和严重度套规则模板给修复建议，再叠加来源维度提示
+#   desc: permanent+fatal/blocking→立即修复；permanent+degraded→排查根因；intermittent→监控复现；transient→重试退避/监控趋势；末尾拼 _SOURCE_ACTION_HINTS
+#   inputs: I2 A1
+#   outputs: 修复建议字符串（未知模式返回"未知模式，无可建议"）
+# 层: 输出
+# - id: O1
+#   name_zh: 模式查询结果
+#   name_en: ErrorPattern query results
+#   intro: 单个模式或按 count 降序的模式列表，供 session 启动/gate 决策/AI 反思
+#   downstream: zephyr.gov_enforcement.rule_bridge.session_worktree（[CONSUMERS] 头）
+# - id: O2
+#   name_zh: 修复建议文本
+#   name_en: suggested action str
+#   intro: 面向 AI/人的一句话修复策略建议
+#   downstream: zephyr.gov_enforcement.rule_bridge.session_worktree（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I2 --> A3
+# I2 --> A4
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations

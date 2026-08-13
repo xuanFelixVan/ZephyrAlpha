@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_GIT_PERFORMANCE_MONITOR | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
-"""git_performance_monitor_reconciler.py — git 性能持续监控 + 早期预警（ARCH-GIT-CALL-BUDGET P3.5，2026-07-19）。
+"""
+
+git_performance_monitor_reconciler.py — git 性能持续监控 + 早期预警（ARCH-GIT-CALL-BUDGET P3.5，2026-07-19）。
 
 post-commit 事件触发，测量 git status 计时并记录到 ``.runtime/git_performance_log.jsonl``。
 当性能退化或 stale worktree 累积超阈值时返回 ``ReconcileResult(action="warn")``。
@@ -58,6 +60,83 @@ Usage
     )
 
     registry.register(make_git_performance_monitor_reconciler(gateway))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: git status --short 子进程
+#   fields: 工作区状态命令（cwd=repo_root，超时 120s）
+#   code: measure_git_status L107
+# - id: I2
+#   name: .aidrafts/ worktree 目录
+#   fields: sess-* 前缀的 session worktree 目录
+#   code: count_stale_worktrees L135
+# - id: I3
+#   name: 历史性能日志
+#   fields: .runtime/git_performance_log.jsonl 最近条目
+#   code: read_recent_perf_entries L168
+# 层: 算法
+# - id: A1
+#   name_zh: ① git status 计时测量
+#   name_en: measure_git_status
+#   intro: 用 monotonic 钟测 git status 耗时并截取错误摘要
+#   desc: 返回 (elapsed_s, returncode, stderr[:120])；超时/异常也返回实测耗时，rc=-1/-2 不阻断
+#   inputs: I1
+#   outputs: (elapsed, rc, stderr 摘要)
+# - id: A2
+#   name_zh: ② stale worktree 计数
+#   name_en: count_stale_worktrees
+#   intro: 数 .aidrafts 下 sess-* 目录个数作为堆积预警信号
+#   desc: 只计数不清理（清理由 session_worktree_sweep 负责）；OSError 归 0
+#   inputs: I2
+#   outputs: stale_worktree_count
+# - id: A3
+#   name_zh: ③ 性能日志追加
+#   name_en: append_perf_log
+#   intro: 把本次测量结果追加写进 JSONL 性能日志
+#   desc: 条目含 ts/session_id/commit_sha/elapsed_s/status_rc/stale_worktree_count；写失败仅记日志
+#   inputs: A1 A2
+#   outputs: 性能日志条目
+# - id: A4
+#   name_zh: ④ 退化趋势检测
+#   name_en: detect_degradation_trend
+#   intro: 最近 3 次计时连续严格递增就判定性能退化趋势
+#   desc: 取最近 N+1 条日志（含本次刚写条目），times[i+1]>times[i] 全成立 → is_degrading；deque(maxlen) 避免读大文件
+#   inputs: I3 A3
+#   outputs: (is_degrading, recent_times)
+# - id: A5
+#   name_zh: ⑤ 三重预警判定与 auto-sweep
+#   name_en: _reconcile
+#   intro: 绝对阈值+stale 堆积+退化趋势三个维度任一命中即 warn
+#   desc: rc!=0 或 elapsed>30s fail 阈 / >10s warn 阈 → warn；stale>10 → 触发 session_worktree_sweep 自动清理；趋势退化 → warn；异常降级 warn 永不抛出
+#   inputs: A1 A2 A4
+#   outputs: ReconcileResult(clean/warn)
+#   invariant: reconciler 永不抛异常；测量失败不阻断 commit
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: warn=性能退化/stale 堆积预警（gate_id=GATE-GIT-PERFORMANCE-MONITOR），clean=正常
+#   downstream: GitCommitGateway MOD-INF-035
+# - id: O2
+#   name_zh: 性能日志条目
+#   name_en: git_performance_log.jsonl 条目
+#   intro: 每次 commit 的性能采样落盘，供趋势追踪与退化检测自消费
+#   downstream: .runtime/git_performance_log.jsonl（本模块 A4 自消费读回）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> O2
+# I3 --> A4
+# A3 --> A4
+# A1 --> A5
+# A2 --> A5
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

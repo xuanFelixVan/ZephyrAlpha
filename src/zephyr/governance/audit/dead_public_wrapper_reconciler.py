@@ -16,7 +16,9 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""dead_public_wrapper_reconciler.py — 死公共 wrapper 自动检测 reconciler.
+"""
+
+dead_public_wrapper_reconciler.py — 死公共 wrapper 自动检测 reconciler.
 
 #ARCH-STAGE4-PUBLIC-WRAPPER-DEAD-CODE-001 防复发自动化：post-commit 事件触发，
 扫描 src/zephyr/ 下所有 Python 文件，检测"死公共 wrapper"——即公共函数（无下划线
@@ -51,6 +53,62 @@ Usage
     )
 
     registry.register(make_dead_public_wrapper_reconciler(gateway))
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: src/zephyr 下 Python 源码文件
+#   fields: rglob *.py（排除 __pycache__）
+#   code: _find_dead_public_wrappers L227
+# - id: I2
+#   name: 全仓调用点文本
+#   fields: src/zephyr + scripts + tests 的 .py 文件内容
+#   code: search_dirs L266-268
+# 层: 算法
+# - id: A1
+#   name_zh: ① 公私同名函数对发现
+#   name_en: _find_function_pairs
+#   intro: AST 扫描找同 scope 里 foo 和 _foo 同时存在的函数对
+#   desc: 模块级+类级两层扫描；排除 __dunder__ 协议方法与 make_ 工厂函数
+#   inputs: I1
+#   outputs: 候选 public/private 函数对
+# - id: A2
+#   name_zh: ② trivial wrapper 判定
+#   name_en: _is_trivial_wrapper
+#   intro: 剥掉 docstring 后函数体只剩一条转发调用才算 wrapper
+#   desc: 仅 1 条真实语句且为 return _foo(...) / _foo(...) / self._foo(...) 形式；多语句/含控制流不算
+#   inputs: A1
+#   outputs: trivial wrapper 候选
+# - id: A3
+#   name_zh: ③ 零外部调用方过滤
+#   name_en: _find_dead_public_wrappers Phase2/3
+#   intro: 用合并正则全仓数调用次数，只剩定义处一次的就是死 wrapper
+#   desc: combined regex \b(name1|name2|...)\( 单遍扫描三目录；call_count<=1（仅定义）判死
+#   inputs: A2 I2
+#   outputs: 死公共 wrapper 列表（file/function/line/scope）
+# - id: A4
+#   name_zh: ④ reconcile 编排
+#   name_en: _reconcile
+#   intro: 汇总死 wrapper 清单为 warn 告警，detail 截断防超长
+#   desc: 最多列 10 条；warn-only 不阻断 commit；AST/正则异常降级 warn 永不抛出
+#   inputs: A3
+#   outputs: ReconcileResult(clean/warn)
+#   invariant: reconciler 永不抛异常；warn-only
+# 层: 输出
+# - id: O1
+#   name_zh: 对账结果 ReconcileResult
+#   name_en: ReconcileResult
+#   intro: warn=检出死公共 wrapper 清单（gate_id=GATE-DEAD-PUBLIC-WRAPPER），clean=无
+#   downstream: GitCommitGateway MOD-INF-035
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# I2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

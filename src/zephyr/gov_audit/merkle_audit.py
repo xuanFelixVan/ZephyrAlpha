@@ -15,10 +15,57 @@
 # [A_module] module_id=MOD-INF-022 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).
+"""
+
+Merkle Audit — 兼容别名，SSoT已迁移至 zephyr.gov_audit (MOD-INF-020).
 
 原内存Merkle树已被MOD-INF-020的MerkleAggregator+HourlyMerkleAggregator超集覆盖。
 本模块保留API兼容性，内部委托至SSoT。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 升级事件 字典
+#   fields: escalation_event（任意可 JSON 序列化的事件字典）
+#   code: MerkleAudit.record(escalation_event) L74
+# 层: 算法
+# - id: A1
+#   name_zh: ① 事件哈希入叶
+#   name_en: MerkleTree.add_event
+#   intro: 把事件字典序列化后算 SHA-256 当一片叶子存起来
+#   desc: json.dumps(event, sort_keys=True).encode() → hashlib.sha256 → hexdigest 追加到 _leaves
+#   inputs: I1
+#   outputs: 叶子哈希列表 _leaves
+# - id: A2
+#   name_zh: ② Merkle 根计算
+#   name_en: MerkleTree.root_hash
+#   intro: 把所有叶子委托给 SSoT 聚合器算出 Merkle 根
+#   desc: 空树返回 "empty"；否则 _MerkleAggregator.build(self._leaves)（zephyr.gov_audit.integrity）
+#   inputs: A1
+#   outputs: Merkle 根哈希
+#   invariant: SSoT=zephyr.gov_audit(MOD-INF-020)，本文件仅为兼容别名
+# - id: A3
+#   name_zh: ③ 记录并取根
+#   name_en: MerkleAudit.record/get_root
+#   intro: 对外门面：record 先加事件再返回最新根，get_root 只查不记
+#   desc: record()=add_event+root_hash 返回 str；get_root()=root_hash
+#   inputs: A1 A2
+#   outputs: 根哈希 str
+# 层: 输出
+# - id: O1
+#   name_zh: Merkle 根哈希
+#   name_en: merkle root hash str
+#   intro: 升级事件序列的完整性指纹，可用于审计对账
+#   invariant: 空树返回 "empty"
+#   downstream: zephyr.governance.__init__（[CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

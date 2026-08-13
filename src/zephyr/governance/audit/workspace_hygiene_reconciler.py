@@ -32,7 +32,9 @@
 
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""workspace_hygiene_reconciler.py — 工作区卫生自动清理 reconciler（DEBT-WORKSPACE-001/002 消除，2026-07-20）。
+"""
+
+workspace_hygiene_reconciler.py — 工作区卫生自动清理 reconciler（DEBT-WORKSPACE-001/002 消除，2026-07-20）。
 
 
 
@@ -184,6 +186,80 @@ Usage
 
     registry.register(make_workspace_hygiene_reconciler(gateway))
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: post-commit 事件参数
+#   fields: committed_files 已提交文件列表 + session_id 会话标识
+#   code: _reconcile(committed_files, session_id) L574
+# - id: I2
+#   name: 工作区 git 状态 文本数据
+#   fields: git status --porcelain 原始输出（XY状态+路径）
+#   code: git status --porcelain L498
+# - id: I3
+#   name: auto-sync 产物清单 内置常量
+#   fields: 路径前缀元组（生成器产物/报告/缓存/遥测等约25条）
+#   code: _AUTO_SYNC_PREFIXES L236
+# - id: I4
+#   name: gateway 缓冲待提交文件集
+#   fields: 前序 reconciler 已写盘并 buffer 待 flush 的文件路径集合
+#   code: gateway._batcher.buffered_files() L617
+# 层: 算法
+# - id: A1
+#   name_zh: ① 工作区修改清单获取与解析
+#   name_en: _git_status_porcelain + _parse_porcelain
+#   intro: 跑 git status 拿到工作区所有 modified 文件，只留修改态跳过新增删除重命名
+#   desc: subprocess 调 git status --porcelain（超时10s）→ 逐行解析 XY 状态码，跳过 R/??/D/A，路径转 POSIX 去引号；fail-open 失败返回空列表
+#   inputs: I2
+#   outputs: modified 修改文件路径列表
+#   invariant: 永不抛异常，失败降级为空列表
+# - id: A2
+#   name_zh: ② auto-sync 产物分类
+#   name_en: _is_auto_sync_product
+#   intro: 把修改文件分成两类：可自动还原的生成产物 vs 需要人看的真实代码改动
+#   desc: 前缀匹配 _AUTO_SYNC_PREFIXES + catalogs 下两个派生 yaml → auto_sync_files；其余为 real_changes；再排除 gateway buffer 中待 flush 文件防"日志说已重生实际未重生"盲区
+#   inputs: A1 I3 I4
+#   outputs: auto_sync_files + real_changes 两清单
+# - id: A3
+#   name_zh: ③ 批量 git restore 还原
+#   name_en: GitCommandBatcher.git_restore_batch
+#   intro: 单次 subprocess 把所有 auto-sync 产物还原回 HEAD 版本，不逐个重试
+#   desc: 一次 git restore -- <files> 批量调用（GIT-BUDGET-INV-002 合规，N文件=1 subprocess），fail-open 返回成功清单
+#   inputs: A2
+#   outputs: restored_count + restore_failed
+# - id: A4
+#   name_zh: ④ 结果判定 action
+#   name_en: _reconcile 判定段
+#   intro: 根据还原结果和真实改动情况给出 skip/clean/warn 三档结论
+#   desc: 无修改→skip；有真实代码修改或 restore 失败→warn（不自动处理真实改动）；仅 auto-sync 且全部还原成功→clean；异常兜底→warn
+#   inputs: I1 A2 A3
+#   outputs: action + detail 详情串
+#   invariant: 永不抛异常；真实代码修改只告警不还原
+# 层: 输出
+# - id: O1
+#   name_zh: 工作区卫生对账结果
+#   name_en: ReconcileResult
+#   intro: 三档结论（skip/clean/warn）+ 明细，告知 commit 后工作区是否已清理干净
+#   invariant: action ∈ {skip, clean, warn}
+#   downstream: GitCommitGateway post-commit 编排（gov_enforcement.rule_bridge.git_commit_gateway）
+# - id: O2
+#   name_zh: reconciler 注册规格
+#   name_en: ReconcilerSpec
+#   intro: gate_id=GATE-WORKSPACE-HYGIENE、priority=890 的 trigger+reconcile 注册单元
+#   downstream: reconciliation_registry 注册，GitCommitGateway 调度
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# A1 --> A2
+# I3 --> A2
+# I4 --> A2
+# A2 --> A3
+# A2 --> A4
+# A3 --> A4
+# I1 --> A4
+# A4 --> O1
+# A4 --> O2
 """
 
 

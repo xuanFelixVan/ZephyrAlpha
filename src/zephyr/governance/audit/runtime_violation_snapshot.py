@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_RUNTIME_VIOLATION_SNAPSHOT | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
-"""runtime_violation_snapshot.py — trae_060 §5 evidence 运行时快照（#ARCH-GOV-CONVERGENCE-META Phase 3.4b）。
+"""
+
+runtime_violation_snapshot.py — trae_060 §5 evidence 运行时快照（#ARCH-GOV-CONVERGENCE-META Phase 3.4b）。
 
 病根1 治本（架构债务 §三 病根1）
 ------------------------------
@@ -91,6 +93,60 @@ Usage
     # M20 指标调用
     snapshot = load_snapshot(project_root)
     drift_count = compute_drift_count(snapshot)  # 0 = 无漂移
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: baseline 冻结历史快照 YAML
+#   fields: data/runtime_violation_snapshot/baseline_2026_06_26.yaml 各类别 claimed_count + rule + claim_text
+#   code: _BASELINE_REL L115 / _load_baseline L175
+# - id: I2
+#   name: dashboard 指标 live 计数 subprocess 数据
+#   fields: architecture_health_dashboard.py --json --metric M01 M02 M03 M10 的 count/details/error
+#   code: _run_dashboard L144
+# 层: 算法
+# - id: A1
+#   name_zh: ① live 违规快照生成
+#   name_en: generate_snapshot
+#   intro: 对 4 个违规类别逐一对账：detected（dashboard live）- claimed（baseline 冻结）= drift
+#   desc: 加载 baseline → subprocess 调 dashboard（120s 超时 fail-open）→ 按 _CATEGORY_TO_METRIC 映射（vocab_hardcode→M01 / manual_trigger→M02 / mergeable_clusters→M03 / time_trigger→M10）逐类算 drift=detected-claimed，drift≠0 累计 drift_count；检测器失败降级 error 字段
+#   inputs: I1 I2
+#   outputs: snapshot dict（violations + summary）
+#   invariant: 永不抛异常，返回 dict 始终含 violations
+# - id: A2
+#   name_zh: ② 快照持久化双写
+#   name_en: save_snapshot
+#   intro: 快照写 latest.json 同时按 UTC 时间戳归档一份历史
+#   desc: latest.json 覆盖写 + snapshot_<yyyyMMddTHHMMSSZ>.json 归档；归档失败仅 warn
+#   inputs: A1
+#   outputs: latest.json Path + 归档文件
+# - id: A3
+#   name_zh: ③ 漂移类别数计算
+#   name_en: compute_drift_count
+#   intro: 从快照取 drift_count（|drift|>0 的类别数），即 M20 指标报告值
+#   desc: 优先读 summary.drift_count；缺失则从 violations 重算兜底；空快照返回 0
+#   inputs: A1
+#   outputs: drift_count int（0=无漂移）
+# 层: 输出
+# - id: O1
+#   name_zh: live 违规快照文件
+#   name_en: latest.json + 时间戳归档
+#   intro: data/runtime_violation_snapshot/ 下的当前快照与历史归档，trae_060 §5 的 live 替代
+#   downstream: runtime_violation_snapshot_reconciler（[CONSUMERS] 同包 reconciler 调用生成）
+# - id: O2
+#   name_zh: M20 漂移指标值
+#   name_en: drift_count
+#   intro: baseline vs live 漂移类别数，0=完全一致，>0=存在漂移
+#   downstream: architecture_health_dashboard M20 指标（[CONSUMERS]）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# A1 --> A2
+# A1 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations
