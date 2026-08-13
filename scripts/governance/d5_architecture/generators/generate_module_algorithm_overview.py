@@ -62,6 +62,7 @@ import os
 import re
 import sys
 from collections import Counter, defaultdict
+from dataclasses import dataclass
 from pathlib import Path
 
 _THIS_FILE = Path(__file__).resolve()
@@ -105,6 +106,28 @@ warn_only: false
 
 OUTPUT_DIR = REPO_ROOT / "docs" / "02_enterprise_architecture" / "08_algorithm_overview"
 DOC_BASENAME = "module_algorithm_overview.md"
+
+# 本地 HTTP 文档服务器基址（可缩放 HTML 跳转链接用，对齐 generate_domain_doc.py 约定）：
+# IDE 预览面板对 file:/// 和相对路径链接会在编辑器内打开源码，仅 http:// 链接交给
+# 外部浏览器渲染。需本地 http server（scripts/serve_docs_http.bat，端口变更时同步改这里）。
+# host/port 拼装 + 环境变量覆盖（对齐 DEFAULT_OLLAMA_URL 的 os.getenv 模式，
+# NO-HARDCODED-URL gate 禁单行硬编码 localhost URL 字面量，§5.160.9）。
+_DOC_HTTP_HOST = "localhost"
+_DOC_HTTP_PORT = 8765
+_DOC_HTTP_BASE = os.environ.get("ZEPHYR_DOC_HTTP_BASE") or f"http://{_DOC_HTTP_HOST}:{_DOC_HTTP_PORT}"
+
+
+def _zoomable_html_url(md_rel: str) -> str:
+    """由 md 相对输出路径（如 ``stages/06_buy_flow.md``）派生可缩放 HTML 的 http 链接。
+
+    HTML 由 emit_zoomable_html 联动生成，位于 md 同级 ``_zoomable_html/`` 子目录同名 .html。
+    """
+    p = Path(md_rel)
+    html_abs = OUTPUT_DIR / p.parent / HTML_SUBDIR / f"{p.stem}.html"
+    try:
+        return f"{_DOC_HTTP_BASE}/{html_abs.relative_to(REPO_ROOT).as_posix()}"
+    except ValueError:  # output-dir 在仓库根之外（--output-dir 手动覆盖）时降级相对路径
+        return f"{HTML_SUBDIR}/{p.stem}.html"
 
 # layer 顺序与中文名（#ARCH-005 权威 4 层；从 layer_vocabulary.yaml SSoT 动态加载，零漂移）
 import yaml as _yaml  # noqa: E402  # gate-vocab: 从 SSoT 动态加载 layer 值
@@ -184,7 +207,11 @@ def load_modules_and_edges() -> tuple[list[dict], list[dict]]:
     finally:
         reader.close()
 
-    # ── 模块去重 ──
+    return _dedupe_modules(all_nodes), _filter_import_edges(all_nodes, all_edges)
+
+
+def _dedupe_modules(all_nodes: list[dict]) -> list[dict]:
+    """模块去重：过滤 module+.py 节点 → 按 blueprint_id 分组 → 每组选代表路径并聚合字段。"""
     module_nodes = [
         n for n in all_nodes
         if n.get("node_type") == "module" and (n.get("path") or "").endswith(".py")
@@ -198,10 +225,7 @@ def load_modules_and_edges() -> tuple[list[dict], list[dict]]:
     modules: list[dict] = []
     for key, nodes in groups.items():
         # 代表路径：优先 __init__.py，其次最短 path
-        nodes.sort(key=lambda n: (
-            0 if (n.get("path") or "").endswith("__init__.py") else 1,
-            len(n.get("path") or ""),
-        ))
+        nodes.sort(key=_rep_path_sort_key)
         rep = {k: v for k, v in nodes[0].items()}
         rep["module_id"] = key
         rep["build_status"] = _aggregate_build_status([n.get("build_status") for n in nodes])
@@ -210,14 +234,28 @@ def load_modules_and_edges() -> tuple[list[dict], list[dict]]:
         # 无 domain_id，但子文件 regime_detector.py 有 D_REGIME）。
         for field_name in ("domain_id", "architecture_layer"):
             if not (rep.get(field_name) or "").strip():
-                for n in nodes:
-                    v = (n.get(field_name) or "").strip()
-                    if v:
-                        rep[field_name] = v
-                        break
+                _fill_first_nonempty(rep, nodes, field_name)
         modules.append(rep)
+    return modules
 
-    # ── 依赖边过滤（按 blueprint_id 聚合）──
+
+def _rep_path_sort_key(n: dict) -> tuple[int, int]:
+    """代表路径排序键：__init__.py 优先（0），其次最短 path。"""
+    path = n.get("path") or ""
+    return (0 if path.endswith("__init__.py") else 1, len(path))
+
+
+def _fill_first_nonempty(rep: dict, nodes: list[dict], field_name: str) -> None:
+    """把 rep[field_name] 补为组内首个非空值（rep 上为空时才补）。"""
+    for n in nodes:
+        v = (n.get(field_name) or "").strip()
+        if v:
+            rep[field_name] = v
+            break
+
+
+def _filter_import_edges(all_nodes: list[dict], all_edges: list[dict]) -> list[dict]:
+    """依赖边过滤：node_id→blueprint_id 映射 → 仅保留 import 类边，按 blueprint_id 聚合去重+排自环。"""
     nid2bp: dict[str, str] = {}
     for n in all_nodes:
         if n.get("node_type") == "module":
@@ -235,11 +273,10 @@ def load_modules_and_edges() -> tuple[list[dict], list[dict]]:
             continue
         edges_set.add((fb, tb, e.get("dep_type")))
 
-    edges = [
+    return [
         {"from_module_id": f, "to_module_id": t, "dep_type": d}
         for f, t, d in edges_set
     ]
-    return modules, edges
 
 
 def _aggregate_build_status(statuses: list) -> str:
@@ -570,8 +607,39 @@ def _render_dep_edges(edge_tuples: list[tuple[str, str, bool]]) -> tuple[list[st
     return edge_lines, "\n".join(link_lines)
 
 
+# 包入口（__init__.py）通用名：翻译真源 auto-extract 常把 __init__.py 登记为
+# "包入口 / Init"（无信息量），命中时改走 _derive_pkg_entry_name 派生友好中文名。
+_GENERIC_PKG_ENTRY_NAMES = {"包入口", "包标记", "init", "__init__", "package", "package init"}
+
+
+def _has_cjk(text: str) -> bool:
+    """检测字符串是否含中文字符（CJK Unified Ideographs）。"""
+    return any("\u4e00" <= ch <= "\u9fff" for ch in text)
+
+
+def _is_pkg_entry(path: str) -> bool:
+    """是否包入口文件（__init__.py）。"""
+    return path.replace("\\", "/").endswith("__init__.py")
+
+
+def _derive_pkg_entry_name(r: dict) -> str:
+    """包入口友好中文名：``{域中文名}包入口``；域缺失时回退 ``{包目录名} 包入口``。"""
+    dom_id = r.get("domain_id") or ""
+    dom_zh = get_domain_name_zh(dom_id) if dom_id else ""
+    if dom_zh and dom_zh != dom_id:
+        return f"{dom_zh}包入口"
+    path = (r.get("path") or "").replace("\\", "/")
+    pkg = path.rsplit("/", 2)[-2] if "/" in path else ""
+    return f"{pkg} 包入口" if pkg else ""
+
+
 def _module_display_name(r: dict | None) -> str:
-    """模块显示名：翻译真源双语名 → docstring 首行 → 路径派生。"""
+    """模块显示名：翻译真源双语名 → docstring 首行 → 路径派生。
+
+    包入口兜底（2026-08-13）：__init__.py 的翻译真源多为 auto-extract 的
+    "包入口 / Init"（无信息量中文），命中通用名时派生"{域中文名}包入口"，
+    保证图表节点/卡片标题显示有信息量的中文名而非"包入口"。
+    """
     if not r:
         return ""
     name = (r.get("bi_name") or "").strip()
@@ -579,6 +647,44 @@ def _module_display_name(r: dict | None) -> str:
         name = (r["summary"].module_name or "").strip()
     if not name:
         name = derive_name_from_path(r.get("path") or r["module_id"])
+    if _is_pkg_entry(r.get("path") or ""):
+        head = name.split(" / ", 1)[0].strip().lower()
+        # 通用名（"包入口 / Init"）或无中文的 docstring 碎片名（如 "# （ALGO_FLOW）"）
+        # 都视为无信息量 → 派生"{域中文名}包入口"
+        if head in _GENERIC_PKG_ENTRY_NAMES or not _has_cjk(name):
+            derived = _derive_pkg_entry_name(r)
+            if derived:
+                name = derived
+    return name
+
+
+def _module_plain_zh(r: dict) -> str:
+    """模块大白话：翻译真源 plain_zh → 包入口派生 → docstring 摘要前 50 字。
+
+    包入口派生（2026-08-13）：__init__.py 的 plain_zh 常为空，直接回退英文
+    docstring 会让节点没有中文大白话；此时按域中文名/包目录名派生。
+    """
+    plain = get_module_plain(r.get("path") or "")
+    if plain:
+        return plain
+    if _is_pkg_entry(r.get("path") or ""):
+        dom_id = r.get("domain_id") or ""
+        dom_zh = get_domain_name_zh(dom_id) if dom_id else ""
+        if dom_zh and dom_zh != dom_id:
+            return f"{dom_zh}域各子模块的统一入口（包入口）"
+        path = (r.get("path") or "").replace("\\", "/")
+        pkg = path.rsplit("/", 2)[-2] if "/" in path else ""
+        if pkg:
+            return f"{pkg} 包各子模块的统一入口"
+    return (r["summary"].summary or "")[:50]
+
+
+def _zh_name_part(name: str) -> str:
+    """取双语名的中文段（"中文 / English" → "中文"）；无中文段时返回原名。"""
+    for seg in name.split(" / "):
+        seg = seg.strip()
+        if any("\u4e00" <= ch <= "\u9fff" for ch in seg):
+            return seg
     return name
 
 
@@ -586,7 +692,7 @@ def _stage_node_label(r: dict) -> str:
     """环节总图节点标签（§4.3 域内节点四要素：成熟度+双语名+大白话+文件路径）。"""
     mat = _TIER_MATURITY.get(r["tier"], r["tier"])
     name = _module_display_name(r)
-    plain = get_module_plain(r.get("path") or "") or (r["summary"].summary or "")[:50]
+    plain = _module_plain_zh(r)
     parts = (r.get("path") or "").replace("\\", "/").split("/")
     file_seg = "/".join(parts[-2:]) if len(parts) >= 2 else (r.get("path") or "")
     label = f"({mat}) {name}<br/>{plain}<br/>文件: {file_seg}"
@@ -637,6 +743,43 @@ def render_stage_overview_mermaid(stage_rows: list[dict], edges: list[dict]) -> 
     return "\n".join(lines)
 
 
+def _rel_node_label(row_by_id: dict, module_id: str, is_center: bool = False) -> str:
+    """关联图节点标签：状态emoji+中文名（第一行）+ module_id（第二行），短折行使节点更窄。"""
+    rr = row_by_id.get(module_id)
+    emoji = STATUS_EMOJI.get(rr["tier"], "⬜") if rr else "⬜"
+    name = _module_display_name(rr) if rr else derive_name_from_path(module_id)
+    # 节点内容简化（2026-08-13）：第一行只显示中文名（双语名取中文段），
+    # module_id 挪到第二行；max_units=24 短折行使节点更窄。
+    name = _zh_name_part(name)
+    star = "⭐ " if is_center else ""
+    text = f"{star}{emoji} {name}<br/>{module_id}"
+    rendered: list[str] = []
+    for seg in text.split("<br/>"):
+        seg = seg.strip()
+        if seg:
+            rendered.append(_wrap_label_text(_sanitize_algo_label(seg), max_units=24))
+    return "<br/>".join(rendered)
+
+
+def _rel_edge_tuples(
+    row_by_id: dict,
+    center_nid: str,
+    ups: list[str],
+    downs: list[str],
+) -> list[tuple[str, str, bool]]:
+    """关联图边生成：上游→本模块 / 本模块→下游；对端非运营态=断点边。"""
+    def _is_break(x: str) -> bool:
+        rr = row_by_id.get(x)
+        return (rr is None) or rr["tier"] != "operational"
+
+    edge_tuples: list[tuple[str, str, bool]] = []
+    for u in ups:  # 上游 → 本模块（上游未实现=断点）
+        edge_tuples.append((_mod_node_id(u), center_nid, _is_break(u)))
+    for d in downs:  # 本模块 → 下游（下游未实现=断点）
+        edge_tuples.append((center_nid, _mod_node_id(d), _is_break(d)))
+    return edge_tuples
+
+
 def _render_module_relation_mermaid(r: dict, rel: dict) -> str:
     """模块上下游关联图（卡片下）：上游依赖 → 本模块 → 下游消费者（§4.15 断点边）。
 
@@ -651,38 +794,15 @@ def _render_module_relation_mermaid(r: dict, rel: dict) -> str:
         return ""
     ups, downs = ups_all[:8], downs_all[:8]
 
-    def _node_label(module_id: str, is_center: bool = False) -> str:
-        rr = row_by_id.get(module_id)
-        emoji = STATUS_EMOJI.get(rr["tier"], "⬜") if rr else "⬜"
-        name = _module_display_name(rr) if rr else derive_name_from_path(module_id)
-        star = "⭐ " if is_center else ""
-        text = f"{star}{emoji} {module_id}<br/>{name}"
-        rendered: list[str] = []
-        for seg in text.split("<br/>"):
-            seg = seg.strip()
-            if seg:
-                rendered.append(_wrap_label_text(_sanitize_algo_label(seg), max_units=40))
-        return "<br/>".join(rendered)
-
     lines = ["```mermaid", _ALGO_MERMAID_THEME, "flowchart LR"]
     center_nid = _mod_node_id(mid)
     for u in ups:
-        lines.append(f'    {_mod_node_id(u)}["{_node_label(u)}"]')
-    lines.append(f'    {center_nid}["{_node_label(mid, is_center=True)}"]')
+        lines.append(f'    {_mod_node_id(u)}["{_rel_node_label(row_by_id, u)}"]')
+    lines.append(f'    {center_nid}["{_rel_node_label(row_by_id, mid, is_center=True)}"]')
     for d in downs:
-        lines.append(f'    {_mod_node_id(d)}["{_node_label(d)}"]')
+        lines.append(f'    {_mod_node_id(d)}["{_rel_node_label(row_by_id, d)}"]')
 
-    def _is_break(x: str) -> bool:
-        rr = row_by_id.get(x)
-        return (rr is None) or rr["tier"] != "operational"
-
-    edge_tuples: list[tuple[str, str, bool]] = []
-    for u in ups:  # 上游 → 本模块（上游未实现=断点）
-        edge_tuples.append((_mod_node_id(u), center_nid, _is_break(u)))
-    for d in downs:  # 本模块 → 下游（下游未实现=断点）
-        edge_tuples.append((center_nid, _mod_node_id(d), _is_break(d)))
-
-    edge_lines, link_style = _render_dep_edges(edge_tuples)
+    edge_lines, link_style = _render_dep_edges(_rel_edge_tuples(row_by_id, center_nid, ups, downs))
     lines.append("")
     lines.extend(edge_lines)
     if link_style:
@@ -850,7 +970,7 @@ def _render_module_card_text(
 def _module_card_header_lines(r: dict, s: AlgorithmSummary) -> list[str]:
     """卡片头部：锚点 + 标题行（emoji/双语名/layer·域 标签）。"""
     emoji = STATUS_EMOJI[r["tier"]]
-    name = r["bi_name"] or s.module_name or r["module_id"]
+    name = _module_display_name(r) or r["module_id"]
     dom_id = r["domain_id"] or ""
     dom_zh = get_domain_name_zh(dom_id) if dom_id else ""
     dom_display = f"{dom_zh}（{dom_id}）" if (dom_zh and dom_zh != dom_id) else (dom_id or "—")
@@ -1247,6 +1367,7 @@ def render_index_doc(
 > 改真源 → 重跑生成器 → 本文档自动更新（派生产物，不入 git，按需生成）。
 > **重生成命令**：`python scripts/governance/d5_architecture/generators/generate_module_algorithm_overview.py`
 > **生成时间**（幂等）：{ts}
+> **[可缩放 HTML 版 / Zoomable HTML]({_zoomable_html_url('index.md')})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 
 > **三档状态**：🟦运营态（代码存在，以代码为准）｜🟧设计态（代码未落盘，以蓝图为准）｜⬜缺失（无代码无蓝图，需补）。
 > **检修入口**：先看「按作战环节索引」定位环节 → 进入环节文件看算法卡片 → 沿「被依赖」看影响面。
@@ -1307,6 +1428,7 @@ def render_stage_doc(
     header = f"""# 算法全景图 — 作战环节「{zh}」（{len(stage_rows)} 模块）
 
 > [← 返回索引](../index.md)
+> **[可缩放 HTML 版 / Zoomable HTML]({_zoomable_html_url(file_rel)})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 > **真源**：代码 docstring + header ｜ blueprint.md §核心规则 ｜ {DB_DISPLAY_NAME}
 > 自动派生，离库不入 git。改真源 → 重跑生成器 → 本文档自动更新。
 > **生成时间**（幂等）：{ts}
@@ -1346,6 +1468,7 @@ def render_system_foundation_doc(
     header = f"""# 算法全景图 — 系统基础（未锚定模块，{len(unanchored_rows)} 模块）
 
 > [← 返回索引](index.md)
+> **[可缩放 HTML 版 / Zoomable HTML]({_zoomable_html_url('system_foundation.md')})** — Ctrl+滚轮缩放 ｜ 双击重置 ｜ Ctrl+Shift+D 切换拖动/选择模式
 > **真源**：代码 docstring + header ｜ blueprint.md §核心规则 ｜ {DB_DISPLAY_NAME}
 > 这些模块未锚定到任何作战环节（基础设施/治理/安全/数据类），按 architecture_layer（L0→L3）内部分组。
 > 自动派生，离库不入 git。改真源 → 重跑生成器 → 本文档自动更新。
@@ -1382,6 +1505,83 @@ def _atomic_write(path: Path, content: str) -> None:
 
 
 # ── CLI 入口 ──────────────────────────────────────────────────
+
+
+@dataclass
+class _WriteInputs:
+    """_write_md_files 的参数对象（§5.150 长参数列表规避，NO-LONG-PARAM-LIST gate）。"""
+
+    rows: list[dict]
+    edges: list[dict]
+    anchored_by_stage: dict[str, list[dict]]
+    unanchored_rows: list[dict]
+    module_to_file: dict[str, str]
+    consumers: dict[str, list[str]]
+    rel: dict
+
+
+def _write_md_files(out_dir: Path, wi: _WriteInputs) -> list[tuple[str, int]]:
+    """写入全部 MD 文件（index + 各环节 + system_foundation），返回 (相对路径, 字符数) 列表。"""
+    written: list[tuple[str, int]] = []
+
+    # index.md
+    index_md = render_index_doc(wi.rows, wi.edges, wi.anchored_by_stage, wi.unanchored_rows, wi.module_to_file)
+    index_path = out_dir / "index.md"
+    _atomic_write(index_path, index_md)
+    written.append(("index.md", len(index_md)))
+
+    # stages/XX_stage.md
+    for stage_id in STAGE_ORDER:
+        stage_rows = wi.anchored_by_stage.get(stage_id, [])
+        if not stage_rows:
+            continue
+        stage_md = render_stage_doc(stage_id, stage_rows, wi.edges, wi.consumers, wi.rel)
+        stage_path = out_dir / STAGE_ID_TO_FILE[stage_id]
+        _atomic_write(stage_path, stage_md)
+        written.append((STAGE_ID_TO_FILE[stage_id], len(stage_md)))
+
+    # system_foundation.md
+    if wi.unanchored_rows:
+        sf_md = render_system_foundation_doc(wi.unanchored_rows, wi.edges, wi.consumers, wi.rel)
+        sf_path = out_dir / "system_foundation.md"
+        _atomic_write(sf_path, sf_md)
+        written.append(("system_foundation.md", len(sf_md)))
+
+    return written
+
+
+def _cleanup_old_files(out_dir: Path, stages_dir: Path) -> None:
+    """清理旧单文件产物（md+html）与不在当前 STAGE_ORDER 的过时环节文件。"""
+    old_single = out_dir / DOC_BASENAME
+    if old_single.exists():
+        old_single.unlink()
+        print(f"[CLEANUP] 删除旧单文件产物: {DOC_BASENAME}")
+    old_html = out_dir / HTML_SUBDIR / DOC_BASENAME.replace(".md", ".html")
+    if old_html.exists():
+        old_html.unlink()
+        print(f"[CLEANUP] 删除旧 HTML: {old_html.name}")
+
+    # 清理过时 stages（不在当前 STAGE_ORDER 的文件）
+    current_stage_files = {STAGE_ID_TO_FILE[s] for s in STAGE_ORDER}
+    for f in sorted(stages_dir.iterdir()):
+        rel_name = f"stages/{f.name}"
+        if f.is_file() and rel_name not in current_stage_files:
+            f.unlink()
+            print(f"[CLEANUP] 删除过时环节文件: {rel_name}")
+
+
+def _emit_html_files(out_dir: Path, written: list[tuple[str, int]]) -> None:
+    """联动生成可缩放 HTML（mermaid 渲染验证用，离库派生不入 git）；单文件失败不阻断。"""
+    html_cnt = 0
+    for rel_, _s in written:
+        md_path = out_dir / rel_
+        try:
+            html_path = emit_zoomable_html(md_path, md_path.read_text(encoding="utf-8"))
+            if html_path is not None:
+                html_cnt += 1
+        except Exception as e:  # noqa: BLE001 — HTML 派生失败不阻断主产物
+            print(f"  [WARN] HTML 生成失败 {rel_}: {type(e).__name__}: {e}")
+    print(f"[OK] 可缩放 HTML {html_cnt} 个（{HTML_SUBDIR}/）")
 
 
 def main() -> None:
@@ -1428,48 +1628,12 @@ def main() -> None:
     print("[5/5] 渲染多文件输出（index + 11 stages + system_foundation）...")
     consumers = _build_consumers(edges)
     rel = _build_rel_context(rows, edges, consumers)
-    written: list[tuple[str, int]] = []
-
-    # index.md
-    index_md = render_index_doc(rows, edges, anchored_by_stage, unanchored_rows, module_to_file)
-    index_path = out_dir / "index.md"
-    _atomic_write(index_path, index_md)
-    written.append(("index.md", len(index_md)))
-
-    # stages/XX_stage.md
-    for stage_id in STAGE_ORDER:
-        stage_rows = anchored_by_stage.get(stage_id, [])
-        if not stage_rows:
-            continue
-        stage_md = render_stage_doc(stage_id, stage_rows, edges, consumers, rel)
-        stage_path = out_dir / STAGE_ID_TO_FILE[stage_id]
-        _atomic_write(stage_path, stage_md)
-        written.append((STAGE_ID_TO_FILE[stage_id], len(stage_md)))
-
-    # system_foundation.md
-    if unanchored_rows:
-        sf_md = render_system_foundation_doc(unanchored_rows, edges, consumers, rel)
-        sf_path = out_dir / "system_foundation.md"
-        _atomic_write(sf_path, sf_md)
-        written.append(("system_foundation.md", len(sf_md)))
-
-    # 清理旧的单文件产物（module_algorithm_overview.md）+ 过时 stages
-    old_single = out_dir / DOC_BASENAME
-    if old_single.exists():
-        old_single.unlink()
-        print(f"[CLEANUP] 删除旧单文件产物: {DOC_BASENAME}")
-    old_html = out_dir / HTML_SUBDIR / DOC_BASENAME.replace(".md", ".html")
-    if old_html.exists():
-        old_html.unlink()
-        print(f"[CLEANUP] 删除旧 HTML: {old_html.name}")
-
-    # 清理过时 stages（不在当前 STAGE_ORDER 的文件）
-    current_stage_files = {STAGE_ID_TO_FILE[s] for s in STAGE_ORDER}
-    for f in sorted(stages_dir.iterdir()):
-        rel = f"stages/{f.name}"
-        if f.is_file() and rel not in current_stage_files:
-            f.unlink()
-            print(f"[CLEANUP] 删除过时环节文件: {rel}")
+    written = _write_md_files(out_dir, _WriteInputs(
+        rows=rows, edges=edges, anchored_by_stage=anchored_by_stage,
+        unanchored_rows=unanchored_rows, module_to_file=module_to_file,
+        consumers=consumers, rel=rel,
+    ))
+    _cleanup_old_files(out_dir, stages_dir)
 
     print(f"\n[OK] 生成 {len(written)} 个文件：")
     for rel_, size in written:
@@ -1477,17 +1641,7 @@ def main() -> None:
     total_chars = sum(s for _, s in written)
     print(f"  {'合计':45s} {total_chars:>8,} 字符")
 
-    # 联动生成可缩放 HTML（mermaid 渲染验证用，离库派生不入 git）
-    html_cnt = 0
-    for rel_, _s in written:
-        md_path = out_dir / rel_
-        try:
-            html_path = emit_zoomable_html(md_path, md_path.read_text(encoding="utf-8"))
-            if html_path is not None:
-                html_cnt += 1
-        except Exception as e:  # noqa: BLE001 — HTML 派生失败不阻断主产物
-            print(f"  [WARN] HTML 生成失败 {rel_}: {type(e).__name__}: {e}")
-    print(f"[OK] 可缩放 HTML {html_cnt} 个（{HTML_SUBDIR}/）")
+    _emit_html_files(out_dir, written)
 
 
 if __name__ == "__main__":
