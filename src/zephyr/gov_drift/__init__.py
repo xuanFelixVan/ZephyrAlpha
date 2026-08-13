@@ -1,6 +1,36 @@
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+"""
+
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: Python 包导入请求
+#   fields: 无数据字段（解释器 import 机制触发，不读任何数据表）
+#   code: import zephyr.gov_drift
+# 层: 算法
+# - id: A1
+#   name_zh: ① 模块命名空间声明
+#   name_en: zephyr.gov_drift.__init__
+#   intro: behavioral_audit 模块地图（ARCH-034 治本：强化发现性，不建物理子目录）
+#   desc: MOD-INF-023 包入口，模块命名空间声明并声明 __all__（325项）
+#   inputs: I1
+#   outputs: zephyr.gov_drift 包级公共命名空间
+#   invariant: 包级导出以 __all__ 声明为准（325项）
+# 层: 输出
+# - id: O1
+#   name_zh: zephyr.gov_drift 包公共 API
+#   name_en: __all__ 325项
+#   intro: behavioral_audit 模块地图（ARCH-034 治本：强化发现性，不建物理子目录）——对外统一出口
+#   downstream: 见蓝图头 [CONSUMERS] 声明
+# [/ALGO_FLOW]
+# 边:
+# I1 --> A1
+# A1 --> O1
+"""
+
 from __future__ import annotations
 
 # ============================================================================
