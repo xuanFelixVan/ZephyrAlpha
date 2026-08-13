@@ -1,0 +1,526 @@
+# [A_config] module_id=REG-PAT-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-PAT-001
+name: Chart Pattern Registry
+name_zh: 图形形态注册表
+description: >-
+  图形形态唯一真源（SSoT）。登记 8 大类图形形态（candlestick_pattern/chart_pattern/chanlun/
+  elliott_wave/trendline_channel/support_resistance/fibonacci/structure）的识别算法、参数、
+  输入输出、主观性分级。MVP 按 O6 裁剪：candlestick（6种已施工）+ chart_pattern（4种登记）+
+  trendline_channel（1种登记）+ support_resistance（3种已施工）+ structure（1种已施工），
+  chanlun/elliott_wave/fibonacci 3 类 schema 预留按需补充。
+  对标 TA-Lib CDLPATTERN 61 种 K 线形态 + Edwards&Magee 经典图表形态 + 缠论 + 艾略特波浪。
+  business_registry_construction_plan §6.2.4。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: draft
+version: 1.0.0
+created: '2026-08-13'
+last_updated: '2026-08-13'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- pattern_id
+entry_count: 15
+
+entry_schema:
+  pattern_id: str                # PAT-{CLASS}-{NNN}，如 PAT-CANDLE-001
+  name: str
+  name_zh: str
+  aliases: list[str]
+  pattern_class: str             # candlestick_pattern/chart_pattern/chanlun/elliott_wave/trendline_channel/support_resistance/fibonacci/structure
+  pattern_subtype: str           # 子类（反转/持续、单根/两根/三根、推动浪/调整浪）
+  recognition_algorithm: str     # rule_based/template_match/fractal/regression/dl_cnn/dl_transformer/dl_yolo
+  algorithm_variant: str         # 峰谷法/回归法/模板匹配法/分形法/规则法/yolov8/vit-tiny/resnet/cnn_talib_hybrid/cnn_lstm_hybrid
+  dl_model_ref: str              # DL 模型引用（MVP 预留不实施）
+  dl_training_dataset: str       # 训练数据集来源（MVP 预留不实施）
+  params: obj                    # {lookback: 20, threshold: 0.03}
+  inputs: list[str]              # OHLCV/分时数据/K线图像
+  outputs: obj                   # {present: bool, start_pos: int, end_pos: int, confidence: float}
+  subjectivity: str              # high/medium/low
+  timeframe: str                 # intraday/daily/weekly
+  module_id: str
+  doc_ref: str
+  code_path: str
+  used_by_factors: list[str]     # 反向关联 factor_id（forward-ref，factor_registry 施工后回填）
+  variant_of: str                # 可选：形态变体（单向引用）
+  status: str                    # candidate/experimental/active/deprecated/retired
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  # 性能（可空，运行时填充）
+  hit_rate: float
+  false_positive_rate: float
+  last_evaluated_at: date
+
+chart_patterns:
+  # ============================================================
+  # CANDLESTICK_PATTERN（K线形态类）— 6条
+  # 代码真源：reversal.py candle_pattern 列（MOD-L02-020）
+  # 6 形态编码：0无/1锤子/±2吞没/3启明星/4黄昏星/5十字星
+  # ============================================================
+
+  - pattern_id: "PAT-CANDLE-001"
+    name: "Hammer"
+    name_zh: "锤子线"
+    aliases: ["hammer", "上吊线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {shadow_ratio: 2.0, upper_shadow_max: 0.3}
+    inputs: ["OHLCV"]
+    outputs: {present: true, code: 1}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-002"
+    name: "Bullish Engulfing"
+    name_zh: "看涨吞没"
+    aliases: ["bullish_engulfing", "抱线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: true, code: 2}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-003"
+    name: "Bearish Engulfing"
+    name_zh: "看跌吞没"
+    aliases: ["bearish_engulfing"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: true, code: -2}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-002"
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-004"
+    name: "Morning Star"
+    name_zh: "启明星"
+    aliases: ["morning_star", "早晨之星"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: true, code: 3}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-005"
+    name: "Evening Star"
+    name_zh: "黄昏星"
+    aliases: ["evening_star", "暮星"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: true, code: 4}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-006"
+    name: "Doji"
+    name_zh: "十字星"
+    aliases: ["doji", "十字线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: true, code: 5}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    code_path: "src/zephyr/factor/technical_indicators/reversal.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # CHART_PATTERN（经典图表形态类）— 4条
+  # 来源：sell_signal_collector.py 8类卖出信号第②类"技术面卖出"
+  # 代码状态：信号类型已登记，独立检测算法待施工
+  # ============================================================
+
+  - pattern_id: "PAT-CHART-001"
+    name: "Double Top"
+    name_zh: "双头"
+    aliases: ["double_top", "M头"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 60, peak_tolerance: 0.03}
+    inputs: ["OHLCV"]
+    outputs: {present: false, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第②类"
+    code_path: "src/zephyr/sell_decision/core/sell_signal_collector.py"
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-002"
+    name: "Head and Shoulders Top"
+    name_zh: "头肩顶"
+    aliases: ["head_shoulders_top", "H&S顶"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 120, shoulder_tolerance: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: false, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第②类"
+    code_path: "src/zephyr/sell_decision/core/sell_signal_collector.py"
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-003"
+    name: "Wedge Breakdown"
+    name_zh: "楔形破位"
+    aliases: ["wedge_breakdown", "上升楔形破位"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续转反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "回归法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 40, convergence_threshold: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: false, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第②类"
+    code_path: "src/zephyr/sell_decision/core/sell_signal_collector.py"
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-004"
+    name: "Double Bottom"
+    name_zh: "双底"
+    aliases: ["double_bottom", "W底"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 60, trough_tolerance: 0.03}
+    inputs: ["OHLCV"]
+    outputs: {present: false, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "62_business_registry_construction.md §6.2.4 Edwards&Magee"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # TRENDLINE_CHANNEL（趋势线与通道类）— 1条
+  # 来源：sell_signal_collector.py 8类卖出信号第②类"均线死叉"
+  # ============================================================
+
+  - pattern_id: "PAT-TREND-001"
+    name: "MA Death Cross"
+    name_zh: "均线死叉"
+    aliases: ["death_cross", "死叉"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {fast_period: 5, slow_period: 20}
+    inputs: ["OHLCV"]
+    outputs: {present: false, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第②类"
+    code_path: "src/zephyr/sell_decision/core/sell_signal_collector.py"
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # SUPPORT_RESISTANCE（支撑阻力类）— 3条
+  # 代码已施工：breakout_failure_detector + intraday_buy_sell_point_analyzer + stop_loss_engine
+  # ============================================================
+
+  - pattern_id: "PAT-SR-001"
+    name: "Breakout Failure Detection"
+    name_zh: "压力位突破失败检测"
+    aliases: ["breakout_failure", "压力位挑战失败"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "阻力位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {max_challenge_count: 3}
+    inputs: ["OHLCV", "resistance_level"]
+    outputs: {present: true, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-SELL-003"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第⑧类"
+    code_path: "src/zephyr/sell_decision/core/breakout_failure_detector.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-SR-002"
+    name: "Intraday Breakout/Breakdown"
+    name_zh: "分时突破/破位"
+    aliases: ["intraday_breakout", "分时突破前高"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "支撑位+阻力位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {breakout_pct_threshold: 1.0, volume_ratio_min: 1.5}
+    inputs: ["分时数据", "prev_high", "prev_low"]
+    outputs: {present: true, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "intraday_buy_sell_point_analyzer.py §INTRADAY_BREAKOUT"
+    code_path: "src/zephyr/signal_ashare/intraday_buy_sell_point_analyzer.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-SR-003"
+    name: "Intraday Stop-Loss Break"
+    name_zh: "分时止损破位"
+    aliases: ["intraday_break", "跌破分时均线"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "支撑位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {break_threshold: 0.5}
+    inputs: ["分时数据", "support_level", "vwap", "prev_low"]
+    outputs: {present: true, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-RK-09"
+    doc_ref: "ashare_stop_loss_engine.py §5 分时破位"
+    code_path: "src/zephyr/risk/core/ashare_stop_loss_engine.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # STRUCTURE（价格结构类）— 1条
+  # 代码已施工：overlay_features.py s2_spring_flag（Wyckoff Spring）
+  # ============================================================
+
+  - pattern_id: "PAT-STRUCT-001"
+    name: "Wyckoff Spring"
+    name_zh: "威科夫弹簧"
+    aliases: ["spring", "震仓", "假跌破诱空"]
+    pattern_class: "structure"
+    pattern_subtype: "底部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 20}
+    inputs: ["OHLCV"]
+    outputs: {present: true, start_pos: null, end_pos: null, confidence: null}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "overlay_features.py s2_spring_flag"
+    code_path: "src/zephyr/regime/features/overlay_features.py"
+    used_by_factors: []
+    variant_of: null
+    status: "active"
+    version: "1.0.0"
+    created_at: "2026-08-13"
+    updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # 预留类（schema 保留，条目按需补充）
+  # chanlun（缠论）：分型→笔→线段→中枢→走势，顶底分型/一二三买卖点/背驰
+  # elliott_wave（波浪理论）：推动浪1-5/调整浪abc/延长/锯齿形/平台形/三角形
+  # fibonacci（斐波那契工具）：回测位23.6-78.6%/扩展位/扇形/弧形/时间区间
+  # ============================================================

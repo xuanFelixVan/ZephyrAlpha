@@ -549,7 +549,7 @@ tiers:
       # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
       # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
       # P1 被测对象/交易风控 7 表中 factor/strategy/risk_limit 已落盘（Step1-3 schema+条目完成，Step4-8 交叉引用/半派生/审计/治理同步待做），
-      # indicator/execution_algo/data_asset/chart_pattern 待施工；P2 field_dictionary 已施工（2026-08-13，AI-REG-FLD-001，§4.5 八步全做）/experiment 待施工。
+      # chart_pattern 2026-08-13 落盘（15条，Step1-6完成）；indicator/execution_algo/data_asset 待施工；P2（field_dictionary/experiment）待施工。
       - registry_id: REG-UNI-001
         name: 股票池登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml
@@ -620,14 +620,14 @@ tiers:
         description: 技术指标 name_zh/description 真源（§4.16.4）——22 条种子条目由 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。算法地图全量落地配套（2026-08-12）。
         owned_by: governance
 
-      - registry_id: REG-FLD-001
-        name: 字段字典登记表
-        physical_path: docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml
+      - registry_id: REG-PAT-001
+        name: 图形形态注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 257
-        status: active
-        description: 数据字段唯一真源（SSoT）——16 域（行情/资金流/情绪广度/技术指标/宏观/因子信号/合成信号/委托/成交/持仓/组合配置/风险/绩效/执行/实验/模型服务）257 条。真源反查自 cross_layer_contracts.yaml（18 业务契约）+ factor_registry inputs（111 因子声明字段）；§4.5 八步全做（E1-E20 审计 0 错误），条目均 candidate 态（PROMOTE 走 §4.13）；source_system FK → data_asset_registry 未施工（pending 待回填）。#ARCH-BREG-001 P2（2026-08-13 AI-REG-FLD-001）
+        entry_count: 15
+        status: draft
+        description: 图形形态唯一真源（SSoT）——8 大类（candlestick_pattern/chart_pattern/chanlun/elliott_wave/trendline_channel/support_resistance/fibonacci/structure）15 条已落盘（candlestick 6 active + chart_pattern 4 candidate + trendline 1 candidate + support_resistance 3 active + structure 1 active）。chanlun/elliott_wave/fibonacci 3 类 schema 预留。Step1-6 完成，Step7-8 待做。#ARCH-BREG-001 P1-B
         owned_by: governance
 
 # ============================================================
@@ -673,4 +673,4 @@ summary:
   by_tier:
     tier_0_core: 12
     tier_1_governance: 28
-    tier_2_runtime: 18
+    tier_2_runtime: 19

@@ -1,11 +1,11 @@
-# 自动生成于 2026-08-13T11:27:32Z
+# 自动生成于 2026-08-13T11:29:22Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-13T11:27:32Z'
+generated_at: '2026-08-13T11:29:22Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 37
+total_registries: 38
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 475
+  entry_count: 474
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -63,6 +63,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: active
+- registry_id: REG-PAT-001
+  name: Chart Pattern Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: draft
 - registry_id: PS-REG-007
   name: 跨模块依赖登记表
   category: governance_rule
@@ -237,7 +245,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 62
+  entry_count: 0
   status: active
 - registry_id: PS-REG-020
   name: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
