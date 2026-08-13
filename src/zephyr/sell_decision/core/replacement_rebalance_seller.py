@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Replacement & Rebalance Seller — 置换与再平衡卖出 (MOD-SELL-006)
 
 两种被动卖出驱动:
@@ -29,9 +31,67 @@ Replacement & Rebalance Seller — 置换与再平衡卖出 (MOD-SELL-006)
     - 置换阈值: 默认候选评分高出当前 > 20% 触发(可配置)
     - 输出 ReplacementRebalanceOrder 喂给 SELL-001 收集器第⑥类信号源
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.2 SELL-06
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.2 SELL-06
 SSoT: depgraph MOD-SELL-006
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 再平衡评估输入 标量参数
+#   fields: symbol标的代码 + current_weight当前权重[0,1] + target_weight目标权重[0,1]
+#   code: evaluate_rebalance() L192-196
+# - id: I2
+#   name: 置换评估输入 标量参数
+#   fields: symbol当前持仓(卖A) + current_score当前评分[0,1] + replace_with候选标的(买B) + candidate_score候选评分[0,1]
+#   code: evaluate_replacement() L250-255
+# - id: I3
+#   name: 阈值配置 标量
+#   fields: rebalance_threshold权重偏离阈值0.05 + replacement_score_threshold评分差阈值0.20
+#   code: __init__ L171-174
+# 层: 算法
+# - id: A1
+#   name_zh: ① 再平衡卖出评估
+#   name_en: evaluate_rebalance
+#   intro: 当前权重比目标权重超配超过5%就被动减仓
+#   desc: drift=current-target; drift>0.05才触发否则None; confidence=min(0.5+drift, 0.9)偏离越大越高; 低配不触发(买入非本模块职责)
+#   inputs: I1 I3
+#   outputs: REBALANCE/REDUCE卖出指令或None
+#   invariant: 再平衡=权重偏离>阈值→被动卖出超配
+# - id: A2
+#   name_zh: ② 置换卖出评估
+#   name_en: evaluate_replacement
+#   intro: 候选池里评分高出当前持仓20%就卖A买B
+#   desc: score_diff=candidate-current; diff>0.20才触发否则None; confidence=min(0.6+score_diff, 0.9); REPLACEMENT指令必须带replace_with
+#   inputs: I2 I3
+#   outputs: REPLACEMENT/REPLACE卖出指令或None
+#   invariant: 置换=候选池有更优标的→卖A买B; confidence∈[0,1]
+# - id: A3
+#   name_zh: ③ 指令回调广播
+#   name_en: on_order/_notify
+#   intro: 卖出指令生成后逐个通知注册的回调且单个回调故障不影响其他
+#   desc: on_order注册回调; _notify遍历回调执行, 异常隔离记error日志
+#   inputs: A1 A2
+#   outputs: 回调事件分发
+# 层: 输出
+# - id: O1
+#   name_zh: 置换/再平衡卖出指令
+#   name_en: ReplacementRebalanceOrder
+#   intro: 含标的/类型/权重/方向/置信度/置换目标的frozen卖出指令, 即收集器第⑥类信号源
+#   invariant: confidence∈[0,1]; REPLACEMENT必须带replace_with
+#   downstream: MOD-SELL-001(收集器第⑥类信号源); MOD-SELL-007(融合引擎)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# I2 --> A2
+# I3 --> A2
+# A1 --> A3
+# A2 --> A3
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Stop-Hunting Protector — 止损猎杀防护器 (MOD-SELL-015)
 
 防护做市商/HFT 主动猎杀止损位:
@@ -31,9 +33,65 @@ Stop-Hunting Protector — 止损猎杀防护器 (MOD-SELL-015)
     - 偏移方向: 默认 BELOW(止损位下移, 防向上猎杀), 可配置 ABOVE
     - 输出 AdjustedStopLevel 喂给 SELL-05 止损策略族 + SELL-07 融合引擎
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.2 SELL-15
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.2 SELL-15
 SSoT: depgraph MOD-SELL-015
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 原始止损位 技术位
+#   fields: symbol + original_stop(>0) + offset_pct(可选,默认2%) + direction(BELOW/ABOVE)
+#   code: adjust_stop_level 参数
+# - id: I2
+#   name: 行情价格 盘中价与收盘价
+#   fields: current_price(盘中,>0) + close_price(确认跌破用,>0)
+#   code: evaluate_soft_stop 参数
+# - id: I3
+#   name: 软止损状态 调用方维护
+#   fields: current_state(NORMAL/OBSERVING/CONFIRMED/CLEARED) 无状态设计不持久化
+#   code: evaluate_soft_stop 参数 current_state
+# 层: 算法
+# - id: A1
+#   name_zh: ① 止损位偏移防猎杀
+#   name_en: StopHuntingProtector.adjust_stop_level
+#   intro: 止损位不精确挂在技术位上，故意偏移1-2%让猎杀单扫不到
+#   desc: 入参校验后 BELOW: adjusted=original×(1-pct); ABOVE: adjusted=original×(1+pct); 默认pct=0.02∈(0,0.1]
+#   inputs: I1
+#   outputs: AdjustedStopLevel(state=NORMAL, confirmed=False)
+#   invariant: 止损位偏移1-2%防猎杀
+# - id: A2
+#   name_zh: ② 软止损状态机转移
+#   name_en: _transition
+#   intro: 触及止损不立刻卖，先进观察期，收盘价确认跌破才执行，价格回升就解除
+#   desc: NORMAL/CLEARED+现价≤止损位→OBSERVING; OBSERVING+收盘价<止损位→CONFIRMED; OBSERVING+现价>止损位→CLEARED; CONFIRMED为终态由调用方重置
+#   inputs: I2 I3
+#   outputs: 新软止损状态 SoftStopState
+#   invariant: 软止损=触及→OBSERVING→确认跌破→CONFIRMED; 观察期收回→CLEARED
+# - id: A3
+#   name_zh: ③ 状态到置信度与卖出方向映射
+#   name_en: evaluate_soft_stop
+#   intro: 把状态机结果翻译成置信度和卖出方向，CONFIRMED清仓、OBSERVING减仓、其余占位不卖
+#   desc: CONFIRMED→conf=1.0/CLEAR; OBSERVING→conf=0.5/REDUCE; CLEARED/NORMAL→conf=0.0/REPLACE占位; 软止损评估不重复偏移(offset_pct=0)
+#   inputs: A2
+#   outputs: AdjustedStopLevel(含新状态+置信度+方向) 并_notify回调通知
+#   invariant: confidence∈[0,1]
+# 层: 输出
+# - id: O1
+#   name_zh: 止损猎杀防护结果 AdjustedStopLevel
+#   name_en: AdjustedStopLevel
+#   intro: 含偏移后止损位/软止损状态/是否确认跌破/置信度/卖出方向，并通过on_adjusted回调广播
+#   invariant: offset_pct∈[0,1]; confidence∈[0,1]; adjusted_stop>0
+#   downstream: MOD-SELL-005(止损策略族消费AdjustedStopLevel) ; MOD-SELL-007(融合引擎)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A2
+# A2 --> A3
+# A1 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Sell Urgency Scorer — 卖出紧迫度评分器 (MOD-SELL-009)
 
 基于卖出信号来源类型映射紧迫度(0~1), 匹配执行策略, 消费 SELL-08 仲裁结果做冲突增强。
@@ -36,9 +38,74 @@ Sell Urgency Scorer — 卖出紧迫度评分器 (MOD-SELL-009)
     - 多信号取最大紧迫度(最紧急决定原则)
     - 属A类基础设施(类型→紧迫度映射+策略匹配, 逻辑明确)
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.4 SELL-09
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.4 SELL-09
 SSoT: depgraph MOD-SELL-009
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 卖出信号列表 SellSignal
+#   fields: symbol + signal_type(8类) + source + metadata(risk_force)
+#   code: sell_signals: list[SellSignal] 来自 MOD-SELL-001
+# - id: I2
+#   name: 仲裁结果列表 ArbitrationResult
+#   fields: symbol + conflict_level(STRONG等)
+#   code: arbitration_results 来自 MOD-SELL-008 可选
+# - id: I3
+#   name: 评分时间 clock 时间源
+#   fields: now 或注入 clock 可测试替换
+#   code: now / clock 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 按标的分组与仲裁索引
+#   name_en: SellUrgencyScorer.score
+#   intro: 把信号按股票分组，仲裁结果也按股票建好索引，逐标的评分且单标的异常隔离
+#   desc: defaultdict按symbol分组信号 + arb_by_symbol索引仲裁结果 + 逐标的_score_one 异常仅记日志
+#   inputs: I1 I2 I3
+#   outputs: 每标的一条SellUrgencyScore(按symbol排序)
+# - id: A2
+#   name_zh: ② 单信号紧迫度映射
+#   name_en: _signal_urgency / _is_risk_forced
+#   intro: 风控来源的信号直接给1.0，其他按8类信号类型查表映射紧迫度
+#   desc: source含RISK或metadata.risk_force→1.0; 否则_urgency_map[signal_type](主力弃庄/挑战失败1.0 技术基本面0.6 止盈时间止损0.3) 未知默认0.5
+#   inputs: I1
+#   outputs: 单信号urgency ∈[0,1]
+#   invariant: 风控→1.0
+# - id: A3
+#   name_zh: ③ 最紧急决定与强冲突增强
+#   name_en: _score_one
+#   intro: 同标的多个信号取最大紧迫度，遇到SELL-08强冲突仲裁就抬到0.9以上
+#   desc: max(各信号urgency)取主导信号; 仲裁conflict_level=STRONG且urgency<0.9 → 提升至0.9 conflict_enhanced=True
+#   inputs: A1 A2
+#   outputs: 标的最终urgency + 主导信号类型
+#   invariant: 最紧急决定原则(多信号取最大); 强冲突增强≥0.9
+# - id: A4
+#   name_zh: ④ 紧迫度等级与执行策略匹配
+#   name_en: _urgency_to_level / _urgency_to_strategy
+#   intro: 把紧迫度数值翻译成三档等级和三档执行策略
+#   desc: urgency≥0.8→URGENT ≥0.5→MODERATE 否则RELAXED; >0.8→MARKET_FAST市价 >0.5→LIMITED_TIME限价限时 否则PATIENT_LIMIT耐心等待
+#   inputs: A3
+#   outputs: UrgencyLevel + ExecutionStrategy
+#   invariant: 紧迫度∈[0,1]; 执行策略三档匹配
+# 层: 输出
+# - id: O1
+#   name_zh: 卖出紧迫度评分 SellUrgencyScore 列表
+#   name_en: list[SellUrgencyScore]
+#   intro: 每标的含urgency/level/strategy/主导信号/冲突增强标记/理由，喂给执行域定下单方式
+#   invariant: urgency∈[0,1]
+#   downstream: D-EX-CORE(执行策略) ; MOD-SELL-007(融合引擎,后建) ; D-POSITION
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# I1 --> A2
+# A1 --> A3
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations

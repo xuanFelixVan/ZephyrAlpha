@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Sell Signal Collector — 卖出信号收集器 (MOD-SELL-001)
 
 卖出信号管道入口——汇聚8类卖出信号并标准化为 SellSignal 列表, 喂给 SELL-02 评分器。
@@ -37,9 +39,59 @@ Sell Signal Collector — 卖出信号收集器 (MOD-SELL-001)
     - 去重规则: 同 symbol+同 signal_type+同 direction → 保留 confidence 最高的
     - 属A类基础设施(管道+数据结构+聚合), 不涉及"用什么策略卖出"的决策(那是SELL-04/05)
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.1 SELL-01, §3 域间依赖
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.1 SELL-01, §3 域间依赖
 SSoT: depgraph MOD-SELL-001
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 各域卖出信号提供者 Provider
+#   fields: 实现SellSignalProvider协议的对象或callable, provide(symbol,now,context)→list[SellSignal], 每类信号最多一个
+#   code: register 注册的 D-SIGNAL/D-RISK/D-PF-CORE/D-ML-SERVE 各域 provider
+# - id: I2
+#   name: 采集请求参数
+#   fields: symbol标的代码 + now当前时间 + context上下文(持仓状态/市场状态/组合信息)
+#   code: collect(symbol, now, context)
+# 层: 算法
+# - id: A1
+#   name_zh: ① Provider 注册管理
+#   name_en: SellSignalCollector.register / unregister
+#   intro: 把各域实现的8类信号提供者登记进字典，同类重复注册直接报错
+#   desc: signal_type→provide方法绑定(协议对象取.provide, 否则需callable); 已注册抛DuplicateProviderError; 8类信号类型架构硬边界不可扩展
+#   inputs: I1
+#   outputs: _providers 注册表
+#   invariant: 每类信号类型最多一个provider; 8类信号类型不可扩展
+# - id: A2
+#   name_zh: ② 全Provider汇聚采集
+#   name_en: SellSignalCollector.collect
+#   intro: 对指定标的挨个调用所有provider收集原始信号，单个挂了不拖垮整体
+#   desc: 遍历_providers调provider(symbol,now,context)汇总raw列表; 单provider异常仅记error日志隔离故障
+#   inputs: I1 I2
+#   outputs: 原始SellSignal列表
+# - id: A3
+#   name_zh: ③ 标准化去重排序
+#   name_en: _standardize
+#   intro: 同股票同类型同方向的重复信号只留置信度最高的，最后按置信度降序排好
+#   desc: dedup_key=(symbol,signal_type,direction)去重保留max(confidence) → 按confidence降序排序
+#   inputs: A2
+#   outputs: 标准化SellSignal列表
+#   invariant: 同symbol同signal_type同direction去重保留最高confidence; confidence∈[0,1]
+# 层: 输出
+# - id: O1
+#   name_zh: 标准化卖出信号列表 SellSignal
+#   name_en: list[SellSignal]
+#   intro: 不可变值对象含8类信号类型/方向/置信度/时间框架/来源/理由，是卖出决策管道的统一入口数据
+#   invariant: confidence∈[0,1]
+#   downstream: MOD-SELL-002(评分器) ; MOD-SELL-007(融合引擎) ; D-POSITION(仓位状态反馈)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Sell Signal Fusion Engine — 卖出信号融合引擎 (MOD-SELL-007)
 
 多卖出信号加权融合为综合卖出意愿(0~1)+融合置信度, 支持多时间框架共振增强。
@@ -32,9 +34,85 @@ Sell Signal Fusion Engine — 卖出信号融合引擎 (MOD-SELL-007)
     - 默认 WeightedAverageFusion, FusionStrategy 协议可注入(贝叶斯/D-S 预留)
     - 属A类基础设施(加权融合+共振+一致性, 逻辑明确)
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.4 SELL-07, §4 E-SELL-01
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.4 SELL-07, §4 E-SELL-01
 SSoT: depgraph MOD-SELL-007
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 卖出信号列表 list[SellSignal]
+#   fields: 来自SELL-01收集器的信号, 含symbol/signal_type/timeframe/direction/confidence, 空列表抛InvalidFusionInputError
+#   code: fuse() sell_signals L276
+# - id: I2
+#   name: 融合策略与共振参数 配置
+#   fields: strategy融合策略(默认WeightedAverageFusion, 贝叶斯/D-S预留) + resonance_boost共振增强因子1.5
+#   code: __init__ L255-258
+# 层: 算法
+# - id: A1
+#   name_zh: ① 按标的分组融合主入口
+#   name_en: SellSignalFusionEngine.fuse
+#   intro: 把一堆卖出信号按标的分组逐标的融合且单个标的炸了不影响其他
+#   desc: defaultdict按symbol分组; 逐标的调_fuse_one; 单标的异常隔离记error继续; 结果按symbol排序
+#   inputs: I1 I2
+#   outputs: 分组成交通知+逐标的决策列表
+#   invariant: 单标的异常隔离
+# - id: A2
+#   name_zh: ② 信号权重计算 共振增强
+#   name_en: _signal_weight/_has_resonance
+#   intro: 强制类信号权重高, 同标的同方向跨时间框架的信号权重乘1.5
+#   desc: weight=类型权重(主力出货/突破失败1.5, 基本面1.2, 技术/量价1.0, 相对强度0.8, 机会成本/时间止损0.6); 存在同向不同时间框架信号时×resonance_boost
+#   inputs: A1 I2
+#   outputs: 每信号权重列表
+#   invariant: 多时间框架共振×1.5
+# - id: A3
+#   name_zh: ③ 加权平均融合
+#   name_en: WeightedAverageFusion.fuse
+#   intro: 信号置信度按权重加权平均得到综合卖出意愿
+#   desc: willingness=Σ(confidence×weight)/Σ(weight), clamp到[0,1]; 空信号或权重和<=0返回(0,0)
+#   inputs: A2
+#   outputs: willingness综合意愿[0,1]
+#   invariant: 综合意愿∈[0,1]
+# - id: A4
+#   name_zh: ④ 一致性检查与置信度折算
+#   name_en: _check_consistency
+#   intro: 看信号方向有多齐, 越齐置信度打得越足
+#   desc: 同方向最大占比>80%=HIGH/50-80%=MEDIUM/<50%=LOW; confidence=willingness×一致性因子(1.0/0.8/0.5), clamp[0,1]
+#   inputs: A3
+#   outputs: 融合置信度+一致性等级+主导信号类型
+#   invariant: 融合置信度∈[0,1]; 一致性三档
+# - id: A5
+#   name_zh: ⑤ 融合事件发布
+#   name_en: _emit_event
+#   intro: 每个标的融合完就广播E-SELL-01事件给订阅方
+#   desc: 包装SellSignalFusedEvent(decision+context_snapshot)逐个回调广播; 回调异常不阻断
+#   inputs: A1
+#   outputs: SellSignalFusedEvent事件
+# 层: 输出
+# - id: O1
+#   name_zh: 融合卖出决策
+#   name_en: FusedSellDecision
+#   intro: 含综合卖出意愿/融合置信度/贡献信号/一致性/主导信号类型的frozen决策
+#   invariant: willingness∈[0,1]; confidence∈[0,1]
+#   downstream: MOD-SELL-008(仲裁器); MOD-SELL-009(紧迫度)
+# - id: O2
+#   name_zh: 卖出信号融合事件 E-SELL-01
+#   name_en: SellSignalFusedEvent
+#   intro: 融合完成广播的事件, 带决策与上下文快照
+#   downstream: D-POSITION(E-SELL-01); D-SIGNAL
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I2 --> A2
+# I2 --> A3
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
+# A1 --> A5
+# A5 --> O2
 """
 
 from __future__ import annotations

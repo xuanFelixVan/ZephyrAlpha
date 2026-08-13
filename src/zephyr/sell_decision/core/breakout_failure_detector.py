@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Breakout Failure Detector — 突破成败检测器 (MOD-SELL-003)
 
 消费 L1 因子层压力位计算结果, 判定突破成功/失败, 产出 BreakoutResult:
@@ -30,9 +32,70 @@ Breakout Failure Detector — 突破成败检测器 (MOD-SELL-003)
     - 强制清仓阈值: 默认 K≥3 (设计文档 §1.1 SELL-03), 可配置
     - 输出 BreakoutResult 含 direction: SUCCESS→无卖出 / FAILURE→REDUCE / FORCED_CLEAR→CLEAR
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.1 SELL-03
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.1 SELL-03
 SSoT: depgraph MOD-SELL-003
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 压力位 resistance_level float
+#   fields: L1 因子层算好的压力位价格（必须>0，本模块不负责计算）
+#   code: detect(resistance_level) L205
+# - id: I2
+#   name: 当前价格 current_price float
+#   fields: 最新成交价（必须>0）
+#   code: detect(current_price) L205
+# - id: I3
+#   name: 历史挑战失败次数 challenge_count int
+#   fields: 本次检测前累计挑战压力位失败次数（>=0，调用方维护）
+#   code: detect(challenge_count) L205
+# - id: I4
+#   name: 检测器配置 2项
+#   fields: forced_clear_threshold=3（第K次失败强平）/ success_confidence=0.8
+#   code: __init__ L178（_DEFAULT_FORCED_CLEAR_THRESHOLD L145）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 输入合法性校验
+#   name_en: detect 前置校验
+#   intro: 先检查标的价格次数合不合法，不合法直接抛错
+#   desc: symbol 非空 / resistance_level>0 / current_price>0 / challenge_count>=0，任一违反抛 InvalidBreakoutInputError(ZA-SELL-0003)
+#   inputs: I1 I2 I3
+#   outputs: 合法输入四元组
+# - id: A2
+#   name_zh: ② 突破成败三态判定
+#   name_en: detect
+#   intro: 价过压力位算突破成功，冲不上去累计到第3次就强制清仓
+#   desc: 价>压力位→SUCCESS（conf=0.8，direction=REPLACE占位持有，metadata 记 breakout_pct=(C-R)/R）；价≤压力位且 challenge_count+1>=K→FORCED_CLEAR（conf=1.0 CLEAR）；否则→FAILURE（conf=min(0.5+(n-1)*0.1, 0.9) REDUCE，失败次数+1）
+#   inputs: A1 I4
+#   outputs: BreakoutResult（status/confidence/direction/challenge_count）
+#   invariant: K>=3次失败→强制清仓（最高优先级 conf=1.0）；confidence∈[0,1]
+# - id: A3
+#   name_zh: ③ 检测完成事件回调
+#   name_en: _notify
+#   intro: 检测出结果后通知所有订阅回调，单个回调挂不影响主流程
+#   desc: 遍历 on_detected 注册的回调逐个调用；回调异常隔离记日志
+#   inputs: A2
+#   outputs: BreakoutResult 事件通知
+#   invariant: 回调异常隔离不阻断
+# 层: 输出
+# - id: O1
+#   name_zh: 突破检测结果 BreakoutResult
+#   name_en: BreakoutResult
+#   intro: 三态结论：成功持有/失败减仓/强平清仓，含置信度与原因
+#   invariant: 不可变 frozen dataclass；direction∈REPLACE/REDUCE/CLEAR
+#   downstream: MOD-SELL-001 收集器第⑧类信号源 / D-POSITION 持有加仓信号（CONSUMERS 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I3 --> A1
+# A1 --> A2
+# I4 --> A2
+# A2 --> A3
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

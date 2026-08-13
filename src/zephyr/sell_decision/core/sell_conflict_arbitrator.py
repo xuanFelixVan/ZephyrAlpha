@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 Sell Conflict Arbitrator — 买卖冲突仲裁器 (MOD-SELL-008)
 
 同标的同时存在买入+卖出信号 → 卖出优先(保守原则) + 冲突等级分类 + 审计追溯。
@@ -34,9 +36,80 @@ Sell Conflict Arbitrator — 买卖冲突仲裁器 (MOD-SELL-008)
     - SELL-007 融合引擎建好后, 可增强消费 FusedSellDecision(向后兼容)
     - 属A类基础设施(冲突检测+保守原则+分级, 逻辑明确)
 
-依据: D:\\临时工作区\\依赖图\\31-D-SELL-DECISION-卖出决策域.md §1.4 SELL-08, §4 E-SELL-02, §8 CTR-SELL-001
+依据: D:\临时工作区\依赖图-D-SELL-DECISION-卖出决策域.md §1.4 SELL-08, §4 E-SELL-02, §8 CTR-SELL-001
 SSoT: depgraph MOD-SELL-008
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 卖出信号列表 list[SellSignal]
+#   fields: symbol / signal_type（主力出货/突破失败/止盈等）/ source / metadata / confidence
+#   code: arbitrate(sell_signals) L247（来自 SELL-01 sell_signal_collector）
+# - id: I2
+#   name: 买入信号列表 list[BuySignal]
+#   fields: symbol / confidence∈[0,1] / source / strategy_id（轻量契约，跨域契约就绪前占位）
+#   code: BuySignal L113
+# - id: I3
+#   name: 仲裁配置 3项
+#   fields: strong_conflict_types=主力出货+突破失败 / risk_source_marker="RISK" / weak_delay_ticks=1
+#   code: __init__ L220（_DEFAULT_STRONG_TYPES L188）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 分组仲裁主入口
+#   name_en: arbitrate
+#   intro: 把买卖信号按标的分组，逐个有卖出信号的标的做冲突仲裁
+#   desc: defaultdict 按 symbol 分组买卖两侧 → 逐标的 _arbitrate_one（按 symbol 排序）→ 仅冲突时发 E-SELL-02 事件；单标的异常隔离不阻断其他标的
+#   inputs: I1 I2
+#   outputs: list[ArbitrationResult]
+#   invariant: 单标的异常隔离
+# - id: A2
+#   name_zh: ② 冲突分级
+#   name_en: _classify_conflict
+#   intro: 看卖出信号里有没有主力出货/突破失败/风控强制的，有就算强冲突
+#   desc: 任一信号 signal_type∈strong_types → STRONG；或 source 含 "RISK" / metadata.risk_force=True（风控强制）→ STRONG；否则 WEAK
+#   inputs: I1 I3
+#   outputs: ConflictLevel（STRONG/WEAK）
+# - id: A3
+#   name_zh: ③ 卖出优先裁决
+#   name_en: _arbitrate_one
+#   intro: 同标的买卖撞车永远卖出赢，强冲突立刻卖，弱冲突等1个Tick再看
+#   desc: 无买入对手→NO_CONFLICT直通（winning_side=NONE）；STRONG→SELL_PRIORITY 延迟0；WEAK→DELAYED_OBSERVE 延迟 weak_delay_ticks=1；冲突时 winning_side 恒为 SELL
+#   inputs: A2
+#   outputs: ArbitrationResult（verdict/conflict_level/delay_ticks/reason）
+#   invariant: 卖出优先铁律（冲突时永远卖出方胜出）；强冲突0延迟；弱冲突延迟≤1Tick
+# - id: A4
+#   name_zh: ④ E-SELL-02 事件发布
+#   name_en: _emit_event
+#   intro: 冲突仲裁完成后向订阅者广播 SellArbitrated 事件
+#   desc: 构造 SellArbitratedEvent（result+context_snapshot 含 symbol/verdict/level/双方信号数）→ 逐个调 on_arbitrated 注册的回调；回调异常不阻断主流程
+#   inputs: A3
+#   outputs: SellArbitratedEvent（E-SELL-02）
+#   invariant: 回调异常隔离不阻断
+# 层: 输出
+# - id: O1
+#   name_zh: 仲裁结果列表 list[ArbitrationResult]
+#   name_en: ArbitrationResult
+#   intro: 每个有卖出信号的标的给出裁决、冲突等级和延迟tick数
+#   invariant: 不可变 frozen dataclass
+#   downstream: MOD-SELL-009 紧迫度评分（CONSUMERS 头）
+# - id: O2
+#   name_zh: SellArbitrated 事件 E-SELL-02
+#   name_en: SellArbitratedEvent
+#   intro: 冲突仲裁完成事件，供执行层和组合层消费并留审计
+#   downstream: D-EX-CORE(E-SELL-02) / D-PF-CORE / D-GOVERNANCE 审计（CONSUMERS 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A1
+# I1 --> A2
+# I3 --> A2
+# A2 --> A3
+# A1 --> A3
+# A3 --> A4
+# A3 --> O1
+# A4 --> O2
 """
 
 from __future__ import annotations
