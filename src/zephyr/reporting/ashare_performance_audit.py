@@ -14,7 +14,9 @@
 # [TESTS] tests/reporting/test_ashare_performance_audit.py
 # [A_module] module_id=MOD-RPT-026 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — A-Share Performance Audit & Optimization Trigger
+"""
+
+D_REPORTING — A-Share Performance Audit & Optimization Trigger
 
 A股绩效审计与优化触发器——消费归因结果(CTR-P1-009) + 绩效指标, 执行 5 类审计规则,
 自动触发优化建议。
@@ -32,6 +34,106 @@ A股绩效审计与优化触发器——消费归因结果(CTR-P1-009) + 绩效�
 
 设计真源: D:/临时工作区/依赖图/10-D-REPORTING-报告域.md §1.2 D-REPORTING-26, §2.1
 蓝图: docs/03_modules/_domain_reporting/ashare_performance_audit/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 绩效指标 performance_metrics dict
+#   fields: return_pct / max_drawdown / sharpe_ratio / sortino_ratio
+#   code: performance_metrics（audit() 参数）
+# - id: I2
+#   name: 归因结果 attribution_result dict（CTR-P1-009）
+#   fields: total_return / allocation_effect / selection_effect / interaction_effect / transaction_cost_drag
+#   code: attribution_result（audit() 参数）
+# - id: I3
+#   name: 预期交易成本 expected_cost float
+#   fields: 预期成本（可选，提供时才执行成本审计）
+#   code: expected_cost
+# - id: I4
+#   name: 审计阈值配置 AuditThresholds
+#   fields: 收益率-1%/-5%、回撤-10%/-15%、Sharpe 0/0.5、归因容忍0.1%、成本比1.5x/2.0x
+#   code: AuditThresholds（L102 frozen dataclass）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 收益率审计
+#   name_en: ASharePerformanceAuditor._audit_return
+#   intro: 拿 return_pct 对照 -1% 警告 / -5% 临界阈值定严重度
+#   desc: return_pct<critical→CRITICAL，<warning→WARNING，否则无发现；缺指标安静跳过
+#   inputs: I1 I4
+#   outputs: 收益率 AuditFinding 列表
+# - id: A2
+#   name_zh: ② 回撤审计
+#   name_en: ASharePerformanceAuditor._audit_drawdown
+#   intro: 拿 max_drawdown 对照 -10% 警告 / -15% 临界阈值定严重度
+#   desc: max_drawdown<critical→CRITICAL，<warning→WARNING
+#   inputs: I1 I4
+#   outputs: 回撤 AuditFinding 列表
+# - id: A3
+#   name_zh: ③ 风险调整收益审计
+#   name_en: ASharePerformanceAuditor._audit_risk_adjusted
+#   intro: 检查 Sharpe<0 警告 / <0.5 提示，Sortino<0 警告
+#   desc: sharpe_ratio 与 sortino_ratio 分别对照 sharpe_warning/sharpe_info/sortino_warning
+#   inputs: I1 I4
+#   outputs: 风险调整 AuditFinding 列表
+# - id: A4
+#   name_zh: ④ 归因一致性校验
+#   name_en: ASharePerformanceAuditor._audit_attribution
+#   intro: 校验 allocation+selection+interaction 是否约等于 total_return
+#   desc: diff=|allocation+selection+interaction-total_return|，diff>0.1%容忍→WARNING
+#   inputs: I2 I4
+#   outputs: 归因一致性 AuditFinding 列表
+#   invariant: allocation+selection+interaction ≈ total_return（容忍 0.1%）
+# - id: A5
+#   name_zh: ⑤ 交易成本审计
+#   name_en: ASharePerformanceAuditor._audit_cost
+#   intro: 实际成本拖累与预期成本的比值超 1.5x/2.0x 触发警告/临界
+#   desc: cost_ratio=|transaction_cost_drag|/expected_cost；>2.0→CRITICAL，>1.5→WARNING；expected_cost 缺失或≤0 跳过
+#   inputs: I2 I3 I4
+#   outputs: 成本 AuditFinding 列表
+# - id: A6
+#   name_zh: ⑥ 优化建议触发（_TRIGGER_MAP 规则映射）
+#   name_en: _build_recommendation
+#   intro: 按（审计类别,严重度）查映射表生成策略调整/风控收紧/成本控制等纯建议
+#   desc: (category,severity)→(recommendation_type,priority)，target_module 经 _TARGET_MODULE_MAP 映射到 D_PF_CORE/D_RISK/D_POSITION/D_EX_CORE；无映射返回 None
+#   inputs: A1 A2 A3 A4 A5
+#   outputs: OptimizationRecommendation 列表
+#   invariant: 纯建议输出不自动执行
+# - id: A7
+#   name_zh: ⑦ 审计报告组装与完整性指纹
+#   name_en: ASharePerformanceAuditor.audit/_compute_data_hash/validate_report
+#   intro: 汇总发现与建议生成不可变报告，用 SHA-256 指纹防篡改
+#   desc: content={绩效摘要,归因摘要,findings,recommendations}→data_hash=SHA-256(canonical_json)；validate_report 重算哈希比对验真
+#   inputs: A6
+#   outputs: PerformanceAuditReport
+#   invariant: data_hash=SHA-256(canonical_json(content))；纯消费层不发布事件(D-RPT-D01)
+# 层: 输出
+# - id: O1
+#   name_zh: A股绩效审计报告
+#   name_en: PerformanceAuditReport
+#   intro: 含 5 类审计发现、优化建议与 SHA-256 完整性指纹的不可变审计报告
+#   invariant: 5类审计(收益率/回撤/风险调整/归因一致性/交易成本)
+#   downstream: zephyr.reporting（报告域内部消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I2 --> A4
+# I2 --> A5
+# I3 --> A5
+# I4 --> A1
+# I4 --> A2
+# I4 --> A3
+# I4 --> A4
+# I4 --> A5
+# A1 --> A6
+# A2 --> A6
+# A3 --> A6
+# A4 --> A6
+# A5 --> A6
+# A6 --> A7
+# A7 --> O1
 """
 
 from __future__ import annotations

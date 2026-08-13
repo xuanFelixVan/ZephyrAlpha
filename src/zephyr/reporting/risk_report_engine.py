@@ -14,7 +14,9 @@
 # [TESTS] tests/reporting/test_risk_report_engine.py
 # [A_module] module_id=MOD-RPT-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — Risk Report Engine (风险报告引擎)
+"""
+
+D_REPORTING — Risk Report Engine (风险报告引擎)
 
 消费 D-RISK 诊断结果(RiskDashboardSnapshot + RiskMetricsReport), 生成 4 类风险报告:
   - DailyRiskSummary: 日度风险摘要 (VaR/CVaR/回撤/杠杆/集中度/告警)
@@ -27,6 +29,93 @@
 
 设计真源: D:/临时工作区/依赖图/10-D-REPORTING-报告域.md §1.2 D-REPORTING-08, §5.1
 蓝图: docs/03_modules/_domain_reporting/risk_report_engine/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 风险仪表盘快照 RiskDashboardSnapshot（CTR-P1-008）
+#   fields: overall_risk_score / gross_leverage / top_position_concentration / sector_concentrations / active_alerts
+#   code: snapshot（generate_daily/generate_event_flash 参数）
+# - id: I2
+#   name: 风险指标报告 RiskMetricsReport（CTR-P1-011）
+#   fields: var_1d_95/99 / cvar_1d_95/99 / current_drawdown / max_drawdown / sharpe_ratio / sortino_ratio / beta / volatility_1d / as_of_date
+#   code: metrics（generate_daily 参数）
+# - id: I3
+#   name: 日度风险摘要列表
+#   fields: daily_summaries（≥1 条 DailyRiskSummary，按 report_date 排序聚合）
+#   code: generate_weekly/generate_monthly 参数 daily_summaries
+# 层: 算法
+# - id: A1
+#   name_zh: ① 风险等级 4 档判定
+#   name_en: _classify_risk_level
+#   intro: 把 overall_risk_score 按 0.3/0.6/0.8 三档阈值映射成 LOW/MEDIUM/HIGH/CRITICAL
+#   desc: score<0.3→LOW；<0.6→MEDIUM；<0.8→HIGH；≥0.8→CRITICAL
+#   inputs: I1
+#   outputs: RiskLevel
+#   invariant: RiskLevel 4档判定(overall_risk_score 阈值)
+# - id: A2
+#   name_zh: ② 日度风险摘要生成
+#   name_en: RiskReportEngine.generate_daily
+#   intro: 校验两输入 portfolio_id 一致后，把风险快照与指标合并成单日风险全貌报告
+#   desc: portfolio_id 不一致抛 ZA-RPT-0003；risk_level=A1(snapshot.overall_risk_score)；report_date=as_of_date→YYYY-MM-DD；汇总 VaR/CVaR/回撤/杠杆/集中度/告警
+#   inputs: I1 I2 A1
+#   outputs: DailyRiskSummary
+# - id: A3
+#   name_zh: ③ 事件风险快报生成
+#   name_en: RiskReportEngine.generate_event_flash/_assess_impact/_recommendations_for_level
+#   intro: 有活跃告警时生成即时快报：按等级给影响评估和标准化处置建议
+#   desc: active_alerts 为空返回 None；impact=等级严重度(低/中/高/极高)+告警广度(单点/多点)；recommendations 按等级查静态建议表（LOW 监控→CRITICAL 减仓/Kill Switch）
+#   inputs: I1 A1
+#   outputs: EventRiskFlash（可空）
+#   invariant: 事件快报仅active_alerts非空时生成
+# - id: A4
+#   name_zh: ④ 周度风险深度聚合
+#   name_en: RiskReportEngine.generate_weekly/_determine_trend
+#   intro: 聚合一周日度报告算 VaR/回撤/评分均值极值，并用前后半段均值差判定趋势
+#   desc: 按日期排序；avg/max/min(var_1d_95)；max_drawdown 取 min（负值最负=最差）；趋势=后半段均值-前半段均值，>0.05→RISING，<-0.05→FALLING，否则 STABLE；空列表抛 ZA-RPT-0003
+#   inputs: I3
+#   outputs: WeeklyRiskDeep
+#   invariant: 周度趋势前后半段比对
+# - id: A5
+#   name_zh: ⑤ 月度风险治理聚合
+#   name_en: RiskReportEngine.generate_monthly
+#   intro: 聚合一个月日度报告，按风险等级统计天数分布和 high/critical 天数
+#   desc: month=首条 report_date[:7]；distribution[level]=天数计数；high_risk_days/critical_risk_days 分别统计；avg_var/max_var_99/avg_dd/avg_score；空列表抛 ZA-RPT-0003
+#   inputs: I3
+#   outputs: MonthlyRiskGovernance
+#   invariant: 月度分布按RiskLevel统计天数
+# 层: 输出
+# - id: O1
+#   name_zh: 日度风险摘要
+#   name_en: DailyRiskSummary
+#   intro: 单日风险全貌不可变报告（VaR/CVaR/回撤/杠杆/集中度/告警/等级）
+#   invariant: 4类报告frozen不可变
+#   downstream: zephyr.reporting；并作为周度/月度聚合的输入
+# - id: O2
+#   name_zh: 事件风险快报
+#   name_en: EventRiskFlash
+#   intro: 告警触发的即时风险通报（影响评估+处置建议），无告警不生成
+#   downstream: zephyr.reporting
+# - id: O3
+#   name_zh: 周度/月度风险报告
+#   name_en: WeeklyRiskDeep/MonthlyRiskGovernance
+#   intro: 周度趋势判定与月度风险等级分布治理报告
+#   downstream: zephyr.reporting
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I1 --> A3
+# I2 --> A2
+# I3 --> A4
+# I3 --> A5
+# A1 --> A2
+# A1 --> A3
+# A2 --> O1
+# A3 --> O2
+# A4 --> O3
+# A5 --> O3
 """
 
 from __future__ import annotations

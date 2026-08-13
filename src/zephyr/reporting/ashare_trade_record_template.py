@@ -14,13 +14,60 @@
 # [TESTS] tests/reporting/test_ashare_trade_record_template.py
 # [A_module] module_id=MOD-RPT-027 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record Template)
+"""
+
+D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record Template)
 
 为 A 股交易记录提供标准化模板: 11 必填字段 + 强制校验 + 模板版本管理。
 满足证监会交易记录留存要求, 属 A 类基础设施。
 
 设计真源: D:/临时工作区/依赖图/10-D-REPORTING-报告域.md §1.3 D-REPORTING-27
 蓝图: docs/03_modules/_domain_reporting/ashare_trade_record_template/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 交易记录字典 entry
+#   fields: 11必填字段 trade_date/symbol/side/quantity/price/amount/commission/stamp_duty/transfer_fee/strategy_id/account_id
+#   code: validate() 参数 entry（dict）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 格式校验（日期/代码/方向）
+#   name_en: AShareTradeRecordTemplate.validate 格式段
+#   intro: 校验交易日期是 YYYY-MM-DD、证券代码是 6 位数字、买卖方向是 BUY/SELL
+#   desc: _DATE_RE=^\d{4}-\d{2}-\d{2}$；_SYMBOL_RE=^\d{6}$；side.upper()∈(BUY,SELL)；缺字段或格式错抛 ZA-RPT-0005
+#   inputs: I1
+#   outputs: 格式合法的 trade_date/symbol/side
+# - id: A2
+#   name_zh: ② 数值与业务规则校验
+#   name_en: AShareTradeRecordTemplate.validate 数值段
+#   intro: 校验数量为 100 整数倍、金额等于数量乘价格、印花税仅卖出可非零等 A 股规则
+#   desc: quantity>0 且 quantity%100==0；price>0；amount==quantity×price；commission/transfer_fee≥0；stamp_duty≥0 且 BUY 时必须=0；strategy_id/account_id 非空
+#   inputs: A1
+#   outputs: 校验通过的 11 字段数值
+#   invariant: amount=quantity×price一致性；stamp_duty仅SELL>0；quantity为100整数倍
+# - id: A3
+#   name_zh: ③ 不可变记录生成
+#   name_en: TradeRecordEntry 构建
+#   intro: 把校验通过的字段装进 frozen 不可变记录并带模板版本号
+#   desc: TradeRecordEntry(schema_version="1.0")，strategy_id/account_id 去首尾空格
+#   inputs: A2
+#   outputs: TradeRecordEntry
+#   invariant: TradeRecordEntry frozen不可变
+# 层: 输出
+# - id: O1
+#   name_zh: A股交易记录（模板校验通过）
+#   name_en: TradeRecordEntry
+#   intro: 满足证监会交易记录留存要求的 11 必填字段标准化不可变记录
+#   invariant: 11必填字段强制校验
+#   downstream: zephyr.reporting（报告域内部消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# A3 --> O1
 """
 
 from __future__ import annotations

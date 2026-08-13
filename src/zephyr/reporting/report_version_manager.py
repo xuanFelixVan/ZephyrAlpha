@@ -14,7 +14,9 @@
 # [TESTS] tests/reporting/test_report_version_manager.py
 # [A_module] module_id=MOD-RPT-013 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — Report Version Manager (报告版本管理器)
+"""
+
+D_REPORTING — Report Version Manager (报告版本管理器)
 
 报告域版本化基座。为所有报告提供: 版本存储(append-only) + 差异引擎(版本间 diff)
 + 快照管理(create/get/list) + 哈希链审计(Tamper-Evident, 篡改可检测)。
@@ -33,6 +35,71 @@
 
 阶段2扩展（本次不实现, 见蓝图 §4）:
   - SQLite 持久化 / Merkle 树批量完整性证明 / OpenLineage 血缘
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 报告内容存储请求
+#   fields: report_id 逻辑报告标识 + content JSON可序列化dict
+#   code: store() 参数（report_id/content）
+# - id: I2
+#   name: 版本差异请求
+#   fields: report_id + from_version + to_version 版本号
+#   code: diff() 参数
+# 层: 算法
+# - id: A1
+#   name_zh: ① 版本存储与哈希链（append-only）
+#   name_en: ReportVersionManager.store/_compute_content_hash/_compute_record_hash
+#   intro: 内容算 SHA-256 指纹、版本号自动递增并链接前版哈希，append-only 落存
+#   desc: version_number=len(versions)+1；content_hash=SHA-256(canonical_json(content))；record_hash=SHA-256(version_id|timestamp|report_id|version_number|content_hash|prev_hash)；prev_hash(v_n)=record_hash(v_{n-1})；Lock 线程安全
+#   inputs: I1
+#   outputs: ReportVersion 不可变版本记录
+#   invariant: 版本号per report_id单调递增；哈希链prev_hash(v_n)=record_hash(v_{n-1})；append-only禁止修改删除
+# - id: A2
+#   name_zh: ② 快照管理
+#   name_en: get_version/get_latest/list_versions/list_reports
+#   intro: 按版本号取版本、取最新版、列全部版本和全部 report_id
+#   desc: 内存 _store: report_id→list[ReportVersion]（按版本号升序），查询返回副本
+#   inputs: A1
+#   outputs: 版本查询结果
+# - id: A3
+#   name_zh: ③ 差异引擎（键级 diff）
+#   name_en: ReportVersionManager.diff
+#   intro: 对比两版本内容字典，按键给出新增/删除/修改三类差异
+#   desc: 遍历 old∪new 键：仅新有→additions，仅旧有→deletions，值不等→modifications(key→(old,new))；版本不存在抛 ZA-RPT-0002
+#   inputs: I2 A2
+#   outputs: VersionDiff（additions/deletions/modifications）
+# - id: A4
+#   name_zh: ④ 审计链验证
+#   name_en: ReportVersionManager.verify_chain
+#   intro: 遍历全部版本重算哈希，验证版本号连续、prev_hash 链接、内容与记录指纹未篡改
+#   desc: 逐项校验 version_number==i+1、prev_hash 链接、content_hash 重算、record_hash 重算；任一不符返回 False；空链视为完整
+#   inputs: A1
+#   outputs: 链完整性 bool
+# 层: 输出
+# - id: O1
+#   name_zh: 报告版本记录（含哈希链）
+#   name_en: ReportVersion
+#   intro: 报告域版本化基座产出的不可变版本记录，满足交易日志≥7年不可篡改审计约束
+#   invariant: ReportVersion frozen不可变
+#   downstream: zephyr.reporting（各报告模块版本化基座）
+# - id: O2
+#   name_zh: 版本差异
+#   name_en: VersionDiff
+#   intro: 两版本间键级差异（新增/删除/修改），供报告变更审计与对比
+#   downstream: zephyr.reporting（报告域内部消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A3
+# A1 --> A2
+# A2 --> A3
+# A2 --> A4
+# A1 --> A4
+# A1 --> O1
+# A3 --> O2
+# A4 --> O1
 """
 
 from __future__ import annotations

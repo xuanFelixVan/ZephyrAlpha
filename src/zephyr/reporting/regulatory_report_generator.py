@@ -14,7 +14,9 @@
 # [TESTS] tests/reporting/test_regulatory_report_generator.py
 # [A_module] module_id=MOD-RPT-006 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — Regulatory Report Generator (监管报告生成器)
+"""
+
+D_REPORTING — Regulatory Report Generator (监管报告生成器)
 
 生成证监会/交易所要求的 4 类监管报告（基础版, 手动生成）:
   - ProgrammaticTradingReport: 程序化交易报告 (策略架构/参数/风控规则)
@@ -27,6 +29,86 @@
 
 设计真源: D:/临时工作区/依赖图/10-D-REPORTING-报告域.md §1.2 D-REPORTING-06, §4.8
 蓝图: docs/03_modules/_domain_reporting/regulatory_report_generator/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 策略与风控规则列表
+#   fields: strategies(name/parameters/status) + risk_rules(name/threshold/action)
+#   code: strategies/risk_rules（generate_programmatic_trading 参数）
+# - id: I2
+#   name: 异常交易事件列表
+#   fields: events(event_type/trigger/action/timestamp)
+#   code: events（generate_abnormal_trading 参数）
+# - id: I3
+#   name: 持仓列表
+#   fields: holdings(symbol/quantity/market_value/sector)
+#   code: holdings（generate_position 参数）
+# - id: I4
+#   name: 绩效指标 metrics dict
+#   fields: return_pct / max_drawdown / sharpe_ratio / sortino_ratio / attribution_summary
+#   code: metrics（generate_performance 参数）
+# - id: I5
+#   name: 报告元数据
+#   fields: portfolio_id 账户标识 + reporting_period 报告期(YYYY-MM/YYYY-Qn/YYYY)
+#   code: portfolio_id/reporting_period（各 generate_* 公共参数）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 程序化交易报告生成
+#   name_en: RegulatoryReportGenerator.generate_programmatic_trading
+#   intro: 把策略架构参数和风控规则打包成程序化交易监管报告内容
+#   desc: content={strategies, risk_rules, strategy_count, risk_rule_count}，必填缺失抛 ZA-RPT-0006
+#   inputs: I1
+#   outputs: programmatic_trading content
+# - id: A2
+#   name_zh: ② 异常交易自报生成
+#   name_en: RegulatoryReportGenerator.generate_abnormal_trading
+#   intro: 汇总异常事件、触发条件和处置动作生成异常交易自报
+#   desc: content={events, event_count, event_types(去重)}
+#   inputs: I2
+#   outputs: abnormal_trading content
+# - id: A3
+#   name_zh: ③ 持仓报告生成（集中度+行业分布）
+#   name_en: RegulatoryReportGenerator.generate_position
+#   intro: 算总市值、最大持仓集中度和各行业市值占比生成持仓报告
+#   desc: total=Σmarket_value；top_concentration=max(market_value)/total；sector_concentrations[s]=Σsector市值/total
+#   inputs: I3
+#   outputs: position content（含集中度指标）
+# - id: A4
+#   name_zh: ④ 绩效报告生成
+#   name_en: RegulatoryReportGenerator.generate_performance
+#   intro: 校验 return_pct/max_drawdown/sharpe_ratio 必填后打包绩效报告
+#   desc: 必填三指标缺失抛 ZA-RPT-0006；content={metrics, return_pct, max_drawdown, sharpe_ratio}
+#   inputs: I4
+#   outputs: performance content
+# - id: A5
+#   name_zh: ⑤ 报告组装与完整性指纹
+#   name_en: _build_report/_compute_data_hash/validate_report
+#   intro: 把内容装进 frozen 报告并算 SHA-256 指纹，校验时重算比对防篡改
+#   desc: data_hash=SHA-256(canonical_json(content))（sort_keys 确定性序列化）；report_id=REG-{类型前3字母}-uuid10；validate_report 重算哈希比对
+#   inputs: A1 A2 A3 A4 I5
+#   outputs: RegulatoryReport
+#   invariant: data_hash=SHA-256(canonical_json(content))；RegulatoryReport frozen不可变；基础版不含自动化报送(GATE-002/003)
+# 层: 输出
+# - id: O1
+#   name_zh: 监管报告（4 类）
+#   name_en: RegulatoryReport
+#   intro: 程序化交易/异常交易/持仓/绩效 4 类证监会交易所监管报告（手动生成基础版）
+#   invariant: 4类报告(程序化交易/异常交易/持仓/绩效)；必填字段缺失拒绝
+#   downstream: zephyr.reporting（报告域内部消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A3
+# I4 --> A4
+# I5 --> A5
+# A1 --> A5
+# A2 --> A5
+# A3 --> A5
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations

@@ -14,7 +14,9 @@
 # [TESTS] tests/reporting/test_report_publisher.py
 # [A_module] module_id=MOD-RPT-003 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — Report Publisher (报告发布器)
+"""
+
+D_REPORTING — Report Publisher (报告发布器)
 
 报告域唯一出口(D-RPT-D05)。所有报告模块的输出汇聚至此, 归档+分发。
 
@@ -32,6 +34,70 @@
 
 设计真源: D:/临时工作区/依赖图/10-D-REPORTING-报告域.md §1.1 D-REPORTING-03, §2.1, §3
 蓝图: docs/03_modules/_domain_reporting/report_publisher/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 报告发布请求
+#   fields: report_id 逻辑标识 + source 报告来源枚举 + report_type 类型 + content JSON可序列化dict
+#   code: publish() 参数（report_id/source/report_type/content）
+# - id: I2
+#   name: 分发渠道列表
+#   fields: channels（ARCHIVE/WEBHOOK/EMAIL，默认 [ARCHIVE]）
+#   code: channels（publish() 参数）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 发布输入校验
+#   name_en: _require + content 类型检查
+#   intro: 检查 report_id/source/report_type/content 必填非空且 content 必须是 dict
+#   desc: 缺失/空/非dict 抛 ZA-RPT-0003
+#   inputs: I1
+#   outputs: 校验通过的发布请求
+# - id: A2
+#   name_zh: ② 归档与哈希链（append-only）
+#   name_en: ReportPublisher.publish/_compute_content_hash/_compute_record_hash
+#   intro: 报告内容算 SHA-256 指纹并链接上一条记录哈希，append-only 写入归档
+#   desc: content_hash=SHA-256(canonical_json(content))；prev_hash=上一条 record_hash（首条为空）；record_hash=SHA-256(archive_id|archived_at|report_id|source|report_type|content_hash|prev_hash)；Lock 保证线程安全
+#   inputs: A1
+#   outputs: ArchivedReport（含哈希链）
+#   invariant: append-only归档+哈希链；frozen不可变；线程安全；纯消费层不发布事件(D-RPT-D01)
+# - id: A3
+#   name_zh: ③ 报告分发（基础版）
+#   name_en: _distribute
+#   intro: 按渠道定分发状态：仅归档直接 SENT，微信/邮件挂 PENDING 待对接
+#   desc: _BASE_DISTRIBUTION_STATUS 映射：ARCHIVE→SENT，WEBHOOK/EMAIL→PENDING；生成 DistributionRecord
+#   inputs: A2 I2
+#   outputs: DistributionRecord 分发记录
+# - id: A4
+#   name_zh: ④ 哈希链完整性校验
+#   name_en: ReportPublisher.verify_chain
+#   intro: 遍历归档重算三层哈希，验证链无断裂、内容未篡改
+#   desc: 逐条比对 content_hash 重算值、prev_hash 链接、record_hash 重算值，任一不符返回 False
+#   inputs: A2
+#   outputs: 链完整性 bool
+# 层: 输出
+# - id: O1
+#   name_zh: 归档报告（含哈希链）
+#   name_en: ArchivedReport
+#   intro: 报告域唯一出口归档产物，可按 archive_id/source/type 查询与取最新
+#   invariant: 报告域唯一出口(D-RPT-D05)
+#   downstream: zephyr.reporting（各报告模块汇聚至此归档）；verify_chain 供完整性审计
+# - id: O2
+#   name_zh: 分发记录
+#   name_en: DistributionRecord
+#   intro: 单次分发操作记录（ARCHIVE已送达；微信Webhook/邮件SMTP基础版仅登记PENDING未实际发送）
+#   downstream: WEBHOOK(微信)/EMAIL(邮件) 外部渠道（基础版 PENDING 受限未发）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A3
+# A1 --> A2
+# A2 --> A3
+# A2 --> A4
+# A2 --> O1
+# A3 --> O2
+# A4 --> O1
 """
 
 from __future__ import annotations

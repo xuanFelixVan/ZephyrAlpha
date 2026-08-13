@@ -14,13 +14,62 @@
 # [TESTS] tests/reporting/test_report_watermark_tracker.py
 # [A_module] module_id=MOD-RPT-017 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — Report Watermark Tracker (报告水印追踪器)
+"""
+
+D_REPORTING — Report Watermark Tracker (报告水印追踪器)
 
 为每份报告加盖不可篡改水印, 提供来源追溯+完整性校验+哈希链审计。
 复用 POS-009/EX-15/RPT-013 的哈希链模式。
 
 设计真源: D:/临时工作区/依赖图/10-D-REPORTING-报告域.md §1.3 D-REPORTING-17
 蓝图: docs/03_modules/_domain_reporting/report_watermark_tracker/blueprint.md
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 水印加盖请求
+#   fields: report_id 报告标识 + content JSON可序列化dict + source 生成源模块名
+#   code: stamp() 参数（report_id/content/source）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 水印加盖与哈希链（append-only）
+#   name_en: WatermarkTracker.stamp/_compute_content_hash/_compute_signature/_compute_record_hash
+#   intro: 为报告内容算内容指纹和水印签名，并链接上一条水印哈希形成防篡改链
+#   desc: content_hash=SHA-256(canonical_json(content))；watermark_signature=SHA-256(source|content_hash|timestamp)；record_hash=SHA-256(watermark_id|report_id|source|timestamp|content_hash|signature|prev_watermark_hash)；prev_watermark_hash(w_n)=record_hash(w_{n-1})；Lock 线程安全
+#   inputs: I1
+#   outputs: ReportWatermark 不可变水印记录
+#   invariant: watermark_signature=SHA-256(source+content_hash+timestamp)；append-only禁止修改删除
+# - id: A2
+#   name_zh: ② 水印完整性校验
+#   name_en: WatermarkTracker.verify_watermark
+#   intro: 重算内容哈希和水印签名，检测报告内容被篡改或水印被伪造
+#   desc: 重算 content_hash 与记录比对（内容篡改检测）；重算 signature 与记录比对（水印伪造检测）；任一不符返回 False
+#   inputs: A1
+#   outputs: 水印校验 bool
+# - id: A3
+#   name_zh: ③ 水印哈希链审计
+#   name_en: WatermarkTracker.verify_chain
+#   intro: 遍历报告全部水印，验证链链接、签名与记录指纹均未被破坏
+#   desc: 逐条校验 prev_watermark_hash 链接、signature 重算、record_hash 重算；任一不符返回 False；无水印返回 True
+#   inputs: A1
+#   outputs: 链完整性 bool
+#   invariant: 哈希链prev_watermark_hash(w_n)=record_hash(w_{n-1})
+# 层: 输出
+# - id: O1
+#   name_zh: 报告水印记录（含哈希链）
+#   name_en: ReportWatermark
+#   intro: 加盖在报告上的不可篡改水印，支持来源追溯（list_sources）与完整性校验
+#   invariant: ReportWatermark frozen不可变
+#   downstream: zephyr.reporting（报告域内部消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A3
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
 """
 
 from __future__ import annotations

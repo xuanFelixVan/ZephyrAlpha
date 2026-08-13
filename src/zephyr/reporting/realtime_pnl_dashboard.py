@@ -14,7 +14,9 @@
 # [TESTS] tests/reporting/test_realtime_pnl_dashboard.py
 # [A_module] module_id=MOD-RPT-004 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘)
+"""
+
+D_REPORTING — Real-time P&L Dashboard (实时盈亏仪表盘)
 
 盘中实时聚合 PnL/持仓/风控状态, 产出 DashboardSnapshot 供 D-FRONTEND 渲染。
 本模块只产出数据, 不渲染 UI; 3s 刷新由消费者定时调用 refresh() 实现（不内置定时器,
@@ -35,6 +37,76 @@
 
 属 A 类基础设施（确定性数据聚合），纯消费层不发布领域事件(D-RPT-D01)。
 纯基础设施: 不决定"买什么/何时买"，只负责"实时算出当前盈亏/持仓/风控状态"。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 成交回报 Fill + 买卖方向（CTR-005 契约）
+#   fields: fill(symbol/price/quantity/fees) + side(BUY/SELL) + avg_cost(可选)
+#   code: record_fill() 参数（zephyr.shared.contracts.fill.Fill）
+# - id: I2
+#   name: 当前市价字典
+#   fields: market_prices {symbol: Decimal 当前市价}
+#   code: refresh() 参数 market_prices
+# - id: I3
+#   name: PositionTracker 持仓状态（MOD-EX-002）
+#   fields: holdings 持仓数量 + avg_costs 均价 + cash 现金
+#   code: zephyr.ex_core.position_tracker.tracker.PositionTracker
+# - id: I4
+#   name: 风控状态快照（可选）
+#   fields: RiskDashboardSnapshot（不注入则降级为 None）
+#   code: update_risk() 参数 risk_snapshot
+# 层: 算法
+# - id: A1
+#   name_zh: ① 已实现盈亏累计
+#   name_en: RealtimePnlDashboard.record_fill
+#   intro: 每笔成交算已实现盈亏：买入只计费用，卖出按价差乘数量计净盈亏并累加
+#   desc: BUY: gross_pnl=0 仅累加 fees；SELL: gross=(fill_price-avg_cost)×qty，累加 net_pnl+fees；avg_cost=None 时从 tracker 读（须在 apply_fill 前调用）
+#   inputs: I1 I3
+#   outputs: RealizedPnl + 累计 realized_pnl_total/fees_total/fill_count
+#   invariant: realized_pnl_total仅record_fill修改(refresh只读)
+# - id: A2
+#   name_zh: ② 市价校验
+#   name_en: RealtimePnlDashboard.refresh 前置校验
+#   intro: 拒绝负市价，市价缺失的标的回退用均价（浮盈按 0 算）
+#   desc: price<0 抛 ZA-RPT-0001；market_prices.get(symbol, avg_cost) 回退
+#   inputs: I2
+#   outputs: 校验通过的市价表
+# - id: A3
+#   name_zh: ③ 未实现盈亏与持仓明细重算
+#   name_en: refresh 持仓循环 + PnlCalculator.calculate_unrealized
+#   intro: 用当前市价逐标的重算市值和浮动盈亏及浮盈百分比
+#   desc: market_value=qty×current_price；upnl=calculate_unrealized(symbol,qty,avg_cost,price)；pct=(current-avg)/avg×100（avg=0 时为 0.0）
+#   inputs: A2 I3
+#   outputs: PositionPnlEntry 列表 + unrealized_total + total_market_value
+#   invariant: Decimal-only金额计算(return_pct除外)
+# - id: A4
+#   name_zh: ④ 组合快照组装
+#   name_en: refresh 快照构建（DashboardSnapshot）
+#   intro: 汇总已实现+未实现得总盈亏，算总资产和收益率产出不可变快照
+#   desc: total_pnl=realized+unrealized；total_assets=cash+total_market_value；return_pct=total_pnl/initial_capital×100；缓存为最近快照
+#   inputs: A1 A3 I4
+#   outputs: DashboardSnapshot
+#   invariant: total_pnl=realized+unrealized恒成立；DashboardSnapshot/PositionPnlEntry frozen不可变；纯消费层不发布事件不改持仓
+# 层: 输出
+# - id: O1
+#   name_zh: 实时盈亏仪表盘快照
+#   name_en: DashboardSnapshot
+#   intro: 某时刻完整组合盈亏/持仓明细/风控状态的不可变快照，供前端渲染（3s 刷新由消费者定时调 refresh）
+#   invariant: total_pnl=realized+unrealized
+#   downstream: zephyr.frontend（D-FRONTEND 渲染消费）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# I3 --> A1
+# I3 --> A3
+# I4 --> A4
+# A1 --> A4
+# A2 --> A3
+# A3 --> A4
+# A4 --> O1
 """
 
 from __future__ import annotations
