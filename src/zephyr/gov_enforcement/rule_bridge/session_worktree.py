@@ -30,7 +30,9 @@
 
 # [TTL] permanent
 
-"""session_worktree.py — AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）
+"""
+
+session_worktree.py — AI 对话 worktree 物理隔离 helper（FP-ISO.4C，2026-07-01 治本）
 
 41 个并发丢失案例分析结论：模式 A（git stash/reset/checkout 冲掉工作区）占 51%，
 
@@ -106,6 +108,112 @@ Usage（AI 通过 RunCommand 调用）::
 
     "
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session 生命周期请求入参
+#   fields: session_id + files + message + breaking_change/allow_concurrent/task_files/depends_on_sessions 等开关
+#   code: session_worktree_start L2554 / session_worktree_commit L4689 / session_worktree_merge L6951 / session_worktree_abort L7930
+# - id: I2
+#   name: 主工作区文件与 HEAD
+#   fields: 项目根待提交文件（同步源）+ 主工作区 HEAD（base 新鲜度锚点）
+#   code: _sync_files_to_worktree L3615 / _ensure_worktree_base_fresh L3426
+# - id: I3
+#   name: SessionRegistry 注册表
+#   fields: 活跃 session 并发状态 / breaking_change 标记 / task_files 指纹 / 依赖 session
+#   code: SessionRegistry（始终用主仓库根目录，非 worktree）
+# - id: I4
+#   name: WorktreePool 预创建池
+#   fields: .aidrafts_pool/ 下 idle worktree（lease 优先，失败 fall back 直接创建）
+#   code: worktree_pool.get_pool().lease(sid)（ARCH-GIT-CALL-BUDGET P3.3）
+# 层: 算法
+# - id: A1
+#   name_zh: ① session 启动与并发阻断
+#   name_en: session_worktree_start
+#   intro: 对话启动一步搞定注册+开独立 worktree，治本变更期间双向阻断其他并发 session
+#   desc: 健康自检 → breaking_change 双向阻断 + task_files Jaccard≥50% 任务去重 → 注册 session → pool.lease 优先（失败 fall back manager.create_session_worktree，pool 永不阻断）→ 顺带清理 .aidrafts/ 根目录超 1h 的 _* 孤儿脚本 L2554+
+#   inputs: I1 I3 I4
+#   outputs: {ok, session_id, worktree_path, branch=session/{sid}}
+#   invariant: 幂等——worktree 已存在则复用；breaking_change 并发阻断 allow_concurrent 可逃生
+# - id: A2
+#   name_zh: ② worktree base 新鲜度对齐
+#   name_en: _ensure_worktree_base_fresh
+#   intro: 提交前先查 worktree 的 base 有没有落后于主 HEAD，落后就自动对齐防搭便车提交
+#   desc: worktree HEAD vs 主工作区 HEAD 比对：无 session commit → git reset --hard <main HEAD>；有 session commit → git rebase <main HEAD>，冲突 fail-loud 返回 base_sync_failed=True 阻断 L3426
+#   inputs: I2
+#   outputs: 对齐后的 worktree base / 阻断
+# - id: A3
+#   name_zh: ③ 文件同步与 worktree 内提交
+#   name_en: session_worktree_commit
+#   intro: 把项目根的改动拷进 worktree，跑完 HELD-OVERLAP/DCR/pre-commit 三道检测后在 worktree 独立 index 里直接 commit
+#   desc: copy2 同步文件到 worktree L3615 → HELD-OVERLAP gate → DCR 检测（subprocess check_directory_contract，fail-closed）→ gate_registry.check_all 跑 worktree-compatible gates（monkeypatch run_git 重定向到 worktree，框架异常降级 warn）→ worktree 内 git add+commit L4689
+#   inputs: I1 I2 A2
+#   outputs: {ok, commit_hash} / GATE_VIOLATION 阻断
+#   invariant: worktree 有独立 index，无需 _GlobalCommitLock
+# - id: A4
+#   name_zh: ④ pre-merge 拓扑检查
+#   name_en: _run_pre_merge_topo_check
+#   intro: merge 前用 MAIN 副本的对齐检查器扫 worktree，session 自己引入的 HIGH 级漂移直接阻断合并
+#   desc: subprocess 调 check_blueprint_code_alignment --json --scan-root <worktree>；HIGH（ORPHAN_MODULE_ID/MODULE_ID_DRIFT）且属 session 变更文件 → 阻断；LOW 暂态容忍；checker 缺失 fail-closed，DB/超时/JSON 失败 fail-open L5968
+#   inputs: I1 I2
+#   outputs: 放行 / merge 阻断
+# - id: A5
+#   name_zh: ⑤ pre-merge gate 检查
+#   name_en: _pre_merge_gate_check
+#   intro: 模拟 staged 状态再跑一遍门禁，抓住 commit 之后主分支新上的 gate 规则
+#   desc: git reset --soft merge-base 模拟 staged → 跑全部 worktree-compatible gates（跳过 _WORKTREE_SKIP_GATES）→ 阻断则 return merged=False → git reset --soft orig_head 恢复现场；gate 异常降级 warn 不阻断 L6170
+#   inputs: A4
+#   outputs: 放行 / merged=False
+# - id: A6
+#   name_zh: ⑥ 合并回主分支与收尾
+#   name_en: session_worktree_merge
+#   intro: --no-ff 把 session 分支合回主分支，串行化防并发，合完自动跑 reconciler 补漂移再清理注销
+#   desc: _pre_merge_auto_clean → A4/A5 检查 → WorktreeManager.merge_session_worktree（--no-ff + _WorktreeLock 串行）→ reconcile_verify 默认触发全部已注册 reconciler → 清理 worktree + kill heartbeat daemon + 注销 session L6951
+#   inputs: I1 I3 A5
+#   outputs: {ok, merged} + 主分支新 commit
+#   invariant: merge 串行化由 _WorktreeLock 保护
+# - id: A7
+#   name_zh: ⑦ 放弃 session
+#   name_en: session_worktree_abort
+#   intro: 任务不要了——丢弃 worktree 里的修改，删 worktree 和分支，注销 session
+#   desc: cleanup_session_worktree(force) + unregister + kill heartbeat daemon L7930；返回 dict 不抛异常
+#   inputs: I1 I3
+#   outputs: {ok, aborted}
+# 层: 输出
+# - id: O1
+#   name_zh: 生命周期操作结果 dict
+#   name_en: StartResult / CommitResult dict
+#   intro: start/commit/merge/abort 统一返回 dict——ok 字段是成败唯一入口，含 worktree_path/branch/commit_hash/merged
+#   invariant: 所有函数返回 dict 不抛异常；失败附 error/blocked_by 字段
+#   downstream: scripts/governance/session_worktree_cli.py（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: 主分支合并落地
+#   name_en: merged commit on main branch
+#   intro: session 工作经 --no-ff merge 进入主分支，worktree/session/心跳全部清理回收
+#   downstream: AI 对话工作流（AGENTS.md 规则）+ post-merge reconciler 链路
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# I4 --> A1
+# I2 --> A2
+# A2 --> A3
+# I1 --> A3
+# I2 --> A3
+# I1 --> A4
+# I2 --> A4
+# A4 --> A5
+# A5 --> A6
+# I1 --> A6
+# I3 --> A6
+# I1 --> A7
+# I3 --> A7
+# A1 --> O1
+# A3 --> O1
+# A6 --> O1
+# A7 --> O1
+# A6 --> O2
 """
 
 from __future__ import annotations

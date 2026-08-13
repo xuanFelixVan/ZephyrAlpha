@@ -16,6 +16,8 @@
 # [TTL] permanent
 
 """
+
+
 GateEventAdapter — GateRepo 事件适配器（DW-0006）
 ===================================================
 将 gate 运行结果作为事件追加到 task_events 表，
@@ -24,6 +26,60 @@ GateEventAdapter — GateRepo 事件适配器（DW-0006）
 功能：
 - append_gate_event: 将 gate pass/fail 结果作为 GATE_PASSED/GATE_FAILED 事件追加
 - query_gate_events: 按 task_id 查询 gate 相关事件
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: gate 运行结果入参
+#   fields: task_id + gate_id + passed + 可选 details/session_id
+#   code: append_gate_event(task_id, gate_id, passed, ...) L63-71
+# - id: I2
+#   name: task_events 事件表 SQLite
+#   fields: event_id / event_type / payload / timestamp / session_id
+#   code: EventStore(DB_PATH, auto_init=True) L60-61
+# 层: 算法
+# - id: A1
+#   name_zh: ① 事件类型映射与 payload 组装
+#   name_en: GateEventAdapter.append_gate_event
+#   intro: 把 gate 通过/失败翻译成 GATE_PASSED/GATE_FAILED 事件类型并打包 payload
+#   desc: _GATE_EVENT_TYPE_MAP L43-46 查表 passed→GATE_PASSED / failed→GATE_FAILED；payload={gate_id, passed[, details]} L92-98
+#   inputs: I1
+#   outputs: event_type + payload
+#   invariant: event_type 枚举变更必须同步更新 _GATE_EVENT_TYPE_MAP
+# - id: A2
+#   name_zh: ② 事件原子追加写库
+#   name_en: EventStore.append_event
+#   intro: 把组装好的 gate 事件原子追加进 task_events 表，落地 Event Sourcing
+#   desc: 透传 task_id/event_type/payload/session_id L100-105；与 gate 持久化原子（INVARIANTS）
+#   inputs: A1 I2
+#   outputs: event_id
+# - id: A3
+#   name_zh: ③ gate 事件查询过滤
+#   name_en: GateEventAdapter.query_gate_events
+#   intro: 按 task_id 回放全部事件，只挑 GATE_PASSED/GATE_FAILED 两类按时间正序返回
+#   desc: replay_events(task_id) 全量回放 → 过滤 event_type ∈ {GATE_PASSED, GATE_FAILED} → 投影为 dict L115-126
+#   inputs: I2
+#   outputs: gate 事件列表
+# 层: 输出
+# - id: O1
+#   name_zh: 新事件 event_id
+#   name_en: str
+#   intro: append_gate_event 返回的事件唯一标识，供调用方追溯
+#   downstream: gate_engine MOD-GATE_ENGINE（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: gate 事件列表
+#   name_en: list[dict]
+#   intro: 指定 task 的 gate 通过/失败历史（event_id/type/payload/timestamp/session_id）
+#   downstream: gate_engine MOD-GATE_ENGINE（# [CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I2 --> A2
+# A2 --> O1
+# I2 --> A3
+# A3 --> O2
 """
 
 from __future__ import annotations

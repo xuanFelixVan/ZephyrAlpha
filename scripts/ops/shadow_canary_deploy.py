@@ -14,7 +14,9 @@
 # [TESTS] tests/ops/test_shadow_canary_deploy.py
 # [TTL] permanent
 # noqa: m11-perm-manual-legitimate  合法 manual CI/CD 灰度发布运行器（簇C EX-021 门禁基建）：GitHub Actions workflow_dispatch / 人工按需调用，非常驻服务/cron/daemon，对齐 apply_depgraph.py 的 manual permanent CLI 写入模式
-"""shadow_canary_deploy.py — Shadow Canary 部署运行器（簇C CI/CD 灰度发布基建）
+"""
+
+shadow_canary_deploy.py — Shadow Canary 部署运行器（簇C CI/CD 灰度发布基建）
 
 把 4 个已有原语编排成一条命令，满足 EX-021 门禁的「CI/CD 灰度发布基础设施」半：
 
@@ -52,16 +54,96 @@ shadow/promote 部分通过本脚本在生产机本地执行（手动或 self-ho
 用法示例::
 
   # 生产灰度（deploy.yml 调用）
-  python scripts/ops/shadow_canary_deploy.py \\
-      --baseline-ref v1.2.3 --duration 600 --divergence-threshold 0.05
+  python scripts/ops/shadow_canary_deploy.py       --baseline-ref v1.2.3 --duration 600 --divergence-threshold 0.05
 
   # smoke 测试（预检跳过 + 自定义影子命令 + 测试数据）
-  python scripts/ops/shadow_canary_deploy.py \\
-      --precheck-mode skip --duration 5 --divergence-threshold 0.05 \\
-      --shadow-cmd "python -c 'import json,os; \\
-      p=os.environ[\"ZEPHYR_SHADOW_OUTPUT_PATH\"]; \\
-      open(p,\"w\").write(json.dumps({\"symbol\":\"000001\",\"timestamp\":\"t1\",\"side\":\"BUY\",\"quantity\":100,\"price\":10.0})+chr(10))'" \\
-      --production-log tests/ops/fixtures/prod_decisions.jsonl
+  python scripts/ops/shadow_canary_deploy.py       --precheck-mode skip --duration 5 --divergence-threshold 0.05       --shadow-cmd "python -c 'import json,os;       p=os.environ["ZEPHYR_SHADOW_OUTPUT_PATH"];       open(p,"w").write(json.dumps({"symbol":"000001","timestamp":"t1","side":"BUY","quantity":100,"price":10.0})+chr(10))'"       --production-log tests/ops/fixtures/prod_decisions.jsonl
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: CLI 命令行参数 7项
+#   fields: baseline_ref / duration / divergence_threshold / adapter / shadow_cmd / production_log / precheck_mode
+#   code: _build_argparser L626
+# - id: I2
+#   name: 生产侧决策日志 jsonl 文件
+#   fields: 每行一条 symbol/timestamp/side/quantity/price
+#   code: logs/production_decisions.jsonl L107
+# - id: I3
+#   name: 影子进程输出决策 jsonl 文件
+#   fields: 每行一条 symbol/timestamp/side/quantity/price（新版本影子决策）
+#   code: logs/shadow_canary/<run_id>/new_decisions.jsonl（ZEPHYR_SHADOW_OUTPUT_PATH 传给子进程）
+# - id: I4
+#   name: 预检命令 4条 GATE-CDC-1
+#   fields: consumer_expectations / schema_version / contract_consistency / health（环境变量 ZEPHYR_PRECHECK_*_CMD 可覆盖）
+#   code: _PRECHECK_DEFAULTS L111
+# 层: 算法
+# - id: A1
+#   name_zh: ① GATE-CDC-1 四项预检
+#   name_en: run_precheck
+#   intro: 发布前先跑4条治理检查命令，任一失败就不进入影子阶段
+#   desc: 4条子命令 returncode==0 视为通过 + simulation_broker 可导入检查；skip 模式 vacuous-pass；异常 fail-closed 视为 blocker
+#   inputs: I1 I4
+#   outputs: CanIDeployResult（allowed/checks/blockers）
+#   invariant: 预检失败 exit 2 不进入 shadow
+# - id: A2
+#   name_zh: ② 影子进程部署
+#   name_en: WindowsProcessDeployer
+#   intro: 启动新版本影子子进程吸相同输入，但走模拟券商不下真单
+#   desc: spawn_python_hidden 启动 → wait_or_timeout 按 duration 等待 → stop 终止 → read_output 读输出；container 适配器为 NotImplementedError stub（#ARCH-065 激活）
+#   inputs: I1
+#   outputs: 影子决策 jsonl（经 I3 落盘）
+#   invariant: shadow-cmd 须含 simulation token（缺失仅 warn 不阻断）
+# - id: A3
+#   name_zh: ③ 决策对齐比对
+#   name_en: compare_decisions
+#   intro: 按(symbol,timestamp)对齐生产与影子决策，算分歧率
+#   desc: 分歧率=mismatches/aligned；不匹配=side不同 或 qty差>1e-9 或 price差超阈值；aligned=0且单侧有差异→1.0 fail-safe，双方皆空→0.0
+#   inputs: I2 I3
+#   outputs: ComparisonResult（divergence_rate/aligned/mismatches/new_only/prod_only/deltas）
+# - id: A4
+#   name_zh: ④ 金丝雀状态机裁决
+#   name_en: CanaryRolloutManager
+#   intro: 分歧率低于阈值就放行 ROLLOUT，否则回滚 ROLLED_BACK
+#   desc: DRAFT→SAMPLING→ROLLOUT/ROLLED_BACK；promote = divergence_rate < threshold
+#   inputs: A3
+#   outputs: CanaryState + 退出码（0=promote / 1=rollback）
+#   invariant: 分歧率 < threshold 才 promote
+# - id: A5
+#   name_zh: ⑤ 运行报告写入
+#   name_en: _write_report
+#   intro: 把预检/比对/状态机/退出码汇总落盘 report.json
+#   desc: 汇总 run_id/precheck/comparison/shadow_canary/canary_state/exit_code/outcome 写 json；写失败不改变退出码
+#   inputs: A1 A3 A4
+#   outputs: report.json
+# 层: 输出
+# - id: O1
+#   name_zh: report.json 灰度运行报告
+#   name_en: report.json
+#   intro: 本次灰度发布的完整裁决依据落盘文件
+#   downstream: 人工审查/CI 归档 logs/shadow_canary/<run_id>/
+# - id: O2
+#   name_zh: 进程退出码 0/1/2
+#   name_en: exit_code
+#   intro: 0=promote放行 1=rollback回滚 2=预检失败或异常
+#   invariant: 预检失败恒为2；分歧率>=阈值恒为1
+#   downstream: .github/workflows/deploy.yml shadow-canary job 门禁（MOD-CD-001 消费方）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I4 --> A1
+# I1 --> A2
+# A1 --> A2
+# A2 --> A3
+# I2 --> A3
+# I3 --> A3
+# A3 --> A4
+# A1 --> A5
+# A3 --> A5
+# A4 --> A5
+# A5 --> O1
+# A4 --> O2
 """
 from __future__ import annotations
 

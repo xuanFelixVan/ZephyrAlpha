@@ -14,7 +14,9 @@
 # [TESTS] tests/governance/rule_bridge/test_batched_auto_committer.py
 # [A_module] module_id=MOD-GOV_BATCHED_AUTO_COMMITTER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""batched_auto_committer.py — Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）
+"""
+
+batched_auto_committer.py — Reconciler 批量化 auto-commit 拦截器（ARCH-GIT-CALL-BUDGET P2.3，2026-07-19）
 
 将 post-commit reconciler 阶段的 N 次独立 ``_commit_auto`` 调用合并为 1 次 squash
 commit，消除「N reconciler × 1 git commit = N commits」反模式（典型场景：所有已注册
@@ -74,6 +76,71 @@ Usage::
             committed_files, session_id, commit_message="",
         )
     # 退出 with 块时自动 flush，产生单个 squash commit
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: reconciler auto-commit 调用入参
+#   fields: session_id + files 绝对路径列表 + commit message
+#   code: buffer(session_id, files, message) L221-223；enable(session_id) L162
+# - id: I2
+#   name: GitCommitGateway 实例
+#   fields: gateway._commit_auto 复用现有提交流程（DCR/TTL/FPT gate + 全局锁 + git add/commit）
+#   code: BatchedAutoCommitter.__init__(gateway) L142-158
+# 层: 算法
+# - id: A1
+#   name_zh: ① 批量模式开关
+#   name_en: enable / disable / is_enabled
+#   intro: enable 进入拦截模式并记 session_id、清空 buffer；disable 退出模式
+#   desc: enable: _enabled=True + _session_id=sid + _buffer=[] L162-174；is_enabled 供 _commit_auto 入口查询 L187-189
+#   inputs: I1
+#   outputs: batching 模式状态
+#   invariant: buffer 清空幂等，可重复 enable/flush
+# - id: A2
+#   name_zh: ② 提交拦截缓冲
+#   name_en: BatchedAutoCommitter.buffer
+#   intro: 拦截每个 reconciler 的 _commit_auto，不进 git 只攒进内存列表，回个合成成功回执
+#   desc: 累积 BufferedCommit(session_id, files, message) L241-247；返回 CommitResult(OK, commit_hash="BUFFERED") L257-261 让 reconciler 记 auto_committed
+#   inputs: I1 A1
+#   outputs: 合成 CommitResult（BUFFERED）
+#   invariant: 线程不安全，仅限 post-commit 单线程上下文
+# - id: A3
+#   name_zh: ③ 聚合 flush 提交
+#   name_en: BatchedAutoCommitter.flush
+#   intro: 把攒下的 N 次提交去重合并成 1 次 squash commit，消除 N reconciler 刷 N 个 commit
+#   desc: 临时 disable 防自拦截 → 文件去重保序 L299-305 → message 合并为 bullet 列表 L308-313 → 单次 gateway._commit_auto L321 → finally 清空 buffer L341
+#   inputs: A2 I2
+#   outputs: CommitResult（OK+hash / NOTHING_TO_COMMIT / COMMIT_FAILED）
+#   invariant: 空 buffer 返回 NOTHING_TO_COMMIT；失败也清空 buffer 防重复提交
+# - id: A4
+#   name_zh: ④ with 上下文协议
+#   name_en: __enter__ / __exit__
+#   intro: 退出 with 块自动 flush，即使块内异常也 flush 防 buffer 泄漏误拦后续提交
+#   desc: __enter__ 返回 self 不自动 enable L345-359；__exit__ 调 flush（异常吞掉只 warn）+ 兜底 disable L361-376，不吞原异常
+#   inputs: A3
+#   outputs: 自动 flush 触发
+# 层: 输出
+# - id: O1
+#   name_zh: 缓冲合成回执
+#   name_en: CommitResult(status=OK, commit_hash="BUFFERED")
+#   intro: 拦截期返回给 reconciler 的假成功回执， reconciler 凭此记 action=auto_committed
+#   downstream: ReconciliationRegistry 各 reconciler（内部使用）
+# - id: O2
+#   name_zh: squash 提交结果
+#   name_en: CommitResult
+#   intro: flush 落地单个聚合 commit（chore(reconciler): batched auto-commit），并记 _last_flush_result 供调用方核验真落地
+#   downstream: git_commit_gateway MOD-INF-035 与 session_worktree MOD-GOV_SESSION_WORKTREE（# [CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# I1 --> A2
+# A2 --> A3
+# I2 --> A3
+# A4 --> A3
+# A2 --> O1
+# A3 --> O2
 """
 
 from __future__ import annotations

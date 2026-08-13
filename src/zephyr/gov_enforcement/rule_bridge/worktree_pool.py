@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_ENFORCEMENT_WORKTREE_POOL | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: prefetch_async 用 daemon 线程一次性触发非周期触发
-"""worktree_pool.py — Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）
+"""
+
+worktree_pool.py — Worktree 预创建池（ARCH-GIT-CALL-BUDGET P3.3，2026-07-19）
 
 病根（第一性原理）
 -----------------
@@ -76,6 +78,79 @@ Diagnosing pool state::
     pool = get_pool(repo_root)
     print(pool.stats())         # {'idle_count': 2, 'target_size': 2, ...}
     print(pool.list_idle())     # [{'pool_id': 'pool-...', 'path': '...', ...}]
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 池操作请求入参
+#   fields: lease(session_id) / prefetch(n) / cleanup_stale(max_age_hours=24)
+#   code: lease L274 / prefetch L382 / cleanup_stale L538
+# - id: I2
+#   name: 主仓库当前 HEAD
+#   fields: git rev-parse HEAD 的 commit SHA（prefetch 建新 worktree 的基准）
+#   code: _current_head_sha L174-183
+# - id: I3
+#   name: .aidrafts_pool/ 池目录现状
+#   fields: pool-{时间戳}-{4hex} 命名的 idle worktree 子目录
+#   code: _list_idle_pool_ids L191-205（独立于 .aidrafts/ 防 sweep 误清）
+# 层: 算法
+# - id: A1
+#   name_zh: ① worktree 租借
+#   name_en: WorktreePool.lease
+#   intro: session 启动时从池里捞一个现成 worktree，改路径改分支名瞬时交付，省掉 2-5 秒的现建开销
+#   desc: 取首个 idle pool_id → pre-flight（目标路径不存在 + git worktree list 已注册）→ git worktree move 到 .aidrafts/{sid}（Windows 文件锁 3 次×0.5s 重试）→ git branch -m 改名 session/{sid}；move 失败清理残骸，rename 失败回滚 move L274-380
+#   inputs: I1 I3 A5
+#   outputs: .aidrafts/{session_id}/ 路径或 None
+#   invariant: 返回 None 时调用方 fall back 直接创建，pool 永不阻断 session 启动
+# - id: A2
+#   name_zh: ② 异步预创建补充
+#   name_en: prefetch / prefetch_async
+#   intro: 往池里预先建好 N 个基于当前 HEAD 的 worktree，lease 成功后后台线程补货不阻塞启动
+#   desc: git worktree add -b session/pool-{ts}-{rand} <path> <head_sha> L427-434；prefetch_async 用 daemon 线程 fire-and-forget L451-476；git 调用带 ZEPHYR_GIT_GUARD_FAST_PATH=1 跳过拦截 L155-156
+#   inputs: I1 I2 I3
+#   outputs: 实际创建数量 / daemon Thread
+# - id: A3
+#   name_zh: ③ 损坏 worktree 清理
+#   name_en: _cleanup_pool_worktree
+#   intro: move 失败的半成品 worktree 三步强清——remove、prune+rmtree 兜底、删分支
+#   desc: git worktree remove --force → 失败则 prune + shutil.rmtree + 再 prune → git branch -D session/pool-{id} → worktree list 复核 L223-269
+#   inputs: A1 A4
+#   outputs: True=清净 / False=需人工介入
+# - id: A4
+#   name_zh: ④ 超龄孤儿兜底清理
+#   name_en: cleanup_stale
+#   intro: 进程崩溃留下的 pool worktree 超过 24 小时没人用就兜底清掉
+#   desc: 扫 .aidrafts_pool/ 下 pool-* 目录，mtime 早于 cutoff 的走 A3 清理 L538-575
+#   inputs: I1 I3
+#   outputs: 清理数量
+# - id: A5
+#   name_zh: ⑤ 池单例获取
+#   name_en: get_pool
+#   intro: 按仓库根目录缓存 WorktreePool 实例，全进程复用同一个池
+#   desc: _pool_instances dict 按 repo_root memoize + 独立锁保护 L597-608
+#   inputs: I1
+#   outputs: WorktreePool 单例
+# 层: 输出
+# - id: O1
+#   name_zh: 租出的 session worktree 路径
+#   name_en: str | None
+#   intro: lease 成功返回 .aidrafts/{session_id}/ 绝对路径（对下游完全透明），None 时调用方自建
+#   downstream: session_worktree MOD-GOV_SESSION_WORKTREE（session_worktree_start 调 lease + prefetch_async，# [CONSUMERS] 头）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I3 --> A1
+# A5 --> A1
+# I1 --> A2
+# I2 --> A2
+# I3 --> A2
+# A1 --> A3
+# I1 --> A4
+# I3 --> A4
+# A4 --> A3
+# I1 --> A5
+# A1 --> O1
 """
 
 from __future__ import annotations

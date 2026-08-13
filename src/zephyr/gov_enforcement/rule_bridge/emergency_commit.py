@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_EMERGENCY_COMMIT | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: 本模块无周期触发
-"""emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）
+"""
+
+emergency_commit.py — 紧急提交通道（Ruling:100PCT-AI-GOVERNANCE P2-1，2026-07-19）
 
 用 ``git commit-tree`` plumbing 命令绕过所有 git hook（pre-commit AND post-commit），
 为 GitCommitGateway 锁死 / POST-COMMIT-GUARD 反复 reset 场景提供合法化逃生通道。
@@ -75,6 +77,84 @@ stuck 进程阻塞（_GlobalCommitLock 超时）或 session 注册表异常导�
         print(f"紧急提交成功: {result['commit_hash']}")
     else:
         print(f"紧急提交失败: {result['error']}")
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 紧急提交请求入参
+#   fields: files 文件列表 + message + session_id + reason + scenario + trigger_reconcilers
+#   code: emergency_commit(files, message, session_id, ...) L403-411
+# - id: I2
+#   name: git 仓库 HEAD 与当前分支
+#   fields: 当前分支名（detached HEAD 拒绝）+ HEAD SHA（commit-tree 的 parent）
+#   code: _get_current_branch L364 / _get_head_sha L376
+# - id: I3
+#   name: agent 紧急计数桶文件
+#   fields: {"count": N, "block_next_start": bool}（按 agent 持久标识分桶，跨 session）
+#   code: .runtime/emergency_counts/<bucket_id>.json L111 + L175-182
+# 层: 算法
+# - id: A1
+#   name_zh: ① agent 分桶标识解析
+#   name_en: _agent_bucket_id
+#   intro: 给 AI 找一个跨 session 不变的持久身份做计数分桶，防每次新 session_id 计数清零
+#   desc: ZEPHYR_AGENT_ID 环境变量 > git config --local user.email（先 rev-parse 校验仓库根）> USER/USERNAME > "default" L114-172
+#   inputs: I3
+#   outputs: bucket_id
+# - id: A2
+#   name_zh: ② 成本递增门禁
+#   name_en: _check_emergency_escalation
+#   intro: 紧急提交用得越多门槛越高——3 次起必须写明原因，5 次直接阻断逼你查根因
+#   desc: count>=5 硬阻断（须先清计数文件）；count>=3 且 reason 为空拒绝 L223-252
+#   inputs: A1 I1
+#   outputs: (allowed, error_msg)
+#   invariant: 阈值 _EMERGENCY_REASON_THRESHOLD=3 / _EMERGENCY_BLOCK_THRESHOLD=5
+# - id: A3
+#   name_zh: ③ 文件归一化校验
+#   name_en: _normalize_files
+#   intro: 把传入文件统一成绝对路径+posix 相对路径，不存在直接 FileNotFoundError
+#   desc: 相对路径相对 root 解析 → is_absolute/p.exists 校验 → relative_to(root).as_posix() L384-400
+#   inputs: I1
+#   outputs: [(abs_path, rel_path)]
+# - id: A4
+#   name_zh: ④ 无 hook plumbing 提交链
+#   name_en: emergency_commit（主流程）
+#   intro: 用 git commit-tree 底层命令造 commit，完全不触发 pre/post-commit hook，绕过锁死网关
+#   desc: 临时 index（GIT_INDEX_FILE）read-tree HEAD → 逐文件 hash-object -w → update-index --add --cacheinfo → write-tree → commit-tree -p HEAD -F msg → update-ref 更新分支 L544-647；message 自动追加 [GW:{sid}:emergency] + [SCENARIO:*] 标记 L531-533
+#   inputs: A2 A3 I2
+#   outputs: commit_sha
+#   invariant: 不获取 _GlobalCommitLock；不触发任何 git hook；临时 index 不污染主 index
+# - id: A5
+#   name_zh: ⑤ 审计落地与 reconciler 补齐
+#   name_en: log_emergency_commit + _trigger_reconcilers_safely + _increment_emergency_count
+#   intro: 提交后补三笔治理账：执行日志、审计报告、reconciler 链路，再递增计数
+#   desc: log_emergency_commit 写 reconcile_execution_log(action='emergency_commit') L650-659；trigger_reconcilers 时手动调 gateway._run_post_commit_reconcile L709-749；成功后计数 +1，>=5 置 block_next_start L677-683；审计/计数失败只 warn 不阻断
+#   inputs: A4
+#   outputs: 审计持久化
+# 层: 输出
+# - id: O1
+#   name_zh: 紧急提交结果
+#   name_en: EmergencyCommitResult
+#   intro: TypedDict 返回契约——ok 字段是成败唯一入口，含 commit_hash 短 SHA/branch/files_count
+#   invariant: 所有失败路径 ok=False 不抛异常
+#   downstream: AI 紧急提交场景手工调用（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: 紧急提交审计痕迹
+#   name_en: reconcile_execution_log + .runtime/reconcile_reports/*.json + GW 标记
+#   intro: action='emergency_commit' 的 DB 日志 + JSON 审计报告 + commit message 里的 [GW:{sid}:emergency] 标记
+#   downstream: check_start_blocked 被 session_worktree_start 消费 MOD-GOV_SESSION_WORKTREE
+# [/ALGO_FLOW]
+#
+# 边:
+# I3 --> A1
+# A1 --> A2
+# I1 --> A2
+# I1 --> A3
+# A2 --> A4
+# A3 --> A4
+# I2 --> A4
+# A4 --> A5
+# A4 --> O1
+# A5 --> O2
 """
 
 from __future__ import annotations

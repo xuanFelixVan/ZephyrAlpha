@@ -14,7 +14,9 @@
 # [TESTS] —（已废弃，无测试；generate_session_id 由 tests/governance/rule_bridge/test_session_worktree.py 间接覆盖）
 # [A_module] module_id=MOD-GOV_SESSION_CLAIM | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）
+"""
+
+session_claim.py — AI 对话并发声明 helper（FP-ISO.4B 件2改，2026-07-01 治本）
 
 .. deprecated:: 2026-07-04
     ``session_claim_start``/``add``/``check``/``heartbeat``/``end`` 已废弃，
@@ -53,6 +55,73 @@ Usage（AI 通过 RunCommand 调用）::
     r = session_claim_start(sid, files=['src/foo.py', 'docs/bar.md'])
     print(r)  # {'session_id': ..., 'claimed': [...], 'conflicts': [...]}
     "
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: claim 请求入参
+#   fields: session_id + files 列表 / 单个 file
+#   code: session_claim_start(session_id, files) L96-100 / session_claim_add(session_id, file) L150-153
+# - id: I2
+#   name: SessionRegistry 注册表
+#   fields: 各 session 的 held_files / pid / 时间戳（共享 JSON 注册表）
+#   code: SessionRegistry(REPO_ROOT) L81-84
+# 层: 算法
+# - id: A1
+#   name_zh: ① session_id 生成
+#   name_en: generate_session_id
+#   intro: Trae 对话没有内置 session_id，用进程号+时间戳拼一个全局唯一的
+#   desc: f"sess-{os.getpid()}-{time.strftime('%Y%m%d%H%M%S')}" L87-93（纯函数，仍在被 session_worktree 使用）
+#   inputs: I1
+#   outputs: sess-{PID}-{yyyyMMddHHmmss}
+#   invariant: 格式 sess-{PID}-{14位时间戳}
+# - id: A2
+#   name_zh: ② 注册并批量 claim（已废弃）
+#   name_en: session_claim_start
+#   intro: 对话启动时原子注册 session 再逐个 claim 文件，冲突的记下来告诉 AI 换文件
+#   desc: registry.register(pid, held_files=[]) L119 → 逐个 claim_file，失败查 owner 记 conflicts L131-141；零实际调用方（死代码，FP-ISO.4C 已取代）
+#   inputs: I1 I2
+#   outputs: {claimed, conflicts}
+# - id: A3
+#   name_zh: ③ 追加 claim 与写前检测（已废弃）
+#   name_en: session_claim_add / session_claim_check
+#   intro: 改新文件前先 claim 或只查不占，冲突时返回 conflict=True 让 AI 等待（软约束）
+#   desc: add: session 不存在返回 not_found → claim_file 失败查 owner 返回 conflict=True L168-196；check: other_held_files 命中则报 owner，仅查询不占用 L207-230
+#   inputs: I1 I2
+#   outputs: {claimed/conflict/owner} 或 {clear/owner}
+# - id: A4
+#   name_zh: ④ 续期与结束释放（已废弃）
+#   name_en: session_claim_heartbeat / session_claim_end
+#   intro: 长对话定期续期防 TTL 过期；对话结束释放所有 claim 并注销 session
+#   desc: heartbeat → registry.heartbeat(sid) L233-249；end → 遍历 held_files 逐个 release_file → unregister L252-286；全程不抛异常
+#   inputs: I1 I2
+#   outputs: {renewed} / {released, unregistered}
+# 层: 输出
+# - id: O1
+#   name_zh: claim 操作结果 dict
+#   name_en: dict
+#   intro: claimed/conflicts/owner 等字段，conflict=True 时 AI 须等待或换文件
+#   invariant: 所有函数返回 dict 不抛异常
+#   downstream: 无下游（session_claim_* 已废弃，零调用方）
+# - id: O2
+#   name_zh: 唯一 session_id 字符串
+#   name_en: str
+#   intro: sess-{PID}-{时间戳} 格式的会话标识，供 worktree 生命周期使用
+#   downstream: session_worktree MOD-GOV_SESSION_WORKTREE（# [CONSUMERS] 头：generate_session_id 仍被调用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O2
+# I1 --> A2
+# I2 --> A2
+# I1 --> A3
+# I2 --> A3
+# I1 --> A4
+# I2 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations

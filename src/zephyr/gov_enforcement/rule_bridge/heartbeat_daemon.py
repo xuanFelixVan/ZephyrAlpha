@@ -16,7 +16,9 @@
 # [TTL] task_bound
 # noqa: m10-time-trigger  M10豁免: daemon 循环是 heartbeat 生命周期，非周期触发
 # noqa: m11-perm-manual-legitimate  M11豁免: session_worktree 子进程 spawn 的 detached daemon，非独立永久系统
-"""heartbeat_daemon.py — session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）
+"""
+
+heartbeat_daemon.py — session heartbeat 独立进程（Ruling:100PCT-AI-GOVERNANCE P3-1，2026-07-20）
 
 第一性原理
 -----------
@@ -70,6 +72,70 @@ Usage::
     from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import (
         heartbeat_file_path, cleanup_heartbeat_file, run_daemon,
     )
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: daemon 启动入参
+#   fields: session_id + project_root + interval（默认 30s）
+#   code: run_daemon(session_id, project_root, interval) L243
+# - id: I2
+#   name: SessionRegistry session 条目
+#   fields: last_activity / start_time 活性锚点（heartbeat 不刷新 last_activity）
+#   code: SessionRegistry(project_root).get(session_id) L186-189 / L207-209
+# 层: 算法
+# - id: A1
+#   name_zh: ① 心跳主循环
+#   name_en: run_daemon
+#   intro: 独立进程里每 30 秒刷一次 registry 心跳并追加一条 alive 审计记录，让死 session 90 秒内被识破
+#   desc: started 记录 → signal 注册 → 1s 初始延迟 → 循环：registry.heartbeat(sid) + alive 记录 + sleep(30) L281-331；registry 故障退避 5s，连续 >10 次写 fatal 返回 1 L317-327
+#   inputs: I1 A2
+#   outputs: registry 心跳刷新 + alive 记录
+#   invariant: 所有异常写 log 后 continue，不崩溃
+# - id: A2
+#   name_zh: ② 活性判定与退出
+#   name_en: _session_in_registry / _session_idle_seconds
+#   intro: session 被注销或闲置超 1800 秒就退出，防僵尸 daemon 永久保活死 session
+#   desc: session 不在 registry → 写 exited 返回 0 L290-292；idle=now-last_activity（缺失回退 start_time，绝不回退 last_heartbeat）> _MAX_IDLE_SECONDS(=1800) → 写 exited(idle timeout) 返回 0 L300-310
+#   inputs: I2
+#   outputs: 继续心跳 / 退出
+#   invariant: 查询失败保守视为存活，不误退出
+# - id: A3
+#   name_zh: ③ 心跳审计追加
+#   name_en: _append_heartbeat_log
+#   intro: 往 heartbeat.jsonl 追加一行 {ts, pid, status} 审计记录，IO 失败只告警
+#   desc: record={ts: UTC ISO, pid, status[, extra]} → JSONL 追加 L123-143；状态标签 started/alive/exited/interrupted/fatal/error
+#   inputs: A1 A4
+#   outputs: JSONL 审计行
+# - id: A4
+#   name_zh: ④ 信号优雅退出
+#   name_en: _handle_signal
+#   intro: 被 kill 时先写一条 interrupted 审计记录再退出，不留无记录死亡
+#   desc: SIGTERM/SIGINT → 从全局变量取 root/sid → 写 interrupted{signal} → sys.exit(0) L226-240；handler 内禁抛异常
+#   inputs: I1
+#   outputs: interrupted 记录 + 进程退出
+# 层: 输出
+# - id: O1
+#   name_zh: heartbeat.jsonl 审计流
+#   name_en: .runtime/sessions/<sid>/heartbeat.jsonl
+#   intro: 每 30s 一行的 daemon 生命周期审计（started/alive/exited/interrupted/fatal/error）
+#   downstream: session_worktree MOD-GOV_SESSION_WORKTREE（_spawn/_kill_heartbeat_daemon，# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: registry 心跳时间戳
+#   name_en: SessionRegistry.last_heartbeat
+#   intro: 供 _is_session_alive 判活的新鲜度锚点——90s 不更新即 stale 释放 held_files
+#   downstream: session_concurrency.SessionRegistry 判活逻辑（内部使用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A2 --> A1
+# A1 --> A3
+# I1 --> A4
+# A4 --> A3
+# A3 --> O1
+# A1 --> O2
 """
 
 from __future__ import annotations

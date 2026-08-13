@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-GOV_WORKTREE_MANAGER | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: while True+time.sleep是worktree锁等待循环，非周期触发
-"""worktree_manager.py — session worktree 物理隔离管理器（阶段3 治本 stash 循环）
+"""
+
+worktree_manager.py — session worktree 物理隔离管理器（阶段3 治本 stash 循环）
 
 根因（2026-06-30 A/A/A 决策）
 ------------------------------
@@ -44,6 +46,89 @@ Usage::
     wt_path = mgr.create_session_worktree("sess-001")
     # ... session 在 wt_path 内工作 ...
     mgr.merge_session_worktree("sess-001", delete_after=True)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: session_id 会话标识
+#   fields: AI session 唯一 ID（字符串，非空校验）
+#   code: create_session_worktree(session_id) L312
+# - id: I2
+#   name: repo_root 仓库根目录
+#   fields: git 仓库路径（默认 REPO_ROOT，须含 .git）
+#   code: WorktreeManager.__init__ L196
+# - id: I3
+#   name: git CLI 子进程
+#   fields: git worktree add/remove/list --porcelain、git merge、git branch -D 等命令输出
+#   code: run_git L205（run_subprocess_hidden，timeout=120s）
+# 层: 算法
+# - id: A1
+#   name_zh: ① 跨进程文件锁
+#   name_en: _WorktreeLock
+#   intro: 用原子创建锁文件串行化 worktree 增删，防并发 session 把 git 内部状态搞乱
+#   desc: os.open(O_CREAT|O_EXCL) 抢锁；过期判定 TTL=锁超时×2 防死锁；超时 30s 抛 WorktreeError；退出删除锁文件
+#   inputs: I2
+#   outputs: 排他锁上下文
+#   invariant: 锁文件 .runtime/locks/worktree.lock 同一时刻最多一个持有者
+# - id: A2
+#   name_zh: ② 创建 session worktree
+#   name_en: WorktreeManager.create_session_worktree
+#   intro: 在 .aidrafts/{sid}/ 给每个 AI session 开独立工作树，物理隔离免 stash
+#   desc: 幂等复用已存在 worktree；_force_rmtree 清残留目录；git branch -D 清旧分支；git worktree add -b session/{sid} 从当前 HEAD 建分支
+#   inputs: I1 I3 A1
+#   outputs: worktree 绝对路径
+#   invariant: worktree 路径前缀 .aidrafts/；分支命名 session/{session_id}
+# - id: A3
+#   name_zh: ③ 合并回主分支
+#   name_en: WorktreeManager.merge_session_worktree
+#   intro: session 干完活后用 --no-ff 把 session 分支合回主分支，冲突就 abort 保现场
+#   desc: 主工作目录执行 git merge --no-ff -m "...[GW:{sid}:merge]"；失败则 git merge --abort 返回 False；成功后 _remove_worktree(force=True) 清理
+#   inputs: I1 I3 A1
+#   outputs: True=合并成功 / False=冲突保留现场
+# - id: A4
+#   name_zh: ④ 清理丢弃 worktree
+#   name_en: WorktreeManager.cleanup_session_worktree / _remove_worktree
+#   intro: 放弃 session 时强删 worktree 和分支，Windows 文件占用走 prune+rmtree 兜底
+#   desc: git worktree remove --force；失败重试一次；再失败 prune + _force_rmtree + 再 prune；git worktree list 复核真删没删；最后删 session 分支
+#   inputs: I1 I3 A1
+#   outputs: True=删除成功 / False=不存在或失败
+# - id: A5
+#   name_zh: ⑤ worktree 状态查询
+#   name_en: list_session_worktrees / get_current_worktree / is_in_worktree
+#   intro: 解析 git worktree list --porcelain 列出 session 工作树，判断当前目录落在哪个 worktree
+#   desc: porcelain 逐行解析为 dict；normcase 标准化路径防 Windows 大小写假阴性；git-dir≠git-common-dir 判定 linked worktree
+#   inputs: I3
+#   outputs: session worktree 列表 / session_id 或 None / bool
+# 层: 输出
+# - id: O1
+#   name_zh: session worktree 路径与合并结果
+#   name_en: Path / bool
+#   intro: create 返回隔离工作树路径，merge/cleanup 返回成功与否，供提交网关隔离 AI 提交
+#   downstream: git_commit_gateway.GitCommitGateway.commit（# [CONSUMERS] 头）
+# - id: O2
+#   name_zh: WorktreeError 异常
+#   name_en: WorktreeError
+#   intro: 创建/删除/merge 失败时抛出，error_code=ZA-GV-0031
+#   downstream: 调用方捕获处理（内部使用）
+# [/ALGO_FLOW]
+#
+# 边:
+# I2 --> A1
+# I1 --> A2
+# I3 --> A2
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# I1 --> A3
+# I3 --> A3
+# I1 --> A4
+# I3 --> A4
+# A2 --> A3
+# I3 --> A5
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
+# A2 --> O2
 """
 
 from __future__ import annotations
