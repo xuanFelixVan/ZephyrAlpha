@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""InputSanitizer: path whitelist + command whitelist + token budget guard.
+"""
+
+InputSanitizer: path whitelist + command whitelist + token budget guard.
 
 Prevents path traversal, command injection, and token budget overruns
 for AI agent operations.
@@ -23,6 +25,81 @@ for AI agent operations.
 Task: T-1-23 | experimental | GLM-5.1
 Safety: HIGH
 Depends: T-1-04 (task_repo.py)
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 待校验文件路径 参数
+#   fields: path 相对路径 + mode（read/write）
+#   code: validate_path(path, mode) L184
+# - id: I2
+#   name: 待校验shell命令 参数
+#   fields: command 命令字符串
+#   code: validate_command(command) L217
+# - id: I3
+#   name: 待注入LLM的上下文 文本
+#   fields: text 任意待注入文本
+#   code: validate_llm_context(text) L238
+# - id: I4
+#   name: Token用量与预算 参数
+#   fields: used 已用 + limit 上限 + request 本次请求
+#   code: check_token_budget(used, limit, request) L246
+# 层: 算法
+# - id: A1
+#   name_zh: ① 路径白名单校验
+#   name_en: InputSanitizer.validate_path
+#   intro: 挡路径穿越：危险模式扫描+必须落在root内+写模式查目录白名单
+#   desc: 长度≤512 → DANGEROUS_PATTERNS 6类模式（../、\0、;&|`$、$(）→ resolve 后 relative_to(root) 防逃逸 → write 模式再查 ALLOWED_WRITE_DIRS 6目录（L184-215）
+#   inputs: I1
+#   outputs: 解析后的绝对 Path（不通过抛 PathTraversalError）
+#   invariant: fail-closed，任何一步不通过即抛异常
+# - id: A2
+#   name_zh: ② 命令白名单校验
+#   name_en: InputSanitizer.validate_command
+#   intro: 挡命令注入：模式扫描+shlex解析+首命令必须在白名单
+#   desc: DANGEROUS_PATTERNS 扫描 → shlex.split 解析 → basename(首命令) 查 ALLOWED_COMMANDS（python/pip/git/ruff/mypy/pytest/echo/ls/cat/rg/fd）（L217-236）
+#   inputs: I2
+#   outputs: 原命令字符串（不通过抛 CommandInjectionError）
+# - id: A3
+#   name_zh: ③ LLM上下文注入防护
+#   name_en: InputSanitizer.validate_llm_context
+#   intro: 注入LLM前拦代码执行/提示词注入/凭据泄露三类高危内容
+#   desc: 50万字符上限 + _CONTEXT_INJECTION_CHECKS 3组正则（code_execution/prompt_injection/credential_pattern），CT-CE-LSG-001 L1 子集（L238-244）
+#   inputs: I3
+#   outputs: None（不通过抛 ContextInjectionError）
+# - id: A4
+#   name_zh: ④ Token预算闸
+#   name_en: InputSanitizer.check_token_budget
+#   intro: 已用+本次请求超上限即拦截
+#   desc: used+request>limit → 抛 TokenBudgetExceededError，否则返回 True（L246-254）
+#   inputs: I4
+#   outputs: bool
+# - id: A5
+#   name_zh: ⑤ 文件名清洗
+#   name_en: InputSanitizer.sanitize_filename
+#   intro: 把文件名里的危险字符替换成下划线
+#   desc: 非[\w-.]字符替换为_ → 空名或点开头加 sanitized_ 前缀 → 截断255字符（L256-260）
+#   inputs: I1
+#   outputs: 清洗后的文件名字符串
+# 层: 输出
+# - id: O1
+#   name_zh: 校验通过的路径/命令/预算结果
+#   name_en: Path / command / True
+#   intro: 校验通过返回安全值，不通过抛 SanitizationError 系异常（ZA-SC-0017~0021）
+#   downstream: 无下游/内部使用（AI agent 操作前置校验，# [CONSUMERS] 头为空）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A5
+# I2 --> A2
+# I3 --> A3
+# I4 --> A4
+# A1 --> O1
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -260,7 +337,7 @@ class InputSanitizer:
         return filename[:255]
 
 
-__all__ = [
+__all__ = [  # noqa: n114-final  n114-final豁免: __all__是Python导出约定且本文件运行时动态append，Final标注不适用
     "ALLOWED_COMMANDS",
     "ALLOWED_WRITE_DIRS",
     "DANGEROUS_PATTERNS",

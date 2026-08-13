@@ -10,7 +10,9 @@
 # [ERROR_CONTRACT]
 # [TESTS] tests/agent_rbac/
 # [TTL] permanent
-"""zephyr.security.access_control — Agent RBAC 权限强制执行器根包.
+"""
+
+zephyr.security.access_control — Agent RBAC 权限强制执行器根包.
 
 依据蓝图 MOD-INF-018（Agent RBAC 七层纵深防御）：
 - guards/        — *_guard.py 权限守卫簇（rbac_guard/abac_guard/input_guard 等）
@@ -19,6 +21,33 @@
 - 根目录        — 其他横切组件（contracts/identity/kill_switch 等）
 
 子模块导入范式: from zephyr.security.access_control.guards.rbac_guard import RBACGuard
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 子模块导入请求 import语句
+#   fields: 对 guards/verifiers/detectors/ 等子模块的显式 import 请求
+#   code: zephyr.security.access_control 包命名空间
+# 层: 算法
+# - id: A1
+#   name_zh: ① 包命名空间组织
+#   name_en: zephyr.security.access_control.__init__
+#   intro: Agent RBAC七层纵深防御权限强制执行器的根包只声明子模块清单不做re-export
+#   desc: __all__列出50个子模块名(guards守卫簇/verifiers验证器簇/detectors检测器簇+横切组件); 子模块按需显式import, 不在根包汇聚导出
+#   inputs: I1
+#   outputs: 子模块命名空间入口
+#   invariant: 子模块按后缀簇归位guards/verifiers/detectors/
+# 层: 输出
+# - id: O1
+#   name_zh: access_control子模块命名空间
+#   name_en: zephyr.security.access_control
+#   intro: 供外部显式导入各权限守卫/验证器/检测器子模块的包入口
+#   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway; zephyr.security.access_control.guards.rbac_guard
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 # submodules are stubs pending implementation (ARCH-036) — 不在此处 re-export，按需显式 import
 

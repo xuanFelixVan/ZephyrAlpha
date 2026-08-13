@@ -15,7 +15,9 @@
 # [A_module] module_id=MOD-INF-023 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
+"""
+
+[BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
 
 Drift Detector MOD-INF-023 CLI — 漂移扫描入口。
 
@@ -35,7 +37,68 @@ Drift Detector MOD-INF-023 CLI — 漂移扫描入口。
 
     python -m zephyr.gov_drift list                    # 列出所有已注册检测器
 
-    python -m zephyr.gov_drift status                  # 模块健康状态"""
+    python -m zephyr.gov_drift status                  # 模块健康状态
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: CLI 命令行参数 字符串参数
+#   fields: 子命令 scan/self-test/budget/list/status + --level(LIGHT/STANDARD/DEEP) + --json + module_id + --tier(P0~P3)
+#   code: main() argparse L350-400
+# 层: 算法
+# - id: A1
+#   name_zh: ① 参数解析与子命令路由
+#   name_en: main
+#   intro: 解析命令行并分发到对应子命令函数，缺省走 status
+#   desc: ArgumentParser + 5 个 sub-parser → args.command 匹配 _cmd_*；无命令默认 _cmd_status
+#   inputs: I1
+#   outputs: 子命令分发
+# - id: A2
+#   name_zh: ② 漂移扫描
+#   name_en: _cmd_scan
+#   intro: 按级别跑漂移扫描并打印报告摘要，有漂移事件返回非零
+#   desc: run_sync(scan(level)) → build_report(result) → 打印 SCAN_ID/DETECTORS_RUN/DRIFT_EVENTS/STORM_MODE/TOP_DIMS/SUMMARY；total_drift_events>0 返回 1
+#   inputs: A1
+#   outputs: 扫描报告打印 + 退出码
+# - id: A3
+#   name_zh: ③ 自检与预算检查
+#   name_en: _cmd_self_test/_cmd_budget
+#   intro: 跑 8 项自检或查模块漂移预算，支持 JSON 输出
+#   desc: SelfTestVerifier().run_all() 打印 PASS/FAIL（summary≠"8/8 checks passed" 返回 1）；check_budget_for_gate(module_id, tier) 打印 ALLOWED/BLOCKED
+#   inputs: A1
+#   outputs: 自检/预算结果打印 + 退出码
+# - id: A4
+#   name_zh: ④ 健康状态巡检
+#   name_en: _cmd_status
+#   intro: 逐项点验注册表/自检/自举等 8 项系统状态并汇总
+#   desc: _status_check_registry/self_test/self_check + drift_engine/cold_start/reconciler/cascade_detect/chaos_injector/gate_integration 打印 OK/FAIL → ALL SYSTEMS GO 或 SOME SYSTEMS DEGRADED
+#   inputs: A1
+#   outputs: 状态报告打印 + 退出码
+# 层: 输出
+# - id: O1
+#   name_zh: 控制台报告
+#   name_en: stdout report
+#   intro: 打印给人/CI 看的扫描、自检、预算、状态文本（可选 JSON）
+#   downstream: 无下游/内部使用（人工/CI 命令行调用，[CONSUMERS] 头为空）
+# - id: O2
+#   name_zh: 进程退出码
+#   name_en: exit code int
+#   intro: 0=正常通过 1=有漂移/自检失败/被阻断，供 CI 门禁判定
+#   downstream: 无下游/内部使用（CI/人工 shell 判定）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A1 --> A3
+# A1 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
+# A2 --> O2
+# A3 --> O2
+# A4 --> O2
+"""
 
 from __future__ import annotations
 

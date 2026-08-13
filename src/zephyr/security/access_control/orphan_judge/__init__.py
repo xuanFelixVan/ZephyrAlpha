@@ -1,6 +1,8 @@
 # [A_module] module_id=MOD-SEC-orphan_judge | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md
+"""
+
+[BLUEPRINT] MOD-INF-029 | docs/03_modules/_cross_layer/orphan-judge/blueprint.md
 
 [MODULE] zephyr.security.access_control.orphan_judge
 
@@ -58,6 +60,32 @@ actual_disk_path: src/zephyr/security/access_control/orphan_judge/
 
   mcp_handler         — MCP 调用治理
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 判定子模块符号
+#   fields: 17 个子模块的判定类（OrphanDetector/DecisionTable/ReferenceGraphEngine/SafetyFence/OrphanCollector/CascadeAnalyzer 等）
+#   code: import 块 L63-79
+# 层: 算法
+# - id: A1
+#   name_zh: ① 公共符号聚合再导出
+#   name_en: __init__ 再导出
+#   intro: 把孤儿文件五层判定能力汇成包级统一入口
+#   desc: 直接 import + __all__ 分段 append/extend 累积（含 Judge/Db/Main 等延迟追加项）；五层判定=L0 注册表对齐 / L1 引用图可达 / L2 功能覆盖 / L3 代码价值 / L4 安全围栏
+#   inputs: I1
+#   outputs: 孤儿审判公共 API 命名空间
+#   invariant: 蓝图 §4 文件清单与代码双向对齐（[INVARIANTS] 头）
+# 层: 输出
+# - id: O1
+#   name_zh: 孤儿审判器公共 API
+#   name_en: __all__
+#   intro: 孤儿文件检测/判定/安全围栏/报告的统一入口
+#   downstream: 见蓝图 §4 接口契约（[CONSUMERS] 头未列具体 MOD）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> O1
 """
 
 from zephyr.security.access_control.orphan_judge.__main__ import main as Main

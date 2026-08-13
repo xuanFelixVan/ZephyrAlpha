@@ -15,6 +15,8 @@
 # [A_module] module_id=MOD-SEC-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
+
+
 ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).
 
 将 fix_completed 事件桥接到 RedBlueValidator，触发修复后的对抗验证会话。
@@ -29,6 +31,52 @@ ValidatorEventBridge — 红蓝验证器事件桥接 (MOD-SEC-030).
         subscribe_eventbus,
     )
     subscribe_eventbus()  # 在 boot_hooks 中统一调用
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: fix_completed事件 payload字典
+#   fields: timestamp + source_function + severity + detail, 来自EventBusBackpressure总线
+#   code: _on_fix_completed() payload L82
+# 层: 算法
+# - id: A1
+#   name_zh: ① 幂等事件订阅
+#   name_en: subscribe_eventbus
+#   intro: 把fix_completed事件挂到背压事件总线上且重复调用安全
+#   desc: _subscribed全局标志保证幂等; bus.subscribe("fix_completed", _on_fix_completed); 总线不可用静默跳过只记warning
+#   inputs: I1
+#   outputs: 事件订阅关系
+#   invariant: subscribe is idempotent
+# - id: A2
+#   name_zh: ② 验证器懒加载单例
+#   name_en: _get_validator
+#   intro: 第一次用时才实例化RedBlueValidator并缓存
+#   desc: _validator_instance全局缓存; 实例化失败记warning返回None不抛异常
+#   inputs: I1
+#   outputs: RedBlueValidator实例或None
+# - id: A3
+#   name_zh: ③ 修复完成事件处理
+#   name_en: _on_fix_completed
+#   intro: 收到修复完成事件就触发一轮对抗验证会话只记日志不回发事件
+#   desc: 解析payload取source/detail; session_name=fix_validation_{source}; validator.run_adversarial_session(); 结果(session_id/scenarios/blocked/bypassed)记info日志; 全程吞异常不外抛
+#   inputs: I1 A1 A2
+#   outputs: 验证会话日志记录
+#   invariant: handler never raises; 验证结果不发布事件避免循环
+# 层: 输出
+# - id: O1
+#   name_zh: 对抗验证触发与日志
+#   name_en: adversarial session log
+#   intro: 修复后对抗验证会话的执行记录(session_id/场景数/拦截数/绕过数)
+#   downstream: zephyr.trading.boot_hooks(启动时统一调用订阅); RedBlueValidator(执行验证)
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A3
+# A1 --> A3
+# A2 --> A3
+# I1 --> A1
+# I1 --> A2
+# A3 --> O1
 """
 
 from __future__ import annotations
