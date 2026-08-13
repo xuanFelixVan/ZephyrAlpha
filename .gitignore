@@ -114,6 +114,11 @@ Thumbs.db
 # Pre-created worktrees for lease-on-session-start; runtime, must not be tracked.
 .aidrafts_pool/
 
+# AI session worktree directory（scripts/session_worktree.py 第二代机制，#ARCH-AICOLLAB-001）
+# 会话物理隔离工作区，运行时目录不得入库；worktree 内含 config/.env.postgres 凭据副本（环境三件套），
+# 不入库同时堵住 SECRET 扩散面（#ARCH-WORKTREE-ENV-001）
+.worktrees/
+
 # AI file lock registry (runtime state, not config)
 .ailocks/
 
