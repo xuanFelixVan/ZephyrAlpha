@@ -5,8 +5,8 @@ title: 仓位算法（分层裁定落地）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.24.2"
-date: 2026-08-12
+version: "1.25.0"
+date: 2026-08-13
 topic: position_sizing
 scope: 07_trading_decision_architecture
 ---
@@ -682,7 +682,7 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 | 设施 | 模块 | 路径 | 状态 | 覆盖本备忘章节 |
 |---|---|---|---|---|
 | 仓位决策引擎 | MOD-POS-001 | `src/zephyr/position/core/position_sizing_engine.py`（881 行） | ✅ production | §2.3 主体：C1 半 Kelly（二值 `f*=(bp-q)/b`，§2.3.1 已证即精确 Kelly）+ C2 风险配额 + C3 波动率检查（μ+2σ 减半）+ C4/C5 VaR/CVaR 下调（0.8/0.7）+ C12 单票默认 5%（`RiskLimits.symbol_overrides` 可覆盖）+ C13 总仓位 12 态 `MARKET_REGIME_CAPS`（§2.4.3 映射一致）+ C6 参与率 >15% 否决 + C7/C8 退出时间减仓 + C9 策略容量 + C11 冲击成本否决（sqrt 模型）+ POS-006 现金 / POS-007 资金曲线 / POS-017 日历 + 降级模式（D-SIGNAL 缺失默认态④）+ 幂等键 |
-| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | ✅ production（70 测试，30号 v2.5.0 §2.2 施工状态块） | §2.2 策略层粗仓位：`size_positions` 支持 equal_weight / risk_parity / custom，**禁用 Kelly/MVO**（与 §2.7 边界声明一致） |
+| StrategyBook | MOD-POS-020 | `src/zephyr/position/core/strategy_book.py` | ✅ production（v1.25.0 实测：此前无专属测试文件，"70 测试"声明失实；本次新建 tests/position/test_strategy_book.py 25 测试全绿） | §2.2 策略层粗仓位：`size_positions` 支持 equal_weight / risk_parity / custom，**禁用 Kelly/MVO**（与 §2.7 边界声明一致）；v1.25.0 补 σ_i 异常判定 4 检查链部分降级（§2.2.2） |
 | FirmRiskAggregator | MOD-POS-021 | `src/zephyr/position/core/firm_risk_aggregator.py` | ✅ production（54 测试） | §2.4 硬上限裁剪执行（求和/按比例削/冲突净额，G13 范围） |
 | BudgetChangeHandler | MOD-POS-022 | `src/zephyr/position/core/budget_change_handler.py` | ✅ production（47 测试） | G14 三级升级（本备忘只引用不展开） |
 
@@ -692,8 +692,8 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 |---|---|---|
 | C10 偏度/峰度分布感知 | §2.3.3 | BM-SEL-13 密度 PDF 高阶矩输出（阶段 3） |
 | `sizing_basis` 显式输出（6 约束取最小命名） | §2.3.4 | MOD-POS-001 输出 dataclass 补字段（§6 待定） |
-| ADV 三档流动性硬上限（20%/10% 两档削减） | §2.4.4 | 代码 C6 参与率 >15% 否决是**近似但不等价**——C6 是否决（veto 保持现仓），§2.4.4 是削减（truncate 到 20% ADV）且含 P25 最坏情况口径；施工时注意口径差异 |
-| 策略层 inverse-vol σ_i 异常判定 4 检查链 | §2.2.2 | StrategyBook risk_parity 路径的异常降级逻辑（§2.2.2 补的施工参数） |
+| ADV 三档流动性硬上限（20%/10% 两档削减） | §2.4.4 | 代码 C6 参与率 >15% 否决是**近似但不等价**——C6 是否决（veto 保持现仓），§2.4.4 是削减（truncate 到 20% ADV）且含 P25 最坏情况口径；施工时注意口径差异（v1.25.0 注：MOD-POS-021 已落 LIQUIDITY_SEVERE_PCT=0.20/LIQUIDITY_MODERATE_PCT=0.10 常量与裁剪逻辑，C6 与 §2.4.4 双口径并存现状待统一核查） |
+| ~~策略层 inverse-vol σ_i 异常判定 4 检查链~~ | §2.2.2 | ✅ **已施工（v1.25.0，AI-POS-001）**：`strategy_book.py` 新增 `VolatilityInfo` dataclass（sigma/valid_samples/listing_days）+ `_is_vol_anomaly` 4 检查链（缺失/样本<30/σ>150%/上市<60日）+ `_size_risk_parity` 部分降级（异常标的等权 budget/N，正常标的 inverse-vol 瓜分剩余 budget×N_ok/N）；`volatility_data` 参数扩展为 `dict[str, float | VolatilityInfo]` 向后兼容 |
 
 **域文档滞后提示**：64_d_position.md（auto-generator，date 2026-08-05）仍将 MOD-POS-020/021 标为"设计态/骨架 v0.1.0"，与 30号 v2.5.0 + 本表不符——该文档需重新生成，见 §6 待定问题。
 
@@ -899,3 +899,4 @@ Morwane（30_multi_strategy_concurrency §7.4 核心实证）是 sleeve 信号 +
 | 2026-08-12 | 1.24.0 | 新增 §4.5 已施工设施盘点 + §6 两项跨文档同步待定问题 | 架构审查回填（通用规则 #11 已施工设施盘点要求）：① §4.5 盘点分层裁定全链路代码资产——MOD-POS-001（881 行 production，C1-C13+POS-006/007/017 全约束链，与本备忘 §2.3/§2.4.3 映射一致）+ MOD-POS-020/021/022 三模块 production（171 测试全绿，30号 v2.5.0 §2.2 印证）；登记 4 项"设计已定代码未施工"演进项（C10 偏度峰度/sizing_basis 显式输出/ADV 三档与 C6 参与率否决的口径差异警示/inverse-vol σ_i 异常 4 检查链）；② §6 新增 2 项跨文档同步待定问题（30号 §2.2 遗留矛盾描述待修订、64_d_position.md 域文档滞后待重新生成——均不越界改）；全网施工状态核查确认 §2 决策链已完整落地可施工 |
 | 2026-08-12 | 1.24.1 | 作战地图全覆盖补丁——BM-POS-03 / BM-POS-07 / BM-SEL-21-C | §2.8 新增"持仓漂移与再平衡"小节（3 环节闭合）：① §2.8.1 BM-POS-03 持仓域统一状态机迁移设计+双档漂移阈值裁决（组合 ±2%/单标的 ±3%，以 steps JSON 默认值核对一致，design），边界澄清——与 42号 §3.3 卖出侧 OBSERVING 四态机同名不同域（持仓生命周期 vs 止损确认）+与 25号 §3.7#8 HoldingDriftMonitor 层级分工（策略级盘后纠偏 ⊂ 持仓域统一状态机）；② §2.8.2 BM-POS-07 漂移/周频日历双驱动组合级再平衡执行链（成本-收益门槛：预期收益改善>2×交易成本/恶化市场⑦⑧⑨×1.5 收紧/再平衡后偏差<1%，RebalanceTriggered 事件契约，design），与 33号 budget 驱动三级再平衡分工（33=预算变更驱动/本节=漂移日历驱动，触发源正交共用执行层）；③ §2.8.3 BM-SEL-21-C PF-CORE 统一再平衡调度 why 层补全（production，MOD-PF-003 已建——偏离阈值±2%/±3%+周五日历+事件+风控四路触发/成本口径>2×与§2.8.2 同一参数面，唯一真源防口径漂移） |
 | 2026-08-12 | 1.24.2 | 作战地图环节映射补强——锚定 BM-RC-02-A、BM-RC-02-B | §2.4.2 末尾补映射块，环节级可追溯 |
+| 2026-08-13 | 1.25.0 | σ_i 异常判定 4 检查链落码 + MOD-POS-020 测试补建（施工会话 AI-POS-001） | 施工验证（SOP 15 步）：① 核查确认 inverse-vol（§2.2.2）/等权（§2.2.3）/Kelly 二值=精确形式+半 Kelly+f≥0 截断（§2.3.1）/TargetPortfolio 契约（§2.2.4）/§2.8 漂移双档阈值±2%/±3%（MOD-POS-003）与再平衡成本-收益门槛 2×+恶化×1.5+收敛<1%（MOD-POS-004）**全部已落码**；② 唯一缺口 σ_i 异常判定 4 检查链补落码——`VolatilityInfo` dataclass（sigma/valid_samples/listing_days，元数据 None 时对应规则不判）+ `_is_vol_anomaly` 4 规则 + `_size_risk_parity` 部分降级（异常标的等权 budget/N，正常标的 inverse-vol 瓜分剩余 budget×N_ok/N，总和=budget），接口扩展 `dict[str, float | VolatilityInfo]` 向后兼容，替换旧 `vol≤0→0.30 默认填充` 简陋逻辑；③ 补 strategy_book.py ALGO_FLOW docstring 标记（GATE-ALGO-FLOW 门禁）；④ **测试基建修正**：§4.5 "70 测试"声明失实（tests/ 全项目实测无 MOD-POS-020 专属测试文件），新建 tests/position/test_strategy_book.py 25 测试（公式/4 规则/部分降级/契约/回撤/rebalance/Sortino）连续 2 轮全绿，position 域 305 passed + 2 既有失败（test_position_state_machine 时间炸弹：T0=2026-08-01 固定日期+真实时钟，cooldown_until=2026-08-06 已过期，属 MOD-POS-002 测试缺陷与本施工无关，待修）；⑤ §4.5 缺口 4 标已施工、MOD-POS-020 行测试声明修正、ADV 行补 MOD-POS-021 流动性常量已落码注记 |
