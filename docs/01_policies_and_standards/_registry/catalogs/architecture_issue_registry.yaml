@@ -12093,6 +12093,15 @@ entries:
     4. etf_list 长期空表根因：sina fund_etf_category_sina 多数基金无成立/上市日期（空串），
        CH setup_date/list_date 为非空 Date 列 → Code 38 整批拒写落盘。修复：空日期
        → 1970-01-01 哨兵。修复后 etf_list_refresh 1628 行成功入 CH，etf_nav_refresh 解锁。
+    5. money_flow 换主源（同批东财反爬治本）：akshare stock_individual_fund_flow 持续断连，
+       money_flow 表仅剩 16 行。实证 tushare pro.moneyflow 5540 行/日可用 → 升主源
+       （money_flow_incremental + money_flow_full_refresh），net=buy-sell 四档映射，
+       main=超大单+大单对齐东财口径；tushare_provider 新增 money_flow capability。
+    6. option_kline 静默 0 行陷阱：QMT 模拟账户无期权权限，miniqmt 返回 0 行 SUCCESS
+       不触发 fallback（#ARCH-SILENT-SUCCESS 已知模式的实例化），option_kline 表长期空。
+       实证 akshare 新浪期权链（option_sse_list/codes/daily_sina）可用 → 升主源；
+       另修 volume 列 safe_float→safe_int（UInt64 拒收 "430606.0" 浮点串，Code 整批落盘）。
+       修复后 option_kline 补回 7/30-8/13 共 2143 行。
     遗留：东财 push2 实时行情类接口（realtime_snapshot/stock_news_em/research_report_em
     等）仍受反爬影响，间歇可用；#ARCH-IFIND-FAILOVER 系列 ifind 待续费。
     capability_validator 覆盖 fallback_sources 的治本扩展另行登记施工。
@@ -12102,11 +12111,11 @@ entries:
     实测：lof_list_refresh 371 行、kline_lof_1min 端到端解锁、etf_list_refresh 1628 行、
     provider 测试 131 全过、RSSHub 重建恢复（dist 布局漂移 rebuild + 计划任务拉起）。
   impact:
-    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list主源切换）'
-    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list capability）'
+    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline主源切换）'
+    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list + money_flow capability）'
     - 'src/zephyr/data/implementations/fred_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/eia_provider.py（_detect_local_proxy）'
-    - 'src/zephyr/data/implementations/akshare_provider.py（_parse_etf_list_row 日期哨兵）'
+    - 'src/zephyr/data/implementations/akshare_provider.py（_parse_etf_list_row 日期哨兵 + option_kline volume safe_int）'
   status: decided
   related_rules: '#ARCH-IFIND-FAILOVER（ifind到期系列切换）; #ARCH-DATA-RECONCILE-001（任务级对账，互补）; #ARCH-AKSHARE-ANTICRAWLER-001（东财反爬既有裁定）'
   created: '2026-08-14'

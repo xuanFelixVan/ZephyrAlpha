@@ -194,7 +194,7 @@ tasks:
     capability: macro_data
 - task_id: money_flow_incremental
   table: c1_market.money_flow
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
+  source: tushare          # 东财反爬治本(2026-08-14): akshare stock_individual_fund_flow(东财push2)持续RemoteDisconnected，tushare pro.moneyflow 升主源(实测5540行/日)
   schedule: daily_capital
   incremental: true
   date_col: trade_date
@@ -202,12 +202,12 @@ tasks:
   capability: money_flow
   symbols:
   fallback_sources:
+  - source: akshare           # 东财源降为fallback（反爬解除后可恢复）
+    capability: money_flow
   - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
     capability: money_flow
-  - source: akshare
-    capability: money_flow
   extra:
-    description: "资金流向增量（iFind 主源；akshare stock_individual_fund_flow 作为 fallback）"
+    description: "资金流向增量（tushare pro.moneyflow 主源；akshare stock_individual_fund_flow 作为 fallback）"
 
 - task_id: hk_connect_flow_incremental
   table: c1_market.hk_connect_flow
@@ -1137,19 +1137,19 @@ tasks:
     capability: us_index
 - task_id: money_flow_full_refresh
   table: c1_market.money_flow
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源（miniqmt不支持money_flow）
+  source: tushare          # 东财反爬治本(2026-08-14): 同 money_flow_incremental，tushare 升主源
   schedule: weekend_calibration
   incremental: false
   dependencies: []
   capability: money_flow
   symbols:
   extra:
-    description: "资金流向全量刷新（AKShare stock_individual_fund_flow）"
+    description: "资金流向全量刷新（tushare pro.moneyflow 逐日）"
 
   fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
+  - source: akshare           # 东财源降为fallback（反爬解除后可恢复）
     capability: money_flow
-  - source: akshare
+  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
     capability: money_flow
 - task_id: daily_valuation_full_refresh
   table: c1_market.daily_valuation
@@ -1497,7 +1497,7 @@ tasks:
 
 - task_id: option_kline_incremental
   table: c1_market.option_kline
-  source: miniqmt
+  source: akshare          # 2026-08-14 治本: QMT模拟账户无期权权限,miniqmt静默返回0行SUCCESS不触发fallback(表长期空); akshare新浪源升主源(实测可用)
   schedule: daily_kline
   incremental: true
   date_col: trade_date
@@ -1505,10 +1505,10 @@ tasks:
   capability: option_kline
   symbols:         # null=自动取50ETF期权列表
   extra:
-    description: "期权日K线增量（miniQMT get_market_data_ex，symbols如10000001.SH）"
+    description: "期权日K线增量（akshare 新浪源 option_sse_daily_sina，50ETF/300ETF）"
 
   fallback_sources:
-  - source: akshare            # #ARCH-OPTION-AKSHARE-FALLBACK: QMT无期权权限时走新浪源
+  - source: miniqmt            # QMT开通期权权限后可恢复主源（get_market_data_ex 全字段更全）
     capability: option_kline
 - task_id: option_greeks_incremental
   table: c1_market.option_greeks
@@ -2044,17 +2044,17 @@ tasks:
     capability: kline_cb
 - task_id: option_kline_full_refresh
   table: c1_market.option_kline
-  source: miniqmt
+  source: akshare          # 2026-08-14 治本: 同 option_kline_incremental，akshare新浪源升主源；原fallback exchange无provider实现
   schedule: weekend_calibration
   incremental: false
   dependencies: []
   capability: option_kline
   symbols:
   extra:
-    description: "期权日K线全量刷新（miniQMT，5年历史回补）"
+    description: "期权日K线全量刷新（akshare 新浪源）"
 
   fallback_sources:
-  - source: exchange
+  - source: miniqmt            # QMT开通期权权限后可恢复主源
     capability: option_kline
 - task_id: hk_kline_full_refresh
   table: c1_market.hk_kline

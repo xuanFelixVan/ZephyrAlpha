@@ -72,7 +72,7 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list"],
+        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -130,6 +130,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_industry_class_suppl(payload, policy)
         elif capability == "lof_list":
             yield from self._fetch_lof_list(payload, policy)
+        elif capability == "money_flow":
+            yield from self._fetch_money_flow(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
@@ -461,3 +463,92 @@ class TushareProvider(IngestProviderBase):
             table=table, columns=columns, rows=rows,
             last_key=today_str, elapsed_sec=seconds_since(t0),
         )
+
+    # ---- 资金流向（2026-08-14 东财反爬替代源） ----
+
+    def _fetch_money_flow(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """个股资金流向增量，写入 c1_market.money_flow。
+
+        东财反爬治本：akshare stock_individual_fund_flow（东财 push2）持续 RemoteDisconnected，
+        改用 tushare pro.moneyflow（按 trade_date 逐日全市场，实测 5540 行/日）。
+        列映射：net = buy_amount - sell_amount（sm/md/lg/elg 四档）；
+        main_net_inflow = 超大单(lg? elg)——tushare 档位: sm小单/md中单/lg大单/elg超大单，
+        main = elg + lg（对齐东财"主力=超大单+大单"口径）。
+        pct = 100 * net / (buy+sell)（毛成交占比代理；tushare 无涨跌幅/收盘价，close/pct_change 填 0，
+        与表内既有 local_moneyflow 行口径一致）。
+
+        表 schema: (trade_date, symbol, close, pct_change, main_net_inflow, main_net_inflow_pct,
+                    super_large_net_inflow, super_large_net_inflow_pct, large..., medium..., small...,
+                    data_source, exchange, symbol_canonical)
+        """
+        table = "c1_market.money_flow"
+        columns = [
+            "trade_date", "symbol", "close", "pct_change",
+            "main_net_inflow", "main_net_inflow_pct",
+            "super_large_net_inflow", "super_large_net_inflow_pct",
+            "large_net_inflow", "large_net_inflow_pct",
+            "medium_net_inflow", "medium_net_inflow_pct",
+            "small_net_inflow", "small_net_inflow_pct",
+            "data_source", "exchange", "symbol_canonical",
+        ]
+        start = payload.start or datetime.date.today()
+        end = payload.end or datetime.date.today()
+
+        current = start
+        while current <= end:
+            t0 = now_utc()
+            dstr = current.strftime("%Y%m%d")
+            try:
+                df = self._call_with_policy(self._pro.moneyflow, policy, trade_date=dstr)
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key=current.isoformat(), elapsed_sec=seconds_since(t0), error=str(e),
+                )
+                current += datetime.timedelta(days=1)
+                continue
+
+            rows: list[tuple] = []
+            if df is not None and not df.empty:
+                for _, r in df.iterrows():
+                    def _f(v) -> float:
+                        try:
+                            return float(v or 0)
+                        except (ValueError, TypeError):
+                            return 0.0
+
+                    sm = _f(r.get("buy_sm_amount")) - _f(r.get("sell_sm_amount"))
+                    md = _f(r.get("buy_md_amount")) - _f(r.get("sell_md_amount"))
+                    lg = _f(r.get("buy_lg_amount")) - _f(r.get("sell_lg_amount"))
+                    elg = _f(r.get("buy_elg_amount")) - _f(r.get("sell_elg_amount"))
+                    main = lg + elg
+
+                    def _pct(net: float, buy_v: float, sell_v: float) -> float:
+                        gross = buy_v + sell_v
+                        return round(100.0 * net / gross, 4) if gross > 0 else 0.0
+
+                    sm_pct = _pct(sm, _f(r.get("buy_sm_amount")), _f(r.get("sell_sm_amount")))
+                    md_pct = _pct(md, _f(r.get("buy_md_amount")), _f(r.get("sell_md_amount")))
+                    lg_pct = _pct(lg, _f(r.get("buy_lg_amount")), _f(r.get("sell_lg_amount")))
+                    elg_pct = _pct(elg, _f(r.get("buy_elg_amount")), _f(r.get("sell_elg_amount")))
+                    main_pct = _pct(main, _f(r.get("buy_lg_amount")) + _f(r.get("buy_elg_amount")),
+                                    _f(r.get("sell_lg_amount")) + _f(r.get("sell_elg_amount")))
+
+                    ts_code = str(r.get("ts_code", "") or "")
+                    symbol = ts_code.split(".")[0]
+                    exchange = ts_code.split(".")[1] if "." in ts_code else ""
+                    rows.append((
+                        current.isoformat(), symbol, 0, 0,
+                        main, main_pct, elg, elg_pct, lg, lg_pct,
+                        md, md_pct, sm, sm_pct,
+                        "tushare", exchange, ts_code,
+                    ))
+
+            self._log.info(f"money_flow {dstr}: {len(rows)} 行（tushare 替代东财）")
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=current.isoformat(), elapsed_sec=seconds_since(t0),
+            )
+            current += datetime.timedelta(days=1)

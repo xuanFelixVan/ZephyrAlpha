@@ -3439,7 +3439,7 @@ class AkshareIngestProvider(IngestProviderBase):
                                 safe_float(kline.get("最高")),
                                 safe_float(kline.get("最低")),
                                 safe_float(kline.get("收盘")),
-                                safe_float(kline.get("成交量")),
+                                safe_int(kline.get("成交量")),  # 2026-08-14修复: volume是UInt64，safe_float产出"430606.0"被CH拒收整批落盘
                                 None,  # amount 接口未提供
                                 "akshare_sina",
                             ))
