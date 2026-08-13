@@ -5,7 +5,7 @@ title: 07 域施工流程标准作业规程（SOP）——端到端 15 步施工
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.1.0"
 date: 2026-08-12
 topic: construction_workflow_sop
 scope: 07_trading_decision_architecture
@@ -149,6 +149,17 @@ python scripts/lock_files.py status
 **不通过处置**：守护进程未运行 → **禁止执行任何后续步骤**（trae_056 明示：非协商必做）/ boot_sequence 失败 → 查 lifecycle_manager 日志
 **产出物**：Session 就绪状态
 **HookRegistry 说明**：任务状态变更回调注册表（`src/zephyr/governance/ops_governance/event_hook.py` §HookRegistry L73，单例 `hook_registry`），按 priority 排序执行，异常隔离。AI 触发任务状态变更时相关 hook 自动执行
+**handoff 交接包读取**（[parallel_session_coordination_policy.md](../../../../docs/01_policies_and_standards/policies/parallel_session_coordination_policy.md)）：Session Continuity 恢复时 MUST 读取上一 session 的 handoff 交接包 `.runtime/handoffs/handoff_<sid>.json`（含 pending_tasks/warnings），否则状态丢失
+**ABS 绝对禁止清单**（[trae_018_behavior_code_prohibition.yaml](../../../../docs/01_policies_and_standards/rules/trae_018_behavior_code_prohibition.yaml) ABS-01~08，全流程红线）：
+- ABS-01：禁止修改 immutable_core 文件（safety_level=H 且 ai_autonomy=immutable_core）
+- ABS-02：禁止删除任何文档（删除走 [trae_029](../../../../docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml) 三步审判）
+- ABS-03：禁止裁决规则冲突（MUST 报告 Owner）
+- ABS-04：禁止忽略高优先级规则
+- ABS-05：禁止执行 P0 变更（Level 1-4 规则，需 Owner 执行）
+- ABS-06：禁止改 P0 条款
+- ABS-07：禁止自行判断紧急绕过审批
+- ABS-08：禁止改 .cursor/rules
+**SECRETS.md 密钥管理**（AGENTS.md 入口）：新 AI 冷启动 MUST 先读 SECRETS.md（密钥文件分布/读取接口决策树/新增密钥三步流程），否则用裸 `os.getenv` 会被 `bare_getenv_gate` 拦截
 
 ---
 
@@ -183,7 +194,9 @@ python scripts/lock_files.py status
 **通过判据**：[REUSE-DECISION] 标注 + 覆盖率证据
 **不通过处置**：找到覆盖 → 走复用决策；完全覆盖 → 放弃新建
 **产出物**：复用决策记录（对话内）
-**修改已有文件场景**：跳过本步（走 [trae_001_file_operation_security.yaml](../../../01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-ZERO 锁协议）
+**修改已有文件场景**：跳过本步（走 [trae_001_file_operation_security.yaml](../../../../docs/01_policies_and_standards/rules/trae_001_file_operation_security.yaml) RULE-ZERO 锁协议）
+**设计意图查询真源**（[trae_083_design_intent_source_discipline.yaml](../../../../docs/01_policies_and_standards/rules/trae_083_design_intent_source_discipline.yaml)）：问题类型三分法——结构状态→depgraph / 设计意图→`D:\临时工作区\依赖图\*.md` / 规则数据→YAML；弃用/重复判定 MUST 双源对比（设计文档 vs depgraph），禁单凭 depgraph 或孤立信号直接弃用（2026-08-01 D_REPORTING 7 模块误删事故根因）
+**向内收三原则**（[trae_060_inward_consolidation.yaml](../../../../docs/01_policies_and_standards/rules/trae_060_inward_consolidation.yaml)）：①能现成不创造（先搜索，禁止同步复制）②创造必全自动（事件驱动，禁 cron/Timer/CircadianScheduler/进程内调度器）③第一性原理治本（质疑元问题，禁只治标）
 
 ---
 
@@ -208,6 +221,13 @@ python scripts/lock_files.py status
 **不通过处置**：任一否决条件命中 → 重新设计消除冲突 → 重新评审
 **产出物**：评审记录 MD 文件
 **豁免场景**：纯内容修改（不改文件结构/不改路径/不改接口契约）可豁免
+**架构变更分级**（[trae_049_ops_domain_manual.yaml](../../../../docs/01_policies_and_standards/rules/trae_049_ops_domain_manual.yaml) OPS-DEV-002）：
+- **L1 微调**：无需审批，PATCH+1
+- **L2 局部变更**：同层 Owner 审批，MINOR+1
+- **L3 跨层变更**：KB 决策记录+Owner 审批+更新 `cross_layer_contracts.yaml`+全量集成测试，MAJOR+1
+- **L4 架构变更**：Emergency Change Board+分阶段执行+全量回归
+- 每级含回滚方案
+**治理顺序因果链**（[trae_017_arch_governance_order.yaml](../../../../docs/01_policies_and_standards/rules/trae_017_arch_governance_order.yaml)）：治理按因果链执行——架构决定→结构重构→元数据对齐→质量补全（前层决定后层是否还需做）；先架构后测试（重构改代码测试白写）；价值判定三步审判（独立功能价值/客观原因/重建成本，ANY 为 YES 则保留，禁用"零消费者"判删除）
 
 ---
 
@@ -306,6 +326,21 @@ python scripts/governance/d5_architecture/generators/align_all.py
 - 粒度约束（RULE-THIRTEEN，代码强制）：deliverables≤1 / files_in_scope≤3 / acceptance≤1 / 不跨 Phase
 - P0 冻结：活跃 P0 任务≥5 冻结新增（P0InflationFrozenError），≥3 黄色警戒需附论证
 - 蓝图拆解入口：`BlueprintDecomposer` 从蓝图 §16 施工指引拆解为任务卡（`src/zephyr/governance/persistence/task_repo.py`）
+**八指标机械门**（[trae_003_task_granularity_threshold.yaml](../../../../docs/01_policies_and_standards/rules/trae_003_task_granularity_threshold.yaml)）：新代码>50行/涉及>3文件/需读蓝图/Schema变更/depgraph操作/消费者影响>50文件/跨域操作/多步骤>3，任一 YES→走任务系统建卡（TaskRepository.create，禁手写 .md）；建卡后立刻施工不等确认
+**并行执行+原子事务**（[trae_004_parallel_atomic_transaction.yaml](../../../../docs/01_policies_and_standards/rules/trae_004_parallel_atomic_transaction.yaml)）：for 循环中 subprocess/多文件独立读写/多 URL 请求 MUST 用 ThreadPoolExecutor(max_workers=8)，禁 multiprocessing；关联修改同一批文件 MUST 同一批完成，禁分多次提交（事务断裂）
+**防幻觉四件套**（[trae_006-009](../../../../docs/01_policies_and_standards/rules/trae_006_anti_hallucination_structure.yaml)）：
+- 结构追溯：15 字段完整性
+- 行为约束：禁 TODO/pass/NotImplementedError，编辑优先禁删+建，最小变更禁顺手重构，假设显式化标记 [ASSUMPTION]
+- 输出验证：步骤验证门每步 exit 0 才进下一步，导入前 Grep/Read 确认，自审闭环 5 项，新代码必测
+- 安全防护：认证/注入/数据暴露三检查，>3文件/>50行先计划，改前读 [CONSUMERS]+Grep 引用，>30 轮开新会话
+**代码组织+类型导入**（[trae_010+011](../../../../docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml)）：
+- 文件≤300行/函数≤50行/类≤200行/文档≤60K tokens(1200行)超限拆分
+- 类型注解分层 mypy（L00-01 strict/L02-08 关键接口 strict/L09-15 public API strict），金额用 Decimal/时间戳用 Timestamp
+- 禁 import */禁下层导入上层
+- SSoT 守卫：改数据结构先改 YAML→运行生成脚本→审计下游→KB 决策记录
+**数据库破坏性操作三步验证**（[trae_063_data_ops_discipline.yaml](../../../../docs/01_policies_and_standards/rules/trae_063_data_ops_discipline.yaml)）：DELETE/REPLACE PARTITION/TRUNCATE/ALTER DELETE 等破坏性操作执行前 MUST 三步验证——①必要性（能否非破坏性替代）②真实性（全字段 GROUP BY HAVING count()>1 查看实际重复行，禁用 count()-uniqExact(排序键)）③可逆性（pg_dump/clickhouse-backup 备份，无备份禁止执行）；证据留档到任务卡 description（2026-07-16 tick_data 21 个月数据误删事故根因）
+**RunCommand 命令纯洁性**（[trae_066_rule_seventeen_runcommand_purity.yaml](../../../../docs/01_policies_and_standards/rules/trae_066_rule_seventeen_runcommand_purity.yaml)）：RunCommand 仅允许裸命令格式（python <脚本>.py）；禁 PowerShell 语法（管道/引号/$变量/cmdlet/>重定向/;串联）；禁裸 git 命令（走 git_guard.py 封装）；文件操作用 Read/Write/Edit/Glob/Grep/DeleteFile 工具
+**Symbol 约定**（[trae_082_symbol_convention.yaml](../../../../docs/01_policies_and_standards/rules/trae_082_symbol_convention.yaml)）：securities 表三字段——symbol 裸码+exchange 列（SH/SZ/HK/US/CFFEX）+symbol_canonical 派生列；跨表 JOIN MUST 用 symbol_canonical（000001 平安银行 vs 000001 上证指数碰撞）；历史数据零改写（ADD COLUMN MATERIALIZED，禁 ALTER UPDATE）
 
 ---
 
@@ -360,6 +395,14 @@ pytest tests/path/to/test_xxx.py -v
 **通过判据**：12 节全部 PASS / FAIL 项已就地修复并自检通过
 **不通过处置**：FAIL 项无法就地修复 → 回 Step 4 修复 → 重审该节
 **产出物**：审查结论（对话内）+ 跳过条款清单+跳过理由（来自 0.5 分类）
+**方法论根因分析**（[trae_024_methodology_diagnosis.yaml](../../../../docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml) MTH-006）：修复问题时修改既有产物即触发——追问到底+诊断反转验证，禁第一个为什么就停（治本关键）；标准先行（查专业框架映射表）+架构上下文自检（文件操作前定位架构层）+决策质量四问（埋雷/容量/对标/建议）+SSoT 冲突裁决（时序/职责/先例）+补漏与终止双检
+**漂移检测套件**（[trae_016_arch_drift_detection.yaml](../../../../docs/01_policies_and_standards/rules/trae_016_arch_drift_detection.yaml) + 脚本）：
+- 契约代码漂移：`scripts/governance/d2_links/check_contract_code_drift.py`
+- LoadPath 完整性：`scripts/governance/d2_links/validate_load_path_integrity.py`（改 AGENTS.md 后必跑）
+- 配置漂移：`scripts/governance/d2_links/validate_config_integrity.py`
+- 断链/相对引用检测：`scripts/governance/d2_links/`
+- 废弃路径写入/分裂删除引用：`scripts/governance/d4_paths/`
+- 孤儿文档/重复规范语言：`scripts/governance/d9_knowledge/`
 
 ---
 
@@ -383,6 +426,12 @@ pytest tests/path/to/test_xxx.py -v
 **不通过处置**：文档与代码漂移 → 回 Step 4 修正 / 跨蓝图未同步 → 补 STEP2
 **产出物**：更新后的设计备忘 + 更新后的 00_index
 **禁止**：改了接口但不 Grep 消费方（遗漏消费方→生产故障）
+**文档规格化三清单**（[trae_030_doc_numbering_metadata.yaml](../../../../docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml) GOV-DOC-011/016/017）：
+- 产出物规格化三清单：可删 11 类/不可删 18 类/必须补充 10 类
+- 纯陈述原则：正文只承载当前真实值，禁过渡文本标注，历史差异走 git log
+- 规则抽象性：规则中数字 MUST 是阈值非事实状态（文件大小/节点数通过动态查询获取）
+**删除安全门禁**（[trae_029_doc_operation_security.yaml](../../../../docs/01_policies_and_standards/rules/trae_029_doc_operation_security.yaml) GOV-DOC-007）：删除文件强制三问（不在锚点列表/已提取价值/无引用）+三步（Grep 引用→同 commit 更新→确认断链）+7 个锚点文件禁删（rule_catalog_registry.yaml/architecture_contract.yaml/trae_041/index.yaml/AGENTS.md/.pre-commit-config.yaml/.roomodes）+断链阈值（生产≤100/过渡≤500/>500 阻断 commit）
+**架构版本化**（[trae_037_arch_qualification_versioning.yaml](../../../../docs/01_policies_and_standards/rules/trae_037_arch_qualification_versioning.yaml) GOV-ARCH-003）：version X.Y.Z 递增——Patch 文字修正/Minor 新增章节/Major 架构方向变更；Minor 及以上记修订记录；代码 PR 必须引用架构文档版本
 
 ---
 
@@ -448,6 +497,11 @@ python scripts/lock_files.py status
 **不通过处置**：文件丢失 → git reflog / dangling blob 恢复（[65_git_safety_governance.md](65_git_safety_governance.md) §灾难恢复）
 **产出物**：完整性确认
 **铁律**：所有新建/修改文件必须立即 `git add`（project_memory #ARCH-GIT-CLEAN-GUARD-FIX 教训——git clean -fd 会物理删除 untracked 文件不进回收站）
+**工作区治理**（[workspace_governance_policy.md](../../../../docs/01_policies_and_standards/policies/workspace_governance_policy.md) + [scripts/rollback.py](../../../../scripts/rollback.py)）：
+- auto-sync 产物还原优先：git checkout 还原 auto-sync 产物，禁手动提交残留（工作区永远有 modified 噪音）
+- .gitignore 维护：.aidrafts/access/metadata/.ailocks 等必忽略
+- 会话开始/提交前检查清单
+- 回滚系统 CLI：`python scripts/rollback.py full_revert|partial_revert|discard|hard_reset|preview|preflight|forward_fix_evaluate|dependency_impact`
 
 ---
 
@@ -503,6 +557,11 @@ python scripts/session_worktree.py commit <sid> "commit message"
 **铁律**：
 - 禁止 `--no-verify` 绕过 pre-commit（[project_memory](file:///c:\Users\fanzi\.trae-cn\memory\projects\-d-ZephyrAlpha--p2-1c552864b6a6a396cfb0\project_memory.md)）
 - 禁止裸 `git commit`（pre-commit 框架全树 stash 会冲掉其他会话暂存，[66_commit_queue_serialization.md](66_commit_queue_serialization.md) §2.1 事故 1）
+**commit 四件套**（[trae_072](../../../../docs/01_policies_and_standards/rules/trae_072_cross_commit_atomicity.yaml)+[trae_073](../../../../docs/01_policies_and_standards/rules/trae_073_precommit_offline_discipline.yaml)+[trae_068](../../../../docs/01_policies_and_standards/rules/trae_068_preventability_layer.yaml)+[trae_069](../../../../docs/01_policies_and_standards/rules/trae_069_commit_gateway_abuse_thresholds.yaml)）：
+- 跨 commit 原子性：同功能多文件同 commit，跨 session 依赖登记 depends_on_sessions，GATE-IMPORT-INTEGRITY 硬阻断悬空 import
+- pre-commit hook 离线纪律：禁外部 repo/local hook language:system/纯 stdlib，删"双防线"（网络依赖会卡死 commit）
+- 第 6 层可预防性：post-only reconciler MUST 评估前移 pre-commit gate
+- 滥用监控 6 维阈值：warn_only 50/24h、emergency_commit 5/24h、allow_overlap 30/7d、forged_gw_marker 3/24h、non_gw_commit 10/24h、force_merge 5/7d+健康度评分
 
 ---
 
@@ -541,6 +600,13 @@ python scripts/session_worktree.py mark-completed <sid>
 - **只清理本会话产生的临时文件，不删其他会话 WIP**（用户原话）
 - 禁止根目录直写 .runtime/（必须走 .runtime/sessions/<sid>/staging/ 会话级隔离）
 - 系统层文件（锁/pid/heartbeat）由现有 reconciler 维护，AI 不手动清理
+**临时文件放置 5 铁律**（[trae_070_temporary_file_placement.yaml](../../../../docs/01_policies_and_standards/rules/trae_070_temporary_file_placement.yaml)）：
+- 任务文档→docs/_working/（.md/.csv/.yaml，auto_archive 归档）
+- 运行时脚本→.runtime/tmp/（.ps1/.py/.sh/.txt/.log，禁 .md）
+- worktree→.aidrafts/{sid}/
+- 测试输出分类
+- 禁凭方便选择（MUST 查 directory_purpose_classification 表）
+- 配 GATE-DIRECTORY-CONTRACT (DCR-008) 硬阻断跨类乱放
 
 ---
 
@@ -606,6 +672,14 @@ python scripts/session_worktree.py cleanup <sid>
 **铁律**：
 - 1 任务 = 1 start + 多次 Edit/Write + 1 commit + 1 merge（worktree 君子协定）
 - held_files 重叠走逃生通道（`--allow-overlap` 不当正门用）
+**worktree base 新鲜度全生命周期**（[trae_074_worktree_base_freshness.yaml](../../../../docs/01_policies_and_standards/rules/trae_074_worktree_base_freshness.yaml)）：
+- 三阶段检测：start(fail-open warning)/commit(fail-closed 阻断)/merge(fail-closed 阻断，薛定谔的回退高发点)
+- emergency_commit 主工作区 vs HEAD 一致性检查（warn-only）+reflog 审计标记
+- force=True 不可绕过 base freshness（#ARCH-FORCE-MERGE-SAFETY-001 治本）
+**分支策略**（[branch_strategy_policy.md](../../../../docs/01_policies_and_standards/policies/branch_strategy_policy.md)）：
+- dev 即主分支/master FF 镜像/session/* 命名（sess-NNNNN-YYYYMMDDHHMMSS）
+- 3 个月未合并废弃
+- 6 条禁止：禁 master commit/禁裸 git commit/禁 push --force/禁议题性分支名
 
 ## 4. 关键检查清单（Checklist）
 
@@ -659,6 +733,7 @@ python scripts/session_worktree.py cleanup <sid>
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
 | 2026-08-12 | 1.0.0 | 初稿落盘 | 端到端 15 步施工闭环 SOP 初版，整合 18 项盲点（Session 冷启动/创建前搜索/架构评审门控/五图对齐/模块准入/文件头/双轨/git 预算/跨蓝图通知/三方对齐/临时文件分类/force merge/commit 持久性/stash 生命周期/pre-commit 增量/54 维度/模块创建 10 phase/任务卡 33 字段）；附录 A 全文收录用户提供的长清单审查 12 节 |
+| 2026-08-12 | 1.1.0 | 第三轮扫描补充 22 项盲点 | 补充：handoff 交接包/ABS 绝对禁止清单/SECRETS.md 密钥管理/设计意图真源/向内收三原则/架构变更分级 L1-L4/治理顺序因果链/八指标机械门/并行执行原子事务/防幻觉四件套/代码组织类型导入/数据库破坏性操作三步验证/RunCommand 命令纯洁性/Symbol 约定/方法论根因分析/漂移检测套件/文档规格化三清单/删除安全门禁/架构版本化/工作区治理+回滚系统/commit 四件套/临时文件放置 5 铁律/worktree base 新鲜度+分支策略；附录 B 补充 d2/d4/d9 检测脚本 |
 
 ## 附录 A：长清单审查全文（用户提供的 12 节审查清单）
 
