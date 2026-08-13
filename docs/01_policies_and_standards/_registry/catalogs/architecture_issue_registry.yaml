@@ -16133,3 +16133,58 @@ entries:
   related_rules: '#ARCH-050（POST-COMMIT-GUARD 原裁定）; #ARCH-GIT-CLEAN-GUARD-FIX'
   created: '2026-08-14'
   last_updated: '2026-08-14'
+
+# --- #ARCH-WORKTREE-ENV-001: .worktrees 新机制环境断层——门禁/配置/审计锚定分裂治本（2026-08-14）---
+- issue_id: '#ARCH-WORKTREE-ENV-001'
+  title: '.worktrees 第二代 session worktree 环境断层——.pth 硬锚主仓 src 致规则数据/配置/审计锚定分裂，strip_session_worktree 与 worktree 检测盲区'
+  severity: P1高
+  category: governance
+  adjudication: |-
+    2026-08-14 立项（用户裁定《四项遗留项治本施工方案》，AI-SELL-001 施工）。
+    病根（第一性）：site-packages 两个 .pth 硬编码 D:\ZephyrAlpha\src，
+    worktree 内任何 python 进程 import zephyr 解析到主仓 → REPO_ROOT=主仓，
+    与 git 操作看 worktree 形成"治理进程视角分裂"：
+    ①规则数据（module_translation_registry.yaml）经 REPO_ROOT 读取——worktree
+      修改版不可见，TRANSLATION-COVERAGE 误报 missing（AI-SELL-001 实证）；
+    ②设 PYTHONPATH 纠偏后，depgraph_schema._PG_ENV_PATH=REPO_ROOT/config/.env.postgres
+      在 worktree 缺失（.gitignore 文件不入 checkout），GATE-PANORAMA-ALIGNMENT warn；
+    ③CAPABILITY-LOOKUP-REQUIRED fail-closed 要求 .runtime/lookup_audit 存在——
+      worktree 天然为空，逼出"从主仓复制 audit jsonl 过门禁"的 workaround，
+      实质是搬运另一环境审计证据通过本环境门禁，fail-closed 红攻防护语义被稀释；
+    ④paths.py strip_session_worktree 只识别 .aidrafts（2026-07-19 旧机制治本），
+      .worktrees（#ARCH-AICOLLAB-001，2026-08-11）落地后从未同步——新机制下
+      MAIN_REPO_ROOT==REPO_ROOT 恒指 worktree 自身，"观测数据锚定主仓库"完全失效；
+    ⑤worktree_manager.get_current_worktree 只认 .aidrafts——.worktrees 内
+      WORKTREE-REQUIRED gate 误判"非 worktree"，#ARCH-RECONCILER-WORKTREE-RACE
+      想消除的 --allow-non-worktree 常态化在新机制下复发。
+    实证：2026-08-14 同日 AI-LIQ-001/AI-SELL-001 两会话各自踩坑并口头形成同一套
+    workaround（PYTHONPATH+复制 .env.postgres+复制 lookup_audit），未固化。
+    裁定（2026-08-14 用户确认）：锚点原则明文化——规则数据（YAML）读进程工作区、
+    观测数据（audit/log）锚 MAIN_REPO_ROOT；治本三件套（P2）：
+    P2-8 session_worktree.py create 自动备置环境（复制 .env.postgres+初始化
+    lookup_audit+生成 activate_env.ps1 注入 PYTHONPATH=<worktree>\src）；
+    P2-9 strip_session_worktree 识别 .worktrees + audit 读写三处改锚 MAIN_REPO_ROOT
+    + 文件分类改锚 gateway.project_root；
+    P2-10 get_current_worktree 支持 .worktrees（含 repo_root=worktree 自身时
+    经 strip_session_worktree 锚定主仓基目录）。
+    附带：.worktrees/ 显式入 .gitignore（P0-2，SECRET 扩散面堵住——worktree 内含
+    凭据副本；原仅靠根目录白名单 /* 兜底）；AGENTS.md LAW-3 双轨矛盾裁定
+    canonical=.worktrees、.aidrafts 冻结不新增。
+  impact:
+    变更文件：
+    - 'scripts/session_worktree.py（create 环境三件套 _provision_worktree_env）'
+    - 'src/zephyr/shared/io/paths.py（strip_session_worktree 识别 .worktrees）'
+    - 'src/zephyr/gov_enforcement/commit_gates/capability_lookup_required_gate.py（读端 MAIN_REPO_ROOT + 分类锚 gateway.project_root）'
+    - 'src/zephyr/governance/capability_lookup.py + src/zephyr/integration/mcp/rule_discovery_server.py（写端 MAIN_REPO_ROOT）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/worktree_manager.py（双机制检测）'
+    - 'tests/scripts/test_session_worktree_env.py + tests/governance/rule_bridge/test_worktree_manager_session_detect.py（新建 7 单测）'
+    - 'tests/governance/commit_gates/test_capability_lookup_required_gate.py（mock 锚点同步）'
+    - '.gitignore（.worktrees/ 显式登记）'
+    关联文档：
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/65_git_safety_governance.md §11.3.1'
+  fix_phase: 'P0-2/P2-8/9/10 已落盘（7 新单测 2 轮全绿 + capability_lookup 4 套件 108 passed 无回归）。后续观察项：MCP server 等长驻进程的 sys.modules 锚定缓存不可热切换（R8），重启生效。'
+  status: decided
+  confirmed_by_user: '2026-08-14 用户裁定《四项遗留项治本施工方案》并指令立即执行'
+  related_rules: '#ARCH-AICOLLAB-001; #ARCH-RECONCILER-WORKTREE-RACE; #ARCH-WORKTREE-002; #ARCH-MERGE-PATH-GAP-001; 65 号 §11.3.1'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'
