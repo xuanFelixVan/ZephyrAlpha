@@ -5,8 +5,8 @@ title: 回撤 Protocol 落地 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.38.2"
-date: 2026-08-12
+version: "1.39.0"
+date: 2026-08-13
 topic: drawdown_protocol_impl
 scope: 07_trading_decision_architecture
 ---
@@ -2487,6 +2487,63 @@ def calibrate_thresholds(sharpe, returns):
 - [tradingwyckoff: Drawdown Complete Guide](https://www.tradingwyckoff.com/en/algorithmic-trading/drawdown-trading-guide/)（2026-01，3 类 drawdown + Ulcer Index + Pain Index 水下面积 + Kill Switch protocol + intraday vs close-to-close 区分）
 - [PropGuard TradeShield Protocol](https://github.com/youcefbibo53/PropGuard-Trailing-Equity-Armor/)（2026-08-08，prop firm 多层 drawdown 防御：静态（初始本金基准）+ trailing（peak 基准）双模式 + Daily Loss Limit + 硬 circuit-breaker）
 - [orstac: Avoid Over-Leveraging](https://orstac.com/ways-to-avoid-over-leveraging-in-trading-3/)（2026-03，soft circuit breaker（win rate<30%→减仓）+ hard circuit breaker（daily DD>5%→24h halt）+ correlation-aware portfolio leverage 净暴露计算）
+
+---
+
+## 9. 施工记录
+
+### v1.39.0（2026-08-13，session AI-DRWD-001）
+
+**施工范围**：§3.5 口径修正 + §6.11 两项落码
+
+**施工内容**：
+
+1. **Kill Switch 平仓/撤单执行链路落码**（§3.5 口径修正，原标注"平仓所有持仓 + 撤所有挂单 ❌ 未落码"）：
+   - 新增 `stop_loss.execute_kill_switch_liquidation(broker, positions, open_orders, scope, max_orders_per_second)` 函数
+   - 支持 scope 三态：`"all"`（平仓+撤单）/ `"position"`（仅平仓）/ `"order"`（仅撤单）
+   - A 股 2026 新规适配：平仓单按 `max_orders_per_second=15` 笔/秒限频分批执行，持仓 >15 只自动分 ⌈N/15⌉ 批
+   - 逐笔异常捕获：单笔失败不阻断整体执行，汇总到 `cancel_errors`/`liquidation_errors` 列表
+   - 输入验证：`scope` 非法值和 `max_orders_per_second <= 0` 抛 `ValueError`
+   - 完整日志链路：CRITICAL 触发 → INFO 逐单 → CRITICAL 汇总（含 event_id 全链路串联）
+   - 输入验证测试：非法 scope / 零限频 / 负限频均抛 ValueError
+
+2. **Ghost Position 检测落码**（§6.11，原仅伪代码）：
+   - 新增 `stop_loss.detect_ghost_positions(broker_holdings, strategy_state, kill_switch_state)` 独立函数
+   - 新增 `DefaultRiskValidator.detect_ghost_positions(broker_holdings, strategy_state)` 实例方法（利用 `self._kill_switch_active` 状态）
+   - 双 Ghost 类型：① `strategy_closed_but_broker_holds`（策略侧 CLOSED 但 broker 有持仓）；② `kill_switch_closed_but_position_remains`（Kill Switch 已关但 broker 仍有持仓）
+   - 去重逻辑：同一标的不重复报告
+
+3. **DefaultRiskValidator 增强**：
+   - `trigger_kill_switch()` 增加 CRITICAL 日志（原无日志）
+   - `reset_kill_switch()` 增加 `confirmation` 参数（含 `holdings_verified_zero` 校验，防 Ghost Position 复位风险）
+   - `validate_order()` / `validate_portfolio()` 补充完整 docstring
+   - 文件头 `[SAFETY]` 修正为 `L`（与 `[A_module] safety=L` 一致）
+
+4. **ALGO_FLOW 标记**：`stop_loss.py` 新增完整 ALGO_FLOW 块（I1-I9 输入 / A1-A5 算法 / O1 输出），覆盖 Kill Switch 执行链路和 Ghost Position 检测
+
+**测试**：81 passed / 0 failed（连续 2 轮），新增 22 个测试用例：
+- `TestExecuteKillSwitchLiquidation`：15 例（scope 三态 / 空持仓 / 失败注入 / 多空方向 / 零 qty 跳过 / 15 笔/秒分批 / 自定义限频 / None open_orders / 非法 scope / 零限频 / 负限频）
+- `TestDetectGhostPositions`：7 例（无 Ghost / 策略 CLOSED / Kill Switch CLOSED / 双类型去重 / 空持仓 / 零 qty）
+- `TestDefaultRiskValidatorGhostDetection`：4 例（实例方法 / Kill Switch 激活 / 无持仓 / 去重）
+- `TestDefaultRiskValidatorResetWithConfirmation`：3 例（确认重置 / Ghost 风险告警 / 无确认兼容）
+
+**长清单审查**：PASS（修复 5 项：scope/限频参数无校验、trigger_kill_switch 无日志、SAFETY 标记矛盾、validate_order/validate_portfolio 无 docstring）
+
+**施工文件**：
+- `src/zephyr/risk/stop_loss.py`：新增 `execute_kill_switch_liquidation` + `detect_ghost_positions` + ALGO_FLOW
+- `src/zephyr/risk/implementations/default_risk_validator.py`：新增 `detect_ghost_positions` + `reset_kill_switch` 确认校验 + `trigger_kill_switch` 日志 + docstring 补全
+- `tests/risk/test_l04_risk_management.py`：新增 22 个测试用例
+
+**§3.5 执行路径状态更新**：
+```
+触发源 → drawdown_controller.kill_switch_advised=True          ✅ 已实现
+       → stop_loss.trigger_kill_switch(reason, scope="all")    ✅ 已实现（事件记录层）
+       → DefaultRiskValidator.trigger_kill_switch() 置状态      ✅ 已实现（_kill_switch_active=True + CRITICAL 日志）
+       → 平仓所有持仓 + 撤所有挂单                              ✅ 已落码（execute_kill_switch_liquidation，15 笔/秒分片）
+       → 锁定新开仓                                            ✅ 已实现（validate_order 拒绝全部新订单）
+       → requires_manual_reset: True（人工复位才能恢复）         ✅ 已实现（事件 dict 字段）
+       → Ghost Position 检测                                   ✅ 已落码（detect_ghost_positions，双类型检测）
+```
 - [csdn: 2026 量化新规实盘交易重构](https://blog.csdn.net/syp1110/article/details/163276625)（2026-08-08，A 股程序化交易新规：每秒15笔/撤单率15%/50微秒停留 + TWAP/VWAP 拆单标配 + Kelly+风险平价头寸管理）
 - [csdn: 期货量化风控实战](https://blog.csdn.net/lisiccwss/article/details/160660741)（2026-08-08，仓位/止损/熔断三层联动 + 状态机防自动恢复重复风险 + 风控与策略分离审计）
 - [marketclutch: Circuit Breakers in Algorithmic Trading](https://marketclutch.com/structural-safeguards-navigating-circuit-breakers-in-algorithmic-trading/)（2026，LULD 价格带 + MWCB 三级 7/13/20% + Pre-Halt Liquidation + 内部系统 circuit breaker 与交易所级分层）

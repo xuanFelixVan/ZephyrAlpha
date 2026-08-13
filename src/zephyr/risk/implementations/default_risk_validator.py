@@ -8,7 +8,7 @@
 # [INVARIANTS] none
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
-# [SAFETY] M
+# [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
@@ -66,6 +66,22 @@ class DefaultRiskValidator(RiskValidator):
         current_holdings: dict[str, float],
         limits: RiskLimits,
     ) -> list[ViolationDetail]:
+        """对单笔订单做 pre-trade 风控校验。
+
+        校验项：
+        1. Kill Switch 激活时拒绝全部新订单（HALT）
+        2. 单仓权重是否超限（HALT）
+        3. 下单后总权重是否超限（HALT）
+
+        Args:
+            symbol: 标的代码
+            target_weight: 目标权重（正=买入，负=卖出）
+            current_holdings: 当前持仓权重字典
+            limits: 风险限额配置
+
+        Returns:
+            违规列表，空列表表示通过
+        """
         violations: list[ViolationDetail] = []
 
         if self._kill_switch_active:
@@ -118,6 +134,22 @@ class DefaultRiskValidator(RiskValidator):
         total_nav: Decimal,
         limits: RiskLimits,
     ) -> list[ViolationDetail]:
+        """对全组合做风控状态校验。
+
+        校验项：
+        1. 各标的持仓是否超单仓限额（HALT）
+        2. 总杠杆是否超限（HALT）
+        3. 组合回撤是否超限额（HALT）
+
+        Args:
+            holdings: symbol → weight 字典
+            market_values: symbol → market_value 字典
+            total_nav: 组合总净值
+            limits: 风险限额配置
+
+        Returns:
+            违规列表，空列表表示通过
+        """
         violations: list[ViolationDetail] = []
 
         # 5.145 审查修复：limits: Any -> RiskLimits，消除 dict 双模式（死代码）
@@ -174,12 +206,80 @@ class DefaultRiskValidator(RiskValidator):
         return violations
 
     def trigger_kill_switch(self) -> None:
-        """手动触发 kill switch"""
+        """手动触发 kill switch（资金级熔断事件）。"""
+        import logging
+
+        _logger = logging.getLogger(__name__)
+        _logger.critical("KILL_SWITCH_ACTIVATED validator=%s", self.__validator_id__)
         self._kill_switch_active = True
 
-    def reset_kill_switch(self) -> None:
-        """重置 kill switch（需人工确认后调用）"""
+    def reset_kill_switch(self, confirmation: dict | None = None) -> None:
+        """重置 kill switch（需人工确认后调用）。
+
+        Args:
+            confirmation: 确认信息字典，必须包含：
+                - confirmed_by: 确认人
+                - holdings_verified_zero: 持仓已清零确认（True/False）
+        """
+        import logging
+
+        _logger = logging.getLogger(__name__)
+
+        if confirmation is not None:
+            confirmed_by = confirmation.get("confirmed_by", "unknown")
+            holdings_verified_zero = confirmation.get("holdings_verified_zero", False)
+            if not holdings_verified_zero:
+                _logger.warning(
+                    "KILL_SWITCH_RESET_GHOST_RISK confirmed_by=%s holdings_not_verified_zero",
+                    confirmed_by,
+                )
+            _logger.warning(
+                "KILL_SWITCH_RESET confirmed_by=%s holdings_verified_zero=%s",
+                confirmed_by,
+                holdings_verified_zero,
+            )
+        else:
+            _logger.warning("KILL_SWITCH_RESET no confirmation provided")
+
         self._kill_switch_active = False
+
+    def detect_ghost_positions(
+        self,
+        broker_holdings: dict[str, dict],
+        strategy_state: dict[str, str],
+    ) -> list[tuple[str, dict, str]]:
+        """检测 Ghost Position（策略认为已平仓但 broker 仍持有的幽灵持仓）。
+
+        两种 Ghost 情况：
+        1. 策略侧某标的 CLOSED 但 broker 仍有该标的持仓
+        2. Kill Switch 已激活但 broker 仍有任意持仓
+
+        Args:
+            broker_holdings: symbol → position_info 字典，broker 端实际持仓
+                position_info 需包含 "qty" 字段
+            strategy_state: symbol → "OPEN"/"CLOSED" 字典，策略侧持仓状态
+
+        Returns:
+            ghost_positions 列表，每项为 (symbol, position_info, ghost_type) 元组
+        """
+        ghosts: list[tuple[str, dict, str]] = []
+
+        # 情况 1：策略侧 CLOSED 但 broker 有持仓
+        for sym, pos in broker_holdings.items():
+            qty = pos.get("qty", 0)
+            if qty != 0 and strategy_state.get(sym) == "CLOSED":
+                ghosts.append((sym, pos, "strategy_closed_but_broker_holds"))
+
+        # 情况 2：Kill Switch 已激活但 broker 仍有任意持仓
+        if self._kill_switch_active:
+            for sym, pos in broker_holdings.items():
+                qty = pos.get("qty", 0)
+                if qty != 0:
+                    # 避免重复（情况 1 已记录的标的不重复添加）
+                    if not any(g[0] == sym for g in ghosts):
+                        ghosts.append((sym, pos, "kill_switch_active_but_position_remains"))
+
+        return ghosts
 
     @property
     def kill_switch_active(self) -> bool:

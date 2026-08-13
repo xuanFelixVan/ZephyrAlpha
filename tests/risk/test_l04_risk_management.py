@@ -35,7 +35,9 @@ from zephyr.risk.risk_validator import (
 )
 from zephyr.risk.stop_loss import (
     StopLossResult,
+    detect_ghost_positions,
     evaluate_stop_loss,
+    execute_kill_switch_liquidation,
     reset_kill_switch,
     trigger_kill_switch,
 )
@@ -576,3 +578,283 @@ class TestStopLossResult:
         )
         assert r.method == "fixed_pct"
         assert r.kill_switch_activated is True
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Kill Switch 执行链路 + Ghost Position 检测测试（§3.5.1/§6.11 施工）
+# ─────────────────────────────────────────────────────────────────────────────
+
+
+class _MockBroker:
+    """模拟 ExecutionBroker 接口，用于测试 Kill Switch 执行链路。"""
+
+    def __init__(self):
+        self.cancelled_orders: list[str] = []
+        self.placed_orders: list[dict] = []
+        self.cancel_fail_orders: set[str] = set()
+        self.place_fail_symbols: set[str] = set()
+
+    def cancel_order(self, order_id: str) -> None:
+        if order_id in self.cancel_fail_orders:
+            raise ConnectionError(f"cancel failed: {order_id}")
+        self.cancelled_orders.append(order_id)
+
+    def place_order(self, symbol: str, direction: str, qty: float, order_type: str) -> None:
+        if symbol in self.place_fail_symbols:
+            raise ConnectionError(f"place failed: {symbol}")
+        self.placed_orders.append(
+            {"symbol": symbol, "direction": direction, "qty": qty, "order_type": order_type}
+        )
+
+
+class TestExecuteKillSwitchLiquidation:
+    """§3.5.1 L1 代码层：Kill Switch 平仓/撤单执行链路测试。"""
+
+    def test_scope_all_with_positions_and_orders(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": 1000, "000001.SZ": 2000}
+        open_orders = {"ord-001": {"symbol": "600000.SH"}, "ord-002": {"symbol": "000001.SZ"}}
+        result = execute_kill_switch_liquidation(broker, positions, open_orders, scope="all")
+        assert result["all_success"] is True
+        assert len(result["cancelled_orders"]) == 2
+        assert len(result["liquidation_orders"]) == 2
+        assert len(result["cancel_errors"]) == 0
+        assert len(result["liquidation_errors"]) == 0
+        assert "event_id" in result
+        assert result["scope"] == "all"
+
+    def test_scope_position_only(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": 1000}
+        open_orders = {"ord-001": {"symbol": "600000.SH"}}
+        result = execute_kill_switch_liquidation(broker, positions, open_orders, scope="position")
+        assert result["all_success"] is True
+        assert len(result["cancelled_orders"]) == 0
+        assert len(result["liquidation_orders"]) == 1
+
+    def test_scope_order_only(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": 1000}
+        open_orders = {"ord-001": {"symbol": "600000.SH"}}
+        result = execute_kill_switch_liquidation(broker, positions, open_orders, scope="order")
+        assert result["all_success"] is True
+        assert len(result["cancelled_orders"]) == 1
+        assert len(result["liquidation_orders"]) == 0
+
+    def test_empty_positions_and_orders(self):
+        broker = _MockBroker()
+        result = execute_kill_switch_liquidation(broker, {}, {}, scope="all")
+        assert result["all_success"] is True
+        assert len(result["cancelled_orders"]) == 0
+        assert len(result["liquidation_orders"]) == 0
+
+    def test_cancel_failure_marks_not_all_success(self):
+        broker = _MockBroker()
+        broker.cancel_fail_orders.add("ord-bad")
+        open_orders = {"ord-ok": {"symbol": "600000.SH"}, "ord-bad": {"symbol": "000001.SZ"}}
+        result = execute_kill_switch_liquidation(broker, {}, open_orders, scope="order")
+        assert result["all_success"] is False
+        assert len(result["cancelled_orders"]) == 1
+        assert len(result["cancel_errors"]) == 1
+        assert result["cancel_errors"][0][0] == "ord-bad"
+
+    def test_liquidate_failure_marks_not_all_success(self):
+        broker = _MockBroker()
+        broker.place_fail_symbols.add("600000.SH")
+        positions = {"600000.SH": 1000, "000001.SZ": 2000}
+        result = execute_kill_switch_liquidation(broker, positions, {}, scope="position")
+        assert result["all_success"] is False
+        assert len(result["liquidation_orders"]) == 1
+        assert len(result["liquidation_errors"]) == 1
+        assert result["liquidation_errors"][0][0] == "600000.SH"
+
+    def test_short_position_direction(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": -500}
+        result = execute_kill_switch_liquidation(broker, positions, {}, scope="position")
+        assert result["all_success"] is True
+        assert broker.placed_orders[0]["direction"] == "BUY"
+        assert broker.placed_orders[0]["qty"] == 500
+
+    def test_long_position_direction(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": 1000}
+        result = execute_kill_switch_liquidation(broker, positions, {}, scope="position")
+        assert result["all_success"] is True
+        assert broker.placed_orders[0]["direction"] == "SELL"
+        assert broker.placed_orders[0]["qty"] == 1000
+
+    def test_zero_qty_positions_skipped(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": 0, "000001.SZ": 100}
+        result = execute_kill_switch_liquidation(broker, positions, {}, scope="position")
+        assert result["all_success"] is True
+        assert len(result["liquidation_orders"]) == 1
+
+    def test_batching_15_per_second(self):
+        broker = _MockBroker()
+        # 20 个持仓，15 笔/秒限频，应分 2 批
+        positions = {f"6000{i:02d}.SH": 100 for i in range(20)}
+        result = execute_kill_switch_liquidation(broker, positions, {}, scope="position")
+        assert result["all_success"] is True
+        assert len(result["liquidation_orders"]) == 20
+        # 总耗时 ≥ 1 秒（第二批等了 1 秒）
+        assert result["total_time_seconds"] >= 1.0
+
+    def test_custom_max_orders_per_second(self):
+        broker = _MockBroker()
+        positions = {f"6000{i:02d}.SH": 100 for i in range(10)}
+        result = execute_kill_switch_liquidation(
+            broker, positions, {}, scope="position", max_orders_per_second=5
+        )
+        assert result["all_success"] is True
+        assert len(result["liquidation_orders"]) == 10
+        # 10 个持仓 5 笔/秒 = 2 批，第二批等 1 秒
+        assert result["total_time_seconds"] >= 1.0
+
+    def test_none_open_orders(self):
+        broker = _MockBroker()
+        positions = {"600000.SH": 1000}
+        result = execute_kill_switch_liquidation(broker, positions, None, scope="all")
+        assert result["all_success"] is True
+        assert len(result["liquidation_orders"]) == 1
+
+    def test_invalid_scope_raises(self):
+        broker = _MockBroker()
+        with pytest.raises(ValueError, match="非法 scope"):
+            execute_kill_switch_liquidation(broker, {}, {}, scope="invalid")
+
+    def test_zero_max_orders_raises(self):
+        broker = _MockBroker()
+        with pytest.raises(ValueError, match="必须 > 0"):
+            execute_kill_switch_liquidation(broker, {}, {}, max_orders_per_second=0)
+
+    def test_negative_max_orders_raises(self):
+        broker = _MockBroker()
+        with pytest.raises(ValueError, match="必须 > 0"):
+            execute_kill_switch_liquidation(broker, {}, {}, max_orders_per_second=-1)
+
+
+class TestDetectGhostPositions:
+    """§3.5.1 Ghost Position 检测测试。"""
+
+    def test_no_ghost_when_all_match(self):
+        broker_holdings = {"600000.SH": {"qty": 1000}, "000001.SZ": {"qty": 2000}}
+        strategy_state = {"600000.SH": "OPEN", "000001.SZ": "OPEN"}
+        ghosts = detect_ghost_positions(broker_holdings, strategy_state, "OPEN")
+        assert len(ghosts) == 0
+
+    def test_ghost_strategy_closed_but_broker_holds(self):
+        broker_holdings = {"600000.SH": {"qty": 1000}}
+        strategy_state = {"600000.SH": "CLOSED"}
+        ghosts = detect_ghost_positions(broker_holdings, strategy_state, "OPEN")
+        assert len(ghosts) == 1
+        assert ghosts[0][0] == "600000.SH"
+        assert ghosts[0][2] == "strategy_closed_but_broker_holds"
+
+    def test_ghost_kill_switch_closed_but_position_remains(self):
+        broker_holdings = {"600000.SH": {"qty": 1000}, "000001.SZ": {"qty": 2000}}
+        strategy_state = {"600000.SH": "OPEN", "000001.SZ": "OPEN"}
+        ghosts = detect_ghost_positions(broker_holdings, strategy_state, "CLOSED")
+        assert len(ghosts) == 2
+        types = {g[2] for g in ghosts}
+        assert "kill_switch_closed_but_position_remains" in types
+
+    def test_ghost_both_types_no_duplicate(self):
+        broker_holdings = {"600000.SH": {"qty": 1000}}
+        strategy_state = {"600000.SH": "CLOSED"}
+        ghosts = detect_ghost_positions(broker_holdings, strategy_state, "CLOSED")
+        assert len(ghosts) == 1
+        assert ghosts[0][2] == "strategy_closed_but_broker_holds"
+
+    def test_no_ghost_when_kill_switch_closed_and_no_positions(self):
+        broker_holdings = {"600000.SH": {"qty": 0}}
+        strategy_state = {"600000.SH": "CLOSED"}
+        ghosts = detect_ghost_positions(broker_holdings, strategy_state, "CLOSED")
+        assert len(ghosts) == 0
+
+    def test_empty_broker_holdings(self):
+        ghosts = detect_ghost_positions({}, {}, "CLOSED")
+        assert len(ghosts) == 0
+
+    def test_zero_qty_not_ghost(self):
+        broker_holdings = {"600000.SH": {"qty": 0}}
+        strategy_state = {"600000.SH": "CLOSED"}
+        ghosts = detect_ghost_positions(broker_holdings, strategy_state, "OPEN")
+        assert len(ghosts) == 0
+
+
+class TestDefaultRiskValidatorGhostDetection:
+    """DefaultRiskValidator.detect_ghost_positions 实例方法测试。"""
+
+    def test_detect_ghost_no_active_kill_switch(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=False)
+        broker_holdings = {"600000.SH": {"qty": 1000}}
+        strategy_state = {"600000.SH": "CLOSED"}
+        ghosts = validator.detect_ghost_positions(broker_holdings, strategy_state)
+        assert len(ghosts) == 1
+        assert ghosts[0][2] == "strategy_closed_but_broker_holds"
+
+    def test_detect_ghost_active_kill_switch(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=True)
+        broker_holdings = {"600000.SH": {"qty": 1000}, "000001.SZ": {"qty": 500}}
+        strategy_state = {"600000.SH": "OPEN", "000001.SZ": "OPEN"}
+        ghosts = validator.detect_ghost_positions(broker_holdings, strategy_state)
+        assert len(ghosts) == 2
+        types = {g[2] for g in ghosts}
+        assert "kill_switch_active_but_position_remains" in types
+
+    def test_detect_ghost_active_kill_switch_no_positions(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=True)
+        broker_holdings = {"600000.SH": {"qty": 0}}
+        strategy_state = {"600000.SH": "OPEN"}
+        ghosts = validator.detect_ghost_positions(broker_holdings, strategy_state)
+        assert len(ghosts) == 0
+
+    def test_detect_ghost_no_duplicate_when_both_conditions(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=True)
+        broker_holdings = {"600000.SH": {"qty": 1000}}
+        strategy_state = {"600000.SH": "CLOSED"}
+        ghosts = validator.detect_ghost_positions(broker_holdings, strategy_state)
+        assert len(ghosts) == 1
+        assert ghosts[0][2] == "strategy_closed_but_broker_holds"
+
+
+class TestDefaultRiskValidatorResetWithConfirmation:
+    """DefaultRiskValidator.reset_kill_switch 确认校验测试。"""
+
+    def test_reset_with_confirmation(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=True)
+        assert validator.kill_switch_active is True
+        validator.reset_kill_switch(
+            {"confirmed_by": "admin", "holdings_verified_zero": True}
+        )
+        assert validator.kill_switch_active is False
+
+    def test_reset_with_ghost_risk_warning(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=True)
+        # holdings_verified_zero=False 时仍重置，但记录告警日志
+        validator.reset_kill_switch(
+            {"confirmed_by": "admin", "holdings_verified_zero": False}
+        )
+        assert validator.kill_switch_active is False
+
+    def test_reset_without_confirmation(self):
+        from zephyr.risk.implementations.default_risk_validator import DefaultRiskValidator
+
+        validator = DefaultRiskValidator(kill_switch_active=True)
+        # 向后兼容：不传 confirmation 也能重置
+        validator.reset_kill_switch()
+        assert validator.kill_switch_active is False
