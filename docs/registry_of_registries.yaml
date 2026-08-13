@@ -620,6 +620,16 @@ tiers:
         description: 技术指标 name_zh/description 真源（§4.16.4）——22 条种子条目由 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。算法地图全量落地配套（2026-08-12）。
         owned_by: governance
 
+      - registry_id: REG-EXP-001
+        name: 实验/回测登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 5
+        status: draft
+        description: 实验/回测目录唯一真源（SSoT）——实验运行实例元信息登记（4 条 regime_validation completed + 1 条 walk_forward running），日志详情由 log_location/fallback_ref 指向 logs/（FallbackBackend JSON，MLflow 已裁定完全卸载）。schema 57 字段含 PBO/DSR/PSR/MinBTL/MTC/CPCV 六方法过拟合检测预留。已知 dangling：UNI-BASKET-001（regime 验证 10 大盘股篮子）pending。#ARCH-BREG-001 P2（2026-08-13 session AI-REG-EXP-001 落盘）
+        owned_by: governance
+
 # ============================================================
 # AI 使用指南
 # ============================================================
@@ -656,11 +666,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 58
+  total_registries: 59
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 12
     tier_1_governance: 28
-    tier_2_runtime: 18
+    tier_2_runtime: 19
