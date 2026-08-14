@@ -148,20 +148,22 @@
 > - 跨模块依赖：[`cross_module_dependency_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 > - 能力→真源文件反查：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
 >
-> **业务资产 registry 速查**（#ARCH-BREG-001，12 表体系，施工总案=design_memos/62_business_registry_construction.md；✅=P0 完成，🔄=P1 Step1-3 落盘待审计）：
+> **业务资产 registry 速查**（#ARCH-BREG-001，14 表体系，施工总案=design_memos/62_business_registry_construction.md；✅=P0 完成，🔄=P1 Step1-3 落盘待审计）：
 > - ✅ 股票池：[`universe_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml)（5 条，回测 MUST 指定 universe_id）
 > - ✅ 基准：[`benchmark_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml)（4 条，回测 MUST 指定 benchmark_id）
 > - ✅ 交易成本模型：[`cost_model_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cost_model_registry.yaml)（3 条，回测 MUST 扣成本）
 > - ✅ 因子库：[`factor_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml)（111 条/10 类，Step1-8 全量闭环）
 > - ✅ 策略库：[`strategy_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml)（59 条/6 类，Step1-8 全量闭环）
 > - ✅ 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（62 条/9 类，K4 补登 var/es/kill_switch 20 条后闭环）
-> - ✅ 技术指标：[`technical_indicator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml)（40 条/5 大类/58 输出列，9 周期覆盖）
+> - ✅ 技术指标：[`technical_indicator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml)（41 条/6 大类，含 Ichimoku，9 周期覆盖）
 > - ✅ 执行算法：[`execution_algo_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml)（6 条：TWAP/VWAP/ICEBERG/POV/IS/ALT）
-> - ✅ 数据资产：[`data_asset_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml)（166 条=15 源+76 数据集+75 作业）
-> - ✅ 图形形态：[`chart_pattern_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml)（15 条/8 大类，6 个 code_path 已验证存在）
+> - ✅ 数据资产：[`data_asset_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml)（171 条=15 源+80 数据集+76 作业，含 DS-080 龙虎榜）
+> - ✅ 图形形态：[`chart_pattern_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml)（254 条/8 大类，十五轮 SOTA 调研收敛关闭）
 > - ✅ 字段字典：[`field_dictionary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml)（257 条/16 域，factor.inputs FK 全量可解析）
 > - ✅ 实验：[`experiment_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml)（5 条可溯源实验记录）
-> - 备注：12 个注册表全部建成并登记 ROOR，状态以 ROOR `summary.total_registries` 为准
+> - ✅ 龙虎榜席位：[`seat_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml)（15 席位，管"谁在买"，与图形形态表正交；消费模块=CAND-SEAT-001）
+> - ✅ 周期分析：[`regime_cycle_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml)（12 条 Gann/统计周期，管"时间窗口"，与 regime/emotion_cycle 正交；消费模块=CAND-CYCLE-001）
+> - 备注：14 个注册表全部建成并登记 ROOR，状态以 ROOR `summary.total_registries` 为准
 
 ## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
 

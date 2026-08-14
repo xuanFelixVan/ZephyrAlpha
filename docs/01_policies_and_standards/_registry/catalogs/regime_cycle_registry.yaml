@@ -1,0 +1,336 @@
+# [A_config] module_id=REG-CYCLE-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-CYCLE-001
+name: Regime Cycle Registry
+name_zh: 周期分析注册表
+description: >-
+  周期分析唯一真源（SSoT）。登记时间周期、价格周期、几何周期（Gann 江恩）、
+  天文周期、统计周期（FFT/自相关/聚类）的识别算法、参数、输入输出。
+  与 regime（市场状态/风险节流）和 emotion_cycle（情绪周期/择时）正交：
+  本表管"时间窗口"（何时可能变盘），regime 管"市场状态"（多谨慎），
+  emotion_cycle 管"sleeve 内 alpha 择时"（买卖什么）。
+  对标：Gann 江恩理论现代量化重述（MarketForum 2025-12）、
+  周期检测 spectral analysis / regime-switching models。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-14'
+last_updated: '2026-08-14'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- cycle_id
+entry_count: 12
+
+entry_schema:
+  cycle_id: str                  # CYC-{TYPE}-{NNN}，如 CYC-TIME-001
+  name: str
+  name_zh: str
+  aliases: list[str]
+  cycle_type: str                # time/price/geometric/astro/statistical
+  recognition_algorithm: str     # rule_based/fft/regression/clustering/spectral
+  algorithm_variant: str         # 江恩角度法/傅里叶变换/自相关/周期聚类/周年日法
+  params: obj                    # {period: 30, tolerance: 3}
+  inputs: list[str]              # OHLCV/日期序列/价格序列
+  outputs: obj                   # {present: bool, next_window: date, confidence: float}
+  subjectivity: str              # high/medium/low
+  timeframe: str                 # daily/weekly/monthly/yearly
+  module_id: str
+  doc_ref: str
+  code_path: str
+  used_by_factors: list[str]
+  status: str                    # candidate/active/deprecated
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+
+cycles:
+  # ============================================================
+  # TIME CYCLES（时间周期）— Gann 核心：时间>价格
+  # ============================================================
+  - cycle_id: "CYC-TIME-001"
+    name: "Gann 30-Day Cycle"
+    name_zh: "江恩 30 天周期"
+    aliases: ["gann_30d", "30天周期"]
+    cycle_type: "time"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(30 交易日间隔+前后 3 日容忍)"
+    params: {period: 30, tolerance: 3}
+    inputs: ["OHLCV", "date_series"]
+    outputs: {present: bool, next_window: date, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Time Cycles（45 Years in Wall Street）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-TIME-002"
+    name: "Gann 60-Day Cycle"
+    name_zh: "江恩 60 天周期"
+    aliases: ["gann_60d", "60天周期"]
+    cycle_type: "time"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(60 交易日间隔+前后 5 日容忍)"
+    params: {period: 60, tolerance: 5}
+    inputs: ["OHLCV", "date_series"]
+    outputs: {present: bool, next_window: date, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Time Cycles（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-TIME-003"
+    name: "Gann 90-Day Cycle"
+    name_zh: "江恩 90 天周期"
+    aliases: ["gann_90d", "90天周期", "季度循环"]
+    cycle_type: "time"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(90 交易日间隔+前后 7 日容忍)"
+    params: {period: 90, tolerance: 7}
+    inputs: ["OHLCV", "date_series"]
+    outputs: {present: bool, next_window: date, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Time Cycles（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-TIME-004"
+    name: "Gann Anniversary Cycle"
+    name_zh: "江恩周年日周期"
+    aliases: ["gann_anniversary", "周年日", "历史高低点周年"]
+    cycle_type: "time"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(历史显著高低点周年纪念日+前后 5 日容忍)"
+    params: {tolerance: 5, min_years: 1}
+    inputs: ["OHLCV", "date_series"]
+    outputs: {present: bool, next_window: date, confidence: float}
+    subjectivity: "high"
+    timeframe: "yearly"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Anniversary Dates（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  # ============================================================
+  # PRICE CYCLES（价格周期）— 波段幅度对称
+  # ============================================================
+  - cycle_id: "CYC-PRICE-001"
+    name: "Swing Symmetry Cycle"
+    name_zh: "波段对称周期"
+    aliases: ["swing_symmetry", "波段对称", "时间价格对称"]
+    cycle_type: "price"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(前波段时间/幅度映射到当前波段，50%/100%/200%对称点)"
+    params: {symmetry_ratios: [0.5, 1.0, 2.0], tolerance_pct: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, symmetry_point: float, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Swing Symmetry（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-PRICE-002"
+    name: "Gann 50% Retracement"
+    name_zh: "江恩 50% 回调带"
+    aliases: ["gann_50_retrace", "50%回调", "半分位"]
+    cycle_type: "price"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(波段 50% 回调位+33%-67% 区间带)"
+    params: {retracement_levels: [0.33, 0.5, 0.67], tolerance_pct: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, retrace_level: float, zone: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann 50% Retracement（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  # ============================================================
+  # GEOMETRIC CYCLES（几何周期）— Gann 角度/九方图（已登 TREND-009/010，此处登记周期维度）
+  # ============================================================
+  - cycle_id: "CYC-GEO-001"
+    name: "Gann Angle Time-Price Balance"
+    name_zh: "江恩角度时间价格平衡"
+    aliases: ["gann_time_price_balance", "1x1平衡"]
+    cycle_type: "geometric"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(重要高低点锚定 1x1 角度线， 时间=价格平衡突破)"
+    params: {angle_ratio: [1, 1], anchor: "swing_extreme", balance_tolerance: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, balance_point: date, confidence: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Angle 1x1（与 PAT-TREND-009 共享算法，此处登记周期维度）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-GEO-002"
+    name: "Gann Square of Nine Time"
+    name_zh: "江恩九方图时间"
+    aliases: ["gann_sq9_time", "九方图时间"]
+    cycle_type: "geometric"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(√price 变换+角度偏移→时间间隔平方数序列)"
+    params: {step: 0.125, time_unit: "day"}
+    inputs: ["OHLCV", "date_series"]
+    outputs: {present: bool, next_time_window: date, sq9_level: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Gann Square of Nine Time（与 PAT-TREND-010 共享算法）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  # ============================================================
+  # STATISTICAL CYCLES（统计周期）— 现代量化重述
+  # ============================================================
+  - cycle_id: "CYC-STAT-001"
+    name: "FFT Spectral Cycle"
+    name_zh: "傅里叶频谱周期"
+    aliases: ["fft_cycle", "频谱周期", "谱分析"]
+    cycle_type: "statistical"
+    recognition_algorithm: "fft"
+    algorithm_variant: "傅里叶变换(时序→频域， 提取 dominant 周期)"
+    params: {window: 256, top_k: 3, min_period: 5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, dominant_periods: list, power_spectrum: list}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "FFT Spectral Analysis（Gann 现代量化重述， MarketForum 2025-12）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-STAT-002"
+    name: "Rolling Autocorrelation Cycle"
+    name_zh: "滚动自相关周期"
+    aliases: ["autocorr_cycle", "自相关周期"]
+    cycle_type: "statistical"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(滚动窗口自相关峰值→周期长度)"
+    params: {window: 60, lag_max: 30, significance: 0.95}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, cycle_length: int, autocorr_peak: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Rolling Autocorrelation（Gann 现代量化重述）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-STAT-003"
+    name: "Cycle Clustering"
+    name_zh: "周期聚类"
+    aliases: ["cycle_clustering", "周期聚类"]
+    cycle_type: "statistical"
+    recognition_algorithm: "clustering"
+    algorithm_variant: "聚类法(历史周期长度聚类→当前周期归属)"
+    params: {n_clusters: 5, min_samples: 10}
+    inputs: ["OHLCV", "date_series"]
+    outputs: {present: bool, cluster_id: int, cluster_center: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Cycle Clustering（Gann 现代量化重述）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - cycle_id: "CYC-STAT-004"
+    name: "Regime-Switching Cycle"
+    name_zh: "机制切换周期"
+    aliases: ["regime_switching", "机制切换"]
+    cycle_type: "statistical"
+    recognition_algorithm: "spectral"
+    algorithm_variant: "谱分析+状态切换(HMM/Markov 切换， 周期状态识别)"
+    params: {n_regimes: 3, lookback: 252}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, current_regime: str, regime_duration: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Regime-Switching Models（Gann 现代量化重述）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+# ============================================================
+# 与相关注册表的边界（2026-08-14 澄清）
+# ============================================================
+boundary_notes:
+  - "regime_cycle_registry（本表）= 时间窗口/周期识别（何时可能变盘）"
+  - "regime（MOD-REGIME-002）= 市场状态/风险节流（多谨慎）"
+  - "emotion_cycle（MOD-SIG-033/035 已实现）= sleeve 内 alpha 择时（买卖什么）"
+  - "三者正交，不重复登记"
+  - "Gann 几何形态（角度线/九方图）已在 chart_pattern_registry（TREND-009/010）"
+  - "本表登记其周期维度（时间价格平衡/时间平方），不重复图形形态"

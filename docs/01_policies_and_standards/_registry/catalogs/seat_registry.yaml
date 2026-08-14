@@ -1,0 +1,342 @@
+# [A_config] module_id=REG-SEAT-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-SEAT-001
+name: Seat Registry
+name_zh: 龙虎榜席位注册表
+description: >-
+  龙虎榜席位唯一真源（SSoT）。登记沪深交易所每日交易公开信息（龙虎榜）的买卖前五席位
+  身份分类、操盘风格、历史胜率、席位溢价。与 chart_pattern_registry 正交：本表管"谁在买"
+  （结构化披露数据），图形形态表管"怎么买"（价格形态）。
+  数据源：AKShare stock_lhb_detail_em（东财）/ iFind（已退役）/ 交易所公开数据。
+  对标：EasyQuant 涨停复盘龙虎榜模块、数据宝龙虎榜回测。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-14'
+last_updated: '2026-08-14'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- seat_id
+entry_count: 15
+
+entry_schema:
+  seat_id: str                   # SEAT-{TYPE}-{NNN}，如 SEAT-YOUZI-001
+  seat_name: str                 # 席位名称（如"机构专用"或具体营业部）
+  seat_type: str                 # institution/youzi/quant/northbound/retail
+  seat_style: str                # 操盘风格（龙头连板/首板/低吸/一日游/波段/量化T0）
+  data_source: str               # AKShare stock_lhb_detail_em / eastmoney / exchange
+  update_frequency: str          # daily（交易日收盘后）
+  history_win_rate: float        # 历史胜率（近12个月次日上涨概率，回测回填）
+  avg_premium_1d: float          # 次日平均溢价（%，回测回填）
+  avg_premium_3d: float          # 3日平均溢价（%，回测回填）
+  max_holding_days: int          # 典型持仓天数（1=一日游，3=短线，20+=波段）
+  reliability_score: float       # 可靠性评分 0-100（综合胜率/溢价/风格一致性）
+  aliases: list[str]
+  status: str                    # candidate/active/deprecated
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+
+seats:
+  # ============================================================
+  # 机构专用席位（institution，中线趋势资金，优先级最高）
+  # ============================================================
+  - seat_id: "SEAT-INST-001"
+    seat_name: "机构专用"
+    seat_type: "institution"
+    seat_style: "中线波段"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 90
+    reliability_score: null
+    aliases: ["机构专用席位", "机构席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-INST-002"
+    seat_name: "深股通专用"
+    seat_type: "institution"
+    seat_style: "北向资金"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 30
+    reliability_score: null
+    aliases: ["深股通", "北向"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-INST-003"
+    seat_name: "沪股通专用"
+    seat_type: "institution"
+    seat_style: "北向资金"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 30
+    reliability_score: null
+    aliases: ["沪股通", "北向"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  # ============================================================
+  # 一线知名游资（youzi，短线情绪龙头，抓连板弹性）
+  # ============================================================
+  - seat_id: "SEAT-YOUZI-001"
+    seat_name: "章盟主"
+    seat_type: "youzi"
+    seat_style: "龙头连板"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 3
+    reliability_score: null
+    aliases: ["章盟主席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-YOUZI-002"
+    seat_name: "方新侠"
+    seat_type: "youzi"
+    seat_style: "龙头连板"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 3
+    reliability_score: null
+    aliases: ["方新侠席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-YOUZI-003"
+    seat_name: "作手新一"
+    seat_type: "youzi"
+    seat_style: "龙头连板"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 3
+    reliability_score: null
+    aliases: ["作手新一席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-YOUZI-004"
+    seat_name: "小鳄鱼"
+    seat_type: "youzi"
+    seat_style: "低吸"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 3
+    reliability_score: null
+    aliases: ["小鳄鱼席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-YOUZI-005"
+    seat_name: "欢乐海岸"
+    seat_type: "youzi"
+    seat_style: "首板"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 3
+    reliability_score: null
+    aliases: ["欢乐海岸席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-YOUZI-006"
+    seat_name: "宁波桑田路"
+    seat_type: "youzi"
+    seat_style: "一日游"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 1
+    reliability_score: null
+    aliases: ["宁波桑田路席位", "一日游游资"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-YOUZI-007"
+    seat_name: "炒股养家"
+    seat_type: "youzi"
+    seat_style: "波段"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 10
+    reliability_score: null
+    aliases: ["炒股养家席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  # ============================================================
+  # 量化席位（quant，中性偏利空，尽量回避主导量化票）
+  # ============================================================
+  - seat_id: "SEAT-QUANT-001"
+    seat_name: "华鑫上海"
+    seat_type: "quant"
+    seat_style: "量化T0"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 1
+    reliability_score: null
+    aliases: ["华鑫上海席位", "量化席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-QUANT-002"
+    seat_name: "华泰总部"
+    seat_type: "quant"
+    seat_style: "量化T0"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 1
+    reliability_score: null
+    aliases: ["华泰总部席位", "量化席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-QUANT-003"
+    seat_name: "中金量化分公司"
+    seat_type: "quant"
+    seat_style: "量化T0"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 1
+    reliability_score: null
+    aliases: ["中金量化席位", "量化席位"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  # ============================================================
+  # 散户席位（retail，拉萨天团=风险标志）
+  # ============================================================
+  - seat_id: "SEAT-RETAIL-001"
+    seat_name: "拉萨金融城南环路"
+    seat_type: "retail"
+    seat_style: "散户集合"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 1
+    reliability_score: null
+    aliases: ["拉萨天团", "拉萨金融城"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+  - seat_id: "SEAT-RETAIL-002"
+    seat_name: "拉萨东环路"
+    seat_type: "retail"
+    seat_style: "散户集合"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: 1
+    reliability_score: null
+    aliases: ["拉萨天团", "拉萨东环"]
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+
+# ============================================================
+# 席位分析六维框架（2026-08-14 检索证据：淘股吧/雪球/爱股票）
+# ============================================================
+seat_analysis_framework:
+  dimension_1_seat_type: "席位定性：机构>游资>量化>散户，决定行情持续性"
+  dimension_2_capital_strength: "资金力度：净买入占比>10%强势，5-10%中性，<5%诱多"
+  dimension_3_position: "股价位置：低位首板最优，高位4板+回避"
+  dimension_4_theme: "题材/市场热点：贴合主线，孤龙必死"
+  dimension_5_structure: "买卖结构：买一买二合计40-60%最佳，独食危险"
+  dimension_6_continuity: "连续性：三日榜真实，单日可对倒诱多"
+
+# 数据源说明
+# - AKShare: stock_lhb_detail_em（东财龙虎榜明细，每日收盘后更新，免费）
+# - 交易所：上交所/深交所每日交易公开信息（官方源）
+# - 东财 Choice：历史龙虎榜回溯（付费，回测用）
+# - 数据宝：龙虎榜回测统计（证券时报，2026-06 机构净买入胜率 45.7%）

@@ -5,7 +5,7 @@ title: 业务资产注册表体系施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.34.3"
+version: "1.35.0"
 date: 2026-08-14
 topic: business_registry_construction
 scope: 07_trading_decision_architecture
@@ -13,11 +13,11 @@ scope: 07_trading_decision_architecture
 
 # 业务资产注册表体系施工总案
 
-> 本备忘是 12 个业务资产注册表（因子/策略/技术指标/图形形态/股票池/基准/成本模型/执行算法/风控限额/数据资产/字段字典/实验）的**施工总案 + 审查底稿 + 调查索引**。
+> 本备忘是 14 个业务资产注册表（因子/策略/技术指标/图形形态/股票池/基准/成本模型/执行算法/风控限额/数据资产/字段字典/实验/龙虎榜席位/周期分析）的**施工总案 + 审查底稿 + 调查索引**。
 > 性质：**施工执行文档**，承载 schema 定稿、P0/P1/P2 阶段进度、裁定依据、数据来源映射，供 AI 与人类审查/升级/调查使用。
 > 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)；架构裁定见 [#ARCH-BREG-001](../../../01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml)。
 > 关联：[15_data_feature_layer_spec](15_data_feature_layer_spec.md)（因子工程总纲）｜ [20_first_batch_strategies](20_first_batch_strategies.md)（策略清单）｜ [16_technical_indicator_catalog](16_technical_indicator_catalog.md)（技术指标 why 层）｜ [52_backtest_framework_docking](52_backtest_framework_docking.md)（回测对接）
-> **施工状态（2026-08-14 核验）：12/12 注册表已全部落盘**（条目数+commit 见 §3 总览），施工过程叙述已按 AI-DOCS-001 压缩折叠；§4 算法体系、§6/§7 schema、E1-E20 审计矩阵为长期有效规则，完整保留。
+> **施工状态（2026-08-14 核验）：14/14 注册表已全部落盘**（条目数+commit 见 §3 总览；v1.35.0 起 12→14——图形形态循环审查裁定新增龙虎榜席位/周期分析 2 表），施工过程叙述已按 AI-DOCS-001 压缩折叠；§4 算法体系、§6/§7 schema、E1-E20 审计矩阵为长期有效规则，完整保留。
 
 ## 1. 主题组信息
 
@@ -49,9 +49,9 @@ scope: 07_trading_decision_architecture
 | 图形形态 | ❌ 0 登记的技术分析形态 | W底/缠论/波浪无算法记录 |
 | 实验/回测目录 | ❌ 散落 51 号 + 代码 | 回测日志无法回溯 |
 
-**治本**：建 12 个业务资产注册表，分 P0/P1/P2 三阶段施工，全部登记 registry_of_registries.yaml，AGENTS.md 显化查询入口。
+**治本**：建 12 个业务资产注册表（v1.35.0 扩为 14 个），分 P0/P1/P2 三阶段施工，全部登记 registry_of_registries.yaml，AGENTS.md 显化查询入口。
 
-## 3. 12 个注册表总览
+## 3. 14 个注册表总览
 
 | # | 注册表 | registry_id | 真源文件 | tier | 优先级 | 状态 | 条目数 |
 |---|---|---|---|---|---|---|---|
@@ -60,20 +60,22 @@ scope: 07_trading_decision_architecture
 | 3 | 交易成本模型 | REG-CST-001 | `catalogs/cost_model_registry.yaml` | tier_2 | P0 | ✅ 已施工（2026-08-12，8e6436364d） | 3 |
 | 4 | 因子库 | REG-FCT-001 | `catalogs/factor_registry.yaml` | tier_2 | P1-A | ✅ 已施工（2026-08-13，ac75684951） | 111 |
 | 5 | 策略库 | REG-STR-001 | `catalogs/strategy_registry.yaml` | tier_2 | P1-A | ✅ 已施工（2026-08-13，ac75684951） | 59 |
-| 6 | 技术指标 | REG-IND-001 | `catalogs/technical_indicator_registry.yaml` | tier_2 | P1-A | ✅ 已施工（2026-08-13，eea122f432） | 40 |
+| 6 | 技术指标 | REG-IND-001 | `catalogs/technical_indicator_registry.yaml` | tier_2 | P1-A | ✅ 已施工（2026-08-13，eea122f432；2026-08-14 补登 Ichimoku） | 41 |
 | 7 | 执行算法 | REG-EXA-001 | `catalogs/execution_algo_registry.yaml` | tier_2 | P1-B | ✅ 已施工（2026-08-13，c7701fcde6） | 6 |
 | 8 | 风控限额 | REG-RLM-001 | `catalogs/risk_limit_registry.yaml` | tier_2 | P1-B | ✅ 已施工（2026-08-13，c6908d4678） | 62 |
-| 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ✅ 已施工（2026-08-13，c7701fcde6） | 166（15+76+75） |
-| 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | ✅ 已施工（2026-08-13，206f48586f） | 15 |
+| 9 | 数据资产 | REG-DATAFLOW-001 | `catalogs/data_asset_registry.yaml`（改名扩展） | tier_2 | P1-B | ✅ 已施工（2026-08-13，c7701fcde6；2026-08-14 补登 DS-077~080/JOB-076） | 171（15+80+76） |
+| 10 | 图形形态 | REG-PAT-001 | `catalogs/chart_pattern_registry.yaml` | tier_2 | P1-B | ✅ 已施工（2026-08-13，206f48586f；2026-08-14 十五轮 SOTA 调研扩充，第十五轮判定可发现新增=0 收敛关闭） | 254 |
 | 11 | 字段字典 | REG-FLD-001 | `catalogs/field_dictionary.yaml` | tier_2 | P2 | ✅ 已施工（2026-08-14，f0ebfdd5dc） | 257 |
 | 12 | 实验/回测目录 | REG-EXP-001 | `catalogs/experiment_registry.yaml` | tier_2 | P2 | ✅ 已施工（2026-08-13，4b92a41a01） | 5 |
+| 13 | 龙虎榜席位 | REG-SEAT-001 | `catalogs/seat_registry.yaml` | tier_2 | P1-B | ✅ 已施工（2026-08-14；图形形态循环审查裁定新增，与图形形态表正交——管"谁在买"；前提数据 DS-080/JOB-076 已登记，消费模块=CAND-SEAT-001） | 15 |
+| 14 | 周期分析 | REG-CYCLE-001 | `catalogs/regime_cycle_registry.yaml` | tier_2 | P1-B | ✅ 已施工（2026-08-14；Gann 时间周期/周年日裁定新增，与 regime/emotion_cycle 正交——管"时间窗口"；无新增数据前提，消费模块=CAND-CYCLE-001） | 12 |
 
 > 路径前缀：`docs/01_policies_and_standards/_registry/`
 > 优先级原则（project_memory）：回测三件套（universe/benchmark/cost_model）> 被测对象三件套（factor/strategy/indicator）> 交易/风控/数据/图形 > 字段字典/实验
-> tier 说明（v1.33.0 修正）：12 表全部归 ROOR tier_2（数据与运行时级），落盘 YAML frontmatter 统一 `tier: tier_2_data_runtime`。原 v1.32.0 及之前将 6 个 P1 表误标 tier_1（治理与政策级），与落盘 YAML 及 ROOR 分层语义不符，已修正。
-> 治理同步状态（2026-08-14 核验）：ROOR tier_2 段已登记 UNI/BMK/CST/FCT/STR/RLM/PAT 7 条，IND/EXA/DATAFLOW/FLD/EXP 5 表落盘待登记（见 §9.1）；AGENTS.md 业务资产速查 12 表全部显化。
+> tier 说明（v1.33.0 修正）：14 表全部归 ROOR tier_2（数据与运行时级），落盘 YAML frontmatter 统一 `tier: tier_2_data_runtime`。原 v1.32.0 及之前将 6 个 P1 表误标 tier_1（治理与政策级），与落盘 YAML 及 ROOR 分层语义不符，已修正。
+> 治理同步状态（2026-08-14 核验）：ROOR tier_2 段 14 表全部已登记（含 v1.35.0 新增 SEAT/CYCLE 2 条）；AGENTS.md 业务资产速查 14 表全部显化。
 
-## 4. 通用 Schema 设计原则（12 表共用）
+## 4. 通用 Schema 设计原则（14 表共用）
 
 1. **frontmatter 头部**对齐 [frontmatter_field_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml)：`module_id` / `ttl` / `schema_version` / `registry_id` / `name` / `name_zh` / `description` / `owner` / `tier` / `status` / `version` / `created` / `last_updated` / `related_arch` / `unique_key`
 2. **entry_schema 按 DB 表设计**预留迁移：每条记录有 `id`(PK) / `created_at` / `updated_at` / `version` / `status`，未来可一键迁 PG
@@ -151,7 +153,7 @@ scope: 07_trading_decision_architecture
 
 ### 4.5 施工流程算法（每注册表通用 8 步，v1.2.0 新增）
 
-12 个注册表统一遵循以下 8 步施工算法，确保 schema-代码-文档三方一致性。
+14 个注册表统一遵循以下 8 步施工算法，确保 schema-代码-文档三方一致性。
 
 ```
 算法 CONSTRUCT_REGISTRY(registry_id, schema, sources):
@@ -2608,6 +2610,7 @@ project_memory 硬约束：个人+100%AI 项目，过度工程是红线。逐项
 
 | 版本 | 日期 | 修订内容 | 审查依据 |
 |---|---|---|---|
+| v1.35.0 | 2026-08-14 | **体系 12→14 表扩展（图形形态循环审查裁定）**：① 新增 2 表——seat_registry（REG-SEAT-001，15 席位，与图形形态表正交管"谁在买"）+ regime_cycle_registry（REG-CYCLE-001，12 周期，与 regime/emotion_cycle 正交管"时间窗口"）；② 前提数据补登——data_asset 新增 DS-080 market_data.lhb_detail（龙虎榜，AKShare stock_lhb_detail_em）+ JOB-076 ingest.akshare_lhb（15+76+75→15+80+76=171）；③ 消费模块登记候选库 CAND-SEAT-001（P1）/CAND-CYCLE-001（P2）；④ §3 总览 14 行全量刷新（IND 40→41 Ichimoku 补登 / PAT 15→254 十五轮 SOTA 扩充收敛关闭 / DATAFLOW 166→171）；⑤ ROOR tier_2 登记 SEAT/CYCLE（total_registries 63→65）+ AGENTS.md 速查 14 表显化 | 2026-08-14 图形形态循环审查会话裁定（Gann 时间周期/周年日+龙虎榜席位形态新建表） |
 | v1.34.3 | 2026-08-14 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | 12 注册表全部落盘核验（条目数+commit 见 §3）；§4.5/E1-E20/schema/FK/拓扑序/编号规则完整保留；施工过程叙述与研究对标散文折叠 |
 | v1.34.2 | 2026-08-12 | 作战地图环节映射补强——锚定 BM-RES-01-D | §4.18 末尾补映射块，环节级可追溯 |
 | v1.34.1 | 2026-08-12 | **作战地图全覆盖补丁——BM-RC-01 / BM-RC-01-A / BM-RC-01-B / BM-RC-01-C / BM-RES-01-A / BM-RES-03-C**：① §6.2.2 补 BM-RC-01 系列 why 层显式映射（production 补 why，非新建）——9 种限额类型语义表（SINGLE_INSTRUMENT/SECTOR/GROSS/NET/VAR_95/VAR_99/MAX_DD/LEVERAGE/FACTOR ↔ limit_type enum 映射）+ 消耗追踪模型（LimitConsumption notional 占用口径，与 35 号 §3.13 盘中循环衔接，2026 新规 15 笔/秒+撤单率 15% 同口径）+ 预警分级 WARNING 黄/CRITICAL 橙/EMERGENCY 红→AI 自治分级处置（红色 Owner 确认制，与 55 号 §3.1B 三级告警通道衔接）+ 策略 CRUD 状态机与版本管理规则（EVOLVE_ENTRY 快照追溯 / ROLLBACK_ENTRY 回滚 / 阈值放宽 MUST 人工审批）；② §14 新增 L1（BM-RES-01-A 已闭合裁定：不建独立数据集快照/回滚——SemVer+git commit+PIT 多版本已为个人项目上限；血缘=§6.2.3 三实体，字段级血缘 Phase 3+）+ L2（BM-RES-03-C 已闭合裁定：目录层已建=12 注册表 tags+§4.6 交叉引用矩阵+§4.7 E1-E20；语义搜索/引用图谱/推荐器 Phase 3+ 候选，条目>1000 重评） | 作战地图 14 环节全覆盖施工 |

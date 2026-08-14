@@ -24,7 +24,7 @@ last_updated: '2026-08-13'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - indicator_id
-entry_count: 40
+entry_count: 41
 
 entry_schema:
   indicator_id: str              # IND-{CLASS}-{NNN}，如 IND-TREND-001
@@ -858,4 +858,25 @@ indicators:
   version: 1.0.0
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
+  owner: MOD-GOVERNANCE
+# ══════════════ 复合类 composite（1 指标 / 5 列，2026-08-14 补登）══════════════
+- indicator_id: IND-COMP-001
+  name: Ichimoku Kinko Hyo
+  name_zh: 一目均衡表
+  aliases: ["ichimoku", "一目均衡", "日本云图"]
+  indicator_class: composite
+  formula: 转折线=(9日高+9日低)/2；基准线=(26日高+26日低)/2；先行跨度A=(转折+基准)/2前移26；先行跨度B=(52日高+52日低)/2前移26；迟行跨度=收盘后移26
+  params: {tenkan: 9, kijun: 26, senkou_b: 52, displacement: 26}
+  inputs: [high, low, close]
+  outputs: [tenkan_sen, kijun_sen, senkou_span_a, senkou_span_b, chikou_span]
+  warmup_period: 78
+  computation_mode: vectorized
+  module_id: MOD-L02-021
+  doc_ref: "16_technical_indicator_catalog.md §6.1（扩展）"
+  code_path: src/zephyr/factor/technical_indicators/trend.py
+  used_by_factors: []
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-14'
+  updated_at: '2026-08-14'
   owner: MOD-GOVERNANCE

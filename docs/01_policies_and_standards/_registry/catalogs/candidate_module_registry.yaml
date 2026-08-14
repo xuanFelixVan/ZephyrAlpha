@@ -16,7 +16,7 @@ tier: tier_1_governance
 status: active
 version: 1.0.0
 created: '2026-07-31'
-last_updated: '2026-08-05'
+last_updated: '2026-08-14'
 
 # ============================================================
 # 设计原则
@@ -5982,5 +5982,195 @@ entries:
   next_review_date: ''
   review_frequency: yearly
   last_review_outcome: 2026-08-12 作战地图审查转候选（#ARCH-OE-035）
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-SEAT-001
+  name: 龙虎榜席位形态分析 / LHB Seat Pattern Analysis
+  aliases:
+  - 席位形态
+  - seat pattern
+  - 龙虎榜分析
+  - seat_registry 消费模块
+  domain: D_ASHARE_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: L2 信号层
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: SSoT 注册表已建（seat_registry.yaml REG-SEAT-001，15 席位条目，2026-08-14），分析模块代码未开发
+    dataflowgraph:
+      has_position: true
+      note: DS-080 market_data.lhb_detail + JOB-076 ingest.akshare_lhb 已登记 data_asset_registry（2026-08-14）
+    decisiongraph:
+      has_position: false
+      note: 晋升后服务 L2 买入信号决策（席位溢价/跟买胜率）
+    blueprint:
+      has_position: false
+      note: 待晋升时定位
+  description: >-
+    基于龙虎榜每日披露数据识别席位形态：知名游资/机构席位上榜跟踪、席位联动（多家关联席位同买）、
+    席位溢价回测（上榜次日/3日超额）、跟买信号生成。与 chart_pattern_registry 正交——
+    图形形态管"怎么买"（价格形态），本模块管"谁在买"（结构化披露数据）。
+  capability: ''
+  problem_it_solves: A股短线交易中"跟主力/跟游资"是核心 alpha 来源，但席位身份/胜率/风格无结构化管理，人工复盘不可持续
+  trigger_signals:
+  - 'JOB-076 龙虎榜日线管道落地并积累 ≥3 个月历史数据'
+  - '打板/连板策略（strategy_registry daban 类 59 条中）回测需要席位维度增强特征'
+  keywords:
+  - 龙虎榜
+  - 席位
+  - 游资
+  - 机构专用
+  - 席位溢价
+  - 跟买
+  upstream_deps:
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml', note: 'REG-SEAT-001 席位 SSoT（已建，15 条）'}
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml', note: 'DS-080 lhb_detail 数据集 + JOB-076 接入管道（已登记，candidate）'}
+  downstream_consumers:
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/strategy_registry.yaml', note: 'daban 类策略席位增强特征'}
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml', note: '席位溢价因子（seat_premium_1d/3d）候选'}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {item: 'DS-080 龙虎榜日线数据', status: registered_candidate, note: '数据源 AKShare stock_lhb_detail_em 已确认可用（免费/学术用途，实盘需商业源合规确认）；JOB-076 接入代码待写'}
+  - {item: '席位历史胜率回测回填', status: pending, note: 'seat_registry 15 条目的 history_win_rate/avg_premium 字段当前为 null，需积累数据后回测回填'}
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全项目无席位形态分析代码（grep 无命中）；SSoT 注册表+数据资产登记已完成（2026-08-14）
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P1
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-14'
+  promoted_to: ''
+  source_draft: 2026-08-14 图形形态循环审查会话——「龙虎榜席位形态」裁定为新建表（CAND 候选，与图形形态表正交）
+  source_section: ''
+  original_id: ''
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: >-
+    前提条件已确认：①数据源可用——AKShare stock_lhb_detail_em（东财龙虎榜，交易日收盘后更新）；
+    ②SSoT 已建——seat_registry.yaml 15 席位（机构2/游资6/量化2/北向1/散户2/其他2）+ 六维分析框架；
+    ③数据资产已登记——DS-080/JOB-076。开工路径：先写 JOB-076 接入（akshare_provider 扩展），
+    积累历史后回测回填席位胜率，再实现席位形态识别（上榜跟踪/联动/溢价）挂入信号层。
+    无日线龙虎榜数据则席位形态无意义——数据管道是第一里程碑。
+  risks:
+  - 'AKShare 学术用途 license——实盘前 MUST 法律确认或采购商业源（同 SRC-AKSHARE-001 compliance 约束）'
+  - '东财反爬限流（3 次跳过策略）可能导致历史回补不完整'
+  - '席位营业部归属随时间漂移（游资换席位），需定期人工维护 seat_registry'
+  alternatives: 不做席位形态则用现有 A股游资图形形态（chart_pattern_registry PAT-STRUCT 系列）间接近似，丢失"谁在买"维度
+  tags:
+  - 龙虎榜
+  - A股特色
+  - 另类数据
+  - 信号增强
+  search_terms:
+  - 龙虎榜席位
+  - seat pattern
+  - lhb
+  - 游资跟踪
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-14'
+  review_frequency: quarterly
+  last_review_outcome: '2026-08-14 登记：前提数据（AKShare 龙虎榜）已确认可用，SSoT 注册表+数据资产已建，待 JOB-076 接入代码开工'
+  acquisition_method: self_build
+  acquisition_source: ''
+- id: CAND-CYCLE-001
+  name: 时间周期分析（Gann 江恩/周年日/统计周期） / Regime Cycle Analysis
+  aliases:
+  - Gann 时间周期
+  - 江恩周期
+  - 周年日效应
+  - regime_cycle_registry 消费模块
+  domain: D_SIGNAL
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: regime 层（时间窗口维度）
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: SSoT 注册表已建（regime_cycle_registry.yaml REG-CYCLE-001，12 周期条目，2026-08-14），识别算法代码未开发；条目 module_id 预留 MOD-REGIME-002
+    dataflowgraph:
+      has_position: true
+      note: 输入 DS-002 market_data.ohlc_bar（日线 OHLCV，已有）——无新增数据依赖
+    decisiongraph:
+      has_position: false
+      note: 晋升后服务 regime 层时间窗口调整（变盘窗口前降仓/收紧）
+    blueprint:
+      has_position: false
+      note: 待晋升时定位（regime 域蓝图）
+  description: >-
+    时间/价格/几何/统计周期识别：Gann 江恩时间周期（30/60/90/120/180/360 交易日+周年日）、
+    江恩价格分割与几何角度线、FFT/自相关/周期聚类统计周期。输出"何时可能变盘"的时间窗口信号。
+    与 regime（市场状态多谨慎）和 emotion_cycle 五阶段（sleeve 内 alpha 择时）正交——本模块管时间窗口。
+  capability: ''
+  problem_it_solves: regime/风控调整目前只看价格与波动状态，无时间维度前瞻（变盘窗口盲视），Gann 周年日等 A股游资关注的时间节点未结构化
+  trigger_signals:
+  - 'regime 层需要时间窗口维度增强（变盘前主动降仓）'
+  - '打板/情绪策略回测发现时间聚集效应（月末/季末/周年）需建模'
+  keywords:
+  - Gann
+  - 江恩
+  - 时间周期
+  - 周年日
+  - FFT
+  - 周期检测
+  - 变盘窗口
+  upstream_deps:
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml', note: 'REG-CYCLE-001 周期 SSoT（已建，12 条：Gann 时间6+价格2+几何2+统计2）'}
+  - {path: 'docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml', note: 'DS-002 ohlc_bar 日线行情（已有，无新增数据依赖）'}
+  downstream_consumers:
+  - {path: 'regime 层模块', note: '时间窗口置信度→regime 节流参数调整'}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {item: '日线 OHLCV 行情数据', status: available, note: 'DS-002 已有——本候选无新增数据前提，可直接开工'}
+  design_admission:
+    q1_implemented:
+      result: false
+      evidence: 全项目无 Gann/周期识别代码（grep 无命中）；SSoT 注册表已建（2026-08-14）
+    blocking_question: none
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-14'
+  promoted_to: ''
+  source_draft: 2026-08-14 图形形态循环审查会话——「Gann 时间周期/周年日」裁定为新建表（CAND 候选）
+  source_section: ''
+  original_id: ''
+  estimated_complexity: M
+  estimated_effort: ''
+  tech_notes: >-
+    前提条件已确认：仅需日线 OHLCV（DS-002 已有），无新增数据依赖，可直接开工。
+    SSoT 已建——regime_cycle_registry.yaml 12 条目（CYC-TIME-001~006 Gann 30/60/90/120/180/360日+周年日、
+    CYC-PRICE-001~002 价格分割/时间价格平衡、CYC-GEO-001~002 江恩角度线/四方图、CYC-STAT-001~002 FFT/自相关聚类）。
+    开工建议顺序：统计周期（FFT/自相关，subjectivity low）先行验证，Gann 规则法（medium）次之，
+    几何类（high）最后。subjectivity 高条目回测 MUST 参数敏感性扫描防过拟合。
+  risks:
+  - 'Gann 类方法学术证据弱——MUST 严格 OOS/WFA 验证，置信度不达标不挂 regime 节流'
+  - '周期参数过拟合风险（多周期并行试探）——需 Bonferroni/多重检验校正'
+  alternatives: 不做时间周期则 regime 维持纯状态驱动（现状），丢失变盘窗口前瞻维度
+  tags:
+  - 周期分析
+  - Gann
+  - regime
+  - 择时
+  search_terms:
+  - Gann 时间周期
+  - 江恩
+  - 周年日
+  - cycle detection
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-14'
+  review_frequency: quarterly
+  last_review_outcome: '2026-08-14 登记：无新增数据前提（日线行情已有），SSoT 注册表已建，可随时开工；优先级 P2 排在 CAND-SEAT-001 之后'
   acquisition_method: self_build
   acquisition_source: ''

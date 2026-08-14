@@ -549,7 +549,7 @@ tiers:
       # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
       # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
       # P1-A 被测对象（factor 111/strategy 59）+ P1-B 交易风控 7 表（risk_limit 62/technical_indicator 40/chart_pattern 15/execution_algo 6/data_asset 166）全部落盘（Step1-8 全量闭环，2026-08-13-14）；
-      # P2 元数据层（field_dictionary 257/experiment 5）2026-08-13 完成。14 个业务注册表全部建成并登记 ROOR（total 867 条，2026-08-14——含 2026-08-14 新增 seat 15/cycle 12 + data_asset 补登 DS-077~080）。
+      # P2 元数据层（field_dictionary 257/experiment 5）2026-08-13 完成。14 个业务注册表全部建成并登记 ROOR（total 914 条，2026-08-14——含 2026-08-14 新增 seat 15/cycle 12 + data_asset 补登 DS-077~080 + chart_pattern 扩至 254）。
       - registry_id: REG-UNI-001
         name: 股票池登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml

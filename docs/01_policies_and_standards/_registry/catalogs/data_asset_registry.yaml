@@ -20,18 +20,20 @@ description: >-
 #   （backtest/{tick_replay,matching_logic,portfolio,metrics}.py→backtest/core/、factor/momentum.py→factor/technical_indicators/）
 #   + DS-005/JOB-005 module_id 空值回填 MOD-SIGNAL-ASHARE；遗留 13 条存量锚点漂移（旧文件 2026-07-06 快照遗留，
 #   文件改名/删除所致，非本次引入）待后续修复——见 62 号 §12 P1-B 第 6 项。
+# v1.1.0 changelog(2026-08-14): 补登 DS-080 market_data.lhb_detail（龙虎榜明细，SRC-AKSHARE-001 东财口径）+ JOB-076 ingest.akshare_lhb
+#   ——seat_registry（REG-SEAT-001）席位形态分析的前提数据资产；同日补登 DS-077~079（renko/point_figure/kagi）。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-13'
-last_updated: '2026-08-13'
+last_updated: '2026-08-14'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 76, jobs: 75}
+entry_counts: {sources: 15, datasets: 80, jobs: 76}
 
 source_schema:
   source_id: str               # SRC-{PROVIDER}-{NNN}
@@ -2647,6 +2649,123 @@ datasets:
   lookahead_test_method: N/A
   label_delay_days: null
   drift_detector: none
+- dataset_id: DS-077
+  entity_name: market_data.renko
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/transformations/renko.py
+  produced_by_job: JOB-002
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: Renko 砖块图（固定砖块尺寸，过滤时间噪声，仅价格变动）
+  valid_since: '2020-01-01'
+  module_id: MOD-L02-019
+  design_maturity: design
+  name: market_data.renko
+  name_zh: Renko 砖块图
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-14'
+  updated_at: '2026-08-14'
+  owner: MOD-GOVERNANCE
+  produced_by_source: SRC-QMT-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+- dataset_id: DS-078
+  entity_name: market_data.point_figure
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/transformations/point_figure.py
+  produced_by_job: JOB-002
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: Point & Figure 点数图（X=上涨 O=下跌，box_size+reversal 参数化）
+  valid_since: '2020-01-01'
+  module_id: MOD-L02-019
+  design_maturity: design
+  name: market_data.point_figure
+  name_zh: Point & Figure 点数图
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-14'
+  updated_at: '2026-08-14'
+  owner: MOD-GOVERNANCE
+  produced_by_source: SRC-QMT-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+- dataset_id: DS-079
+  entity_name: market_data.kagi
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/transformations/kagi.py
+  produced_by_job: JOB-002
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: Kagi 图（价格反转阈值触发转向，忽略时间）
+  valid_since: '2020-01-01'
+  module_id: MOD-L02-019
+  design_maturity: design
+  name: market_data.kagi
+  name_zh: Kagi 图
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-14'
+  updated_at: '2026-08-14'
+  owner: MOD-GOVERNANCE
+  produced_by_source: SRC-QMT-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+
+- dataset_id: DS-080
+  entity_name: market_data.lhb_detail
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/implementations/akshare_provider.py
+  produced_by_job: JOB-076
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 龙虎榜明细（沪深交易所每日交易公开信息——买卖前五席位/成交额/上榜原因，东财口径）
+  valid_since: '2020-01-01'
+  module_id: MOD-L00-004
+  design_maturity: design
+  name: market_data.lhb_detail
+  name_zh: 龙虎榜明细
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-14'
+  updated_at: '2026-08-14'
+  owner: MOD-GOVERNANCE
+  produced_by_source: SRC-AKSHARE-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
 
 jobs:
 - job_id: JOB-001
@@ -4297,3 +4416,24 @@ jobs:
   created_at: '2026-08-13'
   updated_at: '2026-08-13'
   owner: MOD-TRADING-002
+- job_id: JOB-076
+  job_name: ingest.akshare_lhb
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/akshare_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-080
+  pit_relevance: strict
+  description: 龙虎榜明细接入（AKShare stock_lhb_detail_em 东财口径，交易日收盘后拉取，产出DS-080 market_data.lhb_detail）——seat_registry 席位形态分析的前提数据管道
+  module_id: MOD-L00-004
+  design_maturity: design
+  name: ingest.akshare_lhb
+  name_zh: 龙虎榜明细接入
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-14'
+  updated_at: '2026-08-14'
+  owner: MOD-L00-004
