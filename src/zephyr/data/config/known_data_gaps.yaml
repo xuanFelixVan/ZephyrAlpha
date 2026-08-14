@@ -34,11 +34,12 @@ gaps:
     detection_threshold: 5000000  # 日均 < 500万行 = 缺口（5月日均 2385万）
     expected_daily_avg: 23850000  # 5月基准日均
     actual_daily_avg: 2480000     # 6月实际日均（89.6% 缺失）
-    status: "registered"          # registered -> in_progress -> completed
-    root_cause: "2026-06 录制器中断，tick 数据未采集"
+    status: "completed"           # 2026-08-15 百度云回补完成
+    root_cause: "2026-06 录制器中断，tick 数据未采集；07-24 曾误将指数分笔包（000001=上证指数等528标的）导入本表致 5204 万坏行（ingest_ts=2026-07-24 批次）"
     resolution_plan: "通过 backfill_checker run_known_gap_backfill() 触发 QMT 历史数据下载"
+    resolution_actual: "2026-08-15 改道百度云网盘回补（QMT 历史范围外空跑实证）：/apps/bdpan/量化交易数据/A股数据_分笔数据/分笔成交_按月归档_{沪深,京市}/2026-06 按日 zip（时间,成交价,手数,买卖方向 → 本表 schema，amount=价×手×100 计算列，bid/ask=NULL，data_source='bdpan'）；先 ALTER DELETE 清除 07-24 错误批次 52,048,481 行，再导入 21 天沪深+京市共 3.19 亿行（日均 1518 万，3秒快照口径低于5月逐笔基准属源口径差异）；端到端验证：坏行清零、关键行正确、direction 分布合理"
     created: "2026-07-23"
-    last_updated: "2026-07-23"
+    last_updated: "2026-08-15"
 
   # === audit 2.7: edb_data 空表（iFind EDB 配额耗尽 → 2026-08-14 源退役任务删除）===
   - id: "edb_data_ifind_quota_exhausted"
