@@ -65,6 +65,16 @@ class TestPathClassification:
         assert classify_path("data/audit_logs/x.jsonl") == "ephemeral"
         assert classify_path(".aidrafts/sess-1/a.py") == "ephemeral"
 
+    def test_ephemeral_regex_swallowed_compat(self):
+        """吞噬形态兼容：正则首字符限字母会把 .runtime/ 吞成 runtime/（第三轮统筹实证）。"""
+        from zephyr.governance.audit.doc_lifecycle import classify_path
+
+        assert classify_path("runtime/tmp/bar.md") == "ephemeral"
+        assert classify_path("worktrees/AI-X/s.py") == "ephemeral"
+        assert classify_path("aidrafts/sess-1/a.py") == "ephemeral"
+        # 不误伤嵌套合法路径
+        assert classify_path("src/zephyr/runtime/x.py") == "durable"
+
     def test_durable_prefixes(self):
         from zephyr.governance.audit.doc_lifecycle import classify_path
 

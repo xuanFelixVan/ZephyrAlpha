@@ -94,6 +94,17 @@ EPHEMERAL_PREFIXES = (
     "data/",
 )
 
+#: 吞噬兼容形态（2026-08-14 第三轮统筹实证：引用提取正则首字符限 [a-zA-Z]，
+#: `.runtime/` 被吞成 `runtime/`、`.worktrees/`→`worktrees/`——无前导点形态
+#: 必须同判 ephemeral，否则短命路径豁免被正则吞噬击穿）
+#: 安全性：项目根无 runtime//worktrees//aidrafts/ 实体目录（均带点），src/zephyr/runtime/
+#: 等嵌套路径首段非 runtime/ 不误伤。
+EPHEMERAL_COMPAT_PREFIXES = (
+    "worktrees/",
+    "aidrafts/",
+    "runtime/",
+)
+
 #: 支持的文档类型（与旧机制一致）
 SUPPORTED_EXTS = frozenset({".md", ".csv", ".yaml", ".yml", ".json"})
 
@@ -124,7 +135,7 @@ def classify_path(ref: str) -> str:
     norm = ref.replace("\\", "/")
     if norm.startswith("./"):
         norm = norm[2:]
-    for prefix in EPHEMERAL_PREFIXES:
+    for prefix in EPHEMERAL_PREFIXES + EPHEMERAL_COMPAT_PREFIXES:
         if norm.startswith(prefix):
             return "ephemeral"
     return "durable"

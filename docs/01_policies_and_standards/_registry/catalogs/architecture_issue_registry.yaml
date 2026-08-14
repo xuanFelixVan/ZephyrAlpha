@@ -16610,7 +16610,7 @@ entries:
   - 'scripts/ops_guard.py（库层安全删除 API + 统一回收站 + worker 进程覆盖）'
   - 'src/zephyr/governance/audit/reconcile_worker.py（启动三证准入）'
   - 'docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md（裁定书真源）'
-  fix_phase: '裁定书已归档（2026-08-14）；T0 止血待用户授权；T1-T6 待立项施工'
+  fix_phase: '裁定书已归档（2026-08-14）；T0/T1 核心已落地 dev（98aeffde：doc_lifecycle 状态机 17 测试全过 + GATE-WORKING-DOCS 重写 + ops_guard 回收站 API；吞噬形态兼容吸收第三轮统筹正则吞噬实证）；T2-T6 由治理批② AI-RCN-001 评审迭代'
   status: decided
   confirmed_by_user: '2026-08-14 用户指令"全部调研清楚，全面审查相关问题，第一性原理，给出分析过程和裁定结果+治本施工方案"'
   related_rules: '#ARCH-WORKTREE-WIPE-GOV-001（wipe 治本 S1-S6 已 merge）; I-GOV-2（reconciler 无写权铁律，被 _commit_auto 架空）; 65 号 v2.3.0 §5（100% AI 文件安全模型扩展至治理代理层）; tracker §六 #53/#55'
