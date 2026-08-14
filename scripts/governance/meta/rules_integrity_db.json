@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "15f27737dc087d35",
+      "hash": "ce89366e280da3c5",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -51,7 +51,7 @@
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "850c30efabd8c393",
+      "hash": "0494d8ed6bc3d2fd",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -91,6 +91,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-14T17:41:09.179288+00:00",
+  "registered_at": "2026-08-14T21:25:52.370356+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }
