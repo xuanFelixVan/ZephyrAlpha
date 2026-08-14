@@ -295,6 +295,20 @@
 >
 > **AI 合规**：①写新函数前调 `clone_guard.check_before_write`，见 `import_suggestion` 优先复用而非新建；②冷启动调 `clone_guard.audit_status` 看累积技术债（6层闭环·可达性）；③遇 extract 级克隆硬阻断时合并去重（**无逃生通道**，区别于第八件事的 `[no-lookup:]`）；④标记合理重复用 `resolve_finding`（intentional/dismissed + note），勿直接改 `echo-guard.yml`；⑤配置真源 [`echo-guard.yml`](file:///d:/ZephyrAlpha/echo-guard.yml) + [`clone_guard.yml`](file:///d:/ZephyrAlpha/clone_guard.yml)，蓝图 [`blueprint.md §6.1`](file:///d:/ZephyrAlpha/docs/03_modules/_cross_layer/clone_guard/blueprint.md)；⑥**Tier 2 需 `pip install onnxscript`**（echo-guard 0.4.1 未声明，torch 2.13+ dynamo ONNX 导出器必需，缺则 Tier 2 静默降级为 Tier 1-only），详见蓝图 §8.1。
 
+## RULE-GIT-SAFE：Git 安全铁律（2026-08-11 #ARCH-GIT-CLEAN-GUARD-FIX；2026-08-14 wrapper 层落地，65 号 Phase 1）
+
+> **背景**：2026-08-11 灾难——AI 执行 git clean -fd 物理删除多个 untracked 文件。git alias 无法覆盖内置命令（git 2.48.1 Windows 实测确认），alias 拦截全部失效。2026-08-14 wrapper 层施工完成：[`scripts/git_safety_wrapper.ps1`](file:///d:/ZephyrAlpha/scripts/git_safety_wrapper.ps1)（函数集唯一真源）经 [`scripts/install_git_safety_wrapper.ps1`](file:///d:/ZephyrAlpha/scripts/install_git_safety_wrapper.ps1) 幂等安装进 `$PROFILE` 后，下列危险命令在 shell 层硬拦截并落审计（`~/.zephyr_audit/`）。
+
+**所有 AI session MUST 遵守**：
+
+1. **禁止的 git 命令**（阻断/放行边界见 65 号 memo §7.1.1 明细表）：`git clean -f/-fd/-fdx`；`git reset --hard/--merge`（用 `--soft`/`--mixed` 替代）；`git checkout -- <file>`/`HEAD -- <file>`/`checkout .`（切/建分支安全）；`git restore <file>`（`--staged` 安全）；`git stash`（`list`/`show` 只读安全）；`git rm <file>`（`--cached` 安全）；`git branch -D`（用 `-d`）；`git push --force`/`-f`（用 `--force-with-lease`）；`git filter-branch`/`filter-repo`/`reflog expire`/`gc --prune=now|all`（不可逆/抹证据）。
+2. **每轮修改后立即 `git add <file>`**：staged 文件不会被 git clean 删除。
+3. **修改文件前先加锁**：`python scripts/lock_files.py acquire <file> <session_id>`
+4. **完成修改后释放锁**：`python scripts/lock_files.py release <file> <session_id>`
+5. **如需执行危险命令**：必须先 commit 所有修改 + 经用户确认 + 用完整路径调用真实 git：`& 'C:\Program Files\Git\cmd\git.exe' clean -fd`
+6. **禁止用 $HOME/$PID/$TRUE 等 PowerShell 只读自动变量名作变量名**（Codex `$home` 事故教训）。
+7. **wrapper 状态自查**：wrapper 未安装时上述命令在 shell 层无拦截（ops_guard 仍在网关/工具层拦删除原语）——新会话可用 `Get-Command git` 自查（显示 `Function` 即已安装）；未安装报告用户跑 `powershell -File scripts/install_git_safety_wrapper.ps1`。
+
 ## 1. 项目概述
 
 ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**——负责三层运行时编排、节律调度、健康监控、审计日志、工作编排、自动接入。

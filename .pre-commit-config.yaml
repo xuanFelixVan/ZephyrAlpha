@@ -106,6 +106,31 @@ repos:
         always_run: false
         description: "检测 staged 文件是否含受保护路径（.gitignore/.gitattributes/AGENTS.md 等），双层防护 Layer 2（Layer 1 为 in-process gate PROTECTED-PATHS）"
 
+      # ── d6_security 三 hook 接入（65 号 §7.13，2026-08-14 AI-GIT-001）──
+      # 三层闭环：规则层 RULE-GIT-SAFE + 静态检测 pre-commit（本层）+ 运行时 wrapper。
+      # 脚本早已存在但从未注册——静态检测层此前实际缺失。
+      - id: gate-detect-git-dangerous
+        name: "检测危险 git 命令（65 号 §7.13，ABS-26/27/28）"
+        entry: python scripts/governance/d6_security/detect_git_dangerous.py
+        language: system
+        pass_filenames: true
+        always_run: true
+        description: "检测代码/文档中的危险 git 命令（clean -fd/reset --hard/checkout -- 等）"
+      - id: gate-detect-shell-dangerous
+        name: "检测危险 shell 命令（65 号 §7.13，ABS-38/39）"
+        entry: python scripts/governance/d6_security/detect_shell_dangerous.py
+        language: system
+        pass_filenames: true
+        always_run: true
+        description: "检测代码中的危险 shell 命令（Remove-Item -Recurse -Force/rm -rf 等）"
+      - id: gate-detect-permanent-deletion
+        name: "检测 ttl:permanent 文件删除（65 号 §7.13，PS-STD-012 V1）"
+        entry: python scripts/governance/d6_security/detect_permanent_file_deletion.py
+        language: system
+        pass_filenames: true
+        stages: [pre-commit]
+        description: "检测 ttl:permanent 元数据文件被删除"
+
       # ── GATE-WORKTREE-REQUIRED: 主工作区 commit 渐进式软门禁（#ARCH-GIT-SELF-HARM-GUARD L3.1，2026-08-04）──
       # 治本：AGENTS.md RULE-WORKTREE 君子协定升级为软门禁。主工作区 commit warn+计数
       # （.runtime/gate_audit/worktree_skip.jsonl），单 session 累计>=5次升级阻断。

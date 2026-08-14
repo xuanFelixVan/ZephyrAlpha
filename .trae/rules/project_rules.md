@@ -358,6 +358,21 @@ Session 关门时 MUST 根目录审计：ls 根目录 → 逐项对照白名单 
 
 ---
 
+## RULE-GIT-SAFE：Git 安全铁律（2026-08-11 #ARCH-GIT-CLEAN-GUARD-FIX；2026-08-14 wrapper 层落地，65 号 Phase 1）
+
+> **背景**：2026-08-11 灾难——AI 执行 git clean -fd 物理删除多个 untracked 文件；git alias 无法覆盖内置命令（git 2.48.1 Windows 实测），alias 拦截全部失效。wrapper 层：`scripts/git_safety_wrapper.ps1`（唯一真源）经 `scripts/install_git_safety_wrapper.ps1` 幂等安装进 `$PROFILE` 后，危险命令 shell 层硬拦截 + 审计落盘 `~/.zephyr_audit/`。
+
+**所有 AI session MUST 遵守**：
+
+1. **禁止的 git 命令**：`git clean -f/-fd/-fdx`；`git reset --hard/--merge`；`git checkout -- <file>`/`checkout .`（切/建分支安全）；`git restore <file>`（`--staged` 安全）；`git stash`（`list`/`show` 只读安全）；`git rm <file>`（`--cached` 安全）；`git branch -D`（用 `-d`）；`git push --force`（用 `--force-with-lease`）；`git filter-branch`/`filter-repo`/`reflog expire`/`gc --prune=now|all`。
+2. **每轮修改后立即 `git add <file>`**：staged 文件不会被 git clean 删除。
+3. **修改文件前先加锁**：`python scripts/lock_files.py acquire <file> <session_id>`；用后 release。
+4. **危险命令唯一合法路径**：先 commit 全部修改 + 用户确认 + 真实 git 全路径调用：`& 'C:\Program Files\Git\cmd\git.exe' clean -fd`。
+5. **禁止用 $HOME/$PID/$TRUE 等 PS 只读自动变量名作变量名**。
+6. **wrapper 状态自查**：`Get-Command git` 显示 `Function` 即已安装；未安装报告用户跑 `powershell -File scripts/install_git_safety_wrapper.ps1`（未安装期间 ops_guard 仍在网关/工具层拦删除原语）。
+
+---
+
 ## 规则本身的规则
 
 | # | 规则 |
