@@ -548,8 +548,8 @@ tiers:
       # ── 业务资产注册表（#ARCH-BREG-001，2026-08-12 补登记）──
       # 施工总案：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/62_business_registry_construction.md
       # P0 回测必需三件套（universe/benchmark/cost_model）2026-08-10 完成；
-      # P1 被测对象/交易风控 7 表中 factor/strategy/risk_limit 已落盘（Step1-3 schema+条目完成，Step4-8 交叉引用/半派生/审计/治理同步待做），
-      # chart_pattern 2026-08-13 落盘（15条，Step1-6完成）；indicator/execution_algo/data_asset 待施工；P2（field_dictionary/experiment）待施工。
+      # P1-A 被测对象（factor 111/strategy 59）+ P1-B 交易风控 7 表（risk_limit 62/technical_indicator 40/chart_pattern 15/execution_algo 6/data_asset 166）全部落盘（Step1-8 全量闭环，2026-08-13-14）；
+      # P2 元数据层（field_dictionary 257/experiment 5）2026-08-13 完成。12 个业务注册表全部建成并登记 ROOR（total 836 条，2026-08-14）。
       - registry_id: REG-UNI-001
         name: 股票池登记表
         physical_path: docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml
@@ -587,7 +587,7 @@ tiers:
         maintenance: manual
         entry_count: 111
         status: draft
-        description: 交易因子唯一真源（SSoT）——10 类（Barra 6 + A股特色 4）111 条已落盘。注意：P1-A Step1-3 已完成（schema+条目），Step4-8（交叉引用校验/半派生补全/一致性审计/循环审查）待做，条目性能字段运行时可空。#ARCH-BREG-001 P1-A
+        description: 交易因子唯一真源（SSoT）——10 类（Barra 6 + A股特色 4）111 条已落盘。P1-A Step1-8 全量闭环（交叉引用校验/半派生补全/一致性审计/循环审查 2026-08-13 完成，条目性能字段运行时可空）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-STR-001
@@ -597,7 +597,7 @@ tiers:
         maintenance: manual
         entry_count: 59
         status: draft
-        description: 交易策略唯一真源（SSoT）——6 类（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）59 条已落盘。注意：P1-A Step1-3 已完成，Step4-8 待做（code_path 待半派生补全）。#ARCH-BREG-001 P1-A
+        description: 交易策略唯一真源（SSoT）——6 类（daban/multifactor/event_driven/value_reversal/momentum_trend/sector_rotation）59 条已落盘。P1-A Step1-8 全量闭环（code_path 半派生补全完成）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-RLM-001
@@ -605,9 +605,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml
         format: yaml
         maintenance: manual
-        entry_count: 42
+        entry_count: 62
         status: draft
-        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）42 条已落盘。注意：P1-B Step1-3 已完成，Step4-8 待做。#ARCH-BREG-001 P1-B
+        description: 交易风控限额唯一真源（SSoT）——9 类（position/concentration/drawdown/var/es/leverage/turnover/kill_switch/firm_risk）62 条已落盘（P1-B Step1-8 全量闭环 + K4 var/es/kill_switch 补登 20 条）。#ARCH-BREG-001 P1-B
         owned_by: governance
 
       - registry_id: REG-TECHNICAL-INDICATOR-001
@@ -615,9 +615,9 @@ tiers:
         physical_path: docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml
         format: yaml
         maintenance: auto（scripts/governance/_shared/algo_flow_translation_sync.py 种子派生，后续手动扩充）
-        entry_count: 22
+        entry_count: 40
         status: draft
-        description: 技术指标 name_zh/description 真源（§4.16.4）——22 条种子条目由 416 模块 ALGO_FLOW 标记派生（按 name_en 去重），后续扩充走正常登记流程。算法地图全量落地配套（2026-08-12）。
+        description: 技术指标唯一真源（SSoT）——5 大类（trend/momentum/volatility/volume/reversal）40 条 58 输出列，覆盖 1min~月线 9 周期（120min 由 60min 聚合）。Step1-8 全量闭环（2026-08-13，AI-REG-IND-001）。#ARCH-BREG-001 P1-A
         owned_by: governance
 
       - registry_id: REG-PAT-001
@@ -628,6 +628,46 @@ tiers:
         entry_count: 15
         status: draft
         description: 图形形态唯一真源（SSoT）——8 大类（candlestick_pattern/chart_pattern/chanlun/elliott_wave/trendline_channel/support_resistance/fibonacci/structure）15 条已落盘（candlestick 6 active + chart_pattern 4 candidate + trendline 1 candidate + support_resistance 3 active + structure 1 active）。chanlun/elliott_wave/fibonacci 3 类 schema 预留。Step1-6 完成，Step7-8 待做。#ARCH-BREG-001 P1-B
+        owned_by: governance
+
+      - registry_id: REG-EXA-001
+        name: 执行算法登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 6
+        status: active
+        description: 执行算法唯一真源（SSoT）——TWAP/VWAP/ICEBERG/POV/IS/ALT 6 种拆单/撮合算法（对齐 40 号 §2.3 实际代码实现）。含监管合规 8 字段（程序化交易 15 笔/秒+撤单率 15%+50µs 停留+盘后时段+广域网时延地板）与 A 股微观结构 3 字段（价格笼子/T+1/涨跌停不可成交）。编号 EXA-{NAME}-{NNN}。#ARCH-BREG-001 P1-B
+        owned_by: governance
+
+      - registry_id: REG-DATAFLOW-001
+        name: 数据资产登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 166
+        status: active
+        description: 数据资产唯一真源（SSoT）——三实体模型（sources/datasets/jobs，对标 OpenLineage Source/Dataset/Job）。sources 15 个外部/内部数据源 + datasets 76 条 + jobs 75 条（DS-001~076/JOB-001~075 稳定编号）。S6 裁定改名扩展自 dataflow_graph_registry.yaml（registry_id/module_id 保留，稳定标识符不断）。#ARCH-BREG-001 P1-B
+        owned_by: governance
+
+      - registry_id: REG-FLD-001
+        name: 字段字典登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 257
+        status: active
+        description: 数据字段唯一真源（SSoT）——16 域（MKT/MFLOW/EXP/RISK/FCT/MACRO/SENT/ORD/PORT/EXEC/IND/SIG/PERF/POS/ML/FILL）257 条，登记字段的 type/unit/source/复权口径/PIT 性质/质量规则。真源反查自 cross_layer_contracts.yaml 18 个业务契约（146 字段）+ factor_registry inputs（111 声明字段）。source_system FK → data_asset_registry（SRC-QMT-001/SRC-AKSHARE-001/SRC-INTERNAL-001 已回填）。#ARCH-BREG-001 P2
+        owned_by: governance
+
+      - registry_id: REG-EXP-001
+        name: 实验/回测登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 5
+        status: draft
+        description: 实验/回测目录唯一真源（SSoT）——登记所有实验运行实例（backtest/factor_eval/strategy_eval/param_search/walk_forward/regime_validation）的元信息。存储后端=FallbackBackend 本地 JSON（MLflow 已裁定完全卸载），展示层=Panel 实验历史 Tab。parent_experiment_id 支持迭代链。5 条真实可溯源实验（4 条 regime_validation completed + 1 条 walk_forward running）。#ARCH-BREG-001 P2
         owned_by: governance
 
 # ============================================================
@@ -666,11 +706,11 @@ known_issues:
 
 summary:
   total_tiers: 3
-  total_registries: 59
+  total_registries: 63
   fully_scanned: 19
   pending_scan: 5
   broken: 1
   by_tier:
     tier_0_core: 12
     tier_1_governance: 28
-    tier_2_runtime: 19
+    tier_2_runtime: 23
