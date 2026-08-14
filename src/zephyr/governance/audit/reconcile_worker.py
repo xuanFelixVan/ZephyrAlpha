@@ -375,9 +375,22 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
             )
 
     # 证3 session 活性（仅 worktree 锚定型；registry 异常降级放行）
+    #
+    # 判定口径（2026-08-15 一次性进程竞态治本）：活跃 OR 近期活跃（宽限窗内
+    # 有心跳记录）。原口径"仅当前活跃"对一次性 commit 进程系统性误杀——
+    # claim_file auto-register 以网关 python pid 注册，git_commit.py 退出即
+    # PID 死亡→list_active 收割，detached worker 启动（秒级）必然读不到活跃
+    # 记录（086d0e24 worker 拒启实证，本任务的 4/5 commit 全部中招）。
+    #
+    # 安全性论证：证1 管 worktree 删除（文件系统判定），证2 管 payload 陈旧
+    # （15min TTL），证3 宽限窗=PAYLOAD_TTL_SECONDS 与证2 对齐——"新鲜 payload
+    # + 近期活跃 session"即合法；rogue 场景（锚定已删 worktree=证1 拦；远古
+    # payload 复活=证2 拦；从未注册/远古 session 的新鲜 payload=本证拦）不 reopen。
+    # 宽限窗取 load() 原始读（list_active 会收割死记录，拿不到"近期活跃"判据）。
     if anchor_sid:
         try:
             from zephyr.security.access_control.session_concurrency import (
+                SessionInfo,
                 SessionRegistry,
             )
 
@@ -385,14 +398,30 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
             # 但按父目录结构推导——嵌套 worktree 路径（宿主 worktree 内的 tmp
             # fake worktree）下段匹配剥离会锚错宿主）。
             main_root = p_root.parent.parent
-            actives = {
-                s.session_id for s in SessionRegistry(main_root).list_active()
-            }
+            registry = SessionRegistry(main_root)
+            raw = registry.load()  # 原始读：list_active 收割死记录后无法判"近期活跃"
             candidates = {anchor_sid, session_id}
-            if not (candidates & actives):
+            now_epoch_f = float(now_epoch)
+            admitted_sids: set[str] = set()
+            for sid in candidates & raw.keys():
+                info = SessionInfo.from_dict(raw[sid])
+                # ①当前活跃（PID 存活/心跳新鲜——长活 daemon 场景直通）
+                from zephyr.security.access_control.session_concurrency import (  # noqa: PLC0415
+                    _is_session_alive,
+                )
+
+                if _is_session_alive(info, now_epoch_f):
+                    admitted_sids.add(sid)
+                    continue
+                # ②近期活跃宽限：心跳在 PAYLOAD_TTL_SECONDS 内（一次性 commit
+                # 进程退出后 worker 秒级启动的正常窗口）
+                if now_epoch_f - info.last_heartbeat <= PAYLOAD_TTL_SECONDS:
+                    admitted_sids.add(sid)
+            if not admitted_sids:
                 return False, (
-                    f"证3 session 已死：锚定 worktree 的会话 {anchor_sid}/{session_id} "
-                    f"均无活跃记录（rogue worker 拒启）"
+                    f"证3 session 无活跃/近期活跃记录：锚定 worktree 的会话 "
+                    f"{anchor_sid}/{session_id} 在 registry 中无 {PAYLOAD_TTL_SECONDS}s "
+                    f"内心跳（rogue worker 拒启）"
                 )
         except Exception:  # noqa: BLE001 — registry 读取异常证3 降级放行
             pass

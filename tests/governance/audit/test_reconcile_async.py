@@ -1282,3 +1282,44 @@ class TestWorkerAdmission:
             self._payload(tmp_repo, project_root=str(wt), session_id="AI-LIVE-001")
         )
         assert ok, f"三证齐全应放行，实际拒：{reason}"
+
+    def test_accepts_recently_active_session_dead_pid(self, tmp_repo):
+        """证3 宽限回归（086d0e24 拒启实证治本）：一次性 commit 进程退出后
+        PID 死亡但心跳在 15min 宽限窗内 → 放行。
+
+        竞态机制：claim_file auto-register 以网关 python pid 注册，git_commit.py
+        退出即 PID 死亡；detached worker 秒级启动时 list_active 已收割该记录——
+        原"仅当前活跃"口径对全部一次性 commit 系统性误杀（4/5 commit 中招实证）。
+        """
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        wt = tmp_repo / ".worktrees" / "AI-ONESHOT-001"
+        wt.mkdir(parents=True)
+        (wt / ".git").write_text("gitdir: x", encoding="utf-8")
+        # 死 pid（网关进程已退出）+ 新鲜心跳（commit 时刻刚 claim 刷新）
+        SessionRegistry(tmp_repo).register("AI-ONESHOT-001", pid=99999999)
+        ok, reason = _check_worker_admission(
+            self._payload(tmp_repo, project_root=str(wt), session_id="AI-ONESHOT-001")
+        )
+        assert ok, f"近期活跃（心跳在宽限窗内）应放行，实际拒：{reason}"
+
+    def test_rejects_ancient_session_record(self, tmp_repo):
+        """证3 安全边界：心跳超 15min 宽限窗的远古记录（死 pid）→ 仍拒启。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        wt = tmp_repo / ".worktrees" / "AI-ANCIENT-001"
+        wt.mkdir(parents=True)
+        (wt / ".git").write_text("gitdir: x", encoding="utf-8")
+        registry = SessionRegistry(tmp_repo)
+        registry.register("AI-ANCIENT-001", pid=99999999)
+        # 篡改心跳为 20min 前（超出 PAYLOAD_TTL_SECONDS=15min 宽限窗）
+        data = registry.load()
+        data["AI-ANCIENT-001"]["last_heartbeat"] = time.time() - 20 * 60
+        registry.save(data)
+        ok, reason = _check_worker_admission(
+            self._payload(tmp_repo, project_root=str(wt), session_id="AI-ANCIENT-001")
+        )
+        assert not ok
+        assert "证3" in reason

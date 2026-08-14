@@ -16643,10 +16643,45 @@ entries:
   impact:
   - 'src/zephyr/shared/foundation/flags.py（T4-1 已落地：默认审计路径迁 .runtime/audit/）'
   - '.gitignore（T4-1 已落地：data/audit_logs/ 全目录禁跟踪）'
-  - 'pre-commit hook 链（待施工：stash 适配/漂移检测）'
-  fix_phase: 'T4-1 审计写迁出已落地（2026-08-14 治理批②）；T4-2 stash 适配待施工'
-  status: decided
+  - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（T4-2 已落地 2026-08-15：_tracked_area_fingerprint/_check_gates_with_drift_watch——gate 运行期 tracked 区指纹前后比对，漂移即 GATE-TRACKED-DRIFT VIOLATION 报警+落 .runtime/audit/hook_tracked_drift.jsonl，不阻断）'
+  - 'tests/git/test_git_commit_gateway.py::TestGateTrackedDriftWatch（T4-2 已落地：4 用例——指纹稳定/写即变/零写无报/写则审计）'
+  fix_phase: 'T4-1 审计写迁出已落地（2026-08-14 治理批②）；T4-2 已落地（2026-08-15 AI-RCN-001：网关 gate 链 tracked 漂移监视器——hook 运行期 tracked 写=违规报警+审计，不再静默；实证：治理批②期间 blueprint_panorama 生成器在 commit 链内回写 131 tracked 蓝图统计文件被本机制直接捕获，根因另立 #ARCH-WORKTREE-DB-SPLIT-001）'
+  status: implemented
   confirmed_by_user: '2026-08-14 用户裁定治理批② T4（#55 治本）'
-  related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T4 母裁定）; 65 号 §10（pre-commit 框架 stash 适配——既有登记项）; tracker §六 #55'
+  related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T4 母裁定）; 65 号 §10（pre-commit 框架 stash 适配——既有登记项）; tracker §六 #55; #ARCH-WORKTREE-DB-SPLIT-001（T4-2 实证捕获的生成器回写根因）'
   created: '2026-08-14'
-  last_updated: '2026-08-14'
+  last_updated: '2026-08-15'
+
+# --- #ARCH-WORKTREE-DB-SPLIT-001: worktree governance.db 分裂致生成器双源振荡（治理批② T4-2 实证捕获）---
+- issue_id: '#ARCH-WORKTREE-DB-SPLIT-001'
+  title: worktree governance.db 分裂——生成器按 cwd 锚定读不同 DB，派生统计双源振荡（126 蓝图工作区反复 dirty）
+  severity: P1
+  category: governance
+  adjudication: |
+    实证（2026-08-15 AI-RCN-001 治理批② T4-2 监视器捕获）：
+    ①主仓 data/databases/governance.db（01:16 新鲜，含 T1/T2/T3 新模块登记）
+    与 worktree 副本 .worktrees/AI-RCN-001/data/databases/governance.db
+    （worktree 创建时快照）并存——仓级共享状态双真源；
+    ②commit 链内生成器（blueprint_panorama 等）按进程锚定读库：主仓锚定
+    进程产 6505 节点/2 Job，worktree 锚定进程产 6500/1 Job——同一生成器
+    两次运行产出互斥内容，126 个 blueprint.md 工作区在 23:58（新）与
+    01:04（旧）之间来回回写，HEAD 与工作区永久漂移；
+    ③同族病根：SessionRegistry 双 registry 分裂（#ARCH-RECONCILER-AUTO-DELETE-GOV-001
+    T2 已治本——worktree 内构造自动锚主仓，claim 写 worktree vs 三证读主仓
+    致合法 worker 误拦 2 例）。governance.db/depgraph 是同一类"仓级共享状态"
+    被 worktree 物理复制的复发。
+    治本方向（待裁定）：governance.db/depgraph 读取路径锚主仓（与
+    SessionRegistry.__init__ 锚定同模式：.worktrees/<sid>/ 结构检测→锚主仓根），
+    或 worktree 内生成器禁写只读主仓派生（写权限唯一锚主仓进程）。
+    ⚠️ 测试隔离不受影响：tmp_repo 独立空库模式（#50 治本）与本锚定正交——
+    锚定仅在 .worktrees/<sid> 真实 worktree 结构命中时触发。
+  impact:
+  - 'data/databases/governance.db（双副本：主仓 vs .worktrees/*/ 快照）'
+  - 'scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py（§0.6 统计表双源振荡直接受害者）'
+  - '126 个 blueprint.md 工作区 dirty（治理批②期间实证）'
+  fix_phase: '待施工（登记待裁定锚定方案）；临时缓解：派生统计 sync commit 以主仓锚定进程产出为准'
+  status: open
+  confirmed_by_user: ''
+  related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T2 SessionRegistry 锚主仓同族先例）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 监视器捕获本问题）; #50（tmp_repo 独立空库——锚定正交性约束）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

@@ -1280,8 +1280,8 @@ class GitCommitGateway:
                 # 新增门禁 MUST 走 CommitGateRegistry 注册制（commit_gates/ 下 make_xxx_gate() + __init__ register）
                 # commit_message 透传：CAPABILITY-LOOKUP-REQUIRED gate 据此检测 [no-lookup:reason] 逃生标记
                 # （#ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD-S1 止血修复：与 session_worktree._run_pre_commit_gates L1174 对称）
-                gate_results = self._gate_registry.check_all(
-                    self, existing, session_id=session_id, allow_overlap=allow_overlap,
+                gate_results = self._check_gates_with_drift_watch(
+                    existing, session_id, allow_overlap=allow_overlap,
                     allow_promote=allow_promote, commit_message=message,
                     allow_derived_deletion=allow_derived_deletion,
                     allow_non_worktree=allow_non_worktree,
@@ -1304,8 +1304,8 @@ class GitCommitGateway:
                 e, session_id,
             )
             # 无锁降级：直接执行 gate + commit（不串行化，但 gate 仍在）
-            gate_results = self._gate_registry.check_all(
-                self, existing, session_id=session_id, allow_overlap=allow_overlap,
+            gate_results = self._check_gates_with_drift_watch(
+                existing, session_id, allow_overlap=allow_overlap,
                 allow_promote=allow_promote, commit_message=message,
                 allow_derived_deletion=allow_derived_deletion,
                 allow_non_worktree=allow_non_worktree,
@@ -1452,6 +1452,74 @@ class GitCommitGateway:
     # ------------------------------------------------------------------
     # 内部实现
     # ------------------------------------------------------------------
+    def _tracked_area_fingerprint(self) -> str:
+        """tracked 区内容指纹（#ARCH-PRECOMMIT-STASH-ADAPT-001 T4-2）。
+
+        拼接 `git diff-files`（unstaged tracked 修改，含 worktree blob hash）与
+        `git diff-index --cached HEAD`（staged tracked 修改，含 index blob hash）
+        的原始输出取 sha256——任何 gate 运行期对 tracked 文件的写/暂存都会改变
+        指纹。git 不可达降级空串（指纹相等→不报警，松约束不阻断主流）。
+        """
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden  # noqa: PLC0415
+
+        try:
+            unstaged = run_subprocess_hidden(
+                ["git", "diff-files"], capture_output=True, text=True,
+                cwd=str(self.project_root),
+            )
+            staged = run_subprocess_hidden(
+                ["git", "diff-index", "--cached", "HEAD"], capture_output=True,
+                text=True, cwd=str(self.project_root),
+            )
+            import hashlib  # noqa: PLC0415
+
+            blob = f"{unstaged.returncode}:{unstaged.stdout}|{staged.returncode}:{staged.stdout}"
+            return hashlib.sha256(blob.encode("utf-8", errors="replace")).hexdigest()
+        except Exception:  # noqa: BLE001 — 降级空指纹（不报警不阻断）
+            return ""
+
+    def _audit_gate_tracked_drift(self, session_id: str) -> None:
+        """gate 运行期 tracked 区漂移=违规：落审计 + stderr 醒目报警（不阻断 commit）。
+
+        裁定原文（#ARCH-PRECOMMIT-STASH-ADAPT-001）：hook 运行期产生的任何
+        tracked 区写入一律视为违规并报警，而非静默 stash 掩盖（#55 病根：
+        flags.py 门禁运行期向 tracked feature_flags.jsonl 追加审计行→pre-commit
+        框架 "files were modified by this hook" 结构性误报）。
+        审计落 .runtime/audit/（gitignored——T4-1 铁律：审计写永不回 tracked 区）。
+        """
+        msg = (
+            "GATE-TRACKED-DRIFT VIOLATION: pre-commit gate 运行期 tracked 区发生写入"
+            "（#55 族病根回潮——hook 运行期 tracked 写=违规，须审计迁出 tracked 区）"
+        )
+        import sys  # noqa: PLC0415
+
+        logger.warning("%s (session=%s)", msg, session_id)
+        print(f"\n!! {msg}\n   session={session_id}——详见 .runtime/audit/hook_tracked_drift.jsonl", file=sys.stderr)
+        try:
+            from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415
+
+            audit_dir = Path(str(self.project_root)) / ".runtime" / "audit"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            record = {
+                "timestamp": now_utc().isoformat(),
+                "session_id": session_id,
+                "violation": "gate_runtime_tracked_drift",
+                "context": "pre_commit_gates",
+            }
+            with open(audit_dir / "hook_tracked_drift.jsonl", "a", encoding="utf-8") as f:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except OSError:
+            pass  # 审计落盘失败不阻断（warn 已发）
+
+    def _check_gates_with_drift_watch(self, existing, session_id, **kwargs):
+        """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对，漂移即违规报警。"""
+        before = self._tracked_area_fingerprint()
+        results = self._gate_registry.check_all(self, existing, session_id=session_id, **kwargs)
+        after = self._tracked_area_fingerprint()
+        if before and after and before != after:
+            self._audit_gate_tracked_drift(session_id)
+        return results
+
     def _commit_locked(
         self,
         session_id: str,
