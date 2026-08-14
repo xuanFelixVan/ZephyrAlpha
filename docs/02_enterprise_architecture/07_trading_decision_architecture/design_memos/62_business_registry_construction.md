@@ -5,8 +5,8 @@ title: 业务资产注册表体系施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.35.0"
-date: 2026-08-14
+version: "1.35.1"
+date: 2026-08-15
 topic: business_registry_construction
 scope: 07_trading_decision_architecture
 ---
@@ -85,7 +85,12 @@ scope: 07_trading_decision_architecture
 6. **性能指标字段**（IC/Sharpe/容量等）运行时可空，未来进 DB 时序存储
 7. **variant 字段**：策略/形态层用 `variant_of` 可选分组（单向引用，不强制层级）
 8. **半派生**：手写真源（编号/状态/语义）入 git，脚本反查补全（code_path/module_id/依赖）
-9. **版本字段**（v1.2.0 新增，对标 Feast Feature View Versioning 2026-03-31）：每条 entry 含 `version` 字段记录 schema-significant 变更；schema/UDF 改动触发版本快照，metadata-only 改动（description/tags/TTL）原地更新不建版本。**版本策略选项**（v1.4.0 新增，对标 [apxml Feature Versioning Strategies 2026](https://apxml.com/courses/feature-stores-for-ml/chapter-5-governance-security-mlops/feature-versioning-strategies)）：① Semantic Versioning（MAJOR.MINOR.PATCH，当前采用，Feast 模式）；② Immutable Version（UUID/content hash，最强 reproducibility——任何变更生成全新版本 ID，旧版本永久不变；[Atlan 2026-03](https://atlan.com/know/ai-model-versioning-best-practices/)："Every model version should be immutable once registered"）；③ Timestamped；④ Branch-based。**个人项目选择**：YAML 阶段用 ① Semantic（git commit hash 天然提供 ② 的 reproducibility 保证）；DB 迁移后若需审计级 reproducibility 可升级 ②（content hash 作 version 值），schema 的 `version` 字段兼容两种策略。**版本可复现性三要素**（v1.6.0 新增，对标 [beefed.ai 2026 Feature Registry](https://beefed.ai/en/feature-registry-governance-best-practices) + MLflow bundling）：成熟 registry 要求 entry 绑定 ① `code_commit`（代码 commit hash，§4.7 E5b 检查）+ ② 数据血缘三要素 `source_uri`/`transform_script_hash`/`labeler_id` + ③ `materialization_ts`（物化时间戳）。YAML 阶段：`code_commit` 用 git blame 天然提供，`source_uri`/`transform_script_hash`/`labeler_id` 通过 `code_path`+`doc_ref` 间接覆盖，`materialization_ts`=`updated_at`；factor/strategy schema 已预留 `code_commit` 字段，DB 迁移后升级为显式四字段绑定。**SHA256 manifest 选项**（v1.10.0 新增，对标 [OmniBioAI ModelHub 2026-08-08](https://github.com/OmniBioAI/omnibioai-model-registry) + [Ollama content-addressable storage](https://deepwiki.com/ollama/ollama/4.2-model-registry-and-layers)）：当 entry 需 bit-level reproducibility（审计/监管级）时，在 `code_commit` 外追加 `content_hash` 字段——对 entry 关联全部产物（源码+formula+params+inputs/outputs）计算 SHA256 生成 `sha256sums.txt` manifest。**个人项目选择**：YAML 阶段 git commit hash 天然提供 content 追溯（git blob 即 content-addressable storage），**无需额外 SHA256 manifest**；DB 迁移后若需监管级 reproducibility（如 EU AI Act 2026-08-02 高风险 AI 审计）可升级显式 `content_hash` 字段，schema 已预留位置。**防过度工程**：[ManifoldKit #1934 2026-06](https://github.com/roryford/ManifoldKit/issues/1934) 对 SHA256 blob store 的对抗审查结论"over-engineered for single-user on-device app"——个人单用户项目 git commit hash 足够，SHA256 manifest 是 DB+监管阶段可选项非必选项。
+9. **版本字段**（v1.2.0 新增，对标 Feast Feature View Versioning 2026-03-31）：每条 entry 含 `version` 字段记录 schema-significant 变更；schema/UDF 改动触发版本快照，metadata-only 改动（description/tags/TTL）原地更新不建版本
+   - **版本策略选项**（v1.4.0 新增，对标 [apxml Feature Versioning Strategies 2026](https://apxml.com/courses/feature-stores-for-ml/chapter-5-governance-security-mlops/feature-versioning-strategies)）：① Semantic Versioning（MAJOR.MINOR.PATCH，当前采用，Feast 模式）；② Immutable Version（UUID/content hash，最强 reproducibility——任何变更生成全新版本 ID，旧版本永久不变；[Atlan 2026-03](https://atlan.com/know/ai-model-versioning-best-practices/)："Every model version should be immutable once registered"）；③ Timestamped；④ Branch-based
+   - **个人项目选择**：YAML 阶段用 ① Semantic（git commit hash 天然提供 ② 的 reproducibility 保证）；DB 迁移后若需审计级 reproducibility 可升级 ②（content hash 作 version 值），schema 的 `version` 字段兼容两种策略
+   - **版本可复现性三要素**（v1.6.0 新增，对标 [beefed.ai 2026 Feature Registry](https://beefed.ai/en/feature-registry-governance-best-practices) + MLflow bundling）：成熟 registry 要求 entry 绑定 ① `code_commit`（代码 commit hash，§4.7 E5b 检查）+ ② 数据血缘三要素 `source_uri`/`transform_script_hash`/`labeler_id` + ③ `materialization_ts`（物化时间戳）。YAML 阶段：`code_commit` 用 git blame 天然提供，`source_uri`/`transform_script_hash`/`labeler_id` 通过 `code_path`+`doc_ref` 间接覆盖，`materialization_ts`=`updated_at`；factor/strategy schema 已预留 `code_commit` 字段，DB 迁移后升级为显式四字段绑定
+   - **SHA256 manifest 选项**（v1.10.0 新增，对标 [OmniBioAI ModelHub 2026-08-08](https://github.com/OmniBioAI/omnibioai-model-registry) + [Ollama content-addressable storage](https://deepwiki.com/ollama/ollama/4.2-model-registry-and-layers)）：当 entry 需 bit-level reproducibility（审计/监管级）时，在 `code_commit` 外追加 `content_hash` 字段——对 entry 关联全部产物（源码+formula+params+inputs/outputs）计算 SHA256 生成 `sha256sums.txt` manifest。**个人项目选择**：YAML 阶段 git commit hash 天然提供 content 追溯（git blob 即 content-addressable storage），**无需额外 SHA256 manifest**；DB 迁移后若需监管级 reproducibility（如 EU AI Act 2026-08-02 高风险 AI 审计）可升级显式 `content_hash` 字段，schema 已预留位置
+   - **防过度工程**：[ManifoldKit #1934 2026-06](https://github.com/roryford/ManifoldKit/issues/1934) 对 SHA256 blob store 的对抗审查结论"over-engineered for single-user on-device app"——个人单用户项目 git commit hash 足够，SHA256 manifest 是 DB+监管阶段可选项非必选项
 10. **衰减检测字段**（v1.2.0 新增，对标 Alexander & Fabozzi 2026 MRP + Vibe-Trading 2026-07 衰减状态机）：strategy/factor entry 预留 `decay_detection_method` / `last_decay_scan_at` / `decay_state` 字段。Vibe-Trading 衰减状态机：`created → benching → active → monitoring → decayed → disabled`，恢复条件 IC ratio > 0.7
 11. **Schema 演进兼容性**（v1.3.0 新增，对标 Confluent Schema Registry + datalakehouse 2026-02）：schema 变更默认走 **Additive-Only**（只增不删/不重命名，新字段有默认值=BACKWARD 兼容，直接部署）；breaking 变更（删/改/重命名）走 **Expand-Contract** 3 阶段（Expand 共存→Migrate 迁移→Contract 清理）。`schema_version` 区分兼容（1.0→1.1）vs breaking（1.x→2.0）。详见 §4.11 EVOLVE_SCHEMA 算法
 12. **变更与退役治理**（v1.3.0 新增，对标 theFactory 2026-07 + Feast Versioning）：entry 变更按 `change_type` 分类——metadata 原地更新 / schema_sig+code_ref 触发版本快照 / status 走退役流程（详见 §4.9 EVOLVE_ENTRY）。退役 3 阶段 active→deprecated（90天宽限，最少30天）→retired（无活跃引用）→物理删除（退役满1年+ARCH审批），详见 §4.10 RETIRE_ENTRY。retired 记录保留审计追溯，不默认删除
@@ -94,7 +99,11 @@ scope: 07_trading_decision_architecture
 
 §4.5-§4.16 共 12 个生命周期施工算法 + §4.18 DIFF_ENTRY 横切查询算法（共 13 算法）。本导航图给出 13 算法的调用关系图 + 触发时机 + 输入输出依赖，完整覆盖"建→上→改→测→应/回→退→迁"全生命周期；DIFF_ENTRY 为任意阶段可调用的只读查询（非状态变更）。
 
-> 📌 **§4 结构说明**（v1.21.0 新增，辅助导航）：§4 含两类内容——① **算法定义**（§4.4 导航图 / §4.5-§4.16 生命周期算法 / §4.18 横切查询 / §4.20 监管变更 / §4 原则 1-12）是施工 MUST 读；② **研究对标**（§4.17 第一轮 / §4.19 第二轮 / §4.21-§4.28 第三至十轮）是审查底稿，记录每轮全网搜索的"比现有方法更好"发现，供调查溯源。读者优先读 ① 算法定义，② 研究对标按需查阅。研究对标随版本累积增长，新增轮次应精简（≤50 行/轮，仅记已落地项+1-2 项 Phase 1.5+ 评估）。
+> 📌 **§4 结构说明**（v1.21.0 新增，辅助导航）：§4 含两类内容——
+> - ① **算法定义**（§4.4 导航图 / §4.5-§4.16 生命周期算法 / §4.18 横切查询 / §4.20 监管变更 / §4 原则 1-12）：施工 MUST 读
+> - ② **研究对标**（§4.17 第一轮 / §4.19 第二轮 / §4.21-§4.39 第三至二十一轮）：审查底稿，记录每轮全网搜索的"比现有方法更好"发现，供调查溯源，按需查阅
+>
+> 读者优先读 ①，② 按需查阅。研究对标随版本累积增长，新增轮次应精简（≤50 行/轮，仅记已落地项+1-2 项 Phase 1.5+ 评估）。
 
 **13 算法按阶段分组**（建→上→改→测→应/回→退→迁 + 横切查询）：
 
@@ -1124,7 +1133,18 @@ Layer 6（依赖全部）: experiment
 
 ### 4.17 2026-08-10 最新研究对标补充（v1.12.0 新增）
 
-第一轮全网搜索 8 项对标，全部 Phase 1.5+/DB 阶段增强项，MVP 无阻塞：① 双曲衰减模型 α(t)=K/(1+λt)（§4.8，momentum R²=0.65，Phase 1.5+ 拟合 λ）② score-driven BOCPD 变体（§4.8 检测器 3 升级）③ Wasserstein 漂移检测（E11 `drift_method` 已扩展 `wasserstein`）④ pgroll 零停机 Schema 变更（§4.16 R1 工具首选）⑤ PubGrub + 字典序最小拓扑（§4.15 construct_order 升级）⑥ Data Contracts vs Schema Registry 分层（§4 原则 11 写入路径 + E13 读取路径，两者正交）⑦ multigrid 三层 eval gate + `sha256(salt:user_id)%100` 确定性分流（§4.13 渐进式部署）⑧ Feast 原生 OpenLineage 血缘（§4 原则 9，DB 阶段 `feast[openlineage]`+Marquez）。
+第一轮全网搜索 8 项对标，全部 Phase 1.5+/DB 阶段增强项，MVP 无阻塞：
+
+| 项 | 核心发现 | 落地动作 |
+|---|---|---|
+| ① 双曲衰减模型 | α(t)=K/(1+λt)，momentum R²=0.65 | §4.8，Phase 1.5+ 拟合 λ |
+| ② score-driven BOCPD 变体 | §4.8 检测器 3 升级方向 | Phase 1.5+ 评估 |
+| ③ Wasserstein 漂移检测 | 分布漂移度量 | E11 `drift_method` 已扩展 `wasserstein` |
+| ④ pgroll 零停机 Schema 变更 | 零停机迁移工具 | §4.16 R1 工具首选 |
+| ⑤ PubGrub + 字典序最小拓扑 | 依赖解析增强 | §4.15 construct_order 升级方向 |
+| ⑥ Data Contracts vs Schema Registry 分层 | 写入路径契约 vs 读取路径 registry，两者正交 | §4 原则 11 写入路径 + E13 读取路径 |
+| ⑦ multigrid 三层 eval gate | `sha256(salt:user_id)%100` 确定性分流 | §4.13 渐进式部署参考 |
+| ⑧ Feast 原生 OpenLineage 血缘 | `feast[openlineage]`+Marquez | §4 原则 9，DB 阶段启用 |
 
 ### 4.18 版本差异算法（DIFF_ENTRY，v1.13.0 新增，横切查询）
 
@@ -1185,7 +1205,12 @@ Layer 6（依赖全部）: experiment
 | 9 | 原子批量导入 | [Lance BatchCommitTables 2026-06-18](https://github.com/lance-format/lance/discussions/6775)（staged manifests + put-if-not-exists 原子翻可见性）+ [Apicurio multi-table transaction 2026-03-30](https://github.com/Apicurio/apicurio-registry/issues/7670) + [Doris 2PC 2026-07-29](https://blog.csdn.net/juniperhan/article/details/159720535)（prepare→publish + UUID label 幂等） | §4.5 CONSTRUCT_REGISTRY Step1-3（批量创建，但无显式原子性） | **COVERED by git**：YAML 阶段 git commit = 天然原子批量（一个 commit 含多 entry 变更，全有或全无，revert 回滚）。DB 阶段 Apicurio multi-table transaction 模式可复用（PG 单事务包裹多表 upsert） |
 | 10 | 搜索与发现（找已有因子/策略） | [Algolia Dynamic Facets 2026-07-21](https://www.algolia.com/about/news/algolia-launches-dynamic-facets)（AI 行为驱动 facet 实时重排序）+ [base14 metric registry 2026-01-19](https://docs.base14.io/blog/metric-registry/)（3700+ 指标自动提取 + repo/file/commit provenance + trust level） | grep / Select-String | **DEFER**：YAML 阶段 `Select-String` + §4.15 足够查找。Algolia facets 是 web-scale 搜索（万级 entry）。base14 自动提取 + provenance **DB 阶段可复用**（因子定义 provenance = 哪个 notebook/commit） |
 
-> ⚠️ **v1.13.0 缺口审计总结**：10 缺口领域中 **1 项硬缺口已补**（#7 → §4.18 DIFF_ENTRY）、**4 项已覆盖**（#3 通知内联 / #4 反向血缘=§4.15 / #9 原子批量=git commit / #2 FK 验证=§4.6+E4）、**5 项 DEFER 并记录 DB 阶段升级路径**（#1 候选提案 / #5 GC / #6 复活 / #8 健康监控 / #10 搜索）。**核心结论：12 生命周期算法 + 1 横切查询算法 = 13 算法体系已完整闭环，无施工阻塞缺口**。所有 DEFER 项均为 DB 阶段增强项，YAML 阶段现有体系足够——符合 project_memory 过度工程处理原则。**关键 DB 阶段升级备忘**：① Doctor removeAfter deadline 自动标 removal-pending；② RGP restore report 退役恢复审计；③ catalog SLI/SLO freshness lag；④ base14 自动提取+provenance trust level；⑤ priority_score 施工优先级排序。
+> ⚠️ **v1.13.0 缺口审计总结**：
+> - **1 项硬缺口已补**（#7 → §4.18 DIFF_ENTRY）
+> - **4 项已覆盖**（#3 通知内联 / #4 反向血缘=§4.15 / #9 原子批量=git commit / #2 FK 验证=§4.6+E4）
+> - **5 项 DEFER 并记录 DB 阶段升级路径**（#1 候选提案 / #5 GC / #6 复活 / #8 健康监控 / #10 搜索）
+>
+> **核心结论：12 生命周期算法 + 1 横切查询算法 = 13 算法体系已完整闭环，无施工阻塞缺口**。所有 DEFER 项均为 DB 阶段增强项，YAML 阶段现有体系足够——符合 project_memory 过度工程处理原则。**关键 DB 阶段升级备忘**：① Doctor removeAfter deadline 自动标 removal-pending；② RGP restore report 退役恢复审计；③ catalog SLI/SLO freshness lag；④ base14 自动提取+provenance trust level；⑤ priority_score 施工优先级排序。
 
 ### 4.20 A 股 2026 年 7 月监管变更影响（v1.14.0 新增，实盘合规 MUST）
 
@@ -1193,7 +1218,7 @@ Layer 6（依赖全部）: experiment
 
 **① 交易规则 2026 年修订（2026-07-06 生效，对标 [上交所 上证发〔2026〕41号 2026-04-24 发布](https://www.sse.com.cn/lawandrules/sselawsrules2025/trade/universal/c/c_20260424_10816492.shtml) + 新华社/人民日报 2026-07-06 报道）**：
 
-| 变更项 | 旧规则 | 2026 新规则 | 影响注册表 | schema/参数影响 |
+| 变更项 | 原规则 | 2026 新规则 | 影响注册表 | schema/参数影响 |
 |---|---|---|---|---|
 | 主板 ST/*ST 涨跌幅 | 5% | **10%**（与普通主板一致） | universe / risk_limit | universe 的 filter_rules（ST 池风险筛选）+ risk_limit 单日可移动范围翻倍（5%→10% 影响 stop_loss/kill_switch 阈值校准） |
 | 盘后固定价格交易 | 仅科创板/创业板 | **扩至全部 A 股 + 沪深 ETF**（15:05-15:30） | cost_model / execution_algo | execution_algo 新增 `after_hours_fixed_price` 时段（收盘价精确成交，无滑点）；cost_model 该时段 slippage=0 |
@@ -1212,11 +1237,14 @@ Layer 6（依赖全部）: experiment
 | 每笔报单最短停留 | **≥ 50 微秒** | execution_algo | 禁止 sub-50µs 闪单/虚假报价；execution_algo 拆单间隔下限 50µs |
 | 通道平权 | 暂停新设独立交易单元 | data_asset / execution_algo | 无新通道，现有通道公平调度 |
 
-> ⚠️ **高频阈值核实说明（v1.15.0 补）**：中基协 2026-07-27 研报仍引用"300 笔/秒"——经多方核实（[东方财富 2026-07-08](https://caifuhao.eastmoney.com/news/20260708102539948920960) + [雪球 2026-07-08](https://xueqiu.com/1333898802/399079985) + [licai.cofool 2026-08-04](https://licai.cofool.com/ask/qa_7416984.html)）系**研报撰写时间差导致引用 2025 年版规定**：2025 年版 300 笔/秒（2025-07-07 施行）已失效，现行 15 笔/秒分两阶段落地（2026-04-07 第一阶段收紧 + 2026-07-07 全面完整落地）。本表"15 笔/秒"为**现行有效阈值**，中基协研报"300 笔/秒"作废。
+> ⚠️ **高频阈值核实说明（v1.15.0 补）**：中基协 2026-07-27 研报仍引用"300 笔/秒"——经多方核实（[东方财富 2026-07-08](https://caifuhao.eastmoney.com/news/20260708102539948920960) + [雪球 2026-07-08](https://xueqiu.com/1333898802/399079985) + [licai.cofool 2026-08-04](https://licai.cofool.com/ask/qa_7416984.html)）系**研报撰写时间差导致引用 2025 年版规定**：
+> - 2025 年版 300 笔/秒（2025-07-07 施行）已失效，现行 15 笔/秒分两阶段落地（2026-04-07 第一阶段收紧 + 2026-07-07 全面完整落地）
+> - 本表"15 笔/秒"为**现行有效阈值**，中基协研报"300 笔/秒"作废
 
 **③ 局域网行情通道关闭 + 交易网关管理指引（2026-07-31/2026-08-31 生效，v1.15.0 新增，实盘合规 MUST）**
 
-对标 [新浪财经 2026-07-28](https://cj.sina.cn/article/norm_detail?froms=ttmp&url=https%3A%2F%2Ffinance.sina.com.cn%2Fstock%2Festate%2Fintegration%2F2026-07-28%2Fdoc-inikkhkm3121470.shtml) + [东方财富 2026-08-05](http://finance.eastmoney.com/a/202608053832918762.html) + [第一财经 2026-08-05](http://finance.eastmoney.com/a/202608053832922855.html) + [证券时报 2026-07-28](https://stcn.com/article/detail/4044080.html)。2026-07-31 晚间交易所机房内局域网交易行情线路正式关闭，统一切广域网——"基础设施平权"的物理层收口，直接影响 execution_algo 的延迟建模假设。
+对标 [新浪财经 2026-07-28](https://cj.sina.cn/article/norm_detail?froms=ttmp&url=https%3A%2F%2Ffinance.sina.com.cn%2Fstock%2Festate%2Fintegration%2F2026-07-28%2Fdoc-inikkhkm3121470.shtml) + [东方财富 2026-08-05](http://finance.eastmoney.com/a/202608053832918762.html) + [第一财经 2026-08-05](http://finance.eastmoney.com/a/202608053832922855.html) + [证券时报 2026-07-28](https://stcn.com/article/detail/4044080.html)。
+- 事件：2026-07-31 晚间交易所机房内局域网交易行情线路正式关闭，统一切广域网——"基础设施平权"的物理层收口，直接影响 execution_algo 的延迟建模假设
 
 | 时间节点 | 事件 | 影响注册表 | schema/参数影响 |
 |---|---|---|---|
@@ -1236,7 +1264,10 @@ Layer 6（依赖全部）: experiment
 - **benchmark_registry**：SSE 基金收盘价来源标注（集合竞价 vs 连续），影响 close-to-close 收益序列
 - **data_asset_registry**（v1.15.0 补，③局域网关闭）：行情数据源 entry 须补 `latency_profile`（广域网 1.2-2ms vs 旧局域网 0.3-0.8ms）+ `colocation_eligible`（bool, 默认 false，托管服务器已搬离交易所机房）字段
 
-> ⚠️ **个人项目适用性**：这些是**实盘合规硬约束**（非过度工程）。miniQMT 单账户下单频率天然远低于 15 笔/秒（个人策略多数秒级-分钟级），cancel_rate 15% 对低频策略无压力，但 schema 字段 MUST 预留（regulatory compliance 字段缺失=实盘违规风险）。**关键**：40_execution_broker v2.6.0 的 CancelRateGuard 须对齐 15% 阈值（project_memory 已登记 P0 gap 已闭合，须验证阈值=0.15）。**v1.15.0 补**：③局域网关闭对个人项目影响**极小**——个人策略持仓周期天/周级，时延差对天级策略收益影响约等于零，但 `latency_floor_ms`/`network_type` schema 字段 MUST 预留（合规底线），实际延迟建模校准=Phase 1.5+。
+> ⚠️ **个人项目适用性**：这些是**实盘合规硬约束**（非过度工程）：
+> - miniQMT 单账户下单频率天然远低于 15 笔/秒（个人策略多数秒级-分钟级），cancel_rate 15% 对低频策略无压力，但 schema 字段 MUST 预留（regulatory compliance 字段缺失=实盘违规风险）
+> - **关键**：40_execution_broker v2.6.0 的 CancelRateGuard 须对齐 15% 阈值（project_memory 已登记 P0 gap 已闭合，须验证阈值=0.15）
+> - **v1.15.0 补**：③局域网关闭对个人项目影响**极小**——个人策略持仓周期天/周级，时延差对天级策略收益影响约等于零，但 `latency_floor_ms`/`network_type` schema 字段 MUST 预留（合规底线），实际延迟建模校准=Phase 1.5+
 
 ### 4.21 第三轮研究对标补充（v1.14.0 新增）
 
@@ -1574,7 +1605,9 @@ entry_schema:
 
 **数据来源**：[25_multifactor_strategy_detail.md §3.7](25_multifactor_strategy_detail.md)（v1.34.0 修正：原引"§CSI300实证"章节不存在，CSI300 仅见于 §3.7 归因基准伪代码默认值）｜[52_backtest_framework_docking.md](52_backtest_framework_docking.md)（基准对接）
 
-> 🔍 **2026 基准选择待定（v1.1.0 新增，需人决策）**：90 号 §13 提到基准选择待讨论。2026 年中证A500（2024-09 发布）已成机构标配底仓——年化收益 8.58% > 沪深300 7.55%，风险收益比 0.34 > 0.30，行业均衡 + 新质生产力权重高（[中信证券2026Q1研究](https://finance.sina.com.cn/jjxw/2026-05-18/doc-inhyiewk0690431.shtml) ｜ [国信证券策略专题](https://pdf.dfcfw.com/pdf/H3_AP202512301811362016_1.pdf)）。**待定问题 B1**：是否新增 `BMK-INDEX-004 中证A500`（candidate）作为 multifactor 策略的备选/替代基准？万得全A（881001）是否也需补登记作为全市场宽基基准？当前 4 条登记暂不修改，待用户裁定后补登。
+> 🔍 **2026 基准选择待定（v1.1.0 新增，需人决策）**：90 号 §13 提到基准选择待讨论。2026 年中证A500（2024-09 发布）已成机构标配底仓——年化收益 8.58% > 沪深300 7.55%，风险收益比 0.34 > 0.30，行业均衡 + 新质生产力权重高（[中信证券2026Q1研究](https://finance.sina.com.cn/jjxw/2026-05-18/doc-inhyiewk0690431.shtml) ｜ [国信证券策略专题](https://pdf.dfcfw.com/pdf/H3_AP202512301811362016_1.pdf)）。
+> - **待定问题 B1**：是否新增 `BMK-INDEX-004 中证A500`（candidate）作为 multifactor 策略的备选/替代基准？万得全A（881001）是否也需补登记作为全市场宽基基准？
+> - 当前 4 条登记暂不修改，待用户裁定后补登
 
 ### 5.3 cost_model_registry.yaml（交易成本模型，REG-CST-001）
 
@@ -1623,11 +1656,14 @@ entry_schema:
 | CST-ASTOCK-002 | A股保守成本模型 | conservative | 万3/最低5元/双边 | 万5/卖 | 万0.1/沪深双向 | fixed 2bp | square_root(coeff=0.1) | — | candidate |
 | CST-ZERO-001 | 零成本模型 | zero_cost | 0 | 0 | 0 | none | none | — | active |
 
-> ⚠️ **2026 费率校准（v1.1.0 修正硬错误）**：原 v1.0.0 登记印花税"千1（0.1%）"为 **2023-08-28 减半前旧税率**，2026 实际为 **万5（0.05%）卖出单边**（财政部/国家税务总局 2023-08-28 减半政策延续至今，2026 无调整）；过户费原登记"万0.1/沪市only"为旧规则，2026 实际 **沪深双向均收万0.1（0.001%）**（中国结算统一标准，无最低收费）。佣金万3 + 最低5元 双向为 2026 市场默认档（主流万1-万3可协商，免5违规），登记偏保守合理。详见 §13 修订记录 R1。
+> ⚠️ **2026 费率校准（v1.1.0 修正硬错误）**：原 v1.0.0 登记印花税"千1（0.1%）"为 **2023-08-28 减半前旧税率**，2026 实际为 **万5（0.05%）卖出单边**（财政部/国家税务总局 2023-08-28 减半政策延续至今，2026 无调整）；过户费原登记"万0.1/沪市only"为原规则，2026 实际 **沪深双向均收万0.1（0.001%）**（中国结算统一标准，无最低收费）。佣金万3 + 最低5元 双向为 2026 市场默认档（主流万1-万3可协商，免5违规），登记偏保守合理。详见 §13 修订记录 R1。
 >
-> 💡 **佣金口径说明（v1.34.0 补，2026-08-12 全网核验）**：CST-ASTOCK-001 的 `commission.rate=0.0003`（万3）按**全佣口径**登记——含交易所规费（经手费 0.0341‰ + 证管费 0.02‰ ≈ 合计万0.541 双向，[金融界证券 2026 收费公示](https://www.jrjzq.com.cn/ueditor/jsp/upload/file/20250711/1752209700574050330.pdf) + [2026 最新收费标准](https://licai.cofool.com/user/guide_view_3448774.html)）。净佣口径（佣金不含规费、规费另收）下实际成本=净佣+万0.541，回测若用净佣报价需上调。当前万3 全佣登记偏保守，已覆盖规费，无需单独登记规费项。另注意最低 5 元收费对小额交易影响显著（成交<5 万元时实际费率高于名义费率，万1 名义下成交 1 万实际万5）——回测小单笔金额策略（如打板分仓）时 `commission.min=5.0` 的影响 MUST 保留。
+> 💡 **佣金口径说明（v1.34.0 补，2026-08-12 全网核验）**：CST-ASTOCK-001 的 `commission.rate=0.0003`（万3）按**全佣口径**登记——含交易所规费（经手费 0.0341‰ + 证管费 0.02‰ ≈ 合计万0.541 双向，[金融界证券 2026 收费公示](https://www.jrjzq.com.cn/ueditor/jsp/upload/file/20250711/1752209700574050330.pdf) + [2026 最新收费标准](https://licai.cofool.com/user/guide_view_3448774.html)）：
+> - 净佣口径（佣金不含规费、规费另收）下实际成本=净佣+万0.541，回测若用净佣报价需上调；当前万3 全佣登记偏保守，已覆盖规费，无需单独登记规费项
+> - 最低 5 元收费对小额交易影响显著（成交<5 万元时实际费率高于名义费率，万1 名义下成交 1 万实际万5）——回测小单笔金额策略（如打板分仓）时 `commission.min=5.0` 的影响 MUST 保留
 
-**数据来源**：~~52 号 §G1~~（⚠️ v1.34.0 修正：52 号 v1.7.4 曾丢失、现 v1.0.0 重建版**无 §G1 章节**，原"万三佣金/5元最低/1bp滑点"引用悬空；现存文本仅 §3.1 佐证"万三佣金+1bp 滑点+印花税"三要素。**费率校准真源已迁至本节 R1 修订记录**）｜ [40_execution_broker.md §冲击模型](40_execution_broker.md)（保守模型冲击）｜ 2026 费率实证：[华泰证券2026费率](http://m.toutiao.com/group/7671636219272430089/) ｜ [2026最新收费标准](https://licai.cofool.com/user/guide_view_3447293.html) ｜ [2026炒股成本揭秘](https://post.m.smzdm.com/p/a70o48xd/) ｜ [yoyo-quant 2026-08-07](https://github.com/Tastelessor/yoyo-quant)（v1.6.0 补交叉验证：A 股量化框架开源项目，费率配置"佣金万1/最低5元 + 印花税万5/卖出单边 + 过户费 + 滑点 tick + 涨跌停价格剪裁"——印花税万5/卖单边 与本项目 R1 修正一致，佣金万1 vs 本项目万3 差异因 yoyo-quant 面向更低佣金档，本项目万3 偏保守合理）
+**数据来源**：~~52 号 §G1~~（⚠️ v1.34.0 修正：52 号 v1.7.4 曾丢失、现 v1.0.0 重建版**无 §G1 章节**，原"万三佣金/5元最低/1bp滑点"引用悬空；现存文本仅 §3.1 佐证"万三佣金+1bp 滑点+印花税"三要素。**费率校准真源已迁至本节 R1 修订记录**）｜ [40_execution_broker.md §冲击模型](40_execution_broker.md)（保守模型冲击）｜ 2026 费率实证：[华泰证券2026费率](http://m.toutiao.com/group/7671636219272430089/) ｜ [2026最新收费标准](https://licai.cofool.com/user/guide_view_3447293.html) ｜ [2026炒股成本揭秘](https://post.m.smzdm.com/p/a70o48xd/)
+- 交叉验证（v1.6.0 补）：[yoyo-quant 2026-08-07](https://github.com/Tastelessor/yoyo-quant)（A 股量化框架开源项目）费率配置"佣金万1/最低5元 + 印花税万5/卖出单边 + 过户费 + 滑点 tick + 涨跌停价格剪裁"——印花税万5/卖单边与本项目 R1 修正一致；佣金万1 vs 本项目万3 差异因 yoyo-quant 面向更低佣金档，本项目万3 偏保守合理
 
 **square_root 冲击系数校准说明**：CST-ASTOCK-002 的 `coefficient=0.1` 相对 2026 业界主流 prefactor `Y≈0.6`（hftradingbook 2026-06-04）/ AAPL 实证 `c_raw=0.69, c_eff=0.34`（arXiv 2606.24019, 2026-06）偏低约 6 倍。**对个人小资金项目合理**——个人账户多数订单 <1% ADV（40 号 §撮合拆单），无大单冲击，0.1 系数更接近"个人小单无冲击"的现实；Phase 1.5 AUM 增长到大单时需按 40 号 §13.1 校准路径重新拟合（40 号 v1.6.6 已登记 Phase 1.5 校准方法论）。
 
@@ -1886,7 +1922,19 @@ entry_schema:
   owner: str
 ```
 
-**5 大类**（对齐 16 号 §6.1-6.5，v1.1.0 修正第5类，v1.34.0 修正章节引用与列数）：trend（趋势，MA/MACD，10个）/ momentum（动量，KDJ/RSI，10个）/ volatility（波动，BOLL，8个）/ volume（量能，MFI，7个）/ reversal（反转，5个）。合计 40 指标 **58 输出列**（v1.34.0 修正：原"~55 列"为过时约数，16 号实际 58 列，由测试契约 `_EXPECTED_TOTAL=40/_EXPECTED_COLUMN_TOTAL=58` 锁定）。**原 v1.0.0 第5类误写 `structure`，实际 16 号 §6.5 + 代码 `src/zephyr/factor/technical_indicators/reversal.py` 均为 `reversal`（反转类）**——schema-代码-文档三方漂移已修正。代码 `technical_indicators/` 实际文件：indicator_base/momentum/reversal/trend/volatility/volume 6 个 .py。
+**5 大类**（对齐 16 号 §6.1-6.5，v1.1.0 修正第5类，v1.34.0 修正章节引用与列数）：
+
+| 类 | 代表指标 | 个数 |
+|---|---|---|
+| trend（趋势） | MA/MACD | 10 |
+| momentum（动量） | KDJ/RSI | 10 |
+| volatility（波动） | BOLL | 8 |
+| volume（量能） | MFI | 7 |
+| reversal（反转） | — | 5 |
+
+合计 40 指标 **58 输出列**（v1.34.0 修正：原"~55 列"为过时约数，16 号实际 58 列，由测试契约 `_EXPECTED_TOTAL=40/_EXPECTED_COLUMN_TOTAL=58` 锁定）。
+- **原 v1.0.0 第5类误写 `structure`，实际 16 号 §6.5 + 代码 `src/zephyr/factor/technical_indicators/reversal.py` 均为 `reversal`（反转类）**——schema-代码-文档三方漂移已修正
+- 代码 `technical_indicators/` 实际文件：indicator_base/momentum/reversal/trend/volatility/volume 6 个 .py
 
 **9 个周期**（project_memory）：1min/5min/15min/30min/60min/120min/日/周/月（120min 由 60min 两根聚合）
 
@@ -1979,7 +2027,12 @@ entry_schema:
 
 **数据来源**：[40_execution_broker.md](40_execution_broker.md)（6 种算法：TWAP/VWAP/ICEBERG/POV/IS/ALT，代码已实现注册表模式）｜ 代码 `src/zephyr/ex_sor/`（api/core/infrastructure/models/services 子目录）
 
-> 🎯 **2026 RL 自适应执行远期选项（v1.2.0 新增）**：3 项进展作为 `rl_policy_ref` 字段的远期选项（Phase 1.5+ 评估，MVP 不实施）：**MACE**（[arXiv:2603.29086, 2026-03-30](https://arxiv.org/html/2603.29086v1)，AC 框架+平方根冲击 RL 执行环境，关键发现=成本模型实质性影响算法排名，HPO 必需）；**Cheridito & Weiss**（[arXiv:2507.06345v2, 2026-01-26](https://arxiv.org/pdf/2507.06345v2)，Logistic-Normal 策略参数化，市场单+限价单联合分配）；**PPO 自适应执行**（[Stanford CS224R 2025](https://cs224r.stanford.edu/spring_2025/projects/pdfs/CS224r_final_paper%20(4).pdf)，波动率高/流动性低时自动减速暂停）。**个人项目适用性评估**：RL 执行需 LOB 模拟器+大量训练+HPO，对个人项目属过度工程（MVP 阶段）；schema 预留 `rl_policy_ref`，Phase 1.5+ AUM 增长到需要自适应执行时可引用。MVP 阶段 6 算法足够；`warmup_participation_rate`+`cooling_period` 借鉴 MACE 的 HPO 发现（避免 epoch 间参与率单调递增的病态）。
+> 🎯 **2026 RL 自适应执行远期选项（v1.2.0 新增）**：3 项进展作为 `rl_policy_ref` 字段的远期选项（Phase 1.5+ 评估，MVP 不实施）：
+> - **MACE**（[arXiv:2603.29086, 2026-03-30](https://arxiv.org/html/2603.29086v1)）：AC 框架+平方根冲击 RL 执行环境，关键发现=成本模型实质性影响算法排名，HPO 必需
+> - **Cheridito & Weiss**（[arXiv:2507.06345v2, 2026-01-26](https://arxiv.org/pdf/2507.06345v2)）：Logistic-Normal 策略参数化，市场单+限价单联合分配
+> - **PPO 自适应执行**（[Stanford CS224R 2025](https://cs224r.stanford.edu/spring_2025/projects/pdfs/CS224r_final_paper%20(4).pdf)）：波动率高/流动性低时自动减速暂停
+>
+> **个人项目适用性评估**：RL 执行需 LOB 模拟器+大量训练+HPO，对个人项目属过度工程（MVP 阶段）；schema 预留 `rl_policy_ref`，Phase 1.5+ AUM 增长到需要自适应执行时可引用。MVP 阶段 6 算法足够；`warmup_participation_rate`+`cooling_period` 借鉴 MACE 的 HPO 发现（避免 epoch 间参与率单调递增的病态）。
 
 > 🔒 **执行算法反博弈与 TCA 双报告（v1.7.0 新增，对标 [marketmaker.cc 2026-07-15](https://marketmaker.cc/en/blog/post/twap-vwap-pov-execution-algorithms/) + [iotdigitaltwinplm 2026-06-18](https://iotdigitaltwinplm.com/vwap-execution-algorithm-architecture-2026/)）**：
 > **① 反博弈随机化**：每个执行调度器都是对成交量预测的下注——TWAP 押注流动性时间均匀，VWAP 押注今日曲线=昨日，POV 押注实时成交量=交易理由。**确定性切片是被抢跑的陷阱**："A TWAP that fires a child order every 60 seconds at :00 is a metronome, and metronomes get front-run."调度应是**期望值平坦的 Poisson 过程**而非时钟；"retrofitting anti-gaming behavior into a deterministic scheduler is painful" → `anti_gaming` 字段（MVP 阶段 TWAP/VWAP 用 `timing_randomization: poisson, size_jitter: 0.1-0.2`）。
@@ -2065,7 +2118,10 @@ entry_schema:
 > | LEVERAGE | 杠杆倍数限额（个人 A 股现货无杠杆，登记为合规兜底） | leverage |
 > | FACTOR | 因子暴露限额（单因子/因子簇敞口） | concentration（factor 维度） |
 >
-> **消耗追踪模型（LimitConsumption 口径）**：限额消耗=**notional 占用口径**——每条限额实时维护 `current_consumption`（本表 schema 运行时字段），计量该限额约束维度上已被占用的名义额度（如单票持仓市值/单行业合计市值/组合 VaR 估计值），与 `threshold_value` 的比值即消耗率。运行时装配点与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.13 盘中实时风控循环衔接——`intraday_risk_loop` 内 `LimitConsumption()` 实例逐 tick 更新（A 股 2026 新规口径：每秒 15 笔申报/撤单率 15% 亦走同一消耗追踪），消耗率达预警阈值即触发 BM-RC-01-C。YAML 阶段 `current_consumption` 为空（仅台账），DB 阶段落库。
+> **消耗追踪模型（LimitConsumption 口径）**：限额消耗=**notional 占用口径**——
+> - 每条限额实时维护 `current_consumption`（本表 schema 运行时字段），计量该限额约束维度上已被占用的名义额度（如单票持仓市值/单行业合计市值/组合 VaR 估计值），与 `threshold_value` 的比值即消耗率
+> - 运行时装配点与 [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.13 盘中实时风控循环衔接——`intraday_risk_loop` 内 `LimitConsumption()` 实例逐 tick 更新（A 股 2026 新规口径：每秒 15 笔申报/撤单率 15% 亦走同一消耗追踪），消耗率达预警阈值即触发 BM-RC-01-C
+> - YAML 阶段 `current_consumption` 为空（仅台账），DB 阶段落库
 >
 > **② BM-RC-01-C 预警分级与审批流（MOD-L04-001，`risk/risk_manager.py`）**
 >
@@ -2228,14 +2284,22 @@ entry_schema:
 - 关系链：chart_pattern_registry（识别算法）→ factor_registry（形态因子）→ strategy_registry，与 technical_indicator_registry → factor_registry → strategy_registry 完全对称
 - 对标 TA-Lib CDLPATTERN（61种K线形态）+ 缠论体系 + 艾略特波浪 + Edwards&Magee
 
-> 🎯 **2026 图形识别 DL 算法对标（v1.2.0 新增）**：3 类 DL 算法作为 `recognition_algorithm` 的 `dl_*` 选项 + `algorithm_variant` 的 DL 变体（MVP 不实施，schema 预留）：**YOLOv8 目标检测**（[Trader Koo 2026-03](https://kooexperience.com/blog/posts/trader-koo.html)：K 线图作图像输入框出形态+置信度，**准确率 92.6%** vs 规则引擎 68.3%；HuggingFace 预训练 [`foduucom/stockmarket-pattern-detection-yolov8`](https://huggingface.co/foduucom/stockmarket-pattern-detection-yolov8) 识别 6 类）；**ViT-Tiny 视觉 Transformer**（[CS231n Stanford](https://cs231n.stanford.edu/2025/papers/text_file_840597081-LaTeXAuthor_Guidelines_for_CVPR_Proceedings__1_-2.pdf)：切 patch+self-attention 捕获全局依赖）；**CNN+TA-Lib 混合**（规则层 61 形态+DL 层联合，准确率 99.3%）。**个人项目适用性评估**：DL 图形识别需大量标注数据+GPU 训练+模型部署，对个人项目属过度工程（MVP 阶段）；MVP 用 `rule_based`/`template_match`（TA-Lib CDLPATTERN 61 种+经典图表规则法）；schema 预留 DL 字段，Phase 2+ 可评估 YOLOv8 预训练模型（即取即用免训练）。`subjectivity` 字段在 DL 场景标 low（算法客观，但训练数据偏差仍存）。
+> 🎯 **2026 图形识别 DL 算法对标（v1.2.0 新增）**：3 类 DL 算法作为 `recognition_algorithm` 的 `dl_*` 选项 + `algorithm_variant` 的 DL 变体（MVP 不实施，schema 预留）：
+> - **YOLOv8 目标检测**（[Trader Koo 2026-03](https://kooexperience.com/blog/posts/trader-koo.html)）：K 线图作图像输入框出形态+置信度，**准确率 92.6%** vs 规则引擎 68.3%；HuggingFace 预训练 [`foduucom/stockmarket-pattern-detection-yolov8`](https://huggingface.co/foduucom/stockmarket-pattern-detection-yolov8) 识别 6 类
+> - **ViT-Tiny 视觉 Transformer**（[CS231n Stanford](https://cs231n.stanford.edu/2025/papers/text_file_840597081-LaTeXAuthor_Guidelines_for_CVPR_Proceedings__1_-2.pdf)）：切 patch+self-attention 捕获全局依赖
+> - **CNN+TA-Lib 混合**：规则层 61 形态+DL 层联合，准确率 99.3%
+>
+> **个人项目适用性评估**：DL 图形识别需大量标注数据+GPU 训练+模型部署，对个人项目属过度工程（MVP 阶段）；MVP 用 `rule_based`/`template_match`（TA-Lib CDLPATTERN 61 种+经典图表规则法）；schema 预留 DL 字段，Phase 2+ 可评估 YOLOv8 预训练模型（即取即用免训练）。`subjectivity` 字段在 DL 场景标 low（算法客观，但训练数据偏差仍存）。
 
 > 🧠 **"Simplicity Wins" 原则 + CNN+LSTM Hybrid + 反 Look-Ahead Bias（v1.7.0 新增，对标 [arXiv:2605.00875 Haggett 2026-04](https://arxiv.org/pdf/2605.00875.pdf) + [mental-momentum 2026-06-14](https://research.mental-momentum.ai/r/convolutional-neural-networks-chart-lbrhyr)）**：
 > **① Simplicity Wins**（arXiv:2605.00875，Stevens Institute 8 组控制实验，BTC/ETH/S&P500 2018-2024）：**原始 K 线图 + 4 层基础 CNN AUC-ROC 0.892**，outperform 复杂编码（Gramian Angular Field）和大型预训练模型（ResNet18/EfficientNet-B0/ViT）。反直觉发现：① price-only 图表 > 含指标图表（指标是噪声非信号）；② 128×128 分辨率 > 224×224（金融图表信息密度低，低分辨率防过拟合）；③ ImageNet 迁移学习提升 4-16%。→ **Phase 2+ DL 起点应是 `dl_cnn` + 原始 K 线图 + 128×128，而非 YOLOv8/ViT**。
 > **② CNN+LSTM Hybrid**（mental-momentum 2026-06）：**Hybrid 架构（CNN 空间特征+LSTM 时序记忆）一致优于独立模型**；raw pixel 输入 > 显式人工技术指标输入。→ `algorithm_variant: cnn_lstm_hybrid`，Phase 2+ 优先于此变体。
 > **③ 反 Look-Ahead Bias**（mental-momentum 2026-06，**关键实现约束**）：图像生成 MUST 使用**严格后向归一化**（backward-looking normalization）——"never scales using future prediction data"；归一化窗口只含历史数据，禁止全样本 min/max 或未来均值标准化（否则模型"预测"只是记忆未来）。→ `dl_training_dataset` 字段 MUST 记录归一化策略（`backward_only`/`expanding_window`/`rolling_window`），禁止 `global_minmax`（含未来数据）。
 
-**MVP 范围控制**（已按此施工）：图形形态几十种，不一次性建全——从代码反查项目实际用到的形态（`src/zephyr/factor/technical_indicators/` + `src/zephyr/signal_ashare/` 打板链），只登记实际用到或明确规划的（落盘 15 条：candlestick 6 active + chart_pattern 4 candidate + trendline 1 candidate + support_resistance 3 active + structure 1 active）。符合"过度工程纠偏"原则——建库结构完整，内容按需填充。MVP 算法用 rule_based/template_match（O6 裁剪：先做 candlestick_pattern + chart_pattern 2 类），chanlun/elliott_wave/fibonacci 3 类 schema 预留按需补充。
+**MVP 范围控制**（已按此施工）：图形形态几十种，不一次性建全——
+- 从代码反查项目实际用到的形态（`src/zephyr/factor/technical_indicators/` + `src/zephyr/signal_ashare/` 打板链），只登记实际用到或明确规划的（落盘 15 条：candlestick 6 active + chart_pattern 4 candidate + trendline 1 candidate + support_resistance 3 active + structure 1 active）
+- 符合"过度工程纠偏"原则——建库结构完整，内容按需填充
+- MVP 算法用 rule_based/template_match（O6 裁剪：先做 candlestick_pattern + chart_pattern 2 类），chanlun/elliott_wave/fibonacci 3 类 schema 预留按需补充
 
 ## 7. P2 待施工两注册表
 
@@ -2268,7 +2332,9 @@ entry_schema:
 
 **范围裁定**（裁定 8）：仅管数据层字段（行情/因子/特征/输出的 type/unit/source/复权口径/PIT/quality_rules），**不合并** frontmatter_field_registry.yaml（文档元数据，职责分离）。对标 DAMA-DMBOK / dbt schema.yml。
 
-**2026 dbt schema.yml 对标补充**（v1.1.0 新增）：2026 主流 data dictionary 核心字段 = field_name/type/definition/source/owner/allowed_values/sensitivity/freshness/notes（[Basedash 2026-06](https://www.basedash.com/blog/what-is-a-data-dictionary-and-how-to-build-one-for-analytics) ｜ [OvalEdge 2026-02](https://www.ovaledge.com/blog/data-dictionary-best-practices)）——`sensitivity`/`freshness`/`notes` 三字段已补入 schema 并随施工落地。dbt 命名规范（[dbt style guide 2026-08](https://docs.getdbt.com/best-practices/how-we-style/1-how-we-style-our-dbt-models)）：snake_case + business terminology + `<object>_id` PK + `is_`/`has_` boolean 前缀 + `_at` UTC timestamp + `_date` date + `_v1` versioning。
+**2026 dbt schema.yml 对标补充**（v1.1.0 新增）：
+- 2026 主流 data dictionary 核心字段 = field_name/type/definition/source/owner/allowed_values/sensitivity/freshness/notes（[Basedash 2026-06](https://www.basedash.com/blog/what-is-a-data-dictionary-and-how-to-build-one-for-analytics) ｜ [OvalEdge 2026-02](https://www.ovaledge.com/blog/data-dictionary-best-practices)）——`sensitivity`/`freshness`/`notes` 三字段已补入 schema 并随施工落地
+- dbt 命名规范（[dbt style guide 2026-08](https://docs.getdbt.com/best-practices/how-we-style/1-how-we-style-our-dbt-models)）：snake_case + business terminology + `<object>_id` PK + `is_`/`has_` boolean 前缀 + `_at` UTC timestamp + `_date` date + `_v1` versioning
 
 ### 7.2 experiment_registry.yaml（实验/回测目录，REG-EXP-001）
 
@@ -2417,7 +2483,11 @@ entry_schema:
 > **标准误公式**：`SE(SR) ≈ 1/√T`（T=独立观测数），T=250（1年日数据）时 SE≈0.063——观测 Sharpe 0.8 的 95% CI 为 [0.68, 0.92]，精度不足以做配置决策。**自相关膨胀**（Lo 2002）：日收益序列相关使 SE 膨胀 1.5-3x。**重尾膨胀**：A 股 γ₄>6 尖峰重尾使 Sharpe 估计器更嘈杂，CI 更宽。
 > **与 §4.13 PROMOTE_ENTRY 的联动**：Gate 1 检查 `oos_period_months >= 3` 之外 MUST 交叉校验 min_trl_years——Sharpe=1.0 策略 3 个月 OOS 通过后上线，但 MinBTL=5-10 年意味着 3 个月实盘数据**完全不足以确认** edge 真实。Full 阶段应持续 `min_trl_years` 年才从 "probation" 升级为 "confirmed"——`lifecycle_status` 从 `live`(probation) → `monitoring`(confirmed) 的转换条件之一 = 实盘 track record ≥ `min_trl_years`。
 > **与 §4.8 DECAY_SCAN 的联动**：衰减检测的 baseline_sharpe 须基于 ≥ MinBTL 的样本建立——短样本 baseline 本身可能是噪声峰值。track record < MinBTL 时 monthly 扫描统计意义有限，应更关注 regime 匹配和经济逻辑。
-> **个人项目 MVP 决策**：多数策略 Sharpe 0.5-1.0 → MinBTL 5-40 年远超实盘周期，**策略上线后几乎永远处于 probation 态**。实务对策：① 经济逻辑优先（§4.8 阶段1 的"信号发现 vs 信号幻觉"经济理性校验比统计检验更重要）；② 多策略组合分散（不依赖单一策略统计确认）；③ 跨 regime 验证替代时间长度（3-5 年覆盖牛/熊/震荡 3 regime 比单 regime 10 年更有信息量）；④ `min_trl_years` 填计算值，`lifecycle_status` 须 track record 达标才升 `monitoring`，否则保持 `live`(probation) + 加密 `decay_scan_frequency`(weekly)。
+> **个人项目 MVP 决策**：多数策略 Sharpe 0.5-1.0 → MinBTL 5-40 年远超实盘周期，**策略上线后几乎永远处于 probation 态**。实务对策：
+> - ① 经济逻辑优先（§4.8 阶段1 的"信号发现 vs 信号幻觉"经济理性校验比统计检验更重要）
+> - ② 多策略组合分散（不依赖单一策略统计确认）
+> - ③ 跨 regime 验证替代时间长度（3-5 年覆盖牛/熊/震荡 3 regime 比单 regime 10 年更有信息量）
+> - ④ `min_trl_years` 填计算值，`lifecycle_status` 须 track record 达标才升 `monitoring`，否则保持 `live`(probation) + 加密 `decay_scan_frequency`(weekly)
 
 > 🔍 **回测过拟合 7 症状预检清单**（v1.10.0 新增，对标 [tradingnote.co 2026-06-23](https://tradingnote.co/es/blog/overfitting-trading-que-es-como-detectarlo) + [quant67.com 2026-05-01 回测陷阱](https://quant67.com/post/quant/20-backtest-pitfalls/20-backtest-pitfalls.html)）：在跑正式 PBO/DSR/PSR/MinBTL 前先看 7 个经验症状——若命中 ≥4 个，几乎必然过拟合，无需跑统计检验即可阻断部署：
 >
@@ -2444,7 +2514,10 @@ entry_schema:
 > | PBO | — | 选择过程泛化性 | CSCV 对称交叉验证，回答不同问题 |
 > | Plateau 几何指标（robustness score/plateau width） | 弱（standalone） | **选择原则**非独立检测 | fixed threshold 未校准，standalone 诊断不可靠 |
 >
-> **核心洞察**：① PSR 排序/检测能力**不弱于** DSR（AUC 0.81 > 0.79），DSR 的价值在多重检验校正而非提升检测力——MVP 阶段若只跑一个统计检验，PSR（计算更简单，无需 N_eff 估计）是合理起点；② **plateau heuristic（"prefer plateaus over peaks"）作为选择原则有效**——选 smoothed surrogate 的 argmax 而非 raw argmax，OOS Sharpe 平均提升 **0.12（1D）/ 0.31（2D）**，随参数维度单调递增；③ 但 plateau 几何指标**作为独立过拟合检测不可靠**——结论：**"prefer plateaus" 应与统计显著性检验并用，而非替代**（Soloviov: "should be used alongside, not instead of, statistical significance controls"）。
+> **核心洞察**：
+> - ① PSR 排序/检测能力**不弱于** DSR（AUC 0.81 > 0.79），DSR 的价值在多重检验校正而非提升检测力——MVP 阶段若只跑一个统计检验，PSR（计算更简单，无需 N_eff 估计）是合理起点
+> - ② **plateau heuristic（"prefer plateaus over peaks"）作为选择原则有效**——选 smoothed surrogate 的 argmax 而非 raw argmax，OOS Sharpe 平均提升 **0.12（1D）/ 0.31（2D）**，随参数维度单调递增
+> - ③ 但 plateau 几何指标**作为独立过拟合检测不可靠**——结论：**"prefer plateaus" 应与统计显著性检验并用，而非替代**（Soloviov: "should be used alongside, not instead of, statistical significance controls"）
 > **对 §4.12 ADAPT_STRATEGY Step 3 的影响**：Step 3b 已用 `find_plateau` + `centroid`（取稳定区域中心非最高点）✅ 正确；但 plateau 检测通过**不能**替代 Step 3c DSR 校正 + Step 4 OOS 验证，三者互补——plateau 通过是必要非充分条件。
 
 > **honest-backtest 7 层验证框架（v1.6.0 新增，对标 [krivonosoff161/honest-backtest 2026-06](https://github.com/krivonosoff161/honest-backtest)）**：7 层验证架构，每层捕获不同谎言，与 experiment_registry 验证字段映射：
@@ -2578,13 +2651,19 @@ project_memory 硬约束：个人+100%AI 项目，过度工程是红线。逐项
 - YAML 降级为"导出快照"（定期生成不入 git）
 - 混合模式：结构化元数据（编号/状态/关系）YAML；大规模时序数据（IC 历史/回测结果/每日快照）进 ClickHouse/PG 不入 git
 
-> 💡 **因子时序存储用窄表格式（v1.6.0 新增，对标 [DolphinDB 2026 金融数据存储最佳实践](https://docs.dolphindb.com/en/2.00.16/Tutorials/financial_data_storage.html)）**：factor_registry 迁移 DB 后，因子**值时序数据**（非 registry 元数据）推荐用**窄表**（narrow format：`timestamp, security_id, factor_name, factor_value` 四列）而非宽表。窄表优势：① 退役因子只删行不删列（DDL 无锁）；② 新增因子只插行不改表结构；③ 按因子名更新只改相关行；④ `PIVOT BY` 转 panel 格式做多因子查询。**注意**：此仅适用于因子**值时序存储**（IC 历史/每日因子值），registry 元数据仍用 §4 原则2 的标准 entry_schema 表结构。分区策略：日线因子按 `year + factor_name` 分区，分钟级按 `month + factor_name` 或 `day + factor_name`。个人项目 PG 阶段可用 `PARTITION BY LIST (factor_name) + date_trunc('year', trade_date)` 模拟。
+> 💡 **因子时序存储用窄表格式（v1.6.0 新增，对标 [DolphinDB 2026 金融数据存储最佳实践](https://docs.dolphindb.com/en/2.00.16/Tutorials/financial_data_storage.html)）**：factor_registry 迁移 DB 后，因子**值时序数据**（非 registry 元数据）推荐用**窄表**（narrow format：`timestamp, security_id, factor_name, factor_value` 四列）而非宽表：
+> - 窄表优势：① 退役因子只删行不删列（DDL 无锁）；② 新增因子只插行不改表结构；③ 按因子名更新只改相关行；④ `PIVOT BY` 转 panel 格式做多因子查询
+> - **注意**：此仅适用于因子**值时序存储**（IC 历史/每日因子值），registry 元数据仍用 §4 原则2 的标准 entry_schema 表结构
+> - 分区策略：日线因子按 `year + factor_name` 分区，分钟级按 `month + factor_name` 或 `day + factor_name`；个人项目 PG 阶段可用 `PARTITION BY LIST (factor_name) + date_trunc('year', trade_date)` 模拟
 
 **对标**：Feast（YAML 定义 + SQLRegistry 运行时）/ MLflow（代码配置 + DB backend）
 
 > 🎯 **2026 YAML→DB 混合模式共识（v1.2.0 新增）**：2026 业界已形成 **"最小引导 YAML + DB 存储运行时配置"** 混合模式共识——Feast Feature View Versioning（2026-03-31）即典型：YAML 定义 FeatureView schema（手写真源入 git），`feast apply` 时自动写入 SQL Registry（运行时配置入 DB），版本快照自动追踪。MLflow 3.15 同理：代码配置 + DB backend。
 >
-> **对本项目 12 注册表的启示**：**现阶段（YAML 阶段）**——12 注册表全部 YAML 真源入 git，schema 按 DB 表设计预留迁移；git diff/history 天然提供版本追踪（替代 Feast 自动快照），PR review 提供治理（替代 DB ACL）。**迁移触发后**——结构化元数据（编号/状态/关系/variant_of）仍 YAML 入 git（SSoT 真源）；大规模时序数据进 ClickHouse/PG 不入 git。**版本管理演进路径**：YAML 阶段 git diff → DB 阶段 `version` 字段 + `version_pin` 回滚（Feast `@v<N>` 模式），factor/strategy schema 已预留（§6.1.1/§6.1.2）。
+> **对本项目 12 注册表的启示**：
+> - **现阶段（YAML 阶段）**：12 注册表全部 YAML 真源入 git，schema 按 DB 表设计预留迁移；git diff/history 天然提供版本追踪（替代 Feast 自动快照），PR review 提供治理（替代 DB ACL）
+> - **迁移触发后**：结构化元数据（编号/状态/关系/variant_of）仍 YAML 入 git（SSoT 真源）；大规模时序数据进 ClickHouse/PG 不入 git
+> - **版本管理演进路径**：YAML 阶段 git diff → DB 阶段 `version` 字段 + `version_pin` 回滚（Feast `@v<N>` 模式），factor/strategy schema 已预留（§6.1.1/§6.1.2）
 >
 > **个人项目判断**（O4/O10 过度工程审查）：因子<500/实验<5000 远未触发迁移阈值，YAML + git 是当前最优解。SQLite 看似省事但失去 git diff/version/PR review 治理能力（裁定 3 已定）。schema 按 DB 表设计的成本极低，未来迁移省事，不算过早规划。
 
@@ -2610,6 +2689,7 @@ project_memory 硬约束：个人+100%AI 项目，过度工程是红线。逐项
 
 | 版本 | 日期 | 修订内容 | 审查依据 |
 |---|---|---|---|
+| v1.35.1 | 2026-08-15 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-03）——10 处 >300 字纯散文段要点化/表格化（§4 原则9/§4.4 结构说明/§4.17 对标/§4.19 总结/§4.20 适用性/§5.3 佣金口径/§6.1.3 5大类/§6.2.1 RL 远期/§6.2.2 消耗追踪/§6.2.4 DL 对标+MVP 范围/§11 窄表），PURE-ASSERTION 当前态改写 2 处；零信息丢失 | 第二轮压缩循环复扫 |
 | v1.35.0 | 2026-08-14 | **体系 12→14 表扩展（图形形态循环审查裁定）**：① 新增 2 表——seat_registry（REG-SEAT-001，15 席位，与图形形态表正交管"谁在买"）+ regime_cycle_registry（REG-CYCLE-001，12 周期，与 regime/emotion_cycle 正交管"时间窗口"）；② 前提数据补登——data_asset 新增 DS-080 market_data.lhb_detail（龙虎榜，AKShare stock_lhb_detail_em）+ JOB-076 ingest.akshare_lhb（15+76+75→15+80+76=171）；③ 消费模块登记候选库 CAND-SEAT-001（P1）/CAND-CYCLE-001（P2）；④ §3 总览 14 行全量刷新（IND 40→41 Ichimoku 补登 / PAT 15→254 十五轮 SOTA 扩充收敛关闭 / DATAFLOW 166→171）；⑤ ROOR tier_2 登记 SEAT/CYCLE（total_registries 63→65）+ AGENTS.md 速查 14 表显化 | 2026-08-14 图形形态循环审查会话裁定（Gann 时间周期/周年日+龙虎榜席位形态新建表） |
 | v1.34.3 | 2026-08-14 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | 12 注册表全部落盘核验（条目数+commit 见 §3）；§4.5/E1-E20/schema/FK/拓扑序/编号规则完整保留；施工过程叙述与研究对标散文折叠 |
 | v1.34.2 | 2026-08-12 | 作战地图环节映射补强——锚定 BM-RES-01-D | §4.18 末尾补映射块，环节级可追溯 |
