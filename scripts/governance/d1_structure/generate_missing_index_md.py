@@ -18,7 +18,7 @@
 
 
 
-对标：AGENTS.md §6.11 索引-实际同步强制约定（index.md 必须与磁盘实际一致）
+对标：GATE-REG-BL 索引-实际同步强制约定（validate_index_reality.py，index.md 必须与磁盘实际一致）
       每次新增目录或批量迁移后运行一次，确保所有目录都有导航索引。
 
 用法：
@@ -33,7 +33,7 @@ __manifest__ = """
 args:
 - --root
 - docs/
-description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（AGENTS.md §6.11 索引-实际同步强制约定）
+description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（GATE-REG-BL 索引-实际同步强制约定）
 dimensions:
 - D1
 priority: P2

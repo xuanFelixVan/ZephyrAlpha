@@ -325,8 +325,8 @@ data/test_audit_bridge/
 # Watchdog heartbeat files
 data/telemetry/.watchdog_*
 
-# Demo directory
-demos/
+# Demo directory（锚定根目录——原 demos/ 通配误伤 scripts/demos/ 致 demo_e2e_pipeline.py 幽灵条目 #51）
+/demos/
 
 # Temp directories
 temp/

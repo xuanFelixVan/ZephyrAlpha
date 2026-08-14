@@ -17,6 +17,8 @@ from pathlib import Path
 
 def test_demo_e2e_pipeline_compiles() -> None:
     root = REPO_ROOT
-    script = root / "demo_e2e_pipeline.py"
+    # #51 裁定：指向受维护真身 scripts/construction/（原指 repo 根不存在文件存量失败；
+    # scripts/demos/ 陈旧副本 79.6% 重复已清理，见 tracker §六 #51）
+    script = root / "scripts" / "construction" / "demo_e2e_pipeline.py"
     src = script.read_text(encoding="utf-8")
     compile(src, str(script), "exec", dont_inherit=True)

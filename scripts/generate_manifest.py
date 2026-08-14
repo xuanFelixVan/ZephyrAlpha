@@ -14,15 +14,19 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""Generate complete script_manifest.yaml from scripts/ tree scan."""
-# 双 manifest 体系说明（P1-T4 校正，2026-06-26）
-# 本生成器 → scripts/script_manifest.yaml（全树 563 脚本，简单 desc 提取）
+"""Generate complete script-manifest.yaml from scripts/ tree scan."""
+# 双 manifest 体系说明（P1-T4 校正，2026-06-26；#51 裁定收敛，2026-08-14）
+# 本生成器 → scripts/script-manifest.yaml（全树脚本登记真源 SSoT，简单 desc 提取）
 # 兄弟生成器 scripts/governance/generators/generate_script_manifest.py
-#   → scripts/governance/script_manifest.yaml（governance 子集 369，__manifest__ 块提取）
+#   → scripts/governance/script_manifest.yaml（governance 子集，__manifest__ 块提取）
 # 二者非冗余：消费链不同（本生成器供 GitCommitGateway _post_commit_reconcile
-#   + audit_registration；兄弟供 GATE-19 validate_static_manifest_drift --check）
-# 禁止以"统一 SSoT"为由废弃任一——会破坏对应消费链。
-# 详见 .trae/documents/systemic_drift_root_cure_continuation_plan.md §3
+#   + audit_registration + orphan_scanner/registration_checker 等登记检查链；
+#   兄弟供 GATE-19/21 validate_static_manifest_drift --check）
+# #51 裁定（2026-08-14 统筹）：连字符版为登记真源——orphan_scanner/
+#   speed_baseline_checker/pipeline_runner/scaffold_registrar/registration_checker/
+#   registry_adapter REG-SCRIPT-001 均消费连字符版；其自 2026-07-19 起失维护
+#   （生成器 OUTPUT_PATH 曾漂移到下划线版，形成多真源隐患），下划线
+#   script_manifest.yaml 收敛退库，生成器 OUTPUT_PATH 已锚回连字符真源。
 
 import os
 import sys
@@ -32,7 +36,7 @@ from pathlib import Path
 import yaml
 
 SCRIPTS_ROOT = Path("scripts")
-OUTPUT_PATH = "scripts/script_manifest.yaml"
+OUTPUT_PATH = "scripts/script-manifest.yaml"
 EXCLUDE_DIRS = {"__pycache__", "reports", ".git", "node_modules"}
 
 

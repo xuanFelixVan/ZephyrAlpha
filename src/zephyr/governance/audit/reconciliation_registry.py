@@ -2138,19 +2138,21 @@ def make_manifest_reconciler(gateway: object) -> ReconcilerSpec:
 
     1. trigger: committed_files 含 scripts/ 下 .py -> 命中
 
-    2. 重生成 scripts/script_manifest.yaml（generate_manifest.py os.walk 全树 SSoT）
+    2. 重生成 scripts/script-manifest.yaml（generate_manifest.py os.walk 全树 SSoT）
 
     3. git diff 检测 manifest 变更 -> 无变更返回 clean
 
     4. 有变更 -> git add + git commit --no-verify（斩断 zombie 引用循环）
 
-    manifest 体系区分（P1-T4 校正）：本 reconciler 重生成的是
+    manifest 体系区分（P1-T4 校正 + #51 裁定收敛 2026-08-14）：本 reconciler 重生成的是
 
-    ``scripts/script_manifest.yaml``（全树 manifest，generate_manifest.py 产出，
+    ``scripts/script-manifest.yaml``（全树 manifest 登记真源，generate_manifest.py 产出，
 
-    供 gateway + audit_registration 消费）；非 ``scripts/governance/script_manifest.yaml``
+    供 gateway + audit_registration + orphan_scanner 等登记检查链消费）；非
 
-    （governance 子集，generate_script_manifest.py 产出，GATE-19 校验）。二者非冗余。
+    ``scripts/governance/script_manifest.yaml``
+
+    （governance 子集，generate_script_manifest.py 产出，GATE-19/21 校验）。二者非冗余。
 
     Args:
 
@@ -2218,7 +2220,7 @@ def make_manifest_reconciler(gateway: object) -> ReconcilerSpec:
 
         diff_result = gateway.run_git(
 
-            ["git", "diff", "--name-only", "--", "scripts/script_manifest.yaml"]
+            ["git", "diff", "--name-only", "--", "scripts/script-manifest.yaml"]
 
         )
 
@@ -2234,7 +2236,7 @@ def make_manifest_reconciler(gateway: object) -> ReconcilerSpec:
 
         auto_msg = "chore(manifest): auto-reconcile by GitCommitGateway post-commit"
 
-        abs_files = [str(project_root / "scripts/script_manifest.yaml")]
+        abs_files = [str(project_root / "scripts/script-manifest.yaml")]
 
         commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
 
