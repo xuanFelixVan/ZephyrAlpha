@@ -5,8 +5,8 @@ title: 卖出流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.1"
-date: 2026-08-14
+version: "1.7.2"
+date: 2026-08-15
 topic: sell_flow
 scope: 07_trading_decision_architecture
 ---
@@ -338,9 +338,7 @@ def compute_exit_price(position, atr_value, highest_close_fn):
 | 突破失败（回落>阈值） | 止损卖出 | 喂给 BM-SELL-04-B 止损族 |
 | 第 K 次挑战失败（K≥3） | **强制清仓**（最高优先级） | 绕过融合，紧迫度 1.0，市价单 |
 
-**支撑位破位降级**（BM-SELL-01 降级路径）：突破成败判定未就绪→降级为支撑位破位立即清仓（§8.2 支撑位破位→立即清仓）。MVP BM-SELL-01 已建，无需降级。
-
-> **与 41_buy_flow 联动**：[41_buy_flow](41_buy_flow.md) §3.3 突破失败降级——买入侧暂停后续批次，卖出侧 BM-SELL-01 执行止损。买入只"停"，卖出"卖"，分工清晰。
+**支撑位破位降级**（BM-SELL-01 降级路径）：突破成败判定未就绪→降级为支撑位破位立即清仓（§8.2 支撑位破位→立即清仓）。MVP BM-SELL-01 已建，无需降级。**与 41_buy_flow 联动**：[41_buy_flow](41_buy_flow.md) §3.3 突破失败降级——买入侧只"停"（暂停后续批次），卖出侧 BM-SELL-01 执行止损"卖"，分工清晰（符合三维度解耦）。
 
 ### 3.7 ⑥ 分批卖出 —— MVP 降级为一次性执行，分批退出待 MOD-SELL-017
 
@@ -439,9 +437,7 @@ def schedule_sell_order(signal_type, current_time, position):
 
 > **为何止损盘中立即而止盈尾盘集中**：止损是"认错"——价格已破位，每多持有一秒风险增加，须立即执行（algovestiq 2026-05"论点失效位"立即退出）；止盈是"锁定利润"——trailing 止盈是被动触发，不急于一时，尾盘集中可获 U 型高流动性段更优成交价（CSDN 2026-08-08 A 股日内波动研究：14:00-14:57 成交量逐渐走高）。两者时序分离，避免止损单被尾盘集中执行延迟。
 
-> **合规约束**（上交所 2026 修订 §2.4.2，2026-07-06 生效）：14:57-15:00 收盘集合竞价**不可撤单**，止损单若在 14:57 前挂出但未成交，14:57 后无法撤改——须在 14:55-14:57 窗口检查未成交止损单并决定"改挂收盘竞价"或"接受未成交"。与 [41_buy_flow](41_buy_flow.md) §3.4 执行时序算法对称设计。
-
-> **与 41 号建仓窗口错峰**：41 号建仓在 14:50-14:57，42 号止盈/换仓也在 14:50-14:57——方向相反不冲突（卖 A 买 B 是置换再平衡 BM-SELL-05 已建）。止损盘中立即执行不与建仓窗口冲突。做T（BM-SELL-08）另走 9:45-10:15 卖/13:30-14:30 买回的 U 型节奏（CSDN 2026-08-08），与建仓/止损/止盈全错峰。
+> **合规约束**（上交所 2026 修订 §2.4.2，2026-07-06 生效）：14:57-15:00 收盘集合竞价**不可撤单**，止损单若在 14:57 前挂出但未成交，14:57 后无法撤改——须在 14:55-14:57 窗口检查未成交止损单并决定"改挂收盘竞价"或"接受未成交"。与 [41_buy_flow](41_buy_flow.md) §3.4 执行时序算法对称设计。**与 41 号建仓窗口错峰**：41 号建仓在 14:50-14:57，42 号止盈/换仓也在 14:50-14:57——方向相反不冲突（卖 A 买 B 是置换再平衡 BM-SELL-05 已建）；止损盘中立即执行不与建仓窗口冲突；做T（BM-SELL-08）另走 9:45-10:15 卖/13:30-14:30 买回的 U 型节奏（CSDN 2026-08-08），与建仓/止损/止盈全错峰。
 
 ### 3.9 ⑧ 与回撤 Protocol 联动 —— 35 四级阈值触发卖出端响应
 
@@ -485,7 +481,7 @@ def rank_kill_switch_liquidation(positions):
 
 > **为何流动性优先而非亏损优先**：Kill Switch 是生存底线，首要目标是"全部成交"而非"卖好价"。流动性差的标的如果后卖，可能被封死跌停无法成交→暴露无法消除。先卖流动性差的确保全部能成交，再卖流动性好的（即使跌停也能排队成交）。
 
-> **联动边界**：drawdown 是**账户级**风险（35），regime 是**市场级**风险（G15），卖出逻辑在**策略内**（42）。35 触发时通过 budget 节流（G15 Shrinkage）+ 卖出端响应（42 强制清仓/停新仓）协同，三者正交。~~MVP 阶段 35 未就绪时，直接用 30 §2.5 框架~~ **35 已 active v1.37.0**（v1.6.0 订正）：本表四级阈值=30 §2.5 外层框架口径，35 号 §3.2 另有内层代码阈值（5/10/15% 更紧，A/B/C 三层模块）双轨运行，卖出端响应动作不变。
+> **联动边界**：drawdown 是**账户级**风险（35），regime 是**市场级**风险（G15），卖出逻辑在**策略内**（42）。35 触发时通过 budget 节流（G15 Shrinkage）+ 卖出端响应（42 强制清仓/停新仓）协同，三者正交。**35 已 active v1.37.0**：本表四级阈值=30 §2.5 外层框架口径，35 号 §3.2 另有内层代码阈值（5/10/15% 更紧，A/B/C 三层模块）双轨运行，卖出端响应动作不变。
 
 ### 3.10 ⑨ 连续亏损熔断 —— 策略级 Circuit Breaker（2026-08-10 四次审查补充，选项外更优算法）
 
@@ -547,8 +543,6 @@ class TradeLevelCircuitBreaker:
 | 3 笔 | 0.50 | 继续递减 | 同上延伸 |
 | 4 笔 | 0.25 | 最低仓位 | 同上延伸 |
 | ≥5 笔 | 0.25 + block | **暂停开新仓**（is_blocked=True），已有仓位仍按 0.25 缩放（非清仓，等 CUSUM §5.2 判定是否结构性衰减）| 与 §5.2 联动 |
-
-> **v1.4.1 修**：原表格"≥5 笔 | 0 + block"易误解为"仓位归零"，实际代码 `get_position_scale()` 返回 `min_scale=0.25`（min 兜底），`is_blocked()` 返回 True 仅暂停开新仓（已有仓位不强制清仓，与 Kill Switch 清仓区分）。修正为"0.25 + block"消除歧义。
 
 **参数校准依据**（Li 2026 实证 + A 股适配）：
 
@@ -636,7 +630,7 @@ class TradeLevelCircuitBreaker:
 |---|---|---|
 | **MVP（当前）** | 止损(ATR+移动)+止盈(移动)+破位(突破成败)+猎杀防护(已建)+策略止损范式(设计态待施工，MVP 用 Chandelier 阶段切换替代，v1.6.0 订正)；分批一次性；28 未就绪用 regime 降级，35 已 active 1.37.0 可直接联动（v1.6.0 订正） | 本备忘定稿即可施工 |
 | **阶段 2** | [28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) 定稿，退潮信号 L2-B 注入权重校准 | 28 active |
-| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值与卖出端响应正式联动 | ~~35 active~~ **已满足**（35 已 active 1.37.0，v1.6.0 订正）——35 §3.2 三层映射（外层 8/15/20/25% + 内层代码 5/10/15%）与 §3.9 卖出端响应可直接对接，联动代码施工后本阶段关闭 |
+| **阶段 3** | [35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) 定稿，四级阈值与卖出端响应正式联动 | **已满足**（35 已 active 1.37.0）——35 §3.2 三层映射（外层 8/15/20/25% + 内层代码 5/10/15%）与 §3.9 卖出端响应可直接对接，联动代码施工后本阶段关闭 |
 | **阶段 4** | BM-SEL-13 密度 PDF 就绪，密度感知止损/止盈启用 | BM-SEL-13 施工完成 |
 | **阶段 5** | MOD-SELL-017 分批退出施工，分批卖出启用 | 各策略 track record 积累（量化口径随 G04 校准产出补录，v1.7.1） |
 | **阶段 5b（v1.7.1 补登）** | MOD-SELL-014 策略止损范式施工，按策略类型差异化止损（趋势宽/均值回归中/高频紧/Carry 宽/套利无）启用 | G04 按策略类型的参数校准产出（同 §7 三项待定问题依赖） |
@@ -644,28 +638,23 @@ class TradeLevelCircuitBreaker:
 | **阶段 7（远期·待裁定）** | ML 风控远期：Conformal Kelly drawdown dial——conformal prediction 区间 downside miss 时自动降杠杆（模型失效信号），MaxDD 27.7%→20.3%；替代手工回撤四级阈值的自适应风控 | 各策略 12+ 月 track record + conformal 预测模型校准通过 |
 | **阶段 8（远期·待裁定）** | CUSUM 策略衰减检测——实时监控策略 alpha 是否发生结构性衰减（区分"正常回撤"与"策略已死"），触发 sleeve 级降仓/暂停而非单仓位止损 | 各策略 6+ 月实盘 track record（CUSUM 需 OOS 均值 μ₀ 基线） |
 
-**阶段 7 ML 风控远期实证背书**（2026-08 最新研究）：
+**阶段 7 ML 风控远期实证**（出处见 §8.3）：**Conformal Kelly drawdown dial**（[arXiv:2608.01494](https://arxiv.org/html/2608.01494v1)）——conformal 区间 downside miss（实际收益低于预测区间下界）频率显著超历史校准率→判模型失效→自动降杠杆；6 年回测 MaxDD 27.7%→20.3% 且 Sharpe 提升，timing beat 全部 40 个 placebo（rank-based p=1/41≈0.024）；slow/unweighted/per-asset rolling 优于 locally adaptive（区间稳定性>局部锐度，与 35 稳定阈值防过拟合哲学一致）。35 四级阈值（8/15/20/25% 手工）可演进为 conformal drawdown dial——用模型失效信号替代手工阈值。
 
-- **Conformal Kelly drawdown dial**（[arxiv 2608.01494](https://arxiv.org/html/2608.01494v1)，2026-08-02）：当 conformal prediction 区间在 downside miss（实际收益低于预测区间下界）的频率显著高于历史校准率时，判定模型失效，自动降杠杆。6 年回测 MaxDD 从 27.7% 降至 20.3%，Sharpe 提升，且 timing beat 所有 40 个 placebo 版本（rank-based p=1/41≈0.024）。本项目 35 回撤四级阈值（8/15/20/25%手工阈值）可演进为 conformal drawdown dial——用模型预测失效信号替代手工阈值，实现"模型自己知道何时自己坏了"的自适应风控。
-- **关键设计原则**：slow, unweighted, per-asset rolling conformal quantiles 优于 locally adaptive——区间宽度稳定性 > 局部 sharpness。这与 35 回撤 Protocol"用稳定阈值防过拟合"哲学一致。
+> **为何 MVP 不做 ML 风控**：Conformal Kelly 需 6+ 月校准数据（75% 覆盖率）；35 四级阈值（8/15/20/25%）+ Kill Switch 不可覆盖已构成完整风控红线（§3.9）。阶段 7 属远期演进，用 ML 自适应阈值替代手工阈值。
 
-> **为何 MVP 不做 ML 风控**：Conformal Kelly 需 conformal 预测模型校准（75% 覆盖率达成需 6+ 月数据），且 35 回撤 Protocol 四级阈值（8/15/20/25%）已提供生存底线保障。阶段 7 是远期演进，用 ML 自适应阈值替代手工阈值，**非 MVP 范围**。MVP 阶段 35 四级阈值 + Kill Switch 不可覆盖已构成完整风控红线（见 §3.9）。
+**阶段 8 CUSUM 策略衰减检测**（[mathandmarkets 2026-02 Part 81](https://mathandmarkets.com/p/detecting-decay-in-real-time-when)，E.S. Page 1954 工业质控经典工具）：策略回撤与结构性衰减早期肉眼不可区分，CUSUM 实时累积偏离证据，可在 alpha 衰减 **50 个交易日内告警**（远优于滚动 Sharpe 需 6+ 月）。
 
-**阶段 8 CUSUM 策略衰减检测实证背书**（2026-02 最新研究）：
-
-> **核心问题**：策略回撤与结构性衰减在早期肉眼不可区分——同一 equity curve 在 day 220 可能是"正常回撤后恢复"（Scenario A）也可能是"策略已死永不再回"（Scenario B）。等到差异明显时已损失数月收益。CUSUM 是工业界质量控制的经典工具（E.S. Page 1954），可实时累积偏离证据，在 alpha 衰减 50 个交易日内触发告警。
-
-- **CUSUM 算法**（[mathandmarkets 2026-02 Part 81](https://mathandmarkets.com/p/detecting-decay-in-real-time-when)，策略衰减检测系列）：单侧 CUSUM 统计量 `S⁺ₜ = max(0, S⁺ₜ₋₁ + (μ₀ - xₜ) - k)`，其中 μ₀ = OOS 验证期策略日均收益（H₀="策略健康"），xₜ = 观察日收益，k = 0.5σ（allowance slack），告警阈值 h = 4σ（balanced，~0.5 次/年误报）。**实证**：Sharpe~1 策略真实变点 day 200（alpha 从 ~15% 年化降至 -5%），CUSUM 在 day 250 触发告警——**50 交易日检测延迟**，远优于滚动 Sharpe 需 6+ 月才能确认趋势。
-- **与 35 回撤 Protocol 的分工**：35 四级阈值管"组合级回撤止血"（8/15/20/25% → 降仓/暂停），CUSUM 管"策略级 alpha 衰减诊断"（区分"回撤 vs 已死"）。两者正交：35 触发降仓是 symptom treatment（回撤了就砍），CUSUM 触发暂停是 root cause diagnosis（策略 alpha 消失了就停）。CUSUM 告警可联动 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore 下调该 sleeve budget（比纯回撤驱动更精准）。
-- **CUSUM vs Page-Hinkley vs Bayesian 变点**（mathandmarkets 2026-02 四检验对比）：
+- **算法**：单侧统计量 `S⁺ₜ = max(0, S⁺ₜ₋₁ + (μ₀ - xₜ) - k)`，μ₀=OOS 验证期策略日均收益（H₀="策略健康"），xₜ=观察日收益，k=0.5σ（allowance slack），h=4σ（balanced，~0.5 次/年误报）。实证：Sharpe~1 策略真实变点 day 200（alpha ~15%→-5% 年化），CUSUM day 250 告警。
+- **与 35 回撤 Protocol 的分工**：35 四级阈值管"组合级回撤止血"（8/15/20/25%→降仓/暂停），CUSUM 管"策略级 alpha 衰减诊断"（区分"回撤 vs 已死"）——35 是 symptom treatment，CUSUM 是 root cause diagnosis，正交。CUSUM 告警可联动 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore 下调该 sleeve budget（比纯回撤驱动更精准）。
+- **四检验对比**（mathandmarkets 2026-02）：
   | 检验 | 原理 | 优点 | 缺点 | 适用场景 |
   |---|---|---|---|---|
   | **CUSUM** | 累积偏离 μ₀ 的证据 | 简单可解释；参数少（k, h）；工业标准 | 需预设 μ₀；二元告警非概率 | **首选**（策略衰减检测） |
   | Page-Hinkley | 累积偏离运行均值的偏差 | 自适应均值；无 μ₀ 假设 | 对缓慢漂移敏感度低 | 备选（μ₀ 难定时） |
   | Bayesian 变点 | 后验 P(changepoint) | 概率输出；可量化不确定性 | 需指定先验；实现复杂 | 与 CUSUM 叠加验证 |
   | 滚动 Sharpe | 滑窗 Sharpe 比率 | 直觉；行业通用 | 滞后大（6+ 月）；窗口选择敏感 | 基线（不推荐单独用） |
-- **A 股适配**：A 股策略衰减主因是 crowding（策略拥挤度上升）+ regime 切换（[10](10_regime_detector_spec.md)）+ 监管变化（如 2026-04 程序化新规）。CUSUM 的 μ₀ 应取 OOS walkforward 验证期均值（[11 C1 验证](11_regime_backtest_validation_plan.md)），不用全回测均值（含待检测的衰减期）。k=0.5σ / h=4σ 为 balanced 设置，首批策略实盘 6+ 月后按误报率校准。
-- **与 BM-SELL-03 收集评分的关系**：CUSUM 是 sleeve 级 meta 信号（非单仓位信号），不注入 BM-SELL-03 收集评分（那会混淆"仓位该不该卖"与"策略该不该停"）。CUSUM 告警走 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore → RegimeMetaAllocator budget 下调路径，是 sleeve 级降仓而非仓位级卖出。
+- **A 股适配**：衰减主因=crowding（策略拥挤度上升）+ regime 切换（[10](10_regime_detector_spec.md)）+ 监管变化（如 2026-04 程序化新规）。μ₀ 取 OOS walkforward 验证期均值（[11 C1 验证](11_regime_backtest_validation_plan.md)），不用全回测均值（含待检测衰减期）；k=0.5σ/h=4σ 为 balanced 设置，首批策略实盘 6+ 月后按误报率校准。
+- **与 BM-SELL-03 收集评分的关系**：CUSUM 是 sleeve 级 meta 信号（非单仓位信号），不注入 BM-SELL-03（那会混淆"仓位该不该卖"与"策略该不该停"）；告警走 [30 §2.5](30_multi_strategy_concurrency.md) PerformanceScore → RegimeMetaAllocator budget 下调路径，是 sleeve 级降仓而非仓位级卖出。
 
 ### 5.3 为何这是上限而非妥协
 - 止损(ATR+移动)+止盈(移动)+破位+猎杀防护是 2026 年行业共识（quantstock / vibetrader / algovestiq / fairmontequities）
@@ -718,10 +707,8 @@ class TradeLevelCircuitBreaker:
 - [battle_map_06_buy_flow](../battle_map/battle_map_06_buy_flow.md) —— BM-BUY-04 分批建仓（突破失败降级联动）
 
 ### 8.3 开源实证参考
-- **quantstock ATR Stop Loss Guide（2026-02）** —— ATR 倍数选择（日内 1.5×/波段 2×/趋势 3×），14 周期行业标准；印证 ATR 止损主选（§3.3）
+- **quantstock ATR Stop Loss Guide（2026-02）/ algovestiq Stop-Loss（2026-05）/ fairmontequities 5 Ways Stop Loss（2026-07）** —— ATR 倍数选择（日内 1.5×/波段 2×/趋势 3×）、14 周期行业标准、止损设在"论点失效位"非随机百分比、仓位由止损距离驱动、五法并存但 ATR+trailing 为优；印证 ATR 主选+固定%降级（§3.3/§3.4）
 - **vibetrader Trailing Stop Strategy（2026-03）** —— trailing 不封顶、自动锁定利润、消除决策疲劳；趋势宽 5-10%/波段中 3-5%；印证移动止盈/止损统一（§3.4）
-- **algovestiq Stop-Loss（2026-05）** —— 止损设在"论点失效位"非随机百分比，ATR 自适应波动率，仓位由止损距离驱动；印证 ATR 为主+固定%降级（§3.3）
-- **fairmontequities 5 Ways Stop Loss（2026-07）** —— 支撑位/百分比/ATR/trailing/时间五法；印证多法并存但 ATR+trailing 为优（§3.3/§3.4）
 - **eastmoney 止损与资金管理（2026-07）** —— A 股短线 3-5%/中长线 8-15%，单笔风险 1-3%，组合熔断；与 35 四级阈值/单笔 2% 一致（§3.3/§3.9）
 - **volatilitybox Volatility-Adjusted Stop Losses（2026-03）** —— ATR/Chandelier/Keltner 三法对比，595+ 标的 2018-2025 回测 ATR 倍数止损比固定%**减少 34% 过早止损**；倍数选择：剥头皮 1-1.5×/日内 1.5-2×/波段 2-3×/持仓 3-4×；印证 Chandelier Exit 统一 trailing（§3.3/§3.4）
 - **journalplus ATR Trailing Stop Strategy（2026）** —— Chandelier Exit 默认 22 周期+3×ATR(14)；**5 天未移动 1×ATR 强制退出**时间止损；印证时间止损施工算法（§3.2）+ Chandelier 参数（§3.3）
@@ -760,3 +747,4 @@ class TradeLevelCircuitBreaker:
 | 2026-08-12 | 1.6.2 | 作战地图环节映射补强——锚定 BM-RC-05-A | §3.3 末尾补映射块，环节级可追溯 |
 | 2026-08-13 | 1.7.0 | MVP 施工落地——4 模块 65 测试全绿（AI-SELL-001） | §2.4 未施工清单 9 项中 7 项落码：MOD-SELL-000 持仓Triage（§3.2 triage_position，import 消费方 MOD-POS-003 TriageLevel 真源唯一，ATR缺失降级MONITOR，threshold_delta 硬封顶±0.10）/ MOD-SELL-005 止损族（§3.3 Chandelier 统一+策略M±0.5+§3.2 时间止损第⑦类源）/ MOD-SELL-004 止盈族（§3.4 自动phase判定委托005）/ MOD-SELL-019 执行编排（新登记，§3.8 时序+T+1/跌停硬约束+§3.9 Kill Switch清仓排序）；3 处工程修正（triage绝对距离比较消浮点尾差/ATR缺失降级MONITOR/执行编排落地表格约束）；MOD-SELL-014/017/circuit breaker 维持 spec 裁定不施工；三登记齐备（depgraph 节点+边/creation_token×12/plain_zh×4/ARCH-SELL-001） |
 | 2026-08-14 | 1.7.1 | 遗留登记完备性补修（#ARCH-SELL-001 治本方案 P1-4） | §5.2 补阶段 5b（MOD-SELL-014 启用触发=G04 参数校准产出，原仅散见 §2.3/§5.3/§7）+ 阶段 5 触发条件补量化口径注记；§6 "G04 策略类型定稿"措辞勘正为"G04 按策略类型的参数校准产出"（20 号已 active，字面误读风险）；TradeLevelCircuitBreaker 补登 CAND-SELL-001（孤儿决策收口）；battle_map_07 BM-SELL-04-C 文案三方分裂——派生文件不入 git，depgraph MOD-SELL-014=planned 为真源，随下一次 battle_map 重生成自动订正 |
+| 2026-08-15 | 1.7.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-07） | 过程性叙述/重复实证/冗余修饰清理，标题编号/关键数值（四族 MVP/四级回撤 8%/15%/20%/25%/阶段 7-8 远期）/裁定/开放问题/BM-XXX/#ARCH-XXX/跨文档链接零丢失 |

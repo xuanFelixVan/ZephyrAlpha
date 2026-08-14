@@ -5,8 +5,8 @@ title: 买入流 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.0"
-date: 2026-08-13
+version: "1.7.1"
+date: 2026-08-15
 topic: buy_flow
 scope: 07_trading_decision_architecture
 ---
@@ -177,9 +177,7 @@ def compute_batch_split(confidence_score_c031, strategy_type, sector_quality=Non
 | ② 二次回落不破首仓入场价 | L0 行情 | ✅ 可用（盘中价格比较） |
 | ③ 缩量企稳（量比<1） | BM-SEL-02 量比 | ✅ 可用 |
 
-**板块回踩质量 A/B/C（[22 ②](22_sector_rotation_spec.md)）的定位**：**置信度调节因子，已集成**（v1.4.0）。22号 v1.8.0 active 后，A/B/C 作为置信度调节因子注入 `compute_batch_split` 的 `sector_quality` 参数（A→+0.1 激进/B→±0 中性/C→-0.1 分批或放弃，见 §3.2.1 算法）。A/B/C 不作为硬门——C 类不会直接拦截买入，而是降低置信度使策略更可能走分批路径或因阈值不满足而放弃。**降级兼容**：22号数据未就绪时 `sector_quality=None`，退化为纯 C-031 置信度驱动（MVP 兼容，与 §4.2 过度工程审查一致）。
-
-> **过度工程审查结论**（v1.4.0 更新）：分批建仓**不硬依赖** 22 的 A/B/C——C 类不会直接拦截买入，而是降低置信度使策略更可能走分批路径。原 v1.0.0 设计为"C-031 置信度驱动 + A/B/C 增强"避免 41←22 循环阻塞，现 22号 v1.8.0 已 active，A/B/C 作为 `sector_quality` 参数注入 `compute_batch_split`（A→+0.1/B→±0/C→-0.1），**降级兼容** `None` 退化为纯 C-031 驱动。A/B/C→置信度映射表（±0.1 初始值）待 C1 实盘校准（演进路径 §5.2 阶段 2）。
+**板块回踩质量 A/B/C（[22 ②](22_sector_rotation_spec.md)）的定位**：**置信度调节因子，已集成**（v1.4.0）。22号 v1.8.0 active 后，A/B/C 作为置信度调节因子注入 `compute_batch_split` 的 `sector_quality` 参数（A→+0.1 激进/B→±0 中性/C→-0.1 分批或放弃，见 §3.2.1 算法）。A/B/C 不作为硬门——C 类不会直接拦截买入，而是降低置信度使策略更可能走分批路径或因阈值不满足而放弃。**降级兼容**：22号数据未就绪时 `sector_quality=None`，退化为纯 C-031 置信度驱动（MVP 兼容，与 §4.2 过度工程审查一致）。A/B/C→置信度映射 ±0.1 为初始值，待 C1 实盘校准（§5.2 阶段 2）。
 
 #### 3.2.3 分批建仓输出契约
 
@@ -556,7 +554,7 @@ class BoundedActionAdvice:
 
 **定位**：14:45 尾盘决策窗口，基于今日盘中实时推演结果与持仓状态，做加减仓决策（加仓博明天高开/减仓防明天低开/持有不动）。
 
-**裁定**：**建设**——与 §3.4 尾盘执行窗口是**分工消歧**关系：§3.4 是**建仓执行窗口**（把 31 号算好的目标权重落成订单），PLAN-03 是**预测驱动调仓**（基于明日高/低开概率调整已有持仓或加仓）。两者时段重叠（14:45-15:00 vs 14:50-14:57），但职责不同——PLAN-03 产出调仓指令，§3.4 负责把指令落成限价单。
+**裁定**：**建设**——与 §3.4 尾盘执行窗口是**分工消歧**关系：§3.4 是**建仓执行层**（驱动源=31 号仓位裁决，把 FirmTargetPortfolio 目标权重按 BatchedEntryPlan 落成限价单），PLAN-03 是**预测调仓决策层**（驱动源=BM-PLAN-01 盘中推演，基于明日高/低开概率调整已有持仓或加仓）。两者时段重叠（14:45-15:00 vs 14:50-14:57）但职责不同——PLAN-03 加仓指令走 §3.4 窗口执行，减仓指令走 42 号卖出流。
 
 **参数默认值**：
 
@@ -571,8 +569,6 @@ class BoundedActionAdvice:
 **数据流**：盘中推演结果+持仓状态 → 尾盘 15 分钟决策（加仓博明天高开/减仓防明天低开/持有不动）→ 输出尾盘调仓指令 → downstream BM-BUY-02 买入 + BM-SELL-02 卖出。
 
 **降级**：尾盘决策未就绪→不操作（保持现有持仓过夜），宁可不操作也不在尾盘盲动。
-
-> **与 §3.4 的分工消歧**：§3.4 尾盘窗口（14:50-14:57）是**建仓执行**——把 FirmTargetPortfolio 的目标权重按 BatchedEntryPlan 落成限价单，驱动源是 31 号仓位裁决。PLAN-03 尾盘决策（14:45-15:00）是**预测驱动调仓**——基于明日高/低开概率对已有持仓或加仓做调整，驱动源是 BM-PLAN-01 盘中推演。若 PLAN-03 建议加仓且 §3.4 窗口未过，加仓指令走 §3.4 窗口执行；若 PLAN-03 建议减仓，走 42 号卖出流。两者不冲突——PLAN-03 是决策层，§3.4 是执行层。
 
 ## 4. 考虑过的替代方案（拒绝理由）
 
@@ -623,27 +619,25 @@ class BoundedActionAdvice:
 | **阶段 6（远期·待裁定）** | ML 加仓决策：Conformal Kelly 用 75% 预测区间宽度作 fractional Kelly scale（区间宽→缩首仓，区间窄→加首仓）+ PACE LLM 分层执行（长Horizon规划+短Horizon执行，超越 TWAP/AC） | 各策略 12+ 月 track record + conformal 预测模型校准通过 |
 | **阶段 7（远期·待裁定）** | TT-DAC-PS 执行强化学习（twin-target actor-critic + policy smoothing，超 PPO/SAC/TWAP/VWAP/AC）+ MAP-Elites regime-specialist 执行组合（按流动性/波动率 niche 索引多策略）+ Constrained RL+Shield 合规执行（硬约束 Shield 保证零违规：volume participation/价格边界/自成交避免） | 资金规模达需拆单量级（单标的≥数百万）+ 订单簿 Level-2 数据接入 + 深交所/A 股 LOB 历史数据训练集就绪 |
 
-**阶段 6 ML 加仓远期实证背书**（2026-08 最新研究）：
+**阶段 6 ML 加仓远期实证**（完整出处见 §8.3）：
 
-- **Conformal Kelly**（[arxiv 2608.01494](https://arxiv.org/html/2608.01494v1)，2026-08-02）：用 conformal prediction 75% 区间宽度作 fractional Kelly 的 scale——区间宽（模型不确定）→缩仓，区间窄（模型确定）→加仓。6 年回测（2016-2021，含交易成本+1 日执行延迟+杠杆上限）年化净 log 增长 28.5%、Sharpe 1.34、MaxDD 27.7%，超 S&P500 15.9%。**关键发现**：slow, unweighted, per-asset rolling conformal quantiles 优于 locally adaptive（区间宽度稳定性 > 局部 sharpness）。drawdown dial 风控：conformal interval downside miss 时降杠杆，MaxDD 27.7%→20.3%。本项目 C-031 置信度→批次比例映射（§3.2.1）可演进为 conformal interval→fractional Kelly scale，用预测区间宽度替代手工阈值 0.65/0.70/0.75。
-- **PACE LLM 执行**（[arxiv 2607.28410](https://arxiv.org/html/2607.28410v1)，2026-07-30，深交所 Level-1 数据）：Plan-Ahead Controlled Execution 分层框架——长 Horizon 规划 + 短 Horizon 执行，超越 TWAP/Almgren-Chriss/learning-based 0.65 bps。**关键发现**：LLM 高 confidence 反而预示更好表现（与人类过度自信相反），且 LLM 比人类更早交易不拖延。本项目 MVP 尾盘集中执行可演进为 PACE 式分层——策略层 LLM 规划当日建仓节奏（分批间隔/时点），执行层 LLM 做分钟级下单决策。
-- **订单簿流动性强化学习拆单**（CSDN 2026-07-26）：用 ARIMA/LSTM 预测订单簿流动性，用 PPO/DQN 优化大单拆分策略，目标最小化交易成本+市场冲击。流动性感知拆单：liquidity_score > 0.8 不拆分 / > 0.5 拆 2 份 / ≤0.5 拆 5 份。本项目多标的排序算法（§3.6）可演进为强化学习动态拆单，但需订单簿 Level-2 数据接入（MVP 不具备）。
+- **Conformal Kelly**（[arXiv:2608.01494](https://arxiv.org/html/2608.01494v1)）：conformal prediction 75% 区间宽度作 fractional Kelly scale——区间宽（模型不确定）缩仓、区间窄加仓；6 年回测（2016-2021 含成本+1 日延迟+杠杆上限）年化净 log 增长 28.5%、Sharpe 1.34、MaxDD 27.7%（drawdown dial 后 20.3%）；slow/unweighted/per-asset rolling 优于 locally adaptive（区间稳定性>局部锐度）。**本项目映射**：§3.2.1 C-031→批次比例映射可演进为 conformal interval→fractional Kelly scale，`confidence_score_c031` 参数可平滑替换为 conformal_width（替代手工阈值 0.65/0.70/0.75）。
+- **PACE LLM 执行**（[arXiv:2607.28410](https://arxiv.org/html/2607.28410v1)，深交所 Level-1 数据）：长 Horizon 规划+短 Horizon 执行分层框架，超 TWAP/Almgren-Chriss 0.65 bps。**本项目映射**：MVP 尾盘集中执行可演进为"策略层 LLM 规划建仓节奏（分批间隔/时点）+执行层 LLM 分钟级下单"。
+- **订单簿流动性 RL 拆单**（CSDN 2026-07-26）：ARIMA/LSTM 预测订单簿流动性+PPO/DQN 优化拆单（liquidity_score>0.8 不拆/>0.5 拆 2 份/≤0.5 拆 5 份）。**本项目映射**：§3.6 多标的排序算法可演进为 RL 动态拆单，需 Level-2 数据接入（MVP 不具备）。
 
-> **为何 MVP 不做 ML 加仓**：Conformal Kelly 需 conformal 预测模型校准（75% 覆盖率达成需 6+ 月数据），PACE 需 LLM 推理基础设施 + 深交所 Level-1 历史数据训练，强化学习拆单需订单簿 Level-2 数据。MVP 阶段这些前置条件均不满足，强行引入 ML 会增加 meta 参数（模型选择/超参/重训周期）违反"骨架先行"纪律。**阶段 6 是远期演进路径，非 MVP 范围**，但 §3.2.1 的 C-031→批次比例映射接口已预留 conformal interval 替换点（confidence_score_c031 参数可平滑替换为 conformal_width）。
+> **为何 MVP 不做 ML 加仓**：Conformal Kelly 需 6+ 月校准数据（75% 覆盖率），PACE 需 LLM 推理基础设施+Level-1 历史数据，RL 拆单需 Level-2 数据——前置条件 MVP 均不满足，强行引入增加 meta 参数（模型选择/超参/重训周期）违反"骨架先行"纪律。阶段 6 为远期演进路径，接口替换点已预留（见上）。
 
-**阶段 7 执行强化学习远期实证背书**（2026 最新研究）：
+**阶段 7 执行 RL 远期实证**（完整出处见 §8.3）：
 
-- **TT-DAC-PS**（[arXiv:2606.08379](https://arxiv.org/html/2606.08379v1)，2026-06-07，Reading/Göttingen/ICMA Centre）：Twin-Target Deterministic Actor-Critic with Policy Smoothing——确定性 actor-critic 架构，融合四项技术：① twin EMA critic targets + pessimistic min backup（抑制 Q 值过估）；② TD3-style target policy smoothing noise（目标策略平滑）；③ delayed actor updates（延迟策略更新）；④ conservative Q regularisation（保守 Q 正则）。探索用 Ornstein-Uhlenbeck 噪声 + 混合衰减调度（episode-wise decay + variance-guided + SAC-style 自学习温度）。**实证**：10 只美股 LOB 数据，TT-DAC-PS 一致降低 mean implementation shortfall 百分比（竞争性方差），超 PPO/SAC/A2C 及 TWAP/VWAP/AC 全部基线。消融实验证明 Twin-Target pessimistic backup + 混合自适应探索均有贡献（高难度标的移除后退化最大）。**关键发现**：自适应探索在时变流动性+非平稳价差的 episodic 执行中有效，固定噪声调度脆弱。**本项目映射**：阶段 4 TWAP/VWAP 拆单的远期升级——TT-DAC-PS 在大额建仓拆单中替代 TWAP/VWAP 静态调度，自适应流动性波动。但需 LOB 数据 + 训练基础设施，属阶段 7 远期。
+- **TT-DAC-PS**（[arXiv:2606.08379](https://arxiv.org/html/2606.08379v1)，Reading/Göttingen/ICMA）：twin EMA critic targets+pessimistic min backup+TD3 target policy smoothing+delayed actor updates+conservative Q 正则，OU 噪声+混合衰减探索；10 只美股 LOB 一致降低 mean IS，超 PPO/SAC/A2C 及 TWAP/VWAP/AC 全部基线。**本项目映射**：阶段 4 TWAP/VWAP 拆单的远期升级（自适应流动性波动），需 LOB 数据+训练基础设施。
+- **MAP-Elites regime-specialist 执行组合**（[arXiv:2601.22113](https://arxiv.org/pdf/2601.22113)，Imperial/BoA）：按流动性/波动率索引 specialist 策略组合，niche 内 +8-10%；PPO baseline 2.13 bps arrival slippage vs VWAP 5.23 bps（4900 笔 OOS/$21B）；每 cell 需大量算力。**本项目映射**：可与 [34 号 regime meta-allocator](34_regime_meta_allocator.md) 状态索引对接（r3 牛市激进执行/r4 熊市保守拆单），适用资金规模达拆单量级后。
+- **Constrained RL + Shield 合规执行**（[arXiv:2510.04952](https://arxiv.org/pdf/2510.04952v1)，Probe Group）：CMDP 形式化硬约束（volume participation/price boundary/self-trading avoidance）+Shield 模块 action projection 保证**零违规**；ABIDES 多场测试超 TWAP/VWAP 且零合规违规。**A 股适配**：高频认定 300 笔/秒、撤单率监控 50%、涨跌停不申报、14:57 后不可撤、T+1 资金口径均可编码为 Shield 约束——纯 PPO/TT-DAC-PS（无 Shield）无法提供的形式化合规保证。
 
-- **MAP-Elites regime-specialist 执行组合**（[arXiv:2601.22113](https://arxiv.org/pdf/2601.22113)，de Witt & Pakkanen, Imperial College/Bank of America, 2026-01-30）：首次将 MAP-Elites 质量多样性算法应用于交易执行——不搜单一最优策略，而是生成**按流动性/波动率条件索引的 regime-specialist 策略组合**。每个 specialist 在其行为 niche 内实现 8-10% 性能提升（其他 cell 退化，提示 ensemble 组合机会）。配套 PPO baseline（CNN 特征提取器）在 4,900 笔 OOS 订单（$21B notional）上实现 2.13 bps arrival slippage vs VWAP 5.23 bps。**关键发现**：质量多样性方法为 regime-adaptive 执行提供新范式，但每个行为 cell 需大量计算资源开发稳健 specialist。**本项目映射**：与 [34 号 regime meta-allocator](34_regime_meta_allocator.md) 的 12 态（当前 4 态）正交——可按 regime 状态索引不同执行 specialist（如 r3 牛市用激进执行、r4 熊市用保守拆单）。但本项目 MVP 个人小资金单标的一笔限价单即可，MAP-Elites 适用资金规模达需拆单量级后。
-
-- **Constrained RL + Shield 合规执行**（[arXiv:2510.04952](https://arxiv.org/pdf/2510.04952v1)，Probe Group, 2025-10-06）：将交易执行形式化为 Constrained MDP（CMDP），硬约束含：① volume participation 上限（单笔不超过成交量 X%）；② price boundary（价格偏离 collar）；③ self-trading avoidance（避免跨场自成交/wash trade）。架构 = 高层 Planner（跨时间/跨场拆单）+ RL Execution Agent（PPO，细粒度下单）+ Compliance Agent。**核心创新 Shield 模块**：实时监控 RL agent 动作，将任何违规动作投影到最近安全动作集（action projection），保证**零违规**同时保留 RL 算法完整性。**实证**：ABIDES 多智能体模拟器多场测试，RL agent 执行性能（更低 IS + 更低方差）超 TWAP/VWAP，且**零合规违规**；高延迟/部分成交/合规模块切换/约束限变化压力测试下稳健。**A 股适配价值**：2026 量化新规（中基协 2026-07 权威确认）高频认定 300 笔/秒、异常交易撤单率监控 50%——Shield 模块可将这些监管硬约束编码为 CMDP 约束，RL 执行策略在追求最优 IS 的同时**形式化保证不触碰高频认定红线**。这是纯 PPO/TT-DAC-PS（无 Shield）无法提供的合规保证。**A 股额外约束**：涨跌停板不申报（§3.4 卖出侧已遵守）、集合竞价不可撤单（14:57 后）、T+1 资金口径均可编码为 Shield 约束。
-
-> **三法分工与协同**：TT-DAC-PS 优化**执行成本**（最小化 IS，超 TWAP/VWAP/AC）；MAP-Elites 优化**执行适应性**（regime-specialist 组合，不同市场状态用不同执行策略）；Constrained RL+Shield 优化**执行合规性**（零违规保证，监管硬约束形式化）。三者可叠加：MAP-Elites 生成 regime-specialist 策略池 → 每个 specialist 用 TT-DAC-PS 训练 → Shield 模块包裹所有 specialist 保证合规。但**三法均属阶段 7 远期**，前置条件（资金规模/LOB 数据/训练基础设施）MVP 不具备。
-
-> **为何 MVP 不做执行强化学习**：① **资金规模不达标**——个人小资金单标的几万~几十万，一笔限价单即可完成建仓，无拆单需求（金策略 2026：日均成交额≥5000 万流动性门槛，单标的数百万以上才需拆单）；② **数据不达标**——TT-DAC-PS/MAP-Elites 需 LOB 数据训练，本项目 MVP 仅 L0/L1 行情；③ **合规已由限价+尾盘集中保证**——MVP 限价单 + 14:50-14:57 尾盘集中天然合规（单标的 1-2 笔/日，远低于法定 300 笔/秒高频认定线），无需 Shield 形式化保证；④ **过度工程风险**——引入 RL 执行增加 meta 参数（网络结构/超参/重训周期/reward shaping），违反"骨架先行"纪律。**阶段 7 是远期演进路径**，接口预留：§3.6 多标的排序算法可平滑替换为 MAP-Elites specialist 选择器，§3.5 价格锚定可替换为 TT-DAC-PS action 输出，§3.4 时序调度可叠加 Shield 约束投影层。
-
-> **MPC 确定性执行远期候选**（阶段 4→7 桥接，修复 [31_position_sizing](31_position_sizing.md) §7.4 反向引用）：[arXiv:2603.28898](https://arxiv.org/abs/2603.28898)（McAuliffe et al., Bayforest + Bertsekas, 2026-03）将大单执行形式化为 MPC 框架——凸 QP 每步求解，平衡 completion/impact/opportunity cost，NASDAQ Level-3 数据降 schedule shortfall 40-50%。**为何 MPC 是阶段 4→7 的最优桥接**（选项之外更好答案）：① 比 TWAP/VWAP（阶段 4）更自适应——TWAP/VWAP 是静态时间均匀拆分，MPC 每步根据实时成交量/价差重优化；② 比 RL（阶段 7）更轻量——凸 QP 闭式解 vs 神经网络训练，无需 LOB 数据/训练基础设施；③ 确定性可审计——QP 解可追溯优化目标，RL 黑箱不可解释；④ 合规友好——凸约束直接编码 A 股 300 笔/秒高频认定/50% 撤单率监控限制。**为何 MVP 不做**：与阶段 7 RL 同理（资金规模/数据不达标），但 MPC 的前置门槛更低（仅需 L1 成交量数据，不需 LOB），阶段 4 TWAP/VWAP 就绪后可优先升级为 MPC 而非直接跳到 RL。此远期候选已由 [31_position_sizing](31_position_sizing.md) §7.4 反向引用（arXiv:2603.28898 属执行层远期候选 41_buy_flow §5.2）。
+> **三法分工与协同**：TT-DAC-PS 优化**执行成本**（最小化 IS）/ MAP-Elites 优化**执行适应性**（regime-specialist 组合）/ Constrained RL+Shield 优化**执行合规性**（零违规）；可叠加（MAP-Elites 生成 specialist 池→TT-DAC-PS 训练→Shield 包裹保证合规），三法均属阶段 7 远期。
+>
+> **为何 MVP 不做执行强化学习**：①资金规模不达标——个人小资金单标的一笔限价单即可（金策略 2026：日均成交额≥5000 万、单标的数百万以上才需拆单）；②数据不达标——TT-DAC-PS/MAP-Elites 需 LOB 数据，MVP 仅 L0/L1 行情；③合规已由限价+尾盘集中保证（单标的 1-2 笔/日，远低于法定 300 笔/秒认定线）；④过度工程风险——RL 执行增加 meta 参数违反"骨架先行"。**接口预留**：§3.6 排序→MAP-Elites specialist 选择器、§3.5 锚定→TT-DAC-PS action 输出、§3.4 时序→Shield 约束投影层。
+>
+> **MPC 确定性执行远期候选**（阶段 4→7 桥接，[31_position_sizing §7.4](31_position_sizing.md) 反向引用）：[arXiv:2603.28898](https://arxiv.org/abs/2603.28898)（McAuliffe et al., Bayforest+Bertsekas 2026-03）凸 QP 每步求解，平衡 completion/impact/opportunity cost，NASDAQ Level-3 降 schedule shortfall 40-50%。**为何是最优桥接**：①比 TWAP/VWAP（阶段 4）更自适应（每步按实时量/价差重优化）；②比 RL（阶段 7）更轻量（凸 QP 闭式解，无需 LOB/训练设施）；③确定性可审计（QP 解可追溯）；④合规友好（凸约束直接编码 300 笔/秒+50% 撤单率线）。**为何 MVP 不做**：与阶段 7 RL 同理（资金/数据不达标），但前置门槛更低（仅需 L1 量数据）——阶段 4 就绪后可优先升级 MPC 而非直接跳 RL。
 
 ### 5.3 为何这是上限而非妥协
 - 2 批分批 + 尾盘集中 + 限价锚定是 A 股 T+1 个人量化的实务共识（10jqka 2026-06 / eastmoney 2026-07）
@@ -656,7 +650,6 @@ class BoundedActionAdvice:
 
 | 暂缓项 | 暂缓理由 | 重评条件 |
 |---|---|---|
-| ~~**A/B/C→置信度映射表**~~ | ~~22 A/B/C 判定未定义~~ | ✅ **已实施** v1.4.0：22号 v1.8.0 active，A/B/C 注入 `compute_batch_split(sector_quality=)`，初始值 A→+0.1/B→±0/C→-0.1，待 C1 实盘校准 |
 | **盘中实时分散下单** | 需实时信号+实时风控+低延迟执行，MVP 复杂度过高 | G15 + 实时风控就绪 |
 | **动态分批数自适应** | MVP 固定 2 批；动态（按波动率/策略类型选 2-4）增加 meta 参数 | 各策略 6+ 月 track record |
 | **倒金字塔左侧加仓** | 逆势加仓仅适用价值反转策略，趋势/突破策略不用 | G04 价值反转策略定稿后评估 |
@@ -709,6 +702,7 @@ class BoundedActionAdvice:
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-15 | 1.7.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-07） | §5.2 阶段 6/7 实证背书与 §8.3 引用重复处指针化收拢（关键数值 28.5%/Sharpe 1.34/MaxDD 27.7%→20.3%/0.65bps/2.13 vs 5.23bps/40-50% 全保留，出处归 §8.3）；§3.2.2 过度工程审查重复段并入上行（A/B/C→置信度 ±0.1 待 C1 校准保留）；§3.10.4 与 §3.4 分工消歧重复段并入 §3.10.4 裁定；§6 已实施 strikethrough 行删除（v1.4.0 修订记录已载）；分批 2 批/2/3 条件/14:50-14:57 窗口/限价锚定/pro-rata 削减/扳机清单 15 条/T+1 两日型换仓全保留，章节标题编号一字不动 |
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G19 讨论要点占位，待讨论填空 |
 | 2026-08-10 | 1.0.0 | 骨架→active，回填 7 项讨论要点 | 分批建仓（置信度驱动 2 批，A/B/C 为增强非硬门）/突破失败降级/尾盘集中时序/限价锚定/消费 31 产出/budget 数字驱动/T+1 约束；过度工程审查（不硬依赖 22 骨架）；循环至零检查通过 |
 | 2026-08-10 | 1.0.1 | §7 开放问题"待 G14 定稿"→"G14 已定稿 v1.0.0，可对齐 §3.8"（由 G12-AI 同步） | 33号于本日升 active v1.0.0，本备忘引用的"待定稿"措辞陈旧 |
