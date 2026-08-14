@@ -6430,25 +6430,21 @@ def make_delete_audit_reconciler(gateway: object) -> ReconcilerSpec:
             f"report={report_path.name}"
         )
 
-        # 归档提交通道（I-GOV-2 对齐 2026-08-14 裁定）：仅满 7 天宽限期归档的文件
-        # 允许 auto-commit（带 [lifecycle-archive] 标记），且文件在 30 天回收站可恢复——
-        # 损害可逆前提下的整洁性提交，非"误判固化"。其余 reconciler 删除类
-        # auto-commit 一律禁止。
+        # 删除类永不 auto-commit（I-GOV-2 铁律 architecture_issue_registry L12341：
+        # "reconciler 只允许 warn/skip/fix-in-place，禁止 action=commit"；
+        # #ARCH-RECONCILER-AUTO-DELETE-GOV-001 T0② 裁定——物理消除
+        # "误判×自动执行×自动入库"放大链）。
+        # 归档已 move 进 30 天回收站（可逆，guard_recycle 审计在案）；git deletion
+        # 留在工作区，由人工/AI 会话审查后走常规网关显式提交（人在环确认），
+        # reconciler 只 warn 不提交。
         if report.archived:
-            archived_rel = [f for f in report.archived]
-            abs_files = [str(project_root / rel) for rel in archived_rel]
-            auto_msg = (
-                f"chore(lifecycle): [lifecycle-archive] {len(archived_rel)} docs 满 7 天观察期归档 "
-                f"（30 天回收站可恢复）by GitCommitGateway post-commit"
-            )
-            commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-            if commit_result.status == "OK":
-                return ReconcileResult(action="auto_committed", detail=detail + " (auto-committed)")
-            if commit_result.status == "NOTHING_TO_COMMIT":
-                return ReconcileResult(action="clean", detail=detail + " (no staged changes)")
             return ReconcileResult(
                 action="warn",
-                detail=detail + f" (auto-commit failed: {commit_result.status} {commit_result.message[:120]})",
+                detail=(
+                    detail
+                    + f" | {len(report.archived)} docs 已归档回收站（30 天可恢复），"
+                    "git deletion 待人工审查后常规提交（I-GOV-2：删除类禁止 auto-commit）"
+                ),
             )
 
         if report.error:
