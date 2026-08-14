@@ -5,8 +5,8 @@ title: 第二批次策略·价值反转与动量趋势
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
-date: 2026-08-12
+version: "0.2.1"
+date: 2026-08-15
 topic: second_batch_strategies
 scope: 07_trading_decision_architecture
 ---
@@ -78,3 +78,4 @@ scope: 07_trading_decision_architecture
 |---|---|---|---|
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G11 讨论要点占位，暂缓讨论 |
 | 2026-08-12 | 0.2.0 | 保持 draft：补 §2 暂缓理由充分性论证、§3 预研方向登记（A 股实证锚点 + strategy_registry 33 条课程规则与 G11 的语义澄清）、§4 相关性先验预判、§5 开放问题补 00_index 同步项 | 中间版（v0.4.0）曾丢失，重建；暂缓文档不填满但须把"为什么缓、缓期间允许做什么、何时重启"写清；不擅自定决策 |
+| 2026-08-15 | 0.2.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-06） | 通读零发现——骨架文档已最简（暂缓理由/预研方向/相关性预判/开放问题均为最小必要且含裁定与重评条件），正文零变更 |

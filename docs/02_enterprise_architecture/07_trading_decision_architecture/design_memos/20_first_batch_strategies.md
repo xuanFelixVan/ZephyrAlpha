@@ -5,8 +5,8 @@ title: 首批 3 策略定义
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.1"
-date: 2026-08-12
+version: "1.3.2"
+date: 2026-08-15
 topic: first_batch_strategies
 scope: 07_trading_decision_architecture
 ---
@@ -214,9 +214,8 @@ scope: 07_trading_decision_architecture
 | 暂缓项 | 暂缓理由 | 重评条件 | 责任方 |
 |---|---|---|---|
 | 1. charter §3 约束二/三措辞修订 | charter 写"按市场状态切换权重"已被 Morwane 实证否决，应修订为"按市场状态做风险节流"；并补充"统一框架=统一firm风险框架+少而精差异化sleeve，非Citadel pod"澄清 | 本讨论已裁定，待物理修订（2026-08-12 核验：charter §3 约束二仍写"按市场状态切换权重"，未修订） | 04 域 owner 待认领 |
-| ~~2. 30_multi_strategy_concurrency §4.3 pod 误标修正~~ | ✅ **已落地**：30 号 v1.4.0 已修正（§4.3 划删除线 + §7.4 补 resonanzcapital/bayes-group 等 2026 实证） | — | — |
-| ~~3. 30_multi_strategy_concurrency §1.1 5候选清单同步~~ | ✅ **已落地**：30 号 v1.4.0 §1.1 已同步为"价值反转/动量趋势/事件驱动/打板/多因子"（主升龙头并入打板） | — | — |
-| ~~4. 打板情绪周期4+1 与 regime 12态边界~~ | ✅ **已定型**：[28_sentiment_cycle_trading](28_sentiment_cycle_trading.md) v1.0.0 §3.1/§3.4（情绪周期=sleeve 内 alpha 择时，regime=市场级风险节流，正交） | — | G21 已闭合 |
+
+> 已闭合 3 项（30 号 §4.3 pod 误标修正、30 号 §1.1 5 候选清单同步、打板情绪周期 4+1 与 regime 12 态边界定型）——闭合事实与出处见 §8 修订记录 v1.3.0 ③。
 
 ## 6. 待定问题
 
@@ -286,3 +285,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-09 | 1.2.4 | 文档头统一：frontmatter 补 title/owner/language，H1 去"讨论·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 1.3.0 | ①新增 §2.7 已施工设施盘点（通用规则 #11）：打板四引擎/因子工厂/事件处理/position 三件套均 production，pf_core/strategies 空壳=3 策略 sleeve 策略类未施工（缺口登记 §6）；②§4.4 修正内部矛盾——正文"≥6 月"硬性表述改判据驱动（trade-count≥30 + PnL 偏离≤30% + rolling DSR），对齐 v1.2.0 修订记录声称；③§5 待裁定落地状态更新：2/3 号已由 30 号 v1.4.0 落地、4 号已由 28 号 v1.0.0 定型、1 号（charter 措辞）2026-08-12 核验仍未修订保持开放；④§7.5 补 2026-08 实证（炸板率 68% 游资生态 / JPM Factor Views 3Q26 / LVS 事件驱动下行保护 / quant67 情绪衰减）；⑤§7.1 补 28 号引用 | 多轮审查回填：设施盘点先行明确缺口、消除正文与修订记录矛盾、待裁定状态与引用方同步、最新实证入库（2026-08-12 三次并发回滚后重建并即时提交锁定） |
 | 2026-08-12 | 1.3.1 | 作战地图环节映射补强——锚定 BM-SEL-21-A、BM-SEL-21-F | §2.7 末尾补映射块，环节级可追溯 |
+| 2026-08-15 | 1.3.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-06） | §5 移除 3 行删除线已闭合待裁定（pod 误标/5 候选清单/情绪周期边界——闭合事实 v1.3.0 ③ 已载，表末补指针注记）；其余通读零发现。3 策略定义/差异化矩阵/设施盘点/灰度四阶段判据/引用链接零丢失 |

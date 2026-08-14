@@ -5,8 +5,8 @@ title: 密度预测与 QNN 远期愿景
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.1.3"
-date: 2026-08-12
+version: "0.1.4"
+date: 2026-08-15
 topic: density_prediction
 scope: 07_trading_decision_architecture
 ---
@@ -72,3 +72,4 @@ BM-BUY-02-A-1-c（T+1 次日 8 态走势预测，L2C，design）的远期接口=
 | 2026-08-09 | 0.1.1 | 文件名 discussion_021_density_prediction.md → 91_density_prediction.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 0.1.2 | 文档头统一：title/H1 去"讨论稿："前缀，scope 归一为 07_trading_decision_architecture；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 0.1.3 | 作战地图全覆盖补丁——BM-SEL-14 / BM-SEL-14-A / BM-SEL-15（+BM-BUY-02-A-1-c 衔接）。新增「作战地图环节登记」节，按 90 号 §10 规划态真源回填 3 环节：① BM-SEL-14 共形预测——Phase 0 基线=slow unweighted rolling conformal，RWC 为 Phase 0 最优变体（复用 regime 检测器），栈收敛范围待 90 号 P-2 用户裁定；密度 PDF→95% 覆盖率区间层（PDF 分位数外裹 conformal 安全缓冲），消费前提=校准偏离<5%/尾部覆盖率误差<2%；② BM-SEL-14-A TCP-RM/DDCI——与 RWC 取舍裁定：RWC 优先，TCP-RM/DDCI 降级 Phase 2 非平稳增强候选（RWC 压力期残余 2.29% exceedance 为触发重评）；③ BM-SEL-15 Survival 止盈止损时间预测——选型三选一裁定首选 AFT（直接建模事件发生时间、无 PH 假设、参数少），KM 基线校准、Cox 协变量诊断；激活条件=密度预测模型验证通过（与 21 号 §6 登记一致）；④ 衔接 BM-BUY-02-A-1-c 八态预测远期接口="PDF 积分派生"，与 90 号 §7 暂缓裁定重启条件呼应，不另建 8 态专用模型 | 作战地图 14 环节全覆盖施工：闭合 stock_selection 流程 3 个 design 态环节在本稿的登记缺口；90 号 v2.0.0 §10 警示"91 号实际仅 v0.1.2 骨架，引用内容均未落盘"，本版按规划态真源回填 |
+| 2026-08-15 | 0.1.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-06） | 通读零发现——规划态登记已按定位→裁定→契约→重评条件四要素最简（BM-SEL-14/14-A/15 三环节+衔接段），正文零变更 |

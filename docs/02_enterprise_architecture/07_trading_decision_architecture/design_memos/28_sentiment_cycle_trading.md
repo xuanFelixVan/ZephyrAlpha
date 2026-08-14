@@ -5,8 +5,8 @@ title: 情绪周期×交易决策
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.2"
-date: 2026-08-14
+version: "1.2.3"
+date: 2026-08-15
 topic: sentiment_cycle_trading
 scope: 07_trading_decision_architecture
 ---
@@ -1129,8 +1129,6 @@ def analyze_sentiment_driven_correlation(
 | 兜底机制 | §3.3 locate_sentiment_phase | 置信度 55%→兜底 | ✅ 兜底有效 |
 | Hawkes η 切换 | §3.7.4 estimate_hawkes_branching_ratio | 1.2→0.6 | ✅ η 切换有效 |
 
-案例验证了 §3.2-§3.7 算法框架的实战有效性，五个关键发现均与算法预期一致。
-
 ### 3.9 与 regime 协同机制
 
 > 本节总结情绪周期与 regime 12 态的协同工作流，是 §3.5 分工裁定的工程化落地。
@@ -1141,7 +1139,7 @@ def analyze_sentiment_driven_correlation(
 
 #### 3.9.2 软影响映射表（非硬性状态叠加）
 
-情绪周期不作为第 13-17 态硬叠加到 regime（§4.1 拒绝），而是通过 §3.5.2 `apply_sentiment_soft_influence`（regime 概率软影响版本）软调 12 态概率，通过 §3.5.4 `SENTIMENT_REGIME_MAPPING` 软调联合仓位缩放。软影响原则：不强制覆盖 regime 原始判定，按情绪置信度概率加权；乘法叠加（sentiment × regime）保持正交性；时间尺度不同不矛盾可共存（情绪细 1-2 周，regime 粗 1-3 月）。
+情绪周期不作为第 13-17 态硬叠加到 regime（§4.1 拒绝），而是经 §3.5.2 `apply_sentiment_soft_influence`（regime 概率软影响版本）软调 12 态概率、经 §3.5.4 `SENTIMENT_REGIME_MAPPING` 软调联合仓位缩放；软影响原则同 §3.5.3/§3.5.4（不强制覆盖、概率加权、乘法叠加保持正交、时间尺度不同可共存）。
 
 #### 3.9.3 协同工作流
 
@@ -1307,12 +1305,7 @@ def get_strategy_deployment_by_phase(
 
 ## 7. 待定问题（讨论要点对齐）
 
-- [x] ① 5 阶段（冰点/反核/主升/疯狂/退潮）各阶段的买卖纪律 → §3.2 五阶段定义 + §3.4 `PHASE_DISCIPLINE` 各阶段 position_scale/throttle_factor/allow_new_open/策略亲和性
-- [x] ② 情绪周期定位器准确率评估（[30_multi_strategy_concurrency §6.3](30_multi_strategy_concurrency.md)）→ §3.3 `locate_sentiment_phase` 算法化 + §6 待裁定（G07 施工时同步评估）+ §3.3 兜底机制（置信度<60%→默认保守）
-- [x] ③ 情绪周期与 regime 12 态的映射关系 → §3.5 分工裁定（正交）+ §3.5.2 映射表（软影响）+ §3.5.3 关键纪律
-- [x] ④ 各策略在不同情绪阶段的部署策略 → §3.6 部署矩阵（打板主升重仓/多因子冰点布局/事件驱动跨阶段）
-- [x] ⑤ 情绪周期是"隐形驱动"（[30_multi_strategy_concurrency §1.3](30_multi_strategy_concurrency.md)）→策略间相关性来源 → §3.7 验证方法（分层相关性测试）+ §3.7.3 处置结论 + §3.7.4 Hawkes 自激发 + block-bootstrap 2000 次统计显著性验证
-- [x] ⑥ 8 个标准函数签名契约已对齐 → §3.10 标准函数签名契约（classify_sentiment_phase / compute_sentiment_temperature / locate_sentiment_phase / detect_phase_transition / get_phase_trading_discipline / evaluate_locator_accuracy / map_sentiment_to_regime / get_strategy_deployment_by_phase，薄包装委托到实现函数，无递归调用）
+- [x] 六项讨论要点全部闭合：① 五阶段买卖纪律 → §3.2/§3.4；② 定位器准确率评估 → §3.3（含置信度<60%兜底）+ §6 待裁定；③ 与 regime 12 态映射 → §3.5；④ 各策略阶段部署 → §3.6；⑤ 隐形驱动验证 → §3.7（含 §3.7.3 处置 / §3.7.4 Hawkes+block-bootstrap）；⑥ 8 个标准函数签名契约 → §3.10（薄包装无递归）
 
 ## 8. 引用
 
@@ -1349,3 +1342,4 @@ def get_strategy_deployment_by_phase(
 | 2026-08-11 | 1.2.0 | 补全 8 算法 + 修复递归包装 bug | 新增 compute_sentiment_temperature（7 维 A 股情绪温度→[0,100] 综合评分：涨停广度/跌停恐惧/连板高度/炸板背离/封板共识/涨跌比/梯队完整度）+ detect_phase_transition（阶段转换检测：底反转 FREEZING→STARTING + 顶背离 CONSENSUS→EBING，先行指标+确认信号双重判定）；§3.5.4 软影响算法（apply_sentiment_soft_influence 仓位版 + combine_sentiment_regime 乘法叠加 + SENTIMENT_REGIME_MAPPING 5×12 映射表 + CombinedTradingDirective + 60 有效组合 + get_effective_combinations）；§3.6.1 策略部署算法（StrategyDeploymentPolicy 3×5 矩阵 + compute_strategy_deployment）；§3.7.4 Hawkes 自激发（SentimentHawkesParams λ₀/α/β + compute_hawkes_intensity + estimate_hawkes_branching_ratio 分支比 + compute_sentiment_correlation_driver + analyze_sentiment_driven_correlation block-bootstrap 2000 次）；§3.8 2026-08-06 板块性跌停潮案例实证（5 关键发现）；§3.9 与 regime 协同机制（正交分工+软影响映射+协同工作流） |
 | 2026-08-12 | 1.2.1 | §6 补登 #ARCH-ASHARE-002 proposed 议题 | AI-19 深度审查：基础设施盘点发现 #ARCH-ASHARE-002（情绪周期 6 阶段标准化+4 盘面指标，proposed P1）未在本文登记，按通用规则 #12 补登 §6 待裁定。无算法变更 |
 | 2026-08-14 | 1.2.2 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | 删除过程性叙述与重复解释；五阶段定义/定位器/门控节流/权重/仓位上限/伪代码/契约/参数/验收标准/锚点全保留 |
+| 2026-08-15 | 1.2.3 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-06） | §7 六项已闭合讨论要点压缩为一行映射（内容真源 §3.2-§3.10 未动）；§3.8.3 删全✅表后冗余总结句；§3.9.2 软影响原则去重（真源 §3.5.3/§3.5.4）。五阶段参数/映射权重/仓位上限/契约/裁定/链接零丢失 |
