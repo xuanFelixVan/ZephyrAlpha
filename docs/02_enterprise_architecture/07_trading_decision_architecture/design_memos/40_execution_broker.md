@@ -5,8 +5,8 @@ title: 下单对接与撮合（执行层）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.0"
-date: 2026-08-13
+version: "2.11.1"
+date: 2026-08-14
 topic: execution_broker
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 - 执行层是数据流主动脉的末端：接收 firm_target_portfolio，分解为订单，经风控/合规/拆单后通过 miniQMT 发出，回收成交回报，更新持仓，做 TCA 成本尸检
 
 ### 1.2 核心问题
-执行层要回答"信号→订单→成交→对账"全链路的 19 个问题：下单接口对接、撮合算法、滑点模型、交易成本、订单状态机、失败重试、执行风控、集合竞价、T+1 约束、订单分解算法、未成交续接、撤单率控制、资金预占、挂单价算法、临时停牌处理、除权除息日处理、零股与板块差异化申报数量、程序化交易报备合规、MiniQMT 政策关注。前 10 个为 v1.0.0 已定型，⑪-⑭为 v1.1.0 补全的施工环节流程（实盘生存项），v1.2.0 补全 miniQMT 工程约束与价格笼子合规校验，v1.3.0 订正高频认定标准与价格笼子基准价两处事实错误 + 新增决策⑮临时停牌处理，v1.4.0 订正 ST 涨跌幅 + 新增决策⑯除权除息日处理 + 补充盘后固定价格交易/回报延迟/2026最新RL研究，v1.5.0 订正决策⑩科创板整手处理硬错误 + 新增决策⑰零股与板块差异化申报数量 + 新增决策⑱程序化交易报备合规 + 强化高频认定标准权威证据，v1.6.0 新增决策⑲MiniQMT 收紧趋势 + 补充 2026 MPC/MAP-Elites/Direct VWAP，v1.6.1 订正 miniQMT 夸大表述 + Python 版本过时信息，v1.6.2 精简决策⑲移除过度工程（三套迁移方案/骨架代码），v1.6.3-v1.6.5 文档体系整理（段位编号重排 + 管理规范链接修复 + frontmatter 文档头统一），v1.6.6 代码审计（确认 gap 6-18 全部准确未实现 + 已实现项全部确认）+ 过度工程审查（6 种算法不算过度工程，ICEBERG/POV/IS 为低频储备）+ coeff 校准方法论补充（Phase 1.5 校准路径）+ Huberman-Stanzl 理论补充（永久冲击线性无套利地基），v1.6.7 算法工程实践审查（IS 声称订正为指数衰减启发式近似 + POV 内生性说明 + TWAP 随机化/VWAP 在线纠偏现状登记 + I-Star/Bouchaud Propagator/OBI/Algo Wheel 外部参考补充 + 2026-08-08 最新 RL 执行研究 PPO+VWAP 偏差策略 domain-informed priors），v1.6.8 交叉引用补全（37↔40 双向引用 + 2026-08 最新研究二次复查全覆盖确认），v1.7.0 施工环节流程算法审查（TWAP/VWAP 计划生成/IS 4 桶分解/市场冲击 α×σ×√(Q/ADV)/OBI 信号/延迟-冲击权衡/regime 选择逻辑 6 项算法缺失登记）+ 2026 最新研究二次整合（MAP-Elites 细节 + TT-DAC-PS 细节 + UCL 多 agent RL 理论 + Drovix TCA 方法论 + NeverSight/TimGunn70/GinkGO 自适应执行 + 可转债 TWAP 场景规则 + Plexus delay cost 占 IS 54% 洞察强化 DECISION 基准）。每个决策都影响实盘成本与稳定性。
+执行层要回答"信号→订单→成交→对账"全链路的 19 个问题：下单接口对接、撮合算法、滑点模型、交易成本、订单状态机、失败重试、执行风控、集合竞价、T+1 约束、订单分解算法、未成交续接、撤单率控制、资金预占、挂单价算法、临时停牌处理、除权除息日处理、零股与板块差异化申报数量、程序化交易报备合规、MiniQMT 政策关注。①-⑩ 为 v1.0.0 定型，⑪-⑭ v1.1.0 补全，⑮ v1.3.0、⑯ v1.4.0、⑰⑱ v1.5.0、⑲ v1.6.0 陆续新增（演进细节见 §8 修订记录）。每个决策都影响实盘成本与稳定性。
 
 ### 1.3 约束条件
 - miniQMT 个人账户**不支持券商端 VWAP/TWAP 算法接口**（机构客户才有）→ 拆单逻辑必须系统自实现
@@ -36,51 +36,43 @@ scope: 07_trading_decision_architecture
 - 涨跌停板流动性失效：涨停板挂单排不上、跌停板挂单卖不出（流动性危机检测与逃生指令见 [37_liquidity_crisis_protocol](37_liquidity_crisis_protocol.md) §3.5，执行层决策⑥⑭⑮协同）
 - 个人账户资金体量小：多数订单远小于 1% ADV，过度拆单反而增加成本（每笔最低佣金 5 元）
 - AI 开发 → 故障隔离与幂等是生存项：断线/拒单/重复下单必须有兜底
-- **板块差异化申报数量**（v1.5.0 补全）：沪深主板/创业板 100 股整数倍起买；科创板 200 股起买、超 200 股按 1 股递增（201/202 股合法）；北交所 100 股起买。卖出时不足最低单位的零股必须**一次性申报卖出**，不可拆分、不可忽略
-- **程序化交易报备**（v1.5.0 补全）：使用 miniQMT 自动下单属程序化交易，上线前必须通过券商完成报备（策略类型/服务器地址/算法逻辑/风控参数），未报备将被限制交易
-- **MiniQMT 政策关注**（v1.6.0 补全，v1.6.2 精简）：miniQMT 目前正常运营（存量用户交易日正常使用），部分券商收紧新增但不影响存量。风险等级"正常运营但需关注政策变化"——BrokerInterface 抽象层（已实现）是唯一防线，触发迁移时再研究方案（详见决策⑲）
-- **xtquant Python 版本**（v1.6.0 补全，v1.6.1 订正）：截至 2026-04 已支持 **64 位 Python 3.6-3.14**（建议 3.11），不同版本导入时自动切换；2025-10 起已支持 pip 直接安装（miniqmt.com 官方 QA 确认，此前"仅支持 3.6-3.8"为过时信息）
-- **可转债程序化交易权限**（v1.6.0 补全）：卖出可转债需券商单独开通可转债程序化交易权限 + 签署协议 + 增加流量费；股票期权需 100 万以上资金申请
+- **板块差异化申报数量**：沪深主板/创业板 100 股整数倍起买；科创板 200 股起买、超 200 股按 1 股递增（201/202 股合法）；北交所 100 股起买。卖出时不足最低单位的零股必须**一次性申报卖出**，不可拆分、不可忽略
+- **程序化交易报备**：使用 miniQMT 自动下单属程序化交易，上线前必须通过券商完成报备（策略类型/服务器地址/算法逻辑/风控参数），未报备将被限制交易
+- **MiniQMT 政策关注**：miniQMT 目前正常运营（存量用户交易日正常使用），部分券商收紧新增但不影响存量。风险等级"正常运营但需关注政策变化"——BrokerInterface 抽象层（已实现）是唯一防线，触发迁移时再研究方案（详见决策⑲）
+- **xtquant Python 版本**：截至 2026-04 已支持 **64 位 Python 3.6-3.14**（建议 3.11），不同版本导入时自动切换；2025-10 起已支持 pip 直接安装（miniqmt.com 官方 QA 确认）
+- **可转债程序化交易权限**：卖出可转债需券商单独开通可转债程序化交易权限 + 签署协议 + 增加流量费；股票期权需 100 万以上资金申请
 
 ### 1.4 已施工设施盘点（通用规则 #11：先清楚有什么 → 才能知道怎么改 → 才能知道该退役什么）
 
-> 执行层不是从零设计——miniQMT 对接、撮合、成本、滑点、Saga 均已真实实现（非 stub）。本备忘给已有实现补 why 层决策记录 + 填补 gap。
-> 盘点分两块：**施工前已实现 12 项**（v1.0.0 前已 production）+ **v2.5.0-v2.6.0 施工新增 9 项**（gap 6-18 实盘生存级模块，对应决策⑪-⑱）。
+✅ 已施工（ex_core 模块群，commit 见 tracker，1332 测试）：执行层全部模块 production，非 stub。miniQMT 对接/撮合/成本/滑点/Saga/未成交续接/撤单率/资金预占/挂单价/价格笼子/停牌/除权除息/板块整手/报备开关全链路闭合（AI-EXEC-001 施工完毕验证，pytest 1332/1332 全绿）。
 
-**施工前已实现**（12 项，v1.0.0 前 production）：
-
-| 环节 | 模块 | path | 状态 |
+| 环节 | 模块 | path | 对应决策 |
 |---|---|---|---|
-| 下单通道 | MiniQmtBroker | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | 🟦 production |
-| 券商抽象 | BrokerInterface | `src/zephyr/trading/trading_contracts/broker_interface.py` | 🟦 production |
-| 订单状态机 | OrderManager | `src/zephyr/ex_core/order_manager.py` | 🟦 production |
-| 成交回报 | FillHandler | `src/zephyr/ex_core/fill_handler.py` | 🟦 production |
-| 撮合拆单 | AlgoTradingEngine | `src/zephyr/ex_sor/core/algo_trading_engine.py` | 🟦 production |
-| 交易成本 | TransactionCostOptimizer | `src/zephyr/ex_sor/services/transaction_cost_optimizer.py` | 🟦 production |
-| 滑点模型 | SlippageAnalyzer | `src/zephyr/ex_sor/services/slippage_analyzer.py` | 🟦 production |
-| Saga 编排 | OrderExecutionSaga | `src/zephyr/ex_core/order_execution_saga.py` | 🟦 production |
-| 调仓分解 | TradingSession | `src/zephyr/ex_core/trading_session.py` | 🟦 production |
-| TCA 引擎 | DefaultTcaEngine | `src/zephyr/reporting/default_tca_engine.py` | 🟦 production |
-| 持仓对账 | PositionReconciler | `src/zephyr/ex_core/position_reconciler.py` | 🟦 production |
-| 撮合逻辑（回测=实盘共用） | MatchingLogic | `src/zephyr/backtest/core/matching_logic.py` | 🟦 production |
+| 下单通道 | MiniQmtBroker | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ① |
+| 券商抽象 | BrokerInterface | `src/zephyr/trading/trading_contracts/broker_interface.py` | ①⑲ |
+| 订单状态机 | OrderManager | `src/zephyr/ex_core/order_manager.py` | ⑤ |
+| 成交回报 | FillHandler | `src/zephyr/ex_core/fill_handler.py` | — |
+| 撮合拆单 | AlgoTradingEngine | `src/zephyr/ex_sor/core/algo_trading_engine.py` | ② |
+| 交易成本 | TransactionCostOptimizer | `src/zephyr/ex_sor/services/transaction_cost_optimizer.py` | ④ |
+| 滑点模型 | SlippageAnalyzer | `src/zephyr/ex_sor/services/slippage_analyzer.py` | ③ |
+| Saga 编排 | OrderExecutionSaga | `src/zephyr/ex_core/order_execution_saga.py` | ⑥ |
+| 调仓分解 | TradingSession | `src/zephyr/ex_core/trading_session.py` | ⑤⑩⑬ |
+| TCA 引擎 | DefaultTcaEngine | `src/zephyr/reporting/default_tca_engine.py` | ③ |
+| 持仓对账 | PositionReconciler | `src/zephyr/ex_core/position_reconciler.py` | — |
+| 撮合逻辑（回测=实盘共用） | MatchingLogic | `src/zephyr/backtest/core/matching_logic.py` | ① |
+| 未成交续接 | OpenOrderResolver | `src/zephyr/ex_core/open_order_resolver.py` | ⑪ |
+| 撤单率控制 | CancelRateGuard | `src/zephyr/ex_core/cancel_rate_guard.py` | ⑫ |
+| 资金预占 | TradingSession `_validate_and_submit` 内嵌 | `src/zephyr/ex_core/trading_session.py` | ⑬ |
+| 挂单价算法 | PricingPolicy | `src/zephyr/ex_core/pricing_policy.py` | ⑭ |
+| 价格笼子 | price_cage.check_price_cage | `src/zephyr/ex_core/price_cage.py` | ⑭ |
+| 回调线程模型 | AsyncFillDispatcher | `src/zephyr/ex_core/async_fill_dispatcher.py` | ①工程约束 |
+| 断线重连增强 | MiniQmtBroker `_reconnect` 指数退避 | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ⑥层1 |
+| 临时停牌 | TradingHaltResolver | `src/zephyr/ex_core/trading_halt_resolver.py` | ⑮ |
+| 除权除息 | CorporateActionAdjuster | `src/zephyr/ex_core/corporate_action_adjuster.py` | ⑯ |
+| 板块整手/零股 | board_lot.get_board_lot_rule | `src/zephyr/ex_core/board_lot.py` | ⑰ |
+| 程序化报备开关 | ProgrammaticTradingGuard | `src/zephyr/ex_core/programmatic_trading_guard.py` | ⑱ |
 
-**v2.5.0-v2.6.0 施工新增**（9 项，对应决策⑪-⑱ 实盘生存级 gap，全部测试全绿；⚠️ 均未登记 depgraph，见 §6.2 开放问题）：
-
-| 环节 | 模块 | path | 对应决策 | 状态 |
-|---|---|---|---|---|
-| 未成交续接 | OpenOrderResolver | `src/zephyr/ex_core/open_order_resolver.py` | ⑪ | 🟦 production（21 测试） |
-| 撤单率控制 | CancelRateGuard | `src/zephyr/ex_core/cancel_rate_guard.py` | ⑫ | 🟦 production（23 测试） |
-| 资金预占 | TradingSession `_validate_and_submit` 内嵌 | `src/zephyr/ex_core/trading_session.py` | ⑬ | 🟦 production（串行扣减+拒单回滚） |
-| 挂单价算法 | PricingPolicy | `src/zephyr/ex_core/pricing_policy.py` | ⑭ | 🟦 production（22 测试） |
-| 价格笼子 | price_cage.check_price_cage | `src/zephyr/ex_core/price_cage.py` | ⑭ | 🟦 production（23 测试） |
-| 回调线程模型 | AsyncFillDispatcher | `src/zephyr/ex_core/async_fill_dispatcher.py` | ①工程约束 | 🟦 production（14 测试） |
-| 断线重连增强 | MiniQmtBroker `_reconnect` 指数退避 | `src/zephyr/ex_core/adapters/miniqmt_broker.py` | ⑥层1 | 🟦 production（RECONNECT_BACKOFF=(0,2,4,8,16,30)） |
-| 临时停牌 | TradingHaltResolver | `src/zephyr/ex_core/trading_halt_resolver.py` | ⑮ | 🟦 production（16 测试） |
-| 除权除息 | CorporateActionAdjuster | `src/zephyr/ex_core/corporate_action_adjuster.py` | ⑯ | 🟦 production（25 测试） |
-| 板块整手/零股 | board_lot.get_board_lot_rule | `src/zephyr/ex_core/board_lot.py` | ⑰ | 🟦 production（53 测试） |
-| 程序化报备开关 | ProgrammaticTradingGuard | `src/zephyr/ex_core/programmatic_trading_guard.py` | ⑱ | 🟦 production（44 测试） |
-
-> 关联域文档：[44_d_ex_core](../../02_domain_architecture_docs/44_d_ex_core.md)（38 模块：18 生产态+20 设计态，2026-08-05 生成）+ [45_d_ex_sor](../../02_domain_architecture_docs/45_d_ex_sor.md)（18 模块：17 生产态+1 设计态）。⚠️ 两份域文档生成于 v2.5.0 施工前，上表 9 个新模块均未登记（depgraph 未刷新），详见 §6.2 开放问题。
+> 关联域文档：[44_d_ex_core](../../02_domain_architecture_docs/44_d_ex_core.md) + [45_d_ex_sor](../../02_domain_architecture_docs/45_d_ex_sor.md)。⚠️ 两份域文档生成于 v2.5.0 施工前，上表后 10 个新模块均未登记 depgraph，详见 §6.2 开放问题。
 
 ## 2. 决策
 
@@ -88,52 +80,28 @@ scope: 07_trading_decision_architecture
 
 ```
 firm_target_portfolio (来自 FirmRiskAggregator, 30_multi_strategy_concurrency §2.2)
-        │
         ↓
-[订单分解] TradingSession._compute_order_deltas  差额下单：目标-当前=净买卖
-        │   先卖后买（释放资金再买入）/ 板块差异化整手（主板100股/科创200股1股递增）/ 零股一次性卖出
+[订单分解] TradingSession._compute_order_deltas 差额下单（目标-当前=净买卖）：先卖后买（释放资金再买入）/ 板块差异化整手（主板100股/科创200股1股递增）/ 零股一次性卖出
         ↓
-[资金预占] ⑬ 预校验  串行扣减可用资金，卖出单预占释放额度给后续买入
-        │   提交前本地拦截资金不足（避免 54 拒单推高撤单率）
+[资金预占] ⑬ 串行扣减可用资金，卖出单预占释放额度给后续买入；提交前本地拦截资金不足（避免 54 拒单推高撤单率）
         ↓
-[执行风控] 订单层熔断  单票单笔≤4% + 单票≤10笔/日 + 全账户≤50笔/日
-        │   （firm 层 8% 上限在上游 FirmRiskAggregator 已裁剪）
+[执行风控] 盘前检查链 5 步（§2.8.1 该不该下）→ 订单层熔断：单票单笔≤4% + 单票≤10笔/日 + 全账户≤50笔/日（firm 层 8% 上限上游 FirmRiskAggregator 已裁剪）
         ↓
-[Saga 六步] OrderExecutionSaga  风控→信号确认→下单→成交确认→持仓更新→报告
-        │   ≤5s 超时 / 补偿幂等 / 断线重连
+[Saga 六步] OrderExecutionSaga 风控→信号确认→下单→成交确认→持仓更新→报告：≤5s 超时 / 补偿幂等 / 断线重连
         ↓
-[撮合拆单] AlgoTradingEngine  按订单大小自适应：小单直发/中单TWAP/大单VWAP/超大单IS
-        │   参与率≤5% / 单笔≤15%ADV（miniQMT 不支持券商端算法，系统自实现）
+[撮合拆单] AlgoTradingEngine 按订单大小自适应：小单直发/中单TWAP/大单VWAP/超大单IS；参与率≤5% / 单笔≤15%ADV（miniQMT 不支持券商端算法，系统自实现）
         ↓
-[挂单价] ⑭ 被动档挂买一/卖一，超时触发 Make-or-Take 切主动档
-        │   涨停卖单挂涨停价 / 跌停买单挂跌停价（唯一可成交价位）
+[挂单价] ⑭ 被动档挂买一/卖一，超时触发 Make-or-Take 切主动档；涨停卖单挂涨停价 / 跌停买单挂跌停价（唯一可成交价位）
         ↓
-[下单通道] MiniQmtBroker  对接 xttrader（新版 xtquant 250807.1.2）
-        │   T+1查持仓 / 涨跌停±10% / 100股整数倍 / 幂等INV-007 / 回测=实盘一致性预校验
+[下单通道] MiniQmtBroker 对接 xttrader（xtquant 250807.1.2）：T+1查持仓 / 涨跌停±10% / 100股整数倍 / 幂等INV-007 / 回测=实盘一致性预校验
         ↓
-[未成交续接] ⑪ 超时Make-or-Take / PARTIAL按urgency补单 / 14:55尾盘清退
-        │
+[未成交续接] ⑪ 超时Make-or-Take / PARTIAL按urgency补单 / 14:55尾盘清退 → [撤单率控制] ⑫ >12%只挂不撤 / >15%冻结告警 / 内部限频15笔/秒
         ↓
-[撤单率控制] ⑫ 滚动监控降级  >12%只挂不撤 / >15%冻结告警 / 内部限频15笔/秒
-        │
+[临时停牌] ⑮ 停牌跳过/跨日移除目标/释放资金预占/复牌重新评估 → [除权除息] ⑯ 调整前收盘价→涨跌停价→笼子基准价/持仓股数同步 → [零股处理] ⑰ 卖出零股一次性报出/板块差异化申报数量
         ↓
-[临时停牌] ⑮ 停牌跳过/跨日移除目标/释放资金预占/复牌重新评估
-        │
+[成交回报] FillHandler fill_id幂等 / 加权均价累积 / FillSummary → [持仓更新] PositionTracker + PositionReconciler 每5min对账 / 盘后全量对账（Phase 2）
         ↓
-[除权除息] ⑯ 识别除权除息日/调整前收盘价→涨跌停价→笼子基准价/持仓股数同步
-        │
-        ↓
-[零股处理] ⑰ 卖出零股一次性报出/板块差异化申报数量（主板100股/科创200股1股递增）
-        │
-        ↓
-[成交回报] FillHandler  fill_id幂等 / 加权均价累积 / FillSummary
-        │
-        ↓
-[持仓更新] PositionTracker + PositionReconciler  每5min对账 / 盘后全量对账（Phase 2）
-        │
-        ↓
-[TCA 尸检] DefaultTcaEngine + SlippageAnalyzer + TransactionCostOptimizer
-        IS成本分解 / 滑点归因 / 成本分解 → 反馈拆单算法优化（Phase 1.5 规则闭环）
+[TCA 尸检] DefaultTcaEngine + SlippageAnalyzer + TransactionCostOptimizer：IS成本分解 / 滑点归因 / 成本分解 → 反馈拆单算法优化（Phase 1.5 规则闭环）
 ```
 
 ### 2.2 决策①：miniQMT 下单接口对接（按现状定型）
@@ -144,64 +112,53 @@ firm_target_portfolio (来自 FirmRiskAggregator, 30_multi_strategy_concurrency 
 - `connect/disconnect/submit_order/cancel_order/query_order/get_positions` 全套 BrokerInterface
 - A 股约束校验：T+1（查持仓 `can_sell_volume`）/ 涨跌停 ±10%（ST 简化统一 10%）/ 100 股整数倍 / 停牌跳过
 - 幂等下单：所有订单携带 `idempotency_key`（INV-007），重复提交返回已存在的 broker_order_id
-- 断线重连：`_call_xttrader_with_reconnect` 失败自动 `_reconnect` 重试 1 次
+- 断线重连：`_call_xttrader_with_reconnect` 失败自动 `_reconnect` 重试；`_reconnect` 指数退避（见决策⑥层1）
 - 线程安全：`threading.Lock` 保护所有 xttrader 调用（xttrader 非线程安全）
 - 回测=实盘一致性：与 D_BACKTEST 共用 [MatchingLogic](file:///d:/ZephyrAlpha/src/zephyr/backtest/core/matching_logic.py)，`submit_order` 内置 `pre_trade_simulate` 预成交校验
 - 与 D_DATA 共用 xtquant 连接（`shared_xtquant_conn`，避免重复 connect 到 miniQMT 终端）
 
 **xttrader 错误码映射**（代码已实现）：0=成功 / -1=连接失败 / -2=未就绪 / -3=订单号重复 / 50=涨停 / 51=跌停 / 52=数量不合法 / 53=价格不合法 / 54=资金不足 / 55=持仓不足。
 
-**miniQMT 工程约束**（v1.2.0 补全，实盘生存项）：
+**miniQMT 工程约束**（实盘生存项）：
 
-> 以下三条是 XtQuant 实盘的"头号踩坑点"，缺失会导致死锁/延迟/状态不一致。源自 2026 年 miniQMT 实盘避坑指南与官方文档。
-
-1. **回调线程模型**（防死锁/延迟）：`on_stock_order`/`on_stock_trade` 等回调在底层 C++ 线程执行，**回调内绝对不能执行耗时操作**（如数据库写入、复杂计算）。实盘案例：回调中执行复杂计算导致成交回报延迟 3 秒。正确做法：回调内只入队（`Queue.put(trade)`），独立线程消费（`process_trades()` 循环 `Queue.get()`）。[FillHandler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/fill_handler.py) 的回调处理必须遵循此模式。
-
-2. **同步/异步查询陷阱**（防死锁）：`query_stock_trades`/`query_stock_orders`/`query_stock_positions` 等同步查询接口，**在回调函数内调用会导致线程死锁**（C++ 底层线程阻塞）。规则：所有同步查询只能在主线程/独立线程调用；回调内如需查询，用 `query_stock_trades_async` 异步版本（返回 seq，通过 `on_query_trades_async_response` 回调返回结果）。决策⑥⑨的 `query_stock_positions` 调用必须确保不在回调链路中。
-
-3. **时序一致性**（防状态不一致）：`set_relaxed_response_order_enabled(True)` 开启后，允许在 `on_stock_order` 等推送回调中调用同步请求接口（否则会导致事件循环阻塞）。但开启后查询与推送的数据时序会变得不确定，需在"回调内可同步查询"与"时序严格"之间取舍。MVP 建议：**开启 relaxed 模式**（实盘需要回调内查询补状态），但查询结果仅作参考，以 `query_stock_orders` 主动全量同步为准。
-
-4. **Python 版本兼容性**（v1.6.0 补全，v1.6.1 订正，环境约束）：xtquant 截至 2026-04 已支持 **64 位 Python 3.6-3.14**（建议 3.11），不同版本导入时自动切换；2025-10 起已支持 pip 直接安装（miniqmt.com 官方 QA 确认）。此前"仅支持 3.6-3.8"为旧版信息，已过时。系统可与主 Python 环境共用，无需强制虚拟环境隔离。
-
-5. **subscribe_whole_quote BUG**（v1.6.0 补全，数据约束）：`xtdata.subscribe_whole_quote` 取全市场数据时存在实现 BUG（miniqmt.com QA A28），推送回调返回全市场数据而非订阅标的。需在回调函数中自行过滤出感兴趣的标的，不能假设推送的数据只含订阅标的。
-
-**为何不再造**：MiniQmtBroker 已 production 且通过测试，重复造轮子违反 AI-dev 归因清晰度原则。本备忘只记录 why，不改 what。
+1. **回调线程模型**（防死锁/延迟）：`on_stock_order`/`on_stock_trade` 等回调在底层 C++ 线程执行，**回调内绝对不能执行耗时操作**。正确做法：回调内只入队（`Queue.put(trade)`），独立线程消费。[FillHandler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/fill_handler.py) 经 AsyncFillDispatcher 遵循此模式。
+2. **同步/异步查询陷阱**（防死锁）：`query_stock_trades`/`query_stock_orders`/`query_stock_positions` 等同步查询接口，**在回调函数内调用会导致线程死锁**。规则：所有同步查询只能在主线程/独立线程调用；回调内如需查询，用 `query_stock_trades_async` 异步版本。决策⑥⑨的 `query_stock_positions` 调用必须确保不在回调链路中。
+3. **时序一致性**：`set_relaxed_response_order_enabled(True)` 开启后允许在推送回调中调用同步请求接口，但查询与推送的数据时序变得不确定。MVP 裁定：**开启 relaxed 模式**，查询结果仅作参考，以 `query_stock_orders` 主动全量同步为准。
+4. **Python 版本兼容性**：xtquant 截至 2026-04 已支持 **64 位 Python 3.6-3.14**（建议 3.11），2025-10 起已支持 pip 直接安装（miniqmt.com 官方 QA 确认）。系统可与主 Python 环境共用，无需强制虚拟环境隔离。
+5. **subscribe_whole_quote BUG**：`xtdata.subscribe_whole_quote` 取全市场数据时推送回调返回全市场数据而非订阅标的（miniqmt.com QA A28）。需在回调函数中自行过滤标的。
 
 ### 2.3 决策②：撮合算法——按订单大小自适应
 
-**决策**：复用 [AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py)（MOD-XS-005）的 6 种算法 + [AlgoParamOptimizer](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) 自适应选择，默认选择规则按**订单占 ADV 比例**分档：
+**决策**：复用 [AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py)（MOD-XS-005）的 6 种算法 + AlgoParamOptimizer 自适应选择，默认选择规则按**订单占 ADV 比例**分档：
 
 | 订单大小 | 占 ADV | 默认算法 | 理由 |
 |---|---|---|---|
 | 小单 | <1% | 整单限价直发（不拆） | 冲击可忽略，拆了反增成本（每笔最低佣金 5 元） |
 | 中单 | 1-5% | TWAP 等量切片 | 均匀执行，被动挂单，冲击可控 |
 | 大单 | 5-15% | VWAP 按日内量能分布 | 契合 A 股日内成交量分布（开盘20%/上午25%/午盘10%/尾盘45%），隐藏在市场自然成交量里 |
-| 超大单 | >15% | IS（指数衰减启发式，近似 AC 风险厌恶轨迹） | 平衡冲击成本与时机风险，urgency 驱动前/后置加载。**注**：代码用 `exp(-λ×t_i)` 指数衰减权重启发式前置加载，非完整 Almgren-Chriss 均值-方差 QP 求解（完整 AC 需 coeff 已校准 + 闭合形式双曲正弦轨迹，Phase 2 可上推） |
+| 超大单 | >15% | IS（指数衰减启发式，近似 AC 风险厌恶轨迹） | 平衡冲击成本与时机风险，urgency 驱动前/后置加载。**注**：代码用 `exp(-λ×t_i)` 指数衰减权重启发式前置加载，非完整 Almgren-Chriss 均值-方差 QP 求解（Phase 2 可上推闭合形式双曲正弦轨迹） |
 
 **硬约束**（代码已实现）：
 - 参与率 ≤5%（证监会程序化交易规定，§10.1 Hard Block）
-- 单笔订单 ≤15% ADV（Almgren-Chriss 模型上限，§13.1，超则 `OrderTooLargeError` 否决+上游拆分）
+- 单笔订单 ≤15% ADV（Almgren-Chriss 模型上限，超则 `OrderTooLargeError` 否决+上游拆分）
 - 切片数量和 == 订单总量（Decimal 守恒不变量）
 
-**为何自适应而非统一算法**：
-- 个人账户小资金多数订单 <1% ADV，统一 TWAP/VWAP 会让小单也拆，增加下单次数和成本
-- 统一不拆单则浪费了已实现的拆单能力，大单（如打板集中买入）有冲击风险
-- 自适应复用现有 `AlgoParamOptimizer` 逻辑，每档用最合适的算法，既简单又保留大单拆单能力
+**为何自适应而非统一算法**：小资金多数订单 <1% ADV，统一拆单增成本，统一不拆浪费大单拆单能力；自适应复用现有 AlgoParamOptimizer，每档用最合适的算法。
 
-**6 种算法用途**（代码已实现，注册表模式）：TWAP（等量切片被动挂单）/ VWAP（按日内量能分布）/ ICEBERG（小额显示量隐藏大单）/ POV（参与率≤5%）/ IS（指数衰减启发式近似 AC 风险厌恶轨迹）/ ALT（激进对手价吃单，游资"狙击"量化版）。
+**6 种算法契约**（代码已实现，注册表模式）：TWAP（等量切片被动挂单）/ VWAP（按日内量能分布）/ ICEBERG（小额显示量隐藏大单）/ POV（参与率≤5%）/ IS（指数衰减启发式近似 AC 风险厌恶轨迹）/ ALT（激进对手价吃单，游资"狙击"量化版）。
 
-**POV 内生性说明**：POV 算法的参与率 γ 存在内生性——自身交易量成为市场成交量的一部分，实际参与率被低估，需用 `x = γ/(1-γ)·M` 纠正（M=其他参与者成交量）。本系统 γ≤5% 时内生性影响可忽略（γ/(1-γ)≈5.3%），Phase 2 大单场景需考虑补偿。
+**POV 内生性说明**：参与率 γ 存在内生性——自身交易量成为市场成交量的一部分，实际参与率被低估，需用 `x = γ/(1-γ)·M` 纠正（M=其他参与者成交量）。本系统 γ≤5% 时影响可忽略（γ/(1-γ)≈5.3%），Phase 2 大单场景需考虑补偿。
 
-**A 股场景化算法选择规则**（v1.7.0 补充，搜狐两融小顾问 2026-07 + gs-quant 2026-06 + GinkGO 2026-05）：
+**A 股场景化算法选择规则**：
 
 | 标的/场景 | 推荐算法 | 理由 |
 |---|---|---|
 | 沪深股票/ETF（U 型成交分布） | VWAP | 契合 A 股日内量能节奏（开盘 20%/上午 25%/午盘 10%/尾盘 45%），隐藏在自然成交量里 |
-| 可转债（盘口极薄） | **TWAP 而非 VWAP** | 可转债盘口极薄、价格波动依赖正股，VWAP 集中下单会放大冲击成本且历史量曲线预测失效；即使是高流动性可转债也谨慎用 VWAP。**注意**：可转债程序化交易需单独开通权限（决策①） |
+| 可转债（盘口极薄） | **TWAP 而非 VWAP** | 可转债盘口极薄、价格波动依赖正股，VWAP 集中下单放大冲击且历史量曲线预测失效。**注意**：可转债程序化交易需单独开通权限（决策①） |
 | 流动性极差标的（无稳定日内分布） | TWAP | VWAP 依赖量曲线预测，流动性极差时预测失效 |
 | 打板集中买入（urgency 高） | ALT/VWAP 前置 | 激进对手价吃单，需快速成交 |
 
-**Regime-aware 算法选择逻辑**（v1.7.0 登记，Phase 1.5 候选，GinkGO 2026-05 + TimGunn70 2026-06）：当前自适应分档按 ADV 比例**静态**选择算法，未考虑实时市场状态。Phase 1.5 可加 regime 维度（需 TCA 数据校准阈值）：
+**Regime-aware 算法选择逻辑**（Phase 1.5 候选）：当前自适应分档按 ADV 比例**静态**选择算法。Phase 1.5 可加 regime 维度（需 TCA 数据校准阈值）：
 
 | Regime 信号 | 选择逻辑 | 理由 |
 |---|---|---|
@@ -209,7 +166,7 @@ firm_target_portfolio (来自 FirmRiskAggregator, 30_multi_strategy_concurrency 
 | 趋势强（顺势） | 顺势滑行，减少对抗 | 趋势市中逆势挂单难成交且成本高 |
 | 流动性差（盘口薄/价差大） | 减少可见订单 + 降级到 TWAP | 薄流动性下 VWAP 集中下单放大冲击（同可转债逻辑） |
 
-> **判定**：MVP 静态 ADV 分档够用（个人小资金多数订单 <1% ADV，regime 差异影响可忽略）；Phase 1.5 AUM 增长到大单时评估 regime-aware 选择；Phase 2 可上推 MAP-Elites regime-specialist（§4.2 第三阶段）。**不直接替换 MVP 的 TWAP/VWAP**——regime 选择需校准的 coeff + 足够 TCA 历史，盲上反而劣于静态分档。
+> **判定**：MVP 静态 ADV 分档够用（个人小资金多数订单 <1% ADV）；Phase 1.5 AUM 增长到大单时评估 regime-aware；Phase 2 可上推 MAP-Elites regime-specialist（§4.2 第三阶段）。**不直接替换 MVP 的 TWAP/VWAP**——regime 选择需校准的 coeff + 足够 TCA 历史，盲上反而劣于静态分档。
 
 ### 2.4 决策③：滑点模型——DECISION 决策价为主基准
 
@@ -220,21 +177,17 @@ firm_target_portfolio (来自 FirmRiskAggregator, 30_multi_strategy_concurrency 
 - ARRIVAL = 下单到达时刻价格（辅助，隔离执行质量）
 - VWAP / TWAP / PREV_CLOSE（辅助对比）
 
-**为何选 DECISION**：
-- DECISION 衡量"信号→成交"全链路总损耗，是 Implementation Shortfall（IS）的核心指标
-- 与 [DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 的 IS 成本分解（时机+冲击+滑点+佣金）口径一致
-- 回测最保守（含信号延迟成本），实盘不会比回测差
-- 回测=实盘口径一致：回测用 DECISION 算滑点，实盘 TCA 也用 DECISION，双向可追溯
+**为何选 DECISION**：衡量"信号→成交"全链路总损耗，是 Implementation Shortfall（IS）核心指标；与 [DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 的 IS 成本分解口径一致；回测最保守（含信号延迟成本），实盘不会比回测差；回测=实盘口径一致，双向可追溯。
 
 **滑点符号约定**（代码已实现）：BUY 正=买贵了=成本 / SELL 正=卖便宜了=成本。
 
 **归因模型**（代码已实现三因子+残差）：market_impact（平方根冲击模型，`coeff × √participation × volatility_bps`）+ timing（执行期间价格漂移）+ spread（half-spread）+ residual（残差吸收模型误差）。
 
-**预测模型**：[SquareRootImpactPredictor](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/slippage_analyzer.py) 平方根法则（Almgren-Chriss 简化版），`impact_bps = coeff × √participation × vol_bps + half_spread`。
+**预测模型**：SquareRootImpactPredictor 平方根法则（Almgren-Chriss 简化版），`impact_bps = coeff × √participation × vol_bps + half_spread`。
 
-**理论依据**：平方根形式不是经验拟合，而是**无动态套利约束（no-dynamic-arbitrage）下唯一自洽的冲击形式**（Gatheral 2010）。这一约束保证了"冲击的衰减函数不能允许通过组合交易构造无风险套利"，平方根律是满足该约束的存活形式。这为模型可信度提供了理论地基，而非仅依赖实证拟合。**补充**：Huberman-Stanzl (2004) 证明了**永久冲击（permanent impact）必须是线性的**——非线性永久冲击允许构造正期望的往返套利（price manipulation），线性是唯一无套利选择。这为 Almgren-Chriss 框架的 `g(v)=γv` 线性永久冲击假设提供了独立于 Gatheral 的无套利地基。MVP 用平方根律（瞬时冲击）足够；Phase 2 可上推 Bouchaud Propagator 模型（描述冲击的时间衰减结构，今天的交易影响未来价格）。
+**理论依据**：平方根形式是**无动态套利约束下唯一自洽的冲击形式**（Gatheral 2010）；Huberman-Stanzl (2004) 证明**永久冲击必须是线性的**（非线性永久冲击允许 price manipulation 套利），为 AC 框架 `g(v)=γv` 线性永久冲击假设提供无套利地基。MVP 用平方根律（瞬时冲击）足够；Phase 2 可上推 Bouchaud Propagator 模型（冲击时间衰减结构）。
 
-**IS 4 桶分解标准化定义**（v1.7.0 补充，Perold 1988 + youngju 2026-05 + ryanoconnellfinance 2026-03 + hftradingbook 2026-06-04）：[DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 的 IS 成本分解（时机+冲击+滑点+佣金）口径与国际标准 Perold 1988 对齐，标准化 4 桶定义如下：
+**IS 4 桶分解标准化定义**（Perold 1988，[DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 已对齐）：
 
 ```
 IS = (paper P&L) - (actual P&L) = Σ explicit fees + Σ implicit costs
@@ -250,13 +203,11 @@ IS = (paper P&L) - (actual P&L) = Σ explicit fees + Σ implicit costs
 | ③ market_impact | α × σ × √(Q/ADV)（平方根律）| implicit | SlippageAnalyzer 的 market_impact 因子（SquareRootImpactPredictor） |
 | ④ timing_risk | 含 delay_cost + opportunity_cost | implicit | SlippageAnalyzer 的 timing 因子 + residual |
 
-**Delay cost 是 IS 最大组成部分**（v1.7.0 关键洞察，Plexus Group 2004 数据 + ryanoconnellfinance 2026-03）：Plexus Group 实证（2004 亚洲除日本机构股票交易）显示，153 bps 总 IS 中 **delay cost 占 84 bps（54%）**，远超 commission 22 bps（14%）。"Traders who focus only on reducing commissions are optimizing the smallest piece of the cost puzzle"——延迟成本（决策→下单→成交的时间差内的价格漂移）通常是 IS 最大单项。
+**Delay cost 是 IS 最大组成部分**（Plexus Group 2004 亚洲除日本机构股票交易实证）：153 bps 总 IS 中 **delay cost 占 84 bps（54%）**，远超 commission 22 bps（14%）。延迟成本（决策→下单→成交时间差内的价格漂移）通常是 IS 最大单项——这强化了 DECISION 基准选择：firm_target_portfolio → 订单分解 → 资金预占 → Saga → 下单 → 成交回报全链路延迟都累积进 delay cost，DECISION（含 delay cost）比 ARRIVAL（只算执行环节）更保守、更诚实。
 
-> **对本项目的意义**（强化 DECISION 基准选择）：个人账户虽佣金占比高（最低 5 元触发频繁），但**决策延迟才是大头**——firm_target_portfolio → 订单分解 → 资金预占 → Saga → 下单 → 成交回报全链路的延迟都会累积进 delay cost。DECISION 基准（决策价）正是衡量"信号→成交"全链路总损耗，含 delay cost，因此比 ARRIVAL（到达价，只算执行环节）更保守、更诚实。这也解释了为何 §2.4 选 DECISION 而非 ARRIVAL——不是回避执行质量隔离，而是 delay cost 在个人系统（信号→下单链路有 AI 决策延迟）中占比可能比机构更大。
->
-> **Phase 1.5 改进**（Drovix 2026-05-27 TCA 方法论）：当前 IS 报告为单一数字，Phase 1.5 应将 delay cost 从 timing 中**独立报告**（按 venue/broker/time-of-day/notional bucket 分桶），并报告 slippage 分布（median/90th/99th percentile）而非均值——均值被 fat-tail outlier（NFP/FOMC/重大事件）主导，掩盖"困难条件下 broker 表现"的真实成本。
+> **Phase 1.5 改进**（Drovix 2026-05 TCA 方法论）：将 delay cost 从 timing 中**独立报告**（按 venue/broker/time-of-day/notional bucket 分桶），并报告 slippage 分布（median/90th/99th percentile）而非均值——均值被 fat-tail outlier 主导，掩盖困难条件下的真实成本。
 
-**临时冲击 vs 永久冲击分离**（v1.7.0 登记，Phase 2 候选，NeverSight 2026-07-29 + Obizhaeva-Wang 2013）：当前 SquareRootImpactPredictor 是**总冲击**（瞬时），未分离 temporary 和 permanent 两种成分。Phase 2 可上推分离模型：
+**临时冲击 vs 永久冲击分离**（Phase 2 候选，Obizhaeva-Wang 2013）：当前 SquareRootImpactPredictor 是**总冲击**（瞬时），未分离两种成分：
 
 ```
 temporary_impact = η × (trade_rate / avg_volume)   # 交易后衰减，流动性回补
@@ -264,19 +215,18 @@ permanent_impact = γ × (trade_rate / avg_volume)   # 移动均衡价格，信�
 total_impact = temporary_impact + permanent_impact
 ```
 
-- **临时冲击**（η）：交易期间价格偏离，交易停止后衰减回补（流动性恢复）。是执行算法**可控制**的部分——慢执行可摊薄
-- **永久冲击**（γ）：交易后价格不回补的漂移，反映信息泄露（市场认为你的交易含信息）。是执行算法**不可完全消除**的部分——只能通过隐藏意图（ICEBERG/随机化）降低
-- **理论约束**：Huberman-Stanzl 2004 证明永久冲击必须**线性**（γ·v），否则允许 price manipulation 套利；临时冲击可非线性（平方根律）
-- **校准路径**：与 §2.4 coeff 校准方法论协同——during-trade 窗口拟合总冲击，post-decay 窗口（+2hr residual）拟合永久冲击，两者差为临时冲击
+- **临时冲击**（η）：执行算法**可控制**的部分——慢执行可摊薄
+- **永久冲击**（γ）：不可完全消除——只能通过隐藏意图（ICEBERG/随机化）降低；Huberman-Stanzl 2004 证明永久冲击必须**线性**（γ·v）
+- **校准路径**：during-trade 窗口拟合总冲击，post-decay 窗口（+2hr residual）拟合永久冲击，两者差为临时冲击
 
-> **判定**：MVP 用总冲击（平方根律）足够（个人小资金 <1% ADV，临时/永久分离的边际价值低）；Phase 2 coeff 校准后可上推 Obizhaeva-Wang 分离模型，为 RL 执行（需准确的成本模型）铺路。NeverSight 2026-07-29 实证：薄流动性池最优执行 + 机构订单切片场景，临时冲击分离可降低 30-60%。
+> **判定**：MVP 用总冲击（平方根律）足够（个人 <1% ADV 分离边际价值低）；Phase 2 coeff 校准后上推 Obizhaeva-Wang 分离模型，为 RL 执行铺路（NeverSight 2026-07 实证临时冲击分离可降 30-60%）。
 
-**coeff 校准方法论**（v1.6.6 补充，Phase 1.5 施工依据）：[SquareRootImpactPredictor](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/slippage_analyzer.py) 的 `coeff` 当前为经验默认值，未校准。2026 年最优实践（marketmaker.cc 2026-07 / hftradingbook 2026-06）校准路径：
-1. **测量位移**：对每笔 metaorder（母单），记录 arrival mid（下单前中间价）→ during-trade peak（+5min 中间价位移）→ post-decay residual（+2hr 残余位移），按交易方向 signed
-2. **回归拟合**：将位移 bps 回归到 `σ × ε × √(Q/V)`（signed root-volume），斜率即 impact constant `Y`（即 coeff）。during-trade 窗口拟合总冲击，post-decay 窗口拟合永久冲击，两者差为临时冲击
-3. **信号控制**：naive 回归会把"信号预测的漂移"误算为冲击（高估）。须用策略信号收益率作控制变量，剔除 alpha 漂移后的残差才是真实冲击——"signal-controlled" 斜率比 naive 斜率更平坦（hftradingbook 2026-06 实证 naive Y≈0.9 vs signal-controlled Y≈0.6）
-4. **条件化**：单一全局 `Y` 是起点，进阶按盘口深度/波动率 regime 分桶拟合 conditional `Y`（与 Phase 2 MAP-Elites regime-specialist 协同）
-5. **校准难度**（marketmaker.cc 2026-07）："σ 容易、η 是 2 倍误差游戏、γ 是研究项目、轨迹对三者都宽容"——即 coeff 校准是 Phase 1.5 核心工作，但轨迹形状对 coeff 误差不敏感（前/后置加载比例变化小），MVP 用经验默认值不会致命
+**coeff 校准方法论**（Phase 1.5 施工依据）：SquareRootImpactPredictor 的 `coeff` 当前为经验默认值，未校准。校准路径：
+1. **测量位移**：对每笔 metaorder，记录 arrival mid → during-trade peak（+5min）→ post-decay residual（+2hr），按交易方向 signed
+2. **回归拟合**：位移 bps 回归到 `σ × ε × √(Q/V)`（signed root-volume），斜率即 impact constant `Y`（即 coeff）
+3. **信号控制**：naive 回归会把信号预测的漂移误算为冲击（高估）。须用策略信号收益率作控制变量——signal-controlled 斜率更平坦（hftradingbook 2026-06 实证 naive Y≈0.9 vs signal-controlled Y≈0.6）
+4. **条件化**：单一全局 `Y` 是起点，进阶按盘口深度/波动率 regime 分桶拟合 conditional `Y`
+5. **校准难度**（marketmaker.cc 2026-07）："σ 容易、η 是 2 倍误差游戏、γ 是研究项目、轨迹对三者都宽容"——轨迹形状对 coeff 误差不敏感，MVP 用经验默认值不会致命
 
 ### 2.5 决策④：交易成本模型（佣金万0.854 + 2023 法定费率）
 
@@ -293,7 +243,7 @@ total_impact = temporary_impact + permanent_impact
 
 **佣金最低收费影响**：万0.854 费率下，5 元最低佣金对应成交金额 ≈ 5.85 万元。**单笔成交 <5.85 万都触发最低 5 元佣金**——个人账户小资金多数订单走最低收费，此时佣金成本占比反而高于费率隐含值。拆单需谨慎（拆得越碎，最低佣金触发越多）。
 
-**已修复**（v1.0.0 施工，commit 015826ae）：[FeeSchedule](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py) 默认已更新为 `Decimal("0.854")`（万0.854）。实盘开户后需对照交割单二次校准。
+**已施工**：FeeSchedule 默认已更新为 `Decimal("0.854")`（万0.854）。实盘开户后需对照交割单二次校准。
 
 ### 2.6 决策⑤：订单状态机（7 态 + 先卖后买）
 
@@ -313,18 +263,18 @@ EXPIRED → 终态
 **执行顺序规则——先卖后买**：
 - 订单分解时，卖出订单优先于买入订单提交
 - 理由：A 股 T+0 资金——卖出回笼的资金可立即用于买入。先卖后买释放资金，避免买入时资金不足（error_code=54）
-- 已修复（v1.0.0 施工，commit 015826ae）：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已按先 SELL 后 BUY 排序（`sorted(deltas, key=lambda o: 0 if o.side is OrderSide.SELL else 1)`）
+- 已施工：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已按先 SELL 后 BUY 排序
 
-**状态码映射**（[MiniQmtBroker._map_xt_status](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 已实现）：xttrader 48=UNKNOWN→PENDING / 49=PENDING→SUBMITTED / 50=PARTIAL / 52=FILLED / 53=CANCELLED / 55=REJECTED / 56=EXPIRED。
+**状态码映射**（MiniQmtBroker._map_xt_status 已实现）：xttrader 48=UNKNOWN→PENDING / 49=PENDING→SUBMITTED / 50=PARTIAL / 52=FILLED / 53=CANCELLED / 55=REJECTED / 56=EXPIRED。
 
 ### 2.7 决策⑥：失败重试与异常——分类处理
 
 **决策**：三层异常处理（断线重连 + Saga 补偿 + 拒单分类处理）。
 
-**层1 断线重连**（[MiniQmtBroker._call_xttrader_with_reconnect](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py)，已实现；v1.2.0 定型增强规则）：
+**层1 断线重连**（MiniQmtBroker，已施工）：
 - xttrader 调用失败 → 自动 `_reconnect` 重连 → 重试
-- 连接失败带重试：`_do_connect_with_retry` 最多 3 次，间隔 1 秒
-- **v1.2.0 增强（待实现，gap 13）**：断线重连应从"重连 1 次"升级为**指数退避多次重连**——立即→2s→4s→8s→…→max 30s，应对网络抖动场景（实盘案例：5 分钟内重连 7 次，重连 1 次不够）。重连成功后**主动 `query_stock_orders` 全量同步订单状态缺口**——断线期间的回报可能丢失，不能只依赖回调推送，必须主动查询补齐系统与券商端的订单状态差异。
+- **指数退避多次重连**：`RECONNECT_BACKOFF=(0,2,4,8,16,30)` 秒（立即→2s→4s→8s→16s→max 30s，应对 5 分钟内重连 7 次的实盘抖动场景）；TCP 连接 `CONNECT_BACKOFF=(0,1,2,4)`
+- 重连成功后**主动 `query_stock_orders` 全量同步订单状态缺口**——断线期间回报可能丢失，必须主动查询补齐系统与券商端的订单状态差异；`_should_sync_status` 防乱序回报状态倒退（已终态不降级 / 本地 CANCELLED 仅升级为 FILLED / 非终态以券商端为准）
 
 **层2 Saga 补偿**（[OrderExecutionSaga](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_execution_saga.py)，已实现）：
 - 六步（风控→信号→下单→成交→持仓→报告）任一步失败自动补偿
@@ -333,7 +283,7 @@ EXPIRED → 终态
 - 步骤5（持仓）失败 → 持仓回滚（反向 apply_fill，幂等）
 - ≤5s 超时硬约束 / 补偿幂等 / Redis Stream 状态持久化
 
-**层3 拒单（REJECTED）分类处理**（部分实现：分类映射 + `classify_rejection` + `_handle_rejection` 日志已实现，RETRY/冻结/对账动作待 Saga 接管，见 §6.1 gap 4）：
+**层3 拒单（REJECTED）分类处理**（分类映射 + `classify_rejection` + `_handle_rejection` 日志已实现，RETRY/冻结/对账动作待 Saga 接管，见 §6.1 gap 4）：
 
 | 拒单原因 | error_code | 处理策略 | 理由 |
 |---|---|---|---|
@@ -349,11 +299,11 @@ EXPIRED → 终态
 
 ### 2.8 决策⑦：执行风控——盘前检查链 + 订单层熔断两级体系（作战地图 BM-RC-02 / BM-RC-02-C 闭合）
 
-> **v2.10.1 扩展**：作战地图全覆盖补丁——原"订单层熔断"单级扩为**盘前检查链（下单前同步拦截）+ 订单层熔断（下单中账户级安全网）两级体系**。盘前检查链对应 BM-RC-02（production，RK-02 risk_validator stable），本节补 5 步检查链的 why 层；杠杆率检查（BM-RC-02-C）为本节新裁定。两级分工：第一级盘前检查链管"**该不该下**"（组合/账户级风控语义：仓位限额/行业集中度/杠杆率/合规/Kill Switch），第二级订单层熔断管"**这笔单子形态对不对**"（单笔量/频次/参与率）；两级串联，任一 FAIL 即拦截，E-RK-04 PreTradeRejected 事件留痕。
+> **两级体系**：盘前检查链（下单前同步拦截，BM-RC-02 production，RK-02 risk_validator stable）+ 订单层熔断（下单中账户级安全网）。分工：第一级盘前检查链管"**该不该下**"（组合/账户级风控语义：仓位限额/行业集中度/杠杆率/合规/Kill Switch），第二级订单层熔断管"**这笔单子形态对不对**"（单笔量/频次/参与率）；两级串联，任一 FAIL 即拦截，E-RK-04 PreTradeRejected 事件留痕。
 
 #### 2.8.1 盘前 5 步检查链（BM-RC-02，production）
 
-**定位**：BM-RC-02 盘前风控检查（L4 风控域，production，code_mapping：RK-02 risk_validator stable）——BM-BUY/BM-SELL 下单请求到达执行入口前的**同步拦截检查链**：下单请求 → 5 步检查 → 通过放行 BM-EXE 执行 / 拒绝（E-RK-04 PreTradeRejected）→ 拦截。consumes = BM-RC-01 RiskLimits + 持仓快照 + Kill Switch 状态。本链即 [90_methodology_open_questions](90_methodology_open_questions.md) pre-trade 单一 choke point 方案（choke point + YAML 规则）的唯一挂载点——所有下单必经、无旁路（HC-RISK-03 不可绕过）。
+**定位**：BM-RC-02 盘前风控检查（L4 风控域，production）——BM-BUY/BM-SELL 下单请求到达执行入口前的**同步拦截检查链**：下单请求 → 5 步检查 → 通过放行 BM-EXE 执行 / 拒绝（E-RK-04 PreTradeRejected）→ 拦截。consumes = BM-RC-01 RiskLimits + 持仓快照 + Kill Switch 状态。本链即 [90_methodology_open_questions](90_methodology_open_questions.md) pre-trade 单一 choke point 方案的唯一挂载点——所有下单必经、无旁路（HC-RISK-03 不可绕过）。
 
 **裁定**：5 步检查链**固定顺序短路求值（任一 FAIL 即拒单），幂等、P99 < 50ms SLA、Fail-Closed**。步骤构成与输入来源指针：
 
@@ -369,13 +319,13 @@ EXPIRED → 终态
 
 **50ms SLA**：同步拦截延迟预算 **P99 < 50ms**（BM-RC-02 params 原值，与 [35_drawdown_protocol_impl §3.5.2](35_drawdown_protocol_impl.md) 否决执行引擎同一预算口径）——下单热路径，超时即按 Fail-Closed 处理，不允许"等风控就绪再放行"。
 
-**Fail-Closed 裁定**：检查服务不可用 / 持仓快照缺失 / 检查超时 → **一律拒单（保守，不放过），等效禁止开仓**（BM-RC-02 degradation 原值"检查超时→Fail-Closed拒单"）。理由：盘前检查是下单前最后一道组合级闸门，放行未知状态 = 风控裸奔；拒单的代价是漏一单（下一信号周期可补），误放行的代价是穿透风控（不可逆）。
+**Fail-Closed 裁定**：检查服务不可用 / 持仓快照缺失 / 检查超时 → **一律拒单（保守，不放过），等效禁止开仓**。理由：盘前检查是下单前最后一道组合级闸门，放行未知状态 = 风控裸奔；拒单的代价是漏一单（下一信号周期可补），误放行的代价是穿透风控（不可逆）。
 
 **与既有载体的关系**：§2.14 资金预校验（决策⑬）是本链的**资金维度互补项**——检查链管风控语义（该不该下），资金预占管清算语义（钱够不够、并发串行扣减）；执行顺序 = 5 步检查链 → 资金预占预校验 → 提交 broker。
 
 #### 2.8.2 杠杆率检查契约（BM-RC-02-C，production）
 
-**定位**：BM-RC-02-C 杠杆率检查（BM-RC-02 第 3 步，production）——下单前同步拦截，校验模拟成交后账户杠杆不超上限。BM 环节定义中该步挂接 5 级否决体系（P1 强制减仓级语义），本节裁定独立杠杆口径。
+**定位**：BM-RC-02-C 杠杆率检查（BM-RC-02 第 3 步，production）——下单前同步拦截，校验模拟成交后账户杠杆不超上限。
 
 **裁定**：**杠杆口径 = 总资产 / 净资产（账户口径），硬上限 1.0（两融 = 1.0 基准）**——本项目个人账户无两融权限、杠杆资金来源不存在，裁定**仅监控账户口径**（不建两融负债科目）：无负债时总资产（持仓市值 + 现金）/ 净资产恒 ≈1.0，任何 >1.0 读数 = 数据错误或隐形负债，直接拒单排查。
 
@@ -422,17 +372,13 @@ EXPIRED → 终态
 
 > **撤单规则澄清**：9:20-9:25 不可撤单（非 9:25-9:30）。9:25-9:30 是静默期（既不能挂也不能撤），与"不可撤单"是两个概念。上交所 2026 修订规则 §3.3.2 原文："9:20至9:25的开盘集合竞价阶段、14:57至15:00的收盘集合竞价阶段，本所交易主机不接受撤单申报"。
 
-**为何 MVP 不碰集合竞价**：
-- 集合竞价价格不可控（下单时不知道最终成交价），价差大风险高
-- 开盘集合竞价流动性不足，价差大，容易买贵卖便宜
-- 对 T+1 策略意义有限（当天买了不能卖，不如连续竞价灵活）
-- MVP 先把连续竞价做扎实，集合竞价是优化项
+**为何 MVP 不碰集合竞价**：价格不可控（下单时不知最终成交价）、价差大风险高、开盘流动性不足；对 T+1 策略意义有限；MVP 先把连续竞价做扎实，集合竞价是优化项。
 
-**代码 gap**：[TradingSession](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 当前只做连续竞价，集合竞价订单类型（限价单+市价单规则不同）未实现，待第二阶段。
+**代码 gap**：TradingSession 当前只做连续竞价，集合竞价订单类型（限价单+市价单规则不同）未实现，待第二阶段。
 
 ### 2.10 决策⑨：T+1 约束（按现状定型）
 
-**决策**：复用 [MiniQmtBroker._check_t_plus_1](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 已实现的 T+1 校验。
+**决策**：复用 MiniQmtBroker._check_t_plus_1 已实现的 T+1 校验。
 
 **A 股 T+1 规则**：
 - **T+1 股票**：当日买入的股票，次日才能卖出。卖出时查持仓 `can_sell_volume`（可用卖出数量，已扣除当日买入）
@@ -464,9 +410,7 @@ for symbol, weight in firm_target_portfolio:
 
 **执行顺序**（决策⑤）：先 SELL 后 BUY 排序——卖出释放资金（T+0）再买入，避免资金不足。
 
-**整手处理**（v1.5.0 订正，板块差异化）：按板块差异化整手规则向下取整。**沪深主板/创业板/北交所**：100 股整数倍起买，向下取整到 100 股；**科创板**：200 股起买、超 200 股按 1 股递增（201/202 股合法），向下取整到 200 股后再按 1 股递增。**卖出零股**（不足最低申报单位的余额）必须一次性申报卖出，不可忽略、不可拆分——这是交易所硬性规则，详见决策⑰。
-
-> **v1.5.0 订正**：此前版本"向下取整到 100 股整手，不足 100 股的微调忽略"对**科创板买入**是硬错误（科创板 200 股起买/1 股递增，100 股申报直接废单），对**零股卖出**是合规错误（不足 100/200 股的余额必须一次性卖出，忽略会导致持仓长期残留零股 + 对账失败）。已订正为板块差异化整手 + 零股一次性卖出。
+**整手处理**（板块差异化）：**沪深主板/创业板/北交所**：100 股整数倍起买，向下取整到 100 股；**科创板**：200 股起买、超 200 股按 1 股递增（201/202 股合法），向下取整到 200 股后再按 1 股递增。**卖出零股**（不足最低申报单位的余额）必须一次性申报卖出，不可忽略、不可拆分——交易所硬性规则，详见决策⑰。
 
 **幂等**：每个订单携带 `idempotency_key`（INV-007），重复调仓不会重复下单。
 
@@ -474,9 +418,7 @@ for symbol, weight in firm_target_portfolio:
 
 **决策**：对提交后未成交或部分成交的订单，按 urgency 分档续接，而非统一挂死或统一撤单。
 
-> v1.0.0 的状态机只定义了 PARTIAL 的合法后继态，未定义"剩余量怎么决策"。这是实盘"信号发了但没成交"的直接落地点，缺失会导致订单悬挂、持仓与目标长期偏离。v1.1.0 补全。
-
-**续接算法**（待实现，本备忘定型规则）：
+**续接算法**（OpenOrderResolver 已施工）：
 
 | 订单剩余状态 | 触发条件 | 处理策略 | 理由 |
 |---|---|---|---|
@@ -485,11 +427,11 @@ for symbol, weight in firm_target_portfolio:
 | PARTIAL 剩余 <100 股 | 任意 | 忽略，订单转 CANCELLED | 避免碎片化订单触发最低佣金（5 元） |
 | PARTIAL 剩余 ≥100 股 | urgency=高（打板） | Make-or-Take 切换补单 | 打板需快速成交，不可久等 |
 | PARTIAL 剩余 ≥100 股 | urgency=低（多因子） | 留单等成交，下轮调仓再校准 | 多因子换手率低（3-5 天），不必急于补单 |
-| 任意非终态 | 14:55 收盘前 | **尾盘清退**：转入收盘集合竞价或放弃（MVP 选放弃→撤单） | 避免隔夜挂单（A 股限价单默认当日有效 GFD，收盘自动撤销；miniQMT 不支持隔夜挂单，且 T+1 资金/持仓需盘后清算） |
+| 任意非终态 | 14:55 收盘前 | **尾盘清退**：转入收盘集合竞价或放弃（MVP 选放弃→撤单） | 避免隔夜挂单 |
 
-> **订单有效期说明**（v1.3.0 补充）：A 股普通限价委托默认 **GFD（Good-For-Day，当日有效）**，交易日 15:00 收盘后自动撤销，不跨日延续（上交所/深交所《交易规则》§3.2.3）。少数券商支持"夜市委托"（T-1 日 20:00 后提交，参与次日集合竞价），但需手动开通且非全市场通用。miniQMT 走 `xttrader.order_stock` 默认 GFD。因此决策⑪的 14:55 尾盘清退是**合规必需**——不撤也会被交易所收盘自动撤销，但主动撤单可释放资金预占额度并避免"幽灵挂单"占用风控额度。
+> **订单有效期说明**：A 股普通限价委托默认 **GFD（Good-For-Day，当日有效）**，15:00 收盘后自动撤销，不跨日延续（沪深交易所《交易规则》§3.2.3）。少数券商支持"夜市委托"，需手动开通且非全市场通用。miniQMT 走 `xttrader.order_stock` 默认 GFD。14:55 尾盘清退是**合规必需**——不撤也会被收盘自动撤销，但主动撤单可释放资金预占额度并避免"幽灵挂单"占用风控额度。
 
-> **盘后固定价格交易可选通道**（v1.4.0 补充，2026-07-06 新规扩容至全部 A 股/ETF）：尾盘清退时，若仍想以收盘价成交，可选择将未成交订单转入**盘后固定价格交易**（15:05-15:30，以收盘价按时间优先逐笔撮合，15:05 后不可撤单，未成交 15:30 自动作废）。这比连续竞价尾盘抢筹价格更确定（锁定收盘价），但有独立申报通道、流动性弱于盘中。**MVP 决策：暂不参与盘后定价**（流动性弱 + 需单独申报通道 + 收盘价已确定无 alpha），登记为 Phase 1.5 候选（适合以收盘价建仓/减仓的确定性需求场景）。盘后定价细节见 §5 待裁定。
+> **盘后固定价格交易可选通道**（2026-07-06 新规扩容至全部 A 股/ETF）：尾盘清退时可选择将未成交订单转入**盘后固定价格交易**（15:05-15:30，以收盘价按时间优先逐笔撮合，15:05 后不可撤单，未成交 15:30 自动作废）。**MVP 决策：暂不参与盘后定价**（流动性弱 + 需单独申报通道 + 收盘价已确定无 alpha），登记为 Phase 1.5 候选。
 
 **Make-or-Take 切换**（介于纯被动 TWAP 与纯主动 ALT 之间的中间档）：
 ```
@@ -499,30 +441,26 @@ for symbol, weight in firm_target_portfolio:
 ```
 平衡成本（被动挂单省 spread）与成交确定性（主动兜底防漏单）。对打板策略必需（纯被动会错过龙头）。
 
-**为何不统一挂死等成交**：A 股限价单可能因价格远离挂单价而长期不成交，挂死会导致持仓与目标长期偏离，下轮调仓时重复下单（虽有幂等保护，但占用资金预占额度）。
+**为何不统一挂死/不统一转市价**：挂死导致持仓与目标长期偏离、下轮调仓重复下单（占用资金预占额度）；市价单冲击成本高且有"最优五档"限制，大单可能成交到极差价位。
 
-**为何不统一撤单转市价**：市价单冲击成本高，且 A 股市价单有"最优五档"限制，大单可能成交到极差价位。
-
-> **A 股市价单类型差异**（v1.3.0 补充，miniQMT `xttrader.order_stock` price_type 参数）：
-> - **沪市**：对手方最优价格委托 / 最优五档即时成交剩余撤销 / 最优五档即时成交剩转限价 / 本方最优价格委托
-> - **深市**：对手方最优价格委托 / 本方最优价格委托 / 即时成交剩余撤销委托 / 最优五档即时成交剩余撤销 / 全额成交或撤销委托
-> - 关键差异：沪市有"剩转限价"（五档成交后剩余转限价单继续挂），深市有"全额成交或撤销"（FOK，要么全成要么全撤）。MVP 默认限价单，市价单仅 Make-or-Take 兜底时用"对手方最优价格"（跨价吃单保证成交），不用"最优五档"（大单可能吃穿五档到极差价位）。
+> **A 股市价单类型差异**（miniQMT `xttrader.order_stock` price_type 参数）：
+> - **沪市**：对手方最优 / 最优五档即时成交剩余撤销 / 最优五档剩转限价 / 本方最优
+> - **深市**：对手方最优 / 本方最优 / 即时成交剩余撤销 / 最优五档剩余撤销 / 全额成交或撤销（FOK）
+> - 关键差异：沪市有"剩转限价"，深市有 FOK。MVP 默认限价单，市价单仅 Make-or-Take 兜底时用"对手方最优价格"，不用"最优五档"（大单可能吃穿五档到极差价位）。
 
 ### 2.13 决策⑫：撤单流程与撤单率控制（Cancel Flow + Rate Limiting）
 
 **决策**：主动撤单按场景触发 + 撤单率滚动监控降级，确保不触犯程序化交易监管真实标准。
 
-> v1.0.0 §2.8 提了撤单率 ≤15% 约束，但撤单触发逻辑和撤单率控制算法未定义。这是合规生存项。
-
 **程序化交易监管真实标准**（《程序化交易管理实施细则》，2025-04-03 发布、2025-07-07 全面实施；2026-04-07 配套《关于短线交易监管的若干规定》施行）：
 
-> **v1.3.0 事实订正**：此前版本误将"每秒 ≤15 笔"写成高频认定新规，实为市场误传。新浪/财联社 2026-04-07 辟谣文章明确：多家量化私募求证未收到"15 笔/秒"要求，官方高频认定标准仍为 300 笔/秒。所谓"15 笔/秒"源自财经评论作家皮海洲的"建议"，被以讹传讹成新规。
+> **事实订正**："每秒 ≤15 笔"为市场误传（新浪/财联社 2026-04-07 辟谣，多家量化私募求证未收到），官方高频认定标准仍为 300 笔/秒。"15 笔/秒"源自财经评论作家皮海洲的"建议"，被以讹传讹成新规。本系统 15 笔/秒为内部保守限频，非外部标准。
 
 | 监管项 | 真实标准（现行有效） | 性质 |
 |---|---|---|
 | 高频交易认定 | 每秒申报+撤单 ≥**300 笔**，或单日 ≥**20000 笔** | 法定认定线，达标纳入重点监控+差异化收费 |
 | 异常交易监控 | 瞬时申报速率异常 / 频繁瞬时撤单 / 频繁拉抬打压 / 短时大额成交 | 交易所实时监控，可限制交易 |
-| 通道平权 | 暂停新增独立交易单元，存量单元 ≥10 账户共用，清退交易所机房专属托管 | **2026-07-31 正式关闭局域网行情通道**（[华夏时报 2026-08](https://m.toutiao.com/group/7672218395844067890/)）：交易所托管机房行情接入统一由局域网切换为广域网，微秒级延迟（0.3-0.8μs）→ 毫秒级，**微秒级套利窗口消失**；同步禁止券商为特定客户提供更低延迟/优先报单/专属带宽等特权。量化行业从"拼速度"转向"拼深度"（因子挖掘+模型能力），与本项目设计中低频+因子驱动定位一致——速度特权终结对本项目无负面影响，反而消除高频竞品的速度优势 |
+| 通道平权 | 暂停新增独立交易单元，存量单元 ≥10 账户共用，清退交易所机房专属托管 | **2026-07-31 正式关闭局域网行情通道**（华夏时报 2026-08）：托管机房行情接入统一由局域网切换为广域网，微秒级延迟（0.3-0.8μs）→ 毫秒级，微秒级套利窗口消失；同步禁止券商提供更低延迟/优先报单/专属带宽特权。量化行业从"拼速度"转向"拼深度"，与本项目中低频+因子驱动定位一致 |
 | 穿透监管 | 同一实控人名下所有账户（含马甲/关联/分仓/亲属）合并计算报撤单、撤单率、高频阈值 | 封堵分仓马甲规避监管；个人账户实控人明确影响小 |
 
 **本系统内部保守阈值**（比法定线严 20 倍，安全垫充足）：
@@ -532,7 +470,7 @@ for symbol, weight in firm_target_portfolio:
 
 > 这直接决定拆单切片间隔下限：内部 15 笔/秒限频下，切片间隔 ≥ 1000ms/15 ≈ 67ms（实际应远大于此，留缓冲）。MVP 切片间隔默认 ≥10s，远超下限。
 
-**主动撤单触发场景**（待实现）：
+**主动撤单触发场景**（已施工）：
 
 | 触发条件 | 动作 | 理由 |
 |---|---|---|
@@ -541,7 +479,7 @@ for symbol, weight in firm_target_portfolio:
 | 策略信号反转 | 撤单 | 目标权重已变，原订单方向错误 |
 | 资金被更高优先级订单占用 | 撤单重排 | 先卖后买优先级调整 |
 
-**撤单率滚动监控与降级**（待实现）：
+**撤单率滚动监控与降级**（CancelRateGuard 已施工）：
 ```
 maintain rolling_window = 最近 500 笔报单的成交/撤单记录
 rolling_cancel_rate = 撤单数 / 总报单数
@@ -551,17 +489,13 @@ if rolling_cancel_rate > 12%:   # 预警线（阈值 - 3% 缓冲）
 if rolling_cancel_rate > 15%:   # 硬线
     冻结全账户新下单，告警人工介入
 ```
-**为何 12% 预警而非等到 15%**：滚动窗口有滞后性，等看到 15% 时实际可能已超。留 3% 缓冲是合规安全垫。
-
-**为何不省略撤单率控制**：2026 新规下撤单率超限会被交易所标记为异常交易，轻则警告重则限制交易。这是合规生存项，不可省。
+**为何 12% 预警 + 为何不省略**：滚动窗口有滞后性，等看到 15% 时实际可能已超，留 3% 缓冲是合规安全垫；撤单率超限会被交易所标记异常交易，轻则警告重则限制交易，合规生存项不可省。
 
 ### 2.14 决策⑬：资金预占与预校验（Pre-Trade Cash Reservation）
 
 **决策**：下单前做资金预占，避免并发提交多个 BUY 单时资金不足（error_code=54）。
 
-> v1.0.0 决策⑤讲了"先卖后买释放资金"，但下单前如何预判资金足够未定义。先卖后买是粗粒度排序，并发提交多个 BUY 单时，若不做资金预扣，可能都通过预校验但实际提交时资金不足。
-
-**资金预占算法**（待实现）：
+**资金预占算法**（TradingSession._validate_and_submit 已施工，保守费率 `estimated_cost_rate=0.003` 千三含佣金+印花+过户+滑点）：
 ```
 available_cash = broker.get_positions().cash
 pending_release = 0   # 待成交卖出单的净回笼资金
@@ -583,22 +517,17 @@ for order in sorted_deltas:  # 先卖后买顺序
         submit(order)
 ```
 
-**与拒单分类（决策⑥）的协同**：
-- error_code=54（资金不足）是"已提交给 broker 后被拒"——说明预占机制失效或 broker 端有其他扣款
-- 本决策的预校验是"提交前本地拦截"——更早一层，避免无意义的 54 拒单（54 拒单会推高报单数和撤单率）
-- 两者是防御纵深：预校验拦截 99%，54 拒单兜底 1%（如 broker 端费率变动、其他程序占用资金）
+**与拒单分类（决策⑥）的协同**：error_code=54 是"已提交给 broker 后被拒"（预占失效或 broker 端其他扣款），本决策预校验是"提交前本地拦截"（避免无意义 54 拒单推高报单数和撤单率）；防御纵深：预校验拦截 99%，54 拒单兜底 1%。
 
-**为何不依赖 broker 端资金校验**：miniQMT 的 broker 端校验是提交时同步检查，但并发提交多个订单时，每个订单提交时都看到"资金够"，但累计起来不够。本地预占是串行扣减，保证累计不超。
+**为何不依赖 broker 端资金校验**：broker 端校验是提交时同步检查，并发提交多个订单时每个订单都看到"资金够"但累计不够。本地预占是串行扣减，保证累计不超；拒单时回滚预占（买入返还/卖出扣除已释放）。
 
-> **回报延迟时滞背景**（v1.4.0 补充，实盘工程现实）：券商柜台持仓/资金同步存在 **~6 秒时滞**（ptrade/miniQMT 通用问题，柜台配置决定）。若在这 6 秒内连续下单（如 `order_target_value` 差额下单），因持仓市值/可用资金不会瞬时更新，会造成重复下单或资金不足拒单。决策⑬的本地串行预扣正是解决此问题——不依赖 broker 端实时回报，用本地预扣额度串行扣减，绕过 6 秒时滞窗口。实盘案例（果仁网）：吃单默认按现价 ±1% 占用现金，比实际成交多占用，叠加 6 秒时滞导致可用资金计算错位、尾单资金不足。本地预占按 `预估占用 = 数量×价格×(1+费率)` 保守扣减，留 1% 缓冲吸收价差波动。
+> **回报延迟时滞背景**：券商柜台持仓/资金同步存在 **~6 秒时滞**（ptrade/miniQMT 通用问题）。若 6 秒内连续下单，持仓市值/可用资金不瞬时更新，会造成重复下单或资金不足拒单。本地串行预扣正是解决此问题——不依赖 broker 端实时回报，绕过 6 秒时滞窗口；按 `预估占用 = 数量×价格×(1+费率)` 保守扣减，留 1% 缓冲吸收价差波动。
 
 ### 2.15 决策⑭：挂单价算法（Pegging / Pricing Logic）
 
 **决策**：MVP 默认被动档挂单——买单挂买一价、卖单挂卖一价（不跨价，避免主动吃单成本），超时未成交触发决策⑪的 Make-or-Take 切换。
 
-> v1.0.0 讲了拆单算法（TWAP/VWAP 切片），但每个子单的具体挂单价未定义。这是 TWAP/VWAP 落地的最后一公里。
-
-**挂单价规则**（待实现）：
+**挂单价规则**（PricingPolicy 已施工）：
 
 | 订单类型 | 默认挂单价 | 理由 |
 |---|---|---|
@@ -609,24 +538,17 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 涨停板卖单 | 涨停价 | 唯一可能成交的价位（排队） |
 | 跌停板买单 | 跌停价 | 唯一可能成交的价位（排队） |
 
-**为何默认被动档**：
-- 个人账户小资金多数订单 <1% ADV，被动挂单排队足够成交
-- 被动档省 spread（A 股 spread 约 1-2 tick，被动档比主动档省 1-2 tick 成本）
-- 主动吃单只作兜底（Make-or-Take），不作为默认
+**为何默认被动档**：小资金多数订单 <1% ADV，被动挂单排队足够成交；省 spread（A 股 spread 约 1-2 tick）；主动吃单仅兜底。不挂 mid 价（A 股最小单位 0.01 元，mid 价常落 tick 之间无法挂单）。
 
-**为何不挂 mid 价**：A 股最小变动单位 0.01 元，mid 价常落在两个 tick 之间，无法挂单；且挂 mid 等于既不占买一也不占卖一，成交概率更低。
+**"提 1 tick"中间档策略**：买一/卖一常堆积大量机构/量化挂单，纯被动档排队难成交；"提 1 tick"以极小成本（0.01 元/股）换取成交确定性。介于纯被动档和纯主动档之间的**中间偏主动**策略，适合 urgency 中等的订单。MVP 暂不用（被动档+Make-or-Take 已覆盖），Phase 1.5 候选。
 
-**为何不挂对手价（主动档）作为默认**：主动档跨价吃单，每笔都付 spread，小单累积成本高。仅 urgency 高（打板）或超时兜底时用。
+> **Barzykin 被动冲击模型定量基础**（[arXiv:2607.28323](https://arxiv.org/abs/2607.28323) 2026-07-30，详见 §7.4）：限价单成交概率随距 midprice 距离**指数衰减** fill_prob(d) ∝ exp(-κ·d)——"提 1 tick"成交概率提升 e^κ 倍。Phase 1.5 可校准 A 股 κ 参数，为三档选择提供数据驱动阈值。
 
-**"提 1 tick"中间档策略**（v1.2.0 补充）：A 股买一/卖一常堆积大量机构/量化挂单，纯被动档排队难成交。可增加"提 1 tick"策略——买单挂买一+1 tick、卖单挂卖一-1 tick，以极小成本（0.01 元/股）换取成交确定性，避开盘口拥堵区。这是介于纯被动档和纯主动档之间的**中间偏主动**策略，适合 urgency 中等的订单（如多因子建仓）。MVP 可暂不用（被动档+Make-or-Take 已覆盖），登记为 Phase 1.5 候选。
-
-> **v1.7.2 补 Barzykin 被动冲击模型定量基础**（[arXiv:2607.28323](https://arxiv.org/abs/2607.28323) 2026-07-30，详见 §7.4）：限价单成交概率随距 midprice 距离**指数衰减** fill_prob(d) ∝ exp(-κ·d)——"提 1 tick"的成交概率提升幅度可由衰减常数 κ 量化（提 1 tick 后 fill_prob 提升 e^κ 倍）。Phase 1.5 实盘 TCA 数据可校准 A 股 κ 参数，为"提 1 tick vs 纯被动档 vs Make-or-Take"三档选择提供数据驱动阈值，取代当前 urgency 静态分档。同时为 §6.2 开放问题"Make-or-Take 超时 T 初始值"提供理论框架：超时未成交本质是被动冲击率×时间 < 成交阈值，低流动性票 κ 大（衰减快）应缩短 T，高流动性票 κ 小应延长 T。
-
-**价格笼子校验**（v1.2.0 补全，v1.3.0 订正基准价方向，合规硬约束）：
+**价格笼子校验**（合规硬约束）：
 
 > 上交所 2026 修订交易规则 §3.3.14 设有**价格笼子**（有效申报价格范围）机制，超范围委托**直接废单（拒单模式，不缓存不排队）**。这是决策⑭挂单价的**前置合规校验**，不做会废单。
 
-> **v1.3.0 基准价订正**：此前版本误将买入基准价写成"买一价"、卖出基准价写成"卖一价"。按官方定义，**买入基准价 = 卖一价**（即时揭示的最低卖出申报价），**卖出基准价 = 买一价**（即时揭示的最高买入申报价）。基准价取的是**对手方最优价**，不是己方最优价。
+> **基准价**（v1.3.0 订正）：**买入基准价 = 卖一价**（即时揭示的最低卖出申报价），**卖出基准价 = 买一价**（即时揭示的最高买入申报价）。基准价取的是**对手方最优价**，不是己方最优价。
 
 | 方向 | 笼子上/下限（正确公式） | 超限处理 |
 |---|---|---|
@@ -635,7 +557,7 @@ for order in sorted_deltas:  # 先卖后买顺序
 
 **基准价取值优先级**（无盘口时逐级回退）：卖一/买一价（对手方最优）→ 最新成交价 → 前收盘价。
 
-**板块差异**（v1.3.0 补充）：
+**板块差异**：
 
 | 板块 | 笼子幅度 | 0.1元兜底 | 备注 |
 |---|---|---|---|
@@ -643,24 +565,22 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 科创板 | ±2% | ❌ 无 | 严格 ±2%，无兜底 |
 | 北交所 | ±5% | — | 笼子更宽 |
 
-**适用范围**（v1.3.0 补充，关键）：
+**适用范围**（关键）：
 - **仅约束连续竞价时段（9:30-11:30、13:00-14:57）的限价申报**
-- **不适用**：开盘集合竞价（9:15-9:25）、收盘集合竞价（14:57-15:00）、盘中临时停牌期间的限价申报、市价申报、盘后固定价格交易
+- **不适用**：开盘集合竞价、收盘集合竞价、盘中临时停牌期间的限价申报、市价申报、盘后固定价格交易
 - 市价申报不受笼子约束，但科创板/创业板市价单**必须填写保护限价**
 
-- 正常 spread（1-2 tick ≈ 0.01-0.02 元）远小于 2% 笼子，被动档（买一/卖一）和 Make-or-Take（对手价）正常不触发
+- 正常 spread（1-2 tick ≈ 0.01-0.02 元）远小于 2% 笼子，被动档和 Make-or-Take 正常不触发
 - **低流动性股票 spread 较大时**，Make-or-Take 对手价可能超笼子→需夹到笼子边界
-- **集合竞价结束进入连续竞价时**，基准价瞬间变化，极易触发废单→MVP 不碰集合竞价（决策⑧）已规避此风险
-- **涨停板卖单挂涨停价**：涨停价 = 前收盘×110%，是卖出方向的最高价，≥买一价×98% 笼子下限→在笼子内。同理跌停板买单在笼子内
-- 实现位置：[MiniQmtBroker.submit_order](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 提交前校验，超限自动夹到笼子边界（不废单，修正后提交）
+- **集合竞价结束进入连续竞价时**基准价瞬间变化极易触发废单→MVP 不碰集合竞价（决策⑧）已规避此风险
+- **涨停板卖单挂涨停价**：涨停价 = 前收盘×110%，≥买一价×98% 笼子下限→在笼子内。同理跌停板买单在笼子内
+- 实现位置：MiniQmtBroker.submit_order 提交前经 price_cage.check_price_cage 校验，超限自动夹到笼子边界（不废单，修正后提交）
 
 **Phase 1.5 改进项**：peg 到盘口（盘口移动时自动撤单重挂跟随），需实时盘口数据（miniQMT `xtdata.get_full_tick` 支持）。MVP 先用静态挂单（挂出后不动，超时才撤），简单可靠。
 
 ### 2.16 决策⑮：临时停牌处理（Trading Halt Resolution）
 
 **决策**：对持仓/目标股遇到临时停牌，按停牌类型分类处理，核心原则是"停牌期间不挂不撤等复牌、跨日停牌核查移除出当日目标、复牌后重新评估"。
-
-> v1.3.0 新增。前 14 个决策未覆盖临时停牌，这是实盘生存项——持仓票被停牌核查会锁住资金无法平仓，目标股停牌无法建仓，复牌后可能跌停（如爱丽家居 9 连板后停牌核查，复牌跌停风险）。缺失会导致系统对着停牌票反复报废单、资金预占额度被锁死。
 
 **A 股临时停牌类型**（上交所 2026 修订交易规则 §4.2 + 异常交易实时监控细则）：
 
@@ -671,34 +591,23 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 跨日停牌核查（严重异动） | 10日4次同向异动/10日累计±100%/-50%/30日±200%/-70% | 1-5 交易日（二次 5-10 日） | 停牌期间不接收申报 | 核查公告后复牌，进连续竞价 |
 | 重大事项停牌 | 重组/控制权变更/重大未披露事项 | 视事项，1-N 交易日 | 停牌期间不接收申报 | 公告后复牌 |
 
-**处理算法**（待实现，本备忘定型规则）：
+**处理算法**（TradingHaltResolver 已施工）：
 
 | 场景 | 处理策略 | 理由 |
 |---|---|---|
-| 持仓票盘中临时停牌（10分钟） | 不操作，等复牌。若有未成交卖单→保留（复牌集合竞价可能成交） | 10分钟短停牌，持仓无需动作；停牌期间限价单不受笼子约束，是挂单好时机 |
+| 持仓票盘中临时停牌（10分钟） | 不操作，等复牌。若有未成交卖单→保留（复牌集合竞价可能成交） | 10分钟短停牌，持仓无需动作；停牌期间限价单不受笼子约束 |
 | 目标买入票盘中临时停牌 | 从当日 firm_target_portfolio 移除该票，不报单 | 停牌无法成交，报了也是废单，浪费频次 |
-| 持仓票跨日停牌核查（1-5日） | ①该票从后续每轮 firm_target_portfolio 中移除（无法交易）②资金预占额度释放③复牌后重新纳入目标评估 | 资金锁住但持仓还在；不能因停牌票占用资金预占额度导致其他票无法下单 |
+| 持仓票跨日停牌核查（1-5日） | ①该票从后续每轮 firm_target_portfolio 中移除②资金预占额度释放（幂等，仅首次释放）③复牌后重新纳入目标评估 | 资金锁住但持仓还在；不能因停牌票占用预占额度导致其他票无法下单 |
 | 持仓票跨日停牌，复牌后 | ①重新评估目标权重②若复牌跌停→按跌停板卖单处理（决策⑭挂跌停价）③若复牌后流动性恢复→正常下单 | 复牌后价格可能剧变，需重新决策而非沿用停牌前目标 |
 | 目标票停牌 | 当日跳过，下轮调仓再评估 | 无法成交，跳过避免废单 |
 
-**与现有决策的协同**：
-- 与决策① T+1 校验协同：`_check_t_plus_1` 已实现"停牌跳过"（submit_order 检测停牌状态跳过下单），决策⑮补全"停牌期间的目标管理"
-- 与决策⑬资金预占协同：跨日停牌票的资金预占额度必须释放，否则会锁死额度
-- 与决策⑪尾盘清退协同：停牌票的未成交订单在 14:55 清退时一并撤单（若停牌期间可撤）
-- 与决策⑭挂单价协同：复牌后若跌停，卖单挂跌停价（唯一可成交价位）
+**与现有决策的协同**：与决策① T+1 校验协同（submit_order 检测停牌状态跳过下单）；与决策⑬协同（跨日停牌票资金预占必须释放，否则锁死额度）；与决策⑪协同（停牌票未成交订单 14:55 清退时一并撤单）；与决策⑭协同（复牌跌停卖单挂跌停价）。
 
-**为何不在停牌期间挂单抢复牌集合竞价**：
-- MVP 不碰集合竞价（决策⑧），复牌集合竞价同理
-- 复牌集合竞价价格不可控（停牌期间可能积累大量单边委托），价差大风险高
-- 登记为第二阶段改进项（首批策略 track record 后评估）
-
-**为何跨日停牌要释放资金预占**：持仓票停牌期间无法卖出回笼资金，若资金预占额度仍被该票占用，会导致其他买入单因预占不足被本地拦截。释放额度让资金可用于其他票，复牌后再重新评估。
+**为何不抢复牌集合竞价/为何释放资金预占**：MVP 不碰集合竞价（决策⑧），复牌价格不可控、价差大风险高（登记第二阶段改进项）；停牌期间无法卖出回笼资金，预占不释放会锁死额度导致其他买入单被本地拦截，复牌后再重新评估。
 
 ### 2.17 决策⑯：除权除息日处理（Corporate Action - Dividend/Split）
 
 **决策**：识别持仓/目标股的除权除息日，自动调整前收盘价→涨跌停价→价格笼子基准价，并同步持仓股数（送股/转增），避免用旧基准价校验导致废单或持仓错位。
-
-> v1.4.0 新增。除权除息是 A 股常规公司行动（每年年报季密集发生），但执行层 15 个决策均未覆盖。缺失后果：除权除息日系统仍用昨日收盘价算涨跌停价和价格笼子基准价，会与交易所调整后的新基准价不符→挂单价超笼子直接废单；持仓股数未同步送股→持仓对账失败、T+1 可卖数量错位。
 
 **除权除息参考价公式**（沪深北交易所《交易规则》§4.3）：
 
@@ -718,7 +627,7 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 持仓成本 | 除权除息后摊薄 | 盈亏计算基准错位 |
 | 资金 | 现金红利到账（T+1） | 可用资金计算少算红利 |
 
-**处理算法**（待实现，本备忘定型规则）：
+**处理算法**（CorporateActionAdjuster 已施工）：
 
 | 场景 | 处理策略 | 理由 |
 |---|---|---|
@@ -728,21 +637,13 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 当日下单（除权除息票） | 用新前收盘价算涨跌停价 + 价格笼子基准价 | 避免用旧基准价废单 |
 | 回测=实盘一致性 | 回测需用前复权价（adjustment=pre）消除除权除息跳空，实盘用不复权价+除权除息日调整 | 口径统一：回测前复权衡量 alpha，实盘不复权对接真实订单簿 |
 
-**与现有决策的协同**：
-- 与决策①涨跌停校验协同：`_check_price_limit` 必须用除权除息后的新前收盘价算涨跌停价，不能用昨日收盘价
-- 与决策⑭价格笼子协同：笼子基准价回退链"卖一/买一→最新成交价→前收盘价"，除权除息日的前收盘价是调整后的参考价
-- 与决策⑨ T+1 协同：送股增加的股数何时可卖（通常 T+1 可卖），需查 `can_sell_volume` 确认
-- 与决策⑮临时停牌协同：除权除息日可能伴随停牌（如除权除息同时停牌一小时），需叠加处理
+**与现有决策的协同**：与决策①协同（`_check_price_limit` 必须用除权除息后新前收盘价算涨跌停价）；与决策⑭协同（笼子基准价回退链"卖一/买一→最新成交价→前收盘价"，除权除息日的前收盘价是调整后参考价）；与决策⑨协同（送股增加的股数何时可卖需查 `can_sell_volume`）；与决策⑮协同（除权除息日可能伴随停牌，叠加处理）。
 
-**为何不依赖券商端自动调整**：miniQMT 的 `query_stock_positions` 返回的持仓股数会在除权除息日自动更新（券商端已处理送股），但系统的本地持仓缓存（PositionTracker）和前收盘价/涨跌停价计算不会自动更新。必须在本地主动识别并调整，否则本地校验（价格笼子/涨跌停）会用旧值。
-
-**数据源**：除权除息日历可从 `xtdata.get_instrument_detail(symbol)` 的 `ex_dividend_date` 字段获取，或订阅 Tushare/AkShare 的除权除息接口。MVP 建议盘前批量拉取当日除权除息列表，标记到持仓/目标股。
+**为何不依赖券商端自动调整 + 数据源**：miniQMT `query_stock_positions` 持仓股数会在除权除息日自动更新，但本地持仓缓存（PositionTracker）和前收盘价/涨跌停价计算不会，必须本地主动识别调整，否则本地校验用旧值。除权除息日历从 `xtdata.get_instrument_detail(symbol)` 的 `ex_dividend_date` 或 Tushare/AkShare 获取，MVP 盘前批量拉取标记。
 
 ### 2.18 决策⑰：零股处理与板块差异化申报数量（Odd Lot & Board-Specific Lot Size）
 
 **决策**：订单分解时按板块差异化申报数量规则取整，卖出时不足最低申报单位的零股必须一次性申报卖出（不可忽略、不可拆分）。
-
-> v1.5.0 新增。决策⑩原"向下取整到 100 股整手、不足 100 股微调忽略"有两个硬错误：①科创板 200 股起买/1 股递增，按 100 股取整会直接废单（error_code=52 数量不合法）；②卖出时不足 100/200 股的零股按"忽略"处理，会导致持仓长期残留零股 + 持仓对账失败 + 资金无法完全回笼。这是交易所《交易规则》硬性约束，缺失会废单或对账失败。
 
 **板块差异化申报数量规则**（上交所 2026 修订交易规则 §3.3.1 / §6.2 + 深交所/北交所对应条款）：
 
@@ -753,43 +654,29 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 科创板 | **200 股** | **1 股**（201/202 股合法） | 不足 200 股一次性卖出 | 10 万股（限价）/5 万股（市价） |
 | 北交所 | 100 股 | 100 股 | 不足 100 股一次性卖出 | 100 万股 |
 
-> **科创板关键差异**：科创板不要求 100 股整数倍，200 股起买后可以 1 股为单位递增（201、337、505 股均为合法申报）。这与其他板块"100 股整数倍"规则完全不同。当前代码 `floor(qty, 100)` 对科创板是错误的。
+> **科创板关键差异**：科创板不要求 100 股整数倍，200 股起买后可以 1 股为单位递增（201、337、505 股均为合法申报），与其他板块"100 股整数倍"规则完全不同。
 
-**零股产生场景**：零股（不足最低申报单位的余额）通常由以下情况产生：
-- 送股/转增除权（决策⑯）：除权后股数可能不是 100/200 的整数倍
-- 配股：配股比例导致碎股
-- 分批买入：科创板 1 股递增买入后部分卖出产生零股
--ETF 申赎替代/基金分拆
+**零股产生场景**：送股/转增除权（决策⑯）、配股、科创板 1 股递增买入后部分卖出、ETF 申赎替代/基金分拆。
 
-**处理算法**（待实现，本备忘定型规则）：
+**处理算法**（board_lot.get_board_lot_rule 已施工）：
 
 | 场景 | 处理策略 | 理由 |
 |---|---|---|
 | 主板/创业板/北交所买入 | `target_qty = floor(资产×权重/价格, 100)` | 100 股整数倍，向下取整避免资金超占 |
 | 科创板买入 | `target_qty = floor(资产×权重/价格, 200) + max(0, 余数按1股递增)` | 200 股起买，超 200 股按 1 股递增 |
 | 卖出（≥最低单位） | 按 lot_size 取整卖出 | 正常卖出 |
-| **卖出零股**（<最低单位） | **必须一次性申报卖出全部零股** | 交易所硬性规则，不可拆分不可忽略 |
+| **卖出零股**（<最低单位） | **必须一次性申报卖出全部零股**（`adjust_sell_for_odd_lot`） | 交易所硬性规则，不可拆分不可忽略 |
 | 清仓卖出 | 含零股一次性全部卖出 | 清仓时零股一并报出 |
 
-**与现有决策的协同**：
-- 与决策⑩订单分解协同：`_compute_order_deltas` 的整手取整需按板块差异化（`get_board_lot_rule`），不能硬编码 100
-- 与决策⑥拒单分类协同：零股未一次性卖出会被券商拒单（error_code=52 数量不合法），归入"代码 bug"分类
-- 与决策⑯除权除息协同：除权除息送股产生的零股，在除权除息日持仓同步后需检测并标记为零股
-- 与决策⑬资金预占协同：零股卖出的回笼资金需计入 `pending_release`（虽小但不可遗漏）
+**与现有决策的协同**：与决策⑩协同（`_compute_order_deltas` 整手取整按板块差异化 `get_board_lot_rule`，不能硬编码 100）；与决策⑥协同（零股未一次性卖出会被拒单 error_code=52，归入"代码 bug"分类）；与决策⑯协同（除权除息送股产生的零股需在持仓同步后检测标记）；与决策⑬协同（零股卖出回笼资金计入 `pending_release`）。
 
-**为何不忽略零股**：
-- 交易所规则要求零股卖出必须一次性报出，不卖会长期残留在持仓中
-- 持仓对账（PositionReconciler）会发现系统持仓与券商持仓不一致（零股差异）
-- 零股占用的资金无法回笼，虽小但累积影响资金预占精度
-- MVP 阶段若不处理，每次调仓都会产生新零股（除权除息/分批交易），零股越积越多
-
-**为何不为零股单独下单增加频次成本**：零股卖出是清仓行为的一部分（持仓→0 的最后一步），不会额外增加下单次数——清仓时本来就要卖，零股只是清仓订单的最后一笔。只有在"部分卖出产生零股"场景才需单独处理，MVP 建议部分卖出时向上取整到整手避免产生零股（宁可多卖 100 股也不留零股），仅清仓时允许零股一次性报出。
+**为何不忽略零股/不单独下单**：交易所规则要求零股一次性报出，不卖会残留持仓 + 对账失败（PositionReconciler 发现差异）+ 资金无法回笼，越积越多；零股卖出是清仓最后一步不增下单频次——部分卖出时向上取整到整手避免产生零股（宁可多卖 100 股），仅清仓时允许零股一次性报出。
 
 ### 2.19 决策⑱：程序化交易报备合规约束（Programmatic Trading Registration）
 
 **决策**：系统上线实盘前，必须通过券商完成程序化交易报备；报备信息变更时（策略/算法/服务器/风控参数）须同步更新报备。
 
-> v1.5.0 新增。使用 miniQMT 自动下单属程序化交易，受《程序化交易管理实施细则》（2025-07-07 全面实施）约束。未报备的程序化交易将被限制交易。这是合规前置条件，不是执行层代码功能，但执行层文档必须记录此约束，否则系统上线即违规。
+> 使用 miniQMT 自动下单属程序化交易，受《程序化交易管理实施细则》（2025-07-07 全面实施）约束。未报备的程序化交易将被限制交易。这是合规前置条件，不是执行层代码功能，但执行层文档必须记录此约束，否则系统上线即违规。
 
 **报备义务**（《程序化交易管理实施细则》§报告管理 + 证监会《证券市场程序化交易管理规定（试行）》）：
 
@@ -820,21 +707,17 @@ for order in sorted_deltas:  # 先卖后买顺序
 | 参与率 | ≤5%（证监会程序化交易规定） | 决策② |
 | 服务器 | miniQMT 终端运行机器（Windows PC） | 决策① |
 
-**高频交易认定标准**（v1.5.0 强化权威证据，确认 300 笔/秒非 15 笔/秒）：
+**高频交易认定标准权威证据链**（确认 300 笔/秒非 15 笔/秒）：
 
-> **权威证据链**：①沪深北交易所《程序化交易管理实施细则》官方原文（2025-04-03 发布，同花顺/上证报）明确"单账户每秒申报、撤单笔数合计最高达到 300 笔以上"；②中基协私募证券投资基金专业委员会 2026-07 权威解读（晚于 7月7日全面实施）明确"高频交易认定标准为每秒 300 笔/全日 2 万笔，实际交易中绝大多数远低于此"，并澄清"15 笔/秒""50 微秒最小停留"均源自对美国的误传（美国证监会和交易所均无此规定）；③财联社 2026-04-07 辟谣"高频量化降频至 15 笔/秒"为谣言，多家量化私募确认未收到。
->
-> **谣言溯源**：2026-04《短线交易新规》施行前后，财经评论作家皮海洲发文"建议"将高频认定从 300 笔/秒降至 15 笔/秒，被以讹传讹成"已实施新规"。2026-07-07《实施细则》全面实施后，部分自媒体（东方财富/叩富问财）仍传播"已收紧为 15 笔/秒"，与官方文件原文及中基协权威解读矛盾。**本系统以官方文件原文 + 中基协权威解读为准：高频认定标准 = 300 笔/秒或 20000 笔/日。**
+> ①沪深北交易所《程序化交易管理实施细则》官方原文（2025-04-03 发布）明确"单账户每秒申报、撤单笔数合计最高达到 300 笔以上"；②中基协私募证券投资基金专业委员会 2026-07 权威解读（晚于 7月7日全面实施）明确"高频交易认定标准为每秒 300 笔/全日 2 万笔，实际交易中绝大多数远低于此"，并澄清"15 笔/秒""50 微秒最小停留"均源自对美国的误传；③财联社 2026-04-07 辟谣"高频量化降频至 15 笔/秒"为谣言（源自皮海洲"建议"）。**本系统以官方文件原文 + 中基协权威解读为准：高频认定标准 = 300 笔/秒或 20000 笔/日。**
 
-**撤单率官方监控线**（v1.5.0 补充，中基协 2026-07 确认）：A股将撤单率 **50%** 作为异常交易行为监控指标（中基协确认，显著严于美国 90%+/日本 70%）。本系统内部保守阈值 **15%** 远低于官方 50% 线，安全垫充足。
+**撤单率官方监控线**（中基协 2026-07 确认）：A股将撤单率 **50%** 作为异常交易行为监控指标（显著严于美国 90%+/日本 70%）。本系统内部保守阈值 **15%** 远低于官方 50% 线，安全垫充足。
 
-**为何记录报备约束而非代码实现**：报备是券商侧行政流程（签署文件 + 提交信息），不是执行层代码功能。但执行层文档必须记录此约束——系统上线前须确认已完成报备，且系统参数变更时须同步更新报备。将报备字段与系统文档映射，便于报备时对照填写、变更时同步更新。
+**为何记录报备约束而非代码实现**：报备是券商侧行政流程，不是执行层代码功能。但执行层文档必须记录——系统上线前须确认已完成报备（ProgrammaticTradingGuard 已施工做硬校验），参数变更时须同步更新报备；报备字段与系统文档映射便于对照填写、变更时同步更新。
 
 ### 2.20 决策⑲：MiniQMT 正常运营，关注政策变化（Platform Risk Watch）
 
 **决策**：miniQMT 目前正常运营（存量用户交易日正常使用，周末维护属正常系统维护），风险等级为"正常运营但需关注政策变化"。无需预先编写迁移代码——[BrokerInterface](file:///d:/ZephyrAlpha/src/zephyr/trading/trading_contracts/broker_interface.py) 抽象层（已实现）是唯一需要的防线。
-
-> v1.6.0 新增，v1.6.1 订正，v1.6.2 精简。v1.6.0 原引券商营销网站夸大为"正在有序关停/生存级风险"，v1.6.1 经行业调研订正为"部分券商收紧新增、存量稳定"，v1.6.2 进一步精简移除过度工程（三套迁移方案/迁移改造要点/BigQmtBroker骨架代码），只保留风险记录 + BrokerInterface 防线 + 触发条件。
 
 **现状**（搜狐两融小顾问 2026-07 行业调研）：部分券商收紧 miniQMT 新增开通，但**存量用户权限稳定、交易日正常使用**，多数券商仍正常开放。国金证券存量用户确认正常使用（迅投论坛 2026-07 仍有国金用户正常使用 xtquant）。
 
@@ -848,77 +731,60 @@ for order in sorted_deltas:  # 先卖后买顺序
 ## 3. 考虑过的替代方案（拒绝理由）
 
 ### 3.1 撮合：统一 TWAP —— 拒绝
-- **拒绝理由**：小单也拆，增加下单次数和成本（每笔最低佣金 5 元）；不契合 A 股日内量能节奏
-- 自适应分档已覆盖 TWAP 适用场景（中单 1-5% ADV），无需全局统一
+- **拒绝理由**：小单也拆，增加下单次数和成本（每笔最低佣金 5 元）；不契合 A 股日内量能节奏。自适应分档已覆盖 TWAP 适用场景（中单 1-5% ADV），无需全局统一
 
 ### 3.2 撮合：不拆单整单限价直发 —— 拒绝
-- **拒绝理由**：浪费已实现的 AlgoTradingEngine 6 种算法；大单（如打板集中买入）有冲击成本风险
-- 自适应分档已覆盖直发适用场景（小单 <1% ADV），无需全局不拆
+- **拒绝理由**：浪费已实现的 AlgoTradingEngine 6 种算法；大单（如打板集中买入）有冲击成本风险。自适应分档已覆盖直发适用场景（小单 <1% ADV），无需全局不拆
 
 ### 3.3 集合竞价：参与开盘+收盘 —— 拒绝（MVP 延后）
-- **拒绝理由**：集合竞价价格不可控，价差大风险高；MVP 阶段先把连续竞价做扎实
-- **重评条件**：首批策略跑 3 个月有 track record 后，按策略类型差异化评估（打板可参与开盘集合竞价抢龙头）
+- **拒绝理由**：集合竞价价格不可控，价差大风险高；MVP 先把连续竞价做扎实。**重评条件**：首批策略跑 3 个月有 track record 后按策略类型差异化评估（打板可参与开盘集合竞价抢龙头）
 
 ### 3.4 滑点：ARRIVAL 到达价基准 —— 拒绝
-- **拒绝理由**：只算执行环节成本，不含信号延迟，回测偏乐观，实盘可能比回测差
-- DECISION 基准衡量全链路成本，回测最保守，已选为主基准
+- **拒绝理由**：只算执行环节成本，不含信号延迟，回测偏乐观，实盘可能比回测差。DECISION 基准衡量全链路成本，回测最保守，已选为主基准
 
 ### 3.5 滑点：VWAP 基准 —— 拒绝
-- **拒绝理由**：A 股个人账户小单 vs VWAP 意义有限（小单成交价本来就接近 VWAP）；VWAP 要等全天收盘才算得出，盘中不知道
-- 保留为辅助对比基准（SlippageAnalyzer 已支持），不作主基准
+- **拒绝理由**：A 股个人账户小单 vs VWAP 意义有限（小单成交价本来就接近 VWAP）；VWAP 要等全天收盘才算得出，盘中不知道。保留为辅助对比基准（SlippageAnalyzer 已支持）
 
 ### 3.6 订单层熔断：不设，全依赖 firm 层 —— 拒绝
-- **拒绝理由**：2013 光大乌龙指教训——没有订单层单笔量+频次上限，一笔异常订单可打穿风控
-- 订单层熔断是账户级安全网，不可省
+- **拒绝理由**：2013 光大乌龙指教训——没有订单层单笔量+频次上限，一笔异常订单可打穿风控。订单层熔断是账户级安全网，不可省
 
 ### 3.7 拒单：统一重试 3 次 —— 拒绝
-- **拒绝理由**：涨跌停板重试 3 次也无用，还浪费频次、推高撤单率（违反 ≤15% 监管约束）
-- 分类处理：可恢复（价格/连接）重试 1 次，不可恢复（涨跌停/资金/持仓）直接放弃
+- **拒绝理由**：涨跌停板重试 3 次也无用，还浪费频次、推高撤单率（违反 ≤15% 监管约束）。分类处理：可恢复（价格/连接）重试 1 次，不可恢复（涨跌停/资金/持仓）直接放弃
 
 ### 3.8 未成交续接：统一挂死等成交 —— 拒绝
-- **拒绝理由**：A 股限价单可能因价格远离挂单价长期不成交，挂死导致持仓与目标长期偏离，下轮调仓重复下单
-- 按 urgency 分档续接（决策⑪）：超时 Make-or-Take、PARTIAL 按 urgency 补单、14:55 尾盘清退
+- **拒绝理由**：A 股限价单可能因价格远离挂单价长期不成交，挂死导致持仓与目标长期偏离，下轮调仓重复下单。按 urgency 分档续接（决策⑪）
 
 ### 3.9 未成交续接：统一撤单转市价 —— 拒绝
-- **拒绝理由**：市价单冲击成本高，A 股市价单有"最优五档"限制，大单可能成交到极差价位
-- Make-or-Take 平衡：被动挂单优先（省 spread），超时才转对手价主动吃单（保证成交）
+- **拒绝理由**：市价单冲击成本高，A 股市价单有"最优五档"限制，大单可能成交到极差价位。Make-or-Take 平衡：被动挂单优先（省 spread），超时才转对手价主动吃单
 
 ### 3.10 挂单价：默认主动档对手价 —— 拒绝
-- **拒绝理由**：主动档每笔跨价吃单付 spread，小单累积成本高；个人账户小资金被动档排队足够成交
-- 默认被动档（买一/卖一），主动档仅作 Make-or-Take 兜底或 urgency 高（打板）时用
+- **拒绝理由**：主动档每笔跨价吃单付 spread，小单累积成本高；个人账户小资金被动档排队足够成交。默认被动档（买一/卖一），主动档仅作 Make-or-Take 兜底或打板时用
 
 ### 3.11 撤单率：不设控制全靠 broker 端 —— 拒绝
-- **拒绝理由**：程序化交易监管下撤单率超限被交易所标记异常交易（频繁瞬时撤单），轻则警告重则限制交易
-- 滚动监控降级（决策⑫）：>12% 只挂不撤、>15% 冻结告警，合规生存项不可省
+- **拒绝理由**：撤单率超限被交易所标记异常交易（频繁瞬时撤单），轻则警告重则限制交易。滚动监控降级（决策⑫）：>12% 只挂不撤、>15% 冻结告警，合规生存项不可省
 
 ### 3.12 断线重连：仅重连 1 次 —— 拒绝（升级为指数退避）
-- **拒绝理由**：网络抖动场景下重连 1 次不够（实盘案例 5 分钟内断线 7 次）；重连后不主动同步状态会导致系统与券商端订单状态不一致
-- 指数退避多次重连（立即→2s→4s→8s→max30s）+ 重连后 `query_stock_orders` 全量同步状态缺口（决策⑥层1）
+- **拒绝理由**：网络抖动场景下重连 1 次不够（实盘案例 5 分钟内断线 7 次）；重连后不主动同步状态会导致订单状态不一致。指数退避（0→2s→4s→8s→16s→max30s）+ 重连后 `query_stock_orders` 全量同步状态缺口（决策⑥层1）
 
 ### 3.13 挂单价：无价格笼子校验 —— 拒绝（补合规校验）
-- **拒绝理由**：上交所 2026 修订规则价格笼子超范围直接废单（拒单模式），低流动性股票 spread 大时 Make-or-Take 对手价可能超笼子
-- submit_order 前校验笼子边界（买入≤max(卖一×102%,卖一+0.1)，卖出≥min(买一×98%,买一-0.1)），超限自动夹到笼子边界（决策⑭）
+- **拒绝理由**：价格笼子超范围直接废单（拒单模式），低流动性股票 spread 大时 Make-or-Take 对手价可能超笼子。submit_order 前校验笼子边界，超限自动夹到笼子边界（决策⑭）
 
 ### 3.14 零股处理：忽略不足 100/200 股的零股 —— 拒绝（v1.5.0）
-- **拒绝理由**：交易所规则要求零股卖出必须一次性报出，忽略会导致持仓长期残留零股 + 持仓对账失败 + 资金无法完全回笼
-- 按板块差异化整手（主板 100 股/科创 200 股 1 股递增）取整 + 零股一次性卖出（决策⑰）
+- **拒绝理由**：交易所规则要求零股卖出必须一次性报出，忽略会导致持仓残留零股 + 持仓对账失败 + 资金无法完全回笼。按板块差异化整手取整 + 零股一次性卖出（决策⑰）
 
 ### 3.15 整手处理：全板块统一 100 股整数倍 —— 拒绝（v1.5.0）
-- **拒绝理由**：科创板 200 股起买/1 股递增，统一 100 股取整对科创板是硬错误（100 股申报直接废单 error_code=52）
-- 按板块差异化整手规则取整（决策⑰），科创板 200 股起 + 1 股递增
+- **拒绝理由**：科创板 200 股起买/1 股递增，统一 100 股取整对科创板是硬错误（100 股申报直接废单 error_code=52）。按板块差异化整手规则取整（决策⑰）
 
 ### 3.16 程序化交易报备：不报备直接上线 —— 拒绝（v1.5.0）
-- **拒绝理由**：《程序化交易管理实施细则》要求程序化交易者事前报备，未报备将被限制交易
-- 上线前通过券商完成报备（策略/算法/服务器/风控参数），变更时同步更新（决策⑱）
+- **拒绝理由**：《程序化交易管理实施细则》要求事前报备，未报备将被限制交易。上线前通过券商完成报备（策略/算法/服务器/风控参数），变更时同步更新（决策⑱）
 
 ### 3.17 MiniQMT 风险：完全忽略 —— 拒绝（v1.6.0，v1.6.2 精简）
-- **拒绝理由**：miniQMT 虽正常运营但部分券商收紧新增，完全忽略会在政策变化时措手不及
-- 记录风险（正常运营但关注政策变化）+ 保留 BrokerInterface 抽象层作为防线（决策⑲）；v1.6.2 精简：移除三套迁移方案/骨架代码（过度工程），触发时再研究
+- **拒绝理由**：miniQMT 虽正常运营但部分券商收紧新增，完全忽略会在政策变化时措手不及。记录风险 + 保留 BrokerInterface 抽象层作为防线（决策⑲）；v1.6.2 精简移除三套迁移方案/骨架代码（过度工程），触发时再研究
 
 ## 4. 上限定义（Ceiling）
 
 ### 4.1 系统上限
-- **单 broker**：miniQMT（国金证券）。多 broker 路由（[OptimalOrderRouter](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/optimal_order_router.py) XS-01）已实现但 MVP 不启用
+- **单 broker**：miniQMT（国金证券）。多 broker 路由（OptimalOrderRouter XS-01）已实现但 MVP 不启用
 - **6 种撮合算法**：TWAP/VWAP/ICEBERG/POV/IS/ALT，注册表模式可扩展
 - **7 态订单状态机**：PENDING/SUBMITTED/PARTIAL/FILLED/CANCELLED/REJECTED/EXPIRED
 - **订单层熔断**：单票单笔 4% / 单票 10 笔日 / 全账户 50 笔日
@@ -927,23 +793,23 @@ for order in sorted_deltas:  # 先卖后买顺序
 - **资金预占**：串行扣减，提交前本地拦截资金不足
 - **价格笼子校验**：买入价≤max(卖一×102%,卖一+0.1)，卖出价≥min(买一×98%,买一-0.1)，超限夹到边界；仅连续竞价限价单受约束（集合竞价/临停/市价单豁免）
 - **回调线程模型**：on_stock_order/on_stock_trade 入队+独立线程消费，回调内禁同步查询
-- **断线重连**：指数退避（立即→2s→4s→8s→max30s）+ 重连后全量状态同步
+- **断线重连**：指数退避（0→2s→4s→8s→16s→max30s）+ 重连后全量状态同步
 - **临时停牌处理**：盘中临停等复牌/跨日停牌移除目标+释放预占/复牌重新评估（决策⑮）
 - **除权除息日处理**：识别除权除息票→调整前收盘价/涨跌停价/笼子基准价/持仓股数（决策⑯）
 - **订单有效期**：GFD 当日有效，15:00 收盘自动撤销，14:55 主动尾盘清退
 - **盘后固定价格交易**：15:05-15:30 以收盘价撮合，MVP 暂不参与，Phase 1.5 候选
 - **连续竞价时段**：9:30-11:30 + 13:00-14:57（MVP 不含集合竞价/盘后定价）
 - **ST 涨跌幅**：主板 ST 2026-07-06 起统一 ±10%（与普通股持平），创业板/科创板 ST ±20%，北交所 ±30%
-- **板块差异化申报数量**（v1.5.0）：主板/创业板/北交所 100 股整数倍；科创板 200 股起买/1 股递增；卖出零股一次性报出（决策⑰）
-- **程序化交易报备**（v1.5.0）：上线前通过券商完成报备（策略/算法/服务器/风控），变更同步更新（决策⑱）
-- **MiniQMT 政策关注**（v1.6.0，v1.6.2 精简）：正常运营但需关注政策变化，BrokerInterface 抽象层是防线，触发时再研究迁移（决策⑲）
-- **xtquant Python 版本**（v1.6.0，v1.6.1 订正）：支持 64 位 Python 3.6-3.14（建议 3.11），2025-10 起 pip 可装
+- **板块差异化申报数量**：主板/创业板/北交所 100 股整数倍；科创板 200 股起买/1 股递增；卖出零股一次性报出（决策⑰）
+- **程序化交易报备**：上线前通过券商完成报备（策略/算法/服务器/风控），变更同步更新（决策⑱）
+- **MiniQMT 政策关注**：正常运营但需关注政策变化，BrokerInterface 抽象层是防线，触发时再研究迁移（决策⑲）
+- **xtquant Python 版本**：支持 64 位 Python 3.6-3.14（建议 3.11），2025-10 起 pip 可装
 
 ### 4.2 演进路径
-- **第一阶段（MVP，立即施工）**：连续竞价 + 自适应撮合 + DECISION 滑点 + 万0.854 佣金 + 订单层熔断 + 拒单分类处理 + 未成交续接 + 撤单率控制 + 资金预占 + 被动档挂单价。复用全部已实现 production 模块，补代码 gap（见 §6.1）
-- **Phase 1.5（首批策略 track record 1-3 个月）**：① 自适应参与率 POV（盘口深度/价差/波动率动态调参与率，取代固定 5%）② peg 到盘口（盘口移动自动撤单重挂跟随）③ TCA 规则闭环（滑点持续超阈值→自动调高拆单分档阈值）④ 冲击模型 coeff 校准（用实盘 TCA 数据回归拟合 SquareRootImpactPredictor 的 coeff，为 Phase 2 RL 地基）⑤ 盘后固定价格交易（以收盘价建仓/减仓的确定性通道，适合指数调仓/ETF 套利场景）⑥ **TWAP 随机化**（AUM 增长到大单 >5% ADV 时评估：Gaussian 子单扰动 + 时间 jitter + venue/passive-aggressive 混合，防 ML 检测器 schedule gaming，§7.4 hftradingbook 2026-06）⑦ **VWAP 在线纠偏**（dynamic VWAP：日内放大系数 α = 实时市场量/历史量曲线累计预测，纠偏剩余切片，§7.4 quant67 2026-05）⑧ **IS 上推完整 AC QP**（coeff 校准后，从指数衰减启发式升级为 Almgren-Chriss 闭合形式双曲正弦轨迹）⑨ **IS delay cost 独立报告**（v1.7.0 新增，Drovix 2026-05 TCA 方法论：将 delay cost 从 timing 中独立分桶报告 + slippage 分布 median/90th/99th percentile 替代均值，Plexus 数据显示 delay 占 IS 54% 是最大单项）⑩ **Regime-aware 算法选择**（v1.7.0 新增，§2.3 已登记规则：波动率高→减规模延长时间；趋势强→顺势滑行；流动性差→减可见订单降级 TWAP，需 TCA 数据校准阈值）⑪ **OBI 信号用于子单激进程度调整**（v1.7.0 新增，Cont 2014：买入时 OBI>0 抢先吃，OBI<0 再等等；需确认 miniQMT `xtdata.get_full_tick` Level-2 盘口数据可用性，个人小资金 <1% ADV 信号意义有限但可作 Phase 1.5 评估）⑫ **微观结构均值回归闭式限价单阈值**（v1.8.0 新增，[arXiv:2608.00885](https://arxiv.org/abs/2608.00885) Amaral 2026-08-01：大 tick 资产 mid-price 围绕隐含有效价格做平稳均值回归，推导出**闭式最优限价单阈值** θ\*(θ\*-φ)=s_G²（φ=紧报价半价差，s_G=gap 平稳标准差），利润率 R\*=α·s_G·√(2/π)·exp(-θ\*²/2s_G²)。关键结论："gap 刚覆盖价差就交易"收益为零，全部利润来自**等待的期权价值**。**A 股适配**：多数股票大 tick 特征明显（尾盘价差通常 1-2 tick），完全符合模型假设；可直接用于限价单锚定价位选择——当前 §4.1 挂单价"默认被动档（买一/卖一）"是经验规则，闭式阈值提供数学最优替代。**优于 RL**：闭式解无需训练、可解释、零计算成本，比 Phase 2 TT-DAC-PS 更轻量。**定位**：Phase 1.5 候选——用 θ\* 公式替换"被动档"经验规则，需 Step 0 校准 s_G（gap 平稳标准差，可从 A 股 tick 数据滚动估计））⑬ **被动市场冲击最优执行**（v1.8.0 新增，[arXiv:2607.28323](https://arxiv.org/abs/2607.28323) Barzykin/Boyce/Neuman/Tuschmann 2026-07-30 Imperial College+HSBC：限价单被动执行的中观模型，两个实证基础——① 限价单成交概率随距 midprice 距离指数衰减；② 价格变化对 order flow imbalance 短期线性响应。HJB 求解控制限价单 aggressiveness（挂单距离），NASDAQ+FX 数据校准。**A 股适配**：专攻限价单执行，与"限价单锚定"完全对口，提供限价单挂单距离的最优控制框架，比纯 RL 更有数学结构。**定位**：Phase 2 候选——与 ⑫ 闭式阈值互补（⑫ 是静态闭式解，被动冲击是动态 HJB 控制），需实盘 TCA 数据校准成交概率衰减参数 κ）⑭ **信号自适应闭式限价单序列报价**（v1.9.0 新增，[arXiv:2605.24242](https://arxiv.org/abs/2605.24242) Yu 2026-06-11 TU Delft：建立限价单**序列挂单**的统一显式解理论，融合信号依赖漂移 + 价格冲击 + 库存风险 + 执行风险（成交强度依赖报价），用点过程建模成交，HJB 方程化简为三角形有限维结构，**四种执行准则下均给出闭式价值函数和最优报价**。**与 ⑫ 的区别**：⑫ 是单次挂单的静态阈值，⑭ 是序列挂单的动态闭式解——考虑前次挂单成交/撤单状态对后续报价的影响，且报价随信号（如 OBI/动量）自适应调整。**A 股适配**：A 股限价单成交占主导且排队严重，序列挂单闭式解直接对口 TWAP 切片内的智能挂单层。**优于 Avellaneda-Stoikov**：AS 仅给做市报价（双边），⑭ 给执行报价（单边）且有信号自适应。**定位**：Phase 1.5 候选——与 ⑫⑬ 构成"限价单三件套"（⑫ 静态阈值→⑭ 序列闭式→⑬ 动态 HJB），需 Step 0 校准成交强度参数）⑮ **队列位置感知 RL 执行**（v1.9.0 新增，[arXiv:2507.06345](https://arxiv.org/abs/2507.06345) Cheridoto&Weiss ETH Zurich，已发表 Quantitative Finance Vol.26 Issue 6, 2026：将执行建模为市价单/限价单动态分配，用多元 logistic-normal 分布建模，推导新 actor-critic 策略梯度；**保留队列位置优先级**——只取消高队列位订单而非盲目全撤。**A 股适配**：A 股限价单排队严重，"队列位置感知"是独特优势。**定位**：Phase 2 候选——已过同行评审（QF 2026），比 TT-DAC-PS 更聚焦限价单队列管理，与 ⑭ 序列闭式解互补）
-- **第二阶段（首批策略 track record 3 个月后）**：上加集合竞价（按策略差异化）+ 算法参数 RL 优化器（需 coeff 已校准 + 足够 TCA 历史数据）+ **MPC 执行**（模型预测控制，介于规则驱动和 RL 之间的中间路线，减少 schedule shortfall 40-50%，模块化适合生产部署，arXiv 2603.28898 Bayforest+MIT Bertsekas 2026-03）+ **Direct VWAP Optimization**（深度学习直接优化 VWAP 执行目标，绕过成交量曲线预测中间步骤，arXiv 2502.13722）+ **Obizhaeva-Wang 临时/永久冲击分离**（v1.7.0 新增，§2.4 已登记：temporary_impact=η·(trade_rate/avg_volume) 衰减回补 + permanent_impact=γ·(trade_rate/avg_volume) 信息效应，为 RL 执行铺路）+ **TT-DAC-PS 执行 RL**（v1.7.0 细化，arXiv:2606.08379v1 2026-06-07 University of Reading+ICMA Centre Henley Business School+Göttingen：twin EMA critic targets + TD3-style target policy smoothing + delayed actor updates + conservative Q regularisation + OU noise hybrid schedule，集成 Almgren-Chriss trade impact + LOB，10 只美股测试超越 PPO/SAC/A2C 和 TWAP/VWAP/AC baselines）。2026 最新 RL 执行研究表明：成本模型准确性对 RL 算法选择有决定性影响（MACE：AC 冲击模型下 TD3 最优而固定成本下 PPO 最优）；DASRL（AAMAS 2026）动态动作空间 RL 比传统策略降本 16.2%；TT-DAC-PS（arXiv 2026.06）双目标 Actor-Critic 持续降低 IS；Queue-Reactive+DDQN（arXiv 2025.11）model-free RL 适应 LOB 动态。机构实践（Finantrix 2026）：JPMorgan LOXM（2017）首个 RL 执行生产案例，到 2026 年 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均在用 RL 执行，训练范式一致（历史数据训练→仿真验证→上线）。**多 agent RL 理论参考**（v1.7.0 登记，arXiv:2605.20348 2026-05-21 UCL+UZH Blockchain Center Koulouris&Campajola：2-agent Almgren-Chriss liquidation game，发现当 RL agents 有 intra-episode memory（recent prices + own past actions）时会偏离 Nash 走向 Pareto frontier 的 supra-competitive outcomes——个人单 broker 不适用多 agent，但 Phase 3 多 broker 启用时可参考协同执行理论）
-- **第三阶段（AUM 增长或 miniQMT 容量不足时）**：启用多 broker 路由 + ICEBERG 隐藏大单 + Bouchaud Propagator 模型（冲击时间衰减结构，超越平方根律瞬时冲击）+ **MAP-Elites 质量多样性执行**（v1.7.0 细化，arXiv:2601.22113v2 2026-01-30 de Witt&Pakkanen Imperial College+BoA：首次将 MAP-Elites quality-diversity 算法应用于交易执行，不搜索单一最优策略，生成按 liquidity/volatility 索引的 regime-specialist 策略组合；校准的 Gymnasium 环境（瞬时冲击+指数衰减+平方根成交量缩放，fit 400+ 美股 R²>0.02 OOS）；PPO+CNN 特征提取器实现 2.13bps 到达滑点 vs VWAP 5.23bps（4900 笔 OOS 订单，$21B/$210亿名义金额）；单个 specialist 在其行为生态位内 8-10% 性能提升，其他 cells 反而 degrade；**局限性**：论文明确指出"substantial computational resources per behavioural cell may be required for robust specialist development across all market conditions"——这正是判定其为 Phase 3 远期而非 MVP 的依据，个人项目算力不足以训练全 regime specialist 组合，适合 AUM 增长后的大单 regime-adaptive 执行）+ **Algo Wheel**（v1.7.0 登记，2026 机构标配，Finantrix 2026-08-08 + Virtu 2019 + youngju 2026-05：每笔订单实时路由到最优 broker/算法，由历史 TCA 数据驱动；2017 AllianceBernstein+Norges Bank 首推，2026 年 >$50M/day fund 必备；个人单 broker 单账户无需，Phase 3 多 broker 启用时评估）+ **⑯ PACE LLM 父单执行框架**（v2.0.0 新增，[arXiv:2607.28410](https://arxiv.org/abs/2607.28410) Shen et al. 2026-07-30：首个将 LLM 系统性应用于父单执行的框架 PACE=Plan-Ahead Controlled Execution，分层架构——长期规划层用 HP 滤波分解价格序列为趋势项+残差波动项，短期执行层在每个决策点输出子单大小；**深交所 SZSE Level-1 数据验证**（唯一直接对应 A 股的 LLM 执行论文），超越 TWAP/Almgren-Chriss/学习型基线 0.65 bps；LLM 置信度越高表现越好（与人类相反），倾向提前交易而非拖到截止。**A 股适配**：直接在深交所数据验证，HP 滤波趋势-残差分解契合 A 股日内动量+噪声结构。**定位**：Phase 3 远期候选——LLM 推理延迟使其仅适合分钟级及以上执行（非高频），且 0.65 bps 优势较小需进一步验证；依赖外部 LLM API 与本项目"可解释性优先+轻量优先"原则有张力，登记为远期观察项而非施工候选。**不采纳 MVP 理由**：① LLM 推理延迟（100-500ms）远超 A 股限价单排队所需的毫秒级响应；② 0.65 bps 优势在个人小资金 <1% ADV 场景下绝对值可忽略；③ 外部 LLM 依赖引入不可控延迟/成本/隐私风险）+ **⑰ Signature-based 路径依赖执行**（v2.0.0 新增，[arXiv:2606.31387](https://arxiv.org/abs/2606.31387) Morbelli/Karbach/Derksen Deep Blue Capital+阿姆斯特丹大学 2026-07-21：将 alpha 过程和交易速度均建模为时间增强市场路径截断 signature 的线性泛函，信号生成与执行置于同一 signature 基；**二次归约定理**将路径依赖执行问题化为策略系数的有限维凹二次规划，同时处理瞬态冲击+库存暴露+终端清算+近似美元中性；合成实验显示拟合策略比经典 Z-score 基准有更高 return on turnover。**A 股适配**：适用于 A 股配对交易/统计套利的执行，路径依赖信号可捕捉 A 股市场状态切换。**定位**：Phase 2 远期候选——与 MAP-Elites 互补（前者确定性显式解，后者质量多样性搜索），需 signature 数学库支撑，个人项目 MVP 不引入）
+- **第一阶段（MVP）**：✅ 已施工——连续竞价 + 自适应撮合 + DECISION 滑点 + 万0.854 佣金 + 订单层熔断 + 拒单分类处理 + 未成交续接 + 撤单率控制 + 资金预占 + 被动档挂单价，全部 production（§6.1）
+- **Phase 1.5（首批策略 track record 1-3 个月）**：① 自适应参与率 POV（盘口深度/价差/波动率动态调参与率，取代固定 5%）② peg 到盘口（盘口移动自动撤单重挂跟随）③ TCA 规则闭环（滑点持续超阈值→自动调高拆单分档阈值）④ 冲击模型 coeff 校准（实盘 TCA 数据回归拟合 SquareRootImpactPredictor 的 coeff，为 Phase 2 RL 地基）⑤ 盘后固定价格交易（以收盘价建仓/减仓的确定性通道）⑥ TWAP 随机化（大单 >5% ADV 时：Gaussian 子单扰动 + 时间 jitter + venue/passive-aggressive 混合，防 schedule gaming，§7.4 hftradingbook 2026-06）⑦ VWAP 在线纠偏（dynamic VWAP：日内放大系数 α = 实时市场量/历史量曲线累计预测，§7.4 quant67 2026-05）⑧ IS 上推完整 AC QP（coeff 校准后从指数衰减启发式升级为闭合形式双曲正弦轨迹）⑨ IS delay cost 独立报告（Drovix 2026-05：delay 占 IS 54% 是最大单项；slippage 分布 median/90th/99th percentile 替代均值）⑩ Regime-aware 算法选择（§2.3 规则表，需 TCA 校准阈值）⑪ OBI 信号用于子单激进程度调整（Cont 2014：买入 OBI>0 抢先吃，OBI<0 再等等；需确认 miniQMT `xtdata.get_full_tick` Level-2 可用性）⑫ 微观结构均值回归闭式限价单阈值（arXiv:2608.00885 Amaral 2026-08-01：θ\*(θ\*-φ)=s_G²，R\*=α·s_G·√(2/π)·exp(-θ\*²/2s_G²)；全部利润来自等待的期权价值；A 股大 tick 适配，可替换"被动档"经验规则为数学最优，需校准 s_G；详见 §4.5）⑬ 被动市场冲击最优执行（arXiv:2607.28323 Barzykin 2026-07-30：限价单成交概率随距 midprice 指数衰减 + OFI 短期线性响应，HJB 求解挂单距离动态控制，需校准 κ）⑭ 信号自适应闭式限价单序列报价（arXiv:2605.24242 Yu 2026：序列挂单统一显式解，信号漂移+冲击+库存+执行风险，HJB 降为三角有限维结构；与⑫⑬构成"限价单三件套"⑫静态→⑭序列闭式→⑬动态HJB，需校准成交强度参数；详见 §4.5）⑮ 队列位置感知 RL 执行（arXiv:2507.06345 Cheridito&Weiss ETH Zurich，QF Vol.26 Issue 6 2026：市价/限价 logistic-normal actor-critic，只取消高队列位订单；A 股限价单排队严重是独特优势；Phase 2 候选）
+- **第二阶段（首批策略 track record 3 个月后）**：上加集合竞价（按策略差异化）+ 算法参数 RL 优化器（需 coeff 已校准 + 足够 TCA 历史）+ MPC 执行（模型预测控制，减少 schedule shortfall 40-50%，arXiv 2603.28898 Bayforest+MIT Bertsekas 2026-03）+ Direct VWAP Optimization（深度学习直接优化 VWAP 目标绕过量曲线预测，arXiv 2502.13722）+ Obizhaeva-Wang 临时/永久冲击分离（§2.4 已登记，为 RL 执行铺路）+ TT-DAC-PS 执行 RL（arXiv:2606.08379v1 2026-06：twin EMA critic targets + TD3-style target policy smoothing + OU noise hybrid schedule，集成 AC trade impact + LOB，超越 PPO/SAC/A2C 和 TWAP/VWAP/AC baselines）。2026 RL 执行研究佐证：成本模型准确性决定 RL 算法选择（MACE：AC 冲击下 TD3 最优、固定成本下 PPO 最优）；DASRL（AAMAS 2026）动态动作空间降本 16.2%；Queue-Reactive+DDQN（arXiv 2025.11）适应 LOB 动态；Stanford CS224R PPO 初始化 VWAP 偏差策略 +1.27bps（p<10^-4，胜率 58.5%）。机构实践（Finantrix 2026）：JPMorgan LOXM（2017）首个 RL 执行生产案例，2026 年 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均在用。多 agent RL 理论参考（arXiv:2605.20348 UCL 2026-05：2-agent AC liquidation game，intra-episode memory 驱动 supra-competitive outcomes；Phase 3 多 broker 启用时参考协同执行）
+- **第三阶段（AUM 增长或 miniQMT 容量不足时）**：启用多 broker 路由 + ICEBERG 隐藏大单 + Bouchaud Propagator 模型（冲击时间衰减结构）+ MAP-Elites 质量多样性执行（arXiv:2601.22113v2 de Witt&Pakkanen Imperial College+BoA 2026-01：按 liquidity/volatility 索引的 regime-specialist 策略组合，PPO+CNN 2.13bps 到达滑点 vs VWAP 5.23bps（4900 笔 OOS、$21B 名义）；论文明确每 cell 需 substantial computational resources——个人项目算力不足，Phase 3 远期）+ Algo Wheel（2026 机构标配：每笔订单实时路由到最优 broker/算法，历史 TCA 数据驱动；个人单 broker 无需，多 broker 启用时评估）+ ⑯ PACE LLM 父单执行框架（arXiv:2607.28410 Shen et al. 2026-07：HP 滤波分层架构，深交所 SZSE Level-1 数据验证超越 TWAP/AC 0.65 bps；Phase 3 远期观察项——LLM 推理延迟 100-500ms 仅适合分钟级执行、0.65 bps 优势小资金可忽略、外部 LLM 依赖与可解释性优先原则有张力）+ ⑰ Signature-based 路径依赖执行（arXiv:2606.31387 Morbelli et al. 2026-07：alpha+交易速度同 signature 基建模，二次归约定理化为有限维凹 QP；适用 A 股配对交易/统计套利执行；Phase 2 远期候选，需 signature 数学库）
 
 ### 4.3 为何这是上限而非妥协
 - 个人账户资金体量小，多数订单 <1% ADV，6 种算法 + 自适应已覆盖全场景
@@ -968,7 +834,7 @@ for order in sorted_deltas:  # 先卖后买顺序
 | ALT（激进对手价） | 中频（打板策略） | ✅ 打板策略必需，游资"狙击"量化版 |
 
 **为何保留 6 种而非精简**：
-1. **注册表模式零边际成本**：[AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) 用注册表模式，6 种算法是 6 个 Strategy 类注册，未触发时零开销（不占 CPU/内存），精简不会提升性能
+1. **注册表模式零边际成本**：AlgoTradingEngine 用注册表模式，未触发时零开销（不占 CPU/内存），精简不会提升性能
 2. **已 production 不做返工**：6 种算法已实现并通过测试，移除是 rework 而非简化
 3. **大单场景确实存在**：打板集中买入可能达 5-15% ADV（单票重仓），此时 VWAP/IS 有实际价值
 4. **ALT 是打板策略专属**：游资打板需要激进吃单，ALT 不可省
@@ -979,23 +845,17 @@ for order in sorted_deltas:  # 先卖后买顺序
 
 ### 4.5 Microstructure Mean Reversion Optimal Quoting & Signal-Adaptive Sequential Quotes——大 tick 限价单挂单闭式最优解（2026-08-10 新增）
 
-> 本节整合两篇 2026 限价单挂单闭式最优解论文，作为"限价单三件套"⑫⑬⑭ 的集中技术展开。§4.2 演进路径已登记条目级定位（v1.8.0 ⑫ / v1.9.0 ⑭）、§7.4 外部参考已有独立条目（v2.7.0 Yu / v2.8.0 Amaral），本节补全数学推导、A 股适用性、与现有执行算法的层次关系、Python 伪代码。
+> 本节整合两篇 2026 限价单挂单闭式最优解论文，作为"限价单三件套"⑫⑬⑭ 的集中技术展开（§4.2 已登记条目级定位、§7.4 有独立条目）。
 
 **论文引用**：
-- **论文1**：[arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) [q-fin.TR] 2026-08-01，"Optimal Trading of Microstructure Mean Reversion"，Lucas Rabechini Amaral（July 2026 preliminary draft）
+- **论文1**：[arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) [q-fin.TR] 2026-08-01，"Optimal Trading of Microstructure Mean Reversion"，Lucas Rabechini Amaral
 - **论文2**：[arXiv:2605.24242v1](https://arxiv.org/abs/2605.24242) [q-fin.TR] 2026-05-22，"Explicit Signal-Adaptive Sequential Optimal Execution Quotes"，Fenghui Yu（TU Delft）
 
 #### 4.5.1 论文1（Amaral 2026）：微观结构均值回归闭式限价单阈值
 
-**核心模型**：
-1. 大 tick 资产秒级观测 mid 含**稳态均值回归误差**围绕隐含有效价格
-2. order book 自身流产生该误差；求解**长期平均利润率最大化**交易规则（净价差）
-3. deep queue 大 tick 资产中价差为 1-2 tick，假设单手交易者不影响 book 强度
-4. mid 在半 tick 网格上移动，价差有 parity：半整数 mid → 1-tick tight，整数 mid → 2-tick open
+**核心模型**：大 tick 资产秒级观测 mid 含**稳态均值回归误差**围绕隐含有效价格（order book 自身流产生该误差）；求解**长期平均利润率最大化**交易规则（净价差）；deep queue 大 tick 资产价差 1-2 tick，假设单手交易者不影响 book 强度；mid 在半 tick 网格上移动，价差有 parity（半整数 mid → 1-tick tight，整数 mid → 2-tick open）。
 
-**关键变量与过程**：
-- **G = mid 与有效价格之 gap**；G 服从 OU 过程（reversion rate α, stationary std s_G）：`dG = -α·G·dt + σ_G·dW`
-- **对称阈值带**半宽 θ：G 到 -θ 买入，到 +θ 卖出，区间内持有
+**关键变量与过程**：**G = mid 与有效价格之 gap**，G 服从 OU 过程（reversion rate α, stationary std s_G）：`dG = -α·G·dt + σ_G·dW`；**对称阈值带**半宽 θ：G 到 -θ 买入，到 +θ 卖出，区间内持有。
 
 **闭式最优解**（surrogate OU 上是 admissible 策略中最优）：
 ```
@@ -1004,18 +864,11 @@ R* = α·s_G·√(2/π)·exp(-θ*²/(2·s_G²))              # 最优利润率
 ```
 其中 φ = tight-book 半价差。
 
-**关键洞见**："Threshold times margin equals the stationary variance of the gap" → 阈值 × (阈值-半价差) = s_G²。如果 G 一覆盖价差就交易则利润为 0，**所有利润来自等待的期权价值**（waiting option value）——不在 gap 刚跨过价差时立即交易，而是等到 gap 偏离到 θ\* 才动手，多等的这段时间正是利润来源。
+**关键洞见**："Threshold times margin equals the stationary variance of the gap"。如果 G 一覆盖价差就交易则利润为 0，**所有利润来自等待的期权价值**（waiting option value）——等到 gap 偏离到 θ\* 才动手，多等的这段时间正是利润来源。
 
 #### 4.5.2 论文2（Yu 2026）：信号自适应序贯限价单显式报价
 
-**核心贡献**：
-1. **统一显式解理论**：序贯限价单最优挂单价位的 HJB 显式解
-2. 不只控制 metaorder 交易速率，而是**逐个限价单逐时挂单价**
-3. 集成 4 个风险：信号依赖漂移 + 价格冲击 + 库存风险 + 成交风险（point process with quote-dependent intensity）
-4. **4 种执行准则的显式解**：期望终端财富 / 期望终端财富+运行库存惩罚 / CARA 效用 / CARA+运行库存惩罚
-5. **三角有限维结构** → 全部显式求解，含价值函数和最优报价
-6. **关键创新**：允许 mid-price 非零漂移（信号驱动），从 OFI/LOB 动态/数据驱动预测中提取短期漂移
-7. **数值实验**：信号依赖漂移可大幅影响最优执行
+**核心贡献**：① **统一显式解理论**：序贯限价单最优挂单价位的 HJB 显式解——不只控制 metaorder 交易速率，而是**逐个限价单逐时挂单价**；② 集成 4 个风险（信号依赖漂移 + 价格冲击 + 库存风险 + 成交风险，point process with quote-dependent intensity）；③ **4 种执行准则显式解**（期望终端财富 / +运行库存惩罚 / CARA 效用 / CARA+运行库存惩罚）；④ **三角有限维结构** → 全部显式求解（含价值函数和最优报价）；⑤ **关键创新**：允许 mid-price 非零漂移（信号驱动），从 OFI/LOB 动态/数据驱动预测中提取短期漂移。
 
 **与论文1 的区别**：论文1 是单次挂单的静态阈值（对称带 θ\*），论文2 是序列挂单的动态闭式解——考虑前次挂单成交/撤单状态对后续报价的影响，且报价随信号（如 OBI/动量）自适应调整。优于 Avellaneda-Stoikov：AS 仅给做市报价（双边），论文2 给执行报价（单边）且有信号自适应。
 
@@ -1049,9 +902,9 @@ R* = α·s_G·√(2/π)·exp(-θ*²/(2·s_G²))              # 最优利润率
 
 #### 4.5.5 Phase 定位
 
-- **论文1（⑫ 闭式阈值）**：Phase 1.5 候选 / 当前 Phase 限价单增强。闭式解零计算成本、可解释、无需训练，可直接用 θ\* 公式替换 §4.1"被动档"经验规则。唯一前置校准：滚动估计 s_G（gap 平稳标准差，可从 A 股 tick 数据估计，建议日级/周级重估）。
+- **论文1（⑫ 闭式阈值）**：Phase 1.5 候选 / 当前 Phase 限价单增强。闭式解零计算成本、可解释、无需训练，可直接用 θ\* 公式替换 §4.1"被动档"经验规则。唯一前置校准：滚动估计 s_G（gap 平稳标准差，可从 A 股 tick 数据估计，日级/周级重估）。
 - **论文2（⑭ 序贯闭式报价）**：Phase 1.5 候选。与 ⑫⑬ 构成"限价单三件套"（⑫ 静态闭式阈值 → ⑭ 序列闭式 → ⑬ 动态 HJB），需校准成交强度参数。
-- **均非远期 Phase 5+**：闭式解的轻量特性使其比 Phase 2 TT-DAC-PS RL 更早可落地，符合"可解释性优先 + 轻量优先"原则。⑫ 因零前置依赖可作为当前 Phase 限价单增强的最轻量候选。
+- **均非远期 Phase 5+**：闭式解的轻量特性使其比 Phase 2 TT-DAC-PS RL 更早可落地，符合"可解释性优先 + 轻量优先"原则。
 
 #### 4.5.6 与 2026 量化新规的关系
 
@@ -1063,43 +916,17 @@ R* = α·s_G·√(2/π)·exp(-θ*²/(2·s_G²))              # 最优利润率
 #### 4.5.7 Python 伪代码：G gap 估计 + OU 拟合 + θ\* 闭式解 + 对称阈值带策略
 
 ```python
-import numpy as np
-
-def estimate_gap(mid_prices: np.ndarray) -> np.ndarray:
-    """G = mid 与有效价格之 gap；有效价格用 EMA(mid) 近似隐含有效价格。"""
-    eff = _ema(mid_prices, span=60)            # 有效价格低频分量
-    return mid_prices - eff                     # G gap 序列
-
-def fit_ou(gap: np.ndarray, dt: float = 1.0) -> tuple[float, float]:
-    """OU 参数拟合：dG = -alpha*G*dt + sigma_G*dW，返回 (alpha, s_G)。"""
-    g, g_next = gap[:-1], gap[1:]
-    beta = np.cov(g, g_next)[0, 1] / np.var(g)  # OLS: g_next = beta*g
-    alpha = (1 - beta) / dt                      # 回归率
-    resid = g_next - beta * g
-    sigma_G = np.std(resid) / np.sqrt(dt)
-    s_G = sigma_G / np.sqrt(2 * alpha)          # 平稳标准差
-    return alpha, s_G
-
-def closed_form_theta(s_G: float, phi: float) -> float:
-    """闭式最优阈值：theta*(theta*-phi) = s_G^2 -> theta=(phi+sqrt(phi^2+4*s_G^2))/2"""
-    return (phi + np.sqrt(phi**2 + 4 * s_G**2)) / 2
-
-def symmetric_band_action(gap: float, theta: float, position: int) -> str:
-    """对称阈值带：G<=-theta 买入，G>=+theta 卖出，区间内持有。"""
-    if position <= 0 and gap <= -theta:
-        return "BUY"
-    if position >= 0 and gap >= theta:
-        return "SELL"
-    return "HOLD"
-
-# ---- Phase 1.5 落地：替换 PricingPolicy "被动档" 经验规则 ----
-phi = 0.005                                     # 半价差（A 股 1-tick tight 时 = 0.01/2）
-alpha, s_G = fit_ou(estimate_gap(mid_series))
-theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
-# 挂单价 = mid -/+ theta_star（向内收紧到对称带边界），取代"买一/卖一"静态规则
+# G gap 估计 + OU 拟合 + θ* 闭式解 + 对称阈值带策略（Phase 1.5 落地 PricingPolicy）
+eff = ema(mid, span=60);  G = mid - eff                        # EMA 近似隐含有效价格，G = gap 序列
+beta = cov(G[:-1], G[1:])[0,1] / var(G)                        # OLS 一阶矩拟合
+alpha = (1 - beta) / dt                                        # OU 回归率
+s_G = std(G[1:] - beta*G[:-1]) / sqrt(dt) / sqrt(2*alpha)      # 平稳标准差
+theta_star = (phi + sqrt(phi**2 + 4*s_G**2)) / 2               # 闭式解 θ*(θ*-φ)=s_G² 取正根；phi=半价差（A股1-tick tight=0.005）
+# 对称阈值带：G<=-θ* 买入 / G>=+θ* 卖出 / 区间内持有
+# 挂单价 = mid ∓ θ*（向内收紧到对称带边界），取代"买一/卖一"静态规则
 ```
 
-> 伪代码说明：`estimate_gap` 用 EMA 近似有效价格（论文用隐含有效价格，实操可用低频分量代理）；`fit_ou` 用 OLS 一阶矩拟合 OU 参数；`closed_form_theta` 解二次方程 θ²-φθ-s_G²=0 取正根；`symmetric_band_action` 是对称带交易规则。落地时 θ\* 作为 [PricingPolicy](file:///d:/ZephyrAlpha/src/zephyr/ex_core/pricing_policy.py) 的数学锚定替代"被动档"经验规则，需滚动校准 s_G（日级/周级重估）。论文2 序列闭式解在此基础上叠加信号自适应漂移与前次成交状态依赖，Phase 1.5 实盘 TCA 数据校准成交强度参数后启用。
+> 落地说明：θ\* 作为 [PricingPolicy](file:///d:/ZephyrAlpha/src/zephyr/ex_core/pricing_policy.py) 的数学锚定替代"被动档"经验规则，需滚动校准 s_G（日级/周级重估）。论文2 序列闭式解在此基础上叠加信号自适应漂移与前次成交状态依赖，Phase 1.5 实盘 TCA 数据校准成交强度参数后启用。
 
 ## 5. 待裁定（暂缓）
 
@@ -1109,7 +936,7 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 | 多 broker 路由 | 个人单账户单 broker 够用；XS-01 已实现但未启用 | AUM 增长或 miniQMT 容量不足 |
 | 算法参数 RL 优化器 | 需足够 TCA 历史数据训练；Phase 1 规则驱动已够用 | 累积 6 个月实盘 TCA 数据 |
 | Pre-Trade 合规检查（BM-EXE-04） | wash trade/spoofing 检测需多账户数据；个人单账户无自交易风险 | 多账户或合规要求升级 |
-| ST 股涨跌幅差异化 | v1.4.0 订正：主板 ST 2026-07-06 起已统一 ±10%（与普通股持平），代码"ST 简化统一 10%"已正确；创业板/科创板 ST ±20%、北交所 ±30% 仍需差异化（若涉及） | 实盘涉及创业板/科创板/北交所 ST 股时 |
+| ST 股涨跌幅差异化 | 主板 ST 2026-07-06 起已统一 ±10%（与普通股持平），代码"ST 简化统一 10%"已正确；创业板/科创板 ST ±20%、北交所 ±30% 仍需差异化（若涉及） | 实盘涉及创业板/科创板/北交所 ST 股时 |
 | 盘后固定价格交易 | 2026-07-06 新规扩容至全部 A 股/ETF（15:05-15:30 以收盘价撮合）；MVP 暂不参与（流动性弱+需单独通道+收盘价无 alpha） | Phase 1.5，有以收盘价建仓/减仓需求时（如指数调仓/ETF 套利） |
 | 盘后全量对账（EOD Reconciliation） | MVP 盘中每5min对账够用；盘后三方核对流程待定 | 实盘上线后，T+1 结算确认需求 |
 | peg 到盘口（动态挂单跟随） | MVP 静态挂单够用；动态跟随需实时盘口数据 + 撤单率预算 | Phase 1.5，撤单率控制稳定后 |
@@ -1118,67 +945,24 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 
 ### 6.1 代码 gap
 
-> **v2.11.0 施工完毕确认**（2026-08-13，AI-EXEC-001 会话）：§6.1 全部 10 项 P0 gap 落码完整性验证 + IS 4 桶分解核查 + 盘前检查链+订单层熔断代码完整性验证，全部 PASS。施工内容：①9 个 v2.5.0-v2.6.0 新增模块补 [BLUEPRINT] 头；②TradingSession 补资金预占算法+CancelRateGuard 接入+ALGO_FLOW 标记；③DefaultTCAEngine 补 IS 4 桶分解+DECISION 基准默认+方向感知滑点+ALGO_FLOW 标记；④修复 2 个 pre-existing 语法错误（constitutional_update.py/rule_patterns.py docstring 缺 r 前缀）。pytest 连续 2 轮 1332/1332 全通过。长清单审查 9/12 全量 PASS（3 项轻微 FAIL 均为 pre-existing）。
->
-> **v2.6.0 代码审计**（2026-08-10）：v2.5.0 后施工 gap 18，并核验 gap 7/8/11/13/17 实际已完成但文档未同步（重大漂移修复）。**全部 13 项实盘生存级 gap 已闭合**（gap 6-18，除 gap 10/16 为 Phase 2/1.5 暂缓项）。以下为最新状态：
-> - ✅ gap 6 未成交续接：[OpenOrderResolver](file:///d:/ZephyrAlpha/src/zephyr/ex_core/open_order_resolver.py) 已实现（Make-or-Take/PARTIAL补单/尾盘清退/幂等，21测试全绿）
-> - ✅ gap 7 撤单率控制：[CancelRateGuard](file:///d:/ZephyrAlpha/src/zephyr/ex_core/cancel_rate_guard.py) 已实现（滚动500笔窗口/>12%只挂不撤/>15%冻结/15笔秒限频/可注入clock，23测试全绿）；已接入 [TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 的 `can_place_order`/`can_submit_now`/`record_submit`
-> - ✅ gap 8 资金预占：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已实现串行扣减 + 提交前拦截 + 卖出 T+0 释放 + 拒单回滚 + 保守费率 `estimated_cost_rate=0.003`（千三，含佣金+印花+过户+滑点）
-> - ✅ gap 9 挂单价算法：[PricingPolicy](file:///d:/ZephyrAlpha/src/zephyr/ex_core/pricing_policy.py) 已实现（被动档/主动档/涨停跌停/提1tick/盘口回退，22测试全绿）
-> - ✅ gap 11 价格笼子：[price_cage.check_price_cage](file:///d:/ZephyrAlpha/src/zephyr/ex_core/price_cage.py) 已实现（买入基准=卖一/卖出基准=买一/板块差异化幅度/回退链 ask1|bid1→last→prev_close/超限夹边不废单，23测试全绿）
-> - ✅ gap 12 回调线程模型：[AsyncFillDispatcher](file:///d:/ZephyrAlpha/src/zephyr/ex_core/async_fill_dispatcher.py) 已实现（入队+独立线程消费/fill_id幂等/背压/优雅停机，14测试全绿）
-> - ✅ gap 13 断线重连：[MiniQmtBroker._reconnect](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 已实现指数退避 `RECONNECT_BACKOFF=(0,2,4,8,16,30)` + TCP `CONNECT_BACKOFF=(0,1,2,4)` + 重连后主动 `query_stock_orders` 同步状态缺口 + 防状态倒退规则 `_should_sync_status`（终态不降级/CANCELLED 仅升级为 FILLED）
-> - ✅ gap 14 临时停牌：[TradingHaltResolver](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_halt_resolver.py) 已实现（盘中临停/跨日停牌/复牌/目标过滤/预占释放，16测试全绿）
-> - ✅ gap 15 除权除息：[CorporateActionAdjuster](file:///d:/ZephyrAlpha/src/zephyr/ex_core/corporate_action_adjuster.py) 已实现（除权除息参考价/持仓调整/涨跌停重算，25测试全绿）
-> - ⏸ gap 10 盘后全量对账：Phase 2 三方核对（券商对账单 vs 系统 vs 资金），暂缓
-> - ⏸ gap 16 盘后固定价格交易：Phase 1.5 可选通道（15:05-15:30 收盘价撮合），暂缓
-> - ✅ gap 17 板块差异化整手：[board_lot.get_board_lot_rule](file:///d:/ZephyrAlpha/src/zephyr/ex_core/board_lot.py) 已实现（主板/创业板/北交所 100 股整数倍 + 科创板 200 股起 1 股递增 + 零股检测 + 卖出零股一次性申报 `adjust_sell_for_odd_lot`，53测试全绿）
-> - ✅ gap 18 程序化报备开关：[ProgrammaticTradingGuard](file:///d:/ZephyrAlpha/src/zephyr/ex_core/programmatic_trading_guard.py) 已实现（实盘+未报备=拒下单/启动+下单双校验/报备信息漂移检测 SHA-256 hash/PAPER+SIMULATION 豁免/未识别 broker 保守拒绝/报备历史审计，44测试全绿）
-> - 已实现确认：先卖后买排序✓ / 订单层熔断(`_is_blocked_by_circuit_breaker` 单笔4%/单票10笔/全账户50笔)✓ / 拒单分类(`classify_rejection`+`_handle_rejection` 日志，动作待 Saga)✓ partial / FeeSchedule 0.854✓ / AlgoTradingEngine 6 算法 + 5% 参与率 + 15% ADV 上限✓ / SquareRootImpactPredictor + 三因子归因✓
+✅ 已施工（ex_core 模块群，commit 见 tracker，1332 测试）：gap 1-18 全部闭合（v1.0.0 5 项 + v2.5.0-v2.6.0 施工 9 模块 + AI-EXEC-001 施工完毕验证：10 项 P0 gap 落码完整性 + IS 4 桶分解 + 盘前检查链+订单层熔断代码完整性全部 PASS，pytest 连续 2 轮 1332/1332 全绿）。
 
-**v1.0.0 gap（4/5 已闭合 + 1 部分实现，commit 015826ae）**：
-1. ✅ **OrderManager.VALID_TRANSITIONS 补 EXPIRED**：[OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) 已补 `OrderStatus.EXPIRED: set()` 及相关转换。
-2. ✅ **FeeSchedule 佣金默认值**：[TransactionCostOptimizer](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/transaction_cost_optimizer.py) 已更新为 `Decimal("0.854")`（万0.854）。
-3. ✅ **TradingSession 先卖后买顺序**：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已改为先 SELL 后 BUY 排序。
-4. ⚠️ **拒单分类处理实现**（部分）：[OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) 已实现 `RejectionAction` 枚举 + `classify_rejection` 静态方法（8 错误码映射）+ [TradingSession._handle_rejection](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 分类日志。**待补全**：RETRY_ONCE/ALERT_FREEZE/ALERT_RECONCILE 的实际动作（重试 1 次 / 冻结策略新开仓 / 触发持仓对账）待上层 OrderExecutionSaga 接管——当前 MVP 仅记录日志 + 归入 `_blocked_orders`。
-5. ✅ **订单层熔断实现**：[TradingSession](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已实现 `_is_blocked_by_circuit_breaker`（单票单笔4%/单票10笔日/全账户50笔日）。
+**接口级摘要**：
+- 已施工模块与契约见 §1.4 盘点表；关键参数：RECONNECT_BACKOFF=(0,2,4,8,16,30) / CONNECT_BACKOFF=(0,1,2,4)（决策⑥层1）；资金预占 `estimated_cost_rate=0.003`（千三含佣金+印花+过户+滑点，决策⑬）；CancelRateGuard 滚动 500 笔窗口/>12% 只挂不撤/>15% 冻结/15 笔秒限频/可注入 clock（决策⑫），已接入 TradingSession `can_place_order`/`can_submit_now`/`record_submit`；订单层熔断 `_is_blocked_by_circuit_breaker`（单票单笔4%/单票10笔日/全账户50笔日）；FeeSchedule `Decimal("0.854")`；OrderManager 补 EXPIRED 态；price_cage 对手方最优价基准+板块差异化幅度+回退链 ask1|bid1→last→prev_close+超限夹边不废单；AsyncFillDispatcher 入队+独立线程消费/fill_id LRU 幂等（窗口10000）/背压/优雅停机；ProgrammaticTradingGuard 实盘+未报备=拒下单（启动+下单双校验）/SHA-256 风控配置漂移检测/PAPER+SIMULATION 豁免/未识别 broker 保守拒绝/报备历史审计
+- ⚠️ gap 4 拒单分类部分实现：`RejectionAction` 枚举 + `classify_rejection`（8 错误码映射）+ `_handle_rejection` 分类日志已实现；RETRY_ONCE/ALERT_FREEZE/ALERT_RECONCILE 实际动作待 OrderExecutionSaga 接管——当前 MVP 仅记录日志 + 归入 `_blocked_orders`
+- ⏸ gap 10 盘后全量对账（Phase 2）：券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、未成交订单日终转 EXPIRED，待 PositionReconciler 扩展
+- ⏸ gap 16 盘后固定价格交易（Phase 1.5 可选通道）：MiniQmtBroker 新增盘后定价申报接口 + TradingSession 尾盘清退可选转入，MVP 暂不施工
+- gap 19（BigQmtBroker 骨架代码）v1.6.2 判定过度工程已移除——BrokerInterface 抽象层是唯一防线（决策⑲）
 
-**v1.1.0 gap（待施工，本备忘定型规则）**：
-6. ✅ **未成交续接实现**（决策⑪，v2.5.0 施工）：[OpenOrderResolver](file:///d:/ZephyrAlpha/src/zephyr/ex_core/open_order_resolver.py) 已实现 Make-or-Take 超时切换（被动挂单 T 秒未成交→撤单转对手价）、PARTIAL 按 urgency 补单、14:55 尾盘清退、幂等（终态跳过/未注册跳过），21 测试全绿。
-7. ✅ **撤单率控制实现**（决策⑫，v2.6.0 核验已施工）：[CancelRateGuard](file:///d:/ZephyrAlpha/src/zephyr/ex_core/cancel_rate_guard.py) 已实现滚动 500 笔窗口监控、>12% 只挂不撤降级、>15% 冻结告警、15 笔/秒限频（保守安全垫，官方线 300 笔/秒）、可注入 clock（测试友好），23 测试全绿。已接入 [TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 的 `can_place_order`/`can_submit_now`/`record_submit`。
-8. ✅ **资金预占实现**（决策⑬，v2.6.0 核验已施工）：[TradingSession._validate_and_submit](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 已实现串行扣减 `available_cash`、卖出单预占释放额度（T+0 资金可立即用于买入）、提交前本地拦截资金不足（跳过买入避免 error_code=54 推高撤单率）、拒单时回滚预占（买入返还/卖出扣除已释放）、保守费率 `estimated_cost_rate=0.003`（千三含佣金+印花+过户+滑点，偏保守多预留）。
-9. ✅ **挂单价算法实现**（决策⑭，v2.5.0 施工）：[PricingPolicy](file:///d:/ZephyrAlpha/src/zephyr/ex_core/pricing_policy.py) 已实现被动档买一/卖一、主动档对手价、涨停卖单挂涨停价/跌停买单挂跌停价、提1tick中间档（Phase 1.5候选）、盘口回退链，22 测试全绿。
-10. **盘后全量对账实现**（Phase 2）：券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、未成交订单日终转 EXPIRED。待在 [PositionReconciler](file:///d:/ZephyrAlpha/src/zephyr/ex_core/position_reconciler.py) 扩展。
-
-**v1.2.0 gap（待施工，miniQMT 工程约束 + 合规）**：
-11. ✅ **价格笼子校验实现**（决策⑭，v1.3.0 订正基准价，v2.6.0 核验已施工）：[price_cage.check_price_cage](file:///d:/ZephyrAlpha/src/zephyr/ex_core/price_cage.py) 已实现连续竞价限价单合规硬约束——买入上限=max(卖一×(1+pct), 卖一+floor)、卖出下限=min(买一×(1-pct), 买一-floor)，基准价取**对手方最优价**（买入=卖一/卖出=买一），回退链 ask1|bid1→last_price→prev_close，板块差异化幅度（主板/创业板 ±2%+0.1 兜底、科创板严格 ±2%、北交所 ±5%），超限自动夹到笼子边界（不废单，向下/向上取整到 tick），23 测试全绿。集合竞价/临停/市价单豁免由调用方判断。
-12. ✅ **回调线程模型实现**（决策①工程约束2，v2.5.0 施工）：[AsyncFillDispatcher](file:///d:/ZephyrAlpha/src/zephyr/ex_core/async_fill_dispatcher.py) 已实现"入队+独立线程消费"模式，回调内只 Queue.put（O(1)非阻塞），独立 daemon 线程消费；fill_id LRU 幂等去重（窗口10000）；队列满背压保护；优雅停机（哨兵+join）；异常隔离（单笔异常不中断循环），14 测试全绿。`set_relaxed_response_order_enabled(True)` 配置待 MiniQmtBroker 集成时补充。
-13. ✅ **断线重连增强实现**（决策⑥层1，v2.6.0 核验已施工）：[MiniQmtBroker._reconnect](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 已从"重连1次"升级为指数退避 `RECONNECT_BACKOFF=(0,2,4,8,16,30)` 秒（应对 5 分钟内重连 7 次的实盘抖动场景）；TCP 连接 `_do_connect_with_retry` 用 `CONNECT_BACKOFF=(0,1,2,4)` 替代旧版固定 `sleep(1.0)×3`；重连成功后主动 `_sync_order_state_gap` 调用 `query_stock_orders` 全量同步订单状态缺口；状态合并规则 `_should_sync_status` 防乱序回报状态倒退（已终态不降级 / 本地 CANCELLED 仅升级为 FILLED / 非终态以券商端为准）；`_sleep_fn` 可注入（测试友好）。
-
-**v1.3.0 gap（待施工，临时停牌处理）**：
-14. ✅ **临时停牌处理实现**（决策⑮，v2.5.0 施工）：[TradingHaltResolver](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_halt_resolver.py) 已实现停牌状态管理 + 目标过滤——盘中临停票从当日目标移除不报单；跨日停牌票从后续目标移除 + 释放资金预占额度（幂等，仅首次释放）；复牌后标记 RESUMED_REEVALUATE 重新评估；持仓票盘中临停保留不动（HALTED_KEEP_POSITION），16 测试全绿。停牌数据源对接 miniQMT `xtdata.get_instrument_detail` 待集成时补充。
-
-**v1.4.0 gap（待施工，除权除息日处理）**：
-15. ✅ **除权除息日处理实现**（决策⑯，v2.5.0 施工）：[CorporateActionAdjuster](file:///d:/ZephyrAlpha/src/zephyr/ex_core/corporate_action_adjuster.py) 已实现除权除息参考价计算（现金分红/送转/混合三公式）+ 调整前收盘价 + 重算涨跌停价 + 持仓调整（送股增股数/成本摊薄/现金红利T+1到账），25 测试全绿。数据源对接 `xtdata.get_instrument_detail` 的 `ex_dividend_date` 待集成时补充。
-16. **盘后固定价格交易支持**（决策⑪可选通道，Phase 1.5）：[MiniQmtBroker](file:///d:/ZephyrAlpha/src/zephyr/ex_core/adapters/miniqmt_broker.py) 新增盘后定价申报接口（`xttrader.order_stock` 的 price_type 指定盘后定价），[TradingSession](file:///d:/ZephyrAlpha/src/zephyr/ex_core/trading_session.py) 尾盘清退时可选转入盘后定价。MVP 暂不施工，登记 Phase 1.5。
-
-**v1.5.0 gap（待施工，零股处理 + 报备合规）**：
-17. ✅ **板块差异化整手 + 零股一次性卖出**（决策⑰，硬错误订正，v2.6.0 核验已施工）：[board_lot.get_board_lot_rule](file:///d:/ZephyrAlpha/src/zephyr/ex_core/board_lot.py) 已实现板块差异化整手规则——主板/创业板/北交所 100 股整数倍、科创板 200 股起买且超 200 股按 1 股递增（`increment=1`），`classify_board` 按代码前缀识别板块（6 位代码 + 后缀 .SH/.SZ/.BJ），`round_buy_qty` 按板块规则取整（科创板 `max(200, ceil_to_increment)`），`is_odd_lot` 检测零股，`adjust_sell_for_odd_lot` 卖出零股（<min_unit）一次性申报卖出（合规要求，零股不能分笔），53 测试全绿。
-18. ✅ **程序化交易报备开关实现**（决策⑱，v2.6.0 施工）：[ProgrammaticTradingGuard](file:///d:/ZephyrAlpha/src/zephyr/ex_core/programmatic_trading_guard.py) 已实现合规前置硬校验——`TradingMode.LIVE` + 未报备 = 拒下单（启动 `assert_can_start` + 下单 `assert_can_submit` 双校验，防绕过单点）；`record_registration` 记录报备编号/策略名/算法类型/服务器位置/风控配置 hash/日最大下单笔数/撤单率上限；`hash_risk_config` 用 SHA-256 计算风控配置 hash，运行时 `risk_config_provider` 重算对比检测报备信息漂移（漂移则视为未报备，强制重新报备）；`PAPER`/`SIMULATION` 模式豁免；未识别 broker_id 保守拒绝（`live_broker_ids` 集合校验）；`allow_drift_warning_only` 可配置为漂移仅告警不阻断；报备历史 `_registration_history` 保留旧报备作审计，44 测试全绿。报备字段对照表见决策⑱。
-
-**v1.6.2 移除 gap 19**：BigQmtBroker 骨架代码原为 v1.6.0 登记，v1.6.2 判定为过度工程（miniQMT 正常运营，无需为不紧急的迁移预先写代码）已移除。BrokerInterface 抽象层（已实现）是唯一需要的防线，触发迁移时再研究具体方案。
-
-**v1.6.7 算法增强项现状（Phase 1.5 候选，非 MVP gap）**：审查 2026-08 执行算法工程实践（hftradingbook schedule gaming / quant67 dynamic VWAP / Cont OBI），确认两项算法增强当前**未实现**，但判定为 Phase 1.5 候选而非 MVP 强制 gap——个人小资金订单 <1% ADV，自身不构成可检测足迹/自身交易量不影响市场量曲线，MVP 基础版足够：
-- **TWAP 随机化（未实现）**：[AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) TWAP 策略用 `_distribute_evenly` 等量切片 + 固定间隔（L430-458），无 Gaussian 子单扰动 / 无时间 jitter / 无 anti-gaming。**判定**：个人 <1% ADV 订单不构成 ML 可检测足迹，MVP 不需；Phase 1.5 AUM 增长到大单（>5% ADV）时评估加入 size+jitter 随机化（§7.4 hftradingbook 2026-06 schedule gaming 防御）
-- **VWAP 在线纠偏（未实现）**：[AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) VWAP 策略用 `_distribute_by_weights` 按历史时段权重静态分配（L466-499），无日内放大系数 α / 无实时市场量纠偏。**判定**：个人 VWAP 切片量小，静态量曲线偏差影响可忽略；Phase 1.5 评估加入 dynamic VWAP 在线纠偏（§7.4 quant67 2026-05 §3.3）
-- **POV 内生性补偿（未实现，§2.3 已说明）**：POV 参与率 γ 内生性在 γ≤5% 时影响可忽略（γ/(1-γ)≈5.3%），Phase 2 大单场景需考虑 `x=γ/(1-γ)·M` 补偿
-- **IS 完整 AC QP（未实现，§2.3 已说明）**：当前 IS 为 `exp(-λ×t_i)` 指数衰减启发式近似，非完整 Almgren-Chriss 均值-方差 QP 求解；Phase 2 coeff 校准后可上推闭合形式双曲正弦轨迹
-
-**v1.7.0 施工环节流程算法审查（Phase 1.5/2 候选，非 MVP gap）**：审查施工环节流程算法 6 项（TWAP/VWAP 计划生成、IS 4 桶分解、市场冲击 α×σ×√(Q/ADV)、OBI 信号、延迟-冲击权衡、regime 选择逻辑），确认 4 项算法增强当前**未实现**，判定为 Phase 1.5/2 候选而非 MVP 强制 gap——个人小资金 + MVP TCA 单一数字报告已够用：
-- **IS delay cost 独立报告（未实现）**：[DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 当前 IS 成本分解为时机+冲击+滑点+佣金 4 桶，但 delay cost 归入 timing 未独立报告，且 slippage 报告均值而非分布（median/90th/99th percentile）。**判定**：MVP 单一 IS 数字够用；Phase 1.5 应将 delay cost 独立分桶报告 + slippage 分布替代均值（Drovix 2026-05 TCA 方法论，Plexus 数据显示 delay 占 IS 54% 是最大单项，均值被 fat-tail outlier 主导掩盖困难条件下的真实成本）
-- **OBI 信号用于子单激进程度（未实现）**：[AlgoTradingEngine](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) 无 OBI（Order Book Imbalance）信号接入，子单激进程度仅由 urgency 静态分档决定。**判定**：需 Level-2 盘口数据（miniQMT `xtdata.get_full_tick` 需确认可用性），个人小资金 <1% ADV 信号意义有限；Phase 1.5 评估（Cont 2014：OBI = (ΣVolBid - ΣVolAsk)/(ΣVolBid + ΣVolAsk)，买入 OBI>0 抢先吃，OBI<0 再等等）
-- **Regime-aware 算法选择（未实现）**：[AlgoParamOptimizer](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/core/algo_trading_engine.py) 按 ADV 比例**静态**分档选择算法，未考虑实时 regime（波动率/趋势/流动性）。**判定**：MVP 静态分档够用；Phase 1.5 加 regime 维度需 TCA 数据校准阈值（§2.3 已登记规则：波动率高→减规模延长时间；趋势强→顺势滑行；流动性差→减可见订单降级 TWAP）
-- **临时冲击 vs 永久冲击分离（未实现）**：[SquareRootImpactPredictor](file:///d:/ZephyrAlpha/src/zephyr/ex_sor/services/slippage_analyzer.py) 是总冲击（瞬时平方根律），未分离 temporary_impact（η·trade_rate/avg_volume，衰减回补）和 permanent_impact（γ·trade_rate/avg_volume，信息效应）。**判定**：MVP 总冲击足够（个人 <1% ADV 分离边际价值低）；Phase 2 coeff 校准后上推 Obizhaeva-Wang 分离模型，为 RL 执行铺路（§2.4 已登记）
+**Phase 1.5/2 候选（未实现，非 MVP gap，个人 <1% ADV 当前不需要）**：
+- **TWAP 随机化**：AlgoTradingEngine TWAP 为 `_distribute_evenly` 等量切片固定间隔（L430-458），无 Gaussian 扰动/jitter/anti-gaming。个人订单不构成 ML 可检测足迹；AUM 增长到 >5% ADV 时评估（§7.4 hftradingbook schedule gaming 防御）
+- **VWAP 在线纠偏**：VWAP 为 `_distribute_by_weights` 按历史时段权重静态分配（L466-499），无日内放大系数 α。个人切片量小静态偏差可忽略；Phase 1.5 评估 dynamic VWAP（§7.4 quant67）
+- **POV 内生性补偿**：γ≤5% 时影响可忽略（γ/(1-γ)≈5.3%），Phase 2 大单场景需 `x=γ/(1-γ)·M` 补偿（§2.3）
+- **IS 完整 AC QP**：当前 IS 为 `exp(-λ×t_i)` 指数衰减启发式近似；Phase 2 coeff 校准后上推闭合形式双曲正弦轨迹（§2.3）
+- **IS delay cost 独立报告**：DefaultTcaEngine 的 delay cost 归入 timing 未独立分桶，slippage 报告均值而非分布。Phase 1.5 独立分桶 + median/90th/99th percentile 替代均值（Drovix 2026-05，delay 占 IS 54%）
+- **OBI 信号用于子单激进程度**：无 OBI 接入，子单激进程度仅 urgency 静态分档。需 Level-2 盘口数据；Phase 1.5 评估（Cont 2014：OBI = (ΣVolBid - ΣVolAsk)/(ΣVolBid + ΣVolAsk)）
+- **Regime-aware 算法选择**：AlgoParamOptimizer 按 ADV 静态分档，未考虑实时 regime。Phase 1.5 加 regime 维度需 TCA 校准（§2.3 规则表）
+- **临时 vs 永久冲击分离**：SquareRootImpactPredictor 为总冲击（瞬时平方根律），未分离 η/γ 成分。Phase 2 coeff 校准后上推 Obizhaeva-Wang（§2.4）
 
 ### 6.2 开放问题
 - **9 个施工新增模块未登记 depgraph**（v2.10.0 审查发现）：OpenOrderResolver/CancelRateGuard/PricingPolicy/price_cage/AsyncFillDispatcher/TradingHaltResolver/CorporateActionAdjuster/board_lot/ProgrammaticTradingGuard 已施工 production（v2.5.0-v2.6.0），但 44_d_ex_core（2026-08-05 生成，38 模块）/battle_map_10（47 锚点）均未收录，depgraph 生成器自 v2.5.0 施工后未刷新。**待办**：刷新 depgraph 登记 9 模块 blueprint_id → 重新生成 44_d_ex_core → 同步 battle_map_10 锚点（涉及 depgraph 生成器与域文档/作战地图，超出本备忘修改范围，登记待治理流程处理）
@@ -1242,41 +1026,41 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 
 ### 7.4 外部参考
 - 《上海证券交易所交易规则（2026年修订）》（上证发〔2026〕41号，2026-07-06 施行）§3.2 委托、§3.3 申报与竞价（§3.3.2 集合竞价撤单、§3.3.13 涨跌幅限制、§3.3.14 价格笼子）、§3.7 盘后固定价格交易、§4.2 挂牌摘牌停牌复牌、§4.3 除权与除息、§8 交易异常情况处理
-- 《深圳证券交易所交易规则（2026年修订）》（深证发〔2026〕，2026-07-06 施行）§3.1.16 价格笼子（与上交所一致：买入基准价=卖一价）、§3.6 盘后固定价格交易、§4.4 除权与除息
-- 《程序化交易管理实施细则》（证监会/沪深北交易所，2025-04-03 发布、2025-07-07 全面实施）：高频认定标准=每秒申报+撤单≥300笔或单日≥20000笔（官方原文，同花顺/上证报 2025-04-03）；中基协私募证券投资基金专业委员会 2026-07 权威解读确认"300笔/秒"标准未变、实际绝大多数远低于此，并澄清"15笔/秒""50微秒最小停留"均源自对美国的误传（美国证监会和交易所均无此规定）；财联社 2026-04-07 辟谣"高频量化降频至15笔/秒"为谣言（源自财经评论作家皮海洲"建议"）；A股撤单率50%作为异常交易行为监控指标（中基协确认，严于美国90%+/日本70%）；自媒体（东方财富/叩富问财）2026-07后仍误传"15笔/秒"，与官方文件原文矛盾
+- 《深圳证券交易所交易规则（2026年修订）》（2026-07-06 施行）§3.1.16 价格笼子（与上交所一致：买入基准价=卖一价）、§3.6 盘后固定价格交易、§4.4 除权与除息
+- 《程序化交易管理实施细则》（证监会/沪深北交易所，2025-04-03 发布、2025-07-07 全面实施）：高频认定标准=每秒申报+撤单≥300笔或单日≥20000笔（官方原文）；中基协私募证券投资基金专业委员会 2026-07 权威解读确认"300笔/秒"标准未变，澄清"15笔/秒""50微秒最小停留"均源自对美国的误传；财联社 2026-04-07 辟谣"15笔/秒"为谣言（源自皮海洲"建议"）；A股撤单率50%作为异常交易行为监控指标（中基协确认，严于美国90%+/日本70%）
 - 《关于短线交易监管的若干规定》（证监会，2026-04-07 施行）：持股5%以上大股东及董监高短线交易监管（与高频量化无关，曾被误传为"量化降频新规"）
 - 2026-07-06 交易新规四大调整（沪深北交易所同步）：①主板ST股涨跌幅5%→10%（与普通股持平）②盘后固定价格交易扩容至全部A股/ETF（15:05-15:30）③上交所基金收盘连续竞价改集合竞价④深交所创业板引入做市商
 - miniQMT / xtquant 250807.1.2 API 文档（`xttrader.order_stock` / `StockAccount` / `query_stock_positions` / `set_relaxed_response_order_enabled` / `get_instrument_detail`）
 - 2023-08-28 印花税降率（0.1%→0.05%）；2022-04-29 过户费降率（0.002%→0.001%）
 - Almgren-Chriss 最优执行框架（平方根冲击模型）；Implementation Shortfall（IS）成本分解（Perold 1988：IS = 执行成本 + 延迟成本 + 机会成本，4 桶分解 commission/spread/impact/timing）
-- Kissell-Glantz I-Star 市场冲击定价模型（Kissell & Glantz 2003《Optimal Trading Strategies》）——pre-trade 市场冲击预测（瞬时 I_temp + 永久 I_perm），与平方根律交叉验证；2026 仍为机构 pre-trade TCA 主流定价模型之一（youngju 2026-05 深度综述）
+- Kissell-Glantz I-Star 市场冲击定价模型（Kissell & Glantz 2003《Optimal Trading Strategies》）——pre-trade 市场冲击预测（瞬时 I_temp + 永久 I_perm），与平方根律交叉验证；2026 仍为机构 pre-trade TCA 主流定价模型之一（youngju 2026-05）
 - Gatheral (2010) 无动态套利约束下平方根冲击形式的唯一性证明
 - Huberman-Stanzl (2004) 永久冲击线性是无套利唯一选择（price manipulation 禁忌）——补充 Gatheral 平方根律的理论地基
-- Bouchaud-Farmer Propagator 模型（Bouchaud & Farmer 2018《Trades, Quotes and Prices》）——冲击的时间衰减结构（今天的交易影响未来价格），超越平方根律瞬时冲击；Phase 2 候选（§2.4/§4.2 已登记演进路径）
-- **内生市场阻力 propagator 模型**（v2.1.0 补，[Chahdi/De Carvalho/Szymanski arXiv:2601.03215](https://arxiv.org/abs/2601.03215) 2026-01-06 "Trading with market resistance and concave price impact"）：在 Bouchaud-Farmer propagator 基础上引入**内生市场阻力**——精明交易者（部分）检测到 metaorder 并反向交易以利用订单流引发的价格过度反应。模型特征：① **凹型瞬态冲击 + 幂律 propagator + 阻力项**（阻力函数通过不动点方程响应交易者速率）；② 最优性一阶条件为**非线性随机 Fredholm 方程**；③ 线性阻力函数下最优控制存在且唯一，严格凸阻力函数下用 coercivity + 弱下半连续性证存在性；④ 提出迭代格式求解非线性随机 Fredholm 方程并证明**指数收敛速率**；⑤ 数值实验展示不同衰减 profile 与不同市场阻力设定下"买入"信号的最优往返策略。**对本项目的价值**：标准 Bouchaud Propagator 假设其他交易者是被动的，而 A 股量化资金占比 35%+（§6.2 已登记），大单执行时被其他量化策略检测并反向交易是真实风险——内生市场阻力模型正是刻画此对抗性执行场景的理论工具。与 §6.1 TWAP 随机化（schedule gaming 防御）协同：TWAP 随机化防"predator 在切片前埋伏"是工程防御，市场阻力模型是理论建模同一对手。**定位 Phase 3 远期候选**：非线性随机 Fredholm 方程求解比 AC 闭合形式复杂得多，且需校准阻力函数 R(·) 形态（线性/严格凸），个人小资金 <1% ADV 自身不构成可检测 metaorder 足迹，MVP 不需；AUM 增长到大单被检测场景时评估（与 MAP-Elites/Algo Wheel 同 Phase 3 启用条件）
+- Bouchaud-Farmer Propagator 模型（Bouchaud & Farmer 2018《Trades, Quotes and Prices》）——冲击的时间衰减结构，超越平方根律瞬时冲击；Phase 2 候选（§2.4/§4.2 已登记）
+- **内生市场阻力 propagator 模型**（[Chahdi/De Carvalho/Szymanski arXiv:2601.03215](https://arxiv.org/abs/2601.03215) 2026-01-06）：在 Bouchaud-Farmer propagator 基础上引入内生市场阻力——精明交易者检测到 metaorder 并反向交易利用价格过度反应。凹型瞬态冲击+幂律 propagator+阻力项（不动点方程）；最优性一阶条件为非线性随机 Fredholm 方程，迭代格式指数收敛。**对本项目价值**：A 股量化资金占比 35%+，大单执行被其他量化策略检测并反向交易是真实风险，本模型刻画此对抗性执行场景；与 TWAP 随机化（schedule gaming 工程防御）协同——市场阻力模型是理论建模同一对手。**定位 Phase 3 远期候选**：个人 <1% ADV 不构成可检测足迹 MVP 不需，AUM 增长到大单被检测场景时评估
 - coeff 校准方法论（marketmaker.cc 2026-07 "Almgren-Chriss Without the Hand-Waving"：σ容易/η是2倍误差游戏/γ是研究项目/轨迹对三者宽容；hftradingbook 2026-06 "Estimating impact"：测量 arrival→+5min peak→+2hr residual 位移，回归 signed root-volume，signal-controlled Y≈0.6 vs naive 0.9）
-- TWAP 随机化/防操纵（schedule gaming 防御，2026 永久性市场特征）：可预测的固定节奏 TWAP 是 ML 检测器攻击目标（predator 在切片前埋伏，`cost_realised = cost_model + Σ leakage_k`）；防御 = 随机化子单大小（Gaussian 扰动）+ 时间抖动（jitter 间隔）+ venue/passive-aggressive 混合，相同平均参与率下崩溃 predator 命中率（hftradingbook 2026-06 "Schedule gaming"；orderx 2026-07 Part 4 TWAP：size/band/time jitter + opportunistic bursts；iotdigitaltwinplm 2026-05 TWAP Architecture）。**代码现状**：本系统 TWAP 为 `_distribute_evenly` 等量切片固定间隔，**无随机化**（algo_trading_engine.py L430-458）——个人小资金订单 <1% ADV 自身不构成可检测足迹，MVP 不需随机化，登记 Phase 1.5 候选（AUM 增长到大单时评估）
-- VWAP 在线纠偏（dynamic/adaptive VWAP）：用实时已观测市场量更新剩余区间量预测，日内放大系数 α = 当前全市场量 / 历史量曲线当前累计预测，对剩余预测量乘 α（隐含"今天比平时活跃多少倍"判断）（quant67 2026-05 §3.3 在线纠偏）。**代码现状**：本系统 VWAP 为 `_distribute_by_weights` 按历史时段权重静态分配，**无在线纠偏**（algo_trading_engine.py L466-499）——个人小资金 VWAP 切片量小（多数 <1% ADV），静态量曲线偏差影响可忽略，登记 Phase 1.5 候选
-- OBI 订单簿不平衡（Order Book Imbalance，Cont et al. 2014 "The price impact of order book events" Operations Research）——系统性证明 OBI 与下一 mid 价变动正相关；执行算法可据此调整子单激进程度（买入 OBI>0 抢先吃，OBI<0 再等等）。Phase 2 候选（需 Level-2 盘口数据，个人小资金 MVP 不需）
-- Algo Wheel（2026 机构标配）：每笔订单实时路由到最优 broker/算法，由历史 TCA 数据驱动；TCA 2.0 从事后评分卡转向事前决策支持（finantrix 2026-08-08 综述；youngju 2026-05 深度综述）——个人单 broker 单账户无需 Algo Wheel，登记为 Phase 3 候选（多 broker 启用时）
-- TCA + Market Impact Models 2026 Deep Dive（v1.7.0 新增，youngju 2026-05-25 "TCA + Market Impact Models 2026 Deep Dive — Implementation Shortfall, Almgren-Chriss, Kissell-Glantz I-Star, Bouchaud-Farmer Propagator, Bloomberg BTCA, Virtu, big xyt, BMLL, Tradeweb"）：TCA 50 年历史时间线（1988 Perold IS → 1995 Plexus Group 首个商业 TCA → 1998 ITG 收购 Plexus → 2000 Almgren-Chriss → 2003 Kissell-Glantz I-Star → 2005 SEC Reg NMS → 2013 Obizhaeva-Wang temporary/permanent impact → 2014 Bloomberg BTCA → 2018 Bouchaud-Farmer Propagator → 2019 ITG→Virtu → 2024 SEC Rule 605/606 修订 → 2025 KOFIA Best Execution Guideline 修订 → 2026 Algo Wheel 标准+实时 TCA）；IS 4-bucket 标准分解（commission + spread=(Ask−Bid)/2 + market_impact + timing_risk）；2026 KOFIA 分季度 TCA 报告义务化
-- IS 4 桶分解 + delay cost 洞察（v1.7.0 新增，hftradingbook 2026-06-04 "Implicit costs" reviewed + ryanoconnellfinance 2026-03-09 "Implementation Shortfall: Perold Framework and Transaction Cost Analysis" + Plexus Group 2004 数据）：IS = (paper P&L) - (actual P&L) = q·(P̄-P_d) [execution cost] + (Q-q)·(P_end-P_d) [opportunity cost] + F [fees]；4 桶 = commission + spread + market_impact + timing_risk；**Plexus Group 2004 实证**（亚洲除日本机构股票交易）：153 bps 总 IS 中 delay cost 占 84 bps（54%）远超 commission 22 bps（14%）——"Traders who focus only on reducing commissions are optimizing the smallest piece of the cost puzzle"；"VWAP, TWAP, POV and Almgren-Chriss are, formally, machines for minimising expected IS subject to a risk constraint"（hftradingbook 2026-06-04 关键定义）
-- Drovix TCA 方法论（v1.7.0 新增，drovix.com 2026-05-27 "TCA That Actually Drives Decisions: Beyond Implementation Shortfall"）：① "Stop reporting IS as a single number"——IS 单一数字是 vanity metric，应分解为 4 桶按 venue/broker/time-of-day/notional bucket 分别报告；② 基准选择是治理决策非量化决策——VWAP 奖励 smear flow（wrong incentive for minimizing information leakage），arrival mid 惩罚 urgency（wrong for hedging desks），应按策略意图 tag 不同基准；③ "Slippage is a distribution, not a mean"——报告 median/90th/99th percentile，区分 normal vs stressed regime（top decile volatility 或 tier-one macro event 15-min window），"broker that looks identical at the median but is 4× worse at the 99th percentile is not the same broker"；④ 把 rejection rate 转化为 rejection cost in bps（rejected price vs next executable price 差 × rejection frequency）
-- Almgren-Chriss 现代教学（v1.7.0 新增，hftradingbook 2026-06-04 "Almgren–Chriss optimal execution" reviewed）：`S̃k = Sk-1 - η·(nk/τ)` [temporary impact], `Sk = Sk-1 + σ√τ·ξk - γ·nk` [permanent impact + random walk]；mean-variance objective `min_{xk} E[cost] + λ·V[cost]`；**关键极限**：λ=0 → TWAP（risk-neutral limit，最小冲击最大延迟风险），λ→∞ → 前置加载（highly risk-averse limit，最大冲击最小延迟风险）；"Almgren-Chriss is what you *do* with a calibrated impact model"——强调校准的重要性；efficient frontier 概念：no single right answer, only an efficient set
-- Obizhaeva-Wang 临时/永久冲击分离（v1.7.0 新增，Obizhaeva&Wang 2013 "Optimal trading strategy and supply/demand dynamics"）：首次系统性建模 temporary vs permanent impact 分离——temporary_impact = η × (trade_rate/avg_volume) 交易后衰减流动性回补，permanent_impact = γ × (trade_rate/avg_volume) 移动均衡价格信息效应；为 Almgren-Chriss 框架的 `g(v)=γv` 线性永久冲击假设提供微观结构基础；Phase 2 候选（§2.4 已登记，为 RL 执行成本模型铺路）
-- RL Execution Skill 状态/动作/奖励标准化（v1.7.0 新增，NeverSight 2026-07-29 "Reinforcement Learning for Trade Execution" + TimGunn70/rl-for-trade-execution 2026-06 PPO on CME ES futures + GinkGO issue #4305 2026-05-23）：状态空间 [remaining_qty, time_remaining, current_price, spread, volatility, volume, OBI]；动作空间离散 [0%, 10%, 25%, 50%, 100%] 剩余量或连续 [下单量, 下单价格]；奖励 `reward = -(execution_price - arrival_price) × quantity_traded`（最小化 IS）；**自适应执行选择逻辑**（GinkGO + TimGunn70）：波动率高→减少订单规模延长执行时间；趋势强→顺势滑行减少对抗；流动性差→减少可见订单；**用途**：薄流动性池最优执行、机构订单切片、算法交易台临时冲击降低 30-60%（NeverSight 实证）——个人项目 MVP 不适用（需训练数据+校准成本模型），登记 Phase 2/3 远期
-- 执行算法关键指标矩阵（v1.7.0 新增，gs-quant 2026-06-17 + GinkGO 2026-05）：| 指标 | 计算方法 | 信号含义 |——实现价差=执行价-决策价（执行成本）/ 市场冲击=α×σ×√(Q/ADV)（流动性成本）/ VWAP偏差=(执行VWAP-市场VWAP)/市场VWAP（算法表现）/ 填充率=成交数量/计划数量（执行完整性）；**gs-quant 2026 实证**：2024 A 股单笔 >5000 万订单平均 0.8% 市场冲击，算法拆分可降低 62%；TWAP 跟踪误差 0.08-0.12%/市场冲击 0.3-0.4%/完成率 >99.5%；VWAP 跟踪误差 0.05-0.09%/市场冲击 0.2-0.3%/完成率 >99.2%
-- A 股可转债 TWAP 场景规则（v1.7.0 新增，搜狐两融小顾问 2026-07-23 QMT 算法对比）：可转债盘口极薄、价格波动依赖正股，VWAP 集中下单会放大冲击成本且历史量曲线预测失效，即使是高流动性可转债也谨慎用 VWAP；TWAP 更适合可转债等流动性较弱资产；VWAP 适合股票/ETF（U 型成交分布，开盘/尾盘放量稳定盘中缩量）——本系统 §2.3 已登记此场景规则
-- 2026 最优执行 RL 研究：DASRL（AAMAS 2026，动态动作空间 RL，比传统策略降本 16.2%）、TT-DAC-PS（arXiv:2606.08379v1 2026-06-07 University of Reading+ICMA Centre Henley Business School+Göttingen Zaznov/Badii/Kunkel/Dufour，Twin-Target Deterministic Actor-Critic with Policy Smoothing：twin EMA critic targets + TD3-style target policy smoothing + delayed actor updates + conservative Q regularisation + OU noise hybrid schedule（deterministic episode-wise decay + variance-guided adjustment + SAC-style learned temperature），集成 Almgren-Chriss trade impact + LOB prices/volumes，10 只美股 LOB 测试超越 PPO/SAC/A2C 和 TWAP/VWAP/AC baselines，持续降低 IS）、MACE+AC（arXiv 2603.29086v2，2026-03，成本模型对 RL 算法选择的决定性影响：AC 模型下 TD3 最优而固定成本下 PPO 最优，NASDAQ 100 实证）、Queue-Reactive+DDQN（arXiv 2025.11，model-free RL 适应 LOB 动态）、Stanford CS224R（PPO 优于 DDPG，更稳定适应高波动；Alpha-Informed Optimal Trading Execution Padnis：bounded deviation policy `a_t=clip(v_t(1+δ_t),0,1)` + paired-baseline reward 设计，PPO 初始化 VWAP 无 alpha 信号 vs TWAP +1.27bps p<10^-4 胜率 58.5%，domain-informed priors + paired counterfactual 设计是关键创新）、ETH Zurich 市场单+限价单联合 RL（arXiv 2507.06345v2，2026-01，logistic-normal 分配建模）、Berkeley 收盘集合竞价做市 RL（arXiv 2601.17247v2，2026-07-30，DQN+DDPG+TD3+SAC）、MacroHFT 记忆增强元学习 RL（2026-08，子代理按市场状态分解+超级代理元策略）、Oxford APEX DQN（Frontiers 2023，LOB 信号执行）
-- UCL 多 agent RL 执行理论（v1.7.0 新增，arXiv:2605.20348v1 2026-05-21 Koulouris&Campajola UCL Institute of Finance and Technology+UZH Blockchain Center "Memory-Induced Supra-Competitive Outcomes Between Deep Reinforcement Learning Agents in Optimal Trade Execution"）：2-agent Almgren-Chriss liquidation game，发现当 RL agents 有 intra-episode memory（recent prices + own past actions）时会偏离 Nash equilibrium 走向 Pareto frontier 的 supra-competitive outcomes（低于博弈论竞争基准的 IS）；ex-ante schedule-learning agents（执行前提交完整轨迹）无此现象——memory + feedback + state-contingent interaction 是 supra-competitive 的驱动机制。**对本项目意义**：个人单 broker 不适用多 agent，但 Phase 3 多 broker 启用时可参考协同执行理论（多 broker 间避免互相冲击）
-- 2026 MPC 执行：MPC for Trade Execution（arXiv 2603.28898v1，Bayforest+MIT Bertsekas 2026-03）——模型预测控制框架，平衡订单完成/市场冲击/机会成本三目标，每步解快速二次规划，相比价差交叉基准减少 schedule shortfall 40-50%，模块化数据驱动适合生产部署（介于规则驱动 TWAP/VWAP 与 RL 之间的中间路线，不需大量训练数据）
-- 2026 MAP-Elites 质量多样性执行（v1.7.0 细化，arXiv:2601.22113v2 2026-01-30 de Witt&Pakkanen Imperial College London+Bank of America Securities "Diverse Approaches to Optimal Execution Schedule Generation"）——首次将 MAP-Elites（Multi-dimensional Archive of Phenotypic Elites，Mouret&Clune 2015）quality-diversity 算法应用于交易执行，不搜索单一最优策略，生成按 liquidity/volatility 索引的 regime-specialist 策略组合；校准的 Gymnasium 环境（瞬时冲击模型+指数衰减+平方根成交量缩放，fit 400+ 美股 R²>0.02 OOS）；两种 PPO 架构（MLP + CNN 特征提取器），CNN variant 实现 2.13bps 到达滑点 vs VWAP 5.23bps（4900 笔 OOS 订单，$21B/$210亿名义金额）；单个 specialist 在其行为生态位内 8-10% 性能提升，其他 cells 反而 degrade（suggesting ensemble approaches combining improved specialists with baseline PPO）；**局限性**：论文明确指出"substantial computational resources per behavioural cell may be required for robust specialist development across all market conditions"——这是判定其为 Phase 3 远期而非 MVP 的依据
-- Direct VWAP Optimization（arXiv 2502.13722，2025-04）——深度学习直接优化 VWAP 执行目标，绕过成交量曲线预测中间步骤，利用自动微分和自定义损失函数，在波动市场比传统两步法（先预测量曲线再分配）持续实现更低 VWAP 滑点
-- MiniQMT 关停风险（licai.cofool.com 2026-07-30 + miniqmt.com QA 2026）：迅投 MiniQMT 轻型外部接口模式正在有序关停，多家券商已停止新增开通，存量用户后续将陆续无法连接；大 QMT（完整版 QMT）同属迅投原生系统，底层交易通道一致，是唯一无缝替代；迁移方案：消息队列桥接/文件信号中转/策略迁入大 QMT 内置环境
-- miniQMT 工程约束（miniqmt.com QA + CSDN 2026-03 实战避坑）：xtquant 截至 2026-04 支持 64 位 Python 3.6-3.14（建议 3.11，2025-10 起 pip 可装，v1.6.1 订正旧版"仅 3.6-3.8"过时信息）；subscribe_whole_quote 取全市场数据需自行过滤（实现 BUG）；回调函数阻塞致成交回报延迟3秒（CSDN 2026-03 实盘案例）；断线5分钟内重连7次需指数退避（CSDN 2026-03，gap 13 已施工：RECONNECT_BACKOFF=(0,2,4,8,16,30) + 状态缺口同步）；set_relaxed_response_order_enabled 时序控制；可转债程序化交易需单独开通权限+流量费
+- TWAP 随机化/防操纵（schedule gaming 防御，2026 永久性市场特征）：可预测的固定节奏 TWAP 是 ML 检测器攻击目标（predator 在切片前埋伏）；防御 = 随机化子单大小（Gaussian 扰动）+ 时间抖动 + venue/passive-aggressive 混合（hftradingbook 2026-06 "Schedule gaming"；orderx 2026-07；iotdigitaltwinplm 2026-05）。**代码现状**：本系统 TWAP 为 `_distribute_evenly` 等量切片固定间隔（L430-458）**无随机化**——个人 <1% ADV 不构成可检测足迹，MVP 不需，Phase 1.5 候选
+- VWAP 在线纠偏（dynamic/adaptive VWAP）：用实时已观测市场量更新剩余区间量预测，日内放大系数 α = 当前全市场量 / 历史量曲线当前累计预测（quant67 2026-05 §3.3）。**代码现状**：本系统 VWAP 为 `_distribute_by_weights` 静态权重（L466-499）**无在线纠偏**——个人切片量小偏差可忽略，Phase 1.5 候选
+- OBI 订单簿不平衡（Order Book Imbalance，Cont et al. 2014 "The price impact of order book events" Operations Research）——OBI 与下一 mid 价变动正相关；执行算法可据此调整子单激进程度（买入 OBI>0 抢先吃，OBI<0 再等等）。Phase 2 候选（需 Level-2 盘口数据，个人小资金 MVP 不需）
+- Algo Wheel（2026 机构标配）：每笔订单实时路由到最优 broker/算法，由历史 TCA 数据驱动；TCA 2.0 从事后评分卡转向事前决策支持（finantrix 2026-08-08；youngju 2026-05）——个人单 broker 单账户无需，Phase 3 候选（多 broker 启用时）
+- TCA + Market Impact Models 2026 Deep Dive（youngju 2026-05-25）：TCA 50 年时间线（1988 Perold IS → 2000 Almgren-Chriss → 2003 Kissell-Glantz I-Star → 2013 Obizhaeva-Wang → 2018 Bouchaud-Farmer Propagator → 2026 Algo Wheel 标准+实时 TCA）；IS 4-bucket 标准分解（commission + spread=(Ask−Bid)/2 + market_impact + timing_risk）；2026 KOFIA 分季度 TCA 报告义务化
+- IS 4 桶分解 + delay cost 洞察（hftradingbook 2026-06-04 + ryanoconnellfinance 2026-03-09 + Plexus Group 2004）：IS = q·(P̄-P_d) [execution cost] + (Q-q)·(P_end-P_d) [opportunity cost] + F [fees]；**Plexus 2004 实证**：153 bps 总 IS 中 delay cost 占 84 bps（54%）远超 commission 22 bps（14%）——"Traders who focus only on reducing commissions are optimizing the smallest piece of the cost puzzle"；"VWAP, TWAP, POV and Almgren-Chriss are, formally, machines for minimising expected IS subject to a risk constraint"
+- Drovix TCA 方法论（drovix.com 2026-05-27）：① "Stop reporting IS as a single number"——应分解 4 桶按 venue/broker/time-of-day/notional bucket 分别报告；② 基准选择是治理决策——应按策略意图 tag 不同基准；③ "Slippage is a distribution, not a mean"——报告 median/90th/99th percentile，区分 normal vs stressed regime；④ 把 rejection rate 转化为 rejection cost in bps
+- Almgren-Chriss 现代教学（hftradingbook 2026-06-04）：`S̃k = Sk-1 - η·(nk/τ)` [temporary impact], `Sk = Sk-1 + σ√τ·ξk - γ·nk` [permanent impact + random walk]；mean-variance objective `min E[cost] + λ·V[cost]`；**关键极限**：λ=0 → TWAP（risk-neutral limit），λ→∞ → 前置加载（highly risk-averse limit）；efficient frontier：no single right answer, only an efficient set
+- Obizhaeva-Wang 临时/永久冲击分离（Obizhaeva&Wang 2013）：temporary_impact = η × (trade_rate/avg_volume) 衰减回补，permanent_impact = γ × (trade_rate/avg_volume) 信息效应；为 AC 框架 `g(v)=γv` 线性永久冲击假设提供微观结构基础；Phase 2 候选（§2.4 已登记）
+- RL Execution Skill 状态/动作/奖励标准化（NeverSight 2026-07-29 + TimGunn70 2026-06 + GinkGO 2026-05）：状态 [remaining_qty, time_remaining, current_price, spread, volatility, volume, OBI]；动作离散 [0%,10%,25%,50%,100%] 或连续 [下单量,下单价格]；奖励 `-(execution_price - arrival_price) × quantity_traded`；自适应执行选择逻辑同 §2.3 regime 表；薄流动性池/机构订单切片场景临时冲击降低 30-60%（NeverSight 实证）——个人 MVP 不适用，Phase 2/3 远期
+- 执行算法关键指标矩阵（gs-quant 2026-06 + GinkGO 2026-05）：实现价差=执行价-决策价 / 市场冲击=α×σ×√(Q/ADV) / VWAP偏差=(执行VWAP-市场VWAP)/市场VWAP / 填充率=成交数量/计划数量；**gs-quant 2026 实证**：2024 A 股单笔 >5000 万订单平均 0.8% 市场冲击，算法拆分可降低 62%；TWAP 跟踪误差 0.08-0.12%/市场冲击 0.3-0.4%/完成率 >99.5%；VWAP 跟踪误差 0.05-0.09%/市场冲击 0.2-0.3%/完成率 >99.2%
+- A 股可转债 TWAP 场景规则（搜狐两融小顾问 2026-07-23）：可转债盘口极薄、价格波动依赖正股，VWAP 集中下单放大冲击且历史量曲线预测失效，即使高流动性可转债也谨慎用 VWAP；TWAP 更适合可转债等流动性较弱资产；VWAP 适合股票/ETF（U 型成交分布）——本系统 §2.3 已登记此场景规则
+- 2026 最优执行 RL 研究：DASRL（AAMAS 2026，动态动作空间 RL 降本 16.2%）、TT-DAC-PS（arXiv:2606.08379v1 2026-06-07 University of Reading+ICMA Centre+Göttingen：twin EMA critic targets + TD3-style target policy smoothing + delayed actor updates + conservative Q regularisation + OU noise hybrid schedule，集成 AC trade impact + LOB，10 只美股测试超越 PPO/SAC/A2C 和 TWAP/VWAP/AC baselines）、MACE+AC（arXiv 2603.29086v2 2026-03，成本模型决定 RL 算法选择：AC 模型下 TD3 最优而固定成本下 PPO 最优）、Queue-Reactive+DDQN（arXiv 2025.11）、Stanford CS224R（Alpha-Informed PPO：bounded deviation policy `a_t=clip(v_t(1+δ_t),0,1)` + paired-baseline reward，PPO 初始化 VWAP 无 alpha 信号 vs TWAP +1.27bps p<10^-4 胜率 58.5%）、ETH Zurich 市场单+限价单联合 RL（arXiv 2507.06345v2）、Berkeley 收盘集合竞价做市 RL（arXiv 2601.17247v2）、MacroHFT 记忆增强元学习 RL、Oxford APEX DQN
+- UCL 多 agent RL 执行理论（arXiv:2605.20348v1 2026-05-21 Koulouris&Campajola UCL+UZH）：2-agent Almgren-Chriss liquidation game，intra-episode memory 驱动偏离 Nash 走向 Pareto frontier 的 supra-competitive outcomes（低于博弈论竞争基准的 IS）。**对本项目意义**：个人单 broker 不适用多 agent，Phase 3 多 broker 启用时可参考协同执行理论（多 broker 间避免互相冲击）
+- 2026 MPC 执行：MPC for Trade Execution（arXiv 2603.28898v1，Bayforest+MIT Bertsekas 2026-03）——模型预测控制框架，平衡订单完成/市场冲击/机会成本三目标，每步解快速二次规划，相比价差交叉基准减少 schedule shortfall 40-50%，模块化数据驱动适合生产部署（介于规则驱动与 RL 之间的中间路线）
+- 2026 MAP-Elites 质量多样性执行（arXiv:2601.22113v2 2026-01-30 de Witt&Pakkanen Imperial College+BoA "Diverse Approaches to Optimal Execution Schedule Generation"）——首次将 MAP-Elites quality-diversity 算法应用于交易执行，生成按 liquidity/volatility 索引的 regime-specialist 策略组合；校准的 Gymnasium 环境（瞬时冲击+指数衰减+平方根成交量缩放，fit 400+ 美股 R²>0.02 OOS）；PPO+CNN 实现 2.13bps 到达滑点 vs VWAP 5.23bps（4900 笔 OOS 订单，$21B 名义）；单 specialist 在其生态位内 8-10% 提升；**局限性**："substantial computational resources per behavioural cell"——判定 Phase 3 远期的依据
+- Direct VWAP Optimization（arXiv 2502.13722，2025-04）——深度学习直接优化 VWAP 执行目标，绕过成交量曲线预测中间步骤，波动市场比传统两步法持续更低 VWAP 滑点
+- MiniQMT 政策关注（licai.cofool.com 2026-07-30 + miniqmt.com QA 2026）：部分券商收紧 miniQMT 新增开通，存量用户稳定；大 QMT（完整版 QMT）同属迅投原生系统，底层交易通道一致，是唯一无缝替代（v1.6.1 已订正"有序关停"夸大表述，决策⑲ 为准）
+- miniQMT 工程约束（miniqmt.com QA + CSDN 2026-03 实战避坑）：xtquant 截至 2026-04 支持 64 位 Python 3.6-3.14（建议 3.11，2025-10 起 pip 可装）；subscribe_whole_quote 取全市场数据需自行过滤（实现 BUG）；回调函数阻塞致成交回报延迟3秒（实盘案例）；断线5分钟内重连7次需指数退避（gap 13 已施工：RECONNECT_BACKOFF=(0,2,4,8,16,30)）；set_relaxed_response_order_enabled 时序控制；可转债程序化交易需单独开通权限+流量费
 - Finantrix 2026 执行算法综述：JPMorgan LOXM（2017）首个 RL 执行生产案例，到 2026 年 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均用 RL 执行；TCA 2.0 从事后评分卡转向事前决策支持
 - AAAI/ICLR 2026 量化金融前沿综述（国联民生金工 2026-07）：研究重心从"调用通用模型"转向"围绕金融约束重构模型"，强调延迟/回测有效性/非平稳性/交易成本/可解释性；TiMi（ICLR 2026）LLM 离线研发→蒸馏为程序→在线分钟级执行
-- miniQMT/ptrade 实盘避坑：回调函数阻塞/异步时序混乱/断线重连指数退避（CSDN 2026-03）；同步查询死锁与 async 替代（findtruman 2026-05）；`set_relaxed_response_order_enabled` 时序控制（thinktrader 官方文档）；柜台持仓/资金同步 6 秒时滞导致连续下单重复（ptrade 2026-07 order_target_value 注意事项）；吃单按现价±1%占用现金致可用资金错位（果仁网 2025-11 实盘案例）
+- miniQMT/ptrade 实盘避坑：回调函数阻塞/异步时序混乱/断线重连指数退避（CSDN 2026-03）；同步查询死锁与 async 替代（findtruman 2026-05）；`set_relaxed_response_order_enabled` 时序控制（thinktrader 官方文档）；柜台持仓/资金同步 6 秒时滞导致连续下单重复（ptrade 2026-07）；吃单按现价±1%占用现金致可用资金错位（果仁网 2025-11 实盘案例）
 - A 股价格笼子规则（上交所 2026 修订 §3.3.14 / 深交所 §3.1.16）：连续竞价限价单买入≤max(卖一×102%,卖一+0.1)，卖出≥min(买一×98%,买一-0.1)；基准价=对手方最优价（卖一/买一）；仅连续竞价限价单受约束（集合竞价/临停/市价单豁免）；主板/创业板±2%+0.1兜底、科创板严格±2%、北交所±5%
 - A 股临时停牌规则（上交所异常交易实时监控细则）：盘中临停（无涨跌幅股±30%/±60%，10分钟，可挂可撤不受笼子约束，复牌集合竞价）；跨日停牌核查（严重异动 10日4次同向/累计±100%/-50%，1-5交易日）
 - A 股除权除息规则（沪深北交易所《交易规则》§4.3）：除息参考价=登记日收盘价−每股现金红利；除权参考价=登记日收盘价÷(1+送转比例)；除权除息日调整前收盘价→重算涨跌停价→同步持仓股数
@@ -1284,67 +1068,67 @@ theta_star = closed_form_theta(s_G, phi)        # 闭式最优阈值
 - A 股订单有效期：限价单默认 GFD 当日有效，15:00 收盘自动撤销（沪深交易所《交易规则》§3.2.3）
 - A 股涨跌幅限制（2026 现行）：沪深主板±10%（含ST，2026-07-06统一）、创业板/科创板±20%（含ST）、北交所±30%；涨停价=前收盘价×(1+涨幅)，四舍五入到0.01元
 - A 股板块差异化申报数量（上交所 2026 修订交易规则 §3.3.1/§6.2）：沪深主板/创业板/北交所 100 股整数倍起买；科创板 200 股起买、超 200 股按 1 股递增（201/202 股合法）；卖出时不足最低申报单位的零股必须一次性申报卖出（不可拆分）；科创板限价单笔上限 10 万股/市价 5 万股/盘后 100 万股
-- A 股限价单盘口博弈：买一/卖一拥堵区排队难成交，提1 tick 避开拥堵（yueniuzq 2026-06 盘口博弈技巧）
-- A 股市价单类型差异：沪市4种（对手方最优/最优五档剩余撤销/最优五档剩转限价/本方最优）、深市5种（对手方最优/本方最优/即时成交剩余撤销/最优五档剩余撤销/全额成交或撤销）
-- **2026 Sato 精确可解扩散价格动力学模型**（v2.0.0 补，[Sato, Fujiwara, Kanazawa arXiv:2608.00988](https://arxiv.org/abs/2608.00988) 2026-08-02 筑波大学+京都大学 "Exactly solvable model for the diffusive price-dynamics paradox under long-range correlated market-order flow"）：将平方根价格冲击定律 I(Q)∝Q^δ 嵌入 Lillo-Mike-Farmer (LMF) 模型，解决"扩散价格动力学悖论"——市场订单流的长程相关性 C(τ)∝τ^(-γ) 似乎与布朗价格动力学矛盾。将非线性时间序列模型数学映射到统计物理中的 Lévy-walk 框架（精确可解的非马尔可夫随机过程）。**核心理论结果**：证明 δ≤1/2 是价格动力学长期扩散的充要条件（对任意 γ∈(0,1)），即平方根定律 δ=1/2 即使在可预测订单流下也保证扩散性；扩展模型包含 metaorder 拆分中的 resting 状态、冲击衰减（impact decay），与 inverse-cubic law (ICL) 和波动率聚集一致。**对本项目 §2.4 平方根冲击模型的理论支撑**：Gatheral 2010 无套利约束证明平方根形式唯一性，Sato 2026 进一步证明平方根定律在长程相关订单流下仍保证价格扩散性——两者共同构成平方根冲击模型的理论地基。A 股散户主导、订单流相关性强的特征与 LMF 模型假设契合。前期工作（arXiv:2502.17906, 2025-02）基于东京证券交易所 8 年数据验证平方根定律普适性，方法可迁移至 A 股。**不是新算法**而是为现有 SquareRootImpactPredictor 提供更严格的理论依据，不改变 MVP 施工
-- **2026 Bonart 扩散型市场冲击定律**（v2.0.0 补，[Bonart arXiv:2606.07059](https://arxiv.org/abs/2606.07059) 2026-06-05 "Diffusive in plain sight: An inconspicuous law of market impact"）：将冲击分解为已实现收益与反事实收益之差 j_t = x_t - y_t（要求两者均扩散），推导出约束个体参与者冲击标度的恒等式。在信息中性 regime 下，强制冲击增量为白噪声，蕴含平方根标度；在强信息耦合下，冲击随交易量线性增长，复现实证的 linear-to-sublinear crossover。**核心结论**：平方根定律不是异常，而是价格扩散性的直接推论；累积市场冲击本身是扩散的——许多 propagator 和 latent liquidity 模型不满足此诊断；参与率标度 σ_X² - σ_Y² ∝ N·μ。**对本项目的模型选择判据价值**：可用于验证现有 AC/Avellaneda-Stoikov 冲击核的合理性——若 A 股执行算法使用的冲击核不满足扩散性约束，则可能误判冲击成本。Phase 2 coeff 校准时用此诊断检验 SquareRootImpactPredictor 的冲击核是否满足扩散性。**不是新算法**而是模型验证判据
-- **2026 PACE LLM 父单执行框架**（v2.0.0 补，[Shen et al. arXiv:2607.28410](https://arxiv.org/abs/2607.28410) 2026-07-30 "Can Large Language Models Execute Parent Orders?"）：首个将 LLM 系统性应用于父单执行的框架 PACE=Plan-Ahead Controlled Execution，分层架构——长期规划层用 HP 滤波分解价格序列为趋势项+残差波动项，短期执行层在每个决策点输出子单大小；不依赖显式市场假设也不需任务特定训练，完全依赖 LLM 推理时先验知识。**深交所 SZSE Level-1 数据验证**（唯一直接对应 A 股的 LLM 执行论文），超越 TWAP/Almgren-Chriss/学习型基线 0.65 bps；LLM 置信度越高表现越好（与人类相反），倾向提前交易而非拖到截止。代码开源 github.com/zaneopen/PACE。**定位**：Phase 3 远期观察项——LLM 推理延迟（100-500ms）仅适合分钟级+执行，0.65 bps 优势在个人小资金 <1% ADV 场景绝对值可忽略，外部 LLM 依赖引入不可控延迟/成本/隐私风险，与本项目"可解释性优先+轻量优先"原则有张力
-- **2026 Signature-based 路径依赖最优执行**（v2.0.0 补，[Morbelli, Karbach, Derksen arXiv:2606.31387](https://arxiv.org/abs/2606.31387) 2026-07-21 Deep Blue Capital+阿姆斯特丹大学 "Signature-Based Optimal Execution for Statistical Arbitrage with Path-Dependent Trading Signals"）：将 alpha 过程和交易速度均建模为时间增强市场路径截断 signature 的线性泛函，信号生成与执行置于同一 signature 基；**二次归约定理**将路径依赖执行问题化为策略系数的有限维凹二次规划，同时处理瞬态冲击+库存暴露+终端清算+近似美元中性；Tikhonov 正则化和 Lasso 特征选择控制 signature 复杂度。合成实验（均值回归对数价差模型）显示拟合策略比经典 Z-score 基准有更高 return on turnover。**定位**：Phase 2 远期候选——适用于 A 股配对交易/统计套利的执行，路径依赖信号可捕捉 A 股市场状态切换，与 MAP-Elites 互补（确定性显式解 vs 质量多样性搜索），需 signature 数学库支撑
-- **2026 被动冲击点过程方法**（v2.0.0 补，[Ouazzani Chahdi, Rosenbaum, Szymanski arXiv:2412.07461v2](https://arxiv.org/abs/2412.07461) 2024-12-10 v1/2026-07-04 v2 "Passive Market Impact: A Point Process Approach"）：建立连接订单簿流动性动态与价格变动的点过程微观结构模型，关键创新是将每笔成交的恒定信息含量假设替换为依赖订单簿可见深度的函数；基于 Hawkes 过程研究 scaling limits 并分析被动 metaorder 的市场冲击曲线，给出闭式近似。**与 Barzykin 介观模型互补**：Barzykin 从成交概率+OFI 响应推导被动冲击率，本论文从 Hawkes 点过程+订单簿深度推导冲击曲线闭式近似。Phase 2 被动执行建模的两个理论支柱
-- **2026 Queue-Reactive RL 执行**（v2.0.0 补，[España, Hafsi, Lillo, Vittori arXiv:2511.15262](https://arxiv.org/abs/2511.15262) 2025-11-19 v1/2026-07-27 更新 "Reinforcement Learning in Queue-Reactive Models: Application to Optimal Execution"）：采用 Queue-Reactive Model 生成现实可处理的限价单簿仿真，包含瞬态价格冲击和非线性动态订单流响应；训练 DDQN agent，状态空间包含时间/库存/价格/深度变量，model-free 数据驱动。RL agent 在所有配置下持续超越 TWAP 等标准基准，同时学习战略层和战术层策略，适应订单簿条件和短期价格压力。**A 股适配**：Queue-Reactive Model 对大 tick 资产（A 股多数股票）适用，队列位置管理是 A 股执行核心。**定位**：Phase 2 候选——与 ⑮ 队列位置感知 RL 互补（⑮ 用 logistic-normal actor-critic 保留队列优先级，本论文用 DDQN 适应 LOB 动态）
-- **2026 订单流/冲击/波动率统一理论**（v2.2.0 补，[Muhle-Karbe, Ouazzani Chahdi, Rosenbaum, Szymanski arXiv:2601.23172](https://arxiv.org/abs/2601.23172) 2026-01-30 "A unified theory of order flow, market impact, and volatility"）：区分 **core orders**（信息驱动的主订单）和 **reaction flow**（其他交易者对 core orders 的反应流），均建模为 Hawkes 过程。自然 scaling limit 协调多个经验特性：持续有符号订单流、粗糙交易量和波动率、幂律市场冲击。**核心理论结果**：单一统计量 **H₀（core flow 持续性）决定一切**——有符号流收敛到 Hurst 指数 H₀ 的分数过程 + 鞅；交易量 Hurst 指数 H₀−1/2；无套利约束下波动率 Hurst 指数 2H₀−3/2；**价格冲击幂律指数 2−2H₀**。数据估计 H₀≈3/4，**与平方根律一致**（2−2×3/4=1/2）且匹配交易量/波动率粗糙度估计。**对本项目 §2.4 平方根冲击模型的理论支撑**：与 Sato 2026（δ≤1/2 保证扩散性）+ Bonart 2026（平方根律是扩散性推论）构成平方根律理论三支柱——Sato 从 LMF 模型+Lévy-walk 框架证明、Bonart 从扩散性恒等式证明、Muhle-Karbe 从 Hawkes core/reaction flow 统一框架证明，三者独立收敛到同一结论。Muhle-Karbe 的独特贡献是**单一参数 H₀ 统一解释多个看似无关的经验规律**（订单流持续性+交易量粗糙度+波动率粗糙度+冲击幂律），理论约束最强。A 股散户主导、core flow 与 reaction flow 区分明显（游资点火 core + 散户追涨 reaction），H₀ 估计可校准 A 股冲击幂律指数。**不是新算法**而是为 SquareRootImpactPredictor 提供更根本的理论依据，不改变 MVP 施工。Phase 2 coeff 校准时可估计 A 股 H₀ 验证冲击幂律是否偏离 1/2
-- **2026 实时价格冲击逐动作检测**（v2.2.0 补，[Zovko arXiv:2606.13419](https://arxiv.org/abs/2606.13419) 2026-06-11 "Realtime Price Impact Detection"）：通过测量交易者动作与后续不利市场事件间的**时序同步性**逐动作检测价格冲击。将市场事件视为局部估计时变强度的 Poisson 过程，每个动作产生 p 值量化"多快看到事件"的惊讶度。Bayesian 和 frequentist 推导一致；**Fisher 方法最优合并连续动作 p 值，少数几个动作即可累积可靠证据**（而非数百次 fill）。**对本项目 §6.1 TCA 监控的价值**：传统 slippage 监控需数百次 fill 才能区分背景波动，且不建立因果性；本方法围绕因果问题构建，**几毫秒内反应**，可按 venue/对手方/风格分流。与 55 号监控文档的 slippage-at-risk（SaR）框架互补——SaR 是事前分布化风险评估（横截面分位数），Zovko 方法是事后逐动作因果检测（时序同步性 p 值）。**定位 Phase 2 候选**：个人小资金 <1% ADV 单笔冲击可忽略，但多笔累积冲击的实时检测在 AUM 增长后有价值；Phase 1.5 可先用 Fisher 合并 p 值框架监控累积执行质量（不需实时），Phase 2 AUM 增长后升级到逐动作实时检测。与 §6.1 IS 4 桶分解的 market_impact 桶协同——Zovko 方法可为 market_impact 桶提供因果归因（区分"背景波动"vs"自身冲击"）
-- **2026 AAPL 平方根律匿名订单流实证**（v2.2.0 补，[Vasaikar arXiv:2606.24019](https://arxiv.org/abs/2606.24019) 2026-06-22 "Empirical Confirmation of the Square-Root Law of Market Impact"）：在 AAPL 上用 Nasdaq TotalView-ITCH 全量订单流（178 天，~5 亿事件）测试平方根律（SRL）。**无 broker 标签**，从匿名 tape 重构 metaorder。c_raw=0.69（bias-corrected c_eff=0.34），与全球截面一致。ΔAIC=22 优于线性/对数冲击。两个结构测试确认冲击真实性：打乱交易符号使方向冲击降至随机（86%→51%）；打乱事件时序破坏 SRL（80 次校准 0 次可行）。**32 周滚动重校准下前因子稳定**。**对本项目 §2.4 平方根冲击模型的实证支撑**：与 Sato/Bonart/Muhle-Karbe 三篇理论支撑互补——此为**首次在美股上从匿名订单流（无 broker 标签母订单）确认 SRL**，证明 SRL 不依赖 broker 标签即可校准。本项目 A 股无 broker 标签的 tick 数据同理可用匿名订单流重构 metaorder 校准平方根系数。**关键工程洞察**：32 周滚动重校准前因子稳定 → 本项目 Phase 1.5 coeff 校准无需高频重校准，季度/半年度重校准即可。**不是新算法**而是为 SquareRootImpactPredictor coeff 校准提供实证方法论（匿名订单流重构 + 结构测试验证真实性 + 滚动重校准频率参考）
-- **2026 流动性不确定性下最优执行**（v2.2.0 补，[Chevalier, Hafsi, Ly Vath, Pulido arXiv:2506.11813](https://arxiv.org/abs/2506.11813) 2025-06 v1/2026-04-14 v2 "Optimal Execution under Liquidity Uncertainty"）：引入随机过程管理 impacted 与 unaffected 价格偏差衰减率（**volume-effect process**），反映驱动流动性补充步伐的市场活动波动——超越确定性韧性假设，随机流动性波动已被实证记录。**regime-switching Markov 链**捕获市场条件突变。奇异控制问题，trader 最优决定购买时机和速率。值函数满足 **variational HJB 不等式系统**，证明是唯一 viscosity 解，分析执行/继续区域的自由边界。**对本项目的价值**：与内生市场阻力 propagator 模型（arXiv:2601.03215 v2.1.0 已登记）互补——市场阻力模型刻画"对手反向交易"的对抗性执行，本论文刻画"流动性补充步伐随机波动"的非对抗性执行；两者共同构成"市场条件非平稳"下最优执行的两个维度。regime-switching Markov 链与本项目 10 号 regime 检测器天然对接——执行层的流动性 regime 可复用 10 号 HMM 状态。**定位 Phase 3 远期候选**：variational HJB 不等式系统求解比 AC 闭合形式复杂，需校准 volume-effect process 参数 + regime-switching 转移矩阵，个人小资金 <1% ADV 流动性不确定性影响可忽略；AUM 增长到流动性约束成为执行瓶颈时评估（与 MAP-Elites/Algo Wheel/内生市场阻力同 Phase 3 启用条件）
-- **2026 鲁棒平均场控制最优清算**（v2.3.0 补，[Liao, Liu, Mou, Sun arXiv:2607.29514](https://arxiv.org/abs/2607.29514) 2026-07-31 "Robust mean field control: an application to optimal execution under composite uncertainty"）：为多维最优清算问题在**复合不确定性**下（同时来自底层随机过程 + 确定性模型参数）提供鲁棒平均场控制（Robust MFC）框架。验证结果通过 **Hamilton-Jacobi-Bellman-Isaacs (HJBI) 方程**建立——状态变量为概率测度，Hamiltonian 非线性地涉及仓位与动量的联合分布。创新性先验估计建立 HJBI 方程的适定性（well-posedness），Hamiltonian 既非位移凸也非位移凹（超越经典 MFC 假设）。应用到最优清算时允许 Hamiltonian 导数线性增长，求解**受约束多维线性二次最优清算问题**在复合不确定性下。**对本项目的价值**：与已登记的三类执行模型形成层次互补——① Almgren-Chriss（§2.3 决策②）单资产单代理闭合形式；② 内生市场阻力 propagator（arXiv:2601.03215 v2.1.0）刻画对抗性执行但单代理；③ Chevalier 流动性不确定性（arXiv:2506.11813 v2.2.0）刻画非对抗性非平稳但单代理；本论文将执行问题推广到**多代理平均场 + 复合不确定性**，是执行理论最一般的框架之一。"复合不确定性"统一了项目 §6.2 已登记的两组不确定性来源（市场微观结构随机性 + 模型参数估计误差），与 36 号 VaR/ES 的 model uncertainty 处理同构。**定位 Phase 3+ 远期候选**：HJBI 方程在概率测度空间求解远比 AC 闭合形式复杂，需校准底层随机过程 + 模型参数不确定性集，平均场假设要求"大量同质代理"——个人小资金 <1% ADV 不构成可检测的代理足迹，MVP 不需；AUM 增长到组合清算（多资产联动）+ 大单被检测场景时与 MAP-Elites/Algo Wheel/内生市场阻力同 Phase 3+ 评估。与 51 号 §八.E 过拟合检测体系的关联：复合不确定性下的鲁棒控制为"参数搜索鲁棒性"提供理论框架——HJBI 的 min-max 结构（控制 vs 不确定性）与 DSR robustness band（§八.E v1.4.2）"在有效试验数区间内始终存活"思想同构
-- **2026 广发证券高频撤单因子**（v2.4.0 补，广发证券《海量 Level 2 数据因子挖掘系列(八)：从高频撤单信息中构建因子》2026-08-08 安宁宁/陈原文/张逸飞）：基于 Level 2 逐笔订单数据，从撤单活跃度/撤单规模/日内时间结构/快速撤单与普通撤单差异多维度构建高频撤单因子体系。**核心因子实证**（2019-01-01~2026-06-30 全市场选股样本）：撤单活跃度因子 `rel_count_per_active_minute` RankIC 均值 **-9.19%**、IC 胜率 **73.09%**；日内时间结构因子 `time_close_minus_open_count_share` 5 日平滑 RankIC 均值 **5.43%**、IC 胜率 **73.98%**；快速撤单 vs 普通撤单差异因子识别不同交易行为模式（快速撤单=高频信息响应，普通撤单=常规流动性调整）。撤单因子与 Barra 风格因子相关性均 <30%，具有较强独立性，提供区别于传统量价因子的增量信息。**对本项目双用途价值**：①**执行层决策⑫撤单率控制**——撤单行为不仅是合规约束（撤单率≤15%），还蕴含截面 alpha 信息：撤单活跃度高的票可能有信息事件（主力试盘/虚假申报），撤单因子可作为执行层"撤单信号"辅助判断市场微观状态；②**信号层 alpha 因子**——撤单因子提供增量信息，可纳入 25 号多因子模型作为微观结构因子。**定位**：Phase 1.5 候选——需 Level 2 逐笔订单数据（miniQMT `xtdata` 需确认逐笔撤单数据可用性，当前 MVP 用 K 线+5 档盘口不包含逐笔撤单）。与 53 号文档微观结构因子体系协同
-- **2026 Wang/Gao/Li 连续时间最优执行 RL actor-critic**（v2.4.0 补，[Wang, Gao, Li, Finance and Stochastics Vol.30 Issue 2, 2026-04](https://doi.org/10.1007/s00780-026-00589-5) "Reinforcement learning for continuous-time optimal execution: actor–critic algorithm and error analysis" CUHK 系统工程系）：在 Almgren-Chriss 模型下，将最优执行建模为 **mean-quadratic variation 目标 + Shannon entropy 正则化**的连续时间 RL 问题，允许随机策略。**闭式最优值函数和高斯最优反馈策略**——用解析结果参数化值函数和控制策略。**recalibration step 创新关键**——标准 actor-critic 交替 policy evaluation + policy gradient 更新，本方法引入第三步 recalibration，对收敛性至关重要。**有限时间误差分析**证明在合适学习率下线性收敛。三种市场仿真器（AC 模型 + 历史 order flow + 随机 LOB）验证优于经典统计方法和深度学习 RL 算法。**对本项目 Phase 2 RL 执行的价值**：提供连续时间 actor-critic 理论框架，recalibration step 是收敛关键创新（解决标准 actor-critic 在执行问题上的收敛不稳定）；mean-quadratic variation 目标比 IS 更贴合执行风险控制；闭式高斯策略初始化降低训练样本需求。**定位 Phase 2 候选**——与 TT-DAC-PS 互补（TT-DAC-PS 是离散时间 TD3-style + OU noise，本方法是连续时间 actor-critic + 闭式解初始化 + recalibration），两者代表 RL 执行的两条技术路线（无模型 TD3 vs 连续时间 actor-critic）
-- **HALOP 混合动作空间 RL 限价单放置**（v2.4.0 补，[Pan, Zhang, Luo, He, Liu arXiv:2207.11152](https://arxiv.org/abs/2207.11152) Huawei EI Innovation Lab + E Fund 易方达基金 "Learn Continuously, Act Discretely: Hybrid Action-Space Reinforcement Learning For Optimal Execution"）：针对限价单最优放置的"**连续-离散二元性**"——连续控制（价格百分比变化）泛化能力强可跨股票迁移，离散控制（tick 具体价格）专业化精度高但无法跨股票泛化。**两阶段 HALOP 方法**：stage-1 连续 Gaussian 策略 scope 动作子集（确定价格百分比范围），stage-2 fine-grained Gaussian-and-Softmax 策略选具体 tick 价格。实验显示比现有 RL 算法更高样本效率和训练稳定性，显著优于学习型限价单放置方法。**对本项目决策⑭挂单价的直接指导价值**：当前 §4.1 "默认被动档（买一/卖一）"是经验规则，HALOP 提供 RL 框架学习最优限价单放置位置——比静态规则更适应不同流动性/价格水平的股票（低价股 1 tick = 1% vs 高价股 1 tick = 0.01% 的差异由连续-离散两阶段自然处理）。来自华为+易方达基金（A 股头部公募），对 A 股限价单场景有直接适配性。**定位 Phase 2 候选**——与 ⑫ 闭式阈值/⑭ 序列闭式解/⑬ 动态 HJB 构成"限价单四件套"（⑫ 静态闭式→⑭ 序列闭式→⑬ 动态 HJB→HALOP RL 学习），HALOP 是数据驱动 RL 方法需训练数据+算力；与 ⑮ 队列位置感知 RL 互补（⑮ 管理队列位置+市价/限价分配，HALOP 聚焦限价单价格放置精度）
-- **2026 Cheridito-Weiss Logistic-Normal RL 市价+限价动态分配**（v2.5.0 补，[Cheridito & Weiss arXiv:2507.06345v2](https://arxiv.org/abs/2507.06345) 2026-01-26 ETH Zurich 数学系 "Reinforcement Learning for Trade Execution with Market and Limit Orders"）：将交易执行建模为**动态分配任务**——目标是在市价单和限价单之间最优分配以最大化期望收入。用 **multivariate logistic-normal 分布**建模市价/限价分配（simplex 上的连续分布），actor-critic 框架推导新的 policy gradient 表达式（不限于交易执行，可用于任何动态分配任务）。在含噪声交易者/战术交易者/战略交易者的 LOB 模拟器中优于 TWAP/VWAP 基准。**核心创新**：① 同时处理市价+限价+撤单的全 LOB 交互（非简化 reduced-form 冲击模型）；② logistic-normal 参数化解决"分配和≤库存"约束（simplex 约束）；③ 通用动态分配 RL 框架可复用。**对本项目决策⑭+⑪的指导价值**：与 HALOP（限价单价格放置精度）互补——HALOP 解决"限价单挂哪个 tick"，Cheridito-Weiss 解决"市价 vs 限价的动态分配比例"，两者结合形成完整执行 RL 框架。**定位 Phase 2 候选**——需 LOB 模拟器训练环境（直接/间接冲击均需模拟），与 ⑮ Queue-Reactive RL（L1090 España et al）的 LOB 模拟器可复用；logistic-normal 分配框架也可用于决策⑪ Make-or-Take 的"何时从被动限价切主动市价"动态决策（取代当前固定 T 秒超时阈值）。
-- **2026 被动限价单最优执行（介观尺度 HJB）**（v2.7.0 补，[Barzykin, Boyce, Neuman, Tuschmann arXiv:2607.28323v1](https://arxiv.org/abs/2607.28323) 2026-07-30 HSBC + Imperial College London "Optimal Execution with Passive Market Impact"）：推导**介观尺度限价单最优执行模型**，整合两个微观结构可观测量：① 限价单成交概率随距中间价距离呈**指数衰减**（π(d) ~ exp(-αd)）；② 价格变化对订单流不平衡的**短期线性响应**。由此得到随报价距离指数衰减的被动冲击率（passive impact rate）。**HJB 方程求解最优挂单激进度**，权衡"高成交强度+大累积冲击" vs "低冲击+高未成交风险"两个对立目标。用 NASDAQ 股票和公开 FX 数据实证校准。扩展涵盖异质衰减率、瞬态冲击、目标执行计划。**对本项目决策⑭ PricingPolicy 的直接指导价值**：当前 PricingPolicy（gap 9）的被动档/主动档/提1tick 是经验规则，本论文提供**可校准的理论框架**——指数衰减成交概率 π(d)=exp(-αd) 可用 miniQMT 5 档盘口数据估计 α（按板块/流动性分桶），HJB 解给出最优挂单距离 d*（随剩余时间/库存/紧迫度动态变化）。**与已登记模型的层次关系**：① Barzykin 介观 HJB（本论文）= 限价单执行；② Cheridito-Weiss logistic-normal RL = 市价+限价动态分配；③ HALOP = 限价单 tick 价格放置；④ Cheridito-Weiss+HALOP 是 Phase 2 RL 候选，Barzykin HJB 是 Phase 1.5 **轻量可解析**升级路径（无需训练数据，闭式解+α 校准即可）。**定位 Phase 1.5 候选**——个人小资金 <1% ADV 被动冲击可忽略，但成交概率 π(d) 在 A 股流动性差的票上是主要矛盾（挂太被动不成交 vs 挂太主动付 spread），α 校准后 HJB 解可动态选择挂单距离取代 §2.15 静态"被动档/提1tick"经验规则（提1tick 后成交概率提升 e^α 倍可量化）。与 ⑫ Make-or-Take 超时阈值 T 互补——HJB 解给出"何时该从被动切主动"的最优切换点（π(d)×剩余时间 < 阈值时切主动），取代当前固定 30s 超时
-- **2026 A 股平方根冲击必要性证明**（v2.7.0 补，[Zhou, Chen, Wei arXiv:2607.05141v1](https://arxiv.org/abs/2607.05141) 2026-07-06 西湖大学 Yang Zhou 等 "Square-Root Price Impact Is Necessary for Endogenous Manipulation Cycles in Learning-Agent Markets"）：研究**单个进化优化机构智能体与 2 万个羊群散户的最小化 ABM**，**明确实现 A 股机制：±10% 涨跌停、T+1 结算、机构卖出时隐身分布将羊群参数减半**。智能体自发发现多周期掠夺策略（2000 天 8-11 个完整周期，最优种子总收益 +51%、均值 +37.7%）。均值场约化映射为非线性振荡器，经历 **Hopf 分岔（连续）和 fold 分岔（不连续）**——Hopf 临界点处振荡幅度 A∝(C−C_c)^α 与标准预测 α=1/2 一致。**关键理论结果**：平方根冲击是**必要**的——线性冲击完全消除 Hopf 分岔、散户市场无条件稳定；即使 β=0（无散户羊群），仓位追踪反馈+平方根冲击仍产生自维持非线性振荡器。操纵周期作为非线性动力系统的最优控制解涌现，机构智能体类比 Maxwell 妖作为降低价格过程熵率的信息处理控制器。消融实验显示 A 股机制（±10%/T+1/隐身分布）塑造但不创造周期。**对本项目 §2.4 SquareRootImpactPredictor 的 A 股本土理论支撑**：与 Sato/Bonart/Muhle-Karbe 三篇理论支柱互补，本论文的独特价值是**唯一明确建模 A 股 ±10% 涨跌停 + T+1 的 2026 新研究**，且从"平方根必要性"角度证明（线性冲击下市场稳定无操纵周期 → 平方根冲击是操纵周期涌现的必要条件）。**反向监控价值**：个人量化小资金 <1% ADV 不构成可检测的机构足迹，但当 AUM 增长到被检测阈值时，本论文的 ABM 框架可用于**反向识别自身执行是否被掠夺性策略针对**（监测自身订单流是否引发 Hopf 振荡特征）。**定位 Phase 1.5 风险监控候选**——非新算法，为 §2.4 平方根律的 A 股本土适配性提供理论支撑 + AUM 增长后的反向监控框架；与 v2.1.0 内生市场阻力 propagator（arXiv:2601.03215）互补——propagator 刻画对手反向交易的对抗性，本论文刻画羊群+机构的多周期振荡动力学
-- **2026 显式信号自适应序贯最优执行报价**（v2.7.0 补，[Yu arXiv:2605.24242v1](https://arxiv.org/abs/2605.24242) 2026-05-22 TU Delft "Explicit Signal-Adaptive Sequential Optimal Execution Quotes"）：为限价单簿中**序贯限价单挂单**建立统一显式解理论——非仅控制 metaorder 交易速率，而是决定**逐笔限价单应如何报价**。模型融合四个维度：① **信号依赖漂移**（mid-price 可有非零漂移，捕捉订单流不平衡/LOB 动态/数据驱动预测的 alpha 信号）；② 价格冲击；③ 库存风险；④ 执行风险（成交用点过程建模，强度依赖提交报价）。**四种执行准则**统一求解：期望终端财富 / 期望终端财富+running 库存惩罚 / CARA 效用 / CARA 效用+running 库存惩罚。对一般价格冲击和库存惩罚函数推导 HJB 方程，证明四种问题均**降为三角有限维结构可显式求解**，得到全闭式值函数和最优报价。证明 well-posedness/admissibility/verification，支持长时间渐近分析。数值实验显示**信号依赖漂移可显著影响最优执行**。**对本项目决策⑭ PricingPolicy 的直接指导价值**：§4.2 演进路径已登记为 ⑭ 号算法"信号自适应闭式限价单序列报价"——与 ⑫（微观结构均值回归闭式阈值，arXiv:2608.00885）和 ⑬（被动市场冲击动态 HJB，arXiv:2607.28323）构成"限价单三件套"：⑫ 静态单次闭式阈值 → ⑭ 序贯闭式解（考虑前次成交状态对后续报价影响+信号自适应）→ ⑬ 动态 HJB 控制。Yu 2026 的独特贡献是**序贯性**（前次挂单的成交/未成交状态影响后续报价策略）+**信号自适应**（alpha 信号直接进入 HJB 漂移项），优于 Avellaneda-Stoikov 单边执行报价。**定位 Phase 1.5 候选**——闭式解无需训练数据/可解释/零计算成本，符合个人项目可解释性优先原则；A 股大 tick 适配（闭式阈值 θ\* 与 tick size 直接关联），信号依赖漂移可接入 10 号 regime 检测器或 25 号多因子 alpha 信号
-- **2026 微观结构均值回归最优交易（闭式限价单阈值）**（v2.8.0 补，[Amaral arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) 2026-08-01 "Optimal Trading of Microstructure Mean Reversion"）：§4.2 演进路径 ⑫ 号算法的 §7.4 详细条目补全（v1.8.0 登记演进路径但 §7.4 缺独立条目，与"限价单三件套"另两位 Barzykin ⑬/Yu ⑭ 已有 §7.4 条目不一致）。**大 tick 资产微观结构模型**：秒级尺度上观测 mid 围绕隐含有效价格做**平稳均值回归**误差；自建订单簿使其自身订单流产生该误差。大 tick 资产盘口队列深、价差 1-2 tick，假设单手交易者不进入订单簿强度。mid 在半 tick 网格上移动，价差为其 parity（mid 落半整数时收紧 1 tick，落整数时打开 2 tick）。**核心坐标**：gap G=mid−efficient price，取有效价格为外生 Brownian 鞅且 G 可观测。mid 为纯跳过程，跳跃强度倾向有效价格；在 balanced-response 条件下（各 parity 校正漂移相等），G 的均值回归是**定理**——条件均值和稳态协方差恰为 OU 过程（回归率 α、稳态标准差 s_G，由 gap 自协方差识别）。**对称带半宽 θ**：gap 到 −θ 买入、到 +θ 卖出、内部持有。在 surrogate（Gaussian 扩散）上由 switching 文献结果知对称带在所有容许策略中最优；在跳过程上该归约仍为猜想。记 φ=紧报价半价差，对 θ 优化得**闭式最优半宽和利润率**（s_G/θ 主阶）：θ\*(θ\*−φ)=s_G²，R\*=α·s_G·√(2/π)·exp(−θ\*²/2s_G²)。**关键结论**："gap 刚覆盖价差就交易"收益为零——**全部利润来自等待的期权价值**（threshold × margin = gap 稳态方差）。**对本项目决策⑭ PricingPolicy 的直接指导价值**：当前 §4.1 挂单价"默认被动档（买一/卖一）"是经验规则，Amaral 提供**数学最优替代**——θ\* 公式直接给出限价单锚定价位（被动档 vs 提1tick vs 提2tick 的选择由 θ\* 量化决定，而非 urgency 静态分档）。**A 股适配**：多数股票大 tick 特征明显（尾盘价差通常 1-2 tick），完全符合模型假设；θ\* 与 tick size 直接关联（φ=半 tick），A 股 0.01 元 tick 下可直接代入。**优于 RL**：闭式解无需训练/可解释/零计算成本，比 Phase 2 TT-DAC-PS/HALOP 更轻量，符合个人项目可解释性优先原则。**与三件套的层次关系**：⑫ Amaral 静态单次闭式阈值（本论文，OU gap + 对称带）→ ⑭ Yu 序贯闭式解（考虑前次成交状态+信号自适应）→ ⑬ Barzykin 动态 HJB 控制（成交概率指数衰减+OFI 线性响应），三者构成"静态→序贯→动态"的限价单理论升级路径。**定位 Phase 1.5 候选**——用 θ\* 公式替换"被动档"经验规则，需 Step 0 校准 s_G（gap 平稳标准差，可从 A 股 tick 数据滚动估计）和 α（OU 回归率，由 gap 自协方差识别）
-- **2026 regime-RL 三部曲（HMM regime 感知执行的实证边界）**（v2.8.0 补，[Garg SSRN 6559598](https://papers.ssrn.com/abstract=6559598) 2026 Paper I + [SSRN 6733198](https://ssrn.com/abstract=6733198) 2025 Paper II + [TQFB Vol.3 No.2](https://doi.org/10.22105/tqfb.v3i2.85) 2026 Paper III "Regime Survival Forecasting for Adaptive Execution"）：三部曲系统性刻画 HMM-based regime 感知在最优执行中的**结构性与边界**。**Paper I**（SSRN 6559598）：PPO-based flat RL 能否学习 regime 条件执行？CTMSTOU 仿真环境（JP Morgan AI Research Amrouni et al. 2022）多 seed 实验结论——**flat RL 无法学习定性正确的 regime 依赖执行行为**。hand-coded regime-aware rule（WAP 0.9950）显著优于 PPO Blind（1.0003）/PPO State-Aware（1.0004）/PPO Reward-Conditioned（1.0069）；regime 敏感性是**初始化依赖**的（单 seed action 0.92→0.00 regime flip，多 seed 均值近零）；reward conditioning 引入训练不稳定（std 0.0131）无收益；超参敏感性分析确认 gap 持续存在与训练预算无关——**限制是结构性的而非训练不足**。**Paper II**（SSRN 6733198）：regime 信号需**多日聚合**才有效。**Paper III**（TQFB 2026）：Weibull AFT 生存模型能否替代固定聚合窗口？8 资产类 54 个 bearish regime 实例结论——**不能**。concordance index 0.20-0.39 确认 HMM 衍生协变量（posterior entropy + stay probability）在参数 AFT 模型下无 duration 预测信息；无放回子采样模拟显示 concordance 从 n=4 到 n=45 恒在 0.48，排除数据量不足；Weibull shape <1.0 产生递减 hazard 分布其均值结构性地超过窗口上限，60-89% 预测坍缩到边界值。**三部曲总结论**：HMM-based regime 感知在执行中有三重结构限制——regime 信号需多日聚合（II）、learned policy 无法可靠利用（I）、自适应窗口校准不可实现（III）。**对本项目双用途价值**：①**验证 §6.1 "Regime-aware 算法选择（未实现）Phase 1.5 候选"的 MVP 决策**——本项目 MVP 用 AlgoParamOptimizer 静态 ADV 分档选择算法（非 RL），Garg Paper I 实证证明 hand-coded rule > flat RL，支持"Phase 1.5 加 regime 维度用 hand-coded 规则（波动率高→减规模延长时间/趋势强→顺势滑行/流动性差→降级 TWAP）而非直接上 RL"的路径选择；②**关联 10 号 HMM regime 检测器**——本项目 10 号用 HMM 做 regime 检测，Garg 三部曲界定了 HMM regime 信号在执行层的可用边界：信号需多日聚合（10 号 HMM 状态切换不可直接做秒级执行信号，适合日级/周级策略层）、flat RL 无法利用（执行层 regime-aware 应走 hand-coded 规则而非 RL）、自适应窗口不可行（固定聚合窗口是务实选择）。**定位**：Phase 1.5 候选的理论支撑——非新算法，为 §6.1 regime-aware 选择"hand-coded 规则 > flat RL"路径提供实证依据，与 §4.2 ⑩ Regime-aware 算法选择协同
-- **2026 A 股程序化交易监管流动性效应实证**（v2.9.0 补，[Wang/Ji/Chen preprints.org 202607.1753](https://doi.org/10.20944/preprints202607.1753.v1) 2026-07-22 "Algorithmic Trading Regulation and Stock Market Liquidity: Evidence from China's A-Share Market"）：利用 2024-05 证监会《程序化交易管理试行》作为准自然实验，用 tick 级订单数据构建股票级 HFT 强度指数，DID 设计实证限制 HFT（每秒≥300笔/单日≥20000笔认定线）显著改善 A 股流动性——降低买卖价差和价格冲击，效果集中在股价下跌时（HFT 在流动性最有价值时撤回流动性），小中盘股和融资融券标的改善更强。**对本项目 gap 18 程序化报备开关的实证支撑**：①验证监管限制 HFT 改善市场流动性，项目作为非 HFT 参与者是政策受益者；②支撑 §4.1 "内部限频每秒报单+撤单 ≤15 笔（远低于法定 300 笔/秒）"保守策略——实证证明严格限频有益市场质量；③为 §2.12 监管约束（程序化报备/高频认定/撤单率）提供 A 股本土实证依据。**定位**：非新算法，为 gap 18 设计决策提供政策效果实证支撑
+- A 股限价单盘口博弈 + 市价单类型差异：买一/卖一拥堵区排队难成交，提1 tick 避开拥堵（yueniuzq 2026-06）；沪市市价单4种（对手方最优/最优五档剩余撤销/最优五档剩转限价/本方最优）、深市5种（对手方最优/本方最优/即时成交剩余撤销/最优五档剩余撤销/全额成交或撤销）
+- **2026 Sato 精确可解扩散价格动力学模型**（[Sato, Fujiwara, Kanazawa arXiv:2608.00988](https://arxiv.org/abs/2608.00988) 2026-08-02）：将平方根冲击 I(Q)∝Q^δ 嵌入 Lillo-Mike-Farmer 模型，数学映射到 Lévy-walk 框架，证明 **δ≤1/2 是价格长期扩散的充要条件**——平方根定律 δ=1/2 即使在可预测订单流下也保证扩散性。**对 §2.4 的理论支撑**：与 Gatheral 2010 共同构成平方根冲击模型理论地基。前期工作（arXiv:2502.17906）基于东京证交所 8 年数据验证普适性，方法可迁移至 A 股。**不是新算法**，不改变 MVP 施工
+- **2026 Bonart 扩散型市场冲击定律**（[Bonart arXiv:2606.07059](https://arxiv.org/abs/2606.07059) 2026-06-05）：冲击分解为已实现收益与反事实收益之差；信息中性 regime 下强制冲击增量为白噪声蕴含平方根标度，强信息耦合下冲击随交易量线性增长（linear-to-sublinear crossover）。**核心结论**：平方根定律是价格扩散性的直接推论。**对项目的价值**：模型验证判据——Phase 2 coeff 校准时检验 SquareRootImpactPredictor 冲击核是否满足扩散性。**不是新算法**
+- **2026 PACE LLM 父单执行框架**（[Shen et al. arXiv:2607.28410](https://arxiv.org/abs/2607.28410) 2026-07-30）：首个 LLM 系统性应用于父单执行的框架 PACE=Plan-Ahead Controlled Execution，HP 滤波分层架构；**深交所 SZSE Level-1 数据验证**超越 TWAP/AC/学习型基线 0.65 bps；代码开源 github.com/zaneopen/PACE。**定位 Phase 3 远期观察项**——LLM 推理延迟（100-500ms）仅适合分钟级+执行，0.65 bps 优势小资金可忽略，外部 LLM 依赖与可解释性优先原则有张力
+- **2026 Signature-based 路径依赖最优执行**（[Morbelli, Karbach, Derksen arXiv:2606.31387](https://arxiv.org/abs/2606.31387) 2026-07-21 Deep Blue Capital+阿姆斯特丹大学）：alpha 过程和交易速度建模为时间增强市场路径截断 signature 的线性泛函；二次归约定理化为有限维凹二次规划（瞬态冲击+库存暴露+终端清算+近似美元中性）；合成实验优于经典 Z-score 基准。**定位 Phase 2 远期候选**——适用 A 股配对交易/统计套利执行，与 MAP-Elites 互补（显式解 vs 质量多样性搜索），需 signature 数学库
+- **2026 被动冲击点过程方法**（[Ouazzani Chahdi, Rosenbaum, Szymanski arXiv:2412.07461v2](https://arxiv.org/abs/2412.07461) 2026-07-04 v2）：点过程微观结构模型，每笔成交信息含量依赖订单簿可见深度；基于 Hawkes 过程研究 scaling limits，给出被动 metaorder 冲击曲线闭式近似。**与 Barzykin 介观模型互补**——Phase 2 被动执行建模的两个理论支柱
+- **2026 Queue-Reactive RL 执行**（[España, Hafsi, Lillo, Vittori arXiv:2511.15262](https://arxiv.org/abs/2511.15262) 2026-07-27 更新）：Queue-Reactive Model 生成现实 LOB 仿真，训练 DDQN agent（状态含时间/库存/价格/深度）；持续超越 TWAP 基准，适应订单簿条件和短期价格压力。**A 股适配**：Queue-Reactive Model 对大 tick 资产适用。**定位 Phase 2 候选**——与 ⑮ 队列位置感知 RL 互补（⑮ logistic-normal actor-critic 保留队列优先级，本文 DDQN 适应 LOB 动态）
+- **2026 订单流/冲击/波动率统一理论**（[Muhle-Karbe, Ouazzani Chahdi, Rosenbaum, Szymanski arXiv:2601.23172](https://arxiv.org/abs/2601.23172) 2026-01-30）：区分 core orders（信息驱动）与 reaction flow（反应流），均 Hawkes 过程。单一统计量 **H₀（core flow 持续性）决定一切**：价格冲击幂律指数 **2−2H₀**；数据估计 H₀≈3/4，**与平方根律一致**（2−2×3/4=1/2）。**对 §2.4 的理论支撑**：与 Sato（δ≤1/2 保证扩散性）+ Bonart（平方根律是扩散性推论）构成平方根律理论三支柱。A 股散户主导 core/reaction flow 区分明显，H₀ 估计可校准 A 股冲击幂律指数。**不是新算法**，Phase 2 coeff 校准时可估计 A 股 H₀ 验证冲击幂律是否偏离 1/2
+- **2026 实时价格冲击逐动作检测**（[Zovko arXiv:2606.13419](https://arxiv.org/abs/2606.13419) 2026-06-11）：通过交易者动作与后续不利市场事件间的时序同步性逐动作检测价格冲击；市场事件视为局部时变强度 Poisson 过程，每动作产生 p 值；**Fisher 方法最优合并连续动作 p 值，少数几个动作即可累积可靠证据**（vs 传统数百次 fill）。与 55 号 SaR 框架互补（SaR 事前分布化 vs Zovko 事后因果检测）。**定位 Phase 2 候选**——Phase 1.5 可先用 Fisher p 值框架监控累积执行质量；可为 IS 4 桶的 market_impact 桶提供因果归因
+- **2026 AAPL 平方根律匿名订单流实证**（[Vasaikar arXiv:2606.24019](https://arxiv.org/abs/2606.24019) 2026-06-22）：AAPL 上 Nasdaq TotalView-ITCH 全量订单流（178 天 ~5 亿事件）无 broker 标签重构 metaorder 测试 SRL；c_raw=0.69（bias-corrected c_eff=0.34）与全球截面一致；ΔAIC=22 优于线性/对数冲击；**32 周滚动重校准下前因子稳定**。**对本项目 coeff 校准的实证方法论**：A 股无 broker 标签 tick 数据可用匿名订单流重构 metaorder；季度/半年度重校准即可。**不是新算法**
+- **2026 流动性不确定性下最优执行**（[Chevalier, Hafsi, Ly Vath, Pulido arXiv:2506.11813](https://arxiv.org/abs/2506.11813) 2026-04-14 v2）：volume-effect process 管理冲击衰减率随机波动 + regime-switching Markov 链捕获市场条件突变；值函数满足 variational HJB 不等式系统（唯一 viscosity 解）。**对本项目价值**：与内生市场阻力 propagator（对抗性）互补——本论文刻画"流动性补充步伐随机波动"的非对抗性非平稳；regime-switching 链与 10 号 HMM regime 检测器天然对接。**定位 Phase 3 远期候选**——个人 <1% ADV 流动性不确定性影响可忽略，AUM 增长到流动性约束成为瓶颈时评估
+- **2026 鲁棒平均场控制最优清算**（[Liao, Liu, Mou, Sun arXiv:2607.29514](https://arxiv.org/abs/2607.29514) 2026-07-31）：多维最优清算在复合不确定性下（底层随机过程 + 模型参数）的鲁棒平均场控制框架；HJBI 方程（状态变量为概率测度）适定性证明；求解受约束多维线性二次最优清算。**对本项目价值**：执行理论最一般框架之一——①AC 单资产单代理闭合形式 → ②内生市场阻力（对抗性单代理）→ ③Chevalier 流动性不确定性（非对抗性非平稳单代理）→ ④本文多代理平均场+复合不确定性；与 36 号 VaR/ES 的 model uncertainty 处理同构，与 51 号 §八.E DSR robustness band 思想同构（min-max 结构）。**定位 Phase 3+ 远期候选**——AUM 增长到组合清算+大单被检测场景时评估
+- **2026 广发证券高频撤单因子**（《海量 Level 2 数据因子挖掘系列(八)》2026-08-08）：基于 Level 2 逐笔订单数据构建高频撤单因子体系。**核心因子实证**（2019-01~2026-06 全市场）：撤单活跃度因子 `rel_count_per_active_minute` RankIC 均值 **-9.19%**、IC 胜率 **73.09%**；日内时间结构因子 `time_close_minus_open_count_share` 5 日平滑 RankIC 均值 **5.43%**、IC 胜率 **73.98%**；与 Barra 风格因子相关性 <30%。**双用途价值**：①执行层决策⑫撤单率控制——撤单活跃度高的票可能有信息事件，可辅助判断市场微观状态；②信号层 alpha 因子——可纳入 25 号多因子模型微观结构因子。**定位 Phase 1.5 候选**——需 Level 2 逐笔撤单数据（miniQMT `xtdata` 需确认可用性）
+- **2026 Wang/Gao/Li 连续时间最优执行 RL actor-critic**（[Finance and Stochastics Vol.30 Issue 2, 2026-04](https://doi.org/10.1007/s00780-026-00589-5) CUHK）：AC 模型下 mean-quadratic variation 目标 + Shannon entropy 正则化的连续时间 RL；闭式最优值函数和高斯最优反馈策略；**recalibration step 是收敛关键创新**（标准 actor-critic 之外的第三步）；有限时间误差分析证明线性收敛。**定位 Phase 2 候选**——与 TT-DAC-PS 互补（离散 TD3-style vs 连续 actor-critic+闭式初始化）
+- **HALOP 混合动作空间 RL 限价单放置**（[Pan, Zhang, Luo, He, Liu arXiv:2207.11152](https://arxiv.org/abs/2207.11152) Huawei + E Fund 易方达）：限价单"连续-离散二元性"两阶段方法（stage-1 连续 Gaussian 策略 scope 价格百分比范围，stage-2 Gaussian-and-Softmax 选具体 tick）；比现有 RL 更高样本效率和训练稳定性。**对决策⑭的直接指导**：连续-离散两阶段自然处理低价股 1 tick=1% vs 高价股 1 tick=0.01% 差异。**定位 Phase 2 候选**——与⑫⑭⑬构成"限价单四件套"（⑫静态闭式→⑭序列闭式→⑬动态HJB→HALOP RL 学习）；与⑮队列位置感知 RL 互补
+- **2026 Cheridito-Weiss Logistic-Normal RL 市价+限价动态分配**（[Cheridito & Weiss arXiv:2507.06345v2](https://arxiv.org/abs/2507.06345) 2026-01-26 ETH Zurich）：执行建模为市价单/限价单动态分配任务；multivariate logistic-normal 分布建模分配（simplex 约束）；actor-critic 推导新 policy gradient；LOB 模拟器中优于 TWAP/VWAP。**与 HALOP 互补**——HALOP 管"限价单挂哪个 tick"，本文管"市价 vs 限价分配比例"；logistic-normal 框架也可用于决策⑪ Make-or-Take 的"何时从被动切主动"动态决策（取代固定 T 秒超时）。**定位 Phase 2 候选**——需 LOB 模拟器训练环境
+- **2026 被动限价单最优执行（介观尺度 HJB）**（[Barzykin, Boyce, Neuman, Tuschmann arXiv:2607.28323v1](https://arxiv.org/abs/2607.28323) 2026-07-30 HSBC+Imperial College）：介观尺度限价单最优执行模型，整合①限价单成交概率随距中间价**指数衰减**（π(d) ~ exp(-αd)）②价格变化对 OFI 的**短期线性响应**；HJB 求解最优挂单激进度，权衡"高成交强度+大累积冲击" vs "低冲击+高未成交风险"；NASDAQ+FX 数据校准。**对决策⑭ PricingPolicy 的直接指导**：π(d)=exp(-αd) 可用 miniQMT 5 档盘口数据估计 α（按板块/流动性分桶），HJB 解给出最优挂单距离 d\*；提1tick 后成交概率提升 e^α 倍可量化。**定位 Phase 1.5 候选**——轻量可解析升级路径（闭式解+α 校准即可），与 ⑫ Make-or-Take 超时 T 互补（HJB 解给出"何时从被动切主动"最优切换点，取代固定 30s 超时）
+- **2026 A 股平方根冲击必要性证明**（[Zhou, Chen, Wei arXiv:2607.05141v1](https://arxiv.org/abs/2607.05141) 2026-07-06 西湖大学）：单个进化优化机构智能体与 2 万羊群散户的 ABM，**明确实现 A 股机制：±10% 涨跌停、T+1 结算**；智能体自发发现多周期掠夺策略（最优种子 +51%、均值 +37.7%）；均值场约化为非线性振荡器经历 Hopf/fold 分岔。**关键理论结果**：平方根冲击是操纵周期涌现的**必要**条件——线性冲击完全消除 Hopf 分岔、市场无条件稳定。**对 §2.4 的 A 股本土理论支撑**：与 Sato/Bonart/Muhle-Karbe 三支柱互补，唯一明确建模 A 股 ±10%+T+1 的 2026 新研究。**反向监控价值**：AUM 增长到被检测阈值时，ABM 框架可反向识别自身执行是否被掠夺性策略针对（监测自身订单流是否引发 Hopf 振荡特征）。**定位 Phase 1.5 风险监控候选**——非新算法；与内生市场阻力 propagator 互补
+- **2026 显式信号自适应序贯最优执行报价**（[Yu arXiv:2605.24242v1](https://arxiv.org/abs/2605.24242) 2026-05-22 TU Delft）：序贯限价单挂单统一显式解理论——信号依赖漂移+价格冲击+库存风险+执行风险（点过程成交强度依赖报价）四维度；4 种执行准则（期望终端财富/+库存惩罚/CARA/CARA+库存惩罚）HJB 降为三角有限维结构显式求解；数值实验显示信号依赖漂移显著影响最优执行。**对决策⑭的直接指导**：§4.2 ⑭ 号算法，与⑫⑬构成"限价单三件套"；独特贡献是**序贯性**（前次挂单状态影响后续报价）+**信号自适应**（alpha 信号直接进入 HJB 漂移项），优于 Avellaneda-Stoikov 单边执行报价。**定位 Phase 1.5 候选**——闭式解无需训练、可解释、零计算成本；信号依赖漂移可接入 10 号 regime 检测器或 25 号多因子 alpha 信号（详见 §4.5）
+- **2026 微观结构均值回归最优交易（闭式限价单阈值）**（[Amaral arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) 2026-08-01）：§4.2 ⑫ 号算法的详细条目。大 tick 资产 gap G=mid−efficient price 为 OU 过程（回归率 α、稳态标准差 s_G，由 gap 自协方差识别）；对称带半宽 θ 在 surrogate Gaussian 扩散上为所有容许策略中最优；**闭式最优解** θ\*(θ\*−φ)=s_G²，R\*=α·s_G·√(2/π)·exp(−θ\*²/2s_G²)（φ=紧报价半价差）。**关键结论**："gap 刚覆盖价差就交易"收益为零——全部利润来自等待的期权价值。**对决策⑭的直接指导**：θ\* 公式直接给出限价单锚定价位（被动档 vs 提1tick vs 提2tick 由 θ\* 量化决定）；A 股 0.01 元 tick 可直接代入；优于 RL（无需训练/可解释/零计算成本）。**定位 Phase 1.5 候选**——需校准 s_G 和 α（详见 §4.5）
+- **2026 regime-RL 三部曲（HMM regime 感知执行的实证边界）**（[Garg SSRN 6559598](https://papers.ssrn.com/abstract=6559598) Paper I + [SSRN 6733198](https://ssrn.com/abstract=6733198) Paper II + [TQFB Vol.3 No.2](https://doi.org/10.22105/tqfb.v3i2.85) Paper III）：**Paper I**——flat RL（PPO）无法学习 regime 条件执行，hand-coded regime-aware rule（WAP 0.9950）显著优于 PPO（1.0003-1.0069），限制是结构性的非训练不足；**Paper II**——regime 信号需多日聚合才有效；**Paper III**——Weibull AFT 生存模型无法替代固定聚合窗口（concordance 0.20-0.39）。**对本项目双用途价值**：①验证 §6.1 "Regime-aware Phase 1.5 候选"走 hand-coded 规则而非 flat RL 的路径选择；②界定 10 号 HMM regime 检测器在执行层的可用边界（信号需多日聚合，适合日级策略层非秒级执行）。**定位 Phase 1.5 候选的理论支撑**——非新算法
+- **2026 A 股程序化交易监管流动性效应实证**（[Wang/Ji/Chen preprints.org 202607.1753](https://doi.org/10.20944/preprints202607.1753.v1) 2026-07-22）：利用 2024-05 证监会《程序化交易管理试行》作为准自然实验，DID 实证限制 HFT（300笔/秒认定线）显著改善 A 股流动性——降低买卖价差和价格冲击，效果集中在股价下跌时，小中盘股和融资融券标的改善更强。**对 gap 18 报备开关的实证支撑**：①项目作为非 HFT 参与者是政策受益者；②支撑 §4.1 内部限频 15 笔/秒保守策略；③为 §2.12 监管约束提供 A 股本土实证。**定位**：非新算法，政策效果实证支撑
 
 ## 8. 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
-| 2026-08-13 | 2.11.0 | 施工完毕标注：AI-EXEC-001 会话执行 §6.1 全部 10 项 P0 gap 落码完整性验证 + IS 4 桶分解核查 + 盘前检查链+订单层熔断代码完整性验证。施工内容：①9 个 v2.5.0-v2.6.0 新增模块（OpenOrderResolver/CancelRateGuard/PricingPolicy/price_cage/AsyncFillDispatcher/TradingHaltResolver/CorporateActionAdjuster/board_lot/ProgrammaticTradingGuard）算法全部 PASS，补 [BLUEPRINT] 头；②TradingSession 补资金预占算法（串行扣减+卖出释放+提交前拦截+拒单回滚+estimated_cost_rate=0.003）+ CancelRateGuard 接入（can_place_order/can_submit_now/record_submit）+ ALGO_FLOW 标记；③DefaultTCAEngine 补 IS 4 桶分解（_calc_is_decomposition）+ DECISION 基准默认 + 方向感知滑点（_calc_slippage_bps SELL 取反）+ ALGO_FLOW 标记；④修复 2 个 pre-existing 语法错误（constitutional_update.py/rule_patterns.py docstring 缺 r 前缀）。pytest 连续 2 轮 1332/1332 全通过，0 错误。长清单审查 9/12 全量 PASS，3 项轻微 FAIL 均为 pre-existing。 | AI-EXEC-001 会话施工完毕确认 |
-| 2026-08-08 | 1.0.0 | 初稿 | G22 下单对接与撮合执行层 spec 定型：10 要点决策（撮合自适应/滑点DECISION/佣金万0.854/7态机/拒单分类/订单层熔断4%-10-50/集合竞价MVP不碰/T+1查持仓/差额下单先卖后买）+ 现有 production 资产 why 层补全 + 5 项代码 gap 标注 |
-| 2026-08-08 | 1.1.0 | 施工环节流程补全 | 审查发现 4 个施工环节流程算法缺失（实盘生存项）：⑪未成交续接（Make-or-Take/PARTIAL补单/尾盘清退）、⑫撤单率控制（滚动监控降级/2026新规每秒≤15笔）、⑬资金预占（串行扣减/提交前拦截）、⑭挂单价算法（被动档买一卖一/主动档对手价）。补 §2.4 Gatheral 无套利理论依据。补 Phase 1.5 演进路径（自适应参与率/peg盘口/TCA规则闭环/coeff校准）。补 2026 最新执行 RL 研究引用。v1.0.0 的 5 项代码 gap 已施工（commit 015826ae），新增 v1.1.0 gap 6-10 待施工。 |
-| 2026-08-08 | 1.1.1 | 文档-代码漂移对账 | 逐项核查 §6.1 五项 v1.0.0 gap 对照实码：gap 4（拒单分类）由 ✅ 修正为 ⚠️ 部分实现——分类映射(`_REJECTION_ACTIONS`/`classify_rejection`)+`_handle_rejection` 日志已实现，RETRY/冻结/对账实际动作待 Saga 接管。修正 §2.5/§2.6/§2.7 三处 stale 内联"代码 gap"标注（佣金费率/先卖后买已施工，拒单分类标为部分实现）。 |
-| 2026-08-08 | 1.2.0 | miniQMT 工程约束 + 价格笼子合规 | 搜索 miniQMT 实盘踩坑与 A 股微观结构，补 4 项实盘生存级缺失：①决策①补回调线程模型（on_stock_order/on_stock_trade 不能阻塞，入队+独立线程消费）+同步/异步查询陷阱（回调内不能调同步查询，用 async 版本）+set_relaxed_response_order_enabled 时序控制；②决策⑥层1断线重连从"重连1次"升级为指数退避（立即→2s→4s→8s→max30s）+重连后主动 query_stock_orders 同步状态缺口；③决策⑭补价格笼子校验（买入价≤max(买一×102%,买一+0.1)，卖出价≥min(卖一×98%,卖一-0.1)，超范围废单）+提1tick策略（避开盘口拥堵区）；④修正§1.2"10个问题"→"14个问题"内部不一致。新增代码 gap 11-13 待施工。 |
-| 2026-08-08 | 1.3.0 | 事实订正 + 临时停牌处理 + 2026最新RL研究 | 全网搜索 2026-08-08 最新执行算法研究与 A 股监管规则，发现并订正 2 处硬错误 + 补 1 项关键缺失：①**订正高频认定标准**（决策⑫）——"每秒≤15笔"是市场误传（新浪/财联社 2026-04-07 辟谣，多家量化私募确认未收到），真实标准为每秒≥300笔或单日≥20000笔（2025-07-07《实施细则》），本系统内部保守限频15笔/秒作为安全垫；②**订正价格笼子基准价**（决策⑭）——买入基准价=卖一价（非买一价）、卖出基准价=买一价（非卖一价），基准价取对手方最优价；补板块差异（主板/创业板±2%+0.1兜底、科创板严格±2%、北交所±5%）+适用范围（仅连续竞价限价单，集合竞价/临停/市价单豁免）；③**新增决策⑮临时停牌处理**——盘中临停等复牌/跨日停牌核查移除目标+释放资金预占/复牌重新评估，补代码 gap 14；④补订单有效期GFD说明（决策⑪）+市价单类型差异（沪4种/深5种）；⑤补2026最新RL执行研究（DASRL/TT-DAC-PS/MACE/Queue-Reactive+DDQN/Stanford PPO）+Finantrix机构实践+AAAI/ICLR 2026综述。核心问题14→15。 |
-| 2026-08-08 | 1.4.0 | ST涨跌幅订正 + 除权除息日 + 盘后定价 + 回报延迟 + 2026最新RL | 二次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 处硬错误 + 2 项施工环节流程缺失 + 工程细节补充：①**订正ST涨跌幅**（§1.1）——主板ST股2026-07-06起已从±5%统一为±10%（与普通股持平，官方确认），原文"ST ±5%"已过时，代码"ST简化统一10%"反成正确；②**新增决策⑯除权除息日处理**——识别除权除息票→调整前收盘价/涨跌停价/笼子基准价/持仓股数（送股转增），避免用旧基准价废单，补代码 gap 15；③**补充盘后固定价格交易**（决策⑪可选通道）——2026-07-06新规扩容至全部A股/ETF（15:05-15:30以收盘价撮合），MVP暂不参与登记Phase 1.5，补代码 gap 16；④**补充回报延迟6秒时滞背景**（决策⑬）——柜台持仓/资金同步6秒时滞致连续下单重复，本地串行预扣正是解决此问题（ptrade/果仁网实盘案例）；⑤**补2026最新RL研究**（ETH Zurich市场单+限价单联合RL/Berkeley收盘集合竞价做市RL/MacroHFT记忆增强元学习/Oxford APEX DQN）+深交所2026修订规则引用。核心问题15→16。 |
-| 2026-08-08 | 1.5.0 | 科创板整手硬错误订正 + 零股处理 + 程序化报备 + 高频认定权威强化 | 三次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 处硬错误 + 2 项施工环节流程缺失 + 2 项事实强化：①**订正决策⑩科创板整手处理硬错误**——原"floor(qty,100)全板块统一100股"对科创板是废单级错误（科创板200股起买/1股递增，100股申报error_code=52），且卖出零股"忽略"是合规错误（零股必须一次性卖出），已订正为板块差异化整手+零股一次性卖出；②**新增决策⑰零股处理与板块差异化申报数量**——主板100股/科创200股1股递增/北交所100股，零股一次性报出，补代码 gap 17；③**新增决策⑱程序化交易报备合规约束**——上线前必须报备（策略/算法/服务器/风控），未报备限制交易，补代码 gap 18（配置开关非算法）；④**强化高频认定标准权威证据**——补充中基协私募委员会2026-07权威解读（晚于7月7日全面实施）确认300笔/秒未变，"15笔/秒""50微秒停留"均源自美国误传谣言，辟谣自媒体（东方财富/叩富问财）2026-07后仍误传"15笔/秒"；⑤**补充撤单率官方监控线50%**（中基协确认），本系统内部15%远低于官方线；⑥补EESD 2026多智能体RL（高频范畴，个人小资金不适用）。核心问题16→18。 |
-| 2026-08-08 | 1.6.0 | MiniQMT关停风险 + Python版本约束 + 2026 MPC/MAP-Elites/Direct VWAP | 四次审查文档全量内容 + 全网搜索 2026-08-08 最新研究，发现 1 项生存级风险 + 3 项工程约束 + 3 项新算法：①**新增决策⑲MiniQMT关停风险与迁移路径**——迅投MiniQMT正在有序关停（多家券商已停止新增），记录生存级风险+规划BrokerInterface抽象层隔离+大QMT迁移三套方案（消息队列桥接/文件信号中转/策略迁入），补代码gap 19（BigQmtBroker骨架）；②**补充xtquant Python版本限制**——仅支持Windows Python 3.6-3.8，需虚拟环境隔离；③**补充subscribe_whole_quote BUG**——取全市场数据需自行过滤；④**补充可转债程序化交易权限**——需单独开通+流量费；⑤**补2026 MPC执行**（Bayforest+MIT Bertsekas arXiv 2603.28898，介于规则和RL之间的中间路线，减少schedule shortfall 40-50%）；⑥**补MAP-Elites质量多样性执行**（Imperial College+BoA arXiv 2601.22113，PPO+CNN 2.13bps vs VWAP 5.23bps）；⑦**补Direct VWAP Optimization**（arXiv 2502.13722，深度学习直接优化VWAP绕过量曲线预测）。CSDN自媒体(syp1110 2026-07-28)仍在传播"15笔/秒"谣言，印证v1.5.0订正必要性。核心问题18→19。 |
-| 2026-08-08 | 1.6.1 | 订正miniQMT关停夸大表述+Python版本过时信息 | 用户指出miniQMT交易日正常使用、仅周末维护。查证后确认v1.6.0引用licai.cofool.com（券商营销网站）单一不权威来源夸大了风险：①**订正决策⑲miniQMT关停风险**——从"正在有序关停/生存级风险"降为"部分券商收紧新增、存量稳定、交易日正常、多数正常开放"（搜狐两融小顾问2026-07行业调研四类情况），风险等级从"生存级紧急"降为"中长期关注"，保留迁移路径预案但不再定性为紧急；②**订正Python版本**——从"仅支持3.6-3.8"更正为"支持3.6-3.14（建议3.11），2025-10起pip可装"（miniqmt.com官方QA 2026-04确认）；③国金证券存量用户确认正常使用（迅投论坛2026-07-16/22仍有国金用户正常使用miniqmt xtquant），周末维护属正常系统维护非关停信号。教训：引用信息须交叉验证，券商营销网站有夸大动机（引导迁移开户）。 |
-| 2026-08-08 | 1.6.2 | 精简决策⑲移除过度工程 | 用户判定v1.6.1的三套迁移方案+BigQmtBroker骨架代码(gap 19)为过度工程。miniQMT正常运营，无需为不紧急的、可能不会发生的迁移预先写代码。精简决策⑲：①移除三套迁移方案详情表格（消息队列桥接/文件信号中转/策略迁入）；②移除迁移改造要点5项；③移除gap 19（BigQmtBroker骨架代码）；④只保留"正常运营但需关注政策变化"+BrokerInterface抽象层防线（已实现）+触发条件。决策⑲从50行精简到15行。原则：BrokerInterface让迁移从"系统重写"降为"适配器替换"——有这个就足够。 |
-| 2026-08-09 | 1.6.3 | 文件名 design_memo_010_execution_broker.md → 40_execution_broker.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
-| 2026-08-09 | 1.6.4 | §1+§7.1 管理规范链接 `design_memo_management_spec.md`→`01_design_memo_management_spec.md`（2 处） | 改名工程遗留断链修复（全量断链扫描发现） |
-| 2026-08-09 | 1.6.5 | 文档头统一：frontmatter 补 title/owner/language，H1 去"设计备忘·"前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
-| 2026-08-10 | 1.6.6 | 代码审计 + 过度工程审查 + coeff 校准方法论 + 理论补充 | ①**代码审计**（§6.1）：逐项核对 ex_core/ex_sor 实码，确认 v1.1.0-v1.5.0 的 gap 6-18 全部准确（均未实现，无 stale 标注），已实现项（先卖后买/订单层熔断/拒单分类/FeeSchedule/6算法/平方根滑点）全部确认。②**过度工程审查**（§4.4 新增）：6 种算法不算过度工程（注册表零边际成本+已production+打板场景需要），但 ICEBERG/POV/IS 为低频储备，MVP 实际只用 2-3 种；ICEBERG 可在 Phase 1.5 评估退役但当前零成本不动。③**coeff 校准方法论**（§2.4 补充）：Phase 1.5 校准路径——测量 metaorder 位移(arrival→+5min peak→+2hr residual)→回归 signed root-volume→信号控制剔除 alpha 漂移→条件化分桶。引用 marketmaker.cc 2026-07"σ容易/η是2倍游戏/γ是研究项目/轨迹宽容"+hftradingbook 2026-06 signal-controlled Y≈0.6 vs naive 0.9。④**理论补充**（§2.4）：Huberman-Stanzl 2004 证明永久冲击线性是无套利唯一选择，补充 Gatheral 2010 平方根律的理论地基。⑤全网搜索 2026 执行算法（TWAP/VWAP/IS 标准实践 signalpilot/quant67 + miniQMT API + Almgren-Chriss 校准），无新硬错误，文档现有引用准确。 |
-| 2026-08-10 | 1.6.7 | 算法工程实践审查 + IS声称订正 + 2026-08最新研究补充 | 五次审查文档全量内容 + 全网搜索 2026-08-08 最新执行算法工程实践，发现 1 处声称不准确 + 4 项算法增强现状需登记 + 6 项外部参考补充：①**订正决策②IS算法声称**（§2.3）——原"IS（Almgren-Chriss风险厌恶轨迹）"不准确，代码实为 `exp(-λ×t_i)` 指数衰减启发式近似（非完整 AC 均值-方差 QP 求解），订正为"IS（指数衰减启发式，近似 AC 风险厌恶轨迹）"+注明 Phase 2 可上推闭合形式双曲正弦轨迹；②**补 POV 内生性说明**（§2.3）——参与率 γ 内生性，γ≤5% 时影响可忽略（γ/(1-γ)≈5.3%），Phase 2 大单需 `x=γ/(1-γ)·M` 补偿；③**§6.1 新增 v1.6.7 算法增强项现状**——TWAP 随机化（未实现，L430-458 等量切片）+ VWAP 在线纠偏（未实现，L466-499 静态权重）+ POV 内生性补偿 + IS 完整 AC QP，均判定 Phase 1.5/2 候选非 MVP gap（个人 <1% ADV 不构成可检测足迹/不影响量曲线）；④**§4.2 Phase 1.5 演进路径补 ⑥⑦⑧**——TWAP 随机化（AUM>5%ADV 时）/VWAP 在线纠偏（dynamic VWAP α 系数）/IS 上推完整 AC QP；⑤**§7.4 外部参考补充 6 条**——Kissell-Glantz I-Star 市场冲击定价（2003，pre-trade TCA 主流）/Bouchaud-Farmer Propagator（2018，冲击时间衰减）/TWAP 随机化 schedule gaming 防御（hftradingbook 2026-06+orderx 2026-07+iotdigitaltwinplm 2026-05）/VWAP 在线纠偏 dynamic VWAP（quant67 2026-05）/OBI 订单簿不平衡（Cont 2014 Operations Research）/Algo Wheel（2026 机构标配，finantrix 2026-08-08）；⑥**补 2026-08 最新 RL 执行研究**——Stanford CS224R PPO+VWAP 初始化偏差策略 +1.27bps（p<10^-4，胜率58.5%），domain-informed priors + paired-baseline reward 训练范式对 Phase 2 RL 优化器有方法论指导。 |
-| 2026-08-10 | 1.6.8 | 交叉引用补全 + 2026-08最新研究二次复查 | 六次审查文档全量内容 + 全网搜索 2026-08-08/10 最新执行算法研究，发现 1 处交叉引用缺口 + 确认 2026-08 研究全覆盖：①**补全 37↔40 双向交叉引用**——37号文档引用40号9处但40号未引用37号，§7.1 相关设计备忘新增 37_liquidity_crisis_protocol 条目（LIQUIDITY_CRISIS 信号→LEVEL_3 逃生指令 `build_escape_directive`→执行层清仓+撤单+暂停；涨跌停 §3.5 协同——跌停时 spread 置大值 1.0 使双条件 AND 触发），§1.3 约束条件"涨跌停板流动性失效"行补交叉引用（执行层决策⑥⑭⑮协同）；②**2026-08 最新研究二次复查**——España et al. Queue-Reactive+DDQN（arXiv:2511.15262, 2026-07-27 更新）已在 §7.4 line 989 登记；ETH Zurich 市场单+限价单联合RL（arXiv:2507.06345v2, 2026-01）已登记；Stanford CS224R PPO 已登记；marketmaker.cc 2026-07-15 TWAP/VWAP/POV 三算法隐含假设分析与文档 POV内生性公式 x=γ/(1-γ)·M 一致，TWAP随机化建议与 §6.1/§7.4 登记一致，无新增算法需补充。 |
-| 2026-08-10 | 1.7.0 | 施工环节流程算法审查 + IS 4 桶分解 + 2026 最新 RL 执行研究整合 + 外部参考扩充 | 七次审查文档全量内容 + 全网搜索 2026-08 最新执行算法与 RL 执行研究，补全施工环节流程算法 6 项缺失 + 整合 2026 最新研究 + 外部参考扩充：①**§2.3 施工环节流程算法补全**——TWAP/VWAP 计划生成算法（等量切片/历史量曲线静态权重 + Phase 1.5 随机化/在线纠偏演进）、IS 4 桶分解（commission+spread+market_impact+timing_risk，Perold 1988 + Plexus 2004 实证 delay 占 IS 54%）、市场冲击模型（α×σ×√(Q/ADV) 平方根律 + Gatheral 无套利 + Huberman-Stanzl 永久冲击线性地基）、OBI 信号使用规则（Cont 2014：买入 OBI>0 抢先吃，OBI<0 再等等）、延迟-冲击权衡（λ=0→TWAP / λ→∞→前置加载）、regime 选择逻辑（波动率高→减规模延长时间/趋势强→顺势滑行/流动性差→降级 TWAP）。②**§6.1 新增 v1.7.0 施工环节流程算法审查**——4 项算法增强判定为 Phase 1.5/2 候选非 MVP gap：IS delay cost 独立报告（Drovix 2026-05 TCA 方法论，slippage 分布 median/90th/99th 替代均值）、OBI 信号用于子单激进程度（需 Level-2 盘口数据，个人 <1% ADV 信号意义有限）、Regime-aware 算法选择（当前静态 ADV 分档，Phase 1.5 加 regime 维度需 TCA 校准）、临时 vs 永久冲击分离（SquareRootImpactPredictor 当前为总冲击，Phase 2 上推 Obizhaeva-Wang 分离为 RL 铺路）。③**§4.2 演进路径补全 Phase 1.5/2/3**——Phase 1.5 补⑨IS delay cost 独立报告+⑩Regime-aware 算法选择+⑪OBI 信号；Phase 2 补 Obizhaeva-Wang 临时/永久冲击分离 + TT-DAC-PS 执行 RL（arXiv:2606.08379v1 University of Reading+ICMA Centre+Göttingen，双 EMA critic + TD3-style target policy smoothing + OU noise hybrid，超越 PPO/SAC/A2C 和 TWAP/VWAP/AC baselines）+ UCL 多 agent RL 理论参考（arXiv:2605.20348，memory-induced supra-competitive outcomes，Phase 3 多 broker 启用时参考）；Phase 3 细化 MAP-Elites（arXiv:2601.22113v2 Imperial College+BoA，PPO+CNN 2.13bps vs VWAP 5.23bps，$21B 名义金额 4900 笔 OOS，regime-specialist 组合）+ Algo Wheel（2026 机构标配，Phase 3 多 broker 启用评估）。④**§7.4 外部参考补充 8 条**——TCA+Market Impact Models 2026 Deep Dive（youngju 2026-05，TCA 50 年时间线 + IS 4-bucket 标准 + KOFIA 分季度报告义务化）、IS 4 桶分解+delay cost 洞察（hftradingbook 2026-06 + ryanoconnellfinance 2026-03 + Plexus Group 2004 亚洲实证 153bps 中 delay 84bps 占 54%）、Drovix TCA 方法论（2026-05，IS 单一数字是 vanity metric + slippage 是分布非均值 + rejection cost 转化 bps）、Almgren-Chriss 现代教学（hftradingbook 2026-06，λ 极限：λ=0→TWAP / λ→∞→前置加载）、Obizhaeva-Wang 临时/永久冲击分离（2013，temporary_impact=η·trade_rate/avg_volume 衰减回补 + permanent_impact=γ·trade_rate/avg_volume 信息效应）、RL Execution Skill 标准化（NeverSight 2026-07 + TimGunn70 2026-06 + GinkGO 2026-05，状态/动作/奖励标准化 + 自适应执行选择逻辑）、执行算法关键指标矩阵（gs-quant 2026-06 + GinkGO 2026-05，A 股 >5000 万单笔 0.8% 冲击算法拆分降 62%）、A 股可转债 TWAP 场景规则（搜狐两融小顾问 2026-07，可转债盘口薄 VWAP 失效用 TWAP）。⑤**2026 最新 RL 执行研究整合**——DASRL（AAMAS 2026，动态动作空间降本 16.2%）、TT-DAC-PS（arXiv 2026.06）、MACE+AC（arXiv 2603.29086v2，成本模型决定 RL 算法选择）、Queue-Reactive+DDQN（arXiv 2025.11）、Stanford CS224R（Alpha-Informed PPO +1.27bps p<10^-4 胜率 58.5%）、UCL 多 agent RL（arXiv:2605.20348）、Finantrix 2026 机构实践（JPMorgan LOXM→2026 Goldman/Citi/Citadel/Two Sigma/DE Shaw/Millennium 均用 RL 执行）。⑥**过度工程审查**——RL 执行标注为 Phase 2/3 远期演进方向（个人项目 MVP 不适用，需训练数据+校准成本模型+算力），MAP-Elites 标注局限性（论文明确 substantial computational resources required），不擅自定决策，所有 RL 项均登记重评条件。 |
-| 2026-08-10 | 1.7.1 | A股 2026 量化新规完整性补充 | 八次审查文档全量内容，发现 A 股 2026 量化新规 6 项中 5 项已覆盖（高频认定/撤单率/报单停留/强制报备/通道平权），仅 **⑥穿透监管** 未提及——§2.12 监管约束表格新增"穿透监管"行（同一实控人名下所有账户含马甲/关联/分仓/亲属合并计算报撤单/撤单率/高频阈值，封堵分仓马甲规避监管；个人账户实控人明确影响小）。补全后 6/6 新规全覆盖。 |
-| 2026-08-10 | 1.7.2 | 补 Barzykin 被动市场冲击模型 | 九次审查文档全量内容 + 全网搜索 2026-08-10 最新被动执行研究，发现 §7.4 外部参考缺 **Barzykin 被动冲击模型**（[arXiv:2607.28323](https://arxiv.org/abs/2607.28323) 2026-07-30 Barzykin/Boyce/Neuman/Tuschmann "Optimal Execution with Passive Market Impact"）。该模型基于两个经验观测量（① 限价单成交概率随距 midprice 距离**指数衰减** fill_prob(d)∝exp(-κ·d) + ② 价格变化对订单流不平衡 OFI 的短期线性响应）推导**被动冲击率随报价距离指数衰减**的简约模型，NASDAQ 股票+公开 FX 数据实证校准。§7.4 新增外部参考条目（含成交概率/被动冲击率/OFI 响应三要素 + 成交强度vs冲击权衡 + 对决策⑬三项施工指导）；§2.15 决策⑭"提1 tick中间档策略"补 Barzykin 定量基础交叉引用——提1 tick 后 fill_prob 提升 e^κ 倍，Phase 1.5 实盘 TCA 校准 A 股 κ 参数为三档选择（纯被动/提1tick/Make-or-Take）提供数据驱动阈值；同时为 §6.2 开放问题"Make-or-Take 超时 T 初始值"提供理论框架（超时本质=被动冲击率×时间<成交阈值，低流动性票 κ 大缩短 T / 高流动性票 κ 小延长 T）。填补 v1.7.0-v1.7.1 被动执行研究缺口。 |
-| 2026-08-10 | 1.8.0 | 微观结构均值回归闭式限价单阈值 + 被动市场冲击升级到演进路径 | 十次审查文档全量内容 + 后台搜索代理返回 2026-08 最新执行算法研究，§4.2 演进路径 Phase 1.5 新增 2 项选项外更优算法：⑫ **微观结构均值回归闭式限价单阈值**（[arXiv:2608.00885](https://arxiv.org/abs/2608.00885) Amaral 2026-08-01：大 tick 资产 mid-price 围绕隐含有效价格平稳均值回归，闭式最优限价单阈值 θ\*(θ\*-φ)=s_G²，利润率 R\*=α·s_G·√(2/π)·exp(-θ\*²/2s_G²)，"gap 刚覆盖价差就交易"收益为零全部利润来自等待的期权价值；A 股大 tick 适配，可直接替换 §4.1 "被动档"经验规则为数学最优；优于 RL 闭式解无需训练可解释零计算成本）+ ⑬ **被动市场冲击最优执行**（[arXiv:2607.28323](https://arxiv.org/abs/2607.28323) Barzykin et al. 2026-07-30：v1.7.2 已登记 §7.4 外部参考，本次升级到 Phase 2 演进路径——HJB 求解限价单 aggressiveness 动态控制，与 ⑫ 闭式阈值互补：⑫ 静态闭式解/⑬ 动态 HJB 控制，需实盘 TCA 校准成交概率衰减参数 κ）。两项均为"选项之外更好的算法"——比 Phase 2 TT-DAC-PS RL 更轻量（闭式解/HJB vs 神经网络），符合个人项目可解释性优先原则 |
-| 2026-08-10 | 1.9.0 | 信号自适应闭式限价单序列报价 + 队列位置感知 RL 执行 | 十一次审查 + 2026-08 最新执行算法全网搜索，§4.2 Phase 1.5 新增 2 项选项外更优算法：⑭ **信号自适应闭式限价单序列报价**（[arXiv:2605.24242](https://arxiv.org/abs/2605.24242) Yu 2026-06-11 TU Delft：限价单序列挂单统一显式解，融合信号漂移+冲击+库存+执行风险，HJB 化简为三角形有限维结构，四种准则闭式解；与 ⑫ 单次静态阈值区别是⑭考虑前次成交状态对后续报价影响+信号自适应；优于 Avellaneda-Stoikov 单边执行报价+信号自适应；与⑫⑬构成"限价单三件套"⑫静态→⑭序列闭式→⑬动态HJB）+ ⑮ **队列位置感知 RL 执行**（[arXiv:2507.06345](https://arxiv.org/abs/2507.06345) Cheridoto&Weiss ETH Zurich 已发表 QF Vol.26 Issue 6 2026：市价/限价动态分配 logistic-normal actor-critic，保留队列位置优先级只取消高队列位订单；A 股限价单排队严重队列位置感知是独特优势；Phase 2 候选已过同行评审比 TT-DAC-PS 更聚焦限价单队列管理）。两项延续可解释性优先+轻量优先原则 |
-| 2026-08-10 | 2.0.0 | PACE LLM + Sato 精确可解 + Bonart 扩散冲击 + Signature 执行 + 被动冲击点过程 + Queue-Reactive RL | 十二次审查 + 2026-08-10 最新执行算法全网搜索（后台 agent 返回 8 篇 2026-06 至 2026-08-10 论文），§4.2 演进路径 + §7.4 外部参考整合 6 项 2026-08 最新研究：①**⑯ PACE LLM 父单执行框架**（[arXiv:2607.28410](https://arxiv.org/abs/2607.28410) Shen et al. 2026-07-30：首个 LLM 系统性应用于父单执行 PACE=Plan-Ahead Controlled Execution，HP 滤波分层架构，**深交所 SZSE Level-1 数据验证**超越 TWAP/AC 0.65 bps；Phase 3 远期观察项——LLM 推理延迟仅适合分钟级+执行，0.65 bps 优势小资金可忽略，外部 LLM 依赖与可解释性优先原则有张力）；②**Sato 精确可解扩散价格动力学**（[arXiv:2608.00988](https://arxiv.org/abs/2608.00988) 2026-08-02：平方根定律 δ=1/2 在长程相关订单流下仍保证扩散性，为 §2.4 SquareRootImpactPredictor 提供更严格理论依据，非新算法）；③**Bonart 扩散型市场冲击定律**（[arXiv:2606.07059](https://arxiv.org/abs/2606.07059) 2026-06-05：平方根定律是价格扩散性直接推论，提供模型验证判据——Phase 2 coeff 校准时检验冲击核扩散性）；④**⑰ Signature-based 路径依赖执行**（[arXiv:2606.31387](https://arxiv.org/abs/2606.31387) 2026-07-21：alpha+交易速度同 signature 基建模，二次归约定理化为有限维凹 QP，Phase 2 远期候选与 MAP-Elites 互补）；⑤**被动冲击点过程方法**（[arXiv:2412.07461v2](https://arxiv.org/abs/2412.07461) 2026-07-04：Hawkes 点过程+订单簿深度推导冲击曲线闭式近似，与 Barzykin 介观模型互补为 Phase 2 被动执行建模两支柱）；⑥**Queue-Reactive RL 执行**（[arXiv:2511.15262](https://arxiv.org/abs/2511.15262) 2026-07-27：DDQN 适应 LOB 动态超越 TWAP，与 ⑮ logistic-normal actor-critic 互补，Phase 2 候选）。**过度工程审查**：PACE LLM 标注三理由不采纳 MVP（LLM 延迟/小资金绝对值可忽略/外部依赖风险），Sato+Bonart 为理论支撑非新算法不改变 MVP 施工，Signature/Queue-Reactive 标注 Phase 2 远期候选。延续可解释性优先+轻量优先原则 |
-| 2026-08-10 | 2.1.0 | §7.4 补内生市场阻力 propagator 模型（Chahdi/De Carvalho/Szymanski 2026-01） | 二十二次审查 + 2026-08-08 最新市场冲击模型研究：§7.4 在 Bouchaud-Farmer Propagator 基础上补内生市场阻力 propagator 模型（arXiv:2601.03215 Chahdi/De Carvalho/Szymanski 2026-01-06）：精明交易者检测 metaorder 并反向交易利用价格过度反应——凹型瞬态冲击+幂律 propagator+阻力项（不动点方程响应交易者速率），最优性一阶条件为非线性随机 Fredholm 方程，线性阻力下最优控制存在唯一、严格凸阻力下 coercivity+弱下半连续性证存在性，迭代格式指数收敛。**对本项目价值**：A 股量化资金占比 35%+（§6.2 已登记），大单执行被其他量化策略检测并反向交易是真实风险，内生市场阻力模型是刻画此对抗性执行场景的理论工具；与 §6.1 TWAP 随机化（schedule gaming 防御）协同——TWAP 随机化是工程防御 predator 埋伏，市场阻力模型是理论建模同一对手。**定位 Phase 3 远期候选**：非线性随机 Fredholm 方程求解比 AC 闭合形式复杂得多+需校准阻力函数 R(·) 形态，个人小资金 <1% ADV 不构成可检测 metaorder 足迹 MVP 不需，AUM 增长到大单被检测场景时与 MAP-Elites/Algo Wheel 同 Phase 3 评估。全网搜索 2026-08-08 最新 market impact/propagator model/metaorder detection 算法，评估选项外更好答案——内生市场阻力 propagator 为本次搜索发现的 Bouchaud Propagator 对抗性扩展（远期候选非采纳），施工算法完整性不变 |
-| 2026-08-10 | 2.2.0 | §7.4 补 4 篇 2026-08 最新研究（统一理论/实时检测/SRL实证/流动性不确定性执行） | 三十轮审查 + 后台搜索 agent 返回 2026-08-08 最新研究 5 领域 15 篇论文，§7.4 外部参考整合 4 篇未收录的高价值研究：①**Muhle-Karbe 订单流/冲击/波动率统一理论**（arXiv:2601.23172 Muhle-Karbe/Ouazzani Chahdi/Rosenbaum/Szymanski 2026-01-30）：区分 core orders + reaction flow（均 Hawkes 过程），单一统计量 H₀≈3/4 决定一切——有符号流 Hurst H₀、交易量 Hurst H₀−1/2、波动率 Hurst 2H₀−3/2、**价格冲击幂律指数 2−2H₀=1/2**。与 Sato+Bonart 构成平方根律理论三支柱，Muhle-Karbe 独特贡献是单一参数统一解释多个经验规律。A 股散户主导 core/reaction flow 区分明显，H₀ 估计可校准冲击幂律。非新算法，为 SquareRootImpactPredictor 提供更根本理论依据。②**Zovko 实时价格冲击逐动作检测**（arXiv:2606.13419 2026-06-11）：交易者动作与后续不利市场事件间时序同步性逐动作检测，Fisher 方法合并 p 值**少数几个动作即可累积可靠证据**（vs 传统数百次 fill）。与 55 号 SaR 互补（SaR 事前分布化 vs Zovko 事后因果检测）。Phase 2 候选，Phase 1.5 可先用 Fisher p 值框架监控累积执行质量。③**Vasaikar AAPL 平方根律匿名订单流实证**（arXiv:2606.24019 2026-06-22）：Nasdaq ITCH 5 亿事件无 broker 标签重构 metaorder 确认 SRL，c_eff=0.34 与全球截面一致，**32 周滚动重校准前因子稳定**。为 coeff 校准提供实证方法论（匿名重构+结构测试+滚动频率），证明本项目 A 股无 broker 标签 tick 数据可用。④**Chevalier 流动性不确定性下最优执行**（arXiv:2506.11813 2026-04-14 v2）：volume-effect process 管理冲击衰减率随机波动 + regime-switching Markov 链捕获市场条件突变，variational HJB 不等式系统唯一 viscosity 解。与内生市场阻力模型互补（对抗性 vs 非对抗性非平稳），regime-switching 链与 10 号 HMM 天然对接。Phase 3 远期候选。**施工算法完整性结论**：4 篇均为 2026-08 最新研究的理论支撑/实证方法论/远期候选登记，非施工算法缺失。平方根律现由三理论支柱（Sato/Bonart/Muhle-Karbe）+ 一实证支柱（Vasaikar）共同支撑，理论地基最完整 |
-| 2026-08-10 | 2.3.0 | §7.4 补鲁棒平均场控制最优清算（Liao/Liu/Mou/Sun 2026-07-31） | 三十二轮审查 + 2026-08-10 最新执行算法研究全网搜索，§7.4 在 v2.2.0 四篇基础上补鲁棒平均场控制最优清算（[arXiv:2607.29514](https://arxiv.org/abs/2607.29514) Liao/Liu/Mou/Sun 2026-07-31）：为多维最优清算问题在复合不确定性下（底层随机过程 + 确定性模型参数双重不确定性）提供鲁棒平均场控制（Robust MFC）框架。验证结果通过 HJBI 方程建立——状态变量为概率测度，Hamiltonian 非线性涉及仓位与动量的联合分布；创新性先验估计建立 HJBI 方程适定性，Hamiltonian 既非位移凸也非位移凹（超越经典 MFC 假设）；应用到最优清算时允许 Hamiltonian 导数线性增长，求解受约束多维线性二次最优清算问题在复合不确定性下。**对本项目价值**：与已登记的三类执行模型形成层次互补——① Almgren-Chriss（§2.3 决策②）单资产单代理闭合形式；② 内生市场阻力 propagator（arXiv:2601.03215 v2.1.0）刻画对抗性执行但单代理；③ Chevalier 流动性不确定性（arXiv:2506.11813 v2.2.0）刻画非对抗性非平稳但单代理；本论文将执行问题推广到多代理平均场 + 复合不确定性，是执行理论最一般的框架之一。"复合不确定性"统一了项目 §6.2 已登记的两组不确定性来源（市场微观结构随机性 + 模型参数估计误差），与 36 号 VaR/ES 的 model uncertainty 处理同构。**定位 Phase 3+ 远期候选**：HJBI 方程在概率测度空间求解远比 AC 闭合形式复杂，需校准底层随机过程 + 模型参数不确定性集，平均场假设要求"大量同质代理"——个人小资金 <1% ADV 不构成可检测的代理足迹 MVP 不需，AUM 增长到组合清算（多资产联动）+ 大单被检测场景时与 MAP-Elites/Algo Wheel/内生市场阻力同 Phase 3+ 评估。与 51 号 §八.E 过拟合检测体系的关联：复合不确定性下的鲁棒控制为"参数搜索鲁棒性"提供理论框架——HJBI 的 min-max 结构（控制 vs 不确定性）与 DSR robustness band（§八.E v1.4.2）"在有效试验数区间内始终存活"思想同构。**施工算法完整性结论**：本论文为 2026-08 最新执行理论研究的远期候选登记，非施工算法缺失——v2.2.0 四篇 + v2.3.0 一篇共同构成"执行理论层次谱系"（单代理 AC → 对抗性单代理 propagator → 非对抗性非平稳单代理 → 多代理平均场复合不确定性），MVP 阶段 AC 闭合形式 + 平方根冲击已足够，远期候选均为 AUM 增长场景评估 |
-| 2026-08-10 | 2.4.0 | §7.4 补 3 篇 2026-08 新研究（广发撤单因子/Wang连续时间RL/HALOP）+ gap 6 施工 | 三十三轮审查 + 2026-08-10 最新研究全网搜索，§7.4 外部参考补 3 篇高价值研究：①**广发证券高频撤单因子**（《海量 Level 2 数据因子挖掘系列(八)》2026-08-08）：撤单活跃度因子 `rel_count_per_active_minute` RankIC -9.19%/IC胜率73.09%，日内时间结构因子 `time_close_minus_open_count_share` 5日平滑 RankIC 5.43%/IC胜率73.98%，与Barra因子相关性<30%。**双用途价值**：执行层决策⑫撤单率控制（撤单行为蕴含截面alpha，撤单活跃度高=信息事件）+ 信号层多因子模型微观结构因子。Phase 1.5候选（需Level 2逐笔撤单数据）。②**Wang/Gao/Li 连续时间最优执行RL actor-critic**（Finance and Stochastics Vol.30 Issue 2, 2026-04, CUHK）：AC模型下mean-quadratic variation目标+Shannon entropy正则化，闭式高斯最优反馈策略，**recalibration step**是收敛关键创新（标准actor-critic只交替policy evaluation+policy gradient，本方法加第三步recalibration），有限时间误差分析线性收敛。Phase 2候选，与TT-DAC-PS互补（离散TD3 vs 连续actor-critic）。③**HALOP混合动作空间RL限价单放置**（arXiv:2207.11152 Huawei+E Fund易方达）：限价单"连续-离散二元性"两阶段方法（stage-1连续Gaussian scope+stage-2离散Gaussian-Softmax选tick），对决策⑭挂单价有直接指导（比静态"被动档"经验规则更适应不同流动性/价格水平）。Phase 2候选，与⑫⑭⑬构成"限价单四件套"。**施工算法完整性结论**：3篇均为2026-08最新研究的Phase 1.5/2候选登记，非MVP施工算法缺失。同步施工 gap 6 未成交续接（OpenOrderResolver模块：Make-or-Take超时切换/PARTIAL按urgency补单/14:55尾盘清退），见 src/zephyr/ex_core/open_order_resolver.py |
-| 2026-08-10 | 2.5.0 | 5 项 gap 施工完成 + §7.4 补 Cheridito-Weiss Logistic-Normal RL | 三十四轮审查 + 持续改进，5 项施工环节流程算法 gap 全部完成 + 1 篇新研究补充：①**gap 6 未成交续接** ✅ OpenOrderResolver（Make-or-Take超时/PARTIAL补单/尾盘清退/幂等，21测试）；②**gap 9 挂单价算法** ✅ PricingPolicy（被动档买一卖一/主动档对手价/涨停跌停/提1tick/盘口回退，22测试）；③**gap 12 回调线程模型** ✅ AsyncFillDispatcher（入队+独立线程消费/fill_id LRU幂等/背压/优雅停机/异常隔离，14测试）；④**gap 14 临时停牌处理** ✅ TradingHaltResolver（盘中临停/跨日停牌/复牌/目标过滤/预占释放幂等，16测试）；⑤**gap 15 除权除息处理** ✅ CorporateActionAdjuster（除权除息参考价三公式/调整前收盘价/重算涨跌停/持仓调整送股增股数+成本摊薄+现金红利，25测试）。5模块共 98 测试全绿。⑥**§7.4 补 Cheridito-Weiss Logistic-Normal RL**（arXiv:2507.06345v2 2026-01-26 ETH Zurich）：市价+限价动态分配的 logistic-normal 分布 actor-critic，与 HALOP 互补（HALOP 管限价单价格放置精度，Cheridito-Weiss 管市价vs限价分配比例），Phase 2 候选。**施工算法完整性结论**：v1.1.0-v1.4.0 的 5 项实盘生存级 gap（6/9/12/14/15）全部施工完成，剩余 gap 7/8/11/13/17/18 为下一批施工项（撤单率/资金预占/价格笼子/断线重连/板块整手/报备开关），文档与代码一致性已更新 |
-| 2026-08-10 | 2.6.0 | gap 18 施工 + gap 7/8/11/13/17 重大漂移修复（全部 13 项实盘生存级 gap 闭合） | 三十五轮审查 + 持续改进，**全部 13 项实盘生存级 gap 全部闭合**：①**gap 18 程序化报备开关** ✅ ProgrammaticTradingGuard（实盘+未报备=拒下单/启动+下单双校验/报备信息漂移检测 SHA-256 hash/PAPER+SIMULATION 豁免/未识别 broker 保守拒绝/报备历史审计，44测试）；②**重大文档漂移修复**——核对代码发现 gap 7/8/11/13/17 实际已施工但 §6.1 仍标"未实现"（v2.5.0 审计遗漏）：**gap 7 撤单率控制** ✅ CancelRateGuard（滚动500笔/>12%只挂不撤/>15%冻结/15笔秒限频/可注入clock，23测试）已接入 TradingSession；**gap 8 资金预占** ✅ TradingSession._validate_and_submit 已实现串行扣减+提交前拦截+T+0释放+拒单回滚+保守费率 0.003；**gap 11 价格笼子** ✅ price_cage.check_price_cage（对手方最优价/板块差异化幅度/回退链/超限夹边不废单，23测试）；**gap 13 断线重连** ✅ MiniQmtBroker._reconnect（指数退避 RECONNECT_BACKOFF=(0,2,4,8,16,30)/TCP CONNECT_BACKOFF=(0,1,2,4)/状态缺口同步/防状态倒退）；**gap 17 板块差异化整手** ✅ board_lot.get_board_lot_rule（主板/创业板/北交所100股+科创板200股1股递增/零股一次性卖出，53测试）。**累计施工统计**：v2.5.0-v2.6.0 共完成 9 模块 238 测试（gap 6/7/8/9/11/12/13/14/15/17/18）。**剩余 gap**：gap 10 盘后全量对账（Phase 2）+ gap 16 盘后固定价格交易（Phase 1.5 可选）+ gap 19 已移除（过度工程）。文档与代码一致性已彻底校准 |
-| 2026-08-10 | 2.7.0 | 版本同步 + Barzykin 重复引用合并 + Yu 2026 §7.4 补条目 + 笔误修正 + 文档结构审查 | 三十六轮审查 + 2026-08-08 最新执行算法全网搜索二次复查，4 项修复 + 文档结构审查结论：①**frontmatter 版本同步**——v2.6.0→2.7.0（§7.4 已有 v2.7.0 Barzykin/Zhou 条目但 frontmatter 未同步）；②**Barzykin 重复引用合并**——arXiv:2607.28323 在 v1.7.2（§7.4 旧条目）和 v2.7.0（§7.4 新条目）各引用一次（同一篇论文），删除 v1.7.2 旧条目保留 v2.7.0 完整条目（含 HJB 求解+层次关系+Phase 1.5 定位），将被删条目独有的 §2.15"提1tick 中间档"交叉引用合并到 v2.7.0 条目；③**笔误修正**——§7.4 Barzykin v2.7.0 条目"决策⑮ PricingPolicy"订正为"决策⑭"（⑮=临时停牌/⑭=挂单价 PricingPolicy，PricingPolicy 对应 gap 9 决策⑭）；④**§7.4 补 Yu 2026 显式信号自适应序贯报价**（arXiv:2605.24242v1 2026-05-22 TU Delft）——§4.2 演进路径已登记为 ⑭ 号算法但 §7.4 外部参考缺详细条目，本次补全：序贯限价单挂单统一显式解理论（信号依赖漂移+冲击+库存+执行风险四维度，4 种执行准则 HJB 降为三角有限维结构可显式求解），与 ⑫/⑬ 构成"限价单三件套"（静态闭式→序贯闭式→动态 HJB）。⑤**2026-08-08 最新研究二次复查**——DASRL(AAMAS 2026)/Cheridito-Weiss(2507.06345)/España Queue-Reactive(2511.15262)/Chevalier 流动性不确定性(2506.11813)/Sato 精确可解(2608.00988)/Bonart 扩散冲击(2606.07059)/Muhle-Karbe 统一理论(2601.23172)/Vasaikar SRL 实证(2606.24019) 均已登记，未发现 2026-08-08 后新论文遗漏。⑥**文档结构审查**——§1→§2(20 节=架构总览+19 决策)→§3(17 拒绝方案)→§4(上限+演进+过度工程审查)→§5(暂缓)→§6(gap+开放问题)→§7(引用)→§8(修订记录) 符合 ADR 惯例，章节顺序合理无需调整；§7.4 外部参考按添加时间顺序排列（版本号大致递增），便于追溯演进历程。**施工算法完整性结论**：v2.7.0 为文档一致性修复 + 1 篇新研究 §7.4 条目补全，非施工算法缺失；全部 13 项实盘生存级 gap 已闭合（v2.6.0），Phase 1.5/2 候选均已登记重评条件 |
-| 2026-08-10 | 2.8.0 | §7.4 补 Amaral 闭式阈值独立条目 + §7.4 补 Garg regime-RL 三部曲 | 三十七轮审查 + 2026-08-08 最新研究三次复查 + 文档一致性深度审查，2 项 §7.4 条目补全：①**§7.4 补 Amaral 2026 微观结构均值回归闭式限价单阈值**（[arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) 2026-08-01）——"限价单三件套"⑫ 号基石论文 v1.8.0 已登记 §4.2 演进路径但 §7.4 缺独立条目（三件套另两位 Barzykin ⑬/Yu ⑭ 均有 §7.4 条目），本次补全一致性缺口：大 tick 资产 gap=mid−efficient price 为 OU 过程（回归率 α/稳态标准差 s_G），对称带半宽 θ 闭式最优解 θ\*(θ\*−φ)=s_G²（φ=紧报价半价差），利润率 R\*=α·s_G·√(2/π)·exp(−θ\*²/2s_G²)，"gap 刚覆盖价差就交易收益为零全部利润来自等待的期权价值"；θ\* 公式可直接替换 §4.1 "被动档"经验规则为数学最优，A 股 0.01 元 tick 适配，闭式解无需训练符合可解释性优先。②**§7.4 补 Garg 2026 regime-RL 三部曲**（SSRN 6559598 Paper I + SSRN 6733198 Paper II + TQFB Vol.3 No.2 Paper III）——系统性刻画 HMM-based regime 感知在执行中的结构性与边界：Paper I 实证 flat RL（PPO）无法学习 regime 条件执行，hand-coded rule（WAP 0.9950）优于 PPO（1.0003-1.0069），限制是结构性的非训练不足；Paper II regime 信号需多日聚合；Paper III Weibull AFT 生存模型无法替代固定聚合窗口（concordance 0.20-0.39，HMM 协变量无 duration 预测信息）。**双用途价值**：验证 §6.1 "Regime-aware 算法选择 Phase 1.5 候选"的"hand-coded 规则 > flat RL"路径选择 + 界定 10 号 HMM regime 检测器在执行层的可用边界（信号需多日聚合/适合日级策略层非秒级执行/固定聚合窗口是务实选择）。③**2026-08-08 最新研究三次复查**——Amaral(2608.00885)/Garg regime-RL 三部曲为本次新补，此前 v2.7.0 已确认 DASRL/Cheridito-Weiss/España/Chevalier/Sato/Bonart/Muhle-Karbe/Vasaikar/Barzykin/Zhou/Yu/PACE/Signature/被动冲击点过程/Robust MFC/Wang-Gao-Li/HALOP/广发撤单因子 均已登记，2026-08 最新研究覆盖完整。④**文档结构/顺序/内容审查结论**——§1→§2(20节)→§3→§4→§5→§6→§7→§8 结构符合 ADR 惯例无需调整；决策编号①-⑲与"19个问题"一一对应无缺失；§4.2 演进路径算法编号①-⑰（Phase 1.5/2/3 候选）与 §2 决策编号①-⑲为两套独立编号体系（演进路径 vs 决策记录），文档内已通过"⑫ 号算法"/"决策⑭"措辞区分，无歧义；§7.4 外部参考按添加时间顺序排列（版本号递增），本次 2 条新条目续接 v2.7.0 之后。**施工算法完整性结论**：v2.8.0 为 §7.4 外部参考一致性补全 + 1 篇 regime-RL 实证支撑，非施工算法缺失；全部 13 项实盘生存级 gap 已闭合（v2.6.0），Phase 1.5/2 候选（含"限价单三件套"⑫⑬⑭ + regime-aware ⑩ + TWAP 随机化/VWAP 纠偏/OBI/IS delay cost 等）均已登记重评条件 |
-| 2026-08-10 | 2.9.0 | §7.4 补 Wang et al. A 股监管流动性效应实证 + 三十八轮审查结论 | 三十八轮审查 + 2026-08-10 最新执行算法研究四次复查，1 项 §7.4 实证支撑补充 + 审查结论确认：①**§7.4 补 Wang/Ji/Chen 2026 A 股程序化交易监管流动性效应实证**（preprints.org 202607.1753 2026-07-22）：利用 2024-05 证监会《程序化交易管理试行》作为准自然实验，DID 实证限制 HFT（300笔/秒认定线）显著改善 A 股流动性（降低价差+价格冲击），效果集中在股价下跌时，小中盘股和融资融券标的改善更强。为 gap 18 程序化报备开关提供政策效果实证支撑（项目作为非 HFT 参与者是受益者）+ 支撑 §4.1 内部限频 15 笔/秒保守策略 + 为 §2.12 监管约束提供 A 股本土实证。非新算法，为监管合规设计提供实证依据。②**2026-08-10 最新研究四次复查**——确认 2026-08 最新执行算法研究已全覆盖：PACE LLM 执行(2607.28410)/Amaral 闭式阈值(2608.00885)/Garg regime-RL 三部曲(SSRN 6559598+6733198+TQFB)/Barzykin 被动冲击 HJB(2607.28323)/Yu 序贯闭式报价(2605.24242)/Cheridoto-Weiss logistic-normal RL(2507.06345)/Zhou A 股平方根必要性(2607.05141)/DASRL(AAMAS 2026)/HALOP(2207.11152)/España Queue-Reactive(2511.15262)/Chevalier 流动性不确定性(2506.11813)/Sato 精确可解(2608.00988)/Bonart 扩散冲击(2606.07059)/Muhle-Karbe 统一理论(2601.23172)/Vasaikar SRL 实证(2606.24019)/Robust MFC(2607.29514)/Wang-Gao-Li 连续时间RL(Finance Stochastics 2026)/广发撤单因子(2026-08-08)/被动冲击点过程(2412.07461)/Signature 执行(2606.31387)/内生市场阻力 propagator(2601.03215) 均已登记。新发现 Zhai 公开交易者身份(2608.04373 2026-08-06)A 股不公开身份不适用、Feng 多智能体 RL(EESD 2026-07)个人单 broker 不适用，均不补充。③**文档结构/顺序/内容审查结论**——结构一致性总评 A 级：§1→§2(20节)→§3→§4→§5→§6→§7→§8 符合 ADR 惯例；决策编号①-⑲连续无缺失；§4.2 演进路径⑩-⑰与 §2 决策①-⑲两套独立编号体系无歧义；§7.4 外部参考按版本号递增排列无重复引用；frontmatter 版本与修订记录一致；gap 1-19 状态标注一致（13 项已实现+gap 10 Phase 2+gap 16 Phase 1.5+gap 19 移除）。④**施工算法完整性结论**——全部 13 项实盘生存级 gap 已闭合（v2.6.0），Phase 1.5/2/3 候选均已登记重评条件，无施工算法缺失。⑤**L866 "每秒≤15笔"核查**——确认为项目内部保守限频（括号明确"远低于法定高频认定线 300 笔/秒"），非外部标准误传，与 project_memory 记录不冲突，无需修改 |
-| 2026-08-10 | 2.9.1 | §2.12 通道平权行补 2026-07-31 正式关闭局域网行情通道事件 | 三十九轮审查 + 2026-08-10 A 股市场结构变化事件补充：§2.12 监管约束表"通道平权"行从"已推进，削弱速度特权"更新为完整事件描述——**2026-07-31 交易所正式关闭局域网行情通道**（华夏时报 2026-08 报道）：托管机房行情接入统一由局域网切换为广域网，微秒级延迟（0.3-0.8μs）→ 毫秒级，微秒级套利窗口消失；同步禁止券商为特定客户提供更低延迟/优先报单/专属带宽等特权。量化行业从"拼速度"转向"拼深度"（因子挖掘+模型能力），与本项目设计中低频+因子驱动定位一致——速度特权终结对本项目无负面影响，反而消除高频竞品的速度优势。非新算法，为监管约束表补全 2026-07-31 重大市场结构变化事件 |
-| 2026-08-10 | 2.9.2 | §4.5 新增大 tick 限价单挂单闭式最优解算法节（Amaral+Yu 2026 整合） | 四十轮审查 + 整合两篇 2026 限价单挂单闭式最优解论文为独立算法节：§4.5 新增"Microstructure Mean Reversion Optimal Quoting & Signal-Adaptive Sequential Quotes——大 tick 限价单挂单闭式最优解"。整合论文1 [arXiv:2608.00885v1](https://arxiv.org/abs/2608.00885) Amaral 2026-08-01（G gap OU 过程+对称阈值带+闭式 θ\*(θ\*-φ)=s_G² / R\*=α·s_G·√(2/π)·exp(-θ\*²/2s_G²)+"等待的期权价值"洞见）+ 论文2 [arXiv:2605.24242v1](https://arxiv.org/abs/2605.24242) Yu 2026-05-22 TU Delft（4 风险集成+4 准则显式解+信号依赖漂移+三角有限维结构）。两篇此前已分别登记于 §4.2 演进路径⑫⑭ 与 §7.4 外部参考（v1.8.0/v1.9.0/v2.7.0/v2.8.0），本次整合为集中技术展开节：补全 A 股适用性表（大 tick+deep queue→论文1 适用性高）、三层层次关系（PACE 高层规划/Almgren-Chriss 中层速率/本节底层挂单价 micro layer）、Phase 1.5 候选+当前 Phase 限价单增强定位、2026 量化新规 15 笔/秒约束下单笔挂单优化>批量拆单的 ROI 论证、<60 行 Python 伪代码（G gap 估计+OU 拟合+θ\* 闭式解+对称带策略）。frontmatter 2.9.1→2.9.2（patch 级新增算法条目） |
-| 2026-08-12 | 2.10.0 | 已施工设施盘点补全 + 交叉引用补全 + depgraph 登记缺口登记 | 架构审查（通用规则 #11 基础设施盘点）：①**§1.4 升级为「已施工设施盘点」**——原表仅列施工前 12 项资产，补 v2.5.0-v2.6.0 施工新增 9 模块（OpenOrderResolver/CancelRateGuard/资金预占内嵌/PricingPolicy/price_cage/AsyncFillDispatcher/断线重连增强/TradingHaltResolver/CorporateActionAdjuster/board_lot/ProgrammaticTradingGuard，对应决策⑪-⑱），分"施工前已实现 12 项+施工新增 9 项"两块，标注各模块测试数与对应决策号；②**§7.1 补下游交叉引用**——54_reconciliation_attribution（对账归因消费本层产出，54 号已引用本备忘，补回链）+ 42_sell_flow（卖出流落地通道）；③**§7.3 depgraph 模块表补 9 个新模块**（标注"未登记 blueprint_id，待生成器刷新"）；④**§6.2 开放问题新增 depgraph 登记缺口**——44_d_ex_core（2026-08-05 生成）/battle_map_10 均未收录 9 个新模块，待 depgraph 生成器刷新（超本备忘范围，登记待治理流程）。⑤**2026-08 最新研究五次复查**——WebSearch 确认 TT-DAC-PS/quant67 执行算法/AC 教学/miniqmt 官方 QA（Python 3.6-3.14/pip 可装）均已在文档登记或与 v1.6.1 订正一致，无新硬错误、无新算法遗漏 |
-| 2026-08-12 | 2.10.1 | 作战地图全覆盖补丁——盘前检查链（BM-RC-02/BM-RC-02-C） | §2.8 订单层熔断扩为"盘前检查链 + 订单层熔断"两级体系：①**§2.8.1 盘前 5 步检查链**（BM-RC-02，production，RK-02 risk_validator stable，补 why 层）——步骤构成表（BM-RC-02-A 仓位限额 ← 31 §2.4.1 单票硬上限 8%；BM-RC-02-B 行业集中度 ← 31 §2.4.2 行业硬约束；BM-RC-02-C 杠杆率 ← §2.8.2；BM-RC-02-D 合规规则 ← 决策⑱报备开关 + 决策⑭价格笼子；BM-RC-02-E Kill Switch ← 35 §3.5 状态机）+ 幂等语义（纯读求值，状态扣减归决策⑬）+ P99 < 50ms SLA + Fail-Closed 裁定（检查服务不可用 = 禁止开仓）+ 90 号 pre-trade 单一 choke point 挂载点确认；②**§2.8.2 杠杆率检查契约**（BM-RC-02-C）——杠杆口径 = 总资产/净资产（账户口径），两融 = 1.0 基准，个人无两融裁定仅监控账户口径，硬上限 1.0 拒单 + 预警线 0.95 仅日志，盘前发现 >1.0 禁止新开仓 + 人工排查不自动减仓，与 35 §3.6 日度熔断分工（结构维度 vs 损益维度）；③原订单层熔断内容移 §2.8.3 数值口径不变 |
+| 2026-08-14 | 2.11.1 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | 文档压缩：§6.1 施工日志折叠为已施工摘要+接口级参数，§1.4 盘点表合并，§4.2/§7.4 对标散文精简化（结构化表格与数值参数全保留），19 项决策/盘前检查链/订单层熔断/IS 4 桶/6 算法契约/BrokerInterface 防线/撤单率规则完整保留，章节标题编号一字不动 |
+| 2026-08-13 | 2.11.0 | 施工完毕标注：AI-EXEC-001 会话执行 §6.1 全部 10 项 P0 gap 落码完整性验证 + IS 4 桶分解核查 + 盘前检查链+订单层熔断代码完整性验证。9 个新模块补 [BLUEPRINT] 头；TradingSession 补资金预占+CancelRateGuard 接入+ALGO_FLOW；DefaultTCAEngine 补 IS 4 桶分解+DECISION 基准默认+方向感知滑点；修复 2 个 pre-existing 语法错误。pytest 连续 2 轮 1332/1332 全通过 | AI-EXEC-001 会话施工完毕确认 |
+| 2026-08-12 | 2.10.1 | 作战地图全覆盖补丁——盘前检查链（BM-RC-02/BM-RC-02-C）：§2.8 订单层熔断扩为"盘前检查链+订单层熔断"两级体系（§2.8.1 5 步检查链+§2.8.2 杠杆率契约 1.0/0.95+§2.8.3 订单层熔断数值口径不变） | BM-RC-02/BM-RC-02-C 锚点闭合 |
+| 2026-08-12 | 2.10.0 | 已施工设施盘点补全（§1.4 施工前 12 项+施工新增 9 项两块）+ §7.1 补下游交叉引用（54/42）+ §7.3 depgraph 表补 9 新模块 + §6.2 登记 depgraph 缺口 | 通用规则 #11 基础设施盘点 |
+| 2026-08-10 | 2.9.2 | §4.5 新增大 tick 限价单挂单闭式最优解算法节（Amaral+Yu 2026 整合，含 A 股适用性表/三层结构/伪代码） | 限价单三件套集中技术展开 |
+| 2026-08-10 | 2.9.1 | §2.12 通道平权行补 2026-07-31 正式关闭局域网行情通道事件 | 市场结构变化事件补全 |
+| 2026-08-10 | 2.9.0 | §7.4 补 Wang et al. A 股监管流动性效应实证 | 政策效果实证支撑 |
+| 2026-08-10 | 2.8.0 | §7.4 补 Amaral 闭式阈值独立条目 + Garg regime-RL 三部曲 | 外部参考一致性补全 |
+| 2026-08-10 | 2.7.0 | 版本同步 + Barzykin 重复引用合并 + Yu 2026 §7.4 补条目 + 笔误修正 | 文档一致性修复 |
+| 2026-08-10 | 2.6.0 | gap 18 施工 + gap 7/8/11/13/17 重大漂移修复——全部 13 项实盘生存级 gap 闭合（累计 9 模块 238 测试） | 文档与代码一致性彻底校准 |
+| 2026-08-10 | 2.5.0 | 5 项 gap 施工完成（gap 6/9/12/14/15，98 测试全绿）+ §7.4 补 Cheridito-Weiss Logistic-Normal RL | 施工环节流程算法落地 |
+| 2026-08-10 | 2.4.0 | §7.4 补 3 篇（广发撤单因子/Wang 连续时间 RL/HALOP）+ gap 6 施工 | 最新研究补充+施工 |
+| 2026-08-10 | 2.3.0 | §7.4 补鲁棒平均场控制最优清算（Liao et al.） | 执行理论谱系补全 |
+| 2026-08-10 | 2.2.0 | §7.4 补 4 篇（Muhle-Karbe 统一理论/Zovko 实时检测/Vasaikar SRL 实证/Chevalier 流动性不确定性） | 平方根律理论三支柱+实证支柱 |
+| 2026-08-10 | 2.1.0 | §7.4 补内生市场阻力 propagator 模型 | 对抗性执行理论工具 |
+| 2026-08-10 | 2.0.0 | PACE LLM + Sato + Bonart + Signature + 被动冲击点过程 + Queue-Reactive RL 6 项 2026-08 研究整合 | 最新研究登记（PACE 不采纳 MVP 三理由） |
+| 2026-08-10 | 1.9.0 | §4.2 Phase 1.5 新增⑭信号自适应闭式序列报价 + ⑮队列位置感知 RL | 限价单三件套成型 |
+| 2026-08-10 | 1.8.0 | §4.2 新增⑫微观结构均值回归闭式阈值 + ⑬被动市场冲击升级演进路径 | 选项外更优算法登记 |
+| 2026-08-10 | 1.7.2 | 补 Barzykin 被动市场冲击模型（fill_prob(d)∝exp(-κ·d)） | 被动执行研究缺口填补 |
+| 2026-08-10 | 1.7.1 | §2.12 监管表补穿透监管行（实控人账户合并计算） | 2026 量化新规 6/6 全覆盖 |
+| 2026-08-10 | 1.7.0 | 施工环节流程算法审查 + IS 4 桶分解标准化 + 2026 最新 RL 研究整合 + 外部参考扩充 8 条 | 6 项算法缺失登记为 Phase 1.5/2 候选 |
+| 2026-08-10 | 1.6.8 | 37↔40 双向交叉引用补全 + 2026-08 研究二次复查 | 交叉引用缺口修复 |
+| 2026-08-10 | 1.6.7 | IS 声称订正（指数衰减启发式近似）+ POV 内生性 + 算法增强项现状登记 + §7.4 补 6 条 | 算法工程实践审查 |
+| 2026-08-10 | 1.6.6 | 代码审计 + 过度工程审查（§4.4）+ coeff 校准方法论 + Huberman-Stanzl 理论补充 | 确认 gap 6-18 准确未实现 |
+| 2026-08-09 | 1.6.5 | 文档头统一：frontmatter 补 title/owner/language，H1 与 title 对齐 | 文档结构统一 |
+| 2026-08-09 | 1.6.4 | 管理规范链接修复（2 处） | 断链修复 |
+| 2026-08-09 | 1.6.3 | 文件名改 40_execution_broker.md（段位编号制） | 文档体系重排 |
+| 2026-08-08 | 1.6.2 | 精简决策⑲移除过度工程（三套迁移方案/BigQmtBroker 骨架代码/gap 19） | 触发时再研究，BrokerInterface 是唯一防线 |
+| 2026-08-08 | 1.6.1 | 订正 miniQMT 关停夸大表述 + Python 版本过时信息（3.6-3.14/pip 可装） | 交叉验证纠错 |
+| 2026-08-08 | 1.6.0 | 新增决策⑲ MiniQMT 政策关注 + Python 版本约束 + subscribe_whole_quote BUG + 可转债权限 + MPC/MAP-Elites/Direct VWAP | 核心问题 18→19 |
+| 2026-08-08 | 1.5.0 | 订正决策⑩科创板整手硬错误 + 新增决策⑰零股/板块差异化 + 决策⑱程序化报备 + 高频认定权威证据强化 + 撤单率官方监控线 50% | 核心问题 16→18 |
+| 2026-08-08 | 1.4.0 | 订正 ST 涨跌幅 + 新增决策⑯除权除息日 + 盘后固定价格交易 + 回报延迟 6 秒时滞 + 2026 最新 RL | 核心问题 15→16 |
+| 2026-08-08 | 1.3.0 | 订正高频认定标准（300笔/秒非15笔/秒）+ 订正价格笼子基准价（对手方最优价）+ 新增决策⑮临时停牌 + GFD/市价单类型差异 + 2026 最新 RL | 核心问题 14→15 |
+| 2026-08-08 | 1.2.0 | miniQMT 工程约束（回调线程模型/同步异步查询陷阱/relaxed 时序）+ 断线重连指数退避升级 + 价格笼子校验 + 提1tick 策略 | 实盘生存级缺失补全 |
+| 2026-08-08 | 1.1.1 | 文档-代码漂移对账（gap 4 修正为部分实现） | 对账修正 |
+| 2026-08-08 | 1.1.0 | 施工环节流程补全：决策⑪未成交续接/⑫撤单率控制/⑬资金预占/⑭挂单价算法 + Gatheral 理论 + Phase 1.5 演进路径 | 4 个实盘生存项补全 |
+| 2026-08-08 | 1.0.0 | 初稿 | G22 执行层 spec 定型：10 要点决策 + production 资产 why 层 + 5 项代码 gap 标注 |

@@ -5,8 +5,8 @@ title: 对账归因
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.15.5"
-date: 2026-08-12
+version: "1.15.6"
+date: 2026-08-14
 topic: reconciliation_attribution
 scope: 07_trading_decision_architecture
 ---
@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构中后台对账 / Brinson 归因（非 Barra 因子风险归因） |
 | 正交性 | ✅ 与 regime 正交（归因是事后解释，不参与事前决策） |
 | 优先级 | P5 |
-| 状态 | active 1.15.5 |
+| 状态 | active 1.15.6 |
 
 ## 2. 背景
 
@@ -39,7 +39,7 @@ scope: 07_trading_decision_architecture
 - 作战地图 11 已有 18 环节，其中 16 个 production、2 个 design（BM-REC-02-B 绩效归因 + BM-REC-03-D 元级迭代）——本备忘的核心职责是为这两个 design 环节补 why 层 + 定义归因口径上限
 
 ### 2.2 核心问题
-对账归因层要回答 6 个问题（对应 00_index §3 G25 讨论要点）：PnL 归因怎么分解、每日对账对什么、归因维度取哪些、如何与 StrategyBook 独立 PnL 对接、异常交易怎么检测、报表怎么生成。前 4 个是归因口径决策（决定"赚的钱怎么解释"），后 2 个是运营闭环决策（决定"异常怎么抓、结果怎么交付"）。每个决策都影响 AI-dev 下的归因清晰度——归因不清=迭代停滞。
+对账归因层要回答 6 个问题（对应 00_index §3 G25 讨论要点）：PnL 归因怎么分解、每日对账对什么、归因维度取哪些、如何与 StrategyBook 独立 PnL 对接、异常交易怎么检测、报表怎么生成。前 4 个是归因口径决策（决定"赚的钱怎么解释"），后 2 个是运营闭环决策（决定"异常怎么抓、结果怎么交付"）。归因不清=迭代停滞。
 
 ### 2.3 约束条件
 - A 股 T+1 结算：当日买入次日可卖，盘后 15:30 结算对账是硬时点
@@ -85,7 +85,7 @@ scope: 07_trading_decision_architecture
 3. **报告发送渠道未通**：ReportPublisher 的 WEBHOOK/EMAIL 仅落 PENDING 不实际发送——§3.7"双渠道发布"当前是框架能力非运营事实。
 4. **双实现未收敛**：归因引擎（reporting 桩 vs pf_core 实现）、PositionReconciler（ex_core vs position 事件驱动版）、公司行为（trading processor vs ex_core adjuster）三对并存，canonical 归属与口径统一待裁定（§6/§7）。
 5. **BM-REC-02-B 阻塞标注已部分过时**：battle_map 标"⛔ CTR-P1-007/CTR-ERR-005 未就绪暂不可建"——两契约 codegen 文件已落盘（`shared/contracts/execution_report.py` / `errors/execution_rejection_error.py`），残余阻塞是 CTR-P1-007 产出逻辑未施工（execution_core blueprint GAP-L06-003，P0 待施工）+ 归因计算实现缺失（本备忘 §3.2/§3.5 施工算法即为此备）。
-6. **微信入站指令解析未施工（BM-BUY-07 登记）**：出站方向已有 ReportPublisher 微信 Webhook 告警（当前仅落 PENDING 不实发，见缺口 #3）；入站方向——用户微信消息 → D-TRADING-06 解析/路由为标准指令（自然语言解析 + 多人通知列表，source_ref C-019 微信多人互动）——**全仓无实现**。入站指令解析与出站 Webhook 告警共用微信通道但方向相反、生命周期独立：出站是报告/告警分发（本备忘 §3.7），入站是交易指令入口（buy_flow 域，下游 BM-BUY-06 外部指令盯盘→执行结果→微信推送）。处置=**登记远期**：入站指令涉及资金操作，解析错误代价高，须待出站渠道实发（缺口 #3 闭合）+ 指令鉴权/确认机制设计后再评估，不在本备忘施工范围（归属 buy_flow 域备忘）。
+6. **微信入站指令解析未施工（BM-BUY-07 登记）**：出站方向已有 ReportPublisher 微信 Webhook 告警（当前仅落 PENDING 不实发，见缺口 #3）；入站方向——用户微信消息 → D-TRADING-06 解析/路由为标准指令（自然语言解析 + 多人通知列表，source_ref C-019 微信多人互动）——**全仓无实现**。入站与出站共用微信通道但方向相反、生命周期独立：出站是报告/告警分发（本备忘 §3.7），入站是交易指令入口（buy_flow 域，下游 BM-BUY-06 外部指令盯盘→执行结果→微信推送）。处置=**登记远期**：入站指令涉及资金操作，解析错误代价高，须待出站渠道实发（缺口 #3 闭合）+ 指令鉴权/确认机制设计后再评估，不在本备忘施工范围（归属 buy_flow 域备忘）。
 
 ## 3. 决策
 
@@ -144,11 +144,9 @@ scope: 07_trading_decision_architecture
 
 其中 w_p/w_b = 组合/基准权重，r_p/r_b = 组合/基准板块收益（R_b 基准总收益 = Σ(w_b,i × r_b,i)，用于报告展示与 BF 备选口径）。
 
-> **⚠️ v1.15.0 守恒修正（公式 bug 修复）**：本表 v1.14.0 及之前版本写作"allocation = ∑(w_p − w_b) × (r_b − R_b)（BF 基准差口径）+ selection = ∑**w_p** × (r_p − r_b)"——该组合三式求和 = R_p − R_b + ∑(w_p−w_b)(r_p−r_b)，**interaction 被重复计算**，违反本备忘 §3.2/§5.1 自己规定的求和不变量门禁（Carino residual 将恒 FAIL）。修正为**纯 BHB**（allocation = ∑(w_p−w_b)·r_b、selection = ∑w_b·(r_p−r_b)、interaction = ∑(w_p−w_b)(r_p−r_b)）后三式求和恒等 = R_p − R_b ✓。选纯 BHB 而非 BF 3-effect（BF allocation + w_b selection + interaction，亦守恒）的理由：①与仓内唯一生产实现 [pf_core MOD-PF-007](file:///d:/ZephyrAlpha/src/zephyr/pf_core/core/performance_attribution_engine.py)（纯 BHB 含守恒校验）零改动对齐；②与 §3.13 Hentschel GLS 骨架设计矩阵（BHB）一致；③与本节"BHB vs BF 方案明确"决策文字（"保留 BHB 三因子"）一致——表格公式此前与该三处全部矛盾。BF 3-effect（[pybrinson v1.3.1](https://github.com/gghez/pybrinson) / [metricgate 2026-09](https://metricgate.com/docs/multi-period-attribution/)：A_i=(w_p,i−w_b,i)·(R_b,i−R_b)，S_i=w_b,i·(R_p,i−R_b,i)+独立 interaction）登记为 allocation 基准差口径备选，切换只需改 allocation 一式。
+> **⚠️ v1.15.0 守恒修正（公式 bug 修复）**：本表 v1.14.0 及之前版本写作"allocation = ∑(w_p − w_b) × (r_b − R_b)（BF 基准差口径）+ selection = ∑**w_p** × (r_p − r_b)"——该组合三式求和 = R_p − R_b + ∑(w_p−w_b)(r_p−r_b)，**interaction 被重复计算**，违反求和不变量门禁（Carino residual 将恒 FAIL）。修正为**纯 BHB** 后三式求和恒等 = R_p − R_b ✓。选纯 BHB 而非 BF 3-effect 的理由：①与仓内唯一生产实现 [pf_core MOD-PF-007](file:///d:/ZephyrAlpha/src/zephyr/pf_core/core/performance_attribution_engine.py)（纯 BHB 含守恒校验）零改动对齐；②与 §3.13 Hentschel GLS 骨架设计矩阵（BHB）一致；③与本节"BHB vs BF 方案明确"决策文字一致。BF 3-effect（[pybrinson v1.3.1](https://github.com/gghez/pybrinson) / [metricgate 2026-09](https://metricgate.com/docs/multi-period-attribution/)：A_i=(w_p,i−w_b,i)·(R_b,i−R_b)，S_i=w_b,i·(R_p,i−R_b,i)+独立 interaction）登记为 allocation 基准差口径备选，切换只需改 allocation 一式。
 
 **PnL Explain vs PnL Predict 概念框架**（v1.2.0 补，[hftradingbook 2026-06](https://hftradingbook.com/performance/attribution) + [CSDN SRPnL 2026-06](https://blog.csdn.net/weixin_42402664/article/details/152352510) 概念澄清）：
-
-> 2026 行业文献明确将 PnL 归因分两类——**Explain（事后解释）** vs **Predict（事前预测）**——二者不可混用：
 
 | 框架 | 类型 | 原理 | 适用场景 | A 股个人系统适用性 |
 |---|---|---|---|---|
@@ -157,18 +155,11 @@ scope: 07_trading_decision_architecture
 | **SRPnL 敏感性分解**（CSDN 2026-06 推广） | PnL Predict | Sensitivity-based Return and PnL Decomposition，持仓价值映射到风险因子空间实现"白盒式结构性贡献" | 多资产/衍生品组合归因 | 🟥 拒绝（本质是 Greek 风格，需因子协方差矩阵，与 Barra 同源） |
 | **PnL attribution waterfall**（[hftradingbook 2026-06](https://hftradingbook.com/performance/attribution)） | PnL Explain | 做市商：spread capture - adverse selection - own impact + signal alpha + fees = net PnL | 高频做市策略归因 | 🟧 备选（A 股非做市场景，但 TCA 部分借鉴 adverse selection 概念） |
 
-> **为何选 Explain 而非 Predict**：A 股权益策略的 PnL 来源是"配置+选股+时段"决策维度，不是 Greek 敏感性。Greek/SRPnL 是衍生品做市的归因方法（持仓价值对 Delta/Gamma/Vega 的敏感性分解），需要 Greek 模型 + 协方差矩阵估计，与 30 号拒绝 MVO 协方差矩阵保持架构一致。Brinson 作为 Explain 方法的行业标准，对 A 股权益策略是"对的方法对的问题"。
+> **为何选 Explain 而非 Predict**：A 股权益策略的 PnL 来源是"配置+选股+时段"决策维度，不是 Greek 敏感性。Greek/SRPnL 需要 Greek 模型 + 协方差矩阵估计，与 30 号拒绝 MVO 协方差矩阵保持架构一致。
 
-**为何 Brinson 而非 Barra**（2026 行业调研）：
-- Brinson-Fachler（1985/1986）至今仍是行业标准的收益归因框架（[tradetally 2026-07](https://tradetally.com) / [marketopia 2026-05](https://marketopia.com) / [quant67 2026-05](https://quant67.com) / [traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading)），回答"赚的钱来自配置还是选股"
-- Barra 是 MSCI 的因子风险归因模型（BarraOne），回答"因子暴露贡献了多少风险和收益"，需要因子风险模型许可证 + 协方差矩阵估计 + 较长实施周期（finantrix 2026-08 买家指南：典型 deal $100K-$1M+）
-- 个人+AI 系统：Brinson 的"配置 vs 选股"二分已足够指导迭代（亏钱时知道是仓位配错还是选股错），Barra 的因子分解（国家/行业/风格因子）对 5 策略小组合是过度工程
-- 30 号 Model A 已拒绝统一 MVO 优化器（需协方差矩阵）→ 同理拒绝 Barra（也需协方差矩阵），保持架构一致性
-- **5 维归因参考**（[traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading)）：setup quality / regime fit / execution discipline / sizing / instrument selection——本备忘三维度（策略/标的/时段）已覆盖 setup→策略、instrument→标的、sizing→时段，regime fit 由 28 情绪周期 + 30 号 RegimeMetaAllocator 独立管，execution discipline 由 TCA 独立管，无需在 Brinson 归因内混合维度
+**为何 Brinson 而非 Barra**：Brinson（1985/1986）至今是行业标准收益归因框架（[traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading)），回答"赚的钱来自配置还是选股"；Barra 需因子风险模型许可证 + 协方差矩阵估计（finantrix 2026-08：典型 deal $100K-$1M+），对 5 策略小组合过度工程，与 30 号拒 MVO 协方差架构一致（§4.1）。**5 维归因参考**（同前 setup/regime/execution/sizing/instrument）：本备忘三维度已覆盖 setup→策略、instrument→标的、sizing→时段，regime fit 归 28 号 + 30 号 RegimeMetaAllocator、execution 归 TCA，不混入 Brinson。
 
-**多 session PnL 归因边界**（v1.2.0 补，[seriousalchemy 2026-08-04](https://seriousalchemy.com/pnl-sessions/)）：
-
-> 30 号 Model A 的 StrategyBook 可能在持仓未平期间触发 reoptimization（参数迭代），导致同一笔交易的 entry 和 exit 跨 session。seriousalchemy 实证：跨 session 交易若用单 session FIFO 匹配器会产生"幽灵成交"（duplicate order record）+ PnL 漏算。
+**多 session PnL 归因边界**（v1.2.0 补，[seriousalchemy 2026-08-04](https://seriousalchemy.com/pnl-sessions/)）：30 号 Model A 的 StrategyBook 可能在持仓未平期间触发 reoptimization，导致同一笔交易 entry/exit 跨 session；跨 session 交易若用单 session FIFO 匹配器会产生"幽灵成交"（duplicate order record）+ PnL 漏算。
 
 | 边界场景 | 风险 | 缓解策略 |
 |---|---|---|
@@ -176,7 +167,7 @@ scope: 07_trading_decision_architecture
 | 涨跌停/停牌导致订单跨日 | working 订单次日才成交，session 已切换 | OrderManager 必须按 fill_id 幂等（40 号 §6.1 gap 12 AsyncFillDispatcher fill_id LRU 幂等已实现），不依赖 session 状态机 |
 | T+1 结算跨日 | 成交记录日切时点 vs 持仓对账时点错位 | SettlementReconciliation（MOD-TRADING-003）按 T+1 结算单核对，不按 session 切换核对 |
 
-> **设计原则**：PnL 计算和归因必须以 fill_id + position_id 为唯一键，不依赖 session_id/reoptimization_run_id——避免 seriousalchemy 实证的"幽灵成交"和 PnL 漏算。30 号 StrategyBook reoptimization 只影响策略参数（target_portfolio 生成），不影响已成交订单的 PnL 归属。
+> **设计原则**：PnL 计算和归因必须以 fill_id + position_id 为唯一键，不依赖 session_id/reoptimization_run_id——避免"幽灵成交"和 PnL 漏算。30 号 StrategyBook reoptimization 只影响策略参数（target_portfolio 生成），不影响已成交订单的 PnL 归属。
 
 **已实现 gap**（v1.15.0 校准：reporting 侧为全桩，pf_core 侧为真实实现——双实现并存）：
 
@@ -209,30 +200,14 @@ scope: 07_trading_decision_architecture
 | Frongello 递归 | Frongello (2002) | 递归链接，再投资收益归属产生阶段 | 适合再投资分析 |
 | Bacon 几何 | Bacon (2008) ch.6 | 纯几何链接 | 几何归因偏好场景 |
 
-> **GRAP 2026-05-19 专利公开：交易效应作为第 4 因子**（v1.10.0 补，[国知局 202610181717 "基于 GRAP 递推算法的交易效应内嵌式归因方法"](https://www.xjishu.com/zhuanli/55/202610181717.html)）：
->
-> 2026-05-19 公开的 GRAP 递推算法专利核心创新**不是**"链接算法"（本表已列 GRAP 1997 几何归因为备选链接方法），而是把**交易效应（Trading Effect）作为 Brinson 模型的独立第 4 因子**分解出来。传统 Brinson 3 因子（allocation + selection + interaction）假设评估周期内持仓不变，忽略量化策略中频繁的日内交易、算法交易滑点及冲击成本——导致大量日内损益被错误归入选股效应或交互效应残差中。GRAP 专利的 4 因子分解：
->
-> ```
-> 超额收益 = 配置效应 + 选股效应 + 交互效应 + 交易效应
-> ```
->
-> **与 54号 transaction_cost_drag 的等价关系**（v1.10.0 补）：
-> - 54号 §3.2 已在求和不变量校验中定义 `Brinson 3 因子 + transaction_cost_drag = 总超额收益`——transaction_cost_drag 在功能上**等价于** GRAP 专利的"交易效应第 4 因子"
-> - 概念差异：54号 称 "transaction_cost_drag"（成本拖拽，隐含负向），GRAP 称 "交易效应"（中性，可正可负——执行能力强的策略交易效应为正贡献）——后者更中性，但 54号 transaction_cost_drag 分项已含 timing/impact/slippage/commission 四组件，功能等价
-> - 链接差异：54号 主选 Carino 对数链接，GRAP 专利用递推平滑系数——本表已列 GRAP 为备选链接算法，重评条件触发时可切换
-> - **结论：54号 已功能等价覆盖 GRAP 专利核心创新**（交易效应第 4 因子），无需追加施工；若未来需切换到 GRAP 递推平滑系数链接（Carino residual 持续 > 1bp 时），transaction_cost_drag 字段无需改动，仅替换 carino_link_periods → grap_link_periods 即可
+> **GRAP 2026-05-19 专利公开：交易效应作为第 4 因子**（v1.10.0 补，[国知局 202610181717 "基于 GRAP 递推算法的交易效应内嵌式归因方法"](https://www.xjishu.com/zhuanli/55/202610181717.html)）：该专利核心创新**不是**链接算法，而是把**交易效应（Trading Effect）作为 Brinson 模型的独立第 4 因子**（`超额收益 = 配置效应 + 选股效应 + 交互效应 + 交易效应`），解决传统 3 因子假设持仓不变导致日内交易损益被错误归入选股/交互残差的问题。**与本备忘的等价关系**：§3.2 求和不变量已定义 `Brinson 3 因子 + transaction_cost_drag = 总超额收益`——transaction_cost_drag 功能上**等价于** GRAP 的"交易效应第 4 因子"（已含 timing/impact/slippage/commission 四组件）；概念差异是 drag 隐含负向 vs 交易效应中性。**结论：本备忘已功能等价覆盖 GRAP 专利核心创新，无需追加施工**；若未来切换到 GRAP 递推平滑系数链接（Carino residual 持续 > 1bp 时），transaction_cost_drag 字段无需改动，仅替换 carino_link_periods → grap_link_periods。
 
-**主选 Carino 的理由**：
-- GIPS-compliant 报告的标准方法（[metricgate 2026](https://metricgate.com/docs/multi-period-attribution/)：Carino 是 GIPS 报告首选）
-- 实现简单：单期效应 × k_t × (ln(period) / ln(total)) 求和即可
-- residual 可量化校验（见下方质量校验）
-- 开源参考实现 [pybrinson v1.3.1 2026-04-13](https://github.com/gghez/pybrinson) 已实现 Carino/GRAP/Frongello/Menchero/Geometric 5 种链接方法
+**主选 Carino 的理由**：GIPS-compliant 报告标准方法（[metricgate 2026](https://metricgate.com/docs/multi-period-attribution/)）；实现简单（单期效应 × k_t × (ln(period)/ln(total)) 求和），residual 可量化校验（见下方质量门禁）；开源参考 [pybrinson v1.3.1 2026-04-13](https://github.com/gghez/pybrinson) 已实现 Carino/GRAP/Frongello/Menchero/Geometric 5 种链接方法。
 
 **BHB vs BF 方案明确**（v1.1.0 补 / v1.15.0 口径修正）：
 - 本备忘采用 **纯 BHB（Brinson-Hood-Beebower 1986）三因子**（含独立 interaction effect）——与仓内生产实现 pf_core MOD-PF-007 完全同口径（其代码注释自称 "Brinson-Fachler 模型"系注释错误，公式实为 BHB）
 - BF 3-effect（[pybrinson v1.3.1](https://github.com/gghez/pybrinson) / [metricgate 2026-09](https://metricgate.com/docs/multi-period-attribution/)）：allocation = ∑(w_p−w_b)·(r_b − R_b) 基准差口径 + selection = ∑w_b·(r_p−r_b) + 独立 interaction——守恒，登记为备选（切换只改 allocation 一式）
-- 经典 BF 两因子（1985 原文）将 interaction 合并到 selection（[DolphinDB 2026](https://docs.dolphindb.com/zh/tutorials/brinson.html)：BF 两因子，allocation 用 R_b,i − R_b 基准差，selection 用 w_p 加权）——作降级备选
+- 经典 BF 两因子（1985 原文）将 interaction 合并到 selection（[DolphinDB 2026](https://docs.dolphindb.com/zh/tutorials/brinson.html)）——作降级备选
 - 决策保留 BHB 三因子——interaction 独立可见有助于区分"配比+选股协同效应"vs"纯选股能力"，对 AI 迭代更有指导性
 - 重评条件：若 interaction 长期接近 0（统计不显著），可降级到 BF 两因子简化解释
 
@@ -366,7 +341,7 @@ def carino_link_periods(
 
 **A 股 T+1 归因特殊处理子决策**（v1.5.0 补，[akquant A 股市场微观结构 2026](https://akquant.akfamily.xyz/textbook/06_stock_a/) §6.2 T+1 持仓状态机 + [biyapay A 股入门 2025-12](https://www.biyapay.com/en/blogdetail/3010-ashare-beginners-guide-master-market-hours-and-tra) T+1 规则）：
 
-> A 股 T+1 制度（当日买入次日可卖）与 Brinson "beginning-of-period weights + 期内收益" 框架存在张力：T 日新建仓位的权重在 T 日收盘已计入 `_holdings_history[T]`，但 T+1 才能卖出 → T 日建仓的 selection effect 用 T 日收益计算会**高估选股能力**（T 日买入后无法当日卖出兑现，T 日浮盈不可实现）。归因报告若不特殊处理 T+1，会把"当日浮盈"误记为"选股 alpha"，AI 迭代方向被误导。
+> A 股 T+1 制度与 Brinson "beginning-of-period weights + 期内收益" 框架存在张力：T 日新建仓位的权重在 T 日收盘已计入 `_holdings_history[T]`，但 T+1 才能卖出 → T 日建仓的 selection effect 用 T 日收益计算会**高估选股能力**（T 日浮盈不可实现）。归因报告若不特殊处理 T+1，会把"当日浮盈"误记为"选股 alpha"。
 
 **T+1 对 Brinson 三因子的影响分析**：
 
@@ -463,18 +438,15 @@ def get_sector(symbol: str) -> str:
 ```
 
 > **数据源对齐**：申万一级分类 28 行业，akshare `stock_individual_info_em(symbol).行业` 字段直接可用。映射表在 [09_d_alt_data](../../02_domain_architecture_docs/09_d_alt_data.md) `akshare_provider`（production）启动时预加载，季度更新（申万调整频率）。§7 开放问题"Brinson 板块划分"待实盘校准后定 28 行业 vs 风格分类。
-- 归因报告 §3.7 MOD-RPT-015 模板第 2 节 Brinson 分解表增加 "Realized Selection" / "Unrealized (T+1 locked) Selection" 两行分列
+- 归因报告 §3.12 MOD-RPT-015 模板第 2 节 Brinson 分解表增加 "Realized Selection" / "Unrealized (T+1 locked) Selection" 两行分列
 - `t1_warning=True` 时归因报告顶部标注警示，避免 owner 把浮盈当真实 alpha 反馈到策略层
 - T+1 不影响 Carino 多期链接（链接的是已实现 PnL，浮盈在 T+1 卖出后转入已实现）
 
-**为何 T+1 是 A 股归因的真实 gap 而非通用问题**：
-- 美股/港股 T+0 可当日买卖，selection effect 全部可兑现，无需拆分
-- A 股 T+1 是制度性约束（[akquant 2026](https://akquant.akfamily.xyz/textbook/06_stock_a/) §6.2：抑制日内投机），所有当日新建仓位均有 T+1 锁定
-- 不处理会导致打板策略（日内建仓吃涨停）的归因严重失真——当日浮盈被记为 selection alpha，次日低开回落时归因无法解释"昨日的 alpha 今天消失了"
+**为何 T+1 是 A 股归因的真实 gap 而非通用问题**：美股/港股 T+0 可当日买卖，selection 全部可兑现；A 股 T+1 是制度性约束，不处理会导致打板策略归因严重失真——当日浮盈被记为 selection alpha，次日低开回落时归因无法解释"昨日的 alpha 今天消失了"。
 
 **transaction_cost_drag 接入 TCA 算法**（v1.3.0 补，[40_execution_broker](40_execution_broker.md) §2.5 + [DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) IS 成本分解）：
 
-> [default_attribution_engine.py:78](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_attribution_engine.py) 当前 `transaction_cost_drag=0.0` 硬编码，未接入 TCA。归因报告的 transaction_cost_drag 字段必须从 DefaultTcaEngine 的 IS 成本分解导出，否则归因报告漏算执行成本对 PnL 的拖累——AI 迭代无法区分"策略 alpha 错"还是"执行成本高"。
+> [default_attribution_engine.py:78](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_attribution_engine.py) 当前 `transaction_cost_drag=0.0` 硬编码，未接入 TCA。归因报告的 transaction_cost_drag 字段必须从 DefaultTcaEngine 的 IS 成本分解导出，否则无法区分"策略 alpha 错"还是"执行成本高"。
 
 | TCA IS 成本分项 | 含义 | 映射到 transaction_cost_drag 的算法 |
 |---|---|---|
@@ -521,15 +493,11 @@ def calculate_transaction_cost_drag(tca_results_by_fill: dict[str, dict],
 - 残差 = total_active_return - (allocation + selection + interaction + transaction_cost_drag) < 0.01% 是归因完整性校验
 - 残差 > 0.01% 表示归因维度未覆盖完（如缺时机归因/缺外部冲击归因），需排查未编目源
 
-**为何必须接入 TCA**：
-- 40 号 §6.1 gap 12 已实现 fill_id 幂等（AsyncFillDispatcher LRU 去重）；但 [DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 当前仅实现简易滑点（成交价 vs 限价），**IS 四组件分解（timing/impact/slippage/commission）本身待施工**——transaction_cost_drag 接入的前提是 TCA 侧先落 IS 分解（§5.2 第一阶段已登记，§7 开放问题）
-- 当前 transaction_cost_drag=0 导致归因报告"看起来 PnL 来自配置+选股，实际可能被滑点吞噬"——AI 迭代方向被误导
-- 30 号 §2.5 四级回撤 Protocol 触发后，需归因报告区分"回撤来自策略失效"还是"回撤来自执行成本高"——后者可通过 40 号执行算法优化补救，前者需策略层重优化
-- 2026-08 行业共识（[marketmaker.cc 2026-03](https://marketmaker.cc/en/blog/post/backtest-live-parity)）：execution divergences 贡献 10-30% PnL，是 parity gap 最大源；归因必须能定位执行成本贡献
+**为何必须接入 TCA**：[DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) 当前仅简易滑点，**IS 四组件分解（timing/impact/slippage/commission）本身待施工**——drag 接入前提是 TCA 侧先落 IS 分解（§5.2 第一阶段，§7 开放问题）；transaction_cost_drag=0 会让归因报告无法区分"回撤来自策略失效 vs 执行成本高"（30 号 §2.5 四级回撤复盘必需）；[marketmaker.cc 2026-03](https://marketmaker.cc/en/blog/post/backtest-live-parity)：execution divergences 贡献 10-30% PnL，是 parity gap 最大源。
 
 **A 股权益 PnL waterfall 子框架**（v1.3.0 补，[hftradingbook 2026-06](https://hftradingbook.com/performance/attribution) waterfall 模型 A 股适配）：
 
-> hftradingbook 的 PnL waterfall（spread capture - adverse selection - own impact + signal alpha + fees = net PnL）是做市商场景。A 股非做市场景但可借鉴 waterfall 思路——将 PnL 分解为信号贡献 + 选股贡献 + 择时贡献 - 成本 - 机会成本 = 净 PnL，与 Brinson 3 因子互为补充（Brinson 是配置/选择/交互维度，waterfall 是 PnL 流向维度）。
+> hftradingbook 的 PnL waterfall 是做市商场景。A 股非做市场景但可借鉴 waterfall 思路——将 PnL 分解为信号贡献 + 选股贡献 + 择时贡献 - 成本 - 机会成本 = 净 PnL，与 Brinson 3 因子互为补充（Brinson 是配置/选择/交互维度，waterfall 是 PnL 流向维度）。
 
 | PnL waterfall 分项 | 含义 | 算法 | 与 Brinson 的关系 |
 |---|---|---|---|
@@ -542,7 +510,7 @@ def calculate_transaction_cost_drag(tca_results_by_fill: dict[str, dict],
 
 **PnL waterfall 施工算法**（v1.5.1 补，[hftradingbook 2026-06](https://hftradingbook.com/performance/attribution) waterfall 模型 A 股适配 + [AlgoTradingDesk 2026-01](https://algotradingdesk.com/trade-outcome-attribution-algorithmic-trading-dma/) 5 Pillars 逐笔归因 + [OrderX 2026-07-09](https://orderx.com/education/introduction-to-algorithmic-execution-part-12-benchmarks-and-tca/) slippage signed bps 公式）：
 
-> 上表定义了 5 分项的算法概念但缺完整伪代码。Phase 2 启用时施工方直接照此实现——核心是逐笔归因（per-fill attribution），非持仓层面聚合。[OrderX 2026-07-09] slippage signed bps：cost(bps) = side × (exec_price − benchmark) / benchmark × 10_000，side=+1 买/-1 卖。
+> 核心是逐笔归因（per-fill attribution），非持仓层面聚合。[OrderX 2026-07-09] slippage signed bps：cost(bps) = side × (exec_price − benchmark) / benchmark × 10_000，side=+1 买/-1 卖。Phase 2 启用时施工方直接照此实现。
 
 ```python
 def calc_ashare_pnl_waterfall(fills: list[dict],
@@ -552,23 +520,18 @@ def calc_ashare_pnl_waterfall(fills: list[dict],
                                opportunity_cost_records: list[dict] = None) -> dict:
     """A 股 PnL waterfall 5 分项分解（Phase 2 施工算法）。
 
-    [hftradingbook 2026-06] waterfall A 股适配 + [AlgoTradingDesk 2026-01] 5 Pillars。
-    逐笔归因：每笔 fill 独立计算 signal/selection/timing/cost/opportunity 贡献。
-
     Args:
         fills: 成交记录列表，每笔含 symbol/direction/fill_price/qty/decision_price/
                commission/slippage_cost/impact_cost/timing_cost
         signal_records: {symbol: signal_value} 信号触发时信号值
         close_prices: {symbol: close_price} 当日收盘价（timing 基准）
         decision_prices: {symbol: decision_price} 信号产生时决策价
-        opportunity_cost_records: 未成交订单的机会损失记录（外部注入，由 OrderManager
-                                  的 rejected/cancelled orders 聚合，40 号拒单分类），
-                                  每条含 symbol/rejected_signal/intended_qty/decision_price；
-                                  None 或空列表 → opportunity_costs=0（MVP 默认）
+        opportunity_cost_records: 未成交订单机会损失记录（外部注入，OrderManager
+            rejected/cancelled orders 聚合，40 号拒单分类），每条含
+            symbol/rejected_signal/intended_qty/decision_price；None/空 → 0（MVP 默认）
     Returns:
-        {'signal_alpha': float, 'selection_alpha': float, 'timing_alpha': float,
-         'transaction_costs': float, 'opportunity_costs': float, 'net_pnl': float,
-         'invariant_check': bool}
+        {'signal_alpha', 'selection_alpha', 'timing_alpha',
+         'transaction_costs', 'opportunity_costs', 'net_pnl': float}
     """
     signal_alpha = selection_alpha = timing_alpha = 0.0
     transaction_costs = opportunity_costs = 0.0
@@ -629,25 +592,17 @@ def calc_ashare_pnl_waterfall(fills: list[dict],
     }
 ```
 
-**为何 waterfall 是 Brinson 的补充而非替代**：
-- Brinson 回答"赚的钱来自配置还是选股"——决策维度（事后 Explain）
-- Waterfall 回答"PnL 流向哪里"——PnL 构成维度（事后 Explain）
-- 二者交集：Brinson selection 与 waterfall signal alpha + selection alpha 重叠
-- 二者差集：Brinson allocation（waterfall 不分）+ waterfall timing/opportunity（Brinson 不分）
-- MVP 决策：Brinson 为主（行业标准 + 已实现框架），waterfall 为补充（Phase 2 若 Brinson 不够用时上）
-- 重评条件：Brinson 归因残差持续 > 0.01% + 需区分"信号失效"vs"选股失效"vs"择时失效"时
+**为何 waterfall 是 Brinson 的补充而非替代**：Brinson 回答"赚的钱来自配置还是选股"（决策维度），waterfall 回答"PnL 流向哪里"（构成维度）；交集：Brinson selection ≈ waterfall signal + selection alpha；差集：Brinson allocation（waterfall 不分）+ waterfall timing/opportunity（Brinson 不分）。MVP Brinson 为主，waterfall Phase 2 补充；重评条件：Brinson 残差持续 > 0.01% + 需区分"信号/选股/择时失效"时。
 
 **为何不再造**（v1.15.0 校准）：仓内已存在真实归因实现（pf_core MOD-PF-007，含守恒校验+测试），reporting 侧为契约桩——本备忘的价值是为双实现收敛提供公式真源（BHB 守恒口径 + Carino 链接）与 why 层决策记录，而非再建第三套归因引擎。收敛裁定见 §6。
 
 **2026-08 最新研究补充**（v1.4.0 补）：
 
-> 全网搜索 2026-08 最新归因研究，发现 1 项选项之外更好的算法 + 1 项施工算法增强 + 1 项互补框架：
-
 | 算法 | 来源 | 核心思路 | 适用性评估 |
 |---|---|---|---|
 | **Brinson + Industry Layer 5 层分解** | [Kiski 2026-03](https://www.kiski.com/blog-posts/adding-an-industry-layer-to-active-passive-decomposition) | 在 Brinson 3 因子基础上，sector 和 selection 之间插入**行业超额层**：Market + Sector超额 + Industry超额 + Selection + Sizing，解决"selection 变垃圾桶"问题；配套**发行人级 Brinson** 解决 A/H/ADR 交叉上市虚假"选股"噪音 | 🟧 Phase 2 候选（集中型行业基金尽调归因；个人 5 策略组合 industry 层增量信息有限，首批 track record 3 月后评估） |
-| **Trade Outcome Attribution 5 Pillars** | [AlgoTradingDesk 2026-01](https://algotradingdesk.com/trade-outcome-attribution-algorithmic-trading-dma/) | Signal + Timing + Spread + Slippage + Market Impact 五支柱分解，含"信号 P&L 曲线 vs 执行 P&L 曲线"可视化；核心箴言"这不是策略失败，是归因失败" | ✅ 已部分覆盖（PnL waterfall 子框架的 signal/timing/costs 对应），5 Pillars 的"逐笔元数据存储（时间戳/订单类型/簿深度/波动率/成交量/延迟）"可借鉴强化 TCA |
-| **Hentschel 统一 Brinson+Factor GLS** | [Hentschel 2024](https://www.ludgerhentschel.com/PDFs/Hentschel%2024b.pdf)（2026 仍被引用为最新统一框架） | 受限广义最小二乘（Restricted GLS）统一处理交互项重分配/因子残差/多期平滑，将调整导向**精度最低的估计** | 🟥 远期参考（学术统一框架，个人系统过重，登记 §6 待裁定） |
+| **Trade Outcome Attribution 5 Pillars** | [AlgoTradingDesk 2026-01](https://algotradingdesk.com/trade-outcome-attribution-algorithmic-trading-dma/) | Signal + Timing + Spread + Slippage + Market Impact 五支柱分解，含"信号 P&L 曲线 vs 执行 P&L 曲线"可视化 | ✅ 已部分覆盖（PnL waterfall 子框架的 signal/timing/costs 对应），5 Pillars 的"逐笔元数据存储（时间戳/订单类型/簿深度/波动率/成交量/延迟）"可借鉴强化 TCA |
+| **Hentschel 统一 Brinson+Factor GLS** | [Hentschel 2024](https://www.ludgerhentschel.com/PDFs/Hentschel%2024b.pdf) | 受限广义最小二乘（Restricted GLS）统一处理交互项重分配/因子残差/多期平滑，将调整导向**精度最低的估计** | 🟥 远期参考（学术统一框架，个人系统过重，登记 §6 待裁定） |
 
 **滑点分布报告增强**（施工算法 gap，[Drovix 2026-05](https://drovix.com/blog/tca-that-actually-drives-decisions)）：
 
@@ -660,33 +615,22 @@ def calc_ashare_pnl_waterfall(fills: list[dict],
 
 **滑点分布报告增强施工算法**（v1.5.1 补，[Drovix 2026-05](https://drovix.com/blog/tca-that-actually-drives-decisions) 滑点分布 + [OrderX 2026-07-09](https://orderx.com/education/introduction-to-algorithmic-execution-part-12-benchmarks-and-tca/) reversion 诊断 + [waylandz 2026-04-20](https://waylandz.com/blog/backtest-to-live-gap/) cost model 分层）：
 
-> 当前 `calculate_transaction_cost_drag()` 只输出加权均值 `total`，[Drovix 2026-05] 实证滑点是分布非均值——须报告百分位 + 压力 regime 切片。[waylandz 2026-04-20] 进一步指出 backtest-to-live gap 是 cost model 问题：bid-ask slippage 通常建模正确，但 commission timing / microstructure / gap risk 层常被忽略——归因报告须分项展示而非单一数字。
-
 ```python
 import numpy as np
 
 def calculate_slippage_distribution(tca_results: list[dict],
                                      portfolio_weights: dict[str, float]) -> dict:
-    """滑点分布报告增强——百分位 + 压力 regime 切片。
-
-    [Drovix 2026-05]：IS 单一数字是"虚荣指标"，必须报告 median/p90/p99。
-    [OrderX 2026-07-09]：reversion 诊断——价格在成交后回转=临时冲击，
-    价格继续同方向=真实 alpha（非成本）。
+    """滑点分布报告增强——百分位 + 压力 regime 切片（[Drovix 2026-05] 滑点是分布非均值 + [OrderX 2026-07-09] reversion 诊断）。
 
     Args:
         tca_results: 各成交笔的 TCA 分解（含 slippage_cost/symbol/volatility_regime）
         portfolio_weights: 各标的权重（beginning-of-period）
     Returns:
-        {
-            'total': float,              # 加权均值（兼容现有 transaction_cost_drag）
-            'slippage_distribution': {
-                'p50': float, 'p90': float, 'p99': float,  # 百分位
-                'mean': float, 'std': float,
-            },
-            'stress_regime_slippage': float,  # 压力 regime 滑点（top decile 波动率）
-            'normal_regime_slippage': float,  # 正常 regime 滑点
-            'reversion_signal': str,          # 'temporary_impact' / 'real_alpha' / 'inconclusive'
-        }
+        {'total': float,  # 加权均值（兼容 transaction_cost_drag）
+         'slippage_distribution': {'p50','p90','p99','mean','std': float},
+         'stress_regime_slippage': float,  # 压力 regime（top decile 波动率）
+         'normal_regime_slippage': float,
+         'reversion_signal': 'temporary_impact'|'real_alpha'|'inconclusive'}
     """
     slippage_samples = []
     weighted_slippage = 0.0
@@ -733,8 +677,6 @@ def calculate_slippage_distribution(tca_results: list[dict],
 
 **决策**：每日盘后做三层对账——成交对账（系统记录 vs 券商结算单）+ 持仓对账（系统账 vs 券商端）+ 资金对账（系统现金 vs 券商可用资金），盘中加持仓对账每 5min 巡检。
 
-> 2026 行业共识（marketclutch / reconwizz 2026-01 / osfin 2026-03 / limina）：三层对账是机构标准——Position Quantity + Cash Balance + Security Identification 三个数据点缺一不可，cash 完美但 position break（shares missing）或 position 完美但 cash break（failed settlement）都会发生。
-
 **三层对账定义**：
 
 | 对账层 | 对账内容 | 触发时点 | 模块 | 状态 |
@@ -752,7 +694,7 @@ def calculate_slippage_distribution(tca_results: list[dict],
 
 **持仓对账偏差检测算法**（v1.6.0 补，[marketclutch 2026 "Position Reconciliation"](https://marketclutch.com/the-silent-sentinel-mastering-trading-position-reconciliation/) Variance Delta 公式 + [electronictradinghub 2026-06-17 "Position Drift"](https://electronictradinghub.com/crypto-market-making-position-drift-how-multi-venue-state-desync-defeats-pre-trade-risk/) 容差校准不可解问题共识 + [ParseMyStatement 2026-04 Running Balance QA](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 行级不变量校验）：
 
-> §3.3 持仓对账机制描述了"双源比对 / diff > tolerance / 冻结解冻"WHAT 层，但缺 HOW 层算法——DriftItem 数据结构、Delta 计算公式、容差参数、偏差分级、冻结/解冻状态机均未定义。2026 行业共识（marketclutch）：Position Quantity 对账的 Variance Delta = (Internal Qty - External Qty) × Market Price，专业系统用 0.01 元或 1 股作为默认阈值。electronictradinghub 实证：容差校准是"未解决问题"——需按标的流动性/价格量级分层设定，非单一全局阈值。
+> Variance Delta = (Internal Qty - External Qty) × Market Price，专业系统用 0.01 元或 1 股作为默认阈值；容差校准是"未解决问题"——需按标的流动性/价格量级分层设定，非单一全局阈值。以下补 DriftItem 数据结构、Delta 公式、容差参数、偏差分级、冻结/解冻状态机。
 
 **DriftItem 数据结构**：
 
@@ -858,10 +800,7 @@ def detect_position_drift(
 - `monitoring` 是 minor drift 的观察态：不冻结但跟踪后续对账是否收敛
 - 连续 3 次对账（~15min）无 drift 后从 `monitoring` 恢复到 `正常`——避免瞬时数据延迟导致反复冻结/解冻
 
-**为何按金额 bps 分级而非固定股数阈值**：
-- 固定股数阈值（如"差 100 股即冻结"）对高价股（贵州茅台 ~1700 元）和低价股（ST 股 ~2 元）的严重度判断不一致
-- 金额 bps 分级让偏差严重度与持仓市值成正比——100 股偏差对茅台（17 万元）是 minor，对 ST 股（200 元）是 critical
-- electronictradinghub 2026-06 共识："the size threshold above which divergence is treated as a real problem rather than a transient artifact"——bps 分级是按"实际影响"而非"绝对数量"判定
+**为何按金额 bps 分级而非固定股数阈值**：固定股数阈值对高价股（贵州茅台 ~1700 元）和低价股（ST 股 ~2 元）严重度判断不一致；金额 bps 分级让偏差严重度与持仓市值成正比——100 股偏差对茅台（17 万元）是 minor，对 ST 股（200 元）是 critical（[electronictradinghub 2026-06]：按"实际影响"而非"绝对数量"判定）。
 
 **容差校准计划**（[electronictradinghub 2026-06] "calibration does not have a solved answer"）：
 - MVP 用默认容差（qty_tol=0.01 股 / value_tol=1 元 / major=50bps / critical=200bps）
@@ -878,7 +817,7 @@ def detect_position_drift(
 
 **成交对账三层匹配算法**（v1.3.0 补，[osfin 2026-03](https://www.osfin.ai/blog/trade-reconciliation) 6 步流程 + [intura 2026](https://intura.co/en/guides/ai-finance-reconciliation) 匹配逻辑类型 + [ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html) 强弱规则分层）：
 
-> SettlementReconciliation（MOD-TRADING-003）当前是逐笔核对，缺匹配规则分层。2026-08 行业共识是三层匹配（exact/fuzzy/partial）+ 例外闭环——强规则先命中，弱规则辅助候选集排序，未匹配进例外工单。个人系统虽笔数少（日成交 < 100 笔），但匹配规则分层能让对账例外率从 ~5% 降到 < 1%（[ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html) 实证：例外率 18%→2.9%）。
+> SettlementReconciliation（MOD-TRADING-003）当前是逐笔核对，缺匹配规则分层。2026-08 行业共识是三层匹配（exact/fuzzy/partial）+ 例外闭环——强规则先命中，弱规则辅助候选集排序，未匹配进例外工单。匹配规则分层能让对账例外率从 ~5% 降到 < 1%（[ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html) 实证：例外率 18%→2.9%）。
 
 | 匹配层级 | 匹配规则 | 容差 | 命中后动作 | 典型场景 |
 |---|---|---|---|---|
@@ -1006,20 +945,11 @@ def reconcile_trades(system_fills: list[Fill],
     return ReconciliationResult(matched, fuzzy, partial, exceptions)
 ```
 
-**为何三层而非单层 exact**：
-- 单层 exact 容差 0 会让所有精度尾差/T+1 跨日/部分成交都进例外——例外率 ~5-18%（[ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html)）
-- 三层匹配让 95%+ 的"近一致"成交自动归类（fuzzy/partial），例外率 < 1%
-- 例外率低 = owner 复盘负担小（个人系统 owner 单点，例外工单必须可控）
-- 与 40 号决策⑥ fill_id 幂等不冲突：fill_id 是强一致匹配的主键，三层是 fill_id 未命中时的兜底
-
-**为何三层而非四层/五层**：
-- [ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html) 的 5 层（强一致/容差/拆合/弱规则/例外）中，弱规则辅助匹配（摘要关键词/发票号片段）适合财务对账，A 股交易对账无发票号/摘要，弱规则层不适用
-- 三层覆盖 95%+ 场景，第四层（弱规则）边际收益低 + 增加复杂度
-- 重评条件：例外率持续 > 5% + 弱规则层能贡献 > 2% 命中率时
+**为何三层而非单层 exact**：单层 exact 容差 0 会让精度尾差/T+1 跨日/部分成交全进例外（例外率 ~5-18%，[ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html)）；三层让 95%+ "近一致"成交自动归类，例外率 < 1%（owner 单点，例外工单必须可控）；与 40 号 fill_id 幂等不冲突（fill_id 是层①主键，三层是未命中兜底）。**不设四/五层**：弱规则辅助匹配（摘要/发票号片段）适合财务对账，A 股交易对账无此字段；重评条件：例外率持续 > 5% + 弱规则层能贡献 > 2% 命中率时。
 
 **置信度评分匹配子决策**（v1.5.0 补，[naya.finance 2026-04-02](https://www.naya.finance/blog/reconciliation-engine-architecture) 加权属性相似度 + [tilores 2026-06-15](https://tilores.io/content/explainable-entity-resolution-confidence-thresholds-audit) 置信带 + [theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/advanced/reconciliation-pipelines/) 三阶段模式）：
 
-> 三层匹配算法当前只输出 matched/fuzzy/partial/exception 四状态，缺**置信度量化**——fuzzy 层命中可能是"数量差 0.01 股+价格完全一致"（高置信）也可能是"数量差 0.01 股+价格差 0.001 元+跨日"（低置信）。2026-08 行业共识是给每个匹配输出**加权置信度分数**，高于阈值自动接受、中区间人工 review、低于阈值拒绝进例外——把"近一致"匹配从二元判断升级为可审计的概率决策。
+> 三层匹配只输出 matched/fuzzy/partial/exception 四状态，缺**置信度量化**——fuzzy 层命中可能是高置信（仅数量差 0.01 股）也可能是低置信（数量+价格+跨日均差）。2026-08 行业共识是给每个匹配输出**加权置信度分数**，高于阈值自动接受、中区间人工 review、低于阈值拒绝进例外——把"近一致"匹配从二元判断升级为可审计的概率决策。
 
 | 置信带 | 分数范围 | 默认动作 | 审计证据 | 典型 owner |
 |---|---|---|---|---|
@@ -1079,11 +1009,7 @@ def calculate_match_confidence(system_fill: Fill,
 # 层 3 partial 命中典型分数：0.50-0.80（聚合匹配但单笔对应关系不确定）
 ```
 
-**为何加置信度而非保留二元状态**：
-- [tilores 2026-06-15](https://tilores.io/content/explainable-entity-resolution-confidence-thresholds-audit)："confidence score should rank how much evidence supports a proposed match, not become the whole decision"——置信度排序候选集，阈值分离自动接受 vs 人工 review
-- [theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/advanced/reconciliation-pipelines/)："85% confidence threshold is a reasonable starting point, but production systems should calibrate per counterparty using historical false-positive costs"——个人系统单券商（国金 miniQMT）无需 per-counterparty，但需实盘校准
-- 个人系统例外工单 owner 单点：中置信区间（0.50-0.85）触发 review 可在例外爆发前拦截——比"全部 fuzzy 直接 matched"更安全
-- 置信度分数是审计证据的一部分（下方三阶段审计轨迹复用），满足"可解释 + 可审计"双重需求
+**为何加置信度而非保留二元状态**：[tilores 2026-06-15](https://tilores.io/content/explainable-entity-resolution-confidence-thresholds-audit) 置信度排序候选集 + 阈值分离自动接受 vs 人工 review；中置信区间（0.50-0.85）触发 review 可在例外爆发前拦截（owner 单点）；置信度分数是审计证据的一部分（下方三阶段审计轨迹复用）。
 
 **置信度阈值校准计划**：
 - MVP 用默认阈值（High ≥ 0.85 / Middle 0.50-0.85 / Low < 0.50）
@@ -1095,14 +1021,14 @@ def calculate_match_confidence(system_fill: Fill,
 
 **例外工单根因分类增强**（v1.15.0 补，[m2pfintech 2026-08-04 "Exception Management in Reconciliation"](https://m2pfintech.com/blog/exception-management-reconciliation-best-practices/)）：
 
-> 行业实证：对账的真实成本中心不是匹配而是例外处理——"closing an exception is not the same as solving the problem behind it"。§3.3 例外工单当前只标记 system/broker 双侧残留，缺根因维度。补两个轻量字段（非新算法）：
+> 行业实证：对账的真实成本中心不是匹配而是例外处理。例外工单补两个轻量字段（非新算法）：
 > - `root_cause`：例外根因分类枚举——`data_feed`（数据源错误/延迟）/ `process_gap`（流程缺口，如部分成交未同步）/ `system_limitation`（系统 bug/口径不一致）/ `timing`（T+1 跨日等时序差异，自愈型）
 > - `recurrence_key`：重复模式键（symbol + root_cause + 匹配层）——月度复盘统计重复根因分布，同一 recurrence_key 月内 ≥ 3 次 → 升级为系统性问题反馈对应模块 owner（对齐 §3.6 异常事件月度统计节奏）
 > - 落地位置：例外工单结构（`ReconciliationResult.exceptions`）增加两字段，审计轨迹阶段②同步记录
 
 **三阶段不可变审计轨迹子决策**（v1.5.0 补，[theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/advanced/reconciliation-pipelines/) 三阶段模式 + [theneuralbase reconciliation-assistance 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/reconciliation-assistance/) 不可变审计约束 + [tilores 2026-06-15](https://tilores.io/content/explainable-entity-resolution-confidence-thresholds-audit) 审计证据字段）：
 
-> [theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/reconciliation-assistance/) 明确："Audit trail must be immutable: write once, read-only after 30 days" + "regulators audit the false negatives hardest"——不仅记录接受的匹配，还必须记录被拒绝的匹配及理由。当前 54号缺对账决策的审计轨迹设计——对账是 PnL 归因的数据源，任何匹配错误都会传播到归因报告，必须有不可变审计轨迹支撑"归因数据可信"。
+> [theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/reconciliation-assistance/)："Audit trail must be immutable: write once, read-only after 30 days" + "regulators audit the false negatives hardest"——不仅记录接受的匹配，还必须记录被拒绝的匹配及理由。对账是 PnL 归因的数据源，任何匹配错误都会传播到归因报告，必须有不可变审计轨迹支撑"归因数据可信"。
 >
 > **与 #ARCH-OE-007 的对齐声明**（v1.15.0 补）：#ARCH-OE-007（2026-08-11 decided）裁定"BM-BUY-10 不建独立不可篡改审计链，可追溯性由 CC-15 事件溯源承接"。本节三阶段轨迹是**对账业务内生的防篡改可检测（tamper-evident）证据链**——SQLite append-only + hash 链提供"篡改可检测"而非机构级"篡改不可行"，服务对账匹配决策的可回溯自查，与 OE-007 裁剪的机构级不可篡改审计链（BM-BUY-10，面向外部审计/监管举证）性质不同、不冲突；Merkle tree/外部锚定/VCP 等机构级能力已全部标 Phase 2+（见下）。措辞口径：本节"不可变"= tamper-evident 可检测，非 tamper-proof 不可篡改。
 
@@ -1174,21 +1100,11 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 # 30 天后审计表自动 read-only（SQLite 触发器 + 定期 WAL 归档）
 ```
 
-**为何三阶段而非单阶段日志**：
-- 单阶段日志（只记录最终结果）无法回答"匹配决策基于什么数据 + 用了什么规则"——审计无法回溯
-- 三阶段对应"数据→决策→结果"因果链：原始数据 → 匹配决策（含置信度+被拒理由）→ 归因分解——每阶段 hash 链保证不可篡改
-- [theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/reconciliation-assistance/)："must log confidence scores, applied rules, and approver identity with timestamps" + "maintain a complete audit trail that includes rejected matches and their reasoning, not just accepted ones"
-- [tilores 2026-06-15](https://tilores.io/content/explainable-entity-resolution-confidence-thresholds-audit)："capture negative evidence... if records were kept apart because a date conflicted, that reason is as important as a successful match"——阶段②必须记录被拒匹配及理由
-
-**为何用 SQLite hash 链而非区块链**：
-- 个人系统单机 + 单 owner，无需多方信任——SQLite hash 链提供"篡改可检测"而非"篡改不可行"
-- [theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/advanced/reconciliation-pipelines/)："use append-only databases (e.g., PostgreSQL with row-level security and triggers preventing UPDATE/DELETE) or blockchain-backed ledgers for SOX compliance"——个人系统非 SOX 合规对象，SQLite 触发器级保护足够
-- 区块链引入节点同步/共识开销，对单机系统是过度工程
-- 重评条件：AUM 机构化 + 外部资金引入 + 需向 LP/监管提供不可篡改审计证据时 → 迁移到 PostgreSQL append-only 或 Hyperledger
+**为何用 SQLite hash 链而非区块链**：个人系统单机 + 单 owner，无需多方信任——SQLite hash 链提供"篡改可检测"而非"篡改不可行"；非 SOX 合规对象，SQLite 触发器级保护足够；区块链引入节点同步/共识开销是过度工程。重评条件：AUM 机构化 + 外部资金引入 + 需向 LP/监管提供不可篡改审计证据时 → 迁移到 PostgreSQL append-only 或 Hyperledger。
 
 **Merkle Tree 升级路径**（v1.7.0 补 / v1.7.3 更新 VCP v1.2 对齐，[Apotheon.ai 2026-07-18 "Merkle DAG"](https://apotheon.ai/resources/whitepapers/merkle-dags) + [AgentAudit RFC 6962](https://github.com/KaushikKC/AgentAudit) + [mickai.co.uk 2026-06-14 "Tamper-Evident Log"](https://mickai.co.uk/articles/anatomy-tamper-evident-log-hash-chain-anchoring)）：
 
-> 当前 v1.5.0 线性 hash 链（每条记录含前一条 hash）能检测单点篡改，但有 2026 共识级结构性缺陷：①**无 inclusion proof**——无法向第三方证明"某条记录存在于链中"而不泄露全量；②**无外部时间锚**——持 DB 权限者可重写整段历史并重算所有哈希（"重写历史攻击"），线性链无法证伪。2026 共识标准（RFC 6962）是 **Merkle tree + 外部锚定**：
+> 当前 v1.5.0 线性 hash 链能检测单点篡改，但有 2026 共识级结构性缺陷：①**无 inclusion proof**——无法向第三方证明"某条记录存在于链中"而不泄露全量；②**无外部时间锚**——持 DB 权限者可重写整段历史并重算所有哈希（"重写历史攻击"）。2026 共识标准（RFC 6962）是 **Merkle tree + 外部锚定**：
 >
 > | 维度 | 当前（v1.5.0 线性 hash 链） | 升级后（Merkle tree + 外部锚定） |
 > |---|---|---|
@@ -1207,12 +1123,12 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 > | VCP v1.1 层 | 功能 | 对应本备忘当前 | Phase 2 升级后 |
 > |---|---|---|---|
 > | Layer 1 Event Integrity | EventHash（RFC 8785 canonical JSON SHA-256） | ✅ 已有 hash chain | 对齐 RFC 8785 canonicalization + UUIDv7 事件 ID |
-> | Layer 2 Merkle Audit Paths | inclusion proof + consistency proof | ❌ 线性链无 | ✅ Merkle tree（§3.6 升级路径） |
+> | Layer 2 Merkle Audit Paths | inclusion proof + consistency proof | ❌ 线性链无 | ✅ Merkle tree（§3.3 升级路径） |
 > | Layer 3 External Anchoring | RFC 3161 TSA / IETF SCITT 透明日志 | ❌ 无 | ✅ EOD Merkle root 锚定 RFC-3161 TSA |
 >
-> - **VCP-XREF 跨监管映射**：VCP v1.1 引入 VCP-XREF 跨监管映射机制——同一审计事件按多监管要求（EU AI Act Art 12 / DORA Art 17 / MiFID II RTS 25 / prEN ISO/IEC 24970 / CSRC 中国）映射到不同合规视图。本项目当前仅 CSRC 中国监管要求，但 VCP-XREF 机制为未来 AUM 机构化 / 跨境资金接入预留扩展空间——审计轨迹一次记录，多监管视图按需生成
-> - **Completeness Invariant 完整性不变量**（VCP v1.1 + VAP 共识）：审计轨迹须保证"无选择性日志"——通过 sequence number 连续性 + Merkle root 周期性锚定，第三方可证明"无事件被选择性删除"。本备忘当前线性 hash 链有"重写历史攻击"风险（持 DB 权限者可重算所有哈希），Completeness Invariant + 外部锚定是结构性修复
-> - **为何 Phase 2 而非 MVP**：VCP v1.1 三层架构 + VCP-XREF 是机构级跨境监管合规需求（EU AI Act / DORA / MiFID II），本项目当前 CSRC 中国个人单机单 owner，线性 hash 链的"篡改可检测"已满足生存需求；与 §5 重评条件"外部资金引入 + 跨境资金接入"同步触发
+> - **VCP-XREF 跨监管映射**：同一审计事件按多监管要求（EU AI Act Art 12 / DORA Art 17 / MiFID II RTS 25 / prEN ISO/IEC 24970 / CSRC 中国）映射到不同合规视图。本项目当前仅 CSRC 中国监管要求，但 VCP-XREF 机制为未来 AUM 机构化 / 跨境资金接入预留扩展空间——审计轨迹一次记录，多监管视图按需生成
+> - **Completeness Invariant 完整性不变量**（VCP v1.1 + VAP 共识）：审计轨迹须保证"无选择性日志"——通过 sequence number 连续性 + Merkle root 周期性锚定，第三方可证明"无事件被选择性删除"。本备忘当前线性 hash 链有"重写历史攻击"风险，Completeness Invariant + 外部锚定是结构性修复
+> - **为何 Phase 2 而非 MVP**：VCP v1.1 三层架构 + VCP-XREF 是机构级跨境监管合规需求，本项目当前 CSRC 中国个人单机单 owner，线性 hash 链已满足生存需求；与 §5 重评条件"外部资金引入 + 跨境资金接入"同步触发
 >
 > **VCP v1.2 四大新特性升级路径**（v1.8.0 补，[VeritasChain VCP v1.2 2026-05-31 RC1](https://github.com/veritaschain/vcp-spec/blob/main/VCP-Specification-v1_2_en.md) + [IETF draft-kamimura-scitt-vcp-03 2026-07-21](https://datatracker.ietf.org/doc/draft-kamimura-scitt-vcp/)）：
 >
@@ -1220,24 +1136,18 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 >
 > | v1.2 新特性 | 解决的 v1.1 缺口 | 本项目对应场景 | 升级评估 |
 > |---|---|---|---|
-> | **VCP-RECOVERY**（SKIP/REBUILD/MERGE/CHECKPOINT 边界 + 紧急覆盖） | v1.1 Merkle root 锚定失败时无定义的恢复流程——审计员不知"该重建 root / 跳过该批 / 与前批合并 / 检查点重发"何为合规 | EOD Merkle root 写入 RFC-3161 TSA 失败（网络故障/TSA 服务宕机）时的恢复决策 | ✅ Phase 2 直接对齐（与 §3.6 Merkle root 升级同步落地，仅协议文档约束无代码开销） |
-> | **ERASURE 事件**（GDPR crypto-shredding 作为不可变审计事件） | v1.1 只追加不删除，数据主体删除请求无合规留痕——"擦除"本身需要被审计 | 本项目当前无客户数据（个人单 owner），但未来 AUM 机构化接入客户资金时触发 GDPR/PIPL 删除请求 | ⚠️ Phase 3+ 远期（AUM 机构化 + 客户资金接入时触发） |
-> | **SCITT 对齐**（COSE Receipts + 透明度服务 + IETF SCITT 透明日志） | v1.1 外部锚定用 RFC-3161 TSA 单点信任，无多方透明日志共识 | 多方审计场景（多个策略 provider / 多个 LP）需透明日志证明"同一审计事件被多方见证" | ⚠️ Phase 3+ 远期（多方审计需求出现时触发） |
+> | **VCP-RECOVERY**（SKIP/REBUILD/MERGE/CHECKPOINT 边界 + 紧急覆盖） | v1.1 Merkle root 锚定失败时无定义的恢复流程 | EOD Merkle root 写入 RFC-3161 TSA 失败（网络故障/TSA 服务宕机）时的恢复决策 | ✅ Phase 2 直接对齐（与 §3.3 Merkle root 升级同步落地，仅协议文档约束无代码开销） |
+> | **ERASURE 事件**（GDPR crypto-shredding 作为不可变审计事件） | v1.1 只追加不删除，数据主体删除请求无合规留痕 | 未来 AUM 机构化接入客户资金时触发 GDPR/PIPL 删除请求 | ⚠️ Phase 3+ 远期（AUM 机构化 + 客户资金接入时触发） |
+> | **SCITT 对齐**（COSE Receipts + 透明度服务 + IETF SCITT 透明日志） | v1.1 外部锚定用 RFC-3161 TSA 单点信任，无多方透明日志共识 | 多方审计场景（多个策略 provider / 多个 LP）需透明日志 | ⚠️ Phase 3+ 远期（多方审计需求出现时触发） |
 > | **后量子签名**（DILITHIUM2 / FALCON512 从 FUTURE 升为 EXPERIMENTAL） | v1.1 Ed25519 签名在量子计算下不安全——长期审计存档（≥ 20 年）有"今签明破"风险 | 本项目审计轨迹长期存档（监管要求 ≥ 20 年），2040+ 量子计算成熟时 Ed25519 失效 | ⚠️ Phase 5+ 远期（量子计算成熟度跟踪 + 后量子签名标准化稳定后触发） |
 >
-> - **为何 v1.2 是"零破坏性升级"**：v1.2 的所有新特性都是**附加字段**（VCP-RECOVERY 事件类型 / ERASURE 事件类型 / SCITT Receipt 字段 / 后量子签名算法标识），v1.0/v1.1 客户端解析 v1.2 数据时忽略未知字段即可——不存在协议不兼容风险。本项目 Phase 2 落地 v1.1 后，VCP-RECOVERY 边界约束可同步对齐（仅文档约束），其余三项按重评条件触发
-> - **重评条件**：①VCP-RECOVERY：Merkle root 锚定失败率 > 1%/年（TSA 服务不稳定）；②ERASURE：AUM 机构化 + 客户资金接入（GDPR/PIPL 删除请求场景）；③SCITT：多方审计需求出现（多 LP / 多策略 provider 共同审计）；④后量子：NIST PQC 标准化稳定（预计 2027-2030）+ 量子计算威胁评估成熟
-> - **过度工程审查**：VCP v1.2 四大新特性**不是过度工程**——①v1.2 是 v1.1 的协议级升级（零破坏性），登记升级路径是风险前瞻非锦上添花；②四项都有明确的重评条件（TSA 失败率 / AUM 机构化 / 多方审计 / PQC 标准化），不是"无条件下升级"；③VCP-RECOVERY 边界约束是 Phase 2 Merkle root 升级的**必需配套**（无恢复流程的 Merkle root 锚定在 TSA 故障时会陷入"锚定失败 → 不知如何恢复 → 审计轨迹完整性受损"困境）；④ERASURE/SCITT/后量子是 Phase 3+ 远期，登记理论缺口+升级路径+重评条件，不在 Phase 2 实现
+> - **为何 v1.2 是"零破坏性升级"**：所有新特性都是**附加字段**，v1.0/v1.1 客户端解析 v1.2 数据时忽略未知字段即可。本项目 Phase 2 落地 v1.1 后，VCP-RECOVERY 边界约束可同步对齐（仅文档约束），其余三项按重评条件触发
+> - **重评条件**：①VCP-RECOVERY：Merkle root 锚定失败率 > 1%/年（TSA 服务不稳定）；②ERASURE：AUM 机构化 + 客户资金接入；③SCITT：多方审计需求出现；④后量子：NIST PQC 标准化稳定（预计 2027-2030）+ 量子计算威胁评估成熟
+> - **过度工程审查**：VCP v1.2 四大新特性**不是过度工程**——①v1.2 是协议级升级（零破坏性），登记升级路径是风险前瞻；②四项都有明确重评条件；③VCP-RECOVERY 是 Phase 2 Merkle root 升级的**必需配套**（无恢复流程的锚定在 TSA 故障时陷入"锚定失败 → 不知如何恢复 → 审计轨迹完整性受损"困境）；④ERASURE/SCITT/后量子是 Phase 3+ 远期，登记理论缺口+升级路径+重评条件，不在 Phase 2 实现
 
-**为何三层而非两层**（成交+持仓）：
-- 资金对账是 cash 层的 catch-all（limina 2026）：任何影响现金的因素（费率/分红/利息/融资融券）最终都会在资金对账暴露
-- 成交对账抓"交易记录是否一致"，持仓对账抓"结果持仓是否一致"，资金对账抓"钱是否对得上"——三者正交，任一 break 都需独立定位
-- 40 号决策⑬资金预占已实现本地串行扣减，资金对账是预占机制的事后校验（预占可能因费率变动/broker端扣款偏差而失准）
+**为何三层而非两层**（成交+持仓）：资金对账是 cash 层 catch-all（费率/分红/利息最终在资金对账暴露）；成交抓"记录一致"、持仓抓"结果一致"、资金抓"钱对得上"——三者正交，任一 break 需独立定位；40 号决策⑬资金预占的事后校验（预占可能因费率变动/broker 扣款偏差失准）。
 
-**为何盘后全量对账暂缓到 Phase 2**：
-- MVP 盘中每 5min 持仓对账已覆盖实盘生存需求（差异早发现早冻结）
-- 盘后全量对账（券商对账单 vs 系统持仓 vs 资金三方核对、T+1 可用更新、未成交订单日终转 EXPIRED）需要券商对账单数据接入，MVP 先用 `get_positions` 查询兜底
-- 见 [40_execution_broker](40_execution_broker.md) §5 待裁定"盘后全量对账" + §6.1 gap 10
+**为何盘后全量对账暂缓到 Phase 2**（§4.3）：MVP 盘中每 5min 持仓对账已覆盖生存需求（差异早发现早冻结）；盘后全量需券商对账单数据接入，MVP 用 `get_positions` 查询兜底（[40_execution_broker](40_execution_broker.md) §5 待裁定 + §6.1 gap 10）。
 
 **审计证据链扩展：仓位审计追溯（BM-POS-10，design，v1.15.4 补）**：
 
@@ -1257,16 +1167,7 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 | 标的维度 | 各标的独立 PnL 贡献 | PnlCalculator 逐笔计算 | "哪只票赚/亏"→ 反馈到选股层 |
 | 时段维度 | 日内/日间/周/月 PnL 分解 | PnlCalculator 按时间窗口 | "什么时候赚/亏"→ 反馈到择时层 |
 
-**为何因子维度暂缓**：
-- 因子归因（factor_contributions）需要因子暴露矩阵 + 因子收益回归，是 Barra 的简化版，仍需因子模型
-- 个人 5 策略组合的因子暴露主要由选股策略内生决定（多因子策略自带因子暴露，打板策略因子暴露弱），因子归因的增量信息有限
-- Brinson 的"配置 vs 选股"二分已能回答 80% 的迭代问题，因子归因是边际收益递减的优化项
-- 登记为 Phase 2 候选（首批策略 track record 3 个月后，若 Brinson 归因不足以解释策略表现再上因子归因）
-
-**为何不做"策略 × 标的 × 因子 × 时段"四维全归因**：
-- 四维全归因是机构级需求（大型 portfolio 多管理人场景），个人系统信息过载
-- AI-dev 归因清晰度原则：归因维度越多，每个维度的样本量越小，统计显著性越差（5 策略 × 50 标的 × 4 因子 × 20 时段 = 20000 格，多数格子样本不足）
-- 三维度已覆盖迭代所需的核心问题（哪个策略/哪只票/什么时候），因子维度是"锦上添花"非"雪中送炭"
+**为何因子维度暂缓**（§4.2）：因子归因需因子暴露矩阵 + 因子收益回归（Barra 简化版），个人 5 策略组合因子暴露由选股策略内生决定，增量信息有限；Brinson"配置 vs 选股"二分已回答 80% 迭代问题；Phase 2 候选（首批策略 track record 3 月后）。**不做四维全归因**（§4.6）：机构级需求，维度越多每格样本量越小、统计显著性越差（5 策略 × 50 标的 × 4 因子 × 20 时段 = 20000 格，多数格子样本不足）。
 
 ### 3.5 决策④：与 StrategyBook 独立 PnL 归因的对接
 
@@ -1301,7 +1202,7 @@ firm 级聚合归因（DefaultAttributionEngine）
 
 **策略贡献分解求和不变量校验算法**（v1.5.0 补，[abq A 股量化全链路 2026-08-05](https://blog.csdn.net/suwuzs/article/details/163511629) fills/nav/holdings 对账求和不变量 + [ihr360 2026 共管账户贡献度分割](https://docs.ihr360.com/blog/930136) 三条原则）：
 
-> "策略贡献分解 = 各 StrategyBook PnL 求和应等于 firm 层 PnL" 在 §3.5 已定义为不变量，但未给校验算法。归因报告必须显式校验此不变量——差异即对账误差（成交回报漏算/费率错算/T+1 跨日错位），不校验会让错误数据流入 RegimeMetaAllocator budget 调整闭环。
+> "策略贡献分解 = 各 StrategyBook PnL 求和应等于 firm 层 PnL" 在 §3.5 已定义为不变量。归因报告必须显式校验此不变量——差异即对账误差（成交回报漏算/费率错算/T+1 跨日错位），不校验会让错误数据流入 RegimeMetaAllocator budget 调整闭环。
 
 ```python
 # 策略贡献分解求和不变量校验（v1.5.0 施工算法）
@@ -1343,15 +1244,7 @@ def validate_strategy_pnl_invariant(
     }
 ```
 
-**为何求和不变量是归因报告的硬门禁**：
-- 30 号 Model A 的核心承诺是"StrategyBook 独立 PnL 可加"——求和不变量是这一承诺的运行时校验
-- 求和失败 = 数据流某处断裂，归因报告基于错误数据 → AI 迭代方向被误导
-- 与 §3.2 Carino residual < 0.01% 质量门禁并列：Carino 校验单期→多期链接一致性，求和不变量校验策略层→firm 层聚合一致性——双重门禁
-
-**为何两层而非统一归因**：
-- Model A 的核心优势是归因清晰（30 号 §3.1 拒绝 Model B 的理由之一就是"归因纠缠：亏钱时无法区分策略 alpha 错还是优化器权重错"）
-- 统一归因会破坏 StrategyBook 独立性（策略层 PnL 被 firm 层优化器扭曲）
-- 两层归因可追溯对账：策略层 PnL 求和 = firm 层 PnL，差异即定位 bug
+**为何求和不变量是归因报告的硬门禁**：30 号 Model A 核心承诺"StrategyBook 独立 PnL 可加"的运行时校验；求和失败 = 数据流断裂，归因报告基于错误数据会误导 AI 迭代；与 §3.2 Carino residual < 0.01% 门禁并列（Carino 校验单期→多期链接一致性，求和不变量校验策略层→firm 层聚合一致性）——双重门禁。**两层而非统一归因**：统一归因破坏 StrategyBook 独立性（30 号 §3.1 拒 Model B 即因"归因纠缠"）；两层可追溯对账，差异即定位 bug。
 
 **与 RegimeMetaAllocator 的反馈闭环**：
 - firm 级归因的"策略贡献分解"输出各 StrategyBook 的 PerformanceScore（60 日滚动 Sortino，口径真源 34 号 §3.1）
@@ -1375,24 +1268,18 @@ def calc_performance_score(daily_returns: list[float],
     """计算 StrategyBook 的 PerformanceScore（60 日滚动 Sortino）。
 
     [34 号 §3.1 / 30 号 §2.2] 口径：Sortino = mean(r - MAR) / downside_std × sqrt(252)，
-    downside_std 只对低于 MAR（最低可接受收益，默认 0）的收益取标准差——
-    只惩罚下行波动，不惩罚上行波动。映射区间 [0.5, 1.5]（30 号契约，防极端）。
-    对齐 RegimeMetaAllocator：allocation_i = normalize(Base_i × PerformanceScore_i × Shrinkage_i)，
-    budget floor ≥ 5% / cap ≤ 40%（30 号 §2.2 硬约束）。
+    downside_std 只对低于 MAR 的收益取标准差（只惩罚下行波动）。映射区间 [0.5, 1.5]。
+    对齐 RegimeMetaAllocator budget 公式 + floor ≥ 5% / cap ≤ 40%（30 号 §2.2）。
 
     Args:
-        daily_returns: 策略日频收益率序列（百分比小数，如 0.001 = 0.1%）
-        window: 滚动窗口（默认 60 交易日 ≈ 3 个月）
-        periods_per_year: 年化因子（A 股 252 交易日）
-        min_observations: 最少观测数（不足时返回中性 1.0，不调整 budget）
-        mar: 最低可接受收益（Minimum Acceptable Return，默认 0.0）
+        daily_returns: 策略日频收益率序列（小数，如 0.001 = 0.1%）
+        window: 滚动窗口（默认 60 交易日）
+        periods_per_year: 年化因子（A 股 252）
+        min_observations: 最少观测数（不足返回中性 1.0）
+        mar: 最低可接受收益（默认 0.0）
     Returns:
-        {
-            'performance_score': float,   # 年化 Sortino 映射值（RegimeMetaAllocator 消费）
-            'rolling_sortino': float,     # 原始 Sortino 值
-            'is_reliable': bool,          # 观测数是否充足
-            'observations': int,          # 实际观测数
-        }
+        {'performance_score': float,  # 年化 Sortino 映射值
+         'rolling_sortino': float, 'is_reliable': bool, 'observations': int}
     """
     if len(daily_returns) < min_observations:
         # 观测不足：返回中性 1.0（不放大也不缩减 budget）
@@ -1445,7 +1332,7 @@ def calc_performance_score(daily_returns: list[float],
 
 **异常检测施工算法**（v1.5.1 补，[AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) 已实现框架 + [ParseMyStatement 2026-04](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 余额约束行级校验 + [Axon.Trade 2026](https://axon.trade/clock-discipline-for-trading-systems) 时间戳纪律）：
 
-> §3.6 表格定义了"价格偏离 >2σ"和"成交量 >3×mean"阈值，但未给 σ/mean 的计算窗口和算法。[ParseMyStatement 2026-04] 的余额约束系统逐行验证思路可借鉴：每笔成交做行级校验而非事后聚合。
+> §3.6 表格定义了"价格偏离 >2σ"和"成交量 >3×mean"阈值，但未给 σ/mean 的计算窗口和算法。本算法补：σ 用滚动 20 笔成交价格偏离率的标准差（非全量历史，20 笔覆盖约 3-5 个交易日）；mean 用滚动 20 日日均成交量（平滑月末/季末周期噪音）。
 
 ```python
 import numpy as np
@@ -1455,11 +1342,7 @@ def detect_price_anomaly(fill_price: float, decision_price: float,
                          price_deviation_history: deque,
                          sigma_threshold: float = 2.0,
                          min_history: int = 20) -> dict:
-    """价格异常检测：单笔成交价偏离决策价 >2σ。
-
-    [AsharePerformanceAudit] 已实现框架，本算法补 σ 计算窗口：
-    用滚动 20 笔成交的价格偏离率的标准差作为 σ（非全量历史）。
-    A 股 T+1 无日内反转交易，20 笔覆盖约 3-5 个交易日。
+    """价格异常检测：单笔成交价偏离决策价 >2σ。σ 用滚动 20 笔偏离率标准差（约覆盖 3-5 交易日）。
 
     Args:
         fill_price: 实际成交价
@@ -1496,11 +1379,7 @@ def detect_volume_anomaly(current_volume: float,
                           multiplier: float = 3.0,
                           window: int = 20,
                           min_history: int = 10) -> dict:
-    """成交量异常检测：成交量 >3 倍均值。
-
-    [AsharePerformanceAudit] 已实现框架，本算法补 mean 计算窗口：
-    用滚动 20 日日均成交量作为 mean 基准。
-    A 股个股成交量有明显的周期性（月末/季末效应），20 日窗口平滑周期噪音。
+    """成交量异常检测：成交量 >3 倍均值。mean 用滚动 20 日日均成交量（平滑月末/季末周期噪音）。
 
     Args:
         current_volume: 当前成交笔成交量
@@ -1529,7 +1408,7 @@ def detect_volume_anomaly(current_volume: float,
 
 **MAD 鲁棒增强算法**（v1.6.0 补，[juejin.cn 2026-04-28](https://juejin.cn/post/7633584575197380623) 行情数据清洗 Z-Score vs MAD 对比 + [metricgate 2026-05-13](https://metricgate.com/docs/mad-scaled-z-score/) MAD-Scaled Z-Score ISO/USP 标准推荐 + [tokentoolhub 2026](https://tokentoolhub.com/building-a-market-anomaly-detector/) Market Anomaly Detector robust baseline + [standarddeviationcalculator 2026-04-24](https://standarddeviationcalculator.app/learn/modified-z-score-outlier-detection) Modified Z-Score 完整推导）：
 
-> 上述 `detect_price_anomaly` 用标准差 σ 做阈值，但金融数据是典型厚尾分布——σ 被**掩蔽效应（masking）**污染：一个极端异常值（如数据源错误记录 150→1500 元）会拉高 σ，导致自身和其他中等异常值漏检。[juejin.cn 2026-04] 实测：Modified Z-Score 的 3.5 阈值比 Z=3 误判率低 60% 以上。[metricgate 2026-05] 指出 ISO/USP 质控指南推荐 MAD-based 方法为默认鲁棒异常筛选器。MAD 的 50% 击穿点意味着即便半数数据被污染，中位数仍不受影响。
+> 上述 `detect_price_anomaly` 用标准差 σ 做阈值，但金融数据是典型厚尾分布——σ 被**掩蔽效应（masking）**污染：一个极端异常值会拉高 σ，导致自身和其他中等异常值漏检。[juejin.cn 2026-04] 实测：Modified Z-Score 的 3.5 阈值比 Z=3 误判率低 60% 以上。[metricgate 2026-05]：ISO/USP 质控指南推荐 MAD-based 方法为默认鲁棒异常筛选器；MAD 的 50% 击穿点意味着即便半数数据被污染，中位数仍不受影响。
 
 ```python
 def detect_price_anomaly_robust(fill_price: float, decision_price: float,
@@ -1538,21 +1417,15 @@ def detect_price_anomaly_robust(fill_price: float, decision_price: float,
                                   min_history: int = 20) -> dict:
     """价格异常检测（MAD 鲁棒版）：Modified Z-Score = 0.6745 × (x - median) / MAD。
 
-    [metricgate 2026-05-13] Iglewicz-Hoaglin 标准：
-      - MAD = median(|x_i - median(x)|)，50% 击穿点
-      - 0.6745 = 1/Φ⁻¹(0.75) 正态一致性常数，使 MAD-scaled 等价于 σ
-      - |M_i| > 3.5 为异常（conservative），|M_i| > 3.0 为 softer screen
-
-    [juejin.cn 2026-04-28] 金融数据适配性：
-      - 标准差 σ 受极端值污染（masking effect），一条 1500 元错误数据拉偏参考基准
-      - 中位数不受极端值影响，MAD 是金融时间序列异常检测的主力方案
-      - 不需要正态分布假设，适用于厚尾分布
+    Iglewicz-Hoaglin 标准：MAD = median(|x_i - median(x)|)（50% 击穿点）；
+    0.6745 = 1/Φ⁻¹(0.75) 正态一致性常数；|M_i| > 3.5 异常（conservative）。
+    σ 受极端值污染（masking），中位数不受——适用金融厚尾分布，无正态假设。
 
     Args:
         fill_price: 实际成交价
         decision_price: 信号产生时决策价
         price_deviation_history: 滚动历史价格偏离率 deque（maxlen=20）
-        modified_z_threshold: Modified Z-Score 阈值（默认 3.5，Iglewicz-Hoaglin standard）
+        modified_z_threshold: Modified Z-Score 阈值（默认 3.5）
         min_history: 最少历史观测数
     Returns:
         {'is_anomaly': bool, 'modified_z': float, 'severity': str, 'method': 'mad'}
@@ -1616,11 +1489,9 @@ def detect_price_anomaly_robust(fill_price: float, decision_price: float,
 
 **bad-print vs 真实跳空区分增强**（v1.15.0 补，[referentiallabs 2026-05-09 "Market Data Hygiene Part 1"](https://referentiallabs.com/blog/market-data-hygiene-part-1/) Tick Test）：
 
-> MAD/Z-Score 检测"偏离"但不区分**错价 print**（数据源错误记录，如 150→1500 元，下一笔立即回摆）与**真实跳空**（财报/涨停，价格停留新位）——前者应剔除喂给归因，后者必须保留。Tick Test 判定规则：一笔成交**同时显著偏离前一笔与后一笔**（双向偏离）且**下一笔立即回摆至前一笔附近** → bad-print（数据错误，标记剔除 + 反馈数据源质量）；偏离后价格停留 → 真实异动（保留走 §3.6 严重度流程）。与 §3.2 滑点分布的 `reversion_signal`（temporary_impact vs real_alpha，[OrderX 2026-07-09]）同源于"回摆诊断"思想。落地位置：`detect_price_anomaly_robust` 输出增加 `print_type: 'bad_print' | 'real_move' | 'unknown'` 字段（需后一笔数据，盘中检测延迟一笔确认；盘后复盘可直接判定）。Phase 1.5 候选（随异常检测阈值校准同期回归）。
+> MAD/Z-Score 检测"偏离"但不区分**错价 print**（数据源错误记录，下一笔立即回摆）与**真实跳空**（财报/涨停，价格停留新位）——前者应剔除喂给归因，后者必须保留。Tick Test 判定规则：一笔成交**同时显著偏离前一笔与后一笔**（双向偏离）且**下一笔立即回摆至前一笔附近** → bad-print（数据错误，标记剔除 + 反馈数据源质量）；偏离后价格停留 → 真实异动（保留走 §3.6 严重度流程）。与 §3.2 滑点分布的 `reversion_signal` 同源于"回摆诊断"思想。落地位置：`detect_price_anomaly_robust` 输出增加 `print_type: 'bad_print' | 'real_move' | 'unknown'` 字段（需后一笔数据，盘中检测延迟一笔确认；盘后复盘可直接判定）。Phase 1.5 候选（随异常检测阈值校准同期回归）。
 
 **异常严重度分级**（v1.6.0 补，[Monte Carlo Data 2026](https://docs.getmontecarlo.com/docs/marking-alerts-as-incidents) SEV-1~4 severity matrix + [DualEntry 2026](https://docs.dualentry.com/accountants/ai-automation/anomaly-detection) low/medium/high severity scoring + [Finomics 2026-06](https://finomics.ai/docs/finops-framework-compliance/understand-usage-and-cost/anomaly-management) High/Critical recommended response）：
-
-> 原表格"触发阈值"列只标了 >2σ / >3×mean，没有严重度分级。[Monte Carlo Data 2026] 的 SEV 矩阵基于 Impact × Affected scope 二维分级。[DualEntry 2026] 用 low/medium/high 三级 + dismiss/escalate 两动作。[Finomics 2026-06] 定义 High（investigate immediately）和 Critical（executive notification + incident response）。本项目综合为三级 + 逐级升级流程。
 
 | 严重度 | Modified Z-Score \|M_i\| | 价格偏离 bps | 量异常倍数 | 含义 | 响应动作 |
 |---|---|---|---|---|---|
@@ -1629,8 +1500,6 @@ def detect_price_anomaly_robust(fill_price: float, decision_price: float,
 | `critical` | \|M_i\| > 5.0 | >100 bps | >5× | 严重异动，可能由数据源错误/系统 bug/极端市场事件导致 | 微信 Webhook 紧急告警 + 触发持仓对账（§3.3 DriftItem 检测）+ 标的标记 frozen（§3.3 冻结状态机） |
 
 **异常升级流程**（v1.6.0 补，[theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/reconciliation-assistance/) Tier 3 Exception Escalation + [DualEntry 2026](https://docs.dualentry.com/accountants/ai-automation/anomaly-detection) dismiss/escalate 双动作 + SOX 404/MiFID II 审计轨迹要求）：
-
-> [theneuralbase 2026-04] 强调：每个 reconciliation 决策影响审计证据，AI 辅助对账必须保留可审计记录——什么被自动匹配、什么被标记审查、谁批准了例外。[DualEntry 2026] 的 dismiss/escalate 双动作模型简单有效：dismiss 标记为可接受模式（减少未来误报），escalate 路由到指定审查者。本项目个人单账户无多角色路由，escalate = owner 人工介入。
 
 ```
 [检测] detect_price_anomaly_robust / detect_volume_anomaly
@@ -1664,24 +1533,16 @@ def detect_price_anomaly_robust(fill_price: float, decision_price: float,
 
 **dismiss/escalate 审计轨迹要求**（[theneuralbase 2026-04] SOX 404 合规 + [Monte Carlo Data 2026] incident lifecycle）：
 - 每个异常事件（info/warning/critical）必须写入审计轨迹，含：检测规则、modified_z 分数、严重度、时间戳、owner 动作（dismiss/escalate）、原因码
-- dismiss 的事件不删除——[theneuralbase 2026-04] 强调"regulators audit the false negatives hardest"（审查者最严格审查漏报）
+- dismiss 的事件不删除——[theneuralbase 2026-04] "regulators audit the false negatives hardest"
 - 月度复盘报告统计异常事件分布：按严重度/标的/策略分桶，识别系统性异常模式（如某标的频繁 warning = 流动性问题）
 
-**为何不做 wash trade/spoofing 检测**：
-- 个人单账户无自交易风险（wash trade 需多账户对敲）
-- spoofing 检测需订单簿深度数据 + 多账户意图推断，个人系统无此数据
-- 见 [40_execution_broker](40_execution_broker.md) §5 待裁定"Pre-Trade 合规检查"（BM-EXE-04，多账户或合规要求升级时再上）
+**为何不做 wash trade/spoofing 检测**：个人单账户无自交易风险（wash trade 需多账户对敲）；spoofing 检测需订单簿深度数据 + 多账户意图推断。见 [40_execution_broker](40_execution_broker.md) §5 待裁定"Pre-Trade 合规检查"（BM-EXE-04，多账户或合规要求升级时再上）。
 
-**与对账的协同**：
-- 异常交易检测的输出（价格偏离/量异常/拒单）是对账差异的常见来源
-- 持仓对账发现 drift 时，优先排查是否由异常交易导致（如部分成交未记录、拒单未同步）
-- 拒单分类的"持仓不足"（error_code=55）直接触发持仓对账（40 号决策⑥层3）
+**与对账的协同**：异常检测输出（价格偏离/量异常/拒单）是对账差异常见来源；持仓对账发现 drift 优先排查异常交易导致（部分成交未记录/拒单未同步）；error_code=55 持仓不足直接触发持仓对账（40 号决策⑥层3）。
 
 **Stale-Value 冻结馈送检测**（v1.7.0 补，[EQAF arXiv:2606.20079 2026-06](https://arxiv.org/pdf/2606.20079v1) UBS 投行实测关键发现）：
 
-> EQAF（Ensemble Quality Assessment Framework）在 183 笔信用衍生品 / 129 日实测中发现：**stale-value（冻结馈送）异常是纯统计方法的结构性盲区**——Isolation Forest / PCA 重构 / 统计规则均无法检测"连续 N 笔数值完全相同"的冻结数据，因为统计方法假设数据有方差。UBS 实测结论：stale-value 必须**领域确定性规则**兜底，不能依赖统计集成。A 股场景：miniQMT 行情连接断开时，持仓/成交回报可能冻结在最后一个值，导致对账系统误判"一致"（实际是双边都冻结）。
-
-**为何单独列出**：上述三层异常检测（价格/量/拒单）+ Hampel 鲁棒增强（55 号 §3.10）都是统计方法，对"数据冻结"盲区相同。须补一条确定性规则层。
+> EQAF 在 183 笔信用衍生品 / 129 日实测中发现：**stale-value（冻结馈送）异常是纯统计方法的结构性盲区**——Isolation Forest / PCA 重构 / 统计规则均无法检测"连续 N 笔数值完全相同"的冻结数据（统计方法假设数据有方差）。stale-value 必须**领域确定性规则**兜底。A 股场景：miniQMT 行情连接断开时，持仓/成交回报可能冻结在最后一个值，导致对账系统误判"一致"（实际是双边都冻结）。上述三层异常检测 + MAD 鲁棒增强都是统计方法，对"数据冻结"盲区相同，须补一条确定性规则层（第 0 层）。
 
 **Stale-Value 检测算法**（v1.7.0 补）：
 
@@ -1690,24 +1551,16 @@ def detect_stale_value(value_series: list[float],
                        timestamps: list,
                        max_unchanged_count: int = 3,
                        max_stale_seconds: float = 300) -> dict:
-    """冻结馈送检测——连续 N 笔数值完全相同 → 告警。
-
-    [EQAF arXiv:2606.20079 2026-06]：纯统计方法对 stale-value 结构性失效，
-    必须领域确定性规则。A 股 miniQMT 断连时持仓/成交可能冻结在最后一个值。
+    """冻结馈送检测——连续 N 笔数值完全相同 → 告警（[EQAF arXiv:2606.20079]：纯统计方法对 stale-value 结构性失效，须领域确定性规则；miniQMT 断连时持仓/成交可能冻结在最后一个值）。
 
     Args:
         value_series: 数值序列（如持仓量、价格、PnL）
         timestamps: 对应时间戳序列
-        max_unchanged_count: 连续不变最大容忍数（默认 3，A 股整手交易
-                             持仓量短时不变正常，但成交价/时间戳不变异常）
+        max_unchanged_count: 连续不变最大容忍数（默认 3；持仓量短时不变正常，成交价/时间戳不变异常）
         max_stale_seconds: 最长冻结秒数（默认 300s=5min，对账每 5min 跑一次）
     Returns:
-        {
-            'is_stale': bool,
-            'stale_count': int,           # 连续不变次数
-            'stale_duration_seconds': float,  # 冻结持续秒数
-            'severity': str,              # 'none'|'warning'|'critical'
-        }
+        {'is_stale': bool, 'stale_count': int,
+         'stale_duration_seconds': float, 'severity': 'none'|'warning'|'critical'}
     """
     if len(value_series) < 2:
         return {'is_stale': False, 'stale_count': 0,
@@ -1768,11 +1621,6 @@ def detect_stale_value(value_series: list[float],
 - 归档：append-only 归档 + 哈希链已实现；SQLite report_archive + Parquet 数据文件 + LLM 摘要为受限未实现（§2.4 横向缺口 #1/#3）
 - 降级：发布不可用 → 本地归档不推送
 
-**为何四类而非统一一类**：
-- 四类报告的受众和用途不同：风险报告给风控、监管报告给合规、TCA 给执行优化、复盘给策略迭代
-- 统一报告会信息过载（个人系统也无法一次消化全量）
-- 四类已 production，重复造统一报告违反不重造原则
-
 **监管报告自动化门槛**：
 - 当前手动填报（[RegulatoryReportGenerator](file:///d:/ZephyrAlpha/src/zephyr/reporting/regulatory_report_generator.py) 生成报告，人工提交）
 - GATE-002（AUM≥1000 万）或 GATE-003（跨市场）激活后上自动化接口
@@ -1795,11 +1643,8 @@ def detect_stale_value(value_series: list[float],
 | `single_name_cap` | single_name_cap_i（单票硬上限 8%/5%） | 跨策略求和后触顶（多策略同标的叠加） | 复盘策略间标的相关性（§3.5 firm 层聚合） |
 
 **与 Brinson 3 因子的关系**：
-- Brinson 回答"赚的钱来自配置还是选股"——决策维度（事后 Explain）
-- sizing_basis 回答"仓位被哪个约束限制"——约束维度（事后 Explain）
-- 二者正交：Brinson 看已实现 PnL 的来源分解，sizing_basis 看仓位决策的 binding 约束
-- 交集场景：当 sizing_basis = `strategy_intent`（策略意愿主导）且 Brinson selection effect 为负，说明策略选股过激（策略想多配但选错了）→ 直接指向策略层重优化
-- 当 sizing_basis = `cvar_cap`（CVaR 拦住）且 Brinson allocation effect 为负，说明尾部风险约束导致配置偏离基准 → 指向风控参数调整
+- Brinson 看已实现 PnL 的来源分解（决策维度），sizing_basis 看仓位决策的 binding 约束（约束维度）——二者正交
+- 交集场景：sizing_basis = `strategy_intent` 且 Brinson selection effect 为负 → 策略选股过激，指向策略层重优化；sizing_basis = `cvar_cap` 且 Brinson allocation effect 为负 → 尾部风险约束导致配置偏离基准，指向风控参数调整
 
 **实现现状与 gap**：
 - [31 号 §2.3.4](31_position_sizing.md) 已定义完整约束栈 + sizing_basis 命名规范，但代码 [MOD-POS-001](file:///d:/ZephyrAlpha/src/zephyr/position/core/position_sizing_engine.py) 当前**未显式输出 `sizing_basis` 字段**（31 号 §2.3.4 已记入待定问题）
@@ -1807,8 +1652,6 @@ def detect_stale_value(value_series: list[float],
 - MVP 优先级：Phase 1.5（首批策略 track record 1-3 月），与 transaction_cost_drag 接入 TCA 同期施工
 
 **sizing_basis 归因接入算法**（v1.5.0 补，[deadeye-rs 2026-06 v0.1.17](https://github.com/) `sizing_basis` 模式 + [31 号 §2.3.4](31_position_sizing.md) 5 约束命名）：
-
-> §3.8 决策了"归因报告须消费 sizing_basis 字段做仓位决策归因"，但未给归因层接入算法。归因层消费 sizing_basis 的核心是：按 binding 约束类型分桶统计 PnL 贡献，让 owner 复盘时能区分"是 Kelly 估错还是尾部风险超预期还是策略选股过激"。
 
 ```python
 # sizing_basis 归因接入算法（v1.5.0 施工算法）
@@ -1870,20 +1713,15 @@ def attribute_by_sizing_basis(
 
 **接入施工约束**：
 - 31 号 PositionSizingEngine 施工输出 `sizing_basis` 字段后，归因层从持仓记录消费
-- 归因报告 §3.7 MOD-RPT-015 模板新增第 9 节"sizing_basis 仓位决策归因"展示上述分桶
+- 归因报告 §3.12 MOD-RPT-015 模板新增第 9 节"sizing_basis 仓位决策归因"展示上述分桶
 - 与 Brinson 3 因子正交：Brinson 看 PnL 来源（配置/选择/交互），sizing_basis 看仓位约束（哪个 binding）——同一笔 PnL 在两个维度都有归因
 - MVP 优先级 Phase 1.5（§5.2 演进路径已登记），依赖 31 号施工输出字段
-
-**为何不与 Brinson 合并为单一归因**：
-- Brinson 是收益归因（PnL 分解），sizing_basis 是仓位归因（约束命名）——二者数据源不同（Brinson 用持仓历史 + 基准，sizing_basis 用仓位约束栈）
-- 合并会让 Brinson 归因变重（须兼顾约束栈逻辑），违反 Brinson "配置 vs 选股"二分的清晰度原则
-- 分开让各自单一职责：Brinson 管 PnL 来源，sizing_basis 管仓位约束
 
 ### 3.9 决策⑧：deflated-alpha v0.3.0 三重验证（v1.4.0 补，回测 vs 实盘统计显著性验证）
 
 **决策**：归因层引入 [deflated-alpha v0.3.0](https://github.com/0scarito/deflated-alpha)（2026-07-26）作为回测 vs 实盘对账的统计显著性验证框架——单一 `audit()` 调用跑齐 4 类检验（analytical / combinatorial / multiple-testing / bootstrap data-snooping），输出 `LIKELY_REAL / INCONCLUSIVE / LIKELY_OVERFIT` 三态判定，作为 §3.3 三层对账之外的"统计层对账"。
 
-> **为何归因层需要统计显著性验证**：[Combined Trading Signals and Overfitting Risk (2026-06)](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi) 实证——"组合多指标 overwhelmingly 导致历史噪声过拟合而非改善预测信号"，"Advanced statistical frameworks like the Deflated Sharpe Ratio and cross-validation are required to accurately penalize backtest optimization and measure true alpha"。归因层若只做 Brinson 3 因子分解而不用 DSR 验证 alpha 真实性，会把过拟合的"伪 alpha"当作真实 edge 归因，AI 迭代方向被误导。
+> **为何归因层需要统计显著性验证**：[Combined Trading Signals and Overfitting Risk (2026-06)](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi) 实证——"组合多指标 overwhelmingly 导致历史噪声过拟合而非改善预测信号"。归因层若只做 Brinson 3 因子分解而不用 DSR 验证 alpha 真实性，会把过拟合的"伪 alpha"当作真实 edge 归因，AI 迭代方向被误导。
 
 **deflated-alpha v0.3.0 四类检验**（[0scarito/deflated-alpha](https://github.com/0scarito/deflated-alpha) 2026-07-26 实现）：
 
@@ -1896,11 +1734,7 @@ def attribute_by_sizing_basis(
 | **Multiple-testing** | Sharpe 经过 N 试验 p-value haircut 后剩多少？ | Harvey-Liu Bonferroni / Holm / BHY（Harvey & Liu 2015） | ✅ 主选（设计预留：BHY-FDR 拟与 55 号 BH-FDR 口径一致） |
 | **Bootstrap data-snooping** | 最佳策略对重采样 null 是否显著？ | White's Reality Check + Hansen's SPA（White 2000, Hansen 2005） | ✅ v0.3.0 新增（设计预留：55 号原拟标 SPA 备选，归因层升级为主选） |
 
-**为何归因层用 deflated-alpha v0.3.0 而非自造**：
-- v0.3.0 是 MIT 许可、Python ≥ 3.10、numpy/scipy/pandas 依赖的轻量包，单 `audit(trials, periods_per_year=252, bootstrap=True)` 调用即输出完整报告
-- v0.3.0 新增 bootstrap data-snooping（White RC + Hansen SPA）填补了 v0.1.0/v0.2.0 只有 analytical/combinatorial/multiple-testing 三类的空白——4 类检验互补降低漏判：[deflated-alpha README](https://github.com/0scarito/deflated-alpha) 实证案例：SMA crossover 在零漂移 random walk 上显示 1.31 Sharpe，DSR 0.989 几乎被欺骗，bootstrap SPA 甚至 p=0.019 误判显著，但 PBO/CSCV 0.782 抓住过拟合——单类检验会漏判，4 类联合才可靠
-- v0.3.0 输出 `OOS degradation slope` + `Effective trials`（N_eff = ρ̄ + (1−ρ̄)·M，相关试验降权）+ `MinTRL`（最小 track record 长度）三项辅助指标，归因报告可直接消费
-- 自造需实现 4 类检验 + bootstrap 重采样 + CSCV 组合枚举，违反不重造原则
+**为何归因层用 deflated-alpha v0.3.0 而非自造**：MIT 许可轻量包（Python ≥ 3.10，numpy/scipy/pandas），单 `audit(trials, periods_per_year=252, bootstrap=True)` 调用即输出完整报告；4 类检验互补防漏判（[README](https://github.com/0scarito/deflated-alpha) 实证：SMA crossover 在零漂移 random walk 上 DSR 0.989 + SPA p=0.019 均被欺骗，PBO/CSCV 0.782 抓住过拟合）；输出 OOS degradation slope + Effective trials（N_eff 相关试验降权）+ MinTRL 三项辅助指标可直接消费；自造需 4 类检验 + bootstrap 重采样 + CSCV 组合枚举，违反不重造原则。
 
 **与 55 号退役检验的设计预留关系**（v1.15.0 校准——55 号当前 v0.1.0 骨架，以下为设计意图非已落成事实）：
 - 55 号退役检验拟采用 DSR/PBO（**退役 Tier 3 评审前强制检验**，重量离线，低频，决策型）
@@ -1919,32 +1753,29 @@ def reconcile_backtest_live_significance(
         live_returns: pd.Series,                # 实盘累计收益
         periods_per_year: int = 252) -> dict:
     """月/季归因报告调用：跑 deflated-alpha 4 类检验 + OOS 退化斜率。
-    
+
     Args:
         backtest_trial_returns: 50 号 experiment_tracking 的参数 sweep 收益矩阵
         live_returns: 实盘累计收益序列
     Returns:
-        {
-            'verdict': 'LIKELY_REAL' | 'INCONCLUSIVE' | 'LIKELY_OVERFIT',
-            'dsr': float,                    # DSR 概率
-            'pbo': float,                    # PBO 概率
-            'oos_degradation_slope': float,  # OOS 退化斜率
-            'spa_p_value_consistent': float, # Hansen SPA consistent p-value
-            'reality_check_p_value': float,  # White RC p-value
-            'effective_trials': int,         # N_eff 有效试验数
-            'min_trl': int,                  # 最小 track record 长度
-        }
+        {'verdict': 'LIKELY_REAL'|'INCONCLUSIVE'|'LIKELY_OVERFIT',
+         'dsr': float, 'pbo': float,
+         'oos_degradation_slope': float,  # 实盘 Sharpe / 回测最优 Sharpe
+         'spa_p_value_consistent': float,  # Hansen SPA
+         'reality_check_p_value': float,   # White RC
+         'effective_trials': int,          # N_eff 有效试验数
+         'min_trl': int}                   # 最小 track record 长度
     """
     # 1. 跑 deflated-alpha audit（含 bootstrap）
     report = audit(backtest_trial_returns, periods_per_year=periods_per_year,
                    bootstrap=True)
-    
+
     # 2. 实盘 vs 回测 OOS 退化斜率补充校验
     # （实盘 Sharpe / 回测最优 Sharpe，< 0.5 即 OOS 退化严重）
     live_sharpe = live_returns.mean() / live_returns.std() * (periods_per_year ** 0.5)
     backtest_best_sharpe = backtest_trial_returns.mean().max() * (periods_per_year ** 0.5)
     oos_degradation = live_sharpe / backtest_best_sharpe if backtest_best_sharpe > 0 else 0
-    
+
     return {
         'verdict': report.verdict,
         'dsr': report.dsr.dsr,
@@ -1968,16 +1799,9 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
                                       min_trl: int, live_trading_days: int) -> dict:
     """verdict 三态判定阈值解析（对齐 deflated-alpha v0.3.0 内部逻辑）。
 
-    [Bailey & López de Prado 2012/2014] DSR 阈值：
-      DSR > 0.95 → 强证据 alpha 真实（95% 置信超过无技能试验期望最大值）
-      DSR < 0.50 → 弱证据（不足 50% 置信）
-    [Bailey et al. 2017] PBO 阈值：
-      PBO < 0.05 → 低过拟合概率
-      PBO > 0.25 → 高过拟合概率（1/4 概率 IS 最优不是 OOS 最优）
-    [Hansen 2005] SPA consistent p-value：
-      p < 0.05 → 显著优于 null（bootstrap data-snooping 检验通过）
-    [waylandz 2026-04-20] OOS 退化斜率：
-      slope < 0.5 → 实盘 Sharpe 不到回测一半，严重退化
+    阈值（[Bailey & López de Prado 2012/2014] / [Bailey et al. 2017] / [Hansen 2005] / [waylandz 2026-04-20]）：
+      DSR > 0.95 强证据真实 / < 0.50 弱证据；PBO < 0.05 低过拟合 / > 0.25 高过拟合；
+      SPA p < 0.05 显著优于 null；OOS 退化斜率 < 0.5 严重退化。
 
     Args:
         dsr: Deflated Sharpe Ratio 概率（0-1）
@@ -2039,20 +1863,12 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
 - 季频归因报告（§3.7）：跑完整 4 类检验 + bootstrap，若 `verdict == LIKELY_OVERFIT` + `pbo > 20%` → 触发 55 号 §3.6 Tier 3 退役评审
 - `N_eff`（有效试验数）：若 N_eff << N（参数空间维度），说明参数 sweep 高度相关（参数冗余），归因报告标注"参数空间冗余"提示策略层简化参数
 
-**为何归因层而非监控层用 deflated-alpha**：
-- 归因层是事后解释工具（与 55 号 §4.5 实时归因拒绝一致），deflated-alpha 计算开销大（bootstrap O(n_boot · T · N)）适合月/季频离线
-- 监控层（55 号 §3.3）用轻量 CUSUM/PSI 在线检测，归因层用重量 deflated-alpha 离线验证——分层互补
-- 归因报告是 owner 复盘决策的输入，deflated-alpha 的 `verdict` 三态判定可直接驱动复盘动作
+**为何归因层而非监控层用 deflated-alpha**：归因层是事后解释工具，bootstrap 开销 O(n_boot·T·N) 适合月/季频离线；监控层（55 号 §3.3）用轻量 CUSUM/PSI 在线检测，分层互补；`verdict` 三态判定可直接驱动 owner 复盘动作。
 
 **Combined Trading Signals 正交维度启示**（[Combined Trading Signals and Overfitting Risk 2026-06](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi)）：
 - 行业 2026 共识：有效指标组合必须捕捉**数学正交的市场维度**，分离为 trend direction（趋势方向）/ execution timing（执行时机）/ risk sizing（风险仓位）三角色
-- 对归因的启示：Brinson 3 因子（allocation/selection/interaction）已部分覆盖正交维度（allocation≈trend direction，selection≈execution timing，interaction≈协同），但缺 risk sizing 维度——本备忘 §3.8 sizing_basis 归因补齐 risk sizing 维度
-- 对过拟合的警示：组合多指标（如打板策略叠加情绪周期 + 龙头识别 + 量价确认）若非正交维度，会引入多重共线性 + 多重检验危机，须用 deflated-alpha v0.3.0 验证组合后的 alpha 真实性
-
-**为何 deflated-alpha 不是日常归因而是月/季归因**：
-- deflated-alpha v0.3.0 的 bootstrap data-snooping（White RC + Hansen SPA）计算开销 O(n_boot · T · N)，n_boot=1000 + T=1250 + N=100 单次 audit ~分钟级，不适合日频
-- 日频归因用 Brinson 3 因子（轻量，§3.2 已实现框架），月/季频加 deflated-alpha 验证（重量）
-- 分层逻辑：日频 Brinson 回答"赚的钱来自哪"，月/季 deflated-alpha 回答"赚的钱是不是过拟合幻觉"
+- Brinson 3 因子已部分覆盖正交维度（allocation≈trend direction，selection≈execution timing，interaction≈协同），但缺 risk sizing 维度——本备忘 §3.8 sizing_basis 归因补齐
+- 组合多指标若非正交维度，会引入多重共线性 + 多重检验危机，须用 deflated-alpha v0.3.0 验证组合后的 alpha 真实性
 
 **PBO 零假设解释修正**（v1.7.0 补，[Solovjiev 2026-07 "PBO 受控标定"](https://pbo.marketmaker.cc/paper.pdf)）：
 
@@ -2064,20 +1880,20 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
 
 **Plateau Robustness 几何诊断补充**（v1.8.0 补，[Solovjiev 2026 "Plateaus, Peaks, and the Probability of Backtest Overfitting"](https://plateau.marketmaker.cc/paper.pdf) 受控验证）：
 
-> **2026-08 最新受控研究**：Solovjiev 2026 受控实验在 9000 个模拟优化问题上头对头比较 plateau 几何指标 vs PBO vs DSR vs plain PSR。关键发现：①**plain PSR（Probabilistic Sharpe Ratio）是最强单一诊断器**（no-edge ROC AUC 0.808），优于 DSR（0.785）和 PBO（0.669）；②**plateau 几何指标单独 weak**（1 维 no-edge AUC 0.501≈随机猜测），固定阈值（如"robustness score > 0.1"）未校准；③**几何 + 统计组合显著提升检测**——在 2 维场景下组合诊断显著优于纯统计，但 1 维 no-edge 检测组合与 plain PSR 统计不可区分；④**作为选择原则 outright 有效**——选 smoothed-surrogate 最优而非 raw argmax 使 OOS Sharpe 平均提升 0.12（1 维）/ 0.31（2 维），在所有曲率三分位都为正且随曲率单调递增。
+> Solovjiev 2026 受控实验（9000 个模拟优化问题）关键发现：①**plain PSR 是最强单一诊断器**（no-edge ROC AUC 0.808），优于 DSR（0.785）和 PBO（0.669）；②**plateau 几何指标单独 weak**（1 维 no-edge AUC 0.501≈随机猜测），固定阈值未校准；③**几何 + 统计组合显著提升检测**（2 维场景）；④**作为选择原则 outright 有效**——选 smoothed-surrogate 最优而非 raw argmax 使 OOS Sharpe 平均提升 0.12（1 维）/ 0.31（2 维），随曲率单调递增。
 >
-> **施工含义**（v1.8.0 补，作为 §3.9 deflated-alpha 的几何补充而非替代）：
+> **施工含义**（作为 §3.9 deflated-alpha 的几何补充而非替代）：
 > - **不替代 DSR/PBO**：plateau 几何指标单独 weak，不能替代 DSR/PBO 主检验
-> - **作为补充诊断维度**：归因报告新增"参数空间曲率"字段——计算 in-sample Sharpe 曲面在最优参数附近的 smoothed-surrogate 曲率（kernel-smoothed 后的二阶导/plateau width），高曲率 + 低 DSR → "sharp peak fragile"红旗，低曲率 + 高 DSR → "broad plateau robust"标志
-> - **选择原则指导参数重优化**：当 §3.9 verdict == LIKELY_OVERFIT 触发 55 号 §3.6 Tier 1 重优化时，参数重优化须选 smoothed-surrogate 最优（plateau 中心）而非 raw argmax（peak 顶点）——这是 Solovjiev 2026 实证的最强实用建议
-> - **Phase 2 候选**：plateau 几何指标需 in-sample Sharpe 曲面数据（参数 sweep 网格完整记录），依赖 50 号 experiment_tracking 完整记录参数空间——MVP 先用 DSR/PBO，Phase 2 评估 plateau 几何增量价值
+> - **作为补充诊断维度**：归因报告新增"参数空间曲率"字段——计算 in-sample Sharpe 曲面在最优参数附近的 smoothed-surrogate 曲率，高曲率 + 低 DSR → "sharp peak fragile"红旗，低曲率 + 高 DSR → "broad plateau robust"标志
+> - **选择原则指导参数重优化**：当 §3.9 verdict == LIKELY_OVERFIT 触发 55 号 §3.6 Tier 1 重优化时，参数重优化须选 smoothed-surrogate 最优（plateau 中心）而非 raw argmax（peak 顶点）
+> - **Phase 2 候选**：plateau 几何指标需 in-sample Sharpe 曲面数据（参数 sweep 网格完整记录），依赖 50 号 experiment_tracking——MVP 先用 DSR/PBO，Phase 2 评估 plateau 几何增量价值
 > - **重评条件**：①首批策略 Tier 1 重优化 ≥ 2 次/年；②DSR/PBO verdict 边界（DSR 0.5-0.7 灰区）需几何补充诊断；③50 号 experiment_tracking 完整记录参数 sweep 网格
 
 ### 3.10 决策⑨：Combined Trading Signals 正交维度约束（v1.4.0 补）
 
 **决策**：归因报告须标注各策略的"信号组合正交性"——多信号组合策略（如打板叠加情绪周期 + 龙头识别 + 量价确认）须验证信号间数学正交性，非正交组合是过拟合高危场景。
 
-> [Combined Trading Signals and Overfitting Risk (2026-06)](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi) 实证：①组合相关性指标（如 RSI + Stochastic）产生多重共线性，提供冗余数据而非独立信号确认；②穷举指标组合测试保证 backtest 过拟合高概率（多重检验危机 + data snooping）；③ML 模型用原始价格数据一致优于用显式技术指标增强的模型（指标降低泛化性）；④有效指标组合必须捕捉数学正交的市场维度，分离为 trend direction / execution timing / risk sizing 三角色。
+> [Combined Trading Signals and Overfitting Risk (2026-06)](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi) 实证：①组合相关性指标产生多重共线性，提供冗余数据而非独立信号确认；②穷举指标组合测试保证 backtest 过拟合高概率；③ML 模型用原始价格数据一致优于用显式技术指标增强的模型；④有效指标组合必须捕捉数学正交的市场维度，分离为 trend direction / execution timing / risk sizing 三角色。
 
 **正交性验证算法**（v1.4.0 补，轻量级，归因报告消费）：
 
@@ -2190,21 +2006,13 @@ def validate_signal_orthogonality(
 - 阈值（IC 0.7 / 条件数 30 / VIF 5）是行业共识起点，实盘 3 月后回归校准
 - 与 §3.9 deflated-alpha 协同：本算法验证组合前信号正交性，§3.9 验证组合后 alpha 真实性——前后双重防线
 
-**与 25 号多因子策略的关系**：
-- 25 号多因子策略的因子间正交性已由 §3 ic_decay 三层监控 + FSI（55 号 §3.6）覆盖
-- 本备忘 §3.10 补的是**非因子策略**（如 24 号打板）的信号组合正交性——打板策略叠加情绪周期 + 龙头识别 + 量价确认三信号，须验证三信号是否正交
-- 25 号因子正交性用 IC 矩阵 + FSI，24 号信号正交性用本备忘 §3.10 算法——分层检测
-
-**为何归因层而非策略层管正交性**：
-- 策略层（24/25 号）管"信号怎么生成"，归因层管"信号组合是否过拟合"——事后验证
-- 归因报告消费正交性验证结果，反馈到策略层重优化（BM-REC-03 闭环）
-- 与 §3.9 deflated-alpha 协同：§3.9 验证组合后 alpha 真实性，§3.10 验证组合前信号正交性——前后双重防线
+**与 25 号多因子策略的关系**：25 号因子间正交性已由 §3 ic_decay 三层监控 + FSI（55 号 §3.6）覆盖；本备忘 §3.10 补的是**非因子策略**（如 24 号打板）的信号组合正交性——25 号因子正交性用 IC 矩阵 + FSI，24 号信号正交性用本算法，分层检测。
 
 ### 3.11 决策⑩：regime-conditional 归因（v1.5.0 补，Phase 2 候选）
 
 **决策**：归因报告须支持 regime-conditional 分解——按市场 regime 分桶分别计算 Brinson 3 因子 + regime 切换贡献，让 owner 能区分"收益来自 regime fit（顺风）还是 skill（选股/配置能力）"。Phase 2 候选（首批策略 track record 3 个月后，若 Brinson 总归因不足以解释策略表现时启用）。
 
-> **为何需要 regime-conditional 归因**：[traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading) 实证——"Attribution's regime dimension reveals what fraction of returns came from regime fit versus skill within regime. Most retail traders running honest attribution discover 50-80% of their favorable-period returns came from regime fit rather than skill"。这意味着不分解 regime 维度的归因会让 owner 误把"顺风收益"当"选股能力"，regime 切换后策略失效时归因无法解释。[breakingalpha 2026-01](https://breakingalpha.io/insights/performance-attribution-analysis-multi-strategy-portfolios) 明确将 "Regime-conditional: Estimate separate exposures for different market regimes" 列为多策略归因的标准维度之一。
+> **为何需要 regime-conditional 归因**：[traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading) 实证——"Most retail traders running honest attribution discover 50-80% of their favorable-period returns came from regime fit rather than skill"。不分解 regime 维度会让 owner 误把"顺风收益"当"选股能力"，regime 切换后策略失效时归因无法解释。[breakingalpha 2026-01](https://breakingalpha.io/insights/performance-attribution-analysis-multi-strategy-portfolios) 将 regime-conditional 列为多策略归因的标准维度之一。
 
 **regime-conditional 归因算法**（v1.5.0 补）：
 
@@ -2273,8 +2081,7 @@ def attribute_by_regime(
 - 30 号 §2.2 闭环扩展：归因 → regime 条件 budget 调整 → 策略 PnL 变化 → 归因（BM-REC-03 闭环的 regime 维度）
 
 **为何 Phase 2 而非 MVP**：
-- 需要足够 track record 才能按 regime 分桶（每桶样本量 ≥ 20 交易日才统计显著）
-- 28 号情绪周期 regime 标签需实盘校准（regime 切换检测阈值）
+- 需要足够 track record 才能按 regime 分桶（每桶样本量 ≥ 20 交易日才统计显著）；28 号情绪周期 regime 标签需实盘校准
 - MVP 先用 §3.2 Brinson 3 因子（不分 regime），Phase 2 加 regime-conditional 分解
 - 重评条件：Brinson 总归因残差持续 > 0.01% + owner 需区分"顺风收益"vs"真实 skill"时
 
@@ -2282,7 +2089,7 @@ def attribute_by_regime(
 
 **决策**：策略贡献分解（§3.5）的求和不变量校验之外，Phase 2 评估引入 Shapley 值归因作为"公平分配"的更好算法——解决各策略/标的贡献的交互效应公平分配问题（vs naive weight×return 求和）。
 
-> **2026-08 最新研究支持**：[arXiv:2102.05799 Moehle/Boyd/Ang 2021](https://arxiv.org/abs/2102.05799)（Shapley 归因经典框架，被 2026 文献持续引用）+ [xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python)（Python 实现，实证 Shapley vs naive 差异可达 2-10 倍）+ [EDHEC 2026-02 SPPC](https://www.edhec.edu/sites/default/files/2026-02/SLIDES%20AnatomyPortfolioEDHEC.pdf)（Shapley-based Portfolio Performance Contribution，ML 黑盒归因）+ [Man Numeric 2023 SHAP](https://www.man.com/documents/download/b94f6-5adf6-a3bdc-5718e/Man_Numeric_Insights_Shining_Light_into_the_Machine_Learning_Black_Box_English_23-08-2023.pdf)（SHAP 组合归因，非线性交互捕捉）。
+> **2026-08 最新研究支持**：[arXiv:2102.05799 Moehle/Boyd/Ang 2021](https://arxiv.org/abs/2102.05799)（Shapley 归因经典框架）+ [xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python)（Python 实现，实证 Shapley vs naive 差异可达 2-10 倍）+ [EDHEC 2026-02 SPPC](https://www.edhec.edu/sites/default/files/2026-02/SLIDES%20AnatomyPortfolioEDHEC.pdf)（Shapley-based Portfolio Performance Contribution，ML 黑盒归因）+ [Man Numeric 2023 SHAP](https://www.man.com/documents/download/b94f6-5adf6-a3bdc-5718e/Man_Numeric_Insights_Shining_Light_into_the_Machine_Learning_Black_Box_English_23-08-2023.pdf)（SHAP 组合归因，非线性交互捕捉）。
 
 **Shapley 值归因的核心优势**（vs naive 求和）：
 
@@ -2348,18 +2155,15 @@ def shapley_strategy_attribution(
 ```
 
 **为何 Shapley 是"更好"但 Phase 2 才评估**：
-- **更好**：Shapley 公平分配交互效应（naive 求和忽略策略间相关性），对多策略组合归因更准确——[xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python) 实证 JNJ naive +8.39% vs Shapley +18.46%（低相关性策略被 naive 低估）
-- **Phase 2 才评估**：①计算复杂度 O(2^n)，5 策略可行（2^5=32），但若策略数增长到 10+ 需 Monte Carlo 近似；②MVP 先用 §3.5 求和不变量校验（简单 + 满足 30 号 Model A 可加承诺），Phase 2 评估 Shapley 增量价值；③与 §3.11 regime-conditional 协同：Shapley 分配策略贡献，regime-conditional 分解 regime 维度——二者正交可叠加
+- **更好**：Shapley 公平分配交互效应（naive 求和忽略策略间相关性）——[xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python) 实证 JNJ naive +8.39% vs Shapley +18.46%（低相关性策略被 naive 低估）
+- **Phase 2 才评估**：①计算复杂度 O(2^n)，5 策略可行（2^5=32），若策略数增长到 10+ 需 Monte Carlo 近似；②MVP 先用 §3.5 求和不变量校验（简单 + 满足 30 号 Model A 可加承诺）；③与 §3.11 regime-conditional 协同：Shapley 分配策略贡献，regime-conditional 分解 regime 维度——二者正交可叠加
 - **重评条件**：①Brinson 求和不变量残差持续 > 1bp + 策略间相关性显著（IC > 0.5）+ owner 需公平分配交互效应时；②策略数 ≤ 8（精确 Shapley 可行）
 
-**与 §3.5 求和不变量的关系**：
-- §3.5 求和不变量：Σ(strategy_pnl) == firm_pnl，校验数据一致性（对账门禁）
-- §3.12 Shapley：将 firm_pnl 公平分配到各策略（含交互效应），归因解释
-- 二者不冲突：求和不变量是数据校验门禁（PASS 才能跑 Shapley），Shapley 是更精细的归因分解
+**与 §3.5 求和不变量的关系**：§3.5 校验 Σ(strategy_pnl)==firm_pnl 数据一致性（对账门禁，PASS 才能跑 Shapley）；§3.12 Shapley 将 firm_pnl 公平分配到各策略（含交互效应）——不冲突，前者是数据校验门禁，后者是更精细的归因分解。
 
 **MOD-RPT-015 绩效归因报告模板**（v1.3.0 补 / v1.15.0 路径修正，[default_attribution_engine.py](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_attribution_engine.py) + [PerformanceAttributionReport 契约](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/performance_attribution_report.py) CTR-P1-009 codegen 已落盘）：
 
-> MOD-RPT-015 报告生成器模块未施工（registry 无条目、无代码文件）；CTR-P1-009 契约 [performance_attribution_report.py](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/performance_attribution_report.py) 已存在于 shared/contracts（v1.14.0 前本节误链 `reporting/.../performance_attribution_report.py` 悬空路径）。本备忘定义报告模板的最小必填字段 + Carino residual 质量门禁，作为施工时的契约。
+> MOD-RPT-015 报告生成器模块未施工（registry 无条目、无代码文件）；CTR-P1-009 契约 [performance_attribution_report.py](file:///d:/ZephyrAlpha/src/zephyr/shared/contracts/performance_attribution_report.py) 已存在于 shared/contracts。本备忘定义报告模板的最小必填字段 + Carino residual 质量门禁，作为施工时的契约。
 
 ```markdown
 # 绩效归因报告 {period}
@@ -2425,38 +2229,19 @@ def shapley_strategy_attribution(
 - 归因报告归档 → SQLite report_archive + Parquet
 ```
 
-**为何必须定义模板**：
-- MOD-RPT-015 planned 状态意味着施工时无契约——AI 开发可能各处实现不一
-- 模板最小必填字段 + Carino residual 质量门禁是施工时的硬约束
-- 与 55 号复盘模板对接：归因报告是日/周/月复盘的数据源（55 号 §3.7 复盘模板引用归因结果）
-
 **2026-08 最新研究补充**（v1.9.0 补，3 项高价值发现）：
 
-> **发现①：JPMorgan 层次化 Shapley 方法选择框架**——[arXiv:2608.04547v1 Mei & Lin 2026-08-05](https://arxiv.org/abs/2608.04547)（JPMorgan Chase Wholesale Credit QR，q-fin.RM）将"预测差异归因"形式化为合作博弈，头对头比较 6 种归因方法：exact Shapley / hierarchical (nested) Shapley / Integrated Gradients / Gradient SHAP / Permutation SHAP / Kernel SHAP。关键结论：①**exact Shapley 是金标准但 O(2^n) 不可扩展**——输入数 > 15 时计算不可行；②**hierarchical (nested) Shapley 是实用折中**——按输入层次结构（如 portfolio → strategy → signal 三层）嵌套计算，每层内部独立跑 Shapley，层间用父层 Shapley 加权——复杂度从 O(2^n) 降到 O(Σ 2^{n_l})（n_l 是各层节点数），3 层 × 5 节点 = 3×2^5=96 vs 单层 2^15=32768，**降 341 倍**；③**IG/Gradient SHAP 适合连续输入**（如因子暴露矩阵），不适合离散策略组合；④**Permutation/Kernel SHAP 是近似**，有 Monte Carlo 方差，生产系统不推荐。
+> **发现①：JPMorgan 层次化 Shapley 方法选择框架**——[arXiv:2608.04547v1 Mei & Lin 2026-08-05](https://arxiv.org/abs/2608.04547)（JPMorgan Chase，q-fin.RM）头对头比较 6 种归因方法：①**exact Shapley 是金标准但 O(2^n) 不可扩展**（输入 > 15 不可行）；②**hierarchical (nested) Shapley 是实用折中**——按层次结构（portfolio → strategy → signal）嵌套计算，复杂度从 O(2^n) 降到 O(Σ 2^{n_l})，3 层 × 5 节点 = 96 vs 单层 2^15=32768，**降 341 倍**；③IG/Gradient SHAP 适合连续输入不适合离散策略组合；④Permutation/Kernel SHAP 有 Monte Carlo 方差，生产不推荐。
 >
-> **施工含义**（v1.9.0 补，作为 §3.12 Shapley 的可扩展性升级路径）：
-> - **MVP 不变**：3-5 策略用 exact Shapley（§3.12 算法已实现），O(2^5)=32 可行
-> - **Phase 2 扩展路径**：策略数增长到 8-15 时，切换到 hierarchical Shapley——按 sleeve（打板/多因子/套利）→ strategy → signal 三层嵌套，每层 exact Shapley，层间加权
-> - **方法选择决策树**（[arXiv:2608.04547] §4 Table 1 适配本备忘）：输入离散且 ≤15 → exact Shapley；输入离散且 >15 且有层次结构 → hierarchical Shapley；输入连续（因子暴露） → IG；需要可复现性+治理 → exact Shapley（无随机性）> hierarchical > Kernel SHAP（有方差）
-> - **与 §3.13 Hentschel GLS 的关系**：hierarchical Shapley 是**分配层**的可扩展性方案，Hentschel GLS 是**估计层**的统一框架——二者正交，Phase 2 可同时落地（GLS 统一估计 + hierarchical Shapley 分配）
-> - **不采纳 IG/Gradient SHAP**：本备忘归因对象是离散策略/标的组合（非连续特征），IG/Gradient SHAP 不适配——登记但不施工
-
-> **发现②：Shapley 归因规范背景分布**——[Hentschel 2026-07-28 "A Canonical Background Distribution for Shapley Attribution"](https://www.ludgerhentschel.com/PDFs/Hentschel%20%2726i.pdf) 解决 SHAP 归因的"背景分布任意性"问题：SHAP 归因依赖一个背景分布定义"特征缺失"的参考总体，实践中常取全训练样本/随机子采样/聚类中心——这是**为代表性或计算便利而非对应解释问题**而选的。Hentschel 提出**预测中性流形背景分布**：用拟合预测接近中性水平的真实观测数据作为背景，使得 Shapley 效率公理意味着特征归因之和 = 预测值 - 中性预测值（即解释问题要分解的量）。核心优势：①**确定性**——直接从观测数据构造（非随机采样/模拟），条件于拟合模型+参考样本确定；②**语义对齐**——背景对应"模型为何产出该输出而非无条件预测"这一规范问题；③**不改变 Shapley 算法/公理**——仅改变参考分布，可直接接入现有 SHAP 实现。
+> **施工含义**（§3.12 可扩展性升级路径）：**MVP 不变**（3-5 策略 exact Shapley，O(2^5)=32 可行）；**Phase 2 扩展**：策略数 8-15 时切换 hierarchical Shapley（sleeve → strategy → signal 三层嵌套）；**方法选择决策树**（[arXiv:2608.04547] §4 Table 1 适配）：输入离散 ≤15 → exact Shapley；离散 >15 且有层次结构 → hierarchical；连续（因子暴露）→ IG；需可复现性+治理 → exact > hierarchical > Kernel SHAP；**与 §3.13 Hentschel GLS 正交**（hierarchical Shapley 是分配层可扩展方案，GLS 是估计层统一框架，Phase 2 可同时落地）；**不采纳 IG/Gradient SHAP**（本备忘归因对象是离散策略/标的组合，登记但不施工）。
 >
-> **施工含义**（v1.9.0 补，作为 §3.12 Shapley 的背景分布选择指导）：
-> - **MVP 不变**：§3.12 `shapley_strategy_attribution()` 用等权子组合作隐式背景，3-5 策略下背景选择影响小
-> - **Phase 2 评估**：若 Shapley 归因结果对背景分布敏感（换背景→排名变），改用 Hentschel 预测中性背景——用历史归因报告的"中性 Sharpe 水平"对应的策略组合作为背景样本
-> - **与 §3.13 Hentschel GLS 同作者**：Hentschel 2026-07 背景分布论文 + 2024 GLS 统一框架是同一作者的归因理论体系——Phase 2 评估时二者协同（GLS 统一估计 + 规范背景分布）
-> - **不采纳原因登记**：预测中性流形背景需构造"拟合预测接近中性水平的真实观测"——A 股策略组合的中性预测水平定义模糊（Sharpe=0？benchmark return？），MVP 阶段不施工，Phase 2 若 Shapley 背景敏感性触发再评估
-
-> **发现③：Shapley 风险归因——从收益分配到风险分配**——[arXiv:2506.06653 Chen 2025 "Explaining Risks: Axiomatic Risk Attributions for Financial Models"](https://arxiv.org/abs/2506.06653)（Quantitative Finance 期刊发表，q-fin.CP）将 Shapley 值从**收益归因**（return attribution：各策略对 PnL 的贡献分配）扩展到**风险归因**（risk attribution：各策略对组合 VaR/CVaR 的贡献分配）。核心洞察：**风险分配 ≠ 收益分配**——一个策略可能收益贡献为正但风险贡献不成比例地高（如低频高胜率策略贡献正收益但尾部事件时贡献不成比例的 CVaR）。方法：用 Shapley 四公理（效率/对称/哑玩家/可加性）分配组合风险（VaR/CVaR/方差），每个策略的 Shapley 风险值 = 该策略加入所有可能联盟时的边际风险贡献均值，效率公理保证 Σ Shapley 风险 = 组合总风险。
+> **发现②：Shapley 归因规范背景分布**——[Hentschel 2026-07-28 "A Canonical Background Distribution for Shapley Attribution"](https://www.ludgerhentschel.com/PDFs/Hentschel%20%2726i.pdf)：SHAP 归因依赖背景分布定义"特征缺失"的参考总体，实践中常为代表性或计算便利而选。Hentschel 提出**预测中性流形背景分布**（用拟合预测接近中性水平的真实观测作背景），使 Shapley 效率公理意味着特征归因之和 = 预测值 - 中性预测值。优势：确定性（直接从观测构造）+ 语义对齐 + 不改变 Shapley 算法/公理。
 >
-> **施工含义**（v1.9.0 补，作为 §3.12 Shapley 从收益归因扩展到风险归因的路径）：
-> - **MVP 不变**：§3.12 `shapley_strategy_attribution()` 当前仅做收益归因（分解 PnL 贡献），风险归因由 36 号 VaR/CVaR 统一计算（非 Shapley 分配）
-> - **Phase 2 评估**：当 owner 需要"哪个策略贡献了最多组合风险"（而非"哪个策略贡献了最多收益"）时，启用 Shapley 风险归因——用 CVaR 作为风险度量，跑 `shapley_risk_attribution()` 分配各策略的边际 CVaR 贡献
-> - **与 36 号 VaR/CVaR 监控的对接**：36 号 §3.2 计算 portfolio VaR/CVaR 总值，Shapley 风险归因把总值分解到各策略——36 号回答"组合风险是多少"，Shapley 风险归因回答"哪个策略贡献了最多风险"
-> - **与发现①hierarchical Shapley 的协同**：风险归因也可用 hierarchical Shapley 降复杂度——按 sleeve → strategy → signal 三层嵌套分配 CVaR 贡献
-> - **Phase 2+ 远期候选**：MVP 不施工，登记为 36 号 VaR/CVaR 分解的远期候选——当 36 号 portfolio VaR 计算稳定 + owner 需策略级风险归因时激活
+> **施工含义**：**MVP 不变**（§3.12 用等权子组合作隐式背景，3-5 策略下背景选择影响小）；**Phase 2 评估**：若 Shapley 归因结果对背景分布敏感（换背景→排名变），改用 Hentschel 预测中性背景——用历史归因报告的"中性 Sharpe 水平"对应的策略组合作为背景样本；**不采纳原因登记**：预测中性流形背景需构造"拟合预测接近中性水平的真实观测"——A 股策略组合的中性预测水平定义模糊（Sharpe=0？benchmark return？），MVP 阶段不施工，Phase 2 若 Shapley 背景敏感性触发再评估。
+>
+> **发现③：Shapley 风险归因——从收益分配到风险分配**——[arXiv:2506.06653 Chen 2025 "Explaining Risks: Axiomatic Risk Attributions for Financial Models"](https://arxiv.org/abs/2506.06653)（Quantitative Finance，q-fin.CP）将 Shapley 值从**收益归因**扩展到**风险归因**（各策略对组合 VaR/CVaR 的贡献分配）。核心洞察：**风险分配 ≠ 收益分配**——一个策略可能收益贡献为正但风险贡献不成比例地高。方法：用 Shapley 四公理分配组合风险（VaR/CVaR/方差），效率公理保证 Σ Shapley 风险 = 组合总风险。
+>
+> **施工含义**（§3.12 从收益归因扩展到风险归因的路径）：**MVP 不变**（§3.12 仅做收益归因，风险归因由 36 号 VaR/CVaR 统一计算，非 Shapley 分配）；**Phase 2 评估**：当 owner 需要"哪个策略贡献了最多组合风险"时，用 CVaR 作为风险度量跑 `shapley_risk_attribution()` 分配各策略的边际 CVaR 贡献；**与 36 号的对接**：36 号 §3.2 计算 portfolio VaR/CVaR 总值，Shapley 风险归因把总值分解到各策略——36 号回答"组合风险是多少"，Shapley 风险归因回答"哪个策略贡献了最多风险"；风险归因也可用 hierarchical Shapley 降复杂度（sleeve → strategy → signal 三层嵌套分配 CVaR 贡献）；**Phase 2+ 远期候选**：MVP 不施工，当 36 号 portfolio VaR 计算稳定 + owner 需策略级风险归因时激活。
 
 ### 3.13 决策⑫：Hentschel GLS 统一归因框架（v1.8.0 补，Phase 2 候选，2026-08 最新更好算法）
 
@@ -2477,9 +2262,9 @@ def shapley_strategy_attribution(
 
 **为何 Hentschel GLS 是"更好"但 Phase 2 才评估**：
 
-- **更好**：①统一三类调整为单一估计框架，消除"Carino 链接 + Brinson 交互项 + 因子残差"三套独立 ad-hoc 规则的组合失真；②给每个归因项统计置信度（Carino 只校验求和不变量，不回答"这个 allocation effect 0.3% 是否显著"）；③Carino/Frongello 等经典链接规则是其特例——落地 GLS 后现有 Carino 实现可视为 GLS 的特定参数化，平滑过渡无破坏性
-- **Phase 2 才评估**：①MVP 阶段 §3.2 Carino 已满足求和不变量校验 + §3.12 Shapley 满足交互效应公平分配，三类调整的"组合失真"在 3-5 策略小规模下不显著（Hentschel 实证：失真随策略数和持仓变动频率增长）；②GLS 需构造每期估计的协方差矩阵（估计精度矩阵），3-5 策略 + 季度频率下协方差估计噪声大；③pybrinson v1.3.1 有参考实现但非生产级（[gogoahead233-art/brinson-attribution 2026](https://github.com/gogoahead233-art/brinson-attribution) 是教学实现），需自研适配 A 股 T+1 + 板块轮动场景；④与 §3.11 regime-conditional + §3.12 Shapley 协同：Hentschel GLS 是**估计层**统一，regime-conditional 是**分解维度**，Shapley 是**分配原则**——三者正交可叠加
-- **重评条件**：①Carino residual 持续 > 1bp + 策略数 ≥ 5 + 持仓变动频率高（日均 turnover > 30%）；②需归因项统计置信度做退役决策（"allocation effect 0.3% 是否显著"影响退役评审）；③Brinson 交互项占总超额收益比例 > 10%（交互项再分配需求显著）
+- **更好**：①统一三类调整为单一估计框架，消除三套独立 ad-hoc 规则的组合失真；②给每个归因项统计置信度（Carino 只校验求和不变量，不回答"这个 allocation effect 0.3% 是否显著"）；③Carino/Frongello 等经典链接规则是其特例——落地 GLS 后现有 Carino 实现可视为 GLS 的特定参数化，平滑过渡无破坏性
+- **Phase 2 才评估**：①MVP 阶段 §3.2 Carino + §3.12 Shapley 已够用，三类调整的"组合失真"在 3-5 策略小规模下不显著（Hentschel 实证：失真随策略数和持仓变动频率增长）；②GLS 需构造每期估计的协方差矩阵，3-5 策略 + 季度频率下协方差估计噪声大；③pybrinson v1.3.1 是参考实现非生产级，需自研适配 A 股 T+1 + 板块轮动场景；④与 §3.11 regime-conditional（分解维度）+ §3.12 Shapley（分配原则）正交可叠加——Hentschel GLS 是**估计层**统一
+- **重评条件**：①Carino residual 持续 > 1bp + 策略数 ≥ 5 + 持仓变动频率高（日均 turnover > 30%）；②需归因项统计置信度做退役决策；③Brinson 交互项占总超额收益比例 > 10%（交互项再分配需求显著）
 
 **Hentschel GLS 算法骨架**（v1.8.0 补，远期 Phase 2 候选，[Hentschel 2024](https://www.ludgerhentschel.com/PDFs/Hentschel%20%2724b.pdf) + [pybrinson v1.3.1](https://github.com/gghez/pybrinson) 实现参考）：
 
@@ -2489,31 +2274,20 @@ def hentschel_gls_attribution(
         factor_exposures: dict | None = None,  # 可选因子暴露（因子残差再分配）
         precision_weighting: str = "carino"    # carino/frongello/menchero/uniform
     ) -> dict:
-    """Hentschel GLS 统一归因——把多期链接+交互项再分配+因子残差再分配统一为受限 GLS。
-
-    [Hentschel 2024] 核心思想：归因是估计问题，不是 ad-hoc 规则组合。
-    用受限 GLS 把"多期链接、交互项再分配、因子残差再分配"三类调整
-    统一为"按精度最小化统计失真"的回归更新。
+    """Hentschel GLS 统一归因——把多期链接+交互项再分配+因子残差再分配统一为受限 GLS（[Hentschel 2024]：归因是估计问题，三类调整统一为"按精度最小化统计失真"的回归更新）。
 
     Args:
         period_returns: 各期 {strategy_id, weight, benchmark_weight, return, benchmark_return}
         factor_exposures: 可选因子暴露矩阵（n×k），用于因子残差再分配
-        precision_weighting: 精度加权方式
-            - carino: Carino 对数链接（GLS 特例）
-            - frongello: Frongello 链接（GLS 特例）
-            - menchero: Menchero 链接（GLS 特例）
-            - uniform: 均匀加权（无精度感知）
+        precision_weighting: carino/frongello/menchero（GLS 特例）/uniform（无精度感知）
     Returns:
-        {
-            'allocation_effect': float,           # 配置效应（含统计置信度）
-            'selection_effect': float,           # 选股效应
-            'interaction_effect': float,        # 交互效应
-            'factor_residual': float | None,    # 因子残差再分配（可选）
-            'std_errors': dict,                  # 各归因项标准误
-            'confidence_intervals': dict,       # 95% CI
-            'linking_residual': float,          # 链接残差（应≈0）
-            'precision_matrix': np.ndarray,      # 精度矩阵（诊断用）
-        }
+        {'allocation_effect': float, 'selection_effect': float,
+         'interaction_effect': float,
+         'factor_residual': float | None,      # 因子残差再分配（可选）
+         'std_errors': dict,                    # 各归因项标准误
+         'confidence_intervals': dict,          # 95% CI
+         'linking_residual': float,             # 链接残差（应≈0）
+         'precision_matrix': np.ndarray}        # 精度矩阵（诊断用）
     """
     import numpy as np
 
@@ -2609,32 +2383,19 @@ def hentschel_gls_attribution(
 
 > **算法骨架说明**：①上述骨架是远期候选的施工形态参考，非 MVP 实现；②Hentschel GLS 的核心优势是**统计可解释**——给每个归因项标准误 + 95% CI，Carino 只给单点估计 + 求和不变量校验；③Carino/Frongello/Menchero 等经典链接规则在受限 GLS 下是其特例（precision_weighting 参数选择），落地 GLS 后现有 Carino 实现可平滑迁移；④与 §3.5 求和不变量校验的关系：GLS 的求和不变量约束（Aβ = b）是**估计内置**的，无需事后校验；⑤与 §3.11 regime-conditional + §3.12 Shapley 协同：Hentschel GLS 是估计层统一，regime-conditional 是分解维度，Shapley 是分配原则——三者正交可叠加。
 
-**与 §3.2 Carino + §3.12 Shapley 的关系**：
-- §3.2 Carino：多期链接 ad-hoc 规则（logarithmic linking）—— Hentschel GLS 的 precision_weighting="carino" 特例
-- §3.12 Shapley：交互效应公平分配（合作博弈）—— Hentschel GLS 的交互项再分配是约束估计，Shapley 是分配原则
-- 二者不冲突：MVP 先用 Carino + 求和不变量校验（简单 + 满足 30 号 Model A 可加承诺），Phase 2 评估 Hentschel GLS 增量价值（统计置信度 + 统一三类调整）
-
-**为何不直接落地 Hentschel GLS 替代 Carino + Shapley**：
-- **MVP 简单优先**：Carino 单点估计 + 求和不变量校验对 3-5 策略小规模足够，GLS 的统计置信度在小样本下不稳定（dof 低）
-- **实现成熟度**：pybrinson v1.3.1 是参考实现非生产级，需自研适配 A 股 T+1 + 板块轮动 + ST 事件场景
-- **Shapley 价值独立**：Shapley 的公平分配原则（合作博弈四公理）是 GLS 不直接覆盖的——GLS 是估计层，Shapley 是分配层，二者正交
-- **重评条件触发后再评估**：Carino residual 持续 > 1bp + 策略数 ≥ 5 + 持仓变动频率高时，GLS 的统一估计优势才显著
+**与 §3.2 Carino + §3.12 Shapley 的关系**：Carino 是 GLS 的 precision_weighting="carino" 特例；Shapley 是分配原则（GLS 交互项再分配是约束估计）；MVP 先用 Carino + 求和不变量校验（简单 + 满足 30 号 Model A 可加承诺），Phase 2 评估 GLS 增量价值（统计置信度 + 统一三类调整）。**为何不直接落地 GLS 替代**：MVP 简单优先（3-5 策略小样本下 GLS 置信度不稳定 dof 低）；pybrinson v1.3.1 是参考实现非生产级，需自研适配 A 股 T+1 + 板块轮动 + ST 事件；Shapley 公平分配四公理 GLS 不直接覆盖（估计层 vs 分配层正交）；重评条件触发后再评估。
 
 **2026-08 最新研究补充：TreeIG 精确积分梯度**（v1.9.0 补，[Hentschel TreeIG 2026-08-04](https://github.com/LudgerHentschel/treeig) 同作者延伸）：
 
-> **发现③：TreeIG 精确 Integrated Gradients for tree models**——[LudgerHentschel/treeig 2026-08-04](https://github.com/LudgerHentschel/treeig)（v0.1.1 release 2026-05-20，2026-08-04 adaptive numerical event refinement 更新）是 Hentschel 归因理论体系的第三块拼图：Hentschel 2024 GLS 统一框架（§3.13 本节）+ 2026-07 规范背景分布（§3.12 发现②）+ TreeIG 精确积分梯度。TreeIG 核心贡献：对树模型（XGBoost/LightGBM/CatBoost），积分梯度的路径积分**精确退化为分裂边界跨越的预测跳跃之和**——无需 Monte Carlo 采样、无需数值积分、无近似参数。属性分配满足 ∑jϕj = F(x) − F(x0)（精确完备性）。
+> [LudgerHentschel/treeig 2026-08-04](https://github.com/LudgerHentschel/treeig)（v0.1.1）是 Hentschel 归因理论体系的第三块拼图（2024 GLS + 2026-07 背景分布 + TreeIG）：对树模型（XGBoost/LightGBM/CatBoost），积分梯度的路径积分**精确退化为分裂边界跨越的预测跳跃之和**——无需 Monte Carlo 采样、无近似参数，属性分配满足精确完备性。
 >
-> **与本备忘的关系**（v1.9.0 补）：
-> - **不直接施工**：本备忘归因对象是离散策略/标的组合（Brinson 3 因子 + Shapley 分配），非树模型特征归因——TreeIG 是 ML 黑盒归因工具，适配 25 号多因子策略的 ML 模型解释而非 54 号组合归因
-> - **登记原因**：TreeIG 是 Hentschel 归因体系拼图，与 §3.13 GLS + §3.12 背景分布同源——Phase 2 评估 Hentschel GLS 时，若需对 25 号 ML 策略做特征归因（哪些因子贡献了收益），TreeIG 是精确解（vs SHAP Kernel 近似）
-> - **与 §3.12 Shapley 发现①的协同**：[arXiv:2608.04547 JPMorgan] 比较 IG vs Shapley——IG 适合连续输入（因子暴露），TreeIG 把 IG 精确化到树模型；Shapley 适合离散输入（策略组合），hierarchical Shapley 把它可扩展化——二者覆盖不同归因对象
-> - **Phase 2+ 远期候选**：MVP 不施工，登记为 25 号 ML 策略特征归因的远期候选——当 25 号 ML 模型成为主 alpha 来源 + owner 需"哪些因子贡献了今日收益"归因时，TreeIG 替代 SHAP Kernel 近似
+> **与本备忘的关系**：**不直接施工**——本备忘归因对象是离散策略/标的组合，TreeIG 是 ML 黑盒归因工具，适配 25 号多因子策略的 ML 模型解释而非 54 号组合归因；**登记原因**：Phase 2 评估 Hentschel GLS 时，若需对 25 号 ML 策略做特征归因（哪些因子贡献了收益），TreeIG 是精确解（vs SHAP Kernel 近似）——IG 适合连续输入（因子暴露），TreeIG 把 IG 精确化到树模型；Shapley 适合离散输入（策略组合），hierarchical Shapley 把它可扩展化；**Phase 2+ 远期候选**：当 25 号 ML 模型成为主 alpha 来源 + owner 需"哪些因子贡献了今日收益"归因时，TreeIG 替代 SHAP Kernel 近似。
 
 ### 3.14 决策⑬：MCR/CCR 风险分解（v1.14.0 补，Phase 2.5 候选，经典风险归因填补收益-风险归因不对称）
 
 **决策**：为 §3.2 Brinson 收益归因登记**经典 MCR/CCR 风险分解**作为风险归因维度的轻量级中间档——Brinson 回答"谁赚了钱"，MCR/CCR 回答"谁贡献了风险"，二者正交互补。定位 **Phase 2.5 候选**（比 §3.12 Shapley 风险归因 Phase 2+ 更轻量、比 §4.1 Barra Phase 3 更轻量），填补"收益归因已有（Brinson）但风险归因全空白直到 Phase 3 Barra"的中间档缺口。
 
-> **为何需要 MCR/CCR（收益-风险归因不对称问题）**：§3.2 Brinson 3 因子分解组合**收益**到 allocation/selection/interaction，但组合**风险**（波动率/VaR）的分解维度完全空白——直到 §4.1 Barra（Phase 3，需因子模型许可证+协方差矩阵）才填补。这意味着 MVP~Phase 2 期间，owner 能回答"打板策略赚了多少"但无法回答"打板策略贡献了多少组合波动率"——一个收益贡献为正的策略可能风险贡献不成比例地高（高收益高波动 vs 低收益低波动），不分解风险维度会误导 budget 调整方向（30 号 RegimeMetaAllocator 只看 PerformanceScore=收益维度，不看风险维度）。
+> **为何需要 MCR/CCR（收益-风险归因不对称问题）**：§3.2 Brinson 3 因子分解组合**收益**，但组合**风险**（波动率/VaR）的分解维度完全空白——直到 §4.1 Barra（Phase 3，需因子模型许可证+协方差矩阵）才填补。MVP~Phase 2 期间，owner 能回答"打板策略赚了多少"但无法回答"打板策略贡献了多少组合波动率"——一个收益贡献为正的策略可能风险贡献不成比例地高，不分解风险维度会误导 budget 调整方向（30 号 RegimeMetaAllocator 只看 PerformanceScore=收益维度，不看风险维度）。
 
 > **MCR/CCR vs Shapley 风险归因 vs Barra 三档定位**：
 > | 方法 | 风险归因机制 | 协方差来源 | 复杂度 | 定位 |
@@ -2730,13 +2491,11 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 - **Phase 2.5 施工形态**：MCR/CCR 输出 `risk_concentration_ratio = CCR_pct / PnL_share` 字段，30 号 RegimeMetaAllocator 消费该字段作为 budget 调整的风险维度补充（MVP 不接入，Phase 2.5 评估）
 
 **为何 MCR/CCR 是"轻量级"（不需要 Barra 许可证）**：
-- MCR/CCR 只需**经验协方差矩阵**（历史收益直接 `np.cov` 估计），无需 Barra 因子风险模型（CNE5 13类60+因子 + 协方差矩阵授权）
-- §4.1 拒绝 Barra 的核心理由"需因子模型许可证+协方差矩阵估计+较长实施周期"——MCR/CCR 绕过因子模型，直接用经验协方差，**不违反 §4.1 拒绝裁定**
+- MCR/CCR 只需**经验协方差矩阵**（历史收益直接 `np.cov` 估计），无需 Barra 因子风险模型（CNE5 13类60+因子 + 协方差矩阵授权）——**不违反 §4.1 拒绝裁定**
 - 与 30 号"拒绝统一 MVO（需协方差矩阵）"的关系：30 号拒绝的是 MVO **优化器**（用协方差做事前决策），MCR/CCR 是**事后归因**（用协方差做事后解释）——前者是 DECIDE 工具，后者是 EXPLAIN 工具，性质不同
 
 **过度工程审查**：
-- MCR/CCR 是工业标准风险归因（每本风险教科书必讲），非学术前沿——Litterman 1996 Goldman Sachs "Hot Spots" 框架即 MCR/CCR，机构风险管理系统标配
-- 计算量极低（O(n²) 矩阵乘法，3-5 策略 <1ms），无 Monte Carlo / 无因子模型 / 无许可证
+- MCR/CCR 是工业标准风险归因（Litterman 1996 Goldman Sachs "Hot Spots" 框架，机构风险管理系统标配），非学术前沿；计算量极低（O(n²) 矩阵乘法，3-5 策略 <1ms），无 Monte Carlo / 无因子模型 / 无许可证
 - **为何 Phase 2.5 而非 MVP**：MVP 阶段 3 策略组合 + 60 日 track record 不足时经验协方差估计噪声大（小样本协方差不稳定），Phase 2.5（首批策略 3 月 track record 后）协方差估计才稳定
 - **为何 Phase 2.5 而非 Phase 3 Barra**：MCR/CCR 是 Barra 的轻量前置——在 AUM 机构化触发 Barra 评估前，MCR/CCR 已能回答"谁贡献了风险"，无需等 Barra 许可证
 
@@ -2744,7 +2503,7 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 
 **2026-08-12 最新研究补充：FPRO 修复 Euler 对冲对符号失真**（v1.15.0 补，[Grant Holtes 2026-07-22 "A Funded-Path Random-Order Method for Portfolio Active Risk Attribution"](https://www.grantholtes.com/assets/documents/Funded_Path_Random_Order_Portfolio_Active_Risk_Attribution.pdf)）：
 
-> Holtes 2026-07 指出 MCR/CCR（Euler 分解）的结构性弱点：在**最终持仓点**评估边际贡献，会给相互对冲的持仓对分配大额正负抵消贡献（数学正确但掩盖"哪笔决策驱动了风险"）。FPRO（Funded-Path Random-Order）把每次调仓视为从基准出发的离散决策步，在随机排序上求期望边际风险贡献（Shapley 思想），每步用对冲腿或现金腿保持满仓——精确 reconcile 到总主动风险且消除符号抵消伪影。**对本项目的适用性评估**：A 股不能做空 + 3-5 策略，机构组合的对冲对场景有限；但 30 号 firm 层"多策略同标的叠加/求和裁剪"可能产生跨策略同标的对冲（打板买入 vs 多因子减仓同一标的），届时 MCR/CCR 的 CCR_pct 会失真。**登记为 Phase 2.5+ 远期候选**：与 §3.14 MCR/CCR 同期评估——若归因报告显示同标跨策略对冲显著（single_name_cap 频繁 binding + CCR 符号抵消），启用 FPRO 替代 Euler 分解；MVP/Phase 2.5 仍用 MCR/CCR（O(n²) 闭式解足够）。
+> Holtes 2026-07 指出 MCR/CCR（Euler 分解）的结构性弱点：在**最终持仓点**评估边际贡献，会给相互对冲的持仓对分配大额正负抵消贡献（数学正确但掩盖"哪笔决策驱动了风险"）。FPRO（Funded-Path Random-Order）把每次调仓视为从基准出发的离散决策步，在随机排序上求期望边际风险贡献（Shapley 思想），每步用对冲腿或现金腿保持满仓——精确 reconcile 到总主动风险且消除符号抵消伪影。**对本项目的适用性评估**：A 股不能做空 + 3-5 策略，机构组合的对冲对场景有限；但 30 号 firm 层"多策略同标的叠加/求和裁剪"可能产生跨策略同标的对冲（打板买入 vs 多因子减仓同一标的），届时 MCR/CCR 的 CCR_pct 会失真。**登记为 Phase 2.5+ 远期候选**：若归因报告显示同标跨策略对冲显著（single_name_cap 频繁 binding + CCR 符号抵消），启用 FPRO 替代 Euler 分解；MVP/Phase 2.5 仍用 MCR/CCR（O(n²) 闭式解足够）。
 
 **作战地图环节映射**
 
@@ -2833,7 +2592,6 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 - **PBO 零假设解释修正**（v1.7.0 补，[Solovjiev 2026-07 "PBO 受控标定"](https://pbo.marketmaker.cc/paper.pdf)）：`interpret_deflated_alpha_verdict()` 中 PBO 阈值须显式说明 null=0.5（纯噪声下 PBO=0.5，非 0）——PBO<0.5 才有 edge，PBO>0.5 才过拟合；当前阈值 `pbo > 0.25` 是保守红旗（远低于 null=0.5），PBO 接近 0.5 须结合 N_eff+条件数综合判断；防止读者误读 PBO≈0.5 为"不确定"实际是"无 edge"
 - **Stale-Value 冻结馈送检测**（v1.7.0 补，[EQAF arXiv:2606.20079 2026-06](https://arxiv.org/pdf/2606.20079v1) UBS 投行实测）：`detect_stale_value()` 领域确定性规则——连续 N 笔数值完全相同→告警（max_unchanged_count 默认 3 + max_stale_seconds 默认 300s）+ severity 分级（warning/critical）+ 三层异常检测关系：stale-value 是第 0 层（对账/异常检测**之前**先检测数据是否冻结，冻结则跳过本轮）；纯统计方法（Isolation Forest/PCA/统计规则）对 stale-value 结构性失效，必须领域规则兜底；A 股场景：miniQMT 行情连接断开时持仓/成交回报可能冻结在最后一个值，导致对账系统误判"一致"（实际是双边都冻结）
 - **Merkle tree 审计轨迹升级路径**（v1.7.0 补，Phase 2 候选）：当前 v1.5.0 线性 hash 链能检测单点篡改但有结构性缺陷（无 inclusion proof + 无外部时间锚）；升级目标 = Merkle tree + 外部锚定（RFC-3161 TSA / Sigstore Rekor）；升级施工：`write_audit_stage` 线性 prev_hash → Merkle 叶子节点 + 每日 EOD Merkle root 写入 RFC-3161 TSA + 归因报告附带 Merkle root + TSA 时间戳收据；为何暂缓到 Phase 2：个人单机单 owner 线性链"篡改可检测"已满足生存需求，Merkle tree + 外部锚定的价值在 AUM 机构化/外部审计/监管举证场景才释放
-
 - **MCR/CCR 风险分解**（v1.14.0 补，Phase 2.5 候选）：经典 Euler 齐次函数定理分解组合波动率到各策略 MCR（边际贡献）/CCR（组件贡献），求和不变量 ΣCCR=σ_p；仅需经验协方差矩阵（np.cov 估计），无需 Barra 许可证；与 §3.2 Brinson 收益归因正交（收益归因+风险归因双维度），与 §3.12 Shapley 风险归因（Phase 2+ Monte Carlo）形成轻量-高级两档；输出 risk_concentration_ratio=CCR_pct/PnL_share 反馈 30 号 RegimeMetaAllocator budget 风险维度调整
 
 ### 5.2 演进路径
@@ -2865,11 +2623,6 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 | **审计轨迹存储迁移**（v1.5.0 新增） | MVP 用 SQLite append-only + hash 链 + 30 天 read-only 触发器；个人系统单机单 owner 无需多方信任；区块链/Hyperledger 引入节点同步/共识开销是过度工程 | AUM 机构化 + 外部资金引入 + 需向 LP/监管提供不可篡改审计证据 → 迁移到 PostgreSQL append-only 或 Hyperledger |
 | **regime-conditional 归因**（v1.5.0 新增） | [traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading) 实证 50-80% 收益来自 regime fit 而非 skill；但需足够 track record 按 regime 分桶（每桶 ≥ 20 交易日）+ 28 号情绪周期 regime 标签实盘校准；MVP 先用 Brinson 3 因子不分 regime | 首批策略 3 月 track record + Brinson 总归因残差持续 > 0.01% + owner 需区分"顺风收益"vs"真实 skill"时 |
 | **Shapley 值归因**（v1.5.0 新增） | [xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python) + [arXiv:2102.05799](https://arxiv.org/abs/2102.05799) Shapley 公平分配交互效应 vs naive 求和差异 2-10 倍；但 O(2^n) 复杂度，MVP 5 策略可行但增量价值待验证；§3.5 求和不变量已满足 30 号 Model A 可加承诺 | 策略间相关性 IC > 0.5 + owner 需公平分配交互效应 + 策略数 ≤ 8（精确 Shapley 可行）时 |
-| **Hentschel GLS 统一归因框架**（v1.8.0 新增） | [Hentschel 2024](https://www.ludgerhentschel.com/PDFs/Hentschel%20%2724b.pdf) 受限 GLS 把多期链接+交互项再分配+因子残差再分配统一为估计问题，Carino/Frongello/Menchero 是其特例；但需构造精度矩阵 + 3-5 策略小样本下协方差估计噪声大 + pybrinson v1.3.1 非生产级；MVP 先用 §3.2 Carino + §3.5 求和不变量校验 + §3.12 Shapley 三套独立调整 | Carino residual 持续 > 1bp + 策略数 ≥ 5 + 持仓变动频率高（日均 turnover > 30%）+ 需归因项统计置信度做退役决策时 |
-| **VCP v1.2 ERASURE 事件**（v1.8.0 新增） | [VCP v1.2 2026-05-31](https://github.com/veritaschain/vcp-spec/blob/main/VCP-Specification-v1_2_en.md) GDPR crypto-shredding 作为不可变审计事件；本项目当前无客户数据（个人单 owner），ERASURE 留痕需求不触发 | AUM 机构化 + 客户资金接入（GDPR/PIPL 删除请求场景） |
-| **VCP v1.2 SCITT 对齐**（v1.8.0 新增） | [IETF draft-kamimura-scitt-vcp-03 2026-07-21](https://datatracker.ietf.org/doc/draft-kamimura-scitt-vcp/) COSE Receipts + 透明度服务；v1.1 用 RFC-3161 TSA 单点信任，无多方透明日志共识；本项目当前单机单 owner 无多方审计需求 | 多方审计需求出现（多 LP / 多策略 provider 共同审计） |
-| **VCP v1.2 后量子签名**（v1.8.0 新增） | [VCP v1.2 2026-05-31](https://github.com/veritaschain/vcp-spec/blob/main/VCP-Specification-v1_2_en.md) DILITHIUM2/FALCON512 从 FUTURE 升为 EXPERIMENTAL；Ed25519 在量子计算下不安全，审计轨迹长期存档（≥20 年）有"今签明破"风险 | NIST PQC 标准化稳定（预计 2027-2030）+ 量子计算威胁评估成熟 |
-| **Cross-venue 对账 bi-temporal 模型 + 3 类分歧**（v1.11.0 新增） | [alphaequations 2026-04-22 "Cross-venue reconciliation matching engine"](https://www.alphaequations.com/insights/cross-venue-reconciliation-matching-engine/) 提出 cross-venue 对账的 3 类结构性分歧：①order-ID shape（ClOrdID/OrderID/ExecID 跨场所标识符形态不一）②timestamp skew（PTP±50µs 时钟偏移非噪声而是测量不确定度，须建模）③partial-fill fragmentation（大单分多次成交，双方聚合粒度不同）。配套 **bi-temporal timestamp model**（分离"交易发生时间"vs"记录时间"）+ **append-only fill events**（投影状态不存储状态）+ **class-based escalation routing**（按分歧类别而非严重度路由例外）。**ZephyrAlpha 当前为单券商单市场（miniQMT）**，无 cross-venue order-ID shape 分歧；但 partial-fill fragmentation 已由 §3.3 三层匹配算法 partial 层覆盖，timestamp skew 已由 [Axon.Trade PTP±50µs 纪律](https://axon.trade/clock-discipline-for-trading-systems) 部分覆盖；bi-temporal 双字段尚未显式实现——§3.3 `write_audit_stage` 当前只有单一 `timestamp` 字段（`record['timestamp'] = datetime.utcnow().isoformat()`），Phase 2 升级时需补 `event_time`（交易发生时间，业务语义）+ `recorded_at`（记录写入时间，审计语义）双字段分离 | 多券商接入（≥2 venues）/ 跨市场（A 股+港股通+ADR）/ 日成交笔数 > 5000 + 现有 partial 层例外率 > 3% 时评估升级 |
 
 ## 7. 待定问题（讨论要点对齐结果）
 
@@ -2999,33 +2752,33 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
-| 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G25 讨论要点占位，待讨论填空 |
-| 2026-08-10 | 1.0.0 | 骨架→active，6 讨论要点回填 | 全网搜索 2026 年 PnL 归因/对账/Barra 最佳实践 + 核查 battle_map_11 18 环节 + 核查 default_attribution_engine/position_reconciler 源码现状。6 要点定型：①Brinson 3因子为主 Barra 拒绝 ②三层对账（成交/持仓/资金）③策略×标的×时段三维度因子暂缓 ④两层归因（StrategyBook独立PnL+firm聚合）⑤三层异常检测 ⑥四类报告+双渠道。过度工程审查：Barra 因子归因过重（需许可证+协方差矩阵，与30号拒绝MVO一致）。标注 gap：factor_contributions未实现/transaction_cost_drag未接TCA/MOD-RPT-015 planned/资金对账Phase2。开放问题：基准选取/板块划分/大额阈值校准待实盘定。 |
-| 2026-08-10 | 1.1.0 | 补多期链接算法 + BHB/BF 方案明确 + 实现细节约束 + Carino residual 质量门禁 | 用户要求审查施工环节算法缺失。发现 54号 §3.2 只提单期 Brinson-Fachler，缺多期链接算法（周/月/季报必需）。全网搜 2026-08 研究：[metricgate 2026-09](https://metricgate.com/docs/multi-period-attribution/)（Carino GIPS 首选 + residual 校验）；[pybrinson v1.3.1 2026-04](https://github.com/gghez/pybrinson)（5 种链接开源实现：Carino/Menchero/GRAP/Frongello/Bacon）；[DolphinDB 2026](https://docs.dolphindb.com/zh/tutorials/brinson.html)（BHB vs BF 方案）；[brinson-attribution 2026](https://github.com/gogoahead233-art/brinson-attribution)（beginning-of-period weights 消除偏差）；[Ortec Finance 白皮书](https://www.ortecfinance.com/-/media/project/ortec/shared/files/whitepapers/ip-multi-period-performance-attribution-ortec-finance_bas-leerink.pdf)（weight drift 框架）；[ryanoconnellfinance 2026-03](https://ryanoconnellfinance.com/brinson-attribution-model/)（BHB vs BF 区别）。决策：主选 Carino（GIPS-compliant + 实现简单 + residual 可量化）；保留 BHB 三因子（interaction 独立可见，BF 作降级备选）；beginning-of-period weights；Carino residual < 0.01% 质量门禁。§5.1 上限补多期链接/权重时点/质量门禁；§5.2 MVP 补 Carino 实现 + residual 监控基线；§6 待裁定补 weight drift 框架 + AI 驱动对账；§7 开放问题补 Carino 链接粒度 + BF 降级阈值；§8.4 外部参考补 7 条多期链接引用 + 3 条 AI 对账引用。 |
-| 2026-08-10 | 1.2.0 | 补 PnL Explain vs Predict 概念框架 + 多 session PnL 归因边界 + 跨 session 唯一键上限 + 5 维归因参考 | 用户要求再次审查施工环节算法缺失 + 全网搜 2026-08-08 最新研究。发现 54号 §3.2 缺 PnL 归因类型概念框架（Explain vs Predict 混淆可能导致误选 Greek/SRPnL）。全网搜 2026-08 研究：[hftradingbook 2026-06 "Performance Attribution"](https://hftradingbook.com/performance/attribution)（PnL attribution waterfall + 明确 Explain vs Predict 分类，做市商 spread capture - adverse selection - own impact + signal alpha + fees 模型）；[CSDN SRPnL 2026-06](https://blog.csdn.net/weixin_42402664/article/details/152352510)（SRPnL 敏感性分解属 Predict 类，A 股权益拒绝）；[traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading)（5 维归因 framework：setup/regime/execution/sizing/instrument）；[walletfinder 2026-07](https://www.walletfinder.ai/blog/performance-attribution)（Brinson 1986 BHB 跨资产普适性）；[seriousalchemy 2026-08-04 "Calculating P&L When a Trade Spans Multiple Sessions"](https://seriousalchemy.com/pnl-sessions/)（跨 session PnL 计算陷阱：reoptimization 期间持仓未平导致 entry/exit 跨 session，单 session FIFO 匹配器产生幽灵成交 + PnL 漏算，修复：以 fill_id 而非 session_id 为唯一键）。决策：§3.2 补 PnL Explain vs Predict 概念框架表（Brinson=Explain 主选 / Greek/SRPnL=Predict 拒绝 / PnL waterfall=Explain 备选）+ 多 session PnL 归因边界表（StrategyBook reoptimization 期间持仓风险 + 涨跌停跨日 + T+1 跨日）+ 设计原则（fill_id + position_id 唯一键）；§5.1 上限补归因类型上限（Explain 为主 Predict 拒绝）+ 跨 session 唯一键上限；§8.4 外部参考补 5 条 v1.2.0 引用。 |
-| 2026-08-10 | 1.3.0 | 补 transaction_cost_drag 接入 TCA 算法 + A 股 PnL waterfall 子框架 + 成交对账三层匹配算法 + MOD-RPT-015 报告模板 | 用户要求持续审查施工环节流程算法缺失 + 全网搜 2026-08-08 最新研究。发现 54号 §3.2 transaction_cost_drag=0 硬编码未接入 TCA + 缺 PnL waterfall 子框架（Brinson 不覆盖时机/机会成本）；§3.3 SettlementReconciliation 缺匹配规则分层（单层 exact 容差 0 导致例外率 ~5-18%）；§3.7 MOD-RPT-015 planned 无模板契约。全网搜 2026-08 研究：[osfin 2026-03](https://www.osfin.ai/blog/trade-reconciliation) 6 步对账流程；[intura 2026](https://intura.co/en/guides/ai-finance-reconciliation) 4 种匹配逻辑（exact/fuzzy/partial/no-match）；[ai-indeed 2026-08-04](https://www.ai-indeed.com/encyclopedia/19423.html) 5 层匹配 + 例外率 18%→2.9% 实证；[numeric 2026-05](https://www.numeric.io/blog/reconciliation-automation) exception-based review 范式；[airwallex 2026-06](https://www.airwallex.com/us/blog/best-automated-reconciliation-software-solutions) 行业选型基准；[hftradingbook 2026-06](https://hftradingbook.com/performance/attribution) PnL waterfall 模型；[marketmaker.cc 2026-03](https://marketmaker.cc/en/blog/post/backtest-live-parity) execution divergences 贡献 10-30% PnL 实证。决策：§3.2 补 transaction_cost_drag 接入 TCA 算法（4 分项加权求和公式 + Python 实现 + 与 Brinson 求和不变量校验）+ A 股 PnL waterfall 子框架（Signal/Selection/Timing/Costs/Opportunity 5 分项 + 与 Brinson 互补关系表 + Phase 2 启用条件）；§3.3 补成交对账三层匹配算法（exact/fuzzy/partial + 例外工单 + Python 实现 + 容差校准参数）；§3.7 补 MOD-RPT-015 报告模板（8 节最小必填 + Carino residual 质量门禁 + 求和不变量校验）；§5.1 上限补 4 项（成交对账匹配 + transaction_cost_drag 接入 + PnL waterfall + MOD-RPT-015 契约）；§5.2 演进路径补三层匹配实现 + 容差校准 + drag 分项监控基线 + waterfall Phase 2；§8.4 外部参考补 7 条 v1.3.0 引用。 |
-| 2026-08-10 | 1.4.0 | 补 sizing_basis 归因维度 + deflated-alpha 三重验证 + Combined Trading Signals 正交约束 + 2026-08 最新归因算法研究 + 版本号同步修复 | 用户要求持续审查施工环节流程算法缺失 + 全网搜 2026-08-08 最新研究。发现 v1.4.0 内容已写入文档正文（§3.8 sizing_basis 归因维度补强与 31 号对接 / §3.9 deflated-alpha v0.3.0 三重验证回测 vs 实盘统计显著性 / §3.10 Combined Trading Signals 正交维度约束+正交性验证算法）但 frontmatter 版本号未同步。本次修复+补充：①frontmatter→1.4.0；②§3.2 补 2026-08 最新归因算法研究——Brinson+Industry Layer 5 层分解（Kiski 2026-03，Phase 2 候选）+ Trade Outcome Attribution 5 Pillars（AlgoTradingDesk 2026-01，已部分覆盖）+ Hentschel 统一 GLS（远期参考）+ 滑点分布报告增强（Drovix 2026-05，施工算法 gap：median/p90/p99 替代均值+拒绝率转换 bps 成本+多基准并行）；③§8.4 外部参考补 3 组 v1.4.0 引用——2026-08 最新归因算法（Kiski/AlgoTradingDesk/Drovix/Hentschel/arXiv:2608.04547 Shapley/arXiv:2607.10286 TradeLens）+ A 股对账实践（abq CSDN 2026-08-05/恒生电子内存清算/ihr360 共管账户）+ 对账异常检测与时间戳（ParseMyStatement Running Balance Sequence QA/Axon.Trade Clock Discipline PTP±50µs）。 |
-| 2026-08-10 | 1.4.1 | 交叉引用补全 + §5 上限定义同步：①§8.1 补 53 号 + 31 号相关设计备忘条目（原 §8.1 缺上游 G24 模拟实盘路径引用 + §3.8 sizing_basis 已对接 31 号但 §8.1 未登记）；②§5.1 系统上限补 v1.4.0 三项（sizing_basis 归因维度 + deflated-alpha v0.3.0 三重验证 + Combined Trading Signals 正交维度约束，原 §5.1 只到 v1.3.0 MOD-RPT-015 契约，§3.8/§3.9/§3.10 内容已写入但 §5.1 未同步）；③§5.2 演进路径补 v1.4.0 三项（Phase 1.5 sizing_basis 接入 + 正交性验证 / 第二阶段 deflated-alpha 月季归因报告接入） | 三文档最终交叉引用审查发现 54 号 §8.1 缺 53/31 号条目 + §5.1 上限定义未同步 v1.4.0 新增三项（§3.8/§3.9/§3.10 已写入但 §5.1 遗漏）。补全双向引用 + 上限定义同步确保 53→54→55 + 31→54 数据流可追溯 + §5 上限定义与 §3 决策一致 |
-| 2026-08-10 | 1.5.0 | 补成交对账置信度评分匹配 + 三阶段不可变审计轨迹 + 施工算法代码块补全（Brinson/Carino/T+1/求和不变量/sizing_basis/正交性/regime-conditional/Shapley） | 用户要求审查文档所有内容 + 全网搜 2026-08-08 最新研究实践算法。发现 54号 §3.3 三层匹配算法只输出 matched/fuzzy/partial/exception 四状态，缺**置信度量化**——fuzzy 层命中可能是"数量差 0.01 股+价格完全一致"（高置信）也可能是"数量差 0.01 股+价格差 0.001 元+跨日"（低置信），二元判断无法区分；缺对账决策的**不可变审计轨迹**设计——对账是 PnL 归因的数据源，任何匹配错误都会传播到归因报告，必须有审计轨迹支撑"归因数据可信"；缺**施工算法代码块**——多处决策描述了"做什么"但未给"怎么做的算法"（Brinson 3 因子真实计算/Carino 多期链接/sizing_basis 接入/正交性验证/策略贡献求和不变量校验均只有概念公式无完整 Python 实现）；缺**A 股 T+1 归因特殊处理**——T+1 制度下当日新建仓位浮盈被误记为 selection alpha；缺**regime-conditional 归因**——[traderssecondbrain 2026-05] 实证 50-80% 收益来自 regime fit 而非 skill，不分解 regime 维度会误导 AI 迭代。全网搜 2026-08 研究：[naya.finance 2026-04-02](https://www.naya.finance/blog/reconciliation-engine-architecture) 加权属性相似度模型；[tilores 2026-06-15](https://tilores.io/content/explainable-entity-resolution-confidence-thresholds-audit) 置信带 High/Middle/Low + 审计证据字段 + negative evidence；[theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/advanced/reconciliation-pipelines/) 三阶段模式 + 85% 置信阈值 + append-only SOX 合规；[metricgate 2026-09](https://metricgate.com/docs/multi-period-attribution/) Carino k_t 公式 + GIPS 首选 + zero residual 校验；[pybrinson v1.3.1 2026-04-13](https://github.com/gghez/pybrinson) 5 种链接 Python 开源实现；[akquant 2026](https://akquant.akfamily.xyz/textbook/06_stock_a/) §6.2 T+1 持仓状态机；[traderssecondbrain 2026-05](https://traderssecondbrain.com/guides/performance-attribution-trading) regime fit 维度实证 50-80%；[breakingalpha 2026-01](https://breakingalpha.io/insights/performance-attribution-analysis-multi-strategy-portfolios) regime-conditional 标准维度；[arXiv:2102.05799 Moehle/Boyd/Ang](https://arxiv.org/abs/2102.05799) Shapley 归因经典框架；[xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python) Shapley Python 实证 vs naive 差异 2-10 倍；[EDHEC 2026-02 SPPC](https://www.edhec.edu/sites/default/files/2026-02/SLIDES%20AnatomyPortfolioEDHEC.pdf) Shapley ML 黑盒归因；[Man Numeric 2023 SHAP](https://www.man.com/documents/download/b94f6-5adf6-a3bdc-5718e/Man_Numeric_Insights_Shining_Light_into_the_Machine_Learning_Black_Box_English_23-08-2023.pdf) 非线性交互捕捉；[Đikanović EFMA 2026](https://www.efmaefm.org/0EFMAMEETINGS/EFMA%20ANNUAL%20MEETINGS/2026-Norway/Ksenija%20Dikanovic.pdf) factor premia regime-dependent；[simcorp 2024](https://www.simcorp.com/resources/insights/industry-articles/2024/Risk-based-or-Brinson-attribution) Brinson vs risk-based 对比；[ricequant 米筐](https://www.ricequant.com/doc/rqpattr/doc/model-introduction) 因子归因四来源；[equicurious 2026-03](https://equicurious.com/learn/equities/trading-and-execution/performance-attribution-for-active-strategies) Brinson-Fachler 公式 + time-period attribution。决策：①§3.3 新增置信度评分匹配子决策（加权属性相似度算法 + High/Middle/Low 三带路由 + 阈值校准计划）；②§3.3 新增三阶段不可变审计轨迹子决策（SQLite append-only + hash 链 + 30 天 read-only，替代区块链）；③§3.2 补 Brinson 3 因子真实计算 + Carino 多期链接施工算法（calc_single_period_brinson + carino_link_periods 完整 Python 实现，替换 default_attribution_engine.py:82-92 占位）；④§3.2 新增 A 股 T+1 归因特殊处理子决策（calc_brinson_with_t1_settlement 拆分 realized/unrealized selection + t1_warning 警示）；⑤§3.5 补策略贡献分解求和不变量校验算法（validate_strategy_pnl_invariant 作为归因报告发布门禁）；⑥§3.8 补 sizing_basis 归因接入算法（attribute_by_sizing_basis 按 binding 约束分桶 + 亏损复盘动作建议）；⑦§3.10 补正交性验证施工算法（validate_signal_orthogonality Spearman IC 矩阵 + 条件数 + VIF + 正交角色覆盖检查）；⑧新增 §3.11 regime-conditional 归因子决策（attribute_by_regime 按 28 号 regime 分桶 Brinson + regime_fit_share vs skill_share 分解，Phase 2 候选）；⑨新增 §3.12 Shapley 值归因子决策（shapley_strategy_attribution 合作博弈公平分配 + efficiency 公理求和不变量，Phase 2 候选）；⑩§5.1 上限补 6 项（Brinson+Carino 施工算法 + T+1 归因 + 求和不变量校验 + regime-conditional + Shapley）；⑪§5.2 演进路径补 MVP 3 项（Brinson+Carino 落地 + T+1 处理 + 求和不变量门禁）+ Phase 1.5 一项（T+1 浮盈依赖监控基线）+ 第二阶段 2 项（regime-conditional + Shapley 评估）；⑫§6 待裁定补 regime-conditional + Shapley 两项；⑬§7 开放问题补 T+1 浮盈依赖警示阈值 + regime-conditional 分桶粒度；⑭§8.4 外部参考补 6 组 v1.5.0 引用（Brinson 多期链接实现 + A 股 T+1 + regime-conditional + Shapley + 因子归因对比 + 置信度评分 + 不可变审计轨迹）；⑮版本号一致性修复：§1 状态 1.4.0→1.5.0（原 §1 滞后于 frontmatter）。过度工程审查：regime-conditional + Shapley 均标为 Phase 2 候选（MVP 先用 Brinson 3 因子 + 求和不变量），与项目"风险优先、MVP 先行、避免过度工程"原则一致。 |
-| 2026-08-10 | 1.5.1 | 补 PerformanceScore 计算算法 + 异常检测施工算法 + A 股 PnL waterfall 施工算法 + 滑点分布报告增强 + verdict 三态判定阈值 + 55 号版本引用修复 | v1.5.0 多处决策描述了"做什么"但施工算法仍有缺口。发现：①§3.5 提到"PerformanceScore（60 日滚动 Sharpe）"但未给计算公式，RegimeMetaAllocator budget 调整闭环无契约；②§3.6 表格定义了"价格偏离 >2σ"和"成交量 >3×mean"阈值但未给 σ/mean 计算窗口和算法；③§3.2 A 股 PnL waterfall 只有框架无施工算法；④§3.9 deflated-alpha verdict 三态判定无显式阈值；⑤§8.1 对 55 号版本引用漂移（v1.6.1 → 实际 v1.7.0）。全网搜 2026-08 研究：[stockalpha.ai 2026-01-22](https://stockalpha.ai/alpha-learning/multi-factor-analysis-of-stock-returns-using-fama-french-factors-and-beyond) rolling Sharpe 标准实现；[ParseMyStatement 2026-04](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 余额约束行级校验；[Axon.Trade 2026](https://axon.trade/clock-discipline-for-trading-systems) 时间戳纪律；[OrderX 2026-07-09](https://orderx.com/education/introduction-to-algorithmic-execution-part-12-benchmarks-and-tca/) signed bps slippage；[Drovix 2026-05](https://drovix.com/blog/tca-that-actually-drives-decisions) 滑点分布非均值。决策：①§3.5 补 calc_performance_score()（60 日滚动 Sharpe 年化 + [0.5,2.0] 映射 + 观测不足中性 1.0）；②§3.6 补 detect_price_anomaly()（滚动 20 笔 σ + 2σ 阈值 + 50bps 绝对兜底）+ detect_volume_anomaly()（滚动 20 日均量 3 倍阈值）；③§3.2 补 calc_ashare_pnl_waterfall()（5 分项分解 + signed bps slippage）；④§3.2 补 calculate_slippage_distribution()（p50/p90/p99 + 压力 regime 切片 + reversion 诊断）；⑤§3.9 补 interpret_deflated_alpha_verdict()（DSR/PBO/SPA/OOS 四项显式阈值）；⑥§8.1 修复 55 号版本引用 v1.6.1→v1.7.0；⑦§5.1 上限补 5 项 v1.5.1 条目。 |
-| 2026-08-10 | 1.6.0 | 补持仓对账偏差检测算法 + MAD 鲁棒增强 + 异常严重度分级 + 异常升级流程 | 并发会话补充施工算法：①§3.3 新增持仓对账偏差检测算法（[marketclutch 2026](https://marketclutch.com/the-silent-sentinel-mastering-trading-position-reconciliation/) Variance Delta 公式 + [electronictradinghub 2026-06-17](https://electronictradinghub.com/crypto-market-making-position-drift-how-multi-venue-state-desync-defeats-pre-trade-risk/) 容差校准不可解问题 + [ParseMyStatement 2026-04](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 行级不变量校验）；②§3.6 新增 MAD 鲁棒增强算法（[juejin.cn 2026-04-28](https://juejin.cn/post/7633584575197380623) Z-Score vs MAD 对比 + [metricgate 2026-05-13](https://metricgate.com/docs/mad-scaled-z-score/) MAD-Scaled Z-Score ISO/USP 标准 + [tokentoolhub 2026](https://tokentoolhub.com/building-a-market-anomaly-detector/) robust baseline + [standarddeviationcalculator 2026-04-24](https://standarddeviationcalculator.app/learn/modified-z-score-outlier-detection) Modified Z-Score 推导）；③§3.6 新增异常严重度分级（[Monte Carlo Data 2026](https://docs.getmontecarlo.com/docs/marking-alerts-as-incidents) SEV-1~4 severity matrix + [DualEntry 2026](https://docs.dualentry.com/accountants/ai-automation/anomaly-detection) low/medium/high severity scoring + [Finomics 2026-06](https://finomics.ai/docs/finops-framework-compliance/understand-usage-and-cost/anomaly-management) High/Critical recommended response）；④§3.6 新增异常升级流程（[theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/reconciliation-assistance/) Tier 3 Exception Escalation + [DualEntry 2026](https://docs.dualentry.com/accountants/ai-automation/anomaly-detection) dismiss/escalate 双动作 + SOX 404/MiFID II 审计轨迹要求）。注：并发会话已将 §1 状态更新至 1.6.0 但 frontmatter + §9 修订记录未同步，由 v1.6.1 修复。 |
-| 2026-08-10 | 1.6.1 | §8.4 外部参考补 5 条 2026-08 最新研究引用 + 版本号一致性修复 | 用户要求 §8.4 外部参考补 2026-08 最新研究引用。全网搜 2026-08 研究，发现 5 条 v1.5.0 未覆盖的新引用：①[arXiv:2605.24490 2026-05 MRC](https://arxiv.org/html/2605.24490v1) Market Regime Council——多智能体 LLM 决策系统中 exact Shapley credits + Regime Shift Perceptor 统一框架，**同时覆盖 §3.11 regime-conditional + §3.12 Shapley 两条 Phase 2 候选路径**，为未来两模块联合激活提供学术依据；②[MDPI Economies 2026-07-09](https://www.mdpi.com/2227-7099/14/7/268) regime-conditional CVaR 负结果——naive regime-conditional CVaR 年换手率 ~226% 侵蚀净收益至基准以下，**支持本项目 §3.11 标为 Phase 2 候选 + §6 暂缓的谨慎设计**，与项目记忆 RARE regime-conditional CVaR Phase 5+ 评估一致；③[stockalpha.ai 2026-02-17](https://stockalpha.ai/alpha-learning/feature-attribution-under-correlation-shapley-values-for-alpha-signals) 相关性下 Shapley 归因——conditional vs interventional 采样 + group/Owen-Shapley 强相关块处理，**与 §3.10 正交性验证 + §3.12 Shapley 归因直接相关**；④[长江证券 2026-01-18](http://m.hibor.com.cn/wap_detail.aspx?id=b6119d6b6c03dc26e7df783378af4fa3) 组合归因探微——A 股 Brinson 归因国内机构视角，与 ricequant + DolphinDB 构成 A 股归因国内实践三角参考；⑤[attriblink v0.1.6 2026-03](https://github.com/george-dominic/attriblink) Carino 链接开源实现——与 pybrinson v1.3.1 互为独立验证参考。版本号一致性修复：frontmatter 1.5.0→1.6.1（原滞后于 §1 状态 1.6.0）+ §1 状态 1.6.0→1.6.1 + 补 v1.6.0 修订记录（并发会话 §3.3/§3.6 四项施工算法补全未登记）。 |
-| 2026-08-10 | 1.7.0 | 补 PBO 零假设解释修正 + EQAF stale-value 冻结馈送检测 + Merkle tree 审计轨迹升级路径 | 用户要求再次审查文档所有内容 + 全网搜 2026-08-08 最新研究实践算法。发现 3 个"必采纳"级缺口：①§3.9 deflated-alpha verdict 函数用 `pbo > 0.25` 作过拟合红旗但未解释 PBO 零假设值是 0.5（非 0）——[Solovjiev 2026-07 "PBO 受控标定"](https://pbo.marketmaker.cc/paper.pdf) 受控实验确认纯噪声下 PBO=0.5，读者可能误读 PBO≈0.5 为"不确定"实际是"无 edge"；②§3.6 异常检测三层（价格/量/拒单）+ Hampel 鲁棒增强全是统计方法，对"冻结馈送"（stale-value）结构性盲区——[EQAF arXiv:2606.20079 2026-06](https://arxiv.org/pdf/2606.20079v1) UBS 投行 183 笔/129 日实测：纯统计方法对 stale-value 失效，必须领域确定性规则兜底（miniQMT 断连时持仓/成交冻结在最后一个值，双边冻结误判为"一致"）；③§3.3 三阶段审计轨迹用线性 hash 链（prev_hash），无 inclusion proof + 无外部时间锚——[Apotheon.ai 2026-07-18 "Merkle DAG"](https://apotheon.ai/resources/whitepapers/merkle-dags) + [AgentAudit RFC 6962](https://github.com/KaushikKC/AgentAudit) + [mickai.co.uk 2026-06-14](https://mickai.co.uk/articles/anatomy-tamper-evident-log-hash-chain-anchoring) 2026 共识：Merkle tree + 外部锚定（RFC-3161 TSA/Sigstore Rekor）提供 O(log n) inclusion proof + consistency proof + 可证明时间。决策：①§3.9 补 PBO 零假设解释修正子节（null=0.5 而非 0，PBO<0.5 才有 edge，PBO>0.5 才过拟合，当前阈值 pbo>0.25 是保守红旗，PBO 接近 0.5 须结合 N_eff+条件数综合判断）；②§3.6 补 stale-value 冻结馈送检测算法（detect_stale_value 函数，连续 N 笔数值完全相同→告警，作为第 0 层在对账/异常检测之前先检测数据是否冻结，冻结则跳过本轮）；③§3.3 补 Merkle tree 升级路径子节（当前线性 hash 链 v1.5.0 的结构性缺陷 + Merkle tree 对比表 + Phase 2 升级施工：write_audit_stage 改为 Merkle 叶子 + EOD Merkle root 写入 RFC-3161 TSA/Sigstore Rekor + 归因报告附带 Merkle root+TSA 收据；为何暂缓到 Phase 2：个人单机单 owner 线性链已满足生存需求，Merkle 价值在外部审计/监管举证场景才释放，与 §5 重评条件同步触发）。过度工程审查：三项都是"必采纳"级（非可选），PBO 解释是解读正确性必修，stale-value 是统计方法结构性盲区兜底，Merkle 是审计轨迹完整性远期路径（暂缓到 Phase 2 非 MVP）。版本号一致性：frontmatter 1.6.1→1.7.0 + §1 状态 1.6.1→1.7.0 + §8.1 引用 55 号已同步 v1.8.0（本次 55 号升至 v1.9.0，§8.1 待 55 号完成后同步）。 |
-| 2026-08-10 | 1.7.1 | 交叉引用版本同步：§2.1 40号 v1.7.0→v1.7.2 + §8.1 55号 v1.9.0→v1.10.1（2 处 stale 引用修复） | 十五轮审查交叉引用版本漂移扫描：54号 §2.1 引用 40_execution_broker v1.7.0（实际 v1.7.2）+ §8.1 引用 55_monitoring_review v1.9.0（实际 v1.10.1），系并发会话持续升级 frontmatter 后 54号交叉引用未同步。本次修复 2 处 stale 引用 |
-| 2026-08-10 | 1.7.2 | 交叉引用版本同步：§8.1 55号 v1.10.1→v1.11.0（§3.11 鲁棒变点检测演进路径同步）+ frontmatter/§1 状态同步至 v1.7.2 | 54号施工算法完整性二次审查 + 版本一致性验证：55号 v1.11.0 新增 §3.11 鲁棒变点检测演进路径（LBD-FDR/Robust CUSUM/Tail-adaptive CUSUM/RCD Tukey Biweight+PELT/DeCAFS+AR(1) 五项算法），54号 §8.1 交叉引用需同步更新 + 补充 §3.11 摘要描述。全网搜 2026-08 最新归因/对账/审计轨迹研究确认 54号施工算法完整无新增必采纳缺口（pybrinson v1.3.1 + metricgate Carino + theneuralbase 三阶段审计 + martinuke0 immutable ledger 均已覆盖）。frontmatter v1.7.1→v1.7.2 + §1 状态同步。 |
-| 2026-08-10 | 1.7.3 | VCP v1.2 RC + CSRC 中国提交进展整合 | 持续改进：用户要求再次审查施工环节流程算法缺失 + 选项之外更好算法 + 全网搜索 2026-08-08 最新研究 + 文档结构顺序内容调整 + 持续改进不停。全网搜 2026-08 最新加密审计轨迹研究，发现 [VeritasChain Protocol VCP v1.2 RC 2026-05-31](https://veritaschain.org/) 已发布（v1.1 的 protocol-compatible 认证严格化版，零破坏性变更）+ VSO 已向 50+ 法域监管机构正式提交含 **CSRC 中国**（A 股项目本地监管相关性）+ CFTC/SEC/MAS/SFC/ASIC/FCA/SEBI 等 + 默认 Ed25519 + ML-DSA（FIPS 204）量子抗性迁移路径。决策：①§8.4 外部参考 VCP 条目补 v1.2 RC 信息（v1.1→v1.2 版本同步 + CSRC 提交进展 + 量子抗性迁移路径 + Phase 2 须对齐 v1.2 而非 v1.1 裁定）；②§3.3 Merkle Tree 升级路径标题补"v1.7.3 更新 VCP v1.2 对齐"；③§3.3 Phase 2 升级施工步骤补④对齐 VCP v1.2 协议（Merkle tree + RFC 8785 JSON canonicalization + RFC 9562 UUIDv7 + Ed25519 签名按 VCP v1.2 规范实施 + 可对接 VSO 监管验证节点 + CSRC 已收到提交 A 股监管举证有标准化协议可对照）。施工算法完整性审查：54号施工流程算法闭环无缺失独立环节，VCP v1.2 是 Phase 2 升级目标的版本同步而非新施工算法。过度工程审查：Merkle + VCP 仍暂缓 Phase 2（个人单机 MVP 线性 hash 链已满足生存需求），VCP v1.2 对齐是"未来可对接监管验证节点"的远期价值预留。 |
-| 2026-08-10 | 1.8.0 | 补 VCP v1.2 四大新特性升级路径 + 新增 §3.13 Hentschel GLS 统一归因框架 | 持续改进：用户要求再次审查文档所有内容 + 施工环节流程算法缺失 + 选项之外更好算法 + 全网搜 2026-08-08 最新研究。后台 agent 调研返回 4 领域 28 篇 2026-08 最新研究。施工算法完整性二次审查发现 54号 §3.1-§3.12 已有 22 个 ```python 块（Brinson+Carino+T+1+求和不变量+sizing_basis+正交性+regime-conditional+Shapley+三层对账+三层匹配+置信度评分+审计轨迹+Merkle+成本拖累+PnL waterfall+stale-value+deflated-alpha+异常检测 等），施工流程算法闭环无缺失独立环节。决策：①§3.3 Merkle Tree 升级路径补 VCP v1.2 四大新特性升级路径表（VCP-RECOVERY/ERASURE 事件/SCITT 对齐/后量子签名），v1.2 是 v1.1 零破坏性协议升级，VCP-RECOVERY 边界约束是 Phase 2 Merkle root 升级必需配套（无恢复流程的锚定在 TSA 故障时陷入困境），ERASURE/SCITT/后量子是 Phase 3+/5+ 远期登记重评条件；②新增 §3.13 决策⑫ Hentschel GLS 统一归因框架（[Hentschel 2024](https://www.ludgerhentschel.com/PDFs/Hentschel%20%2724b.pdf) 受限 GLS 把多期链接+交互项再分配+因子残差再分配统一为估计问题，Carino/Frongello/Menchero 是其特例，Phase 2 候选），含完整 hentschel_gls_attribution() Python 伪代码（精度矩阵构造 + KKT 受约束最小二乘 + 统计置信度 95% CI + 求和不变量内置约束）；③§5.2 演进路径补 Phase 2 ⑧ Hentschel GLS 评估 + ⑨ VCP v1.2 RECOVERY 边界对齐；④§6 待裁定补 4 项（Hentschel GLS + VCP v1.2 ERASURE/SCITT/后量子）；⑤§7 开放问题补 2 项（Hentschel GLS 是否替代 Carino+Shapley + VCP v1.2 RECOVERY 边界选择）。过度工程审查：Hentschel GLS 标为 Phase 2 候选（MVP Carino + Shapley 已够用），VCP v1.2 四项有明确重评条件（TSA 失败率 / AUM 机构化 / 多方审计 / PQC 标准化），VCP-RECOVERY 是 Phase 2 必需配套非锦上添花。延续过度工程纠偏：所有新增均 Phase 2+ 远期登记非 MVP baseline。 |
-| 2026-08-10 | 1.10.0 | §3.2 补 GRAP 2026-05-19 专利交易效应第 4 因子概念对齐 | 持续改进：用户要求再次审查文档所有内容 + 施工环节流程算法缺失 + 选项之外更好算法 + 全网搜 2026-08-08 最新研究 + 文档结构顺序内容调整。全网搜 2026-08 归因算法研究，发现 [国知局 202610181717 2026-05-19 "基于 GRAP 递推算法的交易效应内嵌式归因方法"](https://www.xjishu.com/zhuanli/55/202610181717.html) 专利公开——核心创新不是"链接算法"（本表已列 GRAP 1997 几何归因为备选链接方法），而是把**交易效应（Trading Effect）作为 Brinson 模型独立第 4 因子**分解出来，解决传统 Brinson 3 因子假设持仓不变导致日内交易执行损益（滑点+冲击成本）被错误归入选股效应或交互效应残差的问题。施工算法完整性审查：54号 §3.2 已在求和不变量校验中定义 Brinson 3 因子 + transaction_cost_drag = 总超额收益——transaction_cost_drag 在功能上**等价于** GRAP 专利的交易效应第 4 因子（含 timing/impact/slippage/commission 四组件），无需追加施工；概念差异（drag 隐含负向 vs effect 中性）和链接差异（Carino vs GRAP 递推平滑系数）均已有重评条件覆盖。决策：§3.2 链接算法表后补 GRAP 2026-05-19 专利交易效应第 4 因子概念对齐说明（功能等价 + 概念差异 + 切换路径），避免读者误以为 54号 缺第 4 因子。过度工程审查：概念澄清非新增施工算法，延续过度工程纠偏纪律。 |
-| 2026-08-10 | 1.9.0 | §3.12 Shapley 补 3 项 2026-08 最新研究 + §3.13 Hentschel GLS 补 TreeIG 同作者延伸 | 持续改进：用户要求再次审查文档所有内容 + 施工环节流程算法缺失 + 选项之外更好算法 + 全网搜 2026-08-08 最新研究。全网搜 2026-08 归因算法研究，发现 3 项高价值发现：①[arXiv:2608.04547v1 Mei & Lin 2026-08-05](https://arxiv.org/abs/2608.04547)（JPMorgan Chase q-fin.RM）预测差异归因方法选择框架——hierarchical Shapley 按层次结构嵌套计算降复杂度 341 倍，是 §3.12 策略数增长到 8-15 时的可扩展性升级路径；②[Hentschel 2026-07-28 "Canonical Background Distribution for Shapley"](https://www.ludgerhentschel.com/PDFs/Hentschel%20%2726i.pdf) 预测中性流形背景分布——解决 SHAP 背景分布任意性问题；③[arXiv:2506.06653 Chen 2025 "Explaining Risks"](https://arxiv.org/abs/2506.06653)（Quantitative Finance 期刊）Shapley 风险归因——从收益分配扩展到风险分配（风险≠收益，一个策略可能收益贡献为正但风险贡献不成比例地高），用 Shapley 四公理分配组合 VaR/CVaR 贡献，与 36 号 VaR/CVaR 监控对接（36 号回答"组合风险是多少"，Shapley 风险归因回答"哪个策略贡献了最多风险"），Phase 2+ 远期候选。另§3.13 补[LudgerHentschel/treeig 2026-08-04](https://github.com/LudgerHentschel/treeig) TreeIG 精确积分梯度（Hentschel 归因体系第三块拼图）。施工算法完整性审查：54号 §3.1-§3.13 已有 22+ ```python 块覆盖全部施工流程，4 项发现均为远期候选登记非施工算法缺失。过度工程审查：所有新增均有 MVP 不变 + 重评条件触发后才评估。 |
-| 2026-08-10 | 1.11.0 | §6 待裁定补 Cross-venue 对账 bi-temporal 模型 + 3 类分歧远期候选 + §8.4 外部参考补 alphaequations 引用 + 版本一致性修复（§1 状态 1.9.0→1.11.0 同步 frontmatter） | 持续改进：用户要求再次审查文档所有内容 + 施工环节流程算法缺失 + 选项之外更好算法 + 全网搜 2026-08-08 最新研究 + 文档结构顺序内容调整。全网搜 2026-08 对账/reconciliation 研究，发现 [alphaequations 2026-04-22 "Cross-venue reconciliation matching engine"](https://www.alphaequations.com/insights/cross-venue-reconciliation-matching-engine/) 提出 cross-venue 对账的 3 类结构性分歧（order-ID shape / timestamp skew / partial-fill fragmentation）+ bi-temporal timestamp model + append-only fill events + class-based escalation routing。**ZephyrAlpha 适用性评估**：单券商单市场（miniQMT）→ ①order-ID shape 分歧不适用（无跨场所标识符映射）；②timestamp skew 部分适用（PTP±50µs 纪律已覆盖，bi-temporal 双字段分离尚未显式实现）；③partial-fill fragmentation 已由 §3.3 三层匹配 partial 层覆盖。**结论**：远期候选登记非 MVP 施工缺口，重评条件为多券商接入/跨市场/日成交 > 5000 + partial 例外率 > 3%。施工算法完整性二次审查：54号 §3.1-§3.13 已有 22+ ```python 块覆盖全部施工流程，无新增施工算法缺失。版本一致性修复：§1 状态 1.9.0→1.11.0（原滞后于 frontmatter）。过度工程审查：bi-temporal 模型对单券商单市场系统属过度工程，登记为远期候选非 MVP baseline，延续过度工程纠偏纪律。 |
-| 2026-08-10 | 1.12.0 | §3.13 Hentschel GLS 设计矩阵 BHB→BF 公式对齐 + §6/§8.4 bi-temporal 声明准确性修正 + §1 状态行版本同步（1.11.0→1.12.0） | 持续改进：用户要求再次审查 54/55 两篇文档施工算法缺失+选项外更好算法+全网搜 2026-08-08 最新研究+持续不停。Agent 深度审查发现 2 项文档准确性问题：①**§3.13 Hentschel GLS 设计矩阵与 §3.2 主框架 Brinson-Fachler 公式不一致**——原 `X[t,0]=(w_p-w_b)*r_b`（BHB allocation 无 -R_b）+ `X[t,1]=w_b*(r_p-r_b)`（BHB selection 用 w_b），与 §3.2 行115-117 选用的 Brinson-Fachler 公式（allocation 含 -R_b + selection 用 w_p）不一致，Phase 2 施工若直接照此实现会产出错误归因。修复：补 `R_b = p['benchmark_total_return']` + 改 `X[t,0]=(w_p-w_b)*(r_b-R_b)`（BF allocation）+ `X[t,1]=w_p*(r_p-r_b)`（BF selection）+ 注释说明 BHB vs BF 差异；②**§6/§8.4 bi-temporal 声明与代码不符**——原 v1.11.0 声称"bi-temporal 概念在 §3.3 三阶段审计轨迹已隐含（event_time vs recorded_at 字段分离）"，但实际代码 `write_audit_stage` 行953 `record['timestamp'] = datetime.utcnow().isoformat()` 只有单一 timestamp 字段，无 event_time/recorded_at 双字段分离。修复：§6 待裁定表 + §8.4 外部参考两处声明改为"bi-temporal 双字段尚未显式实现——§3.3 `write_audit_stage` 当前只有单一 `timestamp` 字段，Phase 2 升级时需补 `event_time`+`recorded_at` 双字段分离"。施工算法完整性结论：本轮为文档准确性修复非新增施工算法缺失，BF 公式对齐属 Phase 2 候选施工形态参考的公式正确性修复（非 MVP 实现变更），bi-temporal 声明修正属文档与代码一致性维护。过度工程审查：Hentschel GLS 仍标 Phase 2 候选非 MVP，bi-temporal 仍标远期候选非 MVP，延续过度工程纠偏纪律。 |
-| 2026-08-10 | 1.12.1 | §3.2/§3.3/§3.2(瀑布) 伪代码完整性修复：①calculate_transaction_cost_drag 签名-函数体变量名不一致（tca_results vs tca_results_by_fill）+ dict 口径修正；②reconcile_trades 三层匹配跨层状态变量未定义（unmatched_system/unmatched_broker/remaining_system/remaining_broker/remaining_after_partial 全部补全）+ group_by_symbol_dir_date/aggregate helper 标注 + 例外工单结构化为 {system, broker} 双侧；③calc_ashare_pnl_waterfall opportunity_costs 外部依赖注入缺口（原注释"外部传入"但函数签名无参数，循环里恒为 0）→ 新增 opportunity_cost_records 参数 + 完整聚合算法 | 伪代码审计 9 项缺口修复之一（54号 4 项：3 处变量 + 1 处依赖注入）。问题性质：①签名-函数体变量名漂移导致施工方照伪代码实现会 NameError；②三层匹配算法跨层状态传递未显式定义，层 2/3/4 引用未声明变量，施工方无法直接落地；③opportunity_costs 注释"外部传入"但无参数接收，函数恒返回 0 导致 PnL waterfall 第 5 分项失效。修复原则：最小改动保留原算法语义，仅补全变量定义/helper 标注/参数注入，不改变决策逻辑。施工算法完整性结论：54号 §3.1-§3.13 共 22+ python 块经本轮修复后跨层状态传递完整、变量定义闭环、helper 依赖显式标注，Phase 2 施工方可直接照此实现。 |
-| 2026-08-10 | 1.13.0 | P2 跨文档悬空 helper 定义补全——get_sector/current_session_id/group_by_symbol_dir_date/aggregate 四个 helper 施工算法定义 | 七十轮审查 P2 跨文档悬空 helper 核查发现 54号 v1.12.1 修复了 reconcile_trades 内部变量定义但四个被调用的 helper 仍无定义（get_sector 在 §3.2 Brinson 归因 L364 调用、current_session_id 在 §3.3 L775 调用、aggregate 在 §3.3 三层匹配 L933-934 调用、group_by_symbol_dir_date 在 aggregate 前置分组调用）。本轮补全四个定义：①get_sector(symbol)——申万一级板块映射（模块级缓存 _SW_LEVEL1_MAP + akshare/tushare 数据源 + 降级返回"未知板块"）；②current_session_id()——对账会话唯一标识（date+session_type 幂等键，MORNING/AFTERNOON/AFTER_HOURS 三时段）；③group_by_symbol_dir_date(items)——按 (symbol,direction,date) 聚合键分组；④aggregate(items,symbol,direction,date)——同键多笔 fill 合并为 AggRecord。四个定义签名与调用点完全匹配。P2 跨文档悬空 helper 全部闭合。 |
-| 2026-08-10 | 1.14.0 | 新增 §3.14 MCR/CCR 风险分解（Phase 2.5 候选）+ §1 状态行版本同步修复（1.12.1→1.14.0） | 持续改进：用户要求"再次审查文档所有内容+施工环节流程算法有缺失+选项之外更好的答案算法+全网搜 2026年8月今天最新研究+文档结构顺序内容调整+持续改进不要停下来询问"。施工算法完整性审查发现收益-风险归因不对称缺口：§3.2 Brinson 分解组合**收益**到 allocation/selection/interaction，但组合**风险**（波动率）分解维度完全空白——直到 §4.1 Barra（Phase 3，需因子模型许可证）才填补，MVP~Phase 2 期间 owner 能回答"谁赚了钱"但无法回答"谁贡献了风险"。决策：新增 §3.14 决策⑬ MCR/CCR 风险分解（经典 Euler 齐次函数定理分解 σ_p 到各资产 MCR/CCR，求和不变量 ΣCCR=σ_p 类比 §3.5 Brinson 求和不变量），定位 Phase 2.5 候选（比 §3.12 Shapley 风险归因 Phase 2+ 更轻量 O(n²)闭式解、比 §4.1 Barra Phase 3 更轻量无需许可证），仅需经验协方差矩阵（np.cov 估计，绕过 Barra 因子模型），不违反 §4.1 拒绝裁定（MCR/CCR 是事后 EXPLAIN 工具非事前 DECIDE 优化器，与 30 号拒 MVO 性质不同）。含完整 calc_mcr_ccr_risk_attribution() + calc_strategy_risk_attribution() Python 伪代码 + 与 §3.5 Brinson 收益归因对称关系 + 与 30 号 RegimeMetaAllocator 联动（risk_concentration_ratio=CCR_pct/PnL_share 反馈 budget 风险维度调整）+ 三档定位表（MCR/CCR Phase 2.5 / Shapley 风险归因 Phase 2+ / Barra Phase 3）+ 过度工程审查（工业标准 Litterman 1996 Goldman Sachs Hot Spots 框架，O(n²)<1ms，Phase 2.5 非因小样本协方差不稳定）。同步：§5.1 上限补 MCR/CCR 条目 + §5.2 第二阶段补⑩ MCR/CCR 评估 + frontmatter 1.13.0→1.14.0 + §1 状态 1.12.1→1.14.0（修复既有同步 bug）。全网搜 2026-08 最新研究交叉验证：15 篇候选论文中 14 篇已收录（DASC/Conditional CTM/Changepoint/MPC/Microstructure/Diffusive/CVaR Tail/Three Matrices/EFS/Alpha Decay/FactorEngine/Unstructured Regime/MS-GARCH/Wasserstein HMM），仅 arXiv:2608.01294 Information-Geometric Bayesian 未收录（登记到 36 号风险监控作 Phase 3+ 远期候选）。施工算法完整性结论：54号 §3.1-§3.14 共 24+ python 块覆盖收益归因(Brinson)+风险归因(MCR/CCR)+对账(三层匹配)+审计(三阶段)+异常检测 全闭环。 |
-| 2026-08-12 | 1.15.0 | 全仓设施盘点回填（通用规则 #11）+ Brinson 公式守恒 bug 修复（纯 BHB 对齐 pf_core）+ PerformanceScore Sharpe→Sortino 口径修正 + 双实现冲突登记 + 55 号悬空引用校准 + OE-007 对齐声明 + 2026-08-12 研究整合（FPRO/bad-print/例外根因/ML 校准期）+ frontmatter/§1 状态同步 1.14.0→1.15.0 | 架构审查七轮循环（读现状盘点→内容回填→缺失审查→全网搜索→过度工程→一致性→规范）发现：①§2.4 盘点缺 12+ 已施工设施（pf_core MOD-PF-007 真实归因实现 698 行带测试 / DailyAuditor MOD-RK-20 日终 PnL 对账 / CashManager MOD-POS-006 T+1 资金账 / MOD-RPT-013/017/027 / MOD-INF-022 双 Reconciler / MOD-EX-003 审计链 / 前端 PnL 组件）+ 横向缺口（无 DB 表/无 15:30 调度/双渠道仅 PENDING）+ 3 处 `...` 悬空路径回填；②**§3.2 公式表守恒 bug**：BF-alloc(−R_b) + w_p-selection + BHB-interaction 组合三式求和 = R_p−R_b + interaction（双计），违反本备忘自定的 Carino residual 门禁——修为纯 BHB（alloc=∑(w_p−w_b)·r_b、selec=∑w_b·(r_p−r_b)），与 pf_core MOD-PF-007 生产实现 + §3.13 GLS 骨架 + "BHB vs BF"决策文字三方对齐，BF 3-effect 登记备选；T+1 拆分随之从权重拆分改为收益贡献拆分（w_b×λ×(r_new−r_b)）；③PerformanceScore 误用 Sharpe/[0.5,2.0]——与 30 号 §2.2 契约（60 日 Sortino/[0.5,1.5]，真源 34 号 §3.1）冲突，已按 Sortino 重写 calc_performance_score；④55 号磁盘 v0.1.0 draft 骨架（2026-08-09），§3.6/§3.9 等小节全部不存在——本备忘所有 55 号小节级引用校准为设计预留对接点（§7 登记回对齐，00_index G26 v1.21.0 标注漂移登记越界项）；⑤OE-007（2026-08-11 decided，BM-BUY-10 不建独立不可篡改审计链）与 §3.3 三阶段轨迹归属张力——补对齐声明：本节为对账业务内生 tamper-evident 证据链，机构级能力全在 Phase 2+；⑥40 号 fill_id 幂等引用错位修正（决策⑥→§6.1 gap 12 AsyncFillDispatcher LRU）；⑦MOD-RPT-015 报告生成器未施工且无 registry 条目（CTR-P1-009 契约已落盘）——§3.12 悬空路径修正为 shared/contracts；⑧TCA IS 四组件未施工（DefaultTcaEngine 仅简易滑点）/ReportPublisher 渠道仅 PENDING/盘后调度无接线/audit_trail 无 DDL——状态夸大全部校准；⑨三对双实现登记（归因引擎 §6 待裁定置顶 + PositionReconciler + 公司行为 §7），MOD-PF-007 算术链接 vs Carino 精度差登记收敛方向（不擅自定）。新增研究：Holtes 2026-07 FPRO（Euler 对冲对符号失真，Phase 2.5+ 远期）；referentiallabs Tick Test（bad-print vs 真实跳空，Phase 1.5）；m2pfintech 例外根因分类（root_cause+recurrence_key 轻量字段）；theneuralbase ML 校准期警示（新机构前 18 月检出率 40-50%，佐证规则优先）。过度工程审查：全部重型机制（Merkle/VCP/Shapley/GLS/MCR-CCR/FPRO/AI 对账/bi-temporal）维持 Phase 2+/待裁定标注，本轮无新增过度工程项。开放问题新增 9 项（PositionReconciler 双实现/公司行为双口径/StrategyBook 独立 PnL 数据源/MOD-RPT-015 登记/CTR-P1-007 产出 GAP-L06-003/15:30 调度接线/DB 持久化 schema/55 号回对齐/含 00_index G26 越界登记）。工程注记：本轮编辑历经并发会话 stash 隔离两次整体回退，经 claim_files（session=arch-review-54）+ session_worktree 物理隔离（ai/arch-review-54/task-54-review）+ GitCommitGateway 提交固化。 |
-| 2026-08-12 | 1.15.1 | 55 号引用校准覆盖面扩展 + v1.12.0 记录-正文漂移勘误 + frontmatter/§1 状态同步 | 确认轮复核发现 2 项遗留：①§3.6 stale-value 节"Hampel 鲁棒增强（55 号 §3.10）"等引用落在 §3.9 校准注记覆盖面（原仅"本节及 §3.10"）之外——扩展注记范围为"§3.6/§3.10/§5.1/§5.2/§8.1 等处"，55 号全部小节级引用统一按设计预留口径理解；②v1.12.0 修订记录声称"§3.13 GLS 设计矩阵已改 BF 公式（X[t,0]=(w_p−w_b)(r_b−R_b)、X[t,1]=w_p(r_p−r_b)）"，但正文实为 BHB（X[t,0]=(w_p−w_b)·r_b、X[t,1]=w_b(r_p−r_b)）——记录-正文漂移勘误：v1.15.0 起**纯 BHB 为本备忘唯一口径**（与 pf_core MOD-PF-007 生产实现 + §3.2 表格 + GLS 骨架三方一致），v1.12.0 条目的 BF 方向声明作废，以本条为准；且 v1.12.0 所述 BF 组合（BF-alloc + w_p-selection + BHB-interaction）即 v1.15.0 修复的守恒 bug 形态，作废正当时。 |
-| 2026-08-12 | 1.15.2 | MOD-RPT-015 报告模板 §4 表头 Sharpe→Sortino 口径跟随修正 + frontmatter/§1 状态同步 | 确认轮二复核发现：§3.12 MOD-RPT-015 报告模板第 4 节"策略贡献分解"表头仍为"60 日滚动 Sharpe"——v1.15.0 已将 PerformanceScore 修正为 Sortino 口径（30 号 §2.2 / 34 号 §3.1 契约），模板表头跟随修正为"60 日滚动 Sortino"，消除正文-模板口径分叉。 |
-| 2026-08-12 | 1.15.3 | §3.14 MCR/CCR 联动段 PerformanceScore Sharpe→Sortino 口径跟随修正 + frontmatter/§1 状态同步 | 确认轮三复核发现：§3.14"与 30 号 RegimeMetaAllocator 的联动"段首行仍写"PerformanceScore=60日滚动Sharpe"（v1.14.0 新增节遗留），随 v1.15.0 Sortino 口径修正跟随更新。至此全文 PerformanceScore 口径零残留（修订记录历史条目除外）。 |
-| 2026-08-12 | 1.15.4 | 作战地图全覆盖补丁——闭合 BM-RC-08-C / BM-POS-10 / BM-REC-03-C / BM-BUY-07：①新增 §3.15 决策⑭压力测试（BM-RC-08-C production 补强：历史情景库 2008/2015/2020 三段+反向压力测试+敏感性分析+传染效应远期登记，产出物走 §3.7 周度报告通道 WeeklyRiskDeep 压力测试板块，与 53 号 BM-SIM-04 分工消歧——53=仿真验证域引擎/54=运营域报告通道）；②§3.3 审计证据链扩展仓位审计追溯（BM-POS-10 design：全记录字段口径+审批链引用语义+哈希链防篡改+PositionAuditReport 契约，与 30 号 §7.5 position_audit_logger production 登记衔接，降级=仓位决策阻断 fail-closed）；③§3.1 新增 §3.1.1 模型层反馈子节（BM-REC-03-C design：漂移检测/分级重训练复用 61 号 §3.3 Drift Observatory，门禁衔接裁定——重训练信号须过 C-003 回测门禁 DecisionGate IS→WFA→OOS 再回 BM-SEL-02，真源 `backtest/core/decision_gate.py`）；④§2.4 横向缺口新增第 6 行（BM-BUY-07 design：微信入站指令解析 D-TRADING-06 与出站 Webhook 告警的关系登记为缺口项——出站仅落 PENDING 不实发/入站全仓无实现，处置=登记远期，归属 buy_flow 域备忘） | 作战地图四环节补 why 层/缺口登记——按"定位 → 裁定（理由+重评条件）→ 契约/参数/接口"格式回填 |
-| 2026-08-12 | 1.15.5 | 作战地图环节映射补强——锚定 BM-SEL-21-E、BM-RC-08-A、BM-RC-08-B | §3.14 末尾补映射块，环节级可追溯 |
-
+| 2026-08-09 | 0.1.0 | 骨架创建 | 00_index G25 讨论要点占位 |
+| 2026-08-10 | 1.0.0 | 骨架→active，6 讨论要点回填（§3.2 Brinson 主选 Barra 拒绝 / §3.3 三层对账 / §3.4 三维度 / §3.5 两层归因 / §3.6 三层异常检测 / §3.7 四类报告） | 2026 行业调研 + battle_map_11 18 环节 + 源码现状核查 |
+| 2026-08-10 | 1.1.0 | §3.2 补多期链接（Carino 主选）+ BHB/BF 方案明确 + beginning-of-period weights + Carino residual <0.01% 质量门禁；§6 补 weight drift/AI 对账 | 单期 Brinson 不能直接加总，周/月/季报需链接算法 |
+| 2026-08-10 | 1.2.0 | §3.2 补 PnL Explain vs Predict 框架 + 多 session 归因边界 + fill_id+position_id 唯一键原则 | Greek/SRPnL（Predict 类）A 股权益拒绝 |
+| 2026-08-10 | 1.3.0 | §3.2 transaction_cost_drag 接入 TCA + A 股 PnL waterfall 子框架；§3.3 三层匹配算法；§3.7 MOD-RPT-015 报告模板 | drag=0 硬编码缺口 + 单层 exact 例外率过高 + 报告无契约 |
+| 2026-08-10 | 1.4.0 | §3.8 sizing_basis 归因 + §3.9 deflated-alpha 三重验证 + §3.10 信号正交约束 + 滑点分布增强方向 | 与 31 号对接 + 过拟合统计验证 + 版本同步修复 |
+| 2026-08-10 | 1.4.1 | §8.1 补 53/31 号引用 + §5.1/§5.2 同步 v1.4.0 三项 | 交叉引用审查 |
+| 2026-08-10 | 1.5.0 | §3.3 置信度评分匹配 + 三阶段不可变审计轨迹；§3.2 Brinson+Carino+T+1 施工算法；§3.5 求和不变量校验；§3.8 sizing_basis 接入；§3.10 正交性验证；新增 §3.11 regime-conditional + §3.12 Shapley（均 Phase 2） | 三层匹配缺置信度量化 + 缺审计轨迹 + 决策有概念无算法 |
+| 2026-08-10 | 1.5.1 | §3.5 calc_performance_score + §3.6 异常检测算法 + §3.2 waterfall 施工算法 + 滑点分布算法 + §3.9 verdict 阈值 + 55 号引用修复 | 施工算法缺口补全 |
+| 2026-08-10 | 1.6.0 | §3.3 持仓偏差检测算法 + §3.6 MAD 鲁棒增强 + 严重度分级 + 升级流程 | 并发会话补施工算法 |
+| 2026-08-10 | 1.6.1 | §8.4 补 5 条 2026-08 引用（MRC/CVaR 负结果/相关性 Shapley/长江证券/attriblink）+ 版本同步修复 | 最新研究覆盖核查 |
+| 2026-08-10 | 1.7.0 | §3.9 PBO 零假设修正（null=0.5）+ §3.6 stale-value 冻结馈送检测（第 0 层）+ §3.3 Merkle tree 升级路径（Phase 2） | 三项必采纳缺口：PBO 解读正确性 + 统计方法盲区兜底 + 审计链结构性缺陷 |
+| 2026-08-10 | 1.7.1 | 交叉引用版本同步（40 号/55 号） | stale 引用修复 |
+| 2026-08-10 | 1.7.2 | §8.1 55 号 v1.11.0 同步 | 交叉引用版本同步 |
+| 2026-08-10 | 1.7.3 | §8.4/§3.3 VCP v1.2 RC 对齐（CSRC 已收提交，Phase 2 对齐 v1.2 而非 v1.1） | VCP v1.2 零破坏性升级发布 |
+| 2026-08-10 | 1.8.0 | §3.3 补 VCP v1.2 四大新特性升级路径 + 新增 §3.13 Hentschel GLS 统一归因框架（Phase 2） | 受限 GLS 统一多期链接/交互项/因子残差再分配 |
+| 2026-08-10 | 1.9.0 | §3.12 补 3 项研究（hierarchical Shapley/背景分布/Shapley 风险归因）+ §3.13 TreeIG 登记 | 2026-08 最新研究整合 |
+| 2026-08-10 | 1.10.0 | §3.2 补 GRAP 专利交易效应第 4 因子概念对齐（功能等价 transaction_cost_drag，无需追加施工） | 专利公开概念澄清 |
+| 2026-08-10 | 1.11.0 | §6 补 Cross-venue 对账 bi-temporal 远期候选 + 版本同步修复 | 单券商单市场暂不适用，登记远期 |
+| 2026-08-10 | 1.12.0 | §3.13 GLS 设计矩阵公式对齐 + §6/§8.4 bi-temporal 声明准确性修正 | 文档准确性修复 |
+| 2026-08-10 | 1.12.1 | §3.2/§3.3 伪代码完整性修复（变量名漂移 + 跨层状态变量补全 + opportunity_costs 参数注入） | 伪代码审计缺口修复 |
+| 2026-08-10 | 1.13.0 | 补全 4 个跨文档悬空 helper 定义（get_sector/current_session_id/group_by_symbol_dir_date/aggregate） | P2 悬空 helper 闭合 |
+| 2026-08-10 | 1.14.0 | 新增 §3.14 MCR/CCR 风险分解（Phase 2.5，Euler 分解补收益-风险归因不对称） | 收益归因已有但风险归因空白至 Phase 3 Barra |
+| 2026-08-12 | 1.15.0 | 全仓设施盘点回填（规则 #11）+ Brinson 公式守恒修复（纯 BHB 对齐 pf_core）+ PerformanceScore Sharpe→Sortino + 双实现冲突登记（§6 置顶）+ 55 号悬空引用校准 + OE-007 对齐声明 + FPRO/bad-print/例外根因/ML 校准期研究整合 + §7 开放问题新增 9 项 | 架构审查七轮循环：12+ 已施工设施漏登 + 公式守恒 bug + 口径冲突 + 状态夸大校准 |
+| 2026-08-12 | 1.15.1 | 55 号引用校准覆盖面扩展 + v1.12.0 记录-正文漂移勘误（纯 BHB 为唯一口径，v1.12.0 BF 声明作废） | 确认轮复核 |
+| 2026-08-12 | 1.15.2 | MOD-RPT-015 模板 §4 表头 Sharpe→Sortino 跟随修正 | 确认轮二复核 |
+| 2026-08-12 | 1.15.3 | §3.14 联动段 PerformanceScore Sharpe→Sortino 跟随修正（全文口径零残留） | 确认轮三复核 |
+| 2026-08-12 | 1.15.4 | 作战地图全覆盖补丁：新增 §3.15 压力测试（BM-RC-08-C）+ §3.3 仓位审计追溯（BM-POS-10）+ §3.1.1 模型层反馈（BM-REC-03-C）+ §2.4 缺口 #6（BM-BUY-07） | 四环节补 why 层/缺口登记 |
+| 2026-08-12 | 1.15.5 | §3.14 末尾补作战地图环节映射（BM-SEL-21-E/BM-RC-08-A/BM-RC-08-B） | 环节级可追溯 |
+| 2026-08-14 | 1.15.6 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001）；修复前序压缩会话截断事故（§7/§8/§9 整章恢复） | 待施工真源保守压缩：伪代码/契约/参数表/验收标准全保留，删除过程性叙述与重复解释 |
