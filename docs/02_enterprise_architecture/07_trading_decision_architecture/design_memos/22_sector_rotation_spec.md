@@ -5,8 +5,8 @@ title: 板块轮动 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.9.6"
-date: 2026-08-12
+version: "1.9.7"
+date: 2026-08-15
 topic: sector_rotation_spec
 scope: 07_trading_decision_architecture
 ---
@@ -34,9 +34,9 @@ scope: 07_trading_decision_architecture
 
 ### 2.1 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1 结算，不能做空）
-- 板块在架构中是**选股的输入特征**，不是独立决策层——G04（[20_first_batch_strategies](20_first_batch_strategies.md)）三策略"与 regime 关系"行（§2.2/§2.3/§2.4）均裁定选股**不读** regime 输出、只收 budget 数字；板块信号作为选股打分维度的消费关系落在选股漏斗（BM-SEL-17 初筛消费板块强度）与 G04 §7.2 作战地图登记（BM-SEL-08/09 为"G06 板块轮动输入"）。⚠️ v1.9.0 审查修正：此前表述"G04 §2.5 差异化矩阵已定…都消费板块信号"不精确——20 号 §2.5 矩阵 8 行维度中无"板块信号"行，板块消费关系真实出处是 §2.2-2.4 各节 + §7.2，已登记 §7 待定问题（建议 20 号 §2.5 矩阵补板块维度行，不越界改）
+- 板块在架构中是**选股的输入特征**，不是独立决策层——G04（[20_first_batch_strategies](20_first_batch_strategies.md)）三策略"与 regime 关系"行（§2.2/§2.3/§2.4）均裁定选股**不读** regime 输出、只收 budget 数字；板块信号作为选股打分维度的消费关系落在选股漏斗（BM-SEL-17 初筛消费板块强度）与 G04 §7.2 作战地图登记（BM-SEL-08/09 为"G06 板块轮动输入"）。⚠️ 注意：20 号 §2.5 差异化矩阵 8 行维度中无"板块信号"行，板块消费关系真实出处是 §2.2-2.4 各节 + §7.2，已登记 §7 待定问题（20 号 §2.5 矩阵补板块维度行，不越界改）
 - **板块数据采集与基础分析已 production**（非空白起步，逐项真源见 §2.5 已施工设施盘点）：
-  - `sector_snapshot_collector`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)；⚠️ v1.9.0 修正：此前引 MOD-L00-004 blueprint `§sector_snapshot`/`§sector_ranking` 锚点不存在于该 blueprint）：tqcenter → ClickHouse `sector_snapshot` 表，混合模式（推送 99 只 + 全量轮询 30 秒），schema 真源 18 个采集字段（22 列含审计列，[market_sector_snapshot.py](../../../schemas/categories/market_sector_snapshot.py) DDL-as-Code；v1.9.0 修正：此前"26 字段"与真源不符）。**实测 2026-07-22：582 只 = 454 个 880xxx + 128 个 881xxx**（非设计估算 584）
+  - `sector_snapshot_collector`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：tqcenter → ClickHouse `sector_snapshot` 表，混合模式（推送 99 只 + 全量轮询 30 秒），schema 真源 18 个采集字段（22 列含审计列，[market_sector_snapshot.py](../../../schemas/categories/market_sector_snapshot.py) DDL-as-Code）。**实测 2026-07-22：582 只 = 454 个 880xxx + 128 个 881xxx**（非设计估算 584）
   - `sector_ranking_engine`（production，[11_d_data](../../02_domain_architecture_docs/11_d_data.md)）：5 因子复合排名动态选 99 只推送池，基准 880001.SH（上证指数）
   - `sector_analyzer`（[MOD-SIG-026](../../../03_modules/_domain_signal/blueprint.md)，production/stable）：6 维度板块分析（强度/延续性/轮动预警/启动条件/风格适配/抱团瓦解），纯函数（v1.9.0 代码确认 6 方法落码：evaluate_strength/judge_continuity/warn_rotation/evaluate_launch_conditions/adapt_market_style/detect_breakdown）
 - [battle_map_05 BM-SEL-08/09](../battle_map/battle_map_05_stock_selection.md) 已登记 proposed：轮动序列追踪 + 回踩 A/B/C（缺失态-未实现）、调整周期进度（MOD-SIG-040 planned）
@@ -60,7 +60,10 @@ scope: 07_trading_decision_architecture
 - **8 月中下旬中报密集期是检验反弹成色窗口**：板块强度算法（§3.1①）的资金流+涨停梯队维度天然对中报业绩兑现敏感，无需新增基本面因子
 - **高低切换已成定局**：科技兑现、周期加仓（煤炭/有色/化工/贵金属资金净流入榜单前四）——印证 §3.1⑤ 虹吸态识别的时效性（虹吸从 AI 产业链向周期切换）
 - **PPI 连续三个月环比上行**（2026-08-09 国家统计局数据），工业产品价格底部确认；**库存周期见底**（沪铜社会库存 7.8 万吨创五年新低，电解铝连续 11 周去库）——周期板块进入 §3.1④ RRG "改善"象限（RS-Ratio<100 但 RS-Momentum>100）的宏观支撑
-- **"电风扇"式再平衡的量化确认（v1.9.1 补，2026-08-10/11 最新）**：①[国泰海通 2026-08](https://m.weibo.cn/detail/5330754731250030)——7 月 28 日至 8 月 7 日跨两周区间**周度行业排名变化均值 12.75，超过历史 75 分位水平 11.75**，"市场呈现较为典型的'电风扇'式再平衡特征"，且"本轮科技反弹或为拥挤出清后的超跌修复，而非新一轮单边主升"——为 §2.3 板块一日游约束（WyckoffTradingAgent Top3 次日重合率 14.8%）提供 2026-08 机构侧量化印证，支撑 §3.1⑧ q3 权重 0.3 与 §3.1⑩ 门槛 v2.1 降阈值；②[川观新闻 2026-08-11 盘面](https://cbgc.scol.com.cn/news/7840749)——沪指终结六连阳跌 0.82% 报 3934 点、缩量 2.34 万亿，机器人/MLCC/算力租赁/创新药"一个接一个，但都没有持续性"——电风扇行情进行时实盘证据；③[财信证券行业轮动模型周报 2026-08-10](https://m.toutiao.com/group/7672560316760490502/)（数据截至 08-07）——高拥挤区：电子/食品饮料；快速升温区：建筑材料/医药生物/传媒/计算机等 10 行业；行业内部关联度 Beta/Alpha 区间划分（12 行业 Beta 共振 / 18 行业 Alpha 分化）——机构轮动模型与 §3.1⑨ 5 状态分类（高拥挤≈DISTRIBUTION_RISK/CONSENSUS_CLIMAX 视角）同向，且其"Alpha 区间=行业内部分化"概念支持 §3.1⑦ 龙头识别在分化行情中的权重溢价
+- **"电风扇"式再平衡的量化确认（v1.9.1 补，2026-08-10/11 最新）**——为 §2.3 一日游约束（Top3 次日重合率 14.8%）提供 2026-08 机构侧量化印证，支撑 §3.1⑧ q3 权重 0.3 与 §3.1⑩ 门槛 v2.1 降阈值：
+  - [国泰海通 2026-08](https://m.weibo.cn/detail/5330754731250030)：7 月 28 日-8 月 7 日**周度行业排名变化均值 12.75，超历史 75 分位 11.75**，"典型的'电风扇'式再平衡"，"本轮科技反弹或为拥挤出清后的超跌修复，而非新一轮单边主升"
+  - [川观新闻 2026-08-11 盘面](https://cbgc.scol.com.cn/news/7840749)：沪指终结六连阳跌 0.82% 报 3934 点、缩量 2.34 万亿，机器人/MLCC/算力租赁/创新药"一个接一个，但都没有持续性"——电风扇行情进行时实盘证据
+  - [财信证券行业轮动周报 2026-08-10](https://m.toutiao.com/group/7672560316760490502/)（数据截至 08-07）：高拥挤区电子/食品饮料；快速升温区建筑材料/医药生物/传媒/计算机等 10 行业；Beta/Alpha 区间划分（12 行业 Beta 共振 / 18 行业 Alpha 分化）——与 §3.1⑨ 5 状态分类（高拥挤≈DISTRIBUTION_RISK/CONSENSUS_CLIMAX 视角）同向，"Alpha 区间=行业内部分化"支持 §3.1⑦ 龙头识别在分化行情中的权重溢价
 
 ### 2.5 已施工设施盘点（通用规则 #11，2026-08-12 代码侧/schema 真源审计）
 
@@ -105,7 +108,7 @@ scope: 07_trading_decision_architecture
 - **互补理由**：纯涨停梯队在非情绪市（震荡/冰点）失效，纯动量在主升态滞后；双模块覆盖结构+动量两维
 - **情绪温度修正因子（板块内封板率）**：双模块算出的板块强度需按板块内封板率修正——[雪球 2026-02](https://xueqiu.com/2118496927/376795876) 量化实证龙头炸板率 8% vs 跟风 32% vs 孤板 58%，封板率=1-炸板率反映资金承接力。板块涨停多但封板率低（<70%）=情绪虚高不稳，强度打折（×0.8）；封板率高（≥85%）=资金共识强，强度确认。**边界**：市场整体情绪温度（全市场涨停家数/连板高度/炸板率/晋级率）归 [G21 情绪周期×交易决策](00_index_trading_decision.md) 与 BM-SEL-23-B；本 spec 只用**板块内**封板率作板块强度的情绪修正因子，不重复建市场情绪温度
 - **对标**：国海固收 2026-07"行业景气度轮转"用 5 项量化指标（涨幅/营收增速/净利增速/ROE/换手率）月度打分 TOP5-10，本项目的 5 因子是日内动量版（同思路、更高频）
-- **板块涨停比归一化（v1.8.0 新增——施工环节算法补全）**：`evaluate_strength` 的"涨停数"维度是绝对值，不同板块成分股数量差异大（电力设备 ~200 只 vs 油气 ~30 只），19 涨停对电力设备 vs 油气含义不同。final_report_0724 用"电力设备 19 涨停（梯队最完整）"作板块情绪宽度，但绝对数不可跨板块比较。补全算法：
+- **板块涨停比归一化（v1.8.0 新增——施工环节算法补全）**：`evaluate_strength` 的"涨停数"维度是绝对值，不同板块成分股数量差异大（电力设备 ~200 只 vs 油气 ~30 只），绝对数不可跨板块比较。补全算法：
 
   ```python
   # 板块涨停比 = 板块涨停数 / 板块成分股数（归一化宽度指标）
@@ -115,8 +118,8 @@ scope: 07_trading_decision_architecture
   # 阈值校准：涨停比 >5% = 强情绪宽度 / >10% = 极强 / <2% = 弱
   ```
 
-  **为何用涨停比而非绝对数**：final_report 交叉对照发现，板块级涨停绝对数无法跨板块比较——电力设备 19 涨停（200 只成分股）和油气 3 涨停（30 只成分股）的涨停比接近（9.5% vs 10%），但绝对数差 6 倍。归一化后才能公平比较板块间的情绪宽度。
-- **板块级资金性质聚合（v1.8.0 新增——施工环节算法补全）**：[25_multifactor_strategy_detail §647-656](25_multifactor_strategy_detail.md) 已有个股级资金性质 5 类分类（拉升/吸筹/弱托底/对倒嫌疑/出货），但未上溯到板块级聚合——final_report 的"资金性质定性"在个股级用，板块评分缺资金流维度。补全算法：
+  **为何用涨停比而非绝对数**：板块级涨停绝对数无法跨板块比较——电力设备 19 涨停（200 只成分股）和油气 3 涨停（30 只成分股）的涨停比接近（9.5% vs 10%），但绝对数差 6 倍。归一化后才能公平比较板块间情绪宽度。
+- **板块级资金性质聚合（v1.8.0 新增——施工环节算法补全）**：[25_multifactor_strategy_detail §647-656](25_multifactor_strategy_detail.md) 已有个股级资金性质 5 类分类（拉升/吸筹/弱托底/对倒嫌疑/出货），但未上溯到板块级聚合——板块评分缺资金流维度。补全算法：
 
   ```python
   def aggregate_capital_nature_to_sector(sector_constituents, capital_nature_scores):
@@ -251,9 +254,9 @@ scope: 07_trading_decision_architecture
 - **为何 RRG 优于纯排名时序**：纯排名时序只看强弱排名变化，丢失"动量引领趋势"的领先信息；RRG 的 RS-Momentum 是 RS-Ratio 的动量，能预测 RS-Ratio 转向（领先信号），且四象限天然对应轮动序列的"接棒/见顶/回避/布局"四阶段
 - **RS-Ratio 与 ranking_engine 第5因子关系澄清**（防施工重复造轮子）：§3.1① `ranking_engine` 第5因子"板块-大盘强弱差"是**当日截面快照**（选 Top99 推送池用）；RRG 的 RS-Ratio 是相对强度的**220 日时序变化率**（MA20 平滑，轮动序列追踪用）。两者数据源同源（都相对基准/大盘）但时间维度与用途不同——ranking 选池（高频截面），RRG 追轮动（低频时序），不重复计算
 - **RRG 增强（2026-08 最新实践）**：
-  1. **Z-score 均值回归叠加**（[closelook 2026-08-07](https://closelook.net/lab/patterns/sector-rs/)）：Z=（当前 RS-Ratio − 63 日均值）/ 63 日标准差。Z>+2 = 统计拉伸（不论在哪个象限，反转候选）；Z<−2 = 异常压缩（反弹候选）。**跨象限修正**——一个"领先"象限的板块若 Z>+2，其领先可能已透支，降低买入优先级
+  1. **Z-score 均值回归叠加**（[closelook 2026-08-07](https://closelook.net/lab/patterns/sector-rs/)）：Z=（当前 RS-Ratio − 63 日均值）/ 63 日标准差，|Z|>2 = 统计拉伸/异常压缩——跨象限修正规则见上方"象限转移确认规则"第 3 条
   2. **多时间框架交叉**（[closelook 2026-08-07](https://closelook.net/lab/patterns/sector-rs/)）：21d/63d/252d 三独立排序。21d 领先 + 252d 滞后 = **新轮动候选**（fresh rotation）；252d 领先 + 21d 滞后 = **疲惫龙头**（tired leader，减仓信号）。全貌需三时间框架共读，单一框架可误判
-  3. **whipsaw 假信号风险**（[kriterionquant 2026-01](https://kriterionquant.com/wp-content/uploads/2026/01/RRG_Dashboard_Complete_11_January_2026.html)）：板块可在象限间快速来回（whipsaw）= 假信号，需连续 2-3 日确认才采信；用 **transition matrix** 量化象限转移概率（如 领先→疲软 的历史概率 vs 领先→改善 的异常概率），低概率转移需额外确认
+  3. **whipsaw 假信号风险**（[kriterionquant 2026-01](https://kriterionquant.com/wp-content/uploads/2026/01/RRG_Dashboard_Complete_11_January_2026.html)）：板块可在象限间快速来回（whipsaw）= 假信号——确认机制见上方"象限转移确认规则"第 1/2 条（连续 2-3 日确认 + transition matrix 概率门限）
   4. **强趋势半圆旋转例外**（[State Street 2026-03](https://www.ssga.com/at/de/intermediary/insights/guide-to-sector-momentum-map)）：顺时针旋转是理想模式非必然——极强趋势下板块可 领先→疲软→领先（半圆，不经过滞后/改善），极弱趋势可 滞后→改善→滞后。施工时旋转路径检测需容许半圆模式
 - **待施工**：RRG 计算（RS-Ratio/RS-Momentum 标准化到100基准，RS-Ratio 回看 220 日+MA20，RS-Mom 回看 60 日，[西部金工 2026-05](https://finance.sina.com.cn/wm/2026-05-27/doc-inhziqxn8446705.shtml) 参数）+ 四象限落点 + Z-score 叠加 + 三时间框架 + transition matrix 存储；lead-lag network（Granger/transfer entropy）作为第三阶段增强（更重，追踪板块间信息流向，非首轮）
 
@@ -315,12 +318,12 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
     }
 ```
 
-- **阈值依据**：z-score > 1.5σ 对应正态分布 ~93% 分位（极端分化），与 §3.1⑨ 5 状态分类的 hhi_top5 > 0.25/0.30 阈值方向一致但更严格（5 状态用绝对阈值，虹吸态用相对 z-score——因为虹吸态是"相对于近期常态的极端分化"而非"绝对集中度高"）。HHI 权重最高（0.4）因集中度是虹吸态核心指标，净流入集中度次之（0.35），净流出比例最低（0.25）因流出是虹吸的后果非原因。参数 N=5 与 §3.1⑨ hhi_top5 协同，window=20 与 §3.1⑨ rolling 窗口一致。**参数均待 G05/G08 实盘校准**——需 ≥3 个月虹吸态样本后标定（§6 待裁定）。
+- **阈值依据**：z-score > 1.5σ 对应正态 ~93% 分位（极端分化）；5 状态用绝对阈值（hhi_top5 > 0.25/0.30），虹吸态用相对 z-score——虹吸态是"相对近期常态的极端分化"而非"绝对集中度高"。权重 HHI 0.4（集中度是核心）/净流入集中度 0.35/净流出比例 0.25（流出是虹吸的后果非原因）。N=5 与 §3.1⑨ hhi_top5 协同，window=20 与 §3.1⑨ rolling 窗口一致。**参数均待 G05/G08 实盘校准**——需 ≥3 个月虹吸态样本后标定（§6 待裁定）。
 - **与 §3.1⑨ 5 状态分类的关系**：5 状态分类的 `RISK_ON`（hhi_top5 > 0.30 + up_ratio > 0.70）是虹吸态的一个特例（高集中+大面积上涨），但虹吸态更精确——5 状态用绝对阈值，虹吸态用 z-score 相对阈值，两者可串联（5 状态先判大类，虹吸态再精判极端分化）。
 
 #### ⑥ 板块资金流 —— 复用现有字段，不新建
 
-**裁定**：`sector_analyzer.SectorData` 已含 `net_inflow`（净流入，亿）字段（代码确认 [sector_analyzer.py L88](../../../src/zephyr/signal_ashare/sector_analyzer.py)）。⚠️ v1.9.4 数据源精确化：**snapshot 链路不含资金流字段**——`sector_snapshot` 表 18 采集字段无 inflow 类字段（schema 真源），`sector_snapshot_collector` 不采集资金流；全仓当前无 `SectorData(` 实例化代码（analyzer 是纯函数库，数据装配调用方未落码）。板块级 `net_inflow` 的正确来源 = **`money_flow`（个股级五层净流入，production）× `sector_constituent`（SCD-2 成分股）聚合**——与 v1.8.0 `aggregate_capital_nature_to_sector` 同一聚合路径，该聚合器待施工（纯函数，无新数据源）。
+**裁定**：`sector_analyzer.SectorData` 已含 `net_inflow`（净流入，亿）字段（代码确认 [sector_analyzer.py L88](../../../src/zephyr/signal_ashare/sector_analyzer.py)）。⚠️ 数据源注意：**snapshot 链路不含资金流字段**——`sector_snapshot` 表 18 采集字段无 inflow 类字段（schema 真源），且 analyzer 是纯函数库（数据装配调用方未落码）。板块级 `net_inflow` 的正确来源 = **`money_flow`（个股级五层净流入，production）× `sector_constituent`（SCD-2 成分股）聚合**——与 v1.8.0 `aggregate_capital_nature_to_sector` 同一聚合路径，该聚合器待施工（纯函数，无新数据源）。
 
 - `evaluate_launch_conditions` 已用 `net_inflow > 0` 加分，`judge_continuity` 已用 `net_inflow ≥ 10亿` 判深度介入
 - §3.1⑤ 虹吸态识别直接消费聚合后的板块级净流入，不新建资金流采集管道
@@ -353,7 +356,7 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
 **裁定**：在 §3.1① 板块强度复合之上叠加**多时间框架动量加权**，新增 q3（3 日涨幅排名）作为快速轮动感知因子，不替换 production 双模块，作为下游"板块强度综合"层的加权增强。
 
 **为何新增 q3（决策推理）**：
-- [WyckoffTradingAgent v2.1.x 2026-04 实证](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/04_Finance_Sector_Rotation_Regime)（申万 L1 31 行业 2025-10~2026-04）：Top3 板块次日重合率仅 14.8%、Top3 完全不同天数 63.2%、领涨仅持续 1 天概率 46.6%——纯 20 日/5 日动量在快速轮动期感知滞后
+- 一日游实证（§2.3 约束末条，Top3 次日重合率 14.8%/完全不同 63.2%/领涨仅 1 天 46.6%）——纯 20 日/5 日动量在快速轮动期感知滞后
 - 旧版 strength = 0.7×q20 + 0.3×q5 在"板块持续领涨"假设下成立，A 股一日游特征下 20 日权重过高会持续追"已经走完的领涨"
 - 新版 strength = 0.4×q20 + 0.3×q5 + 0.3×q3：20 日权重从 0.7 降至 0.4（保留中期趋势锚定），q5 维持 0.3（短中期动量），q3 新增 0.3（3 日超短期动量，最快感知方向变化）
 - **为何不直接用 q3 替代 q20**：纯 3 日动量会沦为"追涨杀跌"噪声，需 20 日锚定中期趋势；3 时间框架共读避免单一框架误判（与 §3.1④ RRG 21d/63d/252d 三时间框架同思路）
@@ -377,11 +380,11 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
   ```
   - `percentile_rank` = 该板块涨跌幅在全板块中的分位（0=最弱，1=最强），与 `ranking_engine` 同归一化思路
   - 输出 `strength_momentum` ∈ [0, 1]，作为"板块强度综合"层第三维（多 TF 动量）输入
-  - **数据源**（v1.9.0 修正）：`market_kline_sector_880` 表（880xxx 板块日K，`sector_kline_downloader` 盘后采集 production）——N 日累计涨跌幅 `ret_N = close(t)/close(t-N) - 1` 从日K 收盘价直接计算，无需新增采集。**此前声明"`sector_snapshot` 表已有 change_pct_3d/5d/20d 字段"有误**——schema 真源（[market_sector_snapshot.py](../../../schemas/categories/market_sector_snapshot.py)）确认该表为实时快照（now_price/amount/up_home 等 18 采集字段），无多日累计涨跌幅字段；快照表管实时截面，K 线表管多日序列，两表分工见 §2.5 盘点
+  - **数据源**：`market_kline_sector_880` 表（880xxx 板块日K，`sector_kline_downloader` 盘后采集 production）——N 日累计涨跌幅 `ret_N = close(t)/close(t-N) - 1` 从日K 收盘价直接计算，无需新增采集。注意 `sector_snapshot` 表为实时快照（18 采集字段，无多日累计涨跌幅字段）；快照表管实时截面，K 线表管多日序列，两表分工见 §2.5 盘点
 
 - **与 production 双模块关系澄清**（防施工重复造轮子）：§3.1① `evaluate_strength`（涨停梯队+结构）+ `ranking_engine`（5 因子动量活跃度）输出"结构强度+动量活跃度"两维复合分；本项 q3/q5/q20 加权是"纯多时间框架动量"维度，作为前两者的**第三维补充**叠加到"板块强度综合"层（§3.2 架构图），不修改 production 模块本身
 - **与 §3.1④ RRG 多时间框架关系澄清**：RRG 的 21d/63d/252d 是相对强度（RS-Ratio）的多时间框架，用于轮动序列追踪（领先/疲软/滞后/改善象限）；本项 q3/q5/q20 是绝对涨幅排名的多时间框架，用于板块强度综合打分。两者时间窗不同（RRG 更长）、基准不同（RRG 相对基准、q 绝对涨幅）、用途不同（RRG 追序列、q 打复合分），不重复计算
-- **待施工**：q3 计算从 `market_kline_sector_880` 日K 收盘价取 3 日累计涨跌幅（v1.9.0 修正数据源），加权公式落地到"板块强度综合"层；权重 0.4/0.3/0.3 为初拟，需 G05 回测校准（§6 待裁定）
+- **待施工**：q3 计算从 `market_kline_sector_880` 日K 收盘价取 3 日累计涨跌幅，加权公式落地到"板块强度综合"层；权重 0.4/0.3/0.3 为初拟，需 G05 回测校准（§6 待裁定）
 
 #### ⑨ 板块轮动状态 5 分类（每日市场级状态）—— 待施工（BM-SEL-08 增强）
 
@@ -441,7 +444,7 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
 | 超强个股通配 | 无视板块限制 | 个股强度 ≥0.90 | **≥0.80** | 进入打分（§3.1⑦ 加权传导，无板块加权） |
 | 其余 | 不满足上述任一 | — | — | **拦截**（不进入打分） |
 
-- **为何降低阈值（决策推理）**：[WyckoffTradingAgent v2.1.x 2026-04 实证](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/04_Finance_Sector_Rotation_Regime) Top3 次日重合率仅 14.8%——若对非热门板块要求过高（0.70/0.90），会错过大量"今日非热门、明日启动"的板块好股票；v2.1 降至 0.60/0.80 留出放行通道，靠 §3.1⑧ q3 短周期动量快速感知启动、§3.1⑨ 5 状态分类抑制高潮追高
+- **为何降低阈值（决策推理）**：一日游特征（Top3 次日重合率 14.8%，§2.3）下，对非热门板块要求过高（0.70/0.90）会错过大量"今日非热门、明日启动"的板块好股票；v2.1 降至 0.60/0.80 留出放行通道，靠 §3.1⑧ q3 短周期动量快速感知启动、§3.1⑨ 5 状态分类抑制高潮追高
 - **与 §3.1⑦ 传导映射关系澄清**：⑩ 是"是否允许进入打分"（准入 gate，二元判定），⑦ 是"进入打分后如何加权"（连续乘数）；⑩ 在 ⑦ 之前，先 gate 后 weight
 - **"个股强度"定义**：复用 G05 选股引擎的多因子综合分（0-1 归一化），非本 spec 定义；本 spec 只声明"板块归属 × 个股强度"的双条件 gate 结构
 - **准入 gate 算法（v1.6.0 补全公式级）**——先 gate 后 weight（§3.1⑦ 加权传导）：
@@ -479,9 +482,8 @@ def detect_siphon_state(sectors: list[SectorData], window: int = 20, n_top: int 
 | CRASH | 0% | **全板块信号拦截**（不开仓） | 平均 -3.2%（空仓正确） |
 
 - **核心结论**（[WyckoffTradingAgent 2026-04 实证](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/04_Finance_Sector_Rotation_Regime)）：选股选得好不如市场选得对，水温仓控是性价比最高的风控手段——NEUTRAL 唯一正收益（+1.17%）、RISK_ON 过热追高亏钱（-1.54%）、CRASH 空仓正确（-3.2%）
-- **为何在本 spec 声明而非 regime spec**：水温→仓位比例归 regime/firm 层（[30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md) MOD-POS-021 firm 层求和+裁剪），但水温→**板块信号响应**是板块 spec 的职责（不同水温下哪些板块信号放行/抑制）。两者分层：regime 管总仓位，板块 spec 管板块信号的水温适配
+- **为何在本 spec 声明而非 regime spec**：水温→仓位比例归 regime/firm 层（[30_multi_strategy_concurrency §2.2](30_multi_strategy_concurrency.md) MOD-POS-021），水温→**板块信号响应**是板块 spec 的职责——regime 管总仓位，本 spec 管板块信号的水温适配（5 档而非 12 态的选型裁定见 §4.8）
 - **水温 5 档与 regime 12 态映射**（待 G21/G30 校准，本 spec 不定）：NEUTRAL≈Bull-Medium/Neutral-Medium；RISK_ON≈Bull-Strong（过热）；PANIC_REPAIR≈BREAKOUT 失败/CRISIS 修复；RISK_OFF≈Bear-Weak/Medium；CRASH≈CRISIS。具体映射在 [10_regime_detector_spec.md](10_regime_detector_spec.md) §3 regime 12 态与本表 5 档的桥接需 G21 情绪周期×交易决策讨论
-- **为何 5 档而非直接用 regime 12 态**：12 态过细，板块信号响应只需 5 档粒度（全开/半开/修复/仅龙头/全关）；5 档是 regime 12 态的"板块信号响应视角"聚合，非替代
 - **水温→板块信号响应算法（v1.6.0 补全公式级）**——将水温 5 档翻译为 3 类可执行调整：
   ```
   # 输入：水温档位 water_temp ∈ {NEUTRAL, RISK_ON, PANIC_REPAIR, RISK_OFF, CRASH}
@@ -705,10 +707,10 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 - [新浪 — 辨识度人气龙头7标准 2026-05](https://www.sina.cn/news/detail/5294851223978344.html)：标签单一/走势独立/成交Top3/情绪卡位/龙虎榜抱团/历史股性/关键位置——§3.1⑦ 龙头识别量化指标依据
 - [雪球 — A股打板炸板率深度量化 2026-02](https://xueqiu.com/2118496927/376795876)：全市场平均炸板率 24.6%，龙头 8% vs 跟风 32% vs 孤板 58%；情绪亢奋期≤15%/平衡期15-30%/衰退期≥30%——§3.1① 板块内封板率情绪温度修正因子依据
 - [东方财富 — A股情绪周期判断体系 2026-03](https://caifuhao.eastmoney.com/news/20260314093054692373420)：5 大核心指标（涨停家数+连板高度/跌停+核按钮/炸板率/赚钱效应/板块联动）+ 四周期判定——§3.1① 板块情绪温度与 G21 市场情绪温度边界划分依据
-- [WyckoffTradingAgent wiki v2.1.x 2026-04 — 板块轮动与大盘水温](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/04_Finance_Sector_Rotation_Regime)：A 股板块一日游实证（申万 L1 31 行业 2025-10~2026-04，Top3 次日重合率 14.8%/Top3 完全不同 63.2%/领涨仅 1 天 46.6%）+ hot_bonus 0.05→0.02 + q3 短周期动量（strength 0.4×q20+0.3×q5+0.3×q3）+ 5 状态分类（CONSENSUS_CLIMAX/DISAGREEMENT_PULLBACK/HEALTHY_MAINLINE/DISTRIBUTION_RISK/NEUTRAL_MIXED）+ 三级放行门槛 v2.1（0.70→0.60 / 0.90→0.80）+ 水温 5 档仓控（NEUTRAL 100%/RISK_ON 50%/PANIC_REPAIR 50%/RISK_OFF 30%/CRASH 0%，NEUTRAL +1.17% 唯一正收益、CRASH -3.2% 空仓正确）——§2.4 一日游约束 + §3.1⑦ hot_bonus + §3.1⑧ q3 + §3.1⑨ 5 状态 + §3.1⑩ 三级门槛 + §3.1⑪ 水温仓控 的核心实证依据
-- [华泰金工 2026-03 — 量化行业轮动的"崎岖之路"](https://finance.sina.com.cn/wm/2026-03-17/doc-inhrfwqa9598438.shtml)：残差动量因子（剥离风格后核心驱动力，2017-2026 年化超额 12.90%）+ 拥挤度预警（4 量价指标门限测试，2026 初成功预警军工/工业金属/贵金属）+ 遗传规划动态因子挖掘（技术面样本外年化超额 25.39%，GPU 加速+多目标|IC|/胜率/NDCG@k）+ 三大破局思路（风格择时辅助/CTA 信号结合/LLM 应用）——§4.5 拒绝机器学习转折点检测（个人项目过重）+ 第三阶段增强（lead-lag network/ML）的依据
-- [国信证券 2026-06 — AI Agent 赋能开发行业轮动策略](https://pdf.dfcfw.com/pdf/H3_AP202606161823592020_1)：Codex 无监督开发行业轮动（行业趋势优选+ETF 落地+国债 ETF 现金管理，60% 行业 40% 国债，2019-2026 年化 12.29% 夏普 1.04）+ Agent 多轮对话共研 RRG（1000+ 风控规则网格搜索，2017 起年化 14.70% 夏普 1.068 / 2019 起年化 20.64% 夏普 1.339）——§3.1④ RRG 主算法的 AI Agent 实践验证 + §4.5 个人项目轻量化的对照（国信用 1000+ 规则网格，本项目只用 RRG+Z-score+三时间框架）
-- [东吴证券 2026-03 — 深度学习系列之二：技术形态专家模型](https://www.fxbaogao.com/detail/5316170)：GRU 神经网络 K 线专家模型，截面 IC 9.14%/时序 IC 10.25%，中信一级行业轮动策略 3 年化超额 12.60% 收益回撤比 2.12，ETF 轮动 5 日调仓年化超额 16.56%——§4.5 机器学习路径的行业对标（个人项目不用 GRU，但多周期融合思路印证 §3.1⑧ q3/q5/q20 多时间框架 + §3.1④ RRG 三时间框架）
+- [WyckoffTradingAgent wiki v2.1.x 2026-04 — 板块轮动与大盘水温](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/04_Finance_Sector_Rotation_Regime)：A 股板块一日游实证（申万 L1 31 行业 2025-10~2026-04，Top3 次日重合率 14.8%/Top3 完全不同 63.2%/领涨仅 1 天 46.6%）+ hot_bonus 0.05→0.02 + q3 短周期动量（strength 0.4×q20+0.3×q5+0.3×q3）+ 5 状态分类（CONSENSUS_CLIMAX/DISAGREEMENT_PULLBACK/HEALTHY_MAINLINE/DISTRIBUTION_RISK/NEUTRAL_MIXED）+ 三级放行门槛 v2.1（0.70→0.60 / 0.90→0.80）+ 水温 5 档仓控（NEUTRAL 100%/RISK_ON 50%/PANIC_REPAIR 50%/RISK_OFF 30%/CRASH 0%，NEUTRAL +1.17% 唯一正收益、CRASH -3.2% 空仓正确）——§2.3 一日游约束 + §3.1⑦ hot_bonus + §3.1⑧ q3 + §3.1⑨ 5 状态 + §3.1⑩ 三级门槛 + §3.1⑪ 水温仓控 的核心实证依据
+- [华泰金工 2026-03 — 量化行业轮动的"崎岖之路"](https://finance.sina.com.cn/wm/2026-03-17/doc-inhrfwqa9598438.shtml)：残差动量因子（2017-2026 年化超额 12.90%）+ 拥挤度预警（4 量价指标门限，2026 初成功预警军工/工业金属/贵金属）+ 遗传规划动态因子挖掘（技术面样本外年化超额 25.39%，GPU 加速）——§4.5 拒绝机器学习转折点检测（个人项目过重）+ 第三阶段增强依据
+- [国信证券 2026-06 — AI Agent 赋能开发行业轮动策略](https://pdf.dfcfw.com/pdf/H3_AP202606161823592020_1)：Codex 无监督开发行业轮动（60% 行业 40% 国债，2019-2026 年化 12.29% 夏普 1.04）+ Agent 共研 RRG（1000+ 风控规则网格搜索，2019 起年化 20.64% 夏普 1.339）——§3.1④ RRG 主算法的 AI Agent 实践验证 + §4.5 轻量化对照（国信用 1000+ 规则网格，本项目只用 RRG+Z-score+三时间框架）
+- [东吴证券 2026-03 — 深度学习系列之二：技术形态专家模型](https://www.fxbaogao.com/detail/5316170)：GRU K 线专家模型，截面 IC 9.14%/时序 IC 10.25%，中信一级行业轮动 3 年化超额 12.60% 收益回撤比 2.12——§4.5 机器学习路径行业对标（个人项目不用 GRU，但多周期融合印证 §3.1⑧ q3/q5/q20 + §3.1④ RRG 三时间框架）
 - [华泰金工 2026-06 — AI 行业轮动模型持续推荐金融](https://finance.sina.com.cn/wm/2026-06-15/doc-inicmsvf5192691.shtml)：全频段量价融合因子 32 行业周频调仓 5 行业等权，2017 初回测年化 26.43% 超额 19.96%，2026 YTD 10% 超额 12.75%——§3.1① ranking_engine 5 因子复合的行业对标（华泰用深度学习全频段融合，本项目用 5 因子线性复合，个人项目轻量化）
 - [华泰金工 2026-07 — 全球风格轮动进行时](https://finance.sina.com.cn/wm/2026-07-05/doc-inifupeq2382499.shtml)：遗传规划行业轮动（33 中信行业，季频因子+周频调仓，2026 推荐 汽车/电新/有色/社服/通信）+ 大小盘均值回归动能较强（大盘拥挤度高位）——§2.4 2026-08 市场实证对照（高低切换、小盘弹性强于大盘）的行业研报依据
 - [2026-08-10 十大券商看后市 — A 股仍处上行周期]：7 月大幅回调后单边行情难再现，板块/风格再平衡需求提升；超跌反弹有演绎空间，小盘弹性显著强于大盘；8 月中下旬中报密集期检验反弹成色；高低切换已成定局（科技兑现、周期加仓，煤炭/有色/化工/贵金属资金净流入前四）——§2.4 2026-08 A 股市场实证对照依据
@@ -746,3 +748,4 @@ sector_snapshot_collector (production) ──880xxx快照──┐
 | 2026-08-12 | 1.9.4 | **确认轮内部锚点审计修复** | 循环自检发现 §2.2/§3.1⑦ 两处"§2.4 一日游实证"锚点不精确——Top3 次日重合率 14.8% 的真源出处是 §2.3 约束末条（WyckoffTradingAgent 链接所在），§2.4 为 2026-08 市场实证对照节，修正为 §2.3 |
 | 2026-08-12 | 1.9.5 | **确认轮 §3.1⑥ 资金流数据源精确化** | 循环自检深挖发现 §3.1⑥"板块资金流——复用现有字段"裁定含两处真源偏差：①"snapshot_collector 采集 26 字段含资金数据"——schema 真源确认 snapshot 表 18 采集字段且无 inflow 类字段，collector 不采集资金流；②全仓扫描无任何 `SectorData(` 实例化代码——analyzer 是纯函数库，数据装配调用方未落码。修正：板块级 net_inflow 正确来源 = money_flow（个股级五层净流入 production）× sector_constituent（SCD-2 成分股）聚合，与 v1.8.0 资金性质聚合同路径，聚合器待施工（纯函数无新数据源）；§2.5 盘点表 snapshot 行同步补"无资金流字段"注记。SectorData.net_inflow 字段本身存在（代码确认 L88），裁定结论"不新建资金流采集管道"不变，仅数据源路径精确化 |
 | 2026-08-12 | 1.9.6 | 作战地图环节映射补强——锚定 BM-SEL-08-A 板块分析器（§2.5 末映射块：MOD-SIG-026 `sector_analyzer.py`，§2.5 盘点行 + §3.1① `evaluate_strength` 复用裁定，production） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
+| 2026-08-15 | 1.9.7 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-07） | 版本修正过程叙述→当前态陈述（§2.1/§3.1⑥/§3.1⑧ 数据源）；§2.4 电风扇超长 bullet 要点化；一日游 14.8% 实证 5 处重复→真源（§2.3）+指针（§3.1⑧/§3.1⑩）；RRG 增强与象限确认规则重复项指针化；§3.1⑪ 与 §4.8 重复的"为何 5 档"合并；§8.4 三条长条目瘦身 + WyckoffTradingAgent 锚点残留修正（§2.4→§2.3）。标题编号/关键数值（强度权重 40/30/30、回踩 Fib 38.2-61.8%、调整周期 80%、RRG DualEma 10/26、虹吸 z>1.5、门槛 0.60/0.80、水温 5 档 100/50/50/30/0%）/裁定/开放问题/BM-XXX/跨文档链接零丢失 |
