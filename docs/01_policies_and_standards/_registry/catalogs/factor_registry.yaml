@@ -140,7 +140,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.1"
+  doc_ref: "29_factor_strategy_extraction.md §F1.1"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -202,7 +202,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.2"
+  doc_ref: "29_factor_strategy_extraction.md §F1.2"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -264,7 +264,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.3"
+  doc_ref: "29_factor_strategy_extraction.md §F1.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -326,7 +326,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.4"
+  doc_ref: "29_factor_strategy_extraction.md §F1.4"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -388,7 +388,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.5"
+  doc_ref: "29_factor_strategy_extraction.md §F1.5"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -450,7 +450,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.6"
+  doc_ref: "29_factor_strategy_extraction.md §F1.6"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -512,7 +512,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.7"
+  doc_ref: "29_factor_strategy_extraction.md §F1.7"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -574,7 +574,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.8"
+  doc_ref: "29_factor_strategy_extraction.md §F1.8"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -636,7 +636,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.10"
+  doc_ref: "29_factor_strategy_extraction.md §F1.10"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -698,7 +698,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.13"
+  doc_ref: "29_factor_strategy_extraction.md §F1.13"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -760,7 +760,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.15"
+  doc_ref: "29_factor_strategy_extraction.md §F1.15"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -822,7 +822,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.16"
+  doc_ref: "29_factor_strategy_extraction.md §F1.16"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -884,7 +884,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.17"
+  doc_ref: "29_factor_strategy_extraction.md §F1.17"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -946,7 +946,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F1.18"
+  doc_ref: "29_factor_strategy_extraction.md §F1.18"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1012,7 +1012,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.1"
+  doc_ref: "29_factor_strategy_extraction.md §F2.1"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1074,7 +1074,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.3"
+  doc_ref: "29_factor_strategy_extraction.md §F2.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1136,7 +1136,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.5"
+  doc_ref: "29_factor_strategy_extraction.md §F2.5"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1198,7 +1198,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.7"
+  doc_ref: "29_factor_strategy_extraction.md §F2.7"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1260,7 +1260,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.9"
+  doc_ref: "29_factor_strategy_extraction.md §F2.9"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1322,7 +1322,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.10"
+  doc_ref: "29_factor_strategy_extraction.md §F2.10"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1384,7 +1384,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.12"
+  doc_ref: "29_factor_strategy_extraction.md §F2.12"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1446,7 +1446,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.13"
+  doc_ref: "29_factor_strategy_extraction.md §F2.13"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1508,7 +1508,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.14"
+  doc_ref: "29_factor_strategy_extraction.md §F2.14"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1570,7 +1570,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.15"
+  doc_ref: "29_factor_strategy_extraction.md §F2.15"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1632,7 +1632,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.17"
+  doc_ref: "29_factor_strategy_extraction.md §F2.17"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1694,7 +1694,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.18"
+  doc_ref: "29_factor_strategy_extraction.md §F2.18"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1756,7 +1756,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.19"
+  doc_ref: "29_factor_strategy_extraction.md §F2.19"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1818,7 +1818,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.21"
+  doc_ref: "29_factor_strategy_extraction.md §F2.21"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1880,7 +1880,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.22"
+  doc_ref: "29_factor_strategy_extraction.md §F2.22"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -1942,7 +1942,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.23"
+  doc_ref: "29_factor_strategy_extraction.md §F2.23"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2004,7 +2004,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.24"
+  doc_ref: "29_factor_strategy_extraction.md §F2.24"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2066,7 +2066,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.25"
+  doc_ref: "29_factor_strategy_extraction.md §F2.25"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2128,7 +2128,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.26"
+  doc_ref: "29_factor_strategy_extraction.md §F2.26"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2190,7 +2190,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.28"
+  doc_ref: "29_factor_strategy_extraction.md §F2.28"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2252,7 +2252,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.29"
+  doc_ref: "29_factor_strategy_extraction.md §F2.29"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2314,7 +2314,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.30"
+  doc_ref: "29_factor_strategy_extraction.md §F2.30"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2376,7 +2376,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F2.31"
+  doc_ref: "29_factor_strategy_extraction.md §F2.31"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2442,7 +2442,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.2"
+  doc_ref: "29_factor_strategy_extraction.md §F3.2"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2504,7 +2504,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.3"
+  doc_ref: "29_factor_strategy_extraction.md §F3.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2566,7 +2566,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.5"
+  doc_ref: "29_factor_strategy_extraction.md §F3.5"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2628,7 +2628,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.7"
+  doc_ref: "29_factor_strategy_extraction.md §F3.7"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2690,7 +2690,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.8"
+  doc_ref: "29_factor_strategy_extraction.md §F3.8"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2752,7 +2752,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.9"
+  doc_ref: "29_factor_strategy_extraction.md §F3.9"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2814,7 +2814,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.10"
+  doc_ref: "29_factor_strategy_extraction.md §F3.10"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2876,7 +2876,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F3.11"
+  doc_ref: "29_factor_strategy_extraction.md §F3.11"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -2942,7 +2942,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.1"
+  doc_ref: "29_factor_strategy_extraction.md §F4.1"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3004,7 +3004,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.2"
+  doc_ref: "29_factor_strategy_extraction.md §F4.2"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3066,7 +3066,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.3"
+  doc_ref: "29_factor_strategy_extraction.md §F4.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3128,7 +3128,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.4"
+  doc_ref: "29_factor_strategy_extraction.md §F4.4"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3190,7 +3190,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.6"
+  doc_ref: "29_factor_strategy_extraction.md §F4.6"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3252,7 +3252,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.7"
+  doc_ref: "29_factor_strategy_extraction.md §F4.7"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3314,7 +3314,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.8"
+  doc_ref: "29_factor_strategy_extraction.md §F4.8"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3376,7 +3376,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.9"
+  doc_ref: "29_factor_strategy_extraction.md §F4.9"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3438,7 +3438,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.10"
+  doc_ref: "29_factor_strategy_extraction.md §F4.10"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3500,7 +3500,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.11"
+  doc_ref: "29_factor_strategy_extraction.md §F4.11"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3562,7 +3562,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.12"
+  doc_ref: "29_factor_strategy_extraction.md §F4.12"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3624,7 +3624,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.15"
+  doc_ref: "29_factor_strategy_extraction.md §F4.15"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3686,7 +3686,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.16"
+  doc_ref: "29_factor_strategy_extraction.md §F4.16"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3748,7 +3748,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.17"
+  doc_ref: "29_factor_strategy_extraction.md §F4.17"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3810,7 +3810,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.18"
+  doc_ref: "29_factor_strategy_extraction.md §F4.18"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3872,7 +3872,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.19"
+  doc_ref: "29_factor_strategy_extraction.md §F4.19"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3934,7 +3934,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.20"
+  doc_ref: "29_factor_strategy_extraction.md §F4.20"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -3996,7 +3996,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.21"
+  doc_ref: "29_factor_strategy_extraction.md §F4.21"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4058,7 +4058,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F4.22"
+  doc_ref: "29_factor_strategy_extraction.md §F4.22"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4124,7 +4124,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.1"
+  doc_ref: "29_factor_strategy_extraction.md §F5.1"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4186,7 +4186,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.2"
+  doc_ref: "29_factor_strategy_extraction.md §F5.2"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4248,7 +4248,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.3"
+  doc_ref: "29_factor_strategy_extraction.md §F5.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4310,7 +4310,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.8"
+  doc_ref: "29_factor_strategy_extraction.md §F5.8"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4372,7 +4372,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.14"
+  doc_ref: "29_factor_strategy_extraction.md §F5.14"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4434,7 +4434,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.18"
+  doc_ref: "29_factor_strategy_extraction.md §F5.18"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4496,7 +4496,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.19"
+  doc_ref: "29_factor_strategy_extraction.md §F5.19"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4558,7 +4558,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.21"
+  doc_ref: "29_factor_strategy_extraction.md §F5.21"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4620,7 +4620,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.24"
+  doc_ref: "29_factor_strategy_extraction.md §F5.24"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4682,7 +4682,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.25"
+  doc_ref: "29_factor_strategy_extraction.md §F5.25"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4744,7 +4744,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.26"
+  doc_ref: "29_factor_strategy_extraction.md §F5.26"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4806,7 +4806,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F5.30"
+  doc_ref: "29_factor_strategy_extraction.md §F5.30"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4872,7 +4872,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.1"
+  doc_ref: "29_factor_strategy_extraction.md §F6.1"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4934,7 +4934,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.3"
+  doc_ref: "29_factor_strategy_extraction.md §F6.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -4996,7 +4996,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.6"
+  doc_ref: "29_factor_strategy_extraction.md §F6.6"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5058,7 +5058,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.7"
+  doc_ref: "29_factor_strategy_extraction.md §F6.7"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5120,7 +5120,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.8"
+  doc_ref: "29_factor_strategy_extraction.md §F6.8"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5182,7 +5182,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.11"
+  doc_ref: "29_factor_strategy_extraction.md §F6.11"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5244,7 +5244,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.14"
+  doc_ref: "29_factor_strategy_extraction.md §F6.14"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5306,7 +5306,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.15"
+  doc_ref: "29_factor_strategy_extraction.md §F6.15"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5368,7 +5368,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.17"
+  doc_ref: "29_factor_strategy_extraction.md §F6.17"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5430,7 +5430,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.18"
+  doc_ref: "29_factor_strategy_extraction.md §F6.18"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5492,7 +5492,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.24"
+  doc_ref: "29_factor_strategy_extraction.md §F6.24"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5554,7 +5554,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.26"
+  doc_ref: "29_factor_strategy_extraction.md §F6.26"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5616,7 +5616,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.27"
+  doc_ref: "29_factor_strategy_extraction.md §F6.27"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5678,7 +5678,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.29"
+  doc_ref: "29_factor_strategy_extraction.md §F6.29"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5740,7 +5740,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F6.32"
+  doc_ref: "29_factor_strategy_extraction.md §F6.32"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5806,7 +5806,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F7.11"
+  doc_ref: "29_factor_strategy_extraction.md §F7.11"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5868,7 +5868,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F7.12"
+  doc_ref: "29_factor_strategy_extraction.md §F7.12"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5930,7 +5930,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F7.13"
+  doc_ref: "29_factor_strategy_extraction.md §F7.13"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -5992,7 +5992,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F7.14"
+  doc_ref: "29_factor_strategy_extraction.md §F7.14"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6054,7 +6054,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F7.16"
+  doc_ref: "29_factor_strategy_extraction.md §F7.16"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6120,7 +6120,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.1"
+  doc_ref: "29_factor_strategy_extraction.md §F8.1"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6182,7 +6182,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.2"
+  doc_ref: "29_factor_strategy_extraction.md §F8.2"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6244,7 +6244,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.3"
+  doc_ref: "29_factor_strategy_extraction.md §F8.3"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6306,7 +6306,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.11"
+  doc_ref: "29_factor_strategy_extraction.md §F8.11"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6368,7 +6368,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.13"
+  doc_ref: "29_factor_strategy_extraction.md §F8.13"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6430,7 +6430,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.14"
+  doc_ref: "29_factor_strategy_extraction.md §F8.14"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6492,7 +6492,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.15"
+  doc_ref: "29_factor_strategy_extraction.md §F8.15"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6554,7 +6554,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.16"
+  doc_ref: "29_factor_strategy_extraction.md §F8.16"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6616,7 +6616,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.22"
+  doc_ref: "29_factor_strategy_extraction.md §F8.22"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6678,7 +6678,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.23"
+  doc_ref: "29_factor_strategy_extraction.md §F8.23"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6740,7 +6740,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.24"
+  doc_ref: "29_factor_strategy_extraction.md §F8.24"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6802,7 +6802,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.25"
+  doc_ref: "29_factor_strategy_extraction.md §F8.25"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6864,7 +6864,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.26"
+  doc_ref: "29_factor_strategy_extraction.md §F8.26"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6926,7 +6926,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.41"
+  doc_ref: "29_factor_strategy_extraction.md §F8.41"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
@@ -6988,7 +6988,7 @@ factors:
   neutralization: "none"
   pit_policy: "price_only"
   module_id: "MOD-FACTOR"
-  doc_ref: "因子与策略提炼.md §F8.43"
+  doc_ref: "29_factor_strategy_extraction.md §F8.43"
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
