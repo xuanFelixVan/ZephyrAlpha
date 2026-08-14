@@ -179,6 +179,23 @@ def cmd_create(args: argparse.Namespace) -> int:
         print(f"[WORKTREE] 创建成功")
         for note in _provision_worktree_env(wt_path):
             print(f"  {note}")
+        # 治理层活性登记（2026-08-14 治本，AI-GIT-001 实证：CLI 创建的 worktree 此前在
+        # SessionRegistry 无注册无心跳，被 GATE-WORKTREE-LIFECYCLE sweep / base_sync
+        # 误判死 session 残留，未提交工作反复被抹——本批次三文件被抹两次后定位）。
+        # 锚主仓根（--git-common-dir），避免从 worktree 内调用时错锚到 worktree .runtime。
+        try:
+            import os as _os
+
+            from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+            _main_root = REPO_ROOT
+            _common = _run_git(["rev-parse", "--git-common-dir"], check=False)
+            if _common.returncode == 0 and _common.stdout.strip():
+                _main_root = Path(_common.stdout.strip()).resolve().parent
+            SessionRegistry(_main_root).register(session_id, pid=_os.getpid())
+            print(f"  session 已登记 SessionRegistry（TTL 3600s，网关 commit/claim 自动续期心跳）")
+        except Exception as e:  # noqa: BLE001 — 登记失败不阻断创建
+            print(f"  WARN: SessionRegistry 登记失败（不阻断创建）: {e}", file=sys.stderr)
         print(f"  进入 worktree: cd {wt_path}")
         return 0
     except Exception as e:
