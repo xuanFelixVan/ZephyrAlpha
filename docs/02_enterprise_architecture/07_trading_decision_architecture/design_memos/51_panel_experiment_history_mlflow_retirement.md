@@ -5,8 +5,8 @@ title: Panel「实验历史」Tab + MLflow 退役施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.11"
-date: 2026-08-12
+version: "1.2.12"
+date: 2026-08-15
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
 parent: 50_backtest_observability_workplan.md
@@ -101,7 +101,7 @@ parent: 50_backtest_observability_workplan.md
 - **新增** `download_artifact_text(...)` 薄包装（返回 str 或 None），便于直接读 c1_summary.md。
 
 #### B2. 新建 `src/zephyr/frontend/dashboard/components/experiment_history.py`
-- **设计参考**（v1.2.2 补，来源前端可视化讨论线 2026-08-02 调研）：屏幕布局可参考 [backtest-kit/ui](https://github.com/tripolskypetr/backtest-kit)（`@backtest-kit/ui`，2026-08 开源回测仪表盘，React18 + Material-UI + Lightweight Charts，5 小时前更新活跃）。该项目屏幕设计专为回测可视化——portfolio cards / KPI boards / candlestick+signal overlays / strategy heatmap / markdown reports / dump explorer，与「实验历史」Tab 需求高度重叠（KPI 卡片网格 ↔ 指标 diff 卡片；列表+详情切换 ↔ run 列表+多选对比；Markdown 报告折叠 ↔ c1_summary.md）。**参考其布局思路，不引入其代码**（技术栈 React/JS vs 本项目 Panel/Python，且它配套自家 backtest-kit 引擎）。本项目 4 轮再审（§八 2026-08-08）未覆盖此项目，v1.2.2 由前端讨论线调研注入。
+- **设计参考**（v1.2.2 补，来源前端可视化讨论线 2026-08-02 调研）：屏幕布局可参考 [backtest-kit/ui](https://github.com/tripolskypetr/backtest-kit)（`@backtest-kit/ui`，2026-08 开源回测仪表盘，React18 + Material-UI + Lightweight Charts，5 小时前更新活跃）。该项目屏幕设计专为回测可视化——portfolio cards / KPI boards / candlestick+signal overlays / strategy heatmap / markdown reports / dump explorer，与「实验历史」Tab 需求高度重叠（KPI 卡片网格 ↔ 指标 diff 卡片；列表+详情切换 ↔ run 列表+多选对比；Markdown 报告折叠 ↔ c1_summary.md）。**参考其布局思路，不引入其代码**（技术栈 React/JS vs 本项目 Panel/Python，且它配套自家 backtest-kit 引擎）。
 - **数据模型**：
   - `@dataclass ExperimentHistoryData`：`runs: list[RunSummary]`、`component: str`。
   - `@dataclass C1ComparisonView`：`run_id`、`run_name`、`start_time`、`passed`、`verdicts: list[C1VerdictRow]`、`nav_baseline: list[float]`、`nav_experiment: list[float]`、`metrics_diff: dict`、`summary_md: str`。
@@ -405,9 +405,9 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
   - 实测误报率（零假设搜索中）：原始"best Sharpe 显著吗"=1.000（每次误报）；DSR=0.001；Harvey-Liu Bonferroni=0.057；White's RC=0.022。
 - **对 C1 的价值**：当前 C1 verdict 只有 Sharpe/MaxDD/Calmar/Turnover 四项**静态阈值**判定。这套工具能回答"跑了很多次实验后，这个 sharpe 是不是侥幸"——比 §八 A 的 DTW 更根本（DTW 看曲线相似度，PBO 看选择过程是否可信）。
 - **建议**：**MVP 不做，登记为后续增强**。理由：① 属策略验证方法论层，非展示层，不落在 51_panel_experiment_history_mlflow_retirement 施工范围；② 需引入 deflated-alpha 依赖（或自行实现 CSCV，成本高）；③ 需 C1 记录"所有试过的配置"（当前只记最终 run，不记搜索路径），是 C1 verdict 体系的上游改造。登记为"C1 verdict 体系升级时评估接入 deflated-alpha 做过拟合检测"。
-- **局限**（v1.2.1 补，来源 CSDN 2026-03）：PBO 自身有三重脆弱性：① 子样本构造偏差（须 Circular Block Bootstrap，滑动窗口违反零均值假设致 PBO 系统性低估）；② 平稳性幻觉（结构性断点如 2020 疫情/2022 加息致 PBO 低估过拟合风险）；③ 搜索空间覆盖不足（网格稀疏区最优解致基准分布失真）。单一 PBO 不具决策鲁棒性，工业实践推荐 **PBO + SRD（Sharpe Ratio Decay，滚动 12M Sharpe 斜率 < -0.03/年 警戒）+ DSR 三维交叉验证矩阵**。这进一步支持"MVP 不做"——接入成本远高于单个 `audit()` 调用。
-- **DSR 有效试验数难题**（v1.2.4 补，来源 marketmaker.cc 2026-07 受控实验「How Many Backtest Winners Survive Deflation?」）：DSR fed **raw trial count（试验数 N）** 会**错误拒绝真 edge**——受控实验中真 edge（年化 Sharpe 3.92）被 DSR 错判为不显著（0.748<0.95）。根因："有效试验数"不是单一数字，5 个估计器对同一矩阵**跨 1.6 到 370.0**（差两个数量级）——最小估计下 deflation 几乎失效，最大估计下过度 deflate。正确做法：用 **bootstrap-based 测试**（White's RC / Hansen's SPA）sidestep 有效试验数选择。这进一步支持"MVP 不做"——DSR 不是"调一个 audit() 就行"，有效试验数估计本身就是开放问题。
-- **九大门控完整菜单**（v1.2.4 补，来源 Student One 2026-06「The Full Menu: Every Out-of-Sample Test We Run」）：业界已系统化为 **9 个 OOS 门禁**，每个针对不同过拟合失效模式：① Holdout（参数过拟合，最弱）② Walk-Forward ③ Purged K-Fold（CV 泄漏）④ PBO（选择过拟合）⑤ Romano-Wolf（多重检验 FDR 控制）⑥ SPA/Hansen（studentized 多重检验）⑦ MC block-bootstrap（路径依赖）⑧ cluster stability（聚类鲁棒）⑨ FDR（假发现率控制）。本节原记 PBO/DSR/CSCV/White RC/Harvey-Liu **5 种**，补全为 9 门禁完整菜单；其中 PBO 是最贵门禁（0.45× cost multiplier）。这进一步支持"MVP 不做"——完整门禁体系是 9 个不是 5 个，接入成本远超当前展示层范围；C1 verdict 体系升级时按此菜单逐项评估。
+- **局限**（v1.2.1 补，来源 CSDN 2026-03）：PBO 自身有三重脆弱性：① 子样本构造偏差（须 Circular Block Bootstrap，滑动窗口违反零均值假设致 PBO 系统性低估）；② 平稳性幻觉（结构性断点如 2020 疫情/2022 加息致 PBO 低估过拟合风险）；③ 搜索空间覆盖不足（网格稀疏区最优解致基准分布失真）。单一 PBO 不具决策鲁棒性，工业实践推荐 **PBO + SRD（Sharpe Ratio Decay，滚动 12M Sharpe 斜率 < -0.03/年 警戒）+ DSR 三维交叉验证矩阵**——接入成本远高于单个 `audit()` 调用。
+- **DSR 有效试验数难题**（v1.2.4 补，来源 marketmaker.cc 2026-07 受控实验「How Many Backtest Winners Survive Deflation?」）：DSR fed **raw trial count（试验数 N）** 会**错误拒绝真 edge**——受控实验中真 edge（年化 Sharpe 3.92）被 DSR 错判为不显著（0.748<0.95）。根因："有效试验数"不是单一数字，5 个估计器对同一矩阵**跨 1.6 到 370.0**（差两个数量级）——最小估计下 deflation 几乎失效，最大估计下过度 deflate。正确做法：用 **bootstrap-based 测试**（White's RC / Hansen's SPA）sidestep 有效试验数选择——有效试验数估计本身是开放问题，非"调一个 audit() 就行"。
+- **九大门控完整菜单**（v1.2.4 补，来源 Student One 2026-06「The Full Menu: Every Out-of-Sample Test We Run」）：业界已系统化为 **9 个 OOS 门禁**，每个针对不同过拟合失效模式：① Holdout（参数过拟合，最弱）② Walk-Forward ③ Purged K-Fold（CV 泄漏）④ PBO（选择过拟合）⑤ Romano-Wolf（多重检验 FDR 控制）⑥ SPA/Hansen（studentized 多重检验）⑦ MC block-bootstrap（路径依赖）⑧ cluster stability（聚类鲁棒）⑨ FDR（假发现率控制）。本节原记 PBO/DSR/CSCV/White RC/Harvey-Liu **5 种**，补全为 9 门禁完整菜单；其中 PBO 是最贵门禁（0.45× cost multiplier）——完整门禁体系接入成本远超当前展示层范围；C1 verdict 体系升级时按此菜单逐项评估。
 
 ### F. 曲线平滑度指标（curve_smoothness，机读曲线质量判定）
 - **来源**：july-backtester #151（zachisit，2026-04-30，`llm_verdict.json` PR #153 已合并）
@@ -472,3 +472,4 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 2026-08-12 | 1.2.9 | 作战地图全覆盖补丁——闭合 BM-RES-02-C（§9.1 实验异常检测轻量裁定：PSI/CUSUM/阈值注册表，不上 isolation forest，重评=日均 run≥50）、BM-RES-02-B（§9.2 可复现性管理：四要素+pip freeze 即一键复现包，不建容器快照）；新增 §九，原 §九 修订记录顺延为 §十 | 实验域 2 环节补裁定，复用既有零件不新增依赖；施工计划 A/B/C 零变更 |
 | 2026-08-12 | 1.2.10 | 作战地图环节映射补强——锚定 BM-RES-02-A | 工作流 B 末尾补映射块，环节级可追溯 |
 | 2026-08-12 | 1.2.11 | 作战地图环节映射补强②——锚定 BM-BT-07-G 回测结果对比（§七.P1-4 多 run 横向对比 + C1ComparisonView 双净值） | 映射块补一行，环节级可追溯；不改既有正文 |
+| 2026-08-15 | 1.2.12 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——B2 设计参考尾句过程性叙述删除（注入过程已由 v1.2.2 修订记录承载）；§八.E 三条"这进一步支持 MVP 不做"冗余收尾口号删除（"MVP 不做"裁定在条目内已声明，理由保留） | 8 类扫描 4 处（类别 2 过程性叙述×1、类别 5 冗余修饰×3）；施工步骤/算法/契约/参数零丢失 |

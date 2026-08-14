@@ -5,8 +5,8 @@ title: 策略间相关性验证
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.1"
-date: 2026-08-10
+version: "1.7.2"
+date: 2026-08-15
 topic: strategy_correlation_validation
 scope: 07_trading_decision_architecture
 ---
@@ -165,7 +165,7 @@ scope: 07_trading_decision_architecture
 | **PDR/PSI/DFR 过拟合检测指标** | ✅ 辅助（v1.6.0） | 三指标补 DSR/PBO 的盲区：① **PDR**=(IS_SR−OOS_SR)/IS_SR，≥0.5 严重过拟合（[digitalninjasystems 2026-05](https://digitalninjasystems.com/)）② **PSI**=Best_SR/Avg_SR，≥3.0 过拟合（**注意**：与 §5.4 Population Stability Index 同名异义，本节是 Parameter Stability Index 过拟合检测，§5.4 是漂移监控）③ **DFR**=N_obs/N_params，<30 参数过多（[backtrex 2026-05](https://backtrex.com/en/blog/overfitting-backtesting-detect-prevent) 机构共识）。胜率>70% 或 PF>3.0 警戒线（[digitalninjasystems 2026-05](https://digitalninjasystems.com/) 实证 70% 零售回测盈利策略前向测试变亏损） |
 | **Harvey-Liu haircuts（Bonferroni/Holm/BHY）** | ✅ 首轮（v1.6.0，通过 deflated-alpha 工具一次集成） | 三种经典多重检验校正把 winner 的 t-stat p-value 调整后反推 haircut Sharpe：Bonferroni/Holm 控制 FWER，BHY 控制 FDR。**rank-1 特性**：Holm 与 Bonferroni 在 top-rank 完全一致（(M-1+1)p=Mp），不构成独立互验；BHY 在 top-rank 最保守（×Mc(M)≥M）。[dsr.marketmaker.cc 2026-07](https://dsr.marketmaker.cc/paper.pdf) controlled study：Bonferroni/Holm 假阳性率 0.057，BHY 0.007，均受控。**不独立实现**——通过 deflated-alpha audit() 一次集成避免过重 |
 | **White Reality Check + Hansen SPA（bootstrap data-snooping）** | ✅ 首轮（v1.6.0，通过 deflated-alpha 工具一次集成） | White RC (2000) 用 stationary bootstrap 重采样整个 trial matrix 联合分布，构建"零技能抽奖 best 表现"的 null，p-value = 重采样 best ≥ 实测 best 的频率。Hansen SPA (2005) 加 studentization + consistent recentering 防止 poor high-variance alternatives 主导（conservative）。**关键**：bootstrap 重采样所有 K 试验联合，**保留 cross-trial 相关结构**——与 §3.2 stationary block-bootstrap 同源（Politis-Romano 1994），但应用场景不同（§3.2 重采样策略对算相关性 CI，本节重采样整个 trial matrix 算 best-performance null）。[dsr.marketmaker.cc 2026-07](https://dsr.marketmaker.cc/paper.pdf) controlled study：White RC 假阳性率 0.022，受控。**不独立实现**——通过 deflated-alpha audit() 一次集成 |
-| **deflated-alpha v0.3.0 工具（一次 audit() 集成四家测试）** | ✅ 首轮（v1.6.0） | [deflated-alpha v0.3.0](https://github.com/0scarito/deflated-alpha)（2026-07-26）一个 audit() 接口运行全部四家过拟合检测：① Analytical（DSR+PSR+MinTRL）② Combinatorial（PBO/CSCV）③ Multiple-testing（Harvey-Liu Bonferroni/Holm/BHY）④ Bootstrap data-snooping（White RC + Hansen SPA）。输出 verdict LIKELY_REAL/INCONCLUSIVE/LIKELY_OVERFIT + 各 check value/status 表格。**为什么必须四家同跑**：[deflated-alpha 案例 (b) SMA crossover on zero-drift random walk](https://github.com/0scarito/deflated-alpha) 实证 DSR=0.989 几乎被骗 + SPA p=0.019 错误显著，只有 PBO=0.782 抓住过拟合——**没有单一测试充分**。**输入要求**：传入全部 N 次试探的 T×N returns matrix（不是仅 winner），只传 winner 无法审计。**effective trials**（v0.2.0）：N̂=ρ̄+(1−ρ̄)·M 自动从 trials 平均相关估计有效独立数，但 [dsr.marketmaker.cc 2026-07](https://dsr.marketmaker.cc/paper.pdf) 实证 5 估计器分歧达两个数量级，须以 robustness band 报告而非点估计 |
+| **deflated-alpha v0.3.0 工具（一次 audit() 集成四家测试）** | ✅ 首轮（v1.6.0） | [deflated-alpha v0.3.0](https://github.com/0scarito/deflated-alpha)（2026-07-26）一个 audit() 接口运行全部四家过拟合检测：① Analytical（DSR+PSR+MinTRL）② Combinatorial（PBO/CSCV）③ Multiple-testing（Harvey-Liu Bonferroni/Holm/BHY）④ Bootstrap data-snooping（White RC + Hansen SPA）。输出 verdict LIKELY_REAL/INCONCLUSIVE/LIKELY_OVERFIT + 各 check value/status 表格。**为什么必须四家同跑**：[deflated-alpha 案例 (b) SMA crossover on zero-drift random walk](https://github.com/0scarito/deflated-alpha) 实证 DSR=0.989 几乎被骗 + SPA p=0.019 错误显著，只有 PBO=0.782 抓住过拟合——**没有单一测试充分**。**输入要求**：传入全部 N 次试探的 T×N returns matrix（不是仅 winner），只传 winner 无法审计。**effective trials**（v0.2.0）：N̂=ρ̄+(1−ρ̄)·M 自动估计有效独立数——估计器分歧与 robustness band 要求同上 DSR 行（同一 controlled study） |
 | **PBO + SRD + DSR 三维交叉验证矩阵（CSDN 2026-03）** | ✅ 首轮（v1.6.0，作为 §3.1⑤ 报告模板第 6 部分的判定框架） | [CSDN 2026-03](https://blog.csdn.net/2501_92877300/article/details/150304073) PBO 三重脆弱性框架：① 子样本构造偏差（滑动窗口违反零均值假设）② 平稳性幻觉（结构性断点）③ 搜索空间覆盖不足。三维交叉验证：PBO（子样本失效频率，n_subsets≥1000，window≥6M，<0.10 警戒线）+ SRD（Sharpe Ratio Decay，滚动 12M 窗口斜率变化率，步长 1M，斜率<−0.03/年）+ DSR（校正多重检验后 Sharpe 显著性，有效独立策略数 K，DSR>1.0 显著）。**PBO 非贝叶斯后验概率，而是经验性拒绝率**——避免误解为"50% 概率过拟合" |
 
 **待施工模块**：数据预处理 pipeline（对数收益率+ADF+异常值+对齐）+ 相关性矩阵计算（Pearson/Spearman，扩展 `correlation_analyzer` 到策略级）+ 组合层 Neff 特征值分解 + **multivariate stationary block-bootstrap 引擎**（Patton-Politis-White 自动 block size，2000×，5 策略同步行重采样）+ 情绪周期分层标签器（消费 BM-SEL-23-B 输出）+ **过拟合检测引擎**（v1.6.0 新增：deflated-alpha v0.3.0 工具集成，audit() 一次运行 DSR+PBO/CSCV+Harvey-Liu haircuts+White RC/Hansen SPA；输入要求传入全部 N 次试探的 T×N returns matrix；辅以 PDR/PSI/DFR 三指标）。第二阶段增强 DCC-GARCH（arch 库 univariate GARCH + DCC 两步估计）。门禁 MOD-PA-004 已就位待消费。
@@ -175,11 +175,11 @@ scope: 07_trading_decision_architecture
 §3.2 已把方法表列全，本节回答"为什么这套算法是必做施工环节，而非可选增强"：
 
 **① 必要性——多策略上线前只算相关性不够**：
-- §3.1①-⑤ 算的是"策略两两/分层/组合层相关性是否过高"，但**相关性低≠策略本身有效**——5 个低相关策略可能全是过拟合的噪声冠军（N 次试探选最好，naive 单检验 100% 误报，[marketmaker.cc 2026-06](https://marketmaker.cc/pt/blog/post/deflated-sharpe-multiple-testing/) controlled study 实证）。低相关只是"分散假设成立"，不保证"每个 sleeve 有真 alpha"
+- §3.1①-⑤ 算的是"策略两两/分层/组合层相关性是否过高"，但**相关性低≠策略本身有效**——5 个低相关策略可能全是过拟合的噪声冠军（N 次试探选最好，naive 单检验 100% 误报——marketmaker.cc 2026-06 controlled study 实证，§2.2 已引）。低相关只是"分散假设成立"，不保证"每个 sleeve 有真 alpha"
 - [20 §2.5](20_first_batch_strategies.md) 五维差异化矩阵从设计层论证策略差异，但**设计差异不等于统计显著性**——DSR/PBO 是从统计层验证设计层假设的工具
 
 **② 算法分层——四家测试互验而非任一单选**：
-- [deflated-alpha v0.3.0 README](https://github.com/0scarito/deflated-alpha) 案例 (b) SMA crossover on zero-drift random walk 实证：DSR=0.989 几乎被骗（**应该 fail 但 pass**）、SPA p=0.019 错误显著（**应该 fail 但 pass**），**只有 PBO/CSCV=0.782 抓住过拟合**。没有单一测试充分
+- §3.2 方法表 deflated-alpha 行案例 (b) 实证：零漂移 random walk 上的 SMA crossover，DSR/SPA 均被骗（应 fail 却 pass），只有 PBO/CSCV 抓住过拟合——**没有单一测试充分**（数值见 §3.2/§8.3）
 - 故 §3.2 方法表把四家全标"✅ 首轮"——Analytical（DSR）+ Combinatorial（PBO）+ Multiple-testing（Harvey-Liu）+ Bootstrap data-snooping（White RC/Hansen SPA）四角度互验
 - deflated-alpha audit() 一次集成避免"四家分别实现"的过重——个人项目不可能独立实现 White RC + Hansen SPA 的 stationary bootstrap recentring
 
@@ -191,7 +191,7 @@ scope: 07_trading_decision_architecture
 
 **④ effective trials 的争议性——标在 §7 待定问题**：
 - DSR 假设 N 次试探独立，但策略试探高度相关（如打板策略试了 20 组参数，本质是 1 个 edge 的 20 种噪声变体）
-- deflated-alpha v0.2.0 用 N̂=ρ̄+(1−ρ̄)·M 估计 effective N，但 [dsr.marketmaker.cc 2026-07](https://dsr.marketmaker.cc/paper.pdf) controlled study 实证 5 个标准估计器在同一个 trial matrix 上分歧达两个数量级（1.6 到 370.0）
+- deflated-alpha v0.2.0 用 N̂=ρ̄+(1−ρ̄)·M 估计 effective N，但 controlled study 实证 5 个标准估计器在同一 trial matrix 上分歧达两个数量级（1.6~370.0，§3.2 DSR 行已引）
 - 决策：报告 effective N 的 robustness band（最小到最大估计），而非点估计——若所有估计下 verdict 一致才下结论
 
 **⑤ 与 §5.4 上线后漂移监控的关系——施工前一次性 vs 上线后持续**：
@@ -354,7 +354,7 @@ scope: 07_trading_decision_architecture
 - [deflated-alpha v0.3.0 — 0scarito 2026-07-26](https://github.com/0scarito/deflated-alpha)：MIT 许可 Python 工具，一个 audit() 接口运行四家过拟合检测（Analytical DSR+PSR+MinTRL / Combinatorial PBO-CSCV / Multiple-testing Harvey-Liu Bonferroni-Holm-BHY / Bootstrap data-snooping White RC+Hansen SPA），输出 verdict LIKELY_REAL/INCONCLUSIVE/LIKELY_OVERFIT + 各 check value/status 表格。v0.2.0 加 effective trials（DSR Appendix 3，N̂=ρ̄+(1−ρ̄)·M）。v0.1.0 DSR+PBO/CSCV+Harvey-Liu haircuts 一个接口。**案例 (b) SMA crossover on zero-drift random walk 实证 DSR=0.989 几乎被骗 + SPA p=0.019 错误显著，只有 PBO=0.782 抓住过拟合——没有单一测试充分**——§3.2 方法表 / §3.3 why 决策 / §4.5 工具集成裁定 / §5.3 过度工程审查 / §6 vendor 评估 / §8.2 depgraph 过拟合检测引擎依据
 - [Soloviov — How Many Backtest Winners Survive Deflation? 2026-07](https://dsr.marketmaker.cc/paper.pdf)：DSR + Harvey-Liu haircuts + White RC controlled study。N=1000 零技能策略 naive 单检验假阳性率 1.000，DSR 降到 0.001，Harvey-Liu Bonferroni/Holm 0.057，BHY 0.007，White RC 0.022。**deflated benchmark SR₀ ≈ 1.63 年化 = 噪声天花板**。effective trials 5 估计器分歧 1.6~370.0（两个数量级），robustness band 而非点估计。regime-switching edge (3.92 SR) 下 DSR 用 raw trial count 错误拒绝（0.748<0.95），用 effective N < 144.8 才保留——§3.2 DSR effective trials / §3.3 ④ effective N 争议 / §4.5 拒绝纯解析 DSR / §7 effective N 估计器分歧处理依据
 - [Soloviov — How Overfit Is Your Search? 2026-07](https://pbo.marketmaker.cc/paper.pdf)：PBO/CSCV controlled study。三 regime 实证：纯噪声 PBO=0.476±0.137、planted edge PBO=0.001、MA-crossover grid on random walk PBO=0.463。**PBO null=0.5 不是 0**（exchangeability 论证：纯噪声下 IS 冠军 OOS 等概率落任何位置），≈0.5=抛硬币完全过拟合。edge-strength sweep PBO 单调从 0.518 (zero edge) → 0.205 → 0.028 → 0.001 → 0.000 (Sharpe 3.17)——§3.2 PBO/CSCV / §3.1⑤ 报告模板第 6 部分 PBO 阈值校准依据
-- [marketmaker.cc — Deflated Sharpe Ratio: Multiple Testing 2026-06](https://marketmaker.cc/pt/blog/post/deflated-sharpe-multiple-testing/)：DSR + Harvey-Liu haircuts + White RC 假阳性率对比表（naive 1.000 / DSR 0.001 / Bonferroni 0.057 / Holm 0.057 / BHY 0.007 / White RC 0.022）。1000 零技能策略 best Sharpe 1.63 年化。**naive 单检验 100% 误报是 multiple testing 的核心陷阱**——§2.2 核心问题多重检验问题 / §3.3 ① 必要性论证依据
+- [marketmaker.cc — Deflated Sharpe Ratio: Multiple Testing 2026-06](https://marketmaker.cc/pt/blog/post/deflated-sharpe-multiple-testing/)：DSR + Harvey-Liu haircuts + White RC 假阳性率对比表（数字同上 Soloviov DSR 条）+ 1000 零技能策略 best Sharpe 1.63 年化——§2.2 核心问题多重检验问题 / §3.3 ① 必要性论证依据
 - [marketmaker.cc — Probability of Backtest Overfitting 2026-07](https://marketmaker.cc/en/blog/post/probability-backtest-overfitting-pbo)：PBO null=0.5 不是 1 的语义澄清。PBO ≈ 0.5 = 抛硬币完全过拟合，PBO ≈ 0 = 选择过程可信。三 regime 对照表（zero-edge 1.98 SR→0.06 OOS PBO 0.476 / planted edge 3.73→2.34 PBO 0.001 / MA-crossover grid 0.97→0.04 PBO 0.463）——§3.2 PBO 语义依据
 - [usekeel — Probability of Backtest Overfitting 2026-05](https://usekeel.io/learn/probability-backtest-overfitting)：PBO/CSCV 算法 step-by-step（T 行分 S=16 块，C(16,8)=12870 对称 IS/OOS 划分，IS 冠军 OOS 相对位 ω=rank_OOS/(N+1)，logit(ω)<0 即落入下半场，PBO=该事件频率）。rank-based 抗 regime shift。PBO<0.5 better than chance、<0.1 strong signal、>0.5 actively perverse——§3.2 PBO/CSCV 算法描述依据
 - [Bailey-López de Prado — Deflated Sharpe Ratio 2014](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2465675)：DSR 原始论文。PSR[SR*] 公式（含 skewness γ₃、kurtosis γ₄ 修正），E[max SR] 极值理论近似，MinTRL 最小 track record length。N 次独立试探假设，Appendix 3 effective trials 修正——§3.2 DSR 多重检验校正依据
@@ -390,3 +390,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-10 | 1.6.1 | 引用去重+scope 边界系统化 | §8.3 tickerly 重复引用合并（v1.6.0 外部编辑引入的重复条目）；§4.5 KinSushi 孤儿引用修复（标注 §4.5 但 §4.5 未提及→加 KinSushi 作 deflated-alpha 零依赖备选）；§5.3 新增失败模式覆盖边界（Student One 2026-06 四模式分类法：G07 覆盖①选择过拟合+④路径依赖、②参数过拟合+③泄漏归策略开发者 20 §4.4），将原 ad-hoc"不做"列表系统化为②③范畴或①④冗余变体；§8.3 加 Student One 引用 |
 | 2026-08-10 | 1.7.0 | 因子衰减与拥挤度建模（2026-08 最新理论研究） | §5.5 新增因子衰减与拥挤度建模远期候选——① Meng & Chen 2026-05 arXiv:2605.23905 Alpha半衰期定理（NYU，三大衰减通道：Signal Crowding/Performative Erosion/Red Queen Race，半衰期从5-7年压缩至18个月，13F机构组合趋同度+42%）；② Lee 2025-12 arXiv:2512.11913 双曲衰减因子拥挤度模型（KAIST，博弈论Nash均衡推导α(t)=K/(1+λt)，动量因子R²=0.65优于线性/指数，机械因子符合双曲衰减而判断型因子不符合，crowding预测尾部风险而非均值→作风控信号非alpha信号）。与§5.4 CUSUM/PSI症状监控互补——从"症状监控"到"根因建模"的演进路径。登记为远期候选，MVP维持CUSUM/PSI，Phase 2+实盘12月后评估双曲衰减拟合 | 用户要求全网搜索2026-08-08最新研究+选项之外更好算法。因子衰减与拥挤度是相关性漂移的根因，此前§5.4仅监控症状（CUSUM/PSI），缺乏根因理论模型。Meng半衰期定理+Lee双曲衰减填补"为什么相关性会漂移"的理论空白，且Lee的"crowding预测尾部风险"洞察与35号回撤Protocol可直接联动（拥挤→崩盘概率↑→预防性减仓） |
 | 2026-08-12 | 1.7.1 | 作战地图环节映射补强——锚定 BM-BT-05-I 组合级过拟合检测（§3.1⑤ 报告模板末映射块：第 6 部分过拟合检测矩阵 DSR/PBO/PDR/PSI/DFR+verdict + 第 7 部分正交性验证承载） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
+| 2026-08-15 | 1.7.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——重复信息真源+指针化 4 处：§3.2 deflated-alpha 行 effective trials 并指 DSR 行、§3.3① naive 误报引文并指 §2.2、§3.3② SMA 案例数值并指 §3.2/§8.3、§3.3④ 估计器分歧引文并指 §3.2、§8.3 marketmaker DSR 条假阳性率数字并指 Soloviov 条 | 8 类扫描 5 处均为类别 3（重复信息 ≥3 处）；参数/阈值/公式/裁定/BM 锚点/跨文档链接零丢失 |
