@@ -550,6 +550,8 @@ scope: 07_trading_decision_architecture
 
 > 另一 AI 持续做 regime（G02/G03 + C1 验证）。本边开启多 AI，每条轨道一个 AI，**3 条轨道并行**。
 
+> **⚠️ 2026-08-14 用户裁定·治理插队**：第 1-3 批业务施工（G12-G14/G16-G20/G22 等 18 会话）全部完工 merge 后，**git/并发协作基础设施专项治理（65/66/67 号，AI-GIT-001）插队为最高优先级**，先于第 4/5 批（34/60/43/53/54/55）。依据：三次事故（git clean 灾难/tracker 丢失/worktree wipe）四层根因（R1 删除原语零拦截/R2 隔离君子协定/R3 删除无审计/R4 清理无 SOP）从未治本，裁定书=docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md。
+
 ### 轨道 A：Alpha 链（核心关键路径）
 ```
 G04 首批3策略⭐ → G05 选股引擎 → G06 板块轮动 → G07 相关性验证
