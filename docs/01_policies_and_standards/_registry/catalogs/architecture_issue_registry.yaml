@@ -16496,6 +16496,104 @@ entries:
   created: '2026-08-14'
   last_updated: '2026-08-14'
 
+# --- #ARCH-DATA-017: 缺口观测失真三病灶——巡检 DateTime 口径误报 + tick 订阅失效心跳盲区 + subscriber 日志吞没 ---
+- issue_id: '#ARCH-DATA-017'
+  title: 数据缺口观测失真三病灶——backfill_checker DateTime 列等值口径误报（已修）+ tick_subscriber 订阅链路失效且心跳由 guard 代写成盲区 + 业务 stdout/stderr 未落盘
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    事件：2026-08-14 17:44 巡检报 kline_5min/kline_sector_intraday 近 6 个交易日全缺，
+    疑似本周盘中调度器未运行。端到端取证后证伪——调度器本周持续运行
+    （tmp/scheduler_run.log 轮转链 08-12~08-14 完整），kline_5min 每日 ~25 万行、
+    kline_sector_intraday 每日 20+ 万行落库完整（CLI status kline_5min_incremental
+    SUCCESS 249840 行与 CH 实测一致）。
+
+    病灶（三连环，同为"观测层失真"——比数据缺失更危险，会把巡检/告警信用耗尽）：
+    (1) 巡检口径误报（已治本）：_SQL_COUNT_BY_CUSTOM_DATE 用 {date_col}=toDate('d')
+        等值比较，kline_5min.trade_time / kline_sector_intraday.trade_date 实为
+        DateTime64——Date 提升为 DateTime('d 00:00:00') 后等值恒不成立 → count 恒 0
+        → 两表 6 天全误报缺失。_SQL_AVG_ROWS_7D 的 GROUP BY {date_col} 对 DateTime64
+        按时刻分组致阈值失真；_SQL_GAP_DATE_RANGE_COUNTS 同样按时刻分组。
+        修法：三处 SQL 统一 toDate({date_col}) 包裹（Date 列为 no-op，DateTime 列正确化），
+        修复后验证：两表 missing=[]，tick_data 真缺口 08-12/13/14 检出正确，Date 列表不回归。
+        连带发现 _SQL_COUNT_BY_DATE 表名双重前缀（c1_market.c1_market.tick_data，
+        品类注册表全名+模板硬编码前缀）→ 查询 400 按 0 行 → tick 检测恒报全缺，已同修。
+    (2) tick 订阅链路失效+心跳盲区：tick_data trade_date 08-12/13/14 真缺失（后经
+        miniqmt 拉取回补，各 2000 万行/天落库）。证据链：ingest_ts 显示 08-12/13 摄入
+        全是 trade_date=08-10/11 的历史回补；实时采集最后成功日为 08-07；guard 日志显示
+        08-10/08-11/08-13 三次启动的实例均在盘中运行但零采集。同期调度器 miniqmt
+        拉取任务每日正常——拉取通道可用、订阅推送通道失效。
+        放大器：start_tick_subscriber.ps1 的 Write-Heartbeat 由 guard 父进程每 15s
+        代写（子进程不死即 fresh），heartbeat 与采集业务存活完全脱节——
+        "进程活着但零采集"持续 4 天无任何告警。tick_subscriber._wait_for_first_tick
+        预热失败后仅 warning 继续运行（设计如此，但无后续重订阅/告警）。
+    (3) 业务日志吞没：guard Start-Process 未配置 -RedirectStandardOutput/Error，
+        tick_subscriber 的 stdout/stderr（含订阅失败/预热超时证据）全部丢弃，
+        导致 (2) 的根因（订阅 API 返回/异常）无法回溯取证。
+
+    裁定（分步治本）：
+    A. 已完成（2026-08-14）：backfill_checker 四处 SQL 口径修复 + 验证（提交 2f606056）。
+    B. 待办：tick_subscriber 日志落盘（guard 启动加 stdout/stderr 重定向到
+       tmp/tick_subscriber_run.log，或 main() 加 RotatingFileHandler）。
+    C. 待办：心跳业务化——tick_subscriber 内部维护"最近 tick 时间戳/今日已落行数"
+       写入 heartbeat 文件，deadman_switch 校验盘中时段（09:30-15:00）超过 N 分钟
+       无 tick 即告警/重启（替代 guard 代写心跳，心跳必须代表业务存活）。
+    D. 待办：订阅失效根因——盘中窗口重启 tick_subscriber 观察订阅序列日志
+       （B 落地后可取证），确认 xtdata subscribe_whole_quote 失效机制
+       （QMT 推送权限/会话状态），必要时改"订阅+定时拉取兜底"双通道。
+    E. 待办：_wait_for_first_tick 预热失败后增加周期性重订阅（当前失败后永久静默）。
+
+    教训（工作区并发蹂躏实证）：本修复 08-14 晚间三度被并发会话的 reset/merge
+    冲掉未提交修改；08-15 凌晨第四度——gateway 提交时 arch yaml 的 017 登记未随
+    2f606056 落库（疑 gateway stash/claim 竞态），08-15 第五度落盘并提交后 git show
+    验证在库。铁律：修复类改动必须随做随提交+提交后验证内容在库。
+  impact:
+  - 'src/zephyr/data/backfill_checker.py（A 已完成：_SQL_AVG_ROWS_7D/_SQL_COUNT_BY_CUSTOM_DATE/_SQL_GAP_DATE_RANGE_COUNTS 三处 toDate 包裹 + _SQL_COUNT_BY_DATE 去双重前缀）'
+  - 'scripts/start_tick_subscriber.ps1（B/C 待办：stdout 重定向 + 心跳业务化）'
+  - 'src/zephyr/data/tick_subscriber.py（C/E 待办：业务心跳写入 + 预热失败周期重订阅）'
+  fix_phase: '2026-08-14 A 完成并验证（五度落盘，工作区/提交蹂躏实证见 adjudication）；B/C/D/E 待盘中窗口施工验证'
+  status: decided
+  confirmed_by_user: '2026-08-14 任务交接指令"查根因+回补"；2026-08-15 用户指令提交修复'
+  related_rules: '#ARCH-DATA-TICK-GAP-001（7-29 tick 断连前例，daily_backfill 由来）; #ARCH-DATA-015/016（同类静默失败治理）; #ARCH-WORKTREE-WIPE-GOV-001（工作区蹂躏同类治理）'
+  created: '2026-08-14'
+  last_updated: '2026-08-15'
+
+# --- #ARCH-DATA-018: daily_valuation 死 fallback + akshare WAF 僵死模式 ---
+- issue_id: '#ARCH-DATA-018'
+  title: daily_valuation 双 fallback 全死（miniqmt 无 capability、local_valuation 无 provider）+ akshare 逐股任务 WAF 拦截下重试循环无告警
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    发现（2026-08-15 generic 回补续跑调研）：
+    (1) 死 fallback（#ARCH-DATA-FALLBACK-REPAIR-001 同类残留）：tasks.yaml
+        daily_valuation_full_refresh 配置 fallback_sources=[miniqmt, local_valuation]，
+        实证 miniqmt provider 无 daily_valuation capability（_KLINE/_FINANCIAL 能力表均无）、
+        scheduler._get_provider 13 源中无 local_valuation 实现——两条 fallback 全死；
+        daily_valuation_incremental 则完全无 fallback。主源 akshare
+        stock_zh_valuation_baidu 被 WAF 拦截时（2026-08-14 晚实证 1500/5543 后 9 小时
+        零进展），任务僵死无任何切换/告警。
+    (2) WAF 僵死模式：akshare 逐股任务（daily_valuation/share_change/restricted_shares
+        等 5543 只循环）在 WAF 拦截下表现为"每股 5 次重试全失败 → 继续下一只"——
+        任务层面呈 SUCCESS 推进但全量空转（近似静默失败），且重试期无告警。
+        08-15 凌晨 share_change（cninfo 源）复现全拦。
+    裁定：
+    A. 死 fallback 清仓：daily_valuation_full_refresh 移除两条死 fallback（或实现
+       local_valuation 本地估值计算 provider——PE/PB 可由 kline_daily 收盘价+财报
+       股本本地算出，工程独立立项评估）；daily_valuation_incremental 暂维持单源。
+    B. WAF 僵死观测：akshare provider 层增加"连续 N 股全失败 → 任务级失败+告警"
+       熔断（当前 per-symbol 重试吞没为 warning）；选股池级任务加总体进度心跳。
+    C. 短任期处置（已执行 2026-08-15）：WAF 冷却期按源分组回补——非 akshare 源
+       （miniqmt/tushare/qweather）先行，akshare 系延后冷却。
+  impact:
+  - 'src/zephyr/data/config/tasks.yaml（daily_valuation 两任务 fallback 配置）'
+  - 'src/zephyr/data/implementations/akshare_provider.py（WAF 熔断+进度心跳）'
+  fix_phase: '2026-08-15 C 已执行；A/B 待施工'
+  status: decided
+  confirmed_by_user: '2026-08-15 用户指令"继续调研处理遗留"'
+  related_rules: '#ARCH-DATA-FALLBACK-REPAIR-001（死 fallback 清仓前例）; #ARCH-DATA-015（baostock 黑名单同源治理）; #ARCH-DATA-017（同日缺口治理主线）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+
 # --- #ARCH-WORKTREE-WIPE-GOV-001: worktree wipe 事故治本 S1-S6 专项（2026-08-14，AI-GIT-001 完工）---
 - issue_id: '#ARCH-WORKTREE-WIPE-GOV-001'
   title: '2026-08-14 worktree wipe 事故治本专项——S1 删除收敛/S2 清理四证/S3 观测层/S4 网关锚定/S5 锚点级联 + task_board 重建；施工中实证 GATE-ROOT-TEMP-SWEEP 扫走 worktree .git 指针新事故机制并修复'
