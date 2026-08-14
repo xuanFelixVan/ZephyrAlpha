@@ -5,8 +5,8 @@ title: 数据源与下载体系规范
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.0"
-date: 2026-08-13
+version: "1.4.1"
+date: 2026-08-14
 topic: data_source_download_spec
 scope: 07_trading_decision_architecture
 depends_on:
@@ -57,19 +57,17 @@ related_issues:
 
 ### 2.1 项目处境
 
-ZephyrAlpha 是 A 股量化交易系统（miniQMT，T+1，不能做空），个人 + 100% AI 开发。数据获取基础设施已大规模施工：
+ZephyrAlpha 是 A 股量化交易系统（miniQMT，T+1，不能做空），个人 + 100% AI 开发。数据获取基础设施已大规模施工（2026-08-12 实测），但此前只有 what 层文档（蓝图/操作手册/域清单）缺 why 层——未来 AI 不知设计缘由会"优化"成另一个样子，飘移发生。本备忘补 why，§12 为全面升级讨论载体（v1.4.0 已裁定收敛）。
 
-- **代码层**：`src/zephyr/data/` 63 个 .py 文件（2026-08-12 rg 实测），含 Provider 抽象 + 15 个数据源实现 + 调度编排 + 质量门控 + 落库 + 韧性容灾全链路。
-- **配置层**：`tasks.yaml` 154 个采集任务（2026-08-12 实测，含 10 个 disabled）；`schedule.yaml` 15 个调度时段条目（L0~L11 含 L2.5/L3.5/L10.5）；`data_sources_registry.yaml` 12 个数据源元数据 + policy 字段。
+- **代码层**：`src/zephyr/data/` 63 个 .py 文件，含 Provider 抽象 + 15 个数据源实现 + 调度编排 + 质量门控 + 落库 + 韧性容灾全链路。
+- **配置层**：`tasks.yaml` 154 个采集任务（含 10 个 disabled）；`schedule.yaml` 15 个调度时段条目（L0~L11 含 L2.5/L3.5/L10.5）；`data_sources_registry.yaml` 12 个数据源元数据 + policy 字段。
 - **落库层**：ClickHouse 三库 `c1_market`（行情/资金/宏观/静态约 80 表）+ `c3_fundamental`（基本面/新闻/股东约 22 表）+ `c0_meta`（fetch_perf 性能记录）。
 - **文档层**：`_domain_data/` 7 篇 + `_domain_mkt_data/` 6 篇 + `11_d_data.md`（D_DATA 域 183 模块）+ `05_dataflow_architecture/`（data_inventory + data_acquisition_requirements）。
 
-但此前只有 what 层文档（蓝图、操作手册、域清单），缺少 why 层——未来 AI 看到当前 Provider 抽象/调度编排/落库引擎/韧性机制设计，不知道为什么是这样，"优化"成另一个样子，飘移发生。本备忘补这个 why，并以 §12 缺口与升级方向作为全面升级的讨论载体。
-
 ### 2.2 核心问题
 
-1. **15 个数据源特性差异极大如何统一管理**：iFind 配额制/miniQMT 单线程+进程依赖/AKShare 60RPM+断 VPN/baostock 线程局部登录/tushare token 积分/tickflow 限流/tdx bestip/rss SSL……每个源限流/重试/反爬/登录刷新策略完全不同，不能一个装饰器统一。
-2. **154 任务如何调度不冲突不遗漏**：盘中实时/盘后日K/夜间财务/周末校准/月初静态等多频次混排，miniQMT 非交易日连不上、iFind 配额耗尽、AKShare 反爬封锁等运行时故障常态。
+1. **15 个数据源特性差异极大如何统一管理**：iFind 配额制/miniQMT 单线程+进程依赖/AKShare 60RPM+断 VPN/baostock 线程局部登录/tushare token 积分/tickflow 限流/tdx bestip/rss SSL……每源限流/重试/反爬/登录刷新策略完全不同，不能一个装饰器统一。
+2. **154 任务如何调度不冲突不遗漏**：盘中实时/盘后日K/夜间财务/周末校准/月初静态多频次混排，miniQMT 非交易日连不上、iFind 配额耗尽、AKShare 反爬封锁等运行时故障常态。
 3. **ClickHouse 写入如何不炸**：5204 只股票逐个写入 = 5204 个 data parts，CH merge 满载崩溃（2026-07-09 实际事故）。
 4. **数据源失败如何不丢数据**：iFind 试用到期/akshare API 损坏/网络中断，单源失败不能让整张表断档。
 5. **新增表如何自动纳入运维**：新表只要在 tasks.yaml 注册任务，应自动获得 fallback/补下载/巡检三层保护，无需手动改配置。
@@ -85,44 +83,16 @@ ZephyrAlpha 是 A 股量化交易系统（miniQMT，T+1，不能做空），个�
 ## 3. 数据获取管线总览
 
 ```
-外部数据源（15 个）                Provider 抽象层                策略注册表
-miniQMT/iFind/AKShare ──→  IngestProviderBase      ──→  SourcePolicy
-baostock/tushare/tickflow     (connect/health_check/      (RPM/重试/退避/
-tdx/tqcenter/cls               fetch/disconnect)           反爬/登录刷新)
-eastmoney_news/rss/eia                                      ↓
-fred/qweather/internal_compute                    CapabilityContract
-                                                  (机器可执行契约 #ARCH-CH-022)
-                                                          ↓
-                          ↓
-调度编排层（APScheduler 15 个时段条目）  落库层（ClickHouse）
-scheduler.py ──→ task_queue(DAG) ──→  BufferedWriter(攒批≥50000行/30s)
-              ↓                          ↓
-         error_classifier               ch_writer(混合传输: driver TCP + WSL)
-         (不可恢复→立即fallback          ├─ c1_market（行情/资金/宏观/静态 ~80表）
-          可恢复→重试用完fallback)       ├─ c3_fundamental（基本面/新闻/股东 ~22表）
-              ↓                          └─ c0_meta.fetch_perf（性能记录）
-         fallback_sources                ↑
-         (主源→副源列表)                 ReplacingMergeTree(统一引擎 #ARCH-CH-002)
-                                          ↑
-                          ↓              幂等: 直接INSERT+CH后台去重
-数据韧性三层机制                   ←──── 8 个 MergeTree 表写前 DELETE
-§1 fallback（主源→副源）                  ↑
-§2 全表补下载（L10 周一02:00）      integrity_checker(L11 每日23:00巡检)
-§3 完整性巡检（L11 每日23:00）      backfill_checker(L10 动态发现全表)
-§4 新增表门禁（DATA-TASK-COMPLETENESS warn级）
-                          ↓
-                    进度/告警/监控
-                    progress_store(SQLite 断点续传)
-                    alerter(日志+failures/+钉钉/邮件)
-                    metrics(Prometheus 文本格式)
-                    source_health_check / fetch_perf
+外部数据源(15) → IngestProviderBase(connect/health_check/fetch/disconnect) ──→ SourcePolicy(RPM/重试/退避/反爬/登录刷新)
+              → CapabilityContract(机器可执行契约 #ARCH-CH-022，启动校验 fail-closed)
+→ scheduler.py(APScheduler 15 时段) → task_queue(DAG) → error_classifier(不可恢复→立即fallback / 可恢复→重试用完fallback) → fallback_sources(主源→副源)
+→ BufferedWriter(攒批≥50000行/30s) → ch_writer(clickhouse-driver TCP) → c1_market(~80表)/c3_fundamental(~22表)/c0_meta.fetch_perf
+   引擎统一 ReplacingMergeTree(#ARCH-CH-002) 直接 INSERT 后台去重；8 个 MergeTree 遗留表写前 DELETE 幂等
+韧性三层：①fallback(主源→副源) ②L10 周一02:00 全表补下载(backfill_checker 动态发现全表回看7天) ③L11 每日23:00 完整性巡检(integrity_checker)
+   + 新增表门禁 DATA-TASK-COMPLETENESS(warn级)；progress_store(SQLite 断点续传)/alerter/metrics/source_health_check/fetch_perf
 ```
 
-**设计要点（why）**：
-- **Provider 只拉数据不写库**：职责单一，写入由上层 scheduler 统一负责（避免 15 个 Provider 各写各的写入逻辑）。
-- **策略作为参数传入 fetch**：限流/重试由基类 `call_with_policy` 公共化，子类不重复实现（Stage 4 公共化，避免 15 份重复代码）。
-- **fetch 返回 Iterator[FetchResult]**：支持分批，每批一个 FetchResult，大表可流式下载不爆内存。
-- **CapabilityContract 机器可执行契约**：把"注释契约"升级为 scheduler 启动时校验的机器契约（#ARCH-CH-022），不一致 fail-closed 阻断启动——100% AI 开发模式下不能靠 AI 自觉读注释。
+设计要点（why）见 §5.1 Provider 接口五条设计决策 + §5.2 CapabilityContract 裁定。
 
 ## 4. 数据源全景
 
@@ -177,19 +147,7 @@ scheduler.py ──→ task_queue(DAG) ──→  BufferedWriter(攒批≥50000�
 
 **事件**：iFind 试用账号到期，原以 ifind 为主源的任务全部降级——ifind 降为 fallback，akshare/tushare 升为主源。
 
-**影响范围**（tasks.yaml 中标记 `#ARCH-IFIND-FAILOVER` 的任务，2026-08-12 实测 7 类 9 任务，全部 ifind 居 fallback 首位）：
-- `daily_valuation_incremental/full_refresh`（估值 PE/PB/PS/PCF）→ akshare 主源
-- `money_flow_incremental/full_refresh`（资金流向）→ akshare 主源
-- `industry_class_refresh`（申万行业分类）→ tushare 主源
-- `industry_class_suppl_refresh`（申万/中证行业分类补充）→ tushare 主源
-- `concept_sector_refresh`（概念板块列表）→ akshare 主源
-- `realtime_snapshot_incremental`（实时行情快照）→ akshare 主源
-- `sector_meta_refresh`（板块信息）→ akshare 主源
-
-**设计决策（why）**：
-- **不硬编码主源**：tasks.yaml 的 `source` 字段可热切换，`fallback_sources` 列表保留 ifind——续费后改回 source=ifind 即可恢复，无需改代码。
-- **降级不丢能力**：所有原 ifind 能力都有 akshare/tushare fallback 覆盖，数据连续性不受影响。
-- **EDB 例外**：`edb_data_incremental` 无 fallback（iFind EDB 配额耗尽 -4318，5万条/月不够拉 104 个宏观指标全历史），该任务 disabled，待 iFind 付费版或替代源。
+**影响范围**（tasks.yaml 中标记 `#ARCH-IFIND-FAILOVER` 的任务，2026-08-12 实测 7 类 9 任务，全部 ifind 居 fallback 首位）：`daily_valuation_incremental/full_refresh`（估值）→ akshare / `money_flow_incremental/full_refresh`（资金流向）→ akshare / `industry_class_refresh`（申万行业分类）→ tushare / `industry_class_suppl_refresh`（行业分类补充）→ tushare / `concept_sector_refresh`（概念板块）→ akshare / `realtime_snapshot_incremental`（实时快照）→ akshare / `sector_meta_refresh`（板块信息）→ akshare。**设计决策（why）**：①**不硬编码主源**——tasks.yaml `source` 字段可热切换，`fallback_sources` 保留 ifind，续费后改回 source=ifind 即恢复，无需改代码；②**降级不丢能力**——所有原 ifind 能力都有 akshare/tushare fallback 覆盖；③**EDB 例外**——`edb_data_incremental` 无 fallback（iFind EDB 配额耗尽 -4318，5万条/月不够拉 104 个宏观指标全历史），任务 disabled，待 iFind 付费版或替代源。
 
 ## 5. Provider 抽象与实现
 
@@ -213,17 +171,15 @@ class IngestProviderBase(abc.ABC):
 ```
 
 **设计决策（why）**：
-1. **Provider 只拉数据返回 list[tuple]，不写 ClickHouse**——职责单一，写入由上层 scheduler 统一负责。若 Provider 内部写库，15 个 Provider 各写各的写入逻辑，维护噩梦。
-2. **fetch 返回 Iterator[FetchResult] 支持分批**——大表（如 kline_1min 130万行/日）可流式下载不爆内存，每批一个 FetchResult 含 columns/rows/last_key。
-3. **策略作为参数传入 fetch，由基类 `call_with_policy` 公共化**——限流/重试逻辑不每个子类重写，Stage 4 公共化后 15 个 Provider 共享同一套策略应用代码。
-4. **异常时返回 FetchResult(error=...) 而非抛出**——让上层 scheduler 决定重试/fallback/告警，Provider 不自作主张。
+1. **Provider 只拉数据返回 list[tuple]，不写 ClickHouse**——职责单一，写入由 scheduler 统一负责（否则 15 个 Provider 各写各的写入逻辑，维护噩梦）。
+2. **fetch 返回 Iterator[FetchResult] 支持分批**——大表（kline_1min 130万行/日）流式下载不爆内存，每批一个 FetchResult 含 columns/rows/last_key。
+3. **策略作为参数传入 fetch，基类 `call_with_policy` 公共化**——Stage 4 公共化后 15 个 Provider 共享同一套策略应用代码。
+4. **异常时返回 FetchResult(error=...) 而非抛出**——重试/fallback/告警由上层 scheduler 决定，Provider 不自作主张。
 5. **`_http_get` 纳入 `_call_with_policy` 重试循环**（#ARCH-RSS-INVESTING-403-001）——5xx 瞬时错误重试，4xx WAF 拦截立即抛出不浪费重试。
 
 ### 5.2 CapabilityContract 机器可执行契约（#ARCH-CH-022）
 
-**问题**：原 `capabilities=["kline_daily", ...]` 是字符串列表，只是注释契约——AI 写 task 声明 `capability: kline_daily` 但 Provider 实际没实现该能力时，运行时才报错。
-
-**裁定**：升级为 `CapabilityContract` 机器可执行契约，scheduler 启动时校验 task 声明与 provider 实现一致性，不一致 fail-closed 阻断启动。
+**问题**：原 `capabilities=["kline_daily", ...]` 字符串列表只是注释契约——AI 写 task 声明 Provider 未实现的能力时运行时才报错。**裁定**：升级为 `CapabilityContract` 机器可执行契约，scheduler 启动时校验 task 声明与 provider 实现一致性，不一致 fail-closed 阻断启动——100% AI 开发模式下不能靠 AI 自觉读注释。
 
 ```python
 @dataclass
@@ -234,8 +190,6 @@ class CapabilityContract:
     supports_full_refresh: bool = True    # 是否支持全量刷新
     requires_date_range: bool = True      # 是否需要 start/end 日期（宏观数据可能不需要）
 ```
-
-**why**：100% AI 开发模式下不能靠 AI 自觉读注释——AI 写 task 时可能声明 Provider 没有的能力，机器契约启动时拦截，防止运行时才发现的错配。
 
 **四字段实际使用实证**（2026-08-12 rg 全量扫描）：仅 `supports_symbols_null` 实际承载区分度（akshare 66 个契约全部 True，#ARCH-CAP-NULL-SYMBOLS-001 修复 83 条 WARN；baostock.kline_daily 唯一显式 False）；`supports_incremental`/`supports_full_refresh`/`requires_date_range` 全项目保持默认值（仅 fred/eia 5 个契约显式 `requires_date_range=True`，等于默认值）。三闲置字段是否裁剪——**v1.4.0 已裁定保留不裁剪**（§16.2 Q15，#ARCH-DATA-002 语义校验落地时复用）。
 
@@ -265,55 +219,31 @@ class CapabilityContract:
 
 > **project_memory 硬约束**：internal_compute_provider 中所有引用的 `_fetch_xxx` 方法必须在类体内真实定义，禁止声明与实现脱节导致 AttributeError。
 
-**why**：internal_compute 是唯一"不拉外部数据、本地计算"的 Provider（技术指标/日历事件/港股日历），其 `_fetch_xxx` 方法是计算入口。AI 增加新能力时可能只在 capabilities 声明却忘了实现 fetch 方法，运行时 AttributeError。该铁律强制声明与实现一一对应。
+**why**：internal_compute 是唯一"不拉外部数据、本地计算"的 Provider。AI 增加新能力时可能只在 capabilities 声明却忘了实现 fetch 方法，运行时 AttributeError——铁律强制声明与实现一一对应。
 
 **实现细节**（2026-08-12 代码实证）：实际路由按 `payload.table` 分派——`calendar_event`/`hk_trade_calendar` 各有同名 `_fetch_xxx` 方法，`technical_indicator` 走默认分支 `_fetch_single_period`（非同名方法）；一致性由 `_INTERNAL_COMPUTE_CAPABILITIES` frozenset 声明 + CAP-CONSISTENCY gate 对齐保证。铁律的准确含义是"声明的能力必须有真实计算路径"，非字面"每个 capability_id 一个同名方法"。
 
 ### 5.5 symbol 标准化（symbol_normalizer/）
 
-**真源**：`src/zephyr/data/symbol_normalizer/normalizer.py`（TRAE-082 symbol 约定铁律，#ARCH-DATA-SYMBOL-001/002）
+**真源**：`src/zephyr/data/symbol_normalizer/normalizer.py`（TRAE-082 symbol 约定铁律，#ARCH-DATA-SYMBOL-001/002）。**职责**：纯函数无副作用，幂等（已带后缀原样返回），空输入→空输出，未知前缀→exchange=None（不擅自推断）。
 
-**职责**：纯函数无副作用，幂等（已带后缀原样返回），空输入→空输出，未知前缀→exchange=None（不擅自推断）。
-
-**A 股裸码→exchange 映射**：
-- 首位 6/5/9→SH（沪市股票/基金/B股）
-- 首位 0/3/1/2→SZ（深市股票/创业板/基金/B股，1.1.0 补 '2'→SZ 深市 B 股 200xxx/201xxx 实测 281K 行）
-- 首位 8/4→BJ（北交所/老三板）
-- 3 位前缀消歧：900-903→SH B股 / 920→BJ 北交所 / 110/113→可转债
-- 支持 SH/SZ/BJ/HK/US 五交易所
-
-**why**：不同数据源 symbol 格式不统一（akshare `600519` vs miniqmt `600519.SH` vs baostock `sh.600519`），统一标准化后才能跨源对比和落库去重。这是跨源验证（§8.4）和数据落库去重的前置依赖。
+**A 股裸码→exchange 映射**：首位 6/5/9→SH（沪市股票/基金/B股）；首位 0/3/1/2→SZ（深市股票/创业板/基金/B股，'2'→SZ 深市 B 股 200xxx/201xxx 实测 281K 行）；首位 8/4→BJ（北交所/老三板）；3 位前缀消歧 900-903→SH B股 / 920→BJ 北交所 / 110/113→可转债；支持 SH/SZ/BJ/HK/US 五交易所。**why**：不同数据源 symbol 格式不统一（akshare `600519` vs miniqmt `600519.SH` vs baostock `sh.600519`），统一标准化后才能跨源对比和落库去重——是 §8.4 跨源验证和落库去重的前置依赖。
 
 ### 5.6 表名注册表消费层 table_registry（#ARCH-CH-024）
 
 **真源**：`src/zephyr/data/table_registry.py`（MOD-GOV-table_registry）
 
-**问题**：`business_data_categories.yaml` 是业务数据品类唯一真源（声明态规则数据，含 98 条品类记录），但改造前 0 行代码消费它——所有 provider/scheduler 直接硬编码表名字符串，与 tasks.yaml 形成双真源。长期漂移必然发生（改名只改一处，另一处遗忘）。
+**问题**：`business_data_categories.yaml` 是业务数据品类唯一真源（98 条品类记录），但改造前 0 行代码消费它——provider/scheduler 直接硬编码表名，与 tasks.yaml 形成双真源，长期漂移必然发生。**裁定**（#ARCH-CH-024）：SSoT 真源已建立声明闭环（YAML 存在）但消费闭环未建立（代码不 import 真源）；表名属于声明态规则数据（trae_062 SSoT 分类铁律：表名是 schema 声明而非 DB 实例），真源是 YAML。
 
-**裁定**（#ARCH-CH-024 第一性原理根因）：SSoT 真源已建立声明闭环（YAML 存在），但消费闭环未建立（代码不 import 真源）。表名属于声明态规则数据（trae_062 SSoT 分类铁律：表名是 schema 声明而非 DB 实例），真源是 YAML。
+**治本**：`business_data_categories.yaml` 是表名/品类唯一真源；代码 MUST 通过 `TableRegistry.table(category_id)` 派生表名**禁止硬编码字符串**；启动时加载 YAML 构建 `category_id → "{database}.{table}"` 映射；`validate_tasks_yaml()` 校验 tasks.yaml.table ⊆ registry，不一致仅 WARN（渐进式收紧；Phase 4 commit gate 将升级为 block）。
 
-**治本**：
-- `business_data_categories.yaml` 是表名/品类唯一真源
-- 代码 MUST 通过 `TableRegistry.table(category_id)` 派生表名，**禁止硬编码字符串**
-- 启动时加载 YAML，构建 `category_id → "{database}.{table}"` 映射
-- `validate_tasks_yaml()` 校验 tasks.yaml.table ⊆ registry，不一致仅 WARN（渐进式收紧；Phase 4 commit gate 将升级为 block）
+**公共接口**：`TableRegistry.table(category_id) -> str`（查不到抛 KeyError，fail-closed）/ `all_tables()` / `is_registered(table)` / `validate_tasks_yaml(tasks)` / `get_registry()`（单例幂等加载）。**why KeyError 而非返回默认**：查不到表名说明 registry 与代码脱节，fail-closed 立即暴露；返回默认值则静默漂移，违背 SSoT 初衷。
 
-**公共接口**：
-- `TableRegistry.table(category_id) -> str`：返回全限定表名（查不到抛 KeyError，fail-closed 禁止凭记忆编表名）
-- `TableRegistry.all_tables() -> list[str]`：所有已注册全限定表名
-- `TableRegistry.is_registered(table) -> bool`
-- `TableRegistry.validate_tasks_yaml(tasks) -> list[str]`
-- `get_registry() -> TableRegistry`：单例（幂等加载）
-
-**why KeyError 而非返回默认**：查不到表名说明 registry 与代码脱节，fail-closed 立即暴露；若返回默认值则静默漂移，违背 SSoT 初衷。
-
-**消费现状**：scheduler._load_config() 末尾调用 validate_tasks_yaml() WARN 校验；news_dedup/sector_kline_downloader 等通过 `get_registry().table()` 派生表名（Phase 5 长期方向：240 处硬编码表名逐步替换为 TableRegistry.table() 常量引用）。
+**消费现状**：scheduler._load_config() 末尾调用 validate_tasks_yaml() WARN 校验；news_dedup/sector_kline_downloader 等通过 `get_registry().table()` 派生表名（Phase 5 长期方向：240 处硬编码表名逐步替换）。
 
 ### 5.7 策略注册表 policy_registry（per-source 调用策略）
 
-**真源**：`src/zephyr/data/policy_registry.py`（MOD-GOV-policy_registry）
-
-**职责**：每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。策略参数来源：`data_source_operation_manual.md`（MOD-L00-002）中每个数据源的限流/防爬/登录方式描述，已固化为 `config/policies.yaml`（派生物，真源在 `data_sources_registry.yaml` 的 policy 字段）。
+**真源**：`src/zephyr/data/policy_registry.py`（MOD-GOV-policy_registry）。**职责**：每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。策略参数来源：`data_source_operation_manual.md`（MOD-L00-002）每源限流/防爬/登录方式描述，已固化为 `config/policies.yaml`（派生物，真源在 `data_sources_registry.yaml` 的 policy 字段）。
 
 **SourcePolicy 数据类**（per-source 策略）：
 
@@ -331,37 +261,19 @@ class CapabilityContract:
 | `user_agent` | 自定义 UA | — |
 | `respect_robots_txt` | 是否遵守 robots.txt | rss=True |
 
-**PolicyRegistry 特性**：从 yaml 加载，支持 `maybe_reload` 热更新（运行时改 policies.yaml 无需重启）；`get_policy` 未知源返回默认策略（DEFAULT_POLICIES fallback），不抛异常。
-
-**why per-source 策略对象而非统一装饰器**：15 个源特性差异极大（iFind 配额制/miniQMT 单线程/AKShare 60RPM+断 VPN/baostock 线程局部登录），统一装饰器无法表达这些差异，必须 per-source 策略对象。
+**PolicyRegistry 特性**：从 yaml 加载，`maybe_reload` 热更新；`get_policy` 未知源返回默认策略（DEFAULT_POLICIES fallback）不抛异常。**why per-source 策略对象而非统一装饰器**：15 个源特性差异极大（iFind 配额制/miniQMT 单线程/AKShare 60RPM+断 VPN/baostock 线程局部登录），统一装饰器无法表达。
 
 ### 5.8 能力校验器 capability_validator（CapabilityContract 执行者）
 
-**真源**：`src/zephyr/data/capability_validator.py`（MOD-GOV-capability_validator）
+**真源**：`src/zephyr/data/capability_validator.py`（MOD-GOV-capability_validator）。**职责**：§5.2 的 CapabilityContract 由本模块在 scheduler 启动时校验——"注释契约"升级为"机器可执行契约"的实际执行者。
 
-**职责**：§5.2 定义的 CapabilityContract 契约由本模块在 scheduler 启动时校验——把"注释契约"升级为"机器可执行契约"的实际执行者。
+**校验规则**：①`task.capability` 必须在 `provider.meta.capability_contracts` 中（按 capability_id 匹配）——不存在 → **ERROR（阻断启动）**；②`task.symbols=null` 时 capability 应声明 `supports_symbols_null=True`——False → **WARN**；③`task.incremental=true` 时应声明 `supports_incremental=True`——False → **WARN**。**Violation 数据类**：`severity`（ERROR/WARN）+ `message` + `task_id` + `capability_id`；`validate_task_capability_contracts(tasks, providers)` 返回 Violation 列表，空列表=通过。
 
-**校验规则**：
-1. `task.capability` 必须在 `provider.meta.capability_contracts` 中（按 capability_id 匹配）——不存在 → **ERROR（阻断启动）**
-2. `task.symbols=null` 时，对应 capability 应声明 `supports_symbols_null=True`——`False` → **WARN**（不阻断，渐进式收紧；向后兼容字符串声明）
-3. `task.incremental=true` 时，对应 capability 应声明 `supports_incremental=True`——`False` → **WARN**
-
-**Violation 数据类**：`severity`（ERROR/WARN）+ `message` + `task_id` + `capability_id`。`validate_task_capability_contracts(tasks, providers)` 返回 Violation 列表，空列表=通过。
-
-**设计原则**（遵循裁定#221）：
-- 不新增 .md 规则文档，转化为启动时校验（reconciler 式）
-- 初期 WARN-only 收集数据，逐步收紧为 ERROR（渐进式治理）
-- 100% AI 开发模式下，只有机器可执行契约才能达到 ~100% 遵守率
-
-**why ERROR/WARN 分级而非全 ERROR**：supports_symbols_null=False 的历史 task 太多，一次性全阻断会瘫痪启动；先 WARN 收集数据，逐步补声明后再收紧为 ERROR。
+**设计原则**（遵循裁定#221）：不新增 .md 规则文档，转化为启动时校验（reconciler 式）；初期 WARN-only 收集数据逐步收紧为 ERROR；100% AI 开发模式下只有机器可执行契约才能达到 ~100% 遵守率。**why ERROR/WARN 分级而非全 ERROR**：supports_symbols_null=False 的历史 task 太多，一次性全阻断会瘫痪启动，先 WARN 收集数据再收紧。
 
 ### 5.9 错误分类器 error_classifier（可恢复性判断）
 
-**真源**：`src/zephyr/data/error_classifier.py`（MOD-GOV-error_classifier，stable）
-
-**职责**：根据 FetchResult.error 字符串判断可恢复性，驱动 §9.1 fallback 决策（不可恢复立即 fallback / 可恢复重试用完 fallback / 未知当可恢复给重试机会）。
-
-**纯字符串匹配无副作用**，预编译正则，覆盖 iFind/akshare/QMT 常见错误：
+**真源**：`src/zephyr/data/error_classifier.py`（MOD-GOV-error_classifier，stable）。**职责**：根据 FetchResult.error 字符串判断可恢复性，驱动 §9.1 fallback 决策（不可恢复立即 fallback / 可恢复重试用完 fallback / 未知当可恢复给重试机会）。纯字符串匹配无副作用，预编译正则：
 
 | 分类 | 关键词模式 | 处置 |
 |---|---|---|
@@ -369,32 +281,21 @@ class CapabilityContract:
 | **recoverable**（可恢复） | Timeout/ConnectionError/RemoteDisconnected/HTTPError/JSONDecodeError/503/502/`miniQMT 已断开`/`行情服务不可用` | 重试用完 fallback |
 | **unknown**（未知） | 匹配失败 | 当可恢复（给重试机会） |
 
-**why 关键词匹配而非异常类型**：FetchResult.error 是字符串（跨 Provider 统一接口），无法用 isinstance 判断异常类型（§13 已述）。
-
-**why 未知当可恢复**：保守策略——给重试机会比立即 fallback 更安全（立即 fallback 可能不必要地切换到较弱的副源）。
+**why 关键词匹配而非异常类型**：FetchResult.error 是字符串（跨 Provider 统一接口），无法 isinstance 判断。**why 未知当可恢复**：保守策略——给重试机会比立即 fallback 更安全（立即 fallback 可能不必要地切到较弱副源）。
 
 ### 5.10 数据源接入层包入口 satellite_geospatial_engine
 
-**真源**：`src/zephyr/data/satellite_geospatial_engine/__init__.py`（MOD-L00-001，D_DATA 域）
+**真源**：`src/zephyr/data/satellite_geospatial_engine/__init__.py`（MOD-L00-001，D_DATA 域）。**职责**：D_DATA 数据接入层域级包入口，re-export `IngestProviderBase` + `IngestProviderMeta`（provider_base）与 `DataQualityGate`（gov_enforcement.rule_enforcement.quality_gate）。
 
-**职责**：D_DATA 数据接入层的域级包入口，re-export `IngestProviderBase` + `IngestProviderMeta`（provider_base）与 `DataQualityGate`（gov_enforcement.rule_enforcement.quality_gate）。
+**CTR 契约依赖声明**（承重墙标记）：生产者——CTR-001 NormalizedMarketData → D_FACTOR/D_SIGNAL/D_RESEARCH、CTR-TRACE-001 TraceContext（链头，trace_id 本层创建）、CTR-ERR-001 DataQualityError → D_FACTOR；消费者——CTR-BP-001~003 Backpressure ← D_FACTOR（背压：暂停/降速/恢复数据推送）。
 
-**CTR 契约依赖声明**（承重墙标记）：
-- 作为生产者：CTR-001 NormalizedMarketData → D_FACTOR/D_SIGNAL/D_RESEARCH；CTR-TRACE-001 TraceContext（链头，trace_id 由本层创建）；CTR-ERR-001 DataQualityError → D_FACTOR
-- 作为消费者：CTR-BP-001~003 Backpressure ← D_FACTOR（背压信号：暂停/降速/恢复数据推送）
-
-**why 独立包入口**：D_DATA 是 LPC 双轨架构 C 轨（业务脊柱），域级包入口集中声明跨层契约依赖，ContractImpactAnalyzer 评估修改影响时的入口点。
+**why 独立包入口**：D_DATA 是 LPC 双轨架构 C 轨（业务脊柱），域级包入口集中声明跨层契约依赖，是 ContractImpactAnalyzer 评估修改影响的入口点。
 
 ## 6. 调度编排层
 
 ### 6.1 为什么用 APScheduler 而非 OS 级触发器
 
-**决策**：采用 APScheduler 常驻进程（BackgroundScheduler + ThreadPoolExecutor），而非 Windows 任务计划/cron。
-
-**why**：
-- OS 级触发器无任务依赖/并发控制/重试编排能力——154 任务有 DAG 依赖（adj_factor→kline_daily_hfq→kline_weekly_hfq），OS 触发器无法表达。
-- APScheduler 支持 `coalesce`（错过多次只跑一次）+ `max_instances=1`（同任务不并发）+ `misfire_grace_time`（错过1小时内补跑）。
-- per-source 串行/跨源并行需要线程池分流：`default` 池 8 线程给可并行源，`heavy` 池 2 线程给串行源（iFind/miniQMT）。
+**决策**：APScheduler 常驻进程（BackgroundScheduler + ThreadPoolExecutor），而非 Windows 任务计划/cron。**why**：①OS 级触发器无任务依赖/并发控制/重试编排能力——154 任务有 DAG 依赖（adj_factor→kline_daily_hfq→kline_weekly_hfq）无法表达；②APScheduler 支持 `coalesce`（错过多次只跑一次）+ `max_instances=1`（同任务不并发）+ `misfire_grace_time`（错过1小时内补跑）；③per-source 串行/跨源并行需线程池分流：`default` 池 8 线程给可并行源，`heavy` 池 2 线程给串行源（iFind/miniQMT）。
 
 ### 6.2 15 个调度时段条目（schedule.yaml 真源）
 
@@ -418,19 +319,11 @@ class CapabilityContract:
 | L10.5 每日盘后补下载 | 00 17 周一-五 | heavy | 当日缺口检测+自动补下载 | 治本#ARCH-DATA-TICK-GAP-001，当天发现当天补（不依赖 L10 周末窗口） |
 | L11 完整性巡检 | 00 23 周一-五 | default | integrity_check_daily | 全表达标检测 |
 
-**why L2.5 独立执行器**：miniqmt 全市场分钟K线（~5000 股）是慢任务，若与板块K线共用 intraday_minute 执行器，板块K线会被阻塞。mootdx TCP 直连获取 880xxx 板块分钟K线是独立通道（不走 miniqmt），独立执行器避免互相阻塞。
-
-**why L10.5 当天补**：L10 周末补下载回看7天，但 tick_data 当日缺口若等到周末才补，期间回测/策略已用错数据。L10.5 盘后立即检测当日缺口当天补，#ARCH-DATA-TICK-GAP-001 治本。
+**why L2.5 独立执行器**：miniqmt 全市场分钟K线（~5000 股）慢任务共用执行器会阻塞板块K线；mootdx TCP 直连 880xxx 是独立通道（不走 miniqmt）。**why L10.5 当天补**：L10 周末回看7天，tick_data 当日缺口若等到周末才补，期间回测/策略已用错数据；L10.5 盘后立即检测当天补，#ARCH-DATA-TICK-GAP-001 治本。
 
 ### 6.3 miniQMT 交易日约束（2026-07-19 裁定）
 
-**问题**：QMT 服务器周末/节假日关闭登录服务（error 10061 WSAECONNREFUSED），miniqmt 任务非交易日触发必然失败。
-
-**裁定**：
-1. `TRADING_DAY_GUARDED_SCHEDULES` 覆盖 L1/L2/L4/L5/L6/L7/L11 共 8 个时段，scheduler 非交易日自动跳过。
-2. L8 改周一 03:00（原周六 02:00），确保周末后首个工作日 QMT 可用。
-3. L9 不在守卫列表（含 ifind/akshare 任务需周末/月初跑），但 miniqmt 源任务必须标 `extra.trading_day_only: true`，由 `_filter_schedule_tasks` 非交易日过滤。
-4. `cli run <task_id>` 手动触发绕过守卫，用户自判时机。
+**问题**：QMT 服务器周末/节假日关闭登录服务（error 10061 WSAECONNREFUSED），miniqmt 任务非交易日触发必然失败。**裁定**：①`TRADING_DAY_GUARDED_SCHEDULES` 覆盖 L1/L2/L4/L5/L6/L7/L11 共 8 个时段，scheduler 非交易日自动跳过；②L8 改周一 03:00（原周六 02:00），确保周末后首个工作日 QMT 可用；③L9 不在守卫列表（含 ifind/akshare 任务需周末/月初跑），但 miniqmt 源任务必须标 `extra.trading_day_only: true`，由 `_filter_schedule_tasks` 非交易日过滤；④`cli run <task_id>` 手动触发绕过守卫，用户自判时机。
 
 ### 6.4 任务依赖图（DAG）
 
@@ -448,22 +341,15 @@ option_kline ──→ option_greeks
 kline_sector_880 ──→ kline_sector_880_resample
 ```
 
-**why**：依赖通过 `task_queue.py` DAG 管理，前置未完成则当前任务 PENDING。避免 adj_factor 没下载完就跑 kline_daily_hfq 导致复权错算。
+**why**：依赖通过 `task_queue.py` DAG 管理，前置未完成则当前任务 PENDING——避免 adj_factor 没下载完就跑 kline_daily_hfq 导致复权错算。
 
 ### 6.5 失败重试与告警
 
-- **任务级重试**：Provider 内部按 SourcePolicy 重试（瞬时错误）。
-- **数据源 fallback**：主源失败后自动尝试副源（§9.1）。
-- **调度级重跑**：DEAD 任务进 `failures/` 目录，CLI `integrator rerun-failed` 一键重跑。
-- **L10 周末补下载**：周一 02:00 自动检测过去7天全表缺失并补下载（不依赖 last_key）。
-- **L11 每日巡检**：每天 23:00 盘后全表达标检测，不达标告警。
-- **告警触发**：任务 DEAD/主源 fallback/单日失败率>5%/某源连续3天失败/iFind -4318/L11 巡检不达标。
+**重试链**：任务级重试（Provider 内部按 SourcePolicy 重试瞬时错误）→ 数据源 fallback（主源失败自动尝试副源，§9.1）→ 调度级重跑（DEAD 任务进 `failures/` 目录，CLI `integrator rerun-failed` 一键重跑）→ L10 周末补下载（周一 02:00 检测过去7天全表缺失并补下载，不依赖 last_key）→ L11 每日巡检（23:00 盘后全表达标检测，不达标告警）。**告警触发**：任务 DEAD / 主源 fallback / 单日失败率>5% / 某源连续3天失败 / iFind -4318 / L11 巡检不达标。
 
 ### 6.6 Tick 订阅独立常驻进程（tick_subscriber.py）
 
-**真源**：`src/zephyr/data/tick_subscriber.py`（MOD-L00-001，#ARCH-CH-013）
-
-**职责**：QMT 实时 Tick 订阅服务——subscribe_quote 实时推送，写入 ClickHouse tick_data。**独立常驻进程，不走 scheduler cron**。
+**真源**：`src/zephyr/data/tick_subscriber.py`（MOD-L00-001，#ARCH-CH-013）。**职责**：QMT 实时 Tick 订阅服务——subscribe_quote 实时推送写入 ClickHouse tick_data，**独立常驻进程不走 scheduler cron**。启动：`python -m zephyr.data.tick_subscriber`，由 `ZephyrAlpha_TickSubscriber` Task Scheduler 任务守护（§10.5）。
 
 **架构**（P0-1 主动 WAL）：
 ```
@@ -476,34 +362,13 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
                                                           异步 drain 到 ClickHouse
 ```
 
-**设计要点**：
-- **QMT callback 线程只做 queue.put_nowait**（最小开销，不阻塞 QMT 行情推送）
-- **flush 线程批量出队**（500 条）构造单个 FetchResult 交 WalWriter
-- **WalWriter 先落盘段文件再异步 drain 到 CH**（P0-1 主动 WAL，CH 不可达时不丢 tick）
-- **15 字段**：trade_date/timestamp/recorded_time/symbol/market_type/price/volume/amount/direction/data_source/bid_price/ask_price/bid_volume/ask_volume/quality_flag
-- **P1-5 metrics 埋点**：received/written/dropped/queue_size
-- **P2-5 分阶段延迟 Histogram**：Stage1 on_tick / Stage2 queue_wait / Stage3 convert / Stage4 wal_add / Stage5 wal_flush
-- **无锁计数**：CPython GIL 保证 int += 1 统计精度足够
-
-**启动**：`python -m zephyr.data.tick_subscriber`，由 `ZephyrAlpha_TickSubscriber` Task Scheduler 任务守护（§10.5）。
-
-**why 独立进程而非 scheduler 任务**：tick 数据是实时推送（subscribe_quote callback）非轮询，不能走 scheduler cron；独立进程避免 tick 高频回调阻塞 scheduler 其他任务；独立心跳监控（§10.6 四层防御）确保 tick_subscriber 崩溃自愈。
+**设计要点**：QMT callback 线程只做 `queue.put_nowait`（最小开销不阻塞行情推送）；flush 线程批量出队（500 条）构造单个 FetchResult 交 WalWriter；**WalWriter 先落盘段文件再异步 drain 到 CH**（P0-1 主动 WAL，CH 不可达不丢 tick）；**15 字段**：trade_date/timestamp/recorded_time/symbol/market_type/price/volume/amount/direction/data_source/bid_price/ask_price/bid_volume/ask_volume/quality_flag；**P1-5 metrics** received/written/dropped/queue_size + **P2-5 分阶段延迟 Histogram**（on_tick/queue_wait/convert/wal_add/wal_flush 五 Stage）；无锁计数（CPython GIL 保证 int += 1 精度足够）。**why 独立进程而非 scheduler 任务**：tick 是实时推送（subscribe_quote callback）非轮询，不能走 cron；独立进程避免高频回调阻塞 scheduler 其他任务；独立心跳监控（§10.6 四层防御）确保崩溃自愈。
 
 ### 6.7 交易日历守卫 trading_calendar
 
-**真源**：`src/zephyr/data/trading_calendar.py`（MOD-GOV-trading_calendar，stable）
+**真源**：`src/zephyr/data/trading_calendar.py`（MOD-GOV-trading_calendar，stable）。**职责**：基于 `exchange_calendars` 包的 XSHG（上交所）日历精确判断交易日（含节假日/调休），纯 Python 本地计算不依赖网络/DB；scheduler 在盘中/盘后时段触发前调 `is_trading_day()`，非交易日自动跳过。XSHG 日历懒加载单例缓存；未安装时降级 weekday 判断；`is_trading_day` 永不抛异常。
 
-**职责**：基于 `exchange_calendars` 包的 XSHG（上交所）日历精确判断每个交易日（含节假日/调休），纯 Python 本地计算不依赖网络/DB。scheduler 在盘中/盘后时段触发前调用 `is_trading_day()`，非交易日自动跳过。
-
-**XSHG 日历单例缓存**：exchange_calendars 加载较慢，`_get_xshg_calendar()` 懒加载 + 单例缓存避免重复初始化。
-
-**回退策略**：exchange_calendars 未安装时降级为 weekday 判断（周一~周五），保证 scheduler 不因依赖缺失而崩溃。`is_trading_day` 永不抛异常。
-
-**TRADING_DAY_GUARDED_SCHEDULES**（需交易日历守卫的时段）：
-- L1 intraday_realtime / L2 intraday_minute / L4 daily_kline / L5 daily_capital / L6 daily_event / L7 nightly_financial / L10.5 daily_backfill / L11 integrity_check / L0 auction_highfreq
-- **不需守卫**：L3 event_driven（7×24）/ L8 weekend_calibration / L9 monthly_static / L10 weekend_backfill（这些时段含非交易日需运行的任务）
-
-**why exchange_calendars 而非自建日历表**：exchange_calendars 是成熟开源库，含历年节假日/调休数据，自建易遗漏调休（如 2024 年春节调休）。XSHG 即上交所日历，与 A 股交易日完全对齐。
+**TRADING_DAY_GUARDED_SCHEDULES**：L0/L1/L2/L4/L5/L6/L7/L10.5/L11 需守卫；**不需守卫**：L3 event_driven（7×24）/ L8 weekend_calibration / L9 monthly_static / L10 weekend_backfill（含非交易日需运行的任务）。**why exchange_calendars 而非自建日历表**：成熟开源库含历年节假日/调休，自建易遗漏调休；XSHG 与 A 股交易日完全对齐。
 
 ### 6.8 板块三件套（sector_kline_downloader / sector_ranking_engine / sector_snapshot_collector）
 
@@ -511,109 +376,53 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 #### 6.8.1 sector_kline_downloader——板块K线下载器
 
-**真源**：`src/zephyr/data/sector_kline_downloader.py`
-
-**职责**：盘后从 tqcenter 下载 880xxx 板块指数K线（1d/1m/5m 三周期）写入 ClickHouse `kline_sector_880` 表。50 只/批分批下载避免 tqcenter 超时。ReplacingMergeTree 幂等写入。
-
-**约束**：tqcenter 仅支持 1d/1m/5m，15m/30m/60m 不被直接支持，需 §6.9 kline_resampler 从 1m/5m 合成。
+**真源**：`src/zephyr/data/sector_kline_downloader.py`。**职责**：盘后从 tqcenter 下载 880xxx 板块指数K线（1d/1m/5m 三周期）写入 ClickHouse `kline_sector_880` 表；50 只/批分批避免 tqcenter 超时；ReplacingMergeTree 幂等写入。**约束**：tqcenter 仅支持 1d/1m/5m，15m/30m/60m 需 §6.9 kline_resampler 从 1m/5m 合成。
 
 #### 6.8.2 sector_ranking_engine——板块动态排名引擎
 
-**真源**：`src/zephyr/data/sector_ranking_engine.py`
+**真源**：`src/zephyr/data/sector_ranking_engine.py`。**职责**：5 因子复合排名动态调整 99 只推送池，每日盘前重算一次。
 
-**职责**：5 因子复合排名动态调整 99 只推送池，每日盘前重算一次。
-
-**5 因子复合排名**（权重之和=1.0）：
-1. 成交额 amount **30%**——板块活跃度
-2. 涨跌幅绝对值 **25%**——板块波动
-3. 主动交投量（outside+inside）**20%**——交投活跃度（volume 恒为 0 的替代方案）
-4. 5分钟动量 **15%**——短期动量
-5. 板块-大盘强弱差 **10%**——相对强度
-
-**大盘基准**：880001.SH（上证指数），缺失时用全板块涨跌幅均值。百分位排名消除量纲差异。
-
-**回退**：sector_snapshot 表无数据时回退到成分股数量 Top99。
+**5 因子复合排名**（权重之和=1.0）：成交额 amount **30%**（板块活跃度）/ 涨跌幅绝对值 **25%**（板块波动）/ 主动交投量（outside+inside）**20%**（volume 恒为 0 的替代方案）/ 5分钟动量 **15%** / 板块-大盘强弱差 **10%**（相对强度）。**大盘基准**：880001.SH（上证指数），缺失时用全板块涨跌幅均值；百分位排名消除量纲。**回退**：sector_snapshot 表无数据时回退成分股数量 Top99。
 
 #### 6.8.3 sector_snapshot_collector——板块实时快照采集器
 
-**真源**：`src/zephyr/data/sector_snapshot_collector.py`
+**真源**：`src/zephyr/data/sector_snapshot_collector.py`。**职责**：方案 C 混合模式采集 880xxx 板块实时快照（99 只推送 + 全量轮询 30 秒）写入 `sector_snapshot` 表。
 
-**职责**：方案 C 混合模式采集 880xxx 板块实时快照（99 只推送 + 全量轮询 30 秒）写入 `sector_snapshot` 表。
-
-**混合模式架构**：
-1. **推送层**：`subscribe_hq` 订阅核心 99 只（由 §6.8.2 ranking_engine 动态选取），~18 秒/次推送通知
-2. **轮询层**：`get_market_snapshot` 每 30 秒轮询全量 582 只（实测 2026-07-22：582 只 = 454 个 880xxx + 128 个 881xxx，非设计时估算的 584）
-3. 收到推送通知或轮询触发时，调 `get_market_snapshot` 取 26 字段写入 ClickHouse
-
-**why 混合模式而非纯推送/纯轮询**：纯推送只覆盖 99 只核心板块，全量 582 只需轮询补全；纯轮询 30 秒延迟对核心板块太高。混合模式核心板块推送低延迟 + 全量板块轮询兜底。
+**混合模式架构**：①推送层 `subscribe_hq` 订阅核心 99 只（§6.8.2 动态选取），~18 秒/次推送；②轮询层 `get_market_snapshot` 每 30 秒轮询全量 582 只（实测 2026-07-22：454 个 880xxx + 128 个 881xxx）；③推送通知或轮询触发时取 26 字段写入 ClickHouse。**why 混合模式**：纯推送只覆盖 99 只核心板块，全量 582 只需轮询补全；纯轮询 30 秒延迟对核心板块太高——核心推送低延迟 + 全量轮询兜底。
 
 ### 6.9 K线合成器 kline_resampler
 
-**真源**：`src/zephyr/data/kline_resampler.py`
+**真源**：`src/zephyr/data/kline_resampler.py`。**职责**：从 `kline_sector_880` 的 1m/5m 合成 15m/30m/60m K线写入同表（ClickHouse `toStartOfInterval` 聚合在 DB 内完成，避免数据搬运）。
 
-**职责**：从 `kline_sector_880` 表的 1m/5m 数据合成 15m/30m/60m K线写入同表（ClickHouse `toStartOfInterval` 聚合在 DB 内完成，避免数据搬运）。
-
-**合成规则**（标准 OHLC 聚合）：
-- open = `argMin(open, timestamp)`——窗口内第一条K线开盘价
-- high = `max(high)` / low = `min(low)`
-- close = `argMax(close, timestamp)`——窗口内最后一条K线收盘价
-- volume = `sum(volume)` / amount = `sum(amount)`
-
-**幂等**：DELETE + INSERT（按 period + trade_date 范围先删后插），盘后批量执行。
-
-**why DB 内合成而非拉到 Python 聚合**：板块K线数据量大（582 板块 × 多周期 × 多日），拉到 Python 聚合是数据搬运浪费；ClickHouse `toStartOfInterval` + `argMin/argMax` 在 DB 内完成，利用 CH 列式聚合优势。
+**合成规则**（标准 OHLC 聚合）：open=`argMin(open, timestamp)` / high=`max(high)` / low=`min(low)` / close=`argMax(close, timestamp)` / volume=`sum(volume)` / amount=`sum(amount)`。**幂等**：DELETE + INSERT（按 period + trade_date 先删后插），盘后批量执行。**why DB 内合成**：582 板块 × 多周期 × 多日数据量大，拉到 Python 聚合是数据搬运浪费，CH 列式聚合在 DB 内完成。
 
 ### 6.10 新闻采集去重（news_collector / news_dedup）
 
 #### 6.10.1 news_dedup——新闻去重模块
 
-**真源**：`src/zephyr/data/news_dedup.py`（MOD-GOV-news_dedup）
+**真源**：`src/zephyr/data/news_dedup.py`（MOD-GOV-news_dedup）。**职责**：基于标题 MD5 哈希对新闻查重去重——不同新闻源（AKShare/财联社/东方财富/RSS）内容可能重复，避免同一新闻多源重复写入 `fund_news_data` 表。
 
-**职责**：基于标题 MD5 哈希对新闻数据查重去重。不同新闻源（AKShare/财联社/东方财富/RSS）获取的内容可能重复，需基于标题去重避免同一条新闻被多源重复写入 `fund_news_data` 表。
-
-**机制**：
-- 查询 ClickHouse 中最近 N 天（`_DEDUP_WINDOW_DAYS=7`）已有新闻的标题哈希集合
-- 过滤掉已存在的标题哈希 + 同一批次内重复标题
-- **fail-open**：去重异常时跳过去重返回原始数据（不阻断写入）
-
-**NEWS_DATA_COLUMNS 标准列**：news_id/publish_time/title/content/summary/source/source_url/data_source/region/language。#ARCH-RSS-INVESTING-403-001：显式写入 region/language，避免海外新闻被表 DEFAULT 误标 CN/zh。
-
-**why 标题 MD5 而非内容哈希**：标题是新闻唯一性最强的字段，内容可能因源不同有编辑差异；MD5 计算快且定长。
+**机制**：查询 CH 最近 N 天（`_DEDUP_WINDOW_DAYS=7`）已有新闻标题哈希集合 → 过滤已存在哈希 + 批次内重复 → **fail-open**（去重异常时跳过返回原始数据，不阻断写入）。**NEWS_DATA_COLUMNS 标准列**：news_id/publish_time/title/content/summary/source/source_url/data_source/region/language；#ARCH-RSS-INVESTING-403-001：显式写入 region/language，避免海外新闻被表 DEFAULT 误标 CN/zh。**why 标题 MD5 而非内容哈希**：标题是新闻唯一性最强字段，内容可能因源不同有编辑差异；MD5 快且定长。
 
 #### 6.10.2 news_collector——新闻数据采集器
 
-**真源**：`src/zephyr/data/news_collector.py`（MOD-DATA-NEWS-001，design 阶段）
-
-**职责**：从 ClickHouse `fund_news_data` 表按条件查询新闻返回标准列 DataFrame，供 P1-E3 NLP 管道（评估集构建、批量推理）使用。复用 `ch_reader.query()` + `regime_data_loader.parse_tsv`，不重复造 TSV 解析轮子。
-
-**PIT 严格**：`publish_time <= end_date`，不泄漏未来新闻（与 §8.6 pit_query 的 PIT 铁律对齐）。
-
-**why 查询器独立于下载器**：news_dedup 是写入端去重（scheduler 调用），news_collector 是读取端查询（NLP 管道调用），职责分离——下载层只管下，消费层按需查。
+**真源**：`src/zephyr/data/news_collector.py`（MOD-DATA-NEWS-001，design 阶段）。**职责**：从 ClickHouse `fund_news_data` 按条件查询新闻返回标准列 DataFrame，供 P1-E3 NLP 管道（评估集构建、批量推理）使用；复用 `ch_reader.query()` + `regime_data_loader.parse_tsv`，不重复造 TSV 解析轮子。**PIT 严格**：`publish_time <= end_date` 不泄漏未来新闻（与 §8.6 PIT 铁律对齐）。**why 查询器独立于下载器**：news_dedup 是写入端去重（scheduler 调用），news_collector 是读取端查询（NLP 管道调用），职责分离。
 
 ## 7. 落库体系
 
 ### 7.1 ClickHouse 引擎统一裁定（#ARCH-CH-002）
 
-**原设计**：全部 MergeTree + 先删后插，理由"数据源唯一不需要去重"。
+**原设计**：全部 MergeTree + 先删后插，理由"数据源唯一不需要去重"。**实际事故**（2026-07-09）：5204 只股票逐个写入时，"先删后插"= 5204 次 ALTER DELETE mutation + 5204 次 INSERT = 双倍 data parts，CH CPU 352% merge 满载崩溃，kline_1min 1039 parts / kline_daily 788 parts。
 
-**实际事故**（2026-07-09）：5204 只股票逐个写入时，"先删后插"= 5204 次 ALTER DELETE mutation + 5204 次 INSERT = 双倍 data parts，CH CPU 352% merge 满载崩溃，kline_1min 1039 parts / kline_daily 788 parts。
-
-**裁定**：废弃"全部 MergeTree + 先删后插"，统一 `ReplacingMergeTree` + 直接 INSERT，CH 后台去重，零 mutation 开销。
-
-**8 个例外**（c3_fundamental 的 MergeTree 遗留表）：share_unlock/restricted_shares/analyst_forecast/disclosure_plan/equity_pledge_detail/rights_issue/share_change/industry_class_suppl——scheduler.run_task 对这些表写前执行 `DELETE WHERE toDate(date_col) IN (start..end)` 保证幂等，date_col 从 tasks.yaml 读取（禁止硬编码）。
+**裁定**：废弃"全部 MergeTree + 先删后插"，统一 `ReplacingMergeTree` + 直接 INSERT，CH 后台去重，零 mutation 开销。**8 个例外**（c3_fundamental 的 MergeTree 遗留表）：share_unlock/restricted_shares/analyst_forecast/disclosure_plan/equity_pledge_detail/rights_issue/share_change/industry_class_suppl——scheduler.run_task 对这些表写前执行 `DELETE WHERE toDate(date_col) IN (start..end)` 保证幂等，date_col 从 tasks.yaml 读取（禁止硬编码）。
 
 ### 7.2 BufferedWriter 批量聚合层（#ARCH-CH-003）
 
-**问题**：ch_writer 逐个 FetchResult = 1 次 INSERT，5204 只股票 = 5204 个 data parts，违反 CH 官方"每秒≤1次INSERT，每次≥1万行"约束。
-
-**裁定**：Provider 和 ch_writer 之间插入 BufferedWriter，攒批写入（按行数 ≥50000 或时间窗口 ≥30 秒触发）。预期 5204 次 INSERT → 1-3 次 INSERT。
+**问题**：ch_writer 逐个 FetchResult = 1 次 INSERT，5204 只股票 = 5204 个 data parts，违反 CH 官方"每秒≤1次INSERT，每次≥1万行"约束。**裁定**：Provider 和 ch_writer 之间插入 BufferedWriter，攒批写入（按行数 ≥50000 或时间窗口 ≥30 秒触发），预期 5204 次 INSERT → 1-3 次 INSERT。
 
 ### 7.3 ch_writer 混合传输（#ARCH-CH-005）
 
-**裁定**：采用混合传输架构
-- `query()` / `delete_where()` → clickhouse-driver TCP（2.9x 查询加速，无类型问题）
-- `write_tsv()` → 保留 WSL subprocess TSV（TSV 自动处理类型转换，1.6x 提速不显著）
-- clickhouse-driver 不可用时自动降级到 WSL subprocess
+**裁定**：混合传输架构——`query()`/`delete_where()` → clickhouse-driver TCP（2.9x 查询加速，无类型问题）；`write_tsv()` → 保留 WSL subprocess TSV（TSV 自动处理类型转换，1.6x 提速不显著）；clickhouse-driver 不可用时自动降级 WSL subprocess。
 
 **后续变更**（2026-07-16 Hyper-V 迁移，#ARCH-CH-010/013 resolved）：ClickHouse 从 WSL2 迁至 Hyper-V VM（172.24.30.100 固定 IP），`_discover_wsl_ip()` 移除，WSL subprocess fallback 通道移除，统一走 clickhouse-driver TCP 直连。
 
@@ -629,20 +438,9 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 ### 7.5 落库表全景（三库）
 
-**c1_market（行情/资金/宏观/静态 ~80 表）**：
-- K线类：kline_daily/kline_daily_hfq/kline_weekly/kline_monthly/kline_weekly_hfq/kline_monthly_hfq/kline_1min~60min/kline_etf_*/kline_lof_*/kline_index/kline_sector/kline_sector_880/kline_sector_intraday/kline_cb/kline_option/kline_hk_daily/kline_hk/kline_us_daily/kline_futures/futures_kline_qmt
-- Tick/快照：tick_data/l2_tick/auction_snapshot/auction_book/index_quote/realtime_snapshot
-- 复权/估值：adj_factor/daily_valuation/stock_valuation
-- 资金面：margin_trading/block_trade/block_trade_detail/dragon_tiger/dragon_tiger_seat/money_flow/hk_connect_flow
-- 宏观：macro_data/edb_data
-- 衍生品：futures_position/futures_term_structure/option_iv_surface/option_greeks/convertible_bond_iv
-- 静态/日历：trade_calendar/hk_trade_calendar/calendar_event/stock_list/index_list/index_constituent/index_weight/index_adjustment/msci_adjustment/industry_class/industry_class_suppl/concept_sector/concept_board/sector_list/sector_meta/sector_constituent/sector_snapshot/convertible_bond_list/etf_list/etf_nav/etf_benchmark/lof_list/hk_stock_list/st_stock_list/ipo_schedule/margin_target_adjustment
-- 另类：hog_spot_index/hog_futures_core/hog_province_spot/weather_data/stock_hot_rank/limit_up_down/technical_indicator/us_index
+**c1_market（行情/资金/宏观/静态 ~80 表）**：K线类（kline_daily/hfq/weekly/monthly/weekly_hfq/monthly_hfq/1min~60min/etf_*/lof_*/index/sector/sector_880/sector_intraday/cb/option/hk_daily/hk/us_daily/futures/futures_kline_qmt）/ Tick快照（tick_data/l2_tick/auction_snapshot/auction_book/index_quote/realtime_snapshot）/ 复权估值（adj_factor/daily_valuation/stock_valuation）/ 资金面（margin_trading/block_trade/block_trade_detail/dragon_tiger/dragon_tiger_seat/money_flow/hk_connect_flow）/ 宏观（macro_data/edb_data）/ 衍生品（futures_position/futures_term_structure/option_iv_surface/option_greeks/convertible_bond_iv）/ 静态日历（trade_calendar/hk_trade_calendar/calendar_event/stock_list/index_list/index_constituent/index_weight/index_adjustment/msci_adjustment/industry_class/industry_class_suppl/concept_sector/concept_board/sector_list/sector_meta/sector_constituent/sector_snapshot/convertible_bond_list/etf_list/etf_nav/etf_benchmark/lof_list/hk_stock_list/st_stock_list/ipo_schedule/margin_target_adjustment）/ 另类（hog_spot_index/hog_futures_core/hog_province_spot/weather_data/stock_hot_rank/limit_up_down/technical_indicator/us_index）
 
-**c3_fundamental（基本面/新闻/股东 ~22 表）**：
-- 新闻：news_data（多源统一表，含 cls/em/rss/akshare/tushare）
-- 财务：balance_sheet/income_statement/cashflow_statement/financial_indicator/main_business
-- 股东/事件：shareholder_count/analyst_forecast/earnings_forecast/express_report/audit_opinion/dividend/rights_issue/share_unlock/restricted_shares/share_change/equity_pledge_detail/equity_pledge_summary/top10_shareholders/top10_circulating_shareholders/disclosure_plan/repurchase/research_report
+**c3_fundamental（基本面/新闻/股东 ~22 表）**：新闻（news_data 多源统一表，含 cls/em/rss/akshare/tushare）/ 财务（balance_sheet/income_statement/cashflow_statement/financial_indicator/main_business）/ 股东事件（shareholder_count/analyst_forecast/earnings_forecast/express_report/audit_opinion/dividend/rights_issue/share_unlock/restricted_shares/share_change/equity_pledge_detail/equity_pledge_summary/top10_shareholders/top10_circulating_shareholders/disclosure_plan/repurchase/research_report）
 
 **c0_meta（元数据）**：fetch_perf（Capability 实测性能记录，source+capability+test_date ORDER BY，api_status 枚举 ok/slow/rate_limited/blocked/broken/pending）
 
@@ -650,61 +448,33 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 #### 7.6.1 ch_config.py——连接配置单真源（#ARCH-CH-017 / #ARCH-CH-019）
 
-**问题**：Hyper-V 迁移前，ch_writer.py 用 `os.environ.get("CLICKHOUSE_HOST", "172.24.30.100")` 硬编码默认值，database_service.py 用 `"localhost"` 默认值，两者不一致且都不主动加载 `config/.env.clickhouse`。当前能工作纯属硬编码默认值巧合等于 .env.clickhouse 的值，CH 再迁移一次就会暴露。
+**问题**：Hyper-V 迁移前 ch_writer.py 硬编码默认值 `172.24.30.100`，database_service.py 用 `"localhost"`，两者不一致且都不主动加载 `config/.env.clickhouse`——当前能工作纯属巧合，CH 再迁移一次就会暴露。
 
-**裁定**：
-- `config/.env.clickhouse` 是 CH 连接配置**唯一真源**
-- 所有 CH 连接入口必须主动读取该文件，**禁止硬编码 IP 默认值**
-- `ensure_ch_env_loaded()`：幂等加载 .env.clickhouse 到 os.environ（文件不存在 log warning 不抛）
-- `load_ch_config()`：返回连接配置字典，读不到**抛 CHConfigError（fail-closed）**
+**裁定**：`config/.env.clickhouse` 是 CH 连接配置**唯一真源**；所有 CH 连接入口必须主动读取该文件**禁止硬编码 IP 默认值**；`ensure_ch_env_loaded()` 幂等加载 .env.clickhouse 到 os.environ（文件不存在 log warning 不抛）；`load_ch_config()` 返回连接配置字典，读不到**抛 CHConfigError（fail-closed）**。
 
 #### 7.6.2 ch_reader.py——统一读取层（#ARCH-CH-007）
 
-**问题**：#ARCH-CH-002 统一 ReplacingMergeTree + 直接 INSERT，但去重是异步的（后台 merge 时才去重），merge 完成前查询返回重复行。100% AI 开发模式下 AI 不会主动在查询中加 FINAL（#ARCH-CH-004 教训）。
+**问题**：#ARCH-CH-002 统一 ReplacingMergeTree + 直接 INSERT，但去重是异步的（后台 merge 时才去重），merge 完成前查询返回重复行；100% AI 开发模式下 AI 不会主动加 FINAL（#ARCH-CH-004 教训）。
 
-**方案**：统一读取层自动注入 FINAL 关键字：
-- `inject_final(sql)`：纯函数，对 SQL 中的 ReplacingMergeTree 表自动注入 FINAL
-- `query(sql)`：执行查询（自动注入 FINAL），返回 TSV 字符串
-- `count(table, where)`：计数查询（自动注入 FINAL），返回 int
-- `query_table(table, columns, where, ...)`：便捷表查询
-
-**why 统一读取层**：消除对 AI 自觉加 FINAL 的依赖——任何查询走 ch_reader 自动去重，不走 ch_reader 的裸查询是 bug。
+**方案**：统一读取层自动注入 FINAL——`inject_final(sql)`（纯函数，对 ReplacingMergeTree 表注入 FINAL）/ `query(sql)`（自动注入，返回 TSV）/ `count(table, where)` / `query_table(table, columns, where, ...)`。**why 统一读取层**：消除对 AI 自觉加 FINAL 的依赖——任何查询走 ch_reader 自动去重，不走 ch_reader 的裸查询是 bug。
 
 ### 7.7 本地落盘兜底与回灌
 
 #### 7.7.1 local_replay.py——本地 TSV 兜底+自动回灌（#ARCH-CH-013 Phase 1）
 
-**问题**：CH 二级降级链（TCP→HTTP）全部失败时（VM/CH 不可达），ch_writer.write_tsv 要么抛异常导致任务失败，要么丢弃数据。
+**问题**：CH 二级降级链（TCP→HTTP）全部失败时，ch_writer.write_tsv 要么抛异常导致任务失败，要么丢弃数据。**方案**：CH 不可达时写本地 TSV 文件而非丢弃，scheduler 启动时 + 每 30 分钟回灌积压。
 
-**方案**：CH 不可达时写本地 TSV 文件而非丢弃，scheduler 启动时 + 每 30 分钟回灌积压。
+**文件布局**：`data/local_fallback/_manifest.jsonl`（每行一条 JSON：{table, cols_clause, file, rows, ts}）+ `data/local_fallback/{db}__{table}/{YYYYMMDD_HHMMSS}_{hash}.tsv`。
 
-**文件布局**：
-```
-data/local_fallback/
-    _manifest.jsonl              # 每行一条 JSON：{table, cols_clause, file, rows, ts}
-    c1_market__kline_daily/
-        20260715_103723_abc123.tsv
-    c3_fundamental__news_data/
-        20260715_103723_def456.tsv
-```
-
-**回灌策略**：读 _manifest.jsonl → 按 table 分组 → 逐文件 ch_writer.write_tsv 回灌 → 成功删除文件+移除 manifest 条目 → 失败保留等下次重试。回灌用 manifest 保存的 cols_clause（不重新查表列防列数不匹配），传 `create_fallback=False` 防重复落盘。
-
-**不变式**：本地落盘文件原子写入（先写 .tmp 再 rename）；manifest 追加模式（JSONL）；save_fallback 永不抛异常（写入失败 log+返回 False）。
+**回灌策略**：读 _manifest.jsonl → 按 table 分组 → 逐文件 ch_writer.write_tsv 回灌 → 成功删除文件+移除 manifest 条目 → 失败保留等下次重试；回灌用 manifest 保存的 cols_clause（不重新查表列防列数不匹配），传 `create_fallback=False` 防重复落盘。**不变式**：落盘文件原子写入（先写 .tmp 再 rename）；manifest 追加模式（JSONL）；save_fallback 永不抛异常（写入失败 log+返回 False）。
 
 #### 7.7.2 sqlite_fallback.py——CH 降级到本地 SQLite（MOD-L00-005）
 
-**职责**：CH 不可达时写本地 SQLite（INSERT OR REPLACE 幂等），查询层可读最近数据。
-
-**设计**：按 table 创建 SQLite 表（schema 与 CH 对齐，仅保留核心列）；每表最大 500K 行（约 4 小时 tick 数据），FIFO 自动清理；get_pending_batches 返回待回灌数据。线程安全：所有 SQLite 操作通过 _lock 串行化（SQLite 单写者模型）。
-
-**why SQLite 而非只 TSV**：TSV 是文件无法查询，SQLite 支持查询层降级读取（如盘后 CH 挂了但策略层要读最近 tick），是 TSV 兜底的查询层补充。
+**职责**：CH 不可达时写本地 SQLite（INSERT OR REPLACE 幂等），查询层可读最近数据。**设计**：按 table 建 SQLite 表（schema 与 CH 对齐仅保留核心列）；每表最大 500K 行（约 4 小时 tick），FIFO 自动清理；get_pending_batches 返回待回灌数据；线程安全——所有 SQLite 操作经 _lock 串行化（单写者模型）。**why SQLite 而非只 TSV**：TSV 是文件无法查询，SQLite 支持查询层降级读取（如盘后 CH 挂了但策略层要读最近 tick），是 TSV 兜底的查询层补充。
 
 ### 7.8 主动 WAL 写入器 wal_writer（P0-1 Phase A）
 
-**真源**：`src/zephyr/data/wal_writer.py`（MOD-GOV-wal_writer）
-
-**职责**：数据先落本地 WAL 段文件，再由后台 drain 线程异步排空到 ClickHouse。解决实时 tick 写入路径在 CH 慢/不可达时延迟突增的问题。被 §6.6 tick_subscriber 使用。
+**真源**：`src/zephyr/data/wal_writer.py`（MOD-GOV-wal_writer）。**职责**：数据先落本地 WAL 段文件，再由后台 drain 线程异步排空到 ClickHouse——解决实时 tick 写入路径在 CH 慢/不可达时延迟突增的问题，被 §6.6 tick_subscriber 使用。
 
 **与 BufferedWriter 的区别**（关键）：
 | 维度 | BufferedWriter | WalWriter |
@@ -713,125 +483,63 @@ data/local_fallback/
 | 延迟 | 依赖 CH 写入速度 | 本地落盘快，写入路径延迟稳定 |
 | CH 慢/不可达 | 阻塞生产者 | 不阻塞生产者（CH 慢只影响 drain 速度） |
 
-**段文件落盘阈值**：每段 ≥ 3000 行或 ≥ 5 秒触发（P0-3 调参：5000→3000 / 10.0→5.0）。
+**段文件落盘阈值**：每段 ≥ 3000 行或 ≥ 5 秒触发（P0-3 调参：5000→3000 / 10.0→5.0）。**WAL 容量背压**：目录上限 2GB——70% warning，**90% critical 背压阻断写入**（`add()` 返回 False，生产者应减速/中断），防 CH 长时间不可达撑爆磁盘。**drain 线程**：轮询积压段文件回灌 CH，失败指数退避（封顶 60s）不退出；无积压 2s 慢轮询，有积压 0.5s 快速重试。
 
-**WAL 容量背压**：WAL 目录上限 2GB——70% warning，**90% critical 背压阻断写入**（`add()` 返回 False，生产者应减速/中断）。防止 CH 长时间不可达时 WAL 段文件无限增长撑爆磁盘。
-
-**drain 线程**：轮询积压段文件回灌 CH，失败指数退避（封顶 60s）不退出；无积压 2s 慢轮询，有积压 0.5s 快速重试。
-
-**复用机制**：
-- `local_replay.save_fallback()`：段落盘（原子写 + manifest 追加）
-- `local_replay.replay_batch()`：drain 回灌
-- `ch_writer._get_table_columns_set()`：列过滤
-- `ch_writer.tsv_escape()`：TSV 序列化
-
-**P1-5 metrics 埋点**：segments / wal_dir_bytes / backlog_files / drain_replayed / drain_failed。
-
-**why 主动 WAL 而非 BufferedWriter 失败才降级**：tick 数据是实时推送，CH 写入延迟突增会阻塞 QMT callback 线程导致丢 tick。主动 WAL 把"写 CH"与"接收 tick"解耦——接收即落盘（快），CH 写入异步 drain（不影响接收）。
+**复用机制**：`local_replay.save_fallback()`（段落盘）/ `local_replay.replay_batch()`（drain 回灌）/ `ch_writer._get_table_columns_set()`（列过滤）/ `ch_writer.tsv_escape()`（TSV 序列化）；**P1-5 metrics**：segments / wal_dir_bytes / backlog_files / drain_replayed / drain_failed。**why 主动 WAL 而非失败才降级**：tick 是实时推送，CH 写入延迟突增会阻塞 QMT callback 线程丢 tick——主动 WAL 把"写 CH"与"接收 tick"解耦（接收即落盘快，CH 写入异步 drain）。
 
 ### 7.9 WAL 编解码注册表 wal_codec/codec_registry
 
-**真源**：`src/zephyr/data/wal_codec/codec_registry.py` + `wal_codec/tsv_codec.py`
+**真源**：`src/zephyr/data/wal_codec/codec_registry.py` + `wal_codec/tsv_codec.py`。**职责**：按 magic number（4 字节前缀）路由到对应编解码器，drain 线程根据段文件 magic 自动选择解码器。
 
-**职责**：按 magic number（4 字节前缀）路由到对应编解码器。drain 线程根据段文件 magic 自动选择解码器。
-
-**codec 清单**：
-- `TsvCodec`：MAGIC=b""（无前缀），纯文本段文件默认按 TSV 解码——当前唯一实现的 codec
-- `_ProtoCodecStub`：MAGIC=b"PB\x01"，Proto 段 P3 远期实现桩，当前 encode/decode 降级到 TSV 并 log warning
-
-**CodecProtocol 协议**：`MAGIC: bytes` + `encode(rows) -> bytes` + `decode(data) -> list[tuple]`。
-
-**get_codec(data)**：遍历 codec 列表，data 以 magic 开头则返回对应 codec；无匹配降级到 TSV（向后兼容）。decode 时 Proto 段需跳过 magic 前缀。
-
-**why magic number 路由而非文件扩展名**：段文件名是时间戳+哈希无扩展名信息；magic 前缀自描述编码格式，drain 线程无需知道段文件用什么 codec 写的。
-
-**why TSV 当前唯一 codec**：TSV 人类可读 + CH 原生支持 TSV 导入 + 序列化简单。Proto codec 是 P3 远期优化（更紧凑+更快解码），当前 TSV 够用。
+**codec 清单**：`TsvCodec`（MAGIC=b"" 无前缀，纯文本段默认 TSV——当前唯一实现）；`_ProtoCodecStub`（MAGIC=b"PB\x01"，P3 远期桩，当前 encode/decode 降级 TSV 并 log warning）。**CodecProtocol**：`MAGIC: bytes` + `encode(rows)` + `decode(data)`；**get_codec(data)** 按 magic 前缀匹配，无匹配降级 TSV（向后兼容）。**why magic number 路由而非文件扩展名**：段文件名是时间戳+哈希无扩展名信息，magic 前缀自描述编码格式。**why TSV 当前唯一 codec**：TSV 人类可读 + CH 原生支持导入 + 序列化简单，Proto 是 P3 远期优化。
 
 ### 7.10 统一数据库连接管理 database_service（跨域引用）
 
-**真源**：`src/zephyr/infrastructure/database_service.py`（MOD-INF-002，D_INFRA_RUNTIME 域，stable）
+**真源**：`src/zephyr/infrastructure/database_service.py`（MOD-INF-002，D_INFRA_RUNTIME 域，stable）。**职责**：统一管理 governance.db / depgraph(PostgreSQL) / ClickHouse(c1_market) / Redis(H1) 的连接池、生命周期、健康检查，数据下载层经本服务获取 CH/Redis 连接。
 
-**职责**：统一管理 governance.db / depgraph(PostgreSQL) / ClickHouse(c1_market) / Redis(H1) 的连接池、生命周期、健康检查。数据下载层通过本服务获取 CH/Redis 连接。
-
-**部署现状**：
-- ClickHouse c1_market 行情仓库 2026-07-01 部署（INFRA-DB-006），`get_clickhouse_conn()` 已实现
-- Redis H1 热缓存 2026-08-02 部署——Redis 7.0.15 @ Hyper-V Ubuntu VM（172.24.30.100:6379，与 ClickHouse 同 VM，D1 决策），`get_redis_conn()` 已实现
-- market.duckdb（旧 DuckDB 业务时序库）2026-07-05 删除（业务行情数据已迁移至 ClickHouse c1_market）
-
-**why 跨域引用而非数据下载层自管连接**：CH/Redis 连接是基础设施资源，governance/depgraph/数据下载层共用，统一管理避免多处各自维护连接池（连接泄漏/配置漂移）。数据下载层的 `ch_config.py`（§7.6.1）负责 CH 连接配置单真源，`database_service` 负责连接池生命周期，两者分工。
+**部署现状**：ClickHouse c1_market 2026-07-01 部署（INFRA-DB-006，`get_clickhouse_conn()` 已实现）；Redis H1 热缓存 2026-08-02 部署（Redis 7.0.15 @ Hyper-V Ubuntu VM 172.24.30.100:6379，与 CH 同 VM，D1 决策，`get_redis_conn()` 已实现）；market.duckdb（旧 DuckDB 业务时序库）2026-07-05 删除（已迁移至 c1_market）。**why 跨域引用**：CH/Redis 连接是基础设施资源多域共用，统一管理避免多处各自维护连接池（连接泄漏/配置漂移）；分工——`ch_config.py`（§7.6.1）管连接配置单真源，`database_service` 管连接池生命周期。
 
 ### 7.11 Tick Redis 热缓存双写 tick_redis_cache（H1 CP-01）
 
-**真源**：`src/zephyr/data/tick_redis_cache.py`（MOD-H1_REDIS_HOT，D_INFRA_RUNTIME 域）
+**真源**：`src/zephyr/data/tick_redis_cache.py`（MOD-H1_REDIS_HOT，D_INFRA_RUNTIME 域）。**职责**：tick → Redis `tick:{symbol}:latest` 双写器（D-DATA → H1 集成适配器）；tick_subscriber._drain_batch 批量出队时将 QMT tick dict 转 Redis Hash 格式，PIPELINE 批量写入。
 
-**职责**：tick → Redis `tick:{symbol}:latest` 双写器（D-DATA → H1 集成适配器）。tick_subscriber._drain_batch 批量出队时，将 QMT tick dict 转换为 Redis Hash 格式，PIPELINE 批量写入。
+**与 WAL 路径的关系**：双写——WAL→ClickHouse 是持久化主路径，Redis 是热读取加速层；Redis 故障 best-effort 降级（log+返回 0），不阻断 WAL 主路径（CP-02 降级：信号端用上一批因子值）。**性能**：PIPELINE 500 条单次 RTT 批量 HSET；每 drain_batch 一次（~500 条/批，3 秒周期）；延迟 <10ms（CP-01 SLO：Tick→Redis ≤3 秒）；**Hash 字段** 5 档 bid/ask + price/volume/amount/timestamp = 23 字段（`_MAX_LEVELS=5`）。
 
-**与 WAL 路径的关系**：双写——WAL→ClickHouse 是持久化主路径，Redis 是热读取加速层。Redis 故障时 best-effort 降级——log+返回 0，不阻断 WAL 主路径（CP-02 降级：信号端用上一批因子值）。
-
-**性能**：
-- PIPELINE 模式：500 条 tick 单次 RTT 批量 HSET
-- 写入频率：每 drain_batch 一次（~500 条/批，tick_subscriber 3 秒周期）
-- 延迟：<10ms（CP-01 SLO：Tick→Redis ≤3 秒）
-
-**Hash 字段**：5 档 bid/ask + price/volume/amount/timestamp = 23 字段（`_MAX_LEVELS=5`）。
-
-**why 双写 Redis 而非只写 CH**：盘中策略读 tick 需要低延迟（<3ms），CH 查询延迟（~50ms）无法满足；Redis 内存读取 <1ms。CH 是持久化（回测/盘后分析），Redis 是盘中热读（策略实时决策），两者职责互补。
-
-**why best-effort 不阻断 WAL**：Redis 是加速层，挂了只是盘中策略读不到最新 tick（降级用上一批），但 tick 数据不能丢（WAL 保证持久化）。Redis 故障不应导致 tick 采集中断。
+**why 双写 Redis 而非只写 CH**：盘中策略读 tick 需低延迟（<3ms），CH 查询 ~50ms 无法满足，Redis 内存读取 <1ms——CH 持久化（回测/盘后分析），Redis 盘中热读，职责互补；**best-effort 不阻断 WAL**——Redis 是加速层，挂了只是盘中读不到最新 tick（降级用上一批），tick 数据不能丢（WAL 保持久化）。
 
 ## 8. 数据质量与完整性
 
 ### 8.1 质量门控（quality_gate.py）
 
-**真源**：`src/zephyr/data/quality_gate.py` 是 **re-export wrapper**——`QualityReport` / `MarketDataValidator` / `apply_quality_gate` 真源在 `zephyr.gov_enforcement.rule_enforcement.quality_gate`（SSoT: `cross_layer_contracts.yaml` → CTR-ERR-001 DataQualityError）。
+**真源**：`src/zephyr/data/quality_gate.py` 是 **re-export wrapper**——`QualityReport` / `MarketDataValidator` / `apply_quality_gate` 真源在 `zephyr.gov_enforcement.rule_enforcement.quality_gate`（SSoT: `cross_layer_contracts.yaml` → CTR-ERR-001 DataQualityError）。**why re-export**：测试通过 `zephyr.data.quality_gate` 导入，但真源在 gov_enforcement 域（质量门禁是跨层契约非数据下载层私有）——re-export 消除 ModuleNotFoundError 同时保持 SSoT，治理域定义规则，数据域 re-export 供消费方就近导入。
 
-**why re-export**：测试通过 `zephyr.data.quality_gate` 导入，但真源在 gov_enforcement 域（质量门禁是跨层契约，非数据下载层私有）。re-export 消除 ModuleNotFoundError 的同时保持 SSoT 单真源——治理域定义质量规则，数据域 re-export 供消费方按域就近导入。
-
-**职责边界**：quality_gate 与下载调度解耦——Provider 只拉数据，质量校验由消费方在读取时调用（不在写入时拦截）。
-
-**why**：写入时拦截会拖慢下载吞吐（5204 只股票逐个校验），且脏数据流入比数据断档危害小（脏数据可事后清洗，断档无法回填）。质量门控放在读取端，按需校验。
+**职责边界**：quality_gate 与下载调度解耦——Provider 只拉数据，质量校验由消费方在读取时调用（不在写入时拦截）。**why**：写入时拦截拖慢下载吞吐（5204 只股票逐个校验），且脏数据流入比断档危害小（脏数据可事后清洗，断档无法回填）。
 
 ### 8.2 完整性巡检（integrity_checker.py · L11）
 
-**流程**（`run_daily_check()`）：
-1. 复用 `backfill_checker._discover_backfill_tables()` 动态发现全表
-2. 逐表检查当天 `count() WHERE date_col = today()` 是否 ≥ 阈值
-3. 不达标的表通过 `alerter.notify()` 告警
-4. 结果记录到 progress_store
-
-**阈值设计**：过去7天平均行数×0.5（低于均值50%视为缺失）；无历史数据返回0（跳过巡检，新表首日不报缺失）。
-
-**why 阈值用历史7天日均×0.5 而非固定值**：不同表行数量级差异大（tick_data 2000万 vs macro_data 几十行），固定阈值无法通用。
+**流程**（`run_daily_check()`）：复用 `backfill_checker._discover_backfill_tables()` 动态发现全表 → 逐表检查当天 `count() WHERE date_col = today()` 是否 ≥ 阈值 → 不达标经 `alerter.notify()` 告警 → 结果记录 progress_store。**阈值设计**：过去7天平均行数×0.5（低于均值50%视为缺失）；无历史数据返回0（跳过巡检，新表首日不报缺失）。**why 历史7天日均×0.5 而非固定值**：不同表行数量级差异大（tick_data 2000万 vs macro_data 几十行），固定阈值无法通用。
 
 ### 8.3 回补检查（backfill_checker.py · L10）
 
-**动态发现机制**（`_discover_backfill_tables()`）：从 tasks.yaml 动态读取所有非 disabled 任务的表，同表多任务去重。自动推断：
-- **日期列名**：`DESCRIBE TABLE` 查 Date 类型列，优先选 trade_date/end_date/report_date/unlock_date/announce_date
-- **阈值**：过去7天平均行数×0.5
+**动态发现机制**（`_discover_backfill_tables()`）：从 tasks.yaml 动态读取所有非 disabled 任务的表，同表多任务去重；自动推断日期列名（`DESCRIBE TABLE` 查 Date 类型列，优先 trade_date/end_date/report_date/unlock_date/announce_date）与阈值（过去7天平均行数×0.5）。
 
-**补下载执行**（`run_weekend_backfill()`）：
-1. 动态发现所有表 → 获取过去7天交易日
-2. 逐表检测缺失日期
-3. tick_data 用专门 `backfill_tick_data()`（分时段+批量写入）
-4. 其他表用 `scheduler.run_task(task_id)` 重跑
+**补下载执行**（`run_weekend_backfill()`）：动态发现所有表 → 获取过去7天交易日 → 逐表检测缺失日期 → tick_data 用专门 `backfill_tick_data()`（分时段+批量写入）→ 其他表用 `scheduler.run_task(task_id)` 重跑。
 
 ### 8.4 跨源验证（cross_source_validator.py）
 
 **实际范围**（2026-08-12 代码实证）：**tick 数据专属**的主备源内容级校验器（P1-4），非通用跨源框架——硬编码校验 `tick_data` 表 `data_source IN ('miniqmt','tdx_backup')` 最近 N 分钟（默认 5）数据，按 symbol 比对主备源最新 price（阈值 0.1% 判 fail）/volume（5% 判 warn）及缺失标的，结果写 `c1_market.cross_validation_log` 表。
 
-**why tick 专属**：服务于 §9.2 冗余源热切换的正确性验证——QMT 主源中断切 TDX 备源时，需确认两源推送的 tick 内容一致（价格偏差在容差内），否则备源数据污染 tick_data。离线任务的跨源对比（如 miniqmt vs baostock 日K）当前**未实现**——v1.4.0 已裁定暂缓（§16.3 Q24）。
+**why tick 专属**：服务于 §9.2 冗余源热切换的正确性验证——QMT 主源中断切 TDX 备源时，需确认两源 tick 内容一致（价格偏差在容差内），否则备源数据污染 tick_data。离线任务跨源对比（如 miniqmt vs baostock 日K）当前**未实现**——v1.4.0 已裁定暂缓（§16.3 Q24）。
 
 ### 8.5 数据源健康检查（source_health_check.py）
 
-**实际机制**（2026-08-12 代码实证）：启动时对 11 个源（tushare/akshare/baostock/ifind/miniqmt/tdx/tickflow/rss/cls/eastmoney_news/tqcenter）做 env 检查→import→connect→**真实 API 探针**（如 miniqmt 用 `get_stock_list_in_sector` 探活、tdx 拉 600000 一日线），状态分级 healthy / connect_only / empty_data / test_fail / env_missing；结果写 `logs/source_health_YYYYMMDD.log` + 内存快照供 scheduler `get_source_health()` 查询。
+**实际机制**（2026-08-12 代码实证）：启动时对 11 个源（tushare/akshare/baostock/ifind/miniqmt/tdx/tickflow/rss/cls/eastmoney_news/tqcenter）做 env 检查→import→connect→**真实 API 探针**（miniqmt 用 `get_stock_list_in_sector` 探活、tdx 拉 600000 一日线），状态分级 healthy / connect_only / empty_data / test_fail / env_missing；结果写 `logs/source_health_YYYYMMDD.log` + 内存快照供 scheduler `get_source_health()` 查询。
 
-**边界**：**不读 fetch_perf、不做 api_status 自动退化决策**——INVARIANTS 明确"异常源不自动禁用（人工决策）"。fetch_perf 的 api_status（ok/slow/rate_limited/blocked/broken）语义仅存在于 §10.4 speed_tester 主动测速结果中，两者是独立的健康信号通道。
+**边界**：**不读 fetch_perf、不做 api_status 自动退化决策**——INVARIANTS 明确"异常源不自动禁用（人工决策）"；fetch_perf 的 api_status 语义仅存在于 §10.4 speed_tester 主动测速结果中，两者是独立的健康信号通道。
 
 ### 8.6 PIT 查询（pit_query.py · #ARCH-CH-021 P0-5）
 
-**真源**：`src/zephyr/data/pit_query.py`
-
-**问题**：c3 财务报表使用 ReplacingMergeTree 覆盖式更新，存在前视偏差风险——同一 report_period 可能有原始公告 + 修正公告多个版本。回测必须只看"当时已公告"的数据（15 号 §3.3 PIT 铁律）。
+**真源**：`src/zephyr/data/pit_query.py`。**问题**：c3 财务报表用 ReplacingMergeTree 覆盖式更新，存在前视偏差风险——同一 report_period 可能有原始公告 + 修正公告多个版本，回测必须只看"当时已公告"的数据（15 号 §3.3 PIT 铁律）。
 
 **方案**：按 announce_date 建立 point-in-time 查询能力，与 backtest 域 pit_manager.py 三公理对齐：
 
@@ -841,27 +549,17 @@ data/local_fallback/
 | `embargo` 选项 | `apply_embargo()` | 泄漏防护：announce_date 截止回退 |
 | `survivorship_universe()` | `check_survivorship_bias()` | 幸存者偏差：PIT 标的池 |
 
-**底层机制**：财务表 ORDER BY (symbol, report_period, announce_date) 保留全部版本（ReplacingMergeTree 按 sort key 去重，announce_date 不同则不合并），故 `LIMIT 1 BY symbol, report_period`（ORDER BY announce_date DESC）可取查询时点已公告的最新版本——这正是 AS OF JOIN 语义。
+**底层机制**：财务表 ORDER BY (symbol, report_period, announce_date) 保留全部版本（ReplacingMergeTree 按 sort key 去重，announce_date 不同则不合并），故 `LIMIT 1 BY symbol, report_period`（ORDER BY announce_date DESC）可取查询时点已公告的最新版本——正是 AS OF JOIN 语义。**约束**：仅查白名单财务表，非白名单抛 PITQueryError；CH 查询失败返回空字符串（同 ch_reader）；表无 period_col 跳过 LIMIT 1 BY。
 
-**约束**：仅查白名单财务表，非白名单抛 PITQueryError；CH 查询失败返回空字符串（同 ch_reader）；表无 period_col 跳过 LIMIT 1 BY。
-
-**why PIT 查询在数据下载层而非回测层**：下载层不仅要把数据下下来，还要保证回测能 PIT 查询——PIT 查询能力依赖下载层的表结构设计（ORDER BY 含 announce_date 保留多版本），是下载层与回测层的契约边界。
+**why PIT 查询在数据下载层而非回测层**：PIT 查询能力依赖下载层的表结构设计（ORDER BY 含 announce_date 保留多版本），是下载层与回测层的契约边界。
 
 ### 8.7 已知数据缺口注册表 known_data_gaps.yaml（#ARCH-CH-029）
 
 **真源**：`src/zephyr/data/config/known_data_gaps.yaml`（MOD-GOV_BACKFILL_CHECKER，audit 2.7/3.8 治本，2026-07-23）
 
-**问题**：§8.3 backfill_checker 默认回看 7 天（`_DEFAULT_BACKFILL_DAYS=7`），无法检测超过 7 天的历史缺口。若某表 2 周前断档，backfill_checker 7 天窗口看不到，缺口永久遗留。
+**问题**：§8.3 backfill_checker 默认回看 7 天（`_DEFAULT_BACKFILL_DAYS=7`），无法检测超过 7 天的历史缺口——若某表 2 周前断档，缺口永久遗留。**方案**：本注册表登记已知历史缺口，backfill_checker 读取后对已登记缺口使用**全范围回看**（不受 7 天窗口限制）；已登记缺口 backfill 完成后标记 `status=completed` 不再重复检测。
 
-**方案**：本注册表登记已知历史缺口，backfill_checker 读取后对已登记缺口使用**全范围回看**（不受 7 天窗口限制）。已登记缺口 backfill 完成后标记 `status=completed`，不再重复检测。
-
-**缺口类型**（2026-08-12 实际注册表全量，6 种）：
-- `date_range`——特定日期范围内行数低于阈值（如 tick_data 2026-06 缺口）
-- `empty_table`——整表为空（如 edb_data iFind 配额耗尽）
-- `source_stale`——数据源停滞（如 share_change akshare 默认 end_date 硬编码事故，已修复）
-- `source_discontinued`——数据源永久停止（如 hk_connect_flow 港交所 2024-08-16 停发）
-- `no_data_source`——无可用批量接口（如 audit_opinion/rights_issue）
-- `permission_required`——需付费权限（如 l2_tick L2 行情）
+**缺口类型**（2026-08-12 实际注册表全量，6 种）：`date_range`（特定日期范围内行数低于阈值，如 tick_data 2026-06 缺口）/ `empty_table`（整表为空，如 edb_data iFind 配额耗尽）/ `source_stale`（数据源停滞，如 share_change akshare 默认 end_date 硬编码事故，已修复）/ `source_discontinued`（数据源永久停止，如 hk_connect_flow 港交所 2024-08-16 停发）/ `no_data_source`（无可用批量接口，如 audit_opinion/rights_issue）/ `permission_required`（需付费权限，如 l2_tick L2 行情）
 
 **已登记缺口**（7 条，2026-08-12 实测——v1.2.1 仅列 2026-07-23 首批 2 条，2026-07-24 增补 5 条）：
 
@@ -875,11 +573,9 @@ data/local_fallback/
 | `rights_issue_interface_removed` | c3_fundamental.rights_issue | no_data_source | akshare 1.18+ 移除批量接口，仅剩逐股接口，任务 disabled | accepted |
 | `l2_tick_permission_required` | c1_market.l2_tick | permission_required | 需付费 L2 权限（#ARCH-DATA-014），fallback 降级五档快照入 tick_data | accepted（tick_data 替代运行中） |
 
-**状态机**：`registered` → `in_progress` → `completed`；另有两终态——`accepted`（缺口已接受，有替代源或永久不可补）/ `resolved`（根因已修复，待回填收尾）。
+**状态机**：`registered` → `in_progress` → `completed`；另有两终态——`accepted`（缺口已接受，有替代源或永久不可补）/ `resolved`（根因已修复，待回填收尾）。**触发方式**：`backfill_checker.run_known_gap_backfill()` 读取本注册表，对 status=registered 的缺口触发 QMT 历史数据下载（tick_data）或等待 iFind 配额恢复（edb_data）。
 
-**触发方式**：`backfill_checker.run_known_gap_backfill()` 读取本注册表，对 status=registered 的缺口触发 QMT 历史数据下载（tick_data）或等待 iFind 配额恢复（edb_data）。
-
-**why 显式登记而非扩大默认窗口**：扩大默认窗口到 30/90 天会让每日 backfill 检查成本暴增（全表扫描 90 天）；显式登记只对已知缺口全范围检测，日常增量检测保持 7 天窗口低成本。这是"日常增量检测"与"已知历史缺口修复"的分工。
+**why 显式登记而非扩大默认窗口**：扩大默认窗口到 30/90 天会让每日 backfill 检查成本暴增（全表扫描 90 天）；显式登记只对已知缺口全范围检测，日常增量检测保持 7 天窗口低成本——"日常增量检测"与"已知历史缺口修复"的分工。
 
 ## 9. 数据韧性与容灾
 
@@ -896,18 +592,11 @@ data/local_fallback/
       capability: daily_valuation
 ```
 
-**run_task fallback 逻辑**：
-1. 构造数据源尝试列表：`sources_to_try = [(主源, capability)] + [(副源, capability), ...]`
-2. 逐源调用 `_try_source()`
-3. **不可恢复错误**（-4318/-4309/配额/接口废弃/认证失败/401/403/license）→ 立即 fallback（跳过重试）
-4. **可恢复错误**（Timeout/ConnectionError/RemoteDisconnected/HTTPError/503/502）→ PolicyRegistry 重试用完后 fallback
-5. 任一源成功即返回 True，全部失败返回 False
-
-**why 错误分类器用关键词匹配而非异常类型**：FetchResult.error 是字符串（跨 Provider 统一接口），无法用 isinstance 判断异常类型。
+**run_task fallback 逻辑**：①构造尝试列表 `sources_to_try = [(主源, capability)] + [(副源, capability), ...]`；②逐源调 `_try_source()`；③**不可恢复错误**（-4318/-4309/配额/接口废弃/认证失败/401/403/license）→ 立即 fallback（跳过重试）；④**可恢复错误**（Timeout/ConnectionError/RemoteDisconnected/HTTPError/503/502）→ PolicyRegistry 重试用完后 fallback；⑤任一源成功即返回 True，全部失败返回 False。
 
 **覆盖率实证**（2026-08-12 tasks.yaml 全量统计）：154 任务中 105 个配置了非空 fallback_sources（68.2%）；49 个无 fallback（含全部 miniqmt 分钟K线 15 个、tqcenter 4 个、tdx 板块分钟K 5 个、生猪 5 个、fred/eia/qweather 显式空列表注明无国内副源等），符合"天然无副源"设计。
 
-**死 fallback 警告**（2026-08-12 实证）：fallback_sources 中引用 `qmt`（7 处）/`exchange`（26 处）/`bdpan`（1 处）/`local_valuation`（1 处）共 35 处**无 Provider 实现**（create_provider 14 分支不含这四个 source_name）——一旦主源失败轮到这些 fallback，会落入"未知数据源"分支返回 None 直接失败。这些配置是"心理安慰型 fallback"，实际不提供韧性。v1.4.0 已裁定：清理 28 处 + 保留 local_valuation 1 处待补实现（§16.2 Q14）。
+**死 fallback 警告**（2026-08-12 实证）：fallback_sources 中引用 `qmt`（7 处）/`exchange`（26 处）/`bdpan`（1 处）/`local_valuation`（1 处）共 35 处**无 Provider 实现**（create_provider 14 分支不含这四个 source_name）——主源失败轮到这些 fallback 会落入"未知数据源"分支返回 None 直接失败，实际不提供韧性。v1.4.0 已裁定：清理 28 处 + 保留 local_valuation 1 处待补实现（§16.2 Q14）。
 
 ### 9.2 冗余源热切换（redundant_source/，MOD-L00-005/007，P2-8）
 
@@ -935,88 +624,41 @@ HeartbeatMonitor ─┤                              SQLiteFallback
 | **BackupTickPoller** | backup_tick_poller.py (MOD-L00-007) | 备源 TDX 轮询器——主源中断时定期拉取 TDX 实时快照（`fetch_tick_snapshot`），转换为 QMT tick dict 喂入 TickSubscriber 队列；QMTSourceAdapter 是 QMT 主源被动适配器（stop=no-op 保持订阅用于恢复检测） | 轮询间隔 3s |
 | **RecoveryManager** | recovery.py | CH 恢复后 SQLite→CH 回灌管理器——监听 HeartbeatMonitor 的 CH 状态变化，CH 恢复后按 batch(1000行) 从 SQLiteFallback 读取回灌 CH，成功删除 SQLite 批次，失败指数退避(2s→4s→...→60s) | 检测间隔 10s / batch 1000 / 退避 2-60s |
 
-**SourceState 状态枚举**：ALIVE / DEAD / UNKNOWN。
+**SourceState 状态枚举**：ALIVE / DEAD / UNKNOWN。**HeartbeatStatus 快照**：primary_state + ch_state + last_tick_ts + last_ch_ok_ts + ch_consecutive_failures。
 
-**HeartbeatStatus 快照**：primary_state + ch_state + last_tick_ts + last_ch_ok_ts + ch_consecutive_failures。
-
-**why 防抖 30s 稳定期**：主源可能短暂恢复又中断（网络抖动），立即切回会导致主备频繁切换（ping-pong）。30s 稳定期确认主源真正恢复后再切回。
-
-**why QMTSourceAdapter.stop()=no-op**：QMT 订阅由 TickSubscriber.start() 管理，切换到备源时不能停 QMT 订阅——保持订阅活跃才能让 HeartbeatMonitor 检测主源恢复触发切回。
-
-**why SQLite 仅写最近 N 小时**：SQLite 是兜底不是持久化（持久化由 WAL+local_replay 负责），SQLite 无限增长会撑爆磁盘。每表 500K 行（约 4 小时 tick）FIFO 自动清理，超过的旧数据由 WAL 段文件保留。
-
-**与 §9.1 fallback 的区别**：§9.1 fallback 是**任务级**主源→副源切换（scheduler.run_task 内，针对 154 个离线任务）；§9.2 是**进程级**主源→备源热切换（tick_subscriber 内，针对实时 tick 推送，零中断切换）。
+**why**：防抖 30s 稳定期——主源可能短暂恢复又中断（网络抖动），立即切回导致主备 ping-pong，30s 确认真恢复再切回；QMTSourceAdapter.stop()=no-op——QMT 订阅由 TickSubscriber.start() 管理，切备源时不能停 QMT 订阅，保持订阅活跃才能让 HeartbeatMonitor 检测主源恢复触发切回；SQLite 仅写最近 N 小时——SQLite 是兜底不是持久化（持久化由 WAL+local_replay 负责），每表 500K 行（约 4 小时 tick）FIFO 清理，旧数据由 WAL 段文件保留。**与 §9.1 fallback 的区别**：§9.1 是**任务级**主源→副源切换（scheduler.run_task 内，针对 154 个离线任务）；§9.2 是**进程级**主源→备源热切换（tick_subscriber 内，针对实时 tick 推送，零中断切换）。
 
 ### 9.3 WAL 编解码（wal_codec/ + wal_writer.py）
 
-**真源**：`docs/03_modules/_domain_data/wal_codec_blueprint.md`
-
-> 详细机制见 §7.8（wal_writer 主动 WAL 写入器）+ §7.9（wal_codec 编解码注册表）。
-
-`wal_writer.py` 主动 WAL 写入器：数据先落本地段文件再异步 drain 到 CH（P0-1，被 tick_subscriber 使用）；`wal_codec/` 按 magic number 路由编解码器（TsvCodec 当前唯一实现，Proto codec P3 远期桩）。用于 CH 写入失败/慢时的兜底，与 §9.2 SQLiteFallback 互补——WAL 保 tick 持久化，SQLite 保查询层可读。
+**真源**：`docs/03_modules/_domain_data/wal_codec_blueprint.md`；详细机制见 §7.8（wal_writer 主动 WAL）+ §7.9（wal_codec 编解码注册表）。用于 CH 写入失败/慢时的兜底，与 §9.2 SQLiteFallback 互补——WAL 保 tick 持久化，SQLite 保查询层可读。
 
 ### 9.4 新增表门禁（DATA-TASK-COMPLETENESS）
 
-**文件**：`gov_enforcement/commit_gates/data_task_completeness_gate.py`（warn 级，priority=80）
-
-**检测逻辑**：
-1. 只在 tasks.yaml 被修改时触发
-2. `git diff HEAD -- tasks.yaml` 提取新增的 task_id
-3. 解析 tasks.yaml 检查新增任务是否配置了 fallback_sources
-4. 未配置 → warn（不阻断）+ detail 含 WARN 信息
-
-**why warn 不阻断**：有些表确实无副源（tick_data 只有 miniqmt），硬阻断阻碍开发。warn 出现在 commit 输出形成"AI 增加表 → 门禁提醒 → AI 补充 fallback_sources"闭环。
+**文件**：`gov_enforcement/commit_gates/data_task_completeness_gate.py`（warn 级，priority=80）。**检测逻辑**：只在 tasks.yaml 被修改时触发 → `git diff HEAD -- tasks.yaml` 提取新增 task_id → 检查新增任务是否配置 fallback_sources → 未配置 → warn（不阻断）+ detail 含 WARN 信息。**why warn 不阻断**：有些表确实无副源（tick_data 只有 miniqmt），硬阻断阻碍开发；warn 出现在 commit 输出形成"AI 增加表 → 门禁提醒 → AI 补充 fallback_sources"闭环。
 
 ## 10. 运维与监控
 
 ### 10.1 进度与断点续传（progress_store.py）
 
-**统一进度存储**（SQLite `data/integrator_progress.db`）：
-- `task_progress`：task_id/source/last_run_at/last_key/last_status/rows_total/error_msg
-- `task_runs`：run_id/task_id/started_at/finished_at/status/rows_fetched/rows_written/error_msg
+**统一进度存储**（SQLite `data/integrator_progress.db`）：`task_progress`（task_id/source/last_run_at/last_key/last_status/rows_total/error_msg）+ `task_runs`（run_id/task_id/started_at/finished_at/status/rows_fetched/rows_written/error_msg）。
 
-**断点续传协议**：
-1. 任务启动 → 查 `task_progress.last_key` → 作为本次 `payload.start`
-2. 分批拉取 → 每批写完 CH → 更新 `last_key`
-3. 异常中断 → 下次启动从 `last_key` 继续
-4. 幂等：CH 写入用 ReplacingMergeTree 直接 INSERT 或 MergeTree 写前 DELETE
-
-**why SQLite 存进度而非 ClickHouse**：进度查询高频但量小，SQLite 单文件部署简单。
+**断点续传协议**：任务启动 → 查 `task_progress.last_key` 作为本次 `payload.start` → 分批拉取每批写完 CH 更新 `last_key` → 异常中断下次从 `last_key` 继续 → 幂等（ReplacingMergeTree 直接 INSERT 或 MergeTree 写前 DELETE）。**why SQLite 存进度而非 ClickHouse**：进度查询高频但量小，SQLite 单文件部署简单。
 
 ### 10.2 告警（alerter.py）
 
-| 通道 | 触发 | 格式 |
-|---|---|---|
-| 日志 | 所有事件 | 结构化日志 `[time][level][task_id][source] message` |
-| 失败汇总文件 | DEAD 任务 | `failures/YYYY-MM-DD.log` |
-| 钉钉 Webhook（可选） | DEAD 任务 + 配额告警 | Markdown 卡片 |
-| 邮件（可选） | 连续 3 天失败 | 汇总邮件 |
+**通道**：日志（所有事件，结构化 `[time][level][task_id][source] message`）/ 失败汇总文件（DEAD 任务，`failures/YYYY-MM-DD.log`）/ 钉钉 Webhook（可选，DEAD 任务+配额告警，Markdown 卡片）/ 邮件（可选，连续 3 天失败汇总）。
 
 ### 10.3 指标（metrics.py）
 
-Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：
-- `integrator_task_total{task, status}` Counter
-- `integrator_task_duration_seconds{task}` Histogram
-- `integrator_rows_fetched_total{task}` Counter
-- `integrator_rate_limit_hits_total{source}` Counter
-- `integrator_retry_total{source}` Counter
-- `integrator_session_uptime_seconds{source}` Gauge
+Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：`integrator_task_total{task, status}` Counter / `integrator_task_duration_seconds{task}` Histogram / `integrator_rows_fetched_total{task}` Counter / `integrator_rate_limit_hits_total{source}` Counter / `integrator_retry_total{source}` Counter / `integrator_session_uptime_seconds{source}` Gauge。
 
 ### 10.4 Capability 实测性能（c0_meta.fetch_perf）
 
-**设计动机**：不同 source.capability 下载速度差异巨大（实测从 5066 行/秒到 0.09 只/秒，跨度 5 万倍），仅靠 policy_registry 的预期 RPM 无法反映实际运行情况。
-
-**2026-07-09 首批实测数据**（14 条）：
-- miniqmt.kline_daily ok 14.5 行/s
-- miniqmt.adj_factor **slow** 0.09只/s（get_divid_factors 每只11秒，全量16h）
-- akshare.daily_valuation **rate_limited** 0.17只/s（百度API空响应率15%）
-- akshare.margin_trading ok 5066 行/s
-- akshare.money_flow **blocked**（东财反爬封锁，已回退 ifind→akshare）
-- akshare.equity_pledge **broken**（API 损坏，已回退 ifind）
+**设计动机**：不同 source.capability 下载速度差异巨大（实测从 5066 行/秒到 0.09 只/秒，跨度 5 万倍），仅靠 policy_registry 的预期 RPM 无法反映实际运行情况。**2026-07-09 首批实测数据**（14 条）：miniqmt.kline_daily ok 14.5 行/s / miniqmt.adj_factor **slow** 0.09只/s（get_divid_factors 每只11秒，全量16h）/ akshare.daily_valuation **rate_limited** 0.17只/s（百度API空响应率15%）/ akshare.margin_trading ok 5066 行/s / akshare.money_flow **blocked**（东财反爬封锁，已回退 ifind→akshare）/ akshare.equity_pledge **broken**（API 损坏，已回退 ifind）。
 
 **派生用法**：调度优先级排序参考（ok 优先，slow/rate_limited 安排低峰）/ 退化决策**人工参考**（blocked/broken 由人裁定回退——代码实证：无任何模块自动消费 fetch_perf 做回退）/ 运维告警（error_rate>0.1）/ 容量规划（rows_per_sec×目标行数估耗时）。
 
-**数据来源**：fetch_perf 的数据由 **speed_tester.py 主动测速**单一通道写入（2026-08-12 代码实证：scheduler.py 零引用 fetch_perf，无"运行时被动记录"）——对每个 capability×每个可用 source 做小样本测速，记录 rows/sec/symbols/sec/错误率，结果写入 c0_meta.fetch_perf。CLI：`integrator speed-test [--source <src>] [--capability <cap>]`。只读测速不写业务表，小样本测试。
+**数据来源**：fetch_perf 由 **speed_tester.py 主动测速**单一通道写入（2026-08-12 代码实证：scheduler.py 零引用 fetch_perf，无"运行时被动记录"）——对每个 capability×每个可用 source 做小样本测速，记录 rows/sec/symbols/sec/错误率写入 c0_meta.fetch_perf。CLI：`integrator speed-test [--source <src>] [--capability <cap>]`，只读测速不写业务表。
 
 **why 单通道的隐患**：测速是抽样（某时点的小样本），日常运行的真实退化（如 akshare 某接口突然 blocked）只能靠 L11 巡检行数下降或任务失败告警间接发现。被动运行时记录（scheduler 每次任务结束写一条 fetch_perf）——**v1.4.0 已裁定施工 P2**（§16.2 Q16，登记 CAND 候选库）。
 
@@ -1024,7 +666,7 @@ Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：
 
 **真源**：[boot_autostart_architecture.md](../../03_modules/_domain_data/boot_autostart_architecture.md)（MOD-L00-004 §1-§5，v1.0.0，2026-08-07 更新）
 
-**第一性原理**（AGENTS.md 硬约束：永久系统必须全自动——自动触发/运行/维护/关闭，禁止需手工干预的设计）：ZephyrAlpha 永久服务必须开机自启 + 崩溃自愈。通过 **Windows Task Scheduler 单一权威入口** 实现。
+**第一性原理**（AGENTS.md 硬约束：永久系统必须全自动——自动触发/运行/维护/关闭，禁止需手工干预的设计）：ZephyrAlpha 永久服务必须开机自启 + 崩溃自愈，通过 **Windows Task Scheduler 单一权威入口** 实现。
 
 **7 项第一性原理约束**：
 
@@ -1038,7 +680,7 @@ Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：
 | C6 | 可观测性（故障可溯） | guard 日志写 `tmp/*_guard.log` |
 | C7 | AI 可维护性（声明式幂等） | register_*.ps1 脚本，Set-ScheduledTask in-place 更新 |
 
-**5 个 Task Scheduler 任务**（单一入口，无 Startup 文件夹/注册表 Run）：
+**5 个 Task Scheduler 任务**（单一入口，无 Startup 文件夹/注册表 Run；部署脚本见 §10.12，AI 会话手动启动用 `schtasks /run /tn ZephyrAlpha_DataScheduler`，禁止 IDE 终端 Start-Process——进程会随终端死）：
 
 | 任务名 | 触发 | 脚本 | 守护对象 |
 |---|---|---|---|
@@ -1048,19 +690,9 @@ Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：
 | `ZephyrAlpha_TraeCacheCleanup` | AtLogOn + PT30S delay | clean_trae_cache.ps1 | Trae 缓存清理 |
 | `ZephyrAlpha_DeadmanSwitch` | PT5M | scripts/deadman_switch.ps1 | 死人开关告警（§10.7） |
 
-**部署**（一次性，无需管理员，交互用户）：
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1   # scheduler + tick_subscriber + deadman_switch
-powershell -ExecutionPolicy Bypass -File scripts\register_aux_tasks.ps1      # RSSHub + TraeCache
-# AI 会话手动启动（禁止 IDE 终端 Start-Process，进程会随终端死）：
-schtasks /run /tn ZephyrAlpha_DataScheduler
-```
+**legacy 清除**（2026-07-27）：移除 Startup 文件夹 `ZephyrAlpha_DataScheduler.lnk` + `start_zephyr_scheduler.bat`（冗余+闪窗+双重启动 tick_subscriber）；`start_rsshub.bat` / `CleanTraeCache.bat` 迁移到 Task Scheduler；备份在 `tmp/startup_backup_20260727/`。
 
-**legacy 清除**（2026-07-27）：移除 Startup 文件夹 `ZephyrAlpha_DataScheduler.lnk` + `start_zephyr_scheduler.bat`（冗余+闪窗+双重启动 tick_subscriber）；`start_rsshub.bat` / `CleanTraeCache.bat` 迁移到 Task Scheduler。备份在 `tmp/startup_backup_20260727/`。
-
-> **project_memory 硬约束（防闪窗双机制）**：
-> - Task Scheduler watchdog 任务禁止直接用 powershell.exe 启动（控制台子系统程序会闪窗），改用 wscript.exe + scripts/launch_hidden.vbs
-> - 运行中的 .py 脚本启动子进程须用 run_subprocess_hidden()/spawn_python_hidden()（CREATE_NO_WINDOW），禁止裸 subprocess.run
+> **project_memory 硬约束（防闪窗双机制）**：①Task Scheduler watchdog 任务禁止直接用 powershell.exe 启动（控制台子系统程序会闪窗），改用 wscript.exe + scripts/launch_hidden.vbs；②运行中的 .py 脚本启动子进程须用 run_subprocess_hidden()/spawn_python_hidden()（CREATE_NO_WINDOW），禁止裸 subprocess.run。
 
 ### 10.6 四层防御 Watchdog（#ARCH-BOOT-001，resolved 2026-08-07）
 
@@ -1082,67 +714,27 @@ Task Scheduler (OS-hosted, MultipleInstances=Parallel, survives user-mode kills)
 | **3. 单实例层**（SSoT） | pid file lock（`tmp/scheduler.lock` 等） | 唯一单实例执行者。Stale lock（pid 已死）触发 orphan cleanup：杀来自死 guard 的任何业务 python（不变式：无 guard => 无业务进程）。`finally` 块在 guard 退出时杀子进程 |
 | **4. 心跳健康层**（Phase 2 治本） | guard 每 15s 写 `tmp/{scheduler,tick_subscriber,ch_health_probe}.heartbeat` | 格式 `ISO8601|guard_pid|child_pid`。新 guard 接管逻辑：PID 活**且**心跳<5min 新鲜 → "已在运行, exit"；PID 活但心跳 stale/missing → 僵尸 → `Stop-Process` 僵尸 guard + 清 lock/heartbeat + 落入 orphan cleanup。这是僵尸 guard（层 2 失效）的恢复路径 |
 
-**历史事故**（2026-08-07 立项根因）：scheduler/tick_subscriber 主进程死亡、guard 僵尸化导致 intraday 下载停滞 2 交易日（kline_1min 停在 08-05 15:00、tick_data 停在 08-04）。根因：`WaitForExit()` 纯阻塞等待在某些 Windows 进程退出场景不返回，guard 主线程卡死（CPU=0），子进程已死但 guard 不 log "exited"、不重启；单实例锁只验 PID 存活不验健康度，Task Scheduler 每 5min 拉新 guard 被僵尸 PID 挡住 "Guard already running, exit" 形成死锁。
-
-**端到端验证**（2026-08-07 16:00-16:03 全绿）：
-
-| 验证项 | scheduler | tick_subscriber | ch_health_probe |
-|---|---|---|---|
-| 僵尸接管（旧guard→新guard） | 24040→640 ✅ | 26940→19480 ✅ | 9132→23384 ✅ |
-| 心跳每 15s 更新 | 640\|23232 ✅ | 19480\|7432 ✅ | 23384\|2364 ✅ |
-| 子进程崩溃→guard 重启 | 杀29640→attempt2(23232) ✅ | — | — |
-| 旧僵尸全死+无重复实例 | 24040/26940/9132 全死，每服务1实例 ✅ |
+**历史事故**（2026-08-07 立项根因）：scheduler/tick_subscriber 主进程死亡、guard 僵尸化导致 intraday 下载停滞 2 交易日（kline_1min 停在 08-05 15:00、tick_data 停在 08-04）。根因：`WaitForExit()` 纯阻塞等待在某些 Windows 进程退出场景不返回，guard 主线程卡死（CPU=0），子进程已死但 guard 不重启；单实例锁只验 PID 存活不验健康度，Task Scheduler 每 5min 拉新 guard 被僵尸 PID 挡住形成死锁。**端到端验证**（2026-08-07 16:00-16:03 全绿）：三服务（scheduler/tick_subscriber/ch_health_probe）僵尸接管 ✅、心跳每 15s 更新 ✅、子进程崩溃→guard 重启 ✅、旧僵尸全死+每服务 1 实例无重复 ✅。
 
 ### 10.7 死人开关告警（#ARCH-BOOT-002，战略补强 E，2026-08-08 落地）
 
 **问题**：四层防御主治本（Phase 1-5）已闭合僵尸接管闭环，但"全层失效无人知"循环未闭合——2026-08-07 的 2 日停摆是**人工发现**的，非系统告警。
 
-**方案**：`scripts/deadman_switch.ps1`——**无状态一次性 Task Scheduler 任务**（非 while-true guard，无僵尸风险），每 5min fire 读 3 个心跳文件（scheduler/tick_subscriber/ch_health_probe），任一陈旧 >10min 即告警。
+**方案**：`scripts/deadman_switch.ps1`——**无状态一次性 Task Scheduler 任务**（非 while-true guard，无僵尸风险），每 5min fire 读 3 个心跳文件（scheduler/tick_subscriber/ch_health_probe），任一陈旧 >10min 即告警。**独立性第一性原理**：监控者不属被监控的 3 服务之一，只读心跳文件——3 服务全死此任务仍独立 fire 并告警。**为何 .ps1 而非 .py**：若故障根因是 Python 栈崩溃（坏 import/venv），.py 监控会跟着死；.ps1 读文件+发 webhook 零 Python 依赖。
 
-**独立性第一性原理**：监控者不属被监控的 3 服务之一，只读心跳文件；若 3 服务全死，此任务仍独立 fire 并告警。
+**告警通道**：飞书 webhook（推手机，复用 `ZEPHYR_FEISHU_WEBHOOK`，与 Alerter 同契约）/ Windows Event Log / 本地 `tmp/deadman_switch_alerts.log`（全审计无冷却）/ **30min 冷却**防多小时停摆刷屏（同一 staleKey 30min 内只推一次手机）。**Fail-safe**：此任务自身死亡退化到 pre-E 现状（无监控），非倒退——无需无限递归监控。
 
-**为何 .ps1 而非 .py**：若故障根因是 Python 栈崩溃（坏 import/venv），.py 监控会跟着死；.ps1 读文件+发 webhook 零 Python 依赖。
-
-**告警通道**：
-- 飞书 webhook（推手机，复用 `ZEPHYR_FEISHU_WEBHOOK`，与 Alerter 同契约）
-- Windows Event Log
-- 本地 `tmp/deadman_switch_alerts.log`（全审计无冷却）
-- **30min 冷却**防多小时停摆刷屏（同一 staleKey 30min 内只推一次手机）
-
-**Fail-safe**：此任务自身死亡退化到 pre-E 现状（无监控），非倒退——无需无限递归监控。
-
-**配套战略补强**（#ARCH-BOOT-002 另两项）：
-- **D. 心跳原子写** ✅：`Out-File` 截断+写非原子，新 guard 轮询期撞上旧 guard 写心跳微秒窗口可能读到半写→误判 stale→假接管（杀健康 guard）。3 个 guard 脚本 `Write-Heartbeat` 改为写 `$HeartbeatFile.tmp` + `Move-Item -Force`（同卷原子 rename）
-- **F. WaitForExit 死锁根因文档化** ✅：3 个 guard 脚本头注释固化"pipe buffer fills → WaitForExit never returns → main thread deadlocks"知识点，防 AI "优化"回 `WaitForExit`
+**配套战略补强**（#ARCH-BOOT-002 另两项）：**D. 心跳原子写** ✅——`Out-File` 截断+写非原子，新 guard 轮询期撞上旧 guard 写心跳微秒窗口可能读到半写→误判 stale→假接管，3 个 guard 脚本 `Write-Heartbeat` 改为写 `$HeartbeatFile.tmp` + `Move-Item -Force`（同卷原子 rename）；**F. WaitForExit 死锁根因文档化** ✅——3 个 guard 脚本头注释固化"pipe buffer fills → WaitForExit never returns → main thread deadlocks"知识点，防 AI "优化"回 `WaitForExit`。
 
 ### 10.8 系统级健康监控
 
 #### 10.8.1 健康聚合器 HealthAggregator（MOD-INF-015）
 
-**真源**：`src/zephyr/infrastructure/system_telemetry/health_aggregator.py`
-
-**职责**：每 15s 轮询 12 系统三态探针（liveness/readiness/healthz）→ 生成健康面板快照 → 年度审计。
-
-**三态模型**：
-- `liveness`：进程是否活着（alive/dead）
-- `readiness`：是否就绪可服务（ready/not_ready）
-- `degraded`：是否降级运行（healthz=degraded）
-
-**快照管理**：最多保留 1440 个快照（15s × 1440 = 6 小时滚动窗口），超出 FIFO 淘汰。
-
-**事件驱动订阅**（永久系统四要素：自动触发）：订阅 event_bus 的 `kill_switch_triggered` / `pipeline_failed` 事件，触发时立即采集健康快照，degraded 系统数 > 0 则告警。
-
-**年度健康报告**：uptime_ratio / mttr_s / degradation_ratio 三指标按系统分项。
+**真源**：`src/zephyr/infrastructure/system_telemetry/health_aggregator.py`。**职责**：每 15s 轮询 12 系统三态探针（liveness 进程是否活着 / readiness 是否就绪可服务 / degraded 是否降级运行）→ 生成健康面板快照 → 年度审计。快照最多保留 1440 个（15s × 1440 = 6 小时滚动窗口）超出 FIFO；事件驱动订阅 event_bus 的 `kill_switch_triggered` / `pipeline_failed`，触发时立即采集快照，degraded 系统数 > 0 则告警；年度健康报告三指标 uptime_ratio / mttr_s / degradation_ratio 按系统分项。
 
 #### 10.8.2 ClickHouse 健康探针 ch_health_probe
 
-**真源**：`scripts/start_ch_health_probe.ps1` + ch_health_probe.py
-
-**职责**：3s 探测 ClickHouse TCP+HTTP 双通连，心跳写入 `tmp/ch_health_probe.heartbeat`。
-
-**纳入四层防御**（#ARCH-BOOT-001 Phase 2）：ch_health_probe 与 scheduler/tick_subscriber 同等纳入心跳僵尸接管机制（缺陷 2 修复：初版方案未覆盖 ch_health_probe）。
-
-**why 独立探针**：ClickHouse 是数据落库终点，CH 不可用则所有下载白费。独立探针避免"scheduler 活着但 CH 死了"的盲区。
+**真源**：`scripts/start_ch_health_probe.ps1` + ch_health_probe.py。**职责**：3s 探测 ClickHouse TCP+HTTP 双通连，心跳写入 `tmp/ch_health_probe.heartbeat`；**纳入四层防御**（#ARCH-BOOT-001 Phase 2）与 scheduler/tick_subscriber 同等纳入心跳僵尸接管机制。**why 独立探针**：CH 是数据落库终点，CH 不可用则所有下载白费——避免"scheduler 活着但 CH 死了"的盲区。
 
 #### 10.8.3 数据源健康检查 source_health_check（§8.5 已述）
 
@@ -1150,26 +742,11 @@ Task Scheduler (OS-hosted, MultipleInstances=Parallel, survives user-mode kills)
 
 #### 10.8.4 三冗余 Watchdog（MOD-INF-015）
 
-**真源**：`src/zephyr/infrastructure/system_telemetry/watchdog.py`
-
-**职责**：三冗余互检 + Panic Mode + Dead Man's Switch（CT-WATCHDOG-001）。
-
-**机制**：
-- 心跳写入外部文件 `data/telemetry/.watchdog_heartbeat_{id}`（原子写：tmp + replace）
-- `check_peers(peers, peer_heartbeats)`：peer 心跳超 1800s（30min）视为 missing，2+ peer missing 触发 `panic_mode=True`
-- `should_alert_dead_mans_switch(last_heartbeat_s)`：超 1800s 触发死人开关告警
-
-**两种运行模式**：
-1. 库模式：`Watchdog(watchdog_id="wd-1")` 嵌入其他进程
-2. 独立进程：`python -m zephyr.infrastructure.system_telemetry.watchdog --id wd-1 --interval 10`
-
-**why 三冗余互检而非单点**：单点 watchdog 自身死亡无人知；三冗余互检，2+ peer missing 才 panic，避免单点误报，且任一 peer 死亡可被其他 peer 发现。
+**真源**：`src/zephyr/infrastructure/system_telemetry/watchdog.py`。**职责**：三冗余互检 + Panic Mode + Dead Man's Switch（CT-WATCHDOG-001）。**机制**：心跳写外部文件 `data/telemetry/.watchdog_heartbeat_{id}`（原子写 tmp + replace）；`check_peers()`——peer 心跳超 1800s（30min）视为 missing，2+ peer missing 触发 `panic_mode=True`；`should_alert_dead_mans_switch()`——超 1800s 触发死人开关告警。**两种运行模式**：库模式（`Watchdog(watchdog_id="wd-1")` 嵌入其他进程）/ 独立进程（`python -m zephyr.infrastructure.system_telemetry.watchdog --id wd-1 --interval 10`）。**why 三冗余互检而非单点**：单点 watchdog 自身死亡无人知；三冗余 2+ peer missing 才 panic 避免单点误报，任一 peer 死亡可被其他 peer 发现。
 
 ### 10.9 不变式测试防回退
 
-**真源**：`tests/scripts/test_guard_invariants.py` + `tests/scripts/test_guard_watchdog.py`
-
-**设计动机**（#ARCH-CH-004）：100% AI 开发模式下，AI 可能"优化"回 `WaitForExit`（看似更简洁）或改回 `IgnoreNew`（看似更安全），导致治本成果被回退。用不变式测试钉死治本决策为可执行不变式，AI 任何回退都会触发测试失败。
+**真源**：`tests/scripts/test_guard_invariants.py` + `tests/scripts/test_guard_watchdog.py`。**设计动机**（#ARCH-CH-004）：100% AI 开发模式下，AI 可能"优化"回 `WaitForExit` 或改回 `IgnoreNew`，导致治本成果被回退——用不变式测试钉死治本决策为可执行不变式，AI 任何回退都会触发测试失败。
 
 **不变式覆盖**：
 
@@ -1186,9 +763,7 @@ Task Scheduler (OS-hosted, MultipleInstances=Parallel, survives user-mode kills)
 
 ### 10.10 CLI（cli.py）
 
-**真源**：`src/zephyr/data/cli.py` + `__main__.py`（`python -m zephyr.data` 等价于 `integrator` 命令）
-
-**包入口 get_integrator()**（`__init__.py`）：调度器单例工厂，首次调用创建 IntegratorScheduler 实例并 `_load_config()` 加载配置，后续调用返回同一实例。CLI 和外部消费者应通过此函数获取调度器。
+**真源**：`src/zephyr/data/cli.py` + `__main__.py`（`python -m zephyr.data` 等价于 `integrator` 命令）。**包入口 get_integrator()**（`__init__.py`）：调度器单例工厂，首次调用创建 IntegratorScheduler 实例并 `_load_config()` 加载配置，后续返回同一实例——CLI 和外部消费者应通过此函数获取调度器。
 
 ```bash
 integrator status                 # 查看所有任务今日状态
@@ -1203,71 +778,34 @@ integrator speed-test [--source <src>] [--capability <cap>]  # 主动测速（§
 
 ### 10.11 无闪窗启动器 launch_hidden.vbs
 
-**真源**：`scripts/launch_hidden.vbs`
+**真源**：`scripts/launch_hidden.vbs`。**病根**：`powershell.exe` 是**控制台子系统程序**，Task Scheduler 以 Interactive 拉起它会瞬间分配控制台窗口；`-WindowStyle Hidden` 只能在主窗口创建后再隐藏，来不及阻止闪现——3 个 watchdog 任务每 5min 触发 → 每 5min 闪 3 次窗口。**原理**：`wscript.exe` 是 **GUI 子系统程序**不创建控制台窗口，`WScript.Shell.Run cmd, 0`（SW_HIDE）启动目标 powershell 时控制台被隐藏创建，从根本上消除闪窗。
 
-**病根**：`powershell.exe` 是**控制台子系统程序**。Task Scheduler 以 Interactive 方式拉起它会瞬间分配一个控制台窗口；`-WindowStyle Hidden` 只能在 PowerShell 主窗口创建之后再隐藏，来不及阻止那一瞬间的闪现。3 个 watchdog 任务每 5min 重复触发 → 每 5min 闪 3 次窗口。
-
-**原理**：`wscript.exe` 是 **GUI 子系统程序**，不创建控制台窗口；`WScript.Shell.Run cmd, 0`（SW_HIDE）启动目标 powershell 时，控制台窗口被隐藏创建，从根本上消除闪窗。
-
-**用法**（Task Scheduler Action）：
-```
-Execute:    wscript.exe
-Arguments:  "D:\ZephyrAlpha\scripts\launch_hidden.vbs" "<ps1 full path>"
-```
-
-**等待策略**：`sh.Run cmd, 0, True`（True=等待子进程退出）。guard 脚本是 while-true 常驻，wscript 随之常驻；guard 崩溃 → wscript 返回其退出码 → Task Scheduler 检测失败 → RestartOnFailure 触发。与原 powershell 直接常驻行为一致，且避免 wscript 立即退出导致 Task Scheduler job object 误杀孙进程 guard。
-
-**why vbs 而非 .ps1 直接启动**：project_memory 硬约束——Task Scheduler watchdog 任务禁止直接用 powershell.exe 启动（控制台子系统程序会闪窗）。vbs 是 GUI 子系统，是消除闪窗的唯一方案（`-WindowStyle Hidden` 治标不治本）。
+**用法**（Task Scheduler Action）：`Execute: wscript.exe` / `Arguments: "D:\ZephyrAlpha\scripts\launch_hidden.vbs" "<ps1 full path>"`。**等待策略**：`sh.Run cmd, 0, True`（True=等待子进程退出）——guard 脚本 while-true 常驻，wscript 随之常驻；guard 崩溃 → wscript 返回退出码 → Task Scheduler 检测失败 → RestartOnFailure 触发；与原 powershell 直接常驻行为一致，且避免 wscript 立即退出导致 Task Scheduler job object 误杀孙进程 guard。**why vbs 而非 .ps1 直接启动**：project_memory 硬约束——watchdog 任务禁止直接用 powershell.exe 启动，vbs 是消除闪窗的唯一方案。
 
 ### 10.12 幂等注册脚本 register_guard_tasks.ps1 / register_aux_tasks.ps1
 
-**真源**：`scripts/register_guard_tasks.ps1`（guard 任务）+ `scripts/register_aux_tasks.ps1`（aux 任务）
-
-**职责**：声明式幂等注册 5 个 Task Scheduler 任务（§10.5 表格），`Set-ScheduledTask` in-place 更新已存在任务。
+**真源**：`scripts/register_guard_tasks.ps1`（guard 任务）+ `scripts/register_aux_tasks.ps1`（aux 任务）。**职责**：声明式幂等注册 5 个 Task Scheduler 任务（§10.5 表格），`Set-ScheduledTask` in-place 更新已存在任务。
 
 **关键约束**（register_guard_tasks.ps1 头注释固化）：
-- **NEVER Unregister+Register an existing task**——Unregister 会 TERMINATE 运行中的 guard 实例（2026-07-22 23:30-00:48 静默 guard 死亡根因：re-registration 杀了运行中 guard 42196/55188，watchdog 虽复活但服务 needless bounced）。必须用 `Set-ScheduledTask` in-place 更新。
-- **MultipleInstances=Parallel**（guard 任务，fix #ARCH-BOOT-001 Phase 1）：Task Scheduler 是 DUMB 周期启动器，不参与单实例决策；单实例 SSoT 是脚本级 PID lock + heartbeat check。IgnoreNew 会阻断新 guard（僵尸 guard 占位时心跳接管成死代码）。
-- **register_aux_tasks.ps1 保持 IgnoreNew**：一次性 AtLogOn 任务无 while-true guard，无僵尸风险，IgnoreNew 合适。**文档化有意非对称**（不变式测试 TestRegisterGuardUsesParallel / TestRegisterAuxKeepsIgnoreNew 钉死）。
+- **NEVER Unregister+Register an existing task**——Unregister 会 TERMINATE 运行中的 guard 实例（2026-07-22 23:30-00:48 静默 guard 死亡根因：re-registration 杀了运行中 guard 42196/55188，watchdog 虽复活但服务 needless bounced），必须用 `Set-ScheduledTask` in-place 更新。
+- **MultipleInstances=Parallel**（guard 任务，fix #ARCH-BOOT-001 Phase 1）：Task Scheduler 是 DUMB 周期启动器不参与单实例决策；单实例 SSoT 是脚本级 PID lock + heartbeat check——IgnoreNew 会阻断新 guard（僵尸 guard 占位时心跳接管成死代码）。
+- **register_aux_tasks.ps1 保持 IgnoreNew**：一次性 AtLogOn 任务无 while-true guard 无僵尸风险，IgnoreNew 合适——**文档化有意非对称**（不变式测试 TestRegisterGuardUsesParallel / TestRegisterAuxKeepsIgnoreNew 钉死）。
 
-**部署**（交互用户，无需管理员）：
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1   # scheduler + tick_subscriber + ch_health_probe + deadman_switch
-powershell -ExecutionPolicy Bypass -File scripts\register_aux_tasks.ps1      # RSSHub + TraeCache
-```
+**部署**（交互用户，无需管理员）：`powershell -ExecutionPolicy Bypass -File scripts\register_guard_tasks.ps1`（scheduler + tick_subscriber + ch_health_probe + deadman_switch）+ `powershell -ExecutionPolicy Bypass -File scripts\register_aux_tasks.ps1`（RSSHub + TraeCache）。
 
-**why 声明式幂等而非手动 schtasks**：AI 可维护性（C7 约束）——register 脚本可重复执行（in-place 更新），AI 改配置后重跑脚本即可同步到 Task Scheduler，无需手动 schtasks 命令易出错。
+**why 声明式幂等而非手动 schtasks**：AI 可维护性（C7 约束）——register 脚本可重复执行（in-place 更新），AI 改配置后重跑脚本即同步，无需易错的手动 schtasks。
 
 ### 10.13 Prometheus HTTP 端点 metrics_server（P1-5 可观测性）
 
-**真源**：`src/zephyr/shared/observability/metrics_server.py`（MOD-INF-016，D_SHARED 域）
+**真源**：`src/zephyr/shared/observability/metrics_server.py`（MOD-INF-016，D_SHARED 域）。**职责**：启动 daemon 线程提供 `/metrics` 和 `/health` HTTP 端点，输出 MetricsRegistry 的 Prometheus 兼容文本，被 §6.6 tick_subscriber 调用（`start_metrics_server(port=9925)`）。`GET /metrics`（Prometheus 文本 200）/ `GET /health`（200）/ 未知路径 404；端口默认 9925，daemon 线程不阻塞主流程，静默访问日志。
 
-**职责**：启动 daemon 线程提供 `/metrics` 和 `/health` HTTP 端点，输出 MetricsRegistry 的 Prometheus 兼容文本。被 §6.6 tick_subscriber 调用（`start_metrics_server(port=9925)`）。
-
-**端点**：
-- `GET /metrics`——输出 Prometheus 文本格式指标（200）
-- `GET /health`——健康检查（200）
-- 未知路径——404
-
-**配置**：端口默认 9925；独立 daemon 线程不阻塞主流程；静默访问日志（不刷屏）。
-
-**验证**：
-```bash
-curl http://localhost:9925/metrics
-curl http://localhost:9925/health
-```
-
-**why HTTP 端点而非只写 metrics.prom 文件**：§10.3 的 metrics.prom 文本文件需外部 scraper（Prometheus node_exporter textfile collector）定时读取，延迟高；HTTP 端点支持 Prometheus pull 模式实时抓取，且支持 curl 手动验证。tick_subscriber 作为独立进程，HTTP 端点让它的指标可被 Prometheus 直接抓取。
-
-**why daemon 线程而非独立进程**：metrics_server 是 tick_subscriber 的附属可观测性组件，独立进程会增加守护复杂度（又多一个 watchdog）。daemon 线程随主进程生死，简单且够用。
+**why HTTP 端点而非只写 metrics.prom 文件**：文本文件需外部 scraper 定时读取延迟高；HTTP 端点支持 Prometheus pull 实时抓取 + curl 手动验证，tick_subscriber 独立进程的指标可被直接抓取；**daemon 线程而非独立进程**——metrics_server 是附属组件，独立进程会增加守护复杂度（又多一个 watchdog），daemon 线程随主进程生死。
 
 ### 10.14 数据相关 commit_gates 防回退门禁（pre-commit 静态检测层）
 
 **真源**：`src/zephyr/gov_enforcement/commit_gates/`（MOD-GATE_ENGINE，D_GOV_CODE_QUALITY 域，由 `GitCommitGateway` 在 pre-commit 钩子统一调度）
 
-**与 §10.9 不变式测试的区别**：§10.9 是运行时不变式测试（pytest 跑测试钉死设计）；本节是 commit 时静态检测（git diff staged 行 AST/正则扫描，AI 改代码时即时拦截）。两者互补——§10.9 防"运行时行为回退"，本节防"源码回退"。
-
-**why 独立成节**：100% AI 开发模式下，§5-§9 的设计决策（BufferedWriter/ch_reader FINAL/version 列/TableRegistry/CapabilityContract/无裸 SQL）若无 commit 门禁强制，AI 后续开发极易"图方便"绕过（直接调 write_result / ch_writer.query / 硬编码表名）。门禁是设计决策的"执法层"配套。
+**与 §10.9 不变式测试的区别**：§10.9 是运行时不变式测试（pytest 钉死设计）；本节是 commit 时静态检测（git diff staged 行 AST/正则扫描，AI 改代码时即时拦截）——两者互补，§10.9 防"运行时行为回退"，本节防"源码回退"。**why 独立成节**：100% AI 开发模式下，§5-§9 的设计决策（BufferedWriter/ch_reader FINAL/version 列/TableRegistry/CapabilityContract/无裸 SQL）若无 commit 门禁强制，AI 后续开发极易"图方便"绕过——门禁是设计决策的"执法层"配套。
 
 **9 个数据相关门禁**（block=硬阻断 / warn=提醒不阻断）：
 
@@ -1285,16 +823,9 @@ curl http://localhost:9925/health
 
 **豁免机制**：`tests/` 全豁免；docstring/注释/import 行豁免；模块自身豁免（ch_writer.py 豁免 CH-FINAL-GATE / table_registry.py 豁免 TABLE-NAME-REGISTRY）；`SQL_*` 常量定义行豁免（ast 精确识别多行常量）。
 
-**fail-open / fail-closed 策略**：
-- git diff 不可达 / AST 解析失败 / YAML 解析失败 → **fail-open**（passed=True，logger.warning，不阻断——检测器失效不能瘫痪开发）
-- 检出违例 → **fail-closed**（passed=False，阻断 commit）
-- audit log 目录缺失（capability_lookup）→ **fail-closed**（防"删目录绕过"攻击向量）
+**fail-open / fail-closed 策略**：git diff 不可达 / AST 解析失败 / YAML 解析失败 → **fail-open**（passed=True，logger.warning，不阻断——检测器失效不能瘫痪开发）；检出违例 → **fail-closed**（阻断 commit）；audit log 目录缺失（capability_lookup）→ **fail-closed**（防"删目录绕过"攻击向量）。**紧急逃生**：`[no-lookup:reason]` commit msg 白名单标记 / `ZEPHYR_BYPASS_LOOKUP=1` 环境变量（与 `ZEPHYR_COMMIT_GATEWAY=1` 同级逃生阀）。
 
-**紧急逃生**：`[no-lookup:reason]` commit msg 白名单标记 / `ZEPHYR_BYPASS_LOOKUP=1` 环境变量（与 `ZEPHYR_COMMIT_GATEWAY=1` 同级逃生阀）。
-
-**why DATA-TASK-COMPLETENESS warn 而非 block**：历史 154 任务中 49 个（31.8%）无 fallback_sources（2026-08-12 实测），一次性全阻断会瘫痪开发；warn 提醒渐进式补全，新任务养成配 fallback 习惯后再收紧。
-
-**why CAPABILITY-OVERLAP 接入 CloneGuard**：纯 token overlap 检测不出"语义克隆"（变量改名+小逻辑增减）；Echo-Guard 语义嵌入检测 extract 级克隆（3+副本）硬阻断，强制合并去重。
+**why DATA-TASK-COMPLETENESS warn 而非 block**：历史 154 任务中 49 个（31.8%）无 fallback_sources（2026-08-12 实测），一次性全阻断会瘫痪开发，warn 渐进式补全后再收紧；**why CAPABILITY-OVERLAP 接入 CloneGuard**：纯 token overlap 检测不出"语义克隆"（变量改名+小逻辑增减），Echo-Guard 语义嵌入检测 extract 级克隆（3+副本）硬阻断强制合并去重。
 
 ## 11. 已施工盘点
 
@@ -1303,17 +834,17 @@ curl http://localhost:9925/health
 > 真源：depgraph（`extract_depgraph.py --modules MOD-L00-004`）。以下为职责描述，文件列表以 depgraph 为准。共 63 个 .py 文件（2026-08-12 rg 实测）。
 
 **包入口**：`__init__.py`（get_integrator 单例工厂）/ `__main__.py`（python -m zephyr.data CLI 入口）
-**Provider 抽象层**：provider_base.py（IngestProviderBase + FetchPayload + FetchResult + IngestProviderMeta + CapabilityContract §5.1-§5.2）/ capability_validator.py（§5.8 启动时契约校验）/ error_classifier.py（§5.9 错误分类器）/ policy_registry.py（§5.7 per-source 策略注册表）/ table_registry.py（§5.6 表名 SSoT 消费层）/ quality_gate.py（§8.1 re-export wrapper）
+**Provider 抽象层**：provider_base.py（IngestProviderBase + FetchPayload + FetchResult + IngestProviderMeta + CapabilityContract §5.1-§5.2）/ capability_validator.py（§5.8）/ error_classifier.py（§5.9）/ policy_registry.py（§5.7）/ table_registry.py（§5.6）/ quality_gate.py（§8.1 re-export wrapper）
 **Provider 实现**（15 个）：implementations/{akshare,baostock,cls,eastmoney_news,eia,fred,ifind,internal_compute,miniqmt,qweather,rss,tdx,tickflow,tqcenter,tushare}_provider.py
 **symbol 标准化**：symbol_normalizer/{__init__,normalizer}.py（§5.5 TRAE-082）
 **域包入口**：satellite_geospatial_engine/__init__.py（§5.10 D_DATA 域入口 + CTR 契约声明）
-**调度编排**：scheduler.py / task_queue.py / progress_store.py（§10.1）/ alerter.py（§10.2）/ metrics.py（§10.3）/ cli.py（§10.10）/ trading_calendar.py（§6.7 交易日历守卫）
-**落库**：ch_config.py（§7.6.1 连接配置单真源）/ ch_reader.py（§7.6.2 统一读取层 FINAL 注入）/ ch_writer.py（§7.3 混合传输）/ buffered_writer.py（§7.2 攒批）/ wal_writer.py（§7.8 主动 WAL）/ local_replay.py（§7.7.1 TSV 兜底+回灌）/ wal_codec/{__init__,codec_registry,tsv_codec}.py（§7.9 编解码注册表）
-**质量完整性**：integrity_checker.py（§8.2 L11 巡检）/ backfill_checker.py（§8.3 L10 补下载）/ cross_source_validator.py（§8.4 跨源验证）/ source_health_check.py（§8.5 数据源健康）/ pit_query.py（§8.6 PIT 查询）/ speed_tester.py（§10.4 主动测速）
-**业务下载器**：sector_kline_downloader.py（§6.8.1 板块K线）/ sector_ranking_engine.py（§6.8.2 板块排名）/ sector_snapshot_collector.py（§6.8.3 板块快照）/ kline_resampler.py（§6.9 K线合成）/ news_collector.py（§6.10.2 新闻查询）/ news_dedup.py（§6.10.1 新闻去重）/ tick_redis_cache.py（§7.11 Redis 热缓存双写）/ tick_subscriber.py（§6.6 Tick 订阅独立进程）
+**调度编排**：scheduler.py / task_queue.py / progress_store.py（§10.1）/ alerter.py（§10.2）/ metrics.py（§10.3）/ cli.py（§10.10）/ trading_calendar.py（§6.7）
+**落库**：ch_config.py（§7.6.1）/ ch_reader.py（§7.6.2 FINAL 注入）/ ch_writer.py（§7.3）/ buffered_writer.py（§7.2）/ wal_writer.py（§7.8）/ local_replay.py（§7.7.1）/ wal_codec/{__init__,codec_registry,tsv_codec}.py（§7.9）
+**质量完整性**：integrity_checker.py（§8.2 L11）/ backfill_checker.py（§8.3 L10）/ cross_source_validator.py（§8.4）/ source_health_check.py（§8.5）/ pit_query.py（§8.6）/ speed_tester.py（§10.4）
+**业务下载器**：sector_kline_downloader.py（§6.8.1）/ sector_ranking_engine.py（§6.8.2）/ sector_snapshot_collector.py（§6.8.3）/ kline_resampler.py（§6.9）/ news_collector.py（§6.10.2）/ news_dedup.py（§6.10.1）/ tick_redis_cache.py（§7.11）/ tick_subscriber.py（§6.6）
 **冗余容灾**：redundant_source/{__init__,heartbeat_monitor,source_switcher,backup_tick_poller,recovery,sqlite_fallback}.py（§9.2 热切换 + SQLite 兜底）
-**配置**：config/tasks.yaml（§11.2）/ config/schedule.yaml（§6.2 15条目）/ config/policies.yaml（派生）/ config/known_data_gaps.yaml（§8.7 历史缺口注册表）
-**守护与自启**（跨域引用，真源在 D_INFRA_RUNTIME / scripts/）：infrastructure/{database_service.py（§7.10 连接管理）, system_telemetry/{watchdog,health_aggregator,health_probes}.py} + shared/observability/{metrics,metrics_server}.py（§10.13） + scripts/{start_scheduler,start_tick_subscriber,start_ch_health_probe,deadman_switch,register_guard_tasks,register_aux_tasks,clean_trae_cache}.ps1 + launch_hidden.vbs（§10.11） + tests/scripts/{test_guard_invariants,test_guard_watchdog}.py（§10.9 不变式测试） + gov_enforcement/commit_gates/{ch_batch_size,ch_final,ch_version_col,table_name_registry,capability_consistency,capability_lookup_required,capability_overlap,bare_sql,data_task_completeness}_gate.py（§10.14 防回退门禁 9 项）
+**配置**：config/tasks.yaml（§11.2）/ config/schedule.yaml（§6.2 15条目）/ config/policies.yaml（派生）/ config/known_data_gaps.yaml（§8.7）
+**守护与自启**（跨域引用，真源在 D_INFRA_RUNTIME / scripts/）：infrastructure/{database_service.py（§7.10）, system_telemetry/{watchdog,health_aggregator,health_probes}.py} + shared/observability/{metrics,metrics_server}.py（§10.13） + scripts/{start_scheduler,start_tick_subscriber,start_ch_health_probe,deadman_switch,register_guard_tasks,register_aux_tasks,clean_trae_cache}.ps1 + launch_hidden.vbs（§10.11） + tests/scripts/{test_guard_invariants,test_guard_watchdog}.py（§10.9） + gov_enforcement/commit_gates/{ch_batch_size,ch_final,ch_version_col,table_name_registry,capability_consistency,capability_lookup_required,capability_overlap,bare_sql,data_task_completeness}_gate.py（§10.14 门禁 9 项）
 
 ### 11.2 配置文件清单
 
@@ -1344,24 +875,7 @@ curl http://localhost:9925/health
 
 ### 11.3 文档清单
 
-| 文档 | module_id | 作用 |
-|---|---|---|
-| _domain_data/index.md | MOD-L00-001 | D-DATA 域索引 |
-| _domain_data/blueprint.md | MOD-L00-001 | Datasource Core 蓝图（v4.0.4，Provider 部分已移交 004） |
-| _domain_data/data_source_integrator_blueprint.md | MOD-L00-004 | 数据源集成器蓝图（what 层真源，v0.4.1） |
-| _domain_data/data_source_operation_manual.md | MOD-L00-002 | 数据源 API 操作唯一真源（iFind+miniQMT 实测验证） |
-| _domain_data/boot_autostart_architecture.md | — | 开机自启架构 |
-| _domain_data/redundant_source_blueprint.md | — | 冗余数据源蓝图 |
-| _domain_data/wal_codec_blueprint.md | — | WAL 编解码蓝图 |
-| _domain_mkt_data/{autoload,connectors,failover,raw_data_cache,vendor_base,vendor_registry}/blueprint.md | — | 行情数据域 6 子模块蓝图 |
-| 02_domain_architecture_docs/11_d_data.md | D_DATA | D_DATA 域 183 模块清单 |
-| 05_dataflow_architecture/data_inventory.md | — | 业务数据现状（ClickHouse 实时扫描） |
-| 05_dataflow_architecture/data_acquisition_requirements.yaml | — | 数据获取需求 P0-P3 |
-| design_memos/15_data_feature_layer_spec.md | G01 | 数据与特征层规范（互补） |
-| design_memos/17_special_trading_days_data_assets.md | — | 特殊交易日数据资产 |
-| design_memos/18_cold_archive_build_plan.md | — | 冷归档施工计划 |
-| design_memos/19_northbound_hold_snapshot.md | — | 北向季度快照 fetcher |
-| design_memos/63_data_utilization_audit.md | — | 数据利用审计（配套） |
+文档清单与 §17 引用同源：`_domain_data/` 7 篇（index.md MOD-L00-001 D-DATA 域索引 / blueprint.md MOD-L00-001 v4.0.4 / data_source_integrator_blueprint.md MOD-L00-004 what 层真源 v0.4.1 / data_source_operation_manual.md MOD-L00-002 / boot_autostart_architecture.md / redundant_source_blueprint.md / wal_codec_blueprint.md）+ `_domain_mkt_data/` 6 子模块蓝图（autoload/connectors/failover/raw_data_cache/vendor_base/vendor_registry）+ `11_d_data.md`（D_DATA 域 183 模块）+ `05_dataflow_architecture/`（data_inventory + data_acquisition_requirements P0-P3）+ design_memos 5 篇（15 互补 / 17 特殊交易日 / 18 冷归档 / 19 北向快照 / 63 配套）——链接与真源路径见 §17.1-§17.3。
 
 ### 11.4 数据消费者层（上游依赖 zephyr.data 的模块）
 
@@ -1383,25 +897,7 @@ curl http://localhost:9925/health
 
 > 数据下载层的验证配套分两类：单元测试（验证模块行为正确）+ 不变式测试（钉死设计决策防回退）。
 
-**A. 模块单元测试**（`tests/zephyr/data/`，25 个文件，验证 §5-§7 各模块行为）：
-
-| 测试文件 | 验证对象 | 对应章节 |
-|---|---|---|
-| test_provider_base.py / test_providers.py / test_providers_stage3.py | IngestProviderBase + 15 Provider 实现 | §5.1/§5.3 |
-| test_capability_validator.py | CapabilityContract 启动校验 | §5.8 |
-| test_internal_compute_provider.py | internal_compute 铁律 | §5.4 |
-| test_data_scheduler.py / test_data_task_queue.py | 调度编排 + 任务队列 | §6.1/§6.4 |
-| test_data_cli.py | CLI 命令 | §10.10 |
-| test_ch_writer.py | CH 混合传输写入 | §7.3 |
-| test_wal_writer.py / test_wal_codec.py | 主动 WAL + 编解码 | §7.8/§7.9 |
-| test_local_replay.py | TSV 兜底+回灌 | §7.7.1 |
-| test_redundant_source.py / redundant_source/test_heartbeat_monitor_alert.py | 冗余源热切换 + 心跳告警 | §9.2 |
-| test_tick_subscriber.py / test_tick_redis_cache.py | Tick 订阅 + Redis 双写 | §6.6/§7.11 |
-| test_kline_resampler.py | K线合成 | §6.9 |
-| test_sector_ranking_engine.py / test_sector_snapshot_collector.py | 板块排名 + 快照 | §6.8.2/§6.8.3 |
-| test_integrity_checker.py / test_cross_source_validator.py | 完整性巡检 + 跨源验证 | §8.2/§8.4 |
-| test_policy_registry.py / test_error_classifier.py | 策略注册 + 错误分类 | §5.7/§5.9 |
-| test_progress_store.py / test_alerter.py / test_metrics.py | 进度/告警/指标 | §10.1/§10.2/§10.3 |
+**A. 模块单元测试**（`tests/zephyr/data/`，25 个文件，验证 §5-§7 各模块行为）：test_provider_base / test_providers / test_providers_stage3（Provider 抽象+15 实现 §5.1/§5.3）/ test_capability_validator（§5.8）/ test_internal_compute_provider（§5.4）/ test_data_scheduler / test_data_task_queue（§6.1/§6.4）/ test_data_cli（§10.10）/ test_ch_writer（§7.3）/ test_wal_writer / test_wal_codec（§7.8/§7.9）/ test_local_replay（§7.7.1）/ test_redundant_source / redundant_source/test_heartbeat_monitor_alert（§9.2）/ test_tick_subscriber / test_tick_redis_cache（§6.6/§7.11）/ test_kline_resampler（§6.9）/ test_sector_ranking_engine / test_sector_snapshot_collector（§6.8.2/§6.8.3）/ test_integrity_checker / test_cross_source_validator（§8.2/§8.4）/ test_policy_registry / test_error_classifier（§5.7/§5.9）/ test_progress_store / test_alerter / test_metrics（§10.1/§10.2/§10.3）
 
 **B. 数据治理测试**（`tests/data/`，13 个文件，验证数据生命周期/质量/分类）：
 test_data_classification / test_data_lifecycle / test_data_pipeline_guard / test_data_quality / test_data_quality_gate / test_data_source_reliability / test_data_volume_growth_monitor / test_l00_data_source / test_market_quality_validator / test_news_collector / test_pit_query / test_source_health_check / test_symbol_normalizer
@@ -1411,7 +907,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 **D. 守护不变式测试**（`tests/scripts/`，§10.9 已述）：test_guard_invariants / test_guard_watchdog（钉死 §10.5-§10.8 守护配置防回退）
 
-**why 记录测试层**：测试是配套的验证层——模块行为变更 MUST 同步更新单元测试，设计决策变更 MUST 同步更新不变式测试。AI 改代码时通过 `[TESTS]` 头注释定位对应测试文件（如 §5.9 error_classifier 头注释 `[TESTS] tests/zephyr/data/test_error_classifier.py`）。
+**why 记录测试层**：测试是配套的验证层——模块行为变更 MUST 同步更新单元测试，设计决策变更 MUST 同步更新不变式测试；AI 改代码时通过 `[TESTS]` 头注释定位对应测试文件。
 
 ## 12. 已知缺口与升级方向（讨论载体）
 
@@ -1454,11 +950,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 ### 12.3 blocked/broken API（akshare 数据源退化）
 
-**现状**（fetch_perf 实测）：
-- `akshare.money_flow` **blocked**（东财反爬封锁 RemoteDisconnected）——已回退 ifind→akshare（#ARCH-IFIND-FAILOVER 后 akshare 主源，但 akshare 也 blocked，实际靠 fallback 链兜底）
-- `akshare.equity_pledge` **broken**（API 损坏 data_json[result]为 None）——已回退 ifind
-- `akshare.equity_pledge_summary` **broken**（同上）
-- `akshare.daily_valuation` **rate_limited**（百度API空响应率15%，0.17只/s）
+**现状**（fetch_perf 实测）：`akshare.money_flow` **blocked**（东财反爬封锁 RemoteDisconnected，#ARCH-IFIND-FAILOVER 后 akshare 主源但也 blocked，实际靠 fallback 链兜底）/ `akshare.equity_pledge` **broken**（API 损坏 data_json[result]为 None，已回退 ifind）/ `akshare.equity_pledge_summary` **broken**（同上）/ `akshare.daily_valuation` **rate_limited**（百度API空响应率15%，0.17只/s）。
 
 **裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
 - [x] akshare money_flow blocked 替代源 → **先验证 fallback 链实效 + 评估 tushare moneyflow 积分，专用爬虫暂缓**（§16.2 Q10 / §16.3 Q19）。
@@ -1467,8 +959,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 ### 12.4 slow capability（性能瓶颈）
 
-**现状**：
-- `miniqmt.adj_factor` **slow** 0.09只/s（get_divid_factors 每只11秒，全量16h）——增量模式下每日只拉近期可接受，全量回算需周末窗口
+**现状**：`miniqmt.adj_factor` **slow** 0.09只/s（get_divid_factors 每只11秒，全量16h）——增量模式下每日只拉近期可接受，全量回算需周末窗口。
 
 **裁定（v1.4.0 定稿，理由与重评条件见 §16）**：
 - [x] adj_factor 全量回算优化 → **暂缓**——增量模式每日可接受，全量回算走周末 16h 窗口；复权因子是交易核心数据，换源反推有口径一致性风险，宁慢勿错（§16.3 Q21）。
@@ -1550,15 +1041,13 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 **实证**：`scheduler.create_provider()`（scheduler.py L987-1049）共 14 个分支（ifind/miniqmt/akshare/baostock/tushare/tickflow/tdx/rss/cls/eastmoney_news/tqcenter/fred/eia/qweather），**无 `internal` 分支**——`source: internal` 落入 else 返回 None（"未知数据源" warning）。
 
-**影响**：`hk_trade_calendar_refresh`（monthly_static，source=internal，#ARCH-DATA-001 止血从 akshare 切到 internal）每月 1 日触发时**主源必然失败**；另 stock_indicator 任务 fallback 到 internal（2 处）同样断裂。internal_compute_provider.py L32 docstring 自称"接入调度器：create_provider() 的 source=="internal" 分支返回本类实例"——**docstring 虚标**，与实现脱节（#ARCH-CH-004 蓝图-实现鸿沟同类）。
-
-**技术细节**：technical_indicator/calendar_event 两个 capability 无 tasks.yaml 任务（技术指标实际由 `src/zephyr/factor/technical_indicators/` D_FACTOR 域独立计算链路承载），故断线仅影响 hk_trade_calendar 一月度任务 + stock_indicator fallback。
+**影响**：`hk_trade_calendar_refresh`（monthly_static，source=internal，#ARCH-DATA-001 止血从 akshare 切到 internal）每月 1 日触发时**主源必然失败**；另 stock_indicator 任务 fallback 到 internal（2 处）同样断裂。internal_compute_provider.py L32 docstring 自称"接入调度器：create_provider() 的 source=="internal" 分支返回本类实例"——**docstring 虚标**，与实现脱节（#ARCH-CH-004 蓝图-实现鸿沟同类）。**技术细节**：technical_indicator/calendar_event 两个 capability 无 tasks.yaml 任务（技术指标实际由 `src/zephyr/factor/technical_indicators/` D_FACTOR 域独立计算链路承载），故断线仅影响 hk_trade_calendar 一月度任务 + stock_indicator fallback。
 
 **裁定（v1.4.0 定稿）**：见 §16.2 Q18——create_provider 补 `internal` 分支（一行 elif）+ 修 docstring 虚标 + 评估 hk_trade_calendar 缺口 + 登记新 ARCH 条目；代码修复越界未做，施工转 P0 缺口登记候选库。
 
 #### 12.12.2 【P2】死 fallback 35 处——"心理安慰型"韧性配置
 
-fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`qmt`（7 处）/`bdpan`（1 处）/`local_valuation`（1 处）。主源失败时这些 fallback 触发即落入"未知数据源"失败，**不提供实际韧性**且掩盖真实风险敞口（§9.1 已补警告）。处置选项：①清理死配置；②补 Provider 实现（local_valuation 本地估值计算有真实需求——daily_valuation_full_refresh 的末级 fallback）；③保留但标注。——v1.4.0 已裁定：①清理为主 + ②local_valuation 单独补实现（§16.2 Q14）。
+fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`qmt`（7 处）/`bdpan`（1 处）/`local_valuation`（1 处）。主源失败时这些 fallback 触发即落入"未知数据源"失败，**不提供实际韧性**且掩盖真实风险敞口（§9.1 已补警告）。
 
 **裁定（v1.4.0 定稿）**：见 §16.2 Q14——清理 qmt/exchange/bdpan 死配置 28 处（保留 local_valuation 1 处——daily_valuation_full_refresh 末级 fallback 有真实需求，补 internal compute provider 实现后启用）。
 
@@ -1578,7 +1067,7 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 
 > **定位**：作战地图 BM-RES-11（多模态知识采集，L1，design 态，source_ref：学习系统架构.md §3 S0 多模态知识采集层）+ 子环节 BM-RES-11-A（采集源分类与调度，S0）覆盖**研究知识源**——研报/新闻/公告/财报/社交媒体/另类数据/论文库（外部源 → 采集 → 分类 → 调度 → BM-RES-06 LLM 研究 Agent / 论文追踪）。本文档当前 15 源全部面向**行情/基本面/宏观交易数据**；研究知识源接入时是本体系的扩展方向而非平行新体系。
 >
-> **裁定（扩展模式已定，建设项登记候选）**：研究知识源接入时**按 §5.7 per-source 策略对象模式扩展**——每新增知识源=新增一个 Provider 实现（IngestProviderBase）+ data_sources_registry.yaml 一条元数据 + policies.yaml 一条 SourcePolicy，**复用现有配额（rpm/concurrency/min_interval_sec）/重试（max_retries/backoff/retry_on）/fallback（§9.1 fallback_sources + error_classifier 可恢复性判断）机制**，不新建采集框架。BM-RES-11-A 的 6 类源分类（研报/新闻/公告/财报/社交/另类）落入现有 provider 分类体系时按"一源一 policy"登记，调度策略（优先级+QPS 分配+重试+增量）复用 §6 调度编排层 15 时段条目模式。**理由**：① §5.7 已论证"why per-source 策略对象而非统一装饰器"——15 个源特性差异极大必须 per-source，研究知识源差异更大（RSS 遵守 robots.txt/论文库 API 配额/社交平台反爬）更需同模式；② 新闻采集链（news_collector + news_dedup，§6.10）已是研究知识源的第一个生产实例，证明本体系承载力；③ 与 C-022/C-044 iFind QPS 协同登记一致（作战地图 code_mapping 注记）。**重评条件**：研究知识源种类超过现有时段条目承载（>5 类新源）或 QPS 配额跨源挤兑时，评估独立知识采集调度面。
+> **裁定（扩展模式已定，建设项登记候选）**：研究知识源接入时**按 §5.7 per-source 策略对象模式扩展**——每新增知识源=新增一个 Provider 实现（IngestProviderBase）+ data_sources_registry.yaml 一条元数据 + policies.yaml 一条 SourcePolicy，**复用现有配额（rpm/concurrency/min_interval_sec）/重试（max_retries/backoff/retry_on）/fallback（§9.1 fallback_sources + error_classifier 可恢复性判断）机制**，不新建采集框架。BM-RES-11-A 的 6 类源分类（研报/新闻/公告/财报/社交/另类）按"一源一 policy"登记，调度策略（优先级+QPS 分配+重试+增量）复用 §6 调度编排层 15 时段条目模式。**理由**：① §5.7 已论证"why per-source 策略对象而非统一装饰器"——15 个源特性差异极大必须 per-source，研究知识源差异更大（RSS 遵守 robots.txt/论文库 API 配额/社交平台反爬）更需同模式；② 新闻采集链（news_collector + news_dedup，§6.10）已是研究知识源的第一个生产实例，证明本体系承载力；③ 与 C-022/C-044 iFind QPS 协同登记一致（作战地图 code_mapping 注记）。**重评条件**：研究知识源种类超过现有时段条目承载（>5 类新源）或 QPS 配额跨源挤兑时，评估独立知识采集调度面。
 >
 > **登记候选（v4.0 采集增强，非 MVP）**：BM-RES-11-A 的**智能去重 / 相关性预筛**两项采集增强登记为候选——智能去重可复用 §6.10.1 news_dedup 的标题 MD5 去重模式扩展到跨源（同一研报多渠道转载）；相关性预筛（采集时即按研究主题相关性打分过滤）是知识源特有需求（交易数据源全量落库，知识源量大噪声多需预筛），待 BM-RES-06 LLM 研究 Agent 上线时一并评估。降级路径对齐作战地图登记：主源失效→自动切换备用源；调度超限→降级 QPS+延后非优先源。
 >
@@ -1764,3 +1253,4 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 | 2026-08-12 | 1.3.0 | 架构审查全量事实核对修订（7 轮审查：现状盘点/内容回填/缺失环节/2026-08 最新研究/过度工程/一致性/规范性） | 架构审查 AI 按工作清单全量核对代码/配置/注册表实证，纠偏 17 处：①数字漂移——§2.1 文件数 48→63（rg 实测）、任务数 130+→154、§6.2 调度 13 档→15 时段条目（补 L0 集合竞价高频 + L3.5 慢新闻两行，§2.1/§3/§6.1/§12.7/§14.1 五处联动）、§8.7 known_data_gaps 2 条→7 条（补 6 缺口类型 + accepted/resolved 终态）、§11.2 同步；②代码实证纠偏——§5.3 fred/eia"VPN 探测跳过"误述（实际仅 rss_provider 有 _is_vpn_ready）、§4.1/§4.2 tickflow 港股能力误列（仅 kline_us_daily/us_index）、§8.4 cross_source_validator 例子错误（tick 专属 QMT vs TDX 非日K 通用）、§8.5 source_health_check"结合 fetch_perf 退化"误述（实际不读 fetch_perf 不自动禁用）、§10.4 fetch_perf"scheduler 被动记录"误述（零引用，speed_tester 单通道）、§5.4 铁律表述补实现细节（table 路由默认分支）；③配置实证——§4.3 iFind 降级 7 类→9 任务精确化、§9.1 补 fallback 覆盖率 68.2%（105/154）+ 死 fallback 35 处警告（qmt/exchange/bdpan/local_valuation 无 Provider 实现）、§12.2 disabled 11→10（msci_adjustment_refresh 从未在 tasks.yaml 登记，移回 §12.6 缺口）、§9.2/§10.14/§17.4 残余计数同步；④状态更新——§12.1 #ARCH-EDB-EXPAND 已落地（fred 3/eia 2 任务启用，国际宏观闭合，edb_data accepted 由 macro_data 兜底）；⑤新发现登记——§12.12 新增 4 项（P1 internal 未接线 create_provider 致 #ARCH-DATA-001 止血断裂 + P2 死 fallback + P2 自动熔断缺失对标 2026 circuit breaker 实践 + P3 #ARCH-DATA-002 语义契约边界衔接）、§16 开放问题补 13-18 共 6 项（含 SPECIAL-DAYS 悬空编号、CapabilityContract 三闲置字段裁剪）；⑥过度工程审查 6 项判定全通过（15 Provider/四字段契约/15 时段/known_data_gaps/tick 专属校验/DATA-002 五项均不过度，实证依据记入 §5.2/§6.2/§8.4）；⑦frontmatter related_issues 补 #ARCH-DATA-002，§17.5 同步。外部研究锚点：akshare v1.18.84（2026-08-10）活跃维护印证"上游 break 常态化"设计前提；ClickHouse 官方 batch 10k-100k 行/≤1 insert/s 与 BufferedWriter 50k行/30s 对齐。status 保持 draft——§12.12.1 P1 缺口修复 + §16 共 18 项开放问题收敛后再升 active。【编辑插曲：本轮修订写入后三次遭并发会话 git 操作回退（共享主工作区 index 被 reset/checkout 波及），全部内容按上下文记录完整重放并立即 git add + claim 保护——印证 #ARCH-GIT-CLEAN-GUARD-FIX 教训与 GitCommitGateway 存在意义】 |
 | 2026-08-12 | 1.3.1 | 作战地图全覆盖补丁——BM-RES-11 / BM-RES-11-A。新增 §12.13 研究知识源扩展方向：研究知识源（研报/新闻/公告/财报/社交/另类/论文库）接入时按 §5.7 per-source 策略对象模式扩展（新源=Provider+registry 元数据+SourcePolicy 三件套，复用现有配额/重试/fallback 机制，不新建采集框架）；6 类源分类按"一源一 policy"登记、调度复用 §6 15 时段条目模式；智能去重/相关性预筛登记候选（复用 §6.10.1 news_dedup MD5 模式扩展跨源；预筛待 BM-RES-06 LLM 研究 Agent 上线一并评估）；降级路径对齐作战地图登记（主源失效切备用源/调度超限降级 QPS）。补定位→裁定（理由+重评条件）→契约→边界四层 |
 | 2026-08-13 | 1.4.0 | **定稿转 active**：§12 全部缺口/升级方向 + §16 全部开放问题逐项裁定收敛（35 项全覆盖） | AI-DSD-001 定稿会话逐项裁定：①§16 重写为三表结构——§16.1 待人拍板费用项 2 项（Q1 iFind 续费默认建议暂不续费/Q4 L2 开通默认建议暂不开通，费用支出最终拍板权在用户）；§16.2 裁定施工 14 项（Q18 internal 接线修复 P0/Q8 data parts 监控 P1/Q17 per-source 自动熔断器 P1/Q5 北向快照 P1/Q6 冷归档 P2/Q16 fetch_perf 被动记录 P2/Q14 死 fallback 清理 28 处/Q13 SPECIAL-DAYS 补登记 ARCH 条目等，登记 CAND 候选库或转施工队列）；§16.3 裁定暂缓/维持/不做 19 项（Q2 EDB 拼凑不做维持 accepted/Q3 低频事件暂缓/Q11 调度动态化暂缓/Q19 tushare 积分评估/Q20-Q26 等，均附理由+重评条件）；②§12 各小节"待裁定" checkbox 全部回填裁定结论+指向 §16 真源（防内容漂移）；③§15 待裁定表与 §16.3 合并同源；④§14.2 演进路径更新为 v1.4.0 施工清单（短期 Q18/Q8/Q17/Q14/Q13，中期 Q5/Q6/Q16，长期费用项+暂缓项）；⑤frontmatter status draft→active、version 1.3.1→1.4.0，ARCH-SPECIAL-DAYS 注记更新为"已裁定补登记"；⑥裁定原则：费用项不越权（待人拍板+默认建议）、技术项按证据裁定（项目约束：MVP/风险优先/避免过度工程/先测量后优化）、暂缓项全部带重评条件（非永久禁止） |
+| 2026-08-14 | 1.4.1 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | AI-DOCS-001 文档压缩：折叠调研过程叙述与重复解释（§3 ASCII 总览图压为紧凑管线描述、选型对比只留结论、重复 why 去重、§4.3 影响范围/§7.5 表全景/§10.4 实测/§11.5 测试清单压为紧凑单行、§10.5 部署块与 §10.12 去重、§10.6 验证明细表压为一行、§12.12.2 处置选项讨论并入裁定），35 项裁定（Q1-Q26）与 §16 三表逐条完整保留，15 源/154 任务/15 时段清单、费用裁定、落库/韧性规则、#ARCH/BM 锚点与跨文档链接全部保留；章节标题与编号一字未动 |
