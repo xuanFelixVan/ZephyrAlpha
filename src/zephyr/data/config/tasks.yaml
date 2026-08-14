@@ -859,6 +859,10 @@ tasks:
   symbols:
   extra:
     description: "交易日历全量刷新（baostock query_trade_date）"
+  # #ARCH-DATA-015: baostock IP黑名单（10001011）治本——补 akshare fallback（原无兜底）
+  fallback_sources:
+  - source: akshare
+    capability: trade_calendar
 
 - task_id: stock_list_refresh
   table: c1_market.stock_list

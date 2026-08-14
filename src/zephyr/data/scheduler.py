@@ -300,6 +300,7 @@ class IntegratorScheduler:
         config_dir: str | Path | None = None,
         progress_db: str | Path | None = None,
         jobs_db: str | None = None,
+        startup_probes: bool = True,
     ):
         """初始化调度器。
 
@@ -307,6 +308,9 @@ class IntegratorScheduler:
             config_dir: 配置目录（含 schedule.yaml/tasks.yaml/policies.yaml）
             progress_db: SQLite 进度库路径
             jobs_db: APScheduler jobstore URL
+            startup_probes: 启动时是否执行 live 网络探针（数据源健康检查/CH 探活/破损 part 检测）。
+                生产默认 True；测试必须传 False 隔离环境噪声（#ARCH-DATA-015：
+                baostock 黑名单经 filterwarnings=error 放大为单测失败的事故治本）。
         """
         self._config_dir = Path(config_dir) if config_dir else _DEFAULT_CONFIG_DIR
         self._jobs_db = jobs_db or _DEFAULT_JOBS_DB
@@ -334,6 +338,7 @@ class IntegratorScheduler:
         # APScheduler 实例（懒初始化）
         self._scheduler = None
         self._started = False
+        self._startup_probes = startup_probes
         # 配置缓存
         self._schedules: dict[str, dict] = {}
         self._tasks: list[dict] = []
@@ -1599,22 +1604,25 @@ class IntegratorScheduler:
 
             self._scheduler.start()
             self._started = True
-            # 数据源健康检查（每日启动时执行，扫描所有数据源连接+下载能力）
-            # 结果写入 logs/source_health_YYYYMMDD.log，异常源记录但不自动禁用
-            try:
-                from zephyr.data.source_health_check import run_source_health_check
+            if self._startup_probes:
+                # 数据源健康检查（每日启动时执行，扫描所有数据源连接+下载能力）
+                # 结果写入 logs/source_health_YYYYMMDD.log，异常源记录但不自动禁用
+                # #ARCH-DATA-015：live 网络 I/O 必须可被测试关闭（startup_probes=False）
+                try:
+                    from zephyr.data.source_health_check import run_source_health_check
 
-                run_source_health_check()
-            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-                log.warning("数据源健康检查失败（不影响调度器启动）: %s", e)
-            # 启动 ClickHouse 健康探活后台线程（裁定 #ARCH-CH-011）
-            self._start_ch_health_probe()
+                    run_source_health_check()
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    log.warning("数据源健康检查失败（不影响调度器启动）: %s", e)
+                # 启动 ClickHouse 健康探活后台线程（裁定 #ARCH-CH-011）
+                self._start_ch_health_probe()
             # 启动卡死任务定期清理线程（Phase 3-B 治本修复 v2）
             self._start_stale_reaper()
             # 启动本地落盘回灌线程（裁定 #ARCH-CH-013 Phase 1）
             self._start_local_replay()
-            # 启动破损 part 自动检测+隔离（裁定 #ARCH-CH-015）
-            self._start_corrupted_part_detector()
+            # 启动破损 part 自动检测+隔离（裁定 #ARCH-CH-015；live CH I/O 随 startup_probes 门控）
+            if self._startup_probes:
+                self._start_corrupted_part_detector()
             # 注册为全局单例（供 _run_schedule_callback 使用）
             global _global_scheduler
             _global_scheduler = self

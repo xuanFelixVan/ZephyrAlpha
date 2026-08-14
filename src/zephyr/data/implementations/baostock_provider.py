@@ -53,6 +53,19 @@ _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
 
 
+def _bs_code_to_symbol(bs_code: str) -> str:
+    """baostock 代码（sh.600000/sz.000001）→ 项目 canonical（600000.SH/000001.SZ）。
+
+    #ARCH-DATA-015：index_constituent 表 symbol_canonical MATERIALIZED 列依赖
+    '代码.交易所大写' 格式推导，小写前缀格式会导致派生列为空串。
+    """
+    code = (bs_code or "").strip()
+    if "." in code:
+        exch, num = code.split(".", 1)
+        return f"{num}.{exch.upper()}"
+    return code
+
+
 class BaostockProvider(IngestProviderBase):
     """Baostock 免费数据源 Provider。
 
@@ -106,6 +119,13 @@ class BaostockProvider(IngestProviderBase):
             import baostock as bs
             result = bs.login()
             if result.error_code != "0":
+                # #ARCH-DATA-015: 登录失败（如 10001011 IP黑名单）时 baostock 库不释放
+                # 底层 socket，filterwarnings=error 下泄漏的 ResourceWarning 会被放大为
+                # 测试 ExceptionGroup；失败路径显式 logout 关闭 socket。
+                try:
+                    bs.logout()
+                except Exception:  # noqa: BLE001 — 清理动作不掩盖原始错误
+                    pass
                 raise RuntimeError(
                     f"baostock login failed: {result.error_code} {result.error_msg}"
                 )
@@ -176,18 +196,21 @@ class BaostockProvider(IngestProviderBase):
         """获取沪深300成分股（bs.query_hs300_stocks）。
 
         baostock API 变更：返回 3 列（updateDate/code/code_name），无 weight 列。
+        #ARCH-DATA-015：列名对齐 index_constituent 表 schema（08-10 SCD-2 重建后
+        旧列名 update_date/code/code_name 与表零交集，write_result 过滤后只剩
+        weight 一列静默空写——300 行丢失的病根）。weight 无数据源置 0（同 miniqmt 口径）。
         """
         bs = self._tls.bs
         table = payload.table or _TBL_INDEX_CONSTITUENT
-        columns = ["update_date", "code", "code_name", "weight"]
+        columns = ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
         t0 = time.time()
         try:
             rs = self._call_with_policy(bs.query_hs300_stocks, policy)
             rows: list[tuple] = []
             while rs.error_code == "0" and rs.next():
                 item = rs.get_row_data()
-                # API 变更后返回 3 列: updateDate, code, code_name（无 weight）
-                rows.append((item[0], item[1], item[2], None))
+                # API 变更后返回 3 列: updateDate, code(sh.600000), code_name
+                rows.append((item[0], "000300.SH", _bs_code_to_symbol(item[1]), 0, "", "baostock"))
             self._log.info(f"沪深300成分股获取完成，{len(rows)} 行")
             yield FetchResult(
                 table=table, columns=columns, rows=rows,
@@ -210,10 +233,13 @@ class BaostockProvider(IngestProviderBase):
 
         baostock API 变更：方法名 query_trade_date → query_trade_dates（加 s）。
         返回 2 列: calendar_date, is_trading_day。
+        #ARCH-DATA-015：列名对齐 trade_calendar 表 schema（exchange/cal_date/is_open/
+        pretrade_date；旧列名 calendar_date/is_trading_day 与表零交集静默空写）。
+        pretrade_date=上一开市日（首个开市日取自身）。
         """
         bs = self._tls.bs
         table = payload.table or _TBL_TRADE_CALENDAR
-        columns = ["calendar_date", "is_trading_day"]
+        columns = ["exchange", "cal_date", "is_open", "pretrade_date"]
         t0 = time.time()
         try:
             start = payload.start.isoformat() if payload.start else "2010-01-01"
@@ -222,10 +248,14 @@ class BaostockProvider(IngestProviderBase):
                 bs.query_trade_dates, policy, start_date=start, end_date=end
             )
             rows: list[tuple] = []
+            last_open: str | None = None
             while rs.error_code == "0" and rs.next():
                 item = rs.get_row_data()
                 # API 变更后返回 2 列: calendar_date(item[0]), is_trading_day(item[1])
-                rows.append((item[0], int(item[1]) if item[1] else 0))
+                cal_date, is_open = item[0], int(item[1]) if item[1] else 0
+                rows.append(("SSE", cal_date, is_open, last_open or cal_date))
+                if is_open:
+                    last_open = cal_date
             self._log.info(f"交易日历获取完成，{len(rows)} 行")
             yield FetchResult(
                 table=table, columns=columns, rows=rows,

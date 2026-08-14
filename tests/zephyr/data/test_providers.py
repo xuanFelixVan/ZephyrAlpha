@@ -798,3 +798,144 @@ class TestMiniQMTSmoke:
         assert len(results[0].rows) == 3
         ex_idx = results[0].columns.index("exchange")
         assert all(row[ex_idx] == "CFFEX" for row in results[0].rows)
+
+
+# ============== #ARCH-DATA-015: baostock 黑名单治本（schema 对齐 + 登录泄漏修复） ==============
+
+class _FakeBsResultSet:
+    """模拟 baostock 查询结果集（error_code + next/get_row_data 迭代）。"""
+
+    def __init__(self, rows):
+        self.error_code = "0"
+        self._rows = rows
+        self._idx = -1
+
+    def next(self):
+        self._idx += 1
+        return self._idx < len(self._rows)
+
+    def get_row_data(self):
+        return self._rows[self._idx]
+
+
+class TestBaostockSchemaAlign:
+    """baostock provider 产出列名必须与 CH 表 schema 对齐（08-10 表重建后旧列名零交集静默空写）。"""
+
+    def _provider(self):
+        from src.zephyr.data.implementations.baostock_provider import BaostockProvider
+        return BaostockProvider()
+
+    def test_bs_code_to_symbol(self):
+        from src.zephyr.data.implementations.baostock_provider import _bs_code_to_symbol
+        assert _bs_code_to_symbol("sh.600000") == "600000.SH"
+        assert _bs_code_to_symbol("sz.000001") == "000001.SZ"
+        assert _bs_code_to_symbol("") == ""
+
+    def test_index_constituent_columns(self):
+        p = self._provider()
+        p.tls.bs = MagicMock()
+        p.tls.bs.query_hs300_stocks = MagicMock(
+            return_value=_FakeBsResultSet([["2026-08-01", "sh.600000", "浦发银行"]])
+        )
+        p.tls.logged_in = True
+        payload = FetchPayload(
+            table="c1_market.index_constituent", symbols=None,
+            start=datetime.date(2026, 8, 1), end=datetime.date(2026, 8, 1),
+            extra={"capability": "index_constituent"},
+        )
+        results = list(p._fetch_index_constituent(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
+        assert results[0].rows == [("2026-08-01", "000300.SH", "600000.SH", 0, "", "baostock")]
+
+    def test_trade_calendar_columns(self):
+        p = self._provider()
+        p.tls.bs = MagicMock()
+        p.tls.bs.query_trade_dates = MagicMock(
+            return_value=_FakeBsResultSet([
+                ["2026-08-13", "1"], ["2026-08-14", "1"], ["2026-08-15", "0"],
+            ])
+        )
+        p.tls.logged_in = True
+        payload = FetchPayload(
+            table="c1_market.trade_calendar", symbols=None,
+            start=datetime.date(2026, 8, 13), end=datetime.date(2026, 8, 15),
+            extra={"capability": "trade_calendar"},
+        )
+        results = list(p._fetch_trade_calendar(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].columns == ["exchange", "cal_date", "is_open", "pretrade_date"]
+        rows = results[0].rows
+        assert rows[0] == ("SSE", "2026-08-13", 1, "2026-08-13")  # 首个开市日 pretrade=自身
+        assert rows[1] == ("SSE", "2026-08-14", 1, "2026-08-13")
+        assert rows[2] == ("SSE", "2026-08-15", 0, "2026-08-14")  # 非开市日 pretrade=上一开市日
+
+    def test_login_failure_closes_socket(self, monkeypatch):
+        """登录失败（如 10001011 黑名单）必须调 logout 释放 socket（防 ResourceWarning 放大）。"""
+        fake_bs = MagicMock()
+        fake_bs.login.return_value = MagicMock(error_code="10001011", error_msg="黑名单用户")
+        monkeypatch.setitem(sys.modules, "baostock", fake_bs)
+        p = self._provider()
+        with pytest.raises(RuntimeError, match="10001011"):
+            p._ensure_login()
+        fake_bs.logout.assert_called_once()
+
+
+class TestAKShareData015Capabilities:
+    """akshare 新增 trade_calendar / index_constituent 能力（死 fallback 补全）。"""
+
+    def test_capabilities_registered(self):
+        from src.zephyr.data.implementations.akshare_provider import _AKSHARE_CAPABILITIES
+        assert "trade_calendar" in _AKSHARE_CAPABILITIES
+        assert "index_constituent" in _AKSHARE_CAPABILITIES
+
+    def test_cn_code_to_symbol(self):
+        from src.zephyr.data.implementations.akshare_provider import _cn_code_to_symbol
+        assert _cn_code_to_symbol("600000") == "600000.SH"
+        assert _cn_code_to_symbol("000001") == "000001.SZ"
+        assert _cn_code_to_symbol("300750") == "300750.SZ"
+        assert _cn_code_to_symbol("430047") == "430047.BJ"
+
+    def test_trade_calendar_fetch(self, monkeypatch):
+        import pandas as pd
+        fake_ak = MagicMock()
+        fake_ak.tool_trade_date_hist_sina = MagicMock(return_value=pd.DataFrame({
+            "trade_date": [datetime.date(2026, 8, 13), datetime.date(2026, 8, 14)],
+        }))
+        monkeypatch.setitem(sys.modules, "akshare", fake_ak)
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.trade_calendar", symbols=None,
+            start=datetime.date(2026, 8, 13), end=datetime.date(2026, 8, 14),
+            extra={"capability": "trade_calendar"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is None
+        assert results[0].columns == ["exchange", "cal_date", "is_open", "pretrade_date"]
+        assert results[0].rows == [
+            ("SSE", datetime.date(2026, 8, 13), 1, datetime.date(2026, 8, 13)),
+            ("SSE", datetime.date(2026, 8, 14), 1, datetime.date(2026, 8, 13)),
+        ]
+
+    def test_index_constituent_fetch(self, monkeypatch):
+        import pandas as pd
+        fake_ak = MagicMock()
+        fake_ak.index_stock_cons_csindex = MagicMock(return_value=pd.DataFrame({
+            "成分券代码": ["600000", "000001"],
+        }))
+        monkeypatch.setitem(sys.modules, "akshare", fake_ak)
+        p = AkshareIngestProvider()
+        payload = FetchPayload(
+            table="c1_market.index_constituent", symbols=None,
+            start=datetime.date(2026, 8, 14), end=datetime.date(2026, 8, 14),
+            extra={"capability": "index_constituent"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error is None
+        assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
+        assert results[0].rows == [
+            ("2026-08-14", "000300.SH", "600000.SH", 0, "", "akshare"),
+            ("2026-08-14", "000300.SH", "000001.SZ", 0, "", "akshare"),
+        ]

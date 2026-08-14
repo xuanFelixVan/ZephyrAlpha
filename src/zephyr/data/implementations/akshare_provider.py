@@ -124,6 +124,8 @@ _TBL_EQUITY_PLEDGE_DETAIL = get_registry().table("fund_equity_pledge_detail")
 _TBL_EQUITY_PLEDGE_SUMMARY = get_registry().table("fund_equity_pledge_summary")
 _TBL_ETF_BENCHMARK = get_registry().table("market_etf_benchmark")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
+_TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
+_TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_HOG_SPOT_INDEX = get_registry().table("market_hog_spot_index")
 _TBL_HOG_FUTURES_CORE = get_registry().table("market_hog_futures_core")
@@ -179,6 +181,9 @@ _AKSHARE_CAPABILITIES = frozenset({
     "sector_meta",         # 替代 iFind 881板块汇总（akshare 从成分股聚合计算）
     "stock_hot_rank",  # #ARCH-REALTIME-ACCUM: 东财人气/关注排行（每日快照积累）
     "option_kline",  # #ARCH-OPTION-AKSHARE-FALLBACK: 新浪源期权日K线（QMT无期权权限时fallback）
+    # #ARCH-DATA-015: baostock IP黑名单治本——补全死 fallback 对应的能力（原配置空挂）
+    "trade_calendar",    # A股交易日历（tool_trade_date_hist_sina，探针实证 8797 行可用）
+    "index_constituent",  # 沪深300成分股（index_stock_cons_csindex，中证指数官网源）
 })
 
 
@@ -199,6 +204,19 @@ def safe_int(v) -> int | None:
         return int(f)
     except (ValueError, TypeError):
         return None
+
+
+def _cn_code_to_symbol(code: str) -> str:
+    """6 位数字代码 → canonical 代码.交易所（600000.SH/000001.SZ/430047.BJ）。
+
+    #ARCH-DATA-015：exchange 前缀规则与 index_constituent 表 MATERIALIZED 派生列
+    口径一致（5/6/9→SH，0/1/2/3→SZ，4/8→BJ），保证 symbol_canonical 非空。
+    """
+    if code.startswith(("5", "6", "9")):
+        return f"{code}.SH"
+    if code.startswith(("4", "8")):
+        return f"{code}.BJ"
+    return f"{code}.SZ"
 
 
 def _classify_seat(name: str) -> str:
@@ -378,6 +396,9 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("stock_hot_rank", supports_symbols_null=True),
             # #ARCH-OPTION-AKSHARE-FALLBACK: 新浪源期权日K线（QMT无期权权限时fallback）
             CapabilityContract("option_kline", supports_symbols_null=True),
+            # #ARCH-DATA-015: baostock 黑名单治本——死 fallback 能力补全（全量接口，无 symbols）
+            CapabilityContract("trade_calendar", supports_symbols_null=True),
+            CapabilityContract("index_constituent", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -4449,6 +4470,95 @@ class AkshareIngestProvider(IngestProviderBase):
     # ---- 30. 港股交易日历（hk_trade_calendar） ----
     # #ARCH-DATA-001: 已迁移至 InternalComputeProvider（exchange_calendars XHKG 港交所真日历）。
     # akshare tool_trade_date_hist_sina 实为 A 股日历，语义错配，故移除本 provider 的该能力。
+
+    # ---- 30b. A股交易日历（trade_calendar，#ARCH-DATA-015） ----
+
+    def _fetch_trade_calendar(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """A股交易日历（akshare tool_trade_date_hist_sina，新浪源，须断VPN）。
+
+        #ARCH-DATA-015：baostock IP 黑名单治本——trade_calendar_refresh 原无 fallback，
+        本能力为其兜底。sina 只返回开市日 → is_open=1；pretrade_date=上一开市日
+        （首个开市日取自身）。列名对齐 trade_calendar 表 schema。
+        """
+        import akshare as ak
+        table = payload.table or _TBL_TRADE_CALENDAR
+        columns = ["exchange", "cal_date", "is_open", "pretrade_date"]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.tool_trade_date_hist_sina, policy)
+            dates = []
+            if df is not None and len(df):
+                for v in df["trade_date"].tolist():
+                    if isinstance(v, datetime.datetime):
+                        dates.append(v.date())
+                    elif isinstance(v, datetime.date):
+                        dates.append(v)
+                    else:  # 字符串/Timestamp 兜底
+                        dates.append(datetime.date.fromisoformat(str(v)[:10]))
+                dates.sort()
+            start, end = payload.start, payload.end
+            if start:
+                dates = [d for d in dates if d >= start]
+            if end:
+                dates = [d for d in dates if d <= end]
+            rows: list[tuple] = []
+            prev: datetime.date | None = None
+            for d in dates:
+                rows.append(("SSE", d, 1, prev or d))
+                prev = d
+            self._log.info(f"trade_calendar: {len(rows)} 行（akshare 新浪源）")
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=(end or datetime.date.today()).isoformat(),
+                elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"trade_calendar 获取失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.time() - t0, error=str(e),
+            )
+
+    # ---- 30c. 沪深300成分股（index_constituent，#ARCH-DATA-015） ----
+
+    def _fetch_index_constituent(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """沪深300成分股（akshare index_stock_cons_csindex，中证指数官网源）。
+
+        #ARCH-DATA-015：tasks.yaml 原配置 akshare fallback 但无对应 capability（死
+        fallback），本方法补全。官网接口不含权重 → weight=0（同 miniqmt 口径）。
+        列名对齐 index_constituent 表 schema。
+        """
+        import akshare as ak
+        table = payload.table or _TBL_INDEX_CONSTITUENT
+        columns = ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
+        t0 = time.time()
+        try:
+            df = self._call_with_policy(ak.index_stock_cons_csindex, policy, symbol="000300")
+            trade_date = (
+                payload.end.isoformat() if payload.end else datetime.date.today().isoformat()
+            )
+            rows: list[tuple] = []
+            if df is not None and len(df):
+                for _, r in df.iterrows():
+                    code = str(r.get("成分券代码", "") or "").zfill(6)
+                    if len(code) != 6 or not code.isdigit():
+                        continue
+                    rows.append((trade_date, "000300.SH", _cn_code_to_symbol(code), 0, "", "akshare"))
+            self._log.info(f"index_constituent: {len(rows)} 行（akshare 中证官网）")
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=trade_date, elapsed_sec=time.time() - t0,
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"index_constituent 获取失败: {e}")
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=time.time() - t0, error=str(e),
+            )
 
     # ---- 31. 指数列表（index_list） ----
 

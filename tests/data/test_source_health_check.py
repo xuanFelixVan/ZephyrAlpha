@@ -228,8 +228,9 @@ class TestRunSingleCheck:
 
 class TestRunSourceHealthCheck:
     def _stub_write_log(self, monkeypatch):
-        """避免真实写 logs/ 目录。"""
+        """避免真实写 logs/ 目录 + 隔离 streak 状态文件/告警通道（#ARCH-DATA-015）。"""
         monkeypatch.setattr(shc, "_write_log", lambda results: Path("logs/dummy"))
+        monkeypatch.setattr(shc, "_update_failure_streaks", lambda results: None)
 
     def test_returns_dict_keyed_by_source(self, monkeypatch):
         _install(monkeypatch, _OkProvider)
@@ -288,6 +289,7 @@ class TestRunSourceHealthCheck:
             raise OSError("disk full")
 
         monkeypatch.setattr(shc, "_write_log", _bad_write)
+        monkeypatch.setattr(shc, "_update_failure_streaks", lambda results: None)
         result = shc.run_source_health_check()  # 不应抛异常
         assert result["s1"]["status"] == "healthy"
 
@@ -357,3 +359,74 @@ class TestWriteLog:
         assert name.endswith(".log")
         date_part = name[len("source_health_"):-len(".log")]
         assert len(date_part) == 8 and date_part.isdigit()
+
+
+# ============ TestFailureStreaks（#ARCH-DATA-015 同源连续失败告警）============
+
+class _FakeAlerter:
+    """记录 notify 调用的假告警器。"""
+
+    def __init__(self):
+        self.calls = []
+
+    def notify(self, task_id, error, level=None, source=None, extra=None):
+        self.calls.append({"task_id": task_id, "error": error, "level": level, "source": source})
+        return True
+
+
+class TestFailureStreaks:
+    """连续异常按自然日累计，>=3 天告警一次，恢复自动消警。"""
+
+    def _run(self, monkeypatch, tmp_path, results, today: str, alerter):
+        import datetime as dt
+        monkeypatch.setattr(shc, "_STREAKS_PATH", tmp_path / "streaks.json")
+        monkeypatch.setattr(
+            shc, "now_utc",
+            lambda: dt.datetime.fromisoformat(today).replace(tzinfo=dt.timezone.utc),
+        )
+        monkeypatch.setattr("zephyr.data.alerter.Alerter", lambda: alerter)
+        shc._update_failure_streaks(results)
+
+    @staticmethod
+    def _bad(source="bs", status="connect_fail"):
+        return {"source": source, "status": status, "error": "10001011 黑名单用户"}
+
+    @staticmethod
+    def _ok(source="bs"):
+        return {"source": source, "status": "healthy", "error": ""}
+
+    def test_alert_on_third_consecutive_day(self, monkeypatch, tmp_path):
+        alerter = _FakeAlerter()
+        self._run(monkeypatch, tmp_path, [self._bad()], "2026-08-14", alerter)
+        self._run(monkeypatch, tmp_path, [self._bad()], "2026-08-15", alerter)
+        assert not alerter.calls  # 连续 2 天不达阈值
+        self._run(monkeypatch, tmp_path, [self._bad()], "2026-08-16", alerter)
+        assert len(alerter.calls) == 1
+        assert alerter.calls[0]["level"] == "ERROR"
+        assert "连续 3 天" in alerter.calls[0]["error"]
+        assert "10001011" in alerter.calls[0]["error"]
+
+    def test_no_duplicate_alert_same_episode(self, monkeypatch, tmp_path):
+        alerter = _FakeAlerter()
+        for day in ("2026-08-14", "2026-08-15", "2026-08-16", "2026-08-17"):
+            self._run(monkeypatch, tmp_path, [self._bad()], day, alerter)
+        assert len(alerter.calls) == 1  # 第 4 天不重复告警
+
+    def test_same_day_rerun_not_double_counted(self, monkeypatch, tmp_path):
+        alerter = _FakeAlerter()
+        for _ in range(3):
+            self._run(monkeypatch, tmp_path, [self._bad()], "2026-08-14", alerter)
+        assert not alerter.calls  # 同一天重跑不累计
+
+    def test_recovery_sends_resolve_and_resets(self, monkeypatch, tmp_path):
+        alerter = _FakeAlerter()
+        for day in ("2026-08-14", "2026-08-15", "2026-08-16"):
+            self._run(monkeypatch, tmp_path, [self._bad()], day, alerter)
+        assert len(alerter.calls) == 1
+        self._run(monkeypatch, tmp_path, [self._ok()], "2026-08-17", alerter)
+        assert len(alerter.calls) == 2
+        assert alerter.calls[1]["level"] == "INFO"
+        assert "恢复正常" in alerter.calls[1]["error"]
+        # 恢复后再异常 → streak 重新从 1 计
+        self._run(monkeypatch, tmp_path, [self._bad()], "2026-08-18", alerter)
+        assert len(alerter.calls) == 2

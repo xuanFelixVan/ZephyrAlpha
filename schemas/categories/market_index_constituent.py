@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS c1_market.index_constituent
 )
 ENGINE = ReplacingMergeTree
 PARTITION BY toYYYYMM(trade_date)
-ORDER BY index_code, trade_date
+ORDER BY (index_code, trade_date, symbol)
 SETTINGS index_granularity = 8192
 """
 
@@ -59,7 +59,7 @@ CATEGORY_ID = "market_index_constituent"
 CALC_MODE = "preload"
 ENGINE = "ReplacingMergeTree"
 PARTITION_KEY = "toYYYYMM(trade_date)"
-ORDER_BY = "index_code, trade_date"
+ORDER_BY = "index_code, trade_date, symbol"  # #ARCH-DATA-015: 补 symbol——原 (index_code, trade_date) 键下 ReplacingMergeTree 把同指数同日的 300 只成分股折叠成 1 行
 
 # 列清单（用于 INSERT 时显式指定，排除 DEFAULT 列由 CH 自动填充）
 # valid_to 需显式传入（退市/失效=终止日，有效=NULL/省略）

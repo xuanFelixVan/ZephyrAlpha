@@ -83,6 +83,9 @@ def scheduler(tmp_path):
         config_dir=config_dir,
         progress_db=progress_db,
         jobs_db=jobs_db,
+        # #ARCH-DATA-015：隔离 live 网络探针（数据源健康检查/CH 探活/破损 part 检测），
+        # 防止环境噪声（如 baostock IP 黑名单泄漏 socket）经 filterwarnings=error 放大为测试失败
+        startup_probes=False,
     )
 
 
@@ -332,6 +335,19 @@ class TestStartStop:
             scheduler.start()
         assert scheduler.started is True
         scheduler.scheduler.start.assert_called_once()
+
+    def test_start_skips_live_probes(self, scheduler):
+        """startup_probes=False 时跳过 live 健康检查/CH 探活/破损 part 检测（#ARCH-DATA-015）。"""
+        with patch("src.zephyr.data.scheduler.IntegratorScheduler.init_scheduler"), \
+             patch("src.zephyr.data.scheduler.IntegratorScheduler._start_ch_health_probe") as mock_ch, \
+             patch("src.zephyr.data.scheduler.IntegratorScheduler._start_corrupted_part_detector") as mock_cp, \
+             patch("zephyr.data.source_health_check.run_source_health_check") as mock_hc:
+            scheduler.scheduler = MagicMock()
+            scheduler.start()
+        assert scheduler.started is True
+        mock_hc.assert_not_called()
+        mock_ch.assert_not_called()
+        mock_cp.assert_not_called()
 
     def test_start_already_started(self, scheduler):
         """已启动再 start 返回 True。"""

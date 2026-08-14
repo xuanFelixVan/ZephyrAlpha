@@ -960,6 +960,19 @@ bs.logout()
 
 > **结论**：分红明细数据**不要使用 baostock**，改用 [AKShare stock_history_dividend_detail](#735-stock_history_dividend_detail-最可靠的分红数据源v190-新增实测)（见 §7.3.5）。baostock 的 K线/季频财务/成分股接口依然稳定可用，仅分红接口存在滞后。
 
+#### §7.2.6 IP 黑名单（10001011）处置 SOP（2026-08-14 实测，#ARCH-DATA-015）
+
+> 2026-08-14 起本机公网 IP 被 baostock 封禁：`bs.login()` 返回 `10001011 黑名单用户，请与管理员联系`。baostock 匿名登录无账号体系，**黑名单是 IP 级封禁**（非账号级）。
+
+**现象识别**：健康检查 `baostock: connect_fail (10001011 黑名单用户)`；连续 ≥3 天异常会自动触发飞书告警（source_health_streaks 机制）。
+
+**处置三步**：
+1. **换公网 IP 复测**（首选）：路由器重播/切换 VPN 出口后跑 `python -c "import baostock as bs; print(bs.login().error_code)"`——返回 `0` 即解封（证实 IP 级封禁）。
+2. **联系管理员解封**：确认 IP 级封禁且换 IP 不可行时，通过 baostock 官方渠道（QQ 群/官网）申请解封——需人工操作，AI 无法代劳。
+3. **评估 fallback 是否够用**：baostock 在项目内仅承担 3 个角色——kline_daily 降级源（主源 miniQMT 健康时用不到）、trade_calendar_refresh 主源（已有 akshare `tool_trade_date_hist_sina` fallback）、index_constituent_refresh 主源（已有 akshare `index_stock_cons_csindex` fallback）。长期封禁不影响数据链路完整性，但应在架构注册表登记降级状态。
+
+**预防**：避免高频 login/logout churn（每次调度器启动健康检查 1 次登录为正常水位；测试必须传 `startup_probes=False` 隔离 live 探针，见 #ARCH-DATA-015）。
+
 ### §7.3 AKShare 完整指南
 
 #### 基本信息

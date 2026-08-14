@@ -16412,3 +16412,53 @@ entries:
   related_rules: '#ARCH-RECONCILE-WORKER-HEARTBEAT-001; #ARCH-RECONCILE-WORKER-STALE-SEVERITY-001; #ARCH-RECONCILER-WORKER-SESSION-001; TRAE-067（无闪窗铁律）; Ruling-100PCT-AI-GOVERNANCE-P2-3'
   created: '2026-08-14'
   last_updated: '2026-08-14'
+
+# --- #ARCH-DATA-015: baostock IP黑名单(10001011)——测试隔离+schema对齐+fallback补全+连续失败告警 ---
+- issue_id: '#ARCH-DATA-015'
+  title: baostock IP 黑名单事件治本——调度器启动探针测试隔离 + baostock/akshare 日历与成分股 schema 对齐 + trade_calendar 无 fallback 补全 + 同源连续失败告警
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    事件：2026-08-14 10:23 起 baostock 匿名登录返回 10001011（黑名单用户，IP级封禁），
+    前一日 23:53 健康检查尚正常。当前机器无 VPN（家庭宽带直连），封禁对象为公网出口 IP。
+    直接业务影响为零（baostock 主源任务仅 2 个且均为 monthly_static，下次触发 2026-09-01；
+    kline_daily fallback 未启用，主源 miniqmt 健康）。
+
+    排查连带发现三个结构性病灶（第一性原理：免费匿名源无 SLA 无契约，架构必须假设其随时可死；
+    100% AI 开发无人类盯环境，环境噪声绝不允许注入质量门禁）：
+    (1) 测试隔离缺陷：scheduler.start() 无条件执行 run_source_health_check()（live 网络 I/O），
+        pyproject filterwarnings=["error"] 把探针泄漏 socket 的 ResourceWarning 升级为 ExceptionGroup，
+        GC 时机随机记到 test_start 头上——baostock 黑名单经此链放大为单测失败（症状放大器）。
+    (2) schema 静默错配：index_constituent 表 08-10 SCD-2/TRAE-082 重建后，baostock
+        _fetch_index_constituent 仍产出旧列名（update_date/code/code_name/weight），write_result
+        列过滤后仅剩 weight 一列 → 08-01 写入的 300 行随表重建丢失且再跑也不会落数；
+        trade_calendar 同样错配（calendar_date/is_trading_day vs exchange/cal_date/is_open/pretrade_date）。
+    (3) 死 fallback：tasks.yaml index_constituent_refresh 配置 akshare fallback 但 akshare provider
+        无 index_constituent capability；trade_calendar_refresh 无任何 fallback。
+
+    裁定（治本四项）：
+    A. 测试隔离：IntegratorScheduler.__init__ 新增 startup_probes=True 参数，False 时 start()
+       跳过 run_source_health_check/_start_ch_health_probe/_start_corrupted_part_detector
+       （live 网络/CH I/O）；测试 fixture 注入 False。baostock _ensure_login 失败路径补 bs.logout()
+       清理泄漏 socket。
+    B. fallback 补全：akshare provider 新增 trade_calendar（tool_trade_date_hist_sina）与
+       index_constituent（index_stock_cons_csindex 000300）capability，列名对齐 CH schema；
+       baostock 两个 _fetch 同步改 schema 列名；tasks.yaml trade_calendar_refresh 补 akshare fallback。
+    C. 连续失败告警：source_health_check 持久化同源连续异常天数（data/source_health_streaks.json），
+       >=3 天经 Alerter 飞书告警（附处置 SOP），恢复自动消警；运维手册补黑名单处置 SOP。
+    D. index_constituent 补灌：能力落地后经 fallback 链（baostock 失败→akshare）补灌沪深300成分。
+  impact:
+  - 'src/zephyr/data/scheduler.py（startup_probes 参数 + start() 探针门控）'
+  - 'src/zephyr/data/implementations/baostock_provider.py（login 泄漏修复 + 2 个 _fetch schema 对齐）'
+  - 'src/zephyr/data/implementations/akshare_provider.py（trade_calendar/index_constituent capability 新增）'
+  - 'src/zephyr/data/source_health_check.py（连续失败 streak 告警）'
+  - 'src/zephyr/data/config/tasks.yaml（trade_calendar_refresh fallback_sources）'
+  - 'tests/zephyr/data/test_data_scheduler.py（fixture startup_probes=False）'
+  - 'tests/zephyr/data/test_providers.py（新 capability + schema 列名测试）'
+  - 'docs/03_modules/_domain_data/data_source_operation_manual.md（黑名单处置 SOP）'
+  fix_phase: '2026-08-14 全四项施工完成：A/B/C/D 落地，index_constituent 经 akshare fallback 补灌 300 行验证通过'
+  status: decided
+  confirmed_by_user: '2026-08-14 用户裁定"全做（推荐）"'
+  related_rules: '#ARCH-DATA-001（日历语义错配前例）; #ARCH-DATA-002（capability 语义对齐）; #ARCH-DATA-FALLBACK-REPAIR-001（死 fallback 清仓）; #ARCH-DATA-IFIND-RETIRE-001（同日 iFind 退役）'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'

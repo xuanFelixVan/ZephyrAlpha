@@ -121,7 +121,10 @@ class TestBaostockProvider:
             assert len(results) == 1
             assert results[0].error is None
             assert len(results[0].rows) == 2
-            assert results[0].rows[0][1] == "sh.600000"
+            # #ARCH-DATA-015：列名对齐 CH schema（trade_date/index_code/symbol/weight/action/data_source），
+            # symbol 转 canonical 大写格式（sh.600000 → 600000.SH）
+            assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
+            assert results[0].rows[0] == ("2026-07-06", "000300.SH", "600000.SH", 0, "", "baostock")
 
     def test_fetch_trade_calendar(self):
         """获取交易日历。"""
@@ -148,7 +151,10 @@ class TestBaostockProvider:
             results = list(p.fetch(payload, SourcePolicy()))
             assert len(results) == 1
             assert len(results[0].rows) == 1
-            assert results[0].rows[0] == ("2026-07-05", 1)
+            # #ARCH-DATA-015：列名对齐 CH schema（exchange/cal_date/is_open/pretrade_date），
+            # 首个开市日 pretrade_date=自身
+            assert results[0].columns == ["exchange", "cal_date", "is_open", "pretrade_date"]
+            assert results[0].rows[0] == ("SSE", "2026-07-05", 1, "2026-07-05")
 
     def test_fetch_unsupported_capability(self):
         bs = self._make_bs_mock(login_ok=True)
@@ -375,7 +381,8 @@ class TestTDXProvider:
             mootdx.quotes.Quotes.factory.assert_called_once_with(market="std")
 
     def test_fetch_industry_class(self):
-        """获取板块分类。"""
+        """industry_class 已弃用（#ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 语义错配，
+        capability 迁 tushare）——回归保护：fetch 必须返回 unsupported capability 错误。"""
         mootdx, mock_client = self._make_mootdx_mock()
         import pandas as pd
         # mootdx block() 返回 DataFrame: [blockname, code]
@@ -396,8 +403,7 @@ class TestTDXProvider:
             )
             results = list(p.fetch(payload, SourcePolicy()))
             assert len(results) == 1
-            assert results[0].error is None
-            assert len(results[0].rows) == 2
+            assert "unsupported capability: industry_class" in (results[0].error or "")
 
     def test_fetch_sector_kline(self):
         """获取板块指数K线。"""

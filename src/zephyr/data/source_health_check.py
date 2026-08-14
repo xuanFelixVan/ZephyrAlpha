@@ -38,6 +38,88 @@ log = logging.getLogger(__name__)
 # 健康检查超时（秒）—— 不阻塞调度器启动太久
 _HEALTH_CHECK_TIMEOUT = 60
 
+# ---- 同源连续失败告警（#ARCH-DATA-015） ----
+# 免费匿名源无 SLA（如 baostock 10001011 IP黑名单），异常可能持续多日无人察觉；
+# 100% AI 开发无人类盯环境，同源连续异常 >=_STREAK_ALERT_DAYS 天必须主动触达。
+_STREAKS_PATH = Path("data/source_health_streaks.json")
+_STREAK_ALERT_DAYS = 3
+_OK_STATUSES = ("healthy", "connect_only", "env_missing")
+
+
+def _update_failure_streaks(results: list[dict]) -> None:
+    """按自然日累计同源连续异常，超阈值告警、恢复消警。
+
+    同一天多次健康检查只计一次（last_date 去重）；告警/状态读写失败仅记日志，
+    绝不影响健康检查主流程（ERROR_CONTRACT）。
+    """
+    import json
+    import datetime as _dt
+
+    try:
+        today = now_utc().date().isoformat()
+        yesterday = (now_utc().date() - _dt.timedelta(days=1)).isoformat()
+        streaks: dict[str, dict] = {}
+        if _STREAKS_PATH.is_file():
+            try:
+                streaks = json.loads(_STREAKS_PATH.read_text(encoding="utf-8"))
+            except Exception:  # noqa: BLE001 — 损坏则从空重建
+                streaks = {}
+
+        from zephyr.data.alerter import Alerter, LEVEL_ERROR, LEVEL_INFO
+
+        alerter = Alerter()
+        for r in results:
+            source = r["source"]
+            status = r["status"]
+            entry = streaks.get(source) or {"streak": 0, "alerted": False}
+            last_date = entry.get("last_date")
+            if status in _OK_STATUSES:
+                if entry.get("alerted"):
+                    alerter.notify(
+                        f"source_health:{source}",
+                        f"数据源 {source} 已恢复正常（{status}），连续异常告警解除",
+                        level=LEVEL_INFO,
+                        source=source,
+                    )
+                streaks[source] = {
+                    "streak": 0, "alerted": False,
+                    "last_date": today, "last_status": status,
+                }
+                continue
+            # 异常分支：按自然日累计连续异常
+            if last_date == today:
+                streak = entry.get("streak", 0) or 1
+            elif last_date == yesterday:
+                streak = entry.get("streak", 0) + 1
+            else:
+                streak = 1
+            alerted = entry.get("alerted", False)
+            if streak >= _STREAK_ALERT_DAYS and not alerted:
+                alerter.notify(
+                    f"source_health:{source}",
+                    (
+                        f"数据源 {source} 连续 {streak} 天异常（{status}: {r.get('error', '')}）。"
+                        "处置 SOP 见运维手册 §7.2.6：①换公网 IP（路由器重播/切换 VPN 出口）后复测；"
+                        "②确认 IP 级封禁则联系数据源管理员解封；③评估 fallback 是否够用（多数任务已有替代源）"
+                    ),
+                    level=LEVEL_ERROR,
+                    source=source,
+                )
+                alerted = True
+                log.warning("数据源 %s 连续 %d 天异常，已触发告警", source, streak)
+            streaks[source] = {
+                "streak": streak, "alerted": alerted,
+                "last_date": today, "last_status": status,
+            }
+
+        _STREAKS_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _STREAKS_PATH.write_text(
+            json.dumps(streaks, ensure_ascii=False, indent=1), encoding="utf-8"
+        )
+    except Exception as e:  # noqa: BLE001 — 告警链路故障不阻塞健康检查
+        log.warning("连续失败告警更新失败（不影响健康检查）: %s", e)
+
+
 
 # ---- API 拉取探针（connect_only 源升级为真实数据拉取测试，2026-08-04）----
 # 每个探针接收已 connect 的 provider，返回 list/DataFrame（非空=healthy，空=empty_data）。
@@ -417,6 +499,9 @@ def run_source_health_check() -> dict[str, dict]:
     with _get_lock():
         global _latest_results
         _latest_results = {r["source"]: r for r in results}
+
+    # 同源连续失败 streak 累计 + 超阈值告警（#ARCH-DATA-015）
+    _update_failure_streaks(results)
 
     # 汇总
     healthy = sum(1 for r in results if r["status"] in ("healthy", "connect_only"))
