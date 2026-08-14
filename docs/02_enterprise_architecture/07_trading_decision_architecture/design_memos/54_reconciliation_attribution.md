@@ -5,8 +5,8 @@ title: 对账归因
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.15.6"
-date: 2026-08-14
+version: "1.15.7"
+date: 2026-08-15
 topic: reconciliation_attribution
 scope: 07_trading_decision_architecture
 ---
@@ -1128,7 +1128,7 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 >
 > - **VCP-XREF 跨监管映射**：同一审计事件按多监管要求（EU AI Act Art 12 / DORA Art 17 / MiFID II RTS 25 / prEN ISO/IEC 24970 / CSRC 中国）映射到不同合规视图。本项目当前仅 CSRC 中国监管要求，但 VCP-XREF 机制为未来 AUM 机构化 / 跨境资金接入预留扩展空间——审计轨迹一次记录，多监管视图按需生成
 > - **Completeness Invariant 完整性不变量**（VCP v1.1 + VAP 共识）：审计轨迹须保证"无选择性日志"——通过 sequence number 连续性 + Merkle root 周期性锚定，第三方可证明"无事件被选择性删除"。本备忘当前线性 hash 链有"重写历史攻击"风险，Completeness Invariant + 外部锚定是结构性修复
-> - **为何 Phase 2 而非 MVP**：VCP v1.1 三层架构 + VCP-XREF 是机构级跨境监管合规需求，本项目当前 CSRC 中国个人单机单 owner，线性 hash 链已满足生存需求；与 §5 重评条件"外部资金引入 + 跨境资金接入"同步触发
+> - **为何 Phase 2 而非 MVP**：同上方 Merkle 升级路径裁定——机构级跨境监管合规需求，个人单机线性 hash 链已满足生存需求；与 §5 重评条件"外部资金引入 + 跨境资金接入"同步触发
 >
 > **VCP v1.2 四大新特性升级路径**（v1.8.0 补，[VeritasChain VCP v1.2 2026-05-31 RC1](https://github.com/veritaschain/vcp-spec/blob/main/VCP-Specification-v1_2_en.md) + [IETF draft-kamimura-scitt-vcp-03 2026-07-21](https://datatracker.ietf.org/doc/draft-kamimura-scitt-vcp/)）：
 >
@@ -2572,26 +2572,26 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 - **transaction_cost_drag 接入 TCA**（v1.3.0 补）：drag = timing + impact + slippage + commission 加权求和；Brinson + drag = 总超额收益（求和不变量）
 - **A 股 PnL waterfall**（v1.3.0 补）：Signal + Selection + Timing - Costs - Opportunity = Net PnL；Brinson 补充框架，Phase 2 若 Brinson 残差 > 0.01% 时启用
 - **MOD-RPT-015 报告契约**（v1.3.0 补）：8 节最小必填 + Carino residual < 0.01% 质量门禁 + 求和不变量校验
-- **sizing_basis 归因维度**（v1.4.0 补，与 [31 号 §2.3.4](31_position_sizing.md) 对接）：仓位裁剪约束溯源（strategy_intent/kelly_budget/var_cap/cvar_cap/single_name_cap 5 约束类型），归因报告增加 sizing_basis 字段追溯每笔仓位的绑定约束
+- **sizing_basis 归因维度**（v1.4.0 补，与 [31 号 §2.3.4](31_position_sizing.md) 对接）：仓位裁剪约束溯源（5 约束枚举见 §3.8），归因报告增加 sizing_basis 字段追溯每笔仓位的绑定约束
 - **deflated-alpha v0.3.0 三重验证**（v1.4.0 补，与 [55 号 §3.6](55_monitoring_review.md) 三层检测链对接）：回测 vs 实盘统计显著性验证（DSR + PBO + OOS 退化斜率 + Hansen SPA consistent p-value + White RC p-value），月/季归因报告调用 `audit()` 跑齐 4 类检验；verdict == LIKELY_OVERFIT → 触发 55 号 Tier 1 重优化
-- **Combined Trading Signals 正交维度约束**（v1.4.0 补）：信号组合前正交性验证（数学正交维度要求 + 相关矩阵条件数 < 10 + VIF < 5），防多信号共线过拟合；正交性不达标 → 拒绝组合或降权
-- **成交对账置信度评分匹配**（v1.5.0 补）：三层匹配算法输出加权置信度分数（fill_id 0.30 + symbol/direction 0.20 + quantity 0.20 + price 0.15 + date 0.10 + timestamp 0.05）；High ≥ 0.85 自动接受 / Middle 0.50-0.85 人工 review / Low < 0.50 例外工单；MVP 用默认阈值，实盘 3 月后回归校准
+- **Combined Trading Signals 正交维度约束**（v1.4.0 补）：信号组合前正交性验证（数学正交维度要求 + IC/条件数/VIF 阈值口径见 §3.10），防多信号共线过拟合；正交性不达标 → 拒绝组合或降权
+- **成交对账置信度评分匹配**（v1.5.0 补）：三层匹配输出加权置信度分数（属性权重与 High/Middle/Low 三带阈值口径见 §3.3）；MVP 用默认阈值，实盘 3 月后回归校准
 - **三阶段不可变审计轨迹**（v1.5.0 补）：阶段①原始事件捕获（system_fills + broker_settlements 原始记录）→ 阶段②匹配决策（层级+置信度+规则版本+被拒匹配 negative evidence）→ 阶段③归因结果（Brinson 分解+Carino residual+不变量校验）；SQLite append-only + hash 链 + 30 天后 read-only；替代区块链（个人单机无需多方信任）
-- **Brinson 3 因子真实计算 + Carino 多期链接施工算法**（v1.5.0 补 / v1.15.0 守恒修正）：`calc_single_period_brinson()`（beginning-of-period weights，纯 BHB 三因子——allocation = ∑(w_p−w_b)·r_b、selection = ∑w_b·(r_p−r_b)，与 pf_core MOD-PF-007 生产实现同口径）+ `carino_link_periods()`（k_t = ln(1+R_{p,t})/R_{p,t} 修正因子 + log_total 归一化 + residual < 1e-6 质量门禁）；落地形态随 §6 双实现收敛裁定（pf_core 基底升级 Carino 或 reporting 桩填充）
-- **A 股 T+1 归因特殊处理**（v1.5.0 补）：`calc_brinson_with_t1_settlement()` 将 selection effect 拆为 realized_selection（T-1 前已建仓，可兑现）+ unrealized_selection（T 日新建仓，T+1 才可卖，仅为浮盈）；归因报告分列两行 + t1_warning 标注（> 50% selection 来自浮盈时警示）；A 股 T+1 制度性约束（[akquant 2026](https://akquant.akfamily.xyz/textbook/06_stock_a/) §6.2）
+- **Brinson 3 因子真实计算 + Carino 多期链接施工算法**（v1.5.0 补 / v1.15.0 守恒修正）：纯 BHB 三因子 + Carino 对数链接（公式与施工算法见 §3.2，与 pf_core MOD-PF-007 生产实现同口径，residual < 1e-6 质量门禁）；落地形态随 §6 双实现收敛裁定（pf_core 基底升级 Carino 或 reporting 桩填充）
+- **A 股 T+1 归因特殊处理**（v1.5.0 补）：`calc_brinson_with_t1_settlement()` 将 selection effect 拆为 realized（T-1 前已建仓，可兑现）+ unrealized（T 日新建仓，T+1 才可卖，仅为浮盈）——施工算法见 §3.2；归因报告分列两行 + t1_warning 标注（> 50% selection 来自浮盈时警示）
 - **策略贡献分解求和不变量校验**（v1.5.0 补）：`validate_strategy_pnl_invariant()` 校验 Σ(strategy_pnl) == firm_pnl（容差 1bp），FAIL 时归因报告拒绝发布 + 定位差异来源（成交漏算/费率错算/T+1 跨日/firm 裁剪副作用）；与 Carino residual 并列为归因报告双重门禁
 - **regime-conditional 归因**（v1.5.0 补，Phase 2 候选）：`attribute_by_regime()` 按 28 号情绪周期 regime 标签分桶跑 Carino 链接 Brinson + regime 切换贡献 + regime_fit_share vs skill_share 分解；regime_fit_share > 0.5 警示；与 30 号 RegimeMetaAllocator regime 条件 budget 调整闭环
 - **Shapley 值归因**（v1.5.0 补，Phase 2 候选）：`shapley_strategy_attribution()` 合作博弈 Shapley 值公平分配策略贡献（含交互效应），效率公理保证 Σ Shapley = 总收益；vs naive 求和差异可达 2-10 倍（[xfinlink 2026-06-28](https://xfinlink.com/blog/shapley-value-portfolio-attribution-python) 实证）；O(2^n) 复杂度，策略数 ≤ 8 精确可行
-- **A 股 PnL waterfall 施工算法**（v1.5.1 补）：`calc_ashare_pnl_waterfall()` 逐笔归因 5 分项分解（Signal alpha + Selection alpha + Timing alpha - Transaction costs - Opportunity costs = Net PnL）；[OrderX 2026-07-09](https://orderx.com/education/introduction-to-algorithmic-execution-part-12-benchmarks-and-tca/) signed bps slippage 公式；Phase 2 启用（Brinson 残差持续 > 0.01% 时）
+- **A 股 PnL waterfall 施工算法**（v1.5.1 补）：逐笔归因施工算法 `calc_ashare_pnl_waterfall()` 见 §3.2（含 [OrderX 2026-07-09](https://orderx.com/education/introduction-to-algorithmic-execution-part-12-benchmarks-and-tca/) signed bps 公式）；启用条件同上条
 - **滑点分布报告增强**（v1.5.1 补）：`calculate_slippage_distribution()` 百分位（p50/p90/p99）+ 压力 regime 切片（top decile 波动率）+ reversion 诊断（temporary_impact vs real_alpha）；[Drovix 2026-05](https://drovix.com/blog/tca-that-actually-drives-decisions) 实证滑点是分布非均值；Phase 1.5 施工
 - **PerformanceScore 计算算法**（v1.5.1 补 / v1.15.0 口径修正）：`calc_performance_score()` 60 日滚动 **Sortino** 年化 → 映射 **[0.5, 1.5]** 区间（30 号 §2.2 契约，口径真源 34 号 §3.1）；观测不足返回中性 1.0；对齐 30 号 RegimeMetaAllocator `allocation_i = normalize(Base_i × PerformanceScore_i × Shrinkage_i)` + budget floor ≥ 5% / cap ≤ 40%
-- **异常检测施工算法**（v1.5.1 补）：`detect_price_anomaly()` 滚动 20 笔价格偏离率 σ + 2σ 阈值（历史不足用 50bps 绝对兜底）+ `detect_volume_anomaly()` 滚动 20 日均量 3 倍阈值；[ParseMyStatement 2026-04](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 行级校验
-- **verdict 三态判定阈值**（v1.5.1 补）：`interpret_deflated_alpha_verdict()` 显式阈值——LIKELY_OVERFIT: DSR<0.50 ∨ PBO>0.25 ∨ SPA p<0.01 ∨ OOS退化<0.50；LIKELY_REAL: 4 项中 ≥3 项通过（DSR>0.95 ∧ PBO<0.05 ∧ SPA p>0.05 ∧ OOS退化>0.70）；INCONCLUSIVE: 其余 + MinTRL 不足直接 INCONCLUSIVE
-- **持仓对账漂移检测算法**（v1.6.0 补）：`detect_position_drift()` 双容差检测（qty_tolerance 0.01 股 + value_tolerance 1 元）+ bps 严重度分级（minor <50bp / major 50-200bp / critical >200bp）+ 冻结/解冻状态机（frozen→reconciling→monitoring→正常）；[marketclutch 2026](https://marketclutch.com/) 三层对账 Position Quantity 维度 + [reconwizz 2026-01](https://reconwizz.com/) cash vs position 独立对账
-- **MAD 鲁棒异常检测**（v1.6.0 补）：`detect_price_anomaly_robust()` Modified Z-Score = 0.6745×(x-median)/MAD（Iglewicz-Hoaglin 3.5 阈值，50% 击穿点，无掩蔽效应）+ MAD=0 退化兜底（绝对 50bps 阈值）+ 三级严重度（info 2-3.5 / warning 3.5-5.0 / critical >5.0）+ dismiss/escalate 升级流程；[juejin.cn 2026-04](https://juejin.cn/post/7633584575197380623) Z-Score vs MAD 金融数据对比 + [metricgate 2026-05](https://metricgate.com/docs/mad-scaled-z-score/) ISO/USP 标准推荐
-- **PBO 零假设解释修正**（v1.7.0 补，[Solovjiev 2026-07 "PBO 受控标定"](https://pbo.marketmaker.cc/paper.pdf)）：`interpret_deflated_alpha_verdict()` 中 PBO 阈值须显式说明 null=0.5（纯噪声下 PBO=0.5，非 0）——PBO<0.5 才有 edge，PBO>0.5 才过拟合；当前阈值 `pbo > 0.25` 是保守红旗（远低于 null=0.5），PBO 接近 0.5 须结合 N_eff+条件数综合判断；防止读者误读 PBO≈0.5 为"不确定"实际是"无 edge"
-- **Stale-Value 冻结馈送检测**（v1.7.0 补，[EQAF arXiv:2606.20079 2026-06](https://arxiv.org/pdf/2606.20079v1) UBS 投行实测）：`detect_stale_value()` 领域确定性规则——连续 N 笔数值完全相同→告警（max_unchanged_count 默认 3 + max_stale_seconds 默认 300s）+ severity 分级（warning/critical）+ 三层异常检测关系：stale-value 是第 0 层（对账/异常检测**之前**先检测数据是否冻结，冻结则跳过本轮）；纯统计方法（Isolation Forest/PCA/统计规则）对 stale-value 结构性失效，必须领域规则兜底；A 股场景：miniQMT 行情连接断开时持仓/成交回报可能冻结在最后一个值，导致对账系统误判"一致"（实际是双边都冻结）
-- **Merkle tree 审计轨迹升级路径**（v1.7.0 补，Phase 2 候选）：当前 v1.5.0 线性 hash 链能检测单点篡改但有结构性缺陷（无 inclusion proof + 无外部时间锚）；升级目标 = Merkle tree + 外部锚定（RFC-3161 TSA / Sigstore Rekor）；升级施工：`write_audit_stage` 线性 prev_hash → Merkle 叶子节点 + 每日 EOD Merkle root 写入 RFC-3161 TSA + 归因报告附带 Merkle root + TSA 时间戳收据；为何暂缓到 Phase 2：个人单机单 owner 线性链"篡改可检测"已满足生存需求，Merkle tree + 外部锚定的价值在 AUM 机构化/外部审计/监管举证场景才释放
+- **异常检测施工算法**（v1.5.1 补）：`detect_price_anomaly()` / `detect_volume_anomaly()`（滚动窗口、阈值与兜底口径见 §3.6）
+- **verdict 三态判定阈值**（v1.5.1 补）：`interpret_deflated_alpha_verdict()` 显式阈值见 §3.9（LIKELY_OVERFIT / LIKELY_REAL / INCONCLUSIVE 三态 + MinTRL 不足直接 INCONCLUSIVE）
+- **持仓对账漂移检测算法**（v1.6.0 补）：`detect_position_drift()` 双容差 + bps 三级严重度 + 冻结/解冻状态机（参数口径见 §3.3）
+- **MAD 鲁棒异常检测**（v1.6.0 补）：`detect_price_anomaly_robust()` 主检测器（Modified Z-Score 公式、3.5 阈值、MAD=0 兜底、三级严重度与 dismiss/escalate 升级流程见 §3.6）
+- **PBO 零假设解释修正**（v1.7.0 补，[Solovjiev 2026-07 "PBO 受控标定"](https://pbo.marketmaker.cc/paper.pdf)）：verdict 函数中 PBO 阈值须显式说明 null=0.5——PBO<0.5 才有 edge，PBO>0.5 才过拟合；`pbo > 0.25` 是保守红旗（远低于 null=0.5），PBO 接近 0.5 须结合 N_eff+条件数综合判断（§3.9）
+- **Stale-Value 冻结馈送检测**（v1.7.0 补，[EQAF arXiv:2606.20079 2026-06](https://arxiv.org/pdf/2606.20079v1) UBS 投行实测）：`detect_stale_value()` 第 0 层领域确定性规则（对账/异常检测前先检数据冻结，冻结则跳过本轮；参数与 A 股断连场景见 §3.6）
+- **Merkle tree 审计轨迹升级路径**（v1.7.0 补，Phase 2 候选）：线性 hash 链 → Merkle tree + 外部锚定（RFC-3161 TSA / Sigstore Rekor）；升级施工步骤、VCP v1.2 对齐口径与暂缓理由见 §3.3
 - **MCR/CCR 风险分解**（v1.14.0 补，Phase 2.5 候选）：经典 Euler 齐次函数定理分解组合波动率到各策略 MCR（边际贡献）/CCR（组件贡献），求和不变量 ΣCCR=σ_p；仅需经验协方差矩阵（np.cov 估计），无需 Barra 许可证；与 §3.2 Brinson 收益归因正交（收益归因+风险归因双维度），与 §3.12 Shapley 风险归因（Phase 2+ Monte Carlo）形成轻量-高级两档；输出 risk_concentration_ratio=CCR_pct/PnL_share 反馈 30 号 RegimeMetaAllocator budget 风险维度调整
 
 ### 5.2 演进路径
@@ -2782,3 +2782,4 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 | 2026-08-12 | 1.15.4 | 作战地图全覆盖补丁：新增 §3.15 压力测试（BM-RC-08-C）+ §3.3 仓位审计追溯（BM-POS-10）+ §3.1.1 模型层反馈（BM-REC-03-C）+ §2.4 缺口 #6（BM-BUY-07） | 四环节补 why 层/缺口登记 |
 | 2026-08-12 | 1.15.5 | §3.14 末尾补作战地图环节映射（BM-SEL-21-E/BM-RC-08-A/BM-RC-08-B） | 环节级可追溯 |
 | 2026-08-14 | 1.15.6 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001）；修复前序压缩会话截断事故（§7/§8/§9 整章恢复） | 待施工真源保守压缩：伪代码/契约/参数表/验收标准全保留，删除过程性叙述与重复解释 |
+| 2026-08-15 | 1.15.7 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§5.1 上限定义 10 条与 §3 重复的参数细节真源+指针化（sizing_basis 5 约束枚举→§3.8、置信度权重/三带→§3.3、Brinson+Carino 公式→§3.2、T+1 拆分算法→§3.2、waterfall 施工算法→§3.2、异常检测/verdict 阈值→§3.6/§3.9、漂移检测→§3.3、MAD→§3.6、stale-value→§3.6、Merkle 升级→§3.3），上限裁定与 Phase 定性保留；§3.3 VCP v1.1"为何 Phase 2"与 Merkle 段重复理由并指；§5.1 正交维度条"条件数 <10"与 §3.10 算法阈值（30）冲突，统一为指针口径 | 8 类扫描 12 处（类别 3 重复信息×11、类别 5 冗余×1）；IS 四组件/Brinson 公式/费率口径/阈值全部保留于 §3 真源 |

@@ -5,8 +5,8 @@ title: 业务数据资产利用率审查与施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "2.1.1"
-date: 2026-08-14
+version: "2.1.2"
+date: 2026-08-15
 topic: data_utilization_audit
 scope: 07_trading_decision_architecture
 related_modules:
@@ -295,7 +295,7 @@ Detective 扫描（每周 cron 触发）：
 | **代码零引用但规划已登记**（v2.1.0 新类别） | **6（5.8%）** | dividend_tax_node / index_adjustment / ipo_schedule / margin_target_adjustment / msci_adjustment / stock_valuation——DDL+规划文档有，代码/config/tasks.yaml 全零（§6.1b 采集未施工类别） |
 | **消费层文档缺口**（施工目标清单） | **59（57.3%）** | 47 张规划层代码活跃 + 12 张零覆盖代码活跃——补消费文档，非接入数据 |
 
-> **v2.1.0 三层口径说明**：v0.2.0 的"38（37.3%）"实测对应今天的**消费层覆盖**（37 张，两天仅 -1，口径稳定）——真问题从未变化：消费方文档不描述表的用法。2026-08-11 提交的 17/64 号带来 53 张规划层引用，任一文档命中口径虚高至 87.4%，**规划层引用不等于消费覆盖**（§7.0.6 L2/L3 标准要求字段/下游逻辑/频率描述）。利用率 99.0% 健康（[thedataops.org 2026](https://www.thedataops.org/data-documentation/) 的 doc coverage 80% 基准针对的是消费级文档，本审查以消费层 35.9% 对齐该基准）。行业对照：[modern-datatools.com 2026-04 Data Baselining](https://www.modern-datatools.com/blog/data-baselining-warehouse-lifecycle-2026) 三层基线法验证"先盘点真源再分层处置"路径；其"20% 表被活跃查询"的企业常态反衬本仓库 99.0% 利用率异常健康。
+> **v2.1.0 三层口径说明**：v0.2.0 的"38（37.3%）"实测即**消费层覆盖**（37 张，口径稳定——见 §2.2 口径修正）——真问题从未变化：消费方文档不描述表的用法；**规划层引用不等于消费覆盖**（§7.0.6 L2/L3 标准要求字段/下游逻辑/频率描述）。利用率 99.0% 健康——[thedataops.org 2026](https://www.thedataops.org/data-documentation/) 的 doc coverage 80% 基准针对消费级文档，本审查以消费层 35.9% 对齐该基准；行业对照 [modern-datatools.com 2026-04 Data Baselining](https://www.modern-datatools.com/blog/data-baselining-warehouse-lifecycle-2026) 三层基线法验证"先盘点真源再分层处置"路径，其"20% 表被活跃查询"企业常态反衬本仓库 99.0% 利用率异常健康。
 
 ### 5.2 已使用表热度分布（design_memos 前 15 名，excl 63 自引 / v2.1.0 实测重排）
 
@@ -317,7 +317,7 @@ Detective 扫描（每周 cron 触发）：
 | ipo_schedule | 14 | 2 | 规划层 | 17/64 规划层（代码零引用，§6.1b） |
 | index_adjustment | 14 | 2 | 规划层 | 17/64 规划层（代码零引用，§6.1b） |
 
-> v2.1.0 以 git 提交态实测重排（任一文档命中口径，子串匹配）。v0.2.0 热度数字（如 block_trade 52 次/5 文档）以当时未提交工作区为扫描对象，现已不可复现——`block_trade` 实测 7 次/2 文档（13/64 号），跌出前 15。通用名 `index`（441 次/43 文档）为子串假阳性，按 §3.3 惯例以全名 `market_index` 复核（3 次真实命中），不入榜。热度仅作参考，施工优先级以 §6 为准。
+> v2.1.0 以 git 提交态实测重排（任一文档命中口径，子串匹配）。v0.2.0 热度数字以未提交工作区为扫描对象不可复现（§2.2 声明）——如 `block_trade` 实测 7 次/2 文档（13/64 号），跌出前 15。通用名 `index`（441 次/43 文档）为子串假阳性，按 §3.3 惯例以全名 `market_index` 复核（3 次真实命中），不入榜。热度仅作参考，施工优先级以 §6 为准。
 
 ### 5.3 零文档覆盖但代码在用（v2.1.0 实测 12 张真缺口）
 
@@ -1388,3 +1388,4 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 2026-08-10 | 2.0.0 | 2026-08 最新研究评估闭环：SetGo metadata readiness 工具链评估排除 | §9 补 SetGo 排除——[SetGo SSDBM '26 2026-08-11](https://dlnext.acm.org/doi/10.1145/3828820.3828827) 六维 metadata readiness 中 3 维不适用或已覆盖（许可/目录就绪/可复现），其余 3 维由 Q score+ODCS 6 组件覆盖；面向科学数据集对外发布，本审查无此需求；assess→enrich 思想已由 §7.0.2+§7.0.1+§7.0.6 覆盖。本版本标志 2026-08 全网最新研究已全部评估完毕，算法体系达完整性闭环。维持 draft |
 | 2026-08-12 | 2.1.0 | 全量重扫核验修正：三层覆盖口径+真闲置收敛+设施盘点+施工计划重 scope | **2026-08-12 git 提交态全量重扫核验**：(1) 基数修正——表数 102→103（`market_stock_valuation` 新增）、受扫文档 42→46 篇、字符量 4.59M→5.24M；(2) 三层覆盖口径——消费层 37（35.9%）/规划层 53（51.5%）/零覆盖 13（12.6%），v0.2.0 的"37.3%"实测即消费层口径，任一文档命中口径虚高 87.4% 废弃，施工目标以消费层为准；(3) 真闲置 3→1 张（仅 `index_meta`）+新增 §6.1b"代码零引用但规划已登记"6 张（dividend_tax_node 改判 dormant VIEW 免归档）；(4) §5 全部数字实测重算（热度榜/零文档缺口 15→12 张/低频表复核）；(5) §2.4 已施工设施盘点——被审查对象全部已施工，审查工具链全部未施工，`src/zephyr/data/ingestions/` 不存在（§7.5 路径修正）；(6) §7 施工计划重 scope——消费层缺口 59 张，覆盖轨迹 35.9%→44.7%→68.9%→93.2%，registry 补齐 26→27 张；(7) §10 Q1 收敛 1 张+新增 Q8；(8) §9 补 2 项；(9) v0.2.0 历史数字不可复现声明（扫描输出须入 git 快照）。全网验证：[modern-datatools.com 2026-04](https://www.modern-datatools.com/blog/data-baselining-warehouse-lifecycle-2026) 三层基线法+"20% 表活跃"企业常态反衬 99.0% 健康。**施工执行插曲**：回填过程遭遇并发会话 stash 隔离清空暂存区事故，全部修改经 dangling blob（f34adb8b）字节级恢复——教训记入 project_memory（git add 快照是最小保护层）。维持 draft（Q1/Q8 待人裁定 + 三波施工未执行） |
 | 2026-08-14 | 2.1.1 | 压缩精简 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001）——2703 行→1390 行（51.4%）；章节标题与编号一字不动；101 表盘点清单/五档分级、三波接入计划与验收标准、闲置表清单、每张表处置裁定全部完整保留；折叠审计方法论过程叙述与已完成阶段性总结（结论+日期保留）；frontmatter version patch+1、date 同步 |
+| 2026-08-15 | 2.1.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§5.1 三层口径说明与 §2.2 口径修正重复段并指（17/64 号 53 张/87.4% 虚高论证保留在 §2.2 单处）；§5.2 热度表注不可复现声明并指 §2.2 | 8 类扫描 2 处均为类别 3（重复信息）；18 项口径表/利用率表/批次清单/算法参数零丢失 |

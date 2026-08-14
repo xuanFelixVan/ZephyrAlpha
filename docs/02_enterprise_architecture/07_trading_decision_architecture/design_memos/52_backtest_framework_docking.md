@@ -5,8 +5,8 @@ title: 回测框架对接
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.3"
-date: 2026-08-12
+version: "1.0.4"
+date: 2026-08-15
 topic: backtest_framework_docking
 scope: 07_trading_decision_architecture
 ---
@@ -148,7 +148,10 @@ DSR（Bailey & López de Prado 2014）两处实现：`backtest/core/metrics.py c
 
 ## 5. 上限定义
 
-**系统上限**：三引擎（向量化/事件驱动/Shrinkage）+ 三维度过拟合 + 三阶段门控 + DSR，对个人 3-5 策略组合已是上限。**演进路径**：策略侧编排入口（统一"策略验证流水线"调用 DecisionGate）随首批上线补；CPCV/Purged K-Fold/Permutation Test 按需升级（首批变体数量>50 时多重比较风险升级再启用）。**为何是上限**：05-F/I/J（Permutation/组合级/p-hacking 追踪）与自适应 WF 属研究级组件（OE-009 同族），个人系统变体规模不需要。**BM-BT-07-I 分层验证门控 V1-V6 显式裁定：不独立施工**——已由 §3.4 三阶段门控 IS→WFA→OOS（≈V1 基础检验/V2 样本外/V3 稳健性）+ [53_simulation_live_path](53_simulation_live_path.md) §3.1 PARALLEL→SHADOW→GRAY_RAMP（≈V5 模拟盘→V6 小仓位实盘）等价承载，V4 压力测试由 BM-SIM-04 压力测试引擎域承接；再建一套 V1-V6 门控=同一防线两套阈值，AI 并发施工时口径必然漂移。
+- **系统上限**：三引擎（向量化/事件驱动/Shrinkage）+ 三维度过拟合 + 三阶段门控 + DSR，对个人 3-5 策略组合已是上限。
+- **演进路径**：策略侧编排入口（统一"策略验证流水线"调用 DecisionGate）随首批上线补；CPCV/Purged K-Fold/Permutation Test 按需升级（首批变体数量>50 时多重比较风险升级再启用）。
+- **为何是上限**：05-F/I/J（Permutation/组合级/p-hacking 追踪）与自适应 WF 属研究级组件（OE-009 同族），个人系统变体规模不需要。
+- **BM-BT-07-I 分层验证门控 V1-V6 显式裁定：不独立施工**——已由 §3.4 三阶段门控 IS→WFA→OOS（≈V1 基础检验/V2 样本外/V3 稳健性）+ [53_simulation_live_path](53_simulation_live_path.md) §3.1 PARALLEL→SHADOW→GRAY_RAMP（≈V5 模拟盘→V6 小仓位实盘）等价承载，V4 压力测试由 BM-SIM-04 压力测试引擎域承接；再建一套 V1-V6 门控=同一防线两套阈值，AI 并发施工时口径必然漂移。
 
 ## 6. 待裁定
 
@@ -202,3 +205,4 @@ DSR（Bailey & López de Prado 2014）两处实现：`backtest/core/metrics.py c
 | 2026-08-12 | 1.0.1 | 作战地图全覆盖补丁——闭合 BM-BT-01-E/01-F/02-C/07-D/07-E（§3.1.1 辅助组件契约）、BM-BT-07-F（§6 待裁定，重评=故障≥10 例）、BM-BT-07-I（§5 显式裁定不独立施工）；§7 补登 BM-SIM-03/06 成熟度口径冲突 | 回测域 7 环节补丁：production 组件补契约、design 组件定暂缓与重评条件，不新施工 |
 | 2026-08-12 | 1.0.2 | 作战地图环节映射补强——锚定 BM-BT-01-A/01-B/01-C、BM-BT-02-A/02-B、BM-BT-03-C、BM-BT-05-C/05-J、BM-BT-06-A/06-B、BM-BT-07-A/07-B（§3.1/§3.2/§3.4/§3.6 末各增映射块） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
 | 2026-08-12 | 1.0.3 | 作战地图环节映射补强②——锚定 BM-BT-05-F / BM-BT-06-C / BM-BT-07-H（§6 待裁定表末映射块，暂缓/上限类环节锚定到 §5 上限与 §4 替代方案裁定） | 同上：环节级可追溯；不改既有正文 |
+| 2026-08-15 | 1.0.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§5 上限定义单段巨型散文（>300 字）要点化为 4 条（系统上限/演进路径/为何是上限/BM-BT-07-I 裁定），全文参数/裁定/环节锚点零丢失 | 8 类扫描仅此 1 处（类别 1）；其余章节经复扫已达收敛 |

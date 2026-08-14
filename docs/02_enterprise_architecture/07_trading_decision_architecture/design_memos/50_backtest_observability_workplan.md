@@ -5,8 +5,8 @@ title: 回测可观测性体系工作计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
-date: 2026-08-12
+version: "1.1.1"
+date: 2026-08-15
 topic: backtest_observability_workplan
 scope: 07_trading_decision_architecture
 parent: 10_regime_detector_spec.md
@@ -62,9 +62,8 @@ parent: 10_regime_detector_spec.md
 | 通用可观测性栈 | OpenTelemetry / OpenObserve / ELK | ❌ 管 logs/metrics/traces，非"结果版本化" |
 
 **关键结论**：
-- 没有一个专门针对"回测结果版本化"的主流开源项目；所有量化框架要么用 MLflow/W&B，要么用 OpenTelemetry，要么自己 dataclass+落盘。
-- MLflow 是自托管/本地/受监管环境的事实标准（2026 评测），Qlib（微软量化平台）默认就用 MLflow Recorder——量化领域权威背书。
-- 我们的方案 = **MLflow（管存储/查询/UI）+ 薄包装层（把六零件的领域语义翻译成 MLflow 语义）**，正是主流做法，不是重复造轮子。薄包装层就是用户说的"写数据库新建表格"的工程化封装。
+- 无专门针对"回测结果版本化"的主流开源项目——量化框架要么用 MLflow/W&B，要么用 OpenTelemetry，要么自造 dataclass+落盘；MLflow 是自托管/本地/受监管环境的事实标准（2026 评测），Qlib（微软量化平台）默认用 MLflow Recorder。
+- 据此当时定"MLflow + 薄包装层"（薄包装层=用户说的"写数据库新建表格"的工程化封装，主流做法非重复造轮子）——2026-08-09 已被 51 号逆转（§1.4）。
 
 > ⚠️ v1.1.0 注记：本节为 v1.0.x 调研历史记录，"MLflow 已定"结论已被 51 号逆转（见 §1.4）。
 
@@ -105,8 +104,7 @@ parent: 10_regime_detector_spec.md
 **裁定结果（v1.1.0 补）：选项 A 已落地**——包名定为 `zephyr.experiment_tracking`，`__init__.py`
 已就位（8 文件正式包），与现有 4 处 observability 零冲突。原三选项保留为决策历史：
 - **A. 改名 `zephyr.experiment_tracking`（✅ 已采用并落地）**——语义最准（experiment tracking 本意），零冲突。
-- B. 保持顶层 `zephyr.observability`——独占顶层，但与现有 4 处 observability 语义重叠（未选）。
-- C. 降为子包 `zephyr.shared.observability.experiment_tracking`——归入现有 shared.observability，但实验跟踪不只是 shared 层（未选）。
+- 未选项：B. 保持顶层 `zephyr.observability`（独占顶层，与现有 4 处 observability 语义重叠）/ C. 降为子包 `zephyr.shared.observability.experiment_tracking`（实验跟踪不只是 shared 层）。
 
 ### 2.4 现有 dashboard 现状（2026-08-07 更新）
 - 可视化技术栈已切换到 **Panel + HoloViz**（#ARCH-047，v3.0.0），`frontend/dashboard/app_panel.py` 是主入口
@@ -245,3 +243,4 @@ M5（⑦）：治理登记收尾                                     [部分完�
 | 2026-08-09 | 1.0.1 | 文件名 discussion_018_backtest_observability_workplan.md → 50_backtest_observability_workplan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 1.0.2 | 文档头统一：frontmatter 补 title/owner/language，H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 1.1.0 | **MLflow 路线逆转收敛改写 + 代码实况核实**（draft→active）：① 头部加 v1.1.0 路线逆转声明（51 号 2026-08-09 裁定完全卸载 MLflow、单一 FallbackBackend JSON、Panel Tab 可视化）；② §1.4 方案选型标注已逆转；③ §2.3 命名冲突标注选项 A 已落地（experiment_tracking 8 文件正式包）；④ §2.5 依赖现状更正（Grep 核实 pyproject.toml 无 observability extras、无 mlflow 声明，v1.0.x"已落地"描述不实）；⑤ §2.6 已动手进度按代码实况更新（__init__.py/query.py/c1_adapter 均已就位，mlflow 残留待 51 号工作流 A 清除）；⑥ §3 工作清单八项全量状态标注（⓪✅/①②❌逆转取消/③✅/④移交51号/⑤待评估/⑥待施工=核心剩余/⑦部分完成）；⑦ §5/§6/§7/§8 按逆转后改写（零新增依赖/验收走 Panel/风险收敛/里程碑 M0-M1 已完成）；⑧ §9 四个决策点全部标已决；status draft→active（方向全定、M1 已落地、剩余工作明确）。另注：本版修正曾遭并发会话回滚五次（含 f7c4ad2e commit 时 index 被还原漏收一次），此为重放写入 | 架构审查第 1-2 轮发现 50 号与 51 号根本矛盾（50 号写"MLflow 已定"而 51 号已裁定退役）+ 多处与代码实况脱节（命名冲突/依赖声明/已动手进度），按 51 号裁定与 Grep 实证收敛统一 |
+| 2026-08-15 | 1.1.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§1.3 关键结论 3 条散文并为 2 条（逆转指针并入，调研事实零丢失）；§2.3 未选项 B/C 并为一条（决策历史保留） | 8 类扫描 2 处（类别 2 过程性叙述×1、类别 5 冗余修饰×1）；被推翻的 MLflow 方案按 v1.1.0 既定"保留为决策历史"裁定不删 |
