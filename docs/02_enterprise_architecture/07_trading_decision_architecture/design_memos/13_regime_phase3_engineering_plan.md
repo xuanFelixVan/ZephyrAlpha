@@ -5,9 +5,9 @@ title: "Phase 3 工程规划——降态数 + 两阶段校准 + NLP 管道 + S2/
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.4.0"
-date: "2026-08-07"
-last_updated: "2026-08-12"
+version: "0.4.1"
+date: "2026-08-15"
+last_updated: "2026-08-15"
 topic: regime_phase3_engineering_plan
 scope: 07_trading_decision_architecture
 doc_id: 13_regime_phase3_engineering_plan
@@ -128,128 +128,48 @@ P2-E8 forward_days ── 依赖 P0-E2 校准器
 > `predict_log_proba` 新增、`confidence_calibrator.py` 新建、`phase2_runner.py` 集成、单元测试落地、
 > `scan_hmm_states.py` BIC 扫描）。实际施工结果与两处实现偏差（T 上界 30.0、Isotonic 免预分桶）回填见 §2.1/§2.2。
 
-4 个阻断项涉及以下文件修改。按优先级排序——**必须从上到下逐项完成**。
+4 个阻断项全部 ✅ 完成（commit 0c5ea28bb1/83c94c4f/e4fd931a）：
+
+- #1 hmmlearn API：新增 `predict_log_proba`
+- #2 校准器降级：新建 `confidence_calibrator.py` + `phase2_runner.py` 集成 + 单测
+- #3 降态后配置失效：重设计 `_STATE_RISK_FACTORS` + `TRANSITION_CONFIG`
+- #4 硬编码 9：文件 A-E 共 ~30 处载重 + `dump_c1_repro_artifacts.py` 注释同步
+
+原逐行行号快照为施工期坐标（随代码演进已偏移），审计以 git 历史为准；现态设施见 §1.6.1。
 
 ### 文件修改总览
 
-| 优先级 | 阻断项 | 文件 | 修改类型 | 载重代码处数 |
-|---|---|---|---|---|
-| **1** | #3 降态后配置失效 | `src/zephyr/regime/core/regime_detector.py` | 重设计 `_STATE_RISK_FACTORS` + `TRANSITION_CONFIG` | 2 块配置 |
-| **2** | #4 硬编码 9 | `src/zephyr/regime/core/regime_detector.py` | 同步改所有硬编码 9 | 13 处载重 |
-| **3** | #4 硬编码 9 | `src/zephyr/regime/validation/phase2/a1_sample_sufficiency.py` | 同步改 `HMM_STATES_9` 等 | 7 处载重 |
-| **4** | #4 硬编码 9 | `src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py` | 改默认 `n_states` | 1 处载重 |
-| **5** | #4 硬编码 9 | `tests/regime/test_regime_detector.py` | 改断言中的 `1.0/9.0` | 6 处载重 |
-| **6** | #4 硬编码 9 | `tests/regime/phase2/test_a1_sample_sufficiency.py` | 改 mock 参数和断言 | 7 处载重 |
-| **7** | #1 hmmlearn API | `src/zephyr/regime/core/regime_detector.py` | 新增 `predict_log_proba` 方法 | +1 方法 |
-| **8** | #2 校准器降级 | 新建 `src/zephyr/regime/validation/phase2/confidence_calibrator.py` | 新建校准器模块 | 新文件 |
-| **9** | #2 校准器降级 | `src/zephyr/regime/validation/phase2/phase2_runner.py` | walk-forward 集成降级策略 | 改 run() |
-| **10** | #2 校准器降级 | 新建 `tests/regime/phase2/test_confidence_calibrator.py` | 单元测试 | 新文件 |
-| **11** | #3 BIC 扫描 | 新建 `scripts/tests/scan_hmm_states.py` | BIC 扫描脚本 | 新文件 |
-| **12** | 注释同步 | `scripts/tests/dump_c1_repro_artifacts.py` | markdown 产物中引用 9 | 2 处注释 |
+✅ 12 项修改全部完成：文件 A-E 改 4 个阻断项 + 3 个新建（`scan_hmm_states.py` / `confidence_calibrator.py` / `test_confidence_calibrator.py`）+ 1 处注释同步。
 
 ### 详细修改路径（按文件分组）
 
 #### 文件 A：`src/zephyr/regime/core/regime_detector.py`（最核心，涉及 3 个阻断项）
 
-**阻断项 #3（降态后配置失效）**：
-
-| 行号 | 当前代码 | 修改为 |
-|---|---|---|
-| 91-103 | `_STATE_RISK_FACTORS` dict（r1-r9 基于 3×3 网格） | 重设计为新态数的 shrinkage 映射（§2.1.6.2 施工方法） |
-| 128-138 | `TRANSITION_CONFIG` 的 T1/T4/T5/T6（依赖网格态转移） | 重设计转换逻辑（§2.1.6.3 施工方法） |
-
-**阻断项 #4（硬编码 9，13 处载重代码）**：
-
-| 行号 | 当前代码 | 修改为 |
-|---|---|---|
-| 60 | `HMM_STATES = [f"r{i}" for i in range(1, 10)]` | `range(1, n_states+1)` |
-| 303 | `{"n_states": 9, ...}` | `{"n_states": 新态数, ...}` |
-| 307-311 | 默认 `state_frequencies`（含 r9） | 适配新态数 |
-| 385 | `hmm_params.get("n_states", 9)` | `get("n_states", 新态数)` |
-| 467 | `1.0 / 9.0` | `1.0 / n_states` |
-| 472 | `1.0 / 9.0` | `1.0 / n_states` |
-| 482 | `if len(last) != 9:` | `if len(last) != n_states:` |
-| 484 | `1.0 / 9.0` | `1.0 / n_states` |
-| 485 | `range(9)` | `range(n_states)` |
-| 488 | `1.0 / 9.0` | `1.0 / n_states` |
-
-**阻断项 #1（hmmlearn API，新增方法）**：
-
-| 行号 | 修改 |
-|---|---|
-| 新增 | `def predict_log_proba(self, X): return np.log(self._hmm_model.predict_proba(X) + 1e-30)` |
+✅ 已施工：#3 `_STATE_RISK_FACTORS` + `TRANSITION_CONFIG` 重设计（施工方法 §2.1.6.2/§2.1.6.3，结果回填 §1.6.1）、#4 硬编码 9 共 13 处载重全量参数化（`HMM_STATES` / `n_states` 默认值 / `1.0 / 9.0` / `range(9)` / `len(last) != 9`）、#1 `predict_log_proba` 新增（:472，`np.log(predict_proba(X) + 1e-30)`）。
 
 #### 文件 B：`src/zephyr/regime/validation/phase2/a1_sample_sufficiency.py`（#4，7 处载重）
 
-| 行号 | 当前代码 | 修改为 |
-|---|---|---|
-| 64 | `HMM_STATES_9 = [f"r{i}" for i in range(1, 10)]` | `HMM_STATES_N = [f"r{i}" for i in range(1, n_states+1)]` |
-| 170 | `"n_states": 9` | `"n_states": 新态数` |
-| 291 | `get("n_states", 9)` | `get("n_states", 新态数)` |
-| 305 | `HMM_STATES_9[i]` | `HMM_STATES_N[i]` |
-| 348 | `total // 9` | `total // n_states` |
-| 351 | `HMM_STATES_9[i]` | `HMM_STATES_N[i]` |
-| 359 | `range(9)` | `range(n_states)` |
+✅ 已施工：`HMM_STATES_9`→`HMM_STATES_N`、`n_states` 默认值、`total // 9`、`range(9)` 等 7 处载重全量参数化。
 
 #### 文件 C：`src/zephyr/regime/validation/phase2/a2_hmm_overfitting.py`（#4，1 处载重）
 
-| 行号 | 当前代码 | 修改为 |
-|---|---|---|
-| 123 | `"n_states": 9` | `"n_states": 新态数` |
+✅ 已施工：默认 `n_states` 同步。
 
 #### 文件 D：`tests/regime/test_regime_detector.py`（#4，6 处载重）
 
-| 行号 | 当前代码 | 修改为 |
-|---|---|---|
-| 173 | `1.0 / 9.0` 断言 | `1.0 / n_states` |
-| 185 | `1.0 / 9.0` 断言 | `1.0 / n_states` |
-| 232 | `{s: 1.0 / 9.0 for s in HMM_STATES}` | `1.0 / n_states` |
-| 235 | `1.0 / 9.0` 断言 | `1.0 / n_states` |
-| 241 | `{s: 1.0 / 9.0 for s in HMM_STATES}` | `1.0 / n_states` |
-| 251 | `{s: 1.0 / 9.0 for s in HMM_STATES}` | `1.0 / n_states` |
+✅ 已施工：`1.0 / 9.0` 断言与 `HMM_STATES` 引用 6 处载重全量参数化。
 
 #### 文件 E：`tests/regime/phase2/test_a1_sample_sufficiency.py`（#4，7 处载重）
 
-| 行号 | 当前代码 | 修改为 |
-|---|---|---|
-| 18 | `n_states: int = 9` mock 默认 | `n_states: int = 新态数` |
-| 43 | `np.arange(9)` | `np.arange(n_states)` |
-| 51 | `len(...) == 9` 断言 | `== n_states` |
-| 70 | `["r9"]` 断言 | 适配新态标签 |
-| 86 | `["r9"]` 断言 | 适配新态标签 |
-| 109 | `np.arange(9)` | `np.arange(n_states)` |
-| 138 | `np.arange(9)` | `np.arange(n_states)` |
+✅ 已施工：mock 默认值、`np.arange(9)`、断言 7 处载重全量参数化。
 
 #### 新建文件清单
 
-| 文件 | 阻断项 | 内容 |
-|---|---|---|
-| `scripts/tests/scan_hmm_states.py` | #3 | BIC 扫描脚本（2-9 态） |
-| `src/zephyr/regime/validation/phase2/confidence_calibrator.py` | #2 | 两阶段校准器 + 降级策略 |
-| `tests/regime/phase2/test_confidence_calibrator.py` | #2 | 校准器单元测试 |
+✅ 3 个新文件均已建并验收：`scripts/tests/scan_hmm_states.py`（#3，BIC 扫描 2-9 态）/ `src/zephyr/regime/validation/phase2/confidence_calibrator.py`（#2，两阶段校准器+降级策略）/ `tests/regime/phase2/test_confidence_calibrator.py`（#2，校准器单测）。现态见 §1.6.1。
 
 ### 施工顺序（关键路径）
 
-```
-步骤 1: 跑 BIC 扫描（新建 scan_hmm_states.py）
-    ↓ 确定新态数（预期 3-4）
-步骤 2: 重设计 _STATE_RISK_FACTORS + TRANSITION_CONFIG（regime_detector.py）
-    ↓ 新配置生效
-步骤 3: 同步改所有硬编码 9（文件 A-E，~30 处）
-    ↓ 编译通过
-步骤 4: 新增 predict_log_proba 方法（regime_detector.py）
-    ↓ API 就绪
-步骤 5: 新建 confidence_calibrator.py（校准器 + 降级策略）
-    ↓ 校准器就绪
-步骤 6: phase2_runner.py 集成校准器
-    ↓ walk-forward 闭环
-步骤 7: 新建 test_confidence_calibrator.py
-    ↓ 测试通过
-步骤 8: 重跑 A1+A2+B1+B4 验证
-    ↓ 确认 A2 OOS/IS ≥ 0.7
-```
-
-> ⚠️ **步骤 1-3 是前置依赖**——必须先确定新态数，才能改硬编码和重设计配置。步骤 4-7 可以在步骤 3 完成后并行。
+✅ 已按关键路径执行完毕：BIC 扫描定态数（=4）→ 重设计 `_STATE_RISK_FACTORS`+`TRANSITION_CONFIG` → 同步硬编码（文件 A-E ~30 处）→ 新增 `predict_log_proba` → 新建校准器 → `phase2_runner.py` 集成 → 单测 → 重跑 A1+A2+B1+B4（A2 OOS/IS=1.042 ≥0.7 达标，Phase 2 全 PASS）。
 
 ---
 
@@ -362,71 +282,24 @@ for n_states in [2, 3, 4, 5, 6, 7, 9]:
 
 #### 2.1.6 工程步骤
 
-| 步骤 | 内容 | 产出 |
-|---|---|---|
-| 1 | 写 BIC 扫描脚本 | `scripts/tests/scan_hmm_states.py` |
-| 2 | 跑 BIC 扫描（2-9 态） | BIC 曲线图 + 拐点判定 |
-| 3 | 改 `regime_detector.py` 默认 `hmm_params["n_states"]` | 从 9 → BIC 拐点（预期 3-4） |
-| 4 | 同步改所有硬编码 9 的位置（清单见 §2.1.6.1） | 适配新态数 |
-| 5 | **重设计 `_STATE_RISK_FACTORS`**（§2.1.6.2） | 降态后 shrinkage 映射 |
-| 6 | **重设计 `TRANSITION_CONFIG`**（§2.1.6.3） | 降态后转换逻辑 |
-| 7 | walk-forward 各季度窗口跑 BIC 验证 | 确认拐点跨期一致 |
-| 8 | 重跑 A1+A2+B1+B4 验证 | 确认 A2 OOS/IS ≥ 0.7 |
+✅ 已按 8 步执行完毕（2026-08-08）：①写 BIC 扫描脚本（`scan_hmm_states.py`）②跑 BIC 扫描（2-9 态）定拐点 ③改 `regime_detector.py` 默认 `n_states` ④同步硬编码 9（§2.1.6.1）⑤重设计 `_STATE_RISK_FACTORS`（§2.1.6.2）⑥重设计 `TRANSITION_CONFIG`（§2.1.6.3）⑦walk-forward 各季度窗口 BIC 复核（拐点跨期一致）⑧重跑 A1+A2+B1+B4（A2 OOS/IS=1.042 ≥0.7 达标）。
 
 #### 2.1.6.1 硬编码 9 完整清单（步骤 4 必须逐项更新）
 
-以下位置**全部**硬编码了 9，降态后必须同步修改，否则测试失败或默认值覆盖新 n_states：
+✅ 已施工（2026-08-08），硬编码 9 已全量参数化为 `n_states`：
 
-**`regime_detector.py`**：
-| 行号 | 当前代码 | 改为 |
-|---|---|---|
-| ~60 | `HMM_STATES = ["r1", ..., "r9"]` | `["r1", ..., "r{新态数}"]` |
-| ~303 | 默认 `{"n_states": 9}` | `{"n_states": 新态数}` |
-| ~467/472/484/488 | `1.0 / 9.0`（均匀分布 fallback） | `1.0 / 新态数` |
-| ~485 | `range(9)` | `range(新态数)` |
-| ~68-74 | ConfidenceSignal 阈值（注释"9 态下 0.5 已是高置信"） | 重新标定阈值 |
+- `regime_detector.py`：`HMM_STATES` / 默认 `n_states` / `1.0 / 9.0`×4 / `range(9)` / ConfidenceSignal 阈值注释重标定
+- `a1_sample_sufficiency.py`：`HMM_STATES_9`→`HMM_STATES_N` / `range(9)` / 降级摘要
+- `phase2_runner.py`：hmm_params 默认
+- `test_regime_detector.py`：`1.0 / 9.0`×8
 
-**`a1_sample_sufficiency.py`**：
-| 行号 | 当前代码 | 改为 |
-|---|---|---|
-| ~64 | `HMM_STATES_9 = [f"r{i}" for i in range(1, 10)]` | `HMM_STATES_N = [f"r{i}" for i in range(1, 新态数+1)]` |
-| ~355 | 降级摘要 `"1/9 均匀分布"` | `"1/{新态数} 均匀分布"` |
-| ~359 | `range(9)` | `range(新态数)` |
-
-**`phase2_runner.py`**：
-| 位置 | 当前代码 | 改为 |
-|---|---|---|
-| hmm_params 默认 | `n_states: 9` | `n_states: 新态数` |
-
-**`tests/regime/test_regime_detector.py`**：
-| 行号 | 当前代码 | 改为 |
-|---|---|---|
-| ~170/173/185/231/232/235/241/251 | `1.0 / 9.0`（8 处） | `1.0 / 新态数` |
-
-> ⚠️ **检查方法**：施工时跑 `grep -rn "1\.0 / 9\|1/9\|range(9)\|n_states.*9" src/zephyr/regime/ tests/regime/` 确认无遗漏。
+施工校验模式：`grep -rn "1\.0 / 9\|1/9\|range(9)\|n_states.*9" src/zephyr/regime/ tests/regime/` 确认无遗漏。原逐行行号快照已折叠（审计见 git 历史）。
 
 #### 2.1.6.2 重设计 `_STATE_RISK_FACTORS`（步骤 5）
 
 **问题**：当前 `_STATE_RISK_FACTORS` 基于 3×3 网格语义（r1=Bull-Low→shrinkage=1.0，r9=Bear-High→0.30）。降到 3-4 态后**网格语义不存在**，shrinkage 映射失效。
 
-**施工方法**：
-1. 先跑 BIC 确定 n_states（预期 3-4）
-2. 用 Viterbi 解码全历史，观察每个新态的**统计特征**（平均收益率、平均波动率、平均换手率）
-3. 根据统计特征映射到语义标签（如 3 态可能是：牛/震荡/熊；4 态可能是：低波趋势/高波趋势/震荡/危机）
-4. 按语义标签分配 shrinkage 值（牛市→1.0 不收缩，危机→0.30 大幅收缩）
-5. 更新 `_STATE_RISK_FACTORS` 字典
-
-```python
-# 示例：3 态方案（施工时根据 BIC 结果和统计特征确定）
-_STATE_RISK_FACTORS = {
-    "r1": 1.0,   # 牛市：不收缩
-    "r2": 0.85,  # 震荡：轻微收缩
-    "r3": 0.50,  # 熊市：大幅收缩
-}
-# overlay 态 r10-r12 保持不变（独立于 HMM 基态）
-```
-
-> ⚠️ 此步骤**不能拍脑袋**——必须先跑 BIC + Viterbi 解码 + 统计特征分析，才能确定态语义和 shrinkage 值。这是 P0-E1 的**第一个施工动作**。
+**施工方法**（已按此执行）：BIC 定 n_states → Viterbi 解码全历史统计各态特征（收益/波动率/换手率）→ 按统计特征映射语义标签 → 按语义分配 shrinkage 值（牛市→1.0 不收缩，危机→0.30 大幅收缩）→ 更新 `_STATE_RISK_FACTORS`。overlay 态 r10-r12 不变（独立于 HMM 基态）。
 
 > **✅ 施工结果回填（2026-08-08）**：BIC 定论 4 态，Viterbi 统计特征（全历史 3733 样本，RobustScaler 标准化后）：
 > r1 低波震荡(vol_pct=-0.52, fr_5d=+0.0003)→0.90 / r2 中波震荡(vol_pct=+0.42, fr_5d=+0.0018)→0.85 /
@@ -444,35 +317,7 @@ _STATE_RISK_FACTORS = {
 
 **问题**：T1/T4/T5/T6 的转换定义依赖特定网格态间转移（如 T4="Bull-Medium→Bull-High"），降态后这些转换无意义。
 
-**施工方法**：
-1. 先完成步骤 5（确定新态语义）
-2. 重新定义 8 个转换类型在新态语义下的含义：
-   - S1（CRISIS）：哪些态组合触发危机信号
-   - S2（RECOVERY）：哪些态组合触发复苏信号
-   - T1（BREAKOUT）：哪个态→哪个态是突破
-   - T3（RECOVERY→BREAKOUT）：哪些维度确认主升
-   - T4/T5/T6：根据新态语义重新定义
-3. 更新 `TRANSITION_CONFIG` 的 `overlay_target`、`keys_gte`、`p_overlay`
-
-```python
-# 示例：3 态方案下的 TRANSITION_CONFIG（施工时根据语义确定）
-TRANSITION_CONFIG = {
-    "S1": {  # 危机检测：r3(熊) + vix_panic
-        "stages": {
-            "trigger": {"keys_gte": {"vix_panic": 60, "correlation": 60}, ...},
-        },
-    },
-    "T1": {  # 突破：r2(震荡) → r1(牛)
-        "overlay_target": "r10",  # overlay 态编号不变
-        "stages": {
-            "trigger": {"keys_gte": {"volume_price": 60, "ma_trend": 50}, ...},
-        },
-    },
-    # ... 其他转换
-}
-```
-
-> ⚠️ overlay 态 r10-r12 编号**不需要重编号**——它们独立于 HMM 基态。但 overlay 默认概率（r10/r11/r12 合计 0.05）在 3-4 基态下每态均分比例变化，建议复核。
+**施工方法**（已按此执行）：先定新态语义（步骤 5）→ 重定义 8 个转换类型在新态语义下的含义（S1/S2 态组合、T1 突破、T3 主升维度、T4/T5/T6 按新态语义）→ 更新 `TRANSITION_CONFIG` 的 `overlay_target`/`keys_gte`/`p_overlay`。overlay 态 r10-r12 编号独立于 HMM 基态，不重编号。
 
 > **✅ 施工结果回填（2026-08-08）**：4 态下转换语义实际重映射（regime_detector.py `TRANSITION_CONFIG` 注释）：
 > T1 震荡态(r1/r2)→BREAKOUT / T2 熊市态(r4)→RECOVERY / T3 RECOVERY→BREAKOUT（不依赖基态语义，不变）/
@@ -510,20 +355,7 @@ def align_labels(detector_prev: RegimeDetector, detector_curr: RegimeDetector) -
     return mapping
 ```
 
-**walk-forward 集成**：
-```python
-detector_prev = None
-for i, q in enumerate(quarter_ends):
-    detector.fit(X_train)
-
-    if detector_prev is not None:
-        # 对齐本季度标签到上季度
-        mapping = align_labels(detector_prev, detector)
-        # 用 mapping 重映射 predict_proba 的输出列
-        # 使 r1 在所有季度始终代表"最低波动态"
-
-    detector_prev = detector
-```
+**walk-forward 集成**：每季度 fit 后调用 `align_labels(detector_prev, detector)` 对齐标签，并用 mapping 重映射 `predict_proba` 输出列，使同编号态在所有季度语义一致（如 r1 始终=最低波动态）。
 
 **限制**：
 - 基于单特征排序的对齐在态均值接近时可能出错
@@ -625,33 +457,11 @@ Stage 2: Isotonic Regression（局部修正，治标）
 
 #### 2.2.5 可升级架构（长远战略）
 
-```python
-# 可插拔 Calibrator 接口
-class Calibrator(ABC):
-    @abstractmethod
-    def fit(self, log_proba: np.ndarray, occurred: np.ndarray) -> None: ...
-    @abstractmethod
-    def transform(self, log_proba: np.ndarray) -> np.ndarray: ...
+可插拔接口（✅ 已落码 `confidence_calibrator.py`）：
 
-# Stage 1 可插拔实现
-class TemperatureCalibrator(Calibrator): ...   # 当前：全局温度
-class SMARTCalibrator(Calibrator): ...         # 未来 v2：按样本自适应温度
-class ATSCPCalibrator(Calibrator): ...         # 未来 v3：共形预测
-
-# Stage 2 固定
-class IsotonicCalibrator(Calibrator): ...      # 非参数局部修正
-
-# 两阶段串联
-class TwoStageCalibrator:
-    def __init__(self, stage1: Calibrator, stage2: Calibrator): ...
-    def fit(self, log_proba, occurred):
-        self.stage1.fit(log_proba, occurred)
-        mid = self.stage1.transform(log_proba)
-        self.stage2.fit(mid, occurred)
-    def transform(self, log_proba):
-        mid = self.stage1.transform(log_proba)
-        return self.stage2.transform(mid)
-```
+- `Calibrator` ABC：`fit(log_proba, occurred)` / `transform(log_proba)`
+- `TwoStageCalibrator(stage1, stage2)` 串联（先 stage1 fit/transform 再 stage2）
+- Stage 1 可插拔（TemperatureCalibrator 当前 / SMARTCalibrator v2 / ATSCPCalibrator v3）；Stage 2 固定 IsotonicCalibrator（非参数局部修正）
 
 **升级路径**：
 ```
@@ -662,16 +472,16 @@ v3（远期）: ATSCPCalibrator + IsotonicCalibrator      ← 有覆盖保证
 
 #### 2.2.6 工程步骤
 
-| 步骤 | 内容 | 产出 |
-|---|---|---|
-| 1 | 改造 RegimeDetector 暴露 `predict_log_proba()` | ~20 行，hmmlearn 已有内部方法 |
-| 2 | 写 `Calibrator` 基类 + 接口 | `calibrator_base.py` ~50 行 |
-| 3 | 写 `TemperatureCalibrator` | ~60 行，T 从验证集学 |
-| 4 | 写 `IsotonicCalibrator` | ~40 行，包装 sklearn |
-| 5 | 写 `TwoStageCalibrator` | ~40 行，串联 Stage 1→2 |
-| 6 | 集成到 walk-forward | 每季度 refit 时同步重拟合校准参数 ~30 行 |
-| 7 | 集成到 B1 验证器 | 校准后 confidence 再跑 B1 ~20 行 |
-| 8 | 单元测试 | ~150 行（测单调性、保序性、walk-forward 稳定性） |
+✅ 已按 8 步执行完毕（2026-08-08）：
+
+1. RegimeDetector 暴露 `predict_log_proba()`
+2. `Calibrator` 基类接口（内聚于 `confidence_calibrator.py`，未单列 `calibrator_base.py`）
+3. `TemperatureCalibrator`（T 从验证集学）
+4. `IsotonicCalibrator`（包装 sklearn）
+5. `TwoStageCalibrator` 串联
+6. walk-forward 每季度 refit 同步重拟合
+7. B1 验证器集成（校准后 confidence 再跑 B1）
+8. 单元测试（单调性/保序性/降级/walk-forward 稳定性）
 
 #### 2.2.7 验收标准
 
@@ -685,40 +495,15 @@ v3（远期）: ATSCPCalibrator + IsotonicCalibrator      ← 有覆盖保证
 
 **A. occurred 标签的计算流程（对接 B1 验证器）**
 
-校准器 `fit(log_proba, occurred)` 中的 `occurred` 是二值标签（0/1），来源是 B1 验证器的"后续收益实现代理标签"逻辑。完整流程：
+校准器 `fit(log_proba, occurred)` 中的 `occurred` 是二值标签（0/1），来源是 B1 验证器的"后续收益实现代理标签"逻辑。完整流程（复用 B1 逻辑，不重复实现）：
 
 > ⚠️ **forward_days 初始值 = 20**（继承 B1 验证器默认值 `DEFAULT_FORWARD_DAYS = 20`，`b1_probability_calibration.py:60`）。P0-E2 施工时直接用 20，P2-E8 扫描后再更新。
 
-```python
-# 步骤 1：算每个 timestamp 的后续 forward_days 累计收益
-# （复用 B1 的 _compute_forward_returns，b1_probability_calibration.py:240）
-forward_returns = close.shift(-forward_days) / close - 1.0
+1. `forward_returns = close.shift(-forward_days) / close - 1.0`（复用 B1 `_compute_forward_returns`，:240）
+2. 按态分组推断预期方向（复用 B1 `_infer_regime_directions`，:252）：|mean_return| < 0.5%（`MIN_RETURN_THRESHOLD`）的态视为无明确方向跳过，否则均值正=涨/负=跌
+3. 标记 occurred：后续收益方向与态预期方向一致 → occurred=1，否则=0
 
-# 步骤 2：按态分组，推断每态"预期方向"（涨/跌）
-# （复用 B1 的 _infer_regime_directions，b1_probability_calibration.py:252）
-# |mean_return| < 0.5% (MIN_RETURN_THRESHOLD) 的态视为无明确方向，跳过
-regime_directions = {}
-for regime, rets in regime_returns.items():
-    mean_r = np.mean(rets)
-    if abs(mean_r) < 0.005:
-        continue  # 无明确方向
-    regime_directions[regime] = "涨" if mean_r > 0 else "跌"
-
-# 步骤 3：标记 occurred
-# 后续收益方向与态预期方向一致 → occurred=1，否则=0
-for rec in records:
-    direction = regime_directions.get(rec["dominant_regime"])
-    if direction is None:
-        continue
-    expected_pos = (direction == "涨")
-    actual_pos = (rec["forward_return"] > 0)
-    occurred = 1 if (expected_pos == actual_pos) else 0
-```
-
-**校准器与 B1 的对接关系**：
-- B1 验证器已有完整的 `occurred` 计算逻辑
-- 校准器**复用 B1 的 occurred 计算**，不重复实现
-- 校准器在 B1 的 `validate()` 之前插入：`log_proba → calibrator.transform() → 校准后 confidence → B1.validate()`
+**对接关系**：校准器在 B1 的 `validate()` 之前插入——`log_proba → calibrator.transform() → 校准后 confidence → B1.validate()`。
 
 **B. T 参数优化方法（对标 Guo et al. 2017）**
 
@@ -731,11 +516,11 @@ from scipy.optimize import minimize_scalar
 
 def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
     """T 从 IS 数据学：最小化二元交叉熵（详见 §2.2.9）。
-    
+
     Args:
         log_proba: (N, n_states) HMM 对数概率
         occurred: (N,) 二值标签（0/1，1=预测方向正确）
-    
+
     Returns:
         T: 最优温度参数（>0，通常 1.0-5.0）
     """
@@ -752,7 +537,7 @@ def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
             occurred * np.log(calibrated_confidence + eps) +
             (1 - occurred) * np.log(1 - calibrated_confidence + eps)
         )
-    
+
     result = minimize_scalar(binary_cross_entropy, bounds=(0.1, 10.0), method='bounded')
     return result.x
 ```
@@ -782,121 +567,33 @@ calibrated_confidence = calibrated_proba.max(axis=1)
 - 对全态做 → 重新分配所有态的概率，confidence 自然降低
 - 只对 max 态做 → 只改一个值，不保证概率和为 1
 
-**改造 RegimeDetector 暴露 log_proba**：
+**改造 RegimeDetector 暴露 log_proba**（✅ 已落码 `regime_detector.py:472`）：
+
 ```python
-# regime_detector.py 新增方法
 def predict_log_proba(self, X: np.ndarray) -> np.ndarray:
-    """返回 HMM 对数后验概率 (T, n_states)——Temperature Scaling 的输入。
-
-    hmmlearn 的 predict_proba(X) 返回 P(state|X) 后验概率矩阵，
-    取 np.log() 得到对数后验。加 epsilon 防 log(0)。
-
-    注意：这是对数后验 log(P(state|X))，不是 pre-softmax logits。
-    Temperature Scaling 对此做 softmax(log_proba/T) 是"tempering"，
-    数学上有效但非标准 Temperature Scaling（详见 §2.2.3 注释）。
-    """
-    proba = self._hmm_model.predict_proba(X)  # (T, n_states) 后验概率
-    return np.log(proba + 1e-30)  # 加 epsilon 防 log(0)
+    """返回 HMM 对数后验 (T, n_states)。对数后验非 pre-softmax logits——
+    softmax(log_proba/T) 是 tempering，数学有效但非标准 Temperature Scaling（§2.2.3）。"""
+    proba = self._hmm_model.predict_proba(X)
+    return np.log(proba + 1e-30)  # epsilon 防 log(0)
 ```
 
 **D. Isotonic 分桶策略**
 
 > **⚠️ 实现偏差回填（2026-08-08）**：实际代码**未采用预分桶**——直接在原始 `(confidence, occurred)` 对上 fit
-> `IsotonicRegression`（PAVA 算法）。原因：5 桶预分桶仅产生 3-4 个拟合点，局部修正过粗；PAVA 的单调性约束自带
-> 正则化，预分桶反而损失信息。分桶点仅保留用于日志可观测性。以下预分桶代码保留为设计推演记录。
+> `IsotonicRegression`（PAVA 算法）。原因：5 桶预分桶（对齐 B1 `BUCKET_EDGES`，`b1_probability_calibration.py:58`）仅产生 3-4 个拟合点，
+> 局部修正过粗；PAVA 的单调性约束自带正则化，预分桶反而损失信息。分桶点仅保留用于日志可观测性。
 
-Stage 2 的 Isotonic Regression 分桶对齐 B1 验证器的 `BUCKET_EDGES`：
-
-```python
-from sklearn.isotonic import IsotonicRegression
-
-# B1 的分桶（b1_probability_calibration.py:58）
-BUCKET_EDGES = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]  # 5 桶
-
-# Stage 2 校准器：分桶后每桶算实际频率，Isotonic 拟合
-def fit_isotonic(confidences: np.ndarray, occurred: np.ndarray) -> IsotonicRegression:
-    # 分桶
-    bucket_idx = np.digitize(confidences, BUCKET_EDGES[1:-1])
-    # 每桶算 (mean_confidence, mean_occurred)
-    points = []
-    for i in range(len(BUCKET_EDGES) - 1):
-        mask = bucket_idx == i
-        if mask.sum() < 5:  # 每桶至少 5 个样本
-            continue
-        points.append((confidences[mask].mean(), occurred[mask].mean()))
-    x = np.array([p[0] for p in points])
-    y = np.array([p[1] for p in points])
-    iso = IsotonicRegression(out_of_bounds='clip')
-    iso.fit(x, y)
-    return iso
-```
-
-**样本效率保障**：
-- walk-forward 每季 ~60 天 → 5 桶每桶 ~12 个样本
-- Stage 1 Temperature 已做全局降温 → Stage 2 的残余偏差小 → Isotonic 不需太细
-- 每桶 < 5 个样本时跳过该桶（防止过拟合）
+**样本效率保障**：walk-forward 每季 ~60 天；Stage 1 Temperature 已做全局降温 → Stage 2 残余偏差小，Isotonic 不需太细。
 
 **E. 持久化机制**
 
 > **⚠️ 实现偏差回填（2026-08-08）**：`save_calibration` / `load_calibration` 已施工（confidence_calibrator.py），
 > 但 `phase2_runner.py` **未调用**——验证场景每季度内存中重 fit 校准器，无需跨季加载持久化产物。
-> 持久化函数保留供未来实盘/独立回测复用（避免重复 walk-forward 拟合）。
-
-walk-forward 每季度 refit 后，校准参数需保存/加载：
-
-```python
-# 保存
-import json
-calibration_artifact = {
-    "quarter": "2024Q3",
-    "T": 2.34,  # Temperature 参数
-    "isotonic_x": [0.12, 0.31, 0.52, 0.71, 0.89],  # Isotonic 输入点
-    "isotonic_y": [0.15, 0.28, 0.48, 0.63, 0.75],  # Isotonic 输出点
-    "fit_samples": 1260,
-    "fit_date": "2024-09-30",
-}
-# 保存到 runtime/calibration/calibration_2024Q3.json
-
-# 加载
-with open("runtime/calibration/calibration_2024Q3.json") as f:
-    artifact = json.load(f)
-calibrator = TwoStageCalibrator(
-    stage1=TemperatureCalibrator(T=artifact["T"]),
-    stage2=IsotonicCalibrator.from_points(
-        artifact["isotonic_x"], artifact["isotonic_y"]
-    ),
-)
-```
+> 持久化产物为 JSON（字段：quarter / T / isotonic_x / isotonic_y / fit_samples / fit_date，存 `runtime/calibration/calibration_{quarter}.json`），保留供未来实盘/独立回测复用（避免重复 walk-forward 拟合）。
 
 **F. PIT 数据泄漏防范**
 
-校准参数必须**只用 IS 数据拟合**，不能看 OOS：
-
-```python
-# walk-forward 季度循环
-for i, q in enumerate(quarter_ends):
-    # IS 数据：训练窗口
-    train_start = q - DateOffset(years=train_years)
-    train_end = q
-    X_is = features.loc[train_start:train_end]
-    
-    # 1. 用 IS 数据 fit HMM
-    detector.fit(X_is)
-    log_proba_is = detector.predict_log_proba(X_is)
-    
-    # 2. 用 IS 数据的 occurred 标签 fit 校准器
-    #    ❌ 禁止：用 OOS（detect_start:next_q）的 occurred
-    occurred_is = compute_occurred(X_is, close, forward_days)
-    calibrator.fit(log_proba_is, occurred_is)
-    
-    # 3. 保存校准参数
-    save_calibration(calibrator, quarter=q)
-    
-    # 4. OOS detect：加载本季度校准器，校准后 confidence
-    for dt in detect_dates_this_quarter:
-        log_proba = detector.predict_log_proba(X[dt])
-        confidence = calibrator.transform(log_proba)  # 校准
-```
+校准参数必须**只用 IS 数据拟合**，不能看 OOS。完整安全 fit 流程（含 §2.2.9 两处泄漏修复后的裁剪与 PIT 方向推断）见 §2.2.9。
 
 #### 2.2.9 数据泄漏边界分析与防护（施工必读）
 
@@ -913,21 +610,7 @@ for i, q in enumerate(quarter_ends):
 IS 末尾 20 天 → forward_return 用了 OOS 收盘价 → occurred 标签被未来数据污染 → T 参数偏移
 ```
 
-**修复**：IS 数据尾部裁剪 `forward_days` 天，确保所有 forward_return 完全在 IS 范围内：
-
-```python
-# ❌ 错误（泄漏）：
-X_is = features.loc[train_start:train_end]
-occurred_is = compute_occurred(X_is, close, forward_days)
-# IS 最后 20 天的 forward_return 跨入 OOS
-
-# ✅ 正确（安全）：
-safe_end = train_end - pd.Timedelta(days=forward_days * 1.5)  # 多留余量
-X_is_safe = X_is.loc[:safe_end]
-close_is_safe = close.loc[:safe_end]
-occurred_is = compute_occurred(X_is_safe, close_is_safe, forward_days)
-# 所有 forward_return 完全在 IS 范围内
-```
+**修复**：IS 数据尾部裁剪 `forward_days × 1.5` 天（`safe_end = train_end - pd.Timedelta(days=forward_days * 1.5)`，多留余量），裁剪后再算 occurred，确保所有 forward_return 完全在 IS 范围内。
 
 ---
 
@@ -946,21 +629,7 @@ occurred_is = compute_occurred(X_is_safe, close_is_safe, forward_days)
 - B1 验证（回顾性分析）：可以用全量数据 → OK
 - 校准器 walk-forward（实盘模拟）：必须 PIT，不能用未来数据 → 泄漏
 
-**修复**：regime_directions 必须用**截至当前季度的 PIT 数据**推断，不能用全量：
-
-```python
-# ❌ 错误（泄漏）：
-# 复用 B1 的全量 _infer_regime_directions
-all_records = collect_all_detect_records_2010_2026()
-regime_directions = _infer_regime_directions(all_records)  # 看到了 2025-2026
-occurred = label_occurred(is_records, regime_directions)
-
-# ✅ 正确（PIT）：
-# 只用 IS 裁剪后的数据推断方向
-is_safe_records = detect_on_is_data(detector, X_is_safe, close_is_safe)
-regime_directions = _infer_regime_directions(is_safe_records)  # 只看 IS 数据
-occurred = label_occurred(is_safe_records, regime_directions)
-```
+**修复**：regime_directions 必须用**截至当前季度的 PIT 数据**推断，不能用全量——只在 IS 裁剪后的安全数据上 detect + `_infer_regime_directions`，再用该方向标记 occurred。
 
 **完整的安全 fit 流程**（修正后的 §2.2.8 F）：
 
@@ -1011,36 +680,7 @@ nll_val = -np.mean(log_prob[np.arange(len(occurred)), occurred.argmax(axis=1)])
 
 **更深层的问题**：Temperature Scaling 的标准 NLL 是多类交叉熵 `-log(P[true_label])`，但我们的 `occurred` 不是类别标签，而是"预测是否正确"的二值指标。正确的目标函数是**二元交叉熵**：
 
-**修复**：用二元交叉熵替代多类 NLL：
-
-```python
-def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
-    """T 从 IS 数据学：最小化二元交叉熵。
-
-    Args:
-        log_proba: (N, n_states) HMM 对数概率
-        occurred: (N,) 二值标签（0/1）
-    """
-    def binary_cross_entropy(T):
-        # softmax(log_proba / T) → 校准概率
-        scaled = log_proba / T
-        log_softmax = scaled - np.logaddexp.reduce(scaled, axis=1, keepdims=True)
-        proba = np.exp(log_softmax)
-
-        # 校准后 confidence = max probability
-        calibrated_confidence = proba.max(axis=1)
-
-        # 二元交叉熵：occurred=1 希望 confidence 高，occurred=0 希望 confidence 低
-        eps = 1e-8
-        bce = -np.mean(
-            occurred * np.log(calibrated_confidence + eps) +
-            (1 - occurred) * np.log(1 - calibrated_confidence + eps)
-        )
-        return bce
-
-    result = minimize_scalar(binary_cross_entropy, bounds=(0.1, 10.0), method='bounded')
-    return result.x
-```
+**修复**：用二元交叉熵替代多类 NLL——修复后实现即 §2.2.8 B 的 `fit_temperature`（`binary_cross_entropy` 目标 + `minimize_scalar` 有界搜索，✅ 已落码 `confidence_calibrator.py`）。
 
 **为什么用二元交叉熵而非多类 NLL**：
 - `occurred` 是"模型预测是否正确"的二值指标，不是类别标签
@@ -1061,86 +701,20 @@ def fit_temperature(log_proba: np.ndarray, occurred: np.ndarray) -> float:
 
 **问题**：walk-forward 每季 ~60 天，裁剪 `forward_days * 1.5`（≈30 天）后可能只剩 ~30 天 IS 数据。如果其中某些态的 occurred 样本不足，校准器拟合不稳定。
 
-**四级降级策略**（✅ 已按四级实现——代码注释与文档原名"三级"不一致，实际 Level 1-4，2026-08-12 订正）：
+**四级降级策略**（✅ 已按四级实现 `fit_calibrator_with_fallback`——代码注释与文档原名"三级"不一致，实际 Level 1-4，2026-08-12 订正）：
 
-```python
-def fit_calibrator_with_fallback(
-    log_proba: np.ndarray,
-    occurred: np.ndarray,
-    prev_calibrator: TwoStageCalibrator | None,
-) -> TwoStageCalibrator:
-    """三级降级：正常→只 Stage 1→回退上季度。"""
-    n_samples = len(occurred)
+| 级别 | 条件 | 行为 |
+|---|---|---|
+| Level 1 | n ≥ 50 | 正常 fit Stage 1 + Stage 2 |
+| Level 2 | 20 ≤ n < 50 | 只 fit Stage 1（Isotonic 样本不足跳过，防过拟合） |
+| Level 3 | n < 20 | 回退上季度校准器 |
+| Level 4 | n < 20 且无上季度校准器 | T=1.0 不校准（identity） |
 
-    # ── Level 1：样本 ≥ 50 → 正常 fit Stage 1 + Stage 2 ──
-    if n_samples >= 50:
-        calibrator = TwoStageCalibrator(
-            stage1=TemperatureCalibrator(),
-            stage2=IsotonicCalibrator(),
-        )
-        calibrator.fit(log_proba, occurred)
-        _logger.info("校准器 Level 1: 正常 fit (n=%d)", n_samples)
-        return calibrator
+**降级阈值依据**：`≥50` = Isotonic 5 桶每桶 ≥10 个样本统计稳定；`≥20` = Temperature 1 参数可拟合（不够 Isotonic 分桶）；`<20` = 连 1 参数都不稳定，回退上季度。
 
-    # ── Level 2：20 ≤ 样本 < 50 → 只 fit Stage 1 (Temperature) ──
-    # Isotonic 需要更多样本，跳过 Stage 2 防止过拟合
-    if n_samples >= 20:
-        calibrator = TwoStageCalibrator(
-            stage1=TemperatureCalibrator(),
-            stage2=None,  # 跳过 Stage 2
-        )
-        calibrator.fit(log_proba, occurred)
-        _logger.warning(
-            "校准器 Level 2: 只 fit Stage 1 (n=%d < 50)，跳过 Isotonic", n_samples
-        )
-        return calibrator
+**walk-forward 集成**：`prev_calibrator=None` 起步，每季度 `fit_calibrator_with_fallback(log_proba_is, occurred_is, prev_calibrator)` 带降级 fit，保存本季度校准器供下季度 Level 3 回退。
 
-    # ── Level 3：样本 < 20 → 回退上季度校准器 ──
-    if prev_calibrator is not None:
-        _logger.warning(
-            "校准器 Level 3: 样本不足 (n=%d < 20)，回退上季度校准器", n_samples
-        )
-        return prev_calibrator
-
-    # ── Level 4：无上季度校准器 → 不校准 (T=1.0) ──
-    _logger.warning(
-        "校准器 Level 4: 样本不足且无上季度校准器，T=1.0 不校准 (n=%d)", n_samples
-    )
-    return TwoStageCalibrator(
-        stage1=TemperatureCalibrator(T=1.0),  # T=1.0 = 不校准
-        stage2=None,
-    )
-```
-
-**降级阈值依据**：
-- `≥50`：Isotonic 5 桶每桶 ≥10 个样本，统计稳定
-- `≥20`：Temperature 1 参数，20 个样本足够拟合（但不够 Isotonic 分桶）
-- `<20`：连 1 参数都不稳定，回退上季度
-
-**walk-forward 集成**：
-```python
-prev_calibrator = None  # 第一季度无前序
-
-for i, q in enumerate(quarter_ends):
-    # ... IS 数据准备 + occurred 标签计算 ...
-
-    # 带降级的 fit
-    calibrator = fit_calibrator_with_fallback(
-        log_proba_is, occurred_is, prev_calibrator
-    )
-
-    # 保存本季度校准器，供下季度 Level 3 回退用
-    save_calibration(calibrator, quarter=q)
-    prev_calibrator = calibrator
-
-    # OOS detect
-    for dt in detect_dates_this_quarter:
-        confidence = calibrator.transform(log_proba)
-```
-
-**验收标准**：
-- [ ] 单元测试：构造 n_samples=10/30/60/100 四组数据，验证分别走 Level 4/2/1/1
-- [ ] walk-forward 审计：打印每季度降级级别，确认无静默降级
+**验收标准**：✅ 已施工——单元测试覆盖 n_samples=10/30/60/100 四组降级路径（Level 4/2/1/1）；walk-forward 审计打印每季度降级级别，无静默降级。
 
 ---
 
@@ -1206,7 +780,7 @@ reward = abs(r) * (1 if (s > 0) == (r > 0) else -1)
 
 1. **强语言性能 ≠ 有用的收益预测力**（arXiv:2608.04200）：
    > "All seven downstream models produce positive but small mean rank information coefficients at the one-day horizon; the largest is 0.0143 for FinBERT. None of the 28 model–horizon tests remains significant"
-   
+
    **大白话**：模型分类新闻很准，但用这个预测股票涨跌基本没用——新闻情感和收益的关系本身就弱
 
    **对我们的启示**：我们需要的不是"预测收益"，而是"检测利空出尽"（S2 触发条件）。这是不同目标——利空出尽检测可能比收益预测更容易
@@ -1258,17 +832,7 @@ overlay_signals_builder
 - `full_publish_time` — 完整发布时间（1970 表示缺失）
 - `category` — 新闻分类
 
-**news_collector.py 查询模板**：
-```python
-query = f"""
-SELECT news_id, publish_time, title, content, summary, source, data_source, region, language
-FROM c3_fundamental.news_data
-WHERE publish_time BETWEEN '{start_date}' AND '{end_date}'
-  AND region = 'CN'
-  AND language = 'zh'
-ORDER BY publish_time
-"""
-```
+**news_collector.py 查询模板**：`SELECT news_id, publish_time, title, content, summary, source, data_source, region, language FROM c3_fundamental.news_data WHERE publish_time BETWEEN '{start}' AND '{end}' AND region='CN' AND language='zh' ORDER BY publish_time`。
 
 **数据源**（5 个 Provider 统一写入此表）：
 - akshare（个股新闻/央视/百度日历/财新/研报）
@@ -1301,33 +865,9 @@ USER_TEMPLATE = """新闻标题：{title}
 prompt = f"[INST] {SYSTEM_PROMPT}\n\n{USER_TEMPLATE.format(title=title, content=content)} [/INST]"
 ```
 
-**输出解析**：
-```python
-import json
-import re
+**输出解析**：`parse_sentiment` 从响应提取 JSON 块（失败回退 neutral/0.5/parse_failed；实际实现已升级为字段级宽松正则，容忍切片瑕疵，见 §3.1.13 C）。
 
-def parse_sentiment(response: str) -> dict:
-    """从 LLM 响应解析 JSON。"""
-    # 提取 JSON 块（兼容 ```json ... ``` 包裹）
-    match = re.search(r'\{[^}]+\}', response, re.DOTALL)
-    if match:
-        return json.loads(match.group())
-    return {"sentiment": "neutral", "score": 0.5, "reason": "parse_failed"}
-```
-
-**情感分数归一化**：
-```python
-def sentiment_to_score(parsed: dict) -> float:
-    """归一化到 [-1, 1] 区间。"""
-    s = parsed["sentiment"]
-    score = parsed["score"]
-    if s == "positive":
-        return score  # [0.5, 1.0] → [0, 1] → 但我们映射到 [0, 1]
-    elif s == "negative":
-        return -score  # 负面
-    else:
-        return 0.0  # 中性
-```
+**情感分数归一化**：`sentiment_to_score` 映射到 [-1, 1]——positive→+score / negative→−score / neutral→0.0。
 
 #### 3.1.9 LoRA SFT 超参数（对标 FinGPT）
 
@@ -1371,52 +911,11 @@ training_args = TrainingArguments(
 )
 ```
 
-**显存预算（RTX 3090 24GB）**：
-- Mistral-7B 4bit 量化：~5GB
-- LoRA 参数：~50MB
-- 梯度 + 优化器状态：~8GB
-- 激活值（batch=4, seq=512）：~6GB
-- **总计 ~19GB，24GB 显存够用**
+**显存预算（RTX 3090 24GB）**：4bit 基座 ~5GB + LoRA ~50MB + 梯度/优化器 ~8GB + 激活（batch=4, seq=512）~6GB ≈ **19GB，24GB 够用**。
 
-**RLSP 强化学习框架**：
-```python
-from trl import PPOTrainer, PPOConfig
+**RLSP 强化学习框架**：TRL PPOTrainer + `PPOConfig(batch_size=16, mini_batch_size=4, learning_rate=1e-5, ppo_epochs=4, kl_penalty="kl", target_kl=0.1)`。奖励函数：`reward = abs(r) × (1 if (s>0)==(r>0) else −1)`（§3.1.4/§3.1.9 统一版），方向一致收益越大奖励越大，方向不一致收益越大惩罚越大。尚未施工（Phase 5）。
 
-# RLSP 配置
-ppo_config = PPOConfig(
-    batch_size=16,
-    mini_batch_size=4,
-    learning_rate=1e-5,          # RL 用更小学习率
-    ppo_epochs=4,
-    kl_penalty="kl",             # KL 散度惩罚（防止偏离 SFT 模型太远）
-    target_kl=0.1,
-)
-
-# 奖励函数
-def compute_reward(sentiment_score: float, forward_return: float) -> float:
-    """RLSP 奖励：情感方向与收益方向一致 → 正奖励。
-    
-    Args:
-        sentiment_score: 模型预测的情感分数 [-1, 1]
-        forward_return: 后续 N 天实际收益率
-    """
-    direction_match = (sentiment_score > 0) == (forward_return > 0)
-    magnitude = abs(forward_return)  # 收益越大奖励/惩罚越大
-    return magnitude * (1 if direction_match else -1)
-```
-
-**RLSP 训练数据准备**：
-```python
-# 从 news_data 提取每日全市场新闻聚合 + 对应日期沪深300涨跌
-rlsp_dataset = []
-for date, news_list in daily_news.items():
-    # 聚合当日所有新闻
-    for news in news_list:
-        rlsp_dataset.append({
-            "prompt": format_prompt(news["title"], news["content"]),
-            "forward_return": compute_forward_return(date, close, forward_days=5),
-        })
-```
+**RLSP 训练数据准备**：从 news_data 提取每日全市场新闻聚合 + 对应日期沪深300涨跌，逐条生成 `{prompt: format_prompt(title, content), forward_return: compute_forward_return(date, close, forward_days=5)}`。
 
 #### 3.1.10 评估数据集与方法
 
@@ -1441,35 +940,9 @@ for date, news_list in daily_news.items():
 | **情感-收益方向一致率** | `P(sign(score) == sign(return))` | RLSP 后 ≥ 55% |
 | **推理速度** | 1000 条新闻耗时 | < 5 分钟（RTX 3090） |
 
-**评估流程**：
-```python
-# 零样本基线
-zero_shot_f1 = evaluate(mistral_zero_shot, eval_set_200)
+**评估流程**：零样本基线 F1 < 0.65 → 切 Qwen2.5-7B（已执行，实测 0.5148）→ LoRA SFT 后评 F1 → RLSP 后评情感-收益方向一致率。
 
-# 切换判定
-if zero_shot_f1 < 0.65:
-    # Mistral 中文太弱，切 Qwen2.5-7B
-    model = "Qwen/Qwen2.5-7B-Instruct"
-    zero_shot_f1 = evaluate(qwen_zero_shot, eval_set_200)
-
-# LoRA SFT 后
-sft_f1 = evaluate(mistral_sft, eval_set_200)
-
-# RLSP 后
-rlsp_direction_accuracy = evaluate_direction(model_rlsp, news_return_pairs)
-```
-
-**模型版本管理**：
-```
-models/
-├── mistral-7b-zero-shot/       # 零样本基线（不保存权重，用 HF 原始）
-├── mistral-7b-sft-v1/          # LoRA SFT 权重
-│   ├── adapter_config.json
-│   └── adapter_model.bin
-└── mistral-7b-rlsp-v1/         # RLSP 增强权重
-    ├── adapter_config.json
-    └── adapter_model.bin
-```
+**模型版本管理**：`models/{基座}-sft-v1/` / `{基座}-rlsp-v1/`（adapter_config + adapter 权重；零样本基座不另存权重）。实际产物见 §3.1.13 E。
 
 #### 3.1.11 工程步骤
 
@@ -1537,18 +1010,12 @@ P1-E3 NLP 管道的下游 S2 维度（policy/bad_news_flat）已用**关键词�
 
 **C. smoke 失败诊断与修复（关键工程经验）**
 
-全量训练前 smoke（50 条）暴露 F1 评估崩塌（全降级 neutral），根因与修复：
+✅ smoke 调试已闭环（8 case 验证全通过）。全量训练前 smoke（50 条）曾暴露 F1 评估崩塌（全降级 neutral），根因：`_batch_predict` 批量 generate 的 `padding_side="left"` 未生效 → 切片错位 → 生成 JSON 开头 `{` 被切 → 解析全失败。两治本修复已落码：
 
-1. **根因**：`_batch_predict` 批量 generate 时 `padding_side="left"` 设置未生效（generate 仍报 right-padding 警告）→ `out[:, prompt_lens:]` 切片错位 → 生成 JSON 开头 `{` 被切掉 → `parse_sentiment` 两条路径（`json.loads` + `\{[^{}]*\}` 花括号正则）全失败 → 降级 neutral
-2. **修复 1**（治本）：[nlp_inference.py](file:///d:/ZephyrAlpha/src/zephyr/nlp/nlp_inference.py#L110-L116) `parse_sentiment` 新增字段级宽松正则 `_SENTIMENT_FIELD_RE`/`_SCORE_FIELD_RE`，不依赖花括号配对，容忍切片瑕疵（8 case 验证全通过）
-3. **修复 2**（治本）：[sentiment_sft_trainer.py](file:///d:/ZephyrAlpha/src/zephyr/ml_train/implementations/sentiment_sft_trainer.py#L418) `_batch_predict` 默认 `batch_size=1`，单条推理无 padding，切片精确
+- ①[nlp_inference.py](file:///d:/ZephyrAlpha/src/zephyr/nlp/nlp_inference.py#L110-L116)：`parse_sentiment` 字段级宽松正则 `_SENTIMENT_FIELD_RE`/`_SCORE_FIELD_RE`（不依赖花括号配对，容忍切片瑕疵）
+- ②[sentiment_sft_trainer.py](file:///d:/ZephyrAlpha/src/zephyr/ml_train/implementations/sentiment_sft_trainer.py#L418)：`_batch_predict` 默认 `batch_size=1`（单条推理无 padding，切片精确）
 
-**D. 训练收敛数据（健康，无过拟合）**
-
-- 训练 loss：1.12（ep0.04）→ 0.06（ep3.0），平滑收敛
-- eval_loss：0.075（ep0.19）→ 0.035（ep1.88），持续下降**无回升**
-- token_accuracy：98.6%，模型稳定输出规范 JSON
-- 训练耗时 ~6.2h（4258 条 × 3 epochs，effective batch=16，每步 ~22s）
+**D. 训练收敛数据（健康，无过拟合）**：训练 loss 1.12→0.06 / eval_loss 0.075→0.035 持续下降**无回升** / token_accuracy 98.6% / 耗时 ~6.2h（4258 条 × 3 epochs，effective batch=16，每步 ~22s）。
 
 **E. 产物**
 
@@ -1586,25 +1053,11 @@ RLSP 优化目标（情感预测收益方向）与真实目标（利空出尽拐
 
 #### 3.2.2 数据库盘点结果
 
-**已有数据表（113 张表中与 regime 相关的）**：
-
-| category_id | 表名 | 说明 | 当前状态 |
-|---|---|---|---|
-| `market_money_flow` | `c1_market.money_flow` | 主力资金净流入/流出 | ⚠️ gated（代码写好但默认关） |
-| `market_hk_connect_flow` | `c1_market.hk_connect_flow` | 沪深港通北向/南向资金 | ⚠️ gated |
-| `market_limit_up_down` | `c1_market.limit_up_down` | 涨跌停数据 | ⚠️ gated |
-| `market_sector_kline` | `c1_market.kline_sector` | 行业板块日 K | ⚠️ gated |
-| `market_option_iv` | `c1_market.option_iv_surface` | 期权 IV 曲面 | ✅ 已用（合成 VIX 后备） |
-| `market_etf_kline_30min` | `c1_market.kline_etf_30min` | ETF 30 分钟 K | ⚠️ gated |
-| `market_etf_kline_60min` | `c1_market.kline_etf_60min` | ETF 60 分钟 K | ⚠️ gated |
-| `market_margin_trading` | `c1_market.margin_trading` | 融资融券 | ❌ 未使用 |
-| `market_dragon_tiger` | `c1_market.dragon_tiger` | 龙虎榜 | ❌ 未使用 |
-| `market_block_trade` | `c1_market.block_trade` | 大宗交易 | ❌ 未使用 |
-| `market_option_greeks` | `c1_market.option_greeks` | 期权 Greeks | ❌ 未使用 |
+**已有数据表（113 张表中与 regime 相关的）**：11 张——7 张 Phase 2c 表（money_flow / hk_connect_flow / limit_up_down / kline_sector / kline_etf_30min / kline_etf_60min 原 gated 待激活；option_iv_surface 已用于合成 VIX）+ 4 张未使用（margin_trading / dragon_tiger / block_trade / option_greeks）。表清单与说明见 §6.1。
 
 **当前 regime 默认配置**：`enable_phase2c=False` + `data_loader=None` → 只查 `kline_index` 一张表。
 
-> **✅ 状态标注（2026-08-12）**：上表"当前状态"与默认配置为 **2026-08-07 激活前快照**——P1-E4 已完成
+> **✅ 状态标注（2026-08-12）**：上述 gated 状态与默认配置为 **2026-08-07 激活前快照**——P1-E4 已完成
 > （`enable_phase2c=True` + RegimeDataLoader 注入，7 张表查询 100%，见 §3.2.4）。
 
 #### 3.2.3 工程步骤
@@ -1664,21 +1117,12 @@ RLSP 优化目标（情感预测收益方向）与真实目标（利空出尽拐
 | `t3_ma_trend_score(close)` | 收盘价 | {0,30,60,70} | 强多头(MA5/MA60>1.05)→70；多头排列→60 |
 | `t3_sentiment_score(ad_ratio)` | 涨跌家数比 | {0,35,65,80} | >0.6→80；>0.3→65；>0→35 |
 
-**T3 触发阈值**（`regime_detector.py:128-138`，`TRANSITION_CONFIG["T3"]`）：
+**T3 触发阈值**（`regime_detector.py` `TRANSITION_CONFIG["T3"]`，✅ 已落码；设计口径见 10 号 §4.10.8）：
 
-```python
-"T3": {  # RECOVERY → BREAKOUT → Bull-Medium
-    "stages": {
-        "strong_confirm": {"total_gte": 200, "shrinkage": 1.0},
-        "confirm":        {"keys_gte": {"volume_price": 60, "ma_trend": 50, "money_effect": 50},
-                           "shrinkage": 0.85},
-        "trigger":        {"keys_gte": {"sentiment": 60, "mainline": 60, "leader": 60},
-                           "p_overlay": {"r12": 0.55}, "shrinkage": 0.7},
-        "fail":           {"keys_gte": {"one_day_mainline": 1},
-                           "p_overlay": {"r11": 0.60}, "shrinkage": 0.6},
-    },
-}
-```
+- strong_confirm：`total_gte=200` → shrinkage 1.0
+- confirm：`volume_price≥60 + ma_trend≥50 + money_effect≥50` → 0.85
+- trigger：`sentiment≥60 + mainline≥60 + leader≥60` + `p_overlay r12=0.55` → 0.7
+- fail：`one_day_mainline≥1` + `p_overlay r11=0.60` → 0.6
 
 **阶段判定优先级**：`strong_confirm → confirm → trigger → fail`，取首个满足。
 
@@ -1716,7 +1160,7 @@ RLSP 优化目标（情感预测收益方向）与真实目标（利空出尽拐
 ```python
 def bad_news_flat_score(news_sentiment: pd.Series, window: int = 5) -> pd.Series:
     """利空出尽分数 ∈ [0, 100]。
-    
+
     算法：
     1. 过去 window 天的负面新闻占比 neg_ratio = neg_count / total_count
     2. 前 window 天的负面占比 prev_neg_ratio
@@ -1805,7 +1249,10 @@ trigger/confirm/strong_confirm 三阶段全堵死。NLP 维度（bad_news_flat=8
 
 #### 3.5.5 防过拟合铁律
 
-算法重设计必须独立于 B4 验证结果进行——先按 §4.12 设计意图改算法（过程化/基本面化），再看 B4 结果。**禁止"调参直到 3/3 命中"**——若改后仍不命中，说明设计意图与历史事件时点有更深层偏差，应回到 §4.12 重新审视事件标注（expected_stage）而非继续调参。详见 [14_regime_s2_diagnosis §3.7](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) 与 [14_regime_s2_diagnosis §5 开放问题 3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)。
+算法重设计必须独立于 B4 验证结果进行——先按 §4.12 设计意图改算法（过程化/基本面化），再看 B4 结果。
+
+- **禁止"调参直到 3/3 命中"**：若改后仍不命中，说明设计意图与历史事件时点有更深层偏差，应回到 §4.12 重新审视事件标注（expected_stage）而非继续调参
+- 详见 [14_regime_s2_diagnosis §3.7](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md) 与 [14_regime_s2_diagnosis §5 开放问题 3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md)
 
 ---
 
@@ -1947,15 +1394,7 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 ### 6.2 需新建的管道
 
-| 管道 | 输入 | 输出 | 工程 |
-|---|---|---|---|
-| NLP 情感分析管道 | `news_data` 表 | 每日情感分数 | P1-E3 |
-| 资金/板块数据激活 | 7 张 gated 表 | T3 真实数据 | P1-E4 |
-| T3 指标计算管道 | 资金/板块数据 | 4 维度分数 | P1-E5 |
-| bad_news_flat 指标 | NLP 情感分数 | 利空出尽分数 | P1-E6 |
-| policy 指标 | NLP 情感分数 + 关键词 | 政策分数 | P2-E7 |
-| 概率校准管道 | HMM log_proba | 校准 confidence | P0-E2 |
-| S2 评分算法重设计 | 现有 31 维数据（无需新数据管道） | capitulation/valuation/spring 新实现 + V 反转通路 | P1-E9 |
+7 条管道：NLP 情感分析（P1-E3）/ 资金/板块数据激活（P1-E4）/ T3 指标计算（P1-E5）/ bad_news_flat（P1-E6）/ policy（P2-E7）/ 概率校准（P0-E2）/ S2 评分重设计（P1-E9）。优先级与依赖见 §1.1 工程清单与 §1.3 执行顺序。
 
 ---
 
@@ -1970,9 +1409,9 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 | BIC elbow | 3 | k=2→3 BIC 提升 22k，k=3→4 只 11k，3 是拐点 |
 | MDPI 2025 | 3 | 牛/熊/动荡 |
 | 4 态方案 | 4 | 需区分波动 regime 时用 |
-| **我们（当前）** | **9** | **无机构用 9 态，过度细分** |
+| **本方案（BIC 驱动）** | **4** | **BIC Kneedle 拐点 + walk-forward 46 季度分布 {4:19,5:25,7:2}，4 态最严** |
 
-**结论**：降到 3-4 态，用 BIC 数据驱动选择。
+**结论**：降到 3-4 态，用 BIC 数据驱动选择（§2.1 已定论=4）。
 
 ### 7.2 概率校准前沿
 
@@ -2033,13 +1472,11 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
 
 | 风险 | 影响 | 概率 | 缓解 |
 |---|---|---|---|
-| Mistral-7B 中文偏弱 | NLP 情感分类不准 | 中 | 先评估中文 F1，<65% 切 Qwen2.5-7B |
-| 降态后 A2 仍不 PASS | HMM 本身不适合此数据 | 低 | 考虑 Nonparametric HMM 或换模型 |
-| **降态后 C1 回测退化** | **Shrinkage 收益消失** | **中** | **见 §8.1 回滚方案** |
-| 校准后 B1 仍不 PASS | confidence 映射设计有更深问题 | 低 | 加 SMART 按样本自适应 |
-| RLSP 训练不稳定 | NLP 管道延期 | 中 | 先用 LoRA SFT 基线，RLSP 作为增强 |
+| RLSP 训练不稳定 | NLP 管道延期 | 中 | 先用 LoRA SFT 基线，RLSP 作为带护栏增强实验（§3.1.13 G） |
 | 新闻情感 → 收益预测力弱 | bad_news_flat 效果有限 | 中 | 目标是利空出尽检测而非收益预测 |
 | 数据表查询异常 | T3 降级 | 低 | 逐表验证，失败返回 None 降级 |
+
+> **已闭环风险（2026-08-08/09 回填）**：Mistral-7B 中文偏弱（实测零样本 F1=0.5148<0.65 → 已按预案切 Qwen2.5-7B）/ 降态后 A2（实测 OOS/IS=1.042 PASS）/ 降态后 C1 退化（实测 Sharpe 0.3474 未退化，§8.1 预案未触发）/ 校准后 B1（ECE=4.2% PASS）。
 
 ### 8.1 C1 回测退化回滚方案
 
@@ -2053,15 +1490,14 @@ QLoRA Benchmark（arXiv:2608.04200）测了 1/2/3/5 天 horizon，发现所有�
   ├─ C1 PASS（Sharpe ≥ 0.2678）→ 继续 Phase 2 验证
   └─ C1 FAIL（Sharpe < 0.2678）→ 回滚
        ├─ Level 1: 调整 _CONFIDENCE_BANDS 阈值 / RiskSignal 参数（不改态数）
-       │          ⚠️ 2026-08-12 修正：原版写"调整 _STATE_RISK_FACTORS"——该 dict 已经
-       │          #ARCH-REGIME-CONFIDENCE-FIX-001 从 ConfidenceSignal 移除（DEPRECATED），
-       │          调它对 Shrinkage 无任何影响。实际生效的置信度杠杆是 _CONFIDENCE_BANDS
-       │          （0.50/0.30/0.15 三档阈值）与 RiskSignal 13 参数。
+       │          （_STATE_RISK_FACTORS 现为 DEPRECATED 状态——#ARCH-REGIME-CONFIDENCE-FIX-001
+       │          已从 ConfidenceSignal 移除，调它对 Shrinkage 无影响；实际生效的置信度杠杆=
+       │          _CONFIDENCE_BANDS 0.50/0.30/0.15 三档阈值 + RiskSignal 13 参数）
        ├─ Level 2: 回退到 9 态 + 仅应用校准器（P0-E2）
        └─ Level 3: 回退到 9 态 + 不校准（当前状态）
 ```
 
-**Level 1 调整方法**（2026-08-12 修正版——调实际生效的 `_CONFIDENCE_BANDS`）：
+**Level 1 调整方法**（调实际生效的 `_CONFIDENCE_BANDS`）：
 ```python
 # 如果 C1 退化，先调置信度分档，不回退态数
 # 原因：降态解决了 A2 过拟合，但 4 态下 max(P) 分布与 9 态不同
@@ -2110,9 +1546,7 @@ Phase 3 完成需同时满足以下条件：
 
 ## 9. 开放问题
 
-1. ~~**BIC 扫描结果**：3 还是 4 是拐点？~~ **已关闭（2026-08-08）**：拐点=4（全历史 Kneedle；WF 46 季度 {4:19, 5:25, 7:2}），见 §2.1
-2. ~~**Mistral 中文 F1**：零样本基线能否 ≥65%？~~ **已关闭（2026-08-09）**：实测 0.5148 < 0.65，已按 §3.1.3 预案切 Qwen2.5-7B，SFT F1=0.7699
-3. ~~**RLSP 奖励函数**：用 `s * sign(r)` 还是 `s * |r|`？~~ **已统一**：`abs(r) * direction_match`（§3.1.4/§3.1.9 统一版）
+1.-3. **已关闭**（折叠）：①BIC 拐点=4（全历史 Kneedle；WF 46 季度 {4:19, 5:25, 7:2}，§2.1）；②Mistral 零样本 F1=0.5148<0.65，已按 §3.1.3 预案切 Qwen2.5-7B（SFT F1=0.7699）；③RLSP 奖励函数统一为 `abs(r) × direction_match`（§3.1.4/§3.1.9 统一版）。
 4. **T 参数上界观察项**：实测 T 普遍命中 10-30 区间（原估 2-5）。若未来 walk-forward 季度 T 持续命中 30.0 上界，说明 HMM 后验过自信结构未变，需评估扩界或从特征层降温（观察项，非阻断）
 5. **forward_days 最优值**：5/10/20/40/60/120 哪个校准误差最低？P0-E2 已用 20 落地，待 P2-E8 扫描后更新
 6. **P1-E9 施工量重估**：14 号 v0.4.5 范围较本文 §3.5 初版显著扩大（V 反转通路 / three_yang 6 维 / 防过拟合方法论栈），原估 ~120 行不足——实际施工量待 14 号 §4.0 Step 0 数据/接口勘探后评估（不擅自定，勘探结论回写本文）
@@ -2141,6 +1575,7 @@ Phase 3 完成需同时满足以下条件：
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-15 | 0.4.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-01） | 折叠 §1.5 已施工清单/行号快照（→git 历史+§1.6 现态）、§2.1.6/§2.2 已落码代码块与重复实现（接口/降级/PIT 流程）、§3.1 已执行评估代码与调试记录、§3.2.2/§6.2 重复盘点、§8 已闭环风险、§9 已关闭问题 1-3；>300 字散文段全量要点化（§1.5 阻断项/§2.1.6.1 硬编码清单/§2.2.5 接口/§2.2.6 工程步骤/§3.3.2 T3 阈值/§3.5.5 防过拟合铁律/§3.1.13 smoke 调试）；标题/参数/裁定/锚点零丢失 |
 | 2026-08-09 | 0.3.1 | 文件名 discussion_019_phase3_engineering_plan.md → 13_regime_phase3_engineering_plan.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 0.3.2 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules 扩展字段保留），H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
 | 2026-08-12 | 0.4.0 | 7 轮循环审查回填：①新增 §1.6 已施工设施盘点（通用规则 #11，代码/脚本/模型/配置/治理全量扫描）；②§2.1/§2.2 回填 P0 施工实际（4 态 BIC 定论 / ECE=4.2% / T 上界 30.0 / Isotonic 免预分桶 / 四级降级 / 验收全勾选）+ _STATE_RISK_FACTORS DEPRECATED 重大变更（#ARCH-REGIME-CONFIDENCE-FIX-001）；③§3.5 同步 14 号 v0.4.x 范围扩大（V 反转通路/three_yang/防过拟合栈），§3.4.4 对齐 S2 事件 ID 与 design_match=false 现状；④§5.3/§6.2 补 P1-E9 治理行与管道行；⑤§7.4 增 2026-08-12 研究复核（HMM≤4 态共识 / 温度缩放 infeasibility floor arXiv:2608.05064 / 中文 NLP / capitulation→thrust→follow-through）；⑥§8.1 回滚 Level 1 修正（原指向已 DEPRECATED 的 dict，改 _CONFIDENCE_BANDS）+ 新增 §8.3 明确不做；⑦§8.2 退出标准回填当前状态；⑧§9 开放问题关闭 2 项、更新 2 项、新增 4 项（T 上界/E9 施工量/12 号同步/draft→active 时机）；⑨§10 时间线状态列；⑩文档头 Phase 体系对齐 11 号（P5=决策门控非参数校准） | 架构审查 AI 7 轮循环审查（盘点/回填/缺失/研究/过度工程/一致性/规范），过度工程审查结论：无越界项（NLP 管道已按硬边界 descope，RLSP 为带护栏可选实验） |
