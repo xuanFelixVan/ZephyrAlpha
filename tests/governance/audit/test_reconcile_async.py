@@ -52,6 +52,26 @@ def tmp_repo(tmp_path, monkeypatch):
     return repo
 
 
+@pytest.fixture(autouse=True)
+def _isolate_governance_db(tmp_repo, monkeypatch):
+    """#50 治本：测试审计日志与生产 governance.db 强制隔离。
+
+    病根（2026-08-14 实证 10 行污染）：tests/conftest.py basetemp=<repo>/.runtime/tmp/
+    pytest_<pid>，worktree 内跑 pytest 时 tmp_repo 位于 .worktrees/<sid>/ 下，
+    strip_session_worktree 剥离后 _governance_db_path 锚定主仓 governance.db——
+    测试 SHA（live_heal_sha/live_timeout_sha/orphan_clean_sha/pending_clean_sha 等）
+    写入生产 reconcile_execution_log 触发 RECONCILER-HEALTH 误报横幅；且告警计数
+    跨测试/跨运行在生产库累积泄漏（test_live_timeout_* 期望 1 实测 2-3 逐次递增）。
+    治本：模块级 autouse fixture 强制 governance.db 锚定 tmp_repo（每测试独立空库），
+    测试审计写入与生产零共享；_check_recent_critical_warns/_log_reconcile_results
+    内部均经模块级 _governance_db_path 解析，patch 一处全链覆盖。
+    """
+    import zephyr.governance.audit.reconciliation_registry as _reg_mod
+
+    db_path = str(tmp_repo / "data" / "databases" / "governance.db")
+    monkeypatch.setattr(_reg_mod, "_governance_db_path", lambda _root: db_path)
+
+
 # ---------------------------------------------------------------------------
 # write_status_file / read_status_file
 # ---------------------------------------------------------------------------
