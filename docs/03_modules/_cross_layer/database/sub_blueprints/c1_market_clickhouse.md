@@ -383,7 +383,7 @@ CREATE TABLE IF NOT EXISTS c1_market.kline_daily
     turnover     Decimal(18,4)  DEFAULT 0 COMMENT '换手率(%，AkShare提供)',
     adj_factor   Decimal(18,8)  DEFAULT 1 COMMENT '复权因子',
     market_type  LowCardinality(String) DEFAULT 'A_share' COMMENT '市场类型(预留港股/美股/期货)',
-    data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT/iFind)',
+    data_source  LowCardinality(String)  COMMENT '数据来源(AkShare/miniQMT)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)'
 )
 ENGINE = ReplacingMergeTree
@@ -399,7 +399,7 @@ COMMENT '日线OHLCV(成品聚合,preload)'
 | 品类 | 日线OHLCV |
 | 性质 | 成品(聚合) |
 | 频率 | 日频 |
-| 数据源 | miniQMT/iFind |
+| 数据源 | miniQMT |
 | 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date)（日线按月分区） |
 | 排序键 | ORDER BY (symbol, trade_date) |
@@ -509,7 +509,7 @@ CREATE TABLE IF NOT EXISTS c1_market.option_iv_surface
     gamma        Decimal(18,6)  DEFAULT 0 COMMENT 'Gamma',
     theta        Decimal(18,6)  DEFAULT 0 COMMENT 'Theta',
     vega         Decimal(18,6)  DEFAULT 0 COMMENT 'Vega',
-    data_source  LowCardinality(String)  COMMENT '数据来源(iFind/AkShare)',
+    data_source  LowCardinality(String)  COMMENT '数据来源(AkShare)',
     quality_flag UInt8          DEFAULT 1  COMMENT '质量标记'
 )
 ENGINE = ReplacingMergeTree
@@ -525,7 +525,7 @@ COMMENT '期权IV曲面(原料衍生,preload)'
 | 品类 | 期权IV曲面 |
 | 性质 | 原料(衍生) |
 | 频率 | 日频 |
-| 数据源 | iFind/AkShare |
+| 数据源 | AkShare |
 | 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (underlying, trade_date, strike, expiry) |
@@ -631,7 +631,7 @@ CREATE TABLE IF NOT EXISTS c1_market.convertible_bond_iv
     theta               Decimal(18,6)  DEFAULT 0 COMMENT 'Theta',
     vega                Decimal(18,6)  DEFAULT 0 COMMENT 'Vega',
     conversion_premium  Decimal(18,6)  COMMENT '转股溢价率',
-    data_source         LowCardinality(String)  COMMENT '数据来源(iFind)',
+    data_source         LowCardinality(String)  COMMENT '数据来源(原iFind已退役2026-08-14,待采购商业源)',
     quality_flag        UInt8          DEFAULT 1  COMMENT '质量标记'
 )
 ENGINE = ReplacingMergeTree
@@ -647,7 +647,7 @@ COMMENT '可转债隐含波动率(成品算,preload)'
 | 品类 | 可转债隐含波动率 |
 | 性质 | 成品(算) |
 | 频率 | 日频 |
-| 数据源 | iFind |
+| 数据源 | 原iFind已退役,待采购商业源 |
 | 引擎 | ReplacingMergeTree |
 | 分区 | PARTITION BY toYYYYMM(trade_date) |
 | 排序键 | ORDER BY (symbol, trade_date) |
@@ -815,10 +815,10 @@ class C1BacktestLoader:
 | CTR-002 | tick_data | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-003 | auction_snapshot | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-004 | index_quote | D_DATA (miniQMT) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
-| CTR-005 | option_iv_surface | D_DATA (iFind/AkShare) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-005 | option_iv_surface | D_DATA (AkShare) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-006 | futures_position | D_DATA (CZCE/DCE) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 | CTR-007 | futures_term_structure | D_DATA (交易所) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
-| CTR-008 | convertible_bond_iv | D_DATA (iFind) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
+| CTR-008 | convertible_bond_iv | D_DATA (待采购,原iFind已退役) | C1MarketWriter | 1.0.0 | 待D_DATA扩展 |
 
 ---
 
@@ -1031,13 +1031,13 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 | # | 表名 | 性质 | 频率 | 数据源 | 引擎 | 分区 | 排序键 | TTL | calc_mode | category_id |
 |---|------|------|:----:|--------|------|------|--------|:---:|:---------:|-------------|
 | 1 | tick_data | 原料 | 3秒 | miniQMT | ReplacingMergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_tick |
-| 2 | kline_daily | 成品(聚合) | 日频 | miniQMT/iFind | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_kline_daily |
+| 2 | kline_daily | 成品(聚合) | 日频 | miniQMT | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_kline_daily |
 | 3 | auction_snapshot | 原料 | 9:15-9:25 | miniQMT | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_auction |
 | 4 | index_quote | 原料 | 3秒 | miniQMT | ReplacingMergeTree | toYYYYMMDD | symbol,trade_date,timestamp | 无 | replay | market_index |
-| 5 | option_iv_surface | 原料(衍生) | 日频 | iFind/AkShare | ReplacingMergeTree | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
+| 5 | option_iv_surface | 原料(衍生) | 日频 | AkShare | ReplacingMergeTree | toYYYYMM | underlying,trade_date,strike,expiry | 无 | preload | market_option_iv |
 | 6 | futures_position | 原料(衍生) | 日频 | CZCE/DCE | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_position |
 | 7 | futures_term_structure | 原料(衍生) | 日频 | 交易所 | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_futures_term |
-| 8 | convertible_bond_iv | 成品(算) | 日频 | iFind | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_cb_iv |
+| 8 | convertible_bond_iv | 成品(算) | 日频 | 待采购(原iFind已退役) | ReplacingMergeTree | toYYYYMM | symbol,trade_date | 无 | preload | market_cb_iv |
 
 ### §13.2 品类注册表条目模板
 

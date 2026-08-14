@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.scheduler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{ifind,miniqmt,akshare}_provider; zephyr.data.trading_calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
+# [DEPENDENCIES] zephyr.data.provider_base; zephyr.data.policy_registry; zephyr.data.progress_store; zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.task_queue; zephyr.data.alerter; zephyr.data.implementations.{miniqmt,akshare,tushare}_provider; zephyr.data.trading_calendar; zephyr.data.local_replay; apscheduler(pip); exchange_calendars(pip)
 # [CONSUMERS] CLI(zephyr.data.cli 阶段3+); main()入口
 # [STARTUP] manual
 # [MATURITY] production
@@ -905,13 +905,11 @@ class IntegratorScheduler:
         source_to_meta = {
             "akshare": ("zephyr.data.implementations.akshare_provider", "AkshareIngestProvider"),
             "miniqmt": ("zephyr.data.implementations.miniqmt_provider", "MiniQmtIngestProvider"),
-            "ifind": ("zephyr.data.implementations.ifind_provider", "IFindProvider"),
         }
         # provider 文件路径映射（Phase 4.3 路由-meta 一致性校验用）
         source_to_path = {
             "akshare": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "akshare_provider.py",
             "miniqmt": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "miniqmt_provider.py",
-            "ifind": REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "ifind_provider.py",
         }
         import importlib
 
@@ -987,11 +985,7 @@ class IntegratorScheduler:
     def create_provider(self, source: str) -> IngestProviderBase | None:
         """创建 Provider 实例（Stage 4 公共化，primary）。"""
         try:
-            if source == "ifind":
-                from zephyr.data.implementations.ifind_provider import IFindProvider
-
-                return IFindProvider()
-            elif source == "miniqmt":
+            if source == "miniqmt":
                 from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
 
                 return MiniQmtIngestProvider()
@@ -1100,7 +1094,7 @@ class IntegratorScheduler:
             is_fallback = i > 0
 
             # 健康检查前置：如果源在启动时健康检查失败，直接跳过不等超时
-            # 避免对已知不可用的源（如 ifind 已到期、RSSHub 挂了）浪费时间等连接超时
+            # 避免对已知不可用的源（如 RSSHub 挂了、QMT 未启动）浪费时间等连接超时
             health_status = "unchecked"
             try:
                 from zephyr.data.source_health_check import get_source_health
@@ -1326,10 +1320,10 @@ class IntegratorScheduler:
     ) -> tuple[object, object | None, str | None]:
         """验证 Provider 可用性和熔断状态。返回 (provider, policy, error)。
 
-        治本修复 #ARCH-IFIND-AUTO-RECONNECT（2026-07-24 引入，2026-07-27 复原）：
-        当 Provider 标记 _connected=False（如 iFind -1010 登录过期后自动标记），
+        治本修复 #ARCH-IFIND-AUTO-RECONNECT（2026-07-24 引入，2026-07-27 复原；iFind 已于 2026-08-14 退役，机制保留并适用于所有 provider）：
+        当 Provider 标记 _connected=False（如远端会话过期等），
         自动尝试重连，避免后续任务全部失败直到人工干预。
-        适用于所有暴露 _connected 属性的 provider（ifind/tushare/tdx/miniqmt 等）。
+        适用于所有暴露 _connected 属性的 provider（tushare/tdx/miniqmt/baostock 等）。
         100% AI 场景下无人工干预窗口，自动重连是治本必需——否则一次会话过期会
         导致整日任务雪崩失败，需用户手动重启进程。
         """
@@ -1338,7 +1332,7 @@ class IntegratorScheduler:
             self._alerter.notify(task_id, f"Provider {source} 不可用", level=LEVEL_ERROR, source=source)
             return None, None, f"Provider {source} 不可用"
 
-        # 自动重连：如果 Provider 已断开连接（如 iFind 会话过期 -1010），尝试重连
+        # 自动重连：如果 Provider 已断开连接（如会话过期被远端断开），尝试重连
         if hasattr(provider, "_connected") and not provider._connected:
             log.warning("Provider %s 连接已断开，尝试自动重连...", source)
             try:
@@ -1485,7 +1479,7 @@ class IntegratorScheduler:
             total_rows += result.rows_fetched
             # 治本修复 #ARCH-CURSOR-DRIFT（2026-07-24）：
             # 仅当本批有实际数据时才推进 last_key 游标。
-            # 原因：Provider（miniqmt/akshare/ifind）在 FetchResult 中设置 last_key=end_str（今天），
+            # 原因：Provider（miniqmt/akshare/tushare）在 FetchResult 中设置 last_key=end_str（今天），
             # 即使返回 0 行。若 0 行也推进游标，则下次查询 start=今天，永久跳过
             # 上次实际数据日期与今天之间未采集的数据（如财报公告延迟、QMT 临时断连后恢复）。
             # 修复：rows_fetched=0 时不推进游标，下次自动回查。对日频数据（kline_daily）
@@ -1642,7 +1636,7 @@ class IntegratorScheduler:
             },
             executors={
                 "default": ThreadPoolExecutor(8),  # 通用任务（可并行源）
-                "heavy": ThreadPoolExecutor(2),  # 串行源（iFind/QMT）
+                "heavy": ThreadPoolExecutor(2),  # 串行源（QMT 等单线程源）
                 "realtime": ThreadPoolExecutor(4),  # 盘中实时层（独立线程池，不与批量争抢）
                 "intraday_minute": ThreadPoolExecutor(4),  # 盘中分钟K线层（schedule.yaml intraday_minute 时段专用）
                 "intraday_sector": ThreadPoolExecutor(2),  # 板块分钟K线层（tdx TCP直连，独立于miniqmt慢任务）

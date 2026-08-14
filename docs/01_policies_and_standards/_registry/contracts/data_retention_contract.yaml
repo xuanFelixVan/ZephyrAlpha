@@ -222,7 +222,6 @@ layers:
     # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
       - c3_fundamental.industry_class
-      - c3_fundamental.industry_class_ifind
       - c3_fundamental.sector_constituent
       - pending: c1_market.industry_chain_graph  # 万得产业链全景图（待接入）
     note: "万得产业链全景图归此层；本质是关系图谱（节点+边），不是时间序列；板块K线(kline_sector)已归L3非L7；新闻事件→产业链→上下游传导分析"

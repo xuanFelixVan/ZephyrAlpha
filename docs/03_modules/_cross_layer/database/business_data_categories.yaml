@@ -51,7 +51,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.2"
 
 - category_id: market_kline_daily_hfq
@@ -67,7 +67,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: market_kline_weekly
@@ -83,7 +83,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 周频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: market_kline_weekly_hfq
@@ -99,7 +99,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 周频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: market_kline_monthly
@@ -115,7 +115,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 月频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: market_kline_monthly_hfq
@@ -131,7 +131,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 月频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 # --- A股分钟K线 ---
@@ -350,7 +350,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 日频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_etf_benchmark
@@ -366,7 +366,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 低频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_etf_nav
@@ -382,7 +382,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 # --- LOF数据 ---
@@ -480,7 +480,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 日频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 # --- 可转债数据 ---
@@ -514,7 +514,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 日频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_cb_iv
@@ -530,7 +530,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [ifind]
+  data_source: [miniqmt]
   blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.8"
 
 # --- 指数数据 ---
@@ -557,7 +557,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: market_index_list
@@ -573,7 +573,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 低频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_index_constituent
@@ -589,7 +589,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 月频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_index_weight
@@ -605,7 +605,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 月频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_index_quote
@@ -832,7 +832,7 @@
 # 注意：板块类表命名易混淆，关系如下：
 #   concept_board = 概念板块列表（371个，如"新能源汽车""大飞机"），来源akshare
 #   concept_board_constituent = 概念板块成分股（概念板块包含哪些股票）
-#   concept_sector = 概念行业列表（388个，如"3D打印""一季报预增"），来源ifind_iwencai
+#   concept_sector = 概念行业列表（388个，如"3D打印""一季报预增"），来源akshare
 #   sector_meta = 同花顺行业板块元数据（90个，含成分数/市值等）
 #   sector_list = 同花顺行业板块成分股（板块包含哪些股票）
 #   kline_sector = 行业板块K线
@@ -871,7 +871,7 @@
   blueprint: null
 
 - category_id: market_concept_sector
-  name: "概念行业列表（388个概念行业，如3D打印/一季报预增，来源ifind_iwencai）"
+  name: "概念行业列表（388个概念行业，如3D打印/一季报预增，来源akshare）"
   engine: clickhouse
   database: c1_market
   table: concept_sector
@@ -883,7 +883,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 低频
-  data_source: [ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_sector_meta
@@ -899,7 +899,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 日频
-  data_source: [ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: market_sector_list
@@ -915,7 +915,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 月频
-  data_source: [ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: market_sector_kline
@@ -931,7 +931,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [tdx, ifind]
+  data_source: [tdx]
   blueprint: null
 
 - category_id: market_sector_kline_880
@@ -1011,7 +1011,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 低频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 # --- A股基本面引用数据 ---
@@ -1029,7 +1029,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: market_daily_valuation
@@ -1045,7 +1045,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [miniqmt, ifind, akshare, local_valuation]
+  data_source: [miniqmt, akshare, local_valuation]
   blueprint: null
 
 - category_id: market_money_flow
@@ -1061,7 +1061,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [miniqmt, ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: market_margin_trading
@@ -1256,7 +1256,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 低频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 # --- 期权数据 ---
@@ -1290,7 +1290,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: market_option_iv
@@ -1306,7 +1306,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 日频
-  data_source: [ifind, akshare]
+  data_source: [akshare]
   blueprint: "docs/03_modules/_cross_layer/database/sub_blueprints/c1_market_clickhouse.md §4.5"
 
 # --- 元数据表 ---
@@ -1324,7 +1324,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 月频
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: docs/03_modules/_cross_layer/database/blueprint.md
 
 - category_id: market_trade_calendar
@@ -1446,7 +1446,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 季频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: fund_income_statement
@@ -1462,7 +1462,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 季频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: fund_cashflow_statement
@@ -1478,7 +1478,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 季频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: fund_financial_indicator
@@ -1494,7 +1494,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 季频
-  data_source: [miniqmt, ifind, akshare]
+  data_source: [miniqmt, akshare]
   blueprint: null
 
 - category_id: fund_dividend
@@ -1510,7 +1510,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 事件驱动
-  data_source: [miniqmt, ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: fund_news_data
@@ -1526,7 +1526,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 实时
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: fund_restricted_shares
@@ -1542,7 +1542,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 事件驱动
-  data_source: [akshare, ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: fund_audit_opinion
@@ -1558,7 +1558,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 年频
-  data_source: [miniqmt, ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: fund_disclosure_plan
@@ -1590,7 +1590,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 事件驱动
-  data_source: [ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: fund_analyst_forecast
@@ -1606,7 +1606,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 事件驱动
-  data_source: [ifind]
+  data_source: [akshare]
   blueprint: null
 
 - category_id: fund_express_report
@@ -1782,7 +1782,7 @@
   hard_constraint: null
   calc_mode: preload
   frequency: 半年频
-  data_source: [miniqmt, ifind]
+  data_source: [miniqmt]
   blueprint: null
 
 - category_id: fund_industry_class_suppl
@@ -1798,7 +1798,7 @@
   hard_constraint: null
   calc_mode: none
   frequency: 低频
-  data_source: [ifind]
+  data_source: [tushare]
   blueprint: null
 
 # --- P2-3 补登（#ARCH-CH-024）：cross_validation_log 建表于 Wave 2 但漏登品类注册表 ---

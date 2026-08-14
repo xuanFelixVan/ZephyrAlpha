@@ -676,7 +676,7 @@ DB_TABLE_GROUPS: list[dict] = [
         "label": "数据流图 dataflowgraph",
         "tables": [
             ("dataflow_datasets", "数据集——数据流转的「货物」（如 market_data.tick / factor.value_factor），含 scope/domain/pit_policy"),
-            ("dataflow_jobs", "作业——处理数据的「加工者」（如 ingest.ifind_kline / compute.value_factor），含 trigger_type/run_context"),
+            ("dataflow_jobs", "作业——处理数据的「加工者」（如 ingest.minqmt_kline / compute.value_factor），含 trigger_type/run_context"),
             ("dataflow_edges", "数据流边——Job 产出/消费 Dataset 的关系（produces / consumed by），{count} 条"),
             # metadata 表：骨架已建但数据为 0（设计态扩展属性待填），暴露空表缺口
             ("dataflow_datasets_metadata", "Dataset 扩展属性——physical_type/pit_policy/contract_ref，{count} 行（0=未填，AI 查 dataflow 会幻觉物理类型）"),

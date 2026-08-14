@@ -516,13 +516,6 @@ HARD_BOUNDARIES = [
         "impact": "策略容量/仓位/做T底仓均受此约束; 融券受限",
     },
     {
-        "id": "HB-IFIND-01",
-        "category": "external_interface",
-        "constraint": "iFind数据源QPS限制",
-        "parameters": "QPS=20（账号总上限）",
-        "impact": "批量数据拉取必须分页限速; 并发请求不可超20",
-    },
-    {
         "id": "HB-QMT-01",
         "category": "external_interface",
         "constraint": "miniQMT交易接口限制",

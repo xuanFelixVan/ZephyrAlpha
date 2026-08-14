@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS c1_market.industry_class
     industry_sw              String,
     industry_zsi             String,
     industry_level           UInt8,
-    data_source              LowCardinality(String)  DEFAULT 'ifind',
+    data_source              LowCardinality(String)  DEFAULT 'tushare',
     valid_from               Date  DEFAULT today()  COMMENT 'SCD-2生效起始日',
     valid_to                 Nullable(Date)  COMMENT 'SCD-2生效终止日(NULL=当前有效)',
     updated_at               DateTime64(3, 'UTC')  DEFAULT now()  COMMENT '记录更新时间',

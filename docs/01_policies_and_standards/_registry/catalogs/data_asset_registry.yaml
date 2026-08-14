@@ -136,7 +136,7 @@ sources:
   - source_id: SRC-AKSHARE-001
     provider_name: AKShare
     name: AKShare
-    name_zh: AKShare 免费行情/基本面（ifind 降级后承接主源，61 个主源任务）
+    name_zh: AKShare 免费行情/基本面（ifind 退役后承接主源，61+ 主源任务）
     connection_type: api
     frequency: day
     sla: anonymous shared 60RPM 限流；断 VPN；东财反爬 3 次跳过
@@ -158,24 +158,24 @@ sources:
   - source_id: SRC-IFIND-001
     provider_name: iFind
     name: iFind
-    name_zh: 同花顺 iFind 商业基本面（试用到期降级为 fallback，#ARCH-IFIND-FAILOVER）
+    name_zh: 同花顺 iFind 商业基本面（已退役2026-08-14，#ARCH-DATA-IFIND-RETIRE-001）
     connection_type: sdk
     frequency: day/tick
     sla: license_key 认证 thread_local；月度配额监控(-4318/-4309)
-    cost: 付费（当前试用到期）
-    compliance: 商业 license；EDB 配额耗尽任务 disabled（64号§4.3）
+    cost: 付费（试用账号到期不续费）
+    compliance: 商业 license；EDB 配额耗尽任务已删除
     license_type: commercial_license
     latency_profile: wan
     colocation_eligible: false
     provides_datasets: []
-    env_config: license_key 环境变量
+    env_config: license_key 环境变量（已退役，不再使用）
     module_id: MOD-L00-004
-    doc_ref: 64_data_source_download_spec.md §4.1/§4.3/§5.3
-    code_path: src/zephyr/data/implementations/ifind_provider.py
-    status: active
-    version: 1.0.0
+    doc_ref: 64_data_source_download_spec.md §4.1/§4.3/§5.3（退役摘要）
+    code_path: src/zephyr/data/implementations/ifind_provider.py（已删除，git 历史检索）
+    status: deprecated
+    version: 2.0.0
     created_at: '2026-08-13'
-    updated_at: '2026-08-13'
+    updated_at: '2026-08-14'
     owner: MOD-L00-004
   - source_id: SRC-BAOSTOCK-001
     provider_name: baostock
@@ -202,7 +202,7 @@ sources:
   - source_id: SRC-TUSHARE-001
     provider_name: tushare
     name: tushare
-    name_zh: tushare 行业分类/新闻（token 积分制，ifind 降级后升行业分类主源；新闻 API 已废弃 disabled）
+    name_zh: tushare 行业分类/新闻（token 积分制，ifind 退役后升行业分类主源；新闻 API 已废弃 disabled）
     connection_type: api
     frequency: day
     sla: token shared 200RPM 积分制
@@ -2650,20 +2650,20 @@ datasets:
 
 jobs:
 - job_id: JOB-001
-  job_name: ingest.ifind_kline
+  job_name: ingest.minqmt_kline
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/data/ingest_ifind.py
+  source_code_ref: src/zephyr/data/implementations/miniqmt_provider.py
   trigger_type: scheduled
   run_context: production
   inputs: []
   outputs:
   - DS-001
   pit_relevance: strict
-  description: 从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick
+  description: 从miniQMT采集日K线数据，写入DS-001 market_data.tick（原ifind_kline已退役2026-08-14 #ARCH-DATA-IFIND-RETIRE-001）
   module_id: MOD-MKT_DATA
-  name: ingest.ifind_kline
-  name_zh: 从同花顺iFind THS_RQ接口采集K线/Tick行情数据
+  name: ingest.minqmt_kline
+  name_zh: 从miniQMT采集日K线数据
   status: candidate
   version: 1.0.0
   created_at: '2026-08-13'

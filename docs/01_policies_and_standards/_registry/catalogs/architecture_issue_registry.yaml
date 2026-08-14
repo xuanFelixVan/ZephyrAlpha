@@ -11727,6 +11727,53 @@ entries:
   related_rules: 'AGENTS.md 弃用模块处理流程（apply_depgraph 软删除）；#ARCH-DEPGRAPH-RESCAN-STATUS-PRESERVATION（regenerate 状态保留）'
   created: '2026-08-04'
   last_updated: '2026-08-04'
+# --- #ARCH-DATA-IFIND-RETIRE-001: iFind 数据源全项目彻底删除（2026-08-14 用户裁定，D类大手术） ---
+- issue_id: '#ARCH-DATA-IFIND-RETIRE-001'
+  title: iFind 数据源全项目彻底删除——代码/配置/测试/注册表切除 + 三道留痕
+  severity: P1高
+  adjudication: |-
+    背景（用户裁定 2026-08-14）：
+    iFind 试用账号 2026-07 到期不续费，#ARCH-IFIND-FAILOVER（2026-08-04）将其降级为
+    fallback 并保留物理文件。保留期间实证产生噪音：31 处死 fallback 配置误导排障、
+    RSS 探针误报连锁、每次全项目审计/grep/depgraph 扫描携带 2396 行死代码。
+    用户裁定：彻底删除 + 三道留痕（"做大了可能需要"的是商业数据源能力位，不是这份
+    实现；恢复成本 = git 历史 + 本条目，与保留死代码相同）。
+
+    能力迁移映射（全部已在产运行）：
+    - money_flow → tushare pro.moneyflow（东财反爬治本 2026-08-14 已切）
+    - industry_class / industry_class_suppl → tushare index_classify+index_member
+    - concept_sector / realtime_snapshot / sector_meta → akshare（同花顺体系接口）
+    - EDB 宏观 → akshare macro_data 8 类利率指标 + FRED/EIA（#ARCH-EDB-EXPAND）
+    - kline_daily → miniqmt 主源（baostock fallback）；daily_valuation → akshare
+
+    已知损失（接受）：
+    - industry_zsi（同花顺行业）无替代源，留 NULL
+    - edb_data 表从未产出（0 行），任务随源退役删除
+
+    三道留痕：
+    1. 本条目（迁移映射 + 恢复路径）
+    2. data_sources_registry.yaml DS-IFIND status=deprecated 留痕（仿 DS-YFINANCE/DS-STOOQ 先例）
+    3. data_source_operation_manual.md §2 压缩为退役摘要
+
+    恢复路径：git 历史检索 src/zephyr/data/implementations/ifind_provider.py
+    （删除前 2396 行）；未来若采购商业数据源（iFind 正式版/Wind/Choice），
+    按 provider 框架新写适配层，旧代码仅作接口选型参考。
+
+    本条目取代 #ARCH-IFIND-FAILOVER 中"物理文件保留作 fallback"的处置。
+    用户显式裁定（"彻底删除+三道留痕"选项确认），非 AI 自主裁定，按铁律#9 直接标 decided。
+  impact:
+    - '删除 src/zephyr/data/implementations/ifind_provider.py（2396 行）'
+    - 'src/zephyr/data/config/tasks.yaml（51 处 ifind fallback 条目清除 + EDB 任务删除 + 7 处自引用死 fallback 清除）'
+    - 'architecture_model/data/data_sources_registry.yaml（DS-IFIND → deprecated + policy:{}）→ policies.yaml 重派生'
+    - 'src/zephyr/data/policy_registry.py / alerter.py / speed_tester.py / scheduler.py / source_health_check.py（DEFAULT_POLICIES/check_quota_exhausted/测速矩阵/工厂分支/探针清除）'
+    - 'tests/zephyr/data/*（IFind 4 测试类删除 + 泛化源名替换）'
+    - 'schemas/categories/*.py（7 表 DEFAULT ifind→当前主源）'
+    - 'docs/03_modules/_domain_data/*.md（蓝图/运维手册退役摘要）'
+  fix_phase: '已完成（2026-08-14）：全项目 grep 清零（留痕除外）+ pytest 通过 + 网关提交'
+  status: decided
+  related_rules: '#ARCH-IFIND-FAILOVER（前序降级处置）; #ARCH-EDB-EXPAND（EDB 替代）; #ARCH-CH-INDUSTRY-CLASS-MIGRATE（行业分类迁移链）'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'
 # --- #ARCH-DUAL-TRIGGER: 体系A×体系B 生成器双重执行消除（2026-08-05 立项） ---
 - issue_id: '#ARCH-DUAL-TRIGGER'
   title: 生成器自动触发体系A（reconcile_async）与体系B（post-commit reconciler）双重执行消除

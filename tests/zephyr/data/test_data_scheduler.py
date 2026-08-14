@@ -159,13 +159,6 @@ class TestCreateProvider:
         """未知数据源返回 None。"""
         assert scheduler.create_provider("nonexistent") is None
 
-    def test_create_ifind(self, scheduler):
-        """ifind 源创建 IFindProvider（import 可能失败，用 mock）。"""
-        with patch("zephyr.data.implementations.ifind_provider.IFindProvider") as mock_cls:
-            mock_cls.return_value = MagicMock()
-            provider = scheduler.create_provider("ifind")
-            assert provider is not None
-
 
 class TestRunTask:
     """run_task 测试（mock provider + ch_writer）。"""

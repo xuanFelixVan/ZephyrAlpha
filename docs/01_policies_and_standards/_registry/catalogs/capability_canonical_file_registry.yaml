@@ -4253,11 +4253,11 @@ capabilities:
       - data_source_provider
       - data_source_integrator
     description: >-
-      数据源 Provider 抽象层（MOD-L00-004 §4）。统一封装 iFind/miniQMT/AKShare/Baostock/
-      Tushare/TickFlow/TDX/RSS 共 8 个数据源 SDK 的连接/拉取/断开生命周期，提供限流+重试+退避策略应用。
+      数据源 Provider 抽象层（MOD-L00-004 §4）。统一封装 miniQMT/AKShare/Baostock/
+      Tushare/TickFlow/TDX/RSS 等数据源 SDK 的连接/拉取/断开生命周期，提供限流+重试+退避策略应用。
       canonical = src/zephyr/data/provider_base.py（DataSourceBase ABC）。
       配套文件：policy_registry.py（SourcePolicy + PolicyRegistry）、
-      implementations/{ifind,miniqmt,akshare,baostock,tushare,tickflow,tdx,rss}_provider.py（8 个 Provider 实现）、
+      implementations/{miniqmt,akshare,baostock,tushare,tickflow,tdx,rss}_provider.py 等 Provider 实现（iFind 已于 2026-08-14 退役删除）、
       scheduler.py（阶段3 调度编排层完整实现，IntegratorScheduler + APScheduler，8源路由 + 事件订阅）、
       cli.py（命令行入口：run/status/rerun-failed/list/pause/resume/start，argparse + subparsers）、
       __main__.py（python -m zephyr.data 入口，re-export cli.main）、
@@ -6978,10 +6978,6 @@ creation_tokens:
     capability: "data_source_provider_abstraction"
   - file: "src/zephyr/data/implementations/__init__.py"
     token: "auto-data-impl-init-20260706"
-    created_by: "session-sess-11416-20260706044753"
-    capability: "data_source_provider_abstraction"
-  - file: "src/zephyr/data/implementations/ifind_provider.py"
-    token: "auto-ifind-provider-20260706"
     created_by: "session-sess-11416-20260706044753"
     capability: "data_source_provider_abstraction"
   - file: "src/zephyr/data/implementations/miniqmt_provider.py"

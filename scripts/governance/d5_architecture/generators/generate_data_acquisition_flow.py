@@ -189,7 +189,6 @@ _SOURCE_ZH: dict[str, str] = get_category_map("data_source")
 _SOURCE_SUMMARY: dict[str, str] = {
     "miniqmt": "主力数据源，采 A股/港股/期货的 K线行情（日/周/月/分钟级）和财务报表、股东数据、期权可转债等。",
     "akshare": "开源数据源，采估值、融资融券、龙虎榜、大宗交易、宏观数据、限售解禁等事件类数据。",
-    "ifind": "付费数据源，采资金流向、股权质押、行业分类等 iFind 独有数据。",
     "tickflow": "美股数据源，采美股日K线和美股指数（ETF替代）。",
     "tqcenter": "880xxx板块数据源，采板块K线、板块实时快照、板块成分股映射；99只推送+584只轮询混合模式，动态5因子排名调整推送池。",
     "tdx": "板块数据源，采通达信板块分类、板块K线、板块成分股。",
@@ -202,7 +201,6 @@ _SOURCE_SUMMARY: dict[str, str] = {
 _SOURCE_MAIN: dict[str, str] = {
     "miniqmt": "K线行情、财务报表、股东数据、期权可转债",
     "akshare": "估值、融资融券、龙虎榜、大宗交易、宏观",
-    "ifind": "资金流向、股权质押、行业分类",
     "tickflow": "美股K线、美股指数",
     "tqcenter": "板块K线、板块实时快照、板块成分股映射",
     "tdx": "板块分类、板块K线、板块成分股",

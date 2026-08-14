@@ -63,7 +63,6 @@ src/zephyr/data/
 │   ├── policies.yaml             # per-source 策略参数（#183 起为派生物，真源见 data_sources_registry.yaml）
 │   └── tasks.yaml                # 任务清单（表→Provider→策略）
 └── implementations/
-    ├── ifind_provider.py         # iFind（THS_RQ/THS_BD/iwencai/EDB）
     ├── miniqmt_provider.py       # miniQMT（xtdata 行情/财务/板块）
     ├── akshare_provider.py       # AKShare（分红/质押/解禁/宏观等）
     ├── baostock_provider.py      # baostock（线程局部登录）
@@ -84,7 +83,7 @@ src/zephyr/data/
 | 断点续传 | 13 个 per-script JSON 文件 | 统一 SQLite 进度存储 |
 | 失败告警 | 无（靠人看日志） | 日志 + 失败汇总文件 + 可选钉钉/邮件 |
 | 数据源连接 | 脚本内直接 `import` SDK | Provider 封装，统一生命周期管理 |
-| Provider 抽象 | 不存在 | IngestProviderBase + 8 个实现 |
+| Provider 抽象 | 不存在 | IngestProviderBase + 14 个实现 |
 | 代码位置 | `tmp/_fetch_*.py`（TTL=task_bound） | `src/zephyr/data/`（长期资产） |
 
 ---
@@ -127,7 +126,6 @@ src/zephyr/data/
 - **61 项数据已有但需手动触发**——这是最大的自动化短板
 - **0 项自动更新**——没有任何定时任务
 - **每个数据源特性差异大**：
-  - iFind：月度配额（-4318/-4309），需 THS_iFinDLogin
   - miniQMT：需三要素 + XtMiniQmt.exe 进程在跑
   - AKShare：60 次/分钟，须断开 VPN（国内反海外 IP）
   - baostock：每线程独立 `bs.login()`，数据滞后约 1 周
@@ -186,7 +184,7 @@ src/zephyr/data/
 
 | 阶段 | 迁移内容 | 旧脚本处置 |
 |------|---------|-----------|
-| 阶段1 | 3 个核心源（iFind/QMT/AKShare）的 Provider 实现 | 保留 |
+| 阶段1 | 3 个核心源（QMT/AKShare/Baostock）的 Provider 实现 | 保留 |
 | 阶段2 | 策略注册表 + 调度器，接入首批 10 个任务 | 保留 |
 | 阶段3 | 剩余 5 个 Provider（baostock/tushare/tickflow/tdx/rss） | 保留 |
 | 阶段4 | 全部 61 项任务接入调度 | 旧脚本退役删除（TTL=task_bound） |
@@ -229,8 +227,8 @@ src/zephyr/data/
          │
 ┌────────▼────────────────────────────────────────────────────┐
 │              Provider 层 (implementations/*)                │
-│   IFind | MiniQMT | AKShare | Baostock | Tushare            │
-│   TickFlow | TDX | RSS                                      │
+│   MiniQMT | AKShare | Baostock | Tushare | TickFlow         │
+│   TDX | RSS | CLS | EastMoneyNews | FRED/EIA | QWeather     │
 │   每个实现：fetch(payload) → FetchResult                    │
 └────────┬────────────────────────────────────────────────────┘
          │
@@ -307,7 +305,7 @@ class FetchResult:
 class IngestProviderBase(ABC):
     """数据源 Provider 抽象基类"""
 
-    source_name: str              # "ifind" / "miniqmt" / "akshare" ...
+    source_name: str              # "miniqmt" / "akshare" / "tushare" ...
     meta: "IngestProviderMeta"
 
     @abstractmethod
@@ -332,21 +330,20 @@ class IngestProviderBase(ABC):
 ```python
 @dataclass
 class IngestProviderMeta:
-    name: str                     # "ifind"
-    display_name: str             # "同花顺 iFind"
+    name: str                     # "akshare"
+    display_name: str             # "AKShare"
     auth_type: str                # "license_key" / "account" / "anonymous"
     requires_process: bool        # 是否需外部进程在跑（QMT 需 XtMiniQmt.exe）
     thread_safety: str            # "thread_local" / "shared" / "single_thread"
     rate_limit_default: int       # 默认 RPM
     capabilities: list[str]       # ["kline_daily", "financial_statement", ...]
-    known_issues: list[str]       # ["月度配额-4318", "试用账号不支持沪深港通"]
+    known_issues: list[str]       # ["单线程串行", "东财反爬"]
 ```
 
 ### §4.3 Per-source 实现清单
 
 | Provider | source_name | SDK | 登录方式 | 线程安全 | 核心能力 |
 |----------|-------------|-----|---------|---------|---------|
-| IFindProvider | ifind | iFinDPy | THS_iFinDLogin(user,pwd) | thread_local | THS_RQ/THS_BD/iwencai/EDB |
 | MiniQmtIngestProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
 | AkshareIngestProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
 | BaostockProvider | baostock | baostock | bs.login() 匿名 | **thread_local**（每线程独立登录） | K线/财务（滞后1周） |
@@ -359,15 +356,15 @@ class IngestProviderMeta:
 
 | _fetch_*.py | 目标 Provider | 目标任务 |
 |-------------|--------------|---------|
-| _fetch_valuation.py | IFindProvider | daily_valuation 增量 |
-| _fetch_index_constituent.py | IFindProvider | index_constituent 全量 |
-| _fetch_industry_class.py | IFindProvider | industry_class 全量 |
+| _fetch_valuation.py | AkshareIngestProvider | daily_valuation 增量 |
+| _fetch_index_constituent.py | BaostockProvider | index_constituent 全量 |
+| _fetch_industry_class.py | TushareProvider | industry_class 全量 |
 | _fetch_hk_daily_kline.py | MiniQmtIngestProvider | hk_daily_kline 增量 |
 | _fetch_futures_kline.py | MiniQmtIngestProvider | futures_kline 增量 |
-| _fetch_margin_trading.py | IFindProvider | margin_trading 增量 |
-| _fetch_block_trade.py | IFindProvider | block_trade 增量 |
-| _fetch_dragon_tiger.py | IFindProvider | dragon_tiger 增量 |
-| _fetch_money_flow.py | IFindProvider | money_flow 增量 |
+| _fetch_margin_trading.py | AkshareIngestProvider | margin_trading 增量 |
+| _fetch_block_trade.py | AkshareIngestProvider | block_trade 增量 |
+| _fetch_dragon_tiger.py | AkshareIngestProvider | dragon_tiger 增量 |
+| _fetch_money_flow.py | TushareProvider | money_flow 增量 |
 | _fetch_macro_data.py | AkshareIngestProvider | macro_data 增量 |
 | _fetch_analyst_forecast.py | AkshareIngestProvider | analyst_forecast 增量 |
 | _fetch_us_index.py | TickFlowProvider | us_index 增量 |
@@ -405,14 +402,13 @@ class SourcePolicy:
     relogin_on_auth_error: bool   # 401/登录失效自动重登
 
     # 数据源专属
-    extra: dict                   # 如 iFind 月度配额监控
+    extra: dict                   # 如 miniQMT 进程依赖
 ```
 
 ### §5.2 跨源策略矩阵（从操作手册抽取）
 
 | 数据源 | RPM | 并发 | 重试 | 退避 | 反爬 | 登录刷新 |
 |--------|-----|------|------|------|------|---------|
-| **iFind** | 0（配额制） | 1 | 3 | exponential 2s/4s/8s | 无 | 月度配额 -4318 时停跑；登录失效重登 |
 | **miniQMT** | 0 | 1（单线程） | 3 | fixed 1s | 无 | 探测 XtMiniQmt.exe 进程；掉线重连 |
 | **AKShare** | 60 | 4 | 5 | jittered 2s±0.5 | **断 VPN**；东财接口 3 次失败跳过 | 无需登录 |
 | **baostock** | 60 | 8（每线程独立 login） | 3 | fixed 2s | 无 | 每线程 bs.login()；登出 bs.logout() |
@@ -447,7 +443,7 @@ scheduler = BackgroundScheduler(
     },
     executors={
         'default': ThreadPoolExecutor(8),       # 通用任务
-        'heavy': ThreadPoolExecutor(2),          # iFind/QMT 等串行源
+        'heavy': ThreadPoolExecutor(2),          # QMT 等串行源
     },
     job_defaults={
         'coalesce': True,                        # 错过多次只跑一次
@@ -466,10 +462,10 @@ scheduler = BackgroundScheduler(
 | **L1 盘中实时** | */5 9-15 周一-五 | realtime | tick_data / index_quote / auction_snapshot / futures_position / kline_hk_daily | QMT | 盘中高频轮询 |
 | **L2 盘中分钟K线** | */5 9-15 周一-五 | intraday_minute | kline_1min / 5min / 15min / 30min / 60min + ETF/LOF 分钟K线 | QMT | 盘中分钟滚动更新 |
 | **L3 事件驱动** | */15 7×24 | default | news_data / macro_data | RSS + AKShare | 来了就处理 |
-| **L4 盘后日K** | 30 16 周一-五 | heavy | kline_daily / kline_daily_hfq / adj_factor / kline_index / daily_valuation / kline_weekly / monthly / hfq 系列 | QMT + iFind | 日频核心，先跑 |
-| **L5 盘后资金** | 00 18 周一-五 | default | margin_trading / block_trade / dragon_tiger / money_flow / futures_kline / us_daily / us_index / share_unlock | iFind + QMT + AKShare + TickFlow | 资金面 + 外盘 |
-| **L6 盘后事件** | 00 19 周一-五 | default | analyst_forecast / dividend / rights_issue / disclosure_plan | AKShare + iFind | 事件类数据 |
-| **L7 夜间财务** | 00 22 周一-五 | heavy | balance_sheet / income_statement / cashflow / financial_indicator / top10_shareholders / equity_pledge | QMT + iFind + AKShare | 低频财务数据 |
+| **L4 盘后日K** | 30 16 周一-五 | heavy | kline_daily / kline_daily_hfq / adj_factor / kline_index / daily_valuation / kline_weekly / monthly / hfq 系列 | QMT + AKShare | 日频核心，先跑 |
+| **L5 盘后资金** | 00 18 周一-五 | default | margin_trading / block_trade / dragon_tiger / money_flow / futures_kline / us_daily / us_index / share_unlock | Tushare + QMT + AKShare + TickFlow | 资金面 + 外盘 |
+| **L6 盘后事件** | 00 19 周一-五 | default | analyst_forecast / dividend / rights_issue / disclosure_plan | AKShare + QMT | 事件类数据 |
+| **L7 夜间财务** | 00 22 周一-五 | heavy | balance_sheet / income_statement / cashflow / financial_indicator / top10_shareholders / equity_pledge | QMT + AKShare | 低频财务数据 |
 | **L8 周末后校准** | 00 3 周一 | heavy | 全量校准 / TDX板块 / 概念板块 / 美股全量 | 各源 | 全量刷新（原周六02:00已废弃，miniqmt周末连不上QMT服务器） |
 | **L9 月初静态** | 00 9 1 * * | default | stock_list / index_list / trade_calendar / etf_list | 各源 | 月度刷新（miniqmt源任务加 `trading_day_only: true`，月初遇周末跳过） |
 | **L10 周末补下载** | 00 2 周一 | heavy | tick_data 补下载 + 全表缺失检测补下载 | QMT + 各源 | 动态发现 tasks.yaml 全表，检测过去7天缺失并精准补下载（APScheduler 0=周一） |
@@ -482,7 +478,7 @@ scheduler = BackgroundScheduler(
 **约束**：
 1. `TRADING_DAY_GUARDED_SCHEDULES`（见 `trading_calendar.py`）已覆盖 L1/L2/L4/L5/L6/L7/L11/L0 共 8 个时段，scheduler 在非交易日自动跳过这些时段的所有任务。
 2. `weekend_calibration`（L8）cron 已从 `00 2 * * 6`（周六）改为 `00 3 * * 0`（周一 03:00），确保周末后首个工作日执行全量校准时 QMT 服务器可用。
-3. `monthly_static`（L9）不在交易日历守卫列表（因含 ifind/akshare 任务需周末/月初跑），但其中的 miniqmt 源任务必须标记 `extra.trading_day_only: true`，由 `_filter_schedule_tasks` 在非交易日自动过滤。当前标记此字段的任务：`stock_list_refresh` / `index_weight_refresh` / `sector_list_refresh`。
+3. `monthly_static`（L9）不在交易日历守卫列表（因含 akshare 等任务需周末/月初跑），但其中的 miniqmt 源任务必须标记 `extra.trading_day_only: true`，由 `_filter_schedule_tasks` 在非交易日自动过滤。当前标记此字段的任务：`stock_list_refresh` / `index_weight_refresh` / `sector_list_refresh`。
 4. `cli run <task_id>` 手动触发**绕过**交易日历守卫，用户需自行判断时机（未来可加非交易日警告）。
 
 **判定流程**：miniqmt 任务触发前 → 检查 `extra.trading_day_only` → 若为 true 且今日非交易日 → 跳过并记日志。
@@ -508,8 +504,8 @@ index_list ──→ index_constituent ──→ index_kline
 
 ### §6.4 并发控制
 
-- **per-source 串行**：iFind/miniQMT/baostock 单线程（API 限制）
-- **跨源并行**：16:30 时段 iFind 和 QMT 可并行
+- **per-source 串行**：miniQMT/baostock 单线程（API 限制）
+- **跨源并行**：16:30 时段 AKShare 和 QMT 可并行
 - **APScheduler executors**：`default` 池 8 线程给可并行源，`heavy` 池 2 线程给串行源
 - **任务级锁**：同一表不允许并发写入（`max_instances=1`）
 
@@ -517,7 +513,7 @@ index_list ──→ index_constituent ──→ index_kline
 
 - **任务级重试**：Provider 内部按 SourcePolicy 重试（瞬时错误）
 - **数据源 fallback**：主源失败后自动尝试副源（详见 §15.5 数据韧性三层机制）
-  - 不可恢复错误（配额-4318/接口废弃/认证失败）→ 立即 fallback，不浪费重试
+  - 不可恢复错误（配额耗尽/接口废弃/认证失败）→ 立即 fallback，不浪费重试
   - 可恢复错误（超时/网络波动）→ PolicyRegistry 重试用完后 fallback
   - tasks.yaml 配置 `fallback_sources` 字段声明副源优先级列表
 - **调度级重跑**：DEAD 任务进入 `failures/` 目录，CLI `integrator rerun-failed` 一键重跑
@@ -528,7 +524,6 @@ index_list ──→ index_constituent ──→ index_kline
   - 主源失败 fallback 到副源 → 告警通知
   - 单日失败率 > 5% → 汇总告警
   - 某数据源连续 3 天失败 → 升级告警
-  - iFind 月度配额 -4318 → 立即告警并暂停该源所有任务
   - L11 巡检发现表当日数据不达标 → 告警通知
 
 ---
@@ -541,7 +536,7 @@ index_list ──→ index_constituent ──→ index_kline
 -- SQLite: data/integrator_progress.db
 CREATE TABLE task_progress (
     task_id        TEXT NOT NULL,         -- "kline_daily_incremental"
-    source         TEXT NOT NULL,         -- "ifind"
+    source         TEXT NOT NULL,         -- "akshare"
     last_run_at    TIMESTAMP,
     last_key       TEXT,                  -- 最大日期 "2026-07-05" 或最大 ID
     last_status    TEXT,                  -- SUCCESS / FAILED / RUNNING
@@ -618,7 +613,7 @@ CREATE TABLE task_runs (
 ```
 logs/integrator/
 ├── scheduler.log         # 调度器主日志
-├── <source>.log          # per-source 日志（ifind.log / akshare.log / ...）
+├── <source>.log          # per-source 日志（akshare.log / miniqmt.log / ...）
 ├── <task>.log            # per-task 日志（kline_daily.log / ...）
 └── failures/
     └── YYYY-MM-DD.log    # 每日失败汇总
@@ -648,7 +643,7 @@ integrator_session_uptime_seconds{source}    # Gauge
 
 | 列 | 类型 | 说明 |
 |---|---|---|
-| source | String | 数据源（miniqmt/akshare/ifind/...） |
+| source | String | 数据源（miniqmt/akshare/tushare/...） |
 | capability | String | 能力名（kline_daily/adj_factor/...） |
 | target_table | String | 目标 ClickHouse 表 |
 | test_date | Date | 测试日期 |
@@ -692,13 +687,13 @@ integrator_session_uptime_seconds{source}    # Gauge
 | akshare | block_trade | ok | 135 | — |
 | akshare | dragon_tiger | ok | 176 | — |
 | akshare | share_unlock | ok | — | 无解禁数据 |
-| akshare | money_flow | **blocked** | — | 东财反爬封锁，已回退ifind |
-| akshare | equity_pledge | **broken** | — | API损坏，已回退ifind |
+| akshare | money_flow | **blocked** | — | 东财反爬封锁，已回退tushare |
+| akshare | equity_pledge | **broken** | — | API损坏，已回退备用源 |
 | akshare | equity_pledge_summary | **broken** | — | 同上 |
 
 **派生用法**：
 - 调度器优先级排序：`ok` 状态的 capability 优先调度，`slow`/`rate_limited` 安排在低峰时段
-- 退化决策：`blocked`/`broken` 自动回退到备用源（如 akshare→ifind）
+- 退化决策：`blocked`/`broken` 自动回退到备用源（如 akshare→tushare）
 - 运维告警：`error_rate > 0.1` 或 `api_status in ('blocked','broken')` 触发告警
 - 容量规划：`rows_per_sec` × `目标行数` 估算下载耗时，判断是否能在盘后窗口完成
 
@@ -716,7 +711,7 @@ integrator_session_uptime_seconds{source}    # Gauge
 ```bash
 integrator status                 # 查看所有任务今日状态
 integrator status <task_id>       # 查看单任务详情
-integrator list --source ifind    # 列出某源所有任务
+integrator list --source akshare  # 列出某源所有任务
 integrator run <task_id>          # 手动触发单任务
 integrator rerun-failed           # 重跑今日所有 DEAD 任务
 integrator pause <source>         # 紧急熔断某源
@@ -748,7 +743,7 @@ def get_integrator() -> IntegratorScheduler:
 jobs:
   - id: kline_daily_incremental
     cron: "30 16 * * 1-5"
-    provider: ifind
+    provider: miniqmt
     table: c1_market.kline_daily
     mode: incremental
     depends_on: []
@@ -761,17 +756,17 @@ jobs:
 
 **config/policies.yaml**（#183 起为派生物，以下示例仅展示格式；真源在 `architecture_model/data/data_sources_registry.yaml` 的 policy 字段）：
 ```yaml
-ifind:
+miniqmt:
   rpm: 0
   concurrency: 1
   max_retries: 3
-  backoff: exponential
-  initial_wait_sec: 2.0
-  retry_on: ["-201", "TimeoutError", "ConnectionError"]
-  session_ttl_sec: 86400
+  backoff: fixed
+  initial_wait_sec: 1.0
+  retry_on: ["TimeoutError", "ConnectionError"]
+  session_ttl_sec: 0
   relogin_on_auth_error: true
   extra:
-    monthly_quota_alert: true
+    requires_process: XtMiniQmt.exe
 akshare:
   rpm: 60
   concurrency: 4
@@ -790,7 +785,7 @@ akshare:
 
 - Python 3.11+（与项目一致）
 - APScheduler 3.10+
-- 数据源 SDK：iFinDPy / xtquant / akshare / baostock / tushare / tickflow / mootdx / feedparser
+- 数据源 SDK：xtquant / akshare / baostock / tushare / tickflow / mootdx / feedparser
 - ClickHouse 访问：复用 `tmp/_ds_common.py` 的 `ch_insert_tsv_explicit`（WSL 调用）
 - 进程模型：单进程多线程（APScheduler BackgroundScheduler + ThreadPoolExecutor）
 
@@ -821,8 +816,6 @@ akshare:
 
 | 故障 | 检测 | 退化策略 |
 |------|------|---------|
-| iFind 登录失效 | health_check 返回 False | 自动 relogin，3 次失败告警 |
-| iFind 月度配额耗尽 (-4318) | 错误码捕获 | 暂停该源所有任务，告警 |
 | QMT 进程掉线 | 探测 XtMiniQmt.exe | 告警，尝试自动重启（可选） |
 | AKShare 反爬 403 | HTTPError | 切代理 / 断 VPN / 跳过该标的 |
 | baostock 数据滞后 | last_key < today-7 | 告警，标记该数据 stale |
@@ -834,8 +827,8 @@ akshare:
 
 ## §12 安全考量
 
-- **凭证管理**：iFind license / QMT 三要素 / tushare token 存 `.env`，不进 git
-- **网络代理**：AKShare 须断 VPN；iFind/QMT 走直连
+- **凭证管理**：QMT 三要素 / tushare token 存 `.env`，不进 git
+- **网络代理**：AKShare 须断 VPN；QMT 走直连
 - **进程权限**：调度器以普通用户跑，ClickHouse 通过 WSL 访问
 - **日志脱敏**：日志中不打印 license/token 明文
 
@@ -872,7 +865,6 @@ akshare:
 
 **交付**：
 - `src/zephyr/data/provider_base.py`（IngestProviderBase + FetchPayload + FetchResult + IngestProviderMeta）
-- `src/zephyr/data/implementations/ifind_provider.py`
 - `src/zephyr/data/implementations/miniqmt_provider.py`
 - `src/zephyr/data/implementations/akshare_provider.py`
 - 单测覆盖 3 个 Provider
@@ -916,7 +908,7 @@ akshare:
 > **设计文档**：`docs/_working/2026-07-15-data-resilience-design.md`（临时工作文档，本节为正式蓝图归档）
 > **关联裁定**：#ARCH-BACKFILL-001（L10 周末补下载）、#ARCH-CH-004（运行时门禁强制蓝图约束）
 
-**背景**：80+ 自动任务存在三个韧性缺口——①无数据源级 fallback（ifind 配额耗尽不自动切 akshare）；②L10 补下载只覆盖 tick_data；③除 tick_data 外无完整性巡检。
+**背景**：80+ 自动任务存在三个韧性缺口——①无数据源级 fallback（主源配额耗尽不自动切备用源）；②L10 补下载只覆盖 tick_data；③除 tick_data 外无完整性巡检。
 
 **目标**：补齐三个缺口，形成闭环——巡检发现缺失 → 告警 → fallback 保证数据源可用 → L10 补下载修复。
 
@@ -966,7 +958,7 @@ akshare:
 
 ```yaml
 - task_id: daily_valuation_incremental
-  source: ifind                    # 主数据源
+  source: akshare                  # 主数据源
   fallback_sources:                # 副数据源列表（可选）
     - source: akshare
       capability: daily_valuation  # 副源的capability（可能与主源不同）
@@ -1062,7 +1054,7 @@ akshare:
 
 | 风险 | 概率 | 影响 | 缓解 |
 |------|------|------|------|
-| iFind 试用账号配额限制 | 高 | 中 | 配额监控 + 配额耗尽时切 AKShare/baostock 降级 |
+| 商业数据源缺失（iFind 已于 2026-08-14 退役） | 中 | 低 | 能力已全部迁移免费源；全球市场数据待采购商业源（#ARCH-DATA-IFIND-RETIRE-001） |
 | QMT 进程需要桌面会话 | 中 | 高 | 文档明确运行环境要求；未来探索 headless 方案 |
 | AKShare 接口不稳定 | 高 | 低 | 5 次重试 + 失败标的跳过 + 次日补跑 |
 | 迁移期间新旧脚本冲突 | 中 | 中 | 任务级互斥锁；迁移一个切一个 |
@@ -1076,6 +1068,7 @@ akshare:
 | 日期 | 决策 | 理由 |
 |------|------|------|
 | 2026-07-06 | 采用 APScheduler 而非 Windows 任务计划 | 需任务依赖/并发控制/重试编排，OS 级触发器能力不足 |
+| 2026-08-14 | iFind 数据源全项目彻底删除（代码/配置/测试/注册表），DS-IFIND 留痕 deprecated | 试用到期后保留死代码实证产生噪音（死 fallback/探针误报/审计负担）；恢复成本=git 历史，见 #ARCH-DATA-IFIND-RETIRE-001 |
 | 2026-07-06 | per-source 策略注册表而非统一重试装饰器 | 各源差异大（配额/反爬/线程安全），需 per-source 策略对象 |
 | 2026-07-06 | 完整集成器（Provider+调度）而非仅调度层 | 现有 Provider 抽象未落地，割裂设计会引用空中楼阁 |
 | 2026-07-06 | 接管 blueprint.md 的 Provider 部分 | 原蓝图声称已实现但磁盘不存在，借此次一并重建 |

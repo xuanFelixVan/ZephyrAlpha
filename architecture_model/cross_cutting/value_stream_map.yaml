@@ -151,10 +151,10 @@ bottlenecks:
   items:
     - id: "B1"
       waste_type: "等待(Wait)"
-      bottleneck: "市场数据上游窗口(iFinD EOD 推送延迟,下游结算数据 T+1 到齐)"
+      bottleneck: "市场数据上游窗口(原iFinD EOD已退役2026-08-14;现akshare/tushare免费源受反爬/限流影响,下游结算数据 T+1 到齐)"
       impact_stages: "① ② ⑥"
-      current_status: "单 Vendor 单链路;无备份源"
-      improvement_direction: "接入 AKShare / Tushare 作 fallback(OSS Catalog X3)"
+      current_status: "免费多源互备(akshare主+tushare/miniqmt fallback);东财反爬需轮换"
+      improvement_direction: "未来做大规模时采购商业源(Wind/iFinD正式版)兜底SLA"
     - id: "B2"
       waste_type: "等待(Wait)"
       bottleneck: "回测任务排队(单机资源、无任务调度器)"
@@ -256,8 +256,8 @@ sla_reality:
   eternal_framework_ref: "原 business_principles.md §4.3(SLA/SLO/SLI 术语铁律) 已删(2026-07-30);git 历史可查"
   counterparties:
     - counterparty: "S10 iFinD(Vendor)"
-      has_real_sla: true
-      note: "由供应商承诺可用性 / 限流 / 字段稳定,登记在 integration-catalog.md Vendor Registry"
+      has_real_sla: false
+      note: "已退役2026-08-14(#ARCH-DATA-IFIND-RETIRE-001):试用账号到期未续费,SLA随之失效;当前无商业Vendor,免费源(akshare/tushare)无SLA承诺"
     - counterparty: "S11 Future partners"
       has_real_sla: false
       note: "未激活;S11 激活后,本表 SLO-6 / SLO-7 需转为对合伙人的 SLA"

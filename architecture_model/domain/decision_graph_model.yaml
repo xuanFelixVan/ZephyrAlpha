@@ -91,7 +91,7 @@ layers:
     layer_name_en: Data Ingestion & Preprocessing
     track: model_driven
     description: >
-      miniQMT + iFind + tushare + 另类数据源 → 事件总线 → 分层时序存储
+      miniQMT + tushare + akshare + 另类数据源 → 事件总线 → 分层时序存储
       产出：tick_data / ohlc_bar / factor_input_data
     decision_frequency: tick
     design_maturity: production

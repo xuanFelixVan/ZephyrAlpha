@@ -1209,7 +1209,7 @@ entries:
   - 数据源集成器
   - Provider抽象层(IngestProviderBase/IngestProviderMeta)
   - 策略注册表(SourcePolicy/PolicyRegistry)
-  - 多源自动下载编排(iFind/miniQMT/AKShare/Tushare/Baostock/CLS/EastMoney/TDX/TickFlow/RSS)
+  - 多源自动下载编排(miniQMT/AKShare/Tushare/Baostock/CLS/EastMoney/TDX/TickFlow/RSS)
   - 卫星地理空间数据引擎(satellite_geospatial_engine)
   aliases:
   - data

@@ -14,7 +14,7 @@ language: zh
 
 **位置**：`src/zephyr/data/` | **CLI**：`integrator` | **蓝图**：MOD-L00-004
 
-统一管理多数据源（iFind / miniQMT / AKShare）的自动下载、调度与 ClickHouse 持久化。
+统一管理多数据源（miniQMT / AKShare / tushare 等）的自动下载、调度与 ClickHouse 持久化。
 
 **数据流**：`CLI → get_integrator() → IntegratorScheduler → IngestProviderBase providers → ch_writer.write_result() → ClickHouse`
 
@@ -22,9 +22,11 @@ language: zh
 
 | Provider | 数据源 | 用途 |
 |----------|--------|------|
-| iFind | 同花顺 iFind | 专业行情/基本面（需凭证） |
 | miniQMT | 迅投 QMT | 实时行情/持仓（fallback） |
 | AKShare | 开源金融数据 | 演示/回退（免费） |
+| tushare | 新闻/基本面/行业分类（积分制） | 免费源主力 |
+
+> iFind（同花顺）已于 2026-08-14 全项目退役删除（#ARCH-DATA-IFIND-RETIRE-001），能力已全部迁移免费源，留痕见 `data_sources_registry.yaml` DS-IFIND（deprecated）。
 
 > 真源：`architecture_model/data/data_sources_registry.yaml`（规则数据，改后 `sync_yaml_to_depgraph.py` 同步到 DB）。
 
@@ -57,7 +59,7 @@ language: zh
 
 | Provider ID | 名称 | 类型 | 状态 |
 |-------------|------|------|------|
-| `DS-IFIND` | 同花顺iFind | commercial | active |
+| `DS-IFIND` | 同花顺iFind | commercial | deprecated |
 | `DS-MINIQMT` | miniQMT | commercial | active |
 | `DS-AKSHARE` | AKShare | open_source | active |
 | `DS-BAOSTOCK` | Baostock | open_source | active |

@@ -76,7 +76,7 @@ def sample_datasets():
 def sample_jobs():
     """3 个 Job：2 production + 1 backtest，全部 design_maturity=production（运营态）。"""
     return [
-        {"id": 10, "name": "ingest.ifind_kline", "scope": "production",
+        {"id": 10, "name": "ingest.akshare_kline", "scope": "production",
          "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
          "context": "production", "maturity": "production", "build": "generated"},
         {"id": 11, "name": "synthesize.signal", "scope": "production",
@@ -112,7 +112,7 @@ def sample_datasets_with_design():
 def sample_jobs_with_design():
     """4 个 Job：3 运营态 + 1 设计态（design_maturity=design）。"""
     return [
-        {"id": 10, "name": "ingest.ifind_kline", "scope": "production",
+        {"id": 10, "name": "ingest.akshare_kline", "scope": "production",
          "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
          "context": "production", "maturity": "production", "build": "generated"},
         {"id": 11, "name": "synthesize.signal", "scope": "production",
@@ -407,7 +407,7 @@ class TestGenPanoramaMd:
     def test_contains_job_list(self, sample_datasets, sample_jobs, sample_edges):
         """全景文档包含 Job 清单。"""
         md = _gen_panorama_md(sample_datasets, sample_jobs, sample_edges)
-        assert "ingest.ifind_kline" in md
+        assert "ingest.akshare_kline" in md
         assert "synthesize.signal" in md
         assert "backtest.replay_ticks" in md
 

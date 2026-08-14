@@ -2,7 +2,7 @@
 # [MODULE] schemas.categories.fundamental_industry_class_suppl
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] none
-# [CONSUMERS] apply_fundamental_tables_ddl; zephyr.data.implementations.ifind_provider
+# [CONSUMERS] apply_fundamental_tables_ddl; zephyr.data.implementations.tushare_provider
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] industry_class_suppl 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_schema.py 执行
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS c3_fundamental.industry_class_suppl
     industry_sw     String                       COMMENT '申万行业分类',
     industry_zsi    String                       COMMENT '中证行业分类',
     industry_level  UInt8 DEFAULT 0              COMMENT '行业等级',
-    data_source     LowCardinality(String) DEFAULT 'ifind' COMMENT '数据来源',
+    data_source     LowCardinality(String) DEFAULT 'tushare' COMMENT '数据来源',
     valid_from      Date DEFAULT today()         COMMENT 'SCD-2生效起始日',
     valid_to        Nullable(Date)               COMMENT 'SCD-2生效终止日(NULL=当前有效)',
     updated_at      DateTime64(3, 'UTC') DEFAULT now() COMMENT '记录更新时间',

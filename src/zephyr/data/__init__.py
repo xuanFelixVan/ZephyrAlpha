@@ -11,7 +11,7 @@ zephyr.data — 数据源集成器（MOD-L00-004）。
 - 策略注册表：SourcePolicy + PolicyRegistry（per-source 限流/重试/反爬）
 - 调度编排层：IntegratorScheduler（阶段2 交付）
 
-阶段1 已交付：provider_base + policy_registry + 3 个 Provider 实现（iFind/miniQMT/AKShare）。
+阶段1 已交付：provider_base + policy_registry + 3 个 Provider 实现（miniQMT/AKShare/Baostock）。
 
 # [ALGO_FLOW]
 # 层: 输入
@@ -36,7 +36,7 @@ zephyr.data — 数据源集成器（MOD-L00-004）。
 #   name_zh: ② 数据源集成公共面再导出
 #   name_en: __init__ re-export（__all__ 9 项）
 #   intro: 把 Provider 抽象/策略注册表/调度编排三层符号聚成 zephyr.data 统一入口
-#   desc: 再导出 IngestProviderBase/IngestProviderMeta/FetchPayload/FetchResult + SourcePolicy/PolicyRegistry/get_registry + IntegratorScheduler/get_integrator（L43-56）；阶段1 已交付 iFind/miniQMT/AKShare 三 Provider
+#   desc: 再导出 IngestProviderBase/IngestProviderMeta/FetchPayload/FetchResult + SourcePolicy/PolicyRegistry/get_registry + IntegratorScheduler/get_integrator（L43-56）；Provider 实现含 miniQMT/AKShare/Tushare 等
 #   inputs: I2
 #   outputs: __all__ 9 个公共符号
 # 层: 输出

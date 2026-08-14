@@ -1188,17 +1188,17 @@ datasets:
 
 jobs:
 - job_id: JOB-001
-  job_name: ingest.ifind_kline
+  job_name: ingest.minqmt_kline
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/data/ingest_ifind.py
+  source_code_ref: src/zephyr/data/implementations/miniqmt_provider.py
   trigger_type: scheduled
   run_context: production
   inputs: []
   outputs:
   - DS-001
   pit_relevance: strict
-  description: 从同花顺iFind THS_RQ接口采集K线/Tick行情数据，写入DS-001 market_data.tick
+  description: 从miniQMT采集日K线数据，写入DS-001 market_data.tick（原ifind_kline已退役2026-08-14 #ARCH-DATA-IFIND-RETIRE-001）
   module_id: MOD-MKT_DATA
 - job_id: JOB-002
   job_name: aggregate.ohlc_bar

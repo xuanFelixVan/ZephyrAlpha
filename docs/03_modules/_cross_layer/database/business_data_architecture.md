@@ -302,13 +302,13 @@ build_status: planned
 | 表名 | 品类 | 性质 | 频率 | 数据源 |
 |------|------|------|:----:|--------|
 | tick_data | A股3秒Tick | 原料 | 3秒 | miniQMT |
-| daily_kline | 日线OHLCV | 成品(聚合) | 日频 | miniQMT/iFind |
+| daily_kline | 日线OHLCV | 成品(聚合) | 日频 | miniQMT(baostock fallback) |
 | auction_snapshot | 集合竞价快照 | 原料 | 9:15-9:25 | miniQMT |
 | index_quote | 指数行情 | 原料 | 3秒 | miniQMT |
-| option_iv_surface | 期权IV曲面 | 原料(衍生) | 日频 | iFind/AkShare |
+| option_iv_surface | 期权IV曲面 | 原料(衍生) | 日频 | AkShare |
 | futures_position | 期货持仓 | 原料(衍生) | 日频 | CZCE/DCE |
 | futures_term_structure | 期货期限结构 | 原料(衍生) | 日频 | 交易所 |
-| convertible_bond_iv | 可转债隐含波动率 | 成品(算) | 日频 | iFind |
+| convertible_bond_iv | 可转债隐含波动率 | 成品(算) | 日频 | 待采购商业源(原iFind已退役2026-08-14) |
 
 > market_type 字段预留（港股/美股/期货，硬边界后填）
 
@@ -328,13 +328,13 @@ build_status: planned
 
 | 表名 | 品类 | 性质 | 数据源 |
 |------|------|------|--------|
-| news_raw | 新闻快讯/公告/研报原文 | 原料 | tushare/iFind |
+| news_raw | 新闻快讯/公告/研报原文 | 原料 | tushare |
 | news_impact | LLM影响值 | 成品(可重算) | LLM计算 |
-| macro_data | 中美宏观/FOMC/VIX/外汇/国债/商品 | 原料 | iFind |
-| sentiment_data | 舆情/情绪面板/社媒情绪 | 原料+成品 | iFind/tushare/爬虫 |
-| financial_data | 财报/股东/调研 | 原料 | iFind |
+| macro_data | 中美宏观/FOMC/VIX/外汇/国债/商品 | 原料 | akshare/FRED/EIA |
+| sentiment_data | 舆情/情绪面板/社媒情绪 | 原料+成品 | tushare/爬虫 |
+| financial_data | 财报/股东/调研 | 原料 | akshare/tushare |
 | credit_spread | 信用利差 | 原料 | 公开数据 |
-| analyst_consensus | 分析师一致预期 | 原料 | iFind |
+| analyst_consensus | 分析师一致预期 | 原料 | 待采购商业源(原iFind已退役2026-08-14) |
 | government_data | 政府公开数据(统计/海关) | 原料 | 统计局/海关 |
 
 #### C4 backtest_clickhouse（回测结果仓库）
@@ -348,10 +348,10 @@ build_status: planned
 
 | 图谱类型 | 实体数 | 关系数 | 数据源 |
 |---------|:------:|:------:|--------|
-| 公司图谱 | ~10,000 | ~50,000 | iFind |
-| 产业图谱 | 238,000 | 551,000 | iFind |
-| 供应链图谱 | ~5,000 | ~20,000 | iFind/年报 |
-| 宏观因果链 | ~500 | ~2,000 | iFind+LLM |
+| 公司图谱 | ~10,000 | ~50,000 | 待采购商业源(原iFind已退役2026-08-14) |
+| 产业图谱 | 238,000 | 551,000 | 待采购商业源(原iFind已退役2026-08-14) |
+| 供应链图谱 | ~5,000 | ~20,000 | 年报(原iFind已退役2026-08-14) |
+| 宏观因果链 | ~500 | ~2,000 | akshare宏观+LLM |
 | 地缘政治图谱 | ~200 | ~1,000 | 新闻+LLM |
 
 #### L4 trading.db（SQLite，交易事务）
@@ -366,13 +366,13 @@ build_status: planned
 
 | # | 新品类 | 归属库 | 性质 | 数据源 |
 |---|--------|--------|------|--------|
-| 1 | 期权IV曲面 | C1 | 原料(衍生) | iFind/AkShare |
+| 1 | 期权IV曲面 | C1 | 原料(衍生) | AkShare |
 | 2 | 期货持仓 | C1 | 原料(衍生) | CZCE/DCE公开 |
 | 3 | 期货期限结构 | C1 | 原料(衍生) | 交易所公开 |
 | 4 | 信用利差 | C3 | 原料 | 公开数据 |
-| 5 | 可转债隐含波动率 | C1 | 成品(算) | iFind |
+| 5 | 可转债隐含波动率 | C1 | 成品(算) | 待采购商业源(原iFind已退役) |
 | 6 | 社交媒体情绪 | C3 | 成品(NLP) | tushare/爬虫 |
-| 7 | 分析师一致预期 | C3 | 原料 | iFind |
+| 7 | 分析师一致预期 | C3 | 原料 | 待采购商业源(原iFind已退役) |
 | 8 | 政府公开数据 | C3 | 原料 | 统计局/海关 |
 | 9 | 风险模型输出 | C2 | 成品(自算) | 自算 |
 

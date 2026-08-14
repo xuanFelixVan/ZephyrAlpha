@@ -17,7 +17,7 @@
 # noqa  M02豁免: 由 scheduler 按 daily_kline 时段调度, 非常驻服务
 """内部计算数据源 Provider（#ARCH-DATA-TI-001，Phase 2 多周期落地 2026-08-10）。
 
-区别于外部数据源 Provider（ifind/miniqmt/akshare 等），本 Provider 不从外部 API 拉数据，
+区别于外部数据源 Provider（miniqmt/akshare/tushare 等），本 Provider 不从外部 API 拉数据，
 而是：
   1. 从 ClickHouse c1_market.kline_{period} 读取 OHLCV K线数据（9 周期）
   2. 调用 TechnicalIndicatorBase 子类计算 40 个技术指标（5 类全部施工完成）

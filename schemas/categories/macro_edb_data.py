@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS c1_market.edb_data
     indicator_code           String  COMMENT '指标代码',
     indicator_name           String  COMMENT '指标名称',
     indicator_value          Float64  COMMENT '指标值',
-    data_source              LowCardinality(String)  DEFAULT 'ifind',
+    data_source              LowCardinality(String)  COMMENT '数据来源(原ifind EDB已退役2026-08-14,表0行停更)',
     ingest_ts                DateTime64(3, 'UTC')  DEFAULT now()
 )
 ENGINE = ReplacingMergeTree

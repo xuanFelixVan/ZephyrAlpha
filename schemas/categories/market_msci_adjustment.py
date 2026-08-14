@@ -24,7 +24,7 @@ MSCI 季度审议（通常2/5/8/11月）与富时罗素半年度审议引发外�
     akshare/tushare 均无 MSCI/富时调整的直接接口。
     本批次只建立表结构，采集任务 disabled。后续路径：
       1) 爬虫 MSCI 官网 quarterly review 公告
-      2) 接入第三方数据源（如 Wind/iFind 的 MSCI 调整专题）
+      2) 接入第三方数据源（如 Wind/Choice 等商业数据源的 MSCI 调整专题）
       3) 手工录入历次调整事件
     数据填充前 data_source='manual'，填充后可改为对应数据源标识。
 

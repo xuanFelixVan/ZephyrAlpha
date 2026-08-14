@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS c1_market.convertible_bond_iv
     theta               Decimal(18,6)  DEFAULT 0 COMMENT 'Theta',
     vega                Decimal(18,6)  DEFAULT 0 COMMENT 'Vega',
     conversion_premium  Decimal(18,6)  COMMENT '转股溢价率',
-    data_source         LowCardinality(String)  COMMENT '数据来源(iFind)',
+    data_source         LowCardinality(String)  COMMENT '数据来源',
     quality_flag        UInt8          DEFAULT 1  COMMENT '质量标记(1=正常 0=异常)',
     ingest_ts           DateTime64(3, 'UTC') DEFAULT now() COMMENT '入库时间戳(audit 1.7 #ARCH-CH-025)',
     exchange LowCardinality(String) MATERIALIZED multiIf(substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('110', '113', '204', '900', '901', '902', '903'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,3) IN ('123', '128'), 'SZ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,2) IN ('43', '83', '87', '92', '93', '94'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('4', '8'), 'BJ', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('5', '6', '9'), 'SH', substring(replaceRegexpAll(splitByChar('.', symbol)[1], '^(sh|sz|bj|hk)', ''),1,1) IN ('0', '1', '2', '3'), 'SZ', '') COMMENT '交易所码(TRAE-082 MATERIALIZED派生,前缀推导)',

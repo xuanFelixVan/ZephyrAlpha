@@ -2,7 +2,7 @@
 # [MODULE] zephyr.data.provider_base
 # [DOMAIN] D_DATA
 # [DEPENDENCIES]
-# [CONSUMERS] zephyr.data.scheduler, zephyr.data.implementations.{ifind,miniqmt,akshare}_provider
+# [CONSUMERS] zephyr.data.scheduler, zephyr.data.implementations.*_provider
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] Provider 只拉数据返回 list[tuple]，不写 ClickHouse；fetch 返回 Iterator[FetchResult]
@@ -59,7 +59,7 @@ class FetchPayload:
         start: 起始日期（含）
         end: 结束日期（含）
         incremental: True=增量（从 last_key 继续），False=全量
-        extra: 数据源专属参数（如 iFind 的 indicators、AKShare 的函数名）
+        extra: 数据源专属参数（如 AKShare 的函数名、miniQMT 的 period）
     """
     table: str
     symbols: list[str] | None
@@ -140,7 +140,7 @@ class IngestProviderMeta:
     """数据源元数据（静态描述）。
 
     Attributes:
-        name: 数据源标识（"ifind"/"miniqmt"/"akshare"...）
+        name: 数据源标识（"miniqmt"/"akshare"/"tushare"...）
         display_name: 中文显示名
         auth_type: 认证方式（"license_key"/"account"/"anonymous"）
         requires_process: 是否需要外部进程在跑（QMT 需 XtMiniQmt.exe）

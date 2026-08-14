@@ -245,7 +245,7 @@ class BaostockProvider(IngestProviderBase):
     ) -> Iterator[FetchResult]:
         """获取日K线（bs.query_history_k_data_plus）。
 
-        作为 iFind 降级源使用。数据滞后约1周。
+        作为日K线降级源使用。数据滞后约1周。
         """
         bs = self._tls.bs
         table = payload.table or _TBL_KLINE_DAILY

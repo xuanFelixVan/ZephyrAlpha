@@ -52,7 +52,7 @@ runtime_plane: hot
 tags:
   - data-source
   - l00
-summary: "数据接入层——业务数据库母蓝图(MOD-ARCH_BIZDB)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/iFind/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。"
+summary: "数据接入层——业务数据库母蓝图(MOD-ARCH_BIZDB)上游，对接69品类全景，多数据源标准化接入(AkShare/miniQMT/tushare/爬虫)，原料/成品/事务三层分类，质量门禁对接CTR契约，calc_mode标注(replay/preload/hybrid)支撑回测调度，为C1~C4仓库提供原料数据。"
 responsibility_domain: 
 build_status: generated
 design_maturity: production
@@ -93,7 +93,7 @@ design_maturity: production
 - **对接母蓝图§6插拔机制**：品类注册表 enabled 二元开关（硬边界品类 enabled=false 预留）
 - **对接母蓝图§7回测调度**：calc_mode 标注（replay/preload/hybrid）
 
-支持多数据源标准化接入：AkShare(免费行情+基本面)、miniQMT(实盘行情)、iFind(付费基本面+另类)、tushare(新闻+基本面)、爬虫(舆情)。支持原料/成品/事务三层分类（原料=tick/新闻原文接入即存，成品=K线/指标可预计算）。上游依赖各类外部 API，下游为 C1~C4 仓库层及 D_FACTOR/D_SIGNAL/D_RESEARCH 层提供标准化原料数据。
+支持多数据源标准化接入：AkShare(免费行情+基本面)、miniQMT(实盘行情)、tushare(新闻+基本面)、爬虫(舆情)。支持原料/成品/事务三层分类（原料=tick/新闻原文接入即存，成品=K线/指标可预计算）。上游依赖各类外部 API，下游为 C1~C4 仓库层及 D_FACTOR/D_SIGNAL/D_RESEARCH 层提供标准化原料数据。
 
 ---
 
@@ -189,7 +189,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH_BIZDB §5)定义了 **69 个数据
 
 | # | 类型 | 内容 | 标准/原因 |
 |---|:----:|------|----------|
-| 1 | ✅ 包含 | 多数据源标准化接入 | AkShare/miniQMT/iFind/tushare/爬虫，QuoteProviderBase OCP扩展点 |
+| 1 | ✅ 包含 | 多数据源标准化接入 | AkShare/miniQMT/tushare/爬虫，QuoteProviderBase OCP扩展点 |
 | 2 | ✅ 包含 | 品类摄取覆盖母蓝图69品类 | 行情/基本面/另类/宏观/新闻/舆情原料摄取 |
 | 3 | ✅ 包含 | 数据质量门禁 | DataQualityGate 对接 CTR 契约质量门禁 |
 | 4 | ✅ 包含 | 标准化输出 | CTR-001~CTR-003 (NormalizedMarketData/新闻/宏观) |
@@ -207,7 +207,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH_BIZDB §5)定义了 **69 个数据
 |------|------|
 | AkShare API 限流（每分钟60次） | 请求必须限速 + 缓存 |
 | 多数据源格式差异（中文列名/字段命名/时区） | 标准化映射 + Schema版本化 + Drift Detector |
-| 付费数据源(iFind)需API密钥 | 环境变量存储，禁止硬编码 |
+| 付费数据源(miniQMT/tushare)需API密钥/凭证 | 环境变量存储，禁止硬编码 |
 | 数据源格式可能变更 | Schema版本化 + Drift Detector |
 | 网络不可用时需降级 | MemoryProvider 提供本地回退 |
 | akshare 为同步HTTP客户端 | 需 asyncio.to_thread 包装避免阻塞事件循环 |
@@ -227,7 +227,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH_BIZDB §5)定义了 **69 个数据
 
 | 维度 | 当前态 | 目标态 | 差距 | 优先级 |
 |------|--------|--------|------|:------:|
-| 数据源数量 | 1 (AkShare已重建) | 5 (AkShare/miniQMT/iFind/tushare/爬虫) | 缺4个数据源，**miniQMT Provider规格已就绪(§16.7.1)，待施工** | P1 |
+| 数据源数量 | 1 (AkShare已重建) | 4 (AkShare/miniQMT/tushare/爬虫) | 缺3个数据源，**miniQMT Provider规格已就绪(§16.7.1)，待施工** | P1 |
 | 品类覆盖 | OHLCV行情(CTR-001) | 69品类(CTR-001~003+) | 缺基本面/另类/宏观/新闻等 | P0 |
 | calc_mode 标注 | 无 | replay/preload/hybrid | 待实现(母蓝图§7.5) | P1 |
 | 品类注册表对接 | 无 | enabled 二元开关 | 待实现(母蓝图§6/§8.2) | P1 |
@@ -240,7 +240,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH_BIZDB §5)定义了 **69 个数据
 |------|------|---------|------|
 | 日线行情摄取 | D_FACTOR请求行情 | AkshareQuoteProvider.fetch_historical → _normalize_columns → DataFrame | OHLCV DataFrame (CTR-001) |
 | 新闻原文摄取(成品原料) | C3仓库请求新闻 | tushare/爬虫Provider.fetch → 标准化 → QualityGate.check | 新闻原文 (CTR-002) |
-| 宏观数据摄取 | C3仓库请求宏观 | iFindProvider.fetch → 标准化 → QualityGate.check | 宏观指标 (CTR-003) |
+| 宏观数据摄取 | C3仓库请求宏观 | akshareProvider.fetch(macro_data) → 标准化 → QualityGate.check | 宏观指标 (CTR-003) |
 | 数据质量校验 | 数据接入后 | DefaultQualityGate.check → QualityReport | QualityReport(passed=True/False) |
 | 离线测试 | 测试环境 | MemoryProvider.fetch_historical → 合成数据 | OHLCV DataFrame |
 | API限流 | AkShare返回429 | 限速重试 + MemoryProvider降级 | 延迟数据或合成数据 |
@@ -294,7 +294,7 @@ ZephyrAlpha 业务数据库母蓝图(MOD-ARCH_BIZDB §5)定义了 **69 个数据
 |---|--------|---------|---------|---------|
 | 1 | AkShare API | fetch_historical → _normalize_columns → validate_schema | C1仓库/D_FACTOR/D_SIGNAL/D_RESEARCH | pd.DataFrame (OHLCV, CTR-001) |
 | 2 | tushare/爬虫 | fetch → 标准化 → QualityGate.check | C3仓库 | 新闻原文 (CTR-002) |
-| 3 | iFind API | fetch → 标准化 → QualityGate.check | C3仓库 | 宏观指标 (CTR-003) |
+| 3 | akshare 宏观API | fetch → 标准化 → QualityGate.check | C3仓库 | 宏观指标 (CTR-003) |
 | 4 | MemoryProvider | 合成数据生成 → validate_schema | 测试/D_FACTOR | pd.DataFrame (OHLCV) |
 | 5 | 任意Provider | fetch → DataQualityGate.check | 仓库层 | QualityReport |
 

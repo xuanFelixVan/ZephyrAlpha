@@ -2,7 +2,7 @@
 # [MODULE] schemas.categories.fundamental_balance_sheet
 # [DOMAIN] D_DATA
 # [DEPENDENCIES] none
-# [CONSUMERS] apply_fundamental_tables_ddl; zephyr.data.implementations.miniqmt_provider; zephyr.data.implementations.ifind_provider
+# [CONSUMERS] apply_fundamental_tables_ddl; zephyr.data.implementations.miniqmt_provider
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] balance_sheet 表 DDL 唯一真源；本文件 DDL 必须与 ClickHouse 实际表结构一致；变更需经 apply_schema.py 执行

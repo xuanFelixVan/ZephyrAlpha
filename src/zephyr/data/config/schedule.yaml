@@ -4,7 +4,7 @@
 # [TTL] permanent
 # 调度计划真源（蓝图 §6.2 调度计划 9 档时段）
 # cron 格式: 分 时 日 月 周（APScheduler 标准）
-# executor: realtime(4线程,盘中实时) / intraday_minute(4线程,盘中分钟K线) / default(8线程,可并行源) / heavy(2线程,串行源如iFind/QMT)
+# executor: realtime(4线程,盘中实时) / intraday_minute(4线程,盘中分钟K线) / default(8线程,可并行源) / heavy(2线程,串行源如QMT)
 #
 # 9档分层架构（对标专业机构实践 2026-07-12 v2）：
 # L1 盘中实时层 — 交易时段高频轮询，独占realtime算力，含港股K线（影响盘中决策）

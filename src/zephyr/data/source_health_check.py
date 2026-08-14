@@ -149,7 +149,7 @@ _HEALTH_CHECKS: list[dict[str, Any]] = [
         "class": "AkshareIngestProvider",
         # 探针选型（2026-08-04）：stock_individual_info_em 走东财 push2，akshare 发送 100+ fields
         # 大请求被东财断连（实测 0/5 失败），会误判 akshare=unhealthy → scheduler 跳过 →
-        # ifind→akshare fallback 链失效。改用 tool_trade_date_hist_sina（新浪源，0.26s，3/3 成功），
+        # akshare 主源任务全断。改用 tool_trade_date_hist_sina（新浪源，0.26s，3/3 成功），
         # 既达标（<2s）又符合项目反爬规避策略（非东财接口）。
         "test": lambda p: __import__("akshare").tool_trade_date_hist_sina(),
         "test_desc": "tool_trade_date_hist_sina 新浪交易日历",
@@ -164,14 +164,6 @@ _HEALTH_CHECKS: list[dict[str, Any]] = [
         ).get_data(),
         "test_desc": "query_trade_dates 交易日历",
         "env_required": [],
-    },
-    {
-        "source": "ifind",
-        "module": "zephyr.data.implementations.ifind_provider",
-        "class": "IFindProvider",
-        "test": None,
-        "test_desc": "仅连接测试",
-        "env_required": ["IFIND_USERNAME", "IFIND_PASSWORD"],
     },
     {
         "source": "miniqmt",

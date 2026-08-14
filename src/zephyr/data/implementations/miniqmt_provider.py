@@ -988,7 +988,7 @@ class MiniQmtIngestProvider(IngestProviderBase):
 
         表 schema: (trade_date, index_code, symbol, weight, action, data_source)
         miniQMT 不提供权重，weight=0, action='', data_source='miniqmt'。
-        若需权重数据，应优先使用 iFind Provider。
+        若需权重数据，可用 akshare Provider（iFind 已于 2026-08-14 退役）。
 
         Args:
             payload: 下载请求（payload.end 作为 trade_date）

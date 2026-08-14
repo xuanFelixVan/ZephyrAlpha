@@ -42,10 +42,10 @@ apply_dataflowgraph.py — dataflowgraph 变更写入工具（CLI）
         --domain-id D_MKT_DATA
 
     # 新增设计态 Job
-    python scripts/governance/apply_dataflowgraph.py --add-design-job \\
-        --job-name ingest.ifind_kline \\
-        --scope production \\
-        --source-code-ref src/zephyr/data/ingest_ifind.py \\
+    python scripts/governance/apply_dataflowgraph.py --add-design-job \
+        --job-name ingest.minqmt_kline \
+        --scope production \
+        --source-code-ref src/zephyr/data/implementations/miniqmt_provider.py \
         --trigger-type scheduled
 
     # 列出所有 Dataset
@@ -474,7 +474,7 @@ def main() -> None:
     parser.add_argument("--valid-since", type=str, default=None, help="数据有效起始日期")
 
     # Job 参数
-    parser.add_argument("--job-name", type=str, help="Job job_name（如 ingest.ifind_kline）")
+    parser.add_argument("--job-name", type=str, help="Job job_name（如 ingest.minqmt_kline）")
     parser.add_argument("--module-id", type=str, default=None, help="module_id（--delete-design-job 按 module_id 定位）")
     parser.add_argument("--source-code-ref", type=str, default=None, help="depgraph 模块 path（跨图关联）")
     parser.add_argument("--trigger-type", type=str, default=None, choices=["event_driven", "scheduled", "manual", "stream"], help="触发类型")

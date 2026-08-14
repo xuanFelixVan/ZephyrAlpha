@@ -47,7 +47,7 @@ from ..table_registry import get_registry
 log = logging.getLogger(__name__)
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
-# _TBL_INDUSTRY_CLASS 已弃用（#ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 语义错配，capability 移至 ifind）
+# _TBL_INDUSTRY_CLASS 已弃用（#ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 语义错配，capability 先迁 ifind，2026-08-14 退役后由 tushare 承担）
 _TBL_KLINE_SECTOR = get_registry().table("market_sector_kline")
 _TBL_SECTOR_CONSTITUENT = get_registry().table("market_sector_constituent_880")
 
@@ -183,7 +183,7 @@ class TDXProvider(IngestProviderBase):
         capabilities=[
             # "industry_class" 已弃用（#ARCH-CH-INDUSTRY-CLASS-MIGRATE）：
             # tdx block() 产出板块成分股，与 industry_class 表（股票→申万行业）语义错配，
-            # 该 capability 改由 ifind_provider 承担（i问财 + "--" split level 1/2/3）。
+            # 该 capability 现由 tushare_provider 承担（原 ifind i问财方案已随源退役）。
             CapabilityContract("kline_sector", supports_symbols_null=True),
         ],
         known_issues=["单线程串行", "无板块分笔Tick", "需bestip选最快服务器"],
@@ -268,7 +268,7 @@ class TDXProvider(IngestProviderBase):
     # ---- 板块指数K线 ----
     # 注：原 _fetch_industry_class（板块分类，client.block）已弃用
     # （#ARCH-CH-INDUSTRY-CLASS-MIGRATE）——tdx block() 产出板块成分股与
-    # industry_class 表语义错配，该 capability 改由 ifind_provider 承担。
+    # industry_class 表语义错配，该 capability 现由 tushare_provider 承担。
 
     @staticmethod
     def _resolve_frequency(extra) -> tuple[int, str]:

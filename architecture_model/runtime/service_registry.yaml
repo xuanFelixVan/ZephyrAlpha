@@ -107,8 +107,8 @@ services:
     port: null
     host: "in-process"
     protocol: dll
-    status: active
-    description: "同花顺iFind客户端(同进程内调用THS_iFinDLogin)"
+    status: deprecated
+    description: "同花顺iFind客户端(已退役2026-08-14 #ARCH-DATA-IFIND-RETIRE-001:试用账号到期不续费,能力已迁akshare/tushare/miniqmt;provider代码已删,git历史可查)"
     owner: ZephyrAlpha-Owner
 
   - id: SVC-MINIQMT

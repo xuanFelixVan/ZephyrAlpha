@@ -96,7 +96,7 @@ def sample_layers():
     """4 个 Layer（L0/L1/L2A/L4），含 module_id + source_code_ref + desc。"""
     return [
         {"id": "L0", "name": "数据接入与预处理层", "name_en": "Data Ingestion",
-         "track": "model_driven", "desc": "miniQMT+iFind数据接入与预处理", "freq": "tick",
+         "track": "model_driven", "desc": "miniQMT+Tushare数据接入与预处理", "freq": "tick",
          "maturity": "production", "build": "stable",
          "module_id": "MOD-DATA-001", "source_code_ref": "src/zephyr/data/ingestion.py",
          "blueprint_name": "数据接入蓝图"},
@@ -669,7 +669,7 @@ class TestNewFields:
         """Track 文件 Layer 清单表含功能简述。"""
         _di = _build_domain_index(sample_tracks, sample_layers, sample_nodes)
         md = _gen_track_file_md(sample_tracks[0], sample_tracks, sample_layers, sample_nodes, sample_edges, _di)
-        assert "miniQMT+iFind数据接入与预处理" in md
+        assert "miniQMT+Tushare数据接入与预处理" in md
         assert "Pre/Post-Trade风控校验" in md
 
     def test_overview_no_blueprint_when_empty(self, sample_tracks, sample_layers, sample_nodes, sample_edges):

@@ -556,10 +556,10 @@ data_source_specialty:
   - id: DS03
     name: "iFinD（同花顺）/ 专业量化数据"
     type: "专业量化数据"
-    cost: "合同制（已有真实 SLA）"
+    cost: "合同制（试用账号2026-07到期未续费）"
     priority: P1
-    status: partial
-    trigger: "已有合同，接口待实现"
+    status: deprecated
+    trigger: "已退役2026-08-14(#ARCH-DATA-IFIND-RETIRE-001)：能力已全部迁至akshare/tushare/miniqmt免费源；未来做大规模时可重新采购正式版，接口经验见运维手册§2留痕"
     asset_class: [cn-stock, cn-fund, cn-futures]
 
   - id: DS04

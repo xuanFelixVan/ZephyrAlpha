@@ -1594,7 +1594,7 @@ def sync_dataflow_registry(cur):
 
     # --- 派生 edges ---
     # YAML 的 produced_by_job / consumed_by_jobs 字段使用 JOB-NNN 格式（YAML job_id），
-    # 不是 job_name（如 ingest.ifind_kline），故用 job_yaml_id_to_pg_id 映射查 PG job_id。
+    # 不是 job_name（如 ingest.minqmt_kline），故用 job_yaml_id_to_pg_id 映射查 PG job_id。
     # 1. Job→Dataset 产出（produced_by_job）→ edge_type=push
     synced_edges = 0
     for d in datasets:

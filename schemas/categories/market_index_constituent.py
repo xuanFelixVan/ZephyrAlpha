@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS c1_market.index_constituent
     symbol       String                 COMMENT 'symbol',
     weight       Decimal(8, 4)          COMMENT 'weight',
     action       String                 COMMENT 'action',
-    data_source  LowCardinality(String) DEFAULT 'ifind' COMMENT 'data_source',
+    data_source  LowCardinality(String) DEFAULT 'baostock' COMMENT 'data_source',
     valid_from   Date                   DEFAULT toDate(trade_date) COMMENT 'SCD-2生效起始日',
     valid_to     Nullable(Date)         COMMENT 'SCD-2生效终止日(NULL=当前有效)',
     updated_at   DateTime64(3, 'UTC')   DEFAULT now() COMMENT '记录更新时间',

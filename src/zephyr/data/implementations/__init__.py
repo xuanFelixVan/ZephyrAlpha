@@ -7,8 +7,7 @@
 每个 Provider 封装一个数据源 SDK，继承 IngestProviderBase。
 SDK import 在方法内部（懒加载），模块加载时不依赖具体 SDK 已安装。
 """
-from .ifind_provider import IFindProvider
 from .miniqmt_provider import MiniQmtIngestProvider
 from .akshare_provider import AkshareIngestProvider
 
-__all__ = ["IFindProvider", "MiniQmtIngestProvider", "AkshareIngestProvider"]
+__all__ = ["MiniQmtIngestProvider", "AkshareIngestProvider"]

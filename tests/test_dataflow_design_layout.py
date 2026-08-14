@@ -75,7 +75,7 @@ def sample_datasets():
 def sample_jobs():
     """3 个运营态 Job。"""
     return [
-        {"id": 10, "name": "ingest.ifind_kline", "scope": "production",
+        {"id": 10, "name": "ingest.akshare_kline", "scope": "production",
          "source": "src/zephyr/data/ingest.py", "trigger": "scheduled",
          "context": "production", "maturity": "production", "build": "generated"},
         {"id": 11, "name": "synthesize.signal", "scope": "production",

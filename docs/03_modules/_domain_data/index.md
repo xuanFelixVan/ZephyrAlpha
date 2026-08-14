@@ -26,7 +26,7 @@ ttl: permanent
 
 | 文档 | 说明 | SSoT 范围 |
 |------|------|----------|
-| [数据源操作手册](data_source_operation_manual.md) | iFind + miniQMT 可获取数据完整清单与获取方法，所有 API 调用方法均已实测验证固化 | 数据源 API 操作唯一真源——"怎么调用+参数坑" |
+| [数据源操作手册](data_source_operation_manual.md) | miniQMT/akshare/tushare 等可获取数据完整清单与获取方法，所有 API 调用方法均已实测验证固化（iFind 已退役 2026-08-14，§2 留痕摘要） | 数据源 API 操作唯一真源——"怎么调用+参数坑" |
 | 实盘数据清单 | 35 项实盘交易实时数据能力索引（数据源/延迟/限流/稳定性/读取速度），生成器 `tmp/generate_realtime_inventory.py` | 实盘数据能力唯一真源——"实盘能拿什么+多快" |
 
 **架构模型真源**：`docs/03_modules/_domain_data/blueprint.md`（Provider 抽象部分已移交 MOD-L00-004）

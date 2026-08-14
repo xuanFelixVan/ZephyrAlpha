@@ -295,8 +295,8 @@ entries:
 
   # ───────── entity_name：数据流 Job 实体名 ─────────
   - category: entity_name
-    en: ingest.ifind_kline
-    zh: 采集.iFind行情
+    en: ingest.minqmt_kline
+    zh: 采集.miniQMT日K线
   - category: entity_name
     en: aggregate.ohlc_bar
     zh: 聚合.OHLC K线
@@ -761,8 +761,8 @@ entries:
     en: income_statement
     zh: 利润表
   - category: table_name
-    en: industry_class_ifind
-    zh: iFind行业分类
+    en: industry_class_tushare
+    zh: tushare申万行业分类
   - category: table_name
     en: main_business
     zh: 主营业务构成

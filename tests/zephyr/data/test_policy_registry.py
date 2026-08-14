@@ -53,18 +53,11 @@ class TestSourcePolicy:
 
 class TestPolicyRegistry:
     def test_defaults_loaded(self):
-        """构造时自动加载 DEFAULT_POLICIES 的 8 个源。"""
+        """构造时自动加载 DEFAULT_POLICIES 的 7 个源。"""
         r = PolicyRegistry()
-        for src in ["ifind", "miniqmt", "akshare", "baostock",
+        for src in ["miniqmt", "akshare", "baostock",
                      "tushare", "tickflow", "tdx", "rss"]:
             assert src in r.list_sources()
-
-    def test_get_policy_ifind(self):
-        r = PolicyRegistry()
-        p = r.get_policy("ifind")
-        assert p.concurrency == 1
-        assert p.relogin_on_auth_error is True
-        assert "-4318" in p.extra.get("quota_error_codes", [])
 
     def test_get_policy_akshare(self):
         r = PolicyRegistry()
@@ -107,14 +100,9 @@ class TestPolicyRegistry:
 
 
 class TestDefaultPoliciesCompleteness:
-    """确保 DEFAULT_POLICIES 覆盖蓝图 §5.2 的 8 个数据源。"""
+    """确保 DEFAULT_POLICIES 覆盖蓝图 §5.2 的 7 个数据源。"""
 
-    def test_all_8_sources_present(self):
-        expected = {"ifind", "miniqmt", "akshare", "baostock",
+    def test_all_7_sources_present(self):
+        expected = {"miniqmt", "akshare", "baostock",
                     "tushare", "tickflow", "tdx", "rss"}
         assert expected == set(DEFAULT_POLICIES.keys())
-
-    def test_ifind_quota_codes(self):
-        p = SourcePolicy.from_dict(DEFAULT_POLICIES["ifind"])
-        assert "-4318" in p.extra["quota_error_codes"]
-        assert "-4309" in p.extra["quota_error_codes"]

@@ -2562,7 +2562,7 @@ entries:
   name_en: tasks
   desc_zh: 任务（tasks.yaml）
   desc_en: ''
-  plain_zh: 数据采集任务清单配置，定义首批 10 个任务的调度计划、DAG 依赖与数据源映射，覆盖 iFind/QMT/AKShare 三个 Provider。
+  plain_zh: 数据采集任务清单配置，定义首批 10 个任务的调度计划、DAG 依赖与数据源映射，覆盖 QMT/AKShare/Baostock 等 Provider。
 - module_path: src/zephyr/data/connectors/
   domain_id: D_DATA
   name_zh: 连接器
@@ -2619,13 +2619,6 @@ entries:
   desc_zh: 东方财富新闻数据源 Provider 实现（MOD-L00-004 §4.3）。
   desc_en: ''
   plain_zh: 东方财富新闻数据源 Provider 实现（MOD-L00-004 §4.3）。
-- module_path: src/zephyr/data/implementations/ifind_provider.py
-  domain_id: D_DATA
-  name_zh: ifind提供器
-  name_en: ifind_provider
-  desc_zh: IFindProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
-  desc_en: ''
-  plain_zh: IFindProvider 实现（MOD-L00-004 §4.3 数据源集成器）。
 - module_path: src/zephyr/data/implementations/miniqmt_provider.py
   domain_id: D_DATA
   name_zh: miniqmt提供器
@@ -41434,13 +41427,13 @@ battle_map_steps:
   flow_stage: stock_selection
   name_zh: 数据接入与预处理
   name_en: Data Ingestion & Preprocessing
-  plain_zh: 把 miniQMT/iFind/tushare 等外部行情、新闻、另类数据收进来洗干净存好，供后面所有环节使用。
-  mechanism_zh: 'L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/iFind/tushare 多源行情+新闻+另类数据接入清洗，写入 ClickHouse 主存+Parquet 冷归档（18号文档）+文件/Redis
+  plain_zh: 把 miniQMT/akshare/tushare 等外部行情、新闻、另类数据收进来洗干净存好，供后面所有环节使用。
+  mechanism_zh: 'L0 层入口。每个 miniQMT Tick（3秒）触发，把 miniQMT/akshare/tushare 多源行情+新闻+另类数据接入清洗，写入 ClickHouse 主存+Parquet 冷归档（18号文档）+文件/Redis
     缓存。是整个数据流主动脉的起点。🆕v8.1 L0 数据增强：FWT检索增强扩散 + GBM-Diffusion 数据增强（候选池，未施工）。
 
     '
   indicators_zh: '①触发：每 3 秒 Tick + 盘前定时；②消费：外部行情/新闻/另类数据；③参数：tick_frequency=3s、存储策略(ClickHouse主存+Parquet冷归档+文件/Redis缓存)、🆕v8.1数据增强=FWT检索增强扩散+GBM-Diffusion（候选池，未施工）；④数据流：外部源→接入清洗→ClickHouse主存/缓存→BM-SEL-02；⑤代码：C-001
-    L0 层；⑥降级：数据源断流→仅执行卖出指令。数据架构扩展：数据源含 miniQMT(xtdata/xttrader SDK)/iFind/tushare/BaoStock；存储=ClickHouse 主存+Parquet 冷归档（18号文档）+文件/Redis
+    L0 层；⑥降级：数据源断流→仅执行卖出指令。数据架构扩展：数据源含 miniQMT(xtdata/xttrader SDK)/akshare/tushare/BaoStock；存储=ClickHouse 主存+Parquet 冷归档（18号文档）+文件/Redis
     缓存；事件契约统一 TickEvent/SignalEvent/DecisionEvent/ExecutionEvent/RiskEvent/SystemEvent；🆕AI驱动异常检测（数据质量）；数据质量四维度=完整性Completeness/一致性Consistency/时效性Timeliness/可用性Availability（数据架构§10）。
 
     📌 概念覆盖清单（草稿H3逐字登记）：§29.4 时序数据库与分层存储架构（→A3数据架构）；§0.2 数据流全景图（接入→处理→存储→服务→质量→治理）；1.3 L0原始行情与L1标准化行情；§17.5 D-ML-TRAIN/D-ML-SERVE
@@ -44166,9 +44159,9 @@ battle_map_steps:
   flow_stage: stock_selection
   name_zh: 故障切换与Failover
   name_en: Failover & Fault Tolerance
-  plain_zh: 主数据源挂了手动切到备用源（iFind/akshare fallback）并重启恢复，尽量不让行情断流。
-  mechanism_zh: BM-SEL-01 数据接入的子环节。主源故障时手动切换备用源（iFind/akshare fallback）+重启恢复。是数据可用性的基础保障。
-  indicators_zh: ①触发：主源心跳超时/数据异常确认后人工介入；②消费：BM-SEL-01-B 连接器状态；③参数：备用源优先级（iFind/akshare fallback）、重启恢复流程；④数据流：主源异常→人工确认→手动切换备用源→重启恢复→下游恢复；⑤代码：MOD-MKT-004（D_MKT_DATA）；⑥降级：所有备用源都挂→仅执行卖出指令（保护性降级）。
+  plain_zh: 主数据源挂了手动切到备用源（akshare/tushare fallback）并重启恢复，尽量不让行情断流。
+  mechanism_zh: BM-SEL-01 数据接入的子环节。主源故障时手动切换备用源（akshare/tushare fallback）+重启恢复。是数据可用性的基础保障。
+  indicators_zh: ①触发：主源心跳超时/数据异常确认后人工介入；②消费：BM-SEL-01-B 连接器状态；③参数：备用源优先级（akshare/tushare fallback）、重启恢复流程；④数据流：主源异常→人工确认→手动切换备用源→重启恢复→下游恢复；⑤代码：MOD-MKT-004（D_MKT_DATA）；⑥降级：所有备用源都挂→仅执行卖出指令（保护性降级）。
 - step_id: BM-SEL-01-D
   flow_stage: stock_selection
   name_zh: 自动加载与热切换
@@ -45294,7 +45287,7 @@ battle_map_steps:
   mechanism_zh: 采集源分类(官方数据源/新闻媒体/另类数据/社交媒体)+采集调度(限流策略/QPS分配/优先级队列/去重策略)。确保采集不漏不重不超限。
   indicators_zh: ①触发：研究知识采集需按源类型分类并按调度策略拉取，避免QPS超限/数据缺失；②消费：多源接入配置(研报/新闻/公告/财报/社交媒体/另类数据) + QPS配额；③参数：采集源分类6类(研报/新闻/公告/财报/社交/另类)
     + 调度策略(优先级+QPS分配+重试+增量) + v4.0采集增强(智能去重/相关性预筛) + 输出契约(原始知识+元数据)；④数据流：源配置→调度拉取→原始多模态知识+元数据→下游BM-RES-08-A清洗；⑤代码映射：待开发（planned，D_RESEARCH/D_INTELLIGENCE域，C-022/C-044
-    iFind QPS协同）；⑥降级：主源失效→自动切换备用源(akshare/tushare)；调度超限→降级QPS+延后非优先源。
+    miniQMT/akshare/tushare QPS协同）；⑥降级：主源失效→自动切换备用源(akshare/tushare)；调度超限→降级QPS+延后非优先源。
 - step_id: BM-RC-09
   flow_stage: risk_control
   name_zh: AI/Agent风险治理
@@ -45621,37 +45614,37 @@ battle_map_cross_cutting:
   event_types:
   - level: 公司级
     types: 突发公告/停牌复牌/问询函/大股东增减持/涨跌停/可转债异动
-    source: iFind+miniQMT
+    source: akshare+miniQMT
     scope: 个股→板块
     recompute: 个股+高相关标的
     latency: <5秒
   - level: 行业级
     types: 产业政策突变/行业突发事件/行业数据发布
-    source: iFind+新闻
+    source: akshare+新闻
     scope: 板块
     recompute: 板块内全部标的
     latency: <5秒
   - level: 区域传导
     types: 日韩股市异动/港股异动/台海事件
-    source: iFind
+    source: 商业数据源(待采购)
     scope: 全市场/板块
     recompute: C-039传导路径
     latency: <5秒
   - level: 全球宏观
     types: 美股期货异动/VIX异动/欧洲股市开盘
-    source: iFind
+    source: 商业数据源(待采购)
     scope: 全市场
     recompute: 全量重算
     latency: <5秒
   - level: 货币商品
     types: 人民币汇率异动/大宗商品异动/国债收益率/央行操作
-    source: iFind
+    source: 商业数据源(待采购)+FRED/EIA
     scope: 全市场/板块
     recompute: C-039传导路径
     latency: <5秒
   - level: 情绪资金
     types: 北向异动/分析师评级/社交媒体/ETF申赎/融资融券
-    source: iFind+miniQMT
+    source: akshare+miniQMT
     scope: 全市场/个股
     recompute: 视影响范围
     latency: <5秒

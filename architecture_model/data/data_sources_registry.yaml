@@ -12,11 +12,16 @@
 # 同步到 DB data_source_assets 表,派生 asset_catalog.md;派生 policies.yaml(generate_policies.py)
 
 module_id: MOD-L00-001
-version: "2.2.0"
-description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。"
+version: "2.3.0"
+description: "外部数据源资产清单真源。从 data_source_operation_manual.md 提取结构化数据,同步到 DB 供 AI 高频查询。#183 合并调用策略到 policy 字段,policies.yaml 改为派生物。v2.1.0: 新增 account_type 顶层字段;DS-IFIND policy.extra 修正 monthly→weekly 配额+补齐 EDB 配额详情(5万条/周/试用版=正式版)。v2.2.0: 补登 DS-CLS(财联社电报,RSSHub路由)和 DS-EASTMONEY_NEWS(东方财富7x24快讯,HTTP直连),修复 policy_registry 运行时无注册策略 WARNING。v2.3.0: DS-IFIND 退役(#ARCH-DATA-IFIND-RETIRE-001,2026-08-14 用户裁定彻底删除+留痕)——provider 代码/tasks/policies/健康检查全项目切除,本条仅留痕。"
 
 data_sources:
   - id: DS-IFIND
+    # 已退役(2026-08-14 #ARCH-DATA-IFIND-RETIRE-001): 试用账号到期不续费,provider 代码/任务/策略全项目切除。
+    # 能力迁移: money_flow→tushare; industry_class/industry_class_suppl→tushare; concept_sector/realtime_snapshot/sector_meta→akshare;
+    #          EDB宏观→akshare macro_data+FRED/EIA; kline_daily→miniqmt(baostock fallback); daily_valuation→akshare。
+    # 已知损失: industry_zsi(同花顺行业)无替代源留 NULL; edb_data 表从未产出(0 行)停止更新。
+    # 恢复路径: git 历史检索 src/zephyr/data/implementations/ifind_provider.py(删除前 2396 行)。
     runtime_id: ifind
     name: "同花顺iFind"
     name_en: "THS iFind"
@@ -29,26 +34,11 @@ data_sources:
     auth_required: true
     auth_method: "THS_iFinDLogin(同进程内调用)"
     rate_limit: "需登录,无明确QPS限制"
-    status: active
-    coverage: "A股K线/Tick/板块/财务/宏观/研报"
+    status: deprecated
+    coverage: "A股K线/Tick/板块/财务/宏观/研报(已退役2026-08-14,试用账号到期;能力已全部迁至akshare/tushare/miniqmt)"
     owner: ZephyrAlpha-Owner
-    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §2"
-    policy:
-      rpm: 0
-      concurrency: 1
-      max_retries: 3
-      backoff: exponential
-      initial_wait_sec: 2.0
-      retry_on: ["-201", "TimeoutError", "ConnectionError"]
-      session_ttl_sec: 86400
-      relogin_on_auth_error: true
-      extra:
-        weekly_quota_alert: true
-        quota_error_codes: ["-4318", "-4309", "-4210", "-5100", "-4216"]
-        edb_quota_per_week: 50000
-        quota_reset_cycle: "weekly_monday"
-        quota_unit: "cell"
-        trial_equals_formal_edb: true
+    operation_manual: "docs/03_modules/_domain_data/data_source_operation_manual.md §2(已退役留痕)"
+    policy: {}
 
   - id: DS-MINIQMT
     runtime_id: miniqmt

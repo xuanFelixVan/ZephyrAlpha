@@ -53,7 +53,7 @@ log = logging.getLogger(__name__)
 
 # Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）
 _TBL_NEWS_DATA = get_registry().table("fund_news_data")
-# #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+# #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
 _TBL_INDUSTRY_CLASS = get_registry().table("market_industry_class")
 _TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
 # 2026-08-14 东财反爬治本：LOF 列表替代源（fund_lof_spot_em 持续 RemoteDisconnected）
@@ -392,7 +392,7 @@ class TushareProvider(IngestProviderBase):
                 if name:
                     rows.append((symbol, name, None, level_num, None))
 
-        self._log.info(f"industry_class: {len(rows)} 行（tushare 替代 iFind）")
+        self._log.info(f"industry_class: {len(rows)} 行（tushare）")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=today_str, elapsed_sec=seconds_since(t0),
@@ -431,7 +431,7 @@ class TushareProvider(IngestProviderBase):
             if full_path:
                 rows.append((symbol, full_path, None, 0, "tushare"))
 
-        self._log.info(f"industry_class_suppl: {len(rows)} 行（tushare 替代 iFind）")
+        self._log.info(f"industry_class_suppl: {len(rows)} 行（tushare）")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=today_str, elapsed_sec=seconds_since(t0),

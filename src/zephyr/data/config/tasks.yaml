@@ -3,10 +3,10 @@
 # [DOMAIN] D_DATA
 # [TTL] permanent
 # 任务清单真源（蓝图 §6.2 调度计划 + §4.4 迁移映射表）
-# 首批 10 任务覆盖 3 个 Provider（iFind/QMT/AKShare）和 2 个调度时段
+# 首批 10 任务覆盖 3 个 Provider（QMT/AKShare/Baostock）和 2 个调度时段
 # schedule 字段对应 schedule.yaml 的时段标识：daily_kline/daily_capital/daily_event/weekend_financial/monthly_static
 # dependencies 是同批次内的前置任务 task_id（DAG 依赖，蓝图 §6.3）
-# source 字段引用 data_sources_registry.yaml 的 runtime_id（如 ifind → DS-IFIND.runtime_id）
+# source 字段引用 data_sources_registry.yaml 的 runtime_id（如 miniqmt → DS-MINIQMT.runtime_id）
 # 数据源调用策略不在本文件维护，真源在 data_sources_registry.yaml 的 policy 字段（派生 policies.yaml）
 #
 # fallback_sources 配置模板（数据韧性三层机制§1，2026-07-15）：
@@ -32,8 +32,6 @@ tasks:
     description: "复权因子增量（miniQMT get_divid_factors）"
 
   fallback_sources:
-  - source: ifind
-    capability: adj_factor
   - source: akshare
     capability: adj_factor
 - task_id: kline_daily_hfq_incremental
@@ -49,8 +47,6 @@ tasks:
     description: "后复权日K线增量（miniQMT dividend_type=back）"
 
   fallback_sources:
-  - source: ifind
-    capability: kline_daily_hfq
   - source: akshare
     capability: kline_daily_hfq
 - task_id: kline_daily_incremental
@@ -66,24 +62,19 @@ tasks:
   - source: baostock
     capability: kline_daily
   extra:
-    description: "不复权日K线增量（miniQMT，保留 iFind 配额给专属数据；baostock 作为 fallback）"
+    description: "不复权日K线增量（miniQMT；baostock 作为 fallback）"
 
 - task_id: daily_valuation_incremental
   table: c1_market.daily_valuation
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，akshare 转正为正式主源
   schedule: daily_kline
   incremental: true
   date_col: trade_date
   dependencies: ["kline_daily_incremental"]    # DAG: kline_daily -> daily_valuation
   capability: daily_valuation
   symbols:
-  fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: daily_valuation
-  - source: akshare
-    capability: daily_valuation
   extra:
-    description: "每日估值（PE/PB/PS/PCF）增量（iFind 主源；akshare 作为 fallback）"
+    description: "每日估值（PE/PB/PS/PCF）增量（akshare 主源）"
 
 - task_id: kline_index_incremental
   table: c1_market.kline_index
@@ -95,12 +86,10 @@ tasks:
   capability: kline_index
   symbols:
   extra:
-    description: "指数日K线增量（miniQMT 沪深指数 609 只，iFind 补齐其余）"
+    description: "指数日K线增量（miniQMT 沪深指数 609 只）"
 
   # ============== 盘后资金时段（17:00 周一-五）==============
   fallback_sources:
-  - source: ifind
-    capability: kline_index
   - source: akshare
     capability: kline_index
 - task_id: margin_trading_incremental
@@ -178,9 +167,6 @@ tasks:
   extra:
     description: "宏观数据增量"
 
-  fallback_sources:
-  - source: ifind
-    capability: macro_data
 - task_id: money_flow_incremental
   table: c1_market.money_flow
   source: tushare          # 东财反爬治本(2026-08-14): akshare stock_individual_fund_flow(东财push2)持续RemoteDisconnected，tushare pro.moneyflow 升主源(实测5540行/日)
@@ -192,8 +178,6 @@ tasks:
   symbols:
   fallback_sources:
   - source: akshare           # 东财源降为fallback（反爬解除后可恢复）
-    capability: money_flow
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
     capability: money_flow
   extra:
     description: "资金流向增量（tushare pro.moneyflow 主源；akshare stock_individual_fund_flow 作为 fallback）"
@@ -283,8 +267,6 @@ tasks:
     description: "周K线增量（miniQMT 日K聚合 resample W）"
 
   fallback_sources:
-  - source: ifind
-    capability: kline_weekly
   - source: akshare
     capability: kline_weekly
 - task_id: kline_monthly_incremental
@@ -300,8 +282,6 @@ tasks:
     description: "月K线增量（miniQMT 日K聚合 resample M）"
 
   fallback_sources:
-  - source: ifind
-    capability: kline_monthly
   - source: akshare
     capability: kline_monthly
 - task_id: kline_1min_incremental
@@ -511,8 +491,6 @@ tasks:
     description: "后复权周K线增量（miniQMT 后复权日K聚合 resample W）"
 
   fallback_sources:
-  - source: ifind
-    capability: kline_weekly_hfq
   - source: akshare
     capability: kline_weekly_hfq
 - task_id: kline_monthly_hfq_incremental
@@ -529,8 +507,6 @@ tasks:
 
   # ============== 盘后事件时段（18:00 周一-五）==============
   fallback_sources:
-  - source: ifind
-    capability: kline_monthly_hfq
   - source: akshare
     capability: kline_monthly_hfq
 - task_id: news_data_incremental
@@ -585,9 +561,6 @@ tasks:
   extra:
     description: "分析师一致预期增量（同花顺一致预期EPS）"
 
-  fallback_sources:
-  - source: ifind
-    capability: analyst_forecast
 - task_id: earnings_forecast_incremental
   table: c3_fundamental.earnings_forecast
   source: miniqmt
@@ -600,9 +573,6 @@ tasks:
   extra:
     description: "盈利预测增量（QMT ProfitForecast表）"
 
-  fallback_sources:
-  - source: ifind
-    capability: earnings_forecast
 - task_id: express_report_incremental
   table: c3_fundamental.express_report
   source: miniqmt
@@ -627,12 +597,10 @@ tasks:
   extra:
     description: "审计意见增量（AKShare 财报附属字段 OPINION_TYPE）"
     disabled: true
-    disabled_reason: "AKShare 暂无专用批量审计意见接口，仅能从财报摘要逐股获取，效率过低。待 iFind 等数据源补齐后启用。"
+    disabled_reason: "AKShare 暂无专用批量审计意见接口，仅能从财报摘要逐股获取，效率过低。待商业数据源补齐后启用。"
 
   fallback_sources:
   - source: miniqmt
-    capability: audit_opinion
-  - source: ifind
     capability: audit_opinion
 - task_id: dividend_incremental
   table: c3_fundamental.dividend
@@ -646,9 +614,6 @@ tasks:
   extra:
     description: "分红送股增量（QMT get_divid_factors）"
 
-  fallback_sources:
-  - source: ifind
-    capability: dividend
 - task_id: rights_issue_incremental
   table: c3_fundamental.rights_issue
   source: akshare
@@ -701,8 +666,6 @@ tasks:
     description: "资产负债表增量"
 
   fallback_sources:
-  - source: ifind
-    capability: balance_sheet
   - source: akshare
     capability: balance_sheet
 - task_id: income_statement_incremental
@@ -718,8 +681,6 @@ tasks:
     description: "利润表增量"
 
   fallback_sources:
-  - source: ifind
-    capability: income_statement
   - source: akshare
     capability: income_statement
 - task_id: cashflow_statement_incremental
@@ -735,8 +696,6 @@ tasks:
     description: "现金流量表增量"
 
   fallback_sources:
-  - source: ifind
-    capability: cashflow_statement
   - source: akshare
     capability: cashflow_statement
 - task_id: financial_indicator_incremental
@@ -752,8 +711,6 @@ tasks:
     description: "财务指标增量（QMT Capital表）"
 
   fallback_sources:
-  - source: ifind
-    capability: financial_indicator
   - source: akshare
     capability: financial_indicator
 - task_id: main_business_incremental
@@ -768,25 +725,16 @@ tasks:
   extra:
     description: "主营业务增量"
 
-  fallback_sources:
-  - source: ifind
-    capability: main_business
 - task_id: industry_class_refresh
   table: c1_market.industry_class
-  source: tushare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，tushare升为主源
+  source: tushare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，tushare 转正为正式主源
   schedule: weekend_calibration
   incremental: false    # 全量重建
   dependencies: []
   capability: industry_class
   symbols:
   extra:
-    description: "申万行业分类全量刷新（ifind i问财 + -- split level 1/2/3）"
-
-  fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: industry_class
-  - source: tushare          # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（index_classify + index_member）
-    capability: industry_class
+    description: "申万行业分类全量刷新（tushare index_classify + index_member）"
 - task_id: kline_sector_incremental
   table: c1_market.kline_sector
   source: tdx
@@ -801,9 +749,6 @@ tasks:
     period: 1d
     count: 100
 
-  fallback_sources:
-  - source: ifind
-    capability: kline_sector
 - task_id: option_iv_surface_incremental
   table: c1_market.option_iv_surface
   source: miniqmt
@@ -817,8 +762,6 @@ tasks:
     description: "期权IV曲面增量（QMT 662期权+Greeks，IV需自己计算）"
 
   fallback_sources:
-  - source: ifind
-    capability: option_iv_surface
   - source: akshare
     capability: option_iv_surface
 - task_id: convertible_bond_iv_incremental
@@ -833,9 +776,6 @@ tasks:
   extra:
     description: "可转债IV增量（QMT 152可转债，IV需自己计算）"
 
-  fallback_sources:
-  - source: ifind
-    capability: convertible_bond_iv
 - task_id: futures_term_structure_incremental
   table: c1_market.futures_term_structure
   source: tushare          # QMT期货板块为空治本(2026-08-14): 模拟账户无期货板块，tushare fut_daily 升主源(实测1074合约/日)
@@ -881,55 +821,32 @@ tasks:
   extra:
     description: "指数3秒实时行情快照"
 
-- task_id: edb_data_incremental
-  table: c1_market.edb_data
-  source: ifind
-  disabled: true    # ifind到期且无fallback，暂时禁用
-  schedule: event_driven
-  incremental: true
-  date_col: report_date
-  dependencies: []
-  capability: edb_data
-  symbols:         # 关键指标列表在 Provider 内配置（约 50-100 个，CPI/PPI/PMI/M0/M1/M2/GDP/社融/利率等）
-  extra:
-    description: "EDB宏观数据增量（iFind THS_EDBQuery，约50-100个关键指标，配额5万条/周）"
-    disabled: true    # iFind EDB 月度配额耗尽(-4318)：试用账号5万条/月不足以拉104个宏观指标全历史。iFinDPy SDK 已于2026-07-23修复（pip install iFinDAPI 0.0.8 + 补 iFinDPy.py 到 site-packages），Python312 登录返回0、EDB通信正常，但配额限制持续存在。edb_data 表至今 0 行。修复路径：升级iFind付费版EDB配额；等下月配额重置后可临时移除本行测试。
+  # EDB宏观数据任务已退役（2026-08-14 #ARCH-DATA-IFIND-RETIRE-001）：iFind 试用账号配额耗尽且数据源整体退役，
+  # edb_data 表从未产出（0 行）。宏观数据由 macro_data 任务（akshare/FRED/EIA）覆盖。
 
-  # ============== iFind 新增能力（concept_sector / realtime_snapshot，2026-07-11）==============
+  # ============== 概念板块/实时快照（2026-07-11 新增，原 iFind 能力已迁 akshare）==============
 - task_id: concept_sector_refresh
   table: c1_market.concept_sector
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，akshare 转正为正式主源
   schedule: monthly_static    # 概念板块列表低频变化，月初刷新
   incremental: false    # 全量重建
   dependencies: []
   capability: concept_sector
-  symbols:         # 全市场查询（THS_iwencai）
+  symbols:         # 全市场查询
   extra:
-    description: "概念板块列表全量刷新（iFind THS_iwencai 查询'概念板块'，解析'所属概念'字段提取唯一板块名）"
-
-  fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: concept_sector
-  - source: akshare           # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（stock_board_concept_name_ths）
-    capability: concept_sector
+    description: "概念板块列表全量刷新（akshare stock_board_concept_name_ths）"
 
 - task_id: realtime_snapshot_incremental
   table: c1_market.realtime_snapshot
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，akshare 转正为正式主源
   schedule: intraday_realtime    # 盘中每5分钟抓取实时快照（9:00-15:59），盘后/非交易日返回-4001自动跳过
   incremental: true
   date_col: snapshot_time
   dependencies: []
   capability: realtime_snapshot
-  symbols:         # null=全A股（THS_DataPool），也可指定标的列表
+  symbols:         # null=全A股，也可指定标的列表
   extra:
-    description: "实时行情快照增量（iFind THS_RealtimeQuotes，OHLCV+成交额，分批50个标的；非交易时段返回-4001属正常）"
-
-  fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: realtime_snapshot
-  - source: akshare           # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（stock_zh_a_spot 新浪源，非东财）
-    capability: realtime_snapshot
+    description: "实时行情快照增量（akshare stock_zh_a_spot 新浪源，全市场一次返回）"
 
   # ============== 静态数据月初刷新（每月1日 09:00）==============
 - task_id: trade_calendar_refresh
@@ -959,8 +876,6 @@ tasks:
   fallback_sources:
   - source: akshare
     capability: stock_list
-  - source: ifind
-    capability: stock_list
 - task_id: stock_list_delisted_refresh
   table: c1_market.stock_list
   source: akshare
@@ -974,9 +889,6 @@ tasks:
     trading_day_only: false    # akshare 源，非交易日也可调用
     update_mode: upsert    # 仅更新 list_status='退市' 的记录，不覆盖在市股
 
-  fallback_sources:
-  - source: ifind
-    capability: stock_list_delisted
 - task_id: index_constituent_refresh
   table: c1_market.index_constituent
   source: baostock
@@ -991,24 +903,16 @@ tasks:
   fallback_sources:
   - source: akshare
     capability: index_constituent
-  - source: ifind
-    capability: index_constituent
 - task_id: industry_class_suppl_refresh
   table: c3_fundamental.industry_class_suppl
-  source: tushare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，tushare升为主源
+  source: tushare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，tushare 转正为正式主源
   schedule: monthly_static
   incremental: false
   dependencies: []
   capability: industry_class_suppl
   symbols:
   extra:
-    description: "申万/中证行业分类全量刷新（iFind THS_DataPool）"
-
-  fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: industry_class_suppl
-  - source: tushare          # #ARCH-IFIND-FAILOVER: iFind 不可用时切换（index_classify + index_member）
-    capability: industry_class_suppl
+    description: "申万/中证行业分类全量刷新（tushare index_classify）"
 
 - task_id: kline_daily_full_refresh
   table: c1_market.kline_daily
@@ -1022,8 +926,6 @@ tasks:
     description: "日K线全量刷新（miniQMT，原降级源 baostock 已替换）"
 
   fallback_sources:
-  - source: ifind
-    capability: kline_daily
   - source: akshare
     capability: kline_daily
 - task_id: macro_data_full_refresh
@@ -1038,8 +940,6 @@ tasks:
     description: "宏观数据全量刷新（GDP/CPI/PMI/货币供应量）"
 
   fallback_sources:
-  - source: ifind
-    capability: macro_data
 
   # --- EIA 能源数据（2026-08-04 新增，#ARCH-EDB-EXPAND）---
   # EIA API v2：免费需注册 key，石油库存/价格/天然气库存
@@ -1112,24 +1012,18 @@ tasks:
   fallback_sources:
   - source: akshare           # 东财源降为fallback（反爬解除后可恢复）
     capability: money_flow
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: money_flow
 - task_id: daily_valuation_full_refresh
   table: c1_market.daily_valuation
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，akshare 转正为正式主源
   schedule: weekend_calibration
   incremental: false
   dependencies: []
   capability: daily_valuation
   symbols:
   extra:
-    description: "估值数据全量刷新（iFind 批量主源 THS_BasicData 200只/次；akshare 并行 fallback）"
+    description: "估值数据全量刷新（akshare 并行主源；miniqmt/local_valuation fallback）"
 
   fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: daily_valuation
-  - source: akshare
-    capability: daily_valuation
   - source: miniqmt
     capability: daily_valuation
   - source: local_valuation
@@ -1211,9 +1105,6 @@ tasks:
   extra:
     description: "AKShare个股新闻增量（ak.stock_news_em）"
 
-  fallback_sources:
-  - source: ifind
-    capability: stock_news_em
 - task_id: news_cctv_incremental
   table: c3_fundamental.news_data
   source: akshare
@@ -1227,9 +1118,6 @@ tasks:
   extra:
     description: "AKShare央视新闻联播增量（ak.news_cctv）"
 
-  fallback_sources:
-  - source: ifind
-    capability: news_cctv
 - task_id: news_economic_baidu_incremental
   table: c3_fundamental.news_data
   source: akshare
@@ -1243,9 +1131,6 @@ tasks:
   extra:
     description: "AKShare百度经济日历增量（ak.news_economic_baidu）"
 
-  fallback_sources:
-  - source: ifind
-    capability: news_economic_baidu
 - task_id: news_baidu_incremental
   table: c3_fundamental.news_data
   source: akshare
@@ -1259,9 +1144,6 @@ tasks:
   extra:
     description: "AKShare百度热搜新闻增量（ak.news_baidu）"
 
-  fallback_sources:
-  - source: ifind
-    capability: news_baidu
 - task_id: news_stock_incremental
   table: c3_fundamental.news_data
   source: akshare
@@ -1276,9 +1158,6 @@ tasks:
     description: "AKShare股票新闻增量（ak.stock_news_global_em）"
 
   # --- Tushare 新闻增量（写入 news_data 统一表，2026-07-11 新增）---
-  fallback_sources:
-  - source: ifind
-    capability: news_stock
 - task_id: news_tushare_incremental
   table: c3_fundamental.news_data
   source: tushare
@@ -1310,9 +1189,6 @@ tasks:
     description: "AKShare限售股明细增量（ak.stock_restricted_release_detail_em，含解禁日期/解禁数量/解禁市值）"
 
   # --- 研报 & 北向资金 & 期货主力合约（2026-07-11 新增）---
-  fallback_sources:
-  - source: ifind
-    capability: restricted_shares
 - task_id: research_report_incremental
   table: c3_fundamental.news_data
   source: akshare
@@ -1326,9 +1202,6 @@ tasks:
   extra:
     description: "AKShare东方财富个股研报增量（ak.stock_research_report_em，含机构评级+盈利预测+PDF链接）"
 
-  fallback_sources:
-  - source: ifind
-    capability: research_report
 - task_id: hk_connect_flow_full
   table: c1_market.hk_connect_flow
   source: akshare
@@ -1467,9 +1340,6 @@ tasks:
   extra:
     description: "期权Greeks增量（miniQMT get_option_detail_data + Black-Scholes计算delta/gamma/theta/vega）"
 
-  fallback_sources:
-  - source: ifind
-    capability: option_greeks
 - task_id: index_weight_refresh
   table: c1_market.index_weight
   source: miniqmt
@@ -1485,8 +1355,6 @@ tasks:
   fallback_sources:
   - source: akshare
     capability: index_weight
-  - source: ifind
-    capability: index_weight
 - task_id: sector_list_refresh
   table: c1_market.sector_list
   source: miniqmt
@@ -1499,9 +1367,6 @@ tasks:
     description: "板块成分股列表全量刷新（miniQMT get_stock_list_in_sector，默认沪深A股）"
     trading_day_only: true    # miniqmt 源，非交易日 QMT 服务器拒绝连接(error 10061)，月初遇周末跳过
 
-  fallback_sources:
-  - source: ifind
-    capability: sector_list
 - task_id: l2_tick_snapshot
   table: c1_market.l2_tick
   source: miniqmt
@@ -1697,9 +1562,6 @@ tasks:
   extra:
     description: "可转债列表全量刷新（AKShare stock_zh_cb_em）"
 
-  fallback_sources:
-  - source: ifind
-    capability: convertible_bond_list
 - task_id: etf_list_refresh
   table: c1_market.etf_list
   source: akshare
@@ -1711,9 +1573,6 @@ tasks:
   extra:
     description: "ETF基金列表全量刷新（AKShare fund_etf_category_sina）"
 
-  fallback_sources:
-  - source: ifind
-    capability: etf_list
 - task_id: lof_list_refresh
   table: c1_market.lof_list
   source: tushare          # 东财反爬治本(2026-08-14): akshare fund_lof_spot_em 持续 RemoteDisconnected，tushare fund_basic(market=E) 升主源
@@ -1727,8 +1586,6 @@ tasks:
 
   fallback_sources:
   - source: akshare           # 东财源降为fallback（反爬解除后可恢复主源）
-    capability: lof_list
-  - source: ifind
     capability: lof_list
 - task_id: hk_stock_list_refresh
   table: c1_market.hk_stock_list
@@ -1763,9 +1620,6 @@ tasks:
   extra:
     description: "指数列表全量刷新（AKShare stock_info_index_name_code）"
 
-  fallback_sources:
-  - source: ifind
-    capability: index_list
 - task_id: etf_benchmark_refresh
   table: c1_market.etf_benchmark
   source: akshare
@@ -1778,12 +1632,9 @@ tasks:
     description: "ETF基准列表全量刷新（AKShare fund_etf_fund_info_em，依赖etf_list）"
 
   # ============== 通达信静态表持续更新（2026-07-11）==============
-  fallback_sources:
-  - source: ifind
-    capability: etf_benchmark
 - task_id: sector_meta_refresh
   table: c1_market.sector_meta
-  source: akshare          # #ARCH-IFIND-FAILOVER: ifind到期降为fallback，akshare升为主源
+  source: akshare          # #ARCH-IFIND-FAILOVER: ifind 已于 2026-08-14 退役，akshare 转正为正式主源
   schedule: daily_kline
   incremental: true
   date_col: trade_date
@@ -1791,13 +1642,7 @@ tasks:
   capability: sector_meta
   symbols:
   extra:
-    description: "通达信板块信息持续更新（iFind THS_WC问财接口获取881二级行业板块总市值/流通市值/成分股数量/总股本）"
-
-  fallback_sources:
-  - source: ifind             # ifind到期降为fallback（续费后可恢复为主源）
-    capability: sector_meta
-  - source: akshare           # #ARCH-IFIND-FAILOVER 方案B: iFind 不可用时切换（同花顺行业双接口 name_ths+summary_ths）
-    capability: sector_meta
+    description: "板块信息持续更新（akshare 同花顺行业双接口 name_ths+summary_ths，板块总市值/流通市值/成分股数量）"
 
   # ============== L10 周末补下载层（周日 02:00）==============
   # 不依赖 last_key，直接查 ClickHouse 实际行数检测缺失，精准补下载
@@ -2000,9 +1845,6 @@ tasks:
   extra:
     description: "分析师预期全量刷新（AKShare，5年历史回补）"
 
-  fallback_sources:
-  - source: ifind
-    capability: analyst_forecast
 - task_id: stock_indicator_full_refresh
   table: c1_market.stock_indicator
   source: akshare
@@ -2050,9 +1892,6 @@ tasks:
   extra:
     description: "ETF净值全量刷新（AKShare fund_etf_fund_info_em，5年历史回补）"
 
-  fallback_sources:
-  - source: ifind
-    capability: etf_nav
 - task_id: repurchase_full_refresh
   table: c3_fundamental.repurchase
   source: akshare

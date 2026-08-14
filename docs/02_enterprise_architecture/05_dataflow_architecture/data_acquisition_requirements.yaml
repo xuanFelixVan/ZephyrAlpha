@@ -21,5 +21,5 @@ requirements:
   # === L9 宏观层空表 ===
   edb_data:
     priority: P2
-    need: "EDB宏观数据（iFind经济数据库）"
-    availability: "已验证(iFind EDB)"
+    need: "EDB宏观数据（原iFind经济数据库，已退役2026-08-14）"
+    availability: "已由 akshare macro_data + FRED/EIA 替代（#ARCH-DATA-IFIND-RETIRE-001）"

@@ -110,7 +110,7 @@ _TBL_BLOCK_TRADE = get_registry().table("market_block_trade")
 _TBL_BLOCK_TRADE_DETAIL = get_registry().table("market_block_trade_detail")
 _TBL_CONCEPT_BOARD = get_registry().table("market_concept_board")
 _TBL_CONCEPT_BOARD_CONSTITUENT = get_registry().table("market_concept_board_constituent")
-# #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+# #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
 _TBL_CONCEPT_SECTOR = get_registry().table("market_concept_sector")
 _TBL_REALTIME_SNAPSHOT = get_registry().table("market_realtime_snapshot")
 _TBL_SECTOR_META = get_registry().table("market_sector_meta")
@@ -173,7 +173,7 @@ _AKSHARE_CAPABILITIES = frozenset({
     "hog_province_spot",  # 分省生猪现价（akshare spot_hog_soozhu）
     "stock_list_delisted",  # #ARCH-CH-021 P0-1: 退市股票列表（SH+SZ delist）
     "futures_position",  # #ARCH-FUTURES-POSITION: 替代 QMT（QMT get_instrument_detail 返回全0）
-    # #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+    # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
     "concept_sector",      # 替代 iFind i问财概念板块（akshare stock_board_concept_name_ths）
     "realtime_snapshot",   # 替代 iFind THS_RealtimeQuotes（akshare stock_zh_a_spot_em，注意反爬）
     "sector_meta",         # 替代 iFind 881板块汇总（akshare 从成分股聚合计算）
@@ -370,7 +370,7 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("hog_spot_index", supports_symbols_null=True),
             CapabilityContract("hog_futures_core", supports_symbols_null=True),
             CapabilityContract("hog_province_spot", supports_symbols_null=True),
-            # #ARCH-IFIND-FAILOVER: iFind 备用数据源（试用账号不可用时自动切换）
+            # #ARCH-IFIND-FAILOVER: 承接原 iFind 能力（iFind 已于 2026-08-14 退役，本源为正式主承担）
             CapabilityContract("concept_sector", supports_symbols_null=True),
             CapabilityContract("realtime_snapshot", supports_symbols_null=True),
             CapabilityContract("sector_meta", supports_symbols_null=True),
@@ -3060,7 +3060,7 @@ class AkshareIngestProvider(IngestProviderBase):
                     continue
                 rows.append((sector_code, sector_name, "akshare"))
 
-        self._log.info(f"concept_sector: {len(rows)} 个概念板块（akshare 替代 iFind）")
+        self._log.info(f"concept_sector: {len(rows)} 个概念板块（akshare）")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=iso_date, elapsed_sec=seconds_since(t0),
@@ -3132,7 +3132,7 @@ class AkshareIngestProvider(IngestProviderBase):
                     "akshare",
                 ))
 
-        self._log.info(f"realtime_snapshot: {len(rows)} 行（akshare 替代 iFind）")
+        self._log.info(f"realtime_snapshot: {len(rows)} 行（akshare）")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=now_str, elapsed_sec=seconds_since(t0),
@@ -3214,7 +3214,7 @@ class AkshareIngestProvider(IngestProviderBase):
             ))
 
         self._log.info(
-            f"sector_meta: {len(rows)} 个板块（同花顺行业，替代 iFind 881）"
+            f"sector_meta: {len(rows)} 个板块（同花顺行业）"
         )
         yield FetchResult(
             table=table, columns=columns, rows=rows,
