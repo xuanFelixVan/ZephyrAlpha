@@ -5,8 +5,8 @@ title: BudgetChangeHandler 三级升级
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
-date: 2026-08-14
+version: "1.1.1"
+date: 2026-08-15
 topic: budget_change_handler
 scope: 07_trading_decision_architecture
 ---
@@ -137,11 +137,10 @@ why 三级而非直接强砍（30 号 L209-212 裁定）：①尊重策略自主
 - [x] ⑥ **每级独立 log/复盘**——🟧 部分：instructions_issued 内存留痕 + action 中文字符串已具备，但无 logger/事件总线发射——**待决策**：接入统一日志的时机（随 G26 复盘编排一并做？）。
 
 **代码层新发现问题（登记待处理，不属原六要点）**：
-1. ~~测试为零~~ ✅ 已修复——补 33 条测试 `tests/position/test_budget_change_handler.py`（2 轮 0 错误），AI-BGT-001 施工完成。30 号表述漂移登记越界修正（见 §7）。
-2. ~~错误码撞号~~ ✅ 已修复——BudgetChangeError ZA-POS-0022 → ZA-POS-0040；TierEscalationTimeout ZA-POS-0024 → RebalanceTimeoutError ZA-POS-0042（代码头 + ALGO_FLOW 引用已同步，blueprint 仍待同步见 §7-7）。
+
+> 原 1/2/4/5（测试为零/错误码撞号/硬编码"多因子"/fail-closed 声明不符）均已修复闭合——真源：§6 已修复表 + §3.7 测试行 + 修订记录 1.1.0。原编号保留不重排，防跨文档引用断裂（15/16/27/52/55 号引用"新发现 7"，本文 §3.7 引用"新发现 3"）。
+
 3. **BudgetChanged 事件链未接线**——RegimeMetaAllocator 只产 BudgetAllocation，全仓库无 `handle_budget_change` 调用方：当前是无生产调用方的纯库模块，接线随 G15→G14 集成时完成（待决策）。
-4. ~~`_retarget_in_convergence` 下调重置窗口硬编码查"多因子"~~ ✅ 已修复——TierState 新增 `strategy_type` 字段，re-target 按自身类型查窗口。
-5. ~~fail-closed 声明与实现不符~~ ✅ 已修复——INVARIANTS 明确改为：state 缺失 = 无活跃升级返回 NO_ACTION（进程内缓存语义）；Phase2 DB 持久化后读取失败场景再适用 fail-closed。
 6. **文档漂移**——30 号 L214 称 481 行（实际 642）且提及不存在的方法名 `_check_tier2_convergence_or_escalate`；blueprint §11.1 仍标"❌ 未实现"。越界修正登记在此。
 7. **00_index 同步（越界登记）**：00_index §0/§7.3 对本批 7 篇重建文档的版本登记全部滞后（15 号 v1.21.2 / 33 号 v2.10.0 / 52 号 v1.7.4 / 55 号 v1.21.0 / 16 号两篇 / 27 号 v0.4.0），需统一同步为本轮重建版本。
 
@@ -161,3 +160,4 @@ why 三级而非直接强砍（30 号 L209-212 裁定）：①尊重策略自主
 | 2026-08-09 | 0.1.0 | 骨架创建 | 施工图骨架先行：由 00_index G14 讨论要点占位，待讨论填空 |
 | 2026-08-12 | 1.0.0 | 骨架→active：回填 §2-§6 全部决策 why（指令型状态机/三级升级/防抖双层/差异化窗口/收敛三条件/接口契约）；§7 六要点逐项对齐代码现状并登记 7 项代码层新发现 | 完整版曾丢失，按已施工代码（MOD-POS-022 production 572 行）+ 30/31/32 号设计依据重建；不擅自定决策，缺口全部入 §7 |
 | 2026-08-14 | 1.1.0 | AI-BGT-001 施工闭环：①行号漂移全部修正（ALGO_FLOW 标记 +68 偏移）；②错误码撞号统一（ZA-POS-0040/0042）；③硬编码"多因子"修复（strategy_type 记录）；④fail-closed 声明对齐进程内缓存语义；⑤补测试 33 条（2 轮 0 错误） | SOP 施工验证+补全；代码真源反查行号精确更新；遗留项 §7 更新 |
+| 2026-08-15 | 1.1.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-11）。§7 新发现已闭合 4 项（原 1/2/4/5，删除线重复登记）去重删除，真源归 §6 已修复表+§3.7 测试行+修订记录 1.1.0；原编号 3/6/7 保留不重排 | 同一修复信息原存 3 处（§6 表/§7 删除线条目/修订记录）违重复纪律；编号保留防跨文档引用断裂（15/16/27/52/55 号引"新发现 7"） |
