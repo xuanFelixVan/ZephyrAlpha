@@ -549,6 +549,27 @@ def _run_worker(payload: dict) -> int:
             worker_pid=os.getpid(),
         )
 
+        # 5.5 T2③ 审计覆盖率指标落盘（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：
+        #     ops_guard in-process 补丁的判定/审计统计随 status 落盘，
+        #     RECONCILER-HEALTH 消费校验覆盖率=100%（audit_failed>0 即缺口）。
+        try:
+            from scripts.ops_guard import get_audit_stats
+
+            _audit_stats = get_audit_stats()
+            if _audit_stats.get("judge_calls"):
+                _status_path = (
+                    Path(project_root) / ".runtime" / "reconcile_reports"
+                    / f"reconcile_status_{commit_sha}.json"
+                )
+                if _status_path.is_file():
+                    _data = json.loads(_status_path.read_text(encoding="utf-8"))
+                    _data["ops_guard_audit_stats"] = _audit_stats
+                    _status_path.write_text(
+                        json.dumps(_data, ensure_ascii=False, indent=2), encoding="utf-8"
+                    )
+        except Exception:  # noqa: BLE001 — 指标落盘失败不阻断 worker 终态
+            pass
+
         # 6. 自愈写入：worker boot 成功 → 对 RECONCILE-WORKER-BOOT 写 clean 记录
         #    #ARCH-RECONCILER-ALERT-SELFHEAL-001 Phase 1：补全告警生命周期对称性
         _write_boot_success_clean(project_root, commit_sha, session_id)

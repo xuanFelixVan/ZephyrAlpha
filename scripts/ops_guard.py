@@ -309,6 +309,7 @@ def audit_delete(
         with open(audit_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception:
+        _AUDIT_STATS["audit_failed"] += 1  # T2③ 覆盖率指标：落盘失败=覆盖率缺口
         pass  # 审计不阻断
 
 
@@ -849,6 +850,7 @@ def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None
         return
     gate_id, declared = ctx
     if op in ("delete", "move") and op not in declared:
+        _AUDIT_STATS["block"] += 1
         verdict = DeleteVerdict(
             allowed=False,
             reason=(
@@ -873,6 +875,22 @@ _ORIG_PRIMITIVES: dict[str, object] = {}
 _INSTALLED = False
 _INSTALL_LOCK = threading.Lock()
 
+#: 删除判定/审计运行统计（T2③ 审计覆盖率指标化真源）：
+#: judge_calls=补丁判定调用总数；allow/block=判定结果；audit_failed=审计落盘失败数。
+#: 覆盖率 = 已落审计的删除动作 / 实际删除动作 ——每次判定必先审计后执行，
+#: audit_failed>0 即覆盖率<100%（RECONCILER-HEALTH 消费报警）。
+_AUDIT_STATS: dict[str, int] = {
+    "judge_calls": 0,
+    "allow": 0,
+    "block": 0,
+    "audit_failed": 0,
+}
+
+
+def get_audit_stats() -> dict[str, int]:
+    """读取删除判定/审计统计（RECONCILER-HEALTH 覆盖率指标消费）。"""
+    return dict(_AUDIT_STATS)
+
 
 def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     """补丁统一判定：raise DeleteBlockedError 阻断；否则落审计后由 wrapper 执行。
@@ -885,6 +903,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     """
     if _BULK_APPROVED.get():
         return
+    _AUDIT_STATS["judge_calls"] += 1
     path_str = os.fspath(path) if not isinstance(path, str) else path
     ctx = _RECONCILER_CTX.get()
     if ctx is not None:
@@ -896,6 +915,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             and any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
             and not _is_authorized()
         ):
+            _AUDIT_STATS["block"] += 1
             verdict = DeleteVerdict(
                 allowed=False,
                 reason=f"reconciler {ctx[0]} 已声明 {op} 但保护区内递归删除硬拦（双保险）: {rel}",
@@ -906,6 +926,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             )
             audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
             raise DeleteBlockedError(f"[OPS-GUARD] {verdict.reason}")
+        _AUDIT_STATS["allow"] += 1
         audit_delete(
             "inprocess_allow",
             f"{op}('{path_str}')",
@@ -922,6 +943,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     # 上下文外：裸 stdlib 调用（worker 进程任意代码路径）
     rel = _resolve_to_repo_rel(path_str)
     if _is_whitelisted(rel):
+        _AUDIT_STATS["allow"] += 1
         audit_delete(
             "inprocess_allow",
             f"{op}('{path_str}')",
@@ -932,6 +954,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
         any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
         and not _is_authorized()
     ):
+        _AUDIT_STATS["block"] += 1
         verdict = DeleteVerdict(
             allowed=False,
             reason=f"in-process 裸删除命中保护区: {rel}",
@@ -945,6 +968,7 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             f"[OPS-GUARD] in-process 删除被阻断——{verdict.reason}\n"
             f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明"
         )
+    _AUDIT_STATS["allow"] += 1
     audit_delete(
         "inprocess_allow",
         f"{op}('{path_str}')",

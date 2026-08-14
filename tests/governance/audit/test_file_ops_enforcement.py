@@ -246,6 +246,26 @@ class TestInprocessEnforcement:
         blocked = [e for e in entries if e.get("action") == "inprocess_block"]
         assert blocked, "阻断事件未落审计"
 
+    def test_audit_stats_counted(self, tmp_path, monkeypatch):
+        """T2③ 覆盖率指标：judge/allow/block 计数自洽（覆盖率=100% by construction）。"""
+        from scripts.ops_guard import get_audit_stats
+
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        install_inprocess_enforcement()
+        before = get_audit_stats()
+        victim = tmp_path / ".runtime" / "tmp" / "stat_ok.txt"
+        victim.parent.mkdir(parents=True, exist_ok=True)
+        victim.write_text("x", encoding="utf-8")
+        os.remove(str(victim))  # allow
+        with pytest.raises(DeleteBlockedError):
+            os.remove("docs/y.md")  # block
+        after = get_audit_stats()
+        assert after["judge_calls"] - before["judge_calls"] == 2
+        assert after["allow"] - before["allow"] == 1
+        assert after["block"] - before["block"] == 1
+        assert after["audit_failed"] == before["audit_failed"]  # 零落盘失败=覆盖率 100%
+
 
 # ---------------------------------------------------------------------------
 # 4. 回收站容量封顶（T1③）

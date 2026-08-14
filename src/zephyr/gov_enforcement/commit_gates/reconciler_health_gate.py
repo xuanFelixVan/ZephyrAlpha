@@ -173,6 +173,43 @@ def make_reconciler_health_gate() -> GateSpec:
                 logger.info("RECONCILER-HEALTH WARN deduped (same signature within 24h)")
             return True, warn_detail
 
+        # 2.5 T2③ 删除审计覆盖率检查（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：
+        # worker status 落盘的 ops_guard_audit_stats 中 audit_failed>0
+        # = 删除动作未 100% 落审计（覆盖率缺口）→ warn 不阻断。
+        try:
+            import glob as _glob
+            import json as _json
+            import time as _time
+
+            _cutoff = _time.time() - 24 * 3600
+            _reports = _glob.glob(
+                str(Path(project_root) / ".runtime" / "reconcile_reports" / "reconcile_status_*.json")
+            )
+            _gap_total = 0
+            _judge_total = 0
+            for _rp in _reports:
+                try:
+                    if Path(_rp).stat().st_mtime < _cutoff:
+                        continue
+                    _stats = _json.loads(Path(_rp).read_text(encoding="utf-8")).get(
+                        "ops_guard_audit_stats"
+                    )
+                    if _stats:
+                        _gap_total += int(_stats.get("audit_failed", 0))
+                        _judge_total += int(_stats.get("judge_calls", 0))
+                except Exception:  # noqa: BLE001 — 单文件损坏跳过
+                    continue
+            if _gap_total > 0:
+                _cov_detail = (
+                    f"RECONCILER-HEALTH WARN: 删除审计覆盖率缺口——24h 内 "
+                    f"ops_guard 判定 {_judge_total} 次但审计落盘失败 {_gap_total} 次"
+                    "（T2③ 覆盖率<100%，查 .runtime/gate_audit/ 写入权限/磁盘）"
+                )
+                logger.warning(_cov_detail)
+                print(f"[GATE RECONCILER-HEALTH] {_cov_detail}")
+        except Exception:  # noqa: BLE001 — 覆盖率检查失败不阻断
+            pass
+
         return True, "reconciler health OK (0 block_next, 0 critical_warn in last 24h)"
 
     return GateSpec(gate_id="RECONCILER-HEALTH", check=_check, priority=64)
