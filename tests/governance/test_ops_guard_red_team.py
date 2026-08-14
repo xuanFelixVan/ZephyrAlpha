@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.test_ops_guard_red_team
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops_guard
