@@ -12110,6 +12110,12 @@ entries:
        前两合约构建 (front,next) 对，basis=front.close-next.close；tushare_provider
        新增 futures_term_structure capability，miniqmt 降 fallback（QMT 期货权限
        开通可恢复）。修复后补回 8/1-8/13 共 783 行（87 品种对/日）。
+    8. etf_nav 换主源（2026-08-14 续）：akshare fund_etf_fund_info_em（东财）持续
+       返回空（"No objects to concatenate"，反爬），且新 etf_list 新浪代码(sh510010)
+       直传 EM API 格式不匹配双重失败 → etf_nav 停滞于 8/7。实证 tushare pro.fund_nav
+       支持 ETF（510300.SH 5 行/周）→ 升主源：新浪代码转 tushare 点格式
+       （sh510010→510010.SH），写入 symbol 与表内既有行口径一致；akshare 降 fallback
+       （反爬解除可恢复）。修复后 8/7-8/13 窗口补回 5000+ 行。
     遗留：东财 push2 实时行情类接口（realtime_snapshot/stock_news_em/research_report_em
     等）仍受反爬影响，间歇可用；#ARCH-IFIND-FAILOVER 系列 ifind 待续费。
     capability_validator 覆盖 fallback_sources 的治本扩展另行登记施工。
@@ -12120,9 +12126,11 @@ entries:
     provider 测试 131 全过、RSSHub 重建恢复（dist 布局漂移 rebuild + 计划任务拉起）。
     续（2026-08-14）：tushare_provider futures_term_structure 能力 + tasks.yaml 主源切换
     （miniqmt→tushare，移除假 exchange fallback），补回 8/1-8/13 共 783 行。
+    续2（2026-08-14）：tushare_provider etf_nav 能力 + etf_nav_refresh 主源切换
+    （akshare→tushare），8/7-8/13 窗口补回 5000+ 行。
   impact:
-    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline/futures_term_structure主源切换）'
-    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list + money_flow + futures_term_structure capability）'
+    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline/futures_term_structure/etf_nav主源切换）'
+    - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list + money_flow + futures_term_structure + etf_nav capability）'
     - 'src/zephyr/data/implementations/fred_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/eia_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/akshare_provider.py（_parse_etf_list_row 日期哨兵 + option_kline volume safe_int）'

@@ -58,6 +58,9 @@ _TBL_INDUSTRY_CLASS_SUPPL = get_registry().table("fund_industry_class_suppl")
 _TBL_LOF_LIST = get_registry().table("market_lof_list")
 # 2026-08-14 QMT期货板块为空治本：期限结构替代源（fut_daily 全市场合约日行情）
 _TBL_FUTURES_TERM = get_registry().table("market_futures_term")
+# 2026-08-14 东财反爬治本：ETF 净值替代源（fund_etf_fund_info_em 持续返回空）
+_TBL_ETF_NAV = get_registry().table("market_etf_nav")
+_TBL_ETF_LIST = get_registry().table("market_etf_list")
 
 # 具体期货合约代码：品种字母 + 到期数字(3~4位) + 交易所后缀；连续合约(如 IC.CFX/TL0.CFX)无到期数字被剔除
 _FUT_CONTRACT_RE = re.compile(r"^([A-Za-z]{1,4})(\d{3,4})\.([A-Za-z]{2,5})$")
@@ -78,7 +81,7 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow", "futures_term_structure"],
+        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow", "futures_term_structure", "etf_nav"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -140,6 +143,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_money_flow(payload, policy)
         elif capability == "futures_term_structure":
             yield from self._fetch_futures_term_structure(payload, policy)
+        elif capability == "etf_nav":
+            yield from self._fetch_etf_nav(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
@@ -634,3 +639,99 @@ class TushareProvider(IngestProviderBase):
                 last_key=current.isoformat(), elapsed_sec=seconds_since(t0),
             )
             current += datetime.timedelta(days=1)
+
+    def _fetch_etf_nav(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """ETF 基金净值增量，写入 c1_market.etf_nav。
+
+        东财反爬治本（2026-08-14）：akshare fund_etf_fund_info_em（东财）持续返回空
+        （"No objects to concatenate"），且 etf_list 新浪代码(sh510010) 直传 EM API
+        格式不匹配双重失败。改用 tushare pro.fund_nav(ts_code, start, end) 逐只获取
+        （实测 510300.SH 5 行/周）。代码转换：sh510010→510010.SH、sz159208→159208.SZ；
+        写入 symbol 用 tushare 点格式（510010.SH），与表内既有行口径一致。
+
+        表 schema: (trade_date, symbol, nav, total_assets, data_source)
+        """
+        table = _TBL_ETF_NAV
+        columns = ["trade_date", "symbol", "nav", "total_assets", "data_source"]
+        start_str = payload.start.strftime("%Y%m%d") if payload.start else "20200101"
+        end_str = payload.end.strftime("%Y%m%d") if payload.end else datetime.date.today().strftime("%Y%m%d")
+
+        symbols = payload.symbols or self._load_etf_list_symbols()
+        if not symbols:
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key="", elapsed_sec=0.0,
+                error="etf_nav 无 symbols 且 etf_list 表无数据，请先运行 etf_list_refresh 任务",
+            )
+            return
+
+        for raw_symbol in symbols:
+            ts_code = self._etf_to_ts_code(raw_symbol)
+            t0 = now_utc()
+            try:
+                df = self._call_with_policy(
+                    self._pro.fund_nav, policy,
+                    ts_code=ts_code, start_date=start_str, end_date=end_str,
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"ETF {ts_code} 净值获取失败，跳过: {e}")
+                continue
+            rows = self._parse_fund_nav_rows(df, ts_code)
+            if rows:
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=end_str, elapsed_sec=seconds_since(t0),
+                )
+
+        self._log.info(f"etf_nav 完成（tushare 替代东财，{len(symbols)} 只）")
+
+    def _load_etf_list_symbols(self) -> list[str]:
+        """从 etf_list 表加载全市场 ETF 代码（新浪格式 sh510010）。"""
+        try:
+            from zephyr.data import ch_reader as _chr
+            tsv = _chr.query_table(_TBL_ETF_LIST, columns="etf_code")
+            if tsv and tsv.strip():
+                symbols = [line.strip() for line in tsv.strip().split("\n") if line.strip()]
+                self._log.info(f"etf_nav 从 etf_list 表加载 {len(symbols)} 只 ETF")
+                return symbols
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"etf_nav 从 etf_list 表加载失败: {e}")
+        return []
+
+    @staticmethod
+    def _etf_to_ts_code(raw: str) -> str:
+        """sh510010 → 510010.SH；sz159208 → 159208.SZ；已是点格式则原样大写。"""
+        code = raw.strip()
+        if "." in code:
+            return code.upper()
+        for prefix, exch in (("sh", "SH"), ("sz", "SZ"), ("bj", "BJ")):
+            if code.lower().startswith(prefix):
+                return f"{code[len(prefix):]}.{exch}"
+        return code
+
+    @staticmethod
+    def _parse_fund_nav_rows(df, ts_code: str) -> list[tuple]:
+        """fund_nav DataFrame → etf_nav 表行（nav_date 归一化为 YYYY-MM-DD）。"""
+        rows: list[tuple] = []
+        if df is None or df.empty:
+            return rows
+        for _, r in df.iterrows():
+            nav_date = str(r.get("nav_date", "") or "")
+            if not nav_date or nav_date in ("NaT", "nan", "None"):
+                continue
+            if len(nav_date) == 8 and nav_date.isdigit():
+                nav_date = f"{nav_date[:4]}-{nav_date[4:6]}-{nav_date[6:]}"
+            try:
+                nav = float(r.get("unit_nav"))
+            except (ValueError, TypeError):
+                continue
+            total_assets = None
+            try:
+                ta = r.get("net_asset")
+                total_assets = float(ta) if ta is not None else None
+            except (ValueError, TypeError):
+                total_assets = None
+            rows.append((nav_date, ts_code, nav, total_assets, "tushare"))
+        return rows

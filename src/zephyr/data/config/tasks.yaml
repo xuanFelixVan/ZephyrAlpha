@@ -1646,7 +1646,7 @@ tasks:
     capability: kline_us_daily
 - task_id: etf_nav_refresh
   table: c1_market.etf_nav
-  source: akshare    # #ARCH-CH-023: miniQMT get_etf_info 不支持，改用 akshare fund_etf_fund_info_em
+  source: tushare    # 东财反爬治本(2026-08-14): fund_etf_fund_info_em 持续返回空，tushare fund_nav 升主源(实测510300.SH 5行/周)
   schedule: daily_kline
   incremental: true
   date_col: trade_date
@@ -1654,10 +1654,10 @@ tasks:
   capability: etf_nav
   symbols:         # 需指定ETF代码如510050.SH
   extra:
-    description: "ETF基金净值增量（miniQMT get_etf_info，含净值/现金余额）"
+    description: "ETF基金净值增量（tushare fund_nav，含单位净值/净资产）"
 
   fallback_sources:
-  - source: ifind
+  - source: akshare
     capability: etf_nav
 - task_id: repurchase_refresh
   table: c3_fundamental.repurchase
