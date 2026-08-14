@@ -8799,6 +8799,13 @@ creation_tokens:
     capability: "ops_guard_delete_interception"
     note: "S1 红队验收测试（42条攻击向量100%拦截率断言）"
 
+  # --- S2 worktree 清理四证 SOP（2026-08-14，wipe 事故治本，AI-GIT-001 承接）---
+  - file: "docs/01_policies_and_standards/sop/worktree_cleanup_sop.md"
+    token: "auto-worktree-cleanup-sop-20260814"
+    created_by: "AI-GIT-001"
+    capability: "worktree_cleanup_safety"
+    note: "worktree 清理四证 SOP（死亡证明/无未合并工作/统筹批准/可恢复证明），wipe 事故 R2+R4 治本"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
