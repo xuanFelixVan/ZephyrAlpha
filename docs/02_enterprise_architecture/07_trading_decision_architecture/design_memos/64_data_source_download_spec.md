@@ -5,8 +5,8 @@ title: 数据源与下载体系规范
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.4.1"
-date: 2026-08-14
+version: "1.4.2"
+date: 2026-08-15
 topic: data_source_download_spec
 scope: 07_trading_decision_architecture
 depends_on:
@@ -51,7 +51,7 @@ related_issues:
 | 对标 | WorldQuant 数据管线 / Numerai 数据接入 / 机构数据中台（Tushare/Wind/iFinD 商业化方案） |
 | 正交性 | ✅ 与 regime/alpha/组合/风控/执行全部正交——纯数据基础设施 |
 | 优先级 | P0（地基，但已大规模施工——本文是已施工设施的 why 回填 + 全面升级讨论载体） |
-| 状态 | ✅ active v1.4.0（2026-08-13 定稿：§12 全部缺口/升级方向与 §16 全部开放问题已逐项裁定收敛——2 项费用类待人拍板（默认建议已给）、14 项裁定施工/登记候选、19 项裁定暂缓/维持/不做（均带理由与重评条件）；裁定单一真源在 §16，§12 各小节只留结论指针防内容漂移。draft 期事实核对与审查发现见 §18 v1.3.0/v1.3.1 记录） |
+| 状态 | ✅ active v1.4.0（2026-08-13 定稿：§12/§16 全 35 项裁定收敛——待人拍板 2（费用类，默认建议已给）/ 裁定施工 14 / 裁定暂缓·维持·不做 19（均带理由与重评条件）；裁定单一真源在 §16，§12 各小节只留结论指针防内容漂移） |
 
 ## 2. 背景
 
@@ -596,7 +596,7 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 **覆盖率实证**（2026-08-12 tasks.yaml 全量统计）：154 任务中 105 个配置了非空 fallback_sources（68.2%）；49 个无 fallback（含全部 miniqmt 分钟K线 15 个、tqcenter 4 个、tdx 板块分钟K 5 个、生猪 5 个、fred/eia/qweather 显式空列表注明无国内副源等），符合"天然无副源"设计。
 
-**死 fallback 警告**（2026-08-12 实证）：fallback_sources 中引用 `qmt`（7 处）/`exchange`（26 处）/`bdpan`（1 处）/`local_valuation`（1 处）共 35 处**无 Provider 实现**（create_provider 14 分支不含这四个 source_name）——主源失败轮到这些 fallback 会落入"未知数据源"分支返回 None 直接失败，实际不提供韧性。v1.4.0 已裁定：清理 28 处 + 保留 local_valuation 1 处待补实现（§16.2 Q14）。
+**死 fallback 警告**（2026-08-12 实证）：fallback_sources 中 35 处引用**无 Provider 实现的 source**（qmt/exchange/bdpan/local_valuation，create_provider 14 分支均不含）——主源失败轮到这些 fallback 会落入"未知数据源"分支返回 None 直接失败，实际不提供韧性。裁定见 §16.2 Q14（清理 28 处 + 保留 local_valuation 1 处待补实现，逐源计数真源在 Q14）。
 
 ### 9.2 冗余源热切换（redundant_source/，MOD-L00-005/007，P2-8）
 
@@ -1047,7 +1047,7 @@ test_ch_batch_size_gate / test_ch_final_gate / test_ch_version_col_gate / test_d
 
 #### 12.12.2 【P2】死 fallback 35 处——"心理安慰型"韧性配置
 
-fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`qmt`（7 处）/`bdpan`（1 处）/`local_valuation`（1 处）。主源失败时这些 fallback 触发即落入"未知数据源"失败，**不提供实际韧性**且掩盖真实风险敞口（§9.1 已补警告）。
+fallback_sources 中 35 处引用无 Provider 实现的 source（§9.1 死 fallback 警告；逐源计数与处置真源在 §16.2 Q14）。主源失败时这些 fallback 触发即落入"未知数据源"失败，**不提供实际韧性**且掩盖真实风险敞口。
 
 **裁定（v1.4.0 定稿）**：见 §16.2 Q14——清理 qmt/exchange/bdpan 死配置 28 处（保留 local_valuation 1 处——daily_valuation_full_refresh 末级 fallback 有真实需求，补 internal compute provider 实现后启用）。
 
@@ -1227,9 +1227,8 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 - #ARCH-CH-022——CapabilityContract 机器可执行契约（§5.2 / §5.8）
 - #ARCH-CH-024——business_data_categories.yaml 表名 SSoT 消费层（§5.6）
 - #ARCH-CH-029——known_data_gaps 已知历史缺口注册表（§8.7）
-- #ARCH-BOOT-001——四层防御 Watchdog（OS层/Guard层/单实例层/心跳健康层，2026-08-07 resolved，§10.6）
+- #ARCH-BOOT-001——四层防御 Watchdog（OS层/Guard层/单实例层/心跳健康层，2026-08-07 resolved，§10.6；含 launch_hidden.vbs 无闪窗启动器 §10.11）
 - #ARCH-BOOT-002——战略补强（D.心跳原子写 / E.死人开关告警 / F.WaitForExit 根因文档化，2026-08-08 落地，§10.7）
-- #ARCH-BOOT-001——四层防御 Watchdog（含 launch_hidden.vbs 无闪窗启动器，§10.11）
 - #ARCH-DATA-001——hk_trade_calendar 数据源错配修复（§4 / project_memory；⚠️ 止血切换目标 internal 未接线，见 §12.12.1）
 - #ARCH-DATA-002——capability-API 语义对齐校验机制（#ARCH-DATA-001 系统性治本，§5.2 语义边界 / §12.12.4）
 - #ARCH-DATA-SYMBOL-001/002——symbol 标准化 TRAE-082（§5.5）
@@ -1254,3 +1253,4 @@ fallback_sources 引用无 Provider 实现的 source：`exchange`（26 处）/`q
 | 2026-08-12 | 1.3.1 | 作战地图全覆盖补丁——BM-RES-11 / BM-RES-11-A。新增 §12.13 研究知识源扩展方向：研究知识源（研报/新闻/公告/财报/社交/另类/论文库）接入时按 §5.7 per-source 策略对象模式扩展（新源=Provider+registry 元数据+SourcePolicy 三件套，复用现有配额/重试/fallback 机制，不新建采集框架）；6 类源分类按"一源一 policy"登记、调度复用 §6 15 时段条目模式；智能去重/相关性预筛登记候选（复用 §6.10.1 news_dedup MD5 模式扩展跨源；预筛待 BM-RES-06 LLM 研究 Agent 上线一并评估）；降级路径对齐作战地图登记（主源失效切备用源/调度超限降级 QPS）。补定位→裁定（理由+重评条件）→契约→边界四层 |
 | 2026-08-13 | 1.4.0 | **定稿转 active**：§12 全部缺口/升级方向 + §16 全部开放问题逐项裁定收敛（35 项全覆盖） | AI-DSD-001 定稿会话逐项裁定：①§16 重写为三表结构——§16.1 待人拍板费用项 2 项（Q1 iFind 续费默认建议暂不续费/Q4 L2 开通默认建议暂不开通，费用支出最终拍板权在用户）；§16.2 裁定施工 14 项（Q18 internal 接线修复 P0/Q8 data parts 监控 P1/Q17 per-source 自动熔断器 P1/Q5 北向快照 P1/Q6 冷归档 P2/Q16 fetch_perf 被动记录 P2/Q14 死 fallback 清理 28 处/Q13 SPECIAL-DAYS 补登记 ARCH 条目等，登记 CAND 候选库或转施工队列）；§16.3 裁定暂缓/维持/不做 19 项（Q2 EDB 拼凑不做维持 accepted/Q3 低频事件暂缓/Q11 调度动态化暂缓/Q19 tushare 积分评估/Q20-Q26 等，均附理由+重评条件）；②§12 各小节"待裁定" checkbox 全部回填裁定结论+指向 §16 真源（防内容漂移）；③§15 待裁定表与 §16.3 合并同源；④§14.2 演进路径更新为 v1.4.0 施工清单（短期 Q18/Q8/Q17/Q14/Q13，中期 Q5/Q6/Q16，长期费用项+暂缓项）；⑤frontmatter status draft→active、version 1.3.1→1.4.0，ARCH-SPECIAL-DAYS 注记更新为"已裁定补登记"；⑥裁定原则：费用项不越权（待人拍板+默认建议）、技术项按证据裁定（项目约束：MVP/风险优先/避免过度工程/先测量后优化）、暂缓项全部带重评条件（非永久禁止） |
 | 2026-08-14 | 1.4.1 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | AI-DOCS-001 文档压缩：折叠调研过程叙述与重复解释（§3 ASCII 总览图压为紧凑管线描述、选型对比只留结论、重复 why 去重、§4.3 影响范围/§7.5 表全景/§10.4 实测/§11.5 测试清单压为紧凑单行、§10.5 部署块与 §10.12 去重、§10.6 验证明细表压为一行、§12.12.2 处置选项讨论并入裁定），35 项裁定（Q1-Q26）与 §16 三表逐条完整保留，15 源/154 任务/15 时段清单、费用裁定、落库/韧性规则、#ARCH/BM 锚点与跨文档链接全部保留；章节标题与编号一字未动 |
+| 2026-08-15 | 1.4.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | ① §17.5 #ARCH-BOOT-001 重复行合并为一条（含 §10.6 + §10.11 双指针）；② §9.1 死 fallback 逐源计数去重（真源=§16.2 Q14）；③ §12.12.2 同项计数去重留指针；④ §1 状态 cell 精简（保留 35 项裁定 2/14/19 口径）；35 项裁定 Q1-Q26 与 §16 三表逐条零丢失，数据源/调度/落库规则/#ARCH/BM 锚点/跨文档链接零丢失；章节标题与编号一字未动 |

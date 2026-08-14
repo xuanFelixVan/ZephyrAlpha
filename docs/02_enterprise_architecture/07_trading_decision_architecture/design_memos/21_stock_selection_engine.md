@@ -5,8 +5,8 @@ title: 选股引擎架构
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.20"
-date: 2026-08-12
+version: "1.1.21"
+date: 2026-08-15
 topic: stock_selection_engine
 scope: 07_trading_decision_architecture
 ---
@@ -29,7 +29,7 @@ scope: 07_trading_decision_architecture
 | 对标 | WorldQuant Alpha 工厂分层 / qstobody 多引擎 / Medallion Architecture |
 | 正交性 | ✅ 与 regime 正交（选股不读 regime 输出，[20 §1.4](20_first_batch_strategies.md)） |
 | 优先级 | P1 |
-| 状态 | ✅ 已定稿 v1.1.19 |
+| 状态 | ✅ 已定稿 v1.1.21 |
 
 ## 2. 背景
 
@@ -99,7 +99,7 @@ scope: 07_trading_decision_architecture
 > - **板块 overlay 降级影响**：[30号](30_multi_strategy_concurrency.md) §2.5.1 定义 `sector_overlay_active=False`（板块轮动 overlay 未激活）时，行业偏离约束从 ±15% 收紧为 ±10%。此时 L2-C 板块轮动 sleeve 不产出 SynthesizedSignal（板块轮动属 design 态，overlay 未激活=不参与选股打分），行业偏离由 firm 层 [32号](32_firm_risk_aggregator.md) §2.5.1 用 ±10% 硬约束兜底。板块轮动激活后（G06 定型+实盘校准），行业偏离放宽至 ±15%，L2-C 产出 SynthesizedSignal 喂入选股评分
 > - **当前施工态**：板块轮动属 🟧 design（G06 待定型），上述映射公式为 **G06 定型时的施工参考**，参数（象限基准值/强度系数/回踩加成）待 G06 回测校准后最终确定
 
-> **why 三层而非两层或四层**：L0/L1 是通用量化地基（数据→因子，任何市场都需），L2-C 是 A 股特色差异化层（游资打板/连板梯队/情绪周期是 A 股独有，海外 alpha 工厂无此层）。三层 = "通用地基 + 本土特色"的最低完整切分；两层（数据+信号）会让因子计算与特色信号混杂、归因不清；四层（再拆"组合信号层"）会与 StrategyBook/firm 层职责重叠（违反 charter 约束四）。实证支撑：Medallion Architecture 三层（Bronze/Silver/Gold）"splitting into 3 layers makes debugging fast"——三层是调试效率与切分清晰度的甜点（[lukastymo 2026-05](https://lukastymo.com/posts/029-software-engineer-value-investing-magic-formula/)）。**2026 前沿趋势印证（v1.0.1 补）**：[国联民生金工 2026-07-16 AAAI/ICLR 综述](https://finance.sina.com.cn/wm/2026-07-16/doc-inihyyvy4515788.shtml)——AI 量化研究重心从"调用通用模型"转向"围绕金融约束重构模型"，延迟/回测有效性/非平稳性/交易成本/风险约束/可解释性成硬约束；分层架构正是"金融约束重构"的工程落地——L0 处理延迟（Tick 3s 接入）、L1 处理非平稳性（因子衰减监控+生命周期治理）、L2-C 处理本土特色（A 股游资/情绪周期），三层各司其职而非通用模型一把梭。
+> **why 三层而非两层或四层**：L0/L1 是通用量化地基（数据→因子，任何市场都需），L2-C 是 A 股特色差异化层（游资打板/连板梯队/情绪周期是 A 股独有，海外 alpha 工厂无此层）。三层 = "通用地基 + 本土特色"的最低完整切分；两层（数据+信号）会让因子计算与特色信号混杂、归因不清；四层（再拆"组合信号层"）会与 StrategyBook/firm 层职责重叠（违反 charter 约束四）。实证支撑：Medallion Architecture 三层（Bronze/Silver/Gold）"splitting into 3 layers makes debugging fast"——三层是调试效率与切分清晰度的甜点（[lukastymo 2026-05](https://lukastymo.com/posts/029-software-engineer-value-investing-magic-formula/)）。**2026 前沿印证**：[国联民生金工 2026-07-16 AAAI/ICLR 综述](https://finance.sina.com.cn/wm/2026-07-16/doc-inihyyvy4515788.shtml)——AI 量化从"调用通用模型"转向"围绕金融约束重构模型"，三层正是其工程落地（L0 处理延迟/L1 处理非平稳性/L2-C 处理本土特色）；LLM 在线/离线边界见 §5.4。
 
 ### 3.2 决策①：双引擎融合定位 = 打板策略内部融合，非跨策略层
 
@@ -162,7 +162,7 @@ scope: 07_trading_decision_architecture
 >
 > **AlphaSAGE 结构感知因子生成**（[arXiv 2509.25055v3, 2026-05-19](https://arxiv.org/pdf/2509.25055v3)）：RGCN（Relational Graph Convolutional Network）结构编码器捕捉因子 AST 的数学结构 + GFlowNet 生成策略（从空 AST 逐步施加 action 生成完整因子）+ 多维度奖励函数（`reward = r_ic + 0.2·r_sa + 0.3·r_nov`，IC 收益 + 结构对齐 + 新颖性）。**对 L1 因子工厂的启示**：AlphaSAGE 是 MAGE 的结构感知升级——MAGE 用 turnover×correlation 2D 行为网格做多样性，AlphaSAGE 用 RGCN 做 **AST 结构嵌入**多样性。两者互补：FactorMiner 禁区当前基于 IC 相关性检查（数值相关），AlphaSAGE 的 RGCN 编码器可补**结构相关**检查（两个因子 IC 不同但 AST 结构相似=同一思路换皮，应进禁区）。与 [CogAlpha](https://arxiv.org/html/2511.18850v4) 多 agent 质量检查互补——AlphaSAGE 在生成层约束结构多样性，CogAlpha 在校验层约束代码质量。
 >
-> **结论**：§6 待裁定-7 LLM alpha 挖掘闭环的工程路径在 2026-08 进一步丰富——Hubble（AST 沙箱 + curated 算子 + Maker vs Checker）+ AlphaEvolve（MAP Elites + Memory Bank）+ XAlpha（记忆/归因层）+ **AlphaMemo（edit motif 级搜索过程记忆 + 非对称否决）** + **FactorMiner（Ralph Loop + 禁区入池前预防）** + **MAGE（turnover×correlation 2D 网格）** + **AlphaAgent（原创性/对齐/复杂度三大正则化）** + **AlphaSAGE（RGCN 结构感知 + GFlowNet 多样性生成）** 构成完整工具链（八框架）。本项目远期演进应采 Hubble 架构为骨架（AST 沙箱确保可执行），FactorMiner 禁区机制接入 [factor_pool_manager.py](20_first_batch_strategies.md) 入池前相关性检查（IC 相关 + AlphaSAGE RGCN 结构相关双层），AlphaMemo edit motif 记忆接入因子治理层经验累积。详见 [20 §2.4 LLM alpha 挖掘新框架](20_first_batch_strategies.md)。
+> **结论**：§6 待裁定-7 LLM alpha 挖掘闭环的工程路径=八框架完整工具链（Hubble/AlphaEvolve/XAlpha/AlphaMemo/FactorMiner/MAGE/AlphaAgent/AlphaSAGE，逐框架分析与链接见上文④各块及 §8.5）。本项目远期演进应采 Hubble 架构为骨架（AST 沙箱确保可执行），FactorMiner 禁区机制接入 [factor_pool_manager.py](20_first_batch_strategies.md) 入池前相关性检查（IC 相关 + AlphaSAGE RGCN 结构相关双层），AlphaMemo edit motif 记忆接入因子治理层经验累积。详见 [20 §2.4 LLM alpha 挖掘新框架](20_first_batch_strategies.md)。
 >
 > **⑤ L1 深度学习 baseline 候选：Cross-Sectional LSTM（v1.1.6 补，施工环节算法补全——当前 §3.3 L1 因子工厂是"人工因子 + IC 评估 + 8 状态治理"纯线性框架，缺非线性深度学习预测 baseline 作为远期对照）**：[Cross-Sectional Heterogeneity LSTM arXiv 2608.05755 2026-08-07](https://arxiv.org/html/2608.05755v1)（Julius Döbelt）——在标准 LSTM 上加 **learnable sector embeddings**（捕获截面异质性，A 股行业轮动适配）+ 宏观金融协变量 + label smoothing/dropout/gradient clipping 正则。S&P 500 日频方向预测实证：超越 basic LSTM / Random Forest / buy-and-hold，预测信号由**短期反转因子 + 行业动量因子**驱动（与 A 股已知有效因子一致），可解释性通过潜空间可视化分析模型如何区分行业。**对 L1 因子工厂的启示**：当前 L1 是纯线性 IC 加权合成（[MOD-L03-001 signal_synthesizer](20_first_batch_strategies.md)），Cross-Sectional LSTM 可作 **Phase 3+ 非线性预测 baseline**——sector embedding 直接适配 A 股行业轮动（与 L2-C 板块轮动 G06 协同），短期反转+行业动量双因子结构与 [20 §2.3](20_first_batch_strategies.md) 因子族对齐。**过度工程审查**：LSTM 非线性预测属远期增强（当前 L1 production 线性框架已够 MVP），不纳入首批施工——登记为 §6 待裁定-9，G09 远期评估深度学习 baseline 接入 L1（须因子工厂治理层稳定运行 6+ 月后）。
 
@@ -206,7 +206,7 @@ scope: 07_trading_decision_architecture
 > **6 维权重校准方法（v1.1.2 补，施工环节算法补全）**：当前 6 维权重（价格动量 20/行业强度 15/相对强度 20/资金 15/技术 20/风险 10）是经验设定，未说明校准方法。校准路径两条：
 > - **路径 A·IC 加权**（与 [20 §2.3](20_first_batch_strategies.md) 因子工厂 IC 加权合成对齐）：将 6 维各视为子因子，计算各自滚动 60 日 RankIC，按 `weight_i = IC_i / Σ|IC_j|` 归一化为权重——IC 高的维度自动获得更高权重，IC 衰减的维度自动降权。优势：与因子工厂治理层（MOD-L02-018）的 IC 末位淘汰逻辑一致，校准自动化。
 > - **路径 B·SHAP 归因**（机器学习反推）：用 LightGBM 训练"6 维→次日收益"模型，SHAP 值反推各维度贡献度作为权重。优势：捕捉非线性交互（IC 加权只捕线性），劣势：需离线训练+定期重训。
-> - **重校准频率**：月度（与 [21 §3.3 IC 衰减四参数](#) 半衰期监控对齐），CUSUM >2σ 触发即时重校准。
+> - **重校准频率**：月度（与 §3.3 IC 衰减四参数半衰期监控对齐），CUSUM >2σ 触发即时重校准。
 > - **MVP 优先**：首版用经验权重（当前 20/15/20/15/20/10）+ 路径 A（IC 加权）作为 Phase 2 演进，路径 B（SHAP）为远期。登记为 §6 待裁定-8。
 
 ### 3.5 决策④：选股 pipeline 标准接口
@@ -398,14 +398,7 @@ scope: 07_trading_decision_architecture
 
 ## 7. 待定问题（讨论要点对齐）
 
-> 以下 6 项来自 [00_index §3 G05 讨论要点](00_index_trading_decision.md)，本版已逐项对齐落入 §3 决策。
-
-- [x] ① 双引擎融合定位 → §3.2（打板 sleeve 内部融合，非跨策略层）
-- [x] ② L0→L1→L2-C 分层 → §3.1/§3.3（通用地基 + A 股特色，三层最低切分）
-- [x] ③ 量化强度评级 → §3.4（打板 sleeve 量化引擎输入，6 维 A~E 评级）
-- [x] ④ 选股 pipeline 标准接口 → §3.5（SelectionResult 统一接口 + 差异化内部实现）
-- [x] ⑤ 候选池生成→过滤→排序→输出 → §3.6（四阶段漏斗，各 sleeve 按频率差异化）
-- [x] ⑥ 与 StrategyBook 对接契约 → §3.7（选股产 target_portfolio+粗仓位，精仓位在 firm 层）
+> [00_index §3 G05 讨论要点](00_index_trading_decision.md) 6 项已全部闭合并落入 §3 决策：① 双引擎融合定位 → §3.2（打板 sleeve 内部融合，非跨策略层）；② L0→L1→L2-C 分层 → §3.1/§3.3（通用地基 + A 股特色三层最低切分）；③ 量化强度评级 → §3.4（打板 sleeve 量化引擎输入，6 维 A~E 评级）；④ 选股 pipeline 标准接口 → §3.5（SelectionResult 统一接口 + 差异化内部实现）；⑤ 候选池生成→过滤→排序→输出 → §3.6（四阶段漏斗，各 sleeve 按频率差异化）；⑥ 与 StrategyBook 对接契约 → §3.7（选股产 target_portfolio+粗仓位，精仓位在 firm 层）。
 
 ## 8. 引用
 
@@ -500,3 +493,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-10 | 1.1.16 | §3.1 补 L2-C 板块轮动→SynthesizedSignal.score 映射公式（跨文档算法交接完整性审查——链路 1 缺口修复） | 后台 agent 6 链路审查发现链路 1（22→21 板块轮动→选股）缺口：21号 §3.1 L2-C→sleeve 接口契约 `SynthesizedSignal(symbol, score, confidence, decision_class, metadata)` 中的 `score` 如何从 22号 RRG 四象限（Leading/Improving/Weakening/Lagging）+板块强度评分(0-100)+回踩质量(A/B/C)推导此前未形式化。本次补全映射公式 `score = clamp(SECTOR_QUADRANT_BASE[quadrant] + strength_score/100 * 0.2 + PULLBACK_QUALITY_BONUS[quality], 0.0, 1.0)` + 板块 overlay 降级影响说明（sector_overlay_active=False 时板块轮动不参与选股打分，行业偏离由 firm 层 ±10% 硬约束兜底）。参数待 G06 回测校准。缺口性质="接口契约未显式文档化"非"算法逻辑断裂"，严重性中等 |
 | 2026-08-12 | 1.1.19 | **作战地图全覆盖补丁——闭合 BM-SEL-02-J / BM-SEL-02-L / BM-SEL-16 / BM-SEL-17 / BM-SEL-18（5 环节）**：① 新增 §3.3.1「信号工厂与信号聚合器（远期登记层）」——BM-SEL-02-J 信号工厂九子阶段流水线（预处理→信号化→合成→过滤→增强→校准→投票→聚合→输出）定位=L1→L2-C 之间信号加工层，裁定=远期登记不施工（激活条件=首批策略上线后信号冲突/口径漂移实例≥3 例）；BM-SEL-02-L 信号聚合器（归一化+优先级仲裁 风险>机会+组合级输出）裁定=远期登记不施工，承接 32 号 §2.7"策略层信号融合归 G05 信号工厂，非 G13 职责"既有声明（G05 本篇登记承接）；② §3.6 补「漏斗三层级 BM 环节映射」块——BM-SEL-16 分级指标过滤（物理/门禁/分级/概率四排除机制语义定型，日线级批处理执行、"3 秒级 Tick"语义登记远期）、BM-SEL-17 初筛漏斗（技术+量价+板块+主力+状态五维构成定型，挂接 L1 ~5000→1200 容量链）、BM-SEL-18 精筛评分（基础+偏移+主力+8态+拥挤+密度六要素 Z-score 综合定型，8 态要素按 90 号 §7 暂缓裁定现状置 0 不参与），三环节由登记级升级为已覆盖；③ §6 待裁定新增 item10（信号工厂+聚合器远期登记及重评条件）；④ 修复 frontmatter 漂移（frontmatter 已为 1.1.19 而 §1 状态仍为 v1.1.18，本版正文同步 v1.1.19） | 选股域作战地图 11 环节全覆盖施工（本篇承担 5 个），定位→裁定→契约→重评条件四要素逐环节显式映射 |
 | 2026-08-12 | 1.1.20 | 作战地图环节映射补强——锚定 BM-SEL-12 分布特征工程（§3.3 末映射块：滞后项/交互项/滚动统计量/Signature 签名，design） | 语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
+| 2026-08-15 | 1.1.21 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08）——① §3.1"why 三层"块尾 2026 前沿印证精简（LLM 在线/离线边界内容 §5.4 已载，留指针）；② §3.3④ 结论段八框架重复枚举去重（逐框架清单真源=上文④各块 + §8.5 + §6 待裁定-7）；③ §3.4 空锚点自链（#）清除；④ §7 已闭合 6 项讨论要点由 checkbox 清单压为一行映射（逐项指针保留）；⑤ §1 状态版本漂移修复（v1.1.19→v1.1.21 同步） | 裁定/待裁定 10 项/BM 锚点/外部链接零丢失 |

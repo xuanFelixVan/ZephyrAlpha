@@ -5,8 +5,8 @@ title: 北向资金季度持仓快照 fetcher 施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
-date: 2026-08-12
+version: "0.2.1"
+date: 2026-08-15
 topic: northbound_hold_snapshot
 scope: 07_trading_decision_architecture
 depends_on:
@@ -45,7 +45,7 @@ related_modules:
 
 ### 2.2 已施工设施盘点（项目已有治理，通用规则 #11）
 
-项目在数据断档治理上已先行（2026-08-12 按 [01 号规范](01_design_memo_management_spec.md) §5.2 引用纪律核验，引用只保留稳定标识——条目 id / 常量名 / 方法名，不写行号）：
+项目在数据断档治理上已先行（2026-08-12 按 [01 号规范](01_design_memo_management_spec.md) §5.2 引用纪律核验：只留稳定标识、不写行号）：
 
 - [known_data_gaps.yaml](../../../../src/zephyr/data/config/known_data_gaps.yaml) 条目 `hk_connect_flow_source_discontinued`：标 `status: accepted`，root_cause 记明"港交所 2024-08-16 停止公布日频明细"
 - [akshare_provider.py](../../../../src/zephyr/data/implementations/akshare_provider.py) `_fetch_hk_connect_flow`：docstring 记明"有效数据范围 2014-11-17 ~ 2024-08-16"，NaN 行自动过滤
@@ -218,3 +218,4 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 | 2026-08-10 | 0.1.0 | 初稿 | 北向日频断档后，实测 akshare 失效/tushare 可行，建立季度快照 fetcher 施工计划 + 外资行为分析方法论 |
 | 2026-08-11 | 0.1.1 | 文件被 git clean 误删后从对话历史重建 | #ARCH-GIT-CLEAN-GUARD-FIX：git alias 无法覆盖内置 clean 命令，文件物理删除 |
 | 2026-08-12 | 0.2.0 | ①frontmatter version 与修订记录对齐（0.1.0→0.2.0，修复 0.1.1 未同步）；②§2.2 改「已施工设施盘点」并按 01 号 §5.2 引用纪律去行号（条目 id/常量名/方法名为稳定标识），修正 DEAD_DATA_SOURCES 键名与代码一致；③§3.1 修正不实引用——三条失效接口尚未登记 known_data_gaps，列入 §5.4/§9；④§6 方法论加 MVP 边界（首期只做 6.3+6.5，6.4 补样本量约束警示）；⑤§5.1 补最小设计声明、§8 补"不做增量/重试编排"（过度工程审查）；⑥§7 验证标准更新（2026Q2 官方 3958 只）、§9 分页风险升级（逼近 4200 上限）、§6 开头补行业实证（国信/招商季度跟踪） | 多轮审查：核验发现虚构引用与行号漂移，过度工程审查裁定 MVP 边界，2026Q2 行业数据入库（2026-08-12 三次并发回滚后重建） |
+| 2026-08-15 | 0.2.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08）；§2.2 引用纪律核验注记精简 | 实测表/方案裁定/开放问题零丢失，通读+自审零发现，不为压而压 |

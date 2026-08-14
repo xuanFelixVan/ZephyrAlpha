@@ -5,8 +5,8 @@ title: 冷数据归档施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "0.3.0"
-date: 2026-08-12
+version: "0.3.1"
+date: 2026-08-15
 topic: cold_archive_build_plan
 scope: 07_trading_decision_architecture
 depends_on:
@@ -270,38 +270,13 @@ python scripts/ch/archiver.py stats
 
 ### 3.6 关键实现要点
 
-**导出方式**（ClickHouse 在 Hyper-V VM，不能直接写 Windows E 盘）：
-- 用 `clickhouse-driver` TCP 分批读取（按月分区，单次 < 2GB，防 OOM）
-- 用 `pyarrow.Table.from_pandas()` + `pyarrow.parquet.write_table()` 写 Parquet
-- Parquet 压缩用 `snappy`（速度快）或 `zstd`（压缩比高，预计 20-30%）
+**导出方式**：ClickHouse HTTP API `SELECT ... FORMAT Parquet` 服务端序列化流式落盘（64KB chunk，内存恒定——ClickHouse 在 Hyper-V VM 不能直接写 Windows E 盘；防 OOM 由"按月分区单文件"粒度保证）。✅ 已施工（§3.8.1）。
 
-**验证机制**：
-```python
-def verify_partition(table, partition, parquet_path):
-    # 1. 行数比对
-    ch_count = ch_reader.query(f"SELECT count() FROM {table} WHERE toYYYYMM(trade_date)={partition}")
-    pq_count = pyarrow.parquet.read_metadata(parquet_path).num_rows
-    assert ch_count == pq_count, f"行数不一致: CH={ch_count} Parquet={pq_count}"
+**验证机制**：行数比对（CH `count()` vs Parquet 元数据 num_rows；>1M 行大分区允许 ±1 容差——count() 元数据优化与 FORMAT Parquet 的已知差异，§3.8.1）+ 随机 100 行抽样可查性确认。逐字段值比对未实现，强化候选见 §10 开放问题 6。
 
-    # 2. 抽样字段值比对（随机 100 行，比对 symbol/open/high/low/close/volume）
-    ch_sample = ch_reader.query(f"SELECT * FROM {table} WHERE toYYYYMM(trade_date)={partition} ORDER BY rand() LIMIT 100")
-    pq_table = pyarrow.parquet.read_table(parquet_path)
-    pq_sample = pq_table.slice(random.randint(0, pq_count-100), 100).to_pandas()
-    # 比对关键字段值一致
-    return True
-```
+**DROP PARTITION**：验证通过后 `ALTER TABLE {table} DROP PARTITION {partition}`。
 
-**DROP PARTITION**：
-```python
-def drop_partition(table, partition):
-    # ALTER TABLE c1_market.tick_data DROP PARTITION 202201
-    ch_reader.query(f"ALTER TABLE {table} DROP PARTITION {partition}")
-```
-
-**断点续传**：
-- 归档清单记录每个分区的 `verified` 和 `dropped` 状态
-- 批量归档中断后重跑，跳过已 `dropped=true` 的分区
-- `verified=true` 但 `dropped=false` 的分区，可直接执行 drop 阶段（跳过 export+verify）
+**断点续传**：归档清单记录每个分区的 `verified`/`dropped` 状态；批量归档中断后重跑跳过 `dropped=true` 分区；`verified=true` 但 `dropped=false` 的分区直接执行 drop 阶段（跳过 export+verify）。
 
 ### 3.7 依赖
 
@@ -311,8 +286,6 @@ def drop_partition(table, partition):
 | pyarrow 19.0.1 | 已安装 | verify 读 Parquet 元数据 / restore 读表 |
 | zephyr.data.ch_reader | 已有 | ClickHouse 查询封装 |
 | zephyr.data.ch_writer | 已有 | ClickHouse 写入（restore 用）|
-
-> 实现差异（v0.3.0 回填）：export 阶段实际采用 **ClickHouse HTTP API `SELECT ... FORMAT Parquet`** 直接流式落盘（服务端序列化，避免 Python 序列化开销），未走 clickhouse-driver 逐行读取 + pyarrow 写表的方案——更快且内存恒定，设计意图（分批防 OOM）由"按月分区单文件"粒度保证。
 
 ### 3.8 已施工设施盘点与执行状态（2026-08-12 回填，通用规则 #11）
 
@@ -410,40 +383,13 @@ def drop_partition(table, partition):
 
 ### 步骤 2：实现 archiver.py
 
-在 `scripts/ch/archiver.py` 新建脚本，实现：
-- `export_partition(table, partition)` — 导出单分区到 Parquet
-- `verify_partition(table, partition, parquet_path)` — 验证行数 + 抽样
-- `drop_partition(table, partition)` — DROP PARTITION
-- `archive_partition(table, partition)` — 三阶段原子操作
-- `archive_range(table, from_yyyymm, to_yyyymm)` — 批量归档（断点续传）
-- `list_archived()` — 列出清单
-- `restore_partition(table, partition)` — 从 Parquet 恢复
-- `stats()` — 统计归档情况
+✅ 已施工（2026-08-10，`scripts/ch/archiver.py` 528 行，5 个 CLI 子命令）——实现函数清单与设计差异见 §3.8.1。
 
 ### 步骤 3：执行冷归档
 
-**执行顺序**（先小表验证流程，再大表批量执行）：
+**执行顺序**（先小表验证流程，再大表批量执行）：kline_30min/15min/5min/60min（200006-201812）→ kline_1min（最大头）→ ETF/LOF 1min → tick_data 2022-2024（93 GiB，流程验证后执行）。CLI 用法见 §3.5。
 
-```bash
-# 3.1 dry-run 确认范围
-python scripts/ch/archiver.py archive-range --table c1_market.kline_30min --from 200006 --to 201812 --dry-run
-
-# 3.2 先归档小表（kline_30min/15min/5min/60min 2019年前），验证流程
-python scripts/ch/archiver.py archive-range --table c1_market.kline_30min --from 200006 --to 201812
-python scripts/ch/archiver.py archive-range --table c1_market.kline_15min --from 200006 --to 201812
-python scripts/ch/archiver.py archive-range --table c1_market.kline_5min --from 200006 --to 201812
-python scripts/ch/archiver.py archive-range --table c1_market.kline_60min --from 200006 --to 201812
-
-# 3.3 归档 kline_1min 2019年前（最大头，42.4 GiB）
-python scripts/ch/archiver.py archive-range --table c1_market.kline_1min --from 200006 --to 201812
-
-# 3.4 归档 ETF/LOF 1min 2019年前
-python scripts/ch/archiver.py archive-range --table c1_market.kline_etf_1min --from 200006 --to 201812
-python scripts/ch/archiver.py archive-range --table c1_market.kline_lof_1min --from 200006 --to 201812
-
-# 3.5 归档 tick_data 2022-2024（93 GiB，流程已验证）
-python scripts/ch/archiver.py archive-range --table c1_market.tick_data --from 202201 --to 202412
-```
+✅ 已于 2026-08-10 执行完毕——各表分区范围、分区数与 manifest 实证（1865 条全 verified+dropped）见 §3.8.2。
 
 ### 步骤 4：验证 D 盘空间释放
 
@@ -560,6 +506,12 @@ D 盘空间释放后，启动流水线：
 
 ## 变更历史
 
+### v0.3.1 (2026-08-15) 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08）
+- §3.6 压为当前态陈述（导出方式/验证机制/DROP/断点续传四条）：被 HTTP FORMAT Parquet 流式落盘取代的 clickhouse-driver 逐行读取设计与未施工伪代码块删除，实际实现以 §3.8.1 差异表为准；§3.7 末尾实现差异注记并入 §3.6
+- §5 步骤 2/3 已施工内容压为"✅ 已施工/已执行"+指针（函数清单→§3.8.1、执行实证→§3.8.2、CLI 用法→§3.5）
+- 变更历史 v0.3.0 条目"§7 行业实践印证"三重重复 bullet 去重为 1 条
+- §1-§2/§4/§6-§10 零改动；铁律裁定/开放问题 7 项/跨文档链接零丢失
+
 ### v0.3.0 (2026-08-12) 执行状态回填 + 已施工设施盘点 + 口径统一
 - **archiver.py 已施工回填**：§1.2 INV-RET-002 状态"未实现"→已实现并执行；新增 §3.8 已施工设施盘点——代码 528 行 5 个 CLI 子命令，与设计的 5 项差异逐条登记（export 走 HTTP FORMAT Parquet 流式落盘优于原方案；独立 export CLI 未实现；verify 仅行数±1容差+抽样可查性未做字段比对；manifest 缺 4 字段）
 - **阶段 1/2 执行状态回填**：manifest 1865 条（2026-08-10 执行，全 verified+dropped）；tick_data 36 分区 + kline 5 周期各 223 + etf_1min 167 + lof_1min 101 + tech_ind 60/120min 各 223；ClickHouse 实测 tick_data 111.13 GiB（与 §6.2 预期精确吻合）/ kline_1min 48.37 GiB / tech_ind 108.06 GiB 300M 行（回算进行中）
@@ -567,8 +519,6 @@ D 盘空间释放后，启动流水线：
 - **口径统一**：§1.3 腾出目标 135 GB/218 GB+ → 147.8 GiB/~231 GB（与 §2.5 一致）；§5 步骤 4 "241 GB"→"231 GB"；§8.1 ARCH 条目 "157.9 GiB"→"147.8 GiB"；§1.1 补 GB/GiB 单位口径说明
 - **治理缺口披露**：§4 铁律修订未落盘（YAML 仍 v1.0.0）；§8.1 ARCH-DATA-COLD-001 未登记；§8.2 两项模块登记未落盘——均转入新增 §10 开放问题（7 项：YAML 落盘/治理登记补办/16号补全/03号同步/ETF-LOF 5min+ 归档裁定/verify 强化/tech_ind 剩余周期归档时机）
 - **§6 验证方法回填**：§6.1 四条验证标准标注实测状态（行数容差/抽样可查性弱化/清单完整性✅/分区删除✅）；§6.2 补实测列
-- **§7 行业实践印证（2026-08-12 WebSearch）**：分区级归档+行数验证方案与 ClickHouse 社区工作流（oneuptime 2026-03 Strategy 3）一致；机构 TTL TO DISK 自动方案因铁律与无 S3 约束不适用，手动 archiver.py 是硬边界内正确取舍
-- **§7 行业实践印证（2026-08-12 WebSearch）**：分区级归档+行数验证方案与 ClickHouse 社区工作流（oneuptime 2026-03 Strategy 3）一致；机构 TTL TO DISK 自动方案因铁律与无 S3 约束不适用，手动 archiver.py 是硬边界内正确取舍
 - **§7 行业实践印证（2026-08-12 WebSearch）**：分区级归档+行数验证方案与 ClickHouse 社区工作流（oneuptime 2026-03 Strategy 3）一致；机构 TTL TO DISK 自动方案因铁律与无 S3 约束不适用，手动 archiver.py 是硬边界内正确取舍
 
 ### v0.2.0 (2026-08-10) 审查修正 + 用户确认

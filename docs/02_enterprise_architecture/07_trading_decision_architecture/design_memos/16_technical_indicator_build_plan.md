@@ -5,8 +5,8 @@ title: 技术指标施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-12
+version: "1.0.1"
+date: 2026-08-15
 topic: technical_indicator_build_plan
 scope: 07_trading_decision_architecture
 ---
@@ -23,7 +23,7 @@ scope: 07_trading_decision_architecture
 |---|---|
 | 主题组 | G01 数据与特征层（地基层·1x 段位） |
 | 依赖 | [16_technical_indicator_catalog](16_technical_indicator_catalog.md)（指标目录） |
-| 状态 | ✅ active v1.0.0（计算/存储/测试已完成；调度挂接+分钟周期回算进行中） |
+| 状态 | ✅ active v1.0.1（计算/存储/测试已完成；调度挂接+分钟周期回算进行中） |
 
 ## 2. 施工范围
 
@@ -56,7 +56,7 @@ scope: 07_trading_decision_architecture
 
 ### 3.2 与 18 号冷归档的衔接
 
-D 盘可用 83.2 GB 装不下 162 GiB 回算 → 18 号两阶段：**阶段 1**（回算前）归档 tick_data 2022-2024 + 各 K 线 2019 年前，腾 147.8 GiB（D 盘可用 ~231 GB，留 69 GB 缓冲）；**阶段 2**（回算完成后）归档分钟指标 2019 年前，再腾 ~36 GiB。technical_indicator 表在阶段 1 排除归档（"正在回算中"）。衔接裁定 #ARCH-DATA-COLD-001（修订 INV-RET-001/003 铁律允许"归档验证后 DROP PARTITION"）。
+D 盘可用 83.2 GB 装不下 162 GiB 回算 → 18 号两阶段：**阶段 1**（回算前）归档 tick_data 2022-2024 + 各 K 线 2019 年前，腾 147.8 GiB（D 盘可用 ~231 GB，留 69 GB 缓冲）；**阶段 2**（回算完成后）归档分钟指标 2019 年前，再腾 ~36 GiB。technical_indicator 表在阶段 1 排除归档（"正在回算中"）。衔接裁定 ARCH-DATA-COLD-001（修订 INV-RET-001/003 铁律允许"归档验证后 DROP PARTITION"；该编号尚未登记 registry，按弱引用格式无 # 前缀，登记落盘后恢复——见 18 号 §8.1/§10 开放问题 2）。
 
 ## 4. 验证计划
 
@@ -89,3 +89,4 @@ D 盘可用 83.2 GB 装不下 162 GiB 回算 → 18 号两阶段：**阶段 1**�
 |---|---|---|---|
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 施工计划骨架。**注意**：本文件曾因未 git commit 丢失，后从代码引用重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§3 回填 8 步施工步骤（5 项已完成/3 项进行中或待施工，含 1min 回算在役实测）；§3.1 回填 198→162GB 回算需求口径与周期优先级（含"先日线+1分钟"否决裁定）；§3.2 回填 18 号冷归档两阶段衔接；§4 回填五层验证计划；§5/§6 新增 | 完整版（v1.3.0）曾丢失，重建；198/162GB 仅含 6 分钟周期的口径差异显式化；调度未闭环入开放问题不擅自施工 |
+| 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08）；§3.2 衔接裁定编号改弱引用格式 | 通读+自审零发现（表格化已充分、裁定/开放问题无冗余），不为压而压；ARCH-DATA-COLD-001 未登记 registry，去 # 前缀与 18 号 §8.1 处理一致（门禁 ARCH-REFERENCE 原子性要求） |
