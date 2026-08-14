@@ -6375,120 +6375,89 @@ def make_delete_audit_reconciler(gateway: object) -> ReconcilerSpec:
     )
 
     # === 旧 GATE-WORKING-DOCS 逻辑（内联自 _make_old_working_docs_reconciler）===
+    # #ARCH-RECONCILER-AUTO-DELETE-GOV-001 治本（2026-08-14 用户裁定完整版一次到位）：
+    # 旧机制"幽灵引用即归档+auto-commit 删除"=一枪毙命，对治理文档误判率 100%
+    # （tracker/裁定书/潘潘文档三次事故实证）。重写为 doc_lifecycle 状态机驱动：
+    # 观察（7 天宽限）→ 自动复活 → 满期归档（30 天回收站）——零物理删除。
 
     def _trigger_working(committed_files: list[str]) -> bool:
 
-        # 与 ghost 一致：committed 文件不在磁盘 = 删除 commit
-
-        return any(not os.path.isfile(f) for f in committed_files)
+        # 状态机每次 post-commit 都推进（增量轻量：正则+mtime+清单 diff），
+        # 不再依赖"删除型 commit"触发——复活检测/宽限期推进需要周期执行。
+        return True
 
     def _reconcile_working(committed_files: list[str], session_id: str) -> ReconcileResult:
 
-        # 1. 扫描+归档（复用真源函数）
+        from zephyr.governance.audit.doc_lifecycle import evaluate_lifecycle
 
-        scan = scan_and_archive_working_docs(project_root, dry_run=False)
+        report = evaluate_lifecycle(project_root)
 
-        scanned = scan["scanned"]
-
-        archived = scan["archived"]
-
-        details = scan["details"]
-
-        # 2. 报告落盘
-
-        report = {
+        # 报告落盘（沿用旧通道）
+        report_payload = {
 
             "gate_id": "GATE-WORKING-DOCS",
 
             "session_id": session_id,
 
-            "scanned": scanned,
+            "scanned": report.scanned,
 
-            "archived": archived,
+            "skipped_permanent": report.skipped_permanent,
 
-            "clean": scan["clean"],
+            "watched": report.watched,
 
-            "details": details,
+            "revived": report.revived,
 
-            "archive_dir": scan["archive_dir"],
+            "archived": report.archived,
+
+            "pruned_recycle": report.pruned_recycle,
+
+            "error": report.error,
 
         }
 
-        report_path, write_err = _write_reconcile_report(project_root, "working_docs", report)
+        report_path, write_err = _write_reconcile_report(project_root, "working_docs", report_payload)
 
         if write_err:
-
             return ReconcileResult(
-
                 action="warn",
-
-                detail=f"working_docs scan done but report write failed: {write_err}",
-
+                detail=f"doc_lifecycle evaluated but report write failed: {write_err}",
             )
 
-        if scanned == 0:
-
-            return ReconcileResult(action="skip", detail="no task_bound .md in _working/")
-
-        if not archived:
-
-            return ReconcileResult(
-
-                action="clean",
-
-                detail=f"working_docs scan clean ({scanned} .md, 0 ghost), report={report_path.name}",
-
-            )
-
-        # 3. 归档后自动 commit _working/ 的删除（经 _commit_auto 统一入口，DCR gate 覆盖）
-
-        archived_rel = [f"docs/_working/{name}" for name in archived]
-
-        abs_files = [str(project_root / rel) for rel in archived_rel]
-
-        auto_msg = (
-
-            f"chore(working_docs): auto-archive {len(archived)} ghost-ref docs by "
-
-            f"GitCommitGateway post-commit"
-
+        detail = (
+            f"lifecycle: scanned={report.scanned} permanent_skip={report.skipped_permanent} "
+            f"watch+{len(report.watched)} revived={len(report.revived)} "
+            f"archived={len(report.archived)} recycle_pruned={report.pruned_recycle}, "
+            f"report={report_path.name}"
         )
 
-        commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
-
-        if commit_result.status == "OK":
-
+        # 归档提交通道（I-GOV-2 对齐 2026-08-14 裁定）：仅满 7 天宽限期归档的文件
+        # 允许 auto-commit（带 [lifecycle-archive] 标记），且文件在 30 天回收站可恢复——
+        # 损害可逆前提下的整洁性提交，非"误判固化"。其余 reconciler 删除类
+        # auto-commit 一律禁止。
+        if report.archived:
+            archived_rel = [f for f in report.archived]
+            abs_files = [str(project_root / rel) for rel in archived_rel]
+            auto_msg = (
+                f"chore(lifecycle): [lifecycle-archive] {len(archived_rel)} docs 满 7 天观察期归档 "
+                f"（30 天回收站可恢复）by GitCommitGateway post-commit"
+            )
+            commit_result = gateway._commit_auto(session_id, abs_files, auto_msg)
+            if commit_result.status == "OK":
+                return ReconcileResult(action="auto_committed", detail=detail + " (auto-committed)")
+            if commit_result.status == "NOTHING_TO_COMMIT":
+                return ReconcileResult(action="clean", detail=detail + " (no staged changes)")
             return ReconcileResult(
-
-                action="auto_committed",
-
-                detail=f"working_docs archived {len(archived)} ghost-ref docs, "
-
-                       f"report={report_path.name}",
-
+                action="warn",
+                detail=detail + f" (auto-commit failed: {commit_result.status} {commit_result.message[:120]})",
             )
 
-        if commit_result.status == "NOTHING_TO_COMMIT":
+        if report.error:
+            return ReconcileResult(action="warn", detail=detail + f" error={report.error[:120]}")
 
-            return ReconcileResult(
+        if report.scanned == 0:
+            return ReconcileResult(action="skip", detail="no lifecycle candidates in _working/")
 
-                action="clean",
-
-                detail=f"working_docs archived {len(archived)} but no staged changes "
-
-                       f"(auto-commit), report={report_path.name}",
-
-            )
-
-        return ReconcileResult(
-
-            action="warn",
-
-            detail=f"working_docs archived {len(archived)} but auto-commit failed "
-
-                   f"({commit_result.status}): {commit_result.message[:200]}",
-
-        )
+        return ReconcileResult(action="clean", detail=detail)
 
     spec_working = ReconcilerSpec(
 

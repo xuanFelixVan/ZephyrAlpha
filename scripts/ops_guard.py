@@ -547,6 +547,129 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
 
 # ============================================================================
+# 统一回收站（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1 治本）
+# 治理代理的一切删除/归档 = move 进回收站，30 天保留期，物理删除违规
+# ============================================================================
+
+#: 回收站根目录（相对仓库根；.runtime/ 已 gitignore 不入库）
+RECYCLE_BIN = ".runtime/recycle_bin"
+
+#: 回收站保留期（秒）——30 天 >>> 事故发现周期
+RECYCLE_TTL_SECONDS = 30 * 24 * 3600
+
+
+def guard_move(src: str | Path, dst: str | Path, *, cwd: str | Path | None = None) -> None:
+    """审计保护的 shutil.move 替代。
+
+    源在保护区内且未授权 → raise DeleteBlockedError（move 出保护区 = 删除变体）。
+    白名单内或未命中保护区 → 落审计后执行。
+    """
+    import shutil
+
+    src_str = str(src)
+    dst_str = str(dst)
+    cmd_repr = f"shutil.move('{src_str}', '{dst_str}')"
+    verdict = analyze_delete_command(cmd_repr, cwd)
+    audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+
+    if not verdict.allowed:
+        raise DeleteBlockedError(
+            f"[OPS-GUARD] move 被阻断——{verdict.reason}\n"
+            f"  源: {src_str}\n"
+            f"  目标: {dst_str}"
+        )
+
+    Path(dst_str).parent.mkdir(parents=True, exist_ok=True)
+    shutil.move(src_str, dst_str)
+
+
+def guard_recycle(
+    path: str | Path,
+    *,
+    cwd: str | Path | None = None,
+    reason: str = "",
+    repo_root: str | Path | None = None,
+) -> str:
+    """统一回收站入口：任何治理代理的"删除"一律 move 进回收站（永不物理删除）。
+
+    回收站结构：.runtime/recycle_bin/<epoch_ts>/<原仓库相对路径>（保留目录层级防重名）。
+    保护区文件也允许进回收站——回收站语义本身即保护（30 天可恢复）；
+    审计记录 reason 供事后追溯。返回回收站内目标路径（相对仓库根）。
+
+    #ARCH-RECONCILER-AUTO-DELETE-GOV-001 第一性原理：自动化代理判定准确率恒<100%，
+    故永不持有不可逆操作能力——guard_recycle 是治理代理唯一合法的"删除"出口。
+    """
+    import shutil
+
+    src = Path(str(path))
+    root = Path(str(repo_root)) if repo_root else Path(str(cwd)) if cwd else Path.cwd()
+    try:
+        rel = src.resolve().relative_to(root.resolve())
+    except (ValueError, OSError):
+        rel = Path(src.name)  # 仓库外路径降级为裸文件名
+    ts = int(time.time())
+    dst = root / RECYCLE_BIN / str(ts) / rel
+    cmd_repr = f"guard_recycle('{src}', reason='{reason}')"
+
+    verdict = DeleteVerdict(
+        allowed=True,
+        reason=f"回收站收纳（保留 30 天可恢复）: {reason or '未注明'}",
+        primitive="recycle_bin",
+        targets=[str(rel)],
+        is_recursive=src.is_dir(),
+        is_protected_zone=False,
+    )
+    audit_delete("guard_recycle", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(src), str(dst))
+    return str(dst.relative_to(root))
+
+
+def prune_recycle_bin(
+    *, repo_root: str | Path, ttl_seconds: int = RECYCLE_TTL_SECONDS
+) -> int:
+    """回收站到期清理（唯一合法的物理删除点，仅作用于回收站内部过期条目）。
+
+    返回清理的条目数。由 doc_lifecycle reconciler 每次运行顺带调用（零新增调度）。
+    """
+    import shutil
+
+    bin_root = Path(str(repo_root)) / RECYCLE_BIN
+    if not bin_root.is_dir():
+        return 0
+    now = int(time.time())
+    pruned = 0
+    for ts_dir in bin_root.iterdir():
+        if not ts_dir.is_dir() or not ts_dir.name.isdigit():
+            continue
+        if now - int(ts_dir.name) <= ttl_seconds:
+            continue
+        for child in ts_dir.iterdir():
+            if child.is_dir():
+                shutil.rmtree(child, ignore_errors=True)
+            else:
+                child.unlink(missing_ok=True)
+        try:
+            ts_dir.rmdir()
+        except OSError:
+            pass
+        pruned += 1
+        audit_delete(
+            "recycle_prune",
+            f"prune_recycle_bin('{ts_dir.name}')",
+            DeleteVerdict(
+                allowed=True,
+                reason=f"回收站 {ttl_seconds // 86400} 天到期清理",
+                primitive="recycle_prune",
+                targets=[ts_dir.name],
+            ),
+            cwd=str(repo_root),
+        )
+    return pruned
+
+
+# ============================================================================
 # CLI
 # ============================================================================
 

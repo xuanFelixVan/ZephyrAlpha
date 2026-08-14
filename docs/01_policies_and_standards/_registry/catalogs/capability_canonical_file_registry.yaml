@@ -6041,6 +6041,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- doc_lifecycle.py（文档生命周期状态机，#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T0/T1 治本核心，2026-08-14 统筹施工）---
+  - file: "src/zephyr/governance/audit/doc_lifecycle.py"
+    token: "auto-doc-lifecycle-20260814"
+    created_by: "session-coord-0814-git001"
+    capability: "doc_lifecycle_state_machine"
   # --- reconciler 自动删除失控族裁定书（2026-08-14，统筹会话，GATE-WORKING-DOCS 误归档+I-GOV-2 架空+S1 盲区三实证）---
   - file: "docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md"
     token: "auto-reconciler-auto-delete-gov-review-20260814"

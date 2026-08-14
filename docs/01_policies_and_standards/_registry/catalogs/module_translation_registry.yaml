@@ -8405,6 +8405,13 @@ entries:
   desc_zh: 'health_score_calculator.py — commit gateway 滥用 6 维加权健康度评分（P3-2，#ARCH-PREVENTABILITY-LAYER-001 Phase '
   desc_en: ''
   plain_zh: commit gateway 滥用 6 维加权健康度评分（P3-2，#ARCH-PREVENTABILITY-LAYER-001 Phase 3）。
+- module_path: src/zephyr/governance/audit/doc_lifecycle.py
+  domain_id: D_GOV_AUDIT
+  name_zh: 文档生命周期状态机
+  name_en: doc_lifecycle
+  desc_zh: 文档生命周期状态机（观察7天宽限→自动复活→满期归档30天回收站），替代旧幽灵引用即归档机制（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 治本）。
+  desc_en: ''
+  plain_zh: 文档生命周期状态机，先标记观察7天、有活跃自动复活、到期才归档进30天回收站，全程自动化零物理删除。
 - module_path: src/zephyr/governance/audit/reconcile_runner.py
   domain_id: D_GOV_AUDIT
   name_zh: 对账运行器
