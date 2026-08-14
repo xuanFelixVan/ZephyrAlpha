@@ -467,6 +467,65 @@ def _is_authorized() -> bool:
     )
 
 
+def _is_docs_untracked(path_str: str, cwd: str | Path | None = None) -> bool:
+    """T3②（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：目标为 docs/ 下 git 未跟踪文件判定。
+
+    清风草稿丢失实证：docs/ 下 untracked 文件"三重无保护"（不在 git、归档器可动、
+    物理删除无审计）——此类文件的删除/移动 MUST 人工确认（guard 规则）。
+
+    Returns:
+        True=目标在 docs/ 下且 git 未跟踪（git ls-files --error-unmatch 非零）。
+        判定异常降级 False（不阻断主流——git 不可达时按 tracked 对待，松约束）。
+    """
+    rel = _resolve_to_repo_rel(path_str, cwd)
+    if not _is_under_prefix(rel, "docs"):
+        return False
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        result = run_subprocess_hidden(
+            ["git", "ls-files", "--error-unmatch", "--", rel],
+            cwd=str(_get_project_root()),
+            capture_output=True,
+            text=True,
+        )
+        return result.returncode != 0
+    except Exception:  # noqa: BLE001 — git 不可达降级 tracked（松约束不阻断）
+        return False
+
+
+def _enforce_docs_untracked(path_str: str, cwd: str | Path | None = None) -> None:
+    """docs/ 下 untracked 文件删除/移动的人工确认闸门（T3②）。
+
+    命中且未人工确认（ZEPHYR_FORCE_DELETE=1）→ 审计 + raise。
+
+    ⚠️ 授权判定只认 FORCE_ENV，不认 GATEWAY_ENV：gateway 标记经
+    os.environ.copy() 被 reconcile worker 继承（reconcile_runner L708），
+    若认 GATEWAY_ENV 则全部 reconciler 天然"已授权"、本闸门形同虚设。
+    人工确认 = 人显式设 ZEPHYR_FORCE_DELETE=1，或人直接操作（不经代理）。
+    """
+    if os.environ.get(FORCE_ENV) == "1":
+        return
+    if not _is_docs_untracked(path_str, cwd):
+        return
+    rel = _resolve_to_repo_rel(path_str, cwd)
+    verdict = DeleteVerdict(
+        allowed=False,
+        reason=(
+            f"docs/ 下 untracked 文件删除/移动需人工确认（T3② 清风草稿丢失治本）: {rel}——"
+            f"三重无保护文件（不在 git/归档器可动/删除无追溯），自动化代理禁动"
+        ),
+        primitive="docs_untracked",
+        targets=[rel],
+        is_protected_zone=True,
+    )
+    audit_delete("docs_untracked_block", f"docs-untracked('{rel}')", verdict, cwd=str(cwd) if cwd else None)
+    raise DeleteBlockedError(
+        f"[OPS-GUARD] docs/ untracked 文件删除被阻断——{rel}\n"
+        f"  解决方案: 人工确认后设 {FORCE_ENV}=1 重试，或由人工直接操作（不经代理）"
+    )
+
+
 def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVerdict:
     """分析命令是否为危险删除操作，判定是否放行。
 
@@ -504,6 +563,23 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
             is_protected_zone=True,
         )
 
+    # T3②：docs/ 下 untracked 文件（含非递归单文件——_judge_protected 对非递归
+    # 直接放行，此处补齐盲区）删除/移动需人工确认（FORCE_ENV，gateway 标记不算）。
+    if os.environ.get(FORCE_ENV) != "1":
+        untracked_hits = [t for t in resolved_targets if _is_docs_untracked(t, cwd)]
+        if untracked_hits:
+            return DeleteVerdict(
+                allowed=False,
+                reason=(
+                    f"docs/ 下 untracked 文件删除需人工确认（T3② 清风治本）: {untracked_hits}——"
+                    f"人工确认后设 {FORCE_ENV}=1 重试"
+                ),
+                primitive=primitive,
+                targets=resolved_targets,
+                is_recursive=is_recursive,
+                is_protected_zone=True,
+            )
+
     reason = "白名单路径" if any(
         _is_whitelisted(rt) for rt in resolved_targets
     ) else ("授权放行" if authorized else "非保护区")
@@ -536,6 +612,7 @@ def guard_rmtree(path: str | Path, *, cwd: str | Path | None = None) -> None:
     import shutil
 
     path_str = str(path)
+    _enforce_docs_untracked(path_str, cwd)  # T3②：声明制/保护区判定均不豁免
     ctx = _RECONCILER_CTX.get()
     if ctx is not None:
         rel = _resolve_to_repo_rel(path_str, cwd)
@@ -565,6 +642,7 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
     if ctx is not None:
         rel = _resolve_to_repo_rel(path_str, cwd)
         _enforce_file_ops("delete", [rel], cwd=cwd)
+        _enforce_docs_untracked(path_str, cwd)  # T3②：声明制不豁免 untracked 人工确认
         verdict = DeleteVerdict(
             allowed=True,
             reason=f"reconciler {ctx[0]} 已声明 delete（声明制直通）",
@@ -580,6 +658,7 @@ def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
             pass
         return
 
+    _enforce_docs_untracked(path_str, cwd)  # T3②
     cmd_repr = f"os.remove('{path_str}')"
     verdict = analyze_delete_command(cmd_repr, cwd)
     audit_delete("guard_remove", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
@@ -624,6 +703,7 @@ def guard_move(src: str | Path, dst: str | Path, *, cwd: str | Path | None = Non
 
     src_str = str(src)
     dst_str = str(dst)
+    _enforce_docs_untracked(src_str, cwd)  # T3②：move 出 docs/ = 删除变体，untracked 需人工确认
     cmd_repr = f"shutil.move('{src_str}', '{dst_str}')"
     ctx = _RECONCILER_CTX.get()
     if ctx is not None:
@@ -696,6 +776,10 @@ def guard_recycle(
     reconciler 上下文内：recycle 视同 move（文件离开原位），校验 file_ops 声明。
     """
     import shutil
+
+    # T3②：untracked docs 文件进回收站 = 从 docs/ 消失（清风案正是"被移走找不到"），
+    # 回收站 30 天可恢复不豁免人工确认——文件原位消失即构成用户损失。
+    _enforce_docs_untracked(str(path), cwd)
 
     ctx = _RECONCILER_CTX.get()
     if ctx is not None:
@@ -909,6 +993,11 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
     if ctx is not None:
         rel = _resolve_to_repo_rel(path_str)
         _enforce_file_ops(op, [rel])
+        try:
+            _enforce_docs_untracked(path_str)  # T3②：声明制不豁免 untracked 人工确认
+        except DeleteBlockedError:
+            _AUDIT_STATS["block"] += 1
+            raise
         if (
             recursive
             and not _is_whitelisted(rel)
@@ -950,6 +1039,11 @@ def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
             DeleteVerdict(allowed=True, reason="白名单路径", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
         )
         return
+    try:
+        _enforce_docs_untracked(path_str)  # T3②：裸调用同样受人工确认闸门约束
+    except DeleteBlockedError:
+        _AUDIT_STATS["block"] += 1
+        raise
     if (
         any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
         and not _is_authorized()

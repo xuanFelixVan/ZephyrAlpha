@@ -191,21 +191,23 @@ class TestReconcilerContextEnforcement:
 # ---------------------------------------------------------------------------
 # 3. in-process 补丁（worker 进程裸 stdlib 删除拦截）
 # ---------------------------------------------------------------------------
-class TestInprocessEnforcement:
-    @pytest.fixture(autouse=True)
-    def _restore_primitives(self):
-        """补丁进程级——测试后恢复原始原语防污染。"""
-        yield
-        if _ORIG_PRIMITIVES:
-            os.remove = _ORIG_PRIMITIVES["os.remove"]  # type: ignore[assignment]
-            os.unlink = _ORIG_PRIMITIVES["os.unlink"]  # type: ignore[assignment]
-            os.rmdir = _ORIG_PRIMITIVES["os.rmdir"]  # type: ignore[assignment]
-            os.rename = _ORIG_PRIMITIVES["os.rename"]  # type: ignore[assignment]
-            import shutil as _sh
-            _sh.rmtree = _ORIG_PRIMITIVES["shutil.rmtree"]  # type: ignore[assignment]
-            _sh.move = _ORIG_PRIMITIVES["shutil.move"]  # type: ignore[assignment]
-        ops_guard_mod._INSTALLED = False
+@pytest.fixture()
+def _restore_primitives():
+    """补丁进程级——测试后恢复原始原语防污染。"""
+    yield
+    if _ORIG_PRIMITIVES:
+        os.remove = _ORIG_PRIMITIVES["os.remove"]  # type: ignore[assignment]
+        os.unlink = _ORIG_PRIMITIVES["os.unlink"]  # type: ignore[assignment]
+        os.rmdir = _ORIG_PRIMITIVES["os.rmdir"]  # type: ignore[assignment]
+        os.rename = _ORIG_PRIMITIVES["os.rename"]  # type: ignore[assignment]
+        import shutil as _sh
+        _sh.rmtree = _ORIG_PRIMITIVES["shutil.rmtree"]  # type: ignore[assignment]
+        _sh.move = _ORIG_PRIMITIVES["shutil.move"]  # type: ignore[assignment]
+    ops_guard_mod._INSTALLED = False
 
+
+@pytest.mark.usefixtures("_restore_primitives")
+class TestInprocessEnforcement:
     def test_install_idempotent(self):
         assert install_inprocess_enforcement() is True
         assert install_inprocess_enforcement() is False
@@ -235,7 +237,11 @@ class TestInprocessEnforcement:
             Path("tests/conftest.py").unlink()
 
     def test_audit_written_for_block(self, tmp_path, monkeypatch):
-        """阻断事件落审计（T2③ 审计覆盖率采集层）。"""
+        """阻断事件落审计（T2③ 审计覆盖率采集层）。
+
+        T3② 后 docs/ untracked 目标由 docs_untracked_block 动作落审计
+        （其余保护区目标仍为 inprocess_block）——两动作都计入阻断审计。
+        """
         monkeypatch.chdir(tmp_path)
         # 审计锚定 _get_project_root()（进程内缓存）——钉住为 tmp_path 隔离验证
         monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
@@ -243,7 +249,10 @@ class TestInprocessEnforcement:
         with pytest.raises(DeleteBlockedError):
             os.remove("docs/x.md")
         entries = _read_audit(tmp_path)
-        blocked = [e for e in entries if e.get("action") == "inprocess_block"]
+        blocked = [
+            e for e in entries
+            if e.get("action") in ("inprocess_block", "docs_untracked_block")
+        ]
         assert blocked, "阻断事件未落审计"
 
     def test_audit_stats_counted(self, tmp_path, monkeypatch):
@@ -265,6 +274,83 @@ class TestInprocessEnforcement:
         assert after["allow"] - before["allow"] == 1
         assert after["block"] - before["block"] == 1
         assert after["audit_failed"] == before["audit_failed"]  # 零落盘失败=覆盖率 100%
+
+
+# ---------------------------------------------------------------------------
+# 3b. docs/ untracked 人工确认闸门（T3②，清风草稿丢失治本）
+# ---------------------------------------------------------------------------
+@pytest.mark.usefixtures("_restore_primitives")
+class TestDocsUntrackedEnforcement:
+    """docs/ 下 untracked 文件删除/移动需人工确认（ZEPHYR_FORCE_DELETE=1）。
+
+    裁定书 T3 验收：docs/ 下 untracked 文件被删必有审计记录；无记录事件=0。
+    """
+
+    def test_inprocess_bare_remove_docs_untracked_blocked(self, tmp_path, monkeypatch):
+        """红队：worker 进程内裸 os.remove untracked docs 草稿 → 阻断+审计。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        victim = tmp_path / "docs" / "draft.md"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("未提交草稿", encoding="utf-8")
+        install_inprocess_enforcement()
+        with pytest.raises(DeleteBlockedError, match="untracked"):
+            os.remove("docs/draft.md")
+        assert victim.exists(), "被拦文件不应消失"
+        entries = _read_audit(tmp_path)
+        assert any(
+            e.get("action") == "docs_untracked_block" for e in entries
+        ), "docs_untracked 阻断未落审计（T3 验收：无记录事件=0）"
+
+    def test_inprocess_force_allows_untracked(self, tmp_path, monkeypatch):
+        """人工确认标记 ZEPHYR_FORCE_DELETE=1 → 放行执行（审计照落）。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        monkeypatch.setenv("ZEPHYR_FORCE_DELETE", "1")
+        victim = tmp_path / "docs" / "draft.md"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("确认废弃", encoding="utf-8")
+        install_inprocess_enforcement()
+        os.remove("docs/draft.md")
+        assert not victim.exists()
+
+    def test_inprocess_gateway_env_no_bypass(self, tmp_path, monkeypatch):
+        """反架空：gateway 标记不豁免 untracked 闸门（worker 继承 env 场景）。"""
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        monkeypatch.setenv("ZEPHYR_COMMIT_GATEWAY", "1")
+        monkeypatch.delenv("ZEPHYR_FORCE_DELETE", raising=False)
+        victim = tmp_path / "docs" / "draft.md"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        install_inprocess_enforcement()
+        with pytest.raises(DeleteBlockedError, match="untracked"):
+            os.remove("docs/draft.md")
+
+    def test_guard_recycle_docs_untracked_blocked(self, tmp_path, monkeypatch):
+        """guard_recycle 对 untracked docs 文件同样拦截（进回收站=从 docs/ 消失）。"""
+        from scripts.ops_guard import guard_recycle
+
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        victim = tmp_path / "docs" / "_working" / "draft.md"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("清风类草稿", encoding="utf-8")
+        with pytest.raises(DeleteBlockedError, match="untracked"):
+            guard_recycle("docs/_working/draft.md", repo_root=tmp_path, reason="归档")
+        assert victim.exists(), "被拦文件不应离开原位"
+
+    def test_guard_recycle_outside_docs_unaffected(self, tmp_path, monkeypatch):
+        """docs/ 之外路径回收不受影响（不误伤主流归档）。"""
+        from scripts.ops_guard import guard_recycle
+
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(ops_guard_mod, "_PROJECT_ROOT_CACHE", tmp_path)
+        victim = tmp_path / "src_staging" / "old.py"
+        victim.parent.mkdir(parents=True)
+        victim.write_text("x", encoding="utf-8")
+        guard_recycle(str(victim), repo_root=tmp_path, reason="常规回收")
+        assert not victim.exists()
 
 
 # ---------------------------------------------------------------------------

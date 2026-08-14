@@ -43,12 +43,12 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-002
-version: "1.1.0"
+version: "1.2.0"
 title: "Directory Contract"
 status: active
 ttl: permanent
-contract_version: "1.1.0"
-last_updated: "2026-07-20"
+contract_version: "1.2.0"
+last_updated: "2026-08-14"
 
 # ============================================================
 # 0. 真源溯源（三维来源声明）
@@ -97,6 +97,20 @@ directory_zones:
       - "architecture_model/"
     default_ttl: permanent
     gate: allow_promote_required
+    # 归档/清理器禁区（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T3①，2026-08-14 裁定）：
+    # 以下子目录为统筹/裁定真源区——任何 reconciler/归档器/清理器（含 doc_lifecycle、
+    # GATE-WORKING-DOCS 后继者、TTL 清理器）一律禁止移动/删除/归档其下文件。
+    # 背景：统筹 tracker/handoff 已自 docs/_working 迁入 design_memos 永久区（1c6cdc9e24），
+    # 两份裁定书已迁入 04_architecture_principles_decisions/（治理批② T3③）——
+    # 此类文件是跨会话协调与裁定真源，被自动化代理移动即造成"清风类"损失。
+    # 强制执行层：①reconciler file_ops 声明制（无 reconciler 声明这些路径的 delete/move）；
+    # ②ops_guard 回收站/移动闸门（untracked 一律人工确认，tracked 走回收站审计）；
+    # ③本声明为 SSoT——未来新增清理类 reconciler 注册时必须对照本节自证不越界。
+    protected_subdirs:
+      - path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/"
+        reason: "统筹区——construction_progress_tracker/handoff/设计备忘录（裁定/进度/交接真源），归档/清理器禁区"
+      - path: "docs/02_enterprise_architecture/04_architecture_principles_decisions/"
+        reason: "裁定书区——架构裁定真源（ttl=permanent），归档/清理器禁区"
     # 永久区子目录中，以下路径豁免晋升门禁（生成器专用）
     # 真源：capability_canonical_file_registry.yaml outputs 字段
     #
@@ -131,6 +145,24 @@ directory_zones:
       - "audit/"
       - "decomposition/"
       - "ttl_content_audit/"
+    # 剩余文件分级（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T3①，2026-08-14 裁定）：
+    # docs/_working 内文件两级分类——归档器管辖 vs 清理器禁区。
+    # 现状实证（2026-08-14）：tracked 仅 5 文件（reports/2 + research_notes/1 + audit/1 + 根级 1），
+    # 统筹 tracker/handoff/裁定书已全部迁出至永久区（design_memos / 04_裁定书区）。
+    file_classification:
+      # 归档器管辖：doc_lifecycle 状态机管理（观察 7 天宽限→生命迹象复活→满期进 30 天回收站，
+      # 零物理删除——98aeffde63）。适用对象=tracked 且 ttl=task_bound 的过程性文档。
+      archivable:
+        rule: "tracked 且 ttl=task_bound 的过程性文档（process_subdirs + 根级任务文档）"
+        manager: "doc_lifecycle 状态机（非一枪毙命——生命迹象自动复活，归档=进回收站可恢复）"
+      # 清理器禁区：以下三类文件任何自动化代理（reconciler/归档器/TTL 清理器）禁动。
+      forbidden:
+        - rule: "git 未跟踪（untracked）文件——三重无保护（不在 git/归档器可动/删除无追溯），删除/移动/归档一律需人工确认"
+          enforcement: "ops_guard._enforce_docs_untracked 硬阻断（T3②，ZEPHYR_FORCE_DELETE=1 为唯一人工确认标记）"
+        - rule: "ttl=permanent 显式声明文件（不应存在于此区——DCR-003/DCR-004 会拦，双保险）"
+          enforcement: "doc_lifecycle permanent 豁免（98aeffde63 状态机内建）"
+        - rule: "短命路径（.worktrees//.runtime//data/ 内引用断裂不算死亡证据）"
+          enforcement: "doc_lifecycle 短命路径断裂不计分（状态机内建）"
 
   neutral:
     # 语义澄清（2026-06-30 修正，trae_047 v1.2.0 全格式加 ttl 后原描述过时）：
