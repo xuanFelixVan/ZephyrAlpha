@@ -1008,6 +1008,43 @@ class GitCommitGateway:
         """向后兼容 thin wrapper（Stage 4 公共化，反向层级）。"""
         return self.run_post_commit_reconcile(existing, session_id, result, commit_message)
 
+    def _snapshot_worktree_status(self, session_id: str, result: CommitResult) -> None:
+        """commit 成功后自动打 worktree git status 快照入审计（S3 观测层治本）。
+
+        2026-08-14 worktree wipe 裁定书 S3：事故时无任何 worktree 状态留痕，
+        4 个 worker 启动即死无从追查。每次网关 commit 成功后落一条 JSONL 到
+        ``.runtime/gate_audit/worktree_status_snapshots.jsonl``——
+        分支头（ahead/behind）+ dirty 条目清单（cap 200）+ dirty 计数。
+        best-effort fail-open：快照失败永不阻断 commit。
+        """
+        if result.status is not CommitStatus.OK:
+            return
+        try:
+            import json as _json
+            from datetime import datetime, timezone
+
+            r = self.run_git(["git", "status", "--porcelain=v1", "--branch"])
+            lines = (r.stdout or "").splitlines() if r.returncode == 0 else []
+            branch_header = lines[0] if lines and lines[0].startswith("##") else ""
+            dirty = [ln for ln in lines if ln and not ln.startswith("##")]
+            audit_dir = self.project_root / ".runtime" / "gate_audit"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            record = {
+                "ts": datetime.now(timezone.utc).isoformat(),
+                "session_id": session_id,
+                "commit_hash": result.commit_hash,
+                "worktree_root": str(self.project_root),
+                "branch_header": branch_header,
+                "dirty_count": len(dirty),
+                "dirty_entries": dirty[:200],
+                "truncated": len(dirty) > 200,
+                "git_rc": r.returncode,
+            }
+            with (audit_dir / "worktree_status_snapshots.jsonl").open("a", encoding="utf-8") as f:
+                f.write(_json.dumps(record, ensure_ascii=False) + "\n")
+        except Exception:  # noqa: BLE001 — 快照 best-effort，失败不阻断 commit
+            logger.debug("worktree status snapshot write failed (non-blocking)", exc_info=True)
+
     def _post_flush_rules_integrity_re_register(self, session_id: str) -> None:
         """flush 后重注册 rules_integrity 基线（治本时序竞态，2026-08-02 audit-02）。
 
@@ -1279,6 +1316,7 @@ class GitCommitGateway:
                 return blocked
             result = self._commit_locked(session_id, existing, full_message, gw_marker)
 
+        self._snapshot_worktree_status(session_id, result)
         self._run_post_commit_reconcile(existing, session_id, result, commit_message=message)
         return result
 
