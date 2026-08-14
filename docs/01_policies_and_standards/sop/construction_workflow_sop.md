@@ -397,7 +397,7 @@ pytest tests/path/to/test_xxx.py -v
 **通过判据**：12 节全部 PASS / FAIL 项已就地修复并自检通过
 **不通过处置**：FAIL 项无法就地修复 → 回 Step 4 修复 → 重审该节
 **产出物**：审查结论（对话内）+ 跳过条款清单+跳过理由（来自 0.5 分类）
-**遗留项登记**（防止遗忘）：审查中发现的遗留项（如文件被其他会话占用无法同步、无法访问 worktree 验证等）MUST 登记到统筹会话的 `docs/_working/construction_progress_tracker.md` §七遗留项登记表，含：遗留项描述/来源施工队/原因/待办条件/状态。bm-fill 或其他会话释放后逐项闭环。**禁止不登记就跳过——未登记的遗留项=必忘项**
+**遗留项登记**（防止遗忘）：审查中发现的遗留项（如文件被其他会话占用无法同步、无法访问 worktree 验证等）MUST 登记到统筹会话的 `docs/_working/construction_progress_tracker.md` §六遗留项登记表，含：遗留项描述/来源施工队/原因/待办条件/状态。bm-fill 或其他会话释放后逐项闭环。**禁止不登记就跳过——未登记的遗留项=必忘项**
 **方法论根因分析**（[trae_024_methodology_diagnosis.yaml](../rules/trae_024_methodology_diagnosis.yaml) MTH-006）：修复问题时修改既有产物即触发——追问到底+诊断反转验证，禁第一个为什么就停（治本关键）；标准先行（查专业框架映射表）+架构上下文自检（文件操作前定位架构层）+决策质量四问（埋雷/容量/对标/建议）+SSoT 冲突裁决（时序/职责/先例）+补漏与终止双检
 **漂移检测套件**（[trae_016_arch_drift_detection.yaml](../rules/trae_016_arch_drift_detection.yaml) + 脚本）：
 - 契约代码漂移：`scripts/governance/d2_links/check_contract_code_drift.py`
@@ -412,7 +412,7 @@ pytest tests/path/to/test_xxx.py -v
 ### Step 7 · 更新施工文档
 
 **何时触发**：Step 6 长清单审查通过
-**前置条件**：审查遗留项已登记到 construction_progress_tracker.md §七（不要求零遗留，但要求已登记）
+**前置条件**：审查遗留项已登记到 construction_progress_tracker.md §六（不要求零遗留，但要求已登记）
 **操作摘要**：设计备忘 frontmatter 升版 + 正文施工完毕标注 + 已施工设施盘点补模块路径 + 00_index 同步
 **引用真源**：[01_design_memo_management_spec.md](../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/01_design_memo_management_spec.md) §5.3 + [trae_052_cross_blueprint_change_cleanup.yaml](../rules/trae_052_cross_blueprint_change_cleanup.yaml) §rule_eleven（跨蓝图变更通知）
 **执行要点**：
