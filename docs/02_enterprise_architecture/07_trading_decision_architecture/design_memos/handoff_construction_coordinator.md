@@ -65,15 +65,16 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 6. **防丢铁律（本次事故教训）**：tracker 与本文件**每次里程碑必须经 GitCommitGateway commit 到 dev**。"staged + .runtime 备份"不是持久化——staged 会被其他会话/reconciler 冲掉，.runtime 免跟踪目录会话关闭即失联。2026-08-13 两份文件因此丢失，靠备份+记忆重建。
 7. **新建文件即 `git add`**：project_memory #ARCH-GIT-CLEAN-GUARD-FIX 教训——`git clean -fd` 物理删除 untracked 文件不进回收站。
 
-## 五、当前状态快照（2026-08-14）
+## 五、当前状态快照（2026-08-14 晚，第四统筹会话更新）
 
 - **第 1-3 批业务施工（18 个会话）**：全部完工 PASS 并 merge 回 dev（第三批 merge：BGT=7ccc296d1e / LIQ=885cddc3af / SELL=a337e0f54c）。
 - **文档压缩批（AI-DOCS-001）**：18 篇 ≥1000 行大文档已压缩 merge（33.6k→23.2k 行，merge ab3df58d9d）。
-- **治理插队批（AI-GIT-001）**：🔄 施工中——git/并发协作基础设施专项（ops_guard 删除收敛/清理四证 SOP/网关锚定/观测层/task_board 重建），裁定书真源=docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md。
+- **治理插队批（AI-GIT-001）**：✅ 已 merge（d8f94d4f2b+04cae02008，S1-S6/task_board/65号 v2.3.0 全落地；worktree 已按四证 SOP 清理，tracker #54）。
+- **治理批②（AI-RCN-001）**：⏳ 待开工——reconciler 自动删除失控族治本（T0-T6），裁定书=docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）。**2026-08-14 晚用户裁定：优先于第 4 批**。
 - **SOP**：v1.4.0 在 dev（01/sop 专区）；merge 冲突处理 SOP=01/sop/merge_conflict_resolution_sop.md；worktree 清理 SOP=01/sop/worktree_cleanup_sop.md。
-- **遗留项**：tracker §六共 49 项登记，22 项已闭环。待用户裁定：#38 S1/S2 立项确认（已含在 AI-GIT-001 范围）、#41 AGENTS.md 计数动态化（Owner 审批）、#48 G04 校准跟踪。
-- **待开工批次**：第 4 批（34 RegimeMeta/60 跨切/43 合规，60 号骨架需先重建）、第 5 批（53/54/55）、重建类（28 号可从 a3750b90d1 恢复/60 号骨架）——均等治理批完工。
-- **环境**：无未 merge 施工分支；AI-GIT-001 有活跃 worktree；主工作区有其他会话 WIP（数据层 src/zephyr/data/* 等），不要碰。
+- **遗留项**：tracker §六共 55 项登记。待用户裁定：#41 AGENTS.md 计数动态化（Owner 审批）、#48 G04 校准跟踪。
+- **待开工批次**：治理批②（AI-RCN-001，优先）→ 第 4 批（34 RegimeMeta/60 跨切/43 合规，60 号骨架需先重建）→ 第 5 批（53/54/55）→ 重建类（28 号可从 a3750b90d1 恢复/60 号骨架）。
+- **环境**：无未 merge 施工分支；`.worktrees/AI-GIT-001` 目录复用中（task-git-wrapper-phase1，0 ahead 已全入 dev）；主工作区活跃会话 coord-0814-git001（迁移收口，用户知情）WIP 不要碰。
 
 ## 六、新批次开工指令要点（供生成一键复制指令时引用）
 
