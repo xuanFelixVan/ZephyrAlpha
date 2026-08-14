@@ -5,7 +5,7 @@ title: "CloneGuard 蓝图 — 多引擎代码克隆检测集成防御体系（�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.1.0"
+version: "0.1.1"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -65,7 +65,7 @@ build_status: planned
 
 **治本思路**：不自研检测算法，而是将 6 个 2026 年最前沿的开源克隆检测引擎并发集成，通过统一编排层形成"四层防御纵深"，覆盖 AI 造轮子的全部 4 个发生时机（写代码前 / 提交时 / 累积期 / 跨边界）。核心约束遵循 #ARCH-GOV-BUDGET-001 的 I-GOV-3（治理预算等量退役）：**升级现有 CAPABILITY-OVERLAP 门禁，不新增门禁**。
 
-> module_id: MOD-CLONE_GUARD | version: 0.1.0 | status: Draft | layer: cross_layer
+> module_id: MOD-CLONE_GUARD | version: 0.1.1 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/clone_guard/ | generation: 1 | construction_progress: not_started
 > **病根定位**：100% AI 开发 → AI 无"记忆" → 为已解决任务重复生成 → 功能重叠代码累积 → 维护成本指数增长 + bug 传播风险
 > **治本原则**：用现成开源引擎 + 自研仅编排层（~1500行）+ 升级不新增门禁（守 I-GOV-3）
@@ -696,3 +696,49 @@ pip install mcrit relate
 <!-- temporal_type: permanent -->
 
 - **2026-08-06**：蓝图 v0.1.0 创建。全网调研 15+ 工具，定案 6 引擎并发集成 + 四层防御纵深。遵循 I-GOV-3 升级 CAPABILITY-OVERLAP 不新增门禁。MVP(Phase A) 仅用 Echo-Guard，2 天投产堵 80% 病根。
+
+---
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/clone_guard/__init__.py` | ✅ 已实现 | |
+| `src/zephyr/clone_guard/engines/__init__.py` | ⚠️ 骨架 | |
+
+### 1.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/clone_guard/__init__.py` | ⚠️ 骨架 | |
+| `tests/clone_guard/test_aggregator.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_ast_grep_adapter.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_config.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_echo_guard_adapter.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_mcp_server.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_mcrit_adapter.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_orchestrator.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_redup_adapter.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_relate_adapter.py` | ✅ 已实现 | |
+| `tests/clone_guard/test_vendetect_adapter.py` | ✅ 已实现 | |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下

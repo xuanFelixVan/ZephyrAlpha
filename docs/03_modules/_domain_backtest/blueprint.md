@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.4
+version: 1.3.5
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -975,6 +975,7 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `src/zephyr/backtest/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/backtest/core/decision_gate.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/metrics.py` | ✅ 已实现 | |
@@ -985,11 +986,17 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `src/zephyr/backtest/io/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/backtest_result_sink.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/io/result_repository.py` | ✅ 已实现 | |
+| `src/zephyr/backtest/regime_validation/__init__.py` | ✅ 已实现 | |
 
 ### 1.2 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/backtest/test_c1_comparator.py` | ✅ 已实现 | |
+| `tests/backtest/test_c1_runner.py` | ✅ 已实现 | |
+| `tests/backtest/test_deadzone_provider.py` | ✅ 已实现 | |
+| `tests/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |
+| `tests/backtest/test_shrinkage_provider.py` | ✅ 已实现 | |
 | `tests/test_backtest_decisiongraph_adapter.py` | ✅ 已实现 | |
 | `tests/test_event_driven_engine.py` | ✅ 已实现 | |
 | `tests/test_matching_engine.py` | ✅ 已实现 | |

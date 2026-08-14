@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.7"
+version: "2.2.8"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.7 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.8 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -940,12 +940,14 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_auction_book.py` | ✅ 已实现 | |
 | `schemas/categories/market_block_trade.py` | ✅ 已实现 | |
 | `schemas/categories/market_block_trade_detail.py` | ✅ 已实现 | |
+| `schemas/categories/market_calendar_event.py` | ✅ 已实现 | |
 | `schemas/categories/market_cb_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market_concept_board.py` | ✅ 已实现 | |
 | `schemas/categories/market_concept_board_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market_concept_sector.py` | ✅ 已实现 | |
 | `schemas/categories/market_convertible_bond_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_daily_valuation.py` | ✅ 已实现 | |
+| `schemas/categories/market_dividend_tax_node.py` | ✅ 已实现 | |
 | `schemas/categories/market_dragon_tiger.py` | ✅ 已实现 | |
 | `schemas/categories/market_dragon_tiger_seat.py` | ✅ 已实现 | |
 | `schemas/categories/market_etf_benchmark.py` | ✅ 已实现 | |
@@ -962,10 +964,12 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_hog_province_spot.py` | ✅ 已实现 | |
 | `schemas/categories/market_hog_spot_index.py` | ✅ 已实现 | |
 | `schemas/categories/market_index.py` | ✅ 已实现 | |
+| `schemas/categories/market_index_adjustment.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_constituent.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_meta.py` | ✅ 已实现 | |
 | `schemas/categories/market_index_weight.py` | ✅ 已实现 | |
+| `schemas/categories/market_ipo_schedule.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_15min.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_1min.py` | ✅ 已实现 | |
 | `schemas/categories/market_kline_30min.py` | ✅ 已实现 | |
@@ -998,8 +1002,10 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_kline_weekly_hfq.py` | ✅ 已实现 | |
 | `schemas/categories/market_limit_up_down.py` | ✅ 已实现 | |
 | `schemas/categories/market_lof_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_margin_target_adjustment.py` | ✅ 已实现 | |
 | `schemas/categories/market_margin_trading.py` | ✅ 已实现 | |
 | `schemas/categories/market_money_flow.py` | ✅ 已实现 | |
+| `schemas/categories/market_msci_adjustment.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_greeks.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_kline.py` | ✅ 已实现 | |
@@ -1011,6 +1017,8 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_st_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_stock_valuation.py` | ✅ 已实现 | |
+| `schemas/categories/market_technical_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_tick.py` | ✅ 已实现 | |
 | `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_index.py` | ✅ 已实现 | |
@@ -1023,6 +1031,8 @@ class ViolationDetail(BaseModel):
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/risk/core/test_orchestrator_alert_integration.py` | ✅ 已实现 | |
+| `tests/risk/core/test_orchestrator_g3g5g6_integration.py` | ✅ 已实现 | |
 | `tests/risk/test_l04_risk_management.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

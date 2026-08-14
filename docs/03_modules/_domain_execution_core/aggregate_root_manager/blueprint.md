@@ -3,7 +3,7 @@ module_id: MOD-EX-049
 title: "执行域聚合根管理器蓝图 — Order/Position生命周期协调层"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -153,6 +153,7 @@ class ExecutionAggregateManager:
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/ex_core/test_aggregate_root_manager.py` | ✅ 已实现 | |
+| `tests/ex_core/test_operational_risk_stats.py` | ✅ 已实现 | |
 
 ### 10.5 路径索引使用指南
 
@@ -167,3 +168,5 @@ class ExecutionAggregateManager:
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

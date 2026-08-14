@@ -5,7 +5,7 @@ title: "Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Tok
 doc_type: blueprint
 status: Active
 activation_phase: requires_100ai
-version: 3.1.2
+version: 3.1.3
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: capacity
@@ -1668,6 +1668,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/infrastructure/capacity_assurance/tech_stack.py` | ✅ 已实现 | |
 | `src/zephyr/integration/budget_enforcer/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/budget_enforcer/degradation_spiral_detector.py` | ✅ 已实现 | |
+| `src/zephyr/shared/capacity_governance/__init__.py` | ✅ 已实现 | |
 
 ### 20.2 测试文件
 
