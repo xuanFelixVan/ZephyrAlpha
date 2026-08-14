@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-14T11:18:22Z
+# 自动生成于 2026-08-14T11:39:55Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-14T11:18:22Z'
+generated_at: '2026-08-14T11:39:55Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 402
@@ -844,7 +844,7 @@ scripts:
   - --root
   - docs/
   warn_only: true
-  description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（AGENTS.md §6.11 索引-实际同步强制约定）
+  description: 扫描目录树，自动为缺失 index.md 的目录生成索引文件（GATE-REG-BL 索引-实际同步强制约定）
   tags:
   - Disruptive
   - Quick
@@ -891,7 +891,7 @@ scripts:
   args:
   - --check
   warn_only: true
-  description: 从磁盘扫描同步 PS-IDX-001 §二 文件数量表格（AGENTS.md §6.11——防止手动维护数字漂移）
+  description: 从磁盘扫描同步 PS-IDX-001 §二 文件数量表格（GATE-REG-BL 索引-实际同步——防止手动维护数字漂移）
   tags:
   - Quick
 - name: d1_structure/validate_config_integrity.py
