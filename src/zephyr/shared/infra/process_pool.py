@@ -205,6 +205,8 @@ def _spawn_detached_via_wmi(
     *,
     cwd: str | None = None,
     env: dict[str, str] | None = None,
+    stdout_path: str | None = None,
+    stderr_path: str | None = None,
 ) -> _WmiDetachedProcess:
     """WMI Win32_Process.Create 降级 spawn（job 禁 breakaway 时的逃逸通道）。
 
@@ -217,9 +219,22 @@ def _spawn_detached_via_wmi(
       ReturnValue=21；ShowWindow 是 WMI 合法通道，探针实证）
     - WMI ReturnValue != 0 → RuntimeError（2=access denied / 9=path not found /
       21=invalid parameter 等，见 MSDN Win32_Process.Create）
+    - stdout_path/stderr_path（S3 观测层，2026-08-14）：WMI 路径 stdio 句柄
+      不可继承，改用 cmd.exe 壳层追加重定向（``cmd.exe /c <cmd> >> "log" 2>&1``）
+      实现日志落盘——比句柄继承覆盖面更全（连解释器启动期错误也落盘）。
+      两路径相同则合并 ``2>&1``，不同则分别 ``2>>``。
     """
     env_dict = dict(os.environ) if env is None else dict(env)
     cmdline = subprocess.list2cmdline(list(cmd))
+    # S3：cmd 壳层重定向包装（cmd /c 后字符串含 >>/& 特殊符 → 不触发 cmd 去引号规则）
+    if stdout_path or stderr_path:
+        out_p = stdout_path or stderr_path
+        err_p = stderr_path or stdout_path
+        if out_p == err_p:
+            redir = f' >> "{out_p}" 2>&1'
+        else:
+            redir = f' >> "{out_p}" 2>> "{err_p}"'
+        cmdline = f"cmd.exe /c {cmdline}{redir}"
     env_lines = "\n".join(
         _ps_single_quote(f"{key}={value}") for key, value in env_dict.items()
     )
@@ -290,6 +305,8 @@ def spawn_python_hidden(
     stdin_to_devnull: bool = True,
     stdout_to_devnull: bool = True,
     stderr_to_devnull: bool = True,
+    stdout_path: str | None = None,
+    stderr_path: str | None = None,
 ) -> subprocess.Popen:
     """无窗口 spawn python 子进程（daemon/reconciler worker/scheduler 用）。
 
@@ -304,16 +321,24 @@ def spawn_python_hidden(
        job 允许 breakaway 或不在 job 中时该 flag 为空操作（零成本）；
        job 禁 breakaway（WinError 5）→ 降级 WMI Win32_Process.Create
        （WMI 服务在 job 外创建进程，天然逃逸），返回 _WmiDetachedProcess
-       shim（pid/poll/wait/terminate/kill 对齐 Popen；stdio 不可继承，
-       等价全 DEVNULL，stdout_to_devnull=False 的调试诉求在降级路径失效）。
+       shim（pid/poll/wait/terminate/kill 对齐 Popen；stdio 句柄不可继承，
+       stdout_to_devnull=False 的调试诉求在降级路径失效；但 stdout_path/
+       stderr_path 日志落盘诉求经 cmd 壳层重定向在降级路径同样生效）。
+    5. stdout_path/stderr_path（S3 观测层，2026-08-14 worktree wipe 裁定书）：
+       提供则 stdio 落盘到指定日志文件（append 模式，父进程句柄 spawn 后即关，
+       子进程持有 duplicate 句柄继续写；WMI 降级路径走 cmd 壳层重定向）——
+       worker "启动即死无日志" 治本。与 *_to_devnull 互斥：path 优先，
+       对应 devnull 标志被忽略。
 
     Args:
         cmd: 命令列表（如 [sys.executable, "-m", "zephyr.foo.daemon", sid])
         cwd: 工作目录
         env: 环境变量（None 则继承父）
         stdin_to_devnull: True 则 stdin=subprocess.DEVNULL
-        stdout_to_devnull: True 则 stdout=subprocess.DEVNULL
-        stderr_to_devnull: True 则 stderr=subprocess.DEVNULL
+        stdout_to_devnull: True 则 stdout=subprocess.DEVNULL（stdout_path 提供时忽略）
+        stderr_to_devnull: True 则 stderr=subprocess.DEVNULL（stderr_path 提供时忽略）
+        stdout_path: stdout 落盘日志文件路径（append）；WMI 降级路径走 cmd 壳层重定向
+        stderr_path: stderr 落盘日志文件路径（append）；WMI 降级路径走 cmd 壳层重定向
 
     Returns:
         subprocess.Popen（已启动，pid 可读）；WMI 降级路径返回 _WmiDetachedProcess
@@ -323,28 +348,52 @@ def spawn_python_hidden(
         "cwd": cwd,
         "env": env,
     }
+    # S3：stdio 落盘句柄（spawn 后父进程关闭，子进程持有 duplicate 继续写）
+    _log_handles: list = []
     if stdin_to_devnull:
         popen_kwargs["stdin"] = subprocess.DEVNULL
-    if stdout_to_devnull:
+    if stdout_path:
+        _h = open(stdout_path, "ab")  # noqa: r144-open 句柄须随 Popen 调用传递，finally 块统一关闭，with 语义不兼容
+        _log_handles.append(_h)
+        popen_kwargs["stdout"] = _h
+    elif stdout_to_devnull:
         popen_kwargs["stdout"] = subprocess.DEVNULL
-    if stderr_to_devnull:
+    if stderr_path:
+        _h = open(stderr_path, "ab")  # noqa: r144-open 同上——句柄生命周期由 finally 显式管理
+        _log_handles.append(_h)
+        popen_kwargs["stderr"] = _h
+    elif stderr_to_devnull:
         popen_kwargs["stderr"] = subprocess.DEVNULL
     if os.name == "nt":
         popen_kwargs["creationflags"] = _hidden_creationflags() | _CREATE_BREAKAWAY_FROM_JOB
     else:
         popen_kwargs["start_new_session"] = True  # POSIX: 新 session（setsid）
     try:
-        return subprocess.Popen(cmd, **popen_kwargs)
-    except PermissionError:
-        if os.name != "nt":
-            raise
-        # WinError 5：父进程在禁 breakaway 的 Job Object 内（IDE 终端
-        # KILL_ON_JOB_CLOSE 实测）——CreateProcess 无法逃逸 job，降级 WMI。
-        logger.warning(
-            "spawn_python_hidden: CREATE_BREAKAWAY_FROM_JOB denied (job object "
-            "forbids breakaway), falling back to WMI Win32_Process.Create"
-        )
-        return _spawn_detached_via_wmi(cmd, cwd=cwd, env=env)
+        try:
+            return subprocess.Popen(cmd, **popen_kwargs)
+        except PermissionError:
+            if os.name != "nt":
+                raise
+            # WinError 5：父进程在禁 breakaway 的 Job Object 内（IDE 终端
+            # KILL_ON_JOB_CLOSE 实测）——CreateProcess 无法逃逸 job，降级 WMI。
+            # S3：stdout_path/stderr_path 透传——WMI 路径改用 cmd 壳层重定向
+            # 落盘（句柄继承不可用），覆盖面更全（含解释器启动期错误）。
+            logger.warning(
+                "spawn_python_hidden: CREATE_BREAKAWAY_FROM_JOB denied (job object "
+                "forbids breakaway), falling back to WMI Win32_Process.Create"
+            )
+            return _spawn_detached_via_wmi(
+                cmd, cwd=cwd, env=env,
+                stdout_path=stdout_path, stderr_path=stderr_path,
+            )
+    finally:
+        # 父进程句柄即刻关闭——CreateProcess/ fork 已把句柄 duplicate 给子进程，
+        # 父关闭不影响子继续写；不关闭则父进程句柄泄漏（长驻 gateway 场景）。
+        for _h in _log_handles:
+            try:
+                _h.close()
+            except OSError:
+                pass
 
 
 def is_pid_alive(pid: int) -> bool:
