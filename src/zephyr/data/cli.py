@@ -50,7 +50,7 @@ log = logging.getLogger(__name__)
 
 
 def _load_dotenv() -> None:
-    """从项目根 .env 加载环境变量（IFIND_USERNAME 等）+ .env.clickhouse（CH 连接配置）。
+    """从项目根 .env 加载环境变量（TUSHARE_TOKEN 等）+ .env.clickhouse（CH 连接配置）。
 
     使用 os.environ.setdefault 避免覆盖已有环境变量。
     .env.clickhouse 加载委托给 ch_config.ensure_ch_env_loaded()（裁定 #ARCH-CH-017）。
@@ -324,7 +324,7 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # list [--source]
     p_list = sub.add_parser("list", help="列出任务（支持源过滤）")
-    p_list.add_argument("--source", default=None, help="按数据源过滤（如 ifind/miniqmt/akshare）")
+    p_list.add_argument("--source", default=None, help="按数据源过滤（如 miniqmt/akshare）")
 
     # run <task_id>
     p_run = sub.add_parser("run", help="手动触发单任务")
@@ -335,18 +335,18 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # pause <source>
     p_pause = sub.add_parser("pause", help="紧急熔断某源（停止该源所有任务）")
-    p_pause.add_argument("source", help="数据源名（如 ifind）")
+    p_pause.add_argument("source", help="数据源名（如 akshare）")
 
     # resume <source>
     p_resume = sub.add_parser("resume", help="恢复已熔断的源")
-    p_resume.add_argument("source", help="数据源名（如 ifind）")
+    p_resume.add_argument("source", help="数据源名（如 akshare）")
 
     # start
     sub.add_parser("start", help="启动常驻调度进程")
 
     # speed-test [--source] [--capability]
     p_speed = sub.add_parser("speed-test", help="数据源测速（小样本测速，选型主备源）")
-    p_speed.add_argument("--source", default=None, help="只测某数据源（如 ifind/miniqmt/akshare/baostock）")
+    p_speed.add_argument("--source", default=None, help="只测某数据源（如 miniqmt/akshare/baostock）")
     p_speed.add_argument("--capability", default=None, help="只测某能力（如 kline_daily/daily_valuation）")
 
     return parser

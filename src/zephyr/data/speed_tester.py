@@ -22,7 +22,7 @@
 用法：
     from zephyr.data.speed_tester import run_speed_tests
     results = run_speed_tests()  # 全量测速
-    results = run_speed_tests(source_filter="ifind")  # 只测 iFind
+    results = run_speed_tests(source_filter="miniqmt")  # 只测 miniqmt
     results = run_speed_tests(cap_filter="daily_valuation")  # 只测 daily_valuation
 
 CLI:
@@ -46,7 +46,6 @@ log = logging.getLogger(__name__)
 SAMPLE_SYMBOLS = ["000001.SZ", "000002.SZ", "600000.SH", "600519.SH", "000858.SZ"]
 SAMPLE_START = datetime.date(2026, 6, 30)
 SAMPLE_END = datetime.date(2026, 7, 9)
-SAMPLE_SNAPSHOT_DATES = ["2026-06-30", "2026-07-09"]
 
 # ============== Phase 5: 表名从 business_data_categories.yaml 真源派生（裁定 #ARCH-CH-024）==============
 _TBL_ADJ_FACTOR = get_registry().table("market_adj_factor")
@@ -101,21 +100,16 @@ _TBL_US_INDEX = get_registry().table("market_us_index")
 # 财务报表是季度数据，10天窗口内 0 行，需用 1 年范围
 _YEAR_AGO = datetime.date(2025, 7, 10)
 TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.date], Optional[datetime.date]]] = [
-    # kline_daily 三源对比
+    # kline_daily 两源对比
     ("miniqmt", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"}, None, None, None),
-    ("ifind", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"}, None, None, None),
     ("baostock", "kline_daily", _TBL_KLINE_DAILY, {"capability": "kline_daily"},
      ["sh.600000", "sz.000001", "sz.000002"], None, None),
 
-    # daily_valuation 两源对比
+    # daily_valuation
     ("akshare", "daily_valuation", _TBL_DAILY_VALUATION, {"capability": "daily_valuation"}, None, None, None),
-    ("ifind", "daily_valuation", _TBL_DAILY_VALUATION,
-     {"capability": "daily_valuation", "snapshot_dates": SAMPLE_SNAPSHOT_DATES}, None, None, None),
 
-    # kline_index 两源对比
+    # kline_index
     ("miniqmt", "kline_index", _TBL_KLINE_INDEX, {"capability": "kline_index"},
-     ["000300.SH", "000905.SH", "000001.SH"], None, None),
-    ("ifind", "kline_index", _TBL_KLINE_INDEX, {"capability": "kline_index"},
      ["000300.SH", "000905.SH", "000001.SH"], None, None),
 
     # index_constituent 两源对比
@@ -124,8 +118,8 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     ("baostock", "index_constituent", _TBL_INDEX_CONSTITUENT,
      {"capability": "index_constituent"}, None, None, None),
 
-    # money_flow: iFind 唯一
-    ("ifind", "money_flow", _TBL_MONEY_FLOW, {"capability": "money_flow"}, None, None, None),
+    # money_flow: tushare 主源
+    ("tushare", "money_flow", _TBL_MONEY_FLOW, {"capability": "money_flow"}, None, None, None),
 
     # adj_factor: miniQMT 唯一（事件驱动，改用 1 年范围重测）
     ("miniqmt", "adj_factor", _TBL_ADJ_FACTOR, {"capability": "adj_factor"},
@@ -207,8 +201,8 @@ TEST_MATRIX: list[tuple[str, str, str, dict, Optional[list], Optional[datetime.d
     ("tdx", "kline_sector", _TBL_KLINE_SECTOR,
      {"capability": "kline_sector"}, ["sh.000001"], None, None),
 
-    # ifind 申万行业分类（#ARCH-CH-INDUSTRY-CLASS-MIGRATE：tdx block() 语义错配，capability 迁至 ifind）
-    ("ifind", "industry_class", _TBL_INDUSTRY_CLASS,
+    # tushare 申万行业分类
+    ("tushare", "industry_class", _TBL_INDUSTRY_CLASS,
      {"capability": "industry_class"}, None, None, None),
 
     # ===== 新增能力测速（2026-07-11）=====
@@ -254,9 +248,6 @@ def _make_provider(source: str):
     if source == "miniqmt":
         from zephyr.data.implementations.miniqmt_provider import MiniQmtIngestProvider
         return MiniQmtIngestProvider()
-    elif source == "ifind":
-        from zephyr.data.implementations.ifind_provider import IFindProvider
-        return IFindProvider()
     elif source == "akshare":
         from zephyr.data.implementations.akshare_provider import AkshareIngestProvider
         return AkshareIngestProvider()

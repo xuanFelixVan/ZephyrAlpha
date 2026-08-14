@@ -178,7 +178,7 @@ class ProgressStore:
 
         Args:
             task_id: 任务标识（如 "kline_daily_incremental"）
-            source: 数据源（如 "ifind"）
+            source: 数据源（如 "akshare"）
             last_key: 断点续传键（如 "2026-07-05"）
             status: "SUCCESS" / "FAILED" / "RUNNING"
             rows_total: 累计拉取行数

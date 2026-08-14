@@ -55,13 +55,13 @@ class TestSaveAndGetLastKey:
 
     def test_save_and_get_last_key(self, store):
         """保存后应能查到 last_key。"""
-        assert store.save_progress("kline_daily", "ifind", "2026-07-05", "SUCCESS", 1000)
+        assert store.save_progress("kline_daily", "akshare", "2026-07-05", "SUCCESS", 1000)
         assert store.get_last_key("kline_daily") == "2026-07-05"
 
     def test_save_progress_upsert(self, store):
         """重复保存应 UPDATE 而非 INSERT（UPSERT）。"""
-        store.save_progress("kline_daily", "ifind", "2026-07-05", "SUCCESS", 1000)
-        store.save_progress("kline_daily", "ifind", "2026-07-06", "SUCCESS", 2000)
+        store.save_progress("kline_daily", "akshare", "2026-07-05", "SUCCESS", 1000)
+        store.save_progress("kline_daily", "akshare", "2026-07-06", "SUCCESS", 2000)
         status = store.get_task_status("kline_daily")
         assert status["last_key"] == "2026-07-06"
         assert status["rows_total"] == 2000
@@ -71,7 +71,7 @@ class TestSaveAndGetLastKey:
 
     def test_save_progress_with_error(self, store):
         """失败状态应保存 error_msg。"""
-        store.save_progress("margin_trading", "ifind", "2026-07-05", "FAILED", 0, "连接超时")
+        store.save_progress("margin_trading", "akshare", "2026-07-05", "FAILED", 0, "连接超时")
         status = store.get_task_status("margin_trading")
         assert status["last_status"] == "FAILED"
         assert status["error_msg"] == "连接超时"
@@ -120,8 +120,8 @@ class TestQueries:
 
     def test_list_failed_tasks(self, store):
         """list_failed_tasks 只返回 FAILED。"""
-        store.save_progress("task_ok", "ifind", "2026-07-05", "SUCCESS", 100)
-        store.save_progress("task_fail1", "ifind", "2026-07-05", "FAILED", 0, "超时")
+        store.save_progress("task_ok", "akshare", "2026-07-05", "SUCCESS", 100)
+        store.save_progress("task_fail1", "akshare", "2026-07-05", "FAILED", 0, "超时")
         store.save_progress("task_fail2", "akshare", "2026-07-05", "FAILED", 0, "SSL错误")
         failed = store.list_failed_tasks()
         assert len(failed) == 2
@@ -130,17 +130,17 @@ class TestQueries:
 
     def test_list_tasks_by_source(self, store):
         """list_tasks_by_source 按数据源过滤。"""
-        store.save_progress("t1", "ifind", "d1", "SUCCESS", 100)
-        store.save_progress("t2", "ifind", "d2", "SUCCESS", 200)
+        store.save_progress("t1", "akshare", "d1", "SUCCESS", 100)
+        store.save_progress("t2", "akshare", "d2", "SUCCESS", 200)
         store.save_progress("t3", "akshare", "d3", "SUCCESS", 300)
-        ifind_tasks = store.list_tasks_by_source("ifind")
-        assert len(ifind_tasks) == 2
+        akshare_tasks = store.list_tasks_by_source("akshare")
+        assert len(akshare_tasks) == 2
         akshare_tasks = store.list_tasks_by_source("akshare")
         assert len(akshare_tasks) == 1
 
     def test_list_all_tasks(self, store):
         """list_all_tasks 返回全部。"""
-        store.save_progress("t1", "ifind", "d1", "SUCCESS", 100)
+        store.save_progress("t1", "akshare", "d1", "SUCCESS", 100)
         store.save_progress("t2", "akshare", "d2", "SUCCESS", 200)
         all_tasks = store.list_all_tasks()
         assert len(all_tasks) == 2
@@ -155,7 +155,7 @@ class TestThreadSafety:
 
         def worker(i):
             for j in range(20):
-                ok = store.save_progress("shared_task", "ifind", f"2026-07-{j:02d}", "SUCCESS", i * 20 + j)
+                ok = store.save_progress("shared_task", "akshare", f"2026-07-{j:02d}", "SUCCESS", i * 20 + j)
                 results.append(ok)
 
         threads = [threading.Thread(target=worker, args=(i,)) for i in range(5)]
@@ -204,7 +204,7 @@ class TestReapStaleRuns:
             ("crashed_task", old_time),
         )
         # 同时在 task_progress 中标记为 RUNNING
-        store.save_progress("crashed_task", "ifind", "2026-07-01", "RUNNING", 500)
+        store.save_progress("crashed_task", "akshare", "2026-07-01", "RUNNING", 500)
 
         reaped = store.reap_stale_runs(max_age_hours=24)
         assert len(reaped) == 1

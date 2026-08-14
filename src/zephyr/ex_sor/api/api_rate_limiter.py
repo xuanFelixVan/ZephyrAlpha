@@ -419,7 +419,7 @@ class ApiRateLimiter:
         """四级限流检查 (L1→L2→L3→L4, 全通过才放行)。
 
         Args:
-            system: 外部系统名 (如 "miniQMT", "iFind")
+            system: 外部系统名 (如 "miniQMT", "tushare")
             session: 当前交易时段
             priority: 请求优先级
             now: 时间戳 (测试用)

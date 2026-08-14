@@ -46,7 +46,7 @@ class SourcePolicy:
     """单数据源调用策略。
 
     Attributes:
-        rpm: 每分钟最大请求数（0=不限或配额制，如 iFind）
+        rpm: 每分钟最大请求数（0=不限或配额制）
         concurrency: 最大并发数（1=串行）
         min_interval_sec: 两次调用最小间隔秒数（RPM 的补充，默认 60/rpm）
         max_retries: 最大重试次数（0=不重试）
@@ -60,7 +60,7 @@ class SourcePolicy:
         respect_robots_txt: 是否遵守 robots.txt
         session_ttl_sec: 登录会话有效期秒数（0=永久，超时自动重登）
         relogin_on_auth_error: 401/登录失效时是否自动重登
-        extra: 数据源专属配置（如 iFind 月度配额监控）
+        extra: 数据源专属配置（如 miniQMT 进程依赖）
     """
     rpm: int = 0
     concurrency: int = 1
@@ -90,12 +90,6 @@ class SourcePolicy:
 
 # 这些默认值对应蓝图 §5.2 跨源策略矩阵，可作为 policies.yaml 缺失时的兜底
 DEFAULT_POLICIES: Final[dict[str, dict]] = {
-    "ifind": {
-        "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "exponential",
-        "initial_wait_sec": 2.0, "retry_on": ["-201", "TimeoutError", "ConnectionError"],
-        "session_ttl_sec": 86400, "relogin_on_auth_error": True,
-        "extra": {"monthly_quota_alert": True, "quota_error_codes": ["-4318", "-4309"]},
-    },
     "miniqmt": {
         "rpm": 0, "concurrency": 1, "max_retries": 3, "backoff": "fixed",
         "initial_wait_sec": 1.0, "retry_on": ["TimeoutError", "ConnectionError"],
@@ -148,7 +142,7 @@ class PolicyRegistry:
     用法：
         registry = PolicyRegistry()
         registry.load_yaml("config/policies.yaml")  # 可选，覆盖默认
-        policy = registry.get_policy("ifind")
+        policy = registry.get_policy("akshare")
     """
 
     def __init__(self):

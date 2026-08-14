@@ -20,7 +20,6 @@
 - 任务 DEAD（重试耗尽）-> 立即告警
 - 单日失败率 > 5% -> 汇总告警
 - 某数据源连续 3 天失败 -> 升级告警
-- iFind 月度配额 -4318 -> 立即告警并暂停该源所有任务
 
 告警方式：
 - 日志（logging，输出到 logs/integrator.log）
@@ -406,32 +405,6 @@ class Alerter:
                 task_id,
                 f"连续 {failure_days} 天失败（阈值 {threshold}），需人工介入",
                 level=LEVEL_CRITICAL,
-            )
-            return True
-        return False
-
-    def check_quota_exhausted(
-        self,
-        source: str,
-        error_code: str,
-    ) -> bool:
-        """检查 iFind 月度配额耗尽（-4318/-4309）。
-
-        Args:
-            source: 数据源
-            error_code: 错误码
-
-        Returns:
-            True 表示配额耗尽，已告警。
-        """
-        quota_codes = {"-4318", "-4309"}
-        if source == "ifind" and error_code in quota_codes:
-            self.notify(
-                "_quota_monitor",
-                f"iFind 月度配额耗尽 (error_code={error_code})，暂停该源所有任务",
-                level=LEVEL_CRITICAL,
-                source=source,
-                extra={"action": "pause_source", "error_code": error_code},
             )
             return True
         return False

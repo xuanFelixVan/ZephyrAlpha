@@ -101,7 +101,7 @@ __all__ = ["make_arch_reference_gate"]
 # 原正则末段 [A-Z]+-\d+ 不匹配 -S2（字母紧贴数字无连字符），导致全家 5 个已登记 S 变体
 # 引用逃逸检测；扩展为 -[A-Z]?\d+（末段可选单字母前缀）后 S 变体可被检出并强制登记。
 # 描述性 ID 支持治本 gate 正则盲区（2026-08-05）——旧正则 [A-Z]+(?:-[A-Z]+)*-[A-Z]?\d+
-# 要求末尾 \d+ 数字，导致 #ARCH-DOC-REF-FILE-URL / #ARCH-IFIND-FAILOVER 等无数字后缀的
+# 要求末尾 \d+ 数字，导致 #ARCH-DOC-REF-FILE-URL 等无数字后缀的
 # 描述性 ARCH ID 完全逃逸检测（全项目 67 个描述性引用 0% 被检出）。新正则
 # \d+|[A-Z][A-Z0-9-]*[A-Z0-9] 同时匹配数字制和描述制 ID，消除盲区。
 _ARCH_REF_RE = re.compile(r"#ARCH-(\d+|[A-Z][A-Z0-9-]*[A-Z0-9])")

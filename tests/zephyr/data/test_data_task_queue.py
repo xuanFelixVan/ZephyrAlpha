@@ -39,12 +39,12 @@ class TestLoadYaml:
 tasks:
   - task_id: task_a
     table: t1
-    source: ifind
+    source: akshare
     schedule: daily_kline
     dependencies: []
   - task_id: task_b
     table: t2
-    source: ifind
+    source: akshare
     schedule: daily_kline
     dependencies: ["task_a"]
 """

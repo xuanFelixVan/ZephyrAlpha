@@ -28,11 +28,11 @@ from zephyr.data.error_classifier import (  # noqa: E402
 class TestClassifyUnrecoverable:
     """不可恢复错误——配额耗尽/接口废弃/认证失败。"""
 
-    def test_ifind_quota_exhausted(self):
-        assert classify_error("iFind error -4318: 配额耗尽") == "unrecoverable"
+    def test_quota_exhausted_keyword(self):
+        assert classify_error("error: 配额耗尽（月度配额）") == "unrecoverable"
 
-    def test_ifind_interface_deprecated(self):
-        assert classify_error("error -4309: 接口已废弃") == "unrecoverable"
+    def test_interface_deprecated(self):
+        assert classify_error("error: 接口已废弃") == "unrecoverable"
 
     def test_auth_failure(self):
         assert classify_error("认证失败: unauthorized") == "unrecoverable"

@@ -30,9 +30,9 @@
 用法：
     from zephyr.data.metrics import get_metrics
     m = get_metrics()
-    m.record_task("kline_daily_incremental", "ifind", "SUCCESS", 12.5, 5500)
-    m.record_rate_limit("ifind")
-    m.record_retry("kline_daily_incremental", "ifind")
+    m.record_task("kline_daily_incremental", "akshare", "SUCCESS", 12.5, 5500)
+    m.record_rate_limit("akshare")
+    m.record_retry("kline_daily_incremental", "akshare")
     m.set_uptime(3600.0)
     m.flush()  # 写入 data/metrics.prom
 """

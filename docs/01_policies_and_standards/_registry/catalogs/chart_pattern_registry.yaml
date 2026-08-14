@@ -8,21 +8,68 @@ name_zh: 图形形态注册表
 description: >-
   图形形态唯一真源（SSoT）。登记 8 大类图形形态（candlestick_pattern/chart_pattern/chanlun/
   elliott_wave/trendline_channel/support_resistance/fibonacci/structure）的识别算法、参数、
-  输入输出、主观性分级。MVP 按 O6 裁剪：candlestick（6种已施工）+ chart_pattern（4种登记）+
-  trendline_channel（1种登记）+ support_resistance（3种已施工）+ structure（1种已施工），
-  chanlun/elliott_wave/fibonacci 3 类 schema 预留按需补充。
-  对标 TA-Lib CDLPATTERN 61 种 K 线形态 + Edwards&Magee 经典图表形态 + 缠论 + 艾略特波浪。
+  输入输出、主观性分级。v2.2.0 三轮全网 SOTA 调研驱动扩充（2026-08-14）：
+  candlestick 68 条（TA-Lib 61 函数全集+A股特色7）+ chart_pattern 38 条（Edwards&Magee/
+  Bulkowski 经典全集+A股游资情绪形态10+DeMark TD计数2）+ trendline_channel 8 条 +
+  support_resistance 7 条 + fibonacci 16 条（工具6+谐波 XABCD 10）+ chanlun 15 条
+  （对齐 chan.py/chanlun-pro 量化实现）+ elliott_wave 8 条 + structure 32 条（Wyckoff
+  全套+SMC 智能资金概念+Matrix Profile+VSA 量价形态7+7 条 DL 算法套件锚点：YOLOv8/
+  Swin-T TADA-AW/ViT-MAE/多模态LLM/Kronos/Mamba/扩散生成式）。
   business_registry_construction_plan §6.2.4。
+# ============================================================
+# SOTA 算法演进说明（2026-08-14 全网调研，三轮检索结论）
+# ============================================================
+# 1. 规则法基线（当前 15 条 active/candidate 的实现方式）：
+#    TA-Lib CDL 函数族 + 峰谷法 + 回归法。K线图基准准确率约 68%（CSDN daily_stock_analysis
+#    实测：规则引擎 68.3% vs CNN 74.1% vs YOLOv8 92.6%）。
+# 2. 目标检测派（识别精度 SOTA）：YOLOv8 直接在 K 线图上定位形态区域+置信度，
+#    支持多形态共存/失败形态识别（右肩量能不足等）。参考 ChartScanAI（Birogul 2019 IEEE 扩展）。
+# 3. Transformer 派：
+#    - Swin Transformer + TADA-AW（时间感知动态聚合+自适应窗口，IJICIC 2025-08）
+#    - ViT-Tiny + MAE 自监督（Stanford CS231N 2025：SSL 聚类后发现可回测形态表示）
+#    - GAF-CNN（Gramian Angular Field 编码 + CNN，arXiv 2605.00875：简单 4 层 CNN 达 0.892 AUC）
+# 4. 多模态 LLM 派（零样本/解释性 SOTA）：LLaMA 3.2-Vision prompt 驱动（IJMO 2025，超越
+#    CNN/ResNet/ViT）；Gemini 2.5 Flash 结构化 JSON 输出月度形态+支撑阻力（MLCI 2026-07）。
+#    A股语境优先 Qwen-VL 系（中文金融图表对齐）。
+# 5. 无监督挖掘派（形态发现，非预定义形态）：Matrix Profile（STUMPY：motif/discord/
+#    FLUSS 语义分段/snippets）；L-MAP 可学习多维矩阵轮廓（AAAI-26，GNN+三元组学习）。
+# 6. 缠论量化派：chan.py（严格笔/线段特征序列法/中枢/三类买卖点/divergence_rate=0.9）、
+#    chanlun-pro（MACD 面积力度比较背驰，query_macd_ld/compare_ld_beichi）。
+# 施工策略：规则法先落地（可解释/低延迟/无训练成本），DL 变体经 dl_model_ref 字段预留，
+#    实验对比后按 experiment_registry 登记回测证据再升级。
+# 第二轮循环审查补充（2026-08-14 同日）：
+# 7. K线基础模型：Kronos（AAAI 2026，BSQ tokenizer+45交易所120亿K线，RankIC +93%，
+#    MIT 开源）——K线领域专用预训练表示，零样本/微调双模式 → PAT-DL-005。
+# 8. 状态空间架构：Mamba/SSM（ICLR 2024 最佳论文，O(n) 线性复杂度+HiPPO 长程记忆，
+#    高频微结构场景延迟敏感适用）→ PAT-DL-006。
+# 9. 谐波形态族（第一轮遗漏修正）：XABCD+斐氏比例 10 种（对齐 djoffrey/HarmonicPatterns
+#    2026-06 活跃维护版）→ FIB-007~016。
+# 10. A股游资情绪形态族（领域特色）：涨停板 21 型量化拆解（搓揉线/天地板/地天板/
+#     一阳穿多线/反包/双响炮/黄金坑/碎阳吸筹/低位箱体/首板试盘/连板/断板洗盘/
+#     烂板回封/尾盘偷袭）→ CANDLE-065~068 + CHART-027~036。
+# 第三轮循环审查补充（2026-08-14 同日）：
+# 11. VSA 量价形态族（Wyckoff 量化分支，Tom Williams）：三输入 Spread/Volume/
+#     ClosePosition 百分位引擎（rolling100 十分位 Effort-vs-Result，2026-07 开源
+#     量化实现）——SC/BC/NoSupply/NoDemand/STV/Test/PseudoUT 7 条 → STRUCT-019~025。
+# 12. DeMark TD 序列：纯价格行为计数（9 Setup+13 Countdown 衰竭）→ CHART-037~038。
+# 13. 扩散模型生成式：图表图像→图表图像条件生成（arXiv 2509.02308）→ PAT-DL-007。
+#     至此 DL 套件 7 条：YOLOv8/Swin-T/ViT-MAE/多模态LLM/Kronos/Mamba/Diffusion。
+algorithm_variant_sota_ladder:
+  - "L1 规则法（基线，全部条目默认）"
+  - "L2 统计法（峰谷/回归/分形/zigzag，经典形态条目）"
+  - "L3 挖掘法（matrix_profile motif/FLUSS，STRUCT-017/018）"
+  - "L4 深度法（dl_yolo YOLOv8 / dl_transformer Swin-T TADA-AW / dl_cnn GAF-CNN）"
+  - "L5 多模态（dl_llm Qwen-VL/Gemini 类零样本形态判读，structured JSON 输出）"
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
-status: draft
-version: 1.0.0
+status: active
+version: 2.2.0
 created: '2026-08-13'
-last_updated: '2026-08-13'
+last_updated: '2026-08-14'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - pattern_id
-entry_count: 15
+entry_count: 192
 
 entry_schema:
   pattern_id: str                # PAT-{CLASS}-{NNN}，如 PAT-CANDLE-001
@@ -31,8 +78,8 @@ entry_schema:
   aliases: list[str]
   pattern_class: str             # candlestick_pattern/chart_pattern/chanlun/elliott_wave/trendline_channel/support_resistance/fibonacci/structure
   pattern_subtype: str           # 子类（反转/持续、单根/两根/三根、推动浪/调整浪）
-  recognition_algorithm: str     # rule_based/template_match/fractal/regression/dl_cnn/dl_transformer/dl_yolo
-  algorithm_variant: str         # 峰谷法/回归法/模板匹配法/分形法/规则法/yolov8/vit-tiny/resnet/cnn_talib_hybrid/cnn_lstm_hybrid
+  recognition_algorithm: str     # rule_based/template_match/fractal/regression/matrix_profile/dl_cnn/dl_transformer/dl_yolo/dl_llm
+  algorithm_variant: str         # 峰谷法/回归法/模板匹配法/分形法/规则法/STUMPY motif/FLUSS/yolov8/swin_tada_aw/vit_mae/gaf_cnn/qwen_vl_zero_shot/cnn_talib_hybrid/cnn_lstm_hybrid
   dl_model_ref: str              # DL 模型引用（MVP 预留不实施）
   dl_training_dataset: str       # 训练数据集来源（MVP 预留不实施）
   params: obj                    # {lookback: 20, threshold: 0.03}
@@ -236,6 +283,1809 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
 
+  - pattern_id: "PAT-CANDLE-007"
+    name: "Inverted Hammer"
+    name_zh: "倒锤子线"
+    aliases: ["inverted_hammer"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLINVERTEDHAMMER)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {shadow_ratio: 2.0, downtrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLINVERTEDHAMMER"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-008"
+    name: "Hanging Man"
+    name_zh: "上吊线"
+    aliases: ["hanging_man"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHANGINGMAN)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {shadow_ratio: 2.0, upper_shadow_max: 0.3, uptrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHANGINGMAN"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-009"
+    name: "Shooting Star"
+    name_zh: "射击之星"
+    aliases: ["shooting_star", "流星线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLSHOOTINGSTAR)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {shadow_ratio: 2.0, gap_required: true, uptrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLSHOOTINGSTAR"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-010"
+    name: "Gravestone Doji"
+    name_zh: "墓碑十字"
+    aliases: ["gravestone_doji"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLGRAVESTONEDOJI)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.1, lower_shadow_max: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLGRAVESTONEDOJI"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-006"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-011"
+    name: "Dragonfly Doji"
+    name_zh: "蜻蜓十字"
+    aliases: ["dragonfly_doji"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLDRAGONFLYDOJI)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.1, upper_shadow_max: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLDRAGONFLYDOJI"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-006"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-012"
+    name: "Long-legged Doji"
+    name_zh: "长腿十字"
+    aliases: ["long_legged_doji", "长脚十字"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根犹豫"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLLONGLEGGEDDOJI)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.1, shadow_ratio: 3.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLLONGLEGGEDDOJI"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-006"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-013"
+    name: "Spinning Top"
+    name_zh: "纺锤顶"
+    aliases: ["spinning_top", "螺旋桨"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根犹豫"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLSPINNINGTOP)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.3}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLSPINNINGTOP"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-014"
+    name: "Marubozu"
+    name_zh: "光头光脚大实体线"
+    aliases: ["marubozu", "马里博祖"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLMARUBOZU)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {shadow_max: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLMARUBOZU"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-015"
+    name: "Closing Marubozu"
+    name_zh: "收盘光头光脚线"
+    aliases: ["closing_marubozu"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLCLOSINGMARUBOZU)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {close_shadow_max: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLCLOSINGMARUBOZU"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-014"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-016"
+    name: "High-Wave"
+    name_zh: "高浪线"
+    aliases: ["high_wave"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根犹豫"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHIGHWAVE)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.3, shadow_ratio: 2.5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHIGHWAVE"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-013"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-017"
+    name: "Rickshaw Man"
+    name_zh: "黄包车夫"
+    aliases: ["rickshaw_man"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根犹豫"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLRICKSHAWMAN)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_max: 0.1, shadow_ratio: 3.0, body_centered: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLRICKSHAWMAN"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-012"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-018"
+    name: "Takuri"
+    name_zh: "探水竿"
+    aliases: ["takuri"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLTAKURI)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lower_shadow_ratio: 3.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLTAKURI"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-011"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-019"
+    name: "Belt Hold"
+    name_zh: "腰带线"
+    aliases: ["belt_hold", "白腰带/黑腰带"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLBELTHOLD)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, shadow_max: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLBELTHOLD"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-014"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-020"
+    name: "Harami"
+    name_zh: "孕线"
+    aliases: ["harami"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHARAMI)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_engulf_ratio: 1.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHARAMI"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-021"
+    name: "Harami Cross"
+    name_zh: "孕线十字"
+    aliases: ["harami_cross"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHARAMICROSS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_engulf_ratio: 1.0, second_body_ratio_max: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHARAMICROSS"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-020"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-022"
+    name: "Morning Doji Star"
+    name_zh: "启明十字星"
+    aliases: ["morning_doji_star"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLMORNINGDOJISTAR)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLMORNINGDOJISTAR"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-004"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-023"
+    name: "Evening Doji Star"
+    name_zh: "黄昏十字星"
+    aliases: ["evening_doji_star"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLEVENINGDOJISTAR)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLEVENINGDOJISTAR"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-005"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-024"
+    name: "Doji Star"
+    name_zh: "十字星组合"
+    aliases: ["doji_star"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLDOJISTAR)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLDOJISTAR"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-006"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-025"
+    name: "Piercing Pattern"
+    name_zh: "刺透线"
+    aliases: ["piercing", "刺穿线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLPIERCING)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, close_above_midpoint: 0.5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLPIERCING"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-026"
+    name: "Dark Cloud Cover"
+    name_zh: "乌云盖顶"
+    aliases: ["dark_cloud_cover"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLDARKCLOUDCOVER)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, close_below_midpoint: 0.5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLDARKCLOUDCOVER"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-025"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-027"
+    name: "Kicking"
+    name_zh: "反冲双胞胎"
+    aliases: ["kicking", "踢形态"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLKICKING)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, marubozu_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLKICKING"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-014"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-028"
+    name: "Kicking by Length"
+    name_zh: "长度反冲"
+    aliases: ["kicking_by_length"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLKICKINGBYLENGTH)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, body_length_compare: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLKICKINGBYLENGTH"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-027"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-029"
+    name: "Three White Soldiers"
+    name_zh: "红三兵"
+    aliases: ["three_white_soldiers", "白三兵"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL3WHITESOLDIERS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {min_body_ratio: 0.6}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL3WHITESOLDIERS"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-030"
+    name: "Three Black Crows"
+    name_zh: "三只乌鸦"
+    aliases: ["three_black_crows", "黑三兵"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL3BLACKCROWS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {min_body_ratio: 0.6}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL3BLACKCROWS"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-029"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-031"
+    name: "Identical Three Crows"
+    name_zh: "同款三乌鸦"
+    aliases: ["identical_three_crows"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLIDENTICAL3CROWS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {open_equal_prev_close: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLIDENTICAL3CROWS"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-030"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-032"
+    name: "Three Inside Up/Down"
+    name_zh: "内含三线"
+    aliases: ["three_inside"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL3INSIDE， Harami 确认版)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL3INSIDE"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-020"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-033"
+    name: "Three Outside Up/Down"
+    name_zh: "外包三线"
+    aliases: ["three_outside"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL3OUTSIDE， Engulfing 确认版)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL3OUTSIDE"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-034"
+    name: "Three-Line Strike"
+    name_zh: "三线打击"
+    aliases: ["three_line_strike", "三线惩击"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "四根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL3LINESTRIKE)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL3LINESTRIKE"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-029"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-035"
+    name: "Three Stars in the South"
+    name_zh: "南方三星"
+    aliases: ["three_stars_in_south"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL3STARSINSOUTH)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL3STARSINSOUTH"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-036"
+    name: "Unique Three River"
+    name_zh: "独特三河底"
+    aliases: ["unique_three_river"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLUNIQUE3RIVER)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLUNIQUE3RIVER"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-037"
+    name: "Ladder Bottom"
+    name_zh: "阶梯底"
+    aliases: ["ladder_bottom", "梯底"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "五根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLLADDERBOTTOM)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLLADDERBOTTOM"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-038"
+    name: "Stick Sandwich"
+    name_zh: "条形三明治"
+    aliases: ["stick_sandwich"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLSTICKSANDWICH)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLSTICKSANDWICH"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-039"
+    name: "Tristar"
+    name_zh: "三星形态"
+    aliases: ["tristar"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLTRISTAR)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLTRISTAR"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-006"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-040"
+    name: "Abandoned Baby"
+    name_zh: "弃婴"
+    aliases: ["abandoned_baby"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLABANDONEDBABY)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {doji_gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLABANDONEDBABY"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-022"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-041"
+    name: "Concealing Baby Swallow"
+    name_zh: "藏燕吞没"
+    aliases: ["concealing_baby_swallow"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "四根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLCONCEALBABYSWALL)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLCONCEALBABYSWALL"}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-042"
+    name: "Advance Block"
+    name_zh: "大敌当前"
+    aliases: ["advance_block", "递进阻挡"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续减弱"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLADVANCEBLOCK)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLADVANCEBLOCK"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-029"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-043"
+    name: "Stalled Pattern"
+    name_zh: "停滞形态"
+    aliases: ["stalled_pattern", "deliberation", "深思"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续减弱"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLSTALLEDPATTERN)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLSTALLEDPATTERN"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-042"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-044"
+    name: "Upside Gap Two Crows"
+    name_zh: "向上跳空双鸦"
+    aliases: ["upside_gap_two_crows"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLUPSIDEGAP2CROWS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLUPSIDEGAP2CROWS"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-030"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-045"
+    name: "Two Crows"
+    name_zh: "两只乌鸦"
+    aliases: ["two_crows"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDL2CROWS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDL2CROWS"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-044"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-046"
+    name: "Homing Pigeon"
+    name_zh: "归鸽"
+    aliases: ["homing_pigeon"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHOMINGPIGEON)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {downtrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHOMINGPIGEON"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-020"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-047"
+    name: "Matching Low"
+    name_zh: "相抵双阳"
+    aliases: ["matching_low"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLMATCHINGLOW)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {close_equal_tolerance: 0.005}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLMATCHINGLOW"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-048"
+    name: "In Neck"
+    name_zh: "入颈线"
+    aliases: ["in_neck"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLINNECK)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {close_near_prev_low_tolerance: 0.005}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLINNECK"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-049"
+    name: "On Neck"
+    name_zh: "上颈线"
+    aliases: ["on_neck"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLONNECK)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {close_equal_prev_low_tolerance: 0.0025}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLONNECK"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-048"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-050"
+    name: "Thrusting"
+    name_zh: "插入线"
+    aliases: ["thrusting", "冲锋线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLTHRUSTING)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {close_below_midpoint: 0.5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLTHRUSTING"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-048"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-051"
+    name: "Counterattack"
+    name_zh: "反击线"
+    aliases: ["counterattack"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLCOUNTERATTACK)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {close_equal_tolerance: 0.005}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLCOUNTERATTACK"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-052"
+    name: "Separating Lines"
+    name_zh: "分手线"
+    aliases: ["separating_lines"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLSEPARATINGLINES)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {open_equal_prev_open_tolerance: 0.0025}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLSEPARATINGLINES"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-053"
+    name: "Side-by-side White Lines"
+    name_zh: "并排阳线"
+    aliases: ["side_by_side_white_lines", "并肩白线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLGAPSIDESIDEWHITE)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLGAPSIDESIDEWHITE"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-054"
+    name: "Rising/Falling Three Methods"
+    name_zh: "上升/下降三法"
+    aliases: ["three_methods", "三法形态"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "五根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLRISINGFALLING3METHODS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {range_hold_ratio: 1.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLRISINGFALLING3METHODS"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-055"
+    name: "Mat Hold"
+    name_zh: "垫形整理"
+    aliases: ["mat_hold", "母持形"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "五根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLMATHOLD)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLMATHOLD"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-054"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-056"
+    name: "Breakaway"
+    name_zh: "脱离形态"
+    aliases: ["breakaway"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "五根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLBREAKAWAY)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLBREAKAWAY"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-057"
+    name: "Upside/Downside Gap Three Methods"
+    name_zh: "跳空三法"
+    aliases: ["gap_three_methods"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLXSIDEGAP3METHODS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, gap_fill_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLXSIDEGAP3METHODS"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-054"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-058"
+    name: "Tasuki Gap"
+    name_zh: "兔跳缺口"
+    aliases: ["tasuki_gap", "田付缺口"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "三根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLTASUKIGAP)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_required: true, gap_not_filled: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLTASUKIGAP"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-059"
+    name: "Hikkake"
+    name_zh: "日垣陷阱"
+    aliases: ["hikkake", "假突破陷阱"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "多根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHIKKAKE)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {inside_bar_required: true, breakout_confirm_bars: 3}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHIKKAKE"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-060"
+    name: "Hikkake Modified"
+    name_zh: "日垣修正陷阱"
+    aliases: ["hikkake_modified"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "多根反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLHIKKAKEMOD)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {inside_bar_required: true, breakout_confirm_bars: 3, trend_filter: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLHIKKAKEMOD"}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-059"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-061"
+    name: "Long Line"
+    name_zh: "长线"
+    aliases: ["long_line"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLLONGLINE)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {min_body_ratio: 0.8}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLLONGLINE"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-014"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-062"
+    name: "Short Line"
+    name_zh: "短线"
+    aliases: ["short_line"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根犹豫"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(对齐TA-Lib CDLSHORTLINE)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {max_body_ratio: 0.25}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, talib_code: "CDLSHORTLINE"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-013"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-063"
+    name: "A-Share Limit-Up Flat"
+    name_zh: "一字涨停板"
+    aliases: ["limit_up_flat", "一字板"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根持续（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(A股涨跌停制度专用)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_min: 0.95, high_eq_low: true, limit_up_pct: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "A股特色形态（打板连板梯队体系，2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-064"
+    name: "A-Share Limit-Down Flat"
+    name_zh: "一字跌停板"
+    aliases: ["limit_down_flat", "一字跌停"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根持续（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(A股涨跌停制度专用)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {body_ratio_min: 0.95, high_eq_low: true, limit_down_pct: -0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "A股特色形态（跌停排板/地天板体系，2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-063"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # CANDLESTICK A股游资/涨跌停制度特色（2026-08-14 二轮补登）
+  # 来源：涨停板 21 型分类（九阳公社 2026-05）+ 搓搓线量化条件（CSDN 2026-07）
+  # ============================================================
+
+  - pattern_id: "PAT-CANDLE-065"
+    name: "Rubbing Lines (Cuoxian)"
+    name_zh: "搓揉线"
+    aliases: ["cuoxian", "揉搓线", "试探-回应双影线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "两根变盘（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(第一根长上影>=2倍实体+第二根长下影>=2倍实体+实体<1/3全长+紧凑区间)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {shadow_body_ratio: 2.0, body_full_ratio_max: 0.33, overlap_required: true, trend_end_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-L02-020"
+    doc_ref: "搓揉线量化四条件（CSDN 2026-07-30 检索证据）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-066"
+    name: "Sky-to-Limit-Down"
+    name_zh: "天地板"
+    aliases: ["sky_to_limit_down", "天地板"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根崩塌（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(高开后砸至跌停收盘，日内振幅触及两极)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {open_premium_min: 0.02, close_at_limit_down: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "A涨跌停制度极端形态（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-064"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-067"
+    name: "Ground-to-Limit-Up (Ditian)"
+    name_zh: "地天板"
+    aliases: ["ground_to_limit_up", "地天板", "天地逆转"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根逆转（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(触及跌停后拉至涨停收盘，巨量博弈)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {low_at_limit_down: true, close_at_limit_up: true, volume_ratio_min: 3.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "涨停板 21 型第 15 类（九阳公社 2026-05 检索证据）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-066"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CANDLE-068"
+    name: "Single Yang Threading MAs"
+    name_zh: "一阳穿多线"
+    aliases: ["one_yang_multi_ma", "一阳穿N线"]
+    pattern_class: "candlestick_pattern"
+    pattern_subtype: "单根突破（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(单根大阳实体贯穿>=3条均线且收盘于其上)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ma_periods: [5, 10, 20, 60], min_mas: 3, body_ratio_min: 0.6}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, ma_count: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "涨停板 21 型第 11 类（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
   # ============================================================
   # CHART_PATTERN（经典图表形态类）— 4条
   # 来源：sell_signal_collector.py 8类卖出信号第②类"技术面卖出"
@@ -359,6 +2209,1009 @@ chart_patterns:
     last_evaluated_at: null
 
   # ============================================================
+  # CHART_PATTERN 扩充（2026-08-14，Edwards&Magee + Bulkowski 经典全集）
+  # 算法：峰谷法(zigzag+枢轴) / 回归法(两条边界线拟合) / 模板匹配法
+  # ============================================================
+
+  - pattern_id: "PAT-CHART-005"
+    name: "Ascending Triangle"
+    name_zh: "上升三角形"
+    aliases: ["ascending_triangle"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(水平阻力线+上升支撑线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 60, touch_min: 2, flat_tolerance: 0.01, slope_min: 0.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-006"
+    name: "Descending Triangle"
+    name_zh: "下降三角形"
+    aliases: ["descending_triangle"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(水平支撑线+下降阻力线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 60, touch_min: 2, flat_tolerance: 0.01, slope_max: 0.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-005"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-007"
+    name: "Symmetrical Triangle"
+    name_zh: "对称三角形"
+    aliases: ["symmetrical_triangle", "收拢三角形"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条收敛趋势线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 60, touch_min: 2, convergence_threshold: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-005"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-008"
+    name: "Rising Wedge"
+    name_zh: "上升楔形"
+    aliases: ["rising_wedge"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条同向上倾收敛线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 40, convergence_threshold: 0.02, slope_min: 0.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-003"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-009"
+    name: "Falling Wedge"
+    name_zh: "下降楔形"
+    aliases: ["falling_wedge"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条同向下倾收敛线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 40, convergence_threshold: 0.02, slope_max: 0.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-008"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-010"
+    name: "Bull Flag"
+    name_zh: "多头旗形"
+    aliases: ["bull_flag", "上升旗形"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(旗杆斜率+小幅回落通道拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pole_surge_pct: 0.15, flag_depth_max: 0.38, flag_bars: 15}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Bulkowski Encyclopedia of Chart Patterns（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-011"
+    name: "Bear Flag"
+    name_zh: "空头旗形"
+    aliases: ["bear_flag", "下降旗形"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(旗杆斜率+小幅反弹通道拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pole_drop_pct: 0.15, flag_depth_max: 0.38, flag_bars: 15}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Bulkowski Encyclopedia of Chart Patterns（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-010"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-012"
+    name: "Pennant"
+    name_zh: "三角旗"
+    aliases: ["pennant"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(旗杆+小对称三角形拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pole_surge_pct: 0.15, pennant_bars: 12}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Bulkowski Encyclopedia of Chart Patterns（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-010"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-013"
+    name: "Cup and Handle"
+    name_zh: "杯柄形"
+    aliases: ["cup_and_handle", "带柄茶杯"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(圆弧底拟合+右杯壁回撤柄)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {cup_depth_range: [0.12, 0.33], handle_depth_max: 0.38, cup_bars_min: 30}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "O'Neil CANSLIM 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-014"
+    name: "Inverse Cup and Handle"
+    name_zh: "倒杯柄形"
+    aliases: ["inverse_cup_and_handle"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(圆弧顶拟合+右杯壁反弹柄)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {cup_height_range: [0.12, 0.33], handle_rebound_max: 0.38, cup_bars_min: 30}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Bulkowski Encyclopedia of Chart Patterns（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-013"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-015"
+    name: "Rectangle"
+    name_zh: "矩形箱体"
+    aliases: ["rectangle", "box", "交易区间"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "持续"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条水平边界线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 40, touch_min: 2, flat_tolerance: 0.01}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-016"
+    name: "Head and Shoulders Bottom"
+    name_zh: "头肩底"
+    aliases: ["head_shoulders_bottom", "_inverse_head_shoulders"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法(三谷中间最低+颈线突破)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 120, shoulder_tolerance: 0.05, neckline_break: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-017"
+    name: "Triple Top"
+    name_zh: "三重顶"
+    aliases: ["triple_top", "三尊头"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法(三峰等高+谷底破位)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 90, peak_tolerance: 0.03}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-018"
+    name: "Triple Bottom"
+    name_zh: "三重底"
+    aliases: ["triple_bottom"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法(三谷等低+峰顶突破)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 90, trough_tolerance: 0.03}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-017"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-019"
+    name: "Rounding Top"
+    name_zh: "圆弧顶"
+    aliases: ["rounding_top", "碟形顶"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(二次曲线拱顶拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 90, curvature_fit_min: 0.8}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-020"
+    name: "Rounding Bottom"
+    name_zh: "圆弧底"
+    aliases: ["rounding_bottom", "碟形底", "U形底"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(二次曲线碗底拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 90, curvature_fit_min: 0.8}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-019"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-021"
+    name: "Broadening Formation"
+    name_zh: "扩散喇叭形"
+    aliases: ["broadening_formation", "扩大三角形"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条发散趋势线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 60, touch_min: 2, divergence_threshold: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-022"
+    name: "Diamond"
+    name_zh: "钻石形"
+    aliases: ["diamond_formation", "菱形"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(先扩散后收敛四线拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lookback: 80, touch_min: 2}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Bulkowski Encyclopedia of Chart Patterns（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-023"
+    name: "V-Top"
+    name_zh: "V形顶"
+    aliases: ["v_top"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法(急涨急跌对称斜率)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {surge_pct: 0.2, drop_pct: 0.2, max_bars: 20}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-024"
+    name: "V-Bottom"
+    name_zh: "V形底"
+    aliases: ["v_bottom"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "峰谷法(急跌急涨对称斜率)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {drop_pct: 0.2, surge_pct: 0.2, max_bars: 20}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-023"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-025"
+    name: "Island Reversal"
+    name_zh: "岛形反转"
+    aliases: ["island_reversal", "孤岛反转"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(两侧反向缺口隔离成岛)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {gap_min_pct: 0.01, island_bars_max: 15}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-026"
+    name: "Dead Cat Bounce"
+    name_zh: "死猫跳"
+    aliases: ["dead_cat_bounce", "超跌反弹陷阱"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "反弹陷阱"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(暴跌后弱反弹+再破低)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {crash_pct: 0.2, bounce_ratio_max: 0.5, bounce_bars: 10}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "常见空头陷阱形态（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # CHART_PATTERN A股游资/情绪周期复合形态（2026-08-14 二轮补登）
+  # 来源：游资起爆铁律（新浪 2026-08）+ 反包低吸战法（淘股吧 2026-03）+
+  #       涨停板 21 型（九阳公社 2026-05）——打板连板梯队体系核心输入
+  # ============================================================
+
+  - pattern_id: "PAT-CHART-027"
+    name: "Limit-Up Reversal Engulfing (Fanbao)"
+    name_zh: "反包涨停"
+    aliases: ["fanbao_limit_up", "反包板", "弱转强反包"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "情绪反转（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(前日阴/十字星+当日放量涨停完全吞没前日实体)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {engulf_required: true, volume_ratio_min: 1.5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "涨停板 21 型第 9 类+反包战法（淘股吧 2026-03 检索证据）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CANDLE-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-028"
+    name: "Double Cannon N-Shape"
+    name_zh: "涨停双响炮"
+    aliases: ["double_cannon", "N字板", "双响炮"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "中继起爆（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(首板+3日内温和缩量洗盘不破首板低点/21日线+二板确认)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {consolidate_days: 3, volume_shrink: true, ma_guard: 21}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "游资起爆铁律形态3（新浪 2026-08-04 检索证据）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-029"
+    name: "Golden Pit"
+    name_zh: "黄金坑"
+    aliases: ["golden_pit", "挖坑洗盘"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "洗盘启动（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(急跌挖坑企稳+放量涨停突破坑口)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pit_depth_min: 0.1, pit_bars_max: 10, breakout_volume_ratio: 2.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "涨停板 21 型第 12 类（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-030"
+    name: "Fragmented Yang Accumulation"
+    name_zh: "碎阳慢涨吸筹"
+    aliases: ["fragmented_yang", "碎阳吸筹"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "潜伏吸筹（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(连续小阳重心上移+上涨放量下跌缩量+不破箱体)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {min_small_yang: 5, up_vol_ratio: 1.2, down_vol_ratio: 0.8}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "游资起爆铁律形态2（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-031"
+    name: "Low Box Consolidation"
+    name_zh: "低位箱体蓄势"
+    aliases: ["low_box_consolidation", "低位横盘蓄势"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "蓄势（A股特色）"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(低位窄幅箱体+振幅<18%+5日不创新低+均线粘合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {range_amplitude_max: 0.18, months_min: 1, no_new_low_days: 5, ma_bind: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "游资起爆铁律形态1（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-015"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-032"
+    name: "First Board Probe"
+    name_zh: "首板试盘"
+    aliases: ["first_board_probe", "首板试盘形态"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "试盘启动（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(长期地量后首板试探+次日温和震荡+第三日倍量高开确认)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ground_vol_ratio_max: 0.3, confirm_volume_ratio: 2.0}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "游资起爆铁律形态4（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-033"
+    name: "Consecutive Limit-Up Ladder"
+    name_zh: "连板梯队结构"
+    aliases: ["consecutive_limit_up", "连板", "连板梯队"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "情绪主升（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(连续>=2日涨停序列+封单/换手分层)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {min_boards: 2, turnover_band: [0.08, 0.25]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, board_count: int, ladder_rank: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "打板连板梯队体系核心结构（universe_registry 梯队池配套）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-034"
+    name: "Mild Board Break"
+    name_zh: "断板温和洗盘"
+    aliases: ["mild_board_break", "温和断板"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "中继洗盘（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(断板日跌幅>-3%或假阴真阳+下影承接+收盘守5日线)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {max_drawdown: -0.03, ma5_guard: true, adjust_days_max: 3}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "反包战法筛选条件2（淘股吧 2026-03 检索证据）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-033"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-035"
+    name: "Broken Board Re-Seal"
+    name_zh: "烂板回封"
+    aliases: ["broken_board_reseal", "烂板回封", "弱转强板"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "弱转强（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(盘中多次开板炸板+尾盘放量回封+换手充分)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {min_reopens: 2, reseal_volume_required: true}
+    inputs: ["分时数据", "OHLCV"]
+    outputs: {present: bool, reopen_count: int}
+    subjectivity: "medium"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "涨停板 21 型第 7 类（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-036"
+    name: "Late-Day Sneak Board"
+    name_zh: "尾盘偷袭板"
+    aliases: ["late_day_board", "尾盘偷袭"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "低质量板（A股特色）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(14:30后急拉封板+量能不足)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {seal_after: "14:30", volume_ratio_max: 1.2}
+    inputs: ["分时数据", "OHLCV"]
+    outputs: {present: bool, seal_time: str}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-SELL-001"
+    doc_ref: "涨停板 21 型第 8 类（次日多无溢价，预警类）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # DeMark TD 序列（2026-08-14 三轮补登，纯价格行为计数形态）
+  # 来源：Tom DeMark《The New Science of Technical Analysis》
+  # TD Setup：连续 9 根收盘 < / > 4 根前收盘；TD Countdown：13 计数衰竭
+  # ============================================================
+
+  - pattern_id: "PAT-CHART-037"
+    name: "TD Sequential Buy Setup"
+    name_zh: "TD 序列买入计数"
+    aliases: ["td_seq_buy", "TD9买", "TD Setup Buy"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "价格行为计数（DeMark）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(连续9根收盘<4根前收盘+条件1/2校验， 13计数衰竭)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {setup_count: 9, countdown: 13, lookback_offset: 4}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, setup_pos: int, countdown_progress: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Tom DeMark TD Sequential（New Science of TA）（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CHART-038"
+    name: "TD Sequential Sell Setup"
+    name_zh: "TD 序列卖出计数"
+    aliases: ["td_seq_sell", "TD9卖", "TD Setup Sell"]
+    pattern_class: "chart_pattern"
+    pattern_subtype: "价格行为计数（DeMark）"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(连续9根收盘>4根前收盘+条件1/2校验， 13计数衰竭)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {setup_count: 9, countdown: 13, lookback_offset: 4}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, setup_pos: int, countdown_progress: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Tom DeMark TD Sequential（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CHART-037"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
   # TRENDLINE_CHANNEL（趋势线与通道类）— 1条
   # 来源：sell_signal_collector.py 8类卖出信号第②类"均线死叉"
   # ============================================================
@@ -387,6 +3240,213 @@ chart_patterns:
     version: "1.0.0"
     created_at: "2026-08-13"
     updated_at: "2026-08-13"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # TRENDLINE_CHANNEL 扩充（2026-08-14，趋势线/通道/音叉/金叉全集）
+  # ============================================================
+
+  - pattern_id: "PAT-TREND-002"
+    name: "Uptrend Line"
+    name_zh: "上升趋势线"
+    aliases: ["uptrend_line"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势支撑"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(依次抬高低点连线拟合+触碰确认)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pivot_left: 3, pivot_right: 3, touch_min: 2, break_confirm_bars: 2}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, slope: float, support_level: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "经典趋势线体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-TREND-003"
+    name: "Downtrend Line"
+    name_zh: "下降趋势线"
+    aliases: ["downtrend_line"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势阻力"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(依次降低高点连线拟合+触碰确认)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pivot_left: 3, pivot_right: 3, touch_min: 2, break_confirm_bars: 2}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, slope: float, resistance_level: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "经典趋势线体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-TREND-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-TREND-004"
+    name: "Ascending Channel"
+    name_zh: "上升通道"
+    aliases: ["ascending_channel"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势通道"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条平行上倾边界拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pivot_left: 3, pivot_right: 3, touch_min: 2, parallel_tolerance: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, slope: float, upper: float, lower: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "经典通道体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-TREND-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-TREND-005"
+    name: "Descending Channel"
+    name_zh: "下降通道"
+    aliases: ["descending_channel"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势通道"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条平行下倾边界拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pivot_left: 3, pivot_right: 3, touch_min: 2, parallel_tolerance: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, slope: float, upper: float, lower: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "经典通道体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-TREND-004"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-TREND-006"
+    name: "Horizontal Channel"
+    name_zh: "水平箱体通道"
+    aliases: ["horizontal_channel", "横盘通道"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "震荡通道"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(两条水平平行边界拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {touch_min: 2, flat_tolerance: 0.01, min_bars: 20}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, upper: float, lower: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "经典通道体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-TREND-004"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-TREND-007"
+    name: "Golden Cross"
+    name_zh: "均线金叉"
+    aliases: ["golden_cross", "金叉"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(快线上穿慢线)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {fast_period: 5, slow_period: 20}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, start_pos: int, end_pos: int, confidence: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "与 PAT-TREND-001 死叉对称（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-TREND-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-TREND-008"
+    name: "Andrew's Pitchfork"
+    name_zh: "安德鲁音叉"
+    aliases: ["andrews_pitchfork", "Median Line"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "趋势通道"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(三枢轴点+中轨/上下平行轨)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {pivot_left: 5, pivot_right: 5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, median_line: float, upper: float, lower: float}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Andrews Pitchfork 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -485,6 +3545,602 @@ chart_patterns:
     last_evaluated_at: null
 
   # ============================================================
+  # SUPPORT_RESISTANCE 扩充（2026-08-14，枢轴点/成交量分布/昨日高低）
+  # ============================================================
+
+  - pattern_id: "PAT-SR-004"
+    name: "Pivot Points (Classic)"
+    name_zh: "经典枢轴点"
+    aliases: ["pivot_points_classic", "PP/PP/R1-R4/S1-S4"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "枢轴位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(PP=(H+L+C)/3 派生 R/S 位)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {levels: [R1, R2, R3, PP, S1, S2, S3]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, pp: float, r1: float, s1: float}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "场内交易员枢轴点体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-SR-005"
+    name: "Pivot Points (Fibonacci)"
+    name_zh: "斐波那契枢轴点"
+    aliases: ["pivot_points_fibonacci"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "枢轴位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(PP+0.382/0.618 波幅派生 R/S)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {fib_ratios: [0.382, 0.618]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, pp: float, r1: float, s1: float}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Fibonacci Pivot 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-SR-004"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-SR-006"
+    name: "Volume Profile Support/Resistance"
+    name_zh: "成交量分布支撑阻力"
+    aliases: ["volume_profile_sr", "VP POC/VAH/VAL"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "量能密集区"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(价格分箱成交量聚合 POC/VAH/VAL)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {bin_count: 50, value_area_pct: 0.7}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, poc: float, vah: float, val: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Volume Profile 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-SR-007"
+    name: "Previous Day High/Low"
+    name_zh: "昨日高低点"
+    aliases: ["prev_day_high_low", "PDH/PDL"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "日级枢轴位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(前一日 high/low 直接映射)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {breakout_confirm_bars: 2}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, pdh: float, pdl: float}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-SIG-024"
+    doc_ref: "日内交易常用位（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # FIBONACCI（斐波那契工具类）— 6条（2026-08-14 新建）
+  # 算法：规则法(极值点锁定+比例位计算)
+  # ============================================================
+
+  - pattern_id: "PAT-FIB-001"
+    name: "Fibonacci Retracement"
+    name_zh: "斐波那契回撤"
+    aliases: ["fib_retracement", "黄金分割回撤"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "回撤位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(波段极值+23.6/38.2/50/61.8/78.6%)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ratios: [0.236, 0.382, 0.5, 0.618, 0.786], golden_zone: [0.5, 0.618]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, levels: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-002"
+    name: "Fibonacci Extension"
+    name_zh: "斐波那契扩展"
+    aliases: ["fib_extension", "黄金分割扩展"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "目标位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(三波段极值+127.2/161.8/261.8%)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ratios: [1.272, 1.618, 2.618]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, targets: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-003"
+    name: "Fibonacci Fan"
+    name_zh: "斐波那契扇形线"
+    aliases: ["fib_fan"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "动态支撑阻力"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(极值点+比例斜率射线族)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ratios: [0.382, 0.5, 0.618]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, fan_lines: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-004"
+    name: "Fibonacci Arc"
+    name_zh: "斐波那契弧形线"
+    aliases: ["fib_arc"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "动态支撑阻力"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(极值点+比例半径圆弧族)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ratios: [0.382, 0.5, 0.618]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, arc_curves: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-005"
+    name: "Fibonacci Time Zone"
+    name_zh: "斐波那契时间区间"
+    aliases: ["fib_time_zone"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "时间周期"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(斐波那契数列竖线：1/2/3/5/8/13/21)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {sequence: [1, 2, 3, 5, 8, 13, 21, 34, 55]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, time_bars: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-006"
+    name: "Fibonacci Cluster"
+    name_zh: "斐波那契共振簇"
+    aliases: ["fib_cluster", "黄金分割共振区"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "共振位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(多波段斐氏位聚合，容差内计数)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {cluster_tolerance: 0.005, min_lines: 3}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, cluster_levels: list}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Confluence Cluster 体系（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # FIBONACCI 谐波形态子族（2026-08-14 第二轮循环审查补登）
+  # XABCD 五点结构 + 斐波那契比例校验（ZigZag 摆动过滤→比例匹配→PRZ 预测）
+  # 对齐开源实现：djoffrey/HarmonicPatterns（2026-06 仍活跃维护，9形态）
+  #              bosskuh6666/harmonic-scanner-ai（2026-06，6形态+PRZ+RSI confluence）
+  # ============================================================
+
+  - pattern_id: "PAT-FIB-007"
+    name: "ABCD Harmonic"
+    name_zh: "ABCD 谐波形态"
+    aliases: ["abcd", "等长三段"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(ZigZag 摆动+AB≈CD 比例校验)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ab_range: [0.382, 0.886], cd_ratio: 1.0, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Harmonic Trading（Carney）；HarmonicPatterns 包 detect_abcd（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-008"
+    name: "Gartley"
+    name_zh: "加特利形态"
+    aliases: ["gartley", "222形态"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.618, ABC=0.382-0.886, BCD=1.13-1.618, XAD=0.786)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: 0.618, abc: [0.382, 0.886], bcd: [1.13, 1.618], xad: 0.786, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "H.M. Gartley 1935；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-009"
+    name: "Bat"
+    name_zh: "蝙蝠形态"
+    aliases: ["bat"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.382-0.5, ABC=0.382-0.886, BCD=1.618-2.618, XAD=0.886)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: [0.382, 0.5], abc: [0.382, 0.886], bcd: [1.618, 2.618], xad: 0.886, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Carney 2001；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-008"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-010"
+    name: "Alternate Bat"
+    name_zh: "变体蝙蝠形态"
+    aliases: ["alt_bat", "alternate_bat"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.382, BCD=2.0-3.618, XAD=1.13)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: 0.382, bcd: [2.0, 3.618], xad: 1.13, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Carney 2013 Alternate Bat；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-009"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-011"
+    name: "Butterfly"
+    name_zh: "蝴蝶形态"
+    aliases: ["butterfly"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.786, ABC=0.382-0.886, BCD=1.618-2.618, XAD=1.272)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: 0.786, abc: [0.382, 0.886], bcd: [1.618, 2.618], xad: 1.272, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Bryce Gilmore；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-008"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-012"
+    name: "Crab"
+    name_zh: "螃蟹形态"
+    aliases: ["crab"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.382-0.618, BCD=2.24-3.618, XAD=1.618)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: [0.382, 0.618], bcd: [2.24, 3.618], xad: 1.618, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Carney 2000；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-008"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-013"
+    name: "Deep Crab"
+    name_zh: "深螃蟹形态"
+    aliases: ["deep_crab"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.886, BCD=2.0-3.618, XAD=1.618)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: 0.886, bcd: [2.0, 3.618], xad: 1.618, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Carney 2013；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-012"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-014"
+    name: "Shark"
+    name_zh: "鲨鱼形态"
+    aliases: ["shark"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.446-0.618, ABC=1.13-1.618, XCD=1.618-2.24, XAD=0.886-1.13)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: [0.446, 0.618], abc: [1.13, 1.618], xcd: [1.618, 2.24], err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Carney 2011；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-008"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-015"
+    name: "Cypher"
+    name_zh: "赛弗形态"
+    aliases: ["cypher"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(XAB=0.382-0.618, ABC=1.272-1.414, BCD=1.618-2.0, XAD=0.786)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {xab: [0.382, 0.618], abc: [1.272, 1.414], bcd: [1.618, 2.0], xad: 0.786, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Darren Oglesbee；HarmonicPatterns 包（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-008"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-FIB-016"
+    name: "Three Drives"
+    name_zh: "三推形态"
+    aliases: ["three_drives"]
+    pattern_class: "fibonacci"
+    pattern_subtype: "谐波-XABCD"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(三浪递推，1.272/1.618 斐氏延伸对称)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {drive2_ext: 1.272, drive3_ext: 1.618, err_allowed: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, points: dict, prz: dict}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "Robert Prechter 三推；谐波经典（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-FIB-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
   # STRUCTURE（价格结构类）— 1条
   # 代码已施工：overlay_features.py s2_spring_flag（Wyckoff Spring）
   # ============================================================
@@ -519,8 +4175,1608 @@ chart_patterns:
     last_evaluated_at: null
 
   # ============================================================
-  # 预留类（schema 保留，条目按需补充）
-  # chanlun（缠论）：分型→笔→线段→中枢→走势，顶底分型/一二三买卖点/背驰
-  # elliott_wave（波浪理论）：推动浪1-5/调整浪abc/延长/锯齿形/平台形/三角形
-  # fibonacci（斐波那契工具）：回测位23.6-78.6%/扩展位/扇形/弧形/时间区间
+  # CHANLUN（缠论类）— 15条（2026-08-14 新建）
+  # 对齐开源量化实现：chan.py（Vespa314，严格笔/特征序列线段/divergence_rate=0.9）
+  #              chanlun-pro（MACD 面积力度比较背驰，query_macd_ld/compare_ld_beichi）
+  # 施工依赖链：分型(001/002) → 笔(003/004) → 线段(005) → 中枢(006)
+  #            → 买卖点(007-012) + 背驰(013/014) + 区间套(015)
+  # ============================================================
+
+  - pattern_id: "PAT-CLL-001"
+    name: "Chanlun Top Fractal"
+    name_zh: "缠论顶分型"
+    aliases: ["chanlun_top_fractal", "顶分型"]
+    pattern_class: "chanlun"
+    pattern_subtype: "形态学-分型"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(三K线中间高点最高且低点最高)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {inclusion_process: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, fractal_pos: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第62-65课；chan.py KLine/Combiner 模块（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-002"
+    name: "Chanlun Bottom Fractal"
+    name_zh: "缠论底分型"
+    aliases: ["chanlun_bottom_fractal", "底分型"]
+    pattern_class: "chanlun"
+    pattern_subtype: "形态学-分型"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(三K线中间低点最低且高点最低)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {inclusion_process: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, fractal_pos: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第62-65课；chan.py KLine/Combiner 模块（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-003"
+    name: "Chanlun Upward Bi"
+    name_zh: "缠论上升笔"
+    aliases: ["chanlun_up_bi", "上升笔"]
+    pattern_class: "chanlun"
+    pattern_subtype: "形态学-笔"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(底分型→顶分型连接，严格笔需独立K线>=5)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {bi_strict: true, min_bi_klines: 5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, bi_start: int, bi_end: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第62-65课；chan.py Bi 模块 bi_strict 配置（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-004"
+    name: "Chanlun Downward Bi"
+    name_zh: "缠论下降笔"
+    aliases: ["chanlun_down_bi", "下降笔"]
+    pattern_class: "chanlun"
+    pattern_subtype: "形态学-笔"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(顶分型→底分型连接，严格笔需独立K线>=5)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {bi_strict: true, min_bi_klines: 5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, bi_start: int, bi_end: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第62-65课；chan.py Bi 模块（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-003"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-005"
+    name: "Chanlun Line Segment"
+    name_zh: "缠论线段"
+    aliases: ["chanlun_seg", "线段"]
+    pattern_class: "chanlun"
+    pattern_subtype: "形态学-线段"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(特征序列法/都业华1+1终结)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {seg_algo: "feature_sequence"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, seg_start: int, seg_end: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第67/71课；chan.py Seg 模块双算法（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-006"
+    name: "Chanlun Zhongshu (Central Hub)"
+    name_zh: "缠论中枢"
+    aliases: ["chanlun_zhongshu", "中枢", "central_hub"]
+    pattern_class: "chanlun"
+    pattern_subtype: "形态学-中枢"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(三笔重叠区间 ZG/ZD， GG/DD 扩展)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {zs_algo: "seg", zs_wzgx: "strict"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, zg: float, zd: float, gg: float, dd: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第17-18课；chan.py ZS 模块（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-007"
+    name: "Chanlun First Buy Point"
+    name_zh: "缠论一类买点"
+    aliases: ["chanlun_bs1_buy", "一买"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-买点"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(趋势背驰后反向段起点， MACD 力度比较)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {divergence_rate: 0.9, min_zs_cnt: 2}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第19-20课；chan.py BuySellPoint BS1（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-008"
+    name: "Chanlun Second Buy Point"
+    name_zh: "缠论二类买点"
+    aliases: ["chanlun_bs2_buy", "二买"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-买点"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(一买后回落不创新低)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {confirm_bars: 1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第19-20课；chan.py BuySellPoint BS2（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-009"
+    name: "Chanlun Third Buy Point"
+    name_zh: "缠论三类买点"
+    aliases: ["chanlun_bs3_buy", "三买"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-买点"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(离开中枢上移后回落不回中枢)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {reentry_confirm_bars: 1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第20-21课；chan.py BuySellPoint BS3（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-010"
+    name: "Chanlun First Sell Point"
+    name_zh: "缠论一类卖点"
+    aliases: ["chanlun_bs1_sell", "一卖"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-卖点"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(上涨趋势背驰后反向段起点)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {divergence_rate: 0.9, min_zs_cnt: 2}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "缠中说禅108课 第19-20课；chan.py BuySellPoint SS1（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-011"
+    name: "Chanlun Second Sell Point"
+    name_zh: "缠论二类卖点"
+    aliases: ["chanlun_bs2_sell", "二卖"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-卖点"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(一卖后反弹不创新高)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {confirm_bars: 1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "缠中说禅108课 第19-20课；chan.py BuySellPoint SS2（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-010"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-012"
+    name: "Chanlun Third Sell Point"
+    name_zh: "缠论三类卖点"
+    aliases: ["chanlun_bs3_sell", "三卖"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-卖点"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(跌破中枢后反弹不回中枢)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {reentry_confirm_bars: 1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "缠中说禅108课 第20-21课；chan.py BuySellPoint SS3（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-010"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-013"
+    name: "Chanlun Trend Divergence"
+    name_zh: "缠论趋势背驰"
+    aliases: ["chanlun_trend_divergence", "趋势背驰"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-背驰"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(MACD 面积力度比较：向段红柱和 vs 绿柱和)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {divergence_rate: 0.9, strength_metric: "macd_area"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, direction: str, strength_ratio: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "chanlun-pro query_macd_ld/compare_ld_beichi（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-014"
+    name: "Chanlun Consolidation Divergence"
+    name_zh: "缠论盘整背驰"
+    aliases: ["chanlun_consolidation_divergence", "盘整背驰"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-背驰"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(中枢进入段vs离开段力度比较)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {divergence_rate: 0.9, strength_metric: "macd_area"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, direction: str, strength_ratio: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "chanlun-pro 盘整背驰规则（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-CLL-013"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-CLL-015"
+    name: "Chanlun Nested Interval (Qujian Tao)"
+    name_zh: "缠论区间套"
+    aliases: ["chanlun_nested_interval", "区间套", "多级别联立"]
+    pattern_class: "chanlun"
+    pattern_subtype: "动力学-精确定位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(月→周→日→30min 多级别买卖点共振收敛)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {lv_list: ["K_M", "K_W", "K_D", "K_30M"]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, point_pos: int, lv_confluence: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SIG-024"
+    doc_ref: "缠中说禅108课 第27课；chan.py lv_list 多级别联立（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # ELLIOTT_WAVE（艾略特波浪类）— 8条（2026-08-14 新建）
+  # 算法：规则法(浪型规则) / 分形法(Fractal 波浪分解) / dl_yolo 预留
+  # ============================================================
+
+  - pattern_id: "PAT-ELW-001"
+    name: "Impulse Wave"
+    name_zh: "推动浪"
+    aliases: ["impulse_wave", "五浪推动"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "推动浪"
+    recognition_algorithm: "fractal"
+    algorithm_variant: "分形法(5浪结构：浪2不破浪1起点、浪3非最短、浪4不叠浪1)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {wave2_max_retrace: 1.0, wave3_not_shortest: true, wave4_no_overlap: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（Frost & Prechter）（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-002"
+    name: "Zigzag Correction"
+    name_zh: "锯齿形调整浪"
+    aliases: ["zigzag_correction", "5-3-5调整"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "调整浪"
+    recognition_algorithm: "fractal"
+    algorithm_variant: "分形法(abc 三浪， a/c 各5子浪 b 为3子浪)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {b_retrace_max: 0.786}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-003"
+    name: "Flat Correction"
+    name_zh: "平台形调整浪"
+    aliases: ["flat_correction", "3-3-5调整"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "调整浪"
+    recognition_algorithm: "fractal"
+    algorithm_variant: "分形法(abc 三浪， a/b 各3子浪 c 为5子浪)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {b_retrace_min: 0.9}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-004"
+    name: "Triangle Correction"
+    name_zh: "三角形调整浪"
+    aliases: ["triangle_correction", "收缩三角调整"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "调整浪"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(abcde 五浪收敛三角拟合)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {convergence_threshold: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-005"
+    name: "Double Three Combination"
+    name_zh: "双重三组合调整"
+    aliases: ["double_three", "W-X-Y组合"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "调整浪"
+    recognition_algorithm: "fractal"
+    algorithm_variant: "分形法(WXY 双重校正结构)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-006"
+    name: "Wave Extension"
+    name_zh: "浪延长"
+    aliases: ["wave_extension", "延长浪"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "推动浪变体"
+    recognition_algorithm: "fractal"
+    algorithm_variant: "分形法(某一浪延伸为5子浪且幅度显著放大)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {extension_ratio_min: 1.618}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, extended_wave: int}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-007"
+    name: "Leading Diagonal"
+    name_zh: "引导楔形"
+    aliases: ["leading_diagonal"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "推动浪变体"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(浪1位置收敛斜纹 5-3-5-3-5)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {convergence_threshold: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-ELW-008"
+    name: "Ending Diagonal"
+    name_zh: "终结楔形"
+    aliases: ["ending_diagonal", "终结三角"]
+    pattern_class: "elliott_wave"
+    pattern_subtype: "推动浪变体"
+    recognition_algorithm: "regression"
+    algorithm_variant: "回归法(浪5位置收敛斜纹 3-3-3-3-3)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {convergence_threshold: 0.02}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, wave_labels: list}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Elliott Wave Principle（2026-08-14 新建）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-ELW-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # STRUCTURE 扩充（2026-08-14）：Wyckoff 全套 + SMC 智能资金概念 +
+  # Matrix Profile 无监督挖掘（STUMPY/L-MAP，AAAI-26 SOTA）
+  # SMC 对齐实现：joshyattridge/smart-money-concepts（Python 包，MIT）
+  # ============================================================
+
+  - pattern_id: "PAT-STRUCT-002"
+    name: "Wyckoff Accumulation"
+    name_zh: "威科夫吸筹区间"
+    aliases: ["wyckoff_accumulation", "PS/SC/AR/ST/Spring/TEST/SOS/LPS"]
+    pattern_class: "structure"
+    pattern_subtype: "底部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(Phase A-E 九事件序列状态机)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {range_min_bars: 60, volume_confirm: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, phase: str}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-003"
+    name: "Wyckoff Distribution"
+    name_zh: "威科夫派发区间"
+    aliases: ["wyckoff_distribution", "PSY/BC/AR/ST/UT/UTAD/SOW/LPSY"]
+    pattern_class: "structure"
+    pattern_subtype: "顶部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(Phase A-E 九事件序列状态机)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {range_min_bars: 60, volume_confirm: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, phase: str}
+    subjectivity: "high"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-002"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-004"
+    name: "Wyckoff Upthrust"
+    name_zh: "威科夫上冲"
+    aliases: ["upthrust", "UT", "假突破诱多"]
+    pattern_class: "structure"
+    pattern_subtype: "顶部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(突破阻力后快速回落收于阻力下)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {break_margin_pct: 0.01, close_back_below: true}
+    inputs: ["OHLCV", "resistance_level"]
+    outputs: {present: bool, ut_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-005"
+    name: "Wyckoff Sign of Strength (SOS)"
+    name_zh: "威科夫强势信号"
+    aliases: ["sos", "sign_of_strength"]
+    pattern_class: "structure"
+    pattern_subtype: "底部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(放量长阳突破交易区间上沿)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_ratio_min: 1.5, break_margin_pct: 0.01}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, sos_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-006"
+    name: "Wyckoff Sign of Weakness (SOW)"
+    name_zh: "威科夫弱势信号"
+    aliases: ["sow", "sign_of_weakness"]
+    pattern_class: "structure"
+    pattern_subtype: "顶部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(放量长阴跌破交易区间下沿)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_ratio_min: 1.5, break_margin_pct: 0.01}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, sow_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-005"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-007"
+    name: "Wyckoff Last Point of Support (LPS)"
+    name_zh: "威科夫最后支撑点"
+    aliases: ["lps", "last_point_of_support"]
+    pattern_class: "structure"
+    pattern_subtype: "底部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(SOS 后回调缩量不破前高支撑)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_shrink_ratio_max: 0.7}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, lps_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-008"
+    name: "Wyckoff Last Point of Supply (LPSY)"
+    name_zh: "威科夫最后供给点"
+    aliases: ["lpsy", "last_point_of_supply"]
+    pattern_class: "structure"
+    pattern_subtype: "顶部结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(SOW 后反弹缩量不过前低阻力)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_shrink_ratio_max: 0.7}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, lpsy_pos: int}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "Wyckoff Method 全套（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-007"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-009"
+    name: "SMC Break of Structure (BOS)"
+    name_zh: "结构突破"
+    aliases: ["bos", "break_of_structure"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-市场结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(close 突破活跃 pivot 且与趋势同向)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {swing_size: 50, confirm: "close"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, direction: str, bos_pos: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系；smartmoneyconcepts 包 swing_highs_lows+FVG（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-010"
+    name: "SMC Change of Character (CHoCH)"
+    name_zh: "性格转变"
+    aliases: ["choch", "change_of_character"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-市场结构"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(close 突破活跃 pivot 且与趋势反向， 优先级高于 BOS)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {swing_size: 50, confirm: "close"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, direction: str, choch_pos: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-009"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-011"
+    name: "SMC Fair Value Gap (FVG)"
+    name_zh: "公允价值缺口"
+    aliases: ["fvg", "fair_value_gap", "三K失衡区", "失衡缺口"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-失衡区"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(三K线 imbalance：bar1.high < bar3.low 或 bar1.low > bar3.high)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {auto_threshold: true, extend_bars: 1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, fvg_top: float, fvg_bottom: float, status: str}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系；smartmoneyconcepts 包 fvg 函数（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-012"
+    name: "SMC Order Block (OB)"
+    name_zh: "订单块"
+    aliases: ["order_block", "ob", "机构订单区"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-机构足迹"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(位移前最后一根反向K线+ATR波动过滤)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ob_filter: "atr", ob_mitigation: "highlow", swing: "internal"}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, ob_top: float, ob_bottom: float, status: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系；smartmoneyconcepts 包 ob 函数（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-013"
+    name: "SMC Liquidity Grab"
+    name_zh: "流动性扫荡"
+    aliases: ["liquidity_grab", "stop_hunt", "扫损", "插针"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-流动性"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(影线越过等高/等低后收盘收回)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {wick_beyond_pct: 0.002, close_back_ratio: 0.5}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, grab_pos: int, direction: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-001"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-014"
+    name: "SMC Equal Highs (EQH)"
+    name_zh: "等高流动性池"
+    aliases: ["eqh", "equal_highs"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-流动性"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(ATR200 基准容差内双高聚类)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {eq_size: 3, eq_threshold_atr_ratio: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, eqh_level: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系；smartmoneyconcepts 包 eqh/eql（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-015"
+    name: "SMC Equal Lows (EQL)"
+    name_zh: "等低流动性池"
+    aliases: ["eql", "equal_lows"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-流动性"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(ATR200 基准容差内双低聚类)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {eq_size: 3, eq_threshold_atr_ratio: 0.1}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, eql_level: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT/SMC 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-014"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-016"
+    name: "SMC Premium/Discount Zone"
+    name_zh: "溢价折价区"
+    aliases: ["premium_discount", "premium_zone", "discount_zone"]
+    pattern_class: "structure"
+    pattern_subtype: "SMC-区间定位"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(swing 区间 50% 均衡位三分：溢价/均衡/折价)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {equilibrium: 0.5, zone_margin: 0.05}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, zone: str, premium: float, discount: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ICT Dealing Range 体系（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-017"
+    name: "Time Series Motif Discovery"
+    name_zh: "时序模体发现"
+    aliases: ["ts_motif", "matrix_profile_motif", "形态自挖掘"]
+    pattern_class: "structure"
+    pattern_subtype: "无监督挖掘"
+    recognition_algorithm: "matrix_profile"
+    algorithm_variant: "STUMPY motif(stump/mstump 滑窗 z-norm 最近邻)"
+    dl_model_ref: "stumpy (pip)"
+    dl_training_dataset: null
+    params: {window_size: 30, max_distance: 0.4}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, motif_pairs: list, motif_distance: float}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Matrix Profile（Yeh 2016/STUMPY）；L-MAP AAAI-26 可学习扩展（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-018"
+    name: "Semantic Segmentation (FLUSS)"
+    name_zh: "语义分段"
+    aliases: ["semantic_segmentation", "fluss", "regime分段"]
+    pattern_class: "structure"
+    pattern_subtype: "无监督挖掘"
+    recognition_algorithm: "matrix_profile"
+    algorithm_variant: "FLUSS/FLOSS(弧曲线 corrected arc curve 分段)"
+    dl_model_ref: "stumpy (pip)"
+    dl_training_dataset: null
+    params: {n_regimes: 3, L: 30}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, regime_locations: list}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Matrix Profile VIII FLUSS（STUMPY fluss 实现，regime 检测）（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-017"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # DL 检测算法变体登记（2026-08-14，SOTA 演进预留，非独立形态）
+  # 说明：以下 4 条是"算法套件"级登记锚点——同一形态家族的 DL 升级路径。
+  # dl_model_ref 已指向推荐实现；训练数据用参数化合成+真实标注双轨。
+  # 施工触发条件：experiment_registry 出现规则法 vs DL 的对比实验需求时启动。
+  # ============================================================
+
+  - pattern_id: "PAT-DL-001"
+    name: "YOLOv8 Chart Pattern Detector"
+    name_zh: "YOLOv8 图表形态检测套件"
+    aliases: ["yolov8_chart", "目标检测形态识别"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_yolo"
+    algorithm_variant: "yolov8(合成数据10万张：30-200根K线+32形态+噪声渲染)"
+    dl_model_ref: "ultralytics/yolov8n"
+    dl_training_dataset: "参数化合成 K 线图（Roboflow 标注流程，对齐 ChartScanAI）"
+    params: {img_size: 640, conf_threshold: 0.5}
+    inputs: ["K线图像"]
+    outputs: {present: bool, boxes: list, classes: list, confidence: list}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "实测基准：规则 68.3%/CNN 74.1%/YOLOv8 92.6%（2026-08 检索证据）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-DL-002"
+    name: "Swin Transformer TADA-AW Classifier"
+    name_zh: "Swin Transformer 时间感知分类套件"
+    aliases: ["swin_tada_aw", "自适应窗口K线分类"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_transformer"
+    algorithm_variant: "swin_tada_aw(时间感知动态聚合+自适应窗口， IJICIC 2025-08)"
+    dl_model_ref: "swin-tiny-patch4-window7"
+    dl_training_dataset: "K线图像分类集（224x224，30根/图）"
+    params: {img_size: 224, patch_size: 4}
+    inputs: ["K线图像"]
+    outputs: {present: bool, prob_up: float, prob_flat: float, prob_down: float}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "TADA-AW（Wang et al. IJICIC Vol.21 No.4, 2025-08）（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-DL-003"
+    name: "ViT-Tiny + MAE Self-supervised Pattern Learner"
+    name_zh: "ViT 自监督形态学习套件"
+    aliases: ["vit_mae", "自监督形态表示"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_transformer"
+    algorithm_variant: "vit_mae(ViT-Tiny+Masked Autoencoder 自监督， 聚类出可回测形态)"
+    dl_model_ref: "vit-tiny-patch16-224 + MAE"
+    dl_training_dataset: "50,000 张 224x224 K线快照（Stanford CS231N 2025 流程）"
+    params: {img_size: 224, mask_ratio: 0.75}
+    inputs: ["K线图像"]
+    outputs: {present: bool, embedding: list, cluster_id: int}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "ViT+MAE（CS231N 2025：SSL 聚类形态可回测）（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-DL-004"
+    name: "Multimodal LLM Pattern Analyst"
+    name_zh: "多模态大模型形态判读套件"
+    aliases: ["dl_llm_analyst", "零样本形态判读"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_llm"
+    algorithm_variant: "qwen_vl_zero_shot(结构化 JSON 输出形态+支撑阻力+信号)"
+    dl_model_ref: "Qwen2.5-VL-7B（A股语境优先）；备选 LLaMA-3.2-Vision / Gemini-2.5-Flash"
+    dl_training_dataset: "零样本/prompt 工程（无训练）"
+    params: {output_schema: "json", monthly_window: 21}
+    inputs: ["K线图像"]
+    outputs: {present: bool, trend: str, patterns: list, sr_levels: list, signal: str}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "LLaMA-Vision(IJMO 2025)/Gemini 2.5 Flash(MLCI 2026-07) 双证据（2026-08-14 补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-DL-005"
+    name: "Kronos K-line Foundation Model"
+    name_zh: "Kronos K线基础模型套件"
+    aliases: ["kronos", "K线基础模型", "BSQ tokenizer"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_transformer"
+    algorithm_variant: "kronos_foundation(BSQ K线 tokenizer+两阶段预训练：去噪+自回归， 45交易所120亿K线)"
+    dl_model_ref: "NeoQuanter/Kronos-44M/84M（AAAI 2026，MIT 开源）"
+    dl_training_dataset: "12 亿 K 线记录预训练（零样本/微调双模式）"
+    params: {mode: "zero_shot_or_finetune", tasks: [forecast, vol_pred, synth_gen]}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, embedding: list, next_bar_pred: dict, rankic: float}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Kronos（清华/三星，arXiv 2508.02739，AAAI 2026 录用；RankIC +93% 超通用 TSFM）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-DL-006"
+    name: "Mamba State-Space Sequence Model"
+    name_zh: "Mamba 状态空间序列套件"
+    aliases: ["mamba_ssm", "选择性状态空间"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_transformer"
+    algorithm_variant: "mamba_ssm(选择性状态空间 S4+HiPPO 初始化， O(n) 长序列线性复杂度)"
+    dl_model_ref: "state-spaces/mamba（ICLR 2024 最佳论文）"
+    dl_training_dataset: "K线序列自监督预训练（领域微调）"
+    params: {d_model: 256, d_state: 16}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, embedding: list, seq_logits: list}
+    subjectivity: "low"
+    timeframe: "intraday"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Mamba（Gu & Dao 2023）；金融微结构适用性分析（jonathankinlay.com 2026-03 检索证据）（2026-08-14 二轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # VSA 量价形态子族（2026-08-14 第三轮循环审查补登）
+  # Volume Spread Analysis（Tom Williams《Master the Markets》，Wyckoff 量化分支）
+  # 三输入：Spread(波幅)+Volume(量能)+Close Position(收盘位置 (C-L)/(H-L))
+  # SOTA 量化实现：百分位 Effort-vs-Result 引擎（rolling 100 窗口十分位对比，
+  # 差>=3 触发信号；ProRealCode VSA-IQ 2026-07 检索证据）
+  # ============================================================
+
+  - pattern_id: "PAT-STRUCT-019"
+    name: "VSA Selling Climax"
+    name_zh: "VSA 抛售高潮"
+    aliases: ["selling_climax", "SC", "抛售高潮"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(宽幅+超高量百分位+收盘近低， 下跌末端)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {spread_pct_min: 80, volume_pct_min: 90, close_pos_max: 0.3, downtrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, effort_decile: int, result_decile: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "VSA（Tom Williams）；百分位 Effort-vs-Result 量化（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-006"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-020"
+    name: "VSA Buying Climax"
+    name_zh: "VSA 买入高潮"
+    aliases: ["buying_climax", "BC", "买入高潮"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(宽幅+超高量百分位+收盘近高， 上涨末端)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {spread_pct_min: 80, volume_pct_min: 90, close_pos_min: 0.7, uptrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, effort_decile: int, result_decile: int}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "VSA（Tom Williams）（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-019"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-021"
+    name: "VSA No Supply"
+    name_zh: "VSA 无供给"
+    aliases: ["no_supply", "NS", "无供给bar"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价持续"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(窄幅+低量百分位+下跌bar收盘近高， 卖盘枯竭)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {spread_pct_max: 40, volume_pct_max: 30, close_pos_min: 0.7, down_bar_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "VSA（Tom Williams）（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-022"
+    name: "VSA No Demand"
+    name_zh: "VSA 无需求"
+    aliases: ["no_demand", "ND", "无需求bar"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价背离"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(窄幅+低量百分位+上涨bar收盘近低， 买盘缺席)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {spread_pct_max: 40, volume_pct_max: 30, close_pos_max: 0.3, up_bar_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "VSA（Tom Williams）（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-021"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-023"
+    name: "VSA Stopping Volume"
+    name_zh: "VSA 停止量"
+    aliases: ["stopping_volume", "STV"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价反转"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(高量+受控波幅+下跌bar收盘上半区， 吸纳抛压)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_pct_min: 80, spread_pct_max: 60, close_pos_min: 0.5, downtrend_required: true}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "VSA（Tom Williams）；ProRealCode VSA-IQ STV 规则（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-019"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-024"
+    name: "VSA Test Bar"
+    name_zh: "VSA 测试bar"
+    aliases: ["test_bar", "VSA测试"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价确认"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(极窄幅+极低量+收盘近高， 测试抛压 absent)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {spread_pct_max: 30, volume_pct_max: 20, close_pos_min: 0.7}
+    inputs: ["OHLCV"]
+    outputs: {present: bool}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "VSA（Tom Williams）（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-021"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-STRUCT-025"
+    name: "VSA Pseudo Upthrust"
+    name_zh: "VSA 伪上冲"
+    aliases: ["pseudo_upthrust", "伪上冲"]
+    pattern_class: "structure"
+    pattern_subtype: "VSA-量价陷阱"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(弱量上破阻力+收盘近低， 弱于真 Upthrust)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {volume_pct_max: 50, close_pos_max: 0.3, break_required: true}
+    inputs: ["OHLCV", "resistance_level"]
+    outputs: {present: bool}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-SELL-001"
+    doc_ref: "VSA（Tom Williams）（2026-08-14 三轮补登）；variant_of PAT-STRUCT-004"
+    code_path: ""
+    used_by_factors: []
+    variant_of: "PAT-STRUCT-004"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  - pattern_id: "PAT-DL-007"
+    name: "Diffusion Generative Chart Forecaster"
+    name_zh: "扩散模型生成式图表预测套件"
+    aliases: ["diffusion_chart_gen", "生成式形态预测"]
+    pattern_class: "structure"
+    pattern_subtype: "DL算法套件"
+    recognition_algorithm: "dl_cnn"
+    algorithm_variant: "diffusion_instruct_pix2pix(当前图表图像+指令prompt→生成下一张图表)"
+    dl_model_ref: "instruct-pix2pix / SD-Edit 类条件扩散"
+    dl_training_dataset: "K线图像对（当前窗口, 未来窗口）+ 指令文本（arXiv 2509.02308 流程）"
+    params: {img_size: 512, steps: 50, guidance: 7.5}
+    inputs: ["K线图像"]
+    outputs: {present: bool, next_chart_image: img, trend_proxy: float}
+    subjectivity: "medium"
+    timeframe: "daily"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "Exploring Diffusion Models for Generative Forecasting of Financial Charts（arXiv 2509.02308，2025-09）（2026-08-14 三轮补登）"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+
+  # ============================================================
+  # 预留说明（2026-08-14 更新）
+  # chanlun/elliott_wave/fibonacci 3 类已从"预留"转为全量登记（CLL-001~015/
+  # ELW-001~008/FIB-001~016，含谐波 10 种）。后续新形态按 pattern_class 归类
+  # 追加，并同步更新文件头 entry_count 与 registry_of_registries.yaml。
   # ============================================================

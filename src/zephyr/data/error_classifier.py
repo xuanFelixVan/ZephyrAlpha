@@ -21,7 +21,7 @@
   - 可恢复错误（超时/网络波动）→ 重试用完才 fallback
   - 未知错误 → 当作可恢复处理（给重试机会）
 
-分类基于关键词匹配（FetchResult.error 字符串），覆盖 iFind/akshare/QMT 常见错误。
+分类基于关键词匹配（FetchResult.error 字符串），覆盖 akshare/QMT/tushare 常见错误。
 
 Usage::
 
@@ -40,8 +40,6 @@ __all__ = ["classify_error", "is_unrecoverable", "is_recoverable"]
 
 # 不可恢复错误关键词——配额/废弃/认证/API漂移类，重试无意义
 _UNRECOVERABLE_PATTERNS = [
-    r"-4318",           # iFind 配额耗尽
-    r"-4309",           # iFind 接口废弃
     r"配额",
     r"quota",
     r"接口已废弃",

@@ -7,7 +7,6 @@
 - 失败汇总文件 JSON 格式正确
 - check_daily_failure_rate 阈值判断
 - check_consecutive_failures 连续失败告警
-- check_quota_exhausted iFind 配额告警
 - list_failure_files / read_failure_file 查询
 - format_alert_text 告警正文格式化
 - notify_channels 通道分发与级别过滤
@@ -43,14 +42,14 @@ class TestNotify:
 
     def test_error_writes_failure_file(self, alerter, tmp_path):
         """ERROR 级别应写失败汇总文件。"""
-        ok = alerter.notify("kline_daily", "连接超时", level=LEVEL_ERROR, source="ifind")
+        ok = alerter.notify("kline_daily", "连接超时", level=LEVEL_ERROR, source="akshare")
         assert ok is True
         files = list((tmp_path / "failures").glob("*.json"))
         assert len(files) == 1
 
     def test_critical_writes_failure_file(self, alerter, tmp_path):
         """CRITICAL 级别应写失败汇总文件。"""
-        ok = alerter.notify("kline_daily", "配额耗尽", level=LEVEL_CRITICAL, source="ifind")
+        ok = alerter.notify("kline_daily", "配额耗尽", level=LEVEL_CRITICAL, source="akshare")
         assert ok is True
         files = list((tmp_path / "failures").glob("*.json"))
         assert len(files) == 1
@@ -75,14 +74,14 @@ class TestNotify:
             "margin_trading",
             "SSL错误",
             level=LEVEL_ERROR,
-            source="ifind",
+            source="akshare",
             extra={"retry_count": 3},
         )
         files = list((tmp_path / "failures").glob("*.json"))
         with open(files[0], encoding="utf-8") as f:
             data = json.load(f)
         assert data["task_id"] == "margin_trading"
-        assert data["source"] == "ifind"
+        assert data["source"] == "akshare"
         assert data["error"] == "SSL错误"
         assert data["level"] == LEVEL_ERROR
         assert data["extra"]["retry_count"] == 3
@@ -137,33 +136,6 @@ class TestConsecutiveFailures:
         assert alerter.check_consecutive_failures("kline_daily", 5, threshold=5) is True
 
 
-class TestQuotaExhausted:
-    """check_quota_exhausted 测试。"""
-
-    def test_ifind_4318(self, alerter, tmp_path):
-        """iFind -4318 配额耗尽告警。"""
-        result = alerter.check_quota_exhausted("ifind", "-4318")
-        assert result is True
-        files = list((tmp_path / "failures").glob("*.json"))
-        assert len(files) == 1
-
-    def test_ifind_4309(self, alerter):
-        """iFind -4309 配额耗尽告警。"""
-        assert alerter.check_quota_exhausted("ifind", "-4309") is True
-
-    def test_non_quota_error(self, alerter, tmp_path):
-        """非配额错误码不告警。"""
-        assert alerter.check_quota_exhausted("ifind", "-201") is False
-        files = list((tmp_path / "failures").glob("*.json"))
-        assert len(files) == 0
-
-    def test_non_ifind_source(self, alerter, tmp_path):
-        """非 iFind 源不检查配额。"""
-        assert alerter.check_quota_exhausted("akshare", "-4318") is False
-        files = list((tmp_path / "failures").glob("*.json"))
-        assert len(files) == 0
-
-
 class TestQueryFailures:
     """list_failure_files / read_failure_file 测试。"""
 
@@ -196,7 +168,7 @@ class TestQueryFailures:
 
     def test_read_failure_file(self, alerter, tmp_path):
         """读取失败文件内容。"""
-        alerter.notify("task_a", "err1", level=LEVEL_ERROR, source="ifind")
+        alerter.notify("task_a", "err1", level=LEVEL_ERROR, source="akshare")
         files = alerter.list_failure_files()
         data = alerter.read_failure_file(files[0])
         assert data is not None
@@ -239,12 +211,12 @@ class TestFormatAlertText:
     def test_basic_format(self):
         """基本字段格式正确。"""
         text = Alerter.format_alert_text(
-            "kline_daily", "连接超时", LEVEL_ERROR, "ifind", None
+            "kline_daily", "连接超时", LEVEL_ERROR, "akshare", None
         )
         assert "[ZephyrAlpha 告警]" in text
         assert "级别: ERROR" in text
         assert "任务: kline_daily" in text
-        assert "数据源: ifind" in text
+        assert "数据源: akshare" in text
         assert "错误: 连接超时" in text
         assert "时间:" in text
 
@@ -295,7 +267,7 @@ class TestNotifyChannelsDispatch:
         """ERROR 级别触达飞书+邮件两个通道。"""
         with patch.object(alerter, "send_feishu_webhook") as mock_fw, \
              patch.object(alerter, "send_email_smtp") as mock_em:
-            alerter.notify_channels("task", "err", LEVEL_ERROR, "ifind", {"k": "v"})
+            alerter.notify_channels("task", "err", LEVEL_ERROR, "akshare", {"k": "v"})
             mock_fw.assert_called_once()
             mock_em.assert_called_once()
             # 验证飞书收到的 text 含任务名
@@ -483,13 +455,13 @@ class TestNotifyChannelIntegration:
     def test_error_triggers_channels(self, alerter, clean_alert_env, tmp_path):
         """ERROR 级别 notify 应触达通道（failure file 写入后）。"""
         with patch.object(alerter, "notify_channels") as mock_ch:
-            alerter.notify("task_a", "err", level=LEVEL_ERROR, source="ifind")
+            alerter.notify("task_a", "err", level=LEVEL_ERROR, source="akshare")
         mock_ch.assert_called_once()
 
     def test_critical_triggers_channels(self, alerter, clean_alert_env, tmp_path):
         """CRITICAL 级别 notify 应触达通道。"""
         with patch.object(alerter, "notify_channels") as mock_ch:
-            alerter.notify("task_a", "err", level=LEVEL_CRITICAL, source="ifind")
+            alerter.notify("task_a", "err", level=LEVEL_CRITICAL, source="akshare")
         mock_ch.assert_called_once()
 
     def test_warn_does_not_trigger_channels(self, alerter, clean_alert_env):

@@ -250,7 +250,7 @@ def _route_caps_from_tree(tree: ast.Module) -> set[str]:
     覆盖三 provider 路由模式：
     - akshare: frozenset(_AKSHARE_CAPABILITIES)
     - miniqmt: 多个 dict(_KLINE_CAPABILITIES/_FINANCIAL_CAPABILITIES/_DIRECT_ROUTES/...)
-    - ifind: if-elif 链(capability == "xxx")
+    - 通用: if-elif 链(capability == "xxx")
     """
     route_caps: set[str] = set()
 

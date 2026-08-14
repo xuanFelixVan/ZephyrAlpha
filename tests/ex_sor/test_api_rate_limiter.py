@@ -267,9 +267,9 @@ def test_l2_system_isolation():
     d_mq = limiter.check("miniQMT", TradingSession.INTRADAY, RequestPriority.P1_RISK, now=NOW)
     assert d_mq.allowed is False
     assert d_mq.blocked_level == RateLimitLevel.L2_SYSTEM
-    # iFind 仍有令牌
-    d_if = limiter.check("iFind", TradingSession.INTRADAY, RequestPriority.P1_RISK, now=NOW)
-    assert d_if.allowed is True
+    # tushare 仍有令牌
+    d_ts = limiter.check("tushare", TradingSession.INTRADAY, RequestPriority.P1_RISK, now=NOW)
+    assert d_ts.allowed is True
 
 
 def test_l2_blocked_reason_contains_system_name():

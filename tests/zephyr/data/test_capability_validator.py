@@ -9,7 +9,7 @@
 - AST 路由能力提取（extract_route_capabilities / _route_caps_from_tree）
 - AST meta 能力提取（extract_meta_capabilities / _meta_caps_from_tree）
 - 路由-meta 一致性校验（check_route_meta_consistency / check_route_meta_consistency_content）
-  - 三 provider 路由模式覆盖：frozenset（akshare）/ 多字典（miniqmt）/ if-elif 链（ifind）
+  - 三 provider 路由模式覆盖：frozenset（akshare）/ 多字典（miniqmt）/ if-elif 链（通用）
   - AnnAssign（类属性 meta）+ Assign（实例级 self.meta）双检测
   - fail-open：文件不存在 / 解析失败
   - 一致 / 路由漏声明 / meta 死声明 三场景
@@ -307,11 +307,11 @@ _MINIQMT_STYLE = textwrap.dedent('''
         )
 ''')
 
-_IFIND_STYLE = textwrap.dedent('''
-    """ifind 风格：if-elif 链 (capability == "xxx")。"""
-    class IFindProvider:
+_IF_ELIF_STYLE = textwrap.dedent('''
+    """if-elif 链风格：(capability == "xxx") 路由。"""
+    class IfElifProvider:
         meta: IngestProviderMeta = IngestProviderMeta(
-            name="ifind", display_name="t", auth_type="anonymous",
+            name="ifelif", display_name="t", auth_type="anonymous",
             requires_process=False, thread_safety="shared", rate_limit_default=0,
             capabilities=["daily_valuation", "kline_daily", "money_flow"],
         )
@@ -379,9 +379,9 @@ class TestExtractRouteCapabilities:
         assert caps == {"kline_daily", "kline_1min", "adj_factor", "index_constituent"}
 
     def test_route_caps_extracted_from_if_elif(self):
-        """ifind 风格：if-elif 链 (capability == "xxx")。"""
+        """if-elif 链风格：(capability == "xxx") 路由。"""
         import ast
-        tree = ast.parse(_IFIND_STYLE)
+        tree = ast.parse(_IF_ELIF_STYLE)
         caps = _route_caps_from_tree(tree)
         assert caps == {"daily_valuation", "kline_daily", "money_flow"}
 
@@ -451,9 +451,9 @@ class TestCheckRouteMetaConsistency:
         """miniqmt 风格一致：无违规。"""
         assert check_route_meta_consistency_content(_MINIQMT_STYLE) == []
 
-    def test_consistent_ifind_style(self):
-        """ifind 风格一致：无违规。"""
-        assert check_route_meta_consistency_content(_IFIND_STYLE) == []
+    def test_consistent_if_elif_style(self):
+        """if-elif 链风格一致：无违规。"""
+        assert check_route_meta_consistency_content(_IF_ELIF_STYLE) == []
 
     def test_inconsistent_route_not_in_meta(self):
         """路由支持但 meta 遗漏声明（本次 8 条 ERROR 根因）。"""
@@ -493,7 +493,7 @@ class TestCheckRouteMetaConsistency:
         providers = [
             ("akshare", REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "akshare_provider.py"),
             ("miniqmt", REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "miniqmt_provider.py"),
-            ("ifind", REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "ifind_provider.py"),
+            ("tushare", REPO_ROOT / "src" / "zephyr" / "data" / "implementations" / "tushare_provider.py"),
         ]
         for name, path in providers:
             if not path.exists():

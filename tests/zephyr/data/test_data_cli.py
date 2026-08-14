@@ -65,7 +65,7 @@ class TestStatusCmd:
         mock_sched = MagicMock()
         mock_sched._progress_store.get_task_status.return_value = {
             "task_id": "t1",
-            "source": "ifind",
+            "source": "akshare",
             "last_run_at": "2026-07-06 16:30",
             "last_key": "2026-07-05",
             "last_status": "SUCCESS",
@@ -76,7 +76,7 @@ class TestStatusCmd:
         assert rc == 0
         out = capsys.readouterr().out
         assert "t1" in out
-        assert "ifind" in out
+        assert "akshare" in out
         assert "SUCCESS" in out
 
     def test_status_task_not_found(self, capsys):
@@ -95,7 +95,7 @@ class TestListCmd:
         """list 无过滤：打印所有任务。"""
         mock_sched = MagicMock()
         mock_sched.list_tasks.return_value = [
-            {"task_id": "t1", "source": "ifind", "table": "c1_market.kline_daily", "schedule": "daily_kline", "incremental": True},
+            {"task_id": "t1", "source": "akshare", "table": "c1_market.kline_daily", "schedule": "daily_kline", "incremental": True},
             {"task_id": "t2", "source": "akshare", "table": "c1_market.fin", "schedule": "daily_kline", "incremental": True},
         ]
         with patch("zephyr.data.get_integrator", return_value=mock_sched):
@@ -107,17 +107,17 @@ class TestListCmd:
         assert "t2" in out
 
     def test_list_by_source(self, capsys):
-        """list --source ifind：仅打印该源任务。"""
+        """list --source akshare：仅打印该源任务。"""
         mock_sched = MagicMock()
         mock_sched.list_tasks.return_value = [
-            {"task_id": "t1", "source": "ifind", "table": "c1.kline", "schedule": "daily_kline", "incremental": True},
+            {"task_id": "t1", "source": "akshare", "table": "c1.kline", "schedule": "daily_kline", "incremental": True},
             {"task_id": "t2", "source": "akshare", "table": "c1.fin", "schedule": "daily_kline", "incremental": True},
         ]
         with patch("zephyr.data.get_integrator", return_value=mock_sched):
-            rc = main(["list", "--source", "ifind"])
+            rc = main(["list", "--source", "akshare"])
         assert rc == 0
         out = capsys.readouterr().out
-        assert "ifind" in out
+        assert "akshare" in out
         # mock_sched.list_tasks 返回所有，CLI 内部过滤
         assert "t1" in out
 
@@ -195,7 +195,7 @@ class TestPauseResumeCmd:
     def test_pause_unknown_source(self, capsys):
         """pause 未知源返回 1。"""
         mock_registry = MagicMock()
-        mock_registry.list_sources.return_value = ["ifind", "akshare"]
+        mock_registry.list_sources.return_value = ["akshare", "akshare"]
         with patch("zephyr.data.cli.get_registry", return_value=mock_registry):
             rc = main(["pause", "unknown"])
         assert rc == 1
@@ -204,14 +204,14 @@ class TestPauseResumeCmd:
     def test_pause_success(self, capsys):
         """pause 已知源：register enabled=False。"""
         mock_registry = MagicMock()
-        mock_registry.list_sources.return_value = ["ifind"]
+        mock_registry.list_sources.return_value = ["akshare"]
         mock_registry.get_policy.return_value = SourcePolicy(rpm=60, enabled=True)
         with patch("zephyr.data.cli.get_registry", return_value=mock_registry):
-            rc = main(["pause", "ifind"])
+            rc = main(["pause", "akshare"])
         assert rc == 0
         mock_registry.register.assert_called_once()
         args = mock_registry.register.call_args[0]
-        assert args[0] == "ifind"
+        assert args[0] == "akshare"
         assert args[1].enabled is False
         # 其他字段保留
         assert args[1].rpm == 60
@@ -219,17 +219,17 @@ class TestPauseResumeCmd:
     def test_pause_already_paused(self, capsys):
         """pause 已熔断的源：幂等返回 0，不调 register。"""
         mock_registry = MagicMock()
-        mock_registry.list_sources.return_value = ["ifind"]
+        mock_registry.list_sources.return_value = ["akshare"]
         mock_registry.get_policy.return_value = SourcePolicy(enabled=False)
         with patch("zephyr.data.cli.get_registry", return_value=mock_registry):
-            rc = main(["pause", "ifind"])
+            rc = main(["pause", "akshare"])
         assert rc == 0
         mock_registry.register.assert_not_called()
 
     def test_resume_unknown_source(self, capsys):
         """resume 未知源返回 1。"""
         mock_registry = MagicMock()
-        mock_registry.list_sources.return_value = ["ifind"]
+        mock_registry.list_sources.return_value = ["akshare"]
         with patch("zephyr.data.cli.get_registry", return_value=mock_registry):
             rc = main(["resume", "unknown"])
         assert rc == 1
@@ -237,24 +237,24 @@ class TestPauseResumeCmd:
     def test_resume_success(self, capsys):
         """resume 已熔断的源：register enabled=True。"""
         mock_registry = MagicMock()
-        mock_registry.list_sources.return_value = ["ifind"]
+        mock_registry.list_sources.return_value = ["akshare"]
         mock_registry.get_policy.return_value = SourcePolicy(rpm=60, enabled=False)
         with patch("zephyr.data.cli.get_registry", return_value=mock_registry):
-            rc = main(["resume", "ifind"])
+            rc = main(["resume", "akshare"])
         assert rc == 0
         mock_registry.register.assert_called_once()
         args = mock_registry.register.call_args[0]
-        assert args[0] == "ifind"
+        assert args[0] == "akshare"
         assert args[1].enabled is True
         assert args[1].rpm == 60
 
     def test_resume_not_paused(self, capsys):
         """resume 未熔断的源：幂等返回 0，不调 register。"""
         mock_registry = MagicMock()
-        mock_registry.list_sources.return_value = ["ifind"]
+        mock_registry.list_sources.return_value = ["akshare"]
         mock_registry.get_policy.return_value = SourcePolicy(enabled=True)
         with patch("zephyr.data.cli.get_registry", return_value=mock_registry):
-            rc = main(["resume", "ifind"])
+            rc = main(["resume", "akshare"])
         assert rc == 0
         mock_registry.register.assert_not_called()
 
