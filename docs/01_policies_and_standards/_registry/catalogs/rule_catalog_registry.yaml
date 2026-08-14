@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-14T11:40:22Z'
+generated_at: '2026-08-14T13:03:18Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 210
+total_files: 208
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2095,7 +2095,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 2.9.0
+  version: 2.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2140,7 +2140,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2555,21 +2555,6 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.0.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/registry_consistency_contract.yaml
   module_id: PS-REG-016
   title: 登记表的登记表 — 跨登记表一致性契约
@@ -2696,21 +2681,6 @@ files:
   doc_type: ''
   status: ''
   version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
