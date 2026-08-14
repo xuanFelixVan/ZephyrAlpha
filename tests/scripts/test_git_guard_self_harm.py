@@ -45,6 +45,7 @@ _AUTH_ENVS = (
     "ZEPHYR_FORCE_STASH",
     "ZEPHYR_COMMIT_GATEWAY",
     "ZEPHYR_GIT_GUARD_FAST_PATH",
+    "ZEPHYR_SERIALIZER_MODE",  # 66 memo 裁定 7 plumbing 白名单
 )
 
 
@@ -270,6 +271,42 @@ class TestCheckoutRestoreSelfHarm:
         r = _run_guard(tmp_path, ["restore", "tracked.py"])
 
         assert r.returncode == 0, f"干净文件应透传，got rc={r.returncode}, stderr={r.stderr}"
+
+
+# ---------------------------------------------------------------------------
+# plumbing 命令拦截（66 memo 裁定 7，事故 6 根因）
+# ---------------------------------------------------------------------------
+class TestPlumbingBlocked:
+    """read-tree/update-index/write-tree/hash-object 直操纵共享 index/对象库，默认硬阻断。"""
+
+    @pytest.mark.parametrize(
+        "args",
+        [
+            ["read-tree", "HEAD"],
+            ["update-index", "--add", "tracked.py"],
+            ["write-tree"],
+            ["hash-object", "-w", "tracked.py"],
+        ],
+    )
+    def test_plumbing_blocked_by_default(self, tmp_path: Path, args: list[str]) -> None:
+        """无白名单 → 阻断 exit 1 + stderr 提示 + 审计落盘。"""
+        _init_repo(tmp_path)
+        r = _run_guard(tmp_path, args)
+        assert r.returncode == 1, f"应阻断: {args}, rc={r.returncode}, stderr={r.stderr}"
+        assert "plumbing" in r.stderr, f"stderr 应含 plumbing 提示: {r.stderr}"
+        # index 未被触碰（read-tree 若真执行会清 staged 区——此处验证未执行）
+        audit = tmp_path / ".runtime" / "gate_audit" / "git_guard_self_harm.jsonl"
+        assert audit.is_file(), "阻断应落审计"
+        assert f"plumbing:{args[0]}" in audit.read_text(encoding="utf-8"), "审计应含 plumbing 动作"
+
+    def test_serializer_mode_whitelist_passthrough(self, tmp_path: Path) -> None:
+        """ZEPHYR_SERIALIZER_MODE=1 → 透传真实 git（临时仓 read-tree HEAD 无副作用）。"""
+        _init_repo(tmp_path)
+        env = _clean_env()
+        env["ZEPHYR_SERIALIZER_MODE"] = "1"
+        r = _run_guard(tmp_path, ["read-tree", "HEAD"], env=env)
+        assert r.returncode == 0, f"白名单应透传，rc={r.returncode}, stderr={r.stderr}"
+        assert "plumbing" not in r.stderr, f"白名单不应触发阻断提示: {r.stderr}"
 
 
 if __name__ == "__main__":

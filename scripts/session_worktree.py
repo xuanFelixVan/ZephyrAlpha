@@ -126,7 +126,7 @@ def _branch_name(session_id: str, task_id: str) -> str:
 
 
 def _find_branch_for_session(session_id: str) -> str | None:
-    """查找 session 对应的分支（通过 git worktree list）。"""
+    """查找 session 对应的分支（通过 git worktree list），返回短分支名（剥 refs/heads/ 前缀）。"""
     try:
         result = _run_git(["worktree", "list", "--porcelain"], check=False)
         if result.returncode != 0:
@@ -137,7 +137,9 @@ def _find_branch_for_session(session_id: str) -> str | None:
                 # 找到对应的 worktree，查找其分支
                 for l2 in result.stdout.splitlines():
                     if l2.startswith("branch ") and session_id in l2:
-                        return l2.split(" ", 1)[1].strip()
+                        full = l2.split(" ", 1)[1].strip()
+                        # porcelain 输出是 refs/heads/ 全限定名；git branch -D 只认短名
+                        return full[len("refs/heads/"):] if full.startswith("refs/heads/") else full
         return None
     except Exception:
         return None
@@ -183,19 +185,58 @@ def cmd_create(args: argparse.Namespace) -> int:
         # SessionRegistry 无注册无心跳，被 GATE-WORKTREE-LIFECYCLE sweep / base_sync
         # 误判死 session 残留，未提交工作反复被抹——本批次三文件被抹两次后定位）。
         # 锚主仓根（--git-common-dir），避免从 worktree 内调用时错锚到 worktree .runtime。
+        _main_root = REPO_ROOT
         try:
-            import os as _os
-
             from zephyr.security.access_control.session_concurrency import SessionRegistry
 
-            _main_root = REPO_ROOT
             _common = _run_git(["rev-parse", "--git-common-dir"], check=False)
             if _common.returncode == 0 and _common.stdout.strip():
                 _main_root = Path(_common.stdout.strip()).resolve().parent
-            SessionRegistry(_main_root).register(session_id, pid=_os.getpid())
-            print(f"  session 已登记 SessionRegistry（TTL 3600s，网关 commit/claim 自动续期心跳）")
+            # pid=0 = 逻辑 session（对齐 rule_bridge session_worktree_start Phase 6 治本）：
+            # CLI 工作流跨进程（create/exec/merge 各一次），os.getpid() 注册会让 create
+            # 进程退出后 PID 死亡 → _is_session_alive 判死（pid>0 时不看 heartbeat），
+            # daemon 心跳也无法保活。pid=0 时判活走 90s 心跳新鲜度，daemon 接管续期。
+            SessionRegistry(_main_root).register(session_id, pid=0)
+            print(f"  session 已登记 SessionRegistry（逻辑 session，daemon 心跳续期）")
         except Exception as e:  # noqa: BLE001 — 登记失败不阻断创建
             print(f"  WARN: SessionRegistry 登记失败（不阻断创建）: {e}", file=sys.stderr)
+        # heartbeat daemon 普及（#56 子项 2，对齐 rule_bridge session_worktree_start）：
+        # 仅 register 无 daemon 时，长时间不 commit 的会话 idle 超 TTL 仍会被判死误杀。
+        # detached daemon 每 30s 刷新心跳；session 注销或 idle>1800s 自动退出。
+        try:
+            import os as _os2
+
+            from zephyr.shared.infra.process_pool import is_pid_alive, spawn_python_hidden
+
+            _hb_pid_file = _main_root / ".runtime" / "locks" / f"heartbeat_{session_id}.pid"
+            _hb_existing: int | None = None
+            try:
+                _hb_existing = int(_hb_pid_file.read_text(encoding="utf-8").strip())
+            except (OSError, ValueError):
+                pass
+            if _hb_existing and is_pid_alive(_hb_existing):
+                print(f"  heartbeat daemon 已在运行（PID {_hb_existing}），幂等跳过")
+            else:
+                _hb_env = _os2.environ.copy()
+                _src = str(_main_root / "src")
+                _hb_env["PYTHONPATH"] = (
+                    _src + _os2.pathsep + _hb_env["PYTHONPATH"] if _hb_env.get("PYTHONPATH") else _src
+                )
+                _hb_env["ZEPHYR_RUNTIME_GATE"] = "0"  # daemon 无需 LLM 运行时拦截
+                _hb_proc = spawn_python_hidden(
+                    [
+                        sys.executable, "-m",
+                        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon",
+                        session_id, str(_main_root), "30",
+                    ],
+                    cwd=str(_main_root),
+                    env=_hb_env,
+                )
+                _hb_pid_file.parent.mkdir(parents=True, exist_ok=True)
+                _hb_pid_file.write_text(str(_hb_proc.pid), encoding="utf-8")
+                print(f"  heartbeat daemon 已启动（PID {_hb_proc.pid}，30s 心跳；注销/idle>1800s 自动退出）")
+        except Exception as e:  # noqa: BLE001 — daemon spawn 失败不阻断创建（仍有 90s 心跳窗+TTL）
+            print(f"  WARN: heartbeat daemon 启动失败（不阻断创建）: {e}", file=sys.stderr)
         print(f"  进入 worktree: cd {wt_path}")
         return 0
     except Exception as e:
@@ -449,6 +490,57 @@ def _four_cert_check(
     return None
 
 
+def _teardown_session_governance(session_id: str) -> None:
+    """会话治理收尾（#56 子项 2 对称闭环）：kill heartbeat daemon + 注销 SessionRegistry。
+
+    create 已登记 registry + spawn daemon，abort/merge 收尾必须对称清理——否则
+    daemon 空跑保活死会话至 idle 超时（1800s），registry 残留条目干扰 sweep 判据。
+    Best-effort：任何一步失败仅告警，不阻断 abort 主流程。
+    """
+    import os as _os
+
+    _main_root = REPO_ROOT
+    _common = _run_git(["rev-parse", "--git-common-dir"], check=False)
+    if _common.returncode == 0 and _common.stdout.strip():
+        _main_root = Path(_common.stdout.strip()).resolve().parent
+
+    # 1. kill heartbeat daemon（PID 文件在手直接 taskkill；daemon 也有自退出兜底）
+    try:
+        _hb_pid_file = _main_root / ".runtime" / "locks" / f"heartbeat_{session_id}.pid"
+        _pid = int(_hb_pid_file.read_text(encoding="utf-8").strip())
+        if _os.name == "nt":
+            run_subprocess_hidden(["taskkill", "/PID", str(_pid), "/F"], capture_output=True, timeout=5)
+        else:
+            _os.kill(_pid, 15)  # SIGTERM
+        print(f"  heartbeat daemon 已终止（PID {_pid}）")
+    except (OSError, ValueError):
+        pass  # 无 PID 文件/已死——无需处理
+    except Exception as e:  # noqa: BLE001
+        print(f"  WARN: heartbeat daemon 终止失败（daemon idle 超时自退出兜底）: {e}", file=sys.stderr)
+    try:
+        _hb_pid_file.unlink(missing_ok=True)
+    except OSError:
+        pass
+
+    # 1b. heartbeat 审计文件清理（对齐 rule_bridge merge/abort 的 cleanup_heartbeat_file；
+    # 只删 heartbeat.jsonl，保留 session 目录其他文件）
+    try:
+        from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import cleanup_heartbeat_file
+
+        cleanup_heartbeat_file(_main_root, session_id)
+    except Exception:  # noqa: BLE001 — best-effort
+        pass
+
+    # 2. 注销 SessionRegistry（对称 create 的 register）
+    try:
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        SessionRegistry(_main_root).unregister(session_id)
+        print("  session 已从 SessionRegistry 注销")
+    except Exception as e:  # noqa: BLE001 — 注销失败不阻断（TTL 到期自动过期兜底）
+        print(f"  WARN: SessionRegistry 注销失败（TTL 3600s 到期自动清理）: {e}", file=sys.stderr)
+
+
 def cmd_abort_inner(
     session_id: str, *, skip_checks: bool = False, exempt_cert1: bool = False
 ) -> int:
@@ -457,12 +549,16 @@ def cmd_abort_inner(
 
     if not wt_path.exists():
         print(f"[WORKTREE] worktree 不存在: {session_id}")
+        _teardown_session_governance(session_id)  # worktree 已没，daemon/registry 残留仍收尾
         return 0
 
     # S2 四证检查（2026-08-14 wipe 事故治本）
     rc = _four_cert_check(session_id, wt_path, skip=skip_checks, exempt_cert1=exempt_cert1)
     if rc is not None:
         return rc
+
+    # 先取分支名（worktree remove 后 _find_branch_for_session 依赖 worktree list 将找不到）
+    branch = _find_branch_for_session(session_id)
 
     # git worktree remove --force
     result = _run_git(["worktree", "remove", "--force", str(wt_path)], check=False)
@@ -473,10 +569,10 @@ def cmd_abort_inner(
         shutil.rmtree(wt_path, ignore_errors=True)
 
     # 删除分支（如果还存在）
-    branch = _find_branch_for_session(session_id)
     if branch:
         _run_git(["branch", "-D", branch], check=False)
 
+    _teardown_session_governance(session_id)
     print(f"[WORKTREE] 已清理: {session_id}")
     return 0
 

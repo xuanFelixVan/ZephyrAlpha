@@ -130,11 +130,31 @@ def test_git_is_function(installed_profile: Path):
         "git filter-repo",
         "git reflog expire --expire=now --all",
         "git gc --prune=now",
+        # 66 memo 裁定 7：plumbing index/对象库操纵（事故 6 根因）
+        "git read-tree HEAD",
+        "git update-index --add foo.py",
+        "git write-tree",
+        "git hash-object -w foo.py",
     ],
 )
 def test_git_dangerous_blocked(installed_profile: Path, cmd: str):
     out = _in_shell(installed_profile, cmd)
     assert "BLOCKED" in out, f"未拦截: {cmd}\n{out}"
+
+
+def test_git_plumbing_serializer_whitelist(installed_profile: Path):
+    """66 memo 裁定 7 白名单：ZEPHYR_SERIALIZER_MODE=1 时 plumbing 透传真实 git
+    （在系统 TEMP 非 git 目录执行，真 git 报自身错误证明透传发生，绝不应出现 wrapper BLOCKED）。
+
+    警告：本用例绝不可用 pytest tmp_path——本仓 pyproject basetemp 在仓内
+    （.runtime/tmp/），仓内透传 read-tree 会真碰主仓 index（66 事故 6 同款风险）。
+    """
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as outside_repo:
+        out = _in_shell(installed_profile, "$env:ZEPHYR_SERIALIZER_MODE='1'; git read-tree HEAD", cwd=Path(outside_repo))
+    assert "BLOCKED" not in out, f"白名单误拦: {out}"
+    assert "not a git repository" in out or "fatal" in out, f"未透传真实 git: {out}"
 
 
 @pytest.mark.parametrize(

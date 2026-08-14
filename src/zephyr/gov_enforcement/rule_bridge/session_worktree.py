@@ -914,6 +914,82 @@ def _quarantine_branch_ref(
 
     return None
 
+
+def _audit_sweep_force_clean(
+
+    repo_root: Path,
+
+    session_id: str,
+
+    branch: str,
+
+    q_ref: str,
+
+    age_seconds: float,
+
+) -> None:
+
+    """sweep force-clean 四证语义审计落盘（#56 子项 1，2026-08-14 治理批）。
+
+    S2 四证（worktree_cleanup_sop.md）在 sweep 自动路径的语义映射：
+      证 1 死亡证明: PASS——sweep 判据已确认 session 不在 active_sids 且超龄
+      证 2 无未合并工作: COMPENSATED——force-clean 触发前提恰是"有未合并提交"，
+                      由证 4 quarantine ref 前置补偿（ref 保存失败则不清理）
+      证 3 统筹批准: AUTO——自动路径无实时人工；72h quarantine 恢复窗口 = 事后
+                    软批准期，本审计供统筹复查（与 scripts 层 S2 四证同文件同构）
+      证 4 可恢复证明: PASS——quarantine ref 已保存
+
+    审计文件与 scripts/session_worktree.py 四证审计同轨：
+    ``.runtime/gate_audit/worktree_abort.jsonl``（统筹一处复查两条清理路径）。
+    fail-open：审计写入失败不阻断清理。
+    """
+
+    try:
+
+        audit_dir = repo_root / ".runtime" / "gate_audit"
+
+        audit_dir.mkdir(parents=True, exist_ok=True)
+
+        record = {
+
+            "timestamp": time.time(),
+
+            "session_id": session_id,
+
+            "verdict": "ALLOWED",
+
+            "reason": "sweep force-clean 四证语义（P3.5 age-based，#56 接入）",
+
+            "path": "rule_bridge._sweep_one_dir",
+
+            "branch": branch,
+
+            "quarantine_ref": q_ref,
+
+            "age_seconds": int(age_seconds),
+
+            "certs": {
+
+                "1_death": "PASS (session 未注册+超龄)",
+
+                "2_no_unmerged": "COMPENSATED (有未合并提交→证4前置)",
+
+                "3_coordinator": "AUTO (72h quarantine 窗=软批准)",
+
+                "4_recovery": f"PASS ({q_ref})",
+
+            },
+
+        }
+
+        with (audit_dir / "worktree_abort.jsonl").open("a", encoding="utf-8") as f:
+
+            f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+    except Exception:  # noqa: BLE001 — 审计写入失败不阻断清理
+
+        logger.debug("sweep force-clean audit write failed (non-blocking)", exc_info=True)
+
 def _sweep_quarantine_refs(
 
     manager: "WorktreeManager",
@@ -1911,11 +1987,15 @@ def _sweep_one_dir(
 
                     if q_ref:
 
+                        # #56 子项 1：sweep force-clean 接入 S2 四证语义审计
+                        # （证1 死亡=sweep 判据已确认；证2 由证4 前置补偿；证3 AUTO=72h 窗软批准；证4=q_ref）
+                        _audit_sweep_force_clean(manager.repo_root, sid, branch, q_ref, age_seconds)
+
                         warnings.append(
 
                             f"{sid}: force-clean 超龄 worktree（age={int(age_seconds)}s "
 
-                            f"> {force_clean_threshold}s，未合并提交已存 {q_ref}，72h 可恢复）"
+                            f"> {force_clean_threshold}s，未合并提交已存 {q_ref}，72h 可恢复，四证语义审计已落）"
 
                         )
 

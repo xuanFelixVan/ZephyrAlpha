@@ -17,6 +17,7 @@
 #   2. Real git.exe detection (7.1.1): env ZEPHYR_REAL_GIT_PATH > registry > common paths > fallback 'git.exe'
 #   3. _ZephyrAuditLog (7.10/7.27): per-session JSONL (no Mutex, append-only post-hoc forensics)
 #   4. git() (7.1.1+7.23): dangerous subcommand pattern match -> BLOCKED + escape hint; 7.14 fail-open (catch -> passthrough + FAIL_OPEN audit)
+#      + 66 memo ruling 7: read-tree/update-index/write-tree/hash-object blocked unless ZEPHYR_SERIALIZER_MODE=1
 #   5. Remove-Item/rd/del/rm (7.1.2): CRITICAL_BLOCKS absolute ban + recursive/batch pattern block + TEMP whitelist
 #      + 7.17.2 .git dir write hard-block (all delete functions) + 7.14 fail-open
 #   6. format/vssadmin delete/diskpart (7.1.2 CRITICAL): fail-closed hard block, no escape, no try/catch
@@ -138,6 +139,11 @@ function git {
             $blocked = $true; $reason = 'git reflog expire erases forensic evidence (7.23)'
         } elseif ($cmd -eq 'gc' -and ($fullArgs -match '--prune=(now|all)')) {
             $blocked = $true; $reason = 'git gc --prune=now physically deletes unreachable objects (7.23)'
+        } elseif ($cmd -in @('read-tree', 'update-index', 'write-tree', 'hash-object') -and $env:ZEPHYR_SERIALIZER_MODE -ne '1') {
+            # 66 memo ruling 7 (incident 6 root cause): plumbing commands manipulate the shared
+            # index/object db directly, bypassing every hook/gate - read-tree invisibly wiped the
+            # shared staged area on 2026-08-12. Serializer whitelist: ZEPHYR_SERIALIZER_MODE=1.
+            $blocked = $true; $reason = "git $cmd manipulates shared index/object db directly (66 memo incident 6). Serializer whitelist: `$env:ZEPHYR_SERIALIZER_MODE=1"
         }
 
         if ($blocked) {

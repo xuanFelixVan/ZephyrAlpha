@@ -71,6 +71,8 @@ from zephyr.infrastructure.runtime.concurrency_guard import (
 # _EXTRACTORS/_scan_untracked_in_dir 等下划线前缀符号为内部实现, 不在公共 API 内
 __all__ = [
     "DANGEROUS_SUBCOMMANDS",
+    "PLUMBING_BLOCKED_SUBCOMMANDS",
+    "SERIALIZER_MODE_ENV",
     "MV_STRATEGY_ENV",
     "check_and_execute",
     "handle_mv",
@@ -81,11 +83,18 @@ __all__ = [
 ]
 
 # 危险子命令集合
-# clean (2026-08-08 #ARCH-GIT-CLEAN-GUARD): git clean -f* 删除 untracked 文件，
+# clean (2026-08-08 #ARCH-GIT-CLEAN-GUARD-FIX): git clean -f* 删除 untracked 文件，
 # 完全绕过 .ailocks/ 锁系统（untracked 文件不在锁管辖范围）。手动 git clean -fd 曾误删
 # 15 个 untracked 文件（experiment_tracking .py + 7 docs）。纳入 DANGEROUS_SUBCOMMANDS
 # 触发 self-harm 检测——有 untracked 文件 + 未授权 → 阻断。
 DANGEROUS_SUBCOMMANDS = {"reset", "checkout", "stash", "revert", "restore", "mv", "clean"}
+
+# 66 memo 裁定 7（2026-08-12 事故 6 根因）：plumbing 命令直接操纵共享 index/对象库，
+# 不受 pre-commit/post-commit/reference-transaction 任何 hook 管辖——read-tree 曾隐形
+# 重置共享 index、清空全部 staged 元数据。默认硬阻断；Serializer P2 形态经白名单放行。
+PLUMBING_BLOCKED_SUBCOMMANDS = {"read-tree", "update-index", "write-tree", "hash-object"}
+# Serializer 合法 plumbing 通道白名单（66 memo §6.3 P2 形态）
+SERIALIZER_MODE_ENV = "ZEPHYR_SERIALIZER_MODE"
 
 # stash 只读子命令（不影响工作区文件）
 STASH_READONLY = {"list", "show", "drop"}
@@ -860,6 +869,29 @@ def check_and_execute(git_args: list[str]) -> int:
         return _passthrough(git_args)
 
     subcommand = git_args[0]
+
+    # 66 memo 裁定 7 前置硬阻断：plumbing index/对象库操纵（事故 6 根因）。
+    # 不经 _EXTRACTORS 自伤检测——危险性与工作区文件冲突无关，见到即拦；
+    # Serializer 合法通道经 ZEPHYR_SERIALIZER_MODE=1 白名单放行（66 memo §6.3）。
+    if subcommand in PLUMBING_BLOCKED_SUBCOMMANDS and os.environ.get(SERIALIZER_MODE_ENV) != "1":
+        print("", file=sys.stderr)
+        print("=" * 70, file=sys.stderr)
+        print(f"[GIT-GUARD] git {subcommand} 被阻断——plumbing 直操纵共享 index/对象库", file=sys.stderr)
+        print("  66 号事故 6 根因：read-tree 曾隐形重置共享 index，清空全部 staged 元数据", file=sys.stderr)
+        print("  此类命令不受 pre-commit/post-commit/reference-transaction 任何 hook 管辖", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("  解决方案:", file=sys.stderr)
+        print(f"    1. Serializer 合法通道：{SERIALIZER_MODE_ENV}=1 git {subcommand} ...", file=sys.stderr)
+        print("    2.  porcelain 替代：read-tree→reset/checkout，write-tree+commit-tree→经 GitCommitGateway", file=sys.stderr)
+        print("=" * 70, file=sys.stderr)
+        _audit_self_harm(
+            action=f"plumbing:{subcommand}",
+            had_uncommitted=False,
+            forced=False,
+            file_count=0,
+            dirty_files=[],
+        )
+        return 1
 
     # 非危险命令，直接透传
     if subcommand not in DANGEROUS_SUBCOMMANDS:

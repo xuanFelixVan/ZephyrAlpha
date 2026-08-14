@@ -40,9 +40,10 @@ lock_files.py —— AI 对话文件锁协议（硬规则执行工具）
 使用：
   python scripts/lock_files.py status                    # 查看所有锁
   python scripts/lock_files.py check src/main.py         # 检查某文件是否被锁
-  python scripts/lock_files.py acquire src/main.py conv-abc --task "重构认证"  # 加锁
+  python scripts/lock_files.py acquire src/main.py conv-abc --task "重构认证" [--ttl 30]  # 加锁（--ttl 分钟）
   python scripts/lock_files.py release src/main.py conv-abc                   # 释放
   python scripts/lock_files.py release-all conv-abc                           # 批量释放
+  python scripts/lock_files.py list [--session conv-abc]                      # 列出锁（可按持有者过滤）
   python scripts/lock_files.py cleanup                                       # 清理死锁
 
 AI 施工铁律：
@@ -50,12 +51,19 @@ AI 施工铁律：
   任何文件修改操作前 MUST 执行 acquire → 获取失败则拒绝操作
   任何文件修改完成后 MUST 执行 release → 释放锁给他人
 
+并发安全（65 memo §7.28）：
+  registry.json 所有 read-modify-write 经 Windows 全局命名 Mutex
+  （Global\\ZephyrLockFilesRegistry，5s 超时）串行化；写入先落 tmp（flush+fsync）
+  再 os.replace 原子替换，防崩溃半成品。
+
 SSoT: AGENTS.md §4 编码安全（扩展）
-Version: 2.0.0
+Version: 2.1.0
 """
 
 from __future__ import annotations
 
+import contextlib
+import ctypes
 import json
 import os
 import shutil
@@ -81,6 +89,39 @@ LOCK_ROOT = REPO_ROOT / ".ailocks"
 # 文件锁 TTL=1800s（AI 对话级锁，30min）；session TTL=3600s（session 生命周期，差异化设计合理，禁止统一）
 DEFAULT_TTL_S = 1800.0  # 30 分钟——超时未释放视为死锁（AI 对话级锁）
 REGISTRY_PATH = LOCK_ROOT / "registry.json"
+
+# ── §7.28 registry.json 并发安全：Windows 全局命名 Mutex ──
+# 26 session 并发 read-modify-write registry.json 必丢锁（§3.12 grite C2 实证）。
+# 所有 RMW 路径必须进 _registry_mutex() 临界区；超时返回 False → 调用方 DENIED。
+_REGISTRY_MUTEX_NAME = r"Global\ZephyrLockFilesRegistry"
+_REGISTRY_MUTEX_TIMEOUT_MS = 5000
+
+try:
+    _kernel32 = ctypes.windll.kernel32  # type: ignore[attr-defined]
+except AttributeError:  # 非 Windows 平台：退化为直通（本仓施工平台为 Windows，见 65 memo §5.3）
+    _kernel32 = None  # type: ignore[assignment]
+
+
+@contextlib.contextmanager
+def _registry_mutex():
+    """全局命名 Mutex 串行化 registry RMW。yield True=获得锁，False=超时/失败。"""
+    if _kernel32 is None:
+        yield True
+        return
+    handle = _kernel32.CreateMutexW(None, False, _REGISTRY_MUTEX_NAME)
+    if not handle:
+        yield False
+        return
+    acquired = False
+    try:
+        rc = _kernel32.WaitForSingleObject(handle, _REGISTRY_MUTEX_TIMEOUT_MS)
+        # WAIT_OBJECT_0(0x0) 获得；WAIT_ABANDONED(0x80) 前持有者崩溃未释放，所有权转移给本进程
+        acquired = rc in (0x0, 0x80)
+        yield acquired
+    finally:
+        if acquired:
+            _kernel32.ReleaseMutex(handle)
+        _kernel32.CloseHandle(handle)
 
 
 def _ensure_lock_root() -> None:
@@ -118,6 +159,10 @@ def _is_stale(lock_dir: Path) -> bool:
     pid = owner.get("pid", 0)
     if pid and not is_pid_alive(pid):
         return True
+    # TTL 判定：优先 expires_at（v2.1.0 --ttl 扩展），旧格式锁回退 timestamp+DEFAULT_TTL_S
+    expires_at = owner.get("expires_at")
+    if expires_at is not None:
+        return time.time() > expires_at
     ts = owner.get("timestamp", 0.0)
     if time.time() - ts > DEFAULT_TTL_S:
         return True
@@ -134,14 +179,17 @@ def _read_owner(lock_dir: Path) -> dict[str, Any] | None:
         return None
 
 
-def _write_owner(lock_dir: Path, owner_id: str, task: str = "") -> None:
+def _write_owner(lock_dir: Path, owner_id: str, task: str = "", ttl_s: float = DEFAULT_TTL_S) -> None:
     lock_dir.mkdir(parents=True, exist_ok=True)
+    now = time.time()
     _owner_file(lock_dir).write_text(
         json.dumps(
             {
                 "owner_id": owner_id,
                 "pid": os.getpid(),
-                "timestamp": time.time(),
+                "timestamp": now,
+                "ttl_s": ttl_s,
+                "expires_at": now + ttl_s,
                 "task": task,
                 "hostname": os.environ.get("COMPUTERNAME", "unknown"),
             },
@@ -175,10 +223,11 @@ def _save_registry(registry: dict[str, Any]) -> None:
     registry["updated_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     tmp_path = f"{REGISTRY_PATH}.{os.getpid()}.tmp"
     try:
-        Path(tmp_path).write_text(
-            json.dumps(registry, ensure_ascii=False, indent=2),
-            encoding="utf-8",
-        )
+        # §7.28 原子写：tmp 文件 flush+fsync 落盘后再 os.replace（Windows 原子替换），防崩溃半成品
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(registry, ensure_ascii=False, indent=2))
+            f.flush()
+            os.fsync(f.fileno())
         os.replace(tmp_path, REGISTRY_PATH)
     except PermissionError:
         try:
@@ -253,10 +302,17 @@ def cmd_check(file_path: str) -> int:
     return 1
 
 
-def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check: bool = False) -> int:
+def cmd_acquire(
+    file_path: str,
+    owner_id: str,
+    task: str = "",
+    skip_naming_check: bool = False,
+    ttl_minutes: float | None = None,
+) -> int:
     _ensure_lock_root()
     normalized = _normalize_path(file_path)
     lock_dir = _lock_dir(file_path)
+    ttl_s = (ttl_minutes * 60.0) if ttl_minutes is not None else DEFAULT_TTL_S
 
     # 命名规范门禁：写入前校验文件名合规性（可跳过，用于历史命名文件）
     if not skip_naming_check:
@@ -287,13 +343,13 @@ def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check
 
     try:
         os.makedirs(lock_dir, exist_ok=False)
-        _write_owner(lock_dir, owner_id, task)
+        _write_owner(lock_dir, owner_id, task, ttl_s)
     except FileExistsError:
         if _is_stale(lock_dir):
             _cleanup_stale(lock_dir)
             try:
                 os.makedirs(lock_dir, exist_ok=False)
-                _write_owner(lock_dir, owner_id, task)
+                _write_owner(lock_dir, owner_id, task, ttl_s)
             except FileExistsError:
                 owner = _read_owner(lock_dir)
                 existing_owner = owner.get("owner_id", "unknown") if owner else "unknown"
@@ -305,9 +361,14 @@ def cmd_acquire(file_path: str, owner_id: str, task: str = "", skip_naming_check
             print(f"DENIED — {normalized} 已被 {existing_owner} 锁定")
             return 1
 
-    _add_to_registry(file_path, owner_id, task)
+    if not _add_to_registry(file_path, owner_id, task, ttl_s):
+        # §7.28 Mutex 超时——回滚锁目录，避免 owner.json 存在但 registry 漏登记的半锁状态
+        shutil.rmtree(lock_dir, ignore_errors=True)
+        print(f"DENIED — {normalized} registry 互斥锁超时（5s），请重试")
+        return 1
     print(f"ACQUIRED — {normalized} 已锁定")
     print(f"  持有者: {owner_id}")
+    print(f"  TTL: {ttl_s / 60.0:g} 分钟（到期自动过期）")
     if task:
         print(f"  任务: {task}")
     return 0
@@ -377,22 +438,28 @@ def cmd_release(file_path: str, owner_id: str) -> int:
 
 def cmd_release_all(owner_id: str) -> int:
     _ensure_lock_root()
-    registry = _load_registry()
-    locks = registry.get("locks", {})
-    released = []
+    # 警告检查（git status 慢操作）在 Mutex 外做，缩短临界区
+    candidates = [fp for fp, info in _load_registry().get("locks", {}).items() if info.get("owner_id") == owner_id]
+    for fp in candidates:
+        _warn_if_uncommitted(fp)  # DM-202919: 释放锁前检查未提交修改（仅警告，不阻止）
 
-    for file_path, info in list(locks.items()):
-        if info.get("owner_id") == owner_id:
-            # DM-202919: 释放锁前检查未提交修改（仅警告，不阻止）
-            _warn_if_uncommitted(file_path)
-            lock_dir = _lock_dir(file_path)
-            shutil.rmtree(lock_dir, ignore_errors=True)
-            del locks[file_path]
-            released.append(file_path)
+    with _registry_mutex() as acquired:
+        if not acquired:
+            print("DENIED — registry 互斥锁超时（5s），请重试")
+            return 1
+        registry = _load_registry()  # 临界区内重读，防竞态
+        locks = registry.get("locks", {})
+        released = []
+        for file_path, info in list(locks.items()):
+            if info.get("owner_id") == owner_id:
+                shutil.rmtree(_lock_dir(file_path), ignore_errors=True)
+                del locks[file_path]
+                released.append(file_path)
+        if released:
+            registry["locks"] = locks
+            _save_registry(registry)
 
     if released:
-        registry["locks"] = locks
-        _save_registry(registry)
         print(f"RELEASED — {len(released)} 个锁已释放：")
         for fp in released:
             print(f"  {fp}")
@@ -404,20 +471,24 @@ def cmd_release_all(owner_id: str) -> int:
 
 def cmd_cleanup() -> int:
     _ensure_lock_root()
-    registry = _load_registry()
-    locks = registry.get("locks", {})
-    cleaned = []
-
-    for file_path in list(locks.keys()):
-        lock_dir = _lock_dir(file_path)
-        if not lock_dir.is_dir() or _is_stale(lock_dir):
-            shutil.rmtree(lock_dir, ignore_errors=True)
-            del locks[file_path]
-            cleaned.append(file_path)
+    with _registry_mutex() as acquired:
+        if not acquired:
+            print("DENIED — registry 互斥锁超时（5s），请重试")
+            return 1
+        registry = _load_registry()
+        locks = registry.get("locks", {})
+        cleaned = []
+        for file_path in list(locks.keys()):
+            lock_dir = _lock_dir(file_path)
+            if not lock_dir.is_dir() or _is_stale(lock_dir):
+                shutil.rmtree(lock_dir, ignore_errors=True)
+                del locks[file_path]
+                cleaned.append(file_path)
+        if cleaned:
+            registry["locks"] = locks
+            _save_registry(registry)
 
     if cleaned:
-        registry["locks"] = locks
-        _save_registry(registry)
         print(f"CLEANED — {len(cleaned)} 个死锁已清理：")
         for fp in cleaned:
             print(f"  {fp}")
@@ -427,23 +498,67 @@ def cmd_cleanup() -> int:
     return 0
 
 
-def _add_to_registry(file_path: str, owner_id: str, task: str = "") -> None:
-    registry = _load_registry()
-    normalized = _normalize_path(file_path)
-    registry.setdefault("locks", {})[normalized] = {
-        "owner_id": owner_id,
-        "task": task,
-        "timestamp": time.time(),
-        "pid": os.getpid(),
-    }
-    _save_registry(registry)
+def cmd_list(session_id: str | None = None) -> int:
+    """§11.2.2 五命令之 list：列出活跃锁，可按持有者过滤。"""
+    _ensure_lock_root()
+    locks = _load_registry().get("locks", {})
+    if session_id is not None:
+        locks = {fp: info for fp, info in locks.items() if info.get("owner_id") == session_id}
+
+    scope = f"持有者 {session_id} " if session_id else ""
+    if not locks:
+        print(f"CLEAN — {scope}无任何文件锁")
+        return 0
+
+    print(f"LOCKED — {scope}{len(locks)} 个文件锁：\n")
+    now = time.time()
+    for file_path, info in sorted(locks.items()):
+        owner = info.get("owner_id", "unknown")
+        task = info.get("task", "")
+        task_str = f" [{task}]" if task else ""
+        expires_at = info.get("expires_at")
+        if expires_at is not None:
+            remain = expires_at - now
+            ttl_str = f"剩余 {remain / 60.0:.1f}m" if remain > 0 else "已过期（待 cleanup）"
+        else:
+            ts = info.get("timestamp", 0)
+            ttl_str = f"已锁定 {(now - ts) / 60.0:.1f}m（旧格式无 expires_at）"
+        print(f"  {file_path}")
+        print(f"    持有者: {owner}{task_str} | {ttl_str}")
+
+    return 0
 
 
-def _remove_from_registry(file_path: str) -> None:
-    registry = _load_registry()
-    normalized = _normalize_path(file_path)
-    registry.get("locks", {}).pop(normalized, None)
-    _save_registry(registry)
+def _add_to_registry(file_path: str, owner_id: str, task: str = "", ttl_s: float = DEFAULT_TTL_S) -> bool:
+    """登记锁进 registry（§7.28 Mutex 临界区内 RMW）。超时/失败返回 False。"""
+    with _registry_mutex() as acquired:
+        if not acquired:
+            return False
+        registry = _load_registry()
+        normalized = _normalize_path(file_path)
+        now = time.time()
+        registry.setdefault("locks", {})[normalized] = {
+            "owner_id": owner_id,
+            "task": task,
+            "timestamp": now,
+            "ttl_s": ttl_s,
+            "expires_at": now + ttl_s,
+            "pid": os.getpid(),
+        }
+        _save_registry(registry)
+        return True
+
+
+def _remove_from_registry(file_path: str) -> bool:
+    """从 registry 移除锁（§7.28 Mutex 临界区内 RMW）。超时/失败返回 False。"""
+    with _registry_mutex() as acquired:
+        if not acquired:
+            return False
+        registry = _load_registry()
+        normalized = _normalize_path(file_path)
+        registry.get("locks", {}).pop(normalized, None)
+        _save_registry(registry)
+        return True
 
 
 class FileLockedError(Exception):
@@ -547,11 +662,21 @@ def _print_help() -> None:
     print("\n子命令：")
     print("  status                    查看所有活跃锁")
     print("  check     <file>          检查文件是否被锁（exit 0=free, 1=locked）")
-    print("  acquire   <file> <owner> [--task <desc>]  锁定文件")
+    print("  acquire   <file> <owner> [--task <desc>] [--ttl <分钟>]  锁定文件（默认 30 分钟）")
     print("  release   <file> <owner>  释放文件锁")
     print("  release-all <owner>       释放该持有者的所有锁")
+    print("  list      [--session <owner>]  列出活跃锁（可按持有者过滤）")
     print("  cleanup                   清理所有死锁（TTL过期/PID已死）")
     print("  guard-write <file> <session> [--task <desc>]  写前自动门禁（check+acquire原子操作）")
+
+
+def _parse_opt(args: list[str], flag: str) -> str | None:
+    """解析 --flag <value> 形式的可选参数，未提供返回 None。"""
+    if flag in args:
+        i = args.index(flag)
+        if i + 1 < len(args):
+            return args[i + 1]
+    return None
 
 
 def main() -> int:
@@ -570,15 +695,19 @@ def main() -> int:
         return cmd_check(args[1])
 
     if cmd == "acquire" and len(args) >= 3:
-        task = ""
-        skip_naming = False
-        if "--task" in args:
-            ti = args.index("--task")
-            if ti + 1 < len(args):
-                task = args[ti + 1]
-        if "--skip-naming-check" in args:
-            skip_naming = True
-        return cmd_acquire(args[1], args[2], task, skip_naming)
+        task = _parse_opt(args, "--task") or ""
+        skip_naming = "--skip-naming-check" in args
+        ttl_raw = _parse_opt(args, "--ttl")
+        ttl_minutes: float | None = None
+        if ttl_raw is not None:
+            try:
+                ttl_minutes = float(ttl_raw)
+                if ttl_minutes <= 0:
+                    raise ValueError
+            except ValueError:
+                print(f"ERROR — --ttl 必须为正数（分钟），收到: {ttl_raw}")
+                return 1
+        return cmd_acquire(args[1], args[2], task, skip_naming, ttl_minutes)
 
     if cmd == "release" and len(args) >= 3:
         return cmd_release(args[1], args[2])
@@ -586,15 +715,14 @@ def main() -> int:
     if cmd == "release-all" and len(args) >= 2:
         return cmd_release_all(args[1])
 
+    if cmd == "list":
+        return cmd_list(_parse_opt(args, "--session"))
+
     if cmd == "cleanup":
         return cmd_cleanup()
 
     if cmd == "guard-write" and len(args) >= 3:
-        task = ""
-        if "--task" in args:
-            ti = args.index("--task")
-            if ti + 1 < len(args):
-                task = args[ti + 1]
+        task = _parse_opt(args, "--task") or ""
         return cmd_guard_write(args[1], args[2], task)
 
     if cmd in ("help", "--help", "-h"):

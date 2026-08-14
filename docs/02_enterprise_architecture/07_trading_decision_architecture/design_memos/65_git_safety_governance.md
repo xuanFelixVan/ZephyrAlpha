@@ -53,11 +53,11 @@ related_modules:
 | 主题组 | G65 Git 安全治理体系（跨切治理层） |
 | 创建 | 2026-08-11 |
 | 优先级 | P0（灾难已发生，必须立即治本） |
-| 状态 | active v2.3.1（2026-08-14 定稿：三轮裁定收敛稳定，施工范围冻结为 §13 八项；关联施工 S1-S6 + task_board 已 merge 回 dev（d8f94d4f2b），S2 四证首次真实清理走通（tracker §六 #54）。**v2.3.1：Phase 1 项 1-7 wrapper 层已全部施工落地**（611227d5/21f447c1/d7844786，40 测试两轮全绿），唯一剩余动作=merge 后跑 install_git_safety_wrapper.ps1 激活；Phase 2 项 8（lock_files TTL）与 66 号 MVP 仍待排期） |
+| 状态 | active v2.4.0（2026-08-14 深夜治理批：①**wrapper 已激活**——$PROFILE 单一 dot-source 真源（旧 v2.1.0 内联 block 已清除，备份 .runtime 外 TEMP），全新会话实证 git=Function/clean -fd BLOCKED/status 透传/审计 JSONL 双记录/Session ID 注入；②**Phase 2 项 8 lock_files TTL+§7.28 Mutex 落地**——Windows 全局命名 Mutex（5s 超时+WAIT_ABANDONED+超时回滚锁目录）+tmp/flush/fsync/replace 原子写+`acquire --ttl`（默认 1800s 真源不变）+expires_at 双写+`list --session` 凑齐五命令，9 新测试+10 回归全绿；③**66 号裁定 7 plumbing 扩展落地**——wrapper git() 拦 read-tree/update-index/write-tree/hash-object+ZEPHYR_SERIALIZER_MODE=1 白名单（45/45），git_guard.py 前置硬阻断+审计（16/16）；④**#56 闭环**——sweep force-clean 接四证语义审计（证2 由证4 quarantine ref 前置补偿、证3 AUTO=72h 窗软批准）、CLI create spawn heartbeat daemon+abort 对称 teardown，顺手治本 3 bug（register pid=0 逻辑 session/abort 分支名提取顺序/refs/heads 前缀）。**新边界发现：Trae AI RunCommand 终端不加载 $PROFILE，wrapper 仅覆盖人工交互终端——AI 通道防护依赖 git_guard 直接调用层+hook 层+规则层**（登记 tracker #58）。66 号 commit_queue 本体仍待排期） |
 | 实际施工范围 | §13 路线图 8 施工项 / 2 Phase / ~11 天（v2.1.0 裁定） |
 | 开发平台 | **Trae IDE（编译器）**——100% 围绕 Trae 开发，不支持 PreToolUse hooks，PowerShell 5.1 终端 |
 | 上游 | [01_design_memo_management_spec](01_design_memo_management_spec.md)｜[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md) |
-| 下游 | 所有 AI session（安全规则约束）｜scripts/git_guard.py、lock_files.py、session_worktree.py｜AGENTS.md + .trae/rules/（永久规则）｜$PROFILE（PowerShell wrapper，**待安装**） |
+| 下游 | 所有 AI session（安全规则约束）｜scripts/git_guard.py、lock_files.py、session_worktree.py｜AGENTS.md + .trae/rules/（永久规则）｜$PROFILE（PowerShell wrapper，**已激活**——限人工交互终端，AI RunCommand 通道不加载 profile，见 tracker #58） |
 
 ## 2. 背景
 
@@ -115,7 +115,7 @@ related_modules:
 | # | 设施 | 与本方案的关系 | 2026-08-14 核实 |
 |---|---|---|---|
 | 1 | scripts/git_guard.py | alias 拦截全失效（§2.2）；直接调用仍有效（7 个 porcelain 子命令），作 wrapper 补充层 | ✅ production |
-| 2 | scripts/lock_files.py | 三件套之 File Lock（§11.3.2） | ✅ production；**无 Mutex/原子写**（§7.28 未施工），无 TTL 参数 |
+| 2 | scripts/lock_files.py | 三件套之 File Lock（§11.3.2） | ✅ production；**v2.4.0：§7.28 Mutex+原子写已落地，`--ttl` 五命令齐备**（tests/git/test_lock_files_ttl_mutex.py 9 用例） |
 | 3 | scripts/session_worktree.py | 三件套之 Worktree（§11.3.1） | ✅ production，五命令齐备 |
 | 4 | scripts/task_board.py | 三件套之 Task Board（§11.2.3） | ✅ **已重建**（2026-08-14 AI-GIT-001，66 号 §2.4 #9 schema，17 测试全过，commit 0e5ed3b9） |
 | 5 | scripts/install_git_safety_wrapper.ps1 | §7.7 安装脚本（一键装/卸 wrapper 进 $PROFILE） | ✅ **已施工**（2026-08-14 晚 AI-GIT-001，611227d5：幂等 marker/卸载/真源自检/-ProfilePath 测试注入） |
@@ -512,7 +512,7 @@ PS 5.1 的 `;`/`|` 天然使每个子命令独立触发函数覆盖；`&&`/`||` 
 | 施工项 | 内容 | 状态 |
 |---|---|---|
 | §7.4 git_guard.py alias 配置清理 | alias 配置保留不删（无害），头注释标注"alias 拦截不生效，依赖 PowerShell wrapper" | ✅ production（直接调用拦 7 个 porcelain 子命令有效，作 wrapper 补充层） |
-| §7.5 lock_files.py 激活 | AI 改文件前 acquire/用后 release，经 RULE-GIT-SAFE 规则 3/4 推动 | ✅ production（无 Mutex/原子写，§7.28 未施工） |
+| §7.5 lock_files.py 激活 | AI 改文件前 acquire/用后 release，经 RULE-GIT-SAFE 规则 3/4 推动 | ✅ production（v2.4.0：§7.28 Mutex+原子写+`--ttl` 已施工） |
 | §7.6 session_worktree 强制 | 每 AI 独立 worktree + 分支；GATE-WORKTREE-REQUIRED 软门禁（阈值可调 5→3，见 §10） | ✅ production（五命令齐备） |
 
 ### 7.7 施工项 7：git wrapper 安装脚本（P0，**待施工——最关键缺口**）
@@ -622,10 +622,11 @@ function _ZephyrCheckGitDirProtection {
 
 > **v2.1.0 简化（20+→4 命令）**：v1.x 的 20+ 命令中 16+ 防 adversarial RCE（`config core.hooksPath`/`update-index --cacheinfo`/`notes add`/`hash-object -w`/`submodule add` 等）——AI 不会主动写 `git config core.hooksPath /tmp/evil`。**只保留 4 个 AI 易误用命令**：`git filter-branch`（历史重写，官方弃用）/`git filter-repo`（历史重写+force push）/`git reflog expire`（抹除 forensic 证据）/`git gc --prune=now|all`（物理删 unreachable 对象；`gc` 无 --prune、`reflog show` 只读放行）。规则明细已并入 §7.1.1 表（末 3 行），实现代码已并入 `git()` 函数。
 
-### 7.28 施工项 28：lock_files.py registry.json 并发安全升级（P0，**待施工——v2.2.0 确认未落地**）
+### 7.28 施工项 28：lock_files.py registry.json 并发安全升级（P0，**✅ 已施工——v2.4.0 落地**）
 
 > **v2.0.0 部分保留**：过渡方案（registry.json + 命名 Mutex + 原子写）保留施工；SQLite 迁移最终方案 deprecated（Task Board 已用 SQLite，无需重复迁移）。
 > **v2.2.0 代码核实**：当前 lock_files.py 无 Mutex、无原子写——26 session 并发 read-modify-write `registry.json` 必然丢锁/双锁（§3.12 grite C2 + PowerShell #24774 证实）。
+> **v2.4.0 施工落地（2026-08-14 深夜）**：`_registry_mutex()`（CreateMutexW `Global\ZephyrLockFilesRegistry`，WaitForSingleObject 5000ms，WAIT_ABANDONED 获所有权，finally ReleaseMutex+CloseHandle）；所有 RMW（_add_to_registry/_remove_from_registry/release_all/cleanup）进临界区，超时 DENIED+acquire 回滚锁目录防半锁；tmp+flush+fsync+os.replace 原子写。验收：tests/git/test_lock_files_ttl_mutex.py 9 用例（含 26 线程并发无丢锁+Mutex 超时回滚）。
 
 **过渡方案实现要点**：
 1. **Windows 全局命名 Mutex 串行化 RMW**：`CreateMutexW('Global\ZephyrLockFilesRegistry')` + `WaitForSingleObject(5000ms)`，临界区内完成"读 → 检查 → 写 registry.json"，finally 中 `ReleaseMutex`+`CloseHandle`；超时返回 DENIED。
@@ -894,3 +895,4 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | 2.1.0 | 2026-08-12 | 第二轮精简：再砍 3 项 + 简化 6 项（4 命令/每 session 审计文件/$PROFILE 一行 UUID/三件套去 heartbeat+epoch+告警），→ 8 项/11 天 |
 | 2.2.0 | 2026-08-14 | 文档实体精简（AI-GIT-001）：落实 v2.0.0/v2.1.0 精简裁定——§3 调研 14 轮折叠、§7 已 deprecated 17 项折叠为一览表（§7.D）、已施工项折叠为状态摘要、待施工项（§7.7 等）完整保留；施工状态经代码核实；新增 §13 关联施工小节指向 wipe 事故裁定书 S1-S6 |
 | 2.3.0 | 2026-08-14 | **定稿**：frontmatter status→active（三轮裁定收敛稳定，active=裁定确认非施工完成，Phase 1 仍待排期——与 66 号 active 先例一致）；正文状态刷新——§4.1 #4/§8.4/§10/§11/§13 task_board 与 S1-S6 关联施工标注闭环（AI-GIT-001 完工：S1 3e2bb5ed70/S2 69558c6479/S3 7383bcd1+95f94195+b36507d8/S4 67abc2ea+a6453e58/S5 7a08eb74/task_board 0e5ed3b9） |
+| 2.4.0 | 2026-08-14 | **深夜治理批全闭环**：①wrapper 激活（清除 $PROFILE 旧 v2.1.0 内联 block，保单一 dot-source；全新会话实证拦截+透传+审计+Session ID）；②§7.28+§11.2.2 施工落地（lock_files Mutex 全局命名锁+fsync 原子写+`--ttl` 五命令，9 测试）；③66 号裁定 7 plumbing 双层落地（wrapper+git_guard 拦 4 命令，SERIALIZER_MODE 白名单，45+16 测试）；④#56 闭环（sweep force-clean 四证语义审计、CLI heartbeat daemon 普及+对称 teardown，顺手治本 register pid=0/分支提取顺序/refs 前缀 3 bug）。**新边界发现**：Trae AI RunCommand 终端不加载 $PROFILE——wrapper 限人工交互终端（tracker #58） |
