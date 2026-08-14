@@ -4,8 +4,8 @@ doc_type: architecture_view
 title: Git 安全治理体系——alias 失效修复与多层防护施工总案（Trae IDE 专用）
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "2.2.0"
+status: active
+version: "2.3.0"
 date: 2026-08-14
 topic: git_safety_governance
 scope: 07_trading_decision_architecture
@@ -53,7 +53,7 @@ related_modules:
 | 主题组 | G65 Git 安全治理体系（跨切治理层） |
 | 创建 | 2026-08-11 |
 | 优先级 | P0（灾难已发生，必须立即治本） |
-| 状态 | draft v2.2.0（2026-08-14 文档实体精简：落实 v2.0.0/v2.1.0 裁定，施工状态已代码核实） |
+| 状态 | active v2.3.0（2026-08-14 定稿：v2.0.0/v2.1.0/v2.2.0 三轮裁定收敛稳定，施工范围冻结为 §13 八项；关联施工 S1-S6 + task_board 重建已闭环。active=裁定确认，Phase 1 施工项仍待排期——与 66 号 active 先例一致） |
 | 实际施工范围 | §13 路线图 8 施工项 / 2 Phase / ~11 天（v2.1.0 裁定） |
 | 开发平台 | **Trae IDE（编译器）**——100% 围绕 Trae 开发，不支持 PreToolUse hooks，PowerShell 5.1 终端 |
 | 上游 | [01_design_memo_management_spec](01_design_memo_management_spec.md)｜[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md) |
@@ -117,7 +117,7 @@ related_modules:
 | 1 | scripts/git_guard.py | alias 拦截全失效（§2.2）；直接调用仍有效（7 个 porcelain 子命令），作 wrapper 补充层 | ✅ production |
 | 2 | scripts/lock_files.py | 三件套之 File Lock（§11.3.2） | ✅ production；**无 Mutex/原子写**（§7.28 未施工），无 TTL 参数 |
 | 3 | scripts/session_worktree.py | 三件套之 Worktree（§11.3.1） | ✅ production，五命令齐备 |
-| 4 | scripts/task_board.py | 三件套之 Task Board（§11.3.3） | ❌ **不存在**（wipe 事故丢失；AI-GIT-001 按 66 号 memo §2.4 #9 schema 重建中） |
+| 4 | scripts/task_board.py | 三件套之 Task Board（§11.2.3） | ✅ **已重建**（2026-08-14 AI-GIT-001，66 号 §2.4 #9 schema，17 测试全过，commit 0e5ed3b9） |
 | 5 | scripts/install_git_safety_wrapper.ps1 | **§7.7 待施工——P0 最关键缺口**：未安装前 L1/L2 不存在 | ❌ 不存在 |
 | 6 | .trae/rules/ | RULE-GIT-SAFE 应写入处（§7.2，Trae AI 规则入口） | ❌ worktree 内不存在 |
 | 7 | src/zephyr/infrastructure/runtime/concurrency_guard.py | git_guard.py 依赖的运行时并发守卫 | ✅ 存在 |
@@ -729,7 +729,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | `acquire doc.md AI-01 --ttl 60`，61 分钟后 check | FREE（需 §11.2.2 扩展落地后） |
 | 26 session 并发 acquire/release 后 registry.json | 无损坏无丢锁（需 §7.28 落地后） |
 | `session_worktree.py create/exec/merge/abort/list` | 五命令正常（✅ 已 production） |
-| `task_board.py create/claim/start/complete`；AI-02 claim 已认领任务 | 状态机正确转换，重复认领 DENIED（待重建完成） |
+| `task_board.py create/claim/start/complete`；AI-02 claim 已认领任务 | 状态机正确转换，重复认领 DENIED（✅ 已重建验收通过，tests/governance/test_task_board.py 17 用例） |
 | commit 含 `git reset --hard` 的文档 | 被 `gate-detect-git-dangerous` 阻断（§7.13 接入后） |
 
 ## 9. 不做什么
@@ -775,12 +775,12 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | `robocopy /mir` 函数覆盖 | 远期评估 |
 | `.git` 阻断是否影响 git 子进程 | 待测试（应安全） |
 | lock_files.py TTL 五命令扩展 | 待施工（当前无 --ttl，2026-08-14 核实） |
-| task_board.py 重建 | 施工中（AI-GIT-001，按 66 号 memo §2.4 #9 schema） |
-| wipe 事故治本 S1-S6 | 施工中（AI-GIT-001，见 §13 关联施工） |
+| task_board.py 重建 | ✅ 已闭环（2026-08-14，AI-GIT-001，0e5ed3b9） |
+| wipe 事故治本 S1-S6 | ✅ 已完工（2026-08-14，AI-GIT-001，见 §13 关联施工） |
 
 ## 11. 多 AI 协调层施工方案（Git Worktree + File Lock(TTL) + Task Board 三件套）
 
-> **v2.2.0 状态**：Worktree 与 File Lock 已 production；Task Board（task_board.py）在 2026-08-14 wipe 事故中丢失（从未入 git），AI-GIT-001 重建中。本节保留 v2.1.0 简化版规格要点作重建/维护依据，施工过程细节（§11.4/§11.5）已折叠。
+> **v2.3.0 状态**：Worktree 与 File Lock 已 production；Task Board（task_board.py）2026-08-14 已由 AI-GIT-001 按 §11.2.3 规格重建（wipe 事故丢失后）。本节保留 v2.1.0 简化版规格要点作维护依据，施工过程细节（§11.4/§11.5）已折叠。
 
 ### 11.1 背景与目标
 
@@ -822,7 +822,8 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 ## 13. 施工路线图（v2.1.0 精简——8 施工项分 2 Phase；v2.2.0 标注施工状态）
 
 > **v2.1.0 精简裁定**：12 施工项 / ~17 天 → **8 施工项 / 2 Phase / ~11 天**。
-> **v2.2.0 状态核实（2026-08-14）**：Phase 1 项 1-7 **全部未落地**（install_git_safety_wrapper.ps1 不存在，wrapper 未装入 $PROFILE——P0 最关键缺口）；Phase 2 中 Worktree/File Lock 基础版已 production，Task Board 丢失重建中。
+> **v2.2.0 状态核实（2026-08-14）**：Phase 1 项 1-7 **全部未落地**（install_git_safety_wrapper.ps1 不存在，wrapper 未装入 $PROFILE——P0 最关键缺口）；Phase 2 中 Worktree/File Lock 基础版已 production。
+> **v2.3.0 状态（2026-08-14 定稿）**：Task Board 已由 AI-GIT-001 重建（0e5ed3b9）——Phase 2 三件套全部 production；Phase 1 项 1-7 仍全部未落地（待排期，不在本次施工范围）。
 
 ### Phase 1: P0 生存级（立即施工，防灾难重演）
 
@@ -843,7 +844,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | 顺序 | 施工项 | 类别 | 依赖 | 工作量 | v2.2.0 状态 |
 |---|---|---|---|---|---|
 | 8 | §11.2.2 File Lock TTL 五命令 + §7.28 并发安全（Mutex+原子写） | 三件套-1 | §7.27 | 1 天 | ⚠️ 基础三命令 production；**TTL/§7.28 未施工** |
-| 9 | §11.2.3 Task Board（SQLite CAS + WAL + 三态） | 三件套-2 | §7.32 | 1.5 天 | ❌ **丢失（wipe 事故），重建中** |
+| 9 | §11.2.3 Task Board（SQLite CAS + WAL + 三态） | 三件套-2 | §7.32 | 1.5 天 | ✅ **已重建**（2026-08-14，AI-GIT-001，0e5ed3b9） |
 | 10 | §11.2.1 Git Worktree（五命令） | 三件套-3 | §11.2.3 | 1.5 天 | ✅ production（五命令齐备） |
 
 **Phase 2 合计：~4 天**——完成后即具备完整并发协调层（Task Board 防重复认领 + File Lock 防同时改 + Worktree 物理隔离）。
@@ -862,7 +863,9 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 
 ### 关联施工（2026-08-14 wipe 事故治本，AI-GIT-001 承接）
 
-2026-08-14 发生 worktree wipe 事故（三 worktree tracked 文件被物理清空，含未入 git 的 task_board.py）。裁定书提出治本方案 S1-S6，由 AI-GIT-001 会话施工中，**不在本 memo 施工范围**：**S1** ops_guard 全原语删除拦截（扩展到所有文件删除原语）；**S2** worktree 清理四证 SOP；**S3** worker 日志落盘；**S4** 网关锚定修复。
+2026-08-14 发生 worktree wipe 事故（三 worktree tracked 文件被物理清空，含未入 git 的 task_board.py）。裁定书提出治本方案 S1-S6，由 AI-GIT-001 会话施工，**不在本 memo 施工范围**：**S1** ops_guard 全原语删除拦截（扩展到所有文件删除原语）；**S2** worktree 清理四证 SOP；**S3** worker 日志落盘；**S4** 网关锚定修复。
+
+> **v2.3.0 状态（2026-08-14 完工）**：S1-S6 + task_board 重建**已全部完工**——S1 ops_guard（3e2bb5ed70，42 红队向量 100% 拦截）；S2 四证 SOP + session_worktree 接入（69558c6479）；S3 worker stdio 落盘 + commit 后 status 快照（7383bcd1/95f94195/b36507d8）；S4 网关锚定（67abc2ea/a6453e58）；S5 锚点级联提示（7a08eb74）；S6 会话环境三件套随 create 备置（#ARCH-WORKTREE-ENV-001 已落地）；task_board.py 重建（0e5ed3b9）。施工中实证发现并修复 GATE-ROOT-TEMP-SWEEP 扫走 worktree .git 指针新事故机制（65a2e8a6）。完工细节见 tracker §六与 AI-GIT-001 完工反馈。
 
 详见裁定书：[2026-08-14_ai-liq-001_worktree_wipe_incident_review.md](../../../_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)。65 号 memo 不再视为 git 治理唯一真源——wipe 事故治本以裁定书为准。
 
@@ -888,3 +891,4 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | 2.0.0 | 2026-08-12 | 精简大修：防御层 19→6，14 项 deprecated，§14/§15 删除，路线图→12 项/17 天 |
 | 2.1.0 | 2026-08-12 | 第二轮精简：再砍 3 项 + 简化 6 项（4 命令/每 session 审计文件/$PROFILE 一行 UUID/三件套去 heartbeat+epoch+告警），→ 8 项/11 天 |
 | 2.2.0 | 2026-08-14 | 文档实体精简（AI-GIT-001）：落实 v2.0.0/v2.1.0 精简裁定——§3 调研 14 轮折叠、§7 已 deprecated 17 项折叠为一览表（§7.D）、已施工项折叠为状态摘要、待施工项（§7.7 等）完整保留；施工状态经代码核实；新增 §13 关联施工小节指向 wipe 事故裁定书 S1-S6 |
+| 2.3.0 | 2026-08-14 | **定稿**：frontmatter status→active（三轮裁定收敛稳定，active=裁定确认非施工完成，Phase 1 仍待排期——与 66 号 active 先例一致）；正文状态刷新——§4.1 #4/§8.4/§10/§11/§13 task_board 与 S1-S6 关联施工标注闭环（AI-GIT-001 完工：S1 3e2bb5ed70/S2 69558c6479/S3 7383bcd1+95f94195+b36507d8/S4 67abc2ea+a6453e58/S5 7a08eb74/task_board 0e5ed3b9） |
