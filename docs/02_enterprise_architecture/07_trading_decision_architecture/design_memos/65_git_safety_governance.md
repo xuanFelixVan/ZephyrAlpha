@@ -53,7 +53,7 @@ related_modules:
 | 主题组 | G65 Git 安全治理体系（跨切治理层） |
 | 创建 | 2026-08-11 |
 | 优先级 | P0（灾难已发生，必须立即治本） |
-| 状态 | active v2.3.0（2026-08-14 定稿：v2.0.0/v2.1.0/v2.2.0 三轮裁定收敛稳定，施工范围冻结为 §13 八项；关联施工 S1-S6 + task_board 重建已闭环。active=裁定确认，Phase 1 施工项仍待排期——与 66 号 active 先例一致） |
+| 状态 | active v2.3.0（2026-08-14 定稿：v2.0.0/v2.1.0/v2.2.0 三轮裁定收敛稳定，施工范围冻结为 §13 八项；关联施工 S1-S6 + task_board 重建已闭环并 **merge 回 dev**（d8f94d4f2b），S2 四证 SOP 首次真实清理走通（证1-4 全 PASS，tracker §六 #54）。active=裁定确认，**Phase 1 施工项 1-7（PowerShell wrapper 层）仍全部未施工、待排期**——与 66 号 active 先例一致） |
 | 实际施工范围 | §13 路线图 8 施工项 / 2 Phase / ~11 天（v2.1.0 裁定） |
 | 开发平台 | **Trae IDE（编译器）**——100% 围绕 Trae 开发，不支持 PreToolUse hooks，PowerShell 5.1 终端 |
 | 上游 | [01_design_memo_management_spec](01_design_memo_management_spec.md)｜[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md) |
@@ -126,6 +126,7 @@ related_modules:
 | 10 | config/immutable_core.yaml | 受保护路径 commit 时检查——与 §7.17.2 运行时阻断两层叠加 | ✅ 正常运行 |
 | 11 | memory/project_memory.md | 灾难教训已记录（§7.3） | ✅ 已记录 |
 | 12 | scripts/setup_git_guard_aliases.py | alias 安装入口，曾缺 clean（§7.12）——alias 失效后降格维护性 | ⚠️ clean 补齐状态未核实 |
+| 13 | scripts/ops_guard.py | **全原语删除拦截层**（S1，2026-08-14 wipe 治本关联施工）——PowerShell/CMD/Python/git clean 四类删除原语，保护区 fail-closed，删除强制先落审计 | ✅ production（3e2bb5ed70，42 红队向量 100% 拦截，已 merge 回 dev；与 §7.1 wrapper 关系：ops_guard 覆盖删除原语面，wrapper 层覆盖 git 危险命令+硬阻断面，两者互补） |
 
 ### 4.2 防护层失效分析
 
@@ -776,7 +777,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | `.git` 阻断是否影响 git 子进程 | 待测试（应安全） |
 | lock_files.py TTL 五命令扩展 | 待施工（当前无 --ttl，2026-08-14 核实） |
 | task_board.py 重建 | ✅ 已闭环（2026-08-14，AI-GIT-001，0e5ed3b9） |
-| wipe 事故治本 S1-S6 | ✅ 已完工（2026-08-14，AI-GIT-001，见 §13 关联施工） |
+| wipe 事故治本 S1-S6 | ✅ 已闭环（2026-08-14 AI-GIT-001 完工，当日 merge 回 dev d8f94d4f2b；S2 四证首次真实清理走通，证1-4 全 PASS——tracker §六 #54） |
 
 ## 11. 多 AI 协调层施工方案（Git Worktree + File Lock(TTL) + Task Board 三件套）
 
@@ -823,7 +824,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 
 > **v2.1.0 精简裁定**：12 施工项 / ~17 天 → **8 施工项 / 2 Phase / ~11 天**。
 > **v2.2.0 状态核实（2026-08-14）**：Phase 1 项 1-7 **全部未落地**（install_git_safety_wrapper.ps1 不存在，wrapper 未装入 $PROFILE——P0 最关键缺口）；Phase 2 中 Worktree/File Lock 基础版已 production。
-> **v2.3.0 状态（2026-08-14 定稿）**：Task Board 已由 AI-GIT-001 重建（0e5ed3b9）——Phase 2 三件套全部 production；Phase 1 项 1-7 仍全部未落地（待排期，不在本次施工范围）。
+> **v2.3.0 状态（2026-08-14 定稿）**：Task Board 已由 AI-GIT-001 重建（0e5ed3b9）并随治理批 **merge 回 dev**（d8f94d4f2b）——Phase 2 三件套全部 production；Phase 1 项 1-7 仍全部未落地（待排期，不在本次施工范围）。
 
 ### Phase 1: P0 生存级（立即施工，防灾难重演）
 
@@ -844,7 +845,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | 顺序 | 施工项 | 类别 | 依赖 | 工作量 | v2.2.0 状态 |
 |---|---|---|---|---|---|
 | 8 | §11.2.2 File Lock TTL 五命令 + §7.28 并发安全（Mutex+原子写） | 三件套-1 | §7.27 | 1 天 | ⚠️ 基础三命令 production；**TTL/§7.28 未施工** |
-| 9 | §11.2.3 Task Board（SQLite CAS + WAL + 三态） | 三件套-2 | §7.32 | 1.5 天 | ✅ **已重建**（2026-08-14，AI-GIT-001，0e5ed3b9） |
+| 9 | §11.2.3 Task Board（SQLite CAS + WAL + 三态） | 三件套-2 | §7.32 | 1.5 天 | ✅ **已重建并 merge 回 dev**（2026-08-14，AI-GIT-001，0e5ed3b9→d8f94d4f2b，17 测试全过） |
 | 10 | §11.2.1 Git Worktree（五命令） | 三件套-3 | §11.2.3 | 1.5 天 | ✅ production（五命令齐备） |
 
 **Phase 2 合计：~4 天**——完成后即具备完整并发协调层（Task Board 防重复认领 + File Lock 防同时改 + Worktree 物理隔离）。
@@ -865,7 +866,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 
 2026-08-14 发生 worktree wipe 事故（三 worktree tracked 文件被物理清空，含未入 git 的 task_board.py）。裁定书提出治本方案 S1-S6，由 AI-GIT-001 会话施工，**不在本 memo 施工范围**：**S1** ops_guard 全原语删除拦截（扩展到所有文件删除原语）；**S2** worktree 清理四证 SOP；**S3** worker 日志落盘；**S4** 网关锚定修复。
 
-> **v2.3.0 状态（2026-08-14 完工）**：S1-S6 + task_board 重建**已全部完工**——S1 ops_guard（3e2bb5ed70，42 红队向量 100% 拦截）；S2 四证 SOP + session_worktree 接入（69558c6479）；S3 worker stdio 落盘 + commit 后 status 快照（7383bcd1/95f94195/b36507d8）；S4 网关锚定（67abc2ea/a6453e58）；S5 锚点级联提示（7a08eb74）；S6 会话环境三件套随 create 备置（#ARCH-WORKTREE-ENV-001 已落地）；task_board.py 重建（0e5ed3b9）。施工中实证发现并修复 GATE-ROOT-TEMP-SWEEP 扫走 worktree .git 指针新事故机制（65a2e8a6）。完工细节见 tracker §六与 AI-GIT-001 完工反馈。
+> **v2.3.0 状态（2026-08-14 完工，当日 merge 闭环）**：S1-S6 + task_board 重建**已全部完工并 merge 回 dev**（d8f94d4f2b）——S1 ops_guard（3e2bb5ed70，42 红队向量 100% 拦截）；S2 四证 SOP + session_worktree 接入（69558c6479）；S3 worker stdio 落盘 + commit 后 status 快照（7383bcd1/95f94195/b36507d8）；S4 网关锚定（67abc2ea/a6453e58）；S5 锚点级联提示（7a08eb74）；S6 会话环境三件套随 create 备置（#ARCH-WORKTREE-ENV-001 已落地）；task_board.py 重建（0e5ed3b9）。施工中实证发现并修复 GATE-ROOT-TEMP-SWEEP 扫走 worktree .git 指针新事故机制（65a2e8a6，**已随 merge 在 dev 生效**）。merge 后统筹按四证 SOP 清理 AI-GIT-001 worktree——**证1-4 全 PASS，S2 首次真实清理走通**（refs/quarantine/AI-GIT-001 + 344MB bundle 双存证，tracker §六 #54）；遗留 #50（reconcile 测试污染生产审计日志）亦已修复闭环（e5d7b6decf）。完工细节见 tracker §六与 AI-GIT-001 完工反馈。
 
 详见裁定书：[2026-08-14_ai-liq-001_worktree_wipe_incident_review.md](../../../_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)。65 号 memo 不再视为 git 治理唯一真源——wipe 事故治本以裁定书为准。
 

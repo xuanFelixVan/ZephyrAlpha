@@ -41,7 +41,7 @@ related_modules:
 | 主题组 | G66 提交队列串行化（跨切治理层·集成基建） |
 | 创建 | 2026-08-12 |
 | 优先级 | P0（23 会话并发已实证不可施工 + read-tree 隐形 index 重置事故） |
-| 状态 | active v1.1.0（3 项裁定用户已确认；**MVP 未施工**：.runtime/commit_queue/ 零施工痕迹、git_guard.py plumbing 扩展未施工、install_git_safety_wrapper.ps1 不存在；AGENTS.md §10.0 铁律已落地） |
+| 状态 | active v1.1.0（3 项裁定用户已确认；**MVP 未施工**：.runtime/commit_queue/ 零施工痕迹、git_guard.py plumbing 扩展未施工、install_git_safety_wrapper.ps1 不存在；AGENTS.md §10.0 铁律已落地；**§2.4 #9 task_board 已重建并 merge 回 dev production**——2026-08-14 AI-GIT-001 按本 memo schema 重建，0e5ed3b9→d8f94d4f2b，17 测试全过） |
 | 开发平台 | Trae IDE（PowerShell 5.1，无 PreToolUse hooks） |
 | 上游 | [65_git_safety_governance](65_git_safety_governance.md)（安全护栏层） |
 | 下游 | 所有 AI session（提交入口）｜GitCommitGateway（落盘执行体）｜task_board（死信承载）｜git_guard.py（plumbing 拦截扩展） |
@@ -103,7 +103,7 @@ related_modules:
 | 6 | reconciler auto-commit 链 | `_commit_auto` + BatchedAutoCommitter + reconcile_runner worker（32+ reconciler 产出派生文件自动提交） | production | **第二写入者**：走共享 index + 全局锁。单写者不变量要求它改道入队（§7 关系表） |
 | 7 | session_worktree 族 | session_worktree.py / worktree_manager.py / worktree_pool.py / worktree_lifecycle.py（.aidrafts/{sid}/） | production | merge 前置 WORKSPACE-CLEAN-CHECK 在 23 会话下永不可达；**队列落地后 merge 消失 → 该检查对象消失 → worktree 从"23会话下不可达的强制"变为"queue 消除 merge 后可达的强制"——不是降级，是升级** |
 | 8 | lock_files.py 文件锁 | .ailocks/（TTL + PID 检测） | production | 保留——编辑期同文件互斥仍由它负责 |
-| 9 | task_board.py | .runtime/task_board.db（SQLite WAL + CAS，状态机 pending→claimed→completed，`metadata_json` + `task_events.payload_json` 可扩展字段） | **wipe 丢失**（2026-08-14 worktree wipe 事故，从未入 git），AI-GIT-001 按本表 schema 重建中 | schema 可承载死信标签（qid+原因+属主进 metadata_json）；无现成 dead_letter 状态，用 metadata 标签即可，无需改表 |
+| 9 | task_board.py | .runtime/task_board.db（SQLite WAL + CAS，状态机 pending→claimed→completed，`metadata_json` + `task_events.payload_json` 可扩展字段） | ✅ **已重建并 merge 回 dev production**（2026-08-14 AI-GIT-001 按本表 schema 重建，0e5ed3b9→d8f94d4f2b，17 测试全过含 8 线程 CAS 恰一胜/60min TTL/exit 2 DENIED/死信 metadata 承载/板根锚主仓跨 worktree 单板） | schema 可承载死信标签（qid+原因+属主进 metadata_json）；无现成 dead_letter 状态，用 metadata 标签即可，无需改表 |
 | 10 | git_guard.py 危险命令拦截 | DANGEROUS_SUBCOMMANDS={reset,checkout,stash,revert,restore,mv,clean} | production | **7 个 porcelain 命令已覆盖；read-tree/update-index/write-tree/hash-object 4 个 plumbing 命令完全缺失（v0.3.0 新发现）**。alias 失效问题依旧，但 install_git_safety_wrapper.ps1 落地后可在 shell 函数层扩展覆盖 |
 | 11 | install_git_safety_wrapper.ps1 | 65 号 §7.7 施工项 7（P0） | **不存在（未施工）** | 落地后可在 shell 层拦截裸 `git commit` + 扩展拦截 plumbing 命令，是 stash 周期触发源 + index 隐形重置的真正清零手段（§7 关系表） |
 | 12 | test_concurrent_safety.ps1 | scripts/governance/ | production | **真实用途：47 个治理脚本的并发安全压测**（RULE-ONE 原子写模式），不含 git commit 场景——§11 的"复用"修正为"借鉴其 Start-Job 并发模式，新建 commit queue 压测" |
