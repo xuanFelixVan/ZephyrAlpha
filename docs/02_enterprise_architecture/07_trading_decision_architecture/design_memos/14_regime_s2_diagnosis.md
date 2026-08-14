@@ -5,9 +5,9 @@ title: "S2 评分算法时点错配诊断与治本方案——capitulation 过�
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.5.1"
-date: "2026-08-08"
-last_updated: "2026-08-12"
+version: "0.5.2"
+date: "2026-08-15"
+last_updated: "2026-08-15"
 topic: regime_s2_diagnosis
 scope: 07_trading_decision_architecture
 doc_id: 14_regime_s2_diagnosis
@@ -220,11 +220,9 @@ related_issues:
 
 > 触发条件所需**维度数据**是否就绪（S2 需 NLP+high/low，未就绪=False，不计 B4 分母）
 
-另一 session 改 `data_ready=true` 的理由是"数据管道已就绪（policy/bad_news_flat=NLP，wyckoff=engine，high/low 已加载）"——在**数据层面**成立。但诊断证明：**数据就绪后 S2 仍 0/3**，根因是算法逻辑错配 + 设计域不匹配，不是维度数据缺失。
+另一 session 改 `data_ready=true` 的理由（"数据管道已就绪"）在**数据层面**成立，但诊断证明：**数据就绪后 S2 仍 0/3**，根因是算法逻辑错配 + 设计域不匹配。`data_ready` 语义无法表达"算法是否有缺陷"或"事件形态是否在设计域内"——commit 93a25890 新增 `design_match` 正补此缺口：承认"数据就绪 ∧ 设计域匹配 ⇒ 可验证"。
 
-`data_ready` 字段语义是"维度数据是否就绪"，**无法表达"算法逻辑是否有缺陷"或"事件形态是否在设计域内"**。commit 93a25890 新增 `design_match` 字段正是补这个缺口——区分"数据未就绪"与"设计域不符"。这是字段语义的演进——它不再假设"数据就绪 ⇒ 触发逻辑可验证"，而是承认"数据就绪 ∧ 设计域匹配 ⇒ 可验证"。
-
-**100% AI 开发下的典型风险**（与 project_memory #ARCH-TEMP-FILE-PLACEMENT-001 教训同类）：AI 看到"NLP/high/low 已激活"就推断"数据已就绪 → S2 可验证"，但没查证算法正确性与事件形态匹配度。这是"看似合理的推断替代应查证的惯例"，在 100% AI 开发下尤须警惕。
+**100% AI 开发下的典型风险**（与 project_memory #ARCH-TEMP-FILE-PLACEMENT-001 教训同类）：AI 看到"NLP/high/low 已激活"就推断"数据已就绪 → S2 可验证"，未查证算法正确性与事件形态匹配度——"看似合理的推断替代应查证的惯例"，100% AI 开发下尤须警惕。
 
 ---
 
@@ -242,9 +240,9 @@ related_issues:
 
 ### 2.2 第一性原理：验证器不能驱动算法设计
 
-B4 验证的目的是"客观验证检测器触发时点是否吻合历史"（[b4_transition_accuracy.py docstring](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py#L17)）。如果为过 B4 而改算法，验证就失去独立性——变成**自我证明（circular validation）**：我改算法让验证通过，验证通过证明算法正确——这是逻辑循环。
+B4 验证的目的是"客观验证检测器触发时点是否吻合历史"（[b4_transition_accuracy.py docstring](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py#L17)）。为过 B4 而改算法 = **自我证明（circular validation）**——改算法让验证通过、验证通过证明算法正确，逻辑循环，验证失去独立性。
 
-算法重设计必须回归 §4.12 设计源头重新对齐语义，独立于验证结果进行。验证结果可以**暴露**缺陷（B4 FAIL 暴露了 S2 算法问题），但不能**驱动**算法设计（不能"调参直到 3/3 命中"）。
+验证结果可以**暴露**缺陷（B4 FAIL 暴露了 S2 算法问题），但不能**驱动**算法设计（不能"调参直到 3/3 命中"）；算法重设计必须回归 §4.12 设计源头重新对齐语义，独立于验证结果进行。
 
 ### 2.3 长远战略：算法重设计是 P1 工程，不应在 P0 验证中草率完成
 
@@ -254,11 +252,11 @@ S2 算法重设计涉及评分逻辑的**语义重新定义**：
 - spring：close 跨日简化 → 复用 wyckoff_engine（同日 low 判定）+ 深度分级
 - **V 反转通路（v0.4.0 新增）**：confirm 的 wyckoff≥60 对 V/政策型复苏设计域不匹配，需开 breadth thrust 析取通路
 
-这需要回归 §4.12.1/§4.12.5/§4.12.2 设计源头重新对齐，重设计后重跑 B4 验证（可能还需调阈值），并防止"调参过拟合 3 个历史事件"。这是 P1 级工程，应在 Phase 3 系统性完成，不在 Phase 2 P0 验证中"为了让 B4 过"而草率改算法。
+这需要回归 §4.12.1/§4.12.5/§4.12.2 设计源头重新对齐，重设计后重跑 B4 验证，并防止"调参过拟合 3 个历史事件"——P1 级工程，应在 Phase 3 系统性完成，不在 Phase 2 P0 验证中"为了让 B4 过"而草率改算法。
 
 ### 2.4 100% AI 开发：隔离问题 → 登记缺陷 → 系统性修复
 
-100% AI 开发下，"为过验证而改算法"的诱惑更强（AI 倾向于"让指标通过"）。正确做法是三步走：
+100% AI 开发下，"为过验证而改算法"的诱惑更强（AI 倾向于"让指标通过"）。正确做法三步走：
 
 1. **隔离**：`design_match=false` 准确反映"S2 当前设计域不匹配"（数据已就绪，问题在算法/形态），B4 回 PASS(3/3)，Phase 2 闭环
 2. **登记**：ARCH 条目记录缺陷（诊断证据 + 设计意图 vs 实现差异 + 设计域不匹配），防止 AI session 间遗忘
@@ -404,18 +402,18 @@ P1-E9 覆盖诊断确认有"时点/形态错配"的四个维度（v0.4.0 扩入 
 **三层升级**：
 
 1. **单日判定多维度化**（参考 ChartMath 2026 capitulation 四过滤器法 + JournalPlus 2026 四信号 confluence）：原仅 vol_z+pct_change 两维，单阈值易被噪声触发。叠加三道过滤器：
-   - 量能放大：当日量 > **2.0×20 日均量**（确认 panic/forced liquidation，非低流动性漂移）。**v0.4.0 校准**：原 1.3× 偏松，2026 多源（quantscanai 3×、JournalPlus 2–5×、Pomegra 2–3× 真 climax）一致表明真 capitulation 量能 2–3× 均量，1.3× 会在普通放量下跌日误触发，校准为 2.0×（取研究下限，留 selective 余地）。
-   - 实体力度：当日实体 `|close-open|` > 40% ATR(14)（确认 decisive selling，非犹豫 K 线）。**v0.4.0 修正**：原 `(close-close.shift(1)).abs()` 注释写"无 open 时近似"，但项目 K 线**有 open 字段**，应直接用 `|close-open|`（真实体，非 close-to-close 近似）。
-   - **下影线过滤器（v0.4.0 新增）**：§4.12.1 设计意图 Phase 4 明列"长下影线"，JournalPlus 2026/Wyckoff Analytics 均把 long lower wick 列为 capitulation 核心标志（"flush and recovery… long lower wick"=买盘从极端低点推回）。量化：下影线 = `min(open,close) - low`，下影线占 K 线比例 `wick_ratio = lower_wick/(high-low)`，要求 `wick_ratio > 0.5`（下影线占 K 线过半=卖盘被吸收）。
-   仅当量价基础分 + 三道过滤器同时满足才给分。多维度共振才区分"真投降"与"普通下跌"。
-   - **RSI<35 过滤器（v0.4.1 可选第 4 维，参考 ChartMath 2026 五因子）**：ChartMath 2026 capitulation 五因子含 RSI(14)<35（比常规 30 更严）+ 收盘低于布林下轨(20,2)。本项目以"量能+实体+下影线"三过滤为主（更贴合 §4.12.1 Phase 4 长下影线意图），RSI/布林作**可选增强**——若实测三过滤器噪声仍大（误触发多），再启用 RSI<35 ∧ 收盘<布林下轨作第 4 道。**默认不启用**，避免四过滤器交集过严致 capitulation 永不触发（§4.5 数值边界：单日本就需簇集才达 60）。
+   - 量能放大：当日量 > **2.0×20 日均量**（确认 panic/forced liquidation）。**v0.4.0 校准**：原 1.3× 偏松，2026 多源（quantscanai 3×、JournalPlus 2–5×、Pomegra 2–3×）一致表明真 capitulation 量能 2–3× 均量，校准为 2.0×（取研究下限留 selective 余地）。
+   - 实体力度：当日实体 `|close-open|` > 40% ATR(14)。**v0.4.0 修正**：项目 K 线**有 open 字段**，直接用真实体（非 close-to-close 近似）。
+   - **下影线过滤器（v0.4.0 新增）**：§4.12.1 Phase 4 明列"长下影线"，JournalPlus 2026/Wyckoff Analytics 均列为 capitulation 核心标志。量化：`wick_ratio = (min(open,close)-low)/(high-low) > 0.5`（下影线占 K 线过半=卖盘被吸收）。
+   仅当量价基础分 + 三道过滤器同时满足才给分（多维度共振区分"真投降"与"普通下跌"）。
+   - **RSI<35 过滤器（v0.4.1 可选第 4 维，ChartMath 2026 五因子）**：RSI(14)<35 + 收盘低于布林下轨(20,2) 作**可选增强**——实测三过滤器噪声仍大时再启用。**默认不启用**，避免交集过严致 capitulation 永不触发（§4.5 数值边界：单日本就需簇集才达 60）。
 
-2. **过程化 = 衰减加权和**（替代 rolling max，参考 ArrowAlgo Decay Block 2026 / Pomegra signal half-life 2026 / MathAndMarkets 2026 half-lives of alpha）：
-   - **为何不用 rolling max**：rolling(lookback).max() 一旦窗口内某日 capitulation=90，之后 lookback 日每天都=90 → S2 trigger 持续满足，**状态粘滞**。但 S2 是 CRISIS→RECOVERY 的**一次性转换事件**，不应持续。dredyson 2026 regime 状态机"锁死"bug 同类。
-   - **衰减加权**：近期 capitulation 权重高，远期指数衰减 e^(-i/τ)，τ=halflife/0.693。既保留"过程"语义（近期曾出现投降抛售），又让信号随时间自然消退，符合 signal half-life（mean reversion 典型 5-20 天，Pomegra 2026 确认；取 halflife=10）。
-   - **数值边界（v0.4.0 补，施工必读）**：权重归一化下，单日 90 分衰减后贡献 = 90 × w₀。halflife=10、lookback=20 时 w₀ ≈ 0.13 → 单日 90 分仅贡献 ~12 分，**单日 capitulation 不足以触发 trigger≥60**。这是设计意图：trigger 要求**多日 capitulation 簇集**（如 2-3 日 70-90 分簇集可达 60+），而非单日 spike。若实测发现簇集后仍不达 60，应扩 lookback 或放 halflife（§4.5 step 5 防过拟合约束下），**禁止**直接降阈值凑分。
+2. **过程化 = 衰减加权和**（替代 rolling max，参考 ArrowAlgo Decay Block 2026 / Pomegra signal half-life 2026 / MathAndMarkets 2026）：
+   - **为何不用 rolling max**：rolling(lookback).max() 一旦窗口内某日 capitulation=90，之后 lookback 日每天=90 → trigger 持续满足，**状态粘滞**；S2 是一次性转换事件，不应持续（dredyson 2026 regime 状态机"锁死"bug 同类）。
+   - **衰减加权**：近期权重高，远期 e^(-i/τ) 衰减，τ=halflife/0.693。保留"过程"语义且信号自然消退（mean reversion 典型 half-life 5-20 天，取 halflife=10）。
+   - **数值边界（v0.4.0 补，施工必读）**：halflife=10、lookback=20 时 w₀≈0.13 → 单日 90 分仅贡献 ~12 分，**单日不足以触发 trigger≥60**——设计意图是 trigger 要求**多日 capitulation 簇集**（2-3 日 70-90 分簇集可达 60+）。若簇集后仍不达 60，应扩 lookback 或放 halflife（§4.5 step 5 约束下），**禁止**直接降阈值凑分。
 
-3. **ATR 自实现**（项目无现成）：实测 `src/zephyr/regime` 下无 `def _atr`/`AverageTrueRange`，需在 overlay_features.py 自带 `_atr` 辅助函数。**v0.4.3 补放置位置**：放在 `overlay_features.py` 顶部模块级（`_atr` 私有函数，前缀 `_` 标内部），紧邻 `s2_capitulation_score` 上方。**理由**：① 仅 overlay_features 内 S2 维度用（spring 失效边距也用，§4.3）；② 若未来 T1/T5 等维度需 ATR，再提升到 `zephyr/regime/features/_indicators.py` 工具模块（当前 YAGNI，避免过度抽象）；③ 私有前缀 `_` 防外部误依赖，未来迁移时可控。
+3. **ATR 自实现**（项目无现成）：`src/zephyr/regime` 下无 `def _atr`/`AverageTrueRange`，需自带。**v0.4.3 补放置位置**：`overlay_features.py` 顶部模块级私有函数（前缀 `_` 标内部），紧邻 `s2_capitulation_score` 上方。**理由**：① 仅 overlay_features 内 S2 维度用（spring 失效边距也用，§4.3）；② 未来 T1/T5 需 ATR 再提升到 `zephyr/regime/features/_indicators.py`（当前 YAGNI）；③ 私有前缀防外部误依赖。
 
 ```python
 def _atr(high: pd.Series, low: pd.Series, close: pd.Series, window: int = 14) -> pd.Series:
@@ -663,7 +661,7 @@ def s2_valuation_score_fundamental(
 
 ### 4.3 P1-E9c: spring 复用 wyckoff_engine + 深度分级 + 验收 checklist
 
-**现状**（[overlay_features.py:328-343](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L328) `s2_spring_flag`）：用 close **跨日**简化判断（无 low）——`前日 close 跌破前低 ∧ 当日 close 收回`。这与真正 Spring"**同日** low 跌破支撑 + 当日 close 收回"语义**时点错位**（非原文所述"逻辑较严"）：它要求两日配合（前日破+当日收），而真 Spring 是单日完成（日内 low 破支撑+收盘收回）。**调用方**（[overlay_signals_builder.py:311](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L311)）仅 `s2_spring_flag(close)` 传 1 参数。
+**现状**（[overlay_features.py:328-343](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L328) `s2_spring_flag`）：close 跨日简化（诊断详见 §1.2.3）。**调用方**（[overlay_signals_builder.py:311](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L311)）仅 `s2_spring_flag(close)` 传 1 参数。
 
 **v0.4.1 校正（跨日 close 定性）**：上文"时点错位（非逻辑较严）"的定性过绝对。FibAlgo 2026 主流 Spring 算法**就用跨日 close**（"前一根 low 破支撑 + 当前根 close 回收至支撑上方"）——跨日 close 本身是合法实现，非缺陷。当前实现的**真问题**是缺 4 项验收要素：① velocity 量化 ② 穿透深度分级 ③ 0.5×ATR 失效边距 ④ 主尾巴判定，而非"跨日 vs 同日"的时点选择。施工时同日 low / 跨日 close 两种实现均可，关键是补齐 4 要素。
 
@@ -924,41 +922,21 @@ def s2_three_yang_flag(
 4. **Phase 2 完整验证**：重跑 A1+B4+A2+B1，确认 B4 S2 命中
 5. **防过拟合方法论栈**（v0.4.3 重写，N=3 小样本专用）：
 
-   **核心挑战**：S2 仅 3 个历史事件（2015/2020/2024），传统回测过拟合检测工具 PBO（Probability of Backtest Overfitting）/CSCV 需 N≥10-12 样本才统计有效（[archimedes #819 2026-06](https://github.com/)），**不可用**。须用以下 6 层方法论栈替代：
+   **核心挑战**：S2 仅 3 个历史事件（2015/2020/2024），传统 PBO/CSCV 需 N≥10-12 样本才统计有效（[archimedes #819 2026-06](https://github.com/)），**不可用**。以以下 6 层方法论栈替代：
 
-   **① 事件研究法（Event Study）—— 主验证方法**
-   - 以事件日（2015-09-15/2020-04-10/2024-09-24）为 t=0，计算 ±10/±20 交易日窗口内 S2 各维度评分的**异常表现**（vs 全历史基线）
-   - 不依赖大样本统计推断，而是逐事件验证"算法是否在正确时点产生正确信号"
-   - 参考：[quant67 2026-05](https://quant67.com/post/quant/12-ml-alpha/12-ml-alpha.html) A 股选股防过拟合——事件研究法是小样本下最稳健的验证方式
+   **① 事件研究法（Event Study）—— 主验证方法**：以事件日（2015-09-15/2020-04-10/2024-09-24）为 t=0，算 ±10/±20 交易日窗口内 S2 各维度评分的异常表现（vs 全历史基线）；不依赖大样本统计推断，逐事件验证"算法是否在正确时点产生正确信号"（[quant67 2026-05](https://quant67.com/post/quant/12-ml-alpha/12-ml-alpha.html)：事件研究法是小样本下最稳健的验证方式）。
 
-   **② 预注册协议（Pre-registration）—— 防确认偏误**
-   - **在看 3 个事件数据之前**，先写下算法设计假设（§4.1-§4.4b 的所有阈值/参数），锁定为"预注册文档"
-   - 算法实现后跑 B4，结果与预注册假设对比——**禁止看到结果后回头调参数**
-   - 参考：[Neyt/How-To-Backtest-Correctly](https://github.com/Neyt/How-To-Backtest-Correctly)（2026-03，Lopez de Prado 开源）"The Second Law: Never run a backtest until your model is fully specified"
-   - 预注册内容：capitulation 衰减参数（halflife=10/30）、valuation CAPE 分位阈值、breadth_thrust 0.615 阈值、spring velocity 4-step、three_yang 6 维标准、confirm 析取逻辑
+   **② 预注册协议（Pre-registration）—— 防确认偏误**：看 3 个事件数据**之前**先锁定 §4.1-§4.4b 全部阈值/参数为预注册文档；实现后跑 B4 与预注册假设对比，**禁止看到结果后回头调参数**（[Neyt/How-To-Backtest-Correctly](https://github.com/Neyt/How-To-Backtest-Correctly) 2026-03 "The Second Law: Never run a backtest until your model is fully specified"）。预注册内容：capitulation 衰减参数（halflife=10/30）、valuation CAPE 分位阈值、breadth_thrust 0.615 阈值、spring velocity 4-step、three_yang 6 维标准、confirm 析取逻辑。
 
-   **③ Deflated Sharpe Ratio（DSR）—— 多重检验校正**
-   - 传统 Sharpe Ratio 不惩罚多次试验 → 虚高。DSR 校正：考虑试验次数 N、收益偏度、峰度、Sharpe 方差（[Bailey & López de Prado 2014](https://research.mental-momentum.ai/r/backtest-overfitting-trading-strategy-ju55g3)）
-   - **关键操作要求**：记录所有历史回试次数 N（每次调参/试阈值算一次），供 DSR 校正用
-   - 参考：[Mental-Momentum 2026-06](https://research.mental-momentum.ai/r/backtest-overfitting-trading-strategy-ju55g3) "must record all historical backtests to determine the true value of N"
+   **③ Deflated Sharpe Ratio（DSR）—— 多重检验校正**：传统 Sharpe 不惩罚多次试验→虚高；DSR 校正试验次数 N、偏度、峰度、Sharpe 方差（[Bailey & López de Prado 2014](https://research.mental-momentum.ai/r/backtest-overfitting-trading-strategy-ju55g3)）。**关键操作要求**：记录所有历史回试次数 N（每次调参/试阈值算一次）供 DSR 校正。
 
-   **④ Combinatorial Purged Cross-Validation（CPCV）—— 替代 walk-forward**
-   - walk-forward 只产生 1 条 OOS 曲线（选择偏差）；CPCV 产生 N 条（性能分布）
-   - 参数：N=10 组, k=2 测试组 → C(10,2)=45 组合 → 45 条 OOS 曲线
-   - Purging：移除标签窗口与测试集重叠的训练样本；Embargo：训练/测试间加缓冲（日线 2-5 日）
-   - 参考：[noonbarbari 2026-07](https://noonbarbari.xyz/de/blog/cpcv-combinatorial-purged-cv) CPCV 深度解析 / [Neyt 开源实现](https://github.com/Neyt/How-To-Backtest-Correctly)
+   **④ Combinatorial Purged Cross-Validation（CPCV）—— 替代 walk-forward**：walk-forward 只产 1 条 OOS 曲线（选择偏差）；CPCV 产 N 条性能分布。参数 N=10 组/k=2 测试组→C(10,2)=45 组合；Purging 移除标签窗口与测试集重叠的训练样本，Embargo 训练/测试间加缓冲（日线 2-5 日）（[noonbarbari 2026-07](https://noonbarbari.xyz/de/blog/cpcv-combinatorial-purged-cv) / [Neyt 开源实现](https://github.com/Neyt/How-To-Backtest-Correctly)）。
 
-   **⑤ Minimum Track Record Length（MinTRL）—— 最小可信记录长度**
-   - Lopez de Prado 公式：在给定 Sharpe 和置信度下，计算"需要多长跟踪记录才能统计可信"
-   - N=3 事件远不够——MinTRL 会告诉你"这个 Sharpe 不可信"，这正是诚实的结论
-   - 用途：不作为通过/不通过门槛，而是**诚实标注"S2 算法验证的统计置信度低"**，防止过度自信
+   **⑤ Minimum Track Record Length（MinTRL）—— 最小可信记录长度**：Lopez de Prado 公式算"给定 Sharpe 和置信度需多长跟踪记录才统计可信"。N=3 事件远不够——MinTRL 会诚实标注"S2 算法验证的统计置信度低"，不作通过门槛，防过度自信。
 
-   **⑥ Walk-Forward Efficiency Ratio（WFE）+ 参数稳定性测试 —— 量化验收门槛**
-   - **WFE = OOS Sharpe / IS Sharpe ≥ 0.6**（[digitalninjasystems 2026-07](https://digitalninjasystems.wpcomstaging.com/2026/07/03/how-to-avoid-overfitting-when-backtesting/)）：OOS 保留 IS 60% 以上性能才算稳健，<0.5 = 红旗
-   - **参数稳定性测试**：平移超参 ±10%（如 halflife 10→9/11），Sharpe 是否陡降？平滑高原 = 稳健，针尖峰 = 过拟合
-   - **Monte Carlo 置换检验**：随机打乱信号 1000 次，原始策略是否为极端离群值？
+   **⑥ Walk-Forward Efficiency Ratio（WFE）+ 参数稳定性测试 —— 量化验收门槛**：**WFE = OOS/IS Sharpe ≥ 0.6**（[digitalninjasystems 2026-07](https://digitalninjasystems.wpcomstaging.com/2026/07/03/how-to-avoid-overfitting-when-backtesting/)），<0.5 = 红旗；**参数稳定性**：超参平移 ±10%（如 halflife 10→9/11）Sharpe 陡降=针尖峰过拟合、平滑高原=稳健；**Monte Carlo 置换检验**：随机打乱信号 1000 次，原始策略是否极端离群。
 
-   **开源实现参考**：[Neyt/How-To-Backtest-Correctly](https://github.com/Neyt/How-To-Backtest-Correctly)（2026-03，MIT 协议）实现了 Triple-Barrier / Meta-Labeling / Purging & Embargoing / CPCV / DSR / PBO / MinTRL 全套，可直接复用。施工时 `pip install` 或 vendor 进 `src/zephyr/shared/backtest/`。
+   **开源实现参考**：[Neyt/How-To-Backtest-Correctly](https://github.com/Neyt/How-To-Backtest-Correctly)（2026-03，MIT）实现 Triple-Barrier/Meta-Labeling/Purging & Embargoing/CPCV/DSR/PBO/MinTRL 全套，可 `pip install` 或 vendor 进 `src/zephyr/shared/backtest/`。
 
    **防过拟合铁律（保留 v0.4.0 原则）**：
    - 算法重设计独立于 B4 验证进行——先按设计意图改算法（过程化/基本面化/V 反转通路），再看 B4 结果。**禁止"调参直到 3/3 命中"**——若改后仍不命中，说明设计意图与历史事件时点有更深层偏差，应回到 §4.12 重新审视事件标注（expected_stage）而非继续调参
@@ -974,16 +952,14 @@ def s2_three_yang_flag(
 
 ### 4.6 演进方向（P2+，非 P1-E9 范围）
 
-v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法，作为 P1-E9 之后的演进方向，不进 MVP：
+v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法，P1-E9 效果不足时再按本节演进：
 
-1. **AH-HMM 元体制门控**（Tampouris & Dritsaki, JRFM 2026-01）：转移概率依赖未观测的元体制（meta-regime），每元体制有自己的转移矩阵。§4.4 V 反转通路（breadth thrust 析取）是其具体实现；元体制门控是更一般的框架——政策型复苏元体制下 S2 阈值放宽（policy/breadth 权重高），市场型复苏元体制下 S2 阈值严（fund/wyckoff 权重高）。P1-E9 验证 §4.4 析取逻辑效果后，若仍需更细的体制自适应，再演进到 AH-HMM。
-2. **LVI 强平级联模型**（LiveVolatile 2026-02）：把 capitulation 建模为机械性强平级联（margin call→强平→价跌→更多强平），LVI=(多头强平总量/未平仓合约)×波动率乘子，>30 高风险/>50 级联中。比 §4.1"量能+实体+下影线"更接近 capitulation 本质（杠杆清洗）。A 股可用融资融券余额变化+质押爆仓 proxy。需衍生品/杠杆数据，P2+ 方向。
-3. **滞回边沿触发器**（Modgil, arXiv:2606.19386, 2026-06）：用衰减信号做阈值触发时，带滞回的上升沿触发器（触发 60/解除 40）可有效避免衰减曲线在阈值附近震荡反复触发。§4.1 衰减加权解决了 rolling max 粘滞，但衰减信号仍可能在 trigger 门槛 60 附近上下震荡反复触发/解除 S2。ArXiv 实证滞回触发每轨迹仅 0-3 次 vs 持续报警 20/20。P1-E9 验证若发现反复触发，加滞回。
-4. **ProRealCode 16 事件 FSM 相位引擎**（González 2026-06-09）：用相位引擎自动分类 16 个 Wyckoff 事件（PSY/UT/BC/SOW/Spring/TSO...），从事件平衡推断主导相位（ACCUMULATION/DISTRIBUTION/NEUTRAL）。§4.3 spring 复用 wyckoff_engine 的 Spring 事件 flag；相位引擎更进一步——spring 只在 ACCUMULATION 相位下才有效，单 flag 不够。若 wyckoff_engine 不输出相位，可参考此引擎补相位判定。
-5. **EVR 量价背离信号**（v0.4.3 新增，[YoungCan-Wang/WyckoffTradingAgent](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/01_Finance_Wyckoff_Method) 2026-05）：EVR（Effort vs Result）= 成交量 > 1.6× 均量 + K 线实体极小（平盘）= 主力暗中吸筹（放了巨量但价格没动=有人在大量买入但刻意压住股价）。**当前 S2 无此维度**——capitulation 衡量"恐慌卖出"，EVR 衡量"放量抗跌暗中吸筹"，二者互补。可作为 S2 confirm 的辅助维度或 wyckoff_score 加分项。A 股可用"成交量分位 + 日内振幅"自算，无需额外数据源。P2+ 方向。**v0.5.1 补可计算代理**：ADL（Accumulation/Distribution Line）反转三模式可作 EVR 的成熟可计算实现（FibAlgo 2026-02）——① 经典背离（价格新低但 ADL 更高低，跨度≥5 日 + 收盘在日振幅中的位置由下 25% 区间改善至上 50% 区间）② 吸筹脉冲（大跌日 ADL 暴增=收盘位置极强，2020-03-23 新冠底实例）③ 隐形吸筹（ADL 走平/微升而价格阴跌 7-10 日）。ADL = 前值 + 资金流乘子×成交量，资金流乘子 = [(close-low)-(high-close)]/(high-low)，纯 OHLCV 可算无需新数据。
-6. **Flush 桥接信号**（v0.4.3 新增，[TradingSim 2026-05](https://www.tradingsim.com/blog/capitulate)）：flush = capitulation 末端的最终暴跌——"扫掉最后弱手和止损，高量打印但收盘回到前区间内，留长下影线"。这正好是 §4.1 capitulation（过程）→ §4.3 spring（收回）的**时序桥接信号**：当前两个维度分离，flush 可量化判定"capitulation 刚结束、spring 即将开始"的过渡态。量化：当日 low 创 N 日新低 + 收盘回到前日区间内 + 下影线 >50% + 量 >2× 均量。可作为 strong_confirm 的时序前置条件。P2+ 方向。
-
-> 这 6 项均为"§4.1-§4.4b 治本方案验证效果不理想时的进阶选项"，非 P1-E9 必做。P1-E9 先做 §4.1-§4.4b + §4.5 验证闭环，效果不足再按本节演进。
+1. **AH-HMM 元体制门控**（Tampouris & Dritsaki, JRFM 2026-01）：转移概率依赖未观测元体制（meta-regime），每元体制有自己的转移矩阵。§4.4 析取通路是其具体实现；元体制门控更一般——政策型复苏元体制下 S2 阈值放宽（policy/breadth 权重高），市场型下从严（fund/wyckoff 权重高）。P1-E9 验证 §4.4 效果后若需更细体制自适应再演进。
+2. **LVI 强平级联模型**（LiveVolatile 2026-02）：capitulation 建模为机械性强平级联（margin call→强平→价跌→更多强平），LVI=（多头强平总量/未平仓合约）×波动率乘子，>30 高风险/>50 级联中。比 §4.1 更接近 capitulation 本质（杠杆清洗）。A 股可用融资融券余额变化+质押爆仓 proxy；需衍生品/杠杆数据。
+3. **滞回边沿触发器**（Modgil, arXiv:2606.19386, 2026-06）：衰减信号做阈值触发时带滞回（触发 60/解除 40）避免衰减曲线在阈值附近震荡反复触发。ArXiv 实证滞回触发每轨迹仅 0-3 次 vs 持续报警 20/20。P1-E9 验证若发现反复触发再加。
+4. **ProRealCode 16 事件 FSM 相位引擎**（González 2026-06-09）：相位引擎自动分类 16 个 Wyckoff 事件（PSY/UT/BC/SOW/Spring/TSO...），从事件平衡推断主导相位（ACCUMULATION/DISTRIBUTION/NEUTRAL）——spring 只在 ACCUMULATION 相位下才有效，单 flag 不够。若 wyckoff_engine 不输出相位可参考此引擎补相位判定。
+5. **EVR 量价背离信号**（v0.4.3，[YoungCan-Wang/WyckoffTradingAgent](https://github.com/YoungCan-Wang/WyckoffTradingAgent/wiki/01_Finance_Wyckoff_Method) 2026-05）：EVR（Effort vs Result）= 量 >1.6× 均量 + 实体极小（平盘）= 主力暗中吸筹（放巨量但价格没动）。与 capitulation（恐慌卖出）互补，可作 S2 confirm 辅助维度或 wyckoff_score 加分项；A 股用"成交量分位+日内振幅"自算无需新数据。**v0.5.1 补可计算代理**：ADL 反转三模式（FibAlgo 2026-02）——① 经典背离（价格新低但 ADL 更高低，跨度≥5 日+收盘位置由下 25% 区间改善至上 50%）② 吸筹脉冲（大跌日 ADL 暴增，2020-03-23 新冠底实例）③ 隐形吸筹（ADL 走平/微升而价格阴跌 7-10 日）。ADL = 前值 + 资金流乘子×成交量，资金流乘子 = [(close-low)-(high-close)]/(high-low)，纯 OHLCV 可算。
+6. **Flush 桥接信号**（v0.4.3，[TradingSim 2026-05](https://www.tradingsim.com/blog/capitulate)）：flush = capitulation 末端最终暴跌（扫掉最后弱手，高量+收盘回前区间+长下影），是 §4.1 capitulation（过程）→ §4.3 spring（收回）的**时序桥接**。量化：当日 low 创 N 日新低 + 收盘回前日区间 + 下影线 >50% + 量 >2× 均量；可作 strong_confirm 时序前置条件。
 
 ---
 
@@ -1013,9 +989,9 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 6. **[参考] 历史事件样本代表性**（反向防过拟合）：3 个 S2 事件（2015 股灾/2020 疫情/2024 924）都是政策驱动 V 型反转。A 股是否存在"慢复苏型" S2（无强力政策、缓慢筑底，走 Wyckoff 吸筹）未被标注？若只按 V 型反转调参，可能对慢复苏失效——需评估是否扩充历史事件样本。**v0.4.0 注**：confirm 析取逻辑（wyckoff ∨ breadth_thrust）正是为同时覆盖两类复苏而设计
 7. **[重要] fund 与 P1-E9 协同**：confirm 需 fund≥50，但 fund 归 P1-E4。P1-E9 修好 capitulation/valuation/breadth_thrust 后若 P1-E4 未完成，confirm 仍卡 fund 门槛——两工程项的施工顺序需协调
 8. **[参考] ML trough nowcasting 远期方向（v0.4.0 新增）**：Rao & Rojas 2025（arXiv:2509.05922）用 SVM + 200 特征（期权 RN 偏度/做市商持仓/put-call）实时识别 capitulation，ROC AUC 0.89。需期权数据（沪深300 ETF 期权可得）。非 MVP，记为 P2+ 方向，不进 P1-E9。（另见 §4.6 演进方向：AH-HMM/LVI/滞回触发器/ProRealCode FSM/EVR/flush）
-9. **[重要] breadth_thrust 阈值本土化校准（v0.4.3 新增）**：§4.4 的 Zweig Breadth Thrust 阈值 0.615（thrust）/ 0.40（washout）是美股 NYSE 标准，A 股市场广度特征不同（涨跌停板制度、散户占比 60%+、924 上涨占比 96.97%）。**Step 0 ③ 勘探时需用 A 股历史数据校准**——建议测试 0.58-0.65 区间，可参考沪深300 成分股上涨占比的 90%分位值。washout 阈值 0.40 同理需校准。校准须在独立于 3 事件的样本上做（§4.5 防过拟合），不能只在 3 个事件上调。
-10. **[阻断] fund 维度升级——成交量代理偏弱（v0.4.3 新增，跨 P1-E4）**：§4.0 警告已述，fund 当前用成交量代理资金承接，但 2026 研究（慧眼财经/华夏时报/东方财富）实证成交量不区分方向（散户接盘式上涨持续性差）、无法识别资金性质（配置型 vs 交易型北向）、缺乏"出清"语义（融资余额低点=出清）。924 是"主力净流入 209.85 亿 + 融资余额攀升 + 成交量量级跃升"三者共振。**confirm≥50 依赖 fund**——P1-E4 应升级 fund 为"融资余额变化分位 + 超大单净流入分位 + 成交量分位"加权。若 P1-E4 未完成，confirm 仍卡 fund 门槛。施工顺序需协调 P1-E4 与 P1-E9。
-11. **[重要] vix 门槛校准——≥40 偏美股标准（v0.4.3 新增，跨 P1-E7）**：§4.0 警告已述，vix≥40 是美股 3-sigma 标准（数年一遇），A 股合成 VIX>25 即触发 8/8 胜率信号（雪球淡定菌/浙商廖静池 2026，沪深300 期权 CBOE 方差互换法）。2026-07 大跌沪深300 期权隐波仅升至 23-28%。**trigger≥40 依赖 vix**——P1-E7 应校准 vix 门槛：若用沪深300 合成 VIX 降至 ≥25-30；或改"IV 近 89 日分位≥80% + 价格布林下轨"（浙商方案，胜率 75-86%）。实现波动率分位是后视镜，无法捕捉 924 这类政策脉冲拐点——需期权隐含 VIX 互补。非 P1-E9 范围，但 trigger 能否触发依赖此。
+9. **[重要] breadth_thrust 阈值本土化校准（v0.4.3 新增）**：§4.4 的 0.615（thrust）/0.40（washout）是美股 NYSE 标准，A 股广度特征不同（涨跌停板、散户 60%+、924 上涨占比 96.97%）。**Step 0 ③ 用 A 股历史数据校准**（测试 0.58-0.65，参考沪深300 成分股上涨占比 90% 分位）；校准须在独立 3 事件的样本上做（§4.5 防过拟合）。
+10. **[阻断] fund 维度升级——成交量代理偏弱（v0.4.3 新增，跨 P1-E4）**：依据与量化方案见 §4.0 fund 警告。**confirm≥50 依赖 fund**——P1-E4 应升级 fund 为"融资余额变化分位 + 超大单净流入分位 + 成交量分位"加权；若 P1-E4 未完成 confirm 仍卡 fund 门槛，施工顺序需协调 P1-E4 与 P1-E9。
+11. **[重要] vix 门槛校准——≥40 偏美股标准（v0.4.3 新增，跨 P1-E7）**：依据见 §4.0 vix 警告。**trigger≥40 依赖 vix**——P1-E7 应校准：沪深300 合成 VIX 降至 ≥25-30，或改"IV 近 89 日分位≥80% + 价格布林下轨"（浙商方案，胜率 75-86%）。非 P1-E9 范围，但 trigger 能否触发依赖此。
 12. **[重要] ARCH 登记状态三方不一致（v0.5.0 新增，跨文档治理）**：`#ARCH-REGIME-S2-ALGORITHM-001` 的 status 在三处不一致——本文档 §3.2 写 `proposed`（铁律#9 待用户确认）、[10_regime_detector_spec §9.7.3](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md) 写 `confirmed`、[13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) 写"待登记"。真源 [architecture_issue_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) 条目为准，10/13 号引用需同步（不越界改，由负责 AI 回填）。
 13. **[重要] 12/13 号闭环叙事未同步（v0.5.0 新增，跨文档治理）**：① [12_regime_phase2_validation](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/12_regime_phase2_validation.md) 仍停留在"B4 FAIL(3/6)、S2 0/3 归因数据缺失"的第二批结论，**未回填** commit 93a25890 的 design_match 闭环（B4=S1 3/3 PASS、Phase 2 闭环）——与 10 号 §9.7/本文档/13 号 §0.1 的闭环叙事直接矛盾，12 号作为 Phase 2 验证真源需回填终态（不越界改，由 AI-17 负责）。② 13 号 §3.5.2 仍写"回退 `data_ready` true→false"（路 1 旧表述），与本文档 §2.5 裁定（路 3：design_match 排除 + data_ready 维持 true）矛盾；13 号 §3.5 范围仅 3 维（capitulation/valuation/spring），未同步本文档 v0.4.0/v0.4.3 扩围的 P1-E9d（breadth_thrust V 反转通路）/P1-E9e（three_yang 6 维校准）；E7 编号 13 号写 `P2-E7`、本文档写 `P1-E7` 需统一（不越界改，由 AI-07 负责）。
 14. **[参考] 10 号 §4.12.10 十二维体系演进对齐（v0.5.0 新增）**：10 号 §4.12.10 已将 S2 升级为 12 维体系——"触发：8 基础维度≥80 或 4 机构维度≥50；确认：8 基础≥140 且 4 机构≥80；强确认：12 维总分≥**260** + Spring Terminal Shakeout + 信用利差收紧"。本文档 §1.1/§1.3 的 strong_confirm（total≥250）对齐的是 §4.12.8 八维体系。P1-E9 施工前需裁定：TRANSITION_CONFIG["S2"] 的 total_gte=250 是否随 10 号 §4.12.10 升至 260、机构维度组（信用利差等）是否纳入（不越界改 10 号，裁定后回写本文档 §4 + regime_detector.py）。
@@ -1034,6 +1010,7 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-15 | 0.5.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-02）——§1.4/§2.2-2.4 裁定散文紧凑化；§4.1 三层升级解释精简；§4.3 现状段改指针（诊断详见 §1.2.3）；§4.5 防过拟合 6 层方法论栈列表转段落；§4.6 演进方向 6 条精简；§6 开放问题 9/10/11 与 §4.0 警告去重（改指针+保留关键阈值） | 文档压缩治理（第一轮 ab3df58d9d 后续）；章节编号零改动，参数/裁定/锚点零丢失 |
 | 2026-08-09 | 0.4.5 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules/related_issues 扩展字段保留），H1 去文件名前缀与 title 对齐；文末补建本「修订记录」章节（§7）；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾）；14 号此前无修订记录章节，补齐对齐 01_design_memo_management_spec §4.3 规范 |
 | 2026-08-12 | 0.5.0 | 第十一轮审查（AI-15）：① §0.1 事件经过表回填 2026-08-07 两个 commit（eb3db21bd8 合成 VIX 后备 + 981d59d8cc S1 correlation 门槛校准）+ 新增因果链完整性注记（数据层根因 vs 算法层根因两层区分）；② 新增 §0.3 已施工设施盘点（通用规则 #11：12 维度函数/合成 VIX/wyckoff_engine/design_match 字段/诊断脚本/测试/治理登记 + P1-E9 未施工清单）；③ §4.4b 校正实参名（s2_three_yang_flag 传 pct_change 非 close）；④ §6 开放问题新增 12-14（ARCH 状态三方不一致 / 12+13 号闭环叙事未同步 / 10 号 §4.12.10 十二维体系演进对齐） | 因果时间线完整性（thresholds 过高/NLP stub=0/合成 VIX 缺失的第一层根因及修复方案此前未入本文档）；规则 #11 基础设施盘点合规；跨文档一致性缺口登记（不越界改 10/12/13 号） |
 | 2026-08-12 | 0.5.1 | 第十二轮最新研究整合（AI-15，2026-08-12 全网搜索）：§4.6 演进方向#5 EVR 补 ADL 可计算代理（FibAlgo 2026-02 ADL 反转三模式：经典背离/吸筹脉冲/隐形吸筹，纯 OHLCV 可算无需新数据）；本轮搜索确认 capitulation 检测（Williams Vix Fix 价格合成恐慌指标=合成 VIX 思路同源）与 S2 多维度触发逻辑无新决策缺口 | 第十二轮搜索（crisis recovery/capitulation 2026）增量价值仅 ADL 一项，其余与既有研究库重合 |

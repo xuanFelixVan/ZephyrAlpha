@@ -5,9 +5,9 @@ title: "Phase 2 模型质量验证设计——A1/A2/B1/B4 四验证器架构"
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "0.3.0"
-date: "2026-08-12"
-last_updated: "2026-08-12"
+version: "0.3.1"
+date: "2026-08-15"
+last_updated: "2026-08-15"
 topic: regime_phase2_validation
 scope: 07_trading_decision_architecture
 doc_id: 12_regime_phase2_validation
@@ -245,8 +245,6 @@ Phase 2 执行 → 4 项独立判定
 
 ---
 
-**下一步**：用户审阅本设计，确认开放问题后，按 MVP 分批施工。
-
 ## 9. 第一批 MVP 执行结果（2026-08-07）
 
 ### 9.1 实施清单
@@ -261,9 +259,7 @@ Phase 2 执行 → 4 项独立判定
 | 单测 | `tests/regime/phase2/test_a1_sample_sufficiency.py`（10）+ `test_b4_transition_accuracy.py`（15） | ✅ 25 passed |
 | JSON 报告 | `runtime/phase2_reports/phase2_a1b4_*.json` | ✅ |
 
-**附带修复**：`overlay_signals_builder.py` 的 `_compute_vix_pct`/`_compute_t3_inputs` 调用点
-原无方法实现（Phase 2c 残留），补 stub（返回 None/空 dict）使 `_precompute` 不再 crash，
-T3 资金/板块 4 维度走 0.0 降级（与 stub 等效，待数据管道就绪后激活）。
+**附带修复**：补 `overlay_signals_builder.py` 的 `_compute_vix_pct`/`_compute_t3_inputs` stub（Phase 2c 残留），T3 资金/板块 4 维度走 0.0 降级（待数据管道就绪后激活）。
 
 ### 9.2 真实数据验证结果（2010-2026，4002 交易日）
 
@@ -296,18 +292,11 @@ T3 资金/板块 4 维度走 0.0 降级（与 stub 等效，待数据管道就�
 
 ### 9.3 诊断与下一步
 
-B4 FAIL 的根因是**overlay 触发逻辑与历史事件未对齐**，分两层：
+B4 FAIL 根因两层（修复方向即 §9.4 P0-P2，已由 §10.1 执行）：
+1. **S1 误触发**：非危机日触发 69 次却漏真实危机日——`vix_panic` 用 `vol_pct` 代理（合成 VIX 未实现），阈值 0.85/0.90 在 A 股常态高波期易触发；`correlation` 60 日 rolling 滞后，危机首发日未升。
+2. **S2 零触发**：trigger 需 `capitulation≥60 + vix≥40 + bad_news_flat≥40`，而 `bad_news_flat` 是 NLP stub（=0.0）且缺合成 VIX。
 
-1. **S1 误触发**：S1 在非危机日触发 69 次（false positive），却漏掉真实危机日。
-   - 可能原因：`vix_panic` 用 `vol_pct` 代理（合成 VIX 未实现），阈值 0.85/0.90 在
-     A 股常态高波期也易触发；`correlation` 60 日 rolling 滞后，危机首发日未升。
-   - 方向：实现合成 VIX（`_compute_vix_pct`）+ 校准 S1 trigger 的 vix_panic/correlation 门槛
-2. **S2 零触发**：S2 trigger 需 `capitulation≥60 + vix≥40 + bad_news_flat≥40`，
-   而 `bad_news_flat` 是 NLP stub（=0.0），`vix` 同样缺合成 VIX。
-   - 方向：实现合成 VIX + NLP 管道（`bad_news_flat`/`policy`），或降低 S2 trigger 门槛
-
-**不弃用 regime**（C1 已证明节流有效）：B4 FAIL 指向 overlay 触发逻辑需重设计，
-非 regime 整体失效。重设计后回到 Phase 2 重验。
+**不弃用 regime**（C1 已证明节流有效）：B4 FAIL 指向 overlay 触发逻辑需重设计，非 regime 整体失效。
 
 ### 9.4 建议后续优先级
 
@@ -380,15 +369,9 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 | OOS 样本 | 1815 | — | 2019-2026 |
 
 **诊断**：
-- IS 和 OOS 模型的状态解码一致率极低（5.0%），说明 HMM 在 2010-2018 学到的状态结构
-  与 2019-2026 差异巨大——模型在时间维度上不稳定
-- 可能原因：
-  1. A 股市场结构在 2019 前后发生变化（注册制、外资流入、量化崛起）
-  2. 9 态 HMM 过拟合 IS 段噪声，OOS 段态分配不同
-  3. 标签对齐（按 vol_pct 列均值排序）可能不充分——若两模型 vol_pct 排序相近但
-     其他特征排列不同，对齐会错配
-- **不弃用 regime**：C1 已证明节流有效。A2 FAIL 指向模型需重设计（降态数/换特征/
-  walk-forward 更频繁 refit），非 regime 整体失效
+- IS/OOS 状态解码一致率极低（5.0%）→ HMM 学到的状态结构跨时间维度不稳定。
+- 可能原因：2019 前后市场结构变化（注册制/外资流入/量化崛起）；9 态过拟合 IS 段噪声；标签对齐（按 vol_pct 列均值排序）不充分（§7 开放问题 1 已升级 Hungarian 全特征匹配）。
+- **不弃用 regime**：C1 已证明节流有效。A2 FAIL 指向模型需重设计（降态数/换特征/walk-forward 更频繁 refit），非 regime 整体失效
 
 #### B1 概率校准度：❌ FAIL（误差=27.6%）
 
@@ -409,14 +392,8 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 | 80-100% | 0.982 | 0.523 | 0.459 | 1406 |
 
 **诊断**：
-- **核心问题**：80-100% 桶（1406 样本，占 78%）预测概率 0.982 但实际频率仅 0.523——
-  HMM 严重过度自信，"98% 确信"时实际只有 52% 命中
-- 中低置信度桶（40-60%, 60-80%）校准良好（误差<5%），说明低置信度预测可靠
-- 高置信度桶（80-100%）严重失准，可能原因：
-  1. HMM 的 `confidence`（max(P)）在 dominant regime 非常明确时趋近 1.0，
-     但后续 20 天收益方向受宏观/事件驱动，与 HMM 状态概率非线性相关
-  2. 12 维概率合并归一化后，overlay 态（r10-r12）置信度被放大
-  3. forward_days=20 可能太短——HMM 状态的收益预测力可能在更长周期（60-120 日）
+- **核心问题**：80-100% 桶（1406 样本占 78%）预测 0.982 但实际仅 0.523——HMM 严重过度自信；中低桶（40-60%/60-80%）校准良好（误差<5%）。
+- 高置信度桶失准可能原因：max(P) 在态明确时趋近 1.0 但后续 20 天收益方向受宏观/事件驱动（非线性相关）；12 维归一化后 overlay 态（r10-r12）置信度被放大；forward_days=20 可能太短（收益预测力或在 60-120 日）。
 
 **各态推断方向**（由数据推断，非固定映射）：
 
@@ -449,12 +426,8 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 | P1 | S2 数据：NLP + 资金/板块 | 解锁 S2 confirm + T3 | ✅ 已重定性（14号诊断：根因非数据缺失而是算法时点错配，S2 事件 design_match=false 排除，B4 回 PASS(3/3)） |
 | P2 | forward_days 参数扫描（20/60/120 日） | 验证收益预测力周期 | ⏳ 未执行（13号 Phase 3 后评估） |
 
-**不弃用 regime**（C1 已证明节流有效）：
-- A1 PASS + B4 S1 3/3 → 模型基础结构可用
-- A2/B1 FAIL 指向概率映射层需重设计，非 HMM 核心失效
-- 重设计 ConfidenceSignal + 降态数后回到 Phase 2 重验
-- **2026-08-12 闭环确认**：上述重设计已由 13号 Phase 3 P0（E1+E2）完成，Phase 2 四验证器重验全 PASS，见 §11
-
+**不弃用 regime**（C1 已证明节流有效）：A1 PASS + B4 S1 3/3 → 模型基础结构可用；A2/B1 FAIL 指向概率映射层需重设计（ConfidenceSignal + 降态数），非 HMM 核心失效。
+**2026-08-12 闭环确认**：重设计已由 13号 Phase 3 P0（E1+E2）完成，Phase 2 四验证器重验全 PASS，见 §11。
 
 ## 11. Phase 2 闭环与修复落盘（2026-08-12 审查回填）
 
@@ -498,13 +471,14 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 
 ### 11.5 外部印证（2026-08-12 WebSearch）
 
-- **标签对齐的结构性升级方向（远期候选，归 13号 Phase 3+ 评估）**：A2 的 Hungarian 全特征最优匹配是"事后对齐"，未解决跨 refit 标签切换（label switching）的结构性问题。egargale/hmm_test PRD #20（2026-05）记录了同构痛点——`_match_states()` 用欧氏距离匹配 means 导致 walk-forward 回测中 regime identity 不稳定，其引用的 **Wasserstein HMM**（Boukardagha 2026：2-Wasserstein 距离做 template-based regime identity tracking，跨 rolling refits 锚定态身份）是结构性解法；同 PRD 的 Robust HMM（Huber M 步抗 flash-crash outlier）/ Student-t emissions / ensemble 投票亦与本项目已知风险点对应。本项目 10号 HSMM/Student-t HMM 已在 Phase 4 鲁棒性阶段规划中（非过度工程清单确认），Wasserstein template tracking 可并入该阶段一并评估。
-- **regime 节流负结果对照**：thinking-blog（2026-05-15）对 6 策略分散加密组合实测 26 个 regime-throttle 变体 **0/26 通过 OOS**——"对已分散的强基线加 throttle 只会堆成本"。与本项目 C1"节流有效（MaxDD 改善 7.37pp）"相反的关键差异在**基线分散度**（其 6 策略机制各异已充分分散，本项目 A 股 T+1 单市场集中度更高）。此负结果的价值：提示 regime Shrinkage 的边际收益依赖组合分散度现状，G04 首批策略实盘后应复测节流净收益（降回撤收益 vs 削减盈利机会成本），归 34号 RegimeMetaAllocator 参数校准参考。
+- **标签对齐的结构性升级方向（远期候选，归 13号 Phase 3+ 评估）**：A2 的 Hungarian 全特征匹配是"事后对齐"，未解决跨 refit 标签切换（label switching）。egargale/hmm_test PRD #20（2026-05）记录同构痛点，其引用的 **Wasserstein HMM**（Boukardagha 2026：2-Wasserstein 距离 template-based regime identity tracking，跨 rolling refits 锚定态身份）是结构性解法；同 PRD 的 Robust HMM（Huber M 步）/ Student-t emissions / ensemble 投票亦对应本项目已知风险点。10号 HSMM/Student-t HMM 已在 Phase 4 规划中，Wasserstein template tracking 可并入一并评估。
+- **regime 节流负结果对照**：thinking-blog（2026-05-15）对 6 策略分散加密组合实测 26 个 regime-throttle 变体 **0/26 通过 OOS**。与本项目 C1"节流有效（MaxDD 改善 7.37pp）"相反的关键差异在**基线分散度**（其 6 策略已充分分散，本项目 A 股 T+1 单市场集中度更高）。提示：regime Shrinkage 边际收益依赖组合分散度，G04 首批策略实盘后应复测节流净收益，归 34号 RegimeMetaAllocator 参数校准参考。
 
 ## 修订记录
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-15 | 0.3.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-02） | 文档压缩治理（第一轮 ab3df58d9d 后续） |
 | 2026-08-12 | 0.3.0 | Phase 2 闭环回填 + 编号/判定基准修正 + 已施工设施盘点 | ① §1 总览表 B2→B4 编号修正（11号 §5 真源确认转换触发准确性为 B4，B2 是 CRPS）；② §1/§2.4 B1 判定基准回填 ECE（2026-08-08 代码已修订，样本加权替代简单均值，补记文档）；③ §7 开放问题 5 项全部标注关闭状态及施工去向（Hungarian 标签对齐/态方向数据推断/事件库落盘/MVP 顺序/分割点）；④ §9.4/§10.4 优先级表补执行状态列；⑤ 新增 §11 Phase 2 闭环与修复落盘——已施工设施盘点（含 13号 P0-E2 confidence_calibrator 两阶段校准器）+ A2 修复落盘（降态 9→4 BIC Kneedle，非原建议 9→6）+ B1 修复落盘（ECE=4.2% PASS）+ B4 修复落盘（14号 design_match=false 排除 S2 事件，PASS 3/3，履行 14号 §5 回写义务）+ Phase 2 最终状态表（四验证器全 PASS，2026-08-12 闭环） | 架构审查回填。12号 §10.4"需复核"状态已被 13号 Phase 3 P0 施工闭环，但文档未回填致与 13/14 号脱节；B2/B4 编号错误与 ECE 判定基准漂移（代码引用了一个未落盘的文档修订）一并修正；⑥ §11.5 补 2026-08-12 外部印证（Wasserstein template tracking 远期候选 + regime 节流 0/26 负结果对照） |
 | 2026-08-09 | 0.2.1 | 文件名 discussion_017_phase2_model_quality_validation.md → 12_regime_phase2_validation.md（段位编号制），内容不变 | 文档体系重排，新旧名对照见 00_index_trading_decision §10 |
 | 2026-08-09 | 0.2.2 | 文档头统一：frontmatter 补 owner/language/topic/scope + 字段顺序统一（doc_id/priority/depends_on/related_modules 扩展字段保留），H1 去文件名前缀与 title 对齐；章节编号与正文零变更 | 15 篇有内容文档结构统一（骨架体系收尾），规范真源 01_design_memo_management_spec §4.2 |
