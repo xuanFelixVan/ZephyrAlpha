@@ -72,18 +72,24 @@ def _probe_tickflow(provider):
 
 
 def _probe_rss(provider) -> list:
-    """rss 探针：解析 36氪直连 RSS feed，返回 entries。
+    """rss 探针：解析国内直连 RSS feed，返回 entries。
 
     选国内直连源（非 RSSHub 路由、非海外源），不依赖本地 RSSHub 进程或 VPN，
     纯粹验证 feedparser + 国内 HTTP 连通性。
+    2026-08-14 修复：36kr.com/feed 变为返回 200 但 0 entries（反爬空壳页），
+    单源探针误报 empty_data → 任务误走 fallback。改为双源任一并非空即健康。
     """
     import feedparser
     from zephyr.shared.foundation.constants import DEFAULT_HTTP_UA
-    resp = provider._http_get(
-        "https://36kr.com/feed", timeout=15,
-        headers={"User-Agent": DEFAULT_HTTP_UA},
-    )
-    return feedparser.parse(resp.content).entries
+    for url in ("https://36kr.com/feed", "https://www.tmtpost.com/rss.xml"):
+        try:
+            resp = provider._http_get(url, timeout=15, headers={"User-Agent": DEFAULT_HTTP_UA})
+            entries = feedparser.parse(resp.content).entries
+            if entries:
+                return entries
+        except Exception:  # noqa: BLE001 — 探针容错：单源失败尝试下一源
+            continue
+    return []
 
 
 def _probe_cls(provider) -> list:
