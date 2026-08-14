@@ -211,12 +211,6 @@ SQL_SELECT_ALL_DOMAINS = "SELECT * FROM domains"
 
 # --- add_design_node / add_file_node ---
 SQL_SELECT_NODE_BY_PATH_DESIGN = "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'"
-SQL_INSERT_DESIGN_NODE = (
-    "INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id, "
-    "build_status, design_maturity, blueprint_path, can_build) "
-    "VALUES (%s, %s, %s, %s, %s, %s, 'design', %s, 1) "
-    "RETURNING node_id"
-)
 SQL_SELECT_NODE_BY_PATH_PRODUCTION = "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='production'"
 SQL_INSERT_FILE_NODE = (
     "INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id, "
