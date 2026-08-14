@@ -1,5 +1,13 @@
 ---
+title: 架构裁定书——AI-LIQ-001 遗留项六项全面审查（worktree wipe 事故）
+doc_type: architecture_review
 ttl: task_bound
+completes_when: "wipe 事故治本项（tracker #38 S1/S2/S3/S4 + #49 reconciler 误删排查）全部闭环后归档转 permanent"
+owner: ZephyrAlpha-Owner
+language: zh
+status: active
+version: "1.0.1"
+date: 2026-08-14
 ---
 
 # 架构裁定书：AI-LIQ-001 遗留项六项全面审查
@@ -7,6 +15,7 @@ ttl: task_bound
 > 审查人：架构师视角（客观第三方）｜方法：物证驱动 + 第一性原理｜范围：6 项遗留项全部完成代码级/文档级实证调研
 > 来源：AI-LIQ-001 会话（37 号流动性危机 Protocol 施工队），2026-08-14 归档 by 统筹会话（AI-SOP-001）
 > 关联：#ARCH-GIT-CLEAN-GUARD-FIX（2026-08-11 git clean 灾难）｜67_merge_conflict_resolution_sop｜tracker §六 #34-37
+> 恢复注记：本文件曾于 2026-08-14 被不明删除（工作区未暂存删除），由统筹从 git 历史恢复重写（内容与原 commit 14644ab0 一致）。
 
 ## 第一部分 · P0 wipe 事故（分析过程 → 裁定）
 

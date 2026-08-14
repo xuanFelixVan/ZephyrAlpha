@@ -8733,6 +8733,16 @@ creation_tokens:
     created_by: "session-AI-SOP-001"
     capability: "tomorrow_plan_engine"
 
+  # --- 统筹文件 reconciler 误删恢复重登记（2026-08-14，事故#49，AI-SOP-001）---
+  - file: "docs/_working/construction_progress_tracker.md"
+    token: "auto-coord-tracker-restore-20260814"
+    created_by: "session-AI-SOP-001"
+    capability: "construction_coordination"
+  - file: "docs/_working/handoff_construction_coordinator.md"
+    token: "auto-coord-handoff-restore-20260814"
+    created_by: "session-AI-SOP-001"
+    capability: "construction_coordination"
+
   # --- 流动性危机管理器（2026-08-13，37号 G18 Protocol 施工，MOD-RK-21）---
   - file: "src/zephyr/risk/core/liquidity_crisis_manager.py"
     token: "auto-risk-liquidity-crisis-manager-20260813"
