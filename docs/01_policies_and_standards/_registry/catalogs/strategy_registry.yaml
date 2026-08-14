@@ -16,7 +16,7 @@ tier: tier_2_data_runtime
 status: active
 version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-13'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - strategy_id
@@ -118,10 +118,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.1"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -186,10 +186,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.2"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -254,10 +254,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.3"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -322,10 +322,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.5"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -390,10 +390,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.7"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -458,10 +458,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.8"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -526,10 +526,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.9"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -594,10 +594,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.10"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -662,10 +662,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.11"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -730,10 +730,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.12"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -798,10 +798,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.14"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -866,10 +866,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.16"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -934,10 +934,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.17"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1002,10 +1002,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.18"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1070,10 +1070,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.19"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1138,10 +1138,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.20"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1206,10 +1206,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.21"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1274,10 +1274,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.22"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1342,10 +1342,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.23"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1410,10 +1410,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.24"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1478,10 +1478,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.27"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1546,10 +1546,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.28"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1614,10 +1614,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.29"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1682,10 +1682,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.31"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1750,10 +1750,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.32"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1818,10 +1818,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S9.33"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1889,10 +1889,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.1"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -1957,10 +1957,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.2"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2025,10 +2025,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.3"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2093,10 +2093,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.7"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2161,10 +2161,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.9"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2229,10 +2229,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.10"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2297,10 +2297,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.11"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2365,10 +2365,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.12"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2433,10 +2433,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.13"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2501,10 +2501,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.14"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2569,10 +2569,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.15"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2637,10 +2637,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.16"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2705,10 +2705,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.17"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2773,10 +2773,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.18"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2841,10 +2841,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.19"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2909,10 +2909,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.20"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -2977,10 +2977,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.21"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3045,10 +3045,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S10.22"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3116,10 +3116,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.2"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3184,10 +3184,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.4"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3252,10 +3252,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.5"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3320,10 +3320,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.6"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3388,10 +3388,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.8"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3456,10 +3456,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.9"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3524,10 +3524,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.10"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3592,10 +3592,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.12"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3660,10 +3660,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.13"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3728,10 +3728,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.14"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3796,10 +3796,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.16"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3864,10 +3864,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.17"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -3932,10 +3932,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S11.18"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -4003,10 +4003,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S13.2"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"
@@ -4071,10 +4071,10 @@ strategies:
     doc_ref: "29_factor_strategy_extraction.md §S13.5"
     code_path: ""
     lifecycle_status: "candidate"
-    status: "active"
+    status: "deprecated"
     version: "1.0.0"
     created_at: "2026-08-10"
-    updated_at: "2026-08-10"
+    updated_at: "2026-08-15"
     go_live_date: null
     retired_date: null
     owner: "MOD-GOVERNANCE"

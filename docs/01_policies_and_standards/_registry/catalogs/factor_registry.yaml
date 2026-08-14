@@ -16,7 +16,7 @@ tier: tier_2_data_runtime
 status: active
 version: 1.1.0
 created: '2026-08-10'
-last_updated: '2026-08-13'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - factor_id
@@ -144,10 +144,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -206,10 +206,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -268,10 +268,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -330,10 +330,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -392,10 +392,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -454,10 +454,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -516,10 +516,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -578,10 +578,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -640,10 +640,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -702,10 +702,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -764,10 +764,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -826,10 +826,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -888,10 +888,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -950,10 +950,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1016,10 +1016,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1078,10 +1078,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1140,10 +1140,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1202,10 +1202,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1264,10 +1264,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1326,10 +1326,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1388,10 +1388,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1450,10 +1450,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1512,10 +1512,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1574,10 +1574,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1636,10 +1636,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1698,10 +1698,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1760,10 +1760,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1822,10 +1822,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1884,10 +1884,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -1946,10 +1946,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2008,10 +2008,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2070,10 +2070,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2132,10 +2132,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2194,10 +2194,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2256,10 +2256,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2318,10 +2318,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2380,10 +2380,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2446,10 +2446,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2508,10 +2508,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2570,10 +2570,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2632,10 +2632,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2694,10 +2694,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2756,10 +2756,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2818,10 +2818,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2880,10 +2880,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -2946,10 +2946,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3008,10 +3008,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3070,10 +3070,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3132,10 +3132,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3194,10 +3194,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3256,10 +3256,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3318,10 +3318,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3380,10 +3380,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3442,10 +3442,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3504,10 +3504,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3566,10 +3566,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3628,10 +3628,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3690,10 +3690,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3752,10 +3752,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3814,10 +3814,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3876,10 +3876,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -3938,10 +3938,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4000,10 +4000,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4062,10 +4062,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4128,10 +4128,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4190,10 +4190,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4252,10 +4252,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4314,10 +4314,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4376,10 +4376,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4438,10 +4438,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4500,10 +4500,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4562,10 +4562,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4624,10 +4624,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4686,10 +4686,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4748,10 +4748,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4810,10 +4810,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4876,10 +4876,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -4938,10 +4938,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5000,10 +5000,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5062,10 +5062,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5124,10 +5124,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5186,10 +5186,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5248,10 +5248,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5310,10 +5310,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5372,10 +5372,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5434,10 +5434,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5496,10 +5496,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5558,10 +5558,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5620,10 +5620,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5682,10 +5682,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5744,10 +5744,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5810,10 +5810,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5872,10 +5872,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5934,10 +5934,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -5996,10 +5996,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6058,10 +6058,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6124,10 +6124,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6186,10 +6186,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6248,10 +6248,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6310,10 +6310,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6372,10 +6372,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6434,10 +6434,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6496,10 +6496,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6558,10 +6558,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6620,10 +6620,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6682,10 +6682,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6744,10 +6744,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6806,10 +6806,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6868,10 +6868,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6930,10 +6930,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
@@ -6992,10 +6992,10 @@ factors:
   code_path: ""
   belongs_to_strategies: []
   variant_of: null
-  status: "candidate"
+  status: "deprecated"
   version: "1.0.0"
   created_at: "2026-08-10"
-  updated_at: "2026-08-10"
+  updated_at: "2026-08-15"
   owner: "MOD-GOVERNANCE"
   ic: null
   ir: null
