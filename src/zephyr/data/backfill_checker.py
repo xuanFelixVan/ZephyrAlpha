@@ -75,7 +75,9 @@ _SQL_KLINE_DISTINCT = (
     "WHERE trade_date >= toDate('{start}') AND trade_date <= toDate('{today}') "
     "ORDER BY trade_date"
 )
-_SQL_COUNT_BY_DATE = "SELECT count() FROM c1_market.{table} WHERE trade_date=toDate('{d_str}')"
+# 注：table 须为全名（含 db 前缀，如 c1_market.tick_data）——_TBL_TICK_DATA 来自
+# 品类注册表 get_registry().table() 即全名；勿再叠加硬编码前缀（2026-08-14 双重前缀事故）
+_SQL_COUNT_BY_DATE = "SELECT count() FROM {table} WHERE trade_date=toDate('{d_str}')"
 
 # tick_data 表写入列子句（用于 ch_writer.write_tsv）
 _TICK_DATA_COLS = (
@@ -159,7 +161,7 @@ def detect_missing_dates(
     """检测指定表在哪些日期的数据行数低于阈值。
 
     Args:
-        table: 表名（如 tick_data, kline_daily）
+        table: 全表名含 db 前缀（如 c1_market.tick_data，来自品类注册表）
         dates: 待检测的日期列表
         threshold: 行数低于此值视为缺失
 
@@ -205,9 +207,11 @@ _SQL_AVG_ROWS_7D = (
     "SELECT count() AS cnt FROM {table} "
     "WHERE {date_col} >= toDate(today() - 7) "
     "AND {date_col} < today() "
-    "GROUP BY {date_col})"
+    "GROUP BY toDate({date_col}))"
 )
-_SQL_COUNT_BY_CUSTOM_DATE = "SELECT count() FROM {table} WHERE {date_col}=toDate('{d_str}')"
+# 注：date_col 统一 toDate() 包裹——Date 列为 no-op，DateTime64 列为正确化
+# （修复 kline_5min.trade_time 等 DateTime64 列等值/分组比较恒失真问题）
+_SQL_COUNT_BY_CUSTOM_DATE = "SELECT count() FROM {table} WHERE toDate({date_col})=toDate('{d_str}')"
 
 
 def _load_tasks_yaml() -> list[dict]:
@@ -661,11 +665,11 @@ _KNOWN_GAPS_PATH = os.path.join(os.path.dirname(__file__), "config", "known_data
 
 # SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀，audit 2.7/3.8）
 _SQL_GAP_DATE_RANGE_COUNTS = (
-    "SELECT {date_col} as d, count() as cnt "
+    "SELECT toDate({date_col}) as d, count() as cnt "
     "FROM {table} "
     "WHERE {date_col} >= toDate('{start}') "
-    "AND {date_col} <= toDate('{end}') "
-    "GROUP BY {date_col} ORDER BY {date_col}"
+    "AND {date_col} <= toDateTime('{end} 23:59:59') "
+    "GROUP BY d ORDER BY d"
 )
 _SQL_GAP_TABLE_ROW_COUNT = "SELECT count() FROM {table}"
 
