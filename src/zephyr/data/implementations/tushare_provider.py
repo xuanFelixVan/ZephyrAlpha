@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.tushare_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] tushare SDK (ts.set_token/ts.pro_api/pro.news/pro.news_info)
+# [DEPENDENCIES] tushare SDK (ts.set_token/ts.pro_api/pro.news/pro.news_info/pro.fund_basic/pro.moneyflow/pro.fut_daily/pro.fund_nav)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
@@ -20,11 +20,13 @@
 - token 认证（环境变量 TUSHARE_TOKEN）
 - 历史数据截止 2024-08（新闻数据）
 - 积分不足时 API 调用受限（TPMaxQueryLimitError 触发重试）
-- 当前能力：news_news_info（新闻快讯）/ news_security（证券新闻）
+- 当前能力：news_data（新闻快讯/证券新闻）/ industry_class / industry_class_suppl /
+  lof_list（东财反爬替代源）/ money_flow（东财反爬替代源）/
+  futures_term_structure（QMT 期货板块为空替代源）/ etf_nav（东财净值接口反爬替代源）
 
 关键设计：
 - connect() 读取 TUSHARE_TOKEN 环境变量，初始化 pro_api 客户端
-- fetch() 调用 pro.news / pro.news_info，按 trade_date 分批
+- fetch() 按 payload.extra["capability"] 路由到各 _fetch_* 方法
 """
 from __future__ import annotations
 

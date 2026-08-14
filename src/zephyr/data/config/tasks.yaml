@@ -115,9 +115,6 @@ tasks:
   extra:
     description: "融资融券增量（AKShare stock_margin_detail_sse/szse）"
 
-  fallback_sources:
-  - source: exchange
-    capability: margin_trading
 - task_id: block_trade_incremental
   table: c1_market.block_trade
   source: akshare
@@ -130,9 +127,6 @@ tasks:
   extra:
     description: "大宗交易增量（AKShare stock_dzjy_mrmx）"
 
-  fallback_sources:
-  - source: exchange
-    capability: block_trade
 - task_id: dragon_tiger_incremental
   table: c1_market.dragon_tiger
   source: akshare
@@ -145,9 +139,6 @@ tasks:
   extra:
     description: "龙虎榜增量（AKShare stock_lhb_detail_em）"
 
-  fallback_sources:
-  - source: exchange
-    capability: dragon_tiger
 - task_id: dragon_tiger_seat_incremental
   table: c1_market.dragon_tiger_seat
   source: akshare
@@ -174,8 +165,6 @@ tasks:
 
   fallback_sources:
   - source: akshare
-    capability: kline_hk_daily
-  - source: qmt
     capability: kline_hk_daily
 - task_id: macro_data_incremental
   table: c1_market.macro_data
@@ -220,9 +209,6 @@ tasks:
   extra:
     description: "沪深港通资金历史（AKShare stock_hsgt_hist_em，有效范围 2014-11-17~2024-08-16 港交所停止公布前）"
 
-  fallback_sources:
-  - source: exchange
-    capability: hk_connect_flow
 - task_id: kline_futures_incremental
   table: c1_market.kline_futures
   source: miniqmt
@@ -236,8 +222,6 @@ tasks:
     description: "期货行情K线增量"
 
   fallback_sources:
-  - source: qmt
-    capability: kline_futures
   - source: akshare
     capability: kline_futures
 - task_id: futures_position_incremental
@@ -577,9 +561,6 @@ tasks:
   extra:
     description: "限售解禁增量（AKShare stock_restricted_release_detail_em）"
 
-  fallback_sources:
-  - source: exchange
-    capability: share_unlock
 - task_id: shareholder_incremental
   table: c3_fundamental.shareholder_count
   source: miniqmt
@@ -592,9 +573,6 @@ tasks:
   extra:
     description: "股东数据增量（十大股东/股东人数）"
 
-  fallback_sources:
-  - source: exchange
-    capability: shareholder
 - task_id: analyst_forecast_incremental
   table: c3_fundamental.analyst_forecast
   source: akshare
@@ -637,9 +615,6 @@ tasks:
   extra:
     description: "业绩快报增量（QMT Performance表）"
 
-  fallback_sources:
-  - source: exchange
-    capability: express_report
 - task_id: audit_opinion_incremental
   table: c3_fundamental.audit_opinion
   source: akshare
@@ -688,9 +663,6 @@ tasks:
     disabled: true
     disabled_reason: "akshare 1.18+ 已移除 stock_rights_issue_detail_sina 批量接口，仅剩 stock_allotment_cninfo 逐股接口，全市场5000+股拉取效率过低。配股为低频事件，待数据源补齐后启用。"
 
-  fallback_sources:
-  - source: exchange
-    capability: rights_issue
 - task_id: equity_pledge_incremental
   table: c3_fundamental.equity_pledge_detail
   source: akshare
@@ -703,9 +675,6 @@ tasks:
   extra:
     description: "股权质押增量（AKShare stock_gpzy_pledge_ratio_em）"
 
-  fallback_sources:
-  - source: exchange
-    capability: equity_pledge
 - task_id: equity_pledge_summary_incremental
   table: c3_fundamental.equity_pledge_summary
   source: akshare
@@ -719,9 +688,6 @@ tasks:
     description: "股权质押摘要增量（AKShare stock_gpzy_profile_em）"
 
   # ============== 周末财务时段（周六 10:00）==============
-  fallback_sources:
-  - source: exchange
-    capability: equity_pledge_summary
 - task_id: balance_sheet_incremental
   table: c3_fundamental.balance_sheet
   source: miniqmt
@@ -977,9 +943,6 @@ tasks:
   extra:
     description: "交易日历全量刷新（baostock query_trade_date）"
 
-  fallback_sources:
-  - source: exchange
-    capability: trade_calendar
 - task_id: stock_list_refresh
   table: c1_market.stock_list
   source: miniqmt
@@ -1378,9 +1341,6 @@ tasks:
   extra:
     description: "AKShare沪深港通北向资金（ak.stock_hsgt_hist_em，沪股通+深股通历史净买额/余额/持股市值）"
 
-  fallback_sources:
-  - source: exchange
-    capability: hk_connect_flow
 - task_id: kline_futures_full
   table: c1_market.kline_futures
   source: akshare
@@ -1394,9 +1354,6 @@ tasks:
     description: "AKShare期货主力合约K线（ak.futures_main_sina，82个主力合约历史K线，含持仓量）"
 
   # ============== AKShare 新增 6 个能力（2026-07-11）==============
-  fallback_sources:
-  - source: qmt
-    capability: kline_futures
 - task_id: limit_up_down_incremental
   table: c1_market.limit_up_down
   source: akshare
@@ -1409,9 +1366,6 @@ tasks:
   extra:
     description: "AKShare涨跌停增量（ak.stock_zt_pool_em涨停 + ak.stock_zt_pool_dtgc_em跌停）"
 
-  fallback_sources:
-  - source: exchange
-    capability: limit_up_down
 - task_id: share_change_incremental
   table: c3_fundamental.share_change
   source: akshare
@@ -1424,9 +1378,6 @@ tasks:
   extra:
     description: "AKShare股本变动增量（ak.stock_share_change_cninfo，含变动原因/总股本）"
 
-  fallback_sources:
-  - source: exchange
-    capability: share_change
 - task_id: st_stock_list_refresh
   table: c1_market.st_stock_list
   source: akshare
@@ -1438,9 +1389,6 @@ tasks:
   extra:
     description: "AKShare ST股票列表刷新（ak.stock_info_sh/sz_name_code 过滤ST/*ST/退市）"
 
-  fallback_sources:
-  - source: exchange
-    capability: st_stock_list
 - task_id: concept_board_refresh
   table: c1_market.concept_board
   source: akshare
@@ -1480,9 +1428,6 @@ tasks:
     description: "AKShare大宗交易每日统计增量（ak.stock_dzjy_mrtj，按日期范围查每日统计）"
 
   # ============== miniQMT 第二批新增能力（15 个数据下载，2026-07-11）==============
-  fallback_sources:
-  - source: exchange
-    capability: block_trade_detail
 - task_id: kline_cb_incremental
   table: c1_market.kline_cb
   source: miniqmt
@@ -1611,9 +1556,6 @@ tasks:
   extra:
     description: "期货日K线增量-QMT专用表（miniQMT get_market_data_ex，symbols如IF2407.CFFEX）"
 
-  fallback_sources:
-  - source: qmt
-    capability: futures_kline_qmt
 - task_id: hk_kline_incremental
   table: c1_market.hk_kline
   source: miniqmt
@@ -1670,9 +1612,6 @@ tasks:
   extra:
     description: "AKShare回购数据全量刷新（ak.stock_repurchase_em，含计划/已回购数量金额）"
 
-  fallback_sources:
-  - source: exchange
-    capability: repurchase
 - task_id: margin_trading_qmt_placeholder
   table: c1_market.margin_trading_qmt
   source: miniqmt
@@ -1685,9 +1624,6 @@ tasks:
     description: "融资融券-QMT占位（QMT无接口，已由AKShare margin_trading_incremental覆盖）"
     disabled: true
 
-  fallback_sources:
-  - source: qmt
-    capability: margin_trading_qmt
 - task_id: dragon_tiger_qmt_placeholder
   table: c1_market.dragon_tiger_qmt
   source: miniqmt
@@ -1700,9 +1636,6 @@ tasks:
     description: "龙虎榜-QMT占位（QMT无接口，已由AKShare dragon_tiger_incremental覆盖）"
     disabled: true
 
-  fallback_sources:
-  - source: qmt
-    capability: dragon_tiger_qmt
 - task_id: block_trade_qmt_placeholder
   table: c1_market.block_trade_qmt
   source: miniqmt
@@ -1716,9 +1649,6 @@ tasks:
     disabled: true
 
   # ============== P1: 百度云历史数据持续更新（十大股东/披露计划，2026-07-11）==============
-  fallback_sources:
-  - source: qmt
-    capability: block_trade_qmt
 - task_id: top10_shareholders_incremental
   table: c3_fundamental.top10_shareholders
   source: akshare
@@ -1731,9 +1661,6 @@ tasks:
   extra:
     description: "十大股东增量（AKShare stock_gdfx_top_10_em，逐股票逐季度拉取，季报披露后更新）"
 
-  fallback_sources:
-  - source: exchange
-    capability: top10_shareholders
 - task_id: top10_circulating_shareholders_incremental
   table: c3_fundamental.top10_circulating_shareholders
   source: akshare
@@ -1746,9 +1673,6 @@ tasks:
   extra:
     description: "十大流通股东增量（AKShare stock_gdfx_free_top_10_em，逐股票逐季度拉取）"
 
-  fallback_sources:
-  - source: exchange
-    capability: top10_circulating_shareholders
 - task_id: disclosure_plan_incremental
   table: c3_fundamental.disclosure_plan
   source: akshare
@@ -1762,9 +1686,6 @@ tasks:
     description: "预约披露计划增量（AKShare stock_disclosure_report_cninfo，按日期范围查全部沪深京股票）"
 
   # ============== P2: 静态列表月初刷新（2026-07-11）==============
-  fallback_sources:
-  - source: exchange
-    capability: disclosure_plan
 - task_id: convertible_bond_list_refresh
   table: c1_market.convertible_bond_list
   source: akshare
@@ -2107,9 +2028,6 @@ tasks:
   extra:
     description: "大宗交易明细全量刷新（AKShare stock_dzjy_mrtj，5年历史回补）"
 
-  fallback_sources:
-  - source: exchange
-    capability: block_trade_detail
 - task_id: limit_up_down_full_refresh
   table: c1_market.limit_up_down
   source: akshare
@@ -2121,9 +2039,6 @@ tasks:
   extra:
     description: "涨跌停全量刷新（AKShare stock_zt_pool_em，5年历史回补）"
 
-  fallback_sources:
-  - source: exchange
-    capability: limit_up_down
 - task_id: etf_nav_full_refresh
   table: c1_market.etf_nav
   source: akshare
@@ -2149,9 +2064,6 @@ tasks:
   extra:
     description: "回购数据全量刷新（AKShare stock_repurchase_em，5年历史回补）"
 
-  fallback_sources:
-  - source: exchange
-    capability: repurchase
 - task_id: equity_pledge_full_refresh
   table: c3_fundamental.equity_pledge_detail
   source: akshare
@@ -2163,9 +2075,6 @@ tasks:
   extra:
     description: "股权质押明细全量刷新（AKShare stock_gpzy_pledge_ratio_em，5年历史回补）"
 
-  fallback_sources:
-  - source: exchange
-    capability: equity_pledge
 
 # ============== 生猪价格数据（2026-07-11 新增，akshare 接入，补齐猪周期分析数据缺口）==============
 

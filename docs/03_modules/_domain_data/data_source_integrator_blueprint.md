@@ -67,7 +67,7 @@ src/zephyr/data/
     ├── miniqmt_provider.py       # miniQMT（xtdata 行情/财务/板块）
     ├── akshare_provider.py       # AKShare（分红/质押/解禁/宏观等）
     ├── baostock_provider.py      # baostock（线程局部登录）
-    ├── tushare_provider.py       # tushare（新闻）
+    ├── tushare_provider.py       # tushare（新闻/行业分类/LOF列表/资金流向/期货期限结构/ETF净值）
     ├── tickflow_provider.py      # TickFlow（美股/港股）
     ├── tdx_provider.py           # mootdx/pytdx（板块指数）
     └── rss_provider.py           # 财经RSS（新闻爬虫）
@@ -350,7 +350,7 @@ class IngestProviderMeta:
 | MiniQmtIngestProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
 | AkshareIngestProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
 | BaostockProvider | baostock | baostock | bs.login() 匿名 | **thread_local**（每线程独立登录） | K线/财务（滞后1周） |
-| TushareProvider | tushare | tushare | token | shared | 新闻（历史截止2024-08） |
+| TushareProvider | tushare | tushare | token | shared | 新闻（历史截止2024-08）/行业分类/LOF列表/资金流向/期货期限结构/ETF净值 |
 | TickFlowProvider | tickflow | tickflow | 无需 key | shared | 美股/港股 K线 |
 | TDXProvider | tdx | mootdx/pytdx | bestip | shared | 板块指数/板块信息 |
 | RSSProvider | rss | feedparser/requests | 无 | shared | 财经新闻爬虫 |

@@ -12128,9 +12128,18 @@ entries:
     （miniqmt→tushare，移除假 exchange fallback），补回 8/1-8/13 共 783 行。
     续2（2026-08-14）：tushare_provider etf_nav 能力 + etf_nav_refresh 主源切换
     （akshare→tushare），8/7-8/13 窗口补回 5000+ 行。
+    续3（2026-08-14 审查后修复）：tasks.yaml 死 fallback 大清仓——create_provider 无
+    exchange/qmt 分支（返回 None），24 处 exchange + 7 处 qmt fallback 条目自始
+    不可达，全部文本级移除（91 行删除零新增，任务数 154 不变）；internal/bdpan/
+    backfill/local_valuation 四类伪源保留待查（hk_trade_calendar_refresh 以
+    internal 为主源于 8/1 实跑出数，与 create_provider 无 internal 分支矛盾，
+    解析路径待另行排查，盲删有风险）。蓝图同步：data_source_integrator_blueprint.md
+    tushare 能力描述更新为 7 能力（§4.2 目录树 + §4.3 Provider 表）；
+    tushare_provider 模块 docstring 能力清单同步。
   impact:
-    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline/futures_term_structure/etf_nav主源切换）'
+    - 'src/zephyr/data/config/tasks.yaml（假fallback修复+lof_list/money_flow/option_kline/futures_term_structure/etf_nav主源切换+31处死fallback清仓）'
     - 'src/zephyr/data/implementations/tushare_provider.py（新增 lof_list + money_flow + futures_term_structure + etf_nav capability）'
+    - 'docs/03_modules/_domain_data/data_source_integrator_blueprint.md（tushare 能力描述同步为 7 能力）'
     - 'src/zephyr/data/implementations/fred_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/eia_provider.py（_detect_local_proxy）'
     - 'src/zephyr/data/implementations/akshare_provider.py（_parse_etf_list_row 日期哨兵 + option_kline volume safe_int）'
