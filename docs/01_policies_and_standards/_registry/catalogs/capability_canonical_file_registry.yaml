@@ -6014,6 +6014,41 @@ capabilities:
       - audit_delete            # 审计落盘(删则删除无留痕,R3 观测层失守)
       - PROTECTED_PREFIXES      # 保护区常量(篡改则保护区失效)
 
+  # --------------------------------------------------------------------------
+  - capability_id: git_safety_wrapper
+    canonical_override: scripts/git_safety_wrapper.ps1
+    aliases:
+      - git-safety-wrapper
+      - install_git_safety_wrapper
+      - RULE-GIT-SAFE
+      - powershell_git_wrapper
+      - zephyr_audit
+      - 65号Phase1
+    description: >-
+      PowerShell 安全 wrapper 函数集（65 号 memo Phase 1，2026-08-14 AI-GIT-001 施工）。
+      $PROFILE dot-source 单真源引用（install_git_safety_wrapper.ps1 幂等安装/卸载，
+      marker 块界定），覆盖五层：L1 git() 危险子命令拦截（clean/reset --hard/checkout --/
+      restore/stash/rm/branch -D/push -f + §7.23 filter-branch/filter-repo/reflog expire/
+      gc --prune=now 四命令，逃生通道提示真实 git.exe 全路径）；L2 Remove-Item/rd/del/rm
+      原生删除覆盖（-Recurse -Force 组合阻断，$env:TEMP 白名单，CRITICAL_BLOCKS 系统级
+      命令绝对禁止）；L4 .git 目录写入硬阻断（_ZephyrCheckGitDirProtection，删除类全挂）；
+      L5 审计落盘（_ZephyrAuditLog 每 session 独立 JSONL ~/.zephyr_audit/，无 Mutex
+      append-only）；L6 Session ID 注入（无 ZEPHYR_SESSION_ID 则生成 UUID）。
+      §7.14 fail-open 裁定：非 CRITICAL 命令 wrapper 出错透传+FAIL_OPEN 审计，
+      CRITICAL（format/vssadmin delete/diskpart）fail-closed 无逃生通道。
+      验收：tests/governance/test_git_safety_wrapper.py（安装/幂等/卸载/git 16 类阻断/
+      放行边界/.git 硬阻断/审计/Session ID）。
+      范围裁剪登记备查：§7.1.4 ProxyCommand 未采纳（手写 param 块覆盖 AI 施工全参数）；
+      .git 阻断挂删除类 4 函数（写类 Set-Content/Out-File/Add-Content/New-Item 暂缓）。
+      解决发现性：新 AI 搜 "git wrapper/git 安全/RULE-GIT-SAFE/clean 拦截" 可定位真源。
+      解决防重建：check_file_canonical() 反查。
+    integrity_anchors:
+      - git                      # 函数覆盖(删则 git 危险命令零拦截)
+      - Remove-Item              # 函数覆盖(删则 PS 递归删除零拦截)
+      - _ZephyrAuditLog          # 审计落盘(删则 wrapper 无留痕)
+      - _ZephyrCheckGitDirProtection  # .git 硬阻断(删则 .git 目录可写)
+      - _criticalBlocks          # CRITICAL 常量(篡改则系统级命令放行)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -8790,6 +8825,23 @@ creation_tokens:
     created_by: "AI-GIT-001"
     capability: "task_board_coordination"
     note: "task_board 验收测试（17 用例：三态机/重复认领 DENIED/CAS 并发恰一胜/TTL 抢占/死信 metadata/WAL）"
+
+  # --- 65 号 Phase 1 wrapper 层（2026-08-14，AI-GIT-001 承接，§7.1/§7.7/§7.10/§7.14/§7.17.2/§7.23/§7.32）---
+  - file: "scripts/git_safety_wrapper.ps1"
+    token: "auto-git-safety-wrapper-phase1-20260814"
+    created_by: "AI-GIT-001"
+    capability: "git_safety_wrapper"
+    note: "wrapper 函数集唯一真源（git/Remove-Item/rd/del/rm 拦截+CRITICAL 硬阻断+.git 阻断+审计+Session ID），$PROFILE dot-source 引用"
+  - file: "scripts/install_git_safety_wrapper.ps1"
+    token: "auto-git-safety-wrapper-installer-20260814"
+    created_by: "AI-GIT-001"
+    capability: "git_safety_wrapper"
+    note: "安装/卸载脚本（marker 幂等、-Uninstall 按块删除、-ProfilePath 测试注入、wrapper 真源自检 fail-closed）"
+  - file: "tests/governance/test_git_safety_wrapper.py"
+    token: "auto-git-safety-wrapper-test-20260814"
+    created_by: "AI-GIT-001"
+    capability: "git_safety_wrapper"
+    note: "wrapper 验收测试（安装/幂等/卸载/git 16 类阻断+放行边界/.git 硬阻断/CRITICAL/审计/Session ID）"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
