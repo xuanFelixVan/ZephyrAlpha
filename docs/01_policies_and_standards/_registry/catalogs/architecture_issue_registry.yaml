@@ -16462,3 +16462,36 @@ entries:
   related_rules: '#ARCH-DATA-001（日历语义错配前例）; #ARCH-DATA-002（capability 语义对齐）; #ARCH-DATA-FALLBACK-REPAIR-001（死 fallback 清仓）; #ARCH-DATA-IFIND-RETIRE-001（同日 iFind 退役）'
   created: '2026-08-14'
   last_updated: '2026-08-14'
+
+# --- #ARCH-DATA-016: tqcenter get_market_snapshot 签名漂移——sector_snapshot 持续 0 行治本 ---
+- issue_id: '#ARCH-DATA-016'
+  title: tqcenter 快照 API 签名+键名漂移——逐代码调用修正 + PascalCase 键映射修正
+  severity: P2中
+  category: data_architecture
+  adjudication: |
+    现象：sector_snapshot_incremental 持续 0 行，日志每批告警
+    "tq.get_market_snapshot() got an unexpected keyword argument ''stock_list''"。
+
+    病根（双层签名漂移，SDK 在项目外 E:\tdx\PYPlugins\user\tqcenter.py，无版本锁定/编译期检查）：
+    (1) 调用签名漂移：provider 按 stock_list=batch 批量调用，SDK 真实签名为
+        get_market_snapshot(stock_code: str, field_list=[]) -> Dict（单代码），
+        每批 TypeError 被 except 吞掉 → 全部批次空转。
+    (2) 返回键名漂移：SDK 返回 PascalCase 键（Now/Open/Max/Volume/UpHome/Zangsu...），
+        _parse_snapshot 按 snake_case（now_price/open_price/...）读取——即使调用修好，
+        解析也只会产出全 NULL/0 行（静默坏数据比 0 行更危险）。
+    放大器：批次级 broad except 把 TypeError 吞成 warning，任务结果 SUCCESS 0 行，
+    属于 100% AI 项目最忌的静默失败模式（对照 #ARCH-DATA-015 同类治理）。
+
+    裁定（治本）：
+    A. 调用改逐代码循环（保留 _BATCH_SIZE 分批进度/节奏），单代码失败仅 debug 不拖垮整批；
+    B. _parse_snapshot 键名按 2026-08-14 实测 dump 改 PascalCase 映射，
+       int 字段加 float() 中转兼容字符串数值；
+    C. 端到端验证：手动 run sector_snapshot_incremental，CH 落数 >0 且关键字段非空。
+  impact:
+  - 'src/zephyr/data/implementations/tqcenter_provider.py（_fetch_sector_snapshot 调用签名 + _parse_snapshot 键映射）'
+  fix_phase: '2026-08-14 完成：单代码调用+PascalCase 映射落地，端到端补跑验证'
+  status: decided
+  confirmed_by_user: '2026-08-14 用户指令"排查 tqcenter sector_snapshot 持续 0 行，修复 API 签名"'
+  related_rules: '#ARCH-DATA-015（同日 baostock 黑名单治本，同类静默失败治理）; #ARCH-DATA-FALLBACK-REPAIR-001（死配置清仓前例）'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'

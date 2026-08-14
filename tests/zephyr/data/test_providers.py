@@ -169,14 +169,15 @@ class TestTQCenterHelpers:
         assert dt == datetime.datetime(2026, 7, 30)
 
     def test_parse_snapshot_valid(self):
-        """有效快照 dict → 元组行（含 18 字段 + data_source）。"""
+        """有效快照 dict → 元组行（含 18 字段 + data_source）。
+        #ARCH-DATA-016：SDK 返回 PascalCase 键（以 2026-08-14 实测 dump 为准）。"""
         trade_date = datetime.date(2026, 7, 30)
         ts = datetime.datetime(2026, 7, 30, 15, 0, 0)
         snap = {
-            "now_price": 10.5, "open_price": 10.0, "max_price": 10.8,
-            "min_price": 9.9, "last_close": 10.2, "before_5min_now": 10.3,
-            "average_price": 10.4, "volume": 1000, "now_vol": 50, "amount": 10500.0,
-            "up_home": 100, "down_home": 80, "inside": 40, "outside": 60, "zangsu": 0.5,
+            "Now": 10.5, "Open": 10.0, "Max": 10.8,
+            "Min": 9.9, "LastClose": 10.2, "Before5MinNow": 10.3,
+            "Average": 10.4, "Volume": 1000, "NowVol": 50, "Amount": 10500.0,
+            "UpHome": 100, "DownHome": 80, "Inside": 40, "Outside": 60, "Zangsu": 0.5,
         }
         row = TQCenterProvider._parse_snapshot("880001", snap, trade_date, ts)
         assert row is not None

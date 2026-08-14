@@ -460,7 +460,18 @@ class TQCenterProvider(IngestProviderBase):
         for i in range(0, len(symbols), _BATCH_SIZE):
             batch = symbols[i : i + _BATCH_SIZE]
             try:
-                snapshots = self._tq.get_market_snapshot(stock_list=batch)
+                # #ARCH-DATA-016: tqcenter get_market_snapshot 真实签名为单代码
+                # (stock_code: str) -> Dict（SDK 在 E:\tdx\PYPlugins\user\tqcenter.py，
+                # 项目外无版本锁定）。原 stock_list=batch 批量签名不存在，每批 TypeError
+                # 被吞 → sector_snapshot 持续 0 行。逐代码调用并组装 {code: snap}。
+                snapshots: dict = {}
+                for code in batch:
+                    try:
+                        snap = self._tq.get_market_snapshot(stock_code=code)
+                        if snap:
+                            snapshots[code] = snap
+                    except Exception as e:  # noqa: BLE001 — 单代码失败不拖垮整批
+                        self._log.debug(f"快照单代码 {code} 失败: {e}")
                 if not snapshots:
                     continue
                 for code, snap in snapshots.items():
@@ -495,7 +506,12 @@ class TQCenterProvider(IngestProviderBase):
 
     @staticmethod
     def _parse_snapshot(code, snap, trade_date, ts):
-        """解析单条快照数据。"""
+        """解析单条快照数据。
+
+        #ARCH-DATA-016：tqcenter SDK 返回 PascalCase 键（Now/Open/Max/...），
+        原 snake_case 读取全 miss → 即使调用成功也产出全 NULL/0 行。
+        键名以 E:\\tdx\\PYPlugins\\user\\tqcenter.py 2026-08-14 实测 dump 为准。
+        """
         if not snap or not isinstance(snap, dict):
             return None
         try:
@@ -504,21 +520,21 @@ class TQCenterProvider(IngestProviderBase):
                 ts,
                 code,
                 "sector",
-                _safe_val(snap.get("now_price"), None),
-                _safe_val(snap.get("open_price"), None),
-                _safe_val(snap.get("max_price"), None),
-                _safe_val(snap.get("min_price"), None),
-                _safe_val(snap.get("last_close"), None),
-                _safe_val(snap.get("before_5min_now"), None),
-                _safe_val(snap.get("average_price"), None),
-                int(_safe_val(snap.get("volume"), 0)),
-                int(_safe_val(snap.get("now_vol"), 0)),
-                _safe_val(snap.get("amount"), 0.0),
-                int(_safe_val(snap.get("up_home"), 0)),
-                int(_safe_val(snap.get("down_home"), 0)),
-                int(_safe_val(snap.get("inside"), 0)),
-                int(_safe_val(snap.get("outside"), 0)),
-                _safe_val(snap.get("zangsu"), 0.0),
+                _safe_val(snap.get("Now"), None),
+                _safe_val(snap.get("Open"), None),
+                _safe_val(snap.get("Max"), None),
+                _safe_val(snap.get("Min"), None),
+                _safe_val(snap.get("LastClose"), None),
+                _safe_val(snap.get("Before5MinNow"), None),
+                _safe_val(snap.get("Average"), None),
+                int(float(_safe_val(snap.get("Volume"), 0))),
+                int(float(_safe_val(snap.get("NowVol"), 0))),
+                _safe_val(snap.get("Amount"), 0.0),
+                int(float(_safe_val(snap.get("UpHome"), 0))),
+                int(float(_safe_val(snap.get("DownHome"), 0))),
+                int(float(_safe_val(snap.get("Inside"), 0))),
+                int(float(_safe_val(snap.get("Outside"), 0))),
+                _safe_val(snap.get("Zangsu"), 0.0),
                 "tqcenter",
             )
         except Exception:  # noqa: BLE001
