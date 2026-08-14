@@ -67,6 +67,7 @@ class TestReconcileForAcceptsCommitMessage:
             trigger=_trigger,
             reconcile=_reconcile,
             priority=100,
+            file_ops=frozenset({"none"}),
         ))
         # 不抛异常 = 签名兼容
         results = registry.reconcile_for(["test.py"], "sess-001", commit_message="test message")
@@ -92,6 +93,7 @@ class TestReconcileForAcceptsCommitMessage:
             gate_id="TEST-MSG-002",
             trigger=_trigger,
             reconcile=_reconcile,
+            file_ops=frozenset({"none"}),
         ))
         # 不传 commit_message = 向后兼容
         results = registry.reconcile_for(["test.py"], "sess-002")
@@ -127,6 +129,7 @@ class TestThreeArgReconcilerReceivesCommitMessage:
             gate_id="TEST-MSG-003",
             trigger=_trigger,
             reconcile=_reconcile,
+            file_ops=frozenset({"none"}),
         ))
         test_msg = "[no-lookup:dogfooding capability lookup mechanism]"
         results = registry.reconcile_for(["test.py"], "sess-003", commit_message=test_msg)
@@ -159,6 +162,7 @@ class TestThreeArgReconcilerReceivesCommitMessage:
             gate_id="TEST-MSG-004",
             trigger=_trigger,
             reconcile=_reconcile,
+            file_ops=frozenset({"none"}),
         ))
         results = registry.reconcile_for(
             ["test.py"], "sess-004",
@@ -196,6 +200,7 @@ class TestTwoArgReconcilerBackwardCompat:
             gate_id="TEST-MSG-005",
             trigger=_trigger,
             reconcile=_reconcile,
+            file_ops=frozenset({"none"}),
         ))
         # 传 commit_message 但 reconciler 是 2-arg，应向后兼容
         results = registry.reconcile_for(

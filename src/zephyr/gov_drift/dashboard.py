@@ -29,8 +29,10 @@ from __future__ import annotations
 import json
 import os
 import sqlite3
+from pathlib import Path
+
 from zephyr.governance.persistence.sqlite_schema import get_db_connection
-from zephyr.shared.io.paths import DB_PATH, REPO_ROOT
+from zephyr.shared.io.paths import DB_PATH
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
@@ -84,8 +86,16 @@ class Dashboard:
 
         # 5.34.7 治本：governance.db 路径从 SSoT（zephyr.shared.io.paths.DB_PATH）派生，
         # 消除字面量 "data/databases/governance.db" 硬编码；自定义 project_root（测试隔离）
-        # 时按 DB_PATH 相对 REPO_ROOT 的相对路径重定位。
-        self._db_path = os.path.join(project_root, *DB_PATH.relative_to(REPO_ROOT).parts)
+        # 时按 DB_PATH 相对主仓根的相对路径重定位。
+        # #ARCH-WORKTREE-DB-SPLIT-001（2026-08-15）：DB_PATH 已翻锚 MAIN_REPO_ROOT，
+        # 此处 project_root 为 session worktree 根时经 anchor_main_root 锚主仓（父目录
+        # 结构判定，嵌套 pytest tmp 库不误判）——worktree 进程读写主仓同一份库。
+        from zephyr.shared.io.paths import MAIN_REPO_ROOT, anchor_main_root  # noqa: PLC0415
+
+        _anchored_root = anchor_main_root(Path(project_root))
+        self._db_path = os.path.join(
+            str(_anchored_root), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts
+        )
 
         self._registry_path = os.path.join(os.path.dirname(__file__), "_detector-registry.yaml")
 

@@ -153,13 +153,13 @@ class TestLogWorkspaceOpDegradation:
             invalid_root.unlink(missing_ok=True)
 
     def test_exception_in_strip_no_raise(self, tmp_path, monkeypatch):
-        """strip_session_worktree 抛异常时不影响 log_workspace_op（降级）。"""
+        """anchor_main_root 抛异常时不影响 log_workspace_op（降级）。"""
         from zephyr.shared.io import workspace_telemetry as wt
 
         def boom(_path):
-            raise RuntimeError("strip failed")
+            raise RuntimeError("anchor failed")
 
-        monkeypatch.setattr(wt, "strip_session_worktree", boom)
+        monkeypatch.setattr(wt, "anchor_main_root", boom)
 
         # 不应抛异常
         log_workspace_op(
@@ -263,10 +263,10 @@ class TestStripSessionWorktreeIntegration:
         worktree_path = main_repo / ".aidrafts" / "sess-test-strip-001"
         worktree_path.mkdir(parents=True)
 
-        # monkeypatch strip_session_worktree 返回主仓库路径
+        # monkeypatch anchor_main_root 返回主仓库路径（单级父目录判定语义）
         from zephyr.shared.io import workspace_telemetry as wt
 
-        def fake_strip(p):
+        def fake_anchor(p):
             s = str(p)
             if ".aidrafts" in s:
                 # 返回 .aidrafts 之前的部分（主仓库根）
@@ -274,7 +274,7 @@ class TestStripSessionWorktreeIntegration:
                 return Path(s[:idx].rstrip("\\/"))
             return p
 
-        monkeypatch.setattr(wt, "strip_session_worktree", fake_strip)
+        monkeypatch.setattr(wt, "anchor_main_root", fake_anchor)
 
         log_workspace_op(
             op="worktree_op",
@@ -294,10 +294,10 @@ class TestStripSessionWorktreeIntegration:
     def test_normal_path_not_stripped(self, tmp_path, monkeypatch):
         """root 是普通路径（无 .aidrafts 前缀）时，日志写到该路径 .runtime/。"""
         from zephyr.shared.io import workspace_telemetry as wt
-        from zephyr.shared.io.paths import strip_session_worktree as real_strip
+        from zephyr.shared.io.paths import anchor_main_root as real_anchor
 
-        # 用真实的 strip_session_worktree（不 mock）
-        monkeypatch.setattr(wt, "strip_session_worktree", real_strip)
+        # 用真实的 anchor_main_root（不 mock）
+        monkeypatch.setattr(wt, "anchor_main_root", real_anchor)
 
         normal_root = tmp_path / "project"
         normal_root.mkdir()

@@ -26,12 +26,15 @@ from zephyr.shared.io.paths import (
     DB_DIR,
     DB_PATH,
     GATES_DIR,
+    MAIN_REPO_ROOT,
     MODELS_CACHE_DIR,
     RATIONALE_LOG_PATH,
     REPO_ROOT,
     SNAPSHOTS_DIR,
     VECTOR_INDEX_DIR,
+    anchor_main_root,
     find_repo_root,
+    is_session_worktree_root,
 )
 
 
@@ -72,13 +75,50 @@ class TestDbPath:
     def test_is_path(self):
         assert isinstance(DB_PATH, Path)
 
-    def test_under_data_dir(self):
-        assert DB_PATH.parent == DB_DIR
+    def test_anchored_main_repo_root(self):
+        """#ARCH-WORKTREE-DB-SPLIT-001：governance.db 锚定主仓根（worktree 进程
+        与主仓进程读写同一份，消灭双副本分裂振荡）。主仓上下文 MAIN==REPO 等价。"""
+        assert DB_PATH == MAIN_REPO_ROOT / "data" / "databases" / "governance.db"
+
+    def test_parent_under_main_data_dir(self):
+        assert DB_PATH.parent == MAIN_REPO_ROOT / "data" / "databases"
+
+
+class TestSessionWorktreeAnchor:
+    """is_session_worktree_root / anchor_main_root（父目录结构判定，嵌套 tmp 安全）。"""
+
+    def test_real_worktree_root_detected(self, tmp_path):
+        wt = tmp_path / ".worktrees" / "AI-X-001"
+        wt.mkdir(parents=True)
+        assert is_session_worktree_root(wt)
+        assert anchor_main_root(wt) == tmp_path
+
+    def test_aidrafts_root_detected(self, tmp_path):
+        wt = tmp_path / ".aidrafts" / "sess-x"
+        wt.mkdir(parents=True)
+        assert is_session_worktree_root(wt)
+        assert anchor_main_root(wt) == tmp_path
+
+    def test_main_root_not_worktree(self, tmp_path):
+        assert not is_session_worktree_root(tmp_path)
+        assert anchor_main_root(tmp_path) == tmp_path
+
+    def test_nested_tmp_repo_not_misjudged(self, tmp_path):
+        """宿主 worktree 内嵌套 pytest tmp 库：段含 .worktrees 但父目录非之→不误判。"""
+        host_wt = tmp_path / ".worktrees" / "AI-HOST"
+        nested = host_wt / ".runtime" / "tmp" / "pytest_1" / "tmp_repo"
+        nested.mkdir(parents=True)
+        assert not is_session_worktree_root(nested)
+        assert anchor_main_root(nested) == nested
 
 
 class TestGatesDir:
     def test_is_under_root(self):
-        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "gates"
+        # 断言对齐 paths.py 现状定义。注：GATES_DIR 指向的 governance/rule_enforcement
+        # 目录实际不存在（真源在 gov_enforcement/rule_enforcement，gate_engine 本地
+        # 常量），paths.py 版本为孤儿定义且致 scheduler_safety FLE gates 静默空转——
+        # 存量独立问题，修复引运行时行为变更，已登记后续治理批（本批不夹带）。
+        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 
     def test_is_path(self):
         assert isinstance(GATES_DIR, Path)

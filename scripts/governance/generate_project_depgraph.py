@@ -3316,6 +3316,48 @@ def _warn_uncommitted_governance_scripts() -> None:
         pass
 
 
+def _collect_active_worktree_exempt_paths(cursor) -> list[str]:
+    """活跃 worktree 独有节点路径豁免集（#ARCH-WORKTREE-DB-SPLIT-001 裁定③）。
+
+    主仓全量重建 DELETE 前调用：当前 DB 非设计态节点中"主仓磁盘已不存在但
+    存在于某活跃 worktree"的路径（=worktree 施工期登记的节点），豁免删除——
+    否则主仓每次重建都把 worktree 已登记节点删掉、worktree 下次登记又加回
+    （node_id 翻面实证：9619955→9627606），双工作区视角 PG 内容反复翻转，
+    派生统计（蓝图 §0.6/README/handbook）随之振荡回写 tracked 文档。
+    生命周期自收敛：worktree merge→文件进 dev→主仓重建正常覆盖；
+    worktree abort→路径消失→下次重建自然删除。
+    """
+    from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
+
+    main_root = anchor_main_root(PROJECT_ROOT)
+    wt_base = main_root / ".worktrees"
+    if not wt_base.is_dir():
+        return []
+    wt_roots = [
+        d for d in wt_base.iterdir() if d.is_dir() and (d / ".git").exists()
+    ]
+    if not wt_roots:
+        return []
+    cursor.execute(
+        "SELECT path FROM nodes "
+        "WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
+        "AND node_type NOT IN ('database', 'gate_rule_set', 'script_collection', "
+        "'test_suite', 'rule_registry_collection') AND path IS NOT NULL"
+    )
+    exempt: list[str] = []
+    for row in cursor.fetchall():
+        rel = row["path"] if isinstance(row, dict) else row[0]
+        if not rel:
+            continue
+        if (main_root / rel).exists():
+            continue  # 主仓存在——正常重建覆盖更新，不豁免
+        for wr in wt_roots:
+            if (wr / rel).exists():
+                exempt.append(rel)
+                break
+    return exempt
+
+
 def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
     """Write depgraph to PostgreSQL database (DM-100024) - P2 PG 迁移
 
@@ -3535,20 +3577,34 @@ def write_depgraph_to_db(depgraph: dict, design_state: dict = None):
         # 裁定#218: 排除 node_type='database' 的持久基础设施节点（已运营非设计态，手工维护不被扫描器清空）
         # ARCH-052: 排除聚合节点类型（gate_rule_set/script_collection/test_suite/rule_registry_collection），
         #           这些节点由 YAML sync 维护（sync_aggregate_nodes），非代码扫描产物，重建时必须保留
+        # #ARCH-WORKTREE-DB-SPLIT-001 裁定③：豁免活跃 worktree 独有节点（主仓不存在但
+        # worktree 存在的路径）——主仓重建不再删 worktree 施工期登记节点，PG 双视角单调。
+        _wt_exempt_paths = _collect_active_worktree_exempt_paths(cursor)
+        if _wt_exempt_paths:
+            print(
+                f"[WT-EXEMPT] 豁免 {len(_wt_exempt_paths)} 个活跃 worktree 独有节点"
+                f"（不参与本次 DELETE；#ARCH-WORKTREE-DB-SPLIT-001）"
+            )
         cursor.execute(
             "DELETE FROM nodes WHERE (design_maturity != 'design' OR design_maturity IS NULL) "
             "AND node_type NOT IN ('database', 'gate_rule_set', 'script_collection', "
-            "'test_suite', 'rule_registry_collection')"
+            "'test_suite', 'rule_registry_collection') "
+            "AND (path IS NULL OR NOT (path = ANY(%s)))",
+            (_wt_exempt_paths,),
         )
         # P0-1 schema fix: 保留设计态边（dep_maturity='design'），只删除运营态边
         # 裁定#218: 同时保留指向 database 节点的边（模块→数据库依赖，手工维护）
         # ARCH-052: 同时保留指向聚合节点的边（gate_engine→gate_rule_set 等手工维护依赖）
+        # #ARCH-WORKTREE-DB-SPLIT-001：同时保留端点为豁免 worktree 节点的边
         cursor.execute(
             "DELETE FROM edges WHERE (dep_maturity != 'design' OR dep_maturity IS NULL) "
             "AND from_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type IN "
             "('database', 'gate_rule_set', 'script_collection', 'test_suite', 'rule_registry_collection')) "
             "AND to_node_id NOT IN (SELECT node_id FROM nodes WHERE node_type IN "
-            "('database', 'gate_rule_set', 'script_collection', 'test_suite', 'rule_registry_collection'))"
+            "('database', 'gate_rule_set', 'script_collection', 'test_suite', 'rule_registry_collection')) "
+            "AND from_node_id NOT IN (SELECT node_id FROM nodes WHERE path = ANY(%s)) "
+            "AND to_node_id NOT IN (SELECT node_id FROM nodes WHERE path = ANY(%s))",
+            (_wt_exempt_paths, _wt_exempt_paths),
         )
 
         # DM-3013: 步骤6 - 显式恢复设计态数据（规格§22.6步骤6）
@@ -4488,6 +4544,28 @@ def main():
         help="Scan 缓存文件路径（默认 .runtime/depgraph_scan_cache.json）。",
     )
     args = parser.parse_args()
+
+    # #ARCH-WORKTREE-DB-SPLIT-001（2026-08-15 裁定）：DB 写入（全量/增量重建）
+    # 仅允许主仓锚定上下文——本工具 DELETE+INSERT 全量重建的扫描根=进程工作区，
+    # worktree 内执行会把 worktree 树写入共享 PG（随后主仓重建又删回），共享真源
+    # 被"最后写入者"翻转（126 tracked 蓝图派生统计振荡实证）。worktree 内新模块
+    # 登记走 apply_depgraph --add-design-node（design upsert，重建豁免保护）；
+    # dry-run/纯扫描只读放行（诊断用途无害）。
+    from zephyr.shared.io.paths import is_session_worktree_root  # noqa: PLC0415
+
+    if args.output_db and not args.dry_run and is_session_worktree_root(PROJECT_ROOT):
+        print(
+            "[DEPGRAPH] REFUSED: worktree 上下文禁止 depgraph DB 写入重建 "
+            "（#ARCH-WORKTREE-DB-SPLIT-001 裁定——全量 DELETE+INSERT 重建权威归主仓锚定进程，\n"
+            "  worktree 扫描根会翻转共享 PG 真源）。\n"
+            "  worktree 内正确姿势：\n"
+            "    ① 新模块/新文件登记：python scripts/governance/apply_depgraph.py "
+            "--add-design-node <file_path> <module_id> <domain_id> --granularity file\n"
+            "    ② 全量刷新：merge 后在主仓执行本命令（或等主仓 post-commit 自动重建）\n"
+            "  dry-run 诊断不受限：--dry-run 可正常运行。",
+            file=sys.stderr,
+        )
+        sys.exit(2)
 
     # Phase 4 防御性门禁 (ARCH-033): 校验本文件中的 #ARCH-XXX 引用在 registry 中有对应条目
     _validate_arch_references()

@@ -143,7 +143,7 @@ import threading
 import time
 from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT, strip_session_worktree
+from zephyr.shared.io.paths import REPO_ROOT, anchor_main_root
 
 logger = logging.getLogger(__name__)
 
@@ -646,7 +646,7 @@ class WorktreeManager:
         cwd = Path.cwd().resolve()
         # repo_root 可能是 worktree 自身（PYTHONPATH 激活后 zephyr 解析到 worktree src），
         # 此时 session worktree 基目录必须锚定主仓库才能命中 cwd
-        main_root = strip_session_worktree(self.repo_root)
+        main_root = anchor_main_root(self.repo_root)
         bases = [self._drafts_dir, self._session_worktrees_dir]
         if main_root != self.repo_root:
             bases += [main_root / ".aidrafts", main_root / ".worktrees"]

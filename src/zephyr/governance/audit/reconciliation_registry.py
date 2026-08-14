@@ -1067,16 +1067,22 @@ def _governance_db_path(project_root: object) -> str:
 
     观测数据写入 .aidrafts/<session>/data/ 而分裂（merge/abort 后即丢失）。
 
-    strip_session_worktree 剥离 .aidrafts 前缀；主仓库进程原样返回。
+    #ARCH-WORKTREE-DB-SPLIT-001（2026-08-15）：strip_session_worktree → anchor_main_root。
+    原深路径段剥离对"宿主 worktree 内嵌套 pytest tmp 测试库根"
+    （.../.worktrees/<宿主>/.runtime/tmp/pytest_*/<test>，conftest basetemp 重定向）
+    误剥到主仓根——测试写 tmp 库、本函数读主仓真库，读写双向错位
+    （test_critical_warn_ack 等 24 项同族失败实证；cleanup 类函数甚至对主仓真库
+    执行 DELETE，存量数据安全隐患）。anchor_main_root 单级父目录结构判定：
+    真 worktree 根→锚主仓；嵌套 tmp 测试库根→原样返回，测试隔离恢复。
 
     """
 
     import os
     from pathlib import Path
 
-    from zephyr.shared.io.paths import strip_session_worktree
+    from zephyr.shared.io.paths import anchor_main_root
 
-    root = strip_session_worktree(Path(str(project_root)))
+    root = anchor_main_root(Path(str(project_root)))
 
     return os.path.join(str(root), "data", "databases", "governance.db")
 
@@ -2785,6 +2791,38 @@ def make_depgraph_ops_reconciler(gateway: object) -> ReconcilerSpec:
 
         import time
 
+        # #ARCH-WORKTREE-DB-SPLIT-001（2026-08-15 裁定）治本①：全量 DELETE+INSERT
+        # 重建的扫描根=cwd 工作区——N 工作区并发下共享 PG 被"最后写入者"翻转
+        # （worktree 6505 ↔ 主仓 6500 实证振荡→126 tracked 蓝图派生统计反复 dirty）。
+        # 裁定：全量重建仅允许主仓锚定上下文；worktree 内增量登记走 apply_depgraph
+        # （design 节点 upsert，NEW-FILE-DEPGRAPH gate 修复路径①），merge 后由主仓
+        # 重建自然吸收（#ARCH-70 同 path design→production 自动转换）。
+        # 父目录结构判定（非段匹配）——pytest tmp 库嵌套宿主 worktree 下不误判。
+        from zephyr.shared.io.paths import anchor_main_root
+
+        _root_path = Path(str(project_root))
+        _main_root = anchor_main_root(_root_path)
+        if _main_root != _root_path:
+            return ReconcileResult(
+                action="clean",
+                detail=(
+                    "worktree 上下文跳过 depgraph 全量重建（#ARCH-WORKTREE-DB-SPLIT-001 "
+                    "裁定：重建权威归主仓锚定进程，worktree 增量登记走 apply_depgraph "
+                    "--add-design-node，merge 后主仓重建自动吸收）"
+                ),
+            )
+
+        # 遗留项3 治本（GATE-DEPGRAPH-OPS pytest tmp 噪音）：tmp 测试库无生成器
+        # 脚本——原逻辑照 spawn 致 rc=2 "can't open file" critical_warn 污染生产
+        # reconcile_execution_log（#50 治了 DB 写入隔离，subprocess 调用残留）。
+        # 无生成器=非 Zephyr 仓库→clean skip（不是失败，不应告警）。
+        _generator = _root_path / "scripts" / "governance" / "generate_project_depgraph.py"
+        if not _generator.is_file():
+            return ReconcileResult(
+                action="clean",
+                detail="非 Zephyr 仓库（无 generate_project_depgraph.py，tmp 测试库等），跳过 depgraph sync",
+            )
+
         # #ARCH-DEPGRAPH-OPS-TIMEOUT-001（2026-07-22）治本：skip-if-recent + timeout 升级。
 
         # 根因：generate_project_depgraph.py --force 全量扫描需 208-296s，原 timeout=300s
@@ -2801,7 +2839,9 @@ def make_depgraph_ops_reconciler(gateway: object) -> ReconcilerSpec:
 
         _SKIP_WINDOW = 600  # 10 min cooldown after any attempt（success or failure）
 
-        _marker = project_root / ".runtime" / "depgraph_ops_last_attempt"
+        # #ARCH-WORKTREE-DB-SPLIT-001：cooldown marker 锚主仓——原 project_root 相对
+        # 路径使各工作区各有节流器（共享 PG 却无共享节流），锚主仓后全仓单节流。
+        _marker = _main_root / ".runtime" / "depgraph_ops_last_attempt"
 
         try:
 

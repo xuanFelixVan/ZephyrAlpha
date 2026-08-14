@@ -28,6 +28,7 @@ from __future__ import annotations
 
 import os
 import sqlite3
+import time
 from pathlib import Path
 from unittest.mock import patch
 
@@ -37,6 +38,17 @@ import pytest
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
+
+@pytest.fixture(autouse=True)
+def _uninstall_inprocess_patch_after_test():
+    """同进程 run_worker 会在进程入口装 in-process 删除原语补丁（T1②），
+    测试进程不退出则补丁残留——拦截同进程后续测试自身清理删除
+    （rule_bridge 等字母序在后目录实证被误拦）。每个测试后卸载复原。"""
+    yield
+    from scripts.ops_guard import uninstall_inprocess_enforcement
+
+    uninstall_inprocess_enforcement()
 
 
 @pytest.fixture
@@ -222,7 +234,7 @@ class TestRunWorkerSelfHealIntegration:
             "project_root": str(tmp_repo_with_db),
             "committed_files": ["README.md"],
             "commit_message": "test",
-            "started_at": 1000,
+            "started_at": time.time(),  # 证2 陈旧校验（T4 三证）：硬编码 1000 属远古负载拒启
         }
 
         # mock 掉 GitCommitGateway 构造 + reconcile（只验证自愈写入被调用）
@@ -254,7 +266,7 @@ class TestRunWorkerSelfHealIntegration:
             "project_root": str(tmp_repo_with_db),
             "committed_files": [],
             "commit_message": "",
-            "started_at": 1000,
+            "started_at": time.time(),  # 证2 陈旧校验（T4 三证）：硬编码 1000 属远古负载拒启
         }
 
         # mock GitCommitGateway 构造抛异常

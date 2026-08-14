@@ -23,7 +23,7 @@ detect_deprecated_path_writes.py — 废弃路径写入检测
 
 检测内容：
 - git staged/working 新文件是否在废弃路径下
-- 废弃路径列表：_DO_NOT_USE_old_tree/、docs/（老树根目录）等
+- 废弃路径列表：_DO_NOT_USE_old_tree 废墟目录、docs/（老树根目录）等——权威清单见 _shared/deprecated_paths.yaml
 
 exit codes: 0=pass, 1=findings, 2=error
 """

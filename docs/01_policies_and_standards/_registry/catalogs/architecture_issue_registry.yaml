@@ -16679,9 +16679,9 @@ entries:
   - 'data/databases/governance.db（双副本：主仓 vs .worktrees/*/ 快照）'
   - 'scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py（§0.6 统计表双源振荡直接受害者）'
   - '126 个 blueprint.md 工作区 dirty（治理批②期间实证）'
-  fix_phase: '待施工（登记待裁定锚定方案）；临时缓解：派生统计 sync commit 以主仓锚定进程产出为准'
-  status: open
-  confirmed_by_user: ''
+  fix_phase: '已治本（2026-08-15 AI-RCN-001 治理批③）：①paths.py DB_PATH 翻锚 MAIN_REPO_ROOT + 新增 is_session_worktree_root/anchor_main_root（单级父目录结构判定，嵌套 pytest tmp 库不误判——区别于 strip_session_worktree 深段剥离）；②depgraph_ops_reconciler worktree 上下文跳过全量重建（增量登记走 apply_depgraph --add-design-node，merge 后主仓重建吸收）+ cooldown marker 锚主仓全仓单节流 + 非 Zephyr 仓库（tmp 测试库无生成器脚本）clean skip（同治 GATE-DEPGRAPH-OPS pytest tmp critical_warn 噪音，遗留项3）；③generate_project_depgraph.py worktree DB 写入重建 REFUSED（exit 2 指引正确姿势，dry-run 放行）+ 主仓重建豁免活跃 worktree 独有节点（DELETE 豁免集，生命周期自收敛：merge 吸收/abort 自然删）；④dashboard.py _db_path 经 anchor_main_root 锚定；⑤同族根治：_governance_db_path 由 strip_session_worktree 改 anchor_main_root——原深段剥离对宿主 worktree 内嵌套 pytest basetemp（conftest 重定向 .runtime/tmp/pytest_<pid>）误剥到主仓根，测试写 tmp 库/读主仓真库双向错位（24 项同族测试失败实证，cleanup 类甚至对主仓真库 DELETE——存量数据安全隐患一并消除）'
+  status: implemented
+  confirmed_by_user: '2026-08-15 用户裁定治理批③施工（遗留项全面审查+治本）'
   related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T2 SessionRegistry 锚主仓同族先例）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 监视器捕获本问题）; #50（tmp_repo 独立空库——锚定正交性约束）'
   created: '2026-08-15'
   last_updated: '2026-08-15'

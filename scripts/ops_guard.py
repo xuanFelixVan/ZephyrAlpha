@@ -1143,6 +1143,31 @@ def inprocess_enforcement_installed() -> bool:
     return _INSTALLED
 
 
+def uninstall_inprocess_enforcement() -> bool:
+    """卸载 in-process 补丁，恢复原语（测试进程污染防护，治理批③ 2026-08-15）。
+
+    生产 worker 进程从不调用（补丁随进程退出消亡）；仅供测试场景：
+    同进程调用 run_worker（如 selfheal integration 测试）后补丁残留，
+    会拦截同进程后续测试自身的清理删除（字母序在 audit 后的 rule_bridge
+    等目录 fixture 清理命中保护区误拦实证）。测试 fixture 收尾调用本函数。
+    返回 True=本次卸载，False=未安装（幂等）。
+    """
+    global _INSTALLED
+    with _INSTALL_LOCK:
+        if not _INSTALLED:
+            return False
+        import shutil as _shutil_mod
+
+        for name, orig in _ORIG_PRIMITIVES.items():
+            if name.startswith("shutil."):
+                setattr(_shutil_mod, name.split(".", 1)[1], orig)
+            else:
+                setattr(os, name.split(".", 1)[1], orig)
+        _ORIG_PRIMITIVES.clear()
+        _INSTALLED = False
+        return True
+
+
 # ============================================================================
 # CLI
 # ============================================================================

@@ -22,8 +22,9 @@
 文档引用 depgraph 时只写稳定逻辑标识（module_id/blueprint_id/path），
 需要 node_id/edge_id 时查 DB（SELECT node_id FROM nodes WHERE blueprint_id='MOD-XXX'）。
 
-背景：8个 blueprint.md 曾硬编码 node_id（如 position_tracker node_id=7451163），
+背景：8个 blueprint.md 曾硬编码 node_id（如 position_tracker node_id=<7位物理ID>），
 DB 节点消失后成死引用，误导人/AI，差点引发错误裁定（2026-08-04 审查）。
+（本 docstring 不写真实数字——自身派生入 56_d_gov_scripts.md 后会被本 gate 自引用检出）
 
 模式:
   --warn-only（默认）: print 违规清单，exit 0

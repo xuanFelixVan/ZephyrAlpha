@@ -102,6 +102,28 @@ def strip_session_worktree(root: Path) -> Path:
 # worktree 进程剥离 .aidrafts/<session> 或 .worktrees/<session> 前缀回主仓库。
 MAIN_REPO_ROOT: Final[Path] = strip_session_worktree(REPO_ROOT)
 
+
+def is_session_worktree_root(root: Path) -> bool:
+    """root 恰为 session worktree 根（.worktrees/<sid>/ 或 .aidrafts/<sess>/）判定。
+
+    父目录结构判定（非段包含匹配）——宿主 worktree 内嵌套的 pytest tmp 路径
+    （.../.worktrees/<宿主>/.runtime/tmp/pytest_*/tmp_repo）不会误判宿主为
+    worktree（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T2 证1/证3 同型陷阱修复模式）。
+    """
+    return root.parent.name in (".worktrees", ".aidrafts")
+
+
+def anchor_main_root(root: Path) -> Path:
+    """session worktree 根 → 主仓根；其他路径原样返回（is_session_worktree_root 配套）。
+
+    与 strip_session_worktree 的区别：本函数只做单级父目录结构判定，对
+    嵌套 tmp 测试库路径安全（不段匹配）；strip_session_worktree 是深路径段
+    剥离（用于任意深度路径）。仓级状态锚定调用方应根据入参形态选择。
+    """
+    if is_session_worktree_root(root):
+        return root.parent.parent
+    return root
+
 # 治本(2026-07-19): PROJECT_ROOT 作为 REPO_ROOT 的语义别名（canonical SSoT 定义点）。
 # 某些模块（如 immutable_core）的测试契约要求 monkeypatch PROJECT_ROOT 属性，
 # 将 canonical 定义放在此处避免 SSOT-REDEFINITION gate 阻断（消除分散重定义）。
@@ -110,9 +132,17 @@ PROJECT_ROOT: Final[Path] = REPO_ROOT
 
 DB_DIR: Final[Path] = REPO_ROOT / "data"
 
-# DB_PATH — computed locally to avoid circular import from zephyr.governance.persistence
+# DB_PATH — 仓级共享治理库（governance.db），锚定主仓根。
+# #ARCH-WORKTREE-DB-SPLIT-001 裁定（2026-08-15）：观测/治理状态归属主仓，
+# worktree 进程与主仓进程读写同一份——原 REPO_ROOT 相对路径在 worktree 内
+# 解析出第二物理副本（.worktrees/<sid>/data/databases/governance.db），
+# 观测数据双副本分裂（worktree abort 即丢失）+ 生成器按 cwd 锚定读不同库
+# 致派生统计双源振荡（126 蓝图 tracked 文档反复 dirty 实证）。
+# 主仓进程 MAIN_REPO_ROOT == REPO_ROOT，语义不变；worktree 进程锚主仓。
+# 测试隔离不受影响：tmp_repo 测试库经显式 db_path 参数/fixture 注入，不经本常量。
+# computed locally to avoid circular import from zephyr.governance.persistence
 # Previously: from zephyr.governance.persistence.sqlite_schema import DB_PATH
-DB_PATH: Final[Path] = REPO_ROOT / "data" / "databases" / "governance.db"
+DB_PATH: Final[Path] = MAIN_REPO_ROOT / "data" / "databases" / "governance.db"
 
 GATES_DIR: Final[Path] = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 SNAPSHOTS_DIR: Final[Path] = REPO_ROOT / ".runtime" / "snapshots"

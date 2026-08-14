@@ -459,10 +459,11 @@ def _run_worker(payload: dict) -> int:
     #     rogue worker（锚定已删 worktree 的 payload 仍执行）治本。
     admitted, deny_reason = _check_worker_admission(payload)
     if not admitted:
-        from zephyr.shared.io.paths import strip_session_worktree
+        from zephyr.shared.io.paths import anchor_main_root
 
-        # 锚定失效时 status 落主仓（worktree 路径可能已不存在）
-        status_root = str(strip_session_worktree(Path(project_root)))
+        # 锚定失效时 status 落主仓（worktree 路径可能已不存在）；
+        # anchor_main_root 单级父目录判定——嵌套 pytest tmp 库不误剥（同族陷阱根治）
+        status_root = str(anchor_main_root(Path(project_root)))
         _write_failed_status(
             status_root, commit_sha, session_id, started_at,
             [f"worker 启动三证拒启: {deny_reason}"],
