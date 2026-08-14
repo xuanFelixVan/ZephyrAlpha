@@ -73,21 +73,32 @@ summary: "BM-BUY-04 分批建仓引擎：消费 31 号 FirmTargetPortfolio，C-0
 | 2 | 已知副本目录 | 无 |
 | 3 | 副本处置状态 | 无副本 |
 ### §0.6 五图对齐视图
+
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-> 自动生成（五图对齐，ARCH-056），禁止手写。生成命令：`python scripts/governance/d5_architecture/generators/align_panoramas.py --module MOD-PA-006`
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-PA-006`
+
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-PA-006` 的 file 节点 | production | `extract_depgraph.py --modules MOD-PA-006` |
-| 数据流图 (dataflow) | 消费 FirmTargetPortfolio（31 号产出） | active | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | BM-BUY-04 分批建仓环节 | production | `generate_decision_diagram.py` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-PA-006` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-006` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
 
 | 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-006 | MOD-PA-006 | ✅ |
-| domain_id | pf_alloc | pf_alloc | ✅ |
-| file_count | 1 文件 | §0.1 占位（AUTOGEN） | — |
+| domain_id | N/A | N/A | ✅ |
+| build_status | stable | stable | ✅ |
+| file_count | 2 文件 | 1 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
+
 ## §1 设计背景与目标 <!-- temporal_type: permanent -->
 ### 1.1 背景
 选股→仓位→执行三段已由 31 号分层裁定框架定稿并产出 FirmTargetPortfolio，但"拿到目标组合后怎么把单子打进去"——分几批、什么时点、锚什么价、资金怎么排——在 41 号 v1.0.0 前无 spec。41 号 §3.2-§3.6 给出裁定（置信度驱动 2 批+尾盘集中+限价锚定+消费 31 产出+T+1 约束），v1.7.0 已落码为本模块。

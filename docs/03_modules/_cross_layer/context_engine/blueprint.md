@@ -208,7 +208,7 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-CONTEXT_ENGINE` 的 60 个 file 节点 | design | `extract_depgraph.py --modules MOD-CONTEXT_ENGINE` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-CONTEXT_ENGINE` 的 61 个 file 节点 | design | `extract_depgraph.py --modules MOD-CONTEXT_ENGINE` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -220,6 +220,6 @@ canonical SSoT 为 [b_context_engine.yaml](file:///D:/ZephyrAlpha/architecture_m
 | module_id | MOD-CONTEXT_ENGINE | MOD-CONTEXT_ENGINE | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 60 文件 | N/A | — |
+| file_count | 61 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

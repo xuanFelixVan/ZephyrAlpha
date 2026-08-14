@@ -71,21 +71,31 @@ summary: "BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静�
 | 2 | 已知副本目录 | 无 |
 | 3 | 副本处置状态 | 无副本 |
 ### §0.6 五图对齐视图
+
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
-> 自动生成（五图对齐，ARCH-056），禁止手写。生成命令：`python scripts/governance/d5_architecture/generators/align_panoramas.py --module MOD-PLAN-001`
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-PLAN-001`
+
+#### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-001` 的 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-001` |
-| 数据流图 (dataflow) | 产出 TomorrowBoundary→MOD-PLAN-002 | active | `apply_dataflowgraph.py --list-datasets` |
-| 决策架构图 (decision) | BM-PLAN-01 明日预案引擎环节 | production | `generate_decision_diagram.py` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-PLAN-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-PLAN-001` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
 
 | 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PLAN-001 | MOD-PLAN-001 | ✅ |
-| domain_id | plan_engine | plan_engine | ✅ |
-| file_count | 1 文件 | §0.1 占位（AUTOGEN） | — |
+| domain_id | N/A | N/A | ✅ |
+| build_status | stable | stable | ✅ |
+| file_count | 2 文件 | 1 文件（§0.1） | ❌ |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ## §1 设计背景与目标 <!-- temporal_type: permanent -->
 ### 1.1 背景
