@@ -619,3 +619,12 @@ gates:
   source: in_process
   register_line: 0  # priority=128
   enabled: true
+# RECONCILER-FILE-OPS（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③，2026-08-14）：
+# 治理代理代码裸删除/移动原语静态扫描——防收敛后回流；删除/移动 MUST 走
+# ops_guard 安全 API（file_ops 声明制+全量审计+回收站可逆）。priority=117。
+- gate_id: RECONCILER-FILE-OPS
+  module_path: zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate
+  factory_function: make_reconciler_file_ops_gate
+  source: in_process
+  register_line: 0  # priority=117
+  enabled: true

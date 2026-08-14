@@ -92,5 +92,8 @@ from zephyr.gov_enforcement.commit_gates.secret_hardcode_gate import (  # noqa: 
 from zephyr.gov_enforcement.commit_gates.commit_scope_gate import (  # noqa: F401  # COMMIT-SCOPE 跨域混合提交治本（13a5e1d512 事故）
     make_commit_scope_gate as _make_commit_scope_gate,
 )
+from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (  # noqa: F401  # RECONCILER-FILE-OPS 裸删除原语静态扫描（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③）
+    make_reconciler_file_ops_gate as _make_reconciler_file_ops_gate,
+)
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
