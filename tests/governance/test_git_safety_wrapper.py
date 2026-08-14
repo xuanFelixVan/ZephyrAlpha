@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """tests/governance/test_git_safety_wrapper.py
 
 65 号 memo §7.7 验收 + §7.1 红队——git_safety_wrapper.ps1 / install_git_safety_wrapper.ps1 全行为测试。
