@@ -5,8 +5,8 @@ title: FirmRiskAggregator 逻辑（组合层风险聚合）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.23"
-date: 2026-08-14
+version: "1.0.24"
+date: 2026-08-15
 topic: firm_risk_aggregator
 scope: 07_trading_decision_architecture
 ---
@@ -30,7 +30,7 @@ scope: 07_trading_decision_architecture
 | 对标 | Citadel pod 模型 firm 层风险聚合 / Morwane risk-parity-throttle |
 | 正交性 | ✅ 与 regime 正交（regime 只缩 budget，不调聚合逻辑） |
 | 优先级 | P2 |
-| 状态 | ✅ 已定稿 v1.0.23（§2.1.1 伪代码 A-G 修复闭环；§2.10.7 Fassino Cauchy 不动点 + §2.10.8 Kakinaga MFCCA + §2.10.9 Hsieh Certified Wasserstein DRO LP 三项远期候选登记（协方差/风险泛函演进三级路径 Fassino→Kakinaga→Hsieh）；§2.11 作战地图口径裁定三环节闭合（BM-SEL-21/BM-RC-07-B/BM-RC-07-C）；已施工 production（8e4d60d5，60 测试全绿）。历史细节见 §9 修订记录） |
+| 状态 | ✅ 已定稿 v1.0.24（§2.1.1 伪代码 A-G 修复闭环；§2.10.7 Fassino Cauchy 不动点 + §2.10.8 Kakinaga MFCCA + §2.10.9 Hsieh Certified Wasserstein DRO LP 三项远期候选登记（协方差/风险泛函演进三级路径 Fassino→Kakinaga→Hsieh）；§2.11 作战地图口径裁定三环节闭合（BM-SEL-21/BM-RC-07-B/BM-RC-07-C）；已施工 production（8e4d60d5，60 测试全绿）；v1.0.24 第二轮循环压缩（AI-DC2-05）。历史细节见 §9 修订记录） |
 
 ### 1.2 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统（miniQMT 通道，T+1，不能做空）
@@ -133,7 +133,15 @@ StrategyTarget   →   ① 按标的求和(自然叠加)  →  ③ Kelly精裁�
 
 **degraded 组装（代码实现）**：`conflicts 任一 truncated`（条件1）∨ `single_name.triggered`（2）∨ `sector.triggered`（3）∨ `total_exposure.triggered`（4）∨ `liquidity_cap.triggered`（4b，v1.0.19 补）∨ `kelly_param_source=="historical_fallback"`（5）。
 
-**A-G 修复记录摘要（v1.0.19 闭环，2026-08-12 核对与代码全部一致）**：A——`constraint_checks` 初始化补 `liquidity_cap` 键（原 Step 1b KeyError）；B——degraded 补 `liquidity_cap.triggered` 析取（G14 可感知流动性降级）；C——Step 1b `adv_data` 改为参数传入 + `sector_adv_median` 从 adv_data 派生（原引用未定义变量）；D——Step 1b `total_capital`→`total_budget` 口径统一；E——Step 1b ADV 两档裁剪算法补全（severe>20% 削到 20% / moderate>10% 削半 / 缺失降级同行业中位数）；F——`PreKellyResult` 增 `contributions` 字段并透传（原数据流断裂致归因丢失）；G——`sector_overlay_active` 注释澄清为 §2.5.1 接口前向兼容预留（非死代码）。
+**A-G 修复记录摘要（v1.0.19 闭环，2026-08-12 核对与代码全部一致）**：
+
+- A——`constraint_checks` 初始化补 `liquidity_cap` 键（原 Step 1b KeyError）
+- B——degraded 补 `liquidity_cap.triggered` 析取（G14 可感知流动性降级）
+- C——Step 1b `adv_data` 改参数传入 + `sector_adv_median` 从 adv_data 派生（原引用未定义变量）
+- D——Step 1b `total_capital`→`total_budget` 口径统一
+- E——Step 1b ADV 两档裁剪算法补全（severe>20% 削到 20% / moderate>10% 削半 / 缺失降级同行业中位数）
+- F——`PreKellyResult` 增 `contributions` 字段并透传（原数据流断裂致归因丢失）
+- G——`sector_overlay_active` 注释澄清为 §2.5.1 接口前向兼容预留（非死代码）
 
 **施工要点**：① 数据流 `StrategyBook → pre_kelly_aggregate → MOD-POS-001 Kelly → post_kelly_clip → FirmTargetPortfolio`，`conflicts`/`contributions`/`kelly_param_source` 三参数须跨段传递（原传空列表致条件 1 永不触发 bug 已修复）；② CASH 豁免贯穿全流程（pre_kelly 求和跳过、post_kelly 裁剪跳过、Step 4 残差计算）；③ 级联单调收敛，Kelly 已 pro-rata 时 Step 3 不触发；④ 幂等：`idempotency_key` 防重复聚合，pre_kelly 结果可缓存，Kelly 重试用同 PreKellyResult（§6 幂等性行）。
 
@@ -567,9 +575,9 @@ Hsieh 不解决"协方差估计需求"（仍需场景集），但解决"优化�
 | **Kelly pro-rata 归一化与 firm 层总仓位裁剪的交互**（防重复缩放） | [31号 §2.3.5](31_position_sizing.md)（Kelly 层 pro-rata）+ 本备忘 §2.5.2（总仓位裁剪等比缩放） | **需对齐**：31号 §2.3.5 在 Kelly 层做 pro-rata 归一化（sum(f_i^final) > 总仓位上限时按比例缩放），本备忘 §2.5.2 总仓位裁剪也做等比缩放。两者可能叠加导致**双重缩放**。施工时须明确：① Kelly 层 pro-rata 用 Kelly 后的 sum vs Kelly 层总仓位上限（可能 = regime_cap）② firm 层 §2.5.2 用裁剪后 sum vs regime_cap ③ 两者口径一致则 Kelly 层 pro-rata 后 firm 层总仓位裁剪自动不触发（`triggered=False`），不会双重缩放。数据流：`pre_kelly_aggregate → MOD-POS-001 Kelly（含 §2.3.5 pro-rata）→ post_kelly_clip（§2.5.2 总仓位裁剪，若 Kelly 已 pro-rata 则跳过）` |
 | **CVaR 接口对齐（var_calculator → constraint_checks）** | 本备忘 §2.10.1 / [30号 §2.5](30_multi_strategy_concurrency.md)（var_calculator.py MOD-POS-008） | **待对齐**：`var_calculator.py` 已 production 实现组合 VaR/CVaR，但输出格式未接入本备忘 `constraint_checks`。施工时须定义：① `constraint_checks.tail_risk` 字段结构（VaR_95/CVaR_95/CVaR_VaR_ratio/tail_quality 四轴）② 调用时机（post_kelly_clip 后调用 var_calculator 验证，非裁剪主算法）③ 与 30号 §2.5 drawdown_controller 5 级响应的关系（drawdown_controller 消费同源 CVaR 做分级响应，G13 只记录不重复计算） |
 | **pre_kelly_aggregate / post_kelly_clip 幂等性与重入** | 本备忘 §2.1（两段接口） | **待定义**：`idempotency_key` 已在 FirmTargetPortfolio 字段（§2.7），但两段拆分后幂等语义需明确——① pre_kelly 与 post_kelly 是否共享同一 idempotency_key ② 若 MOD-POS-001 Kelly 失败重试，post_kelly_clip 是否需重新调用 pre_kelly_aggregate（答案：否，pre_kelly 结果可缓存，Kelly 重试用同 PreKellyResult）③ 幂等窗口（如日内同 idempotency_key 返回缓存结果） |
-| **~~⚠️ P0：StrategyBook→FirmRiskAggregator 接口字段名三方漂移~~** | 2026-08-12 代码核对（[30号 §2.2](30_multi_strategy_concurrency.md) 接口契约②已同步标注） | ✅ **已关闭（AI-FRA-001，8e4d60d5 已 merge，60 测试全绿）**。原漂移诊断备查：代码真源 `TargetPortfolio` dataclass（strategy_book.py）字段为 `positions: dict[str, TargetWeight]` + `budget`；而原 `_sum_by_symbol()` duck-typing 按 `target_portfolio`/`budget_used` 取值——直接传入 TargetPortfolio 对象会静默取空默认值，聚合产出全现金组合且不报错；且 `positions` 值是 `TargetWeight` 对象（含 target_weight/reason/confidence）非裸 float。修复含"传 TargetPortfolio 对象"路径回归测试 |
+| **~~⚠️ P0：StrategyBook→FirmRiskAggregator 接口字段名三方漂移~~** | 2026-08-12 代码核对（[30号 §2.2](30_multi_strategy_concurrency.md) 接口契约②已同步标注） | ✅ **已关闭（AI-FRA-001，8e4d60d5 已 merge，60 测试全绿）**——`TargetPortfolio.positions/budget` 与原 `_sum_by_symbol()` duck-typing `target_portfolio/budget_used` 字段名漂移致静默产出全现金组合，已修复并补"传 TargetPortfolio 对象"路径回归测试（漂移诊断全录 §9 v1.0.21 修订记录） |
 | **T+1 可卖持仓口径假设** | 本备忘 §2.3 净额截断（`max(0, net+current_holdings)`） | **口径假设未明示**：`current_holdings` 假设全部可卖，但 A 股 T+1 下今日买入部分不可卖——若快照含今日买入部分需区分"可卖/冻结"。净额截断若按全量 holdings 计算，极端场景会允许"卖出超过可卖量"的意愿进入下游（执行层 [42号](42_sell_flow.md) sell_flow 兜底）。归执行层职责，但本备忘须明示口径假设：`current_holdings` 应为 **T+1 口径可卖权重**（昨持仓−今日已卖），数据供给方（持仓对账/`position_reconciler`）需按此口径供数 |
-| **~~测试文件丢失重建~~**（2026-08-11 git clean 灾难，#ARCH-GIT-CLEAN-GUARD-FIX） | 代码头部 [TESTS] 声明 `tests/position/test_firm_risk_aggregator.py` | ✅ **已重建（AI-FRA-001，8e4d60d5 已 merge）：60 测试全绿**。原灾难备查：测试文件 2026-08-10 创建未 `git add`，2026-08-11 被 `git clean -fd` 删除且 git 历史无记录。同批仍丢失待重建：`test_strategy_book.py`（70）/ `test_budget_change_handler.py`（47）/ `test_regime_meta_allocator.py`（55），登记 [30号 §6.8](30_multi_strategy_concurrency.md) |
+| **~~测试文件丢失重建~~**（2026-08-11 git clean 灾难，#ARCH-GIT-CLEAN-GUARD-FIX） | 代码头部 [TESTS] 声明 `tests/position/test_firm_risk_aggregator.py` | ✅ **已重建（AI-FRA-001，8e4d60d5 已 merge）：60 测试全绿**。同批仍丢失待重建：`test_strategy_book.py`（70）/ `test_budget_change_handler.py`（47）/ `test_regime_meta_allocator.py`（55），登记 [30号 §6.8](30_multi_strategy_concurrency.md)（灾难经过备查 §9 v1.0.21 修订记录） |
 | **capability_canonical_file_registry 未登记** | 硬约束"模块创建必须生成 creation_token 并登记" | ⚠️ MOD-POS-021（及同批 MOD-POS-020/022、MOD-PA-007）未在 `capability_canonical_file_registry.yaml` 登记（该 registry 仅 MOD-POS-009 一条 D_POSITION 记录）。需补登记（creation_token 追溯生成或按补救流程）——不属本备忘施工范围，登记供治理调度 |
 | **depgraph maturity 滞后** | [64_d_position.md](../../02_domain_architecture_docs/64_d_position.md)（自动生成） | ⚠️ depgraph（PostgreSQL）中 MOD-POS-020/021/022 仍标 design，64 号自动文档佐证滞后（"设计态/design"）。需 depgraph DB 更新 maturity=production 后重新生成——不属本备忘施工范围，登记供治理调度 |
 
@@ -710,3 +718,4 @@ Hsieh 不解决"协方差估计需求"（仍需场景集），但解决"优化�
 | 2026-08-12 | 1.0.21 | 灾后修复 + 全量设施盘点 + 第 3 轮算法审查新发现：① **33 号骨架化交叉引用修正 4 处**——33_budget_change_handler 在 2026-08-11 git clean 灾难（#ARCH-GIT-CLEAN-GUARD-FIX）中内容丢失回退骨架 v0.1.0（v2.x 定稿内容 git 历史无记录），§4.2 阶段 3 + §6 接口契约行/dead-band 行/lot 对齐行引用全部修正为"代码 docstring 为临时真源"；② **§4.2 演进路径三阶段状态更新**——MVP/阶段 2 标记已完成（2026-08-12 核对源码在位），阶段 3 标"代码就绪/文档待重建"；③ **§6 开放问题**：拆分行关闭（✅ 已完成）、新增 6 行——**⚠️ P0 字段名三方漂移**（代码核对发现：`TargetPortfolio.positions`/`budget` vs `_sum_by_symbol` duck-typing 取 `target_portfolio`/`budget_used`，直接传对象静默产出全现金组合不报错；修复归代码施工+补 TargetPortfolio 输入路径回归测试）+ **T+1 可卖持仓口径假设**（§2.3 净额截断 current_holdings 应为 T+1 口径可卖权重，供数方 position_reconciler 需按此口径）+ 测试丢失重建/registry 未登记/depgraph 滞后三行；④ **§7.2 表补"当前状态（2026-08-12 核对源码）"列**；⑤ **§7.6 新增已施工设施盘点**（规则 #11）：G13 数据流核心链 5 模块 + 参数供给方 + 代码-文档契约核对结论（§2.1.1 A-G 修复与代码全部一致/§2.7 契约字段一致/INVARIANTS 一致，唯一不一致=字段名漂移）；⑥ §9 补录 v1.0.20 漏记条目；⑦ §1.1 依赖 31号 v1.18.0→v1.23.0 版本漂移修复 | 架构审查任务（30/32 号）第 1-3 轮：盘点发现 33 号骨架化致 4 处引用悬空、§4.2 表滞后、修订记录缺 v1.0.20、§7.2 无状态列、缺设施盘点节；第 3 轮算法审查新发现字段名三方漂移 P0 断裂风险 + T+1 可卖口径假设未明示。按"事实性漂移修复+决策类登记开放问题"原则处置。**施工方式**：worktree 隔离（主区并发会话持续回退致修改 2 次丢失，用户裁定改 worktree 施工） |
 | 2026-08-12 | 1.0.22 | 作战地图全覆盖补丁——BM-SEL-21 / BM-RC-07-B / BM-RC-07-C | §2.11 新增作战地图组合优化口径裁定小节（3 环节闭合）：① §2.11.1 BM-SEL-21（design 父环节）二选一裁定——BM 假设 maxΣ(w×score) s.t. corr<0.7/拥挤统一优化引擎 vs 本文 §3.4 已裁定路线冲突，裁定维持"自然叠加+Kelly 精裁决+硬裁剪"（默认项），BM 环节定义修订建议登记（process 描述对齐 31/32 号路线+SEL-21-B 描述对齐+约束映射监控层，留 BM 维护批次不擅自改真源）；② §2.11.2 BM-RC-07-B（production）同上冲突裁定——当前=Kelly 上限+风险预算消费（25号 §2.1 框架，预算 34号分配/Kelly 只减不增精裁），优化求解登记 Phase 4 演进（§2.10.7 Fassino Cauchy 不动点远期，拒绝理由①协方差需求未解决裁定维持）；③ §2.11.3 BM-RC-07-C（production）"预算 vs 实际→再平衡触发"链路补全——监控层引用 54号 §3.14 MCR/CCR 风险贡献分解（Euler 分解 Phase 2.5 候选）为偏离度量层，执行层联动 31号 §2.8.2 再平衡执行链，G13 保持单一职责不建再平衡触发器 |
 | 2026-08-14 | 1.0.23 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | §2.1.1 完整伪代码折叠为接口级摘要（production 代码为真源，8e4d60d5，60 测试）；§2.1"代码现状对齐"过程段折叠为 ✅ 已施工标记；§2.10 远期演进方向散文压缩（算法核心/参数/对比表格/链接/Phase 与重评条件全保留）；§7.4 对标实证按主题归组（全部链接保留）；§6 P0 字段名漂移行 + 测试丢失行随 AI-FRA-001 关闭（8e4d60d5 已 merge）；§7.2/§7.6 状态同步。接口契约/degraded 5 条件/liquidity_cap-adv_data-total_budget 口径/§6 全部开放问题/A-G 修复摘要零丢失自审通过 |
+| 2026-08-15 | 1.0.24 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §2.1.1 A-G 修复摘要 300 字段拆 7 要点；§6 两条已闭合行（P0 字段名漂移/测试丢失重建）压缩为一行结论（诊断全录 §9 v1.0.21）；全篇扫描无其他可压缩点——单票 8%/行业 ±10%/±15%/绝对 30%/ADV 20%-10% 两档/degraded 5+4b 条件/cut_ratio 累积公式/O(N×M)/§6 全部开放问题/BM 裁定/链接逐项零丢失 |
