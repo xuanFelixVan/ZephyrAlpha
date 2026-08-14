@@ -6041,6 +6041,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- reconciler 自动删除失控族裁定书（2026-08-14，统筹会话，GATE-WORKING-DOCS 误归档+I-GOV-2 架空+S1 盲区三实证）---
+  - file: "docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md"
+    token: "auto-reconciler-auto-delete-gov-review-20260814"
+    created_by: "session-coord-0814-git001"
+    capability: "reconciler_auto_delete_governance_review"
   # --- worktree wipe 事故裁定书（2026-08-14，AI-LIQ-001 六遗留项审查，统筹会话归档；收编补登）---
   - file: "docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md"
     token: "auto-worktree-wipe-incident-review-20260814"
@@ -6107,10 +6112,11 @@ creation_tokens:
     token: "auto-panpan-course-11-20260810"
     created_by: "session-trae-agent"
     capability: "panpan_course_notes"
-  - file: "docs/_working/潘潘直播课程/因子与策略提炼.md"
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/29_factor_strategy_extraction.md"
     token: "auto-panpan-factor-extraction-20260810"
     created_by: "session-panpan-factor-extraction"
     capability: "panpan_course_notes"
+    # 2026-08-14 用户裁定：从 docs/_working/潘潘直播课程/因子与策略提炼.md 迁入 design_memos 并更名 29_factor_strategy_extraction.md（token 沿用）
 
   # --- 模块级翻译真源（2026-08-01，#ARCH-SSOT-GLOSSARY-MERGE-001 补齐模块级翻译缺口）---
   - file: "scripts/governance/_shared/module_translation_loader.py"
@@ -8766,11 +8772,11 @@ creation_tokens:
     capability: "tomorrow_plan_engine"
 
   # --- 统筹文件 reconciler 误删恢复重登记（2026-08-14，事故#49，AI-SOP-001）---
-  - file: "docs/_working/construction_progress_tracker.md"
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md"
     token: "auto-coord-tracker-restore-20260814"
     created_by: "session-AI-SOP-001"
     capability: "construction_coordination"
-  - file: "docs/_working/handoff_construction_coordinator.md"
+  - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/handoff_construction_coordinator.md"
     token: "auto-coord-handoff-restore-20260814"
     created_by: "session-AI-SOP-001"
     capability: "construction_coordination"

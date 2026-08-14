@@ -83,7 +83,7 @@ git -C .worktrees/<sid> status --porcelain
 
 ### 证 3 · 统筹显式批准（清理动作已登记）
 
-**标准**：清理动作已登记到施工进度跟踪表（`docs/_working/construction_progress_tracker.md`）或统筹会话显式批准。
+**标准**：清理动作已登记到施工进度跟踪表（`docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md`）或统筹会话显式批准。
 
 **登记内容**：目标 sid / 分支名 / ahead commit 数 / stash ref（如有）/ 清理原因 / 执行人。
 

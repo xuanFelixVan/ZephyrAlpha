@@ -5,7 +5,7 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.10.1"
+version: "2.11.0"
 date: 2026-08-12
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
@@ -25,6 +25,7 @@ scope: 07_trading_decision_architecture
 > **状态图例**：`active`=已定稿/已落地｜`draft`=草案/待讨论｜**骨架**=已建占位文档（frontmatter status=draft，仅含主题组信息与讨论要点清单，§2-§6 待填空；讨论定型后升 active）。
 > ⚠️ **2026-08-11 git 灾难影响标注**（v2.9.0 取证确认 + v2.9.1 重建联动更新）：15/16×2/28/33/52/55/60 号曾被本索引标记为 active 高版本，但 git 历史证明高版本内容**从未提交**（未提交内容被 `git clean -fd`/`git reset --hard` 清除）——其中 **7 篇已于 2026-08-12 04:32 重建**（commit 6a4f5392：33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建）；**28号已于 2026-08-12 从 commit a3750b90d1 恢复 v1.2.0（commit 16f119bd）；60号经核查 HEAD 已是 active v1.0.0 完整版（129行，8da7513309 提交，原"骨架"标注过时）**；另 34号 测试套件（55 用例）丢失待重建。详见 §9 开放问题 #D1/#D2。本表"状态"列对齐 2026-08-12 工作树实际 frontmatter（当前有 22 路并发审查 session 正在更新各文档，版本可能再次漂移，下轮审查时重新核对）。
 > 注：`AI_review_instructions.md`（22 路并发 AI 审查回填指令集，active v2.1.0）为审查操作手册，非设计备忘，不入本目录编号。
+> 注：`construction_progress_tracker.md`（施工进度总跟踪表）+ `handoff_construction_coordinator.md`（统筹交接包）为施工统筹协调文件，非设计备忘，不入本目录编号（2026-08-14 自 docs/_working 迁入，防 reconciler 误删——事故 #49）。
 
 | 文件 | 内容一句话 | 状态 |
 |---|---|---|
@@ -51,6 +52,7 @@ scope: 07_trading_decision_architecture
 | [26_event_driven_strategy_detail.md](26_event_driven_strategy_detail.md) | G10 事件驱动策略细节 | active v1.8.0 |
 | [27_second_batch_strategies.md](27_second_batch_strategies.md) | G11 第二批次策略（价值反转/动量趋势，暂缓） | draft v0.2.0（暂缓说明已补） |
 | [28_sentiment_cycle_trading.md](28_sentiment_cycle_trading.md) | G21 情绪周期×交易决策（五阶段+定位器+regime分工+策略部署+隐形驱动验证） | active v1.2.0（2026-08-12 从 a3750b90d1 恢复，16f119bd） |
+| [29_factor_strategy_extraction.md](29_factor_strategy_extraction.md) | 潘潘直播课程因子与策略提炼知识库（546 条：F1-F8 因子+S9-S16 策略，二十一轮审查收敛，factor/strategy/risk_limit 三注册表 doc_ref 真源） | active v1.0.0（2026-08-14 从 _working/潘潘直播课程 迁入） |
 | [30_multi_strategy_concurrency.md](30_multi_strategy_concurrency.md) | 多策略并发架构总纲（Model A：独立账本+firm聚合） | active v2.5.0 |
 | [31_position_sizing.md](31_position_sizing.md) | 仓位算法 spec（策略层粗仓位+firm层Kelly精裁决） | active v1.25.0 |
 | [32_firm_risk_aggregator.md](32_firm_risk_aggregator.md) | G13 FirmRiskAggregator 逻辑 | active v1.0.22 |
@@ -638,6 +640,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 36_var_es_monitoring | G17 VaR/ES | ✅ 已定稿 | active v1.10.2 |
 | 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.1.0（2026-08-14 AI-LIQ-001 施工完毕，MOD-RK-21 production） |
 | 28_sentiment_cycle_trading | G21 情绪周期 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失（v1.2.0 可从 a3750b90d1 恢复） |
+| 29_factor_strategy_extraction | 潘潘课程因子策略提炼知识库（工程文档，非G主题） | 已落盘 | active v1.0.0（2026-08-14 用户裁定从 _working 迁入，原名 因子与策略提炼.md） |
 | 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
 | 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.6.6 |
 | 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
@@ -846,3 +849,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-12 | 2.9.1 | **7 篇骨架重建联动修正（循环审查第 2 轮新发现）**——另一 AI 会话于 04:32 提交 commit 6a4f5392 重建 7 篇骨架文档（33/55/52/15/16catalog/16build_plan→active v1.0.0、27号→draft v0.2.0，依 production 代码回建），本索引 v2.9.0 的"骨架待重建"标注随之部分过时。本轮同步：§0 目录 7 行（15/16×2/27/33/52/55号）+ §0 头部 ⚠️ 标注（7 篇已重建/仅剩 28+60号）+ §2 快照（03/08 行 + 结论）+ §3 状态（G01/G14/G15 v2.8.1/G23/G26）+ §7.3 同 7 行 + §9 #D1 改"部分闭环"（仍待裁定：28号恢复/60号重建）+ #D3 34号版本引用更新。**未变**：28号（可从 a3750b90d1 恢复 v1.2.0）与 60号（骨架）待重建、34号 测试套件（55 用例）丢失待重建。frontmatter v2.9.0→v2.9.1 | 循环审查自检发现：v2.9.0 提交准备期间，7 篇骨架已被另一 AI 重建提交（6a4f5392），索引须联动保持准确——本轮为重建联动修正，无新主题组/决策变更 |
 | 2026-08-12 | 2.10.0 | **作战地图全覆盖工程（BM 339 环节逐环节核对闭合）**——以 PG `battle_map_steps` 为真源全量核对 design_memos 覆盖：① **新建 43号**（G30 合规与交易纪律体系，draft v0.1.0，承载 BM-BUY-08-A/08-B/09/12/15）；② **26 篇补环节设计/裁定**：41号 v1.6.0（明日预案双层架构 BM-PLAN-01/02/03 + 上游四轨裁定）、61号 v2.13.1（研究知识流水线拍板+研究环境否定式裁定+运行时风险治理 BM-RC-09/04-F）、40号 v2.10.1（§2.8 盘前检查链 BM-RC-02/02-C）、53号 v1.7.3（§3.9 仿真域 why 回填 BM-SIM-03/04/06/07）、52号 v1.0.3（辅助组件契约+暂缓裁定）、42号 v1.6.2（§3.11 卖出闭环优化）、31号 v1.24.2（§2.8 持仓漂移与再平衡）、32号 v1.0.22（组合优化口径裁定）、35号 v1.38.2（否决执行引擎 BM-RC-10/10-A）、36/37/54/55/62/15/51/17/64/90/91/21/24/25/20/34/23/10 号同步补丁；③ **环节级锚定**：全部活跃环节（320/339，19 弃用除外）正文显式标注 BM 编号至承载小节，可检索可追溯；④ §0 目录 47→48 篇 + G30 主题组登记 + §2 快照 12 阶段全部"已覆盖"（60号 骨架待重建除外）+ §7.3 补登 43号。否定式裁定（不建设/暂缓+重评条件）经用户 2026-08-12 裁定认可。遗留：battle_map 真源 3 处成熟度口径修正登记在 61 §7.5 / 52 §7 待治理流程回写 DB | 用户裁定驱动：design_memos 须包含作战全景图全部环节流程供后续完整开发；四路语义审计（221 环节）发现 GAP 32 项+PARTIAL 72 项，按"能合并不新建"偏好仅新建 43 号一篇，其余全部并入现有备忘 |
 | 2026-08-12 | 2.10.1 | **全覆盖复核补锚 3 活跃环节 + 28/60号状态回归修正**——① PG `battle_map_steps` 复核（340 环节/19 deprecated/321 活跃，BM-SIM-08 新入库 +1）：发现 3 个活跃环节未逐编号锚定，补锚 24号 v1.10.4（BM-SEL-23-C 情绪周期策略映射→§3.5 门控切换/§3.6 仓位上限 5 档、BM-SEL-25-B 情绪周期自适应权重→§3.5 `determine_adaptive_weights`）+ 53号 v1.7.4（BM-SIM-08 Paper Matching 涨跌停排队引擎→§3.2 Step②/公式②），321 活跃环节恢复 0 缺口；② §2 快照口径更新 339→340 环节、320→321 活跃；③ 修正 v2.10.0 合并回归——28号/60号 状态误回退为"骨架待重建"，实际 28号 v1.2.0 已恢复（16f119bd）、60号 active v1.0.0 已在 HEAD（8da7513309），重放 v2.9.2 更正至 §0 头部注记/§0 目录×2/§2 快照行 12+结论/§6 G21 行+结论/§9 定位器评估行/#D1 闭环共 8 处；④ §0 目录版本对齐 24号 v1.10.4 / 53号 v1.7.4 | 全覆盖工程收口复核：以 DB 当前真源（340 环节）重扫发现 BM-SIM-08 等 3 个活跃环节漏锚（语义早已覆盖、编号未显式）；同时发现 v2.10.0 合并时 28/60号状态文本覆盖了 v2.9.2 的已恢复标注，一并修正 |
+| 2026-08-14 | 2.11.0 | **29号补登（潘潘课程因子策略提炼知识库迁入）**——§0 目录 48→49 篇 + §7.3 占用表补登 29 号；29_factor_strategy_extraction.md（原 docs/_working/潘潘直播课程/因子与策略提炼.md，546 条 F1-F8 因子+S9-S16 策略，二十一轮审查收敛）经用户裁定迁入 design_memos 落位 2x Alpha 策略层，frontmatter 按 01 号规范 §4.2 规范化（ttl→permanent），factor/strategy/risk_limit 三注册表 doc_ref 同步更名；capability_canonical_file_registry token 沿用（auto-panpan-factor-extraction-20260810） | 用户裁定驱动：提炼知识库作为三注册表 doc_ref 真源应落位永久区而非 _working 临时区（task_bound 易被 TTL/wipe 类进程误删，已实证两次）；迁入后命名合规（段位号+snake_case） |

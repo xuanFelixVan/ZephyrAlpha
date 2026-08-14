@@ -16569,10 +16569,50 @@ entries:
     - 'docs/01_policies_and_standards/sop/construction_workflow_sop.md（§七→§六 漂移修正）'
     关联文档：
     - 'docs/_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md（裁定书真源）'
-    - 'docs/_working/construction_progress_tracker.md §六（38-40/43/25/49-52 号项）'
+    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md §六（38-40/43/25/49-52 号项）'
   fix_phase: 'S1-S6 + task_board 全部完工（14 commits，worktree AI-GIT-001 保留待 merge）。验收：S1 红队 42/42 拦截；S4 无 PYTHONPATH 4/4；S3 端到端日志+快照实证；S5 双形态锚点 hint 实证；task_board 17/17。'
   status: decided
   confirmed_by_user: '2026-08-14 用户裁定治理插队批 P0（git/并发协作基础设施专项治理施工）'
   related_rules: '#ARCH-GIT-CLEAN-GUARD-FIX; #ARCH-AICOLLAB-001; #ARCH-WORKTREE-ENV-001; #ARCH-SPAWN-JOB-KILL-001; #ARCH-MERGE-PATH-GAP-001; 65 号 v2.3.0; 66 号 v1.1.0'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'
+
+# --- #ARCH-RECONCILER-AUTO-DELETE-GOV-001: reconciler 自动删除/归档失控族——GATE-WORKING-DOCS 误归档+I-GOV-2 架空+S1 覆盖面盲区（2026-08-14 统筹裁定）---
+- issue_id: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001'
+  title: 治理自动化代理删除能力失控——幽灵引用归档器误删统筹文件三波复发 + _commit_auto 架空 I-GOV-2 + ops_guard 对 worker 零覆盖
+  severity: P0
+  category: governance
+  adjudication: |
+    事件：2026-08-14 主工作区三波非授权文件消失（潘潘 16 tracked 文件删除；
+    tracker/裁定书/handoff 两度被归档；untracked 清风草稿两次丢失不可恢复）。
+    实证真凶（统筹会话一手取证，worker 日志+working_archive+快照时间线）：
+    GATE-WORKING-DOCS 幽灵引用归档器——规则=docs/_working 文档引用的项目内路径
+    磁盘不存在即判幽灵，move 至 .runtime/working_archive + _commit_auto 提交删除。
+    结构性误判：治理/分析文档（tracker/裁定书/潘潘分析）天然高频引用短寿命路径
+    （.worktrees/<sid>/事故现场/数据清单），目标一死文档即中招，误判率对该类=100%。
+    三缺陷叠加：
+    (1) I-GOV-2 铁律（reconciler 禁止 action=commit，L12341）被 _commit_auto 通道
+        全面架空——删除类 auto-commit 是高危分支（wipe 后第三次事故族同根）；
+    (2) S1 ops_guard 实证为 AI 会话调用层拦截（CLI+自觉 API），reconcile worker
+        独立 python 进程不经过——治理代理层删除能力零覆盖零审计；
+    (3) worker 启动准入零校验——锚定已删 worktree 的 payload 仍被执行（rogue
+        worker PID 26288 实证）。
+    第一性原理：自动化代理的不可逆操作能力必须小于其判定准确率；启发式判定
+    准确率恒<100%，故自动代理永不该持有不可逆操作能力——一切自动删除必须
+    可逆（统一回收站），删除类禁止 auto-commit。
+    裁定（治本）：按 2026-08-14_coord_reconciler_auto_delete_governance_review.md
+    T0-T6 分层方案——T0 归档器 dry_run 止血+统筹文件白名单；T1 reconciler 操作面
+    显式声明+删除统一走 guard 库 API+统一回收站；T2 worker 启动三证+动作全量落盘；
+    T3 文档保护区+untracked 删除人工确认；T4 门禁审计写迁出 tracked 区（#55）；
+    T5 告警卫生；T6 I-GOV-2 表述对齐+wipe 裁定书排除清单勘误。
+  impact:
+  - 'src/zephyr/governance/audit/reconciliation_registry.py（GATE-WORKING-DOCS dry_run 化 + file_ops 声明制 + guard API 收敛）'
+  - 'scripts/ops_guard.py（库层安全删除 API + 统一回收站 + worker 进程覆盖）'
+  - 'src/zephyr/governance/audit/reconcile_worker.py（启动三证准入）'
+  - 'docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md（裁定书真源）'
+  fix_phase: '裁定书已归档（2026-08-14）；T0 止血待用户授权；T1-T6 待立项施工'
+  status: decided
+  confirmed_by_user: '2026-08-14 用户指令"全部调研清楚，全面审查相关问题，第一性原理，给出分析过程和裁定结果+治本施工方案"'
+  related_rules: '#ARCH-WORKTREE-WIPE-GOV-001（wipe 治本 S1-S6 已 merge）; I-GOV-2（reconciler 无写权铁律，被 _commit_auto 架空）; 65 号 v2.3.0 §5（100% AI 文件安全模型扩展至治理代理层）; tracker §六 #53/#55'
   created: '2026-08-14'
   last_updated: '2026-08-14'
