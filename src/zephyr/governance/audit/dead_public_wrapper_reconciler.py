@@ -413,4 +413,5 @@ def make_dead_public_wrapper_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
     )

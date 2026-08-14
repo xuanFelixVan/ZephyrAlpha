@@ -362,6 +362,7 @@ def make_algo_flow_translation_reconciler(project_root: Path | None = None):
         trigger=_should_trigger,
         reconcile=_reconcile,
         priority=240,  # 晚于 requirements_version_sync(230)，同属翻译/文档真源校验域
+        file_ops=frozenset({"read", "write"}),
     )
 
 

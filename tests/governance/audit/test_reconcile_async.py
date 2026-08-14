@@ -644,16 +644,19 @@ class TestHeartbeat:
             gate_id="A", priority=10,
             trigger=lambda files: True,
             reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+            file_ops=frozenset({"read"}),
         ))
         reg.register(ReconcilerSpec(
             gate_id="B", priority=20,
             trigger=lambda files: True,
             reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+            file_ops=frozenset({"read"}),
         ))
         reg.register(ReconcilerSpec(
             gate_id="C-skip", priority=30,
             trigger=lambda files: False,  # trigger 不命中
             reconcile=lambda files, sid: ReconcileResult(action="clean", detail=""),
+            file_ops=frozenset({"read"}),
         ))
         reg.reconcile_for(["x.py"], "sess", heartbeat=lambda g: calls.append(g))
         # A、B 命中并触发心跳，C-skip trigger 不命中不触发
@@ -672,6 +675,7 @@ class TestHeartbeat:
             gate_id="X", priority=10,
             trigger=lambda files: True,
             reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ok"),
+            file_ops=frozenset({"read"}),
         ))
         results = reg.reconcile_for(["x.py"], "sess", heartbeat=None)
         assert len(results) == 1
@@ -693,6 +697,7 @@ class TestHeartbeat:
             gate_id="Y", priority=10,
             trigger=lambda files: True,
             reconcile=lambda files, sid: ReconcileResult(action="clean", detail="ran"),
+            file_ops=frozenset({"read"}),
         ))
         results = reg.reconcile_for(["x.py"], "sess", heartbeat=bad_hb)
         assert len(results) == 1

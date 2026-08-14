@@ -267,6 +267,7 @@ def make_metric_count_drift_reconciler(project_root: Path | None = None):
         trigger=_should_trigger,
         reconcile=_reconcile,
         priority=220,  # 晚于 readme_version_sync(210)，同属文档派生校验域
+        file_ops=frozenset({"read", "write"}),
     )
 
 

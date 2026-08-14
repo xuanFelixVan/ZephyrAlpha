@@ -100,6 +100,8 @@ Usage::
 
         priority=100,
 
+        file_ops=frozenset({"read", "write"}),
+
     ))
 
     results = registry.reconcile_for(["scripts/foo.py"], "sess-001")
@@ -272,7 +274,6 @@ __all__ = [
 
     "make_capability_lookup_health_reconciler",  # #ARCH-CAPABILITY-LOOKUP-BYPASS-DEAD Phase 4 G6
 
-    "scan_and_archive_working_docs",
 
     "log_gate_failure",  # Ruling:100PCT-AI-GOVERNANCE P1-5 — gate fail-open 持久化
 
@@ -723,6 +724,20 @@ class ReconcilerSpec:
 
         priority: 执行优先级（升序，数字小先执行）；同 priority 按 register 顺序。
 
+        file_ops: 文件操作面显式声明（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1①，
+
+            2026-08-14 裁定）——``{"none","read","write","delete","move"}`` 子集，
+
+            注册时强校验（空集/非法值 raise）。reconcile_for 执行前经
+
+            ops_guard.set_reconciler_context 注入，执行删除/移动但未声明对应
+
+            能力 → DeleteBlockedError 阻断 + 本表映射 critical_warn。
+
+            第一性原理：自动化代理判定准确率恒<100%，删除能力必须显式声明、
+
+            全量审计、可逆（回收站）。
+
     """
 
     gate_id: str
@@ -732,6 +747,12 @@ class ReconcilerSpec:
     reconcile: Callable[..., ReconcileResult]
 
     priority: int = 100
+
+    file_ops: frozenset = frozenset()  # 空=未声明 → register 强校验拦截
+
+
+#: file_ops 合法操作集（T1① 声明制词表）
+_VALID_FILE_OPS = frozenset({"none", "read", "write", "delete", "move"})
 
 class ReconciliationRegistry:
 
@@ -773,7 +794,27 @@ class ReconciliationRegistry:
 
         按 priority 升序保持 _specs 有序（注册后即排序，reconcile_for 时无需再排）。
 
+        T1① 强校验（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：file_ops 空集=未声明
+        或含非法值 → raise ValueError（显式声明制，注册期 fail-closed）。
+
         """
+
+        if not spec.file_ops:
+
+            raise ValueError(
+                f"ReconcilerSpec {spec.gate_id} 未声明 file_ops——"
+                "T1① 显式声明制（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）："
+                "从 {{'none','read','write','delete','move'}} 中显式选择操作面"
+            )
+
+        _invalid = set(spec.file_ops) - _VALID_FILE_OPS
+
+        if _invalid:
+
+            raise ValueError(
+                f"ReconcilerSpec {spec.gate_id} file_ops 含非法值 {_invalid}，"
+                f"合法集={sorted(_VALID_FILE_OPS)}"
+            )
 
         # 幂等：同 gate_id 先移除旧 spec
 
@@ -811,6 +852,21 @@ class ReconciliationRegistry:
 
         import inspect
 
+        # T1① lazy import（本模块顶层纯 stdlib 约束，函数内 import 为先例）：
+        # DeleteBlockedError 用于映射 critical_warn；ops_guard 不可达时上下文
+        # 注入降级为空操作（不阻断 reconciler 主流程，声明制失效风险由注册期
+        # 强校验兜底——file_ops 空值根本注册不进来）。
+        try:
+            from scripts.ops_guard import (
+                DeleteBlockedError as _DeleteBlockedError,
+                reset_reconciler_context as _reset_rc_ctx,
+                set_reconciler_context as _set_rc_ctx,
+            )
+        except Exception:  # noqa: BLE001 — ops_guard 不可达降级（注册期强校验已兜底）
+            _DeleteBlockedError = None
+            _set_rc_ctx = None
+            _reset_rc_ctx = None
+
         results: list[ReconcileResult] = []
 
         for spec in self._specs:
@@ -845,13 +901,31 @@ class ReconciliationRegistry:
 
                     accepts_msg = False  # 内置/C 函数无法 introspect，向后兼容 2-arg
 
-                if accepts_msg:
+                # T1① file_ops 上下文注入：执行前把 spec 声明注入 ops_guard
+                # contextvar——reconciler 内部任何删除/移动（guard_* API 或
+                # 装了 in-process 补丁的裸 stdlib）未声明即 DeleteBlockedError。
+                _rc_token = None
+                if _set_rc_ctx is not None:
+                    try:
+                        _rc_token = _set_rc_ctx(spec.gate_id, spec.file_ops)
+                    except Exception:  # noqa: BLE001 — 注入失败不阻断（审计缺失风险接受）
+                        _rc_token = None
 
-                    result = spec.reconcile(committed_files, session_id, commit_message)
+                try:
+                    if accepts_msg:
 
-                else:
+                        result = spec.reconcile(committed_files, session_id, commit_message)
 
-                    result = spec.reconcile(committed_files, session_id)
+                    else:
+
+                        result = spec.reconcile(committed_files, session_id)
+
+                finally:
+                    if _rc_token is not None and _reset_rc_ctx is not None:
+                        try:
+                            _reset_rc_ctx(_rc_token)
+                        except Exception:  # noqa: BLE001 — reset 失败不掩盖主结果
+                            pass
 
                 # Defensive: 某些 reconciler 可能返回 dict 而非 ReconcileResult，
 
@@ -918,6 +992,34 @@ class ReconciliationRegistry:
                 )
 
             except (Exception, KeyboardInterrupt) as e:  # noqa: BLE001 — drift 对账非阻断；KeyboardInterrupt 也降级（commit 已入库，reconciler 中断不应 crash 进程，治本 #2026-0701）
+
+                # T1① file_ops 未声明阻断 → 升级 critical_warn（强制 AI 看到：
+                # 某 reconciler 执行了它没声明的删除/移动能力——裁定书红队场景）
+                if _DeleteBlockedError is not None and isinstance(e, _DeleteBlockedError):
+
+                    logger.warning(
+
+                        "ReconciliationRegistry: reconciler %s file_ops 未声明阻断: %s",
+
+                        spec.gate_id, e,
+
+                    )
+
+                    results.append(
+
+                        ReconcileResult(
+
+                            action="critical_warn",
+
+                            detail=f"reconciler {spec.gate_id} file_ops 未声明执行删除/移动被阻断（I-GOV-2/T1①）: {e}",
+
+                            gate_id=spec.gate_id,
+
+                        )
+
+                    )
+
+                    continue
 
                 logger.warning(
 
@@ -2280,6 +2382,8 @@ def make_manifest_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=100,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 def make_path_tree_reconciler(gateway: object) -> ReconcilerSpec:
@@ -2475,6 +2579,8 @@ def make_path_tree_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=150,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # trae_060-reviewed: 合规——新增 reconciler（无法合并进已有：path_tree 触发 .py/.yaml，path_ownership 触发 blueprint.md，生成器不同；治本：path_ownership_map.yaml 自动同步消除手工维护漂移）
@@ -2606,6 +2712,8 @@ def make_path_ownership_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=160,  # 在 path_tree(150) 之后
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -2812,6 +2920,8 @@ def make_depgraph_ops_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=130,
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -3164,6 +3274,8 @@ def make_blueprint_frontmatter_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=135,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 def make_drift_scan_reconciler(gateway: object) -> ReconcilerSpec:
@@ -3364,6 +3476,8 @@ def make_drift_scan_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=140,
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -3698,6 +3812,8 @@ def make_drift_fix_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=150,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 def _module_id_infer_from_dir(file_rel: str) -> str | None:
@@ -3923,6 +4039,8 @@ def make_module_id_recommend_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=160,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # ============================================================================
@@ -4122,7 +4240,10 @@ def make_yaml_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
         if _RETRY_QUEUE_PATH.exists():
 
-            _RETRY_QUEUE_PATH.unlink()
+            # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+            from scripts.ops_guard import guard_remove
+
+            guard_remove(_RETRY_QUEUE_PATH)
 
     def _trigger(committed_files: list[str]) -> bool:
 
@@ -4336,6 +4457,8 @@ def make_yaml_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=160,
 
+        file_ops=frozenset({"read", "write", "delete"}),
+
     )
 
 def _collect_csv_refs(content: str, is_path_fn) -> list[str]:
@@ -4363,364 +4486,6 @@ def _collect_csv_refs(content: str, is_path_fn) -> list[str]:
         pass  # CSV 解析失败回退到正则结果
 
     return refs
-
-def scan_and_archive_working_docs(project_root: object, dry_run: bool = False) -> dict:
-
-    """递归扫描 docs/_working/ 下工作文档的幽灵引用并归档有幽灵引用的文档。
-
-    真源函数：``make_working_docs_reconciler`` 与一次性归档（S5/CLI）共用此逻辑
-
-    （向内收——扫描+归档逻辑唯一真源在此，两处复用，不另建脚本）。
-
-    递归扫描 docs/_working/ 下的工作文档（.md/.csv/.yaml/.yml/.json，排除
-
-    README.md permanent 定位说明），提取每个文档引用的项目内文件路径，检测
-
-    引用路径是否仍存在于磁盘。有幽灵引用的文档移动到
-
-    .runtime/working_archive/<ts>/<name>（可恢复，且 .runtime/ 已 .gitignore 不入库）。
-
-    路径引用提取（v2 扩展，治本 GAP-5：覆盖纯文本/CSV/YAML 路径）：
-
-    - markdown 链接 ``](path)`` -> 提取 path
-
-    - 反引号代码 ``` `path` ``` -> 提取 path
-
-    - 纯文本路径（CSV 单元格值、YAML 值、正文裸路径 docs/foo/bar.md）
-
-    - CSV 专用：逐单元格精确提取（避免正则误匹配 CSV 结构）
-
-    - file:/// 绝对路径 -> 转项目相对路径
-
-    - 排除 http(s):// / mailto: / # 锚点等外部引用
-
-    双重路径解析（治本 GAP-1，与 audit_broken_links.py 一致）：
-
-    - 先相对于文档所在目录解析（markdown 链接习惯，嵌套子目录正确）
-
-    - 若不存在，尝试相对于 project_root 解析（CSV/YAML 项目根相对路径）
-
-    - 两者任一存在即判定非幽灵
-
-    Args:
-
-        project_root: 项目根路径（Path 或 str）。
-
-        dry_run: True 只扫描不归档（返回候选列表）；False 归档（移动文件）。
-
-    Returns:
-
-        报告 dict：::
-
-            {
-
-              "scanned": int,
-
-              "archived": [filename, ...],   # dry_run 时为候选
-
-              "clean": [filename, ...],
-
-              "details": {filename: {"ghost_refs": [...], optional "archive_error": str}},
-
-              "archive_dir": str | None,
-
-            }
-
-    """
-
-    import csv
-    import re
-    import shutil
-    import time
-    from pathlib import Path
-
-    project_root = Path(project_root)
-
-    working_dir = project_root / "docs" / "_working"
-
-    if not working_dir.is_dir():
-
-        return {"scanned": 0, "archived": [], "clean": [], "details": {}, "archive_dir": None}
-
-    # 支持的工作文档扩展名（治本 GAP-5：.md only -> 多类型）
-
-    _SUPPORTED_EXT = frozenset({".md", ".csv", ".yaml", ".yml", ".json"})
-
-    # 路径引用正则（与 audit_broken_links.py 保持一致，向内收复用模式）：
-
-    # - markdown 链接 ](path) 与反引号 `path`（保守，明确引用语法）
-
-    # - 纯文本路径：含路径分隔符的文件路径（覆盖 .py/.ps1/.sh/.toml/.txt/.csv 等全扩展名）
-
-    _MD_LINK_RE = re.compile(r"\]\(([^)]+\.(?:py|yaml|yml|md))\)", re.IGNORECASE)
-
-    _BACKTICK_RE = re.compile(r"`([^`]+\.(?:py|yaml|yml|md))`", re.IGNORECASE)
-
-    # 纯文本路径正则（治本 GAP-5 + 中文前缀防误捕）：
-
-    # - lookbehind 用 [a-zA-Z0-9/] 而非 \w：中文是 \w，用 \w 会阻挡中文后的路径起点，
-
-    #   导致"删除architecture_model/foo.yaml"中"删除"被吞入匹配；
-
-    #   用 ASCII 集合则中文不阻挡，路径从 ASCII 字母处正确起match。
-
-    # - 首字符限 [a-zA-Z]：路径必以 ASCII 字母起（docs/scripts/src/architecture_model/），
-
-    #   杜绝中文前缀（删除/修订）被 [\w] 捕获为路径首字符。
-
-    _TEXT_PATH_RE = re.compile(
-
-        r"(?<![a-zA-Z0-9/])([a-zA-Z][\w\-./]*?/[\w\-]+\.(?:md|yaml|yml|json|py|ps1|sh|toml|txt|csv))\b"
-
-    )
-
-    def _looks_like_path(ref: str) -> bool:
-
-        """过滤非路径引用：必须含路径分隔符，不含空格/通配符/括号。
-
-        宁漏勿误——裸文件名（如 project_memory.md）可能指项目外文件；
-
-        含空格的多是命令行示例（如 ``python scripts/foo.py``）；
-
-        含通配符的是 glob（如 ``**/index.md``）。
-
-        """
-
-        if "/" not in ref and "\\" not in ref:
-
-            return False  # 裸文件名，可能指项目外，跳过
-
-        if any(c in ref for c in (" ", "*", "?", "[", "(", "{")):
-
-            return False  # 命令行示例或通配符，跳过
-
-        if "..." in ref:
-
-            return False  # 省略写法（如 docs/.../foo.md），跳过
-
-        return True
-
-    def _extract_refs(content: str, source_ext: str) -> list[str]:
-
-        """提取文档中引用的项目内文件路径。
-
-        根据 source_ext 选择提取策略：
-
-        - .md: markdown 链接 + 反引号 + 纯文本路径
-
-        - .csv: markdown 链接 + 反引号 + 纯文本路径 + CSV 逐单元格精确提取
-
-        - .yaml/.yml/.json: markdown 链接 + 反引号 + 纯文本路径
-
-        """
-
-        refs: list[str] = []
-
-        # markdown 链接与反引号（所有文本类型都扫，.csv/.yaml 也可能含 markdown）
-
-        for m in _MD_LINK_RE.finditer(content):
-
-            r = m.group(1).replace("\\", "/")
-
-            if _looks_like_path(r):
-
-                refs.append(r)
-
-        for m in _BACKTICK_RE.finditer(content):
-
-            r = m.group(1).replace("\\", "/")
-
-            if _looks_like_path(r):
-
-                refs.append(r)
-
-        # 纯文本路径（治本 GAP-5：覆盖 CSV/YAML/JSON 中的裸路径）
-
-        for m in _TEXT_PATH_RE.finditer(content):
-
-            r = m.group(1).replace("\\", "/")
-
-            if _looks_like_path(r):
-
-                refs.append(r)
-
-        # CSV 专用：逐单元格提取（更精确，避免正则误匹配 CSV 结构）
-
-        if source_ext == ".csv":
-
-            refs.extend(_collect_csv_refs(content, _looks_like_path))
-
-        # 去重保序
-
-        seen: set[str] = set()
-
-        unique: list[str] = []
-
-        for r in refs:
-
-            if r not in seen:
-
-                seen.add(r)
-
-                unique.append(r)
-
-        return unique
-
-    def _is_external(ref: str) -> bool:
-
-        return ref.startswith(("http://", "https://", "mailto:", "#"))
-
-    def _is_ghost(ref: str, source: Path) -> bool:
-
-        """双重路径解析判定幽灵引用（治本 GAP-1，与 audit_broken_links.py 一致）。
-
-        先相对于文档所在目录解析（markdown 链接习惯，嵌套子目录正确）；
-
-        若不存在，尝试相对于 project_root 解析（CSV/YAML 项目根相对路径）。
-
-        两者任一存在即判定非幽灵。
-
-        """
-
-        if _is_external(ref):
-
-            return False
-
-        ref = ref.split("#")[0].strip()  # 剥离锚点（如 foo.md#section -> foo.md）
-
-        if not ref:
-
-            return False
-
-        # file:/// 绝对路径 -> 直接作为绝对路径检查（不拼 project_root，避免前导/解析 bug）
-
-        if ref.startswith("file:///"):
-
-            abs_path = ref[len("file:///"):]
-
-            return not Path(abs_path).exists()
-
-        # 策略1：相对于文档所在目录解析（markdown 链接习惯，嵌套子目录正确）
-
-        try:
-
-            if (source.parent / ref).resolve().exists():
-
-                return False
-
-        except (OSError, ValueError):
-
-            pass
-
-        # 策略2：相对于 project_root 解析（CSV/YAML 项目根相对路径）
-
-        try:
-
-            if (project_root / ref).exists():
-
-                return False
-
-        except (OSError, ValueError):
-
-            pass
-
-        return True
-
-    # 递归扫描多类型工作文档（治本 GAP-5：glob("*.md") -> rglob 多扩展名）
-
-    working_files = [
-
-        f for f in working_dir.rglob("*")
-
-        if f.is_file()
-
-        and f.suffix.lower() in _SUPPORTED_EXT
-
-        and f.name != "README.md"
-
-    ]
-
-    archived: list[str] = []
-
-    clean: list[str] = []
-
-    details: dict = {}
-
-    archive_dir = None
-
-    for doc in working_files:
-
-        try:
-
-            # 5.59.4 修复：原 errors="replace" 用于路径提取，替换字符 \ufffd 可能出现在路径中间，
-
-            # 产生形如 docs/\ufffd03_modules/foo.md 的幻觉路径，污染对账结果。
-
-            # 改为先校验文件是否合法 UTF-8，校验失败则跳过。
-
-            raw = doc.read_bytes()
-
-            try:
-
-                content = raw.decode("utf-8")
-
-            except UnicodeDecodeError:
-
-                continue
-
-        except OSError:
-
-            continue
-
-        refs = _extract_refs(content, doc.suffix.lower())
-
-        ghosts = [r for r in refs if _is_ghost(r, doc)]
-
-        if ghosts:
-
-            details[doc.name] = {"ghost_refs": ghosts}
-
-            if not dry_run:
-
-                if archive_dir is None:
-
-                    archive_dir = project_root / ".runtime" / "working_archive" / str(int(time.time()))
-
-                    archive_dir.mkdir(parents=True, exist_ok=True)
-
-                dest = archive_dir / doc.name
-
-                try:
-
-                    shutil.move(str(doc), str(dest))
-
-                    archived.append(doc.name)
-
-                except OSError as e:
-
-                    details[doc.name]["archive_error"] = "internal error"
-
-            else:
-
-                archived.append(doc.name)  # dry_run 计入候选供审阅
-
-        else:
-
-            clean.append(doc.name)
-
-    return {
-
-        "scanned": len(working_files),
-
-        "archived": archived,
-
-        "clean": clean,
-
-        "details": details,
-
-        "archive_dir": str(archive_dir) if archive_dir else None,
-
-    }
 
 def make_precommit_id_uniqueness_reconciler(gateway: object) -> ReconcilerSpec:
 
@@ -4881,6 +4646,8 @@ def make_precommit_id_uniqueness_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=250,
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -5084,6 +4851,8 @@ def make_vocab_change_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=280,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 def _audit_commit_history(
@@ -5112,7 +4881,7 @@ def _audit_commit_history(
 
     结构保留，供未来复活 A 层时直接复用）。与 working_docs_ghost_ref_archiver 模式
 
-    一致：工厂函数 + 模块级逻辑函数（scan_and_archive_working_docs）。
+    一致：工厂函数 + 模块级逻辑函数模式。
 
     两阶段检查：subject 快速扫描 + body 二次确认
 
@@ -5242,7 +5011,10 @@ def _migrate_deprecated_files(items, dep_path, target_base, project_root) -> lis
 
             target.parent.mkdir(parents=True, exist_ok=True)
 
-            shutil.move(str(item), str(target))
+            # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+            from scripts.ops_guard import guard_move
+
+            guard_move(str(item), str(target))
 
             migrated.append({"src": src_rel, "dst": dst_rel, "status": "moved"})
 
@@ -5261,7 +5033,10 @@ def _remove_empty_subdirs(dep_path, project_root) -> list[str]:
 
             if not os.listdir(root):
 
-                os.rmdir(root)
+                # T1② 收敛：guard 安全 API（空目录清理，审计落盘）
+                from scripts.ops_guard import guard_rmtree
+
+                guard_rmtree(root)
 
                 removed_dirs.append(
 
@@ -5518,6 +5293,8 @@ def make_deprecated_directory_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=600,  # 中等优先级（非阻断，但需要及时发现）
+
+        file_ops=frozenset({"read", "move", "delete"}),
 
     )
 
@@ -5844,6 +5621,8 @@ def make_exempt_zone_frontmatter_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=710,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # ============================================================
@@ -5949,6 +5728,9 @@ def _compose_reconcilers(
         reconcile=_reconcile,
 
         priority=max(s.priority for s in specs),
+
+        # T1① 组合 spec 操作面 = 子 specs 并集（声明制可审计）
+        file_ops=frozenset().union(*(s.file_ops for s in specs)),
 
     )
 
@@ -6081,9 +5863,12 @@ def _cleanup_old_ghost_backups(project_root: object, max_backups: int = 10) -> i
 
         for d in to_remove:
 
+            # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+            from scripts.ops_guard import guard_rmtree
+
             try:
 
-                shutil.rmtree(str(d))
+                guard_rmtree(str(d))
 
             except OSError:
 
@@ -6099,7 +5884,7 @@ def _cleanup_old_ghost_backups(project_root: object, max_backups: int = 10) -> i
 
                             os.chmod(f, stat.S_IWRITE)
 
-                    shutil.rmtree(str(d))
+                    guard_rmtree(str(d))
 
                 except OSError:
 
@@ -6372,6 +6157,8 @@ def make_delete_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=400,
 
+        file_ops=frozenset({"read", "delete"}),
+
     )
 
     # === 旧 GATE-WORKING-DOCS 逻辑（内联自 _make_old_working_docs_reconciler）===
@@ -6464,6 +6251,8 @@ def make_delete_audit_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile_working,
 
         priority=500,
+
+        file_ops=frozenset({"read", "move"}),
 
     )
 
@@ -6575,7 +6364,10 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
 
         try:
 
-            _DEPGRAPH_DIRTY_FLAG.unlink(missing_ok=True)
+            # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+            from scripts.ops_guard import guard_remove
+
+            guard_remove(_DEPGRAPH_DIRTY_FLAG)
 
         except OSError:
 
@@ -6798,6 +6590,8 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=600,
 
+        file_ops=frozenset({"read", "write", "delete"}),
+
     )
 
     # === 旧 GATE-ARCH-MODEL 逻辑（内联自 _make_old_arch_model_reconciler）===
@@ -6906,6 +6700,8 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=610,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
     # === GATE-MANIFEST 逻辑（新增 2026-07-01：.py 文件增删后自动重生 script_manifest.yaml）===
@@ -7009,6 +6805,8 @@ def make_regenerate_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile_manifest,
 
         priority=620,
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -7221,6 +7019,8 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=160,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
     # === 旧 GATE-RULE-FILE-AUDIT 逻辑（内联自 _make_old_rule_file_audit_reconciler）===
@@ -7393,6 +7193,8 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=700,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
     # === 元问题2治本（2026-06-30）：#ARCH-XXX 引用查重检测 ===
@@ -7512,6 +7314,8 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile_arch_refs,
 
         priority=710,  # 最后执行（ARCH引用检测非阻断，低优先级）
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -7663,6 +7467,8 @@ def make_registry_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=155,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
     # === 旧 GATE-REG-BL 逻辑（内联自 _make_old_baseline_aware_reconciler）===
@@ -7800,6 +7606,8 @@ def make_registry_sync_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile_baseline,
 
         priority=200,
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -8053,6 +7861,8 @@ def make_integrity_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=270,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
     # === 旧 GATE-COMMIT-GW-AUDIT 逻辑（内联自 _make_old_commit_gateway_audit_reconciler）===
@@ -8199,6 +8009,8 @@ def make_integrity_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=800,  # 最后执行（审计非阻断，低优先级）
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
     # === 元问题1治本（2026-06-30）：AGENTS.md 引用有效性检测 ===
@@ -8281,6 +8093,8 @@ def make_integrity_audit_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile_agents_md_refs,
 
         priority=810,  # 最后执行（引用检测非阻断，最低优先级）
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -8591,6 +8405,8 @@ def make_module_id_consistency_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=300,
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # trae_060-reviewed: P3 生成器自动触发接入——index_generator(infrastructure/asset_inventory)
@@ -8787,6 +8603,8 @@ def make_index_generator_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=170,  # 在 path_tree(150) 和 yaml_sync(160) 之后，vocab_change(280) 之前
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -9058,7 +8876,10 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                         continue  # append-only 审计日志
 
-                    os.remove(filepath)
+                    # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                    from scripts.ops_guard import guard_remove
+
+                    guard_remove(filepath)
 
                     deleted += 1
 
@@ -9108,7 +8929,10 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                 try:
 
-                    shutil.rmtree(str(_dirpath))
+                    # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                    from scripts.ops_guard import guard_rmtree
+
+                    guard_rmtree(str(_dirpath))
 
                     deleted += 1
 
@@ -9137,6 +8961,8 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=50,  # 在所有 reconciler 之前执行——先清理旧文件
+
+        file_ops=frozenset({"read", "delete"}),
 
     )
 
@@ -9265,6 +9091,8 @@ def make_architecture_health_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=300,  # 低优先级最后执行——基线记录非紧急
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -9479,6 +9307,8 @@ def make_session_log_index_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=175,  # 在 index_generator(170) 之后，runtime_cleanup 之前
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -9900,6 +9730,8 @@ def make_arch_diagram_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=630,  # 在 regenerate(600-620) 之后，rule_audit(700-710) 之前
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # 病根：generate_constraint_violations.py 只读不检测，arch_constraints 表 56 条全部默认
@@ -10043,6 +9875,8 @@ def make_constraint_detect_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=625,  # 在 GATE-ARCH-DIAGRAM (630) 之前跑，生成器依赖检测结果
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -10272,6 +10106,8 @@ def make_gate_inventory_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=820,  # 在 GATE-AGENTS-MD-REFS(810) 之后
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # trae_060-reviewed: 该存在+不可合并进已有+治本。gate_registry.yaml 无任何 reconciler 自动重生成
@@ -10453,6 +10289,8 @@ def make_gate_registry_sync_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=830,  # 在 GATE-MODULE-INVENTORY-SYNC(820) 之后
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # trae_060-reviewed: 该存在+可合并入已有框架（复用 ReconciliationRegistry post-commit warn-only 漂移检测，
@@ -10603,6 +10441,8 @@ def make_in_process_gate_registry_drift_reconciler(gateway: object) -> Reconcile
 
         priority=831,  # 紧随 GATE-GATE-REGISTRY-SYNC(830)
 
+        file_ops=frozenset({"read", "write"}),
+
     )
 
 # trae_060-reviewed: 该存在+可合并入已有框架。tmp/ 清理对标 make_runtime_cleanup_reconciler，
@@ -10716,7 +10556,10 @@ def make_tmp_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                         continue  # 目录结构标记
 
-                    os.remove(filepath)
+                    # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                    from scripts.ops_guard import guard_remove
+
+                    guard_remove(filepath)
 
                     deleted += 1
 
@@ -10745,6 +10588,8 @@ def make_tmp_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=49,  # 在 GATE-RUNTIME-CLEANUP(50) 之前执行——先清理 tmp/
+
+        file_ops=frozenset({"read", "delete"}),
 
     )
 
@@ -10880,6 +10725,8 @@ def make_worktree_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=800,  # 在 GATE-GATE-REGISTRY-SYNC(830) 之前——worktree 清理是基础设施级
 
+        file_ops=frozenset({"read", "delete"}),
+
     )
 
 # trae_060-reviewed: 该存在+可合并入已有框架（第28个reconciler）。病根：pre-commit
@@ -11009,6 +10856,8 @@ def make_scripts_import_integrity_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=210,  # post-commit baseline 全扫组（在 manifest=200/readme=210 区间之后，
+
+        file_ops=frozenset({"read"}),
 
         # gate-registry=830 之前；同 priority 按 register 顺序，不冲突）
 
@@ -11166,6 +11015,8 @@ def make_undefined_name_baseline_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=211,  # post-commit baseline 全扫组（scripts-import=210 之后，
 
+        file_ops=frozenset({"read", "write"}),
+
         # gate-registry=830 之前；同 priority 按 register 顺序，不冲突）
 
     )
@@ -11303,6 +11154,8 @@ def make_consumers_accuracy_baseline_reconciler(gateway: object) -> ReconcilerSp
         reconcile=_reconcile,
 
         priority=212,  # post-commit baseline 全扫组（undefined-name=211 之后）
+
+        file_ops=frozenset({"read", "write"}),
 
     )
 
@@ -11648,6 +11501,8 @@ def make_stash_lifecycle_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=801,  # worktree_lifecycle=800 之后，gate_registry_sync=830 之前
+
+        file_ops=frozenset({"read", "write"}),
 
         # （stash 清理与 worktree 清理同属基础设施级，紧跟 worktree_lifecycle）
 
@@ -12031,6 +11886,8 @@ def make_blueprint_id_legacy_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=145,  # 在 drift_scan@140 之后，module_id_recommend@170 之前
 
+        file_ops=frozenset({"read", "write"}),
+
         # ——drift_scan 看到已同步状态，本 reconciler 报告存量 legacy 债务
 
     )
@@ -12348,6 +12205,8 @@ def make_capability_lookup_health_reconciler(gateway: object) -> ReconcilerSpec:
 
         priority=220,  # 在 scripts_import_integrity@210 / undefined_name_baseline@211 之后
 
+        file_ops=frozenset({"read"}),
+
     )
 
 # 治本 #ARCH-ROOT-TEMP-FILE-ENFORCEMENT-001（2026-07-22）：根目录临时文件清扫 reconciler。
@@ -12551,7 +12410,10 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
                     try:
 
-                        os.remove(full)
+                        # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                        from scripts.ops_guard import guard_remove
+
+                        guard_remove(full)
 
                         purged += 1
 
@@ -12662,9 +12524,12 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
             try:
 
+                # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                from scripts.ops_guard import guard_move, guard_remove
+
                 if is_delete:
 
-                    os.remove(full)
+                    guard_remove(full)
 
                     deleted += 1
 
@@ -12682,7 +12547,7 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
                         dst = os.path.join(str(rt_tmp), f"{stem}.sweep{int(now)}{ext}")
 
-                    shutil.move(full, dst)
+                    guard_move(full, dst)
 
                     moved += 1
 
@@ -12764,9 +12629,12 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
                 try:
 
+                    # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                    from scripts.ops_guard import guard_move, guard_remove
+
                     if is_delete:
 
-                        os.remove(full)
+                        guard_remove(full)
 
                         deleted += 1
 
@@ -12788,7 +12656,7 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
                             dst = os.path.join(str(rt_tmp), f"{stem}.sweep{int(now)}{ext}")
 
-                        shutil.move(full, dst)
+                        guard_move(full, dst)
 
                         moved += 1
 
@@ -12843,6 +12711,8 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=803,  # session_staging=802 之后，gate_registry_sync=830 之前
+
+        file_ops=frozenset({"read", "delete", "move"}),
 
     )
 
@@ -12973,7 +12843,10 @@ def make_session_staging_lifecycle_reconciler(gateway: object) -> ReconcilerSpec
 
                     try:
 
-                        os.remove(filepath)
+                        # T1② 收敛：guard 安全 API（审计+file_ops 声明制强制）
+                        from scripts.ops_guard import guard_remove
+
+                        guard_remove(filepath)
 
                         deleted += 1
 
@@ -12985,7 +12858,10 @@ def make_session_staging_lifecycle_reconciler(gateway: object) -> ReconcilerSpec
 
                 if os.path.isdir(staging) and not os.listdir(staging):
 
-                    os.rmdir(staging)  # 清理空的 staging 目录（不删 session 目录——系统文件可能在其中）
+                    # T1② 收敛：guard 安全 API（空 staging 目录清理，审计落盘）
+                    from scripts.ops_guard import guard_rmtree
+
+                    guard_rmtree(staging)  # 清理空的 staging 目录（不删 session 目录——系统文件可能在其中）
 
             except OSError:
 
@@ -13026,6 +12902,8 @@ def make_session_staging_lifecycle_reconciler(gateway: object) -> ReconcilerSpec
         reconcile=_reconcile,
 
         priority=802,  # worktree_lifecycle=800/stash_lifecycle=801 之后，
+
+        file_ops=frozenset({"read", "delete"}),
 
         # root_temp_sweep=803 之前（暂存层清理先于根目录清扫）
 

@@ -726,6 +726,7 @@ def make_blueprint_status_transition_reconciler(gateway: "object") -> Reconciler
         reconcile=_reconcile,
 
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
 
     )
 

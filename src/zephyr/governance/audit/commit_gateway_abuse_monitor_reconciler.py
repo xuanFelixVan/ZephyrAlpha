@@ -1018,6 +1018,7 @@ def make_commit_gateway_abuse_monitor_reconciler(gateway: "object") -> Reconcile
         trigger=_trigger,
         reconcile=_reconcile,
         priority=PRIORITY,
+        file_ops=frozenset({"read", "write"}),
     )
 
 

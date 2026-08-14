@@ -808,6 +808,7 @@ def make_workspace_hygiene_reconciler(gateway: "object") -> ReconcilerSpec:
         reconcile=_reconcile,
 
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
 
     )
 

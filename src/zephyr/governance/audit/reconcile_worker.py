@@ -358,15 +358,17 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
             f"{now_epoch - started_at}s > {PAYLOAD_TTL_SECONDS}s（远古负载拒启）"
         )
 
-    # 证1 锚定存活（仅 worktree 锚定型）
-    norm = project_root.replace("\\", "/")
+    # 证1 锚定存活（仅 worktree 锚定型）——判定口径：project_root 本身即
+    # .worktrees/<sid> 根目录（父目录名=.worktrees）。禁止用"包含 .worktrees/ 段"
+    # 判定：pytest/工具进程的 tmp 路径可能嵌套在宿主 worktree 之下
+    # （.../.worktrees/<宿主>/.runtime/tmp/...），段匹配会误判宿主为锚定。
+    p_root = Path(project_root)
     anchor_sid = ""
-    if "/.worktrees/" in norm:
-        anchor_sid = norm.split("/.worktrees/", 1)[1].split("/", 1)[0]
-        wt_root = Path(project_root)
-        if not wt_root.is_dir():
+    if p_root.parent.name == ".worktrees":
+        anchor_sid = p_root.name
+        if not p_root.is_dir():
             return False, f"证1 锚定失效：worktree 目录不存在 {project_root}（疑已 abort/删除）"
-        if not (wt_root / ".git").exists():
+        if not (p_root / ".git").exists():
             return False, (
                 f"证1 锚定失效：worktree .git 指针不存在 {project_root} "
                 f"（wipe/sweeper 机制后遗症，拒启防穿透主仓）"
@@ -379,10 +381,10 @@ def _check_worker_admission(payload: dict) -> tuple[bool, str]:
                 SessionRegistry,
             )
 
-            # 锚定失效时 project_root 可能已不存在——registry 锚主仓查
-            from zephyr.shared.io.paths import strip_session_worktree
-
-            main_root = strip_session_worktree(Path(project_root))
+            # 宿主仓根 = .worktrees/<sid> 上两级（与 strip_session_worktree 同义，
+            # 但按父目录结构推导——嵌套 worktree 路径（宿主 worktree 内的 tmp
+            # fake worktree）下段匹配剥离会锚错宿主）。
+            main_root = p_root.parent.parent
             actives = {
                 s.session_id for s in SessionRegistry(main_root).list_active()
             }
@@ -438,6 +440,18 @@ def _run_worker(payload: dict) -> int:
         )
         sys.stderr.write(f"reconcile_worker: admission denied: {deny_reason}\n")
         return 1
+
+    # 0.6 T1② in-process 删除原语补丁（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：
+    #     worker 是独立 python 进程——patch os/shutil 删除原语后，worker 内
+    #     任何代码路径（含 40+ reconciler 及其调用链）的裸 stdlib 删除一律
+    #     过 ops_guard 判定（保护区硬拦+全量审计），库层生效与进程无关。
+    #     安装失败降级放行（reconciler 层 file_ops 上下文强制仍生效兜底）。
+    try:
+        from scripts.ops_guard import install_inprocess_enforcement
+
+        install_inprocess_enforcement()
+    except Exception as e:  # noqa: BLE001 — 补丁安装失败不阻断 worker（reconciler 层声明制兜底）
+        sys.stderr.write(f"reconcile_worker: inprocess enforcement install degraded: {e}\n")
 
     # 1. 写 status=running
     write_status_file(

@@ -427,4 +427,5 @@ def make_remediation_progress_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=900,
+        file_ops=frozenset({"read", "write"}),
     )

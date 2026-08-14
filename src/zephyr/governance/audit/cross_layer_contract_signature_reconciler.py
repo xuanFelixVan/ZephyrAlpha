@@ -821,6 +821,7 @@ def make_cross_layer_contract_signature_reconciler(gateway: "object") -> Reconci
         reconcile=_reconcile,
 
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
 
     )
 
