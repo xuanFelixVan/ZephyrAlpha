@@ -50,11 +50,13 @@
 
 from __future__ import annotations
 
+import contextvars
 import hashlib
 import json
 import os
 import re
 import sys
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -64,8 +66,16 @@ __all__ = [
     "DeleteVerdict",
     "analyze_delete_command",
     "audit_delete",
+    "guard_move",
     "guard_remove",
     "guard_rmtree",
+    "guard_recycle",
+    "prune_recycle_bin",
+    "set_reconciler_context",
+    "reset_reconciler_context",
+    "get_reconciler_context",
+    "install_inprocess_enforcement",
+    "inprocess_enforcement_installed",
     "main",
 ]
 
@@ -126,8 +136,17 @@ def _get_session_id() -> str:
     return os.environ.get(SESSION_ID_ENV, "ops-guard-unknown")
 
 
+_PROJECT_ROOT_CACHE: Path | None = None
+
+
 def _get_project_root() -> Path:
-    """获取 git 仓库根目录（run_subprocess_hidden 统一入口，trae_067 合规）。"""
+    """获取 git 仓库根目录（run_subprocess_hidden 统一入口，trae_067 合规）。
+
+    进程内缓存（in-process 补丁的逐文件判定路径不可承受 subprocess 开销）。
+    """
+    global _PROJECT_ROOT_CACHE
+    if _PROJECT_ROOT_CACHE is not None:
+        return _PROJECT_ROOT_CACHE
     try:
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -137,9 +156,10 @@ def _get_project_root() -> Path:
             text=True,
             check=True,
         )
-        return Path(result.stdout.strip())
+        _PROJECT_ROOT_CACHE = Path(result.stdout.strip())
     except Exception:
-        return Path.cwd()
+        _PROJECT_ROOT_CACHE = Path.cwd()
+    return _PROJECT_ROOT_CACHE
 
 
 def _normalize_path(p: str) -> str:
@@ -509,10 +529,16 @@ def guard_rmtree(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
     目标在保护区内且未授权 → raise DeleteBlockedError。
     白名单内或未命中保护区 → 落审计后执行实际删除。
+    reconciler 上下文内：先校验 file_ops 声明（未声明 delete → 阻断），
+    保护区内递归删除即使已声明也硬拦（双保险）。
     """
     import shutil
 
     path_str = str(path)
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(path_str, cwd)
+        _enforce_file_ops("delete", [rel], cwd=cwd)
     cmd_repr = f"shutil.rmtree('{path_str}')"
     verdict = analyze_delete_command(cmd_repr, cwd)
     audit_delete("guard_rmtree", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
@@ -528,8 +554,31 @@ def guard_rmtree(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
 
 def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
-    """审计保护的 os.remove 替代（单文件删除不拦递归，但落审计）。"""
+    """审计保护的 os.remove 替代（单文件删除不拦递归，但落审计）。
+
+    reconciler 上下文内：校验 file_ops 声明（未声明 delete → 阻断）；
+    已声明 → 直通执行+审计（声明即授权，is_protected_zone 标记照记）。
+    """
     path_str = str(path)
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(path_str, cwd)
+        _enforce_file_ops("delete", [rel], cwd=cwd)
+        verdict = DeleteVerdict(
+            allowed=True,
+            reason=f"reconciler {ctx[0]} 已声明 delete（声明制直通）",
+            primitive="python_remove",
+            targets=[rel],
+            is_recursive=False,
+            is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+        )
+        audit_delete("guard_remove", f"os.remove('{path_str}')", verdict, cwd=str(cwd) if cwd else None)
+        try:
+            os.remove(path_str)
+        except FileNotFoundError:
+            pass
+        return
+
     cmd_repr = f"os.remove('{path_str}')"
     verdict = analyze_delete_command(cmd_repr, cwd)
     audit_delete("guard_remove", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
@@ -557,28 +606,72 @@ RECYCLE_BIN = ".runtime/recycle_bin"
 #: 回收站保留期（秒）——30 天 >>> 事故发现周期
 RECYCLE_TTL_SECONDS = 30 * 24 * 3600
 
+#: 回收站容量封顶（字节）——超容时按 ts 批次最旧优先清理（T1③ 裁定：
+#: 保留期+容量双上限，防失控归档撑爆磁盘）。
+RECYCLE_MAX_BYTES = 512 * 1024 * 1024
+
 
 def guard_move(src: str | Path, dst: str | Path, *, cwd: str | Path | None = None) -> None:
     """审计保护的 shutil.move 替代。
 
     源在保护区内且未授权 → raise DeleteBlockedError（move 出保护区 = 删除变体）。
     白名单内或未命中保护区 → 落审计后执行。
+    reconciler 上下文内：校验 file_ops 声明（未声明 move → 阻断）；
+    已声明 → 直通执行+审计（声明即授权）。
     """
     import shutil
 
     src_str = str(src)
     dst_str = str(dst)
     cmd_repr = f"shutil.move('{src_str}', '{dst_str}')"
-    verdict = analyze_delete_command(cmd_repr, cwd)
-    audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(src_str, cwd)
+        _enforce_file_ops("move", [rel], cwd=cwd)
+        verdict = DeleteVerdict(
+            allowed=True,
+            reason=f"reconciler {ctx[0]} 已声明 move（声明制直通）",
+            primitive="shutil_move",
+            targets=[rel],
+            is_recursive=False,
+            is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+        )
+        audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+        Path(dst_str).parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(src_str, dst_str)
+        return
 
-    if not verdict.allowed:
+    # 上下文外：move 出保护区 = 删除变体（补齐原语识别——analyze 不识别 move，
+    # 此处直接按源路径判定：递归未知按文件级，保护区内源未授权即拦）。
+    rel_src = _resolve_to_repo_rel(src_str, cwd)
+    if (
+        any(_is_under_prefix(rel_src, pp) for pp in PROTECTED_PREFIXES)
+        and not _is_whitelisted(rel_src)
+        and not _is_authorized()
+    ):
+        verdict = DeleteVerdict(
+            allowed=False,
+            reason=f"move 源命中保护区（move 出保护区=删除变体）: {rel_src}",
+            primitive="shutil_move",
+            targets=[rel_src],
+            is_recursive=Path(src_str).is_dir(),
+            is_protected_zone=True,
+        )
+        audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
         raise DeleteBlockedError(
             f"[OPS-GUARD] move 被阻断——{verdict.reason}\n"
             f"  源: {src_str}\n"
             f"  目标: {dst_str}"
         )
 
+    verdict = DeleteVerdict(
+        allowed=True,
+        reason="非保护区 move" if not _is_whitelisted(rel_src) else "白名单路径",
+        primitive="shutil_move",
+        targets=[rel_src],
+        is_recursive=Path(src_str).is_dir(),
+    )
+    audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
     Path(dst_str).parent.mkdir(parents=True, exist_ok=True)
     shutil.move(src_str, dst_str)
 
@@ -598,8 +691,14 @@ def guard_recycle(
 
     #ARCH-RECONCILER-AUTO-DELETE-GOV-001 第一性原理：自动化代理判定准确率恒<100%，
     故永不持有不可逆操作能力——guard_recycle 是治理代理唯一合法的"删除"出口。
+
+    reconciler 上下文内：recycle 视同 move（文件离开原位），校验 file_ops 声明。
     """
     import shutil
+
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        _enforce_file_ops("move", [_resolve_to_repo_rel(str(path), cwd)], cwd=cwd)
 
     src = Path(str(path))
     root = Path(str(repo_root)) if repo_root else Path(str(cwd)) if cwd else Path.cwd()
@@ -627,11 +726,14 @@ def guard_recycle(
 
 
 def prune_recycle_bin(
-    *, repo_root: str | Path, ttl_seconds: int = RECYCLE_TTL_SECONDS
+    *, repo_root: str | Path, ttl_seconds: int = RECYCLE_TTL_SECONDS,
+    max_bytes: int = RECYCLE_MAX_BYTES,
 ) -> int:
-    """回收站到期清理（唯一合法的物理删除点，仅作用于回收站内部过期条目）。
+    """回收站清理（唯一合法的物理删除点，仅作用于回收站内部）。
 
-    返回清理的条目数。由 doc_lifecycle reconciler 每次运行顺带调用（零新增调度）。
+    双上限（T1③）：①TTL 到期清理（30 天）；②容量封顶——超 max_bytes 时
+    按 ts 批次最旧优先整批清理直至达标。返回清理的批次数。
+    由 doc_lifecycle reconciler 每次运行顺带调用（零新增调度）。
     """
     import shutil
 
@@ -640,11 +742,8 @@ def prune_recycle_bin(
         return 0
     now = int(time.time())
     pruned = 0
-    for ts_dir in bin_root.iterdir():
-        if not ts_dir.is_dir() or not ts_dir.name.isdigit():
-            continue
-        if now - int(ts_dir.name) <= ttl_seconds:
-            continue
+
+    def _purge_batch(ts_dir: Path, reason: str) -> None:
         for child in ts_dir.iterdir():
             if child.is_dir():
                 shutil.rmtree(child, ignore_errors=True)
@@ -654,19 +753,276 @@ def prune_recycle_bin(
             ts_dir.rmdir()
         except OSError:
             pass
-        pruned += 1
         audit_delete(
             "recycle_prune",
             f"prune_recycle_bin('{ts_dir.name}')",
-            DeleteVerdict(
-                allowed=True,
-                reason=f"回收站 {ttl_seconds // 86400} 天到期清理",
-                primitive="recycle_prune",
-                targets=[ts_dir.name],
-            ),
+            DeleteVerdict(allowed=True, reason=reason, primitive="recycle_prune", targets=[ts_dir.name]),
             cwd=str(repo_root),
         )
+
+    # ① TTL 到期清理
+    for ts_dir in list(bin_root.iterdir()):
+        if not ts_dir.is_dir() or not ts_dir.name.isdigit():
+            continue
+        if now - int(ts_dir.name) <= ttl_seconds:
+            continue
+        _purge_batch(ts_dir, f"回收站 {ttl_seconds // 86400} 天到期清理")
+        pruned += 1
+
+    # ② 容量封顶（最旧批次优先；ts 目录名=epoch 可直接排序）
+    remaining = sorted(
+        (d for d in bin_root.iterdir() if d.is_dir() and d.name.isdigit()),
+        key=lambda d: int(d.name),
+    )
+    total = 0
+    for d in remaining:
+        for dirpath, _dirs, files in os.walk(d):
+            for f in files:
+                try:
+                    total += os.path.getsize(os.path.join(dirpath, f))
+                except OSError:
+                    pass
+    for d in remaining:
+        if total <= max_bytes:
+            break
+        batch_size = 0
+        for dirpath, _dirs, files in os.walk(d):
+            for f in files:
+                try:
+                    batch_size += os.path.getsize(os.path.join(dirpath, f))
+                except OSError:
+                    pass
+        _purge_batch(d, f"回收站容量封顶（{max_bytes}B）最旧批次优先清理")
+        total -= batch_size
+        pruned += 1
+
     return pruned
+
+
+# ============================================================================
+# reconciler file_ops 声明制运行时强制 + in-process 删除原语补丁
+# （#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1①②，2026-08-14 裁定）
+#
+# 第一性原理：自动化代理判定准确率恒<100% → 删除/移动能力必须显式声明、
+# 全量审计、可逆（回收站）。两层机制：
+#   1. reconciler 上下文（contextvar）：reconcile_for 执行每个 reconciler 前
+#      注入其 ReconcilerSpec.file_ops 声明；guard_* API 入口校验——未声明
+#      delete/move 而执行对应操作 → 审计 + DeleteBlockedError（reconcile_for
+#      映射 critical_warn）。
+#   2. in-process 补丁（install_inprocess_enforcement）：patch os.remove/
+#      os.unlink/os.rmdir/os.rename/shutil.rmtree/shutil.move，reconcile worker
+#      进程入口安装——库层生效与进程无关，worker 内裸 stdlib 删除同样被拦
+#      （保护区硬拦）+ 落审计（T2③ 审计覆盖率=100% 的采集层）。
+# ============================================================================
+
+#: 当前执行的 reconciler 上下文：(gate_id, file_ops frozenset)；None=非 reconciler 执行期
+_RECONCILER_CTX: contextvars.ContextVar[tuple[str, frozenset] | None] = (
+    contextvars.ContextVar("ops_guard_reconciler_ctx", default=None)
+)
+
+#: rmtree/move 整体判定后的批量子操作直通 flag（防内部逐文件重复判定刷屏审计）
+_BULK_APPROVED: contextvars.ContextVar[bool] = contextvars.ContextVar(
+    "ops_guard_bulk_approved", default=False
+)
+
+
+def set_reconciler_context(gate_id: str, file_ops: object) -> contextvars.Token:
+    """注入 reconciler 上下文（reconcile_for 执行前调用）。返回 reset 用 token。"""
+    return _RECONCILER_CTX.set((gate_id, frozenset(file_ops)))
+
+
+def reset_reconciler_context(token: contextvars.Token) -> None:
+    """复位 reconciler 上下文（reconcile_for 执行后 finally 调用，防泄漏到下一 reconciler）。"""
+    _RECONCILER_CTX.reset(token)
+
+
+def get_reconciler_context() -> tuple[str, frozenset] | None:
+    """读取当前 reconciler 上下文（None=非 reconciler 执行期）。"""
+    return _RECONCILER_CTX.get()
+
+
+def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None) -> None:
+    """file_ops 声明强校验：reconciler 上下文内未声明 delete/move 而执行对应操作
+    → 审计落盘 + raise DeleteBlockedError（由 reconcile_for 映射 critical_warn）。"""
+    ctx = _RECONCILER_CTX.get()
+    if ctx is None:
+        return
+    gate_id, declared = ctx
+    if op in ("delete", "move") and op not in declared:
+        verdict = DeleteVerdict(
+            allowed=False,
+            reason=(
+                f"reconciler {gate_id} file_ops={sorted(declared)} 未声明 '{op}'——"
+                "注册时显式声明制（I-GOV-2/T1①），未声明即无此能力"
+            ),
+            primitive=f"file_ops_{op}",
+            targets=list(targets),
+        )
+        audit_delete("file_ops_block", f"{op}({';'.join(targets)[:200]})", verdict, cwd=str(cwd) if cwd else None)
+        raise DeleteBlockedError(
+            f"[OPS-GUARD] file_ops 未声明阻断——reconciler {gate_id} 未声明 '{op}' 能力。\n"
+            f"  目标: {targets[:3]}\n"
+            f"  解决方案: 在该 reconciler 的 ReconcilerSpec.file_ops 中显式声明 '{op}'"
+            "（声明即承担全量审计+回收站可逆义务）"
+        )
+
+
+# ---- in-process 补丁 ----
+
+_ORIG_PRIMITIVES: dict[str, object] = {}
+_INSTALLED = False
+_INSTALL_LOCK = threading.Lock()
+
+
+def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
+    """补丁统一判定：raise DeleteBlockedError 阻断；否则落审计后由 wrapper 执行。
+
+    判定矩阵：
+    - 批量直通 flag → 直接放行（rmtree/move 整体判定已过）
+    - reconciler 上下文内 → file_ops 声明校验；已声明且递归+保护区仍硬拦（双保险）
+    - 上下文外（worker/进程内裸调用）→ 保护区内目标（含单文件）未授权即拦；
+      白名单/其他区域放行+审计
+    """
+    if _BULK_APPROVED.get():
+        return
+    path_str = os.fspath(path) if not isinstance(path, str) else path
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(path_str)
+        _enforce_file_ops(op, [rel])
+        if (
+            recursive
+            and not _is_whitelisted(rel)
+            and any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
+            and not _is_authorized()
+        ):
+            verdict = DeleteVerdict(
+                allowed=False,
+                reason=f"reconciler {ctx[0]} 已声明 {op} 但保护区内递归删除硬拦（双保险）: {rel}",
+                primitive=f"inprocess_{op}",
+                targets=[rel],
+                is_recursive=True,
+                is_protected_zone=True,
+            )
+            audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
+            raise DeleteBlockedError(f"[OPS-GUARD] {verdict.reason}")
+        audit_delete(
+            "inprocess_allow",
+            f"{op}('{path_str}')",
+            DeleteVerdict(
+                allowed=True,
+                reason=f"reconciler {ctx[0]} 已声明 {op}",
+                primitive=f"inprocess_{op}",
+                targets=[rel],
+                is_recursive=recursive,
+                is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+            ),
+        )
+        return
+    # 上下文外：裸 stdlib 调用（worker 进程任意代码路径）
+    rel = _resolve_to_repo_rel(path_str)
+    if _is_whitelisted(rel):
+        audit_delete(
+            "inprocess_allow",
+            f"{op}('{path_str}')",
+            DeleteVerdict(allowed=True, reason="白名单路径", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
+        )
+        return
+    if (
+        any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
+        and not _is_authorized()
+    ):
+        verdict = DeleteVerdict(
+            allowed=False,
+            reason=f"in-process 裸删除命中保护区: {rel}",
+            primitive=f"inprocess_{op}",
+            targets=[rel],
+            is_recursive=recursive,
+            is_protected_zone=True,
+        )
+        audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
+        raise DeleteBlockedError(
+            f"[OPS-GUARD] in-process 删除被阻断——{verdict.reason}\n"
+            f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明"
+        )
+    audit_delete(
+        "inprocess_allow",
+        f"{op}('{path_str}')",
+        DeleteVerdict(allowed=True, reason="非保护区", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
+    )
+
+
+def _wrapped_remove(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=False)
+    return _ORIG_PRIMITIVES["os.remove"](path, *a, **kw)
+
+
+def _wrapped_unlink(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=False)
+    return _ORIG_PRIMITIVES["os.unlink"](path, *a, **kw)
+
+
+def _wrapped_rmdir(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=False)
+    return _ORIG_PRIMITIVES["os.rmdir"](path, *a, **kw)
+
+
+def _wrapped_rename(src: object, dst: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("move", src, recursive=False)
+    return _ORIG_PRIMITIVES["os.rename"](src, dst, *a, **kw)
+
+
+def _wrapped_shutil_rmtree(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=True)
+    token = _BULK_APPROVED.set(True)
+    try:
+        return _ORIG_PRIMITIVES["shutil.rmtree"](path, *a, **kw)
+    finally:
+        _BULK_APPROVED.reset(token)
+
+
+def _wrapped_shutil_move(src: object, dst: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("move", src, recursive=False)
+    token = _BULK_APPROVED.set(True)
+    try:
+        return _ORIG_PRIMITIVES["shutil.move"](src, dst, *a, **kw)
+    finally:
+        _BULK_APPROVED.reset(token)
+
+
+def install_inprocess_enforcement() -> bool:
+    """幂等安装 in-process 删除原语补丁（reconcile worker 进程入口调用）。
+
+    patch os.remove/os.unlink/os.rmdir/os.rename + shutil.rmtree/shutil.move
+    （pathlib.Path.unlink/rmdir 内部走 os.unlink/os.rmdir，一并覆盖）。
+    返回 True=本次新装，False=已装（幂等）。
+    """
+    global _INSTALLED
+    with _INSTALL_LOCK:
+        if _INSTALLED:
+            return False
+        import shutil as _shutil_mod
+
+        _ORIG_PRIMITIVES["os.remove"] = os.remove
+        _ORIG_PRIMITIVES["os.unlink"] = os.unlink
+        _ORIG_PRIMITIVES["os.rmdir"] = os.rmdir
+        _ORIG_PRIMITIVES["os.rename"] = os.rename
+        _ORIG_PRIMITIVES["shutil.rmtree"] = _shutil_mod.rmtree
+        _ORIG_PRIMITIVES["shutil.move"] = _shutil_mod.move
+
+        os.remove = _wrapped_remove  # type: ignore[assignment]
+        os.unlink = _wrapped_unlink  # type: ignore[assignment]
+        os.rmdir = _wrapped_rmdir  # type: ignore[assignment]
+        os.rename = _wrapped_rename  # type: ignore[assignment]
+        _shutil_mod.rmtree = _wrapped_shutil_rmtree  # type: ignore[assignment]
+        _shutil_mod.move = _wrapped_shutil_move  # type: ignore[assignment]
+        _INSTALLED = True
+        return True
+
+
+def inprocess_enforcement_installed() -> bool:
+    """补丁是否已安装（测试/自检用）。"""
+    return _INSTALLED
 
 
 # ============================================================================
