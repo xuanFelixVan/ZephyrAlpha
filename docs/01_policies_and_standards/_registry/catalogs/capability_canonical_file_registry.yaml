@@ -5982,6 +5982,38 @@ capabilities:
       解决发现性：新 AI 搜 "流动性危机/卖压/涨跌停/IPO 抽离/危机恢复" 可定位真源。
       解决防重建：check_file_canonical() 反查。
 
+  # --------------------------------------------------------------------------
+  - capability_id: ops_guard_delete_interception
+    canonical_override: scripts/ops_guard.py
+    aliases:
+      - OPS-GUARD
+      - ops_guard
+      - analyze_delete_command
+      - guard_rmtree
+      - guard_remove
+      - delete_primitive_guard
+      - wipe_incident_S1
+    description: >-
+      全原语删除拦截（S1，2026-08-14 worktree wipe 事故治本，裁定书 R1 能力层失守修复）。
+      治本 git_guard 只拦 git 子命令——Remove-Item/del/os.remove/shutil.rmtree 等
+      删除原语零拦截的缺口。命令分析引擎 analyze_delete_command() 识别四类删除原语
+      （PowerShell Remove-Item -Recurse / CMD del·rd·rmdir /s / Python shutil.rmtree·
+      os.remove 批量 / git clean），token 级开关解析防连字符路径误吃（AI-BGT-001），
+      目标路径解析支持主仓绝对路径/worktree 内路径/尾部通配符。保护区 .worktrees/*、
+      仓库根、src/、docs/、tests/ 递归删除 fail-closed 阻断；白名单 .runtime/tmp、
+      __pycache__ 等段级匹配放行；授权 ZEPHYR_FORCE_DELETE/ZEPHYR_COMMIT_GATEWAY 放行
+      但仍落审计。所有删除命令强制先落审计 jsonl（命令行+cwd+session_id+目标清单 hash）
+      后执行：.runtime/gate_audit/ops_guard_delete.jsonl。Python API guard_rmtree/
+      guard_remove 替换裸 shutil.rmtree/os.remove（白名单+审计+阻断三合一）。
+      红队验收：42 条攻击向量 100% 拦截（tests/governance/test_ops_guard_red_team.py）。
+      解决发现性：新 AI 搜 "删除拦截/ops guard/wipe 防护/递归删除阻断" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类删除拦截脚本。
+    integrity_anchors:
+      - analyze_delete_command  # 命令分析引擎(删则四类原语全裸奔)
+      - guard_rmtree            # Python API rmtree 替代(删则 shutil.rmtree 无防护)
+      - audit_delete            # 审计落盘(删则删除无留痕,R3 观测层失守)
+      - PROTECTED_PREFIXES      # 保护区常量(篡改则保护区失效)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -8754,6 +8786,18 @@ creation_tokens:
     token: "auto-risk-liquidity-crisis-manager-review-20260813"
     created_by: "AI-LIQ-001"
     capability: "liquidity_crisis_manager"
+
+  # --- S1 删除能力收敛（2026-08-14，wipe 事故治本，AI-GIT-001 承接）---
+  - file: "scripts/ops_guard.py"
+    token: "auto-ops-guard-s1-20260814"
+    created_by: "AI-GIT-001"
+    capability: "ops_guard_delete_interception"
+    note: "全原语删除拦截（PowerShell/CMD/Python/git clean四类），保护区递归删除fail-closed阻断，白名单放行，审计jsonl"
+  - file: "tests/governance/test_ops_guard_red_team.py"
+    token: "auto-ops-guard-red-team-20260814"
+    created_by: "AI-GIT-001"
+    capability: "ops_guard_delete_interception"
+    note: "S1 红队验收测试（42条攻击向量100%拦截率断言）"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

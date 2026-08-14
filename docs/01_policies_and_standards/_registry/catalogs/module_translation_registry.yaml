@@ -6578,6 +6578,13 @@ entries:
   desc_zh: Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。
   desc_en: ''
   plain_zh: Git Guard — 拦截危险 git 命令，防止破坏其他 session 的文件锁。
+- module_path: scripts/ops_guard.py
+  domain_id: D_GOVERNANCE
+  name_zh: 操作守卫
+  name_en: ops_guard
+  desc_zh: 全原语删除拦截（S1，wipe 事故治本）——拦截 PowerShell/CMD/Python/git clean 四类删除原语，保护区递归删除 fail-closed 阻断，白名单放行，审计 jsonl 留痕。
+  desc_en: ''
+  plain_zh: 专门管"删文件"的保安。以前只盯着 git 的删除命令，AI 用 PowerShell 或 Python 直接删文件就没人管了。这个守卫把四条删除通道全看住：谁要在重要目录（.worktrees/src/docs/tests）里批量删东西，直接拦下并记日志。
 - module_path: scripts/governance/d5_architecture/generators/zoomable_html.py
   domain_id: D_GOVERNANCE
   name_zh: 可缩放 Mermaid HTML 生成器（共享模块）。
