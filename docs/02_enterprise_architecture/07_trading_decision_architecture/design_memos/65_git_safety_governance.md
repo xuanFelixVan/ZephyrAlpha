@@ -5,7 +5,7 @@ title: Git 安全治理体系——alias 失效修复与多层防护施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.3.0"
+version: "2.3.1"
 date: 2026-08-14
 topic: git_safety_governance
 scope: 07_trading_decision_architecture
@@ -53,7 +53,7 @@ related_modules:
 | 主题组 | G65 Git 安全治理体系（跨切治理层） |
 | 创建 | 2026-08-11 |
 | 优先级 | P0（灾难已发生，必须立即治本） |
-| 状态 | active v2.3.0（2026-08-14 定稿：v2.0.0/v2.1.0/v2.2.0 三轮裁定收敛稳定，施工范围冻结为 §13 八项；关联施工 S1-S6 + task_board 重建已闭环并 **merge 回 dev**（d8f94d4f2b），S2 四证 SOP 首次真实清理走通（证1-4 全 PASS，tracker §六 #54）。active=裁定确认，**Phase 1 施工项 1-7（PowerShell wrapper 层）仍全部未施工、待排期**——与 66 号 active 先例一致） |
+| 状态 | active v2.3.1（2026-08-14 定稿：三轮裁定收敛稳定，施工范围冻结为 §13 八项；关联施工 S1-S6 + task_board 已 merge 回 dev（d8f94d4f2b），S2 四证首次真实清理走通（tracker §六 #54）。**v2.3.1：Phase 1 项 1-7 wrapper 层已全部施工落地**（611227d5/21f447c1/d7844786，40 测试两轮全绿），唯一剩余动作=merge 后跑 install_git_safety_wrapper.ps1 激活；Phase 2 项 8（lock_files TTL）与 66 号 MVP 仍待排期） |
 | 实际施工范围 | §13 路线图 8 施工项 / 2 Phase / ~11 天（v2.1.0 裁定） |
 | 开发平台 | **Trae IDE（编译器）**——100% 围绕 Trae 开发，不支持 PreToolUse hooks，PowerShell 5.1 终端 |
 | 上游 | [01_design_memo_management_spec](01_design_memo_management_spec.md)｜[60_cross_cutting_cleanup](60_cross_cutting_cleanup.md) |
@@ -118,14 +118,14 @@ related_modules:
 | 2 | scripts/lock_files.py | 三件套之 File Lock（§11.3.2） | ✅ production；**无 Mutex/原子写**（§7.28 未施工），无 TTL 参数 |
 | 3 | scripts/session_worktree.py | 三件套之 Worktree（§11.3.1） | ✅ production，五命令齐备 |
 | 4 | scripts/task_board.py | 三件套之 Task Board（§11.2.3） | ✅ **已重建**（2026-08-14 AI-GIT-001，66 号 §2.4 #9 schema，17 测试全过，commit 0e5ed3b9） |
-| 5 | scripts/install_git_safety_wrapper.ps1 | **§7.7 待施工——P0 最关键缺口**：未安装前 L1/L2 不存在 | ❌ 不存在 |
-| 6 | .trae/rules/ | RULE-GIT-SAFE 应写入处（§7.2，Trae AI 规则入口） | ❌ worktree 内不存在 |
+| 5 | scripts/install_git_safety_wrapper.ps1 | §7.7 安装脚本（一键装/卸 wrapper 进 $PROFILE） | ✅ **已施工**（2026-08-14 晚 AI-GIT-001，611227d5：幂等 marker/卸载/真源自检/-ProfilePath 测试注入） |
+| 6 | .trae/rules/ | RULE-GIT-SAFE 应写入处（§7.2，Trae AI 规则入口） | ✅ **已写入**（2026-08-14 晚，21f447c1，project_rules.md RULE-GIT-SAFE 节） |
 | 7 | src/zephyr/infrastructure/runtime/concurrency_guard.py | git_guard.py 依赖的运行时并发守卫 | ✅ 存在 |
 | 8 | GitCommitGateway + commit_gates（100 gate） | 唯一合法 commit 入口——只拦 commit 不拦 clean/reset | ✅ 正常运行 |
-| 9 | .pre-commit-config.yaml | §7.13 d6_security 3 hook 接入处 | ⚠️ 接入状态未核实 |
+| 9 | .pre-commit-config.yaml | §7.13 d6_security 3 hook 接入处 | ✅ **已接入**（2026-08-14 晚，21f447c1：detect_git_dangerous/detect_shell_dangerous/detect_permanent_file_deletion 三 hook 注册） |
 | 10 | config/immutable_core.yaml | 受保护路径 commit 时检查——与 §7.17.2 运行时阻断两层叠加 | ✅ 正常运行 |
 | 11 | memory/project_memory.md | 灾难教训已记录（§7.3） | ✅ 已记录 |
-| 12 | scripts/setup_git_guard_aliases.py | alias 安装入口，曾缺 clean（§7.12）——alias 失效后降格维护性 | ⚠️ clean 补齐状态未核实 |
+| 12 | scripts/setup_git_guard_aliases.py | alias 安装入口，曾缺 clean（§7.12）——alias 失效后降格维护性 | ✅ clean 已补齐（2026-08-14 晚，21f447c1，对齐 7 命令） |
 | 13 | scripts/ops_guard.py | **全原语删除拦截层**（S1，2026-08-14 wipe 治本关联施工）——PowerShell/CMD/Python/git clean 四类删除原语，保护区 fail-closed，删除强制先落审计 | ✅ production（3e2bb5ed70，42 红队向量 100% 拦截，已 merge 回 dev；与 §7.1 wrapper 关系：ops_guard 覆盖删除原语面，wrapper 层覆盖 git 危险命令+硬阻断面，两者互补） |
 
 ### 4.2 防护层失效分析
@@ -767,12 +767,12 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | 问题 | 决策状态 |
 |---|---|
 | wrapper 对 `git rebase`/`merge` 内部 git 子进程是否安全 | 待测试（子进程 git.exe 不经函数，应安全） |
-| `backup.ps1` 清理旧备份（`-Recurse -Force` 非 TEMP）被阻断 | 待处理：改用 `& $_realRemoveItem` |
+| `backup.ps1` 清理旧备份（`-Recurse -Force` 非 TEMP）被阻断 | ✅ 已闭环（2026-08-14 晚核实：当前代码仅单文件 -Force 无 -Recurse 组合，wrapper 不拦，无需修复） |
 | pre-commit 框架 stash unstaged 适配 | 待处理：逃生通道或环境变量绕过 |
 | `iex`/`Invoke-Expression` 别名级绕过 | 待施工：`iex` 是别名需单独函数覆盖 |
 | GATE-WORKTREE-REQUIRED 阈值 5→3 | 待评估 |
 | 定期 push 远程作最终备份 | 待评估（origin/dev 大量 commits 未 push） |
-| setup_git_guard_aliases.py 补 clean | 待核实，低优先级（维护性） |
+| setup_git_guard_aliases.py 补 clean | ✅ 已闭环（2026-08-14 晚，21f447c1：DANGEROUS_SUBCOMMANDS 补 clean 对齐 git_guard 7 命令） |
 | `robocopy /mir` 函数覆盖 | 远期评估 |
 | `.git` 阻断是否影响 git 子进程 | 待测试（应安全） |
 | lock_files.py TTL 五命令扩展 | 待施工（当前无 --ttl，2026-08-14 核实） |
@@ -825,18 +825,19 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 > **v2.1.0 精简裁定**：12 施工项 / ~17 天 → **8 施工项 / 2 Phase / ~11 天**。
 > **v2.2.0 状态核实（2026-08-14）**：Phase 1 项 1-7 **全部未落地**（install_git_safety_wrapper.ps1 不存在，wrapper 未装入 $PROFILE——P0 最关键缺口）；Phase 2 中 Worktree/File Lock 基础版已 production。
 > **v2.3.0 状态（2026-08-14 定稿）**：Task Board 已由 AI-GIT-001 重建（0e5ed3b9）并随治理批 **merge 回 dev**（d8f94d4f2b）——Phase 2 三件套全部 production；Phase 1 项 1-7 仍全部未落地（待排期，不在本次施工范围）。
+> **v2.3.1 状态（2026-08-14 晚，AI-GIT-001 第二批）**：**Phase 1 项 1-7 已全部施工落地**（worktree ai/AI-GIT-001/task-git-wrapper-phase1，commits 611227d5/21f447c1/d7844786）——§7.1 wrapper 函数集 + §7.7 安装脚本 + §7.2 RULE-GIT-SAFE（AGENTS.md + .trae/rules）+ §7.23 四命令（并入 git()）+ §7.17.2 .git 阻断（挂删除类）+ §7.10/7.27 审计（并入 _ZephyrAuditLog）+ §7.13 d6 三 hook 接入 + §7.14 fail-open + §7.32 Session ID；40 验收测试两轮全绿。**激活唯一剩余动作：merge 后跑 `powershell -File scripts/install_git_safety_wrapper.ps1`**。施工偏差如实登记：①§7.1.4 ProxyCommand 未采纳（手写 param 块够用）；②.git 阻断挂删除类 4 函数（写类暂缓）；③memo"函数优先于别名"假设证伪——PS 5.1 实为 Alias>Function，AllScope 别名需 Remove-Item Alias: 删除后函数才生效；④PS 5.1 吞裸 `--`，checkout 路径/分支区分改 rev-parse 校验。
 
 ### Phase 1: P0 生存级（立即施工，防灾难重演）
 
-| 顺序 | 施工项 | 防御层 | 依赖 | 工作量 | v2.2.0 状态 |
+| 顺序 | 施工项 | 防御层 | 依赖 | 工作量 | v2.3.1 状态 |
 |---|---|---|---|---|---|
-| 1 | §7.1 wrapper 函数集（git 拦截 + Remove-Item/rd/del 覆盖） | L1+L2 | 无 | 2 天 | ❌ 未安装（规格就绪，§7.1） |
-| 2 | §7.7 安装脚本 install_git_safety_wrapper.ps1 | - | §7.1 | 1 天 | ❌ **未施工——P0 最关键缺口** |
-| 3 | §7.2 RULE-GIT-SAFE（AGENTS.md + .trae/rules/）+ §7.14 fail-open | L3 | 无 | 1 天 | ❌ .trae/rules/ 不存在 |
-| 4 | §7.23 git 危险命令 4 命令 | L1 | §7.1 | 0.5 天 | ❌ 未施工（代码已并入 §7.1.1） |
-| 5 | §7.17.2 .git 永久阻断 | L4 | §7.1 | 0.5 天 | ❌ 未施工（代码在 §7.17.2） |
-| 6 | §7.27+§7.10 审计日志 + §7.13 d6_security pre-commit | L5 | §7.1 | 1.5 天 | ❌ 未施工（代码在 §7.1.1；pre-commit 待核实） |
-| 7 | §7.32 Session ID 注入（$PROFILE 一行 UUID） | L6 | 无 | 0.5 天 | ❌ 未施工（随 §7.7 写入） |
+| 1 | §7.1 wrapper 函数集（git 拦截 + Remove-Item/rd/del 覆盖） | L1+L2 | 无 | 2 天 | ✅ 已施工（611227d5，40 测试两轮全绿；PS5.1 别名/吞参修正） |
+| 2 | §7.7 安装脚本 install_git_safety_wrapper.ps1 | - | §7.1 | 1 天 | ✅ 已施工（611227d5，幂等/卸载/自检；merge 后跑安装即激活） |
+| 3 | §7.2 RULE-GIT-SAFE（AGENTS.md + .trae/rules/）+ §7.14 fail-open | L3 | 无 | 1 天 | ✅ 已施工（21f447c1；fail-open 并入 wrapper） |
+| 4 | §7.23 git 危险命令 4 命令 | L1 | §7.1 | 0.5 天 | ✅ 已施工（并入 git() 函数，随 611227d5） |
+| 5 | §7.17.2 .git 永久阻断 | L4 | §7.1 | 0.5 天 | ✅ 已施工（挂删除类 4 函数；写类暂缓，随 611227d5） |
+| 6 | §7.27+§7.10 审计日志 + §7.13 d6_security pre-commit | L5 | §7.1 | 1.5 天 | ✅ 已施工（_ZephyrAuditLog 无 BOM JSONL + 三 hook 注册，21f447c1） |
+| 7 | §7.32 Session ID 注入（$PROFILE 一行 UUID） | L6 | 无 | 0.5 天 | ✅ 已施工（并入 wrapper 头部，随 611227d5） |
 
 **Phase 1 合计：~7 天**——完成后即具备 6 层核心防御（实现精简版）+ session 身份。
 

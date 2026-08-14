@@ -74,7 +74,7 @@ scope: 07_trading_decision_architecture
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 12业务注册表施工（registry_of_registries） | active v1.32.0 |
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
 | [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | active v1.4.0 |
-| [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12；wipe 治本 S1-S6+task_board 已闭环 merge 回 dev，四证 SOP 首次真实清理走通） | active v2.3.0 |
+| [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12；wipe 治本 S1-S6+task_board 已 merge 回 dev，四证首次真实清理走通；**Phase 1 wrapper 层 7 项已全部施工**，merge 后跑安装脚本激活） | active v2.3.1 |
 | [66_commit_queue_serialization.md](66_commit_queue_serialization.md) | 提交队列串行化（跨切治理层·集成基建；commit queue 三层防护方案，MVP 待排期；§2.4 #9 task_board 已按其 schema 重建 production 并 merge 回 dev） | active v1.1.0 |
 | [67_merge_conflict_resolution_sop.md](../../../01_policies_and_standards/sop/merge_conflict_resolution_sop.md) | Merge 冲突处理 SOP——冲突三分法（叠加型合并/迭代型取新/互斥型升级裁定）+标准 7 步流程+5 红线，全项目冲突处理唯一真源 **→ 2026-08-13 迁至 docs/01_policies_and_standards/sop/merge_conflict_resolution_sop.md** | active v1.0.1（已迁出本目录） |
 | [90_methodology_open_questions.md](90_methodology_open_questions.md) | 方法论遗留提案 21 项（全部待讨论） | draft v1.18.1 |
@@ -651,7 +651,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 18_cold_archive_build_plan | 冷归档施工计划（数据地基层子项） | 已提议 | active v0.2.0 |
 | 62_business_registry_construction | 12 业务注册表施工（跨切治理层） | ✅ 已定稿 | active v1.32.0 |
 | 63_data_utilization_audit | 数据利用审计（跨切治理层） | 已提议 | draft v2.0.0 |
-| 65_git_safety_governance | Git 安全治理体系（跨切治理层） | ✅ 已定稿 | active v2.3.0 |
+| 65_git_safety_governance | Git 安全治理体系（跨切治理层） | ✅ 已定稿（Phase 1 wrapper 层已施工，待激活） | active v2.3.1 |
 | 66_commit_queue_serialization | 提交队列串行化（跨切治理层·集成基建） | ✅ 已定稿（MVP 待排期） | active v1.1.0 |
 | 90_methodology_open_questions | 方法论遗留提案（工程文档，非G主题） | 已提议 | draft v1.18.1 |
 | 91_density_prediction | 密度预测远期愿景（工程文档，非G主题） | 已提议 | draft v0.1.2 |
