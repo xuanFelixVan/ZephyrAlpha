@@ -5,8 +5,8 @@ title: 回撤 Protocol 落地 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.39.1"
-date: 2026-08-14
+version: "1.39.2"
+date: 2026-08-15
 topic: drawdown_protocol_impl
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | ARKA / LedgerMind / Sina 量化FOF / tradingwyckoff（§2.5 已引）；2026-08 行业补：TradeZella 三级协议 / algostrategyanalyzer Kill Switch / go-trader portfolio kill switch / BloFin 分阶段恢复 / JournalPlus 4 阶段恢复 / r1000-quant-engine hysteresis / dredyson 状态机 hysteresis；学术补：Nystrup/Boyd MPC / Noguer CVaR trend / RMATS / Uryasev CDaR / DLP-SMPC / MARCD / Man Numeric CVaR / Schmitt RWC / CVaR Risk-Aware Q-Learning / Conformal OCE；后续各轮登记见 §4.6-§4.28 / §6.8-§6.37 |
 | 正交性 | ✅ 与 regime 正交（drawdown 是账户级，regime 是市场级） |
 | 优先级 | P2（与 G12 并行） |
-| 状态 | ✅ 已定稿（框架 §2.5 + 落地三层映射 + 阈值裁决 + 6 流程闭环施工 + 状态机 + Ghost Position 兜底 + A 股新规适配 + 回撤归因 + 盘后持久化 + 六类风险失败机制 + Hysteresis 形式化 + 分阶段恢复毕业准则 + 远期演进全量登记 §4.6-§4.28/§6.8-§6.37 + 2026-08 A股量化私募/KOSPI 实证背书 + BoE/SEBI/FSB 全球监管背书 + 通用规则 #11 已施工设施盘点 + 作战地图 BM-RC-10/10-A/05-C/03-C 闭合）；v1.39.0 已施工 Kill Switch 平仓链路 + Ghost 检测（AI-DRWD-001，commit 1d814359，81 测试全绿，已 merge）；v1.39.1 压缩精简（AI-DOCS-001） |
+| 状态 | ✅ 已定稿（框架 §2.5 + 三层映射 + 阈值裁决 + 6 流程闭环 + 状态机 + Ghost 兜底 + A 股新规适配 + 回撤归因 + 盘后持久化 + Hysteresis + 毕业准则 + 远期登记 §4.6-§4.28/§6.8-§6.37 + 2026-08 实证/监管背书 + 通用规则 #11 盘点 + BM-RC-10/10-A/05-C/03-C 闭合）；v1.39.0 已施工 Kill Switch 平仓链路 + Ghost 检测（AI-DRWD-001，commit 1d814359，81 测试全绿，已 merge）；v1.39.1 压缩（AI-DOCS-001）；v1.39.2 第二轮循环压缩（AI-DC2-05） |
 
 ## 2. 背景
 
@@ -105,7 +105,11 @@ scope: 07_trading_decision_architecture
 - `capability_canonical_file_registry.yaml`：drawdown_controller / daily_auditor / kill_switch（security）已登记；**drawdown_tracker / capital_curve_manager 无条目**（仅 blueprint_registry.yaml + module_translation_registry.yaml 有记录）——登记缺口，下次注册表维护批次补齐
 - `module_translation_registry.yaml`：daily_auditor / ashare_stop_loss_engine 的 `name_zh` 系机器误抽取（取成了异常类名"日终审计输入数据非法"），引用时以 blueprint_registry 的 title 为准
 
-**⑥ 盘点结论（对本文档既有论述的三点修正）**：① **§2.2"三套独立阈值体系"应精确化为"3+1"**——交易域还有第四套 `trading_kill_switch.py`（MOD-INF-016）5 级熔断器注册表，DAILY_LOSS 阈值 3% 是 §3.6 第三口径（框架 4% / 3% / ashare 2%；§3.6 裁决维持 4% 不变，production 33 项测试）；② **§3.5 执行路径"平仓+撤单"已落码**（v1.39.0 `execute_kill_switch_liquidation`，commit 1d814359）——v1.38.0 缺口已闭合，见 §3.5 执行路径块；③ **15% EMERGENCY 是否触发 Kill Switch 存在跨真源口径分裂**（drawdown_tracker.py 注释 + BM-RC-03 支持 15%；30 号 §2.5.5 + §3.11 状态机支持 25%）——已登记 §7 ㉓ 开放问题，不擅自裁决。
+**⑥ 盘点结论（对本文档既有论述的三点修正）**：
+
+1. **§2.2"三套独立阈值体系"应精确化为"3+1"**——交易域还有第四套 `trading_kill_switch.py`（MOD-INF-016）5 级熔断器注册表，DAILY_LOSS 阈值 3% 是 §3.6 第三口径（框架 4% / 3% / ashare 2%；§3.6 裁决维持 4% 不变，production 33 项测试）
+2. **§3.5 执行路径"平仓+撤单"已落码**（v1.39.0 `execute_kill_switch_liquidation`，commit 1d814359）——v1.38.0 缺口已闭合，见 §3.5 执行路径块
+3. **15% EMERGENCY 是否触发 Kill Switch 存在跨真源口径分裂**（drawdown_tracker.py 注释 + BM-RC-03 支持 15%；30 号 §2.5.5 + §3.11 状态机支持 25%）——已登记 §7 ㉓ 开放问题，不擅自裁决
 
 ## 3. 决策：三层分离 + 代码优先 + §2.5.1 作为生存边界
 
@@ -152,7 +156,7 @@ scope: 07_trading_decision_architecture
 
 > 恢复是**逐步**而非跳变：`drawdown_controller` 的 `recovery_factor` 是乘性的（0.25→0.50→0.75→1.0），与风险级别 cap 相乘，避免"一恢复就满仓"的跳跃风险。与 [TradeZella 2026-04](https://www.tradezella.com/blog/drawdown-management) 三级恢复协议一致（25% size → 50% → 75% → full，需连续盈利日确认）。
 
-> **分阶段恢复毕业准则**（§3.20 形式化）：`recovery_factor` 阶梯升级前须满足毕业准则，对齐 [BloFin 2026-05](https://blofin.com/en/academy/education/handling-drawdowns) + [JournalPlus 2026-05](https://journalplus.co/learn/guides/trading-after-a-drawdown-guide/) + [fazencapital 2026-05](https://fazencapital.com/learn/en/trading-drawdown-recovery-math-methods-guide)：① 连续 ≥ 3 个盈利日（TradeZella）；② 近 10 笔交易平均期望 ≥ +0.3R（BloFin Phase 2）；③ 规则合规率 ≥ 80%（BloFin 行为性检测）；④ 单笔最大亏损 ≤ 1.2R（completetradersedge 诊断矩阵）。数值达标但准则未达标则不升级（BloFin："Advance only when objective criteria are met"）。详见 §3.20。
+> **分阶段恢复毕业准则**（真源 §3.20）：`recovery_factor` 阶梯升级前须满足 4 项毕业准则——① 连续 ≥3 个盈利日；② 近 10 笔交易平均期望 ≥ +0.3R；③ 规则合规率 ≥ 80%；④ 单笔最大亏损 ≤ 1.2R。数值达标但准则未达标则不升级（BloFin："Advance only when objective criteria are met"）。准则来源与理由详见 §3.20。
 
 ### 3.5 Kill Switch 触发与执行路径（讨论要点 ④，§2.5.5 落地）
 
@@ -168,7 +172,7 @@ scope: 07_trading_decision_architecture
 | 黑天鹅 | BS-007 系统性风险（多模式同触发） | drawdown_controller `_evaluate_black_swan` |
 | 系统故障 | 连续拒单 ≥5 或价格偏离 >5%（CIRCUIT_BREAKER）/ 延迟 >1000ms 或成交率 <50%（SECOND_LEVEL）/ broker API 超时 >10s 或心跳丢失 ≥3（API_TIMEOUT） | `trading_kill_switch.py`（MOD-INF-016，D_TRADING 执行域熔断注册表，production，§2.4 ②）——系统故障维度由执行域 5 级熔断器承接，两域通过 RiskOrchestrator（§6.5）汇聚取最严；行业印证 [klawtrade 2026-04](https://klawtrade.com/blog/algorithmic-trading-risk-management-guide) 7 触发器含"3+ 系统错误/5 分钟" |
 
-> **⚠️ 15% EMERGENCY 触发口径矛盾（登记 §7 ㉓ 开放问题，留业主裁决）**：本表"drawdown_tracker EMERGENCY（15%）触发 Kill Switch"与 §3.11 状态机（CRISIS=15% → 仓位上限 30%，KILL 需 drawdown>25% 或 CVaR>10% 或 BS-007）+ 30 号 §2.5.5（回撤>25% 才清仓）矛盾。支持 15% 触发的证据：drawdown_tracker.py 模块头注释 + battle_map BM-RC-03。**当前实际行为**：15% EMERGENCY 仅发射 E-RK-03 告警事件 + 仓位上限 30%，无 orchestrator 接线到 `trigger_kill_switch`（RiskOrchestrator 未建，§6.5），不会自动全清。裁决候选：a) 15% 仅告警（对齐 §3.11/30 号）；b) 15% 触发全清（对齐代码注释/battle_map，但 Level 3"仓位上限 30%"动作被架空）；c) 15% 触发"软 Kill"（禁新开仓+仅平仓不全清）。倾向 a)——25% 是 §2.5.1 生存边界，15% 全清过于激进且使 Level 3 动作失效；涉及阈值语义裁决，留业主决定。
+> **⚠️ 15% EMERGENCY 触发口径矛盾（登记 §7 ㉓ 开放问题，留业主裁决）**：本表"drawdown_tracker EMERGENCY（15%）触发 Kill Switch"与 §3.11 状态机（CRISIS=15%→仓位上限 30%，KILL 需 drawdown>25% 或 CVaR>10% 或 BS-007）+ 30 号 §2.5.5（回撤>25% 才清仓）三方口径分裂。**当前实际行为**：15% EMERGENCY 仅发射 E-RK-03 告警事件 + 仓位上限 30%（无 orchestrator 接线到 `trigger_kill_switch`，§6.5 未建），不会自动全清。本备忘倾向 15% 仅告警（25% 是 §2.5.1 生存边界）；证据三方/裁决候选 a)-c)/影响面全录见 §7 ㉓。
 
 执行路径（v1.39.0 已全部落码）：
 ```
@@ -1627,13 +1631,7 @@ def graduation_criteria_met(strategy_pnls, expected_phases):
 
 ### v1.39.0（2026-08-13，session AI-DRWD-001）
 
-✅ 已施工（模块=drawdown_controller/kill_switch，commit 1d814359，81 测试全绿，已 merge）
-
-- `stop_loss.execute_kill_switch_liquidation(broker, positions, open_orders, scope, max_orders_per_second)`：scope="all"（平仓+撤单）/"position"（仅平仓）/"order"（仅撤单）三态；A 股 2026 新规适配——平仓单按 15 笔/秒限频分批（持仓 >15 只自动分 ⌈N/15⌉ 批）；逐笔异常捕获汇总 `cancel_errors`/`liquidation_errors`；非法 scope / 限频 ≤0 抛 ValueError；CRITICAL→INFO→CRITICAL 日志链路含 event_id
-- `stop_loss.detect_ghost_positions(broker_holdings, strategy_state, kill_switch_state)` + `DefaultRiskValidator.detect_ghost_positions(broker_holdings, strategy_state)`：双类型 Ghost（`strategy_closed_but_broker_holds` / `kill_switch_closed_but_position_remains`），同标的去重
-- `DefaultRiskValidator.reset_kill_switch(confirmation)` 增 `holdings_verified_zero` 校验（防 Ghost 复位）；`trigger_kill_switch` 增 CRITICAL 日志；stop_loss.py 补 ALGO_FLOW 块
-
-测试：81 passed / 0 failed（连续 2 轮，新增 22 例：liquidation 15 + ghost 7 + validator ghost 4 + reset confirmation 3）；长清单审查 PASS（修复 5 项）。§3.5 执行路径已全部 ✅（见 §3.5 执行路径块）。施工文件：`src/zephyr/risk/stop_loss.py` + `src/zephyr/risk/implementations/default_risk_validator.py` + `tests/risk/test_l04_risk_management.py`。
+✅ 已施工（模块=drawdown_controller/kill_switch，commit 1d814359，81 测试全绿 0 失败连续 2 轮，新增 22 例；长清单审查 PASS，已 merge）——Kill Switch 平仓链路 `execute_kill_switch_liquidation`（scope 三态 + 15 笔/秒分片 ⌈N/15⌉ 批 + 逐笔异常汇总）+ Ghost 双类型检测（`strategy_closed_but_broker_holds` / `kill_switch_closed_but_position_remains`，同标的去重）+ `reset_kill_switch` 增 `holdings_verified_zero` 校验。接口级摘要见 §3.5 执行路径块 / §3.5.1 L1 层 / §2.4④；施工文件：`src/zephyr/risk/stop_loss.py` + `src/zephyr/risk/implementations/default_risk_validator.py` + `tests/risk/test_l04_risk_management.py`。
 
 ## 9. 修订记录
 
@@ -1651,3 +1649,4 @@ def graduation_criteria_met(strategy_pnls, expected_phases):
 | 2026-08-12 | 1.38.2 | 作战地图环节映射补强（BM-POS-05 / BM-RC-03-A / BM-RC-05 / BM-RC-05-B） | §3.7/§3.20 末尾补映射块，环节级可追溯 |
 | 2026-08-13 | 1.39.0 | AI-DRWD-001 施工：§3.5 口径修正 + §6.11 两项落码——execute_kill_switch_liquidation（15 笔/秒分片）+ detect_ghost_positions 双类型 + reset_kill_switch 确认校验；81 测试全绿，commit 1d814359 | Kill Switch 平仓/撤单执行链路与 Ghost 检测从伪代码落码，§3.5 执行路径全 ✅ |
 | 2026-08-14 | 1.39.1 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | AI-DOCS-001 文档压缩：v1.39.0 已施工内容（Kill Switch 平仓链路 + Ghost 检测）折叠为 ✅ 已施工标记 + 接口级摘要；§9 施工记录折叠；过程性叙述/调试记录/迭代版本细节/对标散文删除（表格保留）；阈值表/Kill Switch 触发契约/36 号·37 号联动契约/§3.13 等待做项/开放问题 ㉓/全部数值参数逐项保留；章节标题与编号一字未动 |
+| 2026-08-15 | 1.39.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.5 ⚠️15% EMERGENCY 矛盾块压缩（证据三方/裁决候选全录留 §7 ㉓，正文只留矛盾点+当前行为+倾向+指针）；§3.4 毕业准则块去来源重复（准则数值保留，来源/理由真源 §3.20）；§9 v1.39.0 施工记录折叠为 ✅ 一段（接口摘要已在 §3.5/§3.5.1/§2.4④）；§1 状态行瘦身。全篇扫描无其他可压缩点——8/15/20/25 与 5/10/15 阈值、VaR 2/4/6%+CVaR 10%、degraded 5 条件、撤单率 12%/15%、复位 20日3次/冷却3日/永久5次、BM-XXX/开放问题/跨文档链接逐项零丢失 |

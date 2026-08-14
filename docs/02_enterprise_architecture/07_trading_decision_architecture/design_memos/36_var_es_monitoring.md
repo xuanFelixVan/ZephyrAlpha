@@ -5,8 +5,8 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.10.3"
-date: 2026-08-14
+version: "1.10.4"
+date: 2026-08-15
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 赢牛资管 VaR-ES / Sina 量化风控 / MetricGate VaR/ES / Pomegra VaR vs CVaR / Man Numeric CVaR / Nystrup-Boyd HMM+MPC |
 | 正交性 | ✅ 与 regime 正交（VaR 是组合风险度量，regime 是市场状态） |
 | 优先级 | P3（风险相关模块先于策略模块施工至 production，符合风险优先原则） |
-| 状态 | ✅ 已定稿 v1.10.3（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 研究远期登记 28 节 + §3.20 BM-RC-04-C + §3.1 BM-RC-07-A 口径对齐） |
+| 状态 | ✅ 已定稿 v1.10.4（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 研究远期登记 28 节 + §3.20 BM-RC-04-C + §3.1 BM-RC-07-A 口径对齐 + v1.10.4 第二轮循环压缩（AI-DC2-05）） |
 
 ## 2. 背景
 
@@ -527,9 +527,7 @@ else:
 
 **数据流**：RiskOrchestrator 聚合多源事件（①37号流动性危机 ②36号波动率 regime shift ③55号系统监控异常 ④外部政策事件）→ `events: list[BlackSwanEvent]` → `build_black_swan_signal(events)`（§3.5.2 映射）→ `BlackSwanSignal` → `drawdown_controller.evaluate(...)` → `DrawdownResponse(kill_switch_advised, position_cap, ...)`。
 
-**BlackSwanReport 产出**：`events / triggered_count / blackswan_active = len(active_modes) > 0`（供 35号 §3.13 状态机消费）。
-
-**blackswan_active 来源链**：RiskOrchestrator 聚合（MVP）或 black_swan_detector 检测（远期）→ 36号 `build_black_swan_signal()` → `BlackSwanReport.blackswan_active` → 35号 §3.13 `intraday_risk_loop` 状态机消费。
+**BlackSwanReport 产出 + blackswan_active 来源链**：`events / triggered_count / blackswan_active = len(active_modes) > 0`；来源链 = RiskOrchestrator 聚合（MVP）或 black_swan_detector 检测（远期）→ 36号 `build_black_swan_signal()` → `BlackSwanReport.blackswan_active` → 35号 §3.13 `intraday_risk_loop` 状态机消费（定义点 §3.5.2）。
 
 ### §3.15 VaR breach 恢复/复位状态机
 
@@ -1160,3 +1158,4 @@ Phase 4+ (远期): + TailRisk-Trans Transformer 动态 VaR/ES (§4.16) + ReSGA �
 | 2026-08-12 | 1.10.1 | 作战地图全覆盖补丁——BM-RC-04-C / BM-RC-07-A | ① §3.20 新增盘中因子暴露与相关性矩阵（BM-RC-04-C，production 补强）——firm 层暴露矩阵+相关性矩阵（CTR-P1-008）盘中定时+§3.12 事件联动，复用 MOD-RK-16 不新建模块，FACTOR_EXPOSURE 限额→BM-RC-04-D 告警链，降级跳过检查；与 25号 §3.7#8 策略级 HoldingDriftMonitor 层级分工，监控层相关性矩阵与 30号 §3.1 决策层协方差边界显式标注；② §3.1 补 BM-RC-07-A 口径对齐——VaR 演进口径以本文 FHS/QbSD/CRC 路线为准（G17 权威真源），BM"三阶段演进"缺中间层留 BM 维护批次修订，登记 §6 待裁定；frontmatter date 2026-08-10→2026-08-12 |
 | 2026-08-12 | 1.10.2 | 作战地图环节映射补强——锚定 BM-RC-04-A、BM-RC-06-B、BM-RC-07 | §3.3/§3.12 末尾补映射块，环节级可追溯 |
 | 2026-08-14 | 1.10.3 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | 已施工内容折叠为"✅ 已施工（2 轮 27 测试全绿）+ 接口级摘要"，删除施工过程/调试记录/重复散文；VaR/ES 公式、配置参数、四级阈值、FHS/QbSD/Vol-Targeting 远期规约、§6 待裁定、§7 待定问题、35号契约、BM 锚点、全部数值参数零丢失 |
+| 2026-08-15 | 1.10.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.14 blackswan_active 来源链相邻两处重复合并为一处（定义点 §3.5.2）；全篇扫描无其他可压缩点——VaR 2/4/6%+CVaR 10% 五级、POT 0.90/0.2/0.5/3.0、Basel 交通灯 16/17-20/21、REBUILD 静态 3%/5%/0.7、var_breach ×0.8/×0.9、GREM 四级、盘中 7 触发+冷却 5 分钟+日限 6 次、§6 待裁定/BM 锚点/35号契约/链接逐项零丢失 |

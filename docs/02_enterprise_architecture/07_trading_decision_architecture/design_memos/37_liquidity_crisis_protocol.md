@@ -5,8 +5,8 @@ title: 流动性危机处理
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.1"
-date: 2026-08-14
+version: "1.1.2"
+date: 2026-08-15
 topic: liquidity_crisis_protocol
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | tradingwyckoff Kill Switch / 机构流动性风控 |
 | 正交性 | ✅ 与 regime 正交 |
 | 优先级 | P3 |
-| 状态 | active 1.1.1（5 项讨论要点定型 + G16 对齐 + 涨跌停算法断裂修复 + 逃生执行器 + 危机恢复算法 + sell_pressure/spread/涨跌停形式化 + §3.7.x 前沿评估 16 项（Hawkes/VPIN/Crumbling/SaR/Latent build-up/ExsdHawkes/Liquidation Cascade/Multiplex Hawkes/临界性异质性/Weng 羊群/Zhou 操纵周期/LRISK/欧洲 ML/AdjPIN/Kyle λ/流动性尾部/跨市场传染 BM-RC-12-B）+ §3.8 施工流程总览 + §2.4 指数熔断澄清与 LAN 通道关闭交叉引用 + **v1.1.0 施工落地**：MOD-RK-21 承载六项算法（检测委托 MOD-RK-10），修 §3.1.1 公式 + §3.8 涨跌停 spread 矛盾 + §3.2a 数据源虚标） |
+| 状态 | active 1.1.2（5 项讨论要点定型 + G16 对齐 + 涨跌停算法断裂修复 + 逃生执行器 + 危机恢复算法 + sell_pressure/spread/涨跌停形式化 + §3.7.x 前沿评估 16 项（Hawkes/VPIN/Crumbling/SaR/Latent build-up/ExsdHawkes/Liquidation Cascade/Multiplex Hawkes/临界性异质性/Weng 羊群/Zhou 操纵周期/LRISK/欧洲 ML/AdjPIN/Kyle λ/流动性尾部/跨市场传染 BM-RC-12-B）+ §3.8 施工流程总览 + §2.4 指数熔断澄清与 LAN 通道关闭交叉引用 + **v1.1.0 施工落地**：MOD-RK-21 承载六项算法（检测委托 MOD-RK-10），修 §3.1.1 公式 + §3.8 涨跌停 spread 矛盾 + §3.2a 数据源虚标 + v1.1.2 第二轮循环压缩（AI-DC2-05）） |
 
 ## 2. 背景
 
@@ -245,7 +245,11 @@ def compute_ipo_liquidity_drain(upcoming_ipos, market_avg_volume_20d):
 
 **Kill Switch 触发条件**（battle_map_09 BM-RC-03，production）：回撤超 Emergency 阈值 / VaR 超限且无法减仓 / Owner 手动。
 
-**差异对齐**：⚠️ BM-RC-03 触发条件中**不直接包含"流动性危机"**——危机通过 MOD-RK-10 的 LEVEL_3（≥3 信号）间接联动 Kill Switch 而非直接触发，与 §2.5.5 把"流动性危机"列为 Kill Switch 触发条件之一有细微差异：§2.5.5 把流动性危机列为 Kill Switch 4 触发条件之一（单日亏损>6% / 回撤>25% / 连续5天亏损 / 流动性危机）；代码实现更精细——危机单独 = LEVEL_1 停开仓（对应 §2.5.5"停开仓仅平仓"），危机+其他 ≥2 信号 = LEVEL_3 清仓+Kill Switch（对应"宁可错杀"原则）。危机单独时清仓会踩踏，叠加多信号才升级——合理细化，不违反 spec 精神。**G16 已对齐**：[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md)（G16）已于 2026-08-10 升级 active v1.0.0，§3.5"Kill Switch 触发与执行路径"已填完整，其多源触发表"流动性危机"行明确反向引用本备忘（买卖价差 > 正常 5x → G18），双向引用已建立，G16 确认危机通过 LEVEL_3 间接联动 Kill Switch 与本节一致。
+**差异对齐**：⚠️ BM-RC-03 触发条件中**不直接包含"流动性危机"**——危机通过 MOD-RK-10 的 LEVEL_3（≥3 信号）间接联动 Kill Switch 而非直接触发，与 §2.5.5 存在细微差异但属合理细化、不违反 spec 精神：
+
+- **§2.5.5 spec**：流动性危机列为 Kill Switch 4 触发条件之一（单日亏损>6% / 回撤>25% / 连续5天亏损 / 流动性危机）
+- **代码实现（更精细）**：危机单独 = LEVEL_1 停开仓（对应 §2.5.5"停开仓仅平仓"）；危机+其他 ≥2 信号 = LEVEL_3 清仓+Kill Switch（对应"宁可错杀"原则）——危机单独时清仓会踩踏，叠加多信号才升级
+- **G16 已对齐**：[35_drawdown_protocol_impl](35_drawdown_protocol_impl.md) §3.5 多源触发表"流动性危机"行反向引用本备忘（买卖价差 > 正常 5x → G18），双向引用已建立，确认危机经 LEVEL_3 间接联动 Kill Switch 与本节一致
 
 **为何不直接 Kill Switch**：Kill Switch = 清仓+暂停+冷却 30 分钟（BM-RC-03-B），是核按钮；危机单独发生（如某票突发利空 spread 扩大）时停开仓已足够保护，Kill Switch 留给"系统性崩盘"（≥3 信号）——分级响应比一刀切更合理。
 
@@ -384,7 +388,12 @@ def check_recovery(current_spread, current_sell_pressure,
 | LEVEL_2 → LEVEL_1 | position_cap 从 0.70 → 1.00；`halt_new_orders=False`；通知日志"多信号降级，恢复满仓权限" |
 | LEVEL_3 → LEVEL_2 | Kill Switch 冷却期满后，position_cap 从 0.00 → 0.70；`halt_new_orders=False`（允许重建仓至 70%）；通知日志"系统性危机降级，允许重建仓 70%" |
 
-**为何半阈值（hysteresis）+ 最短持续时间门控**：恢复阈值若=触发阈值（0.5%），spread 在 0.49%-0.51% 间波动会反复触发/恢复（thrashing）；半阈值（0.25%）制造稳定缓冲带（降到 0.25% 才恢复、升到 0.5% 才再触发，控制论迟滞回线标准应用，恒温器/施密特触发器同原理）。危机恢复非瞬时——spread 短暂回到 0.25% 以下可能只是盘中波动间隙，N=5 分钟持续窗口确保恢复条件**持续满足**；LEVEL_1 10 分钟/LEVEL_2 15 分钟是 A 股日内波动节奏的经验估计（MVP 先定，实盘校准）。**与 MOD-RK-10 的集成与待校准**：恢复判定由 `AshareSystemicRiskDetector.check()` 在每次 `detect()` 时顺带执行（输出 `SystemicRiskAlert(level=current_state)` 或 `SystemicRiskAlert(level=0, recovered_from=prev_state)`）。**待校准**（§6）：恢复阈值（spread 半阈值 0.25% / sell_pressure 0.50）与最短持续时间（10/15/30 分钟）是经验初始值，需实盘观测触发-恢复频率校准；重评条件：累积 3 个月恢复事件数据后评估 thrashing 率。
+**为何半阈值（hysteresis）+ 最短持续时间门控**：
+
+- 恢复阈值若=触发阈值（0.5%），spread 在 0.49%-0.51% 间波动会反复触发/恢复（thrashing）；半阈值（0.25%）制造稳定缓冲带（降到 0.25% 才恢复、升到 0.5% 才再触发——控制论迟滞回线标准应用，恒温器/施密特触发器同原理）
+- 危机恢复非瞬时——spread 短暂回到 0.25% 以下可能只是盘中波动间隙，N=5 分钟持续窗口确保恢复条件**持续满足**；LEVEL_1 10 分钟/LEVEL_2 15 分钟是 A 股日内波动节奏经验估计（MVP 先定，实盘校准）
+- **与 MOD-RK-10 的集成**：恢复判定由 `AshareSystemicRiskDetector.check()` 在每次 `detect()` 时顺带执行（输出 `SystemicRiskAlert(level=current_state)` 或 `SystemicRiskAlert(level=0, recovered_from=prev_state)`）
+- **待校准**：阈值与最短持续时间为经验初始值，重评条件见 §6 恢复阈值实盘校准行
 
 ### 3.7 决策⑦：2026 前沿算法评估——Hawkes / VPIN 重评 / Crumbling Labeler
 
@@ -690,7 +699,13 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 ### 5.2 演进路径
 - **第一阶段（MVP，已实现）**：MOD-RK-10 绝对阈值（spread 0.5% + 卖压 0.65）+ MOD-RK-08 Amihud 日频。两级流动性监控 production
 - **Phase 1.5（首批策略 track record 1-3 个月）**：① 阈值实盘校准（用实盘 spread/卖压分布回归拟合，替代经验默认值）② 相对 spread 阈值（spread / N 日均价差 > 5x，若绝对阈值误报多）③ 流动性指标接入策略层（流动性恶化的票降权或剔除）④ **双阈值方案**（2026-08 microstructure 实践）：spread > 3x N 日均值 = 早期预警（策略层降权），spread > 5x = 危机确认（触发 LEVEL_1）——3x 介于"正常"与"5x 危机"之间，能自适应不同流动性票（大盘股 0.05% 日常→0.15% 预警；小盘股 0.3% 日常→0.9% 预警）⑤ **OFI 动态维度**（§3.1.1 储备）：sell_pressure（静态存量）+ OFI（动态变化趋势）双维度 ⑥ **Hawkes 自激励前置预警**（§3.7.1 储备）：若阈值触发滞后，上推 Hawkes 强度作为前置预警层 ⑦ **Amihud 预测方法学**（§3.7.12 储备：阈值校准时用"动态面板 + 三特征（成交活跃度 + 滞后 Amihud + 市场不确定性）"轻量方案替代重 ML 栈——[SSRN 7125463](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7125463) 实证动态面板不输 XGBoost/SVR，流动性高持续意味着静态阈值短期不失效）
-- **第二阶段（AUM 增长或策略需要）**：盘口深度监控（Level-2 多档数据 + 深度衰减建模）+ Bouchaud Propagator（冲击时间衰减结构，与 40_execution_broker 滑点模型协同）+ 流动性综合评分 Liquidity Score = (depth × volume)/(spread + ε) 作为 depth/volume/spread 三者的复合归一化指标 + **Crumbling Labeler**（§3.7.3 远期储备：区分机械撤退 vs 信息重定价，优化 LEVEL_3 清仓决策）+ **SaR 前瞻性框架**（§3.7.4 储备：SaR(α)/ESaR(α)/TSaR(α) + 集中度调整，前瞻性滑点预测 + 识别脆弱盘口结构，与 Hawkes 叠加为双层前瞻预警）+ **Residual Supply 被迫卖出压力信号**（[arXiv:2605.30672 2026-05-29](https://arxiv.org/abs/2605.30672) Wang "Residual Supply and the Price of Risk Absorption"：连续时市场出清模型将残余供给价格分解为库存风险补偿+资本与调整楔子，被迫卖出压力预测当期价格下跌+随后 1-6 月正收益（65bp/月，217bp/6 月），**全市场吸收能力紧张时 premium 翻倍**——A 股适配：用公募赎回数据/北向净流出/融资余额下降近似 forced selling pressure，market-wide absorption capacity strain 作为 LEVEL_2 升级信号；Phase 2+ 远期因需 fund flow 数据接入）+ **LRISK 系统级前瞻预警**（§3.7.11 储备：[SSRN 7110978](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7110978) Jourde/Saillard/Van Dijk 2026 三大放大通道——流量共振+组合重叠+流动性螺旋，提前 1-2 季度预测市场承压，A 股用公募赎回+北向净流出+融资余额 z-score 近似 flow commonality；Phase 2+ 远期因与 Residual Supply 同需 fund flow 数据，须先验证单资产级边际价值）+ **AdjPIN 信息/流动性分解**（§3.7.13 储备：[SSRN 7119388](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7119388) Park 2026 将订单流分解为 AdjPIN 信息成分 + PSOS 流动性成分，区分"信息驱动价格移动"vs"纯流动性冲击"优化 §3.3 LEVEL 响应——信息驱动跟随减仓、纯流动性等待恢复避免流动性枯竭时交易；Phase 2 候选因 ECM 估计计算成本中等）
+- **第二阶段（AUM 增长或策略需要）**：
+  - 盘口深度监控（Level-2 多档数据 + 深度衰减建模）+ Bouchaud Propagator（冲击时间衰减结构，与 40_execution_broker 滑点模型协同）+ 流动性综合评分 Liquidity Score = (depth × volume)/(spread + ε)（depth/volume/spread 三者的复合归一化指标）
+  - **Crumbling Labeler**（§3.7.3 远期储备）：区分机械撤退 vs 信息重定价，优化 LEVEL_3 清仓决策
+  - **SaR 前瞻性框架**（§3.7.4 储备）：SaR(α)/ESaR(α)/TSaR(α) + 集中度调整，前瞻性滑点预测 + 识别脆弱盘口结构，与 Hawkes 叠加为双层前瞻预警
+  - **Residual Supply 被迫卖出压力信号**（[arXiv:2605.30672 2026-05-29](https://arxiv.org/abs/2605.30672) Wang）：残余供给价格分解为库存风险补偿+资本与调整楔子，被迫卖出压力预测当期价格下跌+随后 1-6 月正收益（65bp/月，217bp/6 月），**全市场吸收能力紧张时 premium 翻倍**——A 股用公募赎回/北向净流出/融资余额下降近似 forced selling pressure 作 LEVEL_2 升级信号；Phase 2+ 远期（需 fund flow 数据接入）
+  - **LRISK 系统级前瞻预警**（§3.7.11 储备，[SSRN 7110978](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7110978)）：流量共振+组合重叠+流动性螺旋三大放大通道，提前 1-2 季度预测市场承压，A 股用公募赎回+北向净流出+融资余额 z-score 近似 flow commonality；Phase 2+ 远期（与 Residual Supply 同需 fund flow 数据，须先验证单资产级边际价值）
+  - **AdjPIN 信息/流动性分解**（§3.7.13 储备，[SSRN 7119388](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7119388)）：AdjPIN 信息成分 + PSOS 流动性成分分解，区分"信息驱动价格移动"vs"纯流动性冲击"优化 §3.3 LEVEL 响应——信息驱动跟随减仓、纯流动性等待恢复避免流动性枯竭时交易；Phase 2 候选（ECM 估计计算成本中等）
 
 ### 5.3 为何这是上限而非妥协
 - 个人账户小资金，多数订单 <1% ADV，自身交易不构成流动性冲击——流动性危机是市场级事件，检测市场级信号（卖压 + spread）已足够；MOD-RK-10 已是 5 信号系统性风险检测器的一部分，LIQUIDITY_CRISIS 是其中 1 个信号，复用边际成本为零
@@ -779,3 +794,4 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 2026-08-12 | 1.0.17 / 1.0.18 | 作战地图全覆盖补丁 BM-RC-12-B / BM-RC-12 闭合 + BM-RC-06-A 锚定 | §3.7.16 跨市场传导登记远期+激活条件（管道不存在无承载，MVP 布尔级由 36号 §3.5.2 CONTAGION→BS005 承载；退化=全市场同向下跌最坏假设），父环节 BM-RC-12 闭合；§3.1 末尾补 BM-RC-06-A 映射块，环节级可追溯；frontmatter date→2026-08-12 |
 | 2026-08-13 | 1.1.0 | 施工落地 + 施工审查修复 3 处文档缺陷 | AI-LIQ-001：新建 MOD-RK-21 liquidity_crisis_manager 承载六算法（§3.1.1/§3.1.2/§3.5.1/§3.6/§3.8/§3.2a，检测委托 MOD-RK-10，阈值从 detector.config 读取），54 测试全绿；修 §3.1.1 公式代数错误（ΣVolAsk/(ΣVolBid+ΣVolAsk)）+ §3.8 涨跌停 spread 矛盾（LIMIT_DOWN→1.0/LIMIT_UP→None）+ §3.2a 数据源虚标（akshare 无 ipo capability→§6 待裁定）；commit d53693a1/16a089c8/db695f9d |
 | 2026-08-14 | 1.1.1 | 压缩精简 | 已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） |
+| 2026-08-15 | 1.1.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.4 差异对齐 380 字段要点化（spec/代码实现/G16 对齐三要点，过程性叙述删）；§5.2 第二阶段 500 字段按候选拆 6 子项（全部链接/参数保留）；全篇扫描无其他可压缩点——OBI 公式 ΣVolAsk/(ΣVolBid+ΣVolAsk)、0.65/0.5%/0.25%/0.50 阈值、min_hold 10/15/30 分钟、IPO 四级 0.01/0.02/0.03→1.0/0.90/0.75/0.60、LEVEL_1/2/3 响应矩阵、Amihud 1e-8/萎缩 0.5、BM 锚点/开放问题/链接逐项零丢失 |
