@@ -8806,6 +8806,18 @@ creation_tokens:
     capability: "worktree_cleanup_safety"
     note: "worktree 清理四证 SOP（死亡证明/无未合并工作/统筹批准/可恢复证明），wipe 事故 R2+R4 治本"
 
+  # --- P1-C task_board.py 重建（2026-08-14，66 号 §2.4 #9 schema，AI-GIT-001 承接）---
+  - file: "scripts/task_board.py"
+    token: "auto-task-board-rebuild-20260814"
+    created_by: "AI-GIT-001"
+    capability: "task_board_coordination"
+    note: "多 AI 任务认领板（SQLite WAL+CAS 三态机 pending→claimed→completed），wipe 丢失重建，66 号死信标签承载"
+  - file: "tests/governance/test_task_board.py"
+    token: "auto-task-board-test-20260814"
+    created_by: "AI-GIT-001"
+    capability: "task_board_coordination"
+    note: "task_board 验收测试（17 用例：三态机/重复认领 DENIED/CAS 并发恰一胜/TTL 抢占/死信 metadata/WAL）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
