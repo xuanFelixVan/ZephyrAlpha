@@ -91,6 +91,71 @@ entry_schema:
 # [PURGE 2026-08-05] 移除 5283 个 CAND-HARVEST-* 条目到归档文件 candidate_module_registry_harvest_archive.yaml（主 registry 瘦身）。手工候选 38 条保留。
 entries:
   # ----------------------------------------------------------
+  # CAND-GOVAUDIT-001: 死进程 reconciler 告警自动消音（candidate，一问过——现有路径未覆盖硬杀场景）
+  # 来源: 2026-08-14 用户会话排查（3 条 RECONCILE-WORKER-STALE 残留告警取证）
+  # ----------------------------------------------------------
+- id: CAND-GOVAUDIT-001
+  name: "死进程 reconciler 告警自动消音(Dead-Worker Alert Auto-Ack)"
+  aliases: ["死进程告警自动降级", "dead worker alert auto-ack", "RECONCILE-WORKER-STALE 自愈闭环补全"]
+  domain: D_GOV_AUDIT
+  domain_status: active
+  domain_node_count: 1
+  sub_layer: "governance/audit/reconcile_runner"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展既有节点 src/zephyr/governance/audit/reconcile_runner.py 的 _persist_stale_state 死进程分支"}
+    dataflowgraph: {has_position: false, note: "治理审计内部状态,无业务数据流"}
+    decisiongraph: {has_position: false, note: "治理审计内部状态,无业务决策"}
+    blueprint: {has_position: true, note: "归属治理审计蓝图(reconcile_runner 既有责任)"}
+  description: >-
+    当 reconciler worker 被外部硬杀(作业对象/WMI 回退/手动 kill)时,
+    _persist_stale_state 死进程分支本应记 clean 自愈消音,但实测 2026-08-14 出现
+    3 条 critical_warn 残留(pid=35928/38192 均 DEAD 但告警未消),需人工 ack。
+    增强: 让死进程告警在收割确认后自动写 clean 配对记录,无需人工 ack。
+  capability: ""
+  problem_it_solves: "消除'进程已死但 critical_warn 残留'的告警噪音,减少人工 ack 操作,避免告警疲劳淹没真威胁"
+  trigger_signals:
+    - "再次出现'进程已死但 RECONCILE-WORKER-STALE critical_warn 未自动消音'案例(当前 3 例/单日,属偶发)"
+    - "告警横幅因死进程残留导致真告警被淹没的投诉"
+  keywords: ["reconcile", "worker", "stale", "告警消音", "auto-ack", "死进程", "critical_warn", "self-heal"]
+  upstream_deps:
+    - {path: "src/zephyr/governance/audit/reconcile_runner.py", note: "_persist_stale_state 死进程分支(L407-424)扩展点"}
+  downstream_consumers:
+    - {path: "src/zephyr/governance/audit/reconciliation_registry.py", note: "acknowledge_critical_warns 消费方——本增强落地后人工 ack 调用频率应下降"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "现有 _persist_stale_state 死进程分支(L407-424)有 clean 路径但 2026-08-14 实测未覆盖硬杀场景(3 例残留),属部分实现而非重复——增强既有节点非新建"}
+    blocking_question: null
+    result: candidate
+  status: candidate
+  priority: P2
+  created_at: '2026-08-14'
+  last_reviewed_at: '2026-08-14'
+  promoted_to: ""
+  source_draft: "2026-08-14 会话: 遗留 WARN 清理调研(reconcile_runner.py L355-438 取证)"
+  source_section: "遗留 WARN 调查结论"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: >-
+    病根假设: 死进程分支 clean 写入依赖 reconciler 收割路径被执行,但 worker 被外部硬杀时
+    收割逻辑可能未触发(如 sweep_stale_workers 未跑/status file 读取时机错过)。
+    治本方向: 在 _persist_stale_state 死进程判定后强制落 clean 记录(幂等,dedup_set 已存在),
+    或在 banner 查询侧对 PID 已死的 critical_warn 自动降级为 info。需先复现验证收割路径为何未走。
+  risks:
+    - "若误判活进程为死进程,会漏消音真威胁——必须严格以 _is_pid_alive 取证为准"
+    - "改动治理告警链路,需回归测试覆盖死/活两分支"
+  alternatives: "维持现状人工 ack(成本低,偶发场景可接受)——本增强仅在复发频率升高时晋升"
+  tags: ["治理", "告警", "自愈", "reconciler", "体验优化", "低优先"]
+  search_terms: ["死进程告警", "dead worker alert", "reconcile stale 残留", "auto ack"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-14'
+  review_frequency: yearly
+  last_review_outcome: "candidate 登记(2026-08-14): 属体验优化非缺陷,人工 ack 出口已合规可用。待复发频率证据再评估晋升"
+
+  # ----------------------------------------------------------
   # CAND-RSK-014: 黑天鹅模式库（deferred，四问②挂）
   # ----------------------------------------------------------
 - id: CAND-RSK-014
