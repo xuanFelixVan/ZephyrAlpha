@@ -5,9 +5,9 @@ title: 多因子策略细节
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.13.4"
-date: 2026-08-12
-last_updated: 2026-08-14
+version: "1.13.5"
+date: 2026-08-15
+last_updated: 2026-08-15
 topic: multifactor_strategy_detail
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | WorldQuant Alpha 工厂 / Numerai 多因子 / 华泰金工多因子 / BigQuant ICIR 加权合成（2026-07） |
 | 正交 | ✅ 与 regime 正交（[28 §3.4]）：多因子不读情绪周期，不读 regime，纯横截面选股 |
 | 优先级 | P2（承载主力资金的低频基石） |
-| 状态 | active 1.13.4（6 项讨论要点已对齐 + §3.7 施工算法 8 项补全：合成降级链+约束冲突仲裁+衰减动作生命周期(6态状态机含NEW冷启动+RETIRED退役)+MVP归因+**拥挤实时监控MVP必做**+**换仓触发MVP即做+Inaction Cost成本门控**+**PIT回测框架**+**持仓偏差监控** + Phase 4.1-4.20 远期候选栈 20 子项 + **v1.13.x 名实相符修正：§2.4 已施工设施盘点+4处误写校正（decay_monitor MOD-L02-009/池容量60+4/MOD-PF-002/约束链注记）+23号错链修正**） |
+| 状态 | active 1.13.5（6 项讨论要点已对齐 §3.1-§3.6 + §3.7 施工算法 8 项补全（合成降级链/约束冲突仲裁/衰减动作生命周期 6 态/MVP 归因/拥挤实时监控/换仓触发+Inaction Cost/PIT 回测框架/持仓偏差监控）+ §2.4 设施盘点 + Phase 4.1-4.20 远期候选栈 20 子项——逐项明细见 §8 修订记录） |
 
 ## 2. 背景
 
@@ -481,30 +481,13 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 | Drawdown Risk Beyond Brownian | 非高斯扩展+长记忆回撤建模（arXiv:2608.00127） | Phase 4.13 远期候选 |
 | 多因子×事件驱动相关性实测 | 两者都受情绪周期隐形驱动 | G07 施工前必做 |
 | Hyperbolic 衰减模型替换指数衰减 | α(t)=K/(1+λt) 更贴合 A 股 | 首批策略实盘后校准对比 |
-| ✅Hyperbolic 衰减完整实证 | arXiv:2512.11913 R²=0.65+拥挤预测崩溃1.7-1.8x | §3.3 v1.12.4 补 |
-| ✅A 股 XGBoost+TreeSHAP 实证 | arXiv:2606.12843 rank IC=0.119 行为因子58.2% | §3.1 v1.12.4 补 |
-| ✅EFS US/HK/China 三市场实证 | arXiv:2507.17211 Phase 4.6 完整验证 | Phase 4.6 v1.12.4 补 |
 | Regime-Weighted Conformal Calibration | RWC 扩展 Conformal Kelly（arXiv:2602.03903） | Phase 4.14 远期候选 |
 | Risk-Sensitive RL+Fractional Kelly | 统一 Phase 4.11+4.13（arXiv:2606.20903） | Phase 4.15 远期候选 |
-| ✅Mask-First 完整消融实证 | arXiv:2507.07107 mask 单一最大贡献者+0.44 Sharpe | Phase 4.1 v1.12.5 补 |
 | Sign-Aware Adjusted-MSE 损失 | 错号预测惩罚 11×，Phase 4.2 互补（arXiv:2507.07107） | Phase 4.16 远期候选 |
-| ✅合成降级链决策 | §3.7 缺失#1 SynthesisDegradationChain | §3.7 v1.12.5 补 |
-| ✅7 约束链冲突仲裁 | §3.7 缺失#2 ConstraintArbitration 硬/软分级 | §3.7 v1.12.5 补 |
-| ✅因子衰减→动作全生命周期 | §3.7 缺失#3 DecayActionLifecycle 4 态状态机 | §3.7 v1.12.5 补 |
-| ✅MVP 因子归因 | §3.7 缺失#4 SimpleFactorAttribution Brinson 式 | §3.7 v1.12.5 补 |
-| ✅因子拥挤实时监控 | §3.7 缺失#5 CrowdingRealTimeMonitor MVP必做 | §3.7 v1.12.6 补 |
-| ✅换仓触发决策 | §3.7 缺失#6 RebalanceTrigger MVP即做 | §3.7 v1.12.6 补 |
-| ✅多因子 PIT 安全回测框架 | §3.7 缺失#7 MultifactorPITBacktestFramework 5层PIT | §3.7 v1.12.7 补 |
-| ✅持仓偏差监控 | §3.7 缺失#8 HoldingDriftMonitor 因子暴露+行业偏离 | §3.7 v1.12.7 补 |
-| ✅DecayActionLifecycle 边界状态 | §3.7#3 补 NEW冷启动+RETIRED退役 6态状态机 | §3.7 v1.12.9 补 |
-| ✅A 股高频因子 2026 实证 | 国泰海通 2026-08-10 行为因子多空 12-16% | §3.3 v1.12.6 补 |
-| ✅A 股拥挤崩盘 2026 实证 | 中国基金报 2026-08 57只量化基金踩雷 | §3.3 v1.12.6 补 |
 | Dynamic-β reward 实证 | PLoS One 2025 Sharpe 1.04→1.27 | Phase 4.11 v1.12.6 补 |
-| ✅CVaR RaQL 自适应训练 | arXiv:2608.04305 6机制训练控制器 Bellman残差-85% | Phase 4.11 v1.12.8 补 |
 | Certified Wasserstein Robust Portfolio | arXiv:2608.07032 2026-08-10 分布鲁棒 | Phase 4.17 远期候选 |
 | MFCCA 多尺度组合配置 | arXiv:2608.04987 符号保留+多尺度非线性合成 | Phase 4.18 远期候选 |
 | Stationary Ambiguity 平稳模糊性训练 | arXiv:2608.04832 防模糊性衰减→regime-shift 过拟合 | Phase 4.19 远期候选 |
-| ✅换仓触发 Inaction Cost 门控 | §3.7#6 RebalanceTrigger cost_aware 补 Perold IS 成本-收益门控 | §3.7 v1.12.11 补 |
 | QUBO 换仓调度优化 | arXiv:2603.16904 换仓时序 QUBO 组合优化 成本降 44.5% | Phase 4.20 远期候选 |
 | A 股 2026-07-06 交易新规 | ST 涨跌幅 5%→10%+盘后固定价格交易扩容 | G22 执行层施工时同步 |
 | 衰减监控 CUSUM 层 + 自动淘汰层落码 | 代码仅半衰期监控（decay_monitor.py min_half_life=10），CUSUM/40 日\|IC\|<0.02 休眠为本文档决策（§3.3 代码现状注记） | 随 §3.7#3 DecayActionLifecycle 一并落码 |
@@ -515,6 +498,8 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 | BM-RC-06-D 拥挤度深度增强三项 | §3.7#5 v1.13.2 补：策略逻辑相似度检测+去杠杆路径预案+拥挤悖论防护登记 design 远期（依赖多策略并发实盘数据，当前无输入） | 首批策略上线产生横截面策略持仓数据后激活①；首次去杠杆事件后校准②；③随①上线评估 |
 | BM-SEL-02-E LLM 语义去重 | §3.1 v1.13.2 补：登记远期候选——数值相关性去重（correlation_dedup.py ANA-05）已 production 够用，现状即作战地图降级态 | 因子池扩张到 50+ 且"数值低相关但逻辑同构"伪异质因子实例 ≥2 例 |
 | BM-SEL-02-M 因果因子验证层（DoWhy/DML） | §3.1 v1.13.2 补：登记远期 Phase 4——#ARCH-OE-009 裁的是 BM-MT-04（PC/LiNGAM 因果发现），本环节未被裁剪；与 11 号 §0.6.10 发现 2 Causal-TS 评估呼应 | 因子库伪相关惨案 ≥1 例（入库因子实证为伪相关并造成实亏） |
+
+> 原 17 行 ✅「文档已补」登记行（§3.7 施工算法 8 项、Phase 4.x 实证背书等）非待裁定项且与 §8 修订记录 v1.12.4~v1.12.11 各行重复，第二轮压缩已移除——明细真源见 §8 修订记录与 §3.7/§5.2 正文。
 
 ## 7. 引用
 
@@ -556,3 +541,4 @@ ZephyrAlpha 是个人 + 100% AI 开发的 A 股量化交易系统。首手 3 策
 | 2026-08-12 | 1.13.2 | **作战地图全覆盖补丁——闭合 BM-RC-06-D / BM-SEL-02-E / BM-SEL-02-M（3 环节）**：① §3.7#5 补「BM-RC-06-D 拥挤度检测深度增强扩展」——现有三代理指标（ETF 持仓/因子相关性/量化席位）维持 MVP 必做基线，三个深度增强项（策略逻辑相似度检测/去杠杆路径预案/拥挤悖论防护"人人躲拥挤=新拥挤"二阶监控）登记 design 远期（依赖多策略并发实盘数据）；② §3.1 补「BM-SEL-02-E LLM 语义去重处置裁定」——数值相关性去重（correlation_dedup.py ANA-05）production 够用，LLM 语义去重一支登记远期候选（逻辑等价→保留 IC 高者），现状即作战地图降级态；③ §3.1 补「BM-SEL-02-M 因果因子验证层处置裁定」——显式消歧 #ARCH-OE-009 裁的是 BM-MT-04 因子发现与因果发现（PC/LiNGAM），本环节未被裁剪，登记远期 Phase 4（因子入库前 DoWhy/DML 因果验证），与 11 号 §0.6.10 发现 2 Causal-TS 评估呼应，激活条件=因子库伪相关惨案 ≥1 例；④ §6 待裁定新增 3 行对应登记。三环节均按定位→裁定→契约→重评条件四要素显式映射 |
 | 2026-08-12 | 1.13.3 | 作战地图环节映射补强——锚定 BM-SEL-02-A/02-B/02-C/02-D/02-I（§2.4 末映射块）、BM-SEL-02-H（§3.1 末）、BM-SEL-02-G（§3.3 末）：语义已覆盖但正文未显式编号的环节锚定到承载小节，实现环节级可追溯；不改既有正文 |
 | 2026-08-14 | 1.13.4 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） |
+| 2026-08-15 | 1.13.5 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-06）——§1 状态行清单去重（真源=§8 修订记录）；§6 移除 17 行 ✅「文档已补」闭合登记行（与 §8 修订记录 v1.12.4~v1.12.11 重复，表末补指针注记），§6 现仅余真暂缓/待裁定项。IC 加权/7 约束链/衰减三层阈值/8 项施工算法参数/Phase 4.1-4.20 栈/裁定/链接零丢失 |
