@@ -9031,6 +9031,11 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
         errors = 0
 
+        # T5 告警卫生（2026-08-14，#ARCH-RECONCILER-AUTO-DELETE-GOV-001 裁定5）：
+        # 锁定跳过=clean 语义——文件被占用（WinError 32/5 → PermissionError）非异常，
+        # 不计入 errors；errors 只报真异常，避免恒定 warn 噪音淹没真告警。
+        locked_skipped = 0
+
         for dirpath, _dirnames, filenames in os.walk(runtime_dir):
 
             for filename in filenames:
@@ -9056,6 +9061,10 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
                     os.remove(filepath)
 
                     deleted += 1
+
+                except PermissionError:
+
+                    locked_skipped += 1  # 锁定跳过=clean 语义（T5）
 
                 except OSError:
 
@@ -9103,15 +9112,19 @@ def make_runtime_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                     deleted += 1
 
+                except PermissionError:
+
+                    locked_skipped += 1  # 锁定跳过=clean 语义（T5）
+
                 except OSError:
 
-                    pass  # 锁定/权限，跳过
+                    errors += 1  # 真异常才计入（T5：原 pass 静默吞掉，改为可观测）
 
         return ReconcileResult(
 
             action="clean" if errors == 0 else "warn",
 
-            detail=f".runtime/ TTL cleanup: deleted={deleted}, errors={errors}",
+            detail=f".runtime/ TTL cleanup: deleted={deleted}, errors={errors}, locked_skipped={locked_skipped}",
 
         )
 
@@ -10669,6 +10682,8 @@ def make_tmp_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
         errors = 0
 
+        locked_skipped = 0  # T5 告警卫生：锁定跳过=clean 语义
+
         for dirpath, _dirnames, filenames in os.walk(tmp_dir):
 
             # 豁免自治轮转子目录（pg_backups/由 backup_runtime_state.py max_backups=10 自治）
@@ -10705,6 +10720,10 @@ def make_tmp_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
                     deleted += 1
 
+                except PermissionError:
+
+                    locked_skipped += 1  # 锁定跳过=clean 语义（T5）
+
                 except OSError:
 
                     errors += 1
@@ -10713,7 +10732,7 @@ def make_tmp_cleanup_reconciler(gateway: object) -> ReconcilerSpec:
 
             action="clean" if errors == 0 else "warn",
 
-            detail=f"tmp/ TTL cleanup: deleted={deleted}, errors={errors}",
+            detail=f"tmp/ TTL cleanup: deleted={deleted}, errors={errors}, locked_skipped={locked_skipped}",
 
         )
 

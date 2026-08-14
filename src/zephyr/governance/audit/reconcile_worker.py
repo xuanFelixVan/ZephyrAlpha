@@ -317,6 +317,87 @@ def _unregister_worker_session(project_root: str, worker_sid: str) -> None:
         pass
 
 
+# ---------------------------------------------------------------------------
+# T2 worker 启动三证（#ARCH-RECONCILER-AUTO-DELETE-GOV-001，2026-08-14 裁定）
+# ---------------------------------------------------------------------------
+
+#: payload 新鲜度阈值（秒）——worker 是 commit 后立即 spawn，正常延迟秒级；
+#: 超过 15min 的 payload 视为远古残留（wipe/重建后复活的陈旧负载），拒绝执行。
+PAYLOAD_TTL_SECONDS = 15 * 60
+
+
+def _check_worker_admission(payload: dict) -> tuple[bool, str]:
+    """worker 启动三证：锚定存活 / payload 新鲜度 / session 活性（worktree 型）。
+
+    病根（rogue worker PID 26288 实证，2026-08-14）：payload 锚定已删除的
+    worktree 仍被 spawn 执行——启动准入零校验。S4 修了锚定解析，未修
+    "该不该启动"。三证缺一拒启（写 failed status + 日志），理由：
+
+    - 证1 锚定存活：payload 的 project_root 位于 .worktrees/<sid>/ 内时，
+      该 worktree 根目录与 .git 指针文件必须存在（文件系统判定，确定性高）。
+    - 证2 payload 新鲜度：now - started_at > PAYLOAD_TTL_SECONDS 拒启。
+    - 证3 session 活性（仅 worktree 锚定型）：对应 sid 须在 SessionRegistry
+      活跃；主仓 payload 免证3（协调会话 commit 后即退出是常态）。
+      registry 读取异常时证3 降级放行（增强项不做底线），证1/证2 异常 fail-closed。
+
+    Returns:
+        (allowed, reason)：allowed=False 时 reason 为拒启原因。
+    """
+    project_root = str(payload.get("project_root", "") or "")
+    started_at = int(payload.get("started_at") or 0)
+    session_id = str(payload.get("session_id", "") or "")
+
+    # 证2 payload 新鲜度（先做——最便宜且对所有类型生效）
+    # epoch 秒比较：now_utc().timestamp() 替代 time.time()（DATETIME-NOW-FORBIDDEN 对齐）
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415 — 避免模块级循环
+
+    now_epoch = int(now_utc().timestamp())
+    if started_at and now_epoch - started_at > PAYLOAD_TTL_SECONDS:
+        return False, (
+            f"证2 payload 过期：started_at 距今 "
+            f"{now_epoch - started_at}s > {PAYLOAD_TTL_SECONDS}s（远古负载拒启）"
+        )
+
+    # 证1 锚定存活（仅 worktree 锚定型）
+    norm = project_root.replace("\\", "/")
+    anchor_sid = ""
+    if "/.worktrees/" in norm:
+        anchor_sid = norm.split("/.worktrees/", 1)[1].split("/", 1)[0]
+        wt_root = Path(project_root)
+        if not wt_root.is_dir():
+            return False, f"证1 锚定失效：worktree 目录不存在 {project_root}（疑已 abort/删除）"
+        if not (wt_root / ".git").exists():
+            return False, (
+                f"证1 锚定失效：worktree .git 指针不存在 {project_root} "
+                f"（wipe/sweeper 机制后遗症，拒启防穿透主仓）"
+            )
+
+    # 证3 session 活性（仅 worktree 锚定型；registry 异常降级放行）
+    if anchor_sid:
+        try:
+            from zephyr.security.access_control.session_concurrency import (
+                SessionRegistry,
+            )
+
+            # 锚定失效时 project_root 可能已不存在——registry 锚主仓查
+            from zephyr.shared.io.paths import strip_session_worktree
+
+            main_root = strip_session_worktree(Path(project_root))
+            actives = {
+                s.session_id for s in SessionRegistry(main_root).list_active()
+            }
+            candidates = {anchor_sid, session_id}
+            if not (candidates & actives):
+                return False, (
+                    f"证3 session 已死：锚定 worktree 的会话 {anchor_sid}/{session_id} "
+                    f"均无活跃记录（rogue worker 拒启）"
+                )
+        except Exception:  # noqa: BLE001 — registry 读取异常证3 降级放行
+            pass
+
+    return True, "三证齐全"
+
+
 def _run_worker(payload: dict) -> int:
     """worker 主流程，返回 exit code（0=成功，1=失败）。"""
     from zephyr.governance.audit.reconcile_runner import (
@@ -340,6 +421,22 @@ def _run_worker(payload: dict) -> int:
             started_at,
             ["payload missing commit_sha or project_root"],
         )
+        return 1
+
+    # 0.5 T2 启动三证（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：
+    #     锚定存活/payload 新鲜度/session 活性（worktree 型），缺一拒启。
+    #     rogue worker（锚定已删 worktree 的 payload 仍执行）治本。
+    admitted, deny_reason = _check_worker_admission(payload)
+    if not admitted:
+        from zephyr.shared.io.paths import strip_session_worktree
+
+        # 锚定失效时 status 落主仓（worktree 路径可能已不存在）
+        status_root = str(strip_session_worktree(Path(project_root)))
+        _write_failed_status(
+            status_root, commit_sha, session_id, started_at,
+            [f"worker 启动三证拒启: {deny_reason}"],
+        )
+        sys.stderr.write(f"reconcile_worker: admission denied: {deny_reason}\n")
         return 1
 
     # 1. 写 status=running
@@ -404,6 +501,25 @@ def _run_worker(payload: dict) -> int:
             for r in reconcile_results
             if getattr(r, "action", "") == "warn" and getattr(r, "detail", "")
         ]
+
+        # 4.5 T2 删除/移动类动作全量落盘（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：
+        #     worker stdio 已落盘 .runtime/logs/reconcile_worker_<sha>.log（S3），
+        #     但原仅 warn 级摘要可见——删除/移动语义动作不论等级全部显式落盘，
+        #     消除"clean 动作里藏着文件消失"的观测盲区（19:05 批次死因不可考教训）。
+        _DELETE_HINTS = (
+            "archiv", "recycl", "delet", "removed", "moved", "prune",
+            "归档", "删除", "清理", "回收站",
+        )
+        for _r in reconcile_results:
+            _action = getattr(_r, "action", "")
+            _detail = getattr(_r, "detail", "") or ""
+            _gate = getattr(_r, "gate_id", "?")
+            if _action in ("auto_committed", "fix-in-place") or any(
+                h in _detail for h in _DELETE_HINTS
+            ):
+                sys.stderr.write(
+                    f"[DELETE-AUDIT] gate={_gate} action={_action} detail={_detail[:300]}\n"
+                )
 
         # 5. 写 status=done
         write_status_file(

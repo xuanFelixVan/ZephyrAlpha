@@ -1192,3 +1192,88 @@ class TestIsPidAlive:
         from zephyr.governance.audit.reconcile_runner import _is_pid_alive
         assert _is_pid_alive(0) is False
         assert _is_pid_alive(-1) is False
+
+
+# ---------------------------------------------------------------------------
+# T2 worker 启动三证（#ARCH-RECONCILER-AUTO-DELETE-GOV-001，2026-08-14）
+# ---------------------------------------------------------------------------
+class TestWorkerAdmission:
+    """_check_worker_admission 三证：锚定存活/payload 新鲜度/session 活性。"""
+
+    def _payload(self, tmp_repo, **over):
+        base = {
+            "commit_sha": "sha_admit",
+            "session_id": "sess-admit",
+            "project_root": str(tmp_repo),
+            "committed_files": [],
+            "commit_message": "m",
+            "started_at": int(time.time()),
+        }
+        base.update(over)
+        return base
+
+    def test_accepts_fresh_main_repo_payload(self, tmp_repo):
+        """主仓锚定 + 新鲜 payload → 放行（免证1/证3）。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+
+        ok, reason = _check_worker_admission(self._payload(tmp_repo))
+        assert ok, f"主仓新鲜 payload 应放行，实际拒：{reason}"
+
+    def test_rejects_stale_payload(self, tmp_repo):
+        """证2：started_at 超 15min → 拒启（远古负载）。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+
+        stale = int(time.time()) - 20 * 60
+        ok, reason = _check_worker_admission(self._payload(tmp_repo, started_at=stale))
+        assert not ok
+        assert "证2" in reason
+
+    def test_rejects_missing_worktree_anchor(self, tmp_repo):
+        """证1：锚定 .worktrees/<sid>/ 但目录不存在 → 拒启（rogue worker 场景）。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+
+        wt = str(tmp_repo / ".worktrees" / "AI-GONE-001")
+        ok, reason = _check_worker_admission(
+            self._payload(tmp_repo, project_root=wt)
+        )
+        assert not ok
+        assert "证1" in reason and "不存在" in reason
+
+    def test_rejects_missing_git_pointer(self, tmp_repo):
+        """证1：worktree 目录在但 .git 指针被扫走 → 拒启（sweeper 后遗症防穿透）。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+
+        wt = tmp_repo / ".worktrees" / "AI-BROKEN-001"
+        wt.mkdir(parents=True)  # 目录存在但无 .git 指针
+        ok, reason = _check_worker_admission(
+            self._payload(tmp_repo, project_root=str(wt))
+        )
+        assert not ok
+        assert "证1" in reason and ".git" in reason
+
+    def test_rejects_worktree_with_dead_session(self, tmp_repo):
+        """证3：worktree 完好但锚定 session 无活跃记录 → 拒启。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+
+        wt = tmp_repo / ".worktrees" / "AI-DEAD-001"
+        wt.mkdir(parents=True)
+        (wt / ".git").write_text("gitdir: x", encoding="utf-8")
+        ok, reason = _check_worker_admission(
+            self._payload(tmp_repo, project_root=str(wt), session_id="AI-DEAD-001")
+        )
+        assert not ok
+        assert "证3" in reason
+
+    def test_accepts_worktree_with_live_session(self, tmp_repo):
+        """证3 通过：worktree 完好 + session 在 registry 活跃 → 放行。"""
+        from zephyr.governance.audit.reconcile_worker import _check_worker_admission
+        from zephyr.security.access_control.session_concurrency import SessionRegistry
+
+        wt = tmp_repo / ".worktrees" / "AI-LIVE-001"
+        wt.mkdir(parents=True)
+        (wt / ".git").write_text("gitdir: x", encoding="utf-8")
+        SessionRegistry(tmp_repo).register("AI-LIVE-001", pid=os.getpid())
+        ok, reason = _check_worker_admission(
+            self._payload(tmp_repo, project_root=str(wt), session_id="AI-LIVE-001")
+        )
+        assert ok, f"三证齐全应放行，实际拒：{reason}"

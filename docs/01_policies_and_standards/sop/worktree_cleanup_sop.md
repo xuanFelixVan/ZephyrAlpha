@@ -30,7 +30,7 @@ related_modules:
 > 本 SOP 是 **清理任何 session worktree 的唯一合法流程**，2026-08-14 wipe 事故（三 worktree tracked 文件被物理清空）治本方案 S2。
 > 事故根因：worktree 清理无所有者、无 SOP、无"分支是否有未合并 commit"强制检查点——某会话临时构造"清理"命令直接物理删除三个活跃 worktree。
 > 性质：**操作规范（SOP）**，任何 AI/人工清理 worktree 前必须遵循。
-> 关联：[merge_conflict_resolution_sop](merge_conflict_resolution_sop.md)（merge 冲突处理）｜[construction_workflow_sop](construction_workflow_sop.md) Step 12（施工流程 merge 环节）｜[wipe 事故裁定书](../../_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)
+> 关联：[merge_conflict_resolution_sop](merge_conflict_resolution_sop.md)（merge 冲突处理）｜[construction_workflow_sop](construction_workflow_sop.md) Step 12（施工流程 merge 环节）｜[wipe 事故裁定书](../../02_enterprise_architecture/04_architecture_principles_decisions/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)
 
 ## 1. 适用范围
 

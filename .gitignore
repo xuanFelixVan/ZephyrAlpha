@@ -421,8 +421,9 @@ data/runtime_violation_snapshot/snapshot_*.json
 # Health snapshots (timestamped, regenerable; latest.json tracked)
 data/health_snapshots/health_*.json
 
-# Audit logs (runtime, regenerable; timestamped ai_audit_*.jsonl)
-data/audit_logs/ai_audit_*.jsonl
+# Audit logs (runtime, regenerable; #55 治本 2026-08-14：全目录禁跟踪——门禁/运行时
+# 审计写 tracked 文件会结构性卡死外部 pre-commit 链；新默认落盘区=.runtime/audit/)
+data/audit_logs/
 
 # Rollback trust score runtime state (regenerable; trust_score.json 下划线版本 tracked)
 data/rollback/trust/trust-score.json

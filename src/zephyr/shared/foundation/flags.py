@@ -163,8 +163,11 @@ class FlagRegistry:
 
     5.38.6 修复: 审计轨迹持久化——register/unregister/set 除写入内存
     ``_audit`` list 外，当 ``persist_audit=True``（或显式传 ``audit_path``）
-    时同时追加 JSONL（默认 ``data/audit_logs/feature_flags.jsonl``，惰性解析
-    REPO_ROOT）。默认实例不持久化，避免测试意外写生产路径（ARCH-BENCH-LEAK-001）。
+    时同时追加 JSONL（默认 ``.runtime/audit/feature_flags.jsonl``，惰性解析
+    REPO_ROOT；2026-08-14 自 tracked 区 data/audit_logs/ 迁出——#55/
+    #ARCH-RECONCILER-AUTO-DELETE-GOV-001 裁定4：门禁运行写 tracked 文件致
+    外部 pre-commit 链结构性不可过，审计写一律落 gitignored 运行区）。
+    默认实例不持久化，避免测试意外写生产路径（ARCH-BENCH-LEAK-001）。
     审计写入失败仅 warning，绝不阻断 flag 操作。
     """
 
@@ -206,7 +209,8 @@ class FlagRegistry:
         try:
             from zephyr.shared.io.paths import REPO_ROOT
 
-            return REPO_ROOT / "data" / "audit_logs" / "feature_flags.jsonl"
+            # #55 治本（2026-08-14）：审计写迁出 tracked 区 → .runtime/audit/（gitignored）
+            return REPO_ROOT / ".runtime" / "audit" / "feature_flags.jsonl"
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             return None
 

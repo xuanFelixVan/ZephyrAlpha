@@ -12339,6 +12339,11 @@ entries:
     三条不变量（后续所有治理决策必须满足）：
     - I-GOV-1（派生产物离库）：凡可由DB/源码/YAML经生成器重现的文档，禁止入git。
     - I-GOV-2（reconciler无写权）：reconciler只允许warn/skip/fix-in-place，禁止action="commit"。
+      （2026-08-14 对齐注记，#ARCH-RECONCILER-AUTO-DELETE-GOV-001：_commit_auto 通道实证已架空
+      本铁律字面——对齐为：auto-commit 白名单仅限 ①非删除类派生写回（注册表同步等）
+      ②满 7 天宽限期的生命周期归档（[lifecycle-archive] 标记 + 30 天回收站可恢复）；
+      其余删除类 auto-commit 一律禁止。铁律精神不变：reconciler 不得持有
+      "误判×自动执行×自动入库"的不可逆放大链。）
     - I-GOV-3（治理预算硬上限）：gate<=54 / reconciler<=121 / AGENTS.md<=3000行，新增必须等量退役。
       AGENTS.md 上限计算依据（2026-08-09 重算，原 1234 为 2026-08-05 行数快照冻结）：
       100% AI 开发主力模型 GLM-5.2 + Kimi K3 上下文窗口均为 1,048,576 tokens（1M）；
@@ -16609,10 +16614,39 @@ entries:
   - 'src/zephyr/governance/audit/reconciliation_registry.py（GATE-WORKING-DOCS dry_run 化 + file_ops 声明制 + guard API 收敛）'
   - 'scripts/ops_guard.py（库层安全删除 API + 统一回收站 + worker 进程覆盖）'
   - 'src/zephyr/governance/audit/reconcile_worker.py（启动三证准入）'
-  - 'docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md（裁定书真源）'
-  fix_phase: '裁定书已归档（2026-08-14）；T0 止血待用户授权；T1-T6 待立项施工'
+  - 'docs/02_enterprise_architecture/04_architecture_principles_decisions/2026-08-14_coord_reconciler_auto_delete_governance_review.md（裁定书真源，2026-08-14 自 _working 临时区迁入 04 永久区）'
+  fix_phase: '裁定书已归档（2026-08-14）；T0/T1 核心已落地 dev（98aeffde：doc_lifecycle 状态机 17 测试全过 + GATE-WORKING-DOCS 重写 + ops_guard 回收站 API；吞噬形态兼容吸收第三轮统筹正则吞噬实证）+ T0④ 止血（bed51d19：删除类 auto-commit 通道禁用，删除留工作区人工审查）；T2-T6 已全部落地（2026-08-14 治理批②续）：T2 worker 启动三证+删除动作全量落盘+TestWorkerAdmission；T3 双裁定书 ttl→permanent；T4 flags.py 审计写迁 .runtime/audit/+data/audit_logs/ 退跟踪+#ARCH-PRECOMMIT-STASH-ADAPT-001 立项；T5 cleanup 锁定跳过=clean+横幅 24h dedup；T6 I-GOV-2 对齐+wipe 裁定书勘误；107 项关联测试全过'
   status: decided
   confirmed_by_user: '2026-08-14 用户指令"全部调研清楚，全面审查相关问题，第一性原理，给出分析过程和裁定结果+治本施工方案"'
   related_rules: '#ARCH-WORKTREE-WIPE-GOV-001（wipe 治本 S1-S6 已 merge）; I-GOV-2（reconciler 无写权铁律，被 _commit_auto 架空）; 65 号 v2.3.0 §5（100% AI 文件安全模型扩展至治理代理层）; tracker §六 #53/#55'
+  created: '2026-08-14'
+  last_updated: '2026-08-14'
+
+# --- #ARCH-PRECOMMIT-STASH-ADAPT-001: pre-commit 框架 stash 适配（65 号 §10 登记项立项，#55 治本 T4-2）---
+- issue_id: '#ARCH-PRECOMMIT-STASH-ADAPT-001'
+  title: pre-commit 框架 stash 适配——裸 commit 在干净工作区全过（65 号 §10 既有登记项落地）
+  severity: P1
+  category: governance
+  adjudication: |
+    背景：#55 实证——门禁运行向 tracked 文件（feature_flags.jsonl 51MB）追加
+    时间戳审计行，pre-commit 框架 hook 执行前后 stash/restore 工作区，运行期
+    产生的 tracked 修改被框架判为 "files were modified by hook" → 裸 git commit
+    结构性不可过。65 号 §10 早已登记 "pre-commit 框架 stash 适配——待处理"。
+    治本分层：T4-1（已落地 2026-08-14）=审计写迁出 tracked 区
+    （flags.py 默认落盘 .runtime/audit/feature_flags.jsonl + data/audit_logs/
+    全目录 gitignore + 历史 tracked 审计文件 git rm --cached 退跟踪）；
+    本条目=T4-2 残余立项——pre-commit 框架 stash 行为与本地门禁运行期产物的
+    适配收尾（hook 运行期产生的任何 tracked 区写入一律视为违规并报警，
+    而非静默 stash 掩盖）。
+    验收标准（机器可验证）：干净工作区裸 `git commit` pre-commit 全过；
+    hook 运行前后 tracked 区零漂移（git status --porcelain diff=空）。
+  impact:
+  - 'src/zephyr/shared/foundation/flags.py（T4-1 已落地：默认审计路径迁 .runtime/audit/）'
+  - '.gitignore（T4-1 已落地：data/audit_logs/ 全目录禁跟踪）'
+  - 'pre-commit hook 链（待施工：stash 适配/漂移检测）'
+  fix_phase: 'T4-1 审计写迁出已落地（2026-08-14 治理批②）；T4-2 stash 适配待施工'
+  status: decided
+  confirmed_by_user: '2026-08-14 用户裁定治理批② T4（#55 治本）'
+  related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T4 母裁定）; 65 号 §10（pre-commit 框架 stash 适配——既有登记项）; tracker §六 #55'
   created: '2026-08-14'
   last_updated: '2026-08-14'
