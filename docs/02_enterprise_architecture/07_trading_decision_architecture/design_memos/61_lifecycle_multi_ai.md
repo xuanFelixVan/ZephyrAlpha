@@ -5,8 +5,8 @@ title: 策略生命周期与多 AI 协作
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.13.2"
-date: 2026-08-14
+version: "2.13.3"
+date: 2026-08-15
 topic: lifecycle_multi_ai
 scope: 07_trading_decision_architecture
 ---
@@ -33,7 +33,8 @@ scope: 07_trading_decision_architecture
 - 策略从想法到退役要跨 6 个作战地图阶段（01 孵化→02 训练→03 回测→04 模拟→10 实盘→11 对账退役），每阶段有独立的 why 层空白
 - 00_index 已建立段位编号制（0x-9x）与骨架先行工作流（最新篇数与状态台账以 [00_index_trading_decision](00_index_trading_decision.md) §0 目录为准），需在本备忘锁定生命周期各阶段的文档治理衔接
 ### 2.2 核心问题
-策略生命周期 6 阶段跨越多个作战地图，每阶段都有"准入门禁→运行监控→降级/晋升→退出"的流转，但缺少一份跨阶段的总纲把 6 阶段串成一条状态机。同时多 AI 协作需要明确分工与交接纪律，防止"AI 间不直接通信"原则下出现交接断裂。
+- 生命周期 6 阶段跨作战地图，缺跨阶段总纲串成状态机
+- 多 AI 协作缺分工与交接纪律——"AI 间不直接通信"原则下须防交接断裂
 ### 2.3 约束条件
 - 个人项目：无团队协作平台（无 Jira/Confluence），交接靠文档（design_memo）+ 代码注册表（depgraph）
 - AI 开发：每个会话独立上下文，不能假设"上一个 AI 留了什么在内存里"——所有交接必须落盘
@@ -73,7 +74,7 @@ scope: 07_trading_decision_architecture
 
 **冷启动协议**（BM-MT-02 v3.5）：新策略上线后观察期 + 渐进建仓，仓位上限 = 正常 × 30%，风控驱动与市场无关，可与分批建仓叠加。这是 ④模拟→⑤实盘 的过渡机制。
 
-**渐进建仓节奏细化**（2026-08 补充）：冷启动不是一次性给 30% 然后跳到 100%，而是按**时间+表现双门控**阶梯式放量（[youngju.dev 2026-03](https://www.youngju.dev/blog/ai-platform/2026-03-04-ai-platform-model-registry-ab-deploy-2026)：渐进流量梯度；[kindatechnical 2026-03](https://kindatechnical.com/time-series-analysis/automated-retraining-and-model-selection.html)：post-deployment monitoring）：
+**渐进建仓节奏细化**：冷启动不是一次性给 30% 然后跳到 100%，而是按**时间+表现双门控**阶梯式放量（[youngju.dev 2026-03](https://www.youngju.dev/blog/ai-platform/2026-03-04-ai-platform-model-registry-ab-deploy-2026)：渐进流量梯度；[kindatechnical 2026-03](https://kindatechnical.com/time-series-analysis/automated-retraining-and-model-selection.html)：post-deployment monitoring）：
 
 | 阶段 | 仓位上限 | 持续时长 | 晋升门控 |
 |---|---|---|---|
@@ -95,13 +96,13 @@ scope: 07_trading_decision_architecture
 
 **当前状态**：BM-RES-01（数据特征存储）已运营态；BM-RES-02/06/07 设计态待施工；BM-RES-03/04/05/08/09/10/11 缺失态（无锚点，BM-INV-001 违例）。
 
-**研究知识流水线拍板**（2026-08-12 作战地图全覆盖补丁，一次拍板闭合 §7.2 登记的 BM-RES-03/08/09 缺失态待定问题）：
+**研究知识流水线拍板**（一次拍板闭合 §7.2 登记的 BM-RES-03/08/09 缺失态待定问题）：
 
 1. **BM-RES-03-B 研究发现知识库**（design）→ **轻量建设：Markdown+Git+frontmatter 标签检索**。定位：假设被接受/研究发现产出后的知识沉淀环节（下游 D-KNOWLEDGE）。裁定：不上 SQLite/Neo4j/ChromaDB 独立知识库——个人项目知识条目量级（数十至数百条）用 Markdown + Git 版本化 + frontmatter 标签检索足够；向量检索属过度工程，重评条件：知识条目 >500 且关键词检索失效。契约：知识条目单文件 Markdown 存于研究知识目录，frontmatter 四字段必填——`hypothesis`（假设陈述）/ `evidence`（证据列表）/ `conclusion`（接受/拒绝+理由）/ `tags`（关联因子/策略标签，对接 §3.2 第 2 条假设状态机）；条目生命周期随假设状态机流转。
 2. **BM-RES-08 知识清洗与结构化 + BM-RES-08-A 知识清洗流水线**（design）→ **轻量建设：LLM 单次抽取 + Markdown 结构化模板承载**。定位：原始研究材料→清洗→结构化→沉淀 BM-RES-03 假设。裁定：不上独立 NLP 清洗栈；清洗四动作（去重/去噪/实体链接/质量评分）由"LLM 单次抽取 + Markdown 模板"承载，人工复核后入库；重评条件：日采集量 >50 篇且人工复核成为瓶颈。契约：模板字段——`source`（来源+时间+置信度）/ `dedup_key`（标题哈希，承载去重）/ `entities`（实体链接标签）/ `quality_score`（LLM 自评 1-5 + 人工复核标记）；去重=标题哈希比对，去噪=quality_score <3 不入库，与 BM-RES-03-B 共用 frontmatter 规范。
 3. **BM-RES-09 知识分类与策略提取 + BM-RES-09-A 知识类型分类体系**（design）→ **轻量建设：frontmatter 标签承载 5 类知识**。定位：结构化知识→按类型分类→策略提取→BM-RES-07 策略迭代。裁定：知识类型分类体系（事实型/规则型/策略型/案例型/元知识型）由 frontmatter `knowledge_type` 单字段承载，不建独立分类模型；策略提取=人工阅读 `knowledge_type=strategy` 条目后走 §3.2 第 2 条假设登记进入状态机。重评条件：知识条目 >500 且人工分类不一致。契约：`knowledge_type` 枚举 `fact/rule/strategy/case/meta` 必填；策略提取产出物=假设登记条目。
 
-**研究环境否定式裁定**（2026-08-12 作战地图全覆盖补丁，否定式裁定闭合 4 个 BM-RES 环境/编排环节）：
+**研究环境否定式裁定**（否定式裁定闭合 4 个 BM-RES 环境/编排环节）：
 
 1. **BM-RES-01-C 研究数据沙箱**（design）→ **裁定不建设容器沙箱**。裁定：研究隔离 = venv/目录级隔离 + 审计日志——与 [65_git_safety_governance](65_git_safety_governance.md) §9"不引入沙箱/容器隔离"裁定呼应（Windows 无 macOS Seatbelt 等效物，Docker/WSL 对量化交易开发过重）；venv 依赖隔离 + 研究目录与生产目录物理分离 + Git 审计日志已覆盖"数据隔离+代码隔离"诉求；资源隔离无需求（单机错峰人工调度）。重评条件：引入不可信第三方代码/数据需隔离执行时。
 2. **BM-RES-05-A Notebook 集成与一键转生产**（design）→ **裁定不建设**。裁定：研究环境 = VSCode + 纯 Python 脚本，不建 JupyterLab/papermill——AI 会话直接产出 .py 脚本，"一键转生产"诉求由 §3.8 模块创建 4 步承载，脚本即生产形态无需转换层。BM-RES-05 父环节协作侧由 §3.6 多 AI 协作分工承载，notebook_backend/collaboration_mode 参数随之消解。重评条件：无（除非研究模式转向交互式探索驱动）。
@@ -112,7 +113,7 @@ scope: 07_trading_decision_architecture
 
 **BM-RES-07-A 策略进化与因子挖掘**（design）：当前承载 = 人工 + §3.2 第 2 条假设状态机 + [62_business_registry_construction](62_business_registry_construction.md) §4.12 ADAPT_STRATEGY 衰减后适应算法（归因回流→权重调整→升级方案需审批）；FactorMiner Experience Memory 与 AlphaMemo APV 为 Phase 3 轻量契合点（可脱离 LLM 独立实现，<100 行，见本节远期候选登记）；LLM 化（CogAlpha/Hubble 式自主挖掘）为 Phase 5+ 远期候选，与 §2.3 约束一致不立即施工。
 
-**LLM 驱动 alpha 挖掘远期候选**（2026-08 补充，00_index G28 讨论要点回填）：本项目 100% AI 开发模式天然契合"量化行业从因子竞争转向智能体竞争"趋势，但当前手动因子研究足够，以下 LLM 驱动自动化方案记为远期候选（Phase 5+），待因子库扩张 + LLM 能力成熟后评估。**评估优先级**：AlphaSchema > FactorMiner > AlphaMemo > Hubble > AlphaCrafter > XALPHA > EFS。
+**LLM 驱动 alpha 挖掘远期候选**（00_index G28 讨论要点回填）：本项目 100% AI 开发模式天然契合"量化行业从因子竞争转向智能体竞争"趋势，但当前手动因子研究足够，以下 LLM 驱动自动化方案记为远期候选（Phase 5+），待因子库扩张 + LLM 能力成熟后评估。**评估优先级**：AlphaSchema > FactorMiner > AlphaMemo > Hubble > AlphaCrafter > XALPHA > EFS。
 
 | 候选 | 出处 | 核心范式 | 与本项目关系 |
 |---|---|---|---|
@@ -145,7 +146,7 @@ scope: 07_trading_decision_architecture
 **核心纪律**：
 1. **Champion-Challenger 晋升**（BM-MT-02）：新模型不直接全量上线——A/B 实验对比，统计显著更好才晋升为 Champion，否则留 Challenger 观察。**默认动作：证据不足时保留 Champion**（[MetricGate 2026-04](https://metricgate.com/blogs/champion-challenger-model-testing/)）。**统计检验：mSPRT 混合序贯概率比检验**——每笔交易后累加似然比，达边界即判定（接受 H1 晋升 / 接受 H0 保留 / 继续观察），无需预设样本量；mSPRT 产生 **e-process**，满足 `P(ever exceeds 1/α) ≤ α` 在所有停时成立，可任意频次查看无"偷看惩罚"（经典 SPRT/固定样本 t-test 月度偷看 12 个月实验，Type I 从 5% 膨胀到 ~25%）（[burning-cost 2026-03-24](https://burning-cost.github.io/2026/03/24/sequential-ab-testing-insurance-champion-challenger/)，Johari et al. 2022）。**e-value 理论根基**（[MetricGate 2026-06](https://metricgate.com/blogs/e-value-vs-p-value-evidence/)）：e-value 可乘，独立批次之积构成 test martingale `M_n = ∏E_i`，Ville 不等式保证 anytime-valid；e-value→p-value 转换 `p = min(1, 1/E)`。**陷阱**：tau（先验效应大小）标定错误会严重失效，须用历史 OOS 效应量分布标定。**流量切分**：95/5 不对称分流——**blast-radius 原则**：5% 上限按「challenger 失效最多波及多少资金」反推而非按速度，风险遏制优先于收益验证（[MetricGate A/B 2026-04](https://metricgate.com/blogs/model-deployment-ab-testing/)）+ 护栏指标 guardrail metrics；[theneuralbase 2026-04](https://theneuralbase.com/ai-for-finance/learn/intermediate/champion-challenger/)：金融业 SR 26-02 要求 4-12 周并行验证 + 预注册假设（效应量/显著性/停止规则并行期开始前文档化）。**双指标纪律**：①业务指标（Sharpe/expectancy/年化收益）+ ②ML 指标（AUC/IC/Calibration ECE），**Challenger 两项都优于或等于 Champion 才晋升**——只赢业务指标可能是运气，只赢 ML 指标可能未转化为收益。**ECE 校准门控**：`ECE = Σ (n_b/n) × |p̄_b - ȳ_b|`，Challenger ECE 不得显著高于 Champion（排名好但校准差会导致下游阈值/仓位规则错误触发）。**护栏指标**：最大回撤/换手率/滑点偏离超限立即终止实验。**方法谱系与选型理由**：GSPRT / Always Valid P-Value / Free Anytime Validity（[Koning & van Meer 2025](https://arxiv.org/html/2501.03982v3)）/ 贝叶斯替代范式（Expected Loss / Probability to Be Best，VWO/Statsig 采用）——本项目选 mSPRT 因金融监管（SR 26-2）偏好频率学派 Type I 控制 + 无先验依赖 + e-value 可转 p-value 对接传统报告；**最坏实践是"用固定样本方法但偷看"**（Type I 膨胀至 20-30%，[experimenthq 2026-12](https://www.experimenthq.io/blog/sequential-testing-vs-fixed-horizon)），本项目选序贯因交易笔数累积慢、需要早期停止能力。
 
-   **mSPRT 施工伪代码**（2026-08-10 补充，核心三要素：似然比累加 + tau 标定 + 边界判定）：
+   **mSPRT 施工伪代码**（核心三要素：似然比累加 + tau 标定 + 边界判定）：
 
    ```python
    # mSPRT Champion-Challenger 序贯晋升（Johari et al. 2022 高斯 mixture 闭式解）
@@ -190,10 +191,10 @@ scope: 07_trading_decision_architecture
    ```
    **施工要点**：① α=0.05 对齐 SR 26-2 频率学派 Type I 控制；② tau 用历史 OOS 效应量标准差标定（≥5 个历史点，冷启动兜底 0.2）；③ 边界 1/α=20（Ville 不等式）；④ 似然比用高斯 mixture 闭式解（Johari et al. 2022）；⑤ 流量切分通过 MLflow alias 路由——Challenger 注册 @challenger alias，信号扇出时 5% 订单流走 Challenger 推理路径（blast-radius 上限），95% 走 @champion；晋升时 alias 切换 @champion←@challenger，旧 Champion 自动落 @archived。
 
-   **多策略选择演进路径**（2026-08 补充）：mSPRT 是"champion vs challenger"**成对**序贯检验，适配 3-5 策略规模；策略数 >8（G11 第二批次上线后）时成对比较 O(N²) 组合数 + FWER 膨胀（Bonferroni 过保守），升级为"N 选 K"：**ASHA Tournament**（successive halving 逐轮淘汰底部半数 + 异步并行，[FerroQuant 2026-03](https://arxiv.org/abs/1808.08926)，1056 标的×178 策略实证）+ **SERPANT**（e-process 控制两两比较 FWER + tournament sampling 自适应选比较对 + top-k + early stopping，[Gu et al. ICML 2026](https://openreview.net/forum?id=7Y8xRnGQ47)）——ASHA 决定"淘汰谁"，SERPANT 保证"淘汰决策统计可靠"，正交可组合。记为 **Phase 2+ 候选**：3-5 策略规模下引入是净负担，不立即施工。
+   **多策略选择演进路径**：mSPRT 是"champion vs challenger"**成对**序贯检验，适配 3-5 策略规模；策略数 >8（G11 第二批次上线后）时成对比较 O(N²) 组合数 + FWER 膨胀（Bonferroni 过保守），升级为"N 选 K"：**ASHA Tournament**（successive halving 逐轮淘汰底部半数 + 异步并行，[FerroQuant 2026-03](https://arxiv.org/abs/1808.08926)，1056 标的×178 策略实证）+ **SERPANT**（e-process 控制两两比较 FWER + tournament sampling 自适应选比较对 + top-k + early stopping，[Gu et al. ICML 2026](https://openreview.net/forum?id=7Y8xRnGQ47)）——ASHA 决定"淘汰谁"，SERPANT 保证"淘汰决策统计可靠"，正交可组合。记为 **Phase 2+ 候选**：3-5 策略规模下引入是净负担，不立即施工。
 2. **灰度 + 影子部署**（BM-MT-02-A）：渐进流量梯度 5% → 25% → 50% → 100%，每阶段自动比较指标，异常自动回滚流量；影子模式并行预测不改决策 → 全量晋升或回滚。**影子模式持续时长量化**：须覆盖至少 1 个完整 regime 周期——A 股日内策略 2-4 周，隔夜/波段策略 8-12 周，至少 30-50 笔影子交易才具备统计意义（SR 26-02 金融业 4-12 周并行验证；30-50 笔早期预警，100+ 笔确认）。**影子模式异步架构**（[mljar 2026](https://mljar.com/ai-prompts/mlops/model-monitoring/prompt-shadow-mode/)）：Champion 服务所有请求，Challenger 异步接收请求副本——**fire-and-forget + timeout**，Challenger 超时/出错只记日志绝不阻塞 Champion 响应。**每日对比分析 5 维度**：agreement rate / score correlation / KS 分布比较 / disagreement 抽样 50 笔人工检查 / latency（Challenger p99 须满足 SLA）。**成本警示**：影子模式翻倍计算成本，Challenger 用较小副本数降成本。
 3. **对抗鲁棒性**（BM-MT-02-B）：上线前 FGSM/PGD 对抗扰动测试，输入被轻微扰动就翻盘的模型不准上生产。
-4. **漂移检测多方法 Drift Observatory**（BM-MT-05，2026-08 升级）：单一 PSI 只能抓边际特征漂移，抓不住多变量联合分布漂移和概念漂移。升级为多方法组合：
+4. **漂移检测多方法 Drift Observatory**（BM-MT-05）：单一 PSI 只能抓边际特征漂移，抓不住多变量联合分布漂移和概念漂移。升级为多方法组合：
    - **特征漂移**（covariate shift）：PSI（>0.1 调查 / >0.25 材料性漂移）+ KS 检验（Bonferroni 多重比较校正）+ MMD（多变量联合分布漂移，RBF 核 + 随机傅里叶特征近似 O(n²)→O(n)）+ **Wasserstein 距离**（Earth Mover's Distance，一维 O(n log n)，比 KS 更敏感于整体分布形状变化）——多变量场景用 MMD，单变量连续特征用 Wasserstein 补充 KS 盲区。
    - **概念漂移**（concept drift）：ADWIN（Adaptive Windowing）在滚动误差率上检测结构突变——X→y 映射关系变了，PSI 抓不住。
    - **残差漂移**：CUSUM / Page-Hinkley 在模型残差上检测持续偏移。**CUSUM 参数标准设置**：单侧 `S⁺ₜ = max(0, S⁺ₜ₋₁ + (μ₀ - xₜ) - k)`，μ₀ 为 OOS 验证期均值（**禁止用全回测均值**——包含待检测 regime 会污染基线），k=0.5σ，h=4σ（约 0.5 次/年误报）；实证 Sharpe~1 策略 changepoint 后约 50 交易日检出，优于 Rolling Sharpe 转负的 6+ 个月。**三大失效风险与解法**：①重尾失效（金融收益超额峰度常 >20，经典 CUSUM 100% 误报 → 广义随机逼近 LLR，仅用至 3 阶矩，[arXiv:2605.23419](https://arxiv.org/html/2605.23419v1)）；②自相关失效（AR(p) 特性使 IID 检测器失效 → AR(p)-focus 算法，每迭代 O(log n)，[arXiv:2607.16106](https://arxiv.org/pdf/2607.16106)）；③单窗口局限（→ PM-CuSum 多窗口预测分布组合，一阶渐近最优，[arXiv:2606.05072](https://arxiv.org/html/2606.05072v2)）。**Phase 1 缓解措施**（重尾 100% 误报是实盘生存级问题，LLR/AR(p)-focus/PM-CuSum 均为 Phase 3/4 候选，Phase 1 须可施工）：**① 收益稳健预处理**——CUSUM 输入前 winsorize 截尾到 1%/99% 分位，超额峰度从 >20 压到 <5（<10 行代码）；**② CUSUM 降权 + MMD 提权**——composite drift score 中 CUSUM 权重 0.15→0.05，MMD 提权作主检测器；**③ 确认窗口**——告警后加 3-5 日确认窗口（连续 N 次超标才触发），过滤重尾单日极值；**④ 残差而非原始收益**——残差尾部更轻，高斯假设更接近成立。①+④ 为 Phase 1 必做（<15 行零依赖），②+③ 为推荐（<20 行）；Phase 3 升级后预处理仍保留（与重尾检测器正交可叠加）。
@@ -206,14 +207,14 @@ scope: 07_trading_decision_architecture
    - **漂移 vs 过拟合鉴别——Deflated Sharpe Ratio**：检测到漂移信号后先用 DSR 排除过拟合可能——DSR 调整回测 Sharpe 反映多次试错惩罚，DSR 仍显著 > 0 则漂移是真市场结构变化走重训练/退役流程，DSR 不显著则原策略本身是过拟合产物（漂移是假象），走"策略本身无效"诊断回 §3.2 孵化阶段重新假设。
    - **三闭环保留 + 分级响应阶梯**（staged operational responses）：事前 composite drift score 预警 → 事中在线适应（EWMA/Stage2 缩放）→ 事后 C-007 离线重训；响应不直接跳到重训练，按严重程度分级——① **alert**（仅通知，策略正常运行）；② **reduce size**（减仓至 50%）；③ **stop new entries**（停止新建仓，仅平存量）；④ **quarantine**（隔离暂停待诊断）；⑤ **retrain**（触发重训练）。每级有明确进入/退出条件，避免"一有漂移就重训练"的过度反应。
 
-   **Layer 4 可证覆盖层——Conformal Prediction**（2026-08 重大发现）：Layer 1-3 是启发式阈值（快但有误报），**Conformal Prediction 提供有限样本覆盖保证** `P(Y_{n+1} ∈ Ĉ(X_{n+1})) ≥ 1 - α`，对任意分布、任意模型、任意样本量成立，仅需可交换性。**split conformal 四步**：① 训练集拟合 μ̂；② 校准集算非一致性分数 `sᵢ = |yᵢ - μ̂(xᵢ)|`；③ 取 `(1-α)` 分位数 q̂；④ 预测区间 `Ĉ = [μ̂(x) - q̂, μ̂(x) + q̂]`。**三层应用**：① 漂移检测（监控实际覆盖率，实际覆盖 < 名义 (1-α) 即漂移——数学保证信号非启发式阈值）；② 仓位管理（区间宽度 = 动态风险信号，宽→保守/窄→放大）；③ VaR 校准（RWC regime-weighted conformal 直接对接 36 号 var_calculator，CRSP+16 美股组合 Basel 99%/97.5% 验证，[arXiv:2602.03903](https://arxiv.org/html/2602.03903v3)）。**金融收益特殊处理**（[conformal.marketmaker.cc](https://conformal.marketmaker.cc/) 180 实验）：边际覆盖在 AR(1)/GARCH 下存活（0.901/0.895），仅突变微降；**条件覆盖是 casualty**（GARCH 高波动三分位低估 8 个百分点）——修复：EWMA 波动率归一化分数（spread 0.134→0.040）。**CP ↔ VaR 等价**（[PMLR 266 Retzlaff 2025](https://proceedings.mlr.press/v266/retzlaff25a.html)）：36 号 VaR 回测设施可直接复用于 CP 覆盖检验。**施工定位**：Phase 3 候选，CP 是 wrapper 不改模型，实现 <100 行；先在 36 号试点 RWC VaR 校准再扩展。**mandatory baseline**：先实现 5 行 ConformalNaive 作 floor，自适应方法不能显著超越则不值得复杂度（[arXiv:2606.09473](https://arxiv.org/pdf/2606.09473v1)）。
+   **Layer 4 可证覆盖层——Conformal Prediction**：Layer 1-3 是启发式阈值（快但有误报），**Conformal Prediction 提供有限样本覆盖保证** `P(Y_{n+1} ∈ Ĉ(X_{n+1})) ≥ 1 - α`，对任意分布、任意模型、任意样本量成立，仅需可交换性。**split conformal 四步**：① 训练集拟合 μ̂；② 校准集算非一致性分数 `sᵢ = |yᵢ - μ̂(xᵢ)|`；③ 取 `(1-α)` 分位数 q̂；④ 预测区间 `Ĉ = [μ̂(x) - q̂, μ̂(x) + q̂]`。**三层应用**：① 漂移检测（监控实际覆盖率，实际覆盖 < 名义 (1-α) 即漂移——数学保证信号非启发式阈值）；② 仓位管理（区间宽度 = 动态风险信号，宽→保守/窄→放大）；③ VaR 校准（RWC regime-weighted conformal 直接对接 36 号 var_calculator，CRSP+16 美股组合 Basel 99%/97.5% 验证，[arXiv:2602.03903](https://arxiv.org/html/2602.03903v3)）。**金融收益特殊处理**（[conformal.marketmaker.cc](https://conformal.marketmaker.cc/) 180 实验）：边际覆盖在 AR(1)/GARCH 下存活（0.901/0.895），仅突变微降；**条件覆盖是 casualty**（GARCH 高波动三分位低估 8 个百分点）——修复：EWMA 波动率归一化分数（spread 0.134→0.040）。**CP ↔ VaR 等价**（[PMLR 266 Retzlaff 2025](https://proceedings.mlr.press/v266/retzlaff25a.html)）：36 号 VaR 回测设施可直接复用于 CP 覆盖检验。**施工定位**：Phase 3 候选，CP 是 wrapper 不改模型，实现 <100 行；先在 36 号试点 RWC VaR 校准再扩展。**mandatory baseline**：先实现 5 行 ConformalNaive 作 floor，自适应方法不能显著超越则不值得复杂度（[arXiv:2606.09473](https://arxiv.org/pdf/2606.09473v1)）。
 
    **突变处理主路径——CUSUM + calibration flush（minimax 最优）+ BC-ACI 中心纠正**：
    - **calibration flush**（[arXiv:2602.16537](https://arxiv.org/pdf/2602.16537)，Princeton/Wharton 2026-02）：ACI 的边际覆盖保证允许 regime shift 后持续 60-80 步严重欠覆盖（首半程 66.7%，纸面 valid 但实盘"飞行盲打"）；minimax 最优解是 **CUSUM 检测 + 完全丢弃陈旧校准集用 post-drift 分数重建**（下界 O(√(KT)) 证明无算法可超越）。复用 §3.3 残差漂移 CUSUM 基础设施（同一检测器既检残差漂移又触发 CP 校准集冲刷），<20 行增量。
    - **BC-ACI 偏置校正**（[arXiv:2604.13253](https://arxiv.org/pdf/2604.13253)，Lade et al. 2026-04）：ACI/flush 只调区间宽度无法移动中心——模型持续预测偏置时 ACI 被迫对称膨胀（宽度开销 2|b|）；BC-ACI 叠加 per-horizon EWMA 偏置估计 `b̂_t = EWMA(e_t)` 纠正非一致性分数 `s̃_t = s_t - b̂_t` + MAD 死区阈值，ridge level shift 后 Winkler 分数改善 32%（宽度 8.67→5.50，37% 削减），自校正模型中性无副作用。**与 flush 正交互补**：flush 管宽度重建，BC-ACI 管中心纠正，双重保护（牛市训练模型在熊市系统性高估等场景），<30 行。
    - **联动**：CUSUM 告警 → calibration flush 重建校准集 → BC-ACI 持续纠正残余偏置。
 
-   **四层 Drift Observatory 联动编排伪代码**（2026-08-10 施工填补——四层如何聚合告警→如何映射分级响应的可执行编排逻辑）：
+   **四层 Drift Observatory 联动编排伪代码**（四层告警聚合→分级响应映射的可执行编排逻辑）：
 
    ```python
    def drift_observatory_orchestrate(strategy_id, features, model_output, realized_pnl):
@@ -263,7 +264,7 @@ scope: 07_trading_decision_architecture
    ```
    **施工要点**：① 四层权重 Layer 4 最高（0.40，可证覆盖非启发式）反映"数学保证 > 经验阈值"优先级；② 下游影响门控仅作用于 Layer 1（特征漂移多为良性），Layer 2-4 已直接关联模型行为不门控；③ CUSUM→calibration flush 复用残差漂移 CUSUM 基础设施；④ 分级响应阈值 0.20/0.40/0.60/0.80 对应五级响应；⑤ Layer 4 `coverage_breach` 直接触发 RETRAIN 绕过 composite 阈值——数学保证层告警不可被其他层"稀释"。
 
-   **downstream_impact_gate / trigger_retraining 施工规格**（编排伪代码的两个 helper，逻辑规格化）：
+   **downstream_impact_gate / trigger_retraining 施工规格**（编排伪代码两个 helper 的逻辑规格）：
    - `downstream_impact_gate(l1)`——Layer 1 特征漂移业务影响四步检查：① **regime 解释**（当前 regime ∈ 已知良性列表：季节性/假期/已知切换，复用 10 号 regime 检测器 12 态）；② **IC 衰减**（漂移特征 rolling IC(20d) vs baseline，|ΔIC| > 0.05 = 显著）；③ **Sharpe 退化**（Rolling Sharpe(50 笔窗口) < baseline × 0.7 = 显著，对齐第 5 条 Decay Detection 监控点 1）；④ **残差膨胀**（recent loss(10) > baseline × 1.3 = 显著，对齐第 7 条回滚阈值 MAPE 行）。**复合判定**：regime 可解释 AND ②③④均无显著退化 → 良性漂移降级 severity=0，否则保留告警——regime 可解释是必要非充分条件（即使 regime 良性，IC/Sharpe/残差已退化说明漂移已穿透到模型性能仍须告警）。与 SHAP 归因（哪个特征）/ARM 归因（哪些维度）在"是否漂移→哪些维度→业务影响"链路分工互补。
    - `trigger_retraining(strategy_id, trigger_source)`——三触发（performance / schedule / data_volume，第 8 条）。**分级决策**：突发漂移（composite ≥0.80 / coverage_breach / abrupt）→ 全量重训练；渐进漂移/定时/数据量 → 增量重训练（Phase 3 渐进漂移可升级 knowledge distillation，成本比全量低 5-10x）。**回滚保险（SBS 纪律）**：旧 Champion 版本先落 @challenger；warm-refit 在服务路径外（不在 @champion 上直接训练），滚动窗口数据 + EWC + 伪回放；新模型经第 9 条晋升门禁（OOS Sharpe ≥ Champion × 0.9 / profit factor > 1.5 / MaxDD ≤ Champion × 1.2 / 子周期一致性 / Sortino+Calmar 三角验证）通过 → 晋升 @champion + 旧版保留 30 天回滚窗口；未通过 → 落 @archived 待诊断，保留旧 Champion。与第 7 条回滚的边界：回滚=新 Champion 上线 24h-7 天内紧急恢复（秒级 alias 切换），重训练=Champion 长期退化（盘后离线动作）。
 
@@ -327,7 +328,7 @@ scope: 07_trading_decision_architecture
      **与本项目对齐**：打板策略（24号）属"简单技术形态"类，预期中位存活 ~8-12 个月，须按此节奏规划迭代；多因子策略（25号）属"多因子模型"类，预期 ~24-28 个月。
    - **AI 不是 alpha 衰减的解药**（[CSDN 2026-08-07](https://blog.csdn.net/2601_95872481/article/details/162839541)）：AI/ML 策略同样受衰减宿命制约——① AI 学历史模式受"过去不代表未来"限制；② AI 过拟合**更隐蔽**（黑箱使过拟合更难察觉）；③ AI 策略拥挤 = 新的 crowding 衰减；④ AI 无"自主进化"，该退就要退。**本项目纪律**：Champion-Challenger + Drift Observatory + Decay Detection 三件套**同等适用于 AI/ML 策略和非 AI 策略**——AI 策略不因"更先进"而豁免退役标准。**策略失灵是默认假设非意外**（市场效率定理直接推论）——系统健康 = 失灵了能识别/切换/恢复，不是"永远不失灵"。
 6. **防遗忘**（BM-MT-05-A）：EWC + 伪回放，新模型适应新分布又不丢历史知识。
-7. **自动回滚机制**：新 Champion 上线后旧 Champion 保留 7-30 天作为回滚安全保险（[icyfenix.cn](https://ai.icyfenix.cn/ai-infra-engineering/mlops/model-lifecycle.html)）；部署后 24 小时内监控检测到显著指标 drop → 自动回滚到旧 Champion（[kindatechnical 2026-03](https://kindatechnical.com/time-series-analysis/automated-retraining-and-model-selection.html)）；一键回滚 = 切换 MLflow alias @champion 指针 + 告警。**回滚触发阈值表**（2026-08-10 量化）：
+7. **自动回滚机制**：新 Champion 上线后旧 Champion 保留 7-30 天作为回滚安全保险（[icyfenix.cn](https://ai.icyfenix.cn/ai-infra-engineering/mlops/model-lifecycle.html)）；部署后 24 小时内监控检测到显著指标 drop → 自动回滚到旧 Champion（[kindatechnical 2026-03](https://kindatechnical.com/time-series-analysis/automated-retraining-and-model-selection.html)）；一键回滚 = 切换 MLflow alias @champion 指针 + 告警。**回滚触发阈值表**：
 
    | 指标 | drop 幅度 | 持续时长 | 触发动作 | 来源 |
    |---|---|---|---|---|
@@ -368,7 +369,7 @@ scope: 07_trading_decision_architecture
 
 **个人项目简化**：不上 KFP/KServe/K8s 编排；用 MLflow Model Registry alias 管理生命周期 + 手动审批门禁。BM-MT-02 已有 ExperimentTracker（stable），BM-MT-02-A/B 设计态待施工。
 
-**模型训练两环节裁定**（2026-08-12 作战地图全覆盖补丁）：
+**模型训练两环节裁定**：
 
 1. **BM-MT-01-B AI 辅助代码生成与分析师 Agent 反馈**（battle_map 标 production，实际仅 AST 沙箱落地）→ **登记裁定：生成-反馈闭环并入 §3.2 远期候选**。定位：ModuleRequirementSpec→LLM 生成→Critic 审查→反馈收敛→AST 沙箱→人工审核注册。裁定：Generator/Critic/Judge 生成-反馈闭环 + 分析师 Agent 与 §2.3"不做 agent 编排系统"约束冲突，并入 §3.2 LLM 驱动 alpha 挖掘远期候选（Hubble/EvoQuant 已登记同类范式，Phase 5+ 重评）；**安全栈已落地**——[62_business_registry_construction](62_business_registry_construction.md) §4.34② factor_registry schema `llm_safety_stack` 5 字段（ast_validation/dsl_constrained/complexity_control/dual_channel_rag/family_aware_selection）已承载 Hubble AST 验证沙箱契约，Phase 2+ 启用 LLM 因子生成时 MUST 声明全 true。同时登记**battle_map 成熟度标注倒挂真源修正建议**：BM-MT-01-B 标 production 但 `ml_train/ai_operator/` 仅 AST 沙箱部分落地、生成-反馈闭环未施工，成熟度应 production→design，写入 §7.5 由 battle_map owner 会话裁决。
 2. **BM-MT-01-C 策略数字孪生**（design）→ **裁定不做镜像副本**。裁定：不建策略行为镜像副本——"策略健康评估+衰减预警"诉求已由 §3.9 退役 8 维量化阈值 + §3.3 Drift Observatory 五类漂移四层架构完整承载，镜像副本属重复建设且单机维护实时镜像仿真成本高。**与 #ARCH-OE-010 边界消歧**：#ARCH-OE-010 裁的是 SIM 域数字孪生 + 世界模型 DreamerV3（市场仿真侧，BM-SIM-05 已降级），本环节是策略行为镜像，两者正交——本裁定不触碰 SIM 域既有裁定。重评条件：策略数 >10 且 8 维阈值+Drift Observatory 出现系统性误报/漏报时。
@@ -406,11 +407,11 @@ scope: 07_trading_decision_architecture
 2. **认领前置阅读**：认领 G05 必须先读 G04 产出物；认领 G12 必须先读 30_multi_strategy §2.1；所有 AI 必读 30_multi_strategy + 00_index
 3. **三层分治**（01_spec §2）：生成器管 what is / design_memo 管 why / depgraph 管 what will be——AI 不得越层（生成器不写 why，备忘不写 what is 细节，depgraph 不写 why）
 4. **段位编号**（01_spec §4.1）：新文档按业务域入段（0x-9x），段内取下一个空号，不预留坑位——AI 认领时在 00_index §7.3 占用表登记，避免编号撞车
-5. **并发文件级冲突纪律**（2026-08-12 实战教训补，#ARCH-WORKTREE-GATE-001）：多会话并发施工共享主工作区 git index——未 commit 到分支的修改随时可能被并发会话的 stash/reset/checkout 抹掉（**未落分支的修改不算完成**）。强制：①Edit 前先 `python scripts/git_commit.py --claim-only` 前移声明持有（搭便车防护）；②commit 唯一入口 `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（GitCommitGateway 串行锁+stash 隔离，裸 git commit 被 GATE-COMMIT-GW 阻断）；③检测到其他活跃 session 时 WORKTREE gate 阻断主工作区 commit，须 `python scripts/session_worktree.py create/exec/merge` 物理隔离（本备忘 v2.11.0 修订即经此流程落地）。**行业背书**（2026-08）：CMU CAID（[arXiv:2603.21489](https://arxiv.org/pdf/2603.21489)，2026-03）实证 branch-and-merge + git worktree 是多 agent 协作的核心协调机制（PaperBench +26.7% / Commit0 +14.3%）；VS Code 2026-08-07 起为 Copilot/Claude/Codex agent session 默认启用 git worktree 隔离（[luonghongthuan 2026-08-10](https://luonghongthuan.com/en/blog/vscode-copilot-agent-worktree-isolation-2026/)）——"并发 agent 未提交修改被静默覆盖"是 2026-08 行业公认失败模式，worktree 隔离是其标准解法。
+5. **并发文件级冲突纪律**（#ARCH-WORKTREE-GATE-001）：多会话并发施工共享主工作区 git index——未 commit 到分支的修改随时可能被并发会话的 stash/reset/checkout 抹掉（**未落分支的修改不算完成**）。强制：①Edit 前先 `python scripts/git_commit.py --claim-only` 前移声明持有（搭便车防护）；②commit 唯一入口 `python scripts/git_commit.py --session <id> --files <f> --message <msg>`（GitCommitGateway 串行锁+stash 隔离，裸 git commit 被 GATE-COMMIT-GW 阻断）；③检测到其他活跃 session 时 WORKTREE gate 阻断主工作区 commit，须 `python scripts/session_worktree.py create/exec/merge` 物理隔离（本备忘 v2.11.0 修订即经此流程落地）。**行业背书**（2026-08）：CMU CAID（[arXiv:2603.21489](https://arxiv.org/pdf/2603.21489)，2026-03）实证 branch-and-merge + git worktree 是多 agent 协作的核心协调机制（PaperBench +26.7% / Commit0 +14.3%）；VS Code 2026-08-07 起为 Copilot/Claude/Codex agent session 默认启用 git worktree 隔离（[luonghongthuan 2026-08-10](https://luonghongthuan.com/en/blog/vscode-copilot-agent-worktree-isolation-2026/)）——"并发 agent 未提交修改被静默覆盖"是 2026-08 行业公认失败模式，worktree 隔离是其标准解法。
 
-**运行时风险治理小节**（2026-08-12 作战地图全覆盖补丁，与 §3.6 多 AI 协作衔接——多会话 AI 开发模式下的 AI/Agent 行为治理两环节设计）：
+**运行时风险治理小节**（多会话 AI 开发模式下的 AI/Agent 行为治理两环节设计）：
 
-> 本项目"多 AI = 人调度多会话"（§3.6），AI 会话通过 git/脚本/depgraph 等工具链作用于代码库与文档库——**AI 行为的运行时风险治理**是"人调度"模式的必要配套：会话产出物（代码修改/注册表变更/文档修订）须在有界自治边界内运行，越界即熔断。以下两环节设计不改变"AI 间不直接通信、所有交接落盘"的既有纪律，而是在纪律之上加运行时护栏。
+> 本项目"多 AI = 人调度多会话"（§3.6），AI 会话经 git/脚本/depgraph 工具链作用于代码库与文档库。**定位**：AI 行为运行时风险治理是"人调度"模式的必要配套——会话产出物须在有界自治边界内运行，越界即熔断；不改变"AI 间不直接通信、所有交接落盘"既有纪律，在其上加运行时护栏。
 
 1. **BM-RC-09 AI/Agent 风险治理**（design）→ **设计三件套：有界自治边界 + 治理漂移防护 + ARS 双轨结算裁定**。定位：Agent 自治行为发生时的治理基线（原定义：有界自治 Bounded Autonomy / 保障缺口管理 / 治理漂移防护 / Agent 行为监控 / ARS 双轨结算模型）。设计：
    - **有界自治边界**（自治动作白名单 + 额度）：AI 会话可自治执行的动作收敛为白名单——①文档读写（design_memos/域文档）；②脚本执行（scripts/ 下已登记治理脚本）；③注册表变更（capability/translation/ARCH 登记，经 §3.8 4 步流程）。**额度**：单会话单次任务修改文件数 ≤10（超出须拆任务）、禁止动作黑名单（删除 production 代码文件/修改治理 gate 脚本本身/绕过 git_commit.py 裸 commit——后者已被 GATE-COMMIT-GW 硬阻断）。白名单外动作一律升级人工审批，对应 BM-RC-09 原"保障缺口管理"——白名单覆盖的动作即"保障内"，黑名单+未列举动作即"保障缺口"须人工兜底。
@@ -474,12 +475,12 @@ scope: 07_trading_decision_architecture
 
 **触发式移除纪律**（[quanthedgeai 2026-07-13](https://www.quanthedgeai.com/blog/implementing-a-multi-strategy-portfolio-end-to-end/)）：**"希望不是策略；触发式移除才是"**——防止操作者靠希望持有亏损策略。退役流程须**预定义触发器并在触发时机械执行**，不允许"再观察一下"/"可能是暂时回撤"/"下个月再说"等人为延迟。**心理防线**：操作者面对亏损策略的常见心理陷阱是"沉没成本谬误"（已投入大量研究时间）+ "损失厌恶"（不愿实现亏损）+ "过度自信"（相信会回归）——触发式移除用机械规则消除人为判断的偏差。**触发器实现**：在 G26 监控告警中硬编码退役阈值（§3.9 退役量化阈值表）——⚠️55 号为 draft v0.1.0 骨架待讨论，告警硬编码落地待其定型；当前阈值真源为本备忘本节。阈值触发即自动进入"观察"状态并通知，不允许人工抑制（人工只能审批"延长观察"或"加速退役"，不能"取消退役"）。
 
-**策略归档机制**（2026-08-10 补充，修复断裂交叉引用）：原引用"策略墓地（30_multi_strategy §3.1 #8 A/B 并行统计保留）"经核实为**断裂引用**——30 号 §3.1 实际是"Model B 拒绝"不含"A/B 并行统计保留"内容；60 号（跨切清理）§3.1 已将"#8 A/B 并行统计"列为 A 模型消除项**删除**；"策略墓地"一词全局搜索无任何文档定义。退役策略的归档终点须在本节明确定义，不再依赖已删除的 30 号 #8：
+**策略归档机制**（修复断裂交叉引用）：原引用"策略墓地（30_multi_strategy §3.1 #8 A/B 并行统计保留）"经核实为**断裂引用**——30 号 §3.1 实际是"Model B 拒绝"不含"A/B 并行统计保留"内容；60 号（跨切清理）§3.1 已将"#8 A/B 并行统计"列为 A 模型消除项**删除**；"策略墓地"一词全局搜索无任何文档定义。退役策略的归档终点须在本节明确定义，不再依赖已删除的 30 号 #8：
 - **归档四件套**：① MLflow Model Registry model version 移至 `@archived` alias（与 @champion/@challenger 并列）；② design_memo `status` 改 `deprecated`；③ depgraph `build_status` 改 `retired`；④ 策略产物（PnL 曲线 + 参数快照 + training_run_id + 退役原因五骑士归因）归档到 `strategy_archive/<strategy_id>/` 目录（⚠️设计态：目录未建，待首个退役策略触发时施工——代码核查 2026-08-12 `strategy_archive/` 不存在）
 - **保留统计的意义**（替代已删除的"A/B 并行统计保留"）：归档非"丢弃"，保留退役策略的历史表现作为**基准线**——新策略孵化时须对比"是否优于已退役的同类型策略"（如新动量策略须优于已退役动量策略的 PnL 曲线），避免重新孵化已失败的策略模式（与 §3.2 第 2 条"假设驱动"呼应：已退役策略的失败假设不再重复验证）。A 模型定型后无需跨策略 A/B 投票仲裁（30 号 §3.1 #8 已删），但"同类型策略历史基准对比"仍是有价值的归档用途。
 - **复活机制**：退役策略归档后不永久封存——若 regime 检测器确认五骑士 ② Regime Change 类退役的 regime 已回归，可经 §3.2 孵化阶段重新评估复活可行性（须重新走训练→回测→模拟→实盘全流程，非直接重启）。
 
-**退役流程 5 步施工伪代码**（2026-08-10 补充，原 5 步流程的可执行形态）：
+**退役流程 5 步施工伪代码**：
 
 ```python
 def retirement_workflow(strategy_id):
@@ -569,16 +570,16 @@ def retirement_workflow(strategy_id):
 |---|---|---|
 | LLM 多 Agent 辩论 / R&D-Agent 自进化策略搜索 | 30_multi_strategy §5 已暂缓；AI 写 AI 失控风险高 | 可控性方案（沙箱+审批+回滚）验证可靠 |
 | 独立 Lifecycle Manager 服务（完整 7 状态机编排） | 当前 6 阶段用文档+注册表标记足够 | 策略数 >5 且手动状态管理成为负担 |
-| BM-RES-03/08/09 缺失态环节施工（✅ 已解决，v2.13.0 §3.2 研究知识流水线拍板落地） | 原 7 个缺失态环节中 03/08/09 已由 §3.2"研究知识流水线拍板"轻量闭合（Markdown+Git+frontmatter）；04/05 已由 §3.2"研究环境否定式裁定"闭合（不建编排/Notebook）；10 模块工厂已由 §3.8 4 步承载；11 多模态采集随 08/09 轻量方案消解 | —（已拍板，仅余 BM-RES-06-B 论文追踪 Phase 3 远期候选） |
+| BM-RES-03/08/09 缺失态环节施工 | ✅ 已解决（v2.13.0 §3.2 拍板，闭合明细见 §7.2） | — |
 | 企业级 MLOps 编排栈（KFP+KServe+K8s） | 个人项目无 K8s 运维能力 | 团队扩大或模型数显著增加（>10 并行训练） |
 ## 7. 待定问题
 ### 7.1 退役标准量化（✅ 已解决，v1.3.0 §3.9 落地）
-⑥ 退役阶段的"连续跑输 / 逻辑失效"原为定性描述，已于 **§3.9 退役阶段量化标准**（v1.3.0 起）升级为量化体系——**三选一决策矩阵** + **8 维退役量化阈值表** + **退役流程 5 步施工伪代码**（触发≥10 日持续告警→诊断 6 月回测+同类对比→三选一决策→归档四件套→五骑士归因）+ **触发式移除纪律**（机械执行消除沉没成本/损失厌恶/过度自信心理陷阱）+ **策略归档机制**（MLflow @archived + design_memo deprecated + depgraph retired + strategy_archive/ 目录）。与回撤 Protocol（30_multi_strategy §2.5，8/15/20/25% 风控阈值）的边界已在 §3.9 明确：回撤是短期防御（临时降级），退役是长期判决（edge 结构性失效归档）。
+✅ 已由 §3.9 落地（v1.3.0）：三选一决策矩阵 + 8 维量化阈值表 + 退役 5 步伪代码 + 触发式移除纪律 + 归档四件套；与回撤 Protocol（30_multi_strategy §2.5 风控阈值）边界见 §3.9（短期防御 vs 长期判决）。
 ### 7.2 BM-RES 缺失态环节的施工优先级（✅ 已解决，v2.13.0 §3.2 拍板落地）
-battle_map_01 原有 7 个缺失态环节（BM-RES-03/04/05/08/09/10/11，无锚点），曾是研究孵化域最大空白。**v2.13.0 已一次拍板闭合**：① BM-RES-03-B/08/08-A/09/09-A 由 §3.2"研究知识流水线拍板"轻量建设闭合（Markdown+Git+frontmatter 标签检索）；② BM-RES-01-C/04/04-A/05-A 由 §3.2"研究环境否定式裁定"闭合（不建容器沙箱/Prefect 编排/JupyterLab，venv+目录隔离+64 号 §6.4 APScheduler 调度基座复用）；③ BM-RES-10 模块工厂已由 §3.8 模块创建 4 步承载；④ BM-RES-11 多模态采集随 08/09 轻量方案消解；⑤ BM-RES-06-B 论文追踪登记 Phase 3 远期候选（interim 载体=90/91 号人工文献整合实践）。仅余 BM-RES-06-B 一项远期候选待 Phase 3 评估。
+✅ 已由 §3.2 一次拍板闭合（v2.13.0）：03-B/08/09 轻量建设（Markdown+Git+frontmatter）/ 01-C/04/05-A 否定式裁定（不建沙箱/编排/Notebook）/ 10 由 §3.8 4 步承载 / 11 随 08/09 消解；仅余 BM-RES-06-B 论文追踪 Phase 3 远期候选（interim 载体=90/91 号人工文献整合）。
 ### 7.3 多 AI 会话的上下文交接模板（需人决策）
 当前交接靠"认领前置阅读"纪律，但缺少标准化的交接模板。是否需要定义一份"AI 会话交接 brief"模板（包含：前序产出物路径 / 当前状态 / 待决问题 / 不可越的硬约束）？还是依赖 design_memo frontmatter（status/depends_on/related_issues）足够？
-### 7.4 00_index 漂移与 52/55 号骨架联动登记（2026-08-12 审查新增，不越界改仅登记）
+### 7.4 00_index 漂移与 52/55 号骨架联动登记（不越界改仅登记）
 - **00_index 待同步**（其 owner 会话处理）：①§3 G26 行标 55 号"active v1.21.0"、§0 目录标 52 号"active v1.7.4"/55 号"active v1.21.0"——git log 实证 52/55 号从未离开 draft v0.1.0 骨架（仅 3 个 commit），均为虚构版本；②§0 目录标本备忘 v2.9.1 滞后（实际 v2.10.0+）；③§2 三层快照标 01/02/04 阶段"why 层空白"滞后（本备忘 §3.2/§3.3/§3.5 已承载）；④§3 G24 行标 53 号"待讨论"且产出物名误为 `53_simulation_live_path_simulation_live_path.md`（topic 重复）。
 
 - **52/55 号骨架联动**：52 号（G23 回测 why 层）/55 号（G26 监控告警 why 层）均为 draft v0.1.0 骨架待讨论。本备忘 §3.4/§3.9 已先行承载生命周期侧设计（回测准入门禁、退役量化标准），引用均已标注骨架状态；52/55 号定型后须回填双向联动并复核本备忘 §3.4/§3.9 边界。
@@ -645,3 +646,4 @@ BM-MT-01-B（AI 辅助代码生成与分析师 Agent 反馈）在 battle_map_02 
 | 2026-08-12 | 2.13.0 | 作战地图全覆盖补丁：§3.2 研究知识流水线拍板（BM-RES-03-B/08/09 轻量建设）+ 研究环境否定式裁定（01-C/04/05-A 不建/06-B 远期）+ §3.3 训练两环节裁定（BM-MT-01-B/C）+ §3.6 运行时风险治理小节（BM-RC-09/04-F）；§6/§7.2 标记已解决；新增 §7.5 | 作战地图 16 个环节在 61 号 why 层无定位/裁定/契约记录，按"轻量拍板+否定式裁定+远期登记"三模式一次闭合 |
 | 2026-08-12 | 2.13.1 | 作战地图环节映射补强——锚定 BM-RES-03-A、BM-RES-10-A | §3.2 末尾补映射块，环节级可追溯 |
 | 2026-08-14 | 2.13.2 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | §3.2 LLM 远期候选与 §3.3 候选条目由长篇散文折叠为结构化登记表（链接/Phase/触发条件保留）；downstream_impact_gate/trigger_retraining 伪代码折叠为施工规格（阈值与判定逻辑保留）；betting martingale 伪代码折叠为公式规格；§8.3 与正文内联重复的引用去重（链接零丢失）；§9 同日迭代审查行跨度合并；协作规则/状态机/转换条件/裁定/开放问题零丢失 |
+| 2026-08-15 | 2.13.3 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-10） | §2.2 核心问题散文要点化；§3.6 运行时治理引言去冗；§6/§7.1/§7.2 已闭合项改一行指针（详情真源 §3.9/§3.2，闭合史见 v1.3.0/v2.13.0 条目）；过程性日期标签清理（"2026-08-10 补充/2026-08-12 补丁"等小节注记，时间线由修订记录承载）；多 AI 协作规则条文/状态机/裁定/BM-XXX/#ARCH-XXX/跨文档链接零丢失 |

@@ -5,8 +5,8 @@ title: 方法论约束遗留提案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.0.2"
-date: 2026-08-14
+version: "2.0.3"
+date: 2026-08-15
 topic: methodology_open_questions
 scope: 07_trading_decision_architecture
 ---
@@ -15,11 +15,18 @@ scope: 07_trading_decision_architecture
 
 > **状态**：21 项遗留提案。#1-#11 源自原《能力定位书》§3 约束一~十三；#12-#21 源自系统宪章多轮精简移出项（成功指标/基准/PIT/资产分级/行为边界/资产覆盖/大额下单/工程细节/做T方法论）。
 >
-> **v2.0.0 全量裁定（2026-08-12，架构审查终审）**：21 项遗留提案**全部完成裁定**，文档从 draft 升 active。裁定分布：✅ 已裁定维持 4 项（#3/#4/#6/#11，锚点更新 v2.5.0）｜✅ 新裁定 10 项（#1 策略类型修订采纳 / #2 因子IC双轨采纳 / #5 成本简化采纳 / #8 流动性简化采纳 / #9 数据分层修订采纳 / #13 基准 sleeve 级多基准 / #14 PIT 确认已施工 / #15 资产分级两维精简 / #17 行为边界拒绝OPA改choke point / #19 大额下单默认限价单）｜✅ 合并裁定 2 项（#12 并入 #16；#21 做T采纳为受约束 overlay+四规则）｜❌ 暂缓/远期 2 项（#7 T+1 8态预测暂缓建设 / #10 密度预测远期维持 91 号）｜📝 待用户裁定 5 项（P-1~P-5 方向已给，见「待定问题」节）。
+> **v2.0.0 全量裁定（2026-08-12，架构审查终审）**：21 项遗留提案**全部完成裁定**，文档从 draft 升 active。逐项裁定分布见下表「v2.0.0 裁定」列（维持 4 / 新裁定 10 / 合并 2 / 暂缓·远期 2）；📝 待用户裁定 5 项（P-1~P-5 方向已给，见「待定问题」节）。
 >
-> **v2.0.0 重要更正**：① 11 号 v1.5.2 确认 A2 验证器降 4 态后已 **PASS**（OOS/IS=1.042），"12 号 A2 FAIL"表述过时——Wasserstein HMM 从"A2 修复必需"降级为 Phase 3+ 可选增强；② 91 号实际仅 v0.1.2 骨架，本文档引用的"91 号 v0.4.0~v1.4.0"内容（四阶段路线/RWC/Lévy/Exformer）**均未落盘到 91 号**，标注为规划态；③ 30 号锚点从 v1.3.3 更新至 v2.5.0（Kelly 已升级 Fractional Kelly 25-50% 三档演进，PerformanceScore 口径已改 Sortino）；④ §3 FirmRiskAggregator 模块编号 MOD-POS-001→MOD-POS-021 修正；⑤ #5 印花税"千1"→卖出单边万5（2023-08 减半后现行）；⑥ BM-BT-07/BT-10 状态三方口径对齐（decision_gate.py 策略路径已 production，regime 验证 Phase 5 门控未完成；BT-10 PIT 已 production）。新增「已施工设施盘点」节（通用规则 #11）。v0.2.0~v1.18.1 历次审查（逐项对齐现状+补施工算法缺口+登记 2026 选项外更优算法，过度工程纠偏贯穿、MVP 零新增）明细已并入正文各节"2026 补充论据"与文末修订记录。
+> **v2.0.0 重要更正**：
+> ① 11 号 v1.5.2 确认 A2 验证器降 4 态后已 **PASS**（OOS/IS=1.042）——Wasserstein HMM 降为 Phase 3+ 可选增强（详见 §7）；
+> ② 91 号实际仅 v0.1.2 骨架，本文档引用的"91 号 v0.4.0~v1.4.0"内容（四阶段路线/RWC/Lévy/Exformer）**均未落盘到 91 号**，标注为规划态；
+> ③ 30 号锚点更新至 v2.5.0（Kelly 已升级 Fractional Kelly 25-50% 三档演进，PerformanceScore 口径已改 Sortino）；
+> ④ §3 FirmRiskAggregator 模块编号 MOD-POS-001→MOD-POS-021 修正；
+> ⑤ #5 印花税"千1"→卖出单边万5（2023-08 减半后现行）；
+> ⑥ BM-BT-07/BT-10 状态三方口径对齐（decision_gate.py 策略路径已 production，regime 验证 Phase 5 门控未完成；BT-10 PIT 已 production）。
+> 新增「已施工设施盘点」节（通用规则 #11）。v0.2.0~v1.18.1 历次审查（逐项对齐现状+补施工算法缺口+登记 2026 选项外更优算法，过度工程纠偏贯穿、MVP 零新增）明细已并入正文各节"2026 补充论据"与文末修订记录。
 >
-> **重要**：讨论时以项目实际代码和已定稿文档为准。regime 检测器 spec 为 12 态（10_regime_detector_spec v1.5.1），但**实际实现为 4 态 HMM + 3 overlay = 7 维概率**（11_regime_backtest §0.5.2，BIC 扫描发现 9 态过度细分降为 4 态，A2 已 PASS）。
+> **重要**：讨论时以项目实际代码和已定稿文档为准。regime 检测器实际实现为 **4 态 HMM + 3 overlay = 7 维概率**（非 spec 12 态，详见 §7 更正要点）。
 
 ## 遗留提案总览
 
@@ -106,7 +113,7 @@ scope: 07_trading_decision_architecture
 
 **原待讨论问题（已闭环）**：6大类框架是否采用/与首批3策略关系→✅ 四族+registry 6类双层，首批3策略映射已确认；策略工厂是否强制目录内生产→✅ 采纳为治理规则。
 
-**2026 补充论据（各版本登记，结构化保留）**：
+**2026 补充论据**：
 
 - **四族分类+管线谱系（v0.4.0）**：四族（vzeman 2026-05）=A 动量/趋势（cross-sectional momentum 12-1，net Sharpe ~0.65）/B 因子投资（Big Five value/momentum/quality/size/low-vol）/C 均值回归 StatArb（pairs+OU）/D 事件驱动；管线谱系（Shehral 2026-04）=六阶段信息处理管线（数据获取→信号生成→组合构建→交易执行→风险管理→元层编排），暴露跨领域依赖。项目映射：首批 3 策略落 B+D 两族；原"做T类/防御类"归入 C（日内均值回归）/B（low-vol 因子）。
 - **打板环境剧变实证（v0.6.0，东方财富 2026-08-03）**：打板次日平均溢价 2023 年 4.2%→2026 年 **1.7%**（高位科技涨停次日溢价中位数为负），炸板率 40%→**68%**；量化成交占全市场 35%+（中小盘题材 50%+），完整复刻游资盘口特征成"最大对手盘"；2026-04 程序化新规（实时监控多账户联动/大额对倒/频繁撤单，申报速率≤15笔/秒、撤单率≤15% 硬约束已在 24 号登记）。情绪量化算法：legulegu 6 指标评分（封单强度/炸板率/连板转化率/涨停成交额/封板效率/涨停均市值，0-100）；炸板率 4 阶段（<20% 高潮/30-50% 分歧/>50% 退潮/极高回落冰点）对应项目情绪周期 4+1 阶段。**启示**：① 打板 alpha 衰减须纳入 §20 Alpha Decay 监控；② 24 号需补炸板率/溢价率情绪门控（退潮期>50% 炸板率停打板）；③ 策略从"跟游资"转向"反量化"（低位干净筹码小票+事件催化新题材）。
@@ -141,7 +148,7 @@ scope: 07_trading_decision_architecture
 
 **原待讨论问题（已闭环）**：IC 阈值依据→✅ 双轨化+2026 实证锚点；5 大类分类是否合理→✅ 保留并与 10 类属性正交；Alpha 因子入池流程实现→✅ 见上流程链。
 
-**2026 补充论据（各版本登记，结构化保留）**：
+**2026 补充论据**：
 
 - **SHAP 评估 + GP 发现（v0.3.0/v0.5.0）**：SHAP（MSCI 2026-03 因子评估标准：一致性公理+非线性交互+全局/局部解释，可揭示因子贡献跨 regime 漂移）与 IC 互补不替代（IC 快速初筛管线性，SHAP 深度评估管非线性）；MinShap（arxiv 2604.15107）识别非冗余特征；注意：高相关数据归因稀释→需 VIF 过滤或 Group Shapley，随机背景数据集→前视偏差须严格时序滚动窗口，SHAP 是统计相关非因果。**发现维度**：遗传规划自动挖掘（终端集=基础数据，函数集=rank/ts_corr/delay 算子，适应度=IC/Sharpe；AlphaNet 用深度学习替代）+EAFD（arxiv 2603.15713，LLM 自反思特征生成 +5.8%）；GP 计算量大且易过拟合，列 G01 远期探索（非 MVP）。
 - **PPO 自适应 alpha 加权（v0.7.0，arxiv 2509.01393 U Hyogo）**：PPO agent 实时调整 50 个 formulaic alpha 权重（状态=波动率+近期收益+信号相关性，奖励=Sharpe 惩罚 MaxDD），多数情况 Sharpe 更高+MaxDD 更小——核心价值抗 alpha decay（动态重分配资本远离衰减信号）。与 25 号五静态方法（IC 加权/等权/回归/max_ir/min_variance）互补，列 25 号 Phase 2 远期（IC 半衰期加权先行）。
@@ -152,7 +159,7 @@ scope: 07_trading_decision_architecture
 - **Uncertainty-Adjusted Sorting（v1.12.0，arxiv 2601.00593）**：不确定性调整预测区间替代点预测排序，增益主要来自波动率降低（避开高不确定性股票），灵活 ML 模型上最强，区间部分错误设定仍鲁棒。与 25 号 ML 合成栈正交：LambdaRankIC 管训练目标/RankGLU 管预测头/本项管组合构建排序（"训练→输出→排序"各自独立增强）；A 股涨跌停/停牌/缺口使不确定性天然偏高，与 Mask-First 掩码协同两层防御。~30 行，Phase 4 ML 合成引入后启用。
 - **财信"情绪浓度"第三维（v1.13.0，财信证券 2026-08-10 三维情绪模型周报）**：情绪浓度=中信三级行业指数收益率 PCA 第一主成分方差贡献率（低频 ~30 天），高浓度→Beta 行情/低浓度→Alpha 分化，>0.83 警戒线+顶部形态预示拐点。28 号已有 5 阶段情绪温度但无"行业联动度"维度——情绪浓度管"资金是否共识"，与 22 号虹吸态（管"资金往哪去"）正交；数据源 sector_snapshot（582 只板块指数）已有，PCA ~20 行。温度维重叠不整合、预期维（期货升贴水+PCR）无数据接入不适用。28 号 Phase 2 远期候选（浓度>0.83 触发退潮预警，领先评分降级 1-2 日）。
 - **IGF BBP 相变因子数检测（v1.14.0，arxiv 2607.06908 García-Medina）**：自适应 Marčenko-Pastur 边缘重校准+participation-ratio 去局域化滤波，BBP 相变附近同时检查谱分离+特征向量延展性恢复真实因子数（S&P 500 中位 7 个，比 Onatski 更丰富）。与 15 号 v1.19.0 RMT 去噪权重层正交（IGF 管"有多少因子"的检测层，RMT 管"怎么加权"），~80 行，15 号 Phase 2+（因子池 20+ 时启用）。
-- **量化"双杀"拥挤度实证（v1.6.0）**：2026-07 沪深300 指增平均超额 **-1.51%**/中证500 **-4.54%**/动量因子单月回撤超 **20 个百分点**（十年罕见）；机制=因子拥挤→同质化集中平仓→多杀多。印证因子拥挤度监控必要性，指标：① 因子收益相关性趋 1；② top-N 持仓重叠率；③ 换手率趋同；④ 外部信号（北向集中度/龙虎榜抱团度）。与 32 号 correlation_dedup 互补（策略间事后去重 vs 因子间事前监控）。25 号 Phase 2。
+- **量化"双杀"拥挤度实证（v1.6.0，数据详见附录 A.3）**：机制=因子拥挤→同质化集中平仓→多杀多。印证因子拥挤度监控必要性，指标：① 因子收益相关性趋 1；② top-N 持仓重叠率；③ 换手率趋同；④ 外部信号（北向集中度/龙虎榜抱团度）。与 32 号 correlation_dedup 互补（策略间事后去重 vs 因子间事前监控）。25 号 Phase 2。
 
 ---
 
@@ -178,7 +185,7 @@ scope: 07_trading_decision_architecture
 
 **2026 行业实证**：Columbia arxiv 2412.12350（2024-12）多因子中性策略对比 equal-weight/risk parity/min-variance，**risk parity 胜出**（更高 Sharpe、更低 beta、更小 MaxDD）；ersantana.com（2026-03）risk parity=equal risk contribution，比 Markowitz 稳定、对收益预测不敏感，2026 主流；Morwane/multi-strategy-alpha-book（30 号 §7.4 核心实证）risk-parity 基准 Sharpe +1.43，regime 风险节流后 MaxDD −14.2%→−10.3%，Calmar +38%。
 
-**risk parity 远期递进谱系（各版本登记，均非 MVP）**：naive risk parity（inverse-vol，MVP 现状）→ HRP（long-only）/ TRP（long-short+信号）→ RRP（A 股实证优化）→ Certified W-DRO → W-GAN 生成式 → MFCCA 多重分形 → MINGLE 因子-图联合。逐项要点：
+**risk parity 远期递进谱系（均非 MVP）**：naive risk parity（inverse-vol，MVP 现状）→ HRP（long-only）/ TRP（long-short+信号）→ RRP（A 股实证优化）→ Certified W-DRO → W-GAN 生成式 → MFCCA 多重分形 → MINGLE 因子-图联合。逐项要点：
 - **HRP（v0.8.0，López de Prado）**：相关性矩阵层次聚类+自顶向下分配风险，解决 naive inverse-vol 忽略策略间相关性（高相关策略合计风险预算过高）；无需协方差求逆（数值稳定），危机期相关性飙升时更鲁棒。对接：复用 23 号 PnL 相关性矩阵作聚类输入，聚类层级=策略族；与 34 号 Shrinkage 正交（HRP 管静态风险分配，Shrinkage 管 regime 动态节流）。Phase 2 演进，待 G12 细化聚类阈值与重平衡频率。
 - **TRP 拓扑风险平价（v1.5.0，arxiv 2604.16773 FMI Technologies）**：直击 HRP 两大局限——① HRP 仅 long-only，TRP 原生多空（w_v=s_v×g_v，正信号→多头/负信号→空头）；② HRP 纯风险分配忽略 alpha 信号，TRP 保留信号方向。方法：相关性-距离图提取稀疏有根 MST+Mantegna 距离+Mixed Split-Replication 系数 α_u(ρ)=(1-ρ)+ρ/b(u)（ρ=0 纯信号归一化/ρ=1 保守等分）+L1 归一化到目标杠杆。Semi-Supervised 变体 II"市场根→行业 ETF→个股"直接对接 22 号板块轮动（申万一级 28 行业作第二层）；ρ 可对接 regime（r3 牛市低 ρ 信号驱动/r4 熊市高 ρ 保守）。~150 行（MST+DFS），Phase 2（与 HRP 二选一：long-only 用 HRP，long-short 用 TRP）。
 - **RRP（v1.6.0，Finance Research Letters vol.92(C) 2026）**：risk parity+adaptive perturbation+GARCH 波动率预测+市场状态识别+factor-structured covariance；**中国市场 2012-2024 实证全面优于 TRP/EW/GMV**（A 股 native 实证是最大优势，可复用 10 号市场状态输出+15 号因子暴露矩阵）。Phase 2+ 远期候选。
@@ -218,7 +225,7 @@ scope: 07_trading_decision_architecture
 
 **⚠️ v2.0.0 口径对账注记**：代码 `drawdown_controller.py`（MOD-POS-008）当前为 5 级 VaR 风险级（GREEN~BLACK）+ Soft Stop 5%/Hard Stop 10% 策略止损 + 黑天鹅 7 模式，与本文档/30 号 §2.5 的 4 级回撤 Protocol（8/15/20/25% 净值域）双轨并存。30 号 §2.5 开头已自注"须在 G13/G14 讨论中明确两视角的映射关系"。**裁定方向（待 G13/G14 闭环）**：4 级回撤 Protocol 是净值域硬红线（mandatory），5 级 VaR 风险级+Soft/Hard 止损是策略级监控层——两者并存不冲突，但触发阈值的映射关系（如 Soft 5% vs Level1 8%）须在 35 号 drawdown_protocol_impl 落码时统一，避免双阈值打架。
 
-**2026 风控理论增强（各版本登记，均非 MVP baseline）**：
+**2026 风控理论增强（均非 MVP baseline）**：
 - **Landolfi 非高斯回撤查找表（v1.4.0，arxiv 2608.00127，风控优先原则核心）**：扩展 RSB 回撤框架（P&L=带漂移布朗运动），蒙特卡洛生成 4 决策测度查找表——MaxDD/Max Loss/Final Negative Time（水下占比）/Longest Recovery Time。关键发现：① 非高斯下固定 Sharpe+波动率变化偏度/肥尾/波动率聚类，**四测度分化**——单一 Gaussian 表系统性误警（8/15/20/25% 硬阈值若基于 Gaussian 表会在肥尾/偏态 regime 误判）；② fBM 长记忆的回撤"放大"是自相似色散尺度效应 T^(H-1/2)，即 **sqrt(T) 校准失效**非内在危险（长记忆 regime 下 VaR_10d=VaR_1d×√10 系统性高估）。对接：4 级 Protocol 阈值数据驱动校准路径（Level1-4 映射 MaxDD 分布分位数）；恢复机制量化（"企稳 50%"可替换为恢复时间分布中位数）；与 91 号 Lévy 家族形成"密度预测→回撤测度"闭环。~200 行离线仿真，drawdown_controller Phase 2 阈值校准升级。
 - **Sharp Tail Bounds（v1.11.0，arxiv 2608.06317 UC Berkeley）**：n 个独立非负、均值≤1 随机变量 P[ΣXi≥t] ≤ 1−(1−1/t)^n（∀t≥2n+1），二元 i.i.d. 下取等且放松问题中仍最优——**分布无关解析上界**（不假设任何参数族，仅依赖均值约束），是历史模拟+参数法之外第三条路径。A 股涨跌停 ±10% 天然近二元分布，对打板策略损失聚合特别紧致；适用 t≥2n+1（3-5 策略 t≥7-11）属 VaR_99.5+/ES_99 极端尾部校验；假设独立性，相关性>0 时界偏松=保守方向。成本=0（闭式公式），36 号 VaR/ES 理论背书工具；与 Landolfi 表形成"单期解析界→多期仿真表"闭环。**Bayesian GP 尾部外推（v1.11.0，arxiv 2510.14637）**：β-mixing 条件下 GP 贝叶斯后验渐近 honest credible regions，尾部分位点估计+置信区间（支持 ARMA/GARCH/Markov copula 依赖），与 Sharp Tail Bounds 互补（精确尾部密度+CI vs 分布无关上界包络），~200 行+MCMC，91 号 Phase 3+ 远期。
 - **RWC 压力期 VaR 校准（v1.12.0，arxiv 2602.03903v3 Oxford Schmitt）**：Regime-Weighted Conformal Calibration——model-agnostic 包装器包裹任意条件分位数预测器，用过去预测误差构建安全缓冲，权重=指数时间衰减×regime 相似度；**平滑 regime 漂移下推导覆盖率上下界，不假设加权可交换性**（比经典 conformal 更弱假设）。CRSP+16 组合 Basel 99%/97.5% 实证：TWC（纯时间衰减）是漂移下强默认，regime 加权改善慢适应预测器压力期校准。直击 36 号"VaR 超额发生率集中压力期"已知痛点（VaR 回测通过率>95% 门禁的痛点）；10 号 HMM 后验概率天然提供 regime 相似度权重；适配 52 号 IS→WFA→OOS 门控（WFA 窗口滚动更新 buffer，OOS 用 Basel traffic-light 验证）。~150 行 wrapper，36 号 Phase 2（实盘数据积累后启用）。四项构成"极端尾部上界→精确尾部密度→多期回撤仿真→压力期校准"完整 VaR 风控栈。**分布漂移标度律+核校准（v1.15.0，arxiv 2608.01268 Kaleche）**：检测分布漂移最小样本量标度律 **N\* ≥ log(1/f)/(2ε)**（低于此任何检测器 HMM/CUSUM/MMD/BOCPD 都无法区分真实漂移与采样噪声）+RBF MMD 核带宽应匹配特征尺度；用途=10 号 regime 转换/55/61 号变点检测结果的可信度判据（窗口≥N\*→可信，<N\*→标"低置信变点"），与 RWC 形成"漂移检测→可信度判据→校准启动"闭环；成本≈0 闭式公式，理论背书工具不独立施工。
@@ -238,7 +245,7 @@ scope: 07_trading_decision_architecture
 
 **原始内容**：佣金万2.5双边+印花税千1卖出【v2.0.0 更正：现行万5卖出单边】+滑点(基础0.05%+动态)+市场冲击(Almgren-Chriss)+做T额外成本(滑点×2+失败风险溢价)；回测必须包含全部四类成本。**原待讨论问题（已闭环）**：Almgren-Chriss 是否采用/参数校准→✅ 不进 MVP（接口字段保留）；滑点模型实现→✅ 策略分档；做T滑点×2倍率→✅ 合理保留；费率按账户动态配置→✅ 采纳（不硬编码，宪章已定）。
 
-**2026 算法论据（v0.3.0，关键数据保留）**：① **平方根冲击律**：`市场冲击 = α × σ × √(order_size / ADV)`（σ=日波动率、ADV=日均成交额），冲击与订单规模呈凹函数（Bouchaud 等经验共识）；个人 A 股 order/ADV<0.1% 时冲击 <1bp 可忽略，仅单标的持仓 >1% ADV 需启用动态冲击模型——slippage_analyzer.py 已实现（impact=coeff×√participation×vol_bps）。② Almgren-Chriss 分解=永久冲击（随成交量线性累积）+临时冲击（当笔后衰减），2026 进阶瞬态冲击模型（指数衰减核+平方根缩放，arxiv 2601.22113）。③ 做T失败风险溢价=隔夜底仓暴露×隔夜 VaR，可用 §8 LVaR 框架量化。
+**2026 算法论据（v0.3.0）**：① **平方根冲击律**：`市场冲击 = α × σ × √(order_size / ADV)`（σ=日波动率、ADV=日均成交额），冲击与订单规模呈凹函数（Bouchaud 等经验共识）；个人 A 股 order/ADV<0.1% 时冲击 <1bp 可忽略，仅单标的持仓 >1% ADV 需启用动态冲击模型——slippage_analyzer.py 已实现（impact=coeff×√participation×vol_bps）。② Almgren-Chriss 分解=永久冲击（随成交量线性累积）+临时冲击（当笔后衰减），2026 进阶瞬态冲击模型（指数衰减核+平方根缩放，arxiv 2601.22113）。③ 做T失败风险溢价=隔夜底仓暴露×隔夜 VaR，可用 §8 LVaR 框架量化。
 
 ---
 
@@ -296,7 +303,7 @@ scope: 07_trading_decision_architecture
 
 **原待讨论问题（v2.0.0 已闭环）**：8态是否仍需建设→✅ 暂缓（regime 7维+策略 alpha 已足够）；8态概率如何消费→远期重启时仅接仓位微调；分阶段计划是否对齐 regime→随暂缓一并冻结。
 
-**2026 补充论据（各版本登记）**：
+**2026 补充论据**：
 - **预测天花板实证（v0.6.0，firsh.me 2026-07）**：A 股日线纯价量（19 维跨股可比特征）方向准确率天花板约 **52-53%**（71 只 A 股 2017-2026，9 版架构迭代 p=0.007）——突破口在信息源非架构（注意力相对均值池化仅 +2.9-3.5pp；跨股训练>单股训练）；方向准确率≠盈利（盈亏比<1 时 53% 胜率不足）。若建 8态必须加信息源（情绪/资金/事件/龙虎榜 Level2 另类数据），且应复用 regime 多源特征而非另起炉灶。
 - **Wasserstein HMM（v0.9.0，arxiv 2603.04441 Columbia）**：严格因果滚动 Gaussian HMM+预测性 model-order selection（one-step-ahead log-likelihood 动态选 regime 数）+Wasserstein template tracking（2-Wasserstein 距离将当前分量映射到持久化 regime 模板，解决 HMM 固有 label-switching）。实证 Sharpe **2.18** vs SPX 1.18/MaxDD **-5.43%**；vs 非参数 KNN 换手率显著更低、权重演化更平滑。原定位 12 号 Phase 2 A2 修复候选，**A2 已 PASS 后降级 Phase 3+ 可选增强**；并列候选谱系：BR-iHMM（v1.1.0，doubly outlier-robust online infinite HMM，预测误差降最多 67%，解决离群点毒化+无限状态自适应）与 Huber Robust/Student-t/GH/Feature Saliency/AH-HMM（v1.2.0，egargale/hmm_test PRD #20）。**VRMD（v1.6.0，arxiv 2608.05373，已评估不整合）**：Gaussian HMM regime+option-Delta velocity 盘中操纵检测，关键反面结果——regime 条件化用 recall 换 precision，**precision 上限约 25%**，细分越多 precision 越低，反面印证项目 4 态 HMM 不过度细分决策；操纵检测场景不适用 A 股个人系统（无期权数据接入）。
 
@@ -315,7 +322,7 @@ scope: 07_trading_decision_architecture
 
 **原始内容**：实时流动性评分+流动性调整VaR(LVaR)+退出时间估算(超1天→降仓位)+做T流动性前置检查+流动性降级模式(VaR退化为标准VaR+0.5%溢价)。**原待讨论问题（已闭环）**：评分指标构成/LVaR 切换条件/退出时间模型/超1天阈值合理性/做T前置检查规则——全部见上裁定①-⑥。
 
-**2026 算法论据（v0.3.0，关键数据保留）**：① **Amihud 非流动性指标** `ILLIQ = mean(|r_t| / V_t) × 10^6`（仅需日频数据，Kyle's Lambda 的高频代理，liquidity_monitor.py 已 production）；② LVaR 完整式 `LVaR = VaR + ILLIQ × Volume × Kyle_lambda`（GinkGO 2026-05）——裁定采用简化式；③ **Kyle's Lambda** `ΔP = λ × OrderFlow`（OLS 回归，高频精确但需 Tick 数据，日频用 Amihud 替代）；④ 退出时间通用式 `Position_Size / (ADV × max_participation_rate)`，参与率通常 5-10%（超 10% 显著冲击价格）——裁定采用压力折扣变体。
+**2026 算法论据（v0.3.0）**：① **Amihud 非流动性指标** `ILLIQ = mean(|r_t| / V_t) × 10^6`（仅需日频数据，Kyle's Lambda 的高频代理，liquidity_monitor.py 已 production）；② LVaR 完整式 `LVaR = VaR + ILLIQ × Volume × Kyle_lambda`（GinkGO 2026-05）——裁定采用简化式；③ **Kyle's Lambda** `ΔP = λ × OrderFlow`（OLS 回归，高频精确但需 Tick 数据，日频用 Amihud 替代）；④ 退出时间通用式 `Position_Size / (ADV × max_participation_rate)`，参与率通常 5-10%（超 10% 显著冲击价格）——裁定采用压力折扣变体。
 
 ---
 
@@ -362,7 +369,7 @@ scope: 07_trading_decision_architecture
 - 漂移再平衡阈值（±2%/±3%）的依据？——✅ **已闭环**：30 号 §2.4 实际采用 ε_pos=5% 收敛容差（Tier2→Tier3）+ no-trade 半带公式 `b*=[3cσ²/(2λ)]^(1/3)`（Phase 2 候选）替代 C-047 旧阈值；代码侧 position_drift_monitor（MOD-POS-003）已施工漂移检测，阈值在配置。±2%/±3% 旧值**标 deprecated**（与 Model A 分层架构不兼容——策略层粗仓位天然有波动，±2% 会过度交易）
 - 再平衡成本-收益规则（>2×成本）的阈值是否合理？——✅ **已闭环**：no-trade 半带公式即成本-收益规则的理论化（半带宽度由成本 c、波动 σ、风险厌恶 λ 内生决定），Phase 1 用 ε_pos=5% 固定容差已隐含"小漂移不再平衡"；">2×成本"线性规则**标 deprecated**
 
-**2026 Kelly 分数论据（各版本登记，关键数据保留）**：
+**2026 Kelly 分数论据**：
 - **Kelly 分数实证（v0.7.0）**：Kelly 最优增长率 `g(f*)=SR²/2`（Sharpe 翻倍→增长率 4 倍，提升 Sharpe 比提升 Kelly 分数更有效）；Half-Kelly 捕获 75% 增长@50% 波动，**1/4 Kelly 捕获 95% 增长+显著降回撤**（Lisa Chang 案例：full Kelly 16.8%→6 连败→-62% 回撤；切 1/4 Kelly→6 个月 +56% 恢复，MaxDD -12%）；drawdown 恢复数学（-20% 需 +25%、-50% 需 +100%）——Level4（25%）需 +33% 恢复，Kelly 分数选择直接影响是否触发 Level 4。**动态分数 Kelly 方向**：低波 regime（r1/r2）half-Kelly、高波/CRISIS overlay quarter-Kelly；regime→分数映射表待 G12 细化。
 - **Conformal Kelly（v0.8.0，arxiv 2608.01494 ACS Athens）**：75% conformal 区间宽度缩放仓位（窄→加仓/宽→缩仓），6 年开发窗口含成本+1 日延迟+杠杆上限：**28.5% 年化净对数增长/Sharpe 1.34/MaxDD 27.7%**（vs B&H 15.9%）。**反直觉关键发现：每加快自适应/regime 加权 tweak 反损 0.7-5.3pp 年化——最简方法（slow, unweighted, per-asset rolling conformal）最优**（区间用于仓位缩放时宽度稳定性>局部锐度）；drawdown dial 风控（连续下行失误远超历史率→降杠杆）MaxDD 27.7%→20.3%（rank-based p≈0.024）；lockbox OOS 校准保持（0.745 vs 0.750）但增长未保持——**价值在校准+风控而非增长**。对接：91 号 Phase 0 先实现 slow unweighted baseline 再评估 RWC 增量；可作动态分数 Kelly 的数据驱动实现（替代手工 regime→分数映射表）；drawdown dial 是 4 级 Protocol 的事前软预警补充。**轻量级 Kelly 校准（v0.8.0，Phase 0.5 介于 RWC 与完整密度之间）**：Bayesian Kelly `f* = (p̄ - (1-p̄)/b) · n_eff/(n_eff+κ)`（Beta 共轭先验，样本少自动收缩到 0、样本多逼近经典 Kelly，~20 行）；RMSE 校准 Kelly `f* = 2p-1; α = max(0, 1 - c·RMSE/|f*|); f = α·f*`（c=1.0-2.0 保守系数，低置信信号平滑近零分配，比硬阈值切换更平滑）。
 
@@ -427,7 +434,7 @@ scope: 07_trading_decision_architecture
 
 **原始内容**：相对基准=沪深300；超额收益=组合收益-沪深300收益；组合基准=60%沪深300+40%中证500(仅绩效评估)。**原待讨论问题（已闭环）**：沪深300 是否最合适/中证A500 等替代→✅ sleeve 级多基准+宽基锚保留；60/40 配比依据→✅ 废弃；资产扩展后基准调整→✅ 按 sleeve 各自增设。
 
-**2026 算法论据（v0.4.0，关键数据保留）**：归因驱动的基准选择——① **Barra 式归因**（KTD-Fin arxiv 2605.28359）：组合收益分解 market beta+style exposure+stock-selection alpha；关键发现 LLM 交易 agent 的"alpha"在泄漏控制后**大部分是被动市场/风格暴露**——若项目超额主要是小盘/低波风格暴露，应对标风格基准而非沪深300；② **Smart Beta 基准**（中证指数 2026-07：红利多因子 932315/价值多因子 931052/质量多因子 930939/沪深300质量成长低波 931375）——策略有明确风格倾斜时用对应 Smart Beta 指数作基准。两层框架（宽基管绝对超额+风格层管 style-adjusted alpha，仅 style-adjusted alpha>0 才是真选股能力）已降级远期，概念保留。
+**2026 算法论据（v0.4.0）**：归因驱动的基准选择——① **Barra 式归因**（KTD-Fin arxiv 2605.28359）：组合收益分解 market beta+style exposure+stock-selection alpha；关键发现 LLM 交易 agent 的"alpha"在泄漏控制后**大部分是被动市场/风格暴露**——若项目超额主要是小盘/低波风格暴露，应对标风格基准而非沪深300；② **Smart Beta 基准**（中证指数 2026-07：红利多因子 932315/价值多因子 931052/质量多因子 930939/沪深300质量成长低波 931375）——策略有明确风格倾斜时用对应 Smart Beta 指数作基准。两层框架（宽基管绝对超额+风格层管 style-adjusted alpha，仅 style-adjusted alpha>0 才是真选股能力）已降级远期，概念保留。
 
 ---
 
@@ -446,7 +453,7 @@ scope: 07_trading_decision_architecture
 
 **原始内容**：因子统一定义-计算-存储-服务(Single Source of Truth)；训练数据Day T因子值=Day T收盘可计算值(PIT铁律)；特征版本管理(逻辑变更时训练集与推理版本号一致，旧版保留≥5年)。**原待讨论问题（已闭环）**：PIT 架构方案→✅ 时间戳标注+AS OF JOIN；版本管理机制→✅ experiment_tracking+registry 版本字段；≥5年保留→✅ 采纳；自动化校验→🟧 Phase 2 泄漏测试自动化。
 
-**2026 算法论据（v0.4.0，关键数据保留）**：① **财报双日期**（tradevodata 2026-07，313,562 行实测）：period_end（报告期末）vs first_filed（首次发布日）**平均差距 43 天**（SEC 大型加速申报人 60 天/加速 75 天/其他 90 天）——用 period_end join=给回测 43 天"免费预知"，**必须用 first_filed join**；② **重述泄漏**：18,539 行（5.9%）被后续申报修订 >0.5%，解法=original_value（回测用）+latest_value（实时筛选用）+restated 标志；③ **Observation Spine 模式**：entity×as_of_time 主键，所有特征相对 as_of_time 计算（AS OF JOIN/window aggregate `WHERE feature_time ≤ as_of_time`），标签必须 label_time>as_of_time；④ **时间精度陷阱**：cast('date') 截断到午夜掩盖日内泄漏，须 date_trunc 显式统一粒度，**泄漏检查必须在所有 join 之后**（上游单个泄漏 join 感染整个特征行）。
+**2026 算法论据（v0.4.0）**：① **财报双日期**（tradevodata 2026-07，313,562 行实测）：period_end（报告期末）vs first_filed（首次发布日）**平均差距 43 天**（SEC 大型加速申报人 60 天/加速 75 天/其他 90 天）——用 period_end join=给回测 43 天"免费预知"，**必须用 first_filed join**；② **重述泄漏**：18,539 行（5.9%）被后续申报修订 >0.5%，解法=original_value（回测用）+latest_value（实时筛选用）+restated 标志；③ **Observation Spine 模式**：entity×as_of_time 主键，所有特征相对 as_of_time 计算（AS OF JOIN/window aggregate `WHERE feature_time ≤ as_of_time`），标签必须 label_time>as_of_time；④ **时间精度陷阱**：cast('date') 截断到午夜掩盖日内泄漏，须 date_trunc 显式统一粒度，**泄漏检查必须在所有 join 之后**（上游单个泄漏 join 感染整个特征行）。
 
 ---
 
@@ -499,7 +506,7 @@ scope: 07_trading_decision_architecture
 
 **原待讨论问题（已闭环）**：阈值需回测验证→✅ 2026 实证锚点+实盘校准；三档划分合理性→✅ 映射五层框架；失败指标依据→✅ 与 Level4 一致；分阶段设定→✅ MVP=生存线+失败指标。
 
-**2026 算法论据（v0.5.0，关键数据保留）**：五层评估框架（nexusfi 2026-06：① 存活层 MDD 深度+持续时间+恢复时间 → ② 边际层 Profit Factor>1.5/Expectancy>0 → ③ 效率层 Sharpe/Sortino/Calmar → ④ 鲁棒性层跨 regime 稳定性+OOS 一致性 → ⑤ 可部署层容量/延迟/操作可靠性；每层回答不同问题不能跨层比较）。阈值共识（LedgerMind/tradingwyckoff/nexusfi）：Sharpe <1.0 差/1.0-2.0 好/2.0-3.0 优/**>3.0 可疑过拟合**（BarclayHedge 对冲基金均值仅 0.89）；Calmar >5.0 极罕见；Profit Factor 趋近 1.0=edge 消失；MDD 不能只看深度。**单一指标陷阱**：Sharpe 2.0 在 6 个月低波窗口好看但未经 VIX 飙升≠好；75% 胜率但平均亏损 4×平均盈利=负期望——必须多维交叉验证。
+**2026 算法论据（v0.5.0）**：五层评估框架（nexusfi 2026-06：① 存活层 MDD 深度+持续时间+恢复时间 → ② 边际层 Profit Factor>1.5/Expectancy>0 → ③ 效率层 Sharpe/Sortino/Calmar → ④ 鲁棒性层跨 regime 稳定性+OOS 一致性 → ⑤ 可部署层容量/延迟/操作可靠性；每层回答不同问题不能跨层比较）。阈值共识（LedgerMind/tradingwyckoff/nexusfi）：Sharpe <1.0 差/1.0-2.0 好/2.0-3.0 优/**>3.0 可疑过拟合**（BarclayHedge 对冲基金均值仅 0.89）；Calmar >5.0 极罕见；Profit Factor 趋近 1.0=edge 消失；MDD 不能只看深度。**单一指标陷阱**：Sharpe 2.0 在 6 个月低波窗口好看但未经 VIX 飙升≠好；75% 胜率但平均亏损 4×平均盈利=负期望——必须多维交叉验证。
 
 ---
 
@@ -563,7 +570,7 @@ A股核心矩阵：
 - **施工方案**（Phase 2）：ClickHouse 建轻量 IM 表（复用现有 schema，~1 张表+每日盘前 xtdata 同步脚本 ~80 行），ST 状态 PIT 子表；与 universe_registry 的 eligibility 字段联动（#15）。
 - **过度工程审查**：拒绝 200+ 字段重型 IM/独立 Eligibility Engine 服务=做减法；全部复用现有 schema。✅ 通过。
 
-**2026 算法论据（v0.4.0，关键数据保留）**：① **最小 15 字段集**（Finantrix 2026-03：机构级 200+ 字段实际常用 <50）——证券代码/交易所(SH/SZ/BJ)/证券类型/上市日期/退市日期/复权因子历史/股本变更历史/ST/*ST 状态变更/流通股本/总股本/行业分类/交易单位/最小变动价位/涨跌停规则/是否融资融券标的；② **PIT 跟踪**（Intrinio 2026-02）：退市公司、ST 变更、股本变更都需 effective_date 记录，否则回测有幸存者偏差——A 股退市率低但 ST/*ST 变更频繁，**ST 状态 PIT 跟踪是 A 股特有需求**；③ **标识符映射**：证券代码+交易所作 canonical（比全球 CUSIP/ISIN/FIGI 简单），但 miniQMT/iFind/交易所代码可能不一致需映射层。
+**2026 算法论据（v0.4.0）**：① **最小 15 字段集**（Finantrix 2026-03：机构级 200+ 字段实际常用 <50）——证券代码/交易所(SH/SZ/BJ)/证券类型/上市日期/退市日期/复权因子历史/股本变更历史/ST/*ST 状态变更/流通股本/总股本/行业分类/交易单位/最小变动价位/涨跌停规则/是否融资融券标的；② **PIT 跟踪**（Intrinio 2026-02）：退市公司、ST 变更、股本变更都需 effective_date 记录，否则回测有幸存者偏差——A 股退市率低但 ST/*ST 变更频繁，**ST 状态 PIT 跟踪是 A 股特有需求**；③ **标识符映射**：证券代码+交易所作 canonical（比全球 CUSIP/ISIN/FIGI 简单），但 miniQMT/iFind/交易所代码可能不一致需映射层。
 
 **CAI++ 防御信号补充（v1.4.0，Risks 2026,14,86 Hatzopoulos&Statiou）**：CAI（Copula Asymmetry Index）=滚动窗口联合"股跌&波升"尾部事件经验频率−镜像"股升&波降"经验频率（rank-based 非参数，无需 copula 拟合）；CAI++ 框架（smoothing→standardization→delayed execution 防假信号→hysteresis 防抖动→cost-aware portfolio mapping）转防御分配信号。2000 年起 50 个 equity-volatility 对实证 vs 60-40 占优，但**不替代 risk parity**（定位 tail-aware overlay 非低波动基线替代）。对接：§18 股指期货 P2 背景级→防御信号转化路径（用 IF/IC 收益+10 号 synthetic VIX 算 CAI，CAI 高位→降仓位）；延迟执行+迟滞与 4 级 Protocol 恢复机制同构防抖动；与 91 号 conformal 同为分布无关哲学正交可叠加。CAI ~30 行+框架 ~100 行，drawdown_controller/kill_switch Phase 2 事前防御 overlay（A 股需独立验证）。
 
@@ -587,7 +594,7 @@ A股核心矩阵：
 
 **原待讨论问题（已闭环）**：ADV 阈值/算法选择策略/模块位置/流动性枯竭 fallback/与 BudgetChangeHandler 协同——全部见上裁定①-⑦。
 
-**2026 执行算法四层谱系（v0.3.0，关键数据保留）**：① **静态算法（TWAP/VWAP/POV）**——基线（TWAP 均匀时间切片抗操纵但可预测/VWAP 按成交量曲线需在线纠偏/POV 跟单陷阱），A 股散户默认用此层；② **优化算法（Almgren-Chriss IS）**——均值-方差最优轨迹，λ→0 退化 TWAP，λ>0 前置加载减少价格风险；③ **RL 自适应（PPO/TD3/TT-DAC-PS）**——PPO 在 LOB 回放上 IS 2.13bps vs VWAP 5.23bps（$21B 名义），TT-DAC-PS 双目标+策略平滑超 PPO/SAC/A2C，但**需 LOB 数据+仿真器+~20h 训练，个人 A 股不适用**（无 LOB 接入、资金量小、T+1 限制）；④ **质量多样性（MAP-Elites）**——regime 专家集成（按流动性×波动率索引），niche 内 8-10% 提升，计算密集机构级。统一度量 `IS = (P_execution - P_decision) / P_decision`。
+**2026 执行算法四层谱系（v0.3.0）**：① **静态算法（TWAP/VWAP/POV）**——基线（TWAP 均匀时间切片抗操纵但可预测/VWAP 按成交量曲线需在线纠偏/POV 跟单陷阱），A 股散户默认用此层；② **优化算法（Almgren-Chriss IS）**——均值-方差最优轨迹，λ→0 退化 TWAP，λ>0 前置加载减少价格风险；③ **RL 自适应（PPO/TD3/TT-DAC-PS）**——PPO 在 LOB 回放上 IS 2.13bps vs VWAP 5.23bps（$21B 名义），TT-DAC-PS 双目标+策略平滑超 PPO/SAC/A2C，但**需 LOB 数据+仿真器+~20h 训练，个人 A 股不适用**（无 LOB 接入、资金量小、T+1 限制）；④ **质量多样性（MAP-Elites）**——regime 专家集成（按流动性×波动率索引），niche 内 8-10% 提升，计算密集机构级。统一度量 `IS = (P_execution - P_decision) / P_decision`。
 
 **A-CRaQL（v1.6.0，arxiv 2608.04305 ICAIF'26，已评估不整合）**：不改 CVaR 估计器与 Bellman 不动点，仅重设计训练流程（6 项协同机制：逐格内步长/外层速率衰减/VaR 内变量早期校正/覆盖优先采样/渐进后缀聚合/在线标度校准），CVaR Bellman residual 降 ~85%。不整合理由：仍是 RL 训练流程，不改变"RL 执行在个人系统必要性存疑"的根本结论——与 v0.8.0 SOIC Vol.16（U Hull 2026-08）实证一致（conformal 门控成本方差 19.1→10.0bps 优于 PPO 跨种子高方差，"慢而稳 conformal 胜过 RL"在执行域成立）；且 P-4 已议放弃 41 号阶段 7 执行 RL。记 41 号 Phase 5+ RL 训练流程候选，未来资金量增长重启 RL 执行时评估。
 
@@ -614,7 +621,7 @@ A股核心矩阵：
 
 **原待讨论问题（v2.0.0 已闭环）**：B-008 阈值配置→✅ ≤3参数或≤1模块取严者，上线后校准；B-010 相似度算法→✅ 三维指纹；B-012 审批流程位置→✅ 运营策略文档+Administrator；B-013 版权检查步骤→✅ 不需要，依赖 L-005。
 
-**2026 施工参考论据（各版本登记，关键数据保留）**：
+**2026 施工参考论据**：
 
 - **三维指纹分工（v0.3.0）**：代码逻辑相似度（防换名复活）=AST 哈希 Tier1+CodeSAGE 语义嵌入 Tier2（sim≥0.94，echo-guard 已施工）；PnL 曲线相似度（防行为等价新瓶旧酒）=**DTW 优于 Pearson**（允许时间轴非线性对齐，捕获"形态相似但相位偏移"）——DTW 管形状、Pearson 管方向，两者均超阈值才算相似。DTW 局限（Polito 2026-03）：稳定低波 regime 有用、高波 regime 传统指标更好、跨资产不迁移需重新校准——作 echo-guard 的 PnL 维度补充非替代。
 - **策略退役决策树（v0.5.0）**：生命周期事实——68% 系统化策略 18-24 个月内需重大修改或退役（DeepTradeX 2026）；**Edge Decay 三分法**（luxalgo 2026-08-03）：重优化（核心逻辑成立+OOS 正+邻近参数相似）/暂停减仓（证据混合+expectancy 趋零+回撤超常但可辩护→砍半观察）/退役（OOS expectancy 负+walk-forward 持续失败+成本吞噬 edge+前提不再成立）；**5 预警信号**（WorldQuant Alpha 失效，CSDN 2026-06）：① 因子拥挤度（相关性>0.6 或 HHI>0.25）；② 收益分布异变（偏度>1.5/峰度>3.5 或<2.5/日胜率连续 20 日<52%）；③ 市场状态适应性衰减（HMM 检测状态切换亏损）；④ IC 持续<0.05；⑤ 维护成本>收益 30%。滚动窗口：30-50 笔早期预警/100+ 笔确认；回撤漂移>1.5-2×历史最大回撤；胜率降 10-15pp 连续两窗口；Profit Factor 从 1.5-2.0 滑向 1.0。指纹入库前先用决策树量化确认"确实应退役"而非"正常回撤恐慌"。
@@ -657,7 +664,7 @@ A股核心矩阵：
 
 **原待讨论问题（已闭环）**：容量上限/底仓 sizing/regime 关系/失败处置/主策略协同/3 策略整合——全部见上裁定六项。
 
-**2026 方法论论据（v0.3.0，关键数据保留）**：**正 T**（先低吸后高抛：盘中低位买入→反弹后卖出等量底仓，适用震荡上行/低开反弹；风险=买入后持续大跌仓位被动加重）与**反 T**（先高抛后低吸：高位卖出底仓→回落后买回等量，适用震荡下行/高开回落；风险=卖出后持续拉升踏空丢筹码，**反 T 难度更高**，单边大涨慎用）；仓位管理原建议底仓 1/3~1/2 做日内（v2.0.0 裁定收紧为 20-30%），收盘持仓总量≈开盘（做T不增加总仓位）；日内指标三层栈（quantzee 2026-06：VWAP 日内公允价值+趋势工具 SuperTrend/EMA+动量振荡器 RSI/MACD，专业交易员 2-4 个指标**不超过 4 个**）；**避开前 30 分钟**（开盘假信号率最高）；量化做T路径参考（arxiv 2103.13507：MLP 预测日内趋势→11:20 前买入→14:50 卖出，每日重训练防隔日 gap）。
+**2026 方法论论据（v0.3.0）**：**正 T**（先低吸后高抛：盘中低位买入→反弹后卖出等量底仓，适用震荡上行/低开反弹；风险=买入后持续大跌仓位被动加重）与**反 T**（先高抛后低吸：高位卖出底仓→回落后买回等量，适用震荡下行/高开回落；风险=卖出后持续拉升踏空丢筹码，**反 T 难度更高**，单边大涨慎用）；仓位管理原建议底仓 1/3~1/2 做日内（v2.0.0 裁定收紧为 20-30%），收盘持仓总量≈开盘（做T不增加总仓位）；日内指标三层栈（quantzee 2026-06：VWAP 日内公允价值+趋势工具 SuperTrend/EMA+动量振荡器 RSI/MACD，专业交易员 2-4 个指标**不超过 4 个**）；**避开前 30 分钟**（开盘假信号率最高）；量化做T路径参考（arxiv 2103.13507：MLP 预测日内趋势→11:20 前买入→14:50 卖出，每日重训练防隔日 gap）。
 
 ---
 
@@ -750,7 +757,7 @@ A股核心矩阵：
 | **P-4** | **RL 执行是否实施** | v0.3.0 定执行算法四层谱系（TWAP/VWAP→AC→RL PPO/TD3→MAP-Elites），v1.2.0 补 Conformal-gated 执行（SOIC Vol.16 2026-08 U Hull）实证 conformal 门控成本方差 19.1→10.0bps 优于 PPO RL 执行（跨种子高方差不稳定），反向印证"慢而稳 conformal 胜过 RL"在执行域成立 | **TWAP/VWAP + 平方根冲击律成本估算**（v0.3.0 已定：个人 A 股散户默认用此层，足够） | ① 放弃 41 号阶段 7 执行 RL（Conformal-gated 实证更优+个人系统无 LOB 接入+资金量小+T+1 限制）② 保留 RL 执行作远期选项（资金量增长后可能需要）③ Conformal-gated 执行替代 RL 执行（中等复杂度，需 conformal 校准层） | **方向①**：放弃 41 号阶段 7 执行 RL（个人系统过度工程），保留 TWAP/VWAP 作 MVP 执行层，Conformal-gated 作远期升级选项 |
 | **P-5** | **过拟合检测协议选哪个** | v1.2.0 补 3 项：AlgoXpert IS-WFA-OOS 协议（arxiv 2603.09219v1 2026-03-10，plateau 优先+purge gap+majority-pass/catastrophic-veto 门控）+plateau 启发式受控验证（Soloviov plateau.marketmaker.cc 2026，选择偏置有效 +0.12-0.31 OOS Sharpe 但独立检验弱）+PBO 零假设=0.5（marketmaker.cc 2026-07-01，PBO≈0.5=完全过拟合=抛硬币） | **现有 BM-BT-01~07 体系**（项目已裁定：#6 v0.2.0 标✅已裁定，Purged K-Fold+DSR/PSR 已含） | ① 现有体系+AlgoXpert IS-WFA-OOS（最严谨，plateau 优先+purge gap+双门控）② 现有体系+PBO 零假设=0.5（最简增量，仅改 PBO 零假设）③ 现有体系+plateau 启发式（选择偏置有效但独立检验弱，作辅助非主协议）④ 不改（现有 BM-BT-01~07 已足够） | **方向②**：现有体系+PBO 零假设=0.5 修正（最小增量，修正 PBO 零假设从 1 改为 0.5 即可，AlgoXpert/plateau 列为 Phase 2+ 升级） |
 
-> **v2.0.0 更新（A2 PASS 后续航重估）**：① **P-1/P-3 紧迫性下调**——11 号 v1.5.2 确认 A2 降 4 态后已 PASS（OOS/IS=1.042），Wasserstein HMM 从"A2 修复必需"降级为 Phase 3+ 可选增强，P-1 原方向②的理由"A2 FAIL 痛点驱动"已消失——若用户确认 P-1，改为"W-HMM 与 BR-iHMM 均列 Phase 3+ 远期对照评估，MVP 维持 4 态 HMM+3 overlay 不动"；② **P-5 修订**——v1.7.0 Soloviov 实证 PSR AUC 0.808 > DSR 0.785 > PBO 0.669，方向②修正为"现有体系 + PSR 主诊断 + DSR 补充 + PBO 零假设=0.5 修正"；③ P-2/P-4 维持原方向（方向② slow unweighted+EWMA+ACI / 方向① 放弃 RL 执行）。**五项仍全部待用户裁定**。
+> **v2.0.0 更新（A2 PASS 后续航重估）**：① **P-1/P-3 紧迫性下调**——A2 已 PASS（OOS/IS=1.042，详见 §7 更正），P-1 原方向②的"A2 FAIL 痛点驱动"理由已消失——若用户确认 P-1，改为"W-HMM 与 BR-iHMM 均列 Phase 3+ 远期对照评估，MVP 维持 4 态 HMM+3 overlay 不动"；② **P-5 修订**——v1.7.0 Soloviov 实证 PSR AUC 0.808 > DSR 0.785 > PBO 0.669，方向②修正为"现有体系 + PSR 主诊断 + DSR 补充 + PBO 零假设=0.5 修正"；③ P-2/P-4 维持原方向（方向② slow unweighted+EWMA+ACI / 方向① 放弃 RL 执行）。**五项仍全部待用户裁定**。
 >
 > **收敛原则**：MVP 阶段优先选择"最小可行 baseline"列方案，候选项列为 Phase 2+/3+ 引入。多轮审查累积的"加法"需通过人决策收敛为"减法"——保留有痛点驱动的，暂缓锦上添花的（Wasserstein 组合/仓位层、COP、RL 执行、AlgoXpert 协议）。【v2.0.0 注：W-HMM 的 A2 痛点已随 A2 PASS 消失，收敛原则相应更新】
 
@@ -767,3 +774,4 @@ A股核心矩阵：
 | 2026-08-12 | 2.0.0 | 架构审查终审全量裁定（draft→active）：21 项全部裁定——维持 4 项（#3/#4/#6/#11 锚点更新 v2.5.0）+新裁定 12 项+合并 1 项（#12 并入 #16）+暂缓/远期 2 项（#7/#10）+P-1~P-5 待用户裁定。新增「已施工设施盘点」节（8 已施工/8 部分/5 未施工，12 注册表 6/12 已建）。6 处口径修复（MOD-POS-001→021/印花税千1→万5/BM-BT-07 三方口径/BT-10 已 production/30号锚点 v2.5.0/91号引用标注规划态）。A2 已 PASS 更正（W-HMM 降 Phase 3+）。讨论优先级表转施工优先级表 | 全量架构审查：基础设施盘点+第一性原理逐项裁定+2026-08 调研+system_charter §2 硬边界适配+交叉文档口径对账 |
 | 2026-08-12 | 2.0.1 | 作战地图全覆盖补丁——新增 §22 作战地图选股层补充环节 5 条开放问题（BM-SEL-05-D 主力行为推演/BM-SEL-05-E 庄家识别/BM-SEL-06 跨市场传导/BM-SEL-10 行情生命周期/BM-SEL-26 决策可解释性，均 design 态、登记远期/Phase 2 候选、MVP 不建，各含定位→裁定理由+重评条件→契约/参数→边界消歧四层） | 作战地图 stock_selection design 态环节登记 |
 | 2026-08-14 | 2.0.2 | 压缩精简：噪音去除，提案本体全保留（AI-DOCS-001） | 21 项提案的命题/核心论据（结构化表格+关键数据）/触发条件/重评条件/当前状态逐项保留；折叠各版本调研过程叙述、冗长背景与对标散文（结构化对标表格保留）；修订记录中间版本按区间合并 |
+| 2026-08-15 | 2.0.3 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-10） | 格式噪音清理（论据节"各版本登记/关键数据保留"meta 标签）；头部 v2.0.0 更正单段散文要点化、裁定分布改指总览表；跨节重复数据改真源+指针（量化双杀→附录 A.3、A2 PASS→§7）；21 项提案命题/触发/重评/裁定/链接零丢失 |
