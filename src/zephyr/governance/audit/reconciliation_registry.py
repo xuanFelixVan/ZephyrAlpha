@@ -12629,6 +12629,17 @@ def make_root_temp_sweep_reconciler(gateway: object) -> ReconcilerSpec:
 
         for name in entries:
 
+            # worktree 安全护栏（2026-08-14 AI-GIT-001 实证治本）：以下条目永不触碰。
+            # .git：worktree 内是 gitdir 指针 FILE（非 tracked，动态白名单不覆盖）——
+            #   被 move 后 worktree 瞬间失效（prunable），git 命令从 worktree cwd
+            #   向上穿透锚定主仓（2026-08-14 本会话实证：S4 修复后 worker 首次正确
+            #   锚定 worktree，本 reconciler 随即将 .runtime/tmp/.git 扫走）。
+            # activate_env.ps1：worktree 环境三件套（#ARCH-WORKTREE-ENV-001），
+            #   被扫走后环境激活契约断裂。
+            if name in (".git", "activate_env.ps1"):
+
+                continue
+
             full = os.path.join(str(project_root), name)
 
             if not os.path.isfile(full):

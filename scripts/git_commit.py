@@ -43,9 +43,40 @@ import os
 import sys
 from pathlib import Path
 
-_PROJECT_ROOT = Path(__file__).resolve().parents[1]
-if str(_PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(_PROJECT_ROOT))
+def _resolve_repo_root() -> Path:
+    """从 cwd 用 git rev-parse 解析仓库根（worktree 感知），而非 __file__ 派生。
+
+    S4 治本（2026-08-14，裁定书遗留项 6）：原实现 ``Path(__file__).resolve().parents[1]``
+    在 worktree 内返回 worktree 根，但 pip editable install 的 .pth 把 ``import zephyr``
+    硬锚主仓 src——paths.py find_repo_root() 从主仓 zephyr.__file__ 向上推，REPO_ROOT
+    恒=主仓，worktree 内网关读错 registry（TRANSLATION-COVERAGE 假阴性实证）。
+    改为从 cwd 执行 ``git rev-parse --show-toplevel``——cwd 在 worktree 内时返回
+    worktree 根，在主仓时返回主仓根。与 _shared/constants.py L41-44 已修复先例对齐
+    （"必须添加 src/ 而非项目根"）。
+    """
+    import subprocess as _sp
+
+    # CREATE_NO_WINDOW：bootstrap 阶段 sys.path 尚未插入 src，无法 import
+    # zephyr process_pool 统一入口（循环依赖）——就地补 creationflags 实质合规。
+    _cf = getattr(_sp, "CREATE_NO_WINDOW", 0)
+    try:
+        r = _sp.run(  # noqa: bare-subprocess  bootstrap 循环依赖无法走 process_pool 统一入口，已补 CREATE_NO_WINDOW
+            ["git", "rev-parse", "--show-toplevel"],
+            capture_output=True, text=True, check=True,
+            creationflags=_cf,
+        )
+        return Path(r.stdout.strip())
+    except Exception:
+        return Path(__file__).resolve().parents[1]
+
+
+_REPO_ROOT = _resolve_repo_root()
+# 插入 <repo_root>/src（不是 repo_root 本身——zephyr 包在 src/zephyr 下）
+_SRC = _REPO_ROOT / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
+# 保留 _PROJECT_ROOT 供 argparse default 使用
+_PROJECT_ROOT = _REPO_ROOT
 
 from zephyr.gov_enforcement.rule_bridge.git_commit_gateway import (  # noqa: E402
     CommitStatus,

@@ -727,11 +727,23 @@ def launch_reconcile_async(
     try:
         # TRAE-067 铁律2：复用 process_pool 统一无窗口 spawn 入口
         # spawn_python_hidden 自动处理 CREATE_NO_WINDOW|CREATE_NEW_PROCESS_GROUP
-        # (Windows) / start_new_session (POSIX) + stdin/stdout/stderr=DEVNULL + close_fds
+        # (Windows) / start_new_session (POSIX) + close_fds=True
+        # S3 观测层（2026-08-14 worktree wipe 裁定书）：stdio 从 DEVNULL 改落盘
+        # .runtime/logs/reconcile_worker_<sha>.log——wipe 事故 4 个 worker 启动即死
+        # 无日志可查的治本。日志目录创建失败时降级 DEVNULL（不阻断 launch）。
+        log_dir = root / ".runtime" / "logs"
+        worker_log: str | None = None
+        try:
+            log_dir.mkdir(parents=True, exist_ok=True)
+            worker_log = str(log_dir / f"reconcile_worker_{commit_sha}.log")
+        except OSError:
+            worker_log = None
         proc = spawn_python_hidden(
             cmd,
             cwd=str(root),
             env=env,
+            stdout_path=worker_log,
+            stderr_path=worker_log,
         )
         # 治本：保持 proc 引用，避免 GC 触发 Popen.__del__ ResourceWarning
         _WORKER_PROCS[commit_sha] = proc

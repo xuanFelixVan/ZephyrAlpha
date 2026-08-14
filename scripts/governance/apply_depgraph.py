@@ -211,12 +211,6 @@ SQL_SELECT_ALL_DOMAINS = "SELECT * FROM domains"
 
 # --- add_design_node / add_file_node ---
 SQL_SELECT_NODE_BY_PATH_DESIGN = "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='design'"
-SQL_INSERT_DESIGN_NODE = (
-    "INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id, "
-    "build_status, design_maturity, blueprint_path, can_build) "
-    "VALUES (%s, %s, %s, %s, %s, %s, 'design', %s, 1) "
-    "RETURNING node_id"
-)
 SQL_SELECT_NODE_BY_PATH_PRODUCTION = "SELECT node_id FROM nodes WHERE path=%s AND design_maturity='production'"
 SQL_INSERT_FILE_NODE = (
     "INSERT INTO nodes (node_type, path, granularity, domain_id, blueprint_id, "
@@ -259,6 +253,15 @@ SQL_UPDATE_DESIGN_MATURITY = "UPDATE nodes SET design_maturity=%s WHERE node_id=
 
 # --- remove_design_node ---
 SQL_SELECT_NODE_DETAIL_BY_ID = "SELECT node_id, path, blueprint_id, design_maturity, build_status FROM nodes WHERE node_id=%s"
+
+# S5 锚点级联提示（2026-08-14，AI-GIT-001）：删除/弃用节点时查 battle_map_anchors 引用
+SQL_CASCADE_ANCHOR_NODE_LOOKUP = (
+    "SELECT node_id, path, blueprint_id FROM nodes WHERE node_id = ANY(%s)"
+)
+SQL_CASCADE_ANCHOR_HINT_QUERY = (
+    "SELECT anchor_id, step_id, target_id, target_role FROM battle_map_anchors "
+    "WHERE target_graph = 'depgraph' AND target_id = ANY(%s) ORDER BY anchor_id"
+)
 SQL_COUNT_NODES_BY_PATH_EXCLUDE_ID = "SELECT COUNT(*) FROM nodes WHERE path=%s AND node_id!=%s"
 SQL_DELETE_EDGES_BY_NODE = "DELETE FROM edges WHERE from_node_id=%s OR to_node_id=%s"
 
@@ -1736,6 +1739,71 @@ def _audit_design_node_delete(
         logger.debug("design_node_delete audit write failed (non-blocking)", exc_info=True)
 
 
+def _cascade_anchor_hint(conn, node_ids: list[int], *, op: str) -> None:
+    """S5 锚点级联提示（2026-08-14 幽灵锚点治本，AI-GIT-001）。
+
+    删除/弃用节点时级联检查 battle_map_anchors 是否引用目标节点。
+    target_id 双形态实证（存量 10 个幽灵锚点）：blueprint_id 文本
+    （如 MOD-DAT-fred_ingest）与 node_id 数字字符串（如 '9162495'）并存，
+    故候选键 = {str(node_id), blueprint_id}。
+
+    命中不阻断主操作：stderr 提示 + 审计落盘
+    .runtime/gate_audit/depgraph_anchor_cascade.jsonl，清理走
+    ``python scripts/governance/apply_battle_map.py --remove-anchor --anchor-id <id>``
+    （统筹登记范围，本函数只提示不代删）。fail-open：提示失败不阻断主操作。
+    """
+    try:
+        if not node_ids:
+            return
+        rows = conn.execute(SQL_CASCADE_ANCHOR_NODE_LOOKUP, (list(node_ids),)).fetchall()
+        candidates: set[str] = set()
+        for r in rows:
+            candidates.add(str(r["node_id"]))
+            bp = (r.get("blueprint_id") or "").strip()
+            if bp:
+                candidates.add(bp)
+        if not candidates:
+            return
+        anchors = conn.execute(
+            SQL_CASCADE_ANCHOR_HINT_QUERY, (sorted(candidates),)
+        ).fetchall()
+        if not anchors:
+            return
+        print(
+            f"[S5-CASCADE] battle_map_anchors 级联提示（op={op}）：命中 {len(anchors)} 个锚点——",
+            file=sys.stderr,
+        )
+        for a in anchors:
+            print(
+                f"  anchor_id={a['anchor_id']} step={a['step_id']}"
+                f" target={a['target_id']} role={a['target_role']}",
+                file=sys.stderr,
+            )
+        print(
+            "  处置（统筹登记范围）：python scripts/governance/apply_battle_map.py"
+            " --remove-anchor --anchor-id <id>",
+            file=sys.stderr,
+        )
+        # 审计落盘（非阻断）
+        try:
+            _DESIGN_NODE_DELETE_AUDIT_DIR.mkdir(parents=True, exist_ok=True)
+            record = {
+                "timestamp": int(time.time()),
+                "session_id": os.environ.get("ZEPHYR_SESSION_ID", "cli-manual"),
+                "op": op,
+                "node_ids": list(node_ids),
+                "anchors": [dict(a) for a in anchors],
+            }
+            with (_DESIGN_NODE_DELETE_AUDIT_DIR / "depgraph_anchor_cascade.jsonl").open(
+                "a", encoding="utf-8"
+            ) as f:
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except Exception:  # noqa: BLE001
+            logger.debug("anchor cascade audit write failed (non-blocking)", exc_info=True)
+    except Exception:  # noqa: BLE001 — 级联提示 fail-open，永不阻断主操作
+        logger.debug("cascade anchor hint failed (non-blocking)", exc_info=True)
+
+
 def remove_design_node(node_id: int, db_path: str = None, design_evidence: str = None) -> bool:
     """
     删除设计态节点（软删除）。
@@ -1798,6 +1866,9 @@ def remove_design_node(node_id: int, db_path: str = None, design_evidence: str =
                 evidence=design_evidence.strip(),
                 force=False,
             )
+
+            # S5 锚点级联提示（非阻断）
+            _cascade_anchor_hint(conn, [node_id], op="remove_design_node")
 
             # 软删除（build_status='deprecated'）
             conn.execute(SQL_DEPRECATE_NODE, (node_id,))
@@ -1911,6 +1982,9 @@ def deprecate_node(node_id: int, db_path: str = None, force: bool = False) -> bo
                     blueprint_id=row.get("blueprint_id") or "",
                     force=True,
                 )
+
+            # S5 锚点级联提示（非阻断）
+            _cascade_anchor_hint(conn, [node_id], op="deprecate_node")
 
             conn.execute(SQL_DEPRECATE_NODE, (node_id,))
             conn.commit()
@@ -4114,6 +4188,9 @@ def cmd_delete_nodes(
                         file=sys.stderr,
                     )
                 return len(rows)
+
+            # S5 锚点级联提示（非阻断）
+            _cascade_anchor_hint(conn, node_ids, op="cmd_delete_nodes")
 
             # 先删除关联 edges（出边+入边）
             cur.execute(

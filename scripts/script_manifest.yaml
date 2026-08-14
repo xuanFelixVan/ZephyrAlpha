@@ -4,7 +4,7 @@
 manifest_version: 2.0.0
 generated_by: generate_manifest.py (auto-scan)
 generated_at: '2026-08-14'
-total_scripts: 698
+total_scripts: 699
 scripts:
 - name: __init__.py
   path: __init__.py
@@ -166,6 +166,14 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
+- name: ops_guard.py
+  path: ops_guard.py
+  description: 根因：git_guard 只拦 git 子命令——Remove-Item / del / os.remove / shutil.rmtree
+  domain: ops_guard.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
 - name: post_checkout_guard.py
   path: post_checkout_guard.py
   description: Post-checkout Guard — 事后检测 checkout 是否覆盖了其他 session 的文件锁。
@@ -258,6 +266,14 @@ scripts:
   path: setup_git_guard_aliases.py
   description: Setup/Remove Git Aliases for Git Guard — 自动化集成入口。
   domain: setup_git_guard_aliases.py
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: task_board.py
+  path: task_board.py
+  description: 重建真源
+  domain: task_board.py
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60
@@ -754,14 +770,6 @@ scripts:
   path: context/generate_architecture_context.py
   description: generate_architecture_context.py — 预编译架构上下文包生成器
   domain: generator
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: demos/demo_e2e_pipeline.py
-  path: demos/demo_e2e_pipeline.py
-  description: 演示路径：
-  domain: pipeline
   execution_plane: warm-path
   status: registered
   timeout_seconds: 60

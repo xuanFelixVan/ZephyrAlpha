@@ -5,15 +5,15 @@ title: 提交队列串行化——多 AI 并发施工的集成层总案（三层
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-12
+version: "1.1.0"
+date: 2026-08-14
 topic: commit_queue_serialization
 scope: 07_trading_decision_architecture
 related_issues:
   - "#ARCH-GIT-CLEAN-GUARD-FIX（2026-08-11 git clean 灾难）"
   - "#ARCH-AICOLLAB-001（Git Worktree + File Lock + Task Board 三件套）"
   - "#ARCH-WORKTREE-GATE-001（WORKTREE-REQUIRED 门禁）"
-  - "治理预算三纪律（I-GOV-3 v2）议题——注册表条目在 2026-08-12 并发事故中丢失，待重登记（见 §12 开放问题 5）"
+  - "#ARCH-GOV-BUDGET-002（治理预算三纪律 I-GOV-3 v2；注册表条目在 2026-08-12 并发事故中丢失，2026-08-14 已重登记）"
 depends_on:
   - 01_design_memo_management_spec
   - 60_cross_cutting_cleanup
@@ -30,11 +30,9 @@ related_modules:
 # 提交队列串行化——多 AI 并发施工的集成层总案（三层防护：队列串行 + worktree 隔离 + plumbing 拦截）
 
 > 本备忘针对 2026-08-12 的 23 会话并发事故链（互冲/吞稿/搭便车/连坐阻断/隐形 index 重置），给出**三层治本方案**：①提交队列串行化（提交期）②worktree 隔离强化（编辑期+杂项操作）③plumbing 命令拦截（危险底层命令）。
-> 性质：**决策备忘 + 施工计划**，按"背景→病根→对标→裁定→设计→施工→验证→不做→开放问题"组织。
-> v0.3.0 关键反转：v0.2.0 原"worktree 降级为可选"的裁定被审查轮实测事故推翻——`git read-tree` 隐形重置共享 index 事故证明 worktree 的隔离价值不限于提交期。改为"三层叠加"架构：队列让 worktree 更可行（消除 merge 障碍），worktree 让队列更安全（隔离非 commit 操作），plumbing 拦截堵住最后盲区。
-> v0.4.0 算法补全：补全 7 处施工算法缺失（enqueue 原子性/worktree HEAD 同步/Serializer lease 竞争/compaction 竞态/死信重入队 compaction/快照读取+base_blob 获取/message_file 绝对路径），新增 2026-08 第二轮搜索实证（claude-fleet 三层同构/fak commit-lane submit/drain 同构/AgenticFlict 27.67% 冲突率/VS Code 8月7日默认 worktree 隔离/Cursor 3.0 虚拟快照）。
+> 性质：**决策备忘 + 施工计划**，按"背景→病根→对标→裁定→设计→施工→验证→不做→开放问题"组织。关键历程：v0.3.0 三层防护反转（事故 6 推翻 worktree 降级裁定）、v0.4.0 补全 7 处施工算法、v1.0.0 用户确认 3 项裁定升 active（详见 §13）。
 > 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)。
-> 关联：[65_git_safety_governance](65_git_safety_governance.md)（git 安全防护层）｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)（多 AI 生命周期）
+> 关联：[65_git_safety_governance](65_git_safety_governance.md)（git 安全防护层）｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)（多 AI 生命周期）｜[2026-08-14 worktree wipe 事故裁定书](../../../_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)（姊妹篇：本文管提交期串行化，其 S1-S6 管删除原语/清理流程/观测层）
 
 ## 1. 主题组信息
 
@@ -43,7 +41,7 @@ related_modules:
 | 主题组 | G66 提交队列串行化（跨切治理层·集成基建） |
 | 创建 | 2026-08-12 |
 | 优先级 | P0（23 会话并发已实证不可施工 + read-tree 隐形 index 重置事故） |
-| 状态 | active v1.0.0（用户已确认全部 3 项裁定：整体方案采纳/worktree 强化为第二层防护/AGENTS.md 新建入队铁律） |
+| 状态 | active v1.1.0（3 项裁定用户已确认；**MVP 未施工**：.runtime/commit_queue/ 零施工痕迹、git_guard.py plumbing 扩展未施工、install_git_safety_wrapper.ps1 不存在；AGENTS.md §10.0 铁律已落地） |
 | 开发平台 | Trae IDE（PowerShell 5.1，无 PreToolUse hooks） |
 | 上游 | [65_git_safety_governance](65_git_safety_governance.md)（安全护栏层） |
 | 下游 | 所有 AI session（提交入口）｜GitCommitGateway（落盘执行体）｜task_board（死信承载）｜git_guard.py（plumbing 拦截扩展） |
@@ -52,14 +50,18 @@ related_modules:
 
 ### 2.1 事故链实证（2026-08-12，23 会话并发审查施工）
 
-当日 23 个并发会话全部遭遇工作区互冲，典型事故：
+当日 23 个并发会话全部遭遇工作区互冲。事故 1-5 简表如下；事故 6 单独详述——它是三层防护架构（§4/§5）的裁定依据。
 
-1. **裸 commit 触发 pre-commit stash 吞稿**：会话误执行裸 `git commit`，pre-commit 框架全树 stash + 恢复周期冲掉其他会话暂存（多起，靠 dangling blob 字节级恢复）——注：网关提交走 `--no-verify` 不触发该周期，触发源是**裸 commit 尝试**（stash 发生在 GATE-COMMIT-GW 拦截之前）；
-2. **全区 restore 冲稿**：会话执行 `git restore .` / `git checkout -- .` 无差别清空其他会话未暂存修改（本会话 6 文件被冲 2 次，含已登记 ARCH 条目）；
-3. **共享 index 搭便车/漏收**：commit f7c4ad2e 漏收 50 号文档；A 会话 commit 卷入 B 会话 WIP；
-4. **门禁连坐**：`task_board.py`/`session_worktree.py` 等 WIP 文件未过门禁，阻断所有会话提交；`WORKSPACE-CLEAN-CHECK`（session_worktree.py merge 前置，fail-closed）要求全仓无 WIP → 23 会话下永远不可 merge；
-5. **逃生通道常态化**：`--allow-non-worktree`/`--allow-overlap` 被当正门用，门禁审计稀释（65 号 §4.1 设施清单 D 层第 16 项："AI 未遵守"君子协定）；
-6. **`git read-tree` 隐形重置共享 index**（v0.3.0 新增实证）：架构审查 AI 在测试仓库验证 plumbing 链路时，终端 cwd 被系统重置回主仓，`git read-tree HEAD` 在主仓执行——该命令**不在任何护栏管辖范围**（不在 DANGEROUS_SUBCOMMANDS、不触发任何 hook、AGENTS.md 未提及），直接把共享 index 重置为 HEAD 状态，所有会话的 staged 元数据被清空。既有两道护栏（GATE-COMMIT-GW 拦了裸 commit、REFERENCE-TRANSACTION-GUARD 拦了无标记 update-ref）实时立功——dev 分支未动，但共享 index 已被重置。**此事故证明：即使提交路径被队列完全保护，非 commit 的 git 操作仍可破坏共享状态。**
+| # | 事故 | 一句话 |
+|---|---|---|
+| 1 | 裸 commit 触发 pre-commit stash 吞稿 | 裸 `git commit` 触发 pre-commit 全树 stash+恢复周期，冲掉其他会话暂存（多起，靠 dangling blob 字节级恢复；网关提交走 `--no-verify` 不触发，触发源是裸 commit 尝试本身） |
+| 2 | 全区 restore 冲稿 | `git restore .` / `git checkout -- .` 无差别清空其他会话未暂存修改（本会话 6 文件被冲 2 次，含已登记 ARCH 条目） |
+| 3 | 共享 index 搭便车/漏收 | commit f7c4ad2e 漏收 50 号文档；A 会话 commit 卷入 B 会话 WIP |
+| 4 | 门禁连坐 | `task_board.py`/`session_worktree.py` 等 WIP 文件未过门禁，阻断所有会话提交；`WORKSPACE-CLEAN-CHECK`（fail-closed）要求全仓无 WIP → 23 会话下永远不可 merge |
+| 5 | 逃生通道常态化 | `--allow-non-worktree`/`--allow-overlap` 被当正门用，门禁审计稀释（65 号 §4.1 D 层第 16 项"AI 未遵守"君子协定） |
+| 6 | `git read-tree` 隐形重置共享 index | 见下方完整描述 |
+
+**事故 6 完整描述（v0.3.0 新增实证）**：架构审查 AI 在测试仓库验证 plumbing 链路时，终端 cwd 被系统重置回主仓，`git read-tree HEAD` 在主仓执行——该命令**不在任何护栏管辖范围**（不在 DANGEROUS_SUBCOMMANDS、不触发任何 hook、AGENTS.md 未提及），直接把共享 index 重置为 HEAD 状态，所有会话的 staged 元数据被清空。既有两道护栏（GATE-COMMIT-GW 拦了裸 commit、REFERENCE-TRANSACTION-GUARD 拦了无标记 update-ref）实时立功——dev 分支未动，但共享 index 已被重置。**此事故证明：即使提交路径被队列完全保护，非 commit 的 git 操作仍可破坏共享状态。**
 
 ### 2.2 病根（第一性原理）
 
@@ -101,9 +103,9 @@ related_modules:
 | 6 | reconciler auto-commit 链 | `_commit_auto` + BatchedAutoCommitter + reconcile_runner worker（32+ reconciler 产出派生文件自动提交） | production | **第二写入者**：走共享 index + 全局锁。单写者不变量要求它改道入队（§7 关系表） |
 | 7 | session_worktree 族 | session_worktree.py / worktree_manager.py / worktree_pool.py / worktree_lifecycle.py（.aidrafts/{sid}/） | production | merge 前置 WORKSPACE-CLEAN-CHECK 在 23 会话下永不可达；**队列落地后 merge 消失 → 该检查对象消失 → worktree 从"23会话下不可达的强制"变为"queue 消除 merge 后可达的强制"——不是降级，是升级** |
 | 8 | lock_files.py 文件锁 | .ailocks/（TTL + PID 检测） | production | 保留——编辑期同文件互斥仍由它负责 |
-| 9 | task_board.py | .runtime/task_board.db（SQLite WAL + CAS，状态机 pending→claimed→completed，`metadata_json` + `task_events.payload_json` 可扩展字段） | 代码存在，**当前 untracked WIP** | schema 可承载死信标签（qid+原因+属主进 metadata_json）；无现成 dead_letter 状态，用 metadata 标签即可，无需改表 |
+| 9 | task_board.py | .runtime/task_board.db（SQLite WAL + CAS，状态机 pending→claimed→completed，`metadata_json` + `task_events.payload_json` 可扩展字段） | **wipe 丢失**（2026-08-14 worktree wipe 事故，从未入 git），AI-GIT-001 按本表 schema 重建中 | schema 可承载死信标签（qid+原因+属主进 metadata_json）；无现成 dead_letter 状态，用 metadata 标签即可，无需改表 |
 | 10 | git_guard.py 危险命令拦截 | DANGEROUS_SUBCOMMANDS={reset,checkout,stash,revert,restore,mv,clean} | production | **7 个 porcelain 命令已覆盖；read-tree/update-index/write-tree/hash-object 4 个 plumbing 命令完全缺失（v0.3.0 新发现）**。alias 失效问题依旧，但 install_git_safety_wrapper.ps1 落地后可在 shell 函数层扩展覆盖 |
-| 11 | install_git_safety_wrapper.ps1 | 65 号 §7.7 施工项 7（P0） | **不存在（未施工/已 wipe）** | 落地后可在 shell 层拦截裸 `git commit` + 扩展拦截 plumbing 命令，是 stash 周期触发源 + index 隐形重置的真正清零手段（§7 关系表） |
+| 11 | install_git_safety_wrapper.ps1 | 65 号 §7.7 施工项 7（P0） | **不存在（未施工）** | 落地后可在 shell 层拦截裸 `git commit` + 扩展拦截 plumbing 命令，是 stash 周期触发源 + index 隐形重置的真正清零手段（§7 关系表） |
 | 12 | test_concurrent_safety.ps1 | scripts/governance/ | production | **真实用途：47 个治理脚本的并发安全压测**（RULE-ONE 原子写模式），不含 git commit 场景——§11 的"复用"修正为"借鉴其 Start-Job 并发模式，新建 commit queue 压测" |
 | 13 | .runtime/commit_queue/ | — | **零施工痕迹** | 本方案全新建 |
 | 14 | AGENTS.md §10 | git 命令封装约定 + POST-COMMIT-GUARD + REFERENCE-TRANSACTION-GUARD 文本 | production | **不含"改完立即 add"铁律文本**（2026-08-12 曾写入，并发事故中被 wipe 未落盘）——§4 裁定 6 的"演化"实为"新建" |
@@ -128,18 +130,14 @@ related_modules:
 | worktree 隔离（每会话独立 checkout+index） | Claude Code `--worktree` / Codex Worktree 模式 / VS Code 2026-08 默认 agent worktree | AI 编程社区 2026 标准实践 |
 | plumbing 命令拦截 | git hook 不可覆盖 plumbing → shell wrapper 是唯一可靠层 | 65 号 §3.1 已证实；git-courer（2026-05）同模式 |
 
-### 3.2 2026 年最新实践核验（2026-08-12 两轮 WebSearch）
+### 3.2 2026 年最新实践核验（2026-08-12 两轮 WebSearch，结论式摘要）
 
-- **Merge Queue 仍是主干保护标准答案**：GitHub Merge Queue 文档现行有效；qwen-code issue #4805（2026-06）记录 stale-CI 语义冲突真实事故，对比表确认 rust-lang（bors→GH MQ）、Chromium（Commit Queue，与本方案同名）、VS Code、K8s Prow/Tide 全部采"落盘前对最新基底重验证"形态；tenki.cloud《AI Agent PR Playbook》（2026-07）称 merge queue 对 agent 级提交量"近乎必选"。
-- **Outbox 模式持续成熟**：Dekaf.Outbox（2026-07 合并）等 2026 实现确认 at-least-once + 幂等消费 + relay 轮询是标准形态——本方案"快照落盘即安全 + 重放幂等"同构。
-- **plumbing 直写有 2026 生产实证**：git-courer（2026-05，Go Git MCP server）用 `write-tree` 预览 + `commit-tree`+`update-ref` 落盘，"working tree 全程不碰"——与本方案 §6.3 同一路径，且该项目明确走 `update-ref` 而非手写 ref 文件（reftable 后端兼容）。
-- **多 AI 并发 git 的社区答案（2026）= worktree 隔离 + merge queue 串行，两者叠加**：Claude Code `--worktree` + 内部 commit 串行；Codex Worktree 模式 + PR 合并；**VS Code 2026-08-07 起默认为 Copilot/Claude/Codex agent session 启用 git worktree 隔离**（GitHub 官方发布——"concurrent agents 未提交修改被静默覆盖"是 2026-08 行业公认失败模式，worktree 隔离是其标准解法）；"2-4 个并发 agent 是可管理上限"是社区经验值。**业界模式是 worktree（隔离）+ merge queue（串行），两者都要——不是二选一。** v0.3.0 三层架构与社区共识对齐。
-- **v0.4.0 第二轮搜索新发现（2026-08-12）**：
-  - **claude-fleet（github.com/jellologic/claude-fleet，2026-07）三层同构**：git-worktree 隔离 + sequential merge gate + tool-layer guard hooks——与本文三层架构几乎完全同构。其 crash recovery + "dead agent never holds a lock" 设计验证了我们的 Serializer lease TTL+僵尸 PID 检测方向。
-  - **fak commit-lane（github.com/anthony-chaudhary/fak/issues/1788，2026-06）submit/drain 同构**：`fak commit submit` = 本文 enqueue；`fak commit drain` = 本文 Serializer drain。其 intent 记录含 "id, base SHA, requested paths, path digest, subject, submitter metadata, validation result"——与本文 qid/base_head/files/blob/session_id/message 结构同构。其 "Submit is safe to call concurrently and does not take the git index lock" 和 "Stale-base or dirty-path mismatches are refused before drain touches the index" 验证了本文的核心设计原则。**submit/drain 单写者队列是 2026 年新兴工业模式，非过度工程。**
-  - **AgenticFlict（AIware 2026 学术论文）27.67% 冲突率**：对 107K+ AI 生成 PR 做确定性合并模拟，27.67% 命中合并冲突（336K+ 冲突区域）。**冲突不是边缘案例，是规模化的中位结果**——这是 worktree+queue 三层架构的实证必要性。
-  - **Cursor 3.0（2026-04）虚拟快照**：每个 agent 创建时看到代码库快照，后续 agent 看到同一快照而非前一 agent 的中间状态。本文 `base_head` 的语义即"入队时刻的虚拟快照"——设计方向与 Cursor 3.0 一致。
-  - **agentlocks（github.com/simke9445/agentlocks，2026-07）无 daemon 无数据库**："No daemon, no database, no hosted service. Just files under .agentlocks/locks/"——与本文"队列是 append-only 文件，Serializer 自举排空无常驻进程"设计哲学一致。
+- **Merge Queue 是主干保护标准答案**：GitHub Merge Queue 现行有效；rust-lang（bors→GH MQ）、Chromium（Commit Queue，与本方案同名）、VS Code、K8s Prow/Tide 全部采"落盘前对最新基底重验证"形态；tenki.cloud（2026-07）称 merge queue 对 agent 级提交量"近乎必选"。
+- **worktree 隔离 + merge queue 串行叠加是 2026 社区共识（非二选一）**：Claude Code `--worktree` + 内部 commit 串行；Codex Worktree 模式 + PR 合并；VS Code 2026-08-07 起默认为 agent session 启用 git worktree 隔离（"concurrent agents 未提交修改被静默覆盖"是 2026-08 行业公认失败模式，worktree 隔离是其标准解法）；"2-4 个并发 agent 是可管理上限"是社区经验值。v0.3.0 三层架构与该共识对齐。
+- **claude-fleet（2026-07）三层同构**：git-worktree 隔离 + sequential merge gate + tool-layer guard hooks，与本文三层架构几乎完全同构；其 crash recovery + "dead agent never holds a lock" 设计验证了 Serializer lease TTL+僵尸 PID 检测方向。
+- **fak commit-lane（2026-06）submit/drain 同构**：`fak commit submit` = 本文 enqueue，`fak commit drain` = 本文 Serializer drain；intent 记录字段与本文 qid/base_head/files/blob/session_id/message 结构同构；并发提交不取 git index 锁、stale-base/dirty-path 在 drain 前拒绝——验证本文核心设计原则。**submit/drain 单写者队列是 2026 新兴工业模式，非过度工程。**
+- **AgenticFlict（AIware 2026 学术论文）27.67% 冲突率**：107K+ AI 生成 PR 确定性合并模拟，27.67% 命中合并冲突（336K+ 冲突区域）——冲突是规模化的中位结果，实证 worktree+queue 三层架构的必要性。
+- 其他同向实证：git-courer（2026-05）plumbing 直写生产实证（write-tree 预览 + commit-tree + update-ref 落盘，工作区全程不碰，与 §6.3 P2 同路径）；Cursor 3.0（2026-04）虚拟快照（本文 `base_head` 语义同向）；agentlocks（2026-07）无 daemon 无数据库纯文件（与入队自举排空哲学一致）；Dekaf.Outbox（2026-07）确认 at-least-once + 幂等消费 + relay 轮询标准形态（与"快照落盘即安全 + 重放幂等"同构）。
 
 ### 3.3 更轻量替代方案与排除理由（v0.3.0 修正——worktree 从"排除"翻为"采纳"）
 
@@ -351,7 +349,7 @@ Remove-Item Env:ZEPHYR_SERIALIZER_MODE
 | session_worktree | **v0.3.0 反转：从"降级"改为"强化为第二层防护"**——队列消除 merge 障碍后 worktree 变可行，worktree 隔离 index 防 read-tree 类隐形破坏。待用户裁定（§4 裁定 5），过渡期内现行纪律不变 |
 | AGENTS.md §10 | 新增"改完立即入队"铁律（**新建**非演化，现行文本无"改完立即 add"条款）；全区恢复命令禁令不变 |
 | pre-commit 框架 stash | 队列消灭的是"AI 主动裸 commit 的动机"（入队替代），触发频次趋零；**真正清零靠 install_git_safety_wrapper.ps1 落地在 shell 层拦截裸 `git commit`**（65 号 §7.7，当前未施工） |
-| task_board.py | 死信标签的承载与展示（当前 untracked WIP；schema 的 metadata_json 可承载，无需改表——§2.4 #9） |
+| task_board.py | 死信标签的承载与展示（**wipe 丢失，AI-GIT-001 重建中**；schema 的 metadata_json 可承载，无需改表——§2.4 #9） |
 | WORKSPACE-CLEAN-CHECK | 队列落地后 merge 操作消失（Serializer 直提 dev），该检查**对象消失**自然退役，无需删代码 |
 | REFERENCE-TRANSACTION-GUARD | 既有 plumbing ref 绕过封堵（[GW: 前缀豁免）——本方案落盘 message 附 `[GW:{sid}:q-{qid}]` 前缀匹配兼容（hook grep 逻辑已核对）；MVP 验收必测此路径 |
 | 文件锁 .ailocks | 保留——编辑期同文件互斥仍由它负责 |
@@ -406,22 +404,18 @@ Remove-Item Env:ZEPHYR_SERIALIZER_MODE
 
 ## 12. 开放问题
 
-> 以下各项均已附审查建议。v1.0.0：Q1/Q2/Q3/Q4/Q7 已裁定闭环（用户确认），Q5/Q6 待施工联动。
+> **已闭环（v1.0.0 用户裁定）**：Q1 门禁出队端适配 → MVP 专用 worktree 形态、100 门禁零适配（temp-index 封存 P2）；Q2 `_commit_auto` 改道入队保住单写者不变量；Q3 单 blob 10MB 上限 / done 保留 7 天 TTL / dead 永不自动清理；Q4 无需"队列空窗才 merge"硬门禁（merge 消失，反向约束在 §6.6）；Q7 AGENTS.md §10"改完立即入队"铁律随本文 active 生效（已落地 §10.0）。
 
-1. **门禁出队端适配** → **已裁定（v1.0.0）**：MVP 采纳专用 worktree 形态，100 个现有门禁零适配；temp-index 形态封存为 P2 优化。
-2. **reconcile_runner auto-commit worker 统一** → **已裁定（v1.0.0）**：MVP 将 `_commit_auto` 改道入队，保住单写者不变量；worker 形态不变。
-3. **队列项大小上限与 blob 清理** → **已裁定（v1.0.0）**：单 blob 10MB 上限；done/ 保留 7 天走 TTL 清理；dead/ 永不自动清理。
-4. **"队列空窗才允许 merge"硬门禁** → **已裁定（v1.0.0）**：不需要——队列落地后 merge 操作消失，真正需要的反向约束已写入 §6.6。
-5. **GOV-BUDGET-002 注册表条目重登记**（待施工）：治理预算三纪律（I-GOV-3 v2）条目在当日并发事故中丢失，frontmatter related_issues 引用它会被 ARCH-REFERENCE 门禁拦——故本文以去 `#` 前缀形式表述。**待重登记条目后回填本文引用**。
-6. **61 号 §3.6 / 65 号 §7.6 / ARCH-WORKTREE-GATE-001 口径联动**（待施工，裁定已确认）：用户已确认 worktree 强化方向。队列 MVP 验收通过后，由归属会话联动修订（61 号 §3.6 第 5 条改为"队列+worktree 双层"、65 号 §7.6 改为"worktree 强制（队列落地后可达）"、gate 代码注记同步），本文不越界改。
-7. **AGENTS.md §10 新增"改完立即入队"铁律** → **已裁定（v1.0.0）**：用户已确认，随本文 active 生效，AGENTS.md §10 同步新增条款（本提交一并落地）。
+1. **GOV-BUDGET-002 注册表条目重登记** → **已闭环（2026-08-14）**：治理预算三纪律（I-GOV-3 v2）条目已重登记为 `#ARCH-GOV-BUDGET-002`，本文 frontmatter related_issues 引用已恢复 `#` 前缀。
+2. **61 号 §3.6 / 65 号 §7.6 / ARCH-WORKTREE-GATE-001 口径联动**（待施工，裁定已确认）：用户已确认 worktree 强化方向。队列 MVP 验收通过后，由归属会话联动修订（61 号 §3.6 第 5 条改为"队列+worktree 双层"、65 号 §7.6 改为"worktree 强制（队列落地后可达）"、gate 代码注记同步），本文不越界改。
 
 ## 13. 修订记录
 
 | 版本 | 日期 | 内容 |
 |---|---|---|
-| v0.1.0 | 2026-08-12 | 首版。23 会话事故链病根 → Outbox+MergeQueue+Compaction+DLQ 组装方案；plumbing 直写不碰工作区；门禁出队端执行；worktree 降级可选。源自用户提议 + 架构论证 |
-| v0.2.0 | 2026-08-12 | 架构审查轮修订：①新增 §2.4 已施工设施盘点（15 项实证，含 _GlobalCommitLock 已串行化/REFERENCE-TRANSACTION-GUARD 已堵 plumbing/62 门禁读工作区/三处 WIP 现状核验）；②§6.3 伪代码修正树级回滚 bug（测试仓库实证 base_head 建树静默丢文件，改为当前 HEAD 建树+逐文件冲突检查+CAS update-ref+-F message 防 PS5.1 中文编码损毁+共享 index 再同步步骤）；③落盘形态修正为 MVP 专用 worktree 复用门禁链、temp-index 降 P2；④§6.4 merge-file 实测偏弱（相邻行/EOF 追加均冲突），死信+重新入队为主恢复路径；⑤Serializer 改入队自举排空无常驻 daemon（避 65 号 deprecated L19 同形态）；⑥新增 §3.2 2026 实证（GitHub MQ/Chromium CQ/git-courer plumbing 生产实证/社区 worktree 共识）与 §3.3 替代方案排除；⑦前置条件核验修正（三 WIP 文件现状、_THRESHOLD 5→0 无效论证撤销）；⑧§12 开放问题全部附建议裁定并新增 3 项（GOV-BUDGET-002 重登记/61 号 65 号口径联动/AGENTS.md 新建铁律）；⑨§2.1 行号引用改稳定引用、55 号监控对接点精确化、title 与 H1 一致化 |
-| v0.3.0 | 2026-08-12 | 三层防护修订（read-tree 隐形 index 重置事故根治）：①**关键反转**：v0.2.0 裁定 5"worktree 降级为可选"被事故 6（`git read-tree HEAD` 隐形重置共享 index）推翻——改为"强化为第二层防护"，队列消除 merge 障碍后 worktree 从"不可达的强制"升级为"可达的强制"；②新增 §4 裁定 7（plumbing 命令拦截扩展：read-tree/update-index/write-tree/hash-object 加入 DANGEROUS_SUBCOMMANDS，Serializer 通过 ZEPHYR_SERIALIZER_MODE=1 白名单放行）；③§2.1 新增事故 6 实证；④§2.2 病根从"一个攻击面"扩展为"三个攻击面"（提交期/编辑期/杂项 git 操作）；⑤§2.3 失效点表新增 DANGEROUS_SUBCOMMANDS plumbing 盲区 + REFERENCE-TRANSACTION-GUARD 管不到 index 操纵；⑥§2.4 新增 #16（plumbing 盲区实证）；⑦§3.3 替代方案 ②（worktree）从"排除"翻为"采纳为第二层防护"，新增 ⑦（只做 worktree 不做队列）排除；⑧§5 架构图改为三层防护；⑨§7 关系表新增 git_guard.py 扩展 + install_git_safety_wrapper.ps1 扩展两行；⑧§8 新增 read-tree 类隐形 index 重置的三层兜底处置；⑨§9 新增第 8 条（commit-tree/update-ref 不加入 DANGEROUS_SUBCOMMANDS 的理由）；⑩§10 MVP 新增 git_guard.py 扩展 + install wrapper 落地，P1 新增 worktree 强制升硬；⑪§11 新增第 5 项三层防护穿透测试；⑫title 改为"三层防护"表述 |
-| v0.4.0 | 2026-08-12 | 算法补全修订（7 处施工算法缺失 + 第二轮搜索实证）：①§6.1 补全 enqueue 原子性（qid 生成 CAS seq + O_CREAT\|O_EXCL 文件创建 + blob 原子写入 + base_blob 获取 `git rev-parse HEAD:{path}` + 快照读取需先 lock_files.py acquire）；②§6.2 补全 compaction 竞态防护（seq CAS 串行 + 死信恢复项参与 compaction）；③§6.3 MVP 伪代码补全 Serializer lease 获取算法（O_CREAT\|O_EXCL + TTL=300s + 超时 5s 不等待）+ worktree 准备步骤（merge --ff-only dev + clean -fd + reset --hard HEAD）+ message_file 绝对路径；④§8 补全 lease 算法详情；⑤§11 新增第 6 项 worktree HEAD 同步测试 + 第 7 项 compaction 竞态测试 + 第 1 项 enqueue 不丢不重断言；⑥§3.2 新增第二轮搜索实证 5 项（claude-fleet 三层同构/fak commit-lane submit/drain 同构/AgenticFlict 27.67% 冲突率/VS Code 8月7日默认 worktree/Cursor 3.0 虚拟快照/agentlocks 无 daemon 无数据库）；⑦§6.1 并发安全结论引用 fak commit-lane 同构佐证 |
-| v1.0.0 | 2026-08-12 | 用户确认全部 3 项裁定，文档升 active：①裁定 1（整体方案采纳）——队列串行化为集成层唯一提交入口；②裁定 5（worktree 强化）——从"降级"反转为"强化为第二层防护"，队列消除 merge 障碍后 worktree 升级为可达的强制；③裁定 6（AGENTS.md 新铁律）——"改完立即入队"新建条款随本文 active 生效，AGENTS.md §10 同步新增。§12 Q1/Q2/Q3/Q4/Q7 五项开放问题裁定闭环，Q5（GOV-BUDGET-002 重登记）待施工、Q6（61/65 号口径联动）待 MVP 验收后施工。 |
+| v0.1.0 | 2026-08-12 | 首版：23 会话事故链病根 → Outbox+MergeQueue+Compaction+DLQ 组装方案（plumbing 直写不碰工作区、门禁出队端执行、worktree 降级可选） |
+| v0.2.0 | 2026-08-12 | 架构审查轮：新增 §2.4 设施盘点（15 项实证）；§6.3 修正树级回滚 bug（改从当前 HEAD 建树+CAS update-ref）；落盘形态改 MVP 专用 worktree、temp-index 降 P2；merge-file 实测偏弱降级；Serializer 改入队自举排空；前置条件核验修正；§12 新增 3 项 |
+| v0.3.0 | 2026-08-12 | 三层防护修订（事故 6 read-tree 隐形重置 index 根治）：worktree 从"降级"反转为"第二层防护"；新增裁定 7（4 个 plumbing 命令入 DANGEROUS_SUBCOMMANDS + ZEPHYR_SERIALIZER_MODE 白名单）；§2/§3.3/§5/§7/§8/§9/§10/§11 同步扩展 |
+| v0.4.0 | 2026-08-12 | 算法补全：7 处施工算法（enqueue 原子性/compaction 竞态/Serializer lease/worktree HEAD 同步/message 绝对路径等）；第二轮搜索实证 5 项（claude-fleet 三层同构/fak submit-drain 同构/AgenticFlict 27.67% 冲突率/VS Code 默认 worktree/Cursor 3.0 虚拟快照/agentlocks）；§11 新增测试 2 项 |
+| v1.0.0 | 2026-08-12 | 用户确认全部 3 项裁定，文档升 active：①队列串行化为集成层唯一提交入口；②worktree 强化为第二层防护（队列消除 merge 障碍后升级为可达的强制）；③AGENTS.md §10 新建"改完立即入队"铁律（已落地 §10.0）。§12 Q1/Q2/Q3/Q4/Q7 裁定闭环，Q5/Q6 待施工 |
+| v1.1.0 | 2026-08-14 | 文档实体精简（AI-GIT-001）：§2.1 事故链表化、§3.2 搜索实证摘要化、§12 已闭环开放问题折叠、§13 修订记录压缩；§4-§6/§8-§11 施工核心零改动；task_board.py 现状更新（wipe 丢失，按 §2.4 #9 schema 重建中） |

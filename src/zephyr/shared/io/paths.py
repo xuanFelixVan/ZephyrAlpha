@@ -39,6 +39,7 @@ REPO_ROOT，导致：
 from typing import Final
 
 import functools
+import os
 from pathlib import Path
 
 
@@ -49,12 +50,25 @@ def find_repo_root() -> Path:
     比 parents[N] 或 .parent 链更健壮——不依赖文件深度，
     任何位置的模块都能正确定位项目根。
 
+    S4 治本（2026-08-14，裁定书遗留项 6）：pip editable install 的 .pth 把
+    ``import zephyr`` 硬锚主仓 src，本函数从主仓 zephyr.__file__ 向上推，
+    REPO_ROOT 恒=主仓——worktree 内网关读错 registry。增加 worktree 感知：
+    环境变量 ``ZEPHYR_WORKTREE_ROOT`` 显式注入优先（由 activate_env.ps1 或
+    调用方设置），命中且含 src/zephyr/__init__.py 则直接返回。
+
     Returns:
         Path: 项目根目录的绝对路径。
 
     Raises:
         FileNotFoundError: 向上遍历到文件系统根仍未找到标记。
     """
+    # S4：ZEPHYR_WORKTREE_ROOT 显式注入优先（worktree 感知）
+    wt = os.environ.get("ZEPHYR_WORKTREE_ROOT")
+    if wt:
+        wt_path = Path(wt)
+        if (wt_path / "src" / "zephyr" / "__init__.py").exists():
+            return wt_path
+
     current = Path(__file__).resolve()
     for parent in current.parents:
         if (parent / "src" / "zephyr" / "__init__.py").exists():

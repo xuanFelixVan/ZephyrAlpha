@@ -1,5 +1,6 @@
 ---
 title: 施工进度总跟踪表（并发施工队分配/进度/反馈/核验）
+doc_type: construction_tracker
 date: 2026-08-12
 rebuilt: 2026-08-13
 ttl: task_bound
@@ -90,8 +91,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 第 1 批·业务+建库+定稿 | 8 个施工队 | ✅ 全部完工 merge |
 | 第 2 批·业务+建库 | 7 个施工队 | ✅ 全部完工 merge |
 | 第 3 批 | 33 BudgetChange / 37 流动性 / 42 卖出流 | ✅ 3/3 全部完工 merge |
-| **治理插队批（2026-08-14 用户裁定）** | **AI-GIT-001：git/并发协作基础设施专项（65/66/67 号 + 裁定书 S1-S6：ops_guard 删除收敛/清理四证 SOP/网关锚定/观测层/task_board 重建）** | 🔄 施工中（worktree ai/AI-GIT-001/task-git-infra-governance 实证在建） |
-| **文档压缩批（2026-08-14 用户裁定）** | **AI-DOCS-001：18 篇 ≥1000 行大文档压缩（62/10/54/63/35/36/28/64/40/32/37/90/34/61/26/24/25/AI_review）** | ✅ 已 merge（53856ed1c0 + merge ab3df58d9d；33.6k→23.2k 行，章节编号/参数/裁定/锚点零丢失，三波子代理自审全 PASS + PURE-ASSERTION 表格化修复） |
+| **治理插队批（2026-08-14 用户裁定）** | **AI-GIT-001：git/并发协作基础设施专项（65/66/67 号 + 裁定书 S1-S6：ops_guard 删除收敛/清理四证 SOP/网关锚定/观测层/task_board 重建）** | ✅ 已完工，worktree 保留待 merge（14 commits，详见 §六 #38-40/43/25 与完工反馈） |
 | 第 4 批 | 34 RegimeMeta / 60 跨切（骨架需重建）/ 43 合规 | ⏳ 等治理批完工 |
 | 第 5 批 | 53 模拟实盘 / 54 对账 / 55 监控 | ⏳ 等第 4 批 |
 | 重建类 | 28 号情绪周期（可从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架 | ⏳ 随批排期 |
@@ -158,18 +158,21 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 38 | S1 删除能力收敛（ops_guard 全原语删除拦截+审计）+ S2 worktree 清理四证 SOP | AI-LIQ-001 裁定书 | R1/R2/R4 治本，P0 治理施工，建议独立会话承接 | ⏳ 待立项 |
-| 39 | S4 网关 worktree 锚定缺陷（git_commit.py bootstrap 未插 src/ 致 REPO_ROOT 恒=主工作区） | AI-LIQ-001 裁定书 | P1；已修复 bug 在网关入口复发；过渡期 workaround=PYTHONPATH=<worktree>\src | ⏳ 待立项 |
-| 40 | S3 观测层补齐（reconcile worker stdio 落盘日志 + commit 后 worktree 快照审计） | AI-LIQ-001 裁定书 | P1；本次 4 个 worker 死因不可考直接原因=零日志 | ⏳ 待立项 |
+| 38 | S1 删除能力收敛（ops_guard 全原语删除拦截+审计）+ S2 worktree 清理四证 SOP | AI-LIQ-001 裁定书 | R1/R2/R4 治本，P0 治理施工，建议独立会话承接 | ✅ 已闭环（2026-08-14 AI-GIT-001：S1 ops_guard 3e2bb5ed70——四类删除原语拦截+保护区 fail-closed+白名单+审计 jsonl，42 红队向量 100% 拦截；S2 四证 SOP 新建 + session_worktree merge/abort 接入 69558c6479，逃生通道 --force-skip-checks 落审计） |
+| 39 | S4 网关 worktree 锚定缺陷（git_commit.py bootstrap 未插 src/ 致 REPO_ROOT 恒=主工作区） | AI-LIQ-001 裁定书 | P1；已修复 bug 在网关入口复发；过渡期 workaround=PYTHONPATH=<worktree>\src | ✅ 已闭环（2026-08-14 AI-GIT-001：67abc2ea bootstrap 改 cwd git rev-parse 解析+插 src/，a6453e58 paths.py ZEPHYR_WORKTREE_ROOT 感知+activate_env 注入；无 PYTHONPATH 复测 4/4 通过） |
+| 40 | S3 观测层补齐（reconcile worker stdio 落盘日志 + commit 后 worktree 快照审计） | AI-LIQ-001 裁定书 | P1；本次 4 个 worker 死因不可考直接原因=零日志 | ✅ 已闭环（2026-08-14 AI-GIT-001：7383bcd1 worker stdio 落盘 .runtime/logs/reconcile_worker_<sha>.log，95f94195 spawn_python_hidden stdout/stderr_path（WMI 降级走 cmd 壳层重定向），b36507d8 网关 commit 后 status 快照 worktree_status_snapshots.jsonl；端到端实证日志+快照各 5 条） |
 | 41 | AGENTS.md "179 条已声明能力"硬编码计数漂移（实际 341 条） | AI-LIQ-001 | 裁定：改动态表述（以 capability registry 实时查询为准），挂 #9 Owner 审批通道 | ⏳ 等 Owner 审批 |
 | 42 | 37 号蓝图 §5 两项跨会话排期：①编排层接入 35 号 §3.13 调用方 ②IPO 数据源接入（数据层） | AI-LIQ-001 | 非 37 号施工范围，分配给 35 号调用方会话/数据层会话 | ⏳ 待分配 |
-| 43 | SOP 文本章节号漂移（遗留项登记目标 §七 vs tracker 现状 §六） | AI-LIQ-001 裁定书 S6 | SOP 文本修正，下轮 SOP 维护时顺手 | ⏳ |
+| 43 | SOP 文本章节号漂移（遗留项登记目标 §七 vs tracker 现状 §六） | AI-LIQ-001 裁定书 S6 | SOP 文本修正，下轮 SOP 维护时顺手 | ✅ 已闭环（2026-08-14 AI-GIT-001，71281b93：construction_workflow_sop.md L400/L415 §七→§六） |
 | 44 | 00_index 37 号版本同步（v1.0.18→v1.1.0）+ MOD-RK-21 production 状态 | AI-LIQ-001 | 照 #37 先例：统筹同步 00_index，随 LIQ merge 生效 | ✅ 已闭环（2026-08-14 LIQ 已 merge，00_index L61/L636 同步 v1.1.0；顺手同步第一二批全部滞后版本：31→1.25.0/32→1.0.22/35→1.39.0/36→1.10.2/41→1.7.0/42→1.7.1） |
 | 45 | AI-SELL-001 depgraph 流转遗留（4 节点 design 待 merge 后转换） | AI-SELL-001 | 42 号卖出流 4 模块已 merge（a337e0f54c 含 87764ffb29）；重建后 MOD-SELL-000/004/005/019 全部 stable+production、边升级 active 不断链（#ARCH-70 通道实证）；SOP Step 8 已改写"只登记不流转+merge 后自动转换"分流口径 | ✅ 已闭环（2026-08-14 实证） |
 | 46 | MOD-SELL-014/017 不施工（MVP 决策）+ TradeLevelCircuitBreaker Phase 2 | AI-SELL-001 | 014/017 维持 spec 裁定；42 v1.7.1 补阶段 5b+触发条件勘正；CircuitBreaker 孤儿决策补登 CAND-SELL-001（trigger=G04 参数校准+连续小亏实盘证据）；battle_map_07 BM-SELL-04-C 文案分裂——派生文件不入 git，depgraph 014=planned 为真源，随下一次 battle_map 重生成自动订正 | ✅ 已闭环（2026-08-14，42 v1.7.1 + CAND-SELL-001） |
-| 47 | worktree 环境断层（PYTHONPATH/.env.postgres/lookup_audit 三件套） | AI-SELL-001 | #ARCH-WORKTREE-ENV-001 落地：session_worktree create 自动备环境 + strip_session_worktree/audit 锚定/双机制检测治本（a2163c1b）；.gitignore 显式登记（5e61c9b7） | ✅ 已闭环（2026-08-14）；关联 #39 部分缓解（CLI bootstrap 未插 src 子项仍 ⏳） |
+| 47 | worktree 环境断层（PYTHONPATH/.env.postgres/lookup_audit 三件套） | AI-SELL-001 | #ARCH-WORKTREE-ENV-001 落地：session_worktree create 自动备环境 + strip_session_worktree/audit 锚定/双机制检测治本（a2163c1b）；.gitignore 显式登记（5e61c9b7） | ✅ 已闭环（2026-08-14）；关联 #39 已全闭环（67abc2ea bootstrap 插 src + activate_env 注入 ZEPHYR_WORKTREE_ROOT） |
 | 48 | G04 参数校准动作无负责方/无跟踪（42 号 §6/§7 三项触发条件共同依赖） | AI-SELL-001 审查发现 | 已挂 00_index G04 行跟踪（P1-6 同批）；校准本身依赖首批策略回测/实盘，非施工队范围 | ⏳ 统筹跟踪项 |
-| 49 | reconciler 批 auto-commit（accd0cbe36）误删 tracker+handoff 两统筹文件 | 第三统筹会话实证 | 疑 frontmatter `ttl: task_bound` 触发 TTL 类 reconciler 自动清理（全批次✅被误判为任务终结）；已从 abab909da8/accd0cbe36^ 字节级恢复；需排查哪个 reconciler 执行删除并加白名单/防误删规则——与 #38 S1 删除收敛同根 | 🔥 待排查（建议并入 AI-GIT-001 范围） |
+| 49 | 【新事故机制】GATE-ROOT-TEMP-SWEEP reconciler 扫走 worktree `.git` 指针文件 | AI-GIT-001 实证（2026-08-14 13:19-13:28） | S4 修复后 worker 首次正确锚定 worktree，root-sweep 动态白名单（=tracked 文件）不覆盖 worktree 的 `.git` 指针 FILE 与 `activate_env.ps1`，shutil.move 至 .runtime/tmp 致 worktree 瞬间 prunable、git 命令向上穿透锚定主仓。与 wipe 事故同族（R2 君子协定层）。**已修复**：65a2e8a6 sweeper 护栏（.git/activate_env.ps1 永不触碰），worktree 已 git worktree repair，activate_env.ps1 已恢复 | ✅ 已闭环（机制修复+实证验收）；wipe 事故凶手候选机制登记备查 |
+| 50 | reconcile live-timeout 测试隔离缺陷 + 测试污染生产审计日志 | AI-GIT-001 实证 | test_reconcile_async.py 两测试（test_live_timeout_*）告警计数跨测试/跨运行泄漏（期望 1 实测 2-3 且逐次递增）；且 pytest 运行向生产 reconcile_execution_log 写入测试 SHA（live_heal_sha/live_timeout_sha）触发 RECONCILER-HEALTH 误报横幅。存量问题，非本次引入 | ⏳ 治理排期 |
+| 51 | script_manifest.yaml `demos/demo_e2e_pipeline.py` 幽灵条目 | AI-GIT-001 发现 | 该文件在 dev 树未被 git 跟踪（仅主仓工作区 gitignored 残留），manifest regen 在 worktree 内扫描会反复移除该条目——已在 AI-GIT-001 提交中还原保持现状；归属 pipeline 域，由统筹裁定清理或补跟踪 | ⏳ 统筹裁定 |
+| 52 | 存量幽灵锚点精确画像（#34 补充） | AI-GIT-001 实证 | #34 登记 9 个，实测 10 个：655-663 九个数字 node_id 形态（BM-EXE-02/04/05/06）+ 524 一个 blueprint 形态（MOD-DAT-fred_ingest，BM-RES-11-A）。S5 级联提示已落地（7a08eb74）防新增；存量清理仍走统筹 apply_battle_map.py --remove-anchor | ⏳ 统筹治理项（同 #34） |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
@@ -187,7 +190,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 22 | 17 个已 merge 的 ai/* 分支待删除 | git branch -d 清理 | ✅ 已闭环（2026-08-14 统筹执行，16 个施工分支全部 git branch -d 安全删除；ai/bm-fill 分支按用户裁定留另一 AI 处理，见 #21） |
 | 23 | scripts/session_worktree.py 此前从未被 git 跟踪（merge 清理中丢失的根因） | 已从 stash@{1} 恢复（sha256 与 asset index 一致 BBCACD36…），本次随交接文件一并 commit 落地 | 🔥 本次处理 |
 | 24 | 交接文件防丢机制失效：原 tracker/handoff 仅靠 staged+.runtime 备份，未 commit | 本重建版直接 commit 到 dev；后续统筹会话每个里程碑必须经 GitCommitGateway 落地 tracker | 🔥 本次处理 |
-| 25 | scripts/task_board.py 丢失（66 号队列 MVP 前置条件，曾 untracked WIP） | wipe/并发期间从磁盘消失且从未入 git，不可恢复；66 号施工时按 66 memo §2.4 #9 schema（.runtime/task_board.db SQLite WAL+CAS）重建 | ⏳ 随 66 号施工 |
+| 25 | scripts/task_board.py 丢失（66 号队列 MVP 前置条件，曾 untracked WIP） | wipe/并发期间从磁盘消失且从未入 git，不可恢复；66 号施工时按 66 memo §2.4 #9 schema（.runtime/task_board.db SQLite WAL+CAS）重建 | ✅ 已闭环（2026-08-14 AI-GIT-001 按 66 memo §2.4 #9 schema 重建，0e5ed3b9：三态机/60min TTL/exit 2 DENIED/死信 metadata 承载/板根锚主仓跨 worktree 单板；17 测试全过含 8 线程 CAS 恰一胜；三登记齐） |
 | 26 | ai/AI-BGT-001 + ai/AI-LIQ-001 分支已 merge（7ccc296d1e/885cddc3af）待删 | ✅ 已闭环（2026-08-14 sess-batch-cleanup-0814：重建者会话已死（session registry 无注册），worktree 内容实证为 CRLF 幻影+审计日志，worktree 已 remove、分支已 git branch -d） |
 | 27 | integrity 基线漂移 4 文件 + merge 落盘路径 gap | ✅ ①②已修复落地（#ARCH-MERGE-PATH-GAP-001：guard parents 判定 + 网关 merge finalize）；③自愈 3/4，残 1 为 SELL 活跃 WIP 待其提交收敛 |
 

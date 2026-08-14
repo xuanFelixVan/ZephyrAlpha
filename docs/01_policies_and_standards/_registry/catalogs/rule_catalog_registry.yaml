@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-14T10:10:54Z'
+generated_at: '2026-08-14T09:48:18Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 207
+total_files: 208
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -1766,6 +1766,21 @@ files:
   doc_type: policy
   status: active
   version: 1.0.1
+  rule_form: procedural
+  scope: global
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/sop/worktree_cleanup_sop.md
+  module_id: ''
+  title: Worktree 清理 SOP——四证齐全方可删除（死亡证明/无未合并工作/统筹批准/可恢复证明）
+  doc_type: policy
+  status: active
+  version: 1.0.0
   rule_form: procedural
   scope: global
   stability: ''
