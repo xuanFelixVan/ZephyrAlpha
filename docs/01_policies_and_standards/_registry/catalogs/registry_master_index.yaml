@@ -1,11 +1,11 @@
-# 自动生成于 2026-08-14T05:51:59Z
+# 自动生成于 2026-08-14T10:21:34Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-14T05:51:59Z'
+generated_at: '2026-08-14T10:21:34Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 36
+total_registries: 34
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -31,14 +31,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
-- registry_id: REG-ARCH-ISSUE-001
-  name: 架构议题注册表
+- registry_id: CFG-architecture-issue-registry
+  name: architecture_issue_registry
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 488
-  status: active
+  entry_count: 0
+  status: unknown
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
   category: governance_rule
@@ -70,7 +70,7 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 0
-  status: draft
+  status: active
 - registry_id: PS-REG-007
   name: 跨模块依赖登记表
   category: governance_rule
@@ -238,22 +238,6 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 0
-  status: active
-- registry_id: PS-REG-020
-  name: 规则AI感知索引（trae 规则→operations/gate_ids 映射）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml
-  format: yaml
-  maintenance: auto
-  entry_count: 0
-  status: active
-- registry_id: PS-REG-018
-  name: 规则路径目录（唯一真源 SSoT）
-  category: governance_rule
-  physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
-  format: yaml
-  maintenance: auto
-  entry_count: 208
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表

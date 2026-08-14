@@ -91,7 +91,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 第 1 批·业务+建库+定稿 | 8 个施工队 | ✅ 全部完工 merge |
 | 第 2 批·业务+建库 | 7 个施工队 | ✅ 全部完工 merge |
 | 第 3 批 | 33 BudgetChange / 37 流动性 / 42 卖出流 | ✅ 3/3 全部完工 merge |
-| **治理插队批（2026-08-14 用户裁定）** | **AI-GIT-001：git/并发协作基础设施专项（65/66/67 号 + 裁定书 S1-S6：ops_guard 删除收敛/清理四证 SOP/网关锚定/观测层/task_board 重建）** | ✅ 已完工，worktree 保留待 merge（14 commits，详见 §六 #38-40/43/25 与完工反馈） |
+| **治理插队批（2026-08-14 用户裁定）** | **AI-GIT-001：git/并发协作基础设施专项（65/66/67 号 + 裁定书 S1-S6：ops_guard 删除收敛/清理四证 SOP/网关锚定/观测层/task_board 重建）** | ✅ 已 merge 回 dev（2026-08-14 统筹，16 commits：S1-S6/task_board/65号 v2.3.0/tracker #49-52 登记；worktree 按四证 SOP 清理，见 §六 #54） |
+| **文档压缩批（2026-08-14 用户裁定）** | **AI-DOCS-001：18 篇 ≥1000 行大文档压缩（62/10/54/63/35/36/28/64/40/32/37/90/34/61/26/24/25/AI_review）** | ✅ 已 merge（53856ed1c0 + merge ab3df58d9d；33.6k→23.2k 行，章节编号/参数/裁定/锚点零丢失，三波子代理自审全 PASS + PURE-ASSERTION 表格化修复） |
 | 第 4 批 | 34 RegimeMeta / 60 跨切（骨架需重建）/ 43 合规 | ⏳ 等治理批完工 |
 | 第 5 批 | 53 模拟实盘 / 54 对账 / 55 监控 | ⏳ 等第 4 批 |
 | 重建类 | 28 号情绪周期（可从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架 | ⏳ 随批排期 |
@@ -173,6 +174,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 50 | reconcile live-timeout 测试隔离缺陷 + 测试污染生产审计日志 | AI-GIT-001 实证 | test_reconcile_async.py 两测试（test_live_timeout_*）告警计数跨测试/跨运行泄漏（期望 1 实测 2-3 且逐次递增）；且 pytest 运行向生产 reconcile_execution_log 写入测试 SHA（live_heal_sha/live_timeout_sha）触发 RECONCILER-HEALTH 误报横幅。存量问题，非本次引入 | ⏳ 治理排期 |
 | 51 | script_manifest.yaml `demos/demo_e2e_pipeline.py` 幽灵条目 | AI-GIT-001 发现 | 该文件在 dev 树未被 git 跟踪（仅主仓工作区 gitignored 残留），manifest regen 在 worktree 内扫描会反复移除该条目——已在 AI-GIT-001 提交中还原保持现状；归属 pipeline 域，由统筹裁定清理或补跟踪 | ⏳ 统筹裁定 |
 | 52 | 存量幽灵锚点精确画像（#34 补充） | AI-GIT-001 实证 | #34 登记 9 个，实测 10 个：655-663 九个数字 node_id 形态（BM-EXE-02/04/05/06）+ 524 一个 blueprint 形态（MOD-DAT-fred_ingest，BM-RES-11-A）。S5 级联提示已落地（7a08eb74）防新增；存量清理仍走统筹 apply_battle_map.py --remove-anchor | ⏳ 统筹治理项（同 #34） |
+| 53 | reconciler 批 auto-commit（accd0cbe36）误删 tracker+handoff 两统筹文件（原 #49，merge 时与 AI-GIT-001 分支 #49 撞号改挂 #53） | 第三统筹会话实证 | 疑 frontmatter `ttl: task_bound` 触发 TTL 类 reconciler 自动清理（全批次✅被误判为任务终结）；已从 abab909da8/accd0cbe36^ 字节级恢复；**2026-08-14 晚实证复发**：本统筹备份 commit（d771ec1a）触发 post-commit reconciler，主工作区 docs/_working/潘潘直播课程/ 16 个 tracked 文件被删（git restore 已恢复）；⚠️ 同批 untracked 草稿 docs/_working/潘潘直播课程/草稿/清风量化交易系统2.0.md 被物理删除**不可恢复**（全仓+.runtime/tmp 搜索无踪迹）；凶手实证=锚定已删 AI-DOCS-001 worktree 的 rogue reconcile worker（PID 26288，17:40 启动，stdio 无日志——dev 此前无 S3 落盘，本 merge 后已补齐；统筹已终止该进程）；需排查哪个 reconciler 执行删除并加白名单/防误删规则——与 #38 S1 删除收敛同根 | 🔥 待排查（与 S1 ops_guard 删除拦截同源，建议下一治理批承接） |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
@@ -193,6 +195,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档或删除"
 | 25 | scripts/task_board.py 丢失（66 号队列 MVP 前置条件，曾 untracked WIP） | wipe/并发期间从磁盘消失且从未入 git，不可恢复；66 号施工时按 66 memo §2.4 #9 schema（.runtime/task_board.db SQLite WAL+CAS）重建 | ✅ 已闭环（2026-08-14 AI-GIT-001 按 66 memo §2.4 #9 schema 重建，0e5ed3b9：三态机/60min TTL/exit 2 DENIED/死信 metadata 承载/板根锚主仓跨 worktree 单板；17 测试全过含 8 线程 CAS 恰一胜；三登记齐） |
 | 26 | ai/AI-BGT-001 + ai/AI-LIQ-001 分支已 merge（7ccc296d1e/885cddc3af）待删 | ✅ 已闭环（2026-08-14 sess-batch-cleanup-0814：重建者会话已死（session registry 无注册），worktree 内容实证为 CRLF 幻影+审计日志，worktree 已 remove、分支已 git branch -d） |
 | 27 | integrity 基线漂移 4 文件 + merge 落盘路径 gap | ✅ ①②已修复落地（#ARCH-MERGE-PATH-GAP-001：guard parents 判定 + 网关 merge finalize）；③自愈 3/4，残 1 为 SELL 活跃 WIP 待其提交收敛 |
+| 55 | pre-commit 外部钩存量阻断链（2026-08-14 merge 实证） | 统筹 merge AI-GIT-001 实证：①门禁运行向 tracked 文件 data/audit_logs/feature_flags.jsonl 追加时间戳审计行→任何裸 `git commit` 的全部 hook 被框架误报 "files were modified"（外部 pre-commit 链结构性不可过，网关 in-process 门禁为唯一合法通道；merge 走冲突自动裁决+自动提交规避）；②存量：ZR-005（56_d_gov_scripts.md 派生文档自引用废墟路径字面量，源 docstring 同需修）+ GATE-DOC-NODE-ID（同文件 node_id= 字面量）+ blueprint_registry 158→163 漂移（SELL merge 引入，sync_registry_from_blueprints.py --write 可修）+ noqa battlemap_schema.py:187 未登记（noqa_exempt_registry.yaml 补登即可）——顺修处方均已验证，统筹留有 56_d_gov_scripts.md 工作区修正（gitignored 派生文档） | ⏳ 下一治理批承接 |
 
 ### ✅ 已闭环（备查）
 
