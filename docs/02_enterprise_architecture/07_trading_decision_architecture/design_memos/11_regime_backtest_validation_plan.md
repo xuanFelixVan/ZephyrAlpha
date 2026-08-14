@@ -5,9 +5,9 @@ title: regime 检测器回测验证方案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.6.0"
-date: 2026-08-06
-last_updated: 2026-08-12
+version: "1.6.1"
+date: 2026-08-15
+last_updated: 2026-08-15
 topic: regime_backtest_validation_plan
 scope: 07_trading_decision_architecture
 parent: 10_regime_detector_spec.md
@@ -35,7 +35,7 @@ parent: 10_regime_detector_spec.md
 | **Phase 0** | regime 检测器实现（HMM 9态 + D-SIGNAL-68 + Shrinkage） | ✅ 完成（**4 态非 9 态**） | `regime_detector.py` 618 行 + `regime_feature_builder.py` + features/* |
 | **Phase 1** | C1 开/关对比（核心一票否决） | ✅ 完成 — **四项全通过** | `c1_comparator.py` + `c1_runner.py` + `shrinkage_engine.py` |
 | **Phase 2** | A1/A2/B1/B4 模型质量 | ✅ 完成 — **四项全 PASS** | `phase2/` 4 验证器 + `confidence_calibrator.py` |
-| **Phase 3** | D1-D4 参数阈值校准 | 🟧 部分完成 — D2/D4 完成，D1 部分，D3 未验证（13号 P1 数据层 2026-08-12 已全部完成：T3 激活 ✅ + NLP 关键词 MVP 数据层 ✅；S2 算法重设计 P1-E9 未施工，见 §0.5.4 B4-S2 同步） | A2/A3 升级验证覆盖 D2/D4 |
+| **Phase 3** | D1-D4 参数阈值校准 | 🟧 部分完成 — D2/D4 完成，D1 部分，D3 未验证（13号 P1 数据层 2026-08-12 已全部完成；S2 重设计 P1-E9 未施工，见 §0.5.4 B4-S2 同步） | A2/A3 升级验证覆盖 D2/D4 |
 | **Phase 4** | E1-E4 鲁棒性 | 🟧 部分完成 — E1 walk-forward 已实现，E2/E3/E4 未验证 | `scripts/tests/_smoke_walkforward.py` |
 | **Phase 5** | 决策门控（BM-BT-07） | ❌ 未完成 | — |
 | A3/A4/B2/B3/C2/C3/C4 | 未明确归入 Phase | 🟧/❌ 多数未完成 | A3 部分覆盖，其余未实现 |
@@ -159,10 +159,9 @@ src/zephyr/backtest/
 
 | 文档 | 覆盖范围 | 状态 |
 |---|---|---|
-| `13_regime_phase3_engineering_plan`（降态裁定） | 9态→4态 BIC 证据 + 4态语义 | ✅ 已定稿 |
+| `13_regime_phase3_engineering_plan` | 降态裁定（9态→4态 BIC 证据 + 4态语义）+ Phase 3 工程规划（HMM降态/校准器/NLP管道/置信度信号） | ✅ 已定稿/施工中 |
 | `12_regime_phase2_validation`（Phase 2 验证详设） | A1/A2/B1/B4 验证器设计 | ✅ 已定稿 |
 | `50_backtest_observability_workplan`（回测可观测性） | C1 runner 可观测性 + MLflow 跟踪 | ✅ 已定稿 |
-| `13_regime_phase3_engineering_plan`（Phase 3 工程规划） | HMM降态/校准器/NLP管道/置信度信号 | ✅ 施工中 |
 
 ### 0.5.7 待完成项（Phase 3-5 缺口）
 
@@ -249,6 +248,8 @@ src/zephyr/backtest/
 
 ### 0.6.4 施工优先级
 
+> 第一轮后初版；第四/五轮新增路径并入后的最终优先级见 §0.6.11。
+
 ```
 优先级 1（零开发，立即跑）：
   └── C4 Deflated Sharpe Ratio（已有 calculator，跑一次出结果）
@@ -296,26 +297,21 @@ src/zephyr/backtest/
 
 #### 升级路径 1：Wasserstein HMM — 解决标签切换（label switching）
 
-**问题**：HMM 标签有 permutation invariance——walk-forward 各季度 refit 后 r1 可能变成不同语义。我们当前用 `#ARCH-REGIME-CONFIDENCE-FIX-001` 移除 state_risk 来缓解，但这是治标。
-**2026 研究**：arXiv:2603.04441（Boukardagha 2026-02）Wasserstein HMM——用 2-Wasserstein 距离做 template-based regime identity tracking，**跨 refit 保持标签语义一致**。Sharpe 2.18 vs 1.18 buy-hold，MaxDD -5.43% vs -14.62%。
-**评估**：治本方案，但需重写 HMM 引擎。当前 4 态已通过 A2（OOS/IS=1.042），标签切换问题已大幅缓解。**列为未来升级，非当前缺口**。
+**问题**：HMM 标签有 permutation invariance——walk-forward 各季度 refit 后 r1 可能变成不同语义。当前用 `#ARCH-REGIME-CONFIDENCE-FIX-001` 移除 state_risk 缓解（治标）。
+**2026 研究**：arXiv:2603.04441（Boukardagha 2026-02）Wasserstein HMM——2-Wasserstein 距离 template-based regime identity tracking，**跨 refit 保持标签语义一致**。Sharpe 2.18 vs 1.18 buy-hold，MaxDD -5.43% vs -14.62%。
+**评估**：治本但需重写 HMM 引擎；当前 4 态已过 A2（OOS/IS=1.042），标签切换已大幅缓解。**列为未来升级，非当前缺口**。
 
 #### 升级路径 2：Student-t / GED 重尾发射 — 处理金融危机尾部
 
-**问题**：当前 Gaussian 发射假设正态，但金融收益有肥尾。flash-crash 单日极端值可能毒化整个训练窗口的 regime 均值/协方差。
-**2026 研究**：
-- arXiv:2606.23492（2026-06）Continuous HMM Heavy-Tail Emission Families——Student-t / GED / Laplace 发射，KS/AD pass rate >97% IS / >94% OOS
-- Küçükdağ & Hekimoğlu（2026）Robust HMM——Huber 加权 M-step，outlier-robust 参数更新
-**评估**：对风控用例（尾部事件=危机=最重要）有价值。但需重写 EM M-step。**列为优先级 3 之后的可选升级**。
+**问题**：Gaussian 发射假设正态，金融收益肥尾——flash-crash 极端值可能毒化训练窗口的均值/协方差。
+**2026 研究**：arXiv:2606.23492（2026-06）Heavy-Tail Emission Families——Student-t/GED/Laplace 发射，KS/AD pass rate >97% IS / >94% OOS；Küçükdağ & Hekimoğlu（2026）Robust HMM——Huber 加权 M-step 抗 outlier。
+**评估**：对风控用例（尾部=危机=最重要）有价值，但需重写 EM M-step。**列为优先级 3 之后的可选升级**。
 
 #### 升级路径 3：Feature Saliency HMM — 自动特征选择（补 A4 缺口）
 
-**问题**：A4 特征重要性未验证。当前 13 参数 + 8 转换靠人工设计，无数据驱动的特征筛选。
-**2026 研究**：
-- Fons et al.（2019/2021）Feature Saliency HMM——**在 EM 训练中学习哪些特征是 state-discriminating**，自动特征选择
-- SHAP/Permutation Importance（metricgate 2026-04）：SHAP 局部解释稳定但相关特征致归因稀释（需 Group Shapley）；Permutation 全局但相关特征隐藏重要性。**金融时序须严格按滚动窗口防 look-ahead**
-- mental-momentum（2026-06）警告：SHAP 测相关性非因果性，"常被误当因果证明编造金融叙事"
-**评估**：Feature Saliency HMM 是 HMM 特征重要性的**第一性原理方案**（训练中学习而非事后解释）。SHAP 适合作为审计工具监控 concept drift。**A4 验证建议用 Feature Saliency HMM + SHAP 审计双轨**。
+**问题**：A4 特征重要性未验证；当前 13 参数 + 8 转换靠人工设计，无数据驱动筛选。
+**2026 研究**：Fons et al.（2019/2021）Feature Saliency HMM——EM 训练中学习 state-discriminating 特征；metricgate（2026-04）SHAP 局部稳定但相关特征致归因稀释（需 Group Shapley），Permutation 全局但相关特征隐藏重要性，**金融时序须严格滚动窗口防 look-ahead**；mental-momentum（2026-06）：SHAP 测相关性非因果性。
+**评估**：Feature Saliency HMM 是第一性原理方案（训练中学习而非事后解释）；SHAP 适合作 concept drift 审计。**A4 用 Feature Saliency HMM + SHAP 审计双轨**。
 
 #### 不采用：LSTM+HMM 混合 / 在线无限 HMM
 
@@ -347,10 +343,7 @@ src/zephyr/backtest/
 - 关键设计：状态层外置避免状态爆炸（内置 6×3×4=72 状态 vs 外置 4 状态 + 调制矩阵）
 - 回测：年化 20.9%，Sharpe 1.29，Calmar 1.90
 
-**与我们对比**：
-- 我们的 **overlay（D-SIGNAL-68）**是规则法后验调整（HMM 输出后 gating）——crisis 时 #1<1.0 门控 overlay
-- 中邮证券的**动态调制矩阵**是前验调制（HMM 转移矩阵本身被外置信号调制）——更早介入
-- **评估**：两种方案解决同一问题（HMM 静态性 vs 市场动态性）。我们的 overlay 已通过 A3 验证（C1 不退化），动态调制矩阵是**潜在升级路径**——前验调制理论上比后验 gating 更早响应拐点。但需新增宏观/资金情绪数据管道，工作量较大。**列为优先级 4 之后的可选升级**。
+**与我们对比**：我们的 **overlay（D-SIGNAL-68）**是规则法后验调整（HMM 输出后 gating）；中邮**动态调制矩阵**是前验调制（转移矩阵本身被外置信号调制），理论上更早响应拐点。**评估**：我们的 overlay 已过 A3（C1 不退化）；动态调制矩阵是**潜在升级路径**，但需新增宏观/资金情绪数据管道，工作量较大。**列为优先级 4 之后的可选升级**。
 
 #### 发现 3：状态感知条件风险平价 RARP — Shrinkage 之上的下一步
 
@@ -360,10 +353,7 @@ src/zephyr/backtest/
 - 条件协方差融合：市场风险状态协方差 × 50% + 宏观状态协方差 × 50%
 - Sharpe 0.88，MaxDD 21.89%，ES 5.44%，波动率压缩至 1.4% 以内
 
-**与我们对比**：
-- 我们的 **Shrinkage = ConfidenceSignal × RiskSignal** 是**乘法缩放 budget**（防御性，不改协方差结构）
-- RARP 是**状态条件协方差重估**（进攻性，改变资产间风险贡献）
-- **评估**：RARP 是 Shrinkage 之上的**更高阶方案**——从"缩放仓位"到"按状态重估风险结构"。但本项目定位是"风险节流器"（防御性），不是组合优化器（进攻性）。**如果未来从 Shrinkage 升级到 risk parity，RARP 是直接路径。当前不在 scope 内**。
+**与我们对比**：我们的 **Shrinkage = ConfidenceSignal × RiskSignal** 是**乘法缩放 budget**（防御性，不改协方差结构）；RARP 是**状态条件协方差重估**（进攻性，改风险贡献结构）。**评估**：RARP 是 Shrinkage 之上的更高阶方案，但本项目定位是"风险节流器"非组合优化器。**未来若升级到 risk parity，RARP 是直接路径；当前不在 scope 内**。
 
 #### 发现 4：regime-conditional allocation — 危机时切换分配方法
 
@@ -372,10 +362,7 @@ src/zephyr/backtest/
 - **危机时切换分配方法**（risk parity → inverse-vol），MOVE index > 150 触发
 - 恢复 67% 的分散化损失
 
-**与我们对比**：
-- 我们的 CRISIS overlay 是**危机时 Shrinkage→收缩 budget**（减仓）
-- clawrxiv 方案是**危机时切换分配方法**（从 risk parity 切到 inverse-vol）
-- **评估**：两者方向一致（危机时降低风险），但 clawrxiv 更激进（换方法 vs 减仓位）。**我们的 Shrinkage 减仓是更保守的第一步**，如果未来做 risk parity，可考虑危机时切换到 inverse-vol。
+**与我们对比**：我们的 CRISIS overlay 是**危机时 Shrinkage 收缩 budget**（减仓）；clawrxiv 是**危机时切换分配方法**（risk parity → inverse-vol），方向一致但更激进。**评估**：Shrinkage 减仓是更保守的第一步；未来做 risk parity 可考虑危机时切换 inverse-vol。
 
 #### 发现 5：Kelly 在特定状态的"均值回归"保守倾向（执行层警示）
 
@@ -389,12 +376,7 @@ src/zephyr/backtest/
 
 ### 0.6.8 四轮搜索总结论
 
-| 轮次 | 搜索领域 | 关键发现 | 对本项目影响 |
-|---|---|---|---|
-| 第一轮 | regime 检测/校准/节流/鲁棒性 | 核心算法选对；3 缺口（Conformal/CPCV/Stationary Bootstrap） | 高——直接补缺口 |
-| 第二轮 | HMM 引擎升级/特征重要性 | 3 升级路径（Wasserstein/Student-t/Feature Saliency） | 中——未来升级备查 |
-| 第三轮 | A股专属/组合构建 | 4 态行业共识；动态调制矩阵/RARP/Kelly 警示 | 中——确认选择+远期路径 |
-| 第四轮 | 层次化/多尺度/BOCPD | 层次 HMM 状态持续时间+38.5%/伪转移-28.6%；TVTP 时变转移；Shannon entropy 替代 ConfidenceSignal | 高——层次 HMM 是最有价值的升级路径 |
+> 四轮总结论表已并入 §0.6.11 五轮总结论表（真源，前四行内容相同），本节不再单列。
 
 ### 0.6.9 第四轮发现：层次化 HMM + TVTP + BOCPD（2026-08-08）
 
@@ -408,11 +390,7 @@ src/zephyr/backtest/
 - COVID-19 crash 期间 regime 持续性显著优于 flat HMM
 - 周线宏观特征（周收益/4周滚动波动率/VIX/12周动量）条件化日线微观特征
 
-**与我们对比**：
-- 我们的 HMM 4 态是 **flat**（单尺度日线）
-- 层次 HMM 用**周线宏观层条件化日线层**——结构性地分离"宏观 regime"与"日间噪声"
-- **直接解决 A3（状态转移合理性）**：伪转移 -28.6% = 转移更合理
-- **评估**：这是四轮搜索中**最有价值的升级路径**。但需新增周线宏观层 HMM + 条件化机制，工作量中等。**列为优先级 3（与 Conformal/CPCV 同级）**。
+**与我们对比**：我们的 HMM 4 态是 **flat**（单尺度日线）；层次 HMM 用**周线宏观层条件化日线层**，结构性分离"宏观 regime"与"日间噪声"，**直接解决 A3 伪转移问题**（-28.6%）。**评估**：四轮搜索中**最有价值的升级路径**，但需新增周线宏观层 HMM + 条件化机制，工作量中等。**列为优先级 3（与 Conformal/CPCV 同级）**。
 
 #### 发现 2：TVTP 时变转移概率 — 动态调制矩阵的第一性原理解法
 
@@ -423,12 +401,7 @@ src/zephyr/backtest/
 - **Staggered parameter bounds**：强制波动率单调排序，**缓解标签切换**——比 Wasserstein HMM 简单
 - **Shannon entropy filter**：H_t = -Σ π_t(k) log π_t(k)，高熵抑制交易——比我们的 ConfidenceSignal（max(P) 四档启发式映射）更第一性原理
 
-**与我们对比**：
-- 我们的 HMM 转移矩阵是**静态**的（每季度 refit 一次，期间不变）
-- TVTP 让转移概率随外部压力指数**动态变化**——这是中邮证券"动态调制矩阵"的学术原版
-- Shannon entropy 替代 ConfidenceSignal：entropy 直接度量分布不确定性，无需手动调四档阈值
-- Staggered bounds 比 Wasserstein HMM 更简单地缓解标签切换
-- **评估**：TVTP + Shannon entropy + Staggered bounds 三件套是 HMM 引擎的**系统性升级**。但需重写 EM 训练（TVTP 的 multinomial logit 参数估计）。**列为优先级 4（远期系统性升级）**。
+**与我们对比**：我们的转移矩阵**静态**（季度 refit）；TVTP 让转移概率随压力指数**动态变化**（=中邮"动态调制矩阵"的学术原版）；Shannon entropy 直接度量分布不确定性，可替代 ConfidenceSignal 手动四档；Staggered bounds 比 Wasserstein 更简单地缓解标签切换。**评估**：TVTP + Shannon entropy + Staggered bounds 三件套是 HMM 引擎**系统性升级**，但需重写 EM 训练（multinomial logit 参数估计）。**列为优先级 4（远期系统性升级）**。
 
 #### 发现 3：BOCPD 在线变点检测 — overlay 的概率化升级
 
@@ -437,11 +410,7 @@ src/zephyr/backtest/
 - metricgate（2026-05）：Normal-Gamma 共轭预测，O(t) 每步更新，**O(1) 内存**（带剪枝）
 - CSDN（2026-02）：金融异常检测实战，**Student-t 似然处理肥尾**
 
-**与我们对比**：
-- 我们的 D-SIGNAL-68 overlay 是**规则法**（阈值穿越触发 CRISIS/RECOVERY/BREAKOUT）
-- BOCPD 产出 **P(刚发生变点)** 的概率流——比阈值规则更原理化
-- 但 BOCPD 是**单变量**（多变量是未来方向），需应用到复合信号（如 Shrinkage 输出或波动率指数）
-- **评估**：BOCPD 可作为 overlay 的**概率化补充**——在规则法 overlay 之上叠一层 BOCPD 变点概率，提高拐点检测的统计严谨性。但单变量限制使其只能作为辅助信号。**列为优先级 4（可选辅助升级）**。
+**与我们对比**：我们的 D-SIGNAL-68 overlay 是**规则法**（阈值穿越触发）；BOCPD 产出 **P(刚发生变点)** 概率流，更原理化，但**单变量**限制使其只能作辅助信号（需应用到复合信号如 Shrinkage 输出或波动率指数）。**评估**：可在规则法 overlay 上叠 BOCPD 变点概率提高拐点检测严谨性。**列为优先级 4（可选辅助升级）**。
 
 #### 发现 4：Multi-Scale 共识 — 多时间框架对齐
 
@@ -451,10 +420,7 @@ src/zephyr/backtest/
 - TDFI 三分辨率（fast 8 / medium 13 / slow 21）+ 共识分数 -3~+3
 - 过渡态（±1）标记早期转折——一个层次已转，其他还没跟上
 
-**与我们对比**：
-- 我们的 regime 检测是**单一日线尺度**
-- 多尺度共识可捕捉"周线已转牛但日线还在震荡"的过渡态
-- **评估**：多尺度是层次 HMM（发现 1）的扩展——层次 HMM 是"周线条件化日线"，多尺度共识是"多框架投票"。两者可结合。**列为发现 1 的扩展，优先级随层次 HMM**。
+**与我们对比**：我们的 regime 检测是**单一日线尺度**；多尺度共识可捕捉"周线已转牛但日线还在震荡"的过渡态。**评估**：多尺度是层次 HMM（发现 1）的扩展——层次 HMM 是"周线条件化日线"，多尺度共识是"多框架投票"，两者可结合。**列为发现 1 的扩展，优先级随层次 HMM**。
 
 #### 第四轮新增升级路径汇总
 
@@ -466,7 +432,7 @@ src/zephyr/backtest/
 | Staggered parameter bounds | 标签切换（比 Wasserstein 简单） | 优先级 4 | arXiv:2606.06190 |
 | BOCPD 变点概率 | overlay 规则法→概率化 | 优先级 4 | Adams-MacKay 2007 |
 
-**最终总结论**：核心算法（HMM 4态 + 两阶段校准 + 乘法 Shrinkage + 特征工程）**四轮搜索全部背书**。3 个验证缺口该补（Conformal/CPCV/Stationary Bootstrap）。**11 条升级路径**备查（层次 HMM 最有价值，TVTP/Shannon/Staggered 三件套是系统性升级，BOCPD/Wasserstein/Student-t/Feature Saliency/动态调制矩阵/RARP/regime-conditional 为远期路径）。
+**最终总结论**（四轮时点）：核心算法四轮全背书，11 条升级路径备查——已被 §0.6.11 五轮最终结论覆盖（13 条路径），以彼处为准。
 
 ### 0.6.10 第五轮发现：NLP-Regime 连接 + 因果发现（2026-08-08）
 
@@ -491,14 +457,12 @@ src/zephyr/backtest/
 - Bull regime 重权 trend 信号；mean-reverting regime 重权均值回归
 - 情感信号在价格信号之前提供 regime shift 预警
 
-**对本项目的直接意义**：
-- 我们已有 `nlp_inference.py`（零样本情感推理）+ HMM 4 态 regime 检测
-- **但两者未连接**——NLP 情感未作为 HMM 特征或 overlay 信号
-- 三种连接方式：
-  1. **NLP 作为 HMM 特征**：将情感分数作为 HMM 的第 N+1 维特征输入
-  2. **NLP 作为 overlay 信号**：情感急剧转负→CRISIS overlay 触发（替代/补充 D-SIGNAL-68 规则）
-  3. **NLP 作为 transition 验证**：HMM 状态转移时，检查情感是否同向确认（降低伪转移）
-- **评估**：这是五轮搜索中**最可操作的发现**——不需要新算法，只需连接现有组件。**列为优先级 2（与 Stationary Bootstrap 同级，工作量小但价值高）**。
+**对本项目的直接意义**：我们已有 `nlp_inference.py`（零样本情感推理）+ HMM 4 态，**但两者未连接**。三种连接方式：
+1. **NLP 作为 HMM 特征**：情感分数作第 N+1 维特征输入
+2. **NLP 作为 overlay 信号**：情感急剧转负→CRISIS overlay 触发（替代/补充 D-SIGNAL-68 规则）
+3. **NLP 作为 transition 验证**：HMM 状态转移时检查情感是否同向确认（降伪转移）
+
+**评估**：五轮搜索中**最可操作的发现**——不需新算法，只连接现有组件。**列为优先级 2（与 Stationary Bootstrap 同级，工作量小价值高）**。
 
 #### 发现 2：因果发现 — Bloomberg Causal-TS 库
 
@@ -512,10 +476,7 @@ src/zephyr/backtest/
 - EM 算法交替：regime 分配（E步）→ 因果图推断（M步）
 - **不需要先验 regime 数量**——从数据中学习
 
-**对本项目的意义**：
-- 当前 HMM 只告诉你"在 r3"但不告诉你"r3 内什么导致什么"
-- 因果发现可在每个 regime 内推断因果结构（如"r3 中，北向资金→涨跌家数→指数"）
-- **评估**：学术前沿但工程复杂度高。Bloomberg Causal-TS 可作为 A4 特征重要性的升级方案（从相关性→因果性）。**列为优先级 4（远期探索）**。
+**对本项目的意义**：当前 HMM 只告诉你"在 r3"但不告诉你"r3 内什么导致什么"；因果发现可在每个 regime 内推断因果结构（如"r3 中，北向资金→涨跌家数→指数"）。**评估**：学术前沿但工程复杂度高；Bloomberg Causal-TS 可作 A4 特征重要性的升级方案（相关性→因果性）。**列为优先级 4（远期探索）**。
 
 #### 发现 3：Autoencoder + RL 自适应阈值
 
@@ -921,7 +882,7 @@ Phase 5：决策门控（对接 BM-BT-07）
 3. **验证区间** → ✅ 已决策（2026-08-06）：2015-2026（覆盖 2015 股灾/2018 贸易战/2020 疫情/2024 见底，含多轮 CRISIS-RECOVERY 周期）。
 4. **HMM 实现** → ✅ 已决策（2026-08-06）：hmmlearn GaussianHMM（与行业主流一致，Morwane/fibalgo 均用）。
 
-> **与另一个 AI 施工对话的协调**（2026-08-06）：另一对话正在落盘 4 个多策略模块 blueprint（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator/BudgetChangeHandler）+ regime 检测器 blueprint + 代码骨架。本验证方案（11_regime_backtest_validation_plan）是这些模块的"验收指南"——等骨架就绪后，按本方案执行回测验证。另一对话施工时应参考本方案 §4，确保 regime 检测器接口满足验证需求（输出概率分布供 CRPS、可开关 Shrinkage 供 C1 对比）。
+> **与另一 AI 施工对话的协调**（2026-08-06，已执行完毕）：本方案是多策略模块（StrategyBook/FirmRiskAggregator/RegimeMetaAllocator/BudgetChangeHandler）+ regime 检测器骨架的"验收指南"——施工参考 §4 确保接口满足验证需求（概率分布供 CRPS、可开关 Shrinkage 供 C1 对比）。
 
 ## 10.5 待裁定与开放问题（2026-08-12 v1.6.0 补，规范 §4.4 硬约束#2）
 
@@ -938,6 +899,7 @@ Phase 5：决策门控（对接 BM-BT-07）
 
 | 日期 | 版本 | 改动 | 理由 |
 |---|---|---|---|
+| 2026-08-15 | 1.6.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-02）——§0.6.8 四轮总结论表并入 §0.6.11（真源）改指针；§0.6.4 标注初版+指向 §0.6.11；§0.6.6/0.6.7/0.6.9/0.6.10 各发现"与我们对比"散文段紧凑化；§0.5.1 Phase 3 行/§0.5.6 13号双行合并 | 文档压缩治理（第一轮 ab3df58d9d 后续）；章节编号零改动，参数/裁定/锚点零丢失 |
 | 2026-08-06 | 0.1.0 | 初稿 | regime 检测器回测验证方案设计，对接现有 BM-BT 框架，参考 Morwane risk-throttle 验证范式 |
 | 2026-08-06 | 0.2.0 | §8.1 改为完整 12 态分模块实现（用户裁定直接做完整版）；§10.1 标记已决策；新增与另一 AI 施工对话的协调说明 | 用户第一性原理意见：最终目标就是 12 态，先简化再重做是重复工作；验证后基于证据简化更可靠 |
 | 2026-08-06 | 1.0.0 | §10 全部 4 项决策定稿（完整12态/topn_momentum载体/2015-2026区间/hmmlearn）；status→active；性质改为已定稿验收指南 | 用户确认定稿交接，方案进入施工对话参考阶段 |
