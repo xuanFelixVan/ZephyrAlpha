@@ -5,8 +5,8 @@ title: 技术指标目录
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-12
+version: "1.0.1"
+date: 2026-08-15
 topic: technical_indicator_catalog
 scope: 07_trading_decision_architecture
 ---
@@ -26,7 +26,7 @@ scope: 07_trading_decision_architecture
 | 依赖 | [15_data_feature_layer_spec](15_data_feature_layer_spec.md)（特征层规范） |
 | 正交性 | ✅ 纯数据计算，与 regime/alpha/组合/风控正交 |
 | 优先级 | P1（技术指标是因子工程和策略层的基础输入） |
-| 状态 | ✅ active v1.0.0（计算+存储+测试已施工；调度挂接与注册表待施工，见 §7） |
+| 状态 | ✅ active v1.0.1（计算+存储+测试已施工；调度挂接与注册表待施工，见 §7） |
 
 ## 2. 技术指标计算规范
 
@@ -150,3 +150,4 @@ why 栈映射：多周期共振是 A 股技术分析的主流用法；指标全�
 |---|---|---|---|
 | 2026-08-10 | 0.1.0 | 初稿骨架 | 技术指标目录文档。**注意**：本文件曾因未 git commit 丢失，后从代码引用和 architecture_issue_registry 描述重建骨架 |
 | 2026-08-12 | 1.0.0 | 骨架→active：§6 回填 40 指标/58 列全表（5 大类公式/参数/输出列）；修正 55→58 口径；§6 增"40 指标不裁剪"裁定；补 §6.6 与 factor_registry 正交边界；新增 §7 开放问题（调度未闭环/REG-IND-001 待施工/00_index 同步） | 回填已施工代码 why；口径以测试契约为准；缺口入开放问题不擅自施工 |
+| 2026-08-15 | 1.0.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08） | 清单/公式/裁定无冗余，通读+自审零发现，不为压而压 |

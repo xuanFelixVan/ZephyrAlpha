@@ -5,8 +5,8 @@ title: A股"特殊交易日"数据资产全景与治理（含 hk_trade_calendar 
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
-date: 2026-08-13
+version: "1.0.1"
+date: 2026-08-15
 topic: special_trading_days_data_assets
 scope: 07_trading_decision_architecture
 related_issues:
@@ -160,9 +160,8 @@ related_issues:
 | market_dividend_tax_node | dividend_tax_node | ❌ 未注册（待施工；VIEW 派生，注册仅作台账） |
 | market_msci_adjustment | msci_adjustment | ❌ 未注册（预留，等效 disabled） |
 
-> v0.2.0 修正说明：v0.1.0 本节声称"7 条注册于 L1921-2019（A股特殊日子数据资产段）"，经 Grep
-> 核实该段落与 6 条 category_id 均不存在——schema DDL 落盘 ≠ 品类注册落盘，两者是独立动作。
-> 本表已改为真实状态。
+> v0.2.0 修正：v0.1.0 声称"7 条注册于 L1921-2019（A股特殊日子数据资产段）"经 Grep
+> 核实该段落与 6 条 category_id 均不存在——schema DDL 落盘 ≠ 品类注册落盘，两者是独立动作。本表已改为真实状态。
 
 ### 3.3 tasks.yaml 采集任务（v0.2.0 核实：仅 1 个已注册，5 个待施工）
 
@@ -177,9 +176,9 @@ related_issues:
 | margin_target_adjustment_refresh | margin_target_adjustment | akshare | ❌ 未注册（待施工；provider 方法亦缺失） |
 | msci_adjustment_refresh | msci_adjustment | — | ❌ 未注册（预留，无数据源） |
 
-> v0.2.0 修正说明：v0.1.0 本节声称"6 个任务注册于 L2369-2433"，经 Grep 核实仅
+> v0.2.0 修正：v0.1.0 声称"6 个任务注册于 L2369-2433"经 Grep 核实仅
 > hk_trade_calendar_refresh 存在。calendar_event 的 internal 派生函数（§3.5）已实现但无调度
-> 任务——**calendar_event 表当前无数据填充通道**（DDL 建表后空表），这是最优先补齐的缺口。
+> 任务——**calendar_event 表当前无数据填充通道（DDL 建表后空表），这是最优先补齐的缺口**。
 
 ### 3.4 Provider capability（v0.2.0 核实）
 
@@ -192,7 +191,7 @@ related_issues:
 | AkshareIngestProvider | margin_target_adjustment | — | ❌ 方法不存在（待施工） |
 | ~~AkshareIngestProvider~~ | ~~hk_trade_calendar~~ | ~~`_fetch_hk_trade_calendar`~~ | 方法体已删（留注释）；⚠️ 声明残留见 §4.2 |
 
-> v0.2.0 修正说明：v0.1.0 本节将三个 akshare 采集方法标为已实现（含底层 API
+> v0.2.0 修正：v0.1.0 将三个 akshare 采集方法标为已实现（含底层 API
 > `ak.index_stock_cons_weight_csindex` 等），经 Grep 核实 akshare_provider.py 中无任何
 > index_adjust/ipo_sched/margin_target 相关方法——§2.3 三个"🟨"状态与此一致。
 
@@ -218,10 +217,9 @@ related_issues:
 
 计算范围：[today-5年, today+2年]，全量重算幂等（ReplacingMergeTree 按 event_date+event_type 去重）。
 
-> ⚠️ v0.2.0 注记：上表"✅ 已派生"指 **派生函数已实现**（`_derive_month_ends` L139 /
-> `_derive_futures_delivery` L169 / `_derive_lpr_announcement` L192 / `_derive_hk_connect_closed`
-> L601，Grep 核实存在）。但因 §3.3 `calendar_event_refresh` 任务未注册，**派生函数无调度通道，
-> calendar_event 表大概率为空表**——"代码就绪、数据未灌"。回填数据只需补登记该任务并跑一次。
+> ⚠️ v0.2.0 注记：上表"✅ 已派生"指 **派生函数已实现**（`_derive_month_ends` /
+> `_derive_futures_delivery` / `_derive_lpr_announcement` / `_derive_hk_connect_closed`，Grep 核实存在）。
+> 但因 §3.3 `calendar_event_refresh` 任务未注册，**派生函数无调度通道，calendar_event 表大概率为空表**——"代码就绪、数据未灌"。回填数据只需补登记该任务并跑一次。
 
 ## 4. hk_trade_calendar 数据源语义错配修复（#ARCH-DATA-001）
 
@@ -390,53 +388,41 @@ warn 不拦，存量易混淆 capability 随本施工项人工补登；满足升
 
 ### 6.1 API 白名单维护责任
 
-`capability_semantic_registry.yaml` 的 `allowed_apis` 谁来维护？
-- 选项 A：新增 capability 时强制登记（reconciler 拦截未登记）——治理强，但流程重
-- 选项 B：先人工补登存量易混淆 capability，新增时 warn 不拦——治理弱，但不阻塞
-- **倾向 A**，但需用户拍板。建议 MVP 阶段用 B（warn），积累一定存量后升级为 A（拦）
-- **定稿裁定（v1.0.0，AI-STD-001）**：采纳文内建议——MVP 阶段执行**选项 B**（新增时 warn 不拦 + 存量易混淆 capability 随施工项 2 人工补登）。升级为**选项 A**（新增强制登记、reconciler 拦截）的触发条件（任一满足即升级）：① 易混淆 capability 登记覆盖稳定运行一个完整治理窗口；② capability-API 语义错配同类 bug 再发生一次（不等治理窗口，立即升级）
+`capability_semantic_registry.yaml` 的 `allowed_apis` 谁来维护？选项 A：新增 capability 时强制登记
+（reconciler 拦截未登记）——治理强，但流程重；选项 B：先人工补登存量易混淆 capability，新增时
+warn 不拦——治理弱，但不阻塞。
+**定稿裁定（v1.0.0，AI-STD-001）**：MVP 阶段执行**选项 B**（新增时 warn 不拦 + 存量易混淆 capability 随施工项 2 人工补登）。升级为**选项 A**（新增强制登记、reconciler 拦截）的触发条件（任一满足即升级）：① 易混淆 capability 登记覆盖稳定运行一个完整治理窗口；② capability-API 语义错配同类 bug 再发生一次（不等治理窗口，立即升级）
 
 ### 6.2 msci_adjustment 数据源接入路径
 
 akshare/tushare 均无 MSCI/富时调整直接接口。候选路径：
-1. 爬虫 MSCI 官网 quarterly review 公告（维护成本高，反爬风险）
-2. 接入第三方数据源（Wind/iFind MSCI 调整专题，需付费）
-3. 手工录入历次调整事件（准确但滞后）
-
-**待讨论**：MVP 阶段是否需要 MSCI 调整数据？若需要，选哪条路径？当前表结构已预留，可空置等待。
+① 爬虫 MSCI 官网 quarterly review 公告（维护成本高，反爬风险）；② 接入第三方数据源（Wind/iFind MSCI 调整专题，需付费）；③ 手工录入历次调整事件（准确但滞后）。
 
 **定稿裁定（v1.0.0，AI-STD-001）**：MVP 阶段**不需要** MSCI 调整数据，表结构维持空置（等效 disabled）。
-未来事件驱动/外资流向研究启动时再审，届时路径优先级：**路径 2 优先**（第三方数据源——iFind 已在
-体系内，边际成本最低），路径 1（爬虫）仅作 fallback，路径 3（手工录入）用于补历史关键调整事件。
+未来事件驱动/外资流向研究启动时再审，届时路径优先级：**路径 ② 优先**（第三方数据源——iFind 已在
+体系内，边际成本最低），路径 ①（爬虫）仅作 fallback，路径 ③（手工录入）用于补历史关键调整事件。
 
 ### 6.3 fomc_meeting / major_meeting / stamp_duty_change 手工填充策略
 
 calendar_event 表结构已预留这 3 个 manual event_type，但无填充机制。候选：
-1. 建 CSV 录入 + 一次性 IMPORT（简单）
-2. 建轻量 admin 接口（过度工程，不推荐）
-3. 直接 INSERT SQL 脚本（最轻）
+① 建 CSV 录入 + 一次性 IMPORT（简单）；② 建轻量 admin 接口（过度工程）；③ 直接 INSERT SQL 脚本（最轻）。
 
-**待讨论**：填充策略 + 数据源（FOMC 日程官网可爬、两会日期固定可手工、印花税历史调整可查）。
-
-**定稿裁定（v1.0.0，AI-STD-001）**：采纳**方案 1（CSV 录入 + 一次性 IMPORT）**为标准填充路径——
+**定稿裁定（v1.0.0，AI-STD-001）**：采纳**方案 ①（CSV 录入 + 一次性 IMPORT）**为标准填充路径——
 FOMC 每年 8 次、两会每年 1 次，属低频重复录入，CSV 作手工源数据台账可复查、可增量追加；
-方案 2（轻量 admin 接口）排除（过度工程）；方案 3（直接 INSERT SQL）仅作一次性应急补丁。
+方案 ② 排除（过度工程）；方案 ③ 仅作一次性应急补丁。
 填充时机：随 §6.6-2 `calendar_event_refresh` 任务补登记同批执行（同表同批，一次回填）。
 
 ### 6.4 悬空引用修正（v0.2.0 核实：任务关闭）
 
-v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
+v0.1.0 称 `business_data_categories.yaml` 与 `tasks.yaml` 引用
 `docs/03_modules/_cross_layer/database/special_trading_days_data_ingestion.md` 为悬空引用。
 **v0.2.0 全项目 Grep 核实：该引用已不存在于任何文件**（唯一提及处是本文档自述）——
-推测随 v0.1.0 声称的"L1921-2019 注册段/L2369-2433 任务段"从未落盘而自然不存在。
-本任务关闭，无需施工。
+推测随 v0.1.0 声称的注册/任务段从未落盘而自然不存在。本任务关闭，无需施工。
 
 ### 6.5 ETF 赎回日是否单独建表
 
-用户最初提及"ETF 赎回日"。评估结论（§2.4）：A 股 ETF 为 T+0 实物申赎，无固定"赎回日"；
-净赎回数据可从 `etf_nav` 衍生。**建议不单独建表**，需要时在查询层衍生净赎回指标。待用户确认。
-
-**定稿裁定（v1.0.0，AI-STD-001）**：采纳建议——ETF 赎回日**不单独建表**，需要时在查询层从
+评估结论（§2.4）：A 股 ETF 为 T+0 实物申赎，无固定"赎回日"；净赎回数据可从 `etf_nav` 衍生。
+**定稿裁定（v1.0.0，AI-STD-001）**：**不单独建表**，需要时在查询层从
 `etf_nav` 衍生净赎回指标。本项关闭。
 
 ### 6.6 紧随清理任务（v0.2.0 新增）
@@ -497,3 +483,4 @@ v0.1.0 称 `business_data_categories.yaml` L1923 与 `tasks.yaml` L2371 引用
 | v0.2.1 | 2026-08-12 | 第6轮一致性审查·交叉引用补全：§6.6-2 补 15 号下游依赖注记（15 号 PIT Embargo"BDay 近似换真交易日历"待决策项依赖 calendar_event 表有数据）+ 63 号 v2.1.0 交叉佐证（63 号已将 calendar_event 等 6 表列入"代码零引用但规划已登记"类别，与本版 §3.2/§3.3 核实结论互验）；§6.6-4 补 62 号引用（品类注册补登施工规范见 G62 总案） |
 | v0.2.2 | 2026-08-12 | 作战地图全覆盖补丁——BM-POS-08。新增 §2.5 日历→仓位约束规则：日历事件→临时仓位上限裁决表 6 条（期权交割日否决新开仓/4 月下旬年报截止 ST 清零/预告截止前 5 日否决新买入/微盘股信息空窗收紧 50%/交割日前后下调 5-10%/财报前 3 天降仓位+禁新建，参数以作战地图 indicators 为准核对），数据基座=本文既有 calendar_event 资产（§3.5 event_type 枚举）；输出 CalendarPositionAlert+临时仓位上限 → BM-POS-01/BM-POS-04 消费，与 regime Shrinkage/回撤 Protocol 乘性叠加取最紧；降级=日历数据缺失跳过约束（§3.3 空表即整体降级态）。补定位→裁定（理由+重评条件）→契约→降级四层 |
 | v1.0.0 | 2026-08-13 | **定稿转 active**（AI-STD-001 定稿会话）：① §5 治本方案逐项定稿，新增 §5.8 定稿结论表——项4 符号一致性 gate 采纳且最优先（定稿明确为**双向校验**：路由引用方法须真实定义 + capability 声明须有对应 `_fetch_<cap>` 实现，§5.5 已回填）；项1 CapabilityContract 语义字段（expected_market/expected_variety，可选零迁移）采纳紧随；项2 semantic_registry 采纳与项3同批（初始登记 hk_trade_calendar/trade_calendar/industry_class 3 条，仅易混淆类强制）；项3 AST gate 采纳（验收用例=检出 #ARCH-DATA-001 + #ARCH-CH-INDUSTRY-CLASS-MIGRATE）；项5 运行时抽样推迟并明确启动条件。MVP 最小集=项4+项1 维持不变；② §5.3 维护责任待拍板点落定（MVP=选项B warn不拦）；③ §6 讨论项定夺——§6.1 选项B+升级A触发条件（稳定运行一个治理窗口，或同类bug再现立即升级）；§6.2 MSCI 裁定MVP空置、未来优先iFind路径；§6.3 裁定CSV录入+一次性IMPORT为标准路径、随§6.6-2同批执行；§6.5 ETF赎回日不建表关闭；§6.6-3 三条akshare采集链暂缓施工（MVP聚焦实盘生存级，风险优先让位calendar_event回填；未来启动先登CAND）；§6.6-5 裁定不单独立项、本文档承载追踪；④ §1.2 阻塞表述解除（设计定稿落本文档§5.8，治理裁定仍在注册表）；⑤ frontmatter status draft→active、version 0.2.2→1.0.0、date→2026-08-13。注：#ARCH-DATA-001/002 注册表 fix_phase 回填因 bm-fill 会话占用 architecture_issue_registry.yaml 未同步，待释放后由后续会话执行（多会话并发防护铁律） |
+| v1.0.1 | 2026-08-15 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08）——① §3.2/§3.3/§3.4 v0.2.0 修正说明各压为一段（"DDL 落盘≠注册落盘/任务落盘/方法落地"教训保留）；② §3.5 注记去行号留函数名稳定标识；③ §6.1/§6.2/§6.3/§6.4/§6.5 已定稿讨论项去除过程性"待讨论/倾向"残留，定稿裁定逐字保留；§2 清单/§3 盘点/§4 止血/§5 治本/§5.8 定稿/§6.6 台账/§7 文件清单零改动 |
