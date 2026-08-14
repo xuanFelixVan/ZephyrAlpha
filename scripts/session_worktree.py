@@ -98,6 +98,7 @@ def _provision_worktree_env(wt_path: Path) -> list[str]:
             "# AI session worktree 环境激活（session_worktree.py create 自动生成，勿手改）\n"
             "# 用法: . .\\activate_env.ps1 后跑网关/治理脚本（import zephyr 解析回 worktree src）\n"
             f"$env:PYTHONPATH = '{wt_path}\\src'\n"
+            f"$env:ZEPHYR_WORKTREE_ROOT = '{wt_path}'\n"
             f"Set-Location '{wt_path}'\n",
             encoding="utf-8",
         )
