@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-15T08:06:29Z'
+generated_at: '2026-08-15T08:55:48Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 210
+total_files: 214
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2240,6 +2240,21 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/event_calendar_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml
   module_id: MOD-GOVERNANCE
   title: ''
@@ -2495,12 +2510,42 @@ files:
   tier: ''
   aliases: []
   section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml
   module_id: ''
   title: ''
   doc_type: ''
   status: ''
   version: ''
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2549,6 +2594,21 @@ files:
   rule_form: ''
   scope: ''
   stability: evolving
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: ''
+  status: active
+  version: 1.0.0
+  rule_form: ''
+  scope: ''
+  stability: ''
   layer: ''
   superseded_by: ''
   severity: ''
