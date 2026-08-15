@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 state（指标=状态量计算工具）。primary_timeframe 默认 daily、applicable_timeframes 默认 9 周期全集——依据本库既有规范『传统技术指标全部基于 OHLCV 计算，覆盖 1min~月线 9 周期（120min 由 60min 聚合）』；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   k线、出货、动量、反转、吸筹、因子、均线、基准、形态、成交、执行、指数、指标、波动、突破、组合、绩效、背离、资金、超买、超跌、趋势、量价、震荡
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -28,7 +30,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -97,7 +99,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["趋势", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-002
@@ -126,8 +128,8 @@ indicators:
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["趋势", "均线", "指数"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-003
@@ -157,7 +159,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["趋势", "均线", "组合"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-004
@@ -186,8 +188,8 @@ indicators:
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["趋势", "均线", "指数"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-005
@@ -217,7 +219,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["趋势", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-006
@@ -246,8 +248,8 @@ indicators:
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["趋势", "指数", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-007
@@ -277,7 +279,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["趋势", "指标", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-008
@@ -307,7 +309,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["趋势", "指标", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-009
@@ -337,7 +339,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["反转", "趋势", "指标", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-TREND-010
@@ -366,8 +368,8 @@ indicators:
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["趋势", "指数", "均线"]
   algorithm_status: "quantized"
   evidence: ""
 
@@ -399,7 +401,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "因子", "指标", "绩效"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-002
@@ -429,7 +431,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "指标"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-003
@@ -454,12 +456,12 @@ indicators:
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
+  regime_valid: ["trend_down", "trend_up"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "超跌", "超买", "指标"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-004
@@ -489,7 +491,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-005
@@ -519,7 +521,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "指标"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-006
@@ -549,7 +551,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "资金"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-007
@@ -579,7 +581,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "指标"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-008
@@ -604,12 +606,12 @@ indicators:
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "震荡", "指标"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-009
@@ -639,7 +641,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-MOM-010
@@ -669,7 +671,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["动量", "绩效"]
   algorithm_status: "quantized"
   evidence: ""
 
@@ -701,7 +703,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动", "震荡"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-002
@@ -731,7 +733,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-003
@@ -756,12 +758,12 @@ indicators:
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
+  regime_valid: ["trend_up", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-004
@@ -786,12 +788,12 @@ indicators:
   owner: MOD-GOVERNANCE
   primary_timeframe: "daily"
   applicable_timeframes: ["1min", "5min", "15min", "30min", "60min", "120min", "daily", "weekly", "monthly"]
-  regime_valid: []
+  regime_valid: ["trend_up", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-005
@@ -821,7 +823,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-006
@@ -851,7 +853,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-007
@@ -881,7 +883,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOL-008
@@ -911,7 +913,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["波动"]
   algorithm_status: "quantized"
   evidence: ""
 
@@ -943,7 +945,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["量价"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOLUME-002
@@ -972,8 +974,8 @@ indicators:
   regime_invalid: []
   direction: "neutral"
   entry_role: "state"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["资金", "指数", "指标", "量价"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOLUME-003
@@ -1003,7 +1005,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["量价", "均线", "执行", "成交"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOLUME-004
@@ -1033,7 +1035,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["量价"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOLUME-005
@@ -1063,7 +1065,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["吸筹", "出货", "量价"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOLUME-006
@@ -1093,7 +1095,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["趋势", "量价"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-VOLUME-007
@@ -1123,7 +1125,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["吸筹", "出货", "量价"]
   algorithm_status: "quantized"
   evidence: ""
 
@@ -1156,7 +1158,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["反转", "k线", "形态"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-REV-002
@@ -1186,7 +1188,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["反转", "背离", "趋势"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-REV-003
@@ -1216,7 +1218,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["反转", "背离", "趋势"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-REV-004
@@ -1246,7 +1248,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["反转", "突破"]
   algorithm_status: "quantized"
   evidence: ""
 - indicator_id: IND-REV-005
@@ -1276,7 +1278,7 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["反转", "背离", "量价"]
   algorithm_status: "quantized"
   evidence: ""
 # ══════════════ 复合类 composite（1 指标 / 5 列，2026-08-14 补登）══════════════
@@ -1307,6 +1309,6 @@ indicators:
   direction: "neutral"
   entry_role: "state"
   applies_to: []
-  tags: []
+  tags: ["基准", "指标"]
   algorithm_status: "quantized"
   evidence: ""
