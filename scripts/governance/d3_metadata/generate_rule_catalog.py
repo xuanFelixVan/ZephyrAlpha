@@ -33,7 +33,7 @@ description: >
 dimensions:
   - D3
 priority: P2
-timeout_seconds: 60
+timeout_seconds: 180
 warn_only: false
 """
 
