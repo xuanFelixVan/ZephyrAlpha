@@ -1,0 +1,528 @@
+# [A_config] module_id=REG-MAC-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：裁剪：timeframe×2（发布节奏由 frequency/release_schedule 表达，本库以发布纪律为主）+ direction（宏观指标无固定方向语义）。保留 regime×2（宏观指标用于 regime 判定，标注其结论适用环境有价值）+ entry_role=state + 共有四维度；algorithm_status 固定 not_applicable。
+# ============================================================================
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '2.0'
+registry_id: REG-MAC-001
+name: Macro Indicator Registry
+name_zh: 宏观指标注册表
+description: >-
+  宏观指标唯一真源（SSoT）。登记中国+美国关键宏观指标的发布机构、频率、
+  PIT 滞后规则（公布时点 vs 数据时点）、修订政策、市场影响方向与消费模块。
+  与 field_dictionary 正交：字段字典管"字段级 type/unit/口径"，本表管"指标级
+  发布纪律/市场语义"。宏观发布事件实例归 event_calendar_registry EVT-MACRO-001，
+  数值数据落 data_asset_registry（DS-101 中国宏观 / SRC-FRED-001 美国 22 序列）。
+  消费：regime 层状态识别、宏观择时、流动性预期建模。
+  对标：聚宽 JQData 宏观经济谱系（国民经济/财政/金融 8 大类）、
+  FRED 序列治理、quant666 macro_cn_gdp/macro_sf_month 表。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.1.0
+created: '2026-08-14'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- indicator_id
+entry_count: 15
+
+entry_schema:
+  indicator_id: str              # MAC-{CN|US}-{NNN}
+  name: str
+  name_zh: str
+  aliases: list[str]
+  region: str                    # CN/US
+  category: str                  # price/activity/monetary/credit/fiscal/external/sentiment
+  release_agency: str            # 统计局/央行/海关/BLS/Fed
+  frequency: str                 # monthly/quarterly/daily/event
+  release_schedule: str          # 发布规律（如"每月 9-15 日 09:30"）
+  pit_lag_rule: str              # PIT 规则（数据时点→可用时点的滞后）
+  revision_policy: str           # 修订政策（中国宏观初值少修订；美国非农大幅修订常见）
+  market_impact: str             # 市场影响方向（利多/利空/取决于预期差）
+  impact_assets: list[str]       # 影响资产（equity_index/bond/cny/commodity/sector）
+  data_ref: str                  # FK→data_asset_registry DS/SRC
+  used_by: list[str]             # 消费模块（regime/择时/因子）
+  reliability_note: str
+  status: str                    # candidate/active/deprecated
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+
+indicators:
+  # ============================================================
+  # CN PRICE（中国物价）
+  # ============================================================
+  - indicator_id: "MAC-CN-001"
+    name: "China CPI YoY"
+    name_zh: 中国 CPI 同比
+    aliases: ["cpi", "CPI同比"]
+    region: "CN"
+    category: "price"
+    release_agency: "国家统计局"
+    frequency: "monthly"
+    release_schedule: "每月 9-15 日 09:30（遇节假日顺延）"
+    pit_lag_rule: "数据时点=上月末；可用时点=发布日 09:30 后"
+    revision_policy: "初值即终值（极少修订）"
+    market_impact: "超预期通胀=紧缩预期（利空成长/利多资源）；通缩压力=宽松预期"
+    impact_assets: ["equity_index", "bond", "commodity"]
+    data_ref: "DS-101"
+    used_by: ["regime", "macro_timing"]
+    reliability_note: "关注核心 CPI（剔食品能源）趋势性更强"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-002"
+    name: "China PPI YoY"
+    name_zh: 中国 PPI 同比
+    aliases: ["ppi", "PPI同比"]
+    region: "CN"
+    category: "price"
+    release_agency: "国家统计局"
+    frequency: "monthly"
+    release_schedule: "每月 9-15 日 09:30（与 CPI 同日）"
+    pit_lag_rule: "同 CPI"
+    revision_policy: "初值即终值"
+    market_impact: "PPI 拐点领先工业企业利润约 1-2 季（周期股定价锚）"
+    impact_assets: ["equity_index", "commodity", "sector_cyclical"]
+    data_ref: "DS-101"
+    used_by: ["regime", "sector_rotation"]
+    reliability_note: "PPI-CPI 剪刀差=上中下游利润再分配信号"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # CN ACTIVITY（中国景气）
+  # ============================================================
+  - indicator_id: "MAC-CN-003"
+    name: "China Official Manufacturing PMI"
+    name_zh: 中国官方制造业 PMI
+    aliases: ["pmi", "官方PMI", "NBS PMI"]
+    region: "CN"
+    category: "activity"
+    release_agency: "国家统计局/物流与采购联合会"
+    frequency: "monthly"
+    release_schedule: "每月最后一日/次月 1 日 09:00"
+    pit_lag_rule: "数据时点=当月；可用时点=发布日 09:00 后（最早的可得景气数据）"
+    revision_policy: "不修订"
+    market_impact: "荣枯线 50 上下=扩张/收缩预期差交易"
+    impact_assets: ["equity_index", "commodity", "bond"]
+    data_ref: "DS-101"
+    used_by: ["regime", "macro_timing"]
+    reliability_note: "财新 PMI（每月 1 日/3 日）样本偏中小民企，与官方背离时有信息价值"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-004"
+    name: "China GDP YoY"
+    name_zh: 中国 GDP 同比
+    aliases: ["gdp", "GDP同比"]
+    region: "CN"
+    category: "activity"
+    release_agency: "国家统计局"
+    frequency: "quarterly"
+    release_schedule: "季后 15-18 日 10:00"
+    pit_lag_rule: "数据时点=上季末；可用时点=发布日后"
+    revision_policy: "年度核实修订（初步核算/初步核实/最终核实三版）"
+    market_impact: "总量锚（预期已部分 priced-in）；分项（投资/消费/出口）更有交易价值"
+    impact_assets: ["equity_index", "bond", "cny"]
+    data_ref: "DS-101"
+    used_by: ["regime"]
+    reliability_note: "低频滞后，regime 背景变量而非交易信号"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # CN MONETARY / CREDIT（中国货币信贷）
+  # ============================================================
+  - indicator_id: "MAC-CN-005"
+    name: "China Total Social Financing"
+    name_zh: 社会融资规模增量
+    aliases: ["tsf", "社融"]
+    region: "CN"
+    category: "credit"
+    release_agency: "中国人民银行"
+    frequency: "monthly"
+    release_schedule: "每月 10-15 日（时间不定，盘后）"
+    pit_lag_rule: "数据时点=上月末；可用时点=公布日（盘后则次日）"
+    revision_policy: "小幅修订"
+    market_impact: "社融超预期=信用扩张（利多周期/利空债）；结构（企业中长贷）比总量更重要"
+    impact_assets: ["equity_index", "bond", "sector_bank"]
+    data_ref: "DS-101"
+    used_by: ["regime", "macro_timing", "liquidity_model"]
+    reliability_note: "M1 同比-M2 同比剪刀差=资金活化程度，与股市相关性高"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-006"
+    name: "China M2 YoY"
+    name_zh: 中国 M2 同比
+    aliases: ["m2", "M2同比", "货币供应"]
+    region: "CN"
+    category: "monetary"
+    release_agency: "中国人民银行"
+    frequency: "monthly"
+    release_schedule: "与社融同日"
+    pit_lag_rule: "同社融"
+    revision_policy: "小幅修订"
+    market_impact: "M2 高增=流动性充裕（利多估值）；M1 活化更敏感"
+    impact_assets: ["equity_index", "bond"]
+    data_ref: "DS-101"
+    used_by: ["regime", "liquidity_model"]
+    reliability_note: "与社融合并解读（信用+货币双轮）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-007"
+    name: "China LPR"
+    name_zh: 贷款市场报价利率（LPR）
+    aliases: ["lpr", "LPR"]
+    region: "CN"
+    category: "monetary"
+    release_agency: "全国银行间同业拆借中心（央行授权）"
+    frequency: "monthly"
+    release_schedule: "每月 20 日 09:15（遇节假日顺延）"
+    pit_lag_rule: "发布后立即可用"
+    revision_policy: "不修订"
+    market_impact: "降息=利多（成长股/地产链敏感）；不降=预期落空短期利空"
+    impact_assets: ["equity_index", "sector_bank", "sector_property", "bond"]
+    data_ref: "DS-101"
+    used_by: ["macro_timing", "sector_rotation"]
+    reliability_note: "1 年期 vs 5 年期（房贷锚）分开看；MLF 利率为 LPR 前瞻指引"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-008"
+    name: "China MLF Rate & Operation"
+    name_zh: MLF 利率与操作量
+    aliases: ["mlf", "麻辣粉", "中期借贷便利"]
+    region: "CN"
+    category: "monetary"
+    release_agency: "中国人民银行"
+    frequency: "monthly"
+    release_schedule: "每月 25 日左右（2025 起改为月末，数量招标）"
+    pit_lag_rule: "操作公告后立即可用"
+    revision_policy: "不修订"
+    market_impact: "MLF 利率=LPR 前瞻；超额续作=流动性投放信号"
+    impact_assets: ["bond", "equity_index"]
+    data_ref: "DS-101"
+    used_by: ["macro_timing", "liquidity_model"]
+    reliability_note: "7 天逆回购利率（OMO）2024 起升级为政策利率主轴，MLF 政策利率色彩淡化——两者都要跟踪"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-009"
+    name: "China 10Y CGB Yield"
+    name_zh: 中国 10 年期国债收益率
+    aliases: ["cgb10y", "十债收益率", "中债10Y"]
+    region: "CN"
+    category: "monetary"
+    release_agency: "中债登（每日）"
+    frequency: "daily"
+    release_schedule: "每交易日盘后"
+    pit_lag_rule: "日度数据，盘后可用"
+    revision_policy: "不修订"
+    market_impact: "利率下行=利多估值（DCF 分母）；股债性价比（ERP）择时核心"
+    impact_assets: ["equity_index", "bond"]
+    data_ref: "DS-101"
+    used_by: ["regime", "erp_timing"]
+    reliability_note: "股债收益差（1/PE - 10Y）是 A 股大级别择时有效指标"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # CN EXTERNAL / SENTIMENT（中国外部/情绪）
+  # ============================================================
+  - indicator_id: "MAC-CN-010"
+    name: "China Trade Balance"
+    name_zh: 中国进出口（贸易差额）
+    aliases: ["trade", "进出口"]
+    region: "CN"
+    category: "external"
+    release_agency: "海关总署"
+    frequency: "monthly"
+    release_schedule: "每月 7-13 日 11:00"
+    pit_lag_rule: "数据时点=上月；可用时点=发布日后"
+    revision_policy: "小幅修订"
+    market_impact: "出口超预期=利多制造业链；进口=内需 proxy"
+    impact_assets: ["equity_index", "cny", "sector_export"]
+    data_ref: "DS-101"
+    used_by: ["regime", "sector_rotation"]
+    reliability_note: "1-2 月合并发布（春节扰动），解读需剔基数"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-CN-011"
+    name: "USDCNY Exchange Rate"
+    name_zh: 人民币兑美元汇率
+    aliases: ["usdcny", "人民币汇率"]
+    region: "CN"
+    category: "external"
+    release_agency: "中国外汇交易中心（每日中间价 09:15）"
+    frequency: "daily"
+    release_schedule: "每交易日 09:15 中间价"
+    pit_lag_rule: "实时/日度可用"
+    revision_policy: "不修订"
+    market_impact: "贬值压力=北向流出压力（利空蓝筹）；升值=外资回流"
+    impact_assets: ["equity_index", "northbound_flow"]
+    data_ref: "DS-101"
+    used_by: ["regime", "northbound_model"]
+    reliability_note: "中间价 vs 即期价差=逆周期因子调控信号"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # US（美国——外溢约束，FRED 22 序列已接入 SRC-FRED-001）
+  # ============================================================
+  - indicator_id: "MAC-US-001"
+    name: "US Fed Funds Rate / FOMC"
+    name_zh: 美国联邦基金利率/FOMC 决议
+    aliases: ["fomc", "美联储议息"]
+    region: "US"
+    category: "monetary"
+    release_agency: "Federal Reserve"
+    frequency: "event（每年 8 次议息）"
+    release_schedule: "FOMC 日历年初公布，决议北京时间凌晨 02:00"
+    pit_lag_rule: "决议公布后立即可用（A 股次日开盘定价）"
+    revision_policy: "不修订；点阵图季度更新"
+    market_impact: "加息周期=全球流动性收紧（利空成长/新兴市场）；降息=利多"
+    impact_assets: ["equity_index", "northbound_flow", "cny", "gold"]
+    data_ref: "SRC-FRED-001"
+    used_by: ["regime", "cross_market"]
+    reliability_note: "关注点阵图预期差 vs 决议本身；鲍威尔记者会措辞微调也可驱动波动"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-US-002"
+    name: "US 10Y Treasury Yield"
+    name_zh: 美国 10 年期国债收益率
+    aliases: ["us10y", "美债10Y"]
+    region: "US"
+    category: "monetary"
+    release_agency: "US Treasury / FRED DGS10"
+    frequency: "daily"
+    release_schedule: "每交易日（美盘收盘后）"
+    pit_lag_rule: "日度可用（A 股开盘前已定价隔夜变化）"
+    revision_policy: "不修订"
+    market_impact: "美债利率急升=全球风险资产估值压力（成长股敏感）；中美利差倒挂=资本流出压力"
+    impact_assets: ["equity_index", "northbound_flow", "gold"]
+    data_ref: "SRC-FRED-001"
+    used_by: ["regime", "cross_market"]
+    reliability_note: "实际利率（TIPS 10Y）对成长股定价更直接"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-US-003"
+    name: "US Nonfarm Payrolls"
+    name_zh: 美国非农就业
+    aliases: ["nfp", "非农"]
+    region: "US"
+    category: "activity"
+    release_agency: "BLS"
+    frequency: "monthly"
+    release_schedule: "每月第一个周五 20:30/21:30（北京时间）"
+    pit_lag_rule: "发布后立即可用"
+    revision_policy: "大幅修订常见（初值噪声大，近月修订可达 ±50%）"
+    market_impact: "非农超预期=加息预期升温（利空）；弱非农=降息预期（利多）"
+    impact_assets: ["equity_index", "gold", "us10y"]
+    data_ref: "SRC-FRED-001"
+    used_by: ["cross_market"]
+    reliability_note: "MUST 跟踪修订值而非仅初值；2024-2025 多次大幅下修教训"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - indicator_id: "MAC-US-004"
+    name: "VIX"
+    name_zh: 恐慌指数（标普 500 隐含波动率）
+    aliases: ["vix", "波动率指数"]
+    region: "US"
+    category: "sentiment"
+    release_agency: "CBOE / FRED VIXCLS"
+    frequency: "daily"
+    release_schedule: "每交易日"
+    pit_lag_rule: "日度可用"
+    revision_policy: "不修订"
+    market_impact: "VIX 急升（>30）=全球避险（A 股跟跌概率高）；VIX 低位=风险偏好平稳"
+    impact_assets: ["equity_index", "cross_market"]
+    data_ref: "SRC-FRED-001"
+    used_by: ["regime", "cross_market"]
+    reliability_note: "A 股相关性弱于美股，但极端值（>35）传染性强"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+# ============================================================
+# 治理规则
+# ============================================================
+# 1. PIT 铁律：所有指标 MUST 以"发布时点"入库（而非数据时点）——回测用
+#    as_of 语义取数，禁止用未发布数据（62 号文 E14）。
+# 2. 修订政策 MUST 声明：美国非农/CPI 修订频繁，回测理想用 vintage 数据
+#    （ALFRED）；个人项目 MVP 阶段用终值+标注局限性。
+# 3. 中国宏观少修订但要防"季调口径变更"（如社融口径 2018/2019 两次调整）——
+#    口径变更时指标 MUST 升 version 并记录。
+# 4. 消费声明：regime/择时模块使用指标 MUST 声明 used_by，防口径漂移。
