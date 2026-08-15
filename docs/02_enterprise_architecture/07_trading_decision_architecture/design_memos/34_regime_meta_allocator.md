@@ -5,7 +5,7 @@ title: RegimeMetaAllocator 参数
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.8.5"
+version: "2.8.6"
 date: 2026-08-15
 topic: regime_meta_allocator
 scope: 07_trading_decision_architecture
@@ -349,9 +349,9 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | 设施 | 路径 / 标识 | 状态 | 备注 |
 |---|---|---|---|
 | **主模块代码** | [regime_meta_allocator.py](../../../../src/zephyr/pf_alloc/core/regime_meta_allocator.py)（MOD-PA-007） | ✅ production v1.0.0（MATURITY=production，commit 81c7687540 已提交） | `allocate()` 5 步流程 + `_compute_shrinkage()`（含 CRISIS floor 降级 0.09→0.05）+ `_normalize_and_clip()`（water-filling 投影）+ `compute_performance_score()` 静态方法（Sortino→[0.5,1.5]）全部落地 |
-| **模块蓝图** | [blueprint.md](../../../../docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) | ✅ 存在 | MODIFY-GUARD 锚点 |
+| **模块蓝图** | [blueprint.md](../../../../docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) | ✅ 存在（v0.2.0 已对齐代码 v1.0.0 口径，2026-08-15） | MODIFY-GUARD 锚点 |
 | **测试套件** | [test_regime_meta_allocator.py](../../../../tests/pf_alloc/test_regime_meta_allocator.py) | ✅ **已重建**（2026-08-15，AI-REGIME-001，两轮 55/55 全绿） | 原 55 用例 2026-08-11 git 灾难丢失（从未提交、`git clean -fd` 删除、不可恢复）；按 §3.4 伪代码 16 条施工要点 + 代码本体回建，组织保持原结构 8 类 55 用例（TestConfidenceSignal 8 / TestRiskSignal 4 / TestShrinkage 7 / TestNormalizeAndClip 8 / TestRawAllocation 3 / TestAllocate 9 / TestComputePerformanceScore 8 / TestEdgeCases 8），重建后立即提交 git 闭环 |
-| **错误契约** | AllocationError（ZA-PA-0007）/ ShrinkageDisabled（ZA-PA-0008） | ✅ 已在代码定义 | `shrinkage_enabled=False` 时 `global_shrinkage=1.0` 回退等权（C1 一票否决机制） |
+| **错误契约** | AllocationError（ZA-PA-0007）/ ShrinkageDisabled（ZA-PA-0008） | ⚠️ AllocationError 已定义；ShrinkageDisabled 仅头部声明预留（代码未实例化，2026-08-15 蓝图同步漂移取证） | `shrinkage_enabled=False` 时 `global_shrinkage=1.0` 回退等权不抛错（C1 一票否决机制） |
 | **上游·regime 检测器** | [regime_detector.py](../../../../src/zephyr/regime/core/regime_detector.py)（MOD-REGIME-001）+ [risk_signal_builder.py](../../../../src/zephyr/regime/risk_signal_builder.py) | ✅ 已施工（commit 191a17432f） | 产出 7 维概率（4 HMM 基态 + 3 overlay 特殊态）+ RiskSignal 13 参数 |
 | **上游·C1 验证资产** | `logs/c1_repro/c1_repro_report.md` + `c1_metrics.json` | ✅ 已产出（commit 852457e9） | C1 四项全通过：Sharpe 0.3678→0.3474 / MaxDD 0.2221→0.1485 / Calmar +27% / Turnover ≤2×（[11号](11_regime_backtest_validation_plan.md) §0.5.4） |
 | **下游·StrategyBook** | [strategy_book.py](../../../../src/zephyr/position/core/strategy_book.py)（MOD-POS-020） | ✅ production（70 测试，[30号](30_multi_strategy_concurrency.md) §2.2） | 消费 BudgetAllocation |
@@ -675,3 +675,4 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | 2026-08-14 | 2.8.3 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | §3.4 伪代码折叠为参数常量表+16 条施工要点（代码本体 production 为真源）；§9 修订记录全量保留；参数表/接口契约/触发条件零丢失 |
 | 2026-08-15 | 2.8.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-10） | 过程性标签清理（"N 次审查新增/修复/补充"等审查轮次注记，修订记录已承载审查史）；§6 待裁定表机制描述改指 §5.2 真源（Sticky 行"第六条"笔误修正为第十六条）；§8.1 引用表"关系"列散文压缩为定位+指针（来源/链接/关键数据/支撑关系逐项保留）；参数表/G04 校准触发/裁定/跨文档链接零丢失 |
 | 2026-08-15 | 2.8.5 | 测试套件重建闭环（AI-REGIME-001 施工）：§3.1 丢失标注→✅ 已重建；§3.5 盘点表测试套件行 ❌→✅ + 盘点结论"唯一缺口"表述清除；§6 待裁定 P0 行标 ✅ 已解决 | 原 55 用例 2026-08-11 git 灾难丢失（从未提交不可恢复），按 §3.4 伪代码 16 条施工要点 + 代码本体回建（8 类 55 用例，两轮 55/55 全绿），重建后立即提交 git 闭环灾难教训；文档同步反映防护网恢复 |
+| 2026-08-15 | 2.8.6 | 蓝图同步联动修正（AI-REGIME-001 遗留项处置）：§3.5 盘点表**模块蓝图行**标注 v0.2.0 已对齐代码口径（蓝图原 v0.1.1 存量漂移——12 维概率/SampleShrinkage/Sharpe 映射/4 项未实现错误契约，已按代码 v1.0.0 全面同步：7 维/冷启动中性/Sortino/water-filling/CRISIS floor/真实错误契约）；§3.5 **错误契约行**修正——ShrinkageDisabled（ZA-PA-0008）仅头部声明预留、代码未实例化（蓝图同步过程漂移取证），原"✅ 已在代码定义"表述不准确 | 蓝图是 MODIFY-GUARD 锚点，口径漂移会误导后续 AI 冷启动（如按 12 维概率/SampleShrinkage 施工）；ShrinkageDisabled 未实例化是同类漂移，一并修正保文档-代码一致 |
