@@ -1,6 +1,16 @@
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：裁剪：primary_timeframe/applicable_timeframes/regime_valid/regime_invalid/direction 五字段不适用于股票池（标的集合无 K 线周期/市场环境/方向语义），不予登记。保留 entry_role=reference + 共有四维度（tags/applies_to/algorithm_status/evidence）；algorithm_status 固定 not_applicable（非算法条目）。
+# ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '2.0'
 registry_id: REG-UNI-001
 name: 股票池登记表
 description: >-
@@ -15,9 +25,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.2.0
 created: '2026-08-10'
-last_updated: '2026-08-12'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - universe_id
@@ -48,6 +58,11 @@ entry_schema:
   pit_constituent_construction: bool  # 成分股是否按 point-in-time 构造（true=每个调仓日只用当时可得成分；false=用当前成分回溯=生存偏差；null=未声明）
   delisted_handling: str           # include/exclude/unknown，退市股票处理（include=含退市至退市日，回测 MUST；exclude=仅存活=生存偏差）
   survivorship_free: bool          # universe 是否无生存偏差（true=含退市+PIT构造；false=仅存活股）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 universes:
   - universe_id: UNI-DYNAMIC-001
@@ -80,6 +95,11 @@ universes:
     pit_constituent_construction: true   # 每日用当日涨停/过滤数据重建（动态池日频重建天然 PIT）
     delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活，回测需注意
     survivorship_free: false             # exclude 退市=有生存偏差，打板短周期影响小但须声明
+    entry_role: "reference"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - universe_id: UNI-RULE-001
     name: Tradable A-Share Universe
@@ -111,6 +131,11 @@ universes:
     pit_constituent_construction: true   # 过滤规则（ST状态/上市天数/成交额）均用当日可得数据
     delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活，回测需注意
     survivorship_free: false             # exclude 退市=有生存偏差，多因子长周期回测须评估影响
+    entry_role: "reference"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - universe_id: UNI-INDEX-001
     name: CSI300 Index Constituents
@@ -136,6 +161,11 @@ universes:
     pit_constituent_construction: false  # ⚠️ components_ref（data/index_constituents/csi300.csv）未落盘，当前无 PIT 历史成分文件，用当前成分回溯=生存偏差
     delisted_handling: unknown           # 指数成分自然含调出股，但本项目无历史成分文件=未确认
     survivorship_free: false             # 无 PIT 成分文件=有生存偏差，回测 CSI300 实证前 MUST 补历史成分
+    entry_role: "reference"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - universe_id: UNI-INDEX-002
     name: CSI800 Index Constituents
@@ -161,6 +191,11 @@ universes:
     pit_constituent_construction: false  # ⚠️ components_ref（data/index_constituents/csi800.csv）未落盘，当前无 PIT 历史成分文件
     delisted_handling: unknown           # 指数成分自然含调出股，但本项目无历史成分文件=未确认
     survivorship_free: false             # 无 PIT 成分文件=有生存偏差，回测 CSI800 实证前 MUST 补历史成分
+    entry_role: "reference"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - universe_id: UNI-RULE-002
     name: Event-Driven Pool
@@ -191,3 +226,8 @@ universes:
     pit_constituent_construction: true   # 事件触发+过滤规则均用当日可得数据（candidate 池，回测验证后确认）
     delisted_handling: exclude           # filter_rules 排除退市风险警示=仅存活
     survivorship_free: false             # exclude 退市=有生存偏差，须声明
+    entry_role: "reference"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
