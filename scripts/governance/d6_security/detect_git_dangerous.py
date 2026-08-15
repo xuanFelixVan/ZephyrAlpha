@@ -97,6 +97,25 @@ def scan_file(filepath: Path) -> list[dict]:
     "扫描单个文件并返回发现列表."
 
 
+def scan_files(file_names: list[str]) -> tuple[list[dict], int, int]:
+    """增量扫描指定文件（pre-commit positional files 传参模式，#69 兼容修复）."""
+    findings: list[dict] = []
+    files_scanned = 0
+    for name in file_names:
+        filepath = Path(name).resolve()
+        if not filepath.is_file():
+            continue
+        if filepath.suffix.lower() not in SCAN_EXTENSIONS_CODE or filepath.name in EXCLUDE_FILES:
+            continue
+        try:
+            filepath.relative_to(REPO_ROOT)
+        except (ValueError, OSError):
+            continue
+        files_scanned += 1
+        findings.extend(scan_file(filepath))
+    return (findings, files_scanned, 0)
+
+
 def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
     """扫描仓库并返回发现列表."""
     if scan_dir is None:
@@ -122,11 +141,12 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
 def main() -> None:
     """入口函数."""
     parser = argparse.ArgumentParser(description="危险 Git 命令检测")
+    parser.add_argument("files", nargs="*", help="待扫描文件（pre-commit positional 传入；为空则全仓扫描）")
     parser.add_argument("--scan-dir", default=None, help="扫描目录")
     parser.add_argument("--warn-only", action="store_true", help="警告模式（不阻断 exit 0）")
     args = parser.parse_args()
     scan_dir = Path(args.scan_dir) if args.scan_dir else None
-    findings, files_scanned, errors = scan_repo(scan_dir)
+    findings, files_scanned, errors = scan_files(args.files) if args.files else scan_repo(scan_dir)
     if findings:
         print(f"\n[GIT-DANGEROUS] {len(findings)} 危险 Git 命令发现（扫描 {files_scanned} 文件）:\n", file=sys.stderr)
         for f in findings:
