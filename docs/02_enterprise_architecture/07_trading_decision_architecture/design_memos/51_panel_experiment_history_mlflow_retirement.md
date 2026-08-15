@@ -5,7 +5,7 @@ title: Panel「实验历史」Tab + MLflow 退役施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.13"
+version: "1.2.14"
 date: 2026-08-16
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
@@ -486,3 +486,4 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 2026-08-12 | 1.2.11 | 作战地图环节映射补强②——锚定 BM-BT-07-G 回测结果对比（§七.P1-4 多 run 横向对比 + C1ComparisonView 双净值） | 映射块补一行，环节级可追溯；不改既有正文 |
 | 2026-08-15 | 1.2.12 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——B2 设计参考尾句过程性叙述删除（注入过程已由 v1.2.2 修订记录承载）；§八.E 三条"这进一步支持 MVP 不做"冗余收尾口号删除（"MVP 不做"裁定在条目内已声明，理由保留） | 8 类扫描 4 处（类别 2 过程性叙述×1、类别 5 冗余修饰×3）；施工步骤/算法/契约/参数零丢失 |
 | 2026-08-16 | 1.2.13 | 施工完成核验注入（头部 v1.2.13 块）：A/B/C 三工作流全部完成实际执行——A=mlflow 代码删除+pip uninstall 3.15.1；B=experiment_history.py 建成+app_panel 第 11 Tab 注册冒烟通过；C=fallback run 重生验证+治理登记完成。53 测试全绿；顺手修复 2 个预存 bug（passed 必填位 TypeError 静默返空/bytes artifact 信息丢失）；偏差注记 2 项（P1-4 节流 value_throttled→value、P0-3 按钮按预案砍）；PNG 退役 pending（条件 3 待用户确认） | 51 号计划闭环——experiment_registry 施工前提（FallbackBackend JSON + Panel experiment_history.py）已达成 |
+| 2026-08-16 | 1.2.14 | 浏览器实测抓 2 个 widget 层 bug 修复：① MultiSelect.options value 放 RunSummary 对象致回调 `TypeError: unhashable`（param.value 返回 value 非 label——options value 改 run_id + by_id 解析 + 契约回归测试锚定，pn=None 测试路径覆盖不到 widget 绑定故施工期未暴露）；② 多选横向对比表 `ReferenceError: Tabulator is not defined`（Tabulator JS 走 CDN，单机离线渲染失败——按 B2 文档备选方案改 plotly go.Table，离线零新增）。Playwright+Chrome 终验：单选双曲线/多选对比表/降级 Alert 全 ✅，控制台零异常；54 测试全绿 | 同 v1.2.13 commit 线追加；另记 IDE 内嵌浏览器会注入 /@vite/client（404 被当 JS 解析→SyntaxError→假白屏），Panel 验证须用 Playwright+本机 Chrome 或常规浏览器 |

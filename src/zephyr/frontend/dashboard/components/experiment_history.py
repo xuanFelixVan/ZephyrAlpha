@@ -390,7 +390,12 @@ def _render_c1_comparison(view: C1ComparisonView) -> Any:
 
 
 def _render_multi_run_comparison(runs: list[RunSummary]) -> Any:
-    """P1-4：多 run 横向对比（行=run，列=sharpe/maxdd/calmar/turnover/passed/时间）。"""
+    """P1-4：多 run 横向对比（行=run，列=sharpe/maxdd/calmar/turnover/passed/时间）。
+
+    用 plotly Table 而非 pn.widgets.Tabulator——Tabulator 前端库走 CDN，单机离线
+    渲染失败（2026-08-16 浏览器实测 ReferenceError: Tabulator is not defined）；
+    plotly 已是项目核心依赖，离线零新增（51 号 B2 文档备选方案）。
+    """
     cols = ["run_name", "start_time", "passed", "sharpe", "maxdd", "calmar", "turnover"]
     rows: list[dict[str, Any]] = []
     for r in runs:
@@ -403,10 +408,22 @@ def _render_multi_run_comparison(runs: list[RunSummary]) -> Any:
             "calmar": r.metrics.get("experiment_calmar", r.metrics.get("baseline_calmar")),
             "turnover": r.metrics.get("experiment_turnover", r.metrics.get("baseline_turnover")),
         })
-    df = pd.DataFrame(rows, columns=cols)
     if pn is None:
         return {"columns": cols, "rows": rows}
-    return pn.widgets.Tabulator(df, disabled=True, sizing_mode="stretch_width", height=480)
+    fig = go.Figure(data=[go.Table(
+        header={
+            "values": [f"<b>{c}</b>" for c in cols],
+            "fill_color": _BG, "font": {"color": _TEXT, "size": 13}, "align": "left",
+        },
+        cells={
+            "values": [[row[c] for row in rows] for c in cols],
+            "fill_color": "#3b3b3b", "font": {"color": _TEXT, "size": 12}, "align": "left",
+            "format": [None, None, None, ".3f", ".3f", ".3f", ".3f"], "height": 26,
+        },
+    )])
+    _dark_layout(fig, height=90 + 30 * len(rows))
+    fig.update_layout(title=f"{len(rows)} 个 run 横向指标对比")
+    return pn.pane.Plotly(fig)
 
 
 def render_experiment_history(data: ExperimentHistoryData) -> dict:
@@ -429,7 +446,13 @@ def render_experiment_history(data: ExperimentHistoryData) -> dict:
         )
         return base
 
-    options = {f"{r.run_name}｜{r.start_time:%m-%d %H:%M}" if r.start_time else r.run_name: r for r in data.runs}
+    # options value 用 run_id（panel 实证：MultiSelect.param.value 返回 options 的 value 列表，
+    # 若 value 放 RunSummary 对象则回调里再索引 options 会 TypeError unhashable——2026-08-16 浏览器实测）
+    options = {
+        f"{r.run_name}｜{r.start_time:%m-%d %H:%M}" if r.start_time else r.run_name: r.run_id
+        for r in data.runs
+    }
+    by_id = {r.run_id: r for r in data.runs}
     selector = pn.widgets.MultiSelect(
         name="实验 run（单选看双净值对比，多选横向指标对比）",
         options=options, size=14, sizing_mode="stretch_width",
@@ -438,7 +461,7 @@ def render_experiment_history(data: ExperimentHistoryData) -> dict:
     def _detail(selection: list[str]) -> Any:
         if not selection:
             return pn.pane.Alert("← 选择 run 查看详情（单选=双净值对比，多选=横向指标表）", alert_type="info")
-        picked = [options[k] for k in selection]
+        picked = [by_id[rid] for rid in selection]
         if len(picked) == 1:
             view = fetch_c1_comparison(picked[0].run_id)
             if view is None:

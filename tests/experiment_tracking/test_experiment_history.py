@@ -226,3 +226,26 @@ class TestRender:
         )
         fig = eh._nav_figure(view)
         assert len(fig.data) == 2  # baseline + experiment
+
+    def test_widget_selection_flow(self, fb_env):
+        """回归（2026-08-16 浏览器实测 bug）：MultiSelect.options 的 value 必须是 run_id
+        （str 可哈希）——param.value 返回 value 列表，若放 RunSummary 对象，回调再索引
+        options 会 TypeError unhashable。锚定契约防回退。"""
+        if eh.pn is None:
+            pytest.skip("panel 未装")
+        rid = _write_run(fb_env.fallback_dir)
+        data = eh.fetch_experiment_history()
+        payload = eh.render_experiment_history(data)
+        layout = payload["_layout"]
+        selector = layout[0][0]
+        # 契约 1：options 的 value 全为 run_id（str）
+        assert set(selector.options.values()) == {r.run_id for r in data.runs}
+        assert all(isinstance(v, str) for v in selector.options.values())
+        # 契约 2：param.value 接受 run_id 选择（浏览器端回传同形）
+        selector.value = [rid]
+        assert selector.value == [rid]
+        # 契约 3：by_id 解析路径不炸（回调核心逻辑）
+        by_id = {r.run_id: r for r in data.runs}
+        picked = [by_id[x] for x in selector.value]
+        view = eh.fetch_c1_comparison(picked[0].run_id)
+        assert view is not None and len(view.verdicts) == 4
