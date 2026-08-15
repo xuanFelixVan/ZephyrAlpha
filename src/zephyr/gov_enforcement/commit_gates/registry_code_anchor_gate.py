@@ -29,8 +29,8 @@
 --------
 1. **fail-open**：subprocess 异常/超时/脚本不存在时放行（环境问题不阻断工作流）。
 2. **fail-closed on violations**：checker exit 1 硬阻断；反查命中引用硬阻断。
-3. **priority=106**：在 GIT-CALL-BUDGET(105) 之后、BARE-SUBPROCESS(108) 之前——
-   引用完整性族（70-76 满员）之外就近落位。
+3. **priority=129**：NO-SECRET-HARDCODE(128) 之后、CAPABILITY-OVERLAP(200) 之前——
+   原定 106，实测被 UNDEFINED-NAME 占用（GateRegistrationError 撞号让位惯例）。
 4. **deprecated/retired 条目豁免**：反查时跳过（tombstone 锚点为历史记录）。
 
 Usage::
@@ -225,4 +225,4 @@ def make_registry_code_anchor_gate() -> GateSpec:
 
         return True, ""
 
-    return GateSpec(gate_id="REGISTRY-CODE-ANCHOR", check=_check, priority=106)
+    return GateSpec(gate_id="REGISTRY-CODE-ANCHOR", check=_check, priority=129)

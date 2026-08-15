@@ -265,7 +265,7 @@ class TestGateSpecFields:
         spec = make_registry_code_anchor_gate()
         assert isinstance(spec, GateSpec)
         assert spec.gate_id == "REGISTRY-CODE-ANCHOR"
-        assert spec.priority == 106
+        assert spec.priority == 129
 
 
 class TestGateTrigger:

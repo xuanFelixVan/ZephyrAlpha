@@ -632,10 +632,10 @@ gates:
 # 业务注册表↔代码分域真源双向索引的存在性校验——双触发：staged 15 业务注册表→
 # checker 校验 code_path/code_symbol 锚点真实存在；staged src/ .py 删除/改名→
 # 反查库条目引用硬阻断（防 13 条存量锚点漂移同族复发）。deprecated/retired 豁免。
-# priority=106（GIT-CALL-BUDGET=105 之后、BARE-SUBPROCESS=108 之前；引用完整性族 70-76 满员就近落位）。
+# priority=129（原 106 实测被 UNDEFINED-NAME 占用，GateRegistrationError 撞号让位；NO-SECRET-HARDCODE=128 之后、CAPABILITY-OVERLAP=200 之前）。
 - gate_id: REGISTRY-CODE-ANCHOR
   module_path: zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate
   factory_function: make_registry_code_anchor_gate
   source: in_process
-  register_line: 0  # priority=106
+  register_line: 0  # priority=129
   enabled: true
