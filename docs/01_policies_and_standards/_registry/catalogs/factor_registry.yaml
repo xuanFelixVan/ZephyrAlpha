@@ -10,6 +10,7 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 ranking（因子主消费方式=截面排序打分）；direction 默认 neutral 为占位，条目内容填入时逐条校正；algorithm_status 推导规则：status∈{deprecated,retired}→not_applicable，code_path 非空→quantized，否则 pending_backtest。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、仓位、信号、出货、分时、利率、动量、压力、反转、吸筹、周期、回撤、因子、均值回归、均线、基准、威科夫、宏观、尾盘、形态、情绪、成交、成本、打板、执行、持续、指数、指标、支撑、放量、散户、数据、斐波那契、早盘、期货、杠杆、止损、波动、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、行业、规则、订单、财报、质量、资金、超买、超跌、趋势、量价、量化、隔夜、集中度、震荡、风控、高频、龙头、龙虎榜
+# applies_to 推导补充（2026-08-15）：全库 universe=UNI-RULE-001（全A可交易池），二跳推导 applies_to=[stock]。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
@@ -26,7 +27,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.1
+version: 1.2.2
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -212,7 +213,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["量价", "均线", "分时", "早盘", "执行", "组合", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -284,7 +285,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "均线", "分时", "均值回归"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -356,7 +357,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "放量", "情绪", "分时", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -428,7 +429,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "分时", "量化", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -500,7 +501,7 @@ factors:
   regime_invalid: []
   direction: "short"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "突破", "缩量", "放量", "分时", "早盘", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -572,7 +573,7 @@ factors:
   regime_invalid: []
   direction: "short"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["背离", "缩量", "放量", "量价", "分时", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -644,7 +645,7 @@ factors:
   regime_invalid: []
   direction: "short"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "缩量", "放量", "均线", "分时", "早盘", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -716,7 +717,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["风控", "质量", "仓位", "分时", "量化", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -788,7 +789,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["背离", "量价", "分时", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -860,7 +861,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "放量", "趋势", "分时", "k线", "形态", "量化", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -932,7 +933,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["趋势", "周期", "分时", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1004,7 +1005,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["量价", "震荡", "分时", "早盘", "量化", "集中度", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1148,7 +1149,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["量价", "均线", "资金", "仓位", "分时", "执行", "成本", "缠论", "指标", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1224,7 +1225,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "趋势", "均线", "资金", "震荡", "成本", "量化", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1296,7 +1297,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "放量", "量价", "均线", "资金", "量化", "规则", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1368,7 +1369,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["缩量", "吸筹", "资金", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1440,7 +1441,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "止损", "k线", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1512,7 +1513,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "均线", "止损", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1584,7 +1585,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "打板", "质量", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1656,7 +1657,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["趋势", "周期", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1728,7 +1729,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "k线", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1872,7 +1873,7 @@ factors:
   regime_invalid: []
   direction: "short"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -1944,7 +1945,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2016,7 +2017,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "缺口", "形态", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2088,7 +2089,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2160,7 +2161,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["趋势", "均线", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2232,7 +2233,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "风控", "超跌", "超买", "量化", "规则", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2304,7 +2305,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["持续", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2376,7 +2377,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["趋势", "波动", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2448,7 +2449,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["波动", "均线", "止损", "震荡", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2520,7 +2521,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["支撑", "压力", "趋势", "均线", "缺口", "回撤", "斐波那契", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2592,7 +2593,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "趋势", "超跌", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2664,7 +2665,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["持续", "放量", "资金", "数据", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2736,7 +2737,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["动量", "均线", "仓位", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2808,7 +2809,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["风控", "震荡", "仓位", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -2884,7 +2885,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "量化", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3028,7 +3029,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "放量", "情绪", "资金", "流动性", "形态", "量化", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3100,7 +3101,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["放量", "量价", "流动性", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3464,7 +3465,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "支撑", "压力", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3536,7 +3537,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "背离", "周期", "分时", "量化", "指标", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3608,7 +3609,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "资金", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3680,7 +3681,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "压力", "量化", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3752,7 +3753,7 @@ factors:
   regime_invalid: []
   direction: "short"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["持续", "突破", "缩量", "出货", "资金", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3824,7 +3825,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "放量", "趋势", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -3896,7 +3897,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "放量", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4184,7 +4185,7 @@ factors:
   regime_invalid: []
   direction: "short"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "突破", "压力", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4256,7 +4257,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["背离", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4328,7 +4329,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["持续", "趋势", "波动", "震荡", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4400,7 +4401,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["缺口", "打板", "k线", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4472,7 +4473,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "突破", "支撑", "压力", "趋势", "均线", "斐波那契", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4544,7 +4545,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "趋势", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4616,7 +4617,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["突破", "支撑", "震荡", "形态", "威科夫", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4688,7 +4689,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "持续", "放量", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4760,7 +4761,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["缺口", "情绪", "资金", "形态", "量化", "信号", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -4908,7 +4909,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "资金", "震荡", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -5704,7 +5705,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6064,7 +6065,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6136,7 +6137,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["事件", "宏观"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6568,7 +6569,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["风控", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6640,7 +6641,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["事件", "流动性"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6712,7 +6713,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["风控", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6788,7 +6789,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "情绪", "资金", "超跌"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -6860,7 +6861,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["情绪", "打板", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7004,7 +7005,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["情绪", "打板", "量化", "信号", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7152,7 +7153,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "震荡", "数据", "杠杆", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7368,7 +7369,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["流动性", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7440,7 +7441,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "仓位", "盘口", "数据", "形态", "散户"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7512,7 +7513,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "仓位", "高频", "数据", "缠论", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7584,7 +7585,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["持续", "资金", "流动性"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7656,7 +7657,7 @@ factors:
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "龙虎榜", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7872,7 +7873,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "震荡", "数据", "散户", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -7944,7 +7945,7 @@ factors:
   regime_invalid: []
   direction: "long"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["资金", "流动性", "因子", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -8016,7 +8017,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["情绪", "流动性", "震荡", "散户", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
@@ -8088,7 +8089,7 @@ factors:
   regime_invalid: []
   direction: "both"
   entry_role: "ranking"
-  applies_to: []
+  applies_to: ["stock"]
   tags: ["反转", "资金", "流动性", "杠杆", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
