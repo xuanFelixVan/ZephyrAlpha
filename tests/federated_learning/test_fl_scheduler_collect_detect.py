@@ -21,8 +21,8 @@ from zephyr.feedback_loop.diagnosers.reliability.guard_self_consistency_auditor 
 from zephyr.feedback_loop.diagnosers.reliability.numerical_stability_guard import NumericalStabilityGuard
 from zephyr.feedback_loop.diagnosers.health.self_bottleneck_detector import SelfBottleneckDetector
 from zephyr.feedback_loop.diagnosers.diagnosis.statistical_hygiene_auditor import StatisticalHygieneAuditor
-from zephyr.feedback_loop.feedback_collector import FeedbackCollector
-from zephyr.feedback_loop.metrics_collector import MetricsCollector, MetricSnapshot
+from zephyr.feedback_loop.collectors.feedback_collector import FeedbackCollector
+from zephyr.feedback_loop.collectors.metrics_collector import MetricsCollector, MetricSnapshot
 from zephyr.feedback_loop.scheduler_collect_detect import CollectDetectHandler
 
 

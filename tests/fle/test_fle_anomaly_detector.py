@@ -19,10 +19,10 @@ from zephyr.feedback_loop.detectors.anomaly.anomaly_detector import (
     AnomalyDetector,
     AnomalyEvent,
 )
-from zephyr.feedback_loop.feedback_collector import (
+from zephyr.feedback_loop.collectors.feedback_collector import (
     FeedbackCollector,
 )
-from zephyr.feedback_loop.metrics_collector import (
+from zephyr.feedback_loop.collectors.metrics_collector import (
     MetricsCollector,
     MetricSnapshot,
 )
