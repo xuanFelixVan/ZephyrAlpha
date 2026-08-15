@@ -70,7 +70,7 @@ scope: 07_trading_decision_architecture
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
 | [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 代码待落地 #ARCH-QUANT-003） | active v1.7.4 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
-| [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.0.0（2026-08-12 重建） |
+| [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.1.0（2026-08-15 三件套+阈值注册表施工） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 18业务注册表施工（registry_of_registries） | active v1.32.0 |
@@ -465,7 +465,7 @@ scope: 07_trading_decision_architecture
 | 产出物 | `55_monitoring_review.md` |
 | 对标 | 机构 PM 周报 / 风控周报 |
 | 正交性 | ✅ 与 regime 正交 |
-| 状态 | ✅ active v1.0.0（2026-08-12 重建，6a4f5392） |
+| 状态 | ✅ active v1.1.0（2026-08-15 三件套+阈值注册表施工，AI-MON-001） |
 | 优先级 | P5 |
 
 ---
