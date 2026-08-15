@@ -5,7 +5,7 @@ title: 合规与交易纪律体系
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.0"
+version: "1.0.1"
 date: 2026-08-15
 topic: compliance_discipline
 scope: 07_trading_decision_architecture
