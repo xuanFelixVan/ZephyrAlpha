@@ -239,6 +239,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 79 | AGENTS.md 速查表 REG-ATH-001 未加（PROTECTED-PATHS #9/#41 通道） | AI-MON-001 | **裁定=加入"关键 registry 速查"区**（非 18 业务资产表区——保持 18 计数语义不破；REG-ATH-001 owned_by=governance 非业务资产）；Owner 指令即审批（同 #83 先例），[ARCH-APPROVAL:ARCH-MON-001] 标记落地 | ✅ 已闭环（2026-08-15） |
 | 80 | merge 执行人职责：blueprint_registry/battle_map 重生成 + 3 节点转正核验 + 与 SIM-001/RCAN-001 的 00_index/memo 冲突甄别 | AI-MON-001 | 属 merge 会话职责（#ARCH-70 通道），本批登记不执行 | ⏳ merge 会话执行 |
 | 81 | 观察项两则：①DRIFT-WATCHDOG 判 add_module_translation.py 合法写为漂移 ②GATE-RULE-AUDIT 60s 超时 | AI-MON-001 | ①**实证修正归因框架**：reconcile_execution_log 显示 module_translation_registry 15:32-15:45 内容乒乓三写后自愈——watchdog 按设计捕获真实写冲突存证，非误报；worktree 内脚本写本就不触达主仓锚定的 watchdog，真实缺口=merge 事务窗/live-claim 两授权通道缺失，立 #ARCH-DRIFT-AUTH-001（fail-open 告警+自愈兜底中，降噪增强非紧急）；②**已闭环无需动作**：86184ba5ec 超时 60→180s（AI-TMO-001 已 merge dev 5357ca9b62） | ✅ 已闭环（2026-08-15 裁定） |
+| 82 | 网关 adopt-prior-work 空基线疑似未持久化致 FOREIGN-CHANGE 重复拦截 | AI-MON-001 提交实证（3f13a77d 前置） | 序列实证：①claim（无 adopt）→快照 json 落真基线→commit 被 FOREIGN-CHANGE 拦（符合设计）；②claim --adopt-prior-work（_adopted.jsonl 21 条审计齐全）→空基线应覆盖；③commit 仍按**真基线**拦同 20 文件——疑 save_session_snapshot 静默失败或失败路径删 json 致旧基线残留（事后 json 缺失、仅余 _adopted.jsonl）；④事后对照实验（净文件 claim）快照正常落盘（空基线格式实证）——单发未复现，根因待专项复现确认。绕行=--allow-overlap  sanctioned 逃生（e6edcf76 本批前序 commit 同路径，审计标记齐全）。注：本批 commit 消息含 [ARCH-APPROVAL:ARCH-MON-001]（AGENTS.md+architecture_model/ 受保护路径审批标记） | ⏳ 待专项复现（非阻塞，逃生通道畅通） |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
