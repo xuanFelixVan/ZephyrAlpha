@@ -63,6 +63,15 @@ _TBL_FUTURES_TERM = get_registry().table("market_futures_term")
 # 2026-08-14 东财反爬治本：ETF 净值替代源（fund_etf_fund_info_em 持续返回空）
 _TBL_ETF_NAV = get_registry().table("market_etf_nav")
 _TBL_ETF_LIST = get_registry().table("market_etf_list")
+# 2026-08-16 JOB-083：ST 历史状态名称变更推导回填（tushare namechange 全量历史 →
+# ST 区间 → 变化日快照合成，补齐 DS-085 首个实盘快照日前的历史段）
+_TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
+# JOB-083 SQL（§5.160.2 SQL 集中化：裸 SQL 字面量禁入方法体，NO-BARE-SQL gate）
+_SQL_ST_LIVE_SEAM = "SELECT min(trade_date) FROM {table} WHERE data_source='akshare'"
+_SQL_KLINE_TRADE_DAYS = (
+    "SELECT DISTINCT trade_date FROM c1_market.kline_daily "
+    "WHERE trade_date>='{start}' AND trade_date<='{end}' ORDER BY trade_date"
+)
 
 # 具体期货合约代码：品种字母 + 到期数字(3~4位) + 交易所后缀；连续合约(如 IC.CFX/TL0.CFX)无到期数字被剔除
 _FUT_CONTRACT_RE = re.compile(r"^([A-Za-z]{1,4})(\d{3,4})\.([A-Za-z]{2,5})$")
@@ -83,7 +92,7 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow", "futures_term_structure", "etf_nav"],
+        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow", "futures_term_structure", "etf_nav", "st_namechange_backfill"],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -147,6 +156,8 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_futures_term_structure(payload, policy)
         elif capability == "etf_nav":
             yield from self._fetch_etf_nav(payload, policy)
+        elif capability == "st_namechange_backfill":
+            yield from self._fetch_st_namechange_backfill(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
@@ -737,3 +748,246 @@ class TushareProvider(IngestProviderBase):
                 total_assets = None
             rows.append((nav_date, ts_code, nav, total_assets, "tushare"))
         return rows
+
+    # ---- JOB-083：ST 历史状态名称变更推导回填（DS-085 历史段）----
+
+    @staticmethod
+    def _st_type_of(name: str) -> str | None:
+        """名称 → ST 类型（*ST 优先，否则 ST）；非 ST 名称返回 None（覆盖 SST/*SST 变体）。"""
+        upper = name.upper()
+        if "ST" not in upper:
+            return None
+        return "*ST" if "*ST" in upper else "ST"
+
+    @staticmethod
+    def _ts_code_to_a_share6(ts_code: str) -> str | None:
+        """tushare ts_code → 6 位裸码；仅 A 股板块（60/68/00/30/43/83/87/88/920，
+        对齐 AkshareIngestProvider._board_of_a_share 口径——provider 间不交叉 import
+        故本地镜像规则），后缀必须 SH/SZ/BJ（防异长代码 zfill 串号，对标 JOB-077
+        港股 5 位代码误撞深主板 00 前缀实证）。"""
+        parts = ts_code.strip().split(".")
+        if len(parts) != 2 or parts[1].upper() not in ("SH", "SZ", "BJ"):
+            return None
+        code = parts[0].zfill(6)
+        if code.startswith(("60", "68", "00", "30", "43", "83", "87", "88", "920")):
+            return code
+        return None
+
+    @staticmethod
+    def _parse_yyyymmdd(val) -> datetime.date | None:
+        """YYYYMMDD 或 YYYY-MM-DD 字符串 → date；NaN/脏值返回 None。"""
+        s = str(val or "").strip()
+        if len(s) == 8 and s.isdigit():
+            try:
+                return datetime.date(int(s[:4]), int(s[4:6]), int(s[6:8]))
+            except ValueError:
+                return None
+        if len(s) >= 10:
+            try:
+                return datetime.date.fromisoformat(s[:10])
+            except ValueError:
+                return None
+        return None
+
+    def _derive_st_intervals(self, df) -> list[tuple]:
+        """namechange DataFrame → ST 区间列表 [(code6, name, st_type, start, end|None)]。
+
+        名称含 ST 即 ST 区间（含 *ST/SST 等变体）；start/end 为 tushare 名称生效
+        日期（end None=持续至今）。起始日不可解析的行丢弃并记 warning。
+        """
+        intervals: list[tuple] = []
+        n_bad = 0
+        if df is None or df.empty:
+            return intervals
+        for _, r in df.iterrows():
+            name = str(r.get("name") or "").strip()
+            st_type = self._st_type_of(name)
+            if not st_type:
+                continue
+            code6 = self._ts_code_to_a_share6(str(r.get("ts_code") or ""))
+            if not code6:
+                continue
+            start = self._parse_yyyymmdd(r.get("start_date"))
+            if start is None:
+                n_bad += 1
+                continue
+            intervals.append((code6, name, st_type, start, self._parse_yyyymmdd(r.get("end_date"))))
+        if n_bad:
+            self._log.warning(f"namechange 起始日期不可解析丢弃 {n_bad} 行")
+        return intervals
+
+    def _synthesize_st_snapshots(
+        self,
+        intervals: list[tuple],
+        trade_days: list[datetime.date],
+    ) -> list[tuple]:
+        """ST 区间 + 交易日历 → 变化日全量快照行（事件扫描法）。
+
+        每个交易日 t：active=区间覆盖 t 的代码集；与上一交易日不同则产出 t 当日
+        全量快照。区间起止日落非交易日时顺延到下一交易日生效。全空快照不产出
+        （无行可写；2020 后 A 股 ST 集合恒非空，可忽略）。
+        行: (trade_date, symbol, name, st_type, data_source='tushare_namechange_derived')。
+        """
+        import bisect
+
+        def next_td(d: datetime.date) -> datetime.date | None:
+            i = bisect.bisect_left(trade_days, d)
+            return trade_days[i] if i < len(trade_days) else None
+
+        events: dict[datetime.date, list[tuple]] = {}
+        for code6, name, st_type, start, end in intervals:
+            s_td = next_td(start)
+            if s_td is None:
+                continue
+            events.setdefault(s_td, []).append((code6, (name, st_type)))
+            if end is not None:
+                e_td = next_td(end + datetime.timedelta(days=1))
+                if e_td is not None:
+                    events.setdefault(e_td, []).append((code6, None))
+        rows: list[tuple] = []
+        active: dict[str, tuple] = {}
+        prev_keys: frozenset = frozenset()
+        for t in trade_days:
+            for code6, payload in events.get(t, ()):
+                if payload is None:
+                    active.pop(code6, None)
+                else:
+                    active[code6] = payload
+            keys = frozenset(active.keys())
+            if keys != prev_keys:
+                rows.extend(
+                    (t.isoformat(), c, v[0], v[1], "tushare_namechange_derived")
+                    for c, v in sorted(active.items())
+                )
+                prev_keys = keys
+        return rows
+
+    def _live_st_seam_date(self, _chr, extra: dict) -> datetime.date | None:
+        """首个实盘 ST 快照日（st_stock_list 中 data_source='akshare' 的 min(trade_date)）。
+
+        extra['seam_date']（YYYY-MM-DD）可显式覆盖（重跑/回放场景）。
+        """
+        override = str(extra.get("seam_date") or "").strip()
+        if override:
+            try:
+                return datetime.date.fromisoformat(override[:10])
+            except ValueError:
+                return None
+        try:
+            tsv = _chr.query(_SQL_ST_LIVE_SEAM.format(table=_TBL_ST_STOCK_LIST))
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"实盘 ST 快照接缝日查询失败: {e}")
+            return None
+        first = (tsv or "").strip().split("\n")[0].strip()
+        d = self._parse_yyyymmdd(first)
+        return None if d is None or d.year <= 1971 else d
+
+    def _load_trade_days(
+        self, _chr, start: datetime.date, end: datetime.date
+    ) -> list[datetime.date]:
+        """交易日历：c1_market.kline_daily DISTINCT trade_date（对标 suspend K线推导）。"""
+        tsv = _chr.query(
+            _SQL_KLINE_TRADE_DAYS.format(start=start.isoformat(), end=end.isoformat())
+        )
+        days: list[datetime.date] = []
+        for line in (tsv or "").strip().split("\n"):
+            d = self._parse_yyyymmdd(line)
+            if d is not None:
+                days.append(d)
+        return days
+
+    def _fetch_namechange_paged(self, policy: SourcePolicy, from_year: int = 1990):
+        """namechange 逐年分页拉取 + 合并去重。
+
+        无参调用被 tushare 默认截断至 10000 行（2026-08-16 实证：恰好 10000，
+        致 43 只 2025-26 新戴帽股丢失）——按 [year0101, year1231] 分页（单年
+        行数远低上限），from 1990 起覆盖全量历史（含窗口前起始但延伸入窗口的
+        ST 区间）。单年失败记 warning 继续（部分覆盖优于截断缺失）。
+        """
+        import pandas as pd
+
+        frames = []
+        this_year = datetime.date.today().year
+        for year in range(from_year, this_year + 1):
+            try:
+                df_y = self._call_with_policy(
+                    self._pro.namechange, policy,
+                    start_date=f"{year}0101", end_date=f"{year}1231",
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"namechange {year} 年拉取失败: {e}")
+                continue
+            if df_y is not None and len(df_y):
+                frames.append(df_y)
+        if not frames:
+            return None
+        return pd.concat(frames).drop_duplicates(subset=["ts_code", "name", "start_date"])
+
+    def _fetch_st_namechange_backfill(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """ST 历史状态回填（DS-085 历史段，JOB-083），写入 c1_market.st_stock_list。
+
+        源：tushare pro.namechange 名称变更历史，逐年分页拉取（无参调用被默认
+        截断至 10000 行，2026-08-16 实证）合并去重，1990 起全量覆盖。推导：名称
+        含 ST 的生效区间 → 事件扫描合成"ST 集合变化日"全量快照。接缝：仅产出
+        早于首个实盘快照日（实证 2026-08-10）的快照，与实盘行键零碰撞；实盘日起
+        由 JOB-077 日任务覆盖。幂等：同窗重跑 ReplacingMergeTree 按键替换（月度
+        静态层任务幂等刷新纠偏）。PIT：生效日语义（start/end_date），非公告日
+        （ann_date）——撮合约束关心"当日是否按 ST 规则交易"。已知限制：tushare
+        历史数据截止 2024-08 的 known_issue 不适用于 namechange（实证含 2026-08
+        当日变更）；退市时无更名事件的个股区间无终点（残留进推导集，退市股无
+        K线/不在 universe，消费侧不受影响——残留规模见 registry evidence）。
+        """
+        table = _TBL_ST_STOCK_LIST
+        columns = ["trade_date", "symbol", "name", "st_type", "data_source"]
+        t0 = time.monotonic()
+        win_start = payload.start or datetime.date(2020, 1, 1)  # DS-085 valid_since
+        extra = payload.extra or {}
+
+        from zephyr.data import ch_reader as _chr
+
+        seam = self._live_st_seam_date(_chr, extra)
+        if seam is None:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="实盘 ST 快照接缝日缺失（st_stock_list 无 akshare 行或 CH 不可达）",
+            )
+            return
+        win_end = seam - datetime.timedelta(days=1)
+        if win_end < win_start:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0,
+            )
+            return
+
+        df = self._fetch_namechange_paged(policy)
+        intervals = self._derive_st_intervals(df)
+        # 区间裁剪到窗口 [win_start, win_end]（跨入窗口的截断边界）
+        clipped = [
+            (c, n, t, max(s, win_start), e if e is None else min(e, win_end))
+            for c, n, t, s, e in intervals
+            if not (e is not None and e < win_start) and s <= win_end
+        ]
+        try:
+            trade_days = self._load_trade_days(_chr, win_start, win_end)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"交易日历加载失败: {e}",
+            )
+            return
+        rows = self._synthesize_st_snapshots(clipped, trade_days) if trade_days else []
+        self._log.info(
+            f"st_namechange_backfill: namechange {0 if df is None else len(df)} 行 → "
+            f"ST 区间 {len(intervals)} → 窗口内 {len(clipped)} → 快照行 {len(rows)}"
+            f"（{win_start}~{win_end}，接缝 {seam}）"
+        )
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=rows[-1][0] if rows else "",
+            elapsed_sec=time.monotonic() - t0,
+        )
