@@ -16831,3 +16831,14 @@ entries:
   related_rules: '43_compliance_discipline.md; #ARCH-COMPLIANCE-001（proposed 关联）; #ARCH-BREG-001（登记表扩展同族）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-BREG-002'
+  title: 业务注册表↔代码分域真源双向索引——code_symbol/code_fingerprint 两字段（schema v2.1）+ 锚点存在性校验门禁（门禁A）立项
+  severity: P1高
+  category: governance_mechanism_gap
+  adjudication: '2026-08-15 用户裁定（按此推进）。病根：18 个业务注册表 code_path 仅到文件级且无存在性校验门禁（data_asset 已有 13 条存量锚点漂移实证），库↔代码无双向索引，algorithm_status=quantized 无机制保证代码真实存在。裁定模型=分域真源（非双真源双写）：算法实现域（params/公式/输出列）owner=代码，业务语义域（tags/regime/direction/applies_to）与治理评估域（status/evidence/algorithm_status）owner=库；设计态（代码未建）实现域 owner 暂为库，代码落地后经 code_symbol 锚定移交。四项机制：(1) code_symbol 字段（库→代码符号级锚点，格式 <relative_path>::<function_or_class>）；(2) code_fingerprint 字段（代码侧实现 canonical hash 快照，reconciler 对账漂移告警，不自动双写）；(3) 门禁A=code_path/code_symbol 存在性校验（代码改名/删除→depgraph 反查引用库条目，硬阻断或强制同步）；(4) 门禁B=指纹对账 reconciler（后续批）。时机：factor/strategy 111+59 条 deprecated 重填之日即两字段回填之时，零存量包袱。'
+  impact: "变更文件： - 'docs/01_policies_and_standards/_registry/catalogs/{factor,strategy,technical_indicator,universe,benchmark,cost_model,execution_algo,risk_limit,data_asset,chart_pattern,field_dictionary,experiment,model,regime_cycle,portfolio_model}_registry.yaml + field_dictionary.yaml（schema v2.1 两字段，15 库）' - 'scripts/governance/d5_architecture/checkers/check_registry_code_anchor.py（门禁A checker，后续批新建）' - 'src/zephyr/gov_enforcement/commit_gates/（门禁A in-process gate 注册，后续批）'"
+  fix_phase: 'schema v2.1 两字段已落（2026-08-15 本批，15 库 entry_schema+条目 null 占位）；门禁A checker 与指纹扫描器留后续批施工'
+  status: decided
+  related_rules: '#ARCH-BREG-001（18 业务注册表母议题）; #ARCH-70（worktree merge 通道）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
