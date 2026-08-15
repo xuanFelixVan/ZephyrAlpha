@@ -203,7 +203,7 @@ class CapabilityContract:
 | MiniQmtIngestProvider | miniqmt_provider.py | 行情/财务/板块/期权Greeks/港股/美股 | single_thread+进程依赖；非交易日跳过(trading_day_only) |
 | AkshareIngestProvider | akshare_provider.py | 分红/质押/解禁/宏观/股东/涨跌停/生猪/板块/市场元数据约束(stock_basic/stk_limit/suspend_status，JOB-077) | 60RPM 限流；断 VPN；东财反爬 3 次跳过 |
 | BaostockProvider | baostock_provider.py | K线/财务/交易日历/指数成分 | thread_local（每线程独立 bs.login）；数据滞后1周 |
-| TushareProvider | tushare_provider.py | 行业分类/新闻 | token 积分制；新闻 API 已废弃(disabled) |
+| TushareProvider | tushare_provider.py | 行业分类/新闻/ST名称变更回填(st_namechange_backfill，JOB-083) | token 积分制；新闻 API 已废弃(disabled)；namechange 无参截断 10000 行需逐年分页 |
 | TickFlowProvider | tickflow_provider.py | 美股/港股 K线 | 60RPM 限流 |
 | TDXProvider | tdx_provider.py | 880xxx 板块分钟K线 | mootdx TCP 直连盘中实时；bestip 自动选最快 |
 | TqcenterProvider | tqcenter_provider.py | 880xxx 板块日K/成分股/快照 | 需通达信进程；2026-07-30 升自动调度 |

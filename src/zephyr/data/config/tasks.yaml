@@ -1298,6 +1298,23 @@ tasks:
     description: "ST状态盘前快照（DS-085：SH主板+科创板+SZ名称过滤，盘前供universe过滤）"
     trading_day_only: true
 
+  # JOB-083（DS-085 历史段，2026-08-16）：tushare namechange 名称变更推导 ST 历史区间，
+  # 合成"ST 集合变化日"全量快照（data_source=tushare_namechange_derived），仅产出
+  # 首个实盘快照日（2026-08-10）前的历史段，与实盘行键零碰撞；月初幂等重放纠偏。
+- task_id: st_namechange_backfill
+  table: c1_market.st_stock_list
+  source: tushare
+  schedule: monthly_static
+  incremental: false    # 全量推导重放（同窗 ReplacingMergeTree 按键幂等替换）
+  date_col: trade_date
+  dependencies: []
+  capability: st_namechange_backfill
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "ST历史状态名称变更推导回填（JOB-083/DS-085历史段：tushare namechange→ST区间→变化日快照，补齐 2026-08-10 前历史）"
+    trading_day_only: false
+
 - task_id: suspend_status_premarket
   table: c1_market.suspend
   source: akshare

@@ -8,6 +8,7 @@
 import datetime
 import sys
 import pytest
+import pandas as pd
 from unittest.mock import MagicMock
 
 from src.zephyr.data.provider_base import FetchPayload, FetchResult
@@ -21,6 +22,7 @@ from src.zephyr.data.implementations.tqcenter_provider import (
     TQCenterProvider,
     _safe_val as tq_safe_val,
 )
+from src.zephyr.data.implementations.tushare_provider import TushareProvider
 
 
 # ============== AkshareIngestProvider 测试 ==============
@@ -947,3 +949,149 @@ class TestAKShareData015Capabilities:
         assert [r.rows[0][1] for r in results] == [
             "000300.SH", "000905.SH", "000852.SH", "000985.SH",
         ]
+
+
+# ============== TushareProvider ST 名称变更回填（JOB-083，DS-085 历史段）==============
+
+class TestTushareStNamechange:
+    """ST 历史状态名称变更推导回填：区间推导 + 变化日快照合成 + 接缝路由。"""
+
+    def test_st_type_of(self):
+        f = TushareProvider._st_type_of
+        assert f("ST海虹") == "ST"
+        assert f("*ST中天") == "*ST"
+        assert f("S*ST光明") == "*ST"
+        assert f("SST前锋") == "ST"
+        assert f("浦发银行") is None
+        assert f("退市苏吴") is None
+        assert f("") is None
+
+    def test_ts_code_to_a_share6(self):
+        f = TushareProvider._ts_code_to_a_share6
+        assert f("600000.SH") == "600000"
+        assert f("000001.SZ") == "000001"
+        assert f("300750.SZ") == "300750"
+        assert f("688001.SH") == "688001"   # 科创板有 ST 实例（JOB-077 实盘快照实证 13 只）
+        assert f("830799.BJ") == "830799"
+        assert f("00700.HK") is None    # 港股后缀排除
+        assert f("ABCDEF") is None      # 无后缀排除
+        assert f("139001.SZ") is None   # 非 A 股板块前缀排除
+
+    def test_parse_yyyymmdd(self):
+        f = TushareProvider._parse_yyyymmdd
+        assert f("19980615") == datetime.date(1998, 6, 15)
+        assert f("2020-01-02") == datetime.date(2020, 1, 2)
+        assert f("") is None and f(None) is None and f("nan") is None
+        assert f("20201340") is None  # 非法月日（8 位数字）→ None 不崩溃
+
+    def test_derive_st_intervals(self):
+        df = pd.DataFrame({
+            "ts_code": ["600000.SH", "000503.SZ", "688001.SH", "300750.SZ", "600001.SH"],
+            "name": ["浦发银行", "ST海虹", "ST科创", "*ST宁德", "SST坏日期"],
+            "start_date": ["20100101", "19980615", "20210101", "20200101", "baddate"],
+            "end_date": [None, "20000320", None, "20201231", None],
+        })
+        intervals = TushareProvider()._derive_st_intervals(df)
+        # 600000 非 ST 剔除；600001 起始日不可解析剔除；688001 科创板保留
+        assert intervals == [
+            ("000503", "ST海虹", "ST", datetime.date(1998, 6, 15), datetime.date(2000, 3, 20)),
+            ("688001", "ST科创", "ST", datetime.date(2021, 1, 1), None),
+            ("300750", "*ST宁德", "*ST", datetime.date(2020, 1, 1), datetime.date(2020, 12, 31)),
+        ]
+
+    def test_synthesize_change_day_snapshots(self):
+        days = [
+            datetime.date(2020, 1, 2), datetime.date(2020, 1, 3),
+            datetime.date(2020, 1, 6), datetime.date(2020, 1, 7),
+        ]
+        intervals = [
+            ("600001", "ST甲", "ST", datetime.date(2020, 1, 2), datetime.date(2020, 1, 6)),
+            # 01-04 为周六 → 顺延 01-06（一）生效；end None=持续
+            ("600002", "*ST乙", "*ST", datetime.date(2020, 1, 4), None),
+        ]
+        rows = TushareProvider()._synthesize_st_snapshots(intervals, days)
+        by_date: dict[str, dict] = {}
+        for td, sym, name, st_type, src in rows:
+            by_date.setdefault(td, {})[sym] = (name, st_type, src)
+        # 01-03 集合无变化不产出；01-06 乙戴帽；01-07 甲摘帽（01-06 为最后 ST 日）
+        assert set(by_date.keys()) == {"2020-01-02", "2020-01-06", "2020-01-07"}
+        assert set(by_date["2020-01-02"]) == {"600001"}
+        assert set(by_date["2020-01-06"]) == {"600001", "600002"}
+        assert set(by_date["2020-01-07"]) == {"600002"}
+        assert by_date["2020-01-02"]["600001"] == ("ST甲", "ST", "tushare_namechange_derived")
+
+    def _wired_provider(self, monkeypatch, namechange_df, ch_fake):
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.namechange = MagicMock(return_value=namechange_df)
+        pro.namechange.__name__ = "namechange"
+        p._pro = pro
+        import zephyr.data.ch_reader as provider_ch_reader
+        monkeypatch.setattr(provider_ch_reader, "query", ch_fake)
+        return p
+
+    def test_fetch_route_and_seam(self, monkeypatch):
+        df = pd.DataFrame({
+            "ts_code": ["000503.SZ"], "name": ["ST海虹"],
+            "start_date": ["20200102"], "end_date": ["20200110"],
+            "ann_date": ["20191231"], "change_reason": ["ST"],
+        })
+
+        def fake_query(sql, timeout=0):
+            if "min(trade_date)" in sql:
+                return "2020-01-20"  # 实盘快照接缝日 → 回填窗口 [01-01, 01-19]
+            if "DISTINCT trade_date" in sql:
+                return "\n".join(
+                    f"2020-01-{d:02d}" for d in (2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17)
+                )
+            return ""
+
+        p = self._wired_provider(monkeypatch, df, fake_query)
+        payload = FetchPayload(
+            table="", symbols=None,
+            start=datetime.date(2020, 1, 1), end=None,
+            extra={"capability": "st_namechange_backfill"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1 and not results[0].error
+        # 区间 [01-02, 01-10]：01-02 生效产出快照；01-10(五) 最后 ST 日，
+        # 01-13(一) 集合变空 → 全空快照不产出（文档化限制）
+        assert results[0].rows == [
+            ("2020-01-02", "000503", "ST海虹", "ST", "tushare_namechange_derived")
+        ]
+        assert results[0].last_key == "2020-01-02"
+
+    def test_seam_missing_yields_error_not_crash(self, monkeypatch):
+        p = self._wired_provider(monkeypatch, pd.DataFrame(), lambda sql, timeout=0: "")
+        payload = FetchPayload(
+            table="", symbols=None, start=None, end=None,
+            extra={"capability": "st_namechange_backfill"},
+        )
+        results = list(p.fetch(payload, SourcePolicy()))
+        assert len(results) == 1
+        assert results[0].error and "接缝" in results[0].error
+
+    def test_namechange_paged_concat_dedup(self, monkeypatch):
+        # 无参调用被 tushare 截断至 10000 行（2026-08-16 实证）——逐年分页合并去重
+        def nc(start_date=None, end_date=None, **kw):
+            year = int(str(start_date)[:4])
+            if year in (2020, 2021):  # 跨年页重复行 → 必须去重
+                return pd.DataFrame({
+                    "ts_code": ["000503.SZ"], "name": ["ST海虹"],
+                    "start_date": ["20200102"], "end_date": [None],
+                })
+            return pd.DataFrame()
+
+        p = TushareProvider()
+        p._connected = True
+        pro = MagicMock()
+        pro.namechange = MagicMock(side_effect=nc)
+        pro.namechange.__name__ = "namechange"
+        p._pro = pro
+        df = p._fetch_namechange_paged(
+            MagicMock(rpm=0, max_retries=0, retry_on=[], initial_wait_sec=0, backoff="fixed"),
+            from_year=2020,
+        )
+        assert len(df) == 1
+        assert df.iloc[0]["name"] == "ST海虹"

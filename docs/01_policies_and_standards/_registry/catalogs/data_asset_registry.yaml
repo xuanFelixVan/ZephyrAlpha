@@ -3505,7 +3505,7 @@ datasets:
   tags: ["数据", "绩效"]
   algorithm_status: "not_applicable"
   evidence: "2026-08-15 联调实证：c1_market.stock_basic 单日快照 5208 行（SH主板+科创板+SZ），回读抽验 600000/000001/300750/688001 板块与上市日期正确；2026-08-15 二审修复：SH 行业补全增巨潮个股资料降级链（东财全站封锁期实证可达），8-14 快照 2295 行 SH 行业经重跑幂等替换回补（残留 17 行为巨潮无资料个股，次日重试覆盖），口径=巨潮/证监会行业（与 SZ 交易所清单口径并存）"
-  code_symbol: "AkshareIngestProvider._fetch_stock_basic"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_stock_basic"
   code_fingerprint: null
 
 - dataset_id: DS-082
@@ -3542,7 +3542,7 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: "2026-08-15 联调实证：c1_market.stk_limit 单日快照 5205 行，回读抽验 600000 涨停价 10.10 与前收×1.10 手算一致；分档规则主板10%/ST5%/创业板20%/科创板20%/北交所30%，新股无涨跌幅期留空；按交易日生效日落库（PIT strict）"
-  code_symbol: "AkshareIngestProvider._fetch_stk_limit"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_stk_limit"
   code_fingerprint: null
 
 - dataset_id: DS-083
@@ -3579,7 +3579,7 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: "2026-08-15 联调实证：东财反爬封锁→百度停复牌公告兜底生效，港股 5 位代码双门禁排除；K线缺口推导模式（derive_from_kline）供历史回填；2026-08-15 二审修复：百度 feed 实证冻结于 2025-11-26（当时 6 行快照中 3 行标的当日 K 线正常交易=假停牌），_suspend_rows_from_baidu 增三重陈旧过滤（源站是否跳过/复牌日≤快照日/公告日期>30天），宁可快照空缺不写假停牌约束；存量 6 行已 mutation 清除，实盘重跑验证过滤全命中（跳过3/复牌1/陈旧1→0行）"
-  code_symbol: "AkshareIngestProvider._fetch_suspend_status"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_suspend_status"
   code_fingerprint: null
 
 - dataset_id: DS-084
@@ -3616,7 +3616,7 @@ datasets:
   tags: ["指数", "数据"]
   algorithm_status: "not_applicable"
   evidence: "2026-08-15 联调实证：c1_market.index_constituent 四指数（300/500/1000/中证全指）6926 行，真实权重（300750 4.012%/600519 3.239% 中证官网月末权重快照）；落库复用既有 SCD-2 表"
-  code_symbol: "AkshareIngestProvider._fetch_index_constituent"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_index_constituent"
   code_fingerprint: null
 
 - dataset_id: DS-085
@@ -3638,7 +3638,7 @@ datasets:
   status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-15'
+  updated_at: '2026-08-16'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3652,8 +3652,8 @@ datasets:
   applies_to: ["market"]
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: "2026-08-15 联调实证：c1_market.st_stock_list 当日快照 203 行（扩展补科创板清单，原漏科创板ST）；落库复用既有日快照表，戴帽/摘帽由快照序列派生；2026-08 前历史快照缺口由既有任务积累 + stk_limit 按最近可得（≤T）快照取ST标记（PIT严格）"
-  code_symbol: "AkshareIngestProvider._fetch_st_stock_list"
+  evidence: "2026-08-15 联调实证：c1_market.st_stock_list 当日快照 203 行（扩展补科创板清单，原漏科创板ST）；落库复用既有日快照表，戴帽/摘帽由快照序列派生；2026-08-16 JOB-083 闭合历史段：tushare namechange 逐年分页→ST 生效区间→变化日全量快照 450 个/109902 行（2020-01-02~2026-08-07，data_source=tushare_namechange_derived，接缝实盘首快照 2026-08-10 键零碰撞），stk_limit 按最近可得（≤T）快照取 ST 标记（PIT 严格）消费侧零改动；已知残留：退市无更名个股区间无终点 121 只留推导集（无 K 线不触达消费侧）、摘帽残留个例"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_st_stock_list"
   code_fingerprint: null
 
 - dataset_id: DS-086
@@ -6517,7 +6517,7 @@ jobs:
   tags: ["指数", "执行", "股票池", "数据"]
   algorithm_status: "not_applicable"
   evidence: "2026-08-15 全链路联调 PASS（拉取→落库→回读）：stock_basic 5208行/stk_limit 5205行（600000 涨停10.10 手算一致）/suspend 5行（东财→百度兜底）/index_constituent 四指数6926行含真实权重/st_stock_list 203行（补科创板）；调度：pre_market(08:30)+daily_capital(18:00) 双点 10 任务注册 tasks.yaml；单测 48 条全过"
-  code_symbol: "AkshareIngestProvider._fetch_stock_basic/_fetch_stk_limit/_fetch_suspend_status/_fetch_index_constituent/_fetch_st_stock_list"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider"
   code_fingerprint: null
 - job_id: JOB-078
   job_name: ingest.akshare_fundamental
@@ -6670,4 +6670,32 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: ""
   code_symbol: null
+  code_fingerprint: null
+- job_id: JOB-083
+  job_name: ingest.tushare_st_namechange_backfill
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/tushare_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-085
+  pit_relevance: strict
+  description: ST 历史状态名称变更推导回填（tushare namechange 逐年分页→ST 生效区间→变化日全量快照，补齐 DS-085 实盘快照日 2026-08-10 前历史段；monthly_static 月度幂等刷新纠偏；与 JOB-077 共为 DS-085 生产者——历史段推导/实盘段日快照）
+  module_id: MOD-L00-004
+  design_maturity: design
+  name: ingest.tushare_st_namechange_backfill
+  name_zh: ST历史状态名称变更推导回填
+  status: production
+  version: 1.0.0
+  created_at: '2026-08-16'
+  updated_at: '2026-08-16'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "股票池"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-16 实盘回填：namechange 逐年分页（1990 起；无参调用被 tushare 默认截断 10000 行实证修复）→ST 区间→变化日全量快照 450 个/109902 行落库（2020-01-02~2026-08-07，接缝=实盘首快照 2026-08-10 键零碰撞）；单测 8 条全过；交叉核验：实盘 8-10 集合缺失仅 2 只、独立口径 stock_basic 8-14 名称含 ST=203 只、负面对照 000503 零命中；已知残留：退市无更名个股区间无终点（121 只留推导集，无 K 线不触达消费侧）"
+  code_symbol: "src/zephyr/data/implementations/tushare_provider.py::TushareProvider._fetch_st_namechange_backfill"
   code_fingerprint: null
