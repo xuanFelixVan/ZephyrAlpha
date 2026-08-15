@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-PA-006 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """RegimeMetaAllocator 单元测试 (MOD-PA-007)。
 
 重建说明：原 55 用例在 2026-08-11 git 灾难中丢失（从未提交，git clean -fd 删除）。
