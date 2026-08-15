@@ -6938,6 +6938,9 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
     def _reconcile_catalog(committed_files: list[str], session_id: str) -> ReconcileResult:
 
         # 1. 重新生成 catalog（generate_rule_catalog.py 幂等）
+        # timeout=180：基线实测 20s（215 文件全量 yaml.safe_load），post-commit async
+        # 与并发会话/pytest/Defender 共享整机 IO——60s 仅 3x 余量，2026-08-15 14:46
+        # 实证并发挤压超时一次（critical_warn）；async 不阻塞 commit 主链，180s 纯收益。
 
         gen_result = _run_subprocess(
 
@@ -6953,7 +6956,7 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
             errors="replace",
 
-            timeout=60,
+            timeout=180,
 
         )
 
@@ -6970,6 +6973,7 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
         # 1b. 重新生成规则AI感知索引（#ARCH-GOV-CONVERGENCE-META Phase 3.2a）
 
         #    trae_*.yaml 变更后联动重生成 rule_ai_perception_index.yaml（同源，串联跑）
+        #    timeout 与上同理 180s（同源同型全量扫描，共享整机 IO 余量标定）
 
         perception_result = _run_subprocess(
 
@@ -6985,7 +6989,7 @@ def make_rule_audit_reconciler(gateway: object) -> ReconcilerSpec:
 
             errors="replace",
 
-            timeout=60,
+            timeout=180,
 
         )
 
