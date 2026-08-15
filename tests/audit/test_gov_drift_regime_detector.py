@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_regime_detector | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-INF-023 | docs/03_modules/_domain_governance/drift_detector/blueprint.md | §
-# [MODULE] tests.test_regime_detector
+# [MODULE] tests.test_gov_drift_regime_detector
 # [INVARIANTS] MacroFactor_enum_complete;MacroRegime_enum_complete;MACRO_INDICATORS_covers_all_factors
 # [MODIFY-GUARD] source-change-only
 # [CONSUMERS] pytest
@@ -8,7 +8,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] pytest.ExitCode
-# [TESTS] test_regime_detector.py
+# [TESTS] test_gov_drift_regime_detector.py
 # [TTL] task_bound
 
 from zephyr.gov_drift.detector_core.regime_detector import (

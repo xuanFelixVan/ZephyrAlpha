@@ -1322,7 +1322,7 @@ detector_dimensions:
 | `tests/audit/test_benchmark_integrity.py` | ✅ 已实现 | |
 | `tests/audit/test_ml_engineering.py` | ✅ 已实现 | |
 | `tests/audit/test_performance_baseline.py` | ✅ 已实现 | |
-| `tests/audit/test_regime_detector.py` | ✅ 已实现 | |
+| `tests/audit/test_gov_drift_regime_detector.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_data_lifecycle.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_dependency_manager.py` | ✅ 已实现 | |
 | `tests/cross/test_cross_env_consistency.py` | ✅ 已实现 | |

@@ -2364,7 +2364,7 @@ S2 算法重设计归入 P1-E9（13 号 §3.5）：
 #### 9.17.3 测试（16 文件）
 
 - tests/regime/（13）：test_regime_detector / test_trend_features / test_synthetic_vix / test_chip_distribution_engine / test_overlay_features / test_overlay_signals_builder / test_risk_signal_builder / test_july_case_e2e（7 月案例 E2E）+ phase2/ 下 5 个（test_a1/a2/b1/b4/confidence_calibrator）
-- tests/audit/（2）：test_regime_detector / test_regime_gain_scheduling（审计侧）
+- tests/audit/（2）：test_gov_drift_regime_detector / test_regime_gain_scheduling（审计侧）
 - tests/fle/（1）：test_fle_regime_detector（同名不同域，feedback loop 用）
 
 #### 9.17.4 脚本与验证用例
