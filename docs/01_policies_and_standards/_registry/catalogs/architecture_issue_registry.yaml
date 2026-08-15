@@ -16553,10 +16553,11 @@ entries:
     2f606056 落库（疑 gateway stash/claim 竞态），08-15 第五度落盘并提交后 git show
     验证在库。铁律：修复类改动必须随做随提交+提交后验证内容在库。
   impact:
-  - 'src/zephyr/data/backfill_checker.py（A 已完成：_SQL_AVG_ROWS_7D/_SQL_COUNT_BY_CUSTOM_DATE/_SQL_GAP_DATE_RANGE_COUNTS 三处 toDate 包裹 + _SQL_COUNT_BY_DATE 去双重前缀）'
-  - 'scripts/start_tick_subscriber.ps1（B/C 待办：stdout 重定向 + 心跳业务化）'
-  - 'src/zephyr/data/tick_subscriber.py（C/E 待办：业务心跳写入 + 预热失败周期重订阅）'
-  fix_phase: '2026-08-14 A 完成并验证（五度落盘，工作区/提交蹂躏实证见 adjudication）；B/C/D/E 待盘中窗口施工验证'
+  - 'src/zephyr/data/backfill_checker.py（A 已完成：四处 SQL 口径修复；2026-08-15 慢变化表口径排除：_BUSINESS_EVENT_DATE_COLS + _STATIC_REFRESH_SCHEDULES 双规则）'
+  - 'scripts/start_tick_subscriber.ps1（C 已施工：Test-BizHeartbeatStale 盘中过期重启 child；保留 guard 代写进程心跳——#ARCH-BOOT-001 锁机制依赖，双心跳正交）'
+  - 'src/zephyr/data/tick_subscriber.py（B/C/E 已施工：RotatingFileHandler 落盘 + biz 心跳 JSON + tick-biz-watchdog 盘中周期重订阅）'
+  - 'scripts/deadman_switch.ps1（C 已施工：盘中 last_tick_ts 过期告警，宽限锚点 max(started_ts,当日09:30)）'
+  fix_phase: '2026-08-14 A 完成并验证（提交 2f606056）；2026-08-15 B/C/E 施工完成（提交 3b7eae39f8：main() RotatingFileHandler 落盘 tmp/tick_subscriber_run.log 10MBx5；业务心跳 tmp/tick_subscriber_biz.heartbeat JSON 每15s原子写，含 last_tick_ts/today_rows/is_trading_day(xtdata日历判定)——与 guard 代写进程心跳正交分离；tick-biz-watchdog 线程盘中300s无tick周期重订阅；guard Test-BizHeartbeatStale 盘中过期kill child重启，deadman_switch 盘中10min无tick告警，收盘/周末/节假日不误报；周末单测30项全绿，周一开盘实证 today_rows 增长+断流告警链路）；巡检慢变化表口径排除同修（提交 a2208f30e1：业务事件日期列+monthly_static/weekend_calibration 双规则 threshold 强制0，restricted_shares等6误报表归零，REALTIME-ACCUM每日积累表保留检测）；D 待周一盘中取证（B 落地后订阅序列日志可回溯 subscribe_whole_quote 失效机制）'
   status: decided
   confirmed_by_user: '2026-08-14 任务交接指令"查根因+回补"；2026-08-15 用户指令提交修复'
   related_rules: '#ARCH-DATA-TICK-GAP-001（7-29 tick 断连前例，daily_backfill 由来）; #ARCH-DATA-015/016（同类静默失败治理）; #ARCH-WORKTREE-WIPE-GOV-001（工作区蹂躏同类治理）'
