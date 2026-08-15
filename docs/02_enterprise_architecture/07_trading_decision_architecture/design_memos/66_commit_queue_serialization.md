@@ -32,7 +32,7 @@ related_modules:
 > 本备忘针对 2026-08-12 的 23 会话并发事故链（互冲/吞稿/搭便车/连坐阻断/隐形 index 重置），给出**三层治本方案**：①提交队列串行化（提交期）②worktree 隔离强化（编辑期+杂项操作）③plumbing 命令拦截（危险底层命令）。
 > 性质：**决策备忘 + 施工计划**，按"背景→病根→对标→裁定→设计→施工→验证→不做→开放问题"组织。关键历程：v0.3.0 三层防护反转（事故 6 推翻 worktree 降级裁定）、v0.4.0 补全 7 处施工算法、v1.0.0 用户确认 3 项裁定升 active（详见 §13）。
 > 管理规范见 [01_design_memo_management_spec](01_design_memo_management_spec.md)。
-> 关联：[65_git_safety_governance](65_git_safety_governance.md)（git 安全防护层）｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)（多 AI 生命周期）｜[2026-08-14 worktree wipe 事故裁定书](../../../_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)（姊妹篇：本文管提交期串行化，其 S1-S6 管删除原语/清理流程/观测层）
+> 关联：[65_git_safety_governance](65_git_safety_governance.md)（git 安全防护层）｜[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md)（多 AI 生命周期）｜[2026-08-14 worktree wipe 事故裁定书](../../04_architecture_principles_decisions/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)（姊妹篇：本文管提交期串行化，其 S1-S6 管删除原语/清理流程/观测层）
 
 ## 1. 主题组信息
 

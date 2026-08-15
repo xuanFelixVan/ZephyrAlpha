@@ -887,7 +887,7 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 
 > **v2.3.0 状态（2026-08-14 完工，当日 merge 闭环）**：S1-S6 + task_board 重建**已全部完工并 merge 回 dev**（d8f94d4f2b）——S1 ops_guard（3e2bb5ed70，42 红队向量 100% 拦截）；S2 四证 SOP + session_worktree 接入（69558c6479）；S3 worker stdio 落盘 + commit 后 status 快照（7383bcd1/95f94195/b36507d8）；S4 网关锚定（67abc2ea/a6453e58）；S5 锚点级联提示（7a08eb74）；S6 会话环境三件套随 create 备置（#ARCH-WORKTREE-ENV-001 已落地）；task_board.py 重建（0e5ed3b9）。施工中实证发现并修复 GATE-ROOT-TEMP-SWEEP 扫走 worktree .git 指针新事故机制（65a2e8a6，**已随 merge 在 dev 生效**）。merge 后统筹按四证 SOP 清理 AI-GIT-001 worktree——**证1-4 全 PASS，S2 首次真实清理走通**（refs/quarantine/AI-GIT-001 + 344MB bundle 双存证，tracker §六 #54）；遗留 #50（reconcile 测试污染生产审计日志）亦已修复闭环（e5d7b6decf）。完工细节见 tracker §六与 AI-GIT-001 完工反馈。
 
-详见裁定书：[2026-08-14_ai-liq-001_worktree_wipe_incident_review.md](../../../_working/audit/architecture-reviews/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)。65 号 memo 不再视为 git 治理唯一真源——wipe 事故治本以裁定书为准。
+详见裁定书：[2026-08-14_ai-liq-001_worktree_wipe_incident_review.md](../../04_architecture_principles_decisions/2026-08-14_ai-liq-001_worktree_wipe_incident_review.md)。65 号 memo 不再视为 git 治理唯一真源——wipe 事故治本以裁定书为准。
 
 ## 14. ~~灾难恢复计划~~（v2.0.0 删除）
 

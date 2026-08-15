@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.2"
+version: "0.13.3"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -2170,23 +2170,34 @@ STEP 3: 拆分后验证
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/gov_enforcement/behavioral_admission/admission_response.py` | ✅ 已实现 | |
+| `src/zephyr/gov_rule/constitutional_update/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/architecture_governance/llm_impact_analyzer.py` | ✅ 已实现 | |
 | `src/zephyr/governance/architecture_governance/local_first_arch.py` | ✅ 已实现 | |
 | `src/zephyr/governance/context_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/context_governance/prompt_lifecycle.py` | ✅ 已实现 | |
 | `src/zephyr/governance/data_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/financial_governance/microstructure_defense.py` | ✅ 已实现 | |
+| `src/zephyr/governance/intelligence_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/intelligence_governance/multi_model_consensus.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/migration_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/observability_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/decision_fatigue.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/environment_manager.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/startup_shutdown.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/bus_factor_defense.py` | ✅ 已实现 | |
 | `src/zephyr/governance/resilience_governance/offline_autonomy.py` | ⚠️ 骨架 | |
 | `src/zephyr/governance/resilience_governance/offline_resilience.py` | ✅ 已实现 | |
+| `src/zephyr/infrastructure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/infrastructure/runtime/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/integration/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/integration/behavioral_admission/__init__.py` | ⚠️ 骨架 | |
+
+### 12.2 测试文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `tests/governance/test_task_board.py` | ✅ 已实现 | |
 
 ### 12.5 路径索引使用指南
 

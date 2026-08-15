@@ -462,4 +462,5 @@ def make_translation_coverage_reconciler(gateway: object) -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
     )

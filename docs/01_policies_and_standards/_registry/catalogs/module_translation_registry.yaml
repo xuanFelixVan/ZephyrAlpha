@@ -8412,6 +8412,13 @@ entries:
   desc_zh: 文档生命周期状态机（观察7天宽限→自动复活→满期归档30天回收站），替代旧幽灵引用即归档机制（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 治本）。
   desc_en: ''
   plain_zh: 文档生命周期状态机，先标记观察7天、有活跃自动复活、到期才归档进30天回收站，全程自动化零物理删除。
+- module_path: src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: 治理代理裸删除原语静态扫描门禁
+  name_en: reconciler_file_ops_gate
+  desc_zh: RECONCILER-FILE-OPS 门禁——staged 治理代理代码新增裸 os.remove/shutil.move 等删除/移动原语即阻断，删除 MUST 走 ops_guard 安全 API（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③ 防回流）。
+  desc_en: ''
+  plain_zh: 防止治理代码里有人直接写"删文件"的裸命令。所有删除/移动必须走带审计和回收站的守卫 API，这个门禁在提交时扫代码，发现裸删就拦下。
 - module_path: src/zephyr/governance/audit/reconcile_runner.py
   domain_id: D_GOV_AUDIT
   name_zh: 对账运行器

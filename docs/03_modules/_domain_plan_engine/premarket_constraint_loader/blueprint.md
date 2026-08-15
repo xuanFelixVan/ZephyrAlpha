@@ -3,7 +3,7 @@ module_id: MOD-PLAN-002
 title: "盘前预案加载器 — 9:00加载TomorrowBoundary+9:25集合竞价9情景匹配初始化ConstraintState"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 ttl: permanent
 layer: L2_domain
 functional_domain: plan_engine
@@ -28,7 +28,7 @@ summary: "BM-PLAN-02 盘前预案加载：次日 9:00 加载昨晚 TomorrowBound
 ---
 # Premarket Constraint Loader 蓝图+施工图 — 盘前预案加载器 — 9:00加载TomorrowBoundary+9:25集合竞价9情景匹配初始化ConstraintState
 
-> module_id: MOD-PLAN-002 | version: 0.1.0 | status: Active | layer: L2_domain (plan_engine)
+> module_id: MOD-PLAN-002 | version: 0.1.1 | status: Active | layer: L2_domain (plan_engine)
 > actual_disk_path: src/zephyr/plan_engine/premarket_constraint_loader.py | generation: 1
 > 设计真源: 41_buy_flow v1.7.0 §3.10.3 | 施工性质: 回填蓝图（代码已完工，83用例通过，2026-08-13 补建，遗留项 #29）
 
@@ -453,6 +453,35 @@ class ConstraintState:
 
 ## ⚠️ Vibe Coding 蓝图编写铁律确认 <!-- temporal_type: permanent -->
 本蓝图编写已逐条确认：全部路径项目根相对+正斜杠；必备链接完整列出；蓝图为最终设计结果；产出物路径与磁盘一致；涉及文件范围明确；全文无模糊指令词（铁律#6）；§0.1/§0.6 AUTOGEN 节保留生成说明未手写漂移；已实现代码不复制实现只保留签名（§4）；术语表齐备。
+
+## 1. 已实现代码完整路径索引
+
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
+
+### 1.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| — | — | 本模块尚无已实现代码 |
+
+### 1.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §1（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
+
+---
 
 ## 变更记录
 > 变更历史通过 Git log 追踪。v0.1.0（2026-08-13）：回填创建（遗留项 #29，41 号 v1.7.0 施工完成后补建）。

@@ -332,6 +332,7 @@ def make_backup_reconciler(project_root: Path | None = None):
         trigger=trigger,
         reconcile=reconcile,
         priority=200,  # 低优先级（晚于其他reconciler执行）
+        file_ops=frozenset({"read", "write"}),
     )
 
 

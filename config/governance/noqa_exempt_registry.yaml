@@ -344,9 +344,9 @@ exemptions:
     category: business_subset
     reason: '跨切域清单（#ARCH-CROSS-CUTTING-EXEMPT-001），非 target_layer 词表全集校验'
   - file: src/zephyr/governance/persistence/battlemap_schema.py
-    line: 117
+    line: 187
     category: business_subset
-    reason: 'design_maturity 2态（与 depgraph/decisiongraph 对齐），业务子集非词表'
+    reason: 'design_maturity 3态受控词表（design/production/deprecated，含 deprecated 治理裁定态，#ARCH-OE-007~009），与 depgraph/decisiongraph 对齐，业务子集非词表（行号自 L117 2态版漂移更新，2026-08-15 治理批③）'
   - file: scripts/governance/harvest_candidates_from_drafts.py
     line: 175
     category: business_subset

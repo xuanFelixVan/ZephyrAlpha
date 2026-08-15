@@ -1,7 +1,7 @@
 {
   "files": {
     "AGENTS.md": {
-      "hash": "86fd4c794a241ea9",
+      "hash": "827d26509cb32b18",
       "critical": true,
       "desc": "AI Agent 全局行为约束"
     },
@@ -36,7 +36,7 @@
       "desc": "脚本质量标准"
     },
     "scripts/governance/script_manifest.yaml": {
-      "hash": "8b045897e208c9c4",
+      "hash": "ce89366e280da3c5",
       "critical": true,
       "desc": "脚本注册表"
     },
@@ -46,12 +46,12 @@
       "desc": "GATE-ID-UNIQ 检测脚本（A 层 AST 锚点保护 + C 层 golden hash 兜底）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py": {
-      "hash": "2c2e4d50bde6edf4",
+      "hash": "e0c45d36a2709861",
       "critical": true,
       "desc": "GitCommitGateway 主入口(43门禁+串行锁+stash隔离+_commit_auto五重gate)"
     },
     "src/zephyr/governance/audit/reconciliation_registry.py": {
-      "hash": "6ce78bd05db9bdea",
+      "hash": "0494d8ed6bc3d2fd",
       "critical": true,
       "desc": "post-commit reconciler 注册表(17 reconciler+_commit_auto统一入口)"
     },
@@ -61,7 +61,7 @@
       "desc": "规则完整性校验器自身(C层golden hash自举保护,防篡改清单本身)"
     },
     "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml": {
-      "hash": "e7b632e2f26bfd51",
+      "hash": "394cb550885d650d",
       "critical": true,
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
@@ -91,6 +91,6 @@
       "desc": "ALGO_FLOW 解析器测试锚点（行为契约防回归）"
     }
   },
-  "registered_at": "2026-08-15T05:14:17.805710+00:00",
+  "registered_at": "2026-08-14T21:25:52.370356+00:00",
   "last_check_at": "2026-08-02T13:43:07.830785+00:00"
 }

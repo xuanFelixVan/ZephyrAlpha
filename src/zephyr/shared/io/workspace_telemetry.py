@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §workspace-telemetry
 # [MODULE] zephyr.shared.io.workspace_telemetry
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] stdlib (json, hashlib, logging, datetime); zephyr.shared.io.paths (strip_session_worktree)
+# [DEPENDENCIES] stdlib (json, hashlib, logging, datetime); zephyr.shared.io.paths (anchor_main_root)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_log_workspace_op thin wrapper); zephyr.governance.semantic_audit.self_healer (_rollback telemetry)
 # [STARTUP] imported
 # [MATURITY] production
@@ -65,7 +65,7 @@ import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
-from zephyr.shared.io.paths import strip_session_worktree
+from zephyr.shared.io.paths import anchor_main_root
 
 logger = logging.getLogger(__name__)
 
@@ -102,7 +102,7 @@ def log_workspace_op(
         content_hash: 操作前文件内容 sha256 hex 前 16 字符（可选，空表示文件不存在）。
     """
     try:
-        main_root = strip_session_worktree(Path(root))
+        main_root = anchor_main_root(Path(root))
         log_dir = main_root / ".runtime"
         log_dir.mkdir(parents=True, exist_ok=True)
         entry = {

@@ -6048,6 +6048,29 @@ capabilities:
       - _ZephyrAuditLog          # 审计落盘(删则 wrapper 无留痕)
       - _ZephyrCheckGitDirProtection  # .git 硬阻断(删则 .git 目录可写)
       - _criticalBlocks          # CRITICAL 常量(篡改则系统级命令放行)
+  - capability_id: reconciler_file_ops_gate
+    canonical_override: src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py
+    aliases:
+      - RECONCILER-FILE-OPS
+      - reconciler_file_ops_gate
+      - bare_delete_primitive_gate
+      - reconciler_file_ops_declaration
+    description: >-
+      治理代理裸删除/移动原语静态扫描门禁（#ARCH-RECONCILER-AUTO-DELETE-GOV-001
+      T1③ 双保险之一，2026-08-14 裁定）。reconciler 删除/移动原语已全量收敛
+      ops_guard 安全 API（file_ops 显式声明制+全量审计+回收站可逆），本 gate
+      防回流：staged 治理代理代码（src/zephyr/governance|gov_enforcement +
+      scripts/governance|backup）新增裸 os.remove/os.unlink/os.rmdir/os.rename/
+      shutil.rmtree/shutil.move 调用即阻断，priority=114 注册制。
+      豁免：ops_guard.py 补丁真源自身、tests/、行内 # ops-guard-exempt 标记。
+      配对运行时保险：ops_guard in-process 补丁（install_inprocess_enforcement，
+      worker 进程裸 stdlib 删除硬拦）+ reconciler file_ops 上下文强制
+      （reconcile_for 注入，未声明删除即 DeleteBlockedError→critical_warn）。
+      解决发现性：新 AI 搜 "裸删除/裸删除原语/file_ops 声明/治理代理删除" 可定位。
+    integrity_anchors:
+      - scan_file_for_bare_primitives  # 扫描引擎(删则裸原语回流无检测)
+      - make_reconciler_file_ops_gate  # 工厂函数(删则 gate 不注册)
+      - _BARE_PRIMITIVE_RE             # 原语正则(篡改则检测失效)
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
@@ -6091,6 +6114,11 @@ creation_tokens:
     token: "auto-worktree-wipe-incident-review-20260814"
     created_by: "session-ai-sop-001"
     capability: "worktree_wipe_incident_review"
+  # --- reconciler_file_ops_gate.py（治理代理裸删除原语静态扫描门禁，#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③，2026-08-14 AI-RCN-001 施工）---
+  - file: "src/zephyr/gov_enforcement/commit_gates/reconciler_file_ops_gate.py"
+    token: "auto-reconciler-file-ops-gate-20260814"
+    created_by: "session-AI-RCN-001"
+    capability: "reconciler_file_ops_gate"
   # --- AI审查指令集（2026-08-10，24路并发审查回填指令，覆盖design_memos 42篇文档）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/AI_review_instructions.md"
     token: "auto-ai-review-instructions-20260810"

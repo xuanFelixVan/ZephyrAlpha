@@ -309,6 +309,7 @@ def make_requirements_version_sync_reconciler(project_root: Path | None = None):
         trigger=_trigger,
         reconcile=_reconcile,
         priority=230,  # 晚于 METRIC-COUNT-DRIFT(220)，依赖同步校验非紧急
+        file_ops=frozenset({"read", "write"}),
     )
 
 

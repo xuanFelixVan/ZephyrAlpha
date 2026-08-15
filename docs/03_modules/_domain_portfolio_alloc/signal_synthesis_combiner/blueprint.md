@@ -3,7 +3,7 @@ module_id: MOD-PA-002
 title: "信号合成器蓝图 — 多策略加权投票+共振融合"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: design
 build_status: generated
 ttl: permanent
@@ -149,7 +149,7 @@ result = combiner.combine(signals, position_cap=0.05)
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `src/zephyr/pf_alloc/core/__init__.py` | ⚠️ 骨架 | |
 
 ### 10.5 路径索引使用指南
 
@@ -164,3 +164,5 @@ result = combiner.combine(signals, position_cap=0.05)
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

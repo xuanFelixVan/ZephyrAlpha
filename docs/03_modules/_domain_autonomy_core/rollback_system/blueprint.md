@@ -4,7 +4,7 @@ submodule_path: src/zephyr/infrastructure/rollback
 title: "Rollback System 蓝图 — Git-native回滚+自动触发+运维治理持续性"
 doc_type: blueprint
 status: Active
-version: 9.0.3
+version: 9.0.4
 layer: L0_infrastructure
 layer_name: infrastructure
 functional_domain: execution
@@ -1805,6 +1805,9 @@ STEP 3: 拆分后验证
 | `tests/rollback/test_rollback_verifier_root.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_wal.py` | ✅ 已实现 | |
 | `tests/rule/test_rule_canary_manager.py` | ✅ 已实现 | |
+| `tests/scripts/test_git_guard_self_harm.py` | ✅ 已实现 | |
+| `tests/scripts/test_guard_invariants.py` | ✅ 已实现 | |
+| `tests/scripts/test_guard_watchdog.py` | ✅ 已实现 | |
 | `tests/semantic_auditor/test_semantic_rollback_tag.py` | ✅ 已实现 | |
 | `tests/semantic_auditor/test_semantic_similar_detector.py` | ✅ 已实现 | |
 | `tests/temporal/test_temporal_context_adapter.py` | ✅ 已实现 | |

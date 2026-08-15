@@ -4,7 +4,7 @@ submodule_path: src/zephyr/factor
 title: "Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色"
 doc_type: blueprint
 status: Active
-version: "4.0.4"
+version: "4.0.5"
 layer: L2_domain
 layer_name: alpha_factor
 functional_domain: intelligence
@@ -218,7 +218,7 @@ build_status: stable
 
 # Alpha Factor Core 蓝图+施工图 — 因子工厂·C-027管理+C-009执行双角色
 
-> module_id: MOD-L02-001 | version: 4.0.4 | status: active | domain: factor
+> module_id: MOD-L02-001 | version: 4.0.5 | status: active | domain: factor
 > actual_disk_path: src/zephyr/factor/ | generation: 3 | construction_progress: partially_implemented
 > 子模块体系: D-FACTOR-01~11+24（蓝图内部编号，不进blueprint_registry）
 
@@ -1106,6 +1106,7 @@ class FactorMeta(BaseModel):
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/factor/alpha_signal_pipeline.py` | ✅ 已实现 | |
+| `src/zephyr/factor/core/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/factor/core/backpressure/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/backpressure/limiter.py` | ✅ 已实现 | |
 | `src/zephyr/factor/core/batch_output/__init__.py` | ✅ 已实现 | |
@@ -1157,6 +1158,12 @@ class FactorMeta(BaseModel):
 | `tests/factor/test_multifactor_synthesis.py` | ✅ 已实现 | |
 | `tests/factor/test_six_step_flow.py` | ✅ 已实现 | |
 | `tests/factor/test_three_level_judgment.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_indicator_base.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_momentum.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_reversal.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_trend.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_volatility.py` | ✅ 已实现 | |
+| `tests/zephyr/factor/technical_indicators/test_volume.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

@@ -65,17 +65,17 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 458 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 462 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 436 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 243 |
 | `D_DATA` | 数据接入层 | L1_foundation | 202 |
-| `D_GOV_AUDIT` | 审计追踪 | L2_domain | 195 |
+| `D_GOV_AUDIT` | 审计追踪 | L2_domain | 199 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 177 |
-| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 173 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 171 |
+| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 169 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 130 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 125 |
-| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 122 |
+| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 123 |
 | `D_FACTOR` | 因子 | L2_domain | 116 |
 | `D_GOV_OPS_RESILIENCE` | 运维弹性治理 | L1_foundation | 115 |
 | `D_FBL_DIAGNOSERS` | 反馈诊断器 | L1_foundation | 76 |

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-D5_ARCH_TOOLS | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [MODULE] tests.governance.test_ops_guard_red_team
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.ops_guard
@@ -45,6 +47,7 @@ from scripts.ops_guard import (  # noqa: E402
     guard_remove,
     guard_rmtree,
 )
+from scripts import ops_guard as ops_guard_mod  # noqa: E402
 
 # ============================================================================
 # 红队攻击向量（必须 100% 被拦截）
@@ -185,13 +188,12 @@ class TestWhitelistAllowed:
 
 
 class TestNonRecursiveSingleFile:
-    """非递归单文件删除放行（即使目标在保护区目录下）。"""
+    """非递归单文件删除放行（目标在保护区目录下但已 tracked——docs/ untracked 见 T3② 专类）。"""
 
     @pytest.mark.parametrize(
         "cmd",
         [
             "Remove-Item src\\zephyr\\old_module.py",
-            "Remove-Item docs\\temp_draft.md",
             "Remove-Item tests\\test_old.py",
             "Remove-Item .worktrees\\AI-X\\temp.txt",
             "del src\\zephyr\\old_file.py",
@@ -205,6 +207,40 @@ class TestNonRecursiveSingleFile:
             f"单文件删除被误拦: {cmd}\n  reason={verdict.reason}"
         )
         assert not verdict.is_recursive
+
+
+class TestDocsUntrackedGuard:
+    """T3②（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：docs/ 下 untracked 文件
+    删除/移动需人工确认——清风草稿丢失治本（三重无保护：不在 git/归档器可动/
+    删除无追溯）。"""
+
+    def test_untracked_docs_single_file_blocked(self) -> None:
+        """untracked docs 草稿（git 索引中不存在）单文件删除 → 阻断。"""
+        verdict = analyze_delete_command("Remove-Item docs\\temp_draft.md")
+        assert not verdict.allowed, "untracked docs 草稿删除未被拦（清风案重演通道）"
+        assert "untracked" in verdict.reason
+
+    def test_gateway_env_does_not_bypass(self) -> None:
+        """反架空：ZEPHYR_COMMIT_GATEWAY=1 不豁免（worker 继承 gateway 标记，
+        若认 gateway 则全部 reconciler 天然已授权、闸门形同虚设）。"""
+        with patch.dict(os.environ, {"ZEPHYR_COMMIT_GATEWAY": "1"}):
+            os.environ.pop("ZEPHYR_FORCE_DELETE", None)
+            verdict = analyze_delete_command("Remove-Item docs\\temp_draft.md")
+            assert not verdict.allowed, "gateway 标记错误豁免了 untracked docs 闸门"
+
+    def test_force_env_allows(self) -> None:
+        """人工确认标记 ZEPHYR_FORCE_DELETE=1 → 放行（仍落审计）。"""
+        with patch.dict(os.environ, {"ZEPHYR_FORCE_DELETE": "1"}):
+            verdict = analyze_delete_command("Remove-Item docs\\temp_draft.md")
+            assert verdict.allowed
+
+    def test_tracked_docs_allowed(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        """已 tracked 的 docs 文件单文件删除放行（T3② 不误伤 git 安全网内文件）。"""
+        monkeypatch.setattr(ops_guard_mod, "_is_docs_untracked", lambda *a, **kw: False)
+        verdict = analyze_delete_command("Remove-Item docs\\tracked_doc.md")
+        assert verdict.allowed, (
+            f"tracked docs 单文件删除被误拦: reason={verdict.reason}"
+        )
 
 
 class TestAuthorizedBypass:

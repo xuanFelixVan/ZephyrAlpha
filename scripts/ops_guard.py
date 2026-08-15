@@ -50,11 +50,13 @@
 
 from __future__ import annotations
 
+import contextvars
 import hashlib
 import json
 import os
 import re
 import sys
+import threading
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -64,8 +66,16 @@ __all__ = [
     "DeleteVerdict",
     "analyze_delete_command",
     "audit_delete",
+    "guard_move",
     "guard_remove",
     "guard_rmtree",
+    "guard_recycle",
+    "prune_recycle_bin",
+    "set_reconciler_context",
+    "reset_reconciler_context",
+    "get_reconciler_context",
+    "install_inprocess_enforcement",
+    "inprocess_enforcement_installed",
     "main",
 ]
 
@@ -126,8 +136,17 @@ def _get_session_id() -> str:
     return os.environ.get(SESSION_ID_ENV, "ops-guard-unknown")
 
 
+_PROJECT_ROOT_CACHE: Path | None = None
+
+
 def _get_project_root() -> Path:
-    """获取 git 仓库根目录（run_subprocess_hidden 统一入口，trae_067 合规）。"""
+    """获取 git 仓库根目录（run_subprocess_hidden 统一入口，trae_067 合规）。
+
+    进程内缓存（in-process 补丁的逐文件判定路径不可承受 subprocess 开销）。
+    """
+    global _PROJECT_ROOT_CACHE
+    if _PROJECT_ROOT_CACHE is not None:
+        return _PROJECT_ROOT_CACHE
     try:
         from zephyr.shared.infra.process_pool import run_subprocess_hidden
 
@@ -137,9 +156,10 @@ def _get_project_root() -> Path:
             text=True,
             check=True,
         )
-        return Path(result.stdout.strip())
+        _PROJECT_ROOT_CACHE = Path(result.stdout.strip())
     except Exception:
-        return Path.cwd()
+        _PROJECT_ROOT_CACHE = Path.cwd()
+    return _PROJECT_ROOT_CACHE
 
 
 def _normalize_path(p: str) -> str:
@@ -289,6 +309,7 @@ def audit_delete(
         with open(audit_file, "a", encoding="utf-8") as f:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     except Exception:
+        _AUDIT_STATS["audit_failed"] += 1  # T2③ 覆盖率指标：落盘失败=覆盖率缺口
         pass  # 审计不阻断
 
 
@@ -446,6 +467,65 @@ def _is_authorized() -> bool:
     )
 
 
+def _is_docs_untracked(path_str: str, cwd: str | Path | None = None) -> bool:
+    """T3②（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：目标为 docs/ 下 git 未跟踪文件判定。
+
+    清风草稿丢失实证：docs/ 下 untracked 文件"三重无保护"（不在 git、归档器可动、
+    物理删除无审计）——此类文件的删除/移动 MUST 人工确认（guard 规则）。
+
+    Returns:
+        True=目标在 docs/ 下且 git 未跟踪（git ls-files --error-unmatch 非零）。
+        判定异常降级 False（不阻断主流——git 不可达时按 tracked 对待，松约束）。
+    """
+    rel = _resolve_to_repo_rel(path_str, cwd)
+    if not _is_under_prefix(rel, "docs"):
+        return False
+    try:
+        from zephyr.shared.infra.process_pool import run_subprocess_hidden
+
+        result = run_subprocess_hidden(
+            ["git", "ls-files", "--error-unmatch", "--", rel],
+            cwd=str(_get_project_root()),
+            capture_output=True,
+            text=True,
+        )
+        return result.returncode != 0
+    except Exception:  # noqa: BLE001 — git 不可达降级 tracked（松约束不阻断）
+        return False
+
+
+def _enforce_docs_untracked(path_str: str, cwd: str | Path | None = None) -> None:
+    """docs/ 下 untracked 文件删除/移动的人工确认闸门（T3②）。
+
+    命中且未人工确认（ZEPHYR_FORCE_DELETE=1）→ 审计 + raise。
+
+    ⚠️ 授权判定只认 FORCE_ENV，不认 GATEWAY_ENV：gateway 标记经
+    os.environ.copy() 被 reconcile worker 继承（reconcile_runner L708），
+    若认 GATEWAY_ENV 则全部 reconciler 天然"已授权"、本闸门形同虚设。
+    人工确认 = 人显式设 ZEPHYR_FORCE_DELETE=1，或人直接操作（不经代理）。
+    """
+    if os.environ.get(FORCE_ENV) == "1":
+        return
+    if not _is_docs_untracked(path_str, cwd):
+        return
+    rel = _resolve_to_repo_rel(path_str, cwd)
+    verdict = DeleteVerdict(
+        allowed=False,
+        reason=(
+            f"docs/ 下 untracked 文件删除/移动需人工确认（T3② 清风草稿丢失治本）: {rel}——"
+            f"三重无保护文件（不在 git/归档器可动/删除无追溯），自动化代理禁动"
+        ),
+        primitive="docs_untracked",
+        targets=[rel],
+        is_protected_zone=True,
+    )
+    audit_delete("docs_untracked_block", f"docs-untracked('{rel}')", verdict, cwd=str(cwd) if cwd else None)
+    raise DeleteBlockedError(
+        f"[OPS-GUARD] docs/ untracked 文件删除被阻断——{rel}\n"
+        f"  解决方案: 人工确认后设 {FORCE_ENV}=1 重试，或由人工直接操作（不经代理）"
+    )
+
+
 def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVerdict:
     """分析命令是否为危险删除操作，判定是否放行。
 
@@ -483,6 +563,23 @@ def analyze_delete_command(cmd: str, cwd: str | Path | None = None) -> DeleteVer
             is_protected_zone=True,
         )
 
+    # T3②：docs/ 下 untracked 文件（含非递归单文件——_judge_protected 对非递归
+    # 直接放行，此处补齐盲区）删除/移动需人工确认（FORCE_ENV，gateway 标记不算）。
+    if os.environ.get(FORCE_ENV) != "1":
+        untracked_hits = [t for t in resolved_targets if _is_docs_untracked(t, cwd)]
+        if untracked_hits:
+            return DeleteVerdict(
+                allowed=False,
+                reason=(
+                    f"docs/ 下 untracked 文件删除需人工确认（T3② 清风治本）: {untracked_hits}——"
+                    f"人工确认后设 {FORCE_ENV}=1 重试"
+                ),
+                primitive=primitive,
+                targets=resolved_targets,
+                is_recursive=is_recursive,
+                is_protected_zone=True,
+            )
+
     reason = "白名单路径" if any(
         _is_whitelisted(rt) for rt in resolved_targets
     ) else ("授权放行" if authorized else "非保护区")
@@ -509,10 +606,17 @@ def guard_rmtree(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
     目标在保护区内且未授权 → raise DeleteBlockedError。
     白名单内或未命中保护区 → 落审计后执行实际删除。
+    reconciler 上下文内：先校验 file_ops 声明（未声明 delete → 阻断），
+    保护区内递归删除即使已声明也硬拦（双保险）。
     """
     import shutil
 
     path_str = str(path)
+    _enforce_docs_untracked(path_str, cwd)  # T3②：声明制/保护区判定均不豁免
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(path_str, cwd)
+        _enforce_file_ops("delete", [rel], cwd=cwd)
     cmd_repr = f"shutil.rmtree('{path_str}')"
     verdict = analyze_delete_command(cmd_repr, cwd)
     audit_delete("guard_rmtree", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
@@ -528,8 +632,33 @@ def guard_rmtree(path: str | Path, *, cwd: str | Path | None = None) -> None:
 
 
 def guard_remove(path: str | Path, *, cwd: str | Path | None = None) -> None:
-    """审计保护的 os.remove 替代（单文件删除不拦递归，但落审计）。"""
+    """审计保护的 os.remove 替代（单文件删除不拦递归，但落审计）。
+
+    reconciler 上下文内：校验 file_ops 声明（未声明 delete → 阻断）；
+    已声明 → 直通执行+审计（声明即授权，is_protected_zone 标记照记）。
+    """
     path_str = str(path)
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(path_str, cwd)
+        _enforce_file_ops("delete", [rel], cwd=cwd)
+        _enforce_docs_untracked(path_str, cwd)  # T3②：声明制不豁免 untracked 人工确认
+        verdict = DeleteVerdict(
+            allowed=True,
+            reason=f"reconciler {ctx[0]} 已声明 delete（声明制直通）",
+            primitive="python_remove",
+            targets=[rel],
+            is_recursive=False,
+            is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+        )
+        audit_delete("guard_remove", f"os.remove('{path_str}')", verdict, cwd=str(cwd) if cwd else None)
+        try:
+            os.remove(path_str)
+        except FileNotFoundError:
+            pass
+        return
+
+    _enforce_docs_untracked(path_str, cwd)  # T3②
     cmd_repr = f"os.remove('{path_str}')"
     verdict = analyze_delete_command(cmd_repr, cwd)
     audit_delete("guard_remove", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
@@ -557,28 +686,73 @@ RECYCLE_BIN = ".runtime/recycle_bin"
 #: 回收站保留期（秒）——30 天 >>> 事故发现周期
 RECYCLE_TTL_SECONDS = 30 * 24 * 3600
 
+#: 回收站容量封顶（字节）——超容时按 ts 批次最旧优先清理（T1③ 裁定：
+#: 保留期+容量双上限，防失控归档撑爆磁盘）。
+RECYCLE_MAX_BYTES = 512 * 1024 * 1024
+
 
 def guard_move(src: str | Path, dst: str | Path, *, cwd: str | Path | None = None) -> None:
     """审计保护的 shutil.move 替代。
 
     源在保护区内且未授权 → raise DeleteBlockedError（move 出保护区 = 删除变体）。
     白名单内或未命中保护区 → 落审计后执行。
+    reconciler 上下文内：校验 file_ops 声明（未声明 move → 阻断）；
+    已声明 → 直通执行+审计（声明即授权）。
     """
     import shutil
 
     src_str = str(src)
     dst_str = str(dst)
+    _enforce_docs_untracked(src_str, cwd)  # T3②：move 出 docs/ = 删除变体，untracked 需人工确认
     cmd_repr = f"shutil.move('{src_str}', '{dst_str}')"
-    verdict = analyze_delete_command(cmd_repr, cwd)
-    audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(src_str, cwd)
+        _enforce_file_ops("move", [rel], cwd=cwd)
+        verdict = DeleteVerdict(
+            allowed=True,
+            reason=f"reconciler {ctx[0]} 已声明 move（声明制直通）",
+            primitive="shutil_move",
+            targets=[rel],
+            is_recursive=False,
+            is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+        )
+        audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
+        Path(dst_str).parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(src_str, dst_str)
+        return
 
-    if not verdict.allowed:
+    # 上下文外：move 出保护区 = 删除变体（补齐原语识别——analyze 不识别 move，
+    # 此处直接按源路径判定：递归未知按文件级，保护区内源未授权即拦）。
+    rel_src = _resolve_to_repo_rel(src_str, cwd)
+    if (
+        any(_is_under_prefix(rel_src, pp) for pp in PROTECTED_PREFIXES)
+        and not _is_whitelisted(rel_src)
+        and not _is_authorized()
+    ):
+        verdict = DeleteVerdict(
+            allowed=False,
+            reason=f"move 源命中保护区（move 出保护区=删除变体）: {rel_src}",
+            primitive="shutil_move",
+            targets=[rel_src],
+            is_recursive=Path(src_str).is_dir(),
+            is_protected_zone=True,
+        )
+        audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
         raise DeleteBlockedError(
             f"[OPS-GUARD] move 被阻断——{verdict.reason}\n"
             f"  源: {src_str}\n"
             f"  目标: {dst_str}"
         )
 
+    verdict = DeleteVerdict(
+        allowed=True,
+        reason="非保护区 move" if not _is_whitelisted(rel_src) else "白名单路径",
+        primitive="shutil_move",
+        targets=[rel_src],
+        is_recursive=Path(src_str).is_dir(),
+    )
+    audit_delete("guard_move", cmd_repr, verdict, cwd=str(cwd) if cwd else None)
     Path(dst_str).parent.mkdir(parents=True, exist_ok=True)
     shutil.move(src_str, dst_str)
 
@@ -598,8 +772,18 @@ def guard_recycle(
 
     #ARCH-RECONCILER-AUTO-DELETE-GOV-001 第一性原理：自动化代理判定准确率恒<100%，
     故永不持有不可逆操作能力——guard_recycle 是治理代理唯一合法的"删除"出口。
+
+    reconciler 上下文内：recycle 视同 move（文件离开原位），校验 file_ops 声明。
     """
     import shutil
+
+    # T3②：untracked docs 文件进回收站 = 从 docs/ 消失（清风案正是"被移走找不到"），
+    # 回收站 30 天可恢复不豁免人工确认——文件原位消失即构成用户损失。
+    _enforce_docs_untracked(str(path), cwd)
+
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        _enforce_file_ops("move", [_resolve_to_repo_rel(str(path), cwd)], cwd=cwd)
 
     src = Path(str(path))
     root = Path(str(repo_root)) if repo_root else Path(str(cwd)) if cwd else Path.cwd()
@@ -627,11 +811,14 @@ def guard_recycle(
 
 
 def prune_recycle_bin(
-    *, repo_root: str | Path, ttl_seconds: int = RECYCLE_TTL_SECONDS
+    *, repo_root: str | Path, ttl_seconds: int = RECYCLE_TTL_SECONDS,
+    max_bytes: int = RECYCLE_MAX_BYTES,
 ) -> int:
-    """回收站到期清理（唯一合法的物理删除点，仅作用于回收站内部过期条目）。
+    """回收站清理（唯一合法的物理删除点，仅作用于回收站内部）。
 
-    返回清理的条目数。由 doc_lifecycle reconciler 每次运行顺带调用（零新增调度）。
+    双上限（T1③）：①TTL 到期清理（30 天）；②容量封顶——超 max_bytes 时
+    按 ts 批次最旧优先整批清理直至达标。返回清理的批次数。
+    由 doc_lifecycle reconciler 每次运行顺带调用（零新增调度）。
     """
     import shutil
 
@@ -640,11 +827,8 @@ def prune_recycle_bin(
         return 0
     now = int(time.time())
     pruned = 0
-    for ts_dir in bin_root.iterdir():
-        if not ts_dir.is_dir() or not ts_dir.name.isdigit():
-            continue
-        if now - int(ts_dir.name) <= ttl_seconds:
-            continue
+
+    def _purge_batch(ts_dir: Path, reason: str) -> None:
         for child in ts_dir.iterdir():
             if child.is_dir():
                 shutil.rmtree(child, ignore_errors=True)
@@ -654,19 +838,334 @@ def prune_recycle_bin(
             ts_dir.rmdir()
         except OSError:
             pass
-        pruned += 1
         audit_delete(
             "recycle_prune",
             f"prune_recycle_bin('{ts_dir.name}')",
-            DeleteVerdict(
-                allowed=True,
-                reason=f"回收站 {ttl_seconds // 86400} 天到期清理",
-                primitive="recycle_prune",
-                targets=[ts_dir.name],
-            ),
+            DeleteVerdict(allowed=True, reason=reason, primitive="recycle_prune", targets=[ts_dir.name]),
             cwd=str(repo_root),
         )
+
+    # ① TTL 到期清理
+    for ts_dir in list(bin_root.iterdir()):
+        if not ts_dir.is_dir() or not ts_dir.name.isdigit():
+            continue
+        if now - int(ts_dir.name) <= ttl_seconds:
+            continue
+        _purge_batch(ts_dir, f"回收站 {ttl_seconds // 86400} 天到期清理")
+        pruned += 1
+
+    # ② 容量封顶（最旧批次优先；ts 目录名=epoch 可直接排序）
+    remaining = sorted(
+        (d for d in bin_root.iterdir() if d.is_dir() and d.name.isdigit()),
+        key=lambda d: int(d.name),
+    )
+    total = 0
+    for d in remaining:
+        for dirpath, _dirs, files in os.walk(d):
+            for f in files:
+                try:
+                    total += os.path.getsize(os.path.join(dirpath, f))
+                except OSError:
+                    pass
+    for d in remaining:
+        if total <= max_bytes:
+            break
+        batch_size = 0
+        for dirpath, _dirs, files in os.walk(d):
+            for f in files:
+                try:
+                    batch_size += os.path.getsize(os.path.join(dirpath, f))
+                except OSError:
+                    pass
+        _purge_batch(d, f"回收站容量封顶（{max_bytes}B）最旧批次优先清理")
+        total -= batch_size
+        pruned += 1
+
     return pruned
+
+
+# ============================================================================
+# reconciler file_ops 声明制运行时强制 + in-process 删除原语补丁
+# （#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1①②，2026-08-14 裁定）
+#
+# 第一性原理：自动化代理判定准确率恒<100% → 删除/移动能力必须显式声明、
+# 全量审计、可逆（回收站）。两层机制：
+#   1. reconciler 上下文（contextvar）：reconcile_for 执行每个 reconciler 前
+#      注入其 ReconcilerSpec.file_ops 声明；guard_* API 入口校验——未声明
+#      delete/move 而执行对应操作 → 审计 + DeleteBlockedError（reconcile_for
+#      映射 critical_warn）。
+#   2. in-process 补丁（install_inprocess_enforcement）：patch os.remove/
+#      os.unlink/os.rmdir/os.rename/shutil.rmtree/shutil.move，reconcile worker
+#      进程入口安装——库层生效与进程无关，worker 内裸 stdlib 删除同样被拦
+#      （保护区硬拦）+ 落审计（T2③ 审计覆盖率=100% 的采集层）。
+# ============================================================================
+
+#: 当前执行的 reconciler 上下文：(gate_id, file_ops frozenset)；None=非 reconciler 执行期
+_RECONCILER_CTX: contextvars.ContextVar[tuple[str, frozenset] | None] = (
+    contextvars.ContextVar("ops_guard_reconciler_ctx", default=None)
+)
+
+#: rmtree/move 整体判定后的批量子操作直通 flag（防内部逐文件重复判定刷屏审计）
+_BULK_APPROVED: contextvars.ContextVar[bool] = contextvars.ContextVar(
+    "ops_guard_bulk_approved", default=False
+)
+
+
+def set_reconciler_context(gate_id: str, file_ops: object) -> contextvars.Token:
+    """注入 reconciler 上下文（reconcile_for 执行前调用）。返回 reset 用 token。"""
+    return _RECONCILER_CTX.set((gate_id, frozenset(file_ops)))
+
+
+def reset_reconciler_context(token: contextvars.Token) -> None:
+    """复位 reconciler 上下文（reconcile_for 执行后 finally 调用，防泄漏到下一 reconciler）。"""
+    _RECONCILER_CTX.reset(token)
+
+
+def get_reconciler_context() -> tuple[str, frozenset] | None:
+    """读取当前 reconciler 上下文（None=非 reconciler 执行期）。"""
+    return _RECONCILER_CTX.get()
+
+
+def _enforce_file_ops(op: str, targets: list[str], cwd: str | Path | None = None) -> None:
+    """file_ops 声明强校验：reconciler 上下文内未声明 delete/move 而执行对应操作
+    → 审计落盘 + raise DeleteBlockedError（由 reconcile_for 映射 critical_warn）。"""
+    ctx = _RECONCILER_CTX.get()
+    if ctx is None:
+        return
+    gate_id, declared = ctx
+    if op in ("delete", "move") and op not in declared:
+        _AUDIT_STATS["block"] += 1
+        verdict = DeleteVerdict(
+            allowed=False,
+            reason=(
+                f"reconciler {gate_id} file_ops={sorted(declared)} 未声明 '{op}'——"
+                "注册时显式声明制（I-GOV-2/T1①），未声明即无此能力"
+            ),
+            primitive=f"file_ops_{op}",
+            targets=list(targets),
+        )
+        audit_delete("file_ops_block", f"{op}({';'.join(targets)[:200]})", verdict, cwd=str(cwd) if cwd else None)
+        raise DeleteBlockedError(
+            f"[OPS-GUARD] file_ops 未声明阻断——reconciler {gate_id} 未声明 '{op}' 能力。\n"
+            f"  目标: {targets[:3]}\n"
+            f"  解决方案: 在该 reconciler 的 ReconcilerSpec.file_ops 中显式声明 '{op}'"
+            "（声明即承担全量审计+回收站可逆义务）"
+        )
+
+
+# ---- in-process 补丁 ----
+
+_ORIG_PRIMITIVES: dict[str, object] = {}
+_INSTALLED = False
+_INSTALL_LOCK = threading.Lock()
+
+#: 删除判定/审计运行统计（T2③ 审计覆盖率指标化真源）：
+#: judge_calls=补丁判定调用总数；allow/block=判定结果；audit_failed=审计落盘失败数。
+#: 覆盖率 = 已落审计的删除动作 / 实际删除动作 ——每次判定必先审计后执行，
+#: audit_failed>0 即覆盖率<100%（RECONCILER-HEALTH 消费报警）。
+_AUDIT_STATS: dict[str, int] = {
+    "judge_calls": 0,
+    "allow": 0,
+    "block": 0,
+    "audit_failed": 0,
+}
+
+
+def get_audit_stats() -> dict[str, int]:
+    """读取删除判定/审计统计（RECONCILER-HEALTH 覆盖率指标消费）。"""
+    return dict(_AUDIT_STATS)
+
+
+def _inprocess_judge(op: str, path: object, *, recursive: bool) -> None:
+    """补丁统一判定：raise DeleteBlockedError 阻断；否则落审计后由 wrapper 执行。
+
+    判定矩阵：
+    - 批量直通 flag → 直接放行（rmtree/move 整体判定已过）
+    - reconciler 上下文内 → file_ops 声明校验；已声明且递归+保护区仍硬拦（双保险）
+    - 上下文外（worker/进程内裸调用）→ 保护区内目标（含单文件）未授权即拦；
+      白名单/其他区域放行+审计
+    """
+    if _BULK_APPROVED.get():
+        return
+    _AUDIT_STATS["judge_calls"] += 1
+    path_str = os.fspath(path) if not isinstance(path, str) else path
+    ctx = _RECONCILER_CTX.get()
+    if ctx is not None:
+        rel = _resolve_to_repo_rel(path_str)
+        _enforce_file_ops(op, [rel])
+        try:
+            _enforce_docs_untracked(path_str)  # T3②：声明制不豁免 untracked 人工确认
+        except DeleteBlockedError:
+            _AUDIT_STATS["block"] += 1
+            raise
+        if (
+            recursive
+            and not _is_whitelisted(rel)
+            and any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
+            and not _is_authorized()
+        ):
+            _AUDIT_STATS["block"] += 1
+            verdict = DeleteVerdict(
+                allowed=False,
+                reason=f"reconciler {ctx[0]} 已声明 {op} 但保护区内递归删除硬拦（双保险）: {rel}",
+                primitive=f"inprocess_{op}",
+                targets=[rel],
+                is_recursive=True,
+                is_protected_zone=True,
+            )
+            audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
+            raise DeleteBlockedError(f"[OPS-GUARD] {verdict.reason}")
+        _AUDIT_STATS["allow"] += 1
+        audit_delete(
+            "inprocess_allow",
+            f"{op}('{path_str}')",
+            DeleteVerdict(
+                allowed=True,
+                reason=f"reconciler {ctx[0]} 已声明 {op}",
+                primitive=f"inprocess_{op}",
+                targets=[rel],
+                is_recursive=recursive,
+                is_protected_zone=any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES),
+            ),
+        )
+        return
+    # 上下文外：裸 stdlib 调用（worker 进程任意代码路径）
+    rel = _resolve_to_repo_rel(path_str)
+    if _is_whitelisted(rel):
+        _AUDIT_STATS["allow"] += 1
+        audit_delete(
+            "inprocess_allow",
+            f"{op}('{path_str}')",
+            DeleteVerdict(allowed=True, reason="白名单路径", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
+        )
+        return
+    try:
+        _enforce_docs_untracked(path_str)  # T3②：裸调用同样受人工确认闸门约束
+    except DeleteBlockedError:
+        _AUDIT_STATS["block"] += 1
+        raise
+    if (
+        any(_is_under_prefix(rel, pp) for pp in PROTECTED_PREFIXES)
+        and not _is_authorized()
+    ):
+        _AUDIT_STATS["block"] += 1
+        verdict = DeleteVerdict(
+            allowed=False,
+            reason=f"in-process 裸删除命中保护区: {rel}",
+            primitive=f"inprocess_{op}",
+            targets=[rel],
+            is_recursive=recursive,
+            is_protected_zone=True,
+        )
+        audit_delete("inprocess_block", f"{op}('{path_str}')", verdict)
+        raise DeleteBlockedError(
+            f"[OPS-GUARD] in-process 删除被阻断——{verdict.reason}\n"
+            f"  解决方案: 治理代理改用 guard_* API 并在 ReconcilerSpec.file_ops 显式声明"
+        )
+    _AUDIT_STATS["allow"] += 1
+    audit_delete(
+        "inprocess_allow",
+        f"{op}('{path_str}')",
+        DeleteVerdict(allowed=True, reason="非保护区", primitive=f"inprocess_{op}", targets=[rel], is_recursive=recursive),
+    )
+
+
+def _wrapped_remove(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=False)
+    return _ORIG_PRIMITIVES["os.remove"](path, *a, **kw)
+
+
+def _wrapped_unlink(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=False)
+    return _ORIG_PRIMITIVES["os.unlink"](path, *a, **kw)
+
+
+def _wrapped_rmdir(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=False)
+    return _ORIG_PRIMITIVES["os.rmdir"](path, *a, **kw)
+
+
+def _wrapped_rename(src: object, dst: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("move", src, recursive=False)
+    return _ORIG_PRIMITIVES["os.rename"](src, dst, *a, **kw)
+
+
+def _wrapped_shutil_rmtree(path: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("delete", path, recursive=True)
+    token = _BULK_APPROVED.set(True)
+    try:
+        return _ORIG_PRIMITIVES["shutil.rmtree"](path, *a, **kw)
+    finally:
+        _BULK_APPROVED.reset(token)
+
+
+def _wrapped_shutil_move(src: object, dst: object, *a: object, **kw: object) -> object:
+    _inprocess_judge("move", src, recursive=False)
+    token = _BULK_APPROVED.set(True)
+    try:
+        return _ORIG_PRIMITIVES["shutil.move"](src, dst, *a, **kw)
+    finally:
+        _BULK_APPROVED.reset(token)
+
+
+def install_inprocess_enforcement() -> bool:
+    """幂等安装 in-process 删除原语补丁（reconcile worker 进程入口调用）。
+
+    patch os.remove/os.unlink/os.rmdir/os.rename + shutil.rmtree/shutil.move
+    （pathlib.Path.unlink/rmdir 内部走 os.unlink/os.rmdir，一并覆盖）。
+    返回 True=本次新装，False=已装（幂等）。
+    """
+    global _INSTALLED
+    with _INSTALL_LOCK:
+        if _INSTALLED:
+            return False
+        import shutil as _shutil_mod
+
+        _ORIG_PRIMITIVES["os.remove"] = os.remove
+        _ORIG_PRIMITIVES["os.unlink"] = os.unlink
+        _ORIG_PRIMITIVES["os.rmdir"] = os.rmdir
+        _ORIG_PRIMITIVES["os.rename"] = os.rename
+        _ORIG_PRIMITIVES["shutil.rmtree"] = _shutil_mod.rmtree
+        _ORIG_PRIMITIVES["shutil.move"] = _shutil_mod.move
+
+        os.remove = _wrapped_remove  # type: ignore[assignment]
+        os.unlink = _wrapped_unlink  # type: ignore[assignment]
+        os.rmdir = _wrapped_rmdir  # type: ignore[assignment]
+        os.rename = _wrapped_rename  # type: ignore[assignment]
+        _shutil_mod.rmtree = _wrapped_shutil_rmtree  # type: ignore[assignment]
+        _shutil_mod.move = _wrapped_shutil_move  # type: ignore[assignment]
+        _INSTALLED = True
+        return True
+
+
+def inprocess_enforcement_installed() -> bool:
+    """补丁是否已安装（测试/自检用）。"""
+    return _INSTALLED
+
+
+def uninstall_inprocess_enforcement() -> bool:
+    """卸载 in-process 补丁，恢复原语（测试进程污染防护，治理批③ 2026-08-15）。
+
+    生产 worker 进程从不调用（补丁随进程退出消亡）；仅供测试场景：
+    同进程调用 run_worker（如 selfheal integration 测试）后补丁残留，
+    会拦截同进程后续测试自身的清理删除（字母序在 audit 后的 rule_bridge
+    等目录 fixture 清理命中保护区误拦实证）。测试 fixture 收尾调用本函数。
+    返回 True=本次卸载，False=未安装（幂等）。
+    """
+    global _INSTALLED
+    with _INSTALL_LOCK:
+        if not _INSTALLED:
+            return False
+        import shutil as _shutil_mod
+
+        for name, orig in _ORIG_PRIMITIVES.items():
+            if name.startswith("shutil."):
+                setattr(_shutil_mod, name.split(".", 1)[1], orig)
+            else:
+                setattr(os, name.split(".", 1)[1], orig)
+        _ORIG_PRIMITIVES.clear()
+        _INSTALLED = False
+        return True
 
 
 # ============================================================================

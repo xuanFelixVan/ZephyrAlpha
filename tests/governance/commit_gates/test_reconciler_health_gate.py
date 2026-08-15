@@ -221,3 +221,63 @@ class TestFailOpen:
         gate = make_reconciler_health_gate()
         passed, detail = gate.check(gw, [])
         assert passed is True
+
+
+class TestWarnBannerDedup:
+    """T5 告警卫生（2026-08-14）：critical_warn 横幅 24h dedup。"""
+
+    _WARNS = [
+        {
+            "gate_id": "GATE-DRIFT-SCAN",
+            "logged_at": "2026-08-14T00:00:00Z",
+            "detail": "drift scan failed",
+        }
+    ]
+
+    def _patch_warns(self, monkeypatch, warns):
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_blocks",
+            lambda root: [],
+        )
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.reconciler_health_gate.check_recent_critical_warns",
+            lambda root: warns,
+        )
+
+    def test_first_warn_prints(self, tmp_path: Path, monkeypatch, capsys):
+        """首次告警 → 打印横幅 + dedup 状态落盘。"""
+        self._patch_warns(monkeypatch, self._WARNS)
+        gw = _make_gateway(tmp_path)
+        gate = make_reconciler_health_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is True
+        assert "GATE-DRIFT-SCAN" in capsys.readouterr().out
+        assert (tmp_path / ".runtime" / "reconciler_health_warn_dedup.json").exists()
+
+    def test_same_signature_deduped_within_24h(self, tmp_path: Path, monkeypatch, capsys):
+        """同签名告警 24h 内第二次 → 不打印（仍放行 + detail 保留）。"""
+        self._patch_warns(monkeypatch, self._WARNS)
+        gw = _make_gateway(tmp_path)
+        gate = make_reconciler_health_gate()
+        gate.check(gw, [])
+        capsys.readouterr()  # 清掉首次输出
+        passed, detail = gate.check(gw, [])
+        assert passed is True
+        assert "WARN" in detail  # 语义不变
+        assert capsys.readouterr().out == ""  # 但不再刷屏
+
+    def test_new_signature_prints_again(self, tmp_path: Path, monkeypatch, capsys):
+        """告警内容变化（新签名）→ 24h 内也照常打印（真告警不被淹没）。"""
+        self._patch_warns(monkeypatch, self._WARNS)
+        gw = _make_gateway(tmp_path)
+        gate = make_reconciler_health_gate()
+        gate.check(gw, [])
+        capsys.readouterr()
+        self._patch_warns(
+            monkeypatch,
+            self._WARNS
+            + [{"gate_id": "GATE-NEW", "logged_at": "2026-08-14T01:00:00Z", "detail": "new failure"}],
+        )
+        passed, _ = gate.check(gw, [])
+        assert passed is True
+        assert "GATE-NEW" in capsys.readouterr().out

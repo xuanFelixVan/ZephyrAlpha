@@ -3,7 +3,7 @@ module_id: MOD-RK-08
 title: "风险预算分配器蓝图 — ERC + 自定义预算 SLSQP 优化"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 ttl: permanent
 layer: L02_risk
 layer_name: risk
@@ -142,6 +142,8 @@ build_status: stable
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/risk/core/test_liquidity_monitor.py` | ✅ 已实现 | |
+| `tests/risk/core/test_orchestrator_liquidity_integration.py` | ✅ 已实现 | |
 | `tests/risk/test_risk_budget_allocator.py` | ✅ 已实现 | |
 
 ### 8.5 路径索引使用指南
@@ -157,3 +159,5 @@ build_status: stable
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

@@ -596,9 +596,9 @@ def _log_worktree_delete(session_id: str, source: str, path: "Path | str", root:
 
         from datetime import datetime, timezone
 
-        from zephyr.shared.io.paths import strip_session_worktree
+        from zephyr.shared.io.paths import anchor_main_root
 
-        main_root = strip_session_worktree(Path(root))
+        main_root = anchor_main_root(Path(root))
 
         log_dir = main_root / ".runtime"
 

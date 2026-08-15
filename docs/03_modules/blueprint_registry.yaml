@@ -1,12 +1,12 @@
 registry:
   version: 2.7.14
   created: '2026-05-02'
-  last_updated: '2026-08-13'
-  total_blueprints: 158
+  last_updated: '2026-08-14'
+  total_blueprints: 163
   scope: 03_modules/
-  note: Auto-synced from 158 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 163 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-08-08'
+  generated_at: '2026-08-14'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -1239,7 +1239,8 @@ blueprints:
 - module_id: MOD-PA-006
   name: batched_position_builder
   title: 分批建仓引擎 — C-031置信度驱动分批建仓+尾盘集中执行+限价锚定+资金pro-rata兜底
-  summary: BM-BUY-04 分批建仓引擎——消费 31 号 FirmTargetPortfolio，C-031 置信度驱动 2 批/激进 1 批，尾盘 14:50-14:57 集中执行，限价锚定，资金 pro-rata 兜底，突破失败降级联动 42 号。6 算法+2 数据契约已施工，42 用例通过
+  summary: BM-BUY-04 分批建仓引擎：消费 31 号 FirmTargetPortfolio，C-031 置信度驱动 2 批/激进 1 批，尾盘
+    14:50-14:57 集中执行，限价锚定，资金 pro-rata 兜底，突破失败降级联动 42 号
   layer: L2_domain
   functional_domain: pf_alloc
   blueprint_status: Active
@@ -1330,7 +1331,7 @@ blueprints:
 - module_id: MOD-PLAN-001
   name: tomorrow_boundary_planner
   title: 明日预案引擎 — 盘后生成TomorrowBoundary操作边界（箱体上下沿+加仓上限+禁加仓/必出价位）
-  summary: BM-PLAN-01 明日预案引擎——盘后收盘基于当日数据冷静计算明日操作边界 TomorrowBoundary，边界层（B/C）核心产出者，边界层坏=致命暂停操作。已施工（MVP 骨架）
+  summary: BM-PLAN-01 明日预案引擎：盘后收盘基于当日数据冷静计算明日操作边界 TomorrowBoundary，边界层（B/C）核心产出者，边界层坏=致命暂停操作
   layer: L2_domain
   functional_domain: plan_engine
   blueprint_status: Active
@@ -1343,7 +1344,7 @@ blueprints:
 - module_id: MOD-PLAN-002
   name: premarket_constraint_loader
   title: 盘前预案加载器 — 9:00加载TomorrowBoundary+9:25集合竞价9情景匹配初始化ConstraintState
-  summary: BM-PLAN-02 盘前预案加载——次日 9:00 加载昨晚 TomorrowBoundary，9:25 集合竞价匹配 9 情景初始化 ConstraintState；加载失败=致命，无约束状态禁止开始交易。已施工（MVP ±2% 简化匹配）
+  summary: BM-PLAN-02 盘前预案加载：次日 9:00 加载昨晚 TomorrowBoundary，9:25 集合竞价匹配 9 情景初始化 ConstraintState；加载失败=致命，无约束状态禁止开始交易
   layer: L2_domain
   functional_domain: plan_engine
   blueprint_status: Active
@@ -1356,7 +1357,8 @@ blueprints:
 - module_id: MOD-PLAN-003
   name: closing_session_decision
   title: 尾盘决策引擎 — 14:45基于明日高/低开概率的加减仓决策（ADD/REDUCE/HOLD/EXIT）
-  summary: BM-PLAN-03 尾盘决策——14:45-15:00 基于盘中推演与持仓，高开概率>70%→ADD/低开概率>60%→REDUCE/否则 HOLD；与 41 §3.4 尾盘窗口分工：预测驱动调仓决策层 vs 建仓执行层。已施工
+  summary: BM-PLAN-03 尾盘决策：14:45-15:00 基于今日盘中推演与持仓状态，明日高开概率>70%→ADD/低开概率>60%→REDUCE/否则HOLD；与
+    §3.4 尾盘窗口分工：本模块是预测驱动调仓决策层，§3.4 是建仓执行层
   layer: L2_domain
   functional_domain: plan_engine
   blueprint_status: Active
@@ -1810,16 +1812,16 @@ blueprints:
   file_path: 03_modules/_domain_risk/daily_auditor/blueprint.md
 - module_id: MOD-RK-21
   name: liquidity_crisis_manager
-  title: 流动性危机管理器蓝图 — 卖压/价差/涨跌停五状态/恢复 hysteresis/IPO 抽离预警（37号 G18 施工落地）
+  title: ''
   summary: ''
-  layer: L02_risk
-  functional_domain: risk
+  layer: ''
+  functional_domain: ''
   blueprint_status: Active
   blueprint_level: module
-  priority: P1
-  version: 0.1.0
+  priority: P2
+  version: ''
   generation: ''
-  last_updated: '2026-08-13'
+  last_updated: ''
   file_path: 03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md
 - module_id: MOD-RPT-003
   name: report_publisher
@@ -1925,6 +1927,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_reporting/ashare_trade_record_template/blueprint.md
+- module_id: MOD-SELL-000
+  name: position_triage
+  title: 持仓分级判定器蓝图 — ATR距离驱动WATCH/MONITOR/HOLD三级
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_sell_decision/position_triage/blueprint.md
 - module_id: MOD-SELL-001
   name: sell_signal_collector
   title: 卖出信号收集器蓝图 — 8类卖出信号聚合+去重
@@ -1951,6 +1966,32 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_sell_decision/breakout_failure_detector/blueprint.md
+- module_id: MOD-SELL-004
+  name: take_profit_strategy
+  title: 止盈策略族蓝图 — Chandelier Exit 移动止盈(自动phase判定)
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_sell_decision/take_profit_strategy/blueprint.md
+- module_id: MOD-SELL-005
+  name: stop_loss_strategy
+  title: 止损策略族蓝图 — Chandelier Exit 统一止损 + ATR自适应时间止损
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_sell_decision/stop_loss_strategy/blueprint.md
 - module_id: MOD-SELL-006
   name: replacement_rebalance_seller
   title: 置换与再平衡卖出蓝图 — 机会成本驱动+组合权重偏离驱动
@@ -2016,6 +2057,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_sell_decision/stop_hunting_protector/blueprint.md
+- module_id: MOD-SELL-019
+  name: sell_execution_planner
+  title: 卖出执行编排器蓝图 — 执行时序映射+跌停排队+KillSwitch清仓排序
+  summary: ''
+  layer: L03_sell_decision
+  functional_domain: sell_decision
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.0
+  generation: ''
+  last_updated: '2026-08-13'
+  file_path: 03_modules/_domain_sell_decision/sell_execution_planner/blueprint.md
 - module_id: MOD-SIM-002
   name: strategy_simulator
   title: 策略仿真器蓝图 — 策略沙箱+信号模拟+组合模拟
@@ -2176,7 +2230,8 @@ blueprints:
 - module_id: MOD-TRIG-001
   name: trigger_registry
   title: 扳机清单注册与仲裁引擎 — 触发器统一注册+优先级仲裁+同源去重+冷却期防重
-  summary: 41 §3.9 条件触发执行队列——买入/卖出/执行/风控触发器统一注册 TriggerEntry，priority 1-5 仲裁+scope 排序+同源去重+冷却期，MVP 15 条清单预注册。已施工，24 用例通过
+  summary: 41 §3.9 条件触发执行队列：买入/卖出/执行/风控触发器统一注册 TriggerEntry，priority 1-5 仲裁+scope
+    排序+同源去重+冷却期，MVP 15 条清单预注册
   layer: L2_domain
   functional_domain: trading
   blueprint_status: Active
@@ -2214,16 +2269,16 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
 summary:
-  total: 153
+  total: 163
   by_blueprint_status:
-    Active: 139
+    Active: 149
     Draft: 14
   by_layer:
-    L2_domain: 17
+    L2_domain: 22
     L_BACKTEST: 8
     L1_foundation: 30
     ? ''
-    : 13
+    : 14
     L0_infrastructure: 18
     L3_application: 1
     L01_foundation: 6
@@ -2232,14 +2287,29 @@ summary:
     L03_position: 14
     L02_risk: 11
     L07_reporting: 8
-    L03_sell_decision: 7
+    L03_sell_decision: 11
     L_SIMULATION: 3
     L03_simulation: 5
     L03_trading: 3
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-08-08'
+  last_recomputed: '2026-08-14'
 changelog:
+- version: 2.7.14
+  date: '2026-08-14'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 163 份 blueprint.md；登记项相对上一版有
+    9 条差异摘要'
+  - 'MOD-RK-21.title: [流动性危机管理器蓝图 — 卖压/价差/涨跌停五状态/恢复 hysteresis/IPO 抽离预警（37号 G18 施工落地）]
+    → []'
+  - 'MOD-RK-21.version: [0.1.0] → []'
+  - 'MOD-RK-21.last_updated: [2026-08-13] → []'
+  - 'MOD-RK-21.layer: [L02_risk] → []'
+  - 'MOD-RK-21.priority: [P1] → [P2]'
+  - 新增 MOD-SELL-000 → 03_modules/_domain_sell_decision/position_triage/blueprint.md
+  - 新增 MOD-SELL-004 → 03_modules/_domain_sell_decision/take_profit_strategy/blueprint.md
+  - 新增 MOD-SELL-005 → 03_modules/_domain_sell_decision/stop_loss_strategy/blueprint.md
+  - 新增 MOD-SELL-019 → 03_modules/_domain_sell_decision/sell_execution_planner/blueprint.md
 - version: 2.7.13
   date: '2026-08-07'
   changes:

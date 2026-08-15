@@ -57,13 +57,17 @@ Usage::
 
 from __future__ import annotations
 
+import hashlib
+import json
 import logging
+from pathlib import Path
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import GateSpec
 from zephyr.governance.audit.reconciliation_registry import (
     _check_recent_blocks,
     _check_recent_critical_warns,
 )
+
 check_recent_critical_warns = _check_recent_critical_warns  # public alias（Stage 4 公共化）
 
 check_recent_blocks = _check_recent_blocks  # public alias（Stage 4 公共化）
@@ -72,6 +76,42 @@ check_recent_blocks = _check_recent_blocks  # public alias（Stage 4 公共化�
 logger = logging.getLogger(__name__)
 
 __all__ = ["make_reconciler_health_gate"]
+
+# T5 告警卫生（2026-08-14，#ARCH-RECONCILER-AUTO-DELETE-GOV-001 裁定5）：
+# critical_warn 横幅 24h dedup——同一告警内容签名 24h 内只打印一次，
+# 新增/变化的告警照常打印（真告警不被淹没，恒定噪音不刷屏）。
+_WARN_DEDUP_SECONDS = 24 * 3600
+
+
+def _warn_signature(warns: list[dict]) -> str:
+    """告警内容签名（gate_id+detail 排序哈希）——内容不变=同一条告警。"""
+    parts = sorted(f"{w.get('gate_id', '?')}|{w.get('detail', '')}" for w in warns)
+    return hashlib.sha256("\n".join(parts).encode("utf-8")).hexdigest()[:16]
+
+
+def _should_print_warn(project_root, sig: str) -> bool:
+    """24h dedup 判定：同签名 24h 内已打印→False；否则记录并放行打印。
+
+    状态落盘 .runtime/reconciler_health_warn_dedup.json（gitignored 运行区）。
+    fail-open：任何 IO 异常都允许打印（告警可见性优先于降噪）。
+    """
+    state_path = Path(str(project_root)) / ".runtime" / "reconciler_health_warn_dedup.json"
+    # epoch 秒比较：now_utc().timestamp() 替代 time.time()（DATETIME-NOW-FORBIDDEN 对齐）
+    from zephyr.shared.utils.time_utils import now_utc  # noqa: PLC0415 — 避免模块级循环
+
+    now = now_utc().timestamp()
+    try:
+        st = json.loads(state_path.read_text(encoding="utf-8"))
+        if st.get("sig") == sig and now - float(st.get("ts", 0)) < _WARN_DEDUP_SECONDS:
+            return False
+    except Exception:  # noqa: BLE001 — 状态缺失/损坏=首次打印
+        pass
+    try:
+        state_path.parent.mkdir(parents=True, exist_ok=True)
+        state_path.write_text(json.dumps({"sig": sig, "ts": now}), encoding="utf-8")
+    except Exception:  # noqa: BLE001 — 落盘失败不阻断打印
+        pass
+    return True
 
 
 def make_reconciler_health_gate() -> GateSpec:
@@ -97,16 +137,13 @@ def make_reconciler_health_gate() -> GateSpec:
             blocks = []
 
         if blocks:
-            detail_lines = [
-                f"RECONCILER-HEALTH: {len(blocks)} blocking reconciler failure(s) in last 24h:"
-            ]
+            detail_lines = [f"RECONCILER-HEALTH: {len(blocks)} blocking reconciler failure(s) in last 24h:"]
             for b in blocks[:5]:
                 detail_lines.append(f"  - [{b['logged_at']}] {b['gate_id']}: {b['detail']}")
             if len(blocks) > 5:
                 detail_lines.append(f"  ... and {len(blocks) - 5} more (query governance.db)")
             detail_lines.append(
-                "  Action: fix failures then run resolve_blocks() to clear. "
-                "Escape: commit(allow_overlap=True)."
+                "  Action: fix failures then run resolve_blocks() to clear. Escape: commit(allow_overlap=True)."
             )
             detail = "\n".join(detail_lines)
             logger.error("RECONCILER-HEALTH gate block:\n%s", detail)
@@ -120,19 +157,58 @@ def make_reconciler_health_gate() -> GateSpec:
             warns = []
 
         if warns:
-            warn_lines = [
-                f"RECONCILER-HEALTH WARN: {len(warns)} critical reconciler failure(s) in last 24h:"
-            ]
+            warn_lines = [f"RECONCILER-HEALTH WARN: {len(warns)} critical reconciler failure(s) in last 24h:"]
             for w in warns[:5]:
                 warn_lines.append(f"  - [{w['logged_at']}] {w['gate_id']}: {w['detail']}")
             if len(warns) > 5:
                 warn_lines.append(f"  ... and {len(warns) - 5} more (query governance.db)")
             warn_lines.append("  Investigate before proceeding (non-blocking warning).")
             warn_detail = "\n".join(warn_lines)
-            logger.warning(warn_detail)
-            # 保留 print：gate 告警需直接出现在操作员控制台（commit UX），不依赖 logging 配置
-            print(f"[GATE RECONCILER-HEALTH] {warn_detail}")
+            # T5：24h dedup——同签名告警 24h 内只打印一次，仍落 logger 留痕
+            if _should_print_warn(project_root, _warn_signature(warns)):
+                logger.warning(warn_detail)
+                # 保留 print：gate 告警需直接出现在操作员控制台（commit UX），不依赖 logging 配置
+                print(f"[GATE RECONCILER-HEALTH] {warn_detail}")
+            else:
+                logger.info("RECONCILER-HEALTH WARN deduped (same signature within 24h)")
             return True, warn_detail
+
+        # 2.5 T2③ 删除审计覆盖率检查（#ARCH-RECONCILER-AUTO-DELETE-GOV-001）：
+        # worker status 落盘的 ops_guard_audit_stats 中 audit_failed>0
+        # = 删除动作未 100% 落审计（覆盖率缺口）→ warn 不阻断。
+        try:
+            import glob as _glob
+            import json as _json
+            import time as _time
+
+            _cutoff = _time.time() - 24 * 3600
+            _reports = _glob.glob(
+                str(Path(project_root) / ".runtime" / "reconcile_reports" / "reconcile_status_*.json")
+            )
+            _gap_total = 0
+            _judge_total = 0
+            for _rp in _reports:
+                try:
+                    if Path(_rp).stat().st_mtime < _cutoff:
+                        continue
+                    _stats = _json.loads(Path(_rp).read_text(encoding="utf-8")).get(
+                        "ops_guard_audit_stats"
+                    )
+                    if _stats:
+                        _gap_total += int(_stats.get("audit_failed", 0))
+                        _judge_total += int(_stats.get("judge_calls", 0))
+                except Exception:  # noqa: BLE001 — 单文件损坏跳过
+                    continue
+            if _gap_total > 0:
+                _cov_detail = (
+                    f"RECONCILER-HEALTH WARN: 删除审计覆盖率缺口——24h 内 "
+                    f"ops_guard 判定 {_judge_total} 次但审计落盘失败 {_gap_total} 次"
+                    "（T2③ 覆盖率<100%，查 .runtime/gate_audit/ 写入权限/磁盘）"
+                )
+                logger.warning(_cov_detail)
+                print(f"[GATE RECONCILER-HEALTH] {_cov_detail}")
+        except Exception:  # noqa: BLE001 — 覆盖率检查失败不阻断
+            pass
 
         return True, "reconciler health OK (0 block_next, 0 critical_warn in last 24h)"
 

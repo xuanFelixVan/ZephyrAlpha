@@ -259,7 +259,16 @@ class SessionRegistry:
     """
 
     def __init__(self, project_root: str | Path | None = None) -> None:
-        self._project_root: Path = Path(project_root) if project_root else Path.cwd()
+        root = Path(project_root) if project_root else Path.cwd()
+        # 锚主仓根（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T2 实证治本）：
+        # session registry 是仓级共享状态——worktree（.worktrees/<sid>/ 结构）内
+        # 构造时自动锚定主仓，消除 claim（worktree 内网关进程写 worktree registry）
+        # 与 worker 三证（锚主仓读主仓 registry）的双 registry 分裂——合法 worker
+        # 被证3 误判"session 已死"拒启（2026-08-14 两例实证）。
+        # 嵌套 fake worktree（测试 tmp_repo/.worktrees/<sid>）同样锚宿主根，语义一致。
+        if root.parent.name == ".worktrees":
+            root = root.parent.parent
+        self._project_root: Path = root
         self._registry_path: Path = self._project_root / _REGISTRY_PATH
         self._registry_path.parent.mkdir(parents=True, exist_ok=True)
         # 进程内读写锁：串行化 _load->修改->_save 的 read-modify-write 序列，

@@ -358,6 +358,7 @@ def make_readme_version_sync_reconciler(project_root: Path | None = None):
         trigger=_trigger,
         reconcile=_reconcile,
         priority=210,  # 晚于 BACKUP-RECONILER(200)，README 校验非紧急
+        file_ops=frozenset({"read", "write"}),
     )
 
 

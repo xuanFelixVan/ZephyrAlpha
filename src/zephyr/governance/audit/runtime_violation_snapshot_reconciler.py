@@ -206,5 +206,6 @@ def make_runtime_violation_snapshot_reconciler(gateway: "object") -> ReconcilerS
         trigger=_trigger,
         reconcile=_reconcile,
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
     )
 

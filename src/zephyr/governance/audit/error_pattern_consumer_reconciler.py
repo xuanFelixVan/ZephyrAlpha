@@ -354,4 +354,5 @@ def make_error_pattern_consumer_reconciler(gateway: "object") -> ReconcilerSpec:
         trigger=_trigger,
         reconcile=_reconcile,
         priority=_PRIORITY,
+        file_ops=frozenset({"read", "write"}),
     )

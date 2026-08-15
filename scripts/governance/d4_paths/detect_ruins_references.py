@@ -21,7 +21,7 @@
      GOV-DOC-004 §3（废弃路径清单）
 
 检测内容：
-- 任何文件中引用 _DO_NOT_USE_old_tree/ 路径
+- 任何文件中引用 _DO_NOT_USE_old_tree 废墟目录路径（带尾斜杠字面量即命中，见 _shared/deprecated_paths.yaml）
 - 引用已知的废弃路径
 - 引用候选池中的文件作为正式规则来源
 

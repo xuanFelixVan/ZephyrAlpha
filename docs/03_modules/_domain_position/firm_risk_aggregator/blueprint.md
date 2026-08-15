@@ -3,7 +3,7 @@ module_id: MOD-POS-021
 title: "Firm层风险聚合器蓝图 — 求和+硬上限裁剪+冲突净额（A模型·组合汇总层）"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 design_maturity: production
 build_status: stable
 ttl: permanent
@@ -327,25 +327,28 @@ if net_weight ≤ 0: 标记为清仓/减仓（target_weight=0 或负值转卖出
 ## 10. 已实现代码完整路径索引
 
 > **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
-> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态派生，禁止手写。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> 
 
 ### 10.1 源码文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/position/core/firm_risk_aggregator.py` | ❌ 未实现 | 30_multi_strategy_concurrency §7.2 指定路径，Phase 1 施工 |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 
 **新 AI session 读取顺序**：
-1. 读本蓝图 §1.1（分层边界）→ 知道"FirmRiskAggregator 做什么、不做什么"
-2. 读 §1.2（自然叠加哲学）→ 理解 A 模型核心优势
-3. 读 §3（核心规则）→ 知道"求和→裁剪→净额"完整逻辑
-4. 读 §2.3（FirmTargetPortfolio 契约）→ 知道"和上下游的接口"
+1. 读本蓝图 §10（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
 
 **路径约定**：
-- 所有路径相对于 `D:\ZephyrAlpha\`
+- 所有路径相对于 `D:\ZephyrAlpha\\`
 - 源码在 `src/zephyr/` 下
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

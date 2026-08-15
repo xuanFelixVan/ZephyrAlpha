@@ -1560,3 +1560,87 @@ class TestMergeFinalizeForeignStaged:
         assert not any("收编" in m for m in warn_msgs), (
             f"staged 区干净不应有收编预警，实际={warn_msgs}"
         )
+
+
+# ---------------------------------------------------------------------------
+# T4-2 gate 运行期 tracked 区漂移监视（#ARCH-PRECOMMIT-STASH-ADAPT-001）
+# ---------------------------------------------------------------------------
+class TestGateTrackedDriftWatch:
+    """gate 运行期 tracked 区写入=违规（#55 族病根防回潮）——报警+审计，不阻断。
+
+    裁定原文：hook 运行期产生的任何 tracked 区写入一律视为违规并报警，
+    而非静默 stash 掩盖。
+    """
+
+    class _NoopRegistry:
+        """空 gate 链（零写入）。"""
+
+        def check_all(self, gateway, files, **kwargs):  # noqa: ARG002
+            return []
+
+    class _WritingRegistry:
+        """模拟 #55 病根——gate 运行期向 tracked 文件追加审计行。"""
+
+        def check_all(self, gateway, files, **kwargs):  # noqa: ARG002
+            target = Path(str(gateway.project_root)) / "tracked_audit.jsonl"
+            with open(target, "a", encoding="utf-8") as f:
+                f.write('{"gate_ran": true}\n')
+            return []
+
+    def _prepare(self, tmp_path: Path) -> GitCommitGateway:
+        _init_git_repo(tmp_path)
+        # 一个已 tracked 的文件（gate 运行期写入的受害目标）
+        _write_file(tmp_path, "tracked_audit.jsonl", "")
+        env = {
+            **os.environ,
+            "GIT_AUTHOR_NAME": "T", "GIT_AUTHOR_EMAIL": "t@t.com",
+            "GIT_COMMITTER_NAME": "T", "GIT_COMMITTER_EMAIL": "t@t.com",
+        }
+        subprocess.run(["git", "add", "tracked_audit.jsonl"], cwd=str(tmp_path), capture_output=True, env=env)
+        subprocess.run(["git", "commit", "-m", "track", "--no-verify"], cwd=str(tmp_path), capture_output=True, env=env)
+        return GitCommitGateway(project_root=tmp_path)
+
+    def _audit_file(self, tmp_path: Path) -> Path:
+        return tmp_path / ".runtime" / "audit" / "hook_tracked_drift.jsonl"
+
+    def test_fingerprint_stable_when_clean(self, tmp_path: Path) -> None:
+        """干净 tracked 区：两次指纹一致。"""
+        gw = self._prepare(tmp_path)
+        assert gw._tracked_area_fingerprint() == gw._tracked_area_fingerprint()
+
+    def test_fingerprint_changes_on_tracked_write(self, tmp_path: Path) -> None:
+        """tracked 文件被写 → 指纹变化（监视器判据成立）。"""
+        gw = self._prepare(tmp_path)
+        before = gw._tracked_area_fingerprint()
+        _write_file(tmp_path, "tracked_audit.jsonl", '{"x":1}\n')
+        after = gw._tracked_area_fingerprint()
+        assert before != after
+
+    def test_noop_gates_no_alarm(self, tmp_path: Path) -> None:
+        """零写入 gate 链 → 无漂移报警（无审计文件）。"""
+        gw = self._prepare(tmp_path)
+        gw._gate_registry = self._NoopRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-clean")
+        assert results == []
+        assert not self._audit_file(tmp_path).exists(), "零漂移不应产生违规审计"
+
+    def test_gate_tracked_write_flagged_and_audited(self, tmp_path: Path) -> None:
+        """gate 运行期写 tracked 文件 → 违规审计落盘（T4-2 验收：报警不静默）。"""
+        import json as _json
+
+        gw = self._prepare(tmp_path)
+        gw._gate_registry = self._WritingRegistry()
+        results = gw._check_gates_with_drift_watch([], "sess-drift")
+        assert results == []  # 不阻断——结果照常返回
+        audit = self._audit_file(tmp_path)
+        assert audit.exists(), "gate 运行期 tracked 写入未产生违规审计"
+        records = [
+            _json.loads(line)
+            for line in audit.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        assert any(
+            r.get("violation") == "gate_runtime_tracked_drift"
+            and r.get("session_id") == "sess-drift"
+            for r in records
+        )
