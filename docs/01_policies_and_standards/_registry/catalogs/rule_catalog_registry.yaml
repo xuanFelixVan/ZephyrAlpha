@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-15T08:55:48Z'
+generated_at: '2026-08-15T10:18:32Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 214
@@ -2035,7 +2035,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2095,7 +2095,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 2.13.0
+  version: 2.14.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2110,7 +2110,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2140,7 +2140,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2245,7 +2245,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2260,7 +2260,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2275,7 +2275,7 @@ files:
   title: ''
   doc_type: ''
   status: draft
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2305,7 +2305,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2320,7 +2320,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2515,7 +2515,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2545,7 +2545,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2605,7 +2605,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2620,7 +2620,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2665,7 +2665,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2770,7 +2770,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2785,7 +2785,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2815,7 +2815,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2875,7 +2875,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
