@@ -1,7 +1,17 @@
 # [A_config] module_id=REG-CYCLE-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 state（周期=规则性时间窗口状态量）；primary_timeframe 由既有 timeframe 字段映射（daily→daily，yearly 等枚举外值→null 占位）；direction 默认 neutral 占位；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '2.0'
 registry_id: REG-CYCLE-001
 name: Regime Cycle Registry
 name_zh: 周期分析注册表
@@ -16,9 +26,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-14'
-last_updated: '2026-08-14'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - cycle_id
@@ -46,6 +56,16 @@ entry_schema:
   created_at: date
   updated_at: date
   owner: str
+  primary_timeframe: str|null           # 主时间级别 Primary Timeframe — 条目归属的唯一时间级别（枚举 1min/5min/15min/30min/60min/120min/daily/weekly/monthly；无时间语义条目为 null）
+  applicable_timeframes: list               # 可泛化时间级别 Applicable Timeframes — 条目可泛化适用的时间级别列表（多值，可空表）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  direction: str                # 信号方向 Direction — long/short/both/neutral（无方向语义用 neutral）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 cycles:
   # ============================================================
@@ -72,6 +92,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-TIME-002"
     name: "Gann 60-Day Cycle"
@@ -94,6 +124,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-TIME-003"
     name: "Gann 90-Day Cycle"
@@ -116,6 +156,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-TIME-004"
     name: "Gann Anniversary Cycle"
@@ -138,6 +188,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # PRICE CYCLES（价格周期）— 波段幅度对称
@@ -163,6 +223,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-PRICE-002"
     name: "Gann 50% Retracement"
@@ -185,6 +255,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # GEOMETRIC CYCLES（几何周期）— Gann 角度/九方图（已登 TREND-009/010，此处登记周期维度）
@@ -210,6 +290,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-GEO-002"
     name: "Gann Square of Nine Time"
@@ -232,6 +322,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # STATISTICAL CYCLES（统计周期）— 现代量化重述
@@ -257,6 +357,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-STAT-002"
     name: "Rolling Autocorrelation Cycle"
@@ -279,6 +389,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-STAT-003"
     name: "Cycle Clustering"
@@ -301,6 +421,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - cycle_id: "CYC-STAT-004"
     name: "Regime-Switching Cycle"
@@ -323,6 +453,16 @@ cycles:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
 # ============================================================
 # 与相关注册表的边界（2026-08-14 澄清）
