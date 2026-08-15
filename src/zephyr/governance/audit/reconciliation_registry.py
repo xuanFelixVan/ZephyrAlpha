@@ -4938,7 +4938,8 @@ def make_ttl_drift_incremental_reconciler(gateway: object) -> ReconcilerSpec:
 
     _TTL_SUFFIXES = frozenset({".md", ".py", ".sh", ".ps1", ".mmd", ".yaml", ".json"})
 
-    _SCAN_ROOT_PREFIXES = ("docs/", "src/", "scripts/", "tests/")
+    # 管辖域=文档保留期判定树的 zone 模型覆盖范围（见 docstring"管辖域"节实证收窄说明）
+    _SCAN_ROOT_PREFIXES = ("docs/", "architecture_model/")
 
     def _pick_targets(committed_files: list[str]) -> list[str]:
 
@@ -5052,9 +5053,13 @@ def make_ttl_drift_incremental_reconciler(gateway: object) -> ReconcilerSpec:
 
             detail=f"ttl drift incremental: {len(drift_files)} file(s) ttl 声明与 "
 
-                   f"decision_tree 不符——{shown}{more}；纠偏=人工确认后跑 "
+                   f"decision_tree 不符——{shown}{more}；处置=人工裁定（词表裁定序："
 
-                   f"backfill_ttl_metadata.py --rejudge <file> 并提交（warn-only 不写文件）",
+                   f"显式声明 > zone 契约 > doc_type 默认 > decision_tree 辅助判定——"
+
+                   f"中性区显式 permanent 可为合法 override；确认声明有误再跑 "
+
+                   f"backfill_ttl_metadata.py --rejudge <file> 纠偏提交，warn-only 不写文件）",
 
         )
 

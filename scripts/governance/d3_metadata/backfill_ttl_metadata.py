@@ -404,6 +404,7 @@ def main() -> int:
     ttl_changes = {"permanent": 0, "task_bound": 0}
 
     changed_files: list[str] = []
+    error_files: list[str] = []  # #73：error 归因清单（原只计数无归因，日频链不可诊断）
     for fpath in all_files:
         result = backfill_file(fpath, dry_run=dry_run, rejudge=rejudge)
         stats[result] = stats.get(result, 0) + 1
@@ -413,6 +414,8 @@ def main() -> int:
             metadata = _parse_metadata(fpath)
             ttl_value = _infer_ttl(rel_path, metadata or {})
             ttl_changes[ttl_value] += 1
+        elif result == "error":
+            error_files.append(str(fpath.relative_to(REPO_ROOT)).replace("\\", "/"))
 
     # 输出统计报告
     mode_parts = []
@@ -446,6 +449,12 @@ def main() -> int:
     if changed_files:
         print(f"\n=== CHANGED FILES ({len(changed_files)}) ===")
         for f in changed_files:
+            print(f)
+
+    # error 归因清单（#73：日频链可诊断性——哪份文件解析/写入失败必须能定位）
+    if error_files:
+        print(f"\n=== ERROR FILES ({len(error_files)}) ===")
+        for f in error_files:
             print(f)
 
     if stats["error"] > 0:
