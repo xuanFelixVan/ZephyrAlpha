@@ -1,0 +1,359 @@
+# [A_config] module_id=REG-PFM-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 rule（组合模型=『买多少』的权重规则）；primary_timeframe 默认 null 占位；direction 默认 neutral 占位；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# ============================================================================
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '2.0'
+registry_id: REG-PFM-001
+name: Portfolio Model Registry
+name_zh: 组合构建模型注册表
+description: >-
+  组合构建模型唯一真源（SSoT）。登记组合优化/权重分配方法（等权/打分加权/
+  均值方差/最小方差/风险平价/HRP/Black-Litterman/因子风险模型）的假设、
+  输入依赖、参数、适用场景、已知缺陷。与 execution_algo_registry 正交：
+  执行算法管"怎么交易"（拆单撮合），本表管"买多少"（权重分配）。
+  与 risk_limit_registry 正交：风控限额管"不能超过什么"，本表管"目标是什么"。
+  承载 D_PF_ALLOC 域候选（CAND-PFALLOC-001~003）的模型定义。
+  对标：机构组合构建层（Barra/Aladdin optimizer）、
+  QuantConnect PortfolioConstructionModel 谱系、skfolio/riskfolio-lib 开源实现。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.1.0
+created: '2026-08-14'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- model_id
+entry_count: 8
+
+entry_schema:
+  model_id: str                  # PFM-{CLASS}-{NNN}，如 PFM-RP-001
+  name: str
+  name_zh: str
+  aliases: list[str]
+  model_class: str               # heuristic/mean_variance/risk_based/hierarchical/fundamental
+  objective: str                 # 优化目标（收益最大/波动最小/风险贡献均衡）
+  assumptions: str               # 核心假设（收益正态/相关性稳定等）
+  inputs: list[str]              # 输入依赖（预期收益/协方差/因子暴露）
+  params: obj                    # 关键参数（lookback/shrinkage/max_weight）
+  output: str                    # 输出（target_weight vector）
+  strengths: str
+  weaknesses: str                # 已知缺陷（对输入敏感/估计误差放大等）
+  applicable_scenario: str       # 适用场景（标的数/换手约束/策略类型）
+  est_error_mitigation: str      # 估计误差缓解（收缩/正则化/稳健化）
+  code_path: str                 # 代码锚点（portfolio.optimizer DS-069 等）
+  module_id: str
+  doc_ref: str
+  status: str                    # candidate/active/deprecated
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  primary_timeframe: str|null           # 主时间级别 Primary Timeframe — 条目归属的唯一时间级别（枚举 1min/5min/15min/30min/60min/120min/daily/weekly/monthly；无时间语义条目为 null）
+  applicable_timeframes: list               # 可泛化时间级别 Applicable Timeframes — 条目可泛化适用的时间级别列表（多值，可空表）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  direction: str                # 信号方向 Direction — long/short/both/neutral（无方向语义用 neutral）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+
+portfolio_models:
+  # ============================================================
+  # HEURISTIC（启发式——MVP 基线，已落地）
+  # ============================================================
+  - model_id: "PFM-HEU-001"
+    name: "Equal Weight"
+    name_zh: 等权组合
+    aliases: ["equal_weight", "1/N", "等权"]
+    model_class: "heuristic"
+    objective: "w_i = 1/N（分散化基线）"
+    assumptions: "无（不依赖任何估计）"
+    inputs: ["universe_constituents"]
+    params: {max_weight: null}
+    output: "target_weight vector"
+    strengths: "零估计误差；DeMiguel 2009 证明多数优化模型 OOS 跑不赢 1/N"
+    weaknesses: "不利用任何信息；风险不集中管理"
+    applicable_scenario: "MVP 基线/标的数 10-50/所有策略的回测对照组"
+    est_error_mitigation: "不需要（无估计）"
+    code_path: "src/zephyr/portfolio/（portfolio.optimizer DS-069）"
+    module_id: "MOD-PF-001"
+    doc_ref: "DeMiguel, Garlappi, Uppal 2009 RFS '1/N'"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  - model_id: "PFM-HEU-002"
+    name: "Score-Weighted"
+    name_zh: 打分加权（信号强度加权）
+    aliases: ["score_weight", "打分加权", "信号加权"]
+    model_class: "heuristic"
+    objective: "w_i ∝ score_i（信号分数归一化）"
+    assumptions: "信号分数与预期收益单调"
+    inputs: ["signal_scores", "universe_constituents"]
+    params: {score_floor: 0, max_weight: 0.10, top_n: 20}
+    output: "target_weight vector"
+    strengths: "实现简单；与因子/信号体系直接衔接（signal.composite DS-005）"
+    weaknesses: "忽略相关性（同板块集中）；分数尺度敏感"
+    applicable_scenario: "multifactor/打板策略 MVP 主力方案（topn_momentum DS-072）"
+    est_error_mitigation: "max_weight 截断 + 行业中性化（后续）"
+    code_path: "src/zephyr/portfolio/（portfolio.topn_momentum_strategy DS-072）"
+    module_id: "MOD-PF-001"
+    doc_ref: "30_multi_strategy_concurrency"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  # ============================================================
+  # MEAN VARIANCE（均值方差系——经典但估计误差敏感）
+  # ============================================================
+  - model_id: "PFM-MV-001"
+    name: "Mean-Variance Optimization"
+    name_zh: 均值方差优化（马科维茨）
+    aliases: ["markowitz", "mvo", "均值方差"]
+    model_class: "mean_variance"
+    objective: "max w'μ - λ·w'Σw"
+    assumptions: "收益联合正态/协方差稳定可估/无交易成本"
+    inputs: ["expected_return", "covariance_matrix"]
+    params: {risk_aversion: 1.0, lookback: 252, max_weight: 0.15}
+    output: "target_weight vector"
+    strengths: "理论完备（Nobel 1990）；有效前沿可视化"
+    weaknesses: "估计误差放大器（Michaud 1989）；μ 微小变化→权重剧变；OOS 常跑输 1/N"
+    applicable_scenario: "标的数 <30 + 强预期收益模型时；否则仅作研究对照"
+    est_error_mitigation: "Ledoit-Wolf 收缩（因子库已登记 rmt_denoised）+ 预期收益乘 shrink 系数"
+    code_path: ""
+    module_id: "MOD-PF-001"
+    doc_ref: "62 号文 v1.26.0 MINGLE/双曲衰减研究；CAND-PFALLOC-001 承载"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
+
+  - model_id: "PFM-MV-002"
+    name: "Black-Litterman"
+    name_zh: Black-Litterman 模型
+    aliases: ["black_litterman", "BL模型"]
+    model_class: "mean_variance"
+    objective: "市场均衡收益 + 主观观点贝叶斯融合后 MVO"
+    assumptions: "市场组合为均衡先验；观点带置信度"
+    inputs: ["market_caps", "covariance_matrix", "views", "view_confidence"]
+    params: {tau: 0.025, view_confidence_default: 0.5}
+    output: "target_weight vector"
+    strengths: "解决 MVO 的 μ 敏感问题（先验锚定）；机构标配（GS/BlackRock）"
+    weaknesses: "tau/观点置信度主观；实现复杂度高一档"
+    applicable_scenario: "有明确主观/模型观点且标的含宽基/行业 ETF 时"
+    est_error_mitigation: "先验=市值加权均衡，观点数量少而精"
+    code_path: ""
+    module_id: "MOD-PF-001"
+    doc_ref: "CAND-PFALLOC-003 承载"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
+
+  # ============================================================
+  # RISK BASED（风险驱动——不依赖预期收益，稳健首选）
+  # ============================================================
+  - model_id: "PFM-RB-001"
+    name: "Risk Parity"
+    name_zh: 风险平价
+    aliases: ["risk_parity", "风险平价", "ERC"]
+    model_class: "risk_based"
+    objective: "各资产风险贡献相等（RC_i = σ_p/N）"
+    assumptions: "波动率/相关性可估且相对稳定"
+    inputs: ["covariance_matrix"]
+    params: {lookback: 252, rebalance: "monthly"}
+    output: "target_weight vector"
+    strengths: "不估 μ（避开最大误差源）；桥水全天候实证；OOS 稳健"
+    weaknesses: "低波资产超配（债券/红利）；A 股个股波动聚集时权重极端"
+    applicable_scenario: "ETF/跨资产配置；个股层需加 max_weight 约束"
+    est_error_mitigation: "收缩协方差 + 波动率上限截断"
+    code_path: ""
+    module_id: "MOD-PF-001"
+    doc_ref: "CAND-PFALLOC-002 承载"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
+
+  - model_id: "PFM-RB-002"
+    name: "Minimum Variance"
+    name_zh: 最小方差组合
+    aliases: ["min_variance", "GMV", "最小方差"]
+    model_class: "risk_based"
+    objective: "min w'Σw（仅优化风险，不估收益）"
+    assumptions: "协方差可估"
+    inputs: ["covariance_matrix"]
+    params: {lookback: 252, max_weight: 0.10}
+    output: "target_weight vector"
+    strengths: "低波异象（low-vol anomaly）直接变现；无需 μ"
+    weaknesses: "权重集中低波股；协方差估计误差仍敏感"
+    applicable_scenario: "防御型 sleeve/低波因子组合"
+    est_error_mitigation: "LW 收缩 + 因子模型协方差（Barra 结构化）"
+    code_path: ""
+    module_id: "MOD-PF-001"
+    doc_ref: "factor.barra_risk_model DS-038 可供给结构化协方差"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
+
+  # ============================================================
+  # HIERARCHICAL / FACTOR MODEL（层次化/因子模型——2016+ 现代路线）
+  # ============================================================
+  - model_id: "PFM-HIER-001"
+    name: "Hierarchical Risk Parity"
+    name_zh: 层次风险平价（HRP）
+    aliases: ["hrp", "层次风险平价"]
+    model_class: "hierarchical"
+    objective: "聚类树状结构内递归二分分配（López de Prado 2016）"
+    assumptions: "相关性矩阵含层次结构"
+    inputs: ["covariance_matrix"]
+    params: {linkage: "ward", lookback: 252}
+    output: "target_weight vector"
+    strengths: "无需矩阵求逆（数值稳定）；OOS 实证优于 MVO/RP（JPM 2019 复现）"
+    weaknesses: "树结构对距离度量敏感；无显式目标函数"
+    applicable_scenario: "标的相关性分层明显（板块/风格）时；个股 20-100 只"
+    est_error_mitigation: "树聚类天然稳健；可叠 RMT 去噪相关矩阵（factor_registry rmt_denoised）"
+    code_path: ""
+    module_id: "MOD-PF-001"
+    doc_ref: "62 号文跨文档边界重申（HRP-μ DEFERRED 52 号）；skfolio/riskfolio-lib 可参考实现"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
+
+  - model_id: "PFM-FM-001"
+    name: "Factor Risk Model Optimizer"
+    name_zh: 因子风险模型优化器（Barra 式）
+    aliases: ["barra_optimizer", "因子模型优化", "结构化风险模型"]
+    model_class: "fundamental"
+    objective: "w'（BΩB' + D）w 最小化 + 因子暴露约束"
+    assumptions: "收益由共同因子+特质项驱动（结构化风险）"
+    inputs: ["factor_exposure", "factor_covariance", "specific_risk", "alpha_scores"]
+    params: {factor_exposure_limit: 0.3, specific_risk_limit: 0.05}
+    output: "target_weight vector + factor exposure report"
+    strengths: "降维（N×N→K×K 协方差）；风险归因可解释；机构标配（Barra/Axioma）"
+    weaknesses: "因子模型本身需维护（factor.barra_risk_model DS-038）；特质风险估计难"
+    applicable_scenario: "multifactor 规模化（100+ 标的）+ 需要风格中性约束时"
+    est_error_mitigation: "结构化模型本身就是估计误差缓解"
+    code_path: "src/zephyr/factor/（factor.barra_risk_model DS-038）"
+    module_id: "MOD-PF-001"
+    doc_ref: "factor_registry Barra 6 类 111 因子；CAND-PFALLOC-001 依赖"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+# ============================================================
+# 治理规则
+# ============================================================
+# 1. MVP 基线：所有策略回测 MUST 同时报 1/N（PFM-HEU-001）对照——优化模型
+#    OOS 跑不赢 1/N 则不得晋升（DeMiguel 2009 纪律）。
+# 2. 估计误差声明：使用协方差/预期收益的模型 MUST 声明估计方法与 lookback，
+#    回测 MUST 含参数敏感性（lookback ±50%）扫描。
+# 3. 与 risk_limit 衔接：优化输出 MUST 过 risk_limit_registry 限额检查
+#    （position/concentration）后才生成 order.target（DS-006）。
+# 4. 交易成本感知：目标权重变动 MUST 经 cost_model_registry 扣费评估，
+#    换手成本 > 预期边际收益时不调仓（52 号回测框架对接）。
