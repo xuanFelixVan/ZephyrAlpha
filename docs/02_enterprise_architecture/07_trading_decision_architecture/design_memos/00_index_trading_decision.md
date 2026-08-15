@@ -64,7 +64,7 @@ scope: 07_trading_decision_architecture
 | [40_execution_broker.md](40_execution_broker.md) | 执行层下单对接（19项决策+代码已施工；§2.8 盘前检查链+订单层熔断两级） | active v2.10.1 |
 | [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
 | [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
-| [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | draft v0.1.0（2026-08-12 新建，作战地图全覆盖补丁） |
+| [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | active v1.0.0（2026-08-15 施工落地，AI-COMP-001） |
 | [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
 | [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
@@ -106,7 +106,7 @@ scope: 07_trading_decision_architecture
 | 03 | 回测验证 | ✅ regime 验证（11号 active v1.5.2，C1 四项全通过）+ G23（52号 active v1.0.3 含辅助组件契约与映射锚定）+ 15/23/51/53 映射补强 | 🟧 shrinkage/c1_comparator | 另一AI | **已覆盖**（2026-08-12 全覆盖补丁） |
 | 04 | 模拟验证 | ✅ G24（53号 active v1.7.4，含 §3.9 仿真域 why 层回填 + BM-SIM-08 锚定） | 🟧 5 态 FSM 代码待落地（#ARCH-QUANT-003） | — | **已覆盖**（why 层已补齐，代码待落） |
 | 05 | 选股 | ✅ G04-G10 全部定稿（20-26号 active）；G11 暂缓骨架；21/24/25/22/15 环节映射已锚定 | 🟧 BM-SEL-02/22-25 | — | **已覆盖**（7 主题组定稿+环节级锚定） |
-| 06 | 买入流 | ✅ G19（41号 active v1.6.0，含明日预案双层架构+上游四轨裁定）+ G30（43号 draft v0.1.0 合规纪律） | 🟧 5 算法伪代码已定型待落码 | — | **已覆盖** |
+| 06 | 买入流 | ✅ G19（41号 active v1.6.0，含明日预案双层架构+上游四轨裁定）+ G30（43号 active v1.0.0 合规纪律） | ✅ 43 号 7 模块已施工（AI-COMP-001：必做清单/四项严禁+熔断/授权审计/功能门禁/合规检测+报告门禁，78 测试全绿） | — | **已覆盖** |
 | 07 | 卖出流 | ✅ G20（42号 active v1.7.0，含 §3.11 卖出闭环优化+双向反馈契约） | ✅ MVP 4 模块已施工（AI-SELL-001：Triage/止损/止盈/执行编排，65 测试全绿） | — | **已覆盖** |
 | 08 | 仓位管理 | ✅ 30号 §2.1 + G12/G13/G15（31/32/34号 active）+ G14（33号 active v1.0.0，2026-08-12 重建）+ 31号 v1.24.2 漂移再平衡小节 | ✅ MOD-POS-020/021/022 + MOD-PA-007 全部 production | — | 框架已定+代码 production+文档齐 |
 | 09 | 风控 | ✅ 30号 §2.5 + G16-G18（35/36/37号 active）+ 62号 v1.34.2 限额注册表 why 层 + 61号运行时风险治理 + 55号操作/模型风险审计 | ✅ drawdown/var/kill_switch 已 production | — | **已覆盖** |
@@ -666,7 +666,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 34_regime_meta_allocator | G15 RegimeMetaAllocator | ✅ 已定稿 | active v2.8.1（C1 已通过；参数待策略 PnL 校准） |
 | 41_buy_flow | G19 买入流 | ✅ 已定稿 | active v1.7.0 |
 | 42_sell_flow | G20 卖出流 | ✅ 已定稿 | active v1.7.1 |
-| 43_compliance_discipline | G30 合规与交易纪律体系（交易流层子项，D_COMPLIANCE 域） | ✅ 已落盘 | draft v0.1.0（2026-08-12 作战地图全覆盖补丁新建） |
+| 43_compliance_discipline | G30 合规与交易纪律体系（交易流层子项，D_COMPLIANCE 域） | ✅ 已施工 | active v1.0.0（2026-08-15 AI-COMP-001 落地，7 模块 78 测试全绿） |
 | 40_execution_broker | G22 下单对接 | G22-AI | ✅ v2.10.1 + 代码已施工 |
 | 54_reconciliation_attribution | G25 对账归因 | ✅ 已定稿 | active v1.14.0 |
 | 60_cross_cutting_cleanup | G27 冲突矩阵清理 | ✅ 已定稿 | active v1.1.0（2026-08-15 AI-XCUT-001 实证非骨架：v1.0.2 内容完整；施工=§7⑦ 闭环+CAND-PFALLOC-002 标 rejected+battle_map §16 真源收敛 31→3） |

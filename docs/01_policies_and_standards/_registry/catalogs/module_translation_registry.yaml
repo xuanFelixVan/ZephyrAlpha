@@ -41424,6 +41424,55 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "多 AI 抢活儿时用的'任务黑板'。谁把任务写上去，别人就能认领；同一件事两个人同时抢，只有一个人能抢到（SQLite CAS 原子认领）。任务只有三种状态：待认领/已认领/已完成。2026-08-14 wipe 事故把原版弄丢了，这是按 66 号备忘录 schema 重建的。"
+- module_path: src/zephyr/compliance/discipline_must_do_checker.py
+  domain_id: D_COMPLIANCE
+  name_zh: "四项必做清单检查器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天四个时点（盘前/盘中/盘后/晚上）自动点名：该做的复盘、计划、风险检查做没做——盘中没做直接拦单，其他时点超时只提醒不拦"
+- module_path: src/zephyr/compliance/discipline_prohibition_checker.py
+  domain_id: D_COMPLIANCE
+  name_zh: "四项严禁纪律闸"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "下单前拦四种冲动交易：追高/被套补仓/连赢后加大注/亏损后报复性加仓——前两种和最后一种直接拒单，连赢只提醒，报复还会顺带把该策略当天停掉"
+- module_path: src/zephyr/compliance/hard_boundary_adjudicator.py
+  domain_id: D_COMPLIANCE
+  name_zh: "硬边界功能裁定门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "新功能上线前先查表：表里说能建才放行，说禁建或没登记的一律拦住，并告诉你什么条件下能重新评"
+- module_path: src/zephyr/compliance/trading_compliance_detector.py
+  domain_id: D_COMPLIANCE
+  name_zh: "交易合规检测器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯自己的单子别踩监管红线：拉抬打压/大额成交/幌骗/分层/自成交/尾盘操纵，一命中就拦单并留证据"
+- module_path: src/zephyr/compliance/license_usage_auditor.py
+  domain_id: D_COMPLIANCE
+  name_zh: "数据源授权合规审计器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "查每个数据源的授权条款：能不能用于实盘/回测/再分发，过期就断流，没登记条款的一律只准回测"
+- module_path: src/zephyr/compliance/compliance_report_registry.py
+  domain_id: D_COMPLIANCE
+  name_zh: "程序化交易报告门禁"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "先报告后交易：六项法定义务（账户/软件/策略类型/速率/笔数/重大变更）没得到券商确认就不让下单"
+- module_path: src/zephyr/compliance/compliance_log.py
+  domain_id: D_COMPLIANCE
+  name_zh: "合规日志落库"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "所有合规判定只增不删地记进一个 JSONL 文件，当证据链用，写不进去也不影响交易"
 
 battle_map_steps:
 - step_id: BM-BUY-04

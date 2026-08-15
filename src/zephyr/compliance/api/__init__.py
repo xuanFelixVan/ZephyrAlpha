@@ -1,34 +1,106 @@
 # [TTL] permanent
-# compliance/api
+# compliance/api — 合规域公共 API 出口（43 号施工挂载，2026-08-15）
 
+"""D_COMPLIANCE 公共 API 面。
+
+43 号合规纪律体系（43_compliance_discipline.md）施工的 7 模块经本出口对外暴露，
+供 C-004 风控引擎 / C-002 执行域 / MOD-PA-006 分批建仓 / 62 号治理流程引用：
+
+- discipline_must_do_checker（§3 BM-BUY-08-A）：四时点必做清单完成度检测
+- discipline_prohibition_checker（§4 BM-BUY-08-B）：四项严禁检测 + KillSwitchLite
+- license_usage_auditor（§5 BM-BUY-09）：数据源授权条款合规审计
+- hard_boundary_adjudicator（§6 BM-BUY-12）：功能二元裁定门禁 FeatureGate
+- trading_compliance_detector（§7 BM-BUY-15）：异常交易 2 条 + 市场操纵 4 类
+- compliance_report_registry（§7.4/§7.5）：6 项报告义务登记 + ReportGate
+- compliance_log（§3.2）：compliance_log JSONL append-only 落库
 """
 
+from __future__ import annotations
 
-# [ALGO_FLOW]
-# 层: 输入
-# - id: I1
-#   name: 空包标记文件（无数据输入）
-#   fields: 无字段——包内仅此一个 __init__.py，无子模块无导入
-#   code: src/zephyr/compliance/api/__init__.py L1-3
-# 层: 算法
-# - id: A1
-#   name_zh: ① 空包命名空间占位
-#   name_en: __init__（模块级 __all__）
-#   intro: 声明 compliance.api 包存在，不导出任何符号
-#   desc: 全文仅包名注释 + __all__: list[str] = []（L1-3），无函数无导入，为后续合规 API 子模块预留挂载点
-#   inputs: I1
-#   outputs: 空导出列表
-# 层: 输出
-# - id: O1
-#   name_zh: 空公共 API 面
-#   name_en: __all__=[]
-#   intro: 对外不暴露任何符号，占位待扩展
-#   downstream: 无下游/内部使用（全库无模块 import zephyr.compliance.api）
-# [/ALGO_FLOW]
-#
-# 边:
-# I1 --> A1
-# A1 --> O1
-"""
+from zephyr.compliance.compliance_log import (
+    ComplianceLogger,
+    ComplianceLogRecord,
+)
+from zephyr.compliance.compliance_report_registry import (
+    ComplianceReportRegistry,
+    ReportGate,
+    ReportGateDecision,
+    ReportGateResult,
+    ReportItem,
+)
+from zephyr.compliance.discipline_must_do_checker import (
+    ChecklistAction,
+    ChecklistCheckpoint,
+    ChecklistCompletionChecker,
+    ChecklistVerdict,
+)
+from zephyr.compliance.discipline_prohibition_checker import (
+    DisciplineAction,
+    DisciplineContext,
+    DisciplineGuard,
+    DisciplineThresholds,
+    DisciplineVerdict,
+    KillSwitchLite,
+    OrderRequest,
+    ProhibitedBehavior,
+)
+from zephyr.compliance.hard_boundary_adjudicator import (
+    FeatureEntry,
+    FeatureGate,
+    FeatureGateDecision,
+    FeatureGateResult,
+    FeatureVerdict,
+)
+from zephyr.compliance.license_usage_auditor import (
+    LicenseAuditReport,
+    LicenseUsageAuditor,
+    SourceLicense,
+    ViolationLevel,
+)
+from zephyr.compliance.trading_compliance_detector import (
+    ComplianceAction,
+    ComplianceOrderRecord,
+    ComplianceThresholds,
+    ComplianceTradeRecord,
+    ManipulationType,
+    ManipulationVerdict,
+    TradingComplianceDetector,
+)
 
-__all__: list[str] = []
+__all__: list[str] = [
+    "ChecklistAction",
+    "ChecklistCheckpoint",
+    "ChecklistCompletionChecker",
+    "ChecklistVerdict",
+    "ComplianceAction",
+    "ComplianceLogger",
+    "ComplianceLogRecord",
+    "ComplianceOrderRecord",
+    "ComplianceReportRegistry",
+    "ComplianceThresholds",
+    "ComplianceTradeRecord",
+    "DisciplineAction",
+    "DisciplineContext",
+    "DisciplineGuard",
+    "DisciplineThresholds",
+    "DisciplineVerdict",
+    "FeatureEntry",
+    "FeatureGate",
+    "FeatureGateDecision",
+    "FeatureGateResult",
+    "FeatureVerdict",
+    "KillSwitchLite",
+    "LicenseAuditReport",
+    "LicenseUsageAuditor",
+    "ManipulationType",
+    "ManipulationVerdict",
+    "OrderRequest",
+    "ProhibitedBehavior",
+    "ReportGate",
+    "ReportGateDecision",
+    "ReportGateResult",
+    "ReportItem",
+    "SourceLicense",
+    "TradingComplianceDetector",
+    "ViolationLevel",
+]

@@ -728,6 +728,24 @@ tiers:
         entry_count: 8
         status: active
         description: 组合构建模型唯一真源（SSoT）——8 条（等权/打分加权/均值方差/Black-Litterman/风险平价/最小方差/HRP/Barra 因子模型）。与 execution_algo（怎么交易）和 risk_limit（不能超过什么）正交：本表管"买多少"（权重分配）。MVP 纪律：优化模型 OOS 跑不赢 1/N 不得晋升（DeMiguel 2009）。承载 CAND-PFALLOC-001~003。#ARCH-BREG-001 扩展（2026-08-14）
+      - registry_id: REG-FEATURE-ADJ-001
+        name: 功能二元裁定登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 19
+        status: active
+        description: 硬边界功能裁定（能建/禁建）唯一真源（SSoT）——43 号 §6（BM-BUY-12）。19 条有据种子（harvest 档案 15 条 ✅/❌ + 43 号明示 4 条）；47 项全量迁移为开放问题（源清单不在仓内）。门禁=zephyr.compliance.hard_boundary_adjudicator.FeatureGate（未登记=PENDING 视同 BLOCK）。与 30 号 §5 charter 真红线消歧（功能建设权 vs 运行时阈值）。#ARCH-COMP-001（2026-08-15）
+        owned_by: governance
+
+      - registry_id: REG-CMP-REPORT-001
+        name: 程序化交易报告登记表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 6
+        status: active
+        description: 程序化交易报告 6 项义务登记+报送确认位（broker_ack）唯一真源（SSoT）——43 号 §7.4（BM-BUY-15）。先报告后交易铁律：任一必报项未确认 → C-002 拒单（ReportGate）。含 §7.5 记录性参数 order_min_dwell_us=50（50μs 时间锁裁定不适用，本系统天然满足）。报送动作为人工（券商渠道），本表管登记/确认位/门禁。#ARCH-COMP-001（2026-08-15）
         owned_by: governance
 
 # ============================================================

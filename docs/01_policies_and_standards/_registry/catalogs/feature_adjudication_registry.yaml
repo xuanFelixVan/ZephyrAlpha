@@ -1,0 +1,169 @@
+# [A_config] module_id=REG-FEATURE-ADJ-001 | layer=config | stability=stable | safety=H | ai_autonomy=human_gated
+registry_id: REG-FEATURE-ADJ-001
+name: Feature Adjudication Registry
+name_zh: 功能二元裁定登记表
+description: >-
+  硬边界功能裁定（能建/禁建）唯一真源（43_compliance_discipline.md §6，BM-BUY-12）。
+  与 30 号 §5 charter 真红线消歧：本表管"功能建设权"（设计/上线时门禁），
+  不管运行时风控阈值。门禁校验入口=zephyr.compliance.hard_boundary_adjudicator.FeatureGate。
+  迁移状态：47 项源清单（合规架构.md §10 / 17-D-COMPLIANCE-合规监管域.md）不在仓内，
+  当前 19 条为有据种子（candidate harvest 档案 15 条 ✅/❌ 裁定 + 43 号明示 4 条），
+  全量迁移为开放问题（43 号 §8）。
+doc_type: register
+ttl: permanent
+status: active
+version: 1.0.0
+owner: ZephyrAlpha-Owner
+tier: tier_2_business
+created: '2026-08-15'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-COMP-001'
+unique_key: [feature]
+entry_counts: {features: 19}
+
+feature_schema:
+  feature: str               # 功能名
+  verdict: enum              # BUILDABLE / FORBIDDEN
+  reason: str                # 裁定理由（法规条款/风险论证）
+  adjudicated_at: date       # 裁定日期
+  re_review_condition: str   # 重评条件
+  related_bm: str | null     # 关联作战地图环节
+  source: str                # 裁定证据出处
+
+features:
+  # ── 候选库 harvest 档案裁定（✅ 能建 11 条，source= candidate_module_registry_harvest_archive）──
+  - feature: "交易监控引擎（Trade Surveillance Engine）"
+    verdict: BUILDABLE
+    reason: "异常交易行为检测（Spoofing/Front-running 等）是个人程序化交易自证清白的必备层"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: "BM-BUY-15"
+    source: "harvest 档案 D-COMPLIANCE-01（✅ 能建）"
+  - feature: "监管报告生成（Regulatory Reporter）"
+    verdict: BUILDABLE
+    reason: "程序化交易报备/大户报告是法定义务"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: "BM-BUY-15"
+    source: "harvest 档案 D-COMPLIANCE-02（✅ 能建）"
+  - feature: "执行质量文档（Best Execution Documenter）"
+    verdict: BUILDABLE
+    reason: "记录每笔交易执行质量并存档"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: null
+    source: "harvest 档案 D-COMPLIANCE-03（✅ 能建）"
+  - feature: "市场操纵检测（Market Manipulation Detector）"
+    verdict: BUILDABLE
+    reason: "幌骗/分层/对倒模式识别，自我监控+证据链"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: "BM-BUY-15"
+    source: "harvest 档案 D-COMPLIANCE-06（✅ 能建）"
+  - feature: "持仓报告（Position Reporter）"
+    verdict: BUILDABLE
+    reason: "持仓聚合+阈值检测+报告生成"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: null
+    source: "harvest 档案 D-COMPLIANCE-07（✅ 能建）"
+  - feature: "程序化交易报告（Program Trading Reporter）"
+    verdict: BUILDABLE
+    reason: "算法标识+频率统计+策略分类+报告生成（6 项报告义务载体）"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: "BM-BUY-15"
+    source: "harvest 档案 D-COMPLIANCE-11（✅ 能建）"
+  - feature: "合规自动化（RegTech Compliance Automation）"
+    verdict: BUILDABLE
+    reason: "交易监控+监管报告+合规变更追踪"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: null
+    source: "harvest 档案 D-COMPLIANCE-14（✅ 能建）"
+  - feature: "合规证据链（Compliance Evidence Chain）"
+    verdict: BUILDABLE
+    reason: "审计追踪依赖+合规证据自动收集"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: "BM-BUY-15"
+    source: "harvest 档案 D-COMPLIANCE-15（✅ 能建）"
+  - feature: "合规策略即代码（Compliance Policy-as-Code）"
+    verdict: BUILDABLE
+    reason: "策略版本管理+自动执行+审计"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: null
+    source: "harvest 档案 D-COMPLIANCE-16（✅ 能建）"
+  - feature: "合规规则版本管理（Compliance Rule Version Controller）"
+    verdict: BUILDABLE
+    reason: "兼容性检查+变更影响分析+版本回滚"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: null
+    source: "harvest 档案 D-COMPLIANCE-17（✅ 能建）"
+  - feature: "A股交易纪律检查（A-Share Trading Discipline Checker）"
+    verdict: BUILDABLE
+    reason: "四项必做清单+四项严禁的自动检测和违规告警（43 号 §3/§4 已施工）"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "—"
+    related_bm: "BM-BUY-08-A/BM-BUY-08-B"
+    source: "harvest 档案 D-COMPLIANCE-23（✅ 能建）"
+  # ── 候选库 harvest 档案裁定（❌ 不能建 4 条）──
+  - feature: "信息隔离墙（Information Barrier）"
+    verdict: FORBIDDEN
+    reason: "单人开发、自有资金，无多团队信息隔离场景（BM-BUY-11 族 deprecated）"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "引入外部资金或多人协作时重评"
+    related_bm: "BM-BUY-11"
+    source: "harvest 档案 D-COMPLIANCE-04（❌ 不能建）"
+  - feature: "内幕交易监控（Insider Trading Monitor）"
+    verdict: FORBIDDEN
+    reason: "单人开发无内幕信息接触场景（BM-BUY-11 族 deprecated）"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "引入外部资金或多人协作时重评"
+    related_bm: "BM-BUY-11"
+    source: "harvest 档案 D-COMPLIANCE-05（❌ 不能建）"
+  - feature: "通信监控（Communication Monitor）"
+    verdict: FORBIDDEN
+    reason: "单人开发无通信监控需求（BM-BUY-11 族 deprecated）"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "引入外部资金或多人协作时重评"
+    related_bm: "BM-BUY-11"
+    source: "harvest 档案 D-COMPLIANCE-08（❌ 不能建）"
+  - feature: "反洗钱/客户识别（AML/KYC Engine）"
+    verdict: FORBIDDEN
+    reason: "个人自有资金（50 万 AUM 级）无 AML/KYC 合规要求（BM-BUY-11 族 deprecated）"
+    adjudicated_at: 2026-08-01
+    re_review_condition: "引入外部资金或管理人备案时重评"
+    related_bm: "BM-BUY-11"
+    source: "harvest 档案 D-COMPLIANCE-13（❌ 不能建）"
+  # ── 43 号备忘明示裁定（4 条）──
+  - feature: "裸期权卖方"
+    verdict: FORBIDDEN
+    reason: "通道/资金属性不支持：miniQMT 股票通道无期权卖方权限，个人适当性不满足（裁定原则②）"
+    adjudicated_at: 2026-08-15
+    re_review_condition: "开通期权账户且满足适当性/保证金要求"
+    related_bm: null
+    source: "43_compliance_discipline.md §6.3"
+  - feature: "T+0 变相回转交易工具"
+    verdict: FORBIDDEN
+    reason: "法规明令禁止：A 股 T+1 制度，变相回转=规避交易规则（裁定原则①）"
+    adjudicated_at: 2026-08-15
+    re_review_condition: "T+0 试点放开"
+    related_bm: null
+    source: "43_compliance_discipline.md §6.3"
+  - feature: "跨账户对倒工具"
+    verdict: FORBIDDEN
+    reason: "法规明令禁止：操纵证券市场行为（裁定原则①），无例外"
+    adjudicated_at: 2026-08-15
+    re_review_condition: "—（无重评）"
+    related_bm: "BM-BUY-15"
+    source: "43_compliance_discipline.md §6.3"
+  - feature: "50μs 订单停留时间锁"
+    verdict: FORBIDDEN
+    reason: "不适用（个人低频）：内部限频 ≤15 笔/秒、挂单默认等待 30s，实际停留时间为毫秒级锁的 6 个数量级以上；miniQMT 广域网 1.2-2ms 物理延迟使 50μs 级控制无实现意义。降为记录性参数（compliance_report_registry order_min_dwell_us: 50）"
+    adjudicated_at: 2026-08-15
+    re_review_condition: "策略演进至秒级以内高频（报单速率 > 50 笔/秒）或监管明确适用于全部程序化账户"
+    related_bm: "BM-BUY-15"
+    source: "43_compliance_discipline.md §7.5"

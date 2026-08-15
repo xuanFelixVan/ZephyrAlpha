@@ -1,11 +1,11 @@
-# 自动生成于 2026-08-15T06:48:17Z
+# 自动生成于 2026-08-15T08:30:41Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-15T06:48:17Z'
+generated_at: '2026-08-15T08:30:41Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 38
+total_registries: 40
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -37,7 +37,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 495
+  entry_count: 496
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -55,8 +55,8 @@ registries:
   maintenance: manual
   entry_count: 97
   status: active
-- registry_id: PS-REG-019
-  name: capability_canonical_file_registry
+- registry_id: PS-REG-021
+  name: 能力→真源文件反查注册表
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
   format: yaml
@@ -67,6 +67,14 @@ registries:
   name: Chart Pattern Registry
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: REG-CMP-REPORT-001
+  name: Compliance Report Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 0
@@ -118,6 +126,14 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 2
+  status: active
+- registry_id: REG-FEATURE-ADJ-001
+  name: Feature Adjudication Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
   status: active
 - registry_id: GOV-001
   name: 前沿大模型综合能力排名登记表
@@ -205,7 +221,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 5910
+  entry_count: 5917
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -261,7 +277,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 210
+  entry_count: 212
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表

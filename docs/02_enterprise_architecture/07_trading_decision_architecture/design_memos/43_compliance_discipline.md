@@ -4,8 +4,8 @@ doc_type: architecture_view
 title: 合规与交易纪律体系
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.1.1"
+status: active
+version: "1.0.1"
 date: 2026-08-15
 topic: compliance_discipline
 scope: 07_trading_decision_architecture
@@ -299,7 +299,8 @@ compliance:
 | 问题 | 现状 | 决策状态 |
 |---|---|---|
 | 追高检测 `chase_max_deviation=+2%`、骄傲检测 `win_streak_n=5` 等 MVP 初始阈值 | 本篇给初始值，未经实盘校准 | 待 C1 实盘阶段按误拦截率校准 |
-| 47 项功能裁定清单的迁移录入 | 登记表结构本篇已定，47 项内容散在合规架构.md §10 | 待施工：一次性迁移 + 逐条补 reason/re_review_condition |
+| 47 项功能裁定清单的迁移录入 | 登记表结构本篇已定；源清单（合规架构.md §10 / 17-D-COMPLIANCE-合规监管域.md）不在仓内不可用 | **部分落地**（v1.0.0）：19 条有据种子已登记（harvest 档案 15 条 ✅/❌ + 本篇明示 4 条）；全量 47 项迁移待源文档恢复后补录 |
+| #ARCH-COMPLIANCE-001（5000 笔预警/1 万笔阻断/撤单率 80%/存档 20 年，program_trading_regulation.py） | **已裁定吸收（2026-08-15 用户拍板方案 A）**：不独立建模块——撤单率 80% 被 40 号内部 ≤15% 覆盖；存档维持 JSONL MVP 裁定；唯一缺口=日申报笔数硬计数器（5000 预警/1 万阻断） | **闭环**：计数器并入 tracker #74 装配批（C-002 订单链路读数检查，复用 24/40 号既有计数）；ARCH 条目转 decided |
 | compliance_log 载体 | MVP 用 JSONL 文件；达 3-5 个同类 artifact 后是否建生成器/数据库 | 按 01 号规范 §6 暂缓，不预设 |
 | 单日最高申报笔数填报值 2000 笔/日 | 按打板+多因子容量粗估 | 待实盘首月统计校准 |
 | 报告义务券商侧确认流程（broker_ack 获取方式） | miniQMT/券商程序化报备通道细则未在库 | 待开通实盘时人工核实后补录 |
@@ -310,6 +311,27 @@ compliance:
 |---|---|---|---|
 | 2026-08-12 | 0.1.0 | 新建——作战地图全覆盖补丁，承载 BM-BUY-08-A/08-B/09/12/15 五环节设计真源（08-A 四时点必做清单检查器 / 08-B 四项严禁阈值+算法+KillSwitchLite / 09 数据源授权合规三级 / 12 功能裁定清单+上线门禁（与 30 号 charter 红线消歧）/ 15 操纵 4 类检测+报告 6 项义务+50μs 不适用裁定） | 作战地图 339 环节全覆盖审计发现合规域 5 环节无设计载体，经用户裁定新建本篇统一承载，作 D_COMPLIANCE 域设计真源 |
 | 2026-08-15 | 0.1.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | 首轮未压缩篇目：§9 新建条目改动单元格去正文重复（五环节细节以正文 §3-§7 为准）；全篇扫描无其他可压缩点——追高 +2%/30min+5%、补仓 -5%、骄傲 5 笔×1.5、报复 -2%/2.0/1.5、Spoofing 0.2/10s/3、Layering 3 档/0.8、尾盘 2%/30%、50μs、限频 ≤15 笔/秒+通道 10 笔/秒+2000 笔/日、撤单率 12%/15%、47 项裁定清单、BM-BUY 锚点/开放问题/链接逐项零丢失 |
+| 2026-08-15 | 1.0.0 | **已施工**（AI-COMP-001，第 4 批）：五环节全落地，draft→active | §3-§7 全模块落码（7 模块+2 登记表+78 测试全绿），详见 §10 施工落地记录；depgraph 4 预登记设计态节点落码+3 新登记+10 设计态边 |
+| 2026-08-15 | 1.0.1 | #ARCH-COMPLIANCE-001 裁定吸收（用户拍板方案 A） | §8 开放问题闭环：不独立建 program_trading_regulation.py；日申报笔数硬计数器（5000 预警/1 万阻断）并入 tracker #74 装配批 |
+
+## 10. 施工落地记录
+
+**已施工**（2026-08-15，AI-COMP-001，#ARCH-COMP-001）：
+
+| 环节 | 模块 | 路径 | 测试 |
+|---|---|---|---|
+| §3 必做清单 | MOD-CMP-001 ChecklistCompletionChecker | [src/zephyr/compliance/discipline_must_do_checker.py](../../../../src/zephyr/compliance/discipline_must_do_checker.py) | 11 |
+| §4 四项严禁+熔断 | MOD-CMP-002 DisciplineGuard + KillSwitchLite | [src/zephyr/compliance/discipline_prohibition_checker.py](../../../../src/zephyr/compliance/discipline_prohibition_checker.py) | 18 |
+| §5 授权审计 | MOD-CMP-008 LicenseUsageAuditor | [src/zephyr/compliance/license_usage_auditor.py](../../../../src/zephyr/compliance/license_usage_auditor.py) | 11 |
+| §6 功能门禁 | MOD-CMP-005 FeatureGate + [feature_adjudication_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml)（REG-FEATURE-ADJ-001，19 条种子） | [src/zephyr/compliance/hard_boundary_adjudicator.py](../../../../src/zephyr/compliance/hard_boundary_adjudicator.py) | 8 |
+| §7 交易合规检测 | MOD-CMP-007 TradingComplianceDetector（异常 2 + 操纵 4） | [src/zephyr/compliance/trading_compliance_detector.py](../../../../src/zephyr/compliance/trading_compliance_detector.py) | 17 |
+| §7.4 报告门禁 | MOD-CMP-009 ReportGate + [compliance_report_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml)（REG-CMP-REPORT-001，6 项义务+50μs 记录性参数） | [src/zephyr/compliance/compliance_report_registry.py](../../../../src/zephyr/compliance/compliance_report_registry.py) | 7 |
+| 落库载体 | MOD-CMP-010 ComplianceLogger（JSONL append-only） | [src/zephyr/compliance/compliance_log.py](../../../../src/zephyr/compliance/compliance_log.py) | 6 |
+
+- 蓝图：`docs/03_modules/_domain_compliance/{模块名}/blueprint.md` ×7
+- 工程修正（对伪代码）：①严禁检测加 ε=1e-9 浮点尾差容差（恰达阈值不判违规，与"超阈值"语义一致）；②必做清单盘后/晚间截止按"次日+trade_date 显式入参"实现跨日语义
+- 整合点（设计态边已登记，dep_maturity=design）：C-004 风控引擎→MOD-CMP-002/007；MOD-PA-006 分批建仓→MOD-CMP-002；C-002 执行域（order_manager）→MOD-CMP-009。运行时装配（实际调用点嵌入）留后续装配批
+- merge 后 depgraph 经 #ARCH-70 同身份 UPDATE 通道自动转 production
 
 ---
 

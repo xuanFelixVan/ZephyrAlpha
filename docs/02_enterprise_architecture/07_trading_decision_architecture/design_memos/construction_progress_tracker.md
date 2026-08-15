@@ -242,6 +242,16 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 27 | integrity 基线漂移 4 文件 + merge 落盘路径 gap | ✅ ①②已修复落地（#ARCH-MERGE-PATH-GAP-001：guard parents 判定 + 网关 merge finalize）；③自愈 3/4，残 1 为 SELL 活跃 WIP 待其提交收敛 |
 | 55 | pre-commit 外部钩存量阻断链（2026-08-14 merge 实证） | 统筹 merge AI-GIT-001 实证：①门禁运行向 tracked 文件 data/audit_logs/feature_flags.jsonl 追加时间戳审计行→任何裸 `git commit` 的全部 hook 被框架误报 "files were modified"（外部 pre-commit 链结构性不可过，网关 in-process 门禁为唯一合法通道；merge 走冲突自动裁决+自动提交规避）；②存量：ZR-005（56_d_gov_scripts.md 派生文档自引用废墟路径字面量，源 docstring 同需修）+ GATE-DOC-NODE-ID（同文件 node_id= 字面量）+ blueprint_registry 158→163 漂移（SELL merge 引入，sync_registry_from_blueprints.py --write 可修）+ noqa battlemap_schema.py:187 未登记（noqa_exempt_registry.yaml 补登即可）——顺修处方均已验证，统筹留有 56_d_gov_scripts.md 工作区修正（gitignored 派生文档） | ✅ ①已全闭环（T4-1 2026-08-14 治理批②：flags.py 默认审计路径迁 .runtime/audit/ + data/audit_logs/ 全目录 gitignore + 5 个历史 tracked 审计文件 git rm --cached 退跟踪——51MB feature_flags.jsonl 不再卡外部 pre-commit 链；**T4-2 2026-08-15 AI-RCN-001 落地**：#ARCH-PRECOMMIT-STASH-ADAPT-001 转 implemented——网关 gate 链 tracked 漂移监视器（_tracked_area_fingerprint/_check_gates_with_drift_watch）：hook 运行期 tracked 写=违规报警+落 .runtime/audit/hook_tracked_drift.jsonl 不静默，4 测试用例全过；落地即实证捕获 blueprint_panorama 生成器 commit 链内回写 131 tracked 蓝图（根因另立 #ARCH-WORKTREE-DB-SPLIT-001））；②存量顺修项 ✅ 已闭环（2026-08-15 治理批③ AI-RCN-001）：ZR-005 废墟字面量（detect_ruins_references.py + detect_deprecated_path_writes.py 两真源 docstring 去尾斜杠改写避正则命中+56_d_gov_scripts.md 派生同步，复扫 0 命中）+ GATE-DOC-NODE-ID（check_doc_node_id_hardcode.py docstring node_id=7451163→<7位物理ID>+派生同步，复扫 OK）+ blueprint_registry 漂移（实证已自愈：163/163 同步无 diff）+ noqa 补登（config/governance/noqa_exempt_registry.yaml battlemap_schema.py L117→L187 行号漂移更新+语义同步 3态，vocab 复扫 OK；docs SSoT gate-vocab marker 既有无需动） |
 
+### P1-补4 · 第 4 批 AI-COMP-001 登记（2026-08-15，43 号合规纪律施工）
+
+> 来源：AI-COMP-001 反馈 §7。worktree 副本登记，merge 时由统筹并入 dev 版。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 77 | 47 项功能裁定清单全量迁移 | AI-COMP-001 | feature_adjudication_registry.yaml 已建结构+19 条有据种子（harvest 档案 15 条+43 号明示 4 条）；源清单（合规架构.md §10 / 17-D-COMPLIANCE-合规监管域.md，27 能建+20 禁建）不在仓内不可用，全量迁移待源文档恢复或用户补供 | ⏳ 待源文档 |
+| 78 | 合规模块运行时接线（C-004/C-002/MOD-PA-006 调用点嵌入） | AI-COMP-001 | 7 模块已落码+设计态边登记（dep_maturity=design）；DisciplineGuard→C-004/分批建仓、TradingComplianceDetector→C-004、ReportGate→C-002 order_manager 的实际调用点嵌入属运行时装配（涉 40/41 号 production 代码修改），留装配批裁定施工 | ⏳ 待装配批 |
+| 79 | #ARCH-COMPLIANCE-001 吸收方式裁定 | AI-COMP-001 | proposed 议题（5000 笔预警/1 万笔阻断/撤单率 80%/存档 20 年 program_trading_regulation.py）与 43 号 §7 部分重叠（撤单率/速率已被 40/24 号闭合，申报笔数=报告项⑤）；AI 不替用户拍板，last_updated 已更新 | ⏳ 待用户裁定 |
+
 ### ✅ 已闭环（备查）
 
 | # | 遗留项 | 闭环方式 |
