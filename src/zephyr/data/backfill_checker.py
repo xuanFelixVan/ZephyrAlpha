@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL; run_known_gap_backfill()读取known_data_gaps.yaml检测已登记历史缺口(不受7天窗口限制, audit 2.7/3.8治本)
+# [INVARIANTS] 查CH实际行数发现缺口; 只补缺失不重复下载; 写入tick_data走ch_writer统一通道(TCP→HTTP→本地落盘); 查询走ch_reader自动注入FINAL; run_known_gap_backfill()读取known_data_gaps.yaml检测已登记历史缺口(不受7天窗口限制, audit 2.7/3.8治本); 慢变化表(静态重建schedule或业务事件日期列)threshold强制0跳过日频缺口检测(#ARCH-DATA-017)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -200,6 +200,27 @@ _DATE_COLUMN_PRIORITIES = [
     "fdate",
 ]
 
+# 业务事件日期列（#ARCH-DATA-017 施工项2，2026-08-15 裁定）：
+# 这些列的语义是业务事件发生日（解禁日/上市日/生效日/公告日/报告期），而非采集日——
+# 用"近7个交易日必有数据"的日频口径检测必然误报（restricted_shares/share_unlock 等实证）。
+# 命中即 threshold 强制 0，按"慢变化"类别确定性跳过，不再靠零阈值偶然躲过。
+_BUSINESS_EVENT_DATE_COLS = frozenset({
+    "unlock_date",    # 解禁日（restricted_shares/share_unlock）
+    "list_date",      # 上市日（stock_list）
+    "valid_from",     # 生效日（industry_class/concept_board/lof_list 等）
+    "setup_date",     # 成立日（etf_list）
+    "end_date",       # 截止日（equity_pledge_summary/convertible_bond_list）
+    "announce_date",  # 公告日（财报表按季披露，本就应跳过日频检测）
+    "report_period",  # 报告期（main_business）
+})
+
+# 静态/全量重建类调度时段（#ARCH-DATA-017 施工项2）：
+# 月度/周末周期性全量重建的表无日频采集语义，跳过日频缺口检测。
+# 注意边界：daily_* 时段的 incremental=false 任务是 #ARCH-REALTIME-ACCUM
+# 每日快照积累（weather_data/stock_hot_rank 等，实时源无历史API、错过无法回填），
+# 不是静态表，必须保留日频检测——故按 schedule 判定而非裸 incremental 标志。
+_STATIC_REFRESH_SCHEDULES = frozenset({"monthly_static", "weekend_calibration"})
+
 # SQL 模板（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
 _SQL_DESCRIBE = "DESCRIBE TABLE {table}"
 _SQL_AVG_ROWS_7D = (
@@ -281,6 +302,15 @@ def _discover_backfill_tables() -> list[dict]:
     新增表只需在 tasks.yaml 注册任务，即可自动纳入补下载覆盖范围。
     同表多任务去重，取第一个非 disabled 任务。
 
+    慢变化表口径排除（#ARCH-DATA-017 施工项2，2026-08-15 裁定）：
+      - schedule 属于静态/全量重建时段（monthly_static/weekend_calibration）的表
+        无日频采集语义（stock_list/index_constituent/sector_list 等）；
+      - 日期列属于业务事件日期（unlock_date/list_date/valid_from 等）的表，
+        事件日≠采集日，日频口径检测必误报（restricted_shares 等实证）；
+      两类均 threshold 强制 0，确定性跳过日频缺口检测，不再靠零阈值偶然躲过。
+      边界：daily_* 时段的 incremental=false 任务是 #ARCH-REALTIME-ACCUM 每日
+      快照积累（weather_data/stock_hot_rank 等，错过无法回填），保留检测。
+
     Returns:
         表信息列表，每项含 table/task_id/source/capability/date_column/threshold。
     """
@@ -298,11 +328,21 @@ def _discover_backfill_tables() -> list[dict]:
                 "task_id": task.get("task_id", ""),
                 "source": task.get("source", ""),
                 "capability": task.get("capability", ""),
+                "schedule": task.get("schedule", ""),
             }
     # 推断日期列和阈值
     for info in tables.values():
         info["date_column"] = _infer_date_column(info["table"])
-        info["threshold"] = _infer_threshold(info["table"], info["date_column"])
+        if info["schedule"] in _STATIC_REFRESH_SCHEDULES:
+            # 静态/全量重建类：无日频采集语义，跳过日频缺口检测
+            info["threshold"] = 0
+            info["skip_reason"] = "static_refresh"
+        elif info["date_column"] in _BUSINESS_EVENT_DATE_COLS:
+            # 业务事件日期列：事件日≠采集日，日频口径必误报
+            info["threshold"] = 0
+            info["skip_reason"] = "business_event_date"
+        else:
+            info["threshold"] = _infer_threshold(info["table"], info["date_column"])
     return list(tables.values())
 
 
