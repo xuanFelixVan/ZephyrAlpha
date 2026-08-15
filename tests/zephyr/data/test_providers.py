@@ -23,6 +23,7 @@ from src.zephyr.data.implementations.tqcenter_provider import (
     _safe_val as tq_safe_val,
 )
 from src.zephyr.data.implementations.tushare_provider import TushareProvider
+from src.zephyr.data.implementations.baostock_provider import BaostockProvider
 
 
 # ============== AkshareIngestProvider 测试 ==============
@@ -882,6 +883,101 @@ class TestBaostockSchemaAlign:
         with pytest.raises(RuntimeError, match="10001011"):
             p._ensure_login()
         fake_bs.logout.assert_called_once()
+
+
+class TestBaostockDelistedKline:
+    """JOB-084：退市股历史 K 线回填（universe 解析/行映射/覆盖跳过/不复权口径）。"""
+
+    def _provider(self):
+        from src.zephyr.data.implementations.baostock_provider import BaostockProvider
+        p = BaostockProvider()
+        p.tls.bs = MagicMock()
+        p.tls.logged_in = True
+        return p
+
+    _POLICY = staticmethod(
+        lambda: MagicMock(rpm=0, max_retries=0, retry_on=[], initial_wait_sec=0, backoff="fixed")
+    )
+
+    def _wire(self, p, monkeypatch, universe_rows, kline_rows, span_tsv=""):
+        p.tls.bs.query_stock_basic = MagicMock(return_value=_FakeBsResultSet(universe_rows))
+        p.tls.bs.query_history_k_data_plus = MagicMock(return_value=_FakeBsResultSet(kline_rows))
+        import zephyr.data.ch_reader as provider_ch_reader
+        monkeypatch.setattr(provider_ch_reader, "query", lambda sql, timeout=0: span_tsv)
+        return p
+
+    _UNIVERSE = [
+        ["sz.000005", "ST星源(退)", "1990-12-10", "2024-04-26", "1", "0"],   # 保留
+        ["sh.600000", "浦发银行", "1999-11-10", "", "1", "1"],               # 在市→剔
+        ["sh.900901", "B股退", "1992-01-01", "2020-01-01", "1", "0"],        # B股前缀→剔
+        ["sh.000001", "上证指数", "", "", "2", "1"],                          # 指数→剔
+        ["sz.150001", "基金退", "2010-01-01", "2020-01-01", "5", "0"],        # 基金→剔
+    ]
+
+    _KLINE = [
+        ["2024-04-25", "sz.000005", "0.85", "0.87", "0.83", "0.85", "0.84", "1000", "850.00", "0.5", "1.1905"],
+        # 退市末日：volume/amount/turn/pctChg 空（实证形态）→ 0 兜底；preclose 0.85
+        ["2024-04-26", "sz.000005", "0.83", "0.83", "0.83", "0.83", "0.85", "", "", "", ""],
+        ["2024-04-23", "sz.000005", "", "", "", "", "", "100", "80", "", "0"],  # close 空→丢行
+    ]
+
+    def test_universe_filter(self):
+        p = self._provider()
+        p.tls.bs.query_stock_basic = MagicMock(return_value=_FakeBsResultSet(self._UNIVERSE))
+        out = p._fetch_delisted_universe(p.tls.bs, self._POLICY())
+        assert out == [("sz.000005", "000005", "1990-12-10", "2024-04-26")]
+
+    def test_row_mapper(self):
+        rows = BaostockProvider._map_delisted_kline_rows(self._KLINE, "000005")
+        assert len(rows) == 2  # close 空行被丢
+        r1, r2 = rows
+        assert r1[0] == "2024-04-25" and r1[1] == "000005"
+        assert r1[5] == 0.85 and r1[6] == 1000 and r1[7] == 850.00
+        assert r1[8] == round((0.87 - 0.83) / 0.84 * 100, 4)  # amplitude
+        assert r1[9] == 1.1905 and r1[10] == 0.01 and r1[11] == 0.5  # pct/change/turn
+        assert r1[12] == 1 and r1[13] == "A_share" and r1[14] == "Baostock" and r1[15] == 1
+        # 末日空值兜底 + change 由 preclose 计算
+        assert r2[6] == 0 and r2[7] == 0.0 and r2[9] == 0.0 and r2[11] == 0.0
+        assert r2[10] == -0.02 and r2[8] == 0.0
+
+    def test_fetch_full_flow_and_adjustflag(self, monkeypatch):
+        p = self._wire(self._provider(), monkeypatch, self._UNIVERSE, self._KLINE)
+        payload = FetchPayload(table="", symbols=None, start=None, end=None,
+                               extra={"capability": "kline_daily_delisted"})
+        results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
+        assert len(results) == 1 and not results[0].error
+        assert len(results[0].rows) == 2
+        assert results[0].last_key == "2024-04-26"
+        # 不复权口径（对齐 kline_daily 主口径 miniQMT 不复权）
+        kwargs = p.tls.bs.query_history_k_data_plus.call_args.kwargs
+        assert kwargs["adjustflag"] == "3"
+        assert kwargs["start_date"] == "1990-12-10" and kwargs["end_date"] == "2024-04-26"
+
+    def test_span_covered_skips_fetch(self, monkeypatch):
+        # 已覆盖 [ipo+10d, out-10d] → 跳过不抓（月度幂等刷新只抓新退市股）
+        p = self._wire(self._provider(), monkeypatch, self._UNIVERSE, self._KLINE,
+                       span_tsv="000005\t1990-12-15\t2024-04-20")
+        payload = FetchPayload(table="", symbols=None, start=None, end=None,
+                               extra={"capability": "kline_daily_delisted"})
+        results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
+        assert results == []
+        p.tls.bs.query_history_k_data_plus.assert_not_called()
+
+    def test_span_partial_coverage_still_fetches(self, monkeypatch):
+        # 仅有 2020 后段（min 2020-01-02 > ipo+10d）→ 历史有洞，必须抓
+        p = self._wire(self._provider(), monkeypatch, self._UNIVERSE, self._KLINE,
+                       span_tsv="000005\t2020-01-02\t2024-04-26")
+        payload = FetchPayload(table="", symbols=None, start=None, end=None,
+                               extra={"capability": "kline_daily_delisted"})
+        results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
+        assert len(results) == 1 and len(results[0].rows) == 2
+
+    def test_universe_empty_yields_error(self, monkeypatch):
+        p = self._wire(self._provider(), monkeypatch, [], [])
+        payload = FetchPayload(table="", symbols=None, start=None, end=None,
+                               extra={"capability": "kline_daily_delisted"})
+        results = list(p._fetch_kline_daily_delisted(payload, self._POLICY()))
+        assert len(results) == 1 and results[0].error and "universe" in results[0].error
 
 
 class TestAKShareData015Capabilities:
