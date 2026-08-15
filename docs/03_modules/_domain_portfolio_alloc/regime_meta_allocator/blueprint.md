@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.2.0"
 design_maturity: production
-build_status: generated
+build_status: stable
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc
@@ -364,7 +364,7 @@ allocation_i = water_filling_project(allocation_i)         # floor 5% / cap 40% 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-PA-007` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-PA-007` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
@@ -374,7 +374,7 @@ allocation_i = water_filling_project(allocation_i)         # floor 5% / cap 40% 
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-007 | MOD-PA-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
