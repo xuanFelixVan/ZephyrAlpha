@@ -1,7 +1,17 @@
 # [A_config] module_id=REG-PAT-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 trigger（形态=买卖触发信号）；primary_timeframe 由既有 timeframe 字段映射（daily→daily、weekly→weekly、intraday→null 占位，因 intraday 跨多个分钟级无法唯一归属）；direction 默认 neutral 为占位，条目内容填入时按形态多/空校正；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '2.0'
 registry_id: REG-PAT-001
 name: Chart Pattern Registry
 name_zh: 图形形态注册表
@@ -157,9 +167,9 @@ algorithm_variant_sota_ladder:
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 2.13.0
+version: 2.14.0
 created: '2026-08-13'
-last_updated: '2026-08-14'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - pattern_id
@@ -195,6 +205,16 @@ entry_schema:
   hit_rate: float
   false_positive_rate: float
   last_evaluated_at: date
+  primary_timeframe: str|null           # 主时间级别 Primary Timeframe — 条目归属的唯一时间级别（枚举 1min/5min/15min/30min/60min/120min/daily/weekly/monthly；无时间语义条目为 null）
+  applicable_timeframes: list               # 可泛化时间级别 Applicable Timeframes — 条目可泛化适用的时间级别列表（多值，可空表）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  direction: str                # 信号方向 Direction — long/short/both/neutral（无方向语义用 neutral）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 chart_patterns:
   # ============================================================
@@ -231,6 +251,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-002"
     name: "Bullish Engulfing"
@@ -260,6 +290,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-003"
     name: "Bearish Engulfing"
@@ -289,6 +329,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-004"
     name: "Morning Star"
@@ -318,6 +368,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-005"
     name: "Evening Star"
@@ -347,6 +407,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-006"
     name: "Doji"
@@ -376,6 +446,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-007"
     name: "Inverted Hammer"
@@ -405,6 +485,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-008"
     name: "Hanging Man"
@@ -434,6 +524,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-009"
     name: "Shooting Star"
@@ -463,6 +563,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-010"
     name: "Gravestone Doji"
@@ -492,6 +602,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-011"
     name: "Dragonfly Doji"
@@ -521,6 +641,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-012"
     name: "Long-legged Doji"
@@ -550,6 +680,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-013"
     name: "Spinning Top"
@@ -579,6 +719,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-014"
     name: "Marubozu"
@@ -608,6 +758,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-015"
     name: "Closing Marubozu"
@@ -637,6 +797,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-016"
     name: "High-Wave"
@@ -666,6 +836,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-017"
     name: "Rickshaw Man"
@@ -695,6 +875,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-018"
     name: "Takuri"
@@ -724,6 +914,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-019"
     name: "Belt Hold"
@@ -753,6 +953,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-020"
     name: "Harami"
@@ -782,6 +992,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-021"
     name: "Harami Cross"
@@ -811,6 +1031,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-022"
     name: "Morning Doji Star"
@@ -840,6 +1070,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-023"
     name: "Evening Doji Star"
@@ -869,6 +1109,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-024"
     name: "Doji Star"
@@ -898,6 +1148,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-025"
     name: "Piercing Pattern"
@@ -927,6 +1187,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-026"
     name: "Dark Cloud Cover"
@@ -956,6 +1226,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-027"
     name: "Kicking"
@@ -985,6 +1265,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-028"
     name: "Kicking by Length"
@@ -1014,6 +1304,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-029"
     name: "Three White Soldiers"
@@ -1043,6 +1343,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-030"
     name: "Three Black Crows"
@@ -1072,6 +1382,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-031"
     name: "Identical Three Crows"
@@ -1101,6 +1421,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-032"
     name: "Three Inside Up/Down"
@@ -1130,6 +1460,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-033"
     name: "Three Outside Up/Down"
@@ -1159,6 +1499,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-034"
     name: "Three-Line Strike"
@@ -1188,6 +1538,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-035"
     name: "Three Stars in the South"
@@ -1217,6 +1577,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-036"
     name: "Unique Three River"
@@ -1246,6 +1616,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-037"
     name: "Ladder Bottom"
@@ -1275,6 +1655,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-038"
     name: "Stick Sandwich"
@@ -1304,6 +1694,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-039"
     name: "Tristar"
@@ -1333,6 +1733,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-040"
     name: "Abandoned Baby"
@@ -1362,6 +1772,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-041"
     name: "Concealing Baby Swallow"
@@ -1391,6 +1811,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-042"
     name: "Advance Block"
@@ -1420,6 +1850,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-043"
     name: "Stalled Pattern"
@@ -1449,6 +1889,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-044"
     name: "Upside Gap Two Crows"
@@ -1478,6 +1928,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-045"
     name: "Two Crows"
@@ -1507,6 +1967,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-046"
     name: "Homing Pigeon"
@@ -1536,6 +2006,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-047"
     name: "Matching Low"
@@ -1565,6 +2045,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-048"
     name: "In Neck"
@@ -1594,6 +2084,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-049"
     name: "On Neck"
@@ -1623,6 +2123,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-050"
     name: "Thrusting"
@@ -1652,6 +2162,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-051"
     name: "Counterattack"
@@ -1681,6 +2201,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-052"
     name: "Separating Lines"
@@ -1710,6 +2240,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-053"
     name: "Side-by-side White Lines"
@@ -1739,6 +2279,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-054"
     name: "Rising/Falling Three Methods"
@@ -1768,6 +2318,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-055"
     name: "Mat Hold"
@@ -1797,6 +2357,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-056"
     name: "Breakaway"
@@ -1826,6 +2396,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-057"
     name: "Upside/Downside Gap Three Methods"
@@ -1855,6 +2435,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-058"
     name: "Tasuki Gap"
@@ -1884,6 +2474,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-059"
     name: "Hikkake"
@@ -1913,6 +2513,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-060"
     name: "Hikkake Modified"
@@ -1942,6 +2552,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-061"
     name: "Long Line"
@@ -1971,6 +2591,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-062"
     name: "Short Line"
@@ -2000,6 +2630,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-063"
     name: "A-Share Limit-Up Flat"
@@ -2029,6 +2669,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-064"
     name: "A-Share Limit-Down Flat"
@@ -2058,6 +2708,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # CANDLESTICK A股游资/涨跌停制度特色（2026-08-14 二轮补登）
@@ -2092,6 +2752,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-066"
     name: "Sky-to-Limit-Down"
@@ -2121,6 +2791,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-067"
     name: "Ground-to-Limit-Up (Ditian)"
@@ -2150,6 +2830,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-068"
     name: "Single Yang Threading MAs"
@@ -2179,6 +2869,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-069"
     name: "Tweezer Bottom"
@@ -2208,6 +2908,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-070"
     name: "Tweezer Top"
@@ -2237,6 +2947,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-071"
     name: "Narrow Range Day NR7/NR4"
@@ -2266,6 +2986,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-072"
     name: "Key Reversal (Outside Reversal)"
@@ -2295,6 +3025,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-073"
     name: "Wide Range Bar (WRB)"
@@ -2324,6 +3064,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-074"
     name: "Oops Pattern"
@@ -2353,6 +3103,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-075"
     name: "Three Gaps (Sanku)"
@@ -2382,6 +3142,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-076"
     name: "Tower Top"
@@ -2411,6 +3181,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CANDLE-077"
     name: "Tower Bottom"
@@ -2440,6 +3220,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # CHART_PATTERN（经典图表形态类）— 4条
@@ -2475,6 +3265,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-002"
     name: "Head and Shoulders Top"
@@ -2504,6 +3304,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-003"
     name: "Wedge Breakdown"
@@ -2533,6 +3343,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-004"
     name: "Double Bottom"
@@ -2562,6 +3382,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # CHART_PATTERN 扩充（2026-08-14，Edwards&Magee + Bulkowski 经典全集）
@@ -2596,6 +3426,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-006"
     name: "Descending Triangle"
@@ -2625,6 +3465,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-007"
     name: "Symmetrical Triangle"
@@ -2654,6 +3504,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-008"
     name: "Rising Wedge"
@@ -2683,6 +3543,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-009"
     name: "Falling Wedge"
@@ -2712,6 +3582,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-010"
     name: "Bull Flag"
@@ -2741,6 +3621,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-011"
     name: "Bear Flag"
@@ -2770,6 +3660,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-012"
     name: "Pennant"
@@ -2799,6 +3699,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-013"
     name: "Cup and Handle"
@@ -2828,6 +3738,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-014"
     name: "Inverse Cup and Handle"
@@ -2857,6 +3777,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-015"
     name: "Rectangle"
@@ -2886,6 +3816,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-016"
     name: "Head and Shoulders Bottom"
@@ -2915,6 +3855,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-017"
     name: "Triple Top"
@@ -2944,6 +3894,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-018"
     name: "Triple Bottom"
@@ -2973,6 +3933,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-019"
     name: "Rounding Top"
@@ -3002,6 +3972,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-020"
     name: "Rounding Bottom"
@@ -3031,6 +4011,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-021"
     name: "Broadening Formation"
@@ -3060,6 +4050,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-022"
     name: "Diamond"
@@ -3089,6 +4089,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-023"
     name: "V-Top"
@@ -3118,6 +4128,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-024"
     name: "V-Bottom"
@@ -3147,6 +4167,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-025"
     name: "Island Reversal"
@@ -3176,6 +4206,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-026"
     name: "Dead Cat Bounce"
@@ -3205,6 +4245,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # CHART_PATTERN A股游资/情绪周期复合形态（2026-08-14 二轮补登）
@@ -3240,6 +4290,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-028"
     name: "Double Cannon N-Shape"
@@ -3269,6 +4329,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-029"
     name: "Golden Pit"
@@ -3298,6 +4368,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-030"
     name: "Fragmented Yang Accumulation"
@@ -3327,6 +4407,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-031"
     name: "Low Box Consolidation"
@@ -3356,6 +4446,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-032"
     name: "First Board Probe"
@@ -3385,6 +4485,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-033"
     name: "Consecutive Limit-Up Ladder"
@@ -3414,6 +4524,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-034"
     name: "Mild Board Break"
@@ -3443,6 +4563,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-035"
     name: "Broken Board Re-Seal"
@@ -3472,6 +4602,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-036"
     name: "Late-Day Sneak Board"
@@ -3501,6 +4641,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # DeMark TD 序列（2026-08-14 三轮补登，纯价格行为计数形态）
@@ -3536,6 +4686,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-038"
     name: "TD Sequential Sell Setup"
@@ -3565,6 +4725,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-039"
     name: "Wolfe Wave"
@@ -3594,6 +4764,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-040"
     name: "Quasimodo"
@@ -3623,6 +4803,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-041"
     name: "Ascending Scallop"
@@ -3652,6 +4842,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-042"
     name: "Descending Scallop"
@@ -3681,6 +4881,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-043"
     name: "Horn Top"
@@ -3710,6 +4920,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-044"
     name: "Horn Bottom"
@@ -3739,6 +4959,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-045"
     name: "Pipe Top"
@@ -3768,6 +4998,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-046"
     name: "Pipe Bottom"
@@ -3797,6 +5037,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-047"
     name: "Bump-and-Run Reversal Top"
@@ -3826,6 +5076,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-048"
     name: "Bump-and-Run Reversal Bottom"
@@ -3855,6 +5115,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-049"
     name: "Volatility Contraction Pattern"
@@ -3884,6 +5154,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-050"
     name: "1-2-3 Reversal"
@@ -3913,6 +5193,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-051"
     name: "Ross Hook"
@@ -3942,6 +5232,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-052"
     name: "Old Duck Head"
@@ -3971,6 +5271,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-053"
     name: "Mid-air Refueling"
@@ -4000,6 +5310,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-054"
     name: "Three Peaks and a Domed House"
@@ -4029,6 +5349,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-055"
     name: "Three Rising Valleys"
@@ -4058,6 +5388,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-056"
     name: "Three Falling Peaks"
@@ -4087,6 +5427,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-057"
     name: "Big W"
@@ -4116,6 +5466,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-058"
     name: "Big M"
@@ -4145,6 +5505,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-059"
     name: "Gap Classification"
@@ -4174,6 +5544,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-060"
     name: "Complex Head and Shoulders"
@@ -4203,6 +5583,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-061"
     name: "High Tight Flag"
@@ -4232,6 +5622,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "weekly"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CHART-062"
     name: "Brooks H2/L2 Two-Legged Pullback"
@@ -4261,6 +5661,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # TRENDLINE_CHANNEL（趋势线与通道类）— 1条
@@ -4295,6 +5705,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   # ============================================================
   # TRENDLINE_CHANNEL 扩充（2026-08-14，趋势线/通道/音叉/金叉全集）
@@ -4328,6 +5748,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-003"
     name: "Downtrend Line"
@@ -4357,6 +5787,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-004"
     name: "Ascending Channel"
@@ -4386,6 +5826,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-005"
     name: "Descending Channel"
@@ -4415,6 +5865,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-006"
     name: "Horizontal Channel"
@@ -4444,6 +5904,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-007"
     name: "Golden Cross"
@@ -4473,6 +5943,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-008"
     name: "Andrew's Pitchfork"
@@ -4502,6 +5982,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # GANN 江恩几何（2026-08-14 四轮补登）
@@ -4536,6 +6026,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-010"
     name: "Gann Square of Nine"
@@ -4565,6 +6065,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-011"
     name: "Speed Resistance Lines"
@@ -4594,6 +6104,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-TREND-012"
     name: "Gann Swing Chart"
@@ -4623,6 +6143,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # SUPPORT_RESISTANCE（支撑阻力类）— 3条
@@ -4657,6 +6187,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-SR-002"
     name: "Intraday Breakout/Breakdown"
@@ -4686,6 +6226,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - pattern_id: "PAT-SR-003"
     name: "Intraday Stop-Loss Break"
@@ -4715,6 +6265,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   # ============================================================
   # SUPPORT_RESISTANCE 扩充（2026-08-14，枢轴点/成交量分布/昨日高低）
@@ -4748,6 +6308,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-SR-005"
     name: "Pivot Points (Fibonacci)"
@@ -4777,6 +6347,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-SR-006"
     name: "Volume Profile Support/Resistance"
@@ -4806,6 +6386,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-SR-007"
     name: "Previous Day High/Low"
@@ -4835,6 +6425,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-SR-008"
     name: "Murrey Math Levels"
@@ -4864,6 +6464,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-SR-009"
     name: "Camarilla Pivots"
@@ -4893,6 +6503,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # FIBONACCI（斐波那契工具类）— 6条（2026-08-14 新建）
@@ -4927,6 +6547,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-002"
     name: "Fibonacci Extension"
@@ -4956,6 +6586,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-003"
     name: "Fibonacci Fan"
@@ -4985,6 +6625,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-004"
     name: "Fibonacci Arc"
@@ -5014,6 +6664,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-005"
     name: "Fibonacci Time Zone"
@@ -5043,6 +6703,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-006"
     name: "Fibonacci Cluster"
@@ -5072,6 +6742,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # FIBONACCI 谐波形态子族（2026-08-14 第二轮循环审查补登）
@@ -5108,6 +6788,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-008"
     name: "Gartley"
@@ -5137,6 +6827,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-009"
     name: "Bat"
@@ -5166,6 +6866,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-010"
     name: "Alternate Bat"
@@ -5195,6 +6905,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-011"
     name: "Butterfly"
@@ -5224,6 +6944,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-012"
     name: "Crab"
@@ -5253,6 +6983,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-013"
     name: "Deep Crab"
@@ -5282,6 +7022,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-014"
     name: "Shark"
@@ -5311,6 +7061,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-015"
     name: "Cypher"
@@ -5340,6 +7100,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-016"
     name: "Three Drives"
@@ -5369,6 +7139,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-FIB-017"
     name: "Harmonic 5-0"
@@ -5398,6 +7178,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # STRUCTURE（价格结构类）— 1条
@@ -5432,6 +7222,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   # ============================================================
   # CHANLUN（缠论类）— 15条（2026-08-14 新建）
@@ -5469,6 +7269,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-002"
     name: "Chanlun Bottom Fractal"
@@ -5498,6 +7308,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-003"
     name: "Chanlun Upward Bi"
@@ -5527,6 +7347,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-004"
     name: "Chanlun Downward Bi"
@@ -5556,6 +7386,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-005"
     name: "Chanlun Line Segment"
@@ -5585,6 +7425,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-006"
     name: "Chanlun Zhongshu (Central Hub)"
@@ -5614,6 +7464,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-007"
     name: "Chanlun First Buy Point"
@@ -5643,6 +7503,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-008"
     name: "Chanlun Second Buy Point"
@@ -5672,6 +7542,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-009"
     name: "Chanlun Third Buy Point"
@@ -5701,6 +7581,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-010"
     name: "Chanlun First Sell Point"
@@ -5730,6 +7620,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-011"
     name: "Chanlun Second Sell Point"
@@ -5759,6 +7659,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-012"
     name: "Chanlun Third Sell Point"
@@ -5788,6 +7698,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-013"
     name: "Chanlun Trend Divergence"
@@ -5817,6 +7737,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-014"
     name: "Chanlun Consolidation Divergence"
@@ -5846,6 +7776,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-CLL-015"
     name: "Chanlun Nested Interval (Qujian Tao)"
@@ -5875,6 +7815,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # ELLIOTT_WAVE（艾略特波浪类）— 8条（2026-08-14 新建）
@@ -5909,6 +7859,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-002"
     name: "Zigzag Correction"
@@ -5938,6 +7898,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-003"
     name: "Flat Correction"
@@ -5967,6 +7937,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-004"
     name: "Triangle Correction"
@@ -5996,6 +7976,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-005"
     name: "Double Three Combination"
@@ -6025,6 +8015,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-006"
     name: "Wave Extension"
@@ -6054,6 +8054,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-007"
     name: "Leading Diagonal"
@@ -6083,6 +8093,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-ELW-008"
     name: "Ending Diagonal"
@@ -6112,6 +8132,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # STRUCTURE 扩充（2026-08-14）：Wyckoff 全套 + SMC 智能资金概念 +
@@ -6147,6 +8177,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-003"
     name: "Wyckoff Distribution"
@@ -6176,6 +8216,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-004"
     name: "Wyckoff Upthrust"
@@ -6205,6 +8255,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-005"
     name: "Wyckoff Sign of Strength (SOS)"
@@ -6234,6 +8294,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-006"
     name: "Wyckoff Sign of Weakness (SOW)"
@@ -6263,6 +8333,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-007"
     name: "Wyckoff Last Point of Support (LPS)"
@@ -6292,6 +8372,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-008"
     name: "Wyckoff Last Point of Supply (LPSY)"
@@ -6321,6 +8411,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-009"
     name: "SMC Break of Structure (BOS)"
@@ -6350,6 +8450,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-010"
     name: "SMC Change of Character (CHoCH)"
@@ -6379,6 +8489,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-011"
     name: "SMC Fair Value Gap (FVG)"
@@ -6408,6 +8528,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-012"
     name: "SMC Order Block (OB)"
@@ -6437,6 +8567,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-013"
     name: "SMC Liquidity Grab"
@@ -6466,6 +8606,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-014"
     name: "SMC Equal Highs (EQH)"
@@ -6495,6 +8645,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-015"
     name: "SMC Equal Lows (EQL)"
@@ -6524,6 +8684,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-016"
     name: "SMC Premium/Discount Zone"
@@ -6553,6 +8723,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-017"
     name: "Time Series Motif Discovery"
@@ -6582,6 +8762,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-018"
     name: "Semantic Segmentation (FLUSS)"
@@ -6611,6 +8801,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # DL 检测算法变体登记（2026-08-14，SOTA 演进预留，非独立形态）
@@ -6647,6 +8847,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-002"
     name: "Swin Transformer TADA-AW Classifier"
@@ -6676,6 +8886,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-003"
     name: "ViT-Tiny + MAE Self-supervised Pattern Learner"
@@ -6705,6 +8925,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-004"
     name: "Multimodal LLM Pattern Analyst"
@@ -6734,6 +8964,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-005"
     name: "Kronos K-line Foundation Model"
@@ -6763,6 +9003,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-006"
     name: "Mamba State-Space Sequence Model"
@@ -6792,6 +9042,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # VSA 量价形态子族（2026-08-14 第三轮循环审查补登）
@@ -6829,6 +9089,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-020"
     name: "VSA Buying Climax"
@@ -6858,6 +9128,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-021"
     name: "VSA No Supply"
@@ -6887,6 +9167,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-022"
     name: "VSA No Demand"
@@ -6916,6 +9206,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-023"
     name: "VSA Stopping Volume"
@@ -6945,6 +9245,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-024"
     name: "VSA Test Bar"
@@ -6974,6 +9284,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-025"
     name: "VSA Pseudo Upthrust"
@@ -7003,6 +9323,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-007"
     name: "Diffusion Generative Chart Forecaster"
@@ -7032,6 +9362,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # 分时盘口形态子族（2026-08-14 第四轮循环审查补登，打板连板梯队核心输入）
@@ -7067,6 +9407,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-027"
     name: "Intraday Box Shrinking Consolidation"
@@ -7096,6 +9446,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-028"
     name: "Intraday Double Bottom"
@@ -7125,6 +9485,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-029"
     name: "Intraday VWAP Hold"
@@ -7154,6 +9524,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-030"
     name: "Intraday Pulse Probe"
@@ -7183,6 +9563,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-031"
     name: "Intraday Sawtooth Narrow"
@@ -7212,6 +9602,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-032"
     name: "Intraday Sell Order Freeze"
@@ -7241,6 +9641,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-033"
     name: "Intraday Trap Pull"
@@ -7270,6 +9680,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-034"
     name: "Intraday Wash Lift"
@@ -7299,6 +9719,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # 订单流不平衡子族（2026-08-14 第五轮循环审查补登，盘口结构层）
@@ -7335,6 +9765,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-036"
     name: "Footprint Point of Control (POC)"
@@ -7364,6 +9804,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-037"
     name: "Opening Range Breakout"
@@ -7393,6 +9843,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-038"
     name: "Supply/Demand Zone (Seiden)"
@@ -7422,6 +9882,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-039"
     name: "ICT Power of Three (AMD)"
@@ -7451,6 +9921,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-040"
     name: "Iceberg Order Detection"
@@ -7480,6 +9960,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-STRUCT-041"
     name: "Spoofing/Layering Detection"
@@ -7509,6 +9999,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-008"
     name: "Chart-RVR GRPO Chart Reasoner"
@@ -7538,6 +10038,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-009"
     name: "Multi-Scale VLM Candlestick Benchmark"
@@ -7567,6 +10077,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-010"
     name: "AC-Seq2Net Math-Guided Geometric DL"
@@ -7596,6 +10116,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-011"
     name: "ElliottAgents Multi-Agent Wave Counter"
@@ -7625,6 +10155,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-012"
     name: "wave-alpha Deterministic Wave Engine"
@@ -7654,6 +10194,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - pattern_id: "PAT-DL-013"
     name: "GAF-CNN Visual Encoding Pipeline"
@@ -7683,6 +10233,16 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # 第五轮判定不登（治理正确性，非遗漏，2026-08-14）
