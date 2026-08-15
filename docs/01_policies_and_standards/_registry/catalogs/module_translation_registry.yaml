@@ -52506,3 +52506,25 @@ algo_submodules:
   name_zh: ① 包命名空间初始化 空导出
   name_en: __all__空列表
   plain_zh: 包级init不聚合再导出任何符号，消费者须显式导入具体子模块
+
+- module_path: scripts/governance/d5_architecture/checkers/check_registry_code_anchor.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 业务注册表代码锚点存在性校验（门禁A）
+  name_en: Check Registry Code Anchor
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: scripts/governance/d5_architecture/checkers/check_registry_code_fingerprint.py
+  domain_id: D_GOV_SCRIPTS
+  name_zh: 业务注册表实现指纹对账（门禁B）
+  name_en: Check Registry Code Fingerprint
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''
+- module_path: src/zephyr/gov_enforcement/commit_gates/registry_code_anchor_gate.py
+  domain_id: D_GOV_CODE_QUALITY
+  name_zh: 业务注册表代码锚点门禁（双触发：注册表锚点校验+代码删除反查）
+  name_en: Registry Code Anchor Gate
+  desc_zh: ''
+  desc_en: ''
+  plain_zh: ''

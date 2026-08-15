@@ -37,7 +37,7 @@ entry_schema:
   register_line: integer (informational) — 原 git_commit_gateway.py 中的注册行号（迁移参考）
   enabled: boolean (required, default true) — 是否启用（false 则 auto_registrar 跳过）
   priority: integer (informational) — gate 优先级（从 GateSpec 读取，YAML 不覆盖）
-total_gates: 90
+total_gates: 93  # 2026-08-15 实测修正（原 90 与 entries 实数 92 存量漂移）+ 本批 REGISTRY-CODE-ANCHOR 新增=93
 gates:
 # --- 88 个 in-process gate（82 个从 git_commit_gateway.py L407-484 提取 + GATE-PRECOMMIT-OFFLINE，2026-07-21；+TRANSLATION-COVERAGE 2026-08-02；+PROTECTED-PATHS 2026-08-03 #ARCH-MODEL-LIFECYCLE-001 P1；+DERIVED-FILE-DELETION-PROTECTION 2026-08-03 #ARCH-BP-REGISTRY-DELETION-001 P1；+BLUEPRINT-NODE-ID-HARDCODE 2026-08-04 文档引用铁律 in-process 补齐；+WORKTREE-REQUIRED 2026-08-04 #ARCH-WORKTREE-GATE-001；+TEST-RESIDUE-SSOT 2026-08-04 #ARCH-TEST-RESIDUE-CLEANUP-001 防复发）---
 - gate_id: HELD-OVERLAP
@@ -627,4 +627,15 @@ gates:
   factory_function: make_reconciler_file_ops_gate
   source: in_process
   register_line: 0  # priority=117
+  enabled: true
+# REGISTRY-CODE-ANCHOR（#ARCH-BREG-002 门禁A，2026-08-15）：
+# 业务注册表↔代码分域真源双向索引的存在性校验——双触发：staged 15 业务注册表→
+# checker 校验 code_path/code_symbol 锚点真实存在；staged src/ .py 删除/改名→
+# 反查库条目引用硬阻断（防 13 条存量锚点漂移同族复发）。deprecated/retired 豁免。
+# priority=106（GIT-CALL-BUDGET=105 之后、BARE-SUBPROCESS=108 之前；引用完整性族 70-76 满员就近落位）。
+- gate_id: REGISTRY-CODE-ANCHOR
+  module_path: zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate
+  factory_function: make_registry_code_anchor_gate
+  source: in_process
+  register_line: 0  # priority=106
   enabled: true
