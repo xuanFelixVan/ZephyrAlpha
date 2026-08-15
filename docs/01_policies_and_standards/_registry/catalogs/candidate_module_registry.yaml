@@ -5534,20 +5534,20 @@ entries:
       result:
       evidence: 待复核
     blocking_question: none
-    result: candidate
-  status: candidate
+    result: rejected
+  status: rejected
   priority: P2
   created_at: '2026-08-07'
-  last_reviewed_at: '2026-08-07'
+  last_reviewed_at: '2026-08-15'
   promoted_to: ''
   source_draft: battle_map_08_position_management.md:554
   source_section: ''
   original_id: BM-SEL-20
   estimated_complexity: M
   estimated_effort: ''
-  tech_notes: ''
+  tech_notes: 'rejected 2026-08-15（AI-XCUT-001 按 60_cross_cutting_cleanup §3.3 与 30_multi_strategy_concurrency §7.3 裁定落地）：跨策略投票层随统一优化器（Model A 前身方案）被否决而消失——Model A 独立账本下 sleeve 自然叠加即等价多策略共识（S1 给 5%+S2 给 5%=10%），投票权重 meta-参数=回测/调参/衰减监控纯技术债。同概念 archive 条目 CAND-HARVEST-3225 已 rejected（2026-08-05），本条目系 2026-08-07 acquisition 补登的同名复活候选，按既裁定同步 rejected 防幽灵施工。'
   risks: []
-  alternatives: ''
+  alternatives: 'Model A 自然叠加（30_multi_strategy_concurrency §2.3）——多策略选到同一只票时仓位自然叠加，等价于永远稳定的等权 risk-budget 优化器'
   tags:
   - 候选态环节补登
   - acquisition导入
@@ -5561,7 +5561,7 @@ entries:
   blocked_by: []
   next_review_date: ''
   review_frequency: yearly
-  last_review_outcome: 由 register_candidate_acquisitions.py 补登，承载 acquisition=borrow/scikit-learn VotingClassifier (后置)
+  last_review_outcome: '2026-08-15 rejected（60号 §3.3 跨策略投票降级裁定，AI-XCUT-001 落地；原补登：register_candidate_acquisitions.py，acquisition=borrow/scikit-learn VotingClassifier 后置）'
   acquisition_method: borrow
   acquisition_source: scikit-learn VotingClassifier (后置)
 - id: CAND-SIM-003

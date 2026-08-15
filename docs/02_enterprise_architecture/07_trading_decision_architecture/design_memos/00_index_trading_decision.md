@@ -71,7 +71,7 @@ scope: 07_trading_decision_architecture
 | [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 代码待落地 #ARCH-QUANT-003） | active v1.7.4 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.0.0（2026-08-12 重建） |
-| [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.0.0 |
+| [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 12业务注册表施工（registry_of_registries） | active v1.32.0 |
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
@@ -112,7 +112,7 @@ scope: 07_trading_decision_architecture
 | 09 | 风控 | ✅ 30号 §2.5 + G16-G18（35/36/37号 active）+ 62号 v1.34.2 限额注册表 why 层 + 61号运行时风险治理 + 55号操作/模型风险审计 | ✅ drawdown/var/kill_switch 已 production | — | **已覆盖** |
 | 10 | 执行 | ✅ 40_execution_broker active v2.10.1（§2.8 盘前检查链+订单层熔断两级） | ✅ 代码已施工（10 项 P0 gap 待落 #ARCH-EXEC-001） | G22-AI | ✅ 已定稿+代码已施工 |
 | 11 | 对账 | ✅ G25（54号 active v1.15.5，含压力测试/仓位审计/模型层反馈小节） | 🟧 3 项待落码 | — | **已覆盖** |
-| 12 | 跨切 | 🟧 G27（60号 active v1.0.0）+ G29（64号 draft v1.3.1）+ 62/63/65/90/91号（90号 v2.0.1 补 5 条远期开放问题） | — | — | **已覆盖** |
+| 12 | 跨切 | 🟧 G27（60号 active v1.1.0）+ G29（64号 draft v1.3.1）+ 62/63/65/90/91号（90号 v2.0.1 补 5 条远期开放问题） | — | — | **已覆盖** |
 
 **结论**（2026-08-12 全覆盖补丁后更新）：12 个阶段的 why 层**全部覆盖**——2026-08-12 作战地图全覆盖工程以 PG `battle_map_steps` 340 环节为真源逐环节核对（19 弃用除外），321 个活跃环节全部在设计备忘中有载体（语义覆盖）且**逐编号显式锚定**（正文可检索 BM-XXX 编号至承载小节）：新建 43号（G30 合规与交易纪律），41/61/21/24/25/52/15/51/53/54/55/35/31/32/36/37/42/17/62/64/90/91/40/10/20/34/23 共 26 篇补环节设计或裁定，否定式裁定（不建设/暂缓+重评条件）与建设契约四要素齐全。git 灾难丢失的 8 篇设计文档**全部就绪**（7 篇 04:32 重建 + 28号 v1.2.0 已从 a3750b90d1 恢复（16f119bd）+ 60号 active v1.0.0 已在 HEAD），仅剩 34号 测试套件（代码非文档）待重建。遗留：battle_map 真源 3 处成熟度口径修正（BM-MT-01-B 标 production 实为 design、BM-SIM-03/06 production 标注 vs code_mapping planned、BM-BUY-02-A-1-c 待回写 90 §7 暂缓标注）已分别登记在 61 §7.5 / 52 §7，待治理流程回写 DB。
 
@@ -669,7 +669,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 43_compliance_discipline | G30 合规与交易纪律体系（交易流层子项，D_COMPLIANCE 域） | ✅ 已落盘 | draft v0.1.0（2026-08-12 作战地图全覆盖补丁新建） |
 | 40_execution_broker | G22 下单对接 | G22-AI | ✅ v2.10.1 + 代码已施工 |
 | 54_reconciliation_attribution | G25 对账归因 | ✅ 已定稿 | active v1.14.0 |
-| 60_cross_cutting_cleanup | G27 冲突矩阵清理 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失 |
+| 60_cross_cutting_cleanup | G27 冲突矩阵清理 | ✅ 已定稿 | active v1.1.0（2026-08-15 AI-XCUT-001 实证非骨架：v1.0.2 内容完整；施工=§7⑦ 闭环+CAND-PFALLOC-002 标 rejected+battle_map §16 真源收敛 31→3） |
 | 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.10.0 |
 | 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | 待施工 | draft v0.1.0 |
 | 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.0 |
