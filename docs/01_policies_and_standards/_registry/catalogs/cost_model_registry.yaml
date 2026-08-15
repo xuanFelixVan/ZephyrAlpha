@@ -7,6 +7,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：成本模型是计费规则，无 K 线周期/市场环境/方向语义，裁 timeframe×2/regime×2/direction。保留 entry_role=rule + 共有四维度；algorithm_status 固定 not_applicable。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   成本、规则、风控
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -25,7 +27,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.0
+version: 1.2.1
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -101,8 +103,8 @@ cost_models:
     updated_at: '2026-08-10'
     owner: MOD-EX-CORE
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["成本", "规则"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -143,8 +145,8 @@ cost_models:
     updated_at: '2026-08-10'
     owner: MOD-EX-CORE
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["成本", "风控"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -173,6 +175,6 @@ cost_models:
     owner: MOD-EX-CORE
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["成本"]
     algorithm_status: "not_applicable"
     evidence: ""
