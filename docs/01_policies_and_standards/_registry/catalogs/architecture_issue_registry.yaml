@@ -16912,3 +16912,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-087'
+  title: RuleLoader slug 解析失效——_rule_id_to_filename 精确名映射 vs 84 个带语义后缀规则文件（规则强制静默空转）
+  severity: P0紧急
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/rule/ 族）：src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py L140-147 _rule_id_to_filename 只做精确文件名匹配（trae_001.yaml），而 docs/01_policies_and_standards/rules/ 现存 84 个文件全部带 slug 后缀（trae_001_file_operation_security.yaml）——slug 命名迁移后按 rule_id/DB 绑定的解析路径整体失效：PG rule_bindings 可用时 load_for_operation/skill/gate 对所有规则静默返回空列表（规则强制在线失效，故障半径远超测试面）；get_rule_by_id 必 warn 返回 None。模块自身 ERROR_CONTRACT（L13）仅允许"规则缺失返回空"而规则并不缺失——真代码 bug。已修：精确候选失败后追加 glob 前缀回退（sorted glob f"{lower}_*.yaml" 取首个），tests/rule/test_rule_e2e.py 6 项 + test_rule_integration.py 2 项原样通过；另 1 项魔数跟进（53→动态对齐磁盘真源）。遗留波及面（待裁定/工单）：①PG depgraph nodes 表 rule 节点未灌数据（DB 0 vs YAML 84，test_depgraph_rule_node_count 已 xfail 留痕）——灌库工单；②84 规则全量加载 ~1.3s 超 500ms 存量性能阈值（test_load_all_under_500ms 已 xfail 留痕）——阈值重校准或加载器优化待裁定；③PG 不可用时 _scan_rules_dir 全量回退不过滤触发源的既有弱点（测试假性通过面）待评估。'
+  fix_phase: 主修已落（glob 回退）；遗留①灌库②性能基线③回退过滤弱点 待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

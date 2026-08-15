@@ -90,4 +90,9 @@ class TestListAllRules:
     def test_returns_53_rules(self, loader):
         summaries = loader.list_all_rules()
         assert isinstance(summaries, list)
-        assert len(summaries) == 53, f"Expected 53 rules, got {len(summaries)}"
+        # 生产跟进：规则目录现 84 个 YAML（53 为陈旧魔数）——与磁盘真源动态对齐，防扩容再漂移
+        from zephyr.gov_enforcement.rule_enforcement.rule_engine.rule_engine import _RULES_DIR
+
+        assert len(summaries) == len(list(_RULES_DIR.glob("*.yaml"))), (
+            f"rules count mismatch: {len(summaries)} vs disk {len(list(_RULES_DIR.glob('*.yaml')))}"
+        )
