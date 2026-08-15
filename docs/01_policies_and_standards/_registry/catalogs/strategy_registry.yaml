@@ -10,12 +10,13 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 trigger（策略产生买卖触发信号）；direction 默认 neutral 为占位；algorithm_status 推导规则同 factor（deprecated/retired→not_applicable，code_path 非空→quantized，否则 pending_backtest）。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、仓位、估值、信号、出货、分时、动量、压力、反转、吸筹、周期、因子、均值回归、均线、基准、多因子、宏观、尾盘、形态、成交、成本、成长、打板、执行、持续、指数、支撑、放量、数据、早盘、止损、波动、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、行业、行情、规则、订单、财报、质量、资金、趋势、量价、量化、震荡、风控、龙头
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # direction 语义澄清（2026-08-15）：A股选股/打板策略=多头开仓，exit_logic 的卖点/止损/出货/破位为多头持仓退出信号不计入 direction；short 仅用于明示做空/融券语义（本库当前无此类条目）。applies_to=[stock] 经 benchmark_id=BMK-INDEX-001（沪深300，成分=股票）二跳推导。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-STR-001
 name: 策略登记表
 name_zh: 策略登记表
@@ -27,7 +28,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.2
+version: 1.2.3
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -118,6 +119,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 strategies:
   # ============================================================
@@ -200,6 +203,8 @@ strategies:
     tags: ["突破", "缩量", "放量", "趋势", "资金", "龙头", "风控", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-002"
     name: "Swing Stock Selection (Four-Step)"
@@ -278,6 +283,8 @@ strategies:
     tags: ["缩量", "资金", "龙头", "风控", "震荡", "行业", "多因子", "形态", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-003"
     name: "Stock Pool Whitelist Enforcement"
@@ -356,6 +363,8 @@ strategies:
     tags: ["风控", "多因子", "股票池", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-004"
     name: "No Selection in Downtrend"
@@ -434,6 +443,8 @@ strategies:
     tags: ["反转", "趋势", "风控", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-005"
     name: "Mid-Cap Leader Selection (Highest Volume)"
@@ -512,6 +523,8 @@ strategies:
     tags: ["量价", "风控", "行业", "多因子", "规则", "因子", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-006"
     name: "Full Adjustment Condition (30% or 2 Months)"
@@ -590,6 +603,8 @@ strategies:
     tags: ["风控", "震荡", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-007"
     name: "Industry Imagination Space"
@@ -668,6 +683,8 @@ strategies:
     tags: ["风控", "行业", "多因子", "数据", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-008"
     name: "Sector Capacity Filter"
@@ -746,6 +763,8 @@ strategies:
     tags: ["资金", "风控", "行业", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-009"
     name: "No Acceleration Before Launch"
@@ -824,6 +843,8 @@ strategies:
     tags: ["资金", "打板", "风控", "多因子", "规则", "行情", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-010"
     name: "Leader Strategy / Sector Mid-Cap"
@@ -902,6 +923,8 @@ strategies:
     tags: ["龙头", "风控", "行业", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-011"
     name: "Isolated Rally Avoidance (Manipulated Stocks)"
@@ -980,6 +1003,8 @@ strategies:
     tags: ["风控", "行业", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-012"
     name: "Valuation Percentile Not for Cyclical Stocks"
@@ -1058,6 +1083,8 @@ strategies:
     tags: ["风控", "估值", "成长", "周期", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-013"
     name: "Nine-Stage Stock Selection SOP"
@@ -1136,6 +1163,8 @@ strategies:
     tags: ["资金", "风控", "仓位", "分时", "行业", "多因子", "组合", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-014"
     name: "Unbiased Full-Market Scan"
@@ -1214,6 +1243,8 @@ strategies:
     tags: ["风控", "行业", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-015"
     name: "Tradable Pool Exclusion Rules"
@@ -1292,6 +1323,8 @@ strategies:
     tags: ["出货", "资金", "风控", "流动性", "多因子", "数据", "形态", "规则", "因子", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-016"
     name: "Short-Term Pool 5-Point Scoring"
@@ -1370,6 +1403,8 @@ strategies:
     tags: ["缩量", "放量", "趋势", "龙头", "风控", "行业", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-017"
     name: "Swing Pool 5-Point Scoring"
@@ -1448,6 +1483,8 @@ strategies:
     tags: ["缩量", "龙头", "风控", "震荡", "行业", "多因子", "财报", "规则", "因子", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-018"
     name: "Dual-Strategy 5-Point (Range Top-3 + Counter-Trend Capital)"
@@ -1526,6 +1563,8 @@ strategies:
     tags: ["趋势", "资金", "风控", "震荡", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-019"
     name: "Three-Dimensional Resonance Check"
@@ -1604,6 +1643,8 @@ strategies:
     tags: ["均线", "资金", "风控", "估值", "成长", "盘口", "多因子", "财报", "形态", "组合", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-020"
     name: "Earnings Dimension Factors"
@@ -1682,6 +1723,8 @@ strategies:
     tags: ["风控", "流动性", "估值", "成长", "质量", "多因子", "成本", "财报", "规则", "因子", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-021"
     name: "Stabilization Blue Chips != Offensive Targets"
@@ -1760,6 +1803,8 @@ strategies:
     tags: ["风控", "行业", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-022"
     name: "Diluted Hot Concept Warning"
@@ -1838,6 +1883,8 @@ strategies:
     tags: ["风控", "事件", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-023"
     name: "Stock Outperformance vs Sector Index"
@@ -1916,6 +1963,8 @@ strategies:
     tags: ["风控", "震荡", "指数", "行业", "多因子", "规则", "因子", "绩效"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-024"
     name: "ETF Multi-Comparison Four-Dimensional Selection"
@@ -1994,6 +2043,8 @@ strategies:
     tags: ["背离", "均线", "资金", "风控", "震荡", "多因子", "形态", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-025"
     name: "Research Report Classification System"
@@ -2072,6 +2123,8 @@ strategies:
     tags: ["资金", "风控", "宏观", "周期", "行业", "多因子", "数据", "组合", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MULTIFACTOR-026"
     name: "50% Pullback Trend Breakdown Threshold"
@@ -2150,6 +2203,8 @@ strategies:
     tags: ["突破", "趋势", "风控", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # S10 买点策略 (momentum_trend) — STR-MOMENTUM-TREND-001 ~ 018
@@ -2231,6 +2286,8 @@ strategies:
     tags: ["突破", "放量", "趋势", "动量", "风控", "尾盘", "早盘", "股票池", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-002"
     name: "Pullback Confirmation Second Buy Point (5 Elements)"
@@ -2309,6 +2366,8 @@ strategies:
     tags: ["缩量", "放量", "出货", "趋势", "动量", "风控", "k线", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-003"
     name: "Acceleration Third Buy Point (Risk Point - No Buy)"
@@ -2387,6 +2446,8 @@ strategies:
     tags: ["突破", "放量", "趋势", "动量", "风控", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-004"
     name: "Scale-In / Pyramid Position Building"
@@ -2465,6 +2526,8 @@ strategies:
     tags: ["突破", "吸筹", "趋势", "动量", "仓位", "成本", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-005"
     name: "Risk-Reward Ratio Game"
@@ -2543,6 +2606,8 @@ strategies:
     tags: ["突破", "压力", "趋势", "动量", "止损", "风控", "仓位", "缠论", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-006"
     name: "ETF DCA / Buy The Dip"
@@ -2621,6 +2686,8 @@ strategies:
     tags: ["反转", "趋势", "动量", "指数", "均值回归", "组合", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-007"
     name: "Dual-Strategy Resonance Buy Signal"
@@ -2699,6 +2766,8 @@ strategies:
     tags: ["持续", "突破", "趋势", "动量", "均线", "资金", "打板", "流动性", "震荡", "仓位", "尾盘", "早盘", "行业", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-008"
     name: "Resonance Trigger Condition Matrix"
@@ -2777,6 +2846,8 @@ strategies:
     tags: ["趋势", "动量", "行业", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-009"
     name: "Sector-Stock Consistency Check"
@@ -2855,6 +2926,8 @@ strategies:
     tags: ["趋势", "动量", "风控", "震荡", "行业", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-010"
     name: "A/B/C Three-Tier Buy Point Classification"
@@ -2933,6 +3006,8 @@ strategies:
     tags: ["趋势", "动量", "止损", "震荡", "仓位", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-011"
     name: "Buy Point Three-Level Verdict"
@@ -3011,6 +3086,8 @@ strategies:
     tags: ["压力", "趋势", "动量", "均线", "缺口", "止损", "风控", "执行", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-012"
     name: "Risk-Reward < 2:1 No Trade"
@@ -3089,6 +3166,8 @@ strategies:
     tags: ["压力", "趋势", "动量", "止损", "风控", "规则", "因子", "绩效", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-013"
     name: "Stop-Loss Width Rule (>=1.5x Daily Volatility)"
@@ -3167,6 +3246,8 @@ strategies:
     tags: ["趋势", "动量", "波动", "止损", "仓位", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-014"
     name: "Rebound Probability Grading"
@@ -3245,6 +3326,8 @@ strategies:
     tags: ["反转", "趋势", "动量", "仓位", "量化", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-015"
     name: "Three Opening Scenarios Response Matrix"
@@ -3323,6 +3406,8 @@ strategies:
     tags: ["反转", "放量", "趋势", "动量", "缺口", "风控", "早盘", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-016"
     name: "Full Position Four Hard Conditions"
@@ -3401,6 +3486,8 @@ strategies:
     tags: ["持续", "趋势", "动量", "打板", "仓位", "指数", "基准", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-017"
     name: "Pre-Market Auction Three Verification"
@@ -3479,6 +3566,8 @@ strategies:
     tags: ["趋势", "动量", "缺口", "风控", "早盘", "指数", "执行", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-018"
     name: "Primary + Backup Dual Scenario Response"
@@ -3557,6 +3646,8 @@ strategies:
     tags: ["反转", "趋势", "动量", "止损", "仓位", "早盘", "执行", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # S11 卖点策略 (momentum_trend) — STR-MOMENTUM-TREND-019 ~ 031
@@ -3638,6 +3729,8 @@ strategies:
     tags: ["突破", "趋势", "动量", "止损", "风控", "质量", "盘口", "分时", "规则", "因子", "订单"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-020"
     name: "Stock First Sell Point (Break 20-Day Line)"
@@ -3716,6 +3809,8 @@ strategies:
     tags: ["突破", "趋势", "动量", "风控", "行业", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-021"
     name: "Stock Second Sell Point (High Volume Stall)"
@@ -3794,6 +3889,8 @@ strategies:
     tags: ["放量", "出货", "趋势", "动量", "资金", "风控", "行业", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-022"
     name: "Intraday Quick Reaction Sell"
@@ -3872,6 +3969,8 @@ strategies:
     tags: ["突破", "趋势", "动量", "均线", "龙头", "风控", "分时", "行业", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-023"
     name: "Pressure Level Three Failures Double Top"
@@ -3950,6 +4049,8 @@ strategies:
     tags: ["反转", "突破", "压力", "趋势", "动量", "风控", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-024"
     name: "One Stock One Settlement"
@@ -4028,6 +4129,8 @@ strategies:
     tags: ["趋势", "动量", "风控", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-025"
     name: "Trend-Corresponding Sell Point"
@@ -4106,6 +4209,8 @@ strategies:
     tags: ["趋势", "动量", "风控", "质量", "震荡", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-026"
     name: "Scale-Out Selling Method"
@@ -4184,6 +4289,8 @@ strategies:
     tags: ["背离", "趋势", "动量", "仓位", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-027"
     name: "Anchor Selling Method (Core Strategy)"
@@ -4262,6 +4369,8 @@ strategies:
     tags: ["突破", "趋势", "动量", "龙头", "风控", "行业", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-028"
     name: "Sector Top Four Warning Signs"
@@ -4340,6 +4449,8 @@ strategies:
     tags: ["反转", "背离", "缩量", "放量", "出货", "趋势", "动量", "波动", "资金", "龙头", "风控", "行业", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-029"
     name: "Resonance Sell Signal (Resonance Exit)"
@@ -4418,6 +4529,8 @@ strategies:
     tags: ["持续", "突破", "支撑", "趋势", "动量", "均线", "资金", "止损", "行业", "成本", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-030"
     name: "Position Disposition Rules (Weak Position Clearing)"
@@ -4496,6 +4609,8 @@ strategies:
     tags: ["反转", "突破", "趋势", "动量", "仓位", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-031"
     name: "Weak Asset Rotation"
@@ -4574,6 +4689,8 @@ strategies:
     tags: ["反转", "压力", "趋势", "动量", "形态", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # S13 做T策略 (momentum_trend) — STR-MOMENTUM-TREND-032 ~ 033
@@ -4655,6 +4772,8 @@ strategies:
     tags: ["趋势", "动量", "风控", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - strategy_id: "STR-MOMENTUM-TREND-033"
     name: "T-Trading Two Disciplines (No Add + Node Required)"
@@ -4733,3 +4852,5 @@ strategies:
     tags: ["背离", "趋势", "动量", "量价", "风控", "仓位", "分时", "成本", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
