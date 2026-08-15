@@ -16784,3 +16784,35 @@ entries:
   related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T2 SessionRegistry 锚主仓同族先例）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 监视器捕获本问题）; #50（tmp_repo 独立空库——锚定正交性约束）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-071'
+  title: MemoryLock ttl_seconds 签名占位未实现（TTL 过期强释语义缺席）
+  severity: P2中
+  adjudication: '测试债清偿批（AI-TDEBT-001，#63）实证：src/zephyr/shared/infra/lock.py MemoryLock.acquire/lock 签名含 ttl_seconds（默认 30.0）但方法体从不消费——无到期时间戳记录、无过期判定、is_locked 无 TTL 检查；git pickaxe expires_at 全史零命中，5.40.9 TTL 强释语义自始未实现（测试先行规格 tests/infrastructure/test_infra_lock.py::TestMemoryLockTTL 3 项失败）。3 项测试已 xfail(strict=False) 留痕。待裁定：补实现（测试即规格）或退役 ttl_seconds 参数并改写测试。'
+  fix_phase: 待裁定（补实现 / 退役参数 二选一）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-072'
+  title: 全量 pytest 运行改写宿主仓真实文件并混入 git index（测试隔离缺口，#50 同族文件树+index 面）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，worktree 内 1h37m 全量基线运行）：运行期约 260 个 tracked 文件被改写并进入 staged 区——①blueprint §0.6 五图表被生成器按空库重算回写（如 var_calculator/blueprint.md "0 Dataset/1 Job"→"（无节点）"，mtime 落于运行窗口）；②module_translation_registry.yaml 被改写；③src/scripts 多文件全行重写。叠加存量 CRLF 幻影（checkout 即 modified 的约 80 文件，reset --hard 后仍 M——.gitattributes 与 blob EOL 不一致，tracker #26 已见同族）。污染源高度疑似测试对宿主仓执行生成器/修复脚本（fix_header_module_id/decision_node_plain_zh_backfill/add_module_translation/generate_* 类）且未做 tmp 重定向，mass-staging 疑为 post-commit reconciler batched auto-commit 的宽口 git add 扫入。治理批③主仓 132 dirty 文件即同现象先例。待裁定：识别并隔离污染源测试清单 + auto-commit 暂存口径收敛 + CRLF 幻影治本（blob 归一化或 .gitattributes 修正）。'
+  fix_phase: 待专项（污染源测试识别/隔离 + auto-commit 暂存口径 + CRLF 幻影）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-073'
+  title: ExternalToolCallAuditor 调用链审计为桩实现（audit_trail 蓝图 §9 声明已实现）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/gov_audit/external_tool_audit.py 尾部 ChainValidationResult/ExternalToolCallAuditor/ToolCallRecord/ToolCallStatus 四类为桩——audit_call/validate_chain 无条件返回空 ChainValidationResult；而 tests/external/test_external_tool_audit.py 21 项测试编码了完整设计契约（链深度跟踪/parent_call_id/TOOL- 前缀 call_id/input_output 哈希/max_chain_depth=10/get_calls_by_agent/session 五态小写枚举），与 audit_trail/blueprint.md §3 "外部工具调用链审计=已实现" 声明一致。全 src 无真实实现（max_chain_depth/get_calls_by_agent 零命中）。21 项测试拟 xfail(strict=False) 留痕。待裁定：按测试契约补实现，或退役桩类并清理测试。'
+  fix_phase: 待裁定（补实现 / 退役桩类+清理测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-074'
+  title: AggregateHealth/collect_health 聚合健康检查设计契约为桩实现（system_telemetry/health 包）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：tests/observability/test_observability_health.py 12 项测试编码完整设计契约（AggregateHealth async check(module_names=)/check_block_fast、HealthStatus.ALL_HEALTHY 枚举值、HealthSummary(status/total_modules/healthy_count/to_dict)、collect_health(modules) 聚合），但 src/zephyr/infrastructure/system_telemetry/health/__init__.py 中 HealthStatus/HealthSummary/AggregateHealth/collect_health 为桩数据壳（字段名与契约不符、collect_health 零参返回空壳）；真实演进实现为另一设计 health_aggregator.HealthAggregator（探针驱动、pydantic 模型）。测试-蓝图（shared_core §testing）-源码三方漂移。12 项测试已模块级 xfail(strict=False) 留痕。待裁定：按测试契约补实现，或收敛到 HealthAggregator 设计并改写测试。'
+  fix_phase: 待裁定（按契约补实现 / 收敛 HealthAggregator 并改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

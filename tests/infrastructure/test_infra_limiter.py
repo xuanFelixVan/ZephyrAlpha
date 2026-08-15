@@ -20,8 +20,6 @@
 # [TESTS] pytest tests/test_infra_limiter.py -q
 # [TTL] task_bound
 
-import asyncio
-
 import pytest
 
 from zephyr.shared.infra.limiter import (
@@ -30,12 +28,13 @@ from zephyr.shared.infra.limiter import (
     TokenBucketLimiter,
     async_limited,
 )
+from zephyr.shared.utils.async_utils import run_coroutine_sync
 
 
 class TestTokenBucketLimiter:
     def test_acquire_within_burst(self):
         limiter = TokenBucketLimiter(permits_per_second=10.0, burst_size=5.0)
-        asyncio.get_event_loop().run_until_complete(limiter.acquire())
+        run_coroutine_sync(limiter.acquire())
         stats = limiter.stats()
         assert stats.total_acquired == 1
 
@@ -46,7 +45,7 @@ class TestTokenBucketLimiter:
             for _ in range(n):
                 await limiter.acquire()
 
-        asyncio.get_event_loop().run_until_complete(acquire_n(5))
+        run_coroutine_sync(acquire_n(5))
         stats = limiter.stats()
         assert stats.total_acquired == 5
 
@@ -59,7 +58,7 @@ class TestTokenBucketLimiter:
             with pytest.raises(RateLimitError):
                 await limiter.acquire()
 
-        asyncio.get_event_loop().run_until_complete(exhaust())
+        run_coroutine_sync(exhaust())
 
     def test_stats(self):
         limiter = TokenBucketLimiter(permits_per_second=10.0, burst_size=5.0)
@@ -75,12 +74,12 @@ class TestTokenBucketLimiter:
             async with limiter:
                 pass
 
-        asyncio.get_event_loop().run_until_complete(use())
+        run_coroutine_sync(use())
         assert limiter.stats().total_acquired == 1
 
     def test_refill_over_time(self):
         limiter = TokenBucketLimiter(permits_per_second=1000.0, burst_size=1.0)
-        asyncio.get_event_loop().run_until_complete(limiter.acquire())
+        run_coroutine_sync(limiter.acquire())
         import time
 
         time.sleep(0.05)
@@ -88,7 +87,7 @@ class TestTokenBucketLimiter:
         async def check():
             await limiter.acquire()
 
-        asyncio.get_event_loop().run_until_complete(check())
+        run_coroutine_sync(check())
         stats = limiter.stats()
         assert stats.total_acquired == 2
 
@@ -99,7 +98,7 @@ class TestAsyncLimited:
         async def my_func(x):
             return x * 2
 
-        result = asyncio.get_event_loop().run_until_complete(my_func(5))
+        result = run_coroutine_sync(my_func(5))
         assert result == 10
 
     def test_decorator_preserves_name(self):

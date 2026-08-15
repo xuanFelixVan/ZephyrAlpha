@@ -13,8 +13,6 @@
 
 from __future__ import annotations
 
-import asyncio
-
 import pytest
 
 from zephyr.shared.lifecycle.hooks import (
@@ -23,6 +21,7 @@ from zephyr.shared.lifecycle.hooks import (
     LifecycleState,
     ModuleHealth,
 )
+from zephyr.shared.utils.async_utils import run_coroutine_sync
 
 
 class FakeModule:
@@ -67,7 +66,7 @@ class FakeModule:
     async def on_shutdown(self) -> None:
         self.shutdown_called = True
 
-    async def health_check(self) -> ModuleHealth:
+    def health_check(self) -> ModuleHealth:
         self.health_called = True
         return ModuleHealth(
             module_name=self.module_name,
@@ -77,12 +76,12 @@ class FakeModule:
 
 
 class FailingHealthModule(FakeModule):
-    async def health_check(self) -> ModuleHealth:
+    def health_check(self) -> ModuleHealth:
         raise RuntimeError("health check crashed")
 
 
 def _run(coro):
-    return asyncio.get_event_loop().run_until_complete(coro)
+    return run_coroutine_sync(coro)
 
 
 class TestModuleHealth:
@@ -163,7 +162,7 @@ class TestLifecycleManagerStartupAll:
     def test_startup_all_init_failure_raises(self):
         mgr = LifecycleManager()
         mod = FakeModule()
-        mod.init_raises = True
+        mod._init_raises = True
         mgr.register(mod)
         with pytest.raises(RuntimeError, match="init failed"):
             _run(mgr.startup_all())
@@ -171,7 +170,7 @@ class TestLifecycleManagerStartupAll:
     def test_startup_all_startup_failure_raises(self):
         mgr = LifecycleManager()
         mod = FakeModule()
-        mod.startup_raises = True
+        mod._startup_raises = True
         mgr.register(mod)
         with pytest.raises(RuntimeError, match="startup failed"):
             _run(mgr.startup_all())
@@ -238,7 +237,7 @@ class TestLifecycleManagerHealthCheckAll:
     def test_health_check_all_unhealthy(self):
         mgr = LifecycleManager()
         mod = FakeModule()
-        mod.healthy = False
+        mod._healthy = False
         mgr.register(mod)
         results = _run(mgr.health_check_all())
         assert results["mod_a"].healthy is False

@@ -20,8 +20,6 @@
 # [TESTS] pytest tests/test_infra_outbox.py -q
 # [TTL] task_bound
 
-import asyncio
-
 from zephyr.shared.infra.outbox import (
     MemoryOutboxStore,
     OutboxEntry,
@@ -29,6 +27,7 @@ from zephyr.shared.infra.outbox import (
     OutboxPublisher,
     OutboxStatus,
 )
+from zephyr.shared.utils.async_utils import run_coroutine_sync
 
 
 class TestOutboxStatus:
@@ -50,62 +49,62 @@ class TestOutboxEntry:
 class TestMemoryOutboxStore:
     def test_append(self):
         store = MemoryOutboxStore()
-        entry = asyncio.get_event_loop().run_until_complete(store.append("task.created", {"task_id": "T-001"}))
+        entry = run_coroutine_sync(store.append("task.created", {"task_id": "T-001"}))
         assert entry.event_type == "task.created"
         assert entry.status == OutboxStatus.PENDING
         assert entry.idempotency_key != ""
 
     def test_append_with_idempotency_key(self):
         store = MemoryOutboxStore()
-        entry = asyncio.get_event_loop().run_until_complete(store.append("test", {}, idempotency_key="custom-key"))
+        entry = run_coroutine_sync(store.append("test", {}, idempotency_key="custom-key"))
         assert entry.idempotency_key == "custom-key"
 
     def test_fetch_pending(self):
         store = MemoryOutboxStore()
-        asyncio.get_event_loop().run_until_complete(store.append("ev1", {"a": 1}))
-        asyncio.get_event_loop().run_until_complete(store.append("ev2", {"b": 2}))
-        pending = asyncio.get_event_loop().run_until_complete(store.fetch_pending())
+        run_coroutine_sync(store.append("ev1", {"a": 1}))
+        run_coroutine_sync(store.append("ev2", {"b": 2}))
+        pending = run_coroutine_sync(store.fetch_pending())
         assert len(pending) == 2
 
     def test_mark_published(self):
         store = MemoryOutboxStore()
-        entry = asyncio.get_event_loop().run_until_complete(store.append("test", {}))
-        asyncio.get_event_loop().run_until_complete(store.mark_published(entry.id))
-        pending = asyncio.get_event_loop().run_until_complete(store.fetch_pending())
+        entry = run_coroutine_sync(store.append("test", {}))
+        run_coroutine_sync(store.mark_published(entry.id))
+        pending = run_coroutine_sync(store.fetch_pending())
         assert len(pending) == 0
 
     def test_mark_failed(self):
         store = MemoryOutboxStore()
-        entry = asyncio.get_event_loop().run_until_complete(store.append("test", {}))
-        asyncio.get_event_loop().run_until_complete(store.mark_failed(entry.id))
-        pending = asyncio.get_event_loop().run_until_complete(store.fetch_pending())
+        entry = run_coroutine_sync(store.append("test", {}))
+        run_coroutine_sync(store.mark_failed(entry.id))
+        pending = run_coroutine_sync(store.fetch_pending())
         assert len(pending) == 0
         entry_id = entry.id
-        all_entries = asyncio.get_event_loop().run_until_complete(store.fetch_pending(limit=1000))
-        count = asyncio.get_event_loop().run_until_complete(store.count_pending())
+        all_entries = run_coroutine_sync(store.fetch_pending(limit=1000))
+        count = run_coroutine_sync(store.count_pending())
         assert count == 0
 
     def test_count_pending(self):
         store = MemoryOutboxStore()
-        asyncio.get_event_loop().run_until_complete(store.append("a", {}))
-        asyncio.get_event_loop().run_until_complete(store.append("b", {}))
-        count = asyncio.get_event_loop().run_until_complete(store.count_pending())
+        run_coroutine_sync(store.append("a", {}))
+        run_coroutine_sync(store.append("b", {}))
+        count = run_coroutine_sync(store.count_pending())
         assert count == 2
 
     def test_fetch_pending_limit(self):
         store = MemoryOutboxStore()
         for i in range(5):
-            asyncio.get_event_loop().run_until_complete(store.append(f"ev{i}", {}))
-        pending = asyncio.get_event_loop().run_until_complete(store.fetch_pending(limit=2))
+            run_coroutine_sync(store.append(f"ev{i}", {}))
+        pending = run_coroutine_sync(store.fetch_pending(limit=2))
         assert len(pending) == 2
 
     def test_mark_published_nonexistent(self):
         store = MemoryOutboxStore()
-        asyncio.get_event_loop().run_until_complete(store.mark_published("nonexistent"))
+        run_coroutine_sync(store.mark_published("nonexistent"))
 
     def test_mark_failed_nonexistent(self):
         store = MemoryOutboxStore()
-        asyncio.get_event_loop().run_until_complete(store.mark_failed("nonexistent"))
+        run_coroutine_sync(store.mark_failed("nonexistent"))
 
 
 class TestOutboxPublisher:
@@ -117,21 +116,21 @@ class TestOutboxPublisher:
             published.append(entry.id)
 
         publisher = OutboxPublisher(store=store, handler=handler, poll_interval_seconds=0.05)
-        asyncio.get_event_loop().run_until_complete(store.append("test", {}))
-        asyncio.get_event_loop().run_until_complete(publisher.start())
+        run_coroutine_sync(store.append("test", {}))
+        run_coroutine_sync(publisher.start())
         import time
 
         time.sleep(0.2)
-        asyncio.get_event_loop().run_until_complete(publisher.stop())
+        run_coroutine_sync(publisher.stop())
         assert len(published) >= 1
 
     def test_start_stop_idempotent(self):
         store = MemoryOutboxStore()
         publisher = OutboxPublisher(store=store, handler=lambda e: None, poll_interval_seconds=1.0)
-        asyncio.get_event_loop().run_until_complete(publisher.start())
-        asyncio.get_event_loop().run_until_complete(publisher.start())
-        asyncio.get_event_loop().run_until_complete(publisher.stop())
-        asyncio.get_event_loop().run_until_complete(publisher.stop())
+        run_coroutine_sync(publisher.start())
+        run_coroutine_sync(publisher.start())
+        run_coroutine_sync(publisher.stop())
+        run_coroutine_sync(publisher.stop())
 
 
 class TestOutboxError:

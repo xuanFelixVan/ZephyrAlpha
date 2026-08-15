@@ -20,7 +20,6 @@
 # [TESTS] pytest tests/test_infra_cache.py -q
 # [TTL] task_bound
 
-import asyncio
 import time
 
 from zephyr.shared.infra.cache import (
@@ -29,6 +28,7 @@ from zephyr.shared.infra.cache import (
     MemoryCache,
     cache_key,
 )
+from zephyr.shared.utils.async_utils import run_coroutine_sync
 
 
 class TestCacheStats:
@@ -50,68 +50,68 @@ class TestCacheStats:
 class TestMemoryCache:
     def test_set_and_get(self):
         cache = MemoryCache(max_size=100, default_ttl_seconds=60)
-        asyncio.get_event_loop().run_until_complete(cache.set("key1", "value1"))
-        result = asyncio.get_event_loop().run_until_complete(cache.get("key1"))
+        run_coroutine_sync(cache.set("key1", "value1"))
+        result = run_coroutine_sync(cache.get("key1"))
         assert result == "value1"
 
     def test_get_missing_returns_none(self):
         cache = MemoryCache()
-        result = asyncio.get_event_loop().run_until_complete(cache.get("missing"))
+        result = run_coroutine_sync(cache.get("missing"))
         assert result is None
 
     def test_delete(self):
         cache = MemoryCache()
-        asyncio.get_event_loop().run_until_complete(cache.set("key1", "val"))
-        deleted = asyncio.get_event_loop().run_until_complete(cache.delete("key1"))
+        run_coroutine_sync(cache.set("key1", "val"))
+        deleted = run_coroutine_sync(cache.delete("key1"))
         assert deleted is True
-        result = asyncio.get_event_loop().run_until_complete(cache.get("key1"))
+        result = run_coroutine_sync(cache.get("key1"))
         assert result is None
 
     def test_delete_nonexistent(self):
         cache = MemoryCache()
-        deleted = asyncio.get_event_loop().run_until_complete(cache.delete("nope"))
+        deleted = run_coroutine_sync(cache.delete("nope"))
         assert deleted is False
 
     def test_clear(self):
         cache = MemoryCache()
-        asyncio.get_event_loop().run_until_complete(cache.set("a", 1))
-        asyncio.get_event_loop().run_until_complete(cache.set("b", 2))
-        asyncio.get_event_loop().run_until_complete(cache.clear())
-        r1 = asyncio.get_event_loop().run_until_complete(cache.get("a"))
-        r2 = asyncio.get_event_loop().run_until_complete(cache.get("b"))
+        run_coroutine_sync(cache.set("a", 1))
+        run_coroutine_sync(cache.set("b", 2))
+        run_coroutine_sync(cache.clear())
+        r1 = run_coroutine_sync(cache.get("a"))
+        r2 = run_coroutine_sync(cache.get("b"))
         assert r1 is None
         assert r2 is None
 
     def test_ttl_expiry(self):
         cache = MemoryCache(max_size=100, default_ttl_seconds=1)
-        asyncio.get_event_loop().run_until_complete(cache.set("short", "data", ttl_seconds=0))
+        run_coroutine_sync(cache.set("short", "data", ttl_seconds=0))
         time.sleep(0.05)
-        result = asyncio.get_event_loop().run_until_complete(cache.get("short"))
+        result = run_coroutine_sync(cache.get("short"))
         assert result is None
 
     def test_lru_eviction(self):
         cache = MemoryCache(max_size=3, default_ttl_seconds=60)
-        asyncio.get_event_loop().run_until_complete(cache.set("a", 1))
-        asyncio.get_event_loop().run_until_complete(cache.set("b", 2))
-        asyncio.get_event_loop().run_until_complete(cache.set("c", 3))
-        asyncio.get_event_loop().run_until_complete(cache.set("d", 4))
+        run_coroutine_sync(cache.set("a", 1))
+        run_coroutine_sync(cache.set("b", 2))
+        run_coroutine_sync(cache.set("c", 3))
+        run_coroutine_sync(cache.set("d", 4))
         stats = cache.stats()
         assert stats.size <= 3
 
     def test_stats_tracking(self):
         cache = MemoryCache()
-        asyncio.get_event_loop().run_until_complete(cache.set("k", "v"))
-        asyncio.get_event_loop().run_until_complete(cache.get("k"))
-        asyncio.get_event_loop().run_until_complete(cache.get("miss"))
+        run_coroutine_sync(cache.set("k", "v"))
+        run_coroutine_sync(cache.get("k"))
+        run_coroutine_sync(cache.get("miss"))
         stats = cache.stats()
         assert stats.hits == 1
         assert stats.misses == 1
 
     def test_overwrite_key(self):
         cache = MemoryCache()
-        asyncio.get_event_loop().run_until_complete(cache.set("k", "old"))
-        asyncio.get_event_loop().run_until_complete(cache.set("k", "new"))
-        result = asyncio.get_event_loop().run_until_complete(cache.get("k"))
+        run_coroutine_sync(cache.set("k", "old"))
+        run_coroutine_sync(cache.set("k", "new"))
+        result = run_coroutine_sync(cache.get("k"))
         assert result == "new"
 
 
