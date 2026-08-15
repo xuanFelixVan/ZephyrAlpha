@@ -16872,6 +16872,14 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-083'
+  title: 治理组件窄实现 vs 宽测试契约族——11 模块 125 项（security/access_control 及周边，#ARCH-075 系统性延展）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 按文件批量实测（2026-08-15）：11 个测试文件 125 项失败，全系同一形态——生产组件为窄实现（最小 API 面），测试编码完整宽契约（测试先行、实现未跟，#ARCH-075 桩族的非桩变体）。缺口清单：①observability.py ObservabilityReporter.record_decision 无 level kwarg / detect_density_anomaly 无 operations_in_window / verify_metric_integrity 缺席 / MetricEntry(metric=)、AnomalyResult.rule 字段缺席（15 项）；②cross_cutting.py PermissionHookRegistry.register/disable、PermissionTopology.add_node(depends_on=)/get_impact、AutoMaintenance.record_rule_usage/complexity_budget/rule_last_used、ForensicAssurance.sign_record 缺席（21 项）；③canary_rollout_manager.py CanaryPermission.permission_id/sample_rate/rule_ids/stats、CanaryRolloutManager.rollback/promote_to_full/history 缺席（13 项）；④memory_guard.py MemoryAccessLog(access_id=)、MemoryGuard.stats/_MAX_ACCESS_SIZE 缺席（9 项）；⑤memory_provenance_guard.py MemoryProvenance(source_agent_id=)、guard.flag/record_provenance(vector_db_name=) 缺席（9 项）；⑥multi_agent_collusion_detector.py CollusionResult.collusion_detected/signal_count/evidence_chain、CollusionSignal.signal_type、reset_pair 缺席（8 项）；⑦intent_binder.py IntentDeclaration.is_valid/violations、IntentState.EXCEEDED 缺席（6 项）；⑧guards/path_guard.py violations/is_within_project 缺席、FORBIDDEN_PATHS/ALLOWED_ROOTS 清单与契约不符（13 项）；⑨blueprint_fidelity.py BlueprintFidelity.check_api_contract/summary、FidelityCheck(check_type=) 缺席（7 项）；⑩a2a_protocol/governance/governance_adapter.py MCPSource(track=)、MCPAdapter.probe_track/get_features_for_track 缺席（13 项）；⑪decision_registry.py DecisionRecord(decision_id=)、log(action=)、stats.deny_rate、query 多过滤缺席（11 项）。11 个测试文件已模块级 xfail(strict=False) 留痕。待裁定：逐模块按测试契约补实现，或收敛契约改写测试（建议与 #ARCH-075 同批裁定——同一治理体系的实现深度问题）。'
+  fix_phase: 待裁定（逐模块补实现 / 收敛契约改写测试，建议与 #ARCH-075 同批）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
 - issue_id: '#ARCH-079'
   title: gov_drift.drift_detector.trigger_recovery 为桩（return True）——恢复编排契约未实现
   severity: P2中
