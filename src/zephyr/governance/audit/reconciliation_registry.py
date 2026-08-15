@@ -859,7 +859,11 @@ class ReconciliationRegistry:
         try:
             from scripts.ops_guard import (
                 DeleteBlockedError as _DeleteBlockedError,
+            )
+            from scripts.ops_guard import (
                 reset_reconciler_context as _reset_rc_ctx,
+            )
+            from scripts.ops_guard import (
                 set_reconciler_context as _set_rc_ctx,
             )
         except Exception:  # noqa: BLE001 — ops_guard 不可达降级（注册期强校验已兜底）
