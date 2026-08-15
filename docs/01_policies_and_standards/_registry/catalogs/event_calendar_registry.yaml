@@ -1,0 +1,425 @@
+# [A_config] module_id=REG-EVT-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：裁剪：timeframe×2（事件是离散时点，持有窗口由 typical_holding_window 表达）+ direction（事件类型本身方向不定，利好/利空逐事件判定）。保留 regime×2（事件有效性随市场环境变化）+ entry_role=trigger（事件=策略触发源）+ 共有四维度；algorithm_status 固定 not_applicable（事件类型=日历披露纪律，非算法）。
+# ============================================================================
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '2.0'
+registry_id: REG-EVT-001
+name: Event Calendar Registry
+name_zh: 事件日历注册表
+description: >-
+  事件类型唯一真源（SSoT）。登记 A 股事件驱动策略依赖的全部事件类型 taxonomy：
+  财报披露/业绩预告/业绩快报/除权除息/限售解禁/停复牌/股东增减持/回购/定增/
+  指数成分调整/宏观发布/股东大会。每类事件定义字段、PIT 规则（公告时间 vs 生效时间）、
+  数据源、典型市场影响方向与持有窗口。事件实例数据落 data_asset_registry 数据集
+  （DS-091~097），本表管"事件类型定义+PIT 纪律"。
+  与 regime_cycle_registry 正交：周期表管"规则性时间窗口"（固定间隔），
+  本表管"离散公司/宏观事件"（不规则触发）。
+  对标：Benzinga Events Calendar API（2026-07，公司事件机器可读化趋势）、
+  聚宽 JQData 事件数据谱系、quant666 disclosure_date/share_float 事件表。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.1.0
+created: '2026-08-14'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- event_type_id
+entry_count: 12
+
+entry_schema:
+  event_type_id: str             # EVT-{CLASS}-{NNN}，如 EVT-EARN-001
+  name: str
+  name_zh: str
+  aliases: list[str]
+  event_class: str               # earnings/corporate_action/holder/capital/market_structure/macro/governance
+  subtype: str                   # 细分（如业绩预告=预增/预减/扭亏/首亏）
+  pit_rule: str                  # PIT 纪律：announce_time 可用，effective_date 不可提前使用
+  advance_notice_days: str       # 提前披露规律（如"财报披露计划提前约 10 交易日"）
+  typical_impact: str            # 典型市场影响（正向催化/负向压力/双向高波动）
+  typical_holding_window: str    # 典型事件策略持有窗口（如"公告后 1-5 日"）
+  data_dataset_ref: str          # FK→data_asset_registry DS-XXX
+  data_source: str               # AKShare/Tushare 接口
+  update_frequency: str          # daily/weekly/monthly/quarterly/event
+  used_by_strategies: list[str]  # FK→strategy_registry event_driven 类
+  reliability_note: str          # 数据质量/陷阱备注
+  status: str                    # candidate/active/deprecated
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+
+event_types:
+  # ============================================================
+  # EARNINGS（财报线——披露计划/预告/快报/正式报）
+  # ============================================================
+  - event_type_id: "EVT-EARN-001"
+    name: "Earnings Disclosure Schedule"
+    name_zh: 财报披露计划（预约披露日）
+    aliases: ["disclosure_date", "财报预约", "披露日历"]
+    event_class: "earnings"
+    subtype: "定期报告预约披露（年报/半年报/季报）"
+    pit_rule: "strict——预约披露日公告后即可用；实际披露日可能改期，需每日刷新"
+    advance_notice_days: "交易所提前公布预约表（年报约提前 1-2 月，季报约 10 交易日）"
+    typical_impact: "披露日临近的情绪聚集（抢跑/回避）；披露推迟=利空信号"
+    typical_holding_window: "披露前 5-10 日布局/披露后 1-5 日兑现"
+    data_dataset_ref: "DS-091"
+    data_source: "Tushare disclosure_date / AKShare"
+    update_frequency: "daily"
+    used_by_strategies: []
+    reliability_note: "改期常见（尤其年报 ST 股），MUST 每日全量刷新而非增量追加"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-EARN-002"
+    name: "Earnings Forecast"
+    name_zh: 业绩预告
+    aliases: ["fin_forecast", "业绩预告", "预增预减"]
+    event_class: "earnings"
+    subtype: "预增/预减/扭亏/首亏/续亏/不确定"
+    pit_rule: "strict——公告日晚于收盘则次日可用（盘后公告 T+1 生效，防未来函数）"
+    advance_notice_days: "有条件强制披露（净利变动>50% 等），年报预告截止 1-31"
+    typical_impact: "预增=正向催化（尤其超预期幅度）；首亏=强负向"
+    typical_holding_window: "公告后 1-5 日（超预期漂移 PEAD 窗口可延至 20 日）"
+    data_dataset_ref: "DS-092"
+    data_source: "Tushare fin_forecast_vip"
+    update_frequency: "daily（披露季密集）"
+    used_by_strategies: []
+    reliability_note: "PEAD（公告后漂移）A 股实证窗口约 20 交易日；需区分预告类型与幅度分档"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-EARN-003"
+    name: "Earnings Express"
+    name_zh: 业绩快报
+    aliases: ["fin_express", "业绩快报"]
+    event_class: "earnings"
+    subtype: "营收/净利初值（未经审计）"
+    pit_rule: "strict——同业绩预告，盘后公告 T+1 可用"
+    advance_notice_days: "正式报告前 1-4 周（鼓励性非强制）"
+    typical_impact: "与预告差值=二次信息冲击；快报正式报差值审计风险信号"
+    typical_holding_window: "公告后 1-3 日"
+    data_dataset_ref: "DS-093"
+    data_source: "Tushare fin_express_vip"
+    update_frequency: "daily（披露季）"
+    used_by_strategies: []
+    reliability_note: "与正式报差值>5% 需警惕（盈余管理痕迹）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # CORPORATE ACTION（公司行动——除权/解禁/停复牌）
+  # ============================================================
+  - event_type_id: "EVT-CA-001"
+    name: "Dividend & Split"
+    name_zh: 分红送转（除权除息）
+    aliases: ["dividend", "除权除息", "送转"]
+    event_class: "corporate_action"
+    subtype: "现金分红/送股/转增/拆股"
+    pit_rule: "strict——除权日 MUST 用复权价回测（data_asset 复权口径见 field_dictionary）"
+    advance_notice_days: "股权登记日前公告约 5-10 交易日"
+    typical_impact: "高送转=填权预期炒作（A 股特色）；除息日价格机械下调非真实亏损"
+    typical_holding_window: "预案公告→除权日前（抢权）/除权后（填权博弈）"
+    data_dataset_ref: "DS-094"
+    data_source: "Tushare stock_dividend / AKShare"
+    update_frequency: "daily"
+    used_by_strategies: []
+    reliability_note: "回测 MUST 复权处理；高送转炒作 2018 后监管压制，强度衰减需重新标定"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-CA-002"
+    name: "Share Unlock"
+    name_zh: 限售解禁
+    aliases: ["share_float", "解禁"]
+    event_class: "corporate_action"
+    subtype: "首发原股东/定增机构/股权激励"
+    pit_rule: "strict——解禁日前公告即公开可用"
+    advance_notice_days: "解禁日前约 5-10 交易日公告"
+    typical_impact: "大比例解禁=负向压力（定增机构折价盘尤甚）；小比例影响有限"
+    typical_holding_window: "解禁前 5 日回避/解禁后抛压出清再入"
+    data_dataset_ref: "DS-095"
+    data_source: "Tushare share_float / AKShare 限售解禁"
+    update_frequency: "daily"
+    used_by_strategies: []
+    reliability_note: "关键比率=解禁市值/流通市值；定增解禁关注浮盈率（浮盈大=抛压重）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-CA-003"
+    name: "Suspension & Resumption"
+    name_zh: 停复牌
+    aliases: ["suspend", "停复牌"]
+    event_class: "corporate_action"
+    subtype: "重大资产重组/核查/异常波动/退市风险"
+    pit_rule: "strict——停牌期间价格静止，回测 MUST 排除不可成交日（数据 DS-083）"
+    advance_notice_days: "突发为主（盘中/盘后公告），重组停牌有预案期"
+    typical_impact: "复牌补跌/补涨（停牌期间指数涨跌幅）；重组复牌=高波动事件"
+    typical_holding_window: "复牌后 1-5 日（补跌释放后博弈）"
+    data_dataset_ref: "DS-083"
+    data_source: "Tushare stock_suspend_d / AKShare"
+    update_frequency: "daily"
+    used_by_strategies: []
+    reliability_note: "打板策略 MUST 前置过滤停牌股；长期停牌（>30 日）复牌补跌风险大"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # HOLDER / CAPITAL（股东行为/资本运作）
+  # ============================================================
+  - event_type_id: "EVT-HOLDER-001"
+    name: "Holder Increase & Decrease"
+    name_zh: 股东增减持
+    aliases: ["holder_trade", "增减持", "大股东减持"]
+    event_class: "holder"
+    subtype: "控股股东/董监高/5% 以上股东；增持/减持"
+    pit_rule: "strict——公告日 T+1 可用；减持计划有 15 交易日后实施规则（2024 减持新规）"
+    advance_notice_days: "减持计划提前 15 交易日公告（集中竞价）"
+    typical_impact: "大股东清仓式减持=强负向；董监高增持=弱正向（金额小信号弱）"
+    typical_holding_window: "减持公告后回避至实施完毕；增持公告后 1-10 日"
+    data_dataset_ref: "DS-096"
+    data_source: "Tushare stk_holdertrade / AKShare"
+    update_frequency: "daily"
+    used_by_strategies: []
+    reliability_note: "区分计划公告 vs 实施进展公告；大宗交易减持对二级冲击小于集中竞价"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-CAP-001"
+    name: "Share Repurchase"
+    name_zh: 股票回购
+    aliases: ["repurchase", "回购"]
+    event_class: "capital"
+    subtype: "注销式/股权激励式/市值管理式"
+    pit_rule: "strict——董事会预案公告日 T+1 可用"
+    advance_notice_days: "预案→股东大会→实施，全程公告"
+    typical_impact: "注销式回购=正向（EPS 增厚）；激励式弱正向； symbolic 回购信号弱"
+    typical_holding_window: "预案公告后 1-20 日"
+    data_dataset_ref: "DS-097"
+    data_source: "Tushare stock_repurchase / AKShare"
+    update_frequency: "daily"
+    used_by_strategies: []
+    reliability_note: "关键=回购金额/市值比率+是否注销；'忽悠式回购'（公告不实施）需跟踪实施进度"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-CAP-002"
+    name: "Private Placement"
+    name_zh: 定增（非公开发行）
+    aliases: ["private_placement", "定向增发"]
+    event_class: "capital"
+    subtype: "竞价定增/锁价定增"
+    pit_rule: "strict——预案/过会/批文/发行各节点均为独立事件"
+    advance_notice_days: "预案→实施全程 3-12 月，多节点"
+    typical_impact: "预案=摊薄利空（项目好则中性偏正）；发行完成=利空出尽"
+    typical_holding_window: "批文落地/发行完成节点后 1-10 日"
+    data_dataset_ref: "DS-097"
+    data_source: "AKShare 定增数据"
+    update_frequency: "event"
+    used_by_strategies: []
+    reliability_note: "2026-03 多起价格倒挂破发（发行定价机制变化），破发定增股有套利博弈空间"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  # ============================================================
+  # MARKET STRUCTURE / MACRO / GOVERNANCE（市场结构/宏观/治理）
+  # ============================================================
+  - event_type_id: "EVT-MKT-001"
+    name: "Index Membership Change"
+    name_zh: 指数成分调整
+    aliases: ["index_rebalance", "指数调整", "成分股调整"]
+    event_class: "market_structure"
+    subtype: "沪深300/中证500/中证1000/MSCI/富时 定期调整"
+    pit_rule: "strict——公告日（调整前约 2 周）即公开，生效日收盘实施"
+    advance_notice_days: "半年度定期调整（6 月/12 月第二个周五），公告提前约 10 交易日"
+    typical_impact: "调入=被动买盘正向（公告至生效日）；调出=负向"
+    typical_holding_window: "公告后至生效日收盘（套利窗口约 10 交易日）"
+    data_dataset_ref: "DS-084"
+    data_source: "指数公司公告 / AKShare 指数成分"
+    update_frequency: "half_yearly"
+    used_by_strategies: []
+    reliability_note: "生效日尾盘异动（被动基金调仓）；流动性差的小盘股调入冲击更大"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-MACRO-001"
+    name: "Macro Data Release"
+    name_zh: 宏观数据发布
+    aliases: ["macro_release", "宏观发布", "CPI发布"]
+    event_class: "macro"
+    subtype: "CPI/PPI/PMI/GDP/社融/贸易/LPR/MLF（FK→macro_indicator_registry）"
+    pit_rule: "strict——发布时间精确到分钟（如 CPI 每月 9-15 日 09:30），发布时间前 MUST 不可用"
+    advance_notice_days: "发布日历年初确定（统计局日程）"
+    typical_impact: "超预期数据驱动指数级别波动；社融/LPR 影响流动性预期"
+    typical_holding_window: "发布后 1-3 日（宏观预期修正窗口）"
+    data_dataset_ref: "DS-101"
+    data_source: "AKShare 宏观接口 / 统计局"
+    update_frequency: "monthly/quarterly"
+    used_by_strategies: []
+    reliability_note: "宏观指标定义与 PIT 滞后规则详见 macro_indicator_registry（REG-MAC-001）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+  - event_type_id: "EVT-GOV-001"
+    name: "Shareholder Meeting & Governance"
+    name_zh: 股东大会/治理事件
+    aliases: ["shareholder_meeting", "股东大会"]
+    event_class: "governance"
+    subtype: "年度股东大会/临时股东大会/重大议案表决"
+    pit_rule: "strict——会议通知公告日公开"
+    advance_notice_days: "年度大会提前 20 日通知，临时大会提前 15 日"
+    typical_impact: "常规会议影响弱；重大资产重组/议案否决=高波动"
+    typical_holding_window: "事件驱动（议案公告后 1-5 日）"
+    data_dataset_ref: "DS-097"
+    data_source: "AKShare 公告数据"
+    update_frequency: "event"
+    used_by_strategies: []
+    reliability_note: "低优先级；常规议案可忽略，聚焦重组/章程变更/控制权争夺类"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
+
+# ============================================================
+# 治理规则
+# ============================================================
+# 1. PIT 铁律：所有事件 MUST 区分 announce_time（可用时点）与 effective_date
+#    （生效时点）；盘后公告 T+1 才可用于信号（防未来函数，62 号文 E14/E15）。
+# 2. 事件实例数据落 data_asset_registry（DS-091~097 等），本表只管类型定义。
+# 3. 消费方：strategy_registry event_driven 类策略 MUST 声明消费哪些 event_type_id。
+# 4. 与 regime_cycle_registry 边界：固定间隔时间窗口（Gann/统计周期）归周期表；
+#    不规则离散事件归本表。宏观发布（EVT-MACRO-001）指标定义归 REG-MAC-001。
