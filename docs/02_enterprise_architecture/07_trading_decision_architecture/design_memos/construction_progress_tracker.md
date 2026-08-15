@@ -95,7 +95,8 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 第 3 批 | 33 BudgetChange / 37 流动性 / 42 卖出流 | ✅ 3/3 全部完工 merge |
 | **治理插队批（2026-08-14 用户裁定）** | **AI-GIT-001：git/并发协作基础设施专项（65/66/67 号 + 裁定书 S1-S6：ops_guard 删除收敛/清理四证 SOP/网关锚定/观测层/task_board 重建）** | ✅ 已 merge 回 dev（2026-08-14 统筹，16 commits：S1-S6/task_board/65号 v2.3.0/tracker #49-52 登记；worktree 按四证 SOP 清理，见 §六 #54） |
 | **文档压缩批（2026-08-14 用户裁定）** | **AI-DOCS-001：18 篇 ≥1000 行大文档压缩（62/10/54/63/35/36/28/64/40/32/37/90/34/61/26/24/25/AI_review）** | ✅ 已 merge（53856ed1c0 + merge ab3df58d9d；33.6k→23.2k 行，章节编号/参数/裁定/锚点零丢失，三波子代理自审全 PASS + PURE-ASSERTION 表格化修复） |
-| **治理批②（2026-08-14 晚用户裁定）** | **AI-RCN-001：reconciler 自动删除失控族治本（裁定书 T0-T6：T0 止血 dry_run/T1 删除能力显式声明+ops_guard 安全 API+统一回收站/T2 worker 启动三证+删除审计覆盖率/T3 文档保护区/T4 #55 审计迁出 tracked 区/T5 告警卫生/T6 文本对齐）** | ⏳ 待开工（用户裁定**优先于第 4 批**；裁定书=docs/_working/audit/architecture-reviews/2026-08-14_coord_reconciler_auto_delete_governance_review.md，#ARCH-RECONCILER-AUTO-DELETE-GOV-001） |
+| **治理批②（2026-08-14 晚用户裁定）** | **AI-RCN-001：reconciler 自动删除失控族治本（裁定书 T0-T6：T0 止血 dry_run/T1 删除能力显式声明+ops_guard 安全 API+统一回收站/T2 worker 启动三证+删除审计覆盖率/T3 文档保护区/T4 #55 审计迁出 tracked 区/T5 告警卫生/T6 文本对齐）** | ✅ 完工核验 **PASS**（2026-08-15 第四统筹：12 commit 全实证+关键套件复跑 143 项 1.47s 全绿；T0/T1 核心含 coord-0814-git001 先行落地 98aeffde63 doc_lifecycle 状态机，AI-RCN-001 续作 T2-T6 全层+红队 246×2 全绿；**merge 待主工作区无主残留处置裁定**） |
+| **治理批③（2026-08-15 同会话续作）** | **ARCH-WORKTREE-DB-SPLIT-001 治本（仓级共享状态所有权归主仓/anchor_main_root 两型锚定/worktree 禁写权威 REFUSED/ops_guard 补丁卸载 API）+ #55② 四项顺修全闭环 + strip_session_worktree 同族陷阱五形态根治** | ✅ 完工核验 **PASS**（1465ff020f 实证 25 文件全治理域无跨域夹带；关联子集 2182 项×2 轮全绿；同 ai/AI-RCN-001 分支随批②一并 merge；新登记 #56-#59 待专项裁定，785 失败存量测试债画像 #58 建议专项清偿批） |
 | 第 4 批 | 34 RegimeMeta / 60 跨切（骨架需重建）/ 43 合规 | ⏳ 待开工（等治理批②完工，用户 2026-08-14 晚裁定） |
 | 第 5 批 | 53 模拟实盘 / 54 对账 / 55 监控 | ⏳ 等第 4 批 |
 | 重建类 | 28 号情绪周期（可从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架 | ⏳ 随批排期 |
@@ -184,6 +185,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 57 | 65 号 Phase 2 项 8（lock_files.py TTL 五命令+§7.28 Mutex 原子写）+ 66 号 plumbing 扩展 | 65/66 memo 既定范围；2026-08-14 深夜治理批承接 | **lock_files（✅ 落地）**：§7.28 Windows 全局命名 Mutex（CreateMutexW Global\ZephyrLockFilesRegistry，5s 超时+WAIT_ABANDONED+超时 DENIED+acquire 回滚锁目录防半锁）+tmp/flush/fsync/os.replace 原子写；§11.2.2 `acquire --ttl <分钟>`（默认 1800s 真源 ttl_design 不变）+owner.json/registry expires_at 双写+`_is_stale` expires_at 优先旧格式回退+`list --session` 新命令凑齐五命令。验收 tests/git/test_lock_files_ttl_mutex.py 9 用例全绿（26 线程并发无丢锁+Mutex 超时回滚+TTL 到期自动清理），DM-202919 回归 10/10。**66 plumbing（✅ 落地）**：wrapper git() 拦 read-tree/update-index/write-tree/hash-object+ZEPHYR_SERIALIZER_MODE=1 白名单（test_git_safety_wrapper 45/45）；git_guard.py 前置硬阻断+plumbing 审计（test_git_guard_self_harm 16/16）。⚠️ 测试风险实证：pyproject basetemp 在仓内（.runtime/tmp/），白名单透传用例在仓内跑 read-tree 会真碰主仓 index（66 事故 6 同款）——已改系统 TEMP 并留警示注释；主仓 index 实证无损（staged 恒空）。**66 commit_queue 本体仍⏳待排期**（.runtime/commit_queue/ 零施工痕迹，Serializer/死信/门禁外移为大工程量单项） | ✅ lock_files+plumbing 闭环；⏳ commit_queue 本体留排期 |
 | 58 | 【新边界发现】Trae AI RunCommand 终端不加载 $PROFILE——wrapper 对 AI 命令通道无效 | 2026-08-14 深夜治理批实证 | 实证：AI RunCommand 会话 `(Get-Command git).CommandType`=Application（真实 git.exe 非 wrapper Function），Remove-Item -Recurse -Force 未被拦直接执行；而同机人工新开 PowerShell（加载 profile）git=Function 拦截全生效。根因：Trae AI 终端非交互式启动不加载 $PROFILE。影响面：65 号 wrapper 层（L1/L2/L4/L5/L6）仅覆盖人工交互终端；**AI 通道防护依赖**：git_guard.py 直接调用层（本轮已扩 plumbing）+pre-commit/reference-transaction hook 层+AGENTS.md/.trae/rules 规则层+ops_guard 审计层。旁证：Session ID 注入（§7.32）同样不到 AI 会话（审计 session 归因缺失）。后续方向：Trae 终端启动配置/RunCommand 包装层/环境变量机器级注入——需专项评估，非单轮可交付 | ⏳ 已登记，待专项评估 |
 
+### P0-数据 · 2026-08-15 数据链路巡检汇报登记（用户转述 data-fix 系列成果）
+
+> 背景：下载链路正常（调度器存活/10 源 healthy/akshare WAF 解除），核心数据完整（K 线全周期/tick 3.19 亿行回补/估值财务指数 ETF/LOF 近 7 日齐整）；本轮共回补 40+ 张表、3.4 亿行。44 个"缺口日"（23 表）拆解：6 张口径误报+8 张快照不可回补（永久）+2 张源修复前空窗+4 张待下次批任务+4 张周月K 残缺（价值有限）——**无可行动而未行动的缺口**。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 59 | tick_subscriber 盘中订阅通道修复（日志落盘+心跳业务化，#ARCH-DATA-017 B/C 项） | 数据巡检汇报 2026-08-15 | **P0 时间敏感：2026-08-17 周一开盘前必须完工**，否则盘中 tick 继续靠盘后回补；#ARCH-DATA-017 已第五度落盘登记（f347a5cc4c） | ⏳ 待派会话施工 |
+| 60 | 巡检对慢变化表检测口径排除（restricted_shares/share_unlock/stock_list/index_constituent/concept_board/industry_class 6 表） | 数据巡检汇报 2026-08-15 | 解禁日/上市日/生效日=业务日期非采集日期，表内数据实际完整（如 restricted_shares 1017 万行）；口径误报持续刷屏掩盖真告警；ARCH 登记册已有裁定，择期施工 | ⏳ 待排期（P2） |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
@@ -231,3 +241,4 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 2026-08-14 | 第三批 3/3 全部 merge（sess-batch-cleanup-0814 执行）；00_index 全量版本同步（31/32/35/36/37/41/42）；**用户裁定治理插队**：AI-GIT-001 git 基础设施专项优先于第 4/5 批，00_index §5 + 本表批次区已更新 | 第三统筹会话 |
 | 2026-08-14 | 文档压缩批完工：18 篇 33.6k→23.2k 行，一文档一子代理×3 波自审全 PASS，62 号 19 段研究散文表格化修复 PURE-ASSERTION；⚠️ **reconciler 批 auto-commit accd0cbe36 误删本表+handoff**（疑 ttl:task_bound 触发 TTL 类 reconciler 自动清理，已字节级恢复重写并登记为事故 #49）；裁定书文件同步恢复 | 第三统筹会话 |
 | 2026-08-14 晚 | **第四统筹会话接手**：实证核验推翻用户快照——AI-GIT-001 已 merge（d8f94d4f2b+04cae02008 实证，§五/#54 早已记录），无反馈可核验、无 merge 可执行；期间新事态=reconciler 自动删除失控族裁定书归档（coord-0814-git001，6b15b9d932，#ARCH-RECONCILER-AUTO-DELETE-GOV-001，T0-T6 治本方案）。**用户裁定：完整治理批 T0-T6 优先于第 4 批**（登记为治理批② AI-RCN-001，见 §五）；主工作区活跃会话 coord-0814-git001（迁移收口）经用户确认为知情会话，避让其 WIP；#53 状态更新（真凶定罪→治理批②承接） | 第四统筹会话 |
+| 2026-08-15 | **治理批②+③完工反馈核验双 PASS**（12 commit 全实证+1465ff02 无跨域夹带+统筹复跑关键套件 143 项 1.47s 全绿；逐条验收机器验证过）；分支版 tracker 已带 #53/#55 全闭环+#56-59 登记——⚠️ **编号撞号实证**：分支 #56-59（GATES_DIR 孤儿/drift_events 双库/785 测试债/trusted_git_env）与 dev #56-58（create 活性登记/lock_files+plumbing/Trae 终端不加载 $PROFILE，65/66 遗留批 22:40 登记）撞号——merge 并集时分支四项重编号为 **#61/#62/#63/#64**（GATES_DIR→61、drift_events→62、785 测试债→63、trusted_git_env→64），dev #1-60 不动（数据层新登 #59 tick_subscriber P0 周一前/#60 巡检口径）；merge 阻塞=主工作区 ~140 无主残留（04:46 后 8h 无提交、会话已死；含 AGENTS.md RULE-GIT-SAFE 删节性质不明），待用户裁定处置 | 第四统筹会话 |
