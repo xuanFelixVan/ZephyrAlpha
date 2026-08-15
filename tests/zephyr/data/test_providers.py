@@ -933,10 +933,17 @@ class TestAKShareData015Capabilities:
             extra={"capability": "index_constituent"},
         )
         results = list(p.fetch(payload, SourcePolicy()))
-        assert len(results) == 1
+        # JOB-077（DS-084，2026-08-15）：扩展为四指数（300/500/1000/中证全指），
+        # 每指数一批；权重经 index_stock_cons_weight_csindex（mock 无该接口→MagicMock
+        # len=0→weight 降级 0）；data_source 细化为 akshare_csindex
+        assert len(results) == 4
         assert results[0].error is None
         assert results[0].columns == ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
         assert results[0].rows == [
-            ("2026-08-14", "000300.SH", "600000.SH", 0, "", "akshare"),
-            ("2026-08-14", "000300.SH", "000001.SZ", 0, "", "akshare"),
+            ("2026-08-14", "000300.SH", "600000.SH", 0, "", "akshare_csindex"),
+            ("2026-08-14", "000300.SH", "000001.SZ", 0, "", "akshare_csindex"),
+        ]
+        # 四指数代码顺序固定
+        assert [r.rows[0][1] for r in results] == [
+            "000300.SH", "000905.SH", "000852.SH", "000985.SH",
         ]

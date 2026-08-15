@@ -67,6 +67,7 @@ import logging
 import re
 import threading
 import time
+from decimal import Decimal, ROUND_HALF_UP
 from typing import TYPE_CHECKING, Iterator
 
 if TYPE_CHECKING:
@@ -150,6 +151,32 @@ _TBL_SHARE_UNLOCK = get_registry().table("fund_share_unlock")
 _TBL_STOCK_INDICATOR = get_registry().table("market_stock_indicator")
 _TBL_STOCK_LIST = get_registry().table("market_stock_list")
 _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
+# JOB-077 市场元数据与约束接入（DS-081~083 新建表，2026-08-15）
+_TBL_STOCK_BASIC = get_registry().table("meta_stock_basic")
+_TBL_STK_LIMIT = get_registry().table("market_stk_limit")
+_TBL_SUSPEND = get_registry().table("market_suspend")
+
+# JOB-077 SQL 集中化（NO-BARE-SQL gate 合规，常量名匹配 ^_?SQL_\w+$ 豁免正则）
+# kline_daily 交易日序列/收盘价/每股日期数组（stk_limit 计算与 suspend 推导共用）
+_SQL_KLINE_DAYS = (
+    "SELECT DISTINCT trade_date FROM c1_market.kline_daily "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' ORDER BY trade_date"
+)
+_SQL_KLINE_BARS = (
+    "SELECT trade_date, symbol, close, adj_factor FROM c1_market.kline_daily "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
+)
+_SQL_KLINE_SYMBOL_DAYS = (
+    "SELECT symbol, groupArray(trade_date) FROM c1_market.kline_daily "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}' GROUP BY symbol"
+)
+# CH 不可达探活（ch_reader.query 故障静默返回空串，count() 仍为空=不可达）
+_SQL_KLINE_PROBE = "SELECT count() FROM c1_market.kline_daily"
+# ST 最近可得快照加载（PIT 严格：≤T 口径，窗口前推 400 天）
+_SQL_ST_SNAPSHOTS = (
+    "SELECT trade_date, symbol FROM {table} "
+    "WHERE trade_date >= '{start}' AND trade_date <= '{end}'"
+)
 _TBL_TOP10_CIRCULATING_SHAREHOLDERS = get_registry().table("fund_top10_circulating_shareholders")
 _TBL_TOP10_SHAREHOLDERS = get_registry().table("fund_top10_shareholders")
 
@@ -184,6 +211,10 @@ _AKSHARE_CAPABILITIES = frozenset({
     # #ARCH-DATA-015: baostock IP黑名单治本——补全死 fallback 对应的能力（原配置空挂）
     "trade_calendar",    # A股交易日历（tool_trade_date_hist_sina，探针实证 8797 行可用）
     "index_constituent",  # 沪深300成分股（index_stock_cons_csindex，中证指数官网源）
+    # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
+    "stock_basic",      # DS-081 股票基本信息日快照（交易所官网清单，非东财）
+    "stk_limit",        # DS-082 每日涨跌停价格（规则计算：昨收×(1±幅度)四舍五入到分）
+    "suspend_status",   # DS-083 停复牌（东财停牌清单+百度停复牌公告+K线缺口推导）
 })
 
 
@@ -399,6 +430,10 @@ class AkshareIngestProvider(IngestProviderBase):
             # #ARCH-DATA-015: baostock 黑名单治本——死 fallback 能力补全（全量接口，无 symbols）
             CapabilityContract("trade_calendar", supports_symbols_null=True),
             CapabilityContract("index_constituent", supports_symbols_null=True),
+            # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15，全量接口无 symbols）
+            CapabilityContract("stock_basic", supports_symbols_null=True),
+            CapabilityContract("stk_limit", supports_symbols_null=True),
+            CapabilityContract("suspend_status", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -2694,6 +2729,7 @@ class AkshareIngestProvider(IngestProviderBase):
 
         调用 ak.stock_info_sh_name_code + ak.stock_info_sz_name_code 过滤 ST。
         st_type: ST/*ST/退市（按名称前缀分类）。
+        JOB-077（DS-085，2026-08-15）：补科创板清单（原仅沪主板+深市，漏科创板ST）。
         """
         import akshare as ak
 
@@ -2705,6 +2741,10 @@ class AkshareIngestProvider(IngestProviderBase):
 
         batch_rows.extend(self._collect_st_rows(
             ak, policy, ak.stock_info_sh_name_code, "主板A股",
+            "证券代码", "证券简称",
+        ))
+        batch_rows.extend(self._collect_st_rows(
+            ak, policy, ak.stock_info_sh_name_code, "科创板",
             "证券代码", "证券简称",
         ))
         batch_rows.extend(self._collect_st_rows(
@@ -2730,6 +2770,9 @@ class AkshareIngestProvider(IngestProviderBase):
         if hasattr(val, "strftime"):
             return val.strftime("%Y-%m-%d")
         s = str(val).strip()
+        # NaN/NaT/None/'--' 等空值占位符防御（baidu 停复牌接口 NaN 实证，JOB-077）
+        if s.lower() in ("nan", "nat", "none", "--", ""):
+            return ""
         # 兼容 'YYYYMMDD' 格式
         if len(s) == 8 and s.isdigit():
             return f"{s[:4]}-{s[4:6]}-{s[6:8]}"
@@ -4523,42 +4566,104 @@ class AkshareIngestProvider(IngestProviderBase):
 
     # ---- 30c. 沪深300成分股（index_constituent，#ARCH-DATA-015） ----
 
+    # JOB-077 DS-084：指数成分覆盖范围（沪深300/中证500/中证1000/中证全指）
+    _INDEX_MEMBER_CODES: tuple[tuple[str, str], ...] = (
+        ("000300", "000300.SH"),  # 沪深300
+        ("000905", "000905.SH"),  # 中证500
+        ("000852", "000852.SH"),  # 中证1000
+        ("000985", "000985.SH"),  # 中证全指
+    )
+
+    def _fetch_index_weight_map(self, ak, policy: SourcePolicy, raw_code: str) -> dict[str, float]:
+        """中证指数权重快照（月末发布），key=成分券代码；失败降级空 dict（调用方 weight=0）。"""
+        try:
+            df_w = self._call_with_policy(
+                ak.index_stock_cons_weight_csindex, policy, symbol=raw_code
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"index {raw_code} 权重获取失败（weight=0 降级）: {e}")
+            return {}
+        weight_map: dict[str, float] = {}
+        if df_w is None or len(df_w) == 0:
+            return weight_map
+        for _, wr in df_w.iterrows():
+            wcode = str(wr.get("成分券代码", "") or "").zfill(6)
+            wval = safe_float(wr.get("权重"))
+            if wcode and wval is not None:
+                weight_map[wcode] = wval
+        return weight_map
+
+    def _index_constituent_rows(
+        self, df_cons, l3_code: str, weight_map: dict[str, float], fallback_date: str
+    ) -> tuple[str, list[tuple]]:
+        """成分清单 DataFrame → (trade_date, 行集)。
+
+        trade_date 取成分接口"日期"列最大值（PIT 以清单生效日为准），
+        无该列时回退 fallback_date。权重为最近可得月末快照值（缺失=0）。
+        """
+        trade_date = fallback_date
+        rows: list[tuple] = []
+        if df_cons is None or len(df_cons) == 0:
+            return trade_date, rows
+        try:
+            dates = [self._norm_akshare_date(v) for v in df_cons["日期"].tolist()]
+            dates = [d for d in dates if d]
+            if dates:
+                trade_date = max(dates)
+        except KeyError:
+            pass
+        for _, r in df_cons.iterrows():
+            code = str(r.get("成分券代码", "") or "").zfill(6)
+            if len(code) != 6 or not code.isdigit():
+                continue
+            rows.append((
+                trade_date, l3_code, _cn_code_to_symbol(code),
+                weight_map.get(code, 0), "", "akshare_csindex",
+            ))
+        return trade_date, rows
+
     def _fetch_index_constituent(
         self, payload: FetchPayload, policy: SourcePolicy
     ) -> Iterator[FetchResult]:
-        """沪深300成分股（akshare index_stock_cons_csindex，中证指数官网源）。
+        """指数成分及权重（akshare 中证指数官网源，JOB-077 DS-084 扩展）。
 
         #ARCH-DATA-015：tasks.yaml 原配置 akshare fallback 但无对应 capability（死
-        fallback），本方法补全。官网接口不含权重 → weight=0（同 miniqmt 口径）。
-        列名对齐 index_constituent 表 schema。
+        fallback），本方法补全。JOB-077（2026-08-15）从仅沪深300扩展为四指数
+        （300/500/1000/中证全指），并经 index_stock_cons_weight_csindex 补真实权重
+        （原官网成分接口不含权重 → weight=0，同 miniqmt 口径）。
+        权重接口按月末发布权重日快照（row级日期），成分按当前清单日——成员资格
+        以成分接口日期为准（universe 用途），权重为最近可得月频值。
+        列名对齐 index_constituent 表 schema。每指数 yield 一批。
         """
         import akshare as ak
         table = payload.table or _TBL_INDEX_CONSTITUENT
         columns = ["trade_date", "index_code", "symbol", "weight", "action", "data_source"]
-        t0 = time.time()
-        try:
-            df = self._call_with_policy(ak.index_stock_cons_csindex, policy, symbol="000300")
-            trade_date = (
-                payload.end.isoformat() if payload.end else datetime.date.today().isoformat()
-            )
-            rows: list[tuple] = []
-            if df is not None and len(df):
-                for _, r in df.iterrows():
-                    code = str(r.get("成分券代码", "") or "").zfill(6)
-                    if len(code) != 6 or not code.isdigit():
-                        continue
-                    rows.append((trade_date, "000300.SH", _cn_code_to_symbol(code), 0, "", "akshare"))
-            self._log.info(f"index_constituent: {len(rows)} 行（akshare 中证官网）")
-            yield FetchResult(
-                table=table, columns=columns, rows=rows,
-                last_key=trade_date, elapsed_sec=time.time() - t0,
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            self._log.warning(f"index_constituent 获取失败: {e}")
-            yield FetchResult(
-                table=table, columns=columns, rows=[],
-                last_key="", elapsed_sec=time.time() - t0, error=str(e),
-            )
+        t0 = time.monotonic()
+        fallback_date = (
+            payload.end.isoformat() if payload.end else datetime.date.today().isoformat()
+        )
+        for raw_code, l3_code in self._INDEX_MEMBER_CODES:
+            try:
+                df_cons = self._call_with_policy(
+                    ak.index_stock_cons_csindex, policy, symbol=raw_code
+                )
+                weight_map = self._fetch_index_weight_map(ak, policy, raw_code)
+                trade_date, rows = self._index_constituent_rows(
+                    df_cons, l3_code, weight_map, fallback_date
+                )
+                self._log.info(
+                    f"index_constituent {l3_code}: {len(rows)} 行（akshare 中证官网）"
+                )
+                yield FetchResult(
+                    table=table, columns=columns, rows=rows,
+                    last_key=trade_date, elapsed_sec=time.monotonic() - t0,
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"index_constituent {l3_code} 获取失败: {e}")
+                yield FetchResult(
+                    table=table, columns=columns, rows=[],
+                    last_key="", elapsed_sec=time.monotonic() - t0, error=str(e),
+                )
 
     # ---- 31. 指数列表（index_list） ----
 
@@ -4856,4 +4961,615 @@ class AkshareIngestProvider(IngestProviderBase):
                 # 原 yield error 会触发 scheduler._fetch_and_write 的 break，导致整个任务中止+已拉取数据丢失。
                 self._log.warning(f"ETF {fund_code} 净值获取失败，跳过: {e}")
                 continue
+
+    # ============== JOB-077 市场元数据与约束接入（DS-081~085，2026-08-15）==============
+    # 打板回测急需：universe 构造 + 回测撮合约束前提管道。
+    # 五数据集：股票基本信息(DS-081)/涨跌停价格(DS-082)/停复牌(DS-083)/
+    # 指数成分(DS-084，扩展既有 _fetch_index_constituent)/ST状态(DS-085，扩展既有 _fetch_st_stock_list)。
+    # PIT 语义 strict：全部按交易日快照落库（trade_date=生效日），同日重跑幂等替换。
+
+    # ---- 40a. 股票基本信息（stock_basic，DS-081）----
+
+    @staticmethod
+    def _board_of_a_share(code: str) -> str:
+        """6 位代码 → 市场板块（静态前缀规则，业界通用口径）。
+
+        60→沪主板 / 68→科创板 / 00→深主板 / 30→创业板 / 43/83/87/88/920→北交所。
+        空串=非A股或未知板块（调用方应跳过）。
+        """
+        if code.startswith("68"):
+            return "科创板"
+        if code.startswith("60"):
+            return "沪主板"
+        if code.startswith("30"):
+            return "创业板"
+        if code.startswith("00"):
+            return "深主板"
+        if code.startswith(("43", "83", "87", "88", "920")):
+            return "北交所"
+        return ""
+
+    def _fetch_em_industry_map(
+        self, ak, policy: SourcePolicy, target_codes: set[str]
+    ) -> dict[str, str]:
+        """东财行业板块成分反查 code→行业名（best-effort）。
+
+        东财反爬封锁时连续失败 3 次即放弃（对标 _em_push2_blocked 快速失败模式），
+        返回已收集的部分映射（可能为空 dict）。
+        """
+        result: dict[str, str] = {}
+        try:
+            boards = self._call_with_policy(ak.stock_board_industry_name_em, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_board_industry_name_em 失败（东财反爬？）: {e}")
+            return result
+        if boards is None or len(boards) == 0 or "板块名称" not in boards.columns:
+            return result
+        consecutive_fail = 0
+        for board_name in boards["板块名称"].tolist():
+            if consecutive_fail >= 3:
+                self._log.warning("东财行业板块连续失败3次，放弃行业反查（反爬封锁）")
+                break
+            try:
+                cons = self._call_with_policy(
+                    ak.stock_board_industry_cons_em, policy, symbol=board_name
+                )
+                consecutive_fail = 0
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                consecutive_fail += 1
+                self._log.debug(f"stock_board_industry_cons_em({board_name}) 失败: {e}")
+                continue
+            if cons is None or len(cons) == 0 or "代码" not in cons.columns:
+                continue
+            for code in cons["代码"].tolist():
+                code6 = str(code).zfill(6)
+                if code6 in target_codes and code6 not in result:
+                    result[code6] = str(board_name)
+        return result
+
+    def _collect_sh_basic_rows(
+        self, ak, policy: SourcePolicy, iso_date: str
+    ) -> list[tuple]:
+        """上交所股票基本信息行（主板A股+科创板，交易所官网清单）。
+
+        列：证券代码/证券简称/证券全称/公司全称/上市日期（无行业列，由东财反查补全）。
+        """
+        rows: list[tuple] = []
+        for fn_arg in ("主板A股", "科创板"):
+            try:
+                df_sh = self._call_with_policy(
+                    ak.stock_info_sh_name_code, policy, symbol=fn_arg
+                )
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"stock_info_sh_name_code({fn_arg}) 失败: {e}")
+                continue
+            if df_sh is None or len(df_sh) == 0:
+                continue
+            for _, row in df_sh.iterrows():
+                code = str(row.get("证券代码") or "").strip().zfill(6)
+                if not code.isdigit() or not self._board_of_a_share(code):
+                    continue
+                rows.append((
+                    iso_date, code,
+                    str(row.get("证券简称") or "").strip(),
+                    str(row.get("公司全称") or "").strip(),
+                    "",  # industry 由东财反查补全
+                    self._board_of_a_share(code),
+                    self._norm_akshare_date(row.get("上市日期")) or None,
+                    "akshare",
+                ))
+        return rows
+
+    def _collect_sz_basic_rows(
+        self, ak, policy: SourcePolicy, iso_date: str
+    ) -> list[tuple]:
+        """深交所股票基本信息行（A股列表，自带所属行业，交易所官网清单）。"""
+        rows: list[tuple] = []
+        try:
+            df_sz = self._call_with_policy(
+                ak.stock_info_sz_name_code, policy, symbol="A股列表"
+            )
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_info_sz_name_code(A股列表) 失败: {e}")
+            return rows
+        if df_sz is None or len(df_sz) == 0:
+            return rows
+        for _, row in df_sz.iterrows():
+            code = str(row.get("A股代码") or "").strip().zfill(6)
+            if not code.isdigit() or not self._board_of_a_share(code):
+                continue
+            rows.append((
+                iso_date, code,
+                str(row.get("A股简称") or "").strip(),
+                "",  # SZ 清单无公司全称列
+                str(row.get("所属行业") or "").strip(),
+                self._board_of_a_share(code),
+                self._norm_akshare_date(row.get("A股上市日期")) or None,
+                "akshare",
+            ))
+        return rows
+
+    def _fetch_stock_basic(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """股票基本信息日快照（DS-081），写入 c1_market.stock_basic。
+
+        源：交易所官网清单（stock_info_sh_name_code 主板A股+科创板 /
+        stock_info_sz_name_code A股列表），非东财接口，规避反爬。
+        行业：SZ 列表自带"所属行业"（交易所口径）；SH 清单无行业列，经东财行业
+        板块成分反查 best-effort 补全（反爬封锁时留空，次日重试自然回补）。
+        市场板块：代码前缀静态规则（_board_of_a_share）。北交所暂无官网清单接口
+        （stock_info_bj 未在 akshare 提供），本期不覆盖（已知缺口）。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_STOCK_BASIC
+        columns = [
+            "trade_date", "symbol", "name", "fullname", "industry",
+            "board", "list_date", "data_source",
+        ]
+        iso_date = (payload.end or datetime.date.today()).isoformat()
+        t0 = time.monotonic()
+
+        rows = self._collect_sh_basic_rows(ak, policy, iso_date)
+        rows.extend(self._collect_sz_basic_rows(ak, policy, iso_date))
+
+        # SH 行业补全（东财行业板块反查，best-effort）
+        sh_codes = {r[1] for r in rows if r[4] == "" and r[1].startswith(("60", "68"))}
+        if sh_codes:
+            industry_map = self._fetch_em_industry_map(ak, policy, sh_codes)
+            if industry_map:
+                rows = [
+                    (r[0], r[1], r[2], r[3], industry_map.get(r[1], r[4]), r[5], r[6], r[7])
+                    for r in rows
+                ]
+                self._log.info(
+                    f"SH 行业反查补全 {len([r for r in rows if r[4]])}/{len(rows)} 行"
+                )
+
+        self._log.info(f"stock_basic 快照完成: {len(rows)} 行（{iso_date}）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 40b. 每日涨跌停价格（stk_limit，DS-082）----
+
+    # 创业板注册制改革生效日：涨跌幅 10%→20%（含ST股）
+    _CHINEXT_20PCT_DATE = datetime.date(2020, 8, 24)
+
+    @classmethod
+    def _limit_pct_of(
+        cls, code: str, trade_date: datetime.date, st_flag: bool
+    ) -> float | None:
+        """涨跌停幅度（小数），口径=沪深北交易所交易规则。
+
+        科创板 20%（含ST）；创业板 2020-08-24 起 20%（含ST，改革后ST不再区别），
+        此前 10%；北交所 30%（无ST 5%规则）；主板 ST/*ST 5%、否则 10%。
+        未知板块返回 None（调用方跳过，防误判）。
+        """
+        if code.startswith("68"):
+            return 0.20
+        if code.startswith("30"):
+            return 0.20 if trade_date >= cls._CHINEXT_20PCT_DATE else 0.10
+        if code.startswith(("43", "83", "87", "88", "920")):
+            return 0.30
+        if code.startswith(("60", "00")):
+            return 0.05 if st_flag else 0.10
+        return None
+
+    def _load_st_snapshots(
+        self, start: datetime.date, end: datetime.date
+    ) -> tuple[list[datetime.date], dict[datetime.date, set[str]]]:
+        """加载 st_stock_list 快照：返回 (有序快照日期列表, 日期→ST代码集合)。
+
+        窗口 [start-400d, end]：保证 start 当日可取到最近可得历史快照（PIT 严格，
+        禁用未来快照）。CH 不可达时返回空（调用方降级 st_flag=0 并记日志）。
+        """
+        from zephyr.data import ch_reader as _chr
+
+        win_start = start - datetime.timedelta(days=400)
+        try:
+            tsv = _chr.query(_SQL_ST_SNAPSHOTS.format(
+                table=_TBL_ST_STOCK_LIST,
+                start=win_start.isoformat(), end=end.isoformat(),
+            ))
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"st_stock_list 快照加载失败: {e}")
+            return [], {}
+        by_date: dict[datetime.date, set[str]] = {}
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) != 2:
+                continue
+            try:
+                d = datetime.date.fromisoformat(parts[0][:10])
+            except ValueError:
+                continue
+            by_date.setdefault(d, set()).add(parts[1].strip())
+        return sorted(by_date.keys()), by_date
+
+    def _st_flag_at(
+        self,
+        snap_dates: list[datetime.date],
+        snap_map: dict[datetime.date, set[str]],
+        code: str,
+        trade_date: datetime.date,
+    ) -> int:
+        """查询 code 在 trade_date 的 ST 标记：最近可得（≤T）快照口径（PIT 严格）。"""
+        import bisect
+
+        if not snap_dates:
+            return 0
+        idx = bisect.bisect_right(snap_dates, trade_date) - 1
+        if idx < 0:
+            return 0
+        return 1 if code in snap_map[snap_dates[idx]] else 0
+
+    @staticmethod
+    def _parse_tsv_dates(tsv: str) -> list[datetime.date]:
+        """解析单列日期 TSV（每行一个 YYYY-MM-DD），坏行跳过。"""
+        out: list[datetime.date] = []
+        for line in (tsv or "").strip().split("\n"):
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                out.append(datetime.date.fromisoformat(line[:10]))
+            except ValueError:
+                continue
+        return out
+
+    def _parse_kline_bars(
+        self, tsv: str
+    ) -> dict[str, list[tuple[datetime.date, float, float]]]:
+        """解析 kline TSV（trade_date/symbol/close/adj_factor）为 per-symbol 有序序列。
+
+        仅保留可识别板块的 A 股 6 位代码；close/adj 非正值行跳过（防除零与脏数据）。
+        """
+        bars: dict[str, list[tuple[datetime.date, float, float]]] = {}
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) < 4:
+                continue
+            code = parts[1].strip().split(".")[0].zfill(6)
+            if not self._board_of_a_share(code):
+                continue
+            try:
+                d = datetime.date.fromisoformat(parts[0][:10])
+                close = float(parts[2])
+                adj = float(parts[3]) if parts[3] not in ("", "\\N", "NULL") else 1.0
+            except ValueError:
+                continue
+            if close <= 0 or adj <= 0:
+                continue
+            bars.setdefault(code, []).append((d, close, adj))
+        for series in bars.values():
+            series.sort(key=lambda x: x[0])
+        return bars
+
+    def _stk_limit_row_for(
+        self,
+        code: str,
+        series: list[tuple[datetime.date, float, float]],
+        i: int,
+        day_set: set[datetime.date],
+        snap_dates: list[datetime.date],
+        snap_map: dict[datetime.date, set[str]],
+    ) -> tuple | None:
+        """计算单股单日涨跌停行；非目标交易日/首日无昨收/未知板块返回 None。
+
+        新股无涨跌幅限制期（科创/创业/北交上市前 5 个交易日）产出 NULL 行；
+        除权除息日昨收经 adj_factor 前复权因子比修正，先 round(4) 再进 Decimal
+        （float epsilon 会翻转 ROUND_HALF_UP 边界）。
+        """
+        d, _close, adj = series[i]
+        if d not in day_set or i == 0:
+            return None
+        pct_board = self._board_of_a_share(code)
+        prev_close, prev_adj = series[i - 1][1], series[i - 1][2]
+        pre_close = round(prev_close * (adj / prev_adj), 4)
+        st_flag = self._st_flag_at(snap_dates, snap_map, code, d)
+        if i < 5 and pct_board in ("科创板", "创业板", "北交所"):
+            return (d.isoformat(), code, pre_close, None, None, None,
+                    st_flag, pct_board, "rule_computed")
+        pct = self._limit_pct_of(code, d, bool(st_flag))
+        if pct is None:
+            return None
+        pc = Decimal(str(pre_close))
+        limit_up = float(
+            (pc * Decimal(str(1 + pct))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        )
+        limit_down = float(
+            (pc * Decimal(str(1 - pct))).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        )
+        return (d.isoformat(), code, pre_close, limit_up, limit_down, pct,
+                st_flag, pct_board, "rule_computed")
+
+    def _compute_stk_limit_rows(
+        self,
+        bars: dict[str, list[tuple[datetime.date, float, float]]],
+        trade_days: list[datetime.date],
+        snap_dates: list[datetime.date],
+        snap_map: dict[datetime.date, set[str]],
+    ) -> list[tuple]:
+        """全市场逐股逐日计算涨跌停行（编排循环，单行逻辑在 _stk_limit_row_for）。"""
+        day_set = set(trade_days)
+        rows: list[tuple] = []
+        for code, series in bars.items():
+            for i in range(len(series)):
+                row = self._stk_limit_row_for(code, series, i, day_set, snap_dates, snap_map)
+                if row is not None:
+                    rows.append(row)
+        return rows
+
+    def _fetch_stk_limit(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """每日涨跌停价格（DS-082），写入 c1_market.stk_limit。
+
+        akshare 无全市场涨跌停价接口（2026-08-15 实证 dir(akshare) 仅涨跌停池类
+        函数，只覆盖触板个股）→ 按交易所规则由昨收价计算（行业标准做法，对标
+        tushare stk_limit 语义）：limit_up/down = round_half_up(pre_close×(1±pct), 0.01)。
+        pre_close 口径：kline_daily 上一交易日收盘价，跨除权除息日用 adj_factor
+        前复权因子比修正（pre_close = close_prev × adj_T/adj_prev）。
+        ST 标记：st_stock_list 最近可得（≤T）快照（PIT 严格）。
+        新股：科创板/创业板/北交所上市前 5 个交易日无涨跌幅限制 → limit=NULL；
+        主板上市首日 44% 需发行价（无数据）→ 不产出行。
+        增量口径：payload.start~end 内每个交易日各算一批，同日重跑幂等替换。
+        """
+        from zephyr.data import ch_reader as _chr
+
+        table = payload.table or _TBL_STK_LIMIT
+        columns = [
+            "trade_date", "symbol", "pre_close", "limit_up", "limit_down",
+            "limit_pct", "st_flag", "board", "data_source",
+        ]
+        start = payload.start or datetime.date.today()
+        end = payload.end or datetime.date.today()
+        if start > end:
+            start = end
+        t0 = time.monotonic()
+
+        # 1) 交易日序列（kline_daily 实际有数据的日期=开市日代理）
+        try:
+            tsv_days = _chr.query(_SQL_KLINE_DAYS.format(
+                start=start.isoformat(), end=end.isoformat(),
+            ))
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"kline_daily 交易日序列查询失败: {e}",
+            )
+            return
+        trade_days = self._parse_tsv_dates(tsv_days)
+        if not trade_days:
+            # 区分"CH 不可达"与"确实无数据"：ch_reader.query 失败静默返回空串，
+            # 探活 count() 仍为空串 → CH 不可达 → 显式 error（防 0 行假成功掩盖故障）
+            if not (_chr.query(_SQL_KLINE_PROBE) or "").strip():
+                yield FetchResult(
+                    table=table, columns=columns, rows=[], last_key="",
+                    elapsed_sec=time.monotonic() - t0,
+                    error="ClickHouse 不可达（kline_daily 探活无响应）",
+                )
+                return
+            yield FetchResult(
+                table=table, columns=columns, rows=[],
+                last_key=end.isoformat(), elapsed_sec=time.monotonic() - t0,
+            )
+            return
+
+        # 2) 收盘价+复权因子（前推 45 天缓冲保证 prev_close 可得，覆盖长停牌复牌）
+        buf_start = start - datetime.timedelta(days=45)
+        try:
+            tsv_k = _chr.query(_SQL_KLINE_BARS.format(
+                start=buf_start.isoformat(), end=end.isoformat(),
+            ))
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error=f"kline_daily 收盘价查询失败: {e}",
+            )
+            return
+        bars = self._parse_kline_bars(tsv_k)
+
+        # 3) ST 快照（最近可得口径）+ 4) 逐股逐日计算
+        snap_dates, snap_map = self._load_st_snapshots(start, end)
+        rows = self._compute_stk_limit_rows(bars, trade_days, snap_dates, snap_map)
+
+        self._log.info(
+            f"stk_limit 计算完成: {len(rows)} 行（{trade_days[0]}~{trade_days[-1]}）"
+        )
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=trade_days[-1].isoformat(), elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 40c. 停复牌（suspend_status，DS-083）----
+
+    def _suspend_rows_from_em(self, df, iso_date: str) -> list[tuple]:
+        """东财当前停牌清单 → 行集（防御式列名解析——反爬期无法实证列名，候选列名取值）。
+
+        A股代码恰为 6 位数字；港股 5 位等异长代码排除（防 zfill 串号）。
+        """
+        self._log.info(f"stock_zh_a_stop_em 列: {list(df.columns)}")
+        rows: list[tuple] = []
+        for _, row in df.iterrows():
+            raw = str(row.get("代码") or row.get("股票代码") or "").strip()
+            if len(raw) != 6 or not raw.isdigit() or not self._board_of_a_share(raw):
+                continue
+            rows.append((
+                iso_date, raw,
+                str(row.get("名称") or row.get("股票简称") or "").strip(),
+                self._norm_akshare_date(row.get("停牌日期") or row.get("停牌时间")) or None,
+                self._norm_akshare_date(row.get("复牌日期") or row.get("复牌时间")) or None,
+                str(row.get("停牌原因") or row.get("停牌事项说明") or "").strip(),
+                "akshare_em",
+            ))
+        return rows
+
+    def _suspend_rows_from_baidu(self, df_bd, iso_date: str) -> list[tuple]:
+        """百度停复牌公告 → 行集（列已实证：股票代码/股票简称/停牌时间/复牌时间/停牌事项说明）。
+
+        港股 5 位代码 zfill 后会误撞深主板 00 前缀（实证 003389/009929 港股串入），
+        交易所代码列+长度双门禁排除（JOB-077 联调发现）。
+        """
+        rows: list[tuple] = []
+        for _, row in df_bd.iterrows():
+            raw = str(row.get("股票代码") or "").strip()
+            exch = str(row.get("交易所代码") or "").strip().upper()
+            if exch and exch not in ("SH", "SZ", "BJ"):
+                continue
+            if len(raw) != 6 or not raw.isdigit() or not self._board_of_a_share(raw):
+                continue
+            rows.append((
+                iso_date, raw,
+                str(row.get("股票简称") or "").strip(),
+                self._norm_akshare_date(row.get("停牌时间")) or None,
+                self._norm_akshare_date(row.get("复牌时间")) or None,
+                str(row.get("停牌事项说明") or "").strip(),
+                "akshare_baidu",
+            ))
+        return rows
+
+    def _suspend_snapshot_rows(self, ak, policy: SourcePolicy, iso_date: str) -> list[tuple]:
+        """当前停牌股快照行（东财主源 + 百度兜底）。
+
+        东财 stock_zh_a_stop_em 反爬封锁时降级 news_trade_notify_suspend_baidu
+        （百度停复牌公告，含停牌时间/复牌时间/停牌事项说明）。
+        行: (trade_date, symbol, name, suspend_date, resume_date, reason, data_source)
+        """
+        # 主源：东财当前停牌清单
+        try:
+            df = self._call_with_policy(ak.stock_zh_a_stop_em, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_zh_a_stop_em 失败（转百度兜底）: {e}")
+            df = None
+        if df is not None and len(df):
+            rows = self._suspend_rows_from_em(df, iso_date)
+            if rows:
+                return rows
+        # 兜底：百度停复牌公告
+        try:
+            df_bd = self._call_with_policy(ak.news_trade_notify_suspend_baidu, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"news_trade_notify_suspend_baidu 失败: {e}")
+            return []
+        if df_bd is None or len(df_bd) == 0:
+            return []
+        return self._suspend_rows_from_baidu(df_bd, iso_date)
+
+    @staticmethod
+    def _parse_ch_date_array(raw: str) -> set[datetime.date]:
+        """解析 CH groupArray 返回的日期数组（['2026-01-02','2026-01-05'] 格式）。"""
+        out: set[datetime.date] = set()
+        for tok in raw.strip().strip("[]").split(","):
+            tok = tok.strip().strip("'\"")
+            if not tok:
+                continue
+            try:
+                out.add(datetime.date.fromisoformat(tok[:10]))
+            except ValueError:
+                continue
+        return out
+
+    def _derive_suspend_gaps(
+        self, code: str, bar_days: set[datetime.date], trade_days: list[datetime.date]
+    ) -> list[tuple]:
+        """单股缺口推导：交易日无K线且落在首末bar之间 → 停牌日行。
+
+        首尾 bar 之外的缺口=未上市/退市/尾部持续停牌，无法区分故不推导
+        （尾部停牌由日快照模式覆盖）。
+        """
+        if not bar_days:
+            return []
+        first_bar, last_bar = min(bar_days), max(bar_days)
+        rows: list[tuple] = []
+        for td in trade_days:
+            if td <= first_bar or td >= last_bar or td in bar_days:
+                continue
+            rows.append((td.isoformat(), code, "", td.isoformat(), None, "",
+                         "derived_kline_gap"))
+        return rows
+
+    def _suspend_derive_rows(
+        self, start: datetime.date, end: datetime.date
+    ) -> list[tuple]:
+        """K线缺口推导停牌日（历史回填）：交易日无K线且前后均有K线 → 停牌。
+
+        data_source='derived_kline_gap'。已知限制：区间尾部停牌无法与退市区分，
+        不推导（由日快照模式覆盖）。按年分批控制内存。
+        行: (trade_date, symbol, name, suspend_date, resume_date, reason, data_source)
+        """
+        from zephyr.data import ch_reader as _chr
+
+        rows: list[tuple] = []
+        for year in range(start.year, end.year + 1):
+            ys = max(start, datetime.date(year, 1, 1))
+            ye = min(end, datetime.date(year, 12, 31))
+            try:
+                tsv_days = _chr.query(_SQL_KLINE_DAYS.format(
+                    start=ys.isoformat(), end=ye.isoformat(),
+                ))
+                tsv_bars = _chr.query(_SQL_KLINE_SYMBOL_DAYS.format(
+                    start=ys.isoformat(), end=ye.isoformat(),
+                ))
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                self._log.warning(f"suspend 推导 {year} 年查询失败: {e}")
+                continue
+            trade_days = self._parse_tsv_dates(tsv_days)
+            if not trade_days:
+                continue
+            for line in (tsv_bars or "").strip().split("\n"):
+                parts = line.split("\t", 1)
+                if len(parts) != 2:
+                    continue
+                code = parts[0].strip().split(".")[0].zfill(6)
+                if not self._board_of_a_share(code):
+                    continue
+                bar_days = self._parse_ch_date_array(parts[1])
+                rows.extend(self._derive_suspend_gaps(code, bar_days, trade_days))
+            self._log.info(f"suspend 推导 {year} 年: 累计 {len(rows)} 行")
+        return rows
+
+    def _fetch_suspend_status(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """停复牌记录（DS-083），写入 c1_market.suspend。
+
+        双模式（payload.extra['derive_from_kline'] 切换）：
+        - 快照模式（默认）：当前停牌股日快照（东财主源+百度兜底），PIT strict，
+          逐日积累形成停牌区间；消费 EVT-CA-003。
+        - 推导模式（derive_from_kline=True）：K线缺口推导历史停牌日（回填用）。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_SUSPEND
+        columns = [
+            "trade_date", "symbol", "name", "suspend_date",
+            "resume_date", "reason", "data_source",
+        ]
+        t0 = time.monotonic()
+        end = payload.end or datetime.date.today()
+        extra = payload.extra or {}
+
+        if extra.get("derive_from_kline"):
+            start = payload.start or end
+            rows = self._suspend_derive_rows(start, end)
+            self._log.info(f"suspend 推导模式: {len(rows)} 行（{start}~{end}）")
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=end.isoformat(), elapsed_sec=time.monotonic() - t0,
+            )
+            return
+
+        iso_date = end.isoformat()
+        rows = self._suspend_snapshot_rows(ak, policy, iso_date)
+        self._log.info(f"suspend 快照模式: {len(rows)} 行（{iso_date}）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=time.monotonic() - t0,
+        )
 

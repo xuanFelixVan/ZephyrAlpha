@@ -1227,6 +1227,55 @@
   data_source: [exchange]
   blueprint: null
 
+# --- JOB-077 市场元数据与约束接入（DS-081~083 新建表，2026-08-15）---
+- category_id: meta_stock_basic
+  name: "股票基本信息日快照（代码/名称/行业/市场板块/上市日期，universe构造基础）"
+  engine: clickhouse
+  database: c1_market
+  table: stock_basic
+  schema_file: schemas/categories/meta_stock_basic.py
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: null
+
+- category_id: market_stk_limit
+  name: "每日涨跌停价格（涨停价/跌停价，规则计算：昨收×(1±幅度)四舍五入到分）"
+  engine: clickhouse
+  database: c1_market
+  table: stk_limit
+  schema_file: schemas/categories/market_stk_limit.py
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare, internal]
+  blueprint: null
+
+- category_id: market_suspend
+  name: "停复牌记录（日快照+K线缺口推导，回测MUST排除不可成交日）"
+  engine: clickhouse
+  database: c1_market
+  table: suspend
+  schema_file: schemas/categories/market_suspend.py
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare, internal]
+  blueprint: null
+
 - category_id: market_stock_indicator
   name: "股票技术指标"
   engine: clickhouse

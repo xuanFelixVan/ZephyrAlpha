@@ -44,6 +44,9 @@ import os
 
 # 确保 src/ 在 path 中
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "src"))
+# 仓根入 path（schemas/categories/*.py DDL-as-Code 真源导入前提；
+# 此前缺失导致 try/except 内联 fallback 成为事实运行时——真源漂移温床，JOB-077 治本）
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
 from zephyr.data import ch_writer
 
@@ -339,6 +342,12 @@ ORDER BY (trade_date, province)
 SETTINGS index_granularity = 8192
 """
 
+# JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）— 真源: schemas/categories/ 同名文件
+# 不内联 fallback：DDL 部署必须 fail-closed（导入失败即报错），防止静默使用漂移副本建错表
+from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
+from schemas.categories.market_stk_limit import STK_LIMIT_DDL
+from schemas.categories.market_suspend import SUSPEND_DDL
+
 # 所有 DDL（按依赖顺序）
 _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.tick_data", TICK_DATA_DDL),
@@ -351,6 +360,10 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.hog_spot_index", HOG_SPOT_INDEX_DDL),
     ("c1_market.hog_futures_core", HOG_FUTURES_CORE_DDL),
     ("c1_market.hog_province_spot", HOG_PROVINCE_SPOT_DDL),
+    # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）
+    ("c1_market.stock_basic", STOCK_BASIC_DDL),
+    ("c1_market.stk_limit", STK_LIMIT_DDL),
+    ("c1_market.suspend", SUSPEND_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -378,6 +391,10 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "hog_spot_index": "ReplacingMergeTree",
     "hog_futures_core": "ReplacingMergeTree",
     "hog_province_spot": "ReplacingMergeTree",
+    # JOB-077（DS-081~083，2026-08-15）
+    "stock_basic": "ReplacingMergeTree",
+    "stk_limit": "ReplacingMergeTree",
+    "suspend": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

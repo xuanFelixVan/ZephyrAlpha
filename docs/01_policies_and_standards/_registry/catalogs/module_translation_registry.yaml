@@ -41473,6 +41473,34 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "所有合规判定只增不删地记进一个 JSONL 文件，当证据链用，写不进去也不影响交易"
+- module_path: schemas/categories/meta_stock_basic.py
+  domain_id: D_DATA
+  name_zh: "股票基本信息表结构"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "本文件是 c1_market.stock_basic 表结构的唯一真源（DDL-as-Code 模式）。JOB-077 DS-081：股票基本信息日快照表，universe 构造基础。"
+- module_path: schemas/categories/market_stk_limit.py
+  domain_id: D_DATA
+  name_zh: "涨跌停价格表结构"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "本文件是 c1_market.stk_limit 表结构的唯一真源（DDL-as-Code 模式）。JOB-077 DS-082：每日涨跌停价格表，打板策略与回测撮合约束（涨停不可买/跌停不可卖）。"
+- module_path: schemas/categories/market_suspend.py
+  domain_id: D_DATA
+  name_zh: "停复牌表结构"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "本文件是 c1_market.suspend 表结构的唯一真源（DDL-as-Code 模式）。JOB-077 DS-083：停复牌记录表（日快照+K线缺口推导），回测 MUST 排除不可成交日。"
+- module_path: tests/zephyr/data/test_akshare_market_meta.py
+  domain_id: D_DATA
+  name_zh: "市场元数据接入单测"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "JOB-077 五能力（stock_basic/stk_limit/suspend_status/index_constituent/st_stock_list）的单元测试：板块规则、涨跌停幅度、舍入精度、除权修正、港股排除、K线缺口推导，全 mock 不触网。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
