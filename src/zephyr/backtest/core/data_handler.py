@@ -522,7 +522,7 @@ class MultiSourceDataHandler:
 
     Usage:
         # Tick 模式（做T回测）
-        provider = MiniQmtQuoteProvider(path="E:/国金证券QMT交易端/userdata_mini")
+        provider = MiniQmtQuoteProvider(path="E:/国金QMT交易端模拟/userdata_mini")  # 模拟盘（主线）；实盘路径见 config/.env.qmt QMT_REAL_PATH
         handler = MultiSourceDataHandler(
             tick_provider=provider,
             symbols=["600000.SH"],

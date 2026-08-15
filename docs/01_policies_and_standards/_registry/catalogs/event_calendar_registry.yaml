@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：timeframe×2（事件是离散时点，持有窗口由 typical_holding_window 表达）+ direction（事件类型本身方向不定，利好/利空逐事件判定）。保留 regime×2（事件有效性随市场环境变化）+ entry_role=trigger（事件=策略触发源）+ 共有四维度；algorithm_status 固定 not_applicable（事件类型=日历披露纪律，非算法）。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   事件、信号、分红、利率、压力、套利、宏观、尾盘、市场结构、情绪、成交、打板、指数、指标、数据、早盘、波动、流动性、绩效、股票池、规则、财报、资金、通胀、风控
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -28,7 +30,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -93,7 +95,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["情绪", "事件", "财报", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -121,7 +123,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["事件", "财报"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -149,7 +151,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["风控", "财报", "信号", "事件"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -180,7 +182,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["事件", "分红"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -208,7 +210,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["压力", "资金", "事件", "分红"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -232,11 +234,11 @@ event_types:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
-    regime_valid: []
+    regime_valid: ["high_vol"]
     regime_invalid: []
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["index"]
+    tags: ["波动", "打板", "风控", "事件", "指数", "分红"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -267,7 +269,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["事件", "早盘", "信号", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -294,8 +296,8 @@ event_types:
     regime_valid: []
     regime_invalid: []
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["事件", "信号", "绩效"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -323,7 +325,7 @@ event_types:
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["套利", "早盘", "事件"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -353,8 +355,8 @@ event_types:
     regime_valid: []
     regime_invalid: []
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock", "index", "market"]
+    tags: ["资金", "事件", "流动性", "尾盘", "指数", "股票池", "市场结构"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -381,8 +383,8 @@ event_types:
     regime_valid: []
     regime_invalid: []
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["index"]
+    tags: ["波动", "宏观", "流动性", "指数", "数据", "通胀", "利率", "规则", "指标", "事件"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -406,11 +408,11 @@ event_types:
     created_at: "2026-08-14"
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
-    regime_valid: []
+    regime_valid: ["high_vol"]
     regime_invalid: []
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波动", "事件"]
     algorithm_status: "not_applicable"
     evidence: ""
 

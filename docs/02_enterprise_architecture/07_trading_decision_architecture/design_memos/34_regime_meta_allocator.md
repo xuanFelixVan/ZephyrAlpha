@@ -5,7 +5,7 @@ title: RegimeMetaAllocator 参数
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.8.4"
+version: "2.8.6"
 date: 2026-08-15
 topic: regime_meta_allocator
 scope: 07_trading_decision_architecture
@@ -64,7 +64,7 @@ allocation_i = normalize( Base_i × PerformanceScore_i × Shrinkage_i )
   硬约束：floor ≥ 5%（防饿死），cap ≤ 40%（防集中），Σ allocation_i = 1.0
 ```
 
-✅ **已施工 production**：[regime_meta_allocator.py](../../../../src/zephyr/pf_alloc/core/regime_meta_allocator.py) MOD-PA-007（**v1.0.0 production**，MATURITY=production，commit 81c7687540）——`allocate()` 5 步流程 + `_compute_shrinkage()`（含 CRISIS floor 降级 0.09→0.05）+ `_normalize_and_clip()`（water-filling 投影）+ `compute_performance_score()` 静态方法（Sortino→[0.5,1.5]）全部落地，`FLOOR=0.05` / `CAP=0.40`。⚠️ **2026-08-11 git 灾难**：`tests/pf_alloc/test_regime_meta_allocator.py`（55 用例曾全绿）从未提交、被 `git clean -fd` 删除，**测试套件待重建**（见 §6 待裁定）。
+✅ **已施工 production**：[regime_meta_allocator.py](../../../../src/zephyr/pf_alloc/core/regime_meta_allocator.py) MOD-PA-007（**v1.0.0 production**，MATURITY=production，commit 81c7687540）——`allocate()` 5 步流程 + `_compute_shrinkage()`（含 CRISIS floor 降级 0.09→0.05）+ `_normalize_and_clip()`（water-filling 投影）+ `compute_performance_score()` 静态方法（Sortino→[0.5,1.5]）全部落地，`FLOOR=0.05` / `CAP=0.40`。✅ **测试套件已重建**（2026-08-15，AI-REGIME-001）：[test_regime_meta_allocator.py](../../../../tests/pf_alloc/test_regime_meta_allocator.py) 55 用例按 §3.4 施工要点 16 条 + 代码本体回建（原 2026-08-11 git 灾难丢失，从未提交不可恢复），两轮 55/55 全绿，重建后立即 git 提交闭环（灾难教训：未提交=无保护）。
 
 **两个层次**（[BudgetAllocation](../../../../src/zephyr/pf_alloc/core/regime_meta_allocator.py) dataclass）：
 
@@ -349,9 +349,9 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | 设施 | 路径 / 标识 | 状态 | 备注 |
 |---|---|---|---|
 | **主模块代码** | [regime_meta_allocator.py](../../../../src/zephyr/pf_alloc/core/regime_meta_allocator.py)（MOD-PA-007） | ✅ production v1.0.0（MATURITY=production，commit 81c7687540 已提交） | `allocate()` 5 步流程 + `_compute_shrinkage()`（含 CRISIS floor 降级 0.09→0.05）+ `_normalize_and_clip()`（water-filling 投影）+ `compute_performance_score()` 静态方法（Sortino→[0.5,1.5]）全部落地 |
-| **模块蓝图** | [blueprint.md](../../../../docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) | ✅ 存在 | MODIFY-GUARD 锚点 |
-| **测试套件** | `tests/pf_alloc/test_regime_meta_allocator.py` | ❌ **丢失待重建** | 55 用例（TestConfidenceSignal 8 / TestRiskSignal 4 / TestShrinkage 7 / TestNormalizeAndClip 8 / TestRawAllocation 3 / TestAllocate 9 / TestComputePerformanceScore 8 / TestEdgeCases 8）曾全绿（0.75s）；**从未提交 git，2026-08-11 被 `git clean -fd` 删除，git 历史无记录不可恢复**——须按 §3.4 伪代码 + 代码本体重建（见 §6 待裁定） |
-| **错误契约** | AllocationError（ZA-PA-0007）/ ShrinkageDisabled（ZA-PA-0008） | ✅ 已在代码定义 | `shrinkage_enabled=False` 时 `global_shrinkage=1.0` 回退等权（C1 一票否决机制） |
+| **模块蓝图** | [blueprint.md](../../../../docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) | ✅ 存在（v0.2.0 已对齐代码 v1.0.0 口径，2026-08-15） | MODIFY-GUARD 锚点 |
+| **测试套件** | [test_regime_meta_allocator.py](../../../../tests/pf_alloc/test_regime_meta_allocator.py) | ✅ **已重建**（2026-08-15，AI-REGIME-001，两轮 55/55 全绿） | 原 55 用例 2026-08-11 git 灾难丢失（从未提交、`git clean -fd` 删除、不可恢复）；按 §3.4 伪代码 16 条施工要点 + 代码本体回建，组织保持原结构 8 类 55 用例（TestConfidenceSignal 8 / TestRiskSignal 4 / TestShrinkage 7 / TestNormalizeAndClip 8 / TestRawAllocation 3 / TestAllocate 9 / TestComputePerformanceScore 8 / TestEdgeCases 8），重建后立即提交 git 闭环 |
+| **错误契约** | AllocationError（ZA-PA-0007）/ ShrinkageDisabled（ZA-PA-0008） | ⚠️ AllocationError 已定义；ShrinkageDisabled 仅头部声明预留（代码未实例化，2026-08-15 蓝图同步漂移取证） | `shrinkage_enabled=False` 时 `global_shrinkage=1.0` 回退等权不抛错（C1 一票否决机制） |
 | **上游·regime 检测器** | [regime_detector.py](../../../../src/zephyr/regime/core/regime_detector.py)（MOD-REGIME-001）+ [risk_signal_builder.py](../../../../src/zephyr/regime/risk_signal_builder.py) | ✅ 已施工（commit 191a17432f） | 产出 7 维概率（4 HMM 基态 + 3 overlay 特殊态）+ RiskSignal 13 参数 |
 | **上游·C1 验证资产** | `logs/c1_repro/c1_repro_report.md` + `c1_metrics.json` | ✅ 已产出（commit 852457e9） | C1 四项全通过：Sharpe 0.3678→0.3474 / MaxDD 0.2221→0.1485 / Calmar +27% / Turnover ≤2×（[11号](11_regime_backtest_validation_plan.md) §0.5.4） |
 | **下游·StrategyBook** | [strategy_book.py](../../../../src/zephyr/position/core/strategy_book.py)（MOD-POS-020） | ✅ production（70 测试，[30号](30_multi_strategy_concurrency.md) §2.2） | 消费 BudgetAllocation |
@@ -360,7 +360,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | **同域配套模块** | [multi_strategy_capital_allocator.py](../../../../src/zephyr/pf_alloc/core/multi_strategy_capital_allocator.py)（MOD-PA-003）/ strategy_correlation_gate.py / signal_synthesis_combiner.py | ✅ production（各有测试套件幸存） | MOD-PA-003 是权重规整层（容量截断/MaxDD 减仓/冷启动缩放），与本模块正交——本模块产出"目标 budget 占比"，MOD-PA-003 做权重规整，不重复 |
 | **depgraph 登记** | MOD-PA-007 | ✅ 已登记（代码头 SSoT 声明） | stability=evolving / safety=M / ai_autonomy=ai_modifiable |
 
-**盘点结论**：代码链路（上游 regime → 本模块 → 下游 position 三模块）完整且全部 production；**唯一缺口 = 本模块测试套件丢失待重建**。无需退役/删除的设施——同域 3 个配套模块功能边界清晰不重叠。
+**盘点结论**：代码链路（上游 regime → 本模块 → 下游 position 三模块）完整且全部 production；测试套件缺口已于 2026-08-15 重建闭环（AI-REGIME-001，55 用例两轮全绿）。无需退役/删除的设施——同域 3 个配套模块功能边界清晰不重叠。
 
 **作战地图环节映射**
 
@@ -553,7 +553,7 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | **3 态 vs 4 态 ablation** | CSDN 2026-05 A 股 HMM 实战指出"A 股 60%+ 时间震荡，3 态是过拟合与表达力的折中（2 态太粗、4 态过拟合）"——直接质疑 4 态选择。[11号](11_regime_backtest_validation_plan.md) C1 验证 BIC 选优稳定收敛到 4 态，但未做 3 态样本外稳定性对比 | 首批策略 A 股数据上对比 3 态 vs 4 态样本外稳定性；若 3 态显著更稳则降级 |
 | **Hybrid HMM Poisson jump-duration（换检测器，参数估计更简）** | 机制/出处见 §5.2 第十七条远期候选——Laplace 分位数状态划分 + Poisson jump-duration 强制尾部态驻留 + **直接转移计数绕过 Baum-Welch EM**；比 JM 实现更轻（无动态规划），比当前 HMM 参数估计更简（无 EM 迭代）。归 [10号](10_regime_detector_spec.md) regime 检测器实现 | HMM 实盘后若发现状态抖动 + Baum-Welch EM 重训练耗时成为双重瓶颈，则评估 Hybrid HMM Poisson（同时解决持续性和计算成本）；需先校验 Laplace 分位数与 A 股 4 态语义对应关系 |
 | **3 态 sweet spot 佐证** | kooexperience 2026-03 HMM 教程实证"stock returns naturally cluster into roughly three volatility regimes—two feels too coarse, four or more starts overfitting noise, three is the sweet spot"——与 CSDN 2026-05 A 股实证同向质疑 4 态。但 [11号] C1 BIC 选优稳定收敛到 4 态（非过拟合），且 4 态有语义基础（r1-r4），待 ablation 定论 | 同 3 态 vs 4 态 ablation 条件 |
-| **测试套件重建（P0 缺口）** | `tests/pf_alloc/test_regime_meta_allocator.py` 55 用例在 2026-08-11 git 灾难中丢失（从未提交，`git clean -fd` 删除，git 历史无记录）。代码 MOD-PA-007 已 production 但无测试防护网——后续任何参数校准/CRISIS 分支改动都无回归保障。重建依据：§3.4 伪代码 16 条施工要点 + 代码本体（water-filling 投影/CRISIS floor 降级/gap 两级阈值均已实现） | 用户裁定重建时机（建议首批策略上线前必须闭环）；重建后须立即 `git add` + commit（git 灾难教训：未提交文件 = 无保护） |
+| ~~测试套件重建（P0 缺口）~~ **✅ 已解决（2026-08-15）** | ~~55 用例丢失待重建~~ → **已重建闭环**：AI-REGIME-001 按 §3.4 伪代码 16 条施工要点 + 代码本体（water-filling 投影/CRISIS floor 降级/gap 两级阈值）回建 [test_regime_meta_allocator.py](../../../../tests/pf_alloc/test_regime_meta_allocator.py) 55 用例（8 类组织保持原结构），两轮 55/55 全绿；重建后立即 git 提交闭环（git 灾难教训：未提交=无保护，已执行） | ✅ 已解决（2026-08-15，用户裁定 AI-REGIME-001 施工） |
 | **33号 文档重建依赖（✅ 已解决）** | ~~[33号](33_budget_change_handler.md) 设计文档在 2026-08-11 git 灾难中丢失（骨架 v0.1.0）~~ → **2026-08-12 已重建为 active v1.0.0**（commit 6a4f5392，依 MOD-POS-022 production 代码回建，47 测试幸存）；§3.3 两处引用锚点已恢复精确指向（三级升级→33号 §3.2，budget 变动防抖→33号 §3.3 防抖双层） | ✅ 已解决（2026-08-12） |
 | **conf_k 连续置信收缩（远期候选）** | marketmaker.cc 2026-06-28 受控实验（600 种子、已知 ground truth）：`conf_k = n/(n+k)` 交易数收缩因子 + exposure floor 组合的连续收缩可追平全时间线 Sharpe（OOS 1.70）且退化率仅 0.2%——是比 ConfidenceSignal 四档阶梯（0.3/0.6/0.85/1.0）更有理论形状依据的**连续置信收缩函数**。MVP 不采纳（四档已经 C1 验证 + 1uptick 60% 阈值外部印证 + 语义可解释），登记为四档的连续化远期替代——若 D1 敏感性网格显示四档边界是悬崖型（±20% 扰动效果骤变），conf_k 连续函数是首选替代形状 | D1 网格显示四档悬崖型 / 实盘后 ConfidenceSignal 档位跳变频繁 |
 
@@ -674,3 +674,5 @@ RegimeMetaAllocator(本模块, MOD-PA-007)
 | 2026-08-12 | 2.8.2 | 作战地图环节映射补强——锚定 BM-SEL-20-B | §3.5 末尾补映射块，环节级可追溯 |
 | 2026-08-14 | 2.8.3 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001） | §3.4 伪代码折叠为参数常量表+16 条施工要点（代码本体 production 为真源）；§9 修订记录全量保留；参数表/接口契约/触发条件零丢失 |
 | 2026-08-15 | 2.8.4 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-10） | 过程性标签清理（"N 次审查新增/修复/补充"等审查轮次注记，修订记录已承载审查史）；§6 待裁定表机制描述改指 §5.2 真源（Sticky 行"第六条"笔误修正为第十六条）；§8.1 引用表"关系"列散文压缩为定位+指针（来源/链接/关键数据/支撑关系逐项保留）；参数表/G04 校准触发/裁定/跨文档链接零丢失 |
+| 2026-08-15 | 2.8.5 | 测试套件重建闭环（AI-REGIME-001 施工）：§3.1 丢失标注→✅ 已重建；§3.5 盘点表测试套件行 ❌→✅ + 盘点结论"唯一缺口"表述清除；§6 待裁定 P0 行标 ✅ 已解决 | 原 55 用例 2026-08-11 git 灾难丢失（从未提交不可恢复），按 §3.4 伪代码 16 条施工要点 + 代码本体回建（8 类 55 用例，两轮 55/55 全绿），重建后立即提交 git 闭环灾难教训；文档同步反映防护网恢复 |
+| 2026-08-15 | 2.8.6 | 蓝图同步联动修正（AI-REGIME-001 遗留项处置）：§3.5 盘点表**模块蓝图行**标注 v0.2.0 已对齐代码口径（蓝图原 v0.1.1 存量漂移——12 维概率/SampleShrinkage/Sharpe 映射/4 项未实现错误契约，已按代码 v1.0.0 全面同步：7 维/冷启动中性/Sortino/water-filling/CRISIS floor/真实错误契约）；§3.5 **错误契约行**修正——ShrinkageDisabled（ZA-PA-0008）仅头部声明预留、代码未实例化（蓝图同步过程漂移取证），原"✅ 已在代码定义"表述不准确 | 蓝图是 MODIFY-GUARD 锚点，口径漂移会误导后续 AI 冷启动（如按 12 维概率/SampleShrinkage 施工）；ShrinkageDisabled 未实例化是同类漂移，一并修正保文档-代码一致 |

@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 rule（组合模型=『买多少』的权重规则）；primary_timeframe 默认 null 占位；direction 默认 neutral 占位；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   信号、利率、动量、因子、多因子、形态、成本、打板、波动、组合、绩效、行业、规则、资金、风控
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -27,7 +29,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -102,7 +104,7 @@ portfolio_models:
     direction: "neutral"
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -132,10 +134,10 @@ portfolio_models:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["动量", "资金", "打板", "行业", "多因子", "因子", "信号", "绩效", "组合", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -171,7 +173,7 @@ portfolio_models:
     direction: "neutral"
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["成本", "组合", "绩效", "动量"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -203,8 +205,8 @@ portfolio_models:
     regime_invalid: []
     direction: "neutral"
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["etf", "sector"]
+    tags: ["资金", "行业", "组合", "绩效", "动量"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -239,8 +241,8 @@ portfolio_models:
     regime_invalid: []
     direction: "neutral"
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock", "etf"]
+    tags: ["波动", "风控", "利率", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -273,7 +275,7 @@ portfolio_models:
     direction: "neutral"
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "因子", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -308,8 +310,8 @@ portfolio_models:
     regime_invalid: []
     direction: "neutral"
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock", "sector"]
+    tags: ["风控", "行业", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -342,7 +344,7 @@ portfolio_models:
     direction: "neutral"
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["资金", "风控", "多因子", "形态", "因子", "绩效"]
     algorithm_status: "quantized"
     evidence: ""
 
