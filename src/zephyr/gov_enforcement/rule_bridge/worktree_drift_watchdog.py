@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | #ARCH-WORKTREE-WRITE-INTEGRITY-001
+# [BLUEPRINT] MOD-GOV_DRIFT_WATCHDOG | docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml | §#ARCH-WORKTREE-WRITE-INTEGRITY-001
 # [MODULE] zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog
 # [DOMAIN] D_GOV_ENFORCEMENT
 # [DEPENDENCIES] zephyr.shared.infra.process_pool (spawn_python_hidden/is_pid_alive); zephyr.shared.io.paths (anchor_main_root); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.governance.audit.reconciliation_registry (_log_reconcile_results)
