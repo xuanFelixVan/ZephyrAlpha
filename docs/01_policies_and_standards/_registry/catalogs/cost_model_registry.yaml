@@ -9,10 +9,11 @@
 # 本库裁剪与默认值决策：裁剪：成本模型是计费规则，无 K 线周期/市场环境/方向语义，裁 timeframe×2/regime×2/direction。保留 entry_role=rule + 共有四维度；algorithm_status 固定 not_applicable。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   成本、规则、风控
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-CST-001
 name: 交易成本模型登记表
 description: >-
@@ -27,7 +28,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.1
+version: 1.2.2
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -65,6 +66,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 cost_models:
   - cost_model_id: CST-ASTOCK-001
@@ -107,6 +110,8 @@ cost_models:
     tags: ["成本", "规则"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cost_model_id: CST-ASTOCK-002
     name: A-Share Conservative Cost Model
@@ -149,6 +154,8 @@ cost_models:
     tags: ["成本", "风控"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cost_model_id: CST-ZERO-001
     name: Zero Cost Model
@@ -178,3 +185,5 @@ cost_models:
     tags: ["成本"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
