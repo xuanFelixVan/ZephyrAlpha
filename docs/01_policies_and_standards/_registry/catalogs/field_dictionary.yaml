@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：timeframe×2/regime×2/direction——数据字段定义无周期/环境/方向语义。保留 entry_role=reference + 共有四维度；algorithm_status 固定 not_applicable。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   k线、事件、仓位、估值、信号、分时、分红、利率、压力、周期、回撤、因子、均线、基准、套利、宏观、市场结构、形态、情绪、成交、成本、打板、执行、指数、指标、支撑、散户、数据、早盘、期货、机器学习、杠杆、波动、流动性、盘口、组合、绩效、缠论、股票池、背离、行业、行情、规则、订单、财报、质量、资金、趋势、通胀、量价、量化、隔夜、集中度、震荡、风控、高频、龙头、龙虎榜
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -26,7 +28,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -90,8 +92,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "market"]
+  tags: ["指数", "执行", "数据", "因子", "信号", "订单", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-002
@@ -120,8 +122,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-003
@@ -150,8 +152,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-004
@@ -180,7 +182,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-005
@@ -209,8 +211,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["宏观", "数据", "行情", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-006
@@ -238,8 +240,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-007
@@ -267,8 +269,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["质量", "数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-008
@@ -296,8 +298,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["事件", "数据", "信号", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-009
@@ -326,8 +328,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["分时", "早盘", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-010
@@ -356,8 +358,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["分时", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-011
@@ -386,8 +388,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["分时", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-012
@@ -416,8 +418,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["高频", "分时", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-013
@@ -446,7 +448,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "基准", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-014
@@ -475,7 +477,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["量价", "均线", "分时", "执行", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-015
@@ -503,8 +505,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["量价", "分时", "数据", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-016
@@ -533,8 +535,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "market"]
+  tags: ["数据", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-017
@@ -562,8 +564,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["事件", "数据", "因子", "分红", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-018
@@ -592,7 +594,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["量价", "分时", "基准", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-019
@@ -621,7 +623,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["量价", "分时", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-020
@@ -650,7 +652,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["流动性", "高频", "分时", "缠论", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-021
@@ -679,7 +681,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["高频", "盘口", "数据", "缠论", "因子", "订单", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-022
@@ -708,7 +710,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "早盘", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-023
@@ -737,7 +739,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["量价", "分时", "早盘", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-024
@@ -765,8 +767,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["龙头", "打板", "分时", "早盘", "行业", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-025
@@ -795,8 +797,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["打板", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-026
@@ -825,7 +827,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["流动性", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-027
@@ -854,7 +856,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["支撑", "压力", "分时", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-028
@@ -883,7 +885,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["压力", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-029
@@ -913,7 +915,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["震荡", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-030
@@ -942,7 +944,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["周期", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-031
@@ -971,7 +973,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["周期", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-032
@@ -1000,7 +1002,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["周期", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-033
@@ -1029,7 +1031,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["趋势", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-034
@@ -1058,7 +1060,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["周期", "分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-035
@@ -1087,7 +1089,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-036
@@ -1116,7 +1118,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-037
@@ -1145,7 +1147,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-038
@@ -1173,8 +1175,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["事件", "早盘", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-039
@@ -1202,8 +1204,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["事件", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-040
@@ -1232,7 +1234,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-041
@@ -1260,8 +1262,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["量价", "流动性", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-042
@@ -1291,7 +1293,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["量价", "流动性", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-043
@@ -1320,7 +1322,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["流动性", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-044
@@ -1349,7 +1351,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-045
@@ -1377,8 +1379,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-046
@@ -1406,8 +1408,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "index", "market"]
+  tags: ["指数", "基准", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-047
@@ -1435,8 +1437,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-048
@@ -1464,8 +1466,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-049
@@ -1494,7 +1496,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-050
@@ -1522,8 +1524,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["指数", "基准", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-051
@@ -1551,8 +1553,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["事件", "行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-052
@@ -1580,8 +1582,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "sector"]
+  tags: ["指数", "行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-053
@@ -1609,8 +1611,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["事件", "行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-054
@@ -1638,8 +1640,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-055
@@ -1667,8 +1669,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["情绪", "指数", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-056
@@ -1696,8 +1698,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["背离", "指数", "基准", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-057
@@ -1725,8 +1727,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["背离", "指数", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-058
@@ -1754,8 +1756,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["行业", "数据", "通胀", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-059
@@ -1783,8 +1785,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["指数", "股票池", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MKT-060
@@ -1813,7 +1815,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "财报", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-001
@@ -1842,7 +1844,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "数据", "缠论", "规则", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-002
@@ -1871,7 +1873,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-003
@@ -1900,7 +1902,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-004
@@ -1929,7 +1931,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-005
@@ -1958,7 +1960,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-006
@@ -1987,7 +1989,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "盘口", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-007
@@ -2016,7 +2018,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "盘口", "散户", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-008
@@ -2045,7 +2047,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-009
@@ -2074,7 +2076,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "龙虎榜", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-010
@@ -2105,7 +2107,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "盘口", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-011
@@ -2134,7 +2136,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "盘口", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-012
@@ -2163,7 +2165,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "形态", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-013
@@ -2192,7 +2194,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "形态", "因子", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-014
@@ -2221,7 +2223,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "资金", "散户", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-015
@@ -2250,7 +2252,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-016
@@ -2279,7 +2281,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "事件", "分时", "龙虎榜", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-017
@@ -2308,7 +2310,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-018
@@ -2337,7 +2339,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-019
@@ -2366,7 +2368,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "资金", "杠杆", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-020
@@ -2394,8 +2396,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["资金", "质量", "杠杆", "规则", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-021
@@ -2423,8 +2425,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-022
@@ -2452,8 +2454,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "套利", "分时", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-023
@@ -2481,8 +2483,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["量价", "资金", "因子", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-024
@@ -2510,8 +2512,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["量价", "资金", "因子", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-025
@@ -2539,8 +2541,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-026
@@ -2568,8 +2570,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-027
@@ -2597,8 +2599,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-028
@@ -2626,8 +2628,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MFLOW-029
@@ -2655,8 +2657,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "流动性", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-001
@@ -2684,8 +2686,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["情绪", "周期", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-002
@@ -2714,8 +2716,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-003
@@ -2744,8 +2746,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-004
@@ -2774,7 +2776,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "打板", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-005
@@ -2803,7 +2805,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-006
@@ -2832,7 +2834,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "打板", "周期", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-007
@@ -2861,7 +2863,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-008
@@ -2891,7 +2893,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "打板", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-009
@@ -2920,7 +2922,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "打板", "周期", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-010
@@ -2948,8 +2950,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-011
@@ -2978,7 +2980,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["趋势", "形态", "市场结构", "因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SENT-012
@@ -3006,8 +3008,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["因子", "绩效", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-001
@@ -3036,7 +3038,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-002
@@ -3065,7 +3067,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-003
@@ -3094,7 +3096,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-004
@@ -3123,7 +3125,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-005
@@ -3152,7 +3154,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-006
@@ -3181,7 +3183,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["周期", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-007
@@ -3210,7 +3212,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["趋势", "周期", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-008
@@ -3239,7 +3241,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-IND-009
@@ -3268,7 +3270,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["周期", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-001
@@ -3300,7 +3302,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-002
@@ -3329,7 +3331,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-003
@@ -3358,7 +3360,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-004
@@ -3386,8 +3388,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["宏观", "指数", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-005
@@ -3416,7 +3418,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["情绪", "资金", "宏观", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-006
@@ -3445,7 +3447,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-007
@@ -3473,8 +3475,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["宏观", "行业", "通胀", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-008
@@ -3502,8 +3504,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["宏观", "早盘", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-009
@@ -3532,7 +3534,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "宏观", "利率", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-010
@@ -3561,7 +3563,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "流动性", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-011
@@ -3590,7 +3592,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "宏观", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-012
@@ -3618,8 +3620,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["资金", "宏观", "流动性", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-013
@@ -3647,8 +3649,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "futures"]
+  tags: ["宏观", "隔夜", "早盘", "期货", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-014
@@ -3676,8 +3678,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["宏观", "隔夜", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-015
@@ -3705,8 +3707,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["宏观", "指数", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-MACRO-016
@@ -3734,8 +3736,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["宏观", "指数", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-001
@@ -3764,7 +3766,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-002
@@ -3793,7 +3795,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-003
@@ -3822,7 +3824,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-004
@@ -3851,7 +3853,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-005
@@ -3880,7 +3882,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["股票池", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-006
@@ -3909,7 +3911,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-007
@@ -3938,7 +3940,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-008
@@ -3967,7 +3969,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-009
@@ -3996,7 +3998,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-010
@@ -4025,7 +4027,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-011
@@ -4054,7 +4056,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-012
@@ -4083,7 +4085,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-013
@@ -4112,7 +4114,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-014
@@ -4141,7 +4143,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-015
@@ -4170,7 +4172,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-016
@@ -4199,7 +4201,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-017
@@ -4228,7 +4230,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["估值", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FCT-018
@@ -4257,7 +4259,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["估值", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-001
@@ -4286,7 +4288,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-002
@@ -4317,8 +4319,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-003
@@ -4347,7 +4349,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-004
@@ -4376,7 +4378,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-005
@@ -4405,7 +4407,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-006
@@ -4437,8 +4439,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["情绪", "风控", "周期", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-007
@@ -4467,7 +4469,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-SIG-008
@@ -4496,7 +4498,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-001
@@ -4525,7 +4527,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["盘口", "执行", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-002
@@ -4554,7 +4556,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-003
@@ -4585,8 +4587,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["盘口", "成本", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-004
@@ -4617,7 +4619,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "盘口", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-005
@@ -4647,7 +4649,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["盘口", "量化", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-006
@@ -4677,7 +4679,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-007
@@ -4706,7 +4708,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["量化", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-008
@@ -4735,7 +4737,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-009
@@ -4770,7 +4772,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["盘口", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-010
@@ -4799,7 +4801,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["盘口", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-011
@@ -4828,7 +4830,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["盘口", "组合", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ORD-012
@@ -4857,7 +4859,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["盘口", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FILL-001
@@ -4886,7 +4888,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FILL-002
@@ -4915,7 +4917,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FILL-003
@@ -4945,7 +4947,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FILL-004
@@ -4974,7 +4976,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FILL-005
@@ -5003,7 +5005,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "成本", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-FILL-006
@@ -5032,7 +5034,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["套利", "成本", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-001
@@ -5061,7 +5063,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "仓位", "组合", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-002
@@ -5090,7 +5092,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-003
@@ -5119,7 +5121,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-004
@@ -5147,8 +5149,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["仓位"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-005
@@ -5177,7 +5179,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-006
@@ -5205,8 +5207,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["仓位", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-POS-007
@@ -5236,7 +5238,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "仓位", "杠杆"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-001
@@ -5266,7 +5268,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-002
@@ -5295,7 +5297,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-003
@@ -5324,7 +5326,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-004
@@ -5357,7 +5359,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-005
@@ -5386,7 +5388,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "规则", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-006
@@ -5415,7 +5417,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-007
@@ -5444,7 +5446,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-008
@@ -5476,7 +5478,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-009
@@ -5505,7 +5507,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PORT-010
@@ -5534,7 +5536,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-001
@@ -5563,7 +5565,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-002
@@ -5593,7 +5595,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-003
@@ -5622,7 +5624,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-004
@@ -5651,7 +5653,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-005
@@ -5680,7 +5682,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["波动", "风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-006
@@ -5709,7 +5711,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["波动", "风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-007
@@ -5738,7 +5740,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-008
@@ -5767,7 +5769,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-009
@@ -5796,7 +5798,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-010
@@ -5825,7 +5827,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "回撤"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-011
@@ -5854,7 +5856,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "回撤"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-012
@@ -5883,7 +5885,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "震荡", "回撤"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-013
@@ -5912,7 +5914,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-014
@@ -5941,7 +5943,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "仓位", "集中度"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-015
@@ -5969,8 +5971,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["风控", "行业", "集中度"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-016
@@ -5999,7 +6001,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-017
@@ -6028,7 +6030,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-018
@@ -6057,7 +6059,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-019
@@ -6089,7 +6091,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-020
@@ -6118,7 +6120,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-RISK-021
@@ -6147,7 +6149,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-001
@@ -6176,7 +6178,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["利率", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-002
@@ -6204,8 +6206,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["行业", "组合", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-003
@@ -6233,8 +6235,8 @@ fields:
   updated_at: '2026-08-13'
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["行业", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-004
@@ -6263,7 +6265,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-005
@@ -6292,7 +6294,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-006
@@ -6321,7 +6323,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["成本", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-007
@@ -6350,7 +6352,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-PERF-008
@@ -6379,7 +6381,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-001
@@ -6408,7 +6410,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-002
@@ -6437,7 +6439,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-003
@@ -6466,7 +6468,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-004
@@ -6498,7 +6500,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-005
@@ -6529,7 +6531,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-006
@@ -6558,7 +6560,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "成本", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-007
@@ -6587,7 +6589,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "量化", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-008
@@ -6616,7 +6618,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "量化", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-009
@@ -6645,7 +6647,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["均线", "质量", "执行", "基准", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXEC-010
@@ -6674,7 +6676,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["均线", "质量", "执行", "成本"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-001
@@ -6703,7 +6705,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-002
@@ -6732,7 +6734,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-003
@@ -6766,7 +6768,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-004
@@ -6795,7 +6797,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-005
@@ -6824,7 +6826,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-006
@@ -6853,7 +6855,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-007
@@ -6882,7 +6884,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-008
@@ -6911,7 +6913,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-009
@@ -6940,7 +6942,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-010
@@ -6969,7 +6971,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-011
@@ -7001,7 +7003,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-012
@@ -7030,7 +7032,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-013
@@ -7059,7 +7061,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-014
@@ -7088,7 +7090,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-015
@@ -7117,7 +7119,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-016
@@ -7146,7 +7148,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-017
@@ -7175,7 +7177,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-018
@@ -7204,7 +7206,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-019
@@ -7233,7 +7235,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-020
@@ -7262,7 +7264,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["利率", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-021
@@ -7291,7 +7293,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-022
@@ -7320,7 +7322,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["缠论", "成交", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-023
@@ -7349,7 +7351,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["基准", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-EXP-024
@@ -7378,7 +7380,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-001
@@ -7407,7 +7409,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-002
@@ -7436,7 +7438,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-003
@@ -7465,7 +7467,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-004
@@ -7494,7 +7496,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-005
@@ -7523,7 +7525,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-006
@@ -7555,7 +7557,7 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
 - field_id: FLD-ML-007
@@ -7584,6 +7586,6 @@ fields:
   owner: ZephyrAlpha-Owner
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
