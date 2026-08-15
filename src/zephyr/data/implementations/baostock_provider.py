@@ -51,6 +51,11 @@ log = logging.getLogger(__name__)
 _TBL_INDEX_CONSTITUENT = get_registry().table("market_index_constituent")
 _TBL_TRADE_CALENDAR = get_registry().table("market_trade_calendar")
 _TBL_KLINE_DAILY = get_registry().table("market_kline_daily")
+# JOB-084 SQL（§5.160.2 SQL 集中化：裸 SQL 字面量禁入方法体，NO-BARE-SQL gate）
+_SQL_KLINE_SPAN = (
+    "SELECT symbol, min(trade_date), max(trade_date) FROM {table} "
+    "WHERE symbol IN ({symbols}) GROUP BY symbol"
+)
 
 
 def _bs_code_to_symbol(bs_code: str) -> str:
@@ -89,6 +94,9 @@ class BaostockProvider(IngestProviderBase):
             CapabilityContract("index_constituent", supports_symbols_null=True),
             CapabilityContract("trade_calendar", supports_symbols_null=True),
             CapabilityContract("kline_daily", supports_symbols_null=False),
+            # JOB-084（2026-08-16）：退市股历史 K 线回填——universe 由
+            # bs.query_stock_basic(status=0) 自含解析，无需外部 symbols
+            CapabilityContract("kline_daily_delisted", supports_symbols_null=True),
         ],
         known_issues=["数据滞后约1周", "需thread_local登录"],
     )
@@ -174,18 +182,20 @@ class BaostockProvider(IngestProviderBase):
             )
             return
 
-        cap = (payload.extra or {}).get("capability")
-        if cap == "index_constituent":
+        capability = (payload.extra or {}).get("capability")
+        if capability == "index_constituent":
             yield from self._fetch_index_constituent(payload, policy)
-        elif cap == "trade_calendar":
+        elif capability == "trade_calendar":
             yield from self._fetch_trade_calendar(payload, policy)
-        elif cap == "kline_daily":
+        elif capability == "kline_daily":
             yield from self._fetch_kline_daily(payload, policy)
+        elif capability == "kline_daily_delisted":
+            yield from self._fetch_kline_daily_delisted(payload, policy)
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
                 last_key="", elapsed_sec=0.0,
-                error=f"unsupported capability: {cap}",
+                error=f"unsupported capability: {capability}",
             )
 
     # ---- 沪深300成分股 ----
@@ -312,3 +322,185 @@ class BaostockProvider(IngestProviderBase):
                     table=table, columns=columns, rows=[],
                     last_key="", elapsed_sec=time.time() - t0, error=str(e),
                 )
+
+    # ---- JOB-084：退市股历史 K 线回填（DS-002 幸存者偏差治理）----
+
+    # A 股板块前缀（baostock 代码为小写交易所前缀；北交所 baostock 无覆盖——
+    # tushare 对照实证退市北交所 5 只，known gap 留 registry evidence）
+    _DELISTED_A_PREFIXES = ("sh.60", "sh.68", "sz.00", "sz.30")
+    # 覆盖判定余量：已覆盖 [ipo+10d, out-10d] 即视为完整（防边界毛刺反复重抓）
+    _SPAN_MARGIN_DAYS = 10
+
+    @staticmethod
+    def _iso_or_none(s) -> datetime.date | None:
+        """'YYYY-MM-DD' 字符串 → date，脏值返回 None。"""
+        try:
+            return datetime.date.fromisoformat(str(s or "").strip()[:10])
+        except (ValueError, TypeError):
+            return None
+
+    def _fetch_delisted_universe(self, bs, policy: SourcePolicy) -> list[tuple]:
+        """bs.query_stock_basic → 退市 A 股 universe [(code_bs, code6, ipoDate, outDate)]。
+
+        过滤：type=='1'（股票）& status=='0'（退市）& A 股板块前缀
+        （B股/基金/债券/指数排除；2026-08-16 实证 status=0 全类型 1179 行）。
+        """
+        rs = self._call_with_policy(bs.query_stock_basic, policy)
+        out: list[tuple] = []
+        if rs is None or getattr(rs, "error_code", "?") != "0":
+            self._log.warning(f"query_stock_basic 失败: {getattr(rs, 'error_msg', '?')}")
+            return out
+        while rs.next():
+            row = rs.get_row_data()
+            if len(row) < 6:
+                continue
+            code_bs, _, ipo_d, out_d, typ, status = row[:6]
+            if typ != "1" or status != "0":
+                continue
+            if not code_bs.startswith(self._DELISTED_A_PREFIXES):
+                continue
+            out.append((code_bs, code_bs.split(".")[1], str(ipo_d), str(out_d)))
+        return out
+
+    def _kline_span_map(self, _chr, table: str, codes6: list[str]) -> dict[str, tuple]:
+        """kline_daily 已覆盖区间 {code6: (min_date, max_date)}（增量跳过依据）。"""
+        if not codes6:
+            return {}
+        in_list = ",".join(f"'{c}'" for c in codes6)
+        try:
+            tsv = _chr.query(_SQL_KLINE_SPAN.format(table=table, symbols=in_list))
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"kline_daily 覆盖区间查询失败（降级全量抓取）: {e}")
+            return {}
+        spans: dict[str, tuple] = {}
+        for line in (tsv or "").strip().split("\n"):
+            parts = line.split("\t")
+            if len(parts) != 3:
+                continue
+            lo, hi = self._iso_or_none(parts[1]), self._iso_or_none(parts[2])
+            if lo and hi:
+                spans[parts[0]] = (lo, hi)
+        return spans
+
+    @staticmethod
+    def _map_delisted_kline_rows(rows: list[list], code6: str) -> list[tuple]:
+        """baostock K线行 → kline_daily 表行（INSERT_COLUMNS 列序）。
+
+        fields: date,code,open,high,low,close,preclose,volume,amount,turn,pctChg。
+        不复权（adjustflag=3，对齐 kline_daily 主口径=miniQMT 不复权；既有 baostock
+        fallback 的 adjustflag=2 前复权为历史不一致，不扩散到本能力）→ adj_factor=1。
+        退市整理期末端 volume/amount/turn/pctChg 可空（实证 000005 末日）→ 0 兜底；
+        close 空 → 丢行（价格缺失无撮合价值）。
+        """
+        out: list[tuple] = []
+        for r in rows:
+            if len(r) < 11:
+                continue
+            date_s, _, o, h, lo, cl, pre, vol, amt, turn, pct = r[:11]
+            if not cl:
+                continue
+            close = round(float(cl), 4)
+            preclose = float(pre) if pre else 0.0
+            high = round(float(h), 4) if h else close
+            low = round(float(lo), 4) if lo else close
+            open_ = round(float(o), 4) if o else close
+            amplitude = round((high - low) / preclose * 100, 4) if preclose > 0 else 0.0
+            change = round(close - preclose, 4) if preclose > 0 else 0.0
+            out.append((
+                date_s, code6, open_, high, low, close,
+                int(float(vol)) if vol else 0,
+                round(float(amt), 2) if amt else 0.0,
+                amplitude,
+                round(float(pct), 4) if pct else 0.0,
+                change,
+                round(float(turn), 4) if turn else 0.0,
+                1,            # adj_factor：不复权
+                "A_share",
+                "Baostock",
+                1,            # quality_flag：正常
+            ))
+        return out
+
+    def _is_span_covered(self, span, ipo: datetime.date | None, out_d: datetime.date | None) -> bool:
+        """已覆盖 [ipo+margin, out-margin] 即视为完整（防边界毛刺反复重抓）。"""
+        if not span or not ipo or not out_d:
+            return False
+        margin = datetime.timedelta(days=self._SPAN_MARGIN_DAYS)
+        return span[0] <= ipo + margin and span[1] >= out_d - margin
+
+    def _fetch_one_delisted_kline(
+        self, bs, policy: SourcePolicy, code_bs: str, code6: str, ipo_d: str, out_d: str
+    ) -> list[tuple]:
+        """单只退市股 [ipoDate, outDate] 全历史 K 线抓取+映射（失败记 warning 返回 []）。
+
+        adjustflag=3 不复权：对齐 kline_daily 主口径（miniQMT 不复权）。
+        """
+        try:
+            rs = self._call_with_policy(
+                bs.query_history_k_data_plus,
+                policy,
+                code=code_bs,
+                fields="date,code,open,high,low,close,preclose,volume,amount,turn,pctChg",
+                start_date=ipo_d or "1990-01-01",
+                end_date=out_d or datetime.date.today().isoformat(),
+                frequency="d",
+                adjustflag="3",
+            )
+            raw: list[list] = []
+            while rs is not None and rs.error_code == "0" and rs.next():
+                raw.append(rs.get_row_data())
+            return self._map_delisted_kline_rows(raw, code6)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"退市股 K线 {code_bs} 获取失败: {e}")
+            return []
+
+    def _fetch_kline_daily_delisted(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """退市股历史 K 线回填（JOB-084，DS-002 幸存者偏差治理），写入 kline_daily。
+
+        universe：bs.query_stock_basic(type=1 股票 & status=0 退市) A 股前缀过滤，
+        自含解析不跨源。窗口：每股 [ipoDate, outDate] 全历史（2026-08-16 实证
+        sz.000005 → 8146 根 1990-12-19~2024-04-26 退市日）。增量：symbol 已覆盖
+        [ipo+10d, out-10d] 即跳过（月度 monthly_static 幂等刷新只抓新退市股）；
+        同键 ReplacingMergeTree 替换幂等。单股失败记 warning 继续（汇总日志计数）。
+        """
+        bs = self._tls.bs
+        table = payload.table or _TBL_KLINE_DAILY
+        columns = [
+            "trade_date", "symbol", "open", "high", "low", "close", "volume",
+            "amount", "amplitude", "pct_change", "change", "turnover",
+            "adj_factor", "market_type", "data_source", "quality_flag",
+        ]
+        t0 = time.monotonic()
+        universe = self._fetch_delisted_universe(bs, policy)
+        if not universe:
+            yield FetchResult(
+                table=table, columns=columns, rows=[], last_key="",
+                elapsed_sec=time.monotonic() - t0,
+                error="退市股 universe 解析为空（query_stock_basic 失败或无退市股）",
+            )
+            return
+
+        from zephyr.data import ch_reader as _chr
+        spans = self._kline_span_map(_chr, table, [u[1] for u in universe])
+        n_done = n_skip = n_empty = 0
+        for code_bs, code6, ipo_d, out_d in universe:
+            if self._is_span_covered(
+                spans.get(code6), self._iso_or_none(ipo_d), self._iso_or_none(out_d)
+            ):
+                n_skip += 1
+                continue
+            rows = self._fetch_one_delisted_kline(bs, policy, code_bs, code6, ipo_d, out_d)
+            if not rows:
+                n_empty += 1
+                continue
+            n_done += 1
+            yield FetchResult(
+                table=table, columns=columns, rows=rows,
+                last_key=out_d, elapsed_sec=time.monotonic() - t0,
+            )
+        self._log.info(
+            f"kline_daily_delisted: universe {len(universe)} 只 → 回填 {n_done} 只 "
+            f"/ 跳过已覆盖 {n_skip} / 无数据或失败 {n_empty}（{time.monotonic() - t0:.1f}s）"
+        )

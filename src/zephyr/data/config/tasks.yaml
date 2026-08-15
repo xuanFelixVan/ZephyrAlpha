@@ -1315,6 +1315,24 @@ tasks:
     description: "ST历史状态名称变更推导回填（JOB-083/DS-085历史段：tushare namechange→ST区间→变化日快照，补齐 2026-08-10 前历史）"
     trading_day_only: false
 
+  # JOB-084（DS-002 幸存者偏差治理，2026-08-16）：退市股历史 K 线回填——
+  # baostock query_stock_basic(status=0) 自含解析退市 universe（A股前缀过滤），
+  # 逐股 [ipoDate,outDate] 全历史 adjustflag=3 不复权（对齐 kline_daily 主口径），
+  # 按 symbol 已覆盖区间增量跳过，月度幂等刷新只抓新退市股。
+- task_id: kline_daily_delisted_backfill
+  table: c1_market.kline_daily
+  source: baostock
+  schedule: monthly_static
+  incremental: false    # 自管理 symbol 级覆盖判定（span skip），同键幂等替换
+  date_col: trade_date
+  dependencies: []
+  capability: kline_daily_delisted
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "退市股历史K线回填（JOB-084/DS-002：baostock退市universe→全历史不复权日K，治幸存者偏差；北交所 baostock 无覆盖为已知缺口）"
+    trading_day_only: false
+
 - task_id: suspend_status_premarket
   table: c1_market.suspend
   source: akshare

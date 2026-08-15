@@ -641,7 +641,7 @@ datasets:
   status: candidate
   version: 1.0.0
   created_at: '2026-08-13'
-  updated_at: '2026-08-13'
+  updated_at: '2026-08-16'
   owner: MOD-MKT_DATA
   produced_by_source: SRC-QMT-001
   survivorship_free: unknown
@@ -655,7 +655,7 @@ datasets:
   applies_to: ["market"]
   tags: ["数据", "k线"]
   algorithm_status: "not_applicable"
-  evidence: ""
+  evidence: "2026-08-16 JOB-084 实证：日线段退市股历史补齐——Baostock 源 337 只退市股 1,373,162 行落库 kline_daily（[ipoDate,outDate] 全历史不复权；抽验 000005 全史 8146 根至 2024-04-26 退市日、600200/300379 同验），derived ST 集无 K 线代码 249→5；分钟线段仍仅在市覆盖。已知缺口：北交所退市 5 只（baostock 无 BJ 覆盖）"
   code_symbol: null
   code_fingerprint: null
 - dataset_id: DS-003
@@ -6698,4 +6698,32 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: "2026-08-16 实盘回填：namechange 逐年分页（1990 起；无参调用被 tushare 默认截断 10000 行实证修复）→ST 区间→变化日全量快照 450 个/109902 行落库（2020-01-02~2026-08-07，接缝=实盘首快照 2026-08-10 键零碰撞）；单测 8 条全过；交叉核验：实盘 8-10 集合缺失仅 2 只、独立口径 stock_basic 8-14 名称含 ST=203 只、负面对照 000503 零命中；已知残留：退市无更名个股区间无终点（121 只留推导集，无 K 线不触达消费侧）"
   code_symbol: "src/zephyr/data/implementations/tushare_provider.py::TushareProvider._fetch_st_namechange_backfill"
+  code_fingerprint: null
+- job_id: JOB-084
+  job_name: ingest.baostock_delisted_kline
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/baostock_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-002
+  pit_relevance: strict
+  description: 退市股历史 K 线回填（baostock query_stock_basic status=0 自含解析退市 universe→逐股 [ipoDate,outDate] 全历史日K，adjustflag=3 不复权对齐 kline_daily 主口径；按 symbol 覆盖区间增量跳过，monthly_static 月度幂等刷新；治 DS-002 日线段幸存者偏差）
+  module_id: MOD-L00-004
+  design_maturity: design
+  name: ingest.baostock_delisted_kline
+  name_zh: 退市股历史K线回填
+  status: production
+  version: 1.0.0
+  created_at: '2026-08-16'
+  updated_at: '2026-08-16'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "k线"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-16 实盘回填：universe 337 只（A股前缀过滤，北交所 baostock 无覆盖 5 只为已知缺口）→ 1,373,162 行落库 kline_daily（不复权；抽验 000005 全史 8146 根 1990-12-19~2024-04-26 退市日、600200/300379 同验）；derived ST 集无 K 线代码 249→5（余 5=北交所）；单测 6 条全过（universe过滤/行映射空值兜底/span跳过/不复权口径断言/路由）"
+  code_symbol: "src/zephyr/data/implementations/baostock_provider.py::BaostockProvider._fetch_kline_daily_delisted"
   code_fingerprint: null
