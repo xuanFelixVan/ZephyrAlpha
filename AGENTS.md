@@ -157,13 +157,17 @@
 > - ✅ 风控限额：[`risk_limit_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/risk_limit_registry.yaml)（62 条/9 类，K4 补登 var/es/kill_switch 20 条后闭环）
 > - ✅ 技术指标：[`technical_indicator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/technical_indicator_registry.yaml)（41 条/6 大类，含 Ichimoku，9 周期覆盖）
 > - ✅ 执行算法：[`execution_algo_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml)（6 条：TWAP/VWAP/ICEBERG/POV/IS/ALT）
-> - ✅ 数据资产：[`data_asset_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml)（171 条=15 源+80 数据集+76 作业，含 DS-080 龙虎榜）
+> - ✅ 数据资产：[`data_asset_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/data_asset_registry.yaml)（199 条=15 源+102 数据集+82 作业，含龙虎榜/财务/公司行动/宏观全谱系）
 > - ✅ 图形形态：[`chart_pattern_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml)（254 条/8 大类，十五轮 SOTA 调研收敛关闭）
 > - ✅ 字段字典：[`field_dictionary.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/field_dictionary.yaml)（257 条/16 域，factor.inputs FK 全量可解析）
 > - ✅ 实验：[`experiment_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/experiment_registry.yaml)（5 条可溯源实验记录）
 > - ✅ 龙虎榜席位：[`seat_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/seat_registry.yaml)（15 席位，管"谁在买"，与图形形态表正交；消费模块=CAND-SEAT-001）
 > - ✅ 周期分析：[`regime_cycle_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml)（12 条 Gann/统计周期，管"时间窗口"，与 regime/emotion_cycle 正交；消费模块=CAND-CYCLE-001）
-> - 备注：14 个注册表全部建成并登记 ROOR，状态以 ROOR `summary.total_registries` 为准
+> - ✅ ML 模型：[`model_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml)（8 条，模型产物版本/晋升/衰减，与 experiment 过程表正交）
+> - ✅ 事件日历：[`event_calendar_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/event_calendar_registry.yaml)（12 事件类型全量 PIT 规则，event_driven 策略前提）
+> - ✅ 宏观指标：[`macro_indicator_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml)（15 条中美指标发布纪律/修订政策/市场语义）
+> - ✅ 组合构建模型：[`portfolio_model_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml)（8 条：等权/MVO/BL/风险平价/HRP/Barra，OOS 跑不赢 1/N 不得晋升）
+> - 备注：18 个注册表全部建成并登记 ROOR，状态以 ROOR `summary.total_registries` 为准
 
 ## RULE-SSOT：第五件事（真源分类铁律，防泛化错误，2026-07-09 加强）
 
@@ -527,7 +531,7 @@ result = await gateway.full_scan(user_text, llm_response)
 新 AI 进入项目后，发现已有功能/符号有两个互补手段，职责边界明确：
 
 - **能力发现（CapabilityLookup）**：查"某个能力是否存在 + canonical 真源在哪"。
-  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（179 条已声明能力）
+  - 真源：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)（已声明能力持续扩充——实时条目数以注册表为准，2026-08-15 时点 347 条）
   - 用法：`from zephyr.governance.capability_lookup import CapabilityLookup; CapabilityLookup().find("handoff")`
   - 覆盖范围：仅已声明 capability_id 的功能。子目录文件（如 `audit_trail/agent_signer.py`）默认未声明，查不到。
   - 何时用：新 AI 想做"X 功能"前，反查是否已有该能力的 canonical 实现。
