@@ -492,6 +492,12 @@ class Telemetry:
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.debug("watchdog_tick failed", exc_info=True)
 
+    # ── Stage 4 公共化（补全 2026-08-15）：只读 property（tests/observability/test_facade.py 消费） ──
+    @property
+    def shutdown_called(self) -> bool:
+        """只读：shutdown_called（Stage 4 公共化补全）。"""
+        return self._shutdown_called
+
     def shutdown(self) -> None:
         if self._shutdown_called:
             return

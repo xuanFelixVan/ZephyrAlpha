@@ -416,6 +416,25 @@ class BaseMCPServer:
             error["data"] = data
         return {"jsonrpc": JSONRPC_VERSION, "id": req_id, "error": error}
 
+    # ── Stage 4 公共化（补全 2026-08-15）：public wrappers（tests/a2a/test_mcp.py 消费） ──
+    def ok(self, req_id: str | int, result: dict[str, Any]) -> dict[str, Any]:
+        """公共接口：ok（Stage 4 公共化补全，委托到 self._ok）。"""
+        return self._ok(req_id, result)
+
+    def err(
+        self,
+        req_id: str | int,
+        code: int,
+        message: str,
+        data: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """公共接口：err（Stage 4 公共化补全，委托到 self._err）。"""
+        return self._err(req_id, code, message, data)
+
+    def install_decorated_tools(self) -> None:
+        """公共接口：install_decorated_tools（Stage 4 公共化补全，委托到 self._install_decorated_tools）。"""
+        return self._install_decorated_tools()
+
     # ------------------------------------------------------------------
     # 请求路由
     # ------------------------------------------------------------------

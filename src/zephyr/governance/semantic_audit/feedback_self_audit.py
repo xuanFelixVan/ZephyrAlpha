@@ -134,6 +134,17 @@ class FeedbackSelfAuditor:
 
         self._feedback_history: dict[str, list[dict[str, Any]]] = defaultdict(list)
 
+    # ── Stage 4 公共化（补全 2026-08-15，对齐 gov_audit 变体）：property ──
+    @property
+    def amplification_threshold(self) -> float:
+        """只读：amplification_threshold（Stage 4 公共化补全，tests/semantic_auditor 消费）。"""
+        return self._amplification_threshold
+
+    @amplification_threshold.setter
+    def amplification_threshold(self, value: float) -> None:
+        """写入：amplification_threshold（Stage 4 公共化补全）。"""
+        self._amplification_threshold = value
+
     def detect_self_reinforcement(
         self,
         agent_id: str,

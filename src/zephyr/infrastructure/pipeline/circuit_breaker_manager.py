@@ -76,7 +76,6 @@ class CircuitBreakerManager:
         self._failure_window_s = failure_window_s or self.FAILURE_WINDOW_S
         self._failure_threshold = failure_threshold or self.FAILURE_THRESHOLD
         self._cooldown_s = cooldown_s or self.COOLDOWN_S
-
         self._log_fn = log_fn or (lambda level, msg: None)
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
@@ -109,6 +108,11 @@ class CircuitBreakerManager:
     def failure_window_s(self, value):
         """写入：failure_window_s（Stage 4 公共化）。"""
         self._failure_window_s = value
+
+    @property
+    def states(self) -> dict[str, CircuitBreakerState]:
+        """只读：states（Stage 4 公共化补全 2026-08-15，tests/pipeline/test_pipeline_orchestrator.py 消费）。"""
+        return self._states
 
 
     # ------------------------------------------------------------------

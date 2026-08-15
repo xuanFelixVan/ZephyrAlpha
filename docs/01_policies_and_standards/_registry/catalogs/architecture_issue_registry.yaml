@@ -16848,6 +16848,30 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-080'
+  title: Stage 4 公共化幻觉字段族——property 引用从未赋值的 _xxx（2 例实证，已修）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证 2 例同族：①src/zephyr/integration/vector_memory/in_memory_fake_vms.py store_size getter 返回 self._store_size，但 __init__ 只定义 self._store（dict）；②src/zephyr/shared/event_bus.py EventBusBackpressure.subscribed_topics getter/setter 引用 self._subscribed_topics，但 __init__ 真实存储是 _handlers（topic→handlers dict）。根因：Stage 4 公共化（2026-07-29）批量脚本对"派生语义属性"（无同名存储字段）生成幻觉 getter/setter，任何访问必 AttributeError。修复：①getter=len(self._store)；②getter=frozenset(self._handlers.keys())（setter 无消费方删除）。tests/memory/test_vms_lifecycle.py 2 项 + tests/f_lifecycle/test_f5_event_startup.py 1 项转绿。教训入档：后续公共化批次需全量排查同类（property 引用从未在 __init__ 赋值的 _xxx）。'
+  fix_phase: 已修（2026-08-15，getter=len(_store)；event_bus 变体 getter=frozenset(_handlers.keys())）
+  status: fixed
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-081'
+  title: FeedbackLoopScheduler 连续错误指数退避规格未实现（max_consecutive_errors/error_backoff_base 缺席）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：tests/trading/extreme/test_f14_pipeline_extreme.py::test_consecutive_errors_triggers_backoff 编码红队规格——scheduler.max_consecutive_errors==10 阈值 + error_backoff_base==5.0 + 连续错误 10 次暂停 5 分钟；但 src/zephyr/feedback_loop/scheduler.py 仅有 _consecutive_errors 计数（+property），无阈值字段、无退避逻辑（on exception 仅计数不 crash）。测试先行规格、实现未跟（#ARCH-073~076 同族）。测试已方法级 xfail(strict=False) 留痕。待裁定：按红队规格补退避实现，或改写测试对齐现行行为。'
+  fix_phase: 待裁定（补退避实现 / 改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-082'
+  title: SagaCompensator.compensate 契约分歧——测试 list[str] 逆序补偿 vs 生产 SagaContext 状态机
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：tests/federated_learning/test_fl_saga_compensator.py::TestCompensate 4 项编码契约 compensate(steps: list[str]) -> list["undo_{step}" 逆序]；而生产 src/zephyr/shared/compensation/saga_compensator.py 为 SagaContext 状态机设计（begin/step/compensate_all，step.compensation() 回调，无 undo_ 字符串语义）。两套设计无交集——测试先行契约未落地（#ARCH-073~076 同族）。TestCompensate 已类级 xfail(strict=False) 留痕。待裁定：按测试契约补轻量 compensate(list) 入口，或改写测试对齐 SagaContext 状态机设计。'
+  fix_phase: 待裁定（补轻量入口 / 改写测试对齐状态机）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
 - issue_id: '#ARCH-079'
   title: gov_drift.drift_detector.trigger_recovery 为桩（return True）——恢复编排契约未实现
   severity: P2中
