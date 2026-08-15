@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 ranking（因子主消费方式=截面排序打分）；direction 默认 neutral 为占位，条目内容填入时逐条校正；algorithm_status 推导规则：status∈{deprecated,retired}→not_applicable，code_path 非空→quantized，否则 pending_backtest。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   k线、事件、仓位、信号、出货、分时、利率、动量、压力、反转、吸筹、周期、回撤、因子、均值回归、均线、基准、威科夫、宏观、尾盘、形态、情绪、成交、成本、打板、执行、持续、指数、指标、支撑、放量、散户、数据、斐波那契、早盘、期货、杠杆、止损、波动、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、行业、规则、订单、财报、质量、资金、超买、超跌、趋势、量价、量化、隔夜、集中度、震荡、风控、高频、龙头、龙虎榜
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
@@ -24,7 +26,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.0
+version: 1.2.1
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -205,13 +207,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["量价", "均线", "分时", "早盘", "执行", "组合", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -277,13 +279,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "均线", "分时", "均值回归"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -349,13 +351,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
+  regime_valid: ["trend_up", "panic"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "放量", "情绪", "分时", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -421,13 +423,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "分时", "量化", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -493,13 +495,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "突破", "缩量", "放量", "分时", "早盘", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -565,13 +567,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["背离", "缩量", "放量", "量价", "分时", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -637,13 +639,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "缩量", "放量", "均线", "分时", "早盘", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -709,13 +711,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["风控", "质量", "仓位", "分时", "量化", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -781,13 +783,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["背离", "量价", "分时", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -853,13 +855,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "放量", "趋势", "分时", "k线", "形态", "量化", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -925,13 +927,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["120min", "daily", "weekly", "monthly", "1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["趋势", "周期", "分时", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -996,14 +998,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "30min"
+  applicable_timeframes: ["30min", "1min", "5min", "15min", "60min"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["量价", "震荡", "分时", "早盘", "量化", "集中度", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1069,13 +1071,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["资金", "龙头", "分时", "早盘", "行业", "数据", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1141,13 +1143,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["量价", "均线", "资金", "仓位", "分时", "执行", "成本", "缠论", "指标", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1216,14 +1218,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up", "ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "趋势", "均线", "资金", "震荡", "成本", "量化", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1288,14 +1290,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "放量", "量价", "均线", "资金", "量化", "规则", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1360,14 +1362,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "trend_down"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["缩量", "吸筹", "资金", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1432,14 +1434,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "止损", "k线", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1504,14 +1506,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "均线", "止损", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1576,14 +1578,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "打板", "质量", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1648,14 +1650,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily", "monthly"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["趋势", "周期", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1720,14 +1722,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "k线", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1792,14 +1794,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["panic", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "sector"]
+  tags: ["反转", "放量", "情绪", "资金", "指数", "行业", "量化", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1864,14 +1866,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -1936,14 +1938,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2008,14 +2010,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "缺口", "形态", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2080,14 +2082,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2152,14 +2154,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["趋势", "均线", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2224,14 +2226,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down", "trend_up"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "风控", "超跌", "超买", "量化", "规则", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2296,14 +2298,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["持续", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2368,14 +2370,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["趋势", "波动", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2440,14 +2442,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["波动", "均线", "止损", "震荡", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2512,14 +2514,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["支撑", "压力", "趋势", "均线", "缺口", "回撤", "斐波那契", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2584,14 +2586,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "趋势", "超跌", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2656,14 +2658,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["持续", "放量", "资金", "数据", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2728,14 +2730,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["动量", "均线", "仓位", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2800,14 +2802,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["风控", "震荡", "仓位", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2876,14 +2878,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "量化", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -2948,14 +2950,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["low_vol"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["反转", "缩量", "量价", "流动性", "量化", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3020,14 +3022,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down", "panic"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "放量", "情绪", "资金", "流动性", "形态", "量化", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3092,14 +3094,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["放量", "量价", "流动性", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3164,14 +3166,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["panic", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["情绪", "流动性", "数据", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3236,14 +3238,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["资金", "流动性", "数据", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3308,14 +3310,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["出货", "资金", "龙头", "打板", "流动性", "量化", "规则", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3380,14 +3382,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["持续", "量价", "流动性", "量化", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3456,14 +3458,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["5min", "15min", "daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "支撑", "压力", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3528,14 +3530,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["5min", "15min", "daily", "1min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "背离", "周期", "分时", "量化", "指标", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3600,14 +3602,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "资金", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3672,14 +3674,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "压力", "量化", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3744,14 +3746,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["持续", "突破", "缩量", "出货", "资金", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3816,14 +3818,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "放量", "趋势", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3888,14 +3890,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "放量", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3960,14 +3962,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["反转", "出货", "波动", "资金", "仓位", "行业", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4032,14 +4034,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["反转", "缩量", "回撤", "行业", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4104,14 +4106,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["反转", "放量", "出货", "资金", "仓位", "行业", "形态", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4176,14 +4178,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "short"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "突破", "压力", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4248,14 +4250,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["背离", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4320,14 +4322,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["持续", "趋势", "波动", "震荡", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4392,14 +4394,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["缺口", "打板", "k线", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4464,14 +4466,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "突破", "支撑", "压力", "趋势", "均线", "斐波那契", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4536,14 +4538,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "trend_up", "trend_down"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "趋势", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4608,14 +4610,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["突破", "支撑", "震荡", "形态", "威科夫", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4680,14 +4682,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "持续", "放量", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4752,14 +4754,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["缺口", "情绪", "资金", "形态", "量化", "信号", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4828,14 +4830,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["资金", "行业", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4900,14 +4902,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "资金", "震荡", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4972,14 +4974,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "sector"]
+  tags: ["反转", "放量", "尾盘", "指数", "行业", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5044,14 +5046,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["行业", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5116,14 +5118,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector", "market"]
+  tags: ["资金", "龙头", "打板", "行业", "散户", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5188,14 +5190,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["指数", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5260,14 +5262,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "sector"]
+  tags: ["指数", "行业", "组合", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5332,14 +5334,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["压力", "资金", "行业", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5404,14 +5406,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["动量", "资金", "震荡", "行业", "量化", "因子", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5476,14 +5478,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["震荡", "行业", "因子", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5548,14 +5550,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["行业", "形态", "量化", "组合", "因子", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5620,14 +5622,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "sector"]
+  tags: ["指数", "行业", "股票池", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5696,14 +5698,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5768,14 +5770,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["情绪", "事件", "行业", "财报"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5840,14 +5842,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["事件", "隔夜", "早盘"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5912,14 +5914,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "index"]
+  tags: ["事件", "尾盘", "指数", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -5984,14 +5986,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["事件", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6056,14 +6058,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6128,14 +6130,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["事件", "宏观"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6200,14 +6202,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "futures", "sector", "market"]
+  tags: ["事件", "期货", "行业", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6272,14 +6274,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "futures"]
+  tags: ["事件", "隔夜", "早盘", "期货", "数据", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6344,14 +6346,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["事件"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6416,14 +6418,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "index"]
+  tags: ["事件", "隔夜", "早盘", "指数", "数据", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6488,14 +6490,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["风控", "事件", "宏观", "指数", "利率", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6560,14 +6562,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["风控", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6632,14 +6634,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["事件", "流动性"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6704,14 +6706,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["风控", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6780,14 +6782,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "情绪", "资金", "超跌"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6852,14 +6854,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["情绪", "打板", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6924,14 +6926,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["panic"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["情绪", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -6996,14 +6998,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["panic", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["情绪", "打板", "量化", "信号", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7068,14 +7070,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["panic"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["index"]
+  tags: ["情绪", "打板", "指数", "量化", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7144,14 +7146,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "震荡", "数据", "杠杆", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7216,14 +7218,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["etf"]
+  tags: ["吸筹", "资金", "流动性", "数据", "杠杆"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7288,14 +7290,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "trend_down"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "etf", "index"]
+  tags: ["放量", "资金", "流动性", "震荡", "指数", "散户", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7360,14 +7362,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["流动性", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7432,14 +7434,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "仓位", "盘口", "数据", "形态", "散户"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7505,13 +7507,13 @@ factors:
   version_pin: null
   code_commit: null
   primary_timeframe: null
-  applicable_timeframes: []
+  applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "仓位", "高频", "数据", "缠论", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7576,14 +7578,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_up"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["持续", "资金", "流动性"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7648,14 +7650,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "龙虎榜", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7720,14 +7722,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["panic"]
   regime_invalid: []
   direction: "neutral"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "index"]
+  tags: ["资金", "流动性", "指数", "执行", "股票池", "因子", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7792,14 +7794,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["流动性", "震荡", "散户", "因子", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7864,14 +7866,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "震荡", "数据", "散户", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -7936,14 +7938,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["资金", "流动性", "因子", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -8008,14 +8010,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["ranging", "panic"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["情绪", "流动性", "震荡", "散户", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -8080,14 +8082,14 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
-  regime_valid: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
+  regime_valid: ["trend_down"]
   regime_invalid: []
-  direction: "neutral"
+  direction: "both"
   entry_role: "ranking"
   applies_to: []
-  tags: []
+  tags: ["反转", "资金", "流动性", "杠杆", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -8152,13 +8154,13 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
-  primary_timeframe: null
-  applicable_timeframes: []
+  primary_timeframe: "daily"
+  applicable_timeframes: ["daily"]
   regime_valid: []
   regime_invalid: []
-  direction: "neutral"
+  direction: "long"
   entry_role: "ranking"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["资金", "打板", "流动性", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
