@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 trigger（形态=买卖触发信号）；primary_timeframe 由既有 timeframe 字段映射（daily→daily、weekly→weekly、intraday→null 占位，因 intraday 跨多个分钟级无法唯一归属）；direction 默认 neutral 为占位，条目内容填入时按形态多/空校正；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   k线、事件、信号、出货、分时、压力、反转、吸筹、周期、回撤、因子、均线、基准、威科夫、尾盘、市场结构、形态、情绪、成交、打板、执行、持续、指标、支撑、斐波那契、早盘、机器学习、止损、江恩、波动、波浪、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、规则、订单、谐波、质量、资金、超跌、趋势、通胀、量价、量化、震荡
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -167,7 +169,7 @@ algorithm_variant_sota_ladder:
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 2.14.0
+version: 2.14.1
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -252,13 +254,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -291,13 +293,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -330,13 +332,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -369,13 +371,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -408,13 +410,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -447,13 +449,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -486,13 +488,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -525,13 +527,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -564,13 +566,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -603,13 +605,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -642,13 +644,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -681,13 +683,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -720,13 +722,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -759,13 +761,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -798,13 +800,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -837,13 +839,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -876,13 +878,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -915,13 +917,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -954,13 +956,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -993,13 +995,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1032,13 +1034,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1071,13 +1073,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1110,13 +1112,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1149,13 +1151,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1188,13 +1190,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1227,13 +1229,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1266,13 +1268,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1305,13 +1307,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1344,13 +1346,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1383,13 +1385,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1422,13 +1424,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1461,13 +1463,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1500,13 +1502,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1539,13 +1541,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1578,13 +1580,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1617,13 +1619,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1656,13 +1658,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1695,13 +1697,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1734,13 +1736,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1773,13 +1775,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1812,13 +1814,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1851,13 +1853,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1890,13 +1892,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1929,13 +1931,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1968,13 +1970,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2007,13 +2009,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2046,13 +2048,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2085,13 +2087,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2124,13 +2126,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2163,13 +2165,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2202,13 +2204,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2241,13 +2243,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2280,13 +2282,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2319,13 +2321,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2358,13 +2360,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "震荡", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2397,13 +2399,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2436,13 +2438,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2475,13 +2477,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2514,13 +2516,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "突破", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2553,13 +2555,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2592,13 +2594,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2631,13 +2633,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2670,13 +2672,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "打板", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2709,13 +2711,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2753,13 +2755,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["k线", "形态", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2792,13 +2794,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2831,13 +2833,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["打板", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2870,13 +2872,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["突破", "打板", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2909,13 +2911,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2948,13 +2950,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -2987,13 +2989,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "波动", "震荡", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3026,13 +3028,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3065,13 +3067,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["high_vol"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波动", "震荡", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3104,13 +3106,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缺口", "事件", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3143,13 +3145,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缺口", "事件", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3182,13 +3184,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3221,13 +3223,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3266,13 +3268,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -3305,13 +3307,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -3344,13 +3346,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "持续", "突破", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -3383,13 +3385,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3427,13 +3429,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3466,13 +3468,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3505,13 +3507,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3544,13 +3546,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3583,13 +3585,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3622,13 +3624,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3661,13 +3663,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3700,13 +3702,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3739,13 +3741,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3778,13 +3780,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3817,13 +3819,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "震荡", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3856,13 +3858,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3895,13 +3897,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3934,13 +3936,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -3973,13 +3975,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4012,13 +4014,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4051,13 +4053,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4090,13 +4092,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4129,13 +4131,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4168,13 +4170,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4207,13 +4209,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4246,13 +4248,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "超跌", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4291,13 +4293,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["反转", "情绪", "打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4330,13 +4332,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "资金", "打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4369,13 +4371,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4408,13 +4410,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["吸筹", "资金", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4447,13 +4449,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["资金", "震荡", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4486,13 +4488,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["资金", "打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4525,13 +4527,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["情绪", "打板", "股票池", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4564,13 +4566,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4608,8 +4610,8 @@ chart_patterns:
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4647,8 +4649,8 @@ chart_patterns:
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["打板", "质量", "尾盘", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4687,13 +4689,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4726,13 +4728,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4765,13 +4767,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up", "trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4804,13 +4806,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4843,13 +4845,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4882,13 +4884,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4921,13 +4923,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["weekly"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4960,13 +4962,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["weekly"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -4999,13 +5001,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
+    applicable_timeframes: ["weekly"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5038,13 +5040,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
+    applicable_timeframes: ["weekly"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5077,13 +5079,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "回撤", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5116,13 +5118,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "回撤", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5155,13 +5157,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock", "market"]
+    tags: ["持续", "突破", "波动", "形态", "成交"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5194,13 +5196,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5233,13 +5235,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "突破", "回撤", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5272,13 +5274,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "形态", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5311,13 +5313,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "震荡", "形态", "量化", "信号", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5350,13 +5352,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["weekly"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5389,13 +5391,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5428,13 +5430,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5467,13 +5469,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
+    applicable_timeframes: ["weekly"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5506,13 +5508,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
+    applicable_timeframes: ["weekly"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5545,13 +5547,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["突破", "缺口", "事件", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5584,13 +5586,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5623,13 +5625,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "weekly"
-    applicable_timeframes: []
+    applicable_timeframes: ["weekly"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5668,7 +5670,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "回撤", "执行", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5706,13 +5708,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "趋势", "均线", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -5749,13 +5751,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5788,13 +5790,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["压力", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5827,13 +5829,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up", "trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5866,13 +5868,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up", "trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5905,13 +5907,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging", "trend_up", "trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["趋势", "震荡"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5944,13 +5946,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "both"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "趋势", "均线"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -5983,13 +5985,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up", "trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6027,13 +6029,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
-    tags: []
+    applies_to: ["etf", "market"]
+    tags: ["趋势", "周期", "江恩", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6066,13 +6068,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "趋势", "周期", "江恩"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6105,13 +6107,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["压力", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6144,13 +6146,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["趋势", "波动", "周期", "江恩", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6191,10 +6193,10 @@ chart_patterns:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "支撑", "压力", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -6227,13 +6229,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "支撑", "压力", "分时"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -6266,13 +6268,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "支撑", "压力", "均线", "止损", "分时"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -6315,7 +6317,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6354,7 +6356,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6387,13 +6389,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "量价", "成交"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6425,14 +6427,14 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
-    primary_timeframe: null
-    applicable_timeframes: []
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily", "1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "分时", "机器学习"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6465,13 +6467,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "机器学习"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6503,14 +6505,14 @@ chart_patterns:
     hit_rate: null
     false_positive_rate: null
     last_evaluated_at: null
-    primary_timeframe: null
-    applicable_timeframes: []
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6548,13 +6550,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["回撤", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6587,13 +6589,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6626,13 +6628,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6665,13 +6667,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "压力", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6704,13 +6706,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["周期", "震荡", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6743,13 +6745,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6789,13 +6791,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6828,13 +6830,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6867,13 +6869,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6906,13 +6908,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6945,13 +6947,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -6984,13 +6986,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7023,13 +7025,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7062,13 +7064,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7101,13 +7103,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7140,13 +7142,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7179,13 +7181,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "谐波", "斐波那契", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7223,13 +7225,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "形态", "威科夫", "市场结构"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -7270,13 +7272,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7309,13 +7311,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7348,13 +7350,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "缠论", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7387,13 +7389,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7426,13 +7428,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7465,13 +7467,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7504,13 +7506,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7543,13 +7545,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7582,13 +7584,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7621,13 +7623,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7660,13 +7662,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7699,13 +7701,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7738,13 +7740,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["背离", "趋势", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7777,13 +7779,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["背离", "震荡", "缠论", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7816,13 +7818,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["震荡", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7860,13 +7862,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7899,13 +7901,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7938,13 +7940,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -7977,13 +7979,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8016,13 +8018,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8055,13 +8057,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8094,13 +8096,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8133,13 +8135,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8178,13 +8180,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging", "trend_down"]
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["吸筹", "震荡", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8217,13 +8219,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging", "trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["出货", "震荡", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8256,13 +8258,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8295,13 +8297,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "威科夫", "市场结构", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8334,13 +8336,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "威科夫", "市场结构", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8373,13 +8375,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_down"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["支撑", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8412,13 +8414,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["trend_up"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8451,13 +8453,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8490,13 +8492,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8529,13 +8531,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缺口", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8568,13 +8570,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["资金", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8607,13 +8609,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["流动性", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8646,13 +8648,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["流动性", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8685,13 +8687,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["流动性", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8724,13 +8726,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["daily"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["震荡", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8763,13 +8765,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8802,13 +8804,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8848,13 +8850,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["基准", "形态", "市场结构", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8893,7 +8895,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "k线", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8932,7 +8934,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -8965,13 +8967,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9010,7 +9012,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["k线", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9049,7 +9051,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9090,13 +9092,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "量价", "市场结构", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9129,13 +9131,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9168,13 +9170,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["持续", "量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9207,13 +9209,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["背离", "量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9246,13 +9248,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["反转", "量价", "市场结构", "通胀", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9285,13 +9287,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9324,13 +9326,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9363,13 +9365,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9408,13 +9410,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["资金", "分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9447,13 +9449,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["缩量", "震荡", "分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9486,13 +9488,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9525,13 +9527,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["均线", "打板", "分时", "执行", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9564,13 +9566,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["资金", "打板", "分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9603,13 +9605,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["打板", "震荡", "分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9642,13 +9644,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["打板", "分时", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9681,13 +9683,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["出货", "分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9720,13 +9722,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9772,7 +9774,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["资金", "盘口", "市场结构", "订单", "成交"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9811,7 +9813,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["盘口", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9844,13 +9846,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
-    regime_valid: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["突破", "震荡", "盘口", "分时", "早盘", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9883,13 +9885,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9922,13 +9924,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["出货", "盘口", "分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -9967,7 +9969,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["流动性", "盘口", "执行", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10003,10 +10005,10 @@ chart_patterns:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["打板", "盘口", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10039,13 +10041,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["基准", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10078,13 +10080,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["基准", "k线", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10123,7 +10125,7 @@ chart_patterns:
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "形态", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10156,13 +10158,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["波浪", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10195,13 +10197,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["市场结构", "因子", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -10234,13 +10236,13 @@ chart_patterns:
     false_positive_rate: null
     last_evaluated_at: null
     primary_timeframe: "daily"
-    applicable_timeframes: []
+    applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
     applies_to: []
-    tags: []
+    tags: ["市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
