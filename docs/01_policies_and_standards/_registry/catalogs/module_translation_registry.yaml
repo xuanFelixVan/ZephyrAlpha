@@ -41172,8 +41172,8 @@ entries:
   domain_id: D_INFRA_TELEMETRY
   name_zh: 实验跟踪配置
   name_en: Experiment Tracking Config
-  desc_zh: MLflow tracking_uri / 降级目录 / 全局开关配置（不可变 dataclass，环境变量覆盖）
-  desc_en: MLflow tracking_uri / fallback dir / global toggle config (frozen dataclass, env override)
+  desc_zh: fallback 目录 / 全局开关配置（不可变 dataclass，环境变量覆盖；MLflow 退役后 tracking_uri/experiment_prefix 已删）
+  desc_en: fallback dir / global toggle config (frozen dataclass, env override; mlflow retired, tracking_uri/experiment_prefix removed)
   plain_zh: 管实验记录存哪、关没关的配置开关。设了环境变量全局关闭就什么都不记省资源，没装 mlflow 就退到本地 JSON 文件存。
 - module_path: src/zephyr/experiment_tracking/models.py
   domain_id: D_INFRA_TELEMETRY
@@ -41186,24 +41186,31 @@ entries:
   domain_id: D_INFRA_TELEMETRY
   name_zh: 实验跟踪器
   name_en: Experiment Tracker
-  desc_zh: MLflow 薄包装——lazy import + 三 backend 降级(mlflow/FallbackBackend JSON/NullBackend no-op) + 单例工厂
-  desc_en: MLflow thin wrapper with lazy import + 3-backend fallback (mlflow/FallbackBackend JSON/NullBackend no-op) + singleton
+  desc_zh: 统一实验跟踪入口——单一 JSON FallbackBackend（enable_tracking=False→NullBackend no-op）+ 单例工厂（MLflow 已退役）
+  desc_en: Unified experiment tracking entry with single JSON FallbackBackend (NullBackend no-op when disabled) + singleton (MLflow retired)
     factory
   plain_zh: 记实验结果的总入口。装了 mlflow 就用 mlflow 有 UI 可对比，没装就退到本地 JSON 文件，全局关了就什么都不记。记录失败只报错不中断正经回测。
 - module_path: src/zephyr/experiment_tracking/fallback_tracker.py
   domain_id: D_INFRA_TELEMETRY
-  name_zh: 降级跟踪器
+  name_zh: JSON跟踪器
   name_en: Fallback Tracker
-  desc_zh: mlflow 未装时的 JSON 实现——与 _MLflowBackend 同接口，写 logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json
-  desc_en: JSON fallback backend when mlflow unavailable with same interface as _MLflowBackend
+  desc_zh: 单一 JSON 后端实现——与 ExperimentTracker 同接口，写 logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json
+  desc_en: Single JSON backend implementation with same interface as ExperimentTracker, writing run_meta.json per run
   plain_zh: 没装 mlflow 时的备用记录器。把每次实验结果写成 JSON 文件存本地，接口和正式的 mlflow 一模一样，切换不用改代码。
 - module_path: src/zephyr/experiment_tracking/query.py
   domain_id: D_INFRA_TELEMETRY
   name_zh: 实验查询接口
   name_en: Experiment Query
-  desc_zh: list_runs/get_run/compare_runs——屏蔽 mlflow vs 降级 JSON 差异，统一返回 RunSummary/RunDetail
-  desc_en: list_runs/get_run/compare_runs shielding mlflow vs fallback JSON differences returning unified RunSummary/RunDetail
+  desc_zh: list_runs/get_run/compare_runs/download_artifact——单一 JSON 源（扫 fallback 目录+按 run 目录读 artifact bytes），统一返回 RunSummary/RunDetail
+  desc_en: list_runs/get_run/compare_runs/download_artifact with single JSON source (scan fallback dir + read artifact bytes) returning unified RunSummary/RunDetail
   plain_zh: 查历史实验记录的接口。列出来、看详情、对比多次跑，不管底下存 mlflow 还是 JSON 都返回统一格式，查失败返回空不崩溃。
+- module_path: src/zephyr/frontend/dashboard/components/experiment_history.py
+  domain_id: D_FRONTEND
+  name_zh: 实验历史
+  name_en: Experiment History
+  desc_zh: Panel「实验历史」Tab——C1 回测历史列表+多选横向对比+双净值对比视图（P0-1 归一化/P0-2 对齐/P1-7 分级降级）
+  desc_en: Panel Experiment History Tab with C1 run list + multi-select comparison + dual-NAV comparison view
+  plain_zh: Panel 仪表盘里的"实验历史"页——列出 C1 回测历史记录，单选一条看开/关双净值对比图+四项判定表，多选几条看横向指标对比表；数据全从本地 JSON 读，再也不用开 mlflow ui。
 - module_path: src/zephyr/experiment_tracking/adapters/c1_adapter.py
   domain_id: D_INFRA_TELEMETRY
   name_zh: C1对比结果适配器

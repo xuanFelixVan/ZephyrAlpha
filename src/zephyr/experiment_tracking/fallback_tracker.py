@@ -15,11 +15,11 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 降级跟踪器（mlflow 未装时的 JSON 实现）。
+"""L_INFRA_TELEMETRY — JSON 实验跟踪器（单一后端实现）。
 
-与 _MLflowBackend 同接口，数据写本地 JSON 文件，供 query.py 扫描查询。
-依据: backtest_observability_mlflow_plan.md M1 降级机制
-Version: 0.1.0
+与 ExperimentTracker 同接口，数据写本地 JSON 文件，供 query.py 扫描查询。
+依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A（单一 JSON 后端）
+Version: 0.2.0（MLflow 退役）
 """
 from __future__ import annotations
 

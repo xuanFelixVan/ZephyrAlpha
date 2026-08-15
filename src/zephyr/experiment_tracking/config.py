@@ -15,17 +15,16 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪配置（MLflow tracking_uri / 降级目录 / 全局开关）。
+"""L_INFRA_TELEMETRY — 实验跟踪配置（fallback 目录 / 全局开关）。
 
 从环境变量读取覆盖，ExperimentTrackingConfig 为不可变 dataclass。
 enable_tracking=False（ZEPHYR_EXPERIMENT_TRACKING=0）时 get_tracker() 返回 NullTracker（no-op）。
 
 环境变量:
   ZEPHYR_EXPERIMENT_TRACKING=0  → enable_tracking=False（全局关闭，NullBackend）
-  ZEPHYR_TRACKING_URI=...       → tracking_uri（默认本地 SQLite）
 
-依据: 11_regime_backtest_validation_plan §3 ② 薄包装层设计 + backtest_observability_mlflow_plan.md M1
-Version: 0.1.0
+依据: 11_regime_backtest_validation_plan §3 ② 薄包装层设计 + 51_panel_experiment_history_mlflow_retirement.md 工作流 A3
+Version: 0.2.0（MLflow 退役，删 tracking_uri/experiment_prefix）
 """
 from __future__ import annotations
 
@@ -40,10 +39,7 @@ class ExperimentTrackingConfig:
 
     环境变量覆盖（优先级高于默认值）:
       ZEPHYR_EXPERIMENT_TRACKING=0  → enable_tracking=False（全局关闭，NullBackend）
-      ZEPHYR_TRACKING_URI=...       → tracking_uri（默认本地 SQLite）
     """
-    tracking_uri: str = "sqlite:///logs/mlflow.db"
-    experiment_prefix: str = "zephyr-"           # experiment 名前缀（component → zephyr-{component}）
     fallback_dir: Path = Path("logs/experiment_tracking_fallback")
     enable_tracking: bool = True                  # 全局开关
     artifact_logging: bool = True                 # 是否落净值曲线 CSV（大数据量可关）
@@ -52,8 +48,4 @@ class ExperimentTrackingConfig:
 def load_config() -> ExperimentTrackingConfig:
     """从环境变量加载配置（覆盖默认值）。"""
     enable = os.environ.get("ZEPHYR_EXPERIMENT_TRACKING", "1") != "0"
-    uri = os.environ.get("ZEPHYR_TRACKING_URI", "sqlite:///logs/mlflow.db")
-    return ExperimentTrackingConfig(
-        tracking_uri=uri,
-        enable_tracking=enable,
-    )
+    return ExperimentTrackingConfig(enable_tracking=enable)

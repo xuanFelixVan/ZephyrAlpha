@@ -52,11 +52,9 @@ def _reset_singleton():
 
 
 @pytest.fixture(autouse=True)
-def _force_fallback_backend(monkeypatch):
-    """强制 FallbackBackend：本模块用例断言 run_meta.json，需走 JSON 降级路径。
-    mlflow 若已装会选 _MLflowBackend（不写 JSON），故统一禁用 mlflow 分支。"""
-    import zephyr.experiment_tracking.experiment_tracker as et
-    monkeypatch.setattr(et, "_MLFLOW_AVAILABLE", False)
+def _force_fallback_backend():
+    """强制 FallbackBackend：本模块用例断言 run_meta.json，需走 JSON 路径。
+    MLflow 退役后 enable_tracking=True 恒走 FallbackBackend——本 fixture 为 no-op 保留（历史语义）。"""
 
 
 # ── 合成 C1ComparisonResult 鸭子类型 ─────────────────────────────
@@ -347,10 +345,8 @@ class TestTrackC1Result:
     """track_c1_result 完整流程（FallbackBackend 降级模式）。"""
 
     @pytest.fixture(autouse=True)
-    def _force_fallback(self, monkeypatch):
-        """强制 FallbackBackend（不依赖本机是否装 mlflow），使 run_meta.json 落 fb_dir。"""
-        import zephyr.experiment_tracking.experiment_tracker as et
-        monkeypatch.setattr(et, "_MLFLOW_AVAILABLE", False)
+    def _force_fallback(self):
+        """强制 FallbackBackend：MLflow 退役后 enable_tracking=True 恒走 FallbackBackend——no-op 保留（历史语义）。"""
 
     def test_returns_run_id(self, monkeypatch, tmp_path):
         """track_c1_result 返回非空 run_id。"""

@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-OBS-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md
 # [MODULE] zephyr.experiment_tracking.experiment_tracker
 # [DOMAIN] D_INFRA_TELEMETRY
-# [DEPENDENCIES] mlflow(optional) ; zephyr.experiment_tracking.config ; zephyr.experiment_tracking.fallback_tracker
+# [DEPENDENCIES] zephyr.experiment_tracking.config ; zephyr.experiment_tracking.fallback_tracker
 # [CONSUMERS] zephyr.experiment_tracking.adapters.c1_adapter ; zephyr.experiment_tracking.query
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] lazy import mlflow；未装→FallbackBackend(同接口)；enable_tracking=False→NullBackend；tracking失败只记stderr不抛
+# [INVARIANTS] 单一 FallbackBackend JSON；enable_tracking=False→NullBackend；tracking失败只记stderr不抛
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,30 +15,29 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪器主类（MLflow 薄包装 + lazy import + 降级）。
+"""L_INFRA_TELEMETRY — 实验跟踪器主类（单一 JSON FallbackBackend，MLflow 已退役）。
 
-Zephyr 语义 → MLflow 映射:
-  component (零件类型) → experiment 名 (zephyr-{component})
-  一次运行            → run (run_name={component}_{mode}_{timestamp})
+Zephyr 语义 → 存储映射:
+  component (零件类型) → 子目录名 (logs/experiment_tracking_fallback/{component}/)
+  一次运行            → {run_id}/run_meta.json（params/metrics/tags/status/artifacts）
   指标               → metrics (baseline_/experiment_ 前缀)
   配置               → params
-  产物               → artifacts (nav CSV / report MD / ...)
+  产物               → artifacts (nav CSV / report MD / ...，写 run 目录)
   语义标签           → tags
 
-降级机制:
-  - mlflow 未装 → FallbackBackend（写 logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json）
+后端机制:
+  - enable_tracking=True  → FallbackBackend（写 logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json）
   - enable_tracking=False（ZEPHYR_EXPERIMENT_TRACKING=0）→ _NullBackend（no-op）
   - 所有 log 调用包 try/except，失败只记 stderr 不抛——业务回测不受 tracking 失败影响
 
-依据: 11_regime_backtest_validation_plan §3 ② + backtest_observability_mlflow_plan.md M1
+依据: 11_regime_backtest_validation_plan §3 ② + 51_panel_experiment_history_mlflow_retirement.md 工作流 A
 SSoT: depgraph MOD-OBS-001
-Version: 0.1.0
+Version: 0.2.0（MLflow 退役，单一 JSON 后端）
 """
 from __future__ import annotations
 
 import logging
 import sys
-from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Optional
 
@@ -46,25 +45,6 @@ from zephyr.experiment_tracking.config import ExperimentTrackingConfig, load_con
 from zephyr.experiment_tracking.fallback_tracker import FallbackBackend
 
 _logger = logging.getLogger(__name__)
-
-# lazy import mlflow
-try:  # pragma: no cover — 依赖是否安装决定分支
-    import mlflow  # type: ignore[import-untyped]
-    _MLFLOW_AVAILABLE = True
-except ImportError:
-    mlflow = None  # type: ignore[assignment]
-    _MLFLOW_AVAILABLE = False
-
-_warned_fallback = False  # 降级 warning 只输出一次
-
-
-def _warn_once(msg: str) -> None:
-    """降级 warning 只输出一次（避免刷屏）。"""
-    global _warned_fallback
-    if not _warned_fallback:
-        print(f"[zephyr.experiment_tracking] WARNING: {msg}", file=sys.stderr)
-        _logger.warning(msg)
-        _warned_fallback = True
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -130,64 +110,8 @@ class RunContext:
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Backend 抽象 —— MLflowBackend / FallbackBackend / NullBackend 共同接口
+# Backend 抽象 —— FallbackBackend / NullBackend 共同接口
 # ──────────────────────────────────────────────────────────────────────────────
-
-
-class _MLflowBackend:
-    """mlflow 可用时的 backend（操作 mlflow active run）。"""
-
-    def __init__(self, tracking_uri: str, experiment_prefix: str) -> None:
-        mlflow.set_tracking_uri(tracking_uri)  # type: ignore[union-attr]
-        self._prefix = experiment_prefix
-
-    def _ensure_experiment(self, exp_name: str) -> None:
-        """确保 experiment 存在，显式指定 artifact_location。
-
-        规避部分 mlflow 版本在 Windows 下默认生成 'file:D:/...' 畸形 URI（缺 '//')，
-        导致 list_artifacts / mlflow ui 取不到产物。显式用 Path.as_uri() 生成
-        合法 'file:///' 形式。
-        """
-        exp = mlflow.get_experiment_by_name(exp_name)  # type: ignore[union-attr]
-        if exp is not None:
-            return
-        artifact_root = (Path("mlruns").resolve() / exp_name).as_uri()
-        mlflow.create_experiment(exp_name, artifact_location=artifact_root)  # type: ignore[union-attr]
-
-    def start_run(self, component: str, run_name: Optional[str], tags: Optional[dict]) -> str:
-        exp_name = f"{self._prefix}{component}"
-        self._ensure_experiment(exp_name)
-        mlflow.set_experiment(exp_name)  # type: ignore[union-attr]
-        run = mlflow.start_run(run_name=run_name or f"{component}_{datetime.now():%Y%m%d_%H%M%S}",  # type: ignore[union-attr]
-                               tags=tags or {})
-        return run.info.run_id
-
-    def log_params(self, params: dict[str, Any]) -> None:
-        for k, v in params.items():
-            mlflow.log_param(k, v)  # type: ignore[union-attr]
-
-    def log_metrics(self, metrics: dict[str, float], step: Optional[int]) -> None:
-        for k, v in metrics.items():
-            mlflow.log_metric(k, float(v), step=step)  # type: ignore[union-attr]
-
-    def log_artifact(self, local_path: str, artifact_path: Optional[str]) -> None:
-        mlflow.log_artifact(local_path, artifact_path=artifact_path)  # type: ignore[union-attr]
-
-    def log_artifact_bytes(self, data: bytes, filename: str, artifact_path: Optional[str]) -> None:
-        import tempfile, os
-        tmp = Path(tempfile.mkdtemp()) / filename
-        tmp.write_bytes(data)
-        try:
-            mlflow.log_artifact(str(tmp), artifact_path=artifact_path)  # type: ignore[union-attr]
-        finally:
-            try:
-                os.remove(tmp)
-                os.rmdir(tmp.parent)
-            except OSError:
-                pass
-
-    def end_run(self, status: str) -> None:
-        mlflow.end_run(status=status)  # type: ignore[union-attr]
 
 
 class _NullBackend:
@@ -209,12 +133,11 @@ class _NullBackend:
 
 
 class ExperimentTracker:
-    """MLflow 薄包装——统一实验跟踪入口。
+    """统一实验跟踪入口（单一 JSON 后端）。
 
     自动选择 backend:
       - enable_tracking=False → _NullBackend
-      - mlflow 可用           → _MLflowBackend
-      - mlflow 未装           → FallbackBackend（JSON 降级）
+      - 否则                 → FallbackBackend（JSON）
     """
 
     def __init__(self, config: Optional[ExperimentTrackingConfig] = None) -> None:
@@ -224,22 +147,12 @@ class ExperimentTracker:
     def _make_backend(self) -> Any:
         if not self._config.enable_tracking:
             return _NullBackend()
-        if _MLFLOW_AVAILABLE:
-            try:
-                return _MLflowBackend(self._config.tracking_uri, self._config.experiment_prefix)
-            except Exception as e:  # noqa: BLE001 — mlflow 初始化失败降级
-                _warn_once(f"mlflow 初始化失败({e})，降级到 JSON fallback")
-                return FallbackBackend(self._config.fallback_dir)
-        _warn_once(
-            "mlflow 未安装，实验跟踪降级到本地 JSON（logs/experiment_tracking_fallback/）。"
-            "安装以启用完整 UI: pip install -e '.[observability]'"
-        )
         return FallbackBackend(self._config.fallback_dir)
 
     @property
     def available(self) -> bool:
-        """mlflow 是否可用（False = 降级或关闭模式）。"""
-        return _MLFLOW_AVAILABLE and self._config.enable_tracking
+        """跟踪是否启用（False = 关闭模式 NullBackend）。"""
+        return self._config.enable_tracking
 
     @property
     def config(self) -> ExperimentTrackingConfig:
@@ -273,6 +186,5 @@ def get_tracker() -> ExperimentTracker:
 
 def reset_tracker() -> None:
     """重置单例（测试用：改环境变量后重新初始化）。"""
-    global _tracker_singleton, _warned_fallback
+    global _tracker_singleton
     _tracker_singleton = None
-    _warned_fallback = False

@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-OBS-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md
 # [MODULE] zephyr.experiment_tracking.query
 # [DOMAIN] D_INFRA_TELEMETRY
-# [DEPENDENCIES] zephyr.experiment_tracking.config (load_config); zephyr.experiment_tracking.models (RunSummary/RunDetail); mlflow (lazy); pandas (lazy)
+# [DEPENDENCIES] zephyr.experiment_tracking.config (load_config); zephyr.experiment_tracking.models (RunSummary/RunDetail)
 # [CONSUMERS] zephyr.frontend.dashboard ; AI/人查询
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] list_runs/get_run/compare_runs 屏蔽 mlflow vs JSON 双源；查询失败返回空不抛
+# [INVARIANTS] list_runs/get_run/compare_runs/download_artifact 统一 JSON 源；查询失败返回空不抛
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,13 +15,14 @@
 # [A_module] module_id=MOD-OBS-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""L_INFRA_TELEMETRY — 实验跟踪查询接口（屏蔽 MLflow vs 降级 JSON 差异）。
+"""L_INFRA_TELEMETRY — 实验跟踪查询接口（统一本地 JSON 源，MLflow 已退役）。
 
-list_runs / get_run 对外统一返回 RunSummary / RunDetail，底层按 mlflow 是否可用自动选
-MLflow search_runs 或扫 fallback JSON 目录。Panel/AI/脚本只消费统一模型，不感知双源。
+list_runs / get_run 扫 fallback JSON 目录返回 RunSummary / RunDetail；
+download_artifact 按 run 目录路径规则读 artifact bytes（nav CSV / report MD）。
+Panel/AI/脚本只消费统一模型。
 
-依据: backtest_observability_mlflow_plan.md M1 query.py 设计
-Version: 0.1.0
+依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 A2/B1
+Version: 0.2.0（MLflow 退役，单一 JSON 源 + download_artifact）
 """
 from __future__ import annotations
 
@@ -34,23 +35,9 @@ from typing import Any, Final, Optional
 from zephyr.experiment_tracking.config import ExperimentTrackingConfig, load_config
 from zephyr.experiment_tracking.models import RunDetail, RunSummary
 
-# lazy import mlflow——与 experiment_tracker 同策略
-try:  # pragma: no cover - 环境依赖
-    import mlflow  # type: ignore[import-not-found]
-
-    _MLFLOW_AVAILABLE = True
-except ImportError:  # pragma: no cover
-    mlflow = None  # type: ignore[assignment]
-    _MLFLOW_AVAILABLE = False
-
 _logger = logging.getLogger(__name__)
 
-__all__: Final = ["list_runs", "get_run", "compare_runs"]
-
-
-def _exp_name(component: str, prefix: str) -> str:
-    """component → experiment 名（与 _MLflowBackend._exp_name 一致）。"""
-    return f"{prefix}{component}"
+__all__: Final = ["list_runs", "get_run", "compare_runs", "download_artifact", "download_artifact_text"]
 
 
 def _parse_dt(s: Optional[str]) -> Optional[datetime]:
@@ -63,59 +50,28 @@ def _parse_dt(s: Optional[str]) -> Optional[datetime]:
         return None
 
 
-def _from_ms(ms: Optional[int]) -> Optional[datetime]:
-    """毫秒时间戳 → datetime（失败返回 None）。"""
-    if ms is None:
-        return None
-    try:
-        return datetime.fromtimestamp(ms / 1000.0)
-    except (ValueError, OSError):
-        return None
+def _parse_passed(metrics: dict[str, Any], tags: dict[str, Any]) -> Optional[bool]:
+    """从 metrics/tags 解析 C1 passed（metrics.passed=1.0/0.0 优先，tags.passed 字符串兜底）。
 
-
-def _row_to_summary(row: Any, component: str) -> RunSummary:
-    """mlflow RunData row → RunSummary。"""
-    data = row.data
-    return RunSummary(
-        run_id=row.info.run_id,
-        component=component,
-        run_name=row.info.run_name or "",
-        status=row.info.status or "",
-        start_time=_from_ms(row.info.start_time),
-        end_time=_from_ms(row.info.end_time),
-        tags=dict(data.tags) if data and data.tags else {},
-        metrics=dict(data.metrics) if data and data.metrics else {},
-        artifact_uris=[],
-    )
-
-
-def _list_runs_mlflow(
-    component: Optional[str],
-    max_results: int,
-    cfg: ExperimentTrackingConfig,
-) -> list[RunSummary]:
-    """mlflow 可用时：search_runs 查询。"""
-    import pandas as pd  # mlflow search 依赖 pandas
-
-    client = mlflow.tracking.MlflowClient(tracking_uri=cfg.tracking_uri)  # type: ignore[union-attr]
-    if component is None:
-        experiments = client.search_experiments()
-        runs: list[Any] = []
-        for exp in experiments:
-            if exp.name.startswith(cfg.experiment_prefix):
-                runs.extend(client.search_runs([exp.experiment_id], max_results=max_results))
-    else:
-        exp_name = _exp_name(component, cfg.experiment_prefix)
-        exp = client.get_experiment_by_name(exp_name)
-        if exp is None:
-            return []
-        runs = client.search_runs([exp.experiment_id], max_results=max_results)
-    comp = component or ""
-    return [_row_to_summary(r, comp or r.info.run_name.split("_")[0]) for r in runs]
+    修复预存 bug：RunSummary.passed 为必填位（无默认值），旧构造未传 → TypeError
+    被 list_runs/get_run try/except 吞掉，fallback 查询静默返空。
+    """
+    v = metrics.get("passed")
+    if v is not None:
+        try:
+            return bool(float(v))
+        except (TypeError, ValueError):
+            pass
+    t = tags.get("passed")
+    if isinstance(t, str) and t in ("True", "False"):
+        return t == "True"
+    return None
 
 
 def _meta_to_summary(meta: dict[str, Any], component: str) -> RunSummary:
     """fallback run_meta.json dict → RunSummary。"""
+    metrics = {k: float(v) for k, v in meta.get("metrics", {}).items()}
+    tags = dict(meta.get("tags", {}))
     return RunSummary(
         run_id=meta.get("run_id", ""),
         component=meta.get("component", component),
@@ -123,9 +79,14 @@ def _meta_to_summary(meta: dict[str, Any], component: str) -> RunSummary:
         status=meta.get("status", ""),
         start_time=_parse_dt(meta.get("start_time")),
         end_time=_parse_dt(meta.get("end_time")),
-        tags=dict(meta.get("tags", {})),
-        metrics={k: float(v) for k, v in meta.get("metrics", {}).items()},
-        artifact_uris=[a.get("local_path", "") for a in meta.get("artifacts", [])],
+        passed=_parse_passed(metrics, tags),
+        tags=tags,
+        metrics=metrics,
+        artifact_uris=[
+            # 防御：旧版 fallback meta 的 artifacts 为 list[str]（2026-08-07 前写入）
+            a if isinstance(a, str) else (a.get("local_path") or a.get("filename", ""))
+            for a in meta.get("artifacts", [])
+        ],
     )
 
 
@@ -142,7 +103,7 @@ def _list_runs_fallback(
     component: Optional[str],
     cfg: ExperimentTrackingConfig,
 ) -> list[RunSummary]:
-    """mlflow 不可用时：扫 fallback_dir JSON 目录。"""
+    """扫 fallback_dir JSON 目录。"""
     base = cfg.fallback_dir
     if not base.exists():
         return []
@@ -161,46 +122,18 @@ def _list_runs_fallback(
     return summaries
 
 
-def _get_run_mlflow(
-    run_id: str,
-    component: Optional[str],
-    cfg: ExperimentTrackingConfig,
-) -> Optional[RunDetail]:
-    """mlflow 可用时：get_run 查详情。"""
-    client = mlflow.tracking.MlflowClient(tracking_uri=cfg.tracking_uri)  # type: ignore[union-attr]
-    try:
-        run = client.get_run(run_id)
-    except Exception as exc:  # noqa: BLE001
-        _logger.warning("query get_run mlflow 失败(返回 None): %s", exc)
-        return None
-    data = run.data
-    comp = component or run.info.run_name.split("_")[0] if run.info.run_name else ""
-    arts: list[str] = []
-    try:
-        arts = client.list_artifacts(run_id)
-        arts = [a.path for a in arts]
-    except Exception:  # noqa: BLE001
-        pass
-    return RunDetail(
-        run_id=run.info.run_id,
-        component=comp,
-        run_name=run.info.run_name or "",
-        status=run.info.status or "",
-        start_time=_from_ms(run.info.start_time),
-        end_time=_from_ms(run.info.end_time),
-        tags=dict(data.tags) if data and data.tags else {},
-        metrics={k: float(v) for k, v in (data.metrics or {}).items()},
-        params=dict(data.params) if data and data.params else {},
-        artifact_paths=arts,
-    )
-
-
 def _get_run_fallback(
     run_id: str,
     component: Optional[str],
     cfg: ExperimentTrackingConfig,
 ) -> Optional[RunDetail]:
-    """mlflow 不可用时：扫 fallback_dir 找 run_meta.json。"""
+    """扫 fallback_dir 找 run_meta.json。
+
+    artifact_paths 赋**完整 artifact 描述列表**（含 bytes artifact 的
+    filename+artifact_path，与本地路径 artifact 的 local_path+artifact_path）——
+    修复旧版只取 local_path 致 bytes artifact 信息丢失的缺口
+    （models.py 声明 dict[str,str] 为预存类型 bug，此处按下载层契约赋 list[dict]）。
+    """
     base = cfg.fallback_dir
     if not base.exists():
         return None
@@ -211,6 +144,8 @@ def _get_run_fallback(
             meta = _load_meta(meta_path)
             if meta is None:
                 return None
+            metrics = {k: float(v) for k, v in meta.get("metrics", {}).items()}
+            tags = dict(meta.get("tags", {}))
             return RunDetail(
                 run_id=meta.get("run_id", run_id),
                 component=meta.get("component", comp),
@@ -218,10 +153,16 @@ def _get_run_fallback(
                 status=meta.get("status", ""),
                 start_time=_parse_dt(meta.get("start_time")),
                 end_time=_parse_dt(meta.get("end_time")),
-                tags=dict(meta.get("tags", {})),
-                metrics={k: float(v) for k, v in meta.get("metrics", {}).items()},
+                passed=_parse_passed(metrics, tags),
+                tags=tags,
+                metrics=metrics,
                 params=dict(meta.get("params", {})),
-                artifact_paths=[a.get("local_path", "") for a in meta.get("artifacts", [])],
+                artifact_paths=[
+                    # 防御：旧版 fallback meta 的 artifacts 为 list[str]（2026-08-07 前写入）
+                    {"filename": a} if isinstance(a, str)
+                    else {k: v for k, v in a.items() if v is not None}
+                    for a in meta.get("artifacts", [])
+                ],
             )
     return None
 
@@ -231,7 +172,7 @@ def list_runs(
     max_results: int = 100,
     config: Optional[ExperimentTrackingConfig] = None,
 ) -> list[RunSummary]:
-    """列出 runs（统一返回 RunSummary，屏蔽 mlflow vs JSON）。
+    """列出 runs（统一返回 RunSummary，单一 JSON 源）。
 
     Args:
         component: 零件类型过滤（None=所有零件）。
@@ -243,9 +184,7 @@ def list_runs(
     """
     cfg = config or load_config()
     try:
-        if _MLFLOW_AVAILABLE and cfg.enable_tracking:
-            return _list_runs_mlflow(component, max_results, cfg)
-        return _list_runs_fallback(component, cfg)
+        return _list_runs_fallback(component, cfg)[:max_results]
     except Exception as exc:  # noqa: BLE001
         _logger.warning("list_runs 失败(返回空): %s", exc)
         return []
@@ -256,11 +195,11 @@ def get_run(
     component: Optional[str] = None,
     config: Optional[ExperimentTrackingConfig] = None,
 ) -> Optional[RunDetail]:
-    """获取单次 run 详情（统一返回 RunDetail，屏蔽 mlflow vs JSON）。
+    """获取单次 run 详情（统一返回 RunDetail，单一 JSON 源）。
 
     Args:
         run_id: 运行 ID。
-        component: 零件类型（fallback 扫描需要，mlflow 可省）。
+        component: 零件类型（fallback 扫描需要）。
         config: 配置。
 
     Returns:
@@ -268,8 +207,6 @@ def get_run(
     """
     cfg = config or load_config()
     try:
-        if _MLFLOW_AVAILABLE and cfg.enable_tracking:
-            return _get_run_mlflow(run_id, component, cfg)
         return _get_run_fallback(run_id, component, cfg)
     except Exception as exc:  # noqa: BLE001
         _logger.warning("get_run 失败(返回 None): %s", exc)
@@ -297,3 +234,60 @@ def compare_runs(
         if detail is not None:
             results.append(detail)
     return results
+
+
+def download_artifact(
+    run_id: str,
+    component: str,
+    artifact_path: Optional[str] = None,
+    filename: Optional[str] = None,
+    config: Optional[ExperimentTrackingConfig] = None,
+) -> Optional[bytes]:
+    """从 fallback run 目录读 artifact bytes。
+
+    路径规则 = {fallback_dir}/{component}/{run_id}/{artifact_path or ""}/{filename}
+    （与 FallbackBackend.log_artifact_bytes 写入侧对称）。
+
+    Args:
+        run_id: 运行 ID。
+        component: 零件类型。
+        artifact_path: 产物子目录（如 "nav" / "report"；None=run 根目录）。
+        filename: 产物文件名（如 "nav_curve_baseline.csv"）。
+        config: 配置。
+
+    Returns:
+        bytes 或 None（不存在/读失败返回 None + warning，不抛——契约一致）。
+    """
+    if not filename:
+        return None
+    cfg = config or load_config()
+    try:
+        path = cfg.fallback_dir / component / run_id
+        if artifact_path:
+            path = path / artifact_path
+        path = path / filename
+        if not path.exists():
+            _logger.warning("download_artifact 不存在: %s", path)
+            return None
+        return path.read_bytes()
+    except Exception as exc:  # noqa: BLE001
+        _logger.warning("download_artifact 失败(返回 None): %s", exc)
+        return None
+
+
+def download_artifact_text(
+    run_id: str,
+    component: str,
+    artifact_path: Optional[str] = None,
+    filename: Optional[str] = None,
+    config: Optional[ExperimentTrackingConfig] = None,
+) -> Optional[str]:
+    """download_artifact 薄包装（返回 str 或 None，便于直接读 c1_summary.md）。"""
+    data = download_artifact(run_id, component, artifact_path, filename, config)
+    if data is None:
+        return None
+    try:
+        return data.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        _logger.warning("download_artifact_text 解码失败(返回 None): %s", exc)
+        return None

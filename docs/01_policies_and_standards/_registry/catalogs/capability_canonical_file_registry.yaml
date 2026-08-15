@@ -6876,6 +6876,15 @@ creation_tokens:
     token: "auto-frontend-trade-panel-20260704"
     created_by: "session-sess-17516-20260704044314"
     capability: "dashboard_frontend"
+  # 51 号工作流 B（2026-08-16）：Panel「实验历史」Tab + 其测试（MLflow 退役，单一 JSON 源）
+  - file: "src/zephyr/frontend/dashboard/components/experiment_history.py"
+    token: "auto-frontend-experiment-history-20260816"
+    created_by: "session-ai-25808-20260815122313"
+    capability: "dashboard_frontend"
+  - file: "tests/experiment_tracking/test_experiment_history.py"
+    token: "auto-test-experiment-history-20260816"
+    created_by: "session-ai-25808-20260815122313"
+    capability: "experiment_tracking"
   # 5个测试脚本（test_exempt_checker capability，对标 capability_overlap_gate 设计）
   - file: "scripts/tests/test_frontend_components.py"
     token: "auto-test-frontend-components-20260704"

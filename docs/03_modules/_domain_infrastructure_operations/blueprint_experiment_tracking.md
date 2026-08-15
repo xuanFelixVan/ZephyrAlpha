@@ -1,10 +1,10 @@
 ---
 module_id: MOD-OBS-001
 submodule_path: src/zephyr/experiment_tracking
-title: "Experiment Tracking 蓝图 — MLflow 薄包装 + 降级实验跟踪"
+title: "Experiment Tracking 蓝图 — 单一 JSON 后端实验跟踪（MLflow 已退役）"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.2.0"
 layer: L0_infrastructure
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -16,8 +16,8 @@ ttl: permanent
 actual_disk_path: "src/zephyr/experiment_tracking/"
 belongs_to: "MOD-MASTER_BLUEPRINT"
 parent_module: ""
-summary: "ZephyrAlpha 实验跟踪——MLflow 薄包装 + 三 backend 降级（mlflow / FallbackBackend JSON / NullBackend no-op）。所有零件（C1 / regime_detector / 特征管道 / 回测引擎 / 全链路）的运行统一记录到本地 MLflow（SQLite），人和 AI 通过 query 接口或 mlflow ui 查询、对比、追溯。M1 阶段：core tracker + c1_adapter + track 开关。"
-tags: [experiment_tracking, mlflow, observability, c1-validation, regime-validation, fallback, lazy-import, telemetry, infrastructure]
+summary: "ZephyrAlpha 实验跟踪——单一 JSON 后端（FallbackBackend；enable_tracking=False→NullBackend no-op；MLflow 已于 2026-08-16 退役卸载）。所有零件（C1 / regime_detector / 特征管道 / 回测引擎 / 全链路）的运行统一记录到本地 JSON（logs/experiment_tracking_fallback/），人和 AI 通过 query 接口或 Panel「实验历史」Tab 查询、对比、追溯。M1 阶段：core tracker + c1_adapter + track 开关；M2 阶段（51 号）：MLflow 退役 + Panel 实验历史 Tab。"
+tags: [experiment_tracking, json_backend, observability, c1-validation, regime-validation, fallback, panel, telemetry, infrastructure]
 priority: P2
 runtime_plane: cold
 depends_on:
@@ -30,10 +30,10 @@ references:
 ssot_claims:
   - claim: "实验跟踪统一入口唯一真源"
     scope: "src/zephyr/experiment_tracking/"
-  - claim: "C1 结果→MLflow 语义适配唯一真源"
+  - claim: "C1 结果→JSON 语义适配唯一真源"
     scope: "src/zephyr/experiment_tracking/adapters/c1_adapter.py"
-last_updated: "2026-08-08"
-last_verified: "2026-08-08"
+last_updated: "2026-08-16"
+last_verified: "2026-08-16"
 codification_level: L3
 codification_at: "2026-08-07"
 generation: 1
@@ -47,26 +47,29 @@ design_maturity: design
 responsibility_domain: 
 ---
 
-# Experiment Tracking 蓝图 — MLflow 薄包装 + 降级实验跟踪
+# Experiment Tracking 蓝图 — 单一 JSON 后端实验跟踪（MLflow 已退役）
 
-> module_id: MOD-OBS-001 | version: 0.1.0 | status: Active | layer: L0_infrastructure
-> actual_disk_path: src/zephyr/experiment_tracking/ | generation: 1 | construction_progress: M1 完成
+> module_id: MOD-OBS-001 | version: 0.2.0 | status: Active | layer: L0_infrastructure
+> actual_disk_path: src/zephyr/experiment_tracking/ | generation: 1 | construction_progress: M1 完成 + M2 完成（51 号：MLflow 退役 + Panel 实验历史 Tab，2026-08-16）
 
 ## 概述
 
 本蓝图描述 ZephyrAlpha 实验跟踪层——所有"零件"（C1 / regime_detector / 特征管道 / 回测引擎 /
-全链路）的运行统一记录到本地 MLflow（SQLite backend），人和 AI 都能通过 `experiment_tracking.query`
-接口或 `mlflow ui` 查询、对比、追溯历史实验。
+全链路）的运行统一记录到本地 JSON（`logs/experiment_tracking_fallback/`），人和 AI 都能通过
+`experiment_tracking.query` 接口或 Panel「实验历史」Tab 查询、对比、追溯历史实验。
+
+**MLflow 退役（2026-08-16，51 号工作流 A）**：`_MLflowBackend` 类、query.py mlflow 分支、
+config.py `tracking_uri`/`experiment_prefix` 字段已全部删除，`pip uninstall mlflow` 已执行。
+退役根因：MLflow UI 是外部 UI（违反"集成新功能到现有 frontend"偏好），全量包依赖对单人
+项目过重，pyproject 从未真正声明（51 号 §二.2）。
 
 **命名说明**：包名 `experiment_tracking`（非 `observability`）——项目里 observability 是横切概念
 （infrastructure/shared/security 各有 observability 子域），实验跟踪独占顶层 observability 会语义
-混淆。MLflow 本质即 experiment tracking，故本包取名 experiment_tracking。详见 11_regime_backtest_validation_plan §2.3
-命名冲突发现 + §9 决策 A。
+混淆。详见 11_regime_backtest_validation_plan §2.3 命名冲突发现 + §9 决策 A。
 
-**降级机制**（核心设计）：三 backend 自动选择，业务零感知——
+**后端机制**（核心设计）：两 backend 自动选择，业务零感知——
   - `enable_tracking=False`（`ZEPHYR_EXPERIMENT_TRACKING=0`）→ `_NullBackend`（no-op，全局关闭）
-  - mlflow 可用 → `_MLflowBackend`（完整 UI + 对比能力）
-  - mlflow 未装 → `FallbackBackend`（写 `logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json`）
+  - 否则 → `FallbackBackend`（写 `logs/experiment_tracking_fallback/{component}/{run_id}/run_meta.json`）
   - 所有 `log_*` 调用包 try/except，失败只记 stderr 不抛——**tracking 失败绝不崩业务回测**
 
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：

@@ -16,22 +16,24 @@
 # [TTL] permanent
 """app_panel · Panel 仪表盘主应用入口（v3.1.0, #ARCH-047）
 
-ARCH-047 v3.1.0: 仪表盘可运行化。Panel 主入口组装 10 个 Tab（5 治理类 + 5 交易/回测类）。
+ARCH-047 v3.1.0: 仪表盘可运行化。Panel 主入口组装 11 个 Tab（5 治理类 + 6 交易/回测类）。
 v3.0.0 已完成 5 个交易/回测组件迁移；v3.1.0 完成剩余 5 个治理类组件迁移 + 本主入口。
+v3.4.0（51 号工作流 B）: 新增「实验历史」Tab（C1 回测历史 + 双净值对比，MLflow 退役后单一 JSON 源）。
 
-10 个 Tab:
+11 个 Tab:
   治理类（v3.1.0 迁移）:
     1. 任务进度看板     — task_progress
     2. 知识库概览       — knowledge_overview
     3. 门禁统计         — gate_statistics
     4. Fitness Functions — fitness_functions
     5. OLAP 趋势        — olap_trend
-  交易/回测类（v3.0.0 迁移）:
+  交易/回测类（v3.0.0 迁移 + v3.4.0 新增）:
     6. 回测结果         — backtest_results
-    7. Tick 回放        — tick_replay
-    8. 5档盘口          — order_book
-    9. 持仓监控         — position_monitor
-    10. 交易面板        — trade_panel
+    7. 实验历史         — experiment_history（v3.4.0）
+    8. Tick 回放        — tick_replay
+    9. 5档盘口          — order_book
+    10. 持仓监控        — position_monitor
+    11. 交易面板        — trade_panel
 
 启动方式:
     方式1 (panel serve, 推荐):
@@ -122,6 +124,11 @@ from zephyr.frontend.dashboard.components.trade_panel import (
     TradePanelData,
     render_trade_panel,
 )
+# 实验历史（v3.4.0, 51 号工作流 B：C1 回测历史 + 双净值对比，单一 JSON 源）
+from zephyr.frontend.dashboard.components.experiment_history import (
+    fetch_experiment_history,
+    render_experiment_history,
+)
 
 __all__ = [
     "DashboardPanelApp",
@@ -136,7 +143,7 @@ __all__ = [
 class DashboardPanelApp:
     """Panel 仪表盘应用（v3.1.0, #ARCH-047）
 
-    组装 10 个 Tab：5 治理类 + 5 交易/回测类。
+    组装 11 个 Tab：5 治理类 + 6 交易/回测类（v3.4.0 新增「实验历史」）。
 
     Parameters
     ----------
@@ -286,6 +293,11 @@ class DashboardPanelApp:
         payload = render_trade_panel(data, execution_engine=self._execution_engine)
         return payload.get("_layout") or pn.pane.Markdown("交易面板渲染失败")
 
+    def _tab_experiment_history(self) -> object:
+        data = fetch_experiment_history()
+        payload = render_experiment_history(data)
+        return payload.get("_layout") or pn.pane.Markdown("实验历史渲染失败")
+
     # ===== Demo 数据（无 BacktestResult 注入时展示，证明仪表盘可运行）=====
 
     @staticmethod
@@ -304,6 +316,7 @@ class DashboardPanelApp:
             ("Fitness", self._tab_fitness_functions),
             ("OLAP 趋势", self._tab_olap_trends),
             ("回测结果", self._tab_backtest_results),
+            ("实验历史", self._tab_experiment_history),
             ("Tick 回放", self._tab_tick_replay),
             ("5档盘口", self._tab_order_book),
             ("持仓监控", self._tab_position_monitor),

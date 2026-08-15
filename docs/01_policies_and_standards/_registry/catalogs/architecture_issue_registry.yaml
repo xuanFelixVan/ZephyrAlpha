@@ -13168,10 +13168,10 @@ entries:
     - 'mlruns/ 目录已删 + .runtime/tmp/mlflow_m1_9_test.db + .runtime/_smoke_m1_9_mlflow.py 已删'
     - '38 个测试全部通过（MLflow 清理无回归，0.82s）'
     depgraph：设计态节点 node_id=9008073 path=src/zephyr/experiment_tracking/ granularity=directory domain_id=D_INFRA_TELEMETRY acquisition_method=self_build
-  fix_phase: 'M1 已落地（2026-08-07）—— 6 核心文件 + c1_adapter + track 开关 + 冒烟测试通过；M1-8 治理登记完成（blueprint + 6 plain_zh + capability + depgraph + ARCH）。M1-7 单元测试 55 passed（test_experiment_tracker + test_c1_adapter）+ M1-9 端到端验证全部通过（mlflow 2 run 可对比 + c1_summary.md/nav_curve artifacts）。M1 全部完成（2026-08-08）。✅ 2026-08-10 方向逆转已执行：51 号 A 工作流 MLflow 退役完成（_MLflowBackend 类删除 + query.py mlflow 函数删除 + mlruns/ 清理 + 38 测试通过 0.82s），收敛为单一 FallbackBackend JSON 后端。'
+  fix_phase: 'M1 已落地（2026-08-07）—— 6 核心文件 + c1_adapter + track 开关 + 冒烟测试通过；M1-8 治理登记完成（blueprint + 6 plain_zh + capability + depgraph + ARCH）。M1-7 单元测试 55 passed（test_experiment_tracker + test_c1_adapter）+ M1-9 端到端验证全部通过（mlflow 2 run 可对比 + c1_summary.md/nav_curve artifacts）。M1 全部完成（2026-08-08）。✅ 2026-08-10 方向逆转已执行：51 号 A 工作流 MLflow 退役完成（_MLflowBackend 类删除 + query.py mlflow 函数删除 + mlruns/ 清理 + 38 测试通过 0.82s），收敛为单一 FallbackBackend JSON 后端。⚠️ 订正（2026-08-16）：8-10 记录实为**裁定收敛**（50 号标 MLflow 路线失效），代码未动——8-12 51 号 v1.2.7 核验证实 _MLflowBackend/query mlflow 分支/config 字段全仍在。**2026-08-16 实际执行 51 号 A/B/C 三工作流完成**：A=删 _MLflowBackend 类+query 5 个 mlflow 函数+config 删 tracking_uri/experiment_prefix 字段+pip uninstall mlflow 3.15.1+__init__/fallback 措辞清理；B=Panel「实验历史」Tab（experiment_history.py 新建，P0-1 归一化/P0-2 对齐/P1-5 polarity/P1-6 后缀剥离/P1-7 分级降级/P2-8 lru_cache+前50，app_panel 注册第 11 Tab）；C=2 个 fallback run 重生验证通过（旧 8-07 run P1-7 降级正确）。顺手修复 2 个预存 bug：RunSummary.passed 必填位致 fallback 查询 TypeError 静默返空+bytes artifact 信息丢失；旧 meta artifacts list[str] 格式防御。53 测试全绿。PNG 退役 pending（51 号 §七.P2-10 三条件：Panel 双曲线图上线✅+测试全绿✅+用户确认待⏳）。P1-4 节流实证偏差：panel 版 MultiSelect 无 value_throttled 参数，退用 value 绑定（代码内注记）。'
   status: decided
   created: '2026-08-07'
-  last_updated: '2026-08-10'
+  last_updated: '2026-08-16'
 
 
 # --- #ARCH-OBSERVABILITY-001: 可观测性 umbrella 架构（2026-08-07）---

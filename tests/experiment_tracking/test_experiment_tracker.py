@@ -4,13 +4,13 @@
 # [A_module] module_id=MOD-TEST-OBS-TRACKER | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 # [ARCH-REF] #ARCH-REGIME-DEADZONE-001 #ARCH-OBS-EXP-TRACK-001
-"""ExperimentTracker 单元测试——三 backend 选择 / RunContext 语义 / 单例 / 降级 / 配置。
+"""ExperimentTracker 单元测试——两 backend（Fallback/Null）选择 / RunContext 语义 / 单例 / 配置。
 
 覆盖:
   - ExperimentTrackingConfig 不可变 + load_config 环境变量覆盖
   - _NullBackend（enable_tracking=False）no-op 行为
   - FallbackBackend JSON 写入（start_run/log_*/end_run 全链路）
-  - ExperimentTracker backend 自动选择
+  - ExperimentTracker backend 自动选择（单一 JSON 后端，MLflow 已退役）
   - RunContext 正常退出 FINISHED / 异常退出 FAILED 不吞异常
   - RunContext log_* 失败只 stderr 不抛
   - get_tracker 单例 + reset_tracker 重置
@@ -56,11 +56,10 @@ class TestExperimentTrackingConfig:
             cfg.enable_tracking = False  # type: ignore[misc]
 
     def test_defaults(self):
-        """默认值：tracking_uri=sqlite、enable_tracking=True。"""
+        """默认值：enable_tracking=True + fallback_dir 默认路径。"""
         cfg = ExperimentTrackingConfig()
         assert cfg.enable_tracking is True
-        assert "sqlite" in cfg.tracking_uri
-        assert cfg.experiment_prefix == "zephyr-"
+        assert "experiment_tracking_fallback" in str(cfg.fallback_dir)
 
     def test_load_config_env_disable(self, monkeypatch):
         """ZEPHYR_EXPERIMENT_TRACKING=0 → enable_tracking=False。"""
@@ -73,12 +72,6 @@ class TestExperimentTrackingConfig:
         monkeypatch.setenv("ZEPHYR_EXPERIMENT_TRACKING", "1")
         cfg = load_config()
         assert cfg.enable_tracking is True
-
-    def test_load_config_custom_uri(self, monkeypatch):
-        """ZEPHYR_TRACKING_URI 覆盖默认 tracking_uri。"""
-        monkeypatch.setenv("ZEPHYR_TRACKING_URI", "sqlite:///custom/test.db")
-        cfg = load_config()
-        assert cfg.tracking_uri == "sqlite:///custom/test.db"
 
 
 # ── _NullBackend ─────────────────────────────────────────────────
@@ -181,7 +174,7 @@ class TestFallbackBackend:
 
 
 class TestExperimentTrackerBackendSelection:
-    """ExperimentTracker 自动选择三 backend。"""
+    """ExperimentTracker 自动选择两 backend（Fallback/Null）。"""
 
     def test_disabled_tracking_uses_null_backend(self, monkeypatch):
         """enable_tracking=False → _NullBackend。"""
@@ -190,9 +183,8 @@ class TestExperimentTrackerBackendSelection:
         assert isinstance(tracker._backend, _NullBackend)
         assert tracker.available is False
 
-    def test_mlflow_unavailable_uses_fallback(self, monkeypatch, tmp_path):
-        """mlflow 未装（_MLFLOW_AVAILABLE=False）→ FallbackBackend。"""
-        # 确保启用 tracking
+    def test_enabled_uses_fallback(self, monkeypatch, tmp_path):
+        """enable_tracking=True → FallbackBackend（单一 JSON 后端，恒为真）。"""
         monkeypatch.setenv("ZEPHYR_EXPERIMENT_TRACKING", "1")
         # 用自定义 fallback_dir 避免污染 logs/
         cfg = ExperimentTrackingConfig(
@@ -200,9 +192,8 @@ class TestExperimentTrackerBackendSelection:
             fallback_dir=tmp_path / "fallback",
         )
         tracker = ExperimentTracker(config=cfg)
-        # mlflow 未装时（测试环境通常无 mlflow）→ FallbackBackend
-        # 若 mlflow 已装则 _MLflowBackend——两种都可接受，关键是 backend 非 Null
-        assert not isinstance(tracker._backend, _NullBackend)
+        assert isinstance(tracker._backend, FallbackBackend)
+        assert tracker.available is True
 
     def test_start_run_returns_run_context(self, monkeypatch, tmp_path):
         """start_run 返回 RunContext 实例。"""

@@ -5,8 +5,8 @@ title: Panel「实验历史」Tab + MLflow 退役施工计划
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.12"
-date: 2026-08-15
+version: "1.2.13"
+date: 2026-08-16
 topic: panel_experiment_history_and_mlflow_retirement
 scope: 07_trading_decision_architecture
 parent: 50_backtest_observability_workplan.md
@@ -29,6 +29,18 @@ parent: 50_backtest_observability_workplan.md
 > 声明（§二.2 仍属实，环境级 `pip uninstall mlflow` 未执行）。**§二 Current State Analysis 与代码
 > 现状仍完全一致**，施工条件未变，可直接开工。治理侧：#ARCH-OBS-EXP-TRACK-001 注册表标题已含
 > "MLflow 退役"（C2-3 部分已做）；50 号 v1.1.0 已按本计划逆转收敛（MLflow 路线标失效）。
+
+> **施工完成核验（v1.2.13，2026-08-16 实际执行）**：A/B/C 三工作流**全部完成**——
+> ① A：`_MLflowBackend` 类/query.py 5 个 mlflow 函数/config.py 两字段已删，`pip uninstall mlflow 3.15.1`
+> 已执行，`rg "import mlflow|_MLflowBackend" src/zephyr/` 零命中；② B：`experiment_history.py` 已建
+> （P0-1 归一化/P0-2 对齐/P1-5 polarity/P1-6 后缀剥离/P1-7 分级降级/P2-8 lru_cache+前50），app_panel
+> 注册第 11 Tab，组装冒烟 11 Tab 全通过且 Tab 已列出 run；③ C：2 个 fallback run 重生验证通过
+> （旧 8-07 run 按 P1-7 降级正确显示 NAV 缺失），治理登记（translation 5 条目更新+1 新增/capability
+> 2 token/ARCH 订正/blueprint v0.2.0）完成，53 测试全绿。顺手修复 2 个预存 bug：RunSummary.passed
+> 必填位致 fallback 查询 TypeError 静默返空 + bytes artifact 信息丢失（_get_run_fallback 只取 local_path）；
+> 旧 meta artifacts list[str] 格式已做防御。偏差注记 2 项：P1-4 节流——panel 版 MultiSelect 无
+> value_throttled 参数（仅文本输入类有），退用 value 绑定；P0-3「看详情」按钮按文档预案砍
+> （5-Tab 强依赖持仓/交易，nav CSV 无法重建）。PNG 退役 pending（§七.P2-10 条件 3 用户确认待）。
 
 ## 一、Summary（一句话目标）
 
@@ -473,3 +485,4 @@ Remove-Item -Recurse -Force .runtime\tmp\mlflow_m1_9_test.db, mlruns, .runtime\t
 | 2026-08-12 | 1.2.10 | 作战地图环节映射补强——锚定 BM-RES-02-A | 工作流 B 末尾补映射块，环节级可追溯 |
 | 2026-08-12 | 1.2.11 | 作战地图环节映射补强②——锚定 BM-BT-07-G 回测结果对比（§七.P1-4 多 run 横向对比 + C1ComparisonView 双净值） | 映射块补一行，环节级可追溯；不改既有正文 |
 | 2026-08-15 | 1.2.12 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——B2 设计参考尾句过程性叙述删除（注入过程已由 v1.2.2 修订记录承载）；§八.E 三条"这进一步支持 MVP 不做"冗余收尾口号删除（"MVP 不做"裁定在条目内已声明，理由保留） | 8 类扫描 4 处（类别 2 过程性叙述×1、类别 5 冗余修饰×3）；施工步骤/算法/契约/参数零丢失 |
+| 2026-08-16 | 1.2.13 | 施工完成核验注入（头部 v1.2.13 块）：A/B/C 三工作流全部完成实际执行——A=mlflow 代码删除+pip uninstall 3.15.1；B=experiment_history.py 建成+app_panel 第 11 Tab 注册冒烟通过；C=fallback run 重生验证+治理登记完成。53 测试全绿；顺手修复 2 个预存 bug（passed 必填位 TypeError 静默返空/bytes artifact 信息丢失）；偏差注记 2 项（P1-4 节流 value_throttled→value、P0-3 按钮按预案砍）；PNG 退役 pending（条件 3 待用户确认） | 51 号计划闭环——experiment_registry 施工前提（FallbackBackend JSON + Panel experiment_history.py）已达成 |
