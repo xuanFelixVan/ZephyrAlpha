@@ -47,8 +47,8 @@ blueprint_level: module
 | 方向 | 模块 | 契约/事件 | 说明 |
 |------|------|---------|------|
 | 依赖 | zephyr.compliance.compliance_log | ComplianceLogger | 判定/熔断落 compliance_log |
-| 消费 | C-004 风控引擎 | DisciplineGuard.check(order, ctx) | 订单提交前嵌入（43 号 §4.3） |
-| 消费 | MOD-PA-006 分批建仓 | 同上 | 每批下单前过闸（41 号 §3.6 契约注释） |
+| 消费 | C-004 风控引擎 | DisciplineGuard.check(order, ctx) | 订单提交前嵌入（43 号 §4.3）——**已接线**（AI-ASM-001，trading_session._is_blocked_by_compliance_gates） |
+| 消费 | MOD-PA-006 分批建仓 | 同上 | 每批下单前过闸（41 号 §3.6 契约注释）——**已接线**（AI-ASM-001，BatchedPositionBuilder.gate_batch_order） |
 
 ## 5. 核心逻辑
 

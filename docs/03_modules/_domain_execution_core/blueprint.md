@@ -135,6 +135,7 @@ build_status: generated
 | v2.0.0 (模板v3.3重构) | 同 v1.0.0 + 章节结构重组 | 同 v1.0.0 | 结构重组，无功能变更 |
 | v2.1.0 (模板v4.1回填) | 同 v2.0.0 | 同 v1.0.0 | 模板合规回填，无功能变更 |
 | v2.2.0 (MiniQMT Broker规划) | 同 v2.1.0 | 同 v1.0.0 + adapters/miniqmt_broker.py(P0已修) | MiniQMT实盘Broker规格, 与D_BACKTEST/D_DATA协同, P0已修(P1余项见审计清单) |
+| v2.3.0 (43号合规运行时接线) | 同 v2.2.0 + order_manager.py(C-002 双硬闸: ReportGate+日申报笔数) / trading_session.py(C-004 四道合规闸: INTRADAY清单+KillSwitchLite+四项严禁+交易合规检测) / cancel_rate_guard.py(日申报笔数硬计数器 5000预警/1万阻断) | — | tracker #78 AI-ASM-001 装配批，43_compliance_discipline §3.4/§4.3/§7.1/§7.4/§8，可选注入未接线不影响既有行为 |
 
 ---
 

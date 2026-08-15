@@ -48,7 +48,7 @@ blueprint_level: module
 |------|------|---------|------|
 | 依赖 | zephyr.compliance.compliance_log | ComplianceLogger | 判定落 compliance_log |
 | 依赖 | 调用方注入 CompletionProvider | (ChecklistCheckpoint, date) -> set[str] | 完成度信号源（复盘报告/分析任务/C-004 确认位） |
-| 消费 | C-004 风控引擎 | INTRADAY 检查 | 订单提交前嵌入（Pre-Trade 拦截链一环，40 号决策⑭同通道） |
+| 消费 | C-004 风控引擎 | INTRADAY 检查 | 订单提交前嵌入（Pre-Trade 拦截链一环，40 号决策⑭同通道）——**已接线**（AI-ASM-001，trading_session._validate_and_submit 整批 Hard Block） |
 
 ## 5. 核心逻辑
 

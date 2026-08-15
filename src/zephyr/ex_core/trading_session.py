@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard；权重驱动非订单驱动；资金预占串行扣减+拒单回滚
-# [MODIFY-GUARD]
+# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard；权重驱动非订单驱动；资金预占串行扣减+拒单回滚；C-004 合规闸（清单/纪律/操纵/熔断）注入即生效、检测失效 Fail-Closed 拒单
+# [MODIFY-GUARD] 43_compliance_discipline.md §3.4/§4.3/§7.1（AI-ASM-001 装配批接线）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -19,7 +19,7 @@
 # I2: risk_limits(风控限额) + config(熔断阈值/资金费率) + CancelRateGuard(撤单率状态)
 # F1: _compute_order_deltas(差额下单: 目标qty-当前qty, 先卖后买排序, 板块整手取整)
 # F2: _is_blocked_by_circuit_breaker(订单层熔断: 单票单笔≤4%/单票≤10笔日/全账户≤50笔日)
-# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚)
+# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚; C-004 合规闸: INTRADAY清单HardBlock→KillSwitchLite熔断→四项严禁纪律闸→交易合规检测, 失效Fail-Closed)
 # A2: CancelRateGuard(can_place_order冻结拦截+can_submit_now限频+record_submit计数)
 # A3: _handle_rejection(拒单分类: 涨跌停/资金/持仓不重试, 价格/连接重试1次)
 # O1: submitted_orders(已提交订单) + blocked_orders(已拦截订单) + session_report(统计)
@@ -34,6 +34,17 @@
   4. 可手动可自动——rebalance() 可手动调用，也可由内置定时器自动触发
 
 三态一致性：同一 TradingSession 切换 SimulationBroker / MiniQmtBroker，调仓逻辑一致。
+
+C-004 合规闸（2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipline §3.4/§4.3/§7.1）：
+  _validate_and_submit 在风控检查后、撤单率检查前嵌入四道合规检查
+  （全部可选注入，未注入不影响既有行为；注入后检测失效 Fail-Closed 拒单）：
+  1. INTRADAY 必做清单（MOD-CMP-001）：四时点中唯一 Hard Block 项，
+     每次调仓循环检查一次，缺项 → 整批拒单；
+  2. KillSwitchLite 策略级熔断（43 号 §4.3）：触发策略当日禁止新开仓；
+  3. 四项严禁纪律闸（MOD-CMP-002）：追高/补仓/报复 Hard Block，骄傲 WARNING；
+  4. 交易合规检测（MOD-CMP-007）：大额成交/拉抬打压/尾盘操纵逐单检测
+     （ctx 字段缺省跳过对应检测；Spoofing/Layering/WashTrade 需订单/成交
+     历史，由盘中实时流以同一 detector 实例驱动，不在本链 Pre-Trade 范围）。
 """
 
 from __future__ import annotations
@@ -44,10 +55,26 @@ import uuid
 from collections import defaultdict
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import date, datetime, time, timezone
 from decimal import Decimal
-from typing import Any
+from typing import Any, Final
 
+from zephyr.compliance.discipline_must_do_checker import (
+    ChecklistAction,
+    ChecklistCheckpoint,
+    ChecklistCompletionChecker,
+)
+from zephyr.compliance.discipline_prohibition_checker import (
+    DisciplineAction,
+    DisciplineContext,
+    DisciplineGuard,
+    KillSwitchLite,
+    OrderRequest,
+)
+from zephyr.compliance.trading_compliance_detector import (
+    ManipulationVerdict,
+    TradingComplianceDetector,
+)
 from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
 from zephyr.ex_core.order_manager import OrderManager, RejectionAction
 from zephyr.governance.adapters.risk_validation_bridge import (
@@ -66,6 +93,26 @@ _logger = logging.getLogger(__name__)
 
 SignalProvider = Callable[[list[str]], dict[str, float]]
 PriceProvider = Callable[[list[str]], dict[str, Decimal]]
+
+
+@dataclass(frozen=True)
+class ComplianceMarketContext:
+    """MOD-CMP-007 检测上下文（C-004 合规闸注入，字段 None=跳过对应检测）。
+
+    43 号 §7.3：检测目标=自我监控+证据留存，命中一律 Hard Block。
+    """
+
+    minute_avg_volume: float | None = None  # 该标的分钟均量（大额成交检测）
+    price_change_5min_pct: float | None = None  # 近 5min 价格变动小数（拉抬打压）
+    our_volume_share_5min: float | None = None  # 近 5min 我方成交占比（拉抬打压）
+    pre_close_vwap: float | None = None  # 收盘前 VWAP（尾盘操纵）
+    close_window_volume: float | None = None  # 尾盘窗口市场总量（尾盘操纵）
+    at_time: time | None = None  # 申报时刻（None=取当前时间）
+
+
+# C-004 合规闸上下文提供者签名
+DisciplineCtxProvider = Callable[[Order, PositionSnapshot], DisciplineContext]
+ComplianceCtxProvider = Callable[[Order], ComplianceMarketContext]
 
 # 需要撤单的活跃状态
 _ACTIVE_STATUSES = frozenset({OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL})
@@ -141,7 +188,25 @@ class TradingSession:
         order_manager: OrderManager,
         config: TradingSessionConfig,
         cancel_rate_guard: CancelRateGuard | None = None,
+        checklist_checker: ChecklistCompletionChecker | None = None,
+        kill_switch: KillSwitchLite | None = None,
+        discipline_guard: DisciplineGuard | None = None,
+        discipline_ctx_provider: DisciplineCtxProvider | None = None,
+        compliance_detector: TradingComplianceDetector | None = None,
+        compliance_ctx_provider: ComplianceCtxProvider | None = None,
     ) -> None:
+        # C-004 合规闸成对注入校验（43 号 §4.3/§7.6：检测失效 Fail-Closed，
+        # 缺 ctx 提供器=检测不可评估=配置错误，装配期 fail-fast 优于盘中拒单）
+        if (discipline_guard is None) != (discipline_ctx_provider is None):
+            raise ValueError(
+                "discipline_guard 与 discipline_ctx_provider 必须成对注入"
+                "（43 号 §4.3：纪律闸缺上下文不可评估）"
+            )
+        if (compliance_detector is None) != (compliance_ctx_provider is None):
+            raise ValueError(
+                "compliance_detector 与 compliance_ctx_provider 必须成对注入"
+                "（43 号 §7.6：合规检测缺上下文不可评估）"
+            )
         self._broker = broker
         self._strategy = strategy
         self._risk_validator = risk_validator
@@ -150,6 +215,13 @@ class TradingSession:
         self._order_manager = order_manager
         self._config = config
         self._cancel_rate_guard = cancel_rate_guard or CancelRateGuard()
+        # C-004 合规闸（None=未接线不校验，AI-ASM-001 装配批）
+        self._checklist_checker = checklist_checker
+        self._kill_switch = kill_switch
+        self._discipline_guard = discipline_guard
+        self._discipline_ctx_provider = discipline_ctx_provider
+        self._compliance_detector = compliance_detector
+        self._compliance_ctx_provider = compliance_ctx_provider
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
         self._running = False
@@ -333,6 +405,22 @@ class TradingSession:
         current_holdings_float = {s: float(q) for s, q in positions.holdings.items()}
         submitted: list[Order] = []
 
+        # ── C-004 合规闸 0：INTRADAY 必做清单（43 号 §3.4，订单无关每次循环查一次）──
+        if self._checklist_checker is not None:
+            checklist_verdict = self._checklist_checker.check_checkpoint(
+                ChecklistCheckpoint.INTRADAY,
+                datetime.now(timezone.utc),
+            )
+            if checklist_verdict.action is ChecklistAction.HARD_BLOCK:
+                _logger.error(
+                    "C-004 必做清单 Hard Block: missing=%s detail=%s——整批 %d 单拒下",
+                    checklist_verdict.missing_items,
+                    checklist_verdict.detail,
+                    len(sorted_deltas),
+                )
+                self._blocked_orders.extend(sorted_deltas)
+                return []
+
         # ── 资金预占初始化（§2.14 决策⑬）──
         available_cash = positions.cash
         pending_release = Decimal("0")  # 待成交卖出单的预估净回笼资金
@@ -342,6 +430,11 @@ class TradingSession:
             # ── 盘前检查链 Step 1-3: 风控检查（仓位/行业/杠杆/Kill Switch）──
             target_weight = float(target_weights.get(order.symbol, 0.0))
             if self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float):
+                self._blocked_orders.append(order)
+                continue
+
+            # ── C-004 合规闸 1-3：熔断/纪律闸/交易合规（43 号 §4.3/§7.1）──
+            if self._is_blocked_by_compliance_gates(order, positions):
                 self._blocked_orders.append(order)
                 continue
 
@@ -445,6 +538,119 @@ class TradingSession:
                 [(v.constraint, v.description) for v in violations],
             )
         return halt
+
+    # ------------------------------------------------------------------
+    # C-004 合规闸（43 号 §3.4/§4.3/§7.1，AI-ASM-001 装配批接线）
+    # ------------------------------------------------------------------
+
+    def _is_blocked_by_compliance_gates(self, order: Order, positions: PositionSnapshot) -> bool:
+        """C-004 合规闸：KillSwitchLite 熔断 → 四项严禁纪律闸 → 交易合规检测。
+
+        检测引擎/上下文失效一律保守阻断（Fail-Closed，43 号 §1.3/§4.3/§7.6）。
+        全部组件可选注入，未注入直接放行（不影响既有行为）。
+        """
+        # 1) KillSwitchLite 策略级熔断（43 号 §4.3：触发策略当日禁止新开仓）
+        if self._kill_switch is not None:
+            try:
+                if self._kill_switch.is_blocked(order.strategy_id, date.today()):
+                    _logger.error(
+                        "C-004 拒单[KillSwitchLite 熔断]: strategy=%s symbol=%s 当日禁止新开仓",
+                        order.strategy_id,
+                        order.symbol,
+                    )
+                    return True
+            except Exception:  # noqa: BLE001 — 失效类型不可枚举，Fail-Closed 必须全捕获
+                _logger.exception("KillSwitchLite 状态检查失效，Fail-Closed 拒单: symbol=%s", order.symbol)
+                return True
+
+        # 2) 四项严禁纪律闸（MOD-CMP-002，追高/补仓/报复 Hard Block，骄傲 WARNING）
+        if self._discipline_guard is not None:
+            try:
+                ctx = self._discipline_ctx_provider(order, positions)
+                request = self._make_order_request(order, positions)
+                verdict = self._discipline_guard.check(request, ctx)
+            except Exception:  # noqa: BLE001 — 43 号 §4.3 检测引擎失效=保守 Hard Block
+                _logger.exception("纪律闸检测失效，Fail-Closed 拒单: symbol=%s", order.symbol)
+                return True
+            if verdict.action is DisciplineAction.HARD_BLOCK:
+                _logger.error(
+                    "C-004 拒单[纪律闸 %s]: symbol=%s detail=%s",
+                    verdict.behavior.value if verdict.behavior else "UNKNOWN",
+                    order.symbol,
+                    verdict.detail,
+                )
+                return True
+            if verdict.action is DisciplineAction.WARNING:
+                _logger.warning(
+                    "C-004 纪律闸提醒[%s]: symbol=%s detail=%s（不阻断）",
+                    verdict.behavior.value if verdict.behavior else "UNKNOWN",
+                    order.symbol,
+                    verdict.detail,
+                )
+
+        # 3) 交易合规检测（MOD-CMP-007，命中一律 Hard Block）
+        if self._compliance_detector is not None:
+            try:
+                market_ctx = self._compliance_ctx_provider(order)
+                hits = self._run_compliance_detection(order, market_ctx)
+            except Exception:  # noqa: BLE001 — 43 号 §7.6 检测引擎失效=拒发任何订单
+                _logger.exception("交易合规检测失效，Fail-Closed 拒单: symbol=%s", order.symbol)
+                return True
+            if hits:
+                _logger.error(
+                    "C-004 拒单[交易合规 %s]: symbol=%s detail=%s",
+                    hits[0].mtype.value,
+                    order.symbol,
+                    hits[0].detail,
+                )
+                return True
+        return False
+
+    @staticmethod
+    def _make_order_request(order: Order, positions: PositionSnapshot) -> OrderRequest:
+        """delta 订单 → 纪律闸 OrderRequest（最小契约，43 号 §4.3）。"""
+        total_asset = positions.cash + positions.total_market_value
+        order_value = order.quantity * (order.limit_price or Decimal("0"))
+        is_add = (
+            order.side is OrderSide.BUY
+            and positions.holdings.get(order.symbol, Decimal("0")) > 0
+        )
+        return OrderRequest(
+            symbol=order.symbol,
+            price=float(order.limit_price or Decimal("0")),
+            strategy_id=order.strategy_id,
+            risk_exposure=float(order_value / total_asset) if total_asset > 0 else 0.0,
+            size=float(order_value),
+            is_add=is_add,
+        )
+
+    def _run_compliance_detection(
+        self,
+        order: Order,
+        market_ctx: ComplianceMarketContext,
+    ) -> list[ManipulationVerdict]:
+        """逐单交易合规检测（ctx 字段 None 跳过对应检测）。"""
+        detector = self._compliance_detector
+        qty = float(order.quantity)
+        price = float(order.limit_price or Decimal("0"))
+        verdicts: list[ManipulationVerdict | None] = []
+        if market_ctx.minute_avg_volume is not None:
+            verdicts.append(detector.check_large_trade(qty, market_ctx.minute_avg_volume))
+        if market_ctx.price_change_5min_pct is not None and market_ctx.our_volume_share_5min is not None:
+            verdicts.append(
+                detector.check_ramp_dump(market_ctx.price_change_5min_pct, market_ctx.our_volume_share_5min)
+            )
+        if market_ctx.pre_close_vwap is not None and market_ctx.close_window_volume is not None:
+            verdicts.append(
+                detector.check_close_manipulation(
+                    price,
+                    qty,
+                    market_ctx.pre_close_vwap,
+                    market_ctx.close_window_volume,
+                    market_ctx.at_time or datetime.now(timezone.utc).time(),
+                )
+            )
+        return detector.run_all(*verdicts)
 
     def _handle_rejection(self, order: Order, error: Exception) -> None:
         """拒单分类处理（40_execution_broker §2.7 层3）。
@@ -601,4 +807,12 @@ class TradingSession:
                     _logger.exception("failed to cancel order %s", order.order_id)
 
 
-__all__ = ["TradingSession", "TradingSessionConfig", "SignalProvider", "PriceProvider"]
+__all__: Final = [
+    "TradingSession",
+    "TradingSessionConfig",
+    "SignalProvider",
+    "PriceProvider",
+    "ComplianceMarketContext",
+    "DisciplineCtxProvider",
+    "ComplianceCtxProvider",
+]

@@ -5,7 +5,7 @@ title: 合规与交易纪律体系
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.1"
+version: "1.1.0"
 date: 2026-08-15
 topic: compliance_discipline
 scope: 07_trading_decision_architecture
@@ -300,7 +300,7 @@ compliance:
 |---|---|---|
 | 追高检测 `chase_max_deviation=+2%`、骄傲检测 `win_streak_n=5` 等 MVP 初始阈值 | 本篇给初始值，未经实盘校准 | 待 C1 实盘阶段按误拦截率校准 |
 | 47 项功能裁定清单的迁移录入 | 登记表结构本篇已定；源清单（合规架构.md §10 / 17-D-COMPLIANCE-合规监管域.md）不在仓内不可用 | **部分落地**（v1.0.0）：19 条有据种子已登记（harvest 档案 15 条 ✅/❌ + 本篇明示 4 条）；全量 47 项迁移待源文档恢复后补录 |
-| #ARCH-COMPLIANCE-001（5000 笔预警/1 万笔阻断/撤单率 80%/存档 20 年，program_trading_regulation.py） | **已裁定吸收（2026-08-15 用户拍板方案 A）**：不独立建模块——撤单率 80% 被 40 号内部 ≤15% 覆盖；存档维持 JSONL MVP 裁定；唯一缺口=日申报笔数硬计数器（5000 预警/1 万阻断） | **闭环**：计数器并入 tracker #74 装配批（C-002 订单链路读数检查，复用 24/40 号既有计数）；ARCH 条目转 decided |
+| #ARCH-COMPLIANCE-001（5000 笔预警/1 万笔阻断/撤单率 80%/存档 20 年，program_trading_regulation.py） | **已裁定吸收（2026-08-15 用户拍板方案 A）**：不独立建模块——撤单率 80% 被 40 号内部 ≤15% 覆盖；存档维持 JSONL MVP 裁定；唯一缺口=日申报笔数硬计数器（5000 预警/1 万阻断） | **已闭环**：计数器已施工（2026-08-15 AI-ASM-001，CancelRateGuard v1.1.0 日申报硬计数器，报单+撤单双计+自然日滚动，C-002 order_manager 读数检查）；ARCH 条目转 decided |
 | compliance_log 载体 | MVP 用 JSONL 文件；达 3-5 个同类 artifact 后是否建生成器/数据库 | 按 01 号规范 §6 暂缓，不预设 |
 | 单日最高申报笔数填报值 2000 笔/日 | 按打板+多因子容量粗估 | 待实盘首月统计校准 |
 | 报告义务券商侧确认流程（broker_ack 获取方式） | miniQMT/券商程序化报备通道细则未在库 | 待开通实盘时人工核实后补录 |
@@ -313,6 +313,7 @@ compliance:
 | 2026-08-15 | 0.1.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | 首轮未压缩篇目：§9 新建条目改动单元格去正文重复（五环节细节以正文 §3-§7 为准）；全篇扫描无其他可压缩点——追高 +2%/30min+5%、补仓 -5%、骄傲 5 笔×1.5、报复 -2%/2.0/1.5、Spoofing 0.2/10s/3、Layering 3 档/0.8、尾盘 2%/30%、50μs、限频 ≤15 笔/秒+通道 10 笔/秒+2000 笔/日、撤单率 12%/15%、47 项裁定清单、BM-BUY 锚点/开放问题/链接逐项零丢失 |
 | 2026-08-15 | 1.0.0 | **已施工**（AI-COMP-001，第 4 批）：五环节全落地，draft→active | §3-§7 全模块落码（7 模块+2 登记表+78 测试全绿），详见 §10 施工落地记录；depgraph 4 预登记设计态节点落码+3 新登记+10 设计态边 |
 | 2026-08-15 | 1.0.1 | #ARCH-COMPLIANCE-001 裁定吸收（用户拍板方案 A） | §8 开放问题闭环：不独立建 program_trading_regulation.py；日申报笔数硬计数器（5000 预警/1 万阻断）并入 tracker #74 装配批 |
+| 2026-08-15 | 1.1.0 | **运行时装配完工**（AI-ASM-001，tracker #78） | §10 新增装配记录：C-004 四道合规闸（清单/熔断/纪律/操纵检测）+C-002 双硬闸（ReportGate/日申报笔数）+MOD-PA-006 gate_batch_order+CancelRateGuard v1.1.0 硬计数器；§8 #ARCH-COMPLIANCE-001 转已闭环；红队三向量实证 |
 
 ## 10. 施工落地记录
 
@@ -332,6 +333,19 @@ compliance:
 - 工程修正（对伪代码）：①严禁检测加 ε=1e-9 浮点尾差容差（恰达阈值不判违规，与"超阈值"语义一致）；②必做清单盘后/晚间截止按"次日+trade_date 显式入参"实现跨日语义
 - 整合点（设计态边已登记，dep_maturity=design）：C-004 风控引擎→MOD-CMP-002/007；MOD-PA-006 分批建仓→MOD-CMP-002；C-002 执行域（order_manager）→MOD-CMP-009。运行时装配（实际调用点嵌入）留后续装配批
 - merge 后 depgraph 经 #ARCH-70 同身份 UPDATE 通道自动转 production
+
+**运行时装配**（2026-08-15，AI-ASM-001，tracker #78 + #ARCH-COMPLIANCE-001 方案 A 计数器）：
+
+| 嵌入点 | 接线内容 | 落点 | 语义 |
+|---|---|---|---|
+| C-004 风控引擎（40 号 Pre-Trade 拦截链） | MOD-CMP-001 INTRADAY 必做清单（整批 Hard Block）+ KillSwitchLite 熔断 + MOD-CMP-002 四项严禁 + MOD-CMP-007 逐单检测（大额成交/拉抬打压/尾盘操纵，ctx 缺省跳过） | [trading_session.py](../../../../src/zephyr/ex_core/trading_session.py) `_validate_and_submit`（风控检查后、撤单率检查前） | 可选注入、检测失效 Fail-Closed 拒单、成对注入装配期 fail-fast |
+| C-002 执行域 | MOD-CMP-009 ReportGate 先报告后交易 + 日申报笔数读数检查（5000 预警/1 万阻断） | [order_manager.py](../../../../src/zephyr/ex_core/order_manager.py) `submit_order` 前置 `_check_compliance_gates`（状态机+broker 发送前） | BLOCK → ComplianceGateBlockError（ZA-EX-0011） |
+| MOD-PA-006 分批建仓 | MOD-CMP-002 每批下单前过闸（41 §2.3 不得绕过） | [batched_position_builder.py](../../../../src/zephyr/pf_alloc/batched_position_builder.py) `gate_batch_order` | 闸未注入 → DisciplineGuardError（Fail-Closed） |
+| 日申报笔数硬计数器 | 报单+撤单双计、自然日滚动、5000 预警/1 万阻断、阈值穿越单次告警 | [cancel_rate_guard.py](../../../../src/zephyr/ex_core/cancel_rate_guard.py) v1.1.0（复用 40 号决策⑫既有事件流，不重复实现） | C-002 读数检查消费 |
+
+- 红队实证（tests/compliance/test_runtime_wiring.py）：①9999 笔放行→1 万整 C-002 拒发+broker_ack 缺失拒发；②清单缺项整批 Hard Block、补全恢复；③报复命中 HARD_BLOCK+熔断落盘，C-004 与 MOD-PA-006 跨链同策略均拦，合规日志留痕
+- 测试：213 项（ex_core 3 文件+pf_alloc+compliance 含红队 4 项）连续 2 轮全绿
+- 边界：Spoofing/Layering/WashTrade 需订单/成交历史，由盘中实时流以同一 detector 实例驱动，不在 Pre-Trade 链范围；MOD-CMP-005/008 为治理/审计面不参与运行时拦截
 
 ---
 

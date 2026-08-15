@@ -23,10 +23,20 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import time
+from datetime import date, time
 
 import pytest
 
+from zephyr.compliance.compliance_log import ComplianceLogger
+from zephyr.compliance.discipline_prohibition_checker import (
+    DisciplineAction,
+    DisciplineContext,
+    DisciplineGuard,
+    DisciplineGuardError,
+    KillSwitchLite,
+    OrderRequest,
+    ProhibitedBehavior,
+)
 from zephyr.pf_alloc.batched_position_builder import (
     AGGRESSIVE_THRESHOLD,
     DEFAULT_CONFIRM_BARS,
@@ -42,7 +52,6 @@ from zephyr.pf_alloc.batched_position_builder import (
     rank_buy_orders,
     schedule_buy_orders,
 )
-
 
 # ── 测试用 Mock 对象 ──
 
@@ -464,3 +473,134 @@ class TestBatchedPositionBuilder:
         result = builder.check_degrade(pos)
         assert result is not None
         assert result[0] == "BREAKOUT_FAILED"
+
+
+# ══════════════════════════════════════════════════════════════
+# BM-BUY-08 纪律闸接线（41 §2.3/§3.1，AI-ASM-001 装配批，43 号 §4.3）
+# ══════════════════════════════════════════════════════════════
+
+
+def _tmp_logger(tmp_path) -> ComplianceLogger:
+    """测试用合规日志（写 tmp，不污染生产证据链）。"""
+    return ComplianceLogger(path=tmp_path / "compliance_log.jsonl")
+
+
+def _order(**overrides) -> OrderRequest:
+    base = {
+        "symbol": "600519.SH",
+        "price": 100.0,
+        "strategy_id": "daban_v1",
+        "risk_exposure": 0.03,
+        "size": 30000.0,
+        "is_add": False,
+    }
+    base.update(overrides)
+    return OrderRequest(**base)
+
+
+def _ctx(**overrides) -> DisciplineContext:
+    """全中性 ctx（默认不触发任何检测）。"""
+    base = {
+        "signal_ref_price": None,
+        "surge_30min_pct": None,
+        "position_pnl_pct": None,
+        "win_streak": 0,
+        "normal_exposure": 0.01,
+        "daily_pnl_pct": 0.0,
+        "projected_daily_freq": 1.0,
+        "freq_baseline_20d": 1.0,
+        "size_baseline_20d": 1e9,
+    }
+    base.update(overrides)
+    return DisciplineContext(**base)
+
+
+class TestGateBatchOrder:
+    """每批下单前过 BM-BUY-08 纪律闸（41 §2.3 硬约束，buy_flow 不得绕过）。"""
+
+    def test_no_guard_raises_fail_closed(self):
+        """纪律闸未注入 → DisciplineGuardError（Fail-Closed：闸不可用即拒）。"""
+        builder = BatchedPositionBuilder()
+        with pytest.raises(DisciplineGuardError, match="不得绕过"):
+            builder.gate_batch_order(_order(), _ctx())
+
+    def test_pass_verdict(self, tmp_path):
+        """全中性 → PASS 放行。"""
+        builder = BatchedPositionBuilder(
+            discipline_guard=DisciplineGuard(logger=_tmp_logger(tmp_path))
+        )
+        verdict = builder.gate_batch_order(_order(), _ctx())
+        assert verdict.action is DisciplineAction.PASS
+
+    def test_chasing_hard_block(self, tmp_path):
+        """追高命中 → HARD_BLOCK（取消该批及后续批次，41 §3.3 降级表）。"""
+        builder = BatchedPositionBuilder(
+            discipline_guard=DisciplineGuard(logger=_tmp_logger(tmp_path))
+        )
+        verdict = builder.gate_batch_order(
+            _order(price=100.0),
+            _ctx(signal_ref_price=95.0, surge_30min_pct=0.06),
+        )
+        assert verdict.action is DisciplineAction.HARD_BLOCK
+        assert verdict.behavior is ProhibitedBehavior.CHASING
+
+    def test_overconfidence_warning_not_block(self, tmp_path):
+        """盈利骄傲 → WARNING 不阻断。"""
+        builder = BatchedPositionBuilder(
+            discipline_guard=DisciplineGuard(logger=_tmp_logger(tmp_path))
+        )
+        verdict = builder.gate_batch_order(
+            _order(risk_exposure=0.03),
+            _ctx(win_streak=5, normal_exposure=0.01),
+        )
+        assert verdict.action is DisciplineAction.WARNING
+
+    def test_kill_switch_blocks_strategy(self, tmp_path):
+        """KillSwitchLite 熔断策略当日禁止新开仓（43 号 §4.3）。"""
+        ks = KillSwitchLite(
+            state_path=tmp_path / "ks_state.json",
+            logger=_tmp_logger(tmp_path),
+        )
+        assert ks.trigger("daban_v1", "REVENGE_TRADING", date.today())
+        builder = BatchedPositionBuilder(
+            discipline_guard=DisciplineGuard(logger=_tmp_logger(tmp_path)),
+            kill_switch=ks,
+        )
+        verdict = builder.gate_batch_order(_order(), _ctx(), today=date.today())
+        assert verdict.action is DisciplineAction.HARD_BLOCK
+        assert verdict.kill_switch_triggered
+
+    def test_kill_switch_other_strategy_pass(self, tmp_path):
+        """熔断仅策略级——其他策略正常过闸。"""
+        ks = KillSwitchLite(
+            state_path=tmp_path / "ks_state.json",
+            logger=_tmp_logger(tmp_path),
+        )
+        assert ks.trigger("other_strategy", "REVENGE_TRADING", date.today())
+        builder = BatchedPositionBuilder(
+            discipline_guard=DisciplineGuard(logger=_tmp_logger(tmp_path)),
+            kill_switch=ks,
+        )
+        verdict = builder.gate_batch_order(_order(), _ctx(), today=date.today())
+        assert verdict.action is DisciplineAction.PASS
+
+    def test_revenge_triggers_kill_switch_via_guard(self, tmp_path):
+        """报复交易命中：HARD_BLOCK + KillSwitchLite 经 DisciplineGuard 联动触发。"""
+        ks = KillSwitchLite(
+            state_path=tmp_path / "ks_state.json",
+            logger=_tmp_logger(tmp_path),
+        )
+        guard = DisciplineGuard(kill_switch=ks, logger=_tmp_logger(tmp_path))
+        builder = BatchedPositionBuilder(discipline_guard=guard, kill_switch=ks)
+        verdict = builder.gate_batch_order(
+            _order(size=200.0),
+            _ctx(daily_pnl_pct=-0.03, size_baseline_20d=100.0),
+            today=date.today(),
+        )
+        assert verdict.action is DisciplineAction.HARD_BLOCK
+        assert verdict.behavior is ProhibitedBehavior.REVENGE_TRADING
+        # 熔断状态已落盘——同策略下一批直接被熔断闸拦截
+        assert ks.is_blocked("daban_v1", date.today())
+        verdict2 = builder.gate_batch_order(_order(), _ctx(), today=date.today())
+        assert verdict2.action is DisciplineAction.HARD_BLOCK
+        assert verdict2.kill_switch_triggered

@@ -179,9 +179,11 @@ Batch.status 四态：`PENDING → FILLED / DEGRADED / CANCELLED`。
 ```python
 class BatchedPositionBuilder:
     """分批建仓引擎——消费 FirmTargetPortfolio，产出分批计划/放行判定/降级判定"""
+    def __init__(self, discipline_guard: DisciplineGuard | None = None, kill_switch: KillSwitchLite | None = None): ...  # AI-ASM-001 接线：纪律闸可选注入
     def build_plan(self, symbol: str, total_weight: float, confidence_score_c031: float, strategy_type: str, sector_quality: str | None = None) -> BatchedEntryPlan: ...
     def check_batch2_release(self, plan: BatchedEntryPlan, position: Any, volume_ratio: float, days_since_first_batch: int) -> bool: ...
     def check_degrade(self, position: Any, lookback_days: int = 10, confirm_bars: int = 2) -> tuple[str, str, str] | None: ...
+    def gate_batch_order(self, order: OrderRequest, ctx: DisciplineContext, *, today: date | None = None) -> DisciplineVerdict: ...  # AI-ASM-001 接线：每批下单前过 BM-BUY-08 纪律闸（41 §2.3/§3.1，43 §4.3）
 
 def compute_batch_split(confidence_score_c031: float, strategy_type: str, sector_quality: str | None = None) -> dict[str, Any]: ...
 def detect_breakout_failure(position: Any, lookback_days: int = 10, confirm_bars: int = 2) -> tuple[str, str, str] | None: ...
@@ -200,6 +202,7 @@ def rank_buy_orders(target_holdings: dict[str, float], confidence_scores: dict[s
 | `rank_buy_orders()` | ①剔除 CASH→②流动性升序→③置信度降序→④权重降序（41 §3.6） | 流动性差先挂防无对手盘 |
 | `build_plan()` | ①compute_batch_split→②AGGRESSIVE 单批 / SCALED 双批（确认仓挂 2/3 触发条件）→③sector_quality=None 记 degrade_reason | 编排 §3.2.1+§3.2.3 |
 | `check_batch2_release()` | ①激进模式直返 False→②三条件计数（距首仓≥1 交易日/回落不破入场价/量比<1）→③≥2 项放行（41 §3.2.2） | 2/3 阈值 |
+| `gate_batch_order()` | ①闸未注入→DisciplineGuardError（Fail-Closed）→②KillSwitchLite 熔断→HARD_BLOCK→③委托 DisciplineGuard.check（41 §2.3/§3.1，43 §4.3，AI-ASM-001 接线） | 熔断先于检测 |
 ### 4.2 数据模型
 ```python
 @dataclass(frozen=True)
@@ -237,6 +240,7 @@ class BatchedEntryPlan:
 | `clip_to_available_capital()` | 削减后权重字典（含 `_degrade_reason` 标记） | ZA-PA-0007（InsufficientCapitalError，代码头声明）；当前实现以降级标记代替抛出 |
 | `check_batch2_release()` | bool（≥2/3 条件为 True） | — |
 | `check_degrade()` | None 或 (降级类型,动作,联动) 三元组 | — |
+| `gate_batch_order()` | `DisciplineVerdict`（PASS/WARNING/HARD_BLOCK+kill_switch_triggered） | ZA-CMP-0002（DisciplineGuardError，闸未注入 Fail-Closed，AI-ASM-001 接线） |
 ### 4.5 MCP 接口（条件可选）
 本模块不暴露 MCP 接口。
 ### 4.6 契约版本
