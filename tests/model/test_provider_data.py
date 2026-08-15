@@ -26,12 +26,12 @@ class TestDefaultProviders:
     def test_has_four_providers(self):
         assert set(DEFAULT_PROVIDERS.keys()) == EXPECTED_PROVIDERS
 
-    @pytest.mark.parametrize("provider_name", list(EXPECTED_PROVIDERS))
+    @pytest.mark.parametrize("provider_name", sorted(EXPECTED_PROVIDERS))
     def test_provider_has_required_keys(self, provider_name):
         provider = DEFAULT_PROVIDERS[provider_name]
         assert REQUIRED_PROVIDER_KEYS.issubset(provider.keys())
 
-    @pytest.mark.parametrize("provider_name", list(EXPECTED_PROVIDERS))
+    @pytest.mark.parametrize("provider_name", sorted(EXPECTED_PROVIDERS))
     def test_prices_are_non_negative_floats(self, provider_name):
         provider = DEFAULT_PROVIDERS[provider_name]
         for key in ("price_per_1k_input", "price_per_1k_output"):
@@ -39,14 +39,14 @@ class TestDefaultProviders:
             assert isinstance(value, (int, float)), f"{provider_name}.{key} is not numeric"
             assert value >= 0, f"{provider_name}.{key} is negative"
 
-    @pytest.mark.parametrize("provider_name", list(EXPECTED_PROVIDERS))
+    @pytest.mark.parametrize("provider_name", sorted(EXPECTED_PROVIDERS))
     def test_country_code_is_valid_string(self, provider_name):
         provider = DEFAULT_PROVIDERS[provider_name]
         cc = provider["cc"]
         assert isinstance(cc, str), f"{provider_name}.cc is not a string"
         assert len(cc) >= 2, f"{provider_name}.cc too short: {cc!r}"
 
-    @pytest.mark.parametrize("provider_name", list(EXPECTED_PROVIDERS))
+    @pytest.mark.parametrize("provider_name", sorted(EXPECTED_PROVIDERS))
     def test_model_names_are_non_empty_strings(self, provider_name):
         provider = DEFAULT_PROVIDERS[provider_name]
         model_keys = set(provider.keys()) - REQUIRED_PROVIDER_KEYS
@@ -61,12 +61,12 @@ class TestRawTierMap:
     def test_has_three_tiers(self):
         assert set(_RAW_TIER_MAP.keys()) == EXPECTED_TIERS
 
-    @pytest.mark.parametrize("tier_name", list(EXPECTED_TIERS))
+    @pytest.mark.parametrize("tier_name", sorted(EXPECTED_TIERS))
     def test_tier_has_at_least_one_model(self, tier_name):
         models = _RAW_TIER_MAP[tier_name]
         assert len(models) >= 1, f"{tier_name} has no model entries"
 
-    @pytest.mark.parametrize("tier_name", list(EXPECTED_TIERS))
+    @pytest.mark.parametrize("tier_name", sorted(EXPECTED_TIERS))
     def test_tier_entries_follow_provider_model_format(self, tier_name):
         models = _RAW_TIER_MAP[tier_name]
         for entry in models:

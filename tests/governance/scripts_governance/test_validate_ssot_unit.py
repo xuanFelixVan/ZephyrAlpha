@@ -236,7 +236,7 @@ class TestCheckP0DuplicateActiveModuleId:
 class TestCheckP1StatusInvalid:
     """P1：status 字段有效性。"""
 
-    @pytest.mark.parametrize("status", list(VALID_DOCUMENT_STATUSES))
+    @pytest.mark.parametrize("status", sorted(VALID_DOCUMENT_STATUSES))
     def test_valid_statuses_pass(self, status: str) -> None:
         assert check_p1_status_invalid([_meta(status=status)]) == []
 
