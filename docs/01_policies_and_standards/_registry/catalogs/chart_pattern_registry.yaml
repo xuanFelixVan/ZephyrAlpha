@@ -10,10 +10,11 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 trigger（形态=买卖触发信号）；primary_timeframe 由既有 timeframe 字段映射（daily→daily、weekly→weekly、intraday→null 占位，因 intraday 跨多个分钟级无法唯一归属）；direction 默认 neutral 为占位，条目内容填入时按形态多/空校正；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、信号、出货、分时、压力、反转、吸筹、周期、回撤、因子、均线、基准、威科夫、尾盘、市场结构、形态、情绪、成交、打板、执行、持续、指标、支撑、斐波那契、早盘、机器学习、止损、江恩、波动、波浪、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、规则、订单、谐波、质量、资金、超跌、趋势、通胀、量价、量化、震荡
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-PAT-001
 name: Chart Pattern Registry
 name_zh: 图形形态注册表
@@ -169,7 +170,7 @@ algorithm_variant_sota_ladder:
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 2.14.1
+version: 2.14.2
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -217,6 +218,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 chart_patterns:
   # ============================================================
@@ -263,6 +266,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-002"
     name: "Bullish Engulfing"
@@ -302,6 +307,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-003"
     name: "Bearish Engulfing"
@@ -341,6 +348,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-004"
     name: "Morning Star"
@@ -380,6 +389,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-005"
     name: "Evening Star"
@@ -419,6 +430,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-006"
     name: "Doji"
@@ -458,6 +471,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态", "指标"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-007"
     name: "Inverted Hammer"
@@ -497,6 +512,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-008"
     name: "Hanging Man"
@@ -536,6 +553,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-009"
     name: "Shooting Star"
@@ -575,6 +594,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-010"
     name: "Gravestone Doji"
@@ -614,6 +635,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-011"
     name: "Dragonfly Doji"
@@ -653,6 +676,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-012"
     name: "Long-legged Doji"
@@ -692,6 +717,8 @@ chart_patterns:
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-013"
     name: "Spinning Top"
@@ -731,6 +758,8 @@ chart_patterns:
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-014"
     name: "Marubozu"
@@ -770,6 +799,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-015"
     name: "Closing Marubozu"
@@ -809,6 +840,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-016"
     name: "High-Wave"
@@ -848,6 +881,8 @@ chart_patterns:
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-017"
     name: "Rickshaw Man"
@@ -887,6 +922,8 @@ chart_patterns:
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-018"
     name: "Takuri"
@@ -926,6 +963,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-019"
     name: "Belt Hold"
@@ -965,6 +1004,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-020"
     name: "Harami"
@@ -1004,6 +1045,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-021"
     name: "Harami Cross"
@@ -1043,6 +1086,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-022"
     name: "Morning Doji Star"
@@ -1082,6 +1127,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-023"
     name: "Evening Doji Star"
@@ -1121,6 +1168,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-024"
     name: "Doji Star"
@@ -1160,6 +1209,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-025"
     name: "Piercing Pattern"
@@ -1199,6 +1250,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-026"
     name: "Dark Cloud Cover"
@@ -1238,6 +1291,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-027"
     name: "Kicking"
@@ -1277,6 +1332,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-028"
     name: "Kicking by Length"
@@ -1316,6 +1373,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-029"
     name: "Three White Soldiers"
@@ -1355,6 +1414,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-030"
     name: "Three Black Crows"
@@ -1394,6 +1455,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-031"
     name: "Identical Three Crows"
@@ -1433,6 +1496,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-032"
     name: "Three Inside Up/Down"
@@ -1472,6 +1537,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-033"
     name: "Three Outside Up/Down"
@@ -1511,6 +1578,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-034"
     name: "Three-Line Strike"
@@ -1550,6 +1619,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-035"
     name: "Three Stars in the South"
@@ -1589,6 +1660,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-036"
     name: "Unique Three River"
@@ -1628,6 +1701,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-037"
     name: "Ladder Bottom"
@@ -1667,6 +1742,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-038"
     name: "Stick Sandwich"
@@ -1706,6 +1783,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-039"
     name: "Tristar"
@@ -1745,6 +1824,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-040"
     name: "Abandoned Baby"
@@ -1784,6 +1865,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-041"
     name: "Concealing Baby Swallow"
@@ -1823,6 +1906,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-042"
     name: "Advance Block"
@@ -1862,6 +1947,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-043"
     name: "Stalled Pattern"
@@ -1901,6 +1988,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-044"
     name: "Upside Gap Two Crows"
@@ -1940,6 +2029,8 @@ chart_patterns:
     tags: ["反转", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-045"
     name: "Two Crows"
@@ -1979,6 +2070,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-046"
     name: "Homing Pigeon"
@@ -2018,6 +2111,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-047"
     name: "Matching Low"
@@ -2057,6 +2152,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-048"
     name: "In Neck"
@@ -2096,6 +2193,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-049"
     name: "On Neck"
@@ -2135,6 +2234,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-050"
     name: "Thrusting"
@@ -2174,6 +2275,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-051"
     name: "Counterattack"
@@ -2213,6 +2316,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-052"
     name: "Separating Lines"
@@ -2252,6 +2357,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-053"
     name: "Side-by-side White Lines"
@@ -2291,6 +2398,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-054"
     name: "Rising/Falling Three Methods"
@@ -2330,6 +2439,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-055"
     name: "Mat Hold"
@@ -2369,6 +2480,8 @@ chart_patterns:
     tags: ["持续", "震荡", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-056"
     name: "Breakaway"
@@ -2408,6 +2521,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-057"
     name: "Upside/Downside Gap Three Methods"
@@ -2447,6 +2562,8 @@ chart_patterns:
     tags: ["持续", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-058"
     name: "Tasuki Gap"
@@ -2486,6 +2603,8 @@ chart_patterns:
     tags: ["持续", "缺口", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-059"
     name: "Hikkake"
@@ -2525,6 +2644,8 @@ chart_patterns:
     tags: ["反转", "突破", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-060"
     name: "Hikkake Modified"
@@ -2564,6 +2685,8 @@ chart_patterns:
     tags: ["反转", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-061"
     name: "Long Line"
@@ -2603,6 +2726,8 @@ chart_patterns:
     tags: ["持续", "机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-062"
     name: "Short Line"
@@ -2642,6 +2767,8 @@ chart_patterns:
     tags: ["机器学习", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-063"
     name: "A-Share Limit-Up Flat"
@@ -2681,6 +2808,8 @@ chart_patterns:
     tags: ["持续", "打板", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-064"
     name: "A-Share Limit-Down Flat"
@@ -2720,6 +2849,8 @@ chart_patterns:
     tags: ["持续", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # CANDLESTICK A股游资/涨跌停制度特色（2026-08-14 二轮补登）
@@ -2764,6 +2895,8 @@ chart_patterns:
     tags: ["k线", "形态", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-066"
     name: "Sky-to-Limit-Down"
@@ -2803,6 +2936,8 @@ chart_patterns:
     tags: ["k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-067"
     name: "Ground-to-Limit-Up (Ditian)"
@@ -2842,6 +2977,8 @@ chart_patterns:
     tags: ["打板", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-068"
     name: "Single Yang Threading MAs"
@@ -2881,6 +3018,8 @@ chart_patterns:
     tags: ["突破", "打板", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-069"
     name: "Tweezer Bottom"
@@ -2920,6 +3059,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-070"
     name: "Tweezer Top"
@@ -2959,6 +3100,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-071"
     name: "Narrow Range Day NR7/NR4"
@@ -2998,6 +3141,8 @@ chart_patterns:
     tags: ["突破", "波动", "震荡", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-072"
     name: "Key Reversal (Outside Reversal)"
@@ -3037,6 +3182,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-073"
     name: "Wide Range Bar (WRB)"
@@ -3076,6 +3223,8 @@ chart_patterns:
     tags: ["波动", "震荡", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-074"
     name: "Oops Pattern"
@@ -3115,6 +3264,8 @@ chart_patterns:
     tags: ["缺口", "事件", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-075"
     name: "Three Gaps (Sanku)"
@@ -3154,6 +3305,8 @@ chart_patterns:
     tags: ["缺口", "事件", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-076"
     name: "Tower Top"
@@ -3193,6 +3346,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CANDLE-077"
     name: "Tower Bottom"
@@ -3232,6 +3387,8 @@ chart_patterns:
     tags: ["反转", "k线", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # CHART_PATTERN（经典图表形态类）— 4条
@@ -3277,6 +3434,8 @@ chart_patterns:
     tags: ["反转", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-002"
     name: "Head and Shoulders Top"
@@ -3316,6 +3475,8 @@ chart_patterns:
     tags: ["反转", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-003"
     name: "Wedge Breakdown"
@@ -3355,6 +3516,8 @@ chart_patterns:
     tags: ["反转", "持续", "突破", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-004"
     name: "Double Bottom"
@@ -3394,6 +3557,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # CHART_PATTERN 扩充（2026-08-14，Edwards&Magee + Bulkowski 经典全集）
@@ -3438,6 +3603,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-006"
     name: "Descending Triangle"
@@ -3477,6 +3644,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-007"
     name: "Symmetrical Triangle"
@@ -3516,6 +3685,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-008"
     name: "Rising Wedge"
@@ -3555,6 +3726,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-009"
     name: "Falling Wedge"
@@ -3594,6 +3767,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-010"
     name: "Bull Flag"
@@ -3633,6 +3808,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-011"
     name: "Bear Flag"
@@ -3672,6 +3849,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-012"
     name: "Pennant"
@@ -3711,6 +3890,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-013"
     name: "Cup and Handle"
@@ -3750,6 +3931,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-014"
     name: "Inverse Cup and Handle"
@@ -3789,6 +3972,8 @@ chart_patterns:
     tags: ["反转", "持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-015"
     name: "Rectangle"
@@ -3828,6 +4013,8 @@ chart_patterns:
     tags: ["持续", "震荡", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-016"
     name: "Head and Shoulders Bottom"
@@ -3867,6 +4054,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-017"
     name: "Triple Top"
@@ -3906,6 +4095,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-018"
     name: "Triple Bottom"
@@ -3945,6 +4136,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-019"
     name: "Rounding Top"
@@ -3984,6 +4177,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-020"
     name: "Rounding Bottom"
@@ -4023,6 +4218,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-021"
     name: "Broadening Formation"
@@ -4062,6 +4259,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-022"
     name: "Diamond"
@@ -4101,6 +4300,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-023"
     name: "V-Top"
@@ -4140,6 +4341,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-024"
     name: "V-Bottom"
@@ -4179,6 +4382,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-025"
     name: "Island Reversal"
@@ -4218,6 +4423,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-026"
     name: "Dead Cat Bounce"
@@ -4257,6 +4464,8 @@ chart_patterns:
     tags: ["反转", "超跌", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # CHART_PATTERN A股游资/情绪周期复合形态（2026-08-14 二轮补登）
@@ -4302,6 +4511,8 @@ chart_patterns:
     tags: ["反转", "情绪", "打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-028"
     name: "Double Cannon N-Shape"
@@ -4341,6 +4552,8 @@ chart_patterns:
     tags: ["持续", "资金", "打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-029"
     name: "Golden Pit"
@@ -4380,6 +4593,8 @@ chart_patterns:
     tags: ["打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-030"
     name: "Fragmented Yang Accumulation"
@@ -4419,6 +4634,8 @@ chart_patterns:
     tags: ["吸筹", "资金", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-031"
     name: "Low Box Consolidation"
@@ -4458,6 +4675,8 @@ chart_patterns:
     tags: ["资金", "震荡", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-032"
     name: "First Board Probe"
@@ -4497,6 +4716,8 @@ chart_patterns:
     tags: ["资金", "打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-033"
     name: "Consecutive Limit-Up Ladder"
@@ -4536,6 +4757,8 @@ chart_patterns:
     tags: ["情绪", "打板", "股票池", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-034"
     name: "Mild Board Break"
@@ -4575,6 +4798,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-035"
     name: "Broken Board Re-Seal"
@@ -4614,6 +4839,8 @@ chart_patterns:
     tags: ["打板", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-036"
     name: "Late-Day Sneak Board"
@@ -4653,6 +4880,8 @@ chart_patterns:
     tags: ["打板", "质量", "尾盘", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # DeMark TD 序列（2026-08-14 三轮补登，纯价格行为计数形态）
@@ -4698,6 +4927,8 @@ chart_patterns:
     tags: ["形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-038"
     name: "TD Sequential Sell Setup"
@@ -4737,6 +4968,8 @@ chart_patterns:
     tags: ["形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-039"
     name: "Wolfe Wave"
@@ -4776,6 +5009,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-040"
     name: "Quasimodo"
@@ -4815,6 +5050,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-041"
     name: "Ascending Scallop"
@@ -4854,6 +5091,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-042"
     name: "Descending Scallop"
@@ -4893,6 +5132,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-043"
     name: "Horn Top"
@@ -4932,6 +5173,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-044"
     name: "Horn Bottom"
@@ -4971,6 +5214,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-045"
     name: "Pipe Top"
@@ -5010,6 +5255,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-046"
     name: "Pipe Bottom"
@@ -5049,6 +5296,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-047"
     name: "Bump-and-Run Reversal Top"
@@ -5088,6 +5337,8 @@ chart_patterns:
     tags: ["反转", "回撤", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-048"
     name: "Bump-and-Run Reversal Bottom"
@@ -5127,6 +5378,8 @@ chart_patterns:
     tags: ["反转", "回撤", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-049"
     name: "Volatility Contraction Pattern"
@@ -5166,6 +5419,8 @@ chart_patterns:
     tags: ["持续", "突破", "波动", "形态", "成交"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-050"
     name: "1-2-3 Reversal"
@@ -5205,6 +5460,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-051"
     name: "Ross Hook"
@@ -5244,6 +5501,8 @@ chart_patterns:
     tags: ["持续", "突破", "回撤", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-052"
     name: "Old Duck Head"
@@ -5283,6 +5542,8 @@ chart_patterns:
     tags: ["持续", "形态", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-053"
     name: "Mid-air Refueling"
@@ -5322,6 +5583,8 @@ chart_patterns:
     tags: ["持续", "震荡", "形态", "量化", "信号", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-054"
     name: "Three Peaks and a Domed House"
@@ -5361,6 +5624,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-055"
     name: "Three Rising Valleys"
@@ -5400,6 +5665,8 @@ chart_patterns:
     tags: ["反转", "持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-056"
     name: "Three Falling Peaks"
@@ -5439,6 +5706,8 @@ chart_patterns:
     tags: ["反转", "持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-057"
     name: "Big W"
@@ -5478,6 +5747,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-058"
     name: "Big M"
@@ -5517,6 +5788,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-059"
     name: "Gap Classification"
@@ -5556,6 +5829,8 @@ chart_patterns:
     tags: ["突破", "缺口", "事件", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-060"
     name: "Complex Head and Shoulders"
@@ -5595,6 +5870,8 @@ chart_patterns:
     tags: ["反转", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-061"
     name: "High Tight Flag"
@@ -5634,6 +5911,8 @@ chart_patterns:
     tags: ["持续", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CHART-062"
     name: "Brooks H2/L2 Two-Legged Pullback"
@@ -5673,6 +5952,8 @@ chart_patterns:
     tags: ["持续", "回撤", "执行", "形态"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # TRENDLINE_CHANNEL（趋势线与通道类）— 1条
@@ -5717,6 +5998,8 @@ chart_patterns:
     tags: ["反转", "趋势", "均线", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # TRENDLINE_CHANNEL 扩充（2026-08-14，趋势线/通道/音叉/金叉全集）
@@ -5760,6 +6043,8 @@ chart_patterns:
     tags: ["支撑", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-003"
     name: "Downtrend Line"
@@ -5799,6 +6084,8 @@ chart_patterns:
     tags: ["压力", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-004"
     name: "Ascending Channel"
@@ -5838,6 +6125,8 @@ chart_patterns:
     tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-005"
     name: "Descending Channel"
@@ -5877,6 +6166,8 @@ chart_patterns:
     tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-006"
     name: "Horizontal Channel"
@@ -5916,6 +6207,8 @@ chart_patterns:
     tags: ["趋势", "震荡"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-007"
     name: "Golden Cross"
@@ -5955,6 +6248,8 @@ chart_patterns:
     tags: ["反转", "趋势", "均线"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-008"
     name: "Andrew's Pitchfork"
@@ -5994,6 +6289,8 @@ chart_patterns:
     tags: ["趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # GANN 江恩几何（2026-08-14 四轮补登）
@@ -6038,6 +6335,8 @@ chart_patterns:
     tags: ["趋势", "周期", "江恩", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-010"
     name: "Gann Square of Nine"
@@ -6077,6 +6376,8 @@ chart_patterns:
     tags: ["支撑", "压力", "趋势", "周期", "江恩"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-011"
     name: "Speed Resistance Lines"
@@ -6116,6 +6417,8 @@ chart_patterns:
     tags: ["压力", "趋势"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-TREND-012"
     name: "Gann Swing Chart"
@@ -6155,6 +6458,8 @@ chart_patterns:
     tags: ["趋势", "波动", "周期", "江恩", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # SUPPORT_RESISTANCE（支撑阻力类）— 3条
@@ -6199,6 +6504,8 @@ chart_patterns:
     tags: ["突破", "支撑", "压力", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-002"
     name: "Intraday Breakout/Breakdown"
@@ -6238,6 +6545,8 @@ chart_patterns:
     tags: ["突破", "支撑", "压力", "分时"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-003"
     name: "Intraday Stop-Loss Break"
@@ -6277,6 +6586,8 @@ chart_patterns:
     tags: ["突破", "支撑", "压力", "均线", "止损", "分时"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # SUPPORT_RESISTANCE 扩充（2026-08-14，枢轴点/成交量分布/昨日高低）
@@ -6320,6 +6631,8 @@ chart_patterns:
     tags: ["支撑", "压力", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-005"
     name: "Pivot Points (Fibonacci)"
@@ -6359,6 +6672,8 @@ chart_patterns:
     tags: ["支撑", "压力", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-006"
     name: "Volume Profile Support/Resistance"
@@ -6398,6 +6713,8 @@ chart_patterns:
     tags: ["支撑", "压力", "量价", "成交"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-007"
     name: "Previous Day High/Low"
@@ -6437,6 +6754,8 @@ chart_patterns:
     tags: ["支撑", "压力", "分时", "机器学习"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-008"
     name: "Murrey Math Levels"
@@ -6476,6 +6795,8 @@ chart_patterns:
     tags: ["支撑", "压力", "机器学习"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-SR-009"
     name: "Camarilla Pivots"
@@ -6515,6 +6836,8 @@ chart_patterns:
     tags: ["支撑", "压力"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # FIBONACCI（斐波那契工具类）— 6条（2026-08-14 新建）
@@ -6559,6 +6882,8 @@ chart_patterns:
     tags: ["回撤", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-002"
     name: "Fibonacci Extension"
@@ -6598,6 +6923,8 @@ chart_patterns:
     tags: ["斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-003"
     name: "Fibonacci Fan"
@@ -6637,6 +6964,8 @@ chart_patterns:
     tags: ["支撑", "压力", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-004"
     name: "Fibonacci Arc"
@@ -6676,6 +7005,8 @@ chart_patterns:
     tags: ["支撑", "压力", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-005"
     name: "Fibonacci Time Zone"
@@ -6715,6 +7046,8 @@ chart_patterns:
     tags: ["周期", "震荡", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-006"
     name: "Fibonacci Cluster"
@@ -6754,6 +7087,8 @@ chart_patterns:
     tags: ["斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # FIBONACCI 谐波形态子族（2026-08-14 第二轮循环审查补登）
@@ -6800,6 +7135,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-008"
     name: "Gartley"
@@ -6839,6 +7176,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-009"
     name: "Bat"
@@ -6878,6 +7217,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-010"
     name: "Alternate Bat"
@@ -6917,6 +7258,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-011"
     name: "Butterfly"
@@ -6956,6 +7299,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-012"
     name: "Crab"
@@ -6995,6 +7340,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-013"
     name: "Deep Crab"
@@ -7034,6 +7381,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-014"
     name: "Shark"
@@ -7073,6 +7422,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-015"
     name: "Cypher"
@@ -7112,6 +7463,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-016"
     name: "Three Drives"
@@ -7151,6 +7504,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-FIB-017"
     name: "Harmonic 5-0"
@@ -7190,6 +7545,8 @@ chart_patterns:
     tags: ["形态", "谐波", "斐波那契", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # STRUCTURE（价格结构类）— 1条
@@ -7234,6 +7591,8 @@ chart_patterns:
     tags: ["突破", "形态", "威科夫", "市场结构"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # CHANLUN（缠论类）— 15条（2026-08-14 新建）
@@ -7281,6 +7640,8 @@ chart_patterns:
     tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-002"
     name: "Chanlun Bottom Fractal"
@@ -7320,6 +7681,8 @@ chart_patterns:
     tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-003"
     name: "Chanlun Upward Bi"
@@ -7359,6 +7722,8 @@ chart_patterns:
     tags: ["形态", "缠论", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-004"
     name: "Chanlun Downward Bi"
@@ -7398,6 +7763,8 @@ chart_patterns:
     tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-005"
     name: "Chanlun Line Segment"
@@ -7437,6 +7804,8 @@ chart_patterns:
     tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-006"
     name: "Chanlun Zhongshu (Central Hub)"
@@ -7476,6 +7845,8 @@ chart_patterns:
     tags: ["形态", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-007"
     name: "Chanlun First Buy Point"
@@ -7515,6 +7886,8 @@ chart_patterns:
     tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-008"
     name: "Chanlun Second Buy Point"
@@ -7554,6 +7927,8 @@ chart_patterns:
     tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-009"
     name: "Chanlun Third Buy Point"
@@ -7593,6 +7968,8 @@ chart_patterns:
     tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-010"
     name: "Chanlun First Sell Point"
@@ -7632,6 +8009,8 @@ chart_patterns:
     tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-011"
     name: "Chanlun Second Sell Point"
@@ -7671,6 +8050,8 @@ chart_patterns:
     tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-012"
     name: "Chanlun Third Sell Point"
@@ -7710,6 +8091,8 @@ chart_patterns:
     tags: ["缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-013"
     name: "Chanlun Trend Divergence"
@@ -7749,6 +8132,8 @@ chart_patterns:
     tags: ["背离", "趋势", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-014"
     name: "Chanlun Consolidation Divergence"
@@ -7788,6 +8173,8 @@ chart_patterns:
     tags: ["背离", "震荡", "缠论", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-CLL-015"
     name: "Chanlun Nested Interval (Qujian Tao)"
@@ -7827,6 +8214,8 @@ chart_patterns:
     tags: ["震荡", "缠论"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # ELLIOTT_WAVE（艾略特波浪类）— 8条（2026-08-14 新建）
@@ -7871,6 +8260,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-002"
     name: "Zigzag Correction"
@@ -7910,6 +8301,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-003"
     name: "Flat Correction"
@@ -7949,6 +8342,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-004"
     name: "Triangle Correction"
@@ -7988,6 +8383,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-005"
     name: "Double Three Combination"
@@ -8027,6 +8424,8 @@ chart_patterns:
     tags: ["波浪", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-006"
     name: "Wave Extension"
@@ -8066,6 +8465,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-007"
     name: "Leading Diagonal"
@@ -8105,6 +8506,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-ELW-008"
     name: "Ending Diagonal"
@@ -8144,6 +8547,8 @@ chart_patterns:
     tags: ["波浪"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # STRUCTURE 扩充（2026-08-14）：Wyckoff 全套 + SMC 智能资金概念 +
@@ -8189,6 +8594,8 @@ chart_patterns:
     tags: ["吸筹", "震荡", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-003"
     name: "Wyckoff Distribution"
@@ -8228,6 +8635,8 @@ chart_patterns:
     tags: ["出货", "震荡", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-004"
     name: "Wyckoff Upthrust"
@@ -8267,6 +8676,8 @@ chart_patterns:
     tags: ["突破", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-005"
     name: "Wyckoff Sign of Strength (SOS)"
@@ -8306,6 +8717,8 @@ chart_patterns:
     tags: ["形态", "威科夫", "市场结构", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-006"
     name: "Wyckoff Sign of Weakness (SOW)"
@@ -8345,6 +8758,8 @@ chart_patterns:
     tags: ["形态", "威科夫", "市场结构", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-007"
     name: "Wyckoff Last Point of Support (LPS)"
@@ -8384,6 +8799,8 @@ chart_patterns:
     tags: ["支撑", "形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-008"
     name: "Wyckoff Last Point of Supply (LPSY)"
@@ -8423,6 +8840,8 @@ chart_patterns:
     tags: ["形态", "威科夫", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-009"
     name: "SMC Break of Structure (BOS)"
@@ -8462,6 +8881,8 @@ chart_patterns:
     tags: ["突破", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-010"
     name: "SMC Change of Character (CHoCH)"
@@ -8501,6 +8922,8 @@ chart_patterns:
     tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-011"
     name: "SMC Fair Value Gap (FVG)"
@@ -8540,6 +8963,8 @@ chart_patterns:
     tags: ["缺口", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-012"
     name: "SMC Order Block (OB)"
@@ -8579,6 +9004,8 @@ chart_patterns:
     tags: ["资金", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-013"
     name: "SMC Liquidity Grab"
@@ -8618,6 +9045,8 @@ chart_patterns:
     tags: ["流动性", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-014"
     name: "SMC Equal Highs (EQH)"
@@ -8657,6 +9086,8 @@ chart_patterns:
     tags: ["流动性", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-015"
     name: "SMC Equal Lows (EQL)"
@@ -8696,6 +9127,8 @@ chart_patterns:
     tags: ["流动性", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-016"
     name: "SMC Premium/Discount Zone"
@@ -8735,6 +9168,8 @@ chart_patterns:
     tags: ["震荡", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-017"
     name: "Time Series Motif Discovery"
@@ -8774,6 +9209,8 @@ chart_patterns:
     tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-018"
     name: "Semantic Segmentation (FLUSS)"
@@ -8813,6 +9250,8 @@ chart_patterns:
     tags: ["市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # DL 检测算法变体登记（2026-08-14，SOTA 演进预留，非独立形态）
@@ -8859,6 +9298,8 @@ chart_patterns:
     tags: ["基准", "形态", "市场结构", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-002"
     name: "Swin Transformer TADA-AW Classifier"
@@ -8898,6 +9339,8 @@ chart_patterns:
     tags: ["机器学习", "k线", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-003"
     name: "ViT-Tiny + MAE Self-supervised Pattern Learner"
@@ -8937,6 +9380,8 @@ chart_patterns:
     tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-004"
     name: "Multimodal LLM Pattern Analyst"
@@ -8976,6 +9421,8 @@ chart_patterns:
     tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-005"
     name: "Kronos K-line Foundation Model"
@@ -9015,6 +9462,8 @@ chart_patterns:
     tags: ["k线", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-006"
     name: "Mamba State-Space Sequence Model"
@@ -9054,6 +9503,8 @@ chart_patterns:
     tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # VSA 量价形态子族（2026-08-14 第三轮循环审查补登）
@@ -9101,6 +9552,8 @@ chart_patterns:
     tags: ["反转", "量价", "市场结构", "量化"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-020"
     name: "VSA Buying Climax"
@@ -9140,6 +9593,8 @@ chart_patterns:
     tags: ["反转", "量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-021"
     name: "VSA No Supply"
@@ -9179,6 +9634,8 @@ chart_patterns:
     tags: ["持续", "量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-022"
     name: "VSA No Demand"
@@ -9218,6 +9675,8 @@ chart_patterns:
     tags: ["背离", "量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-023"
     name: "VSA Stopping Volume"
@@ -9257,6 +9716,8 @@ chart_patterns:
     tags: ["反转", "量价", "市场结构", "通胀", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-024"
     name: "VSA Test Bar"
@@ -9296,6 +9757,8 @@ chart_patterns:
     tags: ["量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-025"
     name: "VSA Pseudo Upthrust"
@@ -9335,6 +9798,8 @@ chart_patterns:
     tags: ["量价", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-007"
     name: "Diffusion Generative Chart Forecaster"
@@ -9374,6 +9839,8 @@ chart_patterns:
     tags: ["形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # 分时盘口形态子族（2026-08-14 第四轮循环审查补登，打板连板梯队核心输入）
@@ -9419,6 +9886,8 @@ chart_patterns:
     tags: ["资金", "分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-027"
     name: "Intraday Box Shrinking Consolidation"
@@ -9458,6 +9927,8 @@ chart_patterns:
     tags: ["缩量", "震荡", "分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-028"
     name: "Intraday Double Bottom"
@@ -9497,6 +9968,8 @@ chart_patterns:
     tags: ["分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-029"
     name: "Intraday VWAP Hold"
@@ -9536,6 +10009,8 @@ chart_patterns:
     tags: ["均线", "打板", "分时", "执行", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-030"
     name: "Intraday Pulse Probe"
@@ -9575,6 +10050,8 @@ chart_patterns:
     tags: ["资金", "打板", "分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-031"
     name: "Intraday Sawtooth Narrow"
@@ -9614,6 +10091,8 @@ chart_patterns:
     tags: ["打板", "震荡", "分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-032"
     name: "Intraday Sell Order Freeze"
@@ -9653,6 +10132,8 @@ chart_patterns:
     tags: ["打板", "分时", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-033"
     name: "Intraday Trap Pull"
@@ -9692,6 +10173,8 @@ chart_patterns:
     tags: ["出货", "分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-034"
     name: "Intraday Wash Lift"
@@ -9731,6 +10214,8 @@ chart_patterns:
     tags: ["分时", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # 订单流不平衡子族（2026-08-14 第五轮循环审查补登，盘口结构层）
@@ -9777,6 +10262,8 @@ chart_patterns:
     tags: ["资金", "盘口", "市场结构", "订单", "成交"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-036"
     name: "Footprint Point of Control (POC)"
@@ -9816,6 +10303,8 @@ chart_patterns:
     tags: ["盘口", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-037"
     name: "Opening Range Breakout"
@@ -9855,6 +10344,8 @@ chart_patterns:
     tags: ["突破", "震荡", "盘口", "分时", "早盘", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-038"
     name: "Supply/Demand Zone (Seiden)"
@@ -9894,6 +10385,8 @@ chart_patterns:
     tags: ["市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-039"
     name: "ICT Power of Three (AMD)"
@@ -9933,6 +10426,8 @@ chart_patterns:
     tags: ["出货", "盘口", "分时", "形态", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-040"
     name: "Iceberg Order Detection"
@@ -9972,6 +10467,8 @@ chart_patterns:
     tags: ["流动性", "盘口", "执行", "市场结构", "订单"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-STRUCT-041"
     name: "Spoofing/Layering Detection"
@@ -10011,6 +10508,8 @@ chart_patterns:
     tags: ["打板", "盘口", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-008"
     name: "Chart-RVR GRPO Chart Reasoner"
@@ -10050,6 +10549,8 @@ chart_patterns:
     tags: ["基准", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-009"
     name: "Multi-Scale VLM Candlestick Benchmark"
@@ -10089,6 +10590,8 @@ chart_patterns:
     tags: ["基准", "k线", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-010"
     name: "AC-Seq2Net Math-Guided Geometric DL"
@@ -10128,6 +10631,8 @@ chart_patterns:
     tags: ["机器学习", "形态", "市场结构", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-011"
     name: "ElliottAgents Multi-Agent Wave Counter"
@@ -10167,6 +10672,8 @@ chart_patterns:
     tags: ["波浪", "市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-012"
     name: "wave-alpha Deterministic Wave Engine"
@@ -10206,6 +10713,8 @@ chart_patterns:
     tags: ["市场结构", "因子", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - pattern_id: "PAT-DL-013"
     name: "GAF-CNN Visual Encoding Pipeline"
@@ -10245,6 +10754,8 @@ chart_patterns:
     tags: ["市场结构"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # 第五轮判定不登（治理正确性，非遗漏，2026-08-14）
