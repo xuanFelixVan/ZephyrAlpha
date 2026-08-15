@@ -5,7 +5,7 @@ title: 冲突矩阵清理与事件总线
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.2"
+version: "1.1.0"
 date: 2026-08-15
 topic: cross_cutting_cleanup
 scope: 07_trading_decision_architecture
@@ -64,9 +64,9 @@ related_modules:
 
 1. **防御永远优先于进攻**：风控（C-004 族）高于一切 alpha 信号
 2. **仓位上限是硬约束**：firm 层求和后超上限即裁剪（FirmRiskAggregator，MOD-POS-021，production），不协商、不投票
-3. **卖比买紧急**：同一标的同时出现买卖信号时，卖出（风险释放）优先执行——执行点为 `src/zephyr/sell_decision/core/sell_conflict_arbitrator.py`（MOD-SELL-008，production：强冲突 0 延迟立即执行/弱冲突延迟 1 Tick 观察，仲裁优先级 风控>C-047>市场状态>卖出>买入；注：depgraph build_status=deprecated 与源码 production 标注分裂，见 42 号 §7）
+3. **卖比买紧急**：同一标的同时出现买卖信号时，卖出（风险释放）优先执行——执行点为 `src/zephyr/sell_decision/core/sell_conflict_arbitrator.py`（MOD-SELL-008，production：强冲突 0 延迟立即执行/弱冲突延迟 1 Tick 观察，仲裁优先级 风控>C-047>市场状态>卖出>买入；depgraph 双态已与源码一致 stable+production，2026-08-15 AI-XCUT-001 实证——v1.0.1 注记的 deprecated 分裂已随 42 号 merge #ARCH-70 通道消解）
 
-**遗留动作**：battle_map_12 §16 的 31 条清单仍按旧设计陈列，与本文裁定不一致——作战地图是生成器派生物，待下一轮 sync 重生成时收敛（见 §6，不手工改生成物）。
+**遗留动作**：battle_map_12 §16 的 31 条清单仍按旧设计陈列，与本文裁定不一致——作战地图是生成器派生物，禁止手编；其 §16 真源=`module_translation_registry.yaml` 的 `conflict_matrix` 条目（生成器自该 YAML 派生，sync 重生成只复读真源、不会自动改真源）。2026-08-15 AI-XCUT-001 已将真源收敛（31 条→3 条 firm 硬上限），下次 sync 重生成自动闭合（见 §6）。
 
 ### 3.2 事件总线定位：任务系统用总线，交易信号链直连
 
@@ -86,7 +86,7 @@ related_modules:
 ### 3.3 多策略投票降级
 
 **裁定**（[30 §7.3](30_multi_strategy_concurrency.md) 已落地）：
-- **BM-SEL-20 多策略投票**（CAND-HARVEST-3225）→ 已标记 **rejected**（2026-08-05）：Model A 的 sleeve 自然叠加替代投票机制
+- **BM-SEL-20 多策略投票**（CAND-HARVEST-3225）→ 已标记 **rejected**（2026-08-05）：Model A 的 sleeve 自然叠加替代投票机制。2026-08-15 AI-XCUT-001 实证补刀：archive 条目 rejected 在位，但 2026-08-07 acquisition 补登产生了同名活体候选 CAND-PFALLOC-002（alias BM-SEL-20，status=candidate）——已按本裁定同步标 rejected（防未来 AI 捡起复活候选施工幽灵模块，§4.2）
 - **BM-SEL-02-K 多策略投票与加权** → 降级为**策略内部机制**（非跨策略层）
 - **BM-SEL-25 双引擎融合** → 保留，定位为**打板策略内部**融合（游资引擎×量化引擎），非跨策略层
 
@@ -136,17 +136,13 @@ why：跨策略投票的本质是"多个弱信号合成一个强信号"，前提
 
 | 暂缓项 | 暂缓理由 | 重评条件 |
 |---|---|---|
-| battle_map_12 §16 31 条清单与本文裁定的收敛 | 作战地图是生成器派生物，禁止手编；待下一轮 sync 重生成收敛 | sync 重生成时自动闭合；若 sync 后仍残留旧仲裁描述，登记 architecture_issue_registry |
+| battle_map_12 §16 31 条清单与本文裁定的收敛 | 作战地图是生成器派生物，禁止手编。2026-08-15 AI-XCUT-001 实证：sync 重生成只复读真源不自动闭合，§16 真源=module_translation_registry.yaml `conflict_matrix` 条目——真源已收敛（31 条→3 条，生成器按 len(conflicts) 自动渲染计数） | merge 后下一轮 sync 重生成即闭合；验证标准：重生成后 §16 显示"冲突场景清单（3 条）"。若仍残留，登记 architecture_issue_registry |
 | 盘中多信号源事件队列 | 当前仅打板链一路信号，无多源竞争 | 盘中信号源 ≥3 类（新闻/龙虎榜/异动齐备）时复用 shared/event_bus.py 评估 |
 | 参数热更新 | 远期愿景，单人无并行实验需求 | 多账户/多实例运行时重评 |
 
 ## 7. 待定问题
 
-G27 原讨论要点 ①-⑥ 全部 ✅ 已裁定（2026-08-12 v1.0.0 闭合，见修订记录）：①31 条跨策略冲突仲裁→§3.1；②仅留 firm-level 硬上限→§3.1（3 条）；③事件总线/信号注入机制→§3.2（任务系统总线+交易直连）；④实时计算节奏→§3.4（三档节奏）；⑤配置驱动→§3.5（config 化保留，热更新远期）；⑥多策略投票降级→§3.3（BM-SEL-20 rejected / 02-K 内部化 / 25 打板内部）。唯一未闭合项：
-
-| 项 | 状态 | 落点 |
-|---|---|---|
-| ⑦ firm_risk_aggregator 测试缺口 | ⚠️ 待补 | §3.1 第 2 条硬上限执行模块 `firm_risk_aggregator.py`（MOD-POS-021）头标声明测试 `tests/position/test_firm_risk_aggregator.py` 不存在，需补建（B13 盘点发现） |
+G27 原讨论要点 ①-⑦ 全部 ✅ 闭合：①-⑥ 2026-08-12 v1.0.0 裁定闭合（①31 条跨策略冲突仲裁→§3.1；②仅留 firm-level 硬上限→§3.1（3 条）；③事件总线/信号注入机制→§3.2（任务系统总线+交易直连）；④实时计算节奏→§3.4（三档节奏）；⑤配置驱动→§3.5（config 化保留，热更新远期）；⑥多策略投票降级→§3.3（BM-SEL-20 rejected / 02-K 内部化 / 25 打板内部））；⑦ firm_risk_aggregator 测试缺口 2026-08-13 闭合（AI-FRA-001 merge 引入 `tests/position/test_firm_risk_aggregator.py`，覆盖 pre_kelly_aggregate/post_kelly_clip/aggregate/A-G 修复验证；2026-08-15 AI-XCUT-001 复跑实证 60 passed）——本节无未闭合项。
 
 ## 8. 引用
 
@@ -174,3 +170,4 @@ G27 原讨论要点 ①-⑥ 全部 ✅ 已裁定（2026-08-12 v1.0.0 闭合，�
 | 2026-08-12 | 1.0.0 | 骨架→active 定型回填 | 核心裁定均已在 30 号 §7.3 落地，本文回填 why 并划边界：§3.1 冲突矩阵 31 条→3 条 firm-level 硬上限；§3.2 事件总线定位（任务系统总线 production+交易信号链直连，核验 ex_core 零引用 event_bus）；§3.3 多策略投票降级；§3.4 三档计算节奏（已施工设施盘点）；§3.5 配置驱动边界（config 化保留/热更新远期）；§4 替代方案（微服务总线/全量仲裁/统一路由层均拒绝）；2026 行业实证（Nautilus 进程内 EDA、风控层独立铁律）入 §8.3。G27 六个讨论要点全部闭合（2026-08-12 三次并发回滚后重建） |
 | 2026-08-12 | 1.0.1 | §3.1 澄清 sell_conflict_arbitrator 归属 + §7 登记 firm_risk_aggregator 测试缺口 | AI-19 深度审查：基础设施盘点发现 ①sell_conflict_arbitrator.py（MOD-SELL-008）是 §3.1 第 3 条"卖比买紧急"硬上限执行点，原未明确归属；②firm_risk_aggregator.py 声明测试 tests/position/test_firm_risk_aggregator.py 不存在（B13 测试缺口）。本次 §3.1 补执行点澄清 + §7 补测试缺口登记。无裁定变更 |
 | 2026-08-15 | 1.0.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-11）。§7 已闭合要点 ①-⑥ 合并为一行指针（裁定明细真源=§3 各节+修订记录 1.0.0），仅留 ⑦ 待补项 | 已闭合项入修订记录，消除表格与 §3 正文的状态重复；要点→落点映射零丢失 |
+| 2026-08-15 | 1.1.0 | AI-XCUT-001 跨切清理施工（第 4 批）：①§7 ⑦ 测试缺口实证闭合（AI-FRA-001 已补建，复跑 60 passed），①-⑦ 全闭合；②§3.1 MOD-SELL-008 depgraph 分裂注记更新（现 stable+production 一致）；③§3.3 补 CAND-PFALLOC-002 复活候选按裁定标 rejected；④§6 battle_map §16 收敛项实证"sync 不自动闭合"，真源 module_translation_registry.yaml conflict_matrix 条目已收敛 31 条→3 条 | 统筹指派"骨架重建"前提经 Step 1 实证推翻（文档 v1.0.2 内容完整非骨架），实际施工=三处残留漂移收敛+唯一待补项闭合；00_index L74/L672 滞后登记同步 |
