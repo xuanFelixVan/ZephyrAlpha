@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-15T13:53:57Z
+# 自动生成于 2026-08-15T16:24:54Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-15T13:53:57Z'
+generated_at: '2026-08-15T16:24:54Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 404
@@ -1192,7 +1192,7 @@ scripts:
   dimensions:
   - D3
   priority: P2
-  timeout_seconds: 60
+  timeout_seconds: 180
   args: []
   warn_only: false
   description: 'Scan policy tree; aggregate frontmatter into rule_catalog_registry.yaml.

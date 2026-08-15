@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-15T13:54:39Z'
+generated_at: '2026-08-15T16:25:24Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 216
+total_files: 215
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2095,7 +2095,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 2.14.2
+  version: 2.15.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2125,7 +2125,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.2
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2260,7 +2260,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.1
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2275,7 +2275,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.2
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2320,7 +2320,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.3
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2545,7 +2545,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.1
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2576,21 +2576,6 @@ files:
   doc_type: ''
   status: active
   version: 1.1.2
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
-  module_id: REG-MODULE-TRANSLATION-001
-  title: 模块级翻译注册表（中英对照真源）
-  doc_type: register
-  status: active
-  version: 1.8.2
   rule_form: ''
   scope: ''
   stability: ''
@@ -2635,7 +2620,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.2
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2650,7 +2635,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.2
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2695,7 +2680,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.2
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2800,7 +2785,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.1
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2815,7 +2800,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.3
+  version: 1.3.0
   rule_form: ''
   scope: ''
   stability: ''
