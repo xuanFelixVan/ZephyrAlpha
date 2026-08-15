@@ -92,7 +92,7 @@ portfolio_models:
     weaknesses: "不利用任何信息；风险不集中管理"
     applicable_scenario: "MVP 基线/标的数 10-50/所有策略的回测对照组"
     est_error_mitigation: "不需要（无估计）"
-    code_path: "src/zephyr/portfolio/（portfolio.optimizer DS-069）"
+    code_path: "src/zephyr/pf_core/core/portfolio_optimizer.py"  # 2026-08-15 门禁A存量锚点修复：原 src/zephyr/portfolio/ 已删除，实际实现迁 pf_core（portfolio.optimizer DS-069）
     module_id: "MOD-PF-001"
     doc_ref: "DeMiguel, Garlappi, Uppal 2009 RFS '1/N'"
     status: "candidate"
@@ -127,7 +127,7 @@ portfolio_models:
     weaknesses: "忽略相关性（同板块集中）；分数尺度敏感"
     applicable_scenario: "multifactor/打板策略 MVP 主力方案（topn_momentum DS-072）"
     est_error_mitigation: "max_weight 截断 + 行业中性化（后续）"
-    code_path: "src/zephyr/portfolio/（portfolio.topn_momentum_strategy DS-072）"
+    code_path: "src/zephyr/pf_core/topn_momentum_strategy.py"  # 2026-08-15 门禁A存量锚点修复：原 src/zephyr/portfolio/ 已删除，实际实现迁 pf_core（portfolio.topn_momentum_strategy DS-072）
     module_id: "MOD-PF-001"
     doc_ref: "30_multi_strategy_concurrency"
     status: "candidate"
