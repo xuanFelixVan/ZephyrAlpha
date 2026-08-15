@@ -16816,3 +16816,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-075'
+  title: security/access_control 16 个 "implementation pending" 桩模块——测试先行契约未落地（系统性模式）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 全 src 扫描实证：src/zephyr/security/access_control/ 下 16 个模块为 "Stub module — implementation pending"（build_sanitizer/cascading_failure_isolator/compliance_matrix/defense_depth/dependency_auditor/environment_manager/escalation_handler/key_hierarchy/anti_pattern_guard/permission_mode_manager/continuous_verifier/bootstrap_verifier/secrets_lifecycle/session_lifecycle/micro_verifier/post_action_verifier）——类名/常量齐全但行为缺席。TDD 桩模式（测试先行、实现未跟）的系统性残留，与 #ARCH-073/074 同族。实证 affected 测试：tests/escalation/test_escalation_handler.py（17 项）+ tests/dependency/test_dependency_auditor.py（12 项）已整文件 xfail(strict=False) 留痕。⚠️ dependency_auditor 的 [CONSUMERS] 声称 zephyr.infrastructure.rollback.phase_check_registry 在消费桩——生产侧调用空壳的安全治理组件需一并核查。待裁定：逐模块按测试契约补实现，或退役桩并清理测试与消费方。'
+  fix_phase: 待裁定（逐模块补实现 / 退役桩+清理消费方）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
