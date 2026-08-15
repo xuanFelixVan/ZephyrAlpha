@@ -10,10 +10,11 @@
 # 本库裁剪与默认值决策：裁剪：timeframe×2/regime×2/direction——数据资产（sources/datasets/jobs 三实体）是原料登记，无周期/环境/方向语义。保留 entry_role=reference + 共有四维度；algorithm_status 固定 not_applicable。三段 schema（source_schema/dataset_schema/job_schema）同步增量。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、仓位、估值、信号、分时、分红、利率、动量、回撤、因子、多因子、宏观、市场结构、形态、成交、成本、执行、指数、指标、数据、机器学习、流动性、组合、绩效、股票池、行业、行情、订单、财报、质量、资金、通胀、风控、高频、龙虎榜
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-DATAFLOW-001
 name: Data Asset Registry
 name_zh: 数据资产登记表
@@ -37,7 +38,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.1
+version: 1.2.2
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -75,6 +76,8 @@ source_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 dataset_schema:
   dataset_id: str              # 存量 DS-001~076 稳定编号；新增 DS-{NAME}-{NNN}
@@ -111,6 +114,8 @@ dataset_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 job_schema:
   job_id: str                  # 存量 JOB-001~075 稳定编号；新增 JOB-{NAME}-{NNN}
@@ -138,6 +143,8 @@ job_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 sources:
   - source_id: SRC-QMT-001
@@ -167,6 +174,8 @@ sources:
     tags: ["资金", "行情", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-AKSHARE-001
     provider_name: AKShare
     name: AKShare
@@ -194,6 +203,8 @@ sources:
     tags: ["行情", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-IFIND-001
     provider_name: iFind
     name: iFind
@@ -221,6 +232,8 @@ sources:
     tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-BAOSTOCK-001
     provider_name: baostock
     name: baostock
@@ -248,6 +261,8 @@ sources:
     tags: ["数据", "k线"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-TUSHARE-001
     provider_name: tushare
     name: tushare
@@ -275,6 +290,8 @@ sources:
     tags: ["行业", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-TQCENTER-001
     provider_name: tqcenter
     name: tqcenter
@@ -302,6 +319,8 @@ sources:
     tags: ["行业", "股票池", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-TDX-001
     provider_name: mootdx/TDX
     name: tdx
@@ -329,6 +348,8 @@ sources:
     tags: ["分时", "行业", "k线", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-CLS-001
     provider_name: cls
     name: cls
@@ -356,6 +377,8 @@ sources:
     tags: ["资金", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-EASTMONEY-001
     provider_name: eastmoney_news
     name: eastmoney_news
@@ -383,6 +406,8 @@ sources:
     tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-RSS-001
     provider_name: rss
     name: rss
@@ -410,6 +435,8 @@ sources:
     tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-TICKFLOW-001
     provider_name: tickflow
     name: tickflow
@@ -437,6 +464,8 @@ sources:
     tags: ["资金", "指数", "k线", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-FRED-001
     provider_name: fred
     name: fred
@@ -464,6 +493,8 @@ sources:
     tags: ["宏观", "通胀", "利率", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-EIA-001
     provider_name: eia
     name: eia
@@ -491,6 +522,8 @@ sources:
     tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-QWEATHER-001
     provider_name: qweather
     name: qweather
@@ -518,6 +551,8 @@ sources:
     tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
   - source_id: SRC-INTERNAL-001
     provider_name: InternalCompute
     name: internal_compute
@@ -545,6 +580,8 @@ sources:
     tags: ["事件", "数据", "指标"]
     algorithm_status: "not_applicable"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
 datasets:
 - dataset_id: DS-001
@@ -582,6 +619,8 @@ datasets:
   tags: ["高频", "数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-002
   entity_name: market_data.ohlc_bar
   entity_type: dataset
@@ -617,6 +656,8 @@ datasets:
   tags: ["数据", "k线"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-003
   entity_name: factor.value_factor
   entity_type: dataset
@@ -651,6 +692,8 @@ datasets:
   tags: ["数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-004
   entity_name: factor.momentum_20d
   entity_type: dataset
@@ -685,6 +728,8 @@ datasets:
   tags: ["动量", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-005
   entity_name: signal.composite
   entity_type: dataset
@@ -720,6 +765,8 @@ datasets:
   tags: ["数据", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-006
   entity_name: risk.limits
   entity_type: dataset
@@ -754,6 +801,8 @@ datasets:
   tags: ["风控", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-007
   entity_name: order.target
   entity_type: dataset
@@ -788,6 +837,8 @@ datasets:
   tags: ["数据", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-008
   entity_name: fill.executed
   entity_type: dataset
@@ -821,6 +872,8 @@ datasets:
   tags: ["数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-009
   entity_name: position.snapshot
   entity_type: dataset
@@ -854,6 +907,8 @@ datasets:
   tags: ["仓位", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-010
   entity_name: backtest.result
   entity_type: dataset
@@ -887,6 +942,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-011
   entity_name: backtest.tick_event
   entity_type: dataset
@@ -921,6 +978,8 @@ datasets:
   tags: ["事件", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-012
   entity_name: backtest.target_weights
   entity_type: dataset
@@ -955,6 +1014,8 @@ datasets:
   tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-013
   entity_name: backtest.fills
   entity_type: dataset
@@ -989,6 +1050,8 @@ datasets:
   tags: ["数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-014
   entity_name: backtest.nav_series
   entity_type: dataset
@@ -1023,6 +1086,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-015
   entity_name: factor.ashare_alpha87
   entity_type: dataset
@@ -1057,6 +1122,8 @@ datasets:
   tags: ["数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-016
   entity_name: factor.ashare_capital_flow
   entity_type: dataset
@@ -1091,6 +1158,8 @@ datasets:
   tags: ["资金", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-017
   entity_name: factor.ashare_cross_market
   entity_type: dataset
@@ -1125,6 +1194,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-018
   entity_name: factor.ashare_fundamental
   entity_type: dataset
@@ -1159,6 +1230,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-019
   entity_name: factor.ashare_institutional
   entity_type: dataset
@@ -1193,6 +1266,8 @@ datasets:
   tags: ["资金", "仓位", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-020
   entity_name: factor.ashare_intraday
   entity_type: dataset
@@ -1227,6 +1302,8 @@ datasets:
   tags: ["动量", "分时", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-021
   entity_name: factor.ashare_irl
   entity_type: dataset
@@ -1261,6 +1338,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-022
   entity_name: factor.ashare_market_structure
   entity_type: dataset
@@ -1295,6 +1374,8 @@ datasets:
   tags: ["数据", "形态", "市场结构", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-023
   entity_name: factor.ashare_microstructure
   entity_type: dataset
@@ -1329,6 +1410,8 @@ datasets:
   tags: ["数据", "形态", "市场结构", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-024
   entity_name: factor.ashare_pattern_signal
   entity_type: dataset
@@ -1363,6 +1446,8 @@ datasets:
   tags: ["数据", "k线", "形态", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-025
   entity_name: factor.ashare_ps_liquidity
   entity_type: dataset
@@ -1397,6 +1482,8 @@ datasets:
   tags: ["流动性", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-026
   entity_name: factor.ashare_sector
   entity_type: dataset
@@ -1431,6 +1518,8 @@ datasets:
   tags: ["行业", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-027
   entity_name: factor.ashare_smc
   entity_type: dataset
@@ -1465,6 +1554,8 @@ datasets:
   tags: ["数据", "市场结构", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-028
   entity_name: factor.ashare_technical_indicator
   entity_type: dataset
@@ -1499,6 +1590,8 @@ datasets:
   tags: ["数据", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-029
   entity_name: factor_analysis.correlation_analyzer
   entity_type: dataset
@@ -1533,6 +1626,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-030
   entity_name: factor_analysis.correlation_dedup
   entity_type: dataset
@@ -1567,6 +1662,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-031
   entity_name: factor_analysis.decay_monitor
   entity_type: dataset
@@ -1601,6 +1698,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-032
   entity_name: factor_analysis.factor_attribution
   entity_type: dataset
@@ -1635,6 +1734,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-033
   entity_name: factor_analysis.factor_optimization
   entity_type: dataset
@@ -1669,6 +1770,8 @@ datasets:
   tags: ["数据", "组合", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-034
   entity_name: factor_analysis.ic_decay
   entity_type: dataset
@@ -1703,6 +1806,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-035
   entity_name: factor_analysis.ic_ir_calc
   entity_type: dataset
@@ -1737,6 +1842,8 @@ datasets:
   tags: ["数据", "因子", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-036
   entity_name: factor_analysis.ic_ir_evaluator
   entity_type: dataset
@@ -1771,6 +1878,8 @@ datasets:
   tags: ["数据", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-037
   entity_name: factor_analysis.layered_backtest
   entity_type: dataset
@@ -1805,6 +1914,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-038
   entity_name: factor_analysis.multifactor_synthesis
   entity_type: dataset
@@ -1839,6 +1950,8 @@ datasets:
   tags: ["多因子", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-039
   entity_name: factor_analysis.three_level_judgment
   entity_type: dataset
@@ -1873,6 +1986,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-040
   entity_name: factor_analysis.turnover_analyzer
   entity_type: dataset
@@ -1907,6 +2022,8 @@ datasets:
   tags: ["流动性", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-041
   entity_name: factor.barra_esg
   entity_type: dataset
@@ -1941,6 +2058,8 @@ datasets:
   tags: ["风控", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-042
   entity_name: factor.barra_exposure_calculator
   entity_type: dataset
@@ -1975,6 +2094,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-043
   entity_name: factor.barra_risk_budget_allocator
   entity_type: dataset
@@ -2009,6 +2130,8 @@ datasets:
   tags: ["风控", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-044
   entity_name: factor.barra_risk_model
   entity_type: dataset
@@ -2043,6 +2166,8 @@ datasets:
   tags: ["风控", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-045
   entity_name: factor_mining.causal_validator
   entity_type: dataset
@@ -2077,6 +2202,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-046
   entity_name: factor_mining.mining_agent
   entity_type: dataset
@@ -2111,6 +2238,8 @@ datasets:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-047
   entity_name: backtest.anomaly_diagnoser_result
   entity_type: dataset
@@ -2145,6 +2274,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-048
   entity_name: backtest.data_quality_checker_result
   entity_type: dataset
@@ -2179,6 +2310,8 @@ datasets:
   tags: ["质量", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-049
   entity_name: backtest.decay_monitor_result
   entity_type: dataset
@@ -2213,6 +2346,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-050
   entity_name: backtest.nan_processor_result
   entity_type: dataset
@@ -2247,6 +2382,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-051
   entity_name: backtest.param_analyzer_result
   entity_type: dataset
@@ -2281,6 +2418,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-052
   entity_name: backtest.report_generator_result
   entity_type: dataset
@@ -2315,6 +2454,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-053
   entity_name: backtest.result_comparator_result
   entity_type: dataset
@@ -2349,6 +2490,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-054
   entity_name: backtest.result_deployer_result
   entity_type: dataset
@@ -2383,6 +2526,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-055
   entity_name: data.feature_store
   entity_type: dataset
@@ -2417,6 +2562,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-056
   entity_name: data.realtime_push_manager
   entity_type: dataset
@@ -2451,6 +2598,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-057
   entity_name: data.tick_data_manager
   entity_type: dataset
@@ -2485,6 +2634,8 @@ datasets:
   tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-058
   entity_name: data.kline_resampler
   entity_type: dataset
@@ -2519,6 +2670,8 @@ datasets:
   tags: ["数据", "k线", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-059
   entity_name: data.sector_snapshot_collector
   entity_type: dataset
@@ -2553,6 +2706,8 @@ datasets:
   tags: ["行业", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-060
   entity_name: data_eng.data_lake_manager
   entity_type: dataset
@@ -2587,6 +2742,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-061
   entity_name: data_eng.knowledge_cleaning
   entity_type: dataset
@@ -2621,6 +2778,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-062
   entity_name: data_eng.stream_processing
   entity_type: dataset
@@ -2655,6 +2814,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-063
   entity_name: data_eng.synthetic_data
   entity_type: dataset
@@ -2689,6 +2850,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-064
   entity_name: data_eng.training_data_manager
   entity_type: dataset
@@ -2723,6 +2886,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-065
   entity_name: execution.audit_journal
   entity_type: dataset
@@ -2757,6 +2922,8 @@ datasets:
   tags: ["执行", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-066
   entity_name: execution.fill_handler
   entity_type: dataset
@@ -2791,6 +2958,8 @@ datasets:
   tags: ["执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-067
   entity_name: execution.position_tracker
   entity_type: dataset
@@ -2825,6 +2994,8 @@ datasets:
   tags: ["仓位", "执行", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-068
   entity_name: execution.live_portfolio
   entity_type: dataset
@@ -2859,6 +3030,8 @@ datasets:
   tags: ["执行", "数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-069
   entity_name: portfolio.optimizer
   entity_type: dataset
@@ -2893,6 +3066,8 @@ datasets:
   tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-070
   entity_name: portfolio.portfolio_aggregate
   entity_type: dataset
@@ -2927,6 +3102,8 @@ datasets:
   tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-071
   entity_name: portfolio.strategy_runner
   entity_type: dataset
@@ -2961,6 +3138,8 @@ datasets:
   tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-072
   entity_name: portfolio.topn_momentum_strategy
   entity_type: dataset
@@ -2995,6 +3174,8 @@ datasets:
   tags: ["动量", "数据", "组合", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-073
   entity_name: ml.ai_operator_decisions
   entity_type: dataset
@@ -3029,6 +3210,8 @@ datasets:
   tags: ["机器学习", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-074
   entity_name: ml.training_dataset
   entity_type: dataset
@@ -3063,6 +3246,8 @@ datasets:
   tags: ["机器学习", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-075
   entity_name: risk.drawdown_metric
   entity_type: dataset
@@ -3097,6 +3282,8 @@ datasets:
   tags: ["风控", "回撤", "数据", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-076
   entity_name: trading.pnl
   entity_type: dataset
@@ -3131,6 +3318,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-077
   entity_name: market_data.renko
   entity_type: dataset
@@ -3165,6 +3354,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-078
   entity_name: market_data.point_figure
   entity_type: dataset
@@ -3199,6 +3390,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - dataset_id: DS-079
   entity_name: market_data.kagi
   entity_type: dataset
@@ -3233,6 +3426,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-080
   entity_name: market_data.lhb_detail
@@ -3268,6 +3463,8 @@ datasets:
   tags: ["龙虎榜", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # v1.2.0 补登（2026-08-14）：对标聚宽 JQData/quant666 A 股数据谱系的全量缺口
@@ -3308,6 +3505,8 @@ datasets:
   tags: ["数据", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-082
   entity_name: market_data.stk_limit
@@ -3343,6 +3542,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-083
   entity_name: market_data.suspend
@@ -3378,6 +3579,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-084
   entity_name: meta.index_member
@@ -3413,6 +3616,8 @@ datasets:
   tags: ["指数", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-085
   entity_name: meta.st_status
@@ -3448,6 +3653,8 @@ datasets:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-086
   entity_name: fundamental.daily_basic
@@ -3483,6 +3690,8 @@ datasets:
   tags: ["估值", "数据", "因子", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-087
   entity_name: fundamental.fin_income
@@ -3518,6 +3727,8 @@ datasets:
   tags: ["数据", "财报", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-088
   entity_name: fundamental.fin_balancesheet
@@ -3553,6 +3764,8 @@ datasets:
   tags: ["数据", "财报", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-089
   entity_name: fundamental.fin_cashflow
@@ -3588,6 +3801,8 @@ datasets:
   tags: ["资金", "数据", "财报", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-090
   entity_name: fundamental.fin_indicator
@@ -3623,6 +3838,8 @@ datasets:
   tags: ["数据", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-091
   entity_name: event.disclosure_date
@@ -3658,6 +3875,8 @@ datasets:
   tags: ["事件", "数据", "财报", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-092
   entity_name: event.fin_forecast
@@ -3693,6 +3912,8 @@ datasets:
   tags: ["事件", "数据", "财报", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-093
   entity_name: event.fin_express
@@ -3728,6 +3949,8 @@ datasets:
   tags: ["事件", "数据", "财报", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-094
   entity_name: event.dividend
@@ -3763,6 +3986,8 @@ datasets:
   tags: ["事件", "数据", "分红"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-095
   entity_name: event.share_float
@@ -3798,6 +4023,8 @@ datasets:
   tags: ["事件", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-096
   entity_name: event.holder_trade
@@ -3833,6 +4060,8 @@ datasets:
   tags: ["事件", "数据", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-097
   entity_name: event.repurchase
@@ -3868,6 +4097,8 @@ datasets:
   tags: ["事件", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-098
   entity_name: capital.margin
@@ -3903,6 +4134,8 @@ datasets:
   tags: ["数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-099
   entity_name: capital.hk_hold
@@ -3938,6 +4171,8 @@ datasets:
   tags: ["资金", "仓位", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-100
   entity_name: capital.moneyflow
@@ -3973,6 +4208,8 @@ datasets:
   tags: ["资金", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-101
   entity_name: macro.cn_macro
@@ -4008,6 +4245,8 @@ datasets:
   tags: ["宏观", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - dataset_id: DS-102
   entity_name: industry.sw_daily
@@ -4043,6 +4282,8 @@ datasets:
   tags: ["行业", "数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 jobs:
 - job_id: JOB-001
@@ -4070,6 +4311,8 @@ jobs:
   tags: ["高频", "数据", "k线", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-002
   job_name: aggregate.ohlc_bar
   entity_type: job
@@ -4096,6 +4339,8 @@ jobs:
   tags: ["数据", "k线", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-003
   job_name: compute.value_factor
   entity_type: job
@@ -4122,6 +4367,8 @@ jobs:
   tags: ["估值", "因子", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-004
   job_name: compute.momentum_20d
   entity_type: job
@@ -4148,6 +4395,8 @@ jobs:
   tags: ["动量", "利率", "因子", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-005
   job_name: synthesize.signal
   entity_type: job
@@ -4175,6 +4424,8 @@ jobs:
   tags: ["多因子", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-006
   job_name: check.risk_limits
   entity_type: job
@@ -4201,6 +4452,8 @@ jobs:
   tags: ["风控", "回撤", "仓位", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-007
   job_name: generate.order
   entity_type: job
@@ -4228,6 +4481,8 @@ jobs:
   tags: ["风控", "信号", "订单", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-008
   job_name: execute.order
   entity_type: job
@@ -4255,6 +4510,8 @@ jobs:
   tags: ["仓位", "执行", "订单", "成交", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-009
   job_name: backtest.replay_ticks
   entity_type: job
@@ -4281,6 +4538,8 @@ jobs:
   tags: ["事件", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-010
   job_name: backtest.run_event_driven
   entity_type: job
@@ -4307,6 +4566,8 @@ jobs:
   tags: ["事件", "组合", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-011
   job_name: backtest.match_fills
   entity_type: job
@@ -4333,6 +4594,8 @@ jobs:
   tags: ["执行", "成本", "组合", "成交", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-012
   job_name: backtest.update_portfolio
   entity_type: job
@@ -4359,6 +4622,8 @@ jobs:
   tags: ["仓位", "组合", "成交", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-013
   job_name: backtest.calc_metrics
   entity_type: job
@@ -4385,6 +4650,8 @@ jobs:
   tags: ["回撤", "指标", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-014
   job_name: compute.ashare_alpha87
   entity_type: job
@@ -4412,6 +4679,8 @@ jobs:
   tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-015
   job_name: compute.ashare_capital_flow
   entity_type: job
@@ -4439,6 +4708,8 @@ jobs:
   tags: ["资金", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-016
   job_name: compute.ashare_cross_market
   entity_type: job
@@ -4466,6 +4737,8 @@ jobs:
   tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-017
   job_name: compute.ashare_fundamental
   entity_type: job
@@ -4493,6 +4766,8 @@ jobs:
   tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-018
   job_name: compute.ashare_institutional
   entity_type: job
@@ -4520,6 +4795,8 @@ jobs:
   tags: ["资金", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-019
   job_name: compute.ashare_intraday
   entity_type: job
@@ -4547,6 +4824,8 @@ jobs:
   tags: ["分时", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-020
   job_name: compute.ashare_irl
   entity_type: job
@@ -4574,6 +4853,8 @@ jobs:
   tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-021
   job_name: compute.ashare_market_structure
   entity_type: job
@@ -4601,6 +4882,8 @@ jobs:
   tags: ["k线", "形态", "市场结构", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-022
   job_name: compute.ashare_microstructure
   entity_type: job
@@ -4628,6 +4911,8 @@ jobs:
   tags: ["k线", "形态", "市场结构", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-023
   job_name: compute.ashare_pattern_signal
   entity_type: job
@@ -4655,6 +4940,8 @@ jobs:
   tags: ["k线", "形态", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-024
   job_name: compute.ashare_ps_liquidity
   entity_type: job
@@ -4682,6 +4969,8 @@ jobs:
   tags: ["流动性", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-025
   job_name: compute.ashare_sector
   entity_type: job
@@ -4709,6 +4998,8 @@ jobs:
   tags: ["行业", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-026
   job_name: compute.ashare_smc
   entity_type: job
@@ -4736,6 +5027,8 @@ jobs:
   tags: ["宏观", "k线", "市场结构", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-027
   job_name: compute.ashare_technical_indicator
   entity_type: job
@@ -4763,6 +5056,8 @@ jobs:
   tags: ["k线", "因子", "指标", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-028
   job_name: analyze.correlation_analyzer
   entity_type: job
@@ -4791,6 +5086,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-029
   job_name: analyze.correlation_dedup
   entity_type: job
@@ -4819,6 +5116,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-030
   job_name: analyze.decay_monitor
   entity_type: job
@@ -4847,6 +5146,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-031
   job_name: analyze.factor_attribution
   entity_type: job
@@ -4875,6 +5176,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-032
   job_name: analyze.factor_optimization
   entity_type: job
@@ -4903,6 +5206,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-033
   job_name: analyze.ic_decay
   entity_type: job
@@ -4931,6 +5236,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-034
   job_name: analyze.ic_ir_calc
   entity_type: job
@@ -4959,6 +5266,8 @@ jobs:
   tags: ["因子", "信号", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-035
   job_name: analyze.ic_ir_evaluator
   entity_type: job
@@ -4987,6 +5296,8 @@ jobs:
   tags: ["因子", "信号", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-036
   job_name: analyze.layered_backtest
   entity_type: job
@@ -5015,6 +5326,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-037
   job_name: analyze.multifactor_synthesis
   entity_type: job
@@ -5043,6 +5356,8 @@ jobs:
   tags: ["多因子", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-038
   job_name: analyze.three_level_judgment
   entity_type: job
@@ -5071,6 +5386,8 @@ jobs:
   tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-039
   job_name: analyze.turnover_analyzer
   entity_type: job
@@ -5099,6 +5416,8 @@ jobs:
   tags: ["流动性", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-040
   job_name: compute.barra_esg
   entity_type: job
@@ -5126,6 +5445,8 @@ jobs:
   tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-041
   job_name: compute.barra_exposure_calculator
   entity_type: job
@@ -5153,6 +5474,8 @@ jobs:
   tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-042
   job_name: compute.barra_risk_budget_allocator
   entity_type: job
@@ -5180,6 +5503,8 @@ jobs:
   tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-043
   job_name: compute.barra_risk_model
   entity_type: job
@@ -5207,6 +5532,8 @@ jobs:
   tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-044
   job_name: mine.causal_validator
   entity_type: job
@@ -5235,6 +5562,8 @@ jobs:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-045
   job_name: mine.mining_agent
   entity_type: job
@@ -5263,6 +5592,8 @@ jobs:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-046
   job_name: backtest.anomaly_diagnoser
   entity_type: job
@@ -5290,6 +5621,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-047
   job_name: backtest.data_quality_checker
   entity_type: job
@@ -5317,6 +5650,8 @@ jobs:
   tags: ["质量", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-048
   job_name: backtest.decay_monitor
   entity_type: job
@@ -5344,6 +5679,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-049
   job_name: backtest.nan_processor
   entity_type: job
@@ -5371,6 +5708,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-050
   job_name: backtest.param_analyzer
   entity_type: job
@@ -5398,6 +5737,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-051
   job_name: backtest.report_generator
   entity_type: job
@@ -5425,6 +5766,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-052
   job_name: backtest.result_comparator
   entity_type: job
@@ -5452,6 +5795,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-053
   job_name: backtest.result_deployer
   entity_type: job
@@ -5479,6 +5824,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-054
   job_name: data.feature_store
   entity_type: job
@@ -5505,6 +5852,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-055
   job_name: data.realtime_push_manager
   entity_type: job
@@ -5531,6 +5880,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-056
   job_name: data.tick_data_manager
   entity_type: job
@@ -5557,6 +5908,8 @@ jobs:
   tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-057
   job_name: data.kline_resampler
   entity_type: job
@@ -5583,6 +5936,8 @@ jobs:
   tags: ["数据", "k线"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-058
   job_name: data.sector_snapshot_collector
   entity_type: job
@@ -5609,6 +5964,8 @@ jobs:
   tags: ["行业", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-059
   job_name: data_eng.data_lake_manager
   entity_type: job
@@ -5635,6 +5992,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-060
   job_name: data_eng.knowledge_cleaning
   entity_type: job
@@ -5661,6 +6020,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-061
   job_name: data_eng.stream_processing
   entity_type: job
@@ -5687,6 +6048,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-062
   job_name: data_eng.synthetic_data
   entity_type: job
@@ -5713,6 +6076,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-063
   job_name: data_eng.training_data_manager
   entity_type: job
@@ -5739,6 +6104,8 @@ jobs:
   tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-064
   job_name: ex_core.audit_journal
   entity_type: job
@@ -5767,6 +6134,8 @@ jobs:
   tags: ["仓位", "执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-065
   job_name: ex_core.fill_handler
   entity_type: job
@@ -5795,6 +6164,8 @@ jobs:
   tags: ["仓位", "执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-066
   job_name: ex_core.position_tracker
   entity_type: job
@@ -5823,6 +6194,8 @@ jobs:
   tags: ["仓位", "执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-067
   job_name: ex_core.live_portfolio
   entity_type: job
@@ -5851,6 +6224,8 @@ jobs:
   tags: ["仓位", "执行", "数据", "组合", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-068
   job_name: pf_core.optimizer
   entity_type: job
@@ -5878,6 +6253,8 @@ jobs:
   tags: ["组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-069
   job_name: pf_core.portfolio_aggregate
   entity_type: job
@@ -5905,6 +6282,8 @@ jobs:
   tags: ["组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-070
   job_name: pf_core.strategy_runner
   entity_type: job
@@ -5932,6 +6311,8 @@ jobs:
   tags: ["组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-071
   job_name: pf_core.topn_momentum_strategy
   entity_type: job
@@ -5959,6 +6340,8 @@ jobs:
   tags: ["动量", "组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-072
   job_name: ml_train.ai_operator
   entity_type: job
@@ -5986,6 +6369,8 @@ jobs:
   tags: ["信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-073
   job_name: ml_train.training_pipeline
   entity_type: job
@@ -6014,6 +6399,8 @@ jobs:
   tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-074
   job_name: risk.track_drawdown
   entity_type: job
@@ -6041,6 +6428,8 @@ jobs:
   tags: ["风控", "回撤", "仓位", "指标", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-075
   job_name: trading.calc_pnl
   entity_type: job
@@ -6068,6 +6457,8 @@ jobs:
   tags: ["数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-076
   job_name: ingest.akshare_lhb
   entity_type: job
@@ -6094,6 +6485,8 @@ jobs:
   tags: ["龙虎榜", "数据", "形态"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-077
   job_name: ingest.akshare_market_meta
   entity_type: job
@@ -6124,6 +6517,8 @@ jobs:
   tags: ["指数", "执行", "股票池", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-078
   job_name: ingest.akshare_fundamental
   entity_type: job
@@ -6154,6 +6549,8 @@ jobs:
   tags: ["事件", "估值", "多因子", "数据", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-079
   job_name: ingest.akshare_corporate_event
   entity_type: job
@@ -6186,6 +6583,8 @@ jobs:
   tags: ["事件", "数据", "财报", "分红"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-080
   job_name: ingest.akshare_capital_flow
   entity_type: job
@@ -6214,6 +6613,8 @@ jobs:
   tags: ["资金", "仓位", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-081
   job_name: ingest.akshare_cn_macro
   entity_type: job
@@ -6240,6 +6641,8 @@ jobs:
   tags: ["宏观", "数据", "通胀", "利率", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - job_id: JOB-082
   job_name: ingest.akshare_industry
   entity_type: job
@@ -6266,3 +6669,5 @@ jobs:
   tags: ["指数", "行业", "行情", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
