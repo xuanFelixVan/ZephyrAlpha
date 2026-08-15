@@ -128,9 +128,17 @@ def _check_symbols_null(
 def _check_incremental(
     task: dict, meta: IngestProviderMeta, violations: list[Violation],
 ) -> None:
-    """规则3: task.incremental=true 时，capability 应声明 supports_incremental=True（WARN）。"""
-    extra = task.get("extra") or {}
-    incremental = extra.get("incremental", True)  # 默认增量
+    """规则3: task.incremental=true 时，capability 应声明 supports_incremental=True（WARN）。
+
+    incremental 读取与 scheduler.run_task 一致：顶层 task["incremental"] 优先
+    （tasks.yaml 真源字段），缺省回退 extra["incremental"]（向后兼容旧测试/配置），
+    双缺省默认 True。2026-08-15 前误读 extra 单源——顶层 incremental:false 的
+    全量任务被误当增量校验（northbound_hold_snapshot_refresh 误报 CAP-INCREMENTAL
+    实证，AI-NORTH-001 修复）。
+    """
+    incremental = task.get("incremental")
+    if incremental is None:
+        incremental = (task.get("extra") or {}).get("incremental", True)
     if not incremental:
         return  # 全量模式，不校验增量
     cap_id = task.get("capability")
