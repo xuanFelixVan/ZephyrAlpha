@@ -120,7 +120,9 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **治理批③（2026-08-15 同会话续作）** | **ARCH-WORKTREE-DB-SPLIT-001 治本（仓级共享状态所有权归主仓/anchor_main_root 两型锚定/worktree 禁写权威 REFUSED/ops_guard 补丁卸载 API）+ #55② 四项顺修全闭环 + strip_session_worktree 同族陷阱五形态根治** | ✅ **已 merge 回 dev**（同 e0f962f36e；核验 PASS：25 文件治理域无夹带+2182×2 轮全绿；新登记 #61-#64 待专项裁定，#63 测试债建议专项清偿批——用户已裁定与第 4 批并行开工） |
 | 第 4 批 | 34 RegimeMeta / 60 跨切 / 43 合规 | ✅ 3/3 全部完工 merge（2026-08-15 当日派单当日完工：34=837c5b256c+2bc86c1b29 / 60=def379dbc9 / 43=de45d261aa；另 tick 紧急插队 e179d4ce25+XCUT-002 479de59b23） |
 | **测试债清偿批（2026-08-15 用户裁定并行）** | **AI-TDEBT-001：#63 全量测试存量债 785 failed/17 errors 按簇分包清偿（cross/autonomy/external/semantic/escalation 簇+collection error+xdist set 参数化治本）** | 🔄 施工中（worktree .worktrees/AI-TDEBT-001 活跃） |
-| 第 5 批 | 53 模拟实盘 / 54 对账 / 55 监控 | ⏳ 待开工（第 4 批已完工 merge；测试债批施工完后排期，或用户裁定并行） |
+| **治理顺手批（2026-08-15 晚用户裁定）** | **AI-FIX-001：#69 d6 hook 传参兼容+#70 I001 瑕疵+#80 --to main 默认值+#82 文档债+#73 TTL 质保链（增量校验+每日全量 rejudge）** | 🔄 施工中 |
+| **数据产能批（2026-08-15 晚用户裁定插队）** | **AI-JOB077-001：JOB-077 市场元数据与约束接入（DS-081~085：股票基本信息/涨跌停价/停复牌/指数成分/ST 状态——universe 构造+回测撮合约束前提，打板回测急需）** | 🔄 施工中 |
+| 第 5 批 | 53 模拟实盘（AI-SIM-001）/ 54 对账归因（AI-RCAN-001）/ 55 监控复盘（AI-MON-001） | 🔄 施工中（2026-08-15 晚用户裁定与治理批/JOB-077 并发开工，TDEBT 不占这些域） |
 | 重建类 | 28 号情绪周期（可从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架 | ⏳ 随批排期 |
 
 ## 六、遗留项登记表（重建版，按优先级分类）
@@ -305,3 +307,4 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 2026-08-15 午后 | 历史反馈补转核验：wrapper 批（611227d5/21f447c1/d7844786/0b94b4d4）/65-66 遗留批（561ce485）/#68 闭环（c79de22c0d）/T0-T1 核心（98aeffde63+4cb49217）四项核验 PASS 补登 §四（git 实证早已完成，正式反馈文本今日补转）；新登记 #73（TTL 声明质保链断裂，rejudge 触发面窄+常设 TTL reconciler 已删）/#74（ops_guard 非会话改动+stash 随 wipe 第四次丢失备查，fsck 全库扫描无恢复对象） | 第四统筹会话 |
 | 2026-08-15 下午 | #59/#60 施工反馈核验 **PASS**（3b7eae39f8/a2208f30e1/998d23d1c1 实证在库+统筹复跑 61/61 补独立复跑缺口；周一开盘实盘终验 3 项备案）；**用户裁定第 4 批观察后再定**（批次区已更新）；新登记 #75（脏缓冲区新形态 mtime 回拨+pycache 欺骗+INJ-007 ps1 纯 ASCII）/#76（"无提交即死"误判准事故，判据补强=查进程层心跳）；AI-TICK-001 指令作废（任务已由数据域会话完工）；ce6d13a7（协调会话同 sid 收口 commit，lost-update 第三实证留痕）知情并存 | 第四统筹会话 |
 | 2026-08-15 晚 | **第 4 批 3/3+tick 插队全完工 merge**（用户当日派单当日闭环）：AI-TICK-001（e179d4ce25）/AI-REGIME-001（a88a56fb finalize）/AI-XCUT-001+002（def379dbc9+479de59b23）自行 merge，AI-COMP-001 由统筹 merge（de45d261aa：派生 6 取 theirs+ROOR 并集+撞号重编 #77-79）；merge 前置代收回填会话 WIP（00646958）；五家核验全 PASS（§四）；新登记 #80-84（--to main 风险/网关收编 staged WIP/文档债/AGENTS.md 回填待审批/QMT 自动登录人工项）；SOME-OTHER-GATE 测试污染三方清偿完毕（TICK 324+XCUT 358+REGIME 384 行，横幅消除）；worktree 待清：COMP/TICK（证1 会话活跃阻断，会话结束后 lifecycle sweep 自收）；测试债批 TDEBT-001 施工中 | 第四统筹会话 |
+| 2026-08-15 晚 | **Owner 批准落地**：#83 AGENTS.md 速查表 18 表回填+#41 计数动态化（db26d653，347 条时点值）；#84 实证 QMT 模拟终端无自动登录配置（authAndConfig/MiniConfig 无字段）——兜底=deadman 10min 告警+每日开盘前手动登录一次；**用户裁定三批并发开工**：第 5 批（AI-SIM-001/AI-RCAN-001/AI-MON-001）+治理顺手批（AI-FIX-001）+数据产能批（AI-JOB077-001）；TDEBT-001 仍施工中 | 第四统筹会话 |
