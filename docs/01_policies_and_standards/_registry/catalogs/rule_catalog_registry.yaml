@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-15T10:30:27Z'
+generated_at: '2026-08-15T07:29:24Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 214
+total_files: 210
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2035,7 +2035,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2095,7 +2095,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 2.14.0
+  version: 2.13.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2110,7 +2110,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2140,7 +2140,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2240,27 +2240,12 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/event_calendar_registry.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.1.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/execution_algo_registry.yaml
   module_id: MOD-GOVERNANCE
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2275,7 +2260,7 @@ files:
   title: ''
   doc_type: ''
   status: draft
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2305,7 +2290,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2320,7 +2305,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2510,42 +2495,12 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.1.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/migration_registry.yaml
   module_id: ''
   title: ''
   doc_type: ''
   status: ''
   version: ''
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2600,27 +2555,12 @@ files:
   tier: ''
   aliases: []
   section_count: 0
-- path: docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml
-  module_id: ''
-  title: ''
-  doc_type: ''
-  status: active
-  version: 1.1.0
-  rule_form: ''
-  scope: ''
-  stability: ''
-  layer: ''
-  superseded_by: ''
-  severity: ''
-  tier: ''
-  aliases: []
-  section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/regime_cycle_registry.yaml
   module_id: ''
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2665,7 +2605,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2770,7 +2710,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2785,7 +2725,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2815,7 +2755,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.1.0
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2875,7 +2815,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.2.0
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
