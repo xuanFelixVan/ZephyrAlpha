@@ -14283,7 +14283,7 @@ entries:
   status: proposed
   related_rules: '#ARCH-QUANT-001'
   created: '2026-08-11'
-  last_updated: '2026-08-11'
+  last_updated: '2026-08-15'
 
 - issue_id: '#ARCH-QUANT-003'
   title: '53_simulation_live_path 5 态 FSM 状态机代码落地'
@@ -14300,7 +14300,7 @@ entries:
   status: proposed
   related_rules: '#ARCH-QUANT-001; #ARCH-QUANT-002'
   created: '2026-08-11'
-  last_updated: '2026-08-11'
+  last_updated: '2026-08-15'
 
 - issue_id: '#ARCH-QUANT-004'
   title: 'pf_core / pf_alloc / ex_sor 三个 stub 落地'
