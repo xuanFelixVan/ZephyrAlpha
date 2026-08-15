@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-15T06:20:01Z'
+generated_at: '2026-08-15T06:29:40Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 210
@@ -2076,11 +2076,11 @@ files:
   aliases: []
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
-  module_id: PS-REG-021
-  title: 能力→真源文件反查注册表
-  doc_type: gate
+  module_id: PS-REG-019
+  title: ''
+  doc_type: ''
   status: active
-  version: 1.1.1
+  version: 1.1.0
   rule_form: ''
   scope: ''
   stability: ''
