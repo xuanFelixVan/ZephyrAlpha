@@ -16904,3 +16904,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-086'
+  title: skill-registry 路径漂移——__main__._registry_path 与 _SKILL_REGISTRY_PATH 同指包根不存在文件（SpecRegistry 永远空载被静默降级掩盖）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 515 failed 分簇 tests/agent/test_agent_spec_main.py 7 项）：src/zephyr/autonomy_core/__main__.py L36 _registry_path() 与 src/zephyr/autonomy_core/skill_rbac_registry.py L34 _SKILL_REGISTRY_PATH 同指 src/zephyr/autonomy_core/skill-registry.yaml——该文件不存在（真源在 skills/ 子包 skills/skill-registry.yaml，含 2 个 domain skill）。两处同源漂移不同命：__main__._load_registry 直 open() → cmd_list/status CLI 必 FileNotFoundError 吞成 return 1；skill_rbac_registry 被 _load_from_skill_registry L82-83 文件不存在静默 return 掩盖 → SpecRegistry 生产环境永远空载（功能隐形缺失，无任何报警——静默降级吞错同族陷阱）。真代码 bug 非测试错，修复机械唯一（路径补 skills/ 层），按 #ARCH-085 先例登记后顺手修。已修 2 处+测试跟进 1 项（test_path_under_agent_spec_dir 断言 agent-spec→autonomy_core 目录布局演进），tests/agent/test_agent_spec_main.py 7 项全绿。防复发建议（待裁定）：①静默降级类"文件不存在即 return None/空"模式应至少留 warning 日志（本例掩盖期未知）；②registry 路径类常量应有启动冒烟校验或汇聚到统一路径 SSoT（两处独立硬编码同漂=缺单真源）。'
+  fix_phase: 已修（AI-TDEBT-001 路径补 skills/ 层 2 处）；防复发①②待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

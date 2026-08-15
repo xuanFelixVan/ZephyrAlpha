@@ -31,7 +31,9 @@ from typing import Any
 import yaml
 from pydantic import BaseModel
 
-_SKILL_REGISTRY_PATH = Path(__file__).resolve().parent / "skill-registry.yaml"
+# 真源 registry 在 skills/ 子包（曾错指包根、被 _load_from_skill_registry 静默降级
+# 掩盖致 SpecRegistry 永远空载，#ARCH-086）
+_SKILL_REGISTRY_PATH = Path(__file__).resolve().parent / "skills" / "skill-registry.yaml"
 
 GOVERNANCE_SKILL_TYPES: Final[set] = {
     "domain": [

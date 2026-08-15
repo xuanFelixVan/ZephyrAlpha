@@ -46,7 +46,7 @@ class TestAgentCapability:
 
 
 class TestSpecRegistry:
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_register_and_get(self):
         reg = SpecRegistry()
         cap = AgentCapability(agent_id="agent-1", capabilities=["skill-a"])
@@ -55,12 +55,12 @@ class TestSpecRegistry:
         assert result is not None
         assert result.agent_id == "agent-1"
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_get_nonexistent_returns_none(self):
         reg = SpecRegistry()
         assert reg.get("no-such-agent") is None
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_register_overwrites(self):
         reg = SpecRegistry()
         cap1 = AgentCapability(agent_id="a", version="1.0.0")
@@ -69,12 +69,12 @@ class TestSpecRegistry:
         reg.register(cap2)
         assert reg.get("a").version == "2.0.0"
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_list_all_empty(self):
         reg = SpecRegistry()
         assert reg.list_all() == []
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_list_all_with_entries(self):
         reg = SpecRegistry()
         reg.register(AgentCapability(agent_id="x", capabilities=["name-x", "domain"]))
@@ -84,7 +84,7 @@ class TestSpecRegistry:
         ids = {r["skill_id"] for r in result}
         assert ids == {"x", "y"}
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_list_by_category(self):
         reg = SpecRegistry()
         reg.register(AgentCapability(agent_id="d1", capabilities=["name", "domain"]))
@@ -94,7 +94,7 @@ class TestSpecRegistry:
         assert len(domain_entries) == 1
         assert len(role_entries) == 1
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_list_all_entry_structure(self):
         reg = SpecRegistry()
         reg.register(AgentCapability(agent_id="z", capabilities=["z-name", "domain", "extra"], version="3.0.0"))
@@ -105,7 +105,7 @@ class TestSpecRegistry:
         assert entry["category"] == "domain"
         assert entry["version"] == "3.0.0"
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_list_all_empty_capabilities_uses_agent_id_as_name(self):
         reg = SpecRegistry()
         reg.register(AgentCapability(agent_id="bare", capabilities=[]))
@@ -113,7 +113,7 @@ class TestSpecRegistry:
         assert entries[0]["name"] == "bare"
         assert entries[0]["category"] == "unknown"
 
-    @patch.object(SpecRegistry, "_load_via_skill_router", lambda self: None)
+    @patch.object(SpecRegistry, "_load_from_skill_registry", lambda self: None)
     def test_list_by_category_no_match(self):
         reg = SpecRegistry()
         reg.register(AgentCapability(agent_id="a", capabilities=["n", "domain"]))

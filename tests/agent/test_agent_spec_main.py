@@ -47,8 +47,9 @@ class TestRegistryPath:
         assert result.name == "skill-registry.yaml"
 
     def test_path_under_agent_spec_dir(self):
+        # 生产跟进：registry 已并入 autonomy_core 包内 skills/ 子包（原 agent-spec 目录布局已演进）
         result = _registry_path()
-        assert "agent-spec" in str(result)
+        assert "autonomy_core" in str(result)
 
 
 class TestLoadRegistry:

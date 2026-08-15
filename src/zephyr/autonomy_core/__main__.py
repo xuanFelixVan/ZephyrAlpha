@@ -33,7 +33,8 @@ import yaml
 
 
 def _registry_path() -> Path:
-    return Path(__file__).resolve().parent / "skill-registry.yaml"
+    # 真源 registry 在 skills/ 子包（曾错指包根致 FileNotFoundError，#ARCH-086）
+    return Path(__file__).resolve().parent / "skills" / "skill-registry.yaml"
 
 
 def _load_registry() -> dict:
