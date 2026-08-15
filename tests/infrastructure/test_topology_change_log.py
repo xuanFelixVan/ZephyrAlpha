@@ -200,7 +200,7 @@ class TestGetLastChangeFor:
 
 
 class TestRestoreBranch:
-    @patch("zephyr.infrastructure.rollback.topology_change_log.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.topology_change_log.run_subprocess_hidden")
     def test_restore_success(self, mock_run: MagicMock, log: TopologyChangeLog) -> None:
         reflog_result = MagicMock()
         reflog_result.stdout = "abc123def456\n"
@@ -209,21 +209,21 @@ class TestRestoreBranch:
         assert log.restore_branch("feature") is True
         assert mock_run.call_count == 2
 
-    @patch("zephyr.infrastructure.rollback.topology_change_log.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.topology_change_log.run_subprocess_hidden")
     def test_restore_no_reflog(self, mock_run: MagicMock, log: TopologyChangeLog) -> None:
         reflog_result = MagicMock()
         reflog_result.stdout = ""
         mock_run.return_value = reflog_result
         assert log.restore_branch("feature") is False
 
-    @patch("zephyr.infrastructure.rollback.topology_change_log.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.topology_change_log.run_subprocess_hidden")
     def test_restore_exception(self, mock_run: MagicMock, log: TopologyChangeLog) -> None:
         mock_run.side_effect = OSError("git not found")
         assert log.restore_branch("feature") is False
 
 
 class TestSnapshotCurrentTopology:
-    @patch("zephyr.infrastructure.rollback.topology_change_log.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.topology_change_log.run_subprocess_hidden")
     def test_snapshot_success(self, mock_run: MagicMock, log: TopologyChangeLog) -> None:
         branches_result = MagicMock()
         branches_result.stdout = "main\ndevelop\n"
@@ -237,13 +237,13 @@ class TestSnapshotCurrentTopology:
         assert result["current"] == "main"
         assert "snapshot_at" in result
 
-    @patch("zephyr.infrastructure.rollback.topology_change_log.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.topology_change_log.run_subprocess_hidden")
     def test_snapshot_exception(self, mock_run: MagicMock, log: TopologyChangeLog) -> None:
         mock_run.side_effect = OSError("git not found")
         result = log.snapshot_current_topology()
         assert result == {}
 
-    @patch("zephyr.infrastructure.rollback.topology_change_log.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.topology_change_log.run_subprocess_hidden")
     def test_snapshot_empty_branches(self, mock_run: MagicMock, log: TopologyChangeLog) -> None:
         branches_result = MagicMock()
         branches_result.stdout = ""

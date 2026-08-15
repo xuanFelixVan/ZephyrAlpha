@@ -120,7 +120,7 @@ class TestWarmStandbyInit:
 
 
 class TestInitialize:
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_initialize_creates_state_file(
         self,
         mock_run: MagicMock,
@@ -138,7 +138,7 @@ class TestInitialize:
         assert data["standby_commit"] == "abc1234"
         assert data["is_active"] is True
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_initialize_returns_true_if_dir_exists(
         self,
         mock_run: MagicMock,
@@ -151,7 +151,7 @@ class TestInitialize:
         assert result is True
         mock_run.assert_not_called()
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_initialize_failure(
         self,
         mock_run: MagicMock,
@@ -181,7 +181,7 @@ class TestCutover:
         assert result.success is False
         assert "Failed to read standby state" in result.details
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_cutover_success(
         self,
         mock_run: MagicMock,
@@ -208,7 +208,7 @@ class TestCutover:
         assert result.exit_code == 0
         assert result.rto_ms >= 0
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_cutover_git_checkout_failure(
         self,
         mock_run: MagicMock,
@@ -232,7 +232,7 @@ class TestCutover:
 
 
 class TestRotate:
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_rotate_removes_old_and_initializes(
         self,
         mock_run: MagicMock,
@@ -249,7 +249,7 @@ class TestRotate:
         result = standby.rotate("newcommit")
         assert result is True
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_rotate_remove_failure_still_initializes(
         self,
         mock_run: MagicMock,
@@ -267,7 +267,7 @@ class TestVerifyIntegrity:
     def test_verify_no_standby_dir(self, standby: WarmStandby) -> None:
         assert standby.verify_integrity() is False
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_verify_success(
         self,
         mock_run: MagicMock,
@@ -281,7 +281,7 @@ class TestVerifyIntegrity:
         mock_run.return_value = result
         assert standby.verify_integrity() is True
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_verify_git_failure(
         self,
         mock_run: MagicMock,
@@ -295,7 +295,7 @@ class TestVerifyIntegrity:
         mock_run.return_value = result
         assert standby.verify_integrity() is False
 
-    @patch("zephyr.infrastructure.rollback.warm_standby.subprocess.run")
+    @patch("zephyr.infrastructure.rollback.warm_standby.run_subprocess_hidden")
     def test_verify_exception(
         self,
         mock_run: MagicMock,
