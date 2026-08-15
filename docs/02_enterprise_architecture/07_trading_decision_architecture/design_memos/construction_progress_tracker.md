@@ -249,6 +249,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 82 | data_source_operation_manual.md 示例路径双重过期 | AI-TICK-001 排查发现（2026-08-15） | D 盘→E 盘搬迁+实盘→模拟主线双重过期——文档债，归文档治理批 | ⏳ 择期 |
 | 83 | AGENTS.md 速查表 18 注册表口径回填挂起 | 第四统筹 merge 前置实证（2026-08-15） | 回填会话 18:48 写入 AGENTS.md 速查表 4 新表行+data_asset 199 条口径，被 PROTECTED-PATHS 阻挡挂起（ROOR+62 号同源 WIP 已代收 00646958）——需 Owner 审批通道落地（挂 #9；与 #41 计数动态化可一并裁定） | ⏳ 等 Owner 审批 |
 | 84 | 【用户手动项】QMT 模拟终端登录界面勾选"自动登录" | AI-TICK-001 交接（2026-08-15） | restart_minimqmt.ps1 每日 16:00 重启后终端停在登录页，不勾则次日 miniquote 不起、订阅链全挂——**周一 08-17 开盘前唯一人工前提**；当前 PID 50380 连模拟盘正常 | ⏳ 用户手动（周一前） |
+| 85 | 派生活水与 CRLF 双陷阱（worktree merge 甄别新形态，并入 #68/#75 陷阱族） | AI-FIX-001 治理顺手批实证（2026-08-15） | ①**派生活水**：post-commit 生成器读主仓 depgraph（仓级共享状态）回写文档 AUTO 区块统计，并行会话活跃期 worktree 反复残留数字派生（节点数/边数/file_count 等）——活水追不完，merge 甄别 SOP 认知项：**数字派生物一律丢弃不提交**（提交必与并行会话同款刷新冲突；丢弃零损失，depgraph 可随时再生成）；②**CRLF 尺寸陷阱**：boot_autostart_architecture.md/_domain_risk/blueprint.md 等工作区惯例 CRLF 而 index 归一化 LF（text=set）——回写/编辑此类文件必须 CRLF 保尺寸（index stat.size 与 CRLF 版绑定），LF 回写会导致 status 假 M+diff 空（hash-object 三方一致但 stat 不匹配），极具迷惑性；处方=CRLF 回写+`git add` 刷 stat 缓存（staged diff 实证为空）；与 backfill CRLF-blob 案（#73 批实证）、#75 mtime 回拨案同族——**热文件处置标配：先查 blob/工作区行尾型再定回写姿势** | ⏳ 已登记（SOP 认知项，merge 甄别用） |
 
 ### 流程/环境类
 
