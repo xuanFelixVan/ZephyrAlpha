@@ -21,9 +21,7 @@
 from __future__ import annotations
 
 import json
-import os
 from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 
@@ -34,10 +32,11 @@ from zephyr.governance.ops_governance.budget_models import BudgetDimension, Budg
 @pytest.fixture
 def engine():
     """提供干净的 BudgetEngine 实例。"""
-    BudgetEngine.instance = None
+    # 生产跟进（Stage 4）：instance 为类定义期别名不跟踪 _instance——用 reset_instance()
+    BudgetEngine.reset_instance()
     e = BudgetEngine()
     yield e
-    BudgetEngine.instance = None
+    BudgetEngine.reset_instance()
 
 
 class TestFullLifecycle:
@@ -56,8 +55,8 @@ class TestFullLifecycle:
         persist_path = tmp_path / "shutdown_snapshot.json"
 
         # Step 1: 模拟 session_startup 自动初始化
-        BudgetEngine.instance = engine
-        assert BudgetEngine.instance is not None
+        BudgetEngine.set_instance(engine)
+        assert BudgetEngine.has_instance()
 
         # Step 2: 模拟 LLM 调用 pre_flight_check
         result = engine.pre_flight_check("req-lifecycle-001", estimated_tokens=100, estimated_cost=0.01)
@@ -73,8 +72,9 @@ class TestFullLifecycle:
         assert engine.current_degradation_level == BudgetLevel.L3_DEGRADED
 
         # Step 5: 模拟 session_shutdown 触发 shutdown()
-        with patch("os.path.join", return_value=str(persist_path)):
-            result = engine.shutdown()
+        # 生产跟进（#ARCH-097）：patch("os.path.join") 在 Windows 下污染全进程 pathlib
+        # （os.path.join 即 WindowsPath._flavour.join 同源函数对象）——改用注入 seam
+        result = engine.shutdown(persist_path=str(persist_path))
 
         # Step 6: 验证状态持久化
         assert result["cleaned_up"] is True
@@ -87,13 +87,13 @@ class TestFullLifecycle:
         assert saved["health"] == "DEGRADED"
 
         # 验证单例已重置
-        assert BudgetEngine.instance is None
+        assert not BudgetEngine.has_instance()
 
     def test_full_lifecycle_with_ipi_attack(self, engine, tmp_path):
         """完整生命周期含 IPI 攻击检测。"""
         persist_path = tmp_path / "shutdown_snapshot.json"
 
-        BudgetEngine.instance = engine
+        BudgetEngine.set_instance(engine)
 
         # 正常调用
         result = engine.pre_flight_check("req-001", estimated_tokens=100, estimated_cost=0.01)
@@ -109,11 +109,10 @@ class TestFullLifecycle:
         assert engine.active_step_idx == 4
         assert engine.current_degradation_level == BudgetLevel.L4_EMERGENCY
 
-        # shutdown
-        with patch("os.path.join", return_value=str(persist_path)):
-            engine.shutdown()
+        # shutdown（#ARCH-097：注入 seam 替代 patch os.path.join）
+        engine.shutdown(persist_path=str(persist_path))
 
-        assert BudgetEngine.instance is None
+        assert not BudgetEngine.has_instance()
 
 
 class TestRestartStateRecovery:
@@ -123,7 +122,7 @@ class TestRestartStateRecovery:
         """shutdown 后重新初始化，验证从快照恢复的消费数据一致。"""
         persist_path = tmp_path / "shutdown_snapshot.json"
 
-        BudgetEngine.instance = engine
+        BudgetEngine.set_instance(engine)
 
         # 记录消费
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
@@ -133,11 +132,10 @@ class TestRestartStateRecovery:
         pre_shutdown_consumption = engine.get_consumption_summary()
         pre_shutdown_version = engine.get_consumption_version(BudgetDimension.TOKEN)
 
-        # shutdown — 持久化到 tmp_path
-        with patch("os.path.join", return_value=str(persist_path)):
-            engine.shutdown()
+        # shutdown — 持久化到 tmp_path（#ARCH-097：注入 seam 替代 patch os.path.join）
+        engine.shutdown(persist_path=str(persist_path))
 
-        assert BudgetEngine.instance is None
+        assert not BudgetEngine.has_instance()
 
         # 从快照恢复
         recovered = BudgetEngine.recover_from_snapshot(str(persist_path))
@@ -166,27 +164,24 @@ class TestClosedEngineRejectsOps:
 
     def test_closed_engine_rejects_pre_flight_check(self, engine, tmp_path):
         """shutdown 后 pre_flight_check 应抛 RuntimeError。"""
-        with patch("os.path.join", return_value=str(tmp_path / "snapshot.json")):
-            engine.shutdown()
+        engine.shutdown(persist_path=str(tmp_path / "snapshot.json"))
 
-        with pytest.raises(RuntimeError, match="BudgetEngine已关闭"):
+        with pytest.raises(RuntimeError, match="BudgetEngine 已关闭"):  # 生产跟进（5.99.14）：中英文之间加空格
             engine.pre_flight_check("req-after-close", estimated_tokens=100)
 
     def test_closed_engine_rejects_record_consumption(self, engine, tmp_path):
         """shutdown 后 record_consumption 应抛 RuntimeError。"""
         token_policy = engine.get_active_policy(BudgetDimension.TOKEN)
 
-        with patch("os.path.join", return_value=str(tmp_path / "snapshot.json")):
-            engine.shutdown()
+        engine.shutdown(persist_path=str(tmp_path / "snapshot.json"))
 
-        with pytest.raises(RuntimeError, match="BudgetEngine已关闭"):
+        with pytest.raises(RuntimeError, match="BudgetEngine 已关闭"):  # 生产跟进（5.99.14）：中英文之间加空格
             engine.record_consumption(token_policy.policy_id, 100, 0.01, 0.1)
 
     def test_closed_engine_idempotent_shutdown(self, engine, tmp_path):
         """重复 shutdown 不抛异常。"""
-        with patch("os.path.join", return_value=str(tmp_path / "snapshot.json")):
-            result1 = engine.shutdown()
-            result2 = engine.shutdown()
+        result1 = engine.shutdown(persist_path=str(tmp_path / "snapshot.json"))
+        result2 = engine.shutdown(persist_path=str(tmp_path / "snapshot.json"))
 
         assert result1["cleaned_up"] is True
         assert result2["cleaned_up"] is True

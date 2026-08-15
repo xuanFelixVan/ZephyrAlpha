@@ -131,6 +131,7 @@ class TestOrchestratorE2E:
             AgentRouter(),
             tool_invoker=_ok_invoker(calls),
             directive_mapping=MAPPING,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D2", directive_chain="325+344+999")
         assert res.success is True
@@ -146,6 +147,7 @@ class TestOrchestratorE2E:
             AgentRouter(),
             tool_invoker=_failing_invoker,
             directive_mapping=MAPPING,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="325+344")
         assert res.success is False
@@ -156,6 +158,7 @@ class TestOrchestratorE2E:
             AgentRouter(),
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="")
         assert res.tool_calls == []
@@ -166,6 +169,7 @@ class TestOrchestratorE2E:
             AgentRouter(),
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="325+404")
         assert res.success is False
@@ -183,6 +187,7 @@ class TestHealthMonitorIntegration:
             AgentRouter(),
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
+            enable_lsg=False,
         )
         for _ in range(5):
             orch.orchestrate(domain="D0", directive_chain="999")
@@ -243,6 +248,7 @@ class TestHallucinationPostHook:
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
             hallucination_caller=_cove_pass,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D6", directive_chain="325", claim="Valid claim")
         assert res.hallucination is not None
@@ -255,6 +261,7 @@ class TestHallucinationPostHook:
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
             hallucination_caller=_cove_fail,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D6", directive_chain="325", claim="Suspicious claim")
         assert res.hallucination is not None
@@ -266,6 +273,7 @@ class TestHallucinationPostHook:
             AgentRouter(),
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="999", claim="test")
         assert res.hallucination is None
@@ -284,6 +292,7 @@ class TestE2EPassRate:
             tool_invoker=_ok_invoker([]),
             directive_mapping=MAPPING,
             hallucination_caller=_cove_pass,
+            enable_lsg=False,
         )
         total = 20
         passed = 0

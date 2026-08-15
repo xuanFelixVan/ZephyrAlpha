@@ -250,8 +250,14 @@ class BudgetEngine:
             "health": "HEALTHY" if self._active_step_idx == 0 else "DEGRADED",
         }
 
-    def shutdown(self) -> dict:
-        """关闭 BudgetEngine——资源清理+状态持久化+单例重置。幂等。"""
+    def shutdown(self, persist_path: str | None = None) -> dict:
+        """关闭 BudgetEngine——资源清理+状态持久化+单例重置。幂等。
+
+        persist_path：快照路径注入 seam（#ARCH-097）。默认 None 走 data/budget/。
+        背景：Windows 下 os.path.join 即 ntpath.join，与 pathlib.WindowsPath._flavour.join
+        是同一函数对象——测试 patch("os.path.join") 会污染全进程 pathlib（惰性 Path
+        首次 str() 化即被篡改），故提供注入参数替代 mock 重定向。
+        """
         import json
         import os
 
@@ -259,7 +265,8 @@ class BudgetEngine:
             return {"persisted_to": None, "snapshot": self.get_snapshot(), "cleaned_up": True}
 
         snapshot = self.get_snapshot()
-        persist_path = os.path.join("data", "budget", "shutdown_snapshot.json")
+        if persist_path is None:
+            persist_path = os.path.join("data", "budget", "shutdown_snapshot.json")
         try:
             os.makedirs(os.path.dirname(persist_path), exist_ok=True)
             tmp_path = f"{persist_path}.{os.getpid()}.tmp"
