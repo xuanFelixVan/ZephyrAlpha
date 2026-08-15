@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：timeframe×2（实验周期由 data_period 表达）+ direction（实验记录无方向语义）。保留 regime×2（实验结论的适用/失效市场环境标注，有语义价值）+ entry_role=reference + 共有四维度（tags 为既有字段，保留原值不覆盖）；algorithm_status 固定 not_applicable（实验是验证记录，非算法条目）；evidence 空串占位（实验结果摘要在 result_summary，evidence 供跨库引用摘要后续回填）。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   信号、均值回归、执行、数据、组合、绩效、行业、规则、质量、震荡、风控
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
@@ -33,7 +35,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: draft
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -182,7 +184,7 @@ experiments:
     version: 1.0.0
     owner: MOD-BT-001
     parent_experiment_id: null
-    tags: [regime, c1-shrinkage, phase1, walk-forward, hmm]
+    tags: ["风控", "行业", "规则", "绩效"]
     backtest_bias_checks:
       survivorship: unknown          # 10 大盘股选定篮子未做 PIT 成分构造/退市处理评估（未声明=未做偏差治理）
       lookahead: passed              # 依据：46 季度 WFA HMM refit 仅用当时数据 + B1 校准器 PIT 防泄漏 + 52 号 PIT 三件套 production
@@ -216,7 +218,7 @@ experiments:
     regime_valid: []
     regime_invalid: []
     entry_role: "reference"
-    applies_to: []
+    applies_to: ["sector"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -274,7 +276,7 @@ experiments:
     version: 1.0.0
     owner: MOD-REGIME_VAL-002
     parent_experiment_id: null       # 模型质量维度与 C1 迭代链并行，非父子关系
-    tags: [regime, phase2, hmm, calibration, model-quality]
+    tags: ["风控", "质量", "均值回归", "规则", "信号", "绩效"]
     backtest_bias_checks:
       survivorship: unknown
       lookahead: passed              # B1 校准器显式 PIT 防泄漏（11 号 §0.5.4）
@@ -366,7 +368,7 @@ experiments:
     version: 1.0.0
     owner: MOD-BT-001
     parent_experiment_id: EXP-REGIME-001  # 在 C1 简化版基线上的升级迭代
-    tags: [regime, phase3, risk-signal, overlay, d2, d4]
+    tags: ["风控", "组合", "规则", "信号", "绩效"]
     backtest_bias_checks:
       survivorship: unknown
       lookahead: passed              # 同 EXP-REGIME-001 框架（WFA+PIT）
@@ -460,7 +462,7 @@ experiments:
     version: 1.0.0
     owner: MOD-OBS-001
     parent_experiment_id: null
-    tags: [regime, c1-shrinkage, mock, fallback-backend, smoke]
+    tags: ["风控", "数据", "规则"]
     backtest_bias_checks:
       survivorship: unknown          # mock 合成数据无偏差评估意义
       lookahead: unknown
@@ -542,7 +544,7 @@ experiments:
     version: 1.0.0
     owner: MOD-BT-001
     parent_experiment_id: EXP-REGIME-001  # C1 验证的稳健性深化维度
-    tags: [regime, walk-forward, phase4, e1, partial]
+    tags: ["风控", "震荡", "执行", "规则"]
     backtest_bias_checks:
       survivorship: unknown
       lookahead: passed              # WFA 框架本身即前瞻偏差防御（每窗口仅用当时数据）
@@ -572,7 +574,7 @@ experiments:
     cpcv_oos_sharpe_mean: null
     cpcv_oos_sharpe_std: null
     cpcv_worst_max_dd: null
-    regime_valid: []
+    regime_valid: ["ranging"]
     regime_invalid: []
     entry_role: "reference"
     applies_to: []
