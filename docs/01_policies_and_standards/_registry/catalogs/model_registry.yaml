@@ -10,10 +10,11 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段（本库以版本/晋升/衰减字段为主，v2 维度为增量标注）。entry_role 默认 state（模型=预测状态量生产者）；primary_timeframe 默认 null 占位；algorithm_status 固定 quantized（模型产物本身是已量化 artifact）。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、信号、出货、分时、因子、多因子、形态、情绪、打板、数据、机器学习、波动、盘口、组合、绩效、规则、订单、资金、量化、震荡、龙虎榜
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-ML-001
 name: Model Registry
 name_zh: ML 模型登记表
@@ -29,7 +30,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.1
+version: 1.1.2
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -72,6 +73,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 models:
   # ============================================================
@@ -111,6 +114,8 @@ models:
     tags: ["机器学习", "量化", "绩效", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - model_id: "ML-DENSITY-002"
     name: "Kronos-mini"
@@ -146,6 +151,8 @@ models:
     tags: ["出货", "机器学习", "k线", "绩效", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # LLM SFT（大模型微调——舆情/情感）
@@ -184,6 +191,8 @@ models:
     tags: ["情绪", "机器学习"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # SIGNAL CLASSIFIER（信号分类——打板/连板 ML 候选）
@@ -222,6 +231,8 @@ models:
     tags: ["打板", "机器学习", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - model_id: "ML-CLS-002"
     name: "Seat Pattern Classifier"
@@ -257,6 +268,8 @@ models:
     tags: ["龙虎榜", "机器学习", "数据", "形态", "组合", "规则", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # REGIME / RANKER / ANOMALY（regime 识别/排序/异常检测候选）
@@ -295,6 +308,8 @@ models:
     tags: ["波动", "震荡", "机器学习"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - model_id: "ML-RANK-001"
     name: "Cross-Section Ranker"
@@ -330,6 +345,8 @@ models:
     tags: ["多因子", "机器学习", "因子"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - model_id: "ML-ANOM-001"
     name: "Order Flow Anomaly Detector"
@@ -365,6 +382,8 @@ models:
     tags: ["出货", "资金", "盘口", "分时", "规则", "订单", "机器学习"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
 # ============================================================
 # 治理规则
