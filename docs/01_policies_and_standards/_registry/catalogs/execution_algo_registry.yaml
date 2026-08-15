@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：direction（执行算法买卖方向无关，TWAP/VWAP 等双向通用）。保留 timeframe×2（执行算法有主周期语义，占位 null/[]）+ regime×2（高波动环境影响算法选择）+ entry_role=rule + 共有四维度；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   信号、分时、可转债、均线、尾盘、成交、成本、打板、执行、指数、早盘、流动性、盘口、组合、规则、订单、资金、量价、量化、风控
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -30,7 +32,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -127,12 +129,12 @@ execution_algos:
     t_plus_1: true
     limit_up_down_untradable: true
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["均线", "流动性", "盘口", "分时", "可转债", "执行"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -176,12 +178,12 @@ execution_algos:
     t_plus_1: true
     limit_up_down_untradable: true
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock", "etf"]
+    tags: ["量价", "均线", "流动性", "分时", "尾盘", "早盘", "可转债", "执行", "成交"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -229,7 +231,7 @@ execution_algos:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["资金", "盘口", "执行", "信号", "订单", "成交"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -277,8 +279,8 @@ execution_algos:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["index"]
+    tags: ["资金", "风控", "指数", "成本", "组合", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -325,7 +327,7 @@ execution_algos:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["量价", "执行", "成交"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -371,7 +373,7 @@ execution_algos:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["均线", "资金", "打板", "流动性", "执行", "成本", "量化", "规则", "成交"]
     algorithm_status: "quantized"
     evidence: ""
