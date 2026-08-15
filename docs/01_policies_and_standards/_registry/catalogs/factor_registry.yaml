@@ -10,12 +10,13 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 ranking（因子主消费方式=截面排序打分）；direction 默认 neutral 为占位，条目内容填入时逐条校正；algorithm_status 推导规则：status∈{deprecated,retired}→not_applicable，code_path 非空→quantized，否则 pending_backtest。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、仓位、信号、出货、分时、利率、动量、压力、反转、吸筹、周期、回撤、因子、均值回归、均线、基准、威科夫、宏观、尾盘、形态、情绪、成交、成本、打板、执行、持续、指数、指标、支撑、放量、散户、数据、斐波那契、早盘、期货、杠杆、止损、波动、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、行业、规则、订单、财报、质量、资金、超买、超跌、趋势、量价、量化、隔夜、集中度、震荡、风控、高频、龙头、龙虎榜
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # applies_to 推导补充（2026-08-15）：全库 universe=UNI-RULE-001（全A可交易池），二跳推导 applies_to=[stock]。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-FCT-001
 name: 因子登记表
 name_zh: 因子登记表
@@ -27,7 +28,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.2
+version: 1.2.3
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -140,6 +141,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 factors:
 # ============================================================
@@ -217,6 +220,8 @@ factors:
   tags: ["量价", "均线", "分时", "早盘", "执行", "组合", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-002"
   name: "Sharp Decline Inevitable Rebound"
@@ -289,6 +294,8 @@ factors:
   tags: ["反转", "均线", "分时", "均值回归"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-003"
   name: "Selling Pressure Exhaustion"
@@ -361,6 +368,8 @@ factors:
   tags: ["突破", "放量", "情绪", "分时", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-004"
   name: "Dragonfly False Breakdown"
@@ -433,6 +442,8 @@ factors:
   tags: ["突破", "分时", "量化", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-005"
   name: "Anchoring Point First New High"
@@ -505,6 +516,8 @@ factors:
   tags: ["反转", "突破", "缩量", "放量", "分时", "早盘", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-006"
   name: "Intraday Price-Volume Divergence"
@@ -577,6 +590,8 @@ factors:
   tags: ["背离", "缩量", "放量", "量价", "分时", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-007"
   name: "MA Suppression Three Strikes"
@@ -649,6 +664,8 @@ factors:
   tags: ["反转", "缩量", "放量", "均线", "分时", "早盘", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-008"
   name: "Yellow-White Line Deviation >5pts"
@@ -721,6 +738,8 @@ factors:
   tags: ["风控", "质量", "仓位", "分时", "量化", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-009"
   name: "Intraday Top Divergence"
@@ -793,6 +812,8 @@ factors:
   tags: ["背离", "量价", "分时", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-010"
   name: "Bullish Engulfing Two Bears"
@@ -865,6 +886,8 @@ factors:
   tags: ["反转", "放量", "趋势", "分时", "k线", "形态", "量化", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-011"
   name: "Multi-Timeframe Coverage"
@@ -937,6 +960,8 @@ factors:
   tags: ["趋势", "周期", "分时", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-012"
   name: "First 30-Min Volume Share"
@@ -1009,6 +1034,8 @@ factors:
   tags: ["量价", "震荡", "分时", "早盘", "量化", "集中度", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-013"
   name: "Auction Validation 9:25-9:30"
@@ -1081,6 +1108,8 @@ factors:
   tags: ["资金", "龙头", "分时", "早盘", "行业", "数据", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-INTRADAY-014"
   name: "VWAP Position"
@@ -1153,6 +1182,8 @@ factors:
   tags: ["量价", "均线", "资金", "仓位", "分时", "执行", "成本", "缠论", "指标", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F2 K线/均线技术因子 (technical) — 23 candidates
@@ -1229,6 +1260,8 @@ factors:
   tags: ["突破", "趋势", "均线", "资金", "震荡", "成本", "量化", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-002"
   name: "Volume Breakout MA20 +30%"
@@ -1301,6 +1334,8 @@ factors:
   tags: ["突破", "放量", "量价", "均线", "资金", "量化", "规则", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-003"
   name: "Red More Green Less Accumulation"
@@ -1373,6 +1408,8 @@ factors:
   tags: ["缩量", "吸筹", "资金", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-004"
   name: "Bald Bearish Candle Must Sell"
@@ -1445,6 +1482,8 @@ factors:
   tags: ["突破", "止损", "k线", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-005"
   name: "Single Day -7% Break MA20"
@@ -1517,6 +1556,8 @@ factors:
   tags: ["突破", "均线", "止损", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-006"
   name: "Bad Limit-Up No Chase"
@@ -1589,6 +1630,8 @@ factors:
   tags: ["突破", "打板", "质量", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-007"
   name: "Monthly MACD Death Cross Suspense"
@@ -1661,6 +1704,8 @@ factors:
   tags: ["趋势", "周期", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-008"
   name: "Consecutive Doji Bottoming"
@@ -1733,6 +1778,8 @@ factors:
   tags: ["资金", "k线", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-009"
   name: "Historical Extreme Volume Panic"
@@ -1805,6 +1852,8 @@ factors:
   tags: ["反转", "放量", "情绪", "资金", "指数", "行业", "量化", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-010"
   name: "Five Consecutive Green +30% Take Profit"
@@ -1877,6 +1926,8 @@ factors:
   tags: ["量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-011"
   name: "W Bottom / Double Bottom"
@@ -1949,6 +2000,8 @@ factors:
   tags: ["量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-012"
   name: "Island Reversal"
@@ -2021,6 +2074,8 @@ factors:
   tags: ["反转", "缺口", "形态", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-013"
   name: "Declining Slope Slowdown"
@@ -2093,6 +2148,8 @@ factors:
   tags: ["突破", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-014"
   name: "MA Arrangement Full Classification"
@@ -2165,6 +2222,8 @@ factors:
   tags: ["趋势", "均线", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-015"
   name: "Daily Deviation ±15% Extreme"
@@ -2237,6 +2296,8 @@ factors:
   tags: ["反转", "风控", "超跌", "超买", "量化", "规则", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-016"
   name: "KDJ Stalling"
@@ -2309,6 +2370,8 @@ factors:
   tags: ["持续", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-017"
   name: "Bollinger Band Squeeze/Expansion"
@@ -2381,6 +2444,8 @@ factors:
   tags: ["趋势", "波动", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-018"
   name: "ATR14 Daily True Range"
@@ -2453,6 +2518,8 @@ factors:
   tags: ["波动", "均线", "止损", "震荡", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-019"
   name: "Fibonacci Retracement Levels"
@@ -2525,6 +2592,8 @@ factors:
   tags: ["支撑", "压力", "趋势", "均线", "缺口", "回撤", "斐波那契", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-020"
   name: "RSI Extreme Oversold"
@@ -2597,6 +2666,8 @@ factors:
   tags: ["反转", "趋势", "超跌", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-021"
   name: "Double Bottom Right-Side Four Conditions"
@@ -2669,6 +2740,8 @@ factors:
   tags: ["持续", "放量", "资金", "数据", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-022"
   name: "MACD Zero Axis Position"
@@ -2741,6 +2814,8 @@ factors:
   tags: ["动量", "均线", "仓位", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-023"
   name: "Range Position Percentile"
@@ -2813,6 +2888,8 @@ factors:
   tags: ["风控", "震荡", "仓位", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F3 量能因子 (liquidity) — 8 candidates
@@ -2889,6 +2966,8 @@ factors:
   tags: ["资金", "流动性", "量化", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-002"
   name: "Extreme Low Volume"
@@ -2961,6 +3040,8 @@ factors:
   tags: ["反转", "缩量", "量价", "流动性", "量化", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-003"
   name: "Panic Two-Wave Escape"
@@ -3033,6 +3114,8 @@ factors:
   tags: ["反转", "放量", "情绪", "资金", "流动性", "形态", "量化", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-004"
   name: "Half-Day Volume vs 5-Day Average"
@@ -3105,6 +3188,8 @@ factors:
   tags: ["放量", "量价", "流动性", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-005"
   name: "ETF Premium/Discount"
@@ -3177,6 +3262,8 @@ factors:
   tags: ["情绪", "流动性", "数据", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-006"
   name: "ETF Subscription/Redemption Flow"
@@ -3249,6 +3336,8 @@ factors:
   tags: ["资金", "流动性", "数据", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-007"
   name: "Sky-High Turnover Chip Exhaustion"
@@ -3321,6 +3410,8 @@ factors:
   tags: ["出货", "资金", "龙头", "打板", "流动性", "量化", "规则", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-008"
   name: "Turnover Rate Percentile"
@@ -3393,6 +3484,8 @@ factors:
   tags: ["持续", "量价", "流动性", "量化", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F4 形态/结构因子 (technical) — 19 candidates
@@ -3469,6 +3562,8 @@ factors:
   tags: ["突破", "支撑", "压力", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-025"
   name: "15min Bottom Divergence"
@@ -3541,6 +3636,8 @@ factors:
   tags: ["反转", "背离", "周期", "分时", "量化", "指标", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-026"
   name: "Large-Level Base Breakout"
@@ -3613,6 +3710,8 @@ factors:
   tags: ["突破", "资金", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-027"
   name: "Overhead Trapped Chips Resistance"
@@ -3685,6 +3784,8 @@ factors:
   tags: ["突破", "压力", "量化", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-028"
   name: "Shrink Volume Pullback Washout"
@@ -3757,6 +3858,8 @@ factors:
   tags: ["持续", "突破", "缩量", "出货", "资金", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-029"
   name: "False Breakout (Downtrend)"
@@ -3829,6 +3932,8 @@ factors:
   tags: ["突破", "放量", "趋势", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-030"
   name: "Insufficient Adjustment Breakout Failure"
@@ -3901,6 +4006,8 @@ factors:
   tags: ["突破", "放量", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-031"
   name: "High-Position Amplitude Expansion"
@@ -3973,6 +4080,8 @@ factors:
   tags: ["反转", "出货", "波动", "资金", "仓位", "行业", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-032"
   name: "Accelerated Top"
@@ -4045,6 +4154,8 @@ factors:
   tags: ["反转", "缩量", "回撤", "行业", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-033"
   name: "High-Position Volume Drop Dark Cloud"
@@ -4117,6 +4228,8 @@ factors:
   tags: ["反转", "放量", "出货", "资金", "仓位", "行业", "形态", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-034"
   name: "Triple Failure at Resistance Double Top"
@@ -4189,6 +4302,8 @@ factors:
   tags: ["反转", "突破", "压力", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-035"
   name: "Top Pattern Full Classification"
@@ -4261,6 +4376,8 @@ factors:
   tags: ["背离", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-036"
   name: "Continuation Pattern"
@@ -4333,6 +4450,8 @@ factors:
   tags: ["持续", "趋势", "波动", "震荡", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-037"
   name: "Candlestick Language Full Classification"
@@ -4405,6 +4524,8 @@ factors:
   tags: ["缺口", "打板", "k线", "形态", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-038"
   name: "Trendline Support/Resistance"
@@ -4477,6 +4598,8 @@ factors:
   tags: ["反转", "突破", "支撑", "压力", "趋势", "均线", "斐波那契", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-039"
   name: "Channel System Triple Classification"
@@ -4549,6 +4672,8 @@ factors:
   tags: ["突破", "趋势", "震荡", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-040"
   name: "Spring / False Breakdown Recovery"
@@ -4621,6 +4746,8 @@ factors:
   tags: ["突破", "支撑", "震荡", "形态", "威科夫", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-041"
   name: "V-Shaped Reversal Bottom"
@@ -4693,6 +4820,8 @@ factors:
   tags: ["反转", "持续", "放量", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-042"
   name: "Unfilled Downside Gap Signal"
@@ -4765,6 +4894,8 @@ factors:
   tags: ["缺口", "情绪", "资金", "形态", "量化", "信号", "成交", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F5 板块/市场结构因子 (technical) — 12 candidates
@@ -4841,6 +4972,8 @@ factors:
   tags: ["资金", "行业", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-044"
   name: "Tech-Traditional Separation Signal"
@@ -4913,6 +5046,8 @@ factors:
   tags: ["反转", "资金", "震荡", "量化", "信号", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-045"
   name: "Semiconductor Leads Index"
@@ -4985,6 +5120,8 @@ factors:
   tags: ["反转", "放量", "尾盘", "指数", "行业", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-046"
   name: "Sector Linkage Effect"
@@ -5057,6 +5194,8 @@ factors:
   tags: ["行业", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-047"
   name: "Institutional Market Cap vs Retail Limit-Up"
@@ -5129,6 +5268,8 @@ factors:
   tags: ["资金", "龙头", "打板", "行业", "散户", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-048"
   name: "All-A Equal-Weight vs Cap-Weight"
@@ -5201,6 +5342,8 @@ factors:
   tags: ["指数", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-049"
   name: "Sector Advance-Decline Coverage"
@@ -5273,6 +5416,8 @@ factors:
   tags: ["指数", "行业", "组合", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-050"
   name: "New High Factor (No Overhead Resistance)"
@@ -5345,6 +5490,8 @@ factors:
   tags: ["压力", "资金", "行业", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-051"
   name: "Relative Strength RS"
@@ -5417,6 +5564,8 @@ factors:
   tags: ["动量", "资金", "震荡", "行业", "量化", "因子", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-052"
   name: "Single-Day Relative Strength Alpha"
@@ -5489,6 +5638,8 @@ factors:
   tags: ["震荡", "行业", "因子", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-053"
   name: "Composite RS Score (IC-Weighted)"
@@ -5561,6 +5712,8 @@ factors:
   tags: ["行业", "形态", "量化", "组合", "因子", "绩效", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-TECH-054"
   name: "Sub-Sector Equal-Weight Index"
@@ -5633,6 +5786,8 @@ factors:
   tags: ["指数", "行业", "股票池", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F6 事件驱动/择时因子 (event) — 15 candidates
@@ -5709,6 +5864,8 @@ factors:
   tags: ["反转", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-002"
   name: "Tech Giant Earnings (Microsoft/Meta)"
@@ -5781,6 +5938,8 @@ factors:
   tags: ["情绪", "事件", "行业", "财报"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-003"
   name: "US Stock Overnight Spillover"
@@ -5853,6 +6012,8 @@ factors:
   tags: ["事件", "隔夜", "早盘"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-004"
   name: "Korea Tech Linkage"
@@ -5925,6 +6086,8 @@ factors:
   tags: ["事件", "尾盘", "指数", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-005"
   name: "Spot Price Transmission"
@@ -5997,6 +6160,8 @@ factors:
   tags: ["事件", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-006"
   name: "Month-End Last Two Trading Days"
@@ -6069,6 +6234,8 @@ factors:
   tags: ["资金", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-007"
   name: "Central Bank Reverse Repo / Net Injection"
@@ -6141,6 +6308,8 @@ factors:
   tags: ["事件", "宏观"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-008"
   name: "Crude Oil Dark Market"
@@ -6213,6 +6382,8 @@ factors:
   tags: ["事件", "期货", "行业", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-009"
   name: "A50 Futures Overnight Performance"
@@ -6285,6 +6456,8 @@ factors:
   tags: ["事件", "隔夜", "早盘", "期货", "数据", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-010"
   name: "July Seasonal Effect (Decade Worst Month)"
@@ -6357,6 +6530,8 @@ factors:
   tags: ["事件"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-011"
   name: "International Linkage Indicators"
@@ -6429,6 +6604,8 @@ factors:
   tags: ["事件", "隔夜", "早盘", "指数", "数据", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-012"
   name: "Interest Rate and FX Triple Indicators"
@@ -6501,6 +6678,8 @@ factors:
   tags: ["风控", "事件", "宏观", "指数", "利率", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-013"
   name: "Fed Path Expectation"
@@ -6573,6 +6752,8 @@ factors:
   tags: ["风控", "事件"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-014"
   name: "IPO Drain Effect"
@@ -6645,6 +6826,8 @@ factors:
   tags: ["事件", "流动性"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-EVT-015"
   name: "Gold Safe Haven Factor"
@@ -6717,6 +6900,8 @@ factors:
   tags: ["风控", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F7 情绪面因子 (sentiment) — 5 candidates
@@ -6793,6 +6978,8 @@ factors:
   tags: ["反转", "情绪", "资金", "超跌"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-SENT-002"
   name: "Limit-Up Break Rate + Consecutive Height + Re-Seal Time"
@@ -6865,6 +7052,8 @@ factors:
   tags: ["情绪", "打板", "量化", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-SENT-003"
   name: "Market Breadth (Advance/Decline Ratio)"
@@ -6937,6 +7126,8 @@ factors:
   tags: ["情绪", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-SENT-004"
   name: "Limit-Up/Down Panic Clearing Sequence"
@@ -7009,6 +7200,8 @@ factors:
   tags: ["情绪", "打板", "量化", "信号", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-SENT-005"
   name: "Panic Index Proxy"
@@ -7081,6 +7274,8 @@ factors:
   tags: ["情绪", "打板", "指数", "量化", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 # ============================================================
 # F8 资金面因子 (liquidity) — 15 candidates
@@ -7157,6 +7352,8 @@ factors:
   tags: ["资金", "流动性", "震荡", "数据", "杠杆", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-010"
   name: "ETF Share Surge (Passive Build)"
@@ -7229,6 +7426,8 @@ factors:
   tags: ["吸筹", "资金", "流动性", "数据", "杠杆"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-011"
   name: "ETF Bottom Volume (Blood Chips)"
@@ -7301,6 +7500,8 @@ factors:
   tags: ["放量", "资金", "流动性", "震荡", "指数", "散户", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-012"
   name: "Insider Buying Signal"
@@ -7373,6 +7574,8 @@ factors:
   tags: ["流动性", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-013"
   name: "Money Flow 5-Tier Decomposition"
@@ -7445,6 +7648,8 @@ factors:
   tags: ["资金", "流动性", "仓位", "盘口", "数据", "形态", "散户"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-014"
   name: "Tick-Level Large Order Decomposition"
@@ -7517,6 +7722,8 @@ factors:
   tags: ["资金", "流动性", "仓位", "高频", "数据", "缠论", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-015"
   name: "5-Day/10-Day Cumulative Net Inflow"
@@ -7589,6 +7796,8 @@ factors:
   tags: ["持续", "资金", "流动性"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-016"
   name: "Dragon Tiger List Seats"
@@ -7661,6 +7870,8 @@ factors:
   tags: ["资金", "流动性", "龙虎榜", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-017"
   name: "Large-Cap Large-Order 50% Discount"
@@ -7733,6 +7944,8 @@ factors:
   tags: ["资金", "流动性", "指数", "执行", "股票池", "因子", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-018"
   name: "Up-Market Small-Order Contrarian Discount"
@@ -7805,6 +8018,8 @@ factors:
   tags: ["流动性", "震荡", "散户", "因子", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-019"
   name: "IRCF Factor (Institutional Retail Contrarian Flow)"
@@ -7877,6 +8092,8 @@ factors:
   tags: ["资金", "流动性", "震荡", "数据", "散户", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-020"
   name: "Order Count Over Amount Principle"
@@ -7949,6 +8166,8 @@ factors:
   tags: ["资金", "流动性", "因子", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-021"
   name: "Small-Order Sell Over Buy Principle"
@@ -8021,6 +8240,8 @@ factors:
   tags: ["情绪", "流动性", "震荡", "散户", "信号", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-022"
   name: "Margin Trading Balance Change"
@@ -8093,6 +8314,8 @@ factors:
   tags: ["反转", "资金", "流动性", "杠杆", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 
 - factor_id: "FCT-LIQ-023"
   name: "Big Money Chases Big Caps"
@@ -8165,3 +8388,5 @@ factors:
   tags: ["资金", "打板", "流动性", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
