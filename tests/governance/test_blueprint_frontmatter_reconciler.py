@@ -709,3 +709,50 @@ class TestWeightedVoting:
         content = bp.read_text(encoding="utf-8")
         assert "D_GOV_SCRIPTS" in content
         assert "D_AUDITTEST" not in content
+
+
+class TestQuietMissingAggregation:
+    """批量模式缺蓝图 WARN 聚合（2026-08-15 治本：827 行/rebuild 噪音）。"""
+
+    def _mk_missing_conn(self):
+        return _mock_depgraph_conn({
+            "blueprint_id": "MOD-NOBP", "domain_id": "D_TEST",
+            "design_maturity": "design", "build_status": "planned",
+            "blueprint_path": "",
+        })
+
+    def test_quiet_suppresses_warn_and_collects(self, bfr, tmp_path, monkeypatch, capsys):
+        """quiet 开启：逐条 WARN 静音，模块 id 入累积清单，返回码仍 0（契约不变）。"""
+        conn = self._mk_missing_conn()
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
+        bfr.set_quiet_missing(True)
+        try:
+            assert bfr.reconcile_blueprint_frontmatter("MOD-NOBP") == 0
+            err = capsys.readouterr().err
+            assert "blueprint not found" not in err
+            assert bfr.pop_missing_modules() == ["MOD-NOBP"]
+            # pop 后清单已清空
+            assert bfr.pop_missing_modules() == []
+        finally:
+            bfr.set_quiet_missing(False)
+
+    def test_default_warns_and_does_not_collect(self, bfr, tmp_path, monkeypatch, capsys):
+        """默认（单模块路径）：逐条 WARN 保留，不入累积清单。"""
+        conn = self._mk_missing_conn()
+        monkeypatch.setattr(bfr, "get_depgraph_pg_connection", lambda **kw: conn)
+        monkeypatch.setattr(bfr, "_REPO_ROOT", tmp_path)
+        bfr.set_quiet_missing(False)
+        assert bfr.reconcile_blueprint_frontmatter("MOD-NOBP") == 0
+        err = capsys.readouterr().err
+        assert "blueprint not found" in err
+        assert bfr.pop_missing_modules() == []
+
+    def test_set_quiet_true_resets_backlog(self, bfr):
+        """开启 quiet 时清空上期累积（防跨批量批次串扰）。"""
+        bfr._MISSING_MODULES.append("MOD-STALE")
+        bfr.set_quiet_missing(True)
+        try:
+            assert bfr.pop_missing_modules() == []
+        finally:
+            bfr.set_quiet_missing(False)
