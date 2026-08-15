@@ -5,7 +5,7 @@ title: 模拟与实盘验证路径
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.6"
+version: "1.7.7"
 date: 2026-08-15
 topic: simulation_live_path
 scope: 07_trading_decision_architecture
@@ -450,7 +450,7 @@ PARALLEL (0) → SHADOW (1) → GRAY_RAMP (2) → 全量上线(ramping_percentag
    ↑ fill_rate≥99%          ↑ latency<100ms      ↑ daily_loss<3%
 ```
 
-- **晋级条件**：当前阶段 `elapsed_days` 达机制下限 **且** key_gates 全通过 **且**（观察期层）累计达标——三者同时满足方可 `get_next_phase()` 晋级。
+- **晋级条件**：当前阶段 `elapsed_days` 达机制下限 **且** key_gates 全通过 **且**（观察期层）累计达标——三者同时满足方可 `get_next_phase()` 晋级。**且当前降级姿态须为 NORMAL**（§3.8 状态机；#ARCH-QUANT-003 裁定两机唯一耦合点，2026-08-15 Owner 裁定）——降级中（THROTTLED/SOFT_HALT/HARD_HALT/UNWINDING）禁止晋级。
 - **降级/回退**：任一 ramp 步触发 circuit_breaker / daily_loss 超限 → 停止放大，回退至上一级 ramp 或回退 SHADOW；持续异常 → 回退 G23 回测迭代（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)；[52_backtest_framework_docking](52_backtest_framework_docking.md) active v1.0.4）继续迭代（对齐 battle_map_03 BM-BT-08 试运行与验证：试运行失败→回退 BM-BT-07）。
 - **审计**：`TransitionState` 持久化 current_phase / started_at / ramping_percentage，留好审计凭证（对齐 BM-BT-07-C BacktestRunArtifact 持久化纪律）。
 
@@ -786,8 +786,8 @@ def _state_idx(s: RollbackState) -> int:
 | Bayesian changepoint 的先验分布选择（N-IG vs Student-t）+ dual-trigger 概率阈值 | 本备忘 §5.2/§6（v1.6.0 新增） | 待 ≥200 笔 PnL 序列累积后用历史数据回测校准 |
 | **52/55 号定型后的双向联动回填**（v1.7.6 更新） | 52 号已 active v1.0.4（其 §3.4 承载 G23 why 层并已反向引用本备忘 §3.1）；55 号已 active v1.0.2（其 §3.4-3.6 决策已定待施工）；本备忘全部引用已同步（本次 v1.7.6） | 52 号侧双向引用已闭环；55 号侧联动待其 §3.4 偏离度量施工后回填（55 号域归 AI-MON-001） |
 | **00_index 多处漂移需同步**（v1.7.0 新增，v1.7.6 复核；不越界改仅登记） | 已修复：52/55 号状态已标 active v1.0.0（2026-08-12 重建）；仍存：①§3 G24 行与 §0 目录标本备忘 v1.7.4/§7.3 快照标 v1.6.6（滞后于本版）；②§3 G24/G23 产出物名误为 `53_simulation_live_path_simulation_live_path.md` 等 topic 重复；③§0 目录 61 号版本滞后（实际 v2.13.3） | 待 00_index owner 会话同步（本备忘不越界改） |
-| **#ARCH-QUANT-002 Crash-only 设计 + 状态外部化**（status=proposed，2026-08-11 登记） | registry 裁定方向：关键状态（持仓/挂单/资金/策略状态机）外部化 Redis + 启动"恢复或新建"双路径 + 幂等操作 + 不可恢复错误 fail-fast；impact 含本备忘（§Crash-only 扩展） | 待用户确认裁定方向（铁律#9）；确认后本备忘 §3.8 补 Crash-only 设计原则 |
-| **#ARCH-QUANT-003 5 态 FSM 代码落地**（status=proposed，2026-08-11 登记） | ⚠️registry 登记的 5 态（INITIALIZING/PAPER_TRADING/HALF_SIZED/FULL_LIVE/HALTED，迁移阶段机，扩展 paper_live_transition 三阶段）与本备忘 §3.8 已定稿 5 态（NORMAL/THROTTLED/SOFT_HALT/HARD_HALT/UNWINDING，kill switch 降级回退机）语义不同——两者正交（阶段迁移 vs 阶段内降级），落地前需裁定两机并存还是统一建模 | 待用户裁定（铁律#9）；裁定后按 §3.8 伪代码或 registry 方案施工代码 |
+| **#ARCH-QUANT-002 Crash-only 设计 + 状态外部化**（✅ decided 2026-08-15 Owner 裁定） | 裁定方向：关键状态（持仓/挂单/资金/策略状态机）外部化 Redis + 启动"恢复或新建"双路径 + 幂等操作 + 不可恢复错误 fail-fast；impact 含本备忘（§Crash-only 扩展） | 已批准，先于 QUANT-003 施工（状态外部化是 §3.8 fail-closed `safe_read_state` 前置），时点卡首批策略进 SHADOW 前；确认后本备忘 §3.8 补 Crash-only 设计原则 |
+| **#ARCH-QUANT-003 降级/回退 5 态 FSM 代码落地**（✅ decided 2026-08-15 Owner 裁定，方案 C 按维度各一真源） | 阶段维度真源=`paper_live_transition.py` 三阶段（production 已建，不新建迁移 FSM）；registry 原登记迁移 5 态（INITIALIZING/PAPER_TRADING/HALF_SIZED/FULL_LIVE/HALTED）废弃——与三阶段重复建模，HALTED 归一 §3.8 HARD_HALT；降级维度真源=§3.8 五态，代码落地于 `governance/lifecycle_governance/rollback_state_machine.py`（与 paper_live_transition 同包） | 已批准；两机唯一耦合点=§3.6 晋级前置"降级姿态=NORMAL"；时点在 QUANT-002 完成后、首批策略进 SHADOW 前 |
 
 ## 8. 引用
 
@@ -891,3 +891,4 @@ def _state_idx(s: RollbackState) -> int:
 | 2026-08-12 | 1.7.4 | 作战地图环节映射补强②——补锚 BM-SIM-08 Paper Matching 涨跌停排队引擎：§3.2 撮合 5 步表后加"作战地图锚定"行（Step② + 公式② = BM-SIM-08）+ §3.5 映射块补登记行（design 态待施工，§2.4 盘点"涨跌停排队撮合 待新建"） | PG `battle_map_steps` 全量核对（340 环节/19 deprecated/321 活跃）发现 BM-SIM-08 为 2026-08-12 新入作战地图 04 的活跃环节（source_ref 直指本篇 §3.2 步骤②）但正文未显式编号；语义早已覆盖，仅补编号级锚定，不改既有正文 |
 | 2026-08-15 | 1.7.5 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-09）。§3.4 删 half-sized 晋级重复段；§3.2 square-root 理论背书/citrusquant/EvoMarket 三段长引文要点化；§3.5 REDUCING 态两段合并 + 监管依据/mx-risk-guard/Ghost Position 引文精简；§5.2 MPC/RMATS/概率型 kill switch 改指针（真源 §4.4/§4.5/§6）；§9 修订记录 1.1.0~1.7.0 各行过程性理由压缩为一行结论 | 第二轮循环压缩协议：标题/frontmatter/契约/公式/阈值/裁定/开放问题/BM-XXX/#ARCH-XXX/跨文档链接零丢失，过程性叙述与重复信息收敛 |
 | 2026-08-15 | 1.7.6 | 十五次复审（引用现状同步，AI-SIM-001）：①52 号全篇引用 draft v0.1.0 骨架→active v1.0.4（其 §3.4 已承载 G23 why 层并反向引用本备忘 §3.1）；②55 号 draft v0.1.0 骨架→active v1.0.2（§3.4 偏离度量决策已定待施工）；③20 号 v1.2.4→v1.3.2、35 号 v1.37.0→v1.39.2（detect_ghost_positions 已施工 v1.39.0）、50 号 draft v1.0.2→active v1.1.1；④`backtest/` 相对路径 9 处统一为 `src/zephyr/backtest/` 全路径（顶层无 backtest/ 目录，相对引用不可定位）；⑤§7 更新 52/55 联动项（重评条件已触发，52 侧闭环）+ 00_index 漂移项复核 + 新增 #ARCH-QUANT-002/003 proposed 议题登记（通用规则 #12；QUANT-003 registry 5 态与 §3.8 5 态语义冲突待用户裁定）；⑥Alpha Decay 表 v1.2.0 版本残留两行清理 | 施工会话 AI-SIM-001 第 1-2 轮盘点实证：52/55 号 2026-08-12 已重建 active（commit 6a4f539214+d448be21f3），本备忘"骨架待讨论"表述全过时；35 号 §6.11 detect_ghost_positions 已施工（commit 1d814359） |
+| 2026-08-15 | 1.7.7 | Owner 裁定落地（AI-SIM-001 会话三项批准）：①#ARCH-QUANT-003 按方案 C 修正——阶段维度真源=paper_live_transition 三阶段（不新建迁移 FSM），registry 原迁移 5 态废弃（重复建模），降级维度真源=§3.8 五态（落地 rollback_state_machine.py），HALTED 归一 HARD_HALT；②#ARCH-QUANT-002 Crash-only 批准，先于 QUANT-003 施工；③§3.6 晋级条件补两机唯一耦合点"降级姿态=NORMAL 方可晋级"；§7 两议题行同步 decided 状态；registry 双议题 proposed→decided + owner_approval 留痕 | 用户会话内明确批准三项裁定（方案 C 按维度各一真源消除双真源风险；QUANT-002 为 fail-closed 前置先行；00_index 漂移本会话顺手修） |

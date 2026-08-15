@@ -5,8 +5,8 @@ title: 交易决策架构主题全集（总索引）
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.11.0"
-date: 2026-08-12
+version: "2.11.1"
+date: 2026-08-15
 topic: trading_decision_index
 scope: 07_trading_decision_architecture
 ---
@@ -65,14 +65,14 @@ scope: 07_trading_decision_architecture
 | [41_buy_flow.md](41_buy_flow.md) | G19 买入流 spec（含明日预案双层架构+上游四轨裁定） | active v1.7.0 |
 | [42_sell_flow.md](42_sell_flow.md) | G20 卖出流 spec（MVP 已施工：Triage/止损/止盈/执行编排 4 模块） | active v1.7.1 |
 | [43_compliance_discipline.md](43_compliance_discipline.md) | G30 合规与交易纪律体系（四项必做/四项严禁/信息合规/硬边界裁定/交易合规检测，D_COMPLIANCE 域设计真源） | active v1.0.0（2026-08-15 施工落地，AI-COMP-001） |
-| [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | draft v1.0.2 |
+| [50_backtest_observability_workplan.md](50_backtest_observability_workplan.md) | 回测可观测性工作计划（六零件日志+MLflow方案调研） | active v1.1.1 |
 | [51_panel_experiment_history_mlflow_retirement.md](51_panel_experiment_history_mlflow_retirement.md) | Panel 实验历史 Tab + MLflow 退役施工计划 | active v1.2.6 |
-| [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.0（2026-08-12 重建） |
-| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（5 态 FSM 代码待落地 #ARCH-QUANT-003） | active v1.7.4 |
+| [52_backtest_framework_docking.md](52_backtest_framework_docking.md) | G23 回测框架对接 | active v1.0.4（2026-08-12 重建） |
+| [53_simulation_live_path.md](53_simulation_live_path.md) | G24 模拟与实盘验证路径（降级/回退 5 态 FSM 代码待落地 #ARCH-QUANT-003，已 decided） | active v1.7.7 |
 | [54_reconciliation_attribution.md](54_reconciliation_attribution.md) | G25 对账归因 | active v1.14.0 |
-| [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.0.0（2026-08-12 重建） |
+| [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.0.2（2026-08-12 重建） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
-| [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
+| [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.13.3 |
 | [62_business_registry_construction.md](62_business_registry_construction.md) | 18业务注册表施工（registry_of_registries） | active v1.32.0 |
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
 | [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | active v1.4.0 |
@@ -101,10 +101,10 @@ scope: 07_trading_decision_architecture
 
 | 作战地图 | 阶段 | why 层（备忘/讨论） | depgraph 模块 | 施工方 | 状态 |
 |---|---|---|---|---|---|
-| 01 | 研究孵化 | ✅ G28 策略生命周期（61号 active v2.13.1：知识流水线拍板+研究环境否定式裁定+远期候选登记）+ 51号实验体系 | — | — | **已覆盖**（2026-08-12 全覆盖补丁） |
-| 02 | 模型训练 | ✅ G28（61号 v2.13.1 含 MT-01-B/C 裁定） | — | — | **已覆盖**（2026-08-12 全覆盖补丁） |
-| 03 | 回测验证 | ✅ regime 验证（11号 active v1.5.2，C1 四项全通过）+ G23（52号 active v1.0.3 含辅助组件契约与映射锚定）+ 15/23/51/53 映射补强 | 🟧 shrinkage/c1_comparator | 另一AI | **已覆盖**（2026-08-12 全覆盖补丁） |
-| 04 | 模拟验证 | ✅ G24（53号 active v1.7.4，含 §3.9 仿真域 why 层回填 + BM-SIM-08 锚定） | 🟧 5 态 FSM 代码待落地（#ARCH-QUANT-003） | — | **已覆盖**（why 层已补齐，代码待落） |
+| 01 | 研究孵化 | ✅ G28 策略生命周期（61号 active v2.13.3：知识流水线拍板+研究环境否定式裁定+远期候选登记）+ 51号实验体系 | — | — | **已覆盖**（2026-08-12 全覆盖补丁） |
+| 02 | 模型训练 | ✅ G28（61号 v2.13.3 含 MT-01-B/C 裁定） | — | — | **已覆盖**（2026-08-12 全覆盖补丁） |
+| 03 | 回测验证 | ✅ regime 验证（11号 active v1.5.2，C1 四项全通过）+ G23（52号 active v1.0.4 含辅助组件契约与映射锚定）+ 15/23/51/53 映射补强 | 🟧 shrinkage/c1_comparator | 另一AI | **已覆盖**（2026-08-12 全覆盖补丁） |
+| 04 | 模拟验证 | ✅ G24（53号 active v1.7.7，含 §3.9 仿真域 why 层回填 + BM-SIM-08 锚定） | 🟧 降级/回退 5 态 FSM 代码待落地（#ARCH-QUANT-003，已 decided） | — | **已覆盖**（why 层已补齐，代码待落） |
 | 05 | 选股 | ✅ G04-G10 全部定稿（20-26号 active）；G11 暂缓骨架；21/24/25/22/15 环节映射已锚定 | 🟧 BM-SEL-02/22-25 | — | **已覆盖**（7 主题组定稿+环节级锚定） |
 | 06 | 买入流 | ✅ G19（41号 active v1.6.0，含明日预案双层架构+上游四轨裁定）+ G30（43号 active v1.0.0 合规纪律） | ✅ 43 号 7 模块已施工（AI-COMP-001：必做清单/四项严禁+熔断/授权审计/功能门禁/合规检测+报告门禁，78 测试全绿） | — | **已覆盖** |
 | 07 | 卖出流 | ✅ G20（42号 active v1.7.0，含 §3.11 卖出闭环优化+双向反馈契约） | ✅ MVP 4 模块已施工（AI-SELL-001：Triage/止损/止盈/执行编排，65 测试全绿） | — | **已覆盖** |
@@ -422,10 +422,10 @@ scope: 07_trading_decision_architecture
 | 所属 | 作战地图 03 |
 | 依赖 | G04（策略定义） |
 | 讨论要点 | ① BM-BT-01~07 环节在策略验证中的用法（regime 验证已映射，见 11_regime_backtest_validation_plan §2.1）② 策略回测 vs regime 回测的差异 ③ 策略上线门控 IS→WFA→OOS（BM-BT-07）④ 过拟合检测三维度（BM-BT-05）⑤ Deflated Sharpe（BM-BT-05-G） |
-| 产出物 | `52_backtest_framework_docking_backtest_framework_docking.md` |
+| 产出物 | `52_backtest_framework_docking.md` |
 | 对标 | 11_regime_backtest_validation_plan 已建立的对接范式 / Morwane walk-forward |
 | 正交性 | ✅ 与 regime 正交（复用同一回测框架） |
-| 状态 | ✅ active v1.0.0（2026-08-12 重建，6a4f5392；regime 侧对接已在 11号 落地，策略侧待补） |
+| 状态 | ✅ active v1.0.4（2026-08-12 重建，6a4f5392；regime 侧对接已在 11号 落地，策略侧待补） |
 | 优先级 | P2（G04 后） |
 
 #### G24 模拟与实盘验证路径
@@ -434,10 +434,10 @@ scope: 07_trading_decision_architecture
 | 所属 | 作战地图 04 |
 | 依赖 | G23（回测通过） |
 | 讨论要点 | ① 模拟验证（paper trading）环境 ② 模拟时长 ③ 实盘小资金验证路径 ④ 实盘→模拟差异监控 ⑤ 上线决策门控 ⑥ 灰度上线（单策略先上） |
-| 产出物 | `53_simulation_live_path_simulation_live_path.md` |
+| 产出物 | `53_simulation_live_path.md` |
 | 对标 | 机构 paper trading → 小资金 → 全量 |
 | 正交性 | ✅ 与 regime 正交 |
-| 状态 | ✅ 已定稿 v1.6.6（5 态 FSM 代码待落地 #ARCH-QUANT-003） |
+| 状态 | ✅ 已定稿 v1.7.7（降级/回退 5 态 FSM 代码待落地 #ARCH-QUANT-003，已 decided） |
 | 优先级 | P4 |
 
 ---
@@ -641,11 +641,11 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 37_liquidity_crisis_protocol | G18 流动性危机 | ✅ 已定稿 | active v1.1.0（2026-08-14 AI-LIQ-001 施工完毕，MOD-RK-21 production） |
 | 28_sentiment_cycle_trading | G21 情绪周期 | （待重建） | 骨架 v0.1.0 ⚠️内容丢失（v1.2.0 可从 a3750b90d1 恢复） |
 | 29_factor_strategy_extraction | 潘潘课程因子策略提炼知识库（工程文档，非G主题） | 已落盘 | active v1.0.0（2026-08-14 用户裁定从 _working 迁入，原名 因子与策略提炼.md） |
-| 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
-| 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.6.6 |
-| 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
+| 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.4（2026-08-12 重建） |
+| 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.7.7 |
+| 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.0.2（2026-08-12 重建） |
 | 12_regime_phase2_validation | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.2.2 |
-| 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | 已提议 | draft v1.0.2 |
+| 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | 已定稿 | active v1.1.1 |
 | 13_regime_phase3_engineering_plan | Phase 3 工程规划（工程文档，非G主题） | 已提议 | draft v0.3.2 |
 | 14_regime_s2_diagnosis | S2 算法错配诊断（工程文档，非G主题） | 已提议 | draft v0.4.5 |
 | 16_technical_indicator_build_plan | 技术指标施工计划（数据地基层子项） | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
@@ -670,7 +670,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 40_execution_broker | G22 下单对接 | G22-AI | ✅ v2.10.1 + 代码已施工 |
 | 54_reconciliation_attribution | G25 对账归因 | ✅ 已定稿 | active v1.14.0 |
 | 60_cross_cutting_cleanup | G27 冲突矩阵清理 | ✅ 已定稿 | active v1.1.0（2026-08-15 AI-XCUT-001 实证非骨架：v1.0.2 内容完整；施工=§7⑦ 闭环+CAND-PFALLOC-002 标 rejected+battle_map §16 真源收敛 31→3） |
-| 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.10.0 |
+| 61_lifecycle_multi_ai | G28 生命周期多AI | ✅ 已定稿 | active v2.13.3 |
 | 19_northbound_hold_snapshot | 北向季度快照 fetcher（数据地基层子项） | 待施工 | draft v0.1.0 |
 | 64_data_source_download_spec | G29 数据源与下载体系（跨切治理层·6x 段位） | ✅ 已定稿 | active v1.4.0 |
 
@@ -744,8 +744,8 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | # | 议题 | 优先级 | 决策状态 |
 |---|---|---|---|
 | #ARCH-QUANT-001 | 回测-模拟-实盘同一内核（NautilusKernel 式抽象） | P1 高 | proposed |
-| #ARCH-QUANT-002 | Crash-only 设计 + 状态外部化（Redis） | P1 高 | proposed |
-| #ARCH-QUANT-003 | 53_simulation_live_path 5 态 FSM 状态机代码落地 | P1 高 | proposed |
+| #ARCH-QUANT-002 | Crash-only 设计 + 状态外部化（Redis） | P1 高 | decided（2026-08-15 Owner 裁定，先于 QUANT-003 施工） |
+| #ARCH-QUANT-003 | 53_simulation_live_path 降级/回退 5 态 FSM 代码落地（按维度各一真源修正） | P1 高 | decided（2026-08-15 Owner 裁定方案 C） |
 | #ARCH-QUANT-004 | pf_core / pf_alloc / ex_sor 三个 stub 落地 | P1 高 | proposed |
 | #ARCH-QUANT-005 | VaR → ES 范式迁移（ES 进决策层） | P2 中 | proposed |
 
@@ -850,3 +850,4 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 2026-08-12 | 2.10.0 | **作战地图全覆盖工程（BM 339 环节逐环节核对闭合）**——以 PG `battle_map_steps` 为真源全量核对 design_memos 覆盖：① **新建 43号**（G30 合规与交易纪律体系，draft v0.1.0，承载 BM-BUY-08-A/08-B/09/12/15）；② **26 篇补环节设计/裁定**：41号 v1.6.0（明日预案双层架构 BM-PLAN-01/02/03 + 上游四轨裁定）、61号 v2.13.1（研究知识流水线拍板+研究环境否定式裁定+运行时风险治理 BM-RC-09/04-F）、40号 v2.10.1（§2.8 盘前检查链 BM-RC-02/02-C）、53号 v1.7.3（§3.9 仿真域 why 回填 BM-SIM-03/04/06/07）、52号 v1.0.3（辅助组件契约+暂缓裁定）、42号 v1.6.2（§3.11 卖出闭环优化）、31号 v1.24.2（§2.8 持仓漂移与再平衡）、32号 v1.0.22（组合优化口径裁定）、35号 v1.38.2（否决执行引擎 BM-RC-10/10-A）、36/37/54/55/62/15/51/17/64/90/91/21/24/25/20/34/23/10 号同步补丁；③ **环节级锚定**：全部活跃环节（320/339，19 弃用除外）正文显式标注 BM 编号至承载小节，可检索可追溯；④ §0 目录 47→48 篇 + G30 主题组登记 + §2 快照 12 阶段全部"已覆盖"（60号 骨架待重建除外）+ §7.3 补登 43号。否定式裁定（不建设/暂缓+重评条件）经用户 2026-08-12 裁定认可。遗留：battle_map 真源 3 处成熟度口径修正登记在 61 §7.5 / 52 §7 待治理流程回写 DB | 用户裁定驱动：design_memos 须包含作战全景图全部环节流程供后续完整开发；四路语义审计（221 环节）发现 GAP 32 项+PARTIAL 72 项，按"能合并不新建"偏好仅新建 43 号一篇，其余全部并入现有备忘 |
 | 2026-08-12 | 2.10.1 | **全覆盖复核补锚 3 活跃环节 + 28/60号状态回归修正**——① PG `battle_map_steps` 复核（340 环节/19 deprecated/321 活跃，BM-SIM-08 新入库 +1）：发现 3 个活跃环节未逐编号锚定，补锚 24号 v1.10.4（BM-SEL-23-C 情绪周期策略映射→§3.5 门控切换/§3.6 仓位上限 5 档、BM-SEL-25-B 情绪周期自适应权重→§3.5 `determine_adaptive_weights`）+ 53号 v1.7.4（BM-SIM-08 Paper Matching 涨跌停排队引擎→§3.2 Step②/公式②），321 活跃环节恢复 0 缺口；② §2 快照口径更新 339→340 环节、320→321 活跃；③ 修正 v2.10.0 合并回归——28号/60号 状态误回退为"骨架待重建"，实际 28号 v1.2.0 已恢复（16f119bd）、60号 active v1.0.0 已在 HEAD（8da7513309），重放 v2.9.2 更正至 §0 头部注记/§0 目录×2/§2 快照行 12+结论/§6 G21 行+结论/§9 定位器评估行/#D1 闭环共 8 处；④ §0 目录版本对齐 24号 v1.10.4 / 53号 v1.7.4 | 全覆盖工程收口复核：以 DB 当前真源（340 环节）重扫发现 BM-SIM-08 等 3 个活跃环节漏锚（语义早已覆盖、编号未显式）；同时发现 v2.10.0 合并时 28/60号状态文本覆盖了 v2.9.2 的已恢复标注，一并修正 |
 | 2026-08-14 | 2.11.0 | **29号补登（潘潘课程因子策略提炼知识库迁入）**——§0 目录 48→49 篇 + §7.3 占用表补登 29 号；29_factor_strategy_extraction.md（原 docs/_working/潘潘直播课程/因子与策略提炼.md，546 条 F1-F8 因子+S9-S16 策略，二十一轮审查收敛）经用户裁定迁入 design_memos 落位 2x Alpha 策略层，frontmatter 按 01 号规范 §4.2 规范化（ttl→permanent），factor/strategy/risk_limit 三注册表 doc_ref 同步更名；capability_canonical_file_registry token 沿用（auto-panpan-factor-extraction-20260810） | 用户裁定驱动：提炼知识库作为三注册表 doc_ref 真源应落位永久区而非 _working 临时区（task_bound 易被 TTL/wipe 类进程误删，已实证两次）；迁入后命名合规（段位号+snake_case） |
+| 2026-08-15 | 2.11.1 | **版本漂移修正 + QUANT-002/003 裁定同步（AI-SIM-001 会话，Owner 批准顺手修）**——①版本对齐各文档 frontmatter 实证：53号 v1.7.4/v1.6.6→v1.7.7（§0目录/§2快照04行/§3 G24 状态行/§7.3 共 4 处）、52号 v1.0.0/v1.0.3→v1.0.4（§0目录/§3 G23 行/§7.3 共 3 处）、55号 v1.0.0→v1.0.2（§0目录/§7.3 共 2 处）、61号 v2.10.0/v2.13.1→v2.13.3（§0目录/§2快照01/02行/§7.3 共 4 处）、50号 draft v1.0.2→active v1.1.1（§0目录/§7.3 共 2 处）；②产出物名 topic 重复修正：§3 G23 行 `52_backtest_framework_docking_backtest_framework_docking.md`→`52_backtest_framework_docking.md`、G24 行 `53_simulation_live_path_simulation_live_path.md`→`53_simulation_live_path.md`；③§9.1 QUANT-002/003 proposed→decided + QUANT-003 标题同步"降级/回退 5 态 FSM（按维度各一真源修正）" | 53 号 v1.7.6 审查登记的 00_index 漂移项（其 §7），Owner 2026-08-15 裁定由 AI-SIM-001 顺手修；QUANT-002/003 同日 Owner 裁定 decided（53 号 v1.7.7 修订记录留痕） |
