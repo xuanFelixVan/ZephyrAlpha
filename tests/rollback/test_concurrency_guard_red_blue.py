@@ -76,6 +76,15 @@ def _isolate_mv_strategy_env(monkeypatch):
     monkeypatch.delenv(MV_STRATEGY_ENV, raising=False)
 
 
+@pytest.fixture(autouse=True)
+def _isolate_l1_self_harm_layer(monkeypatch):
+    """隔离 L1 自伤层环境依赖：git_guard._get_dirty_tracked_files 裸 subprocess 不带 cwd，
+    会读 pytest 进程 cwd 的真仓状态（本 worktree 脏）致 fail-closed 误拦一切 reset --hard。
+    patch 为空集让用例走到锁冲突真路径；红队用例同受益（此前脏工作区下被 L1 错因拦截，
+    未真正验证锁冲突分支）。L1 层自身语义由其专项测试覆盖。"""
+    monkeypatch.setattr("scripts.git_guard._get_dirty_tracked_files", lambda: set())
+
+
 @pytest.fixture
 def temp_git_repo():
     """创建临时 git 仓库，用于隔离测试。"""
@@ -427,36 +436,35 @@ class TestConcurrentGuard:
 
         results = {"blocked": 0, "allowed": 0}
         lock = threading.Lock()
+        # 并发 patch 竞争治本：patch 全局只进出一回，run_git_silent 按 thread-local
+        # 分流目标文件（原实现每线程各自 with patch——模块属性全局共享，线程交错时
+        # locked 线程读到 free 线程的 mock 返回值 → 误透传，flaky）
+        _tlocal = threading.local()
 
-        def call_reset_locked():
-            with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
-                with patch("scripts.git_guard.get_session_id", return_value="session-me"):
-                    with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
-                        mock_git_silent.return_value = "src/locked.py"
-                        with patch("scripts.git_guard.passthrough", return_value=0):
-                            return check_and_execute(["reset", "--hard", "HEAD~1"])
+        def call_reset(target: str):
+            _tlocal.target = target
+            return check_and_execute(["reset", "--hard", "HEAD~1"])
 
-        def call_reset_free():
-            with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
-                with patch("scripts.git_guard.get_session_id", return_value="session-me"):
-                    with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
-                        mock_git_silent.return_value = "src/free.py"
-                        with patch("scripts.git_guard.passthrough", return_value=0):
-                            return check_and_execute(["reset", "--hard", "HEAD~1"])
-
-        with ThreadPoolExecutor(max_workers=4) as pool:
-            futures = []
-            for _ in range(5):
-                futures.append(pool.submit(call_reset_locked))
-            for _ in range(5):
-                futures.append(pool.submit(call_reset_free))
-            for future in as_completed(futures, timeout=30):
-                result = future.result()
-                with lock:
-                    if result == 1:
-                        results["blocked"] += 1
-                    else:
-                        results["allowed"] += 1
+        with (
+            patch("scripts.git_guard.get_project_root", return_value=temp_git_repo),
+            patch("scripts.git_guard.get_session_id", return_value="session-me"),
+            patch("scripts.git_guard.run_git_silent") as mock_git_silent,
+            patch("scripts.git_guard.passthrough", return_value=0),
+        ):
+            mock_git_silent.side_effect = lambda *a, **k: _tlocal.target
+            with ThreadPoolExecutor(max_workers=4) as pool:
+                futures = []
+                for _ in range(5):
+                    futures.append(pool.submit(call_reset, "src/locked.py"))
+                for _ in range(5):
+                    futures.append(pool.submit(call_reset, "src/free.py"))
+                for future in as_completed(futures, timeout=30):
+                    result = future.result()
+                    with lock:
+                        if result == 1:
+                            results["blocked"] += 1
+                        else:
+                            results["allowed"] += 1
 
         assert results["blocked"] == 5, f"应阻断5个，实际{results['blocked']}"
         assert results["allowed"] == 5, f"应允许5个，实际{results['allowed']}"
@@ -550,11 +558,13 @@ class TestDefenseSummary:
     """防御能力总结：验证所有防护层协同工作。"""
 
     def test_all_dangerous_commands_covered(self):
-        """验证所有危险子命令都有对应的文件提取器"""
-        # DANGEROUS_SUBCOMMANDS 和 _EXTRACTORS 已在顶部导入
-
+        """验证所有危险子命令都有防护路径（extractor 锁冲突 或 专用前置自伤分支）"""
+        # DANGEROUS_SUBCOMMANDS 和 _EXTRACTORS 已在顶部导入。
+        # clean 由专用前置分支 _check_self_harm_clean 防护（#ARCH-GIT-CLEAN-GUARD-FIX：
+        # untracked 不在锁管辖，无 extractor 是刻意设计，与 mv stub 模式同类）
+        _DEDICATED_PRECHECK = {"clean"}
         for cmd in DANGEROUS_SUBCOMMANDS:
-            assert cmd in _EXTRACTORS, f"危险命令 {cmd} 缺少文件提取器"
+            assert cmd in _EXTRACTORS or cmd in _DEDICATED_PRECHECK, f"危险命令 {cmd} 缺少防护路径"
 
     def test_concurrency_guard_scan_correctness(self, temp_git_repo, other_session_lock):
         """验证 concurrency_guard 扫描结果正确"""
