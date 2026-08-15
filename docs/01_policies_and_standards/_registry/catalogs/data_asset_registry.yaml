@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：timeframe×2/regime×2/direction——数据资产（sources/datasets/jobs 三实体）是原料登记，无周期/环境/方向语义。保留 entry_role=reference + 共有四维度；algorithm_status 固定 not_applicable。三段 schema（source_schema/dataset_schema/job_schema）同步增量。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   k线、事件、仓位、估值、信号、分时、分红、利率、动量、回撤、因子、多因子、宏观、市场结构、形态、成交、成本、执行、指数、指标、数据、机器学习、流动性、组合、绩效、股票池、行业、行情、订单、财报、质量、资金、通胀、风控、高频、龙虎榜
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -35,7 +37,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.0
+version: 1.2.1
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -162,7 +164,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["资金", "行情", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-AKSHARE-001
@@ -189,7 +191,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["行情", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-IFIND-001
@@ -216,7 +218,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-BAOSTOCK-001
@@ -242,8 +244,8 @@ sources:
     updated_at: '2026-08-13'
     owner: MOD-L00-004
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["数据", "k线"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-TUSHARE-001
@@ -269,8 +271,8 @@ sources:
     updated_at: '2026-08-13'
     owner: MOD-L00-004
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["行业", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-TQCENTER-001
@@ -296,8 +298,8 @@ sources:
     updated_at: '2026-08-13'
     owner: MOD-L00-004
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["行业", "股票池", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-TDX-001
@@ -323,8 +325,8 @@ sources:
     updated_at: '2026-08-13'
     owner: MOD-L00-004
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["分时", "行业", "k线", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-CLS-001
@@ -351,7 +353,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["资金", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-EASTMONEY-001
@@ -378,7 +380,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-RSS-001
@@ -405,7 +407,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-TICKFLOW-001
@@ -431,8 +433,8 @@ sources:
     updated_at: '2026-08-13'
     owner: MOD-L00-004
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["index"]
+    tags: ["资金", "指数", "k线", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-FRED-001
@@ -459,7 +461,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["宏观", "通胀", "利率", "数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-EIA-001
@@ -486,7 +488,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-QWEATHER-001
@@ -513,7 +515,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["数据"]
     algorithm_status: "not_applicable"
     evidence: ""
   - source_id: SRC-INTERNAL-001
@@ -540,7 +542,7 @@ sources:
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["事件", "数据", "指标"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -576,8 +578,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["高频", "数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-002
@@ -611,8 +613,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据", "k线"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-003
@@ -646,7 +648,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-004
@@ -680,7 +682,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["动量", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-005
@@ -715,7 +717,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-006
@@ -749,7 +751,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-007
@@ -783,7 +785,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-008
@@ -816,7 +818,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-009
@@ -849,7 +851,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-010
@@ -882,7 +884,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-011
@@ -916,7 +918,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-012
@@ -950,7 +952,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-013
@@ -984,7 +986,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-014
@@ -1018,7 +1020,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-015
@@ -1051,8 +1053,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-016
@@ -1085,8 +1087,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["资金", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-017
@@ -1119,8 +1121,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "market"]
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-018
@@ -1153,8 +1155,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-019
@@ -1187,8 +1189,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["资金", "仓位", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-020
@@ -1221,8 +1223,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["动量", "分时", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-021
@@ -1255,8 +1257,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-022
@@ -1289,8 +1291,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "market"]
+  tags: ["数据", "形态", "市场结构", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-023
@@ -1323,8 +1325,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "形态", "市场结构", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-024
@@ -1357,8 +1359,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "k线", "形态", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-025
@@ -1391,8 +1393,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["流动性", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-026
@@ -1425,8 +1427,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "sector"]
+  tags: ["行业", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-027
@@ -1459,8 +1461,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "市场结构", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-028
@@ -1493,8 +1495,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["数据", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-029
@@ -1528,7 +1530,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-030
@@ -1562,7 +1564,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-031
@@ -1596,7 +1598,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-032
@@ -1630,7 +1632,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-033
@@ -1664,7 +1666,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "组合", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-034
@@ -1698,7 +1700,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-035
@@ -1732,7 +1734,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-036
@@ -1766,7 +1768,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-037
@@ -1800,7 +1802,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-038
@@ -1834,7 +1836,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["多因子", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-039
@@ -1868,7 +1870,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-040
@@ -1902,7 +1904,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["流动性", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-041
@@ -1936,7 +1938,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-042
@@ -1970,7 +1972,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-043
@@ -2004,7 +2006,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-044
@@ -2038,7 +2040,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-045
@@ -2072,7 +2074,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-046
@@ -2106,7 +2108,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-047
@@ -2140,7 +2142,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-048
@@ -2174,7 +2176,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["质量", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-049
@@ -2208,7 +2210,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-050
@@ -2242,7 +2244,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-051
@@ -2276,7 +2278,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-052
@@ -2310,7 +2312,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-053
@@ -2344,7 +2346,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-054
@@ -2378,7 +2380,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-055
@@ -2412,7 +2414,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-056
@@ -2446,7 +2448,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-057
@@ -2480,7 +2482,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-058
@@ -2514,7 +2516,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "k线", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-059
@@ -2547,8 +2549,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["行业", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-060
@@ -2582,7 +2584,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-061
@@ -2616,7 +2618,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-062
@@ -2650,7 +2652,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-063
@@ -2684,7 +2686,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-064
@@ -2718,7 +2720,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-065
@@ -2752,7 +2754,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-066
@@ -2786,7 +2788,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-067
@@ -2820,7 +2822,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "执行", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-068
@@ -2854,7 +2856,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-069
@@ -2888,7 +2890,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-070
@@ -2922,7 +2924,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-071
@@ -2956,7 +2958,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-072
@@ -2990,7 +2992,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["动量", "数据", "组合", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-073
@@ -3024,7 +3026,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-074
@@ -3058,7 +3060,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["机器学习", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-075
@@ -3092,7 +3094,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "回撤", "数据", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-076
@@ -3126,7 +3128,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-077
@@ -3159,8 +3161,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-078
@@ -3193,8 +3195,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - dataset_id: DS-079
@@ -3227,8 +3229,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3262,8 +3264,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["龙虎榜", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3302,8 +3304,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "market"]
+  tags: ["数据", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3337,8 +3339,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3372,8 +3374,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3407,8 +3409,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "market"]
+  tags: ["指数", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3442,8 +3444,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3478,7 +3480,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["估值", "数据", "因子", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3513,7 +3515,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "财报", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3548,7 +3550,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "财报", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3583,7 +3585,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "数据", "财报", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3618,7 +3620,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3653,7 +3655,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据", "财报", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3688,7 +3690,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据", "财报", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3723,7 +3725,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据", "财报", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3757,8 +3759,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["事件", "数据", "分红"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3793,7 +3795,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3828,7 +3830,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据", "信号", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3862,8 +3864,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["事件", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3898,7 +3900,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3933,7 +3935,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "仓位", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -3967,8 +3969,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["资金", "数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4003,7 +4005,7 @@ datasets:
   drift_detector: none
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4037,8 +4039,8 @@ datasets:
   label_delay_days: null
   drift_detector: none
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector", "market"]
+  tags: ["行业", "数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 
@@ -4064,8 +4066,8 @@ jobs:
   updated_at: '2026-08-13'
   owner: MOD-MKT_DATA
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["高频", "数据", "k线", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-002
@@ -4090,8 +4092,8 @@ jobs:
   updated_at: '2026-08-13'
   owner: MOD-MKT_DATA
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["数据", "k线", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-003
@@ -4117,7 +4119,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["估值", "因子", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-004
@@ -4143,7 +4145,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["动量", "利率", "因子", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-005
@@ -4170,7 +4172,7 @@ jobs:
   owner: ''
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["多因子", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-006
@@ -4196,7 +4198,7 @@ jobs:
   owner: MOD-L04-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "回撤", "仓位", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-007
@@ -4223,7 +4225,7 @@ jobs:
   owner: MOD-L05-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "信号", "订单", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-008
@@ -4250,7 +4252,7 @@ jobs:
   owner: MOD-L06-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "执行", "订单", "成交", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-009
@@ -4276,7 +4278,7 @@ jobs:
   owner: MOD-BT-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-010
@@ -4302,7 +4304,7 @@ jobs:
   owner: MOD-BT-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "组合", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-011
@@ -4328,7 +4330,7 @@ jobs:
   owner: MOD-BT-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["执行", "成本", "组合", "成交", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-012
@@ -4354,7 +4356,7 @@ jobs:
   owner: MOD-BT-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "组合", "成交", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-013
@@ -4380,7 +4382,7 @@ jobs:
   owner: MOD-BT-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["回撤", "指标", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-014
@@ -4407,7 +4409,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-015
@@ -4434,7 +4436,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-016
@@ -4460,8 +4462,8 @@ jobs:
   updated_at: '2026-08-13'
   owner: MOD-L02-001
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-017
@@ -4488,7 +4490,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-018
@@ -4515,7 +4517,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["资金", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-019
@@ -4542,7 +4544,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["分时", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-020
@@ -4569,7 +4571,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-021
@@ -4595,8 +4597,8 @@ jobs:
   updated_at: '2026-08-13'
   owner: MOD-L02-001
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["market"]
+  tags: ["k线", "形态", "市场结构", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-022
@@ -4623,7 +4625,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["k线", "形态", "市场结构", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-023
@@ -4650,7 +4652,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["k线", "形态", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-024
@@ -4677,7 +4679,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["流动性", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-025
@@ -4703,8 +4705,8 @@ jobs:
   updated_at: '2026-08-13'
   owner: MOD-L02-001
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["行业", "k线", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-026
@@ -4731,7 +4733,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "k线", "市场结构", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-027
@@ -4758,7 +4760,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["k线", "因子", "指标", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-028
@@ -4786,7 +4788,7 @@ jobs:
   owner: MOD-L02-005
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-029
@@ -4814,7 +4816,7 @@ jobs:
   owner: MOD-L02-006
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-030
@@ -4842,7 +4844,7 @@ jobs:
   owner: MOD-L02-009
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-031
@@ -4870,7 +4872,7 @@ jobs:
   owner: MOD-L02-010
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-032
@@ -4898,7 +4900,7 @@ jobs:
   owner: MOD-L02-012
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-033
@@ -4926,7 +4928,7 @@ jobs:
   owner: MOD-L02-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-034
@@ -4954,7 +4956,7 @@ jobs:
   owner: MOD-L02-002
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-035
@@ -4982,7 +4984,7 @@ jobs:
   owner: MOD-L02-003
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "绩效", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-036
@@ -5010,7 +5012,7 @@ jobs:
   owner: MOD-L02-007
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-037
@@ -5038,7 +5040,7 @@ jobs:
   owner: MOD-L02-011
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["多因子", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-038
@@ -5066,7 +5068,7 @@ jobs:
   owner: MOD-L02-008
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-039
@@ -5094,7 +5096,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["流动性", "因子", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-040
@@ -5121,7 +5123,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-041
@@ -5148,7 +5150,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-042
@@ -5175,7 +5177,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-043
@@ -5202,7 +5204,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "数据", "行情", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-044
@@ -5230,7 +5232,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-045
@@ -5258,7 +5260,7 @@ jobs:
   owner: MOD-L02-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-046
@@ -5285,7 +5287,7 @@ jobs:
   owner: MOD-BT-023
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-047
@@ -5312,7 +5314,7 @@ jobs:
   owner: MOD-BT-022
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["质量", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-048
@@ -5339,7 +5341,7 @@ jobs:
   owner: MOD-BT-018
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-049
@@ -5366,7 +5368,7 @@ jobs:
   owner: MOD-BT-026
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-050
@@ -5393,7 +5395,7 @@ jobs:
   owner: MOD-BT-021
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-051
@@ -5420,7 +5422,7 @@ jobs:
   owner: MOD-BT-019
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-052
@@ -5447,7 +5449,7 @@ jobs:
   owner: MOD-BT-024
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-053
@@ -5474,7 +5476,7 @@ jobs:
   owner: MOD-BT-025
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-054
@@ -5500,7 +5502,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-055
@@ -5526,7 +5528,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-056
@@ -5552,7 +5554,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-057
@@ -5578,7 +5580,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "k线"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-058
@@ -5603,8 +5605,8 @@ jobs:
   updated_at: '2026-08-13'
   owner: MOD-L00-004
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["sector"]
+  tags: ["行业", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-059
@@ -5630,7 +5632,7 @@ jobs:
   owner: MOD-DATA_ENG
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-060
@@ -5656,7 +5658,7 @@ jobs:
   owner: MOD-DATA_ENG
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-061
@@ -5682,7 +5684,7 @@ jobs:
   owner: MOD-DATA_ENG
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-062
@@ -5708,7 +5710,7 @@ jobs:
   owner: MOD-DATA_ENG
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-063
@@ -5734,7 +5736,7 @@ jobs:
   owner: MOD-DATA_ENG
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-064
@@ -5762,7 +5764,7 @@ jobs:
   owner: MOD-EX-003
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-065
@@ -5790,7 +5792,7 @@ jobs:
   owner: MOD-EX-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-066
@@ -5818,7 +5820,7 @@ jobs:
   owner: MOD-EX-002
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "执行", "数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-067
@@ -5846,7 +5848,7 @@ jobs:
   owner: MOD-L06-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["仓位", "执行", "数据", "组合", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-068
@@ -5873,7 +5875,7 @@ jobs:
   owner: MOD-PF-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-069
@@ -5900,7 +5902,7 @@ jobs:
   owner: MOD-PF-003
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-070
@@ -5927,7 +5929,7 @@ jobs:
   owner: MOD-L05-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-071
@@ -5954,7 +5956,7 @@ jobs:
   owner: MOD-L05-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["动量", "组合", "信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-072
@@ -5981,7 +5983,7 @@ jobs:
   owner: MOD-ML-002
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["信号", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-073
@@ -6009,7 +6011,7 @@ jobs:
   owner: MOD-ML-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-074
@@ -6036,7 +6038,7 @@ jobs:
   owner: MOD-RISK-001
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["风控", "回撤", "仓位", "指标", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-075
@@ -6063,7 +6065,7 @@ jobs:
   owner: MOD-TRADING-002
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["数据", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-076
@@ -6088,8 +6090,8 @@ jobs:
   updated_at: '2026-08-14'
   owner: MOD-L00-004
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "market"]
+  tags: ["龙虎榜", "数据", "形态"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-077
@@ -6118,8 +6120,8 @@ jobs:
   updated_at: '2026-08-14'
   owner: MOD-L00-004
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock", "index", "market"]
+  tags: ["指数", "执行", "股票池", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-078
@@ -6149,7 +6151,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "估值", "多因子", "数据", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-079
@@ -6181,7 +6183,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["事件", "数据", "财报", "分红"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-080
@@ -6208,8 +6210,8 @@ jobs:
   updated_at: '2026-08-14'
   owner: MOD-L00-004
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["stock"]
+  tags: ["资金", "仓位", "数据", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-081
@@ -6235,7 +6237,7 @@ jobs:
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: []
-  tags: []
+  tags: ["宏观", "数据", "通胀", "利率", "指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
 - job_id: JOB-082
@@ -6260,7 +6262,7 @@ jobs:
   updated_at: '2026-08-14'
   owner: MOD-L00-004
   entry_role: "reference"
-  applies_to: []
-  tags: []
+  applies_to: ["index", "sector"]
+  tags: ["指数", "行业", "行情", "数据"]
   algorithm_status: "not_applicable"
   evidence: ""
