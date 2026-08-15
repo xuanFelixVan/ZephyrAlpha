@@ -1,0 +1,76 @@
+# [A_config] module_id=REG-CMP-REPORT-001 | layer=config | stability=stable | safety=H | ai_autonomy=human_gated
+registry_id: REG-CMP-REPORT-001
+name: Compliance Report Registry
+name_zh: 程序化交易报告登记表
+description: >-
+  程序化交易报告 6 项义务登记 + 报送确认位（43_compliance_discipline.md §7.4，BM-BUY-15）。
+  铁律：先报告后交易——任一必报项 broker_ack 缺失，C-002 执行域拒单。
+  报送动作为人工（券商渠道），本表管登记/确认位；门禁校验入口=
+  zephyr.compliance.compliance_report_registry.ReportGate。
+  order_min_dwell_us=50 为 §7.5 记录性参数（监管参考值，本系统天然满足，不实现时间锁）。
+doc_type: register
+ttl: permanent
+status: active
+version: 1.0.0
+owner: ZephyrAlpha-Owner
+tier: tier_2_business
+created: '2026-08-15'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-COMP-001'
+unique_key: [item_id]
+entry_counts: {report_items: 6}
+
+order_min_dwell_us: 50  # 监管参考值（§7.5），本系统天然满足——内部限频 ≤15 笔/秒、挂单默认等待 30s
+
+report_item_schema:
+  item_id: str               # RPT-XXX
+  name: str                  # 报告项名
+  content_source: str        # 内容真源
+  timing: str                # 报送时机
+  required: bool             # 是否必报
+  reported_at: date | null   # 报送日期（人工报送后回填）
+  broker_ack: bool           # 券商确认位（人工核实后置真）
+
+report_items:
+  - item_id: RPT-ACCOUNT-INFO
+    name: 账户基本信息
+    content_source: 券商账户档案
+    timing: 首次交易前
+    required: true
+    reported_at: null
+    broker_ack: false
+  - item_id: RPT-SOFTWARE-INFO
+    name: 交易软件信息
+    content_source: miniQMT 客户端标识 + 自研系统说明
+    timing: 首次交易前 / 变更时
+    required: true
+    reported_at: null
+    broker_ack: false
+  - item_id: RPT-STRATEGY-TYPES
+    name: 策略类型（6 大类）
+    content_source: 策略登记（打板/多因子/事件驱动等归类）
+    timing: 首次交易前 / 新增策略时
+    required: true
+    reported_at: null
+    broker_ack: false
+  - item_id: RPT-MAX-ORDER-RATE
+    name: 最高申报速率
+    content_source: miniQMT 通道上限 10 笔/秒（steps JSON；内部限频 ≤15 笔/秒见 24 号 §3.7，取通道值填报）
+    timing: 首次交易前 / 变更时
+    required: true
+    reported_at: null
+    broker_ack: false
+  - item_id: RPT-MAX-DAILY-ORDERS
+    name: 单日最高申报笔数
+    content_source: 按容量测算填报（MVP 初始值 2000 笔/日，待实盘首月统计校准）
+    timing: 首次交易前 / 变更时
+    required: true
+    reported_at: null
+    broker_ack: false
+  - item_id: RPT-MAJOR-CHANGE
+    name: 重大变更
+    content_source: 上述任一项变化
+    timing: T+1 报送
+    required: true
+    reported_at: null
+    broker_ack: false

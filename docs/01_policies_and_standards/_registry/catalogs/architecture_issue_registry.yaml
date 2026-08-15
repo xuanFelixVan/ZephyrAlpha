@@ -14483,7 +14483,7 @@ entries:
   status: proposed
   related_rules: '#ARCH-RISK-002; 40 号 §执行'
   created: '2026-08-11'
-  last_updated: '2026-08-11'
+  last_updated: '2026-08-15'
 
 # --- 第八批：SDD / 审计 / drift / 执行（4 项）---
 - issue_id: '#ARCH-SDD-001'
@@ -16782,5 +16782,52 @@ entries:
   status: implemented
   confirmed_by_user: '2026-08-15 用户裁定治理批③施工（遗留项全面审查+治本）'
   related_rules: '#ARCH-RECONCILER-AUTO-DELETE-GOV-001（T2 SessionRegistry 锚主仓同族先例）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 监视器捕获本问题）; #50（tmp_repo 独立空库——锚定正交性约束）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+
+# --- 43 号合规纪律体系施工立项（2026-08-15，AI-COMP-001，第 4 批）---
+- issue_id: '#ARCH-COMP-001'
+  title: 'G30 合规与交易纪律体系——43_compliance_discipline 五环节施工（必做清单/四项严禁/授权审计/功能门禁/交易合规检测+报告门禁）'
+  severity: P1高
+  category: architecture
+  adjudication: |-
+    2026-08-15 立项+施工（AI-COMP-001，worktree 隔离）。按 43_compliance_discipline.md
+    §3-§7 裁定，施工 7 模块（78 单元测试）+ 2 登记表：
+    (1) MOD-CMP-001 discipline_must_do_checker.py——四时点必做清单完成度检测（§3，
+        盘前08:00/盘后次日09:15/晚间次日08:00 超时 Warning，盘中执行唯一 Hard Block），
+        完成度信号注入不侵入复盘/分析模块；跨日截止语义+信号源失效 Fail-Closed（盘中）
+    (2) MOD-CMP-002 discipline_prohibition_checker.py——四项严禁检测（§4，
+        追高+2%/30min+5% HardBlock / 补仓-5% HardBlock / 骄傲5笔×1.5 Warning /
+        报复-2%+频率2.0或规模1.5 HardBlock）+ KillSwitchLite（策略级当日熔断，
+        次日自动复位，状态损坏 Fail-Closed+升级全局 RC-03）；浮点尾差 ε=1e-9 工程修正
+    (3) MOD-CMP-008 license_usage_auditor.py——数据源授权条款审计（§5，新登记节点），
+        L1超范围/L2过期Fail-Closed/L3再分发三级处置，缺 compliance 段保守默认仅 backtest
+    (4) MOD-CMP-005 hard_boundary_adjudicator.py——FeatureGate（§6），
+        未登记=PENDING视同BLOCK/FORBIDDEN=BLOCK带重评条件/表不可读 Fail-Closed
+    (5) MOD-CMP-007 trading_compliance_detector.py——异常交易2条（拉抬打压/大额成交，
+        MVP 阈值待校准）+市场操纵4类（Spoofing/Layering/WashTrade/尾盘操纵）（§7.2/§7.3）
+    (6) MOD-CMP-009 compliance_report_registry.py——6 项报告义务登记+ReportGate
+        （§7.4 先报告后交易，broker_ack 缺失拒单）+ 50μs 时间锁记录性参数（§7.5 不适用裁定）
+    (7) MOD-CMP-010 compliance_log.py——compliance_log JSONL append-only 落库（§3.2 裁定）
+    登记表：feature_adjudication_registry.yaml（REG-FEATURE-ADJ-001，19 条有据种子——
+    harvest 档案 15 条 ✅/❌ + 43 号明示 4 条；47 项全量迁移=开放问题，源清单
+    合规架构.md §10/17-D-COMPLIANCE 不在仓内）+ compliance_report_registry.yaml
+    （REG-CMP-REPORT-001，6 项义务初始全未确认=BLOCK 先报告后交易实证）。
+    depgraph：4 预登记设计态节点（8661726/27/30/32）落码 + 3 新登记（9651493/94/95）
+    + 10 设计态边（C-004/C-002/MOD-PA-006 整合点声明）。merge 后 #ARCH-70 通道自动转 production。
+    关联 proposed 议题：#ARCH-COMPLIANCE-001（5000笔预警/1万笔阻断/撤单率80%/存档20年）
+    与本批 §7 范围部分重叠，仍 status=proposed 待用户裁定吸收方式。
+  impact:
+    变更文件：
+    - 'src/zephyr/compliance/{discipline_must_do_checker,discipline_prohibition_checker,hard_boundary_adjudicator,trading_compliance_detector,license_usage_auditor,compliance_report_registry,compliance_log}.py（新建 7 模块）'
+    - 'tests/compliance/test_*.py（新建 7 文件 78 测试）'
+    - 'docs/03_modules/_domain_compliance/{7 模块}/blueprint.md（新建）'
+    - 'docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml + compliance_report_registry.yaml（新建 2 登记表）'
+    - 'docs/registry_of_registries.yaml（REG-FEATURE-ADJ-001/REG-CMP-REPORT-001 登记）'
+    - '43_compliance_discipline.md v1.0.0（draft→active，施工落地记录）'
+    - '00_index_trading_decision.md（43 号状态同步）'
+  fix_phase: '已施工（2026-08-15 AI-COMP-001）：见 adjudication；整合接线（C-004/C-002 实际调用点嵌入）留运行时装配批'
+  status: implemented
+  related_rules: '43_compliance_discipline.md; #ARCH-COMPLIANCE-001（proposed 关联）; #ARCH-BREG-001（登记表扩展同族）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
