@@ -4,10 +4,10 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-15T06:46:27Z'
+generated_at: '2026-08-15T08:30:03Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
-total_files: 210
+total_files: 212
 total_rules: 61
 tier_distribution:
   L0: 21
@@ -2076,11 +2076,11 @@ files:
   aliases: []
   section_count: 0
 - path: docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml
-  module_id: PS-REG-019
-  title: ''
-  doc_type: ''
+  module_id: PS-REG-021
+  title: 能力→真源文件反查注册表
+  doc_type: gate
   status: active
-  version: 1.1.0
+  version: 1.1.1
   rule_form: ''
   scope: ''
   stability: ''
@@ -2096,6 +2096,21 @@ files:
   doc_type: ''
   status: active
   version: 2.13.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: register
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
@@ -2291,6 +2306,21 @@ files:
   doc_type: ''
   status: active
   version: 1.1.0
+  rule_form: ''
+  scope: ''
+  stability: ''
+  layer: ''
+  superseded_by: ''
+  severity: ''
+  tier: ''
+  aliases: []
+  section_count: 0
+- path: docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml
+  module_id: ''
+  title: ''
+  doc_type: register
+  status: active
+  version: 1.0.0
   rule_form: ''
   scope: ''
   stability: ''
