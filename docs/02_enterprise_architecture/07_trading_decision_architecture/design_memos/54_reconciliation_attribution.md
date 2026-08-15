@@ -5,7 +5,7 @@ title: 对账归因
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.15.7"
+version: "1.15.8"
 date: 2026-08-15
 topic: reconciliation_attribution
 scope: 07_trading_decision_architecture
@@ -28,13 +28,13 @@ scope: 07_trading_decision_architecture
 | 对标 | 机构中后台对账 / Brinson 归因（非 Barra 因子风险归因） |
 | 正交性 | ✅ 与 regime 正交（归因是事后解释，不参与事前决策） |
 | 优先级 | P5 |
-| 状态 | active 1.15.6 |
+| 状态 | active 1.15.8 |
 
 ## 2. 背景
 
 ### 2.1 项目处境
 - 个人 + 100% AI 开发的 A 股量化系统，下单通道为 miniQMT（国金证券）
-- 执行层已 production（[40_execution_broker](40_execution_broker.md) v2.9.2，19 个决策已定型），多策略并发已定稿 Model A（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) v2.5.0）
+- 执行层已 production（[40_execution_broker](40_execution_broker.md) v2.11.2，19 个决策已定型），多策略并发已定稿 Model A（[30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) v2.6.1）
 - 对账归因是数据流主动脉的末端收口：执行层产出成交回报 → 对账核对 → PnL 计算 → 归因分解 → 复盘报表 → 闭环反馈（[battle_map_11](../battle_map/battle_map_11_reconciliation.md) BM-REC-01/02/03 三阶段 18 环节）
 - 作战地图 11 已有 18 环节，其中 16 个 production、2 个 design（BM-REC-02-B 绩效归因 + BM-REC-03-D 元级迭代）——本备忘的核心职责是为这两个 design 环节补 why 层 + 定义归因口径上限
 
@@ -116,7 +116,8 @@ scope: 07_trading_decision_architecture
         │   factor_contributions 暂不实现 / transaction_cost_drag 待接入TCA
         ↓
 [A股交易复盘] AsharePerformanceAudit (MOD-RPT-026)
-        │   盘前信号验证 / 盘中异常检测(价格偏离>2σ∨成交量>3倍均值) / 大额异动
+        │   5类审计(收益率/回撤/风险调整收益/归因一致性/交易成本)+优化建议+SHA-256指纹
+        │   ※ 盘中异常检测(§3.6 MAD算法)/大额异动为本备忘待施工扩展，非现有代码能力
         ↓
 [报告生成] RiskReportEngine + RegulatoryReportGenerator + ReportPublisher
         │   日/周/事件/月四类风险报告 + 四类监管报告 + 微信/邮件发布 + SQLite/Parquet归档
@@ -271,48 +272,51 @@ def carino_link_periods(
 ) -> dict[str, float]:
     """Carino 对数链接算法——将多期单期 Brinson 效应链接为多期归因。
 
-    [Cariño 1999] + [metricgate 2026-09]：k_t = ln(1+R_{p,t}) / R_{p,t}，
-    再按总对数收益归一化，使链接后各效应求和 = 总几何超额收益（near-zero residual）。
+    [Cariño 1999] 标准形式（v1.15.8 公式修正，原版 k_t=ln(1+R_{p,t})/R_{p,t}
+    在零基准极限下 Σlinked≡1≠G，过不了本节 residual<1e-6 门禁）：
+      k_t = [ln(1+R_{p,t}) − ln(1+R_{b,t})] / (R_{p,t} − R_{b,t})  期修正因子
+      A   = G / ln(1+G)，G = (1+R_p)/(1+R_b) − 1  总几何超额收益
+      linked_i = A × Σ_t e_{i,t} × k_t
+    恒等性质：Σ_i linked_i = A × Σ_t [ln(1+R_{p,t})−ln(1+R_{b,t})]
+             = A × ln(1+G) = G（near-zero residual，浮点精度级）。
     GIPS-compliant 报告首选方法。
     """
     assert len(period_effects) == len(portfolio_period_returns) == len(benchmark_period_returns)
-    # 1. 累计几何收益
+    # 1. 累计几何收益 + 总几何超额收益 G
     cum_portfolio = 1.0
-    for r in portfolio_period_returns:
-        cum_portfolio *= (1.0 + r)
+    cum_benchmark = 1.0
+    for r_p, r_b in zip(portfolio_period_returns, benchmark_period_returns):
+        cum_portfolio *= (1.0 + r_p)
+        cum_benchmark *= (1.0 + r_b)
     total_portfolio_return = cum_portfolio - 1.0
-    log_total = math.log(1.0 + total_portfolio_return) if (1.0 + total_portfolio_return) > 0 else 0.0
+    total_benchmark_return = cum_benchmark - 1.0
+    geometric_active_return = (cum_portfolio / cum_benchmark) - 1.0
 
-    # 2. 各期 Carino 修正因子 k_t（处理 R_{p,t}=0 的退化情形）
-    k_factors = []
-    for r_p in portfolio_period_returns:
-        if abs(r_p) < 1e-12:
-            # R_{p,t} -> 0 时 k_t -> 1（洛必达极限）
-            k_t = 1.0
-        else:
-            k_t = math.log(1.0 + r_p) / r_p
-        k_factors.append(k_t)
-
-    # 3. 归一化缩放因子 A_t = k_t / log_total（处理 log_total=0 退化）
-    if abs(log_total) < 1e-12:
-        # 总收益为 0 时退化为算术平均
-        scale = [1.0 / len(period_effects)] * len(period_effects)
+    # 2. 全局缩放因子 A = G / ln(1+G)（G→0 退化时洛必达极限 A→1）
+    if (1.0 + geometric_active_return) > 0:
+        log_active = math.log(1.0 + geometric_active_return)
     else:
-        scale = [k_t / log_total for k_t in k_factors]
+        log_active = 0.0
+    global_scale = (geometric_active_return / log_active) if abs(log_active) > 1e-12 else 1.0
+
+    # 3. 各期 Carino 修正因子 k_t（R_{p,t}→R_{b,t} 退化时 k_t→1/(1+R_{p,t})，洛必达极限）
+    k_factors = []
+    for r_p, r_b in zip(portfolio_period_returns, benchmark_period_returns):
+        active_t = r_p - r_b
+        if abs(active_t) < 1e-12:
+            k_t = 1.0 / (1.0 + r_p)
+        else:
+            k_t = (math.log(1.0 + r_p) - math.log(1.0 + r_b)) / active_t
+        k_factors.append(k_t)
 
     # 4. 链接各效应
     linked_alloc = linked_selec = linked_interact = 0.0
-    for eff, a_t in zip(period_effects, scale):
-        linked_alloc     += eff['allocation_effect'] * a_t
-        linked_selec     += eff['selection_effect'] * a_t
-        linked_interact  += eff['interaction_effect'] * a_t
+    for eff, k_t in zip(period_effects, k_factors):
+        linked_alloc     += eff['allocation_effect'] * k_t * global_scale
+        linked_selec     += eff['selection_effect'] * k_t * global_scale
+        linked_interact  += eff['interaction_effect'] * k_t * global_scale
 
-    # 5. 总几何超额收益 + residual 质量校验
-    cum_benchmark = 1.0
-    for r in benchmark_period_returns:
-        cum_benchmark *= (1.0 + r)
-    total_benchmark_return = cum_benchmark - 1.0
-    geometric_active_return = ((1.0 + total_portfolio_return) / (1.0 + total_benchmark_return)) - 1.0
+    # 5. residual 质量校验（恒等性质下应处浮点精度级；非零即数据/单期计算 bug）
     linked_sum = linked_alloc + linked_selec + linked_interact
     residual = geometric_active_return - linked_sum
 
@@ -408,7 +412,7 @@ def calc_brinson_with_t1_settlement(
         'unrealized_selection_effect': unrealized_selection,       # 浮盈（T+1 才可兑现）
         'selection_effect_total': base['selection_effect'],       # 总 selection（兼容契约）
         'interaction_effect': base['interaction_effect'],
-        't1_locked_weight': sum(new_positions_today.values()),    # T+1 锁定权重合计
+        't1_locked_weight': sum(info['weight'] for info in new_positions_today.values()),  # T+1 锁定权重合计
         't1_warning': unrealized_selection / base['selection_effect'] > 0.5
                       if abs(base['selection_effect']) > 1e-12 else False,
         # t1_warning=True 表示超过 50% 的 selection 来自当日新建仓位浮盈，
@@ -854,7 +858,7 @@ def group_by_symbol_dir_date(items: list) -> list[tuple]:
     """按 (symbol, direction, date) 聚合键分组，返回所有出现的键。"""
     seen = set()
     for item in items:
-        seen.add((item.symbol, item.direction, getattr(item, 'trade_date', None)))
+        seen.add((item.symbol, item.direction, item.date))
     return list(seen)
 
 
@@ -865,7 +869,8 @@ def aggregate(items: list, symbol: str, direction: str, date) -> "AggRecord":
     用途：三层匹配层 2/3 容差匹配前，将同键多笔 fill 合并为单记录比对
     """
     total_qty = sum(item.quantity for item in items
-                    if item.symbol == symbol and item.direction == direction)
+                    if item.symbol == symbol and item.direction == direction
+                    and item.date == date)
     return AggRecord(symbol=symbol, direction=direction, date=date, qty=total_qty)
 
 # ──────────────────────────────────────────────────────────────────
@@ -886,6 +891,8 @@ def reconcile_trades(system_fills: list[Fill],
     matched_b_fill_ids = set()
     for s_fill in system_fills:
         for b_settle in broker_settlements:
+            if b_settle.fill_id in matched_b_fill_ids:
+                continue  # 防御：一笔券商结算单只允许命中一笔系统成交
             if (s_fill.fill_id == b_settle.fill_id
                 and s_fill.symbol == b_settle.symbol
                 and s_fill.direction == b_settle.direction
@@ -906,6 +913,8 @@ def reconcile_trades(system_fills: list[Fill],
     fuzzy_b_fill_ids = set()
     for s_fill in unmatched_system:
         for b_settle in unmatched_broker:
+            if b_settle.fill_id in fuzzy_b_fill_ids:
+                continue  # 防双计：已命中结算单不再参与后续 fuzzy 匹配
             if (s_fill.symbol == b_settle.symbol
                 and s_fill.direction == b_settle.direction
                 and abs(s_fill.quantity - b_settle.quantity) <= qty_tol
@@ -919,12 +928,11 @@ def reconcile_trades(system_fills: list[Fill],
     # 层 2→3 传递：层 2 未匹配项（用于层 3 拆合匹配）
     remaining_system = [f for f in unmatched_system if f.fill_id not in fuzzy_s_fill_ids]
     remaining_broker = [s for s in unmatched_broker if s.fill_id not in fuzzy_b_fill_ids]
-    remaining = (remaining_system, remaining_broker)  # 供 group_by_symbol_dir_date 使用
 
-    # 层 3: 拆分/合并匹配（按 symbol + direction + date 聚合）
+    # 层 3: 拆分/合并匹配（按 symbol + direction + date 聚合，双边合并取聚合键全集）
     partial_s_fill_ids = set()
     partial_b_fill_ids = set()
-    for symbol, direction, date in group_by_symbol_dir_date(remaining):
+    for symbol, direction, date in group_by_symbol_dir_date(remaining_system + remaining_broker):
         sys_agg = aggregate(remaining_system, symbol, direction, date)
         brk_agg = aggregate(remaining_broker, symbol, direction, date)
         if abs(sys_agg.qty - brk_agg.qty) < 1e-6:
@@ -1080,10 +1088,10 @@ raw_hash = write_audit_stage(db, stage=1, record={
 # 阶段②：匹配决策（三层匹配 + 置信度 + 被拒匹配 negative evidence）
 match_hash = write_audit_stage(db, stage=2, record={
     'matched': [(s.fill_id, b.settle_id, 1.0) for s, b in matched],
-    'fuzzy': [(s.fill_id, b.settle_id, score, reason) for ...],
-    'partial': [(agg_key, score, relation) for ...],
+    'fuzzy': [(s.fill_id, b.settle_id, score, reason) for s, b, score, reason in fuzzy],
+    'partial': [(agg_key, score, relation) for agg_key, score, relation in partial],
     'rejected': [(s.fill_id, b.settle_id, score, reject_reason)
-                 for ... in rejected_pairs],  # negative evidence
+                 for s, b, score, reject_reason in rejected_pairs],  # negative evidence
     'exception': [e for e in exceptions],
     'reviewer': owner_id if any_manual_review else 'auto',
 }, prev_hash=raw_hash)
@@ -1149,7 +1157,7 @@ attribution_hash = write_audit_stage(db, stage=3, record={
 
 **为何盘后全量对账暂缓到 Phase 2**（§4.3）：MVP 盘中每 5min 持仓对账已覆盖生存需求（差异早发现早冻结）；盘后全量需券商对账单数据接入，MVP 用 `get_positions` 查询兜底（[40_execution_broker](40_execution_broker.md) §5 待裁定 + §6.1 gap 10）。
 
-**审计证据链扩展：仓位审计追溯（BM-POS-10，design，v1.15.4 补）**：
+**审计证据链扩展：仓位审计追溯（BM-POS-10，production，v1.15.4 补 / v1.15.8 状态校准对齐 battle_map_08）**：
 
 - **定位**：L3.5 仓位管理层横切环节——任意仓位变更事件（裁决/Kelly/漂移/再平衡/缩放/日历/合并）触发；消费 BM-POS-01~09 全部环节的仓位变更事件 + D-RISK C-004 审批链 + D-EX-CORE 执行结果；产出 **PositionAuditReport** → D-REPORTING 归档 / D-GOVERNANCE 合规审计。代码映射 MOD-POS-009（D-POSITION §1.3 POS-09 Position Audit Logger）。
 - **裁定**：①**字段口径**——每次仓位变更全记录：`{position_id, symbol, qty_before, qty_after, change_source(BM-POS-01~09 环节编号), trigger_event_id, decision_ref, approval_chain_ref, execution_fill_ids, timestamp}`；②**审批链语义**——决策→裁决→风控→执行全链路引用（非内嵌拷贝），审批链本体由 D-RISK C-004 供给，本环节只记引用键防口径漂移；③**哈希链防篡改**——前一条记录哈希链接（与 §3.3 三阶段审计轨迹同构的线性 hash 链，tamper-evident 可检测口径，对齐 #ARCH-OE-007 声明——机构级不可篡改属 BM-BUY-10 已裁剪范围）；④**与 30 号衔接**——仓位审计 logger 已在 [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §7.5 设施盘点登记为 production（`position_audit_logger`），本节为其补 why 层与产出物契约，**不新造审计器**；⑤**降级（保守原则）**——审计日志器未就绪→**仓位决策阻断**（审计是合规底线，无审计不允许执行，fail-closed，与本备忘对账"双边冻结不可误判一致"同哲学）。
@@ -1325,12 +1333,12 @@ def calc_performance_score(daily_returns: list[float],
 
 | 层 | 检测内容 | 触发阈值 | 模块 | 状态 |
 |---|---|---|---|---|
-| ① 价格异常 | 单笔成交价偏离决策价 >2σ | 价格偏离 >2σ | [AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) | 🟦 production |
-| ② 量异常 | 成交量 >3 倍均值 | volume >3×mean | AsharePerformanceAudit | 🟦 production |
+| ① 价格异常 | 单笔成交价偏离决策价 >2σ | 价格偏离 >2σ | [AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) | 🟥 未施工（算法见本节，待接入；该模块现有能力=5 类审计，见 §2.4） |
+| ② 量异常 | 成交量 >3 倍均值 | volume >3×mean | AsharePerformanceAudit | 🟥 未施工（同上） |
 | ③ 拒单分类 | 涨跌停/资金/持仓/数量/价格/连接类拒单 | error_code 50-55/-1/-3 | [OrderManager](file:///d:/ZephyrAlpha/src/zephyr/ex_core/order_manager.py) classify_rejection | 🟦 production（分类+日志）/ 🟧 RETRY/冻结动作待 Saga |
-| ④ 大额异动 | 大额交易异动检测 | 待校准 | AsharePerformanceAudit | 🟦 production（框架）/ 🟧 阈值待校准 |
+| ④ 大额异动 | 大额交易异动检测 | 待校准 | AsharePerformanceAudit | 🟥 未施工（算法见本节，阈值待实盘校准） |
 
-**异常检测施工算法**（v1.5.1 补，[AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) 已实现框架 + [ParseMyStatement 2026-04](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 余额约束行级校验 + [Axon.Trade 2026](https://axon.trade/clock-discipline-for-trading-systems) 时间戳纪律）：
+**异常检测施工算法**（v1.5.1 补，[AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) 审计引擎已 production（5 类审计规则，见 §2.4）、本节异常检测算法为其待接入扩展 + [ParseMyStatement 2026-04](https://parsemystatement.com/blog/running-balance-sequence-qa-detect-missing-merged-lines-before-reconciliation-reng8z) 余额约束行级校验 + [Axon.Trade 2026](https://axon.trade/clock-discipline-for-trading-systems) 时间戳纪律）：
 
 > §3.6 表格定义了"价格偏离 >2σ"和"成交量 >3×mean"阈值，但未给 σ/mean 的计算窗口和算法。本算法补：σ 用滚动 20 笔成交价格偏离率的标准差（非全量历史，20 笔覆盖约 3-5 个交易日）；mean 用滚动 20 日日均成交量（平滑月末/季末周期噪音）。
 
@@ -1613,7 +1621,7 @@ def detect_stale_value(value_series: list[float],
 | 风险报告 | [RiskReportEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/risk_report_engine.py) | 日度（VaR/CVaR/因子暴露/否决统计/漂移/Amihud）/ 周度（压力测试+漂移趋势+拥挤度+模型健康度）/ 事件（触发+影响+处置）/ 月度（参数变更审计+否决有效性+合规） | 日/周/事件/月 | BM-REC-02-E |
 | 监管报告 | [RegulatoryReportGenerator](file:///d:/ZephyrAlpha/src/zephyr/reporting/regulatory_report_generator.py) | 程序化交易报告 / 异常交易自报 / 持仓报告 / 绩效报告 | 月/季+事件 | BM-REC-02-F |
 | TCA 报告 | [DefaultTcaEngine](file:///d:/ZephyrAlpha/src/zephyr/reporting/default_tca_engine.py) | 简易滑点已上线；滑点/冲击成本/市场影响/IS 成本分解待施工（§2.4 盘点） | 每笔成交+日度汇总 | BM-REC-02-A |
-| 复盘报告 | [AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) | 盘前信号验证 / 盘中异常检测 / 盘后归因 / 绩效统计 / 大额异动 | 日度 | BM-REC-02-C |
+| 复盘报告 | [AsharePerformanceAudit](file:///d:/ZephyrAlpha/src/zephyr/reporting/ashare_performance_audit.py) | 5 类审计（收益率/回撤/风险调整收益/归因一致性/交易成本）+ 优化建议（BM 环节定义的盘前信号验证/盘中异常检测/大额异动为待施工扩展，见 §3.6） | 日度 | BM-REC-02-C |
 
 **双渠道发布**（[ReportPublisher](file:///d:/ZephyrAlpha/src/zephyr/reporting/report_publisher.py)，MOD-RPT-003，production 框架）：
 - 微信 Webhook（实时推送，适合告警类）⚠️ 当前仅落 PENDING 状态不实际发送（2026-08-12 代码核查）
@@ -1725,22 +1733,21 @@ def attribute_by_sizing_basis(
 
 **deflated-alpha v0.3.0 四类检验**（[0scarito/deflated-alpha](https://github.com/0scarito/deflated-alpha) 2026-07-26 实现）：
 
-> **⚠️ v1.15.0 交叉引用校准**：55 号（[55_monitoring_review](55_monitoring_review.md)）磁盘现状为 **v0.1.0 draft 骨架**（2026-08-09，§2-§6 全部待填写，无 §3.6/§3.9 等小节）——本节及 §3.6/§3.10/§5.1/§5.2/§8.1 等处所有"55 号 §x.x"引用均为**设计预留对接点**（55 号施工后须回对齐），本备忘内容自包含、以本备忘为真源。下表"55 号已选/一致"等表述按此口径理解，不再逐一标注（§7 开放问题登记回对齐任务）。
+> **⚠️ 55 号交叉引用口径**（v1.15.0 校准 / v1.15.8 更新）：55 号（[55_monitoring_review](55_monitoring_review.md)）已 active v1.0.2（2026-08-15）——本节及 §3.10/§5.1/§5.2/§8.1 等处"55 号 §x.x"引用已按其实际结构对齐：退役评审=55 号 §3.5（双判据+评审制，无 Tier 1/3 术语）、实盘 vs 回测偏离度量=§3.4（>30% 告警 / >50% 退役评估）、CUSUM/PSI 在线监控=§3.2B 模型风险审计 + §3.3 阈值注册表（PSI>0.2 关注 / >0.4 高度，CUSUM h=4σ）。55 号 v1.0.2 未采用 DSR/PBO 做退役检验，deflated-alpha 4 类检验为本备忘归因层自用框架，衔接点=verdict 触发 55 号 §3.4/§3.5 评审通道。本备忘内容自包含、以本备忘为真源（§7 开放问题登记并发施工残余风险）。
 
 | School | Question | This package | 决策 |
 |---|---|---|---|
-| **Analytical** | 赢家 Sharpe 是否超过 N 次无技能试验的期望最大值？ | DSR + PSR + MinTRL（Bailey & López de Prado 2012/2014） | ✅ 主选（设计预留：55 号退役检验拟选 DSR，归因层复用——55 号当前 v0.1.0 骨架，对接待回对齐） |
+| **Analytical** | 赢家 Sharpe 是否超过 N 次无技能试验的期望最大值？ | DSR + PSR + MinTRL（Bailey & López de Prado 2012/2014） | ✅ 主选（归因层自用；与 55 号衔接=verdict 触发其 §3.4/§3.5 评审通道） |
 | **Combinatorial** | IS 赢家是否在 OOS 持续赢？ | PBO via CSCV（Bailey, Borwein, López de Prado & Zhu 2017） | ✅ 主选（对接 11 号 §0.5.7 perturbation PBO） |
-| **Multiple-testing** | Sharpe 经过 N 试验 p-value haircut 后剩多少？ | Harvey-Liu Bonferroni / Holm / BHY（Harvey & Liu 2015） | ✅ 主选（设计预留：BHY-FDR 拟与 55 号 BH-FDR 口径一致） |
-| **Bootstrap data-snooping** | 最佳策略对重采样 null 是否显著？ | White's Reality Check + Hansen's SPA（White 2000, Hansen 2005） | ✅ v0.3.0 新增（设计预留：55 号原拟标 SPA 备选，归因层升级为主选） |
+| **Multiple-testing** | Sharpe 经过 N 试验 p-value haircut 后剩多少？ | Harvey-Liu Bonferroni / Holm / BHY（Harvey & Liu 2015） | ✅ 主选（归因层自用） |
+| **Bootstrap data-snooping** | 最佳策略对重采样 null 是否显著？ | White's Reality Check + Hansen's SPA（White 2000, Hansen 2005） | ✅ v0.3.0 新增（归因层自用主选） |
 
 **为何归因层用 deflated-alpha v0.3.0 而非自造**：MIT 许可轻量包（Python ≥ 3.10，numpy/scipy/pandas），单 `audit(trials, periods_per_year=252, bootstrap=True)` 调用即输出完整报告；4 类检验互补防漏判（[README](https://github.com/0scarito/deflated-alpha) 实证：SMA crossover 在零漂移 random walk 上 DSR 0.989 + SPA p=0.019 均被欺骗，PBO/CSCV 0.782 抓住过拟合）；输出 OOS degradation slope + Effective trials（N_eff 相关试验降权）+ MinTRL 三项辅助指标可直接消费；自造需 4 类检验 + bootstrap 重采样 + CSCV 组合枚举，违反不重造原则。
 
-**与 55 号退役检验的设计预留关系**（v1.15.0 校准——55 号当前 v0.1.0 骨架，以下为设计意图非已落成事实）：
-- 55 号退役检验拟采用 DSR/PBO（**退役 Tier 3 评审前强制检验**，重量离线，低频，决策型）
-- 本备忘 §3.9 deflated-alpha v0.3.0 是**归因层周期性对账检验**（重量离线，月/季频，监控型）
-- 二者复用同一 `deflated-alpha` 包，但触发时机不同：55 号是退役触发，54 号是月/季归因报告触发
-- 分层逻辑（设计意图）：日常监控用 CUSUM/PSI 在线轻量（55 号施工时落定），月/季归因用 deflated-alpha（54 号离线重量），退役评审用 DSR/PBO（55 号离线重量）——三层检测链
+**与 55 号评审通道的衔接**（v1.15.8 校准——55 号已 active v1.0.2，结构为实际盘点）：
+- 55 号 §3.5 退役评审=双判据（连续跑输 / 逻辑失效）+ 评审制（判据触发→退役评估报告→人工裁定），未采用 DSR/PBO；本备忘 deflated-alpha 的 LIKELY_OVERFIT verdict 定位为其"逻辑失效判据"的统计证据输入（不替代其双判据）
+- 二者复用同一 `deflated-alpha` 包，但触发时机不同：55 号 §3.5 是退役评审触发，54 号是月/季归因报告触发
+- 分层逻辑：日常监控用 CUSUM/PSI 在线轻量（55 号 §3.2B/§3.3，PSI>0.2 关注 / >0.4 高度，CUSUM h=4σ），月/季归因用 deflated-alpha（54 号离线重量）——检测链分层
 
 **对账接入算法**：
 
@@ -1773,7 +1780,12 @@ def reconcile_backtest_live_significance(
     # 2. 实盘 vs 回测 OOS 退化斜率补充校验
     # （实盘 Sharpe / 回测最优 Sharpe，< 0.5 即 OOS 退化严重）
     live_sharpe = live_returns.mean() / live_returns.std() * (periods_per_year ** 0.5)
-    backtest_best_sharpe = backtest_trial_returns.mean().max() * (periods_per_year ** 0.5)
+    # 各 trial 年化 Sharpe = mean/std × √252（与 live_sharpe 同口径），取最优
+    # std=0 退化的 trial 由 pandas 自动产 NaN，max() 跳过
+    trial_sharpes = (backtest_trial_returns.mean()
+                     / backtest_trial_returns.std(ddof=1)
+                     * (periods_per_year ** 0.5))
+    backtest_best_sharpe = float(trial_sharpes.max())
     oos_degradation = live_sharpe / backtest_best_sharpe if backtest_best_sharpe > 0 else 0
 
     return {
@@ -1834,7 +1846,7 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
 
     if overfit_flags:
         return {'verdict': 'LIKELY_OVERFIT', 'reasons': overfit_flags,
-                'action': '触发 55 号 §3.6 Tier 1 重优化评审'}
+                'action': '触发 55 号 §3.5 评审通道（重优化/退役评估）'}
 
     # LIKELY_REAL：所有检验通过
     real_flags = []
@@ -1859,11 +1871,11 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
 ```
 
 **归因报告接入规则**：
-- 月频归因报告（§3.7）：若 `verdict == LIKELY_OVERFIT` 或 `oos_degradation_slope < 0.5` → 触发 55 号 §3.6 Tier 1 重优化评审
-- 季频归因报告（§3.7）：跑完整 4 类检验 + bootstrap，若 `verdict == LIKELY_OVERFIT` + `pbo > 20%` → 触发 55 号 §3.6 Tier 3 退役评审
+- 月频归因报告（§3.7）：若 `verdict == LIKELY_OVERFIT` 或 `oos_degradation_slope < 0.5` → 触发 55 号 §3.4 偏离度量评估（其阈值 >30% 告警 / >50% 退役评估）+ §3.5 评审通道
+- 季频归因报告（§3.7）：跑完整 4 类检验 + bootstrap，若 `verdict == LIKELY_OVERFIT` + `pbo > 20%` → 触发 55 号 §3.5 退役评审（verdict 作为其"逻辑失效判据"统计证据输入）
 - `N_eff`（有效试验数）：若 N_eff << N（参数空间维度），说明参数 sweep 高度相关（参数冗余），归因报告标注"参数空间冗余"提示策略层简化参数
 
-**为何归因层而非监控层用 deflated-alpha**：归因层是事后解释工具，bootstrap 开销 O(n_boot·T·N) 适合月/季频离线；监控层（55 号 §3.3）用轻量 CUSUM/PSI 在线检测，分层互补；`verdict` 三态判定可直接驱动 owner 复盘动作。
+**为何归因层而非监控层用 deflated-alpha**：归因层是事后解释工具，bootstrap 开销 O(n_boot·T·N) 适合月/季频离线；监控层（55 号 §3.2B/§3.3）用轻量 CUSUM/PSI 在线检测，分层互补；`verdict` 三态判定可直接驱动 owner 复盘动作。
 
 **Combined Trading Signals 正交维度启示**（[Combined Trading Signals and Overfitting Risk 2026-06](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi)）：
 - 行业 2026 共识：有效指标组合必须捕捉**数学正交的市场维度**，分离为 trend direction（趋势方向）/ execution timing（执行时机）/ risk sizing（风险仓位）三角色
@@ -1885,9 +1897,9 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
 > **施工含义**（作为 §3.9 deflated-alpha 的几何补充而非替代）：
 > - **不替代 DSR/PBO**：plateau 几何指标单独 weak，不能替代 DSR/PBO 主检验
 > - **作为补充诊断维度**：归因报告新增"参数空间曲率"字段——计算 in-sample Sharpe 曲面在最优参数附近的 smoothed-surrogate 曲率，高曲率 + 低 DSR → "sharp peak fragile"红旗，低曲率 + 高 DSR → "broad plateau robust"标志
-> - **选择原则指导参数重优化**：当 §3.9 verdict == LIKELY_OVERFIT 触发 55 号 §3.6 Tier 1 重优化时，参数重优化须选 smoothed-surrogate 最优（plateau 中心）而非 raw argmax（peak 顶点）
+> - **选择原则指导参数重优化**：当 §3.9 verdict == LIKELY_OVERFIT 触发 55 号 §3.5 重优化/退役评审时，参数重优化须选 smoothed-surrogate 最优（plateau 中心）而非 raw argmax（peak 顶点）
 > - **Phase 2 候选**：plateau 几何指标需 in-sample Sharpe 曲面数据（参数 sweep 网格完整记录），依赖 50 号 experiment_tracking——MVP 先用 DSR/PBO，Phase 2 评估 plateau 几何增量价值
-> - **重评条件**：①首批策略 Tier 1 重优化 ≥ 2 次/年；②DSR/PBO verdict 边界（DSR 0.5-0.7 灰区）需几何补充诊断；③50 号 experiment_tracking 完整记录参数 sweep 网格
+> - **重评条件**：①首批策略重优化评审 ≥ 2 次/年（55 号 §3.5 通道）；②DSR/PBO verdict 边界（DSR 0.5-0.7 灰区）需几何补充诊断；③50 号 experiment_tracking 完整记录参数 sweep 网格
 
 ### 3.10 决策⑨：Combined Trading Signals 正交维度约束（v1.4.0 补）
 
@@ -1901,7 +1913,7 @@ def interpret_deflated_alpha_verdict(dsr: float, pbo: float,
 |---|---|---|---|
 | **信号间相关性** | Spearman rank IC 矩阵 + 条件数 | 任两信号 \|IC\| > 0.7 → 高相关红旗；条件数 > 30 → 多重共线性 | 高相关 → 标注"信号冗余"，建议策略层去相关 |
 | **正交角色覆盖** | 检查信号是否覆盖 trend/timing/sizing 三角色 | 缺角色 → 标注"维度缺失" | 缺维度 → 建议策略层补角色 |
-| **组合后 alpha 真实性** | deflated-alpha v0.3.0 audit（§3.9） | verdict == LIKELY_OVERFIT → 过拟合红旗 | 过拟合 → 触发 55 号 §3.6 Tier 1 重优化 |
+| **组合后 alpha 真实性** | deflated-alpha v0.3.0 audit（§3.9） | verdict == LIKELY_OVERFIT → 过拟合红旗 | 过拟合 → 触发 55 号 §3.5 评审通道 |
 
 **正交性验证施工算法**（v1.5.0 补，[Combined Trading Signals 2026-06](https://research.mental-momentum.ai/r/combined-trading-signals-overfitting-zwtahi) 正交维度要求 + VIF 多重共线性检测）：
 
@@ -2006,7 +2018,7 @@ def validate_signal_orthogonality(
 - 阈值（IC 0.7 / 条件数 30 / VIF 5）是行业共识起点，实盘 3 月后回归校准
 - 与 §3.9 deflated-alpha 协同：本算法验证组合前信号正交性，§3.9 验证组合后 alpha 真实性——前后双重防线
 
-**与 25 号多因子策略的关系**：25 号因子间正交性已由 §3 ic_decay 三层监控 + FSI（55 号 §3.6）覆盖；本备忘 §3.10 补的是**非因子策略**（如 24 号打板）的信号组合正交性——25 号因子正交性用 IC 矩阵 + FSI，24 号信号正交性用本算法，分层检测。
+**与 25 号多因子策略的关系**：25 号因子间正交性已由 §3 ic_decay 三层监控 + FSI（[61_lifecycle_multi_ai](61_lifecycle_multi_ai.md) 拥挤度量化指标）覆盖；本备忘 §3.10 补的是**非因子策略**（如 24 号打板）的信号组合正交性——25 号因子正交性用 IC 矩阵 + FSI，24 号信号正交性用本算法，分层检测。
 
 ### 3.11 决策⑩：regime-conditional 归因（v1.5.0 补，Phase 2 候选）
 
@@ -2573,7 +2585,7 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 - **A 股 PnL waterfall**（v1.3.0 补）：Signal + Selection + Timing - Costs - Opportunity = Net PnL；Brinson 补充框架，Phase 2 若 Brinson 残差 > 0.01% 时启用
 - **MOD-RPT-015 报告契约**（v1.3.0 补）：8 节最小必填 + Carino residual < 0.01% 质量门禁 + 求和不变量校验
 - **sizing_basis 归因维度**（v1.4.0 补，与 [31 号 §2.3.4](31_position_sizing.md) 对接）：仓位裁剪约束溯源（5 约束枚举见 §3.8），归因报告增加 sizing_basis 字段追溯每笔仓位的绑定约束
-- **deflated-alpha v0.3.0 三重验证**（v1.4.0 补，与 [55 号 §3.6](55_monitoring_review.md) 三层检测链对接）：回测 vs 实盘统计显著性验证（DSR + PBO + OOS 退化斜率 + Hansen SPA consistent p-value + White RC p-value），月/季归因报告调用 `audit()` 跑齐 4 类检验；verdict == LIKELY_OVERFIT → 触发 55 号 Tier 1 重优化
+- **deflated-alpha v0.3.0 三重验证**（v1.4.0 补，与 55 号 §3.4/§3.5 评审通道对接（v1.15.8 对齐））：回测 vs 实盘统计显著性验证（DSR + PBO + OOS 退化斜率 + Hansen SPA consistent p-value + White RC p-value），月/季归因报告调用 `audit()` 跑齐 4 类检验；verdict == LIKELY_OVERFIT → 触发 55 号 §3.5 评审通道
 - **Combined Trading Signals 正交维度约束**（v1.4.0 补）：信号组合前正交性验证（数学正交维度要求 + IC/条件数/VIF 阈值口径见 §3.10），防多信号共线过拟合；正交性不达标 → 拒绝组合或降权
 - **成交对账置信度评分匹配**（v1.5.0 补）：三层匹配输出加权置信度分数（属性权重与 High/Middle/Low 三带阈值口径见 §3.3）；MVP 用默认阈值，实盘 3 月后回归校准
 - **三阶段不可变审计轨迹**（v1.5.0 补）：阶段①原始事件捕获（system_fills + broker_settlements 原始记录）→ 阶段②匹配决策（层级+置信度+规则版本+被拒匹配 negative evidence）→ 阶段③归因结果（Brinson 分解+Carino residual+不变量校验）；SQLite append-only + hash 链 + 30 天后 read-only；替代区块链（个人单机无需多方信任）
@@ -2597,7 +2609,7 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 ### 5.2 演进路径
 - **第一阶段（MVP，立即施工）**：**归因引擎双实现收敛**（v1.15.0 新增置顶项：按 §6 裁定以 pf_core MOD-PF-007 为实现基底——已有 BHB 守恒校验+测试，升级其算术链接为 Carino；reporting 桩退役或改薄委托；canonical 登记同步修正）+ **TCA IS 四组件施工**（v1.15.0 新增：DefaultTcaEngine 当前仅简易滑点，transaction_cost_drag 接入的前提是 IS 分解先落地）+ 补全 Brinson 3 因子真实计算（接入 _holdings_history，beginning-of-period weights，纯 BHB 口径 §3.2）+ **Carino 多期链接算法实现**（参考 [pybrinson](https://github.com/gghez/pybrinson) v1.3.1）+ **Carino residual 质量门禁**（< 0.01%）+ transaction_cost_drag 接入 TCA（v1.3.0 算法，依赖 TCA IS 施工）+ 绩效归因报告（MOD-RPT-015 v1.0 模板）生成 + **成交对账三层匹配算法实现**（v1.3.0 算法，exact/fuzzy/partial + 例外工单，含 v1.15.0 root_cause/recurrence_key 字段）+ **置信度评分匹配骨架**（v1.5.0 新增：calculate_match_confidence 函数 + High/Middle/Low 三带路由 + 默认阈值 0.85/0.50）+ **三阶段不可变审计轨迹骨架**（v1.5.0 新增：audit_trail SQLite 表 + write_audit_stage hash 链 + INSERT-only 触发器——v1.15.0 盘点确认 audit_trail 表 DDL 缺失，须先落 schema）+ **盘后 15:30 调度接线**（v1.15.0 新增：当前无调度器任务，须注册盘后 cron/APScheduler 触发 SettlementReconciler + DailyAuditor）+ **Brinson+Carino 施工算法契约落地**（v1.5.0 新增：§3.2 calc_single_period_brinson + carino_link_periods 替换 default_attribution_engine.py:82-92 占位实现）+ **A 股 T+1 归因特殊处理**（v1.5.0 新增：calc_brinson_with_t1_settlement 拆分 realized/unrealized selection——v1.15.0 已改为收益贡献拆分口径）+ **策略贡献分解求和不变量校验**（v1.5.0 新增：validate_strategy_pnl_invariant 作为归因报告发布门禁——v1.15.0 警示：策略层独立 PnL 数据源（StrategyBook MOD-POS-020）未实现，须先由策略层施工填充，关联 #ARCH-REG-005）
 - **Phase 1.5（首批策略 track record 1-3 个月）**：① 策略贡献分解反馈 RegimeMetaAllocator budget 调整闭环 ② 大额异动检测阈值校准（实盘数据回归）③ 资金对账实现（PositionReconciler 阶段2扩展）④ **Carino residual 监控基线建立**（实盘归因数据回归后定阈值）⑤ **成交对账三层匹配容差校准**（qty_tol/price_tol/date_window 实盘回归）⑥ **transaction_cost_drag 分项监控基线**（timing/impact/slippage/commission 占比分布）⑦ **sizing_basis 归因维度接入**（v1.4.0 新增：31 号 PositionSizingEngine 输出 sizing_basis 字段后，归因报告增加仓位约束溯源）⑧ **Combined Trading Signals 正交性验证**（v1.4.0 新增：多因子/多信号策略组合前跑正交性检查，相关矩阵条件数 + VIF）⑨ **置信度阈值校准**（v1.5.0 新增：实盘匹配 false positive 率回归 + High/Middle/Low 阈值调整 + 按券商校准 if 多券商）⑩ **审计轨迹 30 天 read-only 触发器激活**（v1.5.0 新增：SQLite 触发器禁止 UPDATE/DELETE 超过 30 天的审计记录 + WAL 归档）⑪ **T+1 浮盈依赖监控基线**（v1.5.0 新增：t1_warning 触发率 + unrealized_selection 占比分布回归）
-- **第二阶段（首批策略 track record 3 个月后）**：① 盘后全量对账（券商对账单接入）② 因子归因（factor_contributions，若 Brinson 不足以解释）③ 监管报告自动化（若 AUM 达门槛）④ **A 股 PnL waterfall 框架**（若 Brinson 残差持续 > 0.01% + 需区分信号/选股/择时失效时）⑤ **deflated-alpha v0.3.0 月/季归因报告接入**（v1.4.0 新增：月/季归因报告调用 `audit()` 跑齐 4 类检验 + OOS 退化斜率，verdict == LIKELY_OVERFIT → 触发 55 号 §3.6 Tier 1 重优化评审）⑥ **regime-conditional 归因**（v1.5.0 新增：§3.11 attribute_by_regime 按 28 号 regime 分桶 Brinson + regime_fit_share vs skill_share 分解，若 Brinson 总归因残差持续 > 0.01% + 需区分顺风/skill 时）⑦ **Shapley 值归因评估**（v1.5.0 新增：§3.12 shapley_strategy_attribution，若策略间相关性 IC > 0.5 + owner 需公平分配交互效应 + 策略数 ≤ 8 时）⑧ **Hentschel GLS 统一归因框架评估**（v1.8.0 新增：§3.13 hentschel_gls_attribution，若 Carino residual 持续 > 1bp + 策略数 ≥ 5 + 持仓变动频率高时，把多期链接+交互项再分配+因子残差再分配统一为受限 GLS 估计，Carino/Frongello/Menchero 是其特例）⑨ **VCP v1.2 RECOVERY 边界对齐**（v1.8.0 新增：§3.3 Merkle root 升级时同步对齐 VCP v1.2 的 SKIP/REBUILD/MERGE/CHECKPOINT 恢复流程，仅协议文档约束无代码开销）⑩ **MCR/CCR 风险分解评估**（v1.14.0 新增：§3.14 calc_mcr_ccr_risk_attribution + calc_strategy_risk_attribution，若 owner 需"哪个策略贡献了最多组合波动率"风险维度归因 + §3.5 Brinson 收益归因已稳定运行 + 60 日协方差估计稳定时，归因报告增加风险贡献维度 CCR_pct + risk_concentration_ratio 反馈 30 号 budget 调整）
+- **第二阶段（首批策略 track record 3 个月后）**：① 盘后全量对账（券商对账单接入）② 因子归因（factor_contributions，若 Brinson 不足以解释）③ 监管报告自动化（若 AUM 达门槛）④ **A 股 PnL waterfall 框架**（若 Brinson 残差持续 > 0.01% + 需区分信号/选股/择时失效时）⑤ **deflated-alpha v0.3.0 月/季归因报告接入**（v1.4.0 新增：月/季归因报告调用 `audit()` 跑齐 4 类检验 + OOS 退化斜率，verdict == LIKELY_OVERFIT → 触发 55 号 §3.5 评审通道）⑥ **regime-conditional 归因**（v1.5.0 新增：§3.11 attribute_by_regime 按 28 号 regime 分桶 Brinson + regime_fit_share vs skill_share 分解，若 Brinson 总归因残差持续 > 0.01% + 需区分顺风/skill 时）⑦ **Shapley 值归因评估**（v1.5.0 新增：§3.12 shapley_strategy_attribution，若策略间相关性 IC > 0.5 + owner 需公平分配交互效应 + 策略数 ≤ 8 时）⑧ **Hentschel GLS 统一归因框架评估**（v1.8.0 新增：§3.13 hentschel_gls_attribution，若 Carino residual 持续 > 1bp + 策略数 ≥ 5 + 持仓变动频率高时，把多期链接+交互项再分配+因子残差再分配统一为受限 GLS 估计，Carino/Frongello/Menchero 是其特例）⑨ **VCP v1.2 RECOVERY 边界对齐**（v1.8.0 新增：§3.3 Merkle root 升级时同步对齐 VCP v1.2 的 SKIP/REBUILD/MERGE/CHECKPOINT 恢复流程，仅协议文档约束无代码开销）⑩ **MCR/CCR 风险分解评估**（v1.14.0 新增：§3.14 calc_mcr_ccr_risk_attribution + calc_strategy_risk_attribution，若 owner 需"哪个策略贡献了最多组合波动率"风险维度归因 + §3.5 Brinson 收益归因已稳定运行 + 60 日协方差估计稳定时，归因报告增加风险贡献维度 CCR_pct + risk_concentration_ratio 反馈 30 号 budget 调整）
 - **第三阶段（AUM 增长或合规要求升级时）**：① Barra 因子风险归因（若机构化）② wash trade/spoofing 检测（若多账户）③ 多 custodian 三方对账（若跨市场）
 
 ### 5.3 为何这是上限而非妥协
@@ -2638,7 +2650,7 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 **开放问题**（需人决策/实盘校准）：
 - **基准选取**：各策略的 benchmark 选沪深 300/中证 500/策略自定义？Brinson 归因的前提是基准定义
 - **Brinson 板块划分**：A 股板块按申万一级（28 行业）/风格（价值/成长/周期/防御）/策略自定义？影响 allocation effect 粒度
-- **大额异动阈值**：当前框架已实现但阈值待校准（实盘数据回归后定）
+- **大额异动阈值**：检测未施工（算法见 §3.6），阈值待实盘校准（实盘数据回归后定）
 - **transaction_cost_drag 接入**：DefaultTcaEngine 的 IS 成本如何映射到 transaction_cost_drag 字段（总和/分项）
 - **MOD-RPT-015 绩效归因报告**：planned 未实现，报告格式需对齐 PerformanceAttributionReport 契约
 - **Carino 链接粒度**（v1.1.0 新增）：周/月报用日频单期链接，季报用周频单期链接——待实盘数据量评估后定（日频链接计算开销 vs 精度）
@@ -2654,16 +2666,16 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 - **CTR-P1-007 产出逻辑**（v1.15.0 新增）：契约 codegen 已落盘但 execution_core 产出逻辑 GAP-L06-003 P0 待施工——BM-REC-02-B 的 TCA/归因数据流上游依赖，battle_map "暂不可建"标注的残余阻塞
 - **盘后 15:30 调度接线**（v1.15.0 新增）：无调度器任务（APScheduler/work_dag 均无）——SettlementReconciler/DailyAuditor 盘后触发当前只能手动/事件调用
 - **对账/归因 DB 持久化 schema**（v1.15.0 新增）：audit_trail 表/对账差异表/归因结果表/report_archive 均无 DDL——三阶段审计轨迹与报告归档的落库前提
-- **55 号对接回对齐**（v1.15.0 新增）：55 号当前 v0.1.0 骨架；本备忘 §3.9/§3.10/§8.1 的 55 号小节级引用为设计预留——55 号施工定型后须回填真实小节号与版本（另：00_index G26 状态标注 v1.21.0 与磁盘 v0.1.0 漂移，越界项登记供 00_index owner 处理，本备忘不改他文档）
+- **55 号对接回对齐**（v1.15.0 新增 / v1.15.8 已对齐）：55 号已 active v1.0.2——本备忘 §3.9/§3.10/§5.1/§5.2/§8.1 的 55 号引用已按其实际结构对齐（退役评审=§3.5 双判据+评审制、偏离度量=§3.4、CUSUM/PSI=§3.2B/§3.3）；残余：55 号由 AI-MON-001 并发施工中，若其结构再变需二次对齐（另：00_index G26 状态标注 v1.21.0 与磁盘 v1.0.2 漂移，越界项登记供 00_index owner 处理，本备忘不改他文档）
 
 ## 8. 引用
 
 ### 8.1 相关设计备忘
-- [40_execution_broker](40_execution_broker.md)（G22 v2.9.2，成交回报/持仓/资金流水产出物，依赖项；fill_id 幂等见 §6.1 gap 12 AsyncFillDispatcher）
+- [40_execution_broker](40_execution_broker.md)（G22 v2.11.2，成交回报/持仓/资金流水产出物，依赖项；fill_id 幂等见 §6.1 gap 12 AsyncFillDispatcher）
 - [30_multi_strategy_concurrency](30_multi_strategy_concurrency.md) §2.2 StrategyBook 独立 PnL / §2.5 回撤 Protocol / §2.2 RegimeMetaAllocator budget
 - [34_regime_meta_allocator](34_regime_meta_allocator.md) §3.1（v1.15.0 新增：PerformanceScore 60 日 Sortino 口径真源，§3.5 对接）
 - [53_simulation_live_path](53_simulation_live_path.md)（G24，模拟实盘路径；SHADOW/GRAY_RAMP 阶段实盘成交供本备忘对账归因；§3.5 执行对账门禁阈值衔接本备忘 SettlementReconciliation）
-- [55_monitoring_review](55_monitoring_review.md)（G26，**当前 v0.1.0 draft 骨架**（2026-08-09），下游复盘消费归因结果；本备忘 §3.9/§3.10 中所有"55 号 §x.x"引用为设计预留对接点——55 号施工定型后须回对齐，见 §7 开放问题）
+- [55_monitoring_review](55_monitoring_review.md)（G26，active v1.0.2（2026-08-15），下游复盘消费归因结果；本备忘 §3.9/§3.10/§5 的 55 号引用已按其 v1.0.2 实际结构对齐，并发施工残余风险见 §7 开放问题）
 - [31_position_sizing](31_position_sizing.md) §2.3.4（sizing_basis 归因维度，§3.8 对接）
 - [50_backtest_observability_workplan](50_backtest_observability_workplan.md)（回测可观测性，归因回测验证）
 - [62_business_registry_construction](62_business_registry_construction.md)（v1.15.0 新增：§7.2 experiment_registry.attribution_result 字段登记约定——归因执行逻辑以本备忘为真源，62 号仅登记结果；data_asset_registry 待施工，对账/归因数据资产登记缺口见 §7 开放问题）
@@ -2783,3 +2795,4 @@ def calc_strategy_risk_attribution(strategy_returns: dict[str, np.ndarray],
 | 2026-08-12 | 1.15.5 | §3.14 末尾补作战地图环节映射（BM-SEL-21-E/BM-RC-08-A/BM-RC-08-B） | 环节级可追溯 |
 | 2026-08-14 | 1.15.6 | 压缩精简：噪音去除+施工细节梳理，零信息丢失审查通过（AI-DOCS-001）；修复前序压缩会话截断事故（§7/§8/§9 整章恢复） | 待施工真源保守压缩：伪代码/契约/参数表/验收标准全保留，删除过程性叙述与重复解释 |
 | 2026-08-15 | 1.15.7 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-04）——§5.1 上限定义 10 条与 §3 重复的参数细节真源+指针化（sizing_basis 5 约束枚举→§3.8、置信度权重/三带→§3.3、Brinson+Carino 公式→§3.2、T+1 拆分算法→§3.2、waterfall 施工算法→§3.2、异常检测/verdict 阈值→§3.6/§3.9、漂移检测→§3.3、MAD→§3.6、stale-value→§3.6、Merkle 升级→§3.3），上限裁定与 Phase 定性保留；§3.3 VCP v1.1"为何 Phase 2"与 Merkle 段重复理由并指；§5.1 正交维度条"条件数 <10"与 §3.10 算法阈值（30）冲突，统一为指针口径 | 8 类扫描 12 处（类别 3 重复信息×11、类别 5 冗余×1）；IS 四组件/Brinson 公式/费率口径/阈值全部保留于 §3 真源 |
+| 2026-08-15 | 1.15.8 | Step 1 复核收敛（AI-RCAN-001）：§1 状态行版本漂移修正；40/30 号引用版本同步（v2.11.2/v2.6.1）；55 号已 active v1.0.2——§3.9/§3.10/§5.1/§5.2/§7/§8.1 全部 55 号引用按其实际结构对齐（退役评审=§3.5、偏离度量=§3.4、CUSUM/PSI=§3.2B/§3.3、FSI 真源=61 号）；§3.1/§3.6/§3.7 AsharePerformanceAudit 能力描述校准为实际 5 类审计（55 号 §7 越界登记 #1 本域闭环）；§3.3 BM-POS-10 状态 design→production 对齐 battle_map_08；施工算法 bug 修复 7 处——carino_link_periods 改标准 Cariño 1999 形式（原式零基准极限 Σlinked≡1≠G，过不了自家 residual<1e-6 门禁）、t1_locked_weight 对 dict 求和 TypeError、层3 group_by 误传 tuple-of-lists AttributeError、trade_date/.date 属性名不一致致 partial 匹配静默失效、aggregate 缺 date 过滤跨日混聚、exact/fuzzy 层已命中结算单未排除防双计、backtest_best_sharpe 缺 /std 量纲错误 | 文档审查发现：版本漂移+悬空引用+状态夸大+伪代码缺陷；决策零变更，公式修复对齐本备忘自定求和不变量门禁 |
