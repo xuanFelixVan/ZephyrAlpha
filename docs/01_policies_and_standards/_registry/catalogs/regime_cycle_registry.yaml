@@ -10,10 +10,11 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 state（周期=规则性时间窗口状态量）；primary_timeframe 由既有 timeframe 字段映射（daily→daily，yearly 等枚举外值→null 占位）；direction 默认 neutral 占位；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   周期、均值回归、时间窗、江恩、波动、突破、绩效、规则、震荡
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-CYCLE-001
 name: Regime Cycle Registry
 name_zh: 周期分析注册表
@@ -28,7 +29,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.1
+version: 1.1.2
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -68,6 +69,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 cycles:
   # ============================================================
@@ -104,6 +107,8 @@ cycles:
     tags: ["周期", "江恩", "规则", "时间窗"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-TIME-002"
     name: "Gann 60-Day Cycle"
@@ -136,6 +141,8 @@ cycles:
     tags: ["周期", "江恩", "规则", "时间窗"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-TIME-003"
     name: "Gann 90-Day Cycle"
@@ -168,6 +175,8 @@ cycles:
     tags: ["周期", "江恩", "规则", "时间窗"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-TIME-004"
     name: "Gann Anniversary Cycle"
@@ -200,6 +209,8 @@ cycles:
     tags: ["周期", "江恩", "规则", "时间窗"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # PRICE CYCLES（价格周期）— 波段幅度对称
@@ -235,6 +246,8 @@ cycles:
     tags: ["周期", "规则", "波动"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-PRICE-002"
     name: "Gann 50% Retracement"
@@ -267,6 +280,8 @@ cycles:
     tags: ["周期", "震荡", "江恩", "规则", "波动"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # GEOMETRIC CYCLES（几何周期）— Gann 角度/九方图（已登 TREND-009/010，此处登记周期维度）
@@ -302,6 +317,8 @@ cycles:
     tags: ["突破", "周期", "江恩", "均值回归", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-GEO-002"
     name: "Gann Square of Nine Time"
@@ -334,6 +351,8 @@ cycles:
     tags: ["周期", "江恩", "规则", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # STATISTICAL CYCLES（统计周期）— 现代量化重述
@@ -369,6 +388,8 @@ cycles:
     tags: ["周期"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-STAT-002"
     name: "Rolling Autocorrelation Cycle"
@@ -401,6 +422,8 @@ cycles:
     tags: ["周期", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-STAT-003"
     name: "Cycle Clustering"
@@ -433,6 +456,8 @@ cycles:
     tags: ["周期"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - cycle_id: "CYC-STAT-004"
     name: "Regime-Switching Cycle"
@@ -465,6 +490,8 @@ cycles:
     tags: ["周期"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
 # ============================================================
 # 与相关注册表的边界（2026-08-14 澄清）
