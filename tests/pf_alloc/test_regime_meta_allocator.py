@@ -1,4 +1,14 @@
-# [BLUEPRINT] MOD-PA-006 | (auto-injected by S4 reconciler) | §
+# [A_test] module_id: MOD-PA-007 | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-PA-007 | docs/03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md | §
+# [MODULE] tests.pf_alloc.test_regime_meta_allocator
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [CONSUMERS] pytest
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
+# [ERROR_CONTRACT] none
+# [TESTS] self
 # [TTL] permanent
 """RegimeMetaAllocator 单元测试 (MOD-PA-007)。
 
