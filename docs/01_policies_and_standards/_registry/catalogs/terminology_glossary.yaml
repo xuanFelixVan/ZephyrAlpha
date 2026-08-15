@@ -32,14 +32,15 @@ description: |
   - table_name：数据清单表中文名（tick_data/daily_kline/...）
   - layer_name_short：导航页短名层（L0_infrastructure→基础设施层，无层号前缀；
     长名层 L0 基础设施层 的 SSoT 在 domain_name_mapping.LAYER_NAME_BILINGUAL）
+  - trading_colloquial：A股社区土话→专业术语对照（2026-08-15 扩；用途=AI 读源文档/课程原话引用时锚定唯一专业译法，防自由翻译漂移；append-only 只增不改，新源文档接入时按需追加；条目级别名（形态/战法别名）不在此类，走各业务注册表 aliases 字段）
 
   新增 Dataset/Job/表/数据源后，在对应类别补 en/zh 条目即可，无需改生成器代码。
 owner: MOD-INF-005
 tier: tier_1_governance
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-07-30'
-last_updated: '2026-07-31'
+last_updated: '2026-08-15'
 unique_key:
 - category
 - en
@@ -809,3 +810,193 @@ entries:
   - category: table_name
     en: share_change
     zh: 股本变动
+
+  # ───────── trading_colloquial：A股社区土话→专业术语对照（2026-08-15 扩，append-only）─────────
+  - category: trading_colloquial
+    en: defensive legacy sectors
+    zh: 传统防御板块
+    description: 土话「老登」——煤炭/银行/保险/白酒等传统行业板块（与科技板块相对）
+  - category: trading_colloquial
+    en: KOSPI (Korea Composite Stock Price Index)
+    zh: 韩国综合指数
+    description: 土话「棒子」——A股科技板块的跨市场映射参照（三星/海力士权重高）
+  - category: trading_colloquial
+    en: retail investors
+    zh: 散户
+    description: 土话「韭菜」——A股社区对散户的俗称
+  - category: trading_colloquial
+    en: panic-sold chips at a loss
+    zh: 恐慌盘割肉筹码
+    description: 土话「带血筹码」——恐慌中亏损割出的筹码，底部特征之一
+  - category: trading_colloquial
+    en: state-backed stabilization funds
+    zh: 护盘资金
+    description: 土话「国家队」——通过宽基ETF异常买入托底的资金主体
+  - category: trading_colloquial
+    en: failed limit-up (opened and unsealed)
+    zh: 涨停开板未回封
+    description: 土话「烂板」——涨停后开板且未能回封，涨停质量差
+  - category: trading_colloquial
+    en: aggressive limit-up chain chasing
+    zh: 高辨识度连板接力
+    description: 土话「头铁/拼头铁」——只做辨识度最高连板标的的激进接力
+  - category: trading_colloquial
+    en: laggard follower stocks
+    zh: 后排跟风股
+    description: 土话「杂毛」——板块内后排跟风个股，易A杀
+  - category: trading_colloquial
+    en: rapid sector rotation
+    zh: 快速轮动行情
+    description: 土话「电风扇」——无主线时题材一天一换的快速轮动
+  - category: trading_colloquial
+    en: trading suspension for verification
+    zh: 停牌核查
+    description: 土话「小黑屋/进小黑屋」——异动触发监管停牌核查
+  - category: trading_colloquial
+    en: single-stock strength amid sector outflows
+    zh: 板块单票独强
+    description: 土话「孤勇者」——一只票超大单流入占板块绝大部分、板块整体被卖的集中度极端态
+  - category: trading_colloquial
+    en: sector core stock by turnover
+    zh: 板块成交额最大核心股
+    description: 土话「中军」——板块内容纳大资金、成交额最大的趋势核心股
+  - category: trading_colloquial
+    en: sector follower stocks
+    zh: 板块跟涨股
+    description: 土话「小弟」——跟随龙头上涨的板块内个股
+  - category: trading_colloquial
+    en: shakeout (high amplitude, neutral close)
+    zh: 震仓
+    description: 土话「震仓」——高波动（振幅大）+收盘变化小的洗盘行为，可量化判据
+  - category: trading_colloquial
+    en: matched trading (self-dealing)
+    zh: 对倒
+    description: 土话「对倒」——自买自卖制造成交假象（超大单与大单方向相反为识别特征）
+  - category: trading_colloquial
+    en: wash trading between related accounts
+    zh: 对敲
+    description: 土话「对敲」——关联账户之间对敲交易制造活跃假象，操纵手法
+  - category: trading_colloquial
+    en: catching a falling knife
+    zh: 接飞刀
+    description: 土话「接飞刀」——主跌浪中抄底（四条件判定见 S9.47）
+  - category: trading_colloquial
+    en: gap-down lock-in
+    zh: 闷杀
+    description: 土话「闷杀」——低开低走封死，持仓无法出逃
+  - category: trading_colloquial
+    en: front-running before event
+    zh: 抢跑
+    description: 土话「抢跑」——事件落地前提前建仓/出逃（预判别人的预判）
+  - category: trading_colloquial
+    en: capped height in transitional boards
+    zh: 卡位
+    description: 土话「穿越卡位」——退潮期崛起的新板高度受限（通常4-5板见顶）
+  - category: trading_colloquial
+    en: mid-tier break warning
+    zh: 梯队断层预警
+    description: 土话「吹哨/中位股吹哨」——中位股断板预示板块资金开始撤退
+  - category: trading_colloquial
+    en: leader lagging its own sector
+    zh: 蹭流
+    description: 土话「蹭流」——板块大涨而老龙头不领涨仅尾盘跟随，带动性缺失
+  - category: trading_colloquial
+    en: trapped buying under resistance
+    zh: 压力位下买入被套
+    description: 土话「洗碗/给人家洗碗」——在套牢盘压力位下方买入站岗
+  - category: trading_colloquial
+    en: spring shakeout dip
+    zh: 黄金坑
+    description: 土话「挖坑/黄金坑」——底部筹码加长背景下的打压吸筹形态（形态库已收编）
+  - category: trading_colloquial
+    en: up-day volume dominance
+    zh: 涨跌日量比占优
+    description: 土话「红肥绿瘦/红多绿少」——阳线放量阴线缩量的吸筹量能特征（UDVR>1.5）
+  - category: trading_colloquial
+    en: dual ice point (sentiment + index oversold)
+    zh: 双冰点
+    description: 土话「双冰点」——情绪温度冰点+次日惯性低开的复合超卖状态
+  - category: trading_colloquial
+    en: extreme low turnover (low percentile)
+    zh: 地量
+    description: 土话「地量」——成交额/成交量历史低分位（<5%分位）
+  - category: trading_colloquial
+    en: extreme high volume (selling climax)
+    zh: 天量
+    description: 土话「天量」——成交量历史极值分位（>95%分位），恐慌或出货标志
+  - category: trading_colloquial
+    en: breakout initiation volume
+    zh: 立桩量
+    description: 土话「立桩量/启动量」——放量大阳线启动，其低点转为支撑锚
+  - category: trading_colloquial
+    en: probe (testing order flow)
+    zh: 试盘
+    description: 土话「试盘」——主力意图探测：首次放量高点+缩量回踩+二次放量确认真突破
+  - category: trading_colloquial
+    en: market stabilization buying
+    zh: 护盘
+    description: 土话「护盘」——宽基ETF/权重股异常放量托底买入（非自发企稳）
+  - category: trading_colloquial
+    en: deliberate heavy selling
+    zh: 砸盘
+    description: 土话「砸盘」——大单集中卖出快速打压股价
+  - category: trading_colloquial
+    en: washout (shaking weak hands)
+    zh: 洗盘
+    description: 土话「洗盘」——清洗浮筹：缩量回调不破关键位，五维证伪框架判定
+  - category: trading_colloquial
+    en: manipulated stock
+    zh: 庄股
+    description: 土话「庄股」——被庄家操纵个股（小市值+低价+机构持仓少+无热点画像）
+  - category: trading_colloquial
+    en: speculative momentum stock
+    zh: 妖股
+    description: 土话「妖股」——高波动连板投机强势股
+  - category: trading_colloquial
+    en: limit-up chain break
+    zh: 断板
+    description: 土话「断板」——连板中断（N进N+1失败）
+  - category: trading_colloquial
+    en: limit-up opened intraday
+    zh: 炸板
+    description: 土话「炸板」——涨停盘中开板；炸板率=炸板家数/涨停家数
+  - category: trading_colloquial
+    en: re-seal limit-up
+    zh: 回封
+    description: 土话「回封」——开板后重新封涨停，回封时间越短越强
+  - category: trading_colloquial
+    en: weak-to-strong reversal
+    zh: 弱转强
+    description: 土话「弱转强」——前日烂板/弱势，次日竞价高开>3%+量能确认转强
+  - category: trading_colloquial
+    en: divergence-to-consensus
+    zh: 分歧转一致
+    description: 土话「分歧转一致」——多空分歧后转一致看多（连板接力关键节点）
+  - category: trading_colloquial
+    en: A-shaped kill (spike then full retracement)
+    zh: A杀
+    description: 土话「A杀/A字杀」——急涨后全幅回吐的尖顶反转
+  - category: trading_colloquial
+    en: bullish engulfing reversal
+    zh: 反包
+    description: 土话「反包」——阳线实体吞没前日阴线实体（吞没形态，形态库已收编）
+  - category: trading_colloquial
+    en: active trading tranche
+    zh: 活仓
+    description: 土话「活仓」——用于日内回转交易的仓位（与底仓相对）
+  - category: trading_colloquial
+    en: core holding tranche
+    zh: 底仓
+    description: 土话「底仓」——中长线核心持仓（20日线上方持有不动）
+  - category: trading_colloquial
+    en: highest limit-up chain leader
+    zh: 高度龙
+    description: 土话「高度龙」——当前市场最高连板的情绪龙头
+  - category: trading_colloquial
+    en: catch-up limit-up leader
+    zh: 补涨龙
+    description: 土话「补涨龙」——高度龙打出后跟随补涨的连板龙头
+  - category: trading_colloquial
+    en: transitional leader across regime
+    zh: 穿越龙
+    description: 土话「穿越龙」——穿越退潮期的过渡连板龙头（高度受卡位限制）
