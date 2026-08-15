@@ -17,12 +17,25 @@ Tests each of the four safety constraints independently:
 Blueprint: docs/03_modules/_domain-infra_ops/escalation-protocol/blueprint.md D-022-02
 """
 
+import pytest
+
 from zephyr.governance.escalation import (
     DelegationEngine,
     DelegationStrategy,
     EscalationEvent,
     RuleCategory,
 )
+
+
+@pytest.fixture(autouse=True)
+def _bypass_lsg_gate(monkeypatch):
+    """本文件测试 D-022-02 四级委托安全约束（自委托/环/深度/SLA），非 LSG 集成。
+
+    DelegationEngine.delegate 入口的 lsg_verify_delegation 在无
+    ZEPHYR_LSG_L4_HMAC_SECRET 的环境下 fail-closed DENY（安全设计姿态），
+    与委托约束逻辑正交——单测隔离按件旁路。
+    """
+    monkeypatch.setattr(DelegationEngine, "lsg_verify_delegation", lambda self, event: None)
 
 
 class TestSelfDelegationProhibition:
