@@ -56,11 +56,11 @@ class TestSessionState:
         state = SessionState()
         assert state.session_id == ""
         assert state.dialogue_number == 0
-        assert state.current_layer == ""
+        assert state.current_layer == 0  # 生产跟进：int 型（session_continuity.py L64）
         assert state.cards_completed == []
         assert state.cards_failed == []
         assert state.last_checkpoint_json == ""
-        assert state.last_journal_line == ""
+        assert state.last_journal_line == 0  # 生产跟进：int 型（L68）
         assert state.timestamp_utc == ""
         assert state.metadata == {}
 
@@ -132,7 +132,7 @@ class TestSessionContinuityInit:
 
     def test_none_db_path_uses_default(self, tmp_path: Path):
         sc = SessionContinuity(project_root=tmp_path)
-        assert sc.db_path == tmp_path / "data" / "databases" / "governance.db"
+        assert sc.db_path == tmp_path / "data" / "databases" / "session_continuity.db"  # 生产跟进：独立库（L93/132/134）
 
 
 class TestSaveLoadSessionState:
@@ -202,25 +202,25 @@ class TestGenerateContinuityContext:
             cards_failed=["card-C"],
         )
         ctx = sc.generate_continuity_context(state)
-        assert "Completed 2 cards" in ctx.progress_summary
-        assert "failed 1 cards" in ctx.progress_summary
+        assert "2 cards completed" in ctx.progress_summary  # 生产措辞跟进
+        assert "1 failed" in ctx.progress_summary  # 生产措辞跟进
         assert ctx.remaining_cards == ["card-C"]
         assert "card-B" in ctx.next_action
 
     def test_with_only_failed(self, sc: SessionContinuity):
         state = SessionState(cards_failed=["card-X"])
         ctx = sc.generate_continuity_context(state)
-        assert "Completed 0 cards" in ctx.progress_summary
-        assert "failed 1 cards" in ctx.progress_summary
+        assert "0 cards completed" in ctx.progress_summary  # 生产措辞跟进
+        assert "1 failed" in ctx.progress_summary  # 生产措辞跟进
         assert ctx.remaining_cards == ["card-X"]
         assert "card-X" in ctx.next_action
 
     def test_with_empty_state(self, sc: SessionContinuity):
         state = SessionState()
         ctx = sc.generate_continuity_context(state)
-        assert "Completed 0 cards" in ctx.progress_summary
+        assert "0 cards completed" in ctx.progress_summary  # 生产措辞跟进
         assert ctx.remaining_cards == []
-        assert ctx.next_action == ""
+        assert ctx.next_action == "Start fresh"  # 生产措辞跟进（与 unit 文件口径一致）
 
     def test_with_completed_no_failed(self, sc: SessionContinuity):
         state = SessionState(cards_completed=["card-1"])
@@ -317,7 +317,7 @@ class TestPrintRestoreSummary:
     def test_no_handoff_prints_first_session(self, sc: SessionContinuity, capsys: pytest.CaptureFixture[str]):
         sc.print_restore_summary()
         output = capsys.readouterr().out
-        assert "第一次 session" in output or "没有历史交接包" in output
+        assert "没有发现历史交接包" in output or "冷启动" in output  # 生产文案跟进（L734）
 
     def test_with_handoff_prints_summary(self, sc: SessionContinuity, capsys: pytest.CaptureFixture[str]):
         sc.save_session_state(

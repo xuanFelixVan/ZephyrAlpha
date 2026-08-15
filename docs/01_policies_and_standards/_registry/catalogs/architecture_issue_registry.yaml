@@ -16928,3 +16928,35 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-089'
+  title: serialization.py SerializationError 重复定义——后定义（Exception, ZA-SH-0035）遮蔽正确版（ZephyrBaseError, ZA-SH-0034），全部 raise 点必 TypeError
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/io/test_io_serialization.py 6 项）：src/zephyr/shared/io/serialization.py 两处定义同名 SerializationError——L77 正确版（ZephyrBaseError 子类，error_code=ZA-SH-0034，__init__ 收 details= kwarg）与 L379 坏版（plain Exception，ZA-SH-0035，__init__(*args, error_code=None, **kwargs) 透传 kwargs 给 Exception 必 TypeError）。后定义遮蔽前定义 → 模块内全部 raise 点（L101/110/119/131/161/176/207 均带 details={}）在 raise 瞬间即崩，序列化错误路径整体不可用。真代码 bug，修复机械唯一：删 L379-386 重复类（已修，6 项测试原样通过）。遗留待裁定：error_code_registry.yaml L753-760 把 ZA-SH-0034 与 ZA-SH-0035 同时登记给 SerializationError（一厂两码注册表漂移）——保留 ZA-SH-0034（存活版），ZA-SH-0035 条目悬空待裁定删除或改标 deprecated。'
+  fix_phase: 已修（删重复类）；ZA-SH-0035 注册表悬空条目待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-090'
+  title: MCPError.error_code 传输层丢弃——_base_server MCPError 分支只透出 message，tool_contracts.yaml 声明的 ZA 码客户端永不可见
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/infrastructure/test_mcp_servers.py 6 项）：src/zephyr/integration/mcp/_base_server.py L557 MCPError 分支 `return self._err(req_id, exc.code, exc.message, exc.data)`——error_code 既不进 message 也不进 data，而生产 raise 点（gate_engine_server L288/313/330/370、doc_guard_server L249/262/273、sentinel_server L188/209）都显式携带 error_code="ZA-*"，tool_contracts.yaml 把 ZA 码声明为各工具 error surface。契约声明的错误码在传输层被整个丢弃。已修（message 前缀内嵌 `[{error_code}]`，测试零改动 6 项转绿；透出的是契约声明 surface 非内部细节，不违 #ARCH-SEC-001 5.168 信任边界）。备选裁定（若团队倾向结构化字段）：改在 data 携带 error_code 并把 6 项测试断言转 err["data"]["error_code"]——当前内嵌实现可在裁定后迁移。'
+  fix_phase: 已修（message 内嵌）；结构化 data 承载备选待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-091'
+  title: OCP-004 三层安全网关重写后"文件写 WARN"规则消失——安全覆盖回退 vs 有意收窄待裁定
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/trading/pipeline/test_phase_f_layers.py）：DefaultSecurityGateway（OCP-004 三层防御重写版，src/zephyr/governance/security_governance/default_security_gateway.py）对输入 `with open("config.txt","w") as f: f.write("/etc/hosts")` 零 finding → decide ALLOW；旧实现有"文件写 WARN+FLAG"规则。重写中该规则消失——若是安全覆盖回退则应补规则（转代码缺口），若有意收窄则测试改写/删除。测试已 xfail(strict=False) 留痕。附带代码侧线索（同批侦察发现，建议同裁定一并核查）：①decide(list) 分支 `has_errors = any(...) or len(risks) > 0`（L310）使 FLAG 分支不可达（任何非空 risks 都 BLOCK）——疑似真 bug；②shared/contracts/model_serving_response.py 与 experiment/ 双份 codegen 类、contract_metrics.py 本地死 DriftAlert——SSoT 隐患（测试已跟进 canonical 路径）。'
+  fix_phase: 待裁定（补 WARN 规则 / 收窄确认后改测试）；①②线索建议同批核查
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-092'
+  title: scripts/governance 存量批量改写损伤——_shared import 收拢到 sys.path bootstrap 前 / 迁入子目录未修 bootstrap（75+ 脚本 --help 崩溃）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/governance/integration/test_all_scripts.py 6 项）：并行冒烟探测（子进程 --help/--warn-only/--jsonl）实报脚本层批量损伤，两种机械形态：①`from _shared.*` 被"PEP8 import 收拢"提升到 sys.path bootstrap 之前——子目录脚本 sys.path[0]≠scripts/governance → ModuleNotFoundError（实证 cbg_reset.py L48 vs bootstrap L65-71、auto_generate_index.py L39、any_type_inferrer.py L64 插在既有 noqa 行前且 bootstrap 插错根；multiline grep from __future__\\n+from _shared\\. 命中 15+ 文件）；②脚本迁入维度子目录但未修 bootstrap（ci_self_check.py 全文无 bootstrap 却 from _shared.constants，[BLUEPRINT] 头仍写旧路径；audit_agent_spec.py L46 sys.path 指向不存在目录）。损伤已在 HEAD（非本轮 pytest 污染——工作区 restore 后文件与 HEAD 一致仍崩）。测试是健康探测器不应改——6 项已 xfail(strict=False) 留痕待专项清偿批。修复方向（专项批）：批量把 _shared import 挪回 bootstrap 后 / 为被移动脚本补 parents 探测式 bootstrap / 修 stale [BLUEPRINT] 路径；并追溯损伤提交批次评估回滚可能。附带裁定：test_jsonl_all 另暴露手写 argv 解析冒烟脚本（git_health_smoke.py L196-201 把 --warn-only 当 repo 路径）吞未知 flag+多行 JSON 输出，与 JSONL 质量门契约不合——补 argparse 主干 或 质量门豁免手写脚本，待裁定。'
+  fix_phase: 待专项清偿批（脚本批量修复/回滚评估）；JSONL 契约范围附带裁定；6 项测试已 xfail 留痕
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

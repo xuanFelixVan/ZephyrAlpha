@@ -555,7 +555,10 @@ class BaseMCPServer:
             self._log.warning("invalid_params", tool=tool_name, error=str(exc))
             return self._err(req_id, ERR_INVALID_PARAMS, f"Invalid params for tool {tool_name!r}")
         except MCPError as exc:
-            return self._err(req_id, exc.code, exc.message, exc.data)
+            # #ARCH-090：tool_contracts.yaml 声明 ZA 码为 error surface，但此前传输层
+            # 只透出 message 致客户端永不可见——message 前缀内嵌错误码（契约合规透出，
+            # 非内部细节，不违 #ARCH-SEC-001 5.168 信任边界）
+            return self._err(req_id, exc.code, f"[{exc.error_code}] {exc.message}", exc.data)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.error("tool_execution_error", tool=tool_name, error=str(exc))
             return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")

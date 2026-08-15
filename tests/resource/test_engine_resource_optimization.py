@@ -224,13 +224,15 @@ class TestCircuitBreaker:
         cb.record_failure()
         assert cb.state == CircuitBreakerState.OPEN
         time.sleep(0.1)
-        assert cb.state == CircuitBreakerState.HALF_OPEN
+        # 5.91.3 跟进：state 纯读不迁移——allow() 触发 _try_recover 迁至 HALF_OPEN
         assert cb.allow() is True
+        assert cb.state == CircuitBreakerState.HALF_OPEN
 
     def test_half_open_success_closes(self):
         cb = CircuitBreaker(failure_threshold=1, recovery_timeout_s=0.05)
         cb.record_failure()
         time.sleep(0.1)
+        assert cb.allow() is True  # 触发迁移
         assert cb.state == CircuitBreakerState.HALF_OPEN
         cb.record_success()
         assert cb.state == CircuitBreakerState.CLOSED
@@ -239,6 +241,7 @@ class TestCircuitBreaker:
         cb = CircuitBreaker(failure_threshold=1, recovery_timeout_s=0.05)
         cb.record_failure()
         time.sleep(0.1)
+        assert cb.allow() is True  # 触发迁移
         assert cb.state == CircuitBreakerState.HALF_OPEN
         cb.record_failure()
         assert cb.state == CircuitBreakerState.OPEN
@@ -247,8 +250,8 @@ class TestCircuitBreaker:
         cb = CircuitBreaker(failure_threshold=1, recovery_timeout_s=0.05, half_open_max_calls=1)
         cb.record_failure()
         time.sleep(0.1)
+        assert cb.allow() is True  # 触发迁移并占唯一 half-open 额度
         assert cb.state == CircuitBreakerState.HALF_OPEN
-        assert cb.allow() is True
         assert cb.allow() is False
 
     def test_reset(self):
@@ -277,8 +280,10 @@ class TestResourceOptimizationEngine:
         e2 = ResourceOptimizationEngine()
         assert e1 is not e2
 
-    @patch("zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.psutil", create=True)
-    def test_snapshot_with_psutil(self, mock_psutil):
+    def test_snapshot_with_psutil(self):
+        # 跟进：snapshot() 函数内 import psutil——sys.modules 注入即生效，
+        # 旧 patch 目标（infrastructure.shared_services）已不存在，删除
+        mock_psutil = MagicMock()
         mock_mem = MagicMock()
         mock_mem.percent = 65.0
         mock_mem.used = 10 * 1024**3
@@ -398,7 +403,7 @@ class TestMonitorLoop:
         time.sleep(0.5)
         health = engine.health_check()
         assert health.engine_running is True
-        assert health.monitor_loop_alive is True
+        assert health.monitor_loop_alive is False  # P1 修复 2026-07-05：事件驱动（EventBus 订阅），无后台线程
         engine.stop_monitor()
         time.sleep(1.5)
         health = engine.health_check()
