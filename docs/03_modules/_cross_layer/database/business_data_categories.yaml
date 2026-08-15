@@ -4,10 +4,11 @@
 # 每个品类一条记录: category_id / name / engine / table / schema_file / data_type / lifecycle / sla_level / enabled / calc_mode
 # 新增品类 = 加一条YAML记录（不改代码）
 #
-# 当前覆盖范围:
+# 当前覆盖范围（2026-08-15 实测校正，AI-NORTH-001）:
 #   C0 meta: 1条
-#   C1 market_clickhouse: 76条（全量表）
-#   C3 fundamental: 21条（全量表）
+#   C1 market_clickhouse: 90条（全量表）
+#   C3 fundamental: 23条（全量表）
+#   合计 114 条 category_id 全唯一
 #
 # 注意：
 #   - "index"一词在数据库中有多义，见各表 name 字段的精确描述
