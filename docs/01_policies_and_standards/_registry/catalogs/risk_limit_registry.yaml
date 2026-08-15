@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：timeframe×2（限额周期语义由 review_cycle/kri_frequency 表达，非 K 线周期）+ direction（风控限额无方向语义）。保留 regime×2（限额在 panic/high_vol 环境收紧，有语义价值）+ entry_role=rule + 共有四维度；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   仓位、信号、反转、回撤、对冲、成本、执行、支撑、数据、杠杆、止损、波动、流动性、盘口、突破、组合、绩效、股票池、行业、行情、规则、质量、资金、趋势、通胀、集中度、震荡、风控
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -23,7 +25,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.0
+version: 1.2.1
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -141,7 +143,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["止损", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -176,7 +178,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["突破", "支撑", "止损", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -211,7 +213,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["回撤", "止损", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -246,7 +248,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["止损", "回撤", "仓位", "成本", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -281,7 +283,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["突破", "回撤", "止损", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -316,7 +318,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["止损", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -351,7 +353,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["回撤", "止损", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -386,7 +388,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["止损", "质量", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -423,8 +425,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["market"]
+    tags: ["仓位", "组合", "行情", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -456,8 +458,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["etf"]
+    tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -490,7 +492,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["趋势", "仓位", "集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -523,7 +525,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -556,7 +558,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -589,7 +591,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -622,7 +624,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "组合", "规则", "绩效", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -655,7 +657,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -688,7 +690,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -721,7 +723,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "对冲", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -750,11 +752,11 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
-    regime_valid: []
+    regime_valid: ["trend_down"]
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["反转", "仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -787,7 +789,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "通胀", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -820,7 +822,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -849,11 +851,11 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
-    regime_valid: []
+    regime_valid: ["trend_down"]
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -886,7 +888,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -918,8 +920,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["仓位", "行业", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -952,7 +954,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -984,8 +986,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["仓位", "股票池", "规则", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1018,7 +1020,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "仓位", "执行", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1051,7 +1053,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "仓位", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1084,7 +1086,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "仓位", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1121,8 +1123,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["stock"]
+    tags: ["集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1155,7 +1157,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["仓位", "集中度", "组合", "规则", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1188,7 +1190,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1220,8 +1222,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["风控", "行业", "集中度", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1254,7 +1256,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["资金", "集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1286,8 +1288,8 @@ risk_limits:
     regime_valid: []
     regime_invalid: []
     entry_role: "rule"
-    applies_to: []
-    tags: []
+    applies_to: ["sector"]
+    tags: ["风控", "仓位", "行业", "集中度", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1324,7 +1326,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["杠杆", "规则", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1361,7 +1363,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["流动性", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1399,7 +1401,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "通胀", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1432,7 +1434,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1465,7 +1467,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "数据"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1498,7 +1500,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1531,7 +1533,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1571,7 +1573,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1606,7 +1608,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "震荡", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1641,7 +1643,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1676,7 +1678,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "规则", "风控"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1711,7 +1713,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["波动", "仓位", "组合", "风控", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
 
@@ -1749,7 +1751,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1782,7 +1784,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "规则", "风控"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1815,7 +1817,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "风控", "规则"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1853,7 +1855,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["回撤", "组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1886,7 +1888,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "回撤", "盘口", "组合", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1919,7 +1921,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["回撤", "组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1952,7 +1954,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["回撤", "组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -1985,7 +1987,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2018,7 +2020,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2051,7 +2053,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2084,7 +2086,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2117,7 +2119,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2150,7 +2152,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "绩效", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2183,7 +2185,7 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["执行", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -2216,6 +2218,6 @@ risk_limits:
     regime_invalid: []
     entry_role: "rule"
     applies_to: []
-    tags: []
+    tags: ["风控", "组合", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
