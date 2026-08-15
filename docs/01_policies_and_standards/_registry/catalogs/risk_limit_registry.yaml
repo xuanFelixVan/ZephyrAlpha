@@ -1,7 +1,17 @@
 # [A_config] module_id=REG-RLM-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：裁剪：timeframe×2（限额周期语义由 review_cycle/kri_frequency 表达，非 K 线周期）+ direction（风控限额无方向语义）。保留 regime×2（限额在 panic/high_vol 环境收紧，有语义价值）+ entry_role=rule + 共有四维度；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '2.0'
 registry_id: REG-RLM-001
 name: 风控限额登记表
 description: >-
@@ -13,9 +23,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.2.0
 created: '2026-08-10'
-last_updated: '2026-08-13'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - risk_limit_id
@@ -86,6 +96,13 @@ entry_schema:
                                    #   event_driven 策略 applicability=conditional（事件窗口划定不得依赖非公开信息）
                                    # 短线交易规定（适用主体 5%+股东/董监高）：个人非大股东 applicability=not_applicable
                                    # 个人量化基于公开数据不涉内幕；compliance_notices 作合规存档非阻断门禁
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 risk_limits:
   # ============================================================
@@ -120,6 +137,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-002"
     name: "Break Support Stop Loss"
@@ -148,6 +172,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-003"
     name: "Sell Even at Limit Down"
@@ -176,6 +207,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-004"
     name: "Trial Position Cost-Blind Stop Loss"
@@ -204,6 +242,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-005"
     name: "Life-or-Death Line Breach Clearance"
@@ -232,6 +277,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-006"
     name: "Time Stop Loss Three Tiers"
@@ -260,6 +312,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-007"
     name: "First-Minute Error Correction"
@@ -288,6 +347,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-DRAWDOWN-008"
     name: "Profit Protection Stop Loss"
@@ -316,6 +382,13 @@ risk_limits:
     response_strategy: "mitigate"
     drawdown_calibration_method: "gaussian"
     pain_metric: {metric_type: none, threshold: null, monitoring_window_days: 252}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # POSITION（仓位类）— 21条
@@ -347,6 +420,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-002"
     name: "Broad ETF Allocation 20-30%"
@@ -373,6 +453,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-003"
     name: "Heavy Position in Uptrend Light in Downtrend"
@@ -399,6 +486,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-004"
     name: "No Blind Averaging Down"
@@ -425,6 +519,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-005"
     name: "Position Split Ballast Plus Attack"
@@ -451,6 +552,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-006"
     name: "Three-Tier Position Allocation"
@@ -477,6 +585,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-007"
     name: "Dynamic Position Cap Adjustment"
@@ -503,6 +618,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-008"
     name: "Emergency Position Adjustment"
@@ -529,6 +651,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-009"
     name: "Pre-Embedded Add Position Path"
@@ -555,6 +684,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-010"
     name: "Barbell Hedging"
@@ -581,6 +717,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-011"
     name: "Rebound Halve to Attack Position"
@@ -607,6 +750,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-012"
     name: "Resonance Level to Position Mapping"
@@ -633,6 +783,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-013"
     name: "Resonance Strategy First Position is Final"
@@ -659,6 +816,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-014"
     name: "No Bottom Fishing"
@@ -685,6 +849,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-015"
     name: "Regulatory Anomaly Avoidance"
@@ -711,6 +882,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-016"
     name: "Sector Ebb Warning"
@@ -737,6 +915,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-017"
     name: "Absolute Blacklist"
@@ -763,6 +948,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-018"
     name: "Stock Pool Whitelist Pre-Check"
@@ -789,6 +981,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-019"
     name: "Trigger Condition Bound Execution"
@@ -815,6 +1014,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-020"
     name: "Probability Tiered Position Sizing"
@@ -841,6 +1047,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-POSITION-021"
     name: "Strategy Win-Rate Driven Position (Kelly)"
@@ -867,6 +1080,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # CONCENTRATION（集中度类）— 6条
@@ -898,6 +1118,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-CONCENTRATION-002"
     name: "Total Position Control Rule"
@@ -924,6 +1151,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-CONCENTRATION-003"
     name: "Correlation Matrix Exposure Merge"
@@ -950,6 +1184,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-CONCENTRATION-004"
     name: "Single Sector Cap 20 Percent"
@@ -976,6 +1217,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-CONCENTRATION-005"
     name: "Large Capital Anti-Landmine"
@@ -1002,6 +1250,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-CONCENTRATION-006"
     name: "Lone Wolf Sector Concentration"
@@ -1028,6 +1283,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # LEVERAGE（杠杆类）— 1条
@@ -1058,6 +1320,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # TURNOVER（换手类）— 1条
@@ -1088,6 +1357,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # FIRM_RISK（公司级类）— 5条
@@ -1119,6 +1395,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-FIRM-RISK-002"
     name: "QMT Disconnection Risk"
@@ -1145,6 +1428,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-FIRM-RISK-003"
     name: "Data Limitation Disclosure"
@@ -1171,6 +1461,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-FIRM-RISK-004"
     name: "Three Scenario Contingency Plans"
@@ -1197,6 +1494,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   - risk_limit_id: "RLM-FIRM-RISK-005"
     name: "Three-Stage Timed Verification"
@@ -1223,6 +1527,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # VAR（VaR类）— 5条（K4遗留补登 2026-08-13，AI-REG-K4-001）
@@ -1256,6 +1567,13 @@ risk_limits:
     response_strategy: "mitigate"
     var_calibration_method: "historical"
     risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-VAR-002"
     name: "Systemic Risk Level ORANGE (VaR 4%)"
@@ -1284,6 +1602,13 @@ risk_limits:
     response_strategy: "mitigate"
     var_calibration_method: "historical"
     risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-VAR-003"
     name: "Systemic Risk Level RED (VaR 6%)"
@@ -1312,6 +1637,13 @@ risk_limits:
     response_strategy: "mitigate"
     var_calibration_method: "historical"
     risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-VAR-004"
     name: "Entry VaR 1.2x Framework Rule"
@@ -1340,6 +1672,13 @@ risk_limits:
     response_strategy: "mitigate"
     var_calibration_method: "historical"
     risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-VAR-005"
     name: "30-Day Volatility Z-Score Adjustment"
@@ -1368,6 +1707,13 @@ risk_limits:
     response_strategy: "mitigate"
     var_calibration_method: "historical"
     risk_contribution_decomposition: {inherent_component: null, correlation_component: null, decomposition_method: standard_rc}
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
 
   # ============================================================
   # ES（期望短缺类）— 3条（K4遗留补登 2026-08-13，AI-REG-K4-001）
@@ -1399,6 +1745,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-ES-002"
     name: "Entry ES 1.3x Framework Rule"
@@ -1425,6 +1778,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-ES-003"
     name: "POT Heavy Tail Alert (GPD Shape 0.2)"
@@ -1451,6 +1811,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "accept"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   # ============================================================
   # KILL_SWITCH（熔断类）— 12条（K4遗留补登 2026-08-13，AI-REG-K4-001）
@@ -1482,6 +1849,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-002"
     name: "Drawdown Protocol Level 2 De-risk 15%"
@@ -1508,6 +1882,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-003"
     name: "Drawdown Protocol Level 3 Halt 20%"
@@ -1534,6 +1915,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-004"
     name: "Drawdown Protocol Level 4 Clearance 25%"
@@ -1560,6 +1948,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-005"
     name: "Single Day Loss 6% Kill Switch"
@@ -1586,6 +1981,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-006"
     name: "Portfolio Daily Circuit Breaker 4%"
@@ -1612,6 +2014,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-007"
     name: "Single Strategy Daily Loss 5% Halt"
@@ -1638,6 +2047,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-008"
     name: "Weekly Loss 5% Trading Halt 2 Days"
@@ -1664,6 +2080,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-009"
     name: "Monthly Loss 10% Trading Halt 3 Days"
@@ -1690,6 +2113,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-010"
     name: "BS-007 Systemic Risk Kill Switch Advice"
@@ -1716,6 +2146,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-011"
     name: "System Failure Circuit Breaker"
@@ -1742,6 +2179,13 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "avoid"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
 
   - risk_limit_id: "RLM-KILL-SWITCH-012"
     name: "Consecutive 5-Day Loss De-risk 50%"
@@ -1768,3 +2212,10 @@ risk_limits:
     current_consumption: null
     stage: "active"
     response_strategy: "mitigate"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: []
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
