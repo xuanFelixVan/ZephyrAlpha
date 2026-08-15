@@ -1,0 +1,379 @@
+# [A_config] module_id=REG-ML-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：无裁剪：全量 10 字段（本库以版本/晋升/衰减字段为主，v2 维度为增量标注）。entry_role 默认 state（模型=预测状态量生产者）；primary_timeframe 默认 null 占位；algorithm_status 固定 quantized（模型产物本身是已量化 artifact）。
+# ============================================================================
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '2.0'
+registry_id: REG-ML-001
+name: Model Registry
+name_zh: ML 模型登记表
+description: >-
+  ML 模型产物唯一真源（SSoT）。登记所有训练产物（预测模型/微调 LLM/密度头）的
+  版本、训练数据快照、评估指标、晋升状态（candidate/staging/production/archived）、
+  部署锚点。与 experiment_registry 正交：实验表管"过程"（回测/参数搜索运行记录），
+  本表管"产物"（训练出的模型 artifact 及其生命周期）。代码锚点：
+  src/zephyr/orchestrator/governance/model_registry.py（运行时治理）+
+  src/zephyr/ml_train/（训练/推理基类）。
+  对标：MLflow Model Registry / W&B Model Registry 核心组件
+  （机构五层栈 Data→Feature→Experiment→Model→Deploy 的第四层）。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.1.0
+created: '2026-08-14'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-BREG-001'
+unique_key:
+- model_id
+entry_count: 8
+
+entry_schema:
+  model_id: str                  # ML-{TYPE}-{NNN}，如 ML-DENSITY-001
+  name: str
+  name_zh: str
+  aliases: list[str]
+  model_type: str                # density_prediction/signal_classifier/regressor/llm_sft/ranker/anomaly_detector
+  architecture: str              # Kronos-mini/LightGBM/Transformer/Qwen-SFT/Mamba/xLSTM/KAN
+  task: str                      # 预测任务定义（如"次日收益分位数"/"涨停概率"）
+  target_variable: str           # 预测目标（return_1d_quantile/limit_up_prob/...）
+  inputs: list[str]              # 输入因子/特征（FK→factor_registry/field_dictionary）
+  training_dataset_ref: str      # FK→data_asset_registry（如 DS-074 ml.training_dataset）
+  experiment_ref: str            # FK→experiment_registry（产出本模型的实验运行）
+  eval_metrics: obj              # {ic: float, sharpe: float, oos_ic: float, ...} 运行时可空
+  artifact_path: str             # 模型文件路径（本地 weights/ 目录）
+  code_path: str                 # 训练/推理代码锚点
+  promotion_stage: str           # candidate/staging/production/archived（晋升门禁 G1-G9 见 62 号文 §4.13）
+  decay_state: str               # created/benching/active/monitoring/decayed/disabled（Vibe-Trading 衰减状态机）
+  serving_mode: str              # batch_daily/realtime/none
+  module_id: str
+  doc_ref: str
+  status: str                    # candidate/active/deprecated
+  version: str
+  created_at: date
+  updated_at: date
+  owner: str
+  primary_timeframe: str|null           # 主时间级别 Primary Timeframe — 条目归属的唯一时间级别（枚举 1min/5min/15min/30min/60min/120min/daily/weekly/monthly；无时间语义条目为 null）
+  applicable_timeframes: list               # 可泛化时间级别 Applicable Timeframes — 条目可泛化适用的时间级别列表（多值，可空表）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  direction: str                # 信号方向 Direction — long/short/both/neutral（无方向语义用 neutral）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+
+models:
+  # ============================================================
+  # DENSITY PREDICTION（密度预测——91 号主路线）
+  # ============================================================
+  - model_id: "ML-DENSITY-001"
+    name: "Lightweight Density Head"
+    name_zh: 轻量密度头（主路线候选一）
+    aliases: ["density_head", "轻量密度头"]
+    model_type: "density_prediction"
+    architecture: "LightGBM/MLP quantile head"
+    task: "次日收益分布分位数预测（q10~q90）"
+    target_variable: "return_1d_quantiles"
+    inputs: []
+    training_dataset_ref: "DS-074"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-SIG-DENSITY"
+    doc_ref: "91_density_prediction.md（主路线二选一：轻量密度头或 Kronos-mini）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  - model_id: "ML-DENSITY-002"
+    name: "Kronos-mini"
+    name_zh: Kronos-mini 时序基础模型（主路线候选二）
+    aliases: ["kronos_mini", "Kronos-mini"]
+    model_type: "density_prediction"
+    architecture: "Kronos-mini（时序 Transformer 基础模型蒸馏版）"
+    task: "K线序列→收益分布（基础模型路线）"
+    target_variable: "return_distribution"
+    inputs: []
+    training_dataset_ref: "DS-074"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-SIG-DENSITY"
+    doc_ref: "91_density_prediction.md；备选模型族见 CAND-SIG-011"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  # ============================================================
+  # LLM SFT（大模型微调——舆情/情感）
+  # ============================================================
+  - model_id: "ML-SFT-001"
+    name: "Sentiment SFT Trainer"
+    name_zh: 舆情情感微调模型
+    aliases: ["sentiment_sft", "情感SFT"]
+    model_type: "llm_sft"
+    architecture: "Qwen SFT（本地微调）"
+    task: "财经文本情感分类（利好/利空/中性 + 强度）"
+    target_variable: "sentiment_score"
+    inputs: ["news_text", "announcement_text"]
+    training_dataset_ref: "DS-074"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: "src/zephyr/ml_train/implementations/sentiment_sft_trainer.py"
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-ML-001"
+    doc_ref: "ml_train 包 sentiment_sft_trainer"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  # ============================================================
+  # SIGNAL CLASSIFIER（信号分类——打板/连板 ML 候选）
+  # ============================================================
+  - model_id: "ML-CLS-001"
+    name: "Daban Limit-Up Classifier"
+    name_zh: 打板涨停概率分类器（候选）
+    aliases: ["打板分类器", "limit_up_classifier"]
+    model_type: "signal_classifier"
+    architecture: "LightGBM（梯度提升树，结构化时序特征首选）"
+    task: "首板/连板次日涨停概率"
+    target_variable: "limit_up_prob_1d"
+    inputs: []
+    training_dataset_ref: "DS-074"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-ML-001"
+    doc_ref: "D_ML_TRAIN 域候选（CAND-MLT-001~005）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  - model_id: "ML-CLS-002"
+    name: "Seat Pattern Classifier"
+    name_zh: 席位形态分类器（候选，依赖龙虎榜数据积累）
+    aliases: ["席位分类器", "seat_classifier"]
+    model_type: "signal_classifier"
+    architecture: "LightGBM/规则混合"
+    task: "席位上榜组合→次日溢价概率"
+    target_variable: "seat_premium_prob"
+    inputs: []
+    training_dataset_ref: "DS-080"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-ML-001"
+    doc_ref: "CAND-SEAT-001（前提：JOB-076 龙虎榜管道 + 3 个月数据积累）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  # ============================================================
+  # REGIME / RANKER / ANOMALY（regime 识别/排序/异常检测候选）
+  # ============================================================
+  - model_id: "ML-REGIME-001"
+    name: "Wasserstein HMM Regime Detector"
+    name_zh: Wasserstein HMM 市场状态识别（候选）
+    aliases: ["wasserstein_hmm", "regime_hmm"]
+    model_type: "regressor"
+    architecture: "HMM + Wasserstein 距离（v1.26.0 第十六轮研究对标）"
+    task: "市场状态聚类（牛/熊/震荡 + 波动率状态）"
+    target_variable: "regime_label"
+    inputs: []
+    training_dataset_ref: "DS-002"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-REGIME-002"
+    doc_ref: "62 号文 §4.34 wasserstein_hmm；regime_detector 现有规则实现之上升级"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  - model_id: "ML-RANK-001"
+    name: "Cross-Section Ranker"
+    name_zh: 截面排序模型（候选，multifactor 选股）
+    aliases: ["截面排序", "stock_ranker"]
+    model_type: "ranker"
+    architecture: "LightGBM LambdaRank"
+    task: "全 A 截面打分排序（multifactor 策略选股层）"
+    target_variable: "cross_section_rank"
+    inputs: []
+    training_dataset_ref: "DS-074"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-ML-001"
+    doc_ref: "D_ML_TRAIN 域候选；消费=portfolio.topn_momentum_strategy（DS-072）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+  - model_id: "ML-ANOM-001"
+    name: "Order Flow Anomaly Detector"
+    name_zh: 订单流异常检测器（候选）
+    aliases: ["订单流异常", "flow_anomaly"]
+    model_type: "anomaly_detector"
+    architecture: "IsolationForest/统计规则"
+    task: "分时订单流不平衡异常识别（对倒/拉抬/出货痕迹）"
+    target_variable: "anomaly_score"
+    inputs: []
+    training_dataset_ref: "DS-001"
+    experiment_ref: ""
+    eval_metrics: null
+    artifact_path: ""
+    code_path: ""
+    promotion_stage: "candidate"
+    decay_state: "created"
+    serving_mode: "none"
+    module_id: "MOD-ML-001"
+    doc_ref: "chart_pattern_registry PAT-STRUCT-035/036 订单流形态的 ML 化候选"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-14"
+    updated_at: "2026-08-14"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: []
+    tags: []
+    algorithm_status: "quantized"
+    evidence: ""
+
+# ============================================================
+# 治理规则
+# ============================================================
+# 1. 晋升门禁：candidate→staging→production 走 62 号文 §4.13 G1-G9 门
+#    （IC 阈值/CPCV/容量检验/多重检验校正），experiment_ref MUST 可溯源。
+# 2. 衰减监控：active 模型 MUST 配置 decay_detection_method（factor_registry 同款
+#    状态机 created→benching→active→monitoring→decayed→disabled）。
+# 3. PIT 纪律：training_dataset_ref MUST 为 PIT 合规数据集（data_asset_registry
+#    pit_policy=strict），禁止未来函数。
+# 4. 与 experiment_registry 分工：实验=运行记录（可多次），模型=产物（晋升唯一）。
+#    同一 model_id 的多次训练在实验表记多行，本表只记当前晋升版本。
+# 5. 防过度工程：个人项目暂不引入 content_hash/SHA256 manifest（git commit 天然
+#    提供追溯，62 号文 §4 原则 9）；监管级需求出现再升级。
