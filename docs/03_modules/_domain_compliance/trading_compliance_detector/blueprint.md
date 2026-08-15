@@ -110,7 +110,7 @@ tests/compliance/test_trading_compliance_detector.py — 17 用例：六类检�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-007 | MOD-CMP-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | N/A | — |
+| build_status | stable | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

@@ -109,7 +109,7 @@ tests/compliance/test_discipline_prohibition_checker.py — 18 用例：四行�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-002 | MOD-CMP-002 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | N/A | — |
+| build_status | stable | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

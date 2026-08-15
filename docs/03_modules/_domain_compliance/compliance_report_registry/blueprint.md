@@ -101,7 +101,7 @@ tests/compliance/test_compliance_report_registry.py — 7 用例：全确认/缺
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-009 | MOD-CMP-009 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | N/A | — |
+| build_status | stable | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

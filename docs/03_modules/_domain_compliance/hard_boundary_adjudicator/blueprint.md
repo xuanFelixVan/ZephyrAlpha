@@ -103,7 +103,7 @@ tests/compliance/test_hard_boundary_adjudicator.py — 8 用例：能建/禁建/
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-CMP-005 | MOD-CMP-005 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | testing | N/A | — |
+| build_status | stable | N/A | — |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
