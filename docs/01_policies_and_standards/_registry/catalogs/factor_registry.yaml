@@ -1,8 +1,18 @@
 # [A_config] module_id=REG-FCT-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 ranking（因子主消费方式=截面排序打分）；direction 默认 neutral 为占位，条目内容填入时逐条校正；algorithm_status 推导规则：status∈{deprecated,retired}→not_applicable，code_path 非空→quantized，否则 pending_backtest。
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.1'
+schema_version: '2.0'
 registry_id: REG-FCT-001
 name: 因子登记表
 name_zh: 因子登记表
@@ -14,7 +24,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.2.0
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -117,6 +127,16 @@ entry_schema:
                                   # discovery_agent=human 时填 null
   version_pin: str               # v1.2.0新增：可选，回滚到历史版本（如 "v2"），Feast FeatureView version 模式
   code_commit: str               # v1.4.0新增：可选，git commit hash（DB 阶段 MUST，对标 beefed.ai compute_git + §4 原则9 Immutable）
+  primary_timeframe: str|null           # 主时间级别 Primary Timeframe — 条目归属的唯一时间级别（枚举 1min/5min/15min/30min/60min/120min/daily/weekly/monthly；无时间语义条目为 null）
+  applicable_timeframes: list               # 可泛化时间级别 Applicable Timeframes — 条目可泛化适用的时间级别列表（多值，可空表）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  direction: str                # 信号方向 Direction — long/short/both/neutral（无方向语义用 neutral）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 factors:
 # ============================================================
@@ -184,6 +204,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-002"
   name: "Sharp Decline Inevitable Rebound"
@@ -246,6 +276,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-003"
   name: "Selling Pressure Exhaustion"
@@ -308,6 +348,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-004"
   name: "Dragonfly False Breakdown"
@@ -370,6 +420,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-005"
   name: "Anchoring Point First New High"
@@ -432,6 +492,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-006"
   name: "Intraday Price-Volume Divergence"
@@ -494,6 +564,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-007"
   name: "MA Suppression Three Strikes"
@@ -556,6 +636,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-008"
   name: "Yellow-White Line Deviation >5pts"
@@ -618,6 +708,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-009"
   name: "Intraday Top Divergence"
@@ -680,6 +780,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-010"
   name: "Bullish Engulfing Two Bears"
@@ -742,6 +852,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-011"
   name: "Multi-Timeframe Coverage"
@@ -804,6 +924,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-012"
   name: "First 30-Min Volume Share"
@@ -866,6 +996,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-013"
   name: "Auction Validation 9:25-9:30"
@@ -928,6 +1068,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-INTRADAY-014"
   name: "VWAP Position"
@@ -990,6 +1140,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F2 K线/均线技术因子 (technical) — 23 candidates
@@ -1056,6 +1216,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-002"
   name: "Volume Breakout MA20 +30%"
@@ -1118,6 +1288,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-003"
   name: "Red More Green Less Accumulation"
@@ -1180,6 +1360,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-004"
   name: "Bald Bearish Candle Must Sell"
@@ -1242,6 +1432,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-005"
   name: "Single Day -7% Break MA20"
@@ -1304,6 +1504,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-006"
   name: "Bad Limit-Up No Chase"
@@ -1366,6 +1576,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-007"
   name: "Monthly MACD Death Cross Suspense"
@@ -1428,6 +1648,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-008"
   name: "Consecutive Doji Bottoming"
@@ -1490,6 +1720,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-009"
   name: "Historical Extreme Volume Panic"
@@ -1552,6 +1792,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-010"
   name: "Five Consecutive Green +30% Take Profit"
@@ -1614,6 +1864,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-011"
   name: "W Bottom / Double Bottom"
@@ -1676,6 +1936,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-012"
   name: "Island Reversal"
@@ -1738,6 +2008,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-013"
   name: "Declining Slope Slowdown"
@@ -1800,6 +2080,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-014"
   name: "MA Arrangement Full Classification"
@@ -1862,6 +2152,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-015"
   name: "Daily Deviation ±15% Extreme"
@@ -1924,6 +2224,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-016"
   name: "KDJ Stalling"
@@ -1986,6 +2296,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-017"
   name: "Bollinger Band Squeeze/Expansion"
@@ -2048,6 +2368,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-018"
   name: "ATR14 Daily True Range"
@@ -2110,6 +2440,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-019"
   name: "Fibonacci Retracement Levels"
@@ -2172,6 +2512,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-020"
   name: "RSI Extreme Oversold"
@@ -2234,6 +2584,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-021"
   name: "Double Bottom Right-Side Four Conditions"
@@ -2296,6 +2656,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-022"
   name: "MACD Zero Axis Position"
@@ -2358,6 +2728,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-023"
   name: "Range Position Percentile"
@@ -2420,6 +2800,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F3 量能因子 (liquidity) — 8 candidates
@@ -2486,6 +2876,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-002"
   name: "Extreme Low Volume"
@@ -2548,6 +2948,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-003"
   name: "Panic Two-Wave Escape"
@@ -2610,6 +3020,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-004"
   name: "Half-Day Volume vs 5-Day Average"
@@ -2672,6 +3092,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-005"
   name: "ETF Premium/Discount"
@@ -2734,6 +3164,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-006"
   name: "ETF Subscription/Redemption Flow"
@@ -2796,6 +3236,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-007"
   name: "Sky-High Turnover Chip Exhaustion"
@@ -2858,6 +3308,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-008"
   name: "Turnover Rate Percentile"
@@ -2920,6 +3380,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F4 形态/结构因子 (technical) — 19 candidates
@@ -2986,6 +3456,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-025"
   name: "15min Bottom Divergence"
@@ -3048,6 +3528,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-026"
   name: "Large-Level Base Breakout"
@@ -3110,6 +3600,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-027"
   name: "Overhead Trapped Chips Resistance"
@@ -3172,6 +3672,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-028"
   name: "Shrink Volume Pullback Washout"
@@ -3234,6 +3744,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-029"
   name: "False Breakout (Downtrend)"
@@ -3296,6 +3816,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-030"
   name: "Insufficient Adjustment Breakout Failure"
@@ -3358,6 +3888,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-031"
   name: "High-Position Amplitude Expansion"
@@ -3420,6 +3960,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-032"
   name: "Accelerated Top"
@@ -3482,6 +4032,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-033"
   name: "High-Position Volume Drop Dark Cloud"
@@ -3544,6 +4104,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-034"
   name: "Triple Failure at Resistance Double Top"
@@ -3606,6 +4176,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-035"
   name: "Top Pattern Full Classification"
@@ -3668,6 +4248,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-036"
   name: "Continuation Pattern"
@@ -3730,6 +4320,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-037"
   name: "Candlestick Language Full Classification"
@@ -3792,6 +4392,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-038"
   name: "Trendline Support/Resistance"
@@ -3854,6 +4464,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-039"
   name: "Channel System Triple Classification"
@@ -3916,6 +4536,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-040"
   name: "Spring / False Breakdown Recovery"
@@ -3978,6 +4608,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-041"
   name: "V-Shaped Reversal Bottom"
@@ -4040,6 +4680,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-042"
   name: "Unfilled Downside Gap Signal"
@@ -4102,6 +4752,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F5 板块/市场结构因子 (technical) — 12 candidates
@@ -4168,6 +4828,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-044"
   name: "Tech-Traditional Separation Signal"
@@ -4230,6 +4900,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-045"
   name: "Semiconductor Leads Index"
@@ -4292,6 +4972,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-046"
   name: "Sector Linkage Effect"
@@ -4354,6 +5044,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-047"
   name: "Institutional Market Cap vs Retail Limit-Up"
@@ -4416,6 +5116,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-048"
   name: "All-A Equal-Weight vs Cap-Weight"
@@ -4478,6 +5188,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-049"
   name: "Sector Advance-Decline Coverage"
@@ -4540,6 +5260,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-050"
   name: "New High Factor (No Overhead Resistance)"
@@ -4602,6 +5332,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-051"
   name: "Relative Strength RS"
@@ -4664,6 +5404,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-052"
   name: "Single-Day Relative Strength Alpha"
@@ -4726,6 +5476,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-053"
   name: "Composite RS Score (IC-Weighted)"
@@ -4788,6 +5548,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-TECH-054"
   name: "Sub-Sector Equal-Weight Index"
@@ -4850,6 +5620,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F6 事件驱动/择时因子 (event) — 15 candidates
@@ -4916,6 +5696,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-002"
   name: "Tech Giant Earnings (Microsoft/Meta)"
@@ -4978,6 +5768,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-003"
   name: "US Stock Overnight Spillover"
@@ -5040,6 +5840,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-004"
   name: "Korea Tech Linkage"
@@ -5102,6 +5912,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-005"
   name: "Spot Price Transmission"
@@ -5164,6 +5984,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-006"
   name: "Month-End Last Two Trading Days"
@@ -5226,6 +6056,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-007"
   name: "Central Bank Reverse Repo / Net Injection"
@@ -5288,6 +6128,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-008"
   name: "Crude Oil Dark Market"
@@ -5350,6 +6200,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-009"
   name: "A50 Futures Overnight Performance"
@@ -5412,6 +6272,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-010"
   name: "July Seasonal Effect (Decade Worst Month)"
@@ -5474,6 +6344,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-011"
   name: "International Linkage Indicators"
@@ -5536,6 +6416,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-012"
   name: "Interest Rate and FX Triple Indicators"
@@ -5598,6 +6488,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-013"
   name: "Fed Path Expectation"
@@ -5660,6 +6560,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-014"
   name: "IPO Drain Effect"
@@ -5722,6 +6632,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-EVT-015"
   name: "Gold Safe Haven Factor"
@@ -5784,6 +6704,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F7 情绪面因子 (sentiment) — 5 candidates
@@ -5850,6 +6780,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-SENT-002"
   name: "Limit-Up Break Rate + Consecutive Height + Re-Seal Time"
@@ -5912,6 +6852,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-SENT-003"
   name: "Market Breadth (Advance/Decline Ratio)"
@@ -5974,6 +6924,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-SENT-004"
   name: "Limit-Up/Down Panic Clearing Sequence"
@@ -6036,6 +6996,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-SENT-005"
   name: "Panic Index Proxy"
@@ -6098,6 +7068,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 # ============================================================
 # F8 资金面因子 (liquidity) — 15 candidates
@@ -6164,6 +7144,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-010"
   name: "ETF Share Surge (Passive Build)"
@@ -6226,6 +7216,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-011"
   name: "ETF Bottom Volume (Blood Chips)"
@@ -6288,6 +7288,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-012"
   name: "Insider Buying Signal"
@@ -6350,6 +7360,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-013"
   name: "Money Flow 5-Tier Decomposition"
@@ -6412,6 +7432,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-014"
   name: "Tick-Level Large Order Decomposition"
@@ -6474,6 +7504,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-015"
   name: "5-Day/10-Day Cumulative Net Inflow"
@@ -6536,6 +7576,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-016"
   name: "Dragon Tiger List Seats"
@@ -6598,6 +7648,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-017"
   name: "Large-Cap Large-Order 50% Discount"
@@ -6660,6 +7720,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-018"
   name: "Up-Market Small-Order Contrarian Discount"
@@ -6722,6 +7792,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-019"
   name: "IRCF Factor (Institutional Retail Contrarian Flow)"
@@ -6784,6 +7864,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-020"
   name: "Order Count Over Amount Principle"
@@ -6846,6 +7936,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-021"
   name: "Small-Order Sell Over Buy Principle"
@@ -6908,6 +8008,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-022"
   name: "Margin Trading Balance Change"
@@ -6970,6 +8080,16 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
 
 - factor_id: "FCT-LIQ-023"
   name: "Big Money Chases Big Caps"
@@ -7032,3 +8152,13 @@ factors:
   llm_safety_stack: null
   version_pin: null
   code_commit: null
+  primary_timeframe: null
+  applicable_timeframes: []
+  regime_valid: []
+  regime_invalid: []
+  direction: "neutral"
+  entry_role: "ranking"
+  applies_to: []
+  tags: []
+  algorithm_status: "not_applicable"
+  evidence: ""
