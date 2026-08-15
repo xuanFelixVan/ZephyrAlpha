@@ -1,13 +1,13 @@
-# 自动生成于 2026-08-15T13:27:47Z
+# 自动生成于 2026-08-15T15:37:51Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-15T13:27:47Z'
+generated_at: '2026-08-15T15:37:51Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
-total_scripts: 403
+total_scripts: 402
 with_manifest: 325
-missing_manifest: 78
+missing_manifest: 77
 categories:
   governance:_sync: 4
   governance:_tasks: 3
@@ -19,7 +19,7 @@ categories:
   governance:d2_links: 2
   governance:d3_metadata: 26
   governance:d4_paths: 4
-  governance:d5_architecture: 112
+  governance:d5_architecture: 111
   governance:d6_security: 15
   governance:d7_code: 41
   governance:d8_doc_sync: 13
@@ -1657,16 +1657,6 @@ scripts:
   description: GATE-ID-UNIQ - 检测 .pre-commit-config.yaml 内 hook id 唯一性,重复即阻断
   tags:
   - Critical
-- name: d5_architecture/checkers/check_registry_code_anchor.py
-  owner: governance:d5_architecture
-  dimensions: []
-  priority: P2
-  timeout_seconds: 60
-  args: []
-  warn_only: false
-  description: ⚠ __manifest__ 缺失——请添加元数据块
-  tags: []
-  _manifest_missing: true
 - name: d5_architecture/checkers/check_rule_four_way_alignment.py
   owner: governance:d5_architecture
   dimensions:
@@ -2983,11 +2973,8 @@ scripts:
   timeout_seconds: 10
   args: []
   warn_only: false
-  description: '
-
-    检测 staged 文件中未解决的合并冲突标记（<<<<<<< / ======= / >>>>>>>）。
-
-    纯 stdlib 替代 external pre-commit-hooks check-merge-conflict（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+  description: '检测 staged 文件中未解决的合并冲突标记（<<<<<<< / ======= / >>>>>>>）。 纯 stdlib 替代
+    external pre-commit-hooks check-merge-conflict（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
 
     '
   tags:
@@ -3114,11 +3101,8 @@ scripts:
   timeout_seconds: 10
   args: []
   warn_only: false
-  description: '
-
-    检测 staged 文件中意外提交的私钥标记（BEGIN PRIVATE KEY / BEGIN OPENSSH PRIVATE KEY 等）。
-
-    纯 stdlib 替代 external pre-commit-hooks detect-private-key（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
+  description: '检测 staged 文件中意外提交的私钥标记（BEGIN PRIVATE KEY / BEGIN OPENSSH PRIVATE KEY
+    等）。 纯 stdlib 替代 external pre-commit-hooks detect-private-key（裁定 #ARCH-PRECOMMIT-OFFLINE-001）。
 
     '
   tags:
