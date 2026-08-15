@@ -1,8 +1,18 @@
 # [A_config] module_id=REG-STR-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 trigger（策略产生买卖触发信号）；direction 默认 neutral 为占位；algorithm_status 推导规则同 factor（deprecated/retired→not_applicable，code_path 非空→quantized，否则 pending_backtest）。
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.1'
+schema_version: '2.0'
 registry_id: REG-STR-001
 name: 策略登记表
 name_zh: 策略登记表
@@ -14,7 +24,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.2.0
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -95,6 +105,16 @@ entry_schema:
   range_bounds: obj              # {min,max} 训练期范围
   last_quality_scan_at: date     # 上次数据质量扫描时间
   entry_series: str              # 条目系列标记（v1.34.0 K2③：panpan_course_rules=潘潘课程规则条目，与机构式策略区分；机构式填 null）
+  primary_timeframe: str|null           # 主时间级别 Primary Timeframe — 条目归属的唯一时间级别（枚举 1min/5min/15min/30min/60min/120min/daily/weekly/monthly；无时间语义条目为 null）
+  applicable_timeframes: list               # 可泛化时间级别 Applicable Timeframes — 条目可泛化适用的时间级别列表（多值，可空表）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  direction: str                # 信号方向 Direction — long/short/both/neutral（无方向语义用 neutral）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 strategies:
   # ============================================================
@@ -167,6 +187,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-002"
     name: "Swing Stock Selection (Four-Step)"
@@ -235,6 +265,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-003"
     name: "Stock Pool Whitelist Enforcement"
@@ -303,6 +343,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-004"
     name: "No Selection in Downtrend"
@@ -371,6 +421,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-005"
     name: "Mid-Cap Leader Selection (Highest Volume)"
@@ -439,6 +499,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-006"
     name: "Full Adjustment Condition (30% or 2 Months)"
@@ -507,6 +577,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-007"
     name: "Industry Imagination Space"
@@ -575,6 +655,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-008"
     name: "Sector Capacity Filter"
@@ -643,6 +733,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-009"
     name: "No Acceleration Before Launch"
@@ -711,6 +811,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-010"
     name: "Leader Strategy / Sector Mid-Cap"
@@ -779,6 +889,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-011"
     name: "Isolated Rally Avoidance (Manipulated Stocks)"
@@ -847,6 +967,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-012"
     name: "Valuation Percentile Not for Cyclical Stocks"
@@ -915,6 +1045,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-013"
     name: "Nine-Stage Stock Selection SOP"
@@ -983,6 +1123,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-014"
     name: "Unbiased Full-Market Scan"
@@ -1051,6 +1201,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-015"
     name: "Tradable Pool Exclusion Rules"
@@ -1119,6 +1279,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-016"
     name: "Short-Term Pool 5-Point Scoring"
@@ -1187,6 +1357,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-017"
     name: "Swing Pool 5-Point Scoring"
@@ -1255,6 +1435,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-018"
     name: "Dual-Strategy 5-Point (Range Top-3 + Counter-Trend Capital)"
@@ -1323,6 +1513,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-019"
     name: "Three-Dimensional Resonance Check"
@@ -1391,6 +1591,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-020"
     name: "Earnings Dimension Factors"
@@ -1459,6 +1669,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-021"
     name: "Stabilization Blue Chips != Offensive Targets"
@@ -1527,6 +1747,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-022"
     name: "Diluted Hot Concept Warning"
@@ -1595,6 +1825,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-023"
     name: "Stock Outperformance vs Sector Index"
@@ -1663,6 +1903,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-024"
     name: "ETF Multi-Comparison Four-Dimensional Selection"
@@ -1731,6 +1981,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-025"
     name: "Research Report Classification System"
@@ -1799,6 +2059,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MULTIFACTOR-026"
     name: "50% Pullback Trend Breakdown Threshold"
@@ -1867,6 +2137,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: null
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ============================================================
   # S10 买点策略 (momentum_trend) — STR-MOMENTUM-TREND-001 ~ 018
@@ -1938,6 +2218,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-002"
     name: "Pullback Confirmation Second Buy Point (5 Elements)"
@@ -2006,6 +2296,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-003"
     name: "Acceleration Third Buy Point (Risk Point - No Buy)"
@@ -2074,6 +2374,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-004"
     name: "Scale-In / Pyramid Position Building"
@@ -2142,6 +2452,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-005"
     name: "Risk-Reward Ratio Game"
@@ -2210,6 +2530,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-006"
     name: "ETF DCA / Buy The Dip"
@@ -2278,6 +2608,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-007"
     name: "Dual-Strategy Resonance Buy Signal"
@@ -2346,6 +2686,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-008"
     name: "Resonance Trigger Condition Matrix"
@@ -2414,6 +2764,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-009"
     name: "Sector-Stock Consistency Check"
@@ -2482,6 +2842,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-010"
     name: "A/B/C Three-Tier Buy Point Classification"
@@ -2550,6 +2920,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-011"
     name: "Buy Point Three-Level Verdict"
@@ -2618,6 +2998,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-012"
     name: "Risk-Reward < 2:1 No Trade"
@@ -2686,6 +3076,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-013"
     name: "Stop-Loss Width Rule (>=1.5x Daily Volatility)"
@@ -2754,6 +3154,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-014"
     name: "Rebound Probability Grading"
@@ -2822,6 +3232,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-015"
     name: "Three Opening Scenarios Response Matrix"
@@ -2890,6 +3310,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-016"
     name: "Full Position Four Hard Conditions"
@@ -2958,6 +3388,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-017"
     name: "Pre-Market Auction Three Verification"
@@ -3026,6 +3466,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-018"
     name: "Primary + Backup Dual Scenario Response"
@@ -3094,6 +3544,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ============================================================
   # S11 卖点策略 (momentum_trend) — STR-MOMENTUM-TREND-019 ~ 031
@@ -3165,6 +3625,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-020"
     name: "Stock First Sell Point (Break 20-Day Line)"
@@ -3233,6 +3703,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-021"
     name: "Stock Second Sell Point (High Volume Stall)"
@@ -3301,6 +3781,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-022"
     name: "Intraday Quick Reaction Sell"
@@ -3369,6 +3859,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-023"
     name: "Pressure Level Three Failures Double Top"
@@ -3437,6 +3937,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-024"
     name: "One Stock One Settlement"
@@ -3505,6 +4015,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-025"
     name: "Trend-Corresponding Sell Point"
@@ -3573,6 +4093,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-026"
     name: "Scale-Out Selling Method"
@@ -3641,6 +4171,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-027"
     name: "Anchor Selling Method (Core Strategy)"
@@ -3709,6 +4249,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-028"
     name: "Sector Top Four Warning Signs"
@@ -3777,6 +4327,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-029"
     name: "Resonance Sell Signal (Resonance Exit)"
@@ -3845,6 +4405,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-030"
     name: "Position Disposition Rules (Weak Position Clearing)"
@@ -3913,6 +4483,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-031"
     name: "Weak Asset Rotation"
@@ -3981,6 +4561,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ============================================================
   # S13 做T策略 (momentum_trend) — STR-MOMENTUM-TREND-032 ~ 033
@@ -4052,6 +4642,16 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   - strategy_id: "STR-MOMENTUM-TREND-033"
     name: "T-Trading Two Disciplines (No Add + Node Required)"
@@ -4120,3 +4720,13 @@ strategies:
     range_bounds: {}
     last_quality_scan_at: null
     entry_series: "panpan_course_rules"
+    primary_timeframe: null
+    applicable_timeframes: []
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "trigger"
+    applies_to: []
+    tags: []
+    algorithm_status: "not_applicable"
+    evidence: ""
