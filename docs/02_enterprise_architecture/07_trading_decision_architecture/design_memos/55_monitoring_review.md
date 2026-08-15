@@ -5,7 +5,7 @@ title: 监控告警与复盘
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.0.2"
+version: "1.1.0"
 date: 2026-08-15
 topic: monitoring_review
 scope: 07_trading_decision_architecture
@@ -113,13 +113,21 @@ scope: 07_trading_decision_architecture
 
 ### 3.3 决策二：告警阈值统编为注册表，阈值不集中即不可审计
 
+**已施工**（2026-08-15 AI-MON-001，#ARCH-MON-001）：[alert_threshold_registry.yaml](../../01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml)（REG-ATH-001，11 类 35 条全代码锚点实证，ROOR 已登记）。
+
 现状：阈值散落各模块（drawdown 5/10/15%、health 内存 70/80/90%、PLV ±1%……）。决策：建**告警阈值注册表**（YAML，随 12 业务注册表体系登记），各模块从注册表读阈值而非各自硬编码。why：个人系统唯一的"风控评审"就是复盘时看阈值清单——散落等于不可评审。Email/WeChat sender 当前 no-op 占位，待首批上线前注入实现（登记 §7）。
 
-### 3.4 决策三（新设计·待施工）：策略偏离监控 = 实盘 vs 回测净值偏离度持续度量
+落地口径（施工裁定）：①挂法=独立注册表（§7③ 待裁定项的工程落地——阈值跨 11 类，risk_limit 9 类 limit_type 不覆盖运维类阈值；Owner 若裁定并表，YAML→YAML 迁移成本极低）；②本批新建模块（§3.4/§3.5）fail-closed 从注册表读阈值；③存量模块码内常量统读改造登记为后续治理项（避让并发会话，本批不动存量生产模块）。
 
-已有零件（PLV 规约、position_drift_monitor 仓位内部漂移、daily_auditor 归因偏差）都不是"实盘 vs 回测"主线。决策：新建轻量偏离度量——每日收盘后计算实盘净值 vs 同期回测净值的两口径偏差（累计收益差 / 日收益相关），复用 decision_gate.monitor_backtest_live_deviation 的阈值体系（>30% 告警 / >50% 退役评估）；历史回测 run 由 experiment_tracking（50 号）供给基准。2026 年实证佐证该阈值区间：零售统计实盘低于回测 50% 即需结构性诊断（traderssecondbrain 2026-05），正常磨损为 10-20%。**标"待施工"**，随首批策略上线一并落地。
+### 3.4 决策三（新设计）：策略偏离监控 = 实盘 vs 回测净值偏离度持续度量
 
-### 3.5 决策四（新设计·待施工）：策略退役标准 = 双判据 + 评审制
+**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/risk/core/strategy_deviation_monitor.py`（MOD-RK-23，blueprint [_domain_risk/strategy_deviation_monitor](../../03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md)，测试 44 项三件套全绿）。§7② 口径待裁定项落地=**两口径皆备**（累计收益相对偏差定 action / 日收益相关标注供周报复盘）。
+
+已有零件（PLV 规约、position_drift_monitor 仓位内部漂移、daily_auditor 归因偏差）都不是"实盘 vs 回测"主线。决策：新建轻量偏离度量——每日收盘后计算实盘净值 vs 同期回测净值的两口径偏差（累计收益差 / 日收益相关），复用 decision_gate.monitor_backtest_live_deviation 的阈值体系（>30% 告警 / >50% 退役评估）；历史回测 run 由 experiment_tracking（50 号）供给基准。2026 年实证佐证该阈值区间：零售统计实盘低于回测 50% 即需结构性诊断（traderssecondbrain 2026-05），正常磨损为 10-20%。施工口径：事件去抖（仅级别变化发射）+ 样本不足只登记不判定 + 基准供给桥失败降级 None 不阻断；日收益相关下限 0.5 占位标 pending_adjudication（THD-DEVIATION-003，待首批上线数据回归校准）。
+
+### 3.5 决策四（新设计）：策略退役标准 = 双判据 + 评审制
+
+**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py`（MOD-GOVERNANCE 伞，PLV 先例）。五判据执行体落地（滚动 20 日跑输 >5% / 滚动 60 日 Sharpe<0 / 回撤漂移 1.5×历史最大回撤 / 回测-实盘偏离 >50%（偏离值由 MOD-RK-23 供给不重算）/ 逻辑失效调用方供给）；标准值取 §7⑤ 候选默认并标 pending_adjudication（THD-RETIRE-001/002/003，待 Owner 裁定）；评审制铁律=判据触发只生成 RetirementEvaluationReport（ReportPublisher TRADING_REVIEW 源归档，status=pending_human_review），模块无策略状态写接口。
 
 代码现状：仅因子级生命周期状态机有 retired 终态，model_drift_monitor 有一条静态登记"Sharpe 30 日<0→策略退役评估"。决策（标准值待裁定，见 §7）：
 1. **连续跑输判据**——实盘滚动 N 日跑输基准超过阈值，或回测-实盘偏差 >50%（复用 decision_gate 阈值）；
@@ -128,7 +136,9 @@ scope: 07_trading_decision_architecture
 
 2026 年退役标准研究锚点（LuxAlgo 2026-08，与本判据体系一致，供裁定时参考）：滚动 expectancy 滑向 0、回撤漂移达历史最大回撤 1.5-2x、profit factor 滑向 1.0、WFA 持续失败、原始市场前提结构性失效；且这类阈值"是评审触发器，不是自动关停规则"——支持评审制。
 
-### 3.6 决策五（新设计·待施工）：复盘编排器 + 复盘模板，频率裁剪为"日自动/周人工/月轻量"
+### 3.6 决策五（新设计）：复盘编排器 + 复盘模板，频率裁剪为"日自动/周人工/月轻量"
+
+**已施工**（2026-08-15 AI-MON-001）：`src/zephyr/reporting/review_orchestrator.py`（MOD-RPT-009，blueprint [_domain_reporting/review_orchestrator](../../03_modules/_domain_reporting/review_orchestrator/blueprint.md)）。日/周/月三频串联 + ReportPublisher 归档（日报 RISK 源 / 周报·月报 TRADING_REVIEW 源）；四段式周报模板结构固化为 WEEKLY_REVIEW_SECTIONS 常量 + 人工维护模板资产 [weekly_review_template.md](../../03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md)（§6 暂缓项口径：先人工维护，跑 12 期后再固化模板引擎）；事件驱动零定时器（run_daily/run_weekly/run_monthly 由日终/周末/月末事件触发）。
 
 三频复盘对个人过重的担心，用**自动化分层**化解而非砍频率：
 - **日复盘 = 机器自动**——DailyAuditor 日终五件套 + DailyRiskSummary，人只看 FAIL 项（告警驱动）；
@@ -165,11 +175,11 @@ scope: 07_trading_decision_architecture
 ## 7. 待定问题（G26 六要点逐项裁定）
 
 - [x] ① **系统健康监控**——✅ 大部分已施工（§3.1A）；缺口：miniQMT 下单链路探针（登记 §6）。
-- [x] ② **策略偏离监控**——🔨 决策已定（§3.4），**待施工**。待裁定：偏离度量的具体口径（累计收益差 vs 日收益相关，还是两者皆备）。
-- [x] ③ **告警阈值与通知**——✅ 机制已施工；🔨 阈值注册表统编待施工（§3.3）。待裁定：注册表挂到哪个既有 registry 文件（risk_limit_registry 扩展还是独立 alert_threshold_registry）。
-- [x] ④ **日/周/月复盘机制**——🔨 频率分层决策已定（§3.6），复盘编排器**待施工**。
-- [x] ⑤ **策略退役标准**——🔨 双判据+评审制决策已定（§3.5）。**待裁定（需人决策）**：连续跑输判据的 N（滚动窗口天数）与阈值——建议候选：滚动 20 日跑输基准 >5%，或滚动 60 日 Sharpe<0，或回撤漂移达历史最大回撤 1.5-2x（2026 研究锚点）；待首批上线前裁定。
-- [x] ⑥ **复盘文档模板**——🔨 四段式模板决策已定（§3.6），**待施工**（先人工维护）。
+- [x] ② **策略偏离监控**——✅ 已施工（§3.4，MOD-RK-23）。口径裁定落地：两口径皆备（累计收益相对偏差定 action / 日收益相关标注供周报复盘）。
+- [x] ③ **告警阈值与通知**——✅ 机制已施工；✅ 阈值注册表统编已施工（§3.3，REG-ATH-001 独立注册表——挂法待裁定项按工程判定落地，Owner 可裁定并表）。遗留：存量模块码内常量统读改造（后续治理项）。
+- [x] ④ **日/周/月复盘机制**——✅ 复盘编排器已施工（§3.6，MOD-RPT-009）。
+- [x] ⑤ **策略退役标准**——✅ 双判据+评审制执行体已施工（§3.5）。**仍待裁定（需人决策）**：判据标准值——当前取候选默认（滚动 20 日跑输 >5% / 滚动 60 日 Sharpe<0 / 回撤漂移 1.5x，注册表标 pending_adjudication），首批上线前裁定后改注册表即生效（代码零改动）。
+- [x] ⑥ **复盘文档模板**——✅ 四段式模板已施工（§3.6，结构固化 + 人工维护模板资产）。
 
 **代码层新发现问题**：
 1. 54 号 §3.1 对 AsharePerformanceAudit 的能力描述（盘前信号验证/盘中 2σ 异常检测）超出实际代码（实际为 5 类绩效审计规则）——越界修正登记在此，不越界改 54 号。
@@ -193,3 +203,4 @@ scope: 07_trading_decision_architecture
 | 2026-08-12 | 1.0.0 | 骨架→active：回填已施工监控/告警/报告设施盘点；定五项决策（复用编排/阈值统编/偏离度量/退役双判据/复盘分层）；六要点逐项对齐；补 2026 研究锚点 | 完整版（v1.21.0）曾丢失，按已施工代码重建；新设计限最小三块并全标"待施工"；不擅自定参数，阈值候选入 §7 待人裁定 |
 | 2026-08-12 | 1.0.1 | 作战地图全覆盖补丁——闭合 BM-RC-08-E / BM-RC-08-D：①§3.2 扩展为"系统健康+操作风险审计"（BM-RC-08-E design：四类审计分类——系统故障/人为错误/Agent 失控/级联失败 + OperationalRiskReport 产物，证据复用 §3.1 已盘点 HealthMonitor/MetricsRegistry/告警链/审计链资产，不新造探头）；②新增 §3.2B 模型风险审计（BM-RC-08-D design：对标 SR 26-2 轻量版"验证→监控→校准"三闭环 + 5 类漂移体系统一口径与检测器分工，串联 23 号 §3.3 过拟合检测 / 23 号 §5.4 CUSUM-PSI 漂移监控 / 36 号 §3.10 VaR 校准审计，recommendation=retrain_gate 衔接 54 号 §3.1.1 BM-REC-03-C 的 C-003 回测门禁链路） | 风控域两个 design 环节（depgraph 无实现）补 why 层，按"定位 → 裁定（理由+重评条件）→ 契约/参数/接口"格式回填；延续"复用优先、新造最少"总立场 |
 | 2026-08-15 | 1.0.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-11）。§3.2/§3.2B 两段超长裁定散文（>300 字单段）表格化：四类审计分类→4 行表，SR 26-2 三支柱→3 行表，5 类漂移检测器分工→3 行表 | 单段超长纯散文表格化；参数/阈值/契约/链接/降级与重评条件逐字保留，零实质改动 |
+| 2026-08-15 | 1.1.0 | 四项决策施工落地（AI-MON-001，#ARCH-MON-001）：§3.3 告警阈值注册表（REG-ATH-001，11 类 35 条全代码锚点）；§3.4 偏离度量（MOD-RK-23 双口径+事件去抖+experiment_tracking 基准桥）；§3.5 退役双判据评审制执行体（五判据，标准值 pending_adjudication）；§3.6 复盘编排器（MOD-RPT-009 三频+四段周报模板） | 三块"待施工"新设计+阈值注册表全闭合；§7 六要点逐项更新；施工裁定留痕（独立注册表挂法/两口径皆备/候选默认值占位待 Owner 裁定）；存量模块阈值统读改造登记后续治理项 |

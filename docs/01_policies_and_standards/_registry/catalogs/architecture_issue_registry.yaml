@@ -16842,3 +16842,14 @@ entries:
   related_rules: '#ARCH-BREG-001（18 业务注册表母议题）; #ARCH-70（worktree merge 通道）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-MON-001'
+  title: 55 号 G26 监控告警与复盘施工——告警阈值注册表（REG-ATH-001）+ 偏离度量（MOD-RK-23）+ 退役双判据评审 + 复盘编排器（MOD-RPT-009）
+  severity: P1高
+  category: feature_construction
+  adjudication: '55 号 memo（active v1.0.2）§3.3/§3.4/§3.5/§3.6 四项决策落地：①§3.3 阈值统编——新建 alert_threshold_registry.yaml（11 类 35 条全代码锚点实证）；§7③ 挂法待裁定项由施工会话按工程判定落地=独立注册表（理由：阈值跨回撤/健康/偏离/PLV/告警/审计/报告/操作风险/漂移/退役/GPU 11 类，risk_limit_registry 9 类 limit_type 不覆盖运维类阈值，独立文件最利于"复盘看阈值清单"审计目的；若 Owner 裁定并表迁移成本极低）②§3.4 偏离度量——strategy_deviation_monitor（累计收益相对偏差+日收益相关双口径皆备，回答 §7② 口径问题；阈值 30%/50% 复用 decision_gate 体系）③§3.5 退役双判据+评审制——strategy_retirement_evaluator 五判据执行体，标准值取 §7⑤ 候选默认（20 日 5%/60 日 Sharpe<0/回撤漂移 1.5x）标 pending_adjudication 待 Owner 裁定，评审制铁律=只出报告不自动退役 ④§3.6 复盘编排器——review_orchestrator 日/周/月三频+四段式周报模板。施工域边界：不占 53/54 号域（experiment_tracking/ReportPublisher 只读消费）；miniQMT 探针留 40 号缺口清单（§6 登记）。'
+  impact: "变更文件： - 'docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml（新建 REG-ATH-001）' - 'src/zephyr/risk/core/strategy_deviation_monitor.py（新建 MOD-RK-23）' - 'src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（新建，MOD-GOVERNANCE 伞）' - 'src/zephyr/reporting/review_orchestrator.py（新建 MOD-RPT-009）' - 'docs/03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md + _domain_reporting/review_orchestrator/{blueprint.md,weekly_review_template.md}（新建）' - 'tests/{risk/core/test_strategy_deviation_monitor,governance/lifecycle/test_strategy_retirement_evaluator,reporting/test_review_orchestrator}.py（44 项）' - 'registry_of_registries.yaml（REG-ATH-001 登记）'"
+  fix_phase: '三件套+注册表已施工（44 测试全绿）；存量模块码内阈值统读改造（各模块从注册表读阈值替代硬编码）登记为后续治理项——避让 TDEBT/FIX/SIM/RCAN 并发会话，本批不动存量生产模块'
+  status: implemented
+  related_rules: '55_monitoring_review.md（G26 真源）; #ARCH-BREG-001（注册表体系同族）; #ARCH-70（worktree merge 通道）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

@@ -643,7 +643,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 29_factor_strategy_extraction | 潘潘课程因子策略提炼知识库（工程文档，非G主题） | 已落盘 | active v1.0.0（2026-08-14 用户裁定从 _working 迁入，原名 因子与策略提炼.md） |
 | 52_backtest_framework_docking | G23 回测对接 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
 | 53_simulation_live_path | G24 模拟实盘 | ✅ 已定稿 | active v1.6.6 |
-| 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
+| 55_monitoring_review | G26 监控复盘 | ✅ 已定稿 | active v1.1.0（2026-08-15 施工落地） |
 | 12_regime_phase2_validation | Phase 2 模型质量验证（工程文档，非G主题） | 已落地 | ✅ v0.2.2 |
 | 50_backtest_observability_workplan | 回测可观测性工作计划（工程文档，非G主题） | 已提议 | draft v1.0.2 |
 | 13_regime_phase3_engineering_plan | Phase 3 工程规划（工程文档，非G主题） | 已提议 | draft v0.3.2 |

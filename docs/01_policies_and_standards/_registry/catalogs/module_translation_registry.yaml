@@ -41473,6 +41473,27 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "所有合规判定只增不删地记进一个 JSONL 文件，当证据链用，写不进去也不影响交易"
+- module_path: src/zephyr/risk/core/strategy_deviation_monitor.py
+  domain_id: D_RISK
+  name_zh: "策略偏离监控器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "每天收盘后拿实盘赚的钱和当初回测说好的钱对一遍账：差太多（超过三成）就提醒人看看，差一半以上就提醒这策略可能要不得了。还能从回测档案里自动把当初的成绩单翻出来当基准。"
+- module_path: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
+  domain_id: D_GOVERNANCE
+  name_zh: "策略退役评估器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着一个策略是不是该退休了：连续跑输大盘、长期不赚钱、回撤比历史上最惨的时候还惨一半、或者实盘跟回测差一半以上，命中任何一条就写一份评估报告等人拍板，它自己绝不会偷偷把策略下线。"
+- module_path: src/zephyr/reporting/review_orchestrator.py
+  domain_id: D_REPORTING
+  name_zh: "复盘编排器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把每天的自动审计、每周的复盘周报、每月的治理汇总串成一条龙：日报机器自己跑，只有出问题才叫人；周报固定四段（赚赔归因、偏离告警、参数变更、下周要干的事）人来看；月报顺带扫一遍哪些策略该考虑退休了。"
 
 battle_map_steps:
 - step_id: BM-BUY-04
