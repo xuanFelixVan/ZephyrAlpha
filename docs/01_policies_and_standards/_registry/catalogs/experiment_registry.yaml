@@ -1,8 +1,18 @@
 # [A_config] module_id=REG-EXP-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# schema v2.0 升级（2026-08-15）：条目级多维适用性标注 + 库内算法迭代字段
+# 背景：潘潘课程 546 条因子/策略条目入库前，库结构先支持多维适用性标注（设计备忘录 29_factor_strategy_extraction.md v1.2.2；
+#       对标 TEJ Factor Library 分类树 / FactorDBMS 元数据评估分表 / Qlib Alpha158 六大类 / BigQuant 参数族）。
+# 新增字段中文释义（条目级；既有条目为默认值/空值占位，禁止视为已填写内容，逐条校正随条目内容填入完成）：
+#   primary_timeframe 主时间级别 | applicable_timeframes 可泛化时间级别 | regime_valid 有效市场环境 |
+#   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
+#   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
+# 本库裁剪与默认值决策：裁剪：timeframe×2（实验周期由 data_period 表达）+ direction（实验记录无方向语义）。保留 regime×2（实验结论的适用/失效市场环境标注，有语义价值）+ entry_role=reference + 共有四维度（tags 为既有字段，保留原值不覆盖）；algorithm_status 固定 not_applicable（实验是验证记录，非算法条目）；evidence 空串占位（实验结果摘要在 result_summary，evidence 供跨库引用摘要后续回填）。
+# ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '1.0'
+schema_version: '2.0'
 registry_id: REG-EXP-001
 name: 实验/回测登记表
 name_zh: 实验/回测登记表
@@ -23,9 +33,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: draft
-version: 1.0.0
+version: 1.1.0
 created: '2026-08-13'
-last_updated: '2026-08-13'
+last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - experiment_id
@@ -106,6 +116,12 @@ entry_schema:
   cpcv_oos_sharpe_mean: float
   cpcv_oos_sharpe_std: float     # std/mean>0.5 红旗（切法敏感=过拟合）
   cpcv_worst_max_dd: float       # 45 条中最差 MaxDD；>0.15 一票否决（§4.13 G1）
+  regime_valid: list               # 有效市场环境 Regime Valid — 条目生效的市场环境列表（枚举 trend_up/trend_down/ranging/panic/euphoria/high_vol/low_vol，空=未标注）
+  regime_invalid: list               # 失效市场环境 Regime Invalid — 条目失效的市场环境列表（多值，可空）
+  entry_role: str                # 条目角色 Entry Role — trigger触发/state状态量/filter过滤/ranking排序/rule规则/reference基准
+  applies_to: list               # 适用标的 Applies To — 条目适用的标的类型列表（枚举 stock/etf/index/futures/sector/market）
+  algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
+  evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
 
 experiments:
   # ── EXP-REGIME-001：C1 Shrinkage 开/关对比验证（11 号 Phase 1，核心一票否决）──
@@ -197,6 +213,12 @@ experiments:
     cpcv_oos_sharpe_mean: null
     cpcv_oos_sharpe_std: null
     cpcv_worst_max_dd: null          # Phase 1.5+ 升级 CPCV；MVP 用 46 季度 WFA
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "reference"
+    applies_to: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ── EXP-REGIME-002：Phase 2 模型质量验证（A1/A2/B1/B4 四项）──
   - experiment_id: EXP-REGIME-002
@@ -283,6 +305,12 @@ experiments:
     cpcv_oos_sharpe_mean: null
     cpcv_oos_sharpe_std: null
     cpcv_worst_max_dd: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "reference"
+    applies_to: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ── EXP-REGIME-003：A2/A3 升级验证（Phase 3 部分，D2/D4 四配置对比）──
   - experiment_id: EXP-REGIME-003
@@ -369,6 +397,12 @@ experiments:
     cpcv_oos_sharpe_mean: null
     cpcv_oos_sharpe_std: null
     cpcv_worst_max_dd: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "reference"
+    applies_to: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ── EXP-REGIME-004：C1 Fallback mock run（FallbackBackend 存储链路验证）──
   - experiment_id: EXP-REGIME-004
@@ -457,6 +491,12 @@ experiments:
     cpcv_oos_sharpe_mean: null
     cpcv_oos_sharpe_std: null
     cpcv_worst_max_dd: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "reference"
+    applies_to: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
   # ── EXP-WALKFWD-001：E1 Walk-Forward 稳定性验证（Phase 4 部分，未闭环）──
   - experiment_id: EXP-WALKFWD-001
@@ -532,6 +572,12 @@ experiments:
     cpcv_oos_sharpe_mean: null
     cpcv_oos_sharpe_std: null
     cpcv_worst_max_dd: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "reference"
+    applies_to: []
+    algorithm_status: "not_applicable"
+    evidence: ""
 
 # ── Step 4 交叉引用校验记录（dangling FK 登记，62 号 §4.6 弱 FK 规则）──
 pending_fk:
