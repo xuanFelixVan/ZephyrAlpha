@@ -16920,3 +16920,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-088'
+  title: RB-SCEN-013 去留待裁定——scenario 注册表 53 条目 vs summary.total=54 不自洽
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/safety/test_game_day_scheduler.py 7 项）：src/zephyr/security/adversarial_validation/_scenario-registry.yaml 的 scenarios 序列缺 RB-SCEN-013（L130→L140 跳号，实际 53 条），但 summary.total 仍 54（L608-609）、by_tier 求和 53——summary 块自身已不一致；RB-SCEN-046 为 deprecated（L504）故 active=52。全仓 grep RB-SCEN-013 零命中，删除无追溯痕迹，无法仓内判定误删还是有意删除。测试编码 2026-07-19 治本版契约（54 总/53 active）。7 项失败已方法级 xfail(strict=False) 留痕。待裁定二选一：(a) 有意删除→按 046 先例本应 deprecated 而非物理删除；既已删则同步 summary.total=53+修 by_tier，测试改 53/52 并将顺序断言放宽为"单调递增允许空洞"（不建议重编号——外部按 ID 引用稳定性）；(b) 误删→恢复 RB-SCEN-013 条目，测试与 summary 不动。另建议（防复发）：注册表条目增删应有审计痕迹（changelog 段或 git 提交说明强制），物理删除场景建议一律改 deprecated。'
+  fix_phase: 待裁定（删后同步 / 恢复条目 二选一）；7 项测试已 xfail 留痕
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
