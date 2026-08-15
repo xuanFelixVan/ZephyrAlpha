@@ -288,7 +288,10 @@ class TestRunSchedule:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+        # 时间解耦：daily_kline 属交易日历守卫时段（_schedule_should_skip），
+        # 非交易日跑测试会 return {}——patch is_trading_day 固定为交易日
+        with patch("src.zephyr.data.scheduler.is_trading_day", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
              patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
             results = scheduler.run_schedule("daily_kline")
         assert len(results) == 1
@@ -318,7 +321,9 @@ class TestRunSchedule:
         mock_provider = _MockProvider()
         mock_provider.connect()
         scheduler.providers["mock"] = mock_provider
-        with patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
+        # 时间解耦：同上（交易日历守卫时段在非交易日 return {}）
+        with patch("src.zephyr.data.scheduler.is_trading_day", return_value=True), \
+             patch("src.zephyr.data.scheduler.BufferedWriter.add", return_value=True), \
              patch("src.zephyr.data.scheduler.BufferedWriter.flush", return_value=True):
             results = scheduler.run_schedule("daily_kline")
         assert len(results) == 2

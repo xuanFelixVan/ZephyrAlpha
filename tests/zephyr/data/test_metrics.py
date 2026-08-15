@@ -52,13 +52,14 @@ class TestIntegratorMetrics:
         assert 'integrator_rows_fetched_total{task_id="t1",source="akshare"} 300' in rendered
 
     def test_record_rate_limit(self, metrics):
-        """record_rate_limit 累加限流命中。"""
+        """record_rate_limit 累加限流命中（按 source 分桶）。"""
+        # 双源结构（ifind 退役批量替换事故修复 2026-08-16：3 次同源致断言失配）
         metrics.record_rate_limit("akshare")
         metrics.record_rate_limit("akshare")
-        metrics.record_rate_limit("akshare")
+        metrics.record_rate_limit("miniqmt")
         rendered = metrics.render()
         assert 'integrator_rate_limit_hits_total{source="akshare"} 2' in rendered
-        assert 'integrator_rate_limit_hits_total{source="akshare"} 1' in rendered
+        assert 'integrator_rate_limit_hits_total{source="miniqmt"} 1' in rendered
 
     def test_record_retry(self, metrics):
         """record_retry 累加重试次数。"""

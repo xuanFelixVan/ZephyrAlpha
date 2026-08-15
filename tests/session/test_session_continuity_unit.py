@@ -93,7 +93,9 @@ class TestContinuityContext:
 
     def test_generate_continuity_context_empty(self, tmp_path):
         sc = SessionContinuity(project_root=tmp_path)
-        state = _make_state(cards_completed=[], cards_failed=[])
+        # last_checkpoint_json 必须显式传空——_make_state 默认 "{}"（truthy）
+        # 会走 "Continue from checkpoint" 分支，与 empty 语义不符（2026-08-16 修复）
+        state = _make_state(cards_completed=[], cards_failed=[], last_checkpoint_json="")
         ctx = sc.generate_continuity_context(state)
         assert "0 cards completed" in ctx.progress_summary
         assert ctx.next_action == "Start fresh"
