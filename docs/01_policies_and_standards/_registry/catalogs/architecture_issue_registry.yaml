@@ -16832,3 +16832,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-077'
+  title: task_events CHECK 约束与 Event Sourcing 组件族事件类型契约正面冲突（schema↔代码矛盾）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/governance/persistence/sqlite_schema.py task_events 表 CHECK 仅允许 14 个 TASK_*/GATE_* 生命周期枚举（5.18.6 从 v18 补回）；而同表写入方 zephyr.gov_audit.event_store.EventStore（DW-0002）append_event docstring 明示泛型事件类型 CREATED/STATUS_CHANGED/PRIORITY_CHANGED/FIELD_UPDATED，且 zephyr.governance.observability_governance.projection_engine.ProjectionEngine._HANDLERS 注册的正是这四个类型——三方同属生产代码，append 任一泛型事件即 sqlite3.IntegrityError。tests/event/test_event_store_stress.py（DW-0006）16 项失败全系此矛盾。待裁定三选一：(a) CHECK 清单扩入泛型四类型（schema 跟进 Event Sourcing 设计）；(b) EventStore 独立建泛型事件表（与任务生命周期事件分表）；(c) EventStore/ProjectionEngine 事件类型改名映射进 14 枚举（组件跟进 schema）。16 项测试已模块级 xfail(strict=False) 留痕。'
+  fix_phase: 待裁定（扩 CHECK / 分表 / 类型映射 三选一）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
