@@ -5,7 +5,7 @@ doc_type: blueprint
 status: Active
 version: "0.1.0"
 ttl: permanent
-design_maturity: design
+design_maturity: production
 layer: L1_foundation
 layer_name: compliance
 functional_domain: compliance
@@ -91,8 +91,8 @@ tests/compliance/test_license_usage_auditor.py — 11 用例：缺段保守/超�
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-CMP-008` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-CMP-008` |
-| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-CMP-008` 的 1 个 file 节点 | production | `extract_depgraph.py --modules MOD-CMP-008` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
