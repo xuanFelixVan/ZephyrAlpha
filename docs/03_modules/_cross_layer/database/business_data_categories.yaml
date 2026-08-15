@@ -810,6 +810,22 @@
   data_source: [exchange]
   blueprint: null
 
+- category_id: market_northbound_hold_snapshot
+  name: "北向资金季度持仓快照（港交所 2024-08-19 日频断档后替代源，tushare hk_hold，仅北向 SH/SZ）"
+  engine: clickhouse
+  database: c1_market
+  table: northbound_hold_snapshot
+  schema_file: schemas/categories/market_northbound_hold_snapshot.py
+  data_type: 成品
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 季频
+  data_source: [tushare]
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/19_northbound_hold_snapshot.md"
+
 # --- 美股数据 ---
 
 - category_id: market_us_kline_daily

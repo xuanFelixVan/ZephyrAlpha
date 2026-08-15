@@ -1554,6 +1554,19 @@ tasks:
   extra:
     description: "预约披露计划增量（AKShare stock_disclosure_report_cninfo，按日期范围查全部沪深京股票）"
 
+  # ============== 北向资金季度持仓快照（19 号 memo，2026-08-15 AI-NORTH-001 施工）==============
+- task_id: northbound_hold_snapshot_refresh
+  table: c1_market.northbound_hold_snapshot
+  source: tushare
+  schedule: nightly_financial    # 与十大股东同层（季度披露类持仓）；每日跑+provider 内 PIT 守卫（季度末+20 自然日才采新季度），新季度发布后当晚即采
+  incremental: false    # 全量覆盖：重拉 2024-09-30 起全部已发布季度（ReplacingMergeTree ORDER BY (ts_code,trade_date) 幂等去重）
+  dependencies: []
+  capability: northbound_hold_snapshot
+  symbols:         # null=全市场（hk_hold 单接口全量快照，无需标的清单）
+  extra:
+    description: "北向资金季度持仓快照（tushare hk_hold 季度末全量，exchange SH/SZ 拆分双调用规避 4200 行上限；港交所 2024-08-19 日频断档后替代源，memo 19）"
+  # 无 fallback_sources：预案为交易所官网直抓（memo §4.2 方案 A），未施工；DATA-TASK-COMPLETENESS warn 已知晓并接受（19 号 memo §8 不做清单）
+
   # ============== P2: 静态列表月初刷新（2026-07-11）==============
 - task_id: convertible_bond_list_refresh
   table: c1_market.convertible_bond_list

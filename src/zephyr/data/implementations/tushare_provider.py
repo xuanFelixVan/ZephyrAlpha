@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.tushare_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] tushare SDK (ts.set_token/ts.pro_api/pro.news/pro.news_info/pro.fund_basic/pro.moneyflow/pro.fut_daily/pro.fund_nav)
+# [DEPENDENCIES] tushare SDK (ts.set_token/ts.pro_api/pro.news/pro.news_info/pro.fund_basic/pro.moneyflow/pro.fut_daily/pro.fund_nav/pro.hk_hold)
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
@@ -22,7 +22,8 @@
 - 积分不足时 API 调用受限（TPMaxQueryLimitError 触发重试）
 - 当前能力：news_data（新闻快讯/证券新闻）/ industry_class / industry_class_suppl /
   lof_list（东财反爬替代源）/ money_flow（东财反爬替代源）/
-  futures_term_structure（QMT 期货板块为空替代源）/ etf_nav（东财净值接口反爬替代源）
+  futures_term_structure（QMT 期货板块为空替代源）/ etf_nav（东财净值接口反爬替代源）/
+  northbound_hold_snapshot（北向季度持仓快照，19 号 memo；逻辑在 northbound_hold_fetcher.py）
 
 关键设计：
 - connect() 读取 TUSHARE_TOKEN 环境变量，初始化 pro_api 客户端
@@ -40,6 +41,7 @@ from typing import Iterator
 from ..provider_base import (
     IngestProviderBase,
     IngestProviderMeta,
+    CapabilityContract,
     FetchPayload,
     FetchResult,
 )
@@ -47,6 +49,8 @@ from ..policy_registry import SourcePolicy
 from ..news_dedup import NEWS_DATA_COLUMNS, build_news_row
 from zephyr.shared.security.secrets import get_required_secret, get_secret_or_default
 from ..table_registry import get_registry
+# 19 号 memo：北向季度持仓快照（绝对 import 供 ORPHAN-MODULE 门禁 git grep 发现引用）
+from zephyr.data.implementations.northbound_hold_fetcher import fetch_northbound_hold_snapshot
 from zephyr.shared.utils.time_utils import now_utc, seconds_since
 
 log = logging.getLogger(__name__)
@@ -83,7 +87,18 @@ class TushareProvider(IngestProviderBase):
         requires_process=False,
         thread_safety="shared",
         rate_limit_default=200,
-        capabilities=["news_data", "industry_class", "industry_class_suppl", "lof_list", "money_flow", "futures_term_structure", "etf_nav"],
+        capabilities=[
+            "news_data", "industry_class", "industry_class_suppl", "lof_list",
+            "money_flow", "futures_term_structure", "etf_nav",
+            # 19 号 memo：北向季度持仓快照（hk_hold），逻辑在独立文件 northbound_hold_fetcher.py
+            CapabilityContract(
+                "northbound_hold_snapshot",
+                supports_symbols_null=True,    # 全市场快照，symbols 无关
+                supports_incremental=False,    # 季度全量覆盖（ReplacingMergeTree 幂等）
+                supports_full_refresh=True,
+                requires_date_range=False,     # PIT 季度枚举自给自足
+            ),
+        ],
         known_issues=["历史数据截止2024-08", "积分不足API受限"],
     )
 
@@ -147,6 +162,11 @@ class TushareProvider(IngestProviderBase):
             yield from self._fetch_futures_term_structure(payload, policy)
         elif capability == "etf_nav":
             yield from self._fetch_etf_nav(payload, policy)
+        elif capability == "northbound_hold_snapshot":
+            # 19 号 memo：fetcher 逻辑在独立文件（避让 akshare_provider 并行施工，tushare 侧仅路由）
+            yield from fetch_northbound_hold_snapshot(
+                self._pro, payload, policy, self._call_with_policy, self._log
+            )
         else:
             yield FetchResult(
                 table=payload.table, columns=[], rows=[],
