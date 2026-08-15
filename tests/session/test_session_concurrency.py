@@ -13,6 +13,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 import time
@@ -201,6 +202,47 @@ class TestSessionRegistryClaimRelease:
         assert reg.get_session("sess-A") is None
         # 过期 session 仍留在文件里（get_session 不删除）
         assert "sess-A" in reg.load()
+
+
+class TestSessionRegistrySaveRace:
+    """_save per-pid tmp 竞态治本回归（2026-08-15 WinError 2 实证：
+    共享 session_registry.tmp 跨进程互踩——A replace 移走后 B replace 报
+    '系统找不到指定的文件'，该次写静默丢失致 session 假性过期）。"""
+
+    def test_save_uses_per_pid_tmp_no_shared_tmp_residue(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(os, "getpid", lambda: 424242)
+        reg = SessionRegistry(project_root=tmp_path)
+        reg._save({"sess-A": {"x": 1}})
+        runtime = tmp_path / ".runtime"
+        final = json.loads((runtime / "session_registry.json").read_text(encoding="utf-8"))
+        assert final == {"sess-A": {"x": 1}}
+        assert not (runtime / "session_registry.tmp").exists()  # 共享名 tmp 不再使用
+        assert not list(runtime.glob("*.tmp"))  # 自身 tmp 已被 os.replace 消耗
+
+    def test_save_ignores_foreign_inflight_tmp(self, tmp_path, monkeypatch):
+        """他进程在飞的共享名 tmp 不被吞（旧实现 os.replace 会吞掉它致对方 WinError 2）。"""
+        monkeypatch.setattr(os, "getpid", lambda: 424243)
+        reg = SessionRegistry(project_root=tmp_path)
+        foreign = tmp_path / ".runtime" / "session_registry.tmp"
+        foreign.write_text('{"other": {}}', encoding="utf-8")
+        reg._save({"mine": {"x": 1}})
+        final = json.loads((tmp_path / ".runtime" / "session_registry.json").read_text(encoding="utf-8"))
+        assert final == {"mine": {"x": 1}}
+        assert foreign.exists()  # 旧实现会吞掉它
+        assert foreign.read_text(encoding="utf-8") == '{"other": {}}'
+
+    def test_handoff_uses_per_pid_tmp(self, tmp_path, monkeypatch):
+        from zephyr.security.access_control.session_concurrency import SessionHandoff
+
+        monkeypatch.setattr(os, "getpid", lambda: 424244)
+        handoff_dir = tmp_path / ".runtime" / "handoffs"
+        handoff_dir.mkdir(parents=True, exist_ok=True)
+        foreign = handoff_dir / "handoff_sess-A.tmp"
+        foreign.write_text("inflight", encoding="utf-8")
+        h = SessionHandoff(project_root=tmp_path)
+        out = h.write_handoff("sess-A", summary="s")
+        assert out.exists()
+        assert foreign.exists()  # 他进程 tmp 不被吞
 
 
 class TestSessionConflictDetectorAcquireWriteback:

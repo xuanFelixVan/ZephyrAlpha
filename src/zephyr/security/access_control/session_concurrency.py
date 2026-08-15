@@ -592,8 +592,18 @@ class SessionRegistry:
             return {}
 
     def _save(self, data: dict[str, dict]) -> None:
-        """原子写入 registry（tmp + os.replace，防并发写损坏）。"""
-        tmp_path = self._registry_path.with_suffix(".tmp")
+        """原子写入 registry（per-pid tmp + os.replace，防并发写损坏）。
+
+        tmp 文件名带 PID（session_registry.<pid>.tmp）——共享单 tmp 名存在跨进程
+        竞态：A 进程 os.replace 把 tmp 移走后，B 进程 os.replace 报 WinError 2
+        （系统找不到指定的文件），该次写静默丢失（仅 warning）。2026-08-15
+        AI-NORTH-001 实证：心跳 daemon 与 commit 进程并发写互踩，心跳丢失致
+        session 假性过期反复自动重注册。per-pid tmp 从构造上消除共享名竞态；
+        os.replace（MoveFileEx REPLACE_EXISTING）本身原子，JSON 不会撕裂。
+        """
+        tmp_path = self._registry_path.with_name(
+            f"{self._registry_path.stem}.{os.getpid()}.tmp"
+        )
         try:
             tmp_path.write_text(
                 json.dumps(data, indent=2, ensure_ascii=False),
@@ -602,6 +612,10 @@ class SessionRegistry:
             os.replace(str(tmp_path), str(self._registry_path))
         except OSError as e:
             logger.warning("SessionRegistry: failed to save registry: %s", e)
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
 
 
 class SessionHandoff:
@@ -632,7 +646,8 @@ class SessionHandoff:
             "warnings": warnings or [],
         }
         handoff_path = self._handoff_dir / f"handoff_{session_id}.json"
-        tmp_path = handoff_path.with_suffix(".tmp")
+        # per-pid tmp（同 _save 的竞态治本：共享 tmp 名跨进程互踩报 WinError 2）
+        tmp_path = handoff_path.with_name(f"{handoff_path.stem}.{os.getpid()}.tmp")
         try:
             tmp_path.write_text(
                 json.dumps(package, indent=2, ensure_ascii=False),
@@ -642,6 +657,10 @@ class SessionHandoff:
             logger.info("SessionHandoff: wrote handoff for session=%s", session_id)
         except OSError as e:
             logger.warning("SessionHandoff: failed to write handoff: %s", e)
+            try:
+                tmp_path.unlink(missing_ok=True)
+            except OSError:
+                pass
         return handoff_path
 
     def read_handoff(self, session_id: str) -> dict | None:
