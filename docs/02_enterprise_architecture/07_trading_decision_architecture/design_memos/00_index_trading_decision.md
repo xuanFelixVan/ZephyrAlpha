@@ -73,7 +73,7 @@ scope: 07_trading_decision_architecture
 | [55_monitoring_review.md](55_monitoring_review.md) | G26 监控告警与复盘 | active v1.0.0（2026-08-12 重建） |
 | [60_cross_cutting_cleanup.md](60_cross_cutting_cleanup.md) | G27 冲突矩阵清理与事件总线（31条仲裁→3条firm硬上限+任务系统总线+三档节奏） | active v1.1.0 |
 | [61_lifecycle_multi_ai.md](61_lifecycle_multi_ai.md) | G28 策略生命周期与多 AI 协作 | active v2.10.0 |
-| [62_business_registry_construction.md](62_business_registry_construction.md) | 14业务注册表施工（12 基表+seat/cycle，registry_of_registries） | active v1.32.0 |
+| [62_business_registry_construction.md](62_business_registry_construction.md) | 18业务注册表施工（registry_of_registries） | active v1.32.0 |
 | [63_data_utilization_audit.md](63_data_utilization_audit.md) | 数据利用审计 | draft v2.0.0 |
 | [64_data_source_download_spec.md](64_data_source_download_spec.md) | 数据源与下载体系规范（15 源/130+任务/11档调度/落库/韧性全面盘点+升级讨论载体） | active v1.4.0 |
 | [65_git_safety_governance.md](65_git_safety_governance.md) | Git 安全治理体系（alias 失效修复+多层防护施工总案，Trae IDE 专用；#ARCH-AICOLLAB-001 三件套方案落 §12；wipe 治本 S1-S6+task_board 已 merge 回 dev，四证首次真实清理走通；**Phase 1 wrapper 层 7 项已全部施工**，merge 后跑安装脚本激活） | active v2.3.1 |
@@ -652,7 +652,7 @@ G22 下单对接 → G19 买入流 → G20 卖出流 → G23 回测对接 → G2
 | 16_technical_indicator_catalog | 技术指标目录（数据地基层子项） | ✅ 已定稿 | active v1.0.0（2026-08-12 重建） |
 | 17_special_trading_days_data_assets | 特殊交易日数据资产（数据地基层子项） | ✅ 已定稿 | active v1.0.0 |
 | 18_cold_archive_build_plan | 冷归档施工计划（数据地基层子项） | 已提议 | active v0.2.0 |
-| 62_business_registry_construction | 14 业务注册表施工（12 基表+seat/cycle，跨切治理层） | ✅ 已定稿 | active v1.32.0 |
+| 62_business_registry_construction | 18 业务注册表施工（跨切治理层） | ✅ 已定稿 | active v1.32.0 |
 | 63_data_utilization_audit | 数据利用审计（跨切治理层） | 已提议 | draft v2.0.0 |
 | 65_git_safety_governance | Git 安全治理体系（跨切治理层） | ✅ 已定稿（Phase 1 wrapper 层已施工，待激活） | active v2.3.1 |
 | 66_commit_queue_serialization | 提交队列串行化（跨切治理层·集成基建） | ✅ 已定稿（MVP 待排期） | active v1.1.0 |
