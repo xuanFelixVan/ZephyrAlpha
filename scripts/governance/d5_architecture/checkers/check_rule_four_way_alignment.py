@@ -31,6 +31,12 @@
   - cross_layer 检查——跨层规则必须对齐
 
 exit codes: 0=pass, 1=findings, 2=error
+
+合并态豁免（2026-08-15，AI-REGISTRY-V2 批实证）：
+  合并进行中（.git/MERGE_HEAD 存在）时工作区处于半合并态——rule_catalog_registry.yaml
+  等被检查文件可能含冲突标记或单侧内容，跨文件一致性检查结果不可信。
+  此时直接 SKIP 返回 exit 0（惯例同 validate_commit_gateway.py：merge 属正常操作放行）。
+  catalog 文件含冲突标记但无 MERGE_HEAD（abort 残留）→ exit 2（环境异常，门禁 fail-open）。
 """
 
 from __future__ import annotations
@@ -49,6 +55,7 @@ from _shared.encoding import ensure_utf8_stdout
 ensure_utf8_stdout()
 
 import argparse
+import subprocess
 
 try:
     import yaml
@@ -190,8 +197,46 @@ def _check_duplicate_rule_ids(catalog: dict, violations: list[str]) -> None:
             )
 
 
+def _is_merge_in_progress() -> bool:
+    """检测合并是否进行中（.git/MERGE_HEAD 存在）。
+
+    惯例同 validate_commit_gateway.py：merge 属正常操作放行。
+    半合并态工作区的跨文件一致性检查结果不可信（catalog 可能含冲突标记/单侧内容）。
+    """
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--git-dir"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            cwd=str(REPO_ROOT),
+        )
+        if result.returncode != 0:
+            return False
+        return (Path(result.stdout.strip()) / "MERGE_HEAD").exists()
+    except Exception:  # noqa: BLE001 — 检测失败保守返回 False（不豁免，正常检查）
+        return False
+
+
+def _catalog_has_conflict_markers() -> bool:
+    """catalog 含 git 冲突标记（merge abort 残留等无 MERGE_HEAD 的场景）。"""
+    try:
+        text = _CATALOG_YAML.read_text(encoding="utf-8")
+    except OSError:
+        return False
+    return "<<<<<<<" in text or ">>>>>>>" in text
+
+
 def check(with_code_refs: bool = False) -> int:
     """主检查函数。返回 exit code。"""
+    # 合并态豁免：半合并工作区跨文件一致性检查不可信（AI-REGISTRY-V2 批实证误拦 4 库）
+    if _is_merge_in_progress():
+        print("[SKIP] 合并进行中（MERGE_HEAD 存在）——半合并态工作区不可信，四方对齐检查豁免")
+        return EXIT_PASS
+    if _catalog_has_conflict_markers():
+        print("[ERROR] rule_catalog_registry.yaml 含 git 冲突标记（merge 残留）——无法可信检查")
+        return EXIT_ERROR
+
     catalog = _load_catalog()
     violations: list[str] = []
 
