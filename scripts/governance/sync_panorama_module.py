@@ -314,16 +314,29 @@ def sync_all_panorama() -> int:
 
     failed = 0
     partial = 0  # P0-2: 部分下游失败（rc=5）单独计数
-    for mid in modules:
-        rc = sync_module_panorama(mid)
-        if rc == 5:
-            # P0-2: 部分下游失败——不重复打印（sync_module_panorama 已打印详情）
-            partial += 1
-        elif rc != 0:
-            print(f"[WARN] 同步 {mid} 失败 (rc={rc})", file=sys.stderr)
-            failed += 1
+    # 缺蓝图 WARN 聚合（2026-08-15 治本：827 行/rebuild 噪音稀释真信号）——
+    # 批量期间逐条 WARN 静音并累积，循环后打印一行汇总。
+    from d5_architecture.syncers import blueprint_frontmatter_reconciler as _bfr
+
+    _bfr.set_quiet_missing(True)
+    try:
+        for mid in modules:
+            rc = sync_module_panorama(mid)
+            if rc == 5:
+                # P0-2: 部分下游失败——不重复打印（sync_module_panorama 已打印详情）
+                partial += 1
+            elif rc != 0:
+                print(f"[WARN] 同步 {mid} 失败 (rc={rc})", file=sys.stderr)
+                failed += 1
+    finally:
+        _missing_bp = _bfr.pop_missing_modules()
+        _bfr.set_quiet_missing(False)
     # P0-2: 汇总行打印结构化计数，供父 reconciler 解析
     print(f"[OK] 同步完成：{len(modules)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
+    print(
+        f"[OK] 蓝图缺失跳过 {len(_missing_bp)} 个模块（容忍常态：单文件模块文档真源=头标+注册表，域级才强制 blueprint.md）",
+        file=sys.stderr,
+    )
     if failed > 0:
         return EXIT_FINDINGS
     if partial > 0:
@@ -348,14 +361,24 @@ def sync_modules_panorama(module_ids: list[str]) -> int:
         return EXIT_PASS
     failed = 0
     partial = 0
-    for mid in module_ids:
-        rc = sync_module_panorama(mid)
-        if rc == 5:
-            partial += 1
-        elif rc != 0:
-            print(f"[WARN] 同步 {mid} 失败 (rc={rc})", file=sys.stderr)
-            failed += 1
+    # 缺蓝图 WARN 聚合（同 sync_all_panorama，2026-08-15 治本）
+    from d5_architecture.syncers import blueprint_frontmatter_reconciler as _bfr
+
+    _bfr.set_quiet_missing(True)
+    try:
+        for mid in module_ids:
+            rc = sync_module_panorama(mid)
+            if rc == 5:
+                partial += 1
+            elif rc != 0:
+                print(f"[WARN] 同步 {mid} 失败 (rc={rc})", file=sys.stderr)
+                failed += 1
+    finally:
+        _missing_bp = _bfr.pop_missing_modules()
+        _bfr.set_quiet_missing(False)
     print(f"[OK] 增量同步完成：{len(module_ids)} 个模块，{failed} 个失败，{partial} 个部分下游失败")
+    if _missing_bp:
+        print(f"[OK] 蓝图缺失跳过 {len(_missing_bp)} 个模块（容忍常态）", file=sys.stderr)
     if failed > 0 or partial > 0:
         return EXIT_FINDINGS
     return EXIT_PASS

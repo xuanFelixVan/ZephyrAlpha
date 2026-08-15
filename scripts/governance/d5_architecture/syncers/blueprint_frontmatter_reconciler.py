@@ -67,6 +67,28 @@ _SQL_QUERY_MODULE_BP = (
 
 _FRONTMATTER_RE = re.compile(r"^---\n(.*?)\n---\n", re.DOTALL)
 
+# 批量模式 WARN 聚合（2026-08-15 治本：rebuild 每次 827 行 "blueprint not found"
+# 逐条 WARN 稀释真信号——缺蓝图是 827 例容忍常态，逐条打印零信息量）。
+# quiet 开启后缺蓝图不再逐条 stderr，累积进 _MISSING_MODULES，由批量调用方
+# （sync_all_panorama）打印一行汇总。单模块 CLI 路径保持逐条 WARN（人读场景）。
+_QUIET_MISSING = False
+_MISSING_MODULES: list[str] = []
+
+
+def set_quiet_missing(quiet: bool) -> None:
+    """批量模式开关：True 时缺蓝图 WARN 聚合（不逐条 stderr），并清空累积清单。"""
+    global _QUIET_MISSING
+    _QUIET_MISSING = quiet
+    if quiet:
+        _MISSING_MODULES.clear()
+
+
+def pop_missing_modules() -> list[str]:
+    """取走并清空批量期累积的缺蓝图模块清单（供汇总行）。"""
+    out = list(_MISSING_MODULES)
+    _MISSING_MODULES.clear()
+    return out
+
 
 def _parse_frontmatter(content: str) -> dict:
     """解析 YAML frontmatter 为 dict（简单实现，不依赖 PyYAML）。"""
@@ -250,6 +272,9 @@ def reconcile_blueprint_frontmatter(module_id: str) -> int:
                 _write_frontmatter_updates(f, module_id, domain_id, dm, bs)
             return EXIT_PASS
         else:
-            print(f"[WARN] blueprint not found, skip (marked missing): {bp_file}", file=sys.stderr)
+            if _QUIET_MISSING:
+                _MISSING_MODULES.append(module_id)
+            else:
+                print(f"[WARN] blueprint not found, skip (marked missing): {bp_file}", file=sys.stderr)
             return EXIT_PASS
     return _write_frontmatter_updates(bp_file, module_id, domain_id, dm, bs)
