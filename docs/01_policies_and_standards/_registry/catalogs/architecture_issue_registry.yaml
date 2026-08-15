@@ -16896,3 +16896,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-085'
+  title: Stage 4 公共化 wrapper 双绑 cls 系统性 bug——classmethod 委托显式再传 cls（13 处 6 文件，公共 API 必 TypeError）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 515 failed 分簇）：Stage 4 公共化机械生成的 wrapper 全部写成 `return cls._xxx(cls, ...)`——目标 _xxx 同为 @classmethod，类访问已自动绑定 cls，显式再传致 4 参 vs 3 参定义，公共 API 一调即 TypeError（"takes 3 positional arguments but 4 were given"），wrapper 自生成起从未可用。13 处全量清单（grep `return (cls|self)\._\w+\((cls|self),` 穷尽）：skill_evaluator.py 5 处（L46/52/58/64/70 evaluate_token_efficiency/structure/freshness/density/constraints）、skill_team_optimizer.py 3 处（L139/145/151 team_score/coverage/compat_score）、skill_translator.py 2 处（L86/92 _infer_source_family/_apply_adaptation）、skill_contract.py 1 处（L39 _parse_contracts）、skill_compliance.py 1 处（L47 _check_pii）、gov_code_quality/code_dedup/signature_matcher.py 1 处（L70 _classify_path）；13 处目标方法已逐个核实均为 @classmethod（无非 classmethod 误报）。波及测试 43 项（test_skill_evaluator 15 / test_skill_team_optimizer 12 / test_skill_translator 8 / test_skill_contract 8 中此形态部分 + signature_matcher 对应）。真代码 bug 非测试错，裁定豁免登记后顺手修（修复方案机械唯一：委托调用删显式 cls 首参）。已修 13 处并逐文件 pytest 验证。防复发建议（待裁定）：①Stage 4 公共化生成器模板修正——classmethod 委托禁止显式传 cls；②对存量 wrapper 加冒烟校验（公共 API 至少可调用不 TypeError）入 clone_guard/arch_guard 检测面。'
+  fix_phase: 已修（AI-TDEBT-001 删显式 cls 委托 13 处）；防复发①②待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
