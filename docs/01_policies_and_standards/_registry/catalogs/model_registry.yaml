@@ -8,6 +8,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段（本库以版本/晋升/衰减字段为主，v2 维度为增量标注）。entry_role 默认 state（模型=预测状态量生产者）；primary_timeframe 默认 null 占位；algorithm_status 固定 quantized（模型产物本身是已量化 artifact）。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   k线、信号、出货、分时、因子、多因子、形态、情绪、打板、数据、机器学习、波动、盘口、组合、绩效、规则、订单、资金、量化、震荡、龙虎榜
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -27,7 +29,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -106,7 +108,7 @@ models:
     direction: "neutral"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["机器学习", "量化", "绩效", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -141,7 +143,7 @@ models:
     direction: "neutral"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["出货", "机器学习", "k线", "绩效", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -179,7 +181,7 @@ models:
     direction: "neutral"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["情绪", "机器学习"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -214,10 +216,10 @@ models:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["打板", "机器学习", "形态", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -252,7 +254,7 @@ models:
     direction: "neutral"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["龙虎榜", "机器学习", "数据", "形态", "组合", "规则", "信号"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -285,12 +287,12 @@ models:
     owner: "MOD-GOVERNANCE"
     primary_timeframe: null
     applicable_timeframes: []
-    regime_valid: []
+    regime_valid: ["ranging"]
     regime_invalid: []
     direction: "neutral"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["波动", "震荡", "机器学习"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -322,10 +324,10 @@ models:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["多因子", "机器学习", "因子"]
     algorithm_status: "quantized"
     evidence: ""
 
@@ -354,13 +356,13 @@ models:
     updated_at: "2026-08-14"
     owner: "MOD-GOVERNANCE"
     primary_timeframe: null
-    applicable_timeframes: []
+    applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "short"
     entry_role: "state"
     applies_to: []
-    tags: []
+    tags: ["出货", "资金", "盘口", "分时", "规则", "订单", "机器学习"]
     algorithm_status: "quantized"
     evidence: ""
 
