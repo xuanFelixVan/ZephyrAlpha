@@ -1266,6 +1266,151 @@ tasks:
   extra:
     description: "AKShare ST股票列表刷新（ak.stock_info_sh/sz_name_code 过滤ST/*ST/退市）"
 
+  # ============== JOB-077 市场元数据与约束接入（DS-081~085，2026-08-15）==============
+  # 盘前 pre_market(08:30) + 盘后 daily_capital(18:00) 双调度点；全部 akshare 源。
+  # ST 盘后刷新已由 st_stock_list_refresh(daily_capital) 覆盖，不重复注册。
+  # 天然无副源（交易所官网/规则计算仅 akshare 承担），fallback_sources 显式置空。
+- task_id: stock_basic_premarket
+  table: c1_market.stock_basic
+  source: akshare
+  schedule: pre_market
+  incremental: false    # 日快照（同日重跑 ReplacingMergeTree 幂等替换）
+  date_col: trade_date
+  dependencies: []
+  capability: stock_basic
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "股票基本信息盘前快照（DS-081：交易所官网清单 SH主板+科创板+SZ）"
+    trading_day_only: true
+
+- task_id: st_status_premarket
+  table: c1_market.st_stock_list
+  source: akshare
+  schedule: pre_market
+  incremental: false    # 日快照积累（DS-085）
+  date_col: trade_date
+  dependencies: []
+  capability: st_stock_list
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "ST状态盘前快照（DS-085：SH主板+科创板+SZ名称过滤，盘前供universe过滤）"
+    trading_day_only: true
+
+- task_id: suspend_status_premarket
+  table: c1_market.suspend
+  source: akshare
+  schedule: pre_market
+  incremental: false    # 日快照积累（DS-083）
+  date_col: trade_date
+  dependencies: []
+  capability: suspend_status
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "停复牌盘前快照（DS-083：东财停牌清单主源+百度停复牌公告兜底）"
+    trading_day_only: true
+
+- task_id: index_member_premarket
+  table: c1_market.index_constituent
+  source: akshare
+  schedule: pre_market
+  incremental: false    # 日快照（DS-084：300/500/1000/中证全指+权重）
+  date_col: trade_date
+  dependencies: []
+  capability: index_constituent
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "指数成分及权重盘前刷新（DS-084：中证官网成分+月末权重快照）"
+    trading_day_only: true
+
+- task_id: stk_limit_premarket
+  table: c1_market.stk_limit
+  source: akshare
+  schedule: pre_market
+  incremental: true     # 增量（last_key 续算；依赖昨收已落库）
+  date_col: trade_date
+  dependencies: ["stock_basic_premarket", "st_status_premarket"]    # ST标记与板块前提
+  capability: stk_limit
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "每日涨跌停价格盘前计算（DS-082：昨收×(1±幅度)规则，供当日撮合约束）"
+    trading_day_only: true
+
+- task_id: stock_basic_postclose
+  table: c1_market.stock_basic
+  source: akshare
+  schedule: daily_capital
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  capability: stock_basic
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "股票基本信息盘后快照（DS-081：捕获盘中/盘后名称与清单变更）"
+    trading_day_only: true
+
+- task_id: suspend_status_postclose
+  table: c1_market.suspend
+  source: akshare
+  schedule: daily_capital
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  capability: suspend_status
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "停复牌盘后快照（DS-083：捕获盘中停牌公告，盘前失败的自愈重试）"
+    trading_day_only: true
+
+- task_id: index_member_postclose
+  table: c1_market.index_constituent
+  source: akshare
+  schedule: daily_capital
+  incremental: false
+  date_col: trade_date
+  dependencies: []
+  capability: index_constituent
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "指数成分及权重盘后刷新（DS-084：指数调整公告盘后发布）"
+    trading_day_only: true
+
+- task_id: stk_limit_postclose
+  table: c1_market.stk_limit
+  source: akshare
+  schedule: daily_capital    # 18:00 在 daily_kline(16:30) 之后，当日收盘已落库
+  incremental: true
+  date_col: trade_date
+  dependencies: []
+  capability: stk_limit
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "每日涨跌停价格盘后重算（DS-082：盘前失败的自愈重试，昨收已确认）"
+    trading_day_only: true
+
+- task_id: suspend_status_derive_weekend
+  table: c1_market.suspend
+  source: akshare
+  schedule: weekend_calibration
+  incremental: false    # 全量推导（当月窗口，周滚积累历史分区）
+  date_col: trade_date
+  dependencies: []
+  capability: suspend_status
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "停复牌K线缺口推导（DS-083回填：交易日无K线且前后均有K线→停牌日）"
+    trading_day_only: false    # 纯CH查询推导，非交易日也可运行
+    derive_from_kline: true
+
 - task_id: concept_board_refresh
   table: c1_market.concept_board
   source: akshare

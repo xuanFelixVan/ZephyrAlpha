@@ -3487,10 +3487,10 @@ datasets:
   design_maturity: design
   name: meta.stock_basic
   name_zh: 股票基本信息
-  status: candidate
+  status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-08-15'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3504,8 +3504,8 @@ datasets:
   applies_to: ["stock", "market"]
   tags: ["数据", "绩效"]
   algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
+  evidence: "2026-08-15 联调实证：c1_market.stock_basic 单日快照 5208 行（SH主板+科创板+SZ），回读抽验 600000/000001/300750/688001 板块与上市日期正确；SH 行业东财反爬期留空（次日重试回补）"
+  code_symbol: "AkshareIngestProvider._fetch_stock_basic"
   code_fingerprint: null
 
 - dataset_id: DS-082
@@ -3524,10 +3524,10 @@ datasets:
   design_maturity: design
   name: market_data.stk_limit
   name_zh: 涨跌停价格
-  status: candidate
+  status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-08-15'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3541,8 +3541,8 @@ datasets:
   applies_to: ["market"]
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
+  evidence: "2026-08-15 联调实证：c1_market.stk_limit 单日快照 5205 行，回读抽验 600000 涨停价 10.10 与前收×1.10 手算一致；分档规则主板10%/ST5%/创业板20%/科创板20%/北交所30%，新股无涨跌幅期留空；按交易日生效日落库（PIT strict）"
+  code_symbol: "AkshareIngestProvider._fetch_stk_limit"
   code_fingerprint: null
 
 - dataset_id: DS-083
@@ -3561,10 +3561,10 @@ datasets:
   design_maturity: design
   name: market_data.suspend
   name_zh: 停复牌
-  status: candidate
+  status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-08-15'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3578,8 +3578,8 @@ datasets:
   applies_to: ["market"]
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
+  evidence: "2026-08-15 联调实证：c1_market.suspend 快照 5 行（东财反爬封锁→百度停复牌公告兜底生效，港股 5 位代码双门禁排除）；K线缺口推导模式（derive_from_kline）供历史回填"
+  code_symbol: "AkshareIngestProvider._fetch_suspend_status"
   code_fingerprint: null
 
 - dataset_id: DS-084
@@ -3598,10 +3598,10 @@ datasets:
   design_maturity: design
   name: meta.index_member
   name_zh: 指数成分
-  status: candidate
+  status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-08-15'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3615,8 +3615,8 @@ datasets:
   applies_to: ["index", "market"]
   tags: ["指数", "数据"]
   algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
+  evidence: "2026-08-15 联调实证：c1_market.index_constituent 四指数（300/500/1000/中证全指）6926 行，真实权重（300750 4.012%/600519 3.239% 中证官网月末权重快照）；落库复用既有 SCD-2 表"
+  code_symbol: "AkshareIngestProvider._fetch_index_constituent"
   code_fingerprint: null
 
 - dataset_id: DS-085
@@ -3635,10 +3635,10 @@ datasets:
   design_maturity: design
   name: meta.st_status
   name_zh: ST 状态
-  status: candidate
+  status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-08-15'
   owner: MOD-GOVERNANCE
   produced_by_source: SRC-AKSHARE-001
   survivorship_free: true
@@ -3652,8 +3652,8 @@ datasets:
   applies_to: ["market"]
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
+  evidence: "2026-08-15 联调实证：c1_market.st_stock_list 当日快照 203 行（扩展补科创板清单，原漏科创板ST）；落库复用既有日快照表，戴帽/摘帽由快照序列派生；2026-08 前历史快照缺口由既有任务积累 + stk_limit 按最近可得（≤T）快照取ST标记（PIT严格）"
+  code_symbol: "AkshareIngestProvider._fetch_st_stock_list"
   code_fingerprint: null
 
 - dataset_id: DS-086
@@ -6507,17 +6507,17 @@ jobs:
   design_maturity: design
   name: ingest.akshare_market_meta
   name_zh: 市场元数据接入
-  status: candidate
+  status: production
   version: 1.0.0
   created_at: '2026-08-14'
-  updated_at: '2026-08-14'
+  updated_at: '2026-08-15'
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: ["stock", "index", "market"]
   tags: ["指数", "执行", "股票池", "数据"]
   algorithm_status: "not_applicable"
-  evidence: ""
-  code_symbol: null
+  evidence: "2026-08-15 全链路联调 PASS（拉取→落库→回读）：stock_basic 5208行/stk_limit 5205行（600000 涨停10.10 手算一致）/suspend 5行（东财→百度兜底）/index_constituent 四指数6926行含真实权重/st_stock_list 203行（补科创板）；调度：pre_market(08:30)+daily_capital(18:00) 双点 10 任务注册 tasks.yaml；单测 48 条全过"
+  code_symbol: "AkshareIngestProvider._fetch_stock_basic/_fetch_stk_limit/_fetch_suspend_status/_fetch_index_constituent/_fetch_st_stock_list"
   code_fingerprint: null
 - job_id: JOB-078
   job_name: ingest.akshare_fundamental

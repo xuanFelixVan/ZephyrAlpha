@@ -201,7 +201,7 @@ class CapabilityContract:
 |---|---|---|---|
 | IFindProvider | ifind_provider.py | THS_RQ/THS_BD/iwencai/EDB/RealtimeQuotes | 月度配额监控(-4318/-4309)；试用到期降级 |
 | MiniQmtIngestProvider | miniqmt_provider.py | 行情/财务/板块/期权Greeks/港股/美股 | single_thread+进程依赖；非交易日跳过(trading_day_only) |
-| AkshareIngestProvider | akshare_provider.py | 分红/质押/解禁/宏观/股东/涨跌停/生猪/板块 | 60RPM 限流；断 VPN；东财反爬 3 次跳过 |
+| AkshareIngestProvider | akshare_provider.py | 分红/质押/解禁/宏观/股东/涨跌停/生猪/板块/市场元数据约束(stock_basic/stk_limit/suspend_status，JOB-077) | 60RPM 限流；断 VPN；东财反爬 3 次跳过 |
 | BaostockProvider | baostock_provider.py | K线/财务/交易日历/指数成分 | thread_local（每线程独立 bs.login）；数据滞后1周 |
 | TushareProvider | tushare_provider.py | 行业分类/新闻 | token 积分制；新闻 API 已废弃(disabled) |
 | TickFlowProvider | tickflow_provider.py | 美股/港股 K线 | 60RPM 限流 |
@@ -297,13 +297,14 @@ class CapabilityContract:
 
 **决策**：APScheduler 常驻进程（BackgroundScheduler + ThreadPoolExecutor），而非 Windows 任务计划/cron。**why**：①OS 级触发器无任务依赖/并发控制/重试编排能力——154 任务有 DAG 依赖（adj_factor→kline_daily_hfq→kline_weekly_hfq）无法表达；②APScheduler 支持 `coalesce`（错过多次只跑一次）+ `max_instances=1`（同任务不并发）+ `misfire_grace_time`（错过1小时内补跑）；③per-source 串行/跨源并行需线程池分流：`default` 池 8 线程给可并行源，`heavy` 池 2 线程给串行源（iFind/miniQMT）。
 
-### 6.2 15 个调度时段条目（schedule.yaml 真源）
+### 6.2 16 个调度时段条目（schedule.yaml 真源）
 
-> schedule.yaml 实际有 15 个时段条目（2026-08-12 实测：L0~L11 编号体系，含 L2.5 板块层 + L3.5 慢新闻层 + L10.5 每日补下载层），非早期 9/11 档。任务分布：daily_capital 24 / weekend_calibration 23 / daily_kline 18 / monthly_static 17 / intraday_minute 15 / daily_event 14 / intraday_realtime 13 / event_driven 12 / nightly_financial 8 / intraday_sector 5 / auction_highfreq 2 / news_slow 2 / weekend_backfill 1（daily_backfill/integrity_check 为动态发现无静态任务）。
+> schedule.yaml 实际有 16 个时段条目（2026-08-15 JOB-077 新增 L0.5 盘前元数据层 pre_market；L0~L11 编号体系，含 L2.5 板块层 + L3.5 慢新闻层 + L10.5 每日补下载层）。任务分布：daily_capital 28 / weekend_calibration 24 / daily_kline 18 / monthly_static 17 / intraday_minute 15 / daily_event 14 / intraday_realtime 13 / event_driven 12 / nightly_financial 8 / intraday_sector 5 / pre_market 5 / auction_highfreq 2 / news_slow 2 / weekend_backfill 1（daily_backfill/integrity_check 为动态发现无静态任务）。
 
 | 时段 | cron | executor | 典型任务 | 说明 |
 |---|---|---|---|---|
 | L0 集合竞价高频 | */10 15-25 9 周一-五（6段含秒） | realtime | auction_snapshot/auction_book | 9:15-9:25 每10秒抓五档盘口，主力挂撤单行为分析；10s 间隔防 max_instances=1+coalesce 塌缩 |
+| L0.5 盘前元数据 | 30 8 周一-五 | default(8线程) | stock_basic/stk_limit/suspend_status/index_member/st_status（JOB-077） | 开市前刷新 universe 构造与回测撮合约束前提；全 akshare 源不依赖 QMT；盘后 daily_capital 双点兜底 |
 | L1 盘中实时 | */5 9-15 周一-五 | realtime(4线程) | tick_data/index_quote/auction/futures_position/kline_hk | 盘中高频轮询，独占 realtime 算力 |
 | L2 盘中分钟K | */5 9-15 周一-五 | intraday_minute(4线程) | kline_1min~60min + ETF/LOF 分钟K | 盘中分钟滚动 |
 | L2.5 盘中板块K线 | */5 9-15 周一-五 | intraday_sector(独立) | 880xxx 板块分钟K线（mootdx TCP 直连） | 独立执行器，避免被 miniqmt 全市场分钟K线慢任务（~5000股）阻塞 |
@@ -438,7 +439,7 @@ QMT callback 线程 ──put_nowait──→ queue.Queue ──批量出队(500
 
 ### 7.5 落库表全景（三库）
 
-**c1_market（行情/资金/宏观/静态 ~80 表）**：K线类（kline_daily/hfq/weekly/monthly/weekly_hfq/monthly_hfq/1min~60min/etf_*/lof_*/index/sector/sector_880/sector_intraday/cb/option/hk_daily/hk/us_daily/futures/futures_kline_qmt）/ Tick快照（tick_data/l2_tick/auction_snapshot/auction_book/index_quote/realtime_snapshot）/ 复权估值（adj_factor/daily_valuation/stock_valuation）/ 资金面（margin_trading/block_trade/block_trade_detail/dragon_tiger/dragon_tiger_seat/money_flow/hk_connect_flow）/ 宏观（macro_data/edb_data）/ 衍生品（futures_position/futures_term_structure/option_iv_surface/option_greeks/convertible_bond_iv）/ 静态日历（trade_calendar/hk_trade_calendar/calendar_event/stock_list/index_list/index_constituent/index_weight/index_adjustment/msci_adjustment/industry_class/industry_class_suppl/concept_sector/concept_board/sector_list/sector_meta/sector_constituent/sector_snapshot/convertible_bond_list/etf_list/etf_nav/etf_benchmark/lof_list/hk_stock_list/st_stock_list/ipo_schedule/margin_target_adjustment）/ 另类（hog_spot_index/hog_futures_core/hog_province_spot/weather_data/stock_hot_rank/limit_up_down/technical_indicator/us_index）
+**c1_market（行情/资金/宏观/静态 ~80 表）**：K线类（kline_daily/hfq/weekly/monthly/weekly_hfq/monthly_hfq/1min~60min/etf_*/lof_*/index/sector/sector_880/sector_intraday/cb/option/hk_daily/hk/us_daily/futures/futures_kline_qmt）/ Tick快照（tick_data/l2_tick/auction_snapshot/auction_book/index_quote/realtime_snapshot）/ 复权估值（adj_factor/daily_valuation/stock_valuation）/ 资金面（margin_trading/block_trade/block_trade_detail/dragon_tiger/dragon_tiger_seat/money_flow/hk_connect_flow）/ 宏观（macro_data/edb_data）/ 衍生品（futures_position/futures_term_structure/option_iv_surface/option_greeks/convertible_bond_iv）/ 静态日历（trade_calendar/hk_trade_calendar/calendar_event/stock_list/stock_basic/index_list/index_constituent/index_weight/index_adjustment/msci_adjustment/industry_class/industry_class_suppl/concept_sector/concept_board/sector_list/sector_meta/sector_constituent/sector_snapshot/convertible_bond_list/etf_list/etf_nav/etf_benchmark/lof_list/hk_stock_list/st_stock_list/ipo_schedule/margin_target_adjustment）/ 市场约束（stk_limit/suspend，JOB-077 DS-082/083，回测撮合前提）/ 另类（hog_spot_index/hog_futures_core/hog_province_spot/weather_data/stock_hot_rank/limit_up_down/technical_indicator/us_index）
 
 **c3_fundamental（基本面/新闻/股东 ~22 表）**：新闻（news_data 多源统一表，含 cls/em/rss/akshare/tushare）/ 财务（balance_sheet/income_statement/cashflow_statement/financial_indicator/main_business）/ 股东事件（shareholder_count/analyst_forecast/earnings_forecast/express_report/audit_opinion/dividend/rights_issue/share_unlock/restricted_shares/share_change/equity_pledge_detail/equity_pledge_summary/top10_shareholders/top10_circulating_shareholders/disclosure_plan/repurchase/research_report）
 
