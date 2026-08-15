@@ -3,9 +3,9 @@ module_id: MOD-PA-007
 title: "Regime元分配器蓝图 — Shrinkage风险节流+PerformanceScore后验分配（A模型·meta层）"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
-build_status: generated
+build_status: stable
 ttl: permanent
 layer: L02_pf_alloc
 layer_name: pf_alloc
@@ -384,7 +384,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-PA-007 | MOD-PA-007 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 1 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
@@ -402,7 +402,7 @@ allocation_i = allocation_i / Σ(clamped_allocation)         # 二次归一化
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| `src/zephyr/pf_alloc/core/regime_meta_allocator.py` | ✅ 已实现 | |
+| — | — | 本模块尚无已实现代码 |
 
 ### 10.5 路径索引使用指南
 

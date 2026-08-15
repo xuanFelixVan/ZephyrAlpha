@@ -3,7 +3,7 @@ module_id: MOD-INF-023
 title: "Drift Detector 蓝图 — 39检测器漂移检测引擎与10状态漂移生命周期"
 doc_type: blueprint
 status: Active
-version: "3.1.2"
+version: "3.1.3"
 layer: L1_foundation
 layer_name: cross_layer
 functional_domain: governance
@@ -77,7 +77,7 @@ build_status: planned
 design_maturity: design
 ---
 
-> module_id: MOD-INF-023 | version: 3.1.2 | status: Active | layer: cross_layer
+> module_id: MOD-INF-023 | version: 3.1.3 | status: Active | layer: cross_layer
 > actual_disk_path: src/zephyr/gov_drift/ + src/zephyr/governance/drift_detector_core/ | generation: 4 | construction_progress: partially_implemented
 
 # Drift Detector 蓝图+施工图 — 39检测器漂移检测引擎与10状态漂移生命周期
@@ -1322,7 +1322,6 @@ detector_dimensions:
 | `tests/audit/test_benchmark_integrity.py` | ✅ 已实现 | |
 | `tests/audit/test_ml_engineering.py` | ✅ 已实现 | |
 | `tests/audit/test_performance_baseline.py` | ✅ 已实现 | |
-| `tests/audit/test_gov_drift_regime_detector.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_data_lifecycle.py` | ✅ 已实现 | |
 | `tests/ba/test_ba_dependency_manager.py` | ✅ 已实现 | |
 | `tests/cross/test_cross_env_consistency.py` | ✅ 已实现 | |
