@@ -16824,3 +16824,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-076'
+  title: behavioral_auditor __main__ _cmd_* 五子命令为 pass 桩（argparse 分派+契约缺席）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/autonomy_core/__main__.py 尾部 _cmd_budget/_cmd_scan/_cmd_list/_cmd_self_test/_cmd_status 五函数为 pass 桩（返回 None），main() 保留手写 sys.argv 分派且仅路由 list/status，不识别 scan/self-test/budget；而 tests/ba/test_ba_main.py + tests/autonomy/test_behavioral_auditor_main.py 37 项测试编码了完整契约（argparse 分派 cmd_scan/cmd_self_test/cmd_budget、import error→1、json 输出模式、check_budget_for_gate allowed/blocked→0/1、status degraded→1 等）。与 #ARCH-073/074/075 同族（测试先行、实现未跟；MODIFY-GUARD 标注 "CLI入口不可修改" 与测试契约一致性待裁定）。37 项测试已模块级 xfail(strict=False) 留痕。待裁定：按测试契约补实现五子命令+argparse 分派，或退役 _cmd_* 桩并改写测试对齐现行 cmd_list/cmd_status 设计。'
+  fix_phase: 待裁定（按契约补实现 / 退役桩+改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
