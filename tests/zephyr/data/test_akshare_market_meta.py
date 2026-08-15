@@ -334,6 +334,79 @@ class TestFetchStockBasic:
         assert [r[1] for r in results[0].rows] == ["000001"]
 
 
+class TestCninfoIndustryFallback:
+    """SH 行业补全二级降级：东财行业反查封锁 → 巨潮个股资料（stock_profile_cninfo）。"""
+
+    def _sh_sz_frames(self):
+        def sh_fn(symbol=None, **kw):
+            return pd.DataFrame({
+                "证券代码": ["600000"], "证券简称": ["浦发银行"],
+                "证券全称": ["浦发银行"], "公司全称": ["上海浦东发展银行股份有限公司"],
+                "上市日期": ["1999-11-10"],
+            })
+
+        sz_df = pd.DataFrame({
+            "板块": ["主板"], "A股代码": ["000001"], "A股简称": ["平安银行"],
+            "A股上市日期": ["1991-04-03"], "A股总股本": ["0"], "A股流通股本": ["0"],
+            "所属行业": ["J 金融业"],
+        })
+        return sh_fn, sz_df
+
+    def test_em_blocked_cninfo_fills(self, monkeypatch):
+        sh_fn, sz_df = self._sh_sz_frames()
+
+        def profile_fn(symbol=None, **kw):
+            return pd.DataFrame({"A股代码": [symbol], "所属行业": ["货币金融服务"]})
+
+        p = AkshareIngestProvider()
+        _mock_ak(
+            monkeypatch,
+            stock_info_sh_name_code=sh_fn,
+            stock_info_sz_name_code=sz_df,
+            stock_board_industry_name_em=ConnectionError("em blocked"),
+            stock_profile_cninfo=profile_fn,
+        )
+        results = _call_fetch(p, "stock_basic", _payload(D(2026, 8, 14), D(2026, 8, 14)))
+        assert not results[0].error
+        by = {r[1]: r for r in results[0].rows}
+        # SH 行业由巨潮降级补全（口径=巨潮/证监会行业）
+        assert by["600000"][4] == "货币金融服务"
+        # SZ 仍取交易所清单口径，不受影响
+        assert by["000001"][4] == "J 金融业"
+
+    def test_both_sources_fail_empty_not_fatal(self, monkeypatch):
+        # 东财+巨潮双源均失败 → industry 留空不致命（次日重试回补）
+        sh_fn, sz_df = self._sh_sz_frames()
+        p = AkshareIngestProvider()
+        _mock_ak(
+            monkeypatch,
+            stock_info_sh_name_code=sh_fn,
+            stock_info_sz_name_code=sz_df,
+            stock_board_industry_name_em=ConnectionError("em blocked"),
+            stock_profile_cninfo=ConnectionError("cninfo blocked"),
+        )
+        results = _call_fetch(p, "stock_basic", _payload(D(2026, 8, 14), D(2026, 8, 14)))
+        assert not results[0].error
+        by = {r[1]: r for r in results[0].rows}
+        assert by["600000"][4] == ""
+        assert by["000001"][4] == "J 金融业"
+
+    def test_cninfo_consecutive_fail_aborts(self, monkeypatch):
+        # 巨潮连续失败 3 次即放弃（快速失败模式，对标 _em_push2_blocked）
+        calls: list[str] = []
+
+        def profile_fn(symbol=None, **kw):
+            calls.append(symbol)
+            raise ConnectionError("cninfo blocked")
+
+        p = AkshareIngestProvider()
+        m = _mock_ak(monkeypatch, stock_profile_cninfo=profile_fn)
+        policy = MagicMock(rpm=0, max_retries=1, backoff="fixed", initial_wait=0)
+        result = p._fetch_cninfo_industry_map(m, policy, {"600000", "600001", "600002", "600003"})
+        assert result == {}
+        assert len(calls) == 3  # 第 3 次失败后熔断，第 4 个代码不再调用
+
+
 # ============== index_constituent 四指数+权重 ==============
 
 class TestFetchIndexConstituent:
@@ -446,16 +519,17 @@ class TestStStockListCoverage:
 
 class TestFetchSuspendStatus:
     def test_em_blocked_baidu_fallback(self, monkeypatch):
+        # 新鲜公告（公告日期≤30天、未复牌、源站未标跳过）→ 兜底正常产出
         baidu_df = pd.DataFrame({
             "股票代码": ["688536", "301073"],
             "股票简称": ["思瑞浦", "君亭酒店"],
             "交易所代码": ["SH", "SZ"],
-            "停牌时间": ["2025-11-26", "2025-11-26"],
+            "停牌时间": ["2026-08-13", "2026-08-14"],
             "复牌时间": [None, None],
             "停牌事项说明": ["拟筹划重大资产重组", "重大事项"],
-            "市值": [0, 0], "公告日期": ["2025-11-26", "2025-11-26"],
+            "市值": [0, 0], "公告日期": ["2026-08-13", "2026-08-14"],
             "公告时间": ["--", "--"], "证券类型": ["stock", "stock"],
-            "市场类型": ["ab", "ab"], "是否跳过": [1, 1],
+            "市场类型": ["ab", "ab"], "是否跳过": [0, 0],
         })
         p = AkshareIngestProvider()
         _mock_ak(
@@ -468,8 +542,32 @@ class TestFetchSuspendStatus:
         rows = results[0].rows
         assert len(rows) == 2
         # (trade_date, symbol, name, suspend_date, resume_date, reason, data_source)
-        assert rows[0][1] == "688536" and rows[0][3] == "2025-11-26"
+        assert rows[0][1] == "688536" and rows[0][3] == "2026-08-13"
         assert rows[0][5] == "拟筹划重大资产重组" and rows[0][6] == "akshare_baidu"
+
+    def test_baidu_stale_feed_filtered(self, monkeypatch):
+        # 2026-08-15 二审实证：百度 feed 冻结于 2025-11-26（全量公告日期陈旧）。
+        # 三重过滤各命中一行：源站是否跳过=1 / 复牌日≤快照日 / 公告>30天——
+        # 宁可快照空缺，不写假停牌约束（3 行标的当日 K 线正常交易实证）。
+        baidu_df = pd.DataFrame({
+            "股票代码": ["688536", "600200", "301073"],
+            "股票简称": ["思瑞浦", "退市苏吴", "君亭酒店"],
+            "交易所代码": ["SH", "SH", "SZ"],
+            "停牌时间": ["2025-11-26", "2025-11-26", "2025-11-26"],
+            "复牌时间": [None, "2025-12-09", None],
+            "停牌事项说明": ["拟筹划重大资产重组", "重要公告", "重大事项"],
+            "公告日期": ["2025-11-26", "2025-11-26", "2025-11-26"],
+            "是否跳过": [1, 0, 0],
+        })
+        p = AkshareIngestProvider()
+        _mock_ak(
+            monkeypatch,
+            stock_zh_a_stop_em=ConnectionError("em blocked"),
+            news_trade_notify_suspend_baidu=baidu_df,
+        )
+        results = _call_fetch(p, "suspend_status", _payload(D(2026, 8, 14), D(2026, 8, 14)))
+        assert not results[0].error
+        assert results[0].rows == []
 
     def test_hk_stock_excluded(self, monkeypatch):
         # 港股 5 位代码 zfill 后误撞深主板 00 前缀（联调实证 003389/009929 串入）——

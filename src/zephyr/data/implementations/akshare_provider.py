@@ -5027,6 +5027,45 @@ class AkshareIngestProvider(IngestProviderBase):
                     result[code6] = str(board_name)
         return result
 
+    def _fetch_cninfo_industry_map(
+        self, ak, policy: SourcePolicy, target_codes: set[str]
+    ) -> dict[str, str]:
+        """巨潮个股资料反查 code→行业名（东财反爬期降级第二级，best-effort）。
+
+        stock_profile_cninfo 为逐股接口（官方披露站，非东财链路，2026-08-15 实证
+        东财全站封锁期可达），连续失败 3 次即放弃（对标 _em_push2_blocked 快速
+        失败模式），返回已收集的部分映射（可能为空 dict）。
+        口径：巨潮/证监会行业（与东财行业分类存在口径差，registry evidence 留痕）。
+        成本：逐股 1 次调用，仅对 EM 反查后仍留空的 SH 代码触发（东财正常时零调用）。
+        """
+        result: dict[str, str] = {}
+        consecutive_fail = 0
+        for code in sorted(target_codes):
+            if consecutive_fail >= 3:
+                self._log.warning("巨潮个股资料连续失败3次，放弃行业反查降级")
+                break
+            try:
+                df = self._call_with_policy(ak.stock_profile_cninfo, policy, symbol=code)
+                consecutive_fail = 0
+            except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                consecutive_fail += 1
+                self._log.debug(f"stock_profile_cninfo({code}) 失败: {e}")
+                continue
+            if df is None or len(df) == 0 or "所属行业" not in df.columns:
+                continue
+            industry = str(df.iloc[0].get("所属行业") or "").strip()
+            if industry:
+                result[code] = industry
+        return result
+
+    @staticmethod
+    def _apply_industry_map(rows: list[tuple], industry_map: dict[str, str]) -> list[tuple]:
+        """按 code→行业映射填充 industry 列（r[4]），映射未命中保持原值。"""
+        return [
+            (r[0], r[1], r[2], r[3], industry_map.get(r[1]) or r[4], r[5], r[6], r[7])
+            for r in rows
+        ]
+
     def _collect_sh_basic_rows(
         self, ak, policy: SourcePolicy, iso_date: str
     ) -> list[tuple]:
@@ -5097,7 +5136,9 @@ class AkshareIngestProvider(IngestProviderBase):
         源：交易所官网清单（stock_info_sh_name_code 主板A股+科创板 /
         stock_info_sz_name_code A股列表），非东财接口，规避反爬。
         行业：SZ 列表自带"所属行业"（交易所口径）；SH 清单无行业列，经东财行业
-        板块成分反查 best-effort 补全（反爬封锁时留空，次日重试自然回补）。
+        板块成分反查 best-effort 补全；东财反爬封锁期降级巨潮个股资料
+        （stock_profile_cninfo，口径=巨潮/证监会行业）；双源均失败留空，
+        次日重试自然回补。
         市场板块：代码前缀静态规则（_board_of_a_share）。北交所暂无官网清单接口
         （stock_info_bj 未在 akshare 提供），本期不覆盖（已知缺口）。
         """
@@ -5114,18 +5155,22 @@ class AkshareIngestProvider(IngestProviderBase):
         rows = self._collect_sh_basic_rows(ak, policy, iso_date)
         rows.extend(self._collect_sz_basic_rows(ak, policy, iso_date))
 
-        # SH 行业补全（东财行业板块反查，best-effort）
+        # SH 行业补全（东财行业板块反查 → 巨潮个股资料，二级降级 best-effort）
         sh_codes = {r[1] for r in rows if r[4] == "" and r[1].startswith(("60", "68"))}
         if sh_codes:
             industry_map = self._fetch_em_industry_map(ak, policy, sh_codes)
             if industry_map:
-                rows = [
-                    (r[0], r[1], r[2], r[3], industry_map.get(r[1], r[4]), r[5], r[6], r[7])
-                    for r in rows
-                ]
-                self._log.info(
-                    f"SH 行业反查补全 {len([r for r in rows if r[4]])}/{len(rows)} 行"
-                )
+                rows = self._apply_industry_map(rows, industry_map)
+            remain = {r[1] for r in rows if r[4] == "" and r[1].startswith(("60", "68"))}
+            cninfo_map: dict[str, str] = {}
+            if remain:
+                cninfo_map = self._fetch_cninfo_industry_map(ak, policy, remain)
+                if cninfo_map:
+                    rows = self._apply_industry_map(rows, cninfo_map)
+            self._log.info(
+                f"SH 行业补全 {len([r for r in rows if r[4] != ''])}/{len(rows)} 行"
+                f"（EM反查 {len(industry_map)} + 巨潮降级 {len(cninfo_map)}）"
+            )
 
         self._log.info(f"stock_basic 快照完成: {len(rows)} 行（{iso_date}）")
         yield FetchResult(
@@ -5410,12 +5455,33 @@ class AkshareIngestProvider(IngestProviderBase):
             ))
         return rows
 
+    @staticmethod
+    def _iso_or_none(s: str) -> datetime.date | None:
+        """'YYYY-MM-DD' 字符串转 date，不可解析返回 None（防御脏数据）。"""
+        try:
+            return datetime.date.fromisoformat(s[:10])
+        except (ValueError, TypeError):
+            return None
+
+    # 百度停复牌公告距快照日超过该天数视为陈旧条目（2026-08-15 实证 feed 冻结）
+    _BAIDU_SUSPEND_STALE_DAYS = 30
+
     def _suspend_rows_from_baidu(self, df_bd, iso_date: str) -> list[tuple]:
         """百度停复牌公告 → 行集（列已实证：股票代码/股票简称/停牌时间/复牌时间/停牌事项说明）。
 
         港股 5 位代码 zfill 后会误撞深主板 00 前缀（实证 003389/009929 港股串入），
         交易所代码列+长度双门禁排除（JOB-077 联调发现）。
+
+        陈旧条目三重过滤（2026-08-15 二审实证：百度 feed 冻结于 2025-11-26，
+        全量 8 行公告日期清一色陈旧，其中 3 行标的当日 K 线正常交易=假停牌）：
+        1. 源站"是否跳过"标记=1 剔除（源站自标噪声）；
+        2. 复牌日 ≤ 快照日剔除（已复牌非当前停牌）；
+        3. 公告日期早于 快照日-30天 剔除（feed 冻结/陈旧保护）；
+        全被过滤时记 warning——宁可快照空缺，不写假停牌约束。
         """
+        snap = datetime.date.fromisoformat(iso_date)
+        stale_before = snap - datetime.timedelta(days=self._BAIDU_SUSPEND_STALE_DAYS)
+        n_skip_flag = n_resumed = n_stale = 0
         rows: list[tuple] = []
         for _, row in df_bd.iterrows():
             raw = str(row.get("股票代码") or "").strip()
@@ -5424,14 +5490,30 @@ class AkshareIngestProvider(IngestProviderBase):
                 continue
             if len(raw) != 6 or not raw.isdigit() or not self._board_of_a_share(raw):
                 continue
+            if str(row.get("是否跳过") or "").strip() in ("1", "1.0"):
+                n_skip_flag += 1
+                continue
+            resume_d = self._iso_or_none(self._norm_akshare_date(row.get("复牌时间")))
+            if resume_d and resume_d <= snap:
+                n_resumed += 1
+                continue
+            notice_d = self._iso_or_none(self._norm_akshare_date(row.get("公告日期")))
+            if notice_d and notice_d < stale_before:
+                n_stale += 1
+                continue
             rows.append((
                 iso_date, raw,
                 str(row.get("股票简称") or "").strip(),
                 self._norm_akshare_date(row.get("停牌时间")) or None,
-                self._norm_akshare_date(row.get("复牌时间")) or None,
+                resume_d.isoformat() if resume_d else None,
                 str(row.get("停牌事项说明") or "").strip(),
                 "akshare_baidu",
             ))
+        if n_skip_flag or n_resumed or n_stale:
+            self._log.warning(
+                f"百度停复牌过滤陈旧/噪声条目: 源站跳过={n_skip_flag} "
+                f"已复牌={n_resumed} 公告陈旧={n_stale}（保留 {len(rows)} 行）"
+            )
         return rows
 
     def _suspend_snapshot_rows(self, ak, policy: SourcePolicy, iso_date: str) -> list[tuple]:
