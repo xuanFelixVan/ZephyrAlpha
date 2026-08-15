@@ -226,7 +226,10 @@ class TestResearchIncubationTopology:
         for sid in EXPECTED_ALL_STEPS:
             assert sid in res_steps, f"缺少研究孵化环节 {sid}（DB 中未找到）"
 
-    @pytest.mark.xfail(reason="#ARCH-093：DB research_incubation 拓扑 25→33 演进（新增 BM-RES-08~11 各带 -A 子）含 sort_order 冲突（08/09=8/9 插头、10 与 01 同 10、11 与 01-A 同 11）+16 环节无锚点——待治理裁定后测试常量统一跟进")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093：DB research_incubation 拓扑 25→33 演进（新增 BM-RES-08~11 各带 -A 子）含 sort_order 冲突（08/09=8/9 插头、10 与 01 同 10、11 与 01-A 同 11）+16 环节无锚点——待治理裁定后测试常量统一跟进",
+    )
     def test_exactly_25_steps(self, res_steps):
         """research_incubation 阶段恰好 25 环节（7 根 + 18 子）。"""
         assert len(res_steps) == 25, (
@@ -234,7 +237,10 @@ class TestResearchIncubationTopology:
             f"{sorted(res_steps.keys())}"
         )
 
-    @pytest.mark.xfail(reason="#ARCH-093：拓扑 25→33（11 根+22 子）演进待治理裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093：拓扑 25→33（11 根+22 子）演进待治理裁定",
+    )
     def test_7_root_18_child(self, res_steps):
         """7 个根环节（depth=0）+ 18 个子环节（depth=1）。"""
         roots = [s for s in res_steps.values() if s.get("depth") == 0]
@@ -267,7 +273,10 @@ class TestResearchIncubationTopology:
                 depth = res_steps[child_id].get("depth")
                 assert depth == 1, f"{child_id} depth 应为 1，实际 {depth}"
 
-    @pytest.mark.xfail(reason="#ARCH-093：拓扑 25→33（新增 08-A/09-A/10-A/11-A 子环节）演进待治理裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093：拓扑 25→33（新增 08-A/09-A/10-A/11-A 子环节）演进待治理裁定",
+    )
     def test_all_children_accounted_for(self, res_steps):
         """18 个子环节全部在 EXPECTED_CHILDREN 映射中（无遗漏/无多余）。"""
         actual_children = {
@@ -336,7 +345,10 @@ class TestResearchIncubationTopology:
 
     # ── 锚点（BM-INV-001）────────────────────────────────────────────
 
-    @pytest.mark.xfail(reason="#ARCH-093：16 环节无锚点（03 全系/04 全系/05-A~C/06-A/B/07-A/08-A~11-A）——锚点缺口待治理裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093：16 环节无锚点（03 全系/04 全系/05-A~C/06-A/B/07-A/08-A~11-A）——锚点缺口待治理裁定",
+    )
     def test_each_step_has_anchor(self, res_anchors):
         """每个环节至少一个锚点（BM-INV-001：无锚点=悬空决策）。"""
         anchored_steps = {a["step_id"] for a in res_anchors}
@@ -355,7 +367,10 @@ class TestResearchIncubationTopology:
             a["target_graph"] == "depgraph" for a in non_candidate
         ), f"存在非法 target_graph 锚点: {[(a['step_id'], a['target_graph']) for a in non_candidate]}"
 
-    @pytest.mark.xfail(reason="#ARCH-093：锚点总数 21<25——锚点缺口待治理裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093：锚点总数 21<25——锚点缺口待治理裁定",
+    )
     def test_anchor_count_at_least_25(self, res_anchors):
         """锚点总数 ≥ 25（每环节至少 1 个，部分有 supplement 锚点）。"""
         assert len(res_anchors) >= 25, (

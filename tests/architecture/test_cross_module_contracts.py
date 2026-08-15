@@ -49,13 +49,19 @@ def _read_frontmatter(path: Path) -> dict:
 class TestUpstreamDependencyReachability:
     """上游依赖可达性验证。"""
 
-    @pytest.mark.xfail(reason="#ARCH-095：MCP blueprint depends_on 现 3 项（MOD-TASK_SYSTEM/MOD-GATE_ENGINE/b_mcp.yaml），测试锚定 ≥4 含 MOD-INF-039——依赖声明契约分歧待架构裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-095：MCP blueprint depends_on 现 3 项（MOD-TASK_SYSTEM/MOD-GATE_ENGINE/b_mcp.yaml），测试锚定 ≥4 含 MOD-INF-039——依赖声明契约分歧待架构裁定",
+    )
     def test_blueprint_depends_on_present(self):
         fm = _read_frontmatter(MCP_BLUEPRINT)
         depends = fm.get("depends_on", [])
         assert len(depends) >= 4, f"depends_on should have >=4 entries, got {len(depends)}"
 
-    @pytest.mark.xfail(reason="#ARCH-095：depends_on 未声明 MOD-INF-039（orchestrator）——声明缺口或测试过期待架构裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-095：depends_on 未声明 MOD-INF-039（orchestrator）——声明缺口或测试过期待架构裁定",
+    )
     def test_depends_on_ids_valid(self):
         fm = _read_frontmatter(MCP_BLUEPRINT)
         depends = fm.get("depends_on", [])

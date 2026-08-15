@@ -32,7 +32,10 @@ from zephyr.autonomy_core.skills.skill_loader import SkillLoader
 class TestPipelineSkillBridge:
     """B1-B2: PipelineSkillBridge 任务注入测试."""
 
-    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——skill-registry.yaml 仅 2 条 domain 条目且 path 指向的 SKILL.md 文件全部不存在，role 类清空；测试锚定 ID（SKILL-DOM-DBS-001/SKILL-ROL-*）均不在册")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-096：skill 内容库整体缺失——skill-registry.yaml 仅 2 条 domain 条目且 path 指向的 SKILL.md 文件全部不存在，role 类清空；测试锚定 ID（SKILL-DOM-DBS-001/SKILL-ROL-*）均不在册",
+    )
     def test_inject_construction_stage(self):
         """construction 阶段 → implementer role."""
         bridge = PipelineSkillBridge()
@@ -63,7 +66,10 @@ class TestPipelineSkillBridge:
         )
         assert isinstance(result, SkillInjectionResult)
 
-    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失（SKILL.md 文件不存在）——loaded=True 依赖内容库恢复")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-096：skill 内容库整体缺失（SKILL.md 文件不存在）——loaded=True 依赖内容库恢复",
+    )
     def test_inject_with_database_keyword(self):
         """database 关键词 → database-specialist domain."""
         bridge = PipelineSkillBridge()
@@ -110,7 +116,10 @@ class TestPipelineSkillBridge:
 class TestSkillContextInjector:
     """B3 + B6: SkillContextInjector 测试."""
 
-    @pytest.mark.xfail(reason="#ARCH-096：测试锚定 SKILL-DOM-DBS-001/SKILL-ROL-IMP-001 不在现注册表——内容库整体缺失待裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-096：测试锚定 SKILL-DOM-DBS-001/SKILL-ROL-IMP-001 不在现注册表——内容库整体缺失待裁定",
+    )
     def test_inject_valid_pair(self):
         injector = SkillContextInjector()
         result = injector.inject("SKILL-DOM-DBS-001", "SKILL-ROL-IMP-001")
@@ -120,7 +129,10 @@ class TestSkillContextInjector:
         assert result.role_skill_id == "SKILL-ROL-IMP-001"
         assert result.l0_constitution is not None
 
-    @pytest.mark.xfail(reason="#ARCH-096：测试锚定 SKILL-ROL-ARC-001 不在现注册表（role 类清空）——内容库整体缺失待裁定")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-096：测试锚定 SKILL-ROL-ARC-001 不在现注册表（role 类清空）——内容库整体缺失待裁定",
+    )
     def test_inject_single_skill(self):
         injector = SkillContextInjector()
         result = injector.inject_single("SKILL-ROL-ARC-001")
@@ -204,7 +216,10 @@ class TestPipelineSkillBridgeFallback:
 class TestIntegrationBridgeEndToEnd:
     """全链路: SkillLoader → TriggerRouter → PipelineSkillBridge."""
 
-    @pytest.mark.xfail(reason="#ARCH-096：health_check 已退役+total_skills 2<3+loaded 依赖缺失内容库——整链待内容库恢复后跟进")
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-096：health_check 已退役+total_skills 2<3+loaded 依赖缺失内容库——整链待内容库恢复后跟进",
+    )
     def test_full_chain_loads_and_routes(self):
         loader = SkillLoader()
         bridge = PipelineSkillBridge()
