@@ -10,10 +10,11 @@
 # 本库裁剪与默认值决策：裁剪：timeframe×2/regime×2/direction——数据字段定义无周期/环境/方向语义。保留 entry_role=reference + 共有四维度；algorithm_status 固定 not_applicable。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、仓位、估值、信号、分时、分红、利率、压力、周期、回撤、因子、均线、基准、套利、宏观、市场结构、形态、情绪、成交、成本、打板、执行、指数、指标、支撑、散户、数据、早盘、期货、机器学习、杠杆、波动、流动性、盘口、组合、绩效、缠论、股票池、背离、行业、行情、规则、订单、财报、质量、资金、趋势、通胀、量价、量化、隔夜、集中度、震荡、风控、高频、龙头、龙虎榜
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-FLD-001
 name: Field Dictionary Registry
 name_zh: 字段字典登记表
@@ -28,7 +29,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.1
+version: 1.1.2
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -64,6 +65,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 fields:
 - field_id: FLD-MKT-001
@@ -96,6 +99,8 @@ fields:
   tags: ["指数", "执行", "数据", "因子", "信号", "订单", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-002
   field_name: trade_date
   name_zh: 交易日
@@ -126,6 +131,8 @@ fields:
   tags: ["因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-003
   field_name: timestamp
   name_zh: 数据时间戳
@@ -156,6 +163,8 @@ fields:
   tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-004
   field_name: time
   name_zh: 盘中时间
@@ -185,6 +194,8 @@ fields:
   tags: ["分时", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-005
   field_name: data_source
   name_zh: 数据源标识
@@ -215,6 +226,8 @@ fields:
   tags: ["宏观", "数据", "行情", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-006
   field_name: ingested_at
   name_zh: 入库时间
@@ -244,6 +257,8 @@ fields:
   tags: ["数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-007
   field_name: quality_score
   name_zh: 数据质量分
@@ -273,6 +288,8 @@ fields:
   tags: ["质量", "数据", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-008
   field_name: is_suspended
   name_zh: 停牌标记
@@ -302,6 +319,8 @@ fields:
   tags: ["事件", "数据", "信号", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-009
   field_name: open
   name_zh: 开盘价
@@ -332,6 +351,8 @@ fields:
   tags: ["分时", "早盘", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-010
   field_name: high
   name_zh: 最高价
@@ -362,6 +383,8 @@ fields:
   tags: ["分时", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-011
   field_name: low
   name_zh: 最低价
@@ -392,6 +415,8 @@ fields:
   tags: ["分时", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-012
   field_name: close
   name_zh: 收盘价
@@ -422,6 +447,8 @@ fields:
   tags: ["高频", "分时", "数据", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-013
   field_name: prev_close
   name_zh: 前收盘价
@@ -451,6 +478,8 @@ fields:
   tags: ["分时", "基准", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-014
   field_name: vwap
   name_zh: 成交量加权均价
@@ -480,6 +509,8 @@ fields:
   tags: ["量价", "均线", "分时", "执行", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-015
   field_name: volume
   name_zh: 成交量
@@ -509,6 +540,8 @@ fields:
   tags: ["量价", "分时", "数据", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-016
   field_name: amount
   name_zh: 成交额
@@ -539,6 +572,8 @@ fields:
   tags: ["数据", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-017
   field_name: adj_factor
   name_zh: 复权因子
@@ -568,6 +603,8 @@ fields:
   tags: ["事件", "数据", "因子", "分红", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-018
   field_name: prev_volume
   name_zh: 前成交量
@@ -597,6 +634,8 @@ fields:
   tags: ["量价", "分时", "基准", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-019
   field_name: volume_intraday
   name_zh: 盘中实时成交量
@@ -626,6 +665,8 @@ fields:
   tags: ["量价", "分时", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-020
   field_name: price_tick
   name_zh: 逐笔价格
@@ -655,6 +696,8 @@ fields:
   tags: ["流动性", "高频", "分时", "缠论", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-021
   field_name: tick_data
   name_zh: 逐笔数据流
@@ -684,6 +727,8 @@ fields:
   tags: ["高频", "盘口", "数据", "缠论", "因子", "订单", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-022
   field_name: auction_price
   name_zh: 集合竞价价
@@ -713,6 +758,8 @@ fields:
   tags: ["分时", "早盘", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-023
   field_name: auction_volume
   name_zh: 集合竞价量
@@ -742,6 +789,8 @@ fields:
   tags: ["量价", "分时", "早盘", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-024
   field_name: sector_leader_auction
   name_zh: 板块龙头竞价强度
@@ -771,6 +820,8 @@ fields:
   tags: ["龙头", "打板", "分时", "早盘", "行业", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-025
   field_name: limit_up_price
   name_zh: 涨停价
@@ -801,6 +852,8 @@ fields:
   tags: ["打板", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-026
   field_name: historical_low
   name_zh: 历史最低价
@@ -830,6 +883,8 @@ fields:
   tags: ["流动性", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-027
   field_name: key_levels
   name_zh: 关键价位
@@ -859,6 +914,8 @@ fields:
   tags: ["支撑", "压力", "分时", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-028
   field_name: resistance_level
   name_zh: 阻力位
@@ -888,6 +945,8 @@ fields:
   tags: ["压力", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-029
   field_name: box_lower
   name_zh: 箱体下沿
@@ -918,6 +977,8 @@ fields:
   tags: ["震荡", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-030
   field_name: close_15min
   name_zh: 15分钟收盘价
@@ -947,6 +1008,8 @@ fields:
   tags: ["周期", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-031
   field_name: high_15min
   name_zh: 15分钟最高价
@@ -976,6 +1039,8 @@ fields:
   tags: ["周期", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-032
   field_name: low_15min
   name_zh: 15分钟最低价
@@ -1005,6 +1070,8 @@ fields:
   tags: ["周期", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-033
   field_name: close_monthly
   name_zh: 月收盘价
@@ -1034,6 +1101,8 @@ fields:
   tags: ["趋势", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-034
   field_name: ohlc_daily
   name_zh: 日K线OHLC
@@ -1063,6 +1132,8 @@ fields:
   tags: ["周期", "分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-035
   field_name: ohlc_minute
   name_zh: 分钟K线OHLC
@@ -1092,6 +1163,8 @@ fields:
   tags: ["分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-036
   field_name: ohlc_weekly
   name_zh: 周K线OHLC
@@ -1121,6 +1194,8 @@ fields:
   tags: ["分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-037
   field_name: ohlc_monthly
   name_zh: 月K线OHLC
@@ -1150,6 +1225,8 @@ fields:
   tags: ["分时", "数据", "k线", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-038
   field_name: a_share_open
   name_zh: A股开盘价
@@ -1179,6 +1256,8 @@ fields:
   tags: ["事件", "早盘", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-039
   field_name: market_close
   name_zh: 市场收盘价
@@ -1208,6 +1287,8 @@ fields:
   tags: ["事件", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-040
   field_name: spot_price
   name_zh: 现货价格
@@ -1237,6 +1318,8 @@ fields:
   tags: ["事件", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-041
   field_name: market_volume
   name_zh: 市场成交量
@@ -1266,6 +1349,8 @@ fields:
   tags: ["量价", "流动性", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-042
   field_name: turnover_rate
   name_zh: 换手率
@@ -1296,6 +1381,8 @@ fields:
   tags: ["量价", "流动性", "因子", "成交", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-043
   field_name: actual_turnover_rate
   name_zh: 实际换手率
@@ -1325,6 +1412,8 @@ fields:
   tags: ["流动性", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-044
   field_name: float_shares
   name_zh: 流通股本
@@ -1354,6 +1443,8 @@ fields:
   tags: ["事件", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-045
   field_name: market_cap
   name_zh: 总市值
@@ -1383,6 +1474,8 @@ fields:
   tags: ["因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-046
   field_name: market_return
   name_zh: 市场收益率
@@ -1412,6 +1505,8 @@ fields:
   tags: ["指数", "基准", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-047
   field_name: market_returns
   name_zh: 市场收益率序列
@@ -1441,6 +1536,8 @@ fields:
   tags: ["利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-048
   field_name: stock_returns
   name_zh: 个股收益率
@@ -1470,6 +1567,8 @@ fields:
   tags: ["利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-049
   field_name: equity_returns
   name_zh: 权益市场收益率
@@ -1499,6 +1598,8 @@ fields:
   tags: ["事件", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-050
   field_name: index_returns
   name_zh: 指数收益率
@@ -1528,6 +1629,8 @@ fields:
   tags: ["指数", "基准", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-051
   field_name: sector_returns
   name_zh: 板块收益率
@@ -1557,6 +1660,8 @@ fields:
   tags: ["事件", "行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-052
   field_name: sector_index_return
   name_zh: 行业指数收益率
@@ -1586,6 +1691,8 @@ fields:
   tags: ["指数", "行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-053
   field_name: oil_sector_returns
   name_zh: 石油板块收益率
@@ -1615,6 +1722,8 @@ fields:
   tags: ["事件", "行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-054
   field_name: a_share_tech_returns
   name_zh: A股科技板块收益率
@@ -1644,6 +1753,8 @@ fields:
   tags: ["行业", "利率", "因子", "绩效", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-055
   field_name: index_close
   name_zh: 指数收盘点位
@@ -1673,6 +1784,8 @@ fields:
   tags: ["情绪", "指数", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-056
   field_name: cap_weight_index
   name_zh: 市值加权指数
@@ -1702,6 +1815,8 @@ fields:
   tags: ["背离", "指数", "基准", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-057
   field_name: equal_weight_index
   name_zh: 等权指数
@@ -1731,6 +1846,8 @@ fields:
   tags: ["背离", "指数", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-058
   field_name: sector_mapping
   name_zh: 板块映射表
@@ -1760,6 +1877,8 @@ fields:
   tags: ["行业", "数据", "通胀", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-059
   field_name: constituent_flag
   name_zh: 成分股标记
@@ -1789,6 +1908,8 @@ fields:
   tags: ["指数", "股票池", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MKT-060
   field_name: earnings_result
   name_zh: 财报业绩结果
@@ -1818,6 +1939,8 @@ fields:
   tags: ["事件", "财报", "因子", "行情"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-001
   field_name: money_flow_super_large
   name_zh: 超大单资金流
@@ -1847,6 +1970,8 @@ fields:
   tags: ["资金", "数据", "缠论", "规则", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-002
   field_name: money_flow_large
   name_zh: 大单资金流
@@ -1876,6 +2001,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-003
   field_name: money_flow_medium
   name_zh: 中单资金流
@@ -1905,6 +2032,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-004
   field_name: money_flow_small
   name_zh: 小单资金流
@@ -1934,6 +2063,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-005
   field_name: main_flow
   name_zh: 主力资金流
@@ -1963,6 +2094,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-006
   field_name: large_order_flow
   name_zh: 大单资金流向
@@ -1992,6 +2125,8 @@ fields:
   tags: ["资金", "流动性", "盘口", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-007
   field_name: small_order_flow
   name_zh: 小单资金流向
@@ -2021,6 +2156,8 @@ fields:
   tags: ["资金", "盘口", "散户", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-008
   field_name: daily_net_inflow
   name_zh: 日度净流入额
@@ -2050,6 +2187,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-009
   field_name: net_buy_amount
   name_zh: 净买入金额
@@ -2079,6 +2218,8 @@ fields:
   tags: ["资金", "龙虎榜", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-010
   field_name: order_direction
   name_zh: 订单方向
@@ -2110,6 +2251,8 @@ fields:
   tags: ["资金", "盘口", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-011
   field_name: order_size
   name_zh: 订单规模
@@ -2139,6 +2282,8 @@ fields:
   tags: ["资金", "盘口", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-012
   field_name: order_count_ratio
   name_zh: 订单数量比率
@@ -2168,6 +2313,8 @@ fields:
   tags: ["资金", "形态", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-013
   field_name: amount_ratio
   name_zh: 成交额比率
@@ -2197,6 +2344,8 @@ fields:
   tags: ["资金", "形态", "因子", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-014
   field_name: small_order_buy_ratio
   name_zh: 小单买入占比
@@ -2226,6 +2375,8 @@ fields:
   tags: ["情绪", "资金", "散户", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-015
   field_name: small_order_sell_ratio
   name_zh: 小单卖出占比
@@ -2255,6 +2406,8 @@ fields:
   tags: ["资金", "因子", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-016
   field_name: dragon_tiger_seats
   name_zh: 龙虎榜席位
@@ -2284,6 +2437,8 @@ fields:
   tags: ["资金", "事件", "分时", "龙虎榜", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-017
   field_name: insider_buying
   name_zh: 内部人增持
@@ -2313,6 +2468,8 @@ fields:
   tags: ["资金", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-018
   field_name: shareholder_holding_change
   name_zh: 股东持股变动
@@ -2342,6 +2499,8 @@ fields:
   tags: ["资金", "事件", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-019
   field_name: margin_balance
   name_zh: 融资余额
@@ -2371,6 +2530,8 @@ fields:
   tags: ["情绪", "资金", "杠杆", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-020
   field_name: short_balance
   name_zh: 融券余额
@@ -2400,6 +2561,8 @@ fields:
   tags: ["资金", "质量", "杠杆", "规则", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-021
   field_name: etf_price
   name_zh: ETF价格
@@ -2429,6 +2592,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-022
   field_name: etf_iopv
   name_zh: ETF IOPV
@@ -2458,6 +2623,8 @@ fields:
   tags: ["资金", "套利", "分时", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-023
   field_name: etf_volume
   name_zh: ETF成交量
@@ -2487,6 +2654,8 @@ fields:
   tags: ["量价", "资金", "因子", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-024
   field_name: etf_volume_ma
   name_zh: ETF成交量均值
@@ -2516,6 +2685,8 @@ fields:
   tags: ["量价", "资金", "因子", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-025
   field_name: etf_shares
   name_zh: ETF份额
@@ -2545,6 +2716,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-026
   field_name: etf_share_change
   name_zh: ETF份额变动
@@ -2574,6 +2747,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-027
   field_name: etf_subscription
   name_zh: ETF申购份额
@@ -2603,6 +2778,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-028
   field_name: etf_redemption
   name_zh: ETF赎回份额
@@ -2632,6 +2809,8 @@ fields:
   tags: ["资金", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MFLOW-029
   field_name: fund_size
   name_zh: 基金规模
@@ -2661,6 +2840,8 @@ fields:
   tags: ["资金", "流动性", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-001
   field_name: market_sentiment
   name_zh: 市场情绪值
@@ -2690,6 +2871,8 @@ fields:
   tags: ["情绪", "周期", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-002
   field_name: advancing_count
   name_zh: 上涨家数
@@ -2720,6 +2903,8 @@ fields:
   tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-003
   field_name: declining_count
   name_zh: 下跌家数
@@ -2750,6 +2935,8 @@ fields:
   tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-004
   field_name: limit_up_count
   name_zh: 涨停家数
@@ -2779,6 +2966,8 @@ fields:
   tags: ["情绪", "打板", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-005
   field_name: limit_down_count
   name_zh: 跌停家数
@@ -2808,6 +2997,8 @@ fields:
   tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-006
   field_name: limit_up_count_series
   name_zh: 涨停家数序列
@@ -2837,6 +3028,8 @@ fields:
   tags: ["情绪", "打板", "周期", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-007
   field_name: limit_down_count_series
   name_zh: 跌停家数序列
@@ -2866,6 +3059,8 @@ fields:
   tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-008
   field_name: broken_limit_count
   name_zh: 炸板家数
@@ -2896,6 +3091,8 @@ fields:
   tags: ["情绪", "打板", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-009
   field_name: max_consecutive_limit_up
   name_zh: 最高连板数
@@ -2925,6 +3122,8 @@ fields:
   tags: ["情绪", "打板", "周期", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-010
   field_name: rs_score
   name_zh: 相对强度分
@@ -2954,6 +3153,8 @@ fields:
   tags: ["因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-011
   field_name: structure_score
   name_zh: 市场结构评分
@@ -2983,6 +3184,8 @@ fields:
   tags: ["趋势", "形态", "市场结构", "因子", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SENT-012
   field_name: daily_alpha
   name_zh: 日度超额收益
@@ -3012,6 +3215,8 @@ fields:
   tags: ["因子", "绩效", "情绪"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-001
   field_name: ma5
   name_zh: 5日均线
@@ -3041,6 +3246,8 @@ fields:
   tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-002
   field_name: ma20
   name_zh: 20日均线
@@ -3070,6 +3277,8 @@ fields:
   tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-003
   field_name: ma60
   name_zh: 60日均线
@@ -3099,6 +3308,8 @@ fields:
   tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-004
   field_name: ma_250
   name_zh: 250日均线
@@ -3128,6 +3339,8 @@ fields:
   tags: ["均线", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-005
   field_name: macd
   name_zh: MACD值
@@ -3157,6 +3370,8 @@ fields:
   tags: ["分时", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-006
   field_name: macd_15min
   name_zh: 15分钟MACD
@@ -3186,6 +3401,8 @@ fields:
   tags: ["周期", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-007
   field_name: macd_monthly
   name_zh: 月线MACD
@@ -3215,6 +3432,8 @@ fields:
   tags: ["趋势", "周期", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-008
   field_name: rsi
   name_zh: RSI值
@@ -3244,6 +3463,8 @@ fields:
   tags: ["分时", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-IND-009
   field_name: rsi_15min
   name_zh: 15分钟RSI
@@ -3273,6 +3494,8 @@ fields:
   tags: ["周期", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-001
   field_name: macro_regime
   name_zh: 宏观状态
@@ -3305,6 +3528,8 @@ fields:
   tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-002
   field_name: release_lag_days
   name_zh: 发布滞后天数
@@ -3334,6 +3559,8 @@ fields:
   tags: ["宏观", "数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-003
   field_name: bond_yield_10y
   name_zh: 10年期国债收益率
@@ -3363,6 +3590,8 @@ fields:
   tags: ["宏观", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-004
   field_name: dxy
   name_zh: 美元指数
@@ -3392,6 +3621,8 @@ fields:
   tags: ["宏观", "指数", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-005
   field_name: usdcnh
   name_zh: 美元离岸人民币
@@ -3421,6 +3652,8 @@ fields:
   tags: ["情绪", "资金", "宏观", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-006
   field_name: gold_price
   name_zh: 黄金价格
@@ -3450,6 +3683,8 @@ fields:
   tags: ["宏观", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-007
   field_name: crude_oil_price
   name_zh: 国际原油价格
@@ -3479,6 +3714,8 @@ fields:
   tags: ["宏观", "行业", "通胀", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-008
   field_name: fed_decision
   name_zh: 美联储议息决议
@@ -3508,6 +3745,8 @@ fields:
   tags: ["宏观", "早盘", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-009
   field_name: fed_funds_rate_expectation
   name_zh: 联邦基金利率预期
@@ -3537,6 +3776,8 @@ fields:
   tags: ["资金", "宏观", "利率", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-010
   field_name: central_bank_repo
   name_zh: 央行公开市场净投放
@@ -3566,6 +3807,8 @@ fields:
   tags: ["宏观", "流动性", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-011
   field_name: ipo_size
   name_zh: IPO募资规模
@@ -3595,6 +3838,8 @@ fields:
   tags: ["事件", "宏观", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-012
   field_name: market_liquidity
   name_zh: 市场流动性指标
@@ -3624,6 +3869,8 @@ fields:
   tags: ["资金", "宏观", "流动性", "因子", "指标"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-013
   field_name: a50_futures_overnight
   name_zh: A50期货隔夜涨跌
@@ -3653,6 +3900,8 @@ fields:
   tags: ["宏观", "隔夜", "早盘", "期货", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-014
   field_name: us_market_returns
   name_zh: 美股收益率
@@ -3682,6 +3931,8 @@ fields:
   tags: ["宏观", "隔夜", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-015
   field_name: overseas_index_returns
   name_zh: 海外指数收益率
@@ -3711,6 +3962,8 @@ fields:
   tags: ["宏观", "指数", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-MACRO-016
   field_name: korea_index_returns
   name_zh: 韩国指数收益率
@@ -3740,6 +3993,8 @@ fields:
   tags: ["宏观", "指数", "利率", "因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-001
   field_name: factor_id
   name_zh: 因子ID
@@ -3769,6 +4024,8 @@ fields:
   tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-002
   field_name: factor_version
   name_zh: 因子版本
@@ -3798,6 +4055,8 @@ fields:
   tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-003
   field_name: as_of_date
   name_zh: 截面日期
@@ -3827,6 +4086,8 @@ fields:
   tags: ["风控", "宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-004
   field_name: raw_value
   name_zh: 因子原始值
@@ -3856,6 +4117,8 @@ fields:
   tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-005
   field_name: normalized_value
   name_zh: 截面标准化值
@@ -3885,6 +4148,8 @@ fields:
   tags: ["股票池", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-006
   field_name: rank_pct
   name_zh: 分位数排名
@@ -3914,6 +4179,8 @@ fields:
   tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-007
   field_name: confidence
   name_zh: 信号置信度
@@ -3943,6 +4210,8 @@ fields:
   tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-008
   field_name: is_valid
   name_zh: 信号有效标记
@@ -3972,6 +4241,8 @@ fields:
   tags: ["因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-009
   field_name: extra
   name_zh: 扩展字段
@@ -4001,6 +4272,8 @@ fields:
   tags: ["数据", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-010
   field_name: ic_mean
   name_zh: IC均值
@@ -4030,6 +4303,8 @@ fields:
   tags: ["因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-011
   field_name: ic_std
   name_zh: IC标准差
@@ -4059,6 +4334,8 @@ fields:
   tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-012
   field_name: ic_ir
   name_zh: ICIR
@@ -4088,6 +4365,8 @@ fields:
   tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-013
   field_name: rank_ic
   name_zh: Rank IC
@@ -4117,6 +4396,8 @@ fields:
   tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-014
   field_name: is_effective
   name_zh: 因子有效标记
@@ -4146,6 +4427,8 @@ fields:
   tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-015
   field_name: decay_alert
   name_zh: 因子衰减告警
@@ -4175,6 +4458,8 @@ fields:
   tags: ["因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-016
   field_name: half_life_days
   name_zh: 因子半衰期
@@ -4204,6 +4489,8 @@ fields:
   tags: ["因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-017
   field_name: evaluation_date
   name_zh: 评估日期
@@ -4233,6 +4520,8 @@ fields:
   tags: ["估值", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FCT-018
   field_name: evaluation_window
   name_zh: 评估窗口
@@ -4262,6 +4551,8 @@ fields:
   tags: ["估值", "因子"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-001
   field_name: signal_id
   name_zh: 信号ID
@@ -4291,6 +4582,8 @@ fields:
   tags: ["信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-002
   field_name: signal_direction
   name_zh: 信号方向
@@ -4323,6 +4616,8 @@ fields:
   tags: ["信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-003
   field_name: signal_value
   name_zh: 信号值
@@ -4352,6 +4647,8 @@ fields:
   tags: ["宏观", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-004
   field_name: suggested_position_pct
   name_zh: 建议仓位百分比
@@ -4381,6 +4678,8 @@ fields:
   tags: ["仓位", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-005
   field_name: contributing_factors
   name_zh: 贡献因子权重
@@ -4410,6 +4709,8 @@ fields:
   tags: ["组合", "因子", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-006
   field_name: regime
   name_zh: 市场状态
@@ -4443,6 +4744,8 @@ fields:
   tags: ["情绪", "风控", "周期", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-007
   field_name: is_degraded
   name_zh: 降级标记
@@ -4472,6 +4775,8 @@ fields:
   tags: ["数据", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-SIG-008
   field_name: generation_latency_ms
   name_zh: 信号合成耗时
@@ -4501,6 +4806,8 @@ fields:
   tags: ["信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-001
   field_name: order_id
   name_zh: 委托ID
@@ -4530,6 +4837,8 @@ fields:
   tags: ["盘口", "执行", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-002
   field_name: strategy_id
   name_zh: 策略ID
@@ -4559,6 +4868,8 @@ fields:
   tags: ["组合", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-003
   field_name: order_type
   name_zh: 委托类型
@@ -4591,6 +4902,8 @@ fields:
   tags: ["盘口", "成本", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-004
   field_name: side
   name_zh: 委托方向
@@ -4622,6 +4935,8 @@ fields:
   tags: ["仓位", "盘口", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-005
   field_name: quantity
   name_zh: 委托数量
@@ -4652,6 +4967,8 @@ fields:
   tags: ["盘口", "量化", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-006
   field_name: limit_price
   name_zh: 限价
@@ -4682,6 +4999,8 @@ fields:
   tags: ["订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-007
   field_name: filled_quantity
   name_zh: 已成交数量
@@ -4711,6 +5030,8 @@ fields:
   tags: ["量化", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-008
   field_name: avg_fill_price
   name_zh: 平均成交价
@@ -4740,6 +5061,8 @@ fields:
   tags: ["订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-009
   field_name: status
   name_zh: 委托状态
@@ -4775,6 +5098,8 @@ fields:
   tags: ["盘口", "订单", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-010
   field_name: broker_order_id
   name_zh: 券商委托号
@@ -4804,6 +5129,8 @@ fields:
   tags: ["盘口", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-011
   field_name: created_at
   name_zh: 创建时间
@@ -4833,6 +5160,8 @@ fields:
   tags: ["盘口", "组合", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ORD-012
   field_name: updated_at
   name_zh: 更新时间
@@ -4862,6 +5191,8 @@ fields:
   tags: ["盘口", "订单"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FILL-001
   field_name: fill_id
   name_zh: 成交ID
@@ -4891,6 +5222,8 @@ fields:
   tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FILL-002
   field_name: broker_fill_id
   name_zh: 券商成交ID
@@ -4920,6 +5253,8 @@ fields:
   tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FILL-003
   field_name: fill_price
   name_zh: 成交价格
@@ -4950,6 +5285,8 @@ fields:
   tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FILL-004
   field_name: fill_timestamp
   name_zh: 成交时间
@@ -4979,6 +5316,8 @@ fields:
   tags: ["成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FILL-005
   field_name: commission
   name_zh: 佣金
@@ -5008,6 +5347,8 @@ fields:
   tags: ["执行", "成本", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-FILL-006
   field_name: slippage
   name_zh: 滑点
@@ -5037,6 +5378,8 @@ fields:
   tags: ["套利", "成本", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-001
   field_name: portfolio_id
   name_zh: 组合ID
@@ -5066,6 +5409,8 @@ fields:
   tags: ["风控", "仓位", "组合", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-002
   field_name: as_of_timestamp
   name_zh: 快照时间戳
@@ -5095,6 +5440,8 @@ fields:
   tags: ["仓位", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-003
   field_name: holdings
   name_zh: 持仓明细
@@ -5124,6 +5471,8 @@ fields:
   tags: ["仓位", "量化"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-004
   field_name: market_values
   name_zh: 持仓市值明细
@@ -5153,6 +5502,8 @@ fields:
   tags: ["仓位"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-005
   field_name: cash
   name_zh: 现金
@@ -5182,6 +5533,8 @@ fields:
   tags: ["仓位"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-006
   field_name: total_market_value
   name_zh: 总市值
@@ -5211,6 +5564,8 @@ fields:
   tags: ["仓位", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-POS-007
   field_name: gross_leverage
   name_zh: 总杠杆
@@ -5241,6 +5596,8 @@ fields:
   tags: ["风控", "仓位", "杠杆"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-001
   field_name: target_weights
   name_zh: 目标权重
@@ -5271,6 +5628,8 @@ fields:
   tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-002
   field_name: current_weights
   name_zh: 当前权重
@@ -5300,6 +5659,8 @@ fields:
   tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-003
   field_name: drift_pct
   name_zh: 权重漂移
@@ -5329,6 +5690,8 @@ fields:
   tags: ["组合", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-004
   field_name: rebalance_reason
   name_zh: 再平衡原因
@@ -5362,6 +5725,8 @@ fields:
   tags: ["组合", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-005
   field_name: rebalance_threshold
   name_zh: 再平衡阈值
@@ -5391,6 +5756,8 @@ fields:
   tags: ["组合", "规则", "信号"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-006
   field_name: risk_limits
   name_zh: 风险限额引用
@@ -5420,6 +5787,8 @@ fields:
   tags: ["风控", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-007
   field_name: allocation_date
   name_zh: 配置日期
@@ -5449,6 +5818,8 @@ fields:
   tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-008
   field_name: allocation_method
   name_zh: 配置方法
@@ -5481,6 +5852,8 @@ fields:
   tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-009
   field_name: strategy_allocations
   name_zh: 策略资金分配
@@ -5510,6 +5883,8 @@ fields:
   tags: ["资金", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-010
   field_name: total_allocated_weight
   name_zh: 总分配权重
@@ -5539,6 +5914,8 @@ fields:
   tags: ["组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-001
   field_name: var_1d_95
   name_zh: 日度95%VaR
@@ -5568,6 +5945,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-002
   field_name: var_1d_99
   name_zh: 日度99%VaR
@@ -5598,6 +5977,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-003
   field_name: cvar_1d_95
   name_zh: 日度95%CVaR
@@ -5627,6 +6008,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-004
   field_name: cvar_1d_99
   name_zh: 日度99%CVaR
@@ -5656,6 +6039,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-005
   field_name: volatility_1d
   name_zh: 日度波动率
@@ -5685,6 +6070,8 @@ fields:
   tags: ["波动", "风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-006
   field_name: volatility_1m
   name_zh: 月度波动率
@@ -5714,6 +6101,8 @@ fields:
   tags: ["波动", "风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-007
   field_name: beta
   name_zh: Beta系数
@@ -5743,6 +6132,8 @@ fields:
   tags: ["风控", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-008
   field_name: sharpe_ratio
   name_zh: 夏普比率
@@ -5772,6 +6163,8 @@ fields:
   tags: ["风控", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-009
   field_name: sortino_ratio
   name_zh: 索提诺比率
@@ -5801,6 +6194,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-010
   field_name: max_drawdown
   name_zh: 最大回撤
@@ -5830,6 +6225,8 @@ fields:
   tags: ["风控", "回撤"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-011
   field_name: current_drawdown
   name_zh: 当前回撤
@@ -5859,6 +6256,8 @@ fields:
   tags: ["风控", "回撤"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-012
   field_name: max_drawdown_current
   name_zh: 当前区间最大回撤
@@ -5888,6 +6287,8 @@ fields:
   tags: ["风控", "震荡", "回撤"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-013
   field_name: portfolio_var_1d
   name_zh: 组合日度VaR
@@ -5917,6 +6318,8 @@ fields:
   tags: ["风控", "组合"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-014
   field_name: top_position_concentration
   name_zh: 最大单仓集中度
@@ -5946,6 +6349,8 @@ fields:
   tags: ["风控", "仓位", "集中度"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-015
   field_name: sector_concentrations
   name_zh: 行业集中度
@@ -5975,6 +6380,8 @@ fields:
   tags: ["风控", "行业", "集中度"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-016
   field_name: overall_risk_score
   name_zh: 综合风险分
@@ -6004,6 +6411,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-017
   field_name: active_alerts
   name_zh: 激活告警列表
@@ -6033,6 +6442,8 @@ fields:
   tags: ["风控", "规则"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-018
   field_name: snapshot_time
   name_zh: 快照时间
@@ -6062,6 +6473,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-019
   field_name: calculation_method
   name_zh: 风险计算方法
@@ -6094,6 +6507,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-020
   field_name: confidence_level
   name_zh: 置信水平
@@ -6123,6 +6538,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-RISK-021
   field_name: lookback_period
   name_zh: 回看期
@@ -6152,6 +6569,8 @@ fields:
   tags: ["风控"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-001
   field_name: total_return
   name_zh: 总收益率
@@ -6181,6 +6600,8 @@ fields:
   tags: ["利率", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-002
   field_name: allocation_effect
   name_zh: 配置效应
@@ -6210,6 +6631,8 @@ fields:
   tags: ["行业", "组合", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-003
   field_name: selection_effect
   name_zh: 选股效应
@@ -6239,6 +6662,8 @@ fields:
   tags: ["行业", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-004
   field_name: interaction_effect
   name_zh: 交互效应
@@ -6268,6 +6693,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-005
   field_name: factor_contributions
   name_zh: 因子贡献度
@@ -6297,6 +6724,8 @@ fields:
   tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-006
   field_name: transaction_cost_drag
   name_zh: 交易成本拖累
@@ -6326,6 +6755,8 @@ fields:
   tags: ["成本", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-007
   field_name: period_start
   name_zh: 归因期开始
@@ -6355,6 +6786,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PERF-008
   field_name: period_end
   name_zh: 归因期结束
@@ -6384,6 +6817,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-001
   field_name: execution_start
   name_zh: 执行开始时间
@@ -6413,6 +6848,8 @@ fields:
   tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-002
   field_name: execution_end
   name_zh: 执行结束时间
@@ -6442,6 +6879,8 @@ fields:
   tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-003
   field_name: broker_id
   name_zh: 执行券商
@@ -6471,6 +6910,8 @@ fields:
   tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-004
   field_name: algo_type
   name_zh: 执行算法类型
@@ -6503,6 +6944,8 @@ fields:
   tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-005
   field_name: direction
   name_zh: 执行方向
@@ -6534,6 +6977,8 @@ fields:
   tags: ["执行"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-006
   field_name: intended_price
   name_zh: 意图价格
@@ -6563,6 +7008,8 @@ fields:
   tags: ["执行", "成本", "基准"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-007
   field_name: intended_quantity
   name_zh: 意图数量
@@ -6592,6 +7039,8 @@ fields:
   tags: ["执行", "量化", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-008
   field_name: actual_quantity
   name_zh: 实际成交数量
@@ -6621,6 +7070,8 @@ fields:
   tags: ["执行", "量化", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-009
   field_name: vwap_price
   name_zh: 实际成交VWAP
@@ -6650,6 +7101,8 @@ fields:
   tags: ["均线", "质量", "执行", "基准", "成交"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXEC-010
   field_name: slippage_bps
   name_zh: 滑点基点
@@ -6679,6 +7132,8 @@ fields:
   tags: ["均线", "质量", "执行", "成本"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-001
   field_name: experiment_id
   name_zh: 实验ID
@@ -6708,6 +7163,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-002
   field_name: experiment_name
   name_zh: 实验名称
@@ -6737,6 +7194,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-003
   field_name: experiment_type
   name_zh: 实验类型
@@ -6771,6 +7230,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-004
   field_name: hypothesis
   name_zh: 实验假设
@@ -6800,6 +7261,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-005
   field_name: variant_a_description
   name_zh: 对照组描述
@@ -6829,6 +7292,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-006
   field_name: variant_b_description
   name_zh: 实验组描述
@@ -6858,6 +7323,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-007
   field_name: variant_b_improvement
   name_zh: 实验组改善幅度
@@ -6887,6 +7354,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-008
   field_name: metrics
   name_zh: 实验指标集
@@ -6916,6 +7385,8 @@ fields:
   tags: ["指标", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-009
   field_name: p_value
   name_zh: 统计显著性p值
@@ -6945,6 +7416,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-010
   field_name: sample_size
   name_zh: 样本量
@@ -6974,6 +7447,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-011
   field_name: conclusion
   name_zh: 实验结论
@@ -7006,6 +7481,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-012
   field_name: affected_factor_ids
   name_zh: 受影响因子ID
@@ -7035,6 +7512,8 @@ fields:
   tags: ["因子", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-013
   field_name: affected_strategy_ids
   name_zh: 受影响策略ID
@@ -7064,6 +7543,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-014
   field_name: actionable_suggestions
   name_zh: 可操作建议
@@ -7093,6 +7574,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-015
   field_name: archived_to_kms
   name_zh: KMS归档标记
@@ -7122,6 +7605,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-016
   field_name: start_timestamp
   name_zh: 实验开始时间
@@ -7151,6 +7636,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-017
   field_name: end_timestamp
   name_zh: 实验结束时间
@@ -7180,6 +7667,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-018
   field_name: start_date
   name_zh: 回测开始日期
@@ -7209,6 +7698,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-019
   field_name: end_date
   name_zh: 回测结束日期
@@ -7238,6 +7729,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-020
   field_name: annual_return
   name_zh: 年化收益率
@@ -7267,6 +7760,8 @@ fields:
   tags: ["利率", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-021
   field_name: win_rate
   name_zh: 胜率
@@ -7296,6 +7791,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-022
   field_name: trades_count
   name_zh: 交易笔数
@@ -7325,6 +7822,8 @@ fields:
   tags: ["缠论", "成交", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-023
   field_name: benchmark_symbol
   name_zh: 基准标的代码
@@ -7354,6 +7853,8 @@ fields:
   tags: ["基准", "绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-EXP-024
   field_name: overfitting_flag
   name_zh: 过拟合标记
@@ -7383,6 +7884,8 @@ fields:
   tags: ["绩效"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-001
   field_name: model_id
   name_zh: 模型ID
@@ -7412,6 +7915,8 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-002
   field_name: model_version
   name_zh: 模型版本
@@ -7441,6 +7946,8 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-003
   field_name: request_id
   name_zh: 推理请求ID
@@ -7470,6 +7977,8 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-004
   field_name: input_features
   name_zh: 输入特征集
@@ -7499,6 +8008,8 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-005
   field_name: prediction
   name_zh: 预测值
@@ -7528,6 +8039,8 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-006
   field_name: prediction_type
   name_zh: 预测类型
@@ -7560,6 +8073,8 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-ML-007
   field_name: inference_ms
   name_zh: 推理耗时
@@ -7589,3 +8104,5 @@ fields:
   tags: ["机器学习"]
   algorithm_status: "not_applicable"
   evidence: ""
+  code_symbol: null
+  code_fingerprint: null
