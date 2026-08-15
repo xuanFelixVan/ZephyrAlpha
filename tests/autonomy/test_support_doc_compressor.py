@@ -106,7 +106,7 @@ class TestDocCompressorSingleton:
     def test_reset_instance(self):
         DocCompressor.instance()
         DocCompressor.reset_instance()
-        assert DocCompressor.instance is None
+        assert DocCompressor._instance is None
 
 
 class TestLoadPolicyFromYaml:
