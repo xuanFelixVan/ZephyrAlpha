@@ -646,6 +646,23 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 
 每 session 启动自动生成 UUID，足够审计日志（§7.10）与 Task Board（§11.3.3）的身份识别。
 
+### 7.33 施工项 33：AI RunCommand 通道防护——profile-snapshot 注入 + AI 会话归因（L1-L6 对 AI 通道等效恢复，tracker #58，2026-08-15 闭环）
+
+**机制根因（实证）**：Trae AI 的 RunCommand 由 `agent-tool-host.exe`（Rust 二进制）spawn `powershell.exe -NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -Command "<preamble>;<用户命令>"`——`-NoProfile` **硬编码在二进制内**（strings 实证），settings.json 无对应配置键（`AI.agent.v2.*.shellExecMode`/`allowList` 仅控制执行模式与白名单），故四个 $PROFILE 变体对 AI 通道全部被抑制。
+
+**注入点（实证）**：硬编码 preamble 内 dot-source 一个**每 toolhost 进程级**环境快照文件——`%USERPROFILE%\.trae-cn\toolhost\native-runcommand-snapshots\process-<pid>-<ts>\powershell-profile-snapshot.ps1`。向其中追加一行 wrapper dot-source 即对**该 toolhost 进程后续所有 RunCommand**恢复 L1/L2/L4/L5/L6 全层（2026-08-15 PoC 实证：git=Function、clean -fd BLOCKED、status 透传、审计落盘）。
+
+**候选方案评估结论**：a. Trae 配置层去 -NoProfile——**不可行**（硬编码无开关）；b. AllUsers profile 迁移——**不可行**（-NoProfile 抑制全部 4 变体）；c. 机器/用户级环境变量注入——**部分采用**（归因语义改由 wrapper 内父进程锚定实现，见下；静态机器级变量不适合每会话 UUID）；d. PATH 前置 git shim——**否决**（系统 PATH 段优先于用户段，需动系统 PATH 顺序，全机影响面过大）；e. 规则层强制 git_guard——**保留为补充**（非强制机制）；f. **profile-snapshot 注入——采纳**（机制内生、零 Trae 文件修改、随 IDE 升级自然失效可重注入）。
+
+**裁定（三项落地）**：
+1. **注入**：`scripts/ensure_ai_wrapper_injection.ps1` 幂等扫描全部快照目录（含 `TRAE_NATIVE_RUN_COMMAND_SNAPSHOT_DIR`/`.trae-cn`/`.trae` 三候选根），对缺 marker（`ZEPHYR-AI-WRAPPER-INJECT`）的快照追加 wrapper dot-source 行；支持 `-Remove` 卸载；`-SnapshotRoot` 供测试。
+2. **保活**：计划任务 `ZephyrAlpha-AI-Wrapper-Inject`（每分钟，当前用户，`powershell -NoProfile -WindowStyle Hidden -File`）补注入——agent-tool-host 重启（IDE 重启等）生成新快照目录后**最长 1 个调度间隔的裸奔窗口**（减配声明，实测 toolhost 进程常与 IDE 同寿，窗口出现频率低）。
+3. **AI 会话归因（§7.32 扩展）**：wrapper Session 块检测父进程为 `agent-tool-host.exe` 时，`ZEPHYR_SESSION_ID = ai-<toolhost_pid>-<toolhost启动yyyyMMddHHmmss>`（同一 IDE 工具宿主下全部 AI 命令共享稳定标识，聚合到单一审计文件；每个 RunCommand 一短命进程若用 UUID 将一命令一文件），审计条目新增 `channel` 字段（`ai-runcommand`/`interactive`）。**已知特性**：AI 会话内 spawn 的子进程（pytest 等）继承 ZEPHYR_SESSION_ID——归因聚合为特性，测试需剔除继承值隔离（两测试文件 `_run_ps` 已适配）。
+
+**验收**：`tests/governance/test_ai_channel_wrapper.py` 15 用例（注入幂等/卸载/缺根静默/fail-closed、快照端到端 git=Function/clean+read-tree BLOCKED/status 透传/Remove-Item 拦截、假 toolhost 父进程 ai- 归因、审计 channel 字段+单文件聚合、计划任务注册）全绿；既有 80 用例（wrapper 45+git_guard 16+lock 19）不回归；人工终端实证不回归。**重评估触发条件**：Trae 升级改变 preamble/快照机制（监测点：快照路径与 dot-source 行）；本机引入 pwsh 通道（pwsh-profile-snapshot.ps1 变体未覆盖）。
+
+**新陷阱登记（本批实证）**：Trae IDE 文档层脏缓冲区会导致 Edit/Write 工具修改不落盘且 Read 回显为缓冲区内容（mtime 不变可识别）——关键施工文件改后须以 `Select-String`/git diff 从进程外核实落盘，必要时 PowerShell 直写。
+
 ### 7.3 / 7.8 / 7.9 / 7.12 配套确认与维护项（非路线图项，按需推进）
 
 | 施工项 | 内容 | 状态 |

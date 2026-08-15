@@ -30,7 +30,14 @@ MARKER = "# >>> git-safety-wrapper >>>"
 
 
 def _run_ps(script: str, timeout: int = 60) -> subprocess.CompletedProcess[str]:
-    """起独立 powershell 子进程执行脚本，返回完整结果。"""
+    """起独立 powershell 子进程执行脚本，返回完整结果。
+
+    tracker #58：AI 通道注入后，AI 会话内 pytest 的子进程会继承 ZEPHYR_SESSION_ID
+    （归因聚合特性）。测试须从"无 session"起点验证 wrapper 自身的注入/归因分支，
+    故剔除继承值。"""
+    env = dict(os.environ)
+    env.pop("ZEPHYR_SESSION_ID", None)
+    env.pop("ZEPHYR_SESSION_START", None)
     return subprocess.run(
         [PS, "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", script],
         capture_output=True,
@@ -38,6 +45,7 @@ def _run_ps(script: str, timeout: int = 60) -> subprocess.CompletedProcess[str]:
         timeout=timeout,
         encoding="utf-8",
         errors="replace",
+        env=env,
     )
 
 

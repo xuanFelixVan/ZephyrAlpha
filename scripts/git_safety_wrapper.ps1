@@ -25,9 +25,24 @@
 
 #requires -Version 5.1
 
-# ---------- 7.32 Session ID injection (L6) ----------
+# ---------- 7.32 Session ID injection (L6) + 7.33 AI-channel attribution (tracker #58) ----------
 if (-not $env:ZEPHYR_SESSION_ID) {
-    $env:ZEPHYR_SESSION_ID = [guid]::NewGuid().ToString()
+    # 7.33: Trae AI RunCommand spawns one short-lived powershell per command, all sharing
+    # parent agent-tool-host.exe (-NoProfile hardcoded, profile never loads; wrapper reaches
+    # this channel via profile-snapshot injection). A per-process UUID would fragment audit
+    # into one file per command - anchor session identity to the stable toolhost parent.
+    $global:_zephyrChannel = 'interactive'
+    try {
+        $_ppid = (Get-CimInstance Win32_Process -Filter "ProcessId=$PID" -Property ParentProcessId -ErrorAction Stop).ParentProcessId
+        $_pp = Get-Process -Id $_ppid -ErrorAction Stop
+        if ($_pp.ProcessName -eq 'agent-tool-host') {
+            $global:_zephyrChannel = 'ai-runcommand'
+            $env:ZEPHYR_SESSION_ID = 'ai-{0}-{1}' -f $_pp.Id, $_pp.StartTime.ToString('yyyyMMddHHmmss')
+        }
+    } catch { }  # attribution failure falls back to per-process UUID, never blocks
+    if (-not $env:ZEPHYR_SESSION_ID) {
+        $env:ZEPHYR_SESSION_ID = [guid]::NewGuid().ToString()
+    }
     $env:ZEPHYR_SESSION_START = (Get-Date).ToString('o')
 }
 
@@ -62,6 +77,7 @@ function _ZephyrAuditLog {
             session   = $env:ZEPHYR_SESSION_ID
             pid       = $PID
         }
+        if ($global:_zephyrChannel) { $_entry.channel = $global:_zephyrChannel }
         if ($EscapeHint) { $_entry.escape_hint = $EscapeHint }
         # UTF-8 without BOM (PS 5.1 Add-Content -Encoding UTF8 emits BOM, breaking JSONL line-1 parsing)
         $_line = $_entry | ConvertTo-Json -Compress
