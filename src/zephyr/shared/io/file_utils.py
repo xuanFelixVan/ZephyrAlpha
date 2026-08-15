@@ -45,13 +45,19 @@ Version: 0.1.0
 from __future__ import annotations
 
 import hashlib
+import json
+import logging
 import os
 import shutil
 import tempfile
 from collections.abc import Generator
 from contextlib import contextmanager
+from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
-from typing import Protocol, runtime_checkable
+from typing import Final, Protocol, runtime_checkable
+
+logger = logging.getLogger(__name__)
 
 
 @runtime_checkable
@@ -65,14 +71,20 @@ class AtomicWriteFn(Protocol):
     def __call__(self, filepath: Path | str, content: str, **kwargs: object) -> Path: ...
 
 
-__all__ = [
+__all__: Final = [
     "AtomicWriteError",
     "AtomicWriteFn",
+    "DEFAULT_HOT_FILES",
+    "SafeWriteResult",
+    "StaleWriteRefused",
+    "WriteVerificationError",
     "atomic_write",
     "backup_and_rollback",
     "backup_file",
+    "content_sha256",
     "restore_backup",
     "safe_read",
+    "safe_write_text",
 ]
 
 
@@ -277,3 +289,150 @@ def backup_and_rollback(
         # 也执行 restore_backup,避免文件停留在半修改状态。
         restore_backup(target, backup_index=0)
         raise
+
+
+# ── CAS 热文件写入（#ARCH-WORKTREE-WRITE-INTEGRITY-001 P2）────────────────────
+# 把 #75 治愈路径（base-hash 校验+写后回读+即时提交）从"纪律"升级为"工具"：
+# 写前必须证明读过当前内容（陈旧缓冲区拒写防吞改），写后回读校验防"修改已生效"
+# 假象，全程审计落 .runtime/audit/（永不回 tracked 区）。内部复用 atomic_write。
+
+# 热文件词表（高频 contested——lost-update/吞写事故全部出自这类文件）：
+# 相对仓根路径，正斜杠。新增热文件在此追加。
+DEFAULT_HOT_FILES: Final = frozenset({
+    "AGENTS.md",
+    "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/00_index_trading_decision.md",
+})
+
+_SAFE_WRITE_AUDIT_REL = ".runtime/audit/safe_write.jsonl"
+
+
+class StaleWriteRefused(RuntimeError):
+    """热文件未声明 base-hash，或 base-hash 与磁盘内容不符（陈旧缓冲区）。
+
+    路径/哈希等细节入 details 字段（MSG-EXPOSURE 合规：消息文本不含敏感信息）。
+    """
+
+    def __init__(self, message: str, *, details: dict | None = None):
+        super().__init__(message)
+        self.details = details or {}
+
+
+class WriteVerificationError(RuntimeError):
+    """写后回读校验失败——落盘内容与预期不符（details 字段承载路径/哈希）。"""
+
+    def __init__(self, message: str, *, details: dict | None = None):
+        super().__init__(message)
+        self.details = details or {}
+
+
+@dataclass
+class SafeWriteResult:
+    path: str
+    written: bool
+    before_sha256: str
+    after_sha256: str
+
+
+def content_sha256(text: str) -> str:
+    """UTF-8 语义内容 hash（调用方读文件后计算，作为 expected_base 传入）。"""
+    return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def _safe_write_audit(repo_root: Path, record: dict) -> None:
+    try:
+        p = repo_root / _SAFE_WRITE_AUDIT_REL
+        p.parent.mkdir(parents=True, exist_ok=True)
+        with open(p, "a", encoding="utf-8") as fh:
+            fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+    except OSError as e:
+        logger.warning("safe_write audit append failed: %s", e)
+
+
+def _is_hot_file(path: Path, repo_root: Path) -> bool:
+    try:
+        rel = path.resolve().relative_to(repo_root.resolve()).as_posix()
+    except ValueError:
+        return False  # 仓外文件不按热文件约束
+    return rel in DEFAULT_HOT_FILES
+
+
+def safe_write_text(
+    path: str | Path,
+    content: str,
+    *,
+    expected_base_sha256: str | None = None,
+    repo_root: str | Path | None = None,
+    encoding: str = "utf-8",
+) -> SafeWriteResult:
+    """CAS 语义写文本文件：base 校验→原子写→回读校验→审计。
+
+    Args:
+        path: 目标文件。
+        content: 新内容。
+        expected_base_sha256: 调用方读到的原内容 hash（content_sha256 计算）。
+            热文件必填；非热文件可选（给了就校验）。
+        repo_root: 仓根（热文件判定/审计锚定）；None 时经 paths.REPO_ROOT 解析。
+        encoding: 读写编码。
+
+    Raises:
+        StaleWriteRefused: 热文件未带 base，或 base 与磁盘不符（拒写，不落盘）。
+        WriteVerificationError: 回读校验失败（落盘内容≠预期）。
+    """
+    from zephyr.shared.io.paths import REPO_ROOT  # noqa: PLC0415
+
+    root = Path(str(repo_root)) if repo_root else REPO_ROOT
+    target = Path(path)
+    hot = _is_hot_file(target, root)
+
+    before_hash = ""
+    if target.exists():
+        before_hash = content_sha256(target.read_text(encoding=encoding))
+
+    base_record = {
+        "ts": datetime.now(timezone.utc).isoformat(),
+        "file": str(target),
+        "hot": hot,
+        "pid": os.getpid(),
+        "session": os.environ.get("ZEPHYR_SESSION_ID", ""),
+        "expected_base": expected_base_sha256 or "",
+        "before_sha256": before_hash,
+    }
+
+    # ① 热文件必须声明 base（强制 read-before-write）
+    if hot and not expected_base_sha256:
+        _safe_write_audit(root, {**base_record, "event": "refused", "reason": "hot_file_without_base"})
+        raise StaleWriteRefused(
+            "热文件未声明 expected_base_sha256，拒写",
+            details={"path": str(target)},
+        )
+    # ② base 与磁盘不符=陈旧缓冲区，拒写（防吞写）
+    if expected_base_sha256 and target.exists() and expected_base_sha256 != before_hash:
+        _safe_write_audit(root, {**base_record, "event": "refused", "reason": "stale_base"})
+        raise StaleWriteRefused(
+            "base-hash 与磁盘不符（磁盘已被他人推进），拒写",
+            details={"path": str(target), "expected": expected_base_sha256[:12],
+                     "disk": before_hash[:12]},
+        )
+
+    # ③ 原子写（复用本模块 atomic_write 真源）
+    atomic_write(target, content, encoding=encoding)
+
+    # ④ 写后回读校验（防"修改已生效"假象）
+    after_hash = content_sha256(target.read_text(encoding=encoding))
+    expected_after = content_sha256(content)
+    if after_hash != expected_after:
+        _safe_write_audit(root, {**base_record, "event": "verify_failed", "after_sha256": after_hash})
+        raise WriteVerificationError(
+            "写后回读校验失败（落盘内容与预期不符）",
+            details={"path": str(target), "expect": expected_after[:12],
+                     "disk": after_hash[:12]},
+        )
+
+    _safe_write_audit(root, {**base_record, "event": "written", "after_sha256": after_hash})
+    return SafeWriteResult(path=str(target), written=True,
+                           before_sha256=before_hash, after_sha256=after_hash)

@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 session_audit.py —— Session 审计轨迹（Phase 12 | 盲点 B32）

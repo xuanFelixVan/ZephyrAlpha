@@ -16,7 +16,7 @@
 # [TTL] permanent
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""
+r"""
 
 dead_public_wrapper_reconciler.py — 死公共 wrapper 自动检测 reconciler.
 

@@ -41473,6 +41473,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "所有合规判定只增不删地记进一个 JSONL 文件，当证据链用，写不进去也不影响交易"
+- module_path: src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: "工作区漂移看门狗"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "盯着主仓工作区的 tracked 文件——谁把文件内容改回旧版（陈旧缓冲区覆写），它立刻发现：先拍照存证，再发告警，还会记录当时在场的会话名单；文件恢复正常后自动消音。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

@@ -35,7 +35,7 @@ v2.1.0 简化:
 CLI:
     python scripts/session_worktree.py create <session-id> <task-id>
     python scripts/session_worktree.py exec <session-id> -- <command...>
-    python scripts/session_worktree.py merge <session-id> [--to main] [--squash] [--yes]
+    python scripts/session_worktree.py merge <session-id> [--to dev] [--squash] [--yes]
     python scripts/session_worktree.py abort <session-id>
     python scripts/session_worktree.py list
 """
@@ -625,7 +625,7 @@ def main() -> int:
     # merge
     p_merge = sub.add_parser("merge", help="合并 worktree 分支回主分支")
     p_merge.add_argument("session_id", help="session ID")
-    p_merge.add_argument("--to", default="main", help="目标分支（默认 main）")
+    p_merge.add_argument("--to", default="dev", help="目标分支（默认 dev——项目主线约定，2026-08-15 前误默认 main，#ARCH-WORKTREE-WRITE-INTEGRITY-001 P1-2② 修正）")
     p_merge.add_argument("--squash", action="store_true", help="squash merge")
     p_merge.add_argument("--yes", action="store_true", help="跳过确认")
     p_merge.set_defaults(func=cmd_merge)
