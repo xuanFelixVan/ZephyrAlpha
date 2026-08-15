@@ -32,7 +32,7 @@
 
 # noqa: m10-time-trigger  M10豁免: reconciler 是 commit 事件触发(非 cron/manual)
 
-"""
+r"""
 
 blueprint_status_transition_reconciler.py — 蓝图状态单调推进 reconciler（P1-d，2026-07-21）。
 

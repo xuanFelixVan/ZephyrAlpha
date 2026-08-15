@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF-028 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 [BLUEPRINT] MOD-INF-028 — LLM 桥接 Stage 6
 

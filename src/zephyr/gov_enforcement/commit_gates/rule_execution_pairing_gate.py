@@ -14,7 +14,7 @@
 # [TESTS] tests/governance/commit_gates/test_rule_execution_pairing_gate.py
 # [A_module] module_id=MOD-GOV_RULE_EXECUTION_PAIRING_GATE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable  # noqa: blueprint-amodule-cross-check [BLUEPRINT]==[A_module] same module
 # [TTL] permanent
-"""
+r"""
 
 rule_execution_pairing_gate.py — 规则-执行配对门禁（RULE-EXECUTION-PAIRING，Phase 3.5）
 

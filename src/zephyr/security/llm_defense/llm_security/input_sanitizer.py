@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-LLM_SECURITY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 InputSanitizer: path whitelist + command whitelist + token budget guard.
 

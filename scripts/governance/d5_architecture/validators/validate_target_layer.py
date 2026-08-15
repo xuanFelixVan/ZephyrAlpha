@@ -14,7 +14,7 @@
 # [TESTS]
 # [A_module] module_id=MOD-INF-005 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""
+r"""
 对标：target_layer_vocabulary.yaml v1.0.0——target_layer 字段值体系多真源不一致修复
 职责：校验代码/测试中的 target_layer 赋值是否使用 target_layer_vocabulary.yaml 合法值
      检测废弃值（D_DATA/基础设施/D_COMPLIANCE 等）并提示替换
