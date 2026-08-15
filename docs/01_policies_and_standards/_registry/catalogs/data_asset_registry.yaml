@@ -43,7 +43,7 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 80, jobs: 76}
+entry_counts: {sources: 15, datasets: 102, jobs: 82}  # v1.2.0 实测修正（v2 schema 升级自检发现 80/76 与实际条目漂移；总数 199 与 ROOR 一致）
 
 source_schema:
   source_id: str               # SRC-{PROVIDER}-{NNN}
