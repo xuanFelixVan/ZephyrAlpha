@@ -10,10 +10,11 @@
 # 本库裁剪与默认值决策：裁剪：timeframe×2（限额周期语义由 review_cycle/kri_frequency 表达，非 K 线周期）+ direction（风控限额无方向语义）。保留 regime×2（限额在 panic/high_vol 环境收紧，有语义价值）+ entry_role=rule + 共有四维度；algorithm_status 推导：code_path 非空→quantized，否则 pending_backtest。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   仓位、信号、反转、回撤、对冲、成本、执行、支撑、数据、杠杆、止损、波动、流动性、盘口、突破、组合、绩效、股票池、行业、行情、规则、质量、资金、趋势、通胀、集中度、震荡、风控
+# schema v2.1（2026-08-15，#ARCH-BREG-002 分域真源裁定）：新增 code_symbol 代码符号锚点 / code_fingerprint 实现指纹——库↔代码双向索引与漂移对账。实现域真源移交规则：代码未落地=库（设计态），代码落地锚定后=代码；业务语义域/治理评估域永属库。既有条目一律 null 占位，回填随条目重填与指纹扫描器施工（门禁A存在性校验/门禁B指纹对账立项#ARCH-BREG-002）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
-schema_version: '2.0'
+schema_version: '2.1'
 registry_id: REG-RLM-001
 name: 风控限额登记表
 description: >-
@@ -25,7 +26,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.1
+version: 1.2.2
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -105,6 +106,8 @@ entry_schema:
   tags: list               # 自由检索标签 Tags — 中文多值标签，服务库内搜索与归纳
   algorithm_status: str                # 算法状态 Algorithm Status — quantized已量化/pending_backtest待回测/pending_definition待定义/not_applicable非算法条目
   evidence: str                # 回测证据 Evidence — IC/胜率等回测证据摘要，空串=未回测（后续条目内容填入时回填）
+  code_symbol: str|null         # 代码符号锚点 Code Symbol — 算法实现的函数/类级锚点（格式 <relative_path>::<symbol>，如 src/zephyr/factor/momentum.py::calc_mom_20）；null=代码未落地（设计态，实现域真源暂为库）；代码落地后实现域真源移交代码，与 code_path 共同支撑库↔代码双向查找（#ARCH-BREG-002 分域真源裁定 2026-08-15）
+  code_fingerprint: str|null    # 实现指纹 Code Fingerprint — 代码侧实现（参数/签名/AST）canonical hash 快照，由扫描器写入；库侧快照与代码重算不一致=漂移告警（门禁B reconciler 对账，告警不自动双写）；null=未计算
 
 risk_limits:
   # ============================================================
@@ -146,6 +149,8 @@ risk_limits:
     tags: ["止损", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-002"
     name: "Break Support Stop Loss"
@@ -181,6 +186,8 @@ risk_limits:
     tags: ["突破", "支撑", "止损", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-003"
     name: "Sell Even at Limit Down"
@@ -216,6 +223,8 @@ risk_limits:
     tags: ["回撤", "止损", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-004"
     name: "Trial Position Cost-Blind Stop Loss"
@@ -251,6 +260,8 @@ risk_limits:
     tags: ["止损", "回撤", "仓位", "成本", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-005"
     name: "Life-or-Death Line Breach Clearance"
@@ -286,6 +297,8 @@ risk_limits:
     tags: ["突破", "回撤", "止损", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-006"
     name: "Time Stop Loss Three Tiers"
@@ -321,6 +334,8 @@ risk_limits:
     tags: ["止损", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-007"
     name: "First-Minute Error Correction"
@@ -356,6 +371,8 @@ risk_limits:
     tags: ["回撤", "止损", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-DRAWDOWN-008"
     name: "Profit Protection Stop Loss"
@@ -391,6 +408,8 @@ risk_limits:
     tags: ["止损", "质量", "回撤", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # POSITION（仓位类）— 21条
@@ -429,6 +448,8 @@ risk_limits:
     tags: ["仓位", "组合", "行情", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-002"
     name: "Broad ETF Allocation 20-30%"
@@ -462,6 +483,8 @@ risk_limits:
     tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-003"
     name: "Heavy Position in Uptrend Light in Downtrend"
@@ -495,6 +518,8 @@ risk_limits:
     tags: ["趋势", "仓位", "集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-004"
     name: "No Blind Averaging Down"
@@ -528,6 +553,8 @@ risk_limits:
     tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-005"
     name: "Position Split Ballast Plus Attack"
@@ -561,6 +588,8 @@ risk_limits:
     tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-006"
     name: "Three-Tier Position Allocation"
@@ -594,6 +623,8 @@ risk_limits:
     tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-007"
     name: "Dynamic Position Cap Adjustment"
@@ -627,6 +658,8 @@ risk_limits:
     tags: ["仓位", "组合", "规则", "绩效", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-008"
     name: "Emergency Position Adjustment"
@@ -660,6 +693,8 @@ risk_limits:
     tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-009"
     name: "Pre-Embedded Add Position Path"
@@ -693,6 +728,8 @@ risk_limits:
     tags: ["仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-010"
     name: "Barbell Hedging"
@@ -726,6 +763,8 @@ risk_limits:
     tags: ["仓位", "对冲", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-011"
     name: "Rebound Halve to Attack Position"
@@ -759,6 +798,8 @@ risk_limits:
     tags: ["反转", "仓位", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-012"
     name: "Resonance Level to Position Mapping"
@@ -792,6 +833,8 @@ risk_limits:
     tags: ["仓位", "通胀", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-013"
     name: "Resonance Strategy First Position is Final"
@@ -825,6 +868,8 @@ risk_limits:
     tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-014"
     name: "No Bottom Fishing"
@@ -858,6 +903,8 @@ risk_limits:
     tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-015"
     name: "Regulatory Anomaly Avoidance"
@@ -891,6 +938,8 @@ risk_limits:
     tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-016"
     name: "Sector Ebb Warning"
@@ -924,6 +973,8 @@ risk_limits:
     tags: ["仓位", "行业", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-017"
     name: "Absolute Blacklist"
@@ -957,6 +1008,8 @@ risk_limits:
     tags: ["仓位", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-018"
     name: "Stock Pool Whitelist Pre-Check"
@@ -990,6 +1043,8 @@ risk_limits:
     tags: ["仓位", "股票池", "规则", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-019"
     name: "Trigger Condition Bound Execution"
@@ -1023,6 +1078,8 @@ risk_limits:
     tags: ["风控", "仓位", "执行", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-020"
     name: "Probability Tiered Position Sizing"
@@ -1056,6 +1113,8 @@ risk_limits:
     tags: ["风控", "仓位", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-POSITION-021"
     name: "Strategy Win-Rate Driven Position (Kelly)"
@@ -1089,6 +1148,8 @@ risk_limits:
     tags: ["风控", "仓位", "绩效"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # CONCENTRATION（集中度类）— 6条
@@ -1127,6 +1188,8 @@ risk_limits:
     tags: ["集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-CONCENTRATION-002"
     name: "Total Position Control Rule"
@@ -1160,6 +1223,8 @@ risk_limits:
     tags: ["仓位", "集中度", "组合", "规则", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-CONCENTRATION-003"
     name: "Correlation Matrix Exposure Merge"
@@ -1193,6 +1258,8 @@ risk_limits:
     tags: ["集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-CONCENTRATION-004"
     name: "Single Sector Cap 20 Percent"
@@ -1226,6 +1293,8 @@ risk_limits:
     tags: ["风控", "行业", "集中度", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-CONCENTRATION-005"
     name: "Large Capital Anti-Landmine"
@@ -1259,6 +1328,8 @@ risk_limits:
     tags: ["资金", "集中度", "组合", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-CONCENTRATION-006"
     name: "Lone Wolf Sector Concentration"
@@ -1292,6 +1363,8 @@ risk_limits:
     tags: ["风控", "仓位", "行业", "集中度", "组合"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # LEVERAGE（杠杆类）— 1条
@@ -1329,6 +1402,8 @@ risk_limits:
     tags: ["杠杆", "规则", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # TURNOVER（换手类）— 1条
@@ -1366,6 +1441,8 @@ risk_limits:
     tags: ["流动性", "风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # FIRM_RISK（公司级类）— 5条
@@ -1404,6 +1481,8 @@ risk_limits:
     tags: ["风控", "通胀", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-FIRM-RISK-002"
     name: "QMT Disconnection Risk"
@@ -1437,6 +1516,8 @@ risk_limits:
     tags: ["风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-FIRM-RISK-003"
     name: "Data Limitation Disclosure"
@@ -1470,6 +1551,8 @@ risk_limits:
     tags: ["风控", "数据"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-FIRM-RISK-004"
     name: "Three Scenario Contingency Plans"
@@ -1503,6 +1586,8 @@ risk_limits:
     tags: ["风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-FIRM-RISK-005"
     name: "Three-Stage Timed Verification"
@@ -1536,6 +1621,8 @@ risk_limits:
     tags: ["风控"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # VAR（VaR类）— 5条（K4遗留补登 2026-08-13，AI-REG-K4-001）
@@ -1576,6 +1663,8 @@ risk_limits:
     tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-VAR-002"
     name: "Systemic Risk Level ORANGE (VaR 4%)"
@@ -1611,6 +1700,8 @@ risk_limits:
     tags: ["风控", "震荡", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-VAR-003"
     name: "Systemic Risk Level RED (VaR 6%)"
@@ -1646,6 +1737,8 @@ risk_limits:
     tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-VAR-004"
     name: "Entry VaR 1.2x Framework Rule"
@@ -1681,6 +1774,8 @@ risk_limits:
     tags: ["组合", "规则", "风控"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-VAR-005"
     name: "30-Day Volatility Z-Score Adjustment"
@@ -1716,6 +1811,8 @@ risk_limits:
     tags: ["波动", "仓位", "组合", "风控", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # ES（期望短缺类）— 3条（K4遗留补登 2026-08-13，AI-REG-K4-001）
@@ -1754,6 +1851,8 @@ risk_limits:
     tags: ["风控", "组合", "绩效", "规则"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-ES-002"
     name: "Entry ES 1.3x Framework Rule"
@@ -1787,6 +1886,8 @@ risk_limits:
     tags: ["组合", "规则", "风控"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-ES-003"
     name: "POT Heavy Tail Alert (GPD Shape 0.2)"
@@ -1820,6 +1921,8 @@ risk_limits:
     tags: ["组合", "风控", "规则"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   # ============================================================
   # KILL_SWITCH（熔断类）— 12条（K4遗留补登 2026-08-13，AI-REG-K4-001）
@@ -1858,6 +1961,8 @@ risk_limits:
     tags: ["回撤", "组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-002"
     name: "Drawdown Protocol Level 2 De-risk 15%"
@@ -1891,6 +1996,8 @@ risk_limits:
     tags: ["风控", "回撤", "盘口", "组合", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-003"
     name: "Drawdown Protocol Level 3 Halt 20%"
@@ -1924,6 +2031,8 @@ risk_limits:
     tags: ["回撤", "组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-004"
     name: "Drawdown Protocol Level 4 Clearance 25%"
@@ -1957,6 +2066,8 @@ risk_limits:
     tags: ["回撤", "组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-005"
     name: "Single Day Loss 6% Kill Switch"
@@ -1990,6 +2101,8 @@ risk_limits:
     tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-006"
     name: "Portfolio Daily Circuit Breaker 4%"
@@ -2023,6 +2136,8 @@ risk_limits:
     tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-007"
     name: "Single Strategy Daily Loss 5% Halt"
@@ -2056,6 +2171,8 @@ risk_limits:
     tags: ["风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-008"
     name: "Weekly Loss 5% Trading Halt 2 Days"
@@ -2089,6 +2206,8 @@ risk_limits:
     tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-009"
     name: "Monthly Loss 10% Trading Halt 3 Days"
@@ -2122,6 +2241,8 @@ risk_limits:
     tags: ["组合", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-010"
     name: "BS-007 Systemic Risk Kill Switch Advice"
@@ -2155,6 +2276,8 @@ risk_limits:
     tags: ["风控", "组合", "绩效", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-011"
     name: "System Failure Circuit Breaker"
@@ -2188,6 +2311,8 @@ risk_limits:
     tags: ["执行", "风控", "信号"]
     algorithm_status: "quantized"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
 
   - risk_limit_id: "RLM-KILL-SWITCH-012"
     name: "Consecutive 5-Day Loss De-risk 50%"
@@ -2221,3 +2346,5 @@ risk_limits:
     tags: ["风控", "组合", "信号"]
     algorithm_status: "pending_backtest"
     evidence: ""
+    code_symbol: null
+    code_fingerprint: null
