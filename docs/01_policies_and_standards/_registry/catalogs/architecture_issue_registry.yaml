@@ -16848,3 +16848,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-079'
+  title: gov_drift.drift_detector.trigger_recovery 为桩（return True）——恢复编排契约未实现
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/gov_drift/drift_detector.py trigger_recovery 函数体仅 return True（-> bool），而 tests/drift/test_drift_detector_gate.py（15 项）+ tests/infrastructure/test_drift_trigger_recovery.py（7 项）编码了完整恢复编排契约：返回 dict 含 recovery_status（RECOVERED/RECOVERY_FAILED/SCAN_FAILED/BYPASS 等）、hotfix bypass 标记、级联锁停（auto_fix_paused）、fixer 不可达降级等。与 #ARCH-073~076 同族（测试先行、实现未跟）。另 drift_trigger_recovery 2 项涉 zephyr.orchestrator 包重构漂移（trigger_router 属性缺席，与 `AttributeError|zephyr.orchestrator` 簇同根）。22 项测试已模块级 xfail(strict=False) 留痕。待裁定：按测试契约补实现 trigger_recovery 编排，或退役桩函数并改写测试。'
+  fix_phase: 待裁定（按契约补实现 / 退役桩+改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
