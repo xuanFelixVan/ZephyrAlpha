@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.data.implementations.tushare_provider（capability=northbound_hold_snapshot 路由委托）
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 仅北向（exchange in SH/SZ，剔除 HK 南向）; PIT 守卫=季度末+20 自然日才采集（官方季度后第 5 个沪深股通交易日发布，留足缓冲）; 全量覆盖写入（ReplacingMergeTree ORDER BY (ts_code, trade_date) 幂等去重）; 单季度按 SH/SZ 拆 2 次调用（规避 hk_hold 单次 4200 行上限，memo §9 分页风险构造性消除）; 上游撞码组整组剔除（宁缺毋错，2026-08-15 实证 tushare 20260630 243 组撞码）
+# [INVARIANTS] 仅北向（exchange in SH/SZ，剔除 HK 南向）; PIT 守卫=季度末+20 自然日才采集（官方季度后第 5 个沪深股通交易日发布，留足缓冲）; 全量覆盖写入（ReplacingMergeTree ORDER BY (ts_code, trade_date) 幂等去重）; 单季度按 SH/SZ 拆 2 次调用（规避 hk_hold 单次 4200 行上限，memo §9 分页风险构造性消除）; 上游撞码组 code 自洽判别救回真主行、判别失效整组剔除（宁缺毋错兜底，2026-08-15 实证 243 组恰好 1 行自洽率 100% 全救回）
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -35,8 +35,10 @@ PIT 语义：官方在每季度后第 5 个沪深股通交易日公布上季度�
 上游数据质量（2026-08-15 联调实证）：tushare hk_hold 20260630 响应存在 243 组
 ts_code 撞码（多只证券被赋予雷同假 code 并映射到合法 ts_code，如 50ETF 撞
 603000.SH=人民网；中航成飛 302132 撞 300132.SZ=青松股份），单证券查询同样撞码，
-无 API 修复路径。处理：_drop_code_collisions 整组剔除（宁缺毋错）+ warn 日志；
-待上游修复后每日全量重拉自愈。已登记 known_data_gaps.yaml
+无 API 修复路径。处理：_resolve_code_collisions 按 code 自洽规则判别——组内恰好
+1 行自洽（int(code)+offset==ts_code 数字部，SH+510000/SZ+223000）则保留真主行
+剔除入侵行（243 组实证全救回）；判别失效（0/>1 行自洽）则整组剔除（宁缺毋错
+兜底）+ warn 日志；上游修复后每日全量重拉自愈。已登记 known_data_gaps.yaml
 （tushare_hk_hold_2026q2_code_collision）。
 
 落表：c1_market.northbound_hold_snapshot（表名真源 business_data_categories.yaml
@@ -122,42 +124,89 @@ def published_quarter_ends(
     return sorted(ends)
 
 
-def _drop_code_collisions(df, quarter_end: datetime.date, exchange: str):
-    """剔除上游撞码组（同 ts_code 多行且 name/vol 冲突），宁缺毋错。
+# 撞码组真主判别的 code 自洽 offset（2026-08-15 probe 实证）：冲突组内恰好 1 行满足
+# int(code)+offset == int(ts_code 数字部)——该行归属该 ts_code（真主，code 与 ts_code
+# 自洽）；其余行为入侵行（ETF/他股假码撞入，code+offset 指向他证券）。243 组实证
+# 恰好 1 行自洽率 100%（SH 139 + SZ 104）。规则失效（0 或 >1 行自洽）时整组剔除兜底。
+_CODE_SELF_CONSISTENCY_OFFSET: Final = {"SH": 510000, "SZ": 223000}
 
-    实证（2026-08-15 联调，tmp 探针）：tushare hk_hold 20260630 响应中 243 只证券
-    code 被上游篡改并与合法 ts_code 撞码（如 50ETF 撞 603000.SH=人民网、
-    中航成飛 302132 撞 300132.SZ=青松股份），按 ts_code 单证券查询返回同样撞码
-    （无修复路径）；撞码组内无可靠程序判别（名称含 ETF 字样仅部分命中）。
-    裁定：整组剔除（数据缺失可自愈——下次全量重拉；错误归属是静默毒数据）。
-    完全相同的重复行（分页重叠）保留首行。
+
+def _is_code_self_consistent(code_val, ts_code: str, exchange: str) -> bool:
+    """code 与 ts_code 自洽性判定（撞码组内真主行判别，见 _resolve_code_collisions）。
+
+    解析失败（非数字/未知 exchange）保守返回 False（视为非真主）。
+    """
+    offset = _CODE_SELF_CONSISTENCY_OFFSET.get(exchange)
+    if offset is None:
+        return False
+    try:
+        code_num = int(str(code_val).strip().zfill(6))
+        ts_num = int(str(ts_code).split(".")[0])
+    except (TypeError, ValueError):
+        return False
+    return code_num + offset == ts_num
+
+
+def _resolve_code_collisions(df, quarter_end: datetime.date, exchange: str):
+    """判别并剔除上游撞码行（同 ts_code 多行且 name/vol 冲突），宁缺毋错兜底。
+
+    实证（2026-08-15 联调，tmp 探针 6-9）：tushare hk_hold 20260630 响应中 243 组
+    ts_code 撞码（多只证券被赋予雷同假 code 并映射到合法 ts_code，如 50ETF 撞
+    603000.SH=人民网；中航成飛 302132 撞 300132.SZ=青松股份），按 ts_code 单证券
+    查询同样撞码（无 API 修复路径）。组内结构：真主行 code 与 ts_code 自洽
+    （_is_code_self_consistent，name 为繁体真名），入侵行 code+offset 指向他证券
+    （ETF 或他股假码），243 组恰好 1 行自洽率 100%。
+
+    裁定：组内恰好 1 行自洽 -> 保留真主行剔除入侵行（救回）；0 或 >1 行自洽
+    （判别规则失效）-> 整组剔除（宁缺毋错：数据缺失可自愈——下次全量重拉；
+    错误归属是静默毒数据）。完全相同的重复行（分页重叠）保留首行。
+    已登记 known_data_gaps.yaml（tushare_hk_hold_2026q2_code_collision）。
 
     Returns:
-        (clean_df, dropped_groups): 剔除后的 DataFrame 与被剔 ts_code 清单。
+        (clean_df, salvaged_codes, dropped_codes):
+        剔除后的 DataFrame、救回的 ts_code 清单、整组剔除的 ts_code 清单。
     """
     if df is None or df.empty:
-        return df, []
+        return df, [], []
     dup_mask = df.duplicated("ts_code", keep=False)
     if not dup_mask.any():
-        return df, []
+        return df, [], []
     dup = df[dup_mask]
     # 冲突组：同 ts_code 下 name 或 vol 不唯一（真正撞码）
     conflict_codes = [
         code for code, g in dup.groupby("ts_code")
         if g["name"].nunique() > 1 or g["vol"].nunique() > 1
     ]
+    salvaged: list[str] = []
+    dropped: list[str] = []
+    drop_idx: list = []
+    for code in conflict_codes:
+        g = dup[dup["ts_code"] == code]
+        cons_mask = g.apply(
+            lambda r: _is_code_self_consistent(r["code"], r["ts_code"], exchange),
+            axis=1,
+        )
+        if int(cons_mask.sum()) == 1:
+            salvaged.append(code)  # 保留真主行，剔除入侵行
+            drop_idx.extend(g[~cons_mask].index.tolist())
+        else:
+            dropped.append(code)   # 判别失效，整组剔除兜底
+            drop_idx.extend(g.index.tolist())
     if conflict_codes:
         sample = dup[dup["ts_code"].isin(conflict_codes[:3])][
             ["code", "ts_code", "name", "vol"]
         ].to_dict("records")
         log.warning(
-            "北向持仓 %s %s: 上游撞码 %d 组整组剔除（宁缺毋错，待 tushare 上游修复后重拉自愈）: %s",
-            quarter_end, exchange, len(conflict_codes), sample,
+            "北向持仓 %s %s: 上游撞码 %d 组——code 自洽判别救回 %d 组（保留真主行），"
+            "判别失效整组剔除 %d 组（宁缺毋错，待上游修复后重拉自愈）: sample=%s",
+            quarter_end, exchange, len(conflict_codes), len(salvaged), len(dropped),
+            sample,
         )
-        df = df[~df["ts_code"].isin(conflict_codes)]
+    if drop_idx:
+        df = df.drop(index=drop_idx)
     #  benign 完全重复（分页重叠）去重保留首行
     df = df.drop_duplicates(subset=["ts_code"], keep="first")
-    return df, conflict_codes
+    return df, salvaged, dropped
 
 
 def _fetch_one_exchange(
@@ -177,7 +226,7 @@ def _fetch_one_exchange(
     rows: list[tuple] = []
     if df is None or df.empty:
         return rows
-    df, _dropped = _drop_code_collisions(df, quarter_end, exchange)
+    df, _salvaged, _dropped = _resolve_code_collisions(df, quarter_end, exchange)
     skipped = 0
     for _, r in df.iterrows():
         try:

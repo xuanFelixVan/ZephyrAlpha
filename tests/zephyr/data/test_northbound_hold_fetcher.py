@@ -183,16 +183,16 @@ class TestFetchNorthboundHoldSnapshot:
         assert results[0].error is not None and "无已发布季度" in results[0].error
 
 
-# ============== 上游撞码剔除（2026-08-15 联调实证）==============
+# ============== 上游撞码判别（2026-08-15 联调实证 + probe6-9 深挖）==============
 
 class TestCodeCollisionDrop:
     def test_conflict_groups_dropped_benign_dups_kept(self):
-        # 撞码组（同 ts_code 不同 name/vol）整组剔除；完全重复行保留首行
+        # 撞码组内 0 行 code 自洽（判别规则失效）→ 整组剔除兜底；完全重复行保留首行
         sz = _df([
             {"code": "31000", "trade_date": "20260630", "ts_code": "300750.SZ",
-             "name": "某ETF", "vol": 999.0, "ratio": 0.5, "exchange": "SZ"},      # 撞码假行
+             "name": "某ETF", "vol": 999.0, "ratio": 0.5, "exchange": "SZ"},      # 撞码假行（31000+223000≠300750）
             {"code": "93000", "trade_date": "20260630", "ts_code": "300750.SZ",
-             "name": "宁德时代", "vol": 123.0, "ratio": 0.3, "exchange": "SZ"},   # 撞码真行（同组同剔）
+             "name": "宁德时代", "vol": 123.0, "ratio": 0.3, "exchange": "SZ"},   # 亦不自洽（93000+223000≠300750）
             {"code": "000001", "trade_date": "20260630", "ts_code": "000001.SZ",
              "name": "平安银行", "vol": 100.0, "ratio": 1.0, "exchange": "SZ"},
             {"code": "000001", "trade_date": "20260630", "ts_code": "000001.SZ",
@@ -205,6 +205,54 @@ class TestCodeCollisionDrop:
         ok = [r for r in results if r.error is None]
         assert len(ok) == 1
         codes = [row[1] for row in ok[0].rows]
-        # 撞码组 300750.SZ 整组剔除（宁缺毋错）；000001.SZ 去重后仅存 1 行
+        # 撞码组 300750.SZ 判别失效整组剔除（宁缺毋错）；000001.SZ 去重后仅存 1 行
         assert "300750.SZ" not in codes
         assert codes == ["000001.SZ"]
+
+    def test_conflict_group_salvaged_by_code_consistency(self):
+        # 组内恰好 1 行 code 自洽 → 保留真主行剔除入侵行（2026Q2 实证 243 组全救回）
+        # SH: 093000+510000=603000 自洽（真主，繁体真名）；031000+510000=541000 不自洽（50ETF 入侵）
+        sh = _df([
+            {"code": "031000", "trade_date": "20260630", "ts_code": "603000.SH",
+             "name": "50ETF", "vol": 16315908.0, "ratio": 0.9, "exchange": "SH"},   # 入侵 ETF 假行
+            {"code": "093000", "trade_date": "20260630", "ts_code": "603000.SH",
+             "name": "人民網", "vol": 7248271.0, "ratio": 0.4, "exchange": "SH"},    # 真主行（繁体名保持上游原值）
+        ])
+        # SZ: 077132+223000=300132 自洽（真主）；079132+223000=302132≠300132 不自洽（中航成飞撞入）
+        sz = _df([
+            {"code": "079132", "trade_date": "20260630", "ts_code": "300132.SZ",
+             "name": "中航成飛", "vol": 500.0, "ratio": 0.1, "exchange": "SZ"},     # 入侵他股假行
+            {"code": "077132", "trade_date": "20260630", "ts_code": "300132.SZ",
+             "name": "青松股份", "vol": 800.0, "ratio": 0.2, "exchange": "SZ"},     # 真主行
+        ])
+        pro = _FakePro({("20260630", "SH"): sh, ("20260630", "SZ"): sz})
+        results = list(fetch_northbound_hold_snapshot(
+            pro, _payload(), None, _call_with_policy, today=_TODAY,
+        ))
+        ok = [r for r in results if r.error is None]
+        assert len(ok) == 1
+        got = {row[1]: row for row in ok[0].rows}
+        # 两组均救回：保留真主行（name/vol 为真主值），入侵行剔除
+        assert set(got) == {"603000.SH", "300132.SZ"}
+        assert got["603000.SH"][2] == "人民網" and got["603000.SH"][3] == 7248271
+        assert got["300132.SZ"][2] == "青松股份" and got["300132.SZ"][3] == 800
+
+    def test_conflict_group_multi_self_consistent_dropped(self):
+        # 组内 >1 行 code 自洽（判别规则失效另一形态）→ 整组剔除兜底
+        sh = _df([
+            {"code": "093000", "trade_date": "20260630", "ts_code": "603000.SH",
+             "name": "人民網", "vol": 100.0, "ratio": 0.4, "exchange": "SH"},   # 自洽
+            {"code": "93000", "trade_date": "20260630", "ts_code": "603000.SH",
+             "name": "人民网", "vol": 200.0, "ratio": 0.5, "exchange": "SH"},   # 同码异写亦自洽（zfill 后相同）
+            {"code": "099001", "trade_date": "20260630", "ts_code": "609001.SH",
+             "name": "正常股票", "vol": 300.0, "ratio": 0.6, "exchange": "SH"},
+        ])
+        pro = _FakePro({("20260630", "SH"): sh})
+        results = list(fetch_northbound_hold_snapshot(
+            pro, _payload(), None, _call_with_policy, today=_TODAY,
+        ))
+        ok = [r for r in results if r.error is None]
+        assert len(ok) == 1
+        codes = [row[1] for row in ok[0].rows]
+        assert "603000.SH" not in codes
+        assert codes == ["609001.SH"]
