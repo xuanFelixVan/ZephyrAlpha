@@ -56,6 +56,7 @@ from zephyr.governance.audit.reconciliation_registry import (
     make_drift_fix_reconciler,
     make_module_id_recommend_reconciler,
     make_yaml_sync_reconciler,
+    make_ttl_drift_incremental_reconciler,
     make_vocab_change_reconciler,
     make_deprecated_directory_reconciler,
     make_delete_audit_reconciler,
@@ -795,6 +796,7 @@ class GitCommitGateway:
         # make_precommit_id_uniqueness_reconciler / make_exempt_zone_frontmatter_reconciler /
         # make_module_id_consistency_reconciler 不再 post-commit 注册（warn->阻断前移）
         self._reconciliation_registry.register(make_vocab_change_reconciler(self))
+        self._reconciliation_registry.register(make_ttl_drift_incremental_reconciler(self))  # #73 TTL 声明质保链·增量校验（priority=285，post-commit warn-only，对齐 decision_tree）
         self._reconciliation_registry.register(make_deprecated_directory_reconciler(self))
         self._reconciliation_registry.register(make_delete_audit_reconciler(self))
         self._reconciliation_registry.register(make_regenerate_reconciler(self))

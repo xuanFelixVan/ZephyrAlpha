@@ -3,7 +3,8 @@
 # [DOMAIN] D_GOV_SCRIPTS
 # [DEPENDENCIES] zephyr.governance._shared.frontmatter; _shared.constants
 # [CONSUMERS] manual batch backfill; stage-2 of ttl root-cause fix
-# [STARTUP] imported
+# [STARTUP] imported（#73 起自动触发：post-commit GATE-TTL-DRIFT-INCREMENTAL reconciler 增量校验 + 计划任务 ZephyrAlpha_TTLRejudgeDaily 每日 18:05 全量 --rejudge --check；manual 仅作人工确认后的 --rejudge 纠偏写入口径）
+# noqa: m11-perm-manual-legitimate  M11豁免: #73 已注册事件+日频双自动触发，manual 入口仅用于人工确认后的 ttl 纠偏写入（对标 apply_depgraph.py CLI 写入工具豁免先例）
 # [MATURITY] production
 # [INVARIANTS] 按 ttl_vocabulary.yaml decision_tree 二元判定 ttl 值；6 格式统一回填（.md/.py/.sh/.ps1/.mmd/.yaml/.json）；只回填有头部但无 ttl 的文件；原子写入
 # [STABILITY] stable
@@ -42,6 +43,10 @@ Usage::
 
     # 重判模式（已有 ttl 的文件也重判，词表变更后纠偏）
     python scripts/governance/d3_metadata/backfill_ttl_metadata.py --rejudge
+
+    # 校验模式（#73 TTL 质保链：隐含 --dry-run 零写入，漂移即 exit 1——
+    # post-commit 增量校验与每日全量常态化的统一出口）
+    python scripts/governance/d3_metadata/backfill_ttl_metadata.py --rejudge --check [files...]
 
     # 限定子目录
     python scripts/governance/d3_metadata/backfill_ttl_metadata.py docs/08_knowledge/01_raw_intake/
@@ -132,7 +137,9 @@ def backfill_file(fpath: Path, dry_run: bool = False, rejudge: bool = False) -> 
 
     # 格式路由（向内收——一个函数，多格式解析；解析器真源：_shared/frontmatter.py）
     if suffix == ".md":
-        metadata, _ = parse_frontmatter(text)
+        # parse_frontmatter 契约=dict|None 单值（SSoT 治本 ARCH-033 Phase 7 后）；
+        # 原 `metadata, _ = parse_frontmatter(text)` 元组解包为潜伏断链（#73 实证修复）
+        metadata = parse_frontmatter(text)
     elif suffix in (".py", ".sh", ".ps1", ".mmd"):
         metadata = parse_py_header(text)
     elif suffix == ".yaml":
@@ -336,8 +343,7 @@ def _parse_metadata(fpath: Path) -> dict | None:
     except (OSError, UnicodeDecodeError):
         return None
     if suffix == ".md":
-        metadata, _ = parse_frontmatter(text)
-        return metadata
+        return parse_frontmatter(text)
     if suffix in (".py", ".sh", ".ps1", ".mmd"):
         return parse_py_header(text)
     if suffix == ".yaml":
@@ -351,7 +357,8 @@ def main() -> int:
     """Entry point: parse args, run logic, return exit code."""
     # 解析参数
     args = sys.argv[1:]
-    dry_run = "--dry-run" in args
+    check = "--check" in args  # #73: 校验模式——隐含 dry-run 零写入，漂移即 EXIT_FINDINGS
+    dry_run = "--dry-run" in args or check
     rejudge = "--rejudge" in args
     path_args = [a for a in args if not a.startswith("-")]
 
@@ -409,7 +416,9 @@ def main() -> int:
 
     # 输出统计报告
     mode_parts = []
-    if dry_run:
+    if check:
+        mode_parts.append("CHECK")
+    if dry_run and not check:
         mode_parts.append("DRY-RUN")
     if rejudge:
         mode_parts.append("REJUDGE")
@@ -441,6 +450,10 @@ def main() -> int:
 
     if stats["error"] > 0:
         return EXIT_FINDINGS
+    if check:
+        # #73 校验模式：漂移（缺 ttl 待回填 / 已有 ttl 待重判）即 findings
+        drift = stats["backfilled"] + stats["rejudged"]
+        return EXIT_FINDINGS if drift > 0 else EXIT_PASS
     return EXIT_PASS
 
 
