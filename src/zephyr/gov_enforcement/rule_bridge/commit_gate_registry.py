@@ -304,15 +304,32 @@ class CommitGateRegistry:
                 )
         self._specs[spec.gate_id] = spec
 
-    def check_all(self, gateway: object, files: list[str], **kwargs: Any) -> list[GateResult]:
+    def check_all(
+        self,
+        gateway: object,
+        files: list[str],
+        skip_gates: frozenset[str] = frozenset(),
+        **kwargs: Any,
+    ) -> list[GateResult]:
         """按 priority 升序执行所有 gate，返回结果列表。
 
         单个 gate 异常降级为 fail-closed（passed=False，安全优先），
         不阻断后续 gate 执行。
+
+        skip_gates: 命中的 gate_id 跳过执行（结果中保留 skipped 记录供审计）。
+        唯一消费场景=worktree 物理隔离 commit（跳过集合单一真源=
+        session_worktree._WORKTREE_SKIP_GATES，tracker #92 治本——物理隔离下
+        搭便车三 gate 无检测对象，对齐 merge 预演既有跳过口径）。
         """
         _audit_allow_overlap_usage(gateway, files, kwargs)
         results: list[GateResult] = []
         for spec in sorted(self._specs.values(), key=lambda s: s.priority):
+            if spec.gate_id in skip_gates:
+                results.append(GateResult(
+                    gate_id=spec.gate_id, passed=True,
+                    detail="skipped: worktree 物理隔离（无检测对象）",
+                ))
+                continue
             try:
                 passed, detail = spec.check(gateway, files, **kwargs)
                 results.append(GateResult(

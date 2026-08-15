@@ -107,6 +107,46 @@ class TestCheckAllException:
         assert results[1].passed is True
 
 
+class TestSkipGates:
+    """skip_gates 跳过执行（tracker #92：worktree 物理隔离 commit 跳过搭便车三 gate）。
+
+    跳过集合单一真源=session_worktree._WORKTREE_SKIP_GATES；注册表层只认 skip_gates
+    参数（不关心来源），跳过结果保留 passed=True 记录供审计（禁隐式消失）。
+    """
+
+    def test_skip_gates_skips_matching_gate_with_audit_record(self):
+        """命中的 gate 不执行，结果保留 skipped 记录（passed=True 不阻断）。"""
+        executed: list[str] = []
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="HELD-OVERLAP", priority=100,
+            check=lambda gw, f, **kw: (executed.append("HELD-OVERLAP"), (False, "would-block"))[1],
+        ))
+        registry.register(GateSpec(
+            gate_id="OTHER-GATE", priority=101,
+            check=lambda gw, f, **kw: (executed.append("OTHER-GATE"), (True, ""))[1],
+        ))
+        results = registry.check_all(None, [], skip_gates=frozenset({"HELD-OVERLAP"}))
+        # 被跳过的 gate 未执行（不会误拦），其余 gate 正常执行
+        assert executed == ["OTHER-GATE"]
+        by_id = {r.gate_id: r for r in results}
+        assert by_id["HELD-OVERLAP"].passed is True
+        assert "skipped" in by_id["HELD-OVERLAP"].detail
+        assert by_id["OTHER-GATE"].passed is True
+
+    def test_skip_gates_default_empty_no_behavior_change(self):
+        """默认空集合 → 全量执行（非 worktree 路径向后兼容回归锁）。"""
+        executed: list[str] = []
+        registry = CommitGateRegistry()
+        registry.register(GateSpec(
+            gate_id="G1", priority=100,
+            check=lambda gw, f, **kw: (executed.append("G1"), (False, "still-blocks"))[1],
+        ))
+        results = registry.check_all(None, [])
+        assert executed == ["G1"]
+        assert results[0].passed is False  # 未跳过：阻断语义完整保留
+
+
 class TestEmptyRegistry:
     """空 registry。"""
 

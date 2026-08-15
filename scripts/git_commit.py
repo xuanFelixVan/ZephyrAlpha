@@ -535,7 +535,10 @@ def main() -> int:
              "（.runtime/claim_snapshots/{sid}_adopted.jsonl）但存储空基线，使 "
              "FOREIGN-CHANGE-DETECTION gate 放行。与 --allow-overlap 区别："
              "allow_overlap 在 commit 时绕 gate，adopt-prior-work 在 claim 时认领附审计。"
-             "适用于本 session 续作前序 session 已落工作区但未 commit 的合法变更。",
+             "适用于本 session 续作前序 session 已落工作区但未 commit 的合法变更。"
+             "注意（tracker #92）：本标志直接加在 commit 命令上（一条命令完成认领+提交）"
+             "——勿拆成 claim-only --adopt-prior-work + 裸 commit 两步；worktree 内提交"
+             "物理隔离直通，无需本标志。",
     )
     parser.add_argument(
         "--allow-derived-deletion",

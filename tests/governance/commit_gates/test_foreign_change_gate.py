@@ -23,6 +23,7 @@
 - TestGateSpecFields: gate_id / priority 字段正确
 - TestSnapshotDiskPersistence: S3-C 治本——claim 快照磁盘持久化 + 崩溃恢复
 - TestAdoptPriorWork: 治本(2026-07-23)——claim_files(adopt_prior_work=True) 认领跨 session 前序工作（空基线+审计）
+- TestIdempotentClaimPreservesBaseline: tracker #92 治本（2026-08-16）——幂等重跑保留首次基线（干净/脏/adopt 三态+release 生命周期）
 - TestPostClaimAuditNormalSelfEditSkipped: P1——正常自编辑不记审计（噪音过滤）
 - TestPostClaimAuditDirtyBaselineChanged: P1——基线非空+变化→记审计（gate同时阻断）
 - TestPostClaimAuditAdoptedChanged: P1——adopted文件+变化→记审计
@@ -413,6 +414,110 @@ class TestAdoptPriorWork:
         # 无 adopt 审计日志
         audit_file = gw.claim_snapshots_dir / "s1_adopted.jsonl"
         assert not audit_file.exists()
+
+
+class TestIdempotentClaimPreservesBaseline:
+    """tracker #92 治本（2026-08-16）：幂等重跑 claim_files 保留首次基线不重捕获。
+
+    根因复现实证：CLI commit 主流程自带 adopt_prior_work=False 的 claim_files 重跑，
+    重捕获把 adopt 的空基线/首次干净基线覆盖为 commit 时刻真基线，破坏
+    「基线=首次 claim 时刻」语义（ARCH-054）→ FOREIGN-CHANGE 重复拦截。
+    修复后语义：基线=首次 claim 时刻快照；release 后快照删除，重新 claim 重新捕获。
+    """
+
+    @staticmethod
+    def _make_gw(project_root: Path, baseline_map: dict[str, str]) -> GitCommitGateway:
+        """构造可 claim 的 gateway（baseline_map 引用捕获——测试中途改值即改变 capture 返回）。"""
+        gw = GitCommitGateway.__new__(GitCommitGateway)
+        gw.project_root = project_root
+        gw.claim_snapshots = {}
+        gw.claim_snapshots_dir = project_root / ".runtime" / "claim_snapshots"
+        gw.registry = MagicMock()
+        gw.registry.claim_file.return_value = True
+        gw.capture_baseline_diff = lambda abs_f: baseline_map.get(abs_f, "")
+        return gw
+
+    def test_reclaim_preserves_clean_baseline(self, tmp_path):
+        """首次干净 claim（基线空）→ 后续编辑 → 重 claim 不重捕获 → 基线仍空 → gate PASS。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        baseline_map = {abs_target: ""}  # 首次 claim 时干净
+        gw = self._make_gw(tmp_path, baseline_map)
+        gw.claim_files("s1", [str(target)])
+        assert gw.claim_snapshots["s1"][abs_target] == ""
+        # 模拟 claim 后本 session 自己编辑（文件变脏）
+        baseline_map[abs_target] = "-old\n+my own edit"
+        # CLI commit 主流程重跑 claim_files（无 adopt）
+        gw.claim_files("s1", [str(target)])
+        # 基线保留首次干净态——不被覆盖为脏
+        assert gw.claim_snapshots["s1"][abs_target] == ""
+        gate = make_foreign_change_gate()
+        gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: ""})
+        passed, _ = gate.check(gw_mock, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is True
+
+    def test_reclaim_preserves_dirty_baseline(self, tmp_path):
+        """首次脏 claim（基线真）→ 重 claim 不重捕获 → 基线仍真 → gate 仍 BLOCK（不削弱防护）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        dirty = "-old\n+foreign wip"
+        baseline_map = {abs_target: dirty}
+        gw = self._make_gw(tmp_path, baseline_map)
+        gw.claim_files("s1", [str(target)])
+        assert gw.claim_snapshots["s1"][abs_target] == dirty
+        # 重跑 claim（即使此刻 capture 返回空也不覆盖既有真基线）
+        baseline_map[abs_target] = ""
+        gw.claim_files("s1", [str(target)])
+        assert gw.claim_snapshots["s1"][abs_target] == dirty
+        gate = make_foreign_change_gate()
+        gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: dirty})
+        passed, detail = gate.check(gw_mock, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is False
+        assert "FOREIGN_CHANGE_VIOLATION" in detail
+
+    def test_adopt_then_bare_reclaim_keeps_empty_baseline(self, tmp_path):
+        """#92 核心回归：adopt 认领（空基线+审计）→ 裸重 claim（无 adopt）→ 空基线不被冲掉。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        baseline_map = {abs_target: "-old\n+prior session wip"}
+        gw = self._make_gw(tmp_path, baseline_map)
+        # adopt 认领前序 WIP：空基线 + 审计
+        gw.claim_files("s1", [str(target)], adopt_prior_work=True)
+        assert gw.claim_snapshots["s1"][abs_target] == ""
+        assert (gw.claim_snapshots_dir / "s1_adopted.jsonl").exists()
+        # CLI commit 主流程重跑 claim_files（adopt=False）——修复前此处覆盖回真基线
+        gw.claim_files("s1", [str(target)])
+        assert gw.claim_snapshots["s1"][abs_target] == ""
+        gate = make_foreign_change_gate()
+        gw_mock = _make_gateway(tmp_path, session_snapshots={abs_target: ""})
+        passed, _ = gate.check(gw_mock, [str(target)], session_id="s1", allow_overlap=False)
+        assert passed is True
+        # adopt 审计不因重跑重复记录
+        records = [
+            line for line in (gw.claim_snapshots_dir / "s1_adopted.jsonl")
+            .read_text(encoding="utf-8").splitlines() if line.strip()
+        ]
+        assert len(records) == 1
+
+    def test_release_then_reclaim_recaptures(self, tmp_path):
+        """release 删快照 → 重新 claim 重新捕获（生命周期正确：基线锚定新一轮首次 claim）。"""
+        target = tmp_path / "a.py"
+        target.touch()
+        abs_target = os.path.abspath(str(target))
+        baseline_map = {abs_target: ""}
+        gw = self._make_gw(tmp_path, baseline_map)
+        gw.claim_files("s1", [str(target)])
+        assert gw.claim_snapshots["s1"][abs_target] == ""
+        # release 后快照删除
+        gw.release_files("s1", [str(target)])
+        assert "s1" not in gw.claim_snapshots
+        # 重新 claim：文件已脏 → 重新捕获真基线
+        baseline_map[abs_target] = "-old\n+new foreign wip"
+        gw.claim_files("s1", [str(target)])
+        assert gw.claim_snapshots["s1"][abs_target] == "-old\n+new foreign wip"
 
 
 # ---------------------------------------------------------------------------

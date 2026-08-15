@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；worktree 物理隔离（阶段3 治本 2026-06-30：commit 检测 session worktree——在 worktree 内直接 commit 无需 stash，不在 worktree 内提示建议使用 session worktree 隔离但仍向后兼容 commit）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本：pre-commit gate 声明式注册，4 个 in-process gate DIRECTORY-CONTRACT/CLAIM-REQUIRED/HELD-OVERLAP/CAPABILITY-OVERLAP 替代 12 个硬编码 _check_*，新增门禁 register(GateSpec) 而非硬编码 _check_*）；held_files 冲突阻断（搭便车治本：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；commit 守卫 _in_commit_flow（红攻1治本：_run_git 检测裸 git commit 且此标志为 False 时拒绝）；rename fallback（_commit_with_file_message 内置 rename 检测，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件）；adopt_prior_work 治本（2026-07-23，ARCH-054 跨 session 续作）：claim_files(adopt_prior_work=True) 认领前序未提交变更——审计记录实际基线 diff_size+sha256 到 .runtime/claim_snapshots/{sid}_adopted.jsonl 但存储空基线让 FOREIGN-CHANGE gate 放行，替代 stash 舞蹈与 --allow-overlap 逃生通道（allow_overlap commit 时绕 gate，adopt claim 时认领附审计）
+# [INVARIANTS] 全项目唯一合法 git commit 入口；全局跨进程串行锁（.ailocks/git_commit_global.lock，TTL=1800s）；commit 用 -F <msg_file> 避免 PowerShell 特殊字符问题（RULE-TWENTY 裁定2）；环境变量 ZEPHYR_COMMIT_GATEWAY=1 + commit message 追加 [GW:session_id] 标记；worktree 物理隔离（阶段3 治本 2026-06-30：commit 检测 session worktree——在 worktree 内直接 commit 无需 stash，不在 worktree 内提示建议使用 session worktree 隔离但仍向后兼容 commit）；门禁注册制 CommitGateRegistry（架构债务 #AD-001 治本：pre-commit gate 声明式注册，4 个 in-process gate DIRECTORY-CONTRACT/CLAIM-REQUIRED/HELD-OVERLAP/CAPABILITY-OVERLAP 替代 12 个硬编码 _check_*，新增门禁 register(GateSpec) 而非硬编码 _check_*）；held_files 冲突阻断（搭便车治本：HeldOverlapGate 在 commit 时检测目标文件是否被其他活跃 session 持有，命中返回 HELD_OVERLAP_VIOLATION 阻断，allow_overlap=True 放行并追加 [GW:<sid>:overlap] 标记）；commit 守卫 _in_commit_flow（红攻1治本：_run_git 检测裸 git commit 且此标志为 False 时拒绝）；rename fallback（_commit_with_file_message 内置 rename 检测，_has_staged_renames 检测到目标文件 R100 时自动切换无 pathspec + _verify_staged_is_clean 验证 staged 区只有目标文件）；adopt_prior_work 治本（2026-07-23，ARCH-054 跨 session 续作）：claim_files(adopt_prior_work=True) 认领前序未提交变更——审计记录实际基线 diff_size+sha256 到 .runtime/claim_snapshots/{sid}_adopted.jsonl 但存储空基线让 FOREIGN-CHANGE gate 放行，替代 stash 舞蹈与 --allow-overlap 逃生通道（allow_overlap commit 时绕 gate，adopt claim 时认领附审计）；claim 基线=首次 claim 时刻快照（tracker #92 治本：幂等重跑 claim_files 保留既有基线不重捕获，防止 CLI commit 主流程重跑覆盖 adopt 空基线/首次干净基线）；worktree 内 commit 跳过搭便车三 gate（tracker #92：wt_session 非 None 时 skip=_WORKTREE_SKIP_GATES 单一真源，物理隔离下无检测对象，对齐 merge 预演口径，非 worktree 路径全量保留）
 # [MODIFY-GUARD] _GlobalCommitLock 的 TTL 与锁文件名；commit message 的 GW 标记格式；ZEPHYR_COMMIT_GATEWAY 环境变量名
 # [STABILITY] evolving
 # [SAFETY] M
@@ -580,6 +580,13 @@ class GitCommitGateway:
                 #ARCH-054: 捕获基线快照（claim 时文件的 git diff HEAD 状态）
                 try:
                     abs_f = os.path.abspath(f)
+                    # tracker #92 治本（2026-08-16）：本 session 已有基线记录=此前已 claim，
+                    # 幂等重跑（如 CLI commit 主流程自带重跑）保留首次基线不重捕获——
+                    # 基线语义=「首次 claim 时刻」（FOREIGN-CHANGE gate 判定锚点），
+                    # 重捕获会把 adopt 的空基线/首次干净基线覆盖为 commit 时刻真基线，破坏语义。
+                    # release_files 删快照后重新捕获，生命周期自洽。
+                    if abs_f in self.claim_snapshots.get(session_id, {}):
+                        continue
                     actual_baseline = self.capture_baseline_diff(abs_f)
                     if adopt_prior_work and actual_baseline:
                         # 治本(2026-07-23): 认领跨 session 前序工作——审计记录实际基线，
@@ -1242,6 +1249,18 @@ class GitCommitGateway:
             wt_session = None
         self._warn_non_worktree_commit(session_id, wt_session)
 
+        # tracker #92 治本（2026-08-16）：worktree 物理隔离下，搭便车三 gate
+        # （HELD-OVERLAP/CLAIM-REQUIRED/FOREIGN-CHANGE-DETECTION）无检测对象——
+        # 同一工作区只有本 session，commit 范围由 pathspec 限定。
+        # 跳过集合单一真源=session_worktree._WORKTREE_SKIP_GATES（merge 预演既有消费方，
+        # 禁复制清单）；cwd 目录判定不依赖 session 活性。非 worktree 路径三 gate 全量保留。
+        _gate_skip: frozenset[str] = frozenset()
+        if wt_session is not None:
+            from zephyr.gov_enforcement.rule_bridge.session_worktree import (  # noqa: PLC0415 延迟 import 防循环
+                _WORKTREE_SKIP_GATES,
+            )
+            _gate_skip = _WORKTREE_SKIP_GATES
+
         # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-commit 告警横幅
         # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。
         # 不阻断 commit（warn 语义），但确保上次 reconciler 失败不被忽视。
@@ -1286,6 +1305,7 @@ class GitCommitGateway:
                     allow_derived_deletion=allow_derived_deletion,
                     allow_non_worktree=allow_non_worktree,
                     allow_multi_domain=allow_multi_domain,
+                    skip_gates=_gate_skip,
                 )
                 blocked = self._check_gate_results(gate_results)
                 if blocked is not None:
@@ -1310,6 +1330,7 @@ class GitCommitGateway:
                 allow_derived_deletion=allow_derived_deletion,
                 allow_non_worktree=allow_non_worktree,
                 allow_multi_domain=allow_multi_domain,
+                skip_gates=_gate_skip,
             )
             blocked = self._check_gate_results(gate_results)
             if blocked is not None:
@@ -1511,10 +1532,16 @@ class GitCommitGateway:
         except OSError:
             pass  # 审计落盘失败不阻断（warn 已发）
 
-    def _check_gates_with_drift_watch(self, existing, session_id, **kwargs):
-        """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对，漂移即违规报警。"""
+    def _check_gates_with_drift_watch(self, existing, session_id, skip_gates=frozenset(), **kwargs):
+        """gate 链执行 + tracked 区漂移监视（T4-2）：运行前后指纹比对，漂移即违规报警。
+
+        skip_gates: 透传 CommitGateRegistry.check_all（worktree 隔离跳过集合，
+        单一真源=session_worktree._WORKTREE_SKIP_GATES，tracker #92）。
+        """
         before = self._tracked_area_fingerprint()
-        results = self._gate_registry.check_all(self, existing, session_id=session_id, **kwargs)
+        results = self._gate_registry.check_all(
+            self, existing, session_id=session_id, skip_gates=skip_gates, **kwargs
+        )
         after = self._tracked_area_fingerprint()
         if before and after and before != after:
             self._audit_gate_tracked_drift(session_id)
