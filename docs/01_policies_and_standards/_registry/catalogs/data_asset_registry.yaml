@@ -3504,7 +3504,7 @@ datasets:
   applies_to: ["stock", "market"]
   tags: ["数据", "绩效"]
   algorithm_status: "not_applicable"
-  evidence: "2026-08-15 联调实证：c1_market.stock_basic 单日快照 5208 行（SH主板+科创板+SZ），回读抽验 600000/000001/300750/688001 板块与上市日期正确；SH 行业东财反爬期留空（次日重试回补）"
+  evidence: "2026-08-15 联调实证：c1_market.stock_basic 单日快照 5208 行（SH主板+科创板+SZ），回读抽验 600000/000001/300750/688001 板块与上市日期正确；2026-08-15 二审修复：SH 行业补全增巨潮个股资料降级链（东财全站封锁期实证可达），8-14 快照 2295 行 SH 行业经重跑幂等替换回补（残留 17 行为巨潮无资料个股，次日重试覆盖），口径=巨潮/证监会行业（与 SZ 交易所清单口径并存）"
   code_symbol: "AkshareIngestProvider._fetch_stock_basic"
   code_fingerprint: null
 
@@ -3578,7 +3578,7 @@ datasets:
   applies_to: ["market"]
   tags: ["数据"]
   algorithm_status: "not_applicable"
-  evidence: "2026-08-15 联调实证：c1_market.suspend 快照 5 行（东财反爬封锁→百度停复牌公告兜底生效，港股 5 位代码双门禁排除）；K线缺口推导模式（derive_from_kline）供历史回填"
+  evidence: "2026-08-15 联调实证：东财反爬封锁→百度停复牌公告兜底生效，港股 5 位代码双门禁排除；K线缺口推导模式（derive_from_kline）供历史回填；2026-08-15 二审修复：百度 feed 实证冻结于 2025-11-26（当时 6 行快照中 3 行标的当日 K 线正常交易=假停牌），_suspend_rows_from_baidu 增三重陈旧过滤（源站是否跳过/复牌日≤快照日/公告日期>30天），宁可快照空缺不写假停牌约束；存量 6 行已 mutation 清除，实盘重跑验证过滤全命中（跳过3/复牌1/陈旧1→0行）"
   code_symbol: "AkshareIngestProvider._fetch_suspend_status"
   code_fingerprint: null
 
