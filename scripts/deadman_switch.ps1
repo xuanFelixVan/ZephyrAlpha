@@ -97,6 +97,45 @@ foreach ($hb in $Heartbeats) {
     }
 }
 
+# ============== tick_subscriber biz heartbeat (#ARCH-DATA-017 ruling C: live-process-zero-collection) ==============
+# Process-level aliveness is covered by tick_subscriber.heartbeat (guard-written) above;
+# this section checks BUSINESS aliveness: last_tick_ts stale beyond threshold during
+# market hours (weekday 09:30-15:00 and is_trading_day). Off-hours/weekend/holiday are
+# skipped (no false alerts); guard side has Test-BizHeartbeatStale restart self-healing.
+$BizHb = Join-Path $TmpDir "tick_subscriber_biz.heartbeat"
+$BizStaleMin = 10
+if ($env:DEADMAN_TICK_BIZ_STALE_MIN -match '^\d+$') { $BizStaleMin = [int]$env:DEADMAN_TICK_BIZ_STALE_MIN }
+$isWeekday = $now.DayOfWeek -ne 'Saturday' -and $now.DayOfWeek -ne 'Sunday'
+$hmNow = $now.Hour * 60 + $now.Minute
+$isMarketHours = $isWeekday -and $hmNow -ge (9 * 60 + 30) -and $hmNow -le (15 * 60)
+if ($isMarketHours) {
+    if (-not (Test-Path $BizHb)) {
+        $staleServices += "tick_subscriber_biz: biz heartbeat MISSING during market hours (subscriber not writing / pre-fix version)"
+    } else {
+        try {
+            $biz = Get-Content $BizHb -Raw -Encoding utf8 | ConvertFrom-Json
+            $skipBiz = ($null -ne $biz.is_trading_day -and -not [bool]$biz.is_trading_day)  # holiday (business-side calendar ground truth)
+            if (-not $skipBiz) {
+                # last_tick_ts null (never received): anchor = max(started_ts, today 09:30) (preopen-start grace)
+                $anchor = $null
+                if ($biz.last_tick_ts) {
+                    $anchor = [datetime]$biz.last_tick_ts
+                } else {
+                    $open = Get-Date -Hour 9 -Minute 30 -Second 0
+                    $anchor = $open
+                    if ($biz.started_ts -and ([datetime]$biz.started_ts) -gt $open) { $anchor = [datetime]$biz.started_ts }
+                }
+                $bizAgeMin = ($now - $anchor).TotalMinutes
+                if ($bizAgeMin -gt $BizStaleMin) {
+                    $staleServices += "tick_subscriber_biz: no tick for $([int]$bizAgeMin)min in market hours (threshold ${BizStaleMin}min; today_rows=$($biz.today_rows), resub_count=$($biz.resub_count)) -- live-process-zero-collection (#ARCH-DATA-017)"
+                }
+            }
+        } catch {
+            $staleServices += "tick_subscriber_biz: biz heartbeat parse error ($($_.Exception.Message))"
+        }
+    }
+}
+
 # All fresh -> exit silently
 if ($staleServices.Count -eq 0) { exit 0 }
 

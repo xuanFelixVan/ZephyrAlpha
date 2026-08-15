@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; P2-5 分阶段延迟度量 Histogram: Stage1 on_tick/Stage2 queue_wait/Stage3 convert/Stage4 wal_add/Stage5 wal_flush
+# [INARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; P2-5 分阶段延迟度量 Histogram: Stage1 on_tick/Stage2 queue_wait/Stage3 convert/Stage4 wal_add/Stage5 wal_flush; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -24,7 +24,9 @@ queue.Queue，后台 flush 线程批量出队转14字段 tuple，WalWriter 先�
 """
 from __future__ import annotations
 
+import json
 import logging
+import os
 import queue
 import signal as sig_module
 import sys
@@ -32,6 +34,7 @@ import threading
 import time
 from datetime import datetime
 from decimal import Decimal
+from pathlib import Path
 
 from zephyr.data.table_registry import get_registry
 from zephyr.shared.observability.metrics import get_registry as _get_metrics_registry
@@ -53,6 +56,15 @@ _DATA_SOURCE = "miniqmt"
 
 # P0-2: 批量出队上限（减少 WalWriter.add 调用次数）
 _DRAIN_BATCH_SIZE = 500
+
+# #ARCH-DATA-017 裁定B/C/E（2026-08-15）：业务心跳/日志落盘路径与看门狗参数
+_REPO_ROOT = Path(__file__).resolve().parents[3]  # src/zephyr/data/tick_subscriber.py → 仓根
+_BIZ_HEARTBEAT_PATH = _REPO_ROOT / "tmp" / "tick_subscriber_biz.heartbeat"
+_RUN_LOG_PATH = _REPO_ROOT / "tmp" / "tick_subscriber_run.log"
+# 盘中无 tick 超此秒数触发周期重订阅（裁定E，对齐 deadman/guard 10min 告警的提前自愈窗口）
+_BIZ_RESUB_AFTER_S = 300.0
+# 业务心跳写出/看门狗循环间隔（对齐 guard 15s 心跳节奏）
+_BIZ_WATCHDOG_LOOP_S = 15.0
 
 
 def infer_market_type(stock_code: str) -> str:
@@ -186,6 +198,7 @@ class TickSubscriber:
       - QMT callback 线程：_on_tick → queue.put_nowait（最小开销，无锁计数）
       - flush 线程：_drain_batch 批量出队(500条) → WalWriter.add（先落盘段文件）
       - WalWriter drain 线程：段文件 → ch_writer → ClickHouse（异步排空）
+      - biz 看门狗线程：业务心跳写出 + 盘中无 tick 周期重订阅（#ARCH-DATA-017 裁定C/E）
     """
 
     def __init__(
@@ -237,6 +250,16 @@ class TickSubscriber:
         self._xtdata = None
         self._subscribed: set[str] = set()
 
+        # #ARCH-DATA-017 裁定C/E：业务心跳与周期重订阅状态
+        self._last_tick_ts: float = 0.0  # 最近 tick 接收时刻（time.time()；0=从未收到）
+        self._symbols_resolved: list[str] = []  # start() 缓存的全市场标的（看门狗重订阅复用）
+        self._biz_thread: threading.Thread | None = None
+        self._resub_count = 0  # 业务看门狗周期重订阅次数
+        self._hb_day = None  # 心跳日界锚（today_rows 日增量基准）
+        self._hb_day_base_written = 0
+        self._is_trading_day: bool | None = None  # xtdata 日历判定（None=未刷新）
+        self._started_ts: float = 0.0  # subscriber 启动时刻（heartbeat started_ts）
+
     def _on_tick(self, datas: dict) -> None:
         """xtdata 回调入口——把 tick 放入队列（QMT 线程调用）。
 
@@ -266,6 +289,7 @@ class TickSubscriber:
                 try:
                     self._tick_queue.put_nowait((symbol, tick))
                     self._received += 1  # 无锁计数
+                    self._last_tick_ts = time.time()  # 裁定C：业务心跳最近 tick 时刻
                     _get_metrics_registry().inc("zephyr_tick_received_total")
                     # P0-2: 首个 tick 成功入队 → 解除 start() 预热等待
                     # is_set() 仅读 bool（GIL 原子），set() 需加锁，check-first 避免热路径锁竞争
@@ -296,6 +320,7 @@ class TickSubscriber:
         try:
             self._tick_queue.put_nowait((symbol, tick))
             self._received += 1
+            self._last_tick_ts = time.time()  # 裁定C：备源 tick 同样视为业务活性
             _get_metrics_registry().inc("zephyr_tick_received_total")
         except queue.Full:
             log.warning("tick 队列已满，丢弃备源 tick symbol=%s", symbol)
@@ -568,6 +593,107 @@ class TickSubscriber:
         log.warning("重新订阅后仍未收到 tick，继续运行（可能存在数据缺口）")
         return False
 
+    # ── #ARCH-DATA-017 裁定C/E：业务心跳 + 盘中周期重订阅（2026-08-15）──
+
+    def _refresh_trading_day_flag(self) -> None:
+        """刷新当日是否交易日（xtdata 日历真源，fallback 周一~周五近似）。
+
+        心跳 JSON 携带 is_trading_day：监控侧（deadman/guard）不做日历推算——
+        业务侧最知道今天该不该有数据，这是"收盘/周末/节假日不误报"的第一性来源。
+        """
+        today = datetime.now().date()
+        try:
+            if self._xtdata is not None:
+                dates = self._xtdata.get_trading_dates("SH")
+                # get_trading_dates 返回毫秒时间戳列表
+                dayset = {
+                    datetime.fromtimestamp(int(d) / 1000).date() for d in (dates or [])
+                }
+                if dayset:
+                    self._is_trading_day = today in dayset
+                    return
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            log.warning("交易日历刷新失败（fallback weekday 近似）: %s", e)
+        self._is_trading_day = today.weekday() < 5
+
+    def _is_market_open_now(self) -> bool:
+        """当前是否盘中时段（09:30-15:00 且交易日）。"""
+        now = datetime.now()
+        if self._is_trading_day is None:
+            self._refresh_trading_day_flag()
+        if not self._is_trading_day:
+            return False
+        hm = now.hour * 60 + now.minute
+        return 9 * 60 + 30 <= hm <= 15 * 60
+
+    def _write_biz_heartbeat(self) -> None:
+        """写业务心跳 JSON（tmp→os.replace 原子写，对齐 guard Write-Heartbeat 防半读）。
+
+        与 tmp/tick_subscriber.heartbeat（guard 代写=进程活性，#ARCH-BOOT-001 锁机制依赖）
+        正交分离：本文件承载业务活性（last_tick_ts/today_rows/is_trading_day），
+        供 deadman_switch 盘中校验与 guard 盘中过期重启判定——治本放大器1
+        "heartbeat 与采集业务存活脱节"（08-12~14 活进程零采集 4 天无告警）。
+        """
+        today = datetime.now().date()
+        if today != self._hb_day:
+            self._hb_day = today
+            self._hb_day_base_written = self._written
+            self._refresh_trading_day_flag()
+        now = time.time()
+        payload = {
+            "ts": datetime.now().isoformat(timespec="seconds"),
+            "pid": os.getpid(),
+            "started_ts": (
+                datetime.fromtimestamp(self._started_ts).isoformat(timespec="seconds")
+                if self._started_ts else None
+            ),
+            "last_tick_ts": (
+                datetime.fromtimestamp(self._last_tick_ts).isoformat(timespec="seconds")
+                if self._last_tick_ts else None
+            ),
+            "last_tick_age_s": round(now - self._last_tick_ts, 1) if self._last_tick_ts else None,
+            "today_rows": self._written - self._hb_day_base_written,
+            "received": self._received,
+            "written": self._written,
+            "errors": self._errors,
+            "subscribed": len(self._subscribed),
+            "resub_count": self._resub_count,
+            "is_trading_day": self._is_trading_day,
+        }
+        try:
+            tmp_path = _BIZ_HEARTBEAT_PATH.with_suffix(".tmp")
+            tmp_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+            os.replace(tmp_path, _BIZ_HEARTBEAT_PATH)
+        except Exception as e:  # noqa: BLE001 — 心跳写出失败不阻断采集主流程
+            log.warning("业务心跳写出失败: %s", e)
+
+    def _biz_watchdog_loop(self) -> None:
+        """业务看门狗（裁定C/E）：周期写业务心跳 + 盘中无 tick 周期重订阅。
+
+        裁定E 治本"预热后永久静默"：_wait_for_first_tick 失败后不再静默——
+        盘中时段 last_tick_ts 超 _BIZ_RESUB_AFTER_S 未更新即重新订阅+重等首 tick。
+        非盘中（收盘/周末/节假日）不重订阅：无 tick 推送属正常，重订阅无意义。
+        """
+        while self._running:
+            self._write_biz_heartbeat()
+            if self._is_market_open_now():
+                idle = time.time() - self._last_tick_ts if self._last_tick_ts else float("inf")
+                if idle > _BIZ_RESUB_AFTER_S and self._symbols_resolved:
+                    self._resub_count += 1
+                    log.warning(
+                        "业务看门狗: 盘中 %.0fs 无 tick（第 %d 次周期重订阅，%d 只标的）...",
+                        idle, self._resub_count, len(self._symbols_resolved),
+                    )
+                    self._subscribed.clear()
+                    self._subscribe_all_symbols(self._symbols_resolved)
+                    # 重等首 tick（Event 已 set 时立即返回，以 last_tick_ts 刷新判恢复）
+                    self._first_tick_received.wait(timeout=30.0)
+                    if self._last_tick_ts and time.time() - self._last_tick_ts < _BIZ_RESUB_AFTER_S:
+                        log.info("业务看门狗: 重订阅后 tick 流已恢复")
+                    else:
+                        log.warning("业务看门狗: 重订阅后 30s 仍无 tick（下轮继续重试）")
+            time.sleep(_BIZ_WATCHDOG_LOOP_S)
+
     @staticmethod
     def _classify_qmt_path(path: str) -> str:
         """按路径特征分类 QMT 实例（config/qmt_environments.yaml identification_hints）。
@@ -724,6 +850,12 @@ class TickSubscriber:
             log.error("无法导入 xtquant，请确保 miniQMT 已安装且 xtquant 可用")
             return False
         self._xtdata = xtdata
+
+        # #ARCH-DATA-017 裁定C：启动即写首帧业务心跳（消除启动窗口期 deadman MISSING 误报），
+        # 后续由 tick-biz-watchdog 线程每 15s 续写
+        self._started_ts = time.time()
+        self._refresh_trading_day_flag()
+        self._write_biz_heartbeat()
         # 启动守卫延后到 _wait_for_qmt_ready 之后：此时 xtdata TCP 连接已建立，
         # TCP 对端进程辨识才能拿到 ground truth（见 _verify_qmt_instance）
 
@@ -770,6 +902,14 @@ class TickSubscriber:
         # 避免开盘瞬间数据缺口：subscribe_quote 是异步的，订阅完成不代表数据已到达
         self._wait_for_first_tick(symbols, timeout=30.0)
 
+        # #ARCH-DATA-017 裁定C/E：缓存标的 + 启动业务看门狗线程
+        # （业务心跳写出 + 盘中无 tick 周期重订阅——治本"预热后永久静默"放大器3）
+        self._symbols_resolved = list(symbols)
+        self._biz_thread = threading.Thread(
+            target=self._biz_watchdog_loop, daemon=True, name="tick-biz-watchdog",
+        )
+        self._biz_thread.start()
+
         # P1-3: 启动双源切换器（主源 QMT + 备源 TDX 自动切换）
         if self._backup_provider is not None and self._heartbeat is not None:
             from zephyr.data.redundant_source.backup_tick_poller import (
@@ -798,6 +938,8 @@ class TickSubscriber:
         self._running = False
         if self._flush_thread:
             self._flush_thread.join(timeout=30)
+        if self._biz_thread:
+            self._biz_thread.join(timeout=5)
         # P1-3: 停止双源切换器（含备源轮询线程）
         if self._switcher:
             self._switcher.stop()
@@ -949,6 +1091,19 @@ def main() -> int:
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+    # 日志落盘（#ARCH-DATA-017 裁定B，对标 scheduler.main 模式）：
+    # 治本"日志吞没"放大器——guard Start-Process 未重定向 stdout/stderr，
+    # 订阅失败/预热超时证据全部丢弃（08-12~14 零采集无法回溯取证）；
+    # 进程内落盘不依赖 guard 配置。RotatingFileHandler 轮转防无限增长。
+    from logging.handlers import RotatingFileHandler
+
+    _RUN_LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    _fh = RotatingFileHandler(
+        _RUN_LOG_PATH, maxBytes=10 * 1024 * 1024, backupCount=5, encoding="utf-8",
+    )
+    _fh.setFormatter(logging.Formatter("%(asctime)s %(levelname)s [%(name)s] %(message)s"))
+    logging.getLogger().addHandler(_fh)
+    log.info("日志落盘: %s", _RUN_LOG_PATH)
     log.info("=== TickSubscriber 启动 ===")
 
     sub = TickSubscriber()

@@ -46,6 +46,7 @@ if (-not (Test-Path $PythonExe)) {
 $TmpDir = Join-Path $RepoRoot "tmp"
 $LockFile = Join-Path $TmpDir "tick_subscriber.lock"
 $HeartbeatFile = Join-Path $TmpDir "tick_subscriber.heartbeat"
+$BizHeartbeatFile = Join-Path $TmpDir "tick_subscriber_biz.heartbeat"  # biz heartbeat (#ARCH-DATA-017 ruling C, JSON written by subscriber itself)
 $GuardLog = Join-Path $TmpDir "tick_subscriber_guard.log"
 
 if (-not (Test-Path $TmpDir)) {
@@ -70,6 +71,41 @@ function Write-Heartbeat {
     # -> false stale -> kill healthy guard. Write tmp + Move-Item (same-volume atomic).
     "$ts|$PID|$ChildPid" | Out-File -FilePath "$HeartbeatFile.tmp" -Encoding utf8 -NoNewline
     Move-Item -Path "$HeartbeatFile.tmp" -Destination $HeartbeatFile -Force
+}
+
+# ============== Business heartbeat staleness (#ARCH-DATA-017 ruling C, 2026-08-15) ==============
+# Root-cause fix for amplifier-1 "live process, zero collection" (4 silent days 08-12~14):
+# guard-written heartbeat only proves the PROCESS is alive, decoupled from COLLECTION health.
+# Biz heartbeat JSON (last_tick_ts/today_rows/is_trading_day) is written by the subscriber
+# itself; here we detect "no tick during market hours" and restart the child.
+# Triggers only when: weekday + market hours (09:30-15:00) + is_trading_day + last_tick
+# stale > $BizStaleMin minutes. last_tick_ts null (never received): anchor =
+# max(started_ts, today 09:30) (preopen-start grace). Missing/corrupt file -> no kill
+# (deadman_switch reports MISSING/parse error instead).
+$BizStaleMin = 10
+if ($env:TICK_BIZ_STALE_MIN -match '^\d+$') { $BizStaleMin = [int]$env:TICK_BIZ_STALE_MIN }
+function Test-BizHeartbeatStale {
+    param([string]$Path)
+    $now = Get-Date
+    if ($now.DayOfWeek -eq 'Saturday' -or $now.DayOfWeek -eq 'Sunday') { return $false }
+    $hm = $now.Hour * 60 + $now.Minute
+    if ($hm -lt 9 * 60 + 30 -or $hm -gt 15 * 60) { return $false }
+    if (-not (Test-Path $Path)) { return $false }
+    try {
+        $biz = Get-Content $Path -Raw -Encoding utf8 | ConvertFrom-Json
+        if ($null -ne $biz.is_trading_day -and -not [bool]$biz.is_trading_day) { return $false }  # holiday: no kill
+        $anchor = $null
+        if ($biz.last_tick_ts) {
+            $anchor = [datetime]$biz.last_tick_ts
+        } else {
+            $open = Get-Date -Hour 9 -Minute 30 -Second 0
+            $anchor = $open
+            if ($biz.started_ts -and ([datetime]$biz.started_ts) -gt $open) { $anchor = [datetime]$biz.started_ts }
+        }
+        return (($now - $anchor).TotalMinutes -gt $BizStaleMin)
+    } catch {
+        return $false
+    }
 }
 
 # ============== Single-instance lock (with watchdog heartbeat, fix #ARCH-BOOT-001) ==============
@@ -133,6 +169,15 @@ try {
         while (-not $proc.HasExited) {
             Start-Sleep -Seconds 15
             Write-Heartbeat -ChildPid $proc.Id
+            # Biz-heartbeat stale restart (#ARCH-DATA-017 ruling C): weekday market hours
+            # + is_trading_day + last_tick stale > $BizStaleMin min = live-process-zero-collection.
+            # Kill child -> outer while loop restarts it (self-heal before deadman alert).
+            # Off-hours/weekend/holiday: Test-BizHeartbeatStale returns false, never kills.
+            if (Test-BizHeartbeatStale -Path $BizHeartbeatFile) {
+                Write-GuardLog "BIZ-STALE: no tick > ${BizStaleMin}min in market hours (live-process-zero-collection #ARCH-DATA-017), restarting tick_subscriber (PID=$subPid)"
+                Stop-Process -Id $proc.Id -Force -ErrorAction SilentlyContinue
+                Start-Sleep -Seconds 2
+            }
         }
         $exitCode = $proc.ExitCode
 
