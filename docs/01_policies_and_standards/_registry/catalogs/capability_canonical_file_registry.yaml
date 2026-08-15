@@ -8871,6 +8871,23 @@ creation_tokens:
     capability: "git_safety_wrapper"
     note: "wrapper 验收测试（安装/幂等/卸载/git 16 类阻断+放行边界/.git 硬阻断/CRITICAL/审计/Session ID）"
 
+  # --- MOD-POS-021 FirmRiskAggregator 收编补登（2026-08-15，tracker #8 闭环，AI-XCUT-002）---
+  - file: "src/zephyr/position/core/firm_risk_aggregator.py"
+    token: "auto-firm-risk-aggregator-20260813"
+    created_by: "AI-XCUT-002"
+    capability: "firm_risk_aggregator"
+    note: "32号 G13 施工（AI-FRA-001，2026-08-13 merge 8e4d60d5）时未登记，tracker #8 收编补登；firm 层求和+裁剪硬上限执行点（60号 §3.1 第2条）"
+  - file: "docs/03_modules/_domain_position/firm_risk_aggregator/blueprint.md"
+    token: "auto-firm-risk-aggregator-bp-20260813"
+    created_by: "AI-XCUT-002"
+    capability: "firm_risk_aggregator"
+    note: "MOD-POS-021 模块蓝图，随源文件一并补登"
+  - file: "tests/position/test_firm_risk_aggregator.py"
+    token: "auto-firm-risk-aggregator-test-20260813"
+    created_by: "AI-XCUT-002"
+    capability: "firm_risk_aggregator"
+    note: "tests/ 豁免规则下自愿补登（60号 §7⑦ 缺口实证已闭合，60 用例）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================
