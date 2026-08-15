@@ -20,6 +20,7 @@ from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import psutil
+import pytest
 
 import zephyr.data.tick_subscriber as ts_module
 from zephyr.data.tick_subscriber import TickSubscriber, tick_to_row, infer_market_type
@@ -387,6 +388,23 @@ class TestBackupTickSource:
 
 
 class TestMain:
+    @pytest.fixture(autouse=True)
+    def _isolate_run_log(self, tmp_path, monkeypatch):
+        """隔离 main() 日志落盘（#ARCH-DATA-017 裁定B 配套治本）：
+        main() 无条件给 root logger 挂 RotatingFileHandler（生产 run log 路径）且不摘除——
+        不隔离则同进程后续测试的 WARNING+ 日志泄漏进生产 tmp/tick_subscriber_run.log
+        （2026-08-15 实证：TestQmtInstanceGuard 6 条假"QMT 实例辨识"ERROR 混入生产日志，
+        干扰 D 项订阅失效取证）。修复：patch 路径到 tmp_path + 测试后摘除并 close handler。
+        """
+        monkeypatch.setattr(ts_module, "_RUN_LOG_PATH", tmp_path / "tick_subscriber_run.log")
+        root = logging.getLogger()
+        before = list(root.handlers)
+        yield
+        for h in list(root.handlers):
+            if h not in before:
+                root.removeHandler(h)
+                h.close()
+
     def test_main_returns_zero_on_keyboard_interrupt(self, monkeypatch):
         """main() 捕获 KeyboardInterrupt 返回 0"""
         import zephyr.data.tick_subscriber as ts_module
