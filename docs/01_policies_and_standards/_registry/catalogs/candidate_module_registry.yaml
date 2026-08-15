@@ -14,9 +14,9 @@ description: >-
 owner: MOD-GOV-029
 tier: tier_1_governance
 status: active
-version: 1.0.0
+version: 1.1.0
 created: '2026-07-31'
-last_updated: '2026-08-14'
+last_updated: '2026-08-16'
 
 # ============================================================
 # 设计原则
@@ -6172,5 +6172,134 @@ entries:
   next_review_date: '2026-11-14'
   review_frequency: quarterly
   last_review_outcome: '2026-08-14 登记：无新增数据前提（日线行情已有），SSoT 注册表已建，可随时开工；优先级 P2 排在 CAND-SEAT-001 之后'
+  acquisition_method: self_build
+  acquisition_source: ''
+
+  # ----------------------------------------------------------
+  # CAND-MKTDATA-001: CSI300/CSI800 成分股 PIT 快照序列接入（deferred，K3 登记——回测两指数池实证前 MUST）
+  # 来源: 62_business_registry_construction.md §14 K3（2026-08-16 用户授权裁定登记）
+  # ----------------------------------------------------------
+- id: CAND-MKTDATA-001
+  name: "指数成分股 PIT 快照接入(Index Constituent PIT Snapshots)"
+  aliases: ["成分股历史快照", "index constituents PIT", "csi300/csi800 成分文件"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/datasets/index_constituents"
+  panorama_position:
+    depgraph: {has_position: true, note: "扩展 mkt_data 域数据接入（akshare_provider 既有节点）"}
+    dataflowgraph: {has_position: true, note: "数据源→data/index_constituents/csi300.csv+csi800.csv（PIT 快照序列）"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 mkt_data 蓝图（universe_registry components_ref 兑现）"}
+  description: >-
+    universe_registry 的 UNI-INDEX-001（CSI300）/UNI-INDEX-002（CSI800）components_ref
+    指向 data/index_constituents/csi300.csv / csi800.csv，但该目录从未落盘
+    （2026-08-12 Glob 实证，E5 审计级硬错误，YAML 已诚实标注 pit=false/survivorship_free=false）。
+    施工：接入中证指数官方季度调整历史成分文件（PIT 快照序列，非单当前快照），
+    或用 akshare index_stock_cons 历史接口按调仓日重建 PIT 成分；
+    落盘后回改 YAML 三字段为 true/include/true。
+  capability: ""
+  problem_it_solves: "消除'universe 条目声称指数池但成分文件不存在'的悬空引用——回测 CSI300/CSI800 实证前无此数据=幸存者偏差+成分前视"
+  trigger_signals:
+    - "multifactor 或任何策略需回测 CSI300/CSI800 指数池实证"
+    - "E5 审计将 pit=false 标注升级为阻断项"
+  keywords: ["universe", "index constituents", "PIT", "csi300", "csi800", "成分股", "幸存者偏差"]
+  upstream_deps:
+    - {path: "src/zephyr/data/implementations/akshare_provider.py", note: "index_stock_cons 历史接口扩展点"}
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml", note: "UNI-INDEX-001/002 components_ref 消费方"}
+  downstream_consumers:
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/benchmark_registry.yaml", note: "BMK-INDEX-001/002 underlying_universe 依赖"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+    - {item: "akshare index_stock_cons 历史接口可用性验证", note: "按调仓日重建 PIT 序列的可行性先行验证"}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "data/index_constituents/ 目录不存在（2026-08-12 Glob 实证），无任何成分股文件落盘"}
+    blocking_question: null
+    result: deferred
+  status: deferred
+  priority: P1
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "62_business_registry_construction.md §14 K3"
+  source_section: "待定问题 K3"
+  original_id: ""
+  estimated_complexity: M
+  tech_notes: >-
+    MVP 阶段 multifactor 回测用 UNI-RULE-001 全A可交易池替代（已标 pit=true），本项不阻塞。
+    施工要点：PIT 快照序列（非单当前快照）防成分前视；中证官方季度调整文件或
+    akshare 历史接口二选一（62 号 K3 处理方向①②）。
+  risks:
+    - "akshare 历史成分接口覆盖区间不足时需混用官方文件，两源对账成本高"
+  alternatives: "维持 UNI-RULE-001 全A池（MVP 默认）——本项仅在需要 CSI300/CSI800 严格实证时晋升"
+  tags: ["数据", "universe", "PIT", "指数成分", "回测前置"]
+  search_terms: ["成分股", "csi300", "csi800", "PIT 快照", "index constituents"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-16'
+  review_frequency: yearly
+  last_review_outcome: "deferred 登记（2026-08-16 用户授权裁定）：MVP 用 UNI-RULE-001 替代，回测两指数池实证前 MUST 晋升"
+  acquisition_method: self_build
+  acquisition_source: "akshare index_stock_cons 历史接口 / 中证指数官方季度调整成分文件"
+
+  # ----------------------------------------------------------
+  # CAND-MKTDATA-002: 板块推送池 universe 条目（deferred，K5 登记——22 号行业轮动落地时触发）
+  # 来源: 62_business_registry_construction.md §14 K5（2026-08-16 用户授权裁定登记）
+  # ----------------------------------------------------------
+- id: CAND-MKTDATA-002
+  name: "板块推送池 Universe(Sector Push-Pool Universe)"
+  aliases: ["板块推送池", "sector push pool", "UNI-SECTOR-001"]
+  domain: D_MKT_DATA
+  domain_status: active
+  domain_node_count: 6
+  sub_layer: "mkt_data/universe/sector"
+  panorama_position:
+    depgraph: {has_position: false, note: "universe_registry 条目扩展，非独立模块"}
+    dataflowgraph: {has_position: true, note: "板块指数（880xxx/881xxx，582 只）→ universe 板块层池"}
+    decisiongraph: {has_position: false, note: "数据层资产，无业务决策"}
+    blueprint: {has_position: true, note: "归属 universe_registry 蓝图（板块层池登记）"}
+  description: >-
+    22 号行业轮动策略有"板块推送池"（880xxx/881xxx，582 只板块指数，22 号 §5.1）——
+    板块层 universe 而非个股池。universe_registry 当前 5 条全为个股池，板块层无登记。
+    施工：补 UNI-SECTOR-001（universe_type=rule_based，component 为板块指数非个股）。
+  capability: ""
+  problem_it_solves: "板块层 universe 无登记——行业轮动策略施工时无板块池真源可引用"
+  trigger_signals:
+    - "22 号行业轮动策略（sector_rotation）施工推进"
+    - "板块层回测需求出现"
+  keywords: ["universe", "sector", "板块推送池", "行业轮动", "880xxx", "881xxx"]
+  upstream_deps:
+    - {path: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/22_industry_rotation.md", note: "§5.1 板块推送池定义源（582 只板块指数）"}
+  downstream_consumers:
+    - {path: "docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml", note: "UNI-SECTOR-001 条目落点"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites: []
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "universe_registry 5 条全为个股池（2026-08-16 核验），板块层无条目"}
+    blocking_question: null
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "62_business_registry_construction.md §14 K5"
+  source_section: "待定问题 K5"
+  original_id: ""
+  estimated_complexity: S
+  tech_notes: "板块指数成分非个股——universe schema 的 component_count/filter_rules 按板块指数口径填写；22 号 §5.1 为定义真源"
+  risks: []
+  alternatives: "MVP 阶段不施工（62 号 K5 原裁定）——22 号策略落地时再裁定"
+  tags: ["数据", "universe", "板块", "行业轮动", "低优先"]
+  search_terms: ["板块推送池", "sector universe", "UNI-SECTOR-001"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-16'
+  review_frequency: yearly
+  last_review_outcome: "deferred 登记（2026-08-16 用户授权裁定）：可选扩展非阻塞，22 号行业轮动策略落地时晋升"
   acquisition_method: self_build
   acquisition_source: ''

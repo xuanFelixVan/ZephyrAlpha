@@ -25,9 +25,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.2
+version: 1.2.0
 created: '2026-08-10'
-last_updated: '2026-08-15'
+last_updated: '2026-08-16'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - benchmark_id
@@ -86,7 +86,7 @@ benchmarks:
     underlying_universe: UNI-INDEX-001
     weight_method: cap_weighted
     data_source: SRC-AKSHARE-001
-    used_by_strategies: [STR-MULTIFACTOR-001]
+    used_by_strategies: []
     module_id: MOD-MKT-DATA
     doc_ref: 25_multifactor_strategy_detail.md §3.7（归因基准伪代码默认值——v1.34.0 修正，原"§CSI300实证"章节不存在）
     code_path: src/zephyr/data/implementations/akshare_provider.py
@@ -150,7 +150,7 @@ benchmarks:
     underlying_universe: UNI-RULE-001
     weight_method: cap_weighted
     data_source: SRC-AKSHARE-001
-    used_by_strategies: [STR-EVENT-001]
+    used_by_strategies: []
     module_id: MOD-MKT-DATA
     doc_ref: null
     code_path: src/zephyr/data/implementations/akshare_provider.py
@@ -174,6 +174,38 @@ benchmarks:
     code_symbol: null
     code_fingerprint: null
 
+  - benchmark_id: BMK-INDEX-004
+    name: CSI A500 Index
+    name_zh: 中证A500指数
+    aliases: [CSI A500, 中证A500, 000510]
+    benchmark_type: index
+    underlying_universe: ""
+    weight_method: cap_weighted
+    data_source: SRC-AKSHARE-001
+    used_by_strategies: []
+    module_id: MOD-MKT-DATA
+    doc_ref: 62_business_registry_construction.md §14 B1（2026-08-16 裁定登记 candidate：2026 机构标配新指数；主基准仍 BMK-INDEX-001 沪深300，是否替换待多基准回测证据）
+    code_path: ""
+    status: candidate
+    version: 1.0.0
+    created_at: '2026-08-16'
+    updated_at: '2026-08-16'
+    owner: MOD-MKT-DATA
+    annual_return: null
+    sharpe: null
+    max_drawdown: null
+    last_evaluated_at: null
+    construction_method: index_provider
+    active_share: null
+    style_drift_detection: {method: none, monitoring_frequency: monthly}
+    entry_role: "reference"
+    applies_to: ["stock", "index"]
+    tags: ["指数", "基准"]
+    algorithm_status: "not_applicable"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
   - benchmark_id: BMK-ABSOLUTE-001
     name: Absolute Return (Zero)
     name_zh: 绝对收益（零基准）
@@ -182,7 +214,7 @@ benchmarks:
     underlying_universe: null
     weight_method: null
     data_source: null
-    used_by_strategies: [STR-DABAN-001]
+    used_by_strategies: []
     module_id: MOD-GOVERNANCE
     doc_ref: 24_daban_strategy_detail.md
     code_path: null
