@@ -51,6 +51,16 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 17 | 37 号流动性危机 Protocol（AI-LIQ-001，MOD-RK-21 六算法+54 测试+37号 v1.1.0） | ✅ 已 merge（885cddc3af，2026-08-14 sess-batch-cleanup-0814；4 commits：d53693a13e/16a089c812/db695f9d1c/3e39367c37，统筹独立复跑 54 passed；Step1/Step6 双 PASS，3 处文档缺陷修复落地 v1.1.0） |
 | 18 | 42 号卖出流（AI-SELL-001，MVP 4 模块 MOD-SELL-000/004/005/019） | ✅ 完工已 merge（分支 87764ffb29 经 a337e0f54c 回 dev；depgraph 重建后 4 节点 stable+production 实证；sell_decision 227 测试全绿；42 号 v1.7.1） |
 
+### 第 4 批+紧急插队（2026-08-15 用户派单，当日全部完工 merge）
+
+| # | session_id | 任务 | commit | 状态 |
+|---|---|---|---|---|
+| 19 | AI-TICK-001 | tick_subscriber 观测层（#59 P0：18 测试入库+TestMain 隔离+模拟盘化排查） | e061a3b0+9613fbc7+a88a56fb | ✅ 已 merge（e179d4ce25；79/79 两轮+统筹 dev 复跑 79/79） |
+| 20 | AI-REGIME-001 | 34 号 RegimeMeta 测试套件重建（55 用例）+blueprint v0.2.0 对齐 | 837c5b256c+2bc86c1b29 | ✅ 已 merge（经 a88a56fb finalize；55/55 两轮+pf_alloc 153/153 无污染） |
+| 21 | AI-XCUT-001 | 60 号跨切清理（三处残留漂移收敛+"骨架重建"前提推翻） | 3d68da3ed3 | ✅ 已 merge（def379dbc9；battle_map §16 重生成闭合实证） |
+| 22 | AI-XCUT-002 | #8 MOD-POS-021 补登+merge 残留标记清除 | 1b613f03cd | ✅ 已 merge（479de59b23） |
+| 23 | AI-COMP-001 | 43 号合规纪律五环节（7 模块+78 测试）+COMPLIANCE-001 方案 A | 8fc6a993b3+b9e38e8dca+5708658d3e | ✅ 已 merge（de45d261aa；79 项两轮+统筹双环境复跑 79/79） |
+| 24 | AI-TDEBT-001 | 测试债清偿批（#63，785 失败按簇分包） | — | 🔄 施工中 |
 ## 二、统筹会话与 merge 记录
 
 | 项 | 内容 |
@@ -92,6 +102,10 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 - [c79de22c0d·#68 闭环] 2026-08-15 第四统筹核验 **PASS**（反馈文本补转）：agent-tool-host -NoProfile 硬编码 strings 实证→65 memo §7.33 裁定快照注入（ensure_ai_wrapper_injection.ps1 幂等 marker+计划任务 ZephyrAlpha-AI-Wrapper-Inject 每分钟保活+wrapper AI 归因 session=ai-<pid>-<启动ts>+审计 channel 字段单文件聚合）；15 新用例全绿+既有 80 不回归+真实 AI 通道实证（clean -fd BLOCKED/status 透传）；两新陷阱登记（ZEPHYR_SESSION_ID 继承须 env.pop 隔离+IDE 脏缓冲区 Edit 不落盘——后者在本统筹 merge 中两次实证复发，均按处方 PowerShell 直写+进程外核实处置）；tracker #68 行=【已闭环】版（merge 隐性回退已修复）。
 - [coord-0814-git001·T0/T1 核心] 2026-08-15 第四统筹核验 **PASS**（反馈文本补转）：98aeffde63 doc_lifecycle 状态机（观察 7 天宽限/生命迹象自动复活/满期归档 30 天回收站/零物理删除全自动）+GATE-WORKING-DOCS 一枪毙命废除（auto-commit 仅限满宽限期归档带 [lifecycle-archive] 标记）+ops_guard 回收站 API（guard_recycle/guard_move/prune_recycle_bin），4cb49217 吞噬兼容修正吸收第三统筹正则前缀吞噬实证（17/17 全绿）；TTL 声明质保链断裂新发现登记 #73；潘潘 16 文件删除平反（合法迁移收口 07b0707c2d/b2dd5630b3）已并入 #53；观察清单 .runtime/archive_watchlist.json 机器可读。
 - [数据域会话·#59/#60 施工] 2026-08-15 第四统筹核验 **PASS**：commit 实证在库（3b7eae39f8 观测层治本 B/C/E 全落地——日志落盘 RotatingFileHandler 10MB×5+biz 心跳 15s 原子写双心跳正交+盘中 300s 无 tick 看门狗重订阅；a2208f30e1 巡检口径排除 6 误报表归零+lof_list 潜伏治愈；998d23d1c1 fix_phase 同步）；统筹独立复跑 tests/zephyr/data/test_tick_subscriber.py **61/61 全绿**（0.65s，补齐协调会话"未独立复跑"缺口）；施工项 2 裁定细化知情采纳（规则 B 按 schedule 判定而非裸 incremental=false，防误伤 REALTIME-ACCUM 快照积累表）；线上已部署（biz 心跳 today_rows=8035 链路活+周六 is_trading_day=false 日历正确）；周一开盘实盘终验清单 3 项备案（订阅序列日志/today_rows 盘中增长/断流模拟 5min 重订阅+10min guard 重启+deadman 告警链路）；踩坑两则登记 #75。
+- [AI-TICK-001] 2026-08-15 第四统筹核验 **PASS**（三轮反馈）：①commit 实证——e061a3b0（18 项契约测试入库 +385 行）+9613fbc7（TestMain autouse 隔离防生产 run log 污染）+a88a56fb（全项目模拟盘化：restart_minimqmt.ps1 每日 16:00 任务默认重启目标改模拟——终端环境漂移制度性根源修复+4 docstring 示例）均在库；merge e179d4ce25（自执行，#ARCH-MERGE-PATH-GAP-001② 通道）；②Step 1/Step 6（A 类）PASS；③测试 79/79×2 轮（61 存量+18 新增）+统筹 dev 复跑 79/79（2.20s）；④联调实证：fake xtdata 全链路+ps1 消费侧 16/16 探针；⑤线上部署：PID 50380 连模拟盘（QMT 实例辨识 TCP 配对✓），biz 心跳全字段正确；⑥唯一人工前提=#84（模拟终端勾自动登录）；⚠️ a88a56fb 收编 REGIME 6 件 staged WIP 事故登记 #81；.pth 隔离缺口第三轮证伪（简单路径型 append，conftest/activate_env 双锚定正确）。
+- [AI-XCUT-001+002] 2026-08-15 第四统筹核验 **PASS**：①3d68da3ed3（4 文件 +28/-161，60 号三处漂移收敛+§16 真源收敛 module_translation_registry conflict_matrix）+1b613f03cd（#8 MOD-POS-021 三 token 补登闭环+主仓 capability registry 一行 >>>>>>> 残留清除——RCN merge 尾巴，致谢）；②Step 1 推翻"骨架需重建"前提（60 号 active v1.0.2 内容完整实证，00_index L672 系滞后登记已同步）；③85 项×2 轮全绿；④merge def379dbc9+479de59b23（四证 PASS 自动清理+XCUT-002 派生回写 stash 存证 refs/quarantine/AI-XCUT-002）；⑤SOME-OTHER-GATE 定性测试夹具污染+358 行精确清污（备份 .runtime/governance_db_backup_before_xcut001_logcleanup.db，今日新污染=0）；⑥顺手发现登记 #80（session_worktree merge --to 默认 main 风险）。
+- [AI-REGIME-001] 2026-08-15 第四统筹核验 **PASS**：①837c5b256c（55 用例重建——原套件 2026-08-11 git 灾难丢失取证不可恢复，按 34 号 §3.4 十六要点回建）+2bc86c1b29（blueprint v0.1.1→v0.2.0 全量对齐代码 v1.0.0 十二处+memo v2.8.6）；②四回归锚点覆盖（Sortino 分母 n-1=10.78 vs 7.49 可区分/water-filling N=2 无解兜底/CRISIS floor 0.09→0.05/allocation×global_shrinkage 解耦）；③55/55×2 轮+tests/pf_alloc 153/153 无交叉污染；④RECONCILER-HEALTH 384 行测试污染清偿（备份 %TEMP%\reconcile_log_test_residue_backup_20260815.json，横幅消除终证）；⑤merge 经 a88a56fb finalize 插曲知情——message 未附冲突处置留痕，审计链以会话报告+本登记为准；⑥worktree 已自清（心跳 idle 自退）。
+- [AI-COMP-001] 2026-08-15 第四统筹核验 **PASS**：①3 commit 实证（8fc6a993b3 主体 31 文件+3760/-35：MOD-CMP-001/002/005/007/008/009/010 七模块+78 测试+7 蓝图+2 新登记表；b9e38e8dca 遗留登记；5708658d3e 方案 A 落地）；②Step 1 PASS（43 号 v0.1.1 交叉引用全实证，过度工程红线守住：AML/KYC/隔离墙/50μs 显式不建或降级）+Step 6 十四节全 PASS（自审捕获修复 4 项含追高边界浮点尾差）；③79 项×2 轮全绿+统筹双环境复跑 79/79（worktree 1.45s/dev 1.33s）；④merge de45d261aa（统筹执行：派生 6 取 theirs+ROOR 并集+撞号重编 #77-79）；⑤遗留三项 #77（47 项裁定全量迁移，源文档不在仓 19 种子已登记）/#78（运行时接线留装配批+日申报笔数硬计数器追加）/#79 ✅ 已闭环（方案 A）。
 
 ## 五、施工批次规划（当前）
 
@@ -104,8 +118,9 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **文档压缩批（2026-08-14 用户裁定）** | **AI-DOCS-001：18 篇 ≥1000 行大文档压缩（62/10/54/63/35/36/28/64/40/32/37/90/34/61/26/24/25/AI_review）** | ✅ 已 merge（53856ed1c0 + merge ab3df58d9d；33.6k→23.2k 行，章节编号/参数/裁定/锚点零丢失，三波子代理自审全 PASS + PURE-ASSERTION 表格化修复） |
 | **治理批②（2026-08-14 晚用户裁定）** | **AI-RCN-001：reconciler 自动删除失控族治本（裁定书 T0-T6：T0 止血 dry_run/T1 删除能力显式声明+ops_guard 安全 API+统一回收站/T2 worker 启动三证+删除审计覆盖率/T3 文档保护区/T4 #55 审计迁出 tracked 区/T5 告警卫生/T6 文本对齐）** | ✅ **已 merge 回 dev**（2026-08-15 午 e0f962f36e 双亲实证；核验 PASS：12 commit 全实证+统筹复跑 143 项全绿+红队 246×2 全绿；worktree 已按四证 SOP 清理，见 §七） |
 | **治理批③（2026-08-15 同会话续作）** | **ARCH-WORKTREE-DB-SPLIT-001 治本（仓级共享状态所有权归主仓/anchor_main_root 两型锚定/worktree 禁写权威 REFUSED/ops_guard 补丁卸载 API）+ #55② 四项顺修全闭环 + strip_session_worktree 同族陷阱五形态根治** | ✅ **已 merge 回 dev**（同 e0f962f36e；核验 PASS：25 文件治理域无夹带+2182×2 轮全绿；新登记 #61-#64 待专项裁定，#63 测试债建议专项清偿批——用户已裁定与第 4 批并行开工） |
-| 第 4 批 | 34 RegimeMeta / 60 跨切（骨架需重建）/ 43 合规 | ⏸️ **观察后再定**（2026-08-15 用户裁定——治理批②③ merge+tick P0 均已收口，观察期待命；开工时统筹即生成三会话一键复制指令，指令草案已备） |
-| 第 5 批 | 53 模拟实盘 / 54 对账 / 55 监控 | ⏳ 等第 4 批 |
+| 第 4 批 | 34 RegimeMeta / 60 跨切 / 43 合规 | ✅ 3/3 全部完工 merge（2026-08-15 当日派单当日完工：34=837c5b256c+2bc86c1b29 / 60=def379dbc9 / 43=de45d261aa；另 tick 紧急插队 e179d4ce25+XCUT-002 479de59b23） |
+| **测试债清偿批（2026-08-15 用户裁定并行）** | **AI-TDEBT-001：#63 全量测试存量债 785 failed/17 errors 按簇分包清偿（cross/autonomy/external/semantic/escalation 簇+collection error+xdist set 参数化治本）** | 🔄 施工中（worktree .worktrees/AI-TDEBT-001 活跃） |
+| 第 5 批 | 53 模拟实盘 / 54 对账 / 55 监控 | ⏳ 待开工（第 4 批已完工 merge；测试债批施工完后排期，或用户裁定并行） |
 | 重建类 | 28 号情绪周期（可从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架 | ⏳ 随批排期 |
 
 ## 六、遗留项登记表（重建版，按优先级分类）
@@ -227,6 +242,11 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 74 | AI-RCN-001 worktree 内 ops_guard.py"非会话所有改动"+恢复前现场 stash 随 wipe 第四次丢失 | bb3a91d48a 反馈登记+第四统筹 wipe 实证（2026-08-15） | 改动内容不可考（wipe 6042D 物理删除工作区，从未入 git 对象库）；stash 存 per-worktree refs 随 worktree 删除（fsck 全库 unreachable 扫描无 AI-RCN-001 相关 WIP 存证实证）；价值判定：恢复成果（c4f970ffad 三方恢复）与批②③ ops_guard 全部机制已完整 merge 入 dev，该改动若相关大概率已被覆盖实现——登记备查，若后续发现功能缺失迹象再回溯 | ✅ 备查闭环（无恢复对象，风险已吸收） |
 | 75 | IDE 脏缓冲区陷阱新形态：mtime 回拨+pycache 陈旧缓存欺骗 import | 数据域会话踩坑实证（2026-08-15） | backfill_checker.py 遭拉锯：Edit 落盘被回滚、**mtime 回拨致 pycache 陈旧缓存欺骗 import**（"修改已生效"假象比 #68 更深一层）——治愈路径=git blob 基 python 直写+回读校验+即时提交；另 ps1 新增中文注释触发 ENCODING-SAFETY（INJ-007：ps1 必须纯 ASCII）——处方：ps1 注释一律英文。并入 #68/#71 陷阱族，AI 会话热文件编辑标配=进程外核实 | ⏳ 下一治理批顺手核查防线 |
 | 76 | 【准事故教训】"8h 无提交=会话死"判据缺陷致 restore 回滚活跃会话 WIP | 第四统筹 merge 处置实证+协调会话取证修正（2026-08-15） | 主工作区 134 残留甄别再教育：127 CRLF 幻影+4 项 04 文档 AUTO 块机械刷新无害，但 3 项 tick WIP 属**数据域活跃会话**（长跑服务型，心跳在调度器/guard 层而非 commit 层）——第四统筹"8h 无提交即死"判据误判，restore 回滚其 WIP；所有者随后重新提交完工（3b7eae39f8 等）零损失实证。**判据补强**：merge/清理前残留甄别须查进程层心跳（调度器 PID/guard 心跳文件/锁文件活性/最近文件写入时序），不能只看 commit 静默期——已并入统筹 SOP 心智 | ✅ 已闭环（判据补强登记，零损失实证） |
+| 80 | session_worktree.py merge 的 --to 默认 main 与项目 dev 主线约定不符 | AI-XCUT-002 顺手发现（2026-08-15） | 误 merge 风险（默认指向 main 而非 dev）；建议下轮脚本维护改默认或加校验 | ⏳ 下一治理批顺手修 |
+| 81 | 网关"主仓直提+他人 staged WIP"场景全量收编行为 | AI-TICK-001 事故上报（2026-08-15，a88a56fb 实证） | 主仓共享工作区 commit 时网关曾明示并发警告（AI-REGIME/COMP/TDEBT 活跃），TICK 4 个 docstring 单行改动走主仓直提系权衡失误——网关全量路径收编 AI-REGIME-001 的 6 件 staged WIP（3 注册表+34 memo+blueprint+test_regime_meta_allocator.py 527 行新增）；内容健康实证（55/55 全绿零丢失）但 commit 边界被并；评估：网关是否加 staged 区隔离保护（仅提交 --files 指定文件，他人 staged 不动）——归 AI-GIT-001 域 | ⏳ 待专项评估 |
+| 82 | data_source_operation_manual.md 示例路径双重过期 | AI-TICK-001 排查发现（2026-08-15） | D 盘→E 盘搬迁+实盘→模拟主线双重过期——文档债，归文档治理批 | ⏳ 择期 |
+| 83 | AGENTS.md 速查表 18 注册表口径回填挂起 | 第四统筹 merge 前置实证（2026-08-15） | 回填会话 18:48 写入 AGENTS.md 速查表 4 新表行+data_asset 199 条口径，被 PROTECTED-PATHS 阻挡挂起（ROOR+62 号同源 WIP 已代收 00646958）——需 Owner 审批通道落地（挂 #9；与 #41 计数动态化可一并裁定） | ⏳ 等 Owner 审批 |
+| 84 | 【用户手动项】QMT 模拟终端登录界面勾选"自动登录" | AI-TICK-001 交接（2026-08-15） | restart_minimqmt.ps1 每日 16:00 重启后终端停在登录页，不勾则次日 miniquote 不起、订阅链全挂——**周一 08-17 开盘前唯一人工前提**；当前 PID 50380 连模拟盘正常 | ⏳ 用户手动（周一前） |
 
 ### 流程/环境类
 
@@ -284,3 +304,4 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 2026-08-15 午后 | coord-0814-gov2：①登记 #56（因子 IC 实证回填无批次归属——ic 全 null/策略 111 条 null 仅 1 active；执行算法套件/pf_alloc 核查结论备查于 #56；首插遭 lost-update 覆盖后重插，#56=重编号后合法空号）②残留取证画像（用户裁定先取证再处置）：134 项=127 CRLF 幻影+4 项 04 文档 AUTO 块机械刷新+3 项 tick WIP；tick WIP 与用户方案 B/C/E 逐条比对零冲突实证，后被数据域会话自提交（3b7eae39f8+998d23d1c1），#59/#60 标闭环 ③**用户裁定第 4 批"观察后再定"**暂不分配。⚠️ 本会话 §七 两次登记均被并行收口 commit 覆盖（lost-update 第三实证），本行第三次写入 | coord-0814-gov2 |
 | 2026-08-15 午后 | 历史反馈补转核验：wrapper 批（611227d5/21f447c1/d7844786/0b94b4d4）/65-66 遗留批（561ce485）/#68 闭环（c79de22c0d）/T0-T1 核心（98aeffde63+4cb49217）四项核验 PASS 补登 §四（git 实证早已完成，正式反馈文本今日补转）；新登记 #73（TTL 声明质保链断裂，rejudge 触发面窄+常设 TTL reconciler 已删）/#74（ops_guard 非会话改动+stash 随 wipe 第四次丢失备查，fsck 全库扫描无恢复对象） | 第四统筹会话 |
 | 2026-08-15 下午 | #59/#60 施工反馈核验 **PASS**（3b7eae39f8/a2208f30e1/998d23d1c1 实证在库+统筹复跑 61/61 补独立复跑缺口；周一开盘实盘终验 3 项备案）；**用户裁定第 4 批观察后再定**（批次区已更新）；新登记 #75（脏缓冲区新形态 mtime 回拨+pycache 欺骗+INJ-007 ps1 纯 ASCII）/#76（"无提交即死"误判准事故，判据补强=查进程层心跳）；AI-TICK-001 指令作废（任务已由数据域会话完工）；ce6d13a7（协调会话同 sid 收口 commit，lost-update 第三实证留痕）知情并存 | 第四统筹会话 |
+| 2026-08-15 晚 | **第 4 批 3/3+tick 插队全完工 merge**（用户当日派单当日闭环）：AI-TICK-001（e179d4ce25）/AI-REGIME-001（a88a56fb finalize）/AI-XCUT-001+002（def379dbc9+479de59b23）自行 merge，AI-COMP-001 由统筹 merge（de45d261aa：派生 6 取 theirs+ROOR 并集+撞号重编 #77-79）；merge 前置代收回填会话 WIP（00646958）；五家核验全 PASS（§四）；新登记 #80-84（--to main 风险/网关收编 staged WIP/文档债/AGENTS.md 回填待审批/QMT 自动登录人工项）；SOME-OTHER-GATE 测试污染三方清偿完毕（TICK 324+XCUT 358+REGIME 384 行，横幅消除）；worktree 待清：COMP/TICK（证1 会话活跃阻断，会话结束后 lifecycle sweep 自收）；测试债批 TDEBT-001 施工中 | 第四统筹会话 |
