@@ -7,6 +7,8 @@
 #   regime_invalid 失效市场环境 | direction 信号方向 | entry_role 条目角色 | applies_to 适用标的 |
 #   tags 自由检索标签 | algorithm_status 算法状态 | evidence 回测证据（空=未回测）
 # 本库裁剪与默认值决策：裁剪：同 universe——基准是参照物，无 K 线周期/市场环境/方向语义，裁 timeframe×2/regime×2/direction。保留 entry_role=reference + 共有四维度；algorithm_status 固定 not_applicable。
+# v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
+#   基准、指数、绩效
 # ============================================================================
 module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -22,7 +24,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -98,8 +100,8 @@ benchmarks:
     active_share: null
     style_drift_detection: {method: none, monitoring_frequency: monthly}
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["stock", "index"]
+    tags: ["指数", "基准"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -128,8 +130,8 @@ benchmarks:
     active_share: null
     style_drift_detection: {method: none, monitoring_frequency: monthly}
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["index"]
+    tags: ["指数", "基准"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -158,8 +160,8 @@ benchmarks:
     active_share: null
     style_drift_detection: {method: none, monitoring_frequency: monthly}
     entry_role: "reference"
-    applies_to: []
-    tags: []
+    applies_to: ["index"]
+    tags: ["指数", "基准"]
     algorithm_status: "not_applicable"
     evidence: ""
 
@@ -189,6 +191,6 @@ benchmarks:
     style_drift_detection: {method: none, monitoring_frequency: monthly}
     entry_role: "reference"
     applies_to: []
-    tags: []
+    tags: ["基准", "绩效"]
     algorithm_status: "not_applicable"
     evidence: ""
