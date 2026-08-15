@@ -38,6 +38,8 @@
 > ```
 > 记住返回的 `session_id`。**一个任务=1次start+多次Edit/Write+1次commit+1次merge**。后续编辑用 Edit/Write 正常操作（写项目根即可，`session_worktree_commit` 会自动同步到 worktree）。
 >
+> **IDE 脏缓冲区陷阱（#68/#71/#75 事故族，#ARCH-WORKTREE-WRITE-INTEGRITY-001 治本）**：Trae IDE 文档层脏缓冲区可致 Edit/Write **不落盘**且 Read 回显旧缓冲区（mtime 回拨可识别）——关键文件改后 MUST 进程外核实（`Select-String`/`git diff`），疑似回拨用 PowerShell `[System.IO.File]::WriteAllText` 直写。防御机制已落地：tracked 文件漂移有常驻看门狗自动快照存证+告警（[`worktree_drift_watchdog.py`](file:///d:/ZephyrAlpha/src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py)，post-commit reconciler 自动拉起）；写注册表/AGENTS.md/tracker 等热文件 MUST 用 `safe_write_text`（[`file_utils.py`](file:///d:/ZephyrAlpha/src/zephyr/shared/io/file_utils.py)，base-hash CAS+回读校验，陈旧缓冲区直接拒写落审计）。
+>
 > **提交时 MUST 调**（不用裸 `git commit`）：
 > ```
 > python -c "from zephyr.gov_enforcement.rule_bridge.session_worktree import session_worktree_commit; r = session_worktree_commit('<session_id>', ['<file1>', '<file2>'], '<message>'); print(r)"
