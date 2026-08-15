@@ -95,5 +95,8 @@ from zephyr.gov_enforcement.commit_gates.commit_scope_gate import (  # noqa: F40
 from zephyr.gov_enforcement.commit_gates.reconciler_file_ops_gate import (  # noqa: F401  # RECONCILER-FILE-OPS 裸删除原语静态扫描（#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T1③）
     make_reconciler_file_ops_gate as _make_reconciler_file_ops_gate,
 )
+from zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate import (  # noqa: F401  # REGISTRY-CODE-ANCHOR 业务注册表代码锚点门禁（#ARCH-BREG-002 门禁A）
+    make_registry_code_anchor_gate as _make_registry_code_anchor_gate,
+)
 
 __all__: list[str] = []  # 子模块各自导出 make_*_gate()，包级不 re-export
