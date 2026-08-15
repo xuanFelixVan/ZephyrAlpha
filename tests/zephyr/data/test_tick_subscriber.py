@@ -8,15 +8,20 @@ import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", "..", "src"))
 
+import json
+import logging
 import queue
 import threading
+import time
 from datetime import datetime
 from decimal import Decimal
+from logging.handlers import RotatingFileHandler
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
 import psutil
 
+import zephyr.data.tick_subscriber as ts_module
 from zephyr.data.tick_subscriber import TickSubscriber, tick_to_row, infer_market_type
 
 
@@ -716,3 +721,383 @@ class TestQmtInstanceGuard:
         sub._xtdata.get_data_dir.side_effect = RuntimeError("not connected")
 
         assert sub._verify_qmt_instance() == "unknown"
+
+
+# ── #ARCH-DATA-017 裁定B/C/E 专项（2026-08-15 AI-TICK-001 补登记入库）──
+# 3b7eae39f8 commit 自报的 16 项 python 单测为临时探针未入库，本批为持久化版本。
+
+# 业务心跳 JSON 契约字段（deadman_switch.ps1 / start_tick_subscriber.ps1 消费面）
+_BIZ_HB_CONTRACT_KEYS = {
+    "ts", "pid", "started_ts", "last_tick_ts", "last_tick_age_s",
+    "today_rows", "received", "written", "errors", "subscribed",
+    "resub_count", "is_trading_day",
+}
+
+
+class _FakeDt(datetime):
+    """固定当前时刻的 datetime 替身（模块级 monkeypatch 用）。"""
+    _fixed = None
+
+    @classmethod
+    def now(cls, tz=None):
+        return cls._fixed
+
+
+def _patch_now(monkeypatch, dt):
+    """把 ts_module.datetime 钉到固定时刻。"""
+    _FakeDt._fixed = dt
+    monkeypatch.setattr(ts_module, "datetime", _FakeDt)
+
+
+class TestBizHeartbeat:
+    """裁定C：业务心跳 JSON——业务活性（last_tick_ts/today_rows）与进程活性正交。"""
+
+    def test_payload_contract_fields(self, tmp_path, monkeypatch):
+        """心跳 JSON 字段集=ps1 消费契约；原子写无 .tmp 残留。"""
+        hb = tmp_path / "tick_subscriber_biz.heartbeat"
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", hb)
+        sub = _make_sub()
+        sub._started_ts = time.time() - 60
+        sub.on_tick({"000001.SZ": {"time": 1720838403000}})
+        sub.written = 10
+        sub._write_biz_heartbeat()  # 首帧锚定日界基准（base=10）
+        sub.written = 52  # 当日净落 42 行
+
+        sub._write_biz_heartbeat()
+
+        payload = json.loads(hb.read_text(encoding="utf-8"))
+        assert set(payload) == _BIZ_HB_CONTRACT_KEYS
+        assert payload["pid"] == os.getpid()
+        assert payload["last_tick_ts"] is not None
+        assert payload["last_tick_age_s"] is not None and payload["last_tick_age_s"] >= 0
+        assert payload["today_rows"] == 42
+        assert payload["subscribed"] == 0
+        assert payload["resub_count"] == 0
+        assert payload["is_trading_day"] is not None
+        assert not hb.with_suffix(".tmp").exists()  # tmp→os.replace 原子写无残留
+
+    def test_first_frame_last_tick_null(self, tmp_path, monkeypatch):
+        """启动首帧（从未收到 tick）：last_tick_ts/last_tick_age_s 为 None，
+        ps1 锚点走 max(started_ts, 当日09:30) 宽限路径——契约要求字段存在且为 null。"""
+        hb = tmp_path / "tick_subscriber_biz.heartbeat"
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", hb)
+        sub = _make_sub()
+        sub._started_ts = time.time()
+
+        sub._write_biz_heartbeat()
+
+        payload = json.loads(hb.read_text(encoding="utf-8"))
+        assert payload["last_tick_ts"] is None
+        assert payload["last_tick_age_s"] is None
+        assert payload["started_ts"] is not None
+        assert payload["today_rows"] == 0
+
+    def test_day_rollover_resets_today_rows(self, tmp_path, monkeypatch):
+        """日界翻转：today_rows 以当日零点 written 为基准（日增量口径）。"""
+        hb = tmp_path / "tick_subscriber_biz.heartbeat"
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", hb)
+        sub = _make_sub()
+        sub._hb_day = datetime(2026, 8, 14).date()  # 昨日锚
+        sub._written = 100
+
+        sub._write_biz_heartbeat()
+
+        payload = json.loads(hb.read_text(encoding="utf-8"))
+        assert sub._hb_day == datetime.now().date()
+        assert sub._hb_day_base_written == 100
+        assert payload["today_rows"] == 0
+
+    def test_primary_and_backup_tick_both_update_last_tick(self):
+        """主源/备源 tick 均刷新 last_tick_ts（备源活性同样算业务存活）。"""
+        sub = _make_sub()
+        assert sub._last_tick_ts == 0.0
+        sub.on_tick({"000001.SZ": {"time": 1720838403000}})
+        t1 = sub._last_tick_ts
+        assert t1 > 0
+        sub.on_backup_tick("000001.SZ", {"time": 1720838403000})
+        assert sub._last_tick_ts >= t1
+
+    def test_write_failure_non_fatal(self, tmp_path, monkeypatch):
+        """心跳写出失败不阻断采集主流程（warning 吞没）。"""
+        hb = tmp_path / "tick_subscriber_biz.heartbeat"
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", hb)
+        monkeypatch.setattr(ts_module.os, "replace", MagicMock(side_effect=OSError("disk full")))
+        sub = _make_sub()
+        sub._write_biz_heartbeat()  # 不抛异常即通过
+
+
+class TestTradingDayFlag:
+    """裁定C：is_trading_day 由业务侧 xtdata 日历判定（fallback weekday 近似）。"""
+
+    def test_xtdata_calendar_hit(self, monkeypatch):
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 10, 0))  # 周一
+        day0_ms = int(datetime(2026, 8, 17).timestamp() * 1000)
+        sub = _make_sub()
+        sub._xtdata = SimpleNamespace(get_trading_dates=lambda mkt: [day0_ms])
+        sub._refresh_trading_day_flag()
+        assert sub._is_trading_day is True
+
+    def test_xtdata_calendar_miss(self, monkeypatch):
+        """日历真实但当日不在其中（节假日）→ False，不误报。"""
+        _patch_now(monkeypatch, datetime(2026, 10, 1, 10, 0))  # 国庆假期
+        other_ms = int(datetime(2026, 10, 9).timestamp() * 1000)
+        sub = _make_sub()
+        sub._xtdata = SimpleNamespace(get_trading_dates=lambda mkt: [other_ms])
+        sub._refresh_trading_day_flag()
+        assert sub._is_trading_day is False
+
+    def test_xtdata_none_fallback_weekday(self, monkeypatch):
+        """xtdata 未挂载 → weekday 近似（周一=True）。"""
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 10, 0))
+        sub = _make_sub()
+        sub._xtdata = None
+        sub._refresh_trading_day_flag()
+        assert sub._is_trading_day is True
+
+    def test_xtdata_none_fallback_weekend(self, monkeypatch):
+        """xtdata 未挂载 → weekday 近似（周六=False）。"""
+        _patch_now(monkeypatch, datetime(2026, 8, 15, 10, 0))
+        sub = _make_sub()
+        sub._xtdata = None
+        sub._refresh_trading_day_flag()
+        assert sub._is_trading_day is False
+
+    def test_xtdata_error_fallback_weekday(self, monkeypatch):
+        """日历接口异常 → fallback weekday，不崩溃。"""
+        _patch_now(monkeypatch, datetime(2026, 8, 15, 10, 0))  # 周六
+        sub = _make_sub()
+        sub._xtdata = SimpleNamespace(
+            get_trading_dates=MagicMock(side_effect=RuntimeError("qmt down"))
+        )
+        sub._refresh_trading_day_flag()
+        assert sub._is_trading_day is False
+
+
+class TestMarketOpenNow:
+    """裁定C：盘中窗口判定（09:30-15:00 且交易日）——告警/重订阅只在盘中生效。"""
+
+    def test_intraday_returns_true(self, monkeypatch):
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 10, 0))
+        sub = _make_sub()
+        sub._is_trading_day = True
+        assert sub._is_market_open_now() is True
+
+    def test_preopen_returns_false(self, monkeypatch):
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 9, 29))
+        sub = _make_sub()
+        sub._is_trading_day = True
+        assert sub._is_market_open_now() is False
+
+    def test_after_close_returns_false(self, monkeypatch):
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 15, 1))
+        sub = _make_sub()
+        sub._is_trading_day = True
+        assert sub._is_market_open_now() is False
+
+    def test_non_trading_day_returns_false(self, monkeypatch):
+        _patch_now(monkeypatch, datetime(2026, 8, 17, 10, 0))
+        sub = _make_sub()
+        sub._is_trading_day = False
+        assert sub._is_market_open_now() is False
+
+
+class _WatchdogXtdata:
+    """看门狗测试用 xtdata 桩：捕获批量订阅回调并计数。"""
+
+    def __init__(self):
+        self.callback = None
+        self.subscribe_calls = 0
+
+    def subscribe_whole_quote(self, codes, callback=None):
+        self.subscribe_calls += 1
+        self.callback = callback
+        return list(codes)
+
+    def get_trading_dates(self, market):
+        day0 = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        return [int(day0.timestamp() * 1000)]
+
+
+class TestBizWatchdog:
+    """裁定E：盘中无 tick 周期重订阅（治本预热后永久静默）；非盘中不重订阅。"""
+
+    def _patch_fast_loop(self, monkeypatch, tmp_path):
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", tmp_path / "biz.heartbeat")
+        monkeypatch.setattr(ts_module, "_BIZ_RESUB_AFTER_S", 0.2)
+        monkeypatch.setattr(ts_module, "_BIZ_WATCHDOG_LOOP_S", 0.02)
+
+    def test_stale_intraday_triggers_resubscribe(self, tmp_path, monkeypatch):
+        """盘中 last_tick 过期 → 清订阅+重订阅；喂 tick 后判恢复退出。"""
+        self._patch_fast_loop(monkeypatch, tmp_path)
+        fake = _WatchdogXtdata()
+        sub = _make_sub()
+        sub._xtdata = fake
+        sub._symbols_resolved = ["000001.SZ"]
+        sub._subscribed = {"000001.SZ"}
+        sub._last_tick_ts = time.time() - 100  # 盘中过期态
+        sub._is_market_open_now = lambda: True
+
+        t = threading.Thread(target=sub._biz_watchdog_loop, daemon=True)
+        t.start()
+        deadline = time.time() + 5
+        while sub._resub_count < 1 and time.time() < deadline:
+            time.sleep(0.02)
+        assert sub._resub_count >= 1
+        assert fake.subscribe_calls >= 1
+        # 重订阅后重等首 tick（30s wait）——喂 tick 立即释放并判恢复
+        fake.callback({"000001.SZ": {"time": int(time.time() * 1000)}})
+        sub.running = False
+        t.join(timeout=3)
+        assert not t.is_alive()
+        assert time.time() - sub._last_tick_ts < 5
+
+    def test_off_hours_no_resubscribe(self, tmp_path, monkeypatch):
+        """非盘中（收盘/周末/节假日）：只写心跳不重订阅。"""
+        self._patch_fast_loop(monkeypatch, tmp_path)
+        fake = _WatchdogXtdata()
+        sub = _make_sub()
+        sub._xtdata = fake
+        sub._symbols_resolved = ["000001.SZ"]
+        sub._last_tick_ts = time.time() - 100  # 即使过期也不重订阅
+        sub._is_market_open_now = lambda: False
+
+        t = threading.Thread(target=sub._biz_watchdog_loop, daemon=True)
+        t.start()
+        time.sleep(0.2)
+        sub.running = False
+        t.join(timeout=3)
+        assert sub._resub_count == 0
+        assert fake.subscribe_calls == 0
+        # 心跳仍在持续写出
+        assert (tmp_path / "biz.heartbeat").exists()
+
+
+class TestMainRunLog:
+    """裁定B：main() RotatingFileHandler 落盘（治本 guard 未重定向 stdout/stderr 吞没）。"""
+
+    def test_main_attaches_run_log(self, tmp_path, monkeypatch):
+        run_log = tmp_path / "tick_subscriber_run.log"
+        monkeypatch.setattr(ts_module, "_RUN_LOG_PATH", run_log)
+        sub_instance = MagicMock()
+        sub_instance.start.return_value = False
+        monkeypatch.setattr(ts_module, "TickSubscriber", lambda *a, **kw: sub_instance)
+        root = logging.getLogger()
+        before = list(root.handlers)
+        old_level = root.level
+        root.setLevel(logging.INFO)  # pytest 下 basicConfig 为 no-op，需显式放行 INFO
+        try:
+            assert ts_module.main() == 1
+            content = run_log.read_text(encoding="utf-8")
+            assert "日志落盘" in content
+            assert "启动失败" in content
+            assert any(
+                isinstance(h, RotatingFileHandler) for h in root.handlers if h not in before
+            )
+        finally:
+            root.setLevel(old_level)
+            for h in list(root.handlers):
+                if h not in before:
+                    root.removeHandler(h)
+                    h.close()
+
+
+class _FakeLinkXtdata:
+    """盘中联调用 xtdata 桩：探活通过/板块列表/批量订阅捕获回调/日历含当日。"""
+
+    def __init__(self, symbols):
+        self._symbols = symbols
+        self.callback = None
+        self.subscribe_calls = 0
+        self.unsub_calls = 0
+
+    def get_stock_list_in_sector(self, sector):
+        return list(self._symbols) if sector == "沪深A股" else []
+
+    def get_market_data_ex(self, fields, codes, period="1m", count=1):
+        return {c: [1] for c in codes}
+
+    def subscribe_whole_quote(self, codes, callback=None):
+        self.subscribe_calls += 1
+        self.callback = callback
+        return list(codes)
+
+    def unsubscribe_whole_quote(self, codes):
+        self.unsub_calls += 1
+        return 1
+
+    def get_trading_dates(self, market):
+        day0 = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        return [int(day0.timestamp() * 1000)]
+
+    def get_data_dir(self):
+        return r"D:\模拟QMT\userdata_mini\datadir"
+
+
+def _feed_ticks(fake_xt, n=5, interval=0.1):
+    """后台喂 tick：等订阅回调就位后按 QMT 快照格式推送。"""
+    deadline = time.time() + 10
+    while fake_xt.callback is None and time.time() < deadline:
+        time.sleep(0.02)
+    for i in range(n):
+        if fake_xt.callback is None:
+            return
+        fake_xt.callback({"000001.SZ": {
+            "time": int(time.time() * 1000),
+            "lastPrice": 10.5 + i * 0.01,
+            "volume": 100,
+            "amount": 1050.0,
+            "bidPrice": [10.49],
+            "askPrice": [10.51],
+            "bidVol": [10],
+            "askVol": [10],
+        }})
+        time.sleep(interval)
+
+
+class TestIntradayLinkIntegration:
+    """联调实证（模拟盘中订阅链路）：start→订阅→tick 流入→WAL 落行→心跳业务字段增长→stop。
+    全程 fake xtdata/WalWriter，不触真 QMT/CH，不污染主仓 tmp。"""
+
+    def test_intraday_subscription_link(self, tmp_path, monkeypatch):
+        hb = tmp_path / "tick_subscriber_biz.heartbeat"
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", hb)
+        monkeypatch.setattr(ts_module, "_BIZ_WATCHDOG_LOOP_S", 0.05)
+        monkeypatch.setattr(ts_module, "start_metrics_server", lambda *a, **kw: None)
+        fake_xt = _FakeLinkXtdata(["000001.SZ"])
+        monkeypatch.setitem(sys.modules, "xtquant", SimpleNamespace(xtdata=fake_xt))
+        fake_writer = MagicMock()
+        fake_writer.add.return_value = True
+        monkeypatch.setitem(
+            sys.modules, "zephyr.data.wal_writer",
+            SimpleNamespace(WalWriter=lambda *a, **kw: fake_writer),
+        )
+
+        sub = ts_module.TickSubscriber()
+        feeder = threading.Thread(target=_feed_ticks, args=(fake_xt,), daemon=True)
+        feeder.start()
+        try:
+            assert sub.start() is True
+            assert fake_xt.subscribe_calls >= 1
+
+            # 轮询心跳：last_tick_ts 出现 且 today_rows 增长（WAL add 成功）
+            payload = None
+            deadline = time.time() + 10
+            while time.time() < deadline:
+                if hb.exists():
+                    payload = json.loads(hb.read_text(encoding="utf-8"))
+                    if payload.get("last_tick_ts") and payload.get("today_rows", 0) >= 1:
+                        break
+                time.sleep(0.05)
+
+            assert payload is not None, "业务心跳未写出"
+            assert set(payload) == _BIZ_HB_CONTRACT_KEYS
+            assert payload["last_tick_ts"] is not None
+            assert payload["today_rows"] >= 1
+            assert payload["received"] >= 1
+            assert payload["written"] >= 1
+            assert payload["subscribed"] == 1
+            assert payload["is_trading_day"] is True
+            assert payload["pid"] == os.getpid()
+        finally:
+            sub.stop()
+        assert fake_xt.unsub_calls >= 1
