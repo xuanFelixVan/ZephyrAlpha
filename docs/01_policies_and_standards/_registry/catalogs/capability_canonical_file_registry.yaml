@@ -8991,6 +8991,33 @@ creation_tokens:
     capability: "firm_risk_aggregator"
     note: "tests/ 豁免规则下自愿补登（60号 §7⑦ 缺口实证已闭合，60 用例）"
 
+  # --- 工作区写层完整性治理（2026-08-15，#ARCH-WORKTREE-WRITE-INTEGRITY-001，AI-WDOG-001）---
+  - file: "src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py"
+    token: "auto-worktree-drift-watchdog-20260815"
+    created_by: "AI-WDOG-001"
+    capability: "worktree_drift_watchdog"
+    note: "P0-1/P0-2 工作区 tracked 漂移看门狗：常驻监视+快照存证+告警自愈+直写归因审计；post-commit reconciler 事件轨 ensure-spawn"
+  - file: "src/zephyr/shared/io/safe_write.py"
+    token: "auto-safe-write-20260815"
+    created_by: "AI-WDOG-001"
+    capability: "safe_write_cas"
+    note: "P2 热文件 CAS 写入工具——CREATE-GUARD 裁定不新建文件，能力并入 atomic_write_protocol canonical（src/zephyr/shared/io/file_utils.py safe_write_text，2026-08-15）；本 token 留档防再次新建同名 sibling"
+  - file: "tests/governance/rule_bridge/test_worktree_drift_watchdog.py"
+    token: "auto-drift-watchdog-test-20260815"
+    created_by: "AI-WDOG-001"
+    capability: "worktree_drift_watchdog"
+    note: "看门狗 7 用例（告警/快照/归因/dedup/自愈/claimed 豁免/grace 宽限/幻影免疫）"
+  - file: "tests/shared/test_safe_write.py"
+    token: "auto-safe-write-test-20260815"
+    created_by: "AI-WDOG-001"
+    capability: "safe_write_cas"
+    note: "safe_write 6 用例（热文件无 base 拒写/陈旧 base 拒写/正确 base 放行/回读校验/审计）"
+  - file: "tests/skill/test_skill_factory_trigger_cas.py"
+    token: "auto-skill-factory-cas-test-20260815"
+    created_by: "AI-WDOG-001"
+    capability: "skill_factory_cas_guard"
+    note: "#71 场景复现 3 用例（并发修改 CAS 放弃+审计/正常插入/幂等）"
+
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
 # ============================================================================

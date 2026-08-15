@@ -16842,3 +16842,34 @@ entries:
   related_rules: '#ARCH-BREG-001（18 业务注册表母议题）; #ARCH-70（worktree merge 通道）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-WORKTREE-WRITE-INTEGRITY-001'
+  title: 工作区写层完整性治理——tracked 漂移看门狗+直写归因审计+CAS 防吞写+merge 默认分支修正（#68/#71/#75 陈旧覆写族治本）
+  severity: P1
+  category: governance
+  adjudication: |-
+    2026-08-15 用户裁定（AI-XCUT-001 取证分析→用户批准方案→AI-WDOG-001 施工）。
+    事件：capability_canonical_file_registry.yaml 工作区文件被回退到 merge 前旧版
+    （blob 917889fc56 精确等于"移除冲突标记行后"中间态），17 行 MOD-POS-021 登记块
+    被抹——四路审计（wrapper/git_guard/ops_guard/T4-2）零记录，实证为未审计直写
+    造成的陈旧缓冲区覆写（#75 族）。
+    第一性原理根因：commit 层有网关+串行锁+审计，工作区写层是三不管地带——
+    写无版本前置条件、写无审计无归属、检测靠运气；100% AI 开发下（无人盯屏/
+    会话零记忆/N 路并发）单点事件必复发。
+    裁定四层治本：P0-1 tracked 漂移看门狗（常驻监视+快照存证+告警自愈）；
+    P0-2 直写归因审计（前后 hash+活跃会话+claim 归属）；P1-1 read-modify-write
+    反模式清除（skill_factory._update_trigger_table CAS 化）；P1-2② merge --to
+    默认值 main→dev；P2 safe_write 热文件 CAS 写入工具。
+  impact:
+  - 'src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py（新建，MOD-GOV_DRIFT_WATCHDOG，node_id=9664211）'
+  - 'src/zephyr/shared/io/file_utils.py（扩展 safe_write_text CAS 层——CREATE-GUARD 裁定并入 atomic_write_protocol canonical，不新建文件；原 planned 节点 9664212 已随证据软删除）'
+  - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（注册 drift watchdog reconciler，priority=845）'
+  - 'src/zephyr/autonomy_core/skills/skill_factory.py（_update_trigger_table CAS 化）'
+  - 'src/zephyr/shared/session/session_audit.py（模块 docstring r""" 顺修——存量非法转义 \ 在 pycache 空白下文必炸 SyntaxError）'
+  - 'scripts/session_worktree.py（merge --to 默认 main→dev）'
+  - 'tests/governance/rule_bridge/test_worktree_drift_watchdog.py + tests/shared/test_safe_write.py + tests/skill/test_skill_factory_trigger_cas.py（新建 16 测试）'
+  fix_phase: '已施工（2026-08-15 AI-WDOG-001）：四层全落地，16 新测试两轮全绿；看门狗经 post-commit reconciler 事件轨 ensure-spawn（禁 cron 合规：daemon 生命周期豁免同 heartbeat_daemon）'
+  status: implemented
+  confirmed_by_user: '2026-08-15 用户批准四层治本方案并指令按序施工'
+  related_rules: '#68（IDE 脏缓冲区）; #71（AGENTS.md 吞节，skill_factory 实证）; #75（mtime 回拨+pycache 欺骗）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 门禁窗口监视——本议题扩展为常驻）; #ARCH-WORKTREE-DB-SPLIT-001（仓级状态同族）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

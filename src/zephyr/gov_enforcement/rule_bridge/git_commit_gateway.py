@@ -831,6 +831,10 @@ class GitCommitGateway:
         self._reconciliation_registry.register(make_translation_coverage_reconciler(self))  # TRANSLATION-COVERAGE Layer 4——翻译覆盖率存量对账（priority=951，post-commit warn-only，全扫 depgraph vs 翻译真源，落盘 drift_report.json）
         self._reconciliation_registry.register(make_cross_layer_contract_signature_reconciler(self))  # 12维度审计自动化 P1-b——跨层契约签名漂移检测（priority=215，post-commit 事件触发，对比 [C_contract] 签名 git show HEAD~1 vs HEAD）
         self._reconciliation_registry.register(make_blueprint_status_transition_reconciler(self))  # 12维度审计自动化 P1-d——BLUEPRINT 状态转跃检测（priority=825，post-commit 事件触发，STABILITY/MATURITY 逆向转跃 hard-fail）
+        from zephyr.gov_enforcement.rule_bridge.worktree_drift_watchdog import (  # noqa: PLC0415
+            make_worktree_drift_watchdog_reconciler,
+        )
+        self._reconciliation_registry.register(make_worktree_drift_watchdog_reconciler(self))  # #ARCH-WORKTREE-WRITE-INTEGRITY-001 P0-1/P0-2 工作区 tracked 漂移看门狗（priority=845，ensure-daemon+即时一扫，陈旧覆写发现靠机制）
         # 注册备份reconciler（MOD-INF-027，post-commit事件触发，8h间隔保护）
         try:
             import sys as _sys

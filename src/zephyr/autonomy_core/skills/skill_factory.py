@@ -144,15 +144,50 @@ class SkillFactory:
         self._save_registry(registry)
 
     def _update_trigger_table(self, module_name: str):
-        content = _AGENTS_MD_PATH.read_text(encoding="utf-8") if _AGENTS_MD_PATH.exists() else ""
+        """触发表追加（CAS 防吞写，#ARCH-WORKTREE-WRITE-INTEGRITY-001 P1-1）。
+
+        旧实现是 read-modify-write 整文件覆写——读写窗口内其他会话/reconciler
+        对文件的修改被静默吞掉（#71 AGENTS.md 吞节事故族反模式）。治本：
+        写入前重读比对（compare-and-swap 语义），内容已变则放弃写入+落审计，
+        绝不整文件回写陈旧内容。
+        """
+        if not _AGENTS_MD_PATH.exists():
+            return
+        content = _AGENTS_MD_PATH.read_text(encoding="utf-8")
         keyword = module_name.lower().replace("-", "|")
         new_entry = f"| {module_name} | {module_name} | implementer |\n"
-        if new_entry.strip() not in content:
-            insert_pos = content.rfind("|")
-            if insert_pos > 0:
-                line_end = content.find("\n", insert_pos)
-                content = content[: line_end + 1] + new_entry + content[line_end + 1 :]
-                _AGENTS_MD_PATH.write_text(content, encoding="utf-8")
+        if new_entry.strip() in content:
+            return
+        insert_pos = content.rfind("|")
+        if insert_pos <= 0:
+            return
+        line_end = content.find("\n", insert_pos)
+        new_content = content[: line_end + 1] + new_entry + content[line_end + 1 :]
+        # CAS：写入前重读——内容已变说明有并发写入方，放弃本次写入而非吞掉对方改动
+        try:
+            current = _AGENTS_MD_PATH.read_text(encoding="utf-8")
+        except OSError:
+            return
+        if current != content:
+            try:
+                import json as _json
+                from datetime import datetime as _dt, timezone as _tz
+                # 触发表目标是 skills 包内 AGENTS.md，审计锚仓根 .runtime/audit/
+                from zephyr.shared.io.paths import REPO_ROOT
+                audit_dir = REPO_ROOT / ".runtime" / "audit"
+                audit_dir.mkdir(parents=True, exist_ok=True)
+                with open(audit_dir / "skill_factory_cas.jsonl", "a", encoding="utf-8") as fh:
+                    fh.write(_json.dumps({
+                        "ts": _dt.now(_tz.utc).isoformat(),
+                        "file": str(_AGENTS_MD_PATH),
+                        "event": "cas_abort",
+                        "detail": "read-modify-write 窗口内文件被并发修改，放弃写入防吞写",
+                        "module_name": module_name,
+                    }, ensure_ascii=False) + "\n")
+            except OSError:
+                pass
+            return
+        _AGENTS_MD_PATH.write_text(new_content, encoding="utf-8")
 
     # ── Stage 4 公共化：向后兼容 thin wrappers ──
 
