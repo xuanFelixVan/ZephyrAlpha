@@ -2,8 +2,8 @@
 module_id: GOV-036
 doc_type: index
 status: Active
-version: 3.0.0
-generated: '2026-06-30'
+version: 3.1.0
+generated: '2026-08-16'
 depends_on:
 - target: DOCS-INDEX
   at: §子目录
@@ -42,9 +42,20 @@ ttl: permanent
 
 ## 子目录一览
 
-| 子目录 | 说明 | 入口 | 轨道 |
-|--------|------|------|:---:|
-| `08_algorithm_overview/` | 算法全景图（按作战环节拆分·三档 code>blueprint>empty·零漂移·离库派生） | [`08_algorithm_overview/README.md`](08_algorithm_overview/README.md) | 人类视图 |
+| 子目录 | 说明 | 入口 | 轨道 | 来源 |
+|--------|------|------|:---:|------|
+| `00_overview_entry/` | 总览入口（导航索引+全景注册表） | [navigation_index.md](00_overview_entry/navigation_index.md) | 人类视图 | 派生·不入git |
+| `01_global_architecture_diagram/` | 全局架构图（项目树/资产目录/契约目录/集成拓扑/能力热力图） | [full_project_tree_zh.md](01_global_architecture_diagram/full_project_tree_zh.md) | 人类视图 | 派生·不入git |
+| `02_domain_architecture_docs/` | 域架构文档（73 域按 D_* 拆分） | [domain_index.md](02_domain_architecture_docs/domain_index.md) | 人类视图 | 派生·不入git（README/domain_index 手写） |
+| `03_governance_reports/` | 治理报告（容量/约束违例/设计vs生产/候选模块清单） | [design_vs_production.md](03_governance_reports/design_vs_production.md) | 人类视图 | 派生·不入git |
+| `04_architecture_principles_decisions/` | 架构原则与决策（system_charter/全景定位/项目手册/治理复盘） | [index.md](04_architecture_principles_decisions/index.md) | 人类视图 | 手写·入git |
+| `05_dataflow_architecture/` | 数据流架构（数据清单/采集流/域数据流） | [index.md](05_dataflow_architecture/index.md) | 人类视图 | 混合：index/yaml 手写，d_*.md 派生 |
+| `06_decision_architecture/` | 决策架构（决策轨/L2A/L3 分层） | [index.md](06_decision_architecture/index.md) | 人类视图 | 混合：index 手写，编号 md 派生 |
+| `07_trading_decision_architecture/` | 交易决策架构（design_memos + battle_map 作战地图） | [00_index_trading_decision.md](07_trading_decision_architecture/design_memos/00_index_trading_decision.md) | 人类视图 | 混合：memos 手写·入git，battle_map 派生·不入git |
+| `08_algorithm_overview/` | 算法全景图（按作战环节拆分·三档 code>blueprint>empty·零漂移·离库派生） | [README.md](08_algorithm_overview/README.md) | 人类视图 | 派生·不入git（整目录） |
+| `target_architecture/` | 目标架构视图（应用流/治理视图） | [application_flows.md](target_architecture/application_flows.md) | 人类视图 | 手写·入git |
+
+> **派生目录不入 git**：标注"派生"的 .md 均由生成器从 depgraph/YAML 真源重建（生成器见 `scripts/governance/d5_architecture/generators/`），按派生禁入 git 裁定经 .gitignore 排除（移除批 commit `326952a276`）。查看 = 主仓跑生成器本地重建；worktree 上下文禁写权威，生成器会 REFUSED。worktree 中看不到这些目录 = 正常。
 
 > `archive/` 目录已于 2026-06-23 物理删除（DM-200908）。历史文档价值已提取至 `project_memory.md` Lessons Learned。
 
@@ -57,11 +68,11 @@ ttl: permanent
 | 文件 | 说明 | 轨道 |
 |------|------|:---:|
 | [→ rules/trae_081_audit_dimensions_framework.yaml](../01_policies_and_standards/rules/trae_081_audit_dimensions_framework.yaml) | 审计审查维度框架（54 维度基座，维度号+名+核心问题） | 规则 |
-| _archive/architecture_debt_registry_v2.md | 已归档：架构债务注册表 v2.0.0（2026-07-24 归档，裁定#221/#222，活跃治理改由三件套承接） | 人类视图 |
-| 04_architecture_principles_decisions/dependency_path_panorama.md | 依赖与路径全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
-| _archive/architecture_decisions_pending.md | 已归档：决策清单（T6/T7/T17已裁定,T18暂缓） | 人类视图 |
-| _archive/ssot_authority_map.md | 已归档：SSoT权威映射（权威角色已被专门YAML取代，validate_ssot.py不消费） | 人类视图 |
-| _archive/t18_implementation_plan.md | 已归档：T18实施计划（暂缓，重启条件未满足） | 人类视图 |
+| ../_archive/architecture_debt_registry_v2.md | 已归档：架构债务注册表 v2.0.0（2026-07-24 归档，裁定#221/#222，活跃治理改由三件套承接） | 人类视图 |
+| 04_architecture_principles_decisions/panorama/dependency_path_panorama.md | 依赖与路径全景图能力定位书（双态模型+SSoT分层+生命周期+生成器覆盖矩阵） | 人类视图 |
+| ../_archive/architecture_decisions_pending.md | 已归档：决策清单（T6/T7/T17已裁定,T18暂缓） | 人类视图 |
+| ../_archive/ssot_authority_map.md | 已归档：SSoT权威映射（权威角色已被专门YAML取代，validate_ssot.py不消费） | 人类视图 |
+| ../_archive/t18_implementation_plan.md | 已归档：T18实施计划（暂缓，重启条件未满足） | 人类视图 |
 
 ## 排除规则（严禁放入本目录的内容）
 
