@@ -29,7 +29,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.2
+version: 1.2.0
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -492,6 +492,41 @@ cycles:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+
+  - cycle_id: "CYC-STAT-013"
+    name: "A 股年度 15 节点季节择时日历"
+    name_zh: "A 股年度 15 节点季节择时日历"
+    aliases: ["月末最后两个交易日", "7月A股十年最大跌幅月", "交割日量能组合择时"]
+    cycle_type: "statistical"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "季节日历法"
+    params: {nodes: 15}
+    inputs: ["date_series"]
+    outputs: {window_dates: []}
+    subjectivity: "medium"
+    timeframe: "yearly"
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §F6.37（吸收 F6.11/F6.18/F6.51）"
+    code_path: ""
+    used_by_factors: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: ["stock", "index"]
+    tags: ["事件", "资金"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
 
 # ============================================================
 # 与相关注册表的边界（2026-08-14 澄清）

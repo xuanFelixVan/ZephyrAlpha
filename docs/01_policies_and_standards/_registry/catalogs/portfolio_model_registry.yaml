@@ -30,7 +30,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.2
+version: 1.2.0
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -366,6 +366,112 @@ portfolio_models:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+
+  - model_id: "PFM-HEUR-009"
+    name: "核心-卫星仓位模型"
+    name_zh: "核心-卫星仓位模型"
+    aliases: []
+    model_class: "heuristic"
+    objective: "核心-卫星（core-satellite）=机构组合结构标准模型，参数已量化。"
+    assumptions: ""
+    inputs: []
+    params: {}
+    output: "target_weight vector"
+    strengths: ""
+    weaknesses: ""
+    applicable_scenario: "卫星仓位≤总仓位 30%；核心止损 k=3-4×ATR、卫星 k=1.5-2×ATR；RS 排名变化触发卫星换仓；卫星做 T 见 S13.6。"
+    est_error_mitigation: ""
+    code_path: ""
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §S14.27"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "止损", "组合"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - model_id: "PFM-RB-009"
+    name: "Kelly 仓位与组合风控硬限制"
+    name_zh: "Kelly 仓位与组合风控硬限制"
+    aliases: []
+    model_class: "risk_based"
+    objective: "连续型凯利（f*=μ/σ²）+半凯利执行+VaR/MaxDD 硬限制=机构组合风控参数族，已是专业形态。"
+    assumptions: ""
+    inputs: []
+    params: {}
+    output: "target_weight vector"
+    strengths: ""
+    weaknesses: ""
+    applicable_scenario: "f*=μ/σ²、半 Kelly；单标的≤min（5%, f*/2）；组合 VaR_95%≤净值 2%；MaxDD≤15% 触发全线减仓 50%。为 S14.17 的参数版。"
+    est_error_mitigation: ""
+    code_path: ""
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §S14.28"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "形态", "执行", "组合", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - model_id: "PFM-MV-009"
+    name: "组合优化三方法"
+    name_zh: "组合优化三方法"
+    aliases: []
+    model_class: "mean_variance"
+    objective: "组合优化三方法=机构组合构建标准方法族（Markowitz/风险平价/最大夏普）。"
+    assumptions: ""
+    inputs: []
+    params: {}
+    output: "target_weight vector"
+    strengths: ""
+    weaknesses: ""
+    applicable_scenario: "均值方差优化（Markowitz）/风险平价（Risk Parity）/最大夏普比率。与 S14.27（核心-卫星）、S14.28（Kelly）为组合层方法族并列。"
+    est_error_mitigation: ""
+    code_path: ""
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §S14.37"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["组合"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
 
 # ============================================================
 # 治理规则

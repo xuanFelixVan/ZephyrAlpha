@@ -170,13 +170,13 @@ algorithm_variant_sota_ladder:
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 2.14.2
+version: 2.15.0
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - pattern_id
-entry_count: 254
+entry_count: 256
 
 entry_schema:
   pattern_id: str                # PAT-{CLASS}-{NNN}，如 PAT-CANDLE-001
@@ -244,14 +244,14 @@ chart_patterns:
     subjectivity: "low"
     timeframe: "daily"
     module_id: "MOD-L02-020"
-    doc_ref: "16_technical_indicator_catalog.md §6.5"
+    doc_ref: "16_technical_indicator_catalog.md §6.5；29_factor_strategy_extraction.md §F2.20（回踩加分项口径）"
     code_path: "src/zephyr/factor/technical_indicators/reversal.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -764,7 +764,7 @@ chart_patterns:
   - pattern_id: "PAT-CANDLE-014"
     name: "Marubozu"
     name_zh: "光头光脚大实体线"
-    aliases: ["marubozu", "马里博祖"]
+    aliases: ["marubozu", "马里博祖", "光头阴线", "光脚阴线"]
     pattern_class: "candlestick_pattern"
     pattern_subtype: "单根持续"
     recognition_algorithm: "rule_based"
@@ -777,14 +777,14 @@ chart_patterns:
     subjectivity: "low"
     timeframe: "daily"
     module_id: "MOD-L02-020"
-    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）；29_factor_strategy_extraction.md §F2.7/§F2.32"
     code_path: ""
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1174,7 +1174,7 @@ chart_patterns:
   - pattern_id: "PAT-CANDLE-024"
     name: "Doji Star"
     name_zh: "十字星组合"
-    aliases: ["doji_star"]
+    aliases: ["doji_star", "连续十字星", "多日小阴小阳磨底"]
     pattern_class: "candlestick_pattern"
     pattern_subtype: "两根反转"
     recognition_algorithm: "rule_based"
@@ -1187,14 +1187,14 @@ chart_patterns:
     subjectivity: "low"
     timeframe: "daily"
     module_id: "MOD-L02-020"
-    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）；29_factor_strategy_extraction.md §F2.13"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-CANDLE-006"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -1256,7 +1256,7 @@ chart_patterns:
   - pattern_id: "PAT-CANDLE-026"
     name: "Dark Cloud Cover"
     name_zh: "乌云盖顶"
-    aliases: ["dark_cloud_cover"]
+    aliases: ["dark_cloud_cover", "高位放量下跌", "板块见顶信号"]
     pattern_class: "candlestick_pattern"
     pattern_subtype: "两根反转"
     recognition_algorithm: "rule_based"
@@ -1269,14 +1269,14 @@ chart_patterns:
     subjectivity: "low"
     timeframe: "daily"
     module_id: "MOD-L02-020"
-    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）"
+    doc_ref: "TA-Lib CDL 函数族 61 全集对齐（2026-08-14 补登）；29_factor_strategy_extraction.md §F4.11（吸收F5.32/F5.33）"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-CANDLE-025"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3399,7 +3399,7 @@ chart_patterns:
   - pattern_id: "PAT-CHART-001"
     name: "Double Top"
     name_zh: "双头"
-    aliases: ["double_top", "M头"]
+    aliases: ["double_top", "M头", "三次不过双头"]
     pattern_class: "chart_pattern"
     pattern_subtype: "反转"
     recognition_algorithm: "rule_based"
@@ -3412,14 +3412,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "sell_signal_collector.py 8类卖出信号第②类"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第②类；29_factor_strategy_extraction.md §F4.12"
     code_path: "src/zephyr/sell_decision/core/sell_signal_collector.py"
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -3535,14 +3535,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "62_business_registry_construction.md §6.2.4 Edwards&Magee"
+    doc_ref: "62_business_registry_construction.md §6.2.4 Edwards&Magee；29_factor_strategy_extraction.md §F2.17"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-CHART-001"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -4347,7 +4347,7 @@ chart_patterns:
   - pattern_id: "PAT-CHART-024"
     name: "V-Bottom"
     name_zh: "V形底"
-    aliases: ["v_bottom"]
+    aliases: ["v_bottom", "V型反转底部形态"]
     pattern_class: "chart_pattern"
     pattern_subtype: "反转"
     recognition_algorithm: "rule_based"
@@ -4360,14 +4360,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）；29_factor_strategy_extraction.md §F4.21"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-CHART-023"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -4388,7 +4388,7 @@ chart_patterns:
   - pattern_id: "PAT-CHART-025"
     name: "Island Reversal"
     name_zh: "岛形反转"
-    aliases: ["island_reversal", "孤岛反转"]
+    aliases: ["island_reversal", "孤岛反转", "岛型反转"]
     pattern_class: "chart_pattern"
     pattern_subtype: "反转"
     recognition_algorithm: "rule_based"
@@ -4401,14 +4401,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）"
+    doc_ref: "Edwards&Magee 经典全集（2026-08-14 补登）；29_factor_strategy_extraction.md §F2.18"
     code_path: ""
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -4489,14 +4489,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SIG-024"
-    doc_ref: "涨停板 21 型第 9 类+反包战法（淘股吧 2026-03 检索证据）（2026-08-14 二轮补登）"
+    doc_ref: "涨停板 21 型第 9 类+反包战法（淘股吧 2026-03 检索证据）（2026-08-14 二轮补登）；29_factor_strategy_extraction.md §F7.34（反包质量判定口径）"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-CANDLE-002"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -4571,14 +4571,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SIG-024"
-    doc_ref: "涨停板 21 型第 12 类（2026-08-14 二轮补登）"
+    doc_ref: "涨停板 21 型第 12 类（2026-08-14 二轮补登）；29_factor_strategy_extraction.md §F4.23"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-STRUCT-001"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -5712,7 +5712,7 @@ chart_patterns:
   - pattern_id: "PAT-CHART-057"
     name: "Big W"
     name_zh: "大W底"
-    aliases: ["big_w", "双底变体高翼"]
+    aliases: ["big_w", "双底变体高翼", "大双底"]
     pattern_class: "chart_pattern"
     pattern_subtype: "反转（高翼双底）"
     recognition_algorithm: "fractal"
@@ -5725,14 +5725,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "weekly"
     module_id: "MOD-SIG-001"
-    doc_ref: "Bulkowski Big W（2026-08-14 十轮补登）"
+    doc_ref: "Bulkowski Big W（2026-08-14 十轮补登）；29_factor_strategy_extraction.md §F2.17"
     code_path: ""
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -6021,14 +6021,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "经典趋势线体系（2026-08-14 补登）"
+    doc_ref: "经典趋势线体系（2026-08-14 补登）；29_factor_strategy_extraction.md §F4.18"
     code_path: ""
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -6103,14 +6103,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "经典通道体系（2026-08-14 补登）"
+    doc_ref: "经典通道体系（2026-08-14 补登）；29_factor_strategy_extraction.md §F4.19"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-TREND-002"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -6131,7 +6131,7 @@ chart_patterns:
   - pattern_id: "PAT-TREND-005"
     name: "Descending Channel"
     name_zh: "下降通道"
-    aliases: ["descending_channel"]
+    aliases: ["descending_channel", "周线通道转折", "下降通道转震荡"]
     pattern_class: "trendline_channel"
     pattern_subtype: "趋势通道"
     recognition_algorithm: "regression"
@@ -6144,14 +6144,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SELL-001"
-    doc_ref: "经典通道体系（2026-08-14 补登）"
+    doc_ref: "经典通道体系（2026-08-14 补登）；29_factor_strategy_extraction.md §F2.16（吸收F4.13）"
     code_path: ""
     used_by_factors: []
     variant_of: "PAT-TREND-004"
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -6461,6 +6461,47 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
 
+  - pattern_id: "PAT-TREND-013"
+    name: "MA Alignment State Classification"
+    name_zh: "均线排列状态分类"
+    aliases: ["ma_alignment", "均线多头排列", "均线空头排列", "均线缠绕", "均线排列状态全分类"]
+    pattern_class: "trendline_channel"
+    pattern_subtype: "状态分类"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(MA5/10/20顺序与发散度判定)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {ma_periods: [5, 10, 20], entangle_threshold: 0.01}
+    inputs: ["OHLCV"]
+    outputs: {state: "bull_align|bear_align|entangled"}
+    subjectivity: "low"
+    timeframe: "daily"
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §F2.21"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily", "weekly"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "neutral"
+    entry_role: "state"
+    applies_to: ["stock", "index"]
+    tags: ["趋势", "均线", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
   # ============================================================
   # SUPPORT_RESISTANCE（支撑阻力类）— 3条
   # 代码已施工：breakout_failure_detector + intraday_buy_sell_point_analyzer + stop_loss_engine
@@ -6469,7 +6510,7 @@ chart_patterns:
   - pattern_id: "PAT-SR-001"
     name: "Breakout Failure Detection"
     name_zh: "压力位突破失败检测"
-    aliases: ["breakout_failure", "压力位挑战失败", "turtle_soup", "海龟汤"]
+    aliases: ["breakout_failure", "压力位挑战失败", "turtle_soup", "海龟汤", "二次拉升不过前高", "压力位三次不过"]
     pattern_class: "support_resistance"
     pattern_subtype: "阻力位"
     recognition_algorithm: "rule_based"
@@ -6482,14 +6523,14 @@ chart_patterns:
     subjectivity: "low"
     timeframe: "intraday"
     module_id: "MOD-SELL-003"
-    doc_ref: "sell_signal_collector.py 8类卖出信号第⑧类"
+    doc_ref: "sell_signal_collector.py 8类卖出信号第⑧类；29_factor_strategy_extraction.md §F1.9/§F4.12（吸收S11.8）"
     code_path: "src/zephyr/sell_decision/core/breakout_failure_detector.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -6839,6 +6880,47 @@ chart_patterns:
     code_symbol: null
     code_fingerprint: null
 
+  - pattern_id: "PAT-SR-010"
+    name: "Support Resistance Polarity Shift"
+    name_zh: "支撑压力互换"
+    aliases: ["polarity_shift", "顶变支撑", "底变压力", "突破回抽确认", "15分钟箱体突破回抽"]
+    pattern_class: "support_resistance"
+    pattern_subtype: "极性转换"
+    recognition_algorithm: "rule_based"
+    algorithm_variant: "规则法(前压力突破后回抽不破确认)"
+    dl_model_ref: null
+    dl_training_dataset: null
+    params: {retest_tolerance: 0.01, confirm_bars: 3}
+    inputs: ["OHLCV"]
+    outputs: {present: bool, retest_pos: int}
+    subjectivity: "medium"
+    timeframe: "intraday"
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §F4.1"
+    code_path: ""
+    used_by_factors: []
+    variant_of: null
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    hit_rate: null
+    false_positive_rate: null
+    last_evaluated_at: null
+    primary_timeframe: "15min"
+    applicable_timeframes: ["15min", "30min", "60min", "daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["支撑", "压力", "突破", "形态"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
   # ============================================================
   # FIBONACCI（斐波那契工具类）— 6条（2026-08-14 新建）
   # 算法：规则法(极值点锁定+比例位计算)
@@ -6860,14 +6942,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-SIG-024"
-    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）"
+    doc_ref: "Fibonacci 工具全集（2026-08-14 新建）；29_factor_strategy_extraction.md §F2.26/§F2.40"
     code_path: ""
     used_by_factors: []
     variant_of: null
     status: "candidate"
     version: "1.0.0"
     created_at: "2026-08-14"
-    updated_at: "2026-08-14"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null
@@ -7556,7 +7638,7 @@ chart_patterns:
   - pattern_id: "PAT-STRUCT-001"
     name: "Wyckoff Spring"
     name_zh: "威科夫弹簧"
-    aliases: ["spring", "震仓", "假跌破诱空"]
+    aliases: ["spring", "震仓", "假跌破诱空", "破底翻", "假破箱体收回"]
     pattern_class: "structure"
     pattern_subtype: "底部结构"
     recognition_algorithm: "rule_based"
@@ -7569,14 +7651,14 @@ chart_patterns:
     subjectivity: "medium"
     timeframe: "daily"
     module_id: "MOD-REGIME-002"
-    doc_ref: "overlay_features.py s2_spring_flag"
+    doc_ref: "overlay_features.py s2_spring_flag；29_factor_strategy_extraction.md §F4.20"
     code_path: "src/zephyr/regime/features/overlay_features.py"
     used_by_factors: []
     variant_of: null
     status: "active"
     version: "1.0.0"
     created_at: "2026-08-13"
-    updated_at: "2026-08-13"
+    updated_at: "2026-08-15"
     owner: "MOD-GOVERNANCE"
     hit_rate: null
     false_positive_rate: null

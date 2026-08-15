@@ -30,7 +30,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.1
+version: 1.2.0
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -415,6 +415,63 @@ event_types:
     tags: ["波动", "事件"]
     algorithm_status: "not_applicable"
     evidence: ""
+
+  - event_type_id: "EVT-EARN-004"
+    name: "关键催化剂日历"
+    name_zh: "关键催化剂日历"
+    aliases: ["变盘窗事件条件识别"]
+    event_class: "earnings"
+    subtype: "财报日历"
+    pit_rule: "announce_time 可用，effective_date 不可提前使用"
+    advance_notice_days: "财报披露计划提前约 10 交易日"
+    typical_impact: "双向高波动"
+    typical_holding_window: "公告后 1-5 日"
+    data_dataset_ref: ""
+    data_source: ""
+    update_frequency: "event"
+    used_by_strategies: []
+    reliability_note: "建立催化剂日历跟踪——07-27 Kimi K3 开源权重发布（本周内确定性催化）+证监会机构座谈会后续政策（前两场后均出实招）+美伊局势/油价+07-27 前算力利好兑现节奏。日历驱动=提前布局。（源：29_factor_strategy_extraction.md §F6.23，吸收 F6.28）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["事件"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+
+  - event_type_id: "EVT-EARN-005"
+    name: "业绩预告强制披露规则+财报静默期"
+    name_zh: "业绩预告强制披露规则+财报静默期"
+    aliases: ["融资融券交割日", "交割日类型簇"]
+    event_class: "earnings"
+    subtype: "财报日历"
+    pit_rule: "announce_time 可用，effective_date 不可提前使用"
+    advance_notice_days: "财报披露计划提前约 10 交易日"
+    typical_impact: "双向高波动"
+    typical_holding_window: "公告后 1-5 日"
+    data_dataset_ref: ""
+    data_source: ""
+    update_frequency: "event"
+    used_by_strategies: []
+    reliability_note: "年度——净利润为负/扭亏为盈/变动超 50% 者须次年 1 月 31 日前披露；半年度——同条件 7 月 15 日前披露；财报窗口期=定期报告披露前 5 日内董监高及内幕知情人禁止买卖本公司股票。为 F6.23 日历的制度性规则补充。（源：29_factor_strategy_extraction.md §F6.36，吸收 F6.44/F6.53）"
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "trigger"
+    applies_to: ["stock"]
+    tags: ["事件", "规则", "财报"]
+    algorithm_status: "pending_backtest"
+    evidence: "（源：29_factor_strategy_extraction.md §F6.36，吸收 F6.44/F6.53）"
+
 
 # ============================================================
 # 治理规则

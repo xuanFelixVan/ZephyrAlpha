@@ -33,7 +33,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.2
+version: 1.2.0
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -392,3 +392,38 @@ execution_algos:
     evidence: ""
     code_symbol: null
     code_fingerprint: null
+
+  - execution_algo_id: "EXA-TWAP-002"
+    name: "智能执行算法参数"
+    name_zh: "智能执行算法参数"
+    aliases: []
+    algo_class: "twap"
+    formula: "TWAP/VWAP/冰山订单拆分（volume_share=0.02, visible_ratio=0.1）"
+    params: {volume_share: 0.02, visible_ratio: 0.1}
+    applicable_scenario: "大单拆分/流动性中性"
+    warmup_participation_rate: null
+    cooling_period: null
+    anti_gaming: {timing_randomization: "none", size_jitter: 0}
+    tca_metrics: ["vwap_slippage", "implementation_shortfall"]
+    market_impact_model: ""
+    impact_model_type: "square_root"
+    cost_model_ref: ""
+    rl_policy_ref: null
+    module_id: "MOD-GOVERNANCE"
+    doc_ref: "29_factor_strategy_extraction.md §S15.62"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    max_orders_per_sec: 14
+    max_daily_orders: 19000
+    cancel_rate_limit: 0.15
+    min_order_interval_us: 50
+    is_hft: false
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["执行", "订单", "量价"]
+    algorithm_status: "quantized"
+    evidence: "TWAP/VWAP/冰山参数（volume_share=0.02/visible_ratio=0.1）"

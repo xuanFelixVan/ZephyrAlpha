@@ -26,7 +26,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.2
+version: 1.3.0
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -2344,6 +2344,1782 @@ risk_limits:
     entry_role: "rule"
     applies_to: []
     tags: ["风控", "组合", "信号"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-009"
+    name: "光头阴线"
+    name_zh: "光头阴线"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "K 线收光头阴线（无上影）且跌破关键位置，抛压极重，必须止损离场。与缩量小阴小阳\"看一天\"逻辑不同。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §F2.7"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["low_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["形态", "止损", "缩量"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-010"
+    name: "单日跌 7% 破 20 日线"
+    name_zh: "单日跌 7% 破 20 日线"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单日跌幅达 7% 以上且跌破 20 日均线，为明确止损信号。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §F2.9"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "均线", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-011"
+    name: "五连阳 30% 获利了结"
+    name_zh: "五连阳 30% 获利了结"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "股票五连阳累计涨幅 30+ 个点，应卖出获利了结，不幻想反包。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §F2.15（吸收 S11.7 五连阳30%止盈）"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["规则"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-CONC-004"
+    name: "高位放量下跌/乌云盖顶"
+    name_zh: "高位放量下跌/乌云盖顶"
+    limit_type: "concentration"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "板块在高位放历史天量下跌（乌云盖顶形态），为主力明牌出货信号。 不管什么情况先卖再说。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §F4.11"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: ["high_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "出货", "形态", "放量"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-012"
+    name: "破底翻/spring 形态"
+    name_zh: "破底翻/spring 形态"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "股价跌破箱体下沿后快速收回（假跌破），为 spring/破底翻形态。跌破是诱空，收回是真支撑。如 516510 云计算 ETF 07-17 假破下沿 1.610 后收回=破底翻雏形。破底翻证伪位=跌破下沿不收回的最低点（如 1.61），破位即止损。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §F4.20"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["ranging"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["威科夫", "形态", "支撑", "止损", "规则", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-013"
+    name: "止损宽度铁律"
+    name_zh: "止损宽度铁律"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "止损宽度≥1.5 倍日波动，否则会被噪声扫掉。如紫光日波动±4.6%，-5% 止损会被噪声扫掉→给 -7% 或用仓位换宽度。ATR14 作为日波动参考（F2.25）。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S10.17"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-CONC-005"
+    name: "个股第一卖点"
+    name_zh: "个股第一卖点"
+    limit_type: "concentration"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "同板块出现退潮信号时，个股跌破 20 日线为兜底卖出信号。按规矩卖哪怕多亏一点也不至于被套死。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S11.4"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "止损", "趋势"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-CONC-006"
+    name: "个股第二卖点"
+    name_zh: "个股第二卖点"
+    limit_type: "concentration"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "板块已有分化退潮迹象，个股在高位放巨量滞涨（如冲高回落大上影线），为主力明牌出货，果断卖出。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S11.5"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "出货", "放量"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-014"
+    name: "止损三要素"
+    name_zh: "止损三要素"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "止损三要素"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.1"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["形态", "放量", "止损", "缩量"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-015"
+    name: "跌破支撑必止损"
+    name_zh: "跌破支撑必止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "跌破关键支撑线/价位必须止损走，概率上越亏越多。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.2"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["支撑", "止损", "规则"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-016"
+    name: "跌停也卖"
+    name_zh: "跌停也卖"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "跌停板不是不能卖票，纪律要求必须走时排队跌停也要走。第一天跌破第二天跌破排队卖在跌停也得走。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.3"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["执行", "流动性"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-017"
+    name: "3820/3800 支撑位止损"
+    name_zh: "3820/3800 支撑位止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "大盘跌破 3820 或 3800 支撑位，止损/止盈走。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.4"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["指数", "支撑", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-KILLSW-003"
+    name: "生死线破位清仓信号"
+    name_zh: "生死线破位清仓信号"
+    limit_type: "kill_switch"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "生死线（如 3741，07-20 低点）放量破=双底破位清仓信号，无条件执行不讨论。生死线是环境判定的硬止损位，破位=环境恶化=清仓观望。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.6"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: ["high_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "执行", "放量", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-018"
+    name: "时间止损三档"
+    name_zh: "时间止损三档"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "时间止损按共振等级三档——①强共振：T+1 必须创新高，否则减半仓；②中等共振：T+0 收盘前必须站稳，否则减仓；③独立信号：T+0 收盘前必须平仓。时间止损=价格未按预期运动即出场，不等亏损扩大。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.8"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-019"
+    name: "首分钟纠错决策"
+    name_zh: "首分钟纠错决策"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "买入后 5-15 分钟内通过瞬时表现诊断判定交易质量。健康信号（分时稳健上行/成交量温和放大/迅速封涨停）→安心持有；危险信号（掉头跌破分时均线和买入价/放量滞涨或放量下跌/封涨停后反复开板）→判定为错误交易，立即执行首分钟止损，而非等待固定 -7% 止损线。这是一种交易质量即时检验机制——不依赖固定时间档位（S12.8）或技术位（S12.2），而是依赖买入后的盘面表现特征做即时纠错。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.9"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["high_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "分时", "均线", "成交", "执行", "放量"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-020"
+    name: "固定比例止损线"
+    name_zh: "固定比例止损线"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "买入价下方-7% 无条件止损；大盘系统性下跌导致可放宽至-10%。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.10"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-021"
+    name: "强势股竞价不及预期止损"
+    name_zh: "强势股竞价不及预期止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "前日涨停、次日竞价低开-3% 以上→9:25-9:30 期间挂单卖出。与 F1.17（±0.3% 情形阈值）用途与阈值均不同。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.11"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["打板", "止损", "竞价"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-KILLSW-004"
+    name: "有效跌破 20 日线确认"
+    name_zh: "有效跌破 20 日线确认"
+    limit_type: "kill_switch"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "连续 2 日收在 20 日线下方且成交量放大=趋势破位清仓。 S11.4/F2.9 为单日口径，本条为\"连续 2 日+放量\"确认口径。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.12"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: ["high_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["成交", "放量", "趋势"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-022"
+    name: "空头下跌浪止损判据"
+    name_zh: "空头下跌浪止损判据"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "收盘<20 日线且 10 日<20 日=标准空头下跌浪→果断止损，黏糊票越亏越多；下跌浪中每次反抽都是卖出机会非反转信号。为 S11.4 增加 10 日线空头确认。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.13"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["trend_down"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["信号", "反转", "均线", "止损", "趋势"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-023"
+    name: "买入后即时验证时间窗分档"
+    name_zh: "买入后即时验证时间窗分档"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "买入后 5 分钟跌破买入价>1% 且放量=观察；15 分钟跌破分时均线且反弹无力=减仓 50%；30 分钟反向运动>2ATR=全部止损。为 S12.9 的分档参数。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.14"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["high_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["分时", "均线", "放量", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-024"
+    name: "ATR 动态止损参数族"
+    name_zh: "ATR 动态止损参数族"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "日内 k=1.5-2x/波段 k=3-4x；追踪止损只上移；ADX>25 用标准 k、ADX<25 增加 k 50%；止盈 m=1.5-2 倍 k；时间止损=持仓 N 日未达 1R 平仓。为 S10.17/F2.25 的参数族扩展。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.15"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["周期", "形态", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-025"
+    name: "共振分级价格止损"
+    name_zh: "共振分级价格止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "按共振等级分档——强共振：跌破个股 3 分钟低点或 -3%；中等共振：-2.5%；独立信号：-2%。S11.16 仅含强共振单档\"跌破成本 -3%\"，本条补全三档分级与\"3 分钟低点\"止损锚，与 S14.19（共振等级→仓位映射）配套。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.16"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "信号", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-026"
+    name: "逻辑失效止损"
+    name_zh: "逻辑失效止损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "买入的核心逻辑被证伪（如预期政策落空、产业证据链断裂），无论盈亏立即离场，不等待价格触发止损位。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S12.17"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["形态", "止损"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-KILLSW-005"
+    name: "跌停不 T"
+    name_zh: "跌停不 T"
+    limit_type: "kill_switch"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "跌停的股票不能做正 T，因跌停拉不起板，次日可能再跌停，做 T 变成补仓。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S13.2"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["流动性"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-027"
+    name: "做 T 两纪律"
+    name_zh: "做 T 两纪律"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "做 T 操作的两条通用纪律原则：①**做 T 不补仓**——做 T 是当日回转交易，做错了必须当天出来（\"哪怕这一笔我进去做错了马上得出来\"），不能把做 T 的仓位留下来变相加仓摊成本。做 T 与补仓是两种完全不同的操作，做 T 错了变补仓会导致仓位失控。②**做 T 有节点**——做 T 不是每天都做，只在有好的节点（分时量价背离、急跌急反等信号）时才做，没有节点就不做（\"做 T 也不是天天做，它有好的节点，你在做的\"）。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S13.5"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "信号", "分时", "背离", "量价", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-POSITION-022"
+    name: "不梭哈一只"
+    name_zh: "不梭哈一只"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "任何情况、任何买点不梭哈/all in 一只股票（指数确认不退市品种可例外）。满仓一只遇雷跑不出来，是长期生存的根本。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.2"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["指数", "集中度", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-028"
+    name: "不盲目补仓"
+    name_zh: "不盲目补仓"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "下跌趋势中补仓只会加大亏损。没有补就已少亏 20-30%。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.8"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["trend_down"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["趋势"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-029"
+    name: "仓位上限动态调整规则"
+    name_zh: "仓位上限动态调整规则"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "仓位上限动态调整——放量站稳 3882（辅助确认：涨停>100 且跌停<20 持续）→提至 70%；收盘破 3741→降至 30%；基准仓位上限 55-60%。仓位上限随环境信号动态调整。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.11"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["high_vol"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "信号", "持续", "放量", "规则"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-POSITION-023"
+    name: "总仓位控制规则"
+    name_zh: "总仓位控制规则"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "总仓位控制规则——单股上限 10%+单板块上限 20%+总仓位维持 55-60% 上限。当前权益 47.8%→周五收盘前目标：弱势仓出清+588170 减至 1/3+紫光减半+主线仓位加至 15-20%。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.13"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "规则", "集中度", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-KILLSW-006"
+    name: "账户级亏损熔断"
+    name_zh: "账户级亏损熔断"
+    limit_type: "kill_switch"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "每日最大亏损总资金 2%、每周 5%、每月 10%，触及任一强制停止交易 1-3 天复盘调整；配合\"情绪断路器\"（触及当日最大亏损强制关机）。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.25"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["情绪", "资金", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-POSITION-024"
+    name: "单票/单板块仓位上限口径并存"
+    name_zh: "单票/单板块仓位上限口径并存"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "课程及系统文档存在四套口径——主观交易经验_润色版：单股 20%/单板块 40%；S14.13：单股 10%/单板块 20%；S14.19：单股 8%/板块 20%；清风量化 2.0：单股<30%。四口径并列待统一裁定。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.26"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-VAR-006"
+    name: "Kelly 仓位与组合风控硬限制"
+    name_zh: "Kelly 仓位与组合风控硬限制"
+    limit_type: "var"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "f*=μ/σ²、半 Kelly；单标的≤min（5%, f*/2）；组合 VaR_95%≤净值 2%；MaxDD≤15% 触发全线减仓 50%。为 S14.17 的参数版。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.28"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: "historical"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "形态", "执行", "组合", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-LEVERAGE-003"
+    name: "按市场状态动态风控参数"
+    name_zh: "按市场状态动态风控参数"
+    limit_type: "leverage"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "牛市——止损 7%/最大仓位 100%/最大回撤 15%/杠杆 1.0；熊市——3%/20%/5%/0.5；震荡——5%/50%/10%/0.8；高波动——2%/30%/3%/0.3；低波动——8%/80%/12%/1.2。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.30"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: ["high_vol", "ranging", "trend_down", "trend_up"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "止损", "震荡", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-030"
+    name: "组合再平衡与换手/参与率上限"
+    name_zh: "组合再平衡与换手/参与率上限"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "组合再平衡引擎——多策略资金分配与权重优化、风险预算分配、定期/阈值再平衡；组合层面硬上限——年化换手率≤50%、持仓量/成交量（参与率）<1%。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S14.38"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["成交", "换手", "流动性", "组合", "规则", "资金"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-LEVERAGE-004"
+    name: "不加杠杆"
+    name_zh: "不加杠杆"
+    limit_type: "leverage"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "任何行情不加杠杆。加杠杆即丧失留在牌桌的机会，一旦爆仓则一切归零。韩国散户爆仓血本无归为前车之鉴。只要保留在牌桌上的机会就有翻身可能（如 924 行情）。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.1"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: []
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-031"
+    name: "不把盈利做成亏损"
+    name_zh: "不把盈利做成亏损"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "震荡行情中最忌讳把盈利做成亏损。会卖票，避免冲高回落把利润还回去。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.6"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["ranging"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["规则", "震荡"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-032"
+    name: "监管异动避雷"
+    name_zh: "监管异动避雷"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "连板龙头异动未压住（如 6 板异动），面临进小黑屋风险，资金不敢与监管作对。不追高，等分歧再进。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.9"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["事件", "规则", "资金", "龙头"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-CONC-007"
+    name: "跳层禁止铁律"
+    name_zh: "跳层禁止铁律"
+    limit_type: "concentration"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "选票九阶段 SOP 任何一步不通过就停在那一层，绝不跳层硬买。板块不通过就不看个股；环境不允许就只试错。跳层=跳过验证=风险失控。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.11"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["执行"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-033"
+    name: "周末变量对冲"
+    name_zh: "周末变量对冲"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "周末美伊变量应对——地面冲突=周一直接低开+油气/黄金反向高开→周五不追高+尾盘留现金。周末变量需在周五提前布局对冲，留现金应对不确定性。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.12"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["尾盘", "规则", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-034"
+    name: "绝对不碰清单"
+    name_zh: "绝对不碰清单"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "绝对不碰清单——德明利/兆易等存储高位股（主力出货中）+通富微电（拉高出货）+航天工程（五连跌停 A 字杀）+新力金融/华鑫股份（无资金）+氟化工+风电+紫光做 T 不加仓的情形（竞价被核低开>-2%）。不碰清单=风险红线。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.17"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["出货", "竞价", "资金"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-035"
+    name: "10 点前不操作纪律"
+    name_zh: "10 点前不操作纪律"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "早盘冲高/砸盘/炸板/高开低走集中发生，有啥事等 10 点之后让资金先打架；缩量阳线次日、变盘日前、震荡调整周期中更应如此；大阳线次日开盘冲高不追，等 10 点后充分换手再决策。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.19"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: ["low_vol", "ranging"]
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["周期", "换手", "早盘", "缩量", "资金", "震荡"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-KILLSW-007"
+    name: "系统性风险瞬时识别四因子+三级警报"
+    name_zh: "系统性风险瞬时识别四因子+三级警报"
+    limit_type: "kill_switch"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "识别因子——①分时\"刀锋\"式近 90 度下跌反弹微弱；②多只活跃股买盘挂单瞬间消失；③跌停家数 30 分钟内从 10 家暴增至 50 家；④核心支柱主线板块集体跌停。响应——触发 1 个=一级警报停止开仓；2 个=二级警报无视盈亏 15 分钟内总仓降至 30% 以下；≥3 个=三级警报无条件清仓。为 S15.18 的触发量化补充。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.20"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["分时"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-POSITION-025"
+    name: "系统级风控阈值组"
+    name_zh: "系统级风控阈值组"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "单股最大仓位 10%（或 100 万市值）；同板块最大 40%；总仓位最大 80%；最低现金储备 5%；单笔订单最大占总资产 2%；单日最大订单数 100；涨停不买入、跌停不卖出；偏离昨收 2% 需确认；不买 ST 股、次新股 60 天内不买、不买停牌股；组合总回撤 5% 止损、单股回撤 8% 止损；移动止损 3%；日盈利目标 2%、日亏损限制 3%；最小日成交量 100 万、最小买卖盘 50 万。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.25"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "成交", "止损", "流动性", "组合", "订单"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-LEVERAGE-005"
+    name: "杠杆率上限 <3x"
+    name_zh: "杠杆率上限 <3x"
+    limit_type: "leverage"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "账户级杠杆率（负债/总资产）上限<3 倍。口径并存：S15.1 为课程原生\"不加杠杆\"铁律（更严），S14.30 为分市场状态 0.3-1.2 倍动态杠杆，本条为系统风控上限口径，三者并列不裁定。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.35"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-036"
+    name: "风控应急机制三条"
+    name_zh: "风控应急机制三条"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "事件触发→执行动作——触发止损→自动平仓；流动性枯竭→切换至市价单；黑天鹅事件→启动对冲。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.36"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["事件", "执行", "止损", "流动性", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-DRAWDOWN-037"
+    name: "计划外机会应急评估三条件"
+    name_zh: "计划外机会应急评估三条件"
+    limit_type: "drawdown"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "计划外机会必须同时满足——①契合当前核心主线；②5 分钟内可完成决策流程；③在仓位限制内。大部分情况拒绝，仅全部满足时应急轻仓参与。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.38"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: "gaussian"
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-VAR-007"
+    name: "波动率风控规则组"
+    name_zh: "波动率风控规则组"
+    limit_type: "var"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "组合波动率上限 25%、单股波动率上限 40%、波动率预警阈值 15%。补 S15.25 同章（第 249 章）的波动率维度。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.55"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: "historical"
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["组合", "规则", "风控"]
+    algorithm_status: "pending_backtest"
+    evidence: ""
+    code_symbol: null
+    code_fingerprint: null
+
+  - risk_limit_id: "RLM-POSITION-026"
+    name: "简单风控规则组"
+    name_zh: "简单风控规则组"
+    limit_type: "position"
+    scope: "strategy"
+    scope_strategy: ""
+    threshold_value: null
+    threshold_unit: ""
+    inherent_risk: null
+    residual_risk: null
+    consumption_tracking: "六条——单票持仓≤15%、行业≤30%、日内亏损≤2%（S14.25 已载）、最大回撤≤10%、日内换手≤50%、持仓量/成交量<1%；基础四条——止损 5%、最大仓位 15%、最大回撤 10%、最大持仓数 20。与 S14.26/S15.25 各套口径并列不裁定。"
+    kri_frequency: "daily"
+    review_cycle: "quarterly"
+    breach_action: "warn"
+    module_id: "MOD-RISK"
+    doc_ref: "29_factor_strategy_extraction.md §S15.57"
+    code_path: ""
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    current_consumption: null
+    stage: "active"
+    response_strategy: "mitigate"
+    drawdown_calibration_method: null
+    var_calibration_method: null
+    regime_valid: []
+    regime_invalid: []
+    entry_role: "rule"
+    applies_to: ["stock"]
+    tags: ["仓位", "成交", "换手", "止损", "行业", "规则"]
     algorithm_status: "pending_backtest"
     evidence: ""
     code_symbol: null

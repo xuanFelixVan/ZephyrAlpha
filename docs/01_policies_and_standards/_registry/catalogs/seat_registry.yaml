@@ -26,7 +26,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.1.1
+version: 1.2.0
 created: '2026-08-14'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -495,6 +495,35 @@ seats:
     tags: ["散户", "龙虎榜"]
     algorithm_status: "pending_backtest"
     evidence: ""
+
+  - seat_id: "SEAT-INST-004"
+    seat_name: "龙虎榜席位"
+    seat_type: "institution"
+    seat_style: "机构净买入跟踪"
+    data_source: "AKShare stock_lhb_detail_em"
+    update_frequency: "daily"
+    history_win_rate: null
+    avg_premium_1d: null
+    avg_premium_3d: null
+    max_holding_days: null
+    reliability_score: null
+    aliases: []
+    status: "candidate"
+    version: "1.0.0"
+    created_at: "2026-08-15"
+    updated_at: "2026-08-15"
+    owner: "MOD-GOVERNANCE"
+    primary_timeframe: "daily"
+    applicable_timeframes: ["daily"]
+    regime_valid: []
+    regime_invalid: []
+    direction: "long"
+    entry_role: "reference"
+    applies_to: ["stock"]
+    tags: ["信号", "持续", "资金"]
+    algorithm_status: "pending_backtest"
+    evidence: "2026 年机构净买入次日上涨概率 45.7%（数据宝/证券时报，席位因子降级为必要条件）；源：29_factor_strategy_extraction.md §F8.16"
+
 
 # ============================================================
 # 席位分析六维框架（2026-08-14 检索证据：淘股吧/雪球/爱股票）
