@@ -10,6 +10,7 @@
 # 本库裁剪与默认值决策：无裁剪：全量 10 字段。entry_role 默认 trigger（策略产生买卖触发信号）；direction 默认 neutral 为占位；algorithm_status 推导规则同 factor（deprecated/retired→not_applicable，code_path 非空→quantized，否则 pending_backtest）。
 # v2.0 标签词表（本库在用，防同义词漂移——同一含义统一用词：翻转→反转、破位/跌破→突破、阻力→压力、派发→出货、横盘/盘整→震荡、超买超卖→均值回归族；同义新词须先归并再入库）：
 #   k线、事件、仓位、估值、信号、出货、分时、动量、压力、反转、吸筹、周期、因子、均值回归、均线、基准、多因子、宏观、尾盘、形态、成交、成本、成长、打板、执行、持续、指数、支撑、放量、数据、早盘、止损、波动、流动性、盘口、突破、组合、绩效、缠论、缩量、缺口、股票池、背离、行业、行情、规则、订单、财报、质量、资金、趋势、量价、量化、震荡、风控、龙头
+# direction 语义澄清（2026-08-15）：A股选股/打板策略=多头开仓，exit_logic 的卖点/止损/出货/破位为多头持仓退出信号不计入 direction；short 仅用于明示做空/融券语义（本库当前无此类条目）。applies_to=[stock] 经 benchmark_id=BMK-INDEX-001（沪深300，成分=股票）二跳推导。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 module_id: MOD-GOVERNANCE
@@ -26,7 +27,7 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.1
+version: 1.2.2
 created: '2026-08-10'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -193,7 +194,7 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: ["trend_up", "trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["突破", "缩量", "放量", "趋势", "资金", "龙头", "风控", "多因子", "规则", "因子"]
@@ -271,7 +272,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging", "trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["缩量", "资金", "龙头", "风控", "震荡", "行业", "多因子", "形态", "规则", "因子"]
@@ -349,7 +350,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["风控", "多因子", "股票池", "规则", "因子"]
@@ -427,9 +428,9 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: ["trend_up", "trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["反转", "趋势", "风控", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -505,7 +506,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["量价", "风控", "行业", "多因子", "规则", "因子", "成交"]
@@ -583,9 +584,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging", "trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["风控", "震荡", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -661,7 +662,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["风控", "行业", "多因子", "数据", "规则", "因子"]
@@ -739,7 +740,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["资金", "风控", "行业", "多因子", "规则", "因子"]
@@ -817,9 +818,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["资金", "打板", "风控", "多因子", "规则", "行情", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -895,7 +896,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["龙头", "风控", "行业", "多因子", "规则", "因子"]
@@ -973,7 +974,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_up"]
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["风控", "行业", "多因子", "规则", "因子"]
@@ -1051,7 +1052,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["风控", "估值", "成长", "周期", "多因子", "规则", "因子"]
@@ -1129,7 +1130,7 @@ strategies:
     applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "sector", "market"]
     tags: ["资金", "风控", "仓位", "分时", "行业", "多因子", "组合", "规则", "因子"]
@@ -1207,7 +1208,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["sector", "market"]
     tags: ["风控", "行业", "多因子", "规则", "因子"]
@@ -1285,9 +1286,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["出货", "资金", "风控", "流动性", "多因子", "数据", "形态", "规则", "因子", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -1363,7 +1364,7 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["缩量", "放量", "趋势", "龙头", "风控", "行业", "多因子", "规则", "因子"]
@@ -1441,7 +1442,7 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["缩量", "龙头", "风控", "震荡", "行业", "多因子", "财报", "规则", "因子", "成交"]
@@ -1519,9 +1520,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["趋势", "资金", "风控", "震荡", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -1597,9 +1598,9 @@ strategies:
     applicable_timeframes: ["1min"]
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["均线", "资金", "风控", "估值", "成长", "盘口", "多因子", "财报", "形态", "组合", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -1675,9 +1676,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["风控", "流动性", "估值", "成长", "质量", "多因子", "成本", "财报", "规则", "因子", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -1753,7 +1754,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["风控", "行业", "多因子", "规则", "因子"]
@@ -1831,9 +1832,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["风控", "事件", "多因子", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -1909,7 +1910,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "index", "sector"]
     tags: ["风控", "震荡", "指数", "行业", "多因子", "规则", "因子", "绩效"]
@@ -1987,7 +1988,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["etf"]
     tags: ["背离", "均线", "资金", "风控", "震荡", "多因子", "形态", "规则", "因子"]
@@ -2065,7 +2066,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["资金", "风控", "宏观", "周期", "行业", "多因子", "数据", "组合", "规则", "因子"]
@@ -2143,7 +2144,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_up"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["突破", "趋势", "风控", "多因子", "规则", "因子"]
@@ -2224,7 +2225,7 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["突破", "放量", "趋势", "动量", "风控", "尾盘", "早盘", "股票池", "规则", "因子"]
@@ -2302,9 +2303,9 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["缩量", "放量", "出货", "趋势", "动量", "风控", "k线", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -2380,9 +2381,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["突破", "放量", "趋势", "动量", "风控", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -2458,9 +2459,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "short"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["突破", "吸筹", "趋势", "动量", "仓位", "成本", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -2538,7 +2539,7 @@ strategies:
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["突破", "压力", "趋势", "动量", "止损", "风控", "仓位", "缠论", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -2614,7 +2615,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_up"]
     regime_invalid: []
-    direction: "short"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock", "etf", "index"]
     tags: ["反转", "趋势", "动量", "指数", "均值回归", "组合", "因子"]
@@ -2692,7 +2693,7 @@ strategies:
     applicable_timeframes: ["1min"]
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["持续", "突破", "趋势", "动量", "均线", "资金", "打板", "流动性", "震荡", "仓位", "尾盘", "早盘", "行业", "因子", "信号"]
@@ -2770,7 +2771,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["趋势", "动量", "行业", "因子", "信号"]
@@ -2848,7 +2849,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["趋势", "动量", "风控", "震荡", "行业", "规则", "因子", "信号"]
@@ -2926,9 +2927,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["ranging"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["趋势", "动量", "止损", "震荡", "仓位", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3004,9 +3005,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["压力", "趋势", "动量", "均线", "缺口", "止损", "风控", "执行", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3082,9 +3083,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["压力", "趋势", "动量", "止损", "风控", "规则", "因子", "绩效", "成交"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3160,9 +3161,9 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["趋势", "动量", "波动", "止损", "仓位", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3238,9 +3239,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "short"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["反转", "趋势", "动量", "仓位", "量化", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3316,9 +3317,9 @@ strategies:
     applicable_timeframes: ["5min", "15min", "30min"]
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["反转", "放量", "趋势", "动量", "缺口", "风控", "早盘", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3394,9 +3395,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["持续", "趋势", "动量", "打板", "仓位", "指数", "基准", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3472,7 +3473,7 @@ strategies:
     applicable_timeframes: ["30min"]
     regime_valid: []
     regime_invalid: []
-    direction: "short"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["market"]
     tags: ["趋势", "动量", "缺口", "风控", "早盘", "指数", "执行", "规则", "因子"]
@@ -3550,9 +3551,9 @@ strategies:
     applicable_timeframes: ["30min"]
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "short"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["反转", "趋势", "动量", "止损", "仓位", "早盘", "执行", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3631,9 +3632,9 @@ strategies:
     applicable_timeframes: ["1min", "5min", "15min", "30min", "60min"]
     regime_valid: ["trend_up"]
     regime_invalid: []
-    direction: "long"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["突破", "趋势", "动量", "止损", "风控", "质量", "盘口", "分时", "规则", "因子", "订单"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -3709,7 +3710,7 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["突破", "趋势", "动量", "风控", "行业", "规则", "因子", "信号"]
@@ -3787,7 +3788,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "neutral"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["放量", "出货", "趋势", "动量", "资金", "风控", "行业", "规则", "因子"]
@@ -3943,9 +3944,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["反转", "突破", "压力", "趋势", "动量", "风控", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -4021,7 +4022,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["趋势", "动量", "风控", "规则", "因子"]
@@ -4099,9 +4100,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_up", "trend_down", "ranging"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["趋势", "动量", "风控", "质量", "震荡", "规则", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -4177,9 +4178,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["背离", "趋势", "动量", "仓位", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -4255,7 +4256,7 @@ strategies:
     applicable_timeframes: ["daily"]
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["突破", "趋势", "动量", "龙头", "风控", "行业", "规则", "因子"]
@@ -4333,7 +4334,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_up"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["sector"]
     tags: ["反转", "背离", "缩量", "放量", "出货", "趋势", "动量", "波动", "资金", "龙头", "风控", "行业", "规则", "因子", "信号"]
@@ -4411,7 +4412,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock", "sector"]
     tags: ["持续", "突破", "支撑", "趋势", "动量", "均线", "资金", "止损", "行业", "成本", "因子", "信号"]
@@ -4567,9 +4568,9 @@ strategies:
     applicable_timeframes: []
     regime_valid: ["trend_down"]
     regime_invalid: []
-    direction: "both"
+    direction: "long"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["反转", "压力", "趋势", "动量", "形态", "因子"]
     algorithm_status: "not_applicable"
     evidence: ""
@@ -4648,7 +4649,7 @@ strategies:
     applicable_timeframes: []
     regime_valid: []
     regime_invalid: []
-    direction: "neutral"
+    direction: "long"
     entry_role: "trigger"
     applies_to: ["stock"]
     tags: ["趋势", "动量", "风控", "规则", "因子"]
@@ -4728,7 +4729,7 @@ strategies:
     regime_invalid: []
     direction: "neutral"
     entry_role: "trigger"
-    applies_to: []
+    applies_to: ["stock"]
     tags: ["背离", "趋势", "动量", "量价", "风控", "仓位", "分时", "成本", "规则", "因子", "信号"]
     algorithm_status: "not_applicable"
     evidence: ""
