@@ -4,7 +4,7 @@ ttl: permanent
 title: "20个AI审计一键复制提示词"
 ---
 
-# 20个AI审计一键复制提示词
+# 20个AI审计一键复制提示词（v2，2026-08-16 范围+清单双升级）
 
 > **⚠️ 禁止删除本文件（PROTECTED FILE）** ⚠️
 > - 用途：20 个审计 AI 的一键复制提示词，用户手动复制粘贴启动审计
@@ -12,8 +12,13 @@ title: "20个AI审计一键复制提示词"
 > - 保护：skip-worktree + Windows 只读属性（attrib +r）
 > - 如需修改：先 `git update-index --no-skip-worktree docs/audit_prompts_20_ai.md` + `attrib -r`，修改后重新设置
 > - 如本文件意外丢失：`git update-index --no-skip-worktree docs/audit_prompts_20_ai.md ; git checkout HEAD -- docs/audit_prompts_20_ai.md ; git update-index --skip-worktree docs/audit_prompts_20_ai.md ; attrib +r "d:\ZephyrAlpha\docs\audit_prompts_20_ai.md"`
+> - 元产物豁免：本文件属审计元任务产物，不作为任何 AI 的被审计对象
 
 > **使用说明**：每个 AI 一个独立 section（用 `===` 分隔），复制对应 AI 编号的整段内容粘贴到新对话即可启动审计。所有提示词自包含，无需额外附件。
+
+> **v2 升级点（2026-08-16）**：
+> 1. 范围升级：20 个 AI 的责任目录按仓库实况全量重扫——新增 regime/orchestrator/plan_engine/feedback_loop/experiment_tracking/nlp/gov_rule/gov_code_quality/gov_drift/clone_guard/red_blue_validator 等域；移除已退役的 autonomy_perm/knowledge；config（含 5 个子目录）、architecture_model（11 个子目录）、scripts/governance（d1-d12）、docs/02（五图派生目录）、tests（102 个顶层分类）等按实况重写
+> 2. 清单升级：新增五图对齐审查（11.7）、治理预算与门禁纪律（十二）、会话工程与工具链纪律（十三）、业务领域专项（十四）、注册表生态同步（8.5）、Gateway 提交姿势（9.8）、编号唯一（2.5）、ps1 纯 ASCII（7.7）、ROOR 实测报数（0.7）等条款
 
 ---
 
@@ -28,8 +33,11 @@ d:\ZephyrAlpha\Dockerfile
 d:\ZephyrAlpha\LICENSE
 d:\ZephyrAlpha\MANIFEST.in
 d:\ZephyrAlpha\README.md
+d:\ZephyrAlpha\SECRETS.md
 d:\ZephyrAlpha\SECURITY.md
+d:\ZephyrAlpha\clone_guard.yml
 d:\ZephyrAlpha\docker-compose.yml
+d:\ZephyrAlpha\echo-guard.yml
 d:\ZephyrAlpha\py.ini
 d:\ZephyrAlpha\pyproject.toml
 d:\ZephyrAlpha\requirements-demo.txt
@@ -45,13 +53,13 @@ d:\ZephyrAlpha\.importlinter
 d:\ZephyrAlpha\.pre-commit-config.yaml
 d:\ZephyrAlpha\.traeignore
 
-审计重点：工程入口合规性、依赖清单完整性、pre-commit 门禁配置、AGENTS.md 作为“新AI第一读”的准确性。
+审计重点：工程入口合规性、依赖清单完整性、pre-commit 门禁配置、AGENTS.md 作为"新AI第一读"的准确性（≤3000 行硬上限）、clone_guard.yml/echo-guard.yml 根级守卫配置。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -60,6 +68,7 @@ d:\ZephyrAlpha\.traeignore
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -93,6 +102,7 @@ d:\ZephyrAlpha\.traeignore
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -148,12 +158,13 @@ d:\ZephyrAlpha\.traeignore
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -171,17 +182,27 @@ d:\ZephyrAlpha\.traeignore
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -194,31 +215,78 @@ d:\ZephyrAlpha\.traeignore
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -228,18 +296,19 @@ d:\ZephyrAlpha\.traeignore
 ```
 你是项目审计 AI-02，负责审计以下区域（配置+架构元）：
 
-d:\ZephyrAlpha\config\                          （全部 yaml/json 配置文件）
-d:\ZephyrAlpha\architecture_model\              （index.yaml 等）
-d:\ZephyrAlpha\.github\                         （workflows: governance.yml, dedup-test.yml）
+d:\ZephyrAlpha\config\                          （根级 yaml/json + data/ + governance/ + infra/ + runtime/ + system_configs/）
+d:\ZephyrAlpha\architecture_model\              （index.yaml + architecture_lock.yaml + contracts/ + cross_cutting/ + data/ + domain/ + events/ + frontend/ + layers/ + runtime/ + security/ + technology/）
+d:\ZephyrAlpha\schemas\                         （categories/ 等 schema 定义）
+d:\ZephyrAlpha\.github\                         （workflows: governance.yml, dedup-test.yml, deploy.yml + CODEOWNERS）
 d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project_rules.md）
 
-审计重点：配置真源唯一性、词表硬编码检测、YAML↔代码常量一致性、CI/CD 门禁覆盖。
+审计重点：配置真源唯一性、词表硬编码检测、YAML↔代码常量一致性、CI/CD 门禁覆盖、architecture_model/contracts/error_code_registry.yaml 错误码全仓唯一 grep（防重码，ARCH-ERRCODE-001）、cross_layer_contracts.yaml 契约一致性。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -248,6 +317,7 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -281,6 +351,7 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -336,12 +407,13 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -359,17 +431,27 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -382,52 +464,109 @@ d:\ZephyrAlpha\.trae\rules\                     （onboarding_detail.md, project
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
 
-## === AI-03 临时+日志+工具 ===
+## === AI-03 运行时+临时+日志+产物 ===
 
 ```
-你是项目审计 AI-03，负责审计以下区域（临时+日志+工具）：
+你是项目审计 AI-03，负责审计以下区域（运行时+临时+日志+产物）：
 
-d:\ZephyrAlpha\tmp\                             （含 data_gap_check/, pg_backups/, runtime_backups/ 及大量临时脚本）
+d:\ZephyrAlpha\tmp\
 d:\ZephyrAlpha\logs\
 d:\ZephyrAlpha\session_logs\
 d:\ZephyrAlpha\_journals\
+d:\ZephyrAlpha\_diag\
+d:\ZephyrAlpha\runtime\
+d:\ZephyrAlpha\data\
+d:\ZephyrAlpha\models\
+d:\ZephyrAlpha\access\
+d:\ZephyrAlpha\meta\
+d:\ZephyrAlpha\metadata\
+d:\ZephyrAlpha\preprocessed_configs\
+d:\ZephyrAlpha\test_dir\
+d:\ZephyrAlpha\v\
 
-审计重点：一次性脚本 TTL 治理（task_bound 脚本是否退役）、临时文件是否污染版本控制、日志是否含敏感信息。
+审计重点：一次性脚本 TTL 治理（task_bound 脚本是否退役）、临时文件是否污染版本控制（派生产物禁入 git）、日志是否含敏感信息、tick_subscriber 业务心跳（tmp/tick_subscriber_biz.heartbeat）观测层三件套、根级数据/模型目录边界（禁止大二进制入 git）、test_dir/v 等可疑残留目录是否应清理。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -436,6 +575,7 @@ d:\ZephyrAlpha\_journals\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -469,6 +609,7 @@ d:\ZephyrAlpha\_journals\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -524,12 +665,13 @@ d:\ZephyrAlpha\_journals\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -547,17 +689,27 @@ d:\ZephyrAlpha\_journals\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -570,31 +722,78 @@ d:\ZephyrAlpha\_journals\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -604,19 +803,20 @@ d:\ZephyrAlpha\_journals\
 ```
 你是项目审计 AI-04，负责审计以下区域（数据域）：
 
+d:\ZephyrAlpha\src\zephyr\data\                 （含 config/tasks.yaml + scheduler/task_queue/pit_query/quality_gate/wal_writer 等）
 d:\ZephyrAlpha\src\zephyr\data_eng\             （api/core/infrastructure/models/services）
 d:\ZephyrAlpha\src\zephyr\data_governance\
 d:\ZephyrAlpha\src\zephyr\data_security\
-d:\ZephyrAlpha\src\zephyr\market_data\
+d:\ZephyrAlpha\src\zephyr\market_data\          （connectors/failover/normalized_market_data_producer/raw_data_cache 等）
 d:\ZephyrAlpha\src\zephyr\alt_data\
 
-审计重点：DatabaseService 访问协议（禁止裸 duckdb.connect）、read_only=True 安全约束、数据源契约一致性。
+审计重点：DatabaseService 访问协议（禁止裸连接）、read_only=True 安全约束、数据源契约一致性、PIT 铁律（pit_query.py 零前瞻）、data_asset_registry 条目状态流转（candidate→production 需盘前+收盘双调度实证）、市场元数据五数据集（基础信息/涨跌停/停复牌/指数成分/ST）。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -625,6 +825,7 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -658,6 +859,7 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -713,12 +915,13 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -736,17 +939,27 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -759,31 +972,78 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -793,20 +1053,20 @@ d:\ZephyrAlpha\src\zephyr\alt_data\
 ```
 你是项目审计 AI-05，负责审计以下区域（执行模拟域）：
 
-d:\ZephyrAlpha\src\zephyr\ex_core\              （含 adapters/miniqmt_broker.py）
+d:\ZephyrAlpha\src\zephyr\ex_core\              （adapters/api/audit_journal/core/infrastructure/position_tracker/services，含 miniqmt_broker）
 d:\ZephyrAlpha\src\zephyr\ex_sor\
 d:\ZephyrAlpha\src\zephyr\execution_simulation\
 d:\ZephyrAlpha\src\zephyr\simulation\
 d:\ZephyrAlpha\src\zephyr\cross_asset\
 d:\ZephyrAlpha\src\zephyr\digital_twin\
 
-审计重点：xttrader 非线程安全、MatchingLogic 共享模块（回测-实盘一致性 B 方案）、broker_interface 契约。
+审计重点：xttrader 非线程安全、MatchingLogic 共享模块（回测-实盘一致性 B 方案）、broker_interface 契约、价格笼子 price_cage/整手 board_lot 交易规则、execution_algo_registry 条目一致性。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -815,6 +1075,7 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -848,6 +1109,7 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -903,12 +1165,13 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -926,17 +1189,27 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -949,31 +1222,78 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -983,20 +1303,18 @@ d:\ZephyrAlpha\src\zephyr\digital_twin\
 ```
 你是项目审计 AI-06，负责审计以下区域（交易域）：
 
-d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
-  - api/ core/ infrastructure/ models/ services/ runtime/ _extensions/
-  - feedback_loop/（actors/collectors/detectors/diagnosers/evolution/forensic/gates/resilience/security/tests/verifiers/docs）
-  - orchestrator/（contracts/core/execution/fault_tolerance/governance/lifecycle/quality/resilience/state）
-  - trading_contracts/（execution/market/portfolio/risk）
-  - 根文件：autopilot.py, conductor.py, dream_cycle.py, finalizer.py, boot_hooks.py, work_dag.py 等
+d:\ZephyrAlpha\src\zephyr\trading\              （action_dispatcher/api/core/infrastructure/models/runtime/services/trading_contracts/_extensions + 根文件 autopilot.py, conductor.py, dream_cycle.py, finalizer.py, boot_hooks.py, work_dag.py, stop_gate.py, task_gate.py, gpu_monitor.py, ports.py）
+d:\ZephyrAlpha\src\zephyr\orchestrator\         （contracts/core/execution/fault_tolerance/governance/lifecycle/quality/resilience）
+d:\ZephyrAlpha\src\zephyr\feedback_loop\        （alert_dispatcher/auto_evolution/decision_engine 等）
+d:\ZephyrAlpha\src\zephyr\plan_engine\          （premarket_constraint_loader/closing_session_decision/tomorrow_boundary_planner）
 
-审计重点：boot_hooks 事件注册、永久系统四要素（自动触发/运行/维护/关闭）、PERM-TRIGGER 门禁、orchestrator 状态机。
+审计重点：boot_hooks 事件注册、永久系统四要素（自动触发/运行/维护/关闭）、PERM-TRIGGER 门禁、orchestrator 状态机、deadman/tick-biz-watchdog 盘中自愈、plan_engine 盘前-收盘-明日边界三决策的事件触发。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -1005,6 +1323,7 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -1038,6 +1357,7 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -1093,12 +1413,13 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -1116,17 +1437,27 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -1139,31 +1470,78 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -1173,19 +1551,21 @@ d:\ZephyrAlpha\src\zephyr\trading\              （全部子目录）
 ```
 你是项目审计 AI-07，负责审计以下区域（回测研究ML域）：
 
-d:\ZephyrAlpha\src\zephyr\backtest\             （core/ 含 matching_engine/pit_manager/walk_forward/metrics 等）
+d:\ZephyrAlpha\src\zephyr\backtest\             （api/core/implementations/infrastructure/io/models/regime_validation/services）
 d:\ZephyrAlpha\src\zephyr\research\
 d:\ZephyrAlpha\src\zephyr\ml_train\
 d:\ZephyrAlpha\src\zephyr\ml_serve\
 d:\ZephyrAlpha\src\zephyr\intelligence\
+d:\ZephyrAlpha\src\zephyr\nlp\
+d:\ZephyrAlpha\src\zephyr\experiment_tracking\  （adapters，MLflow 退役后 Panel 实验历史）
 
-审计重点：PIT 铁律（零前瞻偏差/幸存者偏差）、Sharpe 修正（Deflated Sharpe Ratio）、过拟合检测三维度、回测-实盘偏差监控阈值。
+审计重点：PIT 铁律（零前瞻偏差/幸存者偏差）、Sharpe 修正（Deflated Sharpe Ratio）、过拟合检测三维度、回测-实盘偏差监控阈值、回测环境三件套（universe/benchmark/cost_model）优先于被测三件套（factor/strategy/technical_indicator）、experiment_registry/model_registry 条目一致性。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -1194,6 +1574,7 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -1227,6 +1608,7 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -1282,12 +1664,13 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -1305,17 +1688,27 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -1328,31 +1721,78 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -1362,18 +1802,18 @@ d:\ZephyrAlpha\src\zephyr\intelligence\
 ```
 你是项目审计 AI-08，负责审计以下区域（因子信号域）：
 
-d:\ZephyrAlpha\src\zephyr\factor\               （含 engine/ctr_001_consumer）
+d:\ZephyrAlpha\src\zephyr\factor\               （analysis/api/core/governance/infrastructure/services/technical_indicators）
 d:\ZephyrAlpha\src\zephyr\signal_ashare\
-d:\ZephyrAlpha\src\zephyr\signal_fundamental\    （含 capital/combiner/gen/strategy/synth）
+d:\ZephyrAlpha\src\zephyr\signal_fundamental\
 d:\ZephyrAlpha\src\zephyr\signal_quality\
 
-审计重点：3个signal子域平级关系（D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC）、因子计算 PIT 一致性、signal degradation 契约。
+审计重点：3个signal子域平级关系（D_ASHARE_SIGNAL/D_FUNDAMENTAL_SIGNAL/D_SIGQC）、因子计算 PIT 一致性、signal degradation 契约、技术指标 OHLCV 9 周期规范（120min=60min 两根聚合）、factor_registry/technical_indicator_registry 编号 {PREFIX}-{DOMAIN}-{NNN} 与状态机。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -1382,6 +1822,7 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -1415,6 +1856,7 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -1470,12 +1912,13 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -1493,17 +1936,27 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -1516,31 +1969,78 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -1550,17 +2050,18 @@ d:\ZephyrAlpha\src\zephyr\signal_quality\
 ```
 你是项目审计 AI-09，负责审计以下区域（风控合规安全域）：
 
-d:\ZephyrAlpha\src\zephyr\risk\                 （含 cross_asset/implementations）
-d:\ZephyrAlpha\src\zephyr\compliance\           （含 audit_orchestrator/audit_trail/behavioral_admission/behavioral_auditor/compliance_gate_a6/semantic_auditor/zero_knowledge_audit_stub）
-d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversarial_validation/llm_defense）
+d:\ZephyrAlpha\src\zephyr\risk\                 （api/core/cross_asset/implementations/infrastructure/services）
+d:\ZephyrAlpha\src\zephyr\compliance\           （audit_orchestrator/audit_trail/behavioral_admission/behavioral_auditor/compliance_gate_a6/zero_knowledge_audit_stub 等）
+d:\ZephyrAlpha\src\zephyr\security\             （access_control/adversarial_validation/llm_defense 等）
+d:\ZephyrAlpha\src\zephyr\regime\               （core/features/validation）
 
-审计重点：risk_limits 真源唯一性（禁止多真源）、stop_loss 逻辑、compliance_rule 契约、RBAC/CBAC 矩阵。
+审计重点：risk_limits 真源唯一性（禁止多真源）、stop_loss 逻辑、回撤 Protocol 风险模块施工优先级（drawdown_controller/var_calculator/kill_switch 先于策略至 production）、regime=市场级风险节流与情绪周期正交分工、risk_limit_registry 阈值与 alert 阈值一致性、RBAC/CBAC 矩阵。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -1569,6 +2070,7 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -1602,6 +2104,7 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -1657,12 +2160,13 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -1680,17 +2184,27 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -1703,31 +2217,78 @@ d:\ZephyrAlpha\src\zephyr\security\             （含 access_control/adversaria
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -1743,13 +2304,13 @@ d:\ZephyrAlpha\src\zephyr\position\
 d:\ZephyrAlpha\src\zephyr\sell_decision\
 d:\ZephyrAlpha\src\zephyr\reporting\
 
-审计重点：position_reconciler 事件触发（禁止时间触发）、strategy_registry 真源、performance_attribution_report 契约。
+审计重点：position_reconciler 事件触发（禁止时间触发）、portfolio_model_registry（组合构建"买多少"）与 strategy_registry 真源、performance_attribution_report 契约、sell_decision 各模块（stop_loss/take_profit/conflict_arbitrator 等）与卖出信号链一致性。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -1758,6 +2319,7 @@ d:\ZephyrAlpha\src\zephyr\reporting\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -1791,6 +2353,7 @@ d:\ZephyrAlpha\src\zephyr\reporting\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -1846,12 +2409,13 @@ d:\ZephyrAlpha\src\zephyr\reporting\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -1869,17 +2433,27 @@ d:\ZephyrAlpha\src\zephyr\reporting\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -1892,31 +2466,78 @@ d:\ZephyrAlpha\src\zephyr\reporting\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -1926,19 +2547,22 @@ d:\ZephyrAlpha\src\zephyr\reporting\
 ```
 你是项目审计 AI-11，负责审计以下区域（治理-规则+安全韧性）：
 
-d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_enforcement\      （gate_engine/check_types/invariants/task/admission + 大量 g_*.yaml）
+d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_enforcement\      （gate_engine/check_types/invariants/task/admission + g_*.yaml）
 d:\ZephyrAlpha\src\zephyr\gov_enforcement\rule_bridge\           （session_worktree.py, git_commit_gateway.py, commit_gate_registry.py, session_claim.py, worktree_manager.py）
 d:\ZephyrAlpha\src\zephyr\gov_enforcement\commit_gates\
-d:\ZephyrAlpha\src\zephyr\governance\security_governance\   （含 30+ 安全治理模块）
-d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resilience/circuit_breaker/deadlock_detector 等）
+d:\ZephyrAlpha\src\zephyr\gov_enforcement\behavioral_admission\
+d:\ZephyrAlpha\src\zephyr\gov_rule\
+d:\ZephyrAlpha\src\zephyr\gov_code_quality\
+d:\ZephyrAlpha\src\zephyr\governance\security_governance\
+d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\
 
-审计重点：session_worktree 君子协定、GitCommitGateway 门禁链（CREATE-GUARD/ARCH-REFERENCE/TTL-METADATA 等）、in-process AST gates、安全治理真源。
+审计重点：GitCommitGateway 门禁链与提交姿势（--adopt-prior-work 必须加在 commit 命令、[ARCH-APPROVAL:ISSUE_ID]、ARCH-REFERENCE 拦悬空引用）、session_worktree 君子协定与 worktree 禁写权威、治理预算三纪律 D1/D2/D3（gate/reconciler 数量软参考）、in-process AST gates、ops_guard 补丁卸载 API（uninstall_inprocess_enforcement）。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -1947,6 +2571,7 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -1980,6 +2605,7 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -2035,12 +2661,13 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -2058,17 +2685,27 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -2081,31 +2718,78 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -2115,22 +2799,22 @@ d:\ZephyrAlpha\src\zephyr\governance\resilience_governance\ （f5_*/broker_resil
 ```
 你是项目审计 AI-12，负责审计以下区域（治理-审计+语义行为）：
 
-d:\ZephyrAlpha\src\zephyr\gov_audit\           （anomaly/bridge/cli/contracts/genesis/indexer/integrity/kb_gate/models/privacy/query/retention/writer）
-d:\ZephyrAlpha\src\zephyr\governance\audit_orchestration\
-d:\ZephyrAlpha\src\zephyr\governance\semantic_audit\         （alignment_engine/compliance_map/feedback_self_audit/fix_prioritizer/issue_aggregator/llm_bridge/models/orchestrator/reference_extractor/safety_boundary/self_healer/self_health/semantic_cache/spec_auditor/trigger_engine）
-d:\ZephyrAlpha\src\zephyr\governance\semantic_auditor\
-d:\ZephyrAlpha\src\zephyr\governance\behavioral_auditor\
-d:\ZephyrAlpha\src\zephyr\gov_enforcement\behavioral_admission\
-d:\ZephyrAlpha\src\zephyr\governance\red_blue_validator\
-d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
+d:\ZephyrAlpha\src\zephyr\gov_audit\            （anomaly/bridge/cli/contracts/genesis/indexer/integrity/kb_gate/models/privacy/query/retention/writer）
+d:\ZephyrAlpha\src\zephyr\gov_drift\            （drift 检测/修复/dashboard/events）
+d:\ZephyrAlpha\src\zephyr\clone_guard\
+d:\ZephyrAlpha\src\zephyr\red_blue_validator\
+d:\ZephyrAlpha\src\zephyr\governance\audit\
+d:\ZephyrAlpha\src\zephyr\governance\audit-trail\
+d:\ZephyrAlpha\src\zephyr\governance\semantic_audit\
+d:\ZephyrAlpha\src\zephyr\governance\drift-detector\
 
-审计重点：审计链不可变性（tamper_evident_log）、Merkle 完整性、语义审计 LLM bridge 安全、行为审计红蓝对抗。
+审计重点：审计链不可变性（tamper_evident_log）、Merkle 完整性、语义审计 LLM bridge 安全、行为审计红蓝对抗、DRIFT-WATCHDOG fail-open 认知（banner 先查 reconcile_execution_log 是否 clean 勿当事故）、reconciler 只能 warn/skip/fix-in-place。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -2139,6 +2823,7 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -2172,6 +2857,7 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -2227,12 +2913,13 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -2250,17 +2937,27 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -2273,31 +2970,78 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -2308,22 +3052,20 @@ d:\ZephyrAlpha\src\zephyr\governance\zero_knowledge_audit_stub\
 你是项目审计 AI-13，负责审计以下区域（治理-其余）：
 
 d:\ZephyrAlpha\src\zephyr\governance\ 其余子目录：
-  - adapters/ agent_spec/ architecture_governance/ audit/ bridges/
-  - compliance_gate_a6/ context_governance/ data_governance/ engine/ escalation/
+  - a2a/ adapters/ agent-rbac/ agent-spec/ agent_spec/ architecture_governance/ bridges/
+  - budget-enforcer/ compliance_gate_a6/ context_governance/ data_governance/ engine/ escalation/
   - financial_governance/ implementations/ intelligence_governance/ lifecycle_governance/
-  - observability_governance/ ops_governance/ persistence/ resilience_governance/
-  - security_governance/ semantic_audit/ services/ strategies/
+  - observability_governance/ ops_governance/ persistence/ rollback/ services/ strategies/
 d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
-  - __init__.py capability_lookup.py depgraph_schema.py
-  - evidence_pack.py index.md integrity.py rule_patterns.py
+  - __init__.py capability_lookup.py depgraph_schema.py evidence_pack.py index.md integrity.py rule_patterns.py
 
-审计重点：governance 根目录禁止新增 .py（CREATE-GUARD ARCH-031 防复发）、6 个核心模块清单完整性（__init__/capability_lookup/depgraph_schema/evidence_pack/integrity/rule_patterns；2026-07-17 shim 消除 commit 213be2b5a3 删除 base/merkle_hourly/performance_attribution_report 后稳定为 6）、shim re-export 残留检测。
+审计重点：governance 根目录禁止新增 .py（CREATE-GUARD ARCH-031 防复发）、6 个核心模块清单完整性（__init__/capability_lookup/depgraph_schema/evidence_pack/integrity/rule_patterns；2026-07-17 shim 消除 commit 213be2b5a3 后稳定为 6）、shim re-export 残留检测、连字符目录（agent-rbac/agent-spec/audit-trail/budget-enforcer/drift-detector）snake_case 豁免裁定是否留有登记。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -2332,6 +3074,7 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -2365,6 +3108,7 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -2420,12 +3164,13 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -2443,17 +3188,27 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -2466,31 +3221,78 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -2501,25 +3303,21 @@ d:\ZephyrAlpha\src\zephyr\governance\ 根文件：
 你是项目审计 AI-14，负责审计以下区域（基础设施）：
 
 d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
-  - api/ config/ core/ draft/ events/ hooks/ impact/ pipeline/ quality/
-  - queue/ rollback/ runtime/ services/ session/ sla/
-  - a2a_protocol/ adaptation/ asset_inventory/ auto_fix_engine/ capacity_assurance/
-  - compensation/ dashboard/ dependency/ health_monitor/ knowledge/
-  - lifecycle/ maintenance/ model_capability_exam/ model_profiler/ observability/
-  - reliability/ script_system/ system_telemetry/ infrastructure/
-  - 根文件：_base_server.py audit_logger.py auto_diagnostics.py config_validator.py
-    contract_tester.py cost_tracker.py database_service.py doc_guard_server.py
-    error_codes.py event_store.py file_watcher.py gateway_server.py
-    kill_switch_sim.py prompt_provider.py rate_limiter.py sandbox_server.py
-    sentinel_server.py system_snapshot.py telemetry_server.py warm_hot_gate.py
+  - a2a_protocol/ adaptation/ api/ asset_inventory/ auto_fix_engine/ budget_enforcement/
+  - capacity_assurance/ compensation/ config/ core/ dashboard/ dependency/ draft/ events/
+  - h1_redis_hot/ health_monitor/ hooks/ impact/ lifecycle/ maintenance/ models/
+  - model_capability_exam/ model_profiler/ observability/ pipeline/ quality/ queue/
+  - reliability/ rollback/ runtime/ script_system/ services/ session/ sla/
+  - system_telemetry/ _extensions/
+d:\ZephyrAlpha\src\zephyr\runtime\
 
-审计重点：DatabaseService 访问协议、事件钩子 boot_hooks 注册、永久系统四要素、a2a_protocol 三层协调、sla_monitor 事件触发。
+审计重点：DatabaseService 访问协议、事件钩子 boot_hooks 注册、永久系统四要素、a2a_protocol 三层协调、sla_monitor 事件触发、h1_redis_hot 热数据层契约、budget_enforcement 与治理预算三纪律联动。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -2528,6 +3326,7 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -2561,6 +3360,7 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -2616,12 +3416,13 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -2639,17 +3440,27 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -2662,31 +3473,78 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -2698,20 +3556,18 @@ d:\ZephyrAlpha\src\zephyr\infrastructure\        （全部子目录）
 
 d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
   - _cross_layer/ adaptation/ ai_guards/ alerts/ api/ blueprint_tools/
-  - capacity_governance/ compensation/ context/ contracts/ dependency/ draft/
-  - evaluation/ events/ foundation/ infra/ io/ knowledge/ lifecycle/
+  - capacity_governance/ compensation/ context/ contracts/ database/ dependency/ draft/
+  - evaluation/ events/ foundation/ infra/ io/ lifecycle/
   - maintenance/ observability/ protocols/ queue/ reliability/ resilience/
   - schema/ security/ session/ shared_util/ utils/ versioning/
-  - contracts/ 含 core/errors/execution/market/portfolio/risk
-  - protocols/ 含 a2a/layer3_coordination
 
-审计重点：cross_layer_contracts.yaml 真源唯一性、共享工具去重（frontmatter_utils 在 io/ 和 utils/ 都有？）、event_bus 升级策略、ssot_guard。
+审计重点：cross_layer_contracts.yaml 真源唯一性、共享工具去重（frontmatter/原子写入/YAML 加载等重复簇是否收敛唯一实现）、event_bus 升级策略、ssot_guard、shared/database 访问协议统一入口。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -2720,6 +3576,7 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -2753,6 +3610,7 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -2808,12 +3666,13 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -2831,17 +3690,27 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -2854,55 +3723,100 @@ d:\ZephyrAlpha\src\zephyr\shared\                （全部子目录）
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
 
-## === AI-16 自治集成知识前端 ===
+## === AI-16 自治集成前端 ===
 
 ```
-你是项目审计 AI-16，负责审计以下区域（自治集成知识前端）：
+你是项目审计 AI-16，负责审计以下区域（自治集成前端）：
 
-d:\ZephyrAlpha\src\zephyr\autonomy_core\         （api/assembly/context/core/infrastructure/integration/management/models/parsing/services/skills/support + 根文件）
-d:\ZephyrAlpha\src\zephyr\autonomy_perm\         （api/core/infrastructure/models/red_blue_validator/services）
-d:\ZephyrAlpha\src\zephyr\integration\           （api/behavioral_admission/budget_enforcer/contracts/core/governance/infrastructure/layer1_discovery/layer2_communication/layer3_coordination/local_model/mcp/services/shared/vector_memory + 根文件）
-d:\ZephyrAlpha\src\zephyr\knowledge\
+d:\ZephyrAlpha\src\zephyr\autonomy_core\         （context/integration/skills）
+d:\ZephyrAlpha\src\zephyr\integration\           （behavioral_admission/budget_enforcer/local_model/mcp/shared/vector_memory）
 d:\ZephyrAlpha\src\zephyr\frontend\              （api/core/dashboard/infrastructure/models/services + interface_base.py）
 d:\ZephyrAlpha\src\zephyr\__init__.py
 d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
 
-审计重点：autonomy_core 永久系统（phase_planner/trigger_router/prompt_registry）、integration mcp_server、frontend Panel+HoloViz 技术栈（VIEW-10-FRONTEND-ARCH）、autonomy_perm RBAC。
+审计重点：autonomy_core 永久系统（trigger_router/prompt_registry 等四要素）、integration mcp 服务契约、frontend Panel 技术栈（实验历史 Tab 等，VIEW-10-FRONTEND-ARCH）、service_layer_owners.yaml 责任唯一、已退役域（autonomy_perm/knowledge）无残留引用。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -2911,6 +3825,7 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -2944,6 +3859,7 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -2999,12 +3915,13 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -3022,17 +3939,27 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -3045,31 +3972,78 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -3079,19 +4053,18 @@ d:\ZephyrAlpha\src\zephyr\service_layer_owners.yaml
 ```
 你是项目审计 AI-17，负责审计以下区域（政策架构文档）：
 
-d:\ZephyrAlpha\docs\01_policies_and_standards\   （_registry/catalogs/ + contracts/ + schemas/ + vocabularies/ + policies/ + rules/trae_001-081 + templates/）
-d:\ZephyrAlpha\docs\02_enterprise_architecture\  （00_overview_entry/ + 01_global_architecture_diagram/ + 02_domain_architecture_docs/ + 03_governance_reports/ + 04_architecture_principles_decisions/ + generated/ + sample/ + target_architecture/ + ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） + 建议.md + migration-registry.yaml）
-d:\ZephyrAlpha\docs\registry_of_registries.yaml
-d:\ZephyrAlpha\docs\08_knowledge\                （01_raw_intake/ + 02_triaged/ + data/）
-d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_debt_registry_v2.md + architecture_decisions_pending.md + 各类历史文档）
+d:\ZephyrAlpha\docs\01_policies_and_standards\   （policies/ + rules/ + sop/ + templates/ + _registry/catalogs/ 全部登记表 yaml）
+d:\ZephyrAlpha\docs\02_enterprise_architecture\  （00_overview_entry/ + 01_global_architecture_diagram/ + 02_domain_architecture_docs/ + 03_governance_reports/ + 04_architecture_principles_decisions/ + 05_dataflow_architecture/ + 06_decision_architecture/ + 07_trading_decision_architecture/ + 08_algorithm_overview/ + generated/ + target_architecture/）
+d:\ZephyrAlpha\docs\registry_of_registries.yaml  （ROOR，注册表的注册表）
+d:\ZephyrAlpha\docs\_archive\                    （各类历史文档）
 
-审计重点：YAML 规则真源唯一性（trae_001-060）、architecture_issue_registry 与 #ARCH-NNN 引用一致性、capability_canonical_file_registry 登记、词表 vocabulary 动态加载、ai_first_governance_principles.md（文档已删 2026-07-30，git 历史可查） 裁定执行情况 + trae_081_audit_dimensions_framework.yaml 维度防复发机制。
+审计重点：YAML 规则真源唯一性、architecture_issue_registry 与 #ARCH-NNN 引用一致性、candidate_module_registry（CAND）与 ARCH 登记分流、capability_canonical_file_registry 登记（含 creation_token/aliases）、module_translation_registry plain_zh 中文翻译覆盖、registry_of_registries.yaml 实测业务注册表清单、词表 vocabulary 动态加载、派生文档目录（05/06/07 等生成器产出）禁手改禁入 git。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -3100,6 +4073,7 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -3133,6 +4107,7 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -3188,12 +4163,13 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -3211,17 +4187,27 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -3234,31 +4220,78 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -3269,19 +4302,18 @@ d:\ZephyrAlpha\docs\_archive\                    （03_modules/ + architecture_d
 你是项目审计 AI-18，负责审计以下区域（模块文档工作区）：
 
 d:\ZephyrAlpha\docs\03_modules\                  （全部子目录）
-  - _cross_layer/（_b_track_interfaces/ + 各模块 blueprint.md/index.md）
-  - _domain_*/（50个域的 blueprint.md/index.md）
-  - _master_blueprint/ _system_master/
-  - blueprint_registry.yaml path_ownership_map.yaml system_pathway_registry.yaml template_registry.yaml
-d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + module_migration/ + p2_review_reports/ + research_notes/ + 各类工作中文档）
+  - _cross_layer/ _master_blueprint/ _system_master/
+  - _domain_*/（32 个域目录的 blueprint.md/index.md，含 _domain_regime/_domain_plan_engine 等）
+  - blueprint_registry.yaml system_pathway_registry.yaml template_registry.yaml
+d:\ZephyrAlpha\docs\_working\                    （audit/ + reports/ + research_notes/）
 
-审计重点：blueprint_registry.yaml 唯一真源、蓝图间引用用 module_id（非路径）、frontmatter 状态字段流转、_working 语义（只保留进行中，已完成即退役）、path_ownership_map 一致性。
+审计重点：blueprint_registry.yaml 唯一真源、蓝图间引用用 module_id（非路径）、frontmatter 状态字段流转、蓝图 §0.6 五图对齐视图与实物一致（五图对齐蓝图轴）、_working 语义（只保留进行中，已完成即退役）、path_ownership_map 一致性。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -3290,6 +4322,7 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -3323,6 +4356,7 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -3378,12 +4412,13 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -3401,17 +4436,27 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -3424,33 +4469,78 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
 
-注：本分工方案文件（docs/_working/audit_assignment/）本身属于 AI-18 责任范围，但作为审计元任务产物，不作为被审计对象。
 ```
 
 ---
@@ -3460,26 +4550,15 @@ d:\ZephyrAlpha\docs\_working\                    （03_governance_reports/ + mod
 ```
 你是项目审计 AI-19，负责审计以下区域（测试）：
 
-d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ 个测试分类）
-  - a2a/ agent/ agent_rbac/ ai/ alpha_signal/ architecture/ asset_inventory/
-  - audit/ automation/ autonomy/ ba/ blueprint/ bridges/ budget/ canary/
-  - capability/ capacity/ ce/ chaos/ code_dedup_engine/ cold/ config/ context/
-  - contracts/ cross/ data/ db/ decision/ dependency/ drift/ e/ escalation/
-  - event/ external/ f_lifecycle/ federated_learning/ feedback/ file/ fix/
-  - fixtures/ fle/ gate/ git/ governance/（含 access_control/adversarial/audit/budget/code_dedup/code_quality/commit_gates/compliance/context_governance/data_layer/delegation/depgraph/drift/escalation/governance_e2e/governance_misc/integration/lifecycle/observability/ops/orchestrator/persistence/resilience/rule_bridge/rule_enforcement/scripts_governance/security/shared/trading）
-  - guard/ infrastructure/ intent/ io/ kb/ knowledge_engine/ llm_security/
-  - memory/ ml_experiment/ model/ multi/ observability/ orchestrator/ path/
-  - phase/ pipeline/ prompt/ resource/ risk/ rollback/ rule/ safety/ self_check/
-  - semantic_auditor/ session/ skill/ task/ temporal/ trading/ trae_rules/
-  - unit/ utils/ zephyr/ + conftest.py
+d:\ZephyrAlpha\tests\                            （全部子目录，102 个顶层测试分类 + conftest.py）
 
-审计重点：测试隔离（禁止污染生产 depgraph）、测试文件 #ARCH-NNN 豁免、conftest.py 共享 fixture、测试覆盖率、governance/rule_enforcement 线性增长建子目录（GOV-DOC-018）。
+审计重点：测试隔离（禁止污染生产 depgraph/governance.db）、测试文件 #ARCH-NNN 豁免、conftest.py 共享 fixture、测试覆盖率、线性增长目录建子目录裁定、ops_guard 同进程补丁残留（uninstall_inprocess_enforcement + autouse fixture）、ZEPHYR_SESSION_ID 继承剔除（env.pop 从无 session 起点验证）、pytest_<pid> 残留目录清理、测试与源码域映射完整性。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -3488,6 +4567,7 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -3521,6 +4601,7 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -3576,12 +4657,13 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -3599,17 +4681,27 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -3622,31 +4714,78 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
@@ -3657,25 +4796,17 @@ d:\ZephyrAlpha\tests\                            （全部子目录，约 80+ �
 你是项目审计 AI-20，负责审计以下区域（脚本）：
 
 d:\ZephyrAlpha\scripts\                          （全部子目录）
-  - _archive/（construction/ + governance/ + migration/ + ops/）
-  - arch_guard/（_tools/ + fitness_functions/ + import_linter/ + 根文件）
-  - construction/ context/ governance/（_archive/ + _shared/ + _sync/ + _tasks/ + d1_structure/d2_links/d3_metadata/d4_paths/d5_architecture/d6_security/d7_code/d8_doc_sync/d9_knowledge/ + generators/ + meta/ + migrate_sqlite_to_pg/ + observability/ + repair/ + apply_depgraph.py + generate_project_depgraph.py 等）
-  - hooks/ kb/ mcp/ reports/
-  - 根文件：a2a_full_verification.py calibrate_model_diff.py check_naming_convention.py
-    diagnose_breadth_failed.py dm90971_add_test_headers.py fix_freeze_manifest.py
-    fix_orphan_all.py generate_manifest.py generate_pathway_registry.py
-    git_commit.py git_guard.py ide_health_service.py lock_files.py
-    post_checkout_guard.py print_exam_summary.py quick_profile.py
-    registry_scope.yaml rollback.py run_deepseek_v4_exam.py run_ollama_exam.py
-    scaffold.py script_manifest.yaml
+  - _archive/ arch_guard/ backup/ ch/ construction/ context/ demos/ hooks/ mcp/ migration/ ml/ ops/ pre_commit/ reports/ tests/
+  - governance/（_archive/ + _shared/ + _sync/ + _tasks/ + d1_structure ~ d12_ai_hallucination/ + data_quality/ + generators/ + git_hooks/ + meta/ + migrate_sqlite_to_pg/ + migrations/ + observability/ + oneoff/ + repair/ + reports/ + shared/ + vms/ + apply_depgraph.py + generate_project_depgraph.py 等）
+  - 根文件：git_commit.py git_guard.py session_worktree.py ops_guard.py lock_files.py rollback.py scaffold.py script-manifest.yaml registry_scope.yaml 等
 
-审计重点：apply_depgraph 全景图真源（禁止直连数据库）、generate_project_depgraph 运营态刷新、git_commit.py 已废弃（改用 GitCommitGateway/session_worktree_commit）、一次性脚本 TTL 退役、d1-d9 治理脚本命名前缀规则、capability_canonical_file_registry 登记。
+审计重点：apply_depgraph 全景图真源（禁止直连数据库）、generate_project_depgraph 运营态刷新、git_commit.py GitCommitGateway 唯一合法提交入口、d1-d12 治理脚本命名前缀规则、一次性脚本 TTL 退役（oneoff/）、capability_canonical_file_registry 登记、ensure_ai_wrapper_injection.ps1 等 ps1 纯 ASCII（INJ-007）、worktree 内 DB 写入 REFUSED 纪律。
 
 将上述区域内的所有现有文件视为"本会话已完成的工作"进行审查。结论直接在对话中给出，禁止创建任何报告文件。
 
 审计指令（完整执行）：
 
-# 对话全量工作审查指令
+# 对话全量工作审查指令（v2）
 
  ## 0. 执行前提
  0.1 本指令只审查本会话已完成的工作，禁止创建任何新文件/规则/脚本/登记/报告。发现问题按"先报告→再修复→再自检"分轮次处理，禁止边审边改。
@@ -3684,6 +4815,7 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
  0.4 输出语言中文，专业术语中英并列；只给结果不描述过程。
  0.5 规则描述自包含，无需去查外部规则文件。
  0.6 每条结论必须基于实际读取/检索/验证。
+ 0.7 数量/清单一律实测：业务注册表数量以 docs/registry_of_registries.yaml 实测为准，gate/reconciler/门禁数量以规则目录实测为准，禁止凭记忆报数。
 
  ---
 
@@ -3717,6 +4849,7 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
  2.2 真源唯一：是否存在多真源同步（YAML↔DB↔代码常量↔文档）。多真源必须收敛为单真源+派生缓存，禁止双向同步。重点：改动是否引入了第二决策点（如新增第二个退出码分支、第二个校验入口）。
  2.3 派生关系：缓存/索引/派生数据是否标注真源来源，单向派生。
  2.4 死代码：迁移/重构替换使用点后是否遗留定义点死代码。
+ 2.5 编号唯一：新增错误码/门禁号/注册表条目号/tracker 遗留项号必须全仓 grep 唯一（有 ZA-RK-0009 重码、#77-79 撞号重编先例）；分配 tracker 编号前必须全文件 grep 既有最大号。
 
  ---
 
@@ -3772,12 +4905,13 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
  7.3 物理路径结构：是否平铺优先，无不当嵌套；功能域平级→物理路径平级。
  7.4 强制性：未来AI是否被门禁/规则强制按规则命名。
  7.5 绝对路径：所有代码/配置/脚本中的路径引用是否为绝对路径。
- 7.6 BOM/换行符：新建文件是否含意外BOM字符（\ufeff）；换行符是否一致（LF）。
+ 7.6 BOM/换行符：新建文件是否含意外BOM字符（U+FEFF）；换行符是否一致（LF）。
+ 7.7 脚本编码安全：新建/修改 .ps1 必须纯 ASCII（注释/日志串一律英文）。无 BOM 含中文的 .ps1 会被 PS5.1 按 ANSI(GBK) 误读、多字节序列吞结构字符，语法错误报在结构闭合点而非中文处，极具迷惑性（门禁 INJ-007 ENCODING-SAFETY 硬拦）。
 
  ---
 
  ## 八、影响同步审查 [适用:全类·子项按类型触发]
- 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口。
+ 8.1 AGENTS.md同步 [全类]：本会话新建/修改的功能/规则/门禁是否在 AGENTS.md 有对应说明；是否仍为"新AI第一读"的准确入口；是否仍满足 ≤3000 行硬上限（高层文档只放框架与硬边界，细节参数下沉讨论文档）。
  8.2 索引源与文档索引同步 [全类]：变更是否同步到 capability registry / blueprint registry / architecture_issue_registry / 文档索引 / 跨层契约文件（一次反查多源，不逐个检索）。
      蓝图同步判定（8.2必做子项）：先判定本会话工作是否涉及蓝图——满足任一即"涉及"（列举不穷尽，AI可按任务特性自行扩展判据）：
      - 改动落在某模块 blueprint.md 范围内，或改动后该模块应有/已有蓝图
@@ -3795,17 +4929,27 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
  - 新建功能性脚本是否登记到 capability registry（含 aliases + creation_tokens）
  - 代码中 #ARCH-NNN 引用是否在 architecture_issue_registry 有对应条目
  - 完整性校验数据库是否登记新增/变更脚本的 golden hash
+ 8.5 注册表生态同步 [仅B/C/E类·当新增模块/条目/注册表时]：
+ - 业务注册表归属：新条目落入正确业务注册表；业务注册表总数/清单以 registry_of_registries.yaml 实测为准；新增业务注册表本身必须走 CAND→ROOR 流程登记
+ - 登记分流正确：功能/增强点子 → candidate_module_registry.yaml（CAND-XXX-NNN）；bug/决策/治理/技术债 → architecture_issue_registry.yaml（#ARCH-XXX），禁止混投
+ - 新模块三连带：module_translation_registry.yaml 登记 plain_zh 中文翻译条目；生成 creation_token 并登记 capability_canonical_file_registry.yaml；architecture_issue_registry.yaml 登记 ARCH 条目
+ - 编号格式 {PREFIX}-{DOMAIN}-{NNN}（FCT-/STR-/IND- 等）；同义条目走 aliases 合并不另立条
+ - 条目状态机：新登记条目 candidate→production 须有实证依据（如数据资产需盘前+收盘双调度跑通）
 
  ---
 
  ## 九、版本控制审查 [适用:全类]
  9.1 全部变更是否已 git commit。
- 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway > 裸git commit（禁止）。
+ 9.2 提交方式合规性优先级：worktree模式 session_worktree_commit > GitCommitGateway（scripts/git_commit.py，串行锁+stash隔离+GW标记通道）> 裸git commit（禁止）；禁止 --no-verify 绕过 pre-commit 门禁。
  9.3 是否经过 pre-commit 门禁全量通过。
  9.4 备份先行：改 depgraph 数据库前是否已自动 PG 备份（backup_pg_architecture 事件触发，trae_054 v1.6.0，非 git commit）；oneoff 脚本运行前是否 git commit 脚本 [仅D类]。
  9.5 worktree君子协定：一个任务=1次start+多次Edit/Write+1次commit+1次merge；held_files重叠是否走逃生通道。
  9.6 时间序依赖：会话内多次修改同一文件的最终状态是否正确 [仅当多文件或多轮改动时]。注：时序违规判定依赖11.1 L1铁律（施工前是否先登记depgraph），两者联动审查。
  9.7 并发冲突：是否与其他活跃会话存在 held_files 重叠或 worktree merge 失败遗留；治本变更未提交前是否启动并发AI对话（禁止）[仅当多会话场景]。
+ 9.8 Gateway 提交姿势 [全类·当提交时]：
+ - AI 工作流天然"先编辑后 claim"→claim 基线非空→FOREIGN-CHANGE-DETECTION 必拦；sanctioned 通道=commit 命令加 --allow-overlap（留 [GW:sid:overlap] 审计标记）
+ - 认领前序 WIP：--adopt-prior-work 必须加在 commit 命令上（commit 主流程会重跑 claim_files，把前置 claim-only 存的空基线覆盖回真基线），禁止拆"claim-only + 裸 commit"两步
+ - 受保护路径（AGENTS.md/architecture_model//rules/）commit 消息须含 [ARCH-APPROVAL:ISSUE_ID] 且该 issue 已登记；新增 #ARCH-XXX 引用必须已登记（ARCH-REFERENCE 门禁拦悬空引用）
 
  ---
 
@@ -3818,31 +4962,78 @@ d:\ZephyrAlpha\scripts\                          （全部子目录）
 
  ---
 
- ## 十一、depgraph 全景图依赖登记审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
+ ## 十一、depgraph 全景图与五图对齐审查（治本铁律 L1+L2） [仅C/D类·当新建永久系统或依赖变更时]
  11.1 L1铁律（依赖关系先行）：每个模块施工前（写第1行业务代码前）是否已通过 apply_depgraph 将依赖关系（模块间/契约/事件/外部域）登记到 depgraph 设计态（status=planned）。禁止"先施工后补登记"或"施工中临时编造依赖"。
  11.2 L2铁律（设计态基于最新运营态）：写入设计态前是否确保运营态（production节点）已就绪。执行方法：通过 apply_depgraph --query-production（或等价查询命令）拉取当前运营态节点快照，对比本次设计态登记的依赖关系是否在运营态中存在对应实体；若运营态为空或过期，必须先运行 generate_project_depgraph.py 刷新运营态再写入设计态。
  11.3 状态流转：施工完成并通过验证后，status 是否从 planned→production。
  11.4 禁止直连+访问协议：depgraph 修改必须通过 apply_depgraph，禁止直接改数据库；访问必须走规定连接协议（统一连接函数+读优先）。
  11.5 测试隔离：测试域是否污染生产 depgraph。
  11.6 备份先行：改 depgraph 前是否已自动 PG 备份（backup_pg_architecture）；oneoff 脚本是否先 git commit。
+ 11.7 五图对齐（trae_080_panorama_alignment 铁律）：
+ - 五图 = 前四图以 module_id 为对齐 key（depgraph / dataflowgraph / decisiongraph / blueprint.md）+ 第五图 battle_map 以 step_id 为对齐 key + 双向锚点（BM-INV-002/007）
+ - 验证（施工前 MUST）：python scripts/governance/d5_architecture/generators/align_all.py —— 五图两轴问题须干净（或已知可接受）
+ - 门禁：GATE-PANORAMA-ALIGNMENT（priority=830）domain_mismatches>0 硬阻断；orphans/state_drifts warn-only（君子协定，post-merge reconciler 兜底）
+ - 修复入口：python scripts/governance/sync_panorama_module.py --all
+ - 模块 blueprint.md §0.6 五图对齐视图是否与实物（depgraph 节点/数据流/决策流/battle_map 步骤）一致
+ - 派生文档目录（docs/02_enterprise_architecture 下 05_dataflow_architecture/06_decision_architecture/07_trading_decision_architecture 等）由生成器产出，禁止手改、禁止入 git
 
  非C/D类一行声明 N/A。
 
  ---
 
- ## 十二、审查结论与零问题闭环 [适用:全类]
- 12.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
- 12.2 结论必须包含：
+ ## 十二、治理预算与门禁纪律审查 [仅E类·当门禁/reconciler/规则/登记表变更时]
+ 12.1 治理预算三纪律（I-GOV-3 v2 / ARCH-GOV-BUDGET-002；gate≤54/reconciler≤121 绝对数量硬上限已废除降级软参考）：
+ - D1 开发前查重：能合并必须合并、能精简必须精简
+ - D2 目的声明必填：说不清防什么不得注册
+ - D3 证据年检：零触发进退役候选 + 体检指标（单 gate 体量上限、月增量突增告警）
+ 12.2 reconciler 操作边界：只能执行 warn/skip/fix-in-place，禁止 action="commit"。
+ 12.3 派生产物纪律：可由 DB/源码/YAML 重现的文档禁止入 git。
+ 12.4 DRIFT-WATCHDOG 认知：watchdog 锚主仓工作区，worktree 内写入不触达；主仓 merge 事务窗写/超窗 reconciler 派生写会触发"未登记写入方漂移"banner，但 commit 落地后自愈消音（fail-open 不阻断）——见 banner 先查 reconcile_execution_log 是否 clean，勿当事故处理。
+ 12.5 新增模块必须登记：新模块必须在 architecture_issue_registry.yaml 登记 ARCH 条目（与 8.5 三连带联动）。
+
+ 非E类一行声明 N/A。
+
+ ---
+
+ ## 十三、会话工程与工具链纪律审查 [适用:全类]
+ 13.1 worktree 权威纪律：仓级共享状态（governance.db/depgraph/registry）所有权归主仓；worktree 内生成器 DB 写入重建应被 REFUSED（exit 2+正确姿势指引，dry-run 放行）；worktree 增量登记走 apply_depgraph --add-design-node，merge 后主仓重建自然吸收，abort 自删。
+ 13.2 路径锚定分型：anchor_main_root（单级父目录判定，嵌套 tmp 安全）用于仓根语义入参；strip_session_worktree（深段剥离）仅限 REPO_ROOT 类恒仓根场景。
+ 13.3 IDE 脏缓冲区核实：关键文件改后须进程外核实（Select-String/git diff；mtime 不变或回拨即可识别）；mtime 回拨会使 __pycache__ 陈旧缓存欺骗 import（文件文本新版、import 行为旧版）——根治=以 git blob 为基 python 直写+同进程回读字节校验+立即 Gateway 提交+git show 验证，提交前不信任何工具回显。
+ 13.4 测试进程补丁残留：同进程 run_worker 残留补丁会误拦后续测试清理，须 uninstall_inprocess_enforcement + autouse fixture。
+ 13.5 临时文件全清：测试 log、commit message 文件、pytest_<pid> 残留目录、探针脚本（_probe_*/_test_* 等）一律不留仓。
+ 13.6 AI 会话归因：spawn 子进程继承 ZEPHYR_SESSION_ID 属归因聚合特性；测试须 env.pop 剔除继承值，从"无 session"起点验证。
+ 13.7 AI RunCommand 通道防护：powershell -NoProfile 硬编码（四 profile 变体全抑制）；注入点=进程级 profile 快照 + ensure_ai_wrapper_injection.ps1 幂等注入（marker ZEPHYR-AI-WRAPPER-INJECT）+ 计划任务每分钟保活；AI 归因 session=ai-<toolhost_pid>-<启动ts> + 审计 channel 字段。
+
+ ---
+
+ ## 十四、业务领域专项审查 [按域触发·仅当改动落入对应域]
+ 14.1 风险优先 [风控/回撤]：风险相关模块（drawdown_controller/var_calculator/kill_switch）先于策略模块施工至 production（风险优先原则：生存底线是 alpha 迭代前提）。
+ 14.2 回测环境三件套 [回测]：universe/benchmark/cost_model 施工优先级高于被测对象三件套（factor/strategy/technical_indicator）。
+ 14.3 技术指标规范 [技术指标]：传统技术指标（MA/MACD/KDJ/RSI/BOLL 等）全部基于 OHLCV K 线计算，覆盖 1min/5min/15min/30min/60min/120min/日/周/月 9 个周期；120min 周期通过 60min K 线两根聚合生成。
+ 14.4 情绪周期与 regime 分工 [择时/节流]：情绪周期=sleeve 内 alpha 择时（买卖什么）；regime=市场级风险节流（多谨慎）；两者正交，禁止混用或互相替代。
+ 14.5 PIT 纪律 [数据/回测]：零前瞻偏差/幸存者偏差；市场元数据（涨跌停/停复牌/ST/指数成分/基础信息）双调度（盘前+收盘）与严格 PIT 语义。
+ 14.6 图形形态 [形态识别]：chart_pattern_registry 已收敛（候选池穷尽判定成立）；新形态须满足重开条件（新学术流派/新 A股战法出现公认量化定义）按 CAND 流程补登；同义形态走 aliases 合并不另立条。
+
+ 不涉及的域一行 N/A。
+
+ ---
+
+ ## 十五、审查结论与零问题闭环 [适用:全类]
+ 15.1 审查结论直接在对话里给出，禁止创建任何报告文件（MD/txt/json等一律不创建）。报告形式自行决定，原则：结论清晰、问题可定位、修复可验证。
+ 15.2 结论必须包含：
  - 本会话工作完成度总览（多少项已完成/部分完成/未完成）
  - 本次跳过条款清单 + 跳过理由（来自0.5分类）
  - 发现的问题清单（按严重度排序：阻断/警告/建议）
  - 每条问题的修复方案 + 验证命令 + 回滚命令
  - 蓝图同步结论（涉及/不涉及 + 同步状态；不涉及时一行 N/A）
+ - 五图对齐结论（align_all.py 两轴结果；不涉及时一行 N/A）
+ - 注册表生态结论（ROOR 实测/CAND-ARCH 分流/翻译/creation_token/编号唯一；不涉及时一行 N/A）
  - 最终判定：通过 / 不通过
- 12.3 零问题闭环分级：
+ 15.3 零问题闭环分级：
  - A类（轻量改动）：1轮零问题即通过
  - B/C/D/E类：连续2次零问题才通过
- 12.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+ 15.4 最终自检：本指令所有适用条款是否已全部执行，无遗漏。
+
 ```
 
 ---
