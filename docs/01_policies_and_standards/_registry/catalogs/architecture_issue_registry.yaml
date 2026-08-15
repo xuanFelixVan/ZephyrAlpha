@@ -16840,3 +16840,11 @@ entries:
   status: open
   created: '2026-08-15'
   last_updated: '2026-08-15'
+- issue_id: '#ARCH-078'
+  title: task_repo._make_sub_task 子卡 task_id 违 Task pattern（auto_split 全拆分路径瘫痪）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/governance/persistence/task_repo.py _make_sub_task 以 f"{parent.task_id}{seq_suffix}"（如 OPS-1-d1/-f1/-a1/-t1）生成子卡 task_id，而 Task.task_id pattern=^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$ 不允许后缀——repo 自己生成的 id 过不了同项目模型校验，auto_split_task 全部四条拆分路径（by_deliverable/by_file/by_acceptance/by_target）产出即 ValidationError（_create_sub_cards 吞掉后返回 []）。tests/automation/test_auto_split.py 9 项失败全系此矛盾（另 4 项测试侧演进已修：determine_split_strategy 补 requested 参数、nonexistent 行为改返回 []、directive 必填）。同时 testing.py make_valid_task 工厂缺 Task 新增必填 description 已补（8 项转绿）。待裁定二选一：(a) pattern 扩子卡后缀（如允许 -[dfat]\d+$）；(b) _make_sub_task 改用合规独立 seq 编号（依赖链另行记录）。9 项测试已 xfail(strict=False) 留痕。'
+  fix_phase: 待裁定（pattern 扩后缀 / 子卡改合规 seq）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
