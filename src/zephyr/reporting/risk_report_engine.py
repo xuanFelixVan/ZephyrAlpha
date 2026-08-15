@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidRiskReportInputError(ZA-RPT-0003)
+# [ERROR_CONTRACT] InvalidRiskReportInputError(ZA-RPT-0007)
 # [TESTS] tests/reporting/test_risk_report_engine.py
 # [A_module] module_id=MOD-RPT-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -57,7 +57,7 @@ D_REPORTING — Risk Report Engine (风险报告引擎)
 #   name_zh: ② 日度风险摘要生成
 #   name_en: RiskReportEngine.generate_daily
 #   intro: 校验两输入 portfolio_id 一致后，把风险快照与指标合并成单日风险全貌报告
-#   desc: portfolio_id 不一致抛 ZA-RPT-0003；risk_level=A1(snapshot.overall_risk_score)；report_date=as_of_date→YYYY-MM-DD；汇总 VaR/CVaR/回撤/杠杆/集中度/告警
+#   desc: portfolio_id 不一致抛 ZA-RPT-0007；risk_level=A1(snapshot.overall_risk_score)；report_date=as_of_date→YYYY-MM-DD；汇总 VaR/CVaR/回撤/杠杆/集中度/告警
 #   inputs: I1 I2 A1
 #   outputs: DailyRiskSummary
 # - id: A3
@@ -72,7 +72,7 @@ D_REPORTING — Risk Report Engine (风险报告引擎)
 #   name_zh: ④ 周度风险深度聚合
 #   name_en: RiskReportEngine.generate_weekly/_determine_trend
 #   intro: 聚合一周日度报告算 VaR/回撤/评分均值极值，并用前后半段均值差判定趋势
-#   desc: 按日期排序；avg/max/min(var_1d_95)；max_drawdown 取 min（负值最负=最差）；趋势=后半段均值-前半段均值，>0.05→RISING，<-0.05→FALLING，否则 STABLE；空列表抛 ZA-RPT-0003
+#   desc: 按日期排序；avg/max/min(var_1d_95)；max_drawdown 取 min（负值最负=最差）；趋势=后半段均值-前半段均值，>0.05→RISING，<-0.05→FALLING，否则 STABLE；空列表抛 ZA-RPT-0007
 #   inputs: I3
 #   outputs: WeeklyRiskDeep
 #   invariant: 周度趋势前后半段比对
@@ -80,7 +80,7 @@ D_REPORTING — Risk Report Engine (风险报告引擎)
 #   name_zh: ⑤ 月度风险治理聚合
 #   name_en: RiskReportEngine.generate_monthly
 #   intro: 聚合一个月日度报告，按风险等级统计天数分布和 high/critical 天数
-#   desc: month=首条 report_date[:7]；distribution[level]=天数计数；high_risk_days/critical_risk_days 分别统计；avg_var/max_var_99/avg_dd/avg_score；空列表抛 ZA-RPT-0003
+#   desc: month=首条 report_date[:7]；distribution[level]=天数计数；high_risk_days/critical_risk_days 分别统计；avg_var/max_var_99/avg_dd/avg_score；空列表抛 ZA-RPT-0007
 #   inputs: I3
 #   outputs: MonthlyRiskGovernance
 #   invariant: 月度分布按RiskLevel统计天数
@@ -137,7 +137,7 @@ _logger = logging.getLogger(__name__)
 class InvalidRiskReportInputError(ZephyrBaseError):
     """风险报告输入非法——空列表/缺少必要字段/类型不匹配。"""
 
-    error_code = "ZA-RPT-0003"
+    error_code = "ZA-RPT-0007"
 
 
 # ── 枚举 ──

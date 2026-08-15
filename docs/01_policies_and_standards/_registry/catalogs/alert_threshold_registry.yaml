@@ -7,6 +7,8 @@
 # 消费方式：新增模块从本注册表读阈值（fail-closed，缺文件/缺条目直接报错，禁止码内第二真源）；
 #           存量模块码内常量仍为其代码真源，本表登记其锚点供复盘审计（source_code 字段），统读改造登记为后续治理项。
 # status 口径：active=代码在用（锚点实证）/design=设计态（备忘已定、代码未落）/pending_adjudication=判据机制已施工、标准值待 Owner 裁定（55 号 §7⑤）。
+# 2026-08-15 v1.1.0：§7⑤ 四条 pending_adjudication（THD-RETIRE-001/002/003 + THD-DEVIATION-003）经 Owner 裁定全部转正 active——
+#   裁定逻辑=判据为评审触发器非自动关停，误触发成本≪漏触发成本，风险优先取早触发侧；校准点=首批上线数据回归（PLV 周期）。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -238,10 +240,10 @@ thresholds:
     severity_action: "偏离周报标注（不单独告警，供周复盘「偏离与告警事件」段消费）"
     source_code: "src/zephyr/risk/core/strategy_deviation_monitor.py::StrategyDeviationMonitor（本批施工）"
     consumer: "src/zephyr/risk/core/strategy_deviation_monitor.py (MOD-RK-23)"
-    status: pending_adjudication
-    doc_ref: "55_monitoring_review.md §3.4/§7②（两口径皆备；相关下限默认值待 Owner 裁定）"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.4/§7②（两口径皆备；0.5 于 2026-08-15 Owner 裁定转正）"
     tags: [偏离, 相关, 复盘]
-    evidence: "55 号 §3.4 双口径之一；默认 0.5 为本批占位值，待首批上线数据回归校准"
+    evidence: "55 号 §3.4 双口径之一；0.5 裁定转正——标注态消费（不单独告警），误报成本=周报一行标注；首批上线数据回归校准点"
     last_verified: '2026-08-15'
 
   # ============================================================
@@ -633,10 +635,10 @@ thresholds:
     severity_action: "触发退役评估报告（评审制，人工裁定；不自动退役）"
     source_code: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（本批施工，默认窗口 20 日）"
     consumer: "strategy_retirement_evaluator.py (MOD-GOVERNANCE 伞)"
-    status: pending_adjudication
-    doc_ref: "55_monitoring_review.md §3.5/§7⑤（候选：滚动 20 日跑输基准 >5%，待首批上线前裁定）"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.5/§7⑤（2026-08-15 Owner 裁定转正：滚动 20 日跑输基准 >5%）"
     tags: [退役, 跑输, 评审]
-    evidence: "55 号 §7⑤ 候选一；LuxAlgo 2026-08 研究锚点（滚动 expectancy 滑向 0）"
+    evidence: "55 号 §7⑤ 候选一经裁定转正；LuxAlgo 2026-08 研究锚点（滚动 expectancy 滑向 0）；裁定理由=评审触发器非自动关停，误触发成本=一份评估报告，风险优先取早触发侧"
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-RETIRE-002"
@@ -650,10 +652,10 @@ thresholds:
     severity_action: "触发退役评估报告（评审制）"
     source_code: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（本批施工，默认窗口 60 日）"
     consumer: "strategy_retirement_evaluator.py"
-    status: pending_adjudication
-    doc_ref: "55_monitoring_review.md §7⑤（候选：滚动 60 日 Sharpe<0）"
+    status: active
+    doc_ref: "55_monitoring_review.md §7⑤（2026-08-15 Owner 裁定转正：滚动 60 日 Sharpe<0）"
     tags: [退役, Sharpe, 评审]
-    evidence: "55 号 §7⑤ 候选二；与 THD-DRIFT-004（Sharpe 30 日<0 静态登记）同族互补"
+    evidence: "55 号 §7⑤ 候选二经裁定转正；与 THD-DRIFT-004（Sharpe 30 日<0 静态登记）同族互补；60 日≈一季度零售评估窗"
     last_verified: '2026-08-15'
 
   - threshold_id: "THD-RETIRE-003"
@@ -667,8 +669,8 @@ thresholds:
     severity_action: "触发退役评估报告（评审制）"
     source_code: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（本批施工）"
     consumer: "strategy_retirement_evaluator.py"
-    status: pending_adjudication
-    doc_ref: "55_monitoring_review.md §7⑤（候选：回撤漂移达历史最大回撤 1.5-2x，取区间下限 1.5 占位）"
+    status: active
+    doc_ref: "55_monitoring_review.md §7⑤（2026-08-15 Owner 裁定转正：回撤漂移 1.5x）"
     tags: [退役, 回撤漂移, 评审]
-    evidence: "55 号 §3.5/§7⑤；LuxAlgo 2026-08（回撤漂移 1.5-2x 为评审触发器非自动关停）"
+    evidence: "55 号 §3.5/§7⑤；LuxAlgo 2026-08（回撤漂移 1.5-2x 为评审触发器非自动关停）；裁定取区间下限 1.5=风险优先早触发侧"
     last_verified: '2026-08-15'

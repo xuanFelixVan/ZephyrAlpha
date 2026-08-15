@@ -226,6 +226,20 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 |---|---|---|---|---|
 | 56 | 因子 IC 实证回填无批次归属 | 第四统筹会话（外部评估核查） | 框架全就位（factor_registry v1.32.0 schema 含 ic/ir/decay_halflife/turnover/capacity/因果结构/DASH 稳定性；experiment_registry ic/ic_oos_gap 字段+OOS 脱钩告警；dataflow IC/IR 计算+评估节点；回测三件套 universe/benchmark/cost_model 已建成）——但实证为零：factor_registry 222 个 ic 字段全 null（0 条非空）、策略库 111 条 status null 仅 1 active、多数因子 code_path 空（candidate 合法态）。缺口="因子落码 candidate→experimental + experiment_registry 跑批回填 ic/ir"动作无批次归属；依赖回测跑批，逻辑上排第 5 批（53 模拟实盘）之前或随批。27 号重评条件（首批 3 策略实盘≥3 个月+WeeklyRiskDeep≥12 期+因子衰减基线）即"IC 支撑"获取路径设计。另两项核查结论备查：执行算法套件已落地（6 算法 active+40/41/42 号 merge，评估方表述滞后）；pf_alloc 优化器在第 4 批（34 RegimeMeta）+30 号 Model A 路径，旧 MVO 体系待退役裁定（30 号 §6.9） | ⏳ 等排期裁定（第 5 批前或随批） |
 
+### P1-补4 · AI-MON-001（55 号 G26）批次遗留项裁定闭环（2026-08-15）
+
+> 来源：55 号 G26 施工批次遗留项，施工会话全量调研实证后逐项裁定（第一性原理+风险优先），Owner 指令批准执行。裁定全文见 55 号 v1.1.1 §7③⑤ 与 #ARCH-MON-001/#ARCH-ERRCODE-001/#ARCH-DRIFT-AUTH-001。
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 75 | §7⑤ 退役判据标准值待 Owner 裁定（候选 20 日 5%/60 日 Sharpe<0/漂移 1.5x） | AI-MON-001 | **裁定=全部转正**：判据=评审触发器非自动关停（评审制铁律已落码），误触发成本=一份评估报告 ≪ 漏触发成本=僵尸策略持续亏钱，风险优先取早触发侧；THD-RETIRE-001/002/003+THD-DEVIATION-003 四条 pending_adjudication→active（注册表 v1.1.0），加载器不按 status 过滤故零运行时影响；校准点=首批上线数据回归（PLV 周期）改表即生效 | ✅ 已闭环（2026-08-15） |
+| 76 | §7③ 注册表挂法待裁定（独立 REG-ATH-001 vs 并入 risk_limit_registry） | AI-MON-001 | **裁定=维持独立**：阈值跨 11 类含运维类，risk_limit 9 类 limit_type 管交易限额不覆盖运维阈值，并表造异构 schema 违反 SSoT 分类铁律；迁移成本论证双向成立（留下也是零成本） | ✅ 已闭环（2026-08-15） |
+| 77 | 存量模块码内阈值统读改造（drawdown/health/alert/audit/report 等 8 处） | AI-MON-001 | 维持后续治理项登记——避让 TDEBT/FIX/SIM/RCAN 并发会话不动存量生产模块；本批 test_alert_threshold_consistency.py 已机器锁定注册表↔代码双向一致性（32 active 全量对账），统读改造前无"注册表说谎"风险 | ⏳ 后续治理批 |
+| 78 | 错误码 ZA-GV-0046/0047、ZA-RK-0022/0023、ZA-RPT-0027 未登记 error_code_registry.yaml | AI-MON-001 | **裁定=RK/RPT 两域全量补登**（不只新码——只登新码会让注册表处于半登记说谎态）：23 条含 6 新码（+ZA-RPT-0007，本批 ZA-RPT-0003 与 report_publisher 重码改号）；纯数据零代码风险。实证发现 316 码 vs 登记 208 码全域缺口+15 处存量跨文件重码（ZA-RK-0009 双占用等）+4 前缀未声明——立 #ARCH-ERRCODE-001 专项（改号动存量高敏区代码，择无并发窗口施工） | ✅ 已闭环（2026-08-15，[ARCH-APPROVAL:ARCH-MON-001] 通道） |
+| 79 | AGENTS.md 速查表 REG-ATH-001 未加（PROTECTED-PATHS #9/#41 通道） | AI-MON-001 | **裁定=加入"关键 registry 速查"区**（非 18 业务资产表区——保持 18 计数语义不破；REG-ATH-001 owned_by=governance 非业务资产）；Owner 指令即审批（同 #83 先例），[ARCH-APPROVAL:ARCH-MON-001] 标记落地 | ✅ 已闭环（2026-08-15） |
+| 80 | merge 执行人职责：blueprint_registry/battle_map 重生成 + 3 节点转正核验 + 与 SIM-001/RCAN-001 的 00_index/memo 冲突甄别 | AI-MON-001 | 属 merge 会话职责（#ARCH-70 通道），本批登记不执行 | ⏳ merge 会话执行 |
+| 81 | 观察项两则：①DRIFT-WATCHDOG 判 add_module_translation.py 合法写为漂移 ②GATE-RULE-AUDIT 60s 超时 | AI-MON-001 | ①**实证修正归因框架**：reconcile_execution_log 显示 module_translation_registry 15:32-15:45 内容乒乓三写后自愈——watchdog 按设计捕获真实写冲突存证，非误报；worktree 内脚本写本就不触达主仓锚定的 watchdog，真实缺口=merge 事务窗/live-claim 两授权通道缺失，立 #ARCH-DRIFT-AUTH-001（fail-open 告警+自愈兜底中，降噪增强非紧急）；②**已闭环无需动作**：86184ba5ec 超时 60→180s（AI-TMO-001 已 merge dev 5357ca9b62） | ✅ 已闭环（2026-08-15 裁定） |
+
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |

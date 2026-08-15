@@ -55,17 +55,17 @@ governance/ (桥接层, G-CT-001~008 契约)
 
 | dep_type | 边数 / Edges |
 |----------|------|
-| `import_depends` | 5307 |
-| `test_depends` | 4028 |
-| `config_depends` | 480 |
-| `import` | 294 |
+| `import_depends` | 5310 |
+| `test_depends` | 4032 |
+| `import` | 542 |
+| `config_depends` | 484 |
 | `data` | 49 |
-| `runtime` | 40 |
+| `runtime` | 44 |
 | `contract` | 6 |
 | `event` | 3 |
-| **合计 / Total** | **10207** |
+| **合计 / Total** | **10470** |
 
-**跨域边 / Cross-domain edges：2698** 条（两端节点 domain_id 不同的依赖边）。
+**跨域边 / Cross-domain edges：2757** 条（两端节点 domain_id 不同的依赖边）。
 <!-- AUTO-END:edge_stats -->
 
 > 节点/域总数见 [01_overview.md](01_overview.md) 的 `dependency_stats` AUTO 块。
