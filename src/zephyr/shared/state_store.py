@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.state_store
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.shared.foundation.errors; redis(lazy, 仅 Redis 后端方法内)
 # [CONSUMERS] zephyr.risk.implementations.default_risk_validator; zephyr.risk.stop_loss; zephyr.ex_core.fill_handler; zephyr.ex_core.position_tracker.tracker
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 写入原子(pid-tmp+os.replace); 读损坏必抛StateCorruptError(不静默兜底); UTF-8全程; DedupSet.add幂等
+# [INVARIANTS] 写入原子(pid-tmp+os.replace / Redis SET·SADD 单命令原子); 读损坏必抛StateCorruptError(不静默兜底); UTF-8全程; DedupSet.add幂等; Redis 不可用 fail-fast 抛 StateStoreError(构造即 PING，不静默降级文件后端); Redis 键无 TTL(见过即永久)
 # [MODIFY-GUARD] tests/shared/test_state_store.py
 # [STABILITY] evolving
 # [SAFETY] M
@@ -43,8 +43,25 @@
 设计对标：
   - NautilusTrader crash-only：启动与崩溃恢复共用同一路径，状态外部化。
   - durable_execution.py（本仓）：原子写手法（tmp + os.replace）。
-  - 文件后端为本批默认（JSON/append-only 文件，测试无外部依赖）；
-    Redis 后端按同一接口可后补（53 号 §7 "已有 Redis 基础设施"），消费方零改动。
+  - 文件后端为默认（JSON/append-only 文件，测试无外部依赖）；
+    Redis 后端同接口可选增强（53 号 §7 "已有 Redis 基础设施"，2026-08-17 AI-REDIS-001 落地），
+    消费方零改动——切换走配置注入（make_state_store / make_dedup_set 工厂或构造参数直传）。
+
+Redis 后端（RedisStateStore / RedisDedupSet，与文件后端同接口契约）：
+  - 语义映射：JsonStateStore.save 原子写 → SET 单命令原子；load 三分语义保持
+    （GET nil → None / 可解析 dict → dict / 不可解析或非 dict → StateCorruptError）；
+    AppendOnlyDedupSet.add 幂等 → SADD 返回 1/0（Redis 服务端原子，无需进程内锁）。
+  - crash 容忍等价物：文件后端靠"末行残缺丢弃"，Redis 后端靠服务端持久化（AOF/RDB），
+    客户端进程 crash 不影响已确认写入；实例重启=重连即恢复。
+  - fail-fast：构造即 PING，Redis 不可用抛 StateStoreError（对齐"不可恢复错误 fail-fast"
+    裁定，禁止静默降级文件后端——后端选错是部署事故，必须显式暴露）。
+  - 键规约：`{key_prefix}:{namespace}`，默认前缀 za:state / za:dedup；键无 TTL——
+    kill switch 状态与 fill_id 去重是"见过即永久"记录，TTL 会破坏幂等保证。
+    DB 号隔离沿用 D3 决策（sim=db0/live=db1/治理=db2），由连接配置决定，本层不感知。
+  - 连接配置：禁硬编码——本层不出现任何连接参数，由接线层经
+    zephyr.infrastructure.redis_config.load_redis_config()（config/.env.redis 单真源，
+    fail-closed）建连后注入 redis.Redis 连接（与 H1RedisReader 同款 DI 模式；
+    shared→infrastructure 反向依赖属层级违规，故 config 建连不下沉到本层）。
 
 SSoT: #ARCH-QUANT-002 (architecture_issue_registry.yaml) + 53 号 memo §7
 """
@@ -56,18 +73,29 @@ import logging
 import os
 import threading
 from pathlib import Path
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+
+if TYPE_CHECKING:  # 仅类型注解用；运行时 lazy import（仓内 redis 统一惰性加载惯例）
+    import redis
 
 __all__: Final = [
     "AppendOnlyDedupSet",
     "JsonStateStore",
+    "RedisDedupSet",
+    "RedisStateStore",
     "StateCorruptError",
     "StateStoreError",
+    "make_dedup_set",
+    "make_state_store",
 ]
 
 _logger = logging.getLogger(__name__)
+
+#: Redis 键默认前缀（DB 号隔离由连接配置决定，前缀做库内命名空间隔离）
+DEFAULT_STATE_KEY_PREFIX: Final = "za:state"
+DEFAULT_DEDUP_KEY_PREFIX: Final = "za:dedup"
 
 
 class StateStoreError(ZephyrBaseError):
@@ -80,6 +108,20 @@ class StateCorruptError(StateStoreError):
     """状态记录存在但不可读/损坏——消费方必须按 fail-closed 处理。"""
 
     error_code = "ZA-SH-0050"
+
+
+def _validate_namespace(namespace: str) -> str:
+    """校验 namespace 合法性（双后端共用）：纯名字，禁止路径分隔符与 "." / ".."。
+
+    文件后端防路径穿越；Redis 后端保证键规约 `{prefix}:{namespace}` 干净。
+
+    Raises:
+        StateStoreError: namespace 非法。
+    """
+    safe_name = Path(namespace).name
+    if not safe_name or safe_name != namespace or namespace in (".", ".."):
+        raise StateStoreError(f"非法 namespace: {namespace!r}（禁止路径分隔符）")
+    return namespace
 
 
 class JsonStateStore:
@@ -110,10 +152,7 @@ class JsonStateStore:
 
     def _path_for(self, namespace: str) -> Path:
         """namespace → 状态文件路径（防路径穿越：仅取末段文件名）。"""
-        safe_name = Path(namespace).name
-        if not safe_name or safe_name != namespace or namespace in (".", ".."):
-            raise StateStoreError(f"非法 namespace: {namespace!r}（禁止路径分隔符）")
-        return self._root / f"{safe_name}.json"
+        return self._root / f"{_validate_namespace(namespace)}.json"
 
     def save(self, namespace: str, payload: dict) -> Path:
         """原子写入命名空间状态（pid-tmp + os.replace，RULE-ONE 模板）。
@@ -282,3 +321,300 @@ class AppendOnlyDedupSet:
     def __len__(self) -> int:
         with self._lock:
             return len(self._ids)
+
+
+def _ping_or_raise(conn: redis.Redis, *, what: str) -> None:
+    """构造期 fail-fast 探活：Redis 不可用抛 StateStoreError（禁止静默降级）。"""
+    import redis as redis_lib
+
+    try:
+        conn.ping()
+    except redis_lib.RedisError as exc:
+        raise StateStoreError(
+            f"Redis 不可用（{what} 构造 fail-fast）",
+            details={"error": str(exc)},
+        ) from exc
+
+
+class RedisStateStore:
+    """命名空间 JSON 快照状态存取——Redis 后端（与 JsonStateStore 同接口契约）。
+
+    每个 namespace 对应一个 Redis STRING 键 `{key_prefix}:{namespace}`，值为 JSON 文本。
+    语义映射：save → SET（单命令原子）；load 三分语义保持；delete → DEL。
+
+    Usage:
+        # redis_conn 由接线层经 zephyr.infrastructure.redis_config.load_redis_config()
+        # 建连注入（config/.env.redis 单真源；shared→infrastructure 反向依赖属层级
+        # 违规，故本层不提供 from_config）
+        store = RedisStateStore(redis_conn)
+        store.save("kill_switch", {"active": True, ...})
+        rec = store.load("kill_switch")   # None=无记录 / dict=记录 / raise StateCorruptError=损坏
+
+    Fail-Fast:
+        构造即 PING——Redis 不可用立即抛 StateStoreError（对齐"不可恢复错误
+        fail-fast"裁定，不做静默降级文件后端）；运行期操作失败同样抛 StateStoreError。
+
+    Thread Safety:
+        redis-py 客户端内置连接池，跨线程共享安全；单命令原子无需进程内锁。
+        "检查-再-设置"复合语义同文件后端——由消费方配外部锁。
+
+    TTL:
+        键无 TTL——kill switch 状态等是"最新一条即真源"的永久记录。
+    """
+
+    def __init__(self, redis_conn: redis.Redis, *, key_prefix: str = DEFAULT_STATE_KEY_PREFIX) -> None:
+        if not key_prefix or "\n" in key_prefix or "\r" in key_prefix:
+            raise StateStoreError(f"非法 Redis 键前缀: {key_prefix!r}")
+        self._conn = redis_conn
+        self._key_prefix = key_prefix
+        _ping_or_raise(self._conn, what=type(self).__name__)
+
+    @property
+    def key_prefix(self) -> str:
+        """只读：Redis 键前缀。"""
+        return self._key_prefix
+
+    def _key_for(self, namespace: str) -> str:
+        """namespace → Redis 键（复用双后端共用校验）。"""
+        return f"{self._key_prefix}:{_validate_namespace(namespace)}"
+
+    def save(self, namespace: str, payload: dict) -> str:
+        """原子写入命名空间状态（SET 单命令原子，等价文件后端 pid-tmp+os.replace）。
+
+        Args:
+            namespace: 命名空间（纯名字，禁止路径分隔符）。
+            payload: 可 JSON 序列化的状态字典。
+
+        Returns:
+            写入的 Redis 键。
+
+        Raises:
+            StateStoreError: namespace 非法或 Redis 操作失败。
+        """
+        import redis as redis_lib
+
+        key = self._key_for(namespace)
+        text = json.dumps(payload, ensure_ascii=False, default=str)
+        try:
+            self._conn.set(key, text)
+        except redis_lib.RedisError as exc:
+            raise StateStoreError(
+                "状态写入失败",
+                details={"key": key, "error": str(exc)},
+            ) from exc
+        return key
+
+    def load(self, namespace: str) -> dict | None:
+        """读取命名空间状态（三分语义，与文件后端一致，绝不静默兜底）。
+
+        Returns:
+            None: 记录不存在（fresh boot，由消费方按"从未发生"处理）。
+            dict: 记录内容。
+
+        Raises:
+            StateCorruptError: 记录存在但损坏/非 dict——消费方必须 fail-closed。
+            StateStoreError: Redis 操作失败。
+        """
+        import redis as redis_lib
+
+        key = self._key_for(namespace)
+        try:
+            raw = self._conn.get(key)
+        except redis_lib.RedisError as exc:
+            raise StateStoreError(
+                "状态读取失败",
+                details={"key": key, "error": str(exc)},
+            ) from exc
+        if raw is None:
+            return None
+        if isinstance(raw, bytes):
+            try:
+                raw = raw.decode("utf-8")
+            except UnicodeDecodeError as exc:
+                raise StateCorruptError(
+                    "状态记录损坏",
+                    details={"key": key, "error": str(exc)},
+                ) from exc
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise StateCorruptError(
+                "状态记录损坏",
+                details={"key": key, "error": str(exc)},
+            ) from exc
+        if not isinstance(data, dict):
+            raise StateCorruptError(
+                "状态记录非 dict",
+                details={"key": key, "type": type(data).__name__},
+            )
+        return data
+
+    def delete(self, namespace: str) -> bool:
+        """删除命名空间状态。返回是否实际删除（不存在=False）。"""
+        import redis as redis_lib
+
+        key = self._key_for(namespace)
+        try:
+            return bool(self._conn.delete(key))
+        except redis_lib.RedisError as exc:
+            raise StateStoreError(
+                "状态删除失败",
+                details={"key": key, "error": str(exc)},
+            ) from exc
+
+
+class RedisDedupSet:
+    """持久化去重集——Redis 后端（与 AppendOnlyDedupSet 同接口契约）。
+
+    一个去重集对应一个 Redis SET 键 `{key_prefix}:{set_name}`。
+    语义映射：add → SADD（服务端原子返回 1=首次/0=重复，幂等保证与文件后端一致）；
+    __contains__ → SISMEMBER；__len__ → SCARD。
+
+    Usage:
+        dedup = RedisDedupSet(redis_conn, set_name="processed_fill_ids")
+        if dedup.add(fill.fill_id):
+            ...  # 首次见到，执行记账
+        else:
+            ...  # 重复（含重启后重放），跳过
+
+    Crash 容忍等价物:
+        文件后端容忍"末行残缺"（丢弃重判）；Redis 后端由服务端持久化（AOF/RDB）
+        保证已确认写入不丢，客户端进程 crash 不影响集合内容，重连即恢复。
+
+    Thread Safety:
+        SADD 服务端原子，redis-py 连接池线程安全——无需文件后端的进程内锁。
+
+    TTL:
+        键无 TTL——fill_id 等幂等键"见过即永久"，TTL 会破坏幂等保证。
+    """
+
+    def __init__(
+        self,
+        redis_conn: redis.Redis,
+        *,
+        set_name: str,
+        key_prefix: str = DEFAULT_DEDUP_KEY_PREFIX,
+    ) -> None:
+        if not key_prefix or "\n" in key_prefix or "\r" in key_prefix:
+            raise StateStoreError(f"非法 Redis 键前缀: {key_prefix!r}")
+        _validate_namespace(set_name)
+        self._conn = redis_conn
+        self._key = f"{key_prefix}:{set_name}"
+        _ping_or_raise(self._conn, what=type(self).__name__)
+
+    @property
+    def key(self) -> str:
+        """只读：去重集 Redis 键。"""
+        return self._key
+
+    def add(self, item_id: str) -> bool:
+        """登记 ID。首次见到=True；已存在=False（幂等拦截，SADD 服务端原子）。
+
+        Raises:
+            StateStoreError: item_id 非法（空/含换行）或 Redis 操作失败。
+        """
+        import redis as redis_lib
+
+        if not item_id or "\n" in item_id or "\r" in item_id:
+            raise StateStoreError(f"非法去重 ID: {item_id!r}")
+        try:
+            return bool(self._conn.sadd(self._key, item_id))
+        except redis_lib.RedisError as exc:
+            raise StateStoreError(
+                "去重集写入失败",
+                details={"key": self._key, "error": str(exc)},
+            ) from exc
+
+    def __contains__(self, item_id: str) -> bool:
+        import redis as redis_lib
+
+        try:
+            return bool(self._conn.sismember(self._key, item_id))
+        except redis_lib.RedisError as exc:
+            raise StateStoreError(
+                "去重集读取失败",
+                details={"key": self._key, "error": str(exc)},
+            ) from exc
+
+    def __len__(self) -> int:
+        import redis as redis_lib
+
+        try:
+            return int(self._conn.scard(self._key))
+        except redis_lib.RedisError as exc:
+            raise StateStoreError(
+                "去重集计数失败",
+                details={"key": self._key, "error": str(exc)},
+            ) from exc
+
+
+def make_state_store(
+    backend: str = "json",
+    *,
+    root_dir: str | os.PathLike[str] | None = None,
+    redis_conn: redis.Redis | None = None,
+    key_prefix: str = DEFAULT_STATE_KEY_PREFIX,
+) -> JsonStateStore | RedisStateStore:
+    """状态存取工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。
+
+    Args:
+        backend: "json"（默认，文件后端）或 "redis"。
+        root_dir: 文件后端根目录（backend="json" 必填）。
+        redis_conn: Redis 连接（backend="redis" 必填——由接线层经
+            zephyr.infrastructure.redis_config.load_redis_config() 建连注入，
+            config/.env.redis 单真源，本层不出现连接参数）。
+        key_prefix: Redis 键前缀。
+
+    Raises:
+        StateStoreError: backend 未知或必填参数缺失。
+    """
+    if backend == "json":
+        if root_dir is None:
+            raise StateStoreError("backend='json' 必须提供 root_dir")
+        return JsonStateStore(root_dir)
+    if backend == "redis":
+        if redis_conn is None:
+            raise StateStoreError(
+                "backend='redis' 必须注入 redis_conn"
+                "（由接线层经 zephyr.infrastructure.redis_config.load_redis_config 建连）"
+            )
+        return RedisStateStore(redis_conn, key_prefix=key_prefix)
+    raise StateStoreError(f"未知 state_store 后端: {backend!r}（合法值: 'json'/'redis'）")
+
+
+def make_dedup_set(
+    backend: str = "json",
+    *,
+    path: str | os.PathLike[str] | None = None,
+    redis_conn: redis.Redis | None = None,
+    set_name: str | None = None,
+    key_prefix: str = DEFAULT_DEDUP_KEY_PREFIX,
+) -> AppendOnlyDedupSet | RedisDedupSet:
+    """去重集工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。
+
+    Args:
+        backend: "json"（默认，append-only 文件）或 "redis"。
+        path: 文件后端落盘路径（backend="json" 必填）。
+        redis_conn: Redis 连接（backend="redis" 必填——由接线层经
+            zephyr.infrastructure.redis_config.load_redis_config() 建连注入，
+            config/.env.redis 单真源，本层不出现连接参数）。
+        set_name: Redis 去重集名（backend="redis" 必填，如 "processed_fill_ids"）。
+        key_prefix: Redis 键前缀。
+
+    Raises:
+        StateStoreError: backend 未知或必填参数缺失。
+    """
+    if backend == "json":
+        if path is None:
+            raise StateStoreError("backend='json' 必须提供 path")
+        return AppendOnlyDedupSet(path)
+    if backend == "redis":
+        if not set_name:
+            raise StateStoreError("backend='redis' 必须提供 set_name")
+        if redis_conn is None:
+            raise StateStoreError(
+                "backend='redis' 必须注入 redis_conn"
+                "（由接线层经 zephyr.infrastructure.redis_config.load_redis_config 建连）"
+            )
+        return RedisDedupSet(redis_conn, set_name=set_name, key_prefix=key_prefix)
+    raise StateStoreError(f"未知 dedup_set 后端: {backend!r}（合法值: 'json'/'redis'）")
