@@ -11,6 +11,14 @@ topic: business_registry_construction
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-13 第一批/第二批建库会话 + 后续批次陆续建成全部 18 个业务注册表——factor（111 条）/strategy（59）/risk_limit（42）/technical_indicator（40）/execution_algo（6）/data_asset（166+）/chart_pattern（15）/field_dictionary（257）/experiment（5）及 universe/benchmark/cost_model/seat/regime_cycle/model/event_calendar/macro_indicator/portfolio_model，全部登记入 registry_of_registries.yaml（注册表总目录，数量以实测为准）。
+>
+> **最终成果**：18 个业务注册表全部建成，多轮审计 errors=0；回测环境三件套（股票池/基准/成本模型）按优先级先于被测对象三件套落地。
+>
+> **未做事项及原因**：因子 IC 实证回填未做——框架就绪但 222 个因子 ic 字段全空，需回测跑批回填，排期待定（跟踪表遗留 #56）；各注册表日常新增条目属正常运营，非施工缺口。
+
 # 业务资产注册表体系施工总案
 
 > 本备忘是 18 个业务资产注册表（因子/策略/技术指标/图形形态/股票池/基准/成本模型/执行算法/风控限额/数据资产/字段字典/实验/龙虎榜席位/周期分析/ML 模型/事件日历/宏观指标/组合构建模型）的**施工总案 + 审查底稿 + 调查索引**。

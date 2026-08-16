@@ -422,7 +422,7 @@ class RollbackExecutor:
                     audit_record=audit_record,
                 )
 
-            # 治本 #ARCH-100：方案C 并发守卫接线（原缺口见 1d6baf0f27/f84343b01f）。
+            # 治本 #ARCH-103：方案C 并发守卫接线（原缺口见 1d6baf0f27/f84343b01f）。
             # 持锁即阻断，置于 NO_CHANGES 早退之前——与文件是否有未提交变更无关。
             conflict = check_rollback_conflict(
                 file_list,

@@ -334,7 +334,7 @@ def kb_root(tmp_path: Path) -> Path:
 
 
 
-# ── #ARCH-101 sys.modules 污染探针（2026-08-16 治本）──────────────────────
+# ── #ARCH-107 sys.modules 污染探针（2026-08-16 治本）──────────────────────
 # 根因：测试把 sys.modules["x"] 置 None / MagicMock 后不恢复，同进程后续无关测试爆雷
 # （"import halted; None in sys.modules" / "not a package"），爆雷点≠投毒点，归因极难。
 # 已实证两起：tests/escalation/conftest.py MagicMock 占位 llm_security 毒化 agent_rbac 批跑；
@@ -376,6 +376,6 @@ def _sysmodules_pollution_sentinel():
             ):
                 sys.modules[k] = before[k]
         raise AssertionError(
-            "sys.modules 污染检出（#ARCH-101）：本测试置脏模块注册表且未恢复: "
+            "sys.modules 污染检出（#ARCH-107）：本测试置脏模块注册表且未恢复: "
             + "; ".join(sorted(set(poisoned)))
         )

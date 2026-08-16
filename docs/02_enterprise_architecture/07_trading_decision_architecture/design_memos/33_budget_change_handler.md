@@ -11,6 +11,14 @@ topic: budget_change_handler
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-14 第三批施工（会话 AI-BGT-001，提交 1e78d0d20e/1b8a774ad5/15b1e40f8a 合并回 dev）。核实发现本档非骨架（2026-08-12 已依 MOD-POS-022 生产代码重建），阶段 A 转为重建质量核实——修正 ALGO_FLOW 标记提交造成的行号引用系统性漂移 +68（升 v1.1.0），§7 新发现 4 项缺陷同步闭环（re-target 窗口硬编码/fail-closed 声明/错误码撞号/补测试）。
+>
+> **最终成果**：33 测试两轮全绿；三级升级（Tier 1 封锁新仓/Tier 2 rebalance_to_budget/Tier 3 按比例强裁）与防抖双层以 MOD-POS-022 生产态落地。
+>
+> **未做事项及原因**：无本科目未做项；同期发现的 37 份蓝图 §11 代码索引漂移属全域存量治理，由统筹统一跑同步脚本（遗留 #35），与本档内容无关。
+
 # BudgetChangeHandler 三级升级
 
 > **性质**：决策备忘（G14）。本文回填已施工代码的设计 why——`src/zephyr/position/core/budget_change_handler.py`（MOD-POS-022，642 行，MATURITY=production）。

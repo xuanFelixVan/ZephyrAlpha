@@ -13,6 +13,14 @@ scope: 07_trading_decision_architecture
 parent: 10_regime_detector_spec.md
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：Phase 0-2 全部执行完毕（检测器实现/C1 一票否决通过/A1/A2/B1/B4 四验证器）；Phase 3 部分（D2/D4 完成，D1 敏感性网格部分，D3 未验证）；Phase 4 部分（E1 walk-forward 已实现，E2/E3/E4 未验证）；Phase 5 决策门控未启动。
+>
+> **最终成果**：核心验收目标达成——C1 通过证明置信度收缩（Shrinkage）节流有效，Phase 2 证明模型内在质量可信；检测器以 4 态形态生产运行。
+>
+> **未做事项及原因**：D1 全量敏感性网格/D3/E2/E3/E4/Phase 5 未做——D1 等为增强验证非一票否决项，Phase 5 依赖策略层就绪；按 34 号裁定待首批策略 3-6 个月实盘数据后连同参数校准一并重启。
+
 # regime 检测器回测验证方案
 
 > 本文档定义 regime 检测器（[10_regime_detector_spec.md](10_regime_detector_spec.md) spec）的回测验证方案。

@@ -16994,8 +16994,8 @@ entries:
   status: resolved
   created: '2026-08-16'
   last_updated: '2026-08-16'
-- issue_id: '#ARCH-100'
-  title: 新增治理脚本批量违例——~20 个脚本缺合法命名前缀（validate_/detect_/audit_/check_ 等）+ 17 处裸 return 0/1 未用 EXIT_PASS/EXIT_FINDINGS 常量（validate_script_naming / validate_exit_codes 双门齐拦）
+- issue_id: '#ARCH-114'
+  title: 新增治理脚本批量违例——~20 个脚本缺合法命名前缀（validate_/detect_/audit_/check_ 等）+ 17 处裸 return 0/1 未用 EXIT_PASS/EXIT_FINDINGS 常量（validate_script_naming / validate_exit_codes 双门齐拦）【编号注记：原 GOV 登记 #ARCH-100，merge 撞号终态重编 #ARCH-114——2026-08-16 第五统筹】
   severity: P2中
   category: governance_debt
   adjudication: 'AI-TD2-GOV-001 实证（2026-08-16，包③基线）：tests/governance/security/test_security_scripts.py 2 项失败——validate_script_naming.py 拦截 ~20 个新脚本（oneoff/*、migrations/add_acquisition_fields、git_hooks/post_commit_regen_yaml、d3_metadata/domain_header_maint、d5_architecture/generators/zoomable_html、d6_security/retire_tmp_artifacts、d8_doc_sync/algo_flow_translation_reconciler + requirements_version_sync_reconciler、decision_node_plain_zh_backfill、harvest_candidates_from_drafts、query_candidate_registry、reconcile_generators、register_deferred_modules、shared/frontmatter、verify_generator_paths 等）缺 LEGAL_PREFIXES 合法前缀；validate_exit_codes.py 拦截同批脚本 17 处裸 return 0/1 未走 scripts/governance/shared/constants EXIT_* 常量。双门抓的是真实违例（非测试缺陷），但修复=跨域批量改他人脚本（重命名/常量替换/EXCEPTIONS 豁免三选一），超出 AI-TD2-GOV-001 包③"只动本包域文件"边界，裁定留置交统筹统一处置。'
@@ -17003,8 +17003,8 @@ entries:
   status: open
   created: '2026-08-16'
   last_updated: '2026-08-16'
-- issue_id: '#ARCH-101'
-  title: 包③ PG 依赖集成测试 28 项环境失败——本机 PostgreSQL(5432) 未运行，depgraph/battle_map/dataflowgraph 真实连接类测试全红
+- issue_id: '#ARCH-115'
+  title: 包③ PG 依赖集成测试 28 项环境失败——本机 PostgreSQL(5432) 未运行，depgraph/battle_map/dataflowgraph 真实连接类测试全红【编号注记：原 GOV 登记 #ARCH-101，merge 撞号终态重编 #ARCH-115——2026-08-16 第五统筹】
   severity: P2中
   category: test_debt
   adjudication: 'AI-TD2-GOV-001 实证（2026-08-16，包③ governance 全域复跑 10 failed+23 errors 中 28 项）：Test-NetConnection localhost:5432 TcpTestSucceeded=False，本机无 PG 服务运行。涉及文件：①tests/governance/data_layer/test_database_service.py 3 项（get_depgraph_conn/health_check_depgraph/health_check_all——DatabaseService depgraph 真实 PG 连接+健康检查）；②tests/governance/depgraph/test_depgraph_generator_design_protection.py 1 项（红蓝测试需真实 PG 跑生成器）；③tests/governance/test_sel_unreachable_5_linkage.py 23 项（验证 battle_map PG 中 5 条真实修复边，fixture setup 即 connection refused——装饰器 xfail 不捕获 setup error，改 db_conn fixture 内 pytest.xfail）。病根（第一性原理）：此类测试设计契约=真实 PG 集成验证（区别于 #ARCH-099 的拷贝生产库耦合——它们本就声明需要活 PG），失败是环境不满足而非测试/代码缺陷，与裁定书 §E/L174 battle_map/gov_db 等 DB 依赖项以 xfail 留痕计先例同类。同批 2 项伪环境问题已转正治本（test_apply_dataflowgraph_smoke mock 缺 init_dataflow_db、test_reconcile_generators skip 契约未覆盖生成器 failed 路径），本条目仅收真·环境依赖 28 项。'
@@ -17012,8 +17012,8 @@ entries:
   status: open
   created: '2026-08-16'
   last_updated: '2026-08-16'
-- issue_id: '#ARCH-102'
-  title: worktree_pool lease 3 项环境失败——主仓工作区 116 项残留修改致 WORKSPACE_DRIFT_BLOCKED / git worktree move 失败
+- issue_id: '#ARCH-116'
+  title: worktree_pool lease 3 项环境失败——主仓工作区 116 项残留修改致 WORKSPACE_DRIFT_BLOCKED / git worktree move 失败【编号注记：原 GOV 登记 #ARCH-102，merge 撞号终态重编 #ARCH-116——2026-08-16 第五统筹】
   severity: P2中
   category: test_debt
   adjudication: 'AI-TD2-GOV-001 实证（2026-08-16，包③ governance 全域复跑）：tests/governance/rule_bridge/test_worktree_pool.py 3 项失败（test_lease_relocates_worktree / test_lease_then_prefetch_async_replenishes / test_session_worktree_start_uses_pool）——WorktreePool.lease 执行 git worktree move 时因主仓工作区存在 116 项 real code 残留修改被 WORKSPACE_DRIFT_BLOCKED 拦截（session_worktree 返回 error），move 目标路径未创建致 leased_path=None。失败根因=主仓环境脏状态，非 pool 逻辑缺陷（同文件 test_prefetch_creates_worktree / test_cleanup_stale 等 4 项不触 move 路径全绿可证）；清理主仓=跨域操作，超包③只动本包域文件边界，裁定留置。'

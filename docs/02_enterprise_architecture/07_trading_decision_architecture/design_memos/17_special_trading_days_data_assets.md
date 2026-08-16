@@ -14,6 +14,14 @@ related_issues:
   - "#ARCH-DATA-002（capability-API 语义对齐治本）"
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-13 第一批（会话 AI-STD-001）定稿：草案→active v1.0.0。§5 治本方案 5 项裁定齐全（符号一致性双向校验 + 语义字段 + semantic_registry + AST 门禁采纳，运行时抽样推迟），§6 六项讨论全部拍板；hk_trade_calendar 语义错配修复（#ARCH-DATA-001）+ 治本方案（#ARCH-DATA-002）落地。
+>
+> **最终成果**：A 股特殊交易日数据资产全景与治理定稿；合并后补检全过（无 BOM/换行统一 LF/相对链接零断链）。
+>
+> **未做事项及原因**：运行时抽样校验未做——裁定推迟，MVP 范围外。
+
 # A股"特殊交易日"数据资产全景与治理
 
 > 本文档承接原 `.trae/documents/special_trading_days_data_ingestion.md`（工作规划，不入 git）的规划职责，

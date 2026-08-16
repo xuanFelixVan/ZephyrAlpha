@@ -50,7 +50,7 @@ class TestDatabaseServiceConnection:
 
     @pytest.mark.xfail(
         strict=False,
-        reason="#ARCH-101：真实 depgraph PG 连接集成测试，本机 PG(5432) 未运行即失败——"
+        reason="#ARCH-115：真实 depgraph PG 连接集成测试，本机 PG(5432) 未运行即失败——"
         "属环境依赖非代码缺陷，PG 可用时自动 XPASS；治本待裁定（PG 可用性 skip 门 或 测试容器化）",
     )
     def test_get_depgraph_conn_returns_pg(self, db_service):
@@ -76,7 +76,7 @@ class TestHealthCheck:
 
     @pytest.mark.xfail(
         strict=False,
-        reason="#ARCH-101：真实 depgraph PG 连接集成测试，本机 PG(5432) 未运行即失败——"
+        reason="#ARCH-115：真实 depgraph PG 连接集成测试，本机 PG(5432) 未运行即失败——"
         "属环境依赖非代码缺陷，PG 可用时自动 XPASS；治本待裁定（PG 可用性 skip 门 或 测试容器化）",
     )
     def test_health_check_depgraph_returns_true(self, db_service):
@@ -86,7 +86,7 @@ class TestHealthCheck:
 
     @pytest.mark.xfail(
         strict=False,
-        reason="#ARCH-101：真实 depgraph PG 连接集成测试，本机 PG(5432) 未运行即失败——"
+        reason="#ARCH-115：真实 depgraph PG 连接集成测试，本机 PG(5432) 未运行即失败——"
         "属环境依赖非代码缺陷，PG 可用时自动 XPASS；治本待裁定（PG 可用性 skip 门 或 测试容器化）",
     )
     def test_health_check_all_pass(self, db_service):

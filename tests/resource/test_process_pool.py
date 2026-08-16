@@ -255,7 +255,7 @@ class TestWmiSpawnHelpers:
             pp._spawn_detached_via_wmi(["python.exe", "-c", "pass"])
 
     def test_wmi_spawn_script_contents(self, monkeypatch):
-        """脚本契约（#ARCH-102 新版）：ShowWindow=SW_HIDE、env 经临时文件传输
+        """脚本契约（#ARCH-105 新版）：ShowWindow=SW_HIDE、env 经临时文件传输
         （脚本不内联 env 内容）、cwd 落 CurrentDirectory、返回后 env 文件已清。"""
         import re
 
@@ -295,7 +295,7 @@ class TestWmiSpawnHelpers:
         assert not os.path.exists(captured["env_file"])
 
     def test_wmi_spawn_secret_keys_stripped(self, monkeypatch):
-        """敏感键剥离（#ARCH-102）：令牌/密钥语义变量不进 WMI 传输通道。"""
+        """敏感键剥离（#ARCH-105）：令牌/密钥语义变量不进 WMI 传输通道。"""
         import re
 
         import zephyr.shared.infra.process_pool as pp
@@ -328,7 +328,7 @@ class TestWmiSpawnHelpers:
         assert "ZEPHYR_SESSION_ID=ai-test\n" in captured["env_text"]
 
     def test_wmi_spawn_timeout_sanitized(self, monkeypatch):
-        """超时脱敏（#ARCH-102）：TimeoutExpired 不回传——其 args 含完整命令，
+        """超时脱敏（#ARCH-105）：TimeoutExpired 不回传——其 args 含完整命令，
         病史为全量 env 随异常喷入 reconcile status JSON 明文落盘。"""
         import subprocess
 

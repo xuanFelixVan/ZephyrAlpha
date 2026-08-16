@@ -12,6 +12,14 @@ scope: 07_trading_decision_architecture
 parent: 30_multi_strategy_concurrency.md
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：按本档设计施工后，Phase 2 验证发现 9 态过拟合，按 BIC（贝叶斯信息准则）证据降维为 4 态 HMM（隐马尔可夫模型）+ 3 特殊态覆盖层（输出 7 维概率）；两阶段校准器（温度缩放 + 保序回归）替代置信度硬映射；state_risk_factor 按 C1 证据移除（label-switching 致随机惩罚）。
+>
+> **最终成果**：检测器代码生产态；C1 四项全通过（提交 852457e9，最大回撤改善 7.37 个百分点）；Phase 2 四验证器全过（提交 93a25890：A2 样本外/样本内 0.34→1.042，B1 校准误差 27.6%→4.2%）。
+>
+> **未做事项及原因**：S2 算法重设计（P1-E9）未做——三事件 design_match=false 系设计域错配非数据缺口，重设计归 13 号 Phase 3 规划，未排期。
+
 # regime 检测器完整 spec
 
 > 本文档合并原 10_regime_detector_spec（regime 业务规则）+ 11_regime_backtest_validation_plan（L0 范围决策），为 12 态 regime 检测器的完整讨论文档。

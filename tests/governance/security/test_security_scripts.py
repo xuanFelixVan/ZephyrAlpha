@@ -124,7 +124,7 @@ class TestExitCodeConstants:
 
     @pytest.mark.xfail(
         strict=False,
-        reason="#ARCH-100：双门抓真实违例（~20 新脚本缺合法前缀 + 17 处裸 return 未用 EXIT_* 常量），"
+        reason="#ARCH-114：双门抓真实违例（~20 新脚本缺合法前缀 + 17 处裸 return 未用 EXIT_* 常量），"
         "修复=跨域批量改他人脚本（重命名/常量替换/豁免三选一），留置交统筹裁定处置路径",
     )
     def test_exit_code_gate_passes(self):
@@ -133,7 +133,7 @@ class TestExitCodeConstants:
 
     @pytest.mark.xfail(
         strict=False,
-        reason="#ARCH-100：双门抓真实违例（~20 新脚本缺合法前缀 + 17 处裸 return 未用 EXIT_* 常量），"
+        reason="#ARCH-114：双门抓真实违例（~20 新脚本缺合法前缀 + 17 处裸 return 未用 EXIT_* 常量），"
         "修复=跨域批量改他人脚本（重命名/常量替换/豁免三选一），留置交统筹裁定处置路径",
     )
     def test_naming_gate_passes(self):

@@ -202,7 +202,7 @@ def _ps_single_quote(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
 
-# 敏感键剥离名单（#ARCH-102）：WMI 传输通道不携带令牌/密钥语义变量。
+# 敏感键剥离名单（#ARCH-105）：WMI 传输通道不携带令牌/密钥语义变量。
 # 病史：全量 env 内联 -Command 脚本，TimeoutExpired.args 携带完整命令喷入
 # reconcile status JSON——GITHUB_TOKEN 等明文落盘。WMI 通道经系统服务
 # （Winmgmt）中转，本身亦不宜接触凭据。主 Popen 通道（CreateProcess 直传、
@@ -229,7 +229,7 @@ def _spawn_detached_via_wmi(
 
     - 环境变量（env=None 时物化当前 os.environ，对齐 Popen 继承语义）先经
       _SECRET_ENV_KEY_RE 剥离敏感键，再经临时文件（utf-8-sig）传输给
-      Win32_ProcessStartup.EnvironmentVariables（#ARCH-102）——不内联
+      Win32_ProcessStartup.EnvironmentVariables（#ARCH-105）——不内联
       -Command 脚本：脚本恒定小体量（通道慢时不再解析数万字符），且任何
       异常路径（TimeoutExpired.args 等）都不再携带 env 内容
     - ShowWindow=SW_HIDE 保持 TRAE-067 无闪窗铁律（CreateFlags 被 WMI 拒
@@ -253,7 +253,7 @@ def _spawn_detached_via_wmi(
         else:
             redir = f' >> "{out_p}" 2>> "{err_p}"'
         cmdline = f"cmd.exe /c {cmdline}{redir}"
-    # env 文件传输（#ARCH-102）：utf-8-sig BOM 保 PS5.1 Get-Content 对
+    # env 文件传输（#ARCH-105）：utf-8-sig BOM 保 PS5.1 Get-Content 对
     # 非 ASCII 值（如中文用户名/路径）正确解码；PS finally 与 Python finally
     # 双侧清理（timeout 时 run 已杀子进程，Python 侧兜底）。
     env_fd, env_file = tempfile.mkstemp(prefix="zephyr_wmi_env_", suffix=".txt")
@@ -284,7 +284,7 @@ def _spawn_detached_via_wmi(
                 timeout=60,
             )
         except subprocess.TimeoutExpired:
-            # 脱敏（#ARCH-102）：不回传 TimeoutExpired——其 args 含完整命令，
+            # 脱敏（#ARCH-105）：不回传 TimeoutExpired——其 args 含完整命令，
             # 病史为全量 env 随之喷入 reconcile status JSON 明文落盘。
             raise RuntimeError(
                 "WMI spawn probe timed out after 60s (powershell CIM channel busy/hung)"

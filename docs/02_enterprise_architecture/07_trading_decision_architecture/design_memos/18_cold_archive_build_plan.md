@@ -15,6 +15,14 @@ depends_on:
   - docs/02_enterprise_architecture/04_architecture_principles_decisions/project_handbook/03_data_layer.md
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：archiver.py（scripts/ch/archiver.py）已施工；阶段 1（tick_data + kline_* 2019 年前）2026-08-10 执行完毕；阶段 2 部分执行（technical_indicator 60min/120min 2019 年前已归档）；2026-08-16 冷分层裁定批（AI-ARCH-002，合并 f556515519）落地——数据留存契约 YAML 修订 + archiver.py 重构 +214 行 + test_ch_archiver.py 新建 160 行，原"铁律修订措辞未落盘"缺口闭环。
+>
+> **最终成果**：ClickHouse→E 盘 Parquet 冷归档链路生产可用，D 盘物理空间冲突缓解。
+>
+> **未做事项及原因**：verify 逐字段值比对、manifest 四字段、checksum 强化、独立 export 子命令未做——均登记 §10 开放问题为增强候选，非阻塞；ETF 4 个分钟周期 2019 年前未归档——§2.5 未覆盖，开放问题 5 登记。
+
 # 冷数据归档施工图
 
 > **性质**：active v0.3.0。本文是冷数据归档（ClickHouse → E盘 Parquet）的施工执行计划。

@@ -11,6 +11,14 @@ topic: firm_risk_aggregator
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-13 第二批施工（会话 AI-FRA-001），修复 FirmRiskAggregator 的 P0 字段名漂移缺陷，提交 8e4d60d5 合并回 dev；后续 AI-XCUT-002 顺手补登 MOD-POS-021 能力登记缺口。
+>
+> **最终成果**：60 测试全绿；MOD-POS-021 生产态（54 测试）；按标的自然叠加、单票 8% 硬上限裁剪、O(N) 复杂度的聚合逻辑与本文契约一致。
+>
+> **未做事项及原因**：无本科目未做项——施工期登记的依赖图状态滞后、能力登记缺口均已在后续批次闭环。
+
 # FirmRiskAggregator 逻辑（组合层风险聚合）
 
 > 本备忘把 [30_multi_strategy_concurrency §2.2/§2.3](30_multi_strategy_concurrency.md) 已定稿的"FirmRiskAggregator"框架落地为可施工的执行逻辑与接口契约。

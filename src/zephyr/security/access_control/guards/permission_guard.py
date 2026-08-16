@@ -31,7 +31,7 @@ from zephyr.security.access_control.identity import (
     AgentRole,
 )
 from zephyr.security.access_control.immutable_core import ALWAYS_BLOCKED_OPERATIONS
-# SSoT 收敛（#ARCH-100）：GuardDecision/GuardResult 真源为 shared.contracts.identity.permission，
+# SSoT 收敛（#ARCH-106）：GuardDecision/GuardResult 真源为 shared.contracts.identity.permission，
 # 本模块 re-export 兼容既有导入方。此前本模块与 contracts 各自定义同名枚举，
 # `decision is GuardDecision.BLOCKED` 跨定义恒 False，会把 BLOCKED 静默折叠为放行（fail-open）。
 from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult

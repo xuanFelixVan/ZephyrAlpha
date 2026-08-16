@@ -11,6 +11,14 @@ topic: simulation_live_path
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-15 第 5 批（会话 AI-SIM-001）完成引用现状同步（v1.7.7）+ #ARCH-QUANT-002/003 两项裁定落地（晋级与降级两状态机唯一耦合点，Owner 裁定）；#ARCH-QUANT-002 状态外部化随后由 P0 风控接线批施工闭环（state_store.py，KillSwitch 状态/fill_id 去重集首批迁入）。模拟盘链路已实际上线运行（tick 订阅通道接模拟盘，业务心跳正常）。
+>
+> **最终成果**：回测→模拟→实盘灰度的验证路径定稿并与现状对齐；Crash-only 状态外部化落地。
+>
+> **未做事项及原因**：5 态 FSM（有限状态机）代码未落地（#ARCH-QUANT-003）——裁定已做、代码待施工，归后续批次。
+
 # 模拟与实盘验证路径
 
 > 本备忘定义策略从回测通过到全资金实盘的模拟验证与灰度上线路径，是 [20_first_batch_strategies](20_first_batch_strategies.md) §4.4 灰度指引的"具体 schedule 与执行"展开。

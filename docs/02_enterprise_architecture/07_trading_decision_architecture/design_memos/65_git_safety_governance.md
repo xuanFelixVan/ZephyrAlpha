@@ -34,6 +34,14 @@ related_modules:
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-14 治理插队批（AI-GIT-001）起多轮施工——wipe 事故治本 S1-S6（删除原语拦截 + 四证清理 SOP + 观测层落盘 + 网关锚定修复）+ task_board 重建 + Phase 1 wrapper（命令包装层）7 项全部落码并激活，含 #68 快照注入打通 Trae AI 命令通道（计划任务每分钟保活，AI 命令归因聚合）。
+>
+> **最终成果**：git 安全多层防护生产运行——危险命令拦截（clean -fd 等实证拦下）、删除审计、worktree 四证清理、AI 通道归因全链路实证；wrapper 40+15 测试全绿。
+>
+> **未做事项及原因**：wrapper 将 git branch -d（安全删除）误报为 -D 拦截——规则区分缺陷，归下一治理批顺手修（遗留 #72）；逃生通道已验证可绕行，非阻塞。
+
 # Git 安全治理体系——alias 失效修复与多层防护施工总案（Trae IDE 专用）
 
 > 本备忘是 2026-08-11 灾难事件（AI 执行 `git clean -fd` 物理删除多个 untracked 文件）后的**根因分析 + 调研报告 + 裁定 + 治本施工方案**。

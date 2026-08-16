@@ -11,6 +11,17 @@ topic: sell_flow
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：2026-08-14 第三批施工（会话 AI-SELL-001），MVP 4 模块——MOD-SELL-000 分诊/004 止损/005 止盈/019 执行编排，分支 87764ffb29 经 a337e0f54c 合并回 dev；本档升 v1.7.1（补阶段 5b + 触发条件勘正）。
+>
+> **最终成果**：sell_decision 227 测试全绿；4 节点经依赖图确认为稳定+生产态；止损/止盈/破位/分批四族的 MVP 范围按本档取舍落地。
+>
+> **未做事项及原因**：
+> - MOD-SELL-014/017 未施工——MVP 范围决策（登记 CAND-SELL-001，触发条件=G04 参数校准 + 连续小亏实盘证据）。
+> - TradeLevelCircuitBreaker（交易级熔断）Phase 2 未做——同登记候选库，等触发条件。
+> - G04 参数校准（ATR 倍数/移动止损回撤/时间止损差异化）未做——依赖首批策略回测/实盘轨道记录，属"等数据"非施工缺口（遗留 #48 统筹跟踪）。
+
 # 卖出流 spec
 
 > 本备忘把 [battle_map_07_sell_flow](../battle_map/battle_map_07_sell_flow.md) 14 环节的"what is"落地为卖出侧"how + when"的可施工 spec：止损/止盈/破位/分批四族的 MVP 取舍、时序、T+1 约束、与回撤 Protocol 联动。

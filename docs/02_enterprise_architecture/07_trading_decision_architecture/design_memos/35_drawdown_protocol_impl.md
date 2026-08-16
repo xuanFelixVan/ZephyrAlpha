@@ -11,6 +11,14 @@ topic: drawdown_protocol_impl
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：分两波——①2026-08-13 第一批（会话 AI-DRWD-001）落码 Kill Switch 链路 + detect_ghost_positions，81 测试通过；②2026-08-16 P0 风控接线批（RRESIL 原语层 dbc5d40e2b + RWIRE 消费层 2b3b68b5d2）把回撤熔断从"测试全绿但生产零实例化"接入真实链路：新建 state_store.py（JsonStateStore 原子写 + AppendOnlyDedupSet 崩溃残行容忍）、KillSwitch 状态落盘 Fail-Closed、LIQUIDATING 锁与单一仲裁点、启动时券商持仓全量重建 + fill_id 持久化去重 + Saga 超时终态查询。
+>
+> **最终成果**：红队双路实证（非 mock）——回撤 25% 触发 EMERGENCY、真实置位、MARKET SELL 清算全链；熔断重启存活；并发双触发只发一轮单；事件重放不重复；重建期禁单 Fail-Closed。风控层从"纸面熔断"转生产接线态。
+>
+> **未做事项及原因**：Redis 后端 state_store 未做——当前 JSON 文件后端已满足单机需求，登记后续批按同接口替换。
+
 # 回撤 Protocol 落地 spec
 
 > 本备忘记录回撤 Protocol 从 §2.5 框架到代码落地的选型推理、阈值裁决与上限定义。

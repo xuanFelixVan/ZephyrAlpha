@@ -11,6 +11,14 @@ topic: regime_meta_allocator
 scope: 07_trading_decision_architecture
 ---
 
+> ## 结案报告（2026-08-16 补记）
+>
+> **实际开发**：框架与代码此前已生产态（MOD-PA-007 v1.0.0，含 CRISIS 地板降级与 water-filling 投影）；2026-08-15 专项（会话 AI-REGIME-001）重建 2026-08-11 git 灾难丢失的 55 用例测试套件（按本档 §3.4 十六要点回建，提交 837c5b256c）+ 蓝图 v0.2.0 全量对齐代码（2bc86c1b29）。
+>
+> **最终成果**：55/55 两轮全绿，关联套件 153/153 无交叉污染；四个回归锚点覆盖关键算法差异（Sortino 分母 n-1/water-filling 无解兜底/CRISIS floor 0.09→0.05/分配×收缩解耦）；C1 验证已通过（提交 852457e9）。
+>
+> **未做事项及原因**：分配参数值（Base 权重/PerformanceScore 映射系数/四档阈值/floor·cap）未校准——设计上即依赖首批策略 3-6 个月实盘盈亏（PnL）数据，属"等数据"的计划内状态而非施工缺口（本档 §6 待裁定已登记）。
+
 # RegimeMetaAllocator 参数
 
 > 本备忘记录 regime 元分配器的选型推理、参数框架与上限定义。
