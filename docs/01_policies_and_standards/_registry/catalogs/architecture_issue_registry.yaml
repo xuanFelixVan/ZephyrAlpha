@@ -17268,3 +17268,24 @@ entries:
   status: resolved
   created: '2026-08-17'
   last_updated: '2026-08-17'
+- issue_id: '#ARCH-118'
+  title: trae_010 单文件行数规则第一性原理重裁——300行硬拆线改分层裁量制（高内聚豁免带+并发热点从严）
+  severity: P2中
+  category: governance_rule_evolution
+  adjudication: |-
+    2026-08-17 Owner 裁定（AI-REDIS-001 遗留①触发，Owner 原话"规则可以为正确选择让路，并优化修改更新规则"）：
+    ①考古——≤300行规则 2026-06-21 随 9000 文件批量提交引入，无专项校准记录；paired_gate_id=GATE-NAMING 只管命名不管行数，gov_enforcement 全仓零行数门禁（无牙齿）；src/zephyr 2774 个 py 文件 593（21.4%）>300行、244（8.8%）>500行——规则文本与现实脱节成死条文。
+    ②第一性原理——行数规则存在理由四项：人类认知极限（100%AI 开发项目不成立，AI 读 500 行无障碍）；AI token 成本（518 vs 300 差异可忽略，拆分不当反增跨文件跳跃阅读成本）；并发冲突面（多会话并发施工的真实硬约束——大文件多会话命中概率高，merge 冲突面大，拆分降文件级交集概率）；内聚性代理指标（代理≠目标，单主类高内聚 518 行≠多职责混杂 518 行）。工业对标：redis-py client.py 数千行、requests models.py 约 1000 行、Google style guide 无硬行数上限——按内聚不按行数。
+    ③裁定——trae_010 code_002 单文件行数改分层裁量：≤300 直接通过；301-500 单主类高内聚（同契约多实现/同抽象族，文件头 [INVARIANTS] 声明内聚依据）豁免；>500 须拆分或本表登记豁免（带理由+重评条件）；并发热点文件（≥2 活跃会话施工面同时命中）阈值降一档。函数≤50/类≤200 不动（复杂度代理更接近真因）。
+    ④个案——state_store.py 518 行：拆分（非因行数本身，而因双后端变更节奏不同+消费方热域变更隔离，拆分为正确工程选择，AI-REDIS-001 续作）；tests/shared/test_state_store.py 约 490 行落 301-500 高内聚豁免带（契约参数化双后端同跑=单一测试关注面）。
+  impact:
+    - 'docs/01_policies_and_standards/rules/trae_010_code_naming_organization.yaml（code_002 分层裁量，v1.3.0）'
+    - 'src/zephyr/shared/state_store.py（Redis 后端迁出）'
+    - 'src/zephyr/shared/state_store_redis.py（新建，AI-REDIS-001 续作）'
+    - 'tests/shared/test_state_store_redis.py（新建，Redis 后端+契约测试对称拆分）'
+  fix_phase: 'trae_010 v1.3.0 已落地 dev；state_store 拆分随 AI-REDIS-001 merge 闭环'
+  status: decided
+  related_rules: 'TRAE-010 code_002; #ARCH-QUANT-002（state_store 母议题）'
+  created: '2026-08-17'
+  last_updated: '2026-08-17'
+  owner_approval: '2026-08-17 Owner 会话内明确裁定"规则可以为正确选择让路，并优化修改更新规则"'

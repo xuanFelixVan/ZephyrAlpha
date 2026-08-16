@@ -41522,6 +41522,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把关键运行时状态（熔断开关、已处理成交号去重集）写到磁盘文件里：进程崩了重启还能接着用，不会出现'重启后忘记已经熔断'或'同一笔成交记两次账'的事故"
+- module_path: src/zephyr/shared/state_store_redis.py
+  domain_id: D_SHARED
+  name_zh: "状态外部化原语Redis后端"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "状态外部化的 Redis 版实现（与文件版同一套接口）：状态写进 Redis 而不是磁盘文件，适合多进程/多机共享；进程崩了重连即恢复，切换时消费方代码一行不用改"
 - module_path: src/zephyr/ex_core/risk_layer_orchestrator.py
   domain_id: D_EX_CORE
   name_zh: "风控层运行时编排器"
