@@ -90,10 +90,7 @@ class TestTokenBudget:
 class TestRegistryIntegrity:
     """A6: 注册表完整性验证."""
 
-    @pytest.mark.xfail(
-        reason="registry 2 domain skills SKILL.md content library not built (#ARCH-096 CAND candidate) - retained",
-        strict=False,
-    )
+    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——registry 内 SKILL.md 文件全部不存在；保留作功能规格书", strict=False)
     def test_all_registered_skills_integrity_report(self):
         """审计所有已注册技能——报告缺失/可加载的状态."""
         loader = SkillLoader()
@@ -125,10 +122,7 @@ class TestRegistryIntegrity:
         if missing:
             pytest.fail(f"{len(loadable)}/{len(all_skills)} skills loadable, {len(missing)} missing: {missing[:5]}...")
 
-    @pytest.mark.xfail(
-        reason="registry currently has only 2 domain skill stubs, no role category yet (#ARCH-096 CAND candidate) - retained",
-        strict=False,
-    )
+    @pytest.mark.xfail(reason="#ARCH-096：skill 内容库整体缺失——registry role 类已清空；保留作功能规格书", strict=False)
     def test_skill_registry_yaml_valid(self):
         """skill-registry.yaml 应是合法 YAML."""
         reg_path = REPO_ROOT / "src" / "zephyr" / "autonomy_core" / "skills" / "skill-registry.yaml"

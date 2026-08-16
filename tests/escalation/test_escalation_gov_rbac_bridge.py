@@ -105,7 +105,7 @@ class TestPreExecuteCheck:
         bridge.guard = None
         result = bridge.pre_execute_check("sess-1", "write", "/some/path")
         assert result.passed is True
-        assert "pass-through" in result.reason
+        assert "fail-open" in result.reason
 
     @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_blocked_by_rbac(self):
@@ -117,7 +117,7 @@ class TestPreExecuteCheck:
         mock_result.reason = "not allowed"
         mock_result.audit_context = {"info": "test"}
 
-        from zephyr.shared.contracts.identity.permission import GuardDecision
+        from zephyr.security.access_control.guards.permission_guard import GuardDecision
 
         mock_result.decision = GuardDecision.BLOCKED
 
@@ -129,11 +129,11 @@ class TestPreExecuteCheck:
 
         result = bridge.pre_execute_check("sess-1", "delete", "/path")
         assert result.passed is False
-        assert result.decision == "BLOCKED"
+        assert result.decision == "BLOCK"
 
     @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
-    def test_auto_guard_result(self):
-        from zephyr.shared.contracts.identity.permission import GuardDecision
+    def test_auto_guard_folds_to_allow(self):
+        from zephyr.security.access_control.guards.permission_guard import GuardDecision
 
         mock_result = MagicMock()
         mock_result.decision = GuardDecision.AUTO_GUARD
@@ -150,7 +150,8 @@ class TestPreExecuteCheck:
 
         result = bridge.pre_execute_check("sess-1", "modify", "/path")
         assert result.passed is True
-        assert result.decision == "AUTO_GUARD"
+        assert result.decision == "ALLOW"
+        assert result.rule_id == "R-002"
 
     @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
     def test_allow_result(self):
@@ -173,7 +174,7 @@ class TestPreExecuteCheck:
         assert result.decision == "ALLOW"
 
     @patch("zephyr.governance.agent_spec.rbac_bridge._AGENT_RBAC_AVAILABLE", True)
-    def test_exception_in_rbac_passes_through(self):
+    def test_exception_in_rbac_fails_closed(self):
         mock_guard = MagicMock()
         mock_guard.check.side_effect = RuntimeError("RBAC down")
 
@@ -181,8 +182,9 @@ class TestPreExecuteCheck:
         bridge.guard = mock_guard
 
         result = bridge.pre_execute_check("sess-1", "read")
-        assert result.passed is True
-        assert "RBAC error" in result.reason
+        assert result.passed is False
+        assert result.decision == "BLOCK"
+        assert "RBAC down" in result.reason
 
     def test_empty_session_and_operation(self):
         bridge = EscalationRBACBridge()

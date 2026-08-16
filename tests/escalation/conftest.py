@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-492 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_conftest | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import importlib.util
@@ -39,7 +41,10 @@ _load_mod("zephyr.governance.resilience_governance.circuit_breaker", _gov_dir / 
 _load_mod("zephyr.governance.escalation.escalation_metrics", _gov_dir / "escalation_metrics.py")
 _load_mod("zephyr.governance.intelligence_governance.delegation_engine", _gov_dir / "delegation_engine.py")
 
-sys.modules.setdefault("zephyr.security.llm_defense.llm_security", MagicMock())
-sys.modules.setdefault("zephyr.security.llm_defense.llm_security.gateway", MagicMock())
+try:  # 仅真实包不可用时才占位，防止 MagicMock 无 __path__ 毒化跨目录批跑
+    import zephyr.security.llm_defense.llm_security.gateway  # noqa: F401
+except ImportError:
+    sys.modules.setdefault("zephyr.security.llm_defense.llm_security", MagicMock())
+    sys.modules.setdefault("zephyr.security.llm_defense.llm_security.gateway", MagicMock())
 
 _load_mod("zephyr.governance.escalation.escalation_engine", _gov_dir / "escalation_engine.py")

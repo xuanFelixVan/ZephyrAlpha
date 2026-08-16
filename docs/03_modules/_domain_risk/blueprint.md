@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.8"
+version: "2.2.9"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.8 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.9 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -1006,6 +1006,7 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_margin_trading.py` | ✅ 已实现 | |
 | `schemas/categories/market_money_flow.py` | ✅ 已实现 | |
 | `schemas/categories/market_msci_adjustment.py` | ✅ 已实现 | |
+| `schemas/categories/market_northbound_hold_snapshot.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_greeks.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_iv.py` | ✅ 已实现 | |
 | `schemas/categories/market_option_kline.py` | ✅ 已实现 | |

@@ -16,7 +16,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from zephyr.governance.agent_spec.a2a_failure import (
-    _A2ACommunicationLike,
+    CommunicationFailureEvent,
     on_a2a_failure,
 )
 
@@ -35,11 +35,11 @@ class NotACommunication:
 class TestA2ACommunicationLikeProtocol:
     def test_stub_satisfies_protocol(self):
         comm = StubCommunication(a2a_id="A1", from_agent_id="FA", to_agent_id="TA")
-        assert isinstance(comm, _A2ACommunicationLike)
+        assert isinstance(comm, CommunicationFailureEvent)
 
     def test_non_conforming_does_not_satisfy(self):
         obj = NotACommunication()
-        assert not isinstance(obj, _A2ACommunicationLike)
+        assert not isinstance(obj, CommunicationFailureEvent)
 
 
 class TestOnA2AFailure:

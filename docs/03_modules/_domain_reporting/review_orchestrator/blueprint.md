@@ -3,7 +3,7 @@ module_id: MOD-RPT-009
 title: "复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）"
 doc_type: blueprint
 status: Active
-version: "0.1.0"
+version: "0.1.1"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting
@@ -87,11 +87,30 @@ tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板�
 
 ## 10. 已实现代码完整路径索引
 
-| 路径 | 说明 |
-|------|------|
-| src/zephyr/reporting/review_orchestrator.py | 本模块唯一实现 |
-| docs/03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md | 人工维护周报模板资产（四段） |
-| tests/reporting/test_review_orchestrator.py | 测试 |
+> **AGENTS.md §6.1 蓝图-代码同步强制约定**——本节是蓝图与磁盘代码的「地址簿」。
+> 蓝图声称的文件必须与磁盘实际一致。不一致 = 蓝图漂移 = 下一个 AI session 冷启动时被误导。
+> **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+
+### 10.1 源码文件
+
+| 文件路径 | 实现状态 | 说明 |
+|---------|:---:|------|
+| `src/zephyr/reporting/review_orchestrator.py` | ✅ 已实现 | |
+
+### 10.5 路径索引使用指南
+
+**新 AI session 读取顺序**：
+1. 读本蓝图 §10（本节）→ 知道「哪些已实现、在哪里」
+2. 读模块分解 → 知道「每个模块的职责和 AI 自治权限」
+3. 读施工 Phase 规划 → 知道「下一步该做什么」
+
+**路径约定**：
+- 所有路径相对于 `D:\ZephyrAlpha\\`
+- 源码在 `src/zephyr/` 下
+- 测试在 `tests/` 下
+- 配置在 `config/` 下
+- 治理脚本在 `scripts/governance/` 下
 
 ### §0.6 五图对齐视图
 

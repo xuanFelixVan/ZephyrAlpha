@@ -14,7 +14,7 @@
 from __future__ import annotations
 
 from zephyr.governance.agent_spec.a2a_failure import (
-    _A2ACommunicationLike,
+    CommunicationFailureEvent,
     on_a2a_failure,
 )
 
@@ -29,7 +29,7 @@ class StubA2ACommunication:
 class TestA2ACommunicationLikeProtocol:
     def test_stub_satisfies_protocol(self):
         stub = StubA2ACommunication("a2a-1", "a", "b")
-        assert isinstance(stub, _A2ACommunicationLike)
+        assert isinstance(stub, CommunicationFailureEvent)
 
 
 class TestOnA2AFailure:
