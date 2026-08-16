@@ -41529,6 +41529,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把组合级风控三件套（回撤追踪/VaR/尾部风险）加熔断清算链、盘中持仓对账、启动恢复重建接进交易会话运行时：启动时先以券商持仓为准重建账本，重建完成前禁止下单；盘中每次调仓前评估回撤与VaR/ES，产出仓位上限缩放目标权重；回撤触及EMERGENCY或尾部风险极值时经单一仲裁点触发熔断并按15笔每秒限频清算全部持仓"
+- module_path: src/zephyr/shared/alerts/threshold_loader.py
+  domain_id: D_SHARED
+  name_zh: "告警阈值加载器"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "所有告警阈值只认一个地方：告警阈值注册表。谁要用阈值（比如回撤5%报警），就从这里拿；注册表文件丢了、条目少了、类型写错了，它就当场报错，绝不偷偷用代码里的旧数字。"
 
 battle_map_steps:
 - step_id: BM-BUY-04

@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md
 # [MODULE] zephyr.trading.health_monitor
 # [DOMAIN] D_INFRA_RUNTIME
-# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.contracts.telemetry_emitter; zephyr.trading.__init__
+# [DEPENDENCIES] zephyr.shared.schema.schemas; zephyr.shared.contracts.telemetry_emitter; zephyr.trading.__init__; zephyr.shared.alerts.threshold_loader
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] 压力分级阈值唯一真源=alert_threshold_registry(THD-HEALTH-001~004,fail-closed)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] AlertThresholdConfigError(注册表缺失/畸形)
 # [TESTS]
 # [A_module] module_id=MOD-INF-035 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -26,29 +26,57 @@ import json
 import threading
 import time
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-from typing import Any
+from typing import Any, Final
 
 import logging
 
 from pydantic import BaseModel, Field
 
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.schema.schemas import BASE_CONFIG
 from zephyr.shared.contracts.telemetry_emitter import TelemetryEmitter
 from zephyr.shared.utils.time_utils import now_utc
 
 logger = logging.getLogger(__name__)
 
-# 5.137.1 修复：内存压力分级阈值魔数提取为命名常量
-_MEM_PRESSURE_CRITICAL = 90
-_MEM_PRESSURE_HIGH = 80
-_MEM_PRESSURE_ELEVATED = 70
+# 压力分级阈值真源=alert_threshold_registry（THD-HEALTH-001~004，import 期 fail-closed 加载，
+# 55 号 §3.3 统读改造；历史：5.137.1 魔数提取为命名常量，5.43.5 磁盘纳入分级）
+_HEALTH_THRESHOLD_SPEC: Final[dict[str, str]] = {
+    "THD-HEALTH-001": "mem_pressure_elevated",
+    "THD-HEALTH-002": "mem_pressure_high",
+    "THD-HEALTH-003": "mem_pressure_critical",
+    "THD-HEALTH-004": "disk_pressure_critical",
+}
 
-# 5.43.5 修复：磁盘压力纳入分级阈值，disk_usage>90% 直接判为 CRITICAL
-_DISK_PRESSURE_CRITICAL = 90
+
+def _load_pressure_thresholds(registry_path: Path | None = None) -> dict[str, int]:
+    """从告警阈值注册表加载压力分级阈值（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(
+        _HEALTH_THRESHOLD_SPEC, registry_path=registry_path, cast="int"
+    )
+
+
+_HEALTH_DEFAULTS: Final[dict[str, int]] = _load_pressure_thresholds()
+
+_MEM_PRESSURE_CRITICAL = _HEALTH_DEFAULTS["mem_pressure_critical"]
+_MEM_PRESSURE_HIGH = _HEALTH_DEFAULTS["mem_pressure_high"]
+_MEM_PRESSURE_ELEVATED = _HEALTH_DEFAULTS["mem_pressure_elevated"]
+_DISK_PRESSURE_CRITICAL = _HEALTH_DEFAULTS["disk_pressure_critical"]
+
+
+@dataclass(frozen=True)
+class PressureThresholds:
+    """压力分级阈值（默认值真源=alert_threshold_registry；显式传参可覆盖——测试/特殊场景逃生门）。"""
+
+    mem_elevated: float = _MEM_PRESSURE_ELEVATED
+    mem_high: float = _MEM_PRESSURE_HIGH
+    mem_critical: float = _MEM_PRESSURE_CRITICAL
+    disk_critical: float = _DISK_PRESSURE_CRITICAL
 
 # 5.39.1 修复：模块级共享 MetricsRegistry，避免每次 _collect_metrics 创建新实例导致指标被 GC
 _shared_metrics_registry = None
@@ -97,9 +125,11 @@ class HealthMonitor:
         max_restart_attempts: int = 3,
         health_check_interval: int = 300,
         metrics_interval: int = 60,
+        pressure_thresholds: PressureThresholds | None = None,
     ) -> None:
         self._snapshot_dir = snapshot_dir
         self._max_restart_attempts = max_restart_attempts
+        self._pressure_thresholds = pressure_thresholds or PressureThresholds()
         self._failure_counts: dict[str, int] = {}
         self._probe_fns: dict[str, Callable[[], ProbeResult]] = {}
         self._restart_fns: dict[str, Callable[[], bool]] = {}
@@ -379,11 +409,13 @@ class HealthMonitor:
             disk = psutil.disk_usage("/").percent
         except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
             disk = 0.0
-        if mem > _MEM_PRESSURE_CRITICAL or disk > _DISK_PRESSURE_CRITICAL:
+        # 阈值真源=注册表（THD-HEALTH-001~004），支持构造注入覆盖（逃生门）
+        th = self._pressure_thresholds
+        if mem > th.mem_critical or disk > th.disk_critical:
             return PressureLevel.CRITICAL
-        if mem > _MEM_PRESSURE_HIGH:
+        if mem > th.mem_high:
             return PressureLevel.HIGH
-        if mem > _MEM_PRESSURE_ELEVATED:
+        if mem > th.mem_elevated:
             return PressureLevel.ELEVATED
         return PressureLevel.NORMAL
 

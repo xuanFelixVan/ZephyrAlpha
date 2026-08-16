@@ -59,6 +59,7 @@ build_status: stable
   overall_risk_score / sharpe_ratio / sortino_ratio / beta / volatility_1d /
   sector_concentrations / active_alerts / alert_count
 - 风险等级判定: overall_risk_score <0.3=LOW / 0.3-0.6=MEDIUM / 0.6-0.8=HIGH / >0.8=CRITICAL
+  （分级/趋势阈值默认值真源=alert_threshold_registry.yaml THD-REPORT-001~004，fail-closed 统读，2026-08-17 AI-THD-001；构造传参可覆盖）
 
 ### 3.2 事件风险快报 (EventRiskFlash)
 

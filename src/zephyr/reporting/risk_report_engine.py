@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-RPT-008 | docs/03_modules/_domain_reporting/risk_report_engine/blueprint.md
 # [MODULE] zephyr.reporting.risk_report_engine
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] zephyr.shared.contracts.risk.risk_dashboard_snapshot; zephyr.shared.contracts.risk.risk_metrics; zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.shared.contracts.risk.risk_dashboard_snapshot; zephyr.shared.contracts.risk.risk_metrics; zephyr.shared.foundation.errors; zephyr.shared.alerts.threshold_loader
 # [CONSUMERS] zephyr.reporting
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] RiskLevel 4档判定(overall_risk_score 阈值); 4类报告frozen不可变; 事件快报仅active_alerts非空时生成; 周度趋势前后半段比对; 月度分布按RiskLevel统计天数
+# [INVARIANTS] RiskLevel 4档判定(overall_risk_score 阈值); 4类报告frozen不可变; 事件快报仅active_alerts非空时生成; 周度趋势前后半段比对; 月度分布按RiskLevel统计天数; 分级/趋势阈值真源=alert_threshold_registry(THD-REPORT-001~004,fail-closed)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -125,8 +125,11 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
+from pathlib import Path
 from statistics import mean
+from typing import Final
 
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
 from zephyr.shared.foundation.errors import ZephyrBaseError
@@ -162,20 +165,40 @@ class TrendDirection(str, Enum):
 
 # ── 风险等级判定 ──
 
+#: 报告阈值 ↔ 注册表条目映射（55 号 §3.3 统读：THD-REPORT-001~004）
+_REPORT_THRESHOLD_SPEC: Final[dict[str, str]] = {
+    "THD-REPORT-001": "risk_score_low",
+    "THD-REPORT-002": "risk_score_medium",
+    "THD-REPORT-003": "risk_score_high",
+    "THD-REPORT-004": "trend_stable",
+}
+
+
+def _load_report_thresholds(registry_path: Path | None = None) -> dict[str, float]:
+    """从告警阈值注册表加载报告分级/趋势阈值（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(_REPORT_THRESHOLD_SPEC, registry_path=registry_path)
+
+
+#: import 期 fail-closed 加载（注册表缺失/畸形 → import 即 raise，禁止码内第二真源兜底）
+_REPORT_DEFAULTS: Final[dict[str, float]] = _load_report_thresholds()
+
 _RISK_THRESHOLDS = (
-    (0.3, RiskLevel.LOW),
-    (0.6, RiskLevel.MEDIUM),
-    (0.8, RiskLevel.HIGH),
+    (_REPORT_DEFAULTS["risk_score_low"], RiskLevel.LOW),
+    (_REPORT_DEFAULTS["risk_score_medium"], RiskLevel.MEDIUM),
+    (_REPORT_DEFAULTS["risk_score_high"], RiskLevel.HIGH),
     (float("inf"), RiskLevel.CRITICAL),
 )
 
-# 趋势判定阈值: 前后半段均值差绝对值 < 此值视为 STABLE
-_TREND_THRESHOLD = 0.05
+# 趋势判定阈值: 前后半段均值差绝对值 < 此值视为 STABLE（真源=THD-REPORT-004）
+_TREND_THRESHOLD = _REPORT_DEFAULTS["trend_stable"]
 
 
-def _classify_risk_level(score: float) -> RiskLevel:
-    """根据 overall_risk_score 判定风险等级。"""
-    for threshold, level in _RISK_THRESHOLDS:
+def _classify_risk_level(
+    score: float,
+    thresholds: tuple[tuple[float, "RiskLevel"], ...] | None = None,
+) -> RiskLevel:
+    """根据 overall_risk_score 判定风险等级（thresholds 可注入覆盖，默认注册表加载值）。"""
+    for threshold, level in thresholds or _RISK_THRESHOLDS:
         if score < threshold:
             return level
     return RiskLevel.CRITICAL  # 理论不可达, 防御
@@ -314,8 +337,22 @@ class RiskReportEngine:
         monthly = engine.generate_monthly([daily1, daily2, ...])
     """
 
-    def __init__(self) -> None:
-        pass
+    def __init__(
+        self,
+        *,
+        risk_thresholds: tuple[tuple[float, RiskLevel], ...] | None = None,
+        trend_threshold: float | None = None,
+    ) -> None:
+        """初始化风险报告引擎。
+
+        Args:
+            risk_thresholds: 风险分级阈值（None=注册表加载值 _RISK_THRESHOLDS；显式传参可覆盖——逃生门）
+            trend_threshold: 趋势平稳判定阈值（None=注册表加载值 _TREND_THRESHOLD；显式传参可覆盖）
+        """
+        self._risk_thresholds = risk_thresholds or _RISK_THRESHOLDS
+        self._trend_threshold = (
+            trend_threshold if trend_threshold is not None else _TREND_THRESHOLD
+        )
 
     # ── 日度风险摘要 ──
 
@@ -346,7 +383,7 @@ class RiskReportEngine:
                 },
             )
 
-        risk_level = _classify_risk_level(snapshot.overall_risk_score)
+        risk_level = _classify_risk_level(snapshot.overall_risk_score, self._risk_thresholds)
         report_date = metrics.as_of_date.strftime("%Y-%m-%d")
 
         report = DailyRiskSummary(
@@ -397,7 +434,7 @@ class RiskReportEngine:
         if not alerts:
             return None
 
-        risk_level = _classify_risk_level(snapshot.overall_risk_score)
+        risk_level = _classify_risk_level(snapshot.overall_risk_score, self._risk_thresholds)
         impact = self._assess_impact(risk_level, len(alerts))
         recommendations = _recommendations_for_level(risk_level)
         event_time = datetime.now(UTC)
@@ -495,8 +532,7 @@ class RiskReportEngine:
         )
         return report
 
-    @staticmethod
-    def _determine_trend(score_values: list[float]) -> TrendDirection:
+    def _determine_trend(self, score_values: list[float]) -> TrendDirection:
         """趋势判定——前后半段均值比对。
 
         - 前/后半段均值差 > 阈值 → RISING/FALLING
@@ -515,9 +551,9 @@ class RiskReportEngine:
         avg_second = mean(second_half)
         diff = avg_second - avg_first
 
-        if diff > _TREND_THRESHOLD:
+        if diff > self._trend_threshold:
             return TrendDirection.RISING
-        if diff < -_TREND_THRESHOLD:
+        if diff < -self._trend_threshold:
             return TrendDirection.FALLING
         return TrendDirection.STABLE
 

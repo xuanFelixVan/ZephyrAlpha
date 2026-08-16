@@ -4,11 +4,13 @@
 # 真源决策：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md §3.3
 #   「告警阈值统编为注册表，阈值不集中即不可审计」——个人系统唯一的"风控评审"就是复盘时看阈值清单，散落等于不可评审。
 # 收录范围：监控/告警/复盘链路全部阈值（回撤/健康/偏离/PLV/告警机制/日终审计/风险报告/操作风险/漂移/退役判据/GPU）。
-# 消费方式：新增模块从本注册表读阈值（fail-closed，缺文件/缺条目直接报错，禁止码内第二真源）；
-#           存量模块码内常量仍为其代码真源，本表登记其锚点供复盘审计（source_code 字段），统读改造登记为后续治理项。
+# 消费方式：全部消费模块从本注册表读阈值（fail-closed，缺文件/缺条目直接报错，禁止码内第二真源）；
+#           2026-08-17 AI-THD-001 完成存量 9 模块统读改造（tracker #87，经 src/zephyr/shared/alerts/threshold_loader.py 共享加载器），码内硬编码常量已清零。
 # status 口径：active=代码在用（锚点实证）/design=设计态（备忘已定、代码未落）/pending_adjudication=判据机制已施工、标准值待 Owner 裁定（55 号 §7⑤）。
 # 2026-08-15 v1.1.0：§7⑤ 四条 pending_adjudication（THD-RETIRE-001/002/003 + THD-DEVIATION-003）经 Owner 裁定全部转正 active——
 #   裁定逻辑=判据为评审触发器非自动关停，误触发成本≪漏触发成本，风险优先取早触发侧；校准点=首批上线数据回归（PLV 周期）。
+# 2026-08-17 v1.2.0：存量 9 模块统读落地（drawdown/health/deviation/plv/alert/audit/report/oprisk 26 条 active 条目锚点随统读刷新）；
+#   双向一致性对账测试演化为「注册表值=代码默认值」接线校验 + 红队 fail-closed 36 用例。
 # ============================================================================
 # module_id: MOD-GOVERNANCE
 ttl: permanent
@@ -21,9 +23,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.0.0
+version: 1.2.0
 created: '2026-08-15'
-last_updated: '2026-08-15'
+last_updated: '2026-08-17'
 related_arch: '#ARCH-MON-001'
 unique_key:
 - threshold_id
@@ -64,8 +66,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1B"
     tags: [回撤, 风控, 告警]
-    evidence: "L96 warning_threshold=0.05；__post_init__ 校验 0<val<1 且三级递增（L100-112）"
-    last_verified: '2026-08-15'
+    evidence: "L115 warning_threshold 默认值=_REGISTRY_DEFAULTS（统读）；__post_init__ 校验 0<val<1 且三级递增（L119 起）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-DRAWDOWN-002"
     name: "Drawdown Critical Threshold"
@@ -81,8 +83,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1B"
     tags: [回撤, 风控, 告警]
-    evidence: "L97 critical_threshold=0.10"
-    last_verified: '2026-08-15'
+    evidence: "L116 critical_threshold 默认值=_REGISTRY_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-DRAWDOWN-003"
     name: "Drawdown Emergency Threshold"
@@ -98,8 +100,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1B"
     tags: [回撤, 风控, 告警]
-    evidence: "L98 emergency_threshold=0.15"
-    last_verified: '2026-08-15'
+    evidence: "L117 emergency_threshold 默认值=_REGISTRY_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # HEALTH（系统健康压力分级，55 号 §3.1A）— 4 条
@@ -118,8 +120,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1A"
     tags: [健康, 内存, 压力分级]
-    evidence: "L47 _MEM_PRESSURE_ELEVATED=70；pressure_level() L355-388 判定"
-    last_verified: '2026-08-15'
+    evidence: "L68 _MEM_PRESSURE_ELEVATED=_HEALTH_DEFAULTS（统读）；pressure_level() L385 起判定"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-002"
     name: "Memory Pressure High"
@@ -135,8 +137,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1A"
     tags: [健康, 内存, 压力分级]
-    evidence: "L46 _MEM_PRESSURE_HIGH=80；pressure_response() L390-396"
-    last_verified: '2026-08-15'
+    evidence: "L67 _MEM_PRESSURE_HIGH=_HEALTH_DEFAULTS（统读）；pressure_response() L422 起"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-003"
     name: "Memory Pressure Critical"
@@ -152,8 +154,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1A"
     tags: [健康, 内存, 压力分级]
-    evidence: "L45 _MEM_PRESSURE_CRITICAL=90"
-    last_verified: '2026-08-15'
+    evidence: "L66 _MEM_PRESSURE_CRITICAL=_HEALTH_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-HEALTH-004"
     name: "Disk Pressure Critical"
@@ -169,8 +171,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1A"
     tags: [健康, 磁盘, 压力分级]
-    evidence: "L50 _DISK_PRESSURE_CRITICAL=90（5.43.5 修复：磁盘纳入分级）"
-    last_verified: '2026-08-15'
+    evidence: "L69 _DISK_PRESSURE_CRITICAL=_HEALTH_DEFAULTS（统读；5.43.5 修复：磁盘纳入分级）"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # GPU（显存硬边界，system_charter §2 / 55 号 §3.1A）— 1 条
@@ -205,12 +207,12 @@ thresholds:
     comparator: gt
     severity_action: "warn（偏离告警，ORANGE）"
     source_code: "src/zephyr/backtest/core/decision_gate.py::DecisionGateConfig.backtest_live_deviation_warn"
-    consumer: "decision_gate.py::monitor_backtest_live_deviation（L740-780）；本批 strategy_deviation_monitor.py 复用同阈值体系"
+    consumer: "decision_gate.py::monitor_backtest_live_deviation（L758 起）；本批 strategy_deviation_monitor.py 复用同阈值体系"
     status: active
     doc_ref: "55_monitoring_review.md §3.4"
     tags: [偏离, 实盘回测, 告警]
-    evidence: "decision_gate.py L80 默认 0.30；2026 实证正常磨损 10-20%（traderssecondbrain 2026-05）"
-    last_verified: '2026-08-15'
+    evidence: "decision_gate.py L98 默认值=_DEVIATION_DEFAULTS（统读）；2026 实证正常磨损 10-20%（traderssecondbrain 2026-05）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-DEVIATION-002"
     name: "Backtest Live Deviation Retire"
@@ -226,8 +228,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.4/§3.5"
     tags: [偏离, 退役, 告警]
-    evidence: "decision_gate.py L81 默认 0.50；零售统计实盘低于回测 50% 需结构性诊断"
-    last_verified: '2026-08-15'
+    evidence: "decision_gate.py L99 默认值=_DEVIATION_DEFAULTS（统读）；零售统计实盘低于回测 50% 需结构性诊断"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-DEVIATION-003"
     name: "Daily Return Correlation Floor"
@@ -263,8 +265,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [PLV, 上线验证, 偏差]
-    evidence: "post_live_verification.py L41-72 PLV_CHECKS 5 项；阈值以字符串规约登记（L37 PLVSpec.threshold）"
-    last_verified: '2026-08-15'
+    evidence: "post_live_verification.py L98 PLV_CHECKS=build_plv_checks() 统读（字符串规约保持不数值化）；PLVSpec.threshold L40"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-002"
     name: "PLV Fill Rate Comparison"
@@ -280,8 +282,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [PLV, 上线验证, 成交率]
-    evidence: "L51 threshold=\"±0.5%\""
-    last_verified: '2026-08-15'
+    evidence: "build_plv_checks() L78 起统读；注册表字符串 \"±0.5%\" 原样加载"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-003"
     name: "PLV Risk Conformance"
@@ -297,8 +299,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [PLV, 上线验证, 风控]
-    evidence: "L57 threshold=\"≥limits\""
-    last_verified: '2026-08-15'
+    evidence: "build_plv_checks() 统读；注册表字符串 \"≥limits\" 原样加载"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-004"
     name: "PLV Data Integrity"
@@ -314,8 +316,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [PLV, 上线验证, 数据完整性]
-    evidence: "L63 threshold=\"checksum verified\""
-    last_verified: '2026-08-15'
+    evidence: "build_plv_checks() 统读；注册表字符串 \"checksum verified\" 原样加载"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-PLV-005"
     name: "PLV PnL Reconciliation"
@@ -331,8 +333,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [PLV, 上线验证, 对账]
-    evidence: "L69 threshold=\"±$5/1000trades\""
-    last_verified: '2026-08-15'
+    evidence: "build_plv_checks() 统读；注册表字符串 \"±$5/1000trades\" 原样加载"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # ALERT（告警机制参数，55 号 §3.1B）— 2 条
@@ -351,8 +353,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1B"
     tags: [告警, 去重, 防风暴]
-    evidence: "L249-251 默认 timedelta(minutes=5)；去重 key=source:message（L364）"
-    last_verified: '2026-08-15'
+    evidence: "__init__ L261-269 dedup_window=None→注册表 300 秒 fail-closed 加载（timedelta(seconds=300)）；去重 key=source:message（L389）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-ALERT-002"
     name: "Alert Auto Escalation Timeout"
@@ -368,8 +370,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1B"
     tags: [告警, 升级链, 超时]
-    evidence: "L53 auto_escalate_after_seconds: int = 300"
-    last_verified: '2026-08-15'
+    evidence: "L67-69 auto_escalate_after_seconds=Field(default_factory=_load_auto_escalate_after_seconds)（构造期统读）"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # AUDIT（日终审计五件套参数，55 号 §3.1C）— 3 条
@@ -388,8 +390,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [审计, 对账, 日终]
-    evidence: "L548 pnl_tolerance=0.001（0.1%）"
-    last_verified: '2026-08-15'
+    evidence: "L570 pnl_tolerance 默认值=_AUDIT_DEFAULTS（统读，0.001=0.1%）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-AUDIT-002"
     name: "Limit Warn Ratio"
@@ -405,8 +407,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [审计, 限额, 预警]
-    evidence: "L549 warn_ratio=0.8"
-    last_verified: '2026-08-15'
+    evidence: "L571 warn_ratio 默认值=_AUDIT_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-AUDIT-003"
     name: "Attribution Bias Threshold"
@@ -422,8 +424,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [审计, 归因, 偏差]
-    evidence: "L550 bias_threshold=0.1"
-    last_verified: '2026-08-15'
+    evidence: "L572 bias_threshold 默认值=_AUDIT_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # REPORT（风险报告分级/趋势阈值，55 号 §3.1C）— 4 条
@@ -442,8 +444,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [报告, 风险分级]
-    evidence: "L164-169 (0.3, LOW)/(0.6, MEDIUM)/(0.8, HIGH)/(inf, CRITICAL)"
-    last_verified: '2026-08-15'
+    evidence: "L185-190 _RISK_THRESHOLDS=_REPORT_DEFAULTS 统读 (0.3, LOW)/(0.6, MEDIUM)/(0.8, HIGH)/(inf, CRITICAL)"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-REPORT-002"
     name: "Risk Score Medium"
@@ -459,8 +461,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [报告, 风险分级]
-    evidence: "L166"
-    last_verified: '2026-08-15'
+    evidence: "L187（_REPORT_DEFAULTS 统读）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-REPORT-003"
     name: "Risk Score High"
@@ -476,8 +478,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [报告, 风险分级]
-    evidence: "L167"
-    last_verified: '2026-08-15'
+    evidence: "L188（_REPORT_DEFAULTS 统读）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-REPORT-004"
     name: "Trend Stable Threshold"
@@ -493,8 +495,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.1C"
     tags: [报告, 趋势]
-    evidence: "L172 _TREND_THRESHOLD=0.05"
-    last_verified: '2026-08-15'
+    evidence: "L193 _TREND_THRESHOLD=_REPORT_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # OPRISK（操作风险阈值解释，55 号 §3.2①）— 3 条
@@ -513,8 +515,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.2①"
     tags: [操作风险, 失败率]
-    evidence: "L118 DEFAULT_FAILURE_RATE_THRESHOLD=0.05（行业标准）"
-    last_verified: '2026-08-15'
+    evidence: "L136 DEFAULT_FAILURE_RATE_THRESHOLD=_OPRISK_DEFAULTS（统读，行业标准）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-OPRISK-002"
     name: "Operational Latency P95"
@@ -530,8 +532,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.2①"
     tags: [操作风险, 延迟]
-    evidence: "L121 DEFAULT_LATENCY_P95_THRESHOLD_MS=500.0（行业标准）"
-    last_verified: '2026-08-15'
+    evidence: "L139 DEFAULT_LATENCY_P95_THRESHOLD_MS=_OPRISK_DEFAULTS（统读，行业标准）"
+    last_verified: '2026-08-17'
 
   - threshold_id: "THD-OPRISK-003"
     name: "Operational Severe Multiplier"
@@ -547,8 +549,8 @@ thresholds:
     status: active
     doc_ref: "55_monitoring_review.md §3.2①"
     tags: [操作风险, 严重度]
-    evidence: "L124 _SEVERE_MULTIPLIER=2.0"
-    last_verified: '2026-08-15'
+    evidence: "L142 _SEVERE_MULTIPLIER=_OPRISK_DEFAULTS（统读）"
+    last_verified: '2026-08-17'
 
   # ============================================================
   # DRIFT（模型漂移体系统一口径，55 号 §3.2B + §3.5 联动）— 4 条

@@ -5,8 +5,8 @@ title: 监控告警与复盘
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.1"
-date: 2026-08-15
+version: "1.2.0"
+date: 2026-08-17
 topic: monitoring_review
 scope: 07_trading_decision_architecture
 ---
@@ -17,7 +17,7 @@ scope: 07_trading_decision_architecture
 >
 > **最终成果**：监控告警与复盘体系生产态；test_alert_threshold_consistency.py 机器锁定注册表↔代码双向一致性（32 条全量对账）；错误码 RK/RPT 两域全量补登。
 >
-> **未做事项及原因**：存量模块码内阈值统读改造（8 处）未做——避让并发会话不动存量生产模块，归后续治理批（遗留 #87）；一致性测试已先行锁定，无"注册表说谎"风险。
+> **未做事项及原因**：~~存量模块码内阈值统读改造（8 处）未做~~——**已于 2026-08-17 由 AI-THD-001 完工闭环（遗留 #87 销项）**：9 存量模块经共享加载器 shared/alerts/threshold_loader.py fail-closed 统读注册表，码内硬编码清零、数值零漂移、显式传参覆盖通道全保留；对账测试演化为接线校验+红队 fail-closed 36 用例全绿。
 
 # 监控告警与复盘
 
@@ -125,7 +125,7 @@ scope: 07_trading_decision_architecture
 
 现状：阈值散落各模块（drawdown 5/10/15%、health 内存 70/80/90%、PLV ±1%……）。决策：建**告警阈值注册表**（YAML，随 12 业务注册表体系登记），各模块从注册表读阈值而非各自硬编码。why：个人系统唯一的"风控评审"就是复盘时看阈值清单——散落等于不可评审。Email/WeChat sender 当前 no-op 占位，待首批上线前注入实现（登记 §7）。
 
-落地口径（施工裁定）：①挂法=独立注册表（§7③ 待裁定项的工程落地——阈值跨 11 类，risk_limit 9 类 limit_type 不覆盖运维类阈值；Owner 若裁定并表，YAML→YAML 迁移成本极低）；②本批新建模块（§3.4/§3.5）fail-closed 从注册表读阈值；③存量模块码内常量统读改造登记为后续治理项（避让并发会话，本批不动存量生产模块）。
+落地口径（施工裁定）：①挂法=独立注册表（§7③ 待裁定项的工程落地——阈值跨 11 类，risk_limit 9 类 limit_type 不覆盖运维类阈值；Owner 若裁定并表，YAML→YAML 迁移成本极低）；②本批新建模块（§3.4/§3.5）fail-closed 从注册表读阈值；③存量模块码内常量统读改造~~登记为后续治理项~~——**已完工（2026-08-17 AI-THD-001，tracker #87 销项）**：9 存量模块（drawdown_tracker/health_monitor/decision_gate/post_live_verification/alert_generator/alert_escalation/daily_auditor/risk_report_engine/operational_risk_monitor）经共享加载器 `src/zephyr/shared/alerts/threshold_loader.py`（MOD-INF-016 伞，ZA-SH-0050）fail-closed 统读，数值零漂移+显式传参覆盖通道保留+红队 36 用例全绿。
 
 ### 3.4 决策三（新设计）：策略偏离监控 = 实盘 vs 回测净值偏离度持续度量
 
@@ -184,7 +184,7 @@ scope: 07_trading_decision_architecture
 
 - [x] ① **系统健康监控**——✅ 大部分已施工（§3.1A）；缺口：miniQMT 下单链路探针（登记 §6）。
 - [x] ② **策略偏离监控**——✅ 已施工（§3.4，MOD-RK-23）。口径裁定落地：两口径皆备（累计收益相对偏差定 action / 日收益相关标注供周报复盘）。
-- [x] ③ **告警阈值与通知**——✅ 机制已施工；✅ 阈值注册表统编已施工（§3.3，REG-ATH-001 独立注册表）。**挂法裁定闭环（2026-08-15 Owner 裁定）**：维持独立注册表——阈值跨 11 类含运维类，risk_limit_registry 9 类 limit_type 管交易限额不覆盖运维阈值，并表会造异构 schema 违反 SSoT 分类铁律。遗留：存量模块码内常量统读改造（后续治理项）。
+- [x] ③ **告警阈值与通知**——✅ 机制已施工；✅ 阈值注册表统编已施工（§3.3，REG-ATH-001 独立注册表）。**挂法裁定闭环（2026-08-15 Owner 裁定）**：维持独立注册表——阈值跨 11 类含运维类，risk_limit_registry 9 类 limit_type 管交易限额不覆盖运维阈值，并表会造异构 schema 违反 SSoT 分类铁律。遗留：存量模块码内常量统读改造~~（后续治理项）~~已闭环（2026-08-17 AI-THD-001，§3.3③）。
 - [x] ④ **日/周/月复盘机制**——✅ 复盘编排器已施工（§3.6，MOD-RPT-009）。
 - [x] ⑤ **策略退役标准**——✅ 双判据+评审制执行体已施工（§3.5）。**标准值裁定闭环（2026-08-15 Owner 裁定）**：候选值全部转正（滚动 20 日跑输 >5% / 滚动 60 日 Sharpe<0 / 回撤漂移 1.5x + THD-DEVIATION-003 相关下限 0.5，注册表 4 条 pending_adjudication→active）。裁定逻辑：判据=评审触发器非自动关停（评审制铁律），误触发成本=一份评估报告 ≪ 漏触发成本=僵尸策略持续亏钱，风险优先取早触发侧；校准点=首批上线数据回归（PLV 周期），改表即生效零代码改动。
 - [x] ⑥ **复盘文档模板**——✅ 四段式模板已施工（§3.6，结构固化 + 人工维护模板资产）。

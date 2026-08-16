@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-RK-19 | docs/03_modules/_domain_risk/operational_risk_monitor/blueprint.md | §
 # [MODULE] zephyr.risk.core.operational_risk_monitor
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.ex_core.audit_journal.auditor
+# [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.ex_core.audit_journal.auditor; zephyr.shared.alerts.threshold_loader
 # [CONSUMERS] MOD-L04-001(DefaultRiskManagerOrchestrator,操作风险评估)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 阈值解释层不重算统计;overall_severity=max(failure,latent);纯机制零参数
+# [INVARIANTS] 阈值解释层不重算统计;overall_severity=max(failure,latent);纯机制零参数;阈值真源=alert_threshold_registry(THD-OPRISK-001/002/003,fail-closed)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -101,10 +101,12 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Any
+from pathlib import Path
+from typing import Any, Final
 
 from zephyr.ex_core.audit_journal.auditor import OperationalRiskStats
 from zephyr.risk.risk_manager_base import RiskCheckResult
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 
 _logger = logging.getLogger(__name__)
 
@@ -114,14 +116,30 @@ __all__ = [
     "InvalidOperationalRiskInputError",
 ]
 
-#: 失败率告警阈值（5%，行业标准）
-DEFAULT_FAILURE_RATE_THRESHOLD: float = 0.05
+#: 操作风险阈值 ↔ 注册表条目映射（55 号 §3.3 统读：THD-OPRISK-001/002/003）
+_OPRISK_THRESHOLD_SPEC: Final[dict[str, str]] = {
+    "THD-OPRISK-001": "failure_rate_threshold",
+    "THD-OPRISK-002": "latency_p95_threshold_ms",
+    "THD-OPRISK-003": "severe_multiplier",
+}
 
-#: p95 延迟告警阈值（500ms，行业标准）
-DEFAULT_LATENCY_P95_THRESHOLD_MS: float = 500.0
 
-#: 严重度倍数（实际值 >= 2×阈值 → severe）
-_SEVERE_MULTIPLIER: float = 2.0
+def _load_oprisk_thresholds(registry_path: Path | None = None) -> dict[str, float]:
+    """从告警阈值注册表加载操作风险阈值（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(_OPRISK_THRESHOLD_SPEC, registry_path=registry_path)
+
+
+#: import 期 fail-closed 加载（注册表缺失/畸形 → import 即 raise，禁止码内第二真源兜底）
+_OPRISK_DEFAULTS: Final[dict[str, float]] = _load_oprisk_thresholds()
+
+#: 失败率告警阈值（5%，行业标准；真源=THD-OPRISK-001）
+DEFAULT_FAILURE_RATE_THRESHOLD: float = _OPRISK_DEFAULTS["failure_rate_threshold"]
+
+#: p95 延迟告警阈值（500ms，行业标准；真源=THD-OPRISK-002）
+DEFAULT_LATENCY_P95_THRESHOLD_MS: float = _OPRISK_DEFAULTS["latency_p95_threshold_ms"]
+
+#: 严重度倍数（实际值 >= 2×阈值 → severe；真源=THD-OPRISK-003）
+_SEVERE_MULTIPLIER: float = _OPRISK_DEFAULTS["severe_multiplier"]
 
 
 class InvalidOperationalRiskInputError(ValueError):
@@ -178,15 +196,20 @@ class OperationalRiskMonitor:
         self,
         failure_rate_threshold: float = DEFAULT_FAILURE_RATE_THRESHOLD,
         latency_p95_threshold_ms: float = DEFAULT_LATENCY_P95_THRESHOLD_MS,
+        severe_multiplier: float | None = None,
     ):
         """初始化操作风险监控器。
 
         Args:
-            failure_rate_threshold: 失败率告警阈值（默认 0.05）
-            latency_p95_threshold_ms: p95 延迟告警阈值 ms（默认 500.0）
+            failure_rate_threshold: 失败率告警阈值（默认 0.05，真源=THD-OPRISK-001）
+            latency_p95_threshold_ms: p95 延迟告警阈值 ms（默认 500.0，真源=THD-OPRISK-002）
+            severe_multiplier: 严重度倍数（None=注册表加载值 _SEVERE_MULTIPLIER；显式传参可覆盖——逃生门）
         """
         self._failure_rate_threshold = failure_rate_threshold
         self._latency_p95_threshold_ms = latency_p95_threshold_ms
+        self._severe_multiplier = (
+            severe_multiplier if severe_multiplier is not None else _SEVERE_MULTIPLIER
+        )
 
     # ── 阈值解释 ──
 
@@ -208,10 +231,10 @@ class OperationalRiskMonitor:
             raise InvalidOperationalRiskInputError("OperationalRiskStats is None")
 
         failure_rate_severe = (
-            stats.failure_rate >= _SEVERE_MULTIPLIER * self._failure_rate_threshold
+            stats.failure_rate >= self._severe_multiplier * self._failure_rate_threshold
         )
         latency_severe = (
-            stats.latency_p95_ms >= _SEVERE_MULTIPLIER * self._latency_p95_threshold_ms
+            stats.latency_p95_ms >= self._severe_multiplier * self._latency_p95_threshold_ms
         )
         failure_rate_breached = stats.failure_rate > self._failure_rate_threshold
         latency_breached = stats.latency_p95_ms > self._latency_p95_threshold_ms
@@ -246,7 +269,7 @@ class OperationalRiskMonitor:
         if failure_rate_severe:
             findings.append(
                 f"failure_rate SEVERE: {stats.failure_rate:.4f} "
-                f">= {self._failure_rate_threshold * _SEVERE_MULTIPLIER:.4f} "
+                f">= {self._failure_rate_threshold * self._severe_multiplier:.4f} "
                 f"(2× threshold {self._failure_rate_threshold:.4f})"
             )
         elif failure_rate_breached:
@@ -258,7 +281,7 @@ class OperationalRiskMonitor:
         if latency_severe:
             findings.append(
                 f"latency_p95 SEVERE: {stats.latency_p95_ms:.2f}ms "
-                f">= {self._latency_p95_threshold_ms * _SEVERE_MULTIPLIER:.2f}ms "
+                f">= {self._latency_p95_threshold_ms * self._severe_multiplier:.2f}ms "
                 f"(2× threshold {self._latency_p95_threshold_ms:.2f}ms)"
             )
         elif latency_breached:
@@ -293,10 +316,10 @@ class OperationalRiskMonitor:
             "latency_p95 %.2f vs %.2f (severe %.2f)",
             stats.failure_rate,
             self._failure_rate_threshold,
-            self._failure_rate_threshold * _SEVERE_MULTIPLIER,
+            self._failure_rate_threshold * self._severe_multiplier,
             stats.latency_p95_ms,
             self._latency_p95_threshold_ms,
-            self._latency_p95_threshold_ms * _SEVERE_MULTIPLIER,
+            self._latency_p95_threshold_ms * self._severe_multiplier,
         )
         return assessment
 
