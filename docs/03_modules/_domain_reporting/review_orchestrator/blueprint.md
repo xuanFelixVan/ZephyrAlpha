@@ -1,0 +1,121 @@
+---
+module_id: MOD-RPT-009
+title: "复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）"
+doc_type: blueprint
+status: Active
+version: "0.1.0"
+ttl: permanent
+layer: L07_reporting
+layer_name: reporting
+functional_domain: reporting
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-15"
+last_updated: "2026-08-15"
+priority: P1
+blueprint_level: module
+responsibility_domain: 
+design_maturity: design
+build_status: generated
+---
+
+# MOD-RPT-009 Review Orchestrator — 复盘编排器 蓝图
+
+> **module_id**: MOD-RPT-009 | **域**: D_REPORTING | **层**: L07 报告
+> **优先级**: P1 | **成熟度**: production | **设计真源**: 55_monitoring_review.md §3.6（G26 决策五）
+
+## 1. 定位
+
+D_REPORTING 域编排层——把已 production 的复盘零件（DailyAuditor 五件套 / RiskReportEngine 四类报告 / ReportPublisher 归档）串成"监控-告警-复盘"闭环。只编排不新造分析。
+
+频率分层（55 号 §3.6，自动化分层化解三频过重）：日复盘=机器自动（人只看 FAIL 项）/ 周复盘=人读（四段式唯一固定议程）/ 月复盘=轻量治理汇总（+退役判据扫描聚合）。
+
+## 2. 输入 / 输出
+
+| 方向 | 契约 | 类型 |
+|------|------|------|
+| 输入 | DailyAuditor / RiskReportEngine / ReportPublisher（构造注入） | 实例 |
+| 输入 | StrategyDeviationMonitor / StrategyRetirementEvaluator（可选注入） | 实例 |
+| 输入 | 日：AuditRequest + snapshot + metrics；周：daily_summaries + 四段素材；月：daily_summaries + retirement_inputs | 各契约 |
+| 输出 | DailyReviewResult / WeeklyReviewResult / MonthlyReviewResult | frozen dataclass |
+| 输出 | 归档报告（RISK 源日报 / TRADING_REVIEW 源周报·月报） | ArchivedReport |
+
+## 3. 核心规则
+
+- **日复盘机器自动**：DailyAuditor.audit + generate_daily + 归档；overall_status≠PASS 时提取 IssueRecord 为 human_attention（人只看 FAIL 项——告警驱动）
+- **周复盘四段模板**（结构固定=决策内容）：①本周盈亏与归因（54 号供给）②偏离与告警事件（MOD-RK-23 verdict 快照渲染表+告警清单）③阈值与参数变更（真源 alert_threshold_registry）④下周 action items（经 action_item_sink 外送 IncidentManager/候选库，调用方接线）
+- **月复盘轻量**：generate_monthly + 退役判据扫描聚合（retirement_inputs 逐项过 evaluator，报告计数归档）
+- **事件驱动铁律**：无定时器无 daemon——run_daily/run_weekly/run_monthly 由调用方在日终/周末/月末事件触发
+
+## 4. 关键不变量 (INVARIANTS)
+
+- ReportPublisher 唯一归档出口（D-RPT-D05）；content 仅原始类型（datetime 一律 isoformat）
+- 评审制：退役扫描只聚合 RetirementEvaluationReport（status=pending_human_review），本模块无策略状态写接口
+- 可选依赖未注入时对应段落留空标注，不阻断主链路
+- 周模板四段标题常量 WEEKLY_REVIEW_SECTIONS 唯一真源；人工维护模板资产=同目录 weekly_review_template.md
+
+## 5. 错误契约
+
+| 异常 | 触发 |
+|------|------|
+| InvalidReviewInputError | daily_summaries 空列表 |
+
+下游零件异常（auditor/engine/publisher）不吞——编排层不掩盖源故障。
+
+## 6. 数据模型
+
+- `DailyReviewResult`：trading_date / audit_report / daily_summary / human_attention / deviation_verdicts / archived_report
+- `WeeklyReviewResult`：period / weekly_deep / markdown / action_items / archived_report
+- `MonthlyReviewResult`：month / monthly_governance / retirement_report_count / retirement_strategy_ids / archived_report
+
+## 7. API
+
+- `ReviewOrchestrator(auditor, report_engine, publisher, deviation_monitor=None, retirement_evaluator=None, action_item_sink=None)`
+- `run_daily(trading_date, audit_request, snapshot, metrics, *, publish=True) -> DailyReviewResult`
+- `run_weekly(period, daily_summaries, *, pnl_attribution=None, alert_events=(), threshold_changes=(), action_items=(), publish=True) -> WeeklyReviewResult`
+- `run_monthly(month, daily_summaries, *, retirement_inputs=(), publish=True) -> MonthlyReviewResult`
+
+## 8. 依赖
+
+- MOD-RK-20 DailyAuditor / MOD-RPT-008 RiskReportEngine / MOD-RPT-003 ReportPublisher（生产依赖，复用不新造）
+- MOD-RK-23 StrategyDeviationMonitor（可选，偏离段数据源）
+- strategy_retirement_evaluator（MOD-GOVERNANCE 伞，可选，月退役扫描）
+
+## 9. 测试
+
+tests/reporting/test_review_orchestrator.py——日 PASS/FAIL 两态/周模板四段/偏离表渲染/action sink/月退役扫描聚合/可选依赖降级/空输入拒绝，44 项三件套全绿（2026-08-15）。
+
+## 10. 已实现代码完整路径索引
+
+| 路径 | 说明 |
+|------|------|
+| src/zephyr/reporting/review_orchestrator.py | 本模块唯一实现 |
+| docs/03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md | 人工维护周报模板资产（四段） |
+| tests/reporting/test_review_orchestrator.py | 测试 |
+
+### §0.6 五图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RPT-009`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-RPT-009` 的 1 个 file 节点 | design | `extract_depgraph.py --modules MOD-RPT-009` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-RPT-009 | MOD-RPT-009 | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | generated | generated | ✅ |
+| file_count | 1 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。

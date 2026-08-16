@@ -6,7 +6,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidRiskReportInputError(ZA-RPT-0003)
+# [ERROR_CONTRACT] InvalidRiskReportInputError(ZA-RPT-0007)
 # [TESTS] self
 # [A_module] module_id=MOD-RPT-008 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -40,7 +40,6 @@ from zephyr.reporting.risk_report_engine import (
 )
 from zephyr.shared.contracts.risk.risk_dashboard_snapshot import RiskDashboardSnapshot
 from zephyr.shared.contracts.risk.risk_metrics import RiskMetricsReport
-
 
 # ── 辅助构造 ──
 
@@ -228,7 +227,7 @@ class TestGenerateDaily:
                 make_snapshot(portfolio_id="PF-001"),
                 make_metrics(portfolio_id="PF-002"),
             )
-        assert exc_info.value.error_code == "ZA-RPT-0003"
+        assert exc_info.value.error_code == "ZA-RPT-0007"
         assert "portfolio_id" in exc_info.value.message
 
     def test_with_alerts(self) -> None:
@@ -411,7 +410,7 @@ class TestGenerateWeekly:
         engine = RiskReportEngine()
         with pytest.raises(InvalidRiskReportInputError) as exc_info:
             engine.generate_weekly([])
-        assert exc_info.value.error_code == "ZA-RPT-0003"
+        assert exc_info.value.error_code == "ZA-RPT-0007"
 
     def test_unsorted_input_sorted_internally(self) -> None:
         """乱序输入内部排序。"""

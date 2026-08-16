@@ -1,0 +1,676 @@
+# [A_config] module_id=REG-ATH-001 | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
+# ============================================================================
+# 告警阈值注册表（Alert Threshold Registry）
+# 真源决策：docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/55_monitoring_review.md §3.3
+#   「告警阈值统编为注册表，阈值不集中即不可审计」——个人系统唯一的"风控评审"就是复盘时看阈值清单，散落等于不可评审。
+# 收录范围：监控/告警/复盘链路全部阈值（回撤/健康/偏离/PLV/告警机制/日终审计/风险报告/操作风险/漂移/退役判据/GPU）。
+# 消费方式：新增模块从本注册表读阈值（fail-closed，缺文件/缺条目直接报错，禁止码内第二真源）；
+#           存量模块码内常量仍为其代码真源，本表登记其锚点供复盘审计（source_code 字段），统读改造登记为后续治理项。
+# status 口径：active=代码在用（锚点实证）/design=设计态（备忘已定、代码未落）/pending_adjudication=判据机制已施工、标准值待 Owner 裁定（55 号 §7⑤）。
+# 2026-08-15 v1.1.0：§7⑤ 四条 pending_adjudication（THD-RETIRE-001/002/003 + THD-DEVIATION-003）经 Owner 裁定全部转正 active——
+#   裁定逻辑=判据为评审触发器非自动关停，误触发成本≪漏触发成本，风险优先取早触发侧；校准点=首批上线数据回归（PLV 周期）。
+# ============================================================================
+# module_id: MOD-GOVERNANCE
+ttl: permanent
+schema_version: '1.0'
+registry_id: REG-ATH-001
+name: 告警阈值注册表
+description: >-
+  监控告警与复盘链路阈值唯一真源（SSoT）。登记回撤/健康/偏离/PLV/告警机制/日终审计/风险报告/操作风险/漂移/退役判据/GPU
+  共 11 类阈值，含代码锚点（source_code）与消费模块（consumer）。55 号 G26 §3.3 决策落地（#ARCH-MON-001）。
+owner: MOD-GOVERNANCE
+tier: tier_2_data_runtime
+status: active
+version: 1.0.0
+created: '2026-08-15'
+last_updated: '2026-08-15'
+related_arch: '#ARCH-MON-001'
+unique_key:
+- threshold_id
+
+entry_schema:
+  threshold_id: str          # THD-{CAT}-{NNN}
+  name: str
+  name_zh: str
+  category: str              # drawdown/health/gpu/deviation/plv/alert/audit/report/oprisk/drift/retirement
+  metric_zh: str             # 被度量的指标（中文）
+  value: float|str           # 阈值当前值（数值或字符串规约，如 "±1%"）
+  unit: str                  # ratio/percent/ms/seconds/trades/doc
+  comparator: str            # gt/gte/lt/abs_gt/range/eq（突破方向的语义）
+  severity_action: str       # 触发后动作（告警级别/流程动作）
+  source_code: str           # 代码锚点 path::symbol 或文档锚点（design/pending 类为备忘锚点）
+  consumer: str              # 消费模块（路径或模块名）
+  status: str                # active/design/pending_adjudication/deprecated
+  doc_ref: str               # 决策出处（design memo 锚点）
+  tags: list                 # 中文检索标签
+  evidence: str              # 证据摘要（行号/裁定文）
+  last_verified: date        # 最近实证日期
+
+thresholds:
+  # ============================================================
+  # DRAWDOWN（回撤三级阈值，35 号 Protocol / 55 号 §3.1B）— 3 条
+  # ============================================================
+  - threshold_id: "THD-DRAWDOWN-001"
+    name: "Drawdown Warning Threshold"
+    name_zh: "回撤预警阈值"
+    category: drawdown
+    metric_zh: "当前回撤（相对峰值）"
+    value: 0.05
+    unit: ratio
+    comparator: gt
+    severity_action: "WARNING 级回撤事件（仅级别变化时发射，事件去抖）"
+    source_code: "src/zephyr/risk/core/drawdown_tracker.py::DrawdownTrackerConfig.warning_threshold"
+    consumer: "src/zephyr/risk/core/drawdown_tracker.py (MOD-RK-011)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1B"
+    tags: [回撤, 风控, 告警]
+    evidence: "L96 warning_threshold=0.05；__post_init__ 校验 0<val<1 且三级递增（L100-112）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DRAWDOWN-002"
+    name: "Drawdown Critical Threshold"
+    name_zh: "回撤严重阈值"
+    category: drawdown
+    metric_zh: "当前回撤（相对峰值）"
+    value: 0.10
+    unit: ratio
+    comparator: gt
+    severity_action: "CRITICAL 级回撤事件"
+    source_code: "src/zephyr/risk/core/drawdown_tracker.py::DrawdownTrackerConfig.critical_threshold"
+    consumer: "src/zephyr/risk/core/drawdown_tracker.py (MOD-RK-011)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1B"
+    tags: [回撤, 风控, 告警]
+    evidence: "L97 critical_threshold=0.10"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DRAWDOWN-003"
+    name: "Drawdown Emergency Threshold"
+    name_zh: "回撤紧急阈值"
+    category: drawdown
+    metric_zh: "当前回撤（相对峰值）"
+    value: 0.15
+    unit: ratio
+    comparator: gt
+    severity_action: "EMERGENCY 级回撤事件"
+    source_code: "src/zephyr/risk/core/drawdown_tracker.py::DrawdownTrackerConfig.emergency_threshold"
+    consumer: "src/zephyr/risk/core/drawdown_tracker.py (MOD-RK-011)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1B"
+    tags: [回撤, 风控, 告警]
+    evidence: "L98 emergency_threshold=0.15"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # HEALTH（系统健康压力分级，55 号 §3.1A）— 4 条
+  # ============================================================
+  - threshold_id: "THD-HEALTH-001"
+    name: "Memory Pressure Elevated"
+    name_zh: "内存压力-ELEVATED"
+    category: health
+    metric_zh: "内存使用率（%）"
+    value: 70
+    unit: percent
+    comparator: gt
+    severity_action: "压力分级 ELEVATED（观察）"
+    source_code: "src/zephyr/trading/health_monitor.py::_MEM_PRESSURE_ELEVATED"
+    consumer: "src/zephyr/trading/health_monitor.py (MOD-INF-035)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1A"
+    tags: [健康, 内存, 压力分级]
+    evidence: "L47 _MEM_PRESSURE_ELEVATED=70；pressure_level() L355-388 判定"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-HEALTH-002"
+    name: "Memory Pressure High"
+    name_zh: "内存压力-HIGH"
+    category: health
+    metric_zh: "内存使用率（%）"
+    value: 80
+    unit: percent
+    comparator: gt
+    severity_action: "压力分级 HIGH → THROTTLE_L3（节流 L3 层）"
+    source_code: "src/zephyr/trading/health_monitor.py::_MEM_PRESSURE_HIGH"
+    consumer: "src/zephyr/trading/health_monitor.py (MOD-INF-035)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1A"
+    tags: [健康, 内存, 压力分级]
+    evidence: "L46 _MEM_PRESSURE_HIGH=80；pressure_response() L390-396"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-HEALTH-003"
+    name: "Memory Pressure Critical"
+    name_zh: "内存压力-CRITICAL"
+    category: health
+    metric_zh: "内存使用率（%）"
+    value: 90
+    unit: percent
+    comparator: gt
+    severity_action: "压力分级 CRITICAL → SHUTDOWN_L3_PRESERVE_L2（关 L3 保 L2）"
+    source_code: "src/zephyr/trading/health_monitor.py::_MEM_PRESSURE_CRITICAL"
+    consumer: "src/zephyr/trading/health_monitor.py (MOD-INF-035)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1A"
+    tags: [健康, 内存, 压力分级]
+    evidence: "L45 _MEM_PRESSURE_CRITICAL=90"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-HEALTH-004"
+    name: "Disk Pressure Critical"
+    name_zh: "磁盘压力-CRITICAL"
+    category: health
+    metric_zh: "磁盘使用率（%）"
+    value: 90
+    unit: percent
+    comparator: gt
+    severity_action: "disk_usage>90% 直接判 CRITICAL"
+    source_code: "src/zephyr/trading/health_monitor.py::_DISK_PRESSURE_CRITICAL"
+    consumer: "src/zephyr/trading/health_monitor.py (MOD-INF-035)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1A"
+    tags: [健康, 磁盘, 压力分级]
+    evidence: "L50 _DISK_PRESSURE_CRITICAL=90（5.43.5 修复：磁盘纳入分级）"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # GPU（显存硬边界，system_charter §2 / 55 号 §3.1A）— 1 条
+  # ============================================================
+  - threshold_id: "THD-GPU-001"
+    name: "GPU Memory Hard Cap"
+    name_zh: "GPU 显存硬上限"
+    category: gpu
+    metric_zh: "RTX 3090 显存占用率（%）"
+    value: 90
+    unit: percent
+    comparator: gte
+    severity_action: "硬边界（system_charter §2 约束二硬件）；探头只采集不告警"
+    source_code: "docs/02_enterprise_architecture/04_architecture_principles_decisions/system_charter.md §2（探头 src/zephyr/trading/gpu_monitor.py 无码内阈值常量）"
+    consumer: "src/zephyr/trading/gpu_monitor.py（nvidia-smi 优雅降级探头）"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1A"
+    tags: [GPU, 显存, 硬边界]
+    evidence: "gpu_monitor.py L89-128 仅采集 utilization/memory；阈值存于章程硬边界"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # DEVIATION（实盘 vs 回测偏离，55 号 §3.4）— 3 条
+  # ============================================================
+  - threshold_id: "THD-DEVIATION-001"
+    name: "Backtest Live Deviation Warn"
+    name_zh: "回测-实盘偏离告警阈值"
+    category: deviation
+    metric_zh: "相对偏差 |live-backtest|/|backtest|"
+    value: 0.30
+    unit: ratio
+    comparator: gt
+    severity_action: "warn（偏离告警，ORANGE）"
+    source_code: "src/zephyr/backtest/core/decision_gate.py::DecisionGateConfig.backtest_live_deviation_warn"
+    consumer: "decision_gate.py::monitor_backtest_live_deviation（L740-780）；本批 strategy_deviation_monitor.py 复用同阈值体系"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.4"
+    tags: [偏离, 实盘回测, 告警]
+    evidence: "decision_gate.py L80 默认 0.30；2026 实证正常磨损 10-20%（traderssecondbrain 2026-05）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DEVIATION-002"
+    name: "Backtest Live Deviation Retire"
+    name_zh: "回测-实盘偏离退役评估阈值"
+    category: deviation
+    metric_zh: "相对偏差 |live-backtest|/|backtest|"
+    value: 0.50
+    unit: ratio
+    comparator: gt
+    severity_action: "retire（触发退役评估，RED；评审制不自动退役）"
+    source_code: "src/zephyr/backtest/core/decision_gate.py::DecisionGateConfig.backtest_live_deviation_retire"
+    consumer: "decision_gate.py::monitor_backtest_live_deviation（L740-780）；strategy_deviation_monitor.py / strategy_retirement_evaluator.py 复用"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.4/§3.5"
+    tags: [偏离, 退役, 告警]
+    evidence: "decision_gate.py L81 默认 0.50；零售统计实盘低于回测 50% 需结构性诊断"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DEVIATION-003"
+    name: "Daily Return Correlation Floor"
+    name_zh: "日收益相关下限"
+    category: deviation
+    metric_zh: "实盘 vs 回测日收益 Pearson 相关"
+    value: 0.5
+    unit: ratio
+    comparator: lt
+    severity_action: "偏离周报标注（不单独告警，供周复盘「偏离与告警事件」段消费）"
+    source_code: "src/zephyr/risk/core/strategy_deviation_monitor.py::StrategyDeviationMonitor（本批施工）"
+    consumer: "src/zephyr/risk/core/strategy_deviation_monitor.py (MOD-RK-23)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.4/§7②（两口径皆备；0.5 于 2026-08-15 Owner 裁定转正）"
+    tags: [偏离, 相关, 复盘]
+    evidence: "55 号 §3.4 双口径之一；0.5 裁定转正——标注态消费（不单独告警），误报成本=周报一行标注；首批上线数据回归校准点"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # PLV（上线后验证 5 项规约，55 号 §3.1C）— 5 条
+  # ============================================================
+  - threshold_id: "THD-PLV-001"
+    name: "PLV Order Count Deviation"
+    name_zh: "PLV 订单量偏差"
+    category: plv
+    metric_zh: "Paper vs Live 订单量偏差"
+    value: "±1%"
+    unit: percent
+    comparator: range
+    severity_action: "PLV 验证失败项（上线后验证不通过）"
+    source_code: "src/zephyr/governance/lifecycle_governance/post_live_verification.py::PLV_CHECKS[ORDER_COUNT_DEVIATION]"
+    consumer: "post_live_verification.py (MOD-GOVERNANCE 伞)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [PLV, 上线验证, 偏差]
+    evidence: "post_live_verification.py L41-72 PLV_CHECKS 5 项；阈值以字符串规约登记（L37 PLVSpec.threshold）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-PLV-002"
+    name: "PLV Fill Rate Comparison"
+    name_zh: "PLV 成交率对比"
+    category: plv
+    metric_zh: "Paper vs Live 成交率偏差"
+    value: "±0.5%"
+    unit: percent
+    comparator: range
+    severity_action: "PLV 验证失败项"
+    source_code: "src/zephyr/governance/lifecycle_governance/post_live_verification.py::PLV_CHECKS[FILL_RATE_COMPARISON]"
+    consumer: "post_live_verification.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [PLV, 上线验证, 成交率]
+    evidence: "L51 threshold=\"±0.5%\""
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-PLV-003"
+    name: "PLV Risk Conformance"
+    name_zh: "PLV 风控符合性"
+    category: plv
+    metric_zh: "风控限额符合性"
+    value: "≥limits"
+    unit: ratio
+    comparator: gte
+    severity_action: "PLV 验证失败项"
+    source_code: "src/zephyr/governance/lifecycle_governance/post_live_verification.py::PLV_CHECKS[RISK_CONFORMANCE]"
+    consumer: "post_live_verification.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [PLV, 上线验证, 风控]
+    evidence: "L57 threshold=\"≥limits\""
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-PLV-004"
+    name: "PLV Data Integrity"
+    name_zh: "PLV 数据完整性"
+    category: plv
+    metric_zh: "数据校验和"
+    value: "checksum verified"
+    unit: doc
+    comparator: eq
+    severity_action: "PLV 验证失败项"
+    source_code: "src/zephyr/governance/lifecycle_governance/post_live_verification.py::PLV_CHECKS[DATA_INTEGRITY]"
+    consumer: "post_live_verification.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [PLV, 上线验证, 数据完整性]
+    evidence: "L63 threshold=\"checksum verified\""
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-PLV-005"
+    name: "PLV PnL Reconciliation"
+    name_zh: "PLV 盈亏对账"
+    category: plv
+    metric_zh: "Paper vs Live 盈亏差"
+    value: "±$5/1000trades"
+    unit: trades
+    comparator: range
+    severity_action: "PLV 验证失败项"
+    source_code: "src/zephyr/governance/lifecycle_governance/post_live_verification.py::PLV_CHECKS[PNL_RECONCILIATION]"
+    consumer: "post_live_verification.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [PLV, 上线验证, 对账]
+    evidence: "L69 threshold=\"±$5/1000trades\""
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # ALERT（告警机制参数，55 号 §3.1B）— 2 条
+  # ============================================================
+  - threshold_id: "THD-ALERT-001"
+    name: "Alert Dedup Window"
+    name_zh: "告警去重窗口"
+    category: alert
+    metric_zh: "同源同消息抑制时长"
+    value: 300
+    unit: seconds
+    comparator: lt
+    severity_action: "窗口内同源同消息告警被去重（防告警风暴）"
+    source_code: "src/zephyr/risk/core/alert_generator.py::AlertGenerator.__init__(dedup_window=timedelta(minutes=5))"
+    consumer: "src/zephyr/risk/core/alert_generator.py (MOD-RK-06)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1B"
+    tags: [告警, 去重, 防风暴]
+    evidence: "L249-251 默认 timedelta(minutes=5)；去重 key=source:message（L364）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-ALERT-002"
+    name: "Alert Auto Escalation Timeout"
+    name_zh: "告警自动升级超时"
+    category: alert
+    metric_zh: "无人认领自动升级时长"
+    value: 300
+    unit: seconds
+    comparator: gte
+    severity_action: "超时未认领自动升级一级"
+    source_code: "src/zephyr/shared/alerts/alert_escalation.py::AlertEscalation.auto_escalate_after_seconds"
+    consumer: "src/zephyr/shared/alerts/alert_escalation.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1B"
+    tags: [告警, 升级链, 超时]
+    evidence: "L53 auto_escalate_after_seconds: int = 300"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # AUDIT（日终审计五件套参数，55 号 §3.1C）— 3 条
+  # ============================================================
+  - threshold_id: "THD-AUDIT-001"
+    name: "PnL Reconciliation Tolerance"
+    name_zh: "PnL 对账容差"
+    category: audit
+    metric_zh: "PnL gap_pct 绝对值"
+    value: 0.001
+    unit: ratio
+    comparator: gt
+    severity_action: "对账 FAIL（任一 FAIL→整体 FAIL，自动登记 IssueRecord）"
+    source_code: "src/zephyr/risk/core/daily_auditor.py::AuditConfig.pnl_tolerance"
+    consumer: "src/zephyr/risk/core/daily_auditor.py (MOD-RK-20)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [审计, 对账, 日终]
+    evidence: "L548 pnl_tolerance=0.001（0.1%）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-AUDIT-002"
+    name: "Limit Warn Ratio"
+    name_zh: "限额预警利用率"
+    category: audit
+    metric_zh: "限额消耗 consumed/value"
+    value: 0.8
+    unit: ratio
+    comparator: gt
+    severity_action: "限额合规 WARNING"
+    source_code: "src/zephyr/risk/core/daily_auditor.py::AuditConfig.warn_ratio"
+    consumer: "src/zephyr/risk/core/daily_auditor.py (MOD-RK-20)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [审计, 限额, 预警]
+    evidence: "L549 warn_ratio=0.8"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-AUDIT-003"
+    name: "Attribution Bias Threshold"
+    name_zh: "归因偏差阈值"
+    category: audit
+    metric_zh: "归因偏差 |bias|"
+    value: 0.1
+    unit: ratio
+    comparator: abs_gt
+    severity_action: "归因判 BIASED"
+    source_code: "src/zephyr/risk/core/daily_auditor.py::AuditConfig.bias_threshold"
+    consumer: "src/zephyr/risk/core/daily_auditor.py (MOD-RK-20)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [审计, 归因, 偏差]
+    evidence: "L550 bias_threshold=0.1"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # REPORT（风险报告分级/趋势阈值，55 号 §3.1C）— 4 条
+  # ============================================================
+  - threshold_id: "THD-REPORT-001"
+    name: "Risk Score Low"
+    name_zh: "风险评分-LOW 上限"
+    category: report
+    metric_zh: "综合风险评分"
+    value: 0.3
+    unit: ratio
+    comparator: lt
+    severity_action: "RiskLevel.LOW"
+    source_code: "src/zephyr/reporting/risk_report_engine.py::_RISK_THRESHOLDS"
+    consumer: "src/zephyr/reporting/risk_report_engine.py (MOD-RPT-008)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [报告, 风险分级]
+    evidence: "L164-169 (0.3, LOW)/(0.6, MEDIUM)/(0.8, HIGH)/(inf, CRITICAL)"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-REPORT-002"
+    name: "Risk Score Medium"
+    name_zh: "风险评分-MEDIUM 上限"
+    category: report
+    metric_zh: "综合风险评分"
+    value: 0.6
+    unit: ratio
+    comparator: lt
+    severity_action: "RiskLevel.MEDIUM"
+    source_code: "src/zephyr/reporting/risk_report_engine.py::_RISK_THRESHOLDS"
+    consumer: "src/zephyr/reporting/risk_report_engine.py (MOD-RPT-008)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [报告, 风险分级]
+    evidence: "L166"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-REPORT-003"
+    name: "Risk Score High"
+    name_zh: "风险评分-HIGH 上限"
+    category: report
+    metric_zh: "综合风险评分"
+    value: 0.8
+    unit: ratio
+    comparator: lt
+    severity_action: "RiskLevel.HIGH"
+    source_code: "src/zephyr/reporting/risk_report_engine.py::_RISK_THRESHOLDS"
+    consumer: "src/zephyr/reporting/risk_report_engine.py (MOD-RPT-008)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [报告, 风险分级]
+    evidence: "L167"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-REPORT-004"
+    name: "Trend Stable Threshold"
+    name_zh: "趋势平稳判定阈值"
+    category: report
+    metric_zh: "前后半段均值差绝对值"
+    value: 0.05
+    unit: ratio
+    comparator: lt
+    severity_action: "趋势判 STABLE"
+    source_code: "src/zephyr/reporting/risk_report_engine.py::_TREND_THRESHOLD"
+    consumer: "src/zephyr/reporting/risk_report_engine.py (MOD-RPT-008)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.1C"
+    tags: [报告, 趋势]
+    evidence: "L172 _TREND_THRESHOLD=0.05"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # OPRISK（操作风险阈值解释，55 号 §3.2①）— 3 条
+  # ============================================================
+  - threshold_id: "THD-OPRISK-001"
+    name: "Operational Failure Rate"
+    name_zh: "操作失败率阈值"
+    category: oprisk
+    metric_zh: "执行失败率"
+    value: 0.05
+    unit: ratio
+    comparator: gt
+    severity_action: "breached（单维突破→warning；severe 或双突破→HALT）"
+    source_code: "src/zephyr/risk/core/operational_risk_monitor.py::DEFAULT_FAILURE_RATE_THRESHOLD"
+    consumer: "src/zephyr/risk/core/operational_risk_monitor.py (MOD-RK-19)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.2①"
+    tags: [操作风险, 失败率]
+    evidence: "L118 DEFAULT_FAILURE_RATE_THRESHOLD=0.05（行业标准）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-OPRISK-002"
+    name: "Operational Latency P95"
+    name_zh: "操作延迟 p95 阈值"
+    category: oprisk
+    metric_zh: "下单链路延迟 p95"
+    value: 500.0
+    unit: ms
+    comparator: gt
+    severity_action: "breached"
+    source_code: "src/zephyr/risk/core/operational_risk_monitor.py::DEFAULT_LATENCY_P95_THRESHOLD_MS"
+    consumer: "src/zephyr/risk/core/operational_risk_monitor.py (MOD-RK-19)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.2①"
+    tags: [操作风险, 延迟]
+    evidence: "L121 DEFAULT_LATENCY_P95_THRESHOLD_MS=500.0（行业标准）"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-OPRISK-003"
+    name: "Operational Severe Multiplier"
+    name_zh: "操作风险严重度倍数"
+    category: oprisk
+    metric_zh: "实际值/阈值 倍数"
+    value: 2.0
+    unit: ratio
+    comparator: gte
+    severity_action: "severe（任一维 severe→HALT）"
+    source_code: "src/zephyr/risk/core/operational_risk_monitor.py::_SEVERE_MULTIPLIER"
+    consumer: "src/zephyr/risk/core/operational_risk_monitor.py (MOD-RK-19)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.2①"
+    tags: [操作风险, 严重度]
+    evidence: "L124 _SEVERE_MULTIPLIER=2.0"
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # DRIFT（模型漂移体系统一口径，55 号 §3.2B + §3.5 联动）— 4 条
+  # ============================================================
+  - threshold_id: "THD-DRIFT-001"
+    name: "PSI Attention Level"
+    name_zh: "PSI 关注阈值"
+    category: drift
+    metric_zh: "数据/特征漂移 PSI（边际分布比较）"
+    value: 0.2
+    unit: ratio
+    comparator: gt
+    severity_action: "关注（漂移监控标注）"
+    source_code: "55_monitoring_review.md §3.2B（检测器分工表；代码侧随 23 号 §5.4 CUSUM-PSI 漂移监控消费）"
+    consumer: "23 号 §5.4 上线后漂移监控（design）；55 号 §3.2B 模型风险审计统编"
+    status: design
+    doc_ref: "55_monitoring_review.md §3.2B"
+    tags: [漂移, PSI, 模型风险]
+    evidence: "55 号 §3.2B「阈值统一登记到本备忘 §3.3 阈值注册表（PSI>0.2 关注 / >0.4 高度，CUSUM h=4σ）」"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DRIFT-002"
+    name: "PSI High Level"
+    name_zh: "PSI 高度阈值"
+    category: drift
+    metric_zh: "数据/特征漂移 PSI"
+    value: 0.4
+    unit: ratio
+    comparator: gt
+    severity_action: "高度（漂移告警）"
+    source_code: "55_monitoring_review.md §3.2B"
+    consumer: "23 号 §5.4 上线后漂移监控（design）"
+    status: design
+    doc_ref: "55_monitoring_review.md §3.2B"
+    tags: [漂移, PSI, 模型风险]
+    evidence: "同上"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DRIFT-003"
+    name: "CUSUM Decision Interval"
+    name_zh: "CUSUM 判定区间"
+    category: drift
+    metric_zh: "概念/标签漂移 CUSUM（残差持续偏移）"
+    value: "h=4σ"
+    unit: ratio
+    comparator: gt
+    severity_action: "变点告警"
+    source_code: "55_monitoring_review.md §3.2B"
+    consumer: "23 号 §5.4 CUSUM on rolling correlation（design）"
+    status: design
+    doc_ref: "55_monitoring_review.md §3.2B"
+    tags: [漂移, CUSUM, 模型风险]
+    evidence: "同上"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-DRIFT-004"
+    name: "Prediction Drift Sharpe 30d"
+    name_zh: "预测漂移 Sharpe 30 日"
+    category: drift
+    metric_zh: "Sharpe 30 日滚动"
+    value: 0
+    unit: ratio
+    comparator: lt
+    severity_action: "策略退役评估（静态登记，非自动执行）"
+    source_code: "src/zephyr/gov_drift/detector_core/model_drift_monitor.py::DRIFT_MONITORS[ModelDriftType.PREDICTION]"
+    consumer: "model_drift_monitor.py（静态登记表）；本批 strategy_retirement_evaluator.py 判据②复用同口径"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.5"
+    tags: [漂移, Sharpe, 退役]
+    evidence: "model_drift_monitor.py L52-57 metric=\"Sharpe 30日\" threshold=\"< 0\" action=\"策略退役评估\""
+    last_verified: '2026-08-15'
+
+  # ============================================================
+  # RETIREMENT（策略退役双判据标准值，55 号 §3.5/§7⑤）— 3 条
+  # ============================================================
+  - threshold_id: "THD-RETIRE-001"
+    name: "Rolling Underperformance Window Gap"
+    name_zh: "滚动跑输判据（20 日 / 5%）"
+    category: retirement
+    metric_zh: "滚动 20 日实盘累计收益 − 基准累计收益"
+    value: 0.05
+    unit: ratio
+    comparator: lt
+    severity_action: "触发退役评估报告（评审制，人工裁定；不自动退役）"
+    source_code: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（本批施工，默认窗口 20 日）"
+    consumer: "strategy_retirement_evaluator.py (MOD-GOVERNANCE 伞)"
+    status: active
+    doc_ref: "55_monitoring_review.md §3.5/§7⑤（2026-08-15 Owner 裁定转正：滚动 20 日跑输基准 >5%）"
+    tags: [退役, 跑输, 评审]
+    evidence: "55 号 §7⑤ 候选一经裁定转正；LuxAlgo 2026-08 研究锚点（滚动 expectancy 滑向 0）；裁定理由=评审触发器非自动关停，误触发成本=一份评估报告，风险优先取早触发侧"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-RETIRE-002"
+    name: "Rolling Sharpe 60d Floor"
+    name_zh: "滚动 Sharpe 判据（60 日 / <0）"
+    category: retirement
+    metric_zh: "滚动 60 日 Sharpe"
+    value: 0
+    unit: ratio
+    comparator: lt
+    severity_action: "触发退役评估报告（评审制）"
+    source_code: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（本批施工，默认窗口 60 日）"
+    consumer: "strategy_retirement_evaluator.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §7⑤（2026-08-15 Owner 裁定转正：滚动 60 日 Sharpe<0）"
+    tags: [退役, Sharpe, 评审]
+    evidence: "55 号 §7⑤ 候选二经裁定转正；与 THD-DRIFT-004（Sharpe 30 日<0 静态登记）同族互补；60 日≈一季度零售评估窗"
+    last_verified: '2026-08-15'
+
+  - threshold_id: "THD-RETIRE-003"
+    name: "Drawdown Drift Multiplier"
+    name_zh: "回撤漂移倍数（相对历史最大回撤）"
+    category: retirement
+    metric_zh: "当前回撤 / 历史最大回撤"
+    value: 1.5
+    unit: ratio
+    comparator: gt
+    severity_action: "触发退役评估报告（评审制）"
+    source_code: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py（本批施工）"
+    consumer: "strategy_retirement_evaluator.py"
+    status: active
+    doc_ref: "55_monitoring_review.md §7⑤（2026-08-15 Owner 裁定转正：回撤漂移 1.5x）"
+    tags: [退役, 回撤漂移, 评审]
+    evidence: "55 号 §3.5/§7⑤；LuxAlgo 2026-08（回撤漂移 1.5-2x 为评审触发器非自动关停）；裁定取区间下限 1.5=风险优先早触发侧"
+    last_verified: '2026-08-15'

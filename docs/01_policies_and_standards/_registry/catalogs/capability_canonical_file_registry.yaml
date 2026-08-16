@@ -6071,6 +6071,86 @@ capabilities:
       - scan_file_for_bare_primitives  # 扫描引擎(删则裸原语回流无检测)
       - make_reconciler_file_ops_gate  # 工厂函数(删则 gate 不注册)
       - _BARE_PRIMITIVE_RE             # 原语正则(篡改则检测失效)
+  # --------------------------------------------------------------------------
+  - capability_id: strategy_deviation_monitor
+    canonical_override: src/zephyr/risk/core/strategy_deviation_monitor.py
+    aliases:
+      - StrategyDeviationMonitor
+      - deviation_monitor
+      - 策略偏离监控
+      - backtest_live_deviation_monitor
+    description: >-
+      策略偏离监控器（55 号 G26 §3.4 决策落地，2026-08-15 AI-MON-001 施工，MOD-RK-23）。
+      每日收盘后持续度量实盘 vs 回测净值偏离双口径（累计收益相对偏差 / 日收益 Pearson 相关），
+      阈值复用 decision_gate 同体系（>30% 告警 / >50% 退役评估），阈值唯一真源
+      alert_threshold_registry.yaml（THD-DEVIATION-001/002/003，fail-closed 加载）。
+      事件去抖=仅 action 级别变化发射；基准供给桥 experiment_tracking nav_curve artifact
+      降级 None 不阻断。本模块永不写策略状态（退役评审归 strategy_retirement_evaluator）。
+      解决发现性：新 AI 搜 "偏离/实盘回测偏差/deviation/StrategyDeviationMonitor" 可定位。
+    integrity_anchors:
+      - StrategyDeviationMonitor  # 主类(删则偏离持续度量缺口 reopen)
+      - _load_deviation_thresholds  # 阈值 fail-closed 加载(删则第二真源风险)
+      - evaluate                 # 度量入口(删则无 verdict)
+  # --------------------------------------------------------------------------
+  - capability_id: strategy_retirement_evaluator
+    canonical_override: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
+    aliases:
+      - StrategyRetirementEvaluator
+      - retirement_evaluator
+      - 策略退役评估
+      - retirement_review
+    description: >-
+      策略退役评估器（55 号 G26 §3.5 双判据+评审制决策落地，2026-08-15 AI-MON-001 施工，
+      MOD-GOVERNANCE 伞，PLV 先例无独立 blueprint）。五判据：滚动 20 日跑输>5% /
+      滚动 60 日 Sharpe<0 / 回撤漂移 1.5×历史最大回撤 / 回测-实盘偏离>50%（偏离值由
+      MOD-RK-23 供给不重算）/ 逻辑失效（因子衰减联动，调用方供给）。阈值唯一真源
+      alert_threshold_registry.yaml（THD-RETIRE-001/002/003+THD-DEVIATION-002，
+      标准值 pending_adjudication 待 Owner 裁定）。评审制铁律：判据触发只生成
+      RetirementEvaluationReport（ReportPublisher TRADING_REVIEW 源归档，
+      status=pending_human_review），永不自动改策略状态。
+      解决发现性：新 AI 搜 "退役/retirement/退休策略/StrategyRetirementEvaluator" 可定位。
+    integrity_anchors:
+      - StrategyRetirementEvaluator  # 主类(删则退役评审制无执行体)
+      - evaluate                  # 评估入口(删则判据无触发)
+      - RetirementEvaluationReport  # 报告契约(删则评审产物无载体)
+  # --------------------------------------------------------------------------
+  - capability_id: review_orchestrator
+    canonical_override: src/zephyr/reporting/review_orchestrator.py
+    aliases:
+      - ReviewOrchestrator
+      - 复盘编排器
+      - weekly_review
+      - daily_review
+    description: >-
+      复盘编排器（55 号 G26 §3.6 决策落地，2026-08-15 AI-MON-001 施工，MOD-RPT-009）。
+      日/周/月三频复盘链路编排：日复盘机器自动（DailyAuditor 五件套+DailyRiskSummary，
+      人只看 FAIL 项）；周复盘人读（四段固定模板=盈亏归因/偏离告警/阈值变更/action items，
+      模板资产 docs/03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md）；
+      月复盘轻量治理汇总+退役判据扫描聚合。ReportPublisher 唯一归档出口（D-RPT-D05），
+      事件驱动零定时器。解决发现性：新 AI 搜 "复盘/review/周报/ReviewOrchestrator" 可定位。
+    integrity_anchors:
+      - ReviewOrchestrator       # 主类(删则复盘闭环无编排器)
+      - run_weekly               # 周复盘入口(删则四段模板无装配)
+      - WEEKLY_REVIEW_SECTIONS   # 四段模板常量(删则模板结构漂移)
+  # --------------------------------------------------------------------------
+  - capability_id: alert_threshold_registry
+    canonical_override: docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml
+    aliases:
+      - 告警阈值注册表
+      - alert_threshold_registry
+      - THD-
+      - 阈值注册表
+    description: >-
+      告警阈值注册表（55 号 G26 §3.3 决策落地，2026-08-15 AI-MON-001 施工，REG-ATH-001）。
+      监控告警与复盘链路阈值唯一真源：回撤/健康/偏离/PLV/告警机制/日终审计/风险报告/
+      操作风险/漂移/退役判据/GPU 共 11 类 35 条，全部带代码锚点（source_code）实证。
+      「阈值不集中即不可审计」——个人系统唯一的风控评审=复盘时看阈值清单。
+      新增模块 fail-closed 从本表读阈值；存量模块码内常量统读改造登记为后续治理项。
+      解决发现性：新 AI 搜 "阈值/threshold/告警阈值/THD-" 可定位。
+    integrity_anchors:
+      - thresholds               # 条目区(删则阈值散落不可评审)
+      - THD-DEVIATION-001        # 偏离告警阈值条目(删则 MOD-RK-23 fail-closed 拒启)
+      - THD-RETIRE-001           # 退役判据条目(删则退役评估器 fail-closed 拒启)
 
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
@@ -8698,6 +8778,42 @@ creation_tokens:
     token: "auto-battle-map-completion-plan-20260805"
     created_by: "session-track-drafts-del-archid"
     capability: "battle_map_completion_plan"
+  # --- 55 号 G26 监控告警与复盘三件套+阈值注册表（2026-08-15，AI-MON-001 施工，#ARCH-MON-001）---
+  - file: "docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml"
+    token: "auto-alert-threshold-registry-20260815"
+    created_by: "AI-MON-001"
+    capability: "alert_threshold_registry"
+    note: "REG-ATH-001 告警阈值注册表（11 类 35 条，55 号 §3.3 决策：阈值不集中即不可审计）"
+  - file: "src/zephyr/risk/core/strategy_deviation_monitor.py"
+    token: "auto-strategy-deviation-monitor-20260815"
+    created_by: "AI-MON-001"
+    capability: "strategy_deviation_monitor"
+    note: "MOD-RK-23 策略偏离监控器（55 号 §3.4，实盘 vs 回测双口径持续度量）"
+  - file: "src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py"
+    token: "auto-strategy-retirement-evaluator-20260815"
+    created_by: "AI-MON-001"
+    capability: "strategy_retirement_evaluator"
+    note: "策略退役评估器（55 号 §3.5，双判据+评审制，MOD-GOVERNANCE 伞 PLV 先例）"
+  - file: "src/zephyr/reporting/review_orchestrator.py"
+    token: "auto-review-orchestrator-20260815"
+    created_by: "AI-MON-001"
+    capability: "review_orchestrator"
+    note: "MOD-RPT-009 复盘编排器（55 号 §3.6，日/周/月三频复盘+四段式周报模板）"
+  - file: "docs/03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md"
+    token: "auto-strategy-deviation-monitor-blueprint-20260815"
+    created_by: "AI-MON-001"
+    capability: "strategy_deviation_monitor"
+    note: "MOD-RK-23 蓝图（55 号 §3.4）"
+  - file: "docs/03_modules/_domain_reporting/review_orchestrator/blueprint.md"
+    token: "auto-review-orchestrator-blueprint-20260815"
+    created_by: "AI-MON-001"
+    capability: "review_orchestrator"
+    note: "MOD-RPT-009 蓝图（55 号 §3.6）"
+  - file: "docs/03_modules/_domain_reporting/review_orchestrator/weekly_review_template.md"
+    token: "auto-weekly-review-template-20260815"
+    created_by: "AI-MON-001"
+    capability: "review_orchestrator"
+    note: "周复盘四段式人工维护模板资产（55 号 §3.6/§6 暂缓项口径）"
   - file: "docs/_working/2026-08-05_decision_table_and_plan_engine_design.md"
     token: "auto-decision-table-plan-engine-20260805"
     created_by: "session-track-drafts-del-archid"

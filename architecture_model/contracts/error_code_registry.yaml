@@ -11,8 +11,8 @@ module_id: MOD-GOVERNANCE
 doc_type: register
 title: ZephyrAlpha 业务异常 error_code SSoT 注册表
 status: active
-version: 2.1.0
-date: '2026-07-06'
+version: 2.2.0
+date: '2026-08-15'
 owner: ZephyrAlpha-Owner
 description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次。
 
@@ -33,6 +33,8 @@ domain_prefixes:
   INT: D_INFRASTRUCTURE
   IT: D_INTELLIGENCE
   KB: D_INTEGRATION
+  RK: D_RISK
+  RPT: D_REPORTING
   SC: D_SECURITY
   SH: D_SHARED
   TR: D_TRADING
@@ -313,6 +315,16 @@ error_codes:
   class: InvalidTransitionError
   module: zephyr.gov_drift.state_machine
   file: src/zephyr/gov_drift/state_machine.py
+- code: ZA-GV-0046
+  class: InvalidRetirementInputError
+  module: zephyr.governance.lifecycle_governance.strategy_retirement_evaluator
+  file: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
+  description: 退役评估输入非法（55 号 G26 §3.5，#ARCH-MON-001）
+- code: ZA-GV-0047
+  class: RetirementConfigError
+  module: zephyr.governance.lifecycle_governance.strategy_retirement_evaluator
+  file: src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py
+  description: 阈值注册表缺失/畸形 fail-closed（55 号 G26 §3.5，#ARCH-MON-001）
 - code: ZA-HF-0001
   class: MCPError
   module: zephyr.integration.mcp.doc_guard_server
@@ -482,6 +494,103 @@ error_codes:
   module: zephyr.integration.mcp.tool_contracts
   file: src/zephyr/integration/mcp/tool_contracts.yaml
   description: 索引重建要求（声明于 tool_contracts.yaml）
+- code: ZA-RK-0003
+  class: InvalidDrawdownInputError
+  module: zephyr.risk.core.drawdown_tracker
+  file: src/zephyr/risk/core/drawdown_tracker.py
+- code: ZA-RK-0005
+  class: InvalidVaRConfigError
+  module: zephyr.risk.core.var_calculator
+  file: src/zephyr/risk/core/var_calculator.py
+- code: ZA-RK-0006
+  class: InsufficientVaRHistoryError
+  module: zephyr.risk.core.var_calculator
+  file: src/zephyr/risk/core/var_calculator.py
+- code: ZA-RK-0007
+  class: InvalidConcentrationInputError
+  module: zephyr.risk.core.concentration_monitor
+  file: src/zephyr/risk/core/concentration_monitor.py
+- code: ZA-RK-0008
+  class: InvalidBudgetInputError
+  module: zephyr.risk.core.risk_budget_allocator
+  file: src/zephyr/risk/core/risk_budget_allocator.py
+- code: ZA-RK-0009
+  class: BudgetOptimizationError
+  module: zephyr.risk.core.risk_budget_allocator
+  file: src/zephyr/risk/core/risk_budget_allocator.py
+  description: "canonical 归属=risk_budget_allocator（2026-08-02 f2f48ea0db 先引入）；存量重码：ashare_stop_loss_engine.py::InvalidStopLossInputError 同码占用（4a943705bf 后引入），改号 ZA-RK-0024 留 #ARCH-ERRCODE-001 专项（动存量生产模块，避让并发会话）"
+- code: ZA-RK-0010
+  class: InvalidSystemicRiskInputError
+  module: zephyr.risk.core.ashare_systemic_risk_detector
+  file: src/zephyr/risk/core/ashare_systemic_risk_detector.py
+- code: ZA-RK-0012
+  class: InvalidStressTestInputError
+  module: zephyr.risk.core.stress_test_engine
+  file: src/zephyr/risk/core/stress_test_engine.py
+- code: ZA-RK-0015
+  class: InvalidTailRiskInputError
+  module: zephyr.risk.core.tail_risk_monitor
+  file: src/zephyr/risk/core/tail_risk_monitor.py
+- code: ZA-RK-0016
+  class: InvalidDecompositionInputError
+  module: zephyr.risk.core.risk_decomposition
+  file: src/zephyr/risk/core/risk_decomposition.py
+- code: ZA-RK-0020
+  class: InvalidAuditInputError
+  module: zephyr.risk.core.daily_auditor
+  file: src/zephyr/risk/core/daily_auditor.py
+- code: ZA-RK-0021
+  class: InvalidLiquidityCrisisInputError
+  module: zephyr.risk.core.liquidity_crisis_manager
+  file: src/zephyr/risk/core/liquidity_crisis_manager.py
+- code: ZA-RK-0022
+  class: InvalidDeviationInputError
+  module: zephyr.risk.core.strategy_deviation_monitor
+  file: src/zephyr/risk/core/strategy_deviation_monitor.py
+  description: 偏离度量输入非法（55 号 G26 §3.4，MOD-RK-23，#ARCH-MON-001）
+- code: ZA-RK-0023
+  class: DeviationConfigError
+  module: zephyr.risk.core.strategy_deviation_monitor
+  file: src/zephyr/risk/core/strategy_deviation_monitor.py
+  description: 阈值注册表缺失/畸形 fail-closed（55 号 G26 §3.4，MOD-RK-23，#ARCH-MON-001）
+- code: ZA-RPT-0001
+  class: InvalidDashboardInputError
+  module: zephyr.reporting.realtime_pnl_dashboard
+  file: src/zephyr/reporting/realtime_pnl_dashboard.py
+- code: ZA-RPT-0002
+  class: InvalidVersionInputError
+  module: zephyr.reporting.report_version_manager
+  file: src/zephyr/reporting/report_version_manager.py
+- code: ZA-RPT-0003
+  class: InvalidPublishInputError
+  module: zephyr.reporting.report_publisher
+  file: src/zephyr/reporting/report_publisher.py
+- code: ZA-RPT-0004
+  class: InvalidWatermarkInputError
+  module: zephyr.reporting.report_watermark_tracker
+  file: src/zephyr/reporting/report_watermark_tracker.py
+- code: ZA-RPT-0005
+  class: InvalidTradeRecordError
+  module: zephyr.reporting.ashare_trade_record_template
+  file: src/zephyr/reporting/ashare_trade_record_template.py
+- code: ZA-RPT-0006
+  class: InvalidRegulatoryReportError
+  module: zephyr.reporting.regulatory_report_generator
+  file: src/zephyr/reporting/regulatory_report_generator.py
+- code: ZA-RPT-0007
+  class: InvalidRiskReportInputError
+  module: zephyr.reporting.risk_report_engine
+  file: src/zephyr/reporting/risk_report_engine.py
+  description: 风险报告输入非法（原 ZA-RPT-0003 与 report_publisher 重码，2026-08-15 改号 0007，#ARCH-MON-001）
+- code: ZA-RPT-0026
+  class: InvalidAuditInputError
+  module: zephyr.reporting.ashare_performance_audit
+  file: src/zephyr/reporting/ashare_performance_audit.py
+- code: ZA-RPT-0027
+  class: InvalidReviewInputError
+  module: zephyr.reporting.review_orchestrator
+  file: src/zephyr/reporting/review_orchestrator.py
+  description: 复盘编排输入非法（55 号 G26 §3.6，MOD-RPT-009，#ARCH-MON-001）
 - code: ZA-SC-0001
   class: SessionError
   module: zephyr.security.adversarial_validation.validator
@@ -893,6 +1002,14 @@ error_codes:
   class: MiniQmtBrokerError
   module: zephyr.ex_core.adapters.miniqmt_broker
   file: src/zephyr/ex_core/adapters/miniqmt_broker.py
+# ============================================================
+# 已知缺口（诚实登记，2026-08-15 #ARCH-MON-001 批次实测）
+# ============================================================
+known_issues:
+- issue: 全域登记缺口——代码实测 316 个码 vs 本表 233 条（2026-08-15 补登 RK/RPT 两域 23 条后）；未登记集中域=MKT/PA/POS/REGIME 等（4 个前缀未声明 domain_prefixes）
+  remediation: '#ARCH-ERRCODE-001 专项（全域补登 + 前缀声明 + code↔registry 一致性校验门禁缺失补课）'
+- issue: 存量跨文件重码 15 处（实证清单：ZA-TR-0001/0004、ZA-BT-0009/0010/0011/0012、ZA-MKT-0003、ZA-PA-0002、ZA-POS-0001/0002/0003/0008、ZA-REGIME-0021、ZA-RK-0009、ZA-SH-0014）——违反本表「grep 唯一命中」不变量
+  remediation: '#ARCH-ERRCODE-001 专项按 git 首引入定 canonical、后引入者改号（动存量生产代码，避让并发会话窗口择期施工）'
 # ============================================================
 # 关联系统
 # ============================================================

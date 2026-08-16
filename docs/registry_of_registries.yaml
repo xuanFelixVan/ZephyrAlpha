@@ -748,6 +748,16 @@ tiers:
         description: 程序化交易报告 6 项义务登记+报送确认位（broker_ack）唯一真源（SSoT）——43 号 §7.4（BM-BUY-15）。先报告后交易铁律：任一必报项未确认 → C-002 拒单（ReportGate）。含 §7.5 记录性参数 order_min_dwell_us=50（50μs 时间锁裁定不适用，本系统天然满足）。报送动作为人工（券商渠道），本表管登记/确认位/门禁。#ARCH-COMP-001（2026-08-15）
         owned_by: governance
 
+      - registry_id: REG-ATH-001
+        name: 告警阈值注册表
+        physical_path: docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml
+        format: yaml
+        maintenance: manual
+        entry_count: 35
+        status: active
+        description: 监控告警与复盘链路阈值唯一真源（SSoT）——55 号 G26 §3.3（阈值不集中即不可审计）。11 类 35 条全代码锚点实证：回撤 3/健康 4/GPU 1/偏离 3/PLV 5/告警机制 2/日终审计 3/风险报告 4/操作风险 3/漂移 4/退役判据 3。status 口径：active=32（代码在用；含 4 条退役/偏离判据 2026-08-15 Owner 裁定转正，55 号 §7⑤ 闭环）/design=3（设计态）。新增模块 fail-closed 从本表读阈值；存量模块码内常量统读改造为后续治理项。#ARCH-MON-001（2026-08-15，AI-MON-001）
+        owned_by: governance
+
 # ============================================================
 # AI 使用指南
 # ============================================================

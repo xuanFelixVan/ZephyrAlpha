@@ -1,11 +1,11 @@
-# 自动生成于 2026-08-15T19:57:53Z
+# 自动生成于 2026-08-15T18:00:18Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-15T19:57:53Z'
+generated_at: '2026-08-15T18:00:18Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 43
+total_registries: 45
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -31,13 +31,21 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
+- registry_id: REG-ATH-001
+  name: 告警阈值注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-ARCH-ISSUE-001
   name: 架构议题注册表
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 498
+  entry_count: 501
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -53,7 +61,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 99
+  entry_count: 97
   status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
@@ -197,7 +205,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 93
+  entry_count: 92
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -238,6 +246,14 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 0
+  status: active
+- registry_id: REG-MODULE-TRANSLATION-001
+  name: 模块级翻译注册表（中英对照真源）
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 5920
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -301,7 +317,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 215
+  entry_count: 217
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表

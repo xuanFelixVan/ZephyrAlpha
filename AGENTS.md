@@ -149,6 +149,7 @@
 > - API 接口契约：[`interface_contract_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/interface_contract_registry.yaml)（ARCH-053 新增）
 > - 跨模块依赖：[`cross_module_dependency_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 > - 能力→真源文件反查：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
+> - 告警阈值：[`alert_threshold_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml)（REG-ATH-001，监控/告警/复盘链路阈值 SSoT，35 条/11 类；改阈值先改表，tests/governance/test_alert_threshold_consistency.py 强制注册表↔代码对齐）
 >
 > **业务资产 registry 速查**（#ARCH-BREG-001，14 表体系，施工总案=design_memos/62_business_registry_construction.md；✅=P0 完成，🔄=P1 Step1-3 落盘待审计）：
 > - ✅ 股票池：[`universe_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml)（5 条，回测 MUST 指定 universe_id）
