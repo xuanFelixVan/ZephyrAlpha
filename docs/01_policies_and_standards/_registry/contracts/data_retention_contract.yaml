@@ -213,6 +213,7 @@ layers:
       - c3_fundamental.analyst_forecast
       - c3_fundamental.disclosure_plan
     note: "news_data 已有2000年起1400万行/21GiB历史数据；2000-2009无法用股价验证（日K从2010起，INV-RET-004最短木板）→已归档；share_unlock/analyst_forecast/disclosure_plan 体量 <1 GiB 按 INV-RET-005 永不归档"
+    gap_note: "覆盖缺口：2024-08~2026-06 仅 akshare 细流（bdpan 历史包止 2024-07+全源直播 2026-07 起步），事件驱动回测该窗口新闻盲区（DS-104 注记，回补候选 CAND-DAT-002）；2000-2009 段 2026-08-16 已归档"
 
   # ── 工具层 ──
 

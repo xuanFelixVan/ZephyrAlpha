@@ -86,7 +86,7 @@ __all__ = [
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
 GATES_DIR = SRC_ZEPHYR / "governance" / "rule_enforcement"
-SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
+SCRIPT_MANIFEST = SCRIPTS_DIR / "script-manifest.yaml"  # 连字符=登记真源（裁定 d2da16e0fe，下划线版已退库）
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 RULES_DIR = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "rules"
 CAPABILITY_REGISTRY = PROJECT_ROOT / "docs" / "01_policies_and_standards" / "_registry" / "catalogs" / "capability_canonical_file_registry.yaml"

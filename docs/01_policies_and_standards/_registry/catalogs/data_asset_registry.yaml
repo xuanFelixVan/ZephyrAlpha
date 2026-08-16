@@ -3473,6 +3473,7 @@ datasets:
 # v1.2.0 补登（2026-08-14）：对标聚宽 JQData/quant666 A 股数据谱系的全量缺口
 # DS-081~085 市场约束层 / DS-086~090 基本面层 / DS-091~097 事件层（配 REG-EVT-001）
 # DS-098~100 资金层 / DS-101 中国宏观（配 REG-MAC-001）/ DS-102 行业层
+# DS-103 北向持仓（AI-NORTH-001 批）/ DS-104 新闻事件层（L6 主表 news_data，含 2024-08~2026-06 覆盖缺口注记）
 # ============================================================
 - dataset_id: DS-081
   entity_name: meta.stock_basic
@@ -6799,3 +6800,24 @@ jobs:
   code_symbol: "src/zephyr/data/implementations/tushare_provider.py::TushareProvider._fetch_st_namechange_backfill"
   code_fingerprint: null
   code_fingerprint: null
+- dataset_id: DS-104
+  entity_name: event.news_data
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/news_collector.py
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_ASHARE_SIGNAL
+  pit_policy: strict
+  format_summary: 新闻快讯主表（cls/eastmoney/rss/akshare 等多源 event_driven 写入，SCD 语义由 news_id 锚定）。覆盖缺口：bdpan 历史包止于 2024-07、全量多源直播 2026-07 上线，2024-08~2026-06 仅 akshare 细流（月千级 vs 健康月 8 万级）——事件驱动回测该窗口存在新闻盲区（INV-RET-004 最短木板类推，回补候选见 CAND-DAT-002）
+  valid_since: '2000-01-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: event.news_data
+  name_zh: 新闻快讯
+  status: production
+  version: 1.0.0
+  created_at: '2026-08-16'
+  updated_at: '2026-08-16'
+  owner: MOD-L00-004
