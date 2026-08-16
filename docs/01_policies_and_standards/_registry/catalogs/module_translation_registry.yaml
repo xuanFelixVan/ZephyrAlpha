@@ -41515,6 +41515,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "ClickHouse 的 ReplacingMergeTree 表靠后台合并去重，但合并不保证完成，旧重复行会一直堆着。这个工具按分区逐个强制合并（OPTIMIZE FINAL），把物理重复行真正清掉——既可一次性追补历史，也可每周例行维护近3个月分区"
+- module_path: src/zephyr/ex_core/risk_layer_orchestrator.py
+  domain_id: D_EX_CORE
+  name_zh: "风控层运行时编排器"
+  name_en: "Risk Layer Orchestrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把组合级风控三件套（回撤追踪/VaR/尾部风险）加熔断清算链、盘中持仓对账、启动恢复重建接进交易会话运行时：启动时先以券商持仓为准重建账本，重建完成前禁止下单；盘中每次调仓前评估回撤与VaR/ES，产出仓位上限缩放目标权重；回撤触及EMERGENCY或尾部风险极值时经单一仲裁点触发熔断并按15笔每秒限频清算全部持仓"
 
 battle_map_steps:
 - step_id: BM-BUY-04

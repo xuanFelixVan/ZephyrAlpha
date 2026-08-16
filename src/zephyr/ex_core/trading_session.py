@@ -1,12 +1,12 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard；权重驱动非订单驱动；资金预占串行扣减+拒单回滚；C-004 合规闸（清单/纪律/操纵/熔断）注入即生效、检测失效 Fail-Closed 拒单
-# [MODIFY-GUARD] 43_compliance_discipline.md §3.4/§4.3/§7.1（AI-ASM-001 装配批接线）
+# [INVARIANTS] 只编排不重造——复用 OrderManager/BrokerInterface/StrategyBase/RiskValidationPort/CancelRateGuard/RiskLayerOrchestrator；权重驱动非订单驱动；资金预占串行扣减+拒单回滚；C-004 合规闸（清单/纪律/操纵/熔断）注入即生效、检测失效 Fail-Closed 拒单；风控层注入即生效——启动恢复未完成或熔断触发禁止下单、position_cap 缩放目标权重、对账冻结标的硬拦
+# [MODIFY-GUARD] 43_compliance_discipline.md §3.4/§4.3/§7.1（AI-ASM-001 装配批接线）+ docs/_working/reviews/2026-08-16-dual-review-adjudication.md §六（#ARCH-100，AI-RWIRE-001 风控接线批）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -45,6 +45,15 @@ C-004 合规闸（2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipli
   4. 交易合规检测（MOD-CMP-007）：大额成交/拉抬打压/尾盘操纵逐单检测
      （ctx 字段缺省跳过对应检测；Spoofing/Layering/WashTrade 需订单/成交
      历史，由盘中实时流以同一 detector 实例驱动，不在本链 Pre-Trade 范围）。
+
+组合级风控层（2026-08-16 AI-RWIRE-001 接线批，裁定书 §六 #ARCH-100）：
+  risk_layer 可选注入 RiskLayerOrchestrator（None=未接线，不影响既有行为）：
+  1. start() 先执行 recover_from_broker 以券商持仓为准重建账本，重建完成前
+     （或熔断触发后）rebalance 拒绝下单——Fail-Closed 闸门；
+  2. 每次调仓循环 evaluate_intraday 评估回撤+VaR/ES，position_cap 缩放目标
+     权重（喂仓位上限链），橙/红/黑级或熔断建议禁止新开仓（仅保留卖出）；
+  3. 回撤 EMERGENCY 经监听链触发熔断+清算（编排器内单一仲裁点）；
+  4. 盘中定时对账冻结的标的在 _validate_and_submit 逐单硬拦。
 """
 
 from __future__ import annotations
@@ -77,6 +86,7 @@ from zephyr.compliance.trading_compliance_detector import (
 )
 from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
 from zephyr.ex_core.order_manager import OrderManager, RejectionAction
+from zephyr.ex_core.risk_layer_orchestrator import RiskLayerOrchestrator, RiskLayerSnapshot
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationPort,
     RiskViolation,
@@ -194,6 +204,7 @@ class TradingSession:
         discipline_ctx_provider: DisciplineCtxProvider | None = None,
         compliance_detector: TradingComplianceDetector | None = None,
         compliance_ctx_provider: ComplianceCtxProvider | None = None,
+        risk_layer: RiskLayerOrchestrator | None = None,
     ) -> None:
         # C-004 合规闸成对注入校验（43 号 §4.3/§7.6：检测失效 Fail-Closed，
         # 缺 ctx 提供器=检测不可评估=配置错误，装配期 fail-fast 优于盘中拒单）
@@ -222,6 +233,8 @@ class TradingSession:
         self._discipline_ctx_provider = discipline_ctx_provider
         self._compliance_detector = compliance_detector
         self._compliance_ctx_provider = compliance_ctx_provider
+        # 组合级风控层（None=未接线不评估，AI-RWIRE-001 接线批 #ARCH-100）
+        self._risk_layer = risk_layer
         self._lock = threading.Lock()
         self._timer: threading.Timer | None = None
         self._running = False
@@ -237,12 +250,27 @@ class TradingSession:
     # ------------------------------------------------------------------
 
     def start(self) -> None:
-        """连接 broker + 注册 fill 回调 + 启动定时器（如果 interval > 0）。"""
+        """连接 broker + 注册 fill 回调 + 启动定时器（如果 interval > 0）。
+
+        风控层注入时（#ARCH-100）：先执行启动恢复（以券商持仓为准重建账本，
+        重建完成前 Fail-Closed 禁止下单）→ 盘前首次风险评估 → 启动盘中定时对账。
+        """
         if self._running:
             _logger.warning("TradingSession already running")
             return
         self._broker.connect()
         self._broker.register_fill_callback(self._on_fill)
+        if self._risk_layer is not None:
+            recovery = self._risk_layer.recover_from_broker()
+            if not recovery.success:
+                _logger.critical(
+                    "启动恢复失败，Fail-Closed 保持禁单（可人工介入后重试）: %s",
+                    recovery.error,
+                )
+            else:
+                # 盘前首次风险评估（仓位上限链即刻生效）
+                self._evaluate_risk_layer()
+            self._risk_layer.start_reconcile_loop()
         self._running = True
         _logger.info(
             "TradingSession started: broker=%s universe=%d interval=%ds",
@@ -258,6 +286,8 @@ class TradingSession:
         if self._timer:
             self._timer.cancel()
             self._timer = None
+        if self._risk_layer is not None:
+            self._risk_layer.stop_reconcile_loop()
         self._cancel_pending_orders()
         self._broker.disconnect()
         _logger.info("TradingSession stopped: %s", self.get_session_report())
@@ -273,6 +303,10 @@ class TradingSession:
 
     def _do_rebalance(self) -> list[Order]:
         """实际调仓逻辑（调用方已持锁）。"""
+        # ── 风控层闸门（#ARCH-100）：启动恢复未完成或熔断已触发 → 整批拒下 ──
+        if self._risk_layer is not None and not self._risk_layer.is_trading_allowed:
+            _logger.error("风控层未就绪（启动恢复未完成或熔断已触发）——本次调仓整批拒下")
+            return []
         signals = self._signal_provider(self._config.universe)
         target_weights = self._strategy.generate_target_weights(
             self._config.universe,
@@ -281,7 +315,18 @@ class TradingSession:
         )
         positions = self._broker.get_positions()
         prices = self._price_provider(self._config.universe)
+        # ── 风控层盘中评估（#ARCH-100）：回撤+VaR/ES → position_cap 喂仓位上限链 ──
+        if self._risk_layer is not None:
+            risk_snap = self._evaluate_risk_layer(positions, prices)
+            # 评估可能同步触发熔断（回撤/尾部 EMERGENCY）——同循环立即拒下
+            if not self._risk_layer.is_trading_allowed:
+                _logger.error("盘中评估触发熔断——本次调仓整批拒下")
+                return []
+            target_weights = self._apply_position_cap(target_weights, risk_snap)
         deltas = self._compute_order_deltas(target_weights, positions, prices)
+        if self._risk_layer is not None and not self._risk_layer.allow_new_position:
+            # 橙/红/黑级或熔断建议：禁止新开仓（仅保留卖出 delta）
+            deltas = [o for o in deltas if o.side is not OrderSide.BUY]
         submitted = self._validate_and_submit(deltas, target_weights, positions)
         _logger.info(
             "rebalance: signals=%d weights=%d deltas=%d submitted=%d blocked=%d",
@@ -292,6 +337,58 @@ class TradingSession:
             len(deltas) - len(submitted),
         )
         return submitted
+
+    def _evaluate_risk_layer(
+        self,
+        positions: PositionSnapshot | None = None,
+        prices: dict[str, Decimal] | None = None,
+    ) -> RiskLayerSnapshot | None:
+        """盘前/盘中风控评估：最新价市值算净值 → 编排器评估。
+
+        标的无最新价时回退快照成本价市值（保证净值可算）；评估失效由编排器
+        内部降级（degraded 标记），不阻断调仓主循环。
+        """
+        if self._risk_layer is None:
+            return None
+        if positions is None:
+            positions = self._broker.get_positions()
+        if prices is None:
+            prices = self._price_provider(self._config.universe)
+        market_value = Decimal("0")
+        for symbol, qty in positions.holdings.items():
+            price = prices.get(symbol)
+            if price is not None and price > 0:
+                market_value += qty * price
+            else:
+                market_value += positions.market_values.get(symbol, Decimal("0"))
+        nav = float(positions.cash + market_value)
+        return self._risk_layer.evaluate_intraday(nav)
+
+    @staticmethod
+    def _apply_position_cap(
+        target_weights: dict[str, float],
+        risk_snap: RiskLayerSnapshot | None,
+    ) -> dict[str, float]:
+        """position_cap 缩放目标权重（仓位上限链）：总敞口超上限按比例压缩，cap<=0 全清。"""
+        if risk_snap is None:
+            return target_weights
+        cap = risk_snap.position_cap
+        if cap >= 1.0:
+            return target_weights
+        if cap <= 0.0:
+            _logger.warning("风控层仓位上限=0（%s）——目标权重全清", risk_snap.drawdown_level)
+            return {}
+        total = sum(target_weights.values())
+        if total <= cap:
+            return target_weights
+        factor = cap / total
+        _logger.warning(
+            "风控层仓位上限 %.2f < 目标总敞口 %.2f——按比例缩放 ×%.3f",
+            cap,
+            total,
+            factor,
+        )
+        return {symbol: weight * factor for symbol, weight in target_weights.items()}
 
     def _compute_order_deltas(
         self,
@@ -430,6 +527,12 @@ class TradingSession:
             # ── 盘前检查链 Step 1-3: 风控检查（仓位/行业/杠杆/Kill Switch）──
             target_weight = float(target_weights.get(order.symbol, 0.0))
             if self._is_blocked_by_risk(order.symbol, target_weight, current_holdings_float):
+                self._blocked_orders.append(order)
+                continue
+
+            # ── 风控层：对账冻结标的硬拦（#ARCH-100，蓝图 MOD-EX-056 阶段2）──
+            if self._risk_layer is not None and self._risk_layer.is_symbol_frozen(order.symbol):
+                _logger.error("持仓对账冻结标的拒单: symbol=%s", order.symbol)
                 self._blocked_orders.append(order)
                 continue
 

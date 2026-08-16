@@ -6174,6 +6174,31 @@ capabilities:
       - published_quarter_ends          # PIT 季度枚举(删则 PIT 纪律失效)
       - GENESIS_QUARTER_END             # 回填起点常量(篡改则历史口径漂移)
 
+  # --------------------------------------------------------------------------
+  - capability_id: risk_layer_orchestrator
+    aliases:
+      - RiskLayerOrchestrator
+      - risk_layer_wiring
+      - 风控层运行时编排器
+      - 风控接线编排
+    description: >-
+      风控层运行时编排器（双轮审查裁定书 §六 P0 接线批，2026-08-16 AI-RWIRE-001
+      施工，#ARCH-100）。把组合级风控三件套（DrawdownTracker 回撤追踪 / VaRCalculator
+      / TailRiskMonitor 尾部风险）+ 熔断清算链 + 盘中持仓对账 + 启动恢复编排接进
+      TradingSession 运行时：①启动时先以券商持仓为准 rebuild_from_broker 重建
+      PositionTracker，重建完成前 Fail-Closed 禁止下单；②盘前/盘中每次调仓前
+      evaluate_intraday 评估回撤+VaR/ES，position_cap 缩放目标权重喂仓位上限链；
+      ③回撤 EMERGENCY / 尾部 EMERGENCY / BS-007 经单一仲裁点触发
+      trigger_kill_switch + execute_kill_switch_liquidation（清算以券商实时持仓
+      为准，15 笔/秒限频）；④PositionReconciler 盘中定时对账（蓝图阶段2规划位，
+      默认 300s），冻结标的下单前硬拦。canonical =
+      src/zephyr/ex_core/risk_layer_orchestrator.py。解决发现性：新 AI 搜
+      "风控接线/风险编排/kill switch 清算/启动恢复/持仓对账定时" 可定位。
+    integrity_anchors:
+      - RiskLayerOrchestrator      # 编排器主类(删则风控层零接线)
+      - recover_from_broker        # 启动恢复入口(删则重启空仓错觉)
+      - _engage_kill_switch        # 熔断单一仲裁点(删则EMERGENCY无清算)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -6253,6 +6278,12 @@ creation_tokens:
     token: "auto-module-translation-registry-20260801"
     created_by: "session-sess-module-translation-001"
     capability: "module_translation_loader"
+
+  # --- 风控层运行时编排器（双轮审查裁定书 §六 P0 风控接线批，#ARCH-100，2026-08-16 AI-RWIRE-001 施工）---
+  - file: "src/zephyr/ex_core/risk_layer_orchestrator.py"
+    token: "auto-risk-layer-orchestrator-20260816"
+    created_by: "session-AI-RWIRE-001"
+    capability: "risk_layer_orchestrator"
 
   # --- 作战地图全覆盖补丁·G30 合规与交易纪律体系设计备忘（2026-08-12，BM-BUY-08-A/08-B/09/12/15 五环节承载，D_COMPLIANCE 域设计真源）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/43_compliance_discipline.md"

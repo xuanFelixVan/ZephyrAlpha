@@ -16994,6 +16994,17 @@ entries:
   status: open
   created: '2026-08-16'
   last_updated: '2026-08-16'
+- issue_id: '#ARCH-100'
+  title: 风控全链路零接线（双轮审查 Qwen P0-1）——35回撤/36 VaR-ES/37流动性+KillSwitch+对账器模块全写完测试全绿但生产链路零实例化，回撤25%不会熔断；P0 风控接线批落地（SHADOW 前硬约束）
+  severity: P0高
+  category: integration_gap
+  adjudication: '2026-08-16 双轮审查差异比对裁定书（docs/_working/reviews/2026-08-16-dual-review-adjudication.md §一/§六）：一审（Kimi K3）× 二审（Qwen3.8-Max 盲审）交集确认——风控三件套+KillSwitch+PositionReconciler 生产链路零接线（统筹 grep 复核：RiskOrchestrator src 零匹配；VaRCalculator()/TailRiskMonitor()/DrawdownController() 实例化仅存在于自身定义文件；execute_kill_switch_liquidation 唯一调用点在 tests）。定性=集成缺口非算法 bug（消防栓装了没接水管）。铁律：算法修复在接线前不产生实际保护，接线批最高优先。边界澄清：trading_session 已有合规层接线（ASM-001：C-004 四道闸+ReportGate+日申报计数），缺的是组合级风控层。施工边界（AI-RWIRE-001 × AI-RRESIL-001 并发分治）：KillSwitch 持久化/fill_id 去重/LIQUIDATING 锁由 RRESIL 在 DefaultRiskValidator/fill_handler 内部落地，接口不变；RWIRE 只做调用点接入。rebuild_from_broker 签名约定 rebuild_from_broker(holdings: dict, today_fills: list) -> None，merge 时对齐。'
+  impact: "变更文件： - 'src/zephyr/ex_core/risk_layer_orchestrator.py（新建，MOD-L06-001 伞下 file 粒度节点 node_id=9689693，9 条 runtime 依赖边）' - 'src/zephyr/ex_core/trading_session.py（盘前/盘中循环注入风险评估+position_cap 缩放目标权重+对账冻结标的硬拦+启动恢复 Fail-Closed 闸门）' - 'src/zephyr/ex_core/order_execution_saga.py（超时分支修复：cancel 返回 False 强制查询订单终态，已成交补走 step5/6）' - 'tests/ex_core/test_risk_layer_orchestrator.py + tests/ex_core/test_saga_timeout_recovery.py（新建，红队实证）'"
+  fix_phase: '接线批施工中（AI-RWIRE-001）；算法修复批（F1 ES插值/F2 NaN+Inf/F3 幽灵第三枚举/Qwen P1 群/F5 死代码）接线批 merge 后启动；流动性危机 LEVEL_3 接线（37 号）列本批遗留项'
+  status: open
+  related_rules: '2026-08-16-dual-review-adjudication.md §六（P0 裁定）; #ARCH-COMPLIANCE-001（合规层接线先例 ASM-001）; #ARCH-70（worktree merge 通道）'
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
 - issue_id: '#ARCH-MON-001'
   title: 55 号 G26 监控告警与复盘施工——告警阈值注册表（REG-ATH-001）+ 偏离度量（MOD-RK-23）+ 退役双判据评审 + 复盘编排器（MOD-RPT-009）
   severity: P1高
