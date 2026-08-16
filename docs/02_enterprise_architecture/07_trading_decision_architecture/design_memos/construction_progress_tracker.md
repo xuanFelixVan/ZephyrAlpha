@@ -138,7 +138,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **数据补充批（2026-08-15 晚用户裁定增派）** | **AI-NORTH-001：19 号北向季度持仓快照 fetcher（tushare hk_hold 已验证，日频断档替代）** | ✅ 已 merge（87f50a5e3f，2026-08-16 第五统筹；tushare_provider 冲突手工合并） |
 | **装配批（2026-08-15 晚用户裁定增派）** | **AI-ASM-001：#78 合规运行时接线（C-004/C-002/MOD-PA-006 调用点嵌入 40/41 号 production 链路）+日申报笔数硬计数器（5000 预警/1 万阻断，复用 24/40 号既有计数）** | ✅ 已 merge（8b932ced42，2026-08-16 第五统筹） |
 | 重建类 | 28 号情绪周期恢复（AI-SENT-001，从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架（XCUT-001 实证非骨架无需重建） | ✅ 28 号已闭环（内容层前序会话已恢复至 v1.2.3；AI-SENT-001 核实 v1.2.0→v1.2.3 压缩零漂移 + 00_index L54/L384/L642 三处状态修正）；60 号 ✅ 免重建 |
-| **测试债清偿下批·233 长尾**（2026-08-15 深夜 TDEBT-001 裁定书建议立项，第五统筹登记） | 6 包分包（裁定书 §关联项 E，Two Sigma 风险加权安全/资金优先）：包①安全权限 ~30 项（escalation/rbac/agent_spec/skill）/ 包②交易资金 ~45 项（trading/position/pf_core/rollback）/ 包③治理蓝图 ~60 项+搭车 #ARCH-099（gov_db 8 xfail 治本=自建最小 schema fixture）/ 包④数据基础设施 ~40 项 / 包⑤自治生命周期 ~35 项 / 包⑥工具其他 ~23 项+复跑全量验证 | ⏳ 待用户裁定开工时点与路数（统筹建议：TDEBT-001 merge 后开工——基线 233 以 merge 后 dev 为准，避免重复清偿已修簇；裁定书=docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md，随 TDEBT merge dev 可达） |
+| **测试债清偿下批·233 长尾**（2026-08-15 深夜 TDEBT-001 裁定书建议立项，第五统筹登记） | 6 包分包（裁定书 §关联项 E，Two Sigma 风险加权安全/资金优先）：包①安全权限 ~30 项（escalation/rbac/agent_spec/skill）/ 包②交易资金 ~45 项（trading/position/pf_core/rollback）/ 包③治理蓝图 ~60 项+搭车 #ARCH-099（gov_db 8 xfail 治本=自建最小 schema fixture）/ 包④数据基础设施 ~40 项 / 包⑤自治生命周期 ~35 项 / 包⑥工具其他 ~23 项+复跑全量验证 | 🔄 **已派单 6 路全并发**（2026-08-16 用户裁定）：SEC/TRD/GOV/DATA/AUTO/UTIL 6 worktree 自 fcf3e21e89 切出，开工指令=.runtime/dispatch/2026-08-16-233-six-pack-orders.md（验收同上批：2 轮全绿+假阳性转正+xfail 编号统筹申请） |
 
 ## 六、遗留项登记表（重建版，按优先级分类）
 
