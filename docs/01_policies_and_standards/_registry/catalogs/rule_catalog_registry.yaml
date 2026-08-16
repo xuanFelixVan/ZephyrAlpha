@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-16T19:13:09Z'
+generated_at: '2026-08-16T19:36:47Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 217
@@ -2020,7 +2020,7 @@ files:
   title: ''
   doc_type: ''
   status: active
-  version: 1.0.0
+  version: 1.2.0
   rule_form: ''
   scope: ''
   stability: ''
