@@ -131,14 +131,16 @@ def _is_vpn_ready(port: int = _VPN_SOCKS5_PORT, timeout: float = 1.0) -> bool:
 
     Returns: True 如果 VPN 开启（端口监听中），False 如果 VPN 关闭。
     """
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.settimeout(timeout)
-    try:
-        s.connect(("127.0.0.1", port))
-        s.close()
-        return True
-    except OSError:
-        return False
+    # 资源泄漏治本：OSError 失败路径原实现不 close socket——VPN 关闭时每次探测
+    # 泄漏一个 socket，GC 时触发 PytestUnraisableExceptionWarning（测试结果随
+    # VPN 开关状态翻转）。with 语境保证任意路径关闭。
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.settimeout(timeout)
+        try:
+            s.connect(("127.0.0.1", port))
+            return True
+        except OSError:
+            return False
 
 
 def _is_overseas_feed(feed_url: str) -> bool:

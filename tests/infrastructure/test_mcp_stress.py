@@ -50,8 +50,13 @@ class TestMCPStress:
     @pytest.fixture
     def gw(self):
         gw = create_gateway()
+        # 契约漂移对齐（5.36.8 RBAC Permission 阶段）：dummy server 须登记
+        # ACL 放行，否则默认 operator 角色被拒（-32004）。与本文件
+        # server_instances 注入模式一致，直接写实例属性。
+        acl = gw._auth_cfg.setdefault("acl_by_server", {})
         for sid in ["test_a", "test_b", "test_c"]:
             gw.server_instances[sid] = DummyServer(sid, delay_ms=0)
+            acl[sid] = {"operator": [f"{sid}.echo"], "admin": [f"{sid}.echo"]}
         return gw
 
     def test_concurrent_sessions_no_deadlock(self, gw: MCPGateway):

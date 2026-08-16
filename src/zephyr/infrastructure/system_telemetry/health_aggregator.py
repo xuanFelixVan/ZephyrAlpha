@@ -83,8 +83,15 @@ class HealthAggregator:
     def latest_snapshots(self) -> list[SystemHealthSnapshot]:
         if not self._snapshots:
             return []
-        latest_ts = max(s.timestamp for s in self._snapshots)
-        return [s for s in self._snapshots if s.timestamp == latest_ts]
+        # 契约：返回每个 system 的最新一条快照（一轮 poll 全集）。
+        # 旧实现按"最大时间戳精确相等"过滤——Windows 时钟分辨率 ~15.6ms，
+        # 一轮 poll 跨 tick 时只剩部分 system，结果随机（0 生产消费者，潜在缺陷）。
+        latest_by_system: dict[str, SystemHealthSnapshot] = {}
+        for s in self._snapshots:
+            cur = latest_by_system.get(s.system)
+            if cur is None or s.timestamp >= cur.timestamp:
+                latest_by_system[s.system] = s
+        return list(latest_by_system.values())
 
     def annual_report(
         self, year: int, uptimes: dict[str, float], mttr: dict[str, float], degradations: dict[str, float]

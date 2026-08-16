@@ -321,7 +321,14 @@ class TestProcessRestartRecovery:
 
         new_entry = gateway.pool.pool.get("mcp-verify")
         assert new_entry is not None
-        assert _is_pid_alive(new_entry.pid), f"New PID {new_entry.pid} should be alive in OS"
+        # 高负载下 tasklist 自身可能超过 _is_pid_alive 的 2s 超时（误判 dead），
+        # 轮询宽限消除负载抖动；真死进程不会复活，回归力不变。
+        deadline = time.monotonic() + 10.0
+        while not _is_pid_alive(new_entry.pid):
+            assert time.monotonic() < deadline, (
+                f"New PID {new_entry.pid} should be alive in OS"
+            )
+            time.sleep(0.5)
 
 
 # ---------------------------------------------------------------------------

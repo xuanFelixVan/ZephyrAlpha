@@ -33,8 +33,8 @@ class TestDomainEntry:
         assert entry.subdomain == "sub"
         assert entry.covers == []
         assert entry.aliases == []
-        assert entry.stability == "evolving"
-        assert entry.ai_autonomy == "human_gated"
+        assert entry.change_policy == "evolving"
+        assert entry.modification_permission == "human_gated"
 
 
 class TestOverlapResult:

@@ -188,11 +188,17 @@ class TestConcurrent100Tasks:
                     try:
                         task = _make_taskcard(tid)
                         repo.create(task, allow_direct_create=True)
-                        repo.conn.execute(
-                            "UPDATE tasks SET status='READY', batch_id=? WHERE task_id=?",
-                            ("mixed-batch", tid),
-                        )
-                        repo.conn.commit()
+                        # 竞态治本：裸 SQL 必须与 repo 写操作共用同一把序列化锁。
+                        # 原写法绕过 RLock 直接在共享连接上 commit，高负载下与
+                        # consumer 的 claim_next 事务交错 → "cannot commit
+                        # transaction - SQL statements in progress"（sqlite3
+                        # 共享连接事务语义交错，非 repo 缺陷）。走 _write_tx
+                        # 获得锁内事务语义（公共写 API 不覆盖 batch_id 赋值场景）。
+                        with repo._write_tx() as conn:
+                            conn.execute(
+                                "UPDATE tasks SET status='READY', batch_id=? WHERE task_id=?",
+                                ("mixed-batch", tid),
+                            )
                     except Exception as e:
                         with error_lock:
                             errors.append(f"producer: {e}")

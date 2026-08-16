@@ -58,5 +58,5 @@ def test_healthz_db_degraded_wal_lag(probes):
     assert result["status"] == "degraded"
 
 
-def test_list_12_systems(probes):
-    assert len(probes.list_systems()) == 12
+def test_list_11_systems(probes):
+    assert len(probes.list_systems()) == 11
