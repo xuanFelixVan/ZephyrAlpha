@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] tests/ex_core/test_corporate_action_adjuster.py
 # [TTL] task_bound
 # 对应: src/zephyr/ex_core/corporate_action_adjuster.py

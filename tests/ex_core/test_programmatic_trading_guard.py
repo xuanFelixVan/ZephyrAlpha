@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [TESTS] tests/ex_core/test_programmatic_trading_guard.py
 # [TTL] task_bound
 """ProgrammaticTradingGuard 测试（gap 18 程序化报备开关）。
