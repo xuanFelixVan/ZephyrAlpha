@@ -9326,6 +9326,11 @@ creation_tokens:
     token: "auto-rollback-state-machine-blueprint-20260817"
     created_by: "AI-DGR-001"
     capability: "degradation_rollback_fsm"
+  # --- fail-open 治理批派单指令（2026-08-17 第六统筹 coord-0816-gov4，Owner 裁定 B1+B2 全量 #ARCH-119）---
+  - file: "docs/_working/dispatch/2026-08-17-fopen001-fail-open-b1b2-order.md"
+    token: "auto-fopen001-dispatch-20260817"
+    created_by: "coord-0816-gov4"
+    capability: "construction_dispatch"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"
