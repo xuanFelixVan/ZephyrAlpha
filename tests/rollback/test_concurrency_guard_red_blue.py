@@ -392,26 +392,30 @@ class TestConcurrentGuard:
 
         def call_guard():
             try:
-                with patch("scripts.git_guard.get_project_root", return_value=temp_git_repo):
-                    with patch("scripts.git_guard.get_session_id", return_value="session-me-456"):
-                        with patch("scripts.git_guard.run_git_silent") as mock_git_silent:
-                            mock_git_silent.return_value = "src/important.py"
-                            with patch("scripts.git_guard.passthrough", return_value=0):
-                                return check_and_execute(["reset", "--hard", "HEAD~1"])
+                return check_and_execute(["reset", "--hard", "HEAD~1"])
             except Exception as e:
                 return e
 
-        with ThreadPoolExecutor(max_workers=10) as pool:
-            futures = [pool.submit(call_guard) for _ in range(10)]
-            for future in as_completed(futures, timeout=30):
-                try:
-                    result = future.result()
-                    if isinstance(result, Exception):
-                        errors.append(str(result))
-                    else:
-                        results.append(result)
-                except Exception as e:
-                    errors.append(str(e))
+        # mock.patch 非线程安全：每线程各自 patch 会互相拆解（先退出线程还原真函数，
+        # 其余线程可能落到真仓/真 git）。所有线程补丁值相同，池外单次进程级 patch 等价且安全。
+        with (
+            patch("scripts.git_guard.get_project_root", return_value=temp_git_repo),
+            patch("scripts.git_guard.get_session_id", return_value="session-me-456"),
+            patch("scripts.git_guard.run_git_silent") as mock_git_silent,
+            patch("scripts.git_guard.passthrough", return_value=0),
+        ):
+            mock_git_silent.return_value = "src/important.py"
+            with ThreadPoolExecutor(max_workers=10) as pool:
+                futures = [pool.submit(call_guard) for _ in range(10)]
+                for future in as_completed(futures, timeout=30):
+                    try:
+                        result = future.result()
+                        if isinstance(result, Exception):
+                            errors.append(str(result))
+                        else:
+                            results.append(result)
+                    except Exception as e:
+                        errors.append(str(e))
 
         assert len(errors) == 0, f"并发执行错误: {errors}"
         assert len(results) == 10

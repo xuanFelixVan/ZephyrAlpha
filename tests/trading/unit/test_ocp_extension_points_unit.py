@@ -30,11 +30,17 @@ from zephyr.trading.trading_contracts.execution.position import PositionSnapshot
 
 @pytest.fixture(autouse=True)
 def _clear_ocp_registries() -> None:
+    # 快照-恢复：clear 后不恢复会把空注册表泄漏给后续测试文件
+    # （autodiscover 对已 import 模块是 no-op，装饰器不会重跑）。
+    saved_factors = dict(FactorRegistry._registry)
+    saved_strategies = dict(StrategyRegistry._strategies)
     FactorRegistry.clear()
     StrategyRegistry.clear()
     yield
     FactorRegistry.clear()
     StrategyRegistry.clear()
+    FactorRegistry._registry.update(saved_factors)
+    StrategyRegistry._strategies.update(saved_strategies)
 
 
 def test_import_l02_package_exports_factor_base() -> None:

@@ -61,7 +61,7 @@ class TestPartialRevertNonexistentFile:
         # Mock preflight to pass
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
             # Mock git to return empty for nonexistent files
-            with patch.object(executor, "_run_git") as mock_git:
+            with patch.object(executor, "run_git") as mock_git:
                 # git checkout returns empty (no files matched)
                 mock_git.return_value = ""
                 result = executor.partial_revert(
@@ -80,7 +80,7 @@ class TestPartialRevertZeroMatchGlob:
     def test_zero_match_glob_no_crash(self, executor):
         """partial_revert with glob matching zero files should not crash."""
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
-            with patch.object(executor, "_run_git") as mock_git:
+            with patch.object(executor, "run_git") as mock_git:
                 # Simulate git returning empty (no files matched glob)
                 mock_git.return_value = ""
                 result = executor.partial_revert(
@@ -100,7 +100,7 @@ class TestPartialRevertCrossDirectory:
     def test_cross_directory_recovery(self, executor):
         """partial_revert should handle files across multiple directories."""
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
-            with patch.object(executor, "_run_git") as mock_git:
+            with patch.object(executor, "run_git") as mock_git:
                 # Simulate git returning multiple files from different dirs
                 mock_git.return_value = "src/zephyr/module_a/file.py\nsrc/zephyr/module_b/file.py\n"
                 result = executor.partial_revert(
@@ -141,7 +141,7 @@ class TestPartialRevertMidwayFailure:
         from subprocess import CalledProcessError
 
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
-            with patch.object(executor, "_run_git") as mock_git:
+            with patch.object(executor, "run_git") as mock_git:
                 # First call (checkout) succeeds, second call (commit) fails
                 mock_git.side_effect = ["src/file.py", CalledProcessError(1, "git")]
                 result = executor.partial_revert(
@@ -177,7 +177,7 @@ class TestPartialRevertDryRun:
     def test_dry_run_no_side_effects(self, executor):
         """partial_revert dry_run=True should not modify any files."""
         with patch.object(executor, "preflight_check", return_value=MagicMock(passed=True, errors=[])):
-            with patch.object(executor, "_run_git") as mock_git:
+            with patch.object(executor, "run_git") as mock_git:
                 mock_git.return_value = "src/file.py"
                 result = executor.partial_revert(
                     commit_sha="abc123",

@@ -178,7 +178,7 @@ class TestAdmissionResponseBuilder:
             event_type="file_write",
             retry_after_ms=0,
             remaining_tokens=50.0,
-            circuit_open=False,
+            is_circuit_open=False,
         )
         resp = builder.build_response(result, "req-200")
         assert resp.status == AdmissionResponseStatus.ADMITTED

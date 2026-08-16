@@ -25,7 +25,9 @@ T0 = datetime(2026, 8, 1, 9, 30, tzinfo=timezone.utc)
 
 
 def _mk(symbol: str = "000001.SZ", **cfg) -> PositionStateMachine:
-    return PositionStateMachine(symbol, PositionStateMachineConfig(**cfg) if cfg else None)
+    # 注入冻结时钟锚定 T0：is_in_cooldown 等无 now 参数的属性走 self._clock()，
+    # 默认真实时钟会随日历漂移（T0=2026-08-01 硬编码）导致断言过期。
+    return PositionStateMachine(symbol, PositionStateMachineConfig(**cfg) if cfg else None, clock=lambda: T0)
 
 
 # ── 初始状态 ──────────────────────────────────────────────────────────────────

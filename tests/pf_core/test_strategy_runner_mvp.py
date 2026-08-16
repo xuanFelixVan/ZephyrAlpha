@@ -54,6 +54,18 @@ def ensure_momentum_registered():
     yield
 
 
+@pytest.fixture(autouse=True)
+def ensure_strategy_registered():
+    """确保 topn-momentum 已注册（他文件 clear 泄漏场景下补登）。
+
+    autodiscover_strategies 对已 import 模块是 import no-op（装饰器不重跑），
+    被 StrategyRegistry.clear() 清空后无法靠 autodiscover 自愈，故显式补登。
+    """
+    if StrategyRegistry.get("topn-momentum") is None:
+        StrategyRegistry.register(TopNMomentumStrategy)
+    yield
+
+
 def _make_tsv_multi(n_syms: int = 20, n_days: int = 80) -> str:
     """构造合成日K TSV（纯数字 symbol，9列，制表符分隔）。
 
