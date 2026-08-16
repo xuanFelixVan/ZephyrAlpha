@@ -12698,7 +12698,7 @@ entries:
   impact:
     - 'src/zephyr/regime/features/overlay_features.py（s2_capitulation_score/s2_valuation_score/s2_spring_flag，P0 bug 修复）'
     - 'src/zephyr/regime/validation/phase2/b4_transition_accuracy.py（HistoricalEvent 新增 design_match 字段，validate 不计分母）'
-    - 'docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml（S2 三事件 design_match=false + 排除理由注释）'
+    - 'src/zephyr/regime/validation/phase2/historical_events.yaml（S2 三事件 design_match=false + 排除理由注释；2026-08-17 自 docs/02 文档区迁入代码同包，#ARCH-117）'
     - 'scripts/tests/dump_s2_scores.py（S2 维度评分诊断脚本）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/14_regime_s2_diagnosis.md（诊断与治本详档）'
   fix_phase: design_match=false 排除 + P0 bug 修复已落地（commit 93a25890，B4 PASS(3/3) Phase 2 闭环）；
@@ -17259,3 +17259,12 @@ entries:
   status: open
   created: '2026-08-16'
   last_updated: '2026-08-16'
+- issue_id: '#ARCH-117'
+  title: 业务运行时数据置于 docs/02 文档治理区——B4 历史事件库遭"文档归类"语义移动（2026-08-16 深夜实证），生产代码 parents[5] 长链硬编码引用面临潜伏崩断风险；治本=迁入消费代码同包
+  severity: P2中
+  category: architecture_drift
+  adjudication: '第六统筹会话调查实证（2026-08-16/17）：①事件——historical_events.yaml 自 docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/ 被移至 design_memos/validation_cases/（纯移动 blob hash 全等），23:18 watchdog 检测时点活跃会话仅 task:SRC-081（嫌疑未坐实，已死亡未反复）+ AI-RFIX-001（域零交集排除），9df037441c 已回退未复现；②引用脆弱——src/zephyr/regime/validation/phase2/b4_transition_accuracy.py 经 parents[5]/docs/... 5 级长链硬编码引用，文件一动 B4 验证器运行即崩（潜伏至下次 regime Phase2 验证）；③防护空白——directory_contract protected_subdirs 仅护 design_memos/+04 裁定书区，validation_cases/ 无锚点保护；④普查定界——src 引用 docs/ 共 40 处，39 处为 docs/01 registry+docs/03 modules 既定"文档即真源"设计，业务数据引用 docs/02 仅此孤例。第一性原理：docs/ 区对 AI 会话的语义=文档，.yaml 数据文件在内即"放错了该归类"信号——100% AI 开发项目里"好心整理"诱惑永续，登记保护（求人别动）不如迁移（让人没有动的理由）。'
+  fix_phase: 已闭环（2026-08-17 AI-VCFIX-001）：historical_events.yaml 迁入 src/zephyr/regime/validation/phase2/（与唯一消费方 b4_transition_accuracy.py 同目录，src 内嵌 yaml 120+ 先例），DEFAULT_EVENTS_PATH 改 Path(__file__).parent 零跳引用；memo 10/12/13/14+本 registry 引用同步；空目录 validation_cases/ 已删；派生资产索引 3 份交 GATE-ASSET-INDEX 自动重生；tests/regime/phase2/test_b4_transition_accuracy.py 2 轮全绿（L240 动态 exists 判定零改动）
+  status: resolved
+  created: '2026-08-17'
+  last_updated: '2026-08-17'

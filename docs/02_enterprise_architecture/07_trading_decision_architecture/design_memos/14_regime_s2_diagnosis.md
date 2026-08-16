@@ -128,7 +128,7 @@ related_issues:
 
 | 设施 | 路径 | 状态 |
 |---|---|---|
-| S2 事件定级 | [historical_events.yaml:59-100](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L59) | ✅ data_ready=true + design_match=false（commit 93a25890） |
+| S2 事件定级 | [historical_events.yaml:59-100](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml#L59) | ✅ data_ready=true + design_match=false（commit 93a25890） |
 | ARCH 缺陷登记 | [architecture_issue_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) `#ARCH-REGIME-S2-ALGORITHM-001` | ✅ 已登记（status 三方不一致见 §6 开放问题 12） |
 | P1-E9 工程项 | [13_regime_phase3_engineering_plan §3.5](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/13_regime_phase3_engineering_plan.md) | ✅ 已登记（范围同步缺口见 §6 开放问题 13） |
 
@@ -163,7 +163,7 @@ related_issues:
 |---|---|
 | **设计意图**（[§4.12.1](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/10_regime_detector_spec.md#L1527)） | Capitulation 是"危机见底信号"，描述 **Phase 1-5 的过程**：慢性阴跌→杠杆清算级联→止损簇扫荡→长下影线→反弹与怀疑。底部在情绪恢复前形成（price leads narrative） |
 | **实现**（[overlay_features.py:192-214](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L192) `s2_capitulation_score`） | 当日 `z>1 ∧ pct_change<-1.5%` 分档给分（50/70/90），**瞬时信号无 rolling**。原 `z>2` 已于 2026-08-08 降至 `z>1`（持续高量期 z-score 被滚窗均值抬高、单日 z 被压低，z>2 经验性不可达）。仅 vol_z+pct_change 两维，无 ATR 实体/量能放大/下影线过滤 |
-| **诊断实测** | 三事件日 ±10 交易日窗口内 capitulation **为 0**——但 commit 93a25890 精确诊断澄清：**并非算法完全失效，而是触发在窗口外**。2015 事件 capitulation 在 **08-24/25 底部触发，早于 09-15 事件日约 3 周**（见 [historical_events.yaml:82](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L82) 注释），落在 B4 ±10 评估窗口外，故窗口内仍 0/3 |
+| **诊断实测** | 三事件日 ±10 交易日窗口内 capitulation **为 0**——但 commit 93a25890 精确诊断澄清：**并非算法完全失效，而是触发在窗口外**。2015 事件 capitulation 在 **08-24/25 底部触发，早于 09-15 事件日约 3 周**（见 [historical_events.yaml:82](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml#L82) 注释），落在 B4 ±10 评估窗口外，故窗口内仍 0/3 |
 | **错配本质** | 复苏事件日是企稳时点，当日不会出现"放量暴跌"。设计意图是"近期**曾**出现投降抛售"（过程），实现是"当日**正在**投降抛售"（瞬时）。S2 触发要求 capitulation≥60，但复苏时点 capitulation 必然为 0 → trigger 永不触发。**窗口外触发反而印证了 §4.1 衰减加权和的必要性**：把 08-25 的 capitulation 信号衰减带到 09-15 |
 
 **结论**：capitulation 评分丢失了"过程"语义。正确的实现应衡量"近期曾出现投降抛售"且**信号随时间衰减**（非持续粘滞），而非当日值；且单日判定应从两维升级为多维度共振（见 §4.1）。
@@ -195,7 +195,7 @@ related_issues:
 1. **两个经验性 bug 修复（治标）**：
    - `s2_capitulation_score`：vol_z 阈值 `z>2 → z>1`（持续高量危机期 z-score 被滚窗均值抬高，实测 2015 股灾期 max=1.79 结构性不可达；修复后全局 cap≥60 仅 0.6%，选择性足够）。**治标**——降阈值让 capitulation 能触发，但未解决"过程语义缺失"（§4.1 治本）。
    - `s2_valuation_score`：`rolling(250).max()` 加 `min_periods=20`（000300 数据起点晚于 data_load_start，2015 年 rolling 不足 250 非 NaN → warmup 误零）。**治标**——修 warmup 误零，但未解决"价格回撤≠基本面估值"（§4.2 治本）。
-2. **design_match 字段定级（设计域排除）**：[b4_transition_accuracy.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py) 新增 `design_match` 字段——数据已就绪但事件类型超出当前模型设计域时排除出 B4 分母（区别于 `data_ready`）。3 个 S2 事件标 `design_match: false`，理由（[yaml:82/91/100](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L82)）：
+2. **design_match 字段定级（设计域排除）**：[b4_transition_accuracy.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py) 新增 `design_match` 字段——数据已就绪但事件类型超出当前模型设计域时排除出 B4 分母（区别于 `data_ready`）。3 个 S2 事件标 `design_match: false`，理由（[yaml:82/91/100](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml#L82)）：
    - 2015：capitulation 在 08-24/25 底部触发，早于 09-15 事件日 3 周（窗口外）
    - 2020：V 型反转不走 Wyckoff 吸筹，valuation/wyckoff 合法不达标
    - 2024：政策驱动 V 反转不走 Wyckoff 吸筹，bad_news_flat/capitulation 不达标
@@ -282,7 +282,7 @@ S2 算法重设计涉及评分逻辑的**语义重新定义**：
 
 ### 3.1 步骤 1（已落地）：design_match 定级，Phase 2 闭环
 
-**文件**：[historical_events.yaml:59-100](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L59)
+**文件**：[historical_events.yaml:59-100](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml#L59)
 
 **改动**（commit 93a25890）：
 - 3 个 S2 事件（EVT-2015/2020/2024-RECOVERY）`data_ready` 维持 **true**，新增 `design_match: false`
@@ -342,7 +342,7 @@ P1-E9 覆盖诊断确认有"时点/形态错配"的四个维度（v0.4.0 扩入 
 > - **fund（成交量代理偏弱）**：2026 研究（慧眼财经/华夏时报/东方财富）实证成交量不区分方向（散户接盘式上涨持续性差）、无法识别资金性质（配置型 vs 交易型北向）、缺乏"出清"语义（融资余额低点=出清，两融参与者占比 4% 见底）。924 是"主力净流入 209.85 亿 + 融资余额攀升 + 成交量量级跃升"三者共振，单看成交量无法复现。**P1-E4 应升级 fund 为"融资余额变化分位 + 超大单净流入分位 + 成交量分位"加权**（非 P1-E9 范围，但 confirm≥50 依赖此，见开放问题 10）。
 > - **vix（≥40 门槛可能偏高）**：2026 研究（雪球淡定菌/浙商廖静池）实证 A 股合成 VIX>25 即触发 8/8 胜率信号（沪深300 期权 CBOE 方差互换法），vix≥40 是美股 3-sigma 标准（数年一遇）对沪深300 偏高。2026-07 大跌沪深300 期权隐波仅升至 23-28%。**P1-E7 应校准 vix 门槛**：若用沪深300 合成 VIX 降至 ≥25-30；或改"IV 近 89 日分位≥80% + 价格布林下轨"（浙商方案，胜率 75-86%）。实现波动率分位是后视镜，无法捕捉 924 这类政策脉冲拐点——需期权隐含 VIX 互补（非 P1-E9 范围，见开放问题 11）。
 
-> **关键**：P1-E9 修好 capitulation/valuation 后，total 分提升，但 **confirm 仍卡 wyckoff≥60**——2020/2024 V 反转不走吸筹，wyckoff 合法不达标（[yaml:91/100](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L91)）。这是 commit 93a25890 明示"S2 待重设计（加政策/V 反转信号）"的根因。**§4.4 V 反转通路是 P1-E9 能否让 confirm 触发的关键**，不解决则修完三维度 confirm 仍不触发。另：strong_confirm 仍需 spring≥1 ∧ three_yang≥1（**three_yang 需 §4.4b 校准**），confirm 仍需 fund≥50（**fund 需 P1-E4 升级**，见上注 + §6 开放问题 6/10）。
+> **关键**：P1-E9 修好 capitulation/valuation 后，total 分提升，但 **confirm 仍卡 wyckoff≥60**——2020/2024 V 反转不走吸筹，wyckoff 合法不达标（[yaml:91/100](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml#L91)）。这是 commit 93a25890 明示"S2 待重设计（加政策/V 反转信号）"的根因。**§4.4 V 反转通路是 P1-E9 能否让 confirm 触发的关键**，不解决则修完三维度 confirm 仍不触发。另：strong_confirm 仍需 spring≥1 ∧ three_yang≥1（**three_yang 需 §4.4b 校准**），confirm 仍需 fund≥50（**fund 需 P1-E4 升级**，见上注 + §6 开放问题 6/10）。
 
 > **施工顺序**（关键路径，v0.4.0 补 TDD-first + Step 0 勘探门禁，v0.4.3 补勘探脚本）：
 > 1. **Step 0（勘探门禁，禁止跳过）**：先勘探 ① `c1_market.daily_valuation` 是否含 CAPE/PB/破净率/ERP 字段（§4.2 路 A 前置）② wyckoff_engine 是否暴露 Spring 事件 flag + 是否满足 §4.3 四要素（§4.3 前置）③ A 股涨跌家数/创新低占比数据可得性（§4.4 breadth thrust 前置）④ 50ETF/300ETF 期权 put/call 数据可得性（§4.1 capitulation 第 5/6 维前置）。任一阻断则先建数据管道，**禁止带着假设平铺施工**。
@@ -707,7 +707,7 @@ def s2_valuation_score_fundamental(
 
 ### 4.4 P1-E9d: V 反转通路（confirm 析取逻辑 + Breadth Thrust）★ v0.4.0 新增
 
-**问题**（commit 93a25890 明示）：S2 confirm 门槛 `wyckoff≥60 ∧ policy≥40 ∧ valuation≥40 ∧ fund≥50`，但 2020/2024 是 **V 型反转/政策驱动，不走 Wyckoff 吸筹**（[yaml:91/100](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml#L91)）→ wyckoff 合法偏低 → confirm 永不触发。修好 capitulation/valuation 也救不了 wyckoff。commit 原话："S2 待重设计（**加政策/V 反转信号**）后激活"。
+**问题**（commit 93a25890 明示）：S2 confirm 门槛 `wyckoff≥60 ∧ policy≥40 ∧ valuation≥40 ∧ fund≥50`，但 2020/2024 是 **V 型反转/政策驱动，不走 Wyckoff 吸筹**（[yaml:91/100](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml#L91)）→ wyckoff 合法偏低 → confirm 永不触发。修好 capitulation/valuation 也救不了 wyckoff。commit 原话："S2 待重设计（**加政策/V 反转信号**）后激活"。
 
 **解法**：给 V 反转开一条 confirm 析取通路，不要求所有复苏都走 Wyckoff 吸筹。
 
@@ -967,7 +967,7 @@ v0.4.1 记录 4 个 + v0.4.3 补 2 个 = 6 个 2026 研究发现的更优算法�
 
 | 文档 | 联动改动 | 状态 |
 |---|---|---|
-| [historical_events.yaml](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml) | S2 `design_match: false` 定级（data_ready 维持 true）+ 注释更新 | ✅ 已落地（commit 93a25890） |
+| [historical_events.yaml](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml) | S2 `design_match: false` 定级（data_ready 维持 true）+ 注释更新 | ✅ 已落地（commit 93a25890） |
 | [overlay_features.py](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py) | capitulation z>1 + valuation min_periods=20（P0 治标） | ✅ 已落地（commit 93a25890）；P1-E9 治本待施工 |
 | [b4_transition_accuracy.py](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/b4_transition_accuracy.py) | design_match 字段 + 三处同步 | ✅ 已落地（commit 93a25890） |
 | [architecture_issue_registry.yaml](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml) | 新建 #ARCH-REGIME-S2-ALGORITHM-001 + 修订 #ARCH-REGIME-OVERLAY-001 fix_phase | ✅ 已落地 |

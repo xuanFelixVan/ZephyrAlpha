@@ -2378,7 +2378,7 @@ S2 算法重设计归入 P1-E9（13 号 §3.5）：
 #### 9.17.4 脚本与验证用例
 
 - scripts/tests/run_phase2_validation.py（Phase 2 执行入口）/ dump_s2_scores.py（S2 维度评分诊断，§9.7.2）/ diag_s2_recovery.py（S2 复苏诊断）
-- validation_cases/historical_events.yaml（历史危机/复苏事件库，S2 三事件 design_match=false + 排除理由注释）
+- src/zephyr/regime/validation/phase2/historical_events.yaml（历史危机/复苏事件库，S2 三事件 design_match=false + 排除理由注释；2026-08-17 自 docs/02 文档区迁入代码同包，#ARCH-117）
 
 #### 9.17.5 蓝图与注册表登记
 

@@ -205,7 +205,7 @@ P2-E8 forward_days ── 依赖 P0-E2 校准器
 | T3 四维激活 | [overlay_signals_builder.py:125](file:///d:/ZephyrAlpha/src/zephyr/regime/overlay_signals_builder.py#L125) | ✅ | `_STUB_DIMS=set()`（31 维全可算）；hk_connect_flow 北向融合（:527-540，20 日 z-score）；64 测试用例 |
 | S2 NLP 维度（关键词 MVP） | [overlay_features.py:731/765](file:///d:/ZephyrAlpha/src/zephyr/regime/features/overlay_features.py#L731) | 🟡 | `s2_policy_score` / `s2_bad_news_flat_score`（ClickHouse multiSearchAny 服务端关键词匹配）；Phase 7 用 SFT 模型替换 |
 | S2 三维旧实现 | overlay_features.py:192/282/328 | ❌ 待重设计 | `s2_capitulation_score`（当日值，P1-E9 改过程化）/ `s2_valuation_score`（价格回撤，路 A 基本面化或路 B 放宽）/ `s2_spring_flag`（复用 wyckoff_engine） |
-| S2 事件配置 | [historical_events.yaml](file:///d:/ZephyrAlpha/docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml) | ✅（裁定落盘） | 3 个 S2 事件 `data_ready=true` + `design_match=false`（Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏），B4 维持 PASS(3/3) |
+| S2 事件配置 | [historical_events.yaml](file:///d:/ZephyrAlpha/src/zephyr/regime/validation/phase2/historical_events.yaml) | ✅（裁定落盘） | 3 个 S2 事件 `data_ready=true` + `design_match=false`（Wyckoff 吸筹模板不匹配 A 股 V/政策型复苏），B4 维持 PASS(3/3) |
 
 ### 1.6.3 治理登记（均已落盘）
 
