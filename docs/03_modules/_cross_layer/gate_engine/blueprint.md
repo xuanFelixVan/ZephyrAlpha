@@ -239,6 +239,8 @@ build_status: planned
 | `commit_gates/secret_registry_consistency_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/secret_hardcode_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 | `commit_gates/commit_scope_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/reconciler_file_ops_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
+| `commit_gates/registry_code_anchor_gate.py` | §0.1 | auto-added by GATE-MODULE-INVENTORY-SYNC (ADP-4) | 已实现 | | 本模块 |
 
 ### §0.2 对齐验证矩阵
 

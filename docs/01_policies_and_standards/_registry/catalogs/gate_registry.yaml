@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-16T06:32:08Z'
+generated_at: '2026-08-16T21:32:37Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 148
+total_gates: 149
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -1202,6 +1202,15 @@ gates:
   name: 'RECONCILER-HEALTH: reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）（CommitGate, priority=64）'
   entry: in-process (GitCommitGateway)
   description: reconciler 健康度门禁（#ARCH-DATAQUALITY-V1.7）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: REGISTRY-CODE-ANCHOR
+  name: 'REGISTRY-CODE-ANCHOR: 业务注册表代码锚点门禁（REGISTRY-CODE-ANCHOR）（CommitGate, priority=129）'
+  entry: in-process (GitCommitGateway)
+  description: 业务注册表代码锚点门禁（REGISTRY-CODE-ANCHOR）
   files_trigger: ''
   always_run: false
   category: commit_gate
