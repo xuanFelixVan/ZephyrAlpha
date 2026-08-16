@@ -16,7 +16,7 @@ priority: P0
 blueprint_level: module
 responsibility_domain: 
 design_maturity: production
-build_status: generated
+build_status: stable
 ---
 
 # MOD-RK-011 Drawdown Real-Time Tracker — 回撤实时追踪器 蓝图
@@ -116,7 +116,7 @@ RK-11 是*实时告警*(回撤→分级告警, 监控导向)。RK-11 产出告�
 |------|-------------------|--------------------------|:-------:|
 | module_id | MOD-RK-011 | MOD-RK-011 | ✅ |
 | domain_id | N/A | N/A | ✅ |
-| build_status | generated | generated | ✅ |
+| build_status | stable | stable | ✅ |
 | file_count | 3 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
