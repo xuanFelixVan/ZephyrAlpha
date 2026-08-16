@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-PA-006 | docs/03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md
 # [MODULE] zephyr.pf_alloc.batched_position_builder
 # [DOMAIN] D_PF_ALLOC
-# [DEPENDENCIES] zephyr.position.core.firm_risk_aggregator(FirmTargetPortfolio)
+# [DEPENDENCIES] zephyr.position.core.firm_risk_aggregator(FirmTargetPortfolio); zephyr.compliance.discipline_prohibition_checker
 # [CONSUMERS] 40_execution_broker(订单执行); 42_sell_flow(突破失败降级联动)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 批次比例和=1.0; 首仓比例∈[0.30,1.0]; 放行需2/3条件; 限价单为主市价仅应急; 不读市场态(只消费budget数字)
+# [INVARIANTS] 批次比例和=1.0; 首仓比例∈[0.30,1.0]; 放行需2/3条件; 限价单为主市价仅应急; 不读市场态(只消费budget数字); 每批下单前必过 BM-BUY-08 纪律闸(41 §2.3 硬约束不得绕过)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
@@ -35,7 +35,7 @@ BM-BUY-04 分批建仓核心模块。消费 31 号产出的 FirmTargetPortfolio�
 
 依据: 41_buy_flow §3.2-§3.6 + 31_position_sizing §2.6
 SSoT: depgraph MOD-PA-006
-Version: 1.0.0
+Version: 1.1.0（2026-08-15 AI-ASM-001 装配批：BM-BUY-08 纪律闸 gate_batch_order 接线，43 号 §4.3）
 
 # [ALGO_FLOW]
 # 输入: FirmTargetPortfolio(holdings={symbol: weight}), confidence_scores, liquidity_scores, available_cash, total_account_value
@@ -49,10 +49,19 @@ Version: 1.0.0
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, time
+from datetime import date, datetime, time
 from random import uniform
 from typing import Any, Final
 
+from zephyr.compliance.discipline_prohibition_checker import (
+    DisciplineAction,
+    DisciplineContext,
+    DisciplineGuard,
+    DisciplineGuardError,
+    DisciplineVerdict,
+    KillSwitchLite,
+    OrderRequest,
+)
 
 # ── 常量（参数来源：41_buy_flow §3.2.1/§3.4/§3.5）──
 
@@ -346,11 +355,64 @@ class BatchedPositionBuilder:
     """分批建仓引擎（MOD-PA-006）。
 
     消费 FirmTargetPortfolio → 分批方案 → 时序调度 → 限价锚定 → 产出订单计划。
-    每批下单前须过 BM-BUY-08 纪律闸（追高/补仓/骄傲/报复四项严禁检测）。
+    每批下单前须过 BM-BUY-08 纪律闸（追高/补仓/骄傲/报复四项严禁检测）——
+    41 §2.3 硬约束"buy_flow 不得绕过"，由 ``gate_batch_order`` 承载
+    （2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipline §4.3）。
+
+    Args:
+        discipline_guard: 四项严禁检测引擎（MOD-CMP-002）。None=未接线，
+            此时调用 gate_batch_order 抛 DisciplineGuardError（Fail-Closed：
+            闸不可用即拒，41 §2.3 不得绕过）。
+        kill_switch: KillSwitchLite 策略级熔断（43 号 §4.3）；None=不检查熔断。
     """
 
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        discipline_guard: DisciplineGuard | None = None,
+        kill_switch: KillSwitchLite | None = None,
+    ) -> None:
         """初始化分批建仓引擎。"""
+        self._discipline_guard = discipline_guard
+        self._kill_switch = kill_switch
+
+    def gate_batch_order(
+        self,
+        order: OrderRequest,
+        ctx: DisciplineContext,
+        *,
+        today: date | None = None,
+    ) -> DisciplineVerdict:
+        """每批下单前过 BM-BUY-08 纪律闸（41 §2.3/§3.1：每批重新过闸防变相追高）。
+
+        调用方契约：每个批次的订单提交执行层（40 号）前必须调用本方法；
+        返回 HARD_BLOCK → 取消该批及后续批次并记录违规（41 §3.3 降级表）。
+
+        Args:
+            order: 本批待下订单（最小契约）。
+            ctx: 纪律检测上下文（信号参考价/持仓盈亏/连续盈亏/当日盈亏/基线）。
+            today: 交易日（KillSwitchLite 熔断判定）；None=当日。
+
+        Returns:
+            DisciplineVerdict：PASS / WARNING（骄傲，不阻断）/ HARD_BLOCK。
+
+        Raises:
+            DisciplineGuardError: 纪律闸未注入（Fail-Closed：闸不可用即拒）。
+        """
+        if self._discipline_guard is None:
+            raise DisciplineGuardError(
+                "BM-BUY-08 纪律闸未接线（discipline_guard=None）——41 §2.3 "
+                "硬约束买入下单前必过四项严禁检测，buy_flow 不得绕过，Fail-Closed 拒单"
+            )
+        if self._kill_switch is not None and self._kill_switch.is_blocked(
+            order.strategy_id, today or date.today()
+        ):
+            return DisciplineVerdict(
+                behavior=None,
+                action=DisciplineAction.HARD_BLOCK,
+                detail=f"KillSwitchLite 熔断：策略 {order.strategy_id} 当日禁止新开仓（43 号 §4.3）",
+                kill_switch_triggered=True,
+            )
+        return self._discipline_guard.check(order, ctx)
 
     def build_plan(
         self,

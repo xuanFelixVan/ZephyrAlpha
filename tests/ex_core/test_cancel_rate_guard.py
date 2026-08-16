@@ -8,11 +8,15 @@
 from __future__ import annotations
 
 import time
+from datetime import date, timedelta
 
 import pytest
 
-from zephyr.ex_core.cancel_rate_guard import CancelRateGuard, CancelRateStatus
-
+from zephyr.ex_core.cancel_rate_guard import (
+    CancelRateGuard,
+    CancelRateStatus,
+    DailyDeclarationStatus,
+)
 
 # ── 撤单率计算 ────────────────────────────────────────────────────────────────
 
@@ -250,3 +254,109 @@ class TestEdgeCases:
             guard.record_cancel()
         # 10% > 5% warn, 10% 不 > 10% freeze → WARN
         assert guard.status is CancelRateStatus.WARN_ONLY_PLACE
+
+
+# ── 日申报笔数硬计数器（43 号 §8 方案 A：5000 预警 / 1 万阻断，AI-ASM-001 装配批）──
+
+
+class TestDailyDeclarationCounter:
+    """日申报笔数=报单+撤单合计（24 号 §3.7 申报口径），自然日自动清零。"""
+
+    def test_submit_counts_declaration(self):
+        guard = CancelRateGuard()
+        guard.record_submit()
+        assert guard.daily_declaration_count == 1
+
+    def test_cancel_counts_declaration(self):
+        """撤单同属申报口径。"""
+        guard = CancelRateGuard()
+        guard.record_cancel()
+        assert guard.daily_declaration_count == 1
+
+    def test_fill_not_counted(self):
+        """成交不是申报，不计数。"""
+        guard = CancelRateGuard()
+        guard.record_fill()
+        assert guard.daily_declaration_count == 0
+
+    def test_submit_and_cancel_sum(self):
+        guard = CancelRateGuard()
+        for _ in range(3):
+            guard.record_submit()
+        for _ in range(2):
+            guard.record_cancel()
+        assert guard.daily_declaration_count == 5
+
+    def test_default_thresholds_normal_below_5000(self):
+        guard = CancelRateGuard()
+        for _ in range(4999):
+            guard.record_submit()
+        assert guard.daily_declaration_count == 4999
+        assert guard.daily_declaration_status is DailyDeclarationStatus.NORMAL
+
+    def test_default_thresholds_warning_at_5000(self):
+        """5000 笔整即预警（>= 口径）。"""
+        guard = CancelRateGuard()
+        for _ in range(5000):
+            guard.record_submit()
+        assert guard.daily_declaration_status is DailyDeclarationStatus.WARNING
+
+    def test_default_thresholds_blocked_at_10000(self):
+        """1 万笔整即阻断（>= 口径），第 10001 笔起 C-002 拒单。"""
+        guard = CancelRateGuard()
+        for _ in range(10000):
+            guard.record_submit()
+        assert guard.daily_declaration_status is DailyDeclarationStatus.BLOCKED
+
+    def test_warning_not_blocked_between(self):
+        guard = CancelRateGuard()
+        for _ in range(9999):
+            guard.record_submit()
+        assert guard.daily_declaration_status is DailyDeclarationStatus.WARNING
+
+    def test_custom_daily_thresholds(self):
+        guard = CancelRateGuard(daily_warn_threshold=3, daily_block_threshold=5)
+        assert guard.daily_declaration_status is DailyDeclarationStatus.NORMAL
+        for _ in range(3):
+            guard.record_submit()
+        assert guard.daily_declaration_status is DailyDeclarationStatus.WARNING
+        for _ in range(2):
+            guard.record_submit()
+        assert guard.daily_declaration_status is DailyDeclarationStatus.BLOCKED
+
+    def test_rollover_new_day_resets(self):
+        """跨自然日自动清零（申报笔数为交易日口径）。"""
+        guard = CancelRateGuard(daily_warn_threshold=3, daily_block_threshold=5)
+        for _ in range(4):
+            guard.record_submit()
+        assert guard.daily_declaration_count == 4
+        # 模拟跨日：把计数所属日改为昨天
+        guard._daily_date = date.today() - timedelta(days=1)
+        assert guard.daily_declaration_count == 0
+        assert guard.daily_declaration_status is DailyDeclarationStatus.NORMAL
+        # 新一日重新计数
+        guard.record_submit()
+        assert guard.daily_declaration_count == 1
+
+    def test_reset_clears_daily_counter(self):
+        guard = CancelRateGuard()
+        guard.record_submit()
+        guard.record_cancel()
+        assert guard.daily_declaration_count == 2
+        guard.reset()
+        assert guard.daily_declaration_count == 0
+        assert guard.daily_declaration_status is DailyDeclarationStatus.NORMAL
+
+    def test_threshold_crossing_logs_once(self, caplog):
+        """预警/阻断日志仅阈值穿越瞬间各一次，不逐笔刷日志。"""
+        guard = CancelRateGuard(daily_warn_threshold=2, daily_block_threshold=4)
+        with caplog.at_level("WARNING"):
+            guard.record_submit()  # 1
+            guard.record_submit()  # 2 → 穿越预警线
+            guard.record_submit()  # 3（仍预警，不再刷）
+            guard.record_submit()  # 4 → 穿越阻断线
+            guard.record_submit()  # 5（仍阻断，不再刷）
+        warn_msgs = [r for r in caplog.records if "日申报笔数预警" in r.message]
+        block_msgs = [r for r in caplog.records if "日申报笔数阻断" in r.message]
+        assert len(warn_msgs) == 1
+        assert len(block_msgs) == 1

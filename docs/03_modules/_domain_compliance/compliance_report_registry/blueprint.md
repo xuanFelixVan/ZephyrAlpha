@@ -47,7 +47,7 @@ blueprint_level: module
 |------|------|---------|------|
 | 依赖 | catalogs/compliance_report_registry.yaml | REG-CMP-REPORT-001 | 6 项义务+确认位真源 |
 | 依赖 | zephyr.compliance.compliance_log | ComplianceLogger | 门禁校验落 compliance_log |
-| 消费 | C-002 执行域 | ReportGate.check() | 拒单前置校验 |
+| 消费 | C-002 执行域 | ReportGate.check() | 拒单前置校验——**已接线**（AI-ASM-001，order_manager._check_compliance_gates，BLOCK→ZA-EX-0011） |
 | 协同 | ex_core.programmatic_trading_guard | 报备双校验 | 40 号决策⑱（券商报备状态）与本门禁（6 项义务确认位）互补不重复 |
 
 ## 5. 核心逻辑

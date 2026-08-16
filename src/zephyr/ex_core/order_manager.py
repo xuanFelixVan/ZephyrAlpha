@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.order_manager
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.trading.trading_contracts.execution.fill; zephyr.trading.trading_contracts.execution.order; zephyr.ex_core.cancel_rate_guard; zephyr.compliance.compliance_report_registry
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
-# [MODIFY-GUARD] none
+# [INVARIANTS] 先报告后交易（ReportGate BLOCK→拒发）;日申报>=1万笔拒发（Fail-Closed）;门禁未注入不影响既有行为
+# [MODIFY-GUARD] 43_compliance_discipline.md §7.4/§8（#ARCH-COMPLIANCE-001 方案A）
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] ComplianceGateBlockError(ZA-EX-0011)
 # [TESTS]
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -32,6 +32,14 @@ CTR 契约：
   生产者 — CTR-005 (Fill) -> D_REPORTING
   生产者 — CTR-ERR-005 (ExecutionRejectionError) -> D_PORTFOLIO_CORE, D_REPORTING
 
+C-002 执行域合规门禁（2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipline §7.4/§8）：
+  submit_order 发送 broker 前两道硬闸（注入即生效，未注入不影响既有行为）：
+  1. ReportGate（MOD-CMP-009）：先报告后交易铁律——任一必报项 broker_ack
+     缺失 → ComplianceGateBlockError 拒发；
+  2. 日申报笔数读数检查（CancelRateGuard 硬计数器）：>=1 万笔 → 拒发；
+     >=5000 笔 → WARNING 日志不阻断（2026-06-08 程序化新规）。
+  门禁自身失效（登记表不可读等）由各门禁模块 Fail-Closed 兜底（43 号 §7.4）。
+
 SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
 """
 
@@ -46,12 +54,21 @@ from decimal import Decimal
 from enum import Enum
 from typing import Final
 
+from zephyr.compliance.compliance_report_registry import ReportGate, ReportGateDecision
+from zephyr.ex_core.cancel_rate_guard import CancelRateGuard, DailyDeclarationStatus
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, OrderType
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
+from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.trading.trading_contracts.broker_interface import BrokerInterface
 
 _logger = logging.getLogger(__name__)
+
+
+class ComplianceGateBlockError(ZephyrBaseError):
+    """C-002 合规门禁阻断——先报告后交易 / 日申报笔数超限拒发订单。"""
+
+    error_code = "ZA-EX-0011"
 
 
 class OrderAction(Enum):
@@ -114,7 +131,12 @@ class OrderManager:
         OrderStatus.EXPIRED: set(),
     }
 
-    def __init__(self, brokers: dict[str, BrokerInterface] | None = None):
+    def __init__(
+        self,
+        brokers: dict[str, BrokerInterface] | None = None,
+        report_gate: ReportGate | None = None,
+        declaration_guard: CancelRateGuard | None = None,
+    ):
         self._brokers = brokers or {}
         self._orders: dict[str, Order] = {}
         self._fills: dict[str, list[Fill]] = defaultdict(list)
@@ -123,6 +145,9 @@ class OrderManager:
         self._pending_orders: list[Order] = []
         # order_id -> broker_id 映射（cancel_order 治本：消除硬编码 "simulation" + 反查逻辑）
         self._order_broker_map: dict[str, str] = {}
+        # C-002 合规门禁（43 号 §7.4/§8，AI-ASM-001 装配批接线；None=未接线不校验）
+        self._report_gate = report_gate
+        self._declaration_guard = declaration_guard
 
     # ── Stage 4 公共化（2026-07-29）：只读 properties ──
     @property
@@ -218,6 +243,9 @@ class OrderManager:
         if not broker:
             raise ValueError(f"Broker not found: {broker_id}")
 
+        # ── C-002 合规门禁（43 号 §7.4/§8）：发送 broker 前 Fail-Closed 硬闸 ──
+        self._check_compliance_gates(order)
+
         self._transition_status(order, OrderStatus.SUBMITTED)
         # 记录 order->broker 映射，供 cancel_order 治本使用（消除硬编码+反查）
         self._order_broker_map[order_id] = broker_id
@@ -227,6 +255,48 @@ class OrderManager:
         order.updated_at = datetime.now(UTC)
 
         return broker_order_id
+
+    def _check_compliance_gates(self, order: Order) -> None:
+        """C-002 执行域合规门禁（AI-ASM-001 装配批接线）。
+
+        两道硬闸（注入即生效，None=未接线跳过）：
+        1. ReportGate 先报告后交易（43 号 §7.4 铁律）：任一必报项 broker_ack
+           缺失 → BLOCK → ComplianceGateBlockError 拒发；
+        2. 日申报笔数读数检查（43 号 §8 方案 A）：>=1 万笔拒发；>=5000 笔
+           WARNING 不阻断。
+        """
+        if self._report_gate is not None:
+            gate_result = self._report_gate.check()
+            if gate_result.decision is ReportGateDecision.BLOCK:
+                _logger.error(
+                    "C-002 拒单[先报告后交易]: order_id=%s missing=%s detail=%s",
+                    order.order_id,
+                    gate_result.missing,
+                    gate_result.detail,
+                )
+                raise ComplianceGateBlockError(
+                    f"先报告后交易铁律：{gate_result.detail} (order_id={order.order_id})"
+                )
+        if self._declaration_guard is not None:
+            status = self._declaration_guard.daily_declaration_status
+            count = self._declaration_guard.daily_declaration_count
+            if status is DailyDeclarationStatus.BLOCKED:
+                _logger.error(
+                    "C-002 拒单[日申报笔数超限]: order_id=%s count=%d >= %d（1 万笔限交易）",
+                    order.order_id,
+                    count,
+                    self._declaration_guard.daily_block_threshold,
+                )
+                raise ComplianceGateBlockError(
+                    f"日申报笔数 {count} 笔已达 {self._declaration_guard.daily_block_threshold}"
+                    f" 笔限交易线，拒绝新申报 (order_id={order.order_id})"
+                )
+            if status is DailyDeclarationStatus.WARNING:
+                _logger.warning(
+                    "C-002 日申报笔数预警: count=%d >= %d（5000 笔预警线，不阻断）",
+                    count,
+                    self._declaration_guard.daily_warn_threshold,
+                )
 
     def cancel_order(self, order_id: str) -> bool:
         """撤单——同时通知券商端撤销

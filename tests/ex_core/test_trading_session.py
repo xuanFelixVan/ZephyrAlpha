@@ -20,18 +20,33 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from decimal import Decimal
 from unittest.mock import MagicMock
 
 import pytest
 
+from zephyr.compliance.compliance_log import ComplianceLogger
+from zephyr.compliance.discipline_must_do_checker import (
+    ChecklistCheckpoint,
+    ChecklistCompletionChecker,
+)
+from zephyr.compliance.discipline_prohibition_checker import (
+    DisciplineContext,
+    DisciplineGuard,
+    KillSwitchLite,
+)
+from zephyr.compliance.trading_compliance_detector import TradingComplianceDetector
 from zephyr.ex_core.order_manager import OrderManager
 from zephyr.ex_core.signal_providers import (
     make_mock_price_provider,
     make_mock_signal_provider,
 )
-from zephyr.ex_core.trading_session import TradingSession, TradingSessionConfig
+from zephyr.ex_core.trading_session import (
+    ComplianceMarketContext,
+    TradingSession,
+    TradingSessionConfig,
+)
 from zephyr.governance.adapters.risk_validation_bridge import RiskViolation
 from zephyr.governance.adapters.simulation_broker import SimulationBroker
 from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus
@@ -647,3 +662,234 @@ def test_circuit_breaker_reset_daily() -> None:
     orders3 = session.rebalance()
     assert len(orders3) == 1, "重置后应恢复下单"
     session.stop()
+
+
+# ---------------------------------------------------------------------
+# C-004 合规闸（43 号 §3.4/§4.3/§7.1，AI-ASM-001 装配批接线）
+# ---------------------------------------------------------------------
+
+
+def _tmp_logger(tmp_path) -> ComplianceLogger:
+    """测试用合规日志（写 tmp，不污染生产证据链）。"""
+    return ComplianceLogger(path=tmp_path / "compliance_log.jsonl")
+
+
+def _make_gate_session(tmp_path, **kwargs) -> tuple[TradingSession, MagicMock]:
+    """构建带 C-004 合规闸的 TradingSession（broker=MagicMock，价格 100）。"""
+    broker = MagicMock()
+    broker.get_positions.return_value = _make_position(
+        cash=Decimal("1000000"),
+        holdings={},
+        total_market_value=Decimal("0"),
+    )
+    broker.submit_order.side_effect = lambda order: f"broker_{order.order_id[:8]}"
+    config = TradingSessionConfig(universe=["600519.SH"], broker_id="test_broker")
+    config.max_single_order_pct = Decimal("1.0")
+    config.max_symbol_orders_per_day = 999999
+    config.max_total_orders_per_day = 999999
+    session = TradingSession(
+        broker=broker,
+        strategy=_strategy_returning({"600519.SH": 0.03}),
+        risk_validator=MagicMock(validate_order=MagicMock(return_value=[])),
+        signal_provider=make_mock_signal_provider({}),
+        price_provider=make_mock_price_provider({"600519.SH": Decimal("100")}),
+        order_manager=_make_real_om(broker),
+        config=config,
+        **kwargs,
+    )
+    return session, broker
+
+
+def _discipline_ctx(**overrides) -> DisciplineContext:
+    """构建纪律闸 ctx（默认全中性不触发任何检测）。"""
+    base = {
+        "signal_ref_price": None,
+        "surge_30min_pct": None,
+        "position_pnl_pct": None,
+        "win_streak": 0,
+        "normal_exposure": 0.01,
+        "daily_pnl_pct": 0.0,
+        "projected_daily_freq": 1.0,
+        "freq_baseline_20d": 1.0,
+        "size_baseline_20d": 1e9,
+    }
+    base.update(overrides)
+    return DisciplineContext(**base)
+
+
+class TestChecklistGate:
+    """MOD-CMP-001 INTRADAY 必做清单 Hard Block（43 号 §3.4）。"""
+
+    def test_intraday_incomplete_hard_blocks_all(self, tmp_path):
+        """盘中执行清单缺项 → Hard Block 整批拒单，broker 零调用。"""
+        checker = ChecklistCompletionChecker(
+            completion_provider=lambda cp, td: set(),  # 三项全缺
+            logger=_tmp_logger(tmp_path),
+        )
+        session, broker = _make_gate_session(tmp_path, checklist_checker=checker)
+        orders = session.rebalance()
+        assert orders == []
+        broker.submit_order.assert_not_called()
+
+    def test_intraday_partial_missing_still_blocks(self, tmp_path):
+        """缺 1/3 项也阻断（盘中执行是唯一 Hard Block 项）。"""
+        checker = ChecklistCompletionChecker(
+            completion_provider=lambda cp, td: {"signal_compliance_check", "risk_param_confirm"},
+            logger=_tmp_logger(tmp_path),
+        )
+        session, broker = _make_gate_session(tmp_path, checklist_checker=checker)
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_intraday_complete_allows(self, tmp_path):
+        """清单全完成 → 正常下单。"""
+        checker = ChecklistCompletionChecker(
+            completion_provider=lambda cp, td: {
+                "signal_compliance_check",
+                "risk_param_confirm",
+                "position_limit_verify",
+            },
+            logger=_tmp_logger(tmp_path),
+        )
+        session, broker = _make_gate_session(tmp_path, checklist_checker=checker)
+        orders = session.rebalance()
+        assert len(orders) == 1
+        broker.submit_order.assert_called_once()
+
+
+class TestDisciplineGate:
+    """MOD-CMP-002 四项严禁纪律闸（43 号 §4.3）。"""
+
+    def test_chasing_hard_block(self, tmp_path):
+        """追高：买价超信号参考价 +2% 且 30min 拉升 >5% → Hard Block。"""
+        guard = DisciplineGuard(logger=_tmp_logger(tmp_path))
+        provider = lambda order, pos: _discipline_ctx(  # noqa: E731
+            signal_ref_price=95.0,  # 100/95-1=5.26% > 2%
+            surge_30min_pct=0.06,  # > 5%
+        )
+        session, broker = _make_gate_session(
+            tmp_path, discipline_guard=guard, discipline_ctx_provider=provider
+        )
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_adding_to_loser_hard_block(self, tmp_path):
+        """被套补仓：持仓浮亏 >5% 仍加仓同标的 → Hard Block。"""
+        guard = DisciplineGuard(logger=_tmp_logger(tmp_path))
+        provider = lambda order, pos: _discipline_ctx(position_pnl_pct=-0.08)  # noqa: E731
+        session, broker = _make_gate_session(
+            tmp_path, discipline_guard=guard, discipline_ctx_provider=provider
+        )
+        # 持仓中有同标的 → is_add=True（_make_position 构造持仓）
+        broker.get_positions.return_value = _make_position(
+            cash=Decimal("1000000"),
+            holdings={"600519.SH": Decimal("100")},
+            total_market_value=Decimal("10000"),
+        )
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_overconfidence_warning_allows(self, tmp_path):
+        """盈利骄傲：连盈 5 笔+敞口超 1.5 倍 → WARNING 不阻断。"""
+        guard = DisciplineGuard(logger=_tmp_logger(tmp_path))
+        provider = lambda order, pos: _discipline_ctx(  # noqa: E731
+            win_streak=5,
+            normal_exposure=0.01,  # 本单敞口 0.03 > 1.5×0.01
+        )
+        session, broker = _make_gate_session(
+            tmp_path, discipline_guard=guard, discipline_ctx_provider=provider
+        )
+        orders = session.rebalance()
+        assert len(orders) == 1
+        broker.submit_order.assert_called_once()
+
+    def test_ctx_provider_failure_fail_closed(self, tmp_path):
+        """纪律闸 ctx 提供器失效 → Fail-Closed 拒单（43 号 §4.3）。"""
+        guard = DisciplineGuard(logger=_tmp_logger(tmp_path))
+
+        def _boom(order, pos):
+            raise RuntimeError("market data down")
+
+        session, broker = _make_gate_session(
+            tmp_path, discipline_guard=guard, discipline_ctx_provider=_boom
+        )
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_guard_without_provider_raises(self, tmp_path):
+        """纪律闸与 ctx 提供器必须成对注入（装配期 fail-fast）。"""
+        with pytest.raises(ValueError, match="成对注入"):
+            _make_gate_session(
+                tmp_path,
+                discipline_guard=DisciplineGuard(logger=_tmp_logger(tmp_path)),
+            )
+
+
+class TestKillSwitchLiteGate:
+    """KillSwitchLite 策略级熔断（43 号 §4.3）。"""
+
+    def test_triggered_strategy_blocked(self, tmp_path):
+        """已熔断策略当日禁止新开仓。"""
+        ks = KillSwitchLite(
+            state_path=tmp_path / "ks_state.json",
+            logger=_tmp_logger(tmp_path),
+        )
+        assert ks.trigger("trading_session", "REVENGE_TRADING", date.today())
+        session, broker = _make_gate_session(tmp_path, kill_switch=ks)
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_other_strategy_not_blocked(self, tmp_path):
+        """熔断仅策略级——其他策略不受影响。"""
+        ks = KillSwitchLite(
+            state_path=tmp_path / "ks_state.json",
+            logger=_tmp_logger(tmp_path),
+        )
+        assert ks.trigger("other_strategy", "REVENGE_TRADING", date.today())
+        session, broker = _make_gate_session(tmp_path, kill_switch=ks)
+        assert len(session.rebalance()) == 1
+
+
+class TestTradingComplianceGate:
+    """MOD-CMP-007 交易合规检测（43 号 §7.1）。"""
+
+    def test_large_trade_hard_block(self, tmp_path):
+        """大额成交：单笔 > 分钟均量 50% → Hard Block。"""
+        detector = TradingComplianceDetector(logger=_tmp_logger(tmp_path))
+        provider = lambda order: ComplianceMarketContext(minute_avg_volume=100.0)  # noqa: E731
+        session, broker = _make_gate_session(
+            tmp_path, compliance_detector=detector, compliance_ctx_provider=provider
+        )
+        # 单 300 股 > 0.5×100=50 → 命中
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_ctx_all_none_skips_and_allows(self, tmp_path):
+        """ctx 全 None → 跳过检测放行（字段缺省语义）。"""
+        detector = TradingComplianceDetector(logger=_tmp_logger(tmp_path))
+        provider = lambda order: ComplianceMarketContext()  # noqa: E731
+        session, broker = _make_gate_session(
+            tmp_path, compliance_detector=detector, compliance_ctx_provider=provider
+        )
+        assert len(session.rebalance()) == 1
+
+    def test_ctx_provider_failure_fail_closed(self, tmp_path):
+        """合规检测 ctx 提供器失效 → Fail-Closed 拒单（43 号 §7.6）。"""
+        detector = TradingComplianceDetector(logger=_tmp_logger(tmp_path))
+
+        def _boom(order):
+            raise RuntimeError("tick feed down")
+
+        session, broker = _make_gate_session(
+            tmp_path, compliance_detector=detector, compliance_ctx_provider=_boom
+        )
+        assert session.rebalance() == []
+        broker.submit_order.assert_not_called()
+
+    def test_detector_without_provider_raises(self, tmp_path):
+        """检测器与 ctx 提供器必须成对注入。"""
+        with pytest.raises(ValueError, match="成对注入"):
+            _make_gate_session(
+                tmp_path,
+                compliance_detector=TradingComplianceDetector(logger=_tmp_logger(tmp_path)),
+            )

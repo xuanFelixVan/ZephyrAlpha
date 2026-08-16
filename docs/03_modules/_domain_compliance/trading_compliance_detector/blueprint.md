@@ -47,7 +47,7 @@ blueprint_level: module
 | 方向 | 模块 | 契约/事件 | 说明 |
 |------|------|---------|------|
 | 依赖 | zephyr.compliance.compliance_log | ComplianceLogger | 命中落 compliance_log（证据链） |
-| 消费 | C-004 风控引擎 | check_* 系列 | Pre-Trade/盘中实时嵌入（43 号 §7.1） |
+| 消费 | C-004 风控引擎 | check_* 系列 | Pre-Trade/盘中实时嵌入（43 号 §7.1）——**已接线**（AI-ASM-001，trading_session 逐单检测：大额成交/拉抬打压/尾盘操纵；Spoofing/Layering/WashTrade 由盘中实时流驱动） |
 | 协同 | 40 号 CancelRateGuard/price_cage | 计数器消费 | 撤单率/价格笼子真源（§7.6） |
 | 协同 | 41 号尾盘执行窗口 | 错峰约束 | 尾盘操纵检测联动（§7.3） |
 
