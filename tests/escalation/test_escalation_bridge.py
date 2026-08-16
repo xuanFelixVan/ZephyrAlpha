@@ -41,6 +41,8 @@ def _restore_escalation_engine(saved):
     for key in list(sys.modules.keys()):
         if key.startswith("zephyr.infrastructure.escalation"):
             del sys.modules[key]
+    # 清除 _block 注入的 None 占位，防止同进程后续 import 触发 "import halted"
+    sys.modules.pop("zephyr.governance.services.adapter", None)
     sys.modules.update(saved)
 
 
