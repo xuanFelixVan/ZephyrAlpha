@@ -5,8 +5,8 @@ title: VaR/ES 与波动率监控
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.10.4"
-date: 2026-08-15
+version: "1.11.0"
+date: 2026-08-16
 topic: var_es_monitoring
 scope: 07_trading_decision_architecture
 ---
@@ -27,7 +27,7 @@ scope: 07_trading_decision_architecture
 | 对标 | 赢牛资管 VaR-ES / Sina 量化风控 / MetricGate VaR/ES / Pomegra VaR vs CVaR / Man Numeric CVaR / Nystrup-Boyd HMM+MPC |
 | 正交性 | ✅ 与 regime 正交（VaR 是组合风险度量，regime 是市场状态） |
 | 优先级 | P3（风险相关模块先于策略模块施工至 production，符合风险优先原则） |
-| 状态 | ✅ 已定稿 v1.10.4（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 研究远期登记 28 节 + §3.20 BM-RC-04-C + §3.1 BM-RC-07-A 口径对齐 + v1.10.4 第二轮循环压缩（AI-DC2-05）） |
+| 状态 | ✅ 已定稿 v1.11.0（框架 §2.5.4 + 代码已有实现 + 触发机制裁决 + 4 法回测 MVP 已施工 + 校准/重构/恢复子流程 + 盘中重算 + clean/dirty P&L 区分 + BlackSwanSignal API 对接 + VaR breach 状态机 + FHS/QbSD/Vol-Targeting 施工规约 + 跨文档流程交接链闭合（E1-E3）+ 2026-08 研究远期登记 28 节 + §3.20 BM-RC-04-C + §3.1 BM-RC-07-A 口径对齐 + v1.10.4 第二轮循环压缩（AI-DC2-05）+ **v1.11.0 双轮审查算法修复批（AI-RFIX-001）**：ES 插值口径 method='lower' 裁定 / VaR 非有限值 Fail-Closed / POT 小样本降级落码 / 5 级仓位上限单调性修正 / FHS 漂移语气修正转 CAND-AUTONOMYCORE-002 / D1-D9 漂移逐条对账） |
 
 ## 2. 背景
 
@@ -93,6 +93,7 @@ VaR_95 = max(VaR_param, VaR_hist)
 | method | conservative_max | 取两法 max |
 | min_history | 30 | 最少样本数 |
 | annualization_factor | 252 | A 股交易日年化因子 |
+| max_nonfinite_ratio | 0.05 | 非有限值（NaN/±Inf）占比上限（v1.11.0 新增，双轮审查 F2+F4）：过滤数入 `VaRResult.nan_dropped` 计数 + warning；占比 >5% 抛 `ExcessiveNonFiniteDataError`（Fail-Closed——数据缺口期多为停牌/极端行情高波动日，静默过滤会系统性低估风险且无信号） |
 
 **最小样本约束**：`min_history=30`，不足时抛 `InsufficientVaRHistoryError`。A 股约 1.5 个月数据。
 
@@ -102,13 +103,15 @@ VaR_95 = max(VaR_param, VaR_hist)
 
 **决策**：ES_95 双轨计算——历史模拟法为主，POT 模型厚尾拟合为辅（厚尾检测结果）。
 
-✅ 已施工（tail_risk_monitor，2 轮 27 测试全绿）：`src/zephyr/risk/core/tail_risk_monitor.py` v0.1.0（production, MOD-RK-15）。接口级摘要：`assess(returns, var_forecast)` → ES_95 + 厚尾诊断 + FRTB 加价，强制校验 `es_forecast >= var_forecast`。
+✅ 已施工（tail_risk_monitor，2 轮 27 测试全绿）：`src/zephyr/risk/core/tail_risk_monitor.py` v0.1.0（production, MOD-RK-15）。接口级摘要（v1.11.0 勘正）：`assess(returns, portfolio_value=1.0, now=None)` → TailRiskSnapshot（VaR/ES/POT 厚尾诊断/跳跃/告警/FRTB 加价）——实际签名无 `var_forecast` 参数；ES ≥ VaR 不变式由 `method='lower'` 口径构造性成立（尾部均值 ≤ 分位点），非运行时强制校验（v1.11.0 前本节声称的 `assess(returns, var_forecast)` + "强制校验 es_forecast >= var_forecast" 为文档-代码漂移，双轮审查 D3 对账修正）。
 
 **算法**：
 
 ```python
 # 方法 1: 历史模拟法 ES（主）——尾部条件期望 = 超过 VaR 的损失的平均值
-ES_hist = -mean(r[r <= quantile(r, 1-c)])   # 最差 (1-c) 比例收益均值的负数
+# 插值口径裁定（v1.11.0，双轮审查 F1）：分位数取 method='lower'（实有样本点，不线性插值）——
+# 线性插值产出样本中不存在的虚拟值，小样本下尾部样本口径不稳定；'lower' 下分位点 = sorted[floor((n-1)(1-c))]
+ES_hist = -mean(r[r <= quantile(r, 1-c, method='lower')])   # 尾部（≤ 实有分位点）收益均值的负数
 
 # 方法 2: POT 模型 (Peaks-Over-Threshold) 厚尾拟合（辅）
 # 超过阈值 u 的超额值 X-u ~ GPD(ξ, β)
@@ -121,14 +124,14 @@ ES_hist = -mean(r[r <= quantile(r, 1-c)])   # 最差 (1-c) 比例收益均值的
 
 **POT 阈值选择**：默认取 90% 分位数（最差 10% 拟合）。远期演进见 §3.3 EVT 阈值选择。
 
-**ES ≥ VaR 不变式**：ES 是尾部期望 ≥ VaR 分位数，`tail_risk_monitor.py` 强制校验 `es_forecast >= var_forecast`。
+**ES ≥ VaR 不变式**：ES 是尾部期望 ≥ VaR 分位数——`method='lower'` 口径下由构造成立（尾部均值 ≤ 分位点），代码无独立运行时校验（v1.11.0 勘正，原"强制校验"表述删除）。
 
 **FRTB 尾部风险加价**：当 `shape > critical_shape_threshold (0.5)` 时，`frtb_surcharge = frtb_multiplier (3.0) × shape`，作为资本附加。
 
-**POT 日常计算失败兜底**（v1.4.0）：
-- **触发条件**：`tail_risk_monitor.assess()` 日常计算 GPD 拟合失败（scipy genpareto.fit 不收敛/样本不足/分布异常）
-- **兜底策略**：回退纯历史模拟 ES（`ES_95 = ES_hist`），跳过 POT 修正，标记 `pot_fallback_historical=True` 记入日志；ES ≥ VaR 不变式仍强制校验（历史模拟 ES 天然满足）
-- **连续失败升级**：连续 5 日 POT 拟合失败 → §3.10 RECALIBRATE 动作 3（`pot_threshold_quantile` 0.90→0.85 或→0.95）
+**POT 日常计算失败兜底**（v1.4.0 提出，v1.11.0 落码勘正）：
+- **触发条件**：`tail_risk_monitor.fit_pot()` 日常计算 GPD 拟合失败（scipy genpareto.fit 不收敛/样本不足/分布异常）
+- **兜底策略**：回退纯历史模拟 ES（`ES_95 = ES_hist`），跳过 POT 修正；✅ **已落码（v1.11.0，双轮审查深挖③裁定）**：`fit_pot` 三条降级路径（样本 <min_samples / 负收益 <10 / exceedances <5）均 warning 日志留痕，`TailRiskSnapshot.pot_fallback_historical=True` 标记并入 to_dict——60 日窗口 + 常态负日占比（40-60%）下 exceedances 常 <5，小样本 GPD 拟合是噪声发生器，降级而非硬拟合；ES ≥ VaR 不变式仍构造性成立（历史模拟 ES 天然满足）
+- **连续失败升级**：⚠️ 未施工——"连续 5 日 POT 拟合失败 → §3.10 RECALIBRATE 动作 3（`pot_threshold_quantile` 0.90→0.85 或→0.95）"需跨日失败计数器（状态持久化），随 state_store 持久化批（§3.19 代码差距）一并落地；当前 `pot_threshold_quantile` 为 frozen 配置常量
 - **与 §3.3 Uehara 双门控的关系**：远期 Uehara 拒绝外推时同走此兜底路径
 
 **配置参数**（C 类可调）：
@@ -181,7 +184,7 @@ ES_hist = -mean(r[r <= quantile(r, 1-c)])   # 最差 (1-c) 比例收益均值的
 
 **决策**：VaR/ES breach 不直接触发减仓，而是通过 `drawdown_controller` 的 5 级系统性风险分级 + 黑天鹅模式信号产出分级响应指令。
 
-✅ 已施工（drawdown_controller，2 轮 27 测试全绿）：`src/zephyr/position/core/drawdown_controller.py` v0.1.0（production, MOD-POS-008）。接口级摘要：`evaluate(drawdown_info, var_cvar, strategy_pnls, black_swan, var_breach_state)` → `DrawdownResponse(position_cap, reduce_ratio, kill_switch_advised)`。
+✅ 已施工（drawdown_controller，2 轮 27 测试全绿）：`src/zephyr/position/core/drawdown_controller.py` v0.1.0（production, MOD-POS-008）。接口级摘要（v1.11.0 勘正）：`evaluate(drawdown_info, var_cvar, black_swan=None, strategy_pnls=None)` → `DrawdownResponse(position_cap, reduce_ratio, kill_switch_advised)`——实际签名无 `var_breach_state` 参数（VarBreachStateMachine 乘性折扣协同为 §3.15 待施工项，双轮审查 D4 对账修正）。
 
 #### §3.5.1 5 级系统性风险（VaR/CVaR 驱动）
 
@@ -189,11 +192,12 @@ ES_hist = -mean(r[r <= quantile(r, 1-c)])   # 最差 (1-c) 比例收益均值的
 |---|---|---|---|---|
 | GREEN | < 2% | - | 1.0 | 正常 |
 | YELLOW | 2%-4% | - | 0.5 | 新开仓减半 |
-| ORANGE | 4%-6% | - | 0.7 | 禁止新开 + 减仓 30% |
+| ORANGE | 4%-6% | - | 0.5 | 禁止新开 + 减仓（v1.11.0 修正：原 0.7 非单调倒挂，双轮审查 P1-4 裁定降为 0.5） |
 | RED | > 6% | - | 0.5 | 减仓 50% + 只平不开 |
 | BLACK | - | > 10% | 0.0 | 全部清仓 |
 
 > CVaR = ES（Conditional VaR = Expected Shortfall），同一概念不同命名。
+> **仓位上限单调性裁定（v1.11.0，双轮审查 P1-4）**：仓位上限序列必须按严重度单调非增（1.0→0.5→0.5→0.5→0.0）——原 ORANGE 0.7 致 YELLOW(0.5)→ORANGE(0.7) 风险升级后仓位上限反而放宽，与"渐进减仓"语义矛盾。级别严格度由动作语义区分（YELLOW 新开减半 / ORANGE 禁新开 / RED 只平不开 / BLACK 清仓），不由 cap 数值区分。
 
 **配置参数**（DrawdownControllerConfig）：
 
@@ -229,7 +233,7 @@ ES_hist = -mean(r[r <= quantile(r, 1-c)])   # 最差 (1-c) 比例收益均值的
 
 #### §3.5.3 VaR floor 设定警示（2026-08 理论背书）
 
-**arXiv:2608.05623 Li/Lyu/Wei 2026-08-06**：高 VaR floor 诱发 gambling-for-resurrection（赌博回本）行为，低 floor 具防御性。本项目 5 级阈值采用渐进式减仓（YELLOW 0.5 → ORANGE 0.7 → RED 0.5 → BLACK 0.0）而非硬性单一 floor，天然避免该理论风险；与 35号 §4.12 拒绝"回撤进 RiskSignal"交叉印证——保守低地板阈值优于激进高地板。
+**arXiv:2608.05623 Li/Lyu/Wei 2026-08-06**：高 VaR floor 诱发 gambling-for-resurrection（赌博回本）行为，低 floor 具防御性。本项目 5 级阈值采用分级响应（GREEN 1.0 → YELLOW 0.5 → ORANGE 0.5 → RED 0.5 → BLACK 0.0，仓位上限单调非增 + 动作语义递严：新开减半→禁新开→只平不开→清仓）而非硬性单一 floor，天然避免该理论风险；与 35号 §4.12 拒绝"回撤进 RiskSignal"交叉印证——保守低地板阈值优于激进高地板。（v1.11.0 勘正：原文"渐进式减仓 YELLOW 0.5 → ORANGE 0.7"的 0.7 为非单调倒挂数值错误，已按双轮审查 P1-4 裁定修正为 0.5，"渐进"语义改由动作递严承载——双轮审查 D8 对账）
 
 ### §3.6 30 日波动率调整（z-score 法）
 
@@ -268,7 +272,7 @@ else:
 |---|---|---|
 | VaR 历史模拟 | 60 交易日 | min_history=30（下限）+ 60 日平衡稳定性与时效性 |
 | ES 历史模拟 | 60 交易日 | 与 VaR 对齐 |
-| POT 拟合 | 60 交易日 | 最差 10% ≈ 6 个样本，GPD 拟合最低要求 |
+| POT 拟合 | 60 交易日 | v1.11.0 勘正（双轮审查 D6/深挖③）：原"最差 10% ≈ 6 个样本"隐含全负日假设——60 日窗口负日占比 50% 常态下 exceedances 仅约 3 个 < 代码 ≥5 门槛，GPD 小样本拟合为噪声；裁定为样本不足时跳过 POT 仅历史 ES（`pot_fallback_historical` 标记 + warning 告警，已落码），窗口扩至 252 日列为远期备选 |
 | 30 日波动率 | 30 交易日 | 框架要求 |
 | 60 日均值基准 | 60 交易日 | z-score 分母 |
 | 回测验证 | ≥250 交易日 | Basel 交通灯 250 天标准 |
@@ -302,7 +306,7 @@ else:
 | 3 | Acerbi-Szekely Z2 | ES 直接回测（超限日损失幅度） | Z2 = (1/N)Σ R_t/ES_t · 1{breach} | E[Z2]=-1 | `acerbi_szekely_z2()` |
 | 4 | E-backtesting | 在线累积（anytime-valid） | e_t = Π(1+λ·b_s) | e > 1/α 拒绝 | `e_backtesting()` |
 
-**Christoffersen LR_ind/LR_cc 区分**：`christoffersen()` 返回 `ChristoffersenResult(lr_uc, lr_ind, lr_cc, p_value, reject, n_00, n_01, n_10, n_11)`（n_00/n_01/n_10/n_11 = 未超限→未超限 / 未超限→超限 / 超限→未超限 / 超限→超限聚集）。**独立性失败分支**：当 christoffersen_ind_p < 0.05 且 kupiec_p ≥ 0.05 时 → 覆盖率正确但超限聚集（独立性失败）→ action = "RECALIBRATE"，优先选 FHS（§3.16）。
+**Christoffersen LR_ind/LR_cc 区分**：`christoffersen()` 返回 `ChristoffersenResult(lr_uc, lr_ind, lr_cc, p_value, reject, n_00, n_01, n_10, n_11)`（n_00/n_01/n_10/n_11 = 未超限→未超限 / 未超限→超限 / 超限→未超限 / 超限→超限聚集）。**独立性失败分支**：当 christoffersen_ind_p < 0.05 且 kupiec_p ≥ 0.05 时 → 覆盖率正确但超限聚集（独立性失败）→ action = "RECALIBRATE"——⚠️ v1.11.0 勘正（双轮审查 D1）：FHS 未施工（src 零匹配），原"优先选 FHS（§3.16）"指向不存在代码；当前实际首选动作为 §3.10 动作 1（扩窗口）+ 动作 2（切方法），FHS 晋升走 CAND-AUTONOMYCORE-002 trigger。
 
 **E-backtesting GREM 四级告警**（ERCIM 145 接口）：
 
@@ -341,6 +345,10 @@ else:
 
 **决策**：三档响应——PASS / RECALIBRATE / REBUILD。
 
+> **执行者状态标注（v1.11.0，双轮审查 D1/D7 对账）**：本节动作表的执行者 `RiskOrchestrator` 编排类**未建**（src 零匹配），各 `update_config()/enable()/force_static_mode()` 调用点为设计契约——在风控接线批（AI-RWIRE-001，#ARCH-100）建成编排层前，本节动作由人工/daily_auditor 告警驱动执行，禁止按可执行语气直读。
+>
+> **ES 插值口径裁定（v1.11.0，双轮审查 F1）**：`compute_expected_shortfall` 尾部筛选分位数采用 `method='lower'`（实有样本点 sorted[floor((n-1)(1-c))]，不线性插值）——线性插值产出样本中不存在的虚拟分位值，小样本下尾部口径不稳定；'lower' 口径下 ES ≥ VaR 由构造成立。VaR 历史模拟分位数（`compute_var` / `var_calculator._historical`）保留线性插值（单点连续取值无尾部切片抖动问题）；离散收益（大量 0 值日）下 VaR 可分位报 0 为已知口径特征，由 min_samples 下限 + POT 降级链兜底，回测验证（§3.9）负责捕获系统性低估。
+
 - **PASS**：Basel Green + Kupiec p≥0.05 + Christoffersen p≥0.05 + Z2 不拒绝 + E-backtesting green/yellow
 - **RECALIBRATE**：Basel Yellow + Kupiec reject + Christoffersen 独立性失败 + E-backtesting red
 - **REBUILD**：Basel Red + overall_reject + E-backtesting black
@@ -352,14 +360,14 @@ else:
 | 1 | 扩大数据窗口 | RiskOrchestrator → var_calculator.update_config() | `min_history` 30→60，`window` 60→120 交易日 | 次日回测仍 RECALIBRATE → 继续扩大至 250；连续 3 日 REBUILD → 回滚至 60 |
 | 2 | 切换 VaR 方法 | RiskOrchestrator → var_calculator.update_config() | `method` conservative_max → historical（参数法不稳定时）；或 → parametric（历史模拟小样本不稳定时） | 切换后次日回测 PASS → 保留；RECALIBRATE → 切回原方法 + 标记方法切换失败 |
 | 3 | 重校准 POT 阈值 | RiskOrchestrator → tail_risk_monitor.update_config() | `pot_threshold_quantile` 0.90→0.85（更厚尾）或 →0.95（更保守） | GPD 拟合失败（KS p<0.05）→ 回滚至 0.90 + 跳过 POT 修正 |
-| 4 | 切换到 FHS | RiskOrchestrator → fhs_engine.enable() | GARCH(1,1) 拟合 + 残差重采样（§3.16） | FHS 拟合失败（GARCH 不收敛）→ 回退 historical + 标记 FHS 不可用 |
+| 4 | 切换到 FHS | ⚠️ 未施工（远期候选 CAND-AUTONOMYCORE-002）——RiskOrchestrator → fhs_engine.enable() 为设计契约，src 零匹配 | GARCH(1,1) 拟合 + 残差重采样（§3.16） | FHS 拟合失败（GARCH 不收敛）→ 回退 historical + 标记 FHS 不可用 |
 
 **触发条件 → 动作映射**（v1.1.0）：
 
 | 回测失败信号 | 优先动作 | 理由 |
 |---|---|---|
 | Kupiec reject（覆盖率失败） | 动作 1（扩窗口）+ 动作 2（切方法） | 覆盖率失败 = 样本不足或分布假设错 |
-| Christoffersen LR_ind reject（独立性失败） | 动作 4（切 FHS） | 独立性失败 = 超限聚集 → 需 GARCH 残差重采样破自相关 |
+| Christoffersen LR_ind reject（独立性失败） | 动作 1 + 动作 2（v1.11.0 勘正：动作 4 切 FHS 未施工，src 零匹配——远期晋升走 CAND-AUTONOMYCORE-002） | 独立性失败 = 超限聚集 → 远期用 GARCH 残差重采样破自相关，当前以扩窗口/切方法应对 |
 | Z2 reject（ES 幅度失败） | 动作 3（重校准 POT） | ES 幅度失败 = 尾部拟合不准 |
 | E-backtesting red（anytime-valid 累积证据） | 动作 1 + 动作 2 + 动作 3（组合） | 累积证据 = 多重校准问题 |
 
@@ -416,13 +424,16 @@ else:
 
 **组件状态**：
 
+> **"production" 口径澄清（v1.11.0，双轮审查 D7 对账）**：下表 ✅ production = **模块成熟度**（模块已建 + 单测全绿 + 接口冻结承诺），≠ 生产交易链已接线生效。风控链路（VaR/ES/回撤/KillSwitch/流动性危机/对账）的生产接线由接线批承载（AI-RWIRE-001，#ARCH-100）——接线完成前，本节组件在盘中仅经 daily_auditor 盘后回测链路消费。
+
 | 组件 | 状态 | 说明 |
 |---|---|---|
-| var_calculator.py | ✅ production v0.1.0 | 参数法 + 历史模拟 + conservative_max |
-| tail_risk_monitor.py | ✅ production v0.1.0 | ES + POT GPD + 跳跃检测 + FRTB |
+| var_calculator.py | ✅ production v0.1.0 | 参数法 + 历史模拟 + conservative_max（v1.11.0 +非有限值 Fail-Closed：nan_dropped 计数 + 超阈值 raise） |
+| tail_risk_monitor.py | ✅ production v0.1.0 | ES（method='lower' 口径）+ POT GPD（小样本降级 pot_fallback_historical）+ 跳跃检测 + FRTB |
 | var_backtester.py | ✅ evolving v0.1.0 | MVP 4 法 + Basel traffic light |
 | daily_auditor.py | ✅ production v0.2.0 | run_var_backtest + 3 审计日志方法 |
-| drawdown_controller.py | ✅ production v0.1.0 | 5 级 + 7 黑天鹅 + BlackSwanSignal API |
+| drawdown_controller.py | ✅ production v0.1.0 | 5 级（v1.11.0 仓位上限单调性修正：ORANGE 0.7→0.5）+ 7 黑天鹅 + BlackSwanSignal API |
+| RiskOrchestrator | ⚠️ 未建 | §3.10/§3.15/§3.17 动作表执行者，设计契约——风控接线批（AI-RWIRE-001）承载 |
 | backtest_store | ⚠️ 待施工 | 回测结果持久化层 |
 | clean P&L 双轨记录 | ⚠️ 待施工 | clean/dirty P&L 区分 |
 
@@ -530,6 +541,8 @@ else:
 **BlackSwanReport 产出 + blackswan_active 来源链**：`events / triggered_count / blackswan_active = len(active_modes) > 0`；来源链 = RiskOrchestrator 聚合（MVP）或 black_swan_detector 检测（远期）→ 36号 `build_black_swan_signal()` → `BlackSwanReport.blackswan_active` → 35号 §3.13 `intraday_risk_loop` 状态机消费（定义点 §3.5.2）。
 
 ### §3.15 VaR breach 恢复/复位状态机
+
+> **⚠️ 施工状态（v1.11.0，双轮审查 D4 对账）**：本节为**设计契约，未落码**——`VarBreachStateMachine` 类、`drawdown_controller.evaluate(var_breach_state=...)` 参数、×0.8/×0.9 乘性折扣、§3.18/§3.19 持久化 7 阶段在 src 均零匹配；当前 `evaluate()` 实际签名无 `var_breach_state`（见 §3.5 接口摘要勘正）。落地随 state_store 持久化批（§3.19 代码差距）+ 风控接线批（AI-RWIRE-001）一并施工。以下内容为设计规约，禁止按已实现语气直读。
 
 **决策**：VaR breach 后的恢复采用 `consecutive_days_below_recovery` 条件判断，状态 NORMAL → BREACHED → RECOVERY → NORMAL。
 

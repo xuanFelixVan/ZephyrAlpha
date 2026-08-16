@@ -5,12 +5,12 @@
 # [CONSUMERS] MOD-RK-03(Portfolio Risk Monitor,实时监控) ; MOD-RK-16(Risk Decomposition,残差分析) ; MOD-RK-12(Stress Test) ; MOD-RK-15(Tail Risk)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] VaR≥0(损失额非负);conservative_max=max(parametric,historical);样本不足→抛InsufficientVaRHistoryError;置信度∈(0,1);holding_period≥1
+# [INVARIANTS] VaR≥0(损失额非负);conservative_max=max(parametric,historical);样本不足→抛InsufficientVaRHistoryError;置信度∈(0,1);holding_period≥1;非有限值(NaN/±Inf)过滤+计数nan_dropped,占比超max_nonfinite_ratio→抛ExcessiveNonFiniteDataError(Fail-Closed)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InsufficientVaRHistoryError;InvalidVaRConfigError
+# [ERROR_CONTRACT] InsufficientVaRHistoryError;InvalidVaRConfigError;ExcessiveNonFiniteDataError
 # [TESTS] tests/risk/test_var_calculator.py
 # [A_module] module_id=MOD-RK-05 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -43,7 +43,7 @@ Version: 0.1.0 (Phase 1)
 # 层: 输入
 # - id: I1
 #   name: 日收益序列 np.ndarray
-#   fields: 1维日收益率数组, NaN自动过滤, 需>=min_history(30)样本
+#   fields: 1维日收益率数组, 非有限值(NaN/±Inf)过滤+计数nan_dropped(占比超阈值raise), 需>=min_history(30)有效样本
 #   code: calculate() returns L241
 # - id: I2
 #   name: 组合价值 标量
@@ -135,6 +135,7 @@ __all__ = [
     "VaRCalculator",
     "InsufficientVaRHistoryError",
     "InvalidVaRConfigError",
+    "ExcessiveNonFiniteDataError",
 ]
 
 logger = logging.getLogger(__name__)
@@ -170,6 +171,16 @@ class InsufficientVaRHistoryError(ZephyrBaseError):
     error_code = "ZA-RK-0006"
 
 
+class ExcessiveNonFiniteDataError(ZephyrBaseError):
+    """收益序列非有限值 (NaN/±Inf) 占比超阈值——数据缺口期间拒绝出 VaR (Fail-Closed)。
+
+    双轮审查裁定 (2026-08-16 F2+F4): 静默过滤 NaN/Inf 会让数据洞期间 (停牌/极端行情
+    恰是高波动日) 风险被系统性低估且无任何信号; 占比超 max_nonfinite_ratio 直接 raise。
+    """
+
+    error_code = "ZA-RK-0024"
+
+
 # ──────────────────────────────────────────────────────────────────────────────
 # 配置 (C 类可调参数)
 # ──────────────────────────────────────────────────────────────────────────────
@@ -192,6 +203,8 @@ class VaRConfig:
     method: VaRMethod = VaRMethod.CONSERVATIVE_MAX
     min_history: int = 30
     annualization_factor: int = 252
+    # 非有限值 (NaN/±Inf) 占比上限: 超过即抛 ExcessiveNonFiniteDataError (Fail-Closed)
+    max_nonfinite_ratio: float = 0.05
 
     def __post_init__(self) -> None:
         if not 0 < self.confidence_level < 1:
@@ -209,6 +222,10 @@ class VaRConfig:
         if self.annualization_factor < 1:
             raise InvalidVaRConfigError(
                 f"annualization_factor must be >=1, got {self.annualization_factor}"
+            )
+        if not 0.0 <= self.max_nonfinite_ratio < 1.0:
+            raise InvalidVaRConfigError(
+                f"max_nonfinite_ratio must be in [0,1), got {self.max_nonfinite_ratio}"
             )
 
     @property
@@ -241,9 +258,10 @@ class VaRResult:
         portfolio_value: 输入的组合价值
         mean_return: 样本平均收益 (日频)
         std_return: 样本标准差 (日频)
-        sample_size: 历史样本数
+        sample_size: 历史样本数 (过滤非有限值后的有效样本)
         timestamp: 计算时间
         annualization_factor: 年化因子 (来自 VaRConfig, 默认 252)
+        nan_dropped: 本次计算过滤掉的非有限值 (NaN/±Inf) 样本数, 0=输入全有限
     """
 
     value: float
@@ -259,6 +277,7 @@ class VaRResult:
     parametric_var: float | None = None
     historical_var: float | None = None
     annualization_factor: int = 252
+    nan_dropped: int = 0
 
     @property
     def annualized_vol(self) -> float:
@@ -280,6 +299,7 @@ class VaRResult:
             "std_return": self.std_return,
             "sample_size": self.sample_size,
             "annualized_vol": self.annualized_vol,
+            "nan_dropped": self.nan_dropped,
         }
 
 
@@ -332,10 +352,11 @@ class VaRCalculator:
             VaRResult
 
         Raises:
-            InsufficientVaRHistoryError: 样本数 < min_history
+            InsufficientVaRHistoryError: 有效样本数 < min_history
             InvalidVaRConfigError: portfolio_value 非正
+            ExcessiveNonFiniteDataError: 非有限值 (NaN/±Inf) 占比 > max_nonfinite_ratio
         """
-        returns = self._validate_returns(returns)
+        returns, nan_dropped = self._validate_returns(returns)
         if portfolio_value <= 0:
             raise InvalidVaRConfigError(
                 f"portfolio_value must be positive, got {portfolio_value}"
@@ -362,13 +383,14 @@ class VaRCalculator:
         value_pct = value / portfolio_value if portfolio_value > 0 else 0.0
 
         logger.info(
-            "VaR computed: method=%s value=%.2f (%.4f%%) parametric=%s historical=%s n=%d",
+            "VaR computed: method=%s value=%.2f (%.4f%%) parametric=%s historical=%s n=%d nan_dropped=%d",
             self._config.method.value,
             value,
             value_pct * 100,
             f"{p_var:.2f}" if p_var is not None else None,
             f"{h_var:.2f}" if h_var is not None else None,
             n,
+            nan_dropped,
         )
 
         return VaRResult(
@@ -385,6 +407,7 @@ class VaRCalculator:
             parametric_var=p_var,
             historical_var=h_var,
             annualization_factor=self._config.annualization_factor,
+            nan_dropped=nan_dropped,
         )
 
     def calculate_portfolio(
@@ -458,17 +481,41 @@ class VaRCalculator:
 
     # ── 内部: 校验 ──
 
-    def _validate_returns(self, returns: np.ndarray) -> np.ndarray:
-        """校验并规范化收益序列。"""
+    def _validate_returns(self, returns: np.ndarray) -> tuple[np.ndarray, int]:
+        """校验并规范化收益序列, 返回 (有效序列, 过滤掉的非有限值样本数)。
+
+        非有限值 (NaN/±Inf) 一并过滤 (F2+F4 裁定: np.isfinite):
+        - 过滤数 >0 且占比 <= max_nonfinite_ratio → warning + nan_dropped 计数入 VaRResult;
+        - 占比 > max_nonfinite_ratio (默认 5%) → 抛 ExcessiveNonFiniteDataError,
+          数据缺口期间拒绝出 VaR (Fail-Closed, 防停牌/极端行情高波动日被幸存者化)。
+        """
         arr = np.asarray(returns, dtype=float)
         if arr.ndim != 1:
             raise InvalidVaRConfigError(
                 f"returns must be 1D, got shape {arr.shape}"
             )
-        # 过滤 NaN
-        arr = arr[~np.isnan(arr)]
+        # 过滤非有限值 (NaN + ±Inf)
+        finite_mask = np.isfinite(arr)
+        nan_dropped = int(len(arr) - int(np.count_nonzero(finite_mask)))
+        if nan_dropped > 0:
+            ratio = nan_dropped / len(arr) if len(arr) > 0 else 1.0
+            if ratio > self._config.max_nonfinite_ratio:
+                raise ExcessiveNonFiniteDataError(
+                    f"non-finite (NaN/±Inf) ratio {ratio:.2%} > "
+                    f"max_nonfinite_ratio {self._config.max_nonfinite_ratio:.2%} "
+                    f"({nan_dropped}/{len(arr)}) — 数据缺口过大, 拒绝出 VaR (Fail-Closed)"
+                )
+            logger.warning(
+                "VaR 输入含 %d/%d 非有限值 (NaN/±Inf, %.2f%%), 已过滤并计数 "
+                "(数据缺口期间风险可能低估, 超 %.2f%% 将 raise)",
+                nan_dropped,
+                len(arr),
+                ratio * 100,
+                self._config.max_nonfinite_ratio * 100,
+            )
+            arr = arr[finite_mask]
         if len(arr) < self._config.min_history:
             raise InsufficientVaRHistoryError(
                 f"need >= {self._config.min_history} valid returns, got {len(arr)}"
             )
-        return arr
+        return arr, nan_dropped

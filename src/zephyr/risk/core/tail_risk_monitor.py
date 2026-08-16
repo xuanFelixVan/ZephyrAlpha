@@ -64,7 +64,7 @@ Version: 0.1.0
 #   name_zh: ② 期望短缺ES/CVaR
 #   name_en: compute_expected_shortfall
 #   intro: 比VaR更惨的那部分尾巴的平均亏损
-#   desc: q=quantile(returns,1-c); tail=returns[returns<=q]; ES=-mean(tail), clamp>=0
+#   desc: q=quantile(returns,1-c,method='lower')(实有样本点,防插值尾部抖动,F1裁定); tail=returns[returns<=q]; ES=-mean(tail), clamp>=0
 #   inputs: I1 I3
 #   outputs: es_pct ES比率 + es_var_ratio=ES/VaR
 #   invariant: ES>=VaR
@@ -72,7 +72,7 @@ Version: 0.1.0
 #   name_zh: ③ POT广义帕累托拟合
 #   name_en: fit_pot
 #   intro: 对最差的10%亏损拟合GPD分布看尾巴有多厚
-#   desc: losses=-r[r<0]; u=quantile(losses,0.9); 超额losses>u部分用scipy.genpareto.fit(floc=0)估shape ξ/scale β; tail_index=1/ξ; 样本不足返回None
+#   desc: losses=-r[r<0]; u=quantile(losses,0.9); 超额losses>u部分用scipy.genpareto.fit(floc=0)估shape ξ/scale β; tail_index=1/ξ; 样本不足返回None+warning降级(仅历史ES,pot_fallback_historical=True)
 #   inputs: I1 I3
 #   outputs: PotFitResult(shape/scale/threshold/n_exceedances/tail_index)
 #   invariant: ξ>0=厚尾; tail_index=1/ξ
@@ -298,6 +298,8 @@ class TailRiskSnapshot:
         frtb_addon: FRTB 尾部风险加价
         reason: 告警原因
         timestamp: 快照时间
+        pot_fallback_historical: True=POT 未生效 (样本不足/拟合失败), 已降级为
+            纯历史模拟 ES (厚尾诊断/FRTB shape 加价缺席, memo 36 §3.2 兜底标记)
     """
 
     var: float
@@ -310,6 +312,7 @@ class TailRiskSnapshot:
     reason: str
     timestamp: datetime
     pot: PotFitResult | None = None
+    pot_fallback_historical: bool = False
 
     @property
     def is_heavy_tailed(self) -> bool:
@@ -328,6 +331,7 @@ class TailRiskSnapshot:
             "frtb_addon": self.frtb_addon,
             "reason": self.reason,
             "is_heavy_tailed": self.is_heavy_tailed,
+            "pot_fallback_historical": self.pot_fallback_historical,
         }
 
 
@@ -382,8 +386,14 @@ class TailRiskMonitor:
         es_pct = self.compute_expected_shortfall(returns, cfg.confidence)
         es_var_ratio = es_pct / var_pct if var_pct > 0 else 1.0
 
-        # 3. POT 拟合
+        # 3. POT 拟合 (None=样本不足/拟合失败 → 降级纯历史 ES, 双轮审查深挖③裁定)
         pot = self.fit_pot(returns, cfg.pot_threshold_quantile)
+        pot_fallback_historical = pot is None
+        if pot_fallback_historical:
+            logger.warning(
+                "POT 未生效, 本次快照为纯历史模拟 ES (pot_fallback_historical=True): "
+                "厚尾诊断/FRTB shape 加价缺席"
+            )
 
         # 4. 跳跃检测
         jump_count = self.detect_jumps(returns, cfg.jump_threshold_sigma)
@@ -417,6 +427,7 @@ class TailRiskMonitor:
             frtb_addon=frtb_addon,
             reason=reason,
             timestamp=now,
+            pot_fallback_historical=pot_fallback_historical,
         )
 
     # ── 公开 API: VaR ──
@@ -438,17 +449,23 @@ class TailRiskMonitor:
         """期望短缺 ES (CVaR, 正数, 损失额比率)。
 
         ES = -mean(R | R <= VaR_quantile)
-        VaR_quantile = quantile(returns, 1-confidence) (负值, 如 -0.03)
+        VaR_quantile = quantile(returns, 1-confidence, method='lower') (负值, 如 -0.03)
         ES >= VaR (尾部期望 >= 分位数)
+
+        插值口径裁定 (2026-08-16 双轮审查 F1, memo 36 §3.10): 分位数取
+        `method='lower'` (实有样本点, 不线性插值)——线性插值会产出样本中不存在的
+        虚拟值, 使尾部样本数在小样本下抖动 (如 30 样本 95% 置信在 1/2 个间跳变),
+        ES 估计不连续; 'lower' 口径下尾部样本数 = #{r <= sorted[floor((n-1)(1-c))]},
+        稳定且 ES>=VaR 不变量天然成立 (尾部均值 <= 分位点)。
 
         不变量: ES >= VaR (尾部条件期望的损失 >= 分位数处的损失)
         """
         returns = np.asarray(returns, dtype=float)
-        var_quantile = float(np.quantile(returns, 1 - confidence))
+        var_quantile = float(np.quantile(returns, 1 - confidence, method="lower"))
         # 尾部 = 收益率 <= 分位数 (最差的 tail 部分, 均为负值)
         tail = returns[returns <= var_quantile]
         if len(tail) == 0:
-            # 退化: 无样本低于分位数 (理论上不会发生, 防御性)
+            # 退化: 无样本低于分位数 (method='lower' 下不可达——分位点本身即样本, 防御性保留)
             return max(-var_quantile, 0.0)
         es = -float(np.mean(tail))
         return max(es, 0.0)
@@ -469,26 +486,37 @@ class TailRiskMonitor:
             threshold_quantile: 阈值分位数 (0.90=取最差 10%)
 
         Returns:
-            PotFitResult, None=超过阈值样本不足
+            PotFitResult, None=超过阈值样本不足 (降级为纯历史模拟 ES,
+            snapshot.pot_fallback_historical=True + warning 日志, 2026-08-16
+            双轮审查深挖③裁定: 60 日窗口 + 常态负日占比下 exceedances 常 <5,
+            小样本 GPD 拟合是噪声发生器, 样本不足时跳过 POT 仅历史 ES)
         """
         returns = np.asarray(returns, dtype=float)
         if len(returns) < self._config.min_samples:
+            logger.warning(
+                "POT 降级: 样本 %d < min_samples %d, 跳过 POT 仅历史 ES",
+                len(returns),
+                self._config.min_samples,
+            )
             return None
 
-        # 阈值: 取最差 tail (losses)
-        # returns 中负值是损失, threshold 取 threshold_quantile 分位
-        threshold = float(np.quantile(returns, threshold_quantile))
-        # 超过阈值的"超额值" (用于 GPD, 取 |exceedance|)
-        exceedances = returns[returns > threshold] - threshold
-        # 对损失侧: 取 returns < -|threshold| 的 |returns|
         # 标准 POT: 对损失序列 L = -returns[L < 0], 取 L > u 的 L-u
         losses = -returns[returns < 0]
         if len(losses) < 10:
+            logger.warning(
+                "POT 降级: 负收益样本 %d < 10, 跳过 POT 仅历史 ES",
+                len(losses),
+            )
             return None
         loss_threshold = float(np.quantile(losses, threshold_quantile))
         exceedances = losses[losses > loss_threshold] - loss_threshold
 
         if len(exceedances) < 5:
+            logger.warning(
+                "POT 降级: 超阈值 exceedances %d < 5 (60 日窗口+常态负日占比下常态), "
+                "GPD 小样本拟合为噪声, 跳过 POT 仅历史 ES",
+                len(exceedances),
+            )
             return None
 
         # 拟合 GPD: scipy.stats.genpareto

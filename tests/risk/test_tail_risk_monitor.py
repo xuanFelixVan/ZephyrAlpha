@@ -154,6 +154,103 @@ def test_pot_to_dict(normal_returns):
     assert "is_heavy_tailed" in d
 
 
+# ── F1 红队实证 (2026-08-16 双轮审查裁定): ES 分位数 method='lower' 口径 ──
+
+
+def test_es_quantile_is_actual_sample_point():
+    """F1: ES 尾部筛选分位数必须取实有样本点 (method='lower'), 不用线性插值虚拟值。
+
+    红队构造: 30 样本 (min_samples 边界), 95% 置信 → 分位点 = sorted[floor(29×0.05)]
+    = sorted[1] (第 2 差样本实有点); 线性插值会产出 sorted[1] 与 sorted[2] 之间的
+    虚拟值。ES 必须等于 lower 口径尾部均值的闭式解。
+    """
+    rng = np.random.default_rng(7)
+    returns = rng.normal(0.0, 0.02, 30)
+    es = TailRiskMonitor.compute_expected_shortfall(returns, 0.95)
+    q_lower = float(np.quantile(returns, 0.05, method="lower"))
+    # 分位点是实有样本成员 (非插值虚拟值)
+    assert q_lower == np.sort(returns)[1]
+    assert q_lower in set(returns.tolist())
+    # ES = lower 口径尾部 (r <= q_lower) 均值取负
+    tail = returns[returns <= q_lower]
+    assert es == pytest.approx(-float(np.mean(tail)), rel=1e-12)
+
+
+def test_es_deterministic_on_discrete_returns():
+    """F1: 离散收益 (大量 0 值日, A 股常态) 下 ES 口径确定可复现。
+
+    红队构造: 1 个 -10% 损失日 + 99 个 0 收益日——lower 口径分位点 = sorted[4] = 0.0
+    (实有点), 尾部 = 全部 <=0 样本, ES = -mean = 0.001 恒定, 无插值抖动。
+    """
+    returns = np.concatenate([[-0.10], np.zeros(99)])
+    es1 = TailRiskMonitor.compute_expected_shortfall(returns, 0.95)
+    es2 = TailRiskMonitor.compute_expected_shortfall(returns, 0.95)
+    q_lower = float(np.quantile(returns, 0.05, method="lower"))
+    assert q_lower == 0.0
+    assert es1 == pytest.approx(0.001, rel=1e-9)
+    assert es1 == es2
+
+
+def test_es_ge_var_small_sample_boundary():
+    """F1: min_samples=30 边界 + 多置信度网格, ES>=VaR 不变量保持。"""
+    rng = np.random.default_rng(123)
+    returns = rng.normal(0.0, 0.02, 30)
+    for conf in (0.90, 0.95, 0.99):
+        var = TailRiskMonitor.compute_var(returns, conf)
+        es = TailRiskMonitor.compute_expected_shortfall(returns, conf)
+        assert es >= var, f"ES({es}) < VaR({var}) at n=30 conf={conf}"
+
+
+# ── P1c 红队实证 (双轮审查深挖③裁定): POT 小样本降级纯历史 ES ──
+
+
+def test_pot_degrades_on_sixty_day_half_negative_window():
+    """P1c: 60 日窗口 + 50% 负日常态 → exceedances<5 → pot=None (不硬拟合噪声)。"""
+    rng = np.random.default_rng(7)
+    returns = np.concatenate(
+        [rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)]
+    )
+    monitor = TailRiskMonitor()
+    pot = monitor.fit_pot(returns)
+    assert pot is None  # 60 日窗口下 POT 与样本量天然不兼容, 降级而非噪声拟合
+
+
+def test_pot_fallback_flag_set_in_snapshot():
+    """P1c: 降级路径可验证——snapshot.pot_fallback_historical=True 且入 to_dict。"""
+    rng = np.random.default_rng(7)
+    returns = np.concatenate(
+        [rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)]
+    )
+    monitor = TailRiskMonitor()
+    snapshot = monitor.assess(returns, now=t())
+    assert snapshot.pot is None
+    assert snapshot.pot_fallback_historical is True
+    assert snapshot.to_dict()["pot_fallback_historical"] is True
+    # 降级后 ES 仍为纯历史模拟值 (ES>=VaR 不变量保持)
+    assert snapshot.expected_shortfall >= snapshot.var
+
+
+def test_pot_fallback_logs_warning(caplog):
+    """P1c: 降级路径必须告警留痕 (非静默缺失厚尾诊断)。"""
+    rng = np.random.default_rng(7)
+    returns = np.concatenate(
+        [rng.normal(-0.01, 0.005, 30), rng.normal(0.01, 0.005, 30)]
+    )
+    monitor = TailRiskMonitor()
+    with caplog.at_level("WARNING"):
+        snapshot = monitor.assess(returns, now=t())
+    assert snapshot.pot_fallback_historical is True
+    assert any("POT" in r.message for r in caplog.records)
+
+
+def test_pot_fallback_false_when_fit_succeeds(normal_returns):
+    """样本充足拟合成功时 pot_fallback_historical=False (正常路径不标降级)。"""
+    monitor = TailRiskMonitor()
+    snapshot = monitor.assess(normal_returns, now=t())
+    assert snapshot.pot is not None
+    assert snapshot.pot_fallback_historical is False
+
+
 # ── 跳跃检测 ──────────────────────────────────────────────────────────────────
 
 

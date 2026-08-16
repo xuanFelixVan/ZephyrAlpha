@@ -65,7 +65,7 @@ Version: 0.1.0
 #   name_zh: ① 系统性风险5级判定
 #   name_en: _evaluate_risk_level
 #   intro: 用VaR/CVaR把市场风险分成绿黄橙红黑5级
-#   desc: CVaR>10%→BLACK；VaR>6%→RED、>4%→ORANGE、>2%→YELLOW、否则GREEN；对应仓位上限1.0/0.5/0.7/0.5/0.0
+#   desc: CVaR>10%→BLACK；VaR>6%→RED、>4%→ORANGE、>2%→YELLOW、否则GREEN；对应仓位上限1.0/0.5/0.5/0.5/0.0(单调非增,P1-4裁定)
 #   inputs: I2 I5
 #   outputs: SystemicRiskLevel及仓位上限系数
 # - id: A2
@@ -165,7 +165,7 @@ class SystemicRiskLevel(str, Enum):
 
     GREEN = "GREEN"      # VaR < 2%: 正常
     YELLOW = "YELLOW"    # VaR 2%-4%: 新开仓减半
-    ORANGE = "ORANGE"    # VaR 4%-6%: 禁止新开 + 减仓 30%
+    ORANGE = "ORANGE"    # VaR 4%-6%: 禁止新开 + 减仓(上限 50%)
     RED = "RED"          # VaR > 6%: 减仓 50% + 只平不开
     BLACK = "BLACK"      # CVaR > 10%: 全部清仓
 
@@ -178,8 +178,11 @@ class SystemicRiskLevel(str, Enum):
 _RISK_LEVEL_CAP: dict[SystemicRiskLevel, float] = {
     SystemicRiskLevel.GREEN: 1.0,
     SystemicRiskLevel.YELLOW: 0.5,   # 新开仓减半
-    SystemicRiskLevel.ORANGE: 0.7,   # 减仓 30% → 上限 70%
-    SystemicRiskLevel.RED: 0.5,      # 减仓 50% → 上限 50%
+    # 2026-08-16 双轮审查 P1-4 裁定: ORANGE 原值 0.7 致序列非单调
+    # (YELLOW 0.5 → ORANGE 0.7 风险升级上限反而放宽), 降为 0.5 恢复单调;
+    # 级别严格度由动作语义区分 (ORANGE 禁新开/RED 只平不开), 非由 cap 数值区分
+    SystemicRiskLevel.ORANGE: 0.5,   # 禁止新开 + 减仓 (cap 与 YELLOW/RED 同档)
+    SystemicRiskLevel.RED: 0.5,      # 减仓 50% + 只平不开
     SystemicRiskLevel.BLACK: 0.0,    # 全部清仓
 }
 
@@ -649,7 +652,7 @@ class DrawdownController:
         if risk_level == SystemicRiskLevel.YELLOW:
             actions.append("黄级: 新开仓减半")
         elif risk_level == SystemicRiskLevel.ORANGE:
-            actions.append("橙级: 禁止新开仓 + 减仓 30%")
+            actions.append("橙级: 禁止新开仓 + 减仓(仓位上限 50%)")
         elif risk_level == SystemicRiskLevel.RED:
             actions.append("红级: 减仓 50% + 只平不开")
         elif risk_level == SystemicRiskLevel.BLACK:

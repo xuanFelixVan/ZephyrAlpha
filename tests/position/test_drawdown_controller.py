@@ -47,12 +47,27 @@ def test_yellow_level_new_position_halved():
 
 
 def test_orange_level_no_new_and_reduce_30():
+    """橙级: 禁止新开 + 减仓。P1-4 裁定 (2026-08-16): cap 0.7→0.5 恢复单调——
+    原 0.7 致 YELLOW(0.5)→ORANGE(0.7) 风险升级上限反而放宽 (非单调倒挂)。"""
     ctrl = DrawdownController()
     resp = ctrl.evaluate(NO_DD, VarCvarMetrics(var_95=0.05, cvar_95=0.06))
     assert resp.risk_level == SystemicRiskLevel.ORANGE
-    assert resp.position_cap == pytest.approx(0.7)
+    assert resp.position_cap == pytest.approx(0.5)
     assert resp.allow_new_position is False
     assert resp.only_close is False
+
+
+def test_risk_level_cap_monotone_non_increasing():
+    """P1-4 红队实证: 5 级仓位上限按严重度单调非增 (GREEN→BLACK)。"""
+    order = (
+        SystemicRiskLevel.GREEN,
+        SystemicRiskLevel.YELLOW,
+        SystemicRiskLevel.ORANGE,
+        SystemicRiskLevel.RED,
+        SystemicRiskLevel.BLACK,
+    )
+    caps = [lvl.position_cap for lvl in order]
+    assert caps == sorted(caps, reverse=True), f"仓位上限非单调: {caps}"
 
 
 def test_red_level_reduce_50_only_close():
@@ -265,9 +280,9 @@ def test_no_drawdown_full_recovery():
 
 
 def test_take_strictest_black_swan_vs_risk():
-    """黑天鹅 cap < 风险级别 cap → 取黑天鹅。"""
+    """黑天鹅 cap <= 风险级别 cap → 取黑天鹅。"""
     ctrl = DrawdownController()
-    # VaR=0.05(橙, cap=0.7) vs BS-003(cap=0.5) → 0.5
+    # VaR=0.05(橙, cap=0.5, P1-4 修正后) vs BS-003(cap=0.5) → 0.5
     resp = ctrl.evaluate(
         NO_DD,
         VarCvarMetrics(0.05, 0.055),

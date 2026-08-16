@@ -38,6 +38,9 @@ C-002 执行域合规门禁（2026-08-15 AI-ASM-001 装配批接线，43_complia
      缺失 → ComplianceGateBlockError 拒发；
   2. 日申报笔数读数检查（CancelRateGuard 硬计数器）：>=1 万笔 → 拒发；
      >=5000 笔 → WARNING 日志不阻断（2026-06-08 程序化新规）。
+  撤单侧接线（2026-08-16 AI-RFIX-001，双轮审查 P1-5）：cancel_order 撤单指令
+  发往券商即 record_cancel() 计入日申报硬计数器（成功/失败均计，"申报、撤单
+  笔数"同口径）；未注入 declaration_guard 时跳过，不影响既有行为。
   门禁自身失效（登记表不可读等）由各门禁模块 Fail-Closed 兜底（43 号 §7.4）。
 
 SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
@@ -317,6 +320,14 @@ class OrderManager:
         # 状态机校验
         if order.status not in {OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL}:
             return False
+
+        # 撤单计数接线（2026-08-16 双轮审查 P1-5 裁定，AI-RFIX-001）：撤单指令
+        # 发往券商即构成一笔撤单申报（2026-06-08 程序化新规"申报、撤单笔数"口径，
+        # 43 号 §8 方案 A 日申报硬计数器）——成功/失败均计入（宁可多计不可漏计，
+        # 失败=指令已发出但被拒，仍消耗申报口径）；无 broker_order_id 的纯本地
+        # 撤单（未报交易所）不计
+        if order.broker_order_id and self._declaration_guard is not None:
+            self._declaration_guard.record_cancel()
 
         # 从映射精确路由到所属 broker（治本：消除硬编码 "simulation" + 反查）
         if order.broker_order_id and not self._cancel_at_broker(order_id, order):
