@@ -61,20 +61,20 @@ D_BACKTEST (镜像实盘路径 via MatchingEngine+Portfolio+metrics, DecisionGat
 ## 3. 域清单（AUTO）
 
 <!-- AUTO-START:domain_list -->
-<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-06 -->
+<!-- 数据源：depgraph (PostgreSQL) | 最后同步：2026-08-17 -->
 
 | 域 ID | 域名 | 层 | 节点数 |
 |-------|------|----|-------|
-| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 466 |
+| `D_GOVERNANCE` | 生命周期管理 | L2_domain | 467 |
 | `D_GOV_SCRIPTS` | 脚本治理 | L2_domain | 438 |
 | `D_GOV_CODE_QUALITY` | 代码质量治理 | L1_foundation | 244 |
 | `D_DATA` | 数据接入层 | L1_foundation | 209 |
 | `D_GOV_AUDIT` | 审计追踪 | L2_domain | 200 |
 | `D_SHARED` | 共享服务 | L0_infrastructure | 182 |
-| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 173 |
 | `D_SECURITY` | 对抗验证 | L1_foundation | 171 |
+| `D_INFRA_RUNTIME` | 运行时集成 | L0_infrastructure | 169 |
 | `D_AUTONOMY_CORE` | 自治核心 | L1_foundation | 131 |
-| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 126 |
+| `D_GOV_ENFORCEMENT` | 规则执行 | L2_domain | 128 |
 | `D_FEEDBACK_LOOP` | 反馈循环引擎 | L1_foundation | 125 |
 | `D_FACTOR` | 因子 | L2_domain | 116 |
 | `D_GOV_OPS_RESILIENCE` | 运维弹性治理 | L1_foundation | 115 |

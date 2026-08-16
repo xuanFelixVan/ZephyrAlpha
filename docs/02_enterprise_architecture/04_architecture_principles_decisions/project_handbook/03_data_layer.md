@@ -39,7 +39,7 @@ language: zh
 ## 4. 表计数
 
 <!-- AUTO-START:table_counts -->
-<!-- 数据源：table_registry 内存加载 | 最后同步：2026-08-06 -->
+<!-- 数据源：table_registry 内存加载 | 最后同步：2026-08-17 -->
 
 | 数据库 / Database | 表数 / Tables |
 |------|------|

@@ -55,7 +55,7 @@ language: zh
 ## 6. 任务计数
 
 <!-- AUTO-START:task_counts -->
-<!-- 数据源：data_sources_registry.yaml | 最后同步：2026-08-06 -->
+<!-- 数据源：data_sources_registry.yaml | 最后同步：2026-08-17 -->
 
 | Provider ID | 名称 | 类型 | 状态 |
 |-------------|------|------|------|
