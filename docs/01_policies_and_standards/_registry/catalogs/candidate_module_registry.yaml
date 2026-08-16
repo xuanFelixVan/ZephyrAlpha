@@ -6429,3 +6429,74 @@ entries:
   review_frequency: quarterly
   last_review_outcome: "2026-08-16 登记：存量孤儿已直杀闭环，本项为机制根治（防再积累）"
   acquisition_method: self_build
+
+# ----------------------------------------------------------
+# CAND-DAT-002: 新闻快讯 2024-08~2026-06 历史回补（deferred，源可及性未证实）
+# 来源: 2026-08-16 冷热分层裁定批实证（bdpan 止 2024-07 + 直播 2026-07 起步）
+# ----------------------------------------------------------
+- id: CAND-DAT-002
+  name: "News Flash 2024-08~2026-06 Backfill / 新闻快讯缺口回补"
+  aliases: ["news断档回补", "新闻历史回补", "2024-2026新闻缺口"]
+  domain: D_DATA
+  domain_status: active
+  domain_node_count: 175
+  sub_layer: "ingestion 数据接入层"
+  panorama_position:
+    depgraph:
+      has_position: false
+    dataflowgraph:
+      has_position: true
+      target_node_type: source
+      data_flow_path: "历史新闻源（待调研） → news_data 回补 → 事件驱动回测可验证"
+      upstream_data: ["sina7x24_archive(候选)", "cls_archive(候选)", "tushare_anns(公告替代)"]
+      downstream_data: ["c3_fundamental.news_data"]
+      insertion_description: "news_data 2024-08~2026-06 缺口段回补源"
+    decisiongraph:
+      has_position: true
+      target_layer: "L6"
+      decision_path: "新闻事件 → 事件驱动信号 → 回测验证（2024-08~2026-06 窗口当前不可信）"
+      insertion_description: "L6 事件层缺口段信号源补全"
+    blueprint:
+      has_position: true
+      target_ref: "data_retention_contract.yaml L6 note + data_asset_registry DS-104"
+      design_maturity: design
+  description: "news_data 2024-08~2026-06 共 23 个月覆盖薄（月千级 vs 健康月 8 万级）：bdpan 历史包止于 2024-07，全量多源直播 2026-07 才上线。事件驱动策略该窗口回测存在新闻盲区。需先调研可及历史源（新浪 7x24 深分页/财联社归档/tushare 公告替代），再施工回补。"
+  capability: "news_data"
+  problem_it_solves: "事件驱动回测 2024-08~2026-06 窗口新闻盲区——策略有效性验证缺关键证据链"
+  trigger_signals:
+  - "事件驱动策略回测窗口需覆盖 2024-08~2026-06"
+  - "确认可及历史新闻源（深分页/API 归档/采购）"
+  - "爆冷/ST 案例研究需要该窗口新闻证据（裁定 A 研究价值链）"
+  keywords: ["news_data", "历史回补", "断档", "backfill", "事件驱动"]
+  upstream_deps: []
+  downstream_consumers:
+  - {consumer: "event_driven_strategy", contract: "news_data", note: "事件驱动策略回测"}
+  contracts_to_produce: []
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "历史新闻源可及性调研结论（深分页可行性/量级/限速）", check: "源调研探针报告", met: false}
+  design_admission:
+    q1_implemented: {result: false, equivalent_nodes: [], evidence: "tasks.yaml 仅 event_driven 直播任务，无历史回补任务；kline_5min_history_backfill 已退役无 news 对应物"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "2026-08-16 冷热分层裁定批实证（DS-104 缺口注记）"
+  source_section: "data_asset_registry DS-104 format_summary"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "源调研 1 天 + 施工 3 人天（若源可及）"
+  tech_notes: "写入必须过 news_dedup + ReplacingMergeTree 幂等；回补后对相关分区跑 optimize_merge.py 物理去重"
+  risks: ["历史源不存在或限速致回补不可行", "公告(anns)与快讯语义不同不可替代"]
+  alternatives: "接受缺口并靠 DS-104 注记约束回测窗口（当前状态）。代价：事件驱动策略 23 个月证据链永久缺失"
+  tags: ["数据回补", "新闻", "事件驱动", "待源调研", "P2规划"]
+  search_terms: ["news backfill", "新闻回补", "2024-2026 断档", "news_data gap"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-16'
+  review_frequency: yearly
+  last_review_outcome: "首次登记——源可及性未证实，待事件驱动回测需求触发"

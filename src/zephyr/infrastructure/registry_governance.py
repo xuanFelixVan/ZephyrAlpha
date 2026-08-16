@@ -35,7 +35,7 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
-REGISTRY_PATH = Path("docs/01_policies_and_standards/_registry/catalogs/functional-domain-registry.yaml")
+REGISTRY_PATH = Path("docs/01_policies_and_standards/_registry/catalogs/functional_domain_registry.yaml")  # 实际文件名=下划线（domain_fk_gate.py 同源一致）
 
 
 

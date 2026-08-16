@@ -9217,6 +9217,11 @@ creation_tokens:
 # ============================================================================
 # _validate_di_seam() 动态加载本清单，命中 module_path 的类跳过违规检测。
 # 新增豁免：在此追加 {module_path, reason, created} 条目。
+  # --- optimize_merge.py（ReplacingMergeTree 合并维护工具，分区级 OPTIMIZE FINAL 去重，2026-08-16 AI-ARCH-003 施工）---
+  - file: "scripts/ch/optimize_merge.py"
+    token: "auto-optimize-merge-20260816"
+    created_by: "session-AI-ARCH-003"
+    capability: "ch_merge_maintenance"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"
