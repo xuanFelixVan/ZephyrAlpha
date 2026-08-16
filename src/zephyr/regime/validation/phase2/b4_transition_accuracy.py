@@ -66,15 +66,9 @@ MATCH_WINDOW_DAYS = 5
 # 采用比率制（6/8=0.75）以适配任意事件数；total_evaluated=0 时为 INSUFFICIENT_DATA
 PASS_RATIO = 0.75
 
-# 历史事件库默认路径
-DEFAULT_EVENTS_PATH = (
-    Path(__file__).resolve().parents[5]
-    / "docs"
-    / "02_enterprise_architecture"
-    / "07_trading_decision_architecture"
-    / "validation_cases"
-    / "historical_events.yaml"
-)
+# 历史事件库默认路径（与本文同目录的包内嵌数据——治本迁移：自 docs/02 文档区迁入，
+# 消灭"文档归类"误移风险与 parents[N] 长链硬编码，#ARCH-117）
+DEFAULT_EVENTS_PATH = Path(__file__).resolve().parent / "historical_events.yaml"
 
 
 class B4ValidationError(ZephyrBaseError):

@@ -92,7 +92,7 @@ Phase 2 验证模型的"内在质量"：样本够不够学、过没过拟合、�
 
 **历史事件库**（11_regime_backtest_validation_plan §4.2 B4，需新建为 YAML 真源）：
 ```yaml
-# docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/historical_events.yaml
+# src/zephyr/regime/validation/phase2/historical_events.yaml
 events:
   - { id: EVT-2008-CRISIS, date: "2008-09-16", type: S1_CRISIS, desc: "雷曼破产" }
   - { id: EVT-2015-CRISIS, date: "2015-08-24", type: S1_CRISIS, desc: "股灾2.0" }
@@ -219,8 +219,8 @@ tests/regime/phase2/
 ├── test_b1_probability_calibration.py
 └── test_b4_transition_accuracy.py
 
-docs/02_enterprise_architecture/07_trading_decision_architecture/validation_cases/
-└── historical_events.yaml         # B4 历史事件库（9+ 事件）
+src/zephyr/regime/validation/phase2/
+└── historical_events.yaml         # B4 历史事件库（9+ 事件；2026-08-17 自 docs/02 文档区迁入代码同包，#ARCH-117）
 ```
 
 ## 6. 判定流程
@@ -240,7 +240,7 @@ Phase 2 执行 → 4 项独立判定
 
 1. ✅ **A2 "准确率"定义**：已关闭（按方案 A 施工）。a2_hmm_overfitting.py 实现交叉解码一致率为主指标、KL 散度为补充指标（两者同报）；标签对齐采用 **Hungarian 全特征最优匹配**（scipy linear_sum_assignment，欧氏距离矩阵），scipy 不可用时回退单特征（vol_pct）排序——比本节初稿"按态均值排序"更强。
 2. ✅ **B1 "实际态"标签**：已关闭（按方案 A 的务实变体施工）。代码未做"12 态→收益区间"固定映射，改为**按态分组算平均后续收益的 sign 推断预期方向**（数据驱动，|mean|<0.5% 的态跳过）——避免无监督 HMM 的标签语义依赖，自洽且无需领域知识标定。
-3. ✅ **B4 历史事件库**：已落盘 `validation_cases/historical_events.yaml`（8 事件：4 S1 + 4 S2；BREAKOUT 未标注，2008 两事件超出数据范围实际 6 事件参与判定）。后续 [14号](14_regime_s2_diagnosis.md) 诊断裁定 S2 事件 design_match=false 排除（见 §11.3）。
+3. ✅ **B4 历史事件库**：已落盘 `src/zephyr/regime/validation/phase2/historical_events.yaml`（8 事件：4 S1 + 4 S2；BREAKOUT 未标注，2008 两事件超出数据范围实际 6 事件参与判定）。后续 [14号](14_regime_s2_diagnosis.md) 诊断裁定 S2 事件 design_match=false 排除（见 §11.3）。
 4. ✅ **MVP 范围**：已按"第一批 A1+B4、第二批 A2+B1"执行完毕（§9/§10），顺序无争议。
 5. ✅ **IS/OOS 分割点**：按 2018/2019 切分执行（IS 1918 样本 / OOS 1815 样本），两段各有极端事件，代表性均衡，未调整。
 
@@ -259,7 +259,7 @@ Phase 2 执行 → 4 项独立判定
 
 | 产物 | 路径 | 状态 |
 |---|---|---|
-| 历史事件库 | `validation_cases/historical_events.yaml`（8 事件：4 S1 + 4 S2） | ✅ |
+| 历史事件库 | `src/zephyr/regime/validation/phase2/historical_events.yaml`（8 事件：4 S1 + 4 S2） | ✅ |
 | A1 验证器 | `src/zephyr/regime/validation/phase2/a1_sample_sufficiency.py` | ✅ |
 | B4 验证器 | `src/zephyr/regime/validation/phase2/b4_transition_accuracy.py` | ✅ |
 | Phase2 编排器 | `src/zephyr/regime/validation/phase2/phase2_runner.py` | ✅ |
@@ -451,7 +451,7 @@ S2 仍 0/3（需 NLP + 资金/板块数据，P2 任务）。
 | B4 验证器 | `.../phase2/b4_transition_accuracy.py` | ✅ production | 事件库匹配 ±5 交易日 |
 | 编排器 | `.../phase2/phase2_runner.py` | ✅ production | A1+B4+A2+B1 全量编排 |
 | **两阶段校准器** | `.../phase2/confidence_calibrator.py` | ✅ production（13号 P0-E2） | Temperature Scaling（T 从 IS 数据最小化二元交叉熵学习，bounds 0.1-30.0）+ Isotonic Regression（原始数据 PAVA fit 不预分桶）；四级降级（n≥50 全 fit / 20-50 只 Stage1 / <20 回退上季度 / 无回退 T=1.0）；PIT 防泄漏（IS 尾部裁剪 forward_days×1.5、方向推断只用 IS）；季度 JSON 持久化 runtime/calibration/ |
-| 历史事件库 | `validation_cases/historical_events.yaml` | ✅ | 8 事件（4 S1 + 4 S2） |
+| 历史事件库 | `src/zephyr/regime/validation/phase2/historical_events.yaml` | ✅ | 8 事件（4 S1 + 4 S2） |
 | 合成 VIX | `src/zephyr/regime/features/market_features.py::synthetic_vix_pct` | ✅（§10.1，commit eb3db21bd8） | 下行半偏差年化 × 250 日滚动分位 |
 | 单测 | `tests/regime/phase2/`（a1:10 + b4:15 + a2:22 + b1:20 + calibrator） | ✅ 全绿 | — |
 | 执行脚本 | `scripts/tests/run_phase2_validation.py` | ✅ | 支持 `--first-batch` |
