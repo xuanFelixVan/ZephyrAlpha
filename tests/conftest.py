@@ -332,3 +332,50 @@ def kb_root(tmp_path: Path) -> Path:
 
 
 
+
+
+# ── #ARCH-101 sys.modules 污染探针（2026-08-16 治本）──────────────────────
+# 根因：测试把 sys.modules["x"] 置 None / MagicMock 后不恢复，同进程后续无关测试爆雷
+# （"import halted; None in sys.modules" / "not a package"），爆雷点≠投毒点，归因极难。
+# 已实证两起：tests/escalation/conftest.py MagicMock 占位 llm_security 毒化 agent_rbac 批跑；
+# tests/escalation/test_escalation_bridge.py _block 残留 adapter=None。
+# 探针在每个测试 teardown 比对 zephyr.* 快照：投毒即 fail 投毒者本人，归因前移到当下。
+# 合法姿势不受影响：patch.dict/monkeypatch.setitem 退出自动恢复；del 键自恢复（下次 import 载真源）。
+# 已知边界：conftest 收集期（非测试执行窗口）的占位不在本探针覆盖范围。
+_MISSING = object()
+
+
+@pytest.fixture(autouse=True)
+def _sysmodules_pollution_sentinel():
+    import types as _types
+
+    before = {
+        k: v for k, v in sys.modules.items() if k == "zephyr" or k.startswith("zephyr.")
+    }
+    yield
+    poisoned = []
+    for k, v in sys.modules.items():
+        if not (k == "zephyr" or k.startswith("zephyr.")):
+            continue
+        prior = before.get(k, _MISSING)
+        if v is None:
+            if prior is not None:
+                poisoned.append(f"{k}=None(import-halted)")
+        elif not isinstance(v, _types.ModuleType):
+            if prior is _MISSING or isinstance(prior, _types.ModuleType):
+                poisoned.append(f"{k}=<{type(v).__name__}>(not-a-module)")
+    if poisoned:
+        # 先恢复再报错：探针自身不得成为新污染源（删除新增毒键+回写被改键）
+        for k, v in list(sys.modules.items()):
+            if not (k == "zephyr" or k.startswith("zephyr.")):
+                continue
+            if k not in before and (v is None or not isinstance(v, _types.ModuleType)):
+                del sys.modules[k]
+            elif k in before and before[k] is not v and (
+                v is None or not isinstance(v, _types.ModuleType)
+            ):
+                sys.modules[k] = before[k]
+        raise AssertionError(
+            "sys.modules 污染检出（#ARCH-101）：本测试置脏模块注册表且未恢复: "
+            + "; ".join(sorted(set(poisoned)))
+        )

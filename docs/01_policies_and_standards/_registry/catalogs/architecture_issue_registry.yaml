@@ -16974,7 +16974,7 @@ entries:
   title: skill 内容库整体缺失——skill-registry.yaml 仅 2 条 domain 条目且 path 指向的 SKILL.md 文件全部不存在，role 类清空
   severity: P1高
   adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/autonomy/test_pipeline_bridge_integration.py 5 项）：src/zephyr/autonomy_core/skills/skill-registry.yaml 现仅 2 条 domain 条目（SKILL-DOM-DS0-001 database-specialist / SKILL-DOM-MB0-002 master-blueprint），role 类整体清空；且两条目 path（database-specialist/SKILL.md 等）指向的 SKILL.md 文件在 skills 目录下全部不存在（glob **/SKILL.md 零命中）——SkillLoader.progressive_load 对 SKILL-DOM-DS0-001 抛 FileNotFoundError（.../skills/skills/domain/database-specialist/SKILL.md），对测试锚定的 SKILL-DOM-DBS-001/SKILL-ROL-IMP-001/SKILL-ROL-ARC-001 抛 KeyError（not found in registry）。注册表与内容文件双重漂移，疑似治理批清洗误删或内容库迁移未登记。SkillContextInjector.inject/inject_single 的 try/except 兜底把缺口吞为 loaded=False（符合 ERROR_CONTRACT 监控失败返回空指标？——不，这是注入链路，静默降级使 PipelineSkillBridge 全链失去 skill 注入能力且无告警）。5 项已 xfail(strict=False) 留痕（含 test_full_chain_loads_and_routes 的 health_check 已退役复合形态）。待裁定：a) 恢复/重建 skill 内容库与注册表条目；b) 若 skill 体系已退役则删除 PipelineSkillBridge 链路与测试。c) 附带：inject 静默吞异常建议加 warning 日志（缺口可观测性）。'
-  fix_phase: 已裁定（2026-08-16=转 CAND 登记）：CAND-AUTONOMYCORE-001 已入 candidate_module_registry.yaml（skill 内容库建设，P2，等 trigger_signals 命中晋升）；5 项 xfail(strict=False) 保留作功能规格书（内容库建成之日即验收标准）；inject 静默吞异常加 warning 随 CAND 一并施工
+  fix_phase: 已裁定（2026-08-16=转 CAND 登记）：CAND-AUTONOMYCORE-001 已入 candidate_module_registry.yaml（skill 内容库建设，P2，等 trigger_signals 命中晋升）；10 项 xfail(strict=False) 保留作功能规格书（内容库建成之日即验收标准；2026-08-16 AI-TD2-SEC-001 追加 5 项：test_agent_spec_adversarial×2+test_pipeline_skill_injection×3，同根因不再另立案）；inject 静默吞异常加 warning 随 CAND 一并施工
   status: decided
   created: '2026-08-15'
   last_updated: '2026-08-16'
@@ -16992,6 +16992,30 @@ entries:
   adjudication: 'AI-TDEBT-001 实证（2026-08-16，round3 全量基线 8 errors）：tests/governance/shared/test_governance_db.py 8 项全部 ERROR at setup——gov_db_path fixture 用 sqlite3 online backup API 拷贝生产 governance.db（data/databases/governance.db）到 tmp_path 隔离副本，但：①生产库被盘中守护进程（tick_subscriber/guard 代写心跳）持锁，backup/清理随机撞 database is locked；②生产库 schema 已漂移——tx_idempotency 表缺 idempotency_key 列（_cleanup_test_rows DELETE 即崩）。病根（第一性原理）：2026-07-27 治本改写把"直连共享生产库"改为"拷贝生产库副本"，解决了测试污染生产库方向，但保留了反向耦合——测试的可用性仍依赖生产库的实时锁状态与 schema 版本，违背测试自足性（self-contained）原则。100% AI 开发场景下，此类环境耦合失败会被 AI 误判为代码 bug 浪费排查轮次。裁定（2026-08-16，test-debt-leftover-adjudication）：8 项模块级 xfail(strict=False) 留痕（pytestmark），治本=测试自建最小 schema fixture（DDL 内嵌测试文件，只建 8 张被测表的最小列集），与生产库完全解耦——schema 契约变更时测试驱动更新，反向不再被生产库状态绑架。'
   fix_phase: 待施工（自建最小 schema fixture：内嵌 DDL 建 tasks/task_events/task_snapshots/task_files/gates/circuit_breaker_state/tx_idempotency/drift_events/scan_results 最小列集）；8 项测试已模块级 xfail 留痕
   status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-100'
+  title: GuardDecision/GuardResult 双定义 SSoT 收敛——contracts 版与 security 版各自定义同名枚举/数据类，`is` 判定跨定义恒 False 构成 fail-open 隐患
+  severity: P1高
+  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16，233 测试债包①清偿中发现）：GuardDecision 存在两份独立定义——zephyr.shared.contracts.identity.permission（contracts 版，标 immutable_core）与 zephyr.security.access_control.guards.permission_guard（security 版）；rbac_bridge.py L126 用 `guard_result.decision is GuardDecision.BLOCKED` 判定，若调用方持 contracts 版枚举构造 GuardResult，is 判定恒 False → BLOCKED 被静默折叠为 ALLOW（fail-open，与安全 fail-closed 默认相反）。同族双定义簇：MaturityLevel/IDESource/AgentIdentity（contracts/agent_identity.py vs security/access_control/identity.py，前者 BaseModel 后者 dataclass+方法）、第三个同名 GuardDecision（feedback_loop/.../cross_guard_conflict_detector.py，普通 dataclass，语义不同物=守卫冲突记录）。项目既有收敛先例=identity.py P1-3（AgentRole 删本地定义 re-export contracts 真源 RbacRole）。裁定：照 P1-3 先例，permission_guard.py 删本地 GuardDecision/GuardResult 定义改 re-export contracts 版（contracts 版 GuardResult 为超集：多 audit_context 字段、decision 默认 ALLOW；security 版全部构造点均为关键字传参，兼容）；消费方面检：rbac_bridge/orphan_judge/mcp governance_server 仅读字段或经 PermissionGuard.check 消费，测试 5 文件两版导入混用→统一后 is 判定跨路径恒真。残留不收敛项（跨域/无受害面，登记不代修）：MaturityLevel/IDESource/AgentIdentity 双定义（全仓零 `is` 比较命中，值相等语义安全）、cross_guard_conflict_detector.GuardDecision（同名不同物，建议日后改名 GuardConflictRecord 防 AI 误导）。'
+  fix_phase: 已修（2026-08-16 本 commit）：permission_guard.py 收敛+__all__ re-export 兼容；agent_rbac/escalation/governance/security/contracts/e 五域 2110+ 测试实证零回归
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-101'
+  title: sys.modules 测试污染类——投毒者与爆雷者跨数百测试解耦，归因成本极高；根 conftest 加定向探针前移检出
+  severity: P1高
+  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16，两起同族事故）：①tests/escalation/conftest.py 对 zephyr.security.llm_defense.llm_security 无条件 sys.modules.setdefault(MagicMock())——MagicMock 无 __path__，同进程后续 import 其子模块即炸 "is not a package"（批跑 tests/escalation+tests/agent_rbac 时毒化 test_rbac_auto_lifecycle）；②tests/escalation/test_escalation_bridge.py _block_escalation_engine 注入 sys.modules["zephyr.governance.services.adapter"]=None 而 _restore 只恢复 zephyr.infrastructure.escalation.* 前缀键，None 残留致后续 import "import halted"。第一性根因：pytest 同进程共享 sys.modules 全局态，直接赋值不恢复=隐蔽跨测试污染，且爆雷点距投毒点数百测试，100% AI 场景下每起事故需全链路排查。正确姿势已在仓内存在（patch.dict/monkeypatch.setitem 自恢复，tests/zephyr/data 域大量使用）但无强制检出机制。裁定：tests/conftest.py 加 autouse 探针 _sysmodules_pollution_sentinel——teardown 比对 zephyr.* 键快照，检出 None 化/非模块替换即恢复现场并 fail 投毒者本人；del 键不拦截（重新 import 自恢复真源）；conftest 收集期占位不覆盖（已知边界，已在注释声明）。配套登记（跨域不修）：tests/rollback/conftest.py L12 同款 MagicMock 占位 sqlite_dumper（因其目标非包、tests 内无直接 import 真实模块，当前无受害面）。'
+  fix_phase: 已修（2026-08-16 本 commit）：探针落地+两起存量污染源已修（前 commit ed1d4f8594）；探针经 2530 域批+rollback/safety/db/data/governance 烟测零误伤
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-102'
+  title: pyproject addopts 硬编码 --max-worker-restart=5（xdist 注册项）与 -p no:xdist 串行跑法互斥——exit 4 usage error；串行正确姿势=-n 0
+  severity: P2中
+  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16）：统筹 brief 规定基线命令 `python -m pytest tests/ -p no:xdist -q` 直接 exit 4（unrecognized arguments: --max-worker-restart=5）——addopts 静态注入的 xdist 专属 flag 在插件被 -p 禁用后无注册点。不改 addopts 的理由：该 flag 是 #ARCH-XDIST-WORKER-CRASH-001 的既定崩溃保护，移除会让默认并行跑法失去 worker 自动重启。实证 `-n 0`（插件保持加载、0 worker=进程内串行）等价替代且零配置改动。另记录：全量套件（2530 文件）串行/xdist 在共享机高负载下两次被环境性 kill（exit -1，26%/83% 点位不定，机器 64GB 内存空闲 38GB 非 OOM）——域分批法（escalation/agent_rbac/agent/skill+散点批）是本包实证可行的基线取数姿势。'
+  fix_phase: 已闭环（2026-08-16 本 commit）：pyproject.toml addopts 段注释登记 -n 0 串行姿势与分批建议；不改行为
+  status: resolved
   created: '2026-08-16'
   last_updated: '2026-08-16'
 - issue_id: '#ARCH-MON-001'

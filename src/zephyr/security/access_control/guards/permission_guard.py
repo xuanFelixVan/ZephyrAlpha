@@ -25,14 +25,16 @@
 from __future__ import annotations
 
 import time
-from dataclasses import dataclass
-from enum import Enum
 
 from zephyr.security.access_control.identity import (
     ROLE_DEFAULT_PERMISSIONS,
     AgentRole,
 )
 from zephyr.security.access_control.immutable_core import ALWAYS_BLOCKED_OPERATIONS
+# SSoT 收敛（#ARCH-100）：GuardDecision/GuardResult 真源为 shared.contracts.identity.permission，
+# 本模块 re-export 兼容既有导入方。此前本模块与 contracts 各自定义同名枚举，
+# `decision is GuardDecision.BLOCKED` 跨定义恒 False，会把 BLOCKED 静默折叠为放行（fail-open）。
+from zephyr.shared.contracts.identity.permission import GuardDecision, GuardResult
 
 
 _CRITICAL_OPERATIONS = {
@@ -44,35 +46,6 @@ _CRITICAL_OPERATIONS = {
     "bypass_audit",
     "circumvent_permission_guard",
 }
-
-
-class GuardDecision(str, Enum):
-    """权限决策枚举."""
-
-    ALLOW = "ALLOW"
-    BLOCKED = "BLOCKED"
-    AUTO_GUARD = "AUTO_GUARD"
-
-
-@dataclass
-class GuardResult:
-    """权限检查结果.
-
-    Attributes:
-        decision: 决策（ALLOW/BLOCKED/AUTO_GUARD）
-        reason: 决策原因
-        layer: 检查层（L0_immutable_core/L1_rbac/L4_path_guard/L6_self_defense）
-        target: 目标路径（可选）
-        rule_id: 触发规则的 ID（可选）
-        timing_ns: 检查耗时（纳秒）
-    """
-
-    decision: GuardDecision
-    reason: str = ""
-    layer: str = "L1_rbac"
-    target: str = ""
-    rule_id: str = ""
-    timing_ns: int = 0
 
 
 class PermissionGuard:
