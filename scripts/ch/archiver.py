@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-INF-043 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """archiver.py — ClickHouse 冷数据归档工具（手动 CLI，INV-RET-002）。
