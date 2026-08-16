@@ -173,5 +173,6 @@ class TestTokenBudgetManager:
 
     def test_degraded_with_zero_cap(self):
         mgr = TokenBudgetManager()
-        mgr.cap = 0
+        # cap is a read-only property (no setter); white-box the zero-cap guard
+        mgr._cap = 0
         assert mgr.degraded is False

@@ -516,7 +516,7 @@ class PipelineOrchestrator:
     @staticmethod
     def call_model(module_id, pipeline, model, task, *, token_divisor, prior_artifacts=None, dry_run=False, skill_injection=None) -> dict:
         """公共接口：call_model（Stage 4 公共化）。"""
-        return __class__._call_model(module_id, pipeline, model, task, token_divisor, prior_artifacts, dry_run, skill_injection)
+        return __class__._call_model(module_id, pipeline, model, task, token_divisor=token_divisor, prior_artifacts=prior_artifacts, dry_run=dry_run, skill_injection=skill_injection)
 
 
     @staticmethod

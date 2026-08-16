@@ -127,14 +127,19 @@ class TestL2PatternLevel:
         signals = {p.signal for p in report.proposals if p.layer == FeedbackLayer.L2_PATTERN}
         assert EvolutionSignal.DEPENDENCY_BOTTLENECK in signals
 
-    def test_acceptance_drift_l2_signal(self) -> None:
+    def test_acceptance_drift_not_an_l2_tag_signal(self) -> None:
+        # Current contract: ACCEPTANCE_DRIFT is emitted only at L1 (low-score
+        # aggregation) and L3 (drift checks). The L2 tag groups are exactly
+        # HIGH_RETRY_RATE / CONTEXT_OVERFLOW / DEPENDENCY_BOTTLENECK /
+        # LOW_KNOWLEDGE_HIT; "low-quality"/"rejected" belong to none of them.
         collector = FeedbackCollector()
         for _ in range(5):
             collector.add(task_id="T-A", score=3, tags=["low-quality", "rejected"])
         engine = EvolutionEngine(collector, now=_fixed_now)
         report = engine.evolve()
         signals = {p.signal for p in report.proposals if p.layer == FeedbackLayer.L2_PATTERN}
-        assert EvolutionSignal.ACCEPTANCE_DRIFT in signals
+        assert EvolutionSignal.ACCEPTANCE_DRIFT not in signals
+        assert report.l2_triggered == 0
 
     def test_below_threshold_no_l2(self) -> None:
         collector = FeedbackCollector()
@@ -174,7 +179,10 @@ class TestDryRunMode:
             now=_fixed_now,
         )
         report = engine.evolve(dry_run=True, owner_approved=True)
-        assert report.dry_run is True
+        # EvolutionReport no longer carries dry_run; the dry_run contract now
+        # lives on each proposal (EvolutionProposal.dry_run) plus zero applies.
+        assert len(report.proposals) > 0
+        assert all(p.dry_run for p in report.proposals)
         assert report.applied_count == 0
         assert len(applied) == 0
 

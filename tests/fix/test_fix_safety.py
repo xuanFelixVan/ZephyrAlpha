@@ -145,8 +145,12 @@ class TestWriteSafety:
     def test_verify_write_nonexistent(self, tmp_path):
         assert WriteSafety.verify_write(str(tmp_path / "nope.txt"), "x") is False
 
-    def test_atomic_write_invalid_path(self):
-        result = WriteSafety.atomic_write("/nonexistent_dir_xyz/sub/file.txt", "data")
+    def test_atomic_write_invalid_path(self, tmp_path):
+        # Canonical atomic_write creates parent dirs, so a missing dir is no
+        # longer an error; a path whose parent is a FILE is genuinely unwritable
+        blocker = tmp_path / "blocker"
+        blocker.write_text("x", encoding="utf-8")
+        result = WriteSafety.atomic_write(str(blocker / "sub" / "file.txt"), "data")
         assert result is False
 
 

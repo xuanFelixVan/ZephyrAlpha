@@ -35,8 +35,8 @@ class TestFinalizerAutoShutdown:
     def setup_method(self) -> None:
         """每个测试前重置状态。"""
         import zephyr.trading.finalizer as fin_mod
-        fin_mod.monitoring_finalizers_registered = False
-        fin_mod.global_finalizer = None
+        fin_mod._monitoring_finalizers_registered = False  # real private; Stage-4 alias is an import-time snapshot
+        fin_mod._global_finalizer = None  # real singleton slot
 
     def test_finalizer_importable(self) -> None:
         """Finalizer 可导入。"""

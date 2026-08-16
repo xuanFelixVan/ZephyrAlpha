@@ -129,4 +129,4 @@ class FixReportGenerator:
         return json.dumps(summary, indent=2, ensure_ascii=False)
 
     def get_history(self, limit: int = 10) -> list[FixReport]:
-        return self._history[-limit:]
+        return list(self._history)[-limit:]

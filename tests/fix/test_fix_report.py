@@ -28,7 +28,8 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 class TestFixReportGenerator:
     def test_instantiation(self):
         gen = FixReportGenerator()
-        assert gen.history == []
+        # history is a bounded deque (5.65.8); compare as list
+        assert list(gen.history) == []
 
     def test_generate_empty_actions(self):
         gen = FixReportGenerator()
