@@ -93,7 +93,7 @@ class TestRollbackDrillInstantiation:
             d = RollbackDrill()
             d.project_root = Path.cwd()
             d.drill_log_dir = Path.cwd() / RollbackDrill.DRILL_LOG_DIR
-            d.consecutive_fails = 0
+            d._consecutive_fails = 0  # 只读 property（Stage 4 公共化），私有位赋值
             d.automatic_rollback_melted = False
             assert d.project_root == Path.cwd()
 
@@ -141,21 +141,22 @@ class TestRollbackDrillIsDrillTime:
 
 
 class TestRollbackDrillSelectRandomCommit:
-    @patch.object(RollbackDrill, "_run_git")
+    # 注：select_random_commit 走公共 run_git（Stage 4 公共化），patch _run_git 无效。
+    @patch.object(RollbackDrill, "run_git")
     def test_returns_commit_sha(self, mock_git, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
         mock_git.return_value = "abc1234 msg1\ndef5678 msg2\n"
         result = d.select_random_commit()
         assert result in ["abc1234", "def5678"]
 
-    @patch.object(RollbackDrill, "_run_git")
+    @patch.object(RollbackDrill, "run_git")
     def test_returns_empty_on_no_commits(self, mock_git, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
         mock_git.return_value = ""
         result = d.select_random_commit()
         assert result == ""
 
-    @patch.object(RollbackDrill, "_run_git")
+    @patch.object(RollbackDrill, "run_git")
     def test_returns_empty_on_git_failure(self, mock_git, tmp_path: Path):
         d = RollbackDrill(project_root=tmp_path)
         mock_git.return_value = ""

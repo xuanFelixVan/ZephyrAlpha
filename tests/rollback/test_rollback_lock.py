@@ -112,10 +112,12 @@ class TestRelease:
         assert "Corrupted" in result.reason
 
     def test_release_empty_lock_id(self, rollback_lock: RollbackLock):
+        # 5.58.7 安全契约：空 lock_id 必须拒绝释放（防误释放他人锁），锁文件保留。
         acquire_result = rollback_lock.acquire(owner="test-owner")
         release_result = rollback_lock.release("")
-        assert release_result.acquired is True
-        assert not rollback_lock.lock_path.exists()
+        assert release_result.acquired is False
+        assert "lock_id is required" in release_result.reason
+        assert rollback_lock.lock_path.exists()
 
 
 class TestStatus:

@@ -34,30 +34,30 @@ class TestPropagationTargetEnum:
 
 class TestPropagationRules:
     def test_pending_to_in_progress(self):
-        rule = PROPAGATION_RULES.get("PENDING→IN_PROGRESS")
+        rule = PROPAGATION_RULES.get("PENDING->IN_PROGRESS")
         assert rule is not None
         assert PropagationTarget.GATES in rule["notify"]
         assert PropagationTarget.FLE in rule["notify"]
 
     def test_in_progress_to_completed(self):
-        rule = PROPAGATION_RULES.get("IN_PROGRESS→COMPLETED")
+        rule = PROPAGATION_RULES.get("IN_PROGRESS->COMPLETED")
         assert rule is not None
         assert PropagationTarget.VMS in rule["notify"]
         assert PropagationTarget.DB in rule["notify"]
 
     def test_in_progress_to_blocked(self):
-        rule = PROPAGATION_RULES.get("IN_PROGRESS→BLOCKED")
+        rule = PROPAGATION_RULES.get("IN_PROGRESS->BLOCKED")
         assert rule is not None
         assert PropagationTarget.GATES in rule["notify"]
 
     def test_in_progress_to_failed(self):
-        rule = PROPAGATION_RULES.get("IN_PROGRESS→FAILED")
+        rule = PROPAGATION_RULES.get("IN_PROGRESS->FAILED")
         assert rule is not None
         assert PropagationTarget.FLE in rule["notify"]
         assert PropagationTarget.DB in rule["notify"]
 
     def test_unknown_transition_absent(self):
-        rule = PROPAGATION_RULES.get("UNKNOWN→STATE")
+        rule = PROPAGATION_RULES.get("UNKNOWN->STATE")
         assert rule is None
 
 
@@ -80,11 +80,11 @@ class TestStatePropagationEventModel:
             task_id="T-2",
             old_status="IN_PROGRESS",
             new_status="COMPLETED",
-            transition_key="IN_PROGRESS→COMPLETED",
+            transition_key="IN_PROGRESS->COMPLETED",
             targets=["vector-memory", "database"],
             payload={"reason": "done"},
         )
-        assert event.transition_key == "IN_PROGRESS→COMPLETED"
+        assert event.transition_key == "IN_PROGRESS->COMPLETED"
         assert len(event.targets) == 2
 
 

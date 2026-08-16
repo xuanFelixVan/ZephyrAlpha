@@ -788,7 +788,7 @@ class StagingArea:
                     p.unlink()
             except OSError:
                 pass
-        session_dir = self._draft_path(session_id, "").parent
+        session_dir = self._drafts_root / session_id.replace("/", "_").replace("\\", "_")
         try:
             if session_dir.exists() and not any(session_dir.iterdir()):
                 session_dir.rmdir()

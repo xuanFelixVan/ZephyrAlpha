@@ -76,9 +76,9 @@ class TestFullRevertE2E:
             mock_lock.release.return_value = True
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
-            exec.g0_verify = MagicMock(return_value=True)
+            exec._g0_verify = MagicMock(return_value=True)  # 内部走 _g0_verify，公共 g0_verify 是转发壳
 
-            with patch.object(exec, "_run_git") as mock_git:
+            with patch.object(exec, "run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()
                 result = exec.full_revert("abc123", audit_session="test-session")
 
@@ -100,7 +100,7 @@ class TestFullRevertE2E:
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
 
-            with patch.object(exec, "_run_git") as mock_git:
+            with patch.object(exec, "run_git") as mock_git:
                 mock_git.side_effect = _build_preview_only_git_responses()
                 result = exec.full_revert("abc123", dry_run=True, audit_session="test-session")
 
@@ -118,7 +118,7 @@ class TestFullRevertE2E:
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
 
-            with patch.object(exec, "_run_git") as mock_git:
+            with patch.object(exec, "run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()
                 result = exec.full_revert("abc123", audit_session="test-session")
 
@@ -141,9 +141,9 @@ class TestPartialRevertE2E:
             )
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
-            exec.g0_verify = MagicMock(return_value=True)
+            exec._g0_verify = MagicMock(return_value=True)
 
-            with patch.object(exec, "_run_git") as mock_git:
+            with patch.object(exec, "run_git") as mock_git:
                 mock_git.side_effect = _build_partial_revert_git_responses()
                 result = exec.partial_revert("abc123", file_globs=["src/**/*.py"], audit_session="test-session")
 
@@ -166,7 +166,7 @@ class TestDiscardE2E:
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
 
             with (
-                patch.object(exec, "_run_git") as mock_git,
+                patch.object(exec, "run_git") as mock_git,
                 patch.object(exec, "get_uncommitted_files", return_value=["file.py"]),
                 patch.object(exec, "get_staged_uncommitted_files", return_value=[]),
             ):
@@ -191,9 +191,9 @@ class TestAuditTrailE2E:
             )
 
             exec = RollbackExecutor(project_root=root, rollback_lock=mock_lock)
-            exec.g0_verify = MagicMock(return_value=True)
+            exec._g0_verify = MagicMock(return_value=True)
 
-            with patch.object(exec, "_run_git") as mock_git:
+            with patch.object(exec, "run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()
                 result = exec.full_revert("abc123", audit_session="test-session")
                 assert result.success
@@ -241,9 +241,9 @@ class TestVerifierIntegrationE2E:
                 g0_results.append(True)
                 return True
 
-            exec.g0_verify = MagicMock(side_effect=_track_g0)
+            exec._g0_verify = MagicMock(side_effect=lambda files=None: _track_g0())
 
-            with patch.object(exec, "_run_git") as mock_git:
+            with patch.object(exec, "run_git") as mock_git:
                 mock_git.side_effect = _build_clean_git_responses()
                 result = exec.full_revert("abc123", audit_session="test-session")
 
@@ -257,27 +257,38 @@ def _setup_minimal_git_env(root: Path) -> None:
 
 
 def _build_clean_git_responses():
+    """full_revert(dry_run=False) 现行 git 调用序列（2026-08 重锚）：
+
+    1-3   _concurrency_guard → preview: diff --name-only / diff --stat / log --merges
+    4-7   preflight: status --porcelain / rev-parse --abbrev-ref / merge-base / rev-parse origin/main
+    8-9   _git_revert: revert --no-edit / diff-tree -r HEAD
+    （_g0_verify 由各用例 mock，不消耗本序列）
+    """
     return [
+        "src/a.py\nsrc/b.py",
+        "2 files changed",
+        "",
         "",
         "main",
         "abc123",
         "abc123",
-        "abc123",
-        "2 files changed",
-        "",
         "revert output",
         "src/a.py\nsrc/b.py",
     ]
 
 
 def _build_preview_only_git_responses():
+    """full_revert(dry_run=True)：guard preview(3) + preflight(4) + dispatch preview(3)。"""
     return [
+        "src/a.py",
+        "1 file changed",
+        "",
         "",
         "main",
         "abc123",
         "abc123",
-        "abc123",
-        "2 files changed",
+        "src/a.py",
+        "1 file changed",
         "",
     ]
 

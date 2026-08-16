@@ -168,7 +168,13 @@ class TestStrategyBase:
 
 class TestStrategyRegistry:
     def setup_method(self):
+        self._saved = dict(StrategyRegistry._strategies)
         StrategyRegistry.clear()
+
+    def teardown_method(self):
+        # 恢复快照，避免空/测试桩注册表泄漏给后续测试文件
+        StrategyRegistry.clear()
+        StrategyRegistry._strategies.update(self._saved)
 
     def test_register_and_get(self):
         StrategyRegistry.register(_ConcreteStrategy)
