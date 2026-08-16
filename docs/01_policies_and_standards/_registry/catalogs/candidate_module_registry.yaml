@@ -6475,11 +6475,11 @@ entries:
   source_draft: "140 外来 WIP 调查裁定书 §4.4 Z1/Z2（2026-08-16-test-debt-leftover-adjudication.md）"
   source_section: "§4.4 治本立项 Z1/Z2"
   original_id: "Z1+Z2"
-  status: candidate
+  status: promoted
   priority: P2
   next_review_date: '2026-11-16'
   review_frequency: quarterly
-  last_review_outcome: "2026-08-16 登记：140 WIP 悬案已零损失闭环（终态 127 文件 100% 派生活水，随退役删除）；本项为防复发的流程补强，非紧急"
+  last_review_outcome: "2026-08-17 晋升闭环：AI-GOVA-001 施工 merge（8307cbe89f→4e9eedf54b）——Z1 脏工作区强制 patch 存证 refs/quarantine+Z2 派生活水/CRLF 幻影/实质三分类器内聚 session_worktree.py（abort/sweep 双挂载），13 新测试两轮全绿"
   acquisition_method: self_build
 
   # ----------------------------------------------------------
@@ -6499,11 +6499,11 @@ entries:
   source_draft: "140 外来 WIP 调查裁定书 §4.4 Z3（2026-08-16-test-debt-leftover-adjudication.md）"
   source_section: "§4.4 治本立项 Z3"
   original_id: "Z3"
-  status: candidate
+  status: promoted
   priority: P2
   next_review_date: '2026-11-16'
   review_frequency: quarterly
-  last_review_outcome: "2026-08-16 登记：存量孤儿已直杀闭环，本项为机制根治（防再积累）"
+  last_review_outcome: "2026-08-17 晋升闭环：AI-GOVA-001 施工 merge（8307cbe89f→4e9eedf54b）——heartbeat_daemon 失锚自退（周期核对 worktree 目录/session registry 锚，失锚自动退出），3 新测试全绿"
   acquisition_method: self_build
 
 # ----------------------------------------------------------
