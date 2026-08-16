@@ -242,7 +242,7 @@ docs/_working/analysis/
 
 # 忽略根目录全部直接子项（文件+目录）
 /*
-# --- 合法根文件（git tracked，25 项）---
+# --- 合法根文件（git tracked 25 项 + docker-compose.yaml 预防性豁免 1 项）---
 !.dockerignore
 !.editorconfig
 !.env.example
@@ -254,6 +254,8 @@ docs/_working/analysis/
 !AGENTS.md
 !CONTRIBUTING.md
 !docker-compose.yml
+# Docker 外部约定豁免变体（对齐 directory_contract.yaml root_directory_whitelist，防未来创建被静默忽略）
+!docker-compose.yaml
 !Dockerfile
 !LICENSE
 !MANIFEST.in

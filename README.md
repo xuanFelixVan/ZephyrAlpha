@@ -26,7 +26,7 @@ python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
-# 可选：端到端演示 demo_e2e_pipeline.py（L00 需 Akshare/Baostock）
+# 可选：端到端演示 scripts/construction/demo_e2e_pipeline.py（L00 需 Akshare/Baostock）
 pip install -r requirements-demo.txt
 # 或等价：pip install -e ".[demo]"
 ```
@@ -44,7 +44,7 @@ pip install -r requirements-demo.txt
 端到端演示（依赖网络与 Akshare）：
 
 ```bash
-python scripts/demos/demo_e2e_pipeline.py
+python scripts/construction/demo_e2e_pipeline.py
 ```
 
 ## 核心文档

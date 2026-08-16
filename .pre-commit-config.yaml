@@ -5,7 +5,7 @@
 # Warn-Only → Hard-Block 过渡计划 (Phase A → Phase B)
 # ============================================================================
 #
-# 当前状态 (2026-05-05): 8 个 GATE 处于 warn-only 骨架阶段
+# 历史状态 (2026-05-05): 8 个 GATE 处于 warn-only 骨架阶段
 # 设计原则: Phase A 骨架阶段先跑数据收集，Phase B 施工阶段转为硬阻断
 #
 # 过渡触发条件 (每个 GATE 独立评估):
@@ -13,40 +13,23 @@
 #   b) 所有存量违规清零或归档为已知问题并记录 Owner
 #   c) 对应层的 Phase B 实现代码达到 "functional" 状态
 #
-# 过渡时间表:
+# 过渡时间表（2026-08-17 AI-01 审计对齐——以各 hook args 现状为准）:
 #
-#   GATE-12 (蓝图真源准入)      → 目标 2026-Q3 转硬阻断
-#     依赖: L02/L03 蓝图全部完成 Provenance 标注
-#     当前违规数: 待扫描确认
-#
-#   GATE-13 (蓝图重叠检测)      → 目标 2026-Q3 转硬阻断
-#     依赖: Component Registry 建成
-#     当前违规数: 待扫描确认
-#
-#   GATE-14 (AI权限注册表)      → 目标 2026-Q2 转硬阻断
-#     依赖: 权限注册表完成三轮审计
-#     当前违规数: 待扫描确认
-#
-#   GATE-15 (Frontmatter ttl)    → ✅ 已转硬阻断（commit 阶段增量校验 + 全量审计）
+#   GATE-12 (蓝图真源准入)      → ✅ 已转硬阻断（args --ci；脚本 __manifest__ warn_only:false，不解析 argv，恒硬阻断）
+#   GATE-13 (蓝图重叠检测)      → ✅ 已转硬阻断（args --ci）
+#   GATE-14 (AI权限注册表)      → ✅ 已转硬阻断（args --ci）
+#   GATE-15 (Frontmatter ttl)   → ✅ 已转硬阻断（commit 阶段增量校验 + 全量审计）
 #     依赖: ttl_vocabulary.yaml decision_tree 二元判定树
 #     当前违规数: 0（5144 files 全量扫描通过，阶段2 回填 4815 文件后归零）
 #     全量审计: python scripts/governance/d3_metadata/check_frontmatter_metadata.py --all-files
+#   GATE-16 (架构合规)          → ✅ 已转硬阻断（args --ci）
+#   GATE-IDX (索引-实际同步)    → ✅ 已合并进 gate-reg-bl（validate_index_reality.py --ci 硬阻断）
+#   GATE-DD07 (_shared API重定义) → ✅ 已合并进 gate-script-q（fix_shared_bypass.py --ci 硬阻断）
+#   GATE-22 (AI加载路径完整性)  → 仍 warn-only 骨架（§8.2 路径映射待补建，当前 SKIP）
 #
-#   GATE-16 (架构合规)          → 目标 2026-Q3 转硬阻断
-#     依赖: architecture_contract.yaml 全覆盖验证
-#     当前违规数: 待扫描确认
-#
-#   GATE-IDX (索引-实际同步)    → 目标 2026-Q2 转硬阻断
-#     依赖: 所有 index.md 完成自动生成改造
-#     当前违规数: 待扫描确认
-#
-#   GATE-DD07 (_shared API重定义) → 目标 2026-Q2 转硬阻断
-#     依赖: 所有 bypass 实例修复完成
-#     当前违规数: 待扫描确认
-#
-#   GATE-22 (AI加载路径完整性)  → 目标 2026-Q3 转硬阻断
-#     依赖: AGENTS.md §8.2 路径映射（待补建）100% 准确
-#     当前违规数: 待扫描确认
+# 当前仍 warn-only 的 hook（观察期，存量清零后转 --ci）:
+#   gate-silent-degradation / gate-node-label-quality / gate-algo-quality /
+#   gate-nested-flat-prefix / gate-drift-light-scan(manual) / gate-22 / gate-naming-audit(manual)
 #
 # 执行: 转硬阻断时只需将 args 中的 --warn-only 改为 --ci
 #       例如: args: ["--warn-only"] → args: ["--ci"]
@@ -56,12 +39,11 @@
 # ============================================================================
 #
 # 使用方式:
-#   cd
 #   pre-commit install
 #   pre-commit run --all-files
 #
 # GATE 脚本路径:
-#   scripts/governance/d5_architecture/check_architecture_gates.py
+#   scripts/governance/d5_architecture/checkers/check_architecture_gates.py
 
 # 安装时同时注册 post-commit / commit-msg（Handoff / Conventional Commits）
 #   pre-commit install --hook-type pre-commit --hook-type post-commit --hook-type commit-msg
@@ -276,9 +258,9 @@ repos:
       # 校验范围：docs/03_modules/**/blueprint.md + docs/04_construction_plans/ + 01_policies_and_standards/
       # 校验内容：① frontmatter.provenance 三件套（origin_drafts + audit_chain≥3 + arbitration）
       #           ② node_id/edge_id 硬编码 lint 已移至 GATE-DOC-NODE-ID（check_doc_node_id_hardcode.py，SSoT 治本 2026-08-04）
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
+      # 模式：--ci 硬阻断（已于 Phase B 转正；脚本不解析 argv，__manifest__ warn_only:false 恒硬阻断）
       - id: gate-12-blueprint-provenance
-        name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12 骨架）"
+        name: "GATE-12: 蓝图真源准入门禁（Wave 0 V-12）"
         entry: python scripts/governance/d3_metadata/validate_blueprint_provenance.py
         args: ["--ci"]
         language: system
@@ -293,9 +275,9 @@ repos:
       # 真源声明：rationale-log R74 兜底缺口 V-11 / T-V2-003
       # 校验范围：ai_autonomy_authority_registry.md（上述 catalogs 路径）中的权限标注
       # 校验内容：三层权限值合法 / 必填字段完整 / 模块无重复 / 章节覆盖率 / Immutable Core 最低数量
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
+      # 模式：--ci 硬阻断（已于 Phase B 转正）
       - id: gate-14-authority-registry
-        name: "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11 骨架）"
+        name: "GATE-14: AI 自治权限注册表自校验（Wave 0 V-11）"
         entry: python scripts/governance/d5_architecture/validators/validate_authority_registry.py
         args: ["--ci"]
         language: system
@@ -309,9 +291,9 @@ repos:
       # 真源声明：Wave 1 V-14 兜底 / T-V2-011
       # 校验范围：docs/19_development_workspace/drafts-and-audits/ 下草稿的 components 字段
       # 校验内容：同一 component_id 出现在 2+ 草稿时 warn
-      # 骨架阶段：--warn-only 模式（只警告不阻塞），experimental 转 --ci 强制
+      # 模式：--ci 硬阻断（已于 Phase B 转正）
       - id: gate-13-blueprint-overlap
-        name: "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14 骨架）"
+        name: "GATE-13: 蓝图重叠检测门禁（Wave 1 V-14）"
         entry: python scripts/governance/d11_compliance/validate_blueprint_overlap.py
         args: ["--ci"]
         language: system
@@ -1047,7 +1029,8 @@ repos:
         language: system
         files: ^scripts/governance/d5_architecture/generators/.*\.py$
         pass_filenames: false
-        stages: [commit]
+        # pre-commit v4 stage 名（commit→pre-commit，与 gate-c2 等同批迁移语义对齐）
+        stages: [pre-commit]
         verbose: true
         description: "生成器禁止 datetime.now/time.time/datetime.today（治本 #ARCH-REGEN-NONIDEMPOTENT-001）。豁免：行尾 # noqa: arch-regen-nonidempotent"
 
@@ -1056,7 +1039,8 @@ repos:
         entry: python scripts/governance/d11_compliance/check_no_commit_derived.py
         language: system
         pass_filenames: false
-        stages: [commit]
+        # pre-commit v4 stage 名（commit→pre-commit，与 gate-c2 等同批迁移语义对齐）
+        stages: [pre-commit]
         verbose: true
         description: "阻断派生产物（域文档/项目树）git add（治本 #ARCH-GOV-BUDGET-001 / I-GOV-1）。派生产物已离库，用 scripts/serve_docs.py 按需生成"
 

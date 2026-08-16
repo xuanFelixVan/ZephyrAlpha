@@ -17,7 +17,7 @@ ZephyrAlpha 是 **100% AI 开发** 项目。AI 每次会话都是"冷启动"，�
 
 ---
 
-## 1. 密钥文件分布（6 个文件，72 个 KEY）
+## 1. 密钥文件分布（6 个文件，74 个 KEY）
 
 ```
 ZephyrAlpha/
@@ -38,7 +38,7 @@ ZephyrAlpha/
 
 | 文件 | 用途 | KEY 数 | 加载方式 | 读取接口 |
 |---|---|---|---|---|
-| `.env` | 第三方 API token、运行时密钥 | 36 | `zephyr/__init__.py` **自动加载**到 `os.environ` | `get_required_secret("KEY")` |
+| `.env` | 第三方 API token、运行时密钥 | 38 | `zephyr/__init__.py` **自动加载**到 `os.environ` | `get_required_secret("KEY")` |
 | `config/.env.postgres` | PostgreSQL 凭证 | 9 | **手动加载** | `get_service_secret("KEY", "postgres")` |
 | `config/.env.clickhouse` | ClickHouse 凭证 | 10 | **手动加载** | `get_service_secret("KEY", "clickhouse")` |
 | `config/.env.redis` | Redis 凭证 | 7 | **手动加载** | `get_service_secret("KEY", "redis")` |

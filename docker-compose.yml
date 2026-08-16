@@ -30,7 +30,10 @@ services:
       - "8000:8000"
     env_file:
       # 5.31.14 修复：原 env_file: .env 但 .env 被 .gitignore 忽略，新克隆者无 .env 直接报错退出
-      # 改为 .env.example 作为默认（仓库内已包含），新克隆者可直接 docker-compose up
+      # 改为 .env.example 作为默认（仓库内已包含）
+      # 注意（W2 fail-fast 后修正）：grafana 服务的 ${GRAFANA_ADMIN_PASSWORD:?...} 插值读取
+      # 项目根 .env / shell 环境（非本 env_file），未设置时整个 compose 命令报错退出——
+      # 新克隆者须先在项目根 .env 或 shell 中设置 GRAFANA_ADMIN_PASSWORD 再 docker compose up
       - .env.example
     environment:
       # 5.34.1 修复：原 ZEPHYR_ENV=development 不在 Env 枚举（dev/staging/production/test）中
