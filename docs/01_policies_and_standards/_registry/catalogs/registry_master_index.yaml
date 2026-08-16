@@ -1,11 +1,11 @@
-# 自动生成于 2026-08-16T06:31:23Z
+# 自动生成于 2026-08-16T09:42:54Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-16T06:31:23Z'
+generated_at: '2026-08-16T09:42:54Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
-total_registries: 38
+total_registries: 45
 registries:
 - registry_id: GOV-AI-001
   name: AI 自治权限登记表（全模块权限终表）
@@ -31,13 +31,21 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
+- registry_id: REG-ATH-001
+  name: 告警阈值注册表
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-ARCH-ISSUE-001
   name: 架构议题注册表
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 522
+  entry_count: 529
   status: active
 - registry_id: CFG-business-streams
   name: 业务流定义登记表
@@ -53,7 +61,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 98
+  entry_count: 100
   status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
@@ -67,6 +75,14 @@ registries:
   name: Chart Pattern Registry
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/chart_pattern_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: REG-CMP-REPORT-001
+  name: Compliance Report Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/compliance_report_registry.yaml
   format: yaml
   maintenance: manual
   entry_count: 0
@@ -111,6 +127,14 @@ registries:
   maintenance: manual
   entry_count: 5
   status: active
+- registry_id: REG-EVT-001
+  name: Event Calendar Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/event_calendar_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-EXT-CONTRACT-001
   name: 外部契约验证登记表
   category: governance_rule
@@ -118,6 +142,14 @@ registries:
   format: yaml
   maintenance: manual
   entry_count: 2
+  status: active
+- registry_id: REG-FEATURE-ADJ-001
+  name: Feature Adjudication Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/feature_adjudication_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
   status: active
 - registry_id: GOV-001
   name: 前沿大模型综合能力排名登记表
@@ -173,7 +205,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/in_process_gate_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 92
+  entry_count: 93
   status: active
 - registry_id: CFG-infrastructure-registry
   name: 运行时基础设施登记表
@@ -181,7 +213,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 15
+  entry_count: 16
   status: active
 - registry_id: CFG-interface-contract-registry
   name: 接口契约注册表
@@ -199,13 +231,29 @@ registries:
   maintenance: manual
   entry_count: 0
   status: draft
+- registry_id: REG-MAC-001
+  name: Macro Indicator Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/macro_indicator_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
+- registry_id: REG-ML-001
+  name: Model Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/model_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-MODULE-TRANSLATION-001
   name: 模块级翻译注册表（中英对照真源）
   category: governance_rule
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 5910
+  entry_count: 5922
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -223,6 +271,14 @@ registries:
   maintenance: manual
   entry_count: 0
   status: unknown
+- registry_id: REG-PFM-001
+  name: Portfolio Model Registry
+  category: governance_rule
+  physical_path: docs/01_policies_and_standards/_registry/catalogs/portfolio_model_registry.yaml
+  format: yaml
+  maintenance: manual
+  entry_count: 0
+  status: active
 - registry_id: REG-CYCLE-001
   name: Regime Cycle Registry
   category: governance_rule
@@ -261,7 +317,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml
   format: yaml
   maintenance: auto
-  entry_count: 210
+  entry_count: 215
   status: active
 - registry_id: REG-RULING-001
   name: 裁定中央登记表
@@ -301,7 +357,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/terminology_glossary.yaml
   format: yaml
   maintenance: manual
-  entry_count: 226
+  entry_count: 273
   status: active
 - registry_id: CFG-TRUST-BOUNDARY-001
   name: 信任边界 surface 登记表
