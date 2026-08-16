@@ -339,6 +339,50 @@ class TestGatewayIntegration:
         passed, msg = gate.check(gw, files=[])
         assert passed is True
 
+    def test_db_offline_failopen_persists(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """tracker #116 B1/B2：探针证实 PG 离线 + DB 查询失败 → 放行 +
+        critical_warn 落盘（DB 离线降级，含受影响文件清单）。"""
+        import json as _json
+        import sqlite3 as _sqlite3
+        from datetime import datetime, timezone as _tz
+
+        # 植入探针状态：离线
+        _state = {
+            "reachable": False, "checked_at": datetime.now(_tz.utc).isoformat(),
+            "host": "localhost", "port": 5432, "error": "refused",
+            "last_reachable_at": None,
+            "first_offline_at": datetime.now(_tz.utc).isoformat(),
+        }
+        _sp = tmp_path / ".runtime" / "pg_probe_state.json"
+        _sp.parent.mkdir(parents=True, exist_ok=True)
+        _sp.write_text(_json.dumps(_state), encoding="utf-8")
+
+        gw = self._make_gateway(tmp_path, diff_stdout="src/zephyr/new_module.py\n")
+        import zephyr.gov_enforcement.commit_gates.new_file_depgraph_gate as gate_mod
+        monkeypatch.setattr(gate_mod, "_check_depgraph_has_file", lambda f: None)
+
+        gate = make_new_file_depgraph_gate()
+        files = [str(tmp_path / "src/zephyr/new_module.py")]
+        passed, msg = gate.check(gw, files=files, session_id="sess-t")
+        assert passed is True
+
+        db_path = tmp_path / "data" / "databases" / "governance.db"
+        assert db_path.is_file()
+        conn = _sqlite3.connect(str(db_path))
+        try:
+            rows = conn.execute(
+                "SELECT gate_id, action, detail FROM reconcile_execution_log"
+            ).fetchall()
+        finally:
+            conn.close()
+        assert len(rows) == 1
+        assert rows[0][0] == "NEW-FILE-DEPGRAPH-ENFORCEMENT"
+        assert rows[0][1] == "critical_warn"
+        assert "DB 离线降级" in rows[0][2]
+        assert "src/zephyr/new_module.py" in rows[0][2]
+
     def test_non_zephyr_project_skips(self, tmp_path: Path) -> None:
         """非 Zephyr 项目（无 d1_structure 目录）→ skip。"""
         gw = MagicMock()

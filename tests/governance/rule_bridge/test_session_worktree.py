@@ -1640,6 +1640,148 @@ def test_pre_merge_topo_check_error_exit_fail_open(_isolated_repo, monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# PRE-MERGE-TOPO-CHECK 降级留痕（tracker #116 B1/B2，#ARCH-119）
+# 验证 4 个降级分支放行语义不变 + log_gate_failure 落盘可断言 + 探针区分
+# 「DB 离线降级」vs「真实错误」。探针 refresh 被 monkeypatch 为 no-op（状态
+# 文件由测试植入），governance.db 落 _isolated_repo/data/databases/。
+# 注意 _isolated_repo 模块级共享——断言用「前后行数差」而非绝对行数。
+# ---------------------------------------------------------------------------
+
+def _plant_probe_state(repo, *, reachable: bool) -> None:
+    """在临时仓库植入探针状态文件（并冻结 refresh 为 no-op）。"""
+    from datetime import datetime, timezone as _tz
+    now = datetime.now(_tz.utc).isoformat()
+    state = {
+        "reachable": reachable, "checked_at": now,
+        "host": "localhost", "port": 5432, "error": "" if reachable else "refused",
+        "last_reachable_at": now if reachable else None,
+        "first_offline_at": None if reachable else now,
+    }
+    path = repo / ".runtime" / "pg_probe_state.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state), encoding="utf-8")
+
+
+def _freeze_probe_refresh(monkeypatch) -> None:
+    """冻结 _run_pre_merge_topo_check 入口的探针 refresh（保留测试植入的状态）。"""
+    monkeypatch.setattr(
+        "zephyr.governance.audit.pg_probe.refresh_pg_probe_state",
+        lambda *a, **k: {},
+    )
+
+
+def _reset_failopen_log(repo) -> None:
+    """清空临时仓库的留痕库——前序测试（真实探针）可能已落同签名行触发当日去重，
+    本组断言要求干净起点（模块级共享 fixture，删除仅影响本测试文件）。"""
+    db_path = repo / "data" / "databases" / "governance.db"
+    if db_path.is_file():
+        db_path.unlink()
+
+
+def _count_failopen_rows(repo, gate_id: str = "PRE-MERGE-TOPO-CHECK") -> int:
+    import sqlite3 as _sqlite3
+    db_path = repo / "data" / "databases" / "governance.db"
+    if not db_path.is_file():
+        return 0
+    conn = _sqlite3.connect(str(db_path))
+    try:
+        return conn.execute(
+            "SELECT COUNT(*) FROM reconcile_execution_log "
+            "WHERE gate_id = ? AND action = 'critical_warn'",
+            (gate_id,),
+        ).fetchone()[0]
+    finally:
+        conn.close()
+
+
+def _read_last_failopen_detail(repo, gate_id: str = "PRE-MERGE-TOPO-CHECK") -> str:
+    import sqlite3 as _sqlite3
+    db_path = repo / "data" / "databases" / "governance.db"
+    conn = _sqlite3.connect(str(db_path))
+    try:
+        row = conn.execute(
+            "SELECT detail FROM reconcile_execution_log "
+            "WHERE gate_id = ? AND action = 'critical_warn' "
+            "ORDER BY rowid DESC LIMIT 1",
+            (gate_id,),
+        ).fetchone()
+        return row[0] if row else ""
+    finally:
+        conn.close()
+
+
+def test_topo_failopen_db_down_persists_db_offline(_isolated_repo, monkeypatch):
+    """探针证实离线 + depgraph_module_ids==0 → 放行 + DB_OFFLINE critical_warn 落盘。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _reset_failopen_log(_isolated_repo)
+    _plant_probe_state(_isolated_repo, reachable=False)
+    _freeze_probe_refresh(monkeypatch)
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=1, stdout=_topo_json(depgraph_module_ids=0),
+        stderr="[WARN] depgraph 连接失败",
+    ))
+    before = _count_failopen_rows(_isolated_repo)
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", ["src/zephyr/x/y.py"],
+    )
+    assert passed is True
+    assert violations == []
+    assert _count_failopen_rows(_isolated_repo) == before + 1
+    detail = _read_last_failopen_detail(_isolated_repo)
+    assert "DB 离线降级" in detail
+    assert "src/zephyr/x/y.py" in detail
+
+
+def test_topo_failopen_timeout_real_error_when_probe_online(_isolated_repo, monkeypatch):
+    """探针在线 + checker 超时 → 放行 + REAL_ERROR 留痕（真实错误不静默）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _reset_failopen_log(_isolated_repo)
+    _plant_probe_state(_isolated_repo, reachable=True)
+    _freeze_probe_refresh(monkeypatch)
+    _patch_topo_checker_run(
+        monkeypatch, subprocess.TimeoutExpired(cmd=[], timeout=120),
+    )
+    before = _count_failopen_rows(_isolated_repo)
+    passed, violations = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    assert violations == []
+    assert _count_failopen_rows(_isolated_repo) == before + 1
+    detail = _read_last_failopen_detail(_isolated_repo)
+    assert "真实错误" in detail
+    assert "REAL_ERROR" in detail
+
+
+def test_topo_failopen_exit2_and_json_persist(_isolated_repo, monkeypatch):
+    """exit 2 / JSON 解析失败两分支同样留痕（探针离线 → DB_OFFLINE）。"""
+    _ensure_topo_checker_stub(_isolated_repo)
+    _reset_failopen_log(_isolated_repo)
+    _plant_probe_state(_isolated_repo, reachable=False)
+    _freeze_probe_refresh(monkeypatch)
+    before = _count_failopen_rows(_isolated_repo)
+
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=2, stdout="", stderr="boom",
+    ))
+    passed, _ = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    assert _count_failopen_rows(_isolated_repo) == before + 1  # DB_OFFLINE 首次落盘
+
+    _patch_topo_checker_run(monkeypatch, subprocess.CompletedProcess(
+        args=[], returncode=0, stdout="not json", stderr="",
+    ))
+    passed, _ = _run_pre_merge_topo_check(
+        _isolated_repo, "sess-test", _isolated_repo / "wt", [],
+    )
+    assert passed is True
+    # 同签名（PRE-MERGE-TOPO-CHECK:DB_OFFLINE）当日去重——不新增
+    assert _count_failopen_rows(_isolated_repo) == before + 1
+
+
+# ---------------------------------------------------------------------------
 # P2-2 治本（#ARCH-RECONCILER-HEALTH-WARN-ROOT-CAUSE-001）：
 # _run_pre_commit_gates 重试机制 + _cleanup_worktree_locks 单元测试。
 # 原 _run_pre_commit_gates 单次执行，subprocess 超时即 fail-open

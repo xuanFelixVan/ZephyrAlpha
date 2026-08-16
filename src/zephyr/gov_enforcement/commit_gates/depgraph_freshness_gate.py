@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.depgraph_freshness_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); stdlib(json, datetime, logging)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec); zephyr.governance.audit.pg_probe (pg_offline_beyond/log_db_failopen，#ARCH-119 延迟 import); stdlib(json, datetime, logging)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -150,6 +150,28 @@ def make_depgraph_freshness_gate() -> GateSpec:
 
         # 4. dual-threshold 判定
         if age_seconds >= _BLOCK_SECONDS:
+            # tracker #116 B2（#ARCH-119，报告 §1.3 联动修复）：探针证实 PG 离线
+            # 超 24h 时，saved_at 停更是环境性（reconciler 无法连 PG 重建）而非
+            # 施工失责——豁免阻断并留痕（critical_warn，当日同签名去重）。
+            from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+                log_db_failopen,
+                pg_offline_beyond,
+            )
+            if pg_offline_beyond(project_root, _BLOCK_SECONDS):
+                hours_offline = int(age_seconds // 3600)
+                log_db_failopen(
+                    project_root, "DEPGRAPH-FRESHNESS",
+                    db_offline=True,
+                    reason=(
+                        f"探针证实 PG 离线超 24h，depgraph saved_at({saved_at_raw}) "
+                        f"停更 {hours_offline}h 属环境性误伤，freshness 阻断豁免"
+                    ),
+                    session_id=kwargs.get("session_id", ""),
+                )
+                return True, (
+                    f"depgraph stale {hours_offline}h but probe confirms PG offline >24h; "
+                    f"freshness block exempted (tracker #116, 豁免已留痕)"
+                )
             hours = int(age_seconds // 3600)
             detail = (
                 f"depgraph scan stale: {hours}h since last sync "

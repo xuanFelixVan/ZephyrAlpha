@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.rename_depgraph_sync_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.depgraph_schema (get_depgraph_pg_connection)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.audit.pg_probe (log_db_failopen/pg_probe_shows_offline，#ARCH-119 延迟 import)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -184,13 +184,36 @@ def make_rename_depgraph_sync_gate() -> GateSpec:
 
         # 2. 逐个查询 depgraph 是否已记录新路径
         missing: list[tuple[str, str]] = []
+        degraded: list[tuple[str, str]] = []  # DB 查询失败被降级放行的重命名（#116 B1 留痕）
         for old_path, new_path in renames:
             result = _check_depgraph_has_file(new_path)
             if result is None:
                 # DB 查询失败 → fail-open（不阻断此文件）
+                degraded.append((old_path, new_path))
                 continue
             if not result:
                 missing.append((old_path, new_path))
+
+        # 2b. tracker #116 B1（#ARCH-119）：fail-open 放行统一接 log_gate_failure
+        # 持久化（critical_warn，下次 commit 网关 banner 浮现）；探针状态区分
+        # 「DB 离线降级」（当日同签名去重）vs「真实错误」（逐次留痕不静默）。
+        # 放行语义不变——只加留痕。
+        if degraded:
+            from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+                log_db_failopen,
+                pg_probe_shows_offline,
+            )
+            _offline = pg_probe_shows_offline(gateway.project_root)
+            log_db_failopen(
+                gateway.project_root, "RENAME-DEPGRAPH-SYNC",
+                db_offline=_offline,
+                reason=(
+                    "depgraph 查询失败，重命名同步状态无法验证，降级放行"
+                    + ("（探针证实 PG 离线）" if _offline else "（探针未证实离线——真实连接错误）")
+                ),
+                affected_files=[f"{o} -> {n}" for o, n in degraded],
+                session_id=kwargs.get("session_id", ""),
+            )
 
         # 3. 有未同步的重命名 → 阻断
         if missing:

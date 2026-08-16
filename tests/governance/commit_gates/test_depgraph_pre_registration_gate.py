@@ -348,3 +348,118 @@ class TestCheckClosure:
         gate = make_depgraph_pre_registration_gate()
         passed, detail = gate.check(gw, ["src/zephyr/mod.py"])
         assert passed is True
+
+
+# ---------------------------------------------------------------------------
+# TestFailopenPersistence（tracker #116 B1/B2，#ARCH-119）
+# ---------------------------------------------------------------------------
+
+def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
+    """写入探针状态文件（模拟网关前置探针结果）。"""
+    import json as _json
+    from datetime import datetime, timezone as _tz
+    state = {
+        "reachable": reachable,
+        "checked_at": datetime.now(_tz.utc).isoformat(),
+        "host": "localhost", "port": 5432, "error": "" if reachable else "refused",
+        "last_reachable_at": datetime.now(_tz.utc).isoformat() if reachable else None,
+        "first_offline_at": None if reachable else datetime.now(_tz.utc).isoformat(),
+    }
+    path = project_root / ".runtime" / "pg_probe_state.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_json.dumps(state), encoding="utf-8")
+
+
+def _read_log_rows(project_root: Path) -> list[tuple]:
+    import sqlite3 as _sqlite3
+    db_path = project_root / "data" / "databases" / "governance.db"
+    if not db_path.is_file():
+        return []
+    conn = _sqlite3.connect(str(db_path))
+    try:
+        return conn.execute(
+            "SELECT gate_id, action, detail FROM reconcile_execution_log"
+        ).fetchall()
+    finally:
+        conn.close()
+
+
+class TestFailopenPersistence:
+    """build_status 查询 None（DB 失败）降级 → 留痕可断言（tracker #116 B1/B2）。"""
+
+    def _setup_permanent_file(self, tmp_path: Path) -> MagicMock:
+        src_dir = tmp_path / "src" / "zephyr"
+        src_dir.mkdir(parents=True, exist_ok=True)
+        (src_dir / "mod.py").write_text(
+            "# [TTL] permanent\n" + "\n".join(f"x{i} = {i}" for i in range(60)) + "\n",
+            encoding="utf-8",
+        )
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw.run_git = lambda cmd: _MockResult(returncode=0, stdout="src/zephyr/mod.py\n")
+        return gw
+
+    def test_probe_offline_none_status_logs_db_offline(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """探针证实离线 + query None → 放行 + DB_OFFLINE critical_warn 落盘。"""
+        _plant_probe_state(tmp_path, reachable=False)
+        gw = self._setup_permanent_file(tmp_path)
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
+            lambda _fp: None,
+        )
+        gate = make_depgraph_pre_registration_gate()
+        passed, _detail = gate.check(gw, ["src/zephyr/mod.py"], session_id="sess-t")
+        assert passed is True
+        rows = _read_log_rows(tmp_path)
+        assert len(rows) == 1
+        gate_id, action, detail = rows[0]
+        assert gate_id == "DEPGRAPH-PRE-REGISTRATION"
+        assert action == "critical_warn"
+        assert "DB 离线降级" in detail
+        assert "src/zephyr/mod.py" in detail
+
+    def test_probe_online_conn_failure_logs_real_error(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """探针在线而单发连接失败=真实错误 → REAL_ERROR 留痕（不静默）。"""
+        _plant_probe_state(tmp_path, reachable=True)
+        gw = self._setup_permanent_file(tmp_path)
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
+            lambda _fp: None,
+        )
+        def _raise_conn(*a, **k):
+            raise ConnectionError("auth failed")
+        monkeypatch.setattr(
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
+            _raise_conn,
+        )
+        gate = make_depgraph_pre_registration_gate()
+        passed, _detail = gate.check(gw, ["src/zephyr/mod.py"])
+        assert passed is True
+        rows = _read_log_rows(tmp_path)
+        assert len(rows) == 1
+        assert "真实错误" in rows[0][2]
+        assert "REAL_ERROR" in rows[0][2]
+
+    def test_probe_unknown_conn_ok_no_log(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """探针状态未知 + 单发连接成功 → None 属「无记录」正常语义，不留痕。"""
+        gw = self._setup_permanent_file(tmp_path)
+        monkeypatch.setattr(
+            "zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate.query_build_status",
+            lambda _fp: None,
+        )
+        class _FakeConn:
+            def close(self): pass
+        monkeypatch.setattr(
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
+            lambda *a, **k: _FakeConn(),
+        )
+        gate = make_depgraph_pre_registration_gate()
+        passed, _detail = gate.check(gw, ["src/zephyr/mod.py"])
+        assert passed is True
+        assert _read_log_rows(tmp_path) == []

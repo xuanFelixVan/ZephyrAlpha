@@ -299,3 +299,108 @@ class TestGatewayIntegration:
         gate = make_rename_depgraph_sync_gate()
         passed, msg = gate.check(gw, ["new.py"])
         assert passed is True
+
+
+# ---------------------------------------------------------------------------
+# TestFailopenPersistence（tracker #116 B1/B2，#ARCH-119）
+# ---------------------------------------------------------------------------
+
+def _plant_probe_state(project_root: Path, *, reachable: bool) -> None:
+    """写入探针状态文件（模拟网关前置探针结果）。"""
+    import json as _json
+    from datetime import datetime, timezone as _tz
+    state = {
+        "reachable": reachable,
+        "checked_at": datetime.now(_tz.utc).isoformat(),
+        "host": "localhost", "port": 5432, "error": "" if reachable else "refused",
+        "last_reachable_at": datetime.now(_tz.utc).isoformat() if reachable else None,
+        "first_offline_at": None if reachable else datetime.now(_tz.utc).isoformat(),
+    }
+    path = project_root / ".runtime" / "pg_probe_state.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(_json.dumps(state), encoding="utf-8")
+
+
+def _read_log_rows(project_root: Path) -> list[tuple]:
+    import sqlite3 as _sqlite3
+    db_path = project_root / "data" / "databases" / "governance.db"
+    if not db_path.is_file():
+        return []
+    conn = _sqlite3.connect(str(db_path))
+    try:
+        return conn.execute(
+            "SELECT gate_id, action, detail FROM reconcile_execution_log"
+        ).fetchall()
+    finally:
+        conn.close()
+
+
+def _raise_conn(*a, **k):
+    raise ConnectionError("DB down")
+
+
+class TestFailopenPersistence:
+    """DB 离线 → 放行 + log_gate_failure 落盘可断言（tracker #116 B1/B2）。"""
+
+    def _make_gateway(self, tmp_path: Path) -> MagicMock:
+        gw = MagicMock()
+        gw.project_root = tmp_path
+        gw.run_git = MagicMock(return_value=_MockResult(
+            0, "R100\tsrc/old.py\tsrc/new.py\n"
+        ))
+        return gw
+
+    def test_db_offline_passes_and_persists(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """探针证实离线 + DB 连接失败 → 放行 + critical_warn 落盘（DB_OFFLINE）。"""
+        _plant_probe_state(tmp_path, reachable=False)
+        monkeypatch.setattr(
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
+            _raise_conn,
+        )
+        gw = self._make_gateway(tmp_path)
+        gate = make_rename_depgraph_sync_gate()
+        passed, _msg = gate.check(gw, ["src/new.py"], session_id="sess-t")
+        assert passed is True
+        rows = _read_log_rows(tmp_path)
+        assert len(rows) == 1
+        gate_id, action, detail = rows[0]
+        assert gate_id == "RENAME-DEPGRAPH-SYNC"
+        assert action == "critical_warn"
+        assert "DB 离线降级" in detail
+        assert "src/old.py -> src/new.py" in detail
+
+    def test_db_offline_dedup_same_day(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """探针离线——同签名当日去重（两次 check 只落一条）。"""
+        _plant_probe_state(tmp_path, reachable=False)
+        monkeypatch.setattr(
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
+            _raise_conn,
+        )
+        gw = self._make_gateway(tmp_path)
+        gate = make_rename_depgraph_sync_gate()
+        for _ in range(2):
+            passed, _msg = gate.check(gw, ["src/new.py"])
+            assert passed is True
+        assert len(_read_log_rows(tmp_path)) == 1
+
+    def test_probe_online_real_error_not_silent(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        """探针在线而 gate 连接失败=真实错误 → 逐次留痕（不静默，不去重）。"""
+        _plant_probe_state(tmp_path, reachable=True)
+        monkeypatch.setattr(
+            "zephyr.governance.depgraph_schema.get_depgraph_pg_connection",
+            _raise_conn,
+        )
+        gw = self._make_gateway(tmp_path)
+        gate = make_rename_depgraph_sync_gate()
+        for _ in range(2):
+            passed, _msg = gate.check(gw, ["src/new.py"])
+            assert passed is True
+        rows = _read_log_rows(tmp_path)
+        assert len(rows) == 2
+        assert all("真实错误" in r[2] for r in rows)
