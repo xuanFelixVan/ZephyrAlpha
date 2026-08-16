@@ -17,7 +17,7 @@
 
 pg_wrapper.py — psycopg2 connection 的 sqlite3 兼容 execute() 包装器（单一规范副本）。
 
-治本背景（#ARCH-DI-SEAM-001 / R3，2026-07-28）
+治本背景（#ARCH-098 / R3，2026-07-28）
 -----------------------------------------------
 P2 迁移后 psycopg2 connection 没有 execute() 方法，原 SQLite 代码需通过包装器
 兼容。此前 `_PgConnExecuteWrapper` 在三处重复定义：
@@ -102,7 +102,7 @@ from __future__ import annotations
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
-# DIP 重导出（#ARCH-DI-SEAM-001 / R3）：业务模块（rule_engine 等）通过本别名
+# DIP 重导出（#ARCH-098 / R3）：业务模块（rule_engine 等）通过本别名
 # 捕获 PG 错误，避免顶层 ``import psycopg2``，使业务逻辑仅依赖 persistence 抽象。
 # psycopg2.Error 是所有 psycopg2 异常的基类（含 OperationalError / DatabaseError 等），
 # 别名透传 isinstance 语义与 MRO，零运行时开销。

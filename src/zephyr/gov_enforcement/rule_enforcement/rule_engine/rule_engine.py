@@ -158,7 +158,7 @@ class RuleLoader:
         self,
         db_path: str | Path | None = None,  # 保留向后兼容（PG模式下忽略，治本2026-06-27删除_DB_PATH常量）
         rules_dir: str | Path | None = None,
-        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-098 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
     ) -> None:
         self._rules_dir = Path(rules_dir) if rules_dir else _RULES_DIR
         self._cache: dict[str, dict[str, Any]] = {}

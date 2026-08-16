@@ -51,6 +51,7 @@ INJECTION_PATTERNS = [
     r"javascript:",
     r"\bimport\s+os\b",
     r"\bimport\s+sys\b",
+    r"\bimport\s+subprocess\b",  # #ARCH-094：补裸导入形式（对称 os/sys——原仅有 subprocess\. 与 from subprocess import，裸导入敞口）
     r"\bfrom\s+os\s+import\b",
     r"\bfrom\s+subprocess\s+import\b",
     r"\bctypes\b",

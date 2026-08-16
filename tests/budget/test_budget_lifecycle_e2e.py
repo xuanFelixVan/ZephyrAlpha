@@ -147,7 +147,7 @@ class TestRestartStateRecovery:
 
     def test_restart_without_snapshot_starts_fresh(self, engine, tmp_path):
         """无快照文件时重启应从零开始。"""
-        BudgetEngine.instance = engine
+        BudgetEngine.set_instance(engine)  # #ARCH-097：instance 别名已删，转 set_instance
         engine.shutdown()
 
         # 从不存在的快照恢复

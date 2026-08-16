@@ -58,14 +58,10 @@ class TestRuleInjectionGuard:
         result = self.guard.check("rule-4", "exec('dangerous')")
         assert result.injection_detected is True
 
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-094：生产模式表缺 `import subprocess` 裸导入形式（仅 subprocess. 与 from subprocess import）——规则表缺口待裁定",
-    )
     def test_check_subprocess(self):
         result = self.guard.check("rule-5", "import subprocess")
         assert result.injection_detected is True
-        assert result.injection_type == "import subprocess"
+        assert r"\bimport\s+subprocess\b" in result.matched_patterns  # #ARCH-094：裸导入模式已补登
 
     def test_check_case_insensitive(self):
         result = self.guard.check("rule-6", "IMPORT OS")

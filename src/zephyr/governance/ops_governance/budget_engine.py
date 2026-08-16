@@ -94,7 +94,6 @@ class BudgetEngineProtocol(Protocol):
 class BudgetEngine:
 
     _instance: "BudgetEngine | None" = None
-    instance: 'BudgetEngine | None' = _instance  # public alias（Stage 4 公共化）
     _instance_lock = threading.Lock()
 
     DEFAULT_POLICIES = {

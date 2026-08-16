@@ -47,8 +47,9 @@ class TestShutdown:
     def test_shutdown_persists_state(self, engine, tmp_path):
         """shutdown() 应将快照持久化到文件。"""
         persist_path = tmp_path / "shutdown_snapshot.json"
-        with patch("os.path.join", return_value=str(persist_path)):
-            result = engine.shutdown()
+        # 生产跟进（#ARCH-097）：patch("os.path.join") 在 Windows 下污染全进程 pathlib
+        # （os.path.join 即 WindowsPath._flavour.join 同源函数对象）——改用注入 seam
+        result = engine.shutdown(persist_path=str(persist_path))
 
         assert result["cleaned_up"] is True
         assert "snapshot" in result

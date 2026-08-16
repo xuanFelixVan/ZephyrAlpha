@@ -1593,7 +1593,7 @@ def get_depgraph_pg_connection(
 # 禁止恢复——与 SQLite 同名函数冲突（AGENTS.md §11.4 的历史描述以本代码为准）。
 
 # ---------------------------------------------------------------------------
-# PgConnectionProvider Protocol（#ARCH-DI-SEAM-001 DIP 注入缝，2026-07-27 立项）
+# PgConnectionProvider Protocol（#ARCH-098 DIP 注入缝，2026-07-27 立项）
 # ---------------------------------------------------------------------------
 # 治本：抽象 get_depgraph_pg_connection 的调用契约，使 RuleLoader /
 # GovernanceAutoRunner 等高层模块可在测试中注入 mock 连接提供者，不依赖真实 PG。

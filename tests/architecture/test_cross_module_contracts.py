@@ -21,14 +21,8 @@ import yaml
 from zephyr.shared.io.paths import REPO_ROOT
 
 
-REQUIRED_DEPENDENCIES = [
-    "MOD-INF-039",
-    "MOD-GATE_ENGINE",
-    "MOD-INF-018",
-]
-
-# 生产跟进（AI-TDEBT-001）：MCP 蓝图目录更名 mcp-servers → model_context_protocol_servers；
-# 模块路径 src/zephyr/mcp → src/zephyr/integration/mcp；契约文件为下划线命名 tool_contracts.yaml
+# #ARCH-095 裁定：MCP 实际依赖（import 实证）= MOD-TASK_SYSTEM + MOD-GATE_ENGINE；
+# 原 REQUIRED_DEPENDENCIES 含 MOD-INF-039/MOD-INF-018 属过期契约且无消费方——已删
 MCP_BLUEPRINT = REPO_ROOT / "docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md"
 B_MCP_YAML = REPO_ROOT / "architecture_model/layers/b_mcp.yaml"
 TOOL_CONTRACTS = REPO_ROOT / "src/zephyr/integration/mcp/tool_contracts.yaml"
@@ -49,19 +43,13 @@ def _read_frontmatter(path: Path) -> dict:
 class TestUpstreamDependencyReachability:
     """上游依赖可达性验证。"""
 
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-095：MCP blueprint depends_on 现 3 项（MOD-TASK_SYSTEM/MOD-GATE_ENGINE/b_mcp.yaml），测试锚定 ≥4 含 MOD-INF-039——依赖声明契约分歧待架构裁定",
-    )
     def test_blueprint_depends_on_present(self):
+        # #ARCH-095 裁定：depends_on 现事实 3 项（MOD-TASK_SYSTEM/MOD-GATE_ENGINE/b_mcp.yaml），
+        # import 静态分析实证 MCP 无 orchestrator(MOD-INF-039)/access_control(MOD-INF-018) 依赖
         fm = _read_frontmatter(MCP_BLUEPRINT)
         depends = fm.get("depends_on", [])
-        assert len(depends) >= 4, f"depends_on should have >=4 entries, got {len(depends)}"
+        assert len(depends) >= 3, f"depends_on should have >=3 entries, got {len(depends)}"
 
-    @pytest.mark.xfail(
-        strict=False,
-        reason="#ARCH-095：depends_on 未声明 MOD-INF-039（orchestrator）——声明缺口或测试过期待架构裁定",
-    )
     def test_depends_on_ids_valid(self):
         fm = _read_frontmatter(MCP_BLUEPRINT)
         depends = fm.get("depends_on", [])
@@ -71,7 +59,7 @@ class TestUpstreamDependencyReachability:
             ids = [d.get("module_id", d.get("id", str(d))) for d in depends if isinstance(d, dict)]
         else:
             ids = []
-        for req in ["MOD-INF-039", "MOD-GATE_ENGINE"]:
+        for req in ["MOD-TASK_SYSTEM", "MOD-GATE_ENGINE"]:
             found = any(req in str(i) for i in ids)
             assert found, f"Missing upstream dependency: {req}"
 
