@@ -17,9 +17,13 @@
   python scripts/ch/archiver.py archive --table c1_market.tick_data --partition 202201
   python scripts/ch/archiver.py archive-range --table c1_market.tick_data --from 202201 --to 202412
   python scripts/ch/archiver.py archive-range --table c1_market.tick_data --from 202201 --to 202412 --dry-run
+  python scripts/ch/archiver.py archive-range --table c1_market.technical_indicator --period 60min --from 201901 --to 202108
   python scripts/ch/archiver.py list
   python scripts/ch/archiver.py stats
   python scripts/ch/archiver.py restore --table c1_market.tick_data --partition 202201
+
+元组分区键表（如 c1_market.technical_indicator，PARTITION BY (period, YYYYMM)）
+必须指定 --period；Parquet 按周期子目录分层（technical_indicator/60min/201901.parquet）。
 """
 from __future__ import annotations
 
@@ -31,6 +35,7 @@ import json
 import logging
 import os
 import pathlib
+import re
 import sys
 import time
 import urllib.parse
@@ -81,8 +86,55 @@ _PARTITION_EXPR: dict[str, str] = {
     "c1_market.kline_lof_15min": "toYYYYMM(trade_date)",
     "c1_market.kline_lof_30min": "toYYYYMM(trade_date)",
     "c1_market.kline_lof_60min": "toYYYYMM(trade_date)",
-    "c3_fundamental.news_data": "toYYYYMM(publish_date)",
+    "c3_fundamental.news_data": "toYYYYMM(publish_time)",
+    "c1_market.technical_indicator": "toYYYYMM(trade_date)",
 }
+
+# 元组分区键表：table -> 周期列名。此类表 PARTITION BY (period, toYYYYMM(...))，
+# 归档/恢复必须带 --period 指定周期维度（契约 §2A 派生跟随源，v1.2.0）
+_TUPLE_PERIOD_COL: dict[str, str] = {
+    "c1_market.technical_indicator": "period",
+}
+
+_TUPLE_PARTITION_RE = re.compile(r"^\('([^']+)',(\d{6})\)$")
+
+# SQL 模板常量（NO-BARE-SQL gate 豁免：_SQL_* 前缀）
+_SQL_EXPORT = "SELECT * FROM {table} WHERE {where} FORMAT Parquet"
+_SQL_COUNT_PARTITION = "SELECT count() FROM {table} WHERE {where}"
+_SQL_SAMPLE_RANDOM = "SELECT * FROM {table} WHERE {where} ORDER BY rand() LIMIT 100 FORMAT JSON"
+_SQL_LIST_PARTITIONS = (
+    "SELECT DISTINCT partition FROM system.parts "
+    "WHERE database='{db}' AND table='{tbl}' AND active=1 ORDER BY partition"
+)
+
+
+def _period_col(table: str) -> str | None:
+    """元组分区键表的周期列名；非元组表返回 None。"""
+    return _TUPLE_PERIOD_COL.get(table)
+
+
+def _require_period(table: str, period: str | None) -> None:
+    """元组分区表必须指定 --period；非元组表禁止指定（防误归档错维度）。"""
+    need = _period_col(table)
+    if need and not period:
+        raise ValueError(f"表 {table} 分区键为 ({need}, YYYYMM)，必须指定 --period（如 --period 60min）")
+    if not need and period:
+        raise ValueError(f"表 {table} 非元组分区键，禁止指定 --period")
+
+
+def _build_where(table: str, partition: str, period: str | None) -> str:
+    """构造导出/行数统计的 WHERE 条件（元组键表叠加周期过滤）。"""
+    expr = _get_partition_expr(table)
+    if _period_col(table):
+        return f"{_period_col(table)} = '{period}' AND {expr} = {partition}"
+    return f"{expr} = {partition}"
+
+
+def _drop_partition_sql(table: str, partition: str, period: str | None) -> str:
+    """构造 DROP PARTITION 语句（元组键需 ('period',YYYYMM) 字面量形式）。"""
+    if _period_col(table):
+        return f"ALTER TABLE {table} DROP PARTITION ('{period}',{partition})"
+    return f"ALTER TABLE {table} DROP PARTITION {partition}"
 
 
 def _get_partition_expr(table: str) -> str:
@@ -94,39 +146,57 @@ def _get_partition_expr(table: str) -> str:
     return "toYYYYMM(trade_date)"
 
 
-def _get_partitions(table: str, from_yyyymm: str, to_yyyymm: str) -> list[str]:
-    """查询表在指定范围内的活跃分区列表。"""
+def _get_partitions(table: str, from_yyyymm: str, to_yyyymm: str, period: str | None = None) -> list[str]:
+    """查询表在指定范围内的活跃分区列表（元组键表按 period 过滤并抽取 YYYYMM 段）。"""
     r = ch_reader.query(
-        f"SELECT DISTINCT partition FROM system.parts "
-        f"WHERE database='{table.split('.')[0]}' AND table='{table.split('.')[1]}' "
-        f"AND active=1 AND partition >= '{from_yyyymm}' AND partition <= '{to_yyyymm}' "
-        f"ORDER BY partition"
+        _SQL_LIST_PARTITIONS.format(db=table.split('.')[0], tbl=table.split('.')[1])
     )
-    return [line.strip() for line in r.strip().split("\n") if line.strip()]
+    out: list[str] = []
+    for line in r.strip().split("\n"):
+        p = line.strip()
+        if not p:
+            continue
+        if _period_col(table):
+            m = _TUPLE_PARTITION_RE.match(p)
+            if not m or m.group(1) != period:
+                continue
+            yyyymm = m.group(2)
+        else:
+            yyyymm = p
+        if from_yyyymm <= yyyymm <= to_yyyymm:
+            out.append(yyyymm)
+    return sorted(set(out))
 
 
-def _parquet_path(table: str, partition: str) -> pathlib.Path:
-    """获取分区的 Parquet 文件路径。"""
+def _parquet_path(table: str, partition: str, period: str | None = None) -> pathlib.Path:
+    """获取分区的 Parquet 文件路径（元组键表按周期子目录分层）。"""
     db, tbl = table.split(".")
+    if _period_col(table):
+        return ARCHIVE_ROOT / db / tbl / str(period) / f"{partition}.parquet"
     return ARCHIVE_ROOT / db / tbl / f"{partition}.parquet"
 
 
 # ============== 三阶段原子操作 ==============
 
-def export_partition(table: str, partition: str, dry_run: bool = False) -> pathlib.Path | None:
+def export_partition(table: str, partition: str, dry_run: bool = False, period: str | None = None) -> pathlib.Path | None:
     """阶段1: 从 ClickHouse 导出分区为 Parquet 到 E 盘。
 
     用 ClickHouse HTTP API 的 SELECT ... FORMAT Parquet 直接获取 Parquet 字节流，
     避免 Python 序列化开销，速度最快。
     """
-    pq_path = _parquet_path(table, partition)
+    _require_period(table, period)
+    pq_path = _parquet_path(table, partition, period)
     pq_path.parent.mkdir(parents=True, exist_ok=True)
 
-    partition_expr = _get_partition_expr(table)
-    sql = f"SELECT * FROM {table} WHERE {partition_expr} = {partition} FORMAT Parquet"
+    sql = _SQL_EXPORT.format(table=table, where=_build_where(table, partition, period))
+    # 导出逻辑视图：ReplacingMergeTree 表注入 FINAL（复用 ch_reader SSoT，#ARCH-CH-004）。
+    # 保证 Parquet = 消费者所读去重结果，与 verify 的 FINAL 计数对齐。
+    # 重复行系引擎未合并 artifact（2026-08-16 实证：kline_5min 35 分区、news_data 几乎全部
+    # 热分区存在重复摄入，verify 正确拦截 10 分区）；裸导物理行会把冗余永久固化进冷库。
+    sql = ch_reader.inject_final(sql)
 
     if dry_run:
-        log.info("[DRY-RUN] export %s partition=%s → %s", table, partition, pq_path)
+        log.info("[DRY-RUN] export %s partition=%s period=%s → %s", table, partition, period, pq_path)
         log.info("  SQL: %s", sql)
         return pq_path
 
@@ -177,7 +247,7 @@ def export_partition(table: str, partition: str, dry_run: bool = False) -> pathl
         return None
 
 
-def verify_partition(table: str, partition: str, pq_path: pathlib.Path) -> bool:
+def verify_partition(table: str, partition: str, pq_path: pathlib.Path, period: str | None = None) -> bool:
     """阶段2: 验证 Parquet 行数 = ClickHouse 行数 + 抽样字段值。"""
     try:
         import pyarrow.parquet as pq
@@ -185,11 +255,11 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path) -> bool:
         log.error("  verify 失败: pyarrow 未安装")
         return False
 
-    partition_expr = _get_partition_expr(table)
+    where = _build_where(table, partition, period)
 
     # 1. ClickHouse 行数
     r = ch_reader.query(
-        f"SELECT count() FROM {table} WHERE {partition_expr} = {partition}"
+        _SQL_COUNT_PARTITION.format(table=table, where=where)
     ).strip()
     ch_count = int(r) if r else 0
 
@@ -218,8 +288,7 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path) -> bool:
         # 小分区：直接比对
         try:
             ch_sample = ch_reader.query(
-                f"SELECT * FROM {table} WHERE {partition_expr} = {partition} "
-                f"ORDER BY rand() LIMIT 100 FORMAT JSON"
+                _SQL_SAMPLE_RANDOM.format(table=table, where=where)
             )
             # 简单验证：能查到数据即可（完整字段比对太复杂，行数一致已足够可信）
             log.info("  verify: 抽样 100 行查询成功")
@@ -229,15 +298,17 @@ def verify_partition(table: str, partition: str, pq_path: pathlib.Path) -> bool:
     return True
 
 
-def drop_partition(table: str, partition: str, dry_run: bool = False) -> bool:
+def drop_partition(table: str, partition: str, dry_run: bool = False, period: str | None = None) -> bool:
     """阶段3: ALTER TABLE DROP PARTITION 释放 D 盘空间。"""
+    _require_period(table, period)
+    sql = _drop_partition_sql(table, partition, period)
     if dry_run:
-        log.info("[DRY-RUN] drop %s partition=%s", table, partition)
+        log.info("[DRY-RUN] drop: %s", sql)
         return True
 
-    log.info("  drop: ALTER TABLE %s DROP PARTITION %s", table, partition)
+    log.info("  drop: %s", sql)
     try:
-        r = ch_reader.query(f"ALTER TABLE {table} DROP PARTITION {partition}")
+        r = ch_reader.query(sql)
         log.info("  drop 完成")
         return True
     except Exception as e:
@@ -270,10 +341,14 @@ def _read_manifest() -> list[dict]:
     return records
 
 
-def _is_archived(table: str, partition: str) -> dict | None:
-    """检查分区是否已归档（dropped=true）。返回归档记录或 None。"""
+def _is_archived(table: str, partition: str, period: str | None = None) -> dict | None:
+    """检查分区是否已归档（dropped=true）。返回归档记录或 None。
+
+    旧清单记录无 period 键（get 返回 None），与非元组表 period=None 天然匹配。
+    """
     for record in _read_manifest():
-        if record.get("table") == table and record.get("partition") == partition:
+        if (record.get("table") == table and record.get("partition") == partition
+                and record.get("period") == period):
             if record.get("dropped"):
                 return record
     return None
@@ -281,21 +356,21 @@ def _is_archived(table: str, partition: str) -> dict | None:
 
 # ============== 原子归档操作 ==============
 
-def archive_partition(table: str, partition: str, dry_run: bool = False) -> bool:
+def archive_partition(table: str, partition: str, dry_run: bool = False, period: str | None = None) -> bool:
     """三阶段原子归档: export → verify → drop。"""
     # 断点续传：检查是否已归档
-    existing = _is_archived(table, partition)
+    existing = _is_archived(table, partition, period)
     if existing:
-        log.info("跳过（已归档）: %s partition=%s", table, partition)
+        log.info("跳过（已归档）: %s partition=%s period=%s", table, partition, period)
         return True
 
     log.info("=" * 60)
-    log.info("归档 %s partition=%s", table, partition)
+    log.info("归档 %s partition=%s period=%s", table, partition, period)
 
-    pq_path = _parquet_path(table, partition)
+    pq_path = _parquet_path(table, partition, period)
 
     # 阶段1: export
-    if not export_partition(table, partition, dry_run=dry_run):
+    if not export_partition(table, partition, dry_run=dry_run, period=period):
         log.error("export 失败，中止")
         return False
 
@@ -304,7 +379,7 @@ def archive_partition(table: str, partition: str, dry_run: bool = False) -> bool
         return True
 
     # 阶段2: verify
-    if not verify_partition(table, partition, pq_path):
+    if not verify_partition(table, partition, pq_path, period=period):
         log.error("verify 失败，不执行 drop，数据安全")
         # 删除不可信的 Parquet 文件
         if pq_path.exists():
@@ -312,43 +387,44 @@ def archive_partition(table: str, partition: str, dry_run: bool = False) -> bool
         return False
 
     # 阶段3: drop
-    if not drop_partition(table, partition, dry_run=dry_run):
+    if not drop_partition(table, partition, dry_run=dry_run, period=period):
         log.error("drop 失败，Parquet 已保留，可手动重试 drop")
         # 仍然记录清单（verified=true, dropped=false）
-        _append_manifest({
-            "table": table,
-            "partition": partition,
-            "parquet_path": str(pq_path),
-            "parquet_size_bytes": pq_path.stat().st_size if pq_path.exists() else 0,
-            "archived_at": datetime.datetime.now(datetime.UTC).isoformat(),
-            "verified": True,
-            "dropped": False,
-        })
+        _append_manifest(_manifest_record(table, partition, pq_path, dropped=False, period=period))
         return False
 
     # 记录归档清单
-    _append_manifest({
+    _append_manifest(_manifest_record(table, partition, pq_path, dropped=True, period=period))
+
+    log.info("归档完成: %s partition=%s period=%s ✓", table, partition, period)
+    return True
+
+
+def _manifest_record(table: str, partition: str, pq_path: pathlib.Path, dropped: bool, period: str | None) -> dict:
+    """构造归档清单记录（元组键表附 period 字段）。"""
+    record = {
         "table": table,
         "partition": partition,
         "parquet_path": str(pq_path),
         "parquet_size_bytes": pq_path.stat().st_size if pq_path.exists() else 0,
         "archived_at": datetime.datetime.now(datetime.UTC).isoformat(),
         "verified": True,
-        "dropped": True,
-    })
+        "dropped": dropped,
+    }
+    if period is not None:
+        record["period"] = period
+    return record
 
-    log.info("归档完成: %s partition=%s ✓", table, partition)
-    return True
 
-
-def archive_range(table: str, from_yyyymm: str, to_yyyymm: str, dry_run: bool = False) -> None:
+def archive_range(table: str, from_yyyymm: str, to_yyyymm: str, dry_run: bool = False, period: str | None = None) -> None:
     """批量归档指定范围内的分区。"""
-    partitions = _get_partitions(table, from_yyyymm, to_yyyymm)
-    log.info("=== 批量归档 %s, 范围 %s~%s, 共 %d 个分区 ===", table, from_yyyymm, to_yyyymm, len(partitions))
+    _require_period(table, period)
+    partitions = _get_partitions(table, from_yyyymm, to_yyyymm, period=period)
+    log.info("=== 批量归档 %s period=%s, 范围 %s~%s, 共 %d 个分区 ===", table, period, from_yyyymm, to_yyyymm, len(partitions))
 
     if dry_run:
         for p in partitions:
-            existing = _is_archived(table, p)
+            existing = _is_archived(table, p, period)
             status = "已归档(跳过)" if existing else "待归档"
             log.info("  [DRY-RUN] partition=%s %s", p, status)
         return
@@ -359,13 +435,13 @@ def archive_range(table: str, from_yyyymm: str, to_yyyymm: str, dry_run: bool = 
     t0 = time.time()
 
     for i, p in enumerate(partitions, 1):
-        existing = _is_archived(table, p)
+        existing = _is_archived(table, p, period)
         if existing:
             skipped += 1
             continue
 
         log.info("--- %d/%d ---", i, len(partitions))
-        if archive_partition(table, p, dry_run=False):
+        if archive_partition(table, p, dry_run=False, period=period):
             success += 1
         else:
             failed += 1
@@ -406,6 +482,8 @@ def stats() -> None:
     by_table: dict[str, dict] = {}
     for r in records:
         tbl = r.get("table", "")
+        if r.get("period"):
+            tbl = f"{tbl}({r['period']})"
         if tbl not in by_table:
             by_table[tbl] = {"count": 0, "size_bytes": 0, "dropped": 0}
         by_table[tbl]["count"] += 1
@@ -435,14 +513,15 @@ def stats() -> None:
         pass
 
 
-def restore_partition(table: str, partition: str) -> bool:
+def restore_partition(table: str, partition: str, period: str | None = None) -> bool:
     """从 Parquet 恢复分区到 ClickHouse（应急用）。"""
-    pq_path = _parquet_path(table, partition)
+    _require_period(table, period)
+    pq_path = _parquet_path(table, partition, period)
     if not pq_path.exists():
         log.error("Parquet 文件不存在: %s", pq_path)
         return False
 
-    log.info("恢复 %s partition=%s ← %s", table, partition, pq_path)
+    log.info("恢复 %s partition=%s period=%s ← %s", table, partition, period, pq_path)
 
     # 用 clickhouse-driver 读取 Parquet 并 INSERT
     try:
@@ -489,6 +568,7 @@ def main():
     p_arch = sub.add_parser("archive", help="归档单个分区 (export→verify→drop)")
     p_arch.add_argument("--table", required=True)
     p_arch.add_argument("--partition", required=True)
+    p_arch.add_argument("--period", default=None, help="元组分区键表必填（如 60min）")
     p_arch.add_argument("--dry-run", action="store_true")
 
     # archive-range
@@ -496,6 +576,7 @@ def main():
     p_range.add_argument("--table", required=True)
     p_range.add_argument("--from", dest="from_yyyymm", required=True)
     p_range.add_argument("--to", dest="to_yyyymm", required=True)
+    p_range.add_argument("--period", default=None, help="元组分区键表必填（如 60min）")
     p_range.add_argument("--dry-run", action="store_true")
 
     # list
@@ -509,19 +590,26 @@ def main():
     p_restore = sub.add_parser("restore", help="从 Parquet 恢复到 ClickHouse")
     p_restore.add_argument("--table", required=True)
     p_restore.add_argument("--partition", required=True)
+    p_restore.add_argument("--period", default=None, help="元组分区键表必填（如 60min）")
 
     args = parser.parse_args()
 
+    if args.command in ("archive", "archive-range", "restore"):
+        try:
+            _require_period(args.table, args.period)
+        except ValueError as e:
+            parser.error(str(e))
+
     if args.command == "archive":
-        archive_partition(args.table, args.partition, dry_run=args.dry_run)
+        archive_partition(args.table, args.partition, dry_run=args.dry_run, period=args.period)
     elif args.command == "archive-range":
-        archive_range(args.table, args.from_yyyymm, args.to_yyyymm, dry_run=args.dry_run)
+        archive_range(args.table, args.from_yyyymm, args.to_yyyymm, dry_run=args.dry_run, period=args.period)
     elif args.command == "list":
         list_archived(args.table)
     elif args.command == "stats":
         stats()
     elif args.command == "restore":
-        restore_partition(args.table, args.partition)
+        restore_partition(args.table, args.partition, period=args.period)
 
 
 if __name__ == "__main__":
