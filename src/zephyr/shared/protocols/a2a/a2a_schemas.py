@@ -82,8 +82,8 @@ class A2ATask(BaseModel):
     description: str
     context_ref: str | None = None
     context_package: dict[str, Any] | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=now_utc)
+    updated_at: datetime = Field(default_factory=now_utc)
     deadline: datetime | None = None
     result: dict[str, Any] | None = None
     error: str | None = None

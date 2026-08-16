@@ -63,11 +63,11 @@ class TestAgentHealthMonitorInstantiation:
         assert mon.sample_count == 0
 
     def test_invalid_window_size_raises(self):
-        with pytest.raises(ValueError, match="window_size must be >= 1"):
+        with pytest.raises(ValueError, match="window_size 必须 >= 1"):
             AgentHealthMonitor(window_size=0)
 
     def test_negative_window_size_raises(self):
-        with pytest.raises(ValueError, match="window_size must be >= 1"):
+        with pytest.raises(ValueError, match="window_size 必须 >= 1"):
             AgentHealthMonitor(window_size=-5)
 
     def test_custom_slo_config(self):

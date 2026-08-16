@@ -208,6 +208,10 @@ def apply_patch(
                 line_idx += 1
 
         else:
+            # unified diff file headers (--- a/+++ b) are not content; skip them.
+            # 5.219 fix: the else branch used to copy file headers into the result.
+            if line.startswith(("--- ", "+++ ")):
+                continue
             result_lines.append(line)
 
     while orig_idx < len(original_lines):

@@ -76,7 +76,7 @@ class TestA1_EconomicAttacks:
         """负 hard_limit 会让任何调用都触发熔断？还是允许负预算？"""
         b = CostBudget(hard_limit=-10.00)
         with pytest.raises(CostBudgetExceededError):
-            b.check_budget()
+            b.assert_budget()
 
     def test_cumulative_cost_evasion_via_concurrent_reset(self):
         """攻击：并发 record_usage + reset 竞态绕过熔断"""

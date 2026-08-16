@@ -81,7 +81,7 @@ class TestConfigValidator:
         assert result.checked_fields > 0
 
     def test_validate_missing_required_fields(self, tmp_path):
-        cfg = tmp_path / "thresholds.yaml"
+        cfg = tmp_path / "capacity_params.yaml"
         cfg.write_text(yaml.dump({"version": "1.0"}), encoding="utf-8")
         validator = ConfigValidator()
         result = validator.validate(str(cfg))

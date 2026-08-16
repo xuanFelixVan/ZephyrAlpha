@@ -78,10 +78,10 @@ class TestAlertEscalation:
         pass
 
     def test_instantiate(self):
-        from zephyr.shared.alerts.alert_escalation import AlertEscalation
+        from zephyr.shared.alerts.alert_escalation import AlertEscalation, EscalationLevel
 
         tracker = AlertEscalation()
-        assert tracker.alert_level == "INFO"
+        assert tracker.level == EscalationLevel.WARNING
 
 
 class TestAlertManager:

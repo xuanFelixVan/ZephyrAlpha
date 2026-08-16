@@ -41,8 +41,9 @@ class TestSkillLifecycleInstantiation:
         lc = SkillLifecycle()
         assert isinstance(lc.states, dict)
         assert isinstance(lc.guards, dict)
-        assert isinstance(lc.history, dict)
         assert len(lc.states) == 0
+        assert len(lc.guards) == 0
+        assert lc.history("nonexistent") == []
 
     def test_register_default_active(self):
         lc = SkillLifecycle()

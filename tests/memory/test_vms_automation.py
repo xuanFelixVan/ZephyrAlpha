@@ -242,7 +242,7 @@ class TestMaintenanceLoopTasks:
 
         from zephyr.integration.vector_memory.in_process_vector_memory import InProcessVectorMemory
 
-        source = inspect.getsource(InProcessVectorMemory.maintenance_loop)
+        source = inspect.getsource(InProcessVectorMemory._maintenance_loop)
         assert "CHECK_INTERVAL = 60" in source
         assert "DAILY_INTERVAL = 86400" in source
 

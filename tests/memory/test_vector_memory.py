@@ -11,7 +11,7 @@ vector-memory 模块单元测试 — MOD-INF-011
 ===========================================
 覆盖: CollectionManager / EmbeddingRouter / HybridRetriever
       BridgeLayer / CacheLayer / DesignPrinciplesEnforcer
-      InMemoryMemoryBackend / ChunkStrategyRouter / RetrievalFeedback
+      DegradedVMSBackend / ChunkStrategyRouter / RetrievalFeedback
 """
 
 import numpy as np
@@ -210,15 +210,15 @@ class TestChunkStrategyRouter:
 
 class TestInMemoryBackend:
     def test_degraded_mode(self):
-        from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+        from zephyr.integration.vector_memory.in_memory_memory_backend import DegradedVMSBackend
 
-        backend = InMemoryMemoryBackend()
+        backend = DegradedVMSBackend()
         assert backend.degraded is True
 
     def test_write_and_recall(self):
-        from zephyr.integration.vector_memory.in_memory_memory_backend import InMemoryMemoryBackend
+        from zephyr.integration.vector_memory.in_memory_memory_backend import DegradedVMSBackend
 
-        backend = InMemoryMemoryBackend()
+        backend = DegradedVMSBackend()
         doc_id = backend.write("test content", {"origin": "test"})
         assert doc_id.startswith("im::")
 

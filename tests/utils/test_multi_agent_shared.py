@@ -56,13 +56,24 @@ class TestEnums:
         assert len(values) == 6
 
     def test_task_statuses(self):
+        # SSoT: zephyr.gov_enforcement.rule_enforcement.task_types.TaskStatus
         values = {s.value for s in TaskStatus}
-        assert "pending" in values
-        assert "assigned" in values
-        assert "in_progress" in values
-        assert "completed" in values
-        assert "failed" in values
-        assert len(values) == 5
+        assert values == {
+            "PENDING",
+            "CREATED",
+            "LOCKED",
+            "ASSIGNED",
+            "READY",
+            "IN_PROGRESS",
+            "REVIEWING",
+            "COMPLETED",
+            "VERIFIED",
+            "FAILED",
+            "BLOCKED",
+            "WAITING",
+            "RETRY",
+            "CANCELLED",
+        }
 
     def test_merge_strategies(self):
         values = {s.value for s in MergeStrategy}
