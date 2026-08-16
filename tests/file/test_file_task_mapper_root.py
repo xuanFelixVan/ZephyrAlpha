@@ -26,8 +26,9 @@ from zephyr.orchestrator.file_task_mapper import (
 
 class TestClassifyFileToNamespace:
     def test_adr_path(self):
+        # #21 ruling: classify priority list has no ADR-specific rule; adr path falls to OPS fallback.
         result = classify_file_to_namespace("docs/adr/adr-0001-test.md")
-        assert result == TaskNamespace.KBG
+        assert result == TaskNamespace.OPS
 
     def test_enterprise_architecture_path(self):
         result = classify_file_to_namespace("docs/02_enterprise_architecture/ea.md")

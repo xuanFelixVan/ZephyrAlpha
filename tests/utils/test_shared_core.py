@@ -283,7 +283,7 @@ class TestPathConstants:
         assert DB_DIR == REPO_ROOT / "data"
 
     def test_gates_dir_under_repo_root(self):
-        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "gates"
+        assert GATES_DIR == REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
 
     def test_find_repo_root_returns_path(self):
         root = find_repo_root()

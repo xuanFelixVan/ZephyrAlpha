@@ -38,7 +38,7 @@ from zephyr.autonomy_core.skills.skill_silent_failure import SilentFailureDetect
 class TestSkillExecutor:
     def test_execute_nonexistent_skill(self):
         executor = SkillExecutor(loader=MagicMock())
-        executor.loader.load_l1_frontmatter.side_effect = FileNotFoundError("not found")
+        executor.loader._load_l1_frontmatter.side_effect = FileNotFoundError("not found")
         result = executor.execute("NONEXISTENT-SKILL")
         assert isinstance(result, dict)
         assert result.get("status") == "load_failed"

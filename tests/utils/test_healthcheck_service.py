@@ -157,7 +157,7 @@ class TestHealthcheckServiceCheckGit:
 
         svc = HealthcheckService(project_root=PROJECT_ROOT)
         with patch(
-            "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run",
+            "zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden",
             side_effect=sp.TimeoutExpired(cmd="git", timeout=5),
         ):
             status = svc.check_git()
@@ -166,7 +166,7 @@ class TestHealthcheckServiceCheckGit:
     def test_git_not_found_returns_unhealthy(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
         with patch(
-            "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError
+            "zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden", side_effect=FileNotFoundError
         ):
             status = svc.check_git()
             assert status.healthy is False
@@ -194,7 +194,7 @@ class TestHealthcheckServiceCheckDependencies:
         with patch("builtins.__import__", side_effect=ImportError("no module")):
             status = svc.check_dependencies()
             assert status.healthy is False
-            assert "Import failed" in status.message
+            assert "import failed" in status.message
 
 
 class TestHealthcheckServicePrivateChecks:
@@ -252,7 +252,7 @@ class TestHealthcheckServiceBoundary:
     def test_python_not_found_returns_unhealthy(self):
         svc = HealthcheckService(project_root=PROJECT_ROOT)
         with patch(
-            "zephyr.infrastructure.shared_services.healthcheck_service.subprocess.run", side_effect=FileNotFoundError
+            "zephyr.shared.lifecycle.healthcheck_service.run_subprocess_hidden", side_effect=FileNotFoundError
         ):
             status = svc.check_python()
             assert status.healthy is False

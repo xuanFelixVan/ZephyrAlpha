@@ -405,7 +405,7 @@ class TestCbacIntegration:
             ),
             encoding="utf-8",
         )
-        with patch("zephyr.shared.capability.CAPABILITIES_YAML_PATH", deny_yaml):
+        with patch("zephyr.shared.security.capability.CAPABILITIES_YAML_PATH", deny_yaml):
             CapabilityRegistry.reset()
             api = UnifiedMemoryAPI(backend=memory_backend, enforce_capability=True)
             with pytest.raises(CapabilityDenied):

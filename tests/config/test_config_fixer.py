@@ -45,7 +45,7 @@ class TestConfigFixerScan:
     def test_scan_returns_list(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         fixer = ConfigFixer()
-        result = fixer.scan()
+        result = fixer.scan(root=tmp_path)
         assert isinstance(result, list)
 
     def test_scan_detects_merge_conflict(self, tmp_path, monkeypatch):
@@ -54,13 +54,13 @@ class TestConfigFixerScan:
             "key: val\n<<<<<<< HEAD\na: 1\n=======\nb: 2\n>>>>>>> br\n", encoding="utf-8"
         )
         fixer = ConfigFixer()
-        result = fixer.scan()
+        result = fixer.scan(root=tmp_path)
         assert any(f["type"] == "merge_conflict_markers" for f in result)
 
     def test_scan_empty_dir(self, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         fixer = ConfigFixer()
-        result = fixer.scan()
+        result = fixer.scan(root=tmp_path)
         assert result == []
 
 
