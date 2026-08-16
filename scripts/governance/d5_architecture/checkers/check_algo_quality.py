@@ -1813,6 +1813,7 @@ def _print_report(
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = _parse_args()
     # 默认 --ci
     ci_mode = not args.warn_only

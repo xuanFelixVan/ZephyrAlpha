@@ -1,4 +1,5 @@
 # [TESTS] tests/ex_core/test_open_order_resolver.py
+# [TTL] task_bound
 # 对应: src/zephyr/ex_core/open_order_resolver.py
 # 覆盖: gap 6 未成交续接（Make-or-Take / PARTIAL / 尾盘清退 / 幂等）
 """OpenOrderResolver 单元测试（40_execution_broker §决策⑪ gap 6）。

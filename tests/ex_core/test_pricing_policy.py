@@ -1,4 +1,5 @@
 # [TESTS] tests/ex_core/test_pricing_policy.py
+# [TTL] task_bound
 # 对应: src/zephyr/ex_core/pricing_policy.py
 # 覆盖: gap 9 挂单价算法（被动档/主动档/涨停跌停/提1tick/盘口回退）
 """PricingPolicy 单元测试（40_execution_broker §决策⑭ gap 9）。"""

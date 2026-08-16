@@ -149,6 +149,7 @@ def generate_fix_sql(violations: list[dict[str, object]]) -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="macro_data indicator_name 前缀合规检测"
     )

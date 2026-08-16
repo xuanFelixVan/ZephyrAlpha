@@ -35,3 +35,5 @@ zephyr.nlp — NLP 情感分析管道（P1-E3）。
 # I1 --> A1
 # A1 --> O1
 """
+
+__all__: list[str] = ["nlp_inference"]

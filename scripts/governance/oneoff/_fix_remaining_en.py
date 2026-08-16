@@ -93,6 +93,7 @@ _TRANSLATIONS: dict[str, str] = {
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     with open(_YAML, encoding="utf-8") as f:
         lines = f.readlines()
 

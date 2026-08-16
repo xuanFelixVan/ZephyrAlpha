@@ -1,4 +1,5 @@
 # [TESTS] tests/ex_core/test_trading_halt_resolver.py
+# [TTL] task_bound
 # 对应: src/zephyr/ex_core/trading_halt_resolver.py
 # 覆盖: gap 14 临时停牌处理（盘中临停/跨日停牌/复牌/目标过滤/预占释放）
 """TradingHaltResolver 单元测试（40_execution_broker §决策⑮ gap 14）。"""

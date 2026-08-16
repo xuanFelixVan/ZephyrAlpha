@@ -173,6 +173,7 @@ def _acquire_regen_lock() -> tuple[bool, str]:
     lock_path = _LOCK_DIR / _REGEN_LOCK_NAME
 
     def _write_owner() -> bool:
+        """_write_owner implementation."""
         fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
         try:
             os.write(fd, f"{os.getpid()}\n".encode())
@@ -408,6 +409,7 @@ def _invoke_parallel(entries: list[dict]) -> list[dict]:
     results: list[dict | None] = [None] * len(entries)
 
     def _run(idx: int, entry: dict) -> None:
+        """_run implementation."""
         try:
             results[idx] = _invoke_generator(entry)
             # db:-only boot 兜底：成功后写时间戳（_is_stale 据此判定是否需 boot 重跑）

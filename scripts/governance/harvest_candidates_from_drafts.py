@@ -406,6 +406,7 @@ def append_to_file(path: Path, block: str) -> None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--domain", help="只处理指定域（横杠格式，如 D-CROSS-ASSET）")
     ap.add_argument("--all", action="store_true", help="全量处理所有域")

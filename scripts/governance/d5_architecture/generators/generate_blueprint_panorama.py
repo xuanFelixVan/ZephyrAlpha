@@ -920,6 +920,7 @@ def _fetch_all_dataflow_modules() -> dict[str, DataflowModuleInfo]:
         conn.close()
 
     def _col(row, *keys):
+        """_col implementation."""
         for k in keys:
             if isinstance(row, dict):
                 if k in row:
@@ -973,6 +974,7 @@ def _fetch_all_decision_modules() -> dict[str, DecisionModuleInfo]:
         conn.close()
 
     def _col(row, *keys):
+        """_col implementation."""
         for k in keys:
             if isinstance(row, dict):
                 if k in row:

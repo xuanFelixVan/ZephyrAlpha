@@ -1170,6 +1170,7 @@ def translate_name(name_en: str, module_path: str = "") -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="批量修复 module_translation_registry.yaml 中 name_zh 不含中文的条目")
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不写文件")
     parser.add_argument("--execute", action="store_true", help="执行写入")

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/risk
 title: "Risk Management Core 蓝图+施工图 — 风险管理引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.9"
+version: "2.2.10"
 layer: L2_domain
 layer_name: risk_management
 functional_domain: risk
@@ -59,7 +59,7 @@ build_status: generated
 > 本蓝图仅做审查、回填、压缩、对齐，不触发任何代码变更。
 
 > actual_disk_path: src/zephyr/risk/ (10 .py files)
-> module_id: MOD-L04-001 | version: 2.2.9 | status: Active | layer: L2_domain
+> module_id: MOD-L04-001 | version: 2.2.10 | status: Active | layer: L2_domain
 > generation: 2 | construction_progress: partially_implemented
 
 # Risk Management Core 蓝图+施工图 — 风险管理引擎
@@ -1016,13 +1016,16 @@ class ViolationDetail(BaseModel):
 | `schemas/categories/market_sector_meta.py` | ✅ 已实现 | |
 | `schemas/categories/market_sector_snapshot.py` | ✅ 已实现 | |
 | `schemas/categories/market_st_stock_list.py` | ✅ 已实现 | |
+| `schemas/categories/market_stk_limit.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_list.py` | ✅ 已实现 | |
 | `schemas/categories/market_stock_valuation.py` | ✅ 已实现 | |
+| `schemas/categories/market_suspend.py` | ✅ 已实现 | |
 | `schemas/categories/market_technical_indicator.py` | ✅ 已实现 | |
 | `schemas/categories/market_tick.py` | ✅ 已实现 | |
 | `schemas/categories/market_trade_calendar.py` | ✅ 已实现 | |
 | `schemas/categories/market_us_index.py` | ✅ 已实现 | |
+| `schemas/categories/meta_stock_basic.py` | ✅ 已实现 | |
 | `src/zephyr/risk/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/risk/implementations/default_position_limit_checker.py` | ✅ 已实现 | |
@@ -1034,6 +1037,7 @@ class ViolationDetail(BaseModel):
 |---------|:---:|------|
 | `tests/risk/core/test_orchestrator_alert_integration.py` | ✅ 已实现 | |
 | `tests/risk/core/test_orchestrator_g3g5g6_integration.py` | ✅ 已实现 | |
+| `tests/risk/test_kill_switch_state_persistence.py` | ✅ 已实现 | |
 | `tests/risk/test_l04_risk_management.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

@@ -1,4 +1,5 @@
 # [TESTS] tests/ex_core/test_corporate_action_adjuster.py
+# [TTL] task_bound
 # 对应: src/zephyr/ex_core/corporate_action_adjuster.py
 # 覆盖: gap 15 除权除息处理（参考价/持仓调整/涨跌停重算）
 """CorporateActionAdjuster 单元测试（40_execution_broker §决策⑯ gap 15）。"""

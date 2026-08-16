@@ -489,6 +489,7 @@ def render_full_table(entries: list[dict]) -> list[str]:
     status_order = {"candidate": 0, "deferred": 1, "approved": 2, "promoted": 3, "rejected": 4}
 
     def _sort_key(e: dict) -> tuple:
+        """_sort_key implementation."""
         return (status_order.get(e.get("status", ""), 9), e.get("id", ""))
 
     for e in sorted(entries, key=_sort_key):

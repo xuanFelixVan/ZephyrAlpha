@@ -3,6 +3,7 @@
 # [TESTS] zephyr.risk.core.var_backtester
 # [COVERAGE] Kupiec POF / Christoffersen / Acerbi-Szekely Z2 / E-backtesting / Basel traffic light
 # [MATURITY] evolving
+# [TTL] task_bound
 
 """
 VarBacktester 单测桩 — 36号 §3.9 MVP 4 法回测验证器。

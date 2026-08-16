@@ -243,6 +243,7 @@ def verify_path3_postcommit_yaml() -> dict:
 
     class _FakePopen:  # 拦截 spawn，记录调用参数
         def __init__(self, *args, **kwargs):
+            """__init__ implementation."""
             spawned_calls.append(args)
             self.pid = 99999
 
@@ -284,6 +285,7 @@ _VERIFIERS = {
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="生成器三条触发路径冒烟验证")
     parser.add_argument("--path", type=int, choices=[1, 2, 3],
                         help="只跑指定路径（默认全部）")

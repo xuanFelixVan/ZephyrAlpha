@@ -581,6 +581,7 @@ def _gen_mermaid(
 
     # 过滤（scope + maturity 双维度）
     def _match(item: dict) -> bool:
+        """_match implementation."""
         if scope_filter and item["scope"] != scope_filter:
             return False
         if maturity_filter and item.get("maturity") != maturity_filter:
@@ -1246,6 +1247,7 @@ def main() -> int:
 
     # 辅助：写 MD 后联动生成可缩放 HTML（模板 V1.2 §9.1 #1：MD+HTML 双产物）
     def _write_md_and_html(stem: str, md_text: str) -> None:
+        """_write_md_and_html implementation."""
         md_path = out_dir / f"{stem}.md"
         md_path.write_text(md_text, encoding="utf-8", newline="\n")
         html_path = emit_zoomable_html(md_path, md_text, out_dir / HTML_SUBDIR)

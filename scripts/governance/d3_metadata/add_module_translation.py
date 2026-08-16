@@ -335,6 +335,7 @@ def add_translation(entry: dict, *, dry_run: bool = False) -> tuple[int, str]:
 
 
 def _build_argparser() -> argparse.ArgumentParser:
+    """_build_argparser implementation."""
     p = argparse.ArgumentParser(
         prog="add_module_translation.py",
         description="模块翻译条目合规写入工具（TRANSLATION-COVERAGE 配套）。按 module_path upsert 一条含大白话 plain_zh 的翻译条目。",
@@ -351,6 +352,7 @@ def _build_argparser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     args = _build_argparser().parse_args(argv)
     entry = {
         "module_path": _normalize_path(args.path),

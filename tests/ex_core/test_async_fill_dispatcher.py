@@ -1,4 +1,5 @@
 # [TESTS] tests/ex_core/test_async_fill_dispatcher.py
+# [TTL] task_bound
 # 对应: src/zephyr/ex_core/async_fill_dispatcher.py
 # 覆盖: gap 12 回调线程异步派发（入队/消费/幂等/停机/背压）
 """AsyncFillDispatcher 单元测试（40_execution_broker §决策① 工程约束1 gap 12）。"""

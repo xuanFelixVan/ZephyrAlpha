@@ -219,6 +219,7 @@ def collect_logs_stale(logs_days: int) -> list[Path]:
 def _gather(
     tmp_days: int, pg_keep: int, logs_days: int, subdir_days: int
 ) -> dict[str, list[Path]]:
+    """_gather implementation."""
     return {
         "tmp_root": collect_tmp_root_stale(tmp_days),
         "pg_backups": collect_pg_backups_excess(pg_keep),
@@ -228,6 +229,7 @@ def _gather(
 
 
 def _total_size(paths: list[Path]) -> int:
+    """_total_size implementation."""
     total = 0
     for p in paths:
         try:
@@ -238,6 +240,7 @@ def _total_size(paths: list[Path]) -> int:
 
 
 def _fmt_size(n: int) -> str:
+    """_fmt_size implementation."""
     if n >= 1_048_576:
         return f"{n / 1_048_576:.1f} MB"
     if n >= 1024:
@@ -246,6 +249,7 @@ def _fmt_size(n: int) -> str:
 
 
 def _rel(p: Path) -> str:
+    """_rel implementation."""
     try:
         return str(p.relative_to(REPO_ROOT))
     except ValueError:
@@ -253,6 +257,7 @@ def _rel(p: Path) -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="tmp/ + logs/ 退役区 TTL 执行器（AI-03 P2/P3 治本，默认 dry-run）",
     )

@@ -169,6 +169,7 @@ def check_file(filepath: Path) -> tuple[list[str], list[str]]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="测试结构合规门禁")
     parser.add_argument("--warn-only", action="store_true", help="仅警告不阻断（exit 0）")
     parser.add_argument("--path", type=Path, default=DEFAULT_TEST_DIR, help="测试目录")

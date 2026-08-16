@@ -406,6 +406,7 @@ def collect_py_file_total() -> str:
     sync_date = _SYNC_DATE
 
     def _count_py(root: Path) -> int:
+        """_count_py implementation."""
         if not root.exists():
             return 0
         return sum(1 for f in root.rglob("*.py") if f.name != "__init__.py")
@@ -681,6 +682,7 @@ def replace_block(content: str, block_name: str, new_inner: str) -> tuple[str, b
     regex = re.compile(pattern, re.DOTALL)
 
     def _replace(match: re.Match) -> str:
+        """_replace implementation."""
         start_line = match.group(1)  # <!-- AUTO-START:name -->\n
         return f"{start_line}{new_inner}\n{match.group(3)}"
 

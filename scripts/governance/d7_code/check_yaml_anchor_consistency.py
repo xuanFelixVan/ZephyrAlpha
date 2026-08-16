@@ -87,6 +87,7 @@ EXEMPT_PATTERNS = [
 
 
 def _is_exempt(rel_path: str) -> bool:
+    """_is_exempt implementation."""
     norm = rel_path.replace("\\", "/")
     return any(pat.search(norm) for pat in EXEMPT_PATTERNS)
 
@@ -179,6 +180,7 @@ def scan_all(root: Path) -> dict:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="YAML 治理锚定一致性扫描（B_yaml 锚定块 vs body vs [A_config] 遗留）"
     )

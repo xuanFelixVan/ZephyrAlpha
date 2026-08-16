@@ -819,6 +819,7 @@ def _rel_edge_tuples(
 ) -> list[tuple[str, str, bool]]:
     """关联图边生成：上游→本模块 / 本模块→下游；对端非运营态=断点边。"""
     def _is_break(x: str) -> bool:
+        """_is_break implementation."""
         rr = row_by_id.get(x)
         return (rr is None) or rr["tier"] != "operational"
 
@@ -1202,6 +1203,7 @@ def _indicator_title_parts(node: AlgoFlowNode) -> list[str]:
 
 
 def _label_lines_input(node: AlgoFlowNode) -> list[str]:
+    """_label_lines_input implementation."""
     lines = [_algo_node_title(node)]
     if node.fields:
         lines.append(node.fields)
@@ -1211,6 +1213,7 @@ def _label_lines_input(node: AlgoFlowNode) -> list[str]:
 
 
 def _label_lines_feature(node: AlgoFlowNode) -> list[str]:
+    """_label_lines_feature implementation."""
     lines = [_algo_node_title(node)]
     if node.intro:
         lines.append(node.intro)
@@ -1224,6 +1227,7 @@ def _label_lines_feature(node: AlgoFlowNode) -> list[str]:
 
 
 def _label_lines_algo(node: AlgoFlowNode) -> list[str]:
+    """_label_lines_algo implementation."""
     lines = [_algo_node_title(node)]
     if node.intro:
         lines.append(node.intro)
@@ -1241,6 +1245,7 @@ def _label_lines_algo(node: AlgoFlowNode) -> list[str]:
 
 
 def _label_lines_output(node: AlgoFlowNode) -> list[str]:
+    """_label_lines_output implementation."""
     lines = [_algo_node_title(node)]
     if node.intro:
         lines.append(node.intro)

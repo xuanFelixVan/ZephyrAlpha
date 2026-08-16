@@ -123,6 +123,7 @@ def extract_disk_block(content: str) -> str | None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="生成/校验 .importlinter forbidden_modules 块")
     parser.add_argument(
         "--check",
@@ -147,6 +148,7 @@ def main() -> None:
 
     # 归一化比对：提取值行集合（忽略顺序，防手工排序差异误报）
     def _values(block: str) -> set[str]:
+        """_values implementation."""
         return {line.strip() for line in block.splitlines()[1:] if line.strip()}
 
     expected_vals = _values(expected_block)
