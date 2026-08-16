@@ -14189,11 +14189,11 @@ entries:
     - 'src/zephyr/governance/lifecycle_governance/rollback_state_machine.py（新建，与 paper_live_transition 同包；53 号 §3.8 伪代码落地）'
     - 'src/zephyr/governance/lifecycle_governance/paper_live_transition.py（晋级前置条件接入降级姿态=NORMAL 校验）'
     - 'docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/53_simulation_live_path.md（§3.8 施工锚点）'
-  fix_phase: '待施工（约 1 周）；时点在 #ARCH-QUANT-002 完成后、首批策略进 SHADOW 前'
-  status: decided
+  fix_phase: '已完成（2026-08-17 AI-DGR-001 施工落地，提交标记 [GW:AI-DGR-001]：rollback_state_machine.py 五态 FSM 按 53 号 §3.8 伪代码逐行落地 + paper_live_transition.py 晋级前置 NORMAL 校验耦合点 + 57 项新测试两轮全绿）'
+  status: resolved
   related_rules: '#ARCH-QUANT-001; #ARCH-QUANT-002'
   created: '2026-08-11'
-  last_updated: '2026-08-15'
+  last_updated: '2026-08-17'
   owner_approval: '2026-08-15 用户会话内明确批准方案 C（AI-SIM-001 会话）'
 
 - issue_id: '#ARCH-QUANT-004'

@@ -16,14 +16,14 @@
 #   name_zh: ① 模块命名空间声明
 #   name_en: zephyr.governance.lifecycle_governance.__init__
 #   intro: __unmanaged__src/zephyr/governance/lifecycle_governance/__init__.py 包入口
-#   desc: MOD-GOV-lifecycle_governance 包入口，模块命名空间声明并声明 __all__（24项）
+#   desc: MOD-GOV-lifecycle_governance 包入口，模块命名空间声明并声明 __all__（33项）
 #   inputs: I1
 #   outputs: zephyr.governance.lifecycle_governance 包级公共命名空间
-#   invariant: 包级导出以 __all__ 声明为准（24项）
+#   invariant: 包级导出以 __all__ 声明为准（33项）
 # 层: 输出
 # - id: O1
 #   name_zh: zephyr.governance.lifecycle_governance 包公共 API
-#   name_en: __all__ 24项
+#   name_en: __all__ 33项
 #   intro: __unmanaged__src/zephyr/governance/lifecycle_governance/__init__.py 包入口——对外统一出口
 #   downstream: 见蓝图头 [CONSUMERS] 声明
 # [/ALGO_FLOW]
@@ -41,19 +41,28 @@ __all__ = [
     "PLVSpec",
     "PhaseDef",
     "PhaseSpec",
+    "RollbackState",
+    "STATE_NAMESPACE",
     "TransitionPhase",
     "TransitionState",
     "api_lifecycle",
+    "check_promotion_allowed",
     "create_transition_state",
     "deprecate_api",
+    "evaluate_rollback",
     "get_next_phase",
     "get_next_phase",
     "get_phase_def",
     "get_phase_spec",
     "get_plv_spec",
+    "load_persisted_state",
     "migration_strategy",
     "paper_live_transition",
+    "persist_state",
     "post_live_verification",
+    "recover",
     "remove_api",
+    "rollback_state_machine",
+    "safe_read_state",
     "valid_transition",
 'transition']

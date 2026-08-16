@@ -283,10 +283,11 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 101 | 53 号 §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）裁定落点与代码不符 | 独立复核实证（2026-08-16） | 53 号 v1.7.7 修订记录称"降级维度真源=§3.8 五态（落地 rollback_state_machine.py）"，实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举 src 全仓零命中；晋级迁移 FSM 已经 Owner 裁定方案 C 废弃（不另建，阶段维度真源=paper_live_transition 三阶段门禁）；53 号结案报告已按实测修正 | ⏳ 待排期施工（五态降级机真正落码） |
+| 101 | 53 号 §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）裁定落点与代码不符 | 独立复核实证（2026-08-16） | 53 号 v1.7.7 修订记录称"降级维度真源=§3.8 五态（落地 rollback_state_machine.py）"，实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举 src 全仓零命中；晋级迁移 FSM 已经 Owner 裁定方案 C 废弃（不另建，阶段维度真源=paper_live_transition 三阶段门禁）；53 号结案报告已按实测修正 | ✅ 已闭环（2026-08-17 AI-DGR-001 派单施工，[GW:AI-DGR-001]）：governance/lifecycle_governance/rollback_state_machine.py 新建（MOD-GOV-045，§3.8 伪代码逐行落码——单向更保守/fail-closed/Hysteresis/≥30 笔地板/JsonStateStore 持久化）+ paper_live_transition.py check_promotion_allowed 晋级前置 NORMAL 耦合点；57 新测试两轮全绿+既有 28 项零回归；#ARCH-QUANT-003 resolved；53 号 v1.7.8 锚点全同步 |
 | 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | ⏳ 下一治理批顺手修 |
 | 103 | tests/git test_git_command_timeout_handled 环境敏感失败 | 独立复核实证（2026-08-16） | 测试期望 git 命令超时返回 COMMIT_FAILED，本机执行过快未触发超时致断言失败（148 过/1 失败/1 xpassed）；非功能缺陷，属测试环境假设缺陷 | ⏳ 观察（换机/负载变化时再评估） |
 
+<<<<<<< HEAD
 ### P1-补6 · 2026-08-17 AI-RFIX-001 登记（第六统筹并入，承接方已甄别）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
@@ -296,6 +297,14 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 107 | POT 连续 5 日失败→阈值调整升级计数器 | AI-RFIX-001 反馈⑤ | 需跨日持久化计数器，随 state_store 持久化批（REDIS-001 在途范围不含，归其后续批） | ⏳ state_store 后续批 |
 | 108 | tests/risk/test_ml_experiment_pipeline.py::test_p_hacking_warning 既有失败 | AI-RFIX-001 反馈⑤+第六统筹实证 | dev HEAD 同败实证（'no_models' vs 'p_hacking_warning'），shim 模块 standalone 复现，与本批零依赖链；tests 域归后续测试债批 | ⏳ 后续测试债批 |
 | 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | ⏳ 随 #ARCH-105 治理 |
+
+### P1-补7 · 2026-08-17 AI-DGR-001 登记（53 号 §3.8 五态降级机施工批）【编号注记：原登记 #105-#107 与 RFIX-001 已入 dev 的 #105-#109 撞号，merge 重编 #110-#112——2026-08-17 第六统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 110 | MOD-GOV-045 rollback_state_machine depgraph 登记 | AI-DGR-001（原 #105） | NEW-FILE-DEPGRAPH 门禁强制：已登记 file 粒度节点（node_id=9702457，build_status=generated，design_maturity=design——pre-merge 正确态；#ARCH-70 通道 merge 后重扫自动同身份转 production，无需手工 transition）。⚠️ 教训实证：design_maturity 提前手工转 production 会被主仓锚定的后台重扫当孤儿收割（文件未上主仓盘），pre-merge 必须保持 design | ✅ 已登记（转正随 merge 自动） |
+| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | ⏳ 下一治理批 |
+| 112 | 五态降级机执行侧动作接线（撤单/阻断/减仓/平仓入交易运行时） | AI-DGR-001（原 #107） | 本批只产出姿态（FSM 永不生成/撤销订单）；执行动作消费方接线属 SHADOW 阶段施工（53 号 §3.6 表已同步标注"执行侧接线待施工"） | ⏳ 待 SHADOW 阶段 |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

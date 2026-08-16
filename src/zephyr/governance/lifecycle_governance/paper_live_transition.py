@@ -1,27 +1,73 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
 # [MODULE] zephyr.governance.lifecycle_governance.paper_live_transition
 # [DOMAIN] D_GOVERNANCE
-# [DEPENDENCIES] zephyr.governance.lifecycle_governance.__init__
+# [DEPENDENCIES] zephyr.governance.lifecycle_governance.__init__; zephyr.governance.lifecycle_governance.rollback_state_machine
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] TransitionPhase order: PARALLEL→SHADOW→GRAY_RAMP;valid_transition only sequential;晋级前置当前降级姿态须为NORMAL(#ARCH-QUANT-003两机唯一耦合点)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] PermissionError(晋级时降级姿态非NORMAL)
 # [TESTS]
 # [A_module] module_id=MOD-GOVERNANCE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
+"""三阶段迁移门禁（PARALLEL/SHADOW/GRAY_RAMP）+ 晋级前置降级姿态校验。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 阶段晋级请求
+#   fields: from_phase/to_phase（TransitionPhase 枚举）
+#   code: valid_transition(from_phase, to_phase)
+# - id: I2
+#   name: 当前降级姿态
+#   fields: RollbackState 五态（NORMAL/THROTTLED/SOFT_HALT/HARD_HALT/UNWINDING）
+#   code: check_promotion_allowed(posture)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 不可跳级校验
+#   name_en: valid_transition sequential check
+#   intro: 只允许顺序 next（to_idx == from_idx + 1），不可跳 Phase
+#   desc: PHASE_ORDER 索引差判定；get_next_phase 返回顺序下一阶或 None
+#   inputs: I1
+#   outputs: bool / 下一 Phase
+#   invariant: TransitionPhase order 恒为 PARALLEL→SHADOW→GRAY_RAMP
+# - id: A2
+#   name_zh: ② 晋级前置降级姿态校验
+#   name_en: check_promotion_allowed posture gate
+#   intro: 当前降级姿态非 NORMAL → PermissionError 拒绝晋级（两机唯一耦合点，#ARCH-QUANT-003）
+#   desc: posture != RollbackState.NORMAL → raise PermissionError；姿态读取走 rollback_state_machine.load_persisted_state（fail-closed）
+#   inputs: I2
+#   outputs: None（通过）/ PermissionError（拒绝）
+#   invariant: 降级中（THROTTLED/SOFT_HALT/HARD_HALT/UNWINDING）禁止晋级
+# 层: 输出
+# - id: O1
+#   name_zh: 晋级裁决与迁移状态
+#   name_en: promotion verdict + TransitionState
+#   intro: 晋级通过后经 get_next_phase 推进并持久化 TransitionState（审计凭证）
+#   downstream: 53 号 memo §3.6 晋级仪式（首批策略进 SHADOW 阶段接线）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> O1
+# A2 --> O1
+"""
+
 from __future__ import annotations
 
-from typing import Final
 from datetime import UTC, datetime
 from enum import Enum
+from typing import Final
 
 from pydantic import BaseModel, Field
+
+from zephyr.governance.lifecycle_governance.rollback_state_machine import RollbackState
 
 
 class TransitionPhase(str, Enum):
@@ -86,6 +132,24 @@ def get_next_phase(current: TransitionPhase) -> TransitionPhase | None:
     if idx + 1 < len(phases):
         return phases[idx + 1]
     return None
+
+
+def check_promotion_allowed(posture: RollbackState) -> None:
+    """阶段晋级前置校验：当前降级姿态须为 NORMAL。
+
+    #ARCH-QUANT-003 裁定两机唯一耦合点（53 号 §3.6 晋级条件）：降级中
+    （THROTTLED/SOFT_HALT/HARD_HALT/UNWINDING）禁止晋级；其余时间两机独立。
+    姿态读取走 rollback_state_machine.load_persisted_state（fail-closed——
+    读取失败按 SOFT_HALT 处理即禁止晋级，停错代价 < 放错代价）。
+
+    Raises:
+        PermissionError: 降级姿态非 NORMAL，禁止晋级。
+    """
+    if posture != RollbackState.NORMAL:
+        raise PermissionError(
+            f"降级姿态={posture.value}，禁止晋级（须 NORMAL；"
+            f"#ARCH-QUANT-003 两机唯一耦合点，53 号 §3.6）"
+        )
 
 
 class TransitionState(BaseModel):
