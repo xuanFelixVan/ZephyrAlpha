@@ -298,12 +298,6 @@ class TestCancelPendingRollback:
 class TestDiscardConcurrencyGuard:
     """discard_changes() 并发安全守卫 — .ailocks 锁冲突检测（方案C）"""
 
-    @pytest.mark.xfail(
-        reason="已知独立逻辑 bug（f84343b01f commit 消息自认）：discard_changes 未接入 "
-        "check_rollback_conflict 并发守卫（方案C 集成缺口），疑似真 bug 移交统筹，"
-        "留置待 #ARCH-1xx 编号（AI-TD2-TRD-001 申请中）",
-        strict=False,
-    )
     def test_discard_blocked_by_other_session_lock(self):
         """文件被其他 session 锁定 → BLOCKED_BY_OWNER"""
         from zephyr.infrastructure.runtime.concurrency_guard import ConflictResult

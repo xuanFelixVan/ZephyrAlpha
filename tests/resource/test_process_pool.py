@@ -255,13 +255,21 @@ class TestWmiSpawnHelpers:
             pp._spawn_detached_via_wmi(["python.exe", "-c", "pass"])
 
     def test_wmi_spawn_script_contents(self, monkeypatch):
-        """脚本契约：ShowWindow=SW_HIDE（无闪窗）、env 全量显式传递、cwd 落 CurrentDirectory。"""
+        """脚本契约（#ARCH-102 新版）：ShowWindow=SW_HIDE、env 经临时文件传输
+        （脚本不内联 env 内容）、cwd 落 CurrentDirectory、返回后 env 文件已清。"""
+        import re
+
         import zephyr.shared.infra.process_pool as pp
 
         captured: dict = {}
 
         def _fake_run(cmd, **kw):
             captured["script"] = cmd[-1]
+            m = re.search(r"\$envFile = '([^']+)'", cmd[-1])
+            assert m, "脚本应经 $envFile 引用传输 env"
+            captured["env_file"] = m.group(1)
+            with open(captured["env_file"], "rb") as fh:
+                captured["env_bytes"] = fh.read()
             return self._fake_completed("ZEPHYR_WMI_SPAWN|0|1\n")
 
         monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
@@ -271,9 +279,73 @@ class TestWmiSpawnHelpers:
         script = captured["script"]
         assert "$startup.ShowWindow = [uint16]0" in script
         assert "CreateFlags" not in script  # WMI 拒 CreateFlags（RV=21 实证）
-        assert "'ZW_TEST=v1'" in script
-        assert "'QUOTE=it''s'" in script  # 单引号双写转义
+        assert "Get-Content -LiteralPath $envFile -Encoding UTF8" in script
         assert "CurrentDirectory = 'd:/work'" in script
+        # env 不内联进脚本——任何异常路径（TimeoutExpired.args）都不再携带 env
+        assert "ZW_TEST=v1" not in script
+        assert "QUOTE" not in script
+        # env 文件：utf-8-sig BOM（保 PS5.1 对非 ASCII 值正确解码）+ 全量条目
+        assert captured["env_bytes"].startswith(b"\xef\xbb\xbf")
+        env_text = captured["env_bytes"].decode("utf-8-sig")
+        assert "ZW_TEST=v1\n" in env_text
+        assert "QUOTE=it's\n" in env_text
+        # 双侧清理：函数返回后 env 文件不残留
+        import os
+
+        assert not os.path.exists(captured["env_file"])
+
+    def test_wmi_spawn_secret_keys_stripped(self, monkeypatch):
+        """敏感键剥离（#ARCH-102）：令牌/密钥语义变量不进 WMI 传输通道。"""
+        import re
+
+        import zephyr.shared.infra.process_pool as pp
+
+        captured: dict = {}
+
+        def _fake_run(cmd, **kw):
+            captured["script"] = cmd[-1]
+            m = re.search(r"\$envFile = '([^']+)'", cmd[-1])
+            with open(m.group(1), encoding="utf-8-sig") as fh:
+                captured["env_text"] = fh.read()
+            return self._fake_completed("ZEPHYR_WMI_SPAWN|0|1\n")
+
+        monkeypatch.setattr(pp, "run_subprocess_hidden", _fake_run)
+        pp._spawn_detached_via_wmi(
+            ["python.exe", "-c", "pass"],
+            env={
+                "GITHUB_TOKEN": "ghp_secret",
+                "DEEPSEEK_API_KEY": "sk-secret",
+                "MY_PASSWORD": "pw",
+                "ZW_NORMAL": "keep",
+                "ZEPHYR_SESSION_ID": "ai-test",
+            },
+        )
+        assert "ghp_secret" not in captured["env_text"]
+        assert "sk-secret" not in captured["env_text"]
+        assert "pw" not in captured["env_text"]
+        assert "ghp_secret" not in captured["script"]
+        assert "ZW_NORMAL=keep\n" in captured["env_text"]
+        assert "ZEPHYR_SESSION_ID=ai-test\n" in captured["env_text"]
+
+    def test_wmi_spawn_timeout_sanitized(self, monkeypatch):
+        """超时脱敏（#ARCH-102）：TimeoutExpired 不回传——其 args 含完整命令，
+        病史为全量 env 随异常喷入 reconcile status JSON 明文落盘。"""
+        import subprocess
+
+        import pytest
+
+        import zephyr.shared.infra.process_pool as pp
+
+        def _timeout_run(cmd, **kw):
+            raise subprocess.TimeoutExpired(cmd=cmd, timeout=60)
+
+        monkeypatch.setattr(pp, "run_subprocess_hidden", _timeout_run)
+        with pytest.raises(RuntimeError, match="timed out") as exc_info:
+            pp._spawn_detached_via_wmi(
+                ["python.exe", "-c", "pass"], env={"GITHUB_TOKEN": "ghp_secret"},
+            )
+        assert "ghp_secret" not in str(exc_info.value)
+        assert "GITHUB_TOKEN" not in str(exc_info.value)
 
 
 class TestWmiDetachedProcessShim:

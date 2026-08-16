@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-POS-009 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """PositionStateMachine 单元测试 (MOD-POS-002)。
 
 覆盖: 状态转换合法性 / 灰度发布4阶段 / 观察期规则 / 冷却期规则 / 事件产出。

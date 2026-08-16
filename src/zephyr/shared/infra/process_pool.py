@@ -32,8 +32,10 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 import subprocess
 import sys
+import tempfile
 import threading
 import time
 from dataclasses import dataclass, field
@@ -200,6 +202,18 @@ def _ps_single_quote(value: str) -> str:
     return "'" + value.replace("'", "''") + "'"
 
 
+# 敏感键剥离名单（#ARCH-102）：WMI 传输通道不携带令牌/密钥语义变量。
+# 病史：全量 env 内联 -Command 脚本，TimeoutExpired.args 携带完整命令喷入
+# reconcile status JSON——GITHUB_TOKEN 等明文落盘。WMI 通道经系统服务
+# （Winmgmt）中转，本身亦不宜接触凭据。主 Popen 通道（CreateProcess 直传、
+# 无第三方中转）保留完整继承语义——四调用方（reconcile_worker/drift
+# watchdog/session_worktree/ollama）均无凭据需求，剥离行为差异可接受。
+_SECRET_ENV_KEY_RE = re.compile(
+    r"TOKEN|SECRET|PASSWORD|CREDENTIAL|COOKIE|API_?KEY|PRIVATE_?KEY|ACCESS_?KEY",
+    re.IGNORECASE,
+)
+
+
 def _spawn_detached_via_wmi(
     cmd: list[str],
     *,
@@ -213,8 +227,11 @@ def _spawn_detached_via_wmi(
     进程由 WMI 服务（Winmgmt）创建，不属于调用方所在 Job Object——父命令
     退出拆 job 时不被连坐（#ARCH-SPAWN-JOB-KILL-001 探针实证）。
 
-    - 环境变量经 Win32_ProcessStartup.EnvironmentVariables 全量显式传递
-      （env=None 时物化当前 os.environ，对齐 Popen 继承语义）
+    - 环境变量（env=None 时物化当前 os.environ，对齐 Popen 继承语义）先经
+      _SECRET_ENV_KEY_RE 剥离敏感键，再经临时文件（utf-8-sig）传输给
+      Win32_ProcessStartup.EnvironmentVariables（#ARCH-102）——不内联
+      -Command 脚本：脚本恒定小体量（通道慢时不再解析数万字符），且任何
+      异常路径（TimeoutExpired.args 等）都不再携带 env 内容
     - ShowWindow=SW_HIDE 保持 TRAE-067 无闪窗铁律（CreateFlags 被 WMI 拒
       ReturnValue=21；ShowWindow 是 WMI 合法通道，探针实证）
     - WMI ReturnValue != 0 → RuntimeError（2=access denied / 9=path not found /
@@ -225,6 +242,7 @@ def _spawn_detached_via_wmi(
       两路径相同则合并 ``2>&1``，不同则分别 ``2>>``。
     """
     env_dict = dict(os.environ) if env is None else dict(env)
+    env_dict = {k: v for k, v in env_dict.items() if not _SECRET_ENV_KEY_RE.search(k)}
     cmdline = subprocess.list2cmdline(list(cmd))
     # S3：cmd 壳层重定向包装（cmd /c 后字符串含 >>/& 特殊符 → 不触发 cmd 去引号规则）
     if stdout_path or stderr_path:
@@ -235,38 +253,60 @@ def _spawn_detached_via_wmi(
         else:
             redir = f' >> "{out_p}" 2>> "{err_p}"'
         cmdline = f"cmd.exe /c {cmdline}{redir}"
-    env_lines = "\n".join(
-        _ps_single_quote(f"{key}={value}") for key, value in env_dict.items()
-    )
-    ps_script = (
-        "$cls = Get-CimClass -ClassName Win32_ProcessStartup\n"
-        "$startup = New-CimInstance -CimClass $cls -ClientOnly\n"
-        f"$startup.EnvironmentVariables = [string[]]@(\n{env_lines}\n)\n"
-        "$startup.ShowWindow = [uint16]0\n"  # SW_HIDE（TRAE-067 无闪窗）
-        "$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{\n"
-        f"  CommandLine = {_ps_single_quote(cmdline)}\n"
-        f"  CurrentDirectory = {_ps_single_quote(cwd or os.getcwd())}\n"
-        "  ProcessStartupInformation = $startup\n"
-        "}\n"
-        'Write-Output "ZEPHYR_WMI_SPAWN|$($r.ReturnValue)|$($r.ProcessId)"\n'
-    )
-    completed = run_subprocess_hidden(
-        ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", ps_script],
-        timeout=60,
-    )
-    for line in (completed.stdout or "").splitlines():
-        if line.startswith("ZEPHYR_WMI_SPAWN|"):
-            _, return_value, pid_text = line.strip().split("|", 2)
-            if return_value == "0" and pid_text.isdigit():
-                return _WmiDetachedProcess(int(pid_text), args=cmd)
-            raise RuntimeError(
-                f"WMI Win32_Process.Create failed: ReturnValue={return_value} "
-                f"(cmd={cmdline[:120]})"
+    # env 文件传输（#ARCH-102）：utf-8-sig BOM 保 PS5.1 Get-Content 对
+    # 非 ASCII 值（如中文用户名/路径）正确解码；PS finally 与 Python finally
+    # 双侧清理（timeout 时 run 已杀子进程，Python 侧兜底）。
+    env_fd, env_file = tempfile.mkstemp(prefix="zephyr_wmi_env_", suffix=".txt")
+    try:
+        with os.fdopen(env_fd, "w", encoding="utf-8-sig", newline="\n") as fh:
+            for key, value in env_dict.items():
+                fh.write(f"{key}={value}\n")
+        ps_script = (
+            f"$envFile = {_ps_single_quote(env_file)}\n"
+            "try {\n"
+            "$cls = Get-CimClass -ClassName Win32_ProcessStartup\n"
+            "$startup = New-CimInstance -CimClass $cls -ClientOnly\n"
+            "$startup.EnvironmentVariables = [string[]](Get-Content -LiteralPath $envFile -Encoding UTF8)\n"
+            "$startup.ShowWindow = [uint16]0\n"  # SW_HIDE（TRAE-067 无闪窗）
+            "$r = Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{\n"
+            f"  CommandLine = {_ps_single_quote(cmdline)}\n"
+            f"  CurrentDirectory = {_ps_single_quote(cwd or os.getcwd())}\n"
+            "  ProcessStartupInformation = $startup\n"
+            "}\n"
+            'Write-Output "ZEPHYR_WMI_SPAWN|$($r.ReturnValue)|$($r.ProcessId)"\n'
+            "} finally {\n"
+            "Remove-Item -LiteralPath $envFile -Force -ErrorAction SilentlyContinue\n"
+            "}\n"
+        )
+        try:
+            completed = run_subprocess_hidden(
+                ["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", ps_script],
+                timeout=60,
             )
-    raise RuntimeError(
-        "WMI spawn probe sentinel missing; "
-        f"stdout={(completed.stdout or '')[:200]!r} stderr={(completed.stderr or '')[:200]!r}"
-    )
+        except subprocess.TimeoutExpired:
+            # 脱敏（#ARCH-102）：不回传 TimeoutExpired——其 args 含完整命令，
+            # 病史为全量 env 随之喷入 reconcile status JSON 明文落盘。
+            raise RuntimeError(
+                "WMI spawn probe timed out after 60s (powershell CIM channel busy/hung)"
+            ) from None
+        for line in (completed.stdout or "").splitlines():
+            if line.startswith("ZEPHYR_WMI_SPAWN|"):
+                _, return_value, pid_text = line.strip().split("|", 2)
+                if return_value == "0" and pid_text.isdigit():
+                    return _WmiDetachedProcess(int(pid_text), args=cmd)
+                raise RuntimeError(
+                    f"WMI Win32_Process.Create failed: ReturnValue={return_value} "
+                    f"(cmd={cmdline[:120]})"
+                )
+        raise RuntimeError(
+            "WMI spawn probe sentinel missing; "
+            f"stdout={(completed.stdout or '')[:200]!r} stderr={(completed.stderr or '')[:200]!r}"
+        )
+    finally:
+        try:
+            os.unlink(env_file)
+        except OSError:
+            pass
 
 
 def run_subprocess_hidden(cmd: list[str], **kwargs) -> subprocess.CompletedProcess:

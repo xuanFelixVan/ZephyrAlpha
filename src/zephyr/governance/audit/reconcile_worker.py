@@ -444,6 +444,12 @@ def _run_worker(payload: dict) -> int:
     commit_message: str = payload.get("commit_message", "")
     started_at: int = payload.get("started_at") or int(time.time())
 
+    # 治本 #ARCH-101：worker 经 WMI spawn 时 cwd 未必入 sys.path（通道偶然性），
+    # reconciler 函数级 `from scripts.*` 导入（19 处）随即 ImportError
+    # （GATE-RUNTIME-CLEANUP 实发失败）。显式装配 project_root，自给自足以绝后患。
+    if project_root and project_root not in sys.path:
+        sys.path.insert(0, project_root)
+
     if not commit_sha or not project_root:
         _write_failed_status(
             project_root or ".",
