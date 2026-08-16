@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-GOV_CHECK_GEN_NO_REALTIME | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """测试结构合规门禁——检查 test_*.py 文件结构，防止"脚本伪装测试"和模块级副作用。
 
 检查项:

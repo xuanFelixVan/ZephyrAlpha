@@ -6,9 +6,9 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-16T20:00:02Z'
+  generated_at: '2026-08-16T21:30:46Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
-  total_path_claims: 6047
+  total_path_claims: 6048
   total_ssot_claims: 16
   total_conflicts: 0
   conflict_resolution: 'ssot_claims_priority'
@@ -132,6 +132,20 @@ ownership:
     existence: 'deprecated'
     ownership_judgment: '本模块'
 
+  - path: 'src/zephyr/backtest/services/decay_monitor.py'
+    owner_blueprint: 'MOD-BT-018'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_domain_backtest/decay_monitor/blueprint.md'
+    existence: 'stable'
+    ownership_judgment: '本模块'
+
+  - path: 'src/zephyr/backtest/services/param_analyzer.py'
+    owner_blueprint: 'MOD-BT-021'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_domain_backtest/param_analyzer/blueprint.md'
+    existence: 'stable'
+    ownership_judgment: '本模块'
+
   - path: 'src/zephyr/ex_core/deployment_consistency_manager.py'
     owner_blueprint: 'MOD-EX-021'
     claim_type: 'depgraph_node'
@@ -144,6 +158,13 @@ ownership:
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: '未实现'
+    ownership_judgment: '本模块'
+
+  - path: 'src/zephyr/governance/audit/pg_probe.py'
+    owner_blueprint: 'MOD-GATE_ENGINE'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_cross_layer/gate_engine/blueprint.md'
+    existence: 'generated'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/ex_core/execution_report.py'
@@ -5403,10 +5424,10 @@ ownership:
     existence: 'stable'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/backtest/services/anomaly_diagnoser.py'
-    owner_blueprint: 'MOD-BT-023'
+  - path: 'src/zephyr/backtest/services/report_generator.py'
+    owner_blueprint: 'MOD-BT-019'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_backtest/anomaly_diagnoser/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_backtest/report_generator/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -5424,24 +5445,10 @@ ownership:
     existence: 'stable'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/backtest/services/decay_monitor.py'
-    owner_blueprint: 'MOD-BT-018'
+  - path: 'src/zephyr/backtest/services/anomaly_diagnoser.py'
+    owner_blueprint: 'MOD-BT-023'
     claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_backtest/decay_monitor/blueprint.md'
-    existence: 'stable'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/backtest/services/nan_processor.py'
-    owner_blueprint: 'MOD-BT-026'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_backtest/nan_processor/blueprint.md'
-    existence: 'stable'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/backtest/services/report_generator.py'
-    owner_blueprint: 'MOD-BT-019'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_backtest/report_generator/blueprint.md'
+    declared_in: 'docs/03_modules/_domain_backtest/anomaly_diagnoser/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -5449,6 +5456,13 @@ ownership:
     owner_blueprint: 'MOD-BT-024'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_domain_backtest/result_comparator/blueprint.md'
+    existence: 'stable'
+    ownership_judgment: '本模块'
+
+  - path: 'src/zephyr/backtest/services/nan_processor.py'
+    owner_blueprint: 'MOD-BT-026'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_domain_backtest/nan_processor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
@@ -5730,13 +5744,6 @@ ownership:
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/backtest/services/param_analyzer.py'
-    owner_blueprint: 'MOD-BT-021'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_backtest/param_analyzer/blueprint.md'
-    existence: 'stable'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/digital_twin/_extensions/__init__.py'
