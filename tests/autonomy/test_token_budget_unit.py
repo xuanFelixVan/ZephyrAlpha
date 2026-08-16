@@ -85,7 +85,8 @@ class TestConsume:
     def test_consume_exceeds_budget(self, manager):
         result = manager.consume(600)
         assert result is False
-        assert manager.consumed == 500
+        # All-or-nothing contract: a refused consume leaves consumed unchanged
+        assert manager.consumed == 0
 
     def test_multiple_consumes(self, manager):
         assert manager.consume(100)

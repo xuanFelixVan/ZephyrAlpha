@@ -20,6 +20,7 @@ import pytest
 
 from zephyr.infrastructure.auto_fix_engine.fix_health_check import FixHealthCheck
 from zephyr.infrastructure.auto_fix_engine.models import FixHealthReport
+from zephyr.shared.io.paths import DB_PATH
 
 
 @pytest.fixture
@@ -34,8 +35,9 @@ def health_check(tmp_db):
 
 class TestFixHealthCheckInstantiation:
     def test_creates_instance_with_default_path(self):
+        # Default is the governed shared DB_PATH SSoT (#ARCH-WORKTREE-DB-SPLIT-001)
         hc = FixHealthCheck()
-        assert hc.db_path == "data/auto_fix/auto_fix.db"
+        assert hc.db_path == DB_PATH
 
     def test_creates_instance_with_custom_path(self, tmp_db):
         hc = FixHealthCheck(db_path=tmp_db)

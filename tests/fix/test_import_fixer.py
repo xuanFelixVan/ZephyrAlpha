@@ -43,13 +43,14 @@ class TestImportFixerInstantiation:
 
 class TestImportFixerScan:
     def test_scan_returns_list(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr("zephyr.infrastructure.auto_fix_engine.import_fixer.REPO_ROOT", tmp_path)
         fixer = ImportFixer()
         result = fixer.scan()
         assert isinstance(result, list)
 
     def test_scan_empty_dir(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        # scan() anchors REPO_ROOT (5.12.5 SSoT fix; CWD no longer drives scope)
+        monkeypatch.setattr("zephyr.infrastructure.auto_fix_engine.import_fixer.REPO_ROOT", tmp_path)
         fixer = ImportFixer()
         result = fixer.scan()
         assert result == []

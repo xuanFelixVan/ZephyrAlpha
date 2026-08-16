@@ -53,20 +53,18 @@ class TestHealthMonitorAutoRun:
         hm.stop()
         assert True
 
-    def test_health_monitor_background_thread(self) -> None:
-        """HealthMonitor 启动后台线程。"""
+    def test_health_monitor_event_driven_no_daemon_thread(self) -> None:
+        """Event-driven contract (2026-07-05 P1): start() spawns no polling thread."""
         from zephyr.trading.health_monitor import HealthMonitor
         hm = HealthMonitor(health_check_interval=0.1, metrics_interval=0.05)
         hm.start()
 
-        # 验证线程已启动
-        assert hm.monitor_thread is not None, "后台线程未启动"
-        assert hm.monitor_thread.is_alive(), "后台线程未运行"
+        # no daemon thread by design; the running flag is set instead
+        assert hm.monitor_thread is None
+        assert hm.running
 
         hm.stop()
-
-        # 验证线程已停止
-        assert not hm.running, "HealthMonitor 仍在运行"
+        assert not hm.running
 
     def test_health_monitor_register_probe(self) -> None:
         """HealthMonitor 可注册 probe。"""
@@ -105,19 +103,17 @@ class TestCircadianSchedulerAutoRun:
     """CircadianScheduler 小时级自动运行测试。"""
 
     def test_sla_hourly_report_not_registered(self) -> None:
-        """定时调度已废除：sla_hourly_report 不再通过 CircadianScheduler 定时触发。"""
-        from zephyr.trading import boot_cron_jobs
-        import inspect
-        src = inspect.getsource(boot_cron_jobs)
-        # 定时调度已废除，不应有 sla_hourly_report 的 register_task 调用
-        assert "sla_hourly_report" not in src or "register_task" not in src
+        """Cron scheduling abolished: boot_cron_jobs module retired in dfd117dbba."""
+        import importlib
+        with pytest.raises(ImportError):
+            importlib.import_module("zephyr.trading.boot_cron_jobs")
 
-    def test_health_monitor_monitor_loop_exception_safety(self) -> None:
-        """HealthMonitor 监控循环异常安全。"""
+    def test_health_monitor_tick_exception_safety(self) -> None:
+        """Event-driven mode: tick() never kills the monitor (no loop to die)."""
         from zephyr.trading.health_monitor import HealthMonitor
         hm = HealthMonitor(health_check_interval=0.05, metrics_interval=0.02)
         hm.start()
-        time.sleep(0.15)
-        # 即使内部有异常，循环也应继续
-        assert hm.monitor_thread.is_alive() if hm.monitor_thread else False, "监控循环因异常退出"
+        hm.tick()
+        # no background loop exists; after tick() the monitor stays running
+        assert hm.running
         hm.stop()

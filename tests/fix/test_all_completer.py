@@ -44,20 +44,21 @@ class TestAllCompleterInstantiation:
 
 class TestAllCompleterScan:
     def test_scan_returns_list(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr("zephyr.infrastructure.auto_fix_engine.all_completer.REPO_ROOT", tmp_path)
         comp = AllCompleter()
         result = comp.scan()
         assert isinstance(result, list)
 
     def test_scan_detects_missing_all(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr("zephyr.infrastructure.auto_fix_engine.all_completer.REPO_ROOT", tmp_path)
         (tmp_path / "__init__.py").write_text("def public_func():\n    return 1\n", encoding="utf-8")
         comp = AllCompleter()
         result = comp.scan()
         assert any(f["type"] == "missing_all" for f in result)
 
     def test_scan_empty_dir(self, tmp_path, monkeypatch):
-        monkeypatch.chdir(tmp_path)
+        # scan() anchors REPO_ROOT (5.12.5 SSoT fix; CWD no longer drives scope)
+        monkeypatch.setattr("zephyr.infrastructure.auto_fix_engine.all_completer.REPO_ROOT", tmp_path)
         comp = AllCompleter()
         result = comp.scan()
         assert result == []

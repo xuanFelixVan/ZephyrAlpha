@@ -37,7 +37,7 @@ class TestDispatchTable:
     def test_list_all_systems_returns_keys(self):
         systems = list_all_systems()
         assert isinstance(systems, list)
-        assert len(systems) == 13
+        assert len(systems) == 12  # 12 = active systems; knowledge-base retired in d5b6f5dde1 (was 13)
         assert "orchestrator" in systems
         assert "context-engine" in systems
 
