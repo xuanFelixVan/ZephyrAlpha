@@ -40,11 +40,11 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-003
-version: "1.1.0"
+version: "1.2.0"
 title: "Data Retention & Backtest Layering Contract"
 status: active
 ttl: permanent
-contract_version: "1.1.0"
+contract_version: "1.2.0"
 
 # ============================================================
 # §1 不变原则（铁律）
@@ -70,6 +70,13 @@ invariants:
     rule: "有效验证起点受限于最短木板"
     description: "回测有效验证起点 = max(各层保留起点)，即受限于最早可用数据的时间"
     example: "新闻保留起点2000年，但日K从2010年起，则新闻有效验证起点=2010年"
+
+  - id: INV-RET-005
+    rule: "小体量研究型数据永不归档"
+    description: "单表体量 <1 GiB 且具独立研究价值的数据集（ST/退市状态、龙虎榜席位、事件库、日历、静态元数据等）永久保留 Hot 层。冷热分层的目标是成本治理，不是知识组织——此类数据归档释放空间微不足道，但会显著增加研究查询摩擦（SCD-2 时点回查、爆冷/退市/摘帽案例研究需即时与行情/财务/新闻 JOIN）"
+    enforcement: "layers 条目 cold_policy=不归档 + data_asset_registry 登记；新表登记时按 <1 GiB 阈值判定；体量增长突破阈值后按对应层年龄线重估"
+    scope: small_research_datasets
+    institutional_practice: "机构特殊境遇(special-situation)/事件驱动研究语料常驻在线可查层，不分层（2026-08-16 调研：事件数据 PIT API 化是全行业惯例）"
 
 # ============================================================
 # §2 10层量化数据分层体系
@@ -197,7 +204,7 @@ layers:
     retention_start: "2000-01-01"  # 已有数据从2000年起
     valid_backtest_start: "2010-01-01"  # 受限于日K起点
     hot_ttl: null
-    cold_policy: "不归档（体积小，永久Hot）"
+    cold_policy: "手动归档（≥10年后人工触发；pre-2010段对回测零价值（INV-RET-004），2026-08-16首轮归档199912-200912）"
     classification_keywords: [news, share_unlock, analyst_forecast, disclosure, restricted_shares]
     # tables: 代表性示例（非全量，全量以 data_inventory.md 生成器输出为准）
     tables:
@@ -205,7 +212,7 @@ layers:
       - c3_fundamental.share_unlock
       - c3_fundamental.analyst_forecast
       - c3_fundamental.disclosure_plan
-    note: "news_data 已有2000年起961万行历史数据（百度云下载）；2000-2009保留但无法用股价验证（日K从2010起）"
+    note: "news_data 已有2000年起1400万行/21GiB历史数据；2000-2009无法用股价验证（日K从2010起，INV-RET-004最短木板）→已归档；share_unlock/analyst_forecast/disclosure_plan 体量 <1 GiB 按 INV-RET-005 永不归档"
 
   # ── 工具层 ──
 
@@ -286,6 +293,35 @@ layers:
       - c1_market.index_constituent
 
 # ============================================================
+# §2A 派生数据治理（2026-08-16 裁定，v1.2.0 新增）
+# ============================================================
+# 派生数据 = 可由源数据确定性重算的数据（技术指标/复权因子/聚合视图等）。
+# 派生数据不享原始数据的保留义务，但回测可复现性要求其生命周期受控：
+#   原则1 派生跟随源：派生表分层窗口跟随其源表年龄线——源表某时段归档则派生表同时段归档
+#         （先例：2026-08-10 首轮 kline_60min 与 technical_indicator_60min/120min 各 223 个 pre-2019 分区同步归档）
+#   原则2 滑动窗口显化：technical_indicator 现行事实窗口落契（原隐性运行，v1.2.0 显化）：
+#         1min=近3月 / 5min=近1年 / 15min=近3年 / 30min=近5年 / 60min·120min=跟随源表(≥5年) / daily·weekly·monthly=永久Hot
+#   原则3 唯一通道：窗口外数据只能经 archiver.py 三阶段（export→verify→drop）归档，
+#         禁止 DELETE / TRUNCATE / 直接 DROP PARTITION 修剪（INV-RET-001 适用于派生表）
+#   原则4 重算恢复：派生数据归档后优先从源数据重算恢复（源 OHLCV 永不删除）；
+#         算法版本漂移致重算值≠归档原值时，以冷库 Parquet 原值为准（回测可复现性优先）
+# ============================================================
+derived_data:
+  - table: c1_market.technical_indicator
+    derived_from: [c1_market.kline_1min, c1_market.kline_5min, c1_market.kline_15min, c1_market.kline_30min, c1_market.kline_60min, c1_market.kline_daily, c1_market.kline_weekly, c1_market.kline_monthly]
+    partition_key: "(period, toYYYYMM(trade_date))"
+    sliding_window:
+      "1min": "近3个月"
+      "5min": "近1年"
+      "15min": "近3年"
+      "30min": "近5年"
+      "60min": "跟随源表（≥5年人工归档）"
+      "120min": "跟随源表（≥5年人工归档）"
+      "daily/weekly/monthly": "永久Hot"
+    cold_policy: "手动归档（archiver.py --period 通道，跟随源表年龄线）"
+    note: "65列传统指标全由 OHLCV 确定性计算（data_source=internal）；重算恢复见原则4"
+
+# ============================================================
 # §3 多频共振策略架构
 # ============================================================
 resonance_strategy:
@@ -364,9 +400,14 @@ storage_matrix:
     cold: "E盘Parquet，手动CLI触发（≥5-10年后）"
     delete: "永不"
 
-  - table_pattern: "c3_fundamental.*（财务/新闻/事件）"
+  - table_pattern: "c3_fundamental.news_data"
     hot: "ClickHouse，无TTL，永久保留"
-    cold: "不归档（体积小）"
+    cold: "E盘Parquet，手动CLI触发（≥10年后；pre-2010首轮已归档）"
+    delete: "永不"
+
+  - table_pattern: "c3_fundamental.*（财务/事件/元数据等<1GiB）"
+    hot: "ClickHouse，无TTL，永久保留"
+    cold: "不归档（体积小，INV-RET-005）"
     delete: "永不"
 
   - table_pattern: "c1_market.macro_data"
@@ -383,6 +424,22 @@ storage_matrix:
 # §6 变更历史
 # ============================================================
 changelog:
+  - version: "1.2.0"
+    date: "2026-08-16"
+    author: "AI-ARCH-002"
+    changes:
+      - "新增 INV-RET-005：小体量研究型数据永不归档（ST/事件/静态元数据）"
+      - "新增 §2A 派生数据治理：派生跟随源+滑动窗口显化+archiver唯一通道+重算恢复四原则"
+      - "修订 L6 cold_policy：news_data ≥10年归档（体量突破21GiB），pre-2010首轮已归档199912-200912；其余<1GiB子表永不归档"
+      - "修订 §5 storage_matrix：news_data 单独条目从'不归档'改为'E盘Parquet'"
+      - "version: 1.1.0→1.2.0, contract_version: 1.1.0→1.2.0"
+  - version: "1.1.0"
+    date: "2026-08-16"
+    author: "AI-ARCH-001 (rescued by 统筹通道 commit 2cdbbc80a7)"
+    changes:
+      - "修订 INV-RET-001/003：明确 archiver.py 三阶段（export→verify→drop）验证通过后 DROP PARTITION 合法，不属 TTL 自动删除"
+      - "补充消费者：archiver.py（2026-08-10 已实现并首执行）"
+      - "version: 1.0.0→1.1.0, contract_version: 1.0.0→1.1.0"
   - version: "1.0.0"
     date: "2026-07-14"
     author: "ZephyrAlpha-Owner"
