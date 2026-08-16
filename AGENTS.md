@@ -150,6 +150,7 @@
 > - 跨模块依赖：[`cross_module_dependency_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml)
 > - 能力→真源文件反查：[`capability_canonical_file_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml)
 > - 告警阈值：[`alert_threshold_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/alert_threshold_registry.yaml)（REG-ATH-001，监控/告警/复盘链路阈值 SSoT，35 条/11 类；改阈值先改表，tests/governance/test_alert_threshold_consistency.py 强制注册表↔代码对齐）
+> - 冷数据分层（冷库/归档/物理去重）：[`infrastructure_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) INFRA-STORE-002（E:/zephyr_cold_archive Parquet 冷库，DuckDB 直读）+ 真源契约 [`data_retention_contract.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml)（INV-RET-001~005+§2A 派生治理；ST/小体量研究数据永不归档）；工具 scripts/ch/archiver.py（归档唯一通道，--period 支持元组分区键）+ scripts/ch/optimize_merge.py（ReplacingMergeTree 物理去重，计划任务每周日 03:30）
 >
 > **业务资产 registry 速查**（#ARCH-BREG-001，14 表体系，施工总案=design_memos/62_business_registry_construction.md；✅=P0 完成，🔄=P1 Step1-3 落盘待审计）：
 > - ✅ 股票池：[`universe_registry.yaml`](file:///d:/ZephyrAlpha/docs/01_policies_and_standards/_registry/catalogs/universe_registry.yaml)（5 条，回测 MUST 指定 universe_id）
@@ -511,7 +512,7 @@ result = await gateway.full_scan(user_text, llm_response)
 
 ### 4.3 RULE-TWO 注册审计（孤儿检测防线 2）
 
-> **防线 2**：注册表（`__all__` / `script_manifest.yaml` / `_registry.yaml`）+ 自动审计。
+> **防线 2**：注册表（`__all__` / `script-manifest.yaml` / `_registry.yaml`）+ 自动审计。
 > 防线 1 是 GATE-20 运行时拦截（§4.2.1），防线 3 是 N-16 文件名唯一性。
 
 - **真源**：[audit_registration.py](file:///d:/ZephyrAlpha/scripts/governance/d11_compliance/audit_registration.py)
@@ -1257,7 +1258,7 @@ python scripts/governance/d5_architecture/pre_delete_safety_check.py <file_path>
 
 > **三层 ghost 防御（2026-07-01 ARCH-038 铁律，勿重复造）**：
 > 1. **Layer 1（技术铁律）**：生成器（`generate_domain_doc.py`）内置 `_is_ghost()` 过滤——path 非空但磁盘不存在的节点自动排除。即使 depgraph 有 2774 个 ghost 节点，生成的文档也不会引用幽灵文件。**新 AI 不需要知道要跑 deprecate——不跑也不会有问题**。
-> 2. **Layer 2（自动修复）**：GATE-REGENERATE trigger 已扩展——文件删除 commit 时自动触发生成器重生。GATE-MANIFEST（priority=620）自动重生 script_manifest.yaml。GitCommitGateway post-commit 全自动，无需人工触发。
+> 2. **Layer 2（自动修复）**：GATE-REGENERATE trigger 已扩展——文件删除 commit 时自动触发生成器重生。GATE-MANIFEST（priority=620）自动重生 script-manifest.yaml。GitCommitGateway post-commit 全自动，无需人工触发。
 > 3. **Layer 3（规则补充）**：本段 AGENTS.md 规则。禁止裸连数据库，必须通过 `apply_depgraph.py` 程序化访问（真源方向见 §11.0 决策表）。架构文档由生成器自动产出，禁止手动编辑。
 
 > **命名规范（2026-06-30）**：本数据库的标准名字是 `depgraph (PostgreSQL)`——一眼可知引擎、区别于 SQLite 物理文件 `depgraph.db`。禁止使用以下变体：① 带括号缩写 `depgraph (PG)`/`PG（depgraph）`；② 带"数据库"后缀 `depgraph 数据库`；③ 无括号全称 `PostgreSQL depgraph`/`depgraph PostgreSQL`；④ 无括号缩写 `PG depgraph`/`depgraph PG`。物理标识符不改：`depgraph.db`（SQLite 文件名）、`localhost:5432/depgraph`（PG 连接 URL 中的 database 名）、`数据库名 \`depgraph\``（PG 物理 database 名）、函数名 `get_depgraph_pg_connection`。

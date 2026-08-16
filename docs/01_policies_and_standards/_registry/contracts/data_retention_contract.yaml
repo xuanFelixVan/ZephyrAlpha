@@ -1,6 +1,6 @@
 # [A_config] module_id=CFG-data_retention_contract | layer=config | stability=stable | safety=L | ai_autonomy=human_gated
 # --- 治理锚定 ---
-# blueprint: MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §19
+# blueprint: MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §
 # module_id: MOD-L00-004
 # stability: evolving
 # safety_level: L
@@ -22,7 +22,7 @@
 #   3. 所有表 Hot 层无 TTL 自动删除——ClickHouse 永久保留；手动归档 DROP PARTITION 不属于 TTL 自动删除
 #
 # 消费者：
-#   - data_source_integrator_blueprint.md §19（引用本契约）
+#   - data_source_integrator_blueprint.md（全文引用本契约；该蓝图仅 §0-§8 无独立保留章节，#ARCH-DOCDRIFT-001 修正锚定）
 #   - tasks.yaml（每个任务的 retention 字段从本契约查表）
 #   - ClickHouse DDL（TTL 表达式从本契约校验，index_quote 90天TTL已删除）
 #   - scripts/ch/archiver.py（Cold 层手动归档 CLI，2026-08-10 已实现并首执行，从本契约读取归档规则）

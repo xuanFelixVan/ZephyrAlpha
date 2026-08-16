@@ -35,7 +35,7 @@
 | 资产 | 数量 | 发现入口 |
 |------|:---:|------|
 | 模块 | 4,639 | `python scripts/governance/extract_depgraph.py --summary` |
-| 脚本 | 483 | `scripts/script_manifest.yaml` |
+| 脚本 | 483 | `scripts/script-manifest.yaml` |
 | 门禁 | 43 | `src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml` |
 | 蓝图 / 模板 | 60 / 13 | `docs/03_modules/blueprint_registry.yaml` / `template_registry.yaml` |
 | Agent Skill | 22 | `data/capability_cards/` (skill_*.yaml) |
@@ -170,7 +170,7 @@ except PermissionError: try: os.remove(tmp_path) except OSError: pass
 **RULE-FOUR：创建即注册** — scaffold.py 是唯一创建入口。绕过它 = 孤儿。
 ```
 python scripts/scaffold.py module <包名> <模块名>    # 创建模块 → 注册 __init__.py __all__
-python scripts/scaffold.py script <路径>              # 创建脚本 → 注册 script_manifest.yaml
+python scripts/scaffold.py script <路径>              # 创建脚本 → 注册 script-manifest.yaml
 python scripts/scaffold.py gate <ID>                  # 创建门禁 → 注册 _registry.yaml
 python scripts/scaffold.py rule <主题_描述>           # 创建规则文件（ARCH-037，命名 trae_NNN_<主题>_<描述>.yaml）
 ```
@@ -182,7 +182,7 @@ python scripts/scaffold.py rule <主题_描述>           # 创建规则文件�
 
 | 产出类型 | 必须集成到 |
 |----------|-----------|
-| 新 `.py` 脚本（`scripts/` 下） | `script_manifest.yaml` 注册 + `phase_manager` gate 引用 |
+| 新 `.py` 脚本（`scripts/` 下） | `script-manifest.yaml` 注册 + `phase_manager` gate 引用 |
 | 新 `.py` 模块（`src/zephyr/` 下） | 对应 `__init__.py` 导出 + 至少一个 import 引用点 |
 | 新门禁/gate | `phase_manager.py` PHASE_SEQUENCE 注册 + `_registry.yaml` |
 | 新增 RULE-* | `rule-registry.md` TRAE 域强制登记 → `python scripts/governance/d8_doc_sync/sync_rule_registry.py` |
@@ -195,7 +195,7 @@ python scripts/scaffold.py rule <主题_描述>           # 创建规则文件�
 | ❌ | 用 Write/SearchReplace 直接创建新文件 | 孤儿文件——无注册 |
 | ❌ | 不搜索直接创建新脚本 | 重复造轮子 |
 | ❌ | 搜到了但不复用，坚持新建 | 两个版本分叉维护 |
-| ❌ | 创建 .py 文件但不注册到 script_manifest.yaml | 孤儿脚本 |
+| ❌ | 创建 .py 文件但不注册到 script-manifest.yaml | 孤儿脚本 |
 | ❌ | 创建 `.md` 文档但 frontmatter 不含 `ttl` 字段 | 文档无保留期，无法识别过期/清理 |
 
 ---

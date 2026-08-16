@@ -25,3 +25,4 @@
 | TRAE-019 | RULE-EIGHTEEN 连续两次审查零问题 |
 | TRAE-020 | RULE-NINETEEN 先裁定后确认（MTH-009 显化） |
 | TRAE-021 | RULE-TWENTY 写完即提交（防丢失铁律） |
+| TRAE-022 | RULE-GIT-SAFE Git 安全铁律（2026-08-11 #ARCH-GIT-CLEAN-GUARD-FIX；wrapper 层落地） |

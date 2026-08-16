@@ -17062,3 +17062,25 @@ entries:
   related_rules: '19_northbound_hold_snapshot.md（设计真源）; #ARCH-DATA-015/016/017（数据缺口治理同族）; #ARCH-DATA-UTIL（外部源落库资产登记母议题）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+
+# --- #ARCH-DOCDRIFT-001: 文档引用漂移三连治理（manifest 连字符 + 契约 §19 锚定 + AGENTS 冷分层收录）---
+- issue_id: '#ARCH-DOCDRIFT-001'
+  title: 文档引用漂移三连——script_manifest.yaml 下划线死引用（裁定 d2da16e0fe 后未同步）+ data_retention_contract 锚定 blueprint §19 不存在 + AGENTS.md 未收录冷分层工具链
+  severity: P2中
+  category: governance
+  discovered: 2026-08-16 AI-ARCH-003 会话自审（问题清单 P4/P5 项）
+  adjudication: |-
+    2026-08-16 用户指令"全部修复"：
+    (1) project_rules.md 三处、AGENTS.md 两处下划线 script_manifest.yaml 引用改连字符真源（对齐裁定 d2da16e0fe）；
+    (2) data_retention_contract.yaml 头部锚定 §19 → §（该蓝图仅 §0-§8，无独立保留章节，锚定漂移自 v1.0.0 即存在）；
+    (3) AGENTS.md 关键 registry 速查区补冷分层工具链条目（INFRA-STORE-002/契约/archiver/optimize_merge）。
+  impact:
+  - '.trae/rules/project_rules.md（3 处引用修正）'
+  - 'AGENTS.md（2 处引用修正 + 速查区 1 条目新增）'
+  - 'docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml（锚定修正）'
+  fix_phase: '2026-08-16 本批施工'
+  status: decided
+  confirmed_by_user: '2026-08-16 用户指令（审查问题清单全部修复）'
+  related_rules: '裁定 d2da16e0fe（manifest 连字符真源）; #ARCH-REGISTRY-DISCOVERY-SSOT-001'
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
