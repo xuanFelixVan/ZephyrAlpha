@@ -41515,6 +41515,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "ClickHouse 的 ReplacingMergeTree 表靠后台合并去重，但合并不保证完成，旧重复行会一直堆着。这个工具按分区逐个强制合并（OPTIMIZE FINAL），把物理重复行真正清掉——既可一次性追补历史，也可每周例行维护近3个月分区"
+- module_path: src/zephyr/shared/state_store.py
+  domain_id: D_SHARED
+  name_zh: "状态外部化原语"
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把关键运行时状态（熔断开关、已处理成交号去重集）写到磁盘文件里：进程崩了重启还能接着用，不会出现'重启后忘记已经熔断'或'同一笔成交记两次账'的事故"
 
 battle_map_steps:
 - step_id: BM-BUY-04

@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-EX-001 | docs/03_modules/_domain_execution_core/fill_handler/blueprint.md
 # [MODULE] zephyr.ex_core.fill_handler
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums; zephyr.shared.state_store
 # [CONSUMERS] D_EX_CORE域内模块 ; Fill Processor (D-EX-CORE-08, 阶段2)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] fill_id幂等; filled_quantity单调递增; Decimal全程计算; FillSummary不可变; 状态转换遵循VALID_TRANSITIONS
+# [INVARIANTS] fill_id幂等; filled_quantity单调递增; Decimal全程计算; FillSummary不可变; 状态转换遵循VALID_TRANSITIONS; 配置dedup_store时去重集持久化(重启存活)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] DuplicateFillError(ZA-EX-001-01); InvalidFillError(ZA-EX-001-02); OrderNotFoundError(ZA-EX-001-03)
-# [TESTS] tests/ex_core/test_fill_handler.py
+# [TESTS] tests/ex_core/test_fill_handler.py; tests/ex_core/test_fill_id_dedup_persistence.py
 # [A_module] module_id=MOD-EX-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
@@ -100,6 +100,7 @@ from zephyr.shared.contracts.enums.order_enums import OrderStatus
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.state_store import AppendOnlyDedupSet
 
 logger = logging.getLogger(__name__)
 
@@ -191,9 +192,19 @@ class FillHandler:
         remaining = handler.get_remaining(order.order_id)
     """
 
-    def __init__(self) -> None:
+    def __init__(self, dedup_store: AppendOnlyDedupSet | None = None) -> None:
+        """初始化成交处理器。
+
+        Args:
+            dedup_store: fill_id 持久化去重集（#ARCH-QUANT-002，Qwen P0-2①）。
+                提供时幂等拦截集由 append-only 文件承载，进程重启后
+                同一 fill_id 重放仍被拦截（不再"重启即去重失效"）。
+                None=纯内存 set（既有行为）。
+        """
         self._fills: dict[str, list[Fill]] = defaultdict(list)
-        self._processed_fill_ids: set[str] = set()
+        self._processed_fill_ids: set[str] | AppendOnlyDedupSet = (
+            dedup_store if dedup_store is not None else set()
+        )
         self._summaries: dict[str, FillSummary] = {}
         self._callbacks: list[Callable[[Fill, FillSummary], None]] = []
 
@@ -233,6 +244,26 @@ class FillHandler:
             cached = self._summaries.get(order.order_id)
             if cached is not None:
                 return cached
+            # 持久化去重集场景（Qwen P0-2①）：重启后重放——fill_id 见过但
+            # 本进程无缓存 summary。按订单当前状态构建只读 summary 返回，
+            # 绝不重复累积（否则重启重放=重复记账）。
+            logger.warning(
+                "幂等拦截(重启后重放): fill_id=%s 已处理, 按订单当前状态返回 summary",
+                fill.fill_id,
+            )
+            current_filled = order.filled_quantity or Decimal("0")
+            total_qty = order.quantity
+            return FillSummary(
+                order_id=order.order_id,
+                total_quantity=total_qty,
+                filled_quantity=current_filled,
+                remaining_quantity=max(total_qty - current_filled, Decimal("0")),
+                avg_fill_price=order.avg_fill_price if current_filled > 0 else None,
+                fill_count=0,
+                total_commission=Decimal("0"),
+                is_complete=current_filled >= total_qty,
+                last_fill_timestamp=None,
+            )
 
         # ── 记录成交 ──
         self._fills[order.order_id].append(fill)
