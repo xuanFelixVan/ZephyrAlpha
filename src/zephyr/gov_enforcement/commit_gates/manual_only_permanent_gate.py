@@ -328,8 +328,10 @@ def _check_manual_only_permanent_modified(gateway, rel_path: str, abs_path: str,
     if _has_m11_exemption(content):
         return False  # 合规豁免，放行（与 _check_manual_only_permanent_new 一致）
     try:
+        # --ignore-cr-at-eol：EOL 规范化提交全文件行伪"added"，会把存量 manual 触发
+        # 模式误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
         diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
         )
         if diff_content.returncode != 0:
             return False

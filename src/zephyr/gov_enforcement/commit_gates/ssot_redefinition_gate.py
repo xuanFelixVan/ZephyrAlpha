@@ -177,7 +177,7 @@ def _scan_file_violations(gateway, py_file: str, symbol_to_canonical: dict[str, 
     """扫描单个 staged .py 文件的 added 行，返回违规列表。"""
     try:
         file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(

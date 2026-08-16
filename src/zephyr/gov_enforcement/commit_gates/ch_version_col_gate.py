@@ -97,7 +97,7 @@ def _get_added_lines_text(gateway, rel_path: str) -> list[str]:
     """
     try:
         diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
         )
         if diff_content.returncode != 0:
             return []

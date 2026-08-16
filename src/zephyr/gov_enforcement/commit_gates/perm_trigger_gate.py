@@ -278,7 +278,7 @@ def _check_permanent_trigger_modified(gateway, rel_path: str, abs_path: str, con
     """检测修改文件的 staged 新增行是否含时间触发且全文件无事件订阅。"""
     try:
         diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
         )
         if diff_content.returncode != 0:
             return False

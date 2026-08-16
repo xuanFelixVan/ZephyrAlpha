@@ -118,7 +118,7 @@ def _check_modified_file(gateway, rel_path: str) -> str | None:
     """修改文件检测 staged diff 新增行中的 ch_writer.query 文本模式。"""
     try:
         diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
         )
         if diff_content.returncode != 0:
             return None
