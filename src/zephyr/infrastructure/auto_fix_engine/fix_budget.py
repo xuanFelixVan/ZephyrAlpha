@@ -44,7 +44,8 @@ class FixBudget:
         self._l1_cost: int = config.get("l1_cost_per_fix", 1)
         self._l2_cost: int = config.get("l2_cost_per_fix", 5)
         self._l3_cost: int = config.get("l3_cost_per_fix", 10)
-        self._db_path = db_path or str(_DB_PATH)
+        # db_path resolution: explicit param > config['db_path'] (test isolation seam) > DB_PATH SSoT
+        self._db_path = db_path or config.get("db_path") or str(_DB_PATH)
         self._lock = threading.Lock()
         self._daily_consumed: int = 0
         self._monthly_consumed: int = 0
