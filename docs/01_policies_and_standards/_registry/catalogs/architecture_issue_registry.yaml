@@ -16994,6 +16994,33 @@ entries:
   status: open
   created: '2026-08-16'
   last_updated: '2026-08-16'
+- issue_id: '#ARCH-100'
+  title: discard_changes 未接入 check_rollback_conflict 并发守卫——方案C（1d6baf0f27）集成缺口，破坏性写操作在他 session 持锁文件上可直行
+  severity: P1高
+  category: governance_debt
+  adjudication: 'AI-TD2-TRD-001 实证（2026-08-16，233 包②基线）：tests/rollback/test_rollback_executor_unit.py::test_discard_blocked_by_other_session_lock 锚定方案C 设计意图（文件被他 session 锁定→BLOCKED_BY_OWNER），但 RollbackExecutor.discard_changes 实现从未调用 check_rollback_conflict——f84343b01f（ARCH-034 P4-1）commit 消息自认"discard_changes 方法不在该路径调用 check_rollback_conflict，属独立逻辑 bug"（仅补 import 未接线）。第一性：discard 是对工作区文件的破坏性写，与 full/partial_revert 同级危险——execute() 主链路（L708 _concurrency_guard）已接线方案C，discard_changes 旁路绕过等于守卫存在第二决策点外的敞口。爆炸半径取证：全仓生产唯一调用方 feedback_loop/scheduler_act.py L201 以 force=True 调用（守卫不触达），接线后生产行为零变化；影响面纯测试契约补齐。裁定：治本接线（非 xfail 留置）——guard 检查置于 NO_CHANGES 早退之前（语义：持锁即阻断，与是否有未提交变更无关）。'
+  fix_phase: 已闭环（2026-08-16 本批施工）：discard_changes force=False 分支接入 check_rollback_conflict（conflict→BLOCKED_BY_OWNER+files_blocked+审计），test_discard_blocked_by_other_session_lock 去 xfail 转正；executor_unit/discard 相关测试全绿
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-101'
+  title: reconcile_worker 经 WMI spawn 时 scripts.* 不可导入——GATE-RUNTIME-CLEANUP 等 reconciler 函数级 from scripts.ops_guard import 即 ImportError
+  severity: P2中
+  category: governance_debt
+  adjudication: 'AI-TD2-TRD-001 实证（2026-08-16，post-commit worker 日志）：GATE-RUNTIME-CLEANUP failed: No module named ''scripts.ops_guard''。病根：worker  spawn 通道（WMI Win32_Process Create + cmd /c python -m）仅 PYTHONPATH=src 入环境，cwd 是否入 sys.path 依赖 spawn 通道偶然性（PYTHONSAFEPATH/-P/通道差异），而 reconciliation_registry.py 内 19 处函数级 from scripts.* import（ops_guard guard_remove/guard_rmtree/guard_move、generators/file_lock 等）依赖仓根可导入。第一性：显式优于隐式——worker 持有 payload.project_root，应自给自足装配 sys.path，不赌 cwd 偶然性；逐处加 try/except=19 个创可贴且掩盖真因。裁定：_run_worker 起点显式 sys.path.insert(project_root) 治本，全部函数级导入自然恢复。'
+  fix_phase: 已闭环（2026-08-16 本批施工）：reconcile_worker._run_worker 解析 payload 后显式 project_root 入 sys.path
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-102'
+  title: WMI 降级 spawn 通道双重病灶——全量 env 内联 -Command 巨型脚本放大 60s 超时，且 TimeoutExpired.args 携带全量 env 喷入 reconcile status JSON（GITHUB_TOKEN 明文落盘）
+  severity: P1高
+  category: governance_debt
+  adjudication: 'AI-TD2-TRD-001 实证（2026-08-16，worktree .runtime/reconcile_reports）：badfd338e1/a8935047dd 两次 post-commit worker 均 launch_reconcile_async spawn failed——powershell WMI 通道 60s 超时，status errors 字段完整转储 TimeoutExpired.args（含 GITHUB_TOKEN/TRAE_USER_CLOUDIDE_TOKEN_BLOB 等全量环境变量明文）。第一性：①凭据不落盘是底线——异常路径信息回传必须有界（源头脱敏优于信任下游每个消费者）；②无界数据不进有界通道——env 全量内联命令行（32K 上限+CIM 解析/传输成本随环境膨胀）是通道误用，文件才是无界数据正确载体；③最小传播——凭据不应经 Winmgmt 系统服务中转。裁定：三管齐下——env 经 utf-8-sig 临时文件传输（脚本恒定小体量，PS finally+Python finally 双侧清理）+ _SECRET_ENV_KEY_RE 敏感键剥离（TOKEN/SECRET/PASSWORD/CREDENTIAL/COOKIE/API_KEY 等语义键）+ TimeoutExpired 不回传（静态 RuntimeError 消息）。主 Popen 通道（CreateProcess 直传、无第三方中转）保留完整继承语义；四调用方（reconcile_worker/drift_watchdog/session_worktree/ollama）均无凭据需求，剥离无行为差异。残余风险：CIM 服务并发 contention 不可消除（60s 超时保留兜底），由 spawn_dead_pending 看门狗（120s）fail-open 覆盖。'
+  fix_phase: 已闭环（2026-08-16 本批施工）：process_pool._spawn_detached_via_wmi 改造（文件传输+剥离+脱敏）+test_process_pool.py 契约更新（脚本不内联 env/BOM/剥离/超时脱敏）
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
 - issue_id: '#ARCH-MON-001'
   title: 55 号 G26 监控告警与复盘施工——告警阈值注册表（REG-ATH-001）+ 偏离度量（MOD-RK-23）+ 退役双判据评审 + 复盘编排器（MOD-RPT-009）
   severity: P1高

@@ -422,6 +422,30 @@ class RollbackExecutor:
                     audit_record=audit_record,
                 )
 
+            # 治本 #ARCH-100：方案C 并发守卫接线（原缺口见 1d6baf0f27/f84343b01f）。
+            # 持锁即阻断，置于 NO_CHANGES 早退之前——与文件是否有未提交变更无关。
+            conflict = check_rollback_conflict(
+                file_list,
+                self.owner_session_id or audit_session or "auto",
+                self.project_root,
+            )
+            if conflict.has_conflict:
+                files_blocked = list(conflict.blocked_files)
+                audit_record = self.build_discard_audit(
+                    decision=DiscardDecision.BLOCKED_BY_OWNER,
+                    files=file_list,
+                    blocked=files_blocked,
+                    reason=f"Concurrency conflict (locked by other session): {conflict.locked_by}",
+                    audit_session=audit_session,
+                )
+                return DiscardResult(
+                    success=False,
+                    files_discarded=[],
+                    files_blocked=files_blocked,
+                    decision=DiscardDecision.BLOCKED_BY_OWNER,
+                    audit_record=audit_record,
+                )
+
         uncommitted_files = self.get_uncommitted_files()
         staged_files = self.get_staged_uncommitted_files()
         all_uncommitted = set(uncommitted_files + staged_files)
