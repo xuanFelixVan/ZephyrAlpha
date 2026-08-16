@@ -126,6 +126,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **数据补充批（2026-08-15 晚用户裁定增派）** | **AI-NORTH-001：19 号北向季度持仓快照 fetcher（tushare hk_hold 已验证，日频断档替代）** | 🔄 施工中 |
 | **装配批（2026-08-15 晚用户裁定增派）** | **AI-ASM-001：#78 合规运行时接线（C-004/C-002/MOD-PA-006 调用点嵌入 40/41 号 production 链路）+日申报笔数硬计数器（5000 预警/1 万阻断，复用 24/40 号既有计数）** | 🔄 施工中（避让 SIM-001 施工面） |
 | 重建类 | 28 号情绪周期恢复（AI-SENT-001，从 a3750b90d1 恢复 v1.2.0）/ 60 号骨架（XCUT-001 实证非骨架无需重建） | 🔄 28 号施工中；60 号 ✅ 免重建 |
+| **测试债清偿下批·233 长尾**（2026-08-15 深夜 TDEBT-001 裁定书建议立项，第五统筹登记） | 6 包分包（裁定书 §关联项 E，Two Sigma 风险加权安全/资金优先）：包①安全权限 ~30 项（escalation/rbac/agent_spec/skill）/ 包②交易资金 ~45 项（trading/position/pf_core/rollback）/ 包③治理蓝图 ~60 项+搭车 #ARCH-099（gov_db 8 xfail 治本=自建最小 schema fixture）/ 包④数据基础设施 ~40 项 / 包⑤自治生命周期 ~35 项 / 包⑥工具其他 ~23 项+复跑全量验证 | ⏳ 待用户裁定开工时点与路数（统筹建议：TDEBT-001 merge 后开工——基线 233 以 merge 后 dev 为准，避免重复清偿已修簇；裁定书=docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md，随 TDEBT merge dev 可达） |
 
 ## 六、遗留项登记表（重建版，按优先级分类）
 
@@ -311,3 +312,4 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 2026-08-15 晚 | **第 4 批 3/3+tick 插队全完工 merge**（用户当日派单当日闭环）：AI-TICK-001（e179d4ce25）/AI-REGIME-001（a88a56fb finalize）/AI-XCUT-001+002（def379dbc9+479de59b23）自行 merge，AI-COMP-001 由统筹 merge（de45d261aa：派生 6 取 theirs+ROOR 并集+撞号重编 #77-79）；merge 前置代收回填会话 WIP（00646958）；五家核验全 PASS（§四）；新登记 #80-84（--to main 风险/网关收编 staged WIP/文档债/AGENTS.md 回填待审批/QMT 自动登录人工项）；SOME-OTHER-GATE 测试污染三方清偿完毕（TICK 324+XCUT 358+REGIME 384 行，横幅消除）；worktree 待清：COMP/TICK（证1 会话活跃阻断，会话结束后 lifecycle sweep 自收）；测试债批 TDEBT-001 施工中 | 第四统筹会话 |
 | 2026-08-15 晚 | **Owner 批准落地**：#83 AGENTS.md 速查表 18 表回填+#41 计数动态化（db26d653，347 条时点值）；#84 实证 QMT 模拟终端无自动登录配置（authAndConfig/MiniConfig 无字段）——兜底=deadman 10min 告警+每日开盘前手动登录一次；**用户裁定三批并发开工**：第 5 批（AI-SIM-001/AI-RCAN-001/AI-MON-001）+治理顺手批（AI-FIX-001）+数据产能批（AI-JOB077-001）；TDEBT-001 仍施工中 | 第四统筹会话 |
 | 2026-08-15 深夜 | **并发拉满增派三路**（用户裁定）：AI-NORTH-001（19 号北向快照 fetcher）/AI-SENT-001（28 号恢复重建）/AI-ASM-001（装配批 #78 接线+日申报计数器）；JOB-076/078/079/080-082 因 target 同指 akshare_provider.py 与 JOB077-001 同文件，裁定串行接力不并发；#61-64 待用户专项裁定不派；当前活跃并发 9 路 | 第四统筹会话 |
+| 2026-08-15 深夜 | **第五统筹会话（coord-0815-gov3）接手**：四源上下文恢复（handoff/tracker/SOP v1.4.0/环境实证）；10 路并发活性实证（ASM-001 21:47 慢启动已注册+worktree/分支齐全——接手初判"双无"系 21:43 查询时点早于其注册，误判已修正）；主工作区 dirty 甄别=127 CRLF/AUTO 幻影+1 簇他人实质 WIP（#ARCH-BREG-002 门禁三件套 untracked+portfolio_model_registry 锚点修复，mtime 21:28-21:37，避让不碰）；**接收 TDEBT-001《测试债遗留裁定书》立项建议**（233 长尾 6 包分包+#ARCH-093~099 全录，分支 70 ahead 含 827052e527 裁定落地+312cf6b294 round3 收口台账），已登记 §五，开工时点/路数待用户裁定 | coord-0815-gov3 |

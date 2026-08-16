@@ -16873,3 +16873,269 @@ entries:
   related_rules: '#68（IDE 脏缓冲区）; #71（AGENTS.md 吞节，skill_factory 实证）; #75（mtime 回拨+pycache 欺骗）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 门禁窗口监视——本议题扩展为常驻）; #ARCH-WORKTREE-DB-SPLIT-001（仓级状态同族）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+
+# --- #ARCH-098: PG 连接 DIP 注入缝治本（2026-07-27 立项；原编号 #ARCH-DI-SEAM-001 与 07-18 静态门禁议题撞号，2026-08-16 重编） ---
+- issue_id: '#ARCH-098'
+  title: RuleLoader/GovernanceAutoRunner PG 连接 DIP 注入缝治本（消除模块级 import psycopg2 硬耦合）
+  severity: P2中
+  adjudication: |-
+    病根（第一性原理）：
+    rule_engine.py（L38）和 auto_runner.py（L36）模块级 `import psycopg2` + 直接调用
+    get_depgraph_pg_connection()，违反依赖倒置原则（DIP）——高层模块直接依赖低层
+    DB 驱动具体实现。100% AI 开发场景下，AI 写测试时无法 mock PG 连接，只能跳过
+    DB 失败路径测试，导致降级回退逻辑（如 RuleLoader 回退到 YAML 扫描）无测试覆盖，
+    是幻觉温床。
+
+    治本方案（Phase 1：构造函数注入 + 默认工厂）：
+    1. 在 depgraph_schema.py 定义 `PgConnectionProvider` Protocol（__call__(autocommit) -> connection）
+    2. RuleLoader.__init__ / GovernanceAutoRunner.__init__ 增加可选 pg_conn_provider 参数，
+       默认 = get_depgraph_pg_connection（保持向后兼容）
+    3. 内部所有 get_depgraph_pg_connection() 调用替换为 self._pg_conn_provider(autocommit=...)
+    4. 保留模块级 import psycopg2 仅用于异常类型（psycopg2.Error）——这是捕获异常的
+       具体类型，非依赖倒置目标（异常类型是稳定契约）
+
+    设计权衡：
+    - Phase 1（构造函数注入 + 默认工厂）而非 Phase 2（DI 容器）：项目当前规模无需
+      DI 容器复杂度；Phase 1 已足够支持测试 mock，零运行时开销
+    - 不移除 import psycopg2：psycopg2.Error 是异常捕获类型（稳定接口），不是 DIP 目标
+    - Protocol 而非 ABC：零运行时开销，structural subtyping 符合 Python 习惯
+
+    纯技术修复（重构），无价值判断，按铁律#9 AI 可直接标 decided。
+  impact:
+    - 'src/zephyr/governance/depgraph_schema.py（新增 PgConnectionProvider Protocol）'
+    - 'src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py（RuleLoader.__init__ 增 pg_conn_provider 参数）'
+    - 'src/zephyr/governance/ops_governance/auto_runner.py（GovernanceAutoRunner.__init__ 增 pg_conn_provider 参数 + 3 处调用替换）'
+  fix_phase: |-
+    Phase 1 已完成施工（2026-07-27）：
+      - depgraph_schema.py 新增 PgConnectionProvider Protocol
+      - RuleLoader 注入 pg_conn_provider（默认=get_depgraph_pg_connection）
+      - GovernanceAutoRunner 注入 pg_conn_provider + 3 处调用替换
+      - 向后兼容：未传 pg_conn_provider 时行为与旧版完全一致
+  status: decided
+  related_rules: 'AGENTS.md (DIP 原则), 软件工程 SOLID 原则'
+  created: '2026-07-27'
+  last_updated: '2026-07-27'
+- issue_id: '#ARCH-071'
+  title: MemoryLock ttl_seconds 签名占位未实现（TTL 过期强释语义缺席）
+  severity: P2中
+  adjudication: '测试债清偿批（AI-TDEBT-001，#63）实证：src/zephyr/shared/infra/lock.py MemoryLock.acquire/lock 签名含 ttl_seconds（默认 30.0）但方法体从不消费——无到期时间戳记录、无过期判定、is_locked 无 TTL 检查；git pickaxe expires_at 全史零命中，5.40.9 TTL 强释语义自始未实现（测试先行规格 tests/infrastructure/test_infra_lock.py::TestMemoryLockTTL 3 项失败）。3 项测试已 xfail(strict=False) 留痕。待裁定：补实现（测试即规格）或退役 ttl_seconds 参数并改写测试。'
+  fix_phase: 待裁定（补实现 / 退役参数 二选一）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-072'
+  title: 全量 pytest 运行改写宿主仓真实文件并混入 git index（测试隔离缺口，#50 同族文件树+index 面）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，worktree 内 1h37m 全量基线运行）：运行期约 260 个 tracked 文件被改写并进入 staged 区——①blueprint §0.6 五图表被生成器按空库重算回写（如 var_calculator/blueprint.md "0 Dataset/1 Job"→"（无节点）"，mtime 落于运行窗口）；②module_translation_registry.yaml 被改写；③src/scripts 多文件全行重写。叠加存量 CRLF 幻影（checkout 即 modified 的约 80 文件，reset --hard 后仍 M——.gitattributes 与 blob EOL 不一致，tracker #26 已见同族）。污染源高度疑似测试对宿主仓执行生成器/修复脚本（fix_header_module_id/decision_node_plain_zh_backfill/add_module_translation/generate_* 类）且未做 tmp 重定向，mass-staging 疑为 post-commit reconciler batched auto-commit 的宽口 git add 扫入。治理批③主仓 132 dirty 文件即同现象先例。待裁定：识别并隔离污染源测试清单 + auto-commit 暂存口径收敛 + CRLF 幻影治本（blob 归一化或 .gitattributes 修正）。'
+  fix_phase: 待专项（污染源测试识别/隔离 + auto-commit 暂存口径 + CRLF 幻影）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-073'
+  title: ExternalToolCallAuditor 调用链审计为桩实现（audit_trail 蓝图 §9 声明已实现）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/gov_audit/external_tool_audit.py 尾部 ChainValidationResult/ExternalToolCallAuditor/ToolCallRecord/ToolCallStatus 四类为桩——audit_call/validate_chain 无条件返回空 ChainValidationResult；而 tests/external/test_external_tool_audit.py 21 项测试编码了完整设计契约（链深度跟踪/parent_call_id/TOOL- 前缀 call_id/input_output 哈希/max_chain_depth=10/get_calls_by_agent/session 五态小写枚举），与 audit_trail/blueprint.md §3 "外部工具调用链审计=已实现" 声明一致。全 src 无真实实现（max_chain_depth/get_calls_by_agent 零命中）。21 项测试拟 xfail(strict=False) 留痕。待裁定：按测试契约补实现，或退役桩类并清理测试。'
+  fix_phase: 待裁定（补实现 / 退役桩类+清理测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-074'
+  title: AggregateHealth/collect_health 聚合健康检查设计契约为桩实现（system_telemetry/health 包）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：tests/observability/test_observability_health.py 12 项测试编码完整设计契约（AggregateHealth async check(module_names=)/check_block_fast、HealthStatus.ALL_HEALTHY 枚举值、HealthSummary(status/total_modules/healthy_count/to_dict)、collect_health(modules) 聚合），但 src/zephyr/infrastructure/system_telemetry/health/__init__.py 中 HealthStatus/HealthSummary/AggregateHealth/collect_health 为桩数据壳（字段名与契约不符、collect_health 零参返回空壳）；真实演进实现为另一设计 health_aggregator.HealthAggregator（探针驱动、pydantic 模型）。测试-蓝图（shared_core §testing）-源码三方漂移。12 项测试已模块级 xfail(strict=False) 留痕。待裁定：按测试契约补实现，或收敛到 HealthAggregator 设计并改写测试。'
+  fix_phase: 待裁定（按契约补实现 / 收敛 HealthAggregator 并改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-075'
+  title: security/access_control 16 个 "implementation pending" 桩模块——测试先行契约未落地（系统性模式）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 全 src 扫描实证：src/zephyr/security/access_control/ 下 16 个模块为 "Stub module — implementation pending"（build_sanitizer/cascading_failure_isolator/compliance_matrix/defense_depth/dependency_auditor/environment_manager/escalation_handler/key_hierarchy/anti_pattern_guard/permission_mode_manager/continuous_verifier/bootstrap_verifier/secrets_lifecycle/session_lifecycle/micro_verifier/post_action_verifier）——类名/常量齐全但行为缺席。TDD 桩模式（测试先行、实现未跟）的系统性残留，与 #ARCH-073/074 同族。实证 affected 测试：tests/escalation/test_escalation_handler.py（17 项）+ tests/dependency/test_dependency_auditor.py（12 项）已整文件 xfail(strict=False) 留痕。⚠️ dependency_auditor 的 [CONSUMERS] 声称 zephyr.infrastructure.rollback.phase_check_registry 在消费桩——生产侧调用空壳的安全治理组件需一并核查。待裁定：逐模块按测试契约补实现，或退役桩并清理测试与消费方。'
+  fix_phase: 待裁定（逐模块补实现 / 退役桩+清理消费方）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-076'
+  title: behavioral_auditor __main__ _cmd_* 五子命令为 pass 桩（argparse 分派+契约缺席）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/autonomy_core/__main__.py 尾部 _cmd_budget/_cmd_scan/_cmd_list/_cmd_self_test/_cmd_status 五函数为 pass 桩（返回 None），main() 保留手写 sys.argv 分派且仅路由 list/status，不识别 scan/self-test/budget；而 tests/ba/test_ba_main.py + tests/autonomy/test_behavioral_auditor_main.py 37 项测试编码了完整契约（argparse 分派 cmd_scan/cmd_self_test/cmd_budget、import error→1、json 输出模式、check_budget_for_gate allowed/blocked→0/1、status degraded→1 等）。与 #ARCH-073/074/075 同族（测试先行、实现未跟；MODIFY-GUARD 标注 "CLI入口不可修改" 与测试契约一致性待裁定）。37 项测试已模块级 xfail(strict=False) 留痕。待裁定：按测试契约补实现五子命令+argparse 分派，或退役 _cmd_* 桩并改写测试对齐现行 cmd_list/cmd_status 设计。'
+  fix_phase: 待裁定（按契约补实现 / 退役桩+改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-077'
+  title: task_events CHECK 约束与 Event Sourcing 组件族事件类型契约正面冲突（schema↔代码矛盾）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/governance/persistence/sqlite_schema.py task_events 表 CHECK 仅允许 14 个 TASK_*/GATE_* 生命周期枚举（5.18.6 从 v18 补回）；而同表写入方 zephyr.gov_audit.event_store.EventStore（DW-0002）append_event docstring 明示泛型事件类型 CREATED/STATUS_CHANGED/PRIORITY_CHANGED/FIELD_UPDATED，且 zephyr.governance.observability_governance.projection_engine.ProjectionEngine._HANDLERS 注册的正是这四个类型——三方同属生产代码，append 任一泛型事件即 sqlite3.IntegrityError。tests/event/test_event_store_stress.py（DW-0006）16 项失败全系此矛盾。待裁定三选一：(a) CHECK 清单扩入泛型四类型（schema 跟进 Event Sourcing 设计）；(b) EventStore 独立建泛型事件表（与任务生命周期事件分表）；(c) EventStore/ProjectionEngine 事件类型改名映射进 14 枚举（组件跟进 schema）。16 项测试已模块级 xfail(strict=False) 留痕。'
+  fix_phase: 待裁定（扩 CHECK / 分表 / 类型映射 三选一）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-078'
+  title: task_repo._make_sub_task 子卡 task_id 违 Task pattern（auto_split 全拆分路径瘫痪）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/governance/persistence/task_repo.py _make_sub_task 以 f"{parent.task_id}{seq_suffix}"（如 OPS-1-d1/-f1/-a1/-t1）生成子卡 task_id，而 Task.task_id pattern=^(CP|DM|DW|KBG|KE|OPS|SRC|STD)-\d+$ 不允许后缀——repo 自己生成的 id 过不了同项目模型校验，auto_split_task 全部四条拆分路径（by_deliverable/by_file/by_acceptance/by_target）产出即 ValidationError（_create_sub_cards 吞掉后返回 []）。tests/automation/test_auto_split.py 9 项失败全系此矛盾（另 4 项测试侧演进已修：determine_split_strategy 补 requested 参数、nonexistent 行为改返回 []、directive 必填）。同时 testing.py make_valid_task 工厂缺 Task 新增必填 description 已补（8 项转绿）。待裁定二选一：(a) pattern 扩子卡后缀（如允许 -[dfat]\d+$）；(b) _make_sub_task 改用合规独立 seq 编号（依赖链另行记录）。9 项测试已 xfail(strict=False) 留痕。'
+  fix_phase: 待裁定（pattern 扩后缀 / 子卡改合规 seq）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-080'
+  title: Stage 4 公共化幻觉字段族——property 引用从未赋值的 _xxx（2 例实证，已修）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证 2 例同族：①src/zephyr/integration/vector_memory/in_memory_fake_vms.py store_size getter 返回 self._store_size，但 __init__ 只定义 self._store（dict）；②src/zephyr/shared/event_bus.py EventBusBackpressure.subscribed_topics getter/setter 引用 self._subscribed_topics，但 __init__ 真实存储是 _handlers（topic→handlers dict）。根因：Stage 4 公共化（2026-07-29）批量脚本对"派生语义属性"（无同名存储字段）生成幻觉 getter/setter，任何访问必 AttributeError。修复：①getter=len(self._store)；②getter=frozenset(self._handlers.keys())（setter 无消费方删除）。tests/memory/test_vms_lifecycle.py 2 项 + tests/f_lifecycle/test_f5_event_startup.py 1 项转绿。教训入档：后续公共化批次需全量排查同类（property 引用从未在 __init__ 赋值的 _xxx）。'
+  fix_phase: 已修（2026-08-15，getter=len(_store)；event_bus 变体 getter=frozenset(_handlers.keys())）
+  status: fixed
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-081'
+  title: FeedbackLoopScheduler 连续错误指数退避规格未实现（max_consecutive_errors/error_backoff_base 缺席）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：tests/trading/extreme/test_f14_pipeline_extreme.py::test_consecutive_errors_triggers_backoff 编码红队规格——scheduler.max_consecutive_errors==10 阈值 + error_backoff_base==5.0 + 连续错误 10 次暂停 5 分钟；但 src/zephyr/feedback_loop/scheduler.py 仅有 _consecutive_errors 计数（+property），无阈值字段、无退避逻辑（on exception 仅计数不 crash）。测试先行规格、实现未跟（#ARCH-073~076 同族）。测试已方法级 xfail(strict=False) 留痕。待裁定：按红队规格补退避实现，或改写测试对齐现行行为。'
+  fix_phase: 待裁定（补退避实现 / 改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-082'
+  title: SagaCompensator.compensate 契约分歧——测试 list[str] 逆序补偿 vs 生产 SagaContext 状态机
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：tests/federated_learning/test_fl_saga_compensator.py::TestCompensate 4 项编码契约 compensate(steps: list[str]) -> list["undo_{step}" 逆序]；而生产 src/zephyr/shared/compensation/saga_compensator.py 为 SagaContext 状态机设计（begin/step/compensate_all，step.compensation() 回调，无 undo_ 字符串语义）。两套设计无交集——测试先行契约未落地（#ARCH-073~076 同族）。TestCompensate 已类级 xfail(strict=False) 留痕。待裁定：按测试契约补轻量 compensate(list) 入口，或改写测试对齐 SagaContext 状态机设计。'
+  fix_phase: 待裁定（补轻量入口 / 改写测试对齐状态机）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-083'
+  title: 治理组件窄实现 vs 宽测试契约族——11 模块 125 项（security/access_control 及周边，#ARCH-075 系统性延展）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 按文件批量实测（2026-08-15）：11 个测试文件 125 项失败，全系同一形态——生产组件为窄实现（最小 API 面），测试编码完整宽契约（测试先行、实现未跟，#ARCH-075 桩族的非桩变体）。缺口清单：①observability.py ObservabilityReporter.record_decision 无 level kwarg / detect_density_anomaly 无 operations_in_window / verify_metric_integrity 缺席 / MetricEntry(metric=)、AnomalyResult.rule 字段缺席（15 项）；②cross_cutting.py PermissionHookRegistry.register/disable、PermissionTopology.add_node(depends_on=)/get_impact、AutoMaintenance.record_rule_usage/complexity_budget/rule_last_used、ForensicAssurance.sign_record 缺席（21 项）；③canary_rollout_manager.py CanaryPermission.permission_id/sample_rate/rule_ids/stats、CanaryRolloutManager.rollback/promote_to_full/history 缺席（13 项）；④memory_guard.py MemoryAccessLog(access_id=)、MemoryGuard.stats/_MAX_ACCESS_SIZE 缺席（9 项）；⑤memory_provenance_guard.py MemoryProvenance(source_agent_id=)、guard.flag/record_provenance(vector_db_name=) 缺席（9 项）；⑥multi_agent_collusion_detector.py CollusionResult.collusion_detected/signal_count/evidence_chain、CollusionSignal.signal_type、reset_pair 缺席（8 项）；⑦intent_binder.py IntentDeclaration.is_valid/violations、IntentState.EXCEEDED 缺席（6 项）；⑧guards/path_guard.py violations/is_within_project 缺席、FORBIDDEN_PATHS/ALLOWED_ROOTS 清单与契约不符（13 项）；⑨blueprint_fidelity.py BlueprintFidelity.check_api_contract/summary、FidelityCheck(check_type=) 缺席（7 项）；⑩a2a_protocol/governance/governance_adapter.py MCPSource(track=)、MCPAdapter.probe_track/get_features_for_track 缺席（13 项）；⑪decision_registry.py DecisionRecord(decision_id=)、log(action=)、stats.deny_rate、query 多过滤缺席（11 项）。11 个测试文件已模块级 xfail(strict=False) 留痕。待裁定：逐模块按测试契约补实现，或收敛契约改写测试（建议与 #ARCH-075 同批裁定——同一治理体系的实现深度问题）。'
+  fix_phase: 待裁定（逐模块补实现 / 收敛契约改写测试，建议与 #ARCH-075 同批）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-079'
+  title: gov_drift.drift_detector.trigger_recovery 为桩（return True）——恢复编排契约未实现
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证：src/zephyr/gov_drift/drift_detector.py trigger_recovery 函数体仅 return True（-> bool），而 tests/drift/test_drift_detector_gate.py（15 项）+ tests/infrastructure/test_drift_trigger_recovery.py（7 项）编码了完整恢复编排契约：返回 dict 含 recovery_status（RECOVERED/RECOVERY_FAILED/SCAN_FAILED/BYPASS 等）、hotfix bypass 标记、级联锁停（auto_fix_paused）、fixer 不可达降级等。与 #ARCH-073~076 同族（测试先行、实现未跟）。另 drift_trigger_recovery 2 项涉 zephyr.orchestrator 包重构漂移（trigger_router 属性缺席，与 `AttributeError|zephyr.orchestrator` 簇同根）。22 项测试已模块级 xfail(strict=False) 留痕。待裁定：按测试契约补实现 trigger_recovery 编排，或退役桩函数并改写测试。'
+  fix_phase: 待裁定（按契约补实现 / 退役桩+改写测试）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-084'
+  title: 全量 pytest 运行期 tracked 区并发写入（GATE-TRACKED-DRIFT 实证）——测试侧 #55 族病根回潮
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15）：单进程全量 pytest（4.5 万项）运行期间，worktree tracked 区被并发写入——(a) src/zephyr/security/access_control/*.py、shared/*、trading/* 约 90 文件被批量行尾改写（CRLF→LF，git diff --ignore-cr-at-eol 为空证实零内容变化）；(b) scripts/governance/*.py 约 20 文件被追加 docstring（如 fix_header_module_id.py main() 增 docstring，疑似 docstring 修复器输出）；(c) docs/ AUTO 段统计数字刷新（auto-sync 产物）；(d) docs/03_modules/blueprint_registry.yaml 被删（2676 行，"误删已恢复"教训同型复发）；(e) 更严重：有测试对真仓执行 git add——AI-TDEBT-001 commit 门禁运行期 129 个非目标文件被注入 staged 区，DATETIME-NOW-FORBIDDEN 门禁（扫 git diff --cached 的 added 行）对 CRLF 文件全行视为 added，存量 time.time() 全报致 commit 阻断；GATE-TRACKED-DRIFT 同报（hook 运行前后 tracked 指纹不一致，详见 .runtime/audit/hook_tracked_drift.jsonl）。根因待定位：全量测试中某个/某些测试未用 tmp 副本而对真仓 tracked 区做 in-place 写/git 操作（#55 族"hook 运行期 tracked 写"在测试侧的同族形态；治理批③曾实证 cleanup 类函数对主仓真库 DELETE 的同型藏点）。已处置：停后台全量、unstage 129 文件、blueprint_registry.yaml 已 restore 恢复。认知修正（2026-08-15 深夜复证）：(a) 款"批量行尾改写"大部分为误判——87 个脏文件中 81 个字节级与 HEAD blob 完全一致，真因是 .gitattributes（text=set, eol=lf）vs 历史 CRLF blob 的规范化比较假性脏（status 恒 M，restore 无效，唯一清洁姿势是重提交 LF 版本——属独立行尾规范化债批次，且全量 add 会触发门禁对存量违规全文扫描的阻断面）；pytest 真写入的铁证收窄为：docstring 追加（b）、blueprint_registry.yaml 删除（d）、git add 注入 staged 区（e）三类。待裁定：①定位写入源测试（嫌疑面：docstring/header 修复器测试、派生清理测试、gateway/reconciler auto-commit 测试用真仓跑）并改 tmp 隔离；②全量复验流程须配套"跑后 tracked 区净化"步骤直至治本落地；③评估 pre-commit 门禁对 staged 全集 vs 提交清单的扫描口径（staged 注入场景放大了存量违规误报面）；④行尾规范化债（~81 文件 CRLF blob vs eol=lf）独立成批清偿，与本病灶解耦。'
+  fix_phase: 待裁定（定位写入源测试+tmp 隔离 / 复验配套净化流程 / 门禁扫描口径评估）
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-085'
+  title: Stage 4 公共化 wrapper 双绑 cls 系统性 bug——classmethod 委托显式再传 cls（13 处 6 文件，公共 API 必 TypeError）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 515 failed 分簇）：Stage 4 公共化机械生成的 wrapper 全部写成 `return cls._xxx(cls, ...)`——目标 _xxx 同为 @classmethod，类访问已自动绑定 cls，显式再传致 4 参 vs 3 参定义，公共 API 一调即 TypeError（"takes 3 positional arguments but 4 were given"），wrapper 自生成起从未可用。13 处全量清单（grep `return (cls|self)\._\w+\((cls|self),` 穷尽）：skill_evaluator.py 5 处（L46/52/58/64/70 evaluate_token_efficiency/structure/freshness/density/constraints）、skill_team_optimizer.py 3 处（L139/145/151 team_score/coverage/compat_score）、skill_translator.py 2 处（L86/92 _infer_source_family/_apply_adaptation）、skill_contract.py 1 处（L39 _parse_contracts）、skill_compliance.py 1 处（L47 _check_pii）、gov_code_quality/code_dedup/signature_matcher.py 1 处（L70 _classify_path）；13 处目标方法已逐个核实均为 @classmethod（无非 classmethod 误报）。波及测试 43 项（test_skill_evaluator 15 / test_skill_team_optimizer 12 / test_skill_translator 8 / test_skill_contract 8 中此形态部分 + signature_matcher 对应）。真代码 bug 非测试错，裁定豁免登记后顺手修（修复方案机械唯一：委托调用删显式 cls 首参）。已修 13 处并逐文件 pytest 验证。防复发建议（待裁定）：①Stage 4 公共化生成器模板修正——classmethod 委托禁止显式传 cls；②对存量 wrapper 加冒烟校验（公共 API 至少可调用不 TypeError）入 clone_guard/arch_guard 检测面。'
+  fix_phase: 已修（AI-TDEBT-001 删显式 cls 委托 13 处）；防复发①②待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-086'
+  title: skill-registry 路径漂移——__main__._registry_path 与 _SKILL_REGISTRY_PATH 同指包根不存在文件（SpecRegistry 永远空载被静默降级掩盖）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 515 failed 分簇 tests/agent/test_agent_spec_main.py 7 项）：src/zephyr/autonomy_core/__main__.py L36 _registry_path() 与 src/zephyr/autonomy_core/skill_rbac_registry.py L34 _SKILL_REGISTRY_PATH 同指 src/zephyr/autonomy_core/skill-registry.yaml——该文件不存在（真源在 skills/ 子包 skills/skill-registry.yaml，含 2 个 domain skill）。两处同源漂移不同命：__main__._load_registry 直 open() → cmd_list/status CLI 必 FileNotFoundError 吞成 return 1；skill_rbac_registry 被 _load_from_skill_registry L82-83 文件不存在静默 return 掩盖 → SpecRegistry 生产环境永远空载（功能隐形缺失，无任何报警——静默降级吞错同族陷阱）。真代码 bug 非测试错，修复机械唯一（路径补 skills/ 层），按 #ARCH-085 先例登记后顺手修。已修 2 处+测试跟进 1 项（test_path_under_agent_spec_dir 断言 agent-spec→autonomy_core 目录布局演进），tests/agent/test_agent_spec_main.py 7 项全绿。防复发建议（待裁定）：①静默降级类"文件不存在即 return None/空"模式应至少留 warning 日志（本例掩盖期未知）；②registry 路径类常量应有启动冒烟校验或汇聚到统一路径 SSoT（两处独立硬编码同漂=缺单真源）。'
+  fix_phase: 已修（AI-TDEBT-001 路径补 skills/ 层 2 处）；防复发①②待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-087'
+  title: RuleLoader slug 解析失效——_rule_id_to_filename 精确名映射 vs 84 个带语义后缀规则文件（规则强制静默空转）
+  severity: P0紧急
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/rule/ 族）：src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py L140-147 _rule_id_to_filename 只做精确文件名匹配（trae_001.yaml），而 docs/01_policies_and_standards/rules/ 现存 84 个文件全部带 slug 后缀（trae_001_file_operation_security.yaml）——slug 命名迁移后按 rule_id/DB 绑定的解析路径整体失效：PG rule_bindings 可用时 load_for_operation/skill/gate 对所有规则静默返回空列表（规则强制在线失效，故障半径远超测试面）；get_rule_by_id 必 warn 返回 None。模块自身 ERROR_CONTRACT（L13）仅允许"规则缺失返回空"而规则并不缺失——真代码 bug。已修：精确候选失败后追加 glob 前缀回退（sorted glob f"{lower}_*.yaml" 取首个），tests/rule/test_rule_e2e.py 6 项 + test_rule_integration.py 2 项原样通过；另 1 项魔数跟进（53→动态对齐磁盘真源）。遗留波及面（待裁定/工单）：①PG depgraph nodes 表 rule 节点未灌数据（DB 0 vs YAML 84，test_depgraph_rule_node_count 已 xfail 留痕）——灌库工单；②84 规则全量加载 ~1.3s 超 500ms 存量性能阈值（test_load_all_under_500ms 已 xfail 留痕）——阈值重校准或加载器优化待裁定；③PG 不可用时 _scan_rules_dir 全量回退不过滤触发源的既有弱点（测试假性通过面）待评估。'
+  fix_phase: 主修已落（glob 回退）；遗留①灌库②性能基线③回退过滤弱点 待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-088'
+  title: RB-SCEN-013 去留待裁定——scenario 注册表 53 条目 vs summary.total=54 不自洽
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/safety/test_game_day_scheduler.py 7 项）：src/zephyr/security/adversarial_validation/_scenario-registry.yaml 的 scenarios 序列缺 RB-SCEN-013（L130→L140 跳号，实际 53 条），但 summary.total 仍 54（L608-609）、by_tier 求和 53——summary 块自身已不一致；RB-SCEN-046 为 deprecated（L504）故 active=52。全仓 grep RB-SCEN-013 零命中，删除无追溯痕迹，无法仓内判定误删还是有意删除。测试编码 2026-07-19 治本版契约（54 总/53 active）。7 项失败已方法级 xfail(strict=False) 留痕。待裁定二选一：(a) 有意删除→按 046 先例本应 deprecated 而非物理删除；既已删则同步 summary.total=53+修 by_tier，测试改 53/52 并将顺序断言放宽为"单调递增允许空洞"（不建议重编号——外部按 ID 引用稳定性）；(b) 误删→恢复 RB-SCEN-013 条目，测试与 summary 不动。另建议（防复发）：注册表条目增删应有审计痕迹（changelog 段或 git 提交说明强制），物理删除场景建议一律改 deprecated。'
+  fix_phase: 待裁定（删后同步 / 恢复条目 二选一）；7 项测试已 xfail 留痕
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-089'
+  title: serialization.py SerializationError 重复定义——后定义（Exception, ZA-SH-0035）遮蔽正确版（ZephyrBaseError, ZA-SH-0034），全部 raise 点必 TypeError
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/io/test_io_serialization.py 6 项）：src/zephyr/shared/io/serialization.py 两处定义同名 SerializationError——L77 正确版（ZephyrBaseError 子类，error_code=ZA-SH-0034，__init__ 收 details= kwarg）与 L379 坏版（plain Exception，ZA-SH-0035，__init__(*args, error_code=None, **kwargs) 透传 kwargs 给 Exception 必 TypeError）。后定义遮蔽前定义 → 模块内全部 raise 点（L101/110/119/131/161/176/207 均带 details={}）在 raise 瞬间即崩，序列化错误路径整体不可用。真代码 bug，修复机械唯一：删 L379-386 重复类（已修，6 项测试原样通过）。遗留待裁定：error_code_registry.yaml L753-760 把 ZA-SH-0034 与 ZA-SH-0035 同时登记给 SerializationError（一厂两码注册表漂移）——保留 ZA-SH-0034（存活版），ZA-SH-0035 条目悬空待裁定删除或改标 deprecated。'
+  fix_phase: 已修（删重复类）；ZA-SH-0035 注册表悬空条目待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-090'
+  title: MCPError.error_code 传输层丢弃——_base_server MCPError 分支只透出 message，tool_contracts.yaml 声明的 ZA 码客户端永不可见
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/infrastructure/test_mcp_servers.py 6 项）：src/zephyr/integration/mcp/_base_server.py L557 MCPError 分支 `return self._err(req_id, exc.code, exc.message, exc.data)`——error_code 既不进 message 也不进 data，而生产 raise 点（gate_engine_server L288/313/330/370、doc_guard_server L249/262/273、sentinel_server L188/209）都显式携带 error_code="ZA-*"，tool_contracts.yaml 把 ZA 码声明为各工具 error surface。契约声明的错误码在传输层被整个丢弃。已修（message 前缀内嵌 `[{error_code}]`，测试零改动 6 项转绿；透出的是契约声明 surface 非内部细节，不违 #ARCH-SEC-001 5.168 信任边界）。备选裁定（若团队倾向结构化字段）：改在 data 携带 error_code 并把 6 项测试断言转 err["data"]["error_code"]——当前内嵌实现可在裁定后迁移。'
+  fix_phase: 已修（message 内嵌）；结构化 data 承载备选待裁定
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-091'
+  title: OCP-004 三层安全网关重写后"文件写 WARN"规则消失——安全覆盖回退 vs 有意收窄待裁定
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/trading/pipeline/test_phase_f_layers.py）：DefaultSecurityGateway（OCP-004 三层防御重写版，src/zephyr/governance/security_governance/default_security_gateway.py）对输入 `with open("config.txt","w") as f: f.write("/etc/hosts")` 零 finding → decide ALLOW；旧实现有"文件写 WARN+FLAG"规则。重写中该规则消失——若是安全覆盖回退则应补规则（转代码缺口），若有意收窄则测试改写/删除。测试已 xfail(strict=False) 留痕。附带代码侧线索（同批侦察发现，建议同裁定一并核查）：①decide(list) 分支 `has_errors = any(...) or len(risks) > 0`（L310）使 FLAG 分支不可达（任何非空 risks 都 BLOCK）——疑似真 bug；②shared/contracts/model_serving_response.py 与 experiment/ 双份 codegen 类、contract_metrics.py 本地死 DriftAlert——SSoT 隐患（测试已跟进 canonical 路径）。'
+  fix_phase: 待裁定（补 WARN 规则 / 收窄确认后改测试）；①②线索建议同批核查
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-092'
+  title: scripts/governance 存量批量改写损伤——_shared import 收拢到 sys.path bootstrap 前 / 迁入子目录未修 bootstrap（75+ 脚本 --help 崩溃）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，全量 round1 分簇 tests/governance/integration/test_all_scripts.py 6 项）：并行冒烟探测（子进程 --help/--warn-only/--jsonl）实报脚本层批量损伤，两种机械形态：①`from _shared.*` 被"PEP8 import 收拢"提升到 sys.path bootstrap 之前——子目录脚本 sys.path[0]≠scripts/governance → ModuleNotFoundError（实证 cbg_reset.py L48 vs bootstrap L65-71、auto_generate_index.py L39、any_type_inferrer.py L64 插在既有 noqa 行前且 bootstrap 插错根；multiline grep from __future__\\n+from _shared\\. 命中 15+ 文件）；②脚本迁入维度子目录但未修 bootstrap（ci_self_check.py 全文无 bootstrap 却 from _shared.constants，[BLUEPRINT] 头仍写旧路径；audit_agent_spec.py L46 sys.path 指向不存在目录）。损伤已在 HEAD（非本轮 pytest 污染——工作区 restore 后文件与 HEAD 一致仍崩）。测试是健康探测器不应改——6 项已 xfail(strict=False) 留痕待专项清偿批。修复方向（专项批）：批量把 _shared import 挪回 bootstrap 后 / 为被移动脚本补 parents 探测式 bootstrap / 修 stale [BLUEPRINT] 路径；并追溯损伤提交批次评估回滚可能。附带裁定：test_jsonl_all 另暴露手写 argv 解析冒烟脚本（git_health_smoke.py L196-201 把 --warn-only 当 repo 路径）吞未知 flag+多行 JSON 输出，与 JSONL 质量门契约不合——补 argparse 主干 或 质量门豁免手写脚本，待裁定。'
+  fix_phase: 待专项清偿批（脚本批量修复/回滚评估）；JSONL 契约范围附带裁定；6 项测试已 xfail 留痕
+  status: open
+  created: '2026-08-15'
+  last_updated: '2026-08-15'
+- issue_id: '#ARCH-093'
+  title: battle_map research_incubation 拓扑 25→33 演进待裁定——新增 BM-RES-08~11 各带 -A 子环节，含 sort_order 冲突（08/09=8/9 插头、10 与 01 同 10、11 与 01-A 同 11）+16 环节无锚点
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/governance/test_battle_map_research_incubation.py 5 项）：e2e 拓扑测试锚定 25 环节（7 根+18 子）旧设计，PG 实测 33 环节（11 根+22 子）——新增根 BM-RES-08/09/10/11 各带一个 -A 子。异常信号：①sort_order 冲突——08→8、09→9 插在原主链 01(sort=10) 之前，10 与 01 同 10、11 与 01-A 同 11（唯一性被破坏，形态似"后补插入未重排"）；②锚点缺口——33 环节仅 21 锚点，16 环节无锚点（03 全系/04 全系/05-A~C/06-A/B/07-A/08-A~11-A，违反 BM-INV-001 无锚点=悬空决策）；③主链边仍止於 01→…→07 六条（新增 08-11 无 data_flow/trigger 边接入）。疑似治理批未完成的演进（或脏数据），测试侧不宜单方跟随——5 项已 xfail(strict=False) 留痕（test_exactly_25_steps/test_7_root_18_child/test_all_children_accounted_for/test_each_step_has_anchor/test_anchor_count_at_least_25）。待裁定：a) 确认 08-11 演进合法则重排 sort_order+补锚点+接主链边，测试常量跟进为 33（11 根+22 子）；b) 若为误写则清理 DB 后测试原样转绿。'
+  fix_phase: 已闭环（2026-08-16 裁定=合法演进）：DB sort_order 已重排（根 10~110 单调、子=父+1 家族模式，实证无冲突）+测试常量跟进 33（11 根+22 子）+3 项去 xfail 转绿；锚点缺口 16 环节与 08-11 主链边接入移交 Owner（BM-INV-001 君子协定，align_battle_map 告警通道），2 项锚点测试保留 xfail
+  status: decided
+  created: '2026-08-15'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-094'
+  title: rule_injection_guard 模式表缺 `import subprocess` 裸导入形式（仅有 subprocess\. 与 from subprocess import）
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/rule/test_rule_injection_guard.py）：生产 INJECTION_PATTERNS（src/zephyr/security/access_control/guards/rule_injection_guard.py L31-61）含 `\bsubprocess\.`（L36）与 `\bfrom\s+subprocess\s+import\b`（L55），但无 `\bimport\s+subprocess\b` 裸导入模式——`check("rule-5", "import subprocess")` 零命中 injection_detected=False。与 #ARCH-091（OCP-004 文件写 WARN 规则消失）同族：安全规则表覆盖缺口。对称性推断为遗漏而非有意收窄（os/sys 裸导入均有模式 `\bimport\s+os\b`/`\bimport\s+sys\b`，subprocess 独缺）。测试已 xfail(strict=False) 留痕（test_check_subprocess）。待裁定：补 `\bimport\s+subprocess\b` 模式后测试去 xfail 转绿。'
+  fix_phase: 已修（2026-08-16 裁定补模式）：INJECTION_PATTERNS 补 `\bimport\s+subprocess\b`（对称 os/sys 裸导入），测试去 xfail 转绿（12 项全绿）
+  status: resolved
+  created: '2026-08-15'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-095'
+  title: MCP blueprint depends_on 声明缺口——现 3 项（MOD-TASK_SYSTEM/MOD-GATE_ENGINE/b_mcp.yaml），未声明 MOD-INF-039（orchestrator）/MOD-INF-018
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/architecture/test_cross_module_contracts.py）：docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md frontmatter depends_on 仅 3 项（MOD-TASK_SYSTEM §3.2.1、MOD-GATE_ENGINE §3.2、b_mcp.yaml 全篇），测试锚定 ≥4 且含 MOD-INF-039（b_orchestrator.yaml L12 的 orchestrator 模块）。同测试的路径/文件名漂移已跟进（蓝图目录 mcp-servers→model_context_protocol_servers、模块 src/zephyr/mcp→src/zephyr/integration/mcp、契约文件连字符 tool-contracts.yaml→下划线 tool_contracts.yaml，3 项转绿）。depends_on 分歧属架构声明层——blueprint 为受保护路径不宜单方改：若 MCP 运行时确实依赖 orchestrator（task_manager_server 经 task 系统间接触达？）则补声明；若契约测试锚定的是过期设计（早期 MCP 直接编排）则删断言。2 项已 xfail(strict=False) 留痕（test_blueprint_depends_on_present/test_depends_on_ids_valid）。'
+  fix_phase: 已闭环（2026-08-16 裁定=删过期契约）：import 静态分析实证 MCP 运行时仅依赖 MOD-TASK_SYSTEM+MOD-GATE_ENGINE，MOD-INF-039/MOD-INF-018 属过期设计契约且无消费方——测试断言已删并去 xfail 转绿（6 项全绿），blueprint 受保护路径维持现事实 3 项声明
+  status: resolved
+  created: '2026-08-15'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-096'
+  title: skill 内容库整体缺失——skill-registry.yaml 仅 2 条 domain 条目且 path 指向的 SKILL.md 文件全部不存在，role 类清空
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/autonomy/test_pipeline_bridge_integration.py 5 项）：src/zephyr/autonomy_core/skills/skill-registry.yaml 现仅 2 条 domain 条目（SKILL-DOM-DS0-001 database-specialist / SKILL-DOM-MB0-002 master-blueprint），role 类整体清空；且两条目 path（database-specialist/SKILL.md 等）指向的 SKILL.md 文件在 skills 目录下全部不存在（glob **/SKILL.md 零命中）——SkillLoader.progressive_load 对 SKILL-DOM-DS0-001 抛 FileNotFoundError（.../skills/skills/domain/database-specialist/SKILL.md），对测试锚定的 SKILL-DOM-DBS-001/SKILL-ROL-IMP-001/SKILL-ROL-ARC-001 抛 KeyError（not found in registry）。注册表与内容文件双重漂移，疑似治理批清洗误删或内容库迁移未登记。SkillContextInjector.inject/inject_single 的 try/except 兜底把缺口吞为 loaded=False（符合 ERROR_CONTRACT 监控失败返回空指标？——不，这是注入链路，静默降级使 PipelineSkillBridge 全链失去 skill 注入能力且无告警）。5 项已 xfail(strict=False) 留痕（含 test_full_chain_loads_and_routes 的 health_check 已退役复合形态）。待裁定：a) 恢复/重建 skill 内容库与注册表条目；b) 若 skill 体系已退役则删除 PipelineSkillBridge 链路与测试。c) 附带：inject 静默吞异常建议加 warning 日志（缺口可观测性）。'
+  fix_phase: 已裁定（2026-08-16=转 CAND 登记）：CAND-AUTONOMYCORE-001 已入 candidate_module_registry.yaml（skill 内容库建设，P2，等 trigger_signals 命中晋升）；5 项 xfail(strict=False) 保留作功能规格书（内容库建成之日即验收标准）；inject 静默吞异常加 warning 随 CAND 一并施工
+  status: decided
+  created: '2026-08-15'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-097'
+  title: Windows 下 patch("os.path.join") 污染全进程 pathlib——os.path.join 即 WindowsPath._flavour.join 同源函数对象（测试写法禁令+shutdown 注入 seam 已落地）
+  severity: P1高
+  adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/budget/test_budget_lifecycle_e2e.py 3 项诡异物）：Windows 下 os 模块的 path=ntpath，os.path.join 与 pathlib.WindowsPath._flavour.join 是同一函数对象——unittest.mock.patch("os.path.join") 替换后，全进程所有惰性 WindowsPath 首次 str()/_load_parts 都会被 mock 重定向（探针实证：patch 窗口内 Path(REPO_ROOT)/".runtime" 等健康探针 Path str 化被篡改为测试 persist_path，write_text("ok") 覆写快照文件致 JSONDecodeError: s=''ok''；递归实证：mock side_effect 内 str(Path) → _flavour.join → mock → RecursionError）。根理：CPython WindowsPath 惰性解析，构造只存 _raw_paths，首次访问经 _flavour.join 拼字符串。危害面：任何测试 patch os.path.join 都是进程级核弹——窗口内所有线程的惰性 Path 被篡改（竞态随机污染同进程其他测试，全量画像诡异失败的隐藏源）。已落地：①budget_engine.shutdown 加 persist_path 注入 seam（生产跟进，向后兼容可选参数）；②测试 6 处 patch 全替换为 seam 调用、instance 别名断言改 set_instance/has_instance/reset_instance（instance= 类定义期别名不跟踪 _instance 的 Stage 4 缺陷同步绕开）；③7 项全绿。待裁定：a) 全仓检索 patch("os.path.join"/patch ntpath 同类写法立禁令（门禁规则候选）；b) BudgetEngine.instance 别名缺陷根治（property 化或删别名）。'
+  fix_phase: 已闭环（2026-08-16 裁定全部落地）：a) patch("os.path.join") 活码存量=0（test_budget_shutdown L50 转 persist_path 注入 seam，grep 复核零命中；禁令以裁定书登记为载体，再出现即立 gate）；b) BudgetEngine.instance 类定义期别名已删（坏公共化比无私有化更危险——静默错位），test_budget_lifecycle_e2e L150 转 set_instance，16 项测试全绿
+  status: resolved
+  created: '2026-08-15'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-099'
+  title: test_governance_db 生产库耦合——gov_conn fixture 拷贝生产 governance.db，遭守护进程持锁（database is locked）+schema 漂移（tx_idempotency 缺 idempotency_key 列）setup 即 error
+  severity: P2中
+  adjudication: 'AI-TDEBT-001 实证（2026-08-16，round3 全量基线 8 errors）：tests/governance/shared/test_governance_db.py 8 项全部 ERROR at setup——gov_db_path fixture 用 sqlite3 online backup API 拷贝生产 governance.db（data/databases/governance.db）到 tmp_path 隔离副本，但：①生产库被盘中守护进程（tick_subscriber/guard 代写心跳）持锁，backup/清理随机撞 database is locked；②生产库 schema 已漂移——tx_idempotency 表缺 idempotency_key 列（_cleanup_test_rows DELETE 即崩）。病根（第一性原理）：2026-07-27 治本改写把"直连共享生产库"改为"拷贝生产库副本"，解决了测试污染生产库方向，但保留了反向耦合——测试的可用性仍依赖生产库的实时锁状态与 schema 版本，违背测试自足性（self-contained）原则。100% AI 开发场景下，此类环境耦合失败会被 AI 误判为代码 bug 浪费排查轮次。裁定（2026-08-16，test-debt-leftover-adjudication）：8 项模块级 xfail(strict=False) 留痕（pytestmark），治本=测试自建最小 schema fixture（DDL 内嵌测试文件，只建 8 张被测表的最小列集），与生产库完全解耦——schema 契约变更时测试驱动更新，反向不再被生产库状态绑架。'
+  fix_phase: 待施工（自建最小 schema fixture：内嵌 DDL 建 tasks/task_events/task_snapshots/task_files/gates/circuit_breaker_state/tx_idempotency/drift_events/scan_results 最小列集）；8 项测试已模块级 xfail 留痕
+  status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
