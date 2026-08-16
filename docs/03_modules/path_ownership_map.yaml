@@ -6,9 +6,9 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-16T11:33:18Z'
+  generated_at: '2026-08-16T12:12:32Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
-  total_path_claims: 6002
+  total_path_claims: 6004
   total_ssot_claims: 16
   total_conflicts: 0
   conflict_resolution: 'ssot_claims_priority'
@@ -122,6 +122,20 @@ ownership:
     owner_blueprint: 'MOD-EX-012'
     claim_type: 'depgraph_node'
     declared_in: ''
+    existence: '未实现'
+    ownership_judgment: '本模块'
+
+  - path: 'src/zephyr/shared/state_store.py'
+    owner_blueprint: 'MOD-INF-016'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
+    existence: '未实现'
+    ownership_judgment: '本模块'
+
+  - path: 'src/zephyr/ex_core/risk_layer_orchestrator.py'
+    owner_blueprint: 'MOD-L06-001'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_domain_execution_core/blueprint.md'
     existence: '未实现'
     ownership_judgment: '本模块'
 
