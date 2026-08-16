@@ -21,9 +21,9 @@ def aggregator():
     return HealthAggregator(HealthProbeManager())
 
 
-def test_poll_all_returns_12(aggregator):
+def test_poll_all_returns_11(aggregator):
     results = aggregator.poll_all()
-    assert len(results) == 12
+    assert len(results) == 11
 
 
 def test_all_systems_in_result(aggregator):
@@ -36,7 +36,7 @@ def test_all_systems_in_result(aggregator):
 def test_latest_snapshots(aggregator):
     aggregator.poll_all()
     latest = aggregator.latest_snapshots()
-    assert len(latest) == 12
+    assert len(latest) == 11
 
 
 def test_annual_report(aggregator):

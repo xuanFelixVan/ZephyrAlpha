@@ -348,31 +348,30 @@ class TestRedBlueExtremeScenarios:
             healthy = launcher_module.check_server_health("crash_test", gateway)
             assert healthy is False, "Crashed process should be unhealthy"
 
-    def test_max_processes_limit_enforced(self, gateway):
+    def test_max_processes_limit_enforced(self):
         """达到 max_processes 上限时应拒绝新进程。"""
-        from zephyr.shared.infra.process_lifecycle_gateway import ProcessLifecycleGateway
+        from zephyr.shared.infra.process_pool import MCPProcessPool
 
-        # 创建 max_processes=2 的小池
-        small_gw = ProcessLifecycleGateway(idle_timeout_s=600.0)
-        small_gw.pool.max_processes = 2
+        # 契约漂移对齐：max_processes 为构造参数（公共 API），
+        # 实例属性赋值只建孤儿属性不生效（原测试写法已失效）。
+        pool = MCPProcessPool(max_processes=2, idle_timeout_s=600.0)
         try:
             # 启动 2 个进程
             for i in range(2):
-                entry = small_gw.launch(
+                entry = pool.get_or_create(
                     f"mcp-limit-test-{i}",
                     [sys.executable, "-c", "import time; time.sleep(60)"],
                 )
                 assert entry is not None, f"Process {i} should start"
 
             # 第 3 个应被拒绝
-            entry = small_gw.launch(
+            entry = pool.get_or_create(
                 "mcp-limit-test-2",
                 [sys.executable, "-c", "import time; time.sleep(60)"],
             )
             assert entry is None, "Should reject when max_processes reached"
         finally:
-            small_gw.terminate_all()
-            small_gw.shutdown()
+            pool.terminate_all()
 
     def test_concurrent_start_no_conflict(self, launcher_module, gateway, standin_script):
         """并发启动多个进程不应冲突。"""

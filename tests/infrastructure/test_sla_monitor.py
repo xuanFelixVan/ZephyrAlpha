@@ -24,6 +24,7 @@ from zephyr.infrastructure.sla.sla_monitor import (
     SLAMonitor,
     SLAReport,
 )
+from zephyr.shared.io.paths import REPO_ROOT
 
 
 class TestSLABreachDataclass:
@@ -71,7 +72,7 @@ class TestSLAMonitor:
 
     def test_instantiation_default(self):
         mon = SLAMonitor()
-        assert mon.data_dir == Path("data/sla")
+        assert mon.data_dir == REPO_ROOT / "data" / "sla"
 
     def test_record_rto_within_target(self, tmp_path):
         mon = SLAMonitor(data_dir=tmp_path)

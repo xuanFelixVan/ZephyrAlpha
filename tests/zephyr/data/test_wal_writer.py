@@ -199,6 +199,8 @@ class TestDrainAndRecovery:
         monkeypatch.setattr(wal_writer, "_DRAIN_FAST_INTERVAL", 0.05)
 
         with _mock_table_cols(["trade_date", "symbol", "price"]), \
+             patch("src.zephyr.data.ch_writer.get_insert_columns",
+                   return_value="(trade_date, symbol, price)"), \
              patch("src.zephyr.data.ch_writer.write_tsv", return_value=True):
             w = WalWriter("c1_market.tick_data")
             w.start()

@@ -288,8 +288,12 @@ class TestPrivilegeEscalation:
                 for line in text.split("\n"):
                     if line.strip().startswith("#"):
                         continue
+                    # 假阳性转正：.runtime/tmp 是项目内 sanctioned 临时目录
+                    # （#ARCH-ROOT-TEMP-FILE-ENFORCEMENT），非系统 /tmp——
+                    # 先从行内剔除再匹配系统路径，防止子串误伤。
+                    sanitized = line.replace(".runtime/tmp", "").replace(".runtime\\tmp", "")
                     for dp in dangerous_paths:
-                        if dp.lower() in line.lower():
+                        if dp.lower() in sanitized.lower():
                             findings.append((py_file.name, dp, line.strip()))
             except Exception:
                 pass

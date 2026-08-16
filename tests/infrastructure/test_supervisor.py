@@ -11,13 +11,14 @@
 # [TESTS] tests/test_supervisor.py
 # [TTL] task_bound
 
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 from zephyr.infrastructure.a2a_protocol.layer2_communication.a2a_state import (
     A2ATask,
     A2ATaskStatus,
 )
 from zephyr.infrastructure.a2a_protocol.layer3_coordination.supervisor import Supervisor
+from zephyr.shared.utils.time_utils import now_utc
 
 
 def _make_task(task_id="a2a-task-sup-1", status=A2ATaskStatus.QUEUED, to_agent=None, deadline=None):
@@ -45,9 +46,9 @@ class TestSupervisor:
 
     def test_submit_task_deadline_clamped_min(self):
         sv = Supervisor()
-        task = _make_task(deadline=datetime.utcnow() + timedelta(seconds=30))
+        task = _make_task(deadline=now_utc() + timedelta(seconds=30))
         result = sv.submit_task(task)
-        min_dl = datetime.utcnow() + timedelta(minutes=sv.MIN_TIMEOUT_MINUTES)
+        min_dl = now_utc() + timedelta(minutes=sv.MIN_TIMEOUT_MINUTES)
         assert result.deadline >= min_dl - timedelta(seconds=1)
 
     def test_assign_task(self):
@@ -81,14 +82,14 @@ class TestSupervisor:
         sv = Supervisor()
         task = _make_task()
         sv.submit_task(task)
-        sv.tasks["a2a-task-sup-1"].deadline = datetime.utcnow() - timedelta(hours=1)
+        sv.tasks["a2a-task-sup-1"].deadline = now_utc() - timedelta(hours=1)
         timeouts = sv.escalate_timeouts()
         assert len(timeouts) > 0
         assert sv.tasks["a2a-task-sup-1"].status == A2ATaskStatus.TIMEOUT
 
     def test_detect_deadlocks_no_deadlock(self):
         sv = Supervisor()
-        task = _make_task(deadline=datetime.utcnow() + timedelta(hours=1))
+        task = _make_task(deadline=now_utc() + timedelta(hours=1))
         task.status = A2ATaskStatus.IN_PROGRESS
         sv.submit_task(task)
         deadlocks = sv.detect_deadlocks()

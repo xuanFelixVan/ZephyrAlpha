@@ -633,7 +633,14 @@ class TestDbConnectionNamingConvention:
             get_depgraph_pg_connection as f4_wrapper,
         )
 
-        conn = f4_wrapper(autocommit=True)
+        # PG 不可用时降级 skip（套件既定约定，conftest pg_db 同规）——递归遮蔽
+        # 在抵达 psycopg2.connect 前即抛 RecursionError，故 skip 不削弱回归力。
+        import psycopg2  # noqa: PLC0415
+
+        try:
+            conn = f4_wrapper(autocommit=True)
+        except psycopg2.OperationalError as exc:
+            pytest.skip(f"depgraph PG 不可用，降级 skip: {exc}")
         try:
             assert isinstance(conn, PgConnExecuteWrapper), (
                 "F4 wrapper 必须返回 PgConnExecuteWrapper（包装 psycopg2 conn）"

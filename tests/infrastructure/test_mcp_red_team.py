@@ -458,13 +458,20 @@ def test_21_governance_server_instance():
 
 
 def test_22_sandbox_server_planning_does_not_crash_gateway():
-    """sandbox 状态为 planning 时 Gateway 仍可正常启动"""
+    """sandbox server 已注册时 Gateway 正常启动，route.status 与 mcp.json 真源一致"""
+    import json
+
     from zephyr.integration.mcp.gateway_server import create_gateway
+    from zephyr.shared.io.paths import REPO_ROOT
+
+    # 状态词表真源=config/mcp.json（禁止测试硬编码 planning/implemented）
+    cfg = json.loads((REPO_ROOT / "config" / "mcp.json").read_text(encoding="utf-8"))
+    expected_status = cfg["servers"]["sandbox"]["status"]
 
     gw = create_gateway()
     sandbox_route = gw.routes.get("sandbox")
     assert sandbox_route is not None
-    assert sandbox_route.get("status") == "planning"
+    assert sandbox_route.get("status") == expected_status
 
 
 # ============================================================================
