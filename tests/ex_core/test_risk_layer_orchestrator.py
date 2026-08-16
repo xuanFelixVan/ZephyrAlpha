@@ -18,12 +18,19 @@ TailRiskMonitor/PositionReconciler/DefaultRiskValidator/stop_loss 清算链全�
      重建未完成/失败 → 下单被拒（Fail-Closed）
   3. VaR 黄级 → position_cap=0.5 缩放目标权重；红级 → 禁止新开仓
   4. PositionReconciler  drift → 冻结标的下单硬拦；定时对账循环启停
+  5. 系统性风险 LEVEL_3 逃生链（AI-LVL3-001，37 号 §3.3）：≥3 信号 → LEVEL_3
+     → build_escape_directive 真实产出 → 同一仲裁点真实置位清算全链；
+     情绪断路器 0.85 强制升级；非 LEVEL_3 调用逃生执行器抛错 + LEVEL_1/2
+     不触发熔断
+  6. 降级机（37 号 §3.6）：LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3%
+     逐级降级（3→2→1→0 hysteresis 门控）；降级不解除熔断闩锁
+     （35 号 KILL 态人工复位不变式）
 """
 
 from __future__ import annotations
 
 import threading
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from unittest.mock import MagicMock
 
@@ -38,6 +45,10 @@ from zephyr.ex_core.risk_layer_orchestrator import (
 )
 from zephyr.ex_core.trading_session import TradingSession, TradingSessionConfig
 from zephyr.position.core.drawdown_controller import DrawdownController
+from zephyr.risk.core.ashare_systemic_risk_detector import (
+    AshareSystemicRiskDetector,
+    InvalidSystemicRiskInputError,
+)
 from zephyr.risk.core.drawdown_tracker import DrawdownAlertLevel, DrawdownTracker
 from zephyr.risk.core.tail_risk_monitor import TailRiskMonitor
 from zephyr.risk.core.var_calculator import VaRCalculator
@@ -538,3 +549,368 @@ class TestIntradayReconcile:
         finally:
             orch.stop_reconcile_loop()
         assert orch._reconcile_timer is None
+
+
+# ---------------------------------------------------------------------
+# 红队实证⑤：系统性风险 LEVEL_3 逃生链（37 号 §3.3，AI-LVL3-001）
+# ---------------------------------------------------------------------
+
+_T0 = datetime(2026, 8, 17, 10, 0, tzinfo=UTC)
+
+# 三信号齐发：流动性危机（卖压 0.80 + 价差 1%）+ 量化踩踏（指数 -3% + 量 2.5x）
+# + 外围冲击（-4%）
+_LEVEL3_INPUTS = {
+    "sell_pressure": 0.80,
+    "bid_ask_spread": 0.01,
+    "index_change_pct": -0.03,
+    "volume_surge_ratio": 2.5,
+    "external_market_change": -0.04,
+}
+# 危机消退：卖压/价差回正常，0 信号
+_CALM_INPUTS = {"sell_pressure": 0.30, "bid_ask_spread": 0.001}
+
+
+def _make_systemic_orchestrator(
+    *,
+    broker: FakeBroker,
+    kill_owner: DefaultRiskValidator | None = None,
+    open_orders: dict[str, dict] | None = None,
+    config: RiskLayerConfig | None = None,
+) -> tuple[RiskLayerOrchestrator, dict[str, dict]]:
+    """真实组件 + 可变系统性输入盒（provider 契约=detector.check 关键字映射）。"""
+    inputs_box: dict[str, dict] = {"data": {}}
+    orch = RiskLayerOrchestrator(
+        drawdown_controller=DrawdownController(),
+        drawdown_tracker=DrawdownTracker(initial_net_value=1_000_000.0),
+        var_calculator=VaRCalculator(),
+        tail_risk_monitor=TailRiskMonitor(),
+        broker=broker,
+        kill_switch_owner=kill_owner,
+        open_orders_provider=(lambda: dict(open_orders)) if open_orders is not None else None,
+        systemic_detector=AshareSystemicRiskDetector(),
+        systemic_input_provider=lambda: dict(inputs_box["data"]),
+        config=config,
+    )
+    return orch, inputs_box
+
+
+class TestSystemicLevel3EscapeChain:
+    """红队向量①：≥3 信号 → LEVEL_3 真实触发 → 逃生指令 → Kill Switch 真实清算全链。"""
+
+    def test_three_signals_level3_full_chain(self) -> None:
+        validator = DefaultRiskValidator()
+        broker = FakeBroker(
+            cash=Decimal("500000"),
+            holdings={"600000.SH": Decimal("5000"), "000001.SZ": Decimal("3000")},
+            cost_prices={"600000.SH": Decimal("100"), "000001.SZ": Decimal("50")},
+        )
+        orch, inputs_box = _make_systemic_orchestrator(
+            broker=broker,
+            kill_owner=validator,
+            open_orders={"bk-open-9": {"symbol": "600000.SH"}},
+        )
+        inputs_box["data"] = dict(_LEVEL3_INPUTS)
+
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+
+        # 三级警报：LEVEL_3 真实触发（3 信号）
+        assert snap.systemic_level == 3
+        assert snap.systemic_signal_count == 3
+        assert snap.systemic_sentiment_breaker is False
+        assert snap.systemic_cap == 0.0
+        assert snap.systemic_halt is True
+        # 快照合并：position_cap 取最严（0.0），allow_new_position=False
+        assert snap.position_cap == 0.0
+        assert snap.allow_new_position is False
+        # 逃生指令真实产出（build_escape_directive 全字段）
+        directive = snap.escape_directive
+        assert directive is not None
+        assert directive["directive"] == "escape"
+        assert directive["action"] == "liquidate_all"
+        assert directive["position_cap"] == 0.0
+        assert directive["cancel_pending_orders"] is True
+        assert directive["halt_new_orders"] is True
+        assert directive["kill_switch_required"] is True
+        assert len(directive["triggered_signals"]) == 3
+        # Kill Switch 真实置位：状态层（DefaultRiskValidator 公共接口）
+        assert validator.kill_switch_active is True
+        assert orch.kill_switch_engaged is True
+        assert orch.is_trading_allowed is False
+        # 清算真实执行：2 持仓全平（MARKET SELL）+ 挂单全撤
+        liquidated = {(o.symbol, o.side, o.quantity) for o in broker.submitted}
+        assert liquidated == {
+            ("600000.SH", OrderSide.SELL, Decimal("5000")),
+            ("000001.SZ", OrderSide.SELL, Decimal("3000")),
+        }
+        assert all(o.order_type is OrderType.MARKET for o in broker.submitted)
+        assert broker.cancelled == ["bk-open-9"]
+        report = orch._kill_switch_report
+        assert report is not None and report["report"]["all_success"] is True
+        assert "系统性风险 LEVEL_3" in report["reason"]
+
+    def test_repeated_level3_no_duplicate_liquidation(self) -> None:
+        """LEVEL_3 持续（平级停留）：再次评估不重复清算（仲裁点幂等）。"""
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = dict(_LEVEL3_INPUTS)
+
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert len(broker.submitted) == 1
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(seconds=30))
+        assert snap.systemic_level == 3
+        assert len(broker.submitted) == 1  # 清算仅一次
+        assert snap.escape_directive is None  # 非迁移轮次不重复产指令
+
+    def test_session_level_systemic_cap_scales_weights(self) -> None:
+        """会话级集成：LEVEL_2（2 信号）→ position_cap 0.70 缩放目标权重。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        assert orch.recover_from_broker().success is True
+        # 2 信号：流动性危机 + 外围冲击 → LEVEL_2
+        inputs_box["data"] = {
+            "sell_pressure": 0.80,
+            "bid_ask_spread": 0.01,
+            "external_market_change": -0.04,
+        }
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 2
+        assert snap.systemic_cap == pytest.approx(0.70)
+        assert snap.systemic_halt is False  # LEVEL_2 降仓不停开仓（§3.3）
+        assert snap.position_cap == pytest.approx(0.70)
+        assert snap.allow_new_position is True
+        assert orch.kill_switch_engaged is False
+
+        session = _make_session(
+            broker=broker,
+            risk_layer=orch,
+            target_weights={"600000.SH": 0.8},
+            prices={"600000.SH": Decimal("100")},
+        )
+        submitted = session.rebalance()
+        # 0.8 × (0.7/0.8) = 0.7 → 1M × 0.7 / 100 = 7000 股
+        assert len(submitted) == 1
+        assert submitted[0].quantity == Decimal("7000")
+
+
+class TestSystemicSentimentBreaker:
+    """红队向量②：情绪断路器 0.85 强制升级 LEVEL_3（0 信号也熔断清算）。"""
+
+    def test_sentiment_085_forces_level3_kill_chain(self) -> None:
+        validator = DefaultRiskValidator()
+        broker = FakeBroker(
+            cash=Decimal("0"),
+            holdings={"300750.SZ": Decimal("1000")},
+            cost_prices={"300750.SZ": Decimal("200")},
+        )
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker, kill_owner=validator)
+        inputs_box["data"] = {"sentiment_index": 0.85}  # 0 信号 + 极度恐慌
+
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+
+        assert snap.systemic_level == 3
+        assert snap.systemic_signal_count == 0
+        assert snap.systemic_sentiment_breaker is True
+        assert snap.position_cap == 0.0
+        assert snap.allow_new_position is False
+        assert "情绪断路器" in (snap.escape_directive or {})["reason"]
+        assert validator.kill_switch_active is True
+        assert orch.is_trading_allowed is False
+        # 清算真实执行
+        assert [(o.symbol, o.side) for o in broker.submitted] == [("300750.SZ", OrderSide.SELL)]
+
+    def test_sentiment_below_threshold_no_escalation(self) -> None:
+        """情绪 0.84（阈值下）+ 0 信号 → 正常态，不熔断。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {"sentiment_index": 0.84}
+
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 0
+        assert snap.systemic_sentiment_breaker is False
+        assert snap.position_cap == 1.0
+        assert snap.allow_new_position is True
+        assert orch.kill_switch_engaged is False
+
+
+class TestEscapeDirectiveGuard:
+    """非 LEVEL_3 调用 build_escape_directive 抛错 + LEVEL_1/2 不触发熔断。"""
+
+    def test_non_level3_escape_directive_raises(self) -> None:
+        detector = AshareSystemicRiskDetector()
+        alert_l1 = detector.check(sell_pressure=0.80, bid_ask_spread=0.01)  # 1 信号
+        alert_l2 = detector.check(  # 2 信号
+            sell_pressure=0.80,
+            bid_ask_spread=0.01,
+            external_market_change=-0.04,
+        )
+        with pytest.raises(InvalidSystemicRiskInputError):
+            detector.build_escape_directive(alert_l1)
+        with pytest.raises(InvalidSystemicRiskInputError):
+            detector.build_escape_directive(alert_l2)
+
+    def test_level1_halts_new_orders_without_kill_switch(self) -> None:
+        """LEVEL_1（1 信号）→ 停开仓仅平仓：halt=True 但 cap=1.0，不熔断不清算。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {"sell_pressure": 0.80, "bid_ask_spread": 0.01}
+
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 1
+        assert snap.systemic_halt is True
+        assert snap.systemic_cap == 1.0  # 现有仓位不动（§3.3）
+        assert snap.position_cap == 1.0
+        assert snap.allow_new_position is False  # 停开仓
+        assert snap.escape_directive is None
+        assert orch.kill_switch_engaged is False
+        assert broker.submitted == []
+
+
+# ---------------------------------------------------------------------
+# 红队实证⑥：降级机（37 号 §3.6 恢复条件矩阵 + 最短持续门控）
+# ---------------------------------------------------------------------
+
+
+class TestSystemicDegradationMachine:
+    """红队向量③：LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3% 逐级降级。"""
+
+    def test_cooldown_gates_and_full_ladder(self) -> None:
+        """冷却门控 + 3→2→1→0 逐级 hysteresis 降级；熔断闩锁人工复位不变。"""
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = dict(_LEVEL3_INPUTS)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert orch.systemic_level == 3
+
+        # T+29min：信号归零但冷却未满 → 不降级（防 thrashing）
+        inputs_box["data"] = dict(_CALM_INPUTS)
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=29))
+        assert snap.systemic_level == 3
+        assert snap.systemic_cap == 0.0
+        assert snap.systemic_halt is True
+
+        # T+31min：冷却满 + 信号≤2 + spread<0.3% → 降级 LEVEL_2（允许重建仓 70%）
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=31))
+        assert snap.systemic_level == 2
+        assert snap.systemic_cap == pytest.approx(0.70)
+        assert snap.systemic_halt is False  # §3.6 恢复执行动作：允许重建仓
+        assert snap.position_cap == pytest.approx(0.70)
+        # 35 号 KILL 态禁止 37 号恢复——熔断闩锁保持人工复位
+        assert orch.kill_switch_engaged is True
+        assert orch.is_trading_allowed is False
+
+        # LEVEL_2 停留 14min（<15min 门控）→ 不降级
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=45))
+        assert snap.systemic_level == 2
+        # LEVEL_2 停留 16min + 信号≤1 → 降级 LEVEL_1（恢复满仓权限）
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=47))
+        assert snap.systemic_level == 1
+        assert snap.systemic_cap == 1.0
+        assert snap.systemic_halt is False  # 恢复态 LEVEL_1 不停开仓（§3.6）
+
+        # LEVEL_1 停留 11min + 信号 0 + 半阈值 → 恢复正常
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=58))
+        assert snap.systemic_level == 0
+        assert snap.systemic_cap == 1.0
+        assert snap.systemic_halt is False
+
+    def test_spread_gate_blocks_degradation(self) -> None:
+        """冷却满但 spread 仍 ≥0.3% → 不降级（hysteresis 价差门控）。"""
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = dict(_LEVEL3_INPUTS)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+
+        # T+35min：0 信号（卖压回落）但价差仍 0.4%（≥0.3% 恢复带）
+        inputs_box["data"] = {"sell_pressure": 0.30, "bid_ask_spread": 0.004}
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=35))
+        assert snap.systemic_level == 3
+
+        # 价差回落至 0.2%（<0.3%）→ 降级 LEVEL_2
+        inputs_box["data"] = {"sell_pressure": 0.30, "bid_ask_spread": 0.002}
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=36))
+        assert snap.systemic_level == 2
+
+    def test_persistent_signals_no_degradation(self) -> None:
+        """冷却满但信号仍 ≥3（LEVEL_3 平级停留）→ 不降级。"""
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = dict(_LEVEL3_INPUTS)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=40))
+        assert snap.systemic_level == 3
+        assert snap.systemic_cap == 0.0
+
+
+class TestSystemicWiringRobustness:
+    """接线健壮性：未接线零影响 / provider 失效降级 / 输入过滤。"""
+
+    def test_unwired_orchestrator_behavior_unchanged(self) -> None:
+        """未注入 systemic → 快照默认零约束（对 RWIRE 既有行为零回归）。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = _make_orchestrator(broker=broker)
+        snap = orch.evaluate_intraday(1_000_000.0)
+        assert snap.systemic_level == 0
+        assert snap.systemic_cap == 1.0
+        assert snap.systemic_halt is False
+        assert snap.systemic_signal_count == 0
+        assert snap.systemic_sentiment_breaker is False
+        assert snap.escape_directive is None
+        assert orch.systemic_level == 0
+
+    def test_provider_failure_skips_round_without_blocking(self) -> None:
+        """provider 抛异常 → 本轮跳过（状态保持），交易主循环不阻断。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch = RiskLayerOrchestrator(
+            drawdown_controller=DrawdownController(),
+            drawdown_tracker=DrawdownTracker(initial_net_value=1_000_000.0),
+            var_calculator=VaRCalculator(),
+            tail_risk_monitor=TailRiskMonitor(),
+            broker=broker,
+            systemic_detector=AshareSystemicRiskDetector(),
+            systemic_input_provider=MagicMock(side_effect=RuntimeError("data feed down")),
+        )
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 0
+        assert snap.position_cap == 1.0
+        assert orch.kill_switch_engaged is False
+
+    def test_invalid_input_value_skips_round(self) -> None:
+        """输入越界（sell_pressure=1.5）→ detector 校验抛错被隔离，本轮跳过。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {"sell_pressure": 1.5, "bid_ask_spread": 0.01}
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 0
+        assert orch.kill_switch_engaged is False
+
+    def test_provider_now_key_filtered(self) -> None:
+        """provider 误带 now 键 → 编排层过滤，不撞 detector.check(now=...) 签名。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {"sentiment_index": 0.5, "now": datetime(2020, 1, 1, tzinfo=UTC)}
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 0
+        assert snap.timestamp == _T0
+
+    def test_empty_inputs_skip_round(self) -> None:
+        """provider 返回空/None → 本轮跳过（无输入不可评估，状态保持）。"""
+        broker = FakeBroker(cash=Decimal("1000000"))
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker)
+        inputs_box["data"] = {}
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0)
+        assert snap.systemic_level == 0
+
+    def test_custom_systemic_config_accepted(self) -> None:
+        """C 类参数可覆盖：自定义恢复比例/门控生效。"""
+        broker = FakeBroker(cash=Decimal("0"), holdings={"600000.SH": Decimal("1000")})
+        config = RiskLayerConfig(systemic_min_hold_minutes={1: 5, 2: 8, 3: 12})
+        orch, inputs_box = _make_systemic_orchestrator(broker=broker, config=config)
+        inputs_box["data"] = dict(_LEVEL3_INPUTS)
+        orch.evaluate_intraday(1_000_000.0, now=_T0)
+        inputs_box["data"] = dict(_CALM_INPUTS)
+        # 自定义 12min 冷却：T+11min 不降级，T+13min 降级
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=11))
+        assert snap.systemic_level == 3
+        snap = orch.evaluate_intraday(1_000_000.0, now=_T0 + timedelta(minutes=13))
+        assert snap.systemic_level == 2
