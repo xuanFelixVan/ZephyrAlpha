@@ -38,8 +38,10 @@ from zephyr.infrastructure.auto_fix_engine.models import (
 @pytest.fixture
 def engine(tmp_path):
     config_path = str(tmp_path / "auto_fix_config.yaml")
+    budget_db = (tmp_path / "budget.db").as_posix()
     with open(config_path, "w", encoding="utf-8") as f:
-        f.write("safety:\n  safety_gate_enabled: true\nbudget:\n  daily_limit: 50\n  monthly_limit: 500\n")
+        # budget.db_path -> tmp: keep test consumption off the shared DB_PATH SSoT
+        f.write("safety:\n  safety_gate_enabled: true\nbudget:\n  daily_limit: 50\n  monthly_limit: 500\n  db_path: " + budget_db + "\n")
     return AutoFixEngine(config_path=config_path)
 
 
