@@ -5,7 +5,7 @@
 # [CONSUMERS] D-PORTFOLIO(TradingSession可调用); D-EX-CORE(ExecutionEngine可调用)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞
+# [INVARIANTS] 六步严格顺序;补偿幂等;≤5s超时;每步审计不可跳过;SagaResult frozen不可变;execute同步阻塞;超时撤单失败强制查询订单终态(已成交补走step5/6不吞掉)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -33,7 +33,9 @@ D_EXECUTION_CORE 域事务编排基础设施: 将单笔订单的执行封装为�
 补偿规则:
     - 步骤3失败 → 撤单 (cancel_order, 幂等: 已成交则忽略)
     - 步骤5失败 → 持仓回滚 (反向 apply_fill, 幂等: 覆盖)
-    - 步骤4超时 → 撤单 (步骤3补偿)
+    - 步骤4超时 → 撤单 (步骤3补偿)；撤单返回 False 强制查询订单终态——
+      已成交补走 step5/6（裁定书 §三 P0-2 修复，#ARCH-100：超时分支吞成交
+      会导致持仓账本与券商漂移），无法确认终态则 critical 告警需人工对账
 
 纯基础设施: 不决定"买什么/何时买/买多少", 只负责"按顺序执行六步, 失败就补偿回滚"。
 
@@ -187,6 +189,14 @@ class SagaTimeoutError(Exception):
 
 class SagaCompensationError(Exception):
     """Saga 补偿操作失败。"""
+
+
+class _CancelOutcome(str, Enum):
+    """撤单补偿结果（内部，供超时分支决定是否强制查询订单终态）。"""
+
+    CANCELLED = "CANCELLED"      # 撤单成功
+    NOT_NEEDED = "NOT_NEEDED"    # 订单已终态，无需补偿
+    FAILED = "FAILED"            # 撤单失败/异常（可能已成交，需强制查询终态）
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -477,10 +487,19 @@ class OrderExecutionSaga:
             remaining = ctx.remaining_timeout(self._config)
             fill = self._step4_fill_confirm(ctx, ctx.collector, remaining)
             if fill is None:
-                # 超时 → 补偿撤单
+                # 超时 → 补偿撤单；撤单失败强制查询订单终态——已成交补走后续
+                # step5/6 而非吞掉（裁定书 §三 P0-2，#ARCH-100）
                 ctx.state = SagaState.TIMEOUT
                 ctx.error = f"fill timeout after {self._config.timeout_seconds}s"
-                self._compensate_order(ctx)
+                outcome = self._compensate_order(ctx)
+                if outcome is _CancelOutcome.FAILED:
+                    if self._recover_filled_order(ctx):
+                        return ctx.to_result()
+                    _logger.critical(
+                        "[Saga %s] 撤单失败且无法确认订单终态——持仓可能与券商不一致，需人工对账: order=%s",
+                        ctx.saga_id[:8],
+                        ctx.order.order_id,
+                    )
                 self._audit_timeout(ctx)
                 return ctx.to_result()
 
@@ -699,8 +718,8 @@ class OrderExecutionSaga:
 
     # ── 补偿操作 ──
 
-    def _compensate_order(self, ctx: _SagaContext) -> None:
-        """步骤3补偿: 撤单（幂等）。"""
+    def _compensate_order(self, ctx: _SagaContext) -> _CancelOutcome:
+        """步骤3补偿: 撤单（幂等）。返回撤单结果，供超时分支决定是否强制查询终态。"""
         try:
             if ctx.order.status in (OrderStatus.PENDING, OrderStatus.SUBMITTED, OrderStatus.PARTIAL):
                 cancelled = self._order_manager.cancel_order(ctx.order.order_id)
@@ -715,18 +734,85 @@ class OrderExecutionSaga:
                         {"reason": "saga_compensate", "saga_state": ctx.state.value},
                     )
                     _logger.info("[Saga %s] COMPENSATED: order cancelled", ctx.saga_id[:8])
-                else:
-                    # 撤单失败——可能已成交（幂等: 忽略）
-                    _logger.warning(
-                        "[Saga %s] cancel returned False (may already be filled)", ctx.saga_id[:8]
-                    )
-            else:
-                # 订单已终态（FILLED/CANCELLED/REJECTED）——无需补偿
-                _logger.info(
-                    "[Saga %s] skip compensate: order status=%s", ctx.saga_id[:8], ctx.order.status
+                    return _CancelOutcome.CANCELLED
+                # 撤单失败——可能已成交（由调用方强制查询终态，不再吞掉）
+                _logger.warning(
+                    "[Saga %s] cancel returned False (may already be filled)", ctx.saga_id[:8]
                 )
+                return _CancelOutcome.FAILED
+            # 订单已终态（FILLED/CANCELLED/REJECTED）——无需补偿
+            _logger.info(
+                "[Saga %s] skip compensate: order status=%s", ctx.saga_id[:8], ctx.order.status
+            )
+            return _CancelOutcome.NOT_NEEDED
         except Exception as exc:  # noqa: BLE001
             _logger.error("[Saga %s] compensate_order failed: %s", ctx.saga_id[:8], exc, exc_info=True)
+            return _CancelOutcome.FAILED
+
+    def _recover_filled_order(self, ctx: _SagaContext) -> bool:
+        """超时撤单失败后的终态恢复：强制查询订单终态，已成交补走 step5/6。
+
+        Returns:
+            True=订单实际已成交且后续步骤已补走；False=未成交或无法确认终态
+            （保持 TIMEOUT 语义，调用方继续告警）。
+        """
+        terminal = self._query_terminal_order(ctx)
+        if terminal is None or terminal.status is not OrderStatus.FILLED:
+            return False
+        # 已成交：构造恢复 Fill 补走持仓更新+报告（fill_id 确定性前缀 saga-fq-，
+        # 供 fill_id 去重集识别恢复来源——去重落地归 AI-RRESIL-001，本侧只保证可识别）
+        recovered_qty = terminal.filled_quantity if terminal.filled_quantity > 0 else ctx.order.quantity
+        recovered_price = terminal.avg_fill_price or ctx.order.limit_price or Decimal("0")
+        ctx.fill = Fill(
+            fill_id=f"saga-fq-{ctx.order.order_id}",
+            fill_price=recovered_price,
+            fill_timestamp=datetime.now(UTC),
+            filled_quantity=recovered_qty,
+            idempotency_key=f"saga-fq-{ctx.order.idempotency_key}",
+            order_id=ctx.order.order_id,
+            strategy_id=ctx.order.strategy_id,
+            symbol=ctx.order.symbol,
+        )
+        ctx.state = SagaState.FILL_RECEIVED
+        ctx.mark_step("fill_confirm(force_query)")
+        ctx.error = None
+        self._audit.log(
+            ExecutionAuditEventType.FILL_RECEIVED,
+            ctx.order.order_id,
+            ctx.order.symbol,
+            AuditSource.AUTO,
+            {
+                "fill_id": ctx.fill.fill_id,
+                "recovered_via": "force_query_terminal_state",
+                "fill_price": str(recovered_price),
+                "filled_qty": str(recovered_qty),
+            },
+        )
+        _logger.warning(
+            "[Saga %s] 超时但订单已成交，补走持仓更新+报告: order=%s",
+            ctx.saga_id[:8],
+            ctx.order.order_id,
+        )
+        if not self._step5_position_update(ctx):
+            return True
+        self._step6_report(ctx)
+        ctx.state = SagaState.COMPLETED
+        return True
+
+    def _query_terminal_order(self, ctx: _SagaContext) -> Order | None:
+        """强制查询订单终态：broker 权威查询优先，本地 OrderManager 兜底。"""
+        if ctx.order.broker_order_id:
+            try:
+                terminal = self._broker.query_order(ctx.order.broker_order_id)
+                if terminal is not None:
+                    return terminal
+            except Exception:  # noqa: BLE001 — 券商查询失效降级本地查询
+                _logger.exception("[Saga %s] broker.query_order 失效，降级本地查询", ctx.saga_id[:8])
+        try:
+            return self._order_manager.get_order(ctx.order.order_id)
+        except Exception:  # noqa: BLE001
+            _logger.exception("[Saga %s] order_manager.get_order 失效", ctx.saga_id[:8])
+            return None
 
     def _compensate_position(self, ctx: _SagaContext) -> None:
         """步骤5补偿: 持仓回滚（反向 apply_fill, 幂等）。"""

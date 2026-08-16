@@ -347,7 +347,9 @@ class OrderManager:
             return False
 
         try:
-            broker.cancel_order(order.broker_order_id)
+            # 透传券商端撤单布尔结果（#ARCH-100：原实现吞掉 False——券商拒绝撤单
+            # （如已成交）被误判为撤单成功，Saga 超时分支无法感知真实终态）
+            return bool(broker.cancel_order(order.broker_order_id))
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
             _logger.error(
                 "券商端撤单失败: order_id=%s broker_order_id=%s broker_id=%s error=%s",
@@ -358,7 +360,6 @@ class OrderManager:
                 exc_info=True,
             )
             return False
-        return True
 
     def get_order(self, order_id: str) -> Order | None:
         return self._orders.get(order_id)

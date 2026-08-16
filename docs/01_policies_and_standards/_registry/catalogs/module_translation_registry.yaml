@@ -41522,6 +41522,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把关键运行时状态（熔断开关、已处理成交号去重集）写到磁盘文件里：进程崩了重启还能接着用，不会出现'重启后忘记已经熔断'或'同一笔成交记两次账'的事故"
+- module_path: src/zephyr/ex_core/risk_layer_orchestrator.py
+  domain_id: D_EX_CORE
+  name_zh: "风控层运行时编排器"
+  name_en: "Risk Layer Orchestrator"
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "把组合级风控三件套（回撤追踪/VaR/尾部风险）加熔断清算链、盘中持仓对账、启动恢复重建接进交易会话运行时：启动时先以券商持仓为准重建账本，重建完成前禁止下单；盘中每次调仓前评估回撤与VaR/ES，产出仓位上限缩放目标权重；回撤触及EMERGENCY或尾部风险极值时经单一仲裁点触发熔断并按15笔每秒限频清算全部持仓"
 
 battle_map_steps:
 - step_id: BM-BUY-04
