@@ -3,7 +3,7 @@ module_id: MOD-GOVERNANCE
 title: "Governance Domain 蓝图 — Agent治理八件套跨模块集成契约"
 doc_type: blueprint
 status: Active
-version: "0.13.3"
+version: "0.13.4"
 layer: L1_foundation
 layer_name: domain
 blueprint_level: domain
@@ -2181,6 +2181,7 @@ STEP 3: 拆分后验证
 | `src/zephyr/governance/intelligence_governance/multi_model_consensus.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/lifecycle_governance/migration_strategy.py` | ✅ 已实现 | |
+| `src/zephyr/governance/lifecycle_governance/strategy_retirement_evaluator.py` | ✅ 已实现 | |
 | `src/zephyr/governance/observability_governance/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/decision_fatigue.py` | ✅ 已实现 | |
 | `src/zephyr/governance/ops_governance/environment_manager.py` | ✅ 已实现 | |

@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-TEST-492 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [A_test] module_id: MOD-GOV_conftest | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [TTL] task_bound
 import importlib.util
