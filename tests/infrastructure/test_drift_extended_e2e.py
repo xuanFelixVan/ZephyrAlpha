@@ -196,7 +196,7 @@ class TestHotfixBypass:
         reason=(
             "退役 API 漂移（跨域登记）：gov_drift.drift_detector.trigger_recovery "
             "已退化为 bool 存根（恒 True），dict{hotfix_bypass,recovery_status} 契约 "
-            "已随 MOD-INF-023 超集退役（AI-TD2-DATA-001 留置，待统筹配 #ARCH-1xx）"
+            "已随 MOD-INF-023 超集退役（AI-TD2-DATA-001 留置，统筹配号 #ARCH-110）"
         ),
     )
     def test_hotfix_bypass_in_trigger_recovery(self):
@@ -250,7 +250,7 @@ class TestNoDeprecationWarning:
         reason=(
             "退役 API 漂移（跨域登记）：_fallback_to_rollback_handler 已从 "
             "gov_drift.drift_detector 移除（兼容别名模块仅保留 DriftDetector/"
-            "trigger_recovery 存根）（AI-TD2-DATA-001 留置，待统筹配 #ARCH-1xx）"
+            "trigger_recovery 存根）（AI-TD2-DATA-001 留置，统筹配号 #ARCH-111）"
         ),
     )
     def test_fallback_no_deprecation_warning(self):
@@ -319,7 +319,7 @@ class TestDeepDetectorInterfaces:
         reason=(
             "真 bug（跨域登记不代修）：gov_drift dash 注册表路径致 "
             "load_detector_registry 恒返回 0（真源 _detector_registry.yaml 有 30 条）；"
-            "另阈值 >=31 与实际 30 条不符（AI-TD2-DATA-001 留置，待统筹配 #ARCH-1xx）"
+            "另阈值 >=31 与实际 30 条不符（AI-TD2-DATA-001 留置，统筹配号 #ARCH-109）"
         ),
     )
     def test_registry_all_detectors_active(self):

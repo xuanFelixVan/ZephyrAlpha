@@ -16974,7 +16974,7 @@ entries:
   title: skill 内容库整体缺失——skill-registry.yaml 仅 2 条 domain 条目且 path 指向的 SKILL.md 文件全部不存在，role 类清空
   severity: P1高
   adjudication: 'AI-TDEBT-001 实证（2026-08-15，长尾簇 tests/autonomy/test_pipeline_bridge_integration.py 5 项）：src/zephyr/autonomy_core/skills/skill-registry.yaml 现仅 2 条 domain 条目（SKILL-DOM-DS0-001 database-specialist / SKILL-DOM-MB0-002 master-blueprint），role 类整体清空；且两条目 path（database-specialist/SKILL.md 等）指向的 SKILL.md 文件在 skills 目录下全部不存在（glob **/SKILL.md 零命中）——SkillLoader.progressive_load 对 SKILL-DOM-DS0-001 抛 FileNotFoundError（.../skills/skills/domain/database-specialist/SKILL.md），对测试锚定的 SKILL-DOM-DBS-001/SKILL-ROL-IMP-001/SKILL-ROL-ARC-001 抛 KeyError（not found in registry）。注册表与内容文件双重漂移，疑似治理批清洗误删或内容库迁移未登记。SkillContextInjector.inject/inject_single 的 try/except 兜底把缺口吞为 loaded=False（符合 ERROR_CONTRACT 监控失败返回空指标？——不，这是注入链路，静默降级使 PipelineSkillBridge 全链失去 skill 注入能力且无告警）。5 项已 xfail(strict=False) 留痕（含 test_full_chain_loads_and_routes 的 health_check 已退役复合形态）。待裁定：a) 恢复/重建 skill 内容库与注册表条目；b) 若 skill 体系已退役则删除 PipelineSkillBridge 链路与测试。c) 附带：inject 静默吞异常建议加 warning 日志（缺口可观测性）。'
-  fix_phase: 已裁定（2026-08-16=转 CAND 登记）：CAND-AUTONOMYCORE-001 已入 candidate_module_registry.yaml（skill 内容库建设，P2，等 trigger_signals 命中晋升）；10 项 xfail(strict=False) 保留作功能规格书（内容库建成之日即验收标准；2026-08-16 AI-TD2-SEC-001 追加 5 项：test_agent_spec_adversarial×2+test_pipeline_skill_injection×3，同根因不再另立案）；inject 静默吞异常加 warning 随 CAND 一并施工
+  fix_phase: 已裁定（2026-08-16=转 CAND 登记）：CAND-AUTONOMYCORE-001 已入 candidate_module_registry.yaml（skill 内容库建设，P2，等 trigger_signals 命中晋升）；5 项 xfail(strict=False) 保留作功能规格书（内容库建成之日即验收标准）；inject 静默吞异常加 warning 随 CAND 一并施工
   status: decided
   created: '2026-08-15'
   last_updated: '2026-08-16'
@@ -16995,26 +16995,40 @@ entries:
   created: '2026-08-16'
   last_updated: '2026-08-16'
 - issue_id: '#ARCH-100'
-  title: GuardDecision/GuardResult 双定义 SSoT 收敛——contracts 版与 security 版各自定义同名枚举/数据类，`is` 判定跨定义恒 False 构成 fail-open 隐患
+  title: 风控全链路零接线（双轮审查 Qwen P0-1）——35回撤/36 VaR-ES/37流动性+KillSwitch+对账器模块全写完测试全绿但生产链路零实例化，回撤25%不会熔断；P0 风控接线批落地（SHADOW 前硬约束）
+  severity: P0高
+  category: integration_gap
+  adjudication: '2026-08-16 双轮审查差异比对裁定书（docs/_working/reviews/2026-08-16-dual-review-adjudication.md §一/§六）：一审（Kimi K3）× 二审（Qwen3.8-Max 盲审）交集确认——风控三件套+KillSwitch+PositionReconciler 生产链路零接线（统筹 grep 复核：RiskOrchestrator src 零匹配；VaRCalculator()/TailRiskMonitor()/DrawdownController() 实例化仅存在于自身定义文件；execute_kill_switch_liquidation 唯一调用点在 tests）。定性=集成缺口非算法 bug（消防栓装了没接水管）。铁律：算法修复在接线前不产生实际保护，接线批最高优先。边界澄清：trading_session 已有合规层接线（ASM-001：C-004 四道闸+ReportGate+日申报计数），缺的是组合级风控层。施工边界（AI-RWIRE-001 × AI-RRESIL-001 并发分治）：KillSwitch 持久化/fill_id 去重/LIQUIDATING 锁由 RRESIL 在 DefaultRiskValidator/fill_handler 内部落地，接口不变；RWIRE 只做调用点接入。rebuild_from_broker 签名约定 rebuild_from_broker(holdings: dict, today_fills: list) -> None，merge 时对齐。'
+  impact: "变更文件： - 'src/zephyr/ex_core/risk_layer_orchestrator.py（新建，MOD-L06-001 伞下 file 粒度节点 node_id=9689693，9 条 runtime 依赖边）' - 'src/zephyr/ex_core/trading_session.py（盘前/盘中循环注入风险评估+position_cap 缩放目标权重+对账冻结标的硬拦+启动恢复 Fail-Closed 闸门）' - 'src/zephyr/ex_core/order_execution_saga.py（超时分支修复：cancel 返回 False 强制查询订单终态，已成交补走 step5/6）' - 'tests/ex_core/test_risk_layer_orchestrator.py + tests/ex_core/test_saga_timeout_recovery.py（新建，红队实证）'"
+  fix_phase: '接线批施工中（AI-RWIRE-001）；算法修复批（F1 ES插值/F2 NaN+Inf/F3 幽灵第三枚举/Qwen P1 群/F5 死代码）接线批 merge 后启动；流动性危机 LEVEL_3 接线（37 号）列本批遗留项'
+  status: open
+  related_rules: '2026-08-16-dual-review-adjudication.md §六（P0 裁定）; #ARCH-COMPLIANCE-001（合规层接线先例 ASM-001）; #ARCH-70（worktree merge 通道）'
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-103'
+  title: discard_changes 未接入 check_rollback_conflict 并发守卫——方案C（1d6baf0f27）集成缺口，破坏性写操作在他 session 持锁文件上可直行【编号注记：原 TRD 登记 #ARCH-100，merge 时与 dev 既有 #ARCH-100（风控全链路零接线，Qwen P0-1）撞号，按先例终态重编 #ARCH-103——2026-08-16 第五统筹】
   severity: P1高
-  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16，233 测试债包①清偿中发现）：GuardDecision 存在两份独立定义——zephyr.shared.contracts.identity.permission（contracts 版，标 immutable_core）与 zephyr.security.access_control.guards.permission_guard（security 版）；rbac_bridge.py L126 用 `guard_result.decision is GuardDecision.BLOCKED` 判定，若调用方持 contracts 版枚举构造 GuardResult，is 判定恒 False → BLOCKED 被静默折叠为 ALLOW（fail-open，与安全 fail-closed 默认相反）。同族双定义簇：MaturityLevel/IDESource/AgentIdentity（contracts/agent_identity.py vs security/access_control/identity.py，前者 BaseModel 后者 dataclass+方法）、第三个同名 GuardDecision（feedback_loop/.../cross_guard_conflict_detector.py，普通 dataclass，语义不同物=守卫冲突记录）。项目既有收敛先例=identity.py P1-3（AgentRole 删本地定义 re-export contracts 真源 RbacRole）。裁定：照 P1-3 先例，permission_guard.py 删本地 GuardDecision/GuardResult 定义改 re-export contracts 版（contracts 版 GuardResult 为超集：多 audit_context 字段、decision 默认 ALLOW；security 版全部构造点均为关键字传参，兼容）；消费方面检：rbac_bridge/orphan_judge/mcp governance_server 仅读字段或经 PermissionGuard.check 消费，测试 5 文件两版导入混用→统一后 is 判定跨路径恒真。残留不收敛项（跨域/无受害面，登记不代修）：MaturityLevel/IDESource/AgentIdentity 双定义（全仓零 `is` 比较命中，值相等语义安全）、cross_guard_conflict_detector.GuardDecision（同名不同物，建议日后改名 GuardConflictRecord 防 AI 误导）。'
-  fix_phase: 已修（2026-08-16 本 commit）：permission_guard.py 收敛+__all__ re-export 兼容；agent_rbac/escalation/governance/security/contracts/e 五域 2110+ 测试实证零回归
+  category: governance_debt
+  adjudication: 'AI-TD2-TRD-001 实证（2026-08-16，233 包②基线）：tests/rollback/test_rollback_executor_unit.py::test_discard_blocked_by_other_session_lock 锚定方案C 设计意图（文件被他 session 锁定→BLOCKED_BY_OWNER），但 RollbackExecutor.discard_changes 实现从未调用 check_rollback_conflict——f84343b01f（ARCH-034 P4-1）commit 消息自认 discard_changes 未接线属独立逻辑 bug（仅补 import）。第一性：discard 是对工作区文件的破坏性写，与 full/partial_revert 同级危险——execute() 主链路已接线方案C，discard_changes 旁路绕过=守卫存在第二决策点外的敞口。爆炸半径取证：全仓生产唯一调用方 scheduler_act.py L201 以 force=True 调用（守卫不触达），接线后生产行为零变化。裁定：治本接线（非 xfail 留置）——guard 置于 NO_CHANGES 早退之前（持锁即阻断，与是否有未提交变更无关）。'
+  fix_phase: 已闭环（2026-08-16 AI-TD2-TRD-001 施工，8b341193）：discard_changes force=False 分支接入 check_rollback_conflict（conflict→BLOCKED_BY_OWNER+files_blocked+审计），test_discard_blocked_by_other_session_lock 去 xfail 转正
   status: resolved
   created: '2026-08-16'
   last_updated: '2026-08-16'
-- issue_id: '#ARCH-101'
-  title: sys.modules 测试污染类——投毒者与爆雷者跨数百测试解耦，归因成本极高；根 conftest 加定向探针前移检出
-  severity: P1高
-  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16，两起同族事故）：①tests/escalation/conftest.py 对 zephyr.security.llm_defense.llm_security 无条件 sys.modules.setdefault(MagicMock())——MagicMock 无 __path__，同进程后续 import 其子模块即炸 "is not a package"（批跑 tests/escalation+tests/agent_rbac 时毒化 test_rbac_auto_lifecycle）；②tests/escalation/test_escalation_bridge.py _block_escalation_engine 注入 sys.modules["zephyr.governance.services.adapter"]=None 而 _restore 只恢复 zephyr.infrastructure.escalation.* 前缀键，None 残留致后续 import "import halted"。第一性根因：pytest 同进程共享 sys.modules 全局态，直接赋值不恢复=隐蔽跨测试污染，且爆雷点距投毒点数百测试，100% AI 场景下每起事故需全链路排查。正确姿势已在仓内存在（patch.dict/monkeypatch.setitem 自恢复，tests/zephyr/data 域大量使用）但无强制检出机制。裁定：tests/conftest.py 加 autouse 探针 _sysmodules_pollution_sentinel——teardown 比对 zephyr.* 键快照，检出 None 化/非模块替换即恢复现场并 fail 投毒者本人；del 键不拦截（重新 import 自恢复真源）；conftest 收集期占位不覆盖（已知边界，已在注释声明）。配套登记（跨域不修）：tests/rollback/conftest.py L12 同款 MagicMock 占位 sqlite_dumper（因其目标非包、tests 内无直接 import 真实模块，当前无受害面）。'
-  fix_phase: 已修（2026-08-16 本 commit）：探针落地+两起存量污染源已修（前 commit ed1d4f8594）；探针经 2530 域批+rollback/safety/db/data/governance 烟测零误伤
-  status: resolved
-  created: '2026-08-16'
-  last_updated: '2026-08-16'
-- issue_id: '#ARCH-102'
-  title: pyproject addopts 硬编码 --max-worker-restart=5（xdist 注册项）与 -p no:xdist 串行跑法互斥——exit 4 usage error；串行正确姿势=-n 0
+- issue_id: '#ARCH-104'
+  title: reconcile_worker 经 WMI spawn 时 scripts.* 不可导入——GATE-RUNTIME-CLEANUP 等 reconciler 函数级 from scripts.ops_guard import 即 ImportError【原 TRD #ARCH-101，撞号重编——2026-08-16 第五统筹】
   severity: P2中
-  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16）：统筹 brief 规定基线命令 `python -m pytest tests/ -p no:xdist -q` 直接 exit 4（unrecognized arguments: --max-worker-restart=5）——addopts 静态注入的 xdist 专属 flag 在插件被 -p 禁用后无注册点。不改 addopts 的理由：该 flag 是 #ARCH-XDIST-WORKER-CRASH-001 的既定崩溃保护，移除会让默认并行跑法失去 worker 自动重启。实证 `-n 0`（插件保持加载、0 worker=进程内串行）等价替代且零配置改动。另记录：全量套件（2530 文件）串行/xdist 在共享机高负载下两次被环境性 kill（exit -1，26%/83% 点位不定，机器 64GB 内存空闲 38GB 非 OOM）——域分批法（escalation/agent_rbac/agent/skill+散点批）是本包实证可行的基线取数姿势。'
-  fix_phase: 已闭环（2026-08-16 本 commit）：pyproject.toml addopts 段注释登记 -n 0 串行姿势与分批建议；不改行为
+  category: governance_debt
+  adjudication: 'AI-TD2-TRD-001 实证（2026-08-16，post-commit worker 日志）：GATE-RUNTIME-CLEANUP failed: No module named scripts.ops_guard。病根：worker spawn 通道（WMI Win32_Process Create+cmd /c python -m）仅 PYTHONPATH=src 入环境，cwd 是否入 sys.path 依赖通道偶然性，而 reconciliation_registry.py 内 19 处函数级 from scripts.* import 依赖仓根可导入。第一性：显式优于隐式——worker 持有 payload.project_root，应自给自足装配 sys.path，不赌 cwd 偶然性；逐处 try/except=19 个创可贴且掩盖真因。裁定：_run_worker 起点显式 sys.path.insert(project_root) 治本。'
+  fix_phase: 已闭环（2026-08-16 AI-TD2-TRD-001 施工，8b341193）：reconcile_worker._run_worker 解析 payload 后显式 project_root 入 sys.path
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-105'
+  title: WMI 降级 spawn 通道双重病灶——全量 env 内联放大 60s 超时，且 TimeoutExpired.args 携带全量 env 喷入 reconcile status JSON（GITHUB_TOKEN 明文落盘）【原 TRD #ARCH-102，撞号重编——2026-08-16 第五统筹】
+  severity: P1高
+  category: governance_debt
+  adjudication: 'AI-TD2-TRD-001 实证（2026-08-16，worktree .runtime/reconcile_reports）：两笔 post-commit worker 均 spawn failed——WMI 通道 60s 超时，status errors 完整转储 TimeoutExpired.args（含 GITHUB_TOKEN 等全量环境变量明文）。第一性：①凭据不落盘是底线——异常回传必须有界（源头脱敏优于信任下游）；②无界数据不进有界通道——env 全量内联命令行（32K 上限+CIM 解析成本）是通道误用，文件才是正确载体；③最小传播——凭据不应经 Winmgmt 系统服务中转。裁定三管齐下：env 经 utf-8-sig 临时文件传输（PS+Python 双侧清理）+ 敏感键剥离（TOKEN/SECRET/PASSWORD/CREDENTIAL/COOKIE/API_KEY 等）+ TimeoutExpired 不回传（静态 RuntimeError）。主 Popen 通道保留完整继承语义；四调用方均无凭据需求。残余 CIM 并发 contention 由 spawn_dead_pending 看门狗 fail-open 覆盖。'
+  fix_phase: 已闭环（2026-08-16 AI-TD2-TRD-001 施工，48bd4983）：process_pool._spawn_detached_via_wmi 改造（文件传输+剥离+脱敏）+test_process_pool.py 契约更新
   status: resolved
   created: '2026-08-16'
   last_updated: '2026-08-16'
@@ -17086,3 +17100,135 @@ entries:
   related_rules: '19_northbound_hold_snapshot.md（设计真源）; #ARCH-DATA-015/016/017（数据缺口治理同族）; #ARCH-DATA-UTIL（外部源落库资产登记母议题）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+
+# --- #ARCH-DOCDRIFT-001: 文档引用漂移三连治理（manifest 连字符 + 契约 §19 锚定 + AGENTS 冷分层收录）---
+- issue_id: '#ARCH-DOCDRIFT-001'
+  title: 文档引用漂移三连——script_manifest.yaml 下划线死引用（裁定 d2da16e0fe 后未同步）+ data_retention_contract 锚定 blueprint §19 不存在 + AGENTS.md 未收录冷分层工具链
+  severity: P2中
+  category: governance
+  discovered: 2026-08-16 AI-ARCH-003 会话自审（问题清单 P4/P5 项）
+  adjudication: |-
+    2026-08-16 用户指令"全部修复"：
+    (1) project_rules.md 三处、AGENTS.md 两处下划线 script_manifest.yaml 引用改连字符真源（对齐裁定 d2da16e0fe）；
+    (2) data_retention_contract.yaml 头部锚定 §19 → §（该蓝图仅 §0-§8，无独立保留章节，锚定漂移自 v1.0.0 即存在）；
+    (3) AGENTS.md 关键 registry 速查区补冷分层工具链条目（INFRA-STORE-002/契约/archiver/optimize_merge）。
+  impact:
+  - '.trae/rules/project_rules.md（3 处引用修正）'
+  - 'AGENTS.md（2 处引用修正 + 速查区 1 条目新增）'
+  - 'docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml（锚定修正）'
+  fix_phase: '2026-08-16 本批施工'
+  status: decided
+  confirmed_by_user: '2026-08-16 用户指令（审查问题清单全部修复）'
+  related_rules: '裁定 d2da16e0fe（manifest 连字符真源）; #ARCH-REGISTRY-DISCOVERY-SSOT-001'
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-106'
+  title: 'GuardDecision/GuardResult 双定义 SSoT 收敛——contracts 版与 security 版各自定义同名枚举/数据类，`is`
+    判定跨定义恒 False 构成 fail-open 隐患【编号注记：原 SEC 登记 #ARCH-100，merge 撞号终态重编 #ARCH-106——2026-08-16
+    第五统筹】'
+  severity: P1高
+  adjudication: AI-TD2-SEC-001 实证（2026-08-16，233 测试债包①清偿中发现）：GuardDecision 存在两份独立定义——zephyr.shared.contracts.identity.permission（contracts
+    版，标 immutable_core）与 zephyr.security.access_control.guards.permission_guard（security
+    版）；rbac_bridge.py L126 用 `guard_result.decision is GuardDecision.BLOCKED` 判定，若调用方持
+    contracts 版枚举构造 GuardResult，is 判定恒 False → BLOCKED 被静默折叠为 ALLOW（fail-open，与安全
+    fail-closed 默认相反）。同族双定义簇：MaturityLevel/IDESource/AgentIdentity（contracts/agent_identity.py
+    vs security/access_control/identity.py，前者 BaseModel 后者 dataclass+方法）、第三个同名 GuardDecision（feedback_loop/.../cross_guard_conflict_detector.py，普通
+    dataclass，语义不同物=守卫冲突记录）。项目既有收敛先例=identity.py P1-3（AgentRole 删本地定义 re-export contracts
+    真源 RbacRole）。裁定：照 P1-3 先例，permission_guard.py 删本地 GuardDecision/GuardResult 定义改
+    re-export contracts 版（contracts 版 GuardResult 为超集：多 audit_context 字段、decision
+    默认 ALLOW；security 版全部构造点均为关键字传参，兼容）；消费方面检：rbac_bridge/orphan_judge/mcp governance_server
+    仅读字段或经 PermissionGuard.check 消费，测试 5 文件两版导入混用→统一后 is 判定跨路径恒真。残留不收敛项（跨域/无受害面，登记不代修）：MaturityLevel/IDESource/AgentIdentity
+    双定义（全仓零 `is` 比较命中，值相等语义安全）、cross_guard_conflict_detector.GuardDecision（同名不同物，建议日后改名
+    GuardConflictRecord 防 AI 误导）。
+  fix_phase: 已修（2026-08-16 本 commit）：permission_guard.py 收敛+__all__ re-export 兼容；agent_rbac/escalation/governance/security/contracts/e
+    五域 2110+ 测试实证零回归
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-107'
+  title: 'sys.modules 测试污染类——投毒者与爆雷者跨数百测试解耦，归因成本极高；根 conftest 加定向探针前移检出【编号注记：原 SEC
+    登记 #ARCH-101，merge 撞号终态重编 #ARCH-107——2026-08-16 第五统筹】'
+  severity: P1高
+  adjudication: AI-TD2-SEC-001 实证（2026-08-16，两起同族事故）：①tests/escalation/conftest.py
+    对 zephyr.security.llm_defense.llm_security 无条件 sys.modules.setdefault(MagicMock())——MagicMock
+    无 __path__，同进程后续 import 其子模块即炸 "is not a package"（批跑 tests/escalation+tests/agent_rbac
+    时毒化 test_rbac_auto_lifecycle）；②tests/escalation/test_escalation_bridge.py _block_escalation_engine
+    注入 sys.modules["zephyr.governance.services.adapter"]=None 而 _restore 只恢复 zephyr.infrastructure.escalation.*
+    前缀键，None 残留致后续 import "import halted"。第一性根因：pytest 同进程共享 sys.modules 全局态，直接赋值不恢复=隐蔽跨测试污染，且爆雷点距投毒点数百测试，100%
+    AI 场景下每起事故需全链路排查。正确姿势已在仓内存在（patch.dict/monkeypatch.setitem 自恢复，tests/zephyr/data
+    域大量使用）但无强制检出机制。裁定：tests/conftest.py 加 autouse 探针 _sysmodules_pollution_sentinel——teardown
+    比对 zephyr.* 键快照，检出 None 化/非模块替换即恢复现场并 fail 投毒者本人；del 键不拦截（重新 import 自恢复真源）；conftest
+    收集期占位不覆盖（已知边界，已在注释声明）。配套登记（跨域不修）：tests/rollback/conftest.py L12 同款 MagicMock 占位
+    sqlite_dumper（因其目标非包、tests 内无直接 import 真实模块，当前无受害面）。
+  fix_phase: 已修（2026-08-16 本 commit）：探针落地+两起存量污染源已修（前 commit ed1d4f8594）；探针经 2530
+    域批+rollback/safety/db/data/governance 烟测零误伤
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-108'
+  title: 'pyproject addopts 硬编码 --max-worker-restart=5（xdist 注册项）与 -p no:xdist 串行跑法互斥——exit
+    4 usage error；串行正确姿势=-n 0【编号注记：原 SEC 登记 #ARCH-102，merge 撞号终态重编 #ARCH-108——2026-08-16
+    第五统筹】'
+  severity: P2中
+  adjudication: 'AI-TD2-SEC-001 实证（2026-08-16）：统筹 brief 规定基线命令 `python -m pytest tests/
+    -p no:xdist -q` 直接 exit 4（unrecognized arguments: --max-worker-restart=5）——addopts
+    静态注入的 xdist 专属 flag 在插件被 -p 禁用后无注册点。不改 addopts 的理由：该 flag 是 #ARCH-XDIST-WORKER-CRASH-001
+    的既定崩溃保护，移除会让默认并行跑法失去 worker 自动重启。实证 `-n 0`（插件保持加载、0 worker=进程内串行）等价替代且零配置改动。另记录：全量套件（2530
+    文件）串行/xdist 在共享机高负载下两次被环境性 kill（exit -1，26%/83% 点位不定，机器 64GB 内存空闲 38GB 非 OOM）——域分批法（escalation/agent_rbac/agent/skill+散点批）是本包实证可行的基线取数姿势。'
+  fix_phase: 已闭环（2026-08-16 本 commit）：pyproject.toml addopts 段注释登记 -n 0 串行姿势与分批建议；不改行为
+  status: resolved
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-109'
+  title: gov_drift dash 路径硬编码真 bug——_detector-registry.yaml（dash）在 drift_engine/self_test_verifier/self_check
+    三处硬编码，磁盘真源为下划线 _detector_registry.yaml（30 detectors），致 data_integrity 检查 MISSING+load_detector_registry
+    恒返 0+阈值>=31 与实际 30 条不符
+  severity: P2中
+  category: governance_debt
+  adjudication: AI-TD2-DATA-001 实证（2026-08-16，233 包④）：tests/infrastructure/test_drift_e2e_pipeline.py
+    2 项+test_drift_extended_e2e.py 1 项 xfail 锚定同一根因——dash/下划线文件名漂移。裁定：路径真源收敛（下划线版为磁盘事实），三处硬编码跟进+阈值常量
+    31→30。跨域（gov_drift 治理域），233 包④按"跨域登记不代修"留置。
+  fix_phase: 待施工（归治理批/下包；涉及 gov_drift 生产文件 3 处）
+  status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-110'
+  title: drift_extended_e2e 随 MOD-INF-023 超集退役——测试锚定已退役 API 面
+  severity: P3低
+  category: governance_debt
+  adjudication: AI-TD2-DATA-001 留置（2026-08-16）：test_drift_extended_e2e.py L199 锚定
+    MOD-INF-023 超集已退役的 API。裁定：测试跟进退役事实（改写或删除），属退役收编类非真 bug。
+  fix_phase: 待施工（退役收编，随治理批）
+  status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-111'
+  title: drift trigger_recovery 存根——恢复触发器仅存根未实现，e2e 测试锚定完整实现
+  severity: P3低
+  category: feature_gap
+  adjudication: AI-TD2-DATA-001 留置（2026-08-16）：test_drift_extended_e2e.py L253 锚定
+    trigger_recovery 完整实现，当前为存根。裁定：功能缺口非回归——实现或降级测试锚定存根语义，择一定。
+  fix_phase: 待施工（功能缺口，随治理批裁定实现或降级）
+  status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-112'
+  title: auto_telemetry_bootstrap 时序竞态——测试存在时序竞态（bootstrap 初始化与断言竞速）
+  severity: P3低
+  category: test_debt
+  adjudication: AI-TD2-DATA-001 留置（2026-08-16）：test_auto_telemetry_bootstrap.py L28
+    时序竞态。裁定：测试自身竞态修复（同步点/轮询替代裸 sleep 断言），低风险测试债。
+  fix_phase: 待施工（随治理批）
+  status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'
+- issue_id: '#ARCH-113'
+  title: telemetry_facade 依赖治理域修复——治理域修复后本测试应恢复 GREEN
+  severity: P3低
+  category: test_debt
+  adjudication: AI-TD2-DATA-001 留置（2026-08-16）：test_telemetry_facade.py L260 断言依赖治理域某修复落地。裁定：跟踪项——治理域修复落地后本测试去
+    xfail 即转正，无需本域动作。
+  fix_phase: 待治理域前置修复后转正（跟踪项）
+  status: open
+  created: '2026-08-16'
+  last_updated: '2026-08-16'

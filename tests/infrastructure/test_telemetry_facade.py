@@ -257,7 +257,7 @@ class TestPhaseCheckIntegration:
             "真 bug（跨域登记不代修）：phase_check_registry.check_observability_baseline "
             "锚定已迁移旧路径 src/zephyr/system-telemetry（现位于 "
             "src/zephyr/infrastructure/system_telemetry），恒返回 YELLOW。"
-            "治理域修复后本测试应恢复 GREEN（AI-TD2-DATA-001 留置，待统筹配 #ARCH-1xx）"
+            "治理域修复后本测试应恢复 GREEN（AI-TD2-DATA-001 留置，统筹配号 #ARCH-113）"
         ),
     )
     def test_gate_observability_baseline_green(self):

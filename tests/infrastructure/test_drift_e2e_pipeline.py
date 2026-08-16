@@ -189,7 +189,7 @@ def test_e2e_gate_engine_drift_budget():
         "真 bug（跨域登记不代修）：src/zephyr/gov_drift 的 dash 路径 "
         "_detector-registry.yaml 在 drift_engine/self_test_verifier/self_check "
         "三处硬编码，磁盘真源为下划线 _detector_registry.yaml（30 detectors），"
-        "致 data_integrity 检查 MISSING（AI-TD2-DATA-001 留置，待统筹配 #ARCH-1xx）"
+        "致 data_integrity 检查 MISSING（AI-TD2-DATA-001 留置，统筹配号 #ARCH-109）"
     ),
 )
 def test_e2e_self_test_verifier():
@@ -206,7 +206,7 @@ def test_e2e_self_test_verifier():
     reason=(
         "真 bug（跨域登记不代修）：gov_drift dash 注册表路径致 load_detector_registry "
         "恒返回 0（真源 _detector_registry.yaml 有 30 条）；另阈值 >=31 与实际 30 条不符"
-        "（AI-TD2-DATA-001 留置，待统筹配 #ARCH-1xx）"
+        "（AI-TD2-DATA-001 留置，统筹配号 #ARCH-109）"
     ),
 )
 def test_e2e_registry_consistency():
