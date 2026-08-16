@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-EX-002 | docs/03_modules/_domain_execution_core/position_tracker/blueprint.md
 # [MODULE] zephyr.ex_core.position_tracker.tracker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.position; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.shared.contracts.fill; zephyr.shared.contracts.position; zephyr.shared.contracts.enums.order_enums; zephyr.shared.state_store
 # [CONSUMERS] zephyr.governance.adapters.simulation_broker; zephyr.ex_core.trading_session
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] Decimal-only金额计算; PositionSnapshot frozen不可变; apply_fill需显式side(Fill契约无side字段)
+# [INVARIANTS] Decimal-only金额计算; PositionSnapshot frozen不可变; apply_fill需显式side(Fill契约无side字段); 配置dedup_store时同一fill_id最多入账一次(at-most-once)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
-# [TESTS] tests/ex_core/test_position_tracker.py
+# [TESTS] tests/ex_core/test_position_tracker.py; tests/ex_core/test_fill_id_dedup_persistence.py
 # [A_module] module_id=MOD-EX-002 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """
@@ -80,6 +80,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from collections.abc import Iterable
 from datetime import UTC, datetime
 from decimal import Decimal
 from threading import Lock
@@ -87,6 +88,7 @@ from threading import Lock
 from zephyr.shared.contracts.enums.order_enums import OrderSide
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.position import PositionSnapshot
+from zephyr.shared.state_store import AppendOnlyDedupSet
 
 _logger = logging.getLogger(__name__)
 
@@ -115,12 +117,24 @@ class PositionTracker:
         self,
         initial_cash: Decimal = Decimal("1000000"),
         portfolio_id: str = "position_tracker",
+        dedup_store: AppendOnlyDedupSet | None = None,
     ) -> None:
+        """初始化持仓跟踪器。
+
+        Args:
+            initial_cash: 初始现金。
+            portfolio_id: 组合标识。
+            dedup_store: fill_id 持久化去重集（#ARCH-QUANT-002，Qwen P0-2①）。
+                提供时 apply_fill 幂等（同一 fill_id 最多入账一次，重启存活），
+                Saga 补偿 rollback-{fill_id} 确定性 ID 配本去重集实现真幂等。
+                None=不去重（既有行为，幂等性由调用方保证）。
+        """
         self._initial_cash = initial_cash
         self._cash = initial_cash
         self._portfolio_id = portfolio_id
         self._holdings: dict[str, Decimal] = {}
         self._avg_costs: dict[str, Decimal] = {}
+        self._dedup_store = dedup_store
         self._lock = Lock()
 
     # ── Stage 4 公共化（只读 properties）──
@@ -152,11 +166,21 @@ class PositionTracker:
             side: 买卖方向（Fill 契约无 side 字段，需调用方从 Order 传入）。
 
         Note:
-            阶段1不做幂等去重（同一 fill_id 重复调用会重复更新）。
-            幂等性由调用方保证（SimulationBroker 的 _simulate_fill 天然一次性）。
-            阶段2将增加 fill_id 去重（见蓝图 §4）。
+            配置 dedup_store 时同一 fill_id 最多入账一次（at-most-once，
+            去重登记先行：重复/重放直接跳过，含重启后重放与 Saga 补偿
+            rollback-{fill_id} 重试）；未配置时保持既有行为（不去重，
+            幂等性由调用方保证）。
         """
         with self._lock:
+            if self._dedup_store is not None and not self._dedup_store.add(fill.fill_id):
+                _logger.warning(
+                    "apply_fill 幂等拦截: fill_id=%s 已入账, 跳过 symbol=%s side=%s",
+                    fill.fill_id,
+                    fill.symbol,
+                    side,
+                )
+                return
+
             symbol = fill.symbol
             fill_qty = fill.filled_quantity
             fill_price = fill.fill_price
@@ -190,6 +214,59 @@ class PositionTracker:
                 fill_price,
                 self._cash,
                 self._holdings[symbol],
+            )
+
+    def rebuild_from_broker(
+        self,
+        holdings: dict[str, dict[str, object]],
+        today_fills: Iterable[Fill] = (),
+        *,
+        cash: Decimal | None = None,
+    ) -> None:
+        """以券商为准全量重建持仓账（Crash-only 启动恢复路径，#ARCH-QUANT-002）。
+
+        供 AI-RWIRE-001 启动流程消费：进程重启后先调本方法以券商持仓
+        全量重建 PositionTracker（Qwen P0-2②：以券商为准，防"空仓错觉下
+        重复建仓"），重建完成前调用方应禁止下单（Fail-Closed 由调用方保证）。
+
+        Args:
+            holdings: 券商实时持仓，symbol → {"qty": int|float|str|Decimal,
+                "avg_cost": float|str|Decimal}。qty==0 的标的不入账；
+                此映射是重建后的唯一真源（覆盖式重建，清空既有持仓账）。
+            today_fills: 当日已成交 Fill 序列（可选）。仅将其 fill_id 登记入
+                持久化去重集（防重启后重放重复记账），不再改动持仓
+                （持仓以 holdings 为准）；未配置 dedup_store 时忽略。
+            cash: 券商资金余额（可选）。None=保留当前现金账不变。
+        """
+        with self._lock:
+            self._holdings.clear()
+            self._avg_costs.clear()
+
+            for symbol, info in holdings.items():
+                qty = Decimal(str(info.get("qty", 0)))
+                if qty == 0:
+                    continue
+                avg_cost = Decimal(str(info.get("avg_cost", 0)))
+                self._holdings[symbol] = qty
+                self._avg_costs[symbol] = avg_cost
+
+            if cash is not None:
+                self._cash = cash
+
+            fills = list(today_fills)
+            registered_fills = 0
+            if self._dedup_store is not None:
+                for fill in fills:
+                    if self._dedup_store.add(fill.fill_id):
+                        registered_fills += 1
+
+            _logger.info(
+                "rebuild_from_broker: 以券商为准重建完成 holdings=%d cash=%s "
+                "today_fills登记=%d/%d",
+                len(self._holdings),
+                self._cash,
+                registered_fills,
+                len(fills),
             )
 
     def get_positions(self) -> PositionSnapshot:

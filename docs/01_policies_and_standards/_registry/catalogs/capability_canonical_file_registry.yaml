@@ -9211,6 +9211,23 @@ creation_tokens:
     created_by: "AI-NORTH-001"
     capability: "northbound_hold_snapshot"
     note: "Step 1.8 架构评审记录（新增模块触发，L2 局部变更六项清单全 PASS）"
+  # --- state_store.py（Crash-only 状态外部化原语，#ARCH-QUANT-002 承载层，2026-08-16 AI-RRESIL-001 施工）---
+  - file: "src/zephyr/shared/state_store.py"
+    token: "auto-state-store-20260816"
+    created_by: "AI-RRESIL-001"
+    capability: "crash_only_state_store"
+  - file: "tests/shared/test_state_store.py"
+    token: "auto-state-store-test-20260816"
+    created_by: "AI-RRESIL-001"
+    capability: "crash_only_state_store"
+  - file: "tests/risk/test_kill_switch_state_persistence.py"
+    token: "auto-kill-switch-state-persistence-test-20260816"
+    created_by: "AI-RRESIL-001"
+    capability: "kill_switch_state_persistence"
+  - file: "tests/ex_core/test_fill_id_dedup_persistence.py"
+    token: "auto-fill-id-dedup-persistence-test-20260816"
+    created_by: "AI-RRESIL-001"
+    capability: "fill_id_persistent_dedup"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）
