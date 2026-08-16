@@ -176,9 +176,9 @@ Usage（AI 通过 RunCommand 调用）::
 #   name_zh: ⑦ 放弃 session
 #   name_en: session_worktree_abort
 #   intro: 任务不要了——丢弃 worktree 里的修改，删 worktree 和分支，注销 session
-#   desc: cleanup_session_worktree(force) + unregister + kill heartbeat daemon L7930；返回 dict 不抛异常
+#   desc: 脏工作区先 _generate_retire_patch_evidence 强制 patch 存证+三分类（CAND-WORKTREE-001 Z1/Z2，存证失败 fail-closed 不删）→ cleanup_session_worktree(force) + unregister + kill heartbeat daemon；返回 dict 不抛异常
 #   inputs: I1 I3
-#   outputs: {ok, aborted}
+#   outputs: {ok, aborted} + retire_evidence（脏时）
 # 层: 输出
 # - id: O1
 #   name_zh: 生命周期操作结果 dict
@@ -393,6 +393,8 @@ class AbortResult(TypedDict, total=False):
     unregistered: bool
 
     main_cleaned: int
+
+    retire_evidence: dict       # CAND-WORKTREE-001 Z1：退役存证结果（generated/patch_path/counts/files；error=RETIRE_EVIDENCE_FAILED 时 aborted=False）
 
 class StatusResult(TypedDict, total=False):
 
@@ -990,8 +992,232 @@ def _audit_sweep_force_clean(
 
         logger.debug("sweep force-clean audit write failed (non-blocking)", exc_info=True)
 
-def _sweep_quarantine_refs(
+# ============================================================================
+# CAND-WORKTREE-001（2026-08-17，裁定书 §4.4 Z1+Z2）：
+# 退役脏工作区强制 patch 存证 + 派生活水三分类器
+#
+# 背景：140 外来 WIP 悬案（2026-08-16，commit 558fb2ee4b）——TDEBT worktree 退役
+# 时 127 个脏文件随目录删除，未存证，"零损失"结论靠事后取证重建。治本：
+#   Z1 流程补强——abort/sweep 退役脏工作区前，强制生成
+#      .runtime/quarantine/<sid>-retire-<ts>.patch 全量 diff 存证再删目录
+#      （git add -N 纳管 untracked 后 git diff HEAD，含新文件全文）；
+#      存证生成失败 fail-closed 不删（对标 sweep quarantine ref 保存失败不清理先例）。
+#   Z2 工具化——退役/merge 甄别三分类器（派生活水/CRLF 幻影/实质），判据=
+#      调查探针同款逻辑：EOL 归一化比对 + AUTO-START/AUTO-END 标记段定位剔块比骨架。
+#      分类结果写入退役审计（.runtime/gate_audit/worktree_abort.jsonl），辅助统筹
+#      秒级甄别"假 WIP"（tracker #85 SOP 认知项的机器层落地）。
+# ============================================================================
 
+# 退役三分类标签（派生活水=生成器可再生的 AUTO 块内差异；CRLF 幻影=EOL 归一化后
+# 零差异的行尾翻转；实质=真业务 WIP，丢失不可逆）
+_RETIRE_CLASS_DERIVED = "derived"
+_RETIRE_CLASS_PHANTOM = "crlf_phantom"
+_RETIRE_CLASS_SUBSTANTIVE = "substantive"
+
+_RETIRE_PATCH_DIR = Path(".runtime") / "quarantine"  # patch 存证目录（root 相对）
+
+
+def _normalize_eol_text(text: str) -> str:
+    """EOL 归一化（CRLF/CR → LF）——CRLF 幻影判定的基础原语。"""
+    return text.replace("\r\n", "\n").replace("\r", "\n")
+
+
+def _strip_auto_block_lines(text: str) -> list[str]:
+    """剔除 AUTO-START..AUTO-END 标记段内容行，保留骨架（含标记行本身）。
+
+    派生活水判定（Z2）：生成器只回写 AUTO 块内数字（depgraph 统计块等），
+    剔块后骨架相等 ⇔ 全部差异落在 AUTO 标记段内 = 派生可再生物。
+    行级扫描兼容 <!-- AUTO-START:name --> / <!-- TREE-AUTO-END --> 等变体
+    （含 AUTO-START/AUTO-BEGIN 的行开块，含 AUTO-END 的行闭块）；
+    未闭合块按"到文件尾"处理（两侧同法，骨架比较仍对称）。
+    """
+    out: list[str] = []
+    in_block = False
+    for line in text.split("\n"):
+        if not in_block and ("AUTO-START" in line or "AUTO-BEGIN" in line):
+            in_block = True
+            out.append(line)  # 标记行属骨架（块名差异=结构差异）
+            continue
+        if in_block:
+            if "AUTO-END" in line:
+                in_block = False
+                out.append(line)
+            continue  # 块内容行剔除
+        out.append(line)
+    return out
+
+
+def _classify_retire_file_content(old_text: "str | None", new_text: "str | None") -> str:
+    """单文件退役三分类（纯函数，Z2 分类器核心）。
+
+    Args:
+        old_text: HEAD 版本内容（None=HEAD 无此文件/读取失败——新增文件）。
+        new_text: 工作区版本内容（None=文件已删除/读取失败）。
+
+    Returns:
+        derived（EOL 归一化后不同但剔除 AUTO 块后骨架相等=派生活水）/
+        crlf_phantom（EOL 归一化后完全相等=行尾翻转幻影）/
+        substantive（其余=实质 WIP；新增/删除/读取失败保守判实质——宁可多存证）。
+    """
+    if old_text is None or new_text is None:
+        return _RETIRE_CLASS_SUBSTANTIVE
+    old_n = _normalize_eol_text(old_text)
+    new_n = _normalize_eol_text(new_text)
+    if old_n == new_n:
+        return _RETIRE_CLASS_PHANTOM
+    if _strip_auto_block_lines(old_n) == _strip_auto_block_lines(new_n):
+        return _RETIRE_CLASS_DERIVED
+    return _RETIRE_CLASS_SUBSTANTIVE
+
+
+def _classify_retire_dirty_files(
+    manager: "WorktreeManager", wt_path: Path, porcelain_lines: list[str],
+) -> list[dict]:
+    """逐脏文件执行三分类（Z2 工具化：retire/merge 甄别用）。
+
+    读 HEAD 版本（git show HEAD:path）+ 工作区版本，调 _classify_retire_file_content。
+    单文件读取失败不阻断整体分类（该文件保守判 substantive）。
+
+    Returns:
+        [{"path": str, "status": str, "classification": str}, ...]
+    """
+    results: list[dict] = []
+    for line in porcelain_lines:
+        if len(line) < 4:
+            continue
+        status = line[:2]
+        rel = line[3:]
+        if " -> " in rel:  # rename：取新路径
+            rel = rel.split(" -> ", 1)[1]
+        rel = rel.strip().strip('"')
+        if status == "??":
+            # untracked 无 HEAD 基线——保守判实质（新文件内容丢失不可逆）
+            results.append({"path": rel, "status": status,
+                            "classification": _RETIRE_CLASS_SUBSTANTIVE})
+            continue
+        r_old = manager.run_git(["git", "show", f"HEAD:{rel}"], cwd=str(wt_path))
+        old_text = r_old.stdout if r_old.returncode == 0 else None
+        wt_file = wt_path / rel
+        try:
+            new_text = wt_file.read_text(encoding="utf-8", errors="replace") \
+                if wt_file.is_file() else None
+        except OSError:
+            new_text = None
+        results.append({"path": rel, "status": status,
+                        "classification": _classify_retire_file_content(old_text, new_text)})
+    return results
+
+
+def _generate_retire_patch_evidence(
+    root: Path,
+    session_id: str,
+    manager: "WorktreeManager",
+    source: str,
+) -> dict:
+    """Z1 强制存证：脏工作区退役前生成全量 diff patch + 三分类退役审计。
+
+    流程：git status --porcelain 判脏 → 脏则 git add -N .（intent-to-add 纳管
+    untracked，使 git diff HEAD 含新文件全文）→ git diff HEAD 全量 patch →
+    写 .runtime/quarantine/<sid>-retire-<ts>.patch → 三分类结果连同 patch 路径
+    写入退役审计（.runtime/gate_audit/worktree_abort.jsonl，与 sweep force-clean
+    四证审计同轨——统筹一处复查两条清理路径）。
+
+    fail-closed 语义：git 链路任一步失败返回 {"generated": False, "error": ...}，
+    调用方 MUST 保留 worktree 不删（对标 sweep quarantine ref 保存失败不清理先例）。
+    干净工作区/目录不存在返回 {"generated": False, "reason": ...}（非 error，
+    调用方照常继续删除）。
+
+    注意：git add -N 会写 worktree index（untracked 转 intent-to-add）——
+    存证后随目录删除无副作用；若存证失败保留 worktree，index 残留 -N 条目
+    仅改变 git status 展示形态（?? → A），无内容影响。
+
+    Args:
+        root: 项目根目录（patch/审计落盘处，非 worktree）。
+        session_id: session 标识（patch 文件名锚）。
+        manager: WorktreeManager 实例。
+        source: 调用路径标识（"abort" / "sweep"），写入审计溯源。
+
+    Returns:
+        {"generated": bool, "patch_path": str, "counts": {...}, "files": [...],
+         "source": str, "reason"/"error": str}
+    """
+    wt_path = manager._wt_path(session_id)
+    if not wt_path.exists():
+        return {"generated": False, "reason": "worktree_dir_missing", "source": source}
+    try:
+        r_status = manager.run_git(["git", "status", "--porcelain=v1"], cwd=str(wt_path))
+        if r_status.returncode != 0:
+            return {"generated": False, "source": source,
+                    "error": f"git status 失败: {(r_status.stderr or '').strip()[:200]}"}
+        porcelain_lines = [l for l in r_status.stdout.splitlines() if l.strip()]
+        if not porcelain_lines:
+            return {"generated": False, "reason": "clean", "source": source}
+
+        r_add = manager.run_git(["git", "add", "-N", "."], cwd=str(wt_path))
+        if r_add.returncode != 0:
+            return {"generated": False, "source": source,
+                    "error": f"git add -N 失败: {(r_add.stderr or '').strip()[:200]}"}
+        r_diff = manager.run_git(["git", "diff", "HEAD"], cwd=str(wt_path))
+        if r_diff.returncode != 0:
+            return {"generated": False, "source": source,
+                    "error": f"git diff HEAD 失败: {(r_diff.stderr or '').strip()[:200]}"}
+
+        files = _classify_retire_dirty_files(manager, wt_path, porcelain_lines)
+        counts = {
+            _RETIRE_CLASS_DERIVED: 0,
+            _RETIRE_CLASS_PHANTOM: 0,
+            _RETIRE_CLASS_SUBSTANTIVE: 0,
+        }
+        for f in files:
+            counts[f["classification"]] = counts.get(f["classification"], 0) + 1
+
+        ts = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime())
+        q_dir = root / _RETIRE_PATCH_DIR
+        q_dir.mkdir(parents=True, exist_ok=True)
+        patch_path = q_dir / f"{session_id}-retire-{ts}.patch"
+        header = (
+            f"# retire evidence | session={session_id} | source={source} | ts={ts}\n"
+            f"# 三分类（CAND-WORKTREE-001 Z2）：derived={counts[_RETIRE_CLASS_DERIVED]} "
+            f"crlf_phantom={counts[_RETIRE_CLASS_PHANTOM]} "
+            f"substantive={counts[_RETIRE_CLASS_SUBSTANTIVE]}\n"
+        )
+        patch_path.write_text(header + r_diff.stdout, encoding="utf-8")
+
+        record = {
+            "timestamp": time.time(),
+            "session_id": session_id,
+            "verdict": "RETIRE_EVIDENCE",
+            "reason": "CAND-WORKTREE-001 退役脏工作区强制 patch 存证+三分类",
+            "path": f"rule_bridge.session_worktree.{source}",
+            "patch_path": str(patch_path),
+            "counts": counts,
+            "files": files,
+        }
+        try:
+            audit_dir = root / ".runtime" / "gate_audit"
+            audit_dir.mkdir(parents=True, exist_ok=True)
+            with (audit_dir / "worktree_abort.jsonl").open("a", encoding="utf-8") as fh:
+                fh.write(json.dumps(record, ensure_ascii=False) + "\n")
+        except Exception:  # noqa: BLE001 — 审计写入失败不阻断（patch 已落盘）
+            logger.debug("retire evidence audit write failed (non-blocking)", exc_info=True)
+
+        logger.info(
+            "retire evidence: sid=%s source=%s patch=%s 三分类=%s",
+            session_id, source, patch_path.name, counts,
+        )
+        return {
+            "generated": True,
+            "patch_path": str(patch_path),
+            "counts": counts,
+            "files": files,
+            "source": source,
+        }
+    except Exception as e:  # noqa: BLE001 — 存证链路异常=fail-closed 信号，调用方保留 worktree
+        return {"generated": False, "source": source,
+                "error": f"retire evidence 异常: {str(e)[:200]}"}
+
+
+def _sweep_quarantine_refs(
     manager: "WorktreeManager",
 
     max_age_hours: int = _QUARANTINE_REF_RETENTION_HOURS,
@@ -1372,6 +1598,8 @@ def _spawn_heartbeat_daemon(
 
     session_id: str, root: Path, interval: int = 30,
 
+    worktree_path: "Path | str | None" = None,
+
 ) -> int | None:
 
     """spawn detached heartbeat daemon 进程（#ARCH-HEARTBEAT-001, P0 治本）。
@@ -1386,6 +1614,12 @@ def _spawn_heartbeat_daemon(
 
     （list_active 清理）。
 
+    CAND-DAEMON-001（2026-08-17）：spawn 时传入所属 worktree 路径作失锚锚点，
+
+    daemon 周期核对路径存活，worktree 目录消失（退役/删除）即失锚自退——
+
+    根治孤儿 daemon 制造假活性（#99 族实证 2 个两天残留 daemon）。
+
     幂等：若 daemon 已在运行（PID 文件存在且进程存活），不重复 spawn。
 
     Args:
@@ -1395,6 +1629,8 @@ def _spawn_heartbeat_daemon(
         root: 项目根目录。
 
         interval: 心跳刷新间隔（秒），默认 30。测试可用更短间隔。
+
+        worktree_path: 所属 worktree 锚点路径（失锚自退依据）；None=不配置锚。
 
     Returns: daemon PID 或 None（spawn 失败，不阻断 start——session 仍有 90s 可用）。
 
@@ -1449,6 +1685,8 @@ def _spawn_heartbeat_daemon(
             str(root),
 
             str(interval),
+
+            str(worktree_path) if worktree_path else "",
 
         ]
 
@@ -2022,6 +2260,24 @@ def _sweep_one_dir(
                     return 0, 1, warnings
 
     # 通过三重保护——清理
+
+    # CAND-WORKTREE-001 Z1（2026-08-17）：git 注册态 worktree 退役前强制 patch
+    # 存证（脏文件 >0 时）——与 abort 路径同轨。存证失败 fail-closed 保留待人工
+    # 评估（同上方 quarantine ref 保存失败不清理语义）。孤儿物理目录（git 已不
+    # 认）无 HEAD 基线可 diff，维持原清理路径不动。
+    if manager.worktree_exists(sid):
+
+        _ev = _generate_retire_patch_evidence(manager.repo_root, sid, manager, source="sweep")
+
+        if _ev.get("error"):
+
+            warnings.append(
+
+                f"{sid}: 退役存证生成失败（{_ev['error']}），保留 worktree 待人工评估"
+
+            )
+
+            return 0, 1, warnings
 
     swept = 0
 
@@ -3219,7 +3475,9 @@ def session_worktree_start(
 
         # spawn 失败不阻断 start（session 仍有 90s 可用窗口）
 
-        daemon_pid = _spawn_heartbeat_daemon(sid, root)
+        # CAND-DAEMON-001：传入 worktree 锚点路径，worktree 消失 daemon 失锚自退
+
+        daemon_pid = _spawn_heartbeat_daemon(sid, root, worktree_path=wt_path)
 
         return {
 
@@ -8193,6 +8451,40 @@ def session_worktree_abort(
 
     main_cleaned = 0
 
+    # CAND-WORKTREE-001 Z1（2026-08-17）：退役脏工作区强制 patch 存证。
+    # 脏文件 >0 时先生成 .runtime/quarantine/<sid>-retire-<ts>.patch 全量 diff
+    # 存证（成分三分类写入退役审计），再删目录——防 140 外来 WIP 悬案复发。
+    # 存证链路失败 fail-closed 不删（对标 sweep quarantine ref 保存失败不清理），
+    # 必须在主工作区清理/worktree 删除之前执行。
+    retire_evidence: dict = {}
+
+    if manager.worktree_exists(session_id):
+
+        retire_evidence = _generate_retire_patch_evidence(root, session_id, manager, source="abort")
+
+        if retire_evidence.get("error"):
+
+            return {
+
+                "session_id": session_id,
+
+                "aborted": False,
+
+                "message": (
+                    f"退役存证生成失败，worktree 保留待人工评估（未做任何清理）: "
+                    f"{retire_evidence['error']}"
+                ),
+
+                "unregistered": False,
+
+                "main_cleaned": 0,
+
+                "error": "RETIRE_EVIDENCE_FAILED",
+
+                "retire_evidence": retire_evidence,
+
+            }
+
     # 清理主工作区残留（君子协定模式：AI 写项目根，abort 需同步清理）
 
     if files:
@@ -8212,6 +8504,16 @@ def session_worktree_abort(
             )
 
             parts = ["worktree 已丢弃并清理"]
+
+            if retire_evidence.get("generated"):
+
+                _c = retire_evidence.get("counts", {})
+
+                parts.append(
+                    f"（退役存证 {Path(retire_evidence['patch_path']).name}："
+                    f"派生 {_c.get('derived', 0)}/幻影 {_c.get('crlf_phantom', 0)}"
+                    f"/实质 {_c.get('substantive', 0)}）"
+                )
 
             if main_cleaned > 0:
 
@@ -8276,6 +8578,8 @@ def session_worktree_abort(
         "unregistered": unregistered,
 
         "main_cleaned": main_cleaned,
+
+        "retire_evidence": retire_evidence,
 
     }
 

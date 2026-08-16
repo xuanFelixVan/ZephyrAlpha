@@ -16999,28 +16999,28 @@ entries:
   severity: P2中
   category: governance_debt
   adjudication: 'AI-TD2-GOV-001 实证（2026-08-16，包③基线）：tests/governance/security/test_security_scripts.py 2 项失败——validate_script_naming.py 拦截 ~20 个新脚本（oneoff/*、migrations/add_acquisition_fields、git_hooks/post_commit_regen_yaml、d3_metadata/domain_header_maint、d5_architecture/generators/zoomable_html、d6_security/retire_tmp_artifacts、d8_doc_sync/algo_flow_translation_reconciler + requirements_version_sync_reconciler、decision_node_plain_zh_backfill、harvest_candidates_from_drafts、query_candidate_registry、reconcile_generators、register_deferred_modules、shared/frontmatter、verify_generator_paths 等）缺 LEGAL_PREFIXES 合法前缀；validate_exit_codes.py 拦截同批脚本 17 处裸 return 0/1 未走 scripts/governance/shared/constants EXIT_* 常量。双门抓的是真实违例（非测试缺陷），但修复=跨域批量改他人脚本（重命名/常量替换/EXCEPTIONS 豁免三选一），超出 AI-TD2-GOV-001 包③"只动本包域文件"边界，裁定留置交统筹统一处置。'
-  fix_phase: 待统筹裁定处置路径（重命名合法化 / 批量常量替换 / EXCEPTIONS 豁免）；2 项测试已 xfail(strict=False) 留痕
-  status: open
+  fix_phase: 已闭环（2026-08-17 AI-GOVA-001 治理批 A 包）：裁定路径三选一落地=**EXCEPTIONS 豁免登记**（对比分析随该批 commit 说明——A 批量改名：shared/frontmatter.py 系 import 库改名断链+git_hooks 引用面+并发域碰撞；B 常量替换：门禁正则无差别拦 71 处含 helper 业务返回值、盲改语义腐蚀+撞 DGR 并发域；C 豁免：命名门 108 条先例对齐、零跨域碰撞，门禁对未来新脚本牙齿不掉）。命名门 EXCEPTIONS +22 条（basename 匹配，逐组注理由：oneoff 已执行/库性质/git hook/迁移脚本/爷爷条款）；退出码门新增 EXIT_EXCEPTIONS 机制（原无豁免通道，相对路径精确匹配 25 文件）；test_security_scripts.py 2 项 xfail 已除，双门复跑 exit=0 转正。残余风险（豁免文件未来新增违例静默）已登记告知统筹
+  status: resolved
   created: '2026-08-16'
-  last_updated: '2026-08-16'
+  last_updated: '2026-08-17'
 - issue_id: '#ARCH-115'
   title: 包③ PG 依赖集成测试 28 项环境失败——本机 PostgreSQL(5432) 未运行，depgraph/battle_map/dataflowgraph 真实连接类测试全红【编号注记：原 GOV 登记 #ARCH-101，merge 撞号终态重编 #ARCH-115——2026-08-16 第五统筹】
   severity: P2中
   category: test_debt
   adjudication: 'AI-TD2-GOV-001 实证（2026-08-16，包③ governance 全域复跑 10 failed+23 errors 中 28 项）：Test-NetConnection localhost:5432 TcpTestSucceeded=False，本机无 PG 服务运行。涉及文件：①tests/governance/data_layer/test_database_service.py 3 项（get_depgraph_conn/health_check_depgraph/health_check_all——DatabaseService depgraph 真实 PG 连接+健康检查）；②tests/governance/depgraph/test_depgraph_generator_design_protection.py 1 项（红蓝测试需真实 PG 跑生成器）；③tests/governance/test_sel_unreachable_5_linkage.py 23 项（验证 battle_map PG 中 5 条真实修复边，fixture setup 即 connection refused——装饰器 xfail 不捕获 setup error，改 db_conn fixture 内 pytest.xfail）。病根（第一性原理）：此类测试设计契约=真实 PG 集成验证（区别于 #ARCH-099 的拷贝生产库耦合——它们本就声明需要活 PG），失败是环境不满足而非测试/代码缺陷，与裁定书 §E/L174 battle_map/gov_db 等 DB 依赖项以 xfail 留痕计先例同类。同批 2 项伪环境问题已转正治本（test_apply_dataflowgraph_smoke mock 缺 init_dataflow_db、test_reconcile_generators skip 契约未覆盖生成器 failed 路径），本条目仅收真·环境依赖 28 项。'
-  fix_phase: 28 项已 xfail(strict=False) 留痕（含 fixture 内 xfail 1 处），PG 可用时自动 XPASS 转正；治本方向待统筹裁定——PG 可用性 skip 门（conftest 全局 probe）或集成测试容器化（testcontainers/pg_tmp）
-  status: open
+  fix_phase: 已闭环（2026-08-17 AI-GOVA-001 治理批 A 包）：PG 5432 经 UAC 恢复 Running（tracker #100），28 项环境依赖全消——第六统筹复跑终证 6 项自动 XPASS+22 项直 passed（关联 4 文件 36 项=29 passed+7 xpassed 零失败）；xfail 留痕标记已全部清除（test_database_service.py 3 装饰器/test_sel_unreachable_5_linkage.py fixture 内 pytest.xfail 段/test_depgraph_generator_design_protection.py 1 装饰器），清除后复跑 36 项全 passed 零 xpassed 零 xfailed。PG 再离线的暴露面分析随 fail-open 敞口报告（docs/_working/reports/2026-08-17-fail-open-analysis.md）交 Owner 裁定
+  status: resolved
   created: '2026-08-16'
-  last_updated: '2026-08-16'
+  last_updated: '2026-08-17'
 - issue_id: '#ARCH-116'
   title: worktree_pool lease 3 项环境失败——主仓工作区 116 项残留修改致 WORKSPACE_DRIFT_BLOCKED / git worktree move 失败【编号注记：原 GOV 登记 #ARCH-102，merge 撞号终态重编 #ARCH-116——2026-08-16 第五统筹】
   severity: P2中
   category: test_debt
   adjudication: 'AI-TD2-GOV-001 实证（2026-08-16，包③ governance 全域复跑）：tests/governance/rule_bridge/test_worktree_pool.py 3 项失败（test_lease_relocates_worktree / test_lease_then_prefetch_async_replenishes / test_session_worktree_start_uses_pool）——WorktreePool.lease 执行 git worktree move 时因主仓工作区存在 116 项 real code 残留修改被 WORKSPACE_DRIFT_BLOCKED 拦截（session_worktree 返回 error），move 目标路径未创建致 leased_path=None。失败根因=主仓环境脏状态，非 pool 逻辑缺陷（同文件 test_prefetch_creates_worktree / test_cleanup_stale 等 4 项不触 move 路径全绿可证）；清理主仓=跨域操作，超包③只动本包域文件边界，裁定留置。'
-  fix_phase: 3 项已 xfail(strict=False) 留痕，主仓工作区清理后自动 XPASS 转正；治本方向待统筹裁定——测试自建隔离裸仓 fixture（tmp git init 仓内跑 pool 全流程）替代真实主仓锚定
-  status: open
+  fix_phase: 已闭环（2026-08-17 AI-GOVA-001 治理批 A 包）：主仓派生淤积收口后 3 项 XPASS 事实 OBE 转正（第六统筹复跑终证）；3 处 xfail 装饰器已清除，清除后复跑全 passed。顺手半治本：test_session_worktree_start_uses_pool 显式走 allow_workspace_drift 逃生通道（测试主体=pool lease 优先级，start 的 fail-closed drift 检查会把施工会话常态脏工作区误判为测试失败；drift 门禁行为由 test_session_worktree_workspace_clean.py 专项覆盖）——残余环境耦合面收敛但未全隔离（lease/prefetch 两测试仍锚真实仓），全量隔离裸仓 fixture 属进一步优化，不阻塞
+  status: resolved
   created: '2026-08-16'
-  last_updated: '2026-08-16'
+  last_updated: '2026-08-17'
 - issue_id: '#ARCH-100'
   title: 风控全链路零接线（双轮审查 Qwen P0-1）——35回撤/36 VaR-ES/37流动性+KillSwitch+对账器模块全写完测试全绿但生产链路零实例化，回撤25%不会熔断；P0 风控接线批落地（SHADOW 前硬约束）
   severity: P0高

@@ -58,6 +58,46 @@ RE_RETURN_BARE = re.compile(r"^(\s*)return\s+([012])\s*$", re.MULTILINE)
 RE_EXIT_CONST = re.compile(r"EXIT_PASS|EXIT_FINDINGS|EXIT_ERROR")
 EXCLUDE_DIRS = frozenset({"_shared", "__pycache__", "test_fixtures"})
 
+# --- #ARCH-114 豁免登记（2026-08-17 AI-GOVA-001 裁定路径 C：豁免登记）---
+# 裁定书=architecture_issue_registry.yaml #ARCH-114；三选一对比分析（批量改名/
+# 常量替换/豁免登记）随治理批 A 包 commit 说明。本门原无豁免机制，镜像
+# validate_script_naming.py EXCEPTIONS 先例新增；按仓内相对路径（正斜杠）精确
+# 匹配，D2 纪律逐条注明理由：
+#   存量 71 处裸 return/sys.exit(0/1/2) 散布 25 文件，正则无法区分 main()/CLI
+#   入口返回值与 helper 业务返回值（0/1 语义非退出码），盲改有语义腐蚀风险；
+#   且 apply_depgraph.py/generate_project_depgraph.py 等属并发施工域，逐点核验
+#   替换的跨域碰撞风险高于常量纯度收益。豁免=爷爷条款登记，门禁对未来新增
+#   脚本保持全量牙齿；豁免文件再新增裸退出码不会被拦（残余风险已告知统筹）。
+EXIT_EXCEPTIONS = frozenset(
+    {
+        "apply_battle_map.py",
+        "apply_depgraph.py",
+        "d11_compliance/check_generator_no_realtime_time.py",
+        "d11_compliance/check_no_commit_derived.py",
+        "d11_compliance/validate_worktree_required.py",
+        "d3_metadata/domain_header_maint.py",
+        "d5_architecture/checkers/check_algo_quality.py",
+        "d5_architecture/checkers/check_node_label_quality.py",
+        "d5_architecture/checkers/check_registry_code_anchor.py",
+        "d5_architecture/generators/generate_battle_map_diagram.py",
+        "d5_architecture/generators/generate_candidate_module_report.py",
+        "d5_architecture/generators/generate_code_wiki_stats.py",
+        "d7_code/check_yaml_anchor_consistency.py",
+        "data_quality/check_indicator_prefix.py",
+        "fix_depgraph_module_id.py",
+        "fix_header_module_id.py",
+        "generate_project_depgraph.py",
+        "git_hooks/post_commit_regen_yaml.py",
+        "harvest_candidates_from_drafts.py",
+        "oneoff/data_domain_design_state_complete.py",
+        "oneoff/fix_module_translation_zh.py",
+        "oneoff/load_acquisition_decisions.py",
+        "oneoff/register_candidate_acquisitions.py",
+        "reconcile_generators.py",
+        "register_deferred_modules.py",
+    }
+)
+
 _BARE_TO_CONST = {"0": "EXIT_PASS", "1": "EXIT_FINDINGS", "2": "EXIT_ERROR"}
 
 
@@ -76,6 +116,8 @@ def scan_scripts() -> list[dict]:
             continue
 
         rel = str(py.relative_to(SCRIPTS_DIR)).replace("\\", "/")
+        if rel in EXIT_EXCEPTIONS:
+            continue
 
         for m in RE_SYS_EXIT_BARE.finditer(src):
             line_no = src[: m.start()].count("\n") + 1

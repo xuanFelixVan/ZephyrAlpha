@@ -2451,6 +2451,13 @@ entries:
   desc_zh: 注册守卫任务模块
   desc_en: ''
   plain_zh: 注册守卫任务，守卫的注册表，登记和查询已注册的条目。
+- module_path: scripts/register_drift_watchdog_task.ps1
+  domain_id: D_GOV_ENFORCEMENT
+  name_zh: 注册漂移看门狗任务
+  name_en: register_drift_watchdog_task
+  desc_zh: 注册漂移看门狗任务模块（#99② RestartOnFailure 退避治本）
+  desc_en: ''
+  plain_zh: 注册漂移看门狗任务，工作区漂移看门狗的 Task Scheduler 任务声明式幂等注册（RestartCount=3+RestartInterval=10min 退避固化），防止故障时连环拉起实例堆积。
 - module_path: scripts/start_scheduler.ps1
   domain_id: D_DATA
   name_zh: 启动调度器
@@ -51101,19 +51108,19 @@ algo_submodules:
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A1
-  name_zh: ① Agent上手上下文生成
+  name_zh: 维护手册
   name_en: Handbook.generate_onboarding_context
   plain_zh: 把核心约束、关键目录、任务状态机、关键工具拼成一段固定markdown给新Agent看
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A2
-  name_zh: ② 任务卡模板提供
+  name_zh: 维护手册
   name_en: Handbook.get_task_card_template
   plain_zh: 返回一张固定的任务卡markdown表格模板，照填即可
 - module_path: src/zephyr/shared/maintenance/handbook.py
   module_id: SH-MAIN-001
   node_id: A3
-  name_zh: ③ 目录地图提供
+  name_zh: 维护手册
   name_en: Handbook.get_directory_map
   plain_zh: 返回核心源码/蓝图/任务系统目录到中文说明的映射字典
 - module_path: src/zephyr/shared/io/sqlite_factory.py
