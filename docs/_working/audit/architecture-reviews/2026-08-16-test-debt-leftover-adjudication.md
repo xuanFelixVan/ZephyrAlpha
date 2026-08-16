@@ -173,3 +173,82 @@ reconcile_execution_log 最近 24h critical_warn，2026-08-15 14:46 记录随窗
 
 验收：受影响测试两轮全绿（battle_map/gov_db 等 DB 依赖项以 xfail 留痕计）+
 grep 复核（subprocess 模式在册/patch 存量=0/instance 别名=0/dup=0）。
+
+---
+
+## 四、终态裁定补记（2026-08-16 15:20，Owner 指派本会话深度调查后裁定）
+
+> 触发：Owner 裁定"140 外来 WIP 归属与处置 + 本 worktree merge 排期"两项归本会话调查执行。
+> 调查期间事态演进：第五统筹（coord-0815-gov3）于 13:52–15:17 执行了 11 路 merge 收口 +
+> 全量 worktree 退役。本节为终态取证、追认裁定与治本方案。
+
+### 4.1 事态时间链（reflog/文件系统/进程三层实证）
+
+| 时刻 | 事件 | 证据 |
+|---|---|---|
+| 13:52:06 | coord-0815-gov3 接手登记（233 六包立项建议登记在册） | f7fb6d6bf7 |
+| 14:25–14:43 | merge RCAN/SENT/SIM/FIX/MON + 注册表去重 + merge ASM | reflog 逐条 |
+| 14:32:47 | 存证 main-derived-premerge-20260816.patch（17 文件） | .runtime/quarantine/ |
+| 14:50:11 | merge TDEBT（本裁定书所在分支，含 140 WIP 工作区） | 16c3dcf2c9 |
+| 15:06:51 | merge NORTH（87f50a5e3f，冲突块三方裁决落盘） | reflog |
+| ~15:10 | JOB077 merge 冲突→reset 放弃（独有仅 2 个派生自动提交） | reflog reset 行 |
+| 15:12:13–40 | 退役 8 个 worktree（SIM/FIX/MON/TDEBT/NORTH/JOB077/JOB083/JOB084） | .runtime/sessions/ 触碰时序 |
+| 15:14–15:16 | 退役余下 4 个（TICK/GIT/ARCH/COMP） | worktree list 终态 |
+| 15:15:52 | **AI-ARCH-001 未提交工作抢救入库**（INFRA-STORE-002 + data_retention_contract v1.1.0） | 2cdbbc80a7 |
+| 15:17:39 | depgraph 重建收敛收官（6508 节点/10701 边统计块同步） | 0817f77e84 |
+
+### 4.2 关联项 B 终态裁定：140 外来 WIP = 派生活水 + CRLF 幻影，零损失闭环
+
+**成分终判（三重证据）**：
+1. 终态 127 文件（131 − 4 项已被 merge 吸收，字节一致实证）**100% 为 .md 文档**
+   （blueprint/handbook/backup_inventory），无任何代码/YAML——原"51 实质 WIP"例证
+   _state-machine-registry.yaml 不在终态清单（dev canonical 版在库且近期有提交史
+   09a61b7a88，round3 收口 commits 已吸收）；
+2. 与 dev HEAD 的 123 处内容差 = AUTO 统计块数字（depgraph 节点/边/build_status 分布）——
+   coord 存证的 main-derived-premerge patch 逐 diff 实证为纯数字派生刷新（6500→6508 节点等）；
+3. tracker #85 已立 SOP：数字派生物一律丢弃不提交（丢弃零损失，depgraph 可随时再生成）；
+   CRLF 幻影有 coord-0814-gov2 "127 幻影"先例。
+
+**结论**：该批文件非任何会话的业务 WIP，系 post-commit 生成器读主仓 depgraph 回写
+worktree 文档 AUTO 块所致"派生活水"+ 行尾翻转幻影。coord 退役 TDEBT worktree 时随目录
+删除，**未归档但零损失成立**——canonical 源 = depgraph DB，收官 commit 0817f77e84 已从
+DB 重建全仓统计块，dev 现为最新真源。**裁定：闭环，无需还原、无需追责。**
+
+**过程瑕疵（治本靶点，非追责）**：退役未对脏工作区做 bundle/patch 存证（对照
+AI-RCN-001 的 .runtime/quarantine bundle 先例），"零损失"结论依赖事后取证重建。
+若成分中混入真业务 WIP，删除即不可逆。
+
+### 4.3 Merge 排期终态裁定：#ARCH-70 通道本轮职责已履行完毕
+
+- `git branch --no-merged dev` 终态仅剩 `main`（项目主线隔离约定，合法）；
+  全部 12 个 ai/* 施工分支 merged 且已删；worktree 仅剩主仓。
+- JOB077 abort **追认为正确处置**：分支独有 2 commits 皆为 reconciler/integrity
+  派生自动提交，dev 管道自行再生成，零信息损失。
+- 遗留 = 生命周期卫生（孤儿进程/孤儿目录/陈旧 session 分支），由本会话本批执行（§4.5）。
+
+### 4.4 治本施工方案（防"外来 WIP"悬案复发）
+
+| # | 缺口 | 治本动作 | 性质 |
+|---|---|---|---|
+| Z1 | 退役脏工作区无存证 | session_worktree retire 流程强制：脏文件 >0 时先生成<br>`.runtime/quarantine/<sid>-retire-<ts>.patch`（diff 存证）再删目录；<br>成分自动三分类（派生活水/CRLF 幻影/实质）写入退役审计 | 流程补强（登记 CAND 待立项） |
+| Z2 | 派生活水反复制造"假 WIP" | tracker #85 SOP 已有认知项；补机器层：retire/merge 甄别脚本<br>内置"AUTO 块数字 diff 自动判派生"分类器（本调查探针同款逻辑：<br>EOL 归一化 + dev HEAD 比对 + AUTO-END 标记段定位） | 工具化（随 Z1 同立项） |
+| Z3 | 孤儿 heartbeat_daemon 制造假活性 | 本批直接执行：直杀 2 个残留 daemon + 1 个僵尸 backup.ps1<br>（13 个随退役失锚自退）；根治=daemon 启动时注册 worktree 路径，<br>watchdog 周期核对路径存活，失锚自退（登记 CAND） | 本批执行 + CAND 登记 |
+| Z4 | 孤儿 worktree 目录（未注册） | 本批直接执行：删 5 个（DC2-01 陈旧快照/DC2-09/DOCS-001/<br>WDOG-001/WRN-001 空壳）；backup 计划任务实证锚主仓路径不受影响 | 本批执行 |
+| Z5 | session/* 陈旧分支（baostock-harden/ifind-retire，已 merged） | 保留候选：属数据加固历史分支，删除权交 Owner/统筹<br>（非本裁定范围，tracker 登记） | 登记 |
+
+### 4.5 本批执行记录（2026-08-16，本会话直执）
+
+- 孤儿进程：取证时 15 个 heartbeat_daemon 在跑（worktree/分支已无对象）；退役潮后 13 个
+  失锚自退（实证进程列表消失），本批直杀 2 个两天残留（ifind-retire pid 11592 /
+  baostock-harden pid 25424）+ 1 个僵尸 backup.ps1（pid 38792，脚本文件已随 DOCS-001
+  空壳化丢失，进程空转两天）；
+  保留：watchdog（主仓锚定）/scheduler/tick_subscriber/ch_health_probe/panel/wrapper-inject
+  + 6 个 TD2 新批 daemon。
+- 删孤儿目录 5 个（.worktrees/ 下未注册：AI-DC2-01/-09/AI-DOCS-001/AI-WDOG-001/AI-WRN-001）。
+- 233 下批交接书落盘：docs/_working/reports/233_test_debt_batch_handover_20260816.md
+  （Owner 转发统筹派单；与本批卫生执行零文件交集，可并发）。
+- 台账策略：本批全链以本节 §4 为登记真源；tracker 并表移交统筹（执行窗口 coord 正活跃
+  登记 233 派单，避让 tracker 并发写防 lost-update 第四实证）。
+- 收尾实证：本批落笔时 coord 已自建 6 个 TD2 worktree（15:25:00–38，SEC/TRD/GOV/DATA/
+  AUTO/UTIL 全并发，5a3ac40477 派单登记在册）——233 立项已由用户裁定直通，交接书作为
+  施工规范备查件随批生效。
