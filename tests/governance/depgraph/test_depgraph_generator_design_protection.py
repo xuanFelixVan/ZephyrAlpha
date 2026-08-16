@@ -160,11 +160,6 @@ def main():
         return 1
 
 
-@pytest.mark.xfail(
-    strict=False,
-    reason="#ARCH-115：真实 depgraph PG 红蓝集成测试，本机 PG(5432) 未运行即失败——"
-    "属环境依赖非代码缺陷，PG 可用时自动 XPASS；治本待裁定（PG 可用性 skip 门 或 测试容器化）",
-)
 def test_depgraph_generator_design_protection():
     """depgraph 生成器设计态保护验证——委托给 main()，pytest 收集入口。"""
     assert main() == 0

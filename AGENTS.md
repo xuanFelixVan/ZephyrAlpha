@@ -376,7 +376,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 | 一次性运维/诊断/迁移脚本 | A 类·非永久 | trae_060 §6 not_applies_to |
 | 测试夹具/常量 | A 类·非规则数据 | trae_060 §6 not_applies_to |
 
-> **常驻守护服务（watchdog 三服务 + 死人开关，C 类·永久系统）**：四个 Task Scheduler 任务构成数据层 7×24 守护体系，均经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/register_guard_tasks.ps1) 一次性注册（AtLogOn 事件触发 + 5min repeat 兜底）。前 3 服务（watchdog 三服务）`MultipleInstances=Parallel`（#ARCH-BOOT-001 治本）：脚本级 PID 锁+心跳为单实例 SSoT，Task Scheduler 退化为无脑周期触发器（IgnoreNew 会阻断僵尸 guard 接管，导致 08-06/08-07 两交易日 intraday 停摆）。watchdog 的 5min repeat + 15s sleep 轮询属 **OS 进程监管时间退避例外**（非 reconciler 事件触发约束范围，对标 #ARCH-CH-PROBE-GUARD "5min repeat 属兜底"先例）。四层防御+心跳接管细节见 [`boot_autostart_architecture.md §3/§8`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/boot_autostart_architecture.md)。
+> **常驻守护服务（watchdog 三服务 + 死人开关 + 工作区漂移看门狗，C 类·永久系统）**：五个 Task Scheduler 任务构成 7×24 守护体系（前四个=数据层，漂移看门狗=治理执行域），均经一次性脚本注册（前四个经 [`register_guard_tasks.ps1`](file:///d:/ZephyrAlpha/scripts/register_guard_tasks.ps1)，漂移看门狗经 register_drift_watchdog_task.ps1，AtLogOn 事件触发 + 5min repeat 兜底）。前 3 服务（watchdog 三服务）`MultipleInstances=Parallel`（#ARCH-BOOT-001 治本）：脚本级 PID 锁+心跳为单实例 SSoT，Task Scheduler 退化为无脑周期触发器（IgnoreNew 会阻断僵尸 guard 接管，导致 08-06/08-07 两交易日 intraday 停摆）。watchdog 的 5min repeat + 15s sleep 轮询属 **OS 进程监管时间退避例外**（非 reconciler 事件触发约束范围，对标 #ARCH-CH-PROBE-GUARD "5min repeat 属兜底"先例）。四层防御+心跳接管细节见 [`boot_autostart_architecture.md §3/§8`](file:///d:/ZephyrAlpha/docs/03_modules/_domain_data/boot_autostart_architecture.md)。
 >
 > | 服务 | Task Scheduler 任务名 | guard 脚本 | 说明 |
 > |------|----------------------|-----------|------|
@@ -384,6 +384,7 @@ ZephyrAlpha 是一个 AI 治理框架。AutoRuntime Core 是其**系统大脑**�
 > | Tick 订阅器 | ZephyrAlpha_TickSubscriber | [`start_tick_subscriber.ps1`](file:///d:/ZephyrAlpha/scripts/start_tick_subscriber.ps1) | 实时行情订阅（盘中 tick→Redis/WAL） |
 > | CH 健康探针 | ZephyrAlpha_CHHealthProbe | [`start_ch_health_probe.ps1`](file:///d:/ZephyrAlpha/scripts/start_ch_health_probe.ps1) | CH 连通性监控（3s TCP+HTTP 双通道探测） |
 > | 死人开关 | ZephyrAlpha_DeadmanSwitch | [`deadman_switch.ps1`](file:///d:/ZephyrAlpha/scripts/deadman_switch.ps1) | 心跳陈旧监控（一次性任务，5min fire，任一 heartbeat >10min 飞书+EventLog 告警） |
+> | 工作区漂移看门狗 | ZephyrAlpha_WorktreeDriftWatchdog | [`register_drift_watchdog_task.ps1`](file:///d:/ZephyrAlpha/scripts/register_drift_watchdog_task.ps1)（声明式注册；无 guard 脚本，pythonw 直起 daemon） | tracked 漂移周期扫描（#99② 退避治本：RestartCount=3+RestartInterval=10min 固化任务定义，单实例 SSoT=daemon 字节锁，双触发器 5min repeat） |
 >
 > **死人开关（#ARCH-BOOT-002 E，2026-08-08 治本）**：watchdog 三服务的四层防御闭合了 guard 级僵尸接管，但**未闭合系统级失效**——若 3 服务全死，心跳文件陈旧但无人读。治本：`deadman_switch.ps1` 是无状态一次性任务（非 while-true guard，无僵尸风险），每 5min fire 读 3 个心跳文件，任一陈旧 >10min 即飞书+EventLog+本地日志三通道告警（30min 冷却防刷屏）。独立性第一性原理：监控者不属被监控 3 服务之一，只读心跳；用 `.ps1` 而非 `.py`——若 Python 栈崩溃 `.py` 监控会跟着死。
 >

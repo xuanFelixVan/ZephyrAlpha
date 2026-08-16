@@ -5,8 +5,8 @@
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.session_worktree (_spawn_heartbeat_daemon / _kill_heartbeat_daemon)
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
-# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / idle 超 _MAX_IDLE_SECONDS）；_append_heartbeat_log 字段集
+# [INVARIANTS] heartbeat 独立进程（DETACHED_PROCESS）——session_worktree 工作流跨多个 python -c 进程，线程无法跨进程存活，必须用 detached subprocess；heartbeat.jsonl 每 30s 追加一条 {ts,pid,status} 审计记录；session 不再在 registry 中时 daemon 退出（返回 0）；worktree 锚点丢失（spawn 传入的 worktree 目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001 2026-08-17：根治孤儿 daemon 制造假活性，锚点未配置时跳过零行为变更）；idle 超 _MAX_IDLE_SECONDS（=session_concurrency._ACTIVITY_IDLE_TIMEOUT_SECONDS=1800s）时 daemon 退出（#ARCH-HEARTBEAT-002 活性反转治本 2026-07-23：last_activity 为独立活性锚点，heartbeat 不刷新，消除僵尸 daemon 永久保活死 session）；不抛异常（所有错误写 log 后 continue）
+# [MODIFY-GUARD] heartbeat_file_path 路径格式；run_daemon 退出条件（registry 不含 sid / worktree 锚点丢失 / idle 超 _MAX_IDLE_SECONDS）；_append_heartbeat_log 字段集
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -39,6 +39,7 @@ heartbeat 不再更新——后续 commit/merge 进程无法接续心跳。
   2. daemon 每 30s 调用 ``registry.heartbeat(session_id)`` 刷新 registry 时间戳
   3. daemon 每 30s 追加一条 ``heartbeat.jsonl`` 审计记录（{ts, pid, status}）
   4. session 不再在 registry 中时 daemon 自动退出（返回 0）
+  4a. worktree 锚点丢失（目录消失=退役/删除）时 daemon 失锚自退（CAND-DAEMON-001）
   5. ``session_worktree_merge`` / ``abort`` 调用 ``_kill_heartbeat_daemon`` 终止 daemon
 
 文件路径
@@ -77,8 +78,8 @@ Usage::
 # 层: 输入
 # - id: I1
 #   name: daemon 启动入参
-#   fields: session_id + project_root + interval（默认 30s）
-#   code: run_daemon(session_id, project_root, interval) L243
+#   fields: session_id + project_root + interval（默认 30s）+ worktree_path（可选失锚锚点，CAND-DAEMON-001）
+#   code: run_daemon(session_id, project_root, interval, worktree_path) L331
 # - id: I2
 #   name: SessionRegistry session 条目
 #   fields: last_activity / start_time 活性锚点（heartbeat 不刷新 last_activity）
@@ -94,9 +95,9 @@ Usage::
 #   invariant: 所有异常写 log 后 continue，不崩溃
 # - id: A2
 #   name_zh: ② 活性判定与退出
-#   name_en: _session_in_registry / _session_idle_seconds
-#   intro: session 被注销或闲置超 1800 秒就退出，防僵尸 daemon 永久保活死 session
-#   desc: session 不在 registry → 写 exited 返回 0 L290-292；idle=now-last_activity（缺失回退 start_time，绝不回退 last_heartbeat）> _MAX_IDLE_SECONDS(=1800) → 写 exited(idle timeout) 返回 0 L300-310
+#   name_en: _session_in_registry / _worktree_anchor_alive / _session_idle_seconds
+#   intro: session 被注销、worktree 锚点丢失（退役/删除）或闲置超 1800 秒就退出，防僵尸 daemon 永久保活死 session 与孤儿 daemon 假活性
+#   desc: session 不在 registry → 写 exited 返回 0；worktree_path 已配置且目录消失 → 写 exited(worktree anchor lost) 返回 0（CAND-DAEMON-001 2026-08-17）；idle=now-last_activity（缺失回退 start_time，绝不回退 last_heartbeat）> _MAX_IDLE_SECONDS(=1800) → 写 exited(idle timeout) 返回 0
 #   inputs: I2
 #   outputs: 继续心跳 / 退出
 #   invariant: 查询失败保守视为存活，不误退出
@@ -289,6 +290,28 @@ def _session_idle_seconds(session_id: str, project_root: str | Path) -> float | 
         return None
 
 
+def _worktree_anchor_alive(worktree_path: str | Path | None) -> bool:
+    """检查 worktree 锚点是否存活（CAND-DAEMON-001 失锚自退，2026-08-17）。
+
+    daemon 启动时由 _spawn_heartbeat_daemon 传入所属 worktree 路径；
+    周期核对路径存活——worktree 目录消失（退役/删除/物理清理）即失锚。
+
+    Args:
+        worktree_path: 锚定 worktree 路径；None/空串=未配置锚（旧 spawn 兼容），
+            保守视为存活（不引入误退出）。
+
+    Returns:
+        True=锚存活或未配置，False=已失锚（调用方应退出）。
+    """
+    if not worktree_path:
+        return True
+    try:
+        return Path(worktree_path).exists()
+    except OSError as e:  # 路径查询异常保守视为存活（对标 _session_in_registry 不误退出）
+        logger.debug("worktree anchor check failed (assume alive): %s", e)
+        return True
+
+
 def _handle_signal(signum: int, frame) -> None:  # noqa: ANN001
     """signal handler：写 interrupted 记录后 sys.exit(0)。
 
@@ -306,7 +329,8 @@ def _handle_signal(signum: int, frame) -> None:  # noqa: ANN001
     sys.exit(0)
 
 
-def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEARTBEAT_INTERVAL) -> int:
+def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEARTBEAT_INTERVAL,
+               worktree_path: str | Path | None = None) -> int:
     """heartbeat daemon 主循环（独立进程入口）。
 
     生命周期：
@@ -315,6 +339,10 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
       3. ``_INITIAL_DELAY`` 秒后开始心跳循环
       4. 每 ``interval`` 秒：``registry.heartbeat(sid)`` + 追加 ``alive`` 记录
       5. session 不在 registry 中 → 写 ``exited`` 记录，返回 0
+      5a. worktree 锚点丢失（worktree_path 已配置且目录消失=退役/删除）→
+          写 ``exited``(reason=worktree anchor lost) 记录，返回 0
+          （CAND-DAEMON-001 失锚自退 2026-08-17：根治孤儿 daemon 制造假活性——
+          #99 族实证 2 个两天残留 daemon，worktree 早无对象仍空转）
       5b. session idle 超 ``_MAX_IDLE_SECONDS``（last_activity 活性锚点，
           heartbeat 不刷新）→ 写 ``exited``(reason=idle timeout) 记录，返回 0
           （#ARCH-HEARTBEAT-002 活性反转治本：消除僵尸 daemon 永久保活死 session）
@@ -325,6 +353,8 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
         session_id: session 标识。
         project_root: 项目根目录。
         interval: 心跳间隔（秒，默认 30）。
+        worktree_path: 所属 worktree 锚点路径（可选；None=未配置锚，
+            跳过失锚检查——兼容旧 spawn 调用方）。
 
     Returns:
         0=正常退出，1=致命错误。
@@ -355,6 +385,16 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
             # 检查 session 是否仍在 registry 中
             if not _session_in_registry(session_id, root):
                 _append_heartbeat_log(hb_path, "exited", {"reason": "session not in registry"})
+                return 0
+
+            # 失锚自退（CAND-DAEMON-001，2026-08-17）：worktree 目录消失=所属
+            # worktree 已退役/删除，daemon 继续心跳即"孤儿假活性"（#99 族实证
+            # 2 个两天残留 daemon）。锚点未配置（旧 spawn）时跳过，零行为变更。
+            if not _worktree_anchor_alive(worktree_path):
+                _append_heartbeat_log(
+                    hb_path, "exited",
+                    {"reason": "worktree anchor lost", "worktree_path": str(worktree_path)},
+                )
                 return 0
 
             # 活性反转治本（2026-07-23）：idle 超 _MAX_IDLE_SECONDS 自动退出。
@@ -406,11 +446,12 @@ def run_daemon(session_id: str, project_root: str | Path, interval: int = _HEART
 
 
 if __name__ == "__main__":  # pragma: no cover
-    # 命令行入口：python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> [root] [interval]
+    # 命令行入口：python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <sid> [root] [interval] [worktree_path]
     if len(sys.argv) < 2:
-        print("Usage: python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <session_id> [project_root] [interval]", file=sys.stderr)
+        print("Usage: python -m zephyr.gov_enforcement.rule_bridge.heartbeat_daemon <session_id> [project_root] [interval] [worktree_path]", file=sys.stderr)
         sys.exit(2)
     _sid = sys.argv[1]
     _root = sys.argv[2] if len(sys.argv) > 2 else "."
     _interval = int(sys.argv[3]) if len(sys.argv) > 3 else _HEARTBEAT_INTERVAL
-    sys.exit(run_daemon(_sid, _root, _interval))
+    _wt = sys.argv[4] if len(sys.argv) > 4 else None
+    sys.exit(run_daemon(_sid, _root, _interval, worktree_path=_wt))

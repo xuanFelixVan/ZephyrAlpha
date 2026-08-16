@@ -4,7 +4,7 @@
 # [DEPENDENCIES] hmmlearn; numpy; zephyr.shared.foundation.errors
 # [CONSUMERS] MOD-PA-007(RegimeMetaAllocator消费RegimeProbabilities+Shrinkage); BM-BT-03-E(回测验证消费7维概率)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] RegimeProbabilities.probabilities Σ=1.0; Shrinkage≤1.0(只减不增); shrinkage_enabled=False时Shrinkage=1.0; HMM 4态walk-forward季度重拟合; 不输出硬标签只输出7维灰度概率(4 HMM+3 overlay)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving

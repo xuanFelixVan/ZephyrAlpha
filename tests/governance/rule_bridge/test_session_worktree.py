@@ -1999,3 +1999,232 @@ class TestBaseFreshnessFullLifecycle:
         session_worktree_abort(_TEST_SIDS[0])
         kill_all_heartbeat_daemons(_isolated_repo)
 
+
+# ---------------------------------------------------------------------------
+# CAND-WORKTREE-001 Z1+Z2（2026-08-17）：退役脏工作区强制 patch 存证 + 三分类器
+# ---------------------------------------------------------------------------
+
+
+class TestRetireClassifier:
+    """Z2 三分类器纯函数测试（派生活水/CRLF 幻影/实质）。"""
+
+    def test_crlf_phantom_pure_eol_flip(self):
+        """EOL 归一化后完全相等=CRLF 幻影（VCFIX 先例：stash 复活零价值）。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _classify_retire_file_content,
+        )
+        old = "# title\nline1\nline2\n"
+        new = "# title\r\nline1\r\nline2\r\n"
+        assert _classify_retire_file_content(old, new) == "crlf_phantom"
+
+    def test_derived_auto_block_only_diff(self):
+        """差异全部落在 AUTO-START..AUTO-END 标记段内=派生活水（depgraph 统计块同款）。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _classify_retire_file_content,
+        )
+        old = (
+            "# blueprint\n"
+            "<!-- AUTO-START:depgraph_stats -->\n"
+            "节点数: 6500\n"
+            "<!-- AUTO-END:depgraph_stats -->\n"
+            "正文不变\n"
+        )
+        new = (
+            "# blueprint\n"
+            "<!-- AUTO-START:depgraph_stats -->\n"
+            "节点数: 6508\n"
+            "<!-- AUTO-END:depgraph_stats -->\n"
+            "正文不变\n"
+        )
+        assert _classify_retire_file_content(old, new) == "derived"
+
+    def test_substantive_diff_outside_auto_block(self):
+        """AUTO 块外（骨架）有差异=实质 WIP（即使块内也有数字差异）。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _classify_retire_file_content,
+        )
+        old = (
+            "<!-- AUTO-START:s -->\n6500\n<!-- AUTO-END:s -->\n"
+            "正文原版\n"
+        )
+        new = (
+            "<!-- AUTO-START:s -->\n6508\n<!-- AUTO-END:s -->\n"
+            "正文被 AI 改过\n"
+        )
+        assert _classify_retire_file_content(old, new) == "substantive"
+
+    def test_substantive_no_auto_markers(self):
+        """无 AUTO 标记的普通文件任何差异=实质。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _classify_retire_file_content,
+        )
+        assert _classify_retire_file_content("a = 1\n", "a = 2\n") == "substantive"
+
+    def test_substantive_on_none_sides(self):
+        """新增（HEAD 无）/删除（工作区无）保守判实质——内容丢失不可逆。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _classify_retire_file_content,
+        )
+        assert _classify_retire_file_content(None, "new file\n") == "substantive"
+        assert _classify_retire_file_content("old file\n", None) == "substantive"
+
+    def test_strip_auto_blocks_marker_variants(self):
+        """剔块原语：TREE-AUTO-START 变体识别 + 未闭合块剔到文件尾（两侧对称）。"""
+        from zephyr.gov_enforcement.rule_bridge.session_worktree import (
+            _strip_auto_block_lines,
+        )
+        text = "head\n<!-- TREE-AUTO-START -->\nx\ny\n<!-- TREE-AUTO-END -->\ntail\n"
+        stripped = _strip_auto_block_lines(text)
+        assert "x" not in stripped and "y" not in stripped, "块内容行应剔除"
+        assert "head" in stripped and "tail" in stripped, "骨架行应保留"
+        assert any("TREE-AUTO-START" in l for l in stripped), "标记行属骨架应保留"
+        unclosed = "head\n<!-- AUTO-START:s -->\nx\ny\n"
+        assert _strip_auto_block_lines(unclosed) == ["head", "<!-- AUTO-START:s -->"], \
+            "未闭合块应剔到文件尾"
+
+
+class TestRetirePatchEvidence:
+    """Z1 abort 退役强制存证集成测试（隔离仓端到端）。"""
+
+    @pytest.fixture(autouse=True)
+    def _stub_start_clean_check(self, monkeypatch):
+        """前序 PRE-MERGE-TOPO 测试会把 topo checker stub 改写为占位版（隔离仓
+        tracked 残留修改），session_worktree_start 的 fail-closed drift 检查会
+        误拦本类测试——stub 放行（drift 门禁行为由
+        test_session_worktree_workspace_clean.py 专项覆盖，对标
+        test_merge_base_freshness_check_invoked 同款处置）。
+        """
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+        monkeypatch.setattr(
+            sw, "_workspace_clean_check_start", lambda *a, **kw: (True, "stubbed"),
+        )
+
+    def test_abort_generates_patch_and_audit_when_dirty(self, _isolated_repo):
+        """脏 worktree abort：patch 落盘 + 三分类审计 + retire_evidence 返回。"""
+        sid = "sess-pytest-retire-d1"
+        r = session_worktree_start(sid)
+        assert r.get("created") or r.get("registered"), f"start 失败: {r}"
+        wt = Path(r["worktree_path"])
+
+        # 脏文件①：tracked 实质修改（AGENTS.md stub 已在 HEAD）
+        (wt / "AGENTS.md").write_text(
+            "# AGENTS.md (test stub)\n## 1 Test Section\nAI 实质新增一行\n",
+            encoding="utf-8",
+        )
+        # 脏文件②：untracked 新文件
+        (wt / "wip_note.md").write_text("# AI 未提交工作\n", encoding="utf-8")
+
+        a = session_worktree_abort(sid)
+        assert a.get("aborted"), f"abort 失败: {a}"
+        ev = a.get("retire_evidence", {})
+        assert ev.get("generated") is True, f"脏工作区应生成存证: {a}"
+        patch_path = Path(ev["patch_path"])
+        assert patch_path.exists(), "patch 文件应落盘"
+        assert patch_path.name.startswith(f"{sid}-retire-"), "patch 文件名应含 sid-retire 前缀"
+        assert patch_path.parent.name == "quarantine", "patch 应落 .runtime/quarantine/"
+        content = patch_path.read_text(encoding="utf-8")
+        assert "AI 实质新增一行" in content, "patch 应含 tracked 修改 diff"
+        assert "wip_note.md" in content and "AI 未提交工作" in content, \
+            "patch 应含 untracked 新文件全文（git add -N 纳管）"
+        counts = ev.get("counts", {})
+        assert counts.get("substantive", 0) == 2, f"两文件均应判实质: {counts}"
+        assert "退役存证" in a.get("message", ""), "message 应含存证摘要"
+
+        # 退役审计落盘（与 sweep force-clean 四证审计同轨）
+        audit_file = _isolated_repo / ".runtime" / "gate_audit" / "worktree_abort.jsonl"
+        assert audit_file.exists(), "退役审计应落盘"
+        rec = json.loads(audit_file.read_text(encoding="utf-8").strip().splitlines()[-1])
+        assert rec["verdict"] == "RETIRE_EVIDENCE"
+        assert rec["session_id"] == sid
+        assert rec["path"] == "rule_bridge.session_worktree.abort"
+        assert rec["counts"]["substantive"] == 2
+        kill_all_heartbeat_daemons(_isolated_repo)
+
+    def test_abort_clean_worktree_generates_no_patch(self, _isolated_repo):
+        """干净 worktree abort：零存证（reason=clean），正常删除。"""
+        sid = "sess-pytest-retire-c1"
+        r = session_worktree_start(sid)
+        assert r.get("created") or r.get("registered"), f"start 失败: {r}"
+        a = session_worktree_abort(sid)
+        assert a.get("aborted"), f"abort 失败: {a}"
+        ev = a.get("retire_evidence", {})
+        assert ev.get("generated") is False and ev.get("reason") == "clean", \
+            f"干净工作区不应生成存证: {ev}"
+        q_dir = _isolated_repo / ".runtime" / "quarantine"
+        leftovers = list(q_dir.glob(f"{sid}-retire-*.patch")) if q_dir.exists() else []
+        assert not leftovers, f"干净 abort 不应有 patch: {leftovers}"
+        kill_all_heartbeat_daemons(_isolated_repo)
+
+    def test_abort_classifies_crlf_phantom(self, _isolated_repo):
+        """CRLF 行尾翻转的 tracked 文件判 crlf_phantom（幻影零价值）。
+
+        环境注记：全局 git config core.autocrlf=true 时，CRLF 写盘会被 git 归一化
+        判为无变化（status clean）——测试须先将隔离仓 autocrlf 置 false 使 EOL
+        翻转可被 status 捕获（主仓幻影现象同款环境），测试结束恢复原值。
+        """
+        sid = "sess-pytest-retire-p1"
+        old_crlf = subprocess.run(
+            ["git", "config", "--get", "core.autocrlf"],
+            cwd=_isolated_repo, capture_output=True, text=True,
+        ).stdout.strip()
+        subprocess.run(
+            ["git", "config", "core.autocrlf", "false"],
+            cwd=_isolated_repo, capture_output=True,
+        )
+        try:
+            r = session_worktree_start(sid)
+            assert r.get("created") or r.get("registered"), f"start 失败: {r}"
+            wt = Path(r["worktree_path"])
+            # AGENTS.md stub HEAD 版为 LF；工作区改写为 CRLF（内容零变化）
+            (wt / "AGENTS.md").write_bytes(
+                b"# AGENTS.md (test stub)\r\n## 1 Test Section\r\n"
+            )
+            a = session_worktree_abort(sid)
+            assert a.get("aborted"), f"abort 失败: {a}"
+            ev = a.get("retire_evidence", {})
+            assert ev.get("generated") is True, f"幻影也是脏，应生成存证: {a}"
+            files = {f["path"]: f["classification"] for f in ev.get("files", [])}
+            assert files.get("AGENTS.md") == "crlf_phantom", \
+                f"CRLF 翻转应判幻影: {files}"
+        finally:
+            subprocess.run(
+                ["git", "config", "core.autocrlf", old_crlf or "true"],
+                cwd=_isolated_repo, capture_output=True,
+            )
+            kill_all_heartbeat_daemons(_isolated_repo)
+
+    def test_abort_blocked_when_evidence_fails(self, _isolated_repo, monkeypatch):
+        """存证链路失败 fail-closed：不删 worktree、不清理主工作区、error 返回。
+
+        对标 sweep quarantine ref 保存失败不清理先例——宁可保留待人工评估，
+        不可无存证删脏工作区（140 悬案教训）。
+        """
+        import zephyr.gov_enforcement.rule_bridge.session_worktree as sw
+
+        sid = "sess-pytest-retire-f1"
+        r = session_worktree_start(sid)
+        assert r.get("created") or r.get("registered"), f"start 失败: {r}"
+        wt = Path(r["worktree_path"])
+        (wt / "AGENTS.md").write_text("changed\n", encoding="utf-8")
+
+        real_fn = sw._generate_retire_patch_evidence
+        monkeypatch.setattr(
+            sw, "_generate_retire_patch_evidence",
+            lambda *a, **kw: {"generated": False, "source": "abort",
+                              "error": "simulated git failure"},
+        )
+        a = session_worktree_abort(sid)
+        assert a.get("aborted") is False, f"存证失败应阻断 abort: {a}"
+        assert a.get("error") == "RETIRE_EVIDENCE_FAILED"
+        assert a.get("ok") is False, "ok 契约应=False"
+        assert wt.exists(), "存证失败 worktree 必须保留待人工评估"
+
+        # 还原真函数后跑真实 abort 清理（禁用 monkeypatch.undo()——它与 autouse
+        # fixture 的 REPO_ROOT patch 同实例，undo 会误还原 fixture 补丁）
+        monkeypatch.setattr(sw, "_generate_retire_patch_evidence", real_fn)
+        a2 = session_worktree_abort(sid)
+        assert a2.get("aborted"), f"恢复后真实 abort 应成功: {a2}"
+        assert a2.get("retire_evidence", {}).get("generated") is True
+        kill_all_heartbeat_daemons(_isolated_repo)
+
+

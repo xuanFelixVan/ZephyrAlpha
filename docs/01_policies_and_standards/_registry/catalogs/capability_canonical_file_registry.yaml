@@ -6528,6 +6528,12 @@ creation_tokens:
     created_by: "session-g22-v150-review"
     capability: "deadman_switch_monitor"
 
+  # --- 漂移看门狗任务注册脚本（#99②，2026-08-17，RestartOnFailure 退避治本：RestartCount3+Interval10min 固化任务定义）---
+  - file: "scripts/register_drift_watchdog_task.ps1"
+    token: "auto-register-drift-watchdog-task-20260817"
+    created_by: "session-AI-GOVA-001"
+    capability: "worktree_drift_watchdog"
+
   # --- Phase 1 gate marker 目录（2026-07-21，test_phase1_gate_check 期望 8 个 kebab-case 目录）---
   - file: "src/zephyr/governance/agent-spec/__init__.py"
     token: "auto-phase1-marker-agent-spec-20260721"

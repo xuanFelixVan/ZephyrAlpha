@@ -191,6 +191,38 @@ EXCEPTIONS = frozenset(
         "session_worktree_cli.py",
         "test_remediation_progress_smoke.py",
         "verify_sync_integrity.py",
+        # --- #ARCH-114 豁免登记（2026-08-17 AI-GOVA-001 裁定路径 C：豁免登记）---
+        # 裁定书=architecture_issue_registry.yaml #ARCH-114；三选一对比分析随
+        # 治理批 A 包 commit 说明。以下条目按 D2 纪律逐组注明豁免理由。
+        # （机制对齐上方既有条目：按 basename 匹配，注释标明所在目录）
+        # [oneoff 一次性迁移/登记脚本——已执行完毕，重命名=死代码 churn，列退役候选]
+        "_fix_remaining_en.py",            # oneoff/
+        "data_domain_audit_query.py",      # oneoff/
+        "data_domain_design_state_complete.py",  # oneoff/
+        "factor_design_state_complete.py",       # oneoff/
+        "load_acquisition_decisions.py",   # oneoff/
+        "register_candidate_acquisitions.py",  # oneoff/
+        # [import 库性质非 CLI 脚本——重命名断 import 链]
+        "frontmatter.py",                  # shared/
+        "zoomable_html.py",                # d5_architecture/generators/
+        # [git hook——引用方为 hook 安装面，重命名须同步仓外配置]
+        "post_commit_regen_yaml.py",       # git_hooks/
+        # [一次性迁移脚本——已执行]
+        "add_acquisition_fields.py",       # migrations/
+        # [存量活跃工具脚本——重命名须跨域同步 manifest/registry/引用方，
+        #  与并发施工域碰撞风险高于词汇纯度收益，爷爷条款豁免]
+        "add_deferred_design_edges.py",
+        "add_module_translation.py",       # d3_metadata/
+        "domain_header_maint.py",          # d3_metadata/
+        "retire_tmp_artifacts.py",         # d6_security/
+        "algo_flow_translation_reconciler.py",       # d8_doc_sync/
+        "requirements_version_sync_reconciler.py",   # d8_doc_sync/
+        "decision_node_plain_zh_backfill.py",
+        "harvest_candidates_from_drafts.py",
+        "query_candidate_registry.py",
+        "reconcile_generators.py",
+        "register_deferred_modules.py",
+        "verify_generator_paths.py",
     }
 )
 

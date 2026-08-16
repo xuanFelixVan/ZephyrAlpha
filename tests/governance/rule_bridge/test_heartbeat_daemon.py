@@ -501,5 +501,98 @@ def test_cleanup_heartbeat_does_not_clear_block(tmp_path: Path) -> None:
     assert sid in reason
 
 
+# ---------------------------------------------------------------------------
+# CAND-DAEMON-001: worktree 失锚自退（2026-08-17，根治孤儿 daemon 假活性）
+# ---------------------------------------------------------------------------
+
+
+def test_worktree_anchor_alive_semantics(tmp_path: Path) -> None:
+    """_worktree_anchor_alive：None/空串=未配置锚保守存活；存在目录=True；消失=False。"""
+    from zephyr.gov_enforcement.rule_bridge.heartbeat_daemon import _worktree_anchor_alive
+
+    assert _worktree_anchor_alive(None) is True, "未配置锚（旧 spawn 兼容）应保守存活"
+    assert _worktree_anchor_alive("") is True, "空串锚应保守存活"
+    assert _worktree_anchor_alive(tmp_path) is True, "存在目录应存活"
+    assert _worktree_anchor_alive(tmp_path / "gone") is False, "消失目录应失锚"
+
+
+def test_run_daemon_exits_on_worktree_anchor_lost(tmp_path: Path) -> None:
+    """worktree 锚点目录不存在时 daemon 失锚自退（reason=worktree anchor lost）。
+
+    场景（#99 族实证）：session registry 条目残留（2 个两天残留 daemon），
+    但所属 worktree 早已退役删除——daemon 空转制造假活性。
+    失锚自退：首次循环即检测锚点缺失，停止心跳并退出。
+    """
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+        def get(self, sid):
+            # registry 条目残留且活性新鲜——若无锚点检查 daemon 会永久空转
+            return {"session_id": sid, "last_activity": time.time()}
+        def heartbeat(self, sid):
+            pass
+
+    missing_wt = tmp_path / "retired_worktree"  # 从不创建=已退役删除
+    with patch(
+        "zephyr.security.access_control.session_concurrency.SessionRegistry",
+        _FakeRegistry,
+    ), patch(
+        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    ):
+        rc = run_daemon(
+            "sess-anchor-001", tmp_path, interval=0.05, worktree_path=missing_wt,
+        )
+
+    assert rc == 0, "daemon 应正常退出（rc=0）"
+    hb = heartbeat_file_path(tmp_path, "sess-anchor-001")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    exited = [r for r in recs if r["status"] == "exited"]
+    assert exited, "应有 exited 记录"
+    assert exited[0]["reason"] == "worktree anchor lost"
+    assert exited[0]["worktree_path"] == str(missing_wt)
+    assert "alive" not in [r["status"] for r in recs], "失锚退出发生在首次心跳前，不得有 alive 记录"
+
+
+def test_run_daemon_anchor_present_no_false_exit(tmp_path: Path) -> None:
+    """锚点目录存活时 daemon 不误退出（活跃 session 正常心跳直至 registry 注销）。
+
+    红队反向验证：失锚检查不得误杀锚点存活的活跃 session——alive 心跳照常，
+    最终退出原因必须是 registry 注销而非 anchor lost。
+    """
+    calls = {"get": 0}
+
+    class _FakeRegistry:
+        def __init__(self, root):
+            pass
+        def get(self, sid):
+            calls["get"] += 1
+            if calls["get"] >= 3:
+                return None
+            return {"session_id": sid, "last_activity": time.time()}
+        def heartbeat(self, sid):
+            pass
+
+    alive_wt = tmp_path / "active_worktree"
+    alive_wt.mkdir()  # 锚点存活
+    with patch(
+        "zephyr.security.access_control.session_concurrency.SessionRegistry",
+        _FakeRegistry,
+    ), patch(
+        "zephyr.gov_enforcement.rule_bridge.heartbeat_daemon._INITIAL_DELAY", 0.05
+    ):
+        rc = run_daemon(
+            "sess-anchor-002", tmp_path, interval=0.05, worktree_path=alive_wt,
+        )
+
+    assert rc == 0
+    hb = heartbeat_file_path(tmp_path, "sess-anchor-002")
+    recs = [json.loads(line) for line in hb.read_text(encoding="utf-8").strip().splitlines()]
+    statuses = [r["status"] for r in recs]
+    assert "alive" in statuses, "锚点存活的活跃 session 应有 alive 心跳记录"
+    exited = [r for r in recs if r["status"] == "exited"]
+    assert exited and exited[0]["reason"] == "session not in registry", \
+        "退出原因必须是 registry 注销，不得是 worktree anchor lost"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
