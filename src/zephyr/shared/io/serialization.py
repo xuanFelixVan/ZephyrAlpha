@@ -376,14 +376,8 @@ def from_json(
     return from_dict(raw, model=model)
 
 
-class SerializationError(Exception):
-    """序列化/反序列化错误——版本不匹配或格式校验失败。"""
-    error_code = "ZA-SH-0035"
-
-    def __init__(self, *args, error_code: str | None = None, **kwargs):
-        super().__init__(*args, **kwargs)
-        if error_code is not None:
-            self.error_code = error_code
+# 注：此处曾有第二个 SerializationError(Exception, ZA-SH-0035) 重复定义遮蔽 L77 正确版
+# （ZephyrBaseError, ZA-SH-0034），致全部 raise 点 TypeError——已删（#ARCH-089）
 
 
 @dataclass(frozen=True)

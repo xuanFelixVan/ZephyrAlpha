@@ -323,13 +323,8 @@ class EventBusBackpressure:
 
     @property
     def subscribed_topics(self) -> frozenset[str]:
-        """只读：subscribed_topics（Stage 4 公共化）。"""
-        return self._subscribed_topics
-
-    @subscribed_topics.setter
-    def subscribed_topics(self, value):
-        """写入：subscribed_topics（Stage 4 公共化）。"""
-        self._subscribed_topics = value
+        """只读：subscribed_topics（派生量=_handlers 键集；2026-08-15 修复 Stage 4 公共化幻觉字段 _subscribed_topics）。"""
+        return frozenset(self._handlers.keys())
 
     @property
     def emit_count(self) -> int:

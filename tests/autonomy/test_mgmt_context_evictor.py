@@ -109,12 +109,14 @@ class TestContextEvictor:
         assert "pinned" in pinned_ids
 
     def test_eviction_result_compression_ratio(self):
-        result = EvictionResult(kept=[], removed=[], before_tokens=1000, after_tokens=500, budget=600)
+        # EvictionResult 无 budget 字段（窄实现）——compression_ratio 仅依赖 before/after_tokens
+        result = EvictionResult(kept=[], removed=[], before_tokens=1000, after_tokens=500)
         assert result.compression_ratio == 0.5
 
     def test_eviction_result_zero_before_tokens(self):
-        result = EvictionResult(kept=[], removed=[], before_tokens=0, after_tokens=0, budget=600)
-        assert result.compression_ratio == 0.0
+        # 生产语义：before_tokens==0 → 1.0（无压缩=全保留，after/before 数学未定）
+        result = EvictionResult(kept=[], removed=[], before_tokens=0, after_tokens=0)
+        assert result.compression_ratio == 1.0
 
 
 class TestContextEvictorSingleton:
@@ -128,4 +130,4 @@ class TestContextEvictorSingleton:
     def test_reset_instance(self):
         ContextEvictor.instance()
         ContextEvictor.reset_instance()
-        assert ContextEvictor.instance is None
+        assert ContextEvictor._instance is None

@@ -105,12 +105,13 @@ def make_valid_task(
     updated_at: datetime | None = None,
     status: TaskStatus = TaskStatus.PENDING,
     priority: Priority = Priority.P2,
+    description: str = "Factory-generated test task description.",
     **overrides: Any,
 ) -> Task:
     """构造一个 valid-by-construction 的 Task 实例。
 
     必填字段 (task_id/namespace/seq/title/phase/execution_model/safety_level/
-    created_at/updated_at) 全部有合法默认值。
+    created_at/updated_at/description) 全部有合法默认值。
     有 Pydantic default 的字段不显式传——让模型自己 fill default。
 
     用法:
@@ -132,6 +133,7 @@ def make_valid_task(
         "safety_level": safety_level,
         "created_at": created_at or now,
         "updated_at": updated_at or now,
+        "description": description,
     }
     kwargs["status"] = status
     kwargs["priority"] = priority

@@ -11,12 +11,14 @@
 # [TESTS] self
 # [TTL] task_bound
 
-from __future__ import annotations
+"""SelfMonitor 单元测试——对齐生产轻量探针契约。
 
-import json
-import time
-from datetime import UTC, datetime
-from unittest.mock import MagicMock, patch
+生产跟进（2026-08-15，AI-TDEBT-001）：SelfMonitor 已瘦身为无外部依赖的
+计数/仪表探针（__init__/increment/set_gauge/snapshot 四方法），旧契约
+（data_dir 心跳文件/events.jsonl 加载/scheduler 调度）整体退役——测试全量重写。
+"""
+
+from __future__ import annotations
 
 import pytest
 
@@ -24,107 +26,65 @@ from zephyr.gov_audit.self_monitor import SelfMonitor
 
 
 @pytest.fixture
-def data_dir(tmp_path):
-    return tmp_path / "audit-trail"
-
-
-@pytest.fixture
-def data_dir_with_events(data_dir):
-    data_dir.mkdir(parents=True, exist_ok=True)
-    log_path = data_dir / "events.jsonl"
-    events = [
-        {"entry_id": "e1", "event_type": "file_write", "agent_id": "a", "timestamp": datetime.now(UTC).isoformat()},
-        {"entry_id": "e2", "event_type": "file_read", "agent_id": "b", "timestamp": datetime.now(UTC).isoformat()},
-    ]
-    with open(log_path, "w", encoding="utf-8") as f:
-        for e in events:
-            f.write(json.dumps(e) + "\n")
-    return data_dir
-
-
-@pytest.fixture
-def monitor(data_dir):
-    return SelfMonitor(data_dir=data_dir, heartbeat_interval=300, health_check_interval=600)
+def monitor():
+    return SelfMonitor()
 
 
 class TestSelfMonitor:
-    def test_instantiation(self, data_dir):
-        mon = SelfMonitor(data_dir=data_dir)
-        assert mon.heartbeat_interval == 300
-        assert mon.health_check_interval == 600
+    def test_instantiation(self, monitor):
+        """无参构造（生产 INVARIANTS：自监控不引入外部依赖）。"""
+        assert monitor is not None
 
-    def test_heartbeat_no_file(self, monitor):
-        result = monitor.heartbeat()
-        assert "timestamp" in result
-        assert result["total_events"] == 0
-        assert result["file_size_mb"] == 0.0
-        assert result["healthy"] is True
+    def test_increment_default_step(self, monitor):
+        monitor.increment("gate_runs")
+        snap = monitor.snapshot()
+        assert snap["counters"]["gate_runs"] == 1
 
-    def test_heartbeat_with_events(self, data_dir_with_events):
-        mon = SelfMonitor(data_dir=data_dir_with_events)
-        result = mon.heartbeat()
-        assert result["total_events"] == 2
-        assert result["file_size_mb"] >= 0.0
+    def test_increment_accumulates(self, monitor):
+        monitor.increment("gate_runs", 3)
+        monitor.increment("gate_runs", 2)
+        snap = monitor.snapshot()
+        assert snap["counters"]["gate_runs"] == 5
 
-    def test_check_basic(self, data_dir_with_events):
-        mon = SelfMonitor(data_dir=data_dir_with_events)
-        with (
-            patch("zephyr.governance.integrity.IntegrityVerifier") as mock_v,
-            patch("zephyr.gov_audit.query.AuditQuery") as mock_q,
-        ):
-            mock_v_inst = MagicMock()
-            mock_v_inst.verify_chain.return_value = {"status": "valid", "events_checked": 2, "issues": []}
-            mock_v.return_value = mock_v_inst
-            mock_q_inst = MagicMock()
-            mock_q_inst._load_events.return_value = []
-            mock_q.return_value = mock_q_inst
-            health = mon.check()
-            assert "timestamp" in health
-            assert "healthy" in health
-            assert "file_size_mb" in health
+    def test_increment_multi_keys_isolated(self, monitor):
+        monitor.increment("a")
+        monitor.increment("b", 10)
+        snap = monitor.snapshot()
+        assert snap["counters"] == {"a": 1, "b": 10}
 
-    def test_check_empty_dir(self, monitor):
-        health = monitor.check()
-        assert health["file_size_mb"] == 0.0
-        assert health["healthy"] is True
+    def test_set_gauge(self, monitor):
+        monitor.set_gauge("queue_depth", 7.5)
+        snap = monitor.snapshot()
+        assert snap["gauges"]["queue_depth"] == 7.5
 
-    def test_last_health_property(self, monitor):
-        monitor.check()
-        last = monitor.last_health
-        assert isinstance(last, dict)
-        assert "timestamp" in last
+    def test_set_gauge_overwrite(self, monitor):
+        monitor.set_gauge("queue_depth", 7.5)
+        monitor.set_gauge("queue_depth", 3.0)
+        snap = monitor.snapshot()
+        assert snap["gauges"]["queue_depth"] == 3.0
 
-    def test_is_running_default(self, monitor):
-        assert monitor.is_running is False
+    def test_snapshot_structure(self, monitor):
+        """snapshot 五键契约：timestamp/uptime_seconds/counters/gauges/drift。"""
+        snap = monitor.snapshot()
+        assert set(snap.keys()) == {
+            "timestamp",
+            "uptime_seconds",
+            "counters",
+            "gauges",
+            "drift",
+        }
+        assert isinstance(snap["uptime_seconds"], float)
+        assert snap["uptime_seconds"] >= 0.0
 
-    def test_write_heartbeat(self, data_dir):
-        with patch("zephyr.gov_audit.writer.AuditWriter") as mock_cls:
-            mock_writer = MagicMock()
-            mock_writer.write.return_value = "abc123def456"
-            mock_writer.event_count = 1
-            mock_cls.return_value = mock_writer
-            mon = SelfMonitor(data_dir=data_dir)
-            result = mon.write_heartbeat()
-            assert "chain_hash" in result
-            assert result["event_count"] == 1
+    def test_snapshot_drift_default_when_bridge_unavailable(self, monitor, monkeypatch):
+        """drift_bridge 缺失/不可用时 drift 回落默认（监控失败返回空指标契约）。"""
+        monkeypatch.setattr(monitor, "_drift_bridge", None)
+        snap = monitor.snapshot()
+        assert snap["drift"] == {"is_drifting": False, "drift_score": 0.0}
 
-    def test_start_and_stop_scheduler(self, monitor):
-        monitor.start_scheduler(daemon=True)
-        assert monitor.is_running is True
-        monitor.stop_scheduler()
-        time.sleep(0.2)
-        assert monitor.is_running is False
-
-    def test_event_count_no_file(self, monitor):
-        assert monitor.event_count() == 0
-
-    def test_file_size_mb_no_file(self, monitor):
-        assert monitor.file_size_mb() == 0.0
-
-    def test_load_events_raw_no_file(self, monitor):
-        assert monitor.load_events_raw(limit=10) == []
-
-    def test_load_events_raw_with_data(self, data_dir_with_events):
-        mon = SelfMonitor(data_dir=data_dir_with_events)
-        events = mon.load_events_raw(limit=10)
-        assert len(events) == 2
+    def test_snapshot_counters_isolated_copy(self, monitor):
+        """snapshot 返回副本——外部改动不回污内部状态。"""
+        monitor.increment("x")
+        snap = monitor.snapshot()
+        snap["counters"]["x"] = 999
+        assert monitor.snapshot()["counters"]["x"] == 1

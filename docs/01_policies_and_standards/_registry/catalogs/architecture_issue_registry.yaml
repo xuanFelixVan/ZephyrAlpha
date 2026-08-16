@@ -6330,117 +6330,6 @@ entries:
   related_rules: 'AGENTS.md FP-ISO.4C (worktree 物理隔离), trae_068 (preventability layer), trae_074 (worktree base freshness), trae_076 (commit persistence), trae_078 (force merge safety)'
   created: '2026-07-22'
   last_updated: '2026-07-22'
-# --- #ARCH-STASH-ACCUMULATION-001: stash 累积系统性治理（2026-07-21）---
-# 父裁定: #ARCH-WORKTREE-002（缺陷4 stash 堆积治本）→ 本议题系统性扩展
-# 关联: #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001（WORKSPACE-CLEAN-CHECK 引入，stash 累积根因之一）
-#       #ARCH-TEMP-FILE-LIFECYCLE-002（不可能三角——frontmatter 冲突，已 resolved）
-- issue_id: '#ARCH-STASH-ACCUMULATION-001'
-  title: stash 累积系统性治理——自动 drop + 阈值阻断 + 4h TTL + user-manual- 保护（100% AI 开发场景治本）
-  category: architecture_governance
-  severity: P1高
-  adjudication: >-
-    2026-07-21 立项裁定。100% AI 开发场景下，多 session 并发 + WORKSPACE-CLEAN-CHECK
-    merge 阻断 + 8 个活跃 session 各自通过 Edit/Write 写项目根（IDE 限制）+
-    stash_lifecycle_reconciler 只清理 24h 以上 session_worktree 前缀 stash = stash 累积。
-    实测 34-45 个 stash 堆积，部分 30+ 小时。
-
-
-    第一性原理病根（3 个盲区 + 新不可能三角）：
-
-    1. **自动 push 有，自动 drop 无**：session_worktree 在 _execute_cleanups pre-merge
-       + _dispose_main_workdir_files abort 时自动 stash push，但 merge 成功后从不
-       auto drop 本 session 的 pre_merge stash——AI 忘记手动 drop = 累积
-
-    2. **reconciler TTL 太长**：原 make_stash_lifecycle_reconciler TTL=24h，
-       AI session 典型生命周期 1-4h，24h 内 stash 全部保留 = 累积
-
-    3. **AI 前缀识别不全**：原 reconciler 只识别 session_worktree_pre_merge /
-       session_worktree_abort 2 个前缀，但实际 AI stash 有 8 种前缀
-       （phase- / temp-stash-for- / pre-merge stash / pre-merge-stash /
-       merge-prep- / stash-for-merge）= 漏清
-
-    4. **无前置阻断**：stash 累积到 34 个时才被人工发现，reconciler 只清理过期的，
-       无法阻止"活跃 stash 持续累积"的趋势
-
-    新不可能三角（#ARCH-STASH-ACCUMULATION-001）：
-    - WORKSPACE-CLEAN-CHECK 要求 merge 时主工作区 clean（fail-closed 阻断）
-    - 8 个活跃 session 各自通过 Edit/Write 写项目根（IDE 限制，无法物理隔离）
-    - stash_lifecycle_reconciler 只清理 24h 以上 session_worktree 前缀 stash
-    → 三者交集 = stash 累积
-
-
-    stash 累积后果（第一性原理）：
-    1. git 对象存储膨胀（45 个 stash = 45 个 tree 对象）
-    2. AI 判断混淆（看到 stash list 以为有未提交工作）
-    3. stash pop 误恢复其他 session WIP 覆盖当前工作
-    4. stash 索引漂移（drop stash@{3} 后 stash@{4} 变 stash@{3}）
-
-
-    治本方案（7 Phase，全生命周期治理）：
-
-    Phase 1（reconciler 扩展，已落地）：
-    - make_stash_lifecycle_reconciler TTL 24h → 4h（AI session 典型生命周期）
-    - _STASH_PREFIXES 2 个 → _AI_STASH_PREFIXES 8 个前缀
-    - 新增 _PROTECTED_STASH_PREFIXES（user-manual- 永不被清理）
-    - 新增 aggressive 模式（ZEPHYR_STASH_LIFECYCLE_AGGRESSIVE=1 清理所有非 user-manual- stash）
-    - 新增 _is_protected / _is_ai_generated / _should_drop 3 个 helper 函数
-
-    Phase 4（新建 gate，已落地）：
-    - stash_accumulation_gate.py 新建（priority=113）
-    - 阈值：> 20 warn（passed=True + detail），> 40 block（passed=False 阻断 commit）
-    - fail-open：git stash list 失败不阻断
-    - 已在 git_commit_gateway.py 注册（Phase 4 注册，第二次 commit 落地）
-
-    Phase 5（auto drop，已落地）：
-    - session_worktree.py 新建 _drop_session_pre_merge_stash 函数
-    - merge 成功后自动调用（fail-open，drop 失败不阻断 merge）
-    - 按 message 完全匹配 session_id 的 stash 降序 drop（避免 renumbering）
-
-    Phase 7（规则真源，已落地）：
-    - trae_075_stash_lifecycle.yaml 新建（5 铁律）
-    - capability_canonical_file_registry.yaml 登记 creation_token
-    - rule_ai_perception_index.yaml 登记 TRAE-075 条目（total_rules 72）
-
-    Phase 6（长期方向，超出 AI 能力，仅文档化）：
-    - IDE 插件层拦截 Edit/Write 重定向到 worktree
-    - 物理隔离消除 stash push 需求（从源头消除 stash 累积）
-
-    架构师裁定不实现项（超出 AI 能力或过度工程）：
-    - per-session stash_refs.json 追踪——过度工程，reconciler 扫描 stash list 足够
-    - stash pop 恢复——AI 责任，不自动化（误恢复风险 > 自动化收益）
-    - abort stash auto drop——abort 场景少，reconciler 4h TTL 兜底足够
-  fix_phase: |
-    Phase 1（已落地，本次 commit）：
-      - reconciliation_registry.py: make_stash_lifecycle_reconciler 扩展
-        （TTL 4h + 8 前缀 + aggressive 模式 + user-manual- 保护）
-    Phase 4 gate 文件（已落地，本次 commit）：
-      - stash_accumulation_gate.py 新建（priority=113，> 20 warn / > 40 block）
-    Phase 4 注册（第二次 commit，stash 清理后）：
-      - git_commit_gateway.py 注册 stash_accumulation_gate
-        （需 stash < 40 才能通过 STASH-ACCUMULATION gate）
-    Phase 5（已落地，上次 commit）：
-      - session_worktree.py: _drop_session_pre_merge_stash + merge 后调用
-    Phase 7（已落地，本次 commit）：
-      - trae_075_stash_lifecycle.yaml 新建（5 铁律）
-      - capability_canonical_file_registry.yaml 登记 creation_token
-      - rule_ai_perception_index.yaml 登记 TRAE-075 条目
-    Phase 6（长期方向，超出 AI 能力，仅文档化）：
-      - IDE 插件层拦截 Edit/Write 重定向到 worktree
-  impact:
-    - 'src/zephyr/governance/audit/reconciliation_registry.py（Phase 1 扩展）'
-    - 'src/zephyr/gov_enforcement/commit_gates/stash_accumulation_gate.py（Phase 4 新建）'
-    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（Phase 4 注册，第二次 commit）'
-    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（Phase 5 auto drop）'
-    - 'docs/01_policies_and_standards/rules/trae_075_stash_lifecycle.yaml（Phase 7 规则真源）'
-    - 'docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml（Phase 7 creation_token）'
-    - 'docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml（Phase 7 索引）'
-    - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条登记）'
-  status: resolved
-  related_adjudication: '#ARCH-WORKTREE-002 (缺陷4 stash 堆积治本——父裁定，本议题系统性扩展), #ARCH-WORKSPACE-DRIFT-SYSTEMIC-001 (WORKSPACE-CLEAN-CHECK 引入——stash 累积根因之一), #ARCH-TEMP-FILE-LIFECYCLE-002 (不可能三角——frontmatter 冲突，已 resolved)'
-  related_rules: 'trae_075 (stash 生命周期全生命周期铁律), AGENTS.md FP-ISO.4C (worktree 君子协定), trae_062 (SSoT 真源分类), trae_060 (向内收三原则——reconciler 扩展不新建系统)'
-  created: '2026-07-21'
-  last_updated: '2026-07-21'
-
 # --- #ARCH-STASH-ACCUMULATION-002: 施工路径裁定——修正 7 Phase 执行顺序 + 治理工具自启动原则 ---
 - issue_id: '#ARCH-STASH-ACCUMULATION-002'
   title: 'stash 堆积治理施工路径裁定——修正 #ARCH-STASH-ACCUMULATION-001 的 7 Phase 执行顺序 + 引入治理工具自启动原则'
@@ -9698,8 +9587,8 @@ entries:
   related_rules: 'AGENTS.md (100% AI 开发原则——无人工干预窗口需自动恢复)'
   created: '2026-07-24'
   last_updated: '2026-07-27'
-# --- #ARCH-DI-SEAM-001: PG 连接 DIP 注入缝治本（2026-07-27 立项） ---
-- issue_id: '#ARCH-DI-SEAM-001'
+# --- #ARCH-098: PG 连接 DIP 注入缝治本（2026-07-27 立项；原编号 #ARCH-DI-SEAM-001 与 07-18 静态门禁议题撞号，2026-08-16 重编） ---
+- issue_id: '#ARCH-098'
   title: RuleLoader/GovernanceAutoRunner PG 连接 DIP 注入缝治本（消除模块级 import psycopg2 硬耦合）
   severity: P2中
   adjudication: |-
@@ -16881,48 +16770,6 @@ entries:
   related_rules: '#68（IDE 脏缓冲区）; #71（AGENTS.md 吞节，skill_factory 实证）; #75（mtime 回拨+pycache 欺骗）; #ARCH-PRECOMMIT-STASH-ADAPT-001（T4-2 门禁窗口监视——本议题扩展为常驻）; #ARCH-WORKTREE-DB-SPLIT-001（仓级状态同族）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
-
-# --- #ARCH-098: PG 连接 DIP 注入缝治本（2026-07-27 立项；原编号 #ARCH-DI-SEAM-001 与 07-18 静态门禁议题撞号，2026-08-16 重编） ---
-- issue_id: '#ARCH-098'
-  title: RuleLoader/GovernanceAutoRunner PG 连接 DIP 注入缝治本（消除模块级 import psycopg2 硬耦合）
-  severity: P2中
-  adjudication: |-
-    病根（第一性原理）：
-    rule_engine.py（L38）和 auto_runner.py（L36）模块级 `import psycopg2` + 直接调用
-    get_depgraph_pg_connection()，违反依赖倒置原则（DIP）——高层模块直接依赖低层
-    DB 驱动具体实现。100% AI 开发场景下，AI 写测试时无法 mock PG 连接，只能跳过
-    DB 失败路径测试，导致降级回退逻辑（如 RuleLoader 回退到 YAML 扫描）无测试覆盖，
-    是幻觉温床。
-
-    治本方案（Phase 1：构造函数注入 + 默认工厂）：
-    1. 在 depgraph_schema.py 定义 `PgConnectionProvider` Protocol（__call__(autocommit) -> connection）
-    2. RuleLoader.__init__ / GovernanceAutoRunner.__init__ 增加可选 pg_conn_provider 参数，
-       默认 = get_depgraph_pg_connection（保持向后兼容）
-    3. 内部所有 get_depgraph_pg_connection() 调用替换为 self._pg_conn_provider(autocommit=...)
-    4. 保留模块级 import psycopg2 仅用于异常类型（psycopg2.Error）——这是捕获异常的
-       具体类型，非依赖倒置目标（异常类型是稳定契约）
-
-    设计权衡：
-    - Phase 1（构造函数注入 + 默认工厂）而非 Phase 2（DI 容器）：项目当前规模无需
-      DI 容器复杂度；Phase 1 已足够支持测试 mock，零运行时开销
-    - 不移除 import psycopg2：psycopg2.Error 是异常捕获类型（稳定接口），不是 DIP 目标
-    - Protocol 而非 ABC：零运行时开销，structural subtyping 符合 Python 习惯
-
-    纯技术修复（重构），无价值判断，按铁律#9 AI 可直接标 decided。
-  impact:
-    - 'src/zephyr/governance/depgraph_schema.py（新增 PgConnectionProvider Protocol）'
-    - 'src/zephyr/gov_enforcement/rule_enforcement/rule_engine/rule_engine.py（RuleLoader.__init__ 增 pg_conn_provider 参数）'
-    - 'src/zephyr/governance/ops_governance/auto_runner.py（GovernanceAutoRunner.__init__ 增 pg_conn_provider 参数 + 3 处调用替换）'
-  fix_phase: |-
-    Phase 1 已完成施工（2026-07-27）：
-      - depgraph_schema.py 新增 PgConnectionProvider Protocol
-      - RuleLoader 注入 pg_conn_provider（默认=get_depgraph_pg_connection）
-      - GovernanceAutoRunner 注入 pg_conn_provider + 3 处调用替换
-      - 向后兼容：未传 pg_conn_provider 时行为与旧版完全一致
-  status: decided
-  related_rules: 'AGENTS.md (DIP 原则), 软件工程 SOLID 原则'
-  created: '2026-07-27'
-  last_updated: '2026-07-27'
 - issue_id: '#ARCH-071'
   title: MemoryLock ttl_seconds 签名占位未实现（TTL 过期强释语义缺席）
   severity: P2中

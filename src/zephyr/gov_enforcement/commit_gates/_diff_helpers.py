@@ -268,8 +268,10 @@ def _get_added_lines(
     失败时返回空列表并记录 warning。
     """
     try:
+        # --ignore-cr-at-eol：EOL 规范化提交（CRLF→LF 机械翻转）全文件行伪"added"，
+        # 会把存量违规误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
         result = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
         )
         if result.returncode != 0:
             return []

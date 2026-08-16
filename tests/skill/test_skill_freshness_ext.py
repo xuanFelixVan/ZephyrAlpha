@@ -127,17 +127,17 @@ class TestAutoDeprecateSkill:
 class TestShouldLoadOnboarding:
     def test_below_max_rounds(self):
         loader = MagicMock()
-        loader.conversation_round = {"sess-1": 1}
+        loader._conversation_round = {"sess-1": 1}
         assert should_load_onboarding(loader, "sess-1", max_rounds=3) is True
 
     def test_at_max_rounds(self):
         loader = MagicMock()
-        loader.conversation_round = {"sess-1": 3}
+        loader._conversation_round = {"sess-1": 3}
         assert should_load_onboarding(loader, "sess-1", max_rounds=3) is False
 
     def test_unknown_session(self):
         loader = MagicMock()
-        loader.conversation_round = {}
+        loader._conversation_round = {}
         assert should_load_onboarding(loader, "new-sess", max_rounds=3) is True
 
     def test_none_conversation_round_attr(self):
@@ -148,20 +148,20 @@ class TestShouldLoadOnboarding:
 class TestIncrementRound:
     def test_increment_new_session(self):
         loader = MagicMock()
-        loader.conversation_round = {}
+        loader._conversation_round = {}
         result = increment_round(loader, "sess-a")
         assert result == 1
-        assert loader.conversation_round["sess-a"] == 1
+        assert loader._conversation_round["sess-a"] == 1
 
     def test_increment_existing_session(self):
         loader = MagicMock()
-        loader.conversation_round = {"sess-b": 2}
+        loader._conversation_round = {"sess-b": 2}
         result = increment_round(loader, "sess-b")
         assert result == 3
-        assert loader.conversation_round["sess-b"] == 3
+        assert loader._conversation_round["sess-b"] == 3
 
     def test_increment_creates_dict_if_missing(self):
         loader = MagicMock(spec=[])
         result = increment_round(loader, "sess-c")
         assert result == 1
-        assert loader.conversation_round["sess-c"] == 1
+        assert loader._conversation_round["sess-c"] == 1

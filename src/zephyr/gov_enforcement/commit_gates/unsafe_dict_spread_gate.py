@@ -102,7 +102,7 @@ def _collect_unsafe_spread_warnings(gateway, py_file):
     docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
     try:
         file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(

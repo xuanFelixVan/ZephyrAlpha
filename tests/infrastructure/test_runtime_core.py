@@ -10,6 +10,7 @@
 """Test suite: runtime_core"""
 
 import time
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -55,6 +56,8 @@ class TestCircuitBreaker:
         cb.record_failure()
         assert cb.state == CircuitBreakerState.OPEN
         time.sleep(0.02)
+        # 生产跟进（5.91.3）：state getter 不触发迁移，状态转换只在 allow() 内发生
+        assert cb.allow() is True
         assert cb.state == CircuitBreakerState.HALF_OPEN
 
     def test_success_closes_from_half_open(self):
@@ -62,6 +65,8 @@ class TestCircuitBreaker:
         cb.record_failure()
         cb.record_failure()
         time.sleep(0.02)
+        # 生产跟进（5.91.3）：先 allow() 触发 OPEN→HALF_OPEN 迁移
+        assert cb.allow() is True
         assert cb.state == CircuitBreakerState.HALF_OPEN
         cb.record_success()
         assert cb.state == CircuitBreakerState.CLOSED
@@ -209,13 +214,13 @@ class TestAutoRuntimeCoreInit:
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 
         mock_cfg = MagicMock()
-        mock_cfg.audit_log_dir = "/tmp/test_audit"
+        mock_cfg.audit_log_dir = Path("/tmp/test_audit")
         mock_cfg.capability_card_dir = MagicMock()
-        mock_cfg.night_shift_storage_path = "/tmp/test_night"
-        mock_cfg.dream_archive_dir = "/tmp/test_dream"
-        mock_cfg.feedback_proposal_dir = "/tmp/test_feedback"
-        mock_cfg.health_snapshot_dir = "/tmp/test_health"
-        mock_cfg.work_dag_dir = "/tmp/test_dag"
+        mock_cfg.night_shift_storage_path = Path("/tmp/test_night")  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
+        mock_cfg.dream_archive_dir = Path("/tmp/test_dream")
+        mock_cfg.feedback_proposal_dir = Path("/tmp/test_feedback")
+        mock_cfg.health_snapshot_dir = Path("/tmp/test_health")
+        mock_cfg.work_dag_dir = Path("/tmp/test_dag")
         mock_cfg.max_parallel_l1 = 2
         mock_cfg.max_parallel_l2 = 2
         mock_cfg.max_parallel_l3 = 2
@@ -268,13 +273,13 @@ class TestAutoRuntimeCoreInit:
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 
         mock_cfg = MagicMock()
-        mock_cfg.audit_log_dir = "/tmp/test_audit"
+        mock_cfg.audit_log_dir = Path("/tmp/test_audit")
         mock_cfg.capability_card_dir = MagicMock()
-        mock_cfg.night_shift_storage_path = "/tmp/test_night"
-        mock_cfg.dream_archive_dir = "/tmp/test_dream"
-        mock_cfg.feedback_proposal_dir = "/tmp/test_feedback"
-        mock_cfg.health_snapshot_dir = "/tmp/test_health"
-        mock_cfg.work_dag_dir = "/tmp/test_dag"
+        mock_cfg.night_shift_storage_path = Path("/tmp/test_night")  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
+        mock_cfg.dream_archive_dir = Path("/tmp/test_dream")
+        mock_cfg.feedback_proposal_dir = Path("/tmp/test_feedback")
+        mock_cfg.health_snapshot_dir = Path("/tmp/test_health")
+        mock_cfg.work_dag_dir = Path("/tmp/test_dag")
         mock_cfg.max_parallel_l1 = 2
         mock_cfg.max_parallel_l2 = 2
         mock_cfg.max_parallel_l3 = 2
@@ -324,13 +329,13 @@ class TestAutoRuntimeCoreInit:
         from zephyr.trading.auto_runtime_core import AutoRuntimeCore
 
         mock_cfg = MagicMock()
-        mock_cfg.audit_log_dir = "/tmp/test_audit"
+        mock_cfg.audit_log_dir = Path("/tmp/test_audit")
         mock_cfg.capability_card_dir = MagicMock()
-        mock_cfg.night_shift_storage_path = "/tmp/test_night"
-        mock_cfg.dream_archive_dir = "/tmp/test_dream"
-        mock_cfg.feedback_proposal_dir = "/tmp/test_feedback"
-        mock_cfg.health_snapshot_dir = "/tmp/test_health"
-        mock_cfg.work_dag_dir = "/tmp/test_dag"
+        mock_cfg.night_shift_storage_path = Path("/tmp/test_night")  # 生产跟进：ensure_runtime_dirs 取 .parent，契约为 Path
+        mock_cfg.dream_archive_dir = Path("/tmp/test_dream")
+        mock_cfg.feedback_proposal_dir = Path("/tmp/test_feedback")
+        mock_cfg.health_snapshot_dir = Path("/tmp/test_health")
+        mock_cfg.work_dag_dir = Path("/tmp/test_dag")
         mock_cfg.max_parallel_l1 = 2
         mock_cfg.max_parallel_l2 = 2
         mock_cfg.max_parallel_l3 = 2

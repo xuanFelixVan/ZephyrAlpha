@@ -416,6 +416,25 @@ class BaseMCPServer:
             error["data"] = data
         return {"jsonrpc": JSONRPC_VERSION, "id": req_id, "error": error}
 
+    # ── Stage 4 公共化（补全 2026-08-15）：public wrappers（tests/a2a/test_mcp.py 消费） ──
+    def ok(self, req_id: str | int, result: dict[str, Any]) -> dict[str, Any]:
+        """公共接口：ok（Stage 4 公共化补全，委托到 self._ok）。"""
+        return self._ok(req_id, result)
+
+    def err(
+        self,
+        req_id: str | int,
+        code: int,
+        message: str,
+        data: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """公共接口：err（Stage 4 公共化补全，委托到 self._err）。"""
+        return self._err(req_id, code, message, data)
+
+    def install_decorated_tools(self) -> None:
+        """公共接口：install_decorated_tools（Stage 4 公共化补全，委托到 self._install_decorated_tools）。"""
+        return self._install_decorated_tools()
+
     # ------------------------------------------------------------------
     # 请求路由
     # ------------------------------------------------------------------
@@ -536,7 +555,10 @@ class BaseMCPServer:
             self._log.warning("invalid_params", tool=tool_name, error=str(exc))
             return self._err(req_id, ERR_INVALID_PARAMS, f"Invalid params for tool {tool_name!r}")
         except MCPError as exc:
-            return self._err(req_id, exc.code, exc.message, exc.data)
+            # #ARCH-090：tool_contracts.yaml 声明 ZA 码为 error surface，但此前传输层
+            # 只透出 message 致客户端永不可见——message 前缀内嵌错误码（契约合规透出，
+            # 非内部细节，不违 #ARCH-SEC-001 5.168 信任边界）
+            return self._err(req_id, exc.code, f"[{exc.error_code}] {exc.message}", exc.data)
         except Exception as exc:  # noqa: BLE001 — 5.135治标: broad exception catch
             self._log.error("tool_execution_error", tool=tool_name, error=str(exc))
             return self._err(req_id, ERR_TOOL_EXECUTION, "internal error")

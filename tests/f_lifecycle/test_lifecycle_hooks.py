@@ -20,8 +20,6 @@
 # [TESTS] pytest tests/test_lifecycle_hooks.py -q
 # [TTL] task_bound
 
-import asyncio
-
 import pytest
 
 from zephyr.shared.lifecycle.hooks import (
@@ -30,6 +28,7 @@ from zephyr.shared.lifecycle.hooks import (
     LifecycleState,
     ModuleHealth,
 )
+from zephyr.shared.utils.async_utils import run_coroutine_sync
 
 
 class FakeModule:
@@ -117,7 +116,7 @@ class TestLifecycleManager:
         mod2 = FakeModule("second")
         mgr.register(mod1)
         mgr.register(mod2)
-        asyncio.get_event_loop().run_until_complete(mgr.startup_all())
+        run_coroutine_sync(mgr.startup_all())
         assert mod1.init_called is True
         assert mod2.init_called is True
         assert mod1.startup_called is True
@@ -129,8 +128,8 @@ class TestLifecycleManager:
         mod2 = FakeModule("second")
         mgr.register(mod1)
         mgr.register(mod2)
-        asyncio.get_event_loop().run_until_complete(mgr.startup_all())
-        asyncio.get_event_loop().run_until_complete(mgr.shutdown_all())
+        run_coroutine_sync(mgr.startup_all())
+        run_coroutine_sync(mgr.shutdown_all())
         assert mod1.shutdown_called is True
         assert mod2.shutdown_called is True
 
@@ -139,14 +138,14 @@ class TestLifecycleManager:
         mod = FakeModule("bad", fail_init=True)
         mgr.register(mod)
         with pytest.raises(RuntimeError, match="init failed"):
-            asyncio.get_event_loop().run_until_complete(mgr.startup_all())
+            run_coroutine_sync(mgr.startup_all())
 
     def test_startup_failure_propagates(self):
         mgr = LifecycleManager()
         mod = FakeModule("bad", fail_startup=True)
         mgr.register(mod)
         with pytest.raises(RuntimeError, match="startup failed"):
-            asyncio.get_event_loop().run_until_complete(mgr.startup_all())
+            run_coroutine_sync(mgr.startup_all())
 
     def test_shutdown_continues_on_error(self):
         mgr = LifecycleManager()
@@ -154,8 +153,8 @@ class TestLifecycleManager:
         mod2 = FakeModule("good2")
         mgr.register(mod1)
         mgr.register(mod2)
-        asyncio.get_event_loop().run_until_complete(mgr.startup_all())
-        asyncio.get_event_loop().run_until_complete(mgr.shutdown_all())
+        run_coroutine_sync(mgr.startup_all())
+        run_coroutine_sync(mgr.shutdown_all())
         assert mod1.shutdown_called is True
         assert mod2.shutdown_called is True
 
@@ -163,8 +162,8 @@ class TestLifecycleManager:
         mgr = LifecycleManager()
         mod1 = FakeModule("healthy")
         mgr.register(mod1)
-        asyncio.get_event_loop().run_until_complete(mgr.startup_all())
-        results = asyncio.get_event_loop().run_until_complete(mgr.health_check_all())
+        run_coroutine_sync(mgr.startup_all())
+        results = run_coroutine_sync(mgr.health_check_all())
         assert "healthy" in results
         assert results["healthy"].healthy is True
 
@@ -175,7 +174,7 @@ class TestLifecycleManager:
 
         mgr = LifecycleManager()
         mgr.register(BadHealth("bad"))
-        results = asyncio.get_event_loop().run_until_complete(mgr.health_check_all())
+        results = run_coroutine_sync(mgr.health_check_all())
         assert "bad" in results
         assert results["bad"].healthy is False
         assert results["bad"].state == LifecycleState.FAILED

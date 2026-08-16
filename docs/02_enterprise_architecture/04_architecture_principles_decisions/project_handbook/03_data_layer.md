@@ -44,9 +44,9 @@ language: zh
 | 数据库 / Database | 表数 / Tables |
 |------|------|
 | `c0_meta` | 1 |
-| `c1_market` | 89 |
+| `c1_market` | 92 |
 | `c3_fundamental` | 23 |
-| **合计 / Total** | **113** |
+| **合计 / Total** | **116** |
 <!-- AUTO-END:table_counts -->
 
 ## 5. 外部权威源（全量表清单与逐表 schema）

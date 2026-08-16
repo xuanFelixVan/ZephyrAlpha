@@ -30,6 +30,6 @@ class TestEventBusUpgradeDeprecation:
     def test_module_has_exports(self):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", DeprecationWarning)
-            from zephyr.infrastructure_runtime_integration import event_bus_upgrade
+            from zephyr.infrastructure import event_bus_upgrade
 
             assert hasattr(event_bus_upgrade, "__all__") or True

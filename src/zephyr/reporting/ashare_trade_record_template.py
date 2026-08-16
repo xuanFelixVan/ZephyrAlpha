@@ -14,7 +14,7 @@
 # [TESTS] tests/reporting/test_ashare_trade_record_template.py
 # [A_module] module_id=MOD-RPT-027 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-"""
+r"""
 
 D_REPORTING — A股交易记录模板引擎 (ASHare Trade Record Template)
 

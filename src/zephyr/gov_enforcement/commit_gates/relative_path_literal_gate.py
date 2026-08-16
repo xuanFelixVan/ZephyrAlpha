@@ -134,7 +134,7 @@ def _scan_file_violations(gateway, py_file: str) -> list[str]:
     # 解析 diff，获取 added 行及行号
     try:
         file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — fail-open 不阻断
         logger.warning("RELATIVE-PATH-LITERAL gate: git diff 失败 file=%s, %s", py_file, e)

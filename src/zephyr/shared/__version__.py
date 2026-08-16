@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 __version__.py —— ZephyrAlpha Shared 模块版本常量

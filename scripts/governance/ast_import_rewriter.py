@@ -230,6 +230,11 @@ class ImportRewriter:
                 return new + suffix
         return None
 
+    # ── Stage 4 公共化（补全 2026-08-15）：public wrapper（tests/governance/test_ast_import_rewriter.py 消费） ──
+    def find_replacement(self, module: str) -> Optional[str]:
+        """公共接口：find_replacement（Stage 4 公共化补全，委托到 self._find_replacement）。"""
+        return self._find_replacement(module)
+
     @staticmethod
     def _apply_line_replace(lines: list[str], lineno: int,
                             old_seg: str, new_seg: str,

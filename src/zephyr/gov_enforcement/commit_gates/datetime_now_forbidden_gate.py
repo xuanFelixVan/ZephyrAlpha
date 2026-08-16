@@ -173,9 +173,11 @@ def _scan_file_for_violations(gateway, py_file: str) -> list[str]:
     docstring_lines = _extract_docstring_lines(file_content) if file_content else set()
 
     # 3b. 解析 diff，获取 added 行及行号
+    # --ignore-cr-at-eol：EOL 规范化提交（CRLF→LF 机械翻转）全文件行伪"added"，
+    # 会把存量违规误报为新增——按内容判定 added，行尾差异不计（2026-08-16 EOL 批实证）
     try:
         file_diff = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", py_file]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", py_file]
         )
     except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
         logger.warning(

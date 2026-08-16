@@ -305,7 +305,7 @@ def _scan_modified_file(gateway, rel_path: str, abs_path: str, content: str) -> 
     """扫描修改文件（只检测 diff 新增行范围内的违规 + 行级 noqa 豁免）。"""
     try:
         diff_content = gateway.run_git(
-            ["git", "diff", "--cached", "--unified=0", "--", rel_path]
+            ["git", "diff", "--cached", "--unified=0", "--ignore-cr-at-eol", "--", rel_path]
         )
         if diff_content.returncode != 0:
             return []

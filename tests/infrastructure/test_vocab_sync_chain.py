@@ -54,7 +54,8 @@ _CONTRACTS_DIR = GOV_DOCS_DIR / "_registry" / "contracts"
 _SCHEMAS_DIR = GOV_DOCS_DIR / "_registry" / "schemas"
 # 注：depgraph 已迁移到 PostgreSQL（P2迁移），_DEPGRAPH_DB 路径常量已移除
 _GENERATE_SCRIPT = _SCRIPTS_GOV / "d3_metadata" / "generate_derived_files.py"
-_SYNC_SCRIPT = _SCRIPTS_GOV / "sync_yaml_to_depgraph.py"
+# 生产跟进：sync_yaml_to_depgraph.py 已迁入 d8_doc_sync/ 子目录
+_SYNC_SCRIPT = _SCRIPTS_GOV / "d8_doc_sync" / "sync_yaml_to_depgraph.py"
 _CONSTANTS_MODULE = _SCRIPTS_GOV / "_shared" / "constants.py"
 
 
@@ -627,7 +628,7 @@ class TestDbConnectionNamingConvention:
             sys.path.insert(0, str(repo_root))
 
         # 关键：若 F4 递归，下面 import + call 会抛 RecursionError
-        from scripts.governance.shared.constants import (  # noqa: PLC0415
+        from scripts.governance._shared.constants import (  # noqa: PLC0415
             PgConnExecuteWrapper,
             get_depgraph_pg_connection as f4_wrapper,
         )

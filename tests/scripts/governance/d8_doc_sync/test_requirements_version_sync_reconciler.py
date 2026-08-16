@@ -35,6 +35,19 @@ from requirements_version_sync_reconciler import (  # noqa: E402
     make_requirements_version_sync_reconciler,
 )
 
+import requirements_version_sync_reconciler as _rvsr  # noqa: E402
+
+_PROJECT_ROOT = Path(__file__).resolve().parents[4]
+
+
+@pytest.fixture(autouse=True)
+def _repin_project_root():
+    """重钉模块全局 _project_root：工厂 make_*(project_root) 会 global 改写模块级
+    _project_root（gateway L866-867 eager 注册时已钉到 tmp 根）——防跨测试全局污染。"""
+    _rvsr.make_requirements_version_sync_reconciler(_PROJECT_ROOT)
+    yield
+    _rvsr.make_requirements_version_sync_reconciler(_PROJECT_ROOT)
+
 
 # ── 辅助：构造临时 pyproject.toml + requirements 文件 ──
 
@@ -267,7 +280,8 @@ class TestTrigger:
 
     def test_trigger_with_path_prefix(self):
         """触发条件匹配相对路径（非仅纯文件名）。"""
-        assert _trigger(["d:/ZephyrAlpha/requirements.txt"]) is True
+        # 环境无关化：硬编码主仓盘符路径在 worktree 下 relpath 出界——改动态拼当前仓根
+        assert _trigger([str(_PROJECT_ROOT / "requirements.txt").replace("\\", "/")]) is True
 
 
 # ── 集成测试：reconciler 端到端 ──

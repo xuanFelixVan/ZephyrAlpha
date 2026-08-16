@@ -151,7 +151,7 @@ class GovernanceAutoRunner:
     """
 
     def __init__(self, pg_conn_provider: PgConnectionProvider | None = None) -> None:
-        # #ARCH-DI-SEAM-001 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
+        # #ARCH-098 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
         self._pg_conn_provider: PgConnectionProvider = (
             pg_conn_provider if pg_conn_provider is not None else get_depgraph_pg_connection
         )
@@ -339,7 +339,7 @@ class GovernanceAutoRunner:
     @staticmethod
     def get_gates_by_event(
         event_type: str,
-        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-098 DIP 注入缝
     ) -> list[str]:
         """从 depgraph (PostgreSQL) 查询指定 event_driven 触发器的 gate 列表.
 
@@ -379,7 +379,7 @@ class GovernanceAutoRunner:
 
     @staticmethod
     def get_all_event_types(
-        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-098 DIP 注入缝
     ) -> list[str]:
         """从 depgraph (PostgreSQL) 查询所有非空的 event_driven 类型。"""
         provider: PgConnectionProvider = pg_conn_provider or get_depgraph_pg_connection

@@ -148,8 +148,8 @@ class TestMustDecorator:
             return 42
 
         assert hasattr(my_func, "_vibe_rule")
-        assert my_func.vibe_rule == "lock_before_write"
-        assert my_func.vibe_level == VibeRuleLevel.MUST
+        assert my_func._vibe_rule == "lock_before_write"
+        assert my_func._vibe_level == VibeRuleLevel.MUST
 
 
 class TestShouldDecorator:
@@ -167,4 +167,4 @@ class TestShouldDecorator:
             return "ok"
 
         assert hasattr(my_func, "_vibe_rule")
-        assert my_func.vibe_level == VibeRuleLevel.SHOULD
+        assert my_func._vibe_level == VibeRuleLevel.SHOULD

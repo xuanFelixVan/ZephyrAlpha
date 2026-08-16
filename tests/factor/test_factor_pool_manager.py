@@ -43,10 +43,10 @@ def _make_manager(
 ) -> FactorPoolManager:
     """创建小容量因子池管理器（用于测试容量限制）。"""
     mgr = FactorPoolManager()
-    mgr.n_max = n_max
-    mgr.active_cap = active_cap
-    mgr.dormant_cap = dormant_cap
-    mgr.min_ic = min_ic
+    mgr._n_max = n_max
+    mgr._active_cap = active_cap
+    mgr._dormant_cap = dormant_cap
+    mgr._min_ic = min_ic
     return mgr
 
 

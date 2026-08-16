@@ -29,9 +29,8 @@ class TestConcurrencySafety:
     def test_lock_acquire_release(self):
         with SkillLock.write_lock("TEST-LOCK-001"):
             assert "w:TEST-LOCK-001" in SkillLock._LOCKS
-        lock = SkillLock._LOCKS.get("w:TEST-LOCK-001")
-        if lock:
-            assert not lock.is_owned()
+        # Stage 4：用公共 API is_lock_owned（RLock 无公开 is_owned）
+        assert not SkillLock.is_lock_owned("w:TEST-LOCK-001")
 
     def test_read_lock_nonblocking(self):
         results = []

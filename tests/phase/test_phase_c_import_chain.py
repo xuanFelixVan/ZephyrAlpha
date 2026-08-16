@@ -43,7 +43,7 @@ PHASE_C_CLASSES: list[ConcreteClass] = [
         "zephyr.risk.implementations.default_risk_manager_orchestrator", "DefaultRiskManagerOrchestrator", "L04"
     ),
     ConcreteClass("zephyr.pf_core.default_equity_strategy", "DefaultEquityStrategy", "L05"),
-    ConcreteClass("zephyr.ex_core.adapters.simulation_broker", "SimulationBroker", "L06"),
+    ConcreteClass("zephyr.governance.adapters.simulation_broker", "SimulationBroker", "L06"),
     ConcreteClass("zephyr.ex_core.order_manager", "OrderManager", "L06"),
     ConcreteClass("zephyr.ex_core.execution_engine", "ExecutionEngine", "L06"),
     ConcreteClass("zephyr.reporting.default_tca_engine", "DefaultTCAEngine", "L07"),

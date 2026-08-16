@@ -47,7 +47,7 @@ class TestSimulateRollback:
                 "",
                 "",
             ]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(
                     returncode=0,
                     stdout="",
@@ -67,7 +67,7 @@ class TestSimulateRollback:
                 "file1.py\nfile2.py",
                 "",
             ]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(
                     returncode=1,
                     stdout="",
@@ -88,7 +88,7 @@ class TestSimulateRollback:
     def test_simulation_result_fields(self, simulator: RollbackSimulator):
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = ["", ""]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
                 result = simulator.simulate_rollback("deadbeef")
                 assert result.commit_sha == "deadbeef"
@@ -101,7 +101,7 @@ class TestSimulateRollback:
     def test_simulation_cleans_up_worktree(self, simulator: RollbackSimulator):
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = ["", "", ""]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
                 simulator.simulate_rollback("abc1234")
                 cleanup_calls = [c for c in mock_git.call_args_list if "worktree" in str(c) and "remove" in str(c)]
@@ -110,19 +110,19 @@ class TestSimulateRollback:
 
 class TestRunGit:
     def test_run_git_success(self, simulator: RollbackSimulator):
-        with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+        with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
             mock_run.return_value = MagicMock(stdout="output", returncode=0)
             result = simulator.run_git(["status"])
             assert result == "output"
 
     def test_run_git_exception(self, simulator: RollbackSimulator):
-        with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+        with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
             mock_run.side_effect = subprocess.TimeoutExpired(cmd="git", timeout=15)
             result = simulator.run_git(["status"])
             assert result == ""
 
     def test_run_git_with_cwd(self, simulator: RollbackSimulator, tmp_path: Path):
-        with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+        with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
             mock_run.return_value = MagicMock(stdout="ok", returncode=0)
             simulator.run_git(["status"], cwd=tmp_path / "subdir")
             call_kwargs = mock_run.call_args
@@ -133,7 +133,7 @@ class TestBoundaryCases:
     def test_empty_commit_sha(self, simulator: RollbackSimulator):
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = ["", ""]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
                 result = simulator.simulate_rollback("")
                 assert isinstance(result, SimulationResult)
@@ -143,7 +143,7 @@ class TestBoundaryCases:
         long_sha = "a" * 40
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = ["", ""]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
                 result = simulator.simulate_rollback(long_sha)
                 assert result.commit_sha == long_sha
@@ -151,7 +151,7 @@ class TestBoundaryCases:
     def test_multiple_simulations(self, simulator: RollbackSimulator):
         with patch.object(simulator, "_run_git") as mock_git:
             mock_git.side_effect = ["", "", "", ""]
-            with patch("zephyr.infrastructure.rollback.rollback_simulator.subprocess.run") as mock_run:
+            with patch("zephyr.infrastructure.rollback.rollback_simulator.run_subprocess_hidden") as mock_run:
                 mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
                 r1 = simulator.simulate_rollback("sha1")
                 r2 = simulator.simulate_rollback("sha2")

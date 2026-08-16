@@ -6303,3 +6303,79 @@ entries:
   last_review_outcome: "deferred 登记（2026-08-16 用户授权裁定）：可选扩展非阻塞，22 号行业轮动策略落地时晋升"
   acquisition_method: self_build
   acquisition_source: ''
+
+  # ----------------------------------------------------------
+  # CAND-AUTONOMYCORE-001: Skill 内容库建设（candidate，#ARCH-096 裁定 2026-08-16）
+  # 来源: AI-TDEBT-001 测试债清偿——tests/autonomy/test_pipeline_bridge_integration.py
+  #   5 项 xfail 锚定的 skill 内容（SKILL.md）出生即桩，裁定登记候选库、xfail 保留作规格书
+  # ----------------------------------------------------------
+- id: CAND-AUTONOMYCORE-001
+  name: "Skill Content Library / 技能内容库"
+  aliases: ["skill内容库", "SKILL.md库", "技能内容文件", "skill-registry内容层"]
+  domain: D_AUTONOMY_CORE
+  domain_status: active
+  domain_node_count: 0
+  sub_layer: "autonomy_core/skills 内容层"
+  panorama_position:
+    depgraph:
+      has_position: true
+      target_module_id: MOD-INF-019
+      target_build_status: production
+      target_neighbors:
+        upstream: []
+        downstream: []
+      insertion_description: "非新模块——为既有 MOD-INF-019（pipeline_bridge）/skill_loader 补齐内容层（SKILL.md 文件+registry 条目），不涉及拓扑变更"
+      target_edges: []
+    dataflowgraph:
+      has_position: false
+    decisiongraph:
+      has_position: false
+    blueprint:
+      has_position: true
+      target_ref: "src/zephyr/autonomy_core/skills/skill-registry.yaml"
+      design_maturity: production
+  description: "为自治管线 skill 注入机制补齐内容层：skill-registry.yaml 当前仅 2 条 domain 桩条目（database-specialist/master-blueprint）且 path 指向的 SKILL.md 全部不存在，role 类清空。建设内容包括 role 类技能（architect/implementer/auditor 等）与 domain 类技能的完整条目及其 SKILL.md 正文，使 PipelineSkillBridge.inject_for_task 的 loaded=True 路径真实可达"
+  capability: ""
+  problem_it_solves: "skill 注入机制（MOD-INF-019 已 production）有骨架无内容——stage→role 映射、关键词→domain 映射的逻辑已闭环，但无实际技能正文可加载，注入结果恒为空壳，自治管线丢失领域上下文增强能力"
+  trigger_signals:
+  - "自治管线（idea→construction→audit）实际启用且注入空壳被证实削弱产出质量"
+  - "用户明确要求 AI 会话按角色/领域加载技能正文"
+  - "SKILL-DOM-DBS-001/SKILL-ROL-* 等锚定 ID 的需求场景出现"
+  keywords: ["skill", "技能注入", "SKILL.md", "pipeline_bridge", "role", "domain", "自治管线"]
+  upstream_deps:
+  - {contract: "MOD-INF-019 PipelineSkillBridge/SkillLoader", from_domain: D_AUTONOMY_CORE, dep_type: H, availability: available, note: "加载机制已 production，内容层直接可被消费"}
+  downstream_consumers:
+  - {consumer: "tests/autonomy/test_pipeline_bridge_integration.py", contract: "5 项 xfail 用例", note: "内容库建成后去 xfail 即验收"}
+  contracts_to_produce:
+  - {id: "skill-registry.yaml 完整条目集", name: "role 类+domain 类技能条目及 SKILL.md 正文"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "加载机制就绪", check: "MOD-INF-019=production", met: true}
+  - {condition: "真实需求场景出现", check: "", met: false, note: "当前无消费方证明内容库的业务价值——xfail 保留作规格书即为等待信号"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "grep 全仓无既有 SKILL.md 内容库（仅 2 桩条目），无重复"}
+    blocking_question: none
+    result: pass
+  status: candidate
+  priority: P2
+  created_at: '2026-08-16'
+  last_reviewed_at: '2026-08-16'
+  promoted_to: ""
+  source_draft: "AI-TDEBT-001 测试债清偿 #ARCH-096 裁定书（docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md）"
+  source_section: "§ARCH-096 skill 内容库恢复或退役"
+  original_id: "ARCH-096"
+  estimated_complexity: M
+  estimated_effort: "5-10人天（role×3~5 + domain×N 条目+正文撰写）"
+  tech_notes: "建设时须与 skill_loader 的加载契约对齐：path 相对 skills/ 目录、references 列表、L1/L2 tier 语义；role 类条目需覆盖 pipeline stage 映射表（idea→architect/construction→implementer/audit→auditor）。退役备选：若长期无 trigger 命中，反向裁定删除 skill-registry.yaml 桩条目+xfail 测试，机制降级为预留接口"
+  risks: ["内容撰写质量依赖领域知识，AI 生成的 SKILL.md 可能泛化无实操价值", "长期无消费方则沦为死内容，需年检复核"]
+  alternatives: "退役路径：删除桩条目与 xfail 测试，PipelineSkillBridge 保留机制但文档声明内容层未建。代价：自治管线永久缺失技能注入维度"
+  tags: ["candidate", "ARCH-096", "自治管线", "skill", "内容层缺失"]
+  search_terms: ["skill content", "SKILL.md", "技能内容库", "pipeline skill bridge", "role skill"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2026-11-16'
+  review_frequency: quarterly
+  last_review_outcome: "2026-08-16 登记（#ARCH-096 裁定）：机制已 production、内容出生即桩，登记候选等待 trigger；xfail 测试保留作验收规格书"
+  acquisition_method: self_build
+  acquisition_source: ''

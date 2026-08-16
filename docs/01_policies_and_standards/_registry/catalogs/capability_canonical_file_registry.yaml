@@ -9079,6 +9079,10 @@ creation_tokens:
     token: "auto-risk-liquidity-crisis-manager-review-20260813"
     created_by: "AI-LIQ-001"
     capability: "liquidity_crisis_manager"
+  - file: "docs/_working/audit/architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md"
+    token: "auto-gov-test-debt-leftover-adjudication-20260816"
+    created_by: "AI-TDEBT-001"
+    capability: "test_debt_adjudication"
 
   # --- S1 删除能力收敛（2026-08-14，wipe 事故治本，AI-GIT-001 承接）---
   - file: "scripts/ops_guard.py"

@@ -3,11 +3,11 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-14T13:07:54Z'
+generated_at: '2026-08-16T06:32:08Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
-total_gates: 147
+total_gates: 148
 gates:
 - gate_id: GATE-PROTECTED-PATHS
   name: 'GATE-PROTECTED-PATHS: 受保护路径写入检测（#ARCH-MODEL-LIFECYCLE-001 P1 Layer 2）'
@@ -1184,6 +1184,15 @@ gates:
     priority=35）'
   entry: in-process (GitCommitGateway)
   description: R5 数字后缀目录禁止门禁（治本：弥补 --no-verify 绕过 pre-commit 的缺口）
+  files_trigger: ''
+  always_run: false
+  category: commit_gate
+  status: active
+  source: commit-gate
+- gate_id: RECONCILER-FILE-OPS
+  name: 'RECONCILER-FILE-OPS: 治理代理裸删除原语静态扫描门禁（RECONCILER-FILE-OPS）（CommitGate, priority=117）'
+  entry: in-process (GitCommitGateway)
+  description: 治理代理裸删除原语静态扫描门禁（RECONCILER-FILE-OPS）
   files_trigger: ''
   always_run: false
   category: commit_gate

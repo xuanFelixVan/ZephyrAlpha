@@ -617,12 +617,52 @@ class TestA11_OrphanChainIntegrity:
         "zephyr_logger",
     ]
 
+    # 子包化演进（2026-08 实测）：裸名 → 真实 dotted path 映射。
+    # contract_tester 迁至 zephyr.infrastructure；其余归入 shared 各子包。
+    _ORPHAN_PATHS = {
+        "adaptive_sampler": "zephyr.shared.capacity_governance.adaptive_sampler",
+        "ai_audit_guard": "zephyr.shared.ai_guards.ai_audit_guard",
+        "ai_understandability_constraint": "zephyr.shared.blueprint_tools.ai_understandability_constraint",
+        "alert_escalation": "zephyr.shared.alerts.alert_escalation",
+        "alert_manager": "zephyr.shared.alerts.alert_manager",
+        "alert_precision_tracker": "zephyr.shared.alerts.alert_precision_tracker",
+        "blueprint_code_auditor": "zephyr.shared.blueprint_tools.blueprint_code_auditor",
+        "budget_aware_prompt": "zephyr.shared.capacity_governance.budget_aware_prompt",
+        "capacity_calibrator": "zephyr.shared.capacity_governance.capacity_calibrator",
+        "capacity_digital_twin": "zephyr.shared.capacity_governance.capacity_digital_twin",
+        "capacity_fingerprint": "zephyr.shared.capacity_governance.capacity_fingerprint",
+        "capacity_governance_loop": "zephyr.shared.capacity_governance.capacity_governance_loop",
+        "capacity_runbook_generator": "zephyr.shared.capacity_governance.capacity_runbook_generator",
+        "code_economy_analyzer": "zephyr.shared.maintenance.code_economy_analyzer",
+        "combinatorial_gate": "zephyr.shared.ai_guards.combinatorial_gate",
+        "contract_tester": "zephyr.infrastructure.contract_tester",
+        "core_integrity_guard": "zephyr.shared.ai_guards.core_integrity_guard",
+        "cost_estimator": "zephyr.shared.capacity_governance.cost_estimator",
+        "degradation_chain": "zephyr.shared.resilience.degradation_chain",
+        "dependency_capacity_guard": "zephyr.shared.capacity_governance.dependency_capacity_guard",
+        "dual_channel_alert": "zephyr.shared.alerts.dual_channel_alert",
+        "error_budget_tracker": "zephyr.shared.resilience.error_budget_tracker",
+        "fault_isolator": "zephyr.shared.resilience.fault_isolator",
+        "heartbeat_server": "zephyr.shared.alerts.heartbeat_server",
+        "longevity_monitor": "zephyr.shared.lifecycle.longevity_monitor",
+        "model_capacity_probe": "zephyr.shared.capacity_governance.model_capacity_probe",
+        "module_birth_registry": "zephyr.shared.protocols.module_birth_registry",
+        "owner_trust_gauge": "zephyr.shared.maintenance.owner_trust_gauge",
+        "reasoning_spans": "zephyr.shared.observability.reasoning_spans",
+        "sandbox_executor": "zephyr.shared.security.sandbox_executor",
+        "slo_review_assistant": "zephyr.shared.maintenance.slo_review_assistant",
+        "task_heartbeat": "zephyr.shared.lifecycle.task_heartbeat",
+        "ttl_cleanup_engine": "zephyr.shared.lifecycle.ttl_cleanup_engine",
+        "vibe_experiment_tracker": "zephyr.shared.versioning.vibe_experiment_tracker",
+        "zephyr_logger": "zephyr.shared.utils.zephyr_logger",
+    }
+
     def test_all_orphans_importable(self):
         """每个孤儿文件至少可被 import"""
         failed = []
         for module_name in self.ORPHAN_FILES:
             try:
-                __import__(f"zephyr.shared.{module_name}")
+                __import__(self._ORPHAN_PATHS[module_name])
             except Exception as e:
                 failed.append(f"{module_name}: {e}")
         assert failed == [], f"{len(failed)} orphan files cannot be imported: {failed}"
@@ -646,5 +686,5 @@ class TestA11_OrphanChainIntegrity:
             "cache": "ttl_cleanup_engine",
         }
         for cluster, module_name in cluster_samples.items():
-            mod = __import__(f"zephyr.shared.{module_name}")
+            mod = __import__(self._ORPHAN_PATHS[module_name])
             assert mod is not None, f"Cluster '{cluster}' sample {module_name} failed to import"

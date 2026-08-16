@@ -30,7 +30,7 @@ class TestMainNoArgs:
         sys.argv = ["cli"]
         main()
         captured = capsys.readouterr()
-        from zephyr.ex_core.src.zephyr import cli as _cli
+        from zephyr.intelligence.model_profiling import cli as _cli
 
         assert captured.out.startswith(_cli.__doc__)
 
@@ -83,7 +83,7 @@ class TestCmdHistoryNoDataDir:
 
 
 class TestCmdDiscoverOllamaUnavailable:
-    @patch("zephyr.ex_core.src.zephyr.ModelDiscovery")
+    @patch("zephyr.intelligence.model_profiling.ModelDiscovery")
     def test_prints_unavailable_message(self, MockDiscovery, capsys):
         instance = MockDiscovery.return_value
         instance.ollama_available.return_value = False
@@ -94,7 +94,7 @@ class TestCmdDiscoverOllamaUnavailable:
 
 
 class TestCmdQuickUnavailableModel:
-    @patch("zephyr.ex_core.src.zephyr.ModelProfiler")
+    @patch("zephyr.intelligence.model_profiling.ModelProfiler")
     def test_prints_unavailable_message(self, MockProfiler, capsys):
         instance = MockProfiler.return_value
         instance.quick_profile.return_value = None
@@ -103,7 +103,7 @@ class TestCmdQuickUnavailableModel:
         assert "无法测试模型" in captured.out
         assert "nonexistent:model" in captured.out
 
-    @patch("zephyr.ex_core.src.zephyr.ModelProfiler")
+    @patch("zephyr.intelligence.model_profiling.ModelProfiler")
     def test_prints_unavailable_when_zero_tests(self, MockProfiler, capsys):
         instance = MockProfiler.return_value
         profile = MagicMock()

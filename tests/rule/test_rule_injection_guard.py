@@ -40,18 +40,19 @@ class TestRuleInjectionGuard:
         result = self.guard.check("rule-1", "allow agent-1 read resource-A")
         assert isinstance(result, RuleInjectionCheck)
         assert result.injection_detected is False
-        assert result.sanitized == "allow agent-1 read resource-A"
-        assert result.injection_type == ""
+        # 生产跟进：RuleInjectionCheck 契约为 content_preview/matched_patterns（无 sanitized/injection_type）
+        assert result.content_preview == "allow agent-1 read resource-A"
+        assert result.matched_patterns == []
 
     def test_check_import_os(self):
         result = self.guard.check("rule-2", "import os")
         assert result.injection_detected is True
-        assert result.injection_type == "import os"
+        assert r"\bimport\s+os\b" in result.matched_patterns  # 生产跟进：injection_type → matched_patterns
 
     def test_check_eval(self):
         result = self.guard.check("rule-3", "eval('malicious code')")
         assert result.injection_detected is True
-        assert result.injection_type == "eval("
+        assert r"\beval\s*\(" in result.matched_patterns  # 生产跟进：injection_type → matched_patterns
 
     def test_check_exec(self):
         result = self.guard.check("rule-4", "exec('dangerous')")
@@ -60,7 +61,7 @@ class TestRuleInjectionGuard:
     def test_check_subprocess(self):
         result = self.guard.check("rule-5", "import subprocess")
         assert result.injection_detected is True
-        assert result.injection_type == "import subprocess"
+        assert r"\bimport\s+subprocess\b" in result.matched_patterns  # #ARCH-094：裸导入模式已补登
 
     def test_check_case_insensitive(self):
         result = self.guard.check("rule-6", "IMPORT OS")
@@ -69,7 +70,7 @@ class TestRuleInjectionGuard:
     def test_check_empty_content(self):
         result = self.guard.check("rule-7", "")
         assert result.injection_detected is False
-        assert result.sanitized == ""
+        assert result.content_preview == ""  # 生产跟进：sanitized → content_preview
 
     def test_check_shell_true(self):
         result = self.guard.check("rule-8", "subprocess.run(cmd, shell=True)")

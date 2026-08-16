@@ -144,6 +144,11 @@ def _rule_id_to_filename(rule_id: str) -> str:
         path = _RULES_DIR / f"{candidate}.yaml"
         if path.exists():
             return f"{candidate}.yaml"
+    # slug 前缀回退（#ARCH-087）：规则文件带语义后缀（trae_001_file_operation_security.yaml），
+    # DB rule_id/按 ID 解析在 slug 迁移后精确名映射整体失效——glob 前缀匹配恢复解析
+    matches = sorted(_RULES_DIR.glob(f"{lower}_*.yaml"))
+    if matches:
+        return matches[0].name
     return f"{lower}.yaml"
 
 class RuleLoader:
@@ -153,7 +158,7 @@ class RuleLoader:
         self,
         db_path: str | Path | None = None,  # 保留向后兼容（PG模式下忽略，治本2026-06-27删除_DB_PATH常量）
         rules_dir: str | Path | None = None,
-        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-DI-SEAM-001 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
+        pg_conn_provider: PgConnectionProvider | None = None,  # #ARCH-098 DIP 注入缝（默认=get_depgraph_pg_connection，测试可注入 mock）
     ) -> None:
         self._rules_dir = Path(rules_dir) if rules_dir else _RULES_DIR
         self._cache: dict[str, dict[str, Any]] = {}

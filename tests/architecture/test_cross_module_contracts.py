@@ -21,15 +21,11 @@ import yaml
 from zephyr.shared.io.paths import REPO_ROOT
 
 
-REQUIRED_DEPENDENCIES = [
-    "MOD-INF-039",
-    "MOD-GATE_ENGINE",
-    "MOD-INF-018",
-]
-
-MCP_BLUEPRINT = REPO_ROOT / "docs/03_modules/_cross_layer/mcp-servers/blueprint.md"
+# #ARCH-095 裁定：MCP 实际依赖（import 实证）= MOD-TASK_SYSTEM + MOD-GATE_ENGINE；
+# 原 REQUIRED_DEPENDENCIES 含 MOD-INF-039/MOD-INF-018 属过期契约且无消费方——已删
+MCP_BLUEPRINT = REPO_ROOT / "docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md"
 B_MCP_YAML = REPO_ROOT / "architecture_model/layers/b_mcp.yaml"
-TOOL_CONTRACTS = REPO_ROOT / "src/zephyr/mcp/tool-contracts.yaml"
+TOOL_CONTRACTS = REPO_ROOT / "src/zephyr/integration/mcp/tool_contracts.yaml"
 
 
 def _read_frontmatter(path: Path) -> dict:
@@ -48,9 +44,11 @@ class TestUpstreamDependencyReachability:
     """上游依赖可达性验证。"""
 
     def test_blueprint_depends_on_present(self):
+        # #ARCH-095 裁定：depends_on 现事实 3 项（MOD-TASK_SYSTEM/MOD-GATE_ENGINE/b_mcp.yaml），
+        # import 静态分析实证 MCP 无 orchestrator(MOD-INF-039)/access_control(MOD-INF-018) 依赖
         fm = _read_frontmatter(MCP_BLUEPRINT)
         depends = fm.get("depends_on", [])
-        assert len(depends) >= 4, f"depends_on should have >=4 entries, got {len(depends)}"
+        assert len(depends) >= 3, f"depends_on should have >=3 entries, got {len(depends)}"
 
     def test_depends_on_ids_valid(self):
         fm = _read_frontmatter(MCP_BLUEPRINT)
@@ -61,7 +59,7 @@ class TestUpstreamDependencyReachability:
             ids = [d.get("module_id", d.get("id", str(d))) for d in depends if isinstance(d, dict)]
         else:
             ids = []
-        for req in ["MOD-INF-039", "MOD-GATE_ENGINE"]:
+        for req in ["MOD-TASK_SYSTEM", "MOD-GATE_ENGINE"]:
             found = any(req in str(i) for i in ids)
             assert found, f"Missing upstream dependency: {req}"
 
@@ -105,7 +103,7 @@ class TestUpstreamDependencyReachability:
             "sandbox_server.py",
             "sentinel_server.py",
             "task_manager_server.py",
-            "tool-contracts.yaml",
+            "tool_contracts.yaml",
         ]
         for f in expected:
             assert f in all_files, f"b_mcp.yaml missing file: {f}"
@@ -124,9 +122,9 @@ class TestUpstreamDependencyReachability:
             "gateway_server.py",
             "handoff_auto_loader.py",
             "__init__.py",
-            "tool-contracts.yaml",
+            "tool_contracts.yaml",
         ]
-        mcp_dir = REPO_ROOT / "src/zephyr/mcp"
+        mcp_dir = REPO_ROOT / "src/zephyr/integration/mcp"
         for f in server_files:
             fp = mcp_dir / f
             assert fp.exists(), f"Missing MCP file: {f}"

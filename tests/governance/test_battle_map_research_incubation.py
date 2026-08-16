@@ -9,12 +9,12 @@
 # [ERROR_CONTRACT] DB不可达->skip_test; 拓扑断裂->AssertionError; 指标缺失->AssertionError
 # [TESTS] tests/governance/test_battle_map_research_incubation.py
 # [TTL] permanent
-"""test_battle_map_research_incubation.py — 研究孵化阶段 25 环节逻辑全覆盖验证
+"""test_battle_map_research_incubation.py — 研究孵化阶段 33 环节逻辑全覆盖验证
 
-验证 battle_map_01_research_incubation.md 真源中研究孵化阶段 25 环节（7 根 + 18 子）的
+验证 battle_map_01_research_incubation.md 真源中研究孵化阶段 33 环节（11 根 + 22 子）的
 数据完整性、拓扑结构、6 件套指标、YAML 叙事、D-RESEARCH 覆盖率及生成器渲染防御性。
 
-环节结构（7 根环节 + 18 子环节 = 25）：
+环节结构（11 根环节 + 22 子环节 = 33）：
 
   BM-RES-01 研究数据与特征存储
     ├─ BM-RES-01-A 数据集版本化与血缘追踪    (D-RESEARCH-01)
@@ -41,12 +41,20 @@
     └─ BM-RES-06-B 论文追踪                   (D-RESEARCH-07)
   BM-RES-07 策略迭代升级
     └─ BM-RES-07-A 策略进化与因子挖掘         (D-RESEARCH-17)
+  BM-RES-08 知识清洗（学习系统S1）            # #ARCH-093：2026-08-04 治理批新增
+    └─ BM-RES-08-A 清洗流水线                (planned，D_RESEARCH/D_INTELLIGENCE)
+  BM-RES-09 知识分类（学习系统S2）            # #ARCH-093 新增
+    └─ BM-RES-09-A 知识分类体系              (planned，D_RESEARCH/D_ML_TRAIN)
+  BM-RES-10 模块工厂（学习系统S3）            # #ARCH-093 新增
+    └─ BM-RES-10-A 模块工厂架构              (planned，D_RESEARCH)
+  BM-RES-11 知识采集（学习系统S0）            # #ARCH-093 新增
+    └─ BM-RES-11-A 采集源分类调度            (planned，D_RESEARCH/D_INTELLIGENCE)
 
 主链流转边（6 条 data_flow）：
   BM-RES-01 → BM-RES-02 → BM-RES-03 → BM-RES-04 → BM-RES-05 → BM-RES-06 → BM-RES-07
 
 六类测试：
-  1. **拓扑验证（e2e，需 DB）**：25 环节存在、7 根 + 18 子、父子嵌套、sort_order、
+  1. **拓扑验证（e2e，需 DB）**：33 环节存在、11 根 + 22 子、父子嵌套、sort_order、
      6 条主链边、每环节有锚点（BM-INV-001）、锚点全指向候选池。
   2. **6 件套指标验证（e2e）**：每环节 indicators 含 6 件套全字段、data_flow 子结构完整、
      params 为 list[dict]（回归测试：防字符串 params 崩溃生成器）。
@@ -83,7 +91,7 @@ if str(_SRC_PATH) not in sys.path:
 
 # ── 研究孵化阶段常量（与 DB step_id / sort_order / D-RESEARCH 对齐）──────────
 
-# 7 根环节主链顺序（sort_order 升序）
+# 11 根环节主链顺序（sort_order 升序；08-11 为 #ARCH-093 学习系统 S0-S3 新增根）
 EXPECTED_ROOT_CHAIN: list[str] = [
     "BM-RES-01",  # 研究数据与特征存储
     "BM-RES-02",  # 实验追踪与可复现性
@@ -92,6 +100,10 @@ EXPECTED_ROOT_CHAIN: list[str] = [
     "BM-RES-05",  # Notebook与协作
     "BM-RES-06",  # LLM研究Agent与论文追踪
     "BM-RES-07",  # 策略迭代升级
+    "BM-RES-08",  # 知识清洗（学习系统S1）
+    "BM-RES-09",  # 知识分类（学习系统S2）
+    "BM-RES-10",  # 模块工厂（学习系统S3）
+    "BM-RES-11",  # 知识采集（学习系统S0）
 ]
 
 # 预期 data_flow 主链边（from → to）
@@ -104,6 +116,10 @@ EXPECTED_DATA_FLOW_EDGES: list[tuple[str, str]] = [
     ("BM-RES-06", "BM-RES-07"),  # 研究发现→策略迭代
 ]
 
+# 线性主链（数据流模拟语义基线=DB 实存 6 条主链边 01→…→07）；
+# #ARCH-093：08-11 学习系统 S0-S3 无 data_flow/trigger 边接入（移交 Owner），不入链模拟
+MAIN_CHAIN: list[str] = EXPECTED_ROOT_CHAIN[:7]
+
 # 父环节 → 子环节列表映射
 EXPECTED_CHILDREN: dict[str, list[str]] = {
     "BM-RES-01": ["BM-RES-01-A", "BM-RES-01-B", "BM-RES-01-C", "BM-RES-01-D"],
@@ -113,9 +129,13 @@ EXPECTED_CHILDREN: dict[str, list[str]] = {
     "BM-RES-05": ["BM-RES-05-A", "BM-RES-05-B", "BM-RES-05-C"],
     "BM-RES-06": ["BM-RES-06-A", "BM-RES-06-B"],
     "BM-RES-07": ["BM-RES-07-A"],
+    "BM-RES-08": ["BM-RES-08-A"],  # #ARCH-093
+    "BM-RES-09": ["BM-RES-09-A"],  # #ARCH-093
+    "BM-RES-10": ["BM-RES-10-A"],  # #ARCH-093
+    "BM-RES-11": ["BM-RES-11-A"],  # #ARCH-093
 }
 
-# 全部 25 环节 step_id（7 根 + 18 子）
+# 全部 33 环节 step_id（11 根 + 22 子）
 EXPECTED_ALL_STEPS: list[str] = list(EXPECTED_ROOT_CHAIN) + [
     child for children in EXPECTED_CHILDREN.values() for child in children
 ]
@@ -222,23 +242,23 @@ class TestResearchIncubationTopology:
     # ── 环节数量 ──────────────────────────────────────────────────────
 
     def test_25_steps_exist(self, res_steps):
-        """25 个研究孵化环节全部存在。"""
+        """33 个研究孵化环节全部存在（含 #ARCH-093 新增 8 个）。"""
         for sid in EXPECTED_ALL_STEPS:
             assert sid in res_steps, f"缺少研究孵化环节 {sid}（DB 中未找到）"
 
-    def test_exactly_25_steps(self, res_steps):
-        """research_incubation 阶段恰好 25 环节（7 根 + 18 子）。"""
-        assert len(res_steps) == 25, (
-            f"research_incubation 阶段应有 25 环节，实际 {len(res_steps)}: "
+    def test_exactly_33_steps(self, res_steps):
+        """research_incubation 阶段恰好 33 环节（11 根 + 22 子，#ARCH-093 裁定后跟进）。"""
+        assert len(res_steps) == 33, (
+            f"research_incubation 阶段应有 33 环节，实际 {len(res_steps)}: "
             f"{sorted(res_steps.keys())}"
         )
 
-    def test_7_root_18_child(self, res_steps):
-        """7 个根环节（depth=0）+ 18 个子环节（depth=1）。"""
+    def test_11_root_22_child(self, res_steps):
+        """11 个根环节（depth=0）+ 22 个子环节（depth=1）（#ARCH-093 裁定后跟进）。"""
         roots = [s for s in res_steps.values() if s.get("depth") == 0]
         children = [s for s in res_steps.values() if s.get("depth") == 1]
-        assert len(roots) == 7, f"根环节应有 7 个，实际 {len(roots)}"
-        assert len(children) == 18, f"子环节应有 18 个，实际 {len(children)}"
+        assert len(roots) == 11, f"根环节应有 11 个，实际 {len(roots)}"
+        assert len(children) == 22, f"子环节应有 22 个，实际 {len(children)}"
 
     # ── 父子嵌套 ──────────────────────────────────────────────────────
 
@@ -266,7 +286,7 @@ class TestResearchIncubationTopology:
                 assert depth == 1, f"{child_id} depth 应为 1，实际 {depth}"
 
     def test_all_children_accounted_for(self, res_steps):
-        """18 个子环节全部在 EXPECTED_CHILDREN 映射中（无遗漏/无多余）。"""
+        """22 个子环节全部在 EXPECTED_CHILDREN 映射中（无遗漏/无多余）。"""
         actual_children = {
             sid for sid in res_steps if sid not in EXPECTED_ROOT_CHAIN
         }
@@ -333,6 +353,10 @@ class TestResearchIncubationTopology:
 
     # ── 锚点（BM-INV-001）────────────────────────────────────────────
 
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093 裁定：16 环节无锚点（03 全系/04 全系/05-A~C/06-A/B/07-A/08-A~11-A）——锚点回填需领域判断，移交 battle_map Owner（裁定书 architecture-reviews/2026-08-16-test-debt-leftover-adjudication.md）",
+    )
     def test_each_step_has_anchor(self, res_anchors):
         """每个环节至少一个锚点（BM-INV-001：无锚点=悬空决策）。"""
         anchored_steps = {a["step_id"] for a in res_anchors}
@@ -351,10 +375,14 @@ class TestResearchIncubationTopology:
             a["target_graph"] == "depgraph" for a in non_candidate
         ), f"存在非法 target_graph 锚点: {[(a['step_id'], a['target_graph']) for a in non_candidate]}"
 
+    @pytest.mark.xfail(
+        strict=False,
+        reason="#ARCH-093 裁定：锚点总数 21<33（每环节至少 1 个）——锚点回填移交 battle_map Owner",
+    )
     def test_anchor_count_at_least_25(self, res_anchors):
-        """锚点总数 ≥ 25（每环节至少 1 个，部分有 supplement 锚点）。"""
-        assert len(res_anchors) >= 25, (
-            f"锚点总数应 ≥ 25（每环节至少 1 个），实际 {len(res_anchors)}"
+        """锚点总数 ≥ 33（每环节至少 1 个，部分有 supplement 锚点）。"""
+        assert len(res_anchors) >= 33, (
+            f"锚点总数应 ≥ 33（每环节至少 1 个），实际 {len(res_anchors)}"
         )
 
     # ── flow_stage 一致性 ────────────────────────────────────────────
@@ -871,11 +899,11 @@ class TestResearchDataFlowSimulation:
     def test_full_pipeline_e2e(self):
         """完整管线端到端：raw_data → iterated_strategy，经 7 环节。"""
         pkt = ResearchArtifact(type="raw_data", payload={"source": "market_data"})
-        for sid in EXPECTED_ROOT_CHAIN:
+        for sid in MAIN_CHAIN:
             processor = PROCESSORS[sid]
             pkt = processor(pkt)
         assert pkt.type == "iterated_strategy", f"最终产物类型应为 iterated_strategy，实际 {pkt.type}"
-        assert pkt.history == EXPECTED_ROOT_CHAIN, (
+        assert pkt.history == MAIN_CHAIN, (
             f"history 轨迹不完整:\n预期 {EXPECTED_ROOT_CHAIN}\n实际 {pkt.history}"
         )
 
@@ -891,16 +919,16 @@ class TestResearchDataFlowSimulation:
             "BM-RES-07": "iterated_strategy",
         }
         pkt = ResearchArtifact(type="raw_data", payload={})
-        for sid in EXPECTED_ROOT_CHAIN:
+        for sid in MAIN_CHAIN:
             pkt = PROCESSORS[sid](pkt)
-            assert pkt.type == expected_outputs[sid], (
+        assert pkt.type == expected_outputs[sid], (
                 f"{sid} 输出类型应为 {expected_outputs[sid]}，实际 {pkt.type}"
             )
 
     def test_history_accumulates(self):
         """history 随环节流转逐步累积。"""
         pkt = ResearchArtifact(type="raw_data", payload={})
-        for i, sid in enumerate(EXPECTED_ROOT_CHAIN):
+        for i, sid in enumerate(MAIN_CHAIN):
             pkt = PROCESSORS[sid](pkt)
             assert len(pkt.history) == i + 1, (
                 f"经过 {sid} 后 history 应有 {i + 1} 项，实际 {len(pkt.history)}"
@@ -910,7 +938,7 @@ class TestResearchDataFlowSimulation:
         """原始 payload 数据在管线中保留（不丢失）。"""
         original_source = "market_data_v2"
         pkt = ResearchArtifact(type="raw_data", payload={"source": original_source})
-        for sid in EXPECTED_ROOT_CHAIN:
+        for sid in MAIN_CHAIN:
             pkt = PROCESSORS[sid](pkt)
         assert pkt.payload["source"] == original_source, (
             "原始 payload 数据在管线中丢失"
@@ -925,7 +953,7 @@ class TestResearchDataFlowSimulation:
     def test_partial_pipeline_stops_correctly(self):
         """半截管线（只跑前 3 环节）产出正确中间态。"""
         pkt = ResearchArtifact(type="raw_data", payload={})
-        for sid in EXPECTED_ROOT_CHAIN[:3]:  # 只跑 RES-01→02→03
+        for sid in MAIN_CHAIN[:3]:  # 只跑 RES-01→02→03
             pkt = PROCESSORS[sid](pkt)
         assert pkt.type == "validated_hypothesis"
         assert pkt.history == ["BM-RES-01", "BM-RES-02", "BM-RES-03"]

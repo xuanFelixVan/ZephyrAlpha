@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF-blueprint_decomposer | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 ZephyrAlpha 蓝图拆解器

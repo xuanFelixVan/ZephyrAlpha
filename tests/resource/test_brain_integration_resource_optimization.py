@@ -40,7 +40,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm.current = ROELevel.WARNING
+        engine.force_pressure(ROELevel.WARNING, "test")  # 跟进：current 只读 property，公开入口 force_pressure
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -51,7 +51,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm.current = ROELevel.CRITICAL
+        engine.force_pressure(ROELevel.CRITICAL, "test")  # 跟进：current 只读 property，公开入口 force_pressure
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -62,7 +62,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm.current = ROELevel.EMERGENCY
+        engine.force_pressure(ROELevel.EMERGENCY, "test")  # 跟进：current 只读 property，公开入口 force_pressure
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -73,7 +73,7 @@ class TestHealthMonitorDelegation:
         from zephyr.shared.lifecycle.resource_optimization_models import PressureLevel as ROELevel
 
         engine = ResourceOptimizationEngine()
-        engine.pressure_sm.current = ROELevel.NORMAL
+        engine.force_pressure(ROELevel.NORMAL, "test")  # 跟进：current 只读 property，公开入口 force_pressure
 
         monitor = HealthMonitor()
         level = monitor.pressure_level()
@@ -105,7 +105,7 @@ class TestAutoRuntimeCoreLifecycle:
 
         mock_engine = MagicMock()
         with patch(
-            "zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.ResourceOptimizationEngine",
+            "zephyr.trading.auto_runtime_core.ResourceOptimizationEngine",  # 跟进：消费点模块级 import（auto_runtime_core L83 模块级 import）
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
@@ -124,7 +124,7 @@ class TestAutoRuntimeCoreLifecycle:
 
         mock_engine = MagicMock()
         with patch(
-            "zephyr.infrastructure.shared_services.lifecycle.resource_optimization_engine.ResourceOptimizationEngine",
+            "zephyr.trading.auto_runtime_core.ResourceOptimizationEngine",  # 跟进：消费点模块级 import（auto_runtime_core L83 模块级 import）
             return_value=mock_engine,
         ):
             core = AutoRuntimeCore()
