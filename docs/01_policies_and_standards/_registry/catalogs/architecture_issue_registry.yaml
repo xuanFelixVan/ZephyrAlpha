@@ -17155,17 +17155,6 @@ entries:
   related_rules: '55_monitoring_review.md（G26 真源）; #ARCH-BREG-001（注册表体系同族）; #ARCH-70（worktree merge 通道）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
-- issue_id: '#ARCH-WORKTREE-WRITE-INTEGRITY-001'
-  title: 工作区 tracked 写完整性——stale 缓冲区覆写（#68/#71/#75 族）检测机制缺失治本（P0-1/P0-2 漂移看门狗）
-  severity: P1高
-  category: governance_infrastructure
-  adjudication: 'commit 层有网关+串行锁+审计，工作区写层曾是三不管地带（无版本前置/无审计/无主动检测）——陈旧缓冲区覆写把 tracked 文件写回旧内容时，发现靠运气、归因无证据。裁定落地 worktree_drift_watchdog（MOD-GOV_DRIFT_WATCHDOG）：周期语义级比对 tracked 文件工作区内容 vs HEAD（git hash-object，CRLF 幻影免疫）→ 四路分流（claimed/grace/dedup/alert）→ 未登记写入方实锤先快照存证再告警（critical_warn，网关 banner 浮现）→ 漂移消解自动 clean 自愈消音。fail-open 只告警不阻断不干扰主流程。'
-  impact: "变更文件： - 'src/zephyr/gov_enforcement/rule_bridge/worktree_drift_watchdog.py（新建）' - 'tests/governance/rule_bridge/test_worktree_drift_watchdog.py' - 'git_commit_gateway（_register_default_reconcilers 接线）'"
-  fix_phase: '已施工 production（daemon/--once/--status 三态）；2026-08-15 实证捕获 module_translation_registry 乒乓写事件并自愈存证；授权通道增强（merge 事务窗/live-claim）另立 #ARCH-DRIFT-AUTH-001'
-  status: implemented
-  related_rules: '#ARCH-054（claim 基线快照同族）; #68/#71/#75（stale 覆写事故族，tracker 编号）'
-  created: '2026-08-15'
-  last_updated: '2026-08-15'
 - issue_id: '#ARCH-ERRCODE-001'
   title: error_code 注册表全域 reconciliation——108 码未登记 + 15 处跨文件重码 + 4 前缀未声明 + 一致性校验门禁缺失
   severity: P2中
