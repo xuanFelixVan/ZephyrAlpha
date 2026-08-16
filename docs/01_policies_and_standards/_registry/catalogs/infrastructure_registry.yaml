@@ -193,6 +193,23 @@ infrastructure:
     provisioned_at: null
     note: "beta 脚本系统归档依赖 S3；开发期可用本地 MinIO"
 
+  # --- 冷数据归档（E 盘 Parquet，INV-RET-002 手动 archiver.py，2026-08-10 首执行，2026-08-16 补登）---
+  - infra_id: "INFRA-STORE-002"
+    name: "zephyr-cold-archive-parquet"
+    type: object_storage
+    description: "冷数据归档层——ClickHouse 大表老分区经 archiver.py 三阶段（export→verify→drop）归档为 E 盘 Parquet；数据永不删除、仅分层（INV-RET-001~003）。归档清单 archive_manifest.jsonl（append-only 审计）。保留政策真源: docs/01_policies_and_standards/_registry/contracts/data_retention_contract.yaml；施工图: 18_cold_archive_build_plan.md。"
+    runtime_plane: cold
+    host: "E:/zephyr_cold_archive"
+    access_method: "归档/恢复 CLI（手动触发，禁接 scheduler）: python scripts/ch/archiver.py archive-range|list|stats|restore；查询: DuckDB 直读 Parquet；清单: E:/zephyr_cold_archive/archive_manifest.jsonl"
+    health_check: query
+    dependency_of:
+      - "MOD-DATA"
+      - "MOD-BACKTEST"
+    sla: "append-only, Parquet zstd, 行数一致性验证通过后才 DROP PARTITION"
+    status: connected
+    provisioned_at: "2026-08-10"
+    note: "2026-08-10 首次执行（tick/分钟线老分区，manifest 1865 条全 verified+dropped，见 18 号文档 §3.8.2）；kline_daily 日线按契约 L3 ≥10年且体积小不归档（量化社区日线永久保存实践）"
+
   # --- 配置中心（RI-04 ConfigCenter）---
   - infra_id: "INFRA-CFG-001"
     name: "zephyr-config-center"

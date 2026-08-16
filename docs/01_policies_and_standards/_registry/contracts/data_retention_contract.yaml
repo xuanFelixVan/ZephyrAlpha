@@ -17,15 +17,15 @@
 #   3. 定义多频共振策略的数据依赖关系
 #
 # 铁律（用户裁决，不可变更）：
-#   1. 所有数据永不删除——只保留或归档，不 DROP
+#   1. 所有数据永不删除——只保留或归档；归档到 Parquet 并验证行数一致后的分区允许 DROP PARTITION（数据已保留在 E 盘）
 #   2. 进 Cold 层必须手动触发——不自动迁移
-#   3. 所有表 Hot 层无 TTL——ClickHouse 永久保留
+#   3. 所有表 Hot 层无 TTL 自动删除——ClickHouse 永久保留；手动归档 DROP PARTITION 不属于 TTL 自动删除
 #
 # 消费者：
 #   - data_source_integrator_blueprint.md §19（引用本契约）
 #   - tasks.yaml（每个任务的 retention 字段从本契约查表）
 #   - ClickHouse DDL（TTL 表达式从本契约校验，index_quote 90天TTL已删除）
-#   - 未来 archiver.py（Cold 层手动归档工具，从本契约读取归档规则）
+#   - scripts/ch/archiver.py（Cold 层手动归档 CLI，2026-08-10 已实现并首执行，从本契约读取归档规则）
 #
 # 对标标准：
 #   - 机构实践：kdb+ 三层（Hot内存/Warm磁盘/Cold归档），10年Tick保留
@@ -40,11 +40,11 @@
 schema_version: "1.0.0"
 doc_type: gate
 module_id: PS-CTR-003
-version: "1.0.0"
+version: "1.1.0"
 title: "Data Retention & Backtest Layering Contract"
 status: active
 ttl: permanent
-contract_version: "1.0.0"
+contract_version: "1.1.0"
 
 # ============================================================
 # §1 不变原则（铁律）
@@ -52,7 +52,8 @@ contract_version: "1.0.0"
 invariants:
   - id: INV-RET-001
     rule: "所有数据永不删除"
-    description: "业务数据只保留或归档，禁止 DROP TABLE / DELETE WHERE / TTL 自动删除"
+    description: "业务数据只保留或归档，禁止 DROP TABLE / DELETE WHERE / TTL 自动删除。归档到 Parquet 并验证行数一致后的 ClickHouse 分区，允许通过 ALTER TABLE ... DROP PARTITION 移除（数据已保留在 Parquet）"
+    enforcement: "archiver.py 归档前必须验证 Parquet 行数 = ClickHouse 行数，验证通过后才 DROP PARTITION；归档清单 append-only 记录"
     scope: all_business_tables
 
   - id: INV-RET-002
@@ -62,7 +63,7 @@ invariants:
 
   - id: INV-RET-003
     rule: "所有表 Hot 层无 TTL"
-    description: "ClickHouse 所有业务表不设 TTL 表达式，永久保留"
+    description: "ClickHouse 所有业务表不设 TTL 表达式，无自动删除。允许手动 DROP PARTITION 归档（INV-RET-002 手动触发前提，归档后数据保留在 E 盘 Parquet）"
     enforcement: "DDL 校验器检查 CREATE TABLE 语句不含 TTL 子句（已存在TTL的表必须删除）"
 
   - id: INV-RET-004
