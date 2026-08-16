@@ -8,9 +8,13 @@
 - 原 251 行 ``test_all`` 拆为 8 个 per-subsystem 测试（修 Eager Test / T1）
 - 原本地 ``check()`` helper + 末尾 raise 换为纯 ``assert`` 带消息（修 Assertion Roulette / T1——
   pytest 失败内省能直接定位到具体 check）
-- 原**直连共享 governance.db**（Mystery Guest / T1——依赖共享文件状态、并发测试互扰、
-  测试期间污染生产/dev DB）改为 session-scoped fixture 拷贝 DB 到 tmp_path 隔离副本
 - 子系统间无 FK 依赖，拆分后各测试自包含
+
+治本改写（2026-08-16，#ARCH-099）：
+- 原 session fixture 用 online backup 拷贝**生产 governance.db**（Mystery Guest / T1——
+  锁竞争：tick_subscriber/reconciler 活跃占用；schema 漂移：生产库缺列/约束演化），
+  改为**测试自建最小 schema fixture**（DDL 内嵌本文件），与生产库完全解耦。
+  最小 schema 仅含各测试实际触达的列，是本测试自身的契约声明。
 """
 
 import sqlite3
@@ -18,20 +22,6 @@ import sys
 from datetime import datetime
 
 import pytest
-
-from zephyr.shared.io.paths import REPO_ROOT  # 仓库根真源（SSoT：zephyr.shared.io.paths）
-
-# #ARCH-099：全模块 8 项 xfail——测试拷贝生产 governance.db 做隔离副本，但生产库被
-# 守护进程（tick_subscriber/guard）持锁（database is locked）且 schema 已漂移
-# （tx_idempotency 缺 idempotency_key 列），setup 阶段即 error。
-# 治本方向：测试自建最小 schema fixture（DDL 内嵌测试），与生产库解耦——建成后去本标记。
-pytestmark = pytest.mark.xfail(
-    strict=False,
-    reason="#ARCH-099：生产库耦合缺口——gov_conn fixture 依赖生产 governance.db 的实时锁状态与 schema，"
-    "治本=测试自建最小 schema fixture（DDL 内嵌），与生产库解耦",
-)
-
-GOV_DB_SOURCE = REPO_ROOT / "data" / "databases" / "governance.db"
 
 # 测试用固定 ID（各测试自包含，fixture 在每条测试前后清理这些行保证幂等）
 _TASK_ID = "TEST-001"
@@ -63,24 +53,201 @@ def _cleanup_test_rows(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
+# ---------------------------------------------------------------------------
+# #ARCH-099 治本：最小 schema DDL（内嵌，与生产库解耦）
+# 仅含各测试实际触达的表与列——本测试的契约声明，不复刻生产库全部约束。
+# ---------------------------------------------------------------------------
+_MINIMAL_SCHEMA_DDL = """
+CREATE TABLE tasks (
+    task_id     TEXT PRIMARY KEY,
+    title       TEXT NOT NULL,
+    description TEXT,
+    status      TEXT NOT NULL DEFAULT 'PENDING',
+    priority    TEXT NOT NULL DEFAULT 'P2',
+    created_at  TEXT NOT NULL,
+    updated_at  TEXT NOT NULL
+);
+CREATE TABLE task_events (
+    event_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_id    TEXT NOT NULL,
+    event_type TEXT NOT NULL,
+    payload    TEXT NOT NULL DEFAULT '{}',
+    timestamp  TEXT NOT NULL,
+    session_id TEXT
+);
+CREATE TABLE task_snapshots (
+    snapshot_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_id       TEXT NOT NULL,
+    snapshot_data TEXT NOT NULL,
+    created_at    TEXT NOT NULL
+);
+CREATE TABLE task_files (
+    task_id   TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    role      TEXT NOT NULL DEFAULT 'in_scope',
+    UNIQUE(task_id, file_path)
+);
+CREATE TABLE gates (
+    gate_run_id TEXT PRIMARY KEY,
+    gate_id     TEXT NOT NULL,
+    passed      INTEGER NOT NULL,
+    details     TEXT,
+    task_id     TEXT,
+    created_at  TEXT NOT NULL
+);
+CREATE TABLE audit_entries (
+    entry_id   INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp  TEXT NOT NULL,
+    actor      TEXT NOT NULL,
+    action     TEXT NOT NULL,
+    target     TEXT,
+    details    TEXT,
+    session_id TEXT
+);
+CREATE TABLE audit_summary (
+    date          TEXT PRIMARY KEY,
+    total_actions INTEGER NOT NULL,
+    by_actor      TEXT,
+    by_action     TEXT,
+    by_target     TEXT
+);
+CREATE TABLE integrity_records (
+    record_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+    check_type TEXT NOT NULL,
+    target     TEXT NOT NULL,
+    result     TEXT NOT NULL,
+    details    TEXT,
+    checked_at TEXT NOT NULL
+);
+CREATE TABLE drift_events (
+    event_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    drift_type     TEXT NOT NULL,
+    target         TEXT NOT NULL,
+    expected_value TEXT,
+    actual_value   TEXT,
+    severity       TEXT,
+    detected_at    TEXT NOT NULL
+);
+CREATE TABLE scan_results (
+    result_id  INTEGER PRIMARY KEY AUTOINCREMENT,
+    scan_type  TEXT NOT NULL,
+    target     TEXT NOT NULL,
+    result     TEXT NOT NULL,
+    details    TEXT,
+    scanned_at TEXT NOT NULL
+);
+CREATE TABLE gate_decisions (
+    decision_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    gate_id     TEXT NOT NULL,
+    decision    TEXT NOT NULL,
+    reason      TEXT,
+    decided_at  TEXT NOT NULL,
+    decided_by  TEXT
+);
+CREATE TABLE fle_metrics (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    timestamp     TEXT NOT NULL,
+    source_system TEXT NOT NULL,
+    metric_name   TEXT NOT NULL,
+    value         REAL NOT NULL,
+    collected_at  TEXT
+);
+CREATE TABLE fle_alerts (
+    alert_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    alert_type   TEXT NOT NULL,
+    severity     TEXT NOT NULL,
+    message      TEXT,
+    triggered_at TEXT NOT NULL
+);
+CREATE TABLE fle_dispatch_log (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    task_type     TEXT NOT NULL,
+    task_data     TEXT,
+    dispatched_at TEXT NOT NULL,
+    result        TEXT
+);
+CREATE TABLE judgment_records (
+    record_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    judgment_type TEXT NOT NULL,
+    context       TEXT,
+    decision      TEXT NOT NULL,
+    reasoning     TEXT,
+    recorded_at   TEXT NOT NULL
+);
+CREATE TABLE circuit_breaker_state (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    caller_module TEXT NOT NULL,
+    target_module TEXT NOT NULL,
+    state         TEXT NOT NULL,
+    failure_count INTEGER NOT NULL DEFAULT 0,
+    UNIQUE(caller_module, target_module)
+);
+CREATE TABLE slow_queries (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    query_text    TEXT NOT NULL,
+    duration_ms   REAL NOT NULL,
+    executed_at   TEXT NOT NULL,
+    database_name TEXT
+);
+CREATE TABLE tx_idempotency (
+    idempotency_key TEXT PRIMARY KEY,
+    operation       TEXT NOT NULL,
+    result          TEXT,
+    created_at      TEXT NOT NULL
+);
+CREATE TABLE usage_records (
+    record_id     INTEGER PRIMARY KEY AUTOINCREMENT,
+    resource_type TEXT NOT NULL,
+    resource_id   TEXT NOT NULL,
+    usage_amount  REAL NOT NULL,
+    unit          TEXT,
+    recorded_at   TEXT NOT NULL
+);
+CREATE TABLE fix_records (
+    record_id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    issue_type        TEXT NOT NULL,
+    issue_description TEXT,
+    fix_applied       TEXT,
+    fixed_at          TEXT NOT NULL,
+    fixed_by          TEXT,
+    status            TEXT
+);
+CREATE TABLE rule_enforcement_log (
+    log_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    rule_id     TEXT NOT NULL,
+    operation   TEXT NOT NULL,
+    target      TEXT,
+    result      TEXT NOT NULL,
+    details     TEXT,
+    enforced_at TEXT NOT NULL,
+    enforced_by TEXT
+);
+CREATE TABLE _schema_version (
+    version     INTEGER PRIMARY KEY,
+    applied_at  TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT ''
+);
+"""
+
+
 @pytest.fixture(scope="session")
 def gov_db_path(tmp_path_factory):
-    """Session-scoped：把 governance.db 拷贝到 tmp_path 隔离副本（schema + data）。
+    """Session-scoped：自建最小 schema 的隔离 governance.db（#ARCH-099 治本）。
 
-    用 sqlite3 online backup API（比 shutil.copy 安全——避免拷贝正在使用的 DB 文件
-    产生损坏副本）。各测试共享此副本，但每条测试通过 ``_cleanup_test_rows`` 清理
-    自己的固定 ID 行，互不干扰。
+    不再拷贝生产库——DDL 内嵌本文件，彻底消除锁竞争 + schema 漂移双耦合。
+    各测试共享此副本，每条测试通过 ``_cleanup_test_rows`` 清理固定 ID 行，互不干扰。
     """
-    if not GOV_DB_SOURCE.exists():
-        pytest.skip(f"governance.db 不存在：{GOV_DB_SOURCE}")
     dst = tmp_path_factory.mktemp("govdb") / "governance_test.db"
-    src_conn = sqlite3.connect(str(GOV_DB_SOURCE))
-    dst_conn = sqlite3.connect(str(dst))
+    conn = sqlite3.connect(str(dst))
     try:
-        src_conn.backup(dst_conn)
+        conn.executescript(_MINIMAL_SCHEMA_DDL)
+        conn.execute(
+            "INSERT INTO _schema_version (version, applied_at, description) VALUES (?, ?, ?)",
+            (1, datetime.now().isoformat(), "minimal test schema (#ARCH-099)"),
+        )
+        conn.commit()
     finally:
-        dst_conn.close()
-        src_conn.close()
+        conn.close()
     return dst
 
 

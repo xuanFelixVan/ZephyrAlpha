@@ -53,7 +53,7 @@ class TestDraftInput:
         inp = DraftInput(idea_text="build something")
         assert inp.author == "AI_AGENT"
         assert inp.suggested_module == ""
-        assert inp.suggested_layer == "l01-infrastructure"
+        assert inp.suggested_layer == "infrastructure_runtime_integration"
 
     def test_custom_values(self):
         inp = DraftInput(
@@ -106,7 +106,7 @@ class TestGenerateDraft:
         assistant = DraftAssistant(output_dir=tmp_path)
         inp = DraftInput(idea_text="Build a task-system for decomposing blueprints")
         draft = assistant.generate_draft(inp)
-        assert draft.module_id == "MOD-INF-039"
+        assert draft.module_id == "MOD-TASK_SYSTEM"
 
     def test_infer_module_rollback_keyword(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)
@@ -130,7 +130,7 @@ class TestGenerateDraft:
         assistant = DraftAssistant(output_dir=tmp_path)
         inp = DraftInput(idea_text="test", suggested_layer="")
         draft = assistant.generate_draft(inp)
-        assert draft.layer == "l01-infrastructure"
+        assert draft.layer == "infrastructure_runtime_integration"
 
     def test_suggested_layer_overrides(self, tmp_path):
         assistant = DraftAssistant(output_dir=tmp_path)

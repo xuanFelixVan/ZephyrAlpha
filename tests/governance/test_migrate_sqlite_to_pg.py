@@ -145,7 +145,7 @@ def _fake_execute_values_factory(fail_tables: set[str]):
         tbl = match.group(1)
         if tbl in fail_tables:
             raise RuntimeError(f"注入失败: {tbl}")
-        cur.conn.tables.setdefault(tbl, []).extend(data)
+        cur._conn.tables.setdefault(tbl, []).extend(data)
 
     return _fake_execute_values
 

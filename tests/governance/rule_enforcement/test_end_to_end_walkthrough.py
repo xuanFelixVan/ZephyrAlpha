@@ -179,7 +179,7 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_with_mixed_results(self):
         walker = EndToEndWalkthrough()
-        walker.results = [
+        walker._results = [  # Stage 4 私有化：直写 _results（results 已是只读方法）
             ScenarioResult("A", True),
             ScenarioResult("B", False, ["fail"]),
             ScenarioResult("C", True),
@@ -189,7 +189,7 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_all_failed(self):
         walker = EndToEndWalkthrough()
-        walker.results = [
+        walker._results = [  # Stage 4 私有化：直写 _results（results 已是只读方法）
             ScenarioResult("A", False, ["fail"]),
             ScenarioResult("B", False, ["err"]),
         ]
@@ -197,12 +197,16 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_single_pass(self):
         walker = EndToEndWalkthrough()
-        walker.results = [ScenarioResult("A", True)]
+        walker._results = [  # Stage 4 私有化：直写 _results（results 已是只读方法）
+            ScenarioResult("A", True),
+        ]
         assert walker.pass_rate() == 1.0
 
     def test_pass_rate_single_fail(self):
         walker = EndToEndWalkthrough()
-        walker.results = [ScenarioResult("A", False, ["fail"])]
+        walker._results = [  # Stage 4 私有化：直写 _results（results 已是只读方法）
+            ScenarioResult("A", False, ["fail"]),
+        ]
         assert walker.pass_rate() == 0.0
 
     def test_pass_rate_returns_float(self):
@@ -212,7 +216,7 @@ class TestEndToEndWalkthroughPassRate:
 
     def test_pass_rate_between_zero_and_one(self):
         walker = EndToEndWalkthrough()
-        walker.results = [
+        walker._results = [  # Stage 4 私有化：直写 _results（results 已是只读方法）
             ScenarioResult("A", True),
             ScenarioResult("B", False, ["fail"]),
         ]

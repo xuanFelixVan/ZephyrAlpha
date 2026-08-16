@@ -142,7 +142,7 @@ class TestSplitDescAndDepends:
 
 class TestMarkerToBlueprintLabel:
     def test_adr_marker(self):
-        assert _marker_to_blueprint_label("[ADR-1-1]") == "ADR"
+        assert _marker_to_blueprint_label("[ADR-1-1]") == "KB 决策记录"
 
     def test_td_marker(self):
         assert _marker_to_blueprint_label("TD-1") == "TD"
@@ -167,8 +167,8 @@ class TestMarkerToBlueprintLabel:
 
 
 class TestResolveTaskNamespace:
-    def test_adr(self):
-        assert _resolve_task_namespace("ADR") == TaskNamespace.KBG
+    def test_kbg_label(self):
+        assert _resolve_task_namespace("KB 决策记录") == TaskNamespace.KBG
 
     def test_cp(self):
         assert _resolve_task_namespace("CP") == TaskNamespace.CP
@@ -192,7 +192,7 @@ class TestResolveTaskNamespace:
         assert _resolve_task_namespace("NONEXISTENT") is None
 
     def test_case_insensitive(self):
-        assert _resolve_task_namespace("adr") == TaskNamespace.KBG
+        assert _resolve_task_namespace("cp") == TaskNamespace.CP
 
 
 class TestBlueprintDecomposerInit:
@@ -260,14 +260,14 @@ class TestDecomposeBlueprint:
         with tempfile.TemporaryDirectory() as tmpdir:
             content = (
                 "- [ADR-1-1] **Module A** — First module description here\n"
-                "depends_on: [ADR-2]\n"
+                "depends_on: [KBG-2]\n"
                 "- [ADR-1-2] **Module B** — Second module description here\n"
             )
             bp_path = _write_blueprint(content, tmpdir)
             decomposer = BlueprintDecomposer()
             result = decomposer.decompose_blueprint(bp_path, namespace="ADR")
             assert result.total_tasks == 2
-            assert "ADR-2" in result.tasks[0].depends_on
+            assert "KBG-2" in result.tasks[0].depends_on
 
     def test_with_docs_dir_writes_output(self):
         with tempfile.TemporaryDirectory() as tmpdir:

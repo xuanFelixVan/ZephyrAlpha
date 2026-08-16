@@ -35,7 +35,7 @@ def mapper(tmp_db: Path) -> FileTaskMapper:
 class TestClassifyFileToNamespace:
     def test_adr_pattern(self) -> None:
         ns = classify_file_to_namespace("docs/02_enterprise_architecture/architecture-rationale-log.md")
-        assert ns == TaskNamespace.ADR
+        assert ns == TaskNamespace.KBG
 
     def test_construction_plan_pattern(self) -> None:
         ns = classify_file_to_namespace("docs/04_construction_plans/construction-plan-L01-infrastructure.md")
@@ -67,7 +67,7 @@ class TestClassifyFileToNamespace:
 
     def test_windows_backslash(self) -> None:
         ns = classify_file_to_namespace("docs\\02_enterprise_architecture\\adr\\adr-0038-file-as-task-paradigm.md")
-        assert ns == TaskNamespace.ADR
+        assert ns == TaskNamespace.KBG
 
 
 class TestFileTaskMapperRegister:

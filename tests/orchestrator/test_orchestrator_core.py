@@ -40,22 +40,22 @@ def good_yaml(tmp_path: Path) -> Path:
             version: "1.0.0"
             triggers:
               onboarding:
-                handler: "zephyr.orchestrator.trigger_router.handle_onboarding_stub"
+                handler: "zephyr.orchestrator.execution.trigger_router.handle_onboarding_stub"
                 description: "test onboarding"
                 safety: "M"
                 enabled: true
               drift_detected:
-                handler: "zephyr.orchestrator.trigger_router.handle_drift_detected"
+                handler: "zephyr.orchestrator.execution.trigger_router.handle_drift_detected"
                 description: "test drift"
                 safety: "H"
                 enabled: true
               cleanup_due:
-                handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+                handler: "zephyr.orchestrator.execution.trigger_router.handle_cleanup_stub"
                 description: "test cleanup"
                 safety: "L"
                 enabled: true
               disabled_one:
-                handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+                handler: "zephyr.orchestrator.execution.trigger_router.handle_cleanup_stub"
                 description: "disabled trigger"
                 safety: "L"
                 enabled: false
@@ -208,7 +208,7 @@ class TestTriggerRouterRouting:
                 version: "1.0.0"
                 triggers:
                   cleanup_due:
-                    handler: "zephyr.orchestrator.trigger_router.handle_cleanup_stub"
+                    handler: "zephyr.orchestrator.execution.trigger_router.handle_cleanup_stub"
                     safety: "L"
                     enabled: true
                 """
