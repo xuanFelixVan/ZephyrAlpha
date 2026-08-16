@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.state_store
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.state_store_redis(lazy, 仅工厂方法内)
 # [CONSUMERS] zephyr.risk.implementations.default_risk_validator; zephyr.risk.stop_loss; zephyr.ex_core.fill_handler; zephyr.ex_core.position_tracker.tracker
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 写入原子(pid-tmp+os.replace); 读损坏必抛StateCorruptError(不静默兜底); UTF-8全程; DedupSet.add幂等
+# [INVARIANTS] 单抽象族高内聚=文件后端+共享错误/校验+工厂（#ARCH-118 分层裁量 301-500 带适用）; 写入原子(pid-tmp+os.replace / Redis SET·SADD 单命令原子); 读损坏必抛StateCorruptError(不静默兜底); UTF-8全程; DedupSet.add幂等; Redis 不可用 fail-fast 抛 StateStoreError(构造即 PING，不静默降级文件后端); Redis 键无 TTL(见过即永久)
 # [MODIFY-GUARD] tests/shared/test_state_store.py
 # [STABILITY] evolving
 # [SAFETY] M
@@ -43,8 +43,11 @@
 设计对标：
   - NautilusTrader crash-only：启动与崩溃恢复共用同一路径，状态外部化。
   - durable_execution.py（本仓）：原子写手法（tmp + os.replace）。
-  - 文件后端为本批默认（JSON/append-only 文件，测试无外部依赖）；
-    Redis 后端按同一接口可后补（53 号 §7 "已有 Redis 基础设施"），消费方零改动。
+  - 文件后端为默认（JSON/append-only 文件，测试无外部依赖）；
+    Redis 后端同接口可选增强（53 号 §7 "已有 Redis 基础设施"，2026-08-17 AI-REDIS-001 落地），
+    实现见 zephyr.shared.state_store_redis（#ARCH-118 拆分：双后端变更节奏不同+
+    消费方热域变更隔离）——消费方零改动，切换走配置注入
+    （make_state_store / make_dedup_set 工厂或构造参数直传）。
 
 SSoT: #ARCH-QUANT-002 (architecture_issue_registry.yaml) + 53 号 memo §7
 """
@@ -56,18 +59,29 @@ import logging
 import os
 import threading
 from pathlib import Path
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+
+if TYPE_CHECKING:  # 仅类型注解用；运行时 lazy import（防 state_store_redis 循环依赖）
+    import redis
+
+    from zephyr.shared.state_store_redis import RedisDedupSet, RedisStateStore
 
 __all__: Final = [
     "AppendOnlyDedupSet",
     "JsonStateStore",
     "StateCorruptError",
     "StateStoreError",
+    "make_dedup_set",
+    "make_state_store",
 ]
 
 _logger = logging.getLogger(__name__)
+
+#: Redis 键默认前缀（DB 号隔离由连接配置决定，前缀做库内命名空间隔离）
+DEFAULT_STATE_KEY_PREFIX: Final = "za:state"
+DEFAULT_DEDUP_KEY_PREFIX: Final = "za:dedup"
 
 
 class StateStoreError(ZephyrBaseError):
@@ -80,6 +94,20 @@ class StateCorruptError(StateStoreError):
     """状态记录存在但不可读/损坏——消费方必须按 fail-closed 处理。"""
 
     error_code = "ZA-SH-0050"
+
+
+def _validate_namespace(namespace: str) -> str:
+    """校验 namespace 合法性（双后端共用）：纯名字，禁止路径分隔符与 "." / ".."。
+
+    文件后端防路径穿越；Redis 后端保证键规约 `{prefix}:{namespace}` 干净。
+
+    Raises:
+        StateStoreError: namespace 非法。
+    """
+    safe_name = Path(namespace).name
+    if not safe_name or safe_name != namespace or namespace in (".", ".."):
+        raise StateStoreError(f"非法 namespace: {namespace!r}（禁止路径分隔符）")
+    return namespace
 
 
 class JsonStateStore:
@@ -110,10 +138,7 @@ class JsonStateStore:
 
     def _path_for(self, namespace: str) -> Path:
         """namespace → 状态文件路径（防路径穿越：仅取末段文件名）。"""
-        safe_name = Path(namespace).name
-        if not safe_name or safe_name != namespace or namespace in (".", ".."):
-            raise StateStoreError(f"非法 namespace: {namespace!r}（禁止路径分隔符）")
-        return self._root / f"{safe_name}.json"
+        return self._root / f"{_validate_namespace(namespace)}.json"
 
     def save(self, namespace: str, payload: dict) -> Path:
         """原子写入命名空间状态（pid-tmp + os.replace，RULE-ONE 模板）。
@@ -282,3 +307,79 @@ class AppendOnlyDedupSet:
     def __len__(self) -> int:
         with self._lock:
             return len(self._ids)
+
+
+def make_state_store(
+    backend: str = "json",
+    *,
+    root_dir: str | os.PathLike[str] | None = None,
+    redis_conn: redis.Redis | None = None,
+    key_prefix: str = DEFAULT_STATE_KEY_PREFIX,
+) -> JsonStateStore | RedisStateStore:
+    """状态存取工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。
+
+    Args:
+        backend: "json"（默认，文件后端）或 "redis"。
+        root_dir: 文件后端根目录（backend="json" 必填）。
+        redis_conn: Redis 连接（backend="redis" 必填——由接线层经
+            zephyr.infrastructure.redis_config.load_redis_config() 建连注入，
+            config/.env.redis 单真源，本层不出现连接参数）。
+        key_prefix: Redis 键前缀。
+
+    Raises:
+        StateStoreError: backend 未知或必填参数缺失。
+    """
+    if backend == "json":
+        if root_dir is None:
+            raise StateStoreError("backend='json' 必须提供 root_dir")
+        return JsonStateStore(root_dir)
+    if backend == "redis":
+        if redis_conn is None:
+            raise StateStoreError(
+                "backend='redis' 必须注入 redis_conn"
+                "（由接线层经 zephyr.infrastructure.redis_config.load_redis_config 建连）"
+            )
+        from zephyr.shared.state_store_redis import RedisStateStore
+
+        return RedisStateStore(redis_conn, key_prefix=key_prefix)
+    raise StateStoreError(f"未知 state_store 后端: {backend!r}（合法值: 'json'/'redis'）")
+
+
+def make_dedup_set(
+    backend: str = "json",
+    *,
+    path: str | os.PathLike[str] | None = None,
+    redis_conn: redis.Redis | None = None,
+    set_name: str | None = None,
+    key_prefix: str = DEFAULT_DEDUP_KEY_PREFIX,
+) -> AppendOnlyDedupSet | RedisDedupSet:
+    """去重集工厂——消费方切换后端的唯一决策点（配置注入，默认文件后端）。
+
+    Args:
+        backend: "json"（默认，append-only 文件）或 "redis"。
+        path: 文件后端落盘路径（backend="json" 必填）。
+        redis_conn: Redis 连接（backend="redis" 必填——由接线层经
+            zephyr.infrastructure.redis_config.load_redis_config() 建连注入，
+            config/.env.redis 单真源，本层不出现连接参数）。
+        set_name: Redis 去重集名（backend="redis" 必填，如 "processed_fill_ids"）。
+        key_prefix: Redis 键前缀。
+
+    Raises:
+        StateStoreError: backend 未知或必填参数缺失。
+    """
+    if backend == "json":
+        if path is None:
+            raise StateStoreError("backend='json' 必须提供 path")
+        return AppendOnlyDedupSet(path)
+    if backend == "redis":
+        if not set_name:
+            raise StateStoreError("backend='redis' 必须提供 set_name")
+        if redis_conn is None:
+            raise StateStoreError(
+                "backend='redis' 必须注入 redis_conn"
+                "（由接线层经 zephyr.infrastructure.redis_config.load_redis_config 建连）"
+            )
+        from zephyr.shared.state_store_redis import RedisDedupSet
+
+        return RedisDedupSet(redis_conn, set_name=set_name, key_prefix=key_prefix)
+    raise StateStoreError(f"未知 dedup_set 后端: {backend!r}（合法值: 'json'/'redis'）")

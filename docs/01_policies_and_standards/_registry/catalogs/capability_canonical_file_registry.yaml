@@ -9292,6 +9292,15 @@ creation_tokens:
     token: "auto-dgr001-dispatch-20260817"
     created_by: "coord-0816-gov4"
     capability: "construction_dispatch"
+  # --- state_store Redis 后端拆分新文件（2026-08-17 AI-REDIS-001 续作，#ARCH-118）---
+  - file: "src/zephyr/shared/state_store_redis.py"
+    token: "redis001-split-state-store-redis-20260817"
+    created_by: "AI-REDIS-001"
+    capability: "crash_only_state_store"
+  - file: "tests/shared/test_state_store_redis.py"
+    token: "redis001-split-test-state-store-redis-20260817"
+    created_by: "AI-REDIS-001"
+    capability: "crash_only_state_store"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"

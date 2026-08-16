@@ -1,14 +1,15 @@
 # [BLUEPRINT] MOD-INF-016 | (auto-injected by S4 reconciler) | §
 # [TTL] permanent
-"""JsonStateStore / AppendOnlyDedupSet 单元测试（#ARCH-QUANT-002 状态外部化原语）。
+"""JsonStateStore / AppendOnlyDedupSet 单元测试（#ARCH-QUANT-002 状态外部化原语 · 文件后端）。
 
 覆盖：JSON 快照三分语义（无记录/正常/损坏）、原子写、append-only 去重集
-重启存活、crash 残行容忍、非法输入拦截。
+重启存活、crash 残行容忍、非法输入拦截、工厂文件后端默认与拦截。
+
+Redis 后端测试（接口契约双后端参数化同跑/fail-fast/无 TTL/键规约）见
+tests/shared/test_state_store_redis.py（#ARCH-118 对称拆分）。
 """
 
 from __future__ import annotations
-
-import json
 
 import pytest
 
@@ -17,6 +18,8 @@ from zephyr.shared.state_store import (
     JsonStateStore,
     StateCorruptError,
     StateStoreError,
+    make_dedup_set,
+    make_state_store,
 )
 
 
@@ -134,3 +137,31 @@ class TestAppendOnlyDedupSet:
         dedup.add("成交-600000")
         dedup2 = AppendOnlyDedupSet(path)
         assert "成交-600000" in dedup2
+
+
+class TestFactories:
+    """消费方切换机制（验收③）：工厂选择后端，默认文件后端。"""
+
+    def test_make_state_store_default_json(self, tmp_path):
+        store = make_state_store(root_dir=tmp_path)
+        assert isinstance(store, JsonStateStore)
+
+    def test_make_state_store_json(self, tmp_path):
+        store = make_state_store("json", root_dir=tmp_path)
+        assert isinstance(store, JsonStateStore)
+
+    def test_make_dedup_set_default_json(self, tmp_path):
+        dedup = make_dedup_set(path=tmp_path / "ids.txt")
+        assert isinstance(dedup, AppendOnlyDedupSet)
+
+    def test_unknown_backend_rejected(self):
+        with pytest.raises(StateStoreError):
+            make_state_store("etcd", root_dir="/tmp/x")
+        with pytest.raises(StateStoreError):
+            make_dedup_set("etcd", path="/tmp/x")
+
+    def test_missing_required_args_rejected(self):
+        with pytest.raises(StateStoreError):
+            make_state_store("json")  # 缺 root_dir
+        with pytest.raises(StateStoreError):
+            make_dedup_set("json")  # 缺 path
