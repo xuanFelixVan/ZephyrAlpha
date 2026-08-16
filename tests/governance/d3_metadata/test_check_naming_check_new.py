@@ -45,13 +45,15 @@ def test_check_new_cli_exists():
 def test_check_new_blocks_duplicate_in_scope():
     """staged 新文件（docs/ 前缀）与已跟踪文件重名 → --check-new exit 非零 + N-16 输出。
 
-    用 docs/battle_map_merge_mapping.md 作为虚构新文件（basename 与已跟踪的
-    docs/_working/battle_map_merge_task/battle_map_merge_mapping.md 相同）。
-    增量模式用 git ls-files 基线，应检出跨目录同名冲突（草稿区文件作基线仍参与检测）。
+    用 docs/trae_028_doc_structure_naming.yaml 作为虚构新文件（basename 与已跟踪的
+    docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml 相同）。
+    增量模式用 git ls-files 基线，应检出跨目录同名冲突。
+    （2026-08-16 换夹具：原夹具 docs/battle_map_merge_mapping.md 的基线文件已删除，
+    且 _working 草稿区已入 N-16 skip_dirs 豁免——双重前提失效。）
     """
-    r = _run(["--check-new", "docs/battle_map_merge_mapping.md"])
+    r = _run(["--check-new", "docs/trae_028_doc_structure_naming.yaml"])
     assert r.returncode != 0, (
-        f"--check-new 应拦截新增重名 docs/battle_map_merge_mapping.md，实际 exit 0。stdout={r.stdout} stderr={r.stderr}"
+        f"--check-new 应拦截新增重名 docs/trae_028_doc_structure_naming.yaml，实际 exit 0。stdout={r.stdout} stderr={r.stderr}"
     )
     assert "N-16" in (r.stdout + r.stderr), f"输出应含 N-16 标记。stdout={r.stdout}"
 

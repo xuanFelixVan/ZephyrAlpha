@@ -209,6 +209,7 @@ class TestFunctionCallableSmoke:
         验证：①函数可调用 ②get_dataflowgraph_pg_connection 调用正常 ③无 NameError。
         """
         mock_conn = _make_mock_conn(fetchone_result=None)
+        monkeypatch.setattr(adf, "init_dataflow_db", lambda *a, **kw: None)  # cmd_* 首行 init 会自建真实连接，一并 mock
         monkeypatch.setattr(adf, "get_dataflowgraph_pg_connection", lambda **kw: mock_conn)
         monkeypatch.setattr(adf, "acquire_dataflow_write_lock", lambda conn: None)
         monkeypatch.setattr(adf, "release_dataflow_write_lock", lambda conn: None)
@@ -239,6 +240,7 @@ class TestFunctionCallableSmoke:
     def test_cmd_list_datasets_callable_with_mock_db(self, adf, monkeypatch):
         """cmd_list_datasets 能被调用（mock DB，检测 NameError）。"""
         mock_conn = _make_mock_conn(fetchall_result=[])
+        monkeypatch.setattr(adf, "init_dataflow_db", lambda *a, **kw: None)  # cmd_* 首行 init 会自建真实连接，一并 mock
         monkeypatch.setattr(adf, "get_dataflowgraph_pg_connection", lambda **kw: mock_conn)
 
         args = argparse.Namespace(list_datasets=True)

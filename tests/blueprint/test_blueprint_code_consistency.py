@@ -112,21 +112,21 @@ class TestVerifyModuleExists:
 
     def test_nonexistent_module_falls_back_to_file_check(self):
         with patch(
-            "zephyr.governance.architecture_governance.blueprint_code_consistency.file_exists",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency._file_exists",
             return_value=False,
         ):
             assert _verify_module_exists("totally.fake.module.xyz") is False
 
     def test_import_error_triggers_file_check(self):
         with patch(
-            "zephyr.governance.architecture_governance.blueprint_code_consistency.file_exists",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency._file_exists",
             return_value=True,
         ):
             assert _verify_module_exists("fake.module.that.cannot.import") is True
 
     def test_import_error_file_check_also_false(self):
         with patch(
-            "zephyr.governance.architecture_governance.blueprint_code_consistency.file_exists",
+            "zephyr.governance.architecture_governance.blueprint_code_consistency._file_exists",
             return_value=False,
         ):
             assert _verify_module_exists("fake.module.no.file") is False

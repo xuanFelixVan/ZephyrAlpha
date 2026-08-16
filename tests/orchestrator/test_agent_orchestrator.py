@@ -282,6 +282,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_ok_invoker(calls),
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D2", directive_chain="325+344")
         assert res.success is True
@@ -308,6 +309,7 @@ class TestAgentOrchestrator:
             self.router,
             tool_invoker=_failing_invoker,
             directive_mapping=self.mapping,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D0", directive_chain="325")
         assert res.success is False
@@ -349,6 +351,7 @@ class TestAgentOrchestrator:
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
             hallucination_caller=cove,
+            enable_lsg=False,
         )
         res = orch.orchestrate(domain="D6", directive_chain="325", claim="Normal claim")
         assert res.hallucination is not None
@@ -399,6 +402,7 @@ class TestAgentOrchestrator:
             tool_invoker=_ok_invoker([]),
             directive_mapping=self.mapping,
             sanitize_llm_context=False,
+            enable_lsg=False,
         )
         assert orch.input_sanitizer is None
         res = orch.orchestrate(

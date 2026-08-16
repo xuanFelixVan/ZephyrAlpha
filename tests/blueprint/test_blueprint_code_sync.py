@@ -117,17 +117,17 @@ class TestVerifySync:
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         mock_entries = [
             SyncEntry(
-                blueprint_path="docs/03_modules/blueprint_registry.yaml",
-                code_path="src/zephyr/core/blueprint_code_sync.py",
+                blueprint_path="docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md",
+                code_path="src/zephyr/infrastructure/blueprint_code_sync.py",
                 status="PENDING",
             ),
             SyncEntry(
                 blueprint_path="docs/nonexistent_blueprint.md",
-                code_path="src/zephyr/core/blueprint_code_sync.py",
+                code_path="src/zephyr/infrastructure/blueprint_code_sync.py",
                 status="PENDING",
             ),
             SyncEntry(
-                blueprint_path="docs/03_modules/blueprint_registry.yaml",
+                blueprint_path="docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md",
                 code_path="src/zephyr/core/nonexistent_code.py",
                 status="PENDING",
             ),
@@ -143,8 +143,8 @@ class TestVerifySync:
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         mock_entries = [
             SyncEntry(
-                blueprint_path="docs/03_modules/blueprint_registry.yaml",
-                code_path="src/zephyr/core/blueprint_code_sync.py",
+                blueprint_path="docs/03_modules/_cross_layer/shared_core/governance_core_blueprint.md",
+                code_path="src/zephyr/infrastructure/blueprint_code_sync.py",
                 status="PENDING",
             ),
         ]
@@ -158,7 +158,7 @@ class TestValidateTaskCard:
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         task_card = {
             "downstream_outputs": [
-                {"path": "src/zephyr/core/blueprint_code_sync.py"},
+                {"path": "src/zephyr/infrastructure/blueprint_code_sync.py"},
             ],
         }
         result, msg = sync.validate_task_card(task_card)
@@ -208,7 +208,7 @@ class TestValidateTaskCard:
         sync = BlueprintCodeSync(project_root=PROJECT_ROOT)
         task_card = {
             "downstream_outputs": [
-                {"path": "src/zephyr/core/blueprint_code_sync.py"},
+                {"path": "src/zephyr/infrastructure/blueprint_code_sync.py"},
                 {"path": "src/zephyr/core/phantom_module.py"},
             ],
         }

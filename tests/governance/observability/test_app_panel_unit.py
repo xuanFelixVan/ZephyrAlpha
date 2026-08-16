@@ -66,11 +66,11 @@ class TestDashboardPanelApp:
         assert isinstance(data.gate_status, BacktestGateStatus)
 
     def test_build_tabs_returns_tabs(self) -> None:
-        """build_tabs 返回 pn.Tabs，含 10 个 Tab。"""
+        """build_tabs 返回 pn.Tabs，含 11 个 Tab。"""
         app = DashboardPanelApp()
         tabs = app.build_tabs()
         # pn.Tabs 对象可通过 len() 获取 Tab 数量
-        assert len(tabs) == 10
+        assert len(tabs) == 11
 
 
 class TestCreateDashboard:

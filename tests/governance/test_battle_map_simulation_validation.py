@@ -9,20 +9,21 @@
 # [ERROR_CONTRACT] DB不可达->skip_test; 拓扑断裂->AssertionError; 指标缺失->AssertionError
 # [TESTS] tests/governance/test_battle_map_simulation_validation.py
 # [TTL] permanent
-"""test_battle_map_simulation_validation.py — 仿真验证阶段 7 环节逻辑全覆盖验证
+"""test_battle_map_simulation_validation.py — 仿真验证阶段 8 环节逻辑全覆盖验证
 
-验证 battle_map_04_simulation_validation.md 真源中仿真验证阶段 7 环节的数据完整性、
+验证 battle_map_04_simulation_validation.md 真源中仿真验证阶段 8 环节的数据完整性、
 拓扑结构、6 件套指标、YAML 叙事及 BM-SIM-07 风控仿真器闭环流程。
 
-环节结构（7 环节）：
+环节结构（8 环节）：
 
-  BM-SIM-01 市场仿真器           (candidate, CAND-HARVEST-0143)
+  BM-SIM-01 市场仿真器           (缺失态无锚点——SSoT 明文，待施工)
   BM-SIM-02 策略仿真器           (production, MOD-SIM-002)
   BM-SIM-03 场景生成与蒙特卡洛   (production, MOD-SIM-005)
-  BM-SIM-07 风控仿真器           (production, MOD-SIM-003)  ← 新增环节
+  BM-SIM-07 风控仿真器           (production, MOD-SIM-003)
   BM-SIM-04 压力测试引擎         (production, MOD-RK-12)
   BM-SIM-05 依赖图数字孪生       (candidate, CAND-HARVEST-0795)
   BM-SIM-06 仿真结果分析         (production, MOD-SIM-012)
+  BM-SIM-08 Paper Matching 涨跌停排队引擎 (design，缺失态无锚点——SSoT 明文，待施工)
 
 流转边（9 条）：
   BM-SIM-01 -.-> BM-SIM-02 --> BM-SIM-03 --> BM-SIM-04 -.-> BM-SIM-05 -.-> BM-SIM-06
@@ -75,7 +76,12 @@ EXPECTED_STEPS = {
     "BM-SIM-04": {"name": "压力测试引擎", "maturity": "production"},
     "BM-SIM-05": {"name": "依赖图数字孪生", "maturity": "production"},
     "BM-SIM-06": {"name": "仿真结果分析", "maturity": "production"},
+    "BM-SIM-08": {"name": "Paper Matching 涨跌停排队引擎", "maturity": "design"},
 }
+
+# 缺失态环节（battle_map_04 SSoT 明文「⚠无锚点」：BM-SIM-01 市场仿真器缺失态待施工，
+# BM-SIM-08 涨跌停排队引擎设计态待施工）——孤儿锚点检查豁免集，新增孤儿会触发断言
+EXPECTED_ANCHORLESS_STEPS = {"BM-SIM-01", "BM-SIM-08"}
 
 # BM-SIM-07 期望的流转边
 EXPECTED_SIM07_EDGES = [
@@ -137,27 +143,36 @@ def translation_registry():
 
 @pytest.mark.e2e
 class TestSimulationValidationTopology:
-    """仿真验证阶段 7 环节拓扑验证。"""
+    """仿真验证阶段 8 环节拓扑验证。"""
 
-    def test_all_7_steps_exist(self, bm_reader):
-        """7 环节全部存在且 flow_stage=simulation_validation。"""
+    def test_all_8_steps_exist(self, bm_reader):
+        """8 环节全部存在且 flow_stage=simulation_validation。"""
         steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
         step_ids = {s["step_id"] for s in steps}
         for expected_id in EXPECTED_STEPS:
             assert expected_id in step_ids, f"环节 {expected_id} 不在 simulation_validation 阶段"
 
-    def test_step_count_is_7(self, bm_reader):
-        """环节总数 = 7（含 BM-SIM-07）。"""
+    def test_step_count_is_8(self, bm_reader):
+        """环节总数 = 8（含 BM-SIM-07 + BM-SIM-08）。"""
         steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
-        assert len(steps) == 7, f"期望 7 环节，实际 {len(steps)} 环节: {[s['step_id'] for s in steps]}"
+        assert len(steps) == 8, f"期望 8 环节，实际 {len(steps)} 环节: {[s['step_id'] for s in steps]}"
 
     def test_no_orphan_steps(self, bm_reader):
-        """无孤儿环节（BM-INV-001）—— 每个环节至少有 1 个锚点。"""
+        """无孤儿环节（BM-INV-001）——除 SSoT 明文缺失态环节（BM-SIM-01/BM-SIM-08）外，
+        每个环节至少有 1 个锚点；且缺失态集合不得扩大。"""
         steps = bm_reader.get_steps_by_flow_stage("simulation_validation")
+        anchorless = set()
         for s in steps:
             sid = s["step_id"]
             anchors = bm_reader.get_anchors_by_step(sid)
-            assert anchors and len(anchors) > 0, f"环节 {sid} 无锚点（孤儿环节 BM-INV-001 违例）"
+            if not anchors:
+                anchorless.add(sid)
+        unexpected = anchorless - EXPECTED_ANCHORLESS_STEPS
+        assert not unexpected, f"环节 {sorted(unexpected)} 无锚点（孤儿环节 BM-INV-001 违例）"
+        missing_expected = EXPECTED_ANCHORLESS_STEPS - anchorless
+        assert not missing_expected, (
+            f"缺失态环节 {sorted(missing_expected)} 已有锚点——请同步更新 EXPECTED_ANCHORLESS_STEPS"
+        )
 
     def test_edge_count(self, bm_reader):
         """流转边总数 >= 9（含 BM-SIM-07 的 2 条边）。"""

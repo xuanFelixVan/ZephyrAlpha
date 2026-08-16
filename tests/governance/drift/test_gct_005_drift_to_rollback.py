@@ -23,7 +23,7 @@ class TestGCT005DriftToRollback:
         assert e.drift_id == "D001"
 
     def test_drift_fix_handler_accepts_event(self):
-        from zephyr.governance.drift_fix import DriftFixHandler
+        from zephyr.infrastructure.rollback.drift_fix import DriftFixHandler
         from zephyr.gov_drift.events import ManagedDriftEvent
 
         e = ManagedDriftEvent(drift_id="D001", target="test_config")

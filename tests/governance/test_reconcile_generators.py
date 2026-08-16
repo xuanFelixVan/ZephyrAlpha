@@ -240,6 +240,11 @@ class TestReconcileInProcess:
         assert result["total"] >= 1, (
             f"reconcile('battle_map_db') 应匹配至少 1 个生成器，实际 {result['total']}"
         )
+        # 生成器内吞 PG 连接错误返回 failed（非异常路径）——docstring 声明的
+        # "PostgreSQL 不可达时 skip" 契约同样覆盖此路径
+        for r in result["regenerated"]:
+            if r["status"] != "ok" and "connection" in str(r.get("error", "")).lower():
+                pytest.skip(f"PostgreSQL 不可达（生成器返回 failed）: {r.get('error', '')}")
         # battle_map 走 in-process 路径（entry_function=regenerate）
         for r in result["regenerated"]:
             assert r["generator"] == "battle_map"
