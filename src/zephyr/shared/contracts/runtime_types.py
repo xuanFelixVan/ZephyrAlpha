@@ -85,21 +85,5 @@ class RuntimeConfig(BaseModel):
         description="人类检测方式: heartbeat | manual_switch | time_window",
     )
 
-    def ensure_dirs(self) -> None:
-        """创建配置引用的全部目录（迁移自旧 src/zephyr/runtime/runtime_config.py）。
-
-        circadian_state_path 已于 2026-06-26 裁定移除，不在创建清单内。
-        """
-        for d in [
-            self.audit_log_dir,
-            self.capability_card_dir,
-            self.work_dag_dir,
-            self.dream_archive_dir,
-            self.feedback_proposal_dir,
-            self.health_snapshot_dir,
-            self.night_shift_storage_path.parent,
-        ]:
-            d.mkdir(parents=True, exist_ok=True)
-
 
 __all__ = ["DATA_DIR", "RuntimeConfig"]

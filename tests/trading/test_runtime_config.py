@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from zephyr.trading.runtime_config import DATA_DIR, RuntimeConfig
+from zephyr.trading.runtime_config import DATA_DIR, RuntimeConfig, ensure_runtime_dirs
 
 
 class TestRuntimeConfigDefaults:
@@ -85,6 +85,8 @@ class TestRuntimeConfigCustom:
 
 class TestRuntimeConfigEnsureDirs:
     def test_ensure_dirs_creates_directories(self, tmp_path: Path):
+        # 迁移后契约=模块级 ensure_runtime_dirs(config)（auto_runtime_core/lifecycle_manager 在消费），
+        # RuntimeConfig 保持纯数据模型，不挂方法。
         cfg = RuntimeConfig(
             audit_log_dir=tmp_path / "audit",
             capability_card_dir=tmp_path / "cards",
@@ -94,7 +96,7 @@ class TestRuntimeConfigEnsureDirs:
             health_snapshot_dir=tmp_path / "health",
             night_shift_storage_path=tmp_path / "nsq" / "queue.jsonl",
         )
-        cfg.ensure_dirs()
+        ensure_runtime_dirs(cfg)
         assert cfg.audit_log_dir.exists()
         assert cfg.capability_card_dir.exists()
         assert cfg.work_dag_dir.exists()
