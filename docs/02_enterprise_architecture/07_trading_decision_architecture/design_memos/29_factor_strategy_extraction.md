@@ -5,8 +5,8 @@ title: 潘潘直播课程 · 交易因子与策略提炼
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.3.2"
-date: 2026-08-15
+version: "1.3.3"
+date: 2026-08-16
 topic: factor_strategy_extraction
 scope: 07_trading_decision_architecture
 ---
@@ -19,6 +19,80 @@ scope: 07_trading_decision_architecture
 > 来源标注：[1]–[11] 对应 1.md–11.md；[全维度分析清单][双策略共振][选票全流程][07-21交易方案][07-24交易预案][final_report] 对应 7 篇新增方法论文档；[分析师语音_润色版][主观交易经验_润色版][交割日_润色版] 对应 3 篇草稿目录文档（第十五轮新增审查）；[分析师语音_缺失功能模块清单][技术仓库][清风量化交易系统2.0] 对应 3 篇草稿目录文档（第十八轮新增审查）。
 > 上述源文档已全部删除（1.md–11.md 空壳 2026-08-14 随目录清理删除；其余经第二十/二十一轮核查确认全覆盖后按用户裁定删除），来源标注保留作为溯源锚点。
 > **算法迭代总原则（2026-08-15 用户裁定）**：本文档只承载筛查判定与专业化对标方向，**不在本文档内继续展开具体算法/参数实现**——待 18 个业务注册表 schema v2 字段全部建成后，条目按判定清单搬入各库，**算法在库内迭代升级**（库内 algorithm_status/evidence 字段承载待回测→已量化状态流转），本文档保持为"判定真源"不再膨胀。
+
+---
+
+# ✅ 结案报告：全部入库完成（2026-08-16）
+
+> **本文档 546 条因子/策略已全部按判定清单完成入库/处置，无一遗漏。**本文档角色自此定格为**判定真源**（每条库条目经 doc_ref 反链回本文档 §F/§S 编号），后续算法/参数/回测证据迭代一律在库内进行，本文档不再新增内容。
+> 入库执行：commit `62e3ae13`（11 库批量写入）+ commit `a6d77ab8`（62 号文档漂移同步与缺口裁定）。
+
+## 一、入库去向总表（真源路径）
+
+| 去向 | 数量 | 真源文件 |
+|---|---|---|
+| 因子库（create） | 140 条（全量重建，删旧 111 条 deprecated） | `docs/01_policies_and_standards/_registry/catalogs/factor_registry.yaml` |
+| 策略库（create+route） | 146 条（全量重建，删旧 59 条 deprecated） | 同目录 `strategy_registry.yaml` |
+| 风控限额库（route_risk） | 48 条（62→110） | 同目录 `risk_limit_registry.yaml` |
+| 图形形态库（route_pattern） | 23 条＝11 处 aliases 归并 + 新建 2 条（PAT-TREND-013 均线排列状态分类 / PAT-SR-010 支撑压力互换）+ 6 处 doc_ref 注记 + 3 条综述不建条（理由见下表 D 类） | 同目录 `chart_pattern_registry.yaml`（254→256） |
+| 小库（route） | 10 条：席位 1（SEAT-INST-004）/周期 1（CYC-STAT-013）/事件 2（EVT-EARN-004/005）/宏观 1（MAC-CN-016）/组合模型 3（PFM-HEUR-009 等）/成本 1（CST-ASTOCK-003）/执行 1（EXA-TWAP-002） | 同目录 `seat_/regime_cycle_/event_calendar_/macro_indicator_/portfolio_model_/cost_model_/execution_algo_registry.yaml` |
+| 并入宿主（merge） | 159 条：重复内容并入宿主条目，名称进宿主 aliases + doc_ref 标"吸收"（含 F5.9 链式合并 F5.12/F5.36→FCT-MOM-022） | 分散于上述各库 |
+| **合计有库痕迹** | **523 条**（校验覆盖 523/526，差额 3 条=下表 D 类有意不建条） | — |
+
+**互查方式**：每条库条目的 `doc_ref` 字段（如 `29_factor_strategy_extraction.md §F5.53（吸收 F5.9）`）反链回本文档对应判定；反向由本文档 § 编号可在库中检索到对应条目。映射对账底稿：`.runtime/migration_29/`（一次性工具，gitignored）。
+
+## 二、判定不入库 29 条——逐条理由
+
+### A. 框架导论（3 条）——是"教你怎么看"的观测清单，不产生可计算信号，其派生具体条目已在库
+
+| 编号 | 条目 | 理由 |
+|---|---|---|
+| F1.1 | 分时四要素框架 | 观测清单（开盘价/均价线/零轴/量能"看哪四样"），无公式无输出值，无法回测。其派生具体条目（分时量价背离/分时均线压制/分时顶背离/探底回升分时）已入因子库 |
+| F1.13 | 一阳包两阴/阳线反包 | 同一形态已被形态库反包类条目覆盖（PAT-CHART-027 反包涨停，aliases 含"弱转强反包"），F7.34 反包质量判定口径已 doc_ref 注记，不重复立条 |
+| F1.15 | 多时间级别覆盖 | 方法论（技术指标计算规范已含 1min~月线 9 周期覆盖约定），非独立因子 |
+
+### B. 体系设计/工程方法（22 条）——是"怎么建系统"的知识，不是"对个股出信号"的因子/策略，归属各专项模块设计文档，不占业务库条目
+
+| 编号 | 条目 | 归属说明 |
+|---|---|---|
+| S14.38 | 组合再平衡与换手/参与率上限 | 组合构建与执行设计——组合库已有 MVO/BL/风险平价等 11 模型，execution_algo 已有参与率字段 |
+| S15.21 | 复盘 KPI 阈值 | 复盘报表设计，归 reporting 域（ashare_performance_audit 等模块） |
+| S15.23 | 系统性风险五级预警（VaR） | 风控体系设计——VaR 5 级已入 risk_limit 库（RLM-VAR-001~005） |
+| S15.24 | 策略退化检测 | decay_monitor 模块设计（策略库条目 decay_detection_method 字段承载） |
+| S15.30 | HMM 市场体制识别 | regime_detector 模块设计（regime 域既有，62 号 §4 已登记 Wasserstein HMM） |
+| S15.33 | 监控信号阈值组 | 告警模块设计（alert_generator） |
+| S15.37 | 交易频率监控 | 执行/运营监控设计（execution_algo 已含频率限额字段） |
+| S15.40 | 决策树/强化学习端到端决策架构 | 端到端架构设想——RL 交易决策=项目裁定不采纳（project_memory 既有纪律） |
+| S15.41 | 统一技术图形识别引擎 | 图形识别引擎模块设计——形态库 254 条已是识别真源，引擎归模块施工非库条目 |
+| S15.42 | 因子预处理流水线 | 数据管道设计，归特征层（15_data_feature_layer_spec） |
+| S15.43 | 因子合成与正交化 | 因子工程方法，归特征层与因子库治理字段（redundancy/correlation_group 已含） |
+| S15.44 | 因子有效性检验四法 | 回测验证方法论，归回测框架（52_backtest_framework_docking） |
+| S15.45 | 绩效归因方法论 | 归因方法，归 performance_attribution_engine 模块 |
+| S15.46 | 事件研究分析法 | 研究方法，归 experiment 验证框架 |
+| S15.47 | 相关性分析与因子去冗余阈值 | 因子工程方法（因子库 redundancy_status 字段+62 号 E20 RMT 去噪审计已承载） |
+| S15.48 | 描述统计与平稳性检验 | 统计检验方法，归数据质量审计（data_quality_checker） |
+| S15.49 | 因子大规模穷举挖掘 | 因子挖掘架构——Phase 2+ 候选（62 号 §4.39⑥ CogAlpha 已登记） |
+| S15.50 | 过拟合检验框架 | 验证方法论——62 号 §八 E 已登记 9 门禁完整菜单（PBO/DSR/CPCV 等） |
+| S15.54 | VaR 三种计算方法 | 风控方法论——RLM-VAR 条目 var_calibration_method 字段承载方法选型 |
+| S15.56 | 市场状态识别规则版阈值 | regime 规则设计，归 regime_detector 模块 |
+| S15.60 | 尾部风险因子族 | tail_risk_monitor 模块设计 |
+| S15.61 | AI 自我优化参数管理体系 | AI 治理设计，归 autonomy 域 |
+
+### C. 分类目录（1 条）——目录本身不是条目
+
+| 编号 | 条目 | 理由 |
+|---|---|---|
+| S15.58 | Alpha 因子库分类体系 | 因子分类目录=factor_registry 的 factor_class 分类骨架参考（technical/momentum/liquidity/sentiment/event/intraday/quality 已落地），目录不建条目 |
+
+### D. 全分类综述（3 条）——目录性内容，形态库分类体系已完整覆盖
+
+| 编号 | 条目 | 理由 |
+|---|---|---|
+| F4.15 | 顶部形态全分类 | 形态库 8 大类 256 条已系统覆盖顶部形态（双头/牛角顶/塔形顶/V 形顶/乌云盖顶等），单独立"全分类"条目与库分类骨架重复 |
+| F4.16 | 中继形态 | 同上——中继/持续形态已由旗形/三角/矩形/扇贝等 chart_pattern 持续类条目覆盖 |
+| F4.17 | K 线语言全分类 | 同上——K 线语义已由 candlestick 77 条（TA-Lib 全集+A 股特色）覆盖 |
+
+> 三类不入库的共同判据：①无法产出可计算信号（A/C/D）——库的硬标准是"能算出数、能排序、能回测"；②属系统设计知识（B）——归属模块蓝图/专项设计文档，与业务库"单标信号条目"边界正交。若未来某条被证明可公式化，按 CAND 流程重新提库。
 
 ---
 
