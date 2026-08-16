@@ -6,7 +6,7 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-16T12:12:32Z'
+  generated_at: '2026-08-16T15:51:20Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
   total_path_claims: 6004
   total_ssot_claims: 16
@@ -129,7 +129,7 @@ ownership:
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
-    existence: '未实现'
+    existence: 'testing'
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/ex_core/risk_layer_orchestrator.py'
@@ -5431,17 +5431,17 @@ ownership:
     existence: 'stable'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/backtest/services/decay_monitor.py'
-    owner_blueprint: 'MOD-BT-018'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_backtest/decay_monitor/blueprint.md'
-    existence: 'stable'
-    ownership_judgment: '本模块'
-
   - path: 'src/zephyr/backtest/services/cache_manager.py'
     owner_blueprint: 'MOD-BT-020'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_domain_backtest/cache_manager/blueprint.md'
+    existence: 'stable'
+    ownership_judgment: '本模块'
+
+  - path: 'src/zephyr/backtest/services/decay_monitor.py'
+    owner_blueprint: 'MOD-BT-018'
+    claim_type: 'depgraph_node'
+    declared_in: 'docs/03_modules/_domain_backtest/decay_monitor/blueprint.md'
     existence: 'stable'
     ownership_judgment: '本模块'
 
