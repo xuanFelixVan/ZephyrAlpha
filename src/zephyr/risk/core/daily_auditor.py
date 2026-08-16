@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-RK-20 | docs/03_modules/_domain_risk/daily_auditor/blueprint.md
 # [MODULE] zephyr.risk.core.daily_auditor
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.shared.foundation.errors; MOD-RK-16(Risk Decomposition,归因复用); MOD-RK-06(限额消耗); MOD-RK-03(持仓快照)
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.alerts.threshold_loader; MOD-RK-16(Risk Decomposition,归因复用); MOD-RK-06(限额消耗); MOD-RK-03(持仓快照)
 # [CONSUMERS] D-REPORTING(CTR-P1-011 AuditRiskMetricsReport)
 # [STARTUP] imported
 # [MATURITY] production
@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidAuditInputError
+# [ERROR_CONTRACT] InvalidAuditInputError; AlertThresholdConfigError(注册表缺失/畸形)
 # [TESTS] tests/risk/test_daily_auditor.py
 # [A_module] module_id=MOD-RK-20 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -136,9 +136,11 @@ import math
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
 from enum import Enum
+from pathlib import Path
 from typing import Any, Final
 
 from zephyr.risk.core.risk_decomposition import DecompositionResult
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__: Final = [
@@ -535,10 +537,29 @@ class AuditRiskMetricsReport:
 # 配置
 # ──────────────────────────────────────────────────────────────────────────────
 
+#: 审计阈值 ↔ 注册表条目映射（55 号 §3.3 统读：THD-AUDIT-001/002/003）
+_AUDIT_THRESHOLD_SPEC: Final[dict[str, str]] = {
+    "THD-AUDIT-001": "pnl_tolerance",
+    "THD-AUDIT-002": "warn_ratio",
+    "THD-AUDIT-003": "bias_threshold",
+}
+
+
+def _load_audit_thresholds(registry_path: Path | None = None) -> dict[str, float]:
+    """从告警阈值注册表加载审计三阈值（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(_AUDIT_THRESHOLD_SPEC, registry_path=registry_path)
+
+
+#: import 期 fail-closed 加载（注册表缺失/畸形 → import 即 raise，禁止码内第二真源兜底）
+_AUDIT_DEFAULTS: Final[dict[str, float]] = _load_audit_thresholds()
+
 
 @dataclass(frozen=True)
 class AuditConfig:
     """日终审计配置。
+
+    默认值真源=alert_threshold_registry（THD-AUDIT-001/002/003，import 期 fail-closed 加载）；
+    显式传参可覆盖注册表默认（测试/特殊场景逃生门）。
 
     Attributes:
         pnl_tolerance: PnL 对账容差 (gap_pct 绝对值阈值), 默认 0.001 (0.1%)
@@ -546,9 +567,9 @@ class AuditConfig:
         bias_threshold: 归因偏差阈值, 默认 0.1 (|bias| > 0.1 → BIASED)
     """
 
-    pnl_tolerance: float = 0.001
-    warn_ratio: float = 0.8
-    bias_threshold: float = 0.1
+    pnl_tolerance: float = _AUDIT_DEFAULTS["pnl_tolerance"]
+    warn_ratio: float = _AUDIT_DEFAULTS["warn_ratio"]
+    bias_threshold: float = _AUDIT_DEFAULTS["bias_threshold"]
 
     def __post_init__(self) -> None:
         if self.pnl_tolerance <= 0:

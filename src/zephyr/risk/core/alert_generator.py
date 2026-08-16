@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-RK-06 | docs/03_modules/_domain_risk/alert_generator/blueprint.md
 # [MODULE] zephyr.risk.core.alert_generator
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.risk.risk_manager_base
+# [DEPENDENCIES] zephyr.risk.risk_manager_base; zephyr.shared.alerts.threshold_loader
 # [CONSUMERS] MOD-L04-001(DefaultRiskManagerOrchestrator,告警统一出口)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 分级纯机制零参数;日志通道必达;邮件/微信best-effort不阻断;去重窗口内同源同消息只派发一次
+# [INVARIANTS] 分级纯机制零参数;日志通道必达;邮件/微信best-effort不阻断;去重窗口内同源同消息只派发一次;去重窗口真源=alert_threshold_registry(THD-ALERT-001,fail-closed)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] L
@@ -108,9 +108,11 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Protocol
+from pathlib import Path
+from typing import Final, Protocol
 
 from zephyr.risk.risk_manager_base import RiskReport
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 
 _logger = logging.getLogger(__name__)
 
@@ -227,6 +229,16 @@ class WeChatChannel:
 
 # ── 告警生成器 ────────────────────────────────────────────────────────
 
+#: 去重窗口 ↔ 注册表条目映射（55 号 §3.3 统读：THD-ALERT-001，单位秒）
+_DEDUP_WINDOW_SPEC: Final[dict[str, str]] = {"THD-ALERT-001": "dedup_window_seconds"}
+
+
+def _load_dedup_window_seconds(registry_path: Path | None = None) -> float:
+    """从告警阈值注册表加载去重窗口秒数（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(_DEDUP_WINDOW_SPEC, registry_path=registry_path)[
+        "dedup_window_seconds"
+    ]
+
 
 class AlertGenerator:
     """告警生成器——分级 → 去重 → 多通道路由。
@@ -248,10 +260,23 @@ class AlertGenerator:
 
     def __init__(
         self,
-        dedup_window: timedelta = timedelta(minutes=5),
+        dedup_window: timedelta | None = None,
         channels: dict[str, AlertChannel] | None = None,
+        registry_path: Path | None = None,
     ):
-        self._dedup_window = dedup_window
+        """初始化告警生成器。
+
+        Args:
+            dedup_window: 去重窗口；None 时从告警阈值注册表 fail-closed 加载
+                （THD-ALERT-001，默认 300 秒）。显式传参可覆盖注册表默认（逃生门）。
+            channels: 通道注入（默认 log/email/wechat 三通道）。
+            registry_path: 注册表路径注入（测试逃生门；默认全仓唯一真源）。
+        """
+        self._dedup_window = (
+            dedup_window
+            if dedup_window is not None
+            else timedelta(seconds=_load_dedup_window_seconds(registry_path))
+        )
         self._dedup_cache: dict[str, datetime] = {}
         self._channels: dict[str, AlertChannel] = channels or {
             "log": LogChannel(),

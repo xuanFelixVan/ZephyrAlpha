@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.alerts.alert_escalation
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.shared.alerts.threshold_loader
 # [CONSUMERS] N/A (all consumers verified as phantom — stale references removed)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS]
+# [INVARIANTS] 自动升级超时真源=alert_threshold_registry(THD-ALERT-002,fail-closed)
 # [MODIFY-GUARD]
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT]
+# [ERROR_CONTRACT] AlertThresholdConfigError(注册表缺失/畸形)
 # [TESTS]
 # [A_module] module_id=MOD-INF-016 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -20,9 +20,11 @@ from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, Field
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.utils.time_utils import now_utc
 
 __all__ = ["AlertEscalation", "EscalationLevel"]
@@ -33,6 +35,18 @@ class EscalationLevel(str, Enum):
     WARNING = "WARNING"
     CRITICAL = "CRITICAL"
     EMERGENCY = "EMERGENCY"
+
+
+def _load_auto_escalate_after_seconds(registry_path: Path | None = None) -> int:
+    """从告警阈值注册表加载自动升级超时秒数（fail-closed；registry_path 为测试逃生门）。
+
+    55 号 §3.3 统读：THD-ALERT-002（默认 300 秒）。
+    """
+    return load_alert_thresholds(
+        {"THD-ALERT-002": "auto_escalate_after_seconds"},
+        registry_path=registry_path,
+        cast="int",
+    )["auto_escalate_after_seconds"]
 
 
 class AlertEscalation(BaseModel):
@@ -50,7 +64,9 @@ class AlertEscalation(BaseModel):
     acknowledged_at: str | None = None
     resolved_at: str | None = None
     escalation_chain: list[str] = Field(default_factory=list)
-    auto_escalate_after_seconds: int = 300
+    auto_escalate_after_seconds: int = Field(
+        default_factory=_load_auto_escalate_after_seconds
+    )  # 构造期 fail-closed 加载（真源=注册表）；显式传参可覆盖
     metadata: dict[str, Any] = Field(default_factory=dict)
 
     @property

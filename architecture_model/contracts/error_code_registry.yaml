@@ -923,6 +923,11 @@ error_codes:
   class: PatchConflictError
   module: zephyr.shared.utils.diff_utils
   file: src/zephyr/shared/utils/diff_utils.py
+- code: ZA-SH-0050
+  class: AlertThresholdConfigError
+  module: zephyr.shared.alerts.threshold_loader
+  file: src/zephyr/shared/alerts/threshold_loader.py
+  description: 告警阈值注册表缺失/畸形 fail-closed（55 号 §3.3 统读，tracker #87，AI-THD-001）
 - code: ZA-TR-0001
   class: RiskLimitViolationError
   module: zephyr.trading.trading_contracts.risk.risk_limit_violation_error

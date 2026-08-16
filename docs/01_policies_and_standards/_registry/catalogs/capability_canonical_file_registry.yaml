@@ -8882,6 +8882,12 @@ creation_tokens:
     token: "auto-decision-table-plan-engine-20260805"
     created_by: "session-track-drafts-del-archid"
     capability: "decision_table_plan_engine"
+  # --- tracker #87 存量模块阈值统读改造（2026-08-17，AI-THD-001 施工，55 号 §3.3 后续治理项落地）---
+  - file: "src/zephyr/shared/alerts/threshold_loader.py"
+    token: "auto-alert-threshold-loader-20260817"
+    created_by: "AI-THD-001"
+    capability: "alert_threshold_loader"
+    note: "告警阈值注册表共享加载器（fail-closed，cast float/int/str）——9 个存量模块码内阈值统读改造的共享真源加载点（MOD-INF-016 伞）"
   - file: "docs/_working/infrastructure_pipelines_engines_construction_plan.md"
     token: "auto-infra-pipelines-engines-plan-20260806"
     created_by: "session-track-drafts-del-archid"

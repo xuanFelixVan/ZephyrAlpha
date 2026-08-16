@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
 # [MODULE] zephyr.backtest.core.decision_gate
 # [DOMAIN] D_BACKTEST
-# [DEPENDENCIES]
+# [DEPENDENCIES] zephyr.backtest.core.overfitting_detector; zephyr.shared.alerts.threshold_loader
 # [CONSUMERS] zephyr.backtest.implementations.vectorized_engine; zephyr.backtest.implementations.event_driven_engine
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入
+# [INVARIANTS] IS->WFA->OOS不可跳级;参数锁定;Sharpe>0.5准入;偏离阈值真源=alert_threshold_registry(THD-DEVIATION-001/002,fail-closed)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -34,11 +34,13 @@ SSoT: docs/03_modules/_domain_backtest/blueprint.md §3.3 P0-14
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from pathlib import Path
+from typing import Any, Final
 
 from zephyr.backtest.core.overfitting_detector import (
     DEFAULT_OOS_SHARPE_THRESHOLD_RATIO,
 )
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 
 
 class DecisionGateError(Exception):
@@ -50,6 +52,22 @@ class DecisionGateError(Exception):
         super().__init__(*args)
         if error_code is not None:
             self.error_code = error_code
+
+
+#: 回测-实盘偏离阈值 ↔ 注册表条目映射（55 号 §3.3 统读：THD-DEVIATION-001/002）
+_DEVIATION_THRESHOLD_SPEC: Final[dict[str, str]] = {
+    "THD-DEVIATION-001": "backtest_live_deviation_warn",
+    "THD-DEVIATION-002": "backtest_live_deviation_retire",
+}
+
+
+def _load_deviation_thresholds(registry_path: Path | None = None) -> dict[str, float]:
+    """从告警阈值注册表加载偏离阈值（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(_DEVIATION_THRESHOLD_SPEC, registry_path=registry_path)
+
+
+#: import 期 fail-closed 加载（注册表缺失/畸形 → import 即 raise，禁止码内第二真源兜底）
+_DEVIATION_DEFAULTS: Final[dict[str, float]] = _load_deviation_thresholds()
 
 
 @dataclass(frozen=True)
@@ -66,8 +84,8 @@ class DecisionGateConfig:
         disaster_max_drawdown: 灾难否决最大回撤(默认0.5,即50%)
         stability_plateau_tolerance: 稳定高原Sharpe变化容忍度(默认0.20)
         cliff_sharpe_drop: 悬崖型参数Sharpe下降阈值(默认0.50)
-        backtest_live_deviation_warn: 回测-实盘偏差告警阈值(默认0.30)
-        backtest_live_deviation_retire: 回测-实盘偏差退役阈值(默认0.50)
+        backtest_live_deviation_warn: 回测-实盘偏差告警阈值(默认0.30,真源=alert_threshold_registry THD-DEVIATION-001)
+        backtest_live_deviation_retire: 回测-实盘偏差退役阈值(默认0.50,真源=alert_threshold_registry THD-DEVIATION-002)
     """
 
     is_sharpe_threshold: float = 0.5
@@ -77,8 +95,8 @@ class DecisionGateConfig:
     disaster_max_drawdown: float = 0.5
     stability_plateau_tolerance: float = 0.20
     cliff_sharpe_drop: float = 0.50
-    backtest_live_deviation_warn: float = 0.30
-    backtest_live_deviation_retire: float = 0.50
+    backtest_live_deviation_warn: float = _DEVIATION_DEFAULTS["backtest_live_deviation_warn"]
+    backtest_live_deviation_retire: float = _DEVIATION_DEFAULTS["backtest_live_deviation_retire"]
 
 
 @dataclass(frozen=True)

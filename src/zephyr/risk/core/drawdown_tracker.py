@@ -1,16 +1,16 @@
 # [BLUEPRINT] MOD-RK-011 | docs/03_modules/_domain_risk/drawdown_tracker/blueprint.md
 # [MODULE] zephyr.risk.core.drawdown_tracker
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.shared.foundation.errors
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.alerts.threshold_loader
 # [CONSUMERS] MOD-RK-17(Kill Switch,EMERGENCY触发) ; D-FRONTEND ; D-AUTONOMY ; D-REPORTING
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] peak单调非减;trough≤peak;drawdown≤0;告警级别由当前回撤唯一决定;事件去抖(连续相同级别不重复发射)
+# [INVARIANTS] peak单调非减;trough≤peak;drawdown≤0;告警级别由当前回撤唯一决定;事件去抖(连续相同级别不重复发射);阈值唯一真源=alert_threshold_registry(THD-DRAWDOWN-001/002/003,fail-closed)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] InvalidDrawdownInputError
+# [ERROR_CONTRACT] InvalidDrawdownInputError; AlertThresholdConfigError(注册表缺失/畸形)
 # [TESTS] tests/risk/test_drawdown_tracker.py
 # [A_module] module_id=MOD-RK-011 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -40,8 +40,10 @@ import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable
+from pathlib import Path
+from typing import Any, Callable, Final
 
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.foundation.errors import ZephyrBaseError
 
 __all__ = [
@@ -89,14 +91,30 @@ class InvalidDrawdownInputError(ZephyrBaseError):
 # 配置 (C 类可调参数)
 # ──────────────────────────────────────────────────────────────────────────────
 
+#: 回撤三级阈值 ↔ 注册表条目映射（55 号 §3.3 统读：THD-DRAWDOWN-001/002/003）
+_DRAWDOWN_THRESHOLD_SPEC: Final[dict[str, str]] = {
+    "THD-DRAWDOWN-001": "warning_threshold",
+    "THD-DRAWDOWN-002": "critical_threshold",
+    "THD-DRAWDOWN-003": "emergency_threshold",
+}
+
+
+def _load_drawdown_thresholds(registry_path: Path | None = None) -> dict[str, float]:
+    """从告警阈值注册表加载回撤三级阈值（fail-closed；registry_path 为测试逃生门）。"""
+    return load_alert_thresholds(_DRAWDOWN_THRESHOLD_SPEC, registry_path=registry_path)
+
+
+#: import 期 fail-closed 加载（注册表缺失/畸形 → import 即 raise，禁止码内第二真源兜底）
+_REGISTRY_DEFAULTS: Final[dict[str, float]] = _load_drawdown_thresholds()
+
 
 @dataclass(frozen=True)
 class DrawdownTrackerConfig:
-    """回撤追踪阈值配置 (设计真源 §1 RK-11)。"""
+    """回撤追踪阈值配置 (设计真源 §1 RK-11；默认值真源=alert_threshold_registry，显式传参可覆盖)。"""
 
-    warning_threshold: float = 0.05    # -5%
-    critical_threshold: float = 0.10   # -10%
-    emergency_threshold: float = 0.15  # -15%
+    warning_threshold: float = _REGISTRY_DEFAULTS["warning_threshold"]    # -5%（THD-DRAWDOWN-001）
+    critical_threshold: float = _REGISTRY_DEFAULTS["critical_threshold"]  # -10%（THD-DRAWDOWN-002）
+    emergency_threshold: float = _REGISTRY_DEFAULTS["emergency_threshold"]  # -15%（THD-DRAWDOWN-003）
 
     def __post_init__(self) -> None:
         for name, val in (

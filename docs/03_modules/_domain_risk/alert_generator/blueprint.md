@@ -31,7 +31,7 @@ build_status: stable
 （黄/橙/红），按级别路由到不同通道（日志/邮件/微信），并对同源告警在时间窗口内去重。
 
 属 A 类基础设施（分级规则基于 RiskReport 字段判定，路由规则基于级别映射，
-均为纯机制无业务参数）。阈值（去重窗口 5 分钟）为 C 类可调参数，默认值硬编码。
+均为纯机制无业务参数）。阈值（去重窗口 5 分钟）为 C 类可调参数，默认值真源=alert_threshold_registry.yaml（THD-ALERT-001=300 秒，fail-closed 统读，2026-08-17 AI-THD-001）；显式传参可覆盖。
 
 **与现有资产的关系**：
 - 各监控器（concentration_monitor / tail_risk_monitor / systemic_risk_detector 等）
@@ -73,7 +73,7 @@ build_status: stable
 
 - 同一 `source`（来源监控器）+ 同一 `message` 在 5 分钟窗口内只派发一次
 - 去重窗口过后自动过期，允许重新派发
-- 去重窗口（5 分钟）为 C 类可调参数，默认值硬编码
+- 去重窗口（5 分钟）为 C 类可调参数，默认值真源=alert_threshold_registry.yaml（THD-ALERT-001，fail-closed 统读）
 
 ## 4. 接口契约
 

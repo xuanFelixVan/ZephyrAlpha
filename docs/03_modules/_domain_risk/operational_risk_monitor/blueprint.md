@@ -34,6 +34,8 @@ fill_rate / latency p50/p95/max/mean），但**无阈值告警**。本模块不�
 
 ## 3. 核心规则
 
+阈值默认值真源=alert_threshold_registry.yaml（THD-OPRISK-001/002/003，fail-closed 统读，2026-08-17 AI-THD-001）；构造传参可覆盖。
+
 - failure_rate_breached: failure_rate > 0.05 (默认阈值，行业标准)
 - latency_breached: latency_p95_ms > 500.0 (默认阈值，行业标准)
 - 严重度倍数: 实际值 >= 2×阈值 → severe
