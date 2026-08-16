@@ -17,7 +17,9 @@ scope: 07_trading_decision_architecture
 >
 > **最终成果**：回测→模拟→实盘灰度的验证路径定稿并与现状对齐；Crash-only 状态外部化落地。
 >
-> **未做事项及原因**：5 态 FSM（有限状态机）代码未落地（#ARCH-QUANT-003）——裁定已做、代码待施工，归后续批次。
+> **未做事项及原因**（2026-08-16 独立复核修正）：
+> - 晋级迁移 FSM 不做——Owner 裁定方案 C：阶段维度真源=paper_live_transition 三阶段门禁，原迁移 5 态废弃（重复建模）。
+> - §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）代码未落地——v1.7.7 裁定指定落地 rollback_state_machine.py，但 2026-08-16 复核实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举在 src 全仓不存在，裁定与代码现实有出入，待后续批次真正落码。
 
 # 模拟与实盘验证路径
 
