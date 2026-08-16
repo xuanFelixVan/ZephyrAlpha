@@ -3,7 +3,7 @@ module_id: MOD-POS-009
 title: "仓位审计记录器蓝图 — 全记录+哈希链+可追溯"
 doc_type: blueprint
 status: Active
-version: "0.1.1"
+version: "0.1.2"
 design_maturity: production
 ttl: permanent
 layer: L03_position
@@ -309,11 +309,11 @@ logger.log_position_sized(plan)
 > **AUTOGEN**：本表由 sync_blueprint_code_index.py 从 depgraph.nodes 运营态（build_status=generated）单向派生，禁止手写；重跑本脚本幂等更新。
 > 
 
-### 11.1 源码文件
+### 11.1 测试文件
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
-| — | — | 本模块尚无已实现代码 |
+| `tests/position/test_position_state_machine.py` | ✅ 已实现 | |
 
 ### 11.5 路径索引使用指南
 
@@ -328,3 +328,5 @@ logger.log_position_sized(plan)
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
+
+

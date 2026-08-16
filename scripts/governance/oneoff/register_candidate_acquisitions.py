@@ -233,6 +233,7 @@ def build_skeleton_entry(
 
 
 def main(dry_run: bool = False) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     # 1. 解析 inventory 候选态 + decision_table 候选态
     inv_candidates = parse_inventory_candidates(_INVENTORY)
     decisions = parse_decision_table(_DECISION_TABLE)

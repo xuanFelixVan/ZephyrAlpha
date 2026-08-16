@@ -125,6 +125,7 @@ def _is_merge_in_progress() -> bool:
 
 
 def _entry_id(entry: dict) -> str:
+    """_entry_id implementation."""
     for k in _ID_KEYS:
         v = entry.get(k)
         if v:

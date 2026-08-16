@@ -33,20 +33,20 @@ scripts/governance/
 ├── _shared/                        共用工具（5 文件）
 ├── d1_structure                   D1 结构完整性（25 脚本）
 ├── d2_links                       D2 链接完整性（2 脚本）
-├── d3_metadata                    D3 元数据合规（23 脚本）
+├── d3_metadata                    D3 元数据合规（26 脚本）
 ├── d4_paths                       D4 路径有效性（4 脚本）
 ├── d5_architecture                D5 架构合规（13 脚本）
-├── d6_security                    D6 安全漏洞（14 脚本）
-├── d7_code                        D7 代码质量（40 脚本）
-├── d8_doc_sync                    D8 文档代码同步（11 脚本）
+├── d6_security                    D6 安全漏洞（15 脚本）
+├── d7_code                        D7 代码质量（41 脚本）
+├── d8_doc_sync                    D8 文档代码同步（13 脚本）
 ├── d9_knowledge                   D9 知识覆盖（2 脚本）
 ├── d10_performance                D10 性能容量（待建设）
-├── d11_compliance                 D11 合规完整性（21 脚本）
+├── d11_compliance                 D11 合规完整性（24 脚本）
 ├── d12_ai_hallucination           D12 AI 幻觉（4 脚本）
 ├── run_all.py                     全维度扫描入口
 ├── status.py                      健康仪表盘
 ├── check_registry_consistency.py  跨登记表一致性校验
-├── script_manifest.yaml           脚本注册表（SSoT — 186 条目）
+├── script_manifest.yaml           脚本注册表（SSoT — 208 条目）
 └── quality_standard.md            审计脚本质量标准
 ```
 <!-- TREE-AUTO-END -->

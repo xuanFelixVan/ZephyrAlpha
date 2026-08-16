@@ -31,3 +31,5 @@ from scripts.governance._shared import (  # noqa: F401,E402
     walk,
     yaml_utils,
 )
+
+__all__: list[str] = ["frontmatter"]

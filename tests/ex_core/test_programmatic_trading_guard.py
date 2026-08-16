@@ -1,4 +1,5 @@
 # [TESTS] tests/ex_core/test_programmatic_trading_guard.py
+# [TTL] task_bound
 """ProgrammaticTradingGuard 测试（gap 18 程序化报备开关）。
 
 覆盖矩阵：

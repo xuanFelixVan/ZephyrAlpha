@@ -34,3 +34,5 @@ ZephyrAlpha 交易运行时入口层。
 # I1 --> A1
 # A1 --> O1
 """
+
+__all__: list[str] = ["intraday_main"]

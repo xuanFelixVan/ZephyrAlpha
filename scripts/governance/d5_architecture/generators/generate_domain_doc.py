@@ -573,6 +573,7 @@ def _node_mermaid_label(n: dict) -> str:
     # 去重辅助：候选与已显示内容完全相同、候选是已显示内容的子串则跳过。
     # 不用前缀匹配（前缀匹配会误杀"名称+增量简介"如 plain_zh=name_zh+"路径集合。"）。
     def _is_dup(candidate: str, shown: list[str]) -> bool:
+        """_is_dup implementation."""
         c = candidate.lower().strip()
         if not c:
             return True

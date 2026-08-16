@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.6"
+version: "2.2.7"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -705,7 +705,7 @@ ZephyrAlpha 量化系统需要一个交易执行层，将 D_PORTFOLIO_CORE 组�
 | 对应蓝图契约 | §4.1 BrokerInterface 子类 + §16.7.1 MiniQmtBroker详细规格 |
 | 产出位置 | `D:\ZephyrAlpha\src\zephyr\ex_core\adapters\miniqmt_broker.py` |
 | 验收标准 | (a) 继承BrokerInterface, 实现submit_order/cancel_order/connect/disconnect/query_order/get_positions; (b) 对接xttrader API(order_stock/cancel_order_stock/query_stock_orders/query_stock_positions); (c) T+1锁定校验; (d) 涨跌停错误码捕获; (e) 幂等键(idempotency_key); (f) 断线重连; (g) 与D_BACKTEST matching_engine共用撮合逻辑(共享MatchingLogic模块) |
-| 验证命令 | `python -m pytest tests/unit/ex_core/test_miniqmt_broker.py -v` (Mock xttrader) + 实盘小资金验证(100股测试) |
+| 验证命令 | `python -m pytest tests/ex_core/test_miniqmt_broker.py -v` (Mock xttrader) + 实盘小资金验证(100股测试) |
 | G7 检查项 | (1) xttrader API调用正确? (2) T+1校验逻辑正确? (3) 涨跌停错误码映射完整? (4) 与matching_engine共用撮合逻辑(非复制粘贴)? (5) 断线重连后状态同步正确? (6) 与D_DATA MiniQmtProvider共用xtquant连接(非重复connect)? |
 | AI 自治范围 | human_gated——实盘交易接入需Owner审批 + 小资金(1万元)灰度验证 |
 | 检查点 | miniqmt_broker.py 存在且非空 + 单元测试通过 + Mock集成测试通过 |
@@ -1193,7 +1193,9 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `tests/ex_core/__init__.py` | ⚠️ 骨架 | |
+| `tests/ex_core/test_order_manager_compliance_gate.py` | ✅ 已实现 | |
 | `tests/ex_core/test_price_cage.py` | ✅ 已实现 | |
+| `tests/ex_core/test_risk_layer_orchestrator.py` | ✅ 已实现 | |
 | `tests/ex_core/test_trading_session.py` | ✅ 已实现 | |
 | `tests/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/trading/pipeline/test_l06_trade_execution.py` | ✅ 已实现 | |

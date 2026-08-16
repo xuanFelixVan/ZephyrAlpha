@@ -7,7 +7,7 @@
 # [MATURITY] production
 # [INVARIANTS] 只修改name_zh行;保留原YAML格式;精确映射module_path→中文
 # [TTL] task_bound
-# noqa: m11-perm-manual-legitimate  一次性修复脚本
+# noqa: m11-perm-manual-legitimate  一次性修复脚本，task_bound 已执行完毕待退役清理
 """补全剩余 65 条英文条目的中文翻译——直接映射 module_path → 中文名。"""
 
 import re
@@ -93,6 +93,7 @@ _TRANSLATIONS: dict[str, str] = {
 
 
 def main():
+    """Entry point: parse args, run logic, return exit code."""
     with open(_YAML, encoding="utf-8") as f:
         lines = f.readlines()
 

@@ -17290,22 +17290,27 @@ entries:
   last_updated: '2026-08-17'
   owner_approval: '2026-08-17 Owner 会话内明确裁定"规则可以为正确选择让路，并优化修改更新规则"'
 - issue_id: '#ARCH-119'
-  title: fail-open 敞口治理——PG 离线 5 门禁静默放行改"放行+强制留痕可追账"+PG 探针区分离线降级与真无违规（B1+B2 全量）
-  severity: P2中
-  category: governance_enhancement
+  title: PG 离线 fail-open 敞口治理——4 个 depgraph 类硬阻断门禁静默放行升级「放行可留痕可追账」+ PG 可用性前置探针区分「DB 离线」vs「真无违规」（tracker #116，B1+B2 全量）
+  severity: P1高
+  category: governance_failopen_hardening
   adjudication: |-
-    2026-08-17 Owner 裁定 B1+B2 全量（tracker #116，方案真源=docs/_working/reports/2026-08-17-fail-open-analysis.md，AI-GOVA-001 交付）：
-    ①敞口实证——PG 离线时 RENAME-DEPGRAPH-SYNC/NEW-FILE-DEPGRAPH-ENFORCEMENT/DEPGRAPH-PRE-REGISTRATION/PRE-MERGE-TOPO-CHECK 四门硬阻断静默放行，仅进程内 warning、commit 成功后零追账锚点（L1"依赖关系先行"铁律失效无留痕）；A 保持=敞口不闭合，C fail-closed=环境故障传导开发冻结收益为负。
-    ②裁定——B1：四 gate fail-open 分支统一接 log_gate_failure 持久化（与 panorama_alignment_gate 既有先例同构，critical_warn+当日同签名去重防告警疲劳），顺手 verify_schema_health 崩溃式阻断优雅化；B2：PG 可用性前置探针（TCP 5432 ≤1s 落 .runtime/pg_probe_state.json），gate 读探针区分"DB 离线降级"（留痕放行）vs"在线真错误"（不静默），DEPGRAPH-FRESHNESS 探针离线超 24h 豁免 saved_at 误伤。
-    ③哲学——100% AI 施工场景环境故障不应冻结开发（可用性优先），但放行必须可感知（持久化留痕+下次 commit banner）+可补偿（PG 恢复后 reconciler 补扫清点）。
+    2026-08-17 Owner 裁定（tracker #116，方案真源 docs/_working/reports/2026-08-17-fail-open-analysis.md 逐点实证）：
+    ①敞口实证——PG 离线时 5 个 depgraph 类硬阻断门禁静默放行，#1 RENAME-DEPGRAPH-SYNC / #2 NEW-FILE-DEPGRAPH-ENFORCEMENT / #3 DEPGRAPH-PRE-REGISTRATION / #5 PRE-MERGE-TOPO-CHECK 仅进程内 warning、commit 成功后零追账锚点=真实敞口（#4 GATE-PANORAMA-ALIGNMENT 已有 log_gate_failure 持久化先例）。
+    ②裁定 B1+B2 全量——B1：#1/#2/#3/#5 fail-open 分支统一接 log_gate_failure 持久化（critical_warn + gate_id + 放行原因 + 受影响文件清单，与 #4 同款签名；同签名当日去重防 PG 长期离线告警疲劳），保持放行语义不变只加留痕；B2：PG 可用性前置探针（网关 commit 前置 TCP 5432 ≤1s 探测，结果落 .runtime/pg_probe_state.json），gate 读取区分「DB 离线降级」vs「真实错误」（探针在线而 gate 连接失败→不静默逐次留痕），探针离线超 24h 豁免 DEPGRAPH-FRESHNESS saved_at 停更误伤（报告 §1.3 联动修复）。
+    ③顺手项——verify_schema_health.py 连接调用移入 try 块：PG 离线从「未捕获异常崩溃式阻断」转「明确告警阻断」（[PG-UNREACHABLE] 错误码 + 引导文案 + exit 2）。
   impact:
-    - 'src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py / new_file_depgraph_gate.py / depgraph_pre_registration_gate.py（fail-open 分支接留痕）'
-    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（PRE-MERGE-TOPO-CHECK 四分支留痕）'
-    - 'scripts/governance/d11_compliance/verify_schema_health.py（崩溃式阻断优雅化）'
-    - 'PG 探针模块（新建或复用扩写，D1 查重先行）+ depgraph_freshness_gate.py（离线豁免）'
-  fix_phase: 'AI-FOPEN-001 施工中（2026-08-17 派单）'
-  status: decided
-  related_rules: 'tracker #116; #ARCH-DRIFT-AUTH-001（fail-open 告警+自愈兜底同构先例）; #100（PG 停服事故母议题）'
+    - 'src/zephyr/governance/audit/pg_probe.py（新建，探针+留痕统一入口，governance/audit/ 子目录合规 ARCH-031）'
+    - 'src/zephyr/gov_enforcement/commit_gates/rename_depgraph_sync_gate.py（#1 降级留痕）'
+    - 'src/zephyr/gov_enforcement/commit_gates/new_file_depgraph_gate.py（#2 降级留痕）'
+    - 'src/zephyr/gov_enforcement/commit_gates/depgraph_pre_registration_gate.py（#3 降级留痕，None 二义性单发连接测试区分）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/session_worktree.py（#5 四降级分支留痕 + merge 前置探针刷新；checker 缺失 fail-closed 分支不动）'
+    - 'src/zephyr/gov_enforcement/commit_gates/depgraph_freshness_gate.py（探针离线超 24h 豁免 saved_at 停更误伤，豁免留痕）'
+    - 'src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py（commit 前置探针刷新，失败不阻断）'
+    - 'scripts/governance/d11_compliance/verify_schema_health.py（PG 离线优雅阻断）'
+    - 'tests/governance/audit/test_pg_probe.py + tests/io/test_verify_schema_health_pg_unreachable.py（新建）；4 gate + session_worktree + freshness 测试扩展'
+  fix_phase: 'AI-FOPEN-001 施工（2026-08-17），随 worktree merge 闭环；tracker #100 fail-open 登记项可闭环'
+  status: resolved
+  related_rules: 'tracker #116; #ARCH-DEP-001; #ARCH-DEPGRAPH-RECONCILER-FAILSILENT; #ARCH-031'
   created: '2026-08-17'
   last_updated: '2026-08-17'
-  owner_approval: '2026-08-17 Owner 裁定 B1+B2 全量'
+  owner_approval: '2026-08-17 Owner 裁定 B1+B2 全量（tracker #116）'

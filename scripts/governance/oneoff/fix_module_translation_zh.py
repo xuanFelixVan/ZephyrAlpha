@@ -7,7 +7,7 @@
 # [MATURITY] production
 # [INVIANTS] 只修改name_zh行;保留原YAML格式;dry-run预览
 # [TTL] task_bound
-# noqa: m11-perm-manual-legitimate  一次性修复脚本
+# noqa: m11-perm-manual-legitimate  一次性修复脚本，task_bound 已执行完毕待退役清理
 """批量修复 module_translation_registry.yaml 中 name_zh 字段不含中文的条目。
 
 问题：auto-extract 产物导致 2930 条 name_zh 填了英文/垃圾/docstring碎片。
@@ -1170,6 +1170,7 @@ def translate_name(name_en: str, module_path: str = "") -> str:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="批量修复 module_translation_registry.yaml 中 name_zh 不含中文的条目")
     parser.add_argument("--dry-run", action="store_true", help="预览模式，不写文件")
     parser.add_argument("--execute", action="store_true", help="执行写入")

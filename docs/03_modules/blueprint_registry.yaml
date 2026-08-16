@@ -1,12 +1,12 @@
 registry:
   version: 2.7.14
   created: '2026-05-02'
-  last_updated: '2026-08-14'
-  total_blueprints: 163
+  last_updated: '2026-08-16'
+  total_blueprints: 173
   scope: 03_modules/
-  note: Auto-synced from 163 blueprint.md files by sync_registry_from_blueprints.py
+  note: Auto-synced from 173 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-08-14'
+  generated_at: '2026-08-16'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -100,7 +100,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 1.3.4
+  version: 1.3.6
   generation: 1
   last_updated: '2026-07-19'
   file_path: 03_modules/_domain_backtest/blueprint.md
@@ -218,7 +218,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 0.1.1
+  version: 0.1.2
   generation: 1
   last_updated: '2026-08-03'
   file_path: 03_modules/_cross_layer/cd_pipeline/blueprint.md
@@ -231,10 +231,101 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-08-08'
   file_path: 03_modules/_cross_layer/clone_guard/blueprint.md
+- module_id: MOD-CMP-001
+  name: discipline_must_do_checker
+  title: 四项必做清单检查器蓝图 — 盘前/盘中/盘后/晚间完成度检测
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/discipline_must_do_checker/blueprint.md
+- module_id: MOD-CMP-002
+  name: discipline_prohibition_checker
+  title: 四项严禁纪律闸蓝图 — 追高/补仓/骄傲/报复检测 + KillSwitchLite
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/discipline_prohibition_checker/blueprint.md
+- module_id: MOD-CMP-005
+  name: hard_boundary_adjudicator
+  title: 硬边界功能裁定门禁蓝图 — 能建/禁建清单 + FeatureGate
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/hard_boundary_adjudicator/blueprint.md
+- module_id: MOD-CMP-007
+  name: trading_compliance_detector
+  title: 交易合规检测器蓝图 — 异常交易 2 条 + 市场操纵 4 类
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/trading_compliance_detector/blueprint.md
+- module_id: MOD-CMP-008
+  name: license_usage_auditor
+  title: 数据源授权合规审计器蓝图 — 授权条款登记/使用审计/违规处置
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/license_usage_auditor/blueprint.md
+- module_id: MOD-CMP-009
+  name: compliance_report_registry
+  title: 程序化交易报告登记+报送门禁蓝图 — 6 项义务 + ReportGate
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P0
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/compliance_report_registry/blueprint.md
+- module_id: MOD-CMP-010
+  name: compliance_log
+  title: 合规日志落库蓝图 — compliance_log JSONL append-only 证据链
+  summary: ''
+  layer: L1_foundation
+  functional_domain: compliance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_compliance/compliance_log/blueprint.md
 - module_id: MOD-CONTEXT_ENGINE
   name: context_engine
   title: Context Engine 集成蓝图 — 上下文引擎集成索引
@@ -245,7 +336,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P0
-  version: 1.1.2
+  version: 1.1.3
   generation: 1
   last_updated: 2026-07-02
   file_path: 03_modules/_cross_layer/context_engine/blueprint.md
@@ -258,7 +349,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: ''
   file_path: 03_modules/_domain_execution_core/fill_handler/blueprint.md
@@ -297,7 +388,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: ''
   file_path: 03_modules/_domain_execution_core/aggregate_root_manager/blueprint.md
@@ -349,7 +440,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: ''
   file_path: 03_modules/_domain_execution_core/order_execution_saga/blueprint.md
@@ -402,7 +493,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.35.4
+  version: 0.35.5
   generation: 1
   last_updated: '2026-05-19'
   file_path: 03_modules/_cross_layer/feedback_loop/blueprint.md
@@ -415,10 +506,23 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.8.9
+  version: 0.8.12
   generation: 1
   last_updated: '2026-05-18'
   file_path: 03_modules/_cross_layer/gate_engine/blueprint.md
+- module_id: MOD-GOV-045
+  name: rollback_state_machine
+  title: 降级/回退五态状态机蓝图 — 53 号 §3.8 伪代码代码落地（#ARCH-QUANT-003）
+  summary: ''
+  layer: L1_foundation
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.2
+  generation: ''
+  last_updated: '2026-08-17'
+  file_path: 03_modules/_domain_governance/rollback_state_machine/blueprint.md
 - module_id: MOD-GOV-ALIGNMENT-LOOP
   name: alignment_loop
   title: 蓝图-代码对齐长效闭环引擎蓝图 — drift自动检测→自动修复→自动验证闭环
@@ -458,7 +562,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: domain
   priority: P0
-  version: 0.13.2
+  version: 0.13.5
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/blueprint.md
@@ -471,7 +575,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 3.1.2
+  version: 3.1.3
   generation: 3
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_infrastructure_operations/capacity_assurance/blueprint.md
@@ -499,7 +603,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 5.5.6
+  version: 5.5.8
   generation: 1
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/governance_automation/blueprint.md
@@ -568,7 +672,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.19.4
+  version: 0.19.6
   generation: 2
   last_updated: '2026-06-23'
   file_path: 03_modules/_cross_layer/shared_core/blueprint.md
@@ -623,7 +727,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.1.2
+  version: 2.1.3
   generation: 9
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/audit_trail/blueprint.md
@@ -638,7 +742,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 9.0.3
+  version: 9.0.4
   generation: 7
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_autonomy_core/rollback_system/blueprint.md
@@ -652,7 +756,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.2
+  version: 2.1.3
   generation: 3
   last_updated: '2026-06-23'
   file_path: 03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
@@ -667,7 +771,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.1.2
+  version: 3.1.4
   generation: 4
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_governance/drift_detector/blueprint.md
@@ -688,7 +792,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 0.7.2
+  version: 0.7.3
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
@@ -807,7 +911,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.2.2
+  version: 2.2.3
   generation: 2
   last_updated: '2026-05-23'
   file_path: 03_modules/_cross_layer/model_profiler/blueprint.md
@@ -901,7 +1005,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.0.0
+  version: 2.0.1
   generation: 2
   last_updated: '2026-07-28'
   file_path: 03_modules/_domain_infrastructure_operations/disaster_recovery_backup/blueprint.md
@@ -915,7 +1019,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: 1.0.0
+  version: 1.0.1
   generation: 1
   last_updated: '2026-08-03'
   file_path: 03_modules/_domain_infrastructure_operations/model_downloader/blueprint.md
@@ -928,7 +1032,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 4.0.4
+  version: 4.0.5
   generation: 4
   last_updated: '2026-07-04'
   file_path: 03_modules/_domain_data/blueprint.md
@@ -941,7 +1045,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 4.0.4
+  version: 4.0.5
   generation: 3
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_factor/blueprint.md
@@ -967,7 +1071,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.2.7
+  version: 2.2.10
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_risk/blueprint.md
@@ -996,7 +1100,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.2.5
+  version: 2.2.7
   generation: 2
   last_updated: '2026-07-17'
   file_path: 03_modules/_domain_execution_core/blueprint.md
@@ -1010,7 +1114,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.2
+  version: 2.1.3
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_reporting/blueprint.md
@@ -1028,7 +1132,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.1.3
+  version: 3.1.5
   generation: 2
   last_updated: '2026-07-05'
   file_path: 03_modules/_domain_frontend/blueprint.md
@@ -1069,7 +1173,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 2.1.1
+  version: 2.1.2
   generation: 2
   last_updated: '2026-05-15'
   file_path: 03_modules/_domain_machine_learning_train/blueprint.md
@@ -1206,7 +1310,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_portfolio_alloc/signal_synthesis_combiner/blueprint.md
@@ -1246,7 +1350,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_pf_alloc/batched_position_builder/blueprint.md
@@ -1259,7 +1363,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.3
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_portfolio_alloc/regime_meta_allocator/blueprint.md
@@ -1272,7 +1376,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_portfolio_core/strategy_engine/blueprint.md
@@ -1337,7 +1441,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md
@@ -1350,7 +1454,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_plan_engine/premarket_constraint_loader/blueprint.md
@@ -1364,7 +1468,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_plan_engine/closing_session_decision/blueprint.md
@@ -1468,7 +1572,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_position/position_audit_logger/blueprint.md
@@ -1520,7 +1624,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_position/strategy_book/blueprint.md
@@ -1533,7 +1637,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_position/firm_risk_aggregator/blueprint.md
@@ -1546,7 +1650,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_position/budget_change_handler/blueprint.md
@@ -1559,7 +1663,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.8
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_regime/regime_detector/blueprint.md
@@ -1572,7 +1676,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_regime/regime_feature_builder/blueprint.md
@@ -1585,7 +1689,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-06'
   file_path: 03_modules/_domain_regime/chip_distribution_engine/blueprint.md
@@ -1611,7 +1715,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/drawdown_tracker/blueprint.md
@@ -1637,7 +1741,7 @@ blueprints:
   blueprint_status: Draft
   blueprint_level: module
   priority: P0
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-05'
   file_path: 03_modules/_domain_risk/alert_generator/blueprint.md
@@ -1676,7 +1780,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 0.1.1
+  version: 0.1.2
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/risk_budget_allocator/blueprint.md
@@ -1823,6 +1927,19 @@ blueprints:
   generation: ''
   last_updated: ''
   file_path: 03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md
+- module_id: MOD-RK-23
+  name: strategy_deviation_monitor
+  title: 策略偏离监控器蓝图 — 实盘 vs 回测净值偏离双口径持续度量（55 号 G26 §3.4）
+  summary: ''
+  layer: L02_risk
+  functional_domain: risk
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.4
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_risk/strategy_deviation_monitor/blueprint.md
 - module_id: MOD-RPT-003
   name: report_publisher
   title: 报告发布器蓝图 — 中心枢纽+归档+分发+哈希链审计(基础版)
@@ -1875,6 +1992,19 @@ blueprints:
   generation: ''
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_reporting/risk_report_engine/blueprint.md
+- module_id: MOD-RPT-009
+  name: review_orchestrator
+  title: 复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）
+  summary: ''
+  layer: L07_reporting
+  functional_domain: reporting
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P1
+  version: 0.1.3
+  generation: ''
+  last_updated: '2026-08-15'
+  file_path: 03_modules/_domain_reporting/review_orchestrator/blueprint.md
 - module_id: MOD-RPT-013
   name: report_version_manager
   title: 报告版本管理器蓝图 — 版本存储+差异引擎+快照管理+哈希链审计
@@ -1936,7 +2066,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_sell_decision/position_triage/blueprint.md
@@ -1975,7 +2105,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_sell_decision/take_profit_strategy/blueprint.md
@@ -1988,7 +2118,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_sell_decision/stop_loss_strategy/blueprint.md
@@ -2066,7 +2196,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: ''
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_sell_decision/sell_execution_planner/blueprint.md
@@ -2237,7 +2367,7 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 0.1.0
+  version: 0.1.1
   generation: 1
   last_updated: '2026-08-13'
   file_path: 03_modules/_domain_trading/trigger_registry/blueprint.md
@@ -2269,14 +2399,14 @@ blueprints:
   last_updated: '2026-05-15'
   file_path: 03_modules/_system_master/blueprint.md
 summary:
-  total: 163
+  total: 173
   by_blueprint_status:
-    Active: 149
+    Active: 159
     Draft: 14
   by_layer:
     L2_domain: 22
     L_BACKTEST: 8
-    L1_foundation: 30
+    L1_foundation: 38
     ? ''
     : 14
     L0_infrastructure: 18
@@ -2285,16 +2415,50 @@ summary:
     L02_pf_alloc: 4
     L02_portfolio_core: 5
     L03_position: 14
-    L02_risk: 11
-    L07_reporting: 8
+    L02_risk: 12
+    L07_reporting: 9
     L03_sell_decision: 11
     L_SIMULATION: 3
     L03_simulation: 5
     L03_trading: 3
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-08-14'
+  last_recomputed: '2026-08-16'
 changelog:
+- version: 2.7.15
+  date: '2026-08-16'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 173 份 blueprint.md；登记项相对上一版有
+    29 条差异摘要'
+  - 'MOD-BT-001.version: [1.3.4] → [1.3.6]'
+  - 'MOD-CD-001.version: [0.1.1] → [0.1.2]'
+  - 'MOD-CLONE_GUARD.version: [0.1.0] → [0.1.1]'
+  - 新增 MOD-CMP-001 → 03_modules/_domain_compliance/discipline_must_do_checker/blueprint.md
+  - 新增 MOD-CMP-002 → 03_modules/_domain_compliance/discipline_prohibition_checker/blueprint.md
+  - 新增 MOD-CMP-005 → 03_modules/_domain_compliance/hard_boundary_adjudicator/blueprint.md
+  - 新增 MOD-CMP-007 → 03_modules/_domain_compliance/trading_compliance_detector/blueprint.md
+  - 新增 MOD-CMP-008 → 03_modules/_domain_compliance/license_usage_auditor/blueprint.md
+  - 新增 MOD-CMP-009 → 03_modules/_domain_compliance/compliance_report_registry/blueprint.md
+  - 新增 MOD-CMP-010 → 03_modules/_domain_compliance/compliance_log/blueprint.md
+  - 'MOD-CONTEXT_ENGINE.version: [1.1.2] → [1.1.3]'
+  - 'MOD-EX-001.version: [0.1.1] → [0.1.2]'
+  - 'MOD-EX-049.version: [0.1.1] → [0.1.2]'
+  - 'MOD-EX-057.version: [0.1.1] → [0.1.2]'
+  - 'MOD-FEEDBACK_LOOP.version: [0.35.4] → [0.35.5]'
+  - 'MOD-GATE_ENGINE.version: [0.8.9] → [0.8.12]'
+  - 新增 MOD-GOV-045 → 03_modules/_domain_governance/rollback_state_machine/blueprint.md
+  - 'MOD-GOVERNANCE.version: [0.13.2] → [0.13.5]'
+  - 'MOD-INF-001.version: [3.1.2] → [3.1.3]'
+  - 'MOD-INF-005.version: [5.5.6] → [5.5.8]'
+  - 'MOD-INF-016.version: [0.19.4] → [0.19.6]'
+  - 'MOD-INF-020.version: [2.1.2] → [2.1.3]'
+  - 'MOD-INF-021.version: [9.0.3] → [9.0.4]'
+  - 'MOD-INF-022.version: [2.1.2] → [2.1.3]'
+  - 'MOD-INF-023.version: [3.1.2] → [3.1.4]'
+  - 'MOD-INF-024.version: [0.7.2] → [0.7.3]'
+  - 'MOD-INF-034.version: [2.2.2] → [2.2.3]'
+  - 'MOD-INF-043.version: [2.0.0] → [2.0.1]'
+  - … 另 32 条差异未展开（运行 dry-run 查看全量）
 - version: 2.7.14
   date: '2026-08-14'
   changes:

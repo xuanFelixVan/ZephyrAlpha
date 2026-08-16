@@ -66,11 +66,23 @@ DANGEROUS_GIT_PATTERNS = [
     ("git\\s+push\\s+.*(--force|-f)", "git push --force 危险操作 (ABS-26)"),
     ("git\\s+reset\\s+--hard", "git reset --hard 危险操作 (ABS-27)"),
     ("git\\s+clean\\s+(-fdx|-fd\\b.*-)", "git clean -fdx/fd 危险操作 (ABS-28)"),
-    ("git\\s+branch\\s+-D\\b", "git branch -D 强制删除分支"),
+    # 大小写敏感：git 旗标语义大小写相反——-d=安全删除（已合并才允许），-D=强制删除；
+    # 全局 IGNORECASE 会把审计留痕中合法的 `git branch -d` 误报为 -D（2026-08-17 AI-00 merge 实证）
+    ("git\\s+branch\\s+(?-i:-D\\b)", "git branch -D 强制删除分支"),
     ("git\\s+rebase\\s+.*(--onto|--root|-i.*origin)", "git rebase 高危变体"),
     ("git\\s+push\\s+--delete\\s+origin", "git push --delete 远程分支删除"),
 ]
 EXCLUDE_FILES = {"detect_git_dangerous.py"}
+# 豁免路径（2026-08-17 AI-00 merge 冲突实证治本）：append-only 历史登记表中的事故取证记录
+# （如"git clean -fd 误删防护（2026-08-11 灾难事件）"）属证据留痕而非操作指令，全文扫描模式下
+# 任何触及这两个 catalog 的 commit/merge 都会误报硬阻断。保护面不收缩：其余全部文件照常扫描。
+EXCLUDE_PATH_PARTS = (
+    "docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml",
+    "docs/01_policies_and_standards/_registry/catalogs/capability_canonical_file_registry.yaml",
+    # 统筹审计留痕文档（append-only 施工台账/交接书）——历史操作取证引用危险命令属证据非指令
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md",
+    "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/handoff_construction_coordinator.md",
+)
 
 
 def scan_file(filepath: Path) -> list[dict]:
@@ -105,7 +117,10 @@ def scan_files(file_names: list[str]) -> tuple[list[dict], int, int]:
         filepath = Path(name).resolve()
         if not filepath.is_file():
             continue
+        normalized = str(filepath).replace("\\", "/")
         if filepath.suffix.lower() not in SCAN_EXTENSIONS_CODE or filepath.name in EXCLUDE_FILES:
+            continue
+        if any(part in normalized for part in EXCLUDE_PATH_PARTS):
             continue
         try:
             filepath.relative_to(REPO_ROOT)
@@ -130,6 +145,8 @@ def scan_repo(scan_dir: Path | None = None) -> tuple[list[dict], int, int]:
         except (ValueError, OSError):
             continue
         if str(rel).startswith("_DO_NOT_USE") or str(rel).startswith(".trae"):
+            continue
+        if any(part in str(rel).replace("\\", "/") for part in EXCLUDE_PATH_PARTS):
             continue
         files_scanned += 1
         findings = scan_file(filepath)

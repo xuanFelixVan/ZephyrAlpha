@@ -4,7 +4,7 @@
 
 # [DOMAIN] D_GOV_ENFORCEMENT
 
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.gov_enforcement.rule_bridge.session_claim (generate_session_id); zephyr.gov_enforcement.rule_bridge.worktree_pool (MOD-GOV_ENFORCEMENT_worktree_pool, ARCH-GIT-CALL-BUDGET P3.3 session_worktree_start 优先 lease); scripts.governance.d1_structure.check_directory_contract (subprocess 调用，DCR 检测真源); scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment (subprocess 调用，PRE-MERGE-TOPO-CHECK 检测真源，#ARCH-DEP-001 第二期)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.worktree_manager (WorktreeManager); zephyr.security.access_control.session_concurrency (SessionRegistry); zephyr.gov_enforcement.rule_bridge.session_claim (generate_session_id); zephyr.gov_enforcement.rule_bridge.worktree_pool (MOD-GOV_ENFORCEMENT_worktree_pool, ARCH-GIT-CALL-BUDGET P3.3 session_worktree_start 优先 lease); scripts.governance.d1_structure.check_directory_contract (subprocess 调用，DCR 检测真源); scripts.governance.d5_architecture.checkers.check_blueprint_code_alignment (subprocess 调用，PRE-MERGE-TOPO-CHECK 检测真源，#ARCH-DEP-001 第二期); zephyr.governance.audit.pg_probe (refresh_pg_probe_state/log_db_failopen/pg_probe_shows_offline，#ARCH-119 merge 前置探针+降级留痕，延迟 import)
 
 # [CONSUMERS] AI 对话启动时调用（AGENTS.md 规则）；scripts/governance/session_worktree_cli.py
 
@@ -6411,6 +6411,33 @@ def _get_session_branch_diff_files(root: Path, session_id: str) -> list[str]:
 
     return [f.strip() for f in diff_r.stdout.strip().split("\n") if f.strip()]
 
+def _log_topo_failopen(
+    root: Path, session_id: str, rel_files: list[str], reason: str,
+) -> None:
+    """tracker #116 B1（#ARCH-119）：PRE-MERGE-TOPO-CHECK 降级放行统一留痕。
+
+    fail-open 放行接 log_gate_failure 持久化（critical_warn，下次 commit 网关
+    banner 浮现）；探针状态区分「DB 离线降级」（当日同签名去重）vs「真实错误」
+    （逐次留痕不静默）。放行语义不变——只加留痕；留痕失败不阻断 merge。
+    """
+    try:
+        from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+            log_db_failopen,
+            pg_probe_shows_offline,
+        )
+        _offline = pg_probe_shows_offline(root)
+        log_db_failopen(
+            root, "PRE-MERGE-TOPO-CHECK",
+            db_offline=_offline,
+            reason=reason + ("（探针证实 PG 离线）" if _offline else "（探针未证实离线——真实错误）"),
+            affected_files=list(rel_files),
+            session_id=session_id,
+            trigger_source="pre_merge_gate",
+        )
+    except Exception:  # noqa: BLE001 — 留痕失败不阻断 merge 主流程
+        pass
+
+
 def _run_pre_merge_topo_check(
 
     root: Path, session_id: str, wt_path: Path, rel_files: list[str],
@@ -6483,6 +6510,19 @@ def _run_pre_merge_topo_check(
 
         }]
 
+    # tracker #116 B2（#ARCH-119）：merge 前置刷新 PG 探针（≤1s TCP，失败不阻断
+    # 只落状态），供降级分支区分「DB 离线降级」vs「真实错误」。
+
+    try:
+
+        from zephyr.governance.audit.pg_probe import refresh_pg_probe_state  # noqa: PLC0415
+
+        refresh_pg_probe_state(root)
+
+    except Exception:  # noqa: BLE001 — 探针自身失败不阻断 merge
+
+        logger.debug("pg_probe refresh skipped", exc_info=True)
+
     cmd = [sys.executable, str(check_script), "--json", "--scan-root", str(wt_path)]
 
     try:
@@ -6505,6 +6545,14 @@ def _run_pre_merge_topo_check(
 
         )
 
+        _log_topo_failopen(
+
+            root, session_id, rel_files,
+
+            f"checker 执行异常（超时/OSError: {type(e).__name__}: {e}），降级放行",
+
+        )
+
         return True, []
 
     # --json 模式：checker 总会先 print JSON 再按 HIGH 决定 exit code
@@ -6518,6 +6566,14 @@ def _run_pre_merge_topo_check(
             "PRE-MERGE-TOPO-CHECK: checker 返回 ERROR(exit 2)，降级放行。stderr: %s",
 
             (result.stderr or "")[:500],
+
+        )
+
+        _log_topo_failopen(
+
+            root, session_id, rel_files,
+
+            f"checker 返回 ERROR(exit 2)，降级放行。stderr: {(result.stderr or '')[:500]}",
 
         )
 
@@ -6539,6 +6595,14 @@ def _run_pre_merge_topo_check(
 
         )
 
+        _log_topo_failopen(
+
+            root, session_id, rel_files,
+
+            f"checker 输出 JSON 解析失败（returncode={result.returncode}, error={e}），降级放行",
+
+        )
+
         return True, []
 
     # DB 不可用 → depgraph_module_ids==0 → fail-open（无法可靠拓扑检查）
@@ -6552,6 +6616,14 @@ def _run_pre_merge_topo_check(
             "无法可靠执行拓扑检查，降级放行。stderr: %s",
 
             (result.stderr or "")[:500],
+
+        )
+
+        _log_topo_failopen(
+
+            root, session_id, rel_files,
+
+            "depgraph_module_ids==0（DB 不可用或 depgraph 为空），无法可靠拓扑检查，降级放行",
 
         )
 

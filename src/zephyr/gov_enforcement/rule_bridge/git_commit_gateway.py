@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-035 | docs/03_modules/_cross_layer/auto_runtime_core/blueprint.md | §ghost-commit-gateway
 # [MODULE] zephyr.gov_enforcement.rule_bridge.git_commit_gateway
 # [DOMAIN] D_GOV_ENFORCEMENT
-# [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency; zephyr.gov_enforcement.rule_bridge.worktree_manager
+# [DEPENDENCIES] zephyr.governance.__init__; zephyr.security.access_control.session_concurrency; zephyr.gov_enforcement.rule_bridge.worktree_manager; zephyr.governance.audit.pg_probe (refresh_pg_probe_state，#ARCH-119 commit 前置探针，延迟 import)
 # [CONSUMERS] zephyr.governance.persistence.task_repo.TaskRepository._auto_commit_on_completion; scripts/git_commit.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -1266,6 +1266,18 @@ class GitCommitGateway:
                 _WORKTREE_SKIP_GATES,
             )
             _gate_skip = _WORKTREE_SKIP_GATES
+
+        # tracker #116 B2（#ARCH-119）：PG 可用性前置探针——commit 前置执行
+        # TCP 5432 探测（≤1s，失败不阻断只落 .runtime/pg_probe_state.json），
+        # 供 #1/#2/#3/#5 depgraph 类 gate 区分「DB 离线降级」vs「真实错误」，
+        # 并供 DEPGRAPH-FRESHNESS 离线超 24h 豁免判定。
+        try:
+            from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+                refresh_pg_probe_state,
+            )
+            refresh_pg_probe_state(self.project_root)
+        except Exception:  # noqa: BLE001 — 探针自身失败不阻断 commit
+            logger.debug("pg_probe refresh skipped", exc_info=True)
 
         # #ARCH-DEPGRAPH-RECONCILER-FAILSILENT Phase 3: pre-commit 告警横幅
         # 翻日志本查最近 24h 的 critical_warn，有则打印醒目横幅强制 AI 看到。

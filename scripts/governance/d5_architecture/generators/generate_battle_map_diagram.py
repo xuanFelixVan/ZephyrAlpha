@@ -756,6 +756,7 @@ def _build_mermaid_paged(
     sorted_steps = sorted(steps, key=lambda x: x.get("sort_order", 0))
 
     def _collect_family(step_id: str, acc: list[dict]) -> None:
+        """_collect_family implementation."""
         acc.append(step_by_id[step_id])
         for child in children_map.get(step_id, []):
             _collect_family(child["step_id"], acc)

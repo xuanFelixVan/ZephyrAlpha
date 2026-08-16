@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.5
+version: 1.3.6
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -977,7 +977,6 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 |---------|:---:|------|
 | `src/zephyr/backtest/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/backtest/core/decision_gate.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/metrics.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/overfitting_detector.py` | ✅ 已实现 | |
 | `src/zephyr/backtest/core/pit_manager.py` | ✅ 已实现 | |

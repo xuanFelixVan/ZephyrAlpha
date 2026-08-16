@@ -37,3 +37,5 @@ regime 检测器 CRISIS 态依赖跨市场相关性（股/债/商品/加密）�
 # I1 --> A1
 # A1 --> O1
 """
+
+__all__: list[str] = ["overlay_signals_builder", "regime_feature_builder", "risk_signal_builder"]

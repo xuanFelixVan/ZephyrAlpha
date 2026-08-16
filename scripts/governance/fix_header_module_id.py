@@ -457,6 +457,7 @@ def print_result(r: FileResult, verbose: bool) -> None:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="批量修复文件头 module_id 与 depgraph 一致")
     parser.add_argument("--dry-run", action="store_true", default=True, help="只分析, 不修改 (默认)")
     parser.add_argument("--confirm", action="store_true", help="实际执行修改")

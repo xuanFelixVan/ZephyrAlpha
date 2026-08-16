@@ -322,7 +322,22 @@ def main() -> int:
 
     # P2迁移后：depgraph 已从 SQLite 迁移到 PostgreSQL，连接由 get_depgraph_pg_connection 统一管理
     # （--db 参数保留以兼容既有 pre-commit 调用，但不再用于连接）
-    conn = get_depgraph_pg_connection(autocommit=True)
+    # tracker #116 顺手项（#ARCH-119，报告 §1.3）：连接调用移入 try 块——
+    # PG 离线从「未捕获异常崩溃式阻断」转「明确告警阻断」（含错误码与引导文案）。
+    try:
+        conn = get_depgraph_pg_connection(autocommit=True)
+    except Exception as e:
+        print(
+            f"[ERROR][PG-UNREACHABLE] depgraph (PostgreSQL) 连接失败，Schema 健康度校验无法执行: "
+            f"{type(e).__name__}: {e}"
+        )
+        print(
+            "  引导: ① 确认 PostgreSQL 服务已启动（默认 localhost:5432，配置真源 "
+            "config/.env.postgres 或 DATABASE_URL）；② PG 停服属环境事故（参考 2026-08-16 "
+            "PG 停服事故），恢复后重新提交即可；③ 若仅需绕过本 hook 做紧急修复，走 "
+            "emergency_commit 通道（会落审计）。"
+        )
+        return EXIT_ERROR
     issues: list[str] = []
     try:
         check_ddl_columns(conn, issues)

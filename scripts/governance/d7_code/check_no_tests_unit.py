@@ -74,6 +74,9 @@ _EXEMPT_PATH_PATTERNS = [
     # 派生清单逐字引用各 gate 自述（含本 gate 描述中的 tests/unit/ 字面量），
     # 非旧路径引用——不自引用误伤（2026-08-14 script_manifest 重生成被本 gate 自咬实证）
     re.compile(r"^scripts/governance/script_manifest\.yaml$"),
+    # 同类自咬：gate_registry.yaml 由生成器逐字收录本 gate 的 name/description（含 tests/unit/ 字面量），
+    # 非旧路径引用（2026-08-17 AI-00 merge 全文扫描实证）
+    re.compile(r"^docs/01_policies_and_standards/_registry/catalogs/gate_registry\.yaml$"),
     # 检测器自身必须字面含检测模式（正则/docstring/报错文案），自豁免
     re.compile(r"^scripts/governance/d7_code/check_no_tests_unit\.py$"),
 ]

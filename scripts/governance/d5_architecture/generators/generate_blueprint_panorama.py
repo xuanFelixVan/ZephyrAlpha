@@ -73,25 +73,10 @@ from zephyr.governance.persistence.decisiongraph_schema import (  # noqa: E402
     get_decisiongraph_pg_connection,
 )
 
-try:
-    from d5_architecture.panorama_common import (
-        min_maturity as _min_mat,
-    )
-    from d5_architecture.panorama_common import (
-        weighted_domain_vote,
-    )
-except ImportError:
-    import sys as _sys
-
-    _pc_path = str(Path(__file__).resolve().parents[1])  # d5_architecture/
-    if _pc_path not in _sys.path:
-        _sys.path.insert(0, _pc_path)
-    from panorama_common import (  # noqa: E402
-        min_maturity as _min_mat,
-    )
-    from panorama_common import (
-        weighted_domain_vote,
-    )
+from d5_architecture.panorama_common import (  # noqa: E402
+    min_maturity as _min_mat,
+    weighted_domain_vote,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -920,6 +905,7 @@ def _fetch_all_dataflow_modules() -> dict[str, DataflowModuleInfo]:
         conn.close()
 
     def _col(row, *keys):
+        """_col implementation."""
         for k in keys:
             if isinstance(row, dict):
                 if k in row:
@@ -973,6 +959,7 @@ def _fetch_all_decision_modules() -> dict[str, DecisionModuleInfo]:
         conn.close()
 
     def _col(row, *keys):
+        """_col implementation."""
         for k in keys:
             if isinstance(row, dict):
                 if k in row:

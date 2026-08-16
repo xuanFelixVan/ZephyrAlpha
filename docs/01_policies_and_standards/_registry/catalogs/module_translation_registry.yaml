@@ -41557,6 +41557,14 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "所有告警阈值只认一个地方：告警阈值注册表。谁要用阈值（比如回撤5%报警），就从这里拿；注册表文件丢了、条目少了、类型写错了，它就当场报错，绝不偷偷用代码里的旧数字。"
+- module_path: src/zephyr/governance/audit/pg_probe.py
+  module_id: MOD-GOV_PG_PROBE
+  domain_id: D_GOV_AUDIT
+  name_zh: PG可用性前置探针与DB降级留痕统一入口
+  name_en: ""
+  desc_zh: ""
+  desc_en: ""
+  plain_zh: "commit/merge 前先用 TCP 摸一下 PostgreSQL 5432 通不通（1 秒超时，不通也不拦你，只把结果写进 .runtime/pg_probe_state.json）；几个 depgraph 门禁在数据库连不上被迫放行时，会查这个状态来分清是'数据库真的挂了'还是'别的错误'，并把放行记录写进治理库（同一个原因一天只记一次，防止刷屏），下次提交时横幅提醒你追账；数据库连续挂超 24 小时时，还会豁免 depgraph 新鲜度门禁的误伤"
 
 battle_map_steps:
 - step_id: BM-BUY-04

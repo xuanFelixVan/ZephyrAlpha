@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-GATE_ENGINE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.gov_enforcement.commit_gates.depgraph_pre_registration_gate
 # [DOMAIN] D_GOV_CODE_QUALITY
-# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.depgraph_schema (get_depgraph_pg_connection)
+# [DEPENDENCIES] zephyr.gov_enforcement.rule_bridge.commit_gate_registry (GateSpec, is_test_exempt); zephyr.governance.depgraph_schema (get_depgraph_pg_connection); zephyr.governance.audit.pg_probe (log_db_failopen/pg_probe_shows_offline，#ARCH-119 延迟 import)
 # [CONSUMERS] zephyr.gov_enforcement.rule_bridge.git_commit_gateway.GitCommitGateway.__init__
 # [STARTUP] imported
 # [MATURITY] production
@@ -67,6 +67,7 @@ from __future__ import annotations
 import logging
 import os
 import re
+import traceback
 
 from zephyr.gov_enforcement.rule_bridge.commit_gate_registry import (
     GateSpec,
@@ -200,13 +201,57 @@ def _query_build_status(file_path: str) -> str | None:
         return None
 
 
-def _scan_violations(gateway, py_files: list[str]) -> list[str]:
+def _log_none_status_failopen(gateway, skipped: list[str], session_id: str = "") -> None:
+    """tracker #116 B1（#ARCH-119）：build_status 查询返回 None 的 permanent 文件降级留痕。
+
+    None 语义二义（「depgraph 无记录」正常 vs 「DB 查询失败」降级）：
+    - 探针证实 PG 离线 → 全部按 DB 离线降级留痕（当日同签名去重）；
+    - 探针在线/未知 → 单发连接测试区分：连接失败=真实错误留痕（不静默）；
+      连接成功=None 为「无记录」正常语义（NEW-FILE-DEPGRAPH-ENFORCEMENT 已管
+      新建无记录），不留痕。
+    """
+    from zephyr.governance.audit.pg_probe import (  # noqa: PLC0415 延迟 import 防循环
+        log_db_failopen,
+        pg_probe_shows_offline,
+    )
+
+    project_root = gateway.project_root
+    if pg_probe_shows_offline(project_root):
+        log_db_failopen(
+            project_root, "DEPGRAPH-PRE-REGISTRATION",
+            db_offline=True,
+            reason="探针证实 PG 离线，build_status 查询失败，planned→production 流转检测降级跳过",
+            affected_files=skipped,
+            session_id=session_id,
+        )
+        return
+    try:
+        from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+
+        conn = get_depgraph_pg_connection(autocommit=True, read_only=True)
+        conn.close()
+    except Exception as e:  # noqa: BLE001 — 连接失败=真实错误留痕
+        log_db_failopen(
+            project_root, "DEPGRAPH-PRE-REGISTRATION",
+            db_offline=False,
+            reason=(
+                f"探针未证实离线但 depgraph 连接失败({type(e).__name__}: {e})，"
+                f"build_status 查询降级跳过——真实错误"
+            ),
+            affected_files=skipped,
+            session_id=session_id,
+            stack_trace=traceback.format_exc(),
+        )
+
+
+def _scan_violations(gateway, py_files: list[str], session_id: str = "") -> list[str]:
     """扫描 planned 状态但已施工的违规。
 
     返回违规消息列表。
     """
     project_root = gateway.project_root
     violations: list[str] = []
+    skipped_none: list[str] = []  # build_status 查询为 None 的 permanent 文件（#116 B1 留痕候选）
 
     for rel in py_files:
         abs_path = os.path.join(str(project_root), rel)
@@ -219,6 +264,9 @@ def _scan_violations(gateway, py_files: list[str]) -> list[str]:
             continue  # 只检测永久模块
 
         status = query_build_status(rel)
+        if status is None:
+            skipped_none.append(rel)  # None 二义：无记录（正常）或 DB 失败（降级）
+            continue
         if status != "planned":
             continue  # 非 planned 不检测（generated/stable/deprecated 放行）
 
@@ -230,6 +278,10 @@ def _scan_violations(gateway, py_files: list[str]) -> list[str]:
             f"  {rel}: depgraph build_status=planned 但实质实现 {impl_lines} 行"
             f" > {_IMPL_THRESHOLD}（planned 表示'计划但未做'，代码已施工应转 production）"
         )
+
+    # tracker #116 B1：DB 降级跳过的 permanent 文件留痕（仅当真为 DB 失败时）
+    if skipped_none:
+        _log_none_status_failopen(gateway, skipped_none, session_id=session_id)
 
     return violations
 
@@ -246,7 +298,9 @@ def make_depgraph_pre_registration_gate() -> GateSpec:
         if not py_files:
             return True, ""
 
-        violations = _scan_violations(gateway, py_files)
+        violations = _scan_violations(
+            gateway, py_files, session_id=kwargs.get("session_id", "")
+        )
 
         if violations:
             detail = (

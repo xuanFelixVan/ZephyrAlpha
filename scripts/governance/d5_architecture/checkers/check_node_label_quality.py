@@ -186,6 +186,7 @@ def _audit_doc(doc_path: Path) -> list[tuple[str, str]]:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(description="审计域文档 Mermaid 节点标签简介质量（五类坏简介）")
     parser.add_argument(
         "files",

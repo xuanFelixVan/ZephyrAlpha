@@ -74,6 +74,7 @@ def _has_algo_flow(py_path: Path) -> tuple[bool, str]:
 
 
 def main(argv: list[str]) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     # pre-commit pass_filenames=true 传入 staged 文件；无参数时直接通过
     files = [a for a in argv if a.endswith(".py") and a.replace("\\", "/").startswith("src/zephyr/")]
     if not files:

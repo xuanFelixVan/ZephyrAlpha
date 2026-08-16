@@ -21,3 +21,5 @@
 ``from scripts.governance.git_hooks import post_commit_regen_yaml``，
 需本 __init__.py 使 git_hooks 成为可导入 Python 包（消除 sys.path hack + 动态导入隐患）。
 """
+
+__all__: list[str] = ["post_commit_regen_yaml"]

@@ -4,7 +4,7 @@ submodule_path: src/zephyr/intelligence/model_profiling
 title: "Model Profiler 蓝图 — 模型画像器·LLM能力基线测量"
 doc_type: blueprint
 status: Active
-version: "2.2.2"
+version: "2.2.3"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -1016,7 +1016,6 @@ MAX_OLLAMA_MODELS, SKIP_MODEL_PATTERNS
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
 | `src/zephyr/infrastructure/model_profiler/__init__.py` | ✅ 已实现 | |
-| `src/zephyr/intelligence/model_profiling/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/benchmark_suite.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/case_assembler.py` | ✅ 已实现 | |
 | `src/zephyr/intelligence/model_profiling/exam_executor.py` | ✅ 已实现 | |

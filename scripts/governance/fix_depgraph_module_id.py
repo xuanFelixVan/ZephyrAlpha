@@ -164,11 +164,13 @@ class SetResult:
 
 
 def _get_conn():
+    """_get_conn implementation."""
     from _shared.constants import get_depgraph_pg_connection  # noqa: E402
     return get_depgraph_pg_connection(autocommit=True)
 
 
 def db_node_by_path(path: str) -> dict | None:
+    """db_node_by_path implementation."""
     conn = _get_conn()
     try:
         row = conn.execute(
@@ -206,6 +208,7 @@ def db_existing_blueprint_ids() -> set[str]:
 
 
 def check_git_clean() -> bool:
+    """Check compliance and report findings."""
     proc = subprocess.run(
         ["git", "status", "--porcelain"],
         capture_output=True, text=True, cwd=str(BASE_DIR),
@@ -299,6 +302,7 @@ def repo_wide_replace(old: str, new: str, dry_run: bool) -> tuple[list[str], lis
 
 
 def apply_rename(old: str, new: str, dry_run: bool) -> tuple[bool, str]:
+    """apply_rename implementation."""
     cmd = [sys.executable, str(APPLY_DEPGRAPH), "--rename-blueprint-id", old, new]
     if dry_run:
         cmd.append("--dry-run")
@@ -308,6 +312,7 @@ def apply_rename(old: str, new: str, dry_run: bool) -> tuple[bool, str]:
 
 
 def apply_set(path: str, new: str, dry_run: bool) -> tuple[bool, str]:
+    """apply_set implementation."""
     cmd = [sys.executable, str(APPLY_DEPGRAPH), "--set-blueprint-id", path, new]
     if dry_run:
         cmd.append("--dry-run")
@@ -348,6 +353,7 @@ def validate_mapping(existing_ids: set[str]) -> list[str]:
 
 
 def print_dry_run(existing_ids: set[str]):
+    """print_dry_run implementation."""
     print("=" * 100)
     print("DRY-RUN: depgraph module_id 修正计划（28 节点）")
     print("=" * 100)
@@ -389,6 +395,7 @@ def print_dry_run(existing_ids: set[str]):
 
 
 def execute_confirm() -> dict:
+    """execute_confirm implementation."""
     report = {
         "run_id": time.strftime("%Y%m%d_%H%M%S"),
         "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -541,6 +548,7 @@ def execute_file_sync() -> dict:
 
 
 def main() -> None:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="修正 depgraph 不合规 blueprint_id 并同步文件头（28 节点 + 6 节点文件同步补漏）",
     )

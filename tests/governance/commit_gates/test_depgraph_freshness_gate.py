@@ -195,3 +195,92 @@ class TestCheckDualThreshold:
         passed, detail = gate.check(gw, [])
         assert passed is True
         assert "future" in detail.lower() or "fresh" in detail.lower()
+
+
+# ---------------------------------------------------------------------------
+# TestPgOfflineExemption（tracker #116 B2，#ARCH-119，报告 §1.3 联动修复）
+# ---------------------------------------------------------------------------
+
+def _write_probe_state(project_root: Path, *, offline_hours: float | None) -> None:
+    """写入探针状态文件。offline_hours=None 表示在线；否则离线时长（小时）。"""
+    now = datetime.now(timezone.utc)
+    if offline_hours is None:
+        state = {
+            "reachable": True, "checked_at": now.isoformat(),
+            "host": "localhost", "port": 5432, "error": "",
+            "last_reachable_at": now.isoformat(), "first_offline_at": None,
+        }
+    else:
+        state = {
+            "reachable": False, "checked_at": now.isoformat(),
+            "host": "localhost", "port": 5432, "error": "refused",
+            "last_reachable_at": None,
+            "first_offline_at": (now - timedelta(hours=offline_hours)).isoformat(),
+        }
+    path = project_root / ".runtime" / "pg_probe_state.json"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(state), encoding="utf-8")
+
+
+def _read_log_rows(project_root: Path) -> list[tuple]:
+    import sqlite3 as _sqlite3
+    db_path = project_root / "data" / "databases" / "governance.db"
+    if not db_path.is_file():
+        return []
+    conn = _sqlite3.connect(str(db_path))
+    try:
+        return conn.execute(
+            "SELECT gate_id, action, detail FROM reconcile_execution_log"
+        ).fetchall()
+    finally:
+        conn.close()
+
+
+class TestPgOfflineExemption:
+    """探针证实 PG 离线超 24h → saved_at 停更豁免阻断 + 留痕。"""
+
+    def test_offline_over_24h_exempts_block(self, tmp_path: Path) -> None:
+        """saved_at 停更 48h + 探针离线 30h → 豁免阻断（放行）+ critical_warn 落盘。"""
+        stale = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+        _write_cache(tmp_path, saved_at=stale)
+        _write_probe_state(tmp_path, offline_hours=30)
+        gw = _make_gateway(tmp_path)
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(gw, [], session_id="sess-t")
+        assert passed is True
+        assert "exempted" in detail
+        rows = _read_log_rows(tmp_path)
+        assert len(rows) == 1
+        assert rows[0][0] == "DEPGRAPH-FRESHNESS"
+        assert rows[0][1] == "critical_warn"
+        assert "DB 离线降级" in rows[0][2]
+
+    def test_offline_under_24h_still_blocks(self, tmp_path: Path) -> None:
+        """saved_at 停更 48h + 探针离线仅 1h（<24h）→ 不豁免，维持阻断。"""
+        stale = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+        _write_cache(tmp_path, saved_at=stale)
+        _write_probe_state(tmp_path, offline_hours=1)
+        gw = _make_gateway(tmp_path)
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False
+        assert "24h" in detail or "stale" in detail.lower()
+
+    def test_probe_online_still_blocks(self, tmp_path: Path) -> None:
+        """saved_at 停更 48h + 探针在线 → 不豁免，维持阻断。"""
+        stale = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+        _write_cache(tmp_path, saved_at=stale)
+        _write_probe_state(tmp_path, offline_hours=None)
+        gw = _make_gateway(tmp_path)
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False
+
+    def test_probe_missing_still_blocks(self, tmp_path: Path) -> None:
+        """saved_at 停更 48h + 无探针状态 → 不豁免，维持阻断。"""
+        stale = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+        _write_cache(tmp_path, saved_at=stale)
+        gw = _make_gateway(tmp_path)
+        gate = make_depgraph_freshness_gate()
+        passed, detail = gate.check(gw, [])
+        assert passed is False

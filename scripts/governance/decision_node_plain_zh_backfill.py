@@ -404,6 +404,7 @@ def backfill(dry_run: bool = False) -> int:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     parser = argparse.ArgumentParser(
         description="一次性补齐 213 决策节点的 plain_zh 大白话简介（读-改-写合并，幂等）",
     )

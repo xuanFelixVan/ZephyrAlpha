@@ -172,7 +172,7 @@ INFRA_KEYWORDS = {
     "breaker",
     "task",
 }
-INFRA_DOMAINS = {"D_INFRA_RUNTIME", "D_INFRA_OPS", "D_OPS", "D_GOV_AUDIT"}  # noqa: gate-vocab
+INFRA_DOMAINS = {"D_INFRA_RUNTIME", "D_INFRA_OPS", "D_OPS", "D_GOV_AUDIT"}  # noqa: gate-vocab — 基础设施域名单系治理域判定集合，属词表豁免合法场景
 
 
 def heuristic_dedup(
@@ -406,6 +406,7 @@ def append_to_file(path: Path, block: str) -> None:
 
 
 def main() -> int:
+    """Entry point: parse args, run logic, return exit code."""
     ap = argparse.ArgumentParser()
     ap.add_argument("--domain", help="只处理指定域（横杠格式，如 D-CROSS-ASSET）")
     ap.add_argument("--all", action="store_true", help="全量处理所有域")

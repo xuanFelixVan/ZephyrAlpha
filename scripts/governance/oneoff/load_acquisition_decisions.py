@@ -224,6 +224,7 @@ def update_candidate_yaml(
 
 
 def main(dry_run: bool = False) -> int:
+    """Entry point: parse args, run logic, return exit code."""
     if not _DECISION_TABLE.exists():
         print(f"ERROR: 决策表不存在: {_DECISION_TABLE}", file=sys.stderr)
         return 1

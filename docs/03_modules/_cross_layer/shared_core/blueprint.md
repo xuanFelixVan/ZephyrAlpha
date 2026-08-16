@@ -4,7 +4,7 @@ submodule_path: src/zephyr/shared
 title: "Shared+Core 蓝图"
 doc_type: blueprint
 status: Active
-version: "0.19.5"
+version: "0.19.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -413,7 +413,6 @@ build_status: generated
 | `src/zephyr/shared/contracts/execution_report.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/experiment/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/experiment/experiment_result.py` | ✅ 已实现 | |
-| `src/zephyr/shared/contracts/experiment/model_serving_response.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/contracts/external/ext_001.py` | ✅ 已实现 | |
 | `src/zephyr/shared/contracts/external/ext_002.py` | ✅ 已实现 | |
@@ -456,7 +455,6 @@ build_status: generated
 | `src/zephyr/shared/security/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/session/__init__.py` | ⚠️ 骨架 | |
 | `src/zephyr/shared/utils/__init__.py` | ⚠️ 骨架 | |
-| `src/zephyr/shared/utils/async_utils.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/__init__.py` | ✅ 已实现 | |
 | `src/zephyr/trading/trading_contracts/execution/execution_rejection_error.py` | ✅ 已实现 | |
@@ -502,6 +500,8 @@ build_status: generated
 | `tests/observability/test_observability_logging.py` | ✅ 已实现 | |
 | `tests/observability/test_observability_metrics.py` | ✅ 已实现 | |
 | `tests/observability/test_observability_tracing.py` | ✅ 已实现 | |
+| `tests/shared/test_state_store.py` | ✅ 已实现 | |
+| `tests/shared/test_state_store_redis.py` | ✅ 已实现 | |
 | `tests/trading/integration/test_trading_contracts.py` | ✅ 已实现 | |
 | `tests/trading/test_feature_flag.py` | ✅ 已实现 | |
 | `tests/utils/test_foundation_deprecation.py` | ✅ 已实现 | |
