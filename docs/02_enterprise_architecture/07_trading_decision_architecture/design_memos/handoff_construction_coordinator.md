@@ -65,16 +65,15 @@ completes_when: "全部批次施工完工、遗留项清零、tracker 归档后�
 6. **防丢铁律（本次事故教训）**：tracker 与本文件**每次里程碑必须经 GitCommitGateway commit 到 dev**。"staged + .runtime 备份"不是持久化——staged 会被其他会话/reconciler 冲掉，.runtime 免跟踪目录会话关闭即失联。2026-08-13 两份文件因此丢失，靠备份+记忆重建。
 7. **新建文件即 `git add`**：project_memory #ARCH-GIT-CLEAN-GUARD-FIX 教训——`git clean -fd` 物理删除 untracked 文件不进回收站。
 
-## 五、当前状态快照（2026-08-15 午后，merge 收口更新）
+## 五、当前状态快照（2026-08-16 午后，第五统筹 11 路收口+233 派单）
 
-- **第 1-3 批业务施工（18 个会话）**：全部完工 PASS 并 merge 回 dev（第三批 merge：BGT=7ccc296d1e / LIQ=885cddc3af / SELL=a337e0f54c）。
-- **文档压缩批（AI-DOCS-001）**：18 篇 ≥1000 行大文档已压缩 merge（33.6k→23.2k 行，merge ab3df58d9d）。
-- **治理插队批（AI-GIT-001）**：✅ 已 merge（d8f94d4f2b+04cae02008，S1-S6/task_board/65号 v2.3.0 全落地；worktree 已按四证 SOP 清理，tracker #54）。
-- **治理批②（AI-RCN-001）+治理批③（同会话续作）**：✅ 已 merge（2026-08-15 午 e0f962f36e 双亲实证）——reconciler 失控族 T0-T6 全层（doc_lifecycle 状态机/file_ops 声明制+ops_guard 收敛+回收站/worker 三证/untracked 人工确认闸门/审计迁出 tracked/tracked 漂移监视器/告警卫生/I-GOV-2 对齐）+ governance.db 双副本治本（anchor_main_root 两型锚定/worktree REFUSED 禁写/补丁卸载 API）；裁定书真源=docs/02_enterprise_architecture/04_architecture_principles_decisions/2026-08-14_coord_reconciler_auto_delete_governance_review.md（04 永久区，ttl=permanent）；核验双 PASS+merge 后 dev 红队 108 项复验全绿；worktree 已四证 SOP 清理（wipe 第四次实证零损失，bundle 存证 .runtime/quarantine/AI-RCN-001.bundle）。
+- **全部历史批次（第 1-5 批+治理批+数据批+重建类）**：✅ 11 路施工会话实质内容全在 dev——SENT e53bc3b70c / RCAN 057a9a2384 / SIM eafc17941c / FIX a539c1fcb6 / MON 0d5f8f0777 / ASM 8b932ced42 / TDEBT 16c3dcf2c9 / NORTH 87f50a5e3f / JOB077 bdf37ab8d5+1e9f14fc82 / JOB083 846a1019a6 / JOB084 3f7f7b603b；ARCH-001 未提交登记抢救入库 2cdbbc80a7（冷归档 INFRA-STORE-002+契约 v1.1.0）。
+- **环境**：14 个旧 worktree 全部四证清理、ai/* 历史分支全删、depgraph 已重建收敛（0817f77e84）；主仓干净（仅 metrics.jsonl 运行时噪音）。
+- **233 测试债下批（🔄 进行中）**：2026-08-16 用户裁定 6 路全并发，worktree 已建（AI-TD2-SEC/TRD/GOV/DATA/AUTO/UTIL-001，自 fcf3e21e89 切出），开工指令=docs/_working/dispatch/2026-08-16-233-six-pack-orders.md；包③搭车 #ARCH-099（gov_db fixture 治本）、包⑥负全量复跑验证职责。
+- **待用户裁定/时点触发**：#95 #ARCH-QUANT-002 Crash-only 状态外部化（首批策略进 SHADOW 前施工）；#96 GATE-RULE-AUDIT 超时观察项；#61-64 专项裁定仍挂起。
+- **明日待办**：2026-08-17 开盘 tick 实盘验证（订阅序列/biz 心跳/断流重订阅三项清单）。
 - **SOP**：v1.4.0 在 dev（01/sop 专区）；merge 冲突处理 SOP=01/sop/merge_conflict_resolution_sop.md；worktree 清理 SOP=01/sop/worktree_cleanup_sop.md。
-- **遗留项**：tracker §六共 72 项登记（#1-72 唯一，merge 撞号已终态重编）。待用户裁定：#41 AGENTS.md 计数动态化（Owner 审批）、#48 G04 校准跟踪、#61 FLE gates GATES_DIR 孤儿（涉运行时行为变更）、#62 drift_events 双库真源、#64 trusted_git_env assert 补回风险；#63 全量测试存量债 785 failed 用户已裁定专项清偿批（AI-TDEBT-001）。
-- **批次推进（2026-08-15 用户裁定）**：#59 tick_subscriber 修复（P0，周一 08-17 开盘前，AI-TICK-001 立即并行）→ 第 4 批（34 RegimeMeta=AI-REGIME-001 / 60 跨切骨架重建=AI-XCUT-001 / 43 合规=AI-COMP-001）∥ 测试债清偿批（AI-TDEBT-001，#63）并行开工 → 第 5 批（53/54/55）→ 重建类（28 号可从 a3750b90d1 恢复）。
-- **环境**：无未 merge 施工分支（wrapper-phase1 已顺手 -d）；worktree 仅剩 .worktrees/AI-GIT-001（task-git-infra-leftovers，另一遗留批会话资产，勿碰）；AI-RCN-001 worktree+分支已清理；主工作区有 65 memo v2.5.0 批（ai-25808 通道）等活动迹象，改动前 git status 避让。
+- **教训登记（2026-08-16）**：开工指令一度误写 .runtime/dispatch（免跟踪区，违防丢铁律 #6），已迁 docs/_working/dispatch/ 并 git add——派发类文件一律落 tracked 区。
 
 ## 六、新批次开工指令要点（供生成一键复制指令时引用）
 
