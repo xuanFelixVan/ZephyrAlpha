@@ -229,3 +229,72 @@ class TestBackwardCompatAndOrder:
         with pytest.raises(ComplianceGateBlockError, match="先报告后交易"):
             _create_and_submit(om)
         broker.submit_order.assert_not_called()
+
+
+# ---------------------------------------------------------------------
+# 撤单计数接线（2026-08-16 双轮审查 P1-5 裁定，AI-RFIX-001）：
+# 撤单指令发往券商即 record_cancel() 计入日申报硬计数器（成功/失败均计）
+# ---------------------------------------------------------------------
+
+
+class TestCancelDeclarationWiring:
+    def _submit_and_get_id(self, om: OrderManager) -> str:
+        order = om.create_order(
+            symbol="600519.SH",
+            strategy_id="test",
+            side=OrderSide.BUY,
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            limit_price=Decimal("10"),
+            broker_id="test_broker",
+        )
+        om.submit_order(order.order_id, "test_broker")
+        return order.order_id
+
+    def test_cancel_success_counts_declaration(self):
+        """撤单成功 → 计入日申报硬计数器 + 撤单率窗口（"申报、撤单笔数"同口径）。"""
+        broker = _make_broker()
+        guard = CancelRateGuard()
+        om = _make_om(broker, declaration_guard=guard)
+        order_id = self._submit_and_get_id(om)
+        assert guard.daily_declaration_count == 0  # submit 侧不经 OM 计数（trading_session 职责）
+        assert om.cancel_order(order_id) is True
+        assert guard.daily_declaration_count == 1
+        assert guard.total_cancels == 1
+
+    def test_cancel_broker_failure_still_counts(self):
+        """券商端撤单失败（如已成交拒撤）仍计入——指令已发出即消耗申报口径。"""
+        broker = _make_broker()
+        broker.cancel_order.return_value = False  # 券商拒撤
+        guard = CancelRateGuard()
+        om = _make_om(broker, declaration_guard=guard)
+        order_id = self._submit_and_get_id(om)
+        assert om.cancel_order(order_id) is False
+        assert guard.daily_declaration_count == 1
+        assert guard.total_cancels == 1
+
+    def test_local_pending_cancel_not_counted(self):
+        """无 broker_order_id 的纯本地撤单（未报交易所）→ 不计申报口径。"""
+        broker = _make_broker()
+        guard = CancelRateGuard()
+        om = _make_om(broker, declaration_guard=guard)
+        order = om.create_order(
+            symbol="600519.SH",
+            strategy_id="test",
+            side=OrderSide.BUY,
+            order_type=OrderType.LIMIT,
+            quantity=Decimal("100"),
+            limit_price=Decimal("10"),
+            broker_id="test_broker",
+        )  # 仅创建未提交 → PENDING 无 broker_order_id
+        assert om.cancel_order(order.order_id) is True
+        assert guard.daily_declaration_count == 0
+        assert guard.total_cancels == 0
+
+    def test_cancel_without_guard_unchanged(self):
+        """未注入 declaration_guard → 撤单行为不变（向后兼容，None 守卫跳过）。"""
+        broker = _make_broker()
+        om = _make_om(broker)
+        order_id = self._submit_and_get_id(om)
+        assert om.cancel_order(order_id) is True
+        assert om.get_order(order_id).status is OrderStatus.CANCELLED

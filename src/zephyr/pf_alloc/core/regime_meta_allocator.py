@@ -546,14 +546,9 @@ class RegimeMetaAllocator:
                 break  # 全部固定
 
             target_free = 1.0 - fixed_sum
-            if free_sum <= 0 or target_free <= 0:
-                # 无法重分配 → 等权分给 free 策略
-                per_free = max(FLOOR, target_free / len(free_sids)) if target_free > 0 else FLOOR
-                for sid in free_sids:
-                    alloc[sid] = per_free
-                break
-
-            # 按比例重分配 free 策略到 target_free
+            # Σalloc=1（Step 1 已归一化）⇒ target_free == free_sum；
+            # free_sids 非空 ⇒ free_sum > |free|×FLOOR > 0——两条件均由不变量保证，
+            # 原"无法重分配"兜底分支数学不可达（2026-08-16 双轮审查 F5 裁定清理）
             scale = target_free / free_sum
             changed = False
             for sid in free_sids:
@@ -621,7 +616,8 @@ class RegimeMetaAllocator:
         downside_returns = returns_arr[downside_mask]
         n_downside = len(downside_returns)
 
-        # downside 样本量门槛（§3.2.2 四件套 #1）
+        # downside 样本量门槛（§3.2.2 四件套 #1）——n_downside==0 被本门槛拦截，
+        # 原"无下行日"分支不可达（2026-08-16 双轮审查 F5 裁定清理）
         if n_downside < DOWNSIDE_MIN_OBSERVATIONS:
             logger.warning(
                 "downside 样本 %d < %d，Sortino 统计不可靠，PerformanceScore 强制中性 1.0",
@@ -629,19 +625,15 @@ class RegimeMetaAllocator:
             )
             return (1.0, SORTINO_NEUTRAL, SORTINO_NEUTRAL)
 
-        if n_downside == 0:
-            # 无下行日 → Sortino 无穷大，但实际是"连胜期 inflated"风险
-            sortino = SORTINO_CEILING  # 映射 1.5，由 gap 监控标记复核
+        # 标准 Sortino 下行偏差（§3.4 施工要点 #10/#13）：
+        # 分母用总样本量 n-1（ddof=1，与 Sharpe np.std(ddof=1) 一致）
+        sum_sq_downside = float(np.sum((downside_returns - mar_daily) ** 2))
+        downside_deviation = math.sqrt(sum_sq_downside / max(n - 1, 1))
+        annual_downside_dev = downside_deviation * math.sqrt(TRADING_DAYS)
+        if annual_downside_dev > 0:
+            sortino = (r_p_annual - MAR_ANNUAL) / annual_downside_dev
         else:
-            # 标准 Sortino 下行偏差（§3.4 施工要点 #10/#13）：
-            # 分母用总样本量 n-1（ddof=1，与 Sharpe np.std(ddof=1) 一致）
-            sum_sq_downside = float(np.sum((downside_returns - mar_daily) ** 2))
-            downside_deviation = math.sqrt(sum_sq_downside / max(n - 1, 1))
-            annual_downside_dev = downside_deviation * math.sqrt(TRADING_DAYS)
-            if annual_downside_dev > 0:
-                sortino = (r_p_annual - MAR_ANNUAL) / annual_downside_dev
-            else:
-                sortino = SORTINO_CEILING
+            sortino = SORTINO_CEILING
 
         # ── Sharpe：总标准差（对照指标，§3.2.2 gap 监控用）──
         if n > 1:

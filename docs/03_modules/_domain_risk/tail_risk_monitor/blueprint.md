@@ -41,7 +41,7 @@ build_status: stable
 | 方向 | 内容 | 契约/事件 |
 |------|------|-----------|
 | 输入 | 收益率序列 returns (np.ndarray) + 配置 TailRiskConfig | — |
-| 输出 | TailRiskSnapshot (var/es/es_var_ratio/pot/jump_count/frtb_addon/alert_level) | 联动 RK-03, RK-17 |
+| 输出 | TailRiskSnapshot (var/es/es_var_ratio/pot/jump_count/frtb_addon/alert_level/pot_fallback_historical) | 联动 RK-03, RK-17 |
 | 依赖 | RK-05 VaR (基准对比, 可选) | — |
 
 ## 3. 核心规则 (设计真源 §1.2 RK-15, §2)
@@ -49,7 +49,7 @@ build_status: stable
 ### 3.1 VaR 与 ES
 
 - VaR_α = -quantile(returns, 1-α)  (正数, 损失额比率)
-- ES_α = -mean(R | R <= VaR_quantile)  (尾部条件期望, 正数)
+- ES_α = -mean(R | R <= VaR_quantile)，VaR_quantile 取 method='lower'（实有样本点，2026-08-16 双轮审查 F1 裁定：防线性插值虚拟分位值致小样本尾部口径抖动）  (尾部条件期望, 正数)
 - 不变量: ES >= VaR (尾部期望 >= 分位数)
 
 ### 3.2 POT 模型 (广义帕累托分布)
@@ -59,6 +59,7 @@ build_status: stable
 - β (scale): 尺度参数
 - tail_index = 1/ξ (厚尾程度, 越小越厚尾)
 - 拟合方法: scipy.stats.genpareto.fit
+- 小样本降级（2026-08-16 双轮审查深挖③裁定）：样本 <min_samples / 负收益 <10 / exceedances <5 → 返回 None + warning 日志，snapshot.pot_fallback_historical=True（60 日窗口常态下 POT 与样本量不兼容，降级纯历史 ES 而非噪声拟合）
 
 ### 3.3 跳跃检测
 

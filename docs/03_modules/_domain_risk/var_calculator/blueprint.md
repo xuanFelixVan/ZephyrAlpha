@@ -61,24 +61,26 @@ Phase 3(未实现): Basel III 三角验证+乘数因子+压力 VaR
 ### 3.3 样本要求
 
 - 历史模拟法需 >= min_history(默认 30) 个有效样本
-- NaN 收益自动过滤
+- 非有限值（NaN/±Inf）过滤并计数（`nan_dropped` 入 VaRResult，2026-08-16 双轮审查 F2+F4 裁定）；占比 > max_nonfinite_ratio（默认 5%）→ 抛 ExcessiveNonFiniteDataError（Fail-Closed，数据缺口期拒绝出 VaR）
 
 ## 4. 关键不变量 (INVARIANTS)
 
 - VaR ≥ 0 (损失额非负, 高均值低波动时取 0 下限)
 - conservative_max = max(parametric, historical)
 - 样本不足 → 抛 InsufficientVaRHistoryError (Fail-Closed)
+- 非有限值占比超阈值 → 抛 ExcessiveNonFiniteDataError (Fail-Closed)
 - 置信度 ∈ (0,1); holding_period ≥ 1
 
 ## 5. 错误契约
 
 - `InvalidVaRConfigError` (ZA-RK-0005): 配置非法(置信度/持有期)
 - `InsufficientVaRHistoryError` (ZA-RK-0006): 历史样本不足
+- `ExcessiveNonFiniteDataError` (ZA-RK-0024): 非有限值(NaN/±Inf)占比超阈值
 
 ## 6. 测试
 
 - `tests/risk/test_var_calculator.py`
-- 覆盖: 参数法/历史模拟/conservative_max、95%/99%、多日缩放、多资产组合、NaN过滤、样本不足、零下限
+- 覆盖: 参数法/历史模拟/conservative_max、95%/99%、多日缩放、多资产组合、NaN/Inf 过滤+计数+超阈值 raise、样本不足、零下限
 
 ## 7. 依赖
 

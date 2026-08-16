@@ -11,6 +11,7 @@ import pytest
 from scipy.stats import norm
 
 from zephyr.risk.core.var_calculator import (
+    ExcessiveNonFiniteDataError,
     InsufficientVaRHistoryError,
     InvalidVaRConfigError,
     VaRCalculator,
@@ -213,14 +214,87 @@ def test_insufficient_history_raises():
 
 
 def test_nan_returns_filtered():
-    """NaN 收益应被过滤, 剩余样本足够则正常计算。"""
+    """少量 NaN (占比 <=5%) 被过滤并计数, 剩余样本足够则正常计算。"""
     cfg = VaRConfig(min_history=50, method=VaRMethod.PARAMETRIC)
     calc = VaRCalculator(cfg)
     returns = np.random.normal(0.0, 0.01, 100)
-    returns[:10] = np.nan  # 10 个 NaN, 剩余 90 >= 50
+    returns[:3] = np.nan  # 3 个 NaN (3% <= 5%), 剩余 97 >= 50
     result = calc.calculate(returns, NAV, now=T0)
-    assert result.sample_size == 90
+    assert result.sample_size == 97
+    assert result.nan_dropped == 3
     assert result.value > 0
+
+
+# ── F2+F4 红队实证 (2026-08-16 双轮审查裁定): 非有限值过滤+计数+超阈值 raise ──
+
+
+def test_nan_dropped_counted_in_result_and_dict():
+    """F2: nan_dropped 计数入 VaRResult + to_dict, 不再静默。"""
+    calc = VaRCalculator(VaRConfig(min_history=30))
+    returns = np.random.normal(0.0, 0.01, 100)
+    returns[10] = np.nan
+    returns[20] = np.nan
+    result = calc.calculate(returns, NAV, now=T0)
+    assert result.nan_dropped == 2
+    assert result.sample_size == 98
+    assert result.to_dict()["nan_dropped"] == 2
+
+
+def test_nan_dropped_zero_for_clean_input():
+    """干净输入 nan_dropped=0。"""
+    calc = VaRCalculator()
+    returns = np.random.normal(0.0, 0.01, 100)
+    result = calc.calculate(returns, NAV, now=T0)
+    assert result.nan_dropped == 0
+    assert result.sample_size == 100
+
+
+def test_inf_filtered_and_counted():
+    """F4: ±Inf 与 NaN 一并过滤 (np.isfinite), 占比未超阈值时计数出 VaR。"""
+    calc = VaRCalculator(VaRConfig(min_history=30, method=VaRMethod.PARAMETRIC))
+    returns = np.random.normal(0.0, 0.01, 100)
+    returns[0] = np.inf
+    returns[1] = -np.inf
+    returns[2] = np.nan
+    result = calc.calculate(returns, NAV, now=T0)
+    assert result.nan_dropped == 3
+    assert result.sample_size == 97
+    assert np.isfinite(result.value)
+
+
+def test_excessive_nan_raises_fail_closed():
+    """F2: NaN 占比 >5% → ExcessiveNonFiniteDataError (数据缺口期拒绝出 VaR)。"""
+    calc = VaRCalculator(VaRConfig(min_history=30))
+    returns = np.random.normal(0.0, 0.01, 100)
+    returns[:6] = np.nan  # 6% > 5%
+    with pytest.raises(ExcessiveNonFiniteDataError, match="non-finite"):
+        calc.calculate(returns, NAV, now=T0)
+
+
+def test_excessive_inf_raises_fail_closed():
+    """F4: Inf 占比 >5% 同样 raise (Inf 不再穿透进 mean/std/quantile)。"""
+    calc = VaRCalculator(VaRConfig(min_history=30))
+    returns = np.random.normal(0.0, 0.01, 100)
+    returns[:6] = np.inf
+    with pytest.raises(ExcessiveNonFiniteDataError):
+        calc.calculate(returns, NAV, now=T0)
+
+
+def test_nonfinite_ratio_boundary_not_exceeded():
+    """边界: 占比恰 == 阈值 (5/100=5%) 不 raise (严格 > 口径)。"""
+    calc = VaRCalculator(VaRConfig(min_history=30, max_nonfinite_ratio=0.05))
+    returns = np.random.normal(0.0, 0.01, 100)
+    returns[:5] = np.nan  # 恰 5%
+    result = calc.calculate(returns, NAV, now=T0)
+    assert result.nan_dropped == 5
+    assert result.sample_size == 95
+
+
+def test_config_invalid_max_nonfinite_ratio():
+    with pytest.raises(InvalidVaRConfigError):
+        VaRConfig(max_nonfinite_ratio=1.0)
+    with pytest.raises(InvalidVaRConfigError):
+        VaRConfig(max_nonfinite_ratio=-0.1)
 
 
 def test_non_positive_portfolio_value_raises():
@@ -274,7 +348,7 @@ def test_result_to_dict_contains_all_fields():
     for key in (
         "value", "value_pct", "method", "confidence_level", "holding_period_days",
         "parametric_var", "historical_var", "portfolio_value", "mean_return",
-        "std_return", "sample_size", "annualized_vol",
+        "std_return", "sample_size", "annualized_vol", "nan_dropped",
     ):
         assert key in d
     assert d["method"] == "conservative_max"
