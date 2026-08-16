@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.risk_layer_orchestrator
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
+# [DEPENDENCIES] zephyr.position.core.drawdown_controller; zephyr.risk.core.drawdown_tracker; zephyr.risk.core.var_calculator; zephyr.risk.core.tail_risk_monitor; zephyr.risk.core.ashare_systemic_risk_detector; zephyr.risk.core.liquidity_crisis_manager; zephyr.risk.stop_loss; zephyr.ex_core.position_reconciler; zephyr.ex_core.position_tracker.tracker; zephyr.trading.trading_contracts.broker_interface; zephyr.shared.contracts.order; zephyr.shared.contracts.enums.order_enums
 # [CONSUMERS] zephyr.ex_core.trading_session
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 重建完成前禁止下单(Fail-Closed); 熔断单一仲裁点(重复触发不重复清算); 清算以券商实时持仓为准; 样本不足降级标记degraded不阻断; 只编排不重造(回撤/VaR/尾部计算全委托既有模块)
+# [INVARIANTS] 重建完成前禁止下单(Fail-Closed); 熔断单一仲裁点(重复触发不重复清算); 清算以券商实时持仓为准; 样本不足降级标记degraded不阻断; 只编排不重造(回撤/VaR/尾部/系统性风险计算全委托既有模块); LEVEL_3必须经build_escape_directive进单一仲裁点; 降级机只迁移警报级别不解除熔断闩锁(KILL态人工复位,35号KILL态禁止37号恢复)
 # [MODIFY-GUARD] docs/_working/reviews/2026-08-16-dual-review-adjudication.md §六 (#ARCH-100)
 # [STABILITY] evolving
 # [SAFETY] H
@@ -19,9 +19,11 @@
 # I3: broker(券商接口, 启动恢复查询+清算执行) + reconciler(持仓对账器)
 # F1: recover_from_broker(以券商持仓为准重建账本, 重建完成前 is_trading_allowed=False)
 # F2: evaluate_intraday(净值→回撤追踪→收益序列→VaR/ES→DrawdownController.evaluate→position_cap)
-# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007→trigger_kill_switch+清算)
+# F3: evaluate_intraday 内嵌系统性风险评估(systemic_input_provider→MOD-RK-10 detector.check→三级警报→37号§3.6降级机)
+# A1: _engage_kill_switch(单一仲裁点: EMERGENCY/尾部极值/BS-007/系统性LEVEL_3→trigger_kill_switch+清算)
 # A2: start/stop_reconcile_loop(盘中定时对账, 蓝图MOD-EX-056阶段2规划位, 默认300s)
-# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded) + RecoveryResult + 清算报告
+# A3: _evaluate_systemic_risk(LEVEL_3→build_escape_directive→_engage_kill_switch; 降级候选→check_recovery门禁)
+# O1: RiskLayerSnapshot(position_cap/allow_new_position/degraded/systemic_level) + RecoveryResult + 清算报告
 # [/ALGO_FLOW]
 """D_EX_CORE — 风控层运行时编排器（Risk Layer Orchestrator）
 
@@ -45,6 +47,14 @@
   4. 启动恢复：recover_from_broker 以券商持仓+当日成交全量重建 PositionTracker
      （消费 AI-RRESIL-001 交付的 rebuild_from_broker 接口），重建完成前
      is_trading_allowed=False（Fail-Closed 闸门，禁止空仓错觉下重复建仓）
+  5. 系统性风险 LEVEL_3 逃生链（#ARCH-100 遗留项，AI-LVL3-001 施工，37 号
+     §3.3/§3.6）：systemic_input_provider 喂市场级输入 → MOD-RK-10
+     detector.check() 三级警报（与 VaR/ES/回撤同层，evaluate_intraday 内嵌）
+     → LEVEL_3 时 build_escape_directive → _engage_kill_switch 同一仲裁点
+     （逃生指令语义=清算+撤单+暂停，与仲裁点既有动作一致）；降级机复用
+     MOD-RK-21 check_recovery（LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3%，
+     逐级 hysteresis 降级）——降级只迁移警报级别（systemic_cap/halt），
+     不解除熔断闩锁（KILL 态人工复位，37 号 §3.8「35 号 KILL 态禁止 37 号恢复」）
 
 边界（并发会话 AI-RRESIL-001）：DefaultRiskValidator / fill_handler /
 PositionTracker 内部实现归 RRESIL，本模块只做调用点接入。
@@ -56,11 +66,11 @@ import logging
 import threading
 import uuid
 from collections import deque
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import Final, Protocol
+from typing import Any, Final, Protocol
 
 import numpy as np
 
@@ -72,10 +82,20 @@ from zephyr.position.core.drawdown_controller import (
     DrawdownResponse,
     VarCvarMetrics,
 )
+from zephyr.risk.core.ashare_systemic_risk_detector import (
+    AshareSystemicRiskDetector,
+    SystemicRiskAlert,
+    SystemicRiskAlertLevel,
+)
 from zephyr.risk.core.drawdown_tracker import (
-    DrawdownAlertLevel,
     DrawdownAlertedEvent,
+    DrawdownAlertLevel,
     DrawdownTracker,
+)
+from zephyr.risk.core.liquidity_crisis_manager import (
+    LiquidityRecoveryState,
+    RecoveryCheckInput,
+    check_recovery,
 )
 from zephyr.risk.core.tail_risk_monitor import (
     TailRiskAlertLevel,
@@ -122,6 +142,11 @@ class RiskLayerConfig:
         liquidation_scope: 清算范围（all=平仓+撤单 / position=仅平仓 / order=仅撤单）
         max_orders_per_second: 清算限频（A 股 2026 程序化交易新规 15 笔/秒）
         today_fills_probe: broker 当日成交查询扩展方法名（可选能力，缺失→空列表降级）
+        systemic_spread_recovery_ratio: 系统性降级机 spread 恢复阈值相对触发阈值比例
+            （37 号 §3.6 半阈值 0.5；触发阈值真源在 detector.config）
+        systemic_sell_pressure_recovery: 系统性降级机卖压恢复阈值（0.50，37 号 §3.6）
+        systemic_min_hold_minutes: 系统性各级别最短持续门控（分钟，
+            {1:10, 2:15, 3:30}——LEVEL_3 的 30min 覆盖 Kill Switch 冷却期）
     """
 
     reconcile_interval_seconds: float = 300.0
@@ -130,6 +155,11 @@ class RiskLayerConfig:
     liquidation_scope: str = "all"
     max_orders_per_second: int = 15
     today_fills_probe: str = "get_today_fills"
+    systemic_spread_recovery_ratio: float = 0.5
+    systemic_sell_pressure_recovery: float = 0.50
+    systemic_min_hold_minutes: dict[int, int] = field(
+        default_factory=lambda: {1: 10, 2: 15, 3: 30}
+    )
 
 
 @dataclass(frozen=True)
@@ -147,6 +177,16 @@ class RiskLayerSnapshot:
         es_pct: ES/CVaR 占净值比例（降级时为 None）
         degraded: 是否降级（收益样本不足，VaR/尾部未参与本次评估）
         degrade_reason: 降级原因（未降级为空串）
+        systemic_level: 系统性风险警报级别（0=正常/1/2/3，降级机迁移后口径；
+            未接线=0）
+        systemic_cap: 系统性层仓位上限贡献（LEVEL_2=0.70/LEVEL_3=0.0，恢复态
+            按 37 号 §3.6 映射；未接线=1.0 不加约束）
+        systemic_halt: 系统性层停开仓标志（触发态 LEVEL_1/LEVEL_3=True；
+            恢复态按 §3.6 恢复执行动作放开；未接线=False）
+        systemic_signal_count: 本轮系统性触发信号数（未接线=0）
+        systemic_sentiment_breaker: 本轮情绪断路器是否触发（未接线=False）
+        escape_directive: 本轮迁移进入 LEVEL_3 时产出的逃生指令字典
+            （build_escape_directive 产出；非 LEVEL_3 迁移=None）
     """
 
     timestamp: datetime
@@ -159,16 +199,28 @@ class RiskLayerSnapshot:
     es_pct: float | None
     degraded: bool
     degrade_reason: str = ""
+    systemic_level: int = 0
+    systemic_cap: float = 1.0
+    systemic_halt: bool = False
+    systemic_signal_count: int = 0
+    systemic_sentiment_breaker: bool = False
+    escape_directive: dict[str, Any] | None = None
 
     @property
     def position_cap(self) -> float:
-        """仓位上限系数（无响应=未评估完成，默认 1.0 不加约束）。"""
-        return self.response.position_cap if self.response is not None else 1.0
+        """仓位上限系数（无响应=未评估完成，默认 1.0 不加约束）。
+
+        回撤响应与系统性层取最严（37 号 §3.8 三循环乘性叠加口径）。
+        """
+        base = self.response.position_cap if self.response is not None else 1.0
+        return min(base, self.systemic_cap)
 
     @property
     def allow_new_position(self) -> bool:
-        """是否允许新开仓（无响应=默认允许；橙/红/黑或熔断建议=禁止）。"""
-        return self.response.allow_new_position if self.response is not None else True
+        """是否允许新开仓（无响应=默认允许；橙/红/黑或熔断建议=禁止；
+        系统性层停开仓=禁止）。"""
+        base = self.response.allow_new_position if self.response is not None else True
+        return base and not self.systemic_halt
 
 
 @dataclass(frozen=True)
@@ -220,6 +272,35 @@ class _LiquidationBrokerAdapter:
         return self._broker.cancel_order(order_id)
 
 
+@dataclass(frozen=True)
+class _SystemicView:
+    """系统性风险一轮评估视图（编排内部，并入 RiskLayerSnapshot）。
+
+    Attributes:
+        level: 降级机迁移后的当前警报级别（0=正常/1/2/3）
+        cap: 系统性层仓位上限贡献（触发/恢复双口径，37 号 §3.3/§3.6）
+        halt: 系统性层停开仓标志
+        signal_count: 本轮 detector.check() 触发信号数
+        sentiment_breaker: 本轮情绪断路器是否触发
+        escape_directive: 迁移进入 LEVEL_3 时产出的逃生指令（否则 None）
+    """
+
+    level: int
+    cap: float
+    halt: bool
+    signal_count: int
+    sentiment_breaker: bool
+    escape_directive: dict[str, Any] | None
+
+
+_SYSTEMIC_LEVEL_TO_INT: Final = {
+    SystemicRiskAlertLevel.NONE: 0,
+    SystemicRiskAlertLevel.LEVEL_1: 1,
+    SystemicRiskAlertLevel.LEVEL_2: 2,
+    SystemicRiskAlertLevel.LEVEL_3: 3,
+}
+
+
 class RiskLayerOrchestrator:
     """风控层运行时编排器——组合级风控接进交易会话的唯一编排点。
 
@@ -235,6 +316,11 @@ class RiskLayerOrchestrator:
             kill_switch_owner=default_risk_validator,
             reconciler=PositionReconciler(system_source=tracker, broker_source=broker),
             open_orders_provider=lambda: {...},
+            # 可选：系统性风险 LEVEL_3 逃生链（37 号）——detector+provider 成对注入即生效
+            systemic_detector=AshareSystemicRiskDetector(),
+            systemic_input_provider=lambda: {
+                "sell_pressure": ..., "bid_ask_spread": ..., "sentiment_index": ...,
+            },
         )
         session = TradingSession(..., risk_layer=orchestrator)
         session.start()  # 内部先 recover_from_broker，完成前禁止下单
@@ -256,6 +342,8 @@ class RiskLayerOrchestrator:
         kill_switch_owner: KillSwitchStateOwner | None = None,
         reconciler: PositionReconciler | None = None,
         open_orders_provider: Callable[[], dict[str, dict]] | None = None,
+        systemic_detector: AshareSystemicRiskDetector | None = None,
+        systemic_input_provider: Callable[[], Mapping[str, Any] | None] | None = None,
         config: RiskLayerConfig | None = None,
         clock: Callable[[], datetime] | None = None,
     ) -> None:
@@ -268,6 +356,8 @@ class RiskLayerOrchestrator:
         self._kill_switch_owner = kill_switch_owner
         self._reconciler = reconciler
         self._open_orders_provider = open_orders_provider
+        self._systemic_detector = systemic_detector
+        self._systemic_input_provider = systemic_input_provider
         self._config = config or RiskLayerConfig()
         self._clock = clock or (lambda: datetime.now(UTC))
 
@@ -279,6 +369,10 @@ class RiskLayerOrchestrator:
         self._kill_switch_report: dict[str, object] | None = None
         self._reconcile_timer: threading.Timer | None = None
         self._reconcile_running = False
+        # 系统性风险降级机状态（37 号 §3.6，复用 MOD-RK-21 恢复状态原语；
+        # 与 evaluate_intraday 同线程契约，跨评估轮次持久）
+        self._systemic_state = LiquidityRecoveryState()
+        self._systemic_via_recovery = False
 
         # EMERGENCY 监听链（E-RK-03）：级别变化去抖由 tracker 保证
         self._tracker.on_drawdown_alerted(self._on_drawdown_alerted)
@@ -416,6 +510,10 @@ class RiskLayerOrchestrator:
             elif response is not None and response.kill_switch_advised:
                 self._engage_kill_switch("BS-007 系统性风险: DrawdownController 建议 Kill Switch")
 
+        # 4. 系统性风险检测（MOD-RK-10，与回撤/VaR/ES 同层；37 号 LEVEL_3 逃生链
+        #    + §3.6 降级机）——独立于收益样本，VaR 降级时照常执行
+        systemic = self._evaluate_systemic_risk(now)
+
         snapshot = RiskLayerSnapshot(
             timestamp=now,
             nav=nav,
@@ -427,6 +525,14 @@ class RiskLayerOrchestrator:
             es_pct=es_pct,
             degraded=degraded,
             degrade_reason=degrade_reason,
+            systemic_level=systemic.level if systemic is not None else 0,
+            systemic_cap=systemic.cap if systemic is not None else 1.0,
+            systemic_halt=systemic.halt if systemic is not None else False,
+            systemic_signal_count=systemic.signal_count if systemic is not None else 0,
+            systemic_sentiment_breaker=(
+                systemic.sentiment_breaker if systemic is not None else False
+            ),
+            escape_directive=systemic.escape_directive if systemic is not None else None,
         )
         with self._lock:
             self._latest = snapshot
@@ -481,6 +587,141 @@ class RiskLayerOrchestrator:
         """当前是否允许新开仓（未评估=允许）。"""
         snap = self.latest_snapshot
         return snap.allow_new_position if snap is not None else True
+
+    # ------------------------------------------------------------------
+    # 系统性风险检测 + LEVEL_3 逃生链 + 降级机（37 号 §3.3/§3.6，AI-LVL3-001）
+    # ------------------------------------------------------------------
+
+    def _evaluate_systemic_risk(self, now: datetime) -> _SystemicView | None:
+        """系统性风险一轮评估：detector.check → 三级警报 → LEVEL_3 逃生链 → 降级机。
+
+        接线语义：systemic_detector 与 systemic_input_provider 成对注入即生效
+        （任一缺失=未接线，返回 None，快照 systemic_* 走默认值不加约束）。
+        provider 失效/无输入 → 本轮跳过（状态保持，Fail-Safe-Neutral——回撤/
+        VaR 链仍保护；流动性输入缺失不应冻结交易主循环）。
+
+        状态机（37 号 §3.3 触发 + §3.6 恢复双口径）：
+          - 升级（alert 级别 > 当前级别）：立即迁移并重置计时；迁移进入 LEVEL_3
+            时 build_escape_directive → _engage_kill_switch 同一仲裁点
+          - 平级：停留（计时器不重置，防 thrashing）
+          - 降级候选（alert 级别 < 当前级别）：check_recovery 门禁（最短持续
+            + 信号数 + spread hysteresis），通过才逐级迁移（3→2→1→0）
+        """
+        detector = self._systemic_detector
+        provider = self._systemic_input_provider
+        if detector is None or provider is None:
+            return None
+        try:
+            raw_inputs = provider()
+        except Exception:  # noqa: BLE001 — 输入失效不阻断交易主循环，下轮重试
+            _logger.exception("systemic_input_provider 失效，本轮跳过系统性风险检测（状态保持）")
+            return None
+        if not raw_inputs:
+            return None
+        # provider 契约：返回 detector.check() 关键字参数映射（"now" 由编排层注入）
+        inputs = {k: v for k, v in raw_inputs.items() if k != "now"}
+        try:
+            alert = detector.check(now=now, **inputs)
+        except Exception:  # noqa: BLE001 — 检测失效不阻断交易主循环（输入校验错属数据边界）
+            _logger.exception("AshareSystemicRiskDetector.check 失效，本轮跳过（状态保持）")
+            return None
+
+        state = self._systemic_state
+        prev_level = state.level if state.in_crisis else 0
+        level = _SYSTEMIC_LEVEL_TO_INT[alert.alert_level]
+        directive: dict[str, Any] | None = None
+
+        if state.in_crisis and level < state.level:
+            # 降级候选——check_recovery 门禁（复用 MOD-RK-21，真源唯一）
+            target = self._try_systemic_recovery(alert, now, inputs)
+            if target is not None:
+                state.exit_crisis(target, timestamp=now)
+                self._systemic_via_recovery = target >= 1
+                _logger.info(
+                    "系统性风险降级: LEVEL_%d → LEVEL_%d（信号=%d）",
+                    prev_level, target, alert.signal_count,
+                )
+        elif level > prev_level:
+            state.enter_crisis(level, timestamp=now)
+            self._systemic_via_recovery = False
+            if alert.is_emergency:
+                # LEVEL_3 逃生链：逃生指令 → 单一仲裁点（清算+撤单+暂停，
+                # 与指令字典语义一致；重复触发仲裁点幂等）
+                directive = detector.build_escape_directive(alert)
+                self._engage_kill_switch(
+                    f"系统性风险 LEVEL_3（{alert.signal_count} 信号"
+                    f"{'+情绪断路器' if alert.sentiment_breaker_triggered else ''}）: "
+                    f"{alert.action}"
+                )
+
+        cap, halt = self._systemic_cap_halt()
+        return _SystemicView(
+            level=state.level if state.in_crisis else 0,
+            cap=cap,
+            halt=halt,
+            signal_count=alert.signal_count,
+            sentiment_breaker=alert.sentiment_breaker_triggered,
+            escape_directive=directive,
+        )
+
+    def _try_systemic_recovery(
+        self,
+        alert: SystemicRiskAlert,
+        now: datetime,
+        inputs: Mapping[str, Any],
+    ) -> int | None:
+        """降级机门禁（37 号 §3.6 恢复条件矩阵）：复用 MOD-RK-21 check_recovery。
+
+        触发阈值真源一律从 detector.config 读取；恢复阈值取 RiskLayerConfig
+        C 类参数（spread 半阈值 0.5 / 卖压 0.50 / 最短持续 {1:10,2:15,3:30}）。
+        spread/sell_pressure 未提供时按 0.0 处理（MOD-RK-21 涨停缺失先例：
+        缺失侧无危机语义，降级由信号数+持续时间主导）。
+        """
+        dcfg = self._systemic_detector.config  # type: ignore[union-attr] — 调用点已判非 None
+        spread = inputs.get("bid_ask_spread")
+        pressure = inputs.get("sell_pressure")
+        return check_recovery(
+            RecoveryCheckInput(
+                current_spread=float(spread) if spread is not None else 0.0,
+                current_sell_pressure=float(pressure) if pressure is not None else 0.0,
+                trigger_threshold_spread=dcfg.bid_ask_spread_threshold,
+                recovery_threshold_spread=(
+                    dcfg.bid_ask_spread_threshold * self._config.systemic_spread_recovery_ratio
+                ),
+                trigger_threshold_pressure=dcfg.sell_pressure_threshold,
+                recovery_threshold_pressure=self._config.systemic_sell_pressure_recovery,
+                min_hold_minutes=self._config.systemic_min_hold_minutes[
+                    self._systemic_state.level
+                ],
+                elapsed=self._systemic_state.elapsed_minutes(now),
+                current_level=self._systemic_state.level,
+                active_signals=alert.signal_count,
+            )
+        )
+
+    def _systemic_cap_halt(self) -> tuple[float, bool]:
+        """系统性层 (position_cap, halt_new_orders)——触发/恢复双口径映射。
+
+        触发态（37 号 §3.3）：LEVEL_1=停开仓（cap 1.0+halt）；LEVEL_2=降仓
+        （cap 0.70，不停开仓）；LEVEL_3=清仓+暂停（cap 0.0+halt）。
+        恢复态（§3.6 恢复执行动作）：降至 LEVEL_1=恢复满仓权限（cap 1.0 不 halt）；
+        降至 LEVEL_2=允许重建仓 70%（cap 0.70 不 halt）。
+        仓位上限真源=detector.config（level_2/level_3_position_cap）。
+        """
+        state = self._systemic_state
+        if not state.in_crisis or state.level <= 0:
+            return 1.0, False
+        dcfg = self._systemic_detector.config  # type: ignore[union-attr] — 接线后才有状态
+        if state.level == 1:
+            return 1.0, not self._systemic_via_recovery
+        if state.level == 2:
+            return dcfg.level_2_position_cap, False
+        return dcfg.level_3_position_cap, True
+
+    @property
+    def systemic_level(self) -> int:
+        """当前系统性风险警报级别（0=正常；未接线=0）。"""
+        return self._systemic_state.level if self._systemic_state.in_crisis else 0
 
     # ------------------------------------------------------------------
     # EMERGENCY 监听链 + 熔断单一仲裁点

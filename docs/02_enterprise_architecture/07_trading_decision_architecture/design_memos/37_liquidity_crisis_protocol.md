@@ -5,8 +5,8 @@ title: 流动性危机处理
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.2"
-date: 2026-08-15
+version: "1.2.0"
+date: 2026-08-17
 topic: liquidity_crisis_protocol
 scope: 07_trading_decision_architecture
 ---
@@ -18,8 +18,9 @@ scope: 07_trading_decision_architecture
 > **最终成果**：MOD-RK-21 生产态；54 测试经统筹独立复跑全绿；买卖价差监控、危机响应（停止开仓仅允许平仓）全链落地。
 >
 > **未做事项及原因**：
-> - LEVEL_3（最高级危机处置）生产接线未做——P0 风控接线批遗留，待后续批次。
-> - 编排层接入 35 号 §3.13 调用方、IPO 数据源接入未做——非本档施工范围，已分配给对应会话（遗留 #42）。
+> - ~~LEVEL_3（最高级危机处置）生产接线未做——P0 风控接线批遗留，待后续批次。~~ **✅ 已闭环（2026-08-17 AI-LVL3-001，v1.2.0）**——`detector.check()` 嵌入 `risk_layer_orchestrator.evaluate_intraday`（与 VaR/ES/回撤同层），LEVEL_3 → `build_escape_directive` → `_engage_kill_switch` 单一仲裁点 → `execute_kill_switch_liquidation` 真实清算全链接通；§3.6 降级机接线（LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3%，复用 MOD-RK-21 `check_recovery`/`LiquidityRecoveryState`，降级只迁移警报级别不解除熔断闩锁——35 号 KILL 态人工复位不变式保持）。红队三向量非 mock 实证 16 项全绿（多信号 LEVEL_3 全链/情绪断路器 0.85 强制升级/冷却期逐级降级+非 LEVEL_3 逃逸守卫）。
+> - IPO 数据源接入未做——数据层施工范围，登记遗留（§6 待裁定行持续有效，tracker #42②）。
+> - ~~编排层接入 35 号 §3.13 调用方~~ **✅ 并入 AI-LVL3-001 闭环**——35 号 §3.13 盘中循环的生产载体即 trading_session 调仓循环 + orchestrator.evaluate_intraday，systemic 评估已内嵌同 tick（tracker #42① 重叠项并入施工）。
 
 # 流动性危机处理
 
@@ -37,7 +38,7 @@ scope: 07_trading_decision_architecture
 | 对标 | tradingwyckoff Kill Switch / 机构流动性风控 |
 | 正交性 | ✅ 与 regime 正交 |
 | 优先级 | P3 |
-| 状态 | active 1.1.2（5 项讨论要点定型 + G16 对齐 + 涨跌停算法断裂修复 + 逃生执行器 + 危机恢复算法 + sell_pressure/spread/涨跌停形式化 + §3.7.x 前沿评估 16 项（Hawkes/VPIN/Crumbling/SaR/Latent build-up/ExsdHawkes/Liquidation Cascade/Multiplex Hawkes/临界性异质性/Weng 羊群/Zhou 操纵周期/LRISK/欧洲 ML/AdjPIN/Kyle λ/流动性尾部/跨市场传染 BM-RC-12-B）+ §3.8 施工流程总览 + §2.4 指数熔断澄清与 LAN 通道关闭交叉引用 + **v1.1.0 施工落地**：MOD-RK-21 承载六项算法（检测委托 MOD-RK-10），修 §3.1.1 公式 + §3.8 涨跌停 spread 矛盾 + §3.2a 数据源虚标 + v1.1.2 第二轮循环压缩（AI-DC2-05）） |
+| 状态 | active 1.2.0（5 项讨论要点定型 + G16 对齐 + 涨跌停算法断裂修复 + 逃生执行器 + 危机恢复算法 + sell_pressure/spread/涨跌停形式化 + §3.7.x 前沿评估 16 项（Hawkes/VPIN/Crumbling/SaR/Latent build-up/ExsdHawkes/Liquidation Cascade/Multiplex Hawkes/临界性异质性/Weng 羊群/Zhou 操纵周期/LRISK/欧洲 ML/AdjPIN/Kyle λ/流动性尾部/跨市场传染 BM-RC-12-B）+ §3.8 施工流程总览 + §2.4 指数熔断澄清与 LAN 通道关闭交叉引用 + **v1.1.0 施工落地**：MOD-RK-21 承载六项算法（检测委托 MOD-RK-10），修 §3.1.1 公式 + §3.8 涨跌停 spread 矛盾 + §3.2a 数据源虚标 + v1.1.2 第二轮循环压缩（AI-DC2-05）+ **v1.2.0 LEVEL_3 生产接线闭环**（AI-LVL3-001：detector.check 嵌入 orchestrator 盘内评估链+逃生链接通 Kill Switch+§3.6 降级机接线，红队三向量实证）） |
 
 ## 2. 背景
 
@@ -231,7 +232,9 @@ def compute_ipo_liquidity_drain(upcoming_ipos, market_avg_volume_20d):
 
 **为何 LEVEL_1 是"停开仓"而非"清仓"**：§2.5.5 明确"停开仓仅平仓"；危机时强行清仓会踩踏（卖在最低点）扩大损失；停开仓+允许平仓 = 不加新仓但允许策略主动减仓（平仓是策略决策非强制）；只有 ≥3 信号（系统性崩盘）才升级清仓（LEVEL_3，"跑得快"比"卖得好"重要）。LEVEL_1"仅允许平仓"是**允许**不是**强制**——强制平仓会剥夺策略决策权且必然踩踏（直接清仓的拒绝理由见 §4.3）。
 
-**逃生执行器（LEVEL_3 专属，已实现）**：LEVEL_3 触发时 `AshareSystemicRiskDetector.build_escape_directive(alert)` 产出逃生指令字典，供 RK-17 Kill Switch 执行：
+**逃生执行器（LEVEL_3 专属，已实现 + 已接线）**：LEVEL_3 触发时 `AshareSystemicRiskDetector.build_escape_directive(alert)` 产出逃生指令字典，供 RK-17 Kill Switch 执行：
+
+> ✅ **生产接线已落地**（2026-08-17 AI-LVL3-001，v1.2.0）：`risk_layer_orchestrator.evaluate_intraday` 内嵌 `detector.check()`（systemic_detector+systemic_input_provider 成对注入即生效），迁移进入 LEVEL_3 时 `build_escape_directive` → `_engage_kill_switch` 单一仲裁点 → `execute_kill_switch_liquidation`（以券商实时持仓为准，15 笔/秒限频）——逃生指令语义（liquidate_all+cancel+halt）与仲裁点既有动作一一对应，重复触发仲裁点幂等。
 
 ```python
 {
@@ -332,6 +335,8 @@ def detect_limit_status(last_price: float, limit_up_price: float,
 ### 3.6 决策⑥：危机恢复算法——滞后-恢复双阈值（Hysteresis）
 
 > ✅ 已施工（`liquidity_crisis_manager` MOD-RK-21 `check_recovery` + `LiquidityRecoveryState`，54 测试全绿，2026-08-13）——接口与参数矩阵如下（算法语义真源在本文档）。
+>
+> ✅ **systemic 层降级机接线已落地**（2026-08-17 AI-LVL3-001，v1.2.0）：`risk_layer_orchestrator` 持有 `LiquidityRecoveryState` 作系统性降级机状态，每轮 `detector.check()` 后按本节恢复条件矩阵经 `check_recovery` 门禁逐级迁移（3→2→1→0；升级立即迁移+重置计时，平级停留不重置）；触发阈值从 `detector.config` 读取、恢复阈值为 orchestrator C 类参数（spread 半阈值 0.5/卖压 0.50/最短持续 {1:10,2:15,3:30}），spread/sell_pressure 未提供按 0.0 处理（MOD-RK-21 涨停缺失先例）。**降级只迁移警报级别（systemic_cap/halt），不解除 Kill Switch 熔断闩锁**——35 号 KILL 态人工复位不变式保持（§3.8「35 号 KILL 态禁止 37 号恢复」）。
 
 **核心原则**：触发阈值与恢复阈值**不对称**（hysteresis 双阈值），避免在临界状态反复震荡（触发→恢复→再触发→再恢复的 thrashing）。**恢复条件矩阵**（对称于 §3.3 触发条件，但阈值更宽松）：
 
@@ -805,3 +810,4 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 2026-08-13 | 1.1.0 | 施工落地 + 施工审查修复 3 处文档缺陷 | AI-LIQ-001：新建 MOD-RK-21 liquidity_crisis_manager 承载六算法（§3.1.1/§3.1.2/§3.5.1/§3.6/§3.8/§3.2a，检测委托 MOD-RK-10，阈值从 detector.config 读取），54 测试全绿；修 §3.1.1 公式代数错误（ΣVolAsk/(ΣVolBid+ΣVolAsk)）+ §3.8 涨跌停 spread 矛盾（LIMIT_DOWN→1.0/LIMIT_UP→None）+ §3.2a 数据源虚标（akshare 无 ipo capability→§6 待裁定）；commit d53693a1/16a089c8/db695f9d |
 | 2026-08-14 | 1.1.1 | 压缩精简 | 已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） |
 | 2026-08-15 | 1.1.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.4 差异对齐 380 字段要点化（spec/代码实现/G16 对齐三要点，过程性叙述删）；§5.2 第二阶段 500 字段按候选拆 6 子项（全部链接/参数保留）；全篇扫描无其他可压缩点——OBI 公式 ΣVolAsk/(ΣVolBid+ΣVolAsk)、0.65/0.5%/0.25%/0.50 阈值、min_hold 10/15/30 分钟、IPO 四级 0.01/0.02/0.03→1.0/0.90/0.75/0.60、LEVEL_1/2/3 响应矩阵、Amihud 1e-8/萎缩 0.5、BM 锚点/开放问题/链接逐项零丢失 |
+| 2026-08-17 | 1.2.0 | LEVEL_3 生产接线闭环（AI-LVL3-001） | 结案报告 L21 遗留第一项闭环：①`detector.check()` 嵌入 `risk_layer_orchestrator.evaluate_intraday`（与 VaR/ES/回撤同层，systemic_detector+systemic_input_provider 成对注入即生效）②LEVEL_3 → `build_escape_directive` → `_engage_kill_switch` 单一仲裁点 → `execute_kill_switch_liquidation` 消费链接通 ③§3.6 降级机接线（复用 MOD-RK-21 `check_recovery`/`LiquidityRecoveryState`，LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3% 逐级迁移，降级不解除熔断闩锁——35 号 KILL 态人工复位不变式保持）④tracker #42①编排层接入 35 号 §3.13 调用方并入本批闭环（生产载体=trading_session 调仓循环+orchestrator 同 tick）；红队三向量非 mock 实证 16 项全绿（多信号 LEVEL_3 全链/情绪断路器 0.85 强制升级/冷却期逐级降级+非 LEVEL_3 逃逸守卫），28 项 orchestrator 测试两轮全绿；IPO 数据源接入登记遗留（§6 持续有效） |
