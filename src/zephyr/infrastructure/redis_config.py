@@ -20,7 +20,8 @@
     仿 ch_config.py（裁定 #ARCH-CH-017 同源思想）。Redis 7.0.15 部署在 Hyper-V
     Ubuntu VM（zephyr-ch, 172.24.30.100），与 ClickHouse 同 VM 共存（D1 决策）。
     归属 MOD-INF-002（D2 决策：get_redis_conn 已在此模块）。当前单实例 + DB 号
-    隔离（D3 决策：sim=db0/live=db1/治理=db2，未来 INFRA-CACHE-001 立项时起独立实例）。
+    隔离（D3 决策：sim=db0/live=db1/治理=db2/测试=db15——tests/shared 专用隔离库，
+    flushdb 清理，2026-08-17 AI-REDIS-001 约定登记；未来 INFRA-CACHE-001 立项时起独立实例）。
 
 治本原则（同 #ARCH-CH-017）：
     - config/.env.redis 是 Redis 连接配置的唯一真源
