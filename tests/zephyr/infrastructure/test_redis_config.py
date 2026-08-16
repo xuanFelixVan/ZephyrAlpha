@@ -28,15 +28,13 @@ def _set_env(monkeypatch, **kwargs):
     monkeypatch.setattr(rc, "_loaded", False)
     # ensure_redis_env_loaded 读真源文件，测试用 env 隔离——跳过文件加载
     monkeypatch.setattr(rc, "ensure_redis_env_loaded", lambda: None)
-    # get_secret_from_file_or_default 会先查 os.environ（空串也算"存在"→返回空串），
-    # 再读真实 .env.redis 文件——测试要完全 hermetic，stub 为返回其 default 参数。
-    # env 优先级不变（load_redis_config 用 os.environ.get(X) or get_secret(...)）：
-    #   - env 非空 → 用 env 值（get_secret 不被求值）
-    #   - env 空/缺失 → get_secret 返回 default（模拟"文件也没有"→走默认值）
+    # 生产跟进（#ARCH-SECRETS-GOV-001 S-2）：get_secret_from_file_or_default 已退役，
+    # 切换为 get_service_secret(key, "redis", required=False)——stub 目标同步替换：
+    # env 非空 → 用 env 值；env 空/缺失 → 返回空串（模拟"文件也没有"→走默认值）
     monkeypatch.setattr(
         rc,
-        "get_secret_from_file_or_default",
-        lambda key, path, default="": default,
+        "get_service_secret",
+        lambda key, service, required=True: os.environ.get(key, ""),
     )
     # 提供所有 load_redis_config 读取的键的默认值（避免空字符串破坏 int() 等）
     defaults = {
