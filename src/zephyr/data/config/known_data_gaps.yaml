@@ -149,3 +149,74 @@ gaps:
     primary_alternative: "c1_market.tick_data（miniQMT get_full_tick 五档快照，已正常运行）"
     created: "2026-07-24"
     last_updated: "2026-07-24"
+
+  # === 2026-08-15: akshare 北向持仓三接口失效（memo 19 §3.1 实测 NoneType，gap_type=interface_broken 首用）===
+  # 背景：北向日频 2024-08-19 断档后，季度持仓快照为替代源；akshare 三条本应承担快照的接口实测失效，
+  #       裁定走 tushare hk_hold（memo 19 §4.2 方案 C），fetcher=northbound_hold_fetcher.py（DS-103/JOB-083）。
+  - id: "akshare_hsgt_hold_stock_em_broken"
+    table: "c1_market.northbound_hold_snapshot"
+    gap_type: "interface_broken"
+    start_date: "2026-08-10"   # 实测失效日（memo 19 §3.1 三轮验证）
+    end_date: null  # 持续中，接口返回 NoneType
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"  # 已接受——akshare 路线弃用，tushare hk_hold 替代
+    root_cause: "akshare 1.18.75 stock_hsgt_hold_stock_em 实测返回 NoneType（东财网页改版致接口失效），
+      本应是北向季度持仓快照来源。非任务/调度/provider bug，上游接口失效。"
+    resolution_plan: "弃用 akshare 路线，tushare pro.hk_hold 季度末全量快照替代（memo 19 §4.2 方案 C 已实测验证）。"
+    primary_alternative: "c1_market.northbound_hold_snapshot（tushare hk_hold，JOB-083 northbound_hold_snapshot_refresh）"
+    created: "2026-08-15"
+    last_updated: "2026-08-15"
+
+  - id: "akshare_hsgt_board_rank_em_broken"
+    table: "c1_market.northbound_hold_snapshot"
+    gap_type: "interface_broken"
+    start_date: "2026-08-10"
+    end_date: null
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"
+    root_cause: "akshare 1.18.75 stock_hsgt_board_rank_em 实测返回 NoneType（东财网页改版致接口失效）。"
+    resolution_plan: "同上——tushare pro.hk_hold 替代（memo 19 §4.2 方案 C）。"
+    primary_alternative: "c1_market.northbound_hold_snapshot（tushare hk_hold，JOB-083）"
+    created: "2026-08-15"
+    last_updated: "2026-08-15"
+
+  - id: "akshare_hsgt_stock_statistics_em_broken"
+    table: "c1_market.northbound_hold_snapshot"
+    gap_type: "interface_broken"
+    start_date: "2026-08-10"
+    end_date: null
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "accepted"
+    root_cause: "akshare 1.18.75 stock_hsgt_stock_statistics_em 实测返回 NoneType（东财网页改版致接口失效）。"
+    resolution_plan: "同上——tushare pro.hk_hold 替代（memo 19 §4.2 方案 C）。"
+    primary_alternative: "c1_market.northbound_hold_snapshot（tushare hk_hold，JOB-083）"
+    created: "2026-08-15"
+    last_updated: "2026-08-15"
+
+  # === 2026-08-15: tushare hk_hold 2026Q2 响应 ts_code 撞码（联调实证，AI-NORTH-001）===
+  - id: "tushare_hk_hold_2026q2_code_collision"
+    table: "c1_market.northbound_hold_snapshot"
+    gap_type: "upstream_data_corruption"
+    start_date: "2026-06-30"
+    end_date: null  # 待 tushare 上游修复；fetcher 每日全量重拉自愈
+    date_column: "trade_date"
+    detection_threshold: 1
+    status: "monitoring"  # 已有程序修复路径——code 自洽判别救回真主行，转监控观察上游
+    root_cause: "tushare hk_hold(trade_date=20260630) 响应中 243 组 ts_code 撞码（SH 139+SZ 104）：
+      多只证券被赋予雷同假 code 并映射到合法 ts_code（如 50ETF 撞 603000.SH=人民网、
+      中航成飛 302132 撞 300132.SZ=青松股份）；按 ts_code 单证券查询返回同样撞码（无 API 修复路径）。
+      组内结构：真主行 code 与 ts_code 自洽（int(code)+offset==ts_code 数字部，
+      SH+510000/SZ+223000，name 为繁体真名），入侵行 code+offset 指向他证券
+      （ETF 或他股假码，code 段 031xxx/079xxx），243 组恰好 1 行自洽率 100%（probe6-9 实证）。
+      2024Q3~2026Q1 七季度零撞码，仅 2026Q2 最新季度受影响。"
+    resolution_plan: "fetcher _resolve_code_collisions：组内恰好 1 行 code 自洽→保留真主行
+      剔除入侵行（2026Q2 实证 243 组全救回）；判别失效（0/>1 行自洽）→整组剔除兜底
+      （宁缺毋错）。待 tushare 上游修复后每日全量重拉自动自愈（无需回填动作）；
+      若判别失效组数 >0 需告警复查规则。"
+    primary_alternative: "无（官方交易所直抓为预案，memo 19 §4.2 方案 A，未施工）"
+    created: "2026-08-15"
+    last_updated: "2026-08-15"
+

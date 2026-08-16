@@ -35,10 +35,13 @@ description: >-
 #   文件改名/删除所致，非本次引入）待后续修复——见 62 号 §12 P1-B 第 6 项。
 # v1.1.0 changelog(2026-08-14): 补登 DS-080 market_data.lhb_detail（龙虎榜明细，SRC-AKSHARE-001 东财口径）+ JOB-076 ingest.akshare_lhb
 #   ——seat_registry（REG-SEAT-001）席位形态分析的前提数据资产；同日补登 DS-077~079（renko/point_figure/kagi）。
+# v1.3.0 changelog(2026-08-15): 补登 DS-103 market_data.northbound_hold_snapshot（北向资金季度持仓快照，
+#   SRC-TUSHARE-001 hk_hold 口径，港交所 2024-08-19 日频断档后替代源）+ JOB-083 ingest.tushare_northbound_hold
+#   ——设计备忘 19 号施工落地（AI-NORTH-001），外资行为因子（待立项）的前提数据资产。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.2.2
+version: 1.3.0
 created: '2026-08-13'
 last_updated: '2026-08-15'
 related_arch: '#ARCH-BREG-001'
@@ -46,7 +49,7 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 102, jobs: 82}  # v1.2.0 实测修正（v2 schema 升级自检发现 80/76 与实际条目漂移；总数 199 与 ROOR 一致）
+entry_counts: {sources: 15, datasets: 103, jobs: 85}  # v1.3.0 实测修正（+DS-103/+JOB-083）
 
 source_schema:
   source_id: str               # SRC-{PROVIDER}-{NNN}
@@ -275,7 +278,7 @@ sources:
     license_type: academic_only
     latency_profile: wan
     colocation_eligible: false
-    provides_datasets: []
+    provides_datasets: [DS-103]
     env_config: TUSHARE token
     module_id: MOD-L00-004
     doc_ref: 64_data_source_download_spec.md §4.1/§5.3
@@ -283,7 +286,7 @@ sources:
     status: active
     version: 1.0.0
     created_at: '2026-08-13'
-    updated_at: '2026-08-13'
+    updated_at: '2026-08-15'
     owner: MOD-L00-004
     entry_role: "reference"
     applies_to: ["sector"]
@@ -4285,6 +4288,46 @@ datasets:
   code_symbol: null
   code_fingerprint: null
 
+# ============================================================
+# v1.3.0 补登（2026-08-15，AI-NORTH-001）：北向资金季度持仓快照（memo 19 施工落地）
+# ============================================================
+- dataset_id: DS-103
+  entity_name: market_data.northbound_hold_snapshot
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/implementations/northbound_hold_fetcher.py
+  produced_by_job: JOB-083
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: 北向资金季度持仓快照（季度末单只证券沪深股通投资者合计持股数量/占比，tushare hk_hold 口径，仅北向 SH/SZ；港交所 2024-08-19 日频断档后替代源，季度后第 5 股通交易日发布）
+  valid_since: '2024-09-30'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: market_data.northbound_hold_snapshot
+  name_zh: 北向资金季度持仓快照
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-15'
+  updated_at: '2026-08-15'
+  owner: MOD-GOVERNANCE
+  produced_by_source: SRC-TUSHARE-001
+  survivorship_free: true
+  pit_available: true
+  earnings_lag_days: null
+  llm_training_cutoff: N/A
+  lookahead_test_method: N/A
+  label_delay_days: null
+  drift_detector: none
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["资金", "数据", "仓位"]
+  algorithm_status: "not_applicable"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -6672,32 +6715,32 @@ jobs:
   code_symbol: null
   code_fingerprint: null
 - job_id: JOB-083
-  job_name: ingest.tushare_st_namechange_backfill
+  job_name: ingest.tushare_northbound_hold
   entity_type: job
   scope: production
-  source_code_ref: src/zephyr/data/implementations/tushare_provider.py
+  source_code_ref: src/zephyr/data/implementations/northbound_hold_fetcher.py
   trigger_type: scheduled
   run_context: production
   inputs: []
   outputs:
-  - DS-085
+  - DS-103
   pit_relevance: strict
-  description: ST 历史状态名称变更推导回填（tushare namechange 逐年分页→ST 生效区间→变化日全量快照，补齐 DS-085 实盘快照日 2026-08-10 前历史段；monthly_static 月度幂等刷新纠偏；与 JOB-077 共为 DS-085 生产者——历史段推导/实盘段日快照）
+  description: 北向资金季度持仓快照接入（tushare hk_hold 季度末全量，exchange SH/SZ 拆分双调用规避 4200 行上限；nightly_financial 时段每日跑+provider 内 PIT 守卫（季度末+20 自然日才采新季度）；全量覆盖写入 ReplacingMergeTree 幂等）——外资行为因子（待立项）的前提数据管道，memo 19 施工落地
   module_id: MOD-L00-004
-  design_maturity: design
-  name: ingest.tushare_st_namechange_backfill
-  name_zh: ST历史状态名称变更推导回填
-  status: production
+  design_maturity: production
+  name: ingest.tushare_northbound_hold
+  name_zh: 北向持仓快照接入
+  status: candidate
   version: 1.0.0
-  created_at: '2026-08-16'
-  updated_at: '2026-08-16'
+  created_at: '2026-08-15'
+  updated_at: '2026-08-15'
   owner: MOD-L00-004
   entry_role: "reference"
   applies_to: ["stock", "market"]
-  tags: ["数据", "股票池"]
+  tags: ["资金", "数据", "仓位"]
   algorithm_status: "not_applicable"
-  evidence: "2026-08-16 实盘回填：namechange 逐年分页（1990 起；无参调用被 tushare 默认截断 10000 行实证修复）→ST 区间→变化日全量快照 450 个/109902 行落库（2020-01-02~2026-08-07，接缝=实盘首快照 2026-08-10 键零碰撞）；单测 8 条全过；交叉核验：实盘 8-10 集合缺失仅 2 只、独立口径 stock_basic 8-14 名称含 ST=203 只、负面对照 000503 零命中；已知残留：退市无更名个股区间无终点（121 只留推导集，无 K 线不触达消费侧）"
-  code_symbol: "src/zephyr/data/implementations/tushare_provider.py::TushareProvider._fetch_st_namechange_backfill"
+  evidence: ""
+  code_symbol: null
   code_fingerprint: null
 - job_id: JOB-084
   job_name: ingest.baostock_delisted_kline
@@ -6726,4 +6769,33 @@ jobs:
   algorithm_status: "not_applicable"
   evidence: "2026-08-16 实盘回填：universe 337 只（A股前缀过滤，北交所 baostock 无覆盖 5 只为已知缺口）→ 1,373,162 行落库 kline_daily（不复权；抽验 000005 全史 8146 根 1990-12-19~2024-04-26 退市日、600200/300379 同验）；derived ST 集无 K 线代码 249→5（余 5=北交所）；单测 6 条全过（universe过滤/行映射空值兜底/span跳过/不复权口径断言/路由）"
   code_symbol: "src/zephyr/data/implementations/baostock_provider.py::BaostockProvider._fetch_kline_daily_delisted"
+  code_fingerprint: null
+- job_id: JOB-085
+  job_name: ingest.tushare_st_namechange_backfill
+  entity_type: job
+  scope: production
+  source_code_ref: src/zephyr/data/implementations/tushare_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-085
+  pit_relevance: strict
+  description: ST 历史状态名称变更推导回填（tushare namechange 逐年分页→ST 生效区间→变化日全量快照，补齐 DS-085 实盘快照日 2026-08-10 前历史段；monthly_static 月度幂等刷新纠偏；与 JOB-077 共为 DS-085 生产者——历史段推导/实盘段日快照）
+  module_id: MOD-L00-004
+  design_maturity: design
+  name: ingest.tushare_st_namechange_backfill
+  name_zh: ST历史状态名称变更推导回填
+  status: production
+  version: 1.0.0
+  created_at: '2026-08-16'
+  updated_at: '2026-08-16'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "股票池"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-16 实盘回填：namechange 逐年分页（1990 起；无参调用被 tushare 默认截断 10000 行实证修复）→ST 区间→变化日全量快照 450 个/109902 行落库（2020-01-02~2026-08-07，接缝=实盘首快照 2026-08-10 键零碰撞）；单测 8 条全过；交叉核验：实盘 8-10 集合缺失仅 2 只、独立口径 stock_basic 8-14 名称含 ST=203 只、负面对照 000503 零命中；已知残留：退市无更名个股区间无终点（121 只留推导集，无 K 线不触达消费侧）"
+  code_symbol: "src/zephyr/data/implementations/tushare_provider.py::TushareProvider._fetch_st_namechange_backfill"
+  code_fingerprint: null
   code_fingerprint: null

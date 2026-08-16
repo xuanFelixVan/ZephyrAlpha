@@ -6152,6 +6152,28 @@ capabilities:
       - THD-DEVIATION-001        # 偏离告警阈值条目(删则 MOD-RK-23 fail-closed 拒启)
       - THD-RETIRE-001           # 退役判据条目(删则退役评估器 fail-closed 拒启)
 
+  # --------------------------------------------------------------------------
+  - capability_id: northbound_hold_snapshot
+    aliases:
+      - northbound_hold_fetcher
+      - hk_hold
+      - 北向持仓快照
+    description: >-
+      北向资金季度持仓快照 fetcher（设计备忘 19 号，2026-08-15 AI-NORTH-001 施工）。
+      港交所 2024-08-19 停止公布北向日频数据后的替代数据源：tushare pro.hk_hold
+      季度末全量快照（仅北向 SH/SZ），落 c1_market.northbound_hold_snapshot
+      （ReplacingMergeTree 全量覆盖幂等）。canonical = src/zephyr/data/implementations/
+      northbound_hold_fetcher.py（auto 派生：basename 匹配 alias northbound_hold_fetcher）。
+      PIT 守卫=季度末+20 自然日才采集；exchange SH/SZ 拆分双调用规避 hk_hold 单次
+      4200 行上限（memo §9 分页风险构造性消除）。由 tushare_provider capability
+      路由委托调用（scheduler task=northbound_hold_snapshot_refresh / JOB-083 / DS-103）。
+      解决发现性：新 AI 搜 "北向/北向持仓/hk_hold/northbound" 可定位真源。
+      解决防重建：check_file_canonical() 反查阻止重建同类 fetcher。
+    integrity_anchors:
+      - fetch_northbound_hold_snapshot  # 主入口(删则 capability 路由空转)
+      - published_quarter_ends          # PIT 季度枚举(删则 PIT 纪律失效)
+      - GENESIS_QUARTER_END             # 回填起点常量(篡改则历史口径漂移)
+
 # ============================================================================
 # creation_tokens — 新建 .py / 非 rules/ .yaml 文件 creation_token 登记（CREATE-GUARD 门禁消费）
 # ============================================================================
@@ -9175,6 +9197,20 @@ creation_tokens:
     created_by: "AI-WDOG-001"
     capability: "skill_factory_cas_guard"
     note: "#71 场景复现 3 用例（并发修改 CAS 放弃+审计/正常插入/幂等）"
+  # --- 北向资金季度持仓快照 fetcher（2026-08-15，memo 19 施工，AI-NORTH-001 task-19-northbound-snapshot）---
+  - file: "src/zephyr/data/implementations/northbound_hold_fetcher.py"
+    token: "auto-northbound-hold-fetcher-20260815"
+    created_by: "AI-NORTH-001"
+    capability: "northbound_hold_snapshot"
+  - file: "schemas/categories/market_northbound_hold_snapshot.py"
+    token: "auto-ddl-truth-c1-northbound-hold-20260815"
+    created_by: "AI-NORTH-001"
+    capability: "ddl_truth_source_c1"
+  - file: "docs/_working/audit/architecture-reviews/2026-08-15_ai-north-001_northbound_hold_snapshot_fetcher_review.md"
+    token: "auto-northbound-hold-fetcher-review-20260815"
+    created_by: "AI-NORTH-001"
+    capability: "northbound_hold_snapshot"
+    note: "Step 1.8 架构评审记录（新增模块触发，L2 局部变更六项清单全 PASS）"
 
 # ============================================================================
 # DI seam 豁免清单（#ARCH-DI-SEAM-001，P1-2）

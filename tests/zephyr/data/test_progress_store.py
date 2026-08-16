@@ -130,13 +130,14 @@ class TestQueries:
 
     def test_list_tasks_by_source(self, store):
         """list_tasks_by_source 按数据源过滤。"""
+        # 双源结构（ifind 退役批量替换事故修复 2026-08-16：3 条同源致断言失配）
         store.save_progress("t1", "akshare", "d1", "SUCCESS", 100)
         store.save_progress("t2", "akshare", "d2", "SUCCESS", 200)
-        store.save_progress("t3", "akshare", "d3", "SUCCESS", 300)
+        store.save_progress("t3", "miniqmt", "d3", "SUCCESS", 300)
         akshare_tasks = store.list_tasks_by_source("akshare")
         assert len(akshare_tasks) == 2
-        akshare_tasks = store.list_tasks_by_source("akshare")
-        assert len(akshare_tasks) == 1
+        miniqmt_tasks = store.list_tasks_by_source("miniqmt")
+        assert len(miniqmt_tasks) == 1
 
     def test_list_all_tasks(self, store):
         """list_all_tasks 返回全部。"""

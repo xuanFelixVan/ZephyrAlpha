@@ -2661,6 +2661,20 @@ entries:
   desc_zh: token 认证（环境变量 TUSHARE_TOKEN）
   desc_en: ''
   plain_zh: token认证（环境变量TUSHARE_TOKEN）；历史数据截止2024-08；积分不足触发重试
+- module_path: src/zephyr/data/implementations/northbound_hold_fetcher.py
+  domain_id: D_DATA
+  name_zh: 北向资金季度持仓快照采集器
+  name_en: northbound_hold_fetcher
+  desc_zh: 北向资金季度持仓快照 fetcher（memo 19）——tushare pro.hk_hold 季度末全量快照（仅北向 SH/SZ），PIT 守卫=季度末+20 自然日才采集，全量覆盖写入 c1_market.northbound_hold_snapshot（ReplacingMergeTree 幂等）；港交所 2024-08-19 日频断档后的替代数据源
+  desc_en: 'Northbound quarterly holdings snapshot fetcher (memo 19) - tushare pro.hk_hold quarter-end full snapshot (SH/SZ only), PIT guard=quarter_end+20d, full-overwrite into c1_market.northbound_hold_snapshot (ReplacingMergeTree idempotent)'
+  plain_zh: 北向资金（外资通过沪深股通买A股的钱）的日频数据 2024 年 8 月起港交所不再公布，但每季度还会公布一次"季末各股票被外资持有多少股"。本模块每季度把这个快照整张拉回来存进数据库，只取北向（上海/深圳）不要南向（香港）；为防一次拉太多被截断，按上海、深圳分两次拉；新季度数据官方发布后才采，没发布就跳过。
+- module_path: schemas/categories/market_northbound_hold_snapshot.py
+  domain_id: D_DATA
+  name_zh: 北向持仓快照表结构
+  name_en: market_northbound_hold_snapshot
+  desc_zh: 本文件是 c1_market.northbound_hold_snapshot 表结构的唯一真源（DDL-as-Code 模式）。
+  desc_en: ''
+  plain_zh: 北向持仓快照这张表怎么建的唯一说明书——有哪些列（季度末日期/股票代码/名称/持股数量/持股占比/交易所）、按什么去重排序，都写死在这里；改表结构必须走建表脚本，不允许手工改库。
 - module_path: src/zephyr/data/integrity_checker.py
   domain_id: D_DATA
   name_zh: 数据完整性巡检器——每天盘后检测全表当日数据是否达标。

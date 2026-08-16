@@ -4,9 +4,9 @@ doc_type: architecture_view
 title: 北向资金季度持仓快照 fetcher 施工计划
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "0.2.1"
-date: 2026-08-15
+status: active
+version: "1.0.1"
+date: 2026-08-16
 topic: northbound_hold_snapshot
 scope: 07_trading_decision_architecture
 depends_on:
@@ -128,14 +128,17 @@ related_modules:
 | hold_ratio | Float32 | 持股数量占 A 股百分比 |
 | exchange | LowCardinality(String) | SH/SZ |
 | data_source | LowCardinality(String) | tushare |
-| ingested_at | DateTime | 入库时间 |
+| ingested_at | DateTime | 入库时间（as-built：DateTime64(3,'UTC') DEFAULT now()，对齐家族 ingest 审计列精度惯例；列名从 memo） |
 
 ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
+**as-built**：引擎 ReplacingMergeTree（全量覆盖幂等去重）；DDL-as-Code 真源 [market_northbound_hold_snapshot.py](../../../../schemas/categories/market_northbound_hold_snapshot.py)；品类登记 market_northbound_hold_snapshot（business_data_categories.yaml）。
 
 ### 5.3 调度
 
-- 频率：每季度第 6 个沪深股通交易日跑一次（官方第 5 个交易日发布，留 1 天缓冲）
-- 回填：从 2024-09-30 开始按季度回填到最新（2024Q3/2024Q4/2025Q1/2025Q2/2025Q3/2025Q4）
+> **as-built（2026-08-15）**：挂既有 `nightly_financial` 时段（22:00 周一~五，与十大股东同层季度披露族）每日跑——fetcher 内 PIT 守卫（季度末+20 自然日才采新季度）使每日运行幂等无代价（全量 8 季度 ~16 次调用 ~3 万行，秒级），新季度发布当晚即采，优于 memo 原设想的季度单次（不新建 quarterly 调度层，9 档分层架构不扩散）。任务 task_id=northbound_hold_snapshot_refresh（tasks.yaml）。
+
+- 频率：每季度第 6 个沪深股通交易日跑一次（官方第 5 个交易日发布，留 1 天缓冲）→ as-built 每日+PIT 守卫（见上）
+- 回填：从 2024-09-30 开始按季度回填到最新（2024Q3/2024Q4/2025Q1/2025Q2/2025Q3/2025Q4）——**as-built 已完成回填**：8 季度（至 2026Q2）30331 行入库
 - 历史补充：8-16 前的日频数据已在 hk_connect_flow 表，不重复采集
 
 ### 5.4 注册表登记
@@ -186,6 +189,12 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 
 ## 7. 验证
 
+> **as-built 实证（2026-08-15 AI-NORTH-001 联调，拉取→落库→回读全链路）**：
+> - 数据完整性：8 季度回读行数 3540/3602/3637/3788/3820/4014/4108/4065（2024Q3~2026Q2）；2026Q2 撞码 243 组经 code 自洽判别全救回、零误剔后 4065 只（官方 3958 只，差值=官方口径不含 ETF，见 §9）
+> - 锚点核对：京东方A（000725.SZ）2025Q4 hold_share=2,760,058,253（27.6 亿股）与官方公布吻合；2026Q2 持股量 top10（京东方A/TCL科技/工商银行/三一重工/京沪高铁/紫金矿业/潍柴动力/农业银行/长江电力/招商银行）符合北向重仓常识
+> - 字段质量：hold_share>0 且 hold_ratio∈[0,100] 违例 0 行（fetcher 内置校验拦截）
+> - 与历史衔接：2024-08-16 前 hk_connect_flow 日频 vs 2024-09-30 季度快照 3540 只，量级连续无突变
+
 - 数据完整性：每季度末日期返回 ~3300-4000 只北向持股（2026Q2 官方公布 3958 只，标的持续扩容），与官方公布 top10（宁德时代/中际旭创/北方华创等）核对
 - 与历史衔接：2024-08-16 前 hk_connect_flow 日频数据 vs 2024-09-30 季度快照，持股数量应连续（无突变）
 - 字段质量：hold_share > 0，hold_ratio ∈ [0, 100]
@@ -205,11 +214,12 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 
 | 问题 | 决策状态 |
 |---|---|
-| 落表用新表 northbound_hold_snapshot 还是扩展 hk_connect_flow | 倾向新表（颗粒度不同：日频 vs 季度），待施工时确认 |
+| 落表用新表 northbound_hold_snapshot 还是扩展 hk_connect_flow | ✅ 已定：新表（颗粒度不同：日频 vs 季度）——2026-08-15 施工落地 c1_market.northbound_hold_snapshot |
 | 是否同步采集南向季度快照 | 本备忘暂不做，待外资行为因子需要时再议 |
 | 外资行为因子何时立项 | 待本 fetcher 落地 + 数据积累 2-3 个季度后评估 |
-| tushare hk_hold 单次返回上限 4200 行——2026Q2 官方公布北向持股 3958 只，逼近上限，分页风险已从"理论"变为"近在眼前" | 施工时必须先验证 2026Q2 季度末日期（20260630）实际返回行数；若 ≥4200 需分页逻辑（按 ts_code 分段或 exchange 分两次） |
-| 三条 akshare 失效接口（§3.1）known_data_gaps.yaml 补登记 | 已列 §5.4 施工项，随 fetcher 施工同步完成 |
+| tushare hk_hold 单次返回上限 4200 行——分页风险 | ✅ 已闭环（2026-08-15 施工）：exchange SH/SZ 拆分双调用，单侧 <2100 行，上限余量翻倍，构造性消除分页需求；20260630 实测 SH 2039/SZ 2269 原始行 |
+| tushare hk_hold 2026Q2 响应 ts_code 撞码（施工联调新发现） | ✅ 已处置+监控：243 组撞码（50ETF 撞 603000.SH=人民网、中航成飛302132 撞 300132.SZ=青松股份），单证券查询同样撞码（无 API 修复路径）；probe 实证组内结构=真主行 code 自洽（int(code)+offset==ts_code 数字部，SH+510000/SZ+223000，name 为繁体真名）+入侵行（ETF/他股假码），恰好 1 行自洽率 100%；fetcher `_resolve_code_collisions` 判别救回真主行（判别失效兜底整组剔除，宁缺毋错）+warn 日志，2026Q2 全救回零误剔（4065 只）；已登记 known_data_gaps.yaml `tushare_hk_hold_2026q2_code_collision`（status=monitoring），上游修复后每日全量重拉自愈；2024Q3~2026Q1 七季度零撞码 |
+| 三条 akshare 失效接口（§3.1）known_data_gaps.yaml 补登记 | ✅ 已闭环（2026-08-15 随施工完成）：`akshare_hsgt_{hold_stock,board_rank,stock_statistics}_em_broken` 三条 gap_type=interface_broken 登记 |
 
 ## 10. 修订记录
 
@@ -219,3 +229,5 @@ ORDER BY (ts_code, trade_date)，分区 toYYYYMM(trade_date)。
 | 2026-08-11 | 0.1.1 | 文件被 git clean 误删后从对话历史重建 | #ARCH-GIT-CLEAN-GUARD-FIX：git alias 无法覆盖内置 clean 命令，文件物理删除 |
 | 2026-08-12 | 0.2.0 | ①frontmatter version 与修订记录对齐（0.1.0→0.2.0，修复 0.1.1 未同步）；②§2.2 改「已施工设施盘点」并按 01 号 §5.2 引用纪律去行号（条目 id/常量名/方法名为稳定标识），修正 DEAD_DATA_SOURCES 键名与代码一致；③§3.1 修正不实引用——三条失效接口尚未登记 known_data_gaps，列入 §5.4/§9；④§6 方法论加 MVP 边界（首期只做 6.3+6.5，6.4 补样本量约束警示）；⑤§5.1 补最小设计声明、§8 补"不做增量/重试编排"（过度工程审查）；⑥§7 验证标准更新（2026Q2 官方 3958 只）、§9 分页风险升级（逼近 4200 上限）、§6 开头补行业实证（国信/招商季度跟踪） | 多轮审查：核验发现虚构引用与行号漂移，过度工程审查裁定 MVP 边界，2026Q2 行业数据入库（2026-08-12 三次并发回滚后重建） |
 | 2026-08-15 | 0.2.1 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-08）；§2.2 引用纪律核验注记精简 | 实测表/方案裁定/开放问题零丢失，通读+自审零发现，不为压而压 |
+| 2026-08-15 | 1.0.0 | 施工落地（AI-NORTH-001 task-19-northbound-snapshot）：①status draft→active；②§5 as-built 回填（独立 fetcher 文件/exchange 拆分/撞码剔除/ReplacingMergeTree/nightly_financial 每日+PIT 守卫/8 季度 30331 行回填完成）；③§7 验证实证回填（行数/锚点/质量零违例）；④§9 三开放问题闭环（新表裁定/分页风险构造性消除/三接口补登）+新增撞码发现处置记录；⑤src_code 映射未落列（§5.1 vs §5.2 冲突以表 schema 为准） | 施工完成按 01 号规范 §4.4 闭环；联调新发现上游撞码（243 组）整组剔除并登记 known_data_gaps |
+| 2026-08-16 | 1.0.1 | 撞码处置策略升级（AI-NORTH-001 遗留项深挖）：`_drop_code_collisions`→`_resolve_code_collisions`——code 自洽判别救回真主行（SH+510000/SZ+223000==ts_code 数字部），判别失效兜底整组剔除（宁缺毋错底线不变）；§7 联调数据 3822→4065、§9 撞码条目同步 as-built（243 组全救回零误剔，gap 条目转 monitoring） | probe6-9 实证组内恰好 1 行自洽率 100%（真主行 name 繁体真名、入侵行 ETF/他股假码），修复后 2026Q2 不再缺 243 只 |

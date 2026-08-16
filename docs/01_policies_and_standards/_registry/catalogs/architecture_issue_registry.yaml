@@ -17027,3 +17027,38 @@ entries:
   related_rules: '#ARCH-WORKTREE-WRITE-INTEGRITY-001（watchdog 母议题）; #ARCH-MON-001（实证来源批次）'
   created: '2026-08-15'
   last_updated: '2026-08-15'
+
+# --- #ARCH-DATA-019: 北向资金季度持仓快照 fetcher 新模块登记（memo 19 施工，AI-NORTH-001）---
+- issue_id: '#ARCH-DATA-019'
+  title: 北向资金季度持仓快照 fetcher 新模块（northbound_hold_fetcher）+ c1_market.northbound_hold_snapshot 新表——港交所 2024-08-19 日频断档后替代数据源
+  severity: P2中
+  category: data_architecture
+  adjudication: |-
+    设计备忘 19 号已裁定方案 C（tushare pro.hk_hold 季度末全量快照，实测验证）。
+    施工裁定（用户任务书 AI-NORTH-001 task-19-northbound-snapshot）：
+    (1) fetcher 独立新文件 src/zephyr/data/implementations/northbound_hold_fetcher.py，
+        tushare_provider 仅加 capability 路由（避让 akshare_provider.py 并行施工 JOB077-001）；
+    (2) 新表 c1_market.northbound_hold_snapshot（ReplacingMergeTree，ORDER BY (ts_code, trade_date)，
+        全量覆盖幂等；DDL-as-Code schemas/categories/market_northbound_hold_snapshot.py）；
+    (3) memo §9 分页风险（hk_hold 单次 4200 行上限，2026Q2 官方 3958 只逼近）构造性消除——
+        exchange SH/SZ 拆分双调用，单侧 <2100 行，上限余量翻倍；
+    (4) PIT 纪律：官方季度后第 5 个沪深股通交易日发布，fetcher 内 PIT 守卫=季度末+20 自然日
+        才采集，未发布季度不采（hk_hold 未发布季度北向返回 0 行双保险）；
+    (5) 调度：tasks.yaml nightly_financial 时段每日跑（与十大股东同层季度披露族），
+        每次全量重拉 2024-09-30 起全部已发布季度（~16 次调用 ~3 万行，秒级）；
+        不新建 quarterly 调度层（9 档分层架构不扩散）。
+    注册表闭环：DS-103/JOB-083（data_asset_registry v1.3.0）+ market_northbound_hold_snapshot
+    （business_data_categories）+ FLD-POS-008/009（field_dictionary）+ 三条 akshare 失效接口
+    补登 known_data_gaps（gap_type=interface_broken 首用，memo §5.4 施工项）。
+  impact:
+  - 'src/zephyr/data/implementations/northbound_hold_fetcher.py（新建）'
+  - 'src/zephyr/data/implementations/tushare_provider.py（capability 路由 3 行叠加）'
+  - 'schemas/categories/market_northbound_hold_snapshot.py（新建 DDL-as-Code）'
+  - 'src/zephyr/data/config/tasks.yaml（northbound_hold_snapshot_refresh 任务）'
+  - 'src/zephyr/data/config/known_data_gaps.yaml（三接口失效登记）'
+  fix_phase: '2026-08-15 AI-NORTH-001 施工完成（单测+联调实证拉取→落库→回读）；status 候选转正待生产调度首季度实证'
+  status: decided
+  confirmed_by_user: '2026-08-15 用户任务书（AI-NORTH-001 施工指令）'
+  related_rules: '19_northbound_hold_snapshot.md（设计真源）; #ARCH-DATA-015/016/017（数据缺口治理同族）; #ARCH-DATA-UTIL（外部源落库资产登记母议题）'
+  created: '2026-08-15'
+  last_updated: '2026-08-15'

@@ -220,6 +220,28 @@ class TestValidateTaskCapabilityContracts:
         ])}
         assert validate_task_capability_contracts([task], metas) == []
 
+    def test_rule3_top_level_incremental_false_no_warn(self):
+        """规则3 回归（2026-08-15 误报实证）：顶层 incremental=false（tasks.yaml 真源字段）
+        + extra 缺省 → 全量模式不 WARN。修复前误读 extra 单源致误报 CAP-INCREMENTAL。"""
+        task = {"task_id": "northbound_hold_snapshot_refresh", "source": "test",
+                "capability": "macro", "symbols": None, "incremental": False}
+        metas = {"test": _make_meta([
+            CapabilityContract("macro", supports_symbols_null=True, supports_incremental=False),
+        ])}
+        assert validate_task_capability_contracts([task], metas) == []
+
+    def test_rule3_top_level_true_beats_extra_false(self):
+        """规则3: 顶层 incremental=true 优先于 extra.incremental=false（与 scheduler 一致）。"""
+        task = {"task_id": "t1", "source": "test", "capability": "macro",
+                "symbols": ["000001.SZ"], "incremental": True,
+                "extra": {"incremental": False}}
+        metas = {"test": _make_meta([
+            CapabilityContract("macro", supports_incremental=False),
+        ])}
+        violations = validate_task_capability_contracts([task], metas)
+        assert len(violations) == 1
+        assert violations[0].rule_id == "CAP-INCREMENTAL"
+
     def test_rule1_error_skips_rule2_rule3(self):
         """规则1 ERROR 后跳过规则2/3（不重复报）。"""
         task = {"task_id": "t1", "source": "test", "capability": "not_exist",

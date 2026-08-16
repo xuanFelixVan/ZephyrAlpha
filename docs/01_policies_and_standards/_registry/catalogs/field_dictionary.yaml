@@ -5598,6 +5598,69 @@ fields:
   evidence: ""
   code_symbol: null
   code_fingerprint: null
+- field_id: FLD-POS-008
+  field_name: hold_share
+  name_zh: 持股数量
+  business_definition: 北向资金（沪深股通投资者合计）持有单只证券的数量，季度末快照（memo 19，DS-103）
+  data_type: int
+  unit: 股
+  allowed_values: null
+  source_system: SRC-TUSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - v>0
+  - 季度末日期对齐（03-31/06-30/09-30/12-31）
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: quarterly（季度后第 5 个沪深股通交易日发布）
+  notes: 'tushare hk_hold.vol 映射；港交所 2024-08-19 日频断档后北向持股唯一可用口径；表 c1_market.northbound_hold_snapshot'
+  module_id: MOD-L00-004
+  doc_ref: 19_northbound_hold_snapshot.md §5.2
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-15'
+  updated_at: '2026-08-15'
+  owner: ZephyrAlpha-Owner
+  entry_role: "reference"
+  applies_to: ["stock"]
+  tags: ["资金", "仓位", "数据"]
+  algorithm_status: "not_applicable"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
+- field_id: FLD-POS-009
+  field_name: hold_ratio
+  name_zh: 持股占比
+  business_definition: 北向资金持有单只证券数量占其 A 股股本百分比，季度末快照（memo 19，DS-103）
+  data_type: float
+  unit: '%(小数)'
+  allowed_values: null
+  source_system: SRC-TUSHARE-001
+  adjust_method: none
+  pit_property: point_in_time
+  quality_rules:
+  - 0≤v≤100
+  steward: ZephyrAlpha-Owner
+  sensitivity: none
+  freshness: quarterly（季度后第 5 个沪深股通交易日发布）
+  notes: 'tushare hk_hold.ratio 映射（百分比数值口径，如 5.23=5.23%）；表 c1_market.northbound_hold_snapshot'
+  module_id: MOD-L00-004
+  doc_ref: 19_northbound_hold_snapshot.md §5.2
+  code_path: null
+  status: candidate
+  version: 1.0.0
+  created_at: '2026-08-15'
+  updated_at: '2026-08-15'
+  owner: ZephyrAlpha-Owner
+  entry_role: "reference"
+  applies_to: ["stock"]
+  tags: ["资金", "仓位", "数据"]
+  algorithm_status: "not_applicable"
+  evidence: ""
+  code_symbol: null
+  code_fingerprint: null
 - field_id: FLD-PORT-001
   field_name: target_weights
   name_zh: 目标权重
