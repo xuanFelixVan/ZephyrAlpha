@@ -377,12 +377,42 @@ def ensure_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> b
     return True
 
 
+def _acquire_single_instance_lock(root: Path):
+    """单实例互斥锁（#99：防 Task Scheduler RestartOnFailure 连环拉起堆积）。
+
+    非阻塞字节锁：拿不到锁=已有实例在岗，返回 None，调用方应立即退出。
+    拿到锁的实例持有文件句柄直至进程退出（OS 自动释放，含崩溃场景——
+    句柄随进程句柄表关闭而释放，无死锁残留）。
+    """
+    import msvcrt  # noqa: PLC0415 — Windows 专用锁（本项目运行环境=Windows 计划任务）
+
+    lock_path = root / _STATE_DIR / "watchdog.lock"
+    try:
+        (root / _STATE_DIR).mkdir(parents=True, exist_ok=True)
+        fh = open(lock_path, "a+b")  # noqa: SIM115 — 句柄须随进程生命周期持有，不可 with 关闭
+        try:
+            msvcrt.locking(fh.fileno(), msvcrt.LK_NBLCK, 1)
+        except OSError:
+            fh.close()
+            return None
+        return fh
+    except OSError:
+        return None
+
+
 def run_daemon(project_root: str | Path, interval: int = _SCAN_INTERVAL) -> int:
     """看门狗主循环：周期 scan_once；无活跃 session 超 _IDLE_EXIT_SECONDS 自动退出。"""
     from zephyr.shared.io.paths import anchor_main_root  # noqa: PLC0415
 
     root = anchor_main_root(Path(str(project_root)).resolve())
     globals()["_WD_ROOT"] = str(root)
+
+    # #99 单实例闸：第二实例（Task Scheduler 复发拉起）拿到锁失败即退，零堆积
+    _lock_fh = _acquire_single_instance_lock(root)
+    if _lock_fh is None:
+        _lifecycle_log(root, "skipped", {"reason": "another instance already running (#99 single-instance lock)"})
+        return 0
+    globals()["_WD_LOCK_FH"] = _lock_fh  # 防 GC 关句柄释放锁——随进程生命周期持有
 
     def _on_signal(signum, frame):  # noqa: ANN001, ANN202
         _lifecycle_log(root, "interrupted", {"signal": signum})
