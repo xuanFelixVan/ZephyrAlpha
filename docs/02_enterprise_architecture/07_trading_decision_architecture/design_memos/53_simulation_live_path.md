@@ -5,8 +5,8 @@ title: 模拟与实盘验证路径
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.7.7"
-date: 2026-08-15
+version: "1.7.8"
+date: 2026-08-17
 topic: simulation_live_path
 scope: 07_trading_decision_architecture
 ---
@@ -19,7 +19,8 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**（2026-08-16 独立复核修正）：
 > - 晋级迁移 FSM 不做——Owner 裁定方案 C：阶段维度真源=paper_live_transition 三阶段门禁，原迁移 5 态废弃（重复建模）。
-> - §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）代码未落地——v1.7.7 裁定指定落地 rollback_state_machine.py，但 2026-08-16 复核实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举在 src 全仓不存在，裁定与代码现实有出入，待后续批次真正落码。
+>
+> **2026-08-17 补记（v1.7.8）**：§3.8 五态降级机代码已落地（AI-DGR-001，#ARCH-QUANT-003 resolved）——`src/zephyr/governance/lifecycle_governance/rollback_state_machine.py`（MOD-GOV-045，与 infrastructure/rollback/ 同名编排机零关系），§3.8 伪代码逐行落地（单向更保守/fail-closed/Hysteresis/≥30 笔地板）+ paper_live_transition.py 晋级前置 NORMAL 校验耦合点，57 项测试两轮全绿。
 
 # 模拟与实盘验证路径
 
@@ -532,14 +533,14 @@ flowchart TD
 3. **观察条件**：保守观察期达标（PARALLEL 累计≥6月 + 交易≥30笔 / GRAY_RAMP half-sized rolling DSR 稳定）
 4. `valid_transition(from, to)` 校验不可跳级 → `get_next_phase()` 晋级 → `TransitionState` 持久化（审计凭证）
 
-**降级/回退程序**（⚠️ 代码验证 `paper_live_transition.py` L31-37：**回退逻辑未在代码中实现**，以下为设计指导，标注"待施工"）：
+**降级/回退程序**（v1.7.8 更新：五态状态机算法已落码 `rollback_state_machine.py`（MOD-GOV-045）；执行侧动作——撤单/阻断/减仓/平仓接线交易运行时——待首批策略进 SHADOW 阶段施工）：
 
 | 回退类型 | 触发条件 | 回退目标 | Kill Switch 级别 | 施工状态 |
 |---|---|---|---|---|
-| **GRAY_RAMP 内回退** | drawdown/daily_loss 触发但未到 circuit_breaker | 上一级 ramp（如 50%→20%） | 1-2 级（Throttle/Cancel-all） | 代码待施工（算法见下状态机） |
-| **跨阶段回退** | 持续异常 / Kill Switch 3 级（Block） | SHADOW 或 PARALLEL | 3 级（Block） | 代码待施工（算法见下状态机） |
-| **回 G23 回测迭代** | 严重异常 / Kill Switch 4 级（Flatten）/ 回测-实盘偏差 `retire`（>50%） | G23（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)；[52_backtest_framework_docking](52_backtest_framework_docking.md) active v1.0.4） | 4 级（Flatten，T+1 受限） | 代码待施工（算法见下状态机） |
-| **退役** | OOS expectancy 转负 / WFA 反复失败 / 市场前提失效 | 直接退役（§3.5 退役矩阵） | 4 级（Flatten） | 代码待施工（算法见下状态机） |
+| **GRAY_RAMP 内回退** | drawdown/daily_loss 触发但未到 circuit_breaker | 上一级 ramp（如 50%→20%） | 1-2 级（Throttle/Cancel-all） | 状态机已落地（算法见下）；执行侧接线待施工 |
+| **跨阶段回退** | 持续异常 / Kill Switch 3 级（Block） | SHADOW 或 PARALLEL | 3 级（Block） | 状态机已落地（算法见下）；执行侧接线待施工 |
+| **回 G23 回测迭代** | 严重异常 / Kill Switch 4 级（Flatten）/ 回测-实盘偏差 `retire`（>50%） | G23（[battle_map_03](../battle_map/battle_map_03_backtest_validation.md)；[52_backtest_framework_docking](52_backtest_framework_docking.md) active v1.0.4） | 4 级（Flatten，T+1 受限） | 状态机已落地（算法见下）；执行侧接线待施工 |
+| **退役** | OOS expectancy 转负 / WFA 反复失败 / 市场前提失效 | 直接退役（§3.5 退役矩阵） | 4 级（Flatten） | 状态机已落地（算法见下）；执行侧接线待施工 |
 
 **降级/回退状态机算法**（v1.6.0 补，填补上表"做什么→怎么做"的算法缺失；对齐 [quant67 2026-05-01](https://quant67.com/post/quant/28-ops-compliance/28-ops-compliance.html) 熔断状态机 + 本备忘 §3.5 Kill Switch 4 级梯子 + oh-my-opentrade REDUCING 态）：
 
@@ -569,7 +570,7 @@ flowchart TD
 > **Hysteresis（滞后回环）防抖动**（[ssystechsoftwares 2026-05](https://ssystechsoftwares.com/circuit-breaker-pattern-trading-bots-python.html)）：trip 阈值与 recover 阈值须不同——如 THROTTLED trip 于 `intraday_dd > 1%`，恢复 NORMAL 须 `intraday_dd < 0.3%`（而非 1%）。无滞后会致状态在阈值附近反复抖动（flapping），产生无效告警 + 撤单重单循环。**最小样本要求**：触发回退须累计 ≥30 笔交易（对齐 §3.3 AlphaFactory G2.2 统计地板），避免小样本噪声误触发——8 笔交易 -7% ROI 不是 broken 是噪声。
 
 ```python
-# 降级/回退状态机伪代码（设计规范，代码待施工——paper_live_transition.py L31-37 未实现回退）
+# 降级/回退状态机伪代码（设计规范；✅ 2026-08-17 已落码 v1.7.8：src/zephyr/governance/lifecycle_governance/rollback_state_machine.py，MOD-GOV-045）
 # 对齐 quant67 2026-05-01 熔断状态机 + §3.5 Kill Switch 4 级梯子 + oh-my-opentrade REDUCING 态
 # 核心约束：① 状态只能单向"更保守"迁移（无自动恢复）
 #           ② 恢复须人工 + 双人复核 + RCA 已写
@@ -792,7 +793,7 @@ def _state_idx(s: RollbackState) -> int:
 | 多 sleeve 同时在迁移不同阶段时的 firm 层风险聚合 | [20_first_batch_strategies](20_first_batch_strategies.md) §4.4（独立灰度） | 待第 2 个 sleeve 进入迁移时（G13 FirmRiskAggregator） |
 | 模拟撮合算法的滑点倍率校准（§3.2 撮合乐观偏差校准，1.5-2× 回测假设） | 本备忘 §3.2（v1.5.0 新增） | 待 SHADOW 阶段用真实滑点数据回归校准倍率 |
 | MPC 智能调速器的 ramp 步长动态调整范围（最小步长下限 / 最大步长上限） | 本备忘 §4.4（v1.5.0 新增） | 待 MPC 重评条件满足后定（保 1% 最小步长兜底） |
-| §3.8 降级/回退状态机的代码落地（`paper_live_transition.py` L31-37 未实现回退） | 本备忘 §3.8（v1.6.0 新增） | 待首批策略进入 SHADOW/GRAY_RAMP 阶段需回退时实现（当前为设计规范伪代码） |
+| §3.8 降级/回退状态机的代码落地 | 本备忘 §3.8（v1.6.0 新增） | ✅ 已落地（2026-08-17 AI-DGR-001，v1.7.8）：`governance/lifecycle_governance/rollback_state_machine.py`（MOD-GOV-045）按 §3.8 伪代码逐行落码 + 晋级前置 NORMAL 耦合点，#ARCH-QUANT-003 resolved；执行侧动作接线待 SHADOW 阶段 |
 | Bayesian changepoint 的先验分布选择（N-IG vs Student-t）+ dual-trigger 概率阈值 | 本备忘 §5.2/§6（v1.6.0 新增） | 待 ≥200 笔 PnL 序列累积后用历史数据回测校准 |
 | **52/55 号定型后的双向联动回填**（v1.7.6 更新） | 52 号已 active v1.0.4（其 §3.4 承载 G23 why 层并已反向引用本备忘 §3.1）；55 号已 active v1.0.2（其 §3.4-3.6 决策已定待施工）；本备忘全部引用已同步（本次 v1.7.6） | 52 号侧双向引用已闭环；55 号侧联动待其 §3.4 偏离度量施工后回填（55 号域归 AI-MON-001） |
 | **00_index 多处漂移需同步**（v1.7.0 新增，v1.7.6 复核；不越界改仅登记） | 已修复：52/55 号状态已标 active v1.0.0（2026-08-12 重建）；仍存：①§3 G24 行与 §0 目录标本备忘 v1.7.4/§7.3 快照标 v1.6.6（滞后于本版）；②§3 G24/G23 产出物名误为 `53_simulation_live_path_simulation_live_path.md` 等 topic 重复；③§0 目录 61 号版本滞后（实际 v2.13.3） | 待 00_index owner 会话同步（本备忘不越界改） |
@@ -816,7 +817,8 @@ def _state_idx(s: RollbackState) -> int:
 - [71_d_simulation](../../02_domain_architecture_docs/71_d_simulation.md)（D_SIMULATION 域 15 模块）
 
 ### 8.3 代码真源
-- `src/zephyr/governance/lifecycle_governance/paper_live_transition.py`（MOD-GOVERNANCE，三阶段迁移门禁 PARALLEL/SHADOW/GRAY_RAMP + key_gates + valid_transition 不可跳级 + TransitionState 持久化）
+- `src/zephyr/governance/lifecycle_governance/paper_live_transition.py`（MOD-GOVERNANCE，三阶段迁移门禁 PARALLEL/SHADOW/GRAY_RAMP + key_gates + valid_transition 不可跳级 + TransitionState 持久化 + `check_promotion_allowed` 晋级前置降级姿态=NORMAL 校验）
+- `src/zephyr/governance/lifecycle_governance/rollback_state_machine.py`（MOD-GOV-045，§3.8 五态降级/回退状态机代码真源——evaluate_rollback/recover/safe_read_state + JsonStateStore 持久化，2026-08-17 AI-DGR-001 落地）
 - `src/zephyr/backtest/core/decision_gate.py`（IS→WFA→OOS 门控 + 参数悬崖检测 + `monitor_backtest_live_deviation` 回测-实盘 Sharpe 偏差 warn>30%/retire>50%，§3.5 触发条件与 §3.8 回退判定的代码真源）
 - `src/zephyr/simulation/deflated_sharpe_calculator.py`（MOD-SIM-024，rolling DSR 完整实现）
 - `src/zephyr/ex_sor/services/slippage_analyzer.py`（滑点分析 + `SquareRootImpactPredictor` coeff=0.142，BM-BT-05-H-A 归因复用）

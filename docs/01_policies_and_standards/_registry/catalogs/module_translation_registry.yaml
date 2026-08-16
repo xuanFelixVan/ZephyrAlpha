@@ -41529,6 +41529,13 @@ entries:
   desc_zh: ""
   desc_en: ""
   plain_zh: "把组合级风控三件套（回撤追踪/VaR/尾部风险）加熔断清算链、盘中持仓对账、启动恢复重建接进交易会话运行时：启动时先以券商持仓为准重建账本，重建完成前禁止下单；盘中每次调仓前评估回撤与VaR/ES，产出仓位上限缩放目标权重；回撤触及EMERGENCY或尾部风险极值时经单一仲裁点触发熔断并按15笔每秒限频清算全部持仓"
+- module_path: src/zephyr/governance/lifecycle_governance/rollback_state_machine.py
+  domain_id: D_GOVERNANCE
+  name_zh: "降级状态机"
+  name_en: "rollback_state_machine"
+  desc_zh: "53号§3.8五态降级/回退状态机（#ARCH-QUANT-003）：单向更保守自动迁移+人工恢复（RCA+双人复核）+fail-closed+Hysteresis+30笔样本地板"
+  desc_en: ""
+  plain_zh: "降级状态机——回撤/拒单率超阈值时自动向更保守态迁移（正常→节流→软停→硬停→平仓），只能更保守不能自动恢复；恢复须人工双人复核+RCA报告；状态读取失败默认软停（宁可停错不可不停，fail-closed）"
 
 battle_map_steps:
 - step_id: BM-BUY-04
