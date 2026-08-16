@@ -859,7 +859,11 @@ class ReconciliationRegistry:
         try:
             from scripts.ops_guard import (
                 DeleteBlockedError as _DeleteBlockedError,
+            )
+            from scripts.ops_guard import (
                 reset_reconciler_context as _reset_rc_ctx,
+            )
+            from scripts.ops_guard import (
                 set_reconciler_context as _set_rc_ctx,
             )
         except Exception:  # noqa: BLE001 — ops_guard 不可达降级（注册期强校验已兜底）
@@ -4892,6 +4896,184 @@ def make_vocab_change_reconciler(gateway: object) -> ReconcilerSpec:
         priority=280,
 
         file_ops=frozenset({"read", "write"}),
+
+    )
+
+# trae_060-reviewed: ①该存在——#73 实证断裂（ttl 声明"准不准"无周期校验，TTL-METADATA 只管"有没有"）；
+# ②不能合并进已有——make_vocab_change_reconciler 触发条件=词表文件变更+auto-commit 纠偏，与本 reconciler
+# 每次 commit 增量校验+warn-only 语义正交；判定逻辑零重复（复用 backfill_ttl_metadata.py --check 统一出口）；
+# ③治本——校验复用 decision_tree SSoT，reconciler 仅做事件接入，不新增写路径/新真源。
+def make_ttl_drift_incremental_reconciler(gateway: object) -> ReconcilerSpec:
+
+    """构造 GATE-TTL-DRIFT-INCREMENTAL post-commit reconciler（#73 TTL 声明质保链·增量校验）。
+
+    断裂点（tracker #73 实证）：TTL-METADATA 门禁管"有没有"（缺 ttl 不让 commit）；
+    GATE-VOCAB-CHANGE 管词表变更后的全量纠偏；但日常新增/修改文档的 ttl 声明
+    "准不准"无周期校验（原常设 TTL reconciler 已删除）——漂移只有词表变更时才被发现。
+
+    本 reconciler 补齐增量校验：每次 commit 后对其中的 ttl 载体文件跑
+    backfill_ttl_metadata.py --rejudge --check（dry-run 零写入，warn-only），
+    声明与 ttl_vocabulary.yaml decision_tree 不符即 warn 曝光，纠偏走人工确认
+    （声明是人/AI 的显式意图，不做静默 auto-fix——reconciler 纪律 warn/skip/fix-in-place，
+    此处取 warn）。
+
+    对账链：
+    1. trigger: committed_files 含 ttl 载体后缀且位于 docs/src/scripts/tests 扫描域
+    2. subprocess 调 backfill_ttl_metadata.py --rejudge --check <files>
+    3. exit 0 -> clean；exit 1 -> warn（CHANGED FILES 清单）；其他 -> warn（脚本异常）
+
+    Args:
+
+        gateway: GitCommitGateway 实例（用 project_root）。
+
+    Returns:
+
+        ReconcilerSpec(gate_id="GATE-TTL-DRIFT-INCREMENTAL", priority=285)。
+
+    """
+
+    import sys
+
+    project_root = gateway.project_root
+
+    _TTL_SUFFIXES = frozenset({".md", ".py", ".sh", ".ps1", ".mmd", ".yaml", ".json"})
+
+    # 管辖域=文档保留期判定树的 zone 模型覆盖范围（见 docstring"管辖域"节实证收窄说明）
+    _SCAN_ROOT_PREFIXES = ("docs/", "architecture_model/")
+
+    def _pick_targets(committed_files: list[str]) -> list[str]:
+
+        targets = []
+
+        for f in committed_files:
+
+            rel = _rel_path(f, str(project_root))
+
+            if not rel.startswith(_SCAN_ROOT_PREFIXES):
+
+                continue
+
+            if Path(rel).suffix.lower() not in _TTL_SUFFIXES:
+
+                continue
+
+            if (project_root / rel).is_file():
+
+                targets.append(rel)
+
+        return targets
+
+    def _trigger(committed_files: list[str]) -> bool:
+
+        return bool(_pick_targets(committed_files))
+
+    def _reconcile(committed_files: list[str], session_id: str) -> ReconcileResult:
+
+        targets = _pick_targets(committed_files)
+
+        if not targets:
+
+            return ReconcileResult(
+
+                action="clean",
+
+                detail="ttl drift incremental: no ttl-bearing files in commit",
+
+            )
+
+        result = _run_subprocess(
+
+            [sys.executable,
+
+             "scripts/governance/d3_metadata/backfill_ttl_metadata.py",
+
+             "--rejudge", "--check", *targets],
+
+            cwd=str(project_root),
+
+            capture_output=True,
+
+            text=True,
+
+            encoding="utf-8",
+
+            errors="replace",
+
+            timeout=120,
+
+        )
+
+        if result.returncode == 0:
+
+            return ReconcileResult(
+
+                action="clean",
+
+                detail=f"ttl drift incremental: {len(targets)} files consistent",
+
+            )
+
+        if result.returncode != 1:
+
+            return ReconcileResult(
+
+                action="warn",
+
+                detail=f"ttl drift incremental check error (exit={result.returncode}): "
+
+                       f"{result.stderr.strip()[:200]}",
+
+            )
+
+        # exit 1 = 漂移——解析 CHANGED FILES 清单曝光
+
+        drift_files = []
+
+        in_section = False
+
+        for line in result.stdout.splitlines():
+
+            if line.startswith("=== CHANGED FILES"):
+
+                in_section = True
+
+                continue
+
+            if in_section and line.strip():
+
+                drift_files.append(line.strip())
+
+        shown = ", ".join(drift_files[:10])
+
+        more = f" (+{len(drift_files) - 10} more)" if len(drift_files) > 10 else ""
+
+        return ReconcileResult(
+
+            action="warn",
+
+            detail=f"ttl drift incremental: {len(drift_files)} file(s) ttl 声明与 "
+
+                   f"decision_tree 不符——{shown}{more}；处置=人工裁定（词表裁定序："
+
+                   f"显式声明 > zone 契约 > doc_type 默认 > decision_tree 辅助判定——"
+
+                   f"中性区显式 permanent 可为合法 override；确认声明有误再跑 "
+
+                   f"backfill_ttl_metadata.py --rejudge <file> 纠偏提交，warn-only 不写文件）",
+
+        )
+
+    return ReconcilerSpec(
+
+        gate_id="GATE-TTL-DRIFT-INCREMENTAL",
+
+        trigger=_trigger,
+
+        reconcile=_reconcile,
+
+        priority=285,
+
+        file_ops=frozenset({"read"}),
 
     )
 

@@ -117,7 +117,9 @@ build_status: stable
 
 | 属性 | 值 |
 |------|-----|
-| SDK来源 | `D:\国金证券QMT交易端\bin.x64\Lib\site-packages\xtquant\` |
+| 主线环境 | **模拟盘 `E:\国金QMT交易端模拟`**（全项目模拟盘化主线，2026-08-15 a88a56fb）；真实资金盘 `E:\国金证券QMT交易端`（QMT_REAL_PATH，非主线） |
+| 环境辨识真源 | `config/qmt_environments.yaml`（#ARCH-QMT-ENV-DISAMBIG-001——任何 QMT 操作前 MUST 先读辨识） |
+| SDK来源 | `E:\国金QMT交易端模拟\bin.x64\Lib\site-packages\xtquant\`（模拟主线） |
 | API数量 | 87个函数 |
 | 板块覆盖 | 36个板块（A股/期货/期权/转债/ETF等） |
 | 运行要求 | XtMiniQmt.exe 必须运行，is_connected=True |
@@ -203,7 +205,7 @@ py -3.11 your_script.py
 
 ```python
 import sys
-qmt_xtquant = r'D:\国金证券QMT交易端\bin.x64\Lib\site-packages'
+qmt_xtquant = r'E:\国金QMT交易端模拟\bin.x64\Lib\site-packages'
 sys.path.append(qmt_xtquant)   # ✅ 用 append
 # sys.path.insert(0, qmt_xtquant)  # ❌ 不能用 insert！会覆盖系统 numpy
 ```
@@ -214,7 +216,7 @@ sys.path.append(qmt_xtquant)   # ✅ 用 append
 
 ```python
 import os
-os.chdir(r'D:\国金证券QMT交易端\bin.x64')  # 关键!
+os.chdir(r'E:\国金QMT交易端模拟\bin.x64')  # 关键!
 ```
 
 **原因**：xtquant 的 `data_dir` 默认是相对路径 `../userdata_mini/datadir`。如果不 chdir，从 `d:\ZephyrAlpha` 运行时会解析为 `d:\userdata_mini\datadir`（不存在），导致所有 K线/Tick API 报"周期错误"。
@@ -223,7 +225,7 @@ os.chdir(r'D:\国金证券QMT交易端\bin.x64')  # 关键!
 
 ```python
 # ❌ 绝对不能这样做！
-xtdata.data_dir = r'D:\国金证券QMT交易端\userdata_mini\datadir'
+xtdata.data_dir = r'E:\国金QMT交易端模拟\userdata_mini\datadir'
 # 这会破坏底层 C++ 函数，导致 get_market_data_ex / get_local_data 报"周期错误"
 ```
 
@@ -235,11 +237,11 @@ xtdata.data_dir = r'D:\国金证券QMT交易端\userdata_mini\datadir'
 import sys, os
 
 # 要素1: sys.path.append（不能用 insert）
-qmt_xtquant = r'D:\国金证券QMT交易端\bin.x64\Lib\site-packages'
+qmt_xtquant = r'E:\国金QMT交易端模拟\bin.x64\Lib\site-packages'
 sys.path.append(qmt_xtquant)
 
 # 要素2: os.chdir 到 QMT bin.x64 目录
-os.chdir(r'D:\国金证券QMT交易端\bin.x64')
+os.chdir(r'E:\国金QMT交易端模拟\bin.x64')
 
 # 要素3: 导入并验证连接
 from xtquant import xtdata
@@ -251,7 +253,7 @@ assert client.is_connected(), "QMT未连接，请确保 XtMiniQmt.exe 正在运�
 
 - 进程名：`XtMiniQmt.exe`（miniQMT 模式，不是完整交易终端）
 - 验证方法：`xtdata.get_client().is_connected()` 返回 `True`
-- 数据目录：`D:\国金证券QMT交易端\userdata_mini\datadir\`（含 `SH/86400/`、`SZ/86400/`、`DividData/` 等子目录）
+- 数据目录：`E:\国金QMT交易端模拟\userdata_mini\datadir\`（含 `SH/86400/`、`SZ/86400/`、`DividData/` 等子目录）
 
 ### §3.2 接口总览（87个API）
 
@@ -299,9 +301,9 @@ xtquant 包含 87 个 API 函数，核心分类：
 import sys, os
 
 # 三要素配置
-qmt_xtquant = r'D:\国金证券QMT交易端\bin.x64\Lib\site-packages'
+qmt_xtquant = r'E:\国金QMT交易端模拟\bin.x64\Lib\site-packages'
 sys.path.append(qmt_xtquant)                          # 要素1: append不是insert
-os.chdir(r'D:\国金证券QMT交易端\bin.x64')             # 要素2: chdir到QMT目录
+os.chdir(r'E:\国金QMT交易端模拟\bin.x64')             # 要素2: chdir到QMT目录
 
 from xtquant import xtdata
 client = xtdata.get_client()
@@ -643,8 +645,8 @@ for stock in stocks:
 **批量下载执行模板**：
 ```python
 import sys, os
-sys.path.append(r'D:\国金证券QMT交易端\bin.x64\Lib\site-packages')
-os.chdir(r'D:\国金证券QMT交易端\bin.x64')
+sys.path.append(r'E:\国金QMT交易端模拟\bin.x64\Lib\site-packages')
+os.chdir(r'E:\国金QMT交易端模拟\bin.x64')
 from xtquant import xtdata
 
 # 批量下载5207只A股日K线
@@ -1246,7 +1248,7 @@ info = tf.instruments.batch(symbols=["600000.SH", "AAPL.US"])
 | 限制 | 说明 | 缓解 |
 |------|------|------|
 | 60次/min限流 | 免费服务速率限制，超限提示等待 | `time.sleep(1)` 控制频率，批量下载分批 |
-| 无实时行情 | 免费服务不提供盘中实时数据 | 实盘用QMT；TickFlow仅用于历史数据下载 |
+| 无实时行情 | 免费服务不提供盘中实时数据 | 实时行情用QMT（当前主线=模拟终端）；TickFlow仅用于历史数据下载 |
 | 无分钟K线 | 1m/5m/15m/30m/60m不可用 | 分钟K线用Baostock(A股)/QMT(美股) |
 | 无真实指数 | DJI/IXIC/GSPC不可用 | 用ETF替代：SPY.US/DIA.US/QQQ.US |
 | 历史深度未知 | count=100成功，count=500被限流(非深度限制) | 分批下载，等限流后重试 |
