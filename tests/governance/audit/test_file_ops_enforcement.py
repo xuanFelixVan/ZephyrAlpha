@@ -43,6 +43,7 @@ from scripts.ops_guard import (  # noqa: E402
     prune_recycle_bin,
     reset_reconciler_context,
     set_reconciler_context,
+    uninstall_inprocess_enforcement,
     _ORIG_PRIMITIVES,
 )
 import scripts.ops_guard as ops_guard_mod  # noqa: E402
@@ -193,17 +194,13 @@ class TestReconcilerContextEnforcement:
 # ---------------------------------------------------------------------------
 @pytest.fixture()
 def _restore_primitives():
-    """补丁进程级——测试后恢复原始原语防污染。"""
+    """补丁进程级——测试后恢复原始原语防污染。
+
+    使用官方 uninstall_inprocess_enforcement()（而非手动恢复），
+    确保 _ORIG_PRIMITIVES 字典被正确清空，避免二次安装时原语链损坏。
+    """
     yield
-    if _ORIG_PRIMITIVES:
-        os.remove = _ORIG_PRIMITIVES["os.remove"]  # type: ignore[assignment]
-        os.unlink = _ORIG_PRIMITIVES["os.unlink"]  # type: ignore[assignment]
-        os.rmdir = _ORIG_PRIMITIVES["os.rmdir"]  # type: ignore[assignment]
-        os.rename = _ORIG_PRIMITIVES["os.rename"]  # type: ignore[assignment]
-        import shutil as _sh
-        _sh.rmtree = _ORIG_PRIMITIVES["shutil.rmtree"]  # type: ignore[assignment]
-        _sh.move = _ORIG_PRIMITIVES["shutil.move"]  # type: ignore[assignment]
-    ops_guard_mod._INSTALLED = False
+    uninstall_inprocess_enforcement()
 
 
 @pytest.mark.usefixtures("_restore_primitives")
