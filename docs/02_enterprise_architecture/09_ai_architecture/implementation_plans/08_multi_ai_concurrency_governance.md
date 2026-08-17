@@ -5,7 +5,7 @@ title: 多 AI 并发治理施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 date: 2026-08-17
 topic: multi_ai_concurrency_governance
 scope: 09_ai_architecture
@@ -150,6 +150,10 @@ scope: 09_ai_architecture
 4. **恢复层是最后一道**：ops_guard 删除强制先落审计（删除前快照）、worktree 四证清理 SOP（refs/quarantine + bundle 双存证）、rollback.py、备份脚本。wipe 事故证明「拦住」之外必须有「救回」——42 红队向量 100% 拦截也不能保证第 43 种原语不存在。
 5. **fail-open vs fail-closed 的分野**：wrapper 出错放行+记录（fail-open，拦错比漏拦更伤害施工体验，65 号 §3.9 行业共识）；网关/门禁 fail-closed（commit 是写操作，宁阻断勿错写）；删除原语在保护区 fail-closed（物理删除不可逆）。三种语义按操作可逆性分配，不是一刀切。
 
+**多 LLM 交叉审查强制策略（AI 生成代码的供应链层防线）**：system_charter §2 约束六要求 AI 生成代码交叉验证+依赖锁定+自治熔断；26-D-SECURITY 草稿 §8.2.3 将其落成强制阈值——100% AI 生成代码必须经至少 2 个独立 LLM 交叉审查，关键安全代码（加密/认证/权限）必须 3 个 LLM 交叉审查，审查结果写入审计链。本项目审查栈 = GLM-5.1 + DeepSeek V4 Pro + Claude（治理架构草稿 §3.1 多 AI 交叉验证栈）。24-D-SECURITY 侧执行承载 = SEC-001 AISGGate（所有 AI 生成代码/指令必须经 AISG 验证后才能执行，fail-closed）+ SEC-006 SupplyChainSecurity（L0 供应链层：SHA-256 校验/SBOM/依赖锁定）。与本节三层闭环的关系：交叉审查属「预防」层，在代码进入仓库前拦截单模型幻觉与漏洞模式，与 commit 期门禁链（拦错误落盘）前后相续、互不替代。
+
+**Agent 制品门禁（CI/CD）**：Agent 系统制品不止代码——25-D-INFRA-OPS 草稿 §16.4（搬入自 Agent 架构 A7）定义三类 Agent 特有制品阶段：Prompt 模板测试（输出格式校验+边界输入测试）、模型基准评估（基准数据集评估+延迟测试）、技能声明验证（依赖完整性+自治边界合规）。质量门禁阈值：Prompt 输出合规率 ≥95%、Agent 自治边界测试 0 违规、A2A 协议兼容性 100%、LLM 基准评估不劣于基线（仅紧急修复可豁免且须事后补测）、代码覆盖率 ≥80%、安全扫描 0 高危。部署策略：新 Agent 上线走影子模式（接收相同输入但不执行、不影响生产流量），Prompt/模型变更走金丝雀 10% 流量验证，Agent 代码变更走蓝绿秒级切换。与本主题的接口：多 AI 并发施工产出的 Prompt/技能声明变更同样经此门禁——制品级门禁与代码级 commit 门禁链两层互补。
+
 ### 3.3 提交队列设计：串行化机制与冲突解决策略 why
 
 **决策**：采纳 66 号三层防护第一层——提交队列串行化作为集成层唯一提交入口：会话提交 = 快照入队即返回；落盘由单写者 Serializer 按序完成。落盘形态 MVP 用专用 worktree 复用现有门禁链，temp-index plumbing 直写降为 P2 优化。
@@ -181,6 +185,55 @@ scope: 09_ai_architecture
 | 杂项 git 操作（read-tree 等 plumbing） | 共享 index 被隐形重置 | plumbing 拦截（git_guard 硬阻断 + wrapper shell 层） | worktree 独立 index（只崩自己）+ 队列快照（已落袋不受 index 影响） |
 
 **理由**：66 号事故链的 6 起事故分别落在三个面上，任何只盖一面的方案都会留重演路径；三层叠加的不变量是「任一层失效，其余层仍保数据不丢」（66 号 §11 穿透测试口径）。
+
+### 3.5 蓝图-代码-文档三方对齐机制（部署前强制检查）why
+
+**决策**：三方对齐采「部署前强制检查」而非「定期巡检」——蓝图定义「系统应该是什么样」，代码定义「系统实际是什么样」，文档定义「系统被描述成什么样」，三者不一致即漂移；每次变更部署前强制完成一致性验证，不一致即阻断（治理架构草稿 HB-GOV-03）。
+
+**机制构成**（真源：治理架构草稿 §6）：
+
+1. **声明式基线唯一真源**：所有架构决策以 YAML/JSON 声明式定义，蓝图中每个组件/接口/约束都有对应声明式定义文件，作为三方对齐基准。
+2. **SHA-256 哈希校验**：关键代码文件（核心模块入口/配置文件/接口定义文件）计算 SHA-256，与蓝图记录对比，不一致即触发架构漂移告警。
+3. **git diff 增量检查**：仅对变更文件执行对齐检查而非全量扫描，部署前检查延迟 ≤5 分钟。
+4. **CI/CD 部署门禁**：部署前自动执行三方对齐检查，不一致即阻断，结果记入审计日志。
+
+**6 维校验规则**：
+
+| 校验维度 | 校验方法 | 不一致处理 |
+|---|---|---|
+| 组件存在性 | 蓝图组件清单 vs 代码模块清单 | 缺失组件=部署阻断 |
+| 接口契约 | 架构契约定义 vs 代码接口签名 | 契约不一致=部署阻断 |
+| 配置一致性 | 声明式配置 vs 运行时实际配置 | 偏差>10%=漂移告警 |
+| 文档完整性 | 代码公共接口 vs API 文档覆盖 | 覆盖率<100%=警告 |
+| 依赖方向 | 代码 import 关系 vs 架构分层约束 | 违反分层=提交阻断（INV-008）|
+| 数据血缘 | 因子计算逻辑 vs 因子文档定义 | 定义不一致=因子下线 |
+
+**与本主题的关系**：三方对齐管「变更内容正确性」（部署门禁），提交队列/网关管「变更过程安全性」（提交门禁）——两者正交：队列保证多 AI 并发提交不互踩（§3.3），三方对齐保证单次部署内容不漂移；其中依赖方向 INV-008 的提交阻断落在 commit 期门禁链职责内。
+
+### 3.6 Prompt 生命周期管理与决策疲劳检测（GOV-005/GOV-003）why
+
+**决策**：Prompt 与 AI 协作规则按「宪法级资产」治理，归 27-D-GOVERNANCE 草稿 §1.1 GOV-005 ConstitutionalGuard 职责集——AI 代码标准执行 + 宪法更新审批 + Vibe Coding 治理 + Prompt 生命周期 + AI 自诊断监督；决策质量监控取 GOV-003 职责集内的决策疲劳检测一项。
+
+**已施工映射（2026-08-17 实测）**：
+
+- Prompt 生命周期：`src/zephyr/governance/context_governance/prompt_lifecycle.py`（实测存在）
+- 决策疲劳检测：`src/zephyr/governance/resilience_governance/decision_fatigue.py` + `decision_fatigue_cli.py`（实测存在）
+- Vibe Coding 执行器：`src/zephyr/gov_enforcement/behavioral_admission/vibe_coding_enforcer.py`（实测存在）
+
+**边界附注（与 00_index v0.4.0 裁定的关系）**：00_index v0.4.0 已裁定移除「决策溯源链 DAG」（连同 zkCA 零知识审计/AI 伦理声明，属 A6 AI 合规过度工程，不适用个人项目）。决策疲劳检测 ≠ 溯源 DAG——疲劳检测监控「1 人长时间审批 AI 产出导致决策质量下降」，不构建决策因果图数据库；本文档不复活已移除项。
+
+**与本主题的关系**：多 AI 并发施工下 Prompt 是会话间交接的隐性契约——Prompt 变更不经生命周期治理，各会话按各自版本施工，产出漂移无法归因；决策疲劳检测对冲单人审批瓶颈（1 人裁决 20+ 会话产出的质量风险）。
+
+### 3.7 AI 施工门禁（AIConstructionGovernor / VibeCodingGovernance）why
+
+**决策**：AI 改代码行为本身纳入门禁治理，防「AI 反复改代码的错误传播」（01-跨域交叉点与因果链草稿 §3 D-GOVERNANCE 段）。
+
+**机制构成**（真源：29-D-GOVERNANCE 草稿子模块表 + 01-跨域交叉点草稿 §3）：
+
+- **D-GOVERNANCE-15 AIConstructionGovernor**（P0）：公式 Hash 门禁 + 值域偏差检测 + 回归截断——AI 改代码后自动回归对比，偏差>阈值即截断阻止传播（深度 6 错误传播防御工事）；兼变更时段门禁（HC-01/HC-02 交易时段核心进程不可自动重启/依赖库不可自动升级，HC-04 保命轨触发放行全自动，HC-05 强制灰度发布）。**建设状态两源矛盾，见 §6 Q7。**
+- **D-GOVERNANCE-14 VibeCodingGovernance**：Session 治理——Session 状态机 + 门禁检查 + 零残留（OPS-VC-* 体系）；仓内实测承载 `vibe_coding_enforcer.py`（§3.6）。
+
+**与本主题的关系**：§3.1~§3.4 管「多 AI 并发不互踩」（空间维度），本节管「单会话多轮修改不传播错误」（因果维度）——回归截断防同一会话内误差累积，与文件锁/提交队列正交互补。
 
 ---
 
@@ -261,6 +314,7 @@ scope: 09_ai_architecture
 | Q4 | temp-index plumbing 形态 P2 评估的触发条件，及 62 门禁 blob 化工程量归属 | 66 号 §9.6 列为 P2 评估对象；评估≠施工承诺 | **待用户裁定** |
 | Q5 | AI RunCommand 通道 wrapper 注入增强（计划任务快照注入；`scripts/ensure_ai_wrapper_injection.ps1` 已存在）是否排期 | 65 号 tracker #58 已闭环——git_guard 直接调用层 + hook 层 + 规则层已构成 AI 通道等价防护；快照注入为增强项非必须项（§3.2 理由 2） | **待用户裁定** |
 | Q6 | 队列落地后 WORKSPACE-CLEAN-CHECK 的退役登记：66 号 §7 口径为「对象消失自然退役，无需删代码」，是否需在规范/注册表侧显式登记退役状态 | 未登记 | 待 MVP 验收后一并裁定 |
+| Q7 | D-GOVERNANCE-15 AIConstructionGovernor 建设状态两源矛盾：01-跨域交叉点草稿 §3 标 ✅ 已建，29-D-GOVERNANCE 草稿子模块表标 ❌ P0 未建；仓内 Grep 未检索到 AIConstructionGovernor/公式Hash/回归截断/值域偏差实现 | 草稿源互相矛盾，仓内未实测到对应模块 | 待用户裁定（以哪份草稿为准、是否排期施工） |
 
 ---
 
@@ -271,6 +325,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.1.0 | 骨架建立（frontmatter + 空节模板） | AI 架构 18 篇施工图批量建档 |
 | 2026-08-17 | 0.2.0 | 填充 §1 主题组信息 + §2 背景（含已施工设施盘点实测）+ §3 设计决策 | AI-FILL-08 第一轮填充（会话中途中断） |
 | 2026-08-17 | 0.2.1 | 续写补完 §4 施工计划（Phase 0→2，队列 MVP 为唯一 P0 缺口，含 depgraph planned→production 登记步骤）+ §5 不做什么 + §6 开放问题（Q1~Q6）+ 补建修订记录；红蓝对抗修正 4 处实测偏差：文件锁命令数（五/六→八，实测 status/check/acquire/release/release-all/list/cleanup/guard-write）、门禁注册表两文件路径限定 rule_bridge/、62 门禁读工作区数字归因 66 号实测、3 处过渡表述改为当前值断言（PURE-ASSERTION 门禁） | AI-FILL-08 续写补完 |
+| 2026-08-17 | 0.2.2 | §3 回填五项：§3.2 补「多 LLM 交叉审查强制策略」（26-D-SECURITY §8.2.3 + 24-D-SECURITY SEC-001/006）与「Agent 制品门禁」（25-D-INFRA-OPS §16.4）；新增 §3.5 三方对齐部署前强制检查（治理架构 §6）、§3.6 Prompt 生命周期与决策疲劳检测（27-D-GOVERNANCE GOV-005/GOV-003，附 00_index v0.4.0 移除溯源 DAG 边界注）、§3.7 AI 施工门禁（D-GOVERNANCE-15/14）；§6 新增 Q7（D-GOV-15 建设状态两源矛盾）；prompt_lifecycle/decision_fatigue/vibe_coding_enforcer 路径均实测 | AI-FILL-08-R2 草稿源回填 |
 
 ---
 
