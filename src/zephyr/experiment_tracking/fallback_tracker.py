@@ -31,7 +31,7 @@ from typing import Any, Optional
 
 
 class FallbackBackend:
-    """mlflow 未装时的 JSON 降级 backend。
+    """单一 JSON 实验跟踪后端（MLflow 已退役，本后端即唯一生产后端）。
 
     每次 run 写一个 JSON 文件到 {fallback_dir}/{component}/{run_id}/run_meta.json，
     含 params/metrics/tags/status/start_time/end_time + artifacts 目录引用。

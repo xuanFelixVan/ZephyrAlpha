@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-INF-036 | docs/03_modules/_cross_layer/model-capability-exam/blueprint.md
 # [MODULE] zephyr.intelligence.model_evaluation.implementations.default_inference_engine
 # [DOMAIN] D_INTELLIGENCE
-# [DEPENDENCIES] zephyr.ml_train.inference_base; zephyr.ml_train.trainer_base; zephyr.trading.trading_contracts.execution.model_serving_request; zephyr.shared.contracts.experiment.model_serving_response
+# [DEPENDENCIES] zephyr.ml_train.implementations.default_inference_engine
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] none
+# [INVARIANTS] 单一真源=zephyr.ml_train.implementations.default_inference_engine; 本模块仅为兼容重导出 shim
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] L
@@ -15,144 +15,23 @@
 # [A_module] module_id=MOD-INF-036 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""D_ML_TRAIN — Default Inference Engine
+"""D_INTELLIGENCE — Default Inference Engine（兼容 shim）
 
-ML 推理引擎具体实现。实现 InferenceEngineBase。
+MIGRATED: SSoT 已迁移至 zephyr.ml_train.implementations.default_inference_engine
+（与同包 inference_base.py 的 MIGRATED 裁定一致——D_ML_TRAIN 为训练/推理基类唯一真源）。
 
-CTR 契约：
-  消费者 — CTR-006 (PositionSnapshot) ← D_EXECUTION_CORE
-  生产者 — CTR-P1-004 (ModelServingRequest) -> D_SIGNAL/D_PORTFOLIO_CORE
-  生产者 — CTR-P1-005 (ModelServingResponse) -> D_SIGNAL/D_PORTFOLIO_CORE
-
-SSoT: cross_layer_contracts.yaml -> CTR-P1-004 + CTR-P1-005
+治本留痕（AI-AUDIT07, 2026-08-17）：本模块原为 ml_train 版的过期完整副本，
+其 load_model() 内 ModelMetadata 构造使用错误字段名（version/input_features/output_type），
+调用即 TypeError——副本自迁移日起即坏死的双真源。收敛为 shim 重导出，
+保持既有 import 路径（tests/trading/pipeline、tests/governance/trading、
+scripts/construction/demo_e2e_pipeline.py 等消费者）零改动。
 """
 
 from __future__ import annotations
 
-import logging
-import time
-from datetime import UTC, datetime
-from pathlib import Path
-from typing import Any
-
-from zephyr.ml_train.inference_base import InferenceEngineBase
-from zephyr.ml_train.trainer_base import ModelMetadata
-from zephyr.shared.contracts.experiment.model_serving_response import ModelServingResponse
-from zephyr.shared.io.paths import REPO_ROOT
-from zephyr.trading.trading_contracts.execution.model_serving_request import ModelServingRequest
-
-_logger = logging.getLogger(__name__)
-
-# 5.117.1 修复：joblib.load 底层使用 pickle，是已知 RCE sink。
-# 限定模型路径必须在项目 data 目录下，防止路径穿越和恶意文件加载。
-_ALLOWED_MODEL_ROOT = (REPO_ROOT / "data").resolve()
-
-__inference_id__ = "default-inference-engine"
-
-
-class DefaultInferenceEngine(InferenceEngineBase):
-    """默认推理引擎——模型加载 + 预测"""
-
-    __inference_id__ = __inference_id__
-
-    def __init__(self, model_registry: dict[str, Any] | None = None):
-        self._models: dict[str, Any] = {}
-        self._metadatas: dict[str, ModelMetadata] = {}
-        self._model_registry = model_registry or {}
-
-    def load_model(self, model_id: str, model_path: str) -> bool:
-        metadata = ModelMetadata(
-            model_id=model_id,
-            model_type="unknown",
-            version="1.0.0",
-            input_features=[],
-            output_type="regression",
-            created_at=datetime.now(UTC).isoformat(),
-            framework="auto",
-        )
-
-        try:
-            import joblib
-
-            # 5.117.1 修复：路径白名单校验，防止路径穿越和恶意模型文件加载
-            resolved = Path(model_path).resolve()
-            if not str(resolved).startswith(str(_ALLOWED_MODEL_ROOT)):
-                raise ValueError(
-                    f"model_path must be under {_ALLOWED_MODEL_ROOT}, got {resolved}"
-                )
-            self._models[model_id] = joblib.load(resolved)
-            self._metadatas[model_id] = metadata
-            _logger.info("Model loaded: model_id=%s path=%s", model_id, model_path)
-            return True
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            _logger.error("Failed to load model: model_id=%s error=%s", model_id, e, exc_info=True)
-
-            if model_id in self._model_registry:
-                self._models[model_id] = self._model_registry[model_id]
-                self._metadatas[model_id] = metadata
-                _logger.info("Model loaded from registry: model_id=%s", model_id)
-                return True
-
-            return False
-
-    def predict(self, request: ModelServingRequest) -> ModelServingResponse:
-        model_id = request.model_id
-        model = self._models.get(model_id)
-
-        start = time.perf_counter()
-
-        if model is None:
-            inference_ms = int((time.perf_counter() - start) * 1000)
-            return ModelServingResponse(
-                request_id=request.request_id,
-                model_id=model_id,
-                prediction=0.0,
-                prediction_type="regression",
-                confidence=0.0,
-                inference_ms=inference_ms,
-                idempotency_key=request.idempotency_key,
-            )
-
-        try:
-            if hasattr(model, "predict"):
-                import numpy as np
-
-                feature_values = list(request.input_features.values())
-                feature_array = np.array([feature_values])
-                raw_pred = model.predict(feature_array)
-                prediction = float(raw_pred[0]) if hasattr(raw_pred, "__getitem__") else float(raw_pred)
-            else:
-                prediction = 0.0
-
-            inference_ms = int((time.perf_counter() - start) * 1000)
-
-            return ModelServingResponse(
-                request_id=request.request_id,
-                model_id=model_id,
-                prediction=prediction,
-                prediction_type="regression",
-                confidence=0.85,
-                inference_ms=inference_ms,
-                idempotency_key=request.idempotency_key,
-            )
-        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
-            _logger.error("Prediction failed: model_id=%s error=%s", model_id, e, exc_info=True)
-            inference_ms = int((time.perf_counter() - start) * 1000)
-            return ModelServingResponse(
-                request_id=request.request_id,
-                model_id=model_id,
-                prediction=0.0,
-                prediction_type="regression",
-                confidence=0.0,
-                inference_ms=inference_ms,
-                idempotency_key=request.idempotency_key,
-            )
-
-    def get_model_metadata(self, model_id: str) -> ModelMetadata | None:
-        return self._metadatas.get(model_id)
-
-    def list_models(self) -> list[str]:
-        return list(self._models.keys())
-
+# MIGRATED: SSoT moved to zephyr.ml_train.implementations.default_inference_engine
+from zephyr.ml_train.implementations.default_inference_engine import (
+    DefaultInferenceEngine,
+)
 
 __all__ = ["DefaultInferenceEngine"]

@@ -33,6 +33,8 @@ domain_prefixes:
   INT: D_INFRASTRUCTURE
   IT: D_INTELLIGENCE
   KB: D_INTEGRATION
+  MLT: D_ML_TRAIN
+  NLP: D_DATA
   RK: D_RISK
   RPT: D_REPORTING
   SC: D_SECURITY
@@ -121,6 +123,71 @@ error_codes:
   class: EventDrivenEngineError
   module: zephyr.backtest.implementations.event_driven_engine
   file: src/zephyr/backtest/implementations/event_driven_engine.py
+- code: ZA-BT-0014
+  class: ShrinkageEngineError
+  module: zephyr.backtest.implementations.shrinkage_engine
+  file: src/zephyr/backtest/implementations/shrinkage_engine.py
+  introduced: '2026-08-17: AI-AUDIT07 改号（原 ZA-BT-0009 与 DecisionGateError 重码，git 首引入者保留 canonical）'
+- code: ZA-BT-0015
+  class: OverfittingGateError
+  module: zephyr.backtest.core.overfitting_detector
+  file: src/zephyr/backtest/core/overfitting_detector.py
+  introduced: '2026-08-17: AI-AUDIT07 改号（原 ZA-BT-0010 与 DataHandlerError 重码）'
+- code: ZA-BT-0016
+  class: ShrinkageProviderError
+  module: zephyr.backtest.regime_validation.shrinkage_provider
+  file: src/zephyr/backtest/regime_validation/shrinkage_provider.py
+  introduced: '2026-08-17: AI-AUDIT07 改号（原 ZA-BT-0010 与 DataHandlerError 重码）'
+- code: ZA-BT-0017
+  class: C1ShrinkageComparatorError
+  module: zephyr.backtest.regime_validation.c1_comparator
+  file: src/zephyr/backtest/regime_validation/c1_comparator.py
+  introduced: '2026-08-17: AI-AUDIT07 改号（原 ZA-BT-0011 与 ArtifactNotFoundError 重码）'
+- code: ZA-BT-0018
+  class: InvalidMetricError
+  module: zephyr.backtest.services.decay_monitor
+  file: src/zephyr/backtest/services/decay_monitor.py
+  introduced: '2026-08-17: AI-AUDIT07 补登（#ARCH-ERRCODE-001 全域登记缺口本域收口）'
+- code: ZA-BT-0019
+  class: ReportError
+  module: zephyr.backtest.services.report_generator
+  file: src/zephyr/backtest/services/report_generator.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0020
+  class: CacheError
+  module: zephyr.backtest.services.cache_manager
+  file: src/zephyr/backtest/services/cache_manager.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0021
+  class: ParamAnalysisError
+  module: zephyr.backtest.services.param_analyzer
+  file: src/zephyr/backtest/services/param_analyzer.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0022
+  class: InvalidDataFormatError
+  module: zephyr.backtest.services.data_quality_checker
+  file: src/zephyr/backtest/services/data_quality_checker.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0023
+  class: DiagnosisError
+  module: zephyr.backtest.services.anomaly_diagnoser
+  file: src/zephyr/backtest/services/anomaly_diagnoser.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0024
+  class: ResultComparisonError
+  module: zephyr.backtest.services.result_comparator
+  file: src/zephyr/backtest/services/result_comparator.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
+- code: ZA-BT-0025
+  class: C1RunnerError
+  module: zephyr.backtest.regime_validation.c1_runner
+  file: src/zephyr/backtest/regime_validation/c1_runner.py
+  introduced: '2026-08-17: AI-AUDIT07 改号（原 ZA-BT-0012 与 BacktestResultSinkError 重码）'
+- code: ZA-BT-0026
+  class: InvalidDataFormatError
+  module: zephyr.backtest.services.nan_processor
+  file: src/zephyr/backtest/services/nan_processor.py
+  introduced: '2026-08-17: AI-AUDIT07 补登'
 - code: ZA-FE-0001
   class: ChartFactoryError
   module: zephyr.frontend.dashboard.components.chart_factory
@@ -494,6 +561,16 @@ error_codes:
   module: zephyr.integration.mcp.tool_contracts
   file: src/zephyr/integration/mcp/tool_contracts.yaml
   description: 索引重建要求（声明于 tool_contracts.yaml）
+- code: ZA-MLT-0001
+  class: SFTTrainError
+  module: zephyr.ml_train.implementations.sentiment_sft_trainer
+  file: src/zephyr/ml_train/implementations/sentiment_sft_trainer.py
+  introduced: '2026-08-17: AI-AUDIT07 补登（#ARCH-ERRCODE-001 全域登记缺口本域收口）'
+- code: ZA-NLP-0001
+  class: NLPInferenceError
+  module: zephyr.nlp.nlp_inference
+  file: src/zephyr/nlp/nlp_inference.py
+  introduced: '2026-08-17: AI-AUDIT07 补登（类 error_code 属性本批补齐，此前仅文档声明）'
 - code: ZA-RK-0003
   class: InvalidDrawdownInputError
   module: zephyr.risk.core.drawdown_tracker

@@ -10,7 +10,7 @@
 # [STABILITY] evolving
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
-# [ERROR_CONTRACT] ShrinkageEngineError(ZA-BT-0009)
+# [ERROR_CONTRACT] ShrinkageEngineError(ZA-BT-0014)
 # [TESTS] tests/backtest/test_shrinkage_engine.py
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -75,9 +75,13 @@ __backtest_id__ = "shrinkage-backtest-engine"
 
 
 class ShrinkageEngineError(ZephyrBaseError):
-    """ZA-BT-0009: Shrinkage 引擎错误（provider 缺失/返回值非法）。"""
+    """ZA-BT-0014: Shrinkage 引擎错误（provider 缺失/返回值非法）。
 
-    error_code = "ZA-BT-0009"
+    改号留痕：原 ZA-BT-0009 与 decision_gate.DecisionGateError 重码，
+    #ARCH-ERRCODE-001 裁定 git 首引入者保留 canonical，本类后引入（2026-08-06）改号。
+    """
+
+    error_code = "ZA-BT-0014"
 
 
 @runtime_checkable

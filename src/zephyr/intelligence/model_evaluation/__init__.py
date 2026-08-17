@@ -25,9 +25,6 @@ def __getattr__(name):
         "UnifiedMemoryAPI": ".unified_memory_api",
         "Reranker": ".reranker",
         "ActivateGate": ".activate",
-        "BacktestEngineBase": ".backtest_base",
-        "BacktestResult": ".backtest_base",
-        "FactorDiscovery": ".backtest_base",
         "InferenceEngineBase": ".inference_base",
         "ModelMetadata": ".inference_base",
         "ModelRegistry": ".inference_base",
@@ -43,9 +40,6 @@ def __getattr__(name):
 
 __all__ = [
     "ActivateGate",
-    "BacktestEngineBase",
-    "BacktestResult",
-    "FactorDiscovery",
     "InferenceEngineBase",
     "ModelMetadata",
     "ModelRegistry",
@@ -53,9 +47,7 @@ __all__ = [
     "Reranker",
     "UnifiedMemoryAPI",
     "activate",
-    "backtest_base",
     "inference_base",
-    "model_evaluation",
     "reranker",
     "unified_memory_api",
 ]

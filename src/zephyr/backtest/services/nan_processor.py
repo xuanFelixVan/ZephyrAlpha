@@ -23,7 +23,7 @@ NaN Processor — 指标NaN处理器 (MOD-BT-026)
 回测指标计算中NaN值的智能填充与清洗。提供6种填充策略 + 按比例清洗高NaN行/列。
 纯pandas工具, 不修改原始数据。
 
-依据: D:\临时工作区\依赖图-D-BACKTEST-回测引擎域.md §1 BT-26
+蓝图: docs/03_modules/_domain_backtest/nan_processor/blueprint.md
 SSoT: depgraph MOD-BT-026
 Version: 0.1.0
 

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.intelligence.model_drift_detector
 # [DOMAIN] D_INTELLIGENCE
 # [DEPENDENCIES] zephyr.governance.__init__; zephyr.shared.io.paths
