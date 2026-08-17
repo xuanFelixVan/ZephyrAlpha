@@ -108,6 +108,12 @@ except (ImportError, RuntimeError):
 # 未覆盖——from zephyr.governance import auto_runner 等全部 ImportError（悬空声明）。
 # 此处补齐 lazy loader（注释原承诺"保留供 lazy loader 反查"），使 __all__ 声明为真。
 _LAZY_SUBMODULE_MAP: dict[str, str] = {
+    # 根目录核心模块 basename（ARCH-031 六核心之三；__all__ 声明但惰性未覆盖——
+    # depgraph_schema 原仅靠他模块传递 import 的副作用挂载，try 块失败即不可达；
+    # evidence_pack/integrity 属性不可达。2026-08-17 AI-AUDIT13 复检治本）
+    "depgraph_schema": "zephyr.governance.depgraph_schema",
+    "evidence_pack": "zephyr.governance.evidence_pack",
+    "integrity": "zephyr.governance.integrity",
     "auto_runner": "zephyr.governance.ops_governance.auto_runner",
     "budget_enforcement": "zephyr.governance.financial_governance.budget_enforcement",
     "constitutional_update": "zephyr.gov_rule.constitutional_update.constitutional_update",

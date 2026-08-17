@@ -369,7 +369,6 @@ def search(
     """T-DB-010: 使用 FTS5 全文搜索任务。
 
 
-
     query
 
         搜索词（支持 FTS5 查询语法）。
@@ -381,7 +380,6 @@ def search(
     limit
 
         返回结果上限（默认 50，最大 200）。
-
 
 
     返回 list[dict{task_id, title, status, priority, phase, snippet}]

@@ -91,7 +91,6 @@ class EscalationRBACBridge:
         self._guard = value
 
 
-
     def request_escalation(self, agent_id: str, target_permission: str, reason: str) -> dict:
         return {
             "agent_id": agent_id,

@@ -183,7 +183,6 @@ class QueryMetrics:
         self._slow_threshold_ms = value
 
 
-
     @classmethod
     def instance(cls) -> QueryMetrics:
         if cls._instance is None:
