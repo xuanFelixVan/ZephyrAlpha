@@ -35,7 +35,6 @@ from zephyr.ex_core.position_reconciler import (
 from zephyr.ex_core.position_tracker.tracker import PositionTracker
 from zephyr.shared.contracts.position import PositionSnapshot
 
-
 # ── helpers ──
 
 
@@ -293,7 +292,7 @@ def test_thread_safety_concurrent_reconcile_and_is_frozen():
             for _ in range(200):
                 rec.reconcile()
                 rec.is_frozen("A")
-                rec.frozen_symbols
+                _ = rec.frozen_symbols
         except Exception as e:  # noqa: BLE001
             errors.append(e)
 
@@ -317,9 +316,10 @@ def test_integration_with_position_tracker_as_system_source():
     验证 PositionReconciler 能消费 PositionTracker.get_positions() 产出的
     PositionSnapshot（CTR-006）。
     """
+    from datetime import datetime
+
     from zephyr.shared.contracts.enums.order_enums import OrderSide
     from zephyr.shared.contracts.fill import Fill
-    from datetime import datetime
 
     tracker = PositionTracker(initial_cash=Decimal("1000000"))
     fill = Fill(

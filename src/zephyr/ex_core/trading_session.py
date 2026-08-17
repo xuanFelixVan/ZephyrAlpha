@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.trading_session
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector
+# [DEPENDENCIES] zephyr.ex_core.order_manager; zephyr.ex_core.cancel_rate_guard; zephyr.ex_core.risk_layer_orchestrator; zephyr.ex_core.board_lot; zephyr.trading.trading_contracts.broker_interface; zephyr.governance.strategies.strategy_base; zephyr.governance.adapters.risk_validation_bridge; zephyr.shared.contracts.order; zephyr.shared.contracts.position; zephyr.shared.contracts.risk_limits; zephyr.shared.contracts.fill; zephyr.compliance.discipline_must_do_checker; zephyr.compliance.discipline_prohibition_checker; zephyr.compliance.trading_compliance_detector
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production
@@ -14,16 +14,6 @@
 # [TESTS] tests/ex_core/test_trading_session.py
 # [A_module] module_id=MOD-L06-001 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# [ALGO_FLOW]
-# I1: target_weights(策略目标权重) + positions(持仓快照cash/holdings/total_market_value) + prices(当前价格)
-# I2: risk_limits(风控限额) + config(熔断阈值/资金费率) + CancelRateGuard(撤单率状态)
-# F1: _compute_order_deltas(差额下单: 目标qty-当前qty, 先卖后买排序, 板块整手取整)
-# F2: _is_blocked_by_circuit_breaker(订单层熔断: 单票单笔≤4%/单票≤10笔日/全账户≤50笔日)
-# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚; C-004 合规闸: INTRADAY清单HardBlock→KillSwitchLite熔断→四项严禁纪律闸→交易合规检测, 失效Fail-Closed)
-# A2: CancelRateGuard(can_place_order冻结拦截+can_submit_now限频+record_submit计数)
-# A3: _handle_rejection(拒单分类: 涨跌停/资金/持仓不重试, 价格/连接重试1次)
-# O1: submitted_orders(已提交订单) + blocked_orders(已拦截订单) + session_report(统计)
-# [/ALGO_FLOW]
 """D_EXECUTION_CORE — TradingSession 盘中实时调仓编排器
 
 连接 行情→策略→风控→下单→持仓跟踪 的实时编排器，使盘中模拟盘可运行。
@@ -54,6 +44,17 @@ C-004 合规闸（2026-08-15 AI-ASM-001 装配批接线，43_compliance_discipli
      权重（喂仓位上限链），橙/红/黑级或熔断建议禁止新开仓（仅保留卖出）；
   3. 回撤 EMERGENCY 经监听链触发熔断+清算（编排器内单一仲裁点）；
   4. 盘中定时对账冻结的标的在 _validate_and_submit 逐单硬拦。
+
+# [ALGO_FLOW]
+# I1: target_weights(策略目标权重) + positions(持仓快照cash/holdings/total_market_value) + prices(当前价格)
+# I2: risk_limits(风控限额) + config(熔断阈值/资金费率) + CancelRateGuard(撤单率状态)
+# F1: _compute_order_deltas(差额下单: 目标qty-当前qty, 先卖后买排序, 板块整手取整board_lot真源, 零股一次性清仓)
+# F2: _is_blocked_by_circuit_breaker(订单层熔断: 单票单笔≤4%/单票≤10笔日/全账户≤50笔日)
+# A1: _validate_and_submit(资金预占: 串行扣减available_cash+卖出预占释放+提交前拦截+拒单回滚; C-004 合规闸: INTRADAY清单HardBlock→KillSwitchLite熔断→四项严禁纪律闸→交易合规检测, 失效Fail-Closed)
+# A2: CancelRateGuard(can_place_order冻结拦截+can_submit_now限频+record_submit计数)
+# A3: _handle_rejection(拒单分类: 涨跌停/资金/持仓不重试, 价格/连接重试1次)
+# O1: submitted_orders(已提交订单) + blocked_orders(已拦截订单) + session_report(统计)
+# [/ALGO_FLOW]
 """
 
 from __future__ import annotations
@@ -84,6 +85,7 @@ from zephyr.compliance.trading_compliance_detector import (
     ManipulationVerdict,
     TradingComplianceDetector,
 )
+from zephyr.ex_core.board_lot import adjust_sell_for_odd_lot, round_buy_qty
 from zephyr.ex_core.cancel_rate_guard import CancelRateGuard
 from zephyr.ex_core.order_manager import OrderManager, RejectionAction
 from zephyr.ex_core.risk_layer_orchestrator import RiskLayerOrchestrator, RiskLayerSnapshot
@@ -153,8 +155,9 @@ class TradingSessionConfig:
         strategy_id: 策略标识（写入 Order.strategy_id）
         rebalance_interval_seconds: 自动调仓间隔秒数（0=仅手动）
         strategy_constraints: 传给 strategy.generate_target_weights 的约束
-        min_order_qty: 最小下单股数（A 股 100）
-        round_lot: 整手数（A 股 100）
+        min_order_qty: 最小下单股数（兜底默认 100；板块差异化申报单位真源=
+            ex_core.board_lot，_compute_order_deltas 按板块规则取整，科创板 200 股起）
+        round_lot: 整手数（兜底默认 100；同上，板块差异化以 board_lot 为准）
         risk_limits: 风控限额
     """
 
@@ -399,9 +402,9 @@ class TradingSession:
         """目标权重 → 订单 delta 列表（未注册到 OrderManager 的值对象）。
 
         - total_asset = cash + total_market_value
-        - target_qty = (total_asset * weight / price) 向下取整到 round_lot
-        - delta_qty = target_qty - current_qty，忽略 < min_order_qty 的微调
-        - 持仓中但不在 target_weights 的标的 → 全部卖出
+        - target_qty = (total_asset * weight / price) 按板块规则向下取整（board_lot 真源）
+        - delta_qty = target_qty - current_qty，忽略小于板块最小申报单位的微调
+        - 持仓中但不在 target_weights 的标的 → 全部卖出（含零股一次性清仓）
         """
         total_asset = positions.cash + positions.total_market_value
         if total_asset <= 0:
@@ -430,15 +433,28 @@ class TradingSession:
         positions: PositionSnapshot,
         prices: dict[str, Decimal],
     ) -> Order | None:
-        """单个标的的目标权重 → 买入/卖出 delta 订单。"""
+        """单个标的的目标权重 → 买入/卖出 delta 订单（板块差异化整手）。"""
         price = prices.get(symbol)
         if not price or price <= 0:
             _logger.debug("skip %s: no valid price", symbol)
             return None
-        target_qty = self._calc_target_qty(total_asset, weight, price)
+        target_qty = self._calc_target_qty(symbol, total_asset, weight, price)
         current_qty = positions.holdings.get(symbol, Decimal("0"))
         delta = target_qty - current_qty
-        return self._build_order_if_significant(symbol, delta, price)
+        if delta > 0:
+            # 买入申报量按板块规则向下取整（科创板 200 股起 1 股递增）
+            qty = round_buy_qty(delta, symbol)
+            side = OrderSide.BUY
+        else:
+            # 卖出申报网格与买入同构（min_unit+increment），取整后过零股规则：
+            # 卖出后剩余不足一个最小申报单位 → 一次性清仓（board_lot §决策⑰）
+            qty = round_buy_qty(-delta, symbol)
+            qty = adjust_sell_for_odd_lot(qty, current_qty, symbol)
+            side = OrderSide.SELL
+        if qty <= 0:
+            # 小于板块最小申报单位的微调忽略（下轮调仓再校准）
+            return None
+        return self._build_order(symbol, side, qty, price)
 
     def _make_sell_all_order(
         self,
@@ -446,29 +462,32 @@ class TradingSession:
         qty: Decimal,
         prices: dict[str, Decimal],
     ) -> Order | None:
-        """清仓卖出订单（标的不在目标权重中）。"""
+        """清仓卖出订单（标的不在目标权重中）。
+
+        清仓不受 min_order_qty 阈值限制——零股（<min_unit）按板块规则
+        必须一次性申报卖出（board_lot §决策⑰），不可滞留。
+        """
         price = prices.get(symbol)
         if not price or price <= 0:
             _logger.debug("skip sell-all %s: no valid price", symbol)
             return None
-        return self._build_order_if_significant(symbol, -qty, price)
+        if qty <= 0:
+            return None
+        return self._build_order(symbol, OrderSide.SELL, qty, price)
 
-    def _calc_target_qty(self, total_asset: Decimal, weight: float, price: Decimal) -> Decimal:
-        """目标权重 → 目标持仓数量（向下取整到 round_lot）。"""
+    def _calc_target_qty(self, symbol: str, total_asset: Decimal, weight: float, price: Decimal) -> Decimal:
+        """目标权重 → 目标持仓数量（板块差异化向下取整，真源 board_lot）。"""
         raw_qty = (total_asset * Decimal(str(weight))) / price
-        lots = raw_qty // self._config.round_lot
-        return lots * self._config.round_lot
+        return round_buy_qty(raw_qty, symbol)
 
-    def _build_order_if_significant(
+    def _build_order(
         self,
         symbol: str,
-        delta: Decimal,
+        side: OrderSide,
+        quantity: Decimal,
         price: Decimal,
-    ) -> Order | None:
-        """delta 显著（>= min_order_qty）则构建 Order 值对象，否则返回 None。"""
-        if abs(delta) < self._config.min_order_qty:
-            return None
-        side = OrderSide.BUY if delta > 0 else OrderSide.SELL
+    ) -> Order:
+        """构建 Order 值对象（数量已由调用方按板块规则取整/调整）。"""
         return Order(
             order_id=f"ts-{symbol}-{uuid.uuid4().hex[:8]}",
             idempotency_key=f"ts-{symbol}-{uuid.uuid4().hex[:8]}",
@@ -476,7 +495,7 @@ class TradingSession:
             strategy_id=self._config.strategy_id,
             side=side,
             order_type=OrderType.LIMIT,
-            quantity=abs(delta),
+            quantity=quantity,
             limit_price=price,
             created_at=datetime.now(timezone.utc),
         )

@@ -152,6 +152,7 @@ from zephyr.market_data.normalized_market_data_producer.producer import load_kli
 
 if TYPE_CHECKING:
     import redis
+
     from zephyr.shared.contracts.market_data import NormalizedMarketData
 
 __all__: Final = [

@@ -1100,9 +1100,9 @@ blueprints:
   blueprint_status: Active
   blueprint_level: module
   priority: P0
-  version: 2.2.7
+  version: 2.2.8
   generation: 2
-  last_updated: '2026-07-17'
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_execution_core/blueprint.md
 - module_id: MOD-L07-001
   name: _domain_reporting
@@ -2425,6 +2425,13 @@ summary:
     已于 2026-07-18 退役）
   last_recomputed: '2026-08-17'
 changelog:
+- version: 2.7.16
+  date: '2026-08-17'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 173 份 blueprint.md；登记项相对上一版有
+    2 条差异摘要'
+  - 'MOD-L06-001.version: [2.2.7] → [2.2.8]'
+  - 'MOD-L06-001.last_updated: [2026-07-17] → [2026-08-17]'
 - version: 2.7.15
   date: '2026-08-16'
   changes:

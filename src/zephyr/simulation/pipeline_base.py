@@ -33,6 +33,46 @@
   - ScoutAgentBase         : OCP 实验-SCT — 自动化实验编排（CTR-P1-014 生产者）
 
 依赖方向：D_RESEARCH -> 实验 -> D_PORTFOLIO_CORE / D_SIGNAL（实验结果提升至生产管线）
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 实验配置 ExperimentConfig
+#   fields: experiment_id/hypothesis/control_params/treatment_params/metrics/start_date/end_date
+#   code: ExperimentPipelineBase.run(config, idempotency_key) (pipeline_base.py)
+# - id: I2
+#   name: Scout 编排上下文 context
+#   fields: 外部资讯 + repo diff（dict）
+#   code: ScoutAgentBase.scout(context, idempotency_key) (pipeline_base.py)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 实验管线抽象
+#   name_en: ExperimentPipelineBase（ABC）
+#   intro: OCP 实验-EXP 扩展点：run() 契约 + Cohen's d 效应量静态方法
+#   desc: 抽象 run()；compute_effect_size=(treatment-control)/pooled_std（|std|<1e-9 退 0）
+#   inputs: I1
+#   outputs: list[ExperimentMetric]
+#   invariant: ABC 不可直接实例化；效应量除零保护
+# - id: A2
+#   name_zh: ② Scout 编排抽象
+#   name_en: ScoutAgentBase（ABC）
+#   intro: OCP 实验-SCT 扩展点：scout() 契约，产出 ExperimentResult（CTR-P1-014）
+#   desc: 结论状态 supported/rejected/inconclusive；confidence<0.7 不发布；确认后 archived_to_kms
+#   inputs: I2
+#   outputs: ExperimentResult
+# 层: 输出
+# - id: O1
+#   name_zh: 实验指标/实验结论
+#   name_en: ExperimentMetric / ExperimentResult
+#   intro: 统计验证指标与最终实验结论，供研究/训练域消费
+#   downstream: D_RESEARCH / D_ML_TRAIN（CTR-P1-014）
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I2 --> A2
+# A1 --> O1
+# A2 --> O1
 """
 
 from __future__ import annotations

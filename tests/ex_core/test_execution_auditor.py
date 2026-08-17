@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """ExecutionAuditLogger 单元测试 — MOD-EX-003 / D-EX-CORE-15
 
 覆盖: 哈希链完整性 / 篡改检测 / 八类事件 / 查询 / 报告 / frozen / 持久化 / 异常隔离
@@ -24,7 +26,6 @@ from zephyr.ex_core.audit_journal.auditor import (
     ExecutionAuditReport,
     _compute_record_hash,
 )
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # fixtures

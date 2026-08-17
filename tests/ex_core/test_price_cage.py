@@ -33,7 +33,6 @@ from zephyr.ex_core.price_cage import (
 )
 from zephyr.shared.contracts.enums.order_enums import OrderSide
 
-
 # ---------------------------------------------------------------------
 # 买入基准价 = 卖一价（ask1）
 # ---------------------------------------------------------------------

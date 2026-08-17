@@ -27,13 +27,12 @@ import random
 import pytest
 
 from zephyr.simulation.deflated_sharpe_calculator import (
+    DeflatedSharpeCalculator,
     DSRConfig,
     DSRResult,
     DSRTrendPoint,
-    DeflatedSharpeCalculator,
     SimulationError,
 )
-
 
 # ============== 辅助函数 ==============
 

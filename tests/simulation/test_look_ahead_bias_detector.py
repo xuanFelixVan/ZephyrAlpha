@@ -31,12 +31,11 @@ from zephyr.simulation.look_ahead_bias_detector import (
     BiasIssue,
     BiasSeverity,
     BiasType,
-    DetectorConfig,
     DetectionResult,
+    DetectorConfig,
     LookAheadBiasDetector,
     SimulationError,
 )
-
 
 # ============== 辅助函数 ==============
 

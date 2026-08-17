@@ -10,13 +10,13 @@ from decimal import Decimal
 import pytest
 
 from zephyr.ex_sor.services.slippage_analyzer import (
-    SlippageFillRecord,
     InsufficientFillsError,
     InvalidBenchmarkError,
     SlippageAnalyzer,
     SlippageAnalyzerError,
     SlippageAttribution,
     SlippageBenchmark,
+    SlippageFillRecord,
     SlippageMetric,
     SlippagePredictor,
     SlippageResult,

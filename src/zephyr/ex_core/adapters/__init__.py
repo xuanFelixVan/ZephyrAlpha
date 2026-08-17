@@ -51,12 +51,12 @@ ex_core.adapters.miniqmt_broker，提供统一 import 入口。
 #   inputs: I1 I2 I3
 #   outputs: __all__ 9个导出符号
 # - id: A2
-#   name_zh: ② MiniQMT 容错导入
-#   name_en: try/except ImportError 兜底
-#   intro: MiniQMT适配器导入失败时置None兜底，避免循环导入或依赖缺失阻断整个包
-#   desc: try导入MiniQmtBroker三符号；ImportError→MiniQmtBroker=None/MiniQmtBrokerError=None/XTTRADER_ERROR_CODES={}（L36-45）
+#   name_zh: ② MiniQMT 直接导入（Fail-Fast）
+#   name_en: 直接导入（2026-08-17 拆除 try/except None 兜底）
+#   intro: 历史循环导入已消除，直接导入让真实导入错误立即暴露而非静默置None
+#   desc: 直接导入 MiniQmtBroker 三符号（miniqmt_broker 对 xtquant 懒加载，模块导入零外部依赖）（L86-94）
 #   inputs: I4
-#   outputs: MiniQMT符号（可空）
+#   outputs: MiniQMT符号
 # 层: 输出
 # - id: O1
 #   name_zh: 统一适配器入口 __all__
@@ -75,25 +75,22 @@ ex_core.adapters.miniqmt_broker，提供统一 import 入口。
 """
 
 # ARCH-GOV-SHIM-001 阶段2：broker_interface import 迁移至 canonical 路径
-from zephyr.trading.trading_contracts.broker_interface import BrokerInterface, FillCallback
+# v2.2.0 新增 MiniQMT 实盘券商适配器。
+# 2026-08-17 治本：原 try/except ImportError 置 None 兜底拆除——历史循环导入
+# 已消除（miniqmt_broker 对 xtquant 为懒加载，模块导入无外部依赖），静默 None
+# 会掩盖真实导入错误（调用方晚发现 AttributeError），Fail-Fast 直接导入。
+from zephyr.ex_core.adapters.miniqmt_broker import (
+    XTTRADER_ERROR_CODES,
+    MiniQmtBroker,
+    MiniQmtBrokerError,
+)
 from zephyr.governance.adapters.risk_validation_bridge import (
     RiskValidationBridge,
     RiskValidationPort,
     RiskViolation,
 )
 from zephyr.governance.adapters.simulation_broker import SimulationBroker
-
-# v2.2.0 新增 MiniQMT 实盘券商适配器（try/except 避免循环导入阻断整个包）
-try:
-    from zephyr.ex_core.adapters.miniqmt_broker import (
-        MiniQmtBroker,
-        MiniQmtBrokerError,
-        XTTRADER_ERROR_CODES,
-    )
-except ImportError:
-    MiniQmtBroker = None  # type: ignore[assignment,misc]
-    MiniQmtBrokerError = None  # type: ignore[assignment,misc]
-    XTTRADER_ERROR_CODES = {}  # type: ignore[assignment]
+from zephyr.trading.trading_contracts.broker_interface import BrokerInterface, FillCallback
 
 __all__ = [
     "BrokerInterface",

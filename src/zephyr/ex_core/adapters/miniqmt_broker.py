@@ -1,11 +1,11 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
 # [MODULE] zephyr.ex_core.adapters.miniqmt_broker
 # [DOMAIN] D_EX_CORE
-# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.data.implementations.miniqmt_provider; zephyr.ex_core.board_lot
+# [DEPENDENCIES] zephyr.trading.trading_contracts.broker_interface; zephyr.backtest.core.matching_logic; zephyr.data.implementations.miniqmt_provider; zephyr.ex_core.board_lot; zephyr.ex_core.price_cage
 # [CONSUMERS] zephyr.frontend.dashboard.components.trade_panel; zephyr.frontend.dashboard.components.position_monitor
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] xttrader非线程安全(加锁); T+1锁定(查持仓available_quantity); 涨跌停限制; 幂等(INV-007); 回测=实盘一致性(MatchingLogic共享, submit_order内置预校验)
+# [INVARIANTS] xttrader非线程安全(加锁); T+1锁定(查持仓available_quantity); 涨跌停限制; 板块差异化整手(board_lot真源); 价格笼子夹边不废单(price_cage真源); 幂等(INV-007); 回测=实盘一致性(MatchingLogic共享, submit_order内置预校验)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M
@@ -19,7 +19,9 @@
 职责:
   - 对接国金证券 MiniQMT 终端的 xttrader API，提供 A 股实盘交易能力
   - 实现 BrokerInterface（OCP-003 扩展点）
-  - A股约束校验: T+1锁定(查持仓available_quantity) / 涨跌停限制 / 100股整数倍 / 停牌跳过
+  - A股约束校验: T+1锁定(查持仓available_quantity) / 涨跌停限制 / 板块差异化整手
+    (board_lot 真源: 主板/创业板/北交所100股递增, 科创板200股起1股递增) / 停牌跳过
+  - 价格笼子: 连续竞价限价单超笼子夹到边界(不废单, price_cage 真源, 需带盘口下单)
   - 幂等下单: 所有订单携带 idempotency_key（INV-007）
   - 断线重连: 连接失败时自动重试；xttrader调用失败自动触发_reconnect
   - 回测=实盘一致性: 共用 MatchingLogic 做预成交校验（submit_order内置）
@@ -37,11 +39,82 @@ xttrader 错误码映射:
 
 A股约束:
   - t_plus=1 (T+1锁定，买入当天不能卖出)
-  - min_order_qty=100 (最小交易单位100股)
+  - 板块差异化整手(真源 board_lot): 主板/创业板/北交所 min_unit=100 递增100,
+    科创板 min_unit=200 递增1 (100股申报=error_code 52)
   - price_tick=0.01 (价格最小变动单位)
   - asset_classes=[stock, etf, convertible_bond]
 
 SSoT: docs/03_modules/_domain_execution_core/blueprint.md §16.7.1 MiniQmtBroker
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 委托订单 Order
+#   fields: symbol/side/quantity/order_type/limit_price/idempotency_key（INV-007 必带）
+#   code: submit_order(order, order_book, prev_close) (miniqmt_broker.py)
+# - id: I2
+#   name: 5档盘口快照 order_book + 昨收 prev_close（可选）
+#   fields: OrderBookSnapshot(ask/bid 5档+last_price)；prev_close 供涨跌停与笼子回退
+#   code: OrderBookSnapshot (backtest.core.matching_logic)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 幂等拦截
+#   name_en: idempotency check
+#   intro: idempotency_key 命中 _idempotency_map 直接返回既有 broker_order_id
+#   desc: 防重复下单（INV-007），全链路 _lock 串行化
+#   inputs: I1
+#   outputs: 既有 broker_order_id 或放行
+#   invariant: 同一 idempotency_key 最多下一次单
+# - id: A2
+#   name_zh: ② A股约束校验
+#   name_en: _validate_a_share_constraints
+#   intro: 板块差异化整手(board_lot真源)+T+1可查持仓+涨跌停板块幅度，违规拒单
+#   desc: get_board_lot_rule(symbol) 校验 min_unit/increment；SELL 查 can_sell_volume；prev_close 算板块涨跌停
+#   inputs: I1 I2
+#   outputs: 放行或 MiniQmtBrokerError(52/50/51/-2)
+#   invariant: 非法申报本地拒单防废单
+# - id: A3
+#   name_zh: ③ 价格笼子夹边
+#   name_en: _apply_price_cage_locked
+#   intro: 连续竞价限价单超笼子夹到边界（不废单），无基准价跳过
+#   desc: check_price_cage(side,limit,symbol,ask1,bid1,last,prev_close) → CLAMPED 则原地修正 limit_price
+#   inputs: I1 I2
+#   outputs: 夹边后 limit_price
+#   invariant: 夹边后价格必在笼子内
+# - id: A4
+#   name_zh: ④ 回测=实盘一致性预校验
+#   name_en: _pre_trade_simulate_locked
+#   intro: 共用 MatchingLogic 模拟成交预估价量（B方案核心）
+#   desc: order→MatchOrderInput → match_market/limit_order → MatchingFill 预估
+#   inputs: I1 I2
+#   outputs: MatchingFill 预估
+#   invariant: 回测=实盘同一撮合实现
+# - id: A5
+#   name_zh: ⑤ xttrader 下单与断线重连
+#   name_en: order_stock via _call_xttrader_with_reconnect
+#   intro: StockAccount+方向23/24+price_type 映射下单，异常自动 _reconnect 重试一次
+#   desc: order_stock(account,symbol,side,volume,price_type,price,strategy_name,order_remark=idem_key) → order_id>0 成功
+#   inputs: I1
+#   outputs: broker_order_id
+#   invariant: xttrader 非线程安全，全调用 _lock 保护（含心跳重连）
+# 层: 输出
+# - id: O1
+#   name_zh: 券商订单号 broker_order_id
+#   name_en: broker_order_id
+#   intro: xttrader 返回的正整数 order_id 转 str，写入 _order_cache/_idempotency_map
+#   downstream: ex_core.order_manager / ex_core.trading_session
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# I1 --> A2
+# I2 --> A2
+# I2 --> A3
+# A1 --> A2
+# A2 --> A3
+# A3 --> A4
+# A4 --> A5
+# A5 --> O1
 """
 
 from __future__ import annotations
@@ -60,7 +133,8 @@ from zephyr.backtest.core.matching_logic import (
     MatchOrderInput,
     OrderBookSnapshot,
 )
-from zephyr.ex_core.board_lot import AShareBoard, classify_board
+from zephyr.ex_core.board_lot import AShareBoard, classify_board, get_board_lot_rule
+from zephyr.ex_core.price_cage import CageStatus, check_price_cage
 from zephyr.shared.utils.time_utils import now_utc
 from zephyr.trading.trading_contracts.broker_interface import (
     BrokerInterface,
@@ -177,9 +251,9 @@ class MiniQmtBroker(BrokerInterface):
 
     # A股约束常量
     T_PLUS = 1
-    MIN_ORDER_QTY = 100
+    MIN_ORDER_QTY = 100  # 主板最小申报单位（板块差异化真源=board_lot.get_board_lot_rule）
     PRICE_TICK = Decimal("0.01")
-    PRICE_LIMIT_PCT = Decimal("0.10")  # 涨跌停 ±10%（ST股 ±5% 简化）
+    PRICE_LIMIT_PCT = Decimal("0.10")  # 主板/ST ±10%（板块差异化幅度见 _BOARD_PRICE_LIMIT_PCT）
     ASSET_CLASSES = ["stock", "etf", "convertible_bond"]
 
     def __init__(
@@ -342,15 +416,16 @@ class MiniQmtBroker(BrokerInterface):
 
         流程:
           1. 幂等检查（idempotency_key 去重）
-          2. A股约束校验（100股整数倍 / 涨跌停 / T+1查持仓available_quantity）
-          3. 回测=实盘一致性预校验（可选 order_book，调用 MatchingLogic 模拟成交）
-          4. 调用 xttrader.order_stock 下单
-          5. 错误码映射
-          6. 缓存订单状态
+          2. A股约束校验（板块差异化整手 board_lot / 涨跌停 / T+1查持仓available_quantity）
+          3. 价格笼子校验（限价单带盘口时，超限夹到边界不废单 price_cage）
+          4. 回测=实盘一致性预校验（可选 order_book，调用 MatchingLogic 模拟成交）
+          5. 调用 xttrader.order_stock 下单
+          6. 错误码映射
+          7. 缓存订单状态
 
         Args:
             order: 委托订单（必须含 idempotency_key）
-            order_book: 当前5档盘口快照（可选，提供则做 MatchingLogic 预校验）
+            order_book: 当前5档盘口快照（可选，提供则做价格笼子+MatchingLogic 预校验）
             prev_close: 昨收价（可选，提供则做涨跌停校验）
 
         Returns:
@@ -375,12 +450,17 @@ class MiniQmtBroker(BrokerInterface):
             # 2. A股约束校验
             self._validate_a_share_constraints(order, prev_close)
 
+            # 2.5 价格笼子校验（40_execution_broker §决策⑭，连续竞价限价单硬约束）
+            # 超限夹到笼子边界（不废单），夹边后再做 MatchingLogic 预校验
+            self._apply_price_cage_locked(order, order_book, prev_close)
+
             # 3. 回测=实盘一致性预校验（B方案核心：下单路径经过 MatchingLogic）
             if order_book is not None:
                 fill_preview = self._pre_trade_simulate_locked(order, order_book)
                 _logger.info(
-                    "预成交校验: symbol=%s 预估均价=%s 预估成交量=%s",
-                    order.symbol, fill_preview.avg_fill_price, fill_preview.filled_quantity,
+                    "预成交校验: symbol=%s 预估价=%s 预估成交量=%s 是否成交=%s",
+                    order.symbol, fill_preview.price, fill_preview.filled_quantity,
+                    fill_preview.filled,
                 )
 
             # 4. 调用 xttrader 下单
@@ -502,9 +582,10 @@ class MiniQmtBroker(BrokerInterface):
             if not orders:
                 return self._order_cache.get(broker_order_id)
 
-            # 查找匹配的订单
+            # 查找匹配的订单（order_id 类型归一：xtquant 版本间 int/str 不一，
+            # _order_cache 键为 str，统一 str 比较防静默查不到）
             for xt_order in orders:
-                if xt_order.order_id == broker_order_id:
+                if str(getattr(xt_order, "order_id", "")) == str(broker_order_id):
                     # 更新缓存
                     cached = self._order_cache.get(broker_order_id)
                     if cached:
@@ -615,6 +696,50 @@ class MiniQmtBroker(BrokerInterface):
         if order.order_type is OrderType.MARKET:
             return self._matching_logic.match_market_order(match_input, order_book)
         return self._matching_logic.match_limit_order(match_input, order_book)
+
+    def _apply_price_cage_locked(
+        self,
+        order: Order,
+        order_book: OrderBookSnapshot | None,
+        prev_close: Decimal | None,
+    ) -> None:
+        """价格笼子校验（调用方已持锁，40_execution_broker §决策⑭）。
+
+        仅连续竞价限价单适用（市价单/集合竞价豁免由本方法内部判断跳过）。
+        基准价回退链：对手方最优价(ask1/bid1)→last_price→prev_close；
+        超限夹到笼子边界（不废单，原地修正 order.limit_price）；
+        无任何基准价（UNKNOWN）跳过校验并 warn（不阻断下单）。
+        """
+        if order.order_type is not OrderType.LIMIT or order.limit_price is None:
+            return
+        ask1 = None
+        bid1 = None
+        last_price = None
+        if order_book is not None:
+            ask1 = order_book.ask_price[0] if order_book.ask_price else None
+            bid1 = order_book.bid_price[0] if order_book.bid_price else None
+            last_price = order_book.last_price
+        result = check_price_cage(
+            side=order.side,
+            limit_price=order.limit_price,
+            symbol=order.symbol,
+            ask1=ask1,
+            bid1=bid1,
+            last_price=last_price,
+            prev_close=prev_close,
+        )
+        if result.status is CageStatus.CLAMPED:
+            _logger.info(
+                "价格笼子夹边: symbol=%s side=%s limit=%s → clamped=%s (base=%s)",
+                order.symbol, order.side.value, order.limit_price,
+                result.clamped_price, result.base_price,
+            )
+            order.limit_price = result.clamped_price
+            order.updated_at = now_utc()
+        elif result.status is CageStatus.UNKNOWN:
+            _logger.warning(
+                "价格笼子校验跳过（无可用基准价）: symbol=%s", order.symbol,
+            )
 
     # ------------------------------------------------------------------
     # 属性
@@ -835,7 +960,7 @@ class MiniQmtBroker(BrokerInterface):
                 return
             synced = 0
             for xt_order in orders:
-                broker_oid = xt_order.order_id
+                broker_oid = str(xt_order.order_id)  # 归一为 str（_order_cache 键为 str）
                 cached = self._order_cache.get(broker_oid)
                 if cached:
                     new_status = self._map_xt_status(xt_order.order_status)
@@ -910,7 +1035,10 @@ class MiniQmtBroker(BrokerInterface):
                     "假死检测：行情 %.0f 秒无更新（阈值 %.0fs），可能 Windows 休眠/锁屏"
                     "导致订阅失效，触发主动重连", elapsed, self._heartbeat_timeout
                 )
-                self._reconnect()
+                # xttrader 非线程安全：重连必须与下单/查询路径同锁串行化，
+                # 否则心跳线程与业务线程并发重连会双重 init XtQuantTrader
+                with self._lock:
+                    self._reconnect()
 
     def start_heartbeat(self) -> None:
         """启动假死心跳检测线程（GAP-012）。"""
@@ -939,7 +1067,8 @@ class MiniQmtBroker(BrokerInterface):
         """A股约束校验
 
         校验:
-          - 100股整数倍
+          - 板块差异化整手（真源 board_lot §决策⑰：主板/创业板/北交所
+            100股递增，科创板200股起1股递增——科创板100股申报=废单 error_code 52）
           - T+1锁定（卖出时查持仓 available_quantity）
           - 涨跌停限制（需提供 prev_close，否则跳过并 warn）
 
@@ -950,16 +1079,18 @@ class MiniQmtBroker(BrokerInterface):
         Raises:
             MiniQmtBrokerError: 校验失败
         """
-        # 100股整数倍
+        # 板块差异化整手校验（board_lot 真源，拒绝非法申报防废单）
+        rule = get_board_lot_rule(order.symbol)
         qty = int(order.quantity)
-        if qty < self.MIN_ORDER_QTY:
+        if qty < rule.min_unit:
             raise MiniQmtBrokerError(
-                f"数量不合法: 最小 {self.MIN_ORDER_QTY} 股, got {qty}",
+                f"数量不合法: {rule.board.value}板块最小申报 {rule.min_unit} 股, got {qty}",
                 error_code=52,
             )
-        if qty % self.MIN_ORDER_QTY != 0:
+        if (qty - rule.min_unit) % rule.increment != 0:
             raise MiniQmtBrokerError(
-                f"数量不合法: 必须 {self.MIN_ORDER_QTY} 股整数倍, got {qty}",
+                f"数量不合法: {rule.board.value}板块须 {rule.min_unit} 股起 "
+                f"+{rule.increment} 股递增, got {qty}",
                 error_code=52,
             )
 

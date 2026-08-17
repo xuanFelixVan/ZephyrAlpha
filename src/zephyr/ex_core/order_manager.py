@@ -44,6 +44,66 @@ C-002 执行域合规门禁（2026-08-15 AI-ASM-001 装配批接线，43_complia
   门禁自身失效（登记表不可读等）由各门禁模块 Fail-Closed 兜底（43 号 §7.4）。
 
 SSoT: cross_layer_contracts.yaml -> CTR-004 + CTR-005
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 订单创建/提交/撤单请求
+#   fields: symbol/strategy_id/side/order_type/quantity/limit_price/broker_id；order_id
+#   code: create_order/submit_order/cancel_order (order_manager.py)
+# - id: I2
+#   name: 成交回报 Fill（broker 回调）
+#   fields: fill_id/order_id/fill_price/filled_quantity/commission
+#   code: _on_fill (order_manager.py)
+# 层: 算法
+# - id: A1
+#   name_zh: ① 订单创建
+#   name_en: create_order
+#   intro: uuid 生成 order_id+idempotency_key，构造 PENDING 订单并登记
+#   desc: 构造 Order(PENDING) → _orders/_pending_orders 登记
+#   inputs: I1
+#   outputs: Order(PENDING)
+#   invariant: Decimal 数量全程；idempotency_key 唯一
+# - id: A2
+#   name_zh: ② 合规门禁+提交
+#   name_en: submit_order → _check_compliance_gates
+#   intro: C-002 双硬闸（ReportGate 先报告后交易 / 日申报笔数超限）Fail-Closed 后状态机转 SUBMITTED 并发 broker
+#   desc: 门禁 BLOCK→ComplianceGateBlockError；过闸→_transition_status(SUBMITTED)→记 _order_broker_map→broker.submit_order
+#   inputs: I1
+#   outputs: broker_order_id
+#   invariant: 先报告后交易；日申报>=1万笔拒发
+# - id: A3
+#   name_zh: ③ 撤单精确路由
+#   name_en: cancel_order → _cancel_at_broker
+#   intro: 按 _order_broker_map 精确路由到所属 broker 撤单，券商失败不标本地终态
+#   desc: 状态机校验→计 record_cancel（申报口径）→broker.cancel_order 透传布尔→成功才转 CANCELLED
+#   inputs: I1
+#   outputs: bool
+#   invariant: 券商撤单结果不吞（False 不误判成功）
+# - id: A4
+#   name_zh: ④ 成交累积与状态驱动
+#   name_en: _on_fill
+#   intro: 成交量累积+加权均价重算，达标驱动 SUBMITTED→PARTIAL→FILLED
+#   desc: filled+=qty → avg 加权 → filled>=quantity 转 FILLED（非法转换仅告警）；回调通知异常不阻断
+#   inputs: I2
+#   outputs: Order 就地更新 + fill 回调
+#   invariant: 状态转换遵循 VALID_TRANSITIONS
+# 层: 输出
+# - id: O1
+#   name_zh: 订单全生命周期状态
+#   name_en: Order / list[Order] / list[Fill]
+#   intro: 按 ID/状态/开放单查询与成交记录，供 TradingSession/Saga 消费
+#   downstream: ex_core.trading_session / ex_core.order_execution_saga
+# [/ALGO_FLOW]
+#
+# 边:
+# I1 --> A1
+# A1 --> A2
+# A2 --> A3
+# I2 --> A4
+# A2 --> O1
+# A3 --> O1
+# A4 --> O1
 """
 
 from __future__ import annotations

@@ -25,7 +25,6 @@ from zephyr.shared.contracts.enums.order_enums import OrderSide, OrderStatus, Or
 from zephyr.shared.contracts.fill import Fill
 from zephyr.shared.contracts.order import Order
 
-
 # ───────────────────────── Fixtures ─────────────────────────
 
 

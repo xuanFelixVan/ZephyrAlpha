@@ -35,7 +35,6 @@ from zephyr.simulation.sharpe_calculator_fixer import (
     SimulationError,
 )
 
-
 # ============== 辅助函数 ==============
 
 
