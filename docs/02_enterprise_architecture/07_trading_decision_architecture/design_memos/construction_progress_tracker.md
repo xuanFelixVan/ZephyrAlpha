@@ -156,6 +156,13 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | **Redis 后端 state_store 批（2026-08-17 Owner 裁定派单）** | 风控接线批遗留——shared/state_store.py Redis 后端（KillSwitch 状态外部化增强，与 JsonStateStore 同接口）；与 RFIX-001 零交集实证（shared 域） | ✅ **已 merge 闭环**（2026-08-17 第六统筹）：d95675322e（RedisStateStore/RedisDedupSet+双工厂+30 新测试）+8470e899（#ARCH-118 拆分续作：Redis 后端迁 state_store_redis.py，统筹代执行）→e9d49313 merge（冲突 9 处：8 派生取 dev 侧+capability token 并集）；统筹独立复跑 65×2+消费方 28 全绿；遗留②（db15 登记）已闭环 2e20d808、遗留④（worktree reconciler spawn）实证=#109 同族非阻断；**trae_010 行数规则第一性原理重裁 v1.3.0 落地（#ARCH-118，Owner 裁定）** |
 | **阈值统读批（2026-08-17 Owner 裁定派单，五路并发 D 路）** | **AI-THD-001：tracker #87 存量 9 模块码内阈值→REG-ATH-001 fail-closed 统读**（drawdown_tracker/health_monitor/decision_gate/post_live_verification/alert_generator/alert_escalation/daily_auditor/risk_report_engine/operational_risk_monitor + test_alert_threshold_consistency 演化） | ✅ **已 merge 闭环**（2026-08-17 第六统筹，ef0dc258）：6c181232a3（22 文件 +686/-189：threshold_loader.py 共享 fail-closed 加载器新建+9 模块统读+对账测试演化 49 项+注册表 v1.2.0+55 号 v1.2.0）；冲突 1 处 module_translation 并集；merge 收口顺手修（test 导入 import-as 全路径化解 TEST-SOURCE-CONSISTENCY 两型误报/__all__ 补 Final/depgraph node 9715194 登记转 stable+production）；统筹独立复跑 49/49+广域 1573 绿（1 失败=#108 存量）；#87 ✅ 已统读 |
 | **五态降级机落码批（2026-08-17 Owner 裁定派单，五路并发 E 路）** | **AI-DGR-001：tracker #101/#ARCH-QUANT-003 53 号 §3.8 五态降级机代码落地**（lifecycle_governance/rollback_state_machine.py 新建+paper_live_transition 晋级 NORMAL 耦合+fail-closed 持久化） | ✅ **已 merge 闭环**（2026-08-17 第六统筹，b04c4a1f）：3572974adb（10 文件 +825/-22：rollback_state_machine.py 新建 MOD-GOV-045 伪代码逐行落地+JsonStateStore 持久化+check_promotion_allowed 耦合点+57 新测试+蓝图+五登记链+53 号 v1.7.8+QUANT-003 resolved）；冲突 9 处（7 B 类派生+capability token 并集+tracker 撞号重编 #105-107→#110-112）；统筹独立复跑 57/57+paper_live 28 零回归；红队五向量实证（fail-closed 畸形持久化/无 RCA PermissionError/UNWINDING 仓位非零/29 vs 30 笔边界/降级中禁晋级）；#101 ✅ 闭环；#110 depgraph node 9702457 已随重扫转 stable+production |
+| **fail-open 敞口治理批（2026-08-17 Owner 裁定 B1+B2 全量，#ARCH-119）** | **AI-FOPEN-001：4 个 depgraph 类硬阻断门禁 fail-open 分支接 log_gate_failure 留痕+PG 可用性前置探针 pg_probe.py+FRESHNESS 离线 24h 豁免+verify_schema_health 优雅阻断** | ✅ **已 merge 闭环**（2026-08-17 AI-00 总控 merge 8a872d0e59+续吸收 48ce3d93cb；fa25c19e49 实证在 dev，18 文件，红队四向量实证；merge 冲突 8 处全解+blueprint_registry 误删恢复+GATE-21/GATE-NO-TESTS-UNIT/GATE-DOC-NODE-ID 顺修+detect_git_dangerous 豁免治本；反馈滞后由第七统筹 2026-08-17 补登记，§六 #116 同步闭环） |
+| **🔵 审查线首批五路（2026-08-17 用户裁定开工，68 号 v1.2.1 转 active，与施工线 5+5 并发）** | **AI-R1~R5 初审+自主治本修复**（20 域×每路 4 域；首审对象=RFIX/RRESIL/RWIRE 风险与执行模块，风险优先+各域近批增量；轮换矩阵初审模型 R1 Kimi-K3/R2 GLM-5.3/R3 Qwen3.8-Max/R4 Kimi-K3/R5 GLM-5.3；复审红队走调度卡切模型） | 🔵 已派单（5 路并发；域隔离+文件级避让，merge 统筹串行） |
+| **🔵 IPO 数据专项批（同裁定，施工线 1/5）** | **AI-IPO-001：§六 #114 IPO 数据源接入（37 号 §5 跨会话排期②）+#117 tick_subscriber 看门狗"启动时 QMT 离线 0 标的"边缘治本（盘中周期性重试 universe 解析+订阅）** | 🔵 已派单 |
+| **🔵 测试债长尾②批（施工线 2/5）** | **AI-TDEBT-002：§六 #108 p_hacking_warning 存量失败+#115 dev 基线 10 项 governance 签名漂移簇（adversarial run_one/base_repo new_id prefix/naming_e2e+consumer_registry）** | 🔵 已派单 |
+| **🔵 POT 升级计数器批（施工线 3/5）** | **AI-POT-001：§六 #107 POT 连续 5 日失败→阈值调整升级跨日持久化计数器（state_store 后续批，双后端）+#113 MON-001 私有 loader 收敛 threshold_loader 顺手项** | 🔵 已派单 |
+| **🔵 治理批 B 包（施工线 4/5）** | **AI-GOVB-001：§六 #102 regime_detector MATURITY 对齐+#105 stop_loss D9 文档漂移+#106 memo36 RiskOrchestrator 命名对账+#111 scaffold module alias 裁定逃生口+#109 worktree spawn WMI 降级（随 #ARCH-105）** | 🔵 已派单 |
+| **🔵 注册表一致性批（施工线 5/5）** | **AI-REGF-001：§六 #8 MOD-POS-021 capability 补登+#10 UNI-BASKET-001 dangling FK+#11 16 号指标分类对齐+#12 data_asset 13 个 E5 锚点漂移+#15 BUY 命名冲突消解+#16 MOD-PLAN-001/002/003 域归属** | 🔵 已派单 |
 
 ## 六、遗留项登记表（重建版，按优先级分类）
 
@@ -178,15 +185,15 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 |---|---|---|---|---|
 | 6 | depgraph build_status 滞后：MOD-POS-020 节点状态异常 | AI-POS-001 | 模块已 production 落码，depgraph 未同步 | ✅ 已闭环（2026-08-14 AI-SELL-001 实证：merge 后 #ARCH-70 同身份 UPDATE 通道自动转换，当前 stable+production） |
 | 7 | depgraph MOD-POS-021 状态仍 design 滞后 | AI-FRA-001 | 同上 | ✅ 已闭环（2026-08-14 同 #6，stable+production 实证） |
-| 8 | capability_canonical_file_registry 未登记 MOD-POS-021（违反硬约束） | AI-FRA-001 | 需补登记 | ⏳ |
+| 8 | capability_canonical_file_registry 未登记 MOD-POS-021（违反硬约束） | AI-FRA-001 | 需补登记 | 🔵 已派单（AI-REGF-001，2026-08-17） |
 | 9 | AGENTS.md 显化修改被 PROTECTED-PATHS 门禁阻断，需 Owner 审批 | AI-REG-FLD-001 / EXP-001 | 两队同遇；走 Owner 审批流程。**2026-08-13 进展**：12 注册表速查改动已获 Owner 批准落地（f15de056）；后续新增显化修改仍需逐个审批 | 🔄 部分闭环 |
-| 10 | dangling FK：UNI-BASKET-001（regime 验证 10 大盘股篮子未登记 universe_registry） | AI-REG-EXP-001 | 需补登 universe_registry 或修正引用 | ⏳ |
-| 11 | 16 号文档 8 大类指标 vs 代码实际 5 大类（trend/momentum/volatility/volume/reversal）不一致 | AI-REG-IND-001 | 文档需对齐代码现实 | ⏳ |
-| 12 | data_asset 注册表 13 个 E5 告警（旧 dataflow 注册表锚点漂移） | AI-REG-EXE-001 | 锚点漂移治理 | ⏳ |
+| 10 | dangling FK：UNI-BASKET-001（regime 验证 10 大盘股篮子未登记 universe_registry） | AI-REG-EXP-001 | 需补登 universe_registry 或修正引用 | 🔵 已派单（AI-REGF-001，2026-08-17） |
+| 11 | 16 号文档 8 大类指标 vs 代码实际 5 大类（trend/momentum/volatility/volume/reversal）不一致 | AI-REG-IND-001 | 文档需对齐代码现实 | 🔵 已派单（AI-REGF-001，2026-08-17） |
+| 12 | data_asset 注册表 13 个 E5 告警（旧 dataflow 注册表锚点漂移） | AI-REG-EXE-001 | 锚点漂移治理 | 🔵 已派单（AI-REGF-001，2026-08-17） |
 | 13 | field_dictionary source_system 3 个值 pending（当时 data_asset_registry 未就绪；现已建成） | AI-REG-FLD-001 | 重跑 E4 FK 检查复核 | ✅ 已闭环（2026-08-14 统筹复核：SRC-QMT-001/AKSHARE-001/INTERNAL-001 在 data_asset_registry L114/136/422 实证存在，pending 标注清零，commit f0ebfdd5） |
 | 14 | 52 号 §7 DSR 双实现未统编（阈值 0.5 vs 0.95），影响 dsr_value 字段语义 | AI-REG-EXP-001 | 需裁定统一阈值 | ⏳ 等裁定 |
-| 15 | BUY 队 5 个新文件 token 与既有 capability 名称重叠 | AI-BUY-001 | 命名冲突需消解 | ⏳ |
-| 16 | MOD-PLAN-001/002/003 域不一致 | AI-BUY-001 | depgraph 域归属修正 | ⏳ |
+| 15 | BUY 队 5 个新文件 token 与既有 capability 名称重叠 | AI-BUY-001 | 命名冲突需消解 | 🔵 已派单（AI-REGF-001，2026-08-17） |
+| 16 | MOD-PLAN-001/002/003 域不一致 | AI-BUY-001 | depgraph 域归属修正 | 🔵 已派单（AI-REGF-001，2026-08-17） |
 | 17 | 33 号文档骨架化，直接影响第三批 33 BudgetChange 施工 | AI-FRA-001 | 第三批开工前需先充实 33 号文档 | ✅ 已闭环（实际 2026-08-12 批二回填 6a4f539214 已重建为 active v1.0.0；AI-BGT-001 核实重建质量并修行号漂移→v1.1.0） |
 
 ### P1-补 · 第二统筹会话补登（2026-08-13）
@@ -288,36 +295,36 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 101 | 53 号 §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）裁定落点与代码不符 | 独立复核实证（2026-08-16） | 53 号 v1.7.7 修订记录称"降级维度真源=§3.8 五态（落地 rollback_state_machine.py）"，实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举 src 全仓零命中；晋级迁移 FSM 已经 Owner 裁定方案 C 废弃（不另建，阶段维度真源=paper_live_transition 三阶段门禁）；53 号结案报告已按实测修正 | ✅ 已闭环（2026-08-17 AI-DGR-001 派单施工，[GW:AI-DGR-001]）：governance/lifecycle_governance/rollback_state_machine.py 新建（MOD-GOV-045，§3.8 伪代码逐行落码——单向更保守/fail-closed/Hysteresis/≥30 笔地板/JsonStateStore 持久化）+ paper_live_transition.py check_promotion_allowed 晋级前置 NORMAL 耦合点；57 新测试两轮全绿+既有 28 项零回归；#ARCH-QUANT-003 resolved；53 号 v1.7.8 锚点全同步 |
-| 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | ⏳ 下一治理批顺手修 |
+| 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
 | 103 | tests/git test_git_command_timeout_handled 环境敏感失败 | 独立复核实证（2026-08-16） | 测试期望 git 命令超时返回 COMMIT_FAILED，本机执行过快未触发超时致断言失败（148 过/1 失败/1 xpassed）；非功能缺陷，属测试环境假设缺陷 | ⏳ 观察（换机/负载变化时再评估） |
 
 ### P1-补6 · 2026-08-17 AI-RFIX-001 登记（第六统筹并入，承接方已甄别）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 105 | D9 文档漂移：stop_loss.py 头注+35 号"已施工"措辞 vs 生产零调用 | AI-RFIX-001 反馈⑤ | 按避让纪律原拟移交 RWIRE-001 接线批一并修正——RWIRE-001 已 merge 完工（2b3b68b5d2），承接方改挂后续治理/接线批 | ⏳ 后续批 |
-| 106 | memo 36 §3.10 动作 1-3 执行者"RiskOrchestrator"措辞与 RWIRE 落地 risk_layer_orchestrator.py（MOD-L06-001）命名对账 | AI-RFIX-001 反馈⑤ | memo 已标"禁止按可执行语气直读"（设计契约）；命名漂移对账+memo 措辞同步，后续批 | ⏳ 后续批 |
-| 107 | POT 连续 5 日失败→阈值调整升级计数器 | AI-RFIX-001 反馈⑤ | 需跨日持久化计数器，随 state_store 持久化批（REDIS-001 在途范围不含，归其后续批） | ⏳ state_store 后续批 |
-| 108 | tests/risk/test_ml_experiment_pipeline.py::test_p_hacking_warning 既有失败 | AI-RFIX-001 反馈⑤+第六统筹实证 | dev HEAD 同败实证（'no_models' vs 'p_hacking_warning'），shim 模块 standalone 复现，与本批零依赖链；tests 域归后续测试债批 | ⏳ 后续测试债批 |
-| 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | ⏳ 随 #ARCH-105 治理 |
+| 105 | D9 文档漂移：stop_loss.py 头注+35 号"已施工"措辞 vs 生产零调用 | AI-RFIX-001 反馈⑤ | 按避让纪律原拟移交 RWIRE-001 接线批一并修正——RWIRE-001 已 merge 完工（2b3b68b5d2），承接方改挂后续治理/接线批 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 106 | memo 36 §3.10 动作 1-3 执行者"RiskOrchestrator"措辞与 RWIRE 落地 risk_layer_orchestrator.py（MOD-L06-001）命名对账 | AI-RFIX-001 反馈⑤ | memo 已标"禁止按可执行语气直读"（设计契约）；命名漂移对账+memo 措辞同步，后续批 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 107 | POT 连续 5 日失败→阈值调整升级计数器 | AI-RFIX-001 反馈⑤ | 需跨日持久化计数器，随 state_store 持久化批（REDIS-001 在途范围不含，归其后续批） | 🔵 已派单（AI-POT-001，2026-08-17） |
+| 108 | tests/risk/test_ml_experiment_pipeline.py::test_p_hacking_warning 既有失败 | AI-RFIX-001 反馈⑤+第六统筹实证 | dev HEAD 同败实证（'no_models' vs 'p_hacking_warning'），shim 模块 standalone 复现，与本批零依赖链；tests 域归后续测试债批 | 🔵 已派单（AI-TDEBT-002，2026-08-17） |
+| 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | 🔵 已派单（AI-GOVB-001 随批治理，2026-08-17） |
 
 ### P1-补7 · 2026-08-17 AI-DGR-001 登记（53 号 §3.8 五态降级机施工批）【编号注记：原登记 #105-#107 与 RFIX-001 已入 dev 的 #105-#109 撞号，merge 重编 #110-#112——2026-08-17 第六统筹】
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 110 | MOD-GOV-045 rollback_state_machine depgraph 登记 | AI-DGR-001（原 #105） | NEW-FILE-DEPGRAPH 门禁强制：已登记 file 粒度节点（build_status=generated，design_maturity=design——pre-merge 正确态；#ARCH-70 通道 merge 后重扫自动同身份转 production，无需手工 transition）。⚠️ 教训实证：design_maturity 提前手工转 production 会被主仓锚定的后台重扫当孤儿收割（文件未上主仓盘），pre-merge 必须保持 design | ✅ 已闭环（2026-08-17 merge 后统筹全量重扫，该节点实证 stable+production） |
-| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | ⏳ 下一治理批 |
+| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
 | 112 | 五态降级机执行侧动作接线（撤单/阻断/减仓/平仓入交易运行时） | AI-DGR-001（原 #107） | 本批只产出姿态（FSM 永不生成/撤销订单）；执行动作消费方接线属 SHADOW 阶段施工（53 号 §3.6 表已同步标注"执行侧接线待施工"） | ⏳ 待 SHADOW 阶段 |
 
 ### P1-补8 · 2026-08-17 THD/LVL3 反馈遗留并入（第六统筹）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 113 | strategy_deviation_monitor / strategy_retirement_evaluator（MON-001 批）持私有 loader 与路径常量，可收敛到 shared threshold_loader | AI-THD-001 反馈⑥ | 同字面量非第二决策点，优化项非缺陷；私有 loader 语义与 threshold_loader 一致（fail-closed 同构），收敛=消重非修 bug | ⏳ 收口窗口优化项 |
-| 114 | IPO 数据源接入（37 号 §5 跨会话排期②） | AI-LVL3-001 反馈⑥ | 数据层施工范围，37 号 §6 待裁定行持续有效（tracker #42② 已标注承接） | ⏳ 数据层专项 |
-| 115 | dev 基线 10 项存量测试失败（governance 域 API 签名漂移债） | AI-GOVA-001 反馈⑥+第六统筹 dev 抽验实证 | 三簇：adversarial run_one 缺 detector 参（test_adversarial_tester 2 项）/base_repo new_id 缺 prefix 参（3 项）/naming_e2e 注册表状态+consumer_registry summary 漂移（5 项）——dev 抽验 7 failed 实证复现（TypeError 签名漂移，#63 测试债同族）；GOVA pristine dev 对比实证与本包零因果 | ⏳ 后续测试债批 |
-| 117 | tick_subscriber 看门狗不覆盖"启动时 QMT 离线致标的解析 0 只"情形 | 2026-08-17 开盘实盘验证实证 | 08-16 18:57 启动时 QMT 未开→板块获取全失败→"订阅 0 只标的"；_biz_watchdog_loop L681 重订阅条件含 `self._symbols_resolved` 非空——标的为 0 时看门狗永不触发，活进程零采集静默 14h+（#ARCH-DATA-017 裁定E"预热后永久静默"的未覆盖边缘）；处置=杀进程 guard 自动拉起后秒级恢复（8035 只订阅+首 tick 2.4s）。建议：标的为 0 且盘中时段，看门狗应周期性重试 universe 解析+订阅（非仅对已有标的重订阅） | ⏳ 数据层专项（与 #114 同域） |
-| 116 | fail-open 敞口治理方案（PG 离线 5 门禁静默放行） | AI-GOVA-001 交付物（docs/_working/reports/2026-08-17-fail-open-analysis.md） | **Owner 已裁定 B1+B2 全量**（2026-08-17，#ARCH-119）：AI-FOPEN-001 派单施工（4 gate 留痕接 log_gate_failure+PG 探针+FRESHNESS 离线豁免+verify_schema_health 优雅化） | ✅ 已派单（AI-FOPEN-001 施工中） |
+| 113 | strategy_deviation_monitor / strategy_retirement_evaluator（MON-001 批）持私有 loader 与路径常量，可收敛到 shared threshold_loader | AI-THD-001 反馈⑥ | 同字面量非第二决策点，优化项非缺陷；私有 loader 语义与 threshold_loader 一致（fail-closed 同构），收敛=消重非修 bug | 🔵 已派单（AI-POT-001 顺手项，2026-08-17） |
+| 114 | IPO 数据源接入（37 号 §5 跨会话排期②） | AI-LVL3-001 反馈⑥ | 数据层施工范围，37 号 §6 待裁定行持续有效（tracker #42② 已标注承接） | 🔵 已派单（AI-IPO-001，2026-08-17） |
+| 115 | dev 基线 10 项存量测试失败（governance 域 API 签名漂移债） | AI-GOVA-001 反馈⑥+第六统筹 dev 抽验实证 | 三簇：adversarial run_one 缺 detector 参（test_adversarial_tester 2 项）/base_repo new_id 缺 prefix 参（3 项）/naming_e2e 注册表状态+consumer_registry summary 漂移（5 项）——dev 抽验 7 failed 实证复现（TypeError 签名漂移，#63 测试债同族）；GOVA pristine dev 对比实证与本包零因果 | 🔵 已派单（AI-TDEBT-002，2026-08-17） |
+| 117 | tick_subscriber 看门狗不覆盖"启动时 QMT 离线致标的解析 0 只"情形 | 2026-08-17 开盘实盘验证实证 | 08-16 18:57 启动时 QMT 未开→板块获取全失败→"订阅 0 只标的"；_biz_watchdog_loop L681 重订阅条件含 `self._symbols_resolved` 非空——标的为 0 时看门狗永不触发，活进程零采集静默 14h+（#ARCH-DATA-017 裁定E"预热后永久静默"的未覆盖边缘）；处置=杀进程 guard 自动拉起后秒级恢复（8035 只订阅+首 tick 2.4s）。建议：标的为 0 且盘中时段，看门狗应周期性重试 universe 解析+订阅（非仅对已有标的重订阅） | 🔵 已派单（AI-IPO-001，2026-08-17） |
+| 116 | fail-open 敞口治理方案（PG 离线 5 门禁静默放行） | AI-GOVA-001 交付物（docs/_working/reports/2026-08-17-fail-open-analysis.md） | **Owner 已裁定 B1+B2 全量**（2026-08-17，#ARCH-119）：AI-FOPEN-001 派单施工（4 gate 留痕接 log_gate_failure+PG 探针+FRESHNESS 离线豁免+verify_schema_health 优雅化） | ✅ 已 merge 闭环（2026-08-17 AI-00 总控 merge 8a872d0e59+续吸收 48ce3d93cb；fa25c19e49 实证已在 dev：18 文件 +4 gate 留痕/pg_probe.py 探针/FRESHNESS 24h 豁免/verify_schema_health exit 2 优雅化，红队四向量实证；merge 冲突 8 处全解+blueprint_registry 误删恢复+GATE-21 等门禁顺修；#ARCH-119 resolved。统筹会话反馈滞后，本次核验补登记） |
 
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）

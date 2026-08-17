@@ -4,8 +4,8 @@ doc_type: architecture_view
 title: 代码与算法多模型审查流水线
 owner: ZephyrAlpha-Owner
 language: zh
-status: draft
-version: "1.2.0"
+status: active
+version: "1.2.1"
 date: 2026-08-17
 topic: code_algorithm_review_pipeline
 scope: 07_trading_decision_architecture
@@ -15,7 +15,7 @@ scope: 07_trading_decision_architecture
 
 > 本文档定义"施工后审查线"：对已 merge 回 dev 的模块代码、算法实现与运行情况，用多模型轮流交叉审查+自主治本修复，与前方施工线 **5+5 路并发**开工，统一由统筹会话调度。
 > 执行蓝本：[docs/audit_prompts_20_ai.md](../../../audit_prompts_20_ai.md)（AI-00 总控+域子代理+自主裁定框架+零打扰闭环，v3.2 已实证）。
-> 性质：跨切治理层（6x 段位）流程规范，draft 待用户裁定后转 active。
+> 性质：跨切治理层（6x 段位）流程规范，2026-08-17 用户裁定转 active 并首开 5+5 十路并发。
 
 ## 1. 背景
 
@@ -207,7 +207,7 @@ scope: 07_trading_decision_architecture
 | # | 问题 | 现状 |
 |---|---|---|
 | 1 | ~~模型版本与渠道确认~~ ✅ 已解决（2026-08-17 用户确认：Kimi-K3 / GLM-5.3 / Qwen3.8-Max，Trae CN 模型选择器手动切换，全程 Trae CN 内完成） | 见 §2.3 |
-| 2 | 首个审查批次的启动时机与对象（建议：RFIX 批已 merge 的 5 个风险/执行模块为首审对象，风险优先） | 待用户派单 |
+| 2 | 首个审查批次的启动时机与对象（建议：RFIX 批已 merge 的 5 个风险/执行模块为首审对象，风险优先） | ✅ 已派单（2026-08-17 用户裁定开工：首审=RFIX/RRESIL/RWIRE 风险与执行模块，R3 路风险优先；五路初审模型=Kimi-K3/GLM-5.3/Qwen3.8-Max/Kimi-K3/GLM-5.3） |
 | 3 | 周期一次性汇报频率（建议：每审查批闭环后一条简报 + 每周汇总）与审查线 token 预算上限（日/周） | 对接 2026-08-17 成本方案，待用户定额度 |
 | 4 | 运行情况周审查的固定窗口（周几、读哪几天的汇总） | 对齐 55 号复盘节奏，待用户定 |
 
