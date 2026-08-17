@@ -37,12 +37,19 @@ Exit codes:
 
 from __future__ import annotations
 
-from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR
-
-import re
 import sys
+from pathlib import Path
 
-from zephyr.shared.io.paths import REPO_ROOT
+_SCRIPT_DIR = Path(__file__).resolve()
+_GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
+if _GOV_DIR not in sys.path:
+    sys.path.insert(0, _GOV_DIR)
+
+from _shared.constants import EXIT_PASS, EXIT_FINDINGS, EXIT_ERROR  # noqa: E402
+
+import re  # noqa: E402
+
+from zephyr.shared.io.paths import REPO_ROOT  # noqa: E402
 
 GATES_DIR = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "commit_gates"
 BLUEPRINT_PATH = (

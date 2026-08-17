@@ -4,7 +4,7 @@
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
-# ttl: task_bound
+# ttl: permanent
 # --- 治理锚定结束 ---
 # scripts 目录清单边界（SCOPE）
 # -----------------------------------------------------------------------------

@@ -19,7 +19,7 @@ foreach ($t in $targets) {
         }
         # Find revision section
         for ($i = 0; $i -lt $lines.Count; $i++) {
-            if ($lines[$i] -match '修订|revision|变更|更新记录') {
+            if ($lines[$i] -match '\u4FEE\u8BA2|revision|\u53D8\u66F4|\u66F4\u65B0\u8BB0\u5F55') {
                 $s = $lines[$i]
                 if ($s.Length -gt 100) { $s = $s.Substring(0, 100) + '...' }
                 Write-Output ("  Revision section at L" + ($i+1) + ": " + $s)

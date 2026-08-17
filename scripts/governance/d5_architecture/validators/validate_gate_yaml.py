@@ -18,14 +18,6 @@
 
 from __future__ import annotations
 
-from _shared.encoding import ensure_utf8_stdout
-
-ensure_utf8_stdout()
-# Gate Configuration Drift Detection — YAML ↔ Code 交叉校验
-# ==========================================================
-# 针对 MOD-GATE_ENGINE 门禁体系，检测 YAML 配置文件与 gate_engine.py 代码之间的漂移。
-# Safety: M | Usage: python scripts/governance/d5_architecture/validate_gate_yaml.py [--fix] [--json]
-
 import sys
 from pathlib import Path
 
@@ -34,8 +26,16 @@ _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GATES_DIR, REPO_ROOT
-from _shared.walk import iter_files
+from _shared.encoding import ensure_utf8_stdout  # noqa: E402
+
+ensure_utf8_stdout()
+# Gate Configuration Drift Detection — YAML ↔ Code 交叉校验
+# ==========================================================
+# 针对 MOD-GATE_ENGINE 门禁体系，检测 YAML 配置文件与 gate_engine.py 代码之间的漂移。
+# Safety: M | Usage: python scripts/governance/d5_architecture/validate_gate_yaml.py [--fix] [--json]
+
+from _shared.constants import EXIT_FINDINGS, EXIT_PASS, GATES_DIR, REPO_ROOT  # noqa: E402
+from _shared.walk import iter_files  # noqa: E402
 
 __manifest__ = """
 args: []
@@ -70,39 +70,44 @@ _NON_AUTOFIX_TYPES = {
 
 
 def _load_engine_checktypes() -> set[str]:
-    """_load_engine_checktypes implementation."""
-    engine_path = GATES_DIR / "gate_engine.py"
+    """从 gate_engine.py 的 _CHECK_DISPATCH 分发表提取已实现 check_type。
+
+    治本（2026-08-17）：引擎已重构为包（rule_enforcement/gate_engine/gate_engine.py）
+    且 check_type 调度从 if-elif 链（``ct == "x"``）改为 _CHECK_DISPATCH 分发表，
+    原路径+原正则双双失效（返回空集=检测静默失明）。改为解析分发表键。
+    """
+    engine_path = GATES_DIR / "gate_engine" / "gate_engine.py"
     if not engine_path.exists():
         return set()
     content = engine_path.read_text(encoding="utf-8", errors="replace")
 
-    types = set()
     import re
 
-    for m in re.finditer(r'elif ct == "(\w+)"', content):
-        types.add(m.group(1))
-    for m in re.finditer(r'ct == "(\w+)"', content):
-        types.add(m.group(1))
-    return types
+    m = re.search(r"_CHECK_DISPATCH[^=]*=\s*\{(.*?)\n\}", content, re.DOTALL)
+    if not m:
+        return set()
+    return set(re.findall(r'"(\w+)":', m.group(1)))
 
 
 def _load_gate_files() -> dict[str, str]:
-    """_load_gate_files implementation."""
-    engine_path = GATES_DIR / "gate_engine.py"
-    if not engine_path.exists():
-        return {}
-    content = engine_path.read_text(encoding="utf-8", errors="replace")
-    import re
+    """从 _registry.yaml 加载 gate_id → yaml 文件名映射。
 
-    m = re.search(r"_GATE_FILES.*?=.*?\{(.*?)\}", content, re.DOTALL)
-    if not m:
+    治本（2026-08-17）：引擎 GateEngine.GATE_FILES 已从 _registry.yaml 动态加载
+    （gate_engine.py L1441-1446：_registry.yaml 是门禁注册表的唯一真源，替代硬编码
+    _GATE_FILES 字典）。原实现 regex 解析 gate_engine.py 旧路径的 dict 字面量，
+    路径与数据结构双漂移（返回空=检测静默失明）。直读同一真源，语义等价。
+    """
+    registry_path = GATES_DIR / "_registry.yaml"
+    if not registry_path.exists():
         return {}
-    result: dict[str, str] = {}
-    for line in m.group(1).split("\n"):
-        pair = re.search(r'"(\w+)":\s*"([^"]+)"', line.strip())
-        if pair:
-            result[pair.group(1)] = pair.group(2)
-    return result
+    import yaml
+
+    data = yaml.safe_load(registry_path.read_text(encoding="utf-8")) or {}
+    return {
+        g["gate_id"]: g.get("file", "")
+        for g in data.get("gates", [])
+        if isinstance(g, dict) and g.get("gate_id")
+    }
 
 
 def check_yaml_gateids_in_engine() -> dict[str, Any]:
@@ -189,11 +194,33 @@ def check_registry_file_refs() -> dict[str, Any]:
     }
 
 
+def _load_engine_severity_map() -> dict[str, str]:
+    """从 gate_engine.py 的 _SEVERITY_MAP 类变量提取 severity 映射（引擎即真源）。
+
+    治本（2026-08-17）：原硬编码 expected_map 缺 reject/hard/soft（引擎
+    gate_engine.py L1693-1702 _SEVERITY_MAP 含），导致 D5 对合法 severity
+    （hard/soft）误报。直读引擎映射，消除第二真源。
+    """
+    engine_path = GATES_DIR / "gate_engine" / "gate_engine.py"
+    if not engine_path.exists():
+        return {}
+    content = engine_path.read_text(encoding="utf-8", errors="replace")
+    import re
+
+    m = re.search(r"_SEVERITY_MAP[^=]*=\s*\{(.*?)\}", content, re.DOTALL)
+    if not m:
+        return {}
+    return {
+        pair.group(1): pair.group(2)
+        for pair in re.finditer(r'"(\w+)":\s*"(\w+)"', m.group(1))
+    }
+
+
 def check_severity_consistency() -> dict[str, Any]:
     """Check compliance and report findings."""
     import yaml
 
-    expected_map = {"error": "P0", "critical": "P0", "warning": "P1", "warn": "P1", "info": "P2"}
+    expected_map = _load_engine_severity_map()
     issues: list[str] = []
 
     for yf in iter_files(GATES_DIR, name_pattern="g*.yaml"):

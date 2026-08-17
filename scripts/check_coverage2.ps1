@@ -15,14 +15,14 @@ function Check-Coverage($filename, $keywordArray) {
     Write-Output "MISSING: $filename does NOT have any of $keywordArray"
 }
 
-Check-Coverage '35_drawdown_protocol_impl.md' @('Brownian', '非高斯', '分数布朗', '长记忆', 'Rej-Seager', '查找表')
-Check-Coverage '37_liquidity_crisis_protocol.md' @('microstructure', 'latent.*build', 'lead-time', '隐含.*build')
-Check-Coverage '55_monitoring_review.md' @('Berry Phase', 'geometric observable', '几何可观', 'Spectral Entropy')
+Check-Coverage '35_drawdown_protocol_impl.md' @('Brownian', '\u975E\u9AD8\u65AF', '\u5206\u6570\u5E03\u6717', '\u957F\u8BB0\u5FC6', 'Rej-Seager', '\u67E5\u627E\u8868')
+Check-Coverage '37_liquidity_crisis_protocol.md' @('microstructure', 'latent.*build', 'lead-time', '\u9690\u542B.*build')
+Check-Coverage '55_monitoring_review.md' @('Berry Phase', 'geometric observable', '\u51E0\u4F55\u53EF\u89C2', 'Spectral Entropy')
 Check-Coverage '30_multi_strategy_concurrency.md' @('inverse-vol', 'Morwane', 'multi-strategy-alpha-book')
-Check-Coverage '37_liquidity_crisis_protocol.md' @('统计跳跃', 'Statistical Jump', 'DD_10', '中金')
+Check-Coverage '37_liquidity_crisis_protocol.md' @('\u7EDF\u8BA1\u8DF3\u8DC3', 'Statistical Jump', 'DD_10', '\u4E2D\u91D1')
 Check-Coverage '36_var_es_monitoring.md' @('CAESar', 'CAViaR.*ES', 'Conditional Autoregressive ES')
-Check-Coverage '36_var_es_monitoring.md' @('BAWS', 'Adaptive Window', 'bootstrap.*window', '自适应窗口')
-Check-Coverage '31_position_sizing.md' @('BlackRock', 'proportional control', '比例控制')
-Check-Coverage '40_execution_broker.md' @('market resistance', '市场阻力', 'Fredholm')
+Check-Coverage '36_var_es_monitoring.md' @('BAWS', 'Adaptive Window', 'bootstrap.*window', '\u81EA\u9002\u5E94\u7A97\u53E3')
+Check-Coverage '31_position_sizing.md' @('BlackRock', 'proportional control', '\u6BD4\u4F8B\u63A7\u5236')
+Check-Coverage '40_execution_broker.md' @('market resistance', '\u5E02\u573A\u963B\u529B', 'Fredholm')
 Check-Coverage '36_var_es_monitoring.md' @('2608.00127', '2608.04987', '2608.04305')
 Check-Coverage '55_monitoring_review.md' @('2605.17117', '2603.04441')

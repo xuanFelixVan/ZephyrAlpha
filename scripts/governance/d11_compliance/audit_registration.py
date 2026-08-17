@@ -17,7 +17,7 @@
 """audit_registration.py — 孤儿注册检测（RULE-TWO 防线 2）
 
 扫描 src/zephyr/ 和 scripts/ 中所有 .py/.yaml 文件，
-对比三个注册表（__init__.py __all__、script_manifest.yaml、_registry.yaml），
+对比三个注册表（__init__.py __all__、script-manifest.yaml、_registry.yaml），
 检测:
   - 孤儿文件: 存在于磁盘但不在任何注册表中
   - 僵尸引用: 注册表引用的文件已删除
@@ -77,7 +77,10 @@ from _shared.file_utils import atomic_write  # noqa: E402  治本(ARCH-036 P1-1)
 PROJECT_ROOT = REPO_ROOT
 SRC_ZEPHYR = PROJECT_ROOT / "src" / "zephyr"
 SCRIPTS_DIR = PROJECT_ROOT / "scripts"
-SCRIPT_MANIFEST = SCRIPTS_DIR / "script_manifest.yaml"
+# 真源：scripts/script-manifest.yaml（连字符，702 条全树清单，generate_manifest.py 生成）。
+# 历史 bug（治本 2026-08-17）：曾指向 scripts/script_manifest.yaml（下划线，不存在），
+# 导致 orphan/zombie 检测静默失效（_build_script_registry 返回空集，146 假孤儿被基线掩盖）。
+SCRIPT_MANIFEST = SCRIPTS_DIR / "script-manifest.yaml"
 GATE_REGISTRY = GATES_DIR / "_registry.yaml"
 
 EXCLUDE_PATTERNS = {
@@ -395,8 +398,11 @@ def _extract_all_entries(source: str) -> set[str]:
 
 
 def _build_script_registry() -> set[str]:
-    """从 script_manifest.yaml 中提取已注册的脚本路径集合。"""
+    """从 script-manifest.yaml 中提取已注册的脚本路径集合。"""
+    # 静默失效修正（对齐 GATE_REGISTRY 处理）：清单缺失时 stderr 警告而非静默返回空集，
+    # 防止 orphan 检测整体失明（2026-08-17 治本：路径断裂曾致 146 假孤儿）。
     if not SCRIPT_MANIFEST.exists():
+        print(f"[WARN] SCRIPT_MANIFEST not found: {SCRIPT_MANIFEST} — script registry scan skipped", file=sys.stderr)
         return set()
 
     manifest = yaml.safe_load(SCRIPT_MANIFEST.read_text(encoding="utf-8")) or {}
@@ -610,7 +616,7 @@ def _scan_script_orphans(
     result: AuditResult,
     changed_files: set[Path] | None = None,
 ) -> None:
-    """扫描 scripts/ 下所有 .py 文件，找出不在 script_manifest.yaml 中的。
+    """扫描 scripts/ 下所有 .py 文件，找出不在 script-manifest.yaml 中的。
 
     Args:
         changed_files: 增量模式下仅扫描此集合中的文件。None 表示全量扫描。
@@ -690,7 +696,7 @@ def _detect_zombie_references(
                 result.zombie_references.append(
                     ZombieEntry(
                         reference=path_str,
-                        registry="script_manifest.yaml",
+                        registry="script-manifest.yaml",
                         detail=entry.get("description", ""),
                     )
                 )

@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [TTL] task_bound
+# [TTL] permanent
 """从 depgraph (PostgreSQL) + 物理蓝图文件 派生 architecture_model/index.yaml。
 
 治本改造（2026-07-30，#ARCH-INDEX-005）：

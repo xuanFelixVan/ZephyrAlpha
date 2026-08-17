@@ -12,28 +12,28 @@ foreach ($f in $files) {
     }
 }
 
-# Find §7.3 occupancy table region (between "## 7.3" and next "## " heading)
+# Find S7.3 occupancy table region (between "## 7.3" and next "## " heading)
 $sec73Start = -1
 $sec73End = $lines.Count
 for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($lines[$i] -match '^## 7\.3') { $sec73Start = $i }
     elseif ($sec73Start -ge 0 -and $lines[$i] -match '^## [0-9]') { $sec73End = $i; break }
 }
-Write-Output "§7.3 region: lines $($sec73Start+1) to $($sec73End)"
+Write-Output "S7.3 region: lines $($sec73Start+1) to $($sec73End)"
 
-# Find §0 catalog region (between "## 0." and "## 1.")
+# Find S0 catalog region (between "## 0." and "## 1.")
 $sec0Start = -1
 $sec0End = $lines.Count
 for ($i = 0; $i -lt $lines.Count; $i++) {
     if ($lines[$i] -match '^## 0\.') { $sec0Start = $i }
     elseif ($sec0Start -ge 0 -and $lines[$i] -match '^## 1\.') { $sec0End = $i; break }
 }
-Write-Output "§0 region: lines $($sec0Start+1) to $($sec0End)"
+Write-Output "S0 region: lines $($sec0Start+1) to $($sec0End)"
 
 $fixCount = 0
 $fixLog = @()
 
-# Fix §7.3 occupancy table rows
+# Fix S7.3 occupancy table rows
 for ($i = $sec73Start; $i -lt $sec73End; $i++) {
     $line = $lines[$i]
     # Match rows starting with "| docname |"
@@ -61,7 +61,7 @@ for ($i = $sec73Start; $i -lt $sec73End; $i++) {
                 $oldVers = [regex]::Matches($line, 'v?([0-9]+\.[0-9]+\.[0-9]+)')
                 foreach ($ov in $oldVers) {
                     if ($ov.Groups[1].Value -ne $actual) {
-                        $fixLog += "L$($i+1) §7.3: $docName $($ov.Groups[1].Value) -> $actual"
+                        $fixLog += "L$($i+1) S7.3: $docName $($ov.Groups[1].Value) -> $actual"
                         break
                     }
                 }
@@ -72,7 +72,7 @@ for ($i = $sec73Start; $i -lt $sec73End; $i++) {
     }
 }
 
-# Fix §0 catalog rows - replace version in description
+# Fix S0 catalog rows - replace version in description
 for ($i = $sec0Start; $i -lt $sec0End; $i++) {
     $line = $lines[$i]
     if ($line -match '^\|\s*\[(\d{2}_[a-z_]+)\.md\]') {
@@ -90,7 +90,7 @@ for ($i = $sec0Start; $i -lt $sec0End; $i++) {
                     $oldVers = [regex]::Matches($descCell, 'v([0-9]+\.[0-9]+\.[0-9]+)')
                     foreach ($ov in $oldVers) {
                         if ($ov.Groups[1].Value -ne $actual) {
-                            $fixLog += "L$($i+1) §0: $docName $($ov.Groups[1].Value) -> $actual"
+                            $fixLog += "L$($i+1) S0: $docName $($ov.Groups[1].Value) -> $actual"
                             break
                         }
                     }

@@ -126,46 +126,6 @@ scripts:
   status: registered
   timeout_seconds: 60
   dimensions: []
-- name: oneoff_commit_audit02.py
-  path: oneoff_commit_audit02.py
-  description: User authorized the allow_non_worktree escape hatch (WORKTREE-REQUIRED gate blocks
-  domain: audit
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: oneoff_fix_generator_nonidempotent.py
-  path: oneoff_fix_generator_nonidempotent.py
-  description: 治本：#ARCH-REGEN-NONIDEMPOTENT-001
-  domain: oneoff_fix_generator_nonidempotent.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: oneoff_migrate_four_question_to_design_admission.py
-  path: oneoff_migrate_four_question_to_design_admission.py
-  description: 'ONEOFF: 四问 -> 一问标准 真源迁移（裁定 2026-08-04）'
-  domain: oneoff_migrate_four_question_to_design_admission.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: oneoff_purge_harvest_candidates.py
-  path: oneoff_purge_harvest_candidates.py
-  description: 归档到独立 archive 文件，主 registry 只保留 ~90 个手工候选，瘦身 6.9MB→~300KB。
-  domain: oneoff_purge_harvest_candidates.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
-- name: oneoff_update_four_question_text_fields.py
-  path: oneoff_update_four_question_text_fields.py
-  description: 策略：q1 保留并改名为"一问标准 q1"；q2/q3/q4 直接删除（含证据文本），不留(已废)历史。
-  domain: oneoff_update_four_question_text_fields.py
-  execution_plane: warm-path
-  status: registered
-  timeout_seconds: 60
-  dimensions: []
 - name: ops_guard.py
   path: ops_guard.py
   description: 根因：git_guard 只拦 git 子命令——Remove-Item / del / os.remove / shutil.rmtree
@@ -5609,6 +5569,46 @@ scripts:
 - name: _archive/migration/verify_migration_alignment.py
   path: _archive/migration/verify_migration_alignment.py
   description: 基于迁移登记表(migration-registry.yaml)的old_path→new_path映射，
+  domain: _archive
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/oneoff/oneoff_commit_audit02.py
+  path: _archive/oneoff/oneoff_commit_audit02.py
+  description: User authorized the allow_non_worktree escape hatch (WORKTREE-REQUIRED gate blocks
+  domain: audit
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/oneoff/oneoff_fix_generator_nonidempotent.py
+  path: _archive/oneoff/oneoff_fix_generator_nonidempotent.py
+  description: 治本：#ARCH-REGEN-NONIDEMPOTENT-001
+  domain: _archive
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/oneoff/oneoff_migrate_four_question_to_design_admission.py
+  path: _archive/oneoff/oneoff_migrate_four_question_to_design_admission.py
+  description: 'ONEOFF: 四问 -> 一问标准 真源迁移（裁定 2026-08-04）'
+  domain: _archive
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/oneoff/oneoff_purge_harvest_candidates.py
+  path: _archive/oneoff/oneoff_purge_harvest_candidates.py
+  description: 归档到独立 archive 文件，主 registry 只保留 ~90 个手工候选，瘦身 6.9MB→~300KB。
+  domain: _archive
+  execution_plane: warm-path
+  status: registered
+  timeout_seconds: 60
+  dimensions: []
+- name: _archive/oneoff/oneoff_update_four_question_text_fields.py
+  path: _archive/oneoff/oneoff_update_four_question_text_fields.py
+  description: 策略：q1 保留并改名为"一问标准 q1"；q2/q3/q4 直接删除（含证据文本），不留(已废)历史。
   domain: _archive
   execution_plane: warm-path
   status: registered

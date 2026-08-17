@@ -75,7 +75,7 @@ def get_deleted_files() -> list[str]:
 
 
 def get_file_content_at_head(rel_path: str) -> str | None:
-    """获取已删除文件列表."""
+    """获取 HEAD 版本文件内容."""
     try:
         result = subprocess.run(
             ["git", "show", f"HEAD:{rel_path}"], capture_output=True, text=True, cwd=str(REPO_ROOT), timeout=15
@@ -85,7 +85,6 @@ def get_file_content_at_head(rel_path: str) -> str | None:
     except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
         pass
     return None
-    "获取 HEAD 版本文件内容."
 
 
 def check_permanent_deletions() -> list[dict]:
@@ -122,7 +121,6 @@ def check_permanent_deletions() -> list[dict]:
             if isinstance(fm, dict) and fm.get("ttl") == "permanent":
                 findings.append({"file": rel_path, "ttl": "permanent", "severity": "CRITICAL"})
     return findings
-    "检查永久文件删除."
 
 
 def main() -> None:
@@ -142,7 +140,6 @@ def main() -> None:
     if args.warn_only:
         sys.exit(EXIT_PASS)
     sys.exit(1 if findings else 0)
-    "入口函数."
 
 
 if __name__ == "__main__":
