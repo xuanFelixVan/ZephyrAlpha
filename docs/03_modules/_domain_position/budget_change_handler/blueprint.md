@@ -24,7 +24,7 @@ responsibility_domain:
 > **module_id**: MOD-POS-022 | **域**: D_POSITION | **层**: L03 仓位管理
 > **优先级**: P0 | **成熟度**: design | **建设标记**: 🟡 待施工
 > **SSoT**: depgraph MOD-POS-022 | **设计真源**: [30_multi_strategy_concurrency.md](../../../02_enterprise_architecture/07_trading_decision_architecture/design_memos/30_multi_strategy_concurrency.md) §2.4（权重变动操作流程·三级升级）
-> **上游触发**: [RegimeMetaAllocator blueprint](../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007 §2.2 BudgetChanged 事件 (E-PA-07)
+> **上游触发**: [RegimeMetaAllocator blueprint](../../_domain_portfolio_alloc/regime_meta_allocator/blueprint.md) MOD-PA-007 §2.2 BudgetChanged 事件 (E-PA-07)
 > **执行目标**: [StrategyBook blueprint](../strategy_book/blueprint.md) MOD-POS-020 §3.3 rebalance_to_budget 接口
 
 ## 1. 定位

@@ -1,8 +1,18 @@
 ---
 module_id: MOD-RK-14
+title: "AI/Agent 风险监控器蓝图 — 交易 Agent 行为越界检测"
 doc_type: blueprint
 status: Active
+version: "0.1.0"
 ttl: permanent
+layer: L02_risk
+layer_name: risk
+functional_domain: risk
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-05"
+last_updated: "2026-08-17"
+blueprint_level: module
 blueprint_id: MOD-RK-14
 domain_id: D_RISK
 path: src/zephyr/risk/core/ai_agent_monitor.py

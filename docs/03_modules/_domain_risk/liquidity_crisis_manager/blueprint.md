@@ -1,8 +1,18 @@
 ---
 module_id: MOD-RK-21
+title: "流动性危机管理器蓝图 — 37号流动性危机协议 6 项算法施工落地"
 doc_type: blueprint
 status: Active
+version: "0.1.0"
 ttl: permanent
+layer: L02_risk
+layer_name: risk
+functional_domain: risk
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-14"
+last_updated: "2026-08-17"
+blueprint_level: module
 blueprint_id: MOD-RK-21
 domain_id: D_RISK
 path: src/zephyr/risk/core/liquidity_crisis_manager.py

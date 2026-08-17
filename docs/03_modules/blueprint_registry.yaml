@@ -1812,29 +1812,29 @@ blueprints:
   file_path: 03_modules/_domain_risk/stress_test_engine/blueprint.md
 - module_id: MOD-RK-13
   name: crowding_monitor
-  title: ''
+  title: 拥挤度监控器蓝图 — 跨参与者因子拥挤度检测
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/crowding_monitor/blueprint.md
 - module_id: MOD-RK-14
   name: ai_agent_monitor
-  title: ''
+  title: AI/Agent 风险监控器蓝图 — 交易 Agent 行为越界检测
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/ai_agent_monitor/blueprint.md
 - module_id: MOD-RK-15
   name: tail_risk_monitor
@@ -1864,29 +1864,29 @@ blueprints:
   file_path: 03_modules/_domain_risk/risk_decomposition/blueprint.md
 - module_id: MOD-RK-18
   name: model_risk_audit
-  title: ''
+  title: 模型风险审计器蓝图 — 交易预测模型漂移/衰退/偏差审计
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/model_risk_audit/blueprint.md
 - module_id: MOD-RK-19
   name: operational_risk_monitor
-  title: ''
+  title: 操作风险监控器蓝图 — 操作风险阈值告警解释层
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/operational_risk_monitor/blueprint.md
 - module_id: MOD-RK-20
   name: daily_auditor
@@ -1903,29 +1903,29 @@ blueprints:
   file_path: 03_modules/_domain_risk/daily_auditor/blueprint.md
 - module_id: MOD-RK-21
   name: liquidity_crisis_manager
-  title: ''
+  title: 流动性危机管理器蓝图 — 37号流动性危机协议 6 项算法施工落地
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md
 - module_id: MOD-RK-22
   name: liquidity_monitor
-  title: ''
+  title: 流动性监控器蓝图 — 纯机制零参数流动性监控
   summary: ''
-  layer: ''
-  functional_domain: ''
+  layer: L02_risk
+  functional_domain: risk
   blueprint_status: Active
   blueprint_level: module
   priority: P2
-  version: ''
+  version: 0.1.0
   generation: ''
-  last_updated: ''
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_risk/liquidity_monitor/blueprint.md
 - module_id: MOD-RK-23
   name: strategy_deviation_monitor
@@ -2408,14 +2408,14 @@ summary:
     L_BACKTEST: 8
     L1_foundation: 38
     ? ''
-    : 14
+    : 8
     L0_infrastructure: 18
     L3_application: 1
     L01_foundation: 6
     L02_pf_alloc: 4
     L02_portfolio_core: 5
     L03_position: 14
-    L02_risk: 12
+    L02_risk: 18
     L07_reporting: 9
     L03_sell_decision: 11
     L_SIMULATION: 3
@@ -2425,6 +2425,35 @@ summary:
     已于 2026-07-18 退役）
   last_recomputed: '2026-08-17'
 changelog:
+- version: 2.7.18
+  date: '2026-08-17'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 173 份 blueprint.md；登记项相对上一版有
+    24 条差异摘要'
+  - 'MOD-RK-13.title: [] → [拥挤度监控器蓝图 — 跨参与者因子拥挤度检测]'
+  - 'MOD-RK-13.version: [] → [0.1.0]'
+  - 'MOD-RK-13.last_updated: [] → [2026-08-17]'
+  - 'MOD-RK-13.layer: [] → [L02_risk]'
+  - 'MOD-RK-14.title: [] → [AI/Agent 风险监控器蓝图 — 交易 Agent 行为越界检测]'
+  - 'MOD-RK-14.version: [] → [0.1.0]'
+  - 'MOD-RK-14.last_updated: [] → [2026-08-17]'
+  - 'MOD-RK-14.layer: [] → [L02_risk]'
+  - 'MOD-RK-18.title: [] → [模型风险审计器蓝图 — 交易预测模型漂移/衰退/偏差审计]'
+  - 'MOD-RK-18.version: [] → [0.1.0]'
+  - 'MOD-RK-18.last_updated: [] → [2026-08-17]'
+  - 'MOD-RK-18.layer: [] → [L02_risk]'
+  - 'MOD-RK-19.title: [] → [操作风险监控器蓝图 — 操作风险阈值告警解释层]'
+  - 'MOD-RK-19.version: [] → [0.1.0]'
+  - 'MOD-RK-19.last_updated: [] → [2026-08-17]'
+  - 'MOD-RK-19.layer: [] → [L02_risk]'
+  - 'MOD-RK-21.title: [] → [流动性危机管理器蓝图 — 37号流动性危机协议 6 项算法施工落地]'
+  - 'MOD-RK-21.version: [] → [0.1.0]'
+  - 'MOD-RK-21.last_updated: [] → [2026-08-17]'
+  - 'MOD-RK-21.layer: [] → [L02_risk]'
+  - 'MOD-RK-22.title: [] → [流动性监控器蓝图 — 纯机制零参数流动性监控]'
+  - 'MOD-RK-22.version: [] → [0.1.0]'
+  - 'MOD-RK-22.last_updated: [] → [2026-08-17]'
+  - 'MOD-RK-22.layer: [] → [L02_risk]'
 - version: 2.7.17
   date: '2026-08-17'
   changes:

@@ -1,8 +1,18 @@
 ---
 module_id: MOD-RK-18
+title: "模型风险审计器蓝图 — 交易预测模型漂移/衰退/偏差审计"
 doc_type: blueprint
 status: Active
+version: "0.1.0"
 ttl: permanent
+layer: L02_risk
+layer_name: risk
+functional_domain: risk
+owner: ZephyrAlpha-Owner
+created_by: agent
+date: "2026-08-05"
+last_updated: "2026-08-17"
+blueprint_level: module
 blueprint_id: MOD-RK-18
 domain_id: D_RISK
 path: src/zephyr/risk/core/model_risk_audit.py
