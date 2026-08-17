@@ -5,7 +5,7 @@ title: AI 层域边界定义
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 date: 2026-08-17
 topic: domain_boundary_definition
 scope: 09_ai_architecture
@@ -144,6 +144,7 @@ scope: 09_ai_architecture
 - **成本**：零迁移；标签词表 + 一次存量打标 + extract 标签过滤。
 - **风险**："哪些算 AI 核心域"需要一份显式清单（本文 §3.4 给出草案）；标签与域两套口径需防 drift。
 - **与约束兼容性**：兼容全部约束；与词表现状（已有 AI/智能域分组）无缝衔接。
+- **草稿源支撑（横切三角模型）**：治理域草稿确立「横切三角」——D-GOVERNANCE 管规则（系统怎么管规则）、D-SECURITY 防攻击（系统怎么防攻击）、D-AUTONOMY-CORE 管 AI 行为（AI 怎么管自己），三顶点互相依赖但职责分离；三角不变量：自治不执行规则（只管行为）、安全不制定规则（只防攻击）、治理不直接执行（只管规则+审计）（源：`.runtime/aidrafts/09_drafts_audit/依赖图/27-D-GOVERNANCE-治理域.md` §0 相邻域边界表/§6.1 关键决策/§6.4 三角不变量；`21-D-KNOWLEDGE-知识域.md` §0；2026-08-17 实测读取）。对 Q1 的含义：AI 相关设施天然横跨三个各自独立的顶点域（如 llm_defense 既是安全防攻击设施又是 AI 设施），选项 B 将设施收拢进单一 D_AI 域与三角不变量存在结构性冲突；选项 C「核心域各自独立 + 横切标签标出散布设施」与三角模型同构——顶点域不动，AI 层以派生视图叠加。
 
 #### 三选项对比矩阵
 
@@ -169,6 +170,8 @@ scope: 09_ai_architecture
 | C2 合并入 D_INTELLIGENCE | 蓝图节点迁 D_INTELLIGENCE，注册表条目改挂，退役 D_KNOWLEDGE | 小（1 节点+1 注册表条目+1 目录） | 丢失"知识管理"独立语义；词表「AI/智能域」分组需同步改 | 与"知识=智能层子能力"观点兼容 |
 | C3 退役 | 参照 ARCH-045（D_SIGLEGACY 删除）先例退役，蓝图归入 D_INTEGRATION（与代码同域） | 小 | 若 13 号文落地知识库需重建域 | 与"代码在哪域就在哪"的物理一致原则兼容 |
 
+**草稿源支撑（记忆 vs 知识正交边界）**：知识域草稿明确 D-KNOWLEDGE 与 D-AUTONOMY-05 的正交拆分——D-AUTONOMY-05 管「AI 怎么记住」（存储机制/检索机制/记忆生命周期，类比海马体，FAISS/SQLite/FTS5），D-KNOWLEDGE 管「知识本身是什么、记住什么」（知识结构/知识关系/知识质量，类比新皮层，知识图谱/因子库/策略库/教训库）；草稿 §6 决策 1：「知识域独立于自治域——自治管怎么记住，知识管记住什么」，且 §1 已为知识本体规划 K01~K14 子模块（知识图谱/因子知识库/策略知识库/教训库/RAG/知识蒸馏等）（源：`.runtime/aidrafts/09_drafts_audit/依赖图/21-D-KNOWLEDGE-知识域.md` §0 与 D-AUTONOMY 的边界表/§6 决策 1，2026-08-17 实测读取）。对选项的含义：C1 保留 = 为草稿已规划的知识本体留位，与正交边界兼容；C2 合并入 D_INTELLIGENCE 与草稿的边界划分不兼容（草稿中知识的正交对方是自治域记忆机制，而非智能域）；C3 退役则丢失草稿已确立的「知识本体」语义载体，13 号文若施工知识库需重建该语义。
+
 **分析倾向（供裁定参考）**：C1 与 C3 各有依据——若 13 号文模块工厂路线确认施工，C1 留位成本最低；若 Phase 0 不施工知识库，C3 更符合物理一致。C2 改动语义最大、收益最小。**最终裁定：待裁定（与 13 号文路线联动）**。
 
 ### 3.3 Q3 衍生边界问题分析
@@ -176,13 +179,17 @@ scope: 09_ai_architecture
 | # | 问题 | 现状实测 | 选项 | 分析倾向（供参考） |
 |---|---|---|---|---|
 | D1 | D_SECURITY_LLM 空域 | 注册表有 MOD-LLM_SECURITY + 代码 `security/llm_defense/`（L0~L8），depgraph 0 节点，代码挂 D_SECURITY(171，超容) | ①代码节点改挂 D_SECURITY_LLM（顺注册表）②退役空域、维持挂 D_SECURITY（顺物理） | 倾向①：D_SECURITY 已超容（171/150），LLM 防御独立成域正好减压，且 09 号文以 L0~L8 独立施工 |
-| D2 | D_INTEGRATION_GATEWAY 空域 | 注册表有 MOD-INF-013（11 MCP 服务端），depgraph 0 节点，MCP 代码挂 D_INTEGRATION(71) | ①MCP 节点改挂 ②退役空域 | 倾向①：D_INTEGRATION 未超容但 MCP 是 10 号文的独立施工面，语义独立 |
+| D2 | D_INTEGRATION_GATEWAY 空域 | 注册表有 MOD-INF-013（11 MCP 服务端），depgraph 0 节点，MCP 代码挂 D_INTEGRATION(71)；草稿源两版裁定相反（见表后裁定史注） | ①MCP 节点改挂 ②退役空域 ③归 D_AUTONOMY_CORE（顺草稿较新版裁定） | 倾向①（依据：D_INTEGRATION 未超容、MCP 是 10 号文独立施工面、语义独立）；草稿裁定史指向③，两套依据并存待 Owner 权衡 |
 | D3 | D_BEHAVIORAL_AUDIT 空域 | 注册表指向 `gov_drift/detector_core/`，depgraph 0 节点 | ①补挂 ②退役并入 D_GOV_DRIFT | 倾向②：功能与 D_GOV_DRIFT(72) 同源同路径，独立域语义弱 |
 | D4 | intelligence_governance 25 文件挂 D_GOVERNANCE(467，超容) | 代码在 `src/zephyr/governance/intelligence_governance/` | ①维持现归属+横切标签 ②改挂 D_INTELLIGENCE ③新建子域 | 倾向①：05 号文职责是包整合（统一入口），域迁移超出其范围；打标签即可见；③=过度工程 |
 | D5 | D_ORCHESTRATOR 角色界定 | 72 模块（生命周期/沙箱/回滚/健康监控）production；61 号备忘冻结"编排系统" | ①维持域+文档明确"生命周期基础设施≠编排"②域改名去 orchestrator 语义 | 倾向①：改名成本高（路径/注册表/蓝图全链路），语义澄清零成本 |
 | D6 | D_ML_SERVE 未入 target_layer 词表 | 词表 44 值无 D_ML_SERVE；注册表与 depgraph 均有此域（7 模块） | ①词表补登 ②不管 | 倾向①：词表自述与注册表/契约保持一致的 SSoT 链路，缺值=链路断裂 |
 
 以上 D1~D6 均为**待裁定**；D1~D3 若裁定"改挂/补挂"，执行走 TRAE-054 协议（apply_depgraph.py），不属于本文档施工范围。
+
+**MCP/A2A 归属裁定史（草稿源，D2 选项③的依据）**：集成域草稿两版对 MCP/A2A 归属裁定相反——27-D-INTEGRATION（较早版）将 D-INTEGRATION-08 MCP Server（P0）与 D-INTEGRATION-09 A2A Protocol Bridge（P1）登记在集成域内（理由：MCP 是 AI 工具集成协议、Agent 间通信是集成能力）；25-D-INTEGRATION（较新版）§6.1/§6.3 裁定 MCP 不入集成域骨架——MCP 是 AI 工具调用协议、属「Agent 能力暴露层」，非 INV-006 定义的「前后端唯一接触点」；§6.5 处置表将 MCP Server 与 A2A Bridge 同归 D-AUTONOMY-CORE（MCP 是 Agent 能力、Agent 间通信是自治能力）（源：`.runtime/aidrafts/09_drafts_audit/依赖图/25-D-INTEGRATION-集成域.md` §6.1/§6.3/§6.5、`27-D-INTEGRATION-集成域.md` §1 子模块表/§6 决策 3~4，2026-08-17 实测读取）。当前三口径并存：depgraph 现挂（MCP→D_INTEGRATION 71 模块、A2A→D_INFRA_A2A 72 模块）｜注册表登记（D_INTEGRATION_GATEWAY 空域，MOD-INF-013 共 11 个 MCP 服务端）｜草稿较新版裁定（归 D-AUTONOMY-CORE）。A2A 的口径冲突（depgraph D_INFRA_A2A vs 草稿裁定 D-AUTONOMY-CORE）超出 D1~D3 空域归位范围，登记为开放问题 Q9。
+
+**治理域草稿两版差异定性（Q4 的分析素材）**：治理域草稿存在两版——27-D-GOVERNANCE 是能力定位书收敛版（8 子模块 GOV-001~008，按 C-043/C-030/C-031 + INV-016/INV-017 收敛，明确不含依赖图基础设施与量子/范畴论模块）；29-D-GOVERNANCE 是百科全书版（§1 子模块清单含 D-GOVERNANCE-01~25 + M1/M4 依赖图基础设施系列 + D25/D27/D29/D76 量子/范畴论模块，另含治理机制细节：§7 合规约束、§9 治理三层边界、§10 变更审批流、§11 漂移检测纠正闭环、§12 AI 自治边界、§13 激活时序、§14 三方对齐、§15 治理自动化——治理机制真源所在）；27 版 §6.5 自带两版差异表（子模块数/依赖图模块/量子模块/审计账本/DDD 铁律/决策溯源/宪法守卫/合规审计 8 个维度）（源：`.runtime/aidrafts/09_drafts_audit/依赖图/27-D-GOVERNANCE-治理域.md` §6.5、`29-D-GOVERNANCE-治理域.md` §1 与 §7~§15，2026-08-17 实测读取）。对 Q4 的含义：若治理域按 27 收敛口径落地，D_GOVERNANCE 超容（467/150）压力下 intelligence_governance 不宜再向治理域语义内生长，D4 倾向①（维持现归属+横切标签）与之兼容；若按 29 百科全书口径落地，域容量进一步膨胀，Q4 各选项的容量权重需重估。两版以哪版为准超出本文裁定范围，登记为开放问题 Q10；05 号文若需引用治理机制细节，29 版是现成素材源（草稿源）。
 
 ### 3.4 裁定依据汇总
 
@@ -194,6 +201,10 @@ scope: 09_ai_architecture
 | 容量现状 | 74 域中 6 个超容（domain_index 容量列口径：D_GOVERNANCE 467/150、D_GOV_SCRIPTS 438/150、D_GOV_CODE_QUALITY 244/150、D_DATA 209/150、D_GOV_AUDIT 200/150、D_SHARED 188/150；extract 的 module_count 与容量列计数口径不同，容量状态以 domain_index 为准） | 反对新增巨型域（B）；支持空域减压（D1） |
 | 已定稿裁定 | 61 号备忘 §2.3 不做 agent 编排系统；00_index §4 架构手动来 | D5 倾向①；全部裁定权归 Owner |
 | 过度工程红线 | 通用规则 5 | 反对 B、反对 D4③ |
+| 横切三角模型（草稿源） | 治理管规则/安全防攻击/自治管行为；三角不变量：自治不执行规则、安全不制定规则、治理不直接执行（27-D-GOVERNANCE §0/§6.1/§6.4 + 21-D-KNOWLEDGE §0） | 选项 C（与三角同构）；反对 B（收拢单一域打破顶点职责分离） |
+| 记忆/知识正交边界（草稿源） | D-AUTONOMY-05 管「怎么记住」（存取机制）vs D-KNOWLEDGE 管「记住什么」（知识结构）（21-D-KNOWLEDGE §0/§6 决策 1） | Q2 选项 C1（保留留位）的支撑素材 |
+| MCP/A2A 归属裁定史（草稿源） | 25-D-INTEGRATION §6.3/§6.5：MCP 属 Agent 能力暴露层（非 INV-006 接触点）归 D-AUTONOMY-CORE，A2A 同归；27-D-INTEGRATION 较早版归集成域 | Q3 D2 选项③；开放问题 Q9 登记 |
+| 治理域草稿两版差异（草稿源） | 27 版=能力定位书收敛版（8 子模块）；29 版=百科全书版（机制真源所在）；27 §6.5 自带差异表 | Q4 分析素材；开放问题 Q10 登记 |
 
 **AI 核心域清单草案（若裁定选项 C，此清单为「AI 层=核心域∪标签」的核心域部分）**：
 D_AUTONOMY_CORE、D_INTELLIGENCE、D_ML_TRAIN、D_ML_SERVE、D_AUTONOMY_PERM、D_KNOWLEDGE（依 Q2 裁定联动）、D_SECURITY_LLM（依 D1 裁定联动）。
@@ -277,12 +288,14 @@ D_AUTONOMY_CORE、D_INTELLIGENCE、D_ML_TRAIN、D_ML_SERVE、D_AUTONOMY_PERM、D
 |---|------|------|------|
 | Q1 | AI 层是横切视图还是独立域？ | 待裁定 | §3.1 三选项分析：A 横切标签 / B 独立域 D_AI / C 混合；分析倾向 C；Owner 拍板后回填 |
 | Q2 | D_KNOWLEDGE（1 蓝图节点、0 生产节点）保留、合并还是退役？ | 待裁定 | §3.2 三选项（C1 保留/C2 合并入 D_INTELLIGENCE/C3 退役）；与 13 号文模块工厂路线联动 |
-| Q3 | D_SECURITY_LLM / D_INTEGRATION_GATEWAY / D_BEHAVIORAL_AUDIT 三个空域如何归位？ | 待裁定 | §3.3 D1~D3：代码改挂顺注册表 vs 退役空域顺物理 |
-| Q4 | intelligence_governance 25 文件的域归属？ | 待裁定 | §3.3 D4：维持 D_GOVERNANCE+标签（倾向）/ 改挂 D_INTELLIGENCE / 新建子域（过度工程）；与 05 号文边界联动 |
+| Q3 | D_SECURITY_LLM / D_INTEGRATION_GATEWAY / D_BEHAVIORAL_AUDIT 三个空域如何归位？ | 待裁定 | §3.3 D1~D3：代码改挂顺注册表 vs 退役空域顺物理；D2 增选项③归 D_AUTONOMY_CORE（顺草稿较新版裁定，见 §3.3 裁定史注） |
+| Q4 | intelligence_governance 25 文件的域归属？ | 待裁定 | §3.3 D4：维持 D_GOVERNANCE+标签（倾向）/ 改挂 D_INTELLIGENCE / 新建子域（过度工程）；与 05 号文边界联动；治理域草稿两版差异见 §3.3 两版差异注（Q10 联动） |
 | Q5 | D_ORCHESTRATOR 域角色如何与 61 号备忘"不做编排"裁定对齐？ | 待裁定 | §3.3 D5：语义澄清（倾向）vs 域改名 |
 | Q6 | D_ML_SERVE 是否补登 target_layer_vocabulary.yaml？ | 待裁定 | §3.3 D6：词表 44 值缺此域，SSoT 链路断裂 |
 | Q7 | 02 号文 Q4（depgraph 节点级计数查询入口）已由本文实测解答——`extract_depgraph.py --summary/--domains` 即入口，02 号文 §3.3 口径是否回填为节点级？ | 待用户裁定 | 本文只读引用 02 号文，不代改；回填与否及回填时机由 Owner/02 号文维护者决定 |
 | Q8 | 04/05/08 号文在 U1 裁定落地前的接口假设（§4.6）是否与各自填充口径冲突？ | 待裁定 | 若其他子代理已按不同假设填充，以 Owner 裁定为准回填对齐 |
+| Q9 | A2A 设施归属口径：depgraph 现挂 D_INFRA_A2A（72 模块）vs 草稿源 25-D-INTEGRATION §6.5 裁定归 D-AUTONOMY-CORE，以哪个为准？ | 待裁定 | §3.3 裁定史注；与 Q3/D2（MCP 归位）联动——草稿较新版裁定中 MCP/A2A 同归 D-AUTONOMY-CORE |
+| Q10 | 治理域草稿两版（27 能力定位书收敛版 8 子模块 vs 29 百科全书版）以哪版为准？ | 待裁定 | §3.3 两版差异注；影响 Q4（intelligence_governance 归属）的容量权重与 05 号文整合的治理机制引用口径 |
 
 ---
 
@@ -292,6 +305,7 @@ D_AUTONOMY_CORE、D_INTELLIGENCE、D_ML_TRAIN、D_ML_SERVE、D_AUTONOMY_PERM、D
 |------|------|------|------|
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 背景（depgraph 74 域/3826 模块经 extract_depgraph.py 实测，AI 相关 17 域现状表，depgraph 设施盘点）+ §3 设计决策（Q1 横切/独立/混合三选项对比矩阵、Q2 D_KNOWLEDGE 三选项、Q3 衍生问题 D1~D6、裁定依据汇总、替代方案）+ §4 施工计划（裁定流程+三分支执行路径）+ §5 不做什么 + §6 开放问题 Q1~Q8（全部待裁定，无假裁定） | AI-FILL-03 按指令集填充裁定类文档；U1 解锁点前置工作 |
+| 2026-08-17 | 0.2.1 | 回填草稿源选项分析素材（纯素材补充，全部维持待裁定）：§3.1 选项 C 增横切三角模型支撑（治理管规则/安全防攻击/自治管行为+三角不变量，源 27-D-GOVERNANCE §0/§6.1/§6.4、21-D-KNOWLEDGE §0）；§3.2 Q2 增记忆 vs 知识正交边界素材（D-AUTONOMY-05 管"怎么记住"vs D-KNOWLEDGE 管"记住什么"，源 21-D-KNOWLEDGE §0/§6 决策 1）；§3.3 增 MCP/A2A 归属裁定史（25-D-INTEGRATION §6.1/§6.3/§6.5 裁定归 D-AUTONOMY-CORE，27-D-INTEGRATION 较早版归集成域；D2 增选项③）与治理域 27/29 两版差异定性（能力定位书收敛版 vs 百科全书版，27 §6.5 自带差异表）；§3.4 依据汇总补 4 行；§6 开放问题 +Q9（A2A 归属口径冲突）+Q10（治理域草稿两版取舍） | AI-FILL-03-R2 按指令回填 09_drafts_audit 草稿源素材（已逐条实测核实）；不改变任何裁定状态，doc_type 不动 |
 
 ---
 
