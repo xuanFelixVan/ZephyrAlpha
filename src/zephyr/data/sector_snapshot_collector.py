@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §sector_snapshot
 # [MODULE] zephyr.data.sector_snapshot_collector
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] clickhouse_driver; tqcenter (external E:\tdx\PYPlugins\user); zephyr.data.ch_config; zephyr.data.sector_ranking_engine
+# [DEPENDENCIES] tqcenter (external E:\tdx\PYPlugins\user); zephyr.data.ch_writer; zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.data.provider_base; zephyr.data.sector_ranking_engine
 # [CONSUMERS] zephyr.data.sector_ranking_engine (reads sector_snapshot table)
 # [STARTUP] manual
 # [MATURITY] production
@@ -54,8 +54,12 @@ log = logging.getLogger(__name__)
 _TQCENTER_PATH = r"E:\tdx\PYPlugins\user"
 _BEIJING_TZ = timezone(timedelta(hours=8))
 
-_CH_DB = "c1_market"
-_CH_TABLE = f"{_CH_DB}.sector_snapshot"
+# 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024，
+# 2026-08-17 AI-04 审计治本：消除硬编码库表名 + 裸 clickhouse_driver.Client）
+from zephyr.data.table_registry import get_registry as _get_table_registry
+
+_CH_TABLE = _get_table_registry().table("market_sector_snapshot_880")
+_TBL_SECTOR_CONSTITUENT = _get_table_registry().table("market_sector_constituent_880")
 
 POLL_INTERVAL = 30
 PUSH_POOL_LIMIT = 99
@@ -98,16 +102,19 @@ PARTITION BY toYYYYMM(trade_date)
 ORDER BY (sector_code, timestamp)
 """
 
-SQL_INSERT = (
-    f"INSERT INTO {_CH_TABLE} "
-    "(trade_date,timestamp,sector_code,market_type,"
-    "now_price,open_price,max_price,min_price,last_close,before_5min_now,average_price,"
-    "volume,now_vol,amount,up_home,down_home,inside,outside,zangsu,"
-    "data_source,fetched_at) VALUES"
-)
+# 快照表列清单（与 parse_snapshot 产出的 20 元组一一对应）；
+# 写入统一走 ch_writer.write_result（FetchResult 通道，裁定 #ARCH-CH-024 同族模式：
+# writer 账号 RBAC + 自动列过滤 + CH 不可达时本地落盘兜底），不再手写 INSERT SQL。
+_SNAPSHOT_COLUMNS = [
+    "trade_date", "timestamp", "sector_code", "market_type",
+    "now_price", "open_price", "max_price", "min_price", "last_close",
+    "before_5min_now", "average_price", "volume", "now_vol", "amount",
+    "up_home", "down_home", "inside", "outside", "zangsu",
+    "data_source", "fetched_at",
+]
 
 SQL_ALL_SECTORS = (
-    f"SELECT DISTINCT sector_code FROM {_CH_DB}.sector_constituent "
+    f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} "
     f"ORDER BY sector_code"
 )
 
@@ -212,46 +219,53 @@ def parse_snapshot(snap: dict, sector_code: str, market_type: str,
 
 
 # ---------- ClickHouse 操作 ----------
+# 访问协议（2026-08-17 AI-04 审计治本）：
+#   读 → ch_reader.query（reader 账号 + FINAL 去重，只读安全约束）
+#   写 → ch_writer.write_result（writer 账号 RBAC + 本地落盘兜底，#ARCH-CH-027）
+#   DDL → ch_writer.query（幂等 CREATE IF NOT EXISTS）
+# 禁止裸 clickhouse_driver.Client（绕过配置真源/账号分层/降级链）。
 
-def _get_ch_client():
-    """从 ch_config 真源加载配置创建 ClickHouse 客户端（裁定 #ARCH-CH-024）。"""
-    from clickhouse_driver import Client
-    from zephyr.data.ch_config import load_ch_config
-    cfg = load_ch_config()
-    c = Client(
-        host=cfg["host"],
-        port=int(cfg["port"]),
-        user=cfg["user"],
-        password=cfg["password"],
-        database=cfg["database"],
-        connect_timeout=10,
-        send_receive_timeout=30,
-    )
-    c.execute("SELECT 1")
-    return c
-
-
-def _create_table(client) -> None:
-    """建表 sector_snapshot（幂等）。"""
-    client.execute(SQL_CREATE_TABLE)
+def _create_table() -> None:
+    """建表 sector_snapshot（幂等，走 ch_writer DDL 通道）。"""
+    from zephyr.data import ch_writer
+    ch_writer.query(SQL_CREATE_TABLE)
     log.info("表 sector_snapshot 已就绪")
 
 
-def _insert_snapshots(client, rows: list[tuple]) -> int:
-    """批量写入快照记录。"""
+def _insert_snapshots(rows: list[tuple]) -> int:
+    """批量写入快照记录（ch_writer.write_result 统一入口）。
+
+    Returns:
+        成功写入行数；CH 提交失败返回 0（数据已本地落盘待回灌，不丢失）。
+    """
     if not rows:
         return 0
-    client.execute(SQL_INSERT, rows)
-    return len(rows)
+    from zephyr.data import ch_writer
+    from zephyr.data.provider_base import FetchResult
+    result = FetchResult(
+        table=_CH_TABLE,
+        columns=_SNAPSHOT_COLUMNS,
+        rows=rows,
+        last_key="",
+        elapsed_sec=0.0,
+    )
+    ok = ch_writer.write_result(result)
+    return len(rows) if ok else 0
 
 
 def _get_all_sector_codes() -> list[str]:
-    """从 sector_constituent 表获取全部板块代码。"""
-    client = _get_ch_client()
-    rows = client.execute(SQL_ALL_SECTORS)
-    codes = [r[0] for r in rows]
-    client.disconnect()
-    return codes
+    """从 sector_constituent 表获取全部板块代码（ch_reader 只读路径）。
+
+    CH 不可达时显式抛错（ch_reader 失败静默返回空串，探活仍空=故障；
+    防 0 只板块假成功导致采集器静默空转，对齐原裸 Client fail-visible 语义）。
+    """
+    from zephyr.data import ch_reader
+    tsv = ch_reader.query(SQL_ALL_SECTORS)
+    if not tsv or not tsv.strip():
+        if not (ch_reader.query("SELECT 1") or "").strip():
+            raise RuntimeError("ClickHouse 不可达（sector_constituent 探活无响应）")
+        return []
+    return [line.strip() for line in tsv.strip().split("\n") if line.strip()]
 
 
 # ---------- tqcenter 初始化 ----------
@@ -270,7 +284,6 @@ def _init_tqcenter():
 def _poll_worker(tq, all_codes: list[str], stop_event: threading.Event):
     """轮询线程：每 POLL_INTERVAL 秒扫一轮全量板块。"""
     log.info("轮询线程启动，共 %d 只板块，间隔 %ds", len(all_codes), POLL_INTERVAL)
-    client = _get_ch_client()
 
     while not stop_event.is_set():
         round_start = time.time()
@@ -291,20 +304,19 @@ def _poll_worker(tq, all_codes: list[str], stop_event: threading.Event):
                 if error_count <= 2:
                     log.warning("轮询 %s 失败: %s", code, str(e)[:80])
 
-        _write_poll_batch(client, rows, len(all_codes), error_count, round_start)
+        _write_poll_batch(rows, len(all_codes), error_count, round_start)
         _wait_next_round(stop_event, round_start)
 
-    client.disconnect()
     log.info("轮询线程已停止")
 
 
-def _write_poll_batch(client, rows: list[tuple], total: int,
+def _write_poll_batch(rows: list[tuple], total: int,
                       errors: int, round_start: float) -> None:
     """写入轮询批次并日志。"""
     if not rows:
         return
     try:
-        n = _insert_snapshots(client, rows)
+        n = _insert_snapshots(rows)
         log.info("轮询完成: 采集 %d/%d, 写入 %d, 错误 %d, 耗时 %.1fs",
                  len(rows), total, n, errors, time.time() - round_start)
     except Exception as e:  # noqa: BLE001
@@ -346,19 +358,17 @@ def _push_worker(tq, push_codes: list[str], stop_event: threading.Event):
         log.error("subscribe_hq 失败: %s", str(e)[:200])
         return
 
-    client = _get_ch_client()
-    processed = _process_push_loop(tq, client, stop_event)
-    client.disconnect()
+    processed = _process_push_loop(tq, stop_event)
     log.info("推送线程已停止，共处理 %d 条", processed)
 
 
-def _process_push_loop(tq, client, stop_event: threading.Event) -> int:
+def _process_push_loop(tq, stop_event: threading.Event) -> int:
     """推送处理主循环，返回处理总数。"""
     processed = 0
     while not stop_event.is_set():
         code = _pop_push_queue()
         if code:
-            processed += _handle_push_code(tq, client, code, processed)
+            processed += _handle_push_code(tq, code, processed)
         else:
             time.sleep(0.5)  # noqa: m10-time-trigger  采集器服务循环,非reconciler
     return processed
@@ -372,14 +382,14 @@ def _pop_push_queue() -> str | None:
     return None
 
 
-def _handle_push_code(tq, client, code: str, processed: int) -> int:
+def _handle_push_code(tq, code: str, processed: int) -> int:
     """处理单个推送通知：取快照+写入，返回1成功/0失败。"""
     try:
         snap = tq.get_market_snapshot(stock_code=code)
         mtype = classify_market_type(code)
         row = parse_snapshot(snap, code, mtype, "tqcenter_push")
         if row:
-            _insert_snapshots(client, [row])
+            _insert_snapshots([row])
             if (processed + 1) % 50 == 0:
                 log.info("推送处理: 累计 %d 条", processed + 1)
             return 1
@@ -398,9 +408,7 @@ def main() -> int:
 
     # 1. 建表
     log.info("[步骤1] 建表...")
-    init_client = _get_ch_client()
-    _create_table(init_client)
-    init_client.disconnect()
+    _create_table()
 
     # 2. 初始化 tqcenter
     log.info("[步骤2] 初始化 tqcenter...")

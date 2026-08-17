@@ -99,4 +99,7 @@ from __future__ import annotations
 from zephyr.data.provider_base import IngestProviderBase, IngestProviderMeta
 from zephyr.gov_enforcement.rule_enforcement.quality_gate import DataQualityGate
 
-__all__ = ["DataQualityGate", "IngestProviderBase", "IngestProviderMeta", "provider_base", "quality_gate"]
+# __all__ 仅列真实导出的符号（2026-08-17 AI-04 审计治本：
+# 原含 "provider_base"/"quality_gate" 两个不存在属性，`import *` 抛 AttributeError；
+# 括注真源模块见上文 docstring A1/A2，不占 __all__ 名额）。
+__all__ = ["DataQualityGate", "IngestProviderBase", "IngestProviderMeta"]

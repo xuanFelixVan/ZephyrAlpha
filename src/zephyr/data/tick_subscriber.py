@@ -5,7 +5,7 @@
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
-# [INARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; P2-5 分阶段延迟度量 Histogram: Stage1 on_tick/Stage2 queue_wait/Stage3 convert/Stage4 wal_add/Stage5 wal_flush; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log)
+# [INVARIANTS] QMT callback 线程只做 queue.put_nowait（最小开销）; flush 线程批量出队(500条)构造单个 FetchResult 交给 WalWriter; WalWriter 先落盘段文件再异步 drain 到 CH（P0-1 主动WAL）; 无锁计数(CPython GIL 保证 int += 1 统计精度足够); queue.Queue 解耦线程安全; P1-5 metrics 埋点覆盖 received/written/dropped/queue_size; P2-5 分阶段延迟度量 Histogram: Stage1 on_tick/Stage2 queue_wait/Stage3 convert/Stage4 wal_add/Stage5 wal_flush; #ARCH-DATA-017 裁定B/C/E: 业务心跳JSON(tick_subscriber_biz.heartbeat)+tick-biz-watchdog线程盘中无tick周期重订阅+日志落盘RotatingFileHandler(tick_subscriber_run.log)
 # [MODIFY-GUARD] none
 # [STABILITY] evolving
 # [SAFETY] M

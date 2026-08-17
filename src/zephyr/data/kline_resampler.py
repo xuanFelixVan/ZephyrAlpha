@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §kline_resample
 # [MODULE] zephyr.data.kline_resampler
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] clickhouse_driver; zephyr.data.ch_config
+# [DEPENDENCIES] clickhouse_driver; zephyr.data.ch_config; zephyr.data.table_registry
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -44,8 +44,11 @@ log = logging.getLogger(__name__)
 
 # ---------- 常量 ----------
 
-_CH_DB = "c1_market"
-_CH_TABLE = f"{_CH_DB}.kline_sector_880"
+# 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024，
+# 2026-08-17 AI-04 审计治本：消除硬编码库表名）
+from zephyr.data.table_registry import get_registry as _get_table_registry
+
+_CH_TABLE = _get_table_registry().table("market_sector_kline_880")
 
 # 合成周期映射：{目标周期: (源周期, 窗口分钟数)}
 _SYNTH_MAP = {
@@ -107,10 +110,15 @@ def _build_synth_sql(source: str, target: str, minutes: int,
 # ---------- ClickHouse 操作 ----------
 
 def _get_ch_client():
-    """从 ch_config 真源加载配置创建 ClickHouse 客户端（裁定 #ARCH-CH-024）。"""
+    """从 ch_config 真源加载【写入账号】配置创建 ClickHouse 客户端。
+
+    本模块执行 DELETE+INSERT 写操作，RBAC（audit 9.4 #ARCH-CH-027）要求使用
+    zephyr_writer 账号（DB 级 INSERT/ALTER 权限），禁止用 base/reader 账号。
+    （2026-08-17 AI-04 审计治本：load_ch_config → load_ch_writer_config）
+    """
     from clickhouse_driver import Client
-    from zephyr.data.ch_config import load_ch_config
-    cfg = load_ch_config()
+    from zephyr.data.ch_config import load_ch_writer_config
+    cfg = load_ch_writer_config()
     c = Client(
         host=cfg["host"],
         port=int(cfg["port"]),

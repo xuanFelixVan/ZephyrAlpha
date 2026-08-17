@@ -78,12 +78,17 @@ class HeartbeatMonitor:
         self._registry = get_registry()
 
     def _default_ch_ping(self) -> bool:
-        """默认 CH ping（SELECT 1）。"""
+        """默认 CH ping（SELECT 1，走 ch_reader 只读探活路径）。
+
+        治本（2026-08-17 AI-04 审计）：原实现 `from ch_writer import ChWriter`
+        引用不存在类每次 ImportError → 恒返回 False（CH 恒误判 DEAD 触发虚假
+        CRITICAL 告警）；且 ch_writer.health_check() 返回 dict 非 bool。
+        改为 ch_reader.query("SELECT 1")：成功返回 "1"，失败返回 ""，语义恰为 bool。
+        """
         try:
-            from zephyr.data.ch_writer import ChWriter  # noqa: F811
-            # 使用 ch_writer 的 health_check
-            from zephyr.data import ch_writer
-            return ch_writer.health_check()
+            from zephyr.data import ch_reader
+            # 短超时：心跳周期 10s，默认 600s 超时会让黑洞主机卡死探测线程
+            return bool(ch_reader.query("SELECT 1", timeout=10).strip())
         except Exception as e:  # noqa: BLE001
             log.debug("CH ping 失败: %s", e)
             return False

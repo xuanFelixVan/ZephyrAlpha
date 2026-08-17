@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-MKT_DATA | docs/03_modules/MOD-MKT_DATA/ | §normalized_market_data_producer
 # [MODULE] zephyr.market_data.normalized_market_data_producer.producer
 # [DOMAIN] D_MKT_DATA
-# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.shared.contracts.market_data
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.data.symbol_normalizer; zephyr.shared.contracts.market_data
 # [CONSUMERS] zephyr.factor.core.ctr001_consumer.converter
 # [STARTUP] imported
 # [MATURITY] production
@@ -84,35 +84,30 @@ _KLINE_COLUMNS = [
 _QFLAG_TO_SCORE = {1: 1.0, 0: 0.5}
 _DEFAULT_QUALITY_SCORE = 1.0
 
-# A股 symbol 前缀 → 交易所后缀映射（CTR-001 契约要求 600519.SH 格式）
-# kline_daily 存储纯数字 symbol（如 600519），producer 在 D_DATA→D_FACTOR 边界
-# 标准化为带交易所后缀格式。裁定#ARCH-SYMBOL-NORMALIZE-001（2026-07-25）：
-#   - 6/9 → .SH（沪市主板 600/601/603/605 + 科创板 688 + 沪市B股 9xxxxx）
-#   - 0/3 → .SZ（深市主板 000/001/002/003 + 创业板 300/301）
-#   - 8/4 → .BJ（北交所 8xxxxx / 4xxxxx）
-# 前缀推断是 A 股标准编码规则，与 Tushare/akshare 的 ts_code 后缀一致。
-_SYMBOL_PREFIX_TO_SUFFIX = {
-    "6": ".SH", "9": ".SH",  # 沪市
-    "0": ".SZ", "3": ".SZ",  # 深市
-    "8": ".BJ", "4": ".BJ",  # 北交所
-}
+# A股 symbol 交易所推导已收敛到唯一真源 zephyr.data.symbol_normalizer
+# （TRAE-082 分层前缀消歧：3位→2位→1位；裁定 #ARCH-SYMBOL-NORMALIZE-001 /
+# #ARCH-DATA-SYMBOL-001/002）。2026-08-17 AI-04 审计治本：删除本文件内嵌的
+# 简化版 1 位前缀映射（920xxx 北交所误判 .SH、2xx 深B/5xx 沪基金不补后缀），
+# 消除双真源漂移。
+from zephyr.data.symbol_normalizer import normalizer as _symbol_normalizer
 
 
 def _normalize_symbol(symbol: str) -> str:
     """将纯数字 symbol 标准化为 CTR-001 契约要求的 600519.SH 格式。
 
     kline_daily 存储纯数字 symbol（如 600519），契约要求带交易所后缀（600519.SH）。
-    按首位数字推断交易所：6/9→SH，0/3→SZ，8/4→BJ。
+    交易所推导委托 symbol_normalizer（TRAE-082 分层前缀消歧真源）。
     已带后缀（含"."）的 symbol 原样返回（幂等）。
-    未知前缀原样返回（不擅自添加后缀）。
+    无法推导交易所的 symbol 原样返回（不擅自添加后缀）。
     """
     if not symbol:
         return symbol
     s = str(symbol).strip()
     if "." in s:  # 已带后缀，幂等返回
         return s
-    if len(s) >= 1 and s[0] in _SYMBOL_PREFIX_TO_SUFFIX:
-        return s + _SYMBOL_PREFIX_TO_SUFFIX[s[0]]
+    bare, exchange = _symbol_normalizer.normalize_symbol(s)
+    if exchange:
+        return _symbol_normalizer.to_canonical(bare, exchange)
     return s  # 未知前缀，原样返回
 
 
@@ -121,11 +116,12 @@ def _strip_symbol_suffix(symbol: str) -> str:
 
     kline_daily.symbol 存储纯数字代码，调用方传入契约格式（600519.SH）时
     需先去后缀再查 DB。幂等：纯数字 symbol 原样返回。
+    委托 symbol_normalizer.split_suffix_symbol（真源）。
     """
     if not symbol:
         return symbol
-    s = str(symbol).strip()
-    return s.split(".")[0]
+    bare, _exchange = _symbol_normalizer.split_suffix_symbol(str(symbol).strip())
+    return bare
 
 
 def _escape_symbol(symbol: str) -> str:
@@ -298,8 +294,12 @@ def produce(
     return load_kline(symbols, start, end)
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def to_int(value, default) -> int:
-    """公共接口：to_int（Stage 4 公共化）。"""
+def to_int(value, default: int = 1) -> int:
+    """公共接口：to_int（Stage 4 公共化）。
+
+    2026-08-17 AI-04 审计治本：补回 default=1 默认值（与私有实现 _to_int 对齐），
+    原包装丢失默认值导致单参调用 TypeError。
+    """
     return _to_int(value, default)
 
 

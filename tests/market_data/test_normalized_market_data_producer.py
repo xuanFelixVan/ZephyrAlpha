@@ -293,8 +293,10 @@ class TestNormalizeSymbol:
         assert _normalize_symbol(None) is None
 
     def test_unknown_prefix_no_suffix(self):
-        # 未知前缀（如 5xxxxx）原样返回，不擅自添加后缀
-        assert _normalize_symbol("599999") == "599999"
+        # 未知前缀（7xxxxx 在 TRAE-082 分层前缀映射中无归属）原样返回，不擅自添加后缀
+        # 2026-08-17 AI-04：5xxxxx 已由真源 symbol_normalizer 归为 SH（沪市基金/ETF），
+        # 本用例改用 7 前缀保持"未知前缀"语义。
+        assert _normalize_symbol("799999") == "799999"
 
     def test_strips_whitespace(self):
         assert _normalize_symbol("  600519  ") == "600519.SH"
