@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [TTL] permanent
 # frontend/_extensions
 

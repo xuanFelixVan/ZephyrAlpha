@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared-core/blueprint.md
+# [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md
 # [MODULE] zephyr.integration.shared.events.event_schemas
 # [DOMAIN] D_INTEGRATION
 # [DEPENDENCIES] zephyr.shared.infra.observer; zephyr.shared.schema.base_config

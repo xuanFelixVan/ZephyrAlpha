@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-019 | (auto-injected by S4 reconciler) | §
+# [BLUEPRINT] MOD-INF-019 | docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 # [TTL] permanent
 """
 

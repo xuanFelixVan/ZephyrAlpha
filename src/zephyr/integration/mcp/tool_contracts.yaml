@@ -1,15 +1,17 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-013 | docs/03_modules/_cross_layer/mcp/blueprint.md | §
+# blueprint: MOD-INF-013 | docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md | §
 # module_id: MOD-INF-013
 # stability: evolving
 # safety_level: L
 # ai_autonomy: ai_modifiable
-# ttl: task_bound
+# ttl: permanent
 # --- 治理锚定结束 ---
 # ZephyrAlpha MCP Tool Contracts
 #
-# 6 MCP Server（task_manager / gate_engine / session_handoff / intent_router / blueprint_search）
-# + Task Manager 采用 FastMCP，工具注册名与下列 ``name:`` 字段一致（task_manager.* 前缀）。
+# 12 MCP Server（task_manager / gate_engine / session_handoff / intent_router / blueprint_search /
+# governance / telemetry / vector_memory / resource_optimization(设计预留) / rule_discovery /
+# mcp_gateway / sandbox）
+# + Task Manager / Telemetry 采用 FastMCP，工具注册名与下列 ``name:`` 字段一致（task_manager.* 前缀）。
 #
 # 工具契约为 T-3-04（MCP Server 实现）与 T-2-29（contract_template_manager）提供前置 schema。
 #
@@ -80,8 +82,8 @@ task_manager:
   description: "任务系统（tasks/events）对外 MCP 接口；包装 task_repo.py + file_task_mapper.py"
   status: stable
   backend:
-    - "src/zephyr/db/task_repo.py (ADR-0030)"
-    - "src/zephyr/core/file_task_mapper.py (ADR-0038)"
+    - "src/zephyr/governance/persistence/task_repo.py (ADR-0030)"
+    - "src/zephyr/orchestrator/file_task_mapper.py (ADR-0038)"
   error_namespace: "ZA-TSK"
   error_codes:
     - code: "ZA-TSK-0001"
@@ -260,7 +262,7 @@ task_manager:
         description: "TaskCard 序列化字典"
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 3 · gate_engine
+# Server 2 · gate_engine
 # ──────────────────────────────────────────────────────────────────────
 
 gate_engine:
@@ -387,8 +389,51 @@ gate_engine:
           accepted: { type: boolean }
       errors: ["ZA-GT-0003"]
 
+    - name: gate_engine.run_g5_quality
+      description: "输出质量 Gate（G5，文档/产出物质量校验）"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          target_path: { type: string }
+          session_id: { type: string }
+      output_schema: { $ref: "#/definitions/GateRunReport" }
+      errors: ["ZA-GT-0001"]
+
+    - name: gate_engine.run_g6_blueprint_compliance
+      description: "蓝图合规 Gate（G6，蓝图↔代码对齐校验）"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          target_path: { type: string }
+          session_id: { type: string }
+      output_schema: { $ref: "#/definitions/GateRunReport" }
+      errors: ["ZA-GT-0001"]
+
+    - name: gate_engine.circuit_breaker_status
+      description: "查询门禁熔断器状态（三态：closed/open/half_open）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          state: { type: string, enum: [closed, open, half_open] }
+          failure_count: { type: integer }
+
 # ──────────────────────────────────────────────────────────────────────
-# Server 4 · session_handoff
+# Server 3 · session_handoff
 # ──────────────────────────────────────────────────────────────────────
 
 session_handoff:
@@ -511,8 +556,25 @@ session_handoff:
           event_id: { type: string }
           delivered_at: { type: string, format: date-time }
 
+    - name: session_handoff.validate_doc_version
+      description: "校验文档版本一致性（handoff 文档与当前仓内版本比对）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          doc_path: { type: string }
+          expected_version: { type: string }
+      output_schema:
+        type: object
+        properties:
+          valid: { type: boolean }
+          current_version: { type: string }
+
 # ──────────────────────────────────────────────────────────────────────
-# Server 5 · intent_router
+# Server 4 · intent_router
 # ──────────────────────────────────────────────────────────────────────
 
 intent_router:
@@ -521,9 +583,9 @@ intent_router:
   description: "自然语言 -> 10 域 + directive 链路由；包装 intent_keyword_mapper（Stage 1）/ embedding / llm 三阶段（ADR-0035）"
   status: beta
   backend:
-    - "src/zephyr/context-engine/intent_keyword_mapper.py (Stage 1, T-2-21)"
-    - "src/zephyr/context-engine/intent_embedding_mapper.py (Stage 2, beta 引入)"
-    - "src/zephyr/context-engine/intent_llm_router.py (Stage 3, stable 引入)"
+    - "src/zephyr/governance/persistence/intent_keyword_mapper.py (Stage 1, T-2-21)"
+    - "src/zephyr/governance/persistence/intent_embedding_mapper.py (Stage 2, beta 引入)"
+    - "src/zephyr/governance/persistence/intent_llm_router.py (Stage 3, stable 引入)"
   error_namespace: "ZA-INT"
   error_codes:
     - code: "ZA-INT-0001"
@@ -631,8 +693,24 @@ intent_router:
                 count: { type: integer }
           duration_seconds: { type: number }
 
+    - name: intent_router.health_status
+      description: "意图路由三阶段健康状态（keyword/embedding/llm 可用性）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          stage1_available: { type: boolean }
+          stage2_available: { type: boolean }
+          stage3_available: { type: boolean }
+
 # ──────────────────────────────────────────────────────────────────────
-# Server 6 · blueprint_search（MOD-INF-013 · T-V2-010）
+# Server 5 · blueprint_search（MOD-INF-013 · T-V2-010）
 # ──────────────────────────────────────────────────────────────────────
 
 blueprint_search:
@@ -641,7 +719,7 @@ blueprint_search:
   description: "任务描述 -> 相关蓝图路由（关键词检索 config/blueprint_routing.yaml；stdio BaseMCPServer）"
   status: experimental
   backend:
-    - "src/zephyr/mcp/blueprint_search_server.py"
+    - "src/zephyr/integration/mcp/blueprint_search_server.py"
     - "config/blueprint_routing.yaml"
   error_namespace: "ZA-BPS"
   error_codes:
@@ -650,6 +728,21 @@ blueprint_search:
       http_status: 503
 
   tools:
+    - name: blueprint_search.refresh_index
+      description: "刷新蓝图路由索引（config/blueprint_routing.yaml 变更后调用）"
+      safety_level: M
+      stability: experimental
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          refreshed: { type: boolean }
+          entries: { type: integer }
+
     - name: blueprint_search.find_relevant_blueprint
       description: "返回与任务描述最相关的 blueprint 路由表项（MOD-INF-009 触发表）"
       safety_level: L
@@ -676,7 +769,7 @@ blueprint_search:
           error: { type: string }
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 7 · governance（DOM-GOV-001 · session-20260508-001）
+# Server 6 · governance（DOM-GOV-001 · session-20260508-001）
 # ──────────────────────────────────────────────────────────────────────
 
 governance:
@@ -685,11 +778,11 @@ governance:
   description: "治理域八件套统一MCP入口 — PhaseGate/Audit/Lock/Contract/Health 五工具（DOM-GOV-001 治理域集成蓝图）"
   status: beta
   backend:
-    - "src/zephyr/mcp/governance_server.py"
+    - "src/zephyr/integration/mcp/governance_server.py"
     - "src/zephyr/governance/"  # 八件套桥接层
-    - "src/zephyr/escalation/"  # EscalationEngine v0.14.0
-    - "src/zephyr/budget-enforcer/"  # BudgetEngine v0.7.0
-    - "src/zephyr/a2a/"  # A2A Protocol v0.10.0
+    - "src/zephyr/governance/escalation/"  # EscalationEngine v0.14.0
+    - "src/zephyr/integration/budget_enforcer/"  # BudgetEngine v0.7.0
+    - "src/zephyr/governance/a2a/"  # A2A Protocol v0.10.0
   error_namespace: "ZA-GOV"
   error_codes:
     - code: "ZA-GOV-0001"
@@ -704,6 +797,15 @@ governance:
     - code: "ZA-GOV-0004"
       message: "governance health DEGRADED"
       http_status: 503
+    - code: "ZA-GOV-0005"
+      message: "drift scan failed"
+      http_status: 500
+    - code: "ZA-GOV-0006"
+      message: "drift report unavailable"
+      http_status: 503
+    - code: "ZA-GOV-0007"
+      message: "drift budget exceeded"
+      http_status: 429
 
   tools:
 
@@ -874,6 +976,161 @@ governance:
           consumption_rate: { type: number }
       errors: ["ZA-GOV-0007"]
 
+    - name: governance.rbac_check
+      description: "RBAC 权限预检——校验指定身份对目标操作/路径的放行判定"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          identity: { type: string }
+          operation: { type: string }
+          target_path: { type: string }
+      output_schema:
+        type: object
+        properties:
+          passed: { type: boolean }
+          reason: { type: string }
+
+    - name: governance.list_skills
+      description: "列出 capability_cards 可用 Skill 清单"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          skills: { type: array, items: { type: string } }
+
+    - name: governance.load_skill
+      description: "按名称加载 Skill 卡内容（data/capability_cards/skill_*.yaml）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        required: [skill_name]
+        additionalProperties: false
+        properties:
+          skill_name: { type: string }
+      output_schema:
+        type: object
+        properties:
+          skill_name: { type: string }
+          content: { type: string }
+
+    - name: governance.write_audit
+      description: "写入治理审计事件（审计链追加）"
+      safety_level: M
+      stability: beta
+      rate_limit_qps: 5
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          event_type: { type: string }
+          payload: { type: object }
+      output_schema:
+        type: object
+        properties:
+          event_id: { type: string }
+          written: { type: boolean }
+
+    - name: governance.execute_rollback
+      description: "执行回滚操作（rollback.py 编排，preflight 通过后放行）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 1
+      input_schema:
+        type: object
+        required: [target]
+        additionalProperties: false
+        properties:
+          target: { type: string, description: "回滚目标（commit/文件/批次）" }
+          dry_run: { type: boolean, default: true }
+      output_schema:
+        type: object
+        properties:
+          preflight: { type: string }
+          executed: { type: boolean }
+
+    - name: governance.escalate
+      description: "触发升级流程（EscalationEngine 评估并路由）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 2
+      input_schema:
+        type: object
+        required: [reason]
+        additionalProperties: false
+        properties:
+          rule_category: { type: string }
+          reason: { type: string, minLength: 10 }
+          context: { type: object }
+      output_schema:
+        type: object
+        properties:
+          escalation_id: { type: string }
+          decision: { type: string }
+
+    - name: governance.check_budget
+      description: "Token/Cost/Time 三维预算预检（BudgetEngine pre_flight_check）"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          operation_id: { type: string }
+          tokens: { type: integer }
+          cost: { type: number }
+      output_schema:
+        type: object
+        properties:
+          passed: { type: boolean }
+          remaining: { type: object }
+
+    - name: governance.escalation_status
+      description: "查询升级单状态"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          escalation_id: { type: string }
+      output_schema:
+        type: object
+        properties:
+          escalation_id: { type: string }
+          status: { type: string }
+
+    - name: governance.escalation_resolve
+      description: "关闭/解决升级单（Owner 或授权角色）"
+      safety_level: H
+      stability: beta
+      rate_limit_qps: 2
+      input_schema:
+        type: object
+        required: [escalation_id, resolution]
+        additionalProperties: false
+        properties:
+          escalation_id: { type: string }
+          resolution: { type: string, minLength: 5 }
+      output_schema:
+        type: object
+        properties:
+          escalation_id: { type: string }
+          resolved: { type: boolean }
+
 # ──────────────────────────────────────────────────────────────────────
 # 共享 Pydantic Schema 定义
 # ──────────────────────────────────────────────────────────────────────
@@ -989,6 +1246,23 @@ definitions:
 # ──────────────────────────────────────────────────────────────────────
 
 changelog:
+  - version: "1.6.0"
+    date: "2026-08-17"
+    author: "AI-AUDIT16 remediation"
+    changes:
+      - "治理锚定修正：blueprint 路径 _cross_layer/mcp/ → _cross_layer/model_context_protocol_servers/；ttl task_bound → permanent"
+      - "backend 路径全量对齐现状（task_repo/file_task_mapper/intent_keyword_mapper/telemetry/vector_memory/blueprint_search/governance/resource_optimization 实际位置）"
+      - "补登已实现工具：gate_engine(run_g5_quality/run_g6_blueprint_compliance/circuit_breaker_status)、session_handoff.validate_doc_version、blueprint_search.refresh_index、intent_router.health_status、governance×9（rbac_check/list_skills/load_skill/write_audit/execute_rollback/escalate/check_budget/escalation_status/escalation_resolve）"
+      - "新增 Server 11 · mcp_gateway（3 tools）与 Server 12 · sandbox（2 tools）契约块；Server 编号重排连续"
+      - "补登错误码：ZA-GOV-0005/0006/0007、ZA-RD 命名空间 + ZA-RD-0001"
+      - "telemetry.metrics_snapshot input → input_schema 对齐 SSoT 字段约定"
+      - "resource_optimization 标注 implementation: pending（MCP server 未落地，设计预留）"
+      - "变更记录重号修正：2026-05-08 telemetry 条目 1.1.0 → 1.5.0"
+  - version: "1.5.0"
+    date: "2026-05-08"
+    author: "DeepSeek V4"
+    changes:
+      - "新增 Server 8 · telemetry（MOD-INF-015），5 tools（health / metrics_snapshot / alerts_status / system_profile / schema_info）"
   - version: "1.4.0"
     date: "2026-05-06"
     author: "AUDIT-08 round-2"
@@ -1031,14 +1305,9 @@ changelog:
       - "全部工具标注 stability / safety_level / rate_limit"
       - "共享 5 类 Schema（Task / RetrievalHit / GateRunReport / HandoffPackage / IntentResult）与 ADR-0040 Pydantic 模型对齐"
       - "依赖 ADR-0030/002/010/013/019/020 + gate-strategy-standard.md 全部锁定"
-  - version: "1.1.0"
-    date: "2026-05-08"
-    author: "DeepSeek V4"
-    changes:
-      - "新增 Server 8 · telemetry（MOD-INF-015），5 tools（health / metrics_snapshot / alerts_status / system_profile / schema_info）"
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 8 · telemetry
+# Server 7 · telemetry
 # ──────────────────────────────────────────────────────────────────────
 
 telemetry:
@@ -1047,8 +1316,8 @@ telemetry:
   description: "系统遥测可观测性服务；包装 MOD-INF-015 Telemetry facade（9子系统）"
   status: beta
   backend:
-    - "src/zephyr/system-telemetry/facade.py (Telemetry)"
-    - "src/zephyr/system-telemetry/auto_bootstrap.py"
+    - "src/zephyr/infrastructure/system_telemetry/facade.py (Telemetry)"
+    - "src/zephyr/infrastructure/system_telemetry/auto_bootstrap.py"
     - "config/metrics_schema.yaml"
     - "config/alert_rules.yaml"
     - "config/sli_registry.yaml"
@@ -1073,10 +1342,13 @@ telemetry:
       safety_level: L
       stability: beta
       rate_limit_qps: 20
-      input:
-        count:
-          type: integer
-          default: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          count:
+            type: integer
+            default: 10
 
     - name: telemetry.alerts_status
       description: "活跃告警状态（待处理数 + 已配置规则简报）"
@@ -1097,7 +1369,7 @@ telemetry:
       rate_limit_qps: 10
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 9 · vector_memory（MOD-INF-011 · VMS v0.7.0）
+# Server 8 · vector_memory（MOD-INF-011 · VMS v0.7.0）
 # ──────────────────────────────────────────────────────────────────────
 
 vector_memory:
@@ -1106,12 +1378,12 @@ vector_memory:
   description: "全系统统一向量记忆体 — InProcessVectorMemory 8 Collection（decisions/code_context/lessons/knowledge/rules/blueprints/session_snapshots/execution_traces）+ HybridRetriever(Vector+BM25+RRF)"
   status: beta
   backend:
-    - "src/zephyr/vector-memory/in_process_vector_memory.py (InProcessVectorMemory)"
-    - "src/zephyr/vector-memory/collection_manager.py (CollectionManager 8 Collection)"
-    - "src/zephyr/vector-memory/hybrid_retriever.py (HybridRetriever Vector+BM25+RRF)"
-    - "src/zephyr/vector-memory/embedding_router.py (EmbeddingRouter BGE-M3 1024d / bge-small 512d)"
-    - "src/zephyr/vector-memory/vector_bridge.py (VectorBridge CE/KB/Orc集成)"
-    - "src/zephyr/vector-memory/index_health_monitor.py (IndexHealthMonitor)"
+    - "src/zephyr/integration/vector_memory/in_process_vector_memory.py (InProcessVectorMemory)"
+    - "src/zephyr/integration/vector_memory/collection_manager.py (CollectionManager 8 Collection)"
+    - "src/zephyr/integration/vector_memory/hybrid_retriever.py (HybridRetriever Vector+BM25+RRF)"
+    - "src/zephyr/integration/local_model/embedding_router.py (EmbeddingRouter BGE-M3 1024d / bge-small 512d)"
+    - "src/zephyr/integration/vector_memory/vector_bridge.py (VectorBridge CE/KB/Orc集成)"
+    - "src/zephyr/integration/vector_memory/index_health_monitor.py (IndexHealthMonitor)"
   error_namespace: "ZA-VMS"
   error_codes:
     - code: "ZA-VMS-0001"
@@ -1291,16 +1563,17 @@ vector_memory:
       errors: ["ZA-VMS-0003", "ZA-VMS-0004"]
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 10 · resource_optimization（MOD-RESOURCE_OPTIMIZATION_ENGINE · ROE v1.0.0）
+# Server 9 · resource_optimization（MOD-RESOURCE_OPTIMIZATION_ENGINE · ROE v1.0.0）
 # ──────────────────────────────────────────────────────────────────────
 
 resource_optimization:
   server_id: resource_optimization
   version: "1.0.0"
-  description: "资源优化引擎 MCP 接口 — MAPE-K 循环驱动的资源监控/分析/优化/自愈（MOD-RESOURCE_OPTIMIZATION_ENGINE）"
+  description: "资源优化引擎 MCP 接口 — MAPE-K 循环驱动的资源监控/分析/优化/自愈（MOD-RESOURCE_OPTIMIZATION_ENGINE）。注意：MCP server 尚未落地（设计预留），backend 引擎已实现。"
   status: experimental
+  implementation: pending  # MCP server 未实现（设计预留契约，无 register_tool 消费方）
   backend:
-    - "src/zephyr/shared/lifecycle/resource_optimization_engine.py (ResourceOptimizationEngine)"
+    - "src/zephyr/trading/resource_optimization.py (ResourceOptimizationEngine)"
     - "src/zephyr/shared/lifecycle/daemon_registry.py (DaemonRegistry)"
     - "config/resource_optimization.yaml"
   error_namespace: "ZA-ROE"
@@ -1452,7 +1725,7 @@ resource_optimization:
           evictions: { type: integer }
 
 # ──────────────────────────────────────────────────────────────────────
-# Server 11 · rule_discovery（MOD-INF-014 · #ARCH-GOV-CONVERGENCE-META Phase 3.2b/3.4a）
+# Server 10 · rule_discovery（MOD-INF-014 · #ARCH-GOV-CONVERGENCE-META Phase 3.2b/3.4a）
 # ──────────────────────────────────────────────────────────────────────
 
 rule_discovery:
@@ -1463,6 +1736,11 @@ rule_discovery:
   source: "docs/01_policies_and_standards/_registry/catalogs/rule_ai_perception_index.yaml"
   stability: evolving
   safety_level: L
+  error_namespace: "ZA-RD"
+  error_codes:
+    - code: "ZA-RD-0001"
+      message: "rule perception index missing or unreadable"
+      http_status: 503
 
   tools:
 
@@ -1517,3 +1795,138 @@ rule_discovery:
         source: { type: string }
         error: { type: string, description: "错误信息（fail-open 时存在）" }
     errors: ["ZA-RD-0001"]
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 11 · mcp_gateway（MOD-INF-013 §12 Phase 5 · ContextForge Gateway 模式）
+# ──────────────────────────────────────────────────────────────────────
+
+mcp_gateway:
+  server_id: mcp_gateway
+  version: "1.0.0"
+  description: "MCP Gateway 集中式治理节点——Route/Auth-ACL/RateLimit/Audit/Degrade 五模块，进程内路由 7 Server"
+  status: beta
+  backend:
+    - "src/zephyr/integration/mcp/gateway_server.py"
+    - "src/zephyr/integration/mcp/audit_logger.py (AuditLogger)"
+    - "src/zephyr/integration/mcp/rate_limiter.py (PerToolRateLimiter)"
+  error_namespace: "ZA-GW"
+  error_codes:
+    - code: "ZA-GW-0001"
+      message: "route target server unavailable"
+      http_status: 503
+    - code: "ZA-GW-0002"
+      message: "rate limit exceeded (10 QPS per client)"
+      http_status: 429
+    - code: "ZA-GW-0003"
+      message: "ACL denied — tool not visible to session role"
+      http_status: 403
+
+  tools:
+    - name: mcp_gateway.health_status
+      description: "Gateway 健康状态——路由表/熔断器/各 Server 存活"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 20
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          healthy: { type: boolean }
+          servers: { type: object }
+
+    - name: mcp_gateway.list_servers
+      description: "列出 Gateway 当前路由的全部 Server 及其工具目录"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          servers: { type: array, items: { type: string } }
+          tool_count: { type: integer }
+
+    - name: mcp_gateway.audit_stats
+      description: "审计日志统计——调用量/拒绝量/按 Server 分布"
+      safety_level: L
+      stability: beta
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties:
+          window_minutes: { type: integer, default: 60 }
+      output_schema:
+        type: object
+        properties:
+          total_calls: { type: integer }
+          denied_calls: { type: integer }
+          by_server: { type: object }
+
+# ──────────────────────────────────────────────────────────────────────
+# Server 12 · sandbox（MOD-INF-013 Phase 7 · B4 安全代码执行沙箱）
+# ──────────────────────────────────────────────────────────────────────
+
+sandbox:
+  server_id: sandbox
+  version: "0.1.0"
+  description: "安全代码执行沙箱——独立 subprocess 执行（timeout 30s，输入≤500KB，输出≤1MB，禁文件系统写入）"
+  status: experimental
+  backend:
+    - "src/zephyr/integration/mcp/sandbox_server.py"
+  error_namespace: "ZA-SBX"
+  error_codes:
+    - code: "ZA-SBX-0001"
+      message: "unsupported language (python/javascript/bash only)"
+      http_status: 400
+    - code: "ZA-SBX-0002"
+      message: "execution timeout (>30s)"
+      http_status: 408
+    - code: "ZA-SBX-0003"
+      message: "input/output size limit exceeded"
+      http_status: 413
+
+  tools:
+    - name: sandbox.execute
+      description: "在隔离 subprocess 中执行代码片段（python/javascript/bash）"
+      safety_level: H
+      stability: experimental
+      rate_limit_qps: 2
+      input_schema:
+        type: object
+        required: [language, code]
+        additionalProperties: false
+        properties:
+          language: { type: string, enum: [python, javascript, bash] }
+          code: { type: string, maxLength: 512000 }
+          stdin: { type: string }
+          timeout: { type: number, default: 30, maximum: 30 }
+      output_schema:
+        type: object
+        properties:
+          stdout: { type: string }
+          stderr: { type: string }
+          exit_code: { type: integer }
+          timed_out: { type: boolean }
+      errors: ["ZA-SBX-0001", "ZA-SBX-0002", "ZA-SBX-0003"]
+
+    - name: sandbox.health_check
+      description: "沙箱健康检查——subprocess 可用性与资源限制状态"
+      safety_level: L
+      stability: experimental
+      rate_limit_qps: 10
+      input_schema:
+        type: object
+        additionalProperties: false
+        properties: {}
+      output_schema:
+        type: object
+        properties:
+          healthy: { type: boolean }
+          supported_languages: { type: array, items: { type: string } }

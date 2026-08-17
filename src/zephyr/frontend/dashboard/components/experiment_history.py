@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md
+# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.experiment_history
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] panel ; plotly ; pandas ; zephyr.experiment_tracking.query ; zephyr.frontend.dashboard.components.backtest_performance(调色板常量)
@@ -25,7 +25,39 @@ fetch_* dataclass 为数据契约（G1 升级时复用），render 层将来重�
 
 依据: 51_panel_experiment_history_mlflow_retirement.md 工作流 B + §七 P0×3/P1×4/P2×3
 Version: 0.1.0
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 实验历史数据请求
+#   fields: component 名 / run_id / 多选 run_id 列表
+#   code: fetch_experiment_history / fetch_c1_comparison / render_experiment_history
+# 层: 算法
+# - id: A1
+#   name_zh: 后端查询 + fallback
+#   name_en: backend_query_fallback
+#   intro: query.list_runs/get_run 拉取；失败→空状态 payload 不抛（ERROR_CONTRACT）
+#   code: fetch_* 系列
+# - id: A2
+#   name_zh: 双净值归一化对比
+#   name_en: nav_normalized_compare
+#   intro: baseline/experiment nav 归一化 + 时间轴交集对齐（P0-1/P0-2）
+#   code: _nav_figure
+# - id: A3
+#   name_zh: 视图渲染
+#   name_en: view_render
+#   intro: pn 可用→Panel 布局；pn=None→纯 dict（可测）
+#   code: _render_c1_comparison / _render_multi_run_comparison / _detail
+# 层: 输出
+# - id: O1
+#   name_zh: Tab payload
+#   name_en: tab_payload
+#   intro: 含 _layout 的 dict 供 app_panel 挂载
+#   downstream: zephyr.frontend.dashboard.app_panel
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> A3 ; A3 --> O1
 """
+
 from __future__ import annotations
 
 import io
@@ -91,6 +123,7 @@ _METRIC_POLARITY: Final = {
 @dataclass
 class ExperimentHistoryData:
     """实验历史列表数据。"""
+
     runs: list[RunSummary]
     component: str
     truncated: bool = False  # P2-8：超过前 50 条截断标记
@@ -99,6 +132,7 @@ class ExperimentHistoryData:
 @dataclass
 class C1VerdictRow:
     """单条 verdict 对比行（从 metrics 三元组解析，P1-6 后缀剥离）。"""
+
     name: str
     baseline: float
     experiment: float
@@ -109,17 +143,18 @@ class C1VerdictRow:
 @dataclass
 class C1ComparisonView:
     """C1 开/关对比视图数据（nav 已归一化 P0-1，时间轴已对齐 P0-2）。"""
+
     run_id: str
     run_name: str
     start_time: str
-    passed: Optional[bool]
+    passed: bool | None
     verdicts: list[C1VerdictRow] = field(default_factory=list)
     nav_baseline: list[float] = field(default_factory=list)
     nav_experiment: list[float] = field(default_factory=list)
     timestamps_baseline: list[str] = field(default_factory=list)
     timestamps_experiment: list[str] = field(default_factory=list)
-    alignment_warning: Optional[str] = None
-    degraded_reason: Optional[str] = None  # P1-7 分级降级
+    alignment_warning: str | None = None
+    degraded_reason: str | None = None  # P1-7 分级降级
     metrics_diff: dict[str, dict[str, float]] = field(default_factory=dict)
     summary_md: str = ""
 
@@ -137,7 +172,7 @@ def _normalize_nav(nav: list[float]) -> list[float]:
     return [v / base for v in nav]
 
 
-def _parse_nav_csv(data: Optional[bytes]) -> Optional[tuple[list[str], list[float]]]:
+def _parse_nav_csv(data: bytes | None) -> tuple[list[str], list[float]] | None:
     """解析 nav CSV（index 列 + nav 列）。损坏/缺 nav 列返回 None（P1-7 触发源）。"""
     if not data:
         return None
@@ -162,9 +197,14 @@ def _parse_verdicts(metrics: dict[str, float]) -> list[C1VerdictRow]:
         e = metrics.get(f"{name}_experiment")
         if b is None or e is None:
             continue  # 不完整三元组跳过
-        verdicts.append(C1VerdictRow(
-            name=name, baseline=b, experiment=e, passed=bool(metrics[key]),
-        ))
+        verdicts.append(
+            C1VerdictRow(
+                name=name,
+                baseline=b,
+                experiment=e,
+                passed=bool(metrics[key]),
+            )
+        )
     return verdicts
 
 
@@ -200,7 +240,7 @@ def reset_experiment_history_cache() -> None:
 
 def fetch_experiment_history(
     component: str = _COMPONENT_DEFAULT,
-    config: Optional[ExperimentTrackingConfig] = None,
+    config: ExperimentTrackingConfig | None = None,
 ) -> ExperimentHistoryData:
     """拉取实验历史列表（start_time 倒序，前 50 条兜底）。
 
@@ -211,6 +251,7 @@ def fetch_experiment_history(
     except Exception as exc:  # noqa: BLE001
         _logger.warning("fetch_experiment_history 失败(返回空): %s", exc)
         return ExperimentHistoryData(runs=[], component=component)
+
     # 排序 key 统一为 timestamp 数值——防御 naive（旧版 fallback 本地时区）vs aware（UTC）混比 TypeError
     def _sort_key(r: RunSummary) -> tuple[int, float]:
         if r.start_time is None:
@@ -227,8 +268,8 @@ def fetch_experiment_history(
 
 def fetch_c1_comparison(
     run_id: str,
-    config: Optional[ExperimentTrackingConfig] = None,
-) -> Optional[C1ComparisonView]:
+    config: ExperimentTrackingConfig | None = None,
+) -> C1ComparisonView | None:
     """拉取单 run 的 C1 对比视图（run 不存在→None；artifact 缺失→分级降级 P1-7）。
 
     施工顺序（51 号 §三.B2）：读 CSV → P0-1 归一化 → P0-2 对齐校验 → P1-6 解析 verdict → P1-7 降级。
@@ -312,15 +353,25 @@ def _nav_figure(view: C1ComparisonView) -> go.Figure:
     """双净值曲线叠加图（baseline 蓝 / experiment 橙；长跨度 >3 年对数 y 轴）。"""
     fig = go.Figure()
     if view.nav_baseline:
-        fig.add_trace(go.Scatter(
-            x=view.timestamps_baseline, y=view.nav_baseline,
-            mode="lines", name="baseline", line={"color": _BLUE, "width": 1.5},
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=view.timestamps_baseline,
+                y=view.nav_baseline,
+                mode="lines",
+                name="baseline",
+                line={"color": _BLUE, "width": 1.5},
+            )
+        )
     if view.nav_experiment:
-        fig.add_trace(go.Scatter(
-            x=view.timestamps_experiment, y=view.nav_experiment,
-            mode="lines", name="experiment", line={"color": _ORANGE, "width": 1.5},
-        ))
+        fig.add_trace(
+            go.Scatter(
+                x=view.timestamps_experiment,
+                y=view.nav_experiment,
+                mode="lines",
+                name="experiment",
+                line={"color": _ORANGE, "width": 1.5},
+            )
+        )
     span_years = len(view.timestamps_baseline) / 252 if view.timestamps_baseline else 0
     if span_years > 3:
         fig.update_yaxes(type="log")  # 长跨度：equal vertical = equal percentage
@@ -336,9 +387,7 @@ def _diff_cards_md(view: C1ComparisonView) -> str:
     parts = []
     for name, d in view.metrics_diff.items():
         mark = "🟢" if d["good"] else ("🔴" if d["delta"] != 0 else "⚪")
-        parts.append(
-            f"**{name}** {d['baseline']:.3f} → {d['experiment']:.3f}（Δ {d['delta']:+.3f} {mark}）"
-        )
+        parts.append(f"**{name}** {d['baseline']:.3f} → {d['experiment']:.3f}（Δ {d['delta']:+.3f} {mark}）")
     return "　|　".join(parts)
 
 
@@ -352,7 +401,7 @@ def _verdicts_md(view: C1ComparisonView) -> str:
     return "\n".join(lines)
 
 
-def _render_c1_comparison(view: C1ComparisonView) -> Any:
+def _render_c1_comparison(view: C1ComparisonView) -> pn.Column | dict[str, Any]:
     """C1 对比视图布局（Alert → 双曲线 → verdict 表 → diff 卡片 → summary 折叠）。
 
     P0-3「看详情」按钮已砍（51 号允许：5-Tab 强依赖持仓/交易数据，nav CSV 无法重建）。
@@ -389,7 +438,7 @@ def _render_c1_comparison(view: C1ComparisonView) -> Any:
     return pn.Column(*children, sizing_mode="stretch_width")
 
 
-def _render_multi_run_comparison(runs: list[RunSummary]) -> Any:
+def _render_multi_run_comparison(runs: list[RunSummary]) -> pn.pane.Plotly | dict[str, Any]:
     """P1-4：多 run 横向对比（行=run，列=sharpe/maxdd/calmar/turnover/passed/时间）。
 
     用 plotly Table 而非 pn.widgets.Tabulator——Tabulator 前端库走 CDN，单机离线
@@ -399,28 +448,39 @@ def _render_multi_run_comparison(runs: list[RunSummary]) -> Any:
     cols = ["run_name", "start_time", "passed", "sharpe", "maxdd", "calmar", "turnover"]
     rows: list[dict[str, Any]] = []
     for r in runs:
-        rows.append({
-            "run_name": r.run_name,
-            "start_time": r.start_time.isoformat()[:19] if r.start_time else "",
-            "passed": ("✅" if r.passed else "❌") if r.passed is not None else "-",
-            "sharpe": r.metrics.get("experiment_sharpe", r.metrics.get("baseline_sharpe")),
-            "maxdd": r.metrics.get("experiment_maxdd", r.metrics.get("baseline_maxdd")),
-            "calmar": r.metrics.get("experiment_calmar", r.metrics.get("baseline_calmar")),
-            "turnover": r.metrics.get("experiment_turnover", r.metrics.get("baseline_turnover")),
-        })
+        rows.append(
+            {
+                "run_name": r.run_name,
+                "start_time": r.start_time.isoformat()[:19] if r.start_time else "",
+                "passed": ("✅" if r.passed else "❌") if r.passed is not None else "-",
+                "sharpe": r.metrics.get("experiment_sharpe", r.metrics.get("baseline_sharpe")),
+                "maxdd": r.metrics.get("experiment_maxdd", r.metrics.get("baseline_maxdd")),
+                "calmar": r.metrics.get("experiment_calmar", r.metrics.get("baseline_calmar")),
+                "turnover": r.metrics.get("experiment_turnover", r.metrics.get("baseline_turnover")),
+            }
+        )
     if pn is None:
         return {"columns": cols, "rows": rows}
-    fig = go.Figure(data=[go.Table(
-        header={
-            "values": [f"<b>{c}</b>" for c in cols],
-            "fill_color": _BG, "font": {"color": _TEXT, "size": 13}, "align": "left",
-        },
-        cells={
-            "values": [[row[c] for row in rows] for c in cols],
-            "fill_color": "#3b3b3b", "font": {"color": _TEXT, "size": 12}, "align": "left",
-            "format": [None, None, None, ".3f", ".3f", ".3f", ".3f"], "height": 26,
-        },
-    )])
+    fig = go.Figure(
+        data=[
+            go.Table(
+                header={
+                    "values": [f"<b>{c}</b>" for c in cols],
+                    "fill_color": _BG,
+                    "font": {"color": _TEXT, "size": 13},
+                    "align": "left",
+                },
+                cells={
+                    "values": [[row[c] for row in rows] for c in cols],
+                    "fill_color": "#3b3b3b",
+                    "font": {"color": _TEXT, "size": 12},
+                    "align": "left",
+                    "format": [None, None, None, ".3f", ".3f", ".3f", ".3f"],
+                    "height": 26,
+                },
+            )
+        ]
+    )
     _dark_layout(fig, height=90 + 30 * len(rows))
     fig.update_layout(title=f"{len(rows)} 个 run 横向指标对比")
     return pn.pane.Plotly(fig)
@@ -442,23 +502,23 @@ def render_experiment_history(data: ExperimentHistoryData) -> dict:
         return base
     if not data.runs:
         base["_layout"] = pn.pane.Alert(
-            "暂无 C1 实验记录。跑一次 C1（track=True）后会在此显示。", alert_type="info",
+            "暂无 C1 实验记录。跑一次 C1（track=True）后会在此显示。",
+            alert_type="info",
         )
         return base
 
     # options value 用 run_id（panel 实证：MultiSelect.param.value 返回 options 的 value 列表，
     # 若 value 放 RunSummary 对象则回调里再索引 options 会 TypeError unhashable——2026-08-16 浏览器实测）
-    options = {
-        f"{r.run_name}｜{r.start_time:%m-%d %H:%M}" if r.start_time else r.run_name: r.run_id
-        for r in data.runs
-    }
+    options = {f"{r.run_name}｜{r.start_time:%m-%d %H:%M}" if r.start_time else r.run_name: r.run_id for r in data.runs}
     by_id = {r.run_id: r for r in data.runs}
     selector = pn.widgets.MultiSelect(
         name="实验 run（单选看双净值对比，多选横向指标对比）",
-        options=options, size=14, sizing_mode="stretch_width",
+        options=options,
+        size=14,
+        sizing_mode="stretch_width",
     )
 
-    def _detail(selection: list[str]) -> Any:
+    def _detail(selection: list[str]) -> pn.viewable.Viewable:
         if not selection:
             return pn.pane.Alert("← 选择 run 查看详情（单选=双净值对比，多选=横向指标表）", alert_type="info")
         picked = [by_id[rid] for rid in selection]

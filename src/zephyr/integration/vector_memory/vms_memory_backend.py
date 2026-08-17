@@ -38,21 +38,48 @@ VMSMemoryBackend -> InMemoryMemoryBackend
 
 迁移说明 (2026-07-19)：本文件原位于 zephyr.gov_kb.vms_memory_backend，
 KBG 系统删除时迁移到 integration.vector_memory，仅改 import 路径，业务逻辑未变。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 统一记忆 API 三件套调用
+#   fields: write(MemoryRecord) / recall(topic) / search(query)
+#   code: VMSMemoryBackend.write/recall/search
+# 层: 算法
+# - id: A1
+#   name_zh: topic→Collection 路由
+#   name_en: topic_collection_routing
+#   intro: TOPIC_TO_COLLECTION 前缀匹配，未命中兜底 "knowledge"
+#   code: _resolve_collection
+# - id: A2
+#   name_zh: VMS 委托 + 降级
+#   name_en: vms_delegate_fallback
+#   intro: is_vms_available 时委托 InProcessVectorMemory；异常/不可用降级 InMemoryMemoryBackend
+#   code: _try_vms_write / recall / search 内 try-except
+# 层: 输出
+# - id: O1
+#   name_zh: 记忆操作结果
+#   name_en: memory_op_result
+#   intro: chunk_id / list[MemoryRecord]
+#   downstream: zephyr.intelligence.model_evaluation.unified_memory_api
+# [/ALGO_FLOW]
+# 边: I1 --> A1 ; A1 --> A2 ; A2 --> O1
 """
 
 from __future__ import annotations
 
 import logging
 import threading
+from typing import Final
 
+from zephyr.integration.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
 from zephyr.intelligence.model_evaluation._memory_backend import (
     InMemoryMemoryBackend,
     MemoryBackend,
     MemoryRecord,
 )
-from zephyr.integration.vector_memory.bridge_layer import TOPIC_TO_COLLECTION
 
-__all__ = ["TOPIC_TO_COLLECTION", "VMSMemoryBackend"]
+__all__: Final = ["TOPIC_TO_COLLECTION", "VMSMemoryBackend"]
 
 _logger = logging.getLogger(__name__)
 

@@ -127,7 +127,6 @@ __all__ = [
     "index_health_monitor",
     "interface",
     "migrate_chroma_to_faiss",
-    "ollama_chat",
     "ollama_embedding",
     "provenance_enforcer",
     "retrieval_feedback",

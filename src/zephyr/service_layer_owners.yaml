@@ -1,5 +1,5 @@
 # --- 治理锚定 ---
-# blueprint: MOD-INF-002 | docs/03_modules/_cross_layer/service-layer-owners.yaml/blueprint.md | §
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_infrastructure_runtime/runtime_integration/blueprint.md | §
 # module_id: MOD-INF-002
 # stability: evolving
 # safety_level: L
@@ -23,6 +23,12 @@ modules:
     - session_handoff:    src/zephyr/integration/mcp/doc_guard_server.py
     - intent_router:      src/zephyr/integration/mcp/sentinel_server.py
     - blueprint_search:   src/zephyr/integration/mcp/blueprint_search_server.py
+    - governance:         src/zephyr/integration/mcp/governance_server.py
+    - telemetry:          src/zephyr/integration/mcp/telemetry_server.py
+    - vector_memory:      src/zephyr/integration/mcp/vector_memory_server.py
+    - rule_discovery:     src/zephyr/integration/mcp/rule_discovery_server.py
+    - mcp_gateway:        src/zephyr/integration/mcp/gateway_server.py
+    - sandbox:            src/zephyr/integration/mcp/sandbox_server.py
 
   pipeline:
     - orchestrator:       src/zephyr/integration/pipeline_orchestrator.py

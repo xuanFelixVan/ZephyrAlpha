@@ -18,7 +18,7 @@
 """
 MOD-INF-019: Agent Spec — SpecEngine 蓝图->Skill 升级引擎
 ============================================================
-Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
+Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
 
@@ -98,7 +98,7 @@ class SpecEngine:
 
     用法:
         engine = SpecEngine()
-        result = engine.upgrade("docs/03_modules/_domain-infra_ops/db/blueprint.md")
+        result = engine.upgrade("docs/03_modules/_cross_layer/database/blueprint.md")
         print(result.to_dict())
     """
 

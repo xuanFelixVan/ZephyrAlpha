@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.mode_manager
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.autonomy_core.__init__

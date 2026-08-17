@@ -31,7 +31,7 @@
 
 from __future__ import annotations
 
-# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
+# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend
 # [INVARIANTS] pending_review
 # [MODIFY-GUARD] no structural changes without owner approval
@@ -50,12 +50,12 @@ from __future__ import annotations
 
 职责
 ----
-人机交互与监控面板：Streamlit Dashboard、告警通知与可视化展现。
+人机交互与监控面板：Panel Dashboard（v3.0.0 #ARCH-047 起替代 Streamlit）、告警通知与可视化展现。
 消费 feedback-loop/fitness_functions.py（Facade 模式封装为展示组件）。
 
 子模块
 ------
-- dashboard/ : Streamlit 监控面板 (app.py + components/)
+- dashboard/ : Panel 监控面板 (app_panel.py + components/)
 
 CTR 契约依赖声明（承重墙标记）
 ------------------------------

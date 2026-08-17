@@ -1126,15 +1126,16 @@ blueprints:
     5个交易/回测组件(backtest_results/tick_replay/order_book/position_monitor/trade_panel)已迁移至Panel+HoloViz。v3.1.0(#ARCH-047):
     5个旧Streamlit页面(fitness_functions/gate_statistics/knowledge_overview/olap_trend/task_progress)迁移至Panel;
     新建app_panel.py主应用入口(pn.Tabs组装10个Tab); ChartFactory新增make_gate_chart/make_trend_line;
-    仪表盘可运行(panel serve --show)。'
+    仪表盘可运行(panel serve --show)。v3.4.0(51号工作流B): 新增「实验历史」Tab(experiment_history.py,
+    C1回测历史+双净值对比, MLflow退役后单一JSON源), app_panel扩至11 Tab。'
   layer: L3_application
   functional_domain: interface
   blueprint_status: Active
   blueprint_level: module
   priority: P1
-  version: 3.1.5
+  version: 3.4.0
   generation: 2
-  last_updated: '2026-07-05'
+  last_updated: '2026-08-17'
   file_path: 03_modules/_domain_frontend/blueprint.md
 - module_id: MOD-L09-001
   name: _domain_research
