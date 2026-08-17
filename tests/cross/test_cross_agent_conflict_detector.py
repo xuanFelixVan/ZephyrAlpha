@@ -194,13 +194,13 @@ class TestResolveConflicts:
 
 class TestRunGit:
     def test_git_success(self, detector: CrossAgentConflictDetector):
-        with patch("zephyr.infrastructure.rollback.cross_agent_conflict_detector.subprocess.run") as mock_run:
+        with patch("zephyr.governance.intelligence_governance.cross_agent_conflict_detector.run_subprocess_hidden") as mock_run:
             mock_run.return_value = MagicMock(stdout="file1.py\nfile2.py\n")
             result = detector.run_git(["diff", "--name-only", "HEAD"])
         assert "file1.py" in result
 
     def test_git_failure_returns_empty(self, detector: CrossAgentConflictDetector):
-        with patch("zephyr.infrastructure.rollback.cross_agent_conflict_detector.subprocess.run") as mock_run:
+        with patch("zephyr.governance.intelligence_governance.cross_agent_conflict_detector.run_subprocess_hidden") as mock_run:
             mock_run.side_effect = Exception("git not found")
             result = detector.run_git(["status"])
         assert result == ""
