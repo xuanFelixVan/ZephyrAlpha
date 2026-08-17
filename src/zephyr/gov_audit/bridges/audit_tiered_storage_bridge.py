@@ -45,7 +45,13 @@ class AuditTieredStorageBridge:
       冷 (COLD): >90天 — 归档目录，可离线
     """
 
-    def __init__(self, data_dir: str | Path = "data/audit-trail") -> None:
+    def __init__(self, data_dir: str | Path | None = None) -> None:
+        # 治本（AI-AUDIT12 路径SSoT收敛）：默认锚定 AUDIT_DATA_DIR 真源
+        # （原默认 "data/audit-trail" 连字符化石目录+相对 cwd）。
+        if data_dir is None:
+            from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
+            data_dir = AUDIT_DATA_DIR
         self._data_dir = Path(data_dir)
         self._hot_dir = self._data_dir
         self._warm_dir = self._data_dir / "warm"

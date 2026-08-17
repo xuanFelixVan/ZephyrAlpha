@@ -37,7 +37,10 @@ import os
 import re
 import subprocess
 from functools import lru_cache
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from zephyr.governance.semantic_audit.models import LLMFixResult, TriggerResult
 
 from pydantic import BaseModel
 
@@ -75,7 +78,10 @@ class _IssueAggregatorProtocol(Protocol):
 
 
 class _LLMBridgeProtocol(Protocol):
-    def generate_fix(self, issue: dict[str, Any]) -> str: ...
+    # 治本（AI-AUDIT12 跨层契约对齐）：原 protocol 签名 generate_fix(issue: dict) -> str
+    # 与 LLMBridge 实际契约 generate_fix(trigger) -> LLMFixResult 不匹配——真实装配即
+    # AttributeError（dict 无 trigger_type）。protocol 与 LLMBridge 真实签名对齐。
+    def generate_fix(self, trigger: "TriggerResult") -> "LLMFixResult": ...
 
 
 class _RollbackHandlerProtocol(Protocol):
@@ -193,7 +199,19 @@ class SelfHealer:
                 )
         fix_content = fix_suggestion
         if not fix_content and self._llm_bridge is not None:
-            fix_content = self._llm_bridge.generate_fix({"target_path": target_path, "issue": issue_description})
+            # 治本（AI-AUDIT12 跨层契约对齐）：按 LLMBridge 真实契约构造 TriggerResult
+            # 调用（原传裸 dict 必抛 AttributeError），并从 LLMFixResult 提取 fix_text
+            # （原按 str 使用返回值，类型不符）。
+            from zephyr.governance.semantic_audit.models import TriggerResult
+
+            fix_result = self._llm_bridge.generate_fix(
+                TriggerResult(
+                    trigger_type="default",
+                    target_location=target_path,
+                    evidence=issue_description,
+                )
+            )
+            fix_content = fix_result.fix_text if getattr(fix_result, "success", False) else ""
         if not fix_content:
             return HealResult(
                 success=False,

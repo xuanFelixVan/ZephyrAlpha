@@ -298,7 +298,7 @@ class AnomalyDetector:
 
 
 
-    构造：AnomalyDetector() 默认 _event_log_path=Path("data/audit-trail/events.jsonl")；
+    构造：AnomalyDetector() 默认 _event_log_path=AUDIT_DATA_DIR/"events.jsonl"（路径真源 SSoT）；
 
     AnomalyDetector(path) 指定事件日志路径。旧 AnomalyDetector(window_size=50) 仍兼容
 
@@ -352,7 +352,10 @@ class AnomalyDetector:
 
         if event_log_path is None:
 
-            self._event_log_path: Path = Path("data/audit-trail/events.jsonl")
+            # 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 AUDIT_DATA_DIR 真源。
+            from zephyr.shared.io.paths import AUDIT_DATA_DIR
+
+            self._event_log_path: Path = AUDIT_DATA_DIR / "events.jsonl"
 
         else:
 

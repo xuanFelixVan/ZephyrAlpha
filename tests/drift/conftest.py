@@ -40,7 +40,11 @@ def _load(name, file_path):
 _ensure_stub("zephyr", _ZEPHYR)
 _ensure_stub("zephyr.shared", _ZEPHYR / "shared")
 _ensure_stub("zephyr.shared.contracts", _ZEPHYR / "shared" / "contracts")
-_ensure_stub("zephyr.shared.contracts.identity", _ZEPHYR / "shared" / "contracts" / "identity")
+# 治本（AI-AUDIT12）：删除 zephyr.shared.contracts.identity 空 stub——该 stub 无
+# __spec__（types.ModuleType 裸对象），同进程后续真实导入链（如 drift_hotfix_bypass →
+# shared.contracts.__init__ → from ...identity import AgentIdentity）命中此 stub 即
+# ImportError "unknown location"，导致 test_drift_hotfix_bypass / test_audit_spec_auditor
+# 收集期爆雷。identity 真实包可正常导入，无需 stub（实证：单独 import OK）。
 _ensure_stub("zephyr.drift_detector", _ZEPHYR / "gov_drift")
 
 _load("zephyr.gov_drift.drift_models", _ZEPHYR / "gov_drift" / "drift_models.py")

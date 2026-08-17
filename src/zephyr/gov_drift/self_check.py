@@ -46,7 +46,7 @@ def check_core_files(base: Path) -> dict[str, str]:
     results: dict[str, str] = {}
 
     for fname in [
-        "_detector-registry.yaml",
+        "_detector_registry.yaml",
         "drift_engine.py",
         "reconciler.py",
         "state_machine.py",
@@ -67,7 +67,7 @@ def check_core_files(base: Path) -> dict[str, str]:
 
 
 def check_registry_parsable(base: Path) -> bool:
-    registry_path = base / "_detector-registry.yaml"
+    registry_path = base / "_detector_registry.yaml"
 
     if not registry_path.exists():
         return False

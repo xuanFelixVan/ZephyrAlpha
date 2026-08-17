@@ -44,6 +44,35 @@ def _compute_file_hash(fp: str) -> str:
 
 from .drift_models import DriftEvent
 
+# 治本（AI-AUDIT12 失效路径修复）：校验脚本真实位置为 d5_architecture/validators/，
+# 原映射缺 validators/ 段，os.path.exists 恒 False —— 4 个维度的 auto-fix 静默空转。
+_VALIDATOR_SCRIPT_MAP: dict[str, str] = {
+    "D5_yaml_disk_sync": "d5_architecture/validators/validate_code_yaml_alignment.py",
+    "D5_static_manifest": "d5_architecture/validators/validate_static_manifest_drift.py",
+    "D5_directory": "d5_architecture/validators/validate_directory_structure.py",
+    "D5_ssot": "d5_architecture/validators/validate_ssot.py",
+}
+
+_THREE_WAY_VALIDATOR = "d5_architecture/validators/validate_three_way_consistency.py"
+
+
+def _atomic_write_text(path: "os.PathLike[str] | str", content: str) -> None:
+    """RULE-ONE 原子写入：tmp+flush+fsync+os.replace（reconciler fix-in-place 纪律）。"""
+    tmp_path = f"{path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as fh:
+            fh.write(content)
+            fh.flush()
+            os.fsync(fh.fileno())
+        os.replace(tmp_path, str(path))
+    except PermissionError:
+        try:
+            os.remove(tmp_path)
+        except OSError:
+            pass
+        raise
+
+
 @dataclass
 class FixSnapshot:
     event_id: uuid.UUID
@@ -179,7 +208,7 @@ class AutoFixer:
                     if old_path in content:
                         updated = content.replace(old_path, new_path)
 
-                        yf.write_text(updated, encoding="utf-8")
+                        _atomic_write_text(yf, updated)
 
                         fixed += 1
 
@@ -195,14 +224,7 @@ class AutoFixer:
         detail = event.resolution_detail or ""
 
         try:
-            script_map = {
-                "D5_yaml_disk_sync": "d5_architecture/validate_code_yaml_alignment.py",
-                "D5_static_manifest": "d5_architecture/validate_static_manifest_drift.py",
-                "D5_directory": "d5_architecture/validate_directory_structure.py",
-                "D5_ssot": "d5_architecture/validate_ssot.py",
-            }
-
-            script_rel = script_map.get(event.drift_dimension)
+            script_rel = _VALIDATOR_SCRIPT_MAP.get(event.drift_dimension)
 
             if not script_rel:
                 return False
@@ -256,8 +278,7 @@ class AutoFixer:
 
                 updated = content.replace(str(actual), str(expected), 1)
 
-                with open(yaml_path, "w", encoding="utf-8") as fh:
-                    fh.write(updated)
+                _atomic_write_text(yaml_path, updated)
 
                 return True
 
@@ -265,8 +286,7 @@ class AutoFixer:
                 self._project_root,
                 "scripts",
                 "governance",
-                "d5_architecture",
-                "validate_three_way_consistency.py",
+                *_THREE_WAY_VALIDATOR.split("/"),
             )
 
             if os.path.exists(script_path):
@@ -347,11 +367,11 @@ class AutoFixer:
 
                     updated_lines.append(line)
 
-                req_file.write_text("\n".join(updated_lines) + "\n", encoding="utf-8")
+                _atomic_write_text(req_file, "\n".join(updated_lines) + "\n")
 
                 return True
 
-            req_file.write_text(result.stdout, encoding="utf-8")
+            _atomic_write_text(req_file, result.stdout)
 
             return True
 
@@ -359,18 +379,37 @@ class AutoFixer:
             return False
 
     def verify_fix(self, event: DriftEvent) -> bool:
-        script_path = os.path.join(
-            self._project_root,
-            "scripts",
-            "governance",
-            "d5_architecture",
-        )
+        """修复后验证闭环（INVARIANTS：自动修复必须验证闭环）。
 
-        for fname in os.listdir(script_path) if os.path.isdir(script_path) else []:
-            if f"validate_{event.detector_id.replace('_', '')}.py" == fname:
-                return True
+        重跑该漂移维度对应的校验脚本（检查模式，非 --auto-fix），exit 0 视为
+        漂移已消除。无对应校验脚本的维度 fail-closed 返回 False——
+        治本（AI-AUDIT12）：原实现两个分支恒 return True，验证名存实亡，
+        修复失败会被误判为成功（违反本模块 INVARIANTS）。
+        """
+        script_rel = _VALIDATOR_SCRIPT_MAP.get(event.drift_dimension)
+        if script_rel is None and event.drift_dimension in (
+            "D3_D5_number_drift",
+            "D5_three_way",
+        ):
+            script_rel = _THREE_WAY_VALIDATOR
+        if script_rel is None:
+            return False
 
-        return True
+        script_path = os.path.join(self._project_root, "scripts", "governance", *script_rel.split("/"))
+        if not os.path.exists(script_path):
+            return False
+
+        try:
+            result = run_subprocess_hidden(
+                [sys.executable, script_path],
+                capture_output=True,
+                text=True,
+                timeout=60,
+                cwd=self._project_root,
+            )
+            return result.returncode == 0
+        except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
+            return False
 
     def rollback_fix(self, event: DriftEvent) -> bool:
         snapshot = self._snapshots.get(event.event_id)

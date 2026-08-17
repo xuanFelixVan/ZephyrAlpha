@@ -185,6 +185,46 @@ class IntegrityVerifier:
                 event_str = dumps(verify_event, ensure_ascii=False, sort_keys=True)
                 prev_hash = hashlib.sha256(event_str.encode("utf-8")).hexdigest()
 
+                # 治本（AI-AUDIT12 审计链自一致性）：校验 stored entry_hash == 内容重算哈希。
+                # 原实现仅做链式 prev 链接 + HMAC-over-entry_hash：篡改"最后一条"事件内容
+                # （保留 entry_hash/hmac_signature 不变）时，无后续事件暴露断链，HMAC 也只
+                # 证明 entry_hash 未被替换而非内容未被篡改——末事件篡改不可检测。
+                # canonical 口径（全部既有测试契约实测并存）：
+                # - production 事件（writer 写入，标记=prev_hash 字段存在）：payload 含 prev_hash
+                # - legacy 事件：两种历史变体并存（含/不含 prev_entry_hash），任一匹配即通过
+                #   （SHA-256 抗原像，接受两个确定性 canonical 不削弱篡改检测）。
+                is_production_format = "prev_hash" in event
+                stored_entry_hash = event.get("entry_hash", "")
+                if is_production_format and not stored_entry_hash:
+                    issues.append(
+                        f"event #{event_count}: production event missing entry_hash "
+                        "(possible strip tamper)"
+                    )
+                if stored_entry_hash:
+                    entry_candidates = [verify_event]
+                    if not is_production_format and "prev_entry_hash" in verify_event:
+                        entry_candidates.append(
+                            {k: v for k, v in verify_event.items() if k != "prev_entry_hash"}
+                        )
+                    if not any(
+                        hmac.compare_digest(
+                            hashlib.sha256(
+                                dumps(c, ensure_ascii=False, sort_keys=True).encode("utf-8")
+                            ).hexdigest(),
+                            stored_entry_hash,
+                        )
+                        for c in entry_candidates
+                    ):
+                        issues.append(
+                            f"event #{event_count}: entry_hash mismatch "
+                            "(content tampered or hash stripped)"
+                        )
+                if is_production_format and self._hmac_key and not event.get("hmac_signature", ""):
+                    issues.append(
+                        f"event #{event_count}: production event missing hmac_signature "
+                        "(possible strip tamper)"
+                    )
+
                 if self._hmac_key:
                     stored_hmac = event.get("hmac_signature", "")
                     if stored_hmac and not self._hmac_matches(event):
@@ -242,12 +282,36 @@ class IntegrityVerifier:
                     calc_hash = hashlib.sha256(
                         dumps(verify_event, ensure_ascii=False, sort_keys=True).encode("utf-8")
                     ).hexdigest()
+                    # 治本（AI-AUDIT12 审计链自一致性）：valid 不再恒 True——stored entry_hash
+                    # 存在时必须与内容重算哈希一致（canonical 口径同 verify_chain：production
+                    # 含 prev_hash；legacy 含/不含 prev_entry_hash 两变体任一匹配）；否则视为
+                    # 内容篡改 valid=False。
+                    stored_entry_hash = event.get("entry_hash", "")
+                    is_production_format = "prev_hash" in event
+                    entry_hash_valid = True
+                    if stored_entry_hash:
+                        single_candidates = [verify_event]
+                        if not is_production_format and "prev_entry_hash" in verify_event:
+                            single_candidates.append(
+                                {k: v for k, v in verify_event.items() if k != "prev_entry_hash"}
+                            )
+                        entry_hash_valid = any(
+                            hmac.compare_digest(
+                                hashlib.sha256(
+                                    dumps(c, ensure_ascii=False, sort_keys=True).encode("utf-8")
+                                ).hexdigest(),
+                                stored_entry_hash,
+                            )
+                            for c in single_candidates
+                        )
                     result: dict[str, Any] = {
                         "status": "found",
                         "event_index": event_index,
-                        "valid": True,
+                        "valid": entry_hash_valid,
                         "chain_hash": calc_hash,
                     }
+                    if not entry_hash_valid:
+                        result["issue"] = "entry_hash mismatch (content tampered or hash stripped)"
                     if self._hmac_key:
                         stored_hmac = event.get("hmac_signature", "")
                         if stored_hmac:
@@ -259,6 +323,12 @@ class IntegrityVerifier:
                                 hashlib.sha256,
                             ).hexdigest()
                             result["hmac_valid"] = hmac.compare_digest(expected_hmac, stored_hmac)
+                        elif is_production_format:
+                            # 治本（AI-AUDIT12）：production 事件必有 hmac_signature（writer
+                            # 恒签名）——缺失即剥离篡改，显式判 invalid（原静默跳过）。
+                            result["hmac_valid"] = False
+                            result["valid"] = False
+                            result.setdefault("issue", "production event missing hmac_signature")
                     return result
         return {"status": "not_found", "valid": False}
 

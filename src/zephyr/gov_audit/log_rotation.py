@@ -46,7 +46,10 @@ class LogRotation:
         max_files: int = DEFAULT_MAX_FILES,
         extra_dirs: list[Path] | tuple[Path, ...] | None = None,
     ) -> None:
-        self._log_dir = Path(log_dir or Path("data/audit_history"))
+        # 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 REPO_ROOT 真源。
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        self._log_dir = Path(log_dir or (REPO_ROOT / "data" / "audit_history"))
         # 5.37.12：默认追加 MCP 审计日志目录（tools_call.jsonl）到轮转范围；
         # 显式传 extra_dirs=() 可关闭追加（测试隔离），传自定义 list 可扩展。
         dirs: list[Path] = [self._log_dir]
@@ -146,7 +149,10 @@ class LogRotationManager:
         max_rotated_days: int = 90,
         config: dict | None = None,
     ) -> None:
-        self._data_dir = Path(data_dir) if data_dir else Path("data/audit_history")
+        # 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 REPO_ROOT 真源。
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        self._data_dir = Path(data_dir) if data_dir else REPO_ROOT / "data" / "audit_history"
         self._data_dir.mkdir(parents=True, exist_ok=True)
         self._compress_rotated = compress_rotated
         self._max_rotated_days = max_rotated_days

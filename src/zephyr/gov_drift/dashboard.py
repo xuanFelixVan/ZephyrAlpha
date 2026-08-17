@@ -97,7 +97,7 @@ class Dashboard:
             str(_anchored_root), *DB_PATH.relative_to(MAIN_REPO_ROOT).parts
         )
 
-        self._registry_path = os.path.join(os.path.dirname(__file__), "_detector-registry.yaml")
+        self._registry_path = os.path.join(os.path.dirname(__file__), "_detector_registry.yaml")
 
     @property
     def project_root(self):

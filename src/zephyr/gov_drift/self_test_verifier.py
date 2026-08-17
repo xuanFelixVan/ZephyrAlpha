@@ -237,10 +237,10 @@ class SelfTestVerifier:
             return {"check": "logic_fragmentation", "status": "ERROR", "detail": str(e)[:100]}
 
     def check_data_integrity(self) -> dict[str, str]:
-        registry = os.path.join(self._base_dir, "_detector-registry.yaml")
+        registry = os.path.join(self._base_dir, "_detector_registry.yaml")
 
         if not os.path.exists(registry):
-            return {"check": "data_integrity", "status": "FAIL", "detail": "_detector-registry.yaml MISSING"}
+            return {"check": "data_integrity", "status": "FAIL", "detail": "_detector_registry.yaml MISSING"}
 
         try:
             import yaml
@@ -298,7 +298,7 @@ class SelfTestVerifier:
             "cross_module_score.py",
             "self_check.py",
             "integration_test_runner.py",
-            "_detector-registry.yaml",
+            "_detector_registry.yaml",
             "__init__.py",
         ]
 

@@ -28,6 +28,7 @@ from pathlib import Path
 from typing import Any, Final
 
 from zephyr.gov_audit.contracts import AuditIndexer as AuditIndexerABC  # noqa: I001 — ABC 契约
+from zephyr.shared.io.paths import REPO_ROOT  # 路径真源（SSoT）
 from zephyr.shared.io.serialization import dumps
 from zephyr.shared.utils.time_utils import now_utc
 
@@ -35,7 +36,8 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["AuditIndexer", "IndexResult"]
 
-DEFAULT_INDEX_DIR: Final[Any] = Path("data/audit_cache")
+# 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 REPO_ROOT 真源。
+DEFAULT_INDEX_DIR: Final[Any] = REPO_ROOT / "data" / "audit_cache"
 INDEX_FILE: Final[str] = "audit_index.json"
 
 # audit_events 表列名（按顺序，用于 INSERT）

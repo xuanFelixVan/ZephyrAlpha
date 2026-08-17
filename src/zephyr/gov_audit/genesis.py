@@ -25,6 +25,7 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
+import os
 import uuid
 from datetime import UTC, datetime
 from pathlib import Path
@@ -115,7 +116,10 @@ class GenesisManager:
         system_id: str = DEFAULT_SYSTEM_ID,
         creator: str = "",
     ) -> None:
-        self._data_dir = Path(data_dir) if data_dir is not None else Path.cwd() / "data" / "audit_genesis"
+        # 治本（AI-AUDIT12 路径SSoT收敛）：cwd 相对默认锚定 REPO_ROOT 真源。
+        from zephyr.shared.io.paths import REPO_ROOT
+
+        self._data_dir = Path(data_dir) if data_dir is not None else REPO_ROOT / "data" / "audit_genesis"
         self._data_dir.mkdir(parents=True, exist_ok=True)
         self._system_id = system_id
         self._creator = creator
@@ -185,13 +189,19 @@ class GenesisManager:
         return GenesisBlock(**block_data)
 
     def _persist(self, block_data: dict[str, Any]) -> None:
-        """将创世块写入 data_dir/genesis.json（原子写）。"""
+        """将创世块写入 data_dir/genesis.json（原子写 + 落盘刷盘）。
+
+        治本（AI-AUDIT12 耐久性对齐 5.74.4）：os.replace 前 flush+fsync，
+        确保创世块内容真正落盘——崩溃后不会出现目标文件存在但内容空洞，
+        破坏审计链不可变起点（本组件 SAFETY=H）。
+        """
         self._data_dir.mkdir(parents=True, exist_ok=True)
         tmp_path = self.genesis_path.with_suffix(".json.tmp")
-        tmp_path.write_text(
-            json.dumps(block_data, indent=2, ensure_ascii=False, default=str),
-            encoding="utf-8",
-        )
+        content = json.dumps(block_data, indent=2, ensure_ascii=False, default=str)
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            f.write(content)
+            f.flush()
+            os.fsync(f.fileno())
         tmp_path.replace(self.genesis_path)
 
     def verify_genesis(self, block: GenesisBlock | None = None) -> GenesisVerificationResult:

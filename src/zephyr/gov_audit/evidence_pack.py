@@ -38,10 +38,12 @@ from typing import Any
 from pydantic import BaseModel, ConfigDict, Field
 
 from zephyr.governance.evidence_pack import EvidencePack  # re-export: audit_trail 模块依赖 EvidencePack
+from zephyr.shared.io.paths import AUDIT_DATA_DIR  # 路径真源（SSoT）
 
 _logger = logging.getLogger(__name__)
 
-DEFAULT_AUDIT_DATA_DIR: Path = Path("data/audit-trail")
+# 治本（AI-AUDIT12 路径SSoT收敛）：相对默认锚定 AUDIT_DATA_DIR 真源。
+DEFAULT_AUDIT_DATA_DIR: Path = AUDIT_DATA_DIR
 
 
 class EvidencePackMetadata(BaseModel):

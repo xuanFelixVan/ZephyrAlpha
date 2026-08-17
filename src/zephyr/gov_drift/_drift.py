@@ -21,6 +21,22 @@
 # [TESTS] tests/test_behavioral_auditor_imports.py
 # [A_module] module_id=MOD-INF-011 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+from zephyr.gov_drift.baseline_poisoning_guard import (
+    HashChainEntry,
+    MultiBaselineVote,
+    build_hash_chain,
+    cross_validate_baseline,
+    generate_integrity_manifest,
+    multi_baseline_vote,
+    verify_hash_chain,
+)
+from zephyr.gov_drift.cascade_detector import (
+    CascadeAlert,
+    CascadeConfig,
+    detect_cascade,
+    dry_run_impact_analysis,
+    is_auto_fix_paused,
+)
 from zephyr.gov_drift.contract_drift_detector import DriftAlert as ContractDriftAlert
 from zephyr.gov_drift.contract_drift_detector import detect_contract_drift
 from zephyr.gov_drift.drift_hotfix_bypass import HotfixAuditEntry, HotfixBypass
@@ -80,7 +96,6 @@ __all__ = [
     "AITrainingLoopResult",
     "CascadeAlert",
     "CascadeConfig",
-    "CascadeEvent",
     "CheckpointWriter",
     "ContractDriftAlert",
     "CrossLanguageConfig",

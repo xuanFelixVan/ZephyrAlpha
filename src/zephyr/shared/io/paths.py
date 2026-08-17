@@ -153,8 +153,14 @@ MODELS_CACHE_DIR: Final[Path] = REPO_ROOT / ".audit_cache" / "models"
 VMS_PERSIST_DIR: Final[Path] = REPO_ROOT / "data" / "vector_db"
 
 # 治本（裁定#6 路径SSoT）：审计数据目录真源——所有审计模块（gov_audit.writer/integrity 等）
-# 必须从此处导入 AUDIT_DATA_DIR，禁止裸 `Path.cwd()/"data"/"audit-trail"`（违反"禁止相对路径"硬约束）。
-AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit-trail"
+# 必须从此处导入 AUDIT_DATA_DIR，禁止裸 `Path.cwd()/"data"/"audit_trail"`（违反"禁止相对路径"硬约束）。
+# 治本（AI-AUDIT12 真源方向裁定 2026-08-17）：目录名取 data/audit_trail（下划线）——
+# 实证：主仓 data/audit_trail/events.jsonl 60.8MB 当日活跃（含 merkle_batches/merkle_hourly/
+# cold/hot/chain_state.json/gate_chain.jsonl 全套生产产物），而 data/audit-trail（连字符）
+# 仅 1.8KB 化石（2026-07-21 起无人写）。retention.py INVARIANTS 与 audit_chain_verifier.py
+# 均声明下划线目录为核心不可变链；原连字符真源指向化石目录，所有 SSoT 消费方
+# （integrity/anomaly/merkle_hourly/evidence_pack/bridges）默认读空链——审计验证静默失效。
+AUDIT_DATA_DIR: Final[Path] = REPO_ROOT / "data" / "audit_trail"
 
 # DM-90974 Phase 2 治本（2026-07-19 真源收敛）：depgraph dirty flag 路径真源。
 # PG-write 脚本（apply_depgraph.py 等）成功 commit DB 后调用 mark_depgraph_dirty() 落此空文件，
