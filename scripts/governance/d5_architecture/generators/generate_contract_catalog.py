@@ -34,7 +34,7 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import DB_DISPLAY_NAME
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 from _shared.constants import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT
 

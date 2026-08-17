@@ -62,7 +62,7 @@ class GlobalActionScheduler:
         while len(self.running) < self.max_concurrent and self.queue:
             action = self.queue.pop(0)
             action.state = ActionState.RUNNING
-            action.started_at = time.time()
+            action.started_at = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
             self.running[action.action_id] = action
 
     def complete(self, action_id: str) -> None:

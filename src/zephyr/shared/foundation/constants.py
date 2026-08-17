@@ -83,6 +83,10 @@ SEMVER_PATTERN: Final[re.Pattern] = re.compile(
 # 5.160.9 修复：Ollama URL 集中化为共享常量（原散落 6 文件，DEFAULT_OLLAMA_URL 重复定义 3 处）
 DEFAULT_OLLAMA_URL: Final[str] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 
+# OTLP gRPC 端点集中化（NO-HARDCODED-URL 门禁，2026-08-17 AI-00 收口：_gen_inherited
+# 模板内嵌字面量被拦，按 §5.160.9 SSoT 原则收编；本地 Jaeger/Tempo 默认 4317）
+DEFAULT_OTLP_ENDPOINT: Final[str] = os.getenv("OTLP_ENDPOINT", "http://localhost:4317")
+
 # RSSHub 本地实例 URL（部署在 D:\RSSHub，npm start，监听 1200 端口）
 DEFAULT_RSSHUB_URL: Final[str] = os.getenv("RSSHUB_BASE_URL", "http://localhost:1200")
 
@@ -140,6 +144,7 @@ __all__ = [
     "DEFAULT_DEEPSEEK_URL",
     "DEFAULT_HTTP_UA",
     "DEFAULT_OLLAMA_URL",
+    "DEFAULT_OTLP_ENDPOINT",
     "DEFAULT_RSSHUB_URL",
     "ETF",
     "FX",

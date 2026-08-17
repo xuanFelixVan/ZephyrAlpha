@@ -50,7 +50,7 @@ class ActionSelector:
     discount_factor: float = 0.9
 
     def select_action(self, diagnosis: object) -> ActionType | None:
-        now = time.time()
+        now = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         for at in self.action_priority:
             if at.value in self.retired_actions:
                 if now - self.retired_actions[at.value] > self.RETIRE_SECONDS:
@@ -61,14 +61,14 @@ class ActionSelector:
         return None
 
     def record_result(self, action_type: ActionType, success: bool) -> None:
-        record = ActionRecord(action_type=action_type, timestamp=time.time(), success=success)
+        record = ActionRecord(action_type=action_type, timestamp=time.time(), success=success)  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         self.history.append(record)
         if success:
             self.consecutive_failures[action_type.value] = 0
         else:
             self.consecutive_failures[action_type.value] = self.consecutive_failures.get(action_type.value, 0) + 1
             if self.consecutive_failures[action_type.value] >= self.MAX_CONSECUTIVE_FAILURES:
-                self.retired_actions[action_type.value] = time.time()
+                self.retired_actions[action_type.value] = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
                 self.consecutive_failures[action_type.value] = 0
 
     def execute_action(self, action_type: ActionType, payload: dict[str, Any]) -> bool:

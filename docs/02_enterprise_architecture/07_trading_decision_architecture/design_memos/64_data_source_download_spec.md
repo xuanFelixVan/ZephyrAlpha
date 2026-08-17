@@ -42,12 +42,12 @@ related_issues:
 > 本目录文档种类适配见 [01_design_memo_management_spec](01_design_memo_management_spec.md) §4.4——spec 类按对象内在结构组织，本文 §3-§10 决策按数据获取管线的 8 个对象分节。
 >
 > **与现有文档关系**：
-> - **接管 why 层** [data_source_integrator_blueprint.md](../../03_modules/_domain_data/data_source_integrator_blueprint.md)（MOD-L00-004 数据源集成器蓝图——what 层真源，本文补 why）
-> - **引用** [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)（MOD-L00-002 数据源 API 操作唯一真源——"怎么调用+参数坑"）
+> - **接管 why 层** [data_source_integrator_blueprint.md](../../../03_modules/_domain_data/data_source_integrator_blueprint.md)（MOD-L00-004 数据源集成器蓝图——what 层真源，本文补 why）
+> - **引用** [data_source_operation_manual.md](../../../03_modules/_domain_data/data_source_operation_manual.md)（MOD-L00-002 数据源 API 操作唯一真源——"怎么调用+参数坑"）
 > - **互补不重叠** [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md)（G01 数据与特征层规范——15 号偏"数据进来后怎么用"PIT/特征仓库/因子工程，本文偏"数据怎么进来"Provider/调度/落库/韧性）
-> - **引用** [11_d_data.md](../../02_enterprise_architecture/02_domain_architecture_docs/11_d_data.md)（D_DATA 域 183 模块清单）
+> - **引用** [11_d_data.md](../../../02_enterprise_architecture/02_domain_architecture_docs/11_d_data.md)（D_DATA 域 183 模块清单）
 > - **配套** [63_data_utilization_audit.md](63_data_utilization_audit.md)（数据利用审计——63 号审"数据用得怎么样"，本文审"数据下得怎么样"）
-> - **引用** [data_inventory.md](../../02_enterprise_architecture/05_dataflow_architecture/data_inventory.md) + [data_acquisition_requirements.yaml](../../02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml)（业务数据现状 + 数据获取需求 P0-P3）
+> - **引用** [data_inventory.md](../../../02_enterprise_architecture/05_dataflow_architecture/data_inventory.md) + [data_acquisition_requirements.yaml](../../../02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml)（业务数据现状 + 数据获取需求 P0-P3）
 
 ## 1. 主题组信息
 
@@ -251,7 +251,7 @@ class CapabilityContract:
 
 ### 5.7 策略注册表 policy_registry（per-source 调用策略）
 
-**真源**：`src/zephyr/data/policy_registry.py`（MOD-GOV-policy_registry）。**职责**：每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。策略参数来源：`data_source_operation_manual.md`（MOD-L00-002）每源限流/防爬/登录方式描述，已固化为 `config/policies.yaml`（派生物，真源在 `data_sources_registry.yaml` 的 policy 字段）。
+**真源**：`src/zephyr/data/policy_registry.py`（MOD-GOV-policy_registry）。**职责**：每个数据源有自己的限流/重试/反爬/登录刷新策略，集中管理、yaml 热更新。策略参数来源：`data_source_operation_manual.md`（MOD-L00-002）每源限流/防爬/登录方式描述，已固化为 `src/zephyr/data/config/policies.yaml`（派生物，真源在 `data_sources_registry.yaml` 的 policy 字段）。
 
 **SourcePolicy 数据类**（per-source 策略）：
 
@@ -673,7 +673,7 @@ Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：`integrator_task_
 
 ### 10.5 开机自启架构（单一真源）
 
-**真源**：[boot_autostart_architecture.md](../../03_modules/_domain_data/boot_autostart_architecture.md)（MOD-L00-004 §1-§5，v1.0.0，2026-08-07 更新）
+**真源**：[boot_autostart_architecture.md](../../../03_modules/_domain_data/boot_autostart_architecture.md)（MOD-L00-004 §1-§5，v1.0.0，2026-08-07 更新）
 
 **第一性原理**（AGENTS.md 硬约束：永久系统必须全自动——自动触发/运行/维护/关闭，禁止需手工干预的设计）：ZephyrAlpha 永久服务必须开机自启 + 崩溃自愈，通过 **Windows Task Scheduler 单一权威入口** 实现。
 
@@ -705,7 +705,7 @@ Prometheus 文本格式 `data/metrics.prom`，可接 Grafana：`integrator_task_
 
 ### 10.6 四层防御 Watchdog（#ARCH-BOOT-001，resolved 2026-08-07）
 
-**真源**：[boot_autostart_architecture.md](../../03_modules/_domain_data/boot_autostart_architecture.md) §3 + §8
+**真源**：[boot_autostart_architecture.md](../../../03_modules/_domain_data/boot_autostart_architecture.md) §3 + §8
 
 **架构**：
 ```
@@ -852,16 +852,16 @@ integrator speed-test [--source <src>] [--capability <cap>]  # 主动测速（§
 **质量完整性**：integrity_checker.py（§8.2 L11）/ backfill_checker.py（§8.3 L10）/ cross_source_validator.py（§8.4）/ source_health_check.py（§8.5）/ pit_query.py（§8.6）/ speed_tester.py（§10.4）
 **业务下载器**：sector_kline_downloader.py（§6.8.1）/ sector_ranking_engine.py（§6.8.2）/ sector_snapshot_collector.py（§6.8.3）/ kline_resampler.py（§6.9）/ news_collector.py（§6.10.2）/ news_dedup.py（§6.10.1）/ tick_redis_cache.py（§7.11）/ tick_subscriber.py（§6.6）
 **冗余容灾**：redundant_source/{__init__,heartbeat_monitor,source_switcher,backup_tick_poller,recovery,sqlite_fallback}.py（§9.2 热切换 + SQLite 兜底）
-**配置**：config/tasks.yaml（§11.2）/ config/schedule.yaml（§6.2 15条目）/ config/policies.yaml（派生）/ config/known_data_gaps.yaml（§8.7）
+**配置**：`src/zephyr/data/config/tasks.yaml`（§11.2）/ `src/zephyr/data/config/schedule.yaml`（§6.2 15条目）/ `src/zephyr/data/config/policies.yaml`（派生）/ `src/zephyr/data/config/known_data_gaps.yaml`（§8.7）
 **守护与自启**（跨域引用，真源在 D_INFRA_RUNTIME / scripts/）：infrastructure/{database_service.py（§7.10）, system_telemetry/{watchdog,health_aggregator,health_probes}.py} + shared/observability/{metrics,metrics_server}.py（§10.13） + scripts/{start_scheduler,start_tick_subscriber,start_ch_health_probe,deadman_switch,register_guard_tasks,register_aux_tasks,clean_trae_cache}.ps1 + launch_hidden.vbs（§10.11） + tests/scripts/{test_guard_invariants,test_guard_watchdog}.py（§10.9） + gov_enforcement/commit_gates/{ch_batch_size,ch_final,ch_version_col,table_name_registry,capability_consistency,capability_lookup_required,capability_overlap,bare_sql,data_task_completeness}_gate.py（§10.14 门禁 9 项）
 
 ### 11.2 配置文件清单
 
 | 文件 | 作用 | 条目数 |
 |---|---|---|
-| config/tasks.yaml | 采集任务清单（表→Provider→策略→fallback） | 154 任务（含 10 disabled，2026-08-12 实测） |
-| config/schedule.yaml | 15 个调度时段条目（L0~L11，含 L2.5 板块 + L3.5 慢新闻 + L10.5 每日补下载） | 15 条目 |
-| config/policies.yaml | per-source 策略参数（派生物，真源在 registry.yaml） | 派生 |
+| `src/zephyr/data/config/tasks.yaml` | 采集任务清单（表→Provider→策略→fallback） | 154 任务（含 10 disabled，2026-08-12 实测） |
+| `src/zephyr/data/config/schedule.yaml` | 15 个调度时段条目（L0~L11，含 L2.5 板块 + L3.5 慢新闻 + L10.5 每日补下载） | 15 条目 |
+| `src/zephyr/data/config/policies.yaml` | per-source 策略参数（派生物，真源在 registry.yaml） | 派生 |
 | config/known_data_gaps.yaml | 已知历史缺口注册表（§8.7，backfill 全范围回看） | 7 条登记（1 registered + 5 accepted + 1 resolved） |
 | architecture_model/data/data_sources_registry.yaml | 数据源元数据 + policy（真源） | 12 数据源 |
 | docs/03_modules/_cross_layer/database/business_data_categories.yaml | 业务数据品类/表名 SSoT 真源（§5.6 TableRegistry 消费对象，98 条品类） | 98 品类 |
@@ -1197,19 +1197,19 @@ fallback_sources 中 35 处引用无 Provider 实现的 source（§9.1 死 fallb
 
 ### 17.2 模块蓝图（what 层真源）
 
-- [data_source_integrator_blueprint.md](../../03_modules/_domain_data/data_source_integrator_blueprint.md)——MOD-L00-004 数据源集成器蓝图（what 层真源，本文补 why）
-- [blueprint.md](../../03_modules/_domain_data/blueprint.md)——MOD-L00-001 Datasource Core 蓝图（v4.0.4，Provider 部分已移交 004）
-- [data_source_operation_manual.md](../../03_modules/_domain_data/data_source_operation_manual.md)——MOD-L00-002 数据源 API 操作唯一真源
-- [boot_autostart_architecture.md](../../03_modules/_domain_data/boot_autostart_architecture.md)——开机自启架构
-- [redundant_source_blueprint.md](../../03_modules/_domain_data/redundant_source_blueprint.md)——冗余数据源蓝图
-- [wal_codec_blueprint.md](../../03_modules/_domain_data/wal_codec_blueprint.md)——WAL 编解码蓝图
-- [_domain_mkt_data/](../../03_modules/_domain_mkt_data/)——行情数据域 6 子模块蓝图（autoload/connectors/failover/raw_data_cache/vendor_base/vendor_registry）
+- [data_source_integrator_blueprint.md](../../../03_modules/_domain_data/data_source_integrator_blueprint.md)——MOD-L00-004 数据源集成器蓝图（what 层真源，本文补 why）
+- [blueprint.md](../../../03_modules/_domain_data/blueprint.md)——MOD-L00-001 Datasource Core 蓝图（v4.0.4，Provider 部分已移交 004）
+- [data_source_operation_manual.md](../../../03_modules/_domain_data/data_source_operation_manual.md)——MOD-L00-002 数据源 API 操作唯一真源
+- [boot_autostart_architecture.md](../../../03_modules/_domain_data/boot_autostart_architecture.md)——开机自启架构
+- [redundant_source_blueprint.md](../../../03_modules/_domain_data/redundant_source_blueprint.md)——冗余数据源蓝图
+- [wal_codec_blueprint.md](../../../03_modules/_domain_data/wal_codec_blueprint.md)——WAL 编解码蓝图
+- [_domain_mkt_data/](../../../03_modules/_domain_mkt_data/)——行情数据域 6 子模块蓝图（autoload/connectors/failover/raw_data_cache/vendor_base/vendor_registry）
 
 ### 17.3 域架构与数据流
 
-- [11_d_data.md](../../02_enterprise_architecture/02_domain_architecture_docs/11_d_data.md)——D_DATA 域 183 模块清单
-- [data_inventory.md](../../02_enterprise_architecture/05_dataflow_architecture/data_inventory.md)——业务数据现状（ClickHouse 实时扫描）
-- [data_acquisition_requirements.yaml](../../02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml)——数据获取需求 P0-P3
+- [11_d_data.md](../../../02_enterprise_architecture/02_domain_architecture_docs/11_d_data.md)——D_DATA 域 183 模块清单
+- [data_inventory.md](../../../02_enterprise_architecture/05_dataflow_architecture/data_inventory.md)——业务数据现状（ClickHouse 实时扫描）
+- [data_acquisition_requirements.yaml](../../../02_enterprise_architecture/05_dataflow_architecture/data_acquisition_requirements.yaml)——数据获取需求 P0-P3
 
 ### 17.4 代码真源（depgraph path）
 

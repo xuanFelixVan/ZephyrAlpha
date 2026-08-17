@@ -107,7 +107,7 @@ why：跨策略投票的本质是"多个弱信号合成一个强信号"，前提
 | 节奏 | 内容 | 设施 |
 |---|---|---|
 | 盘中（3 秒 Tick） | 打板链信号（评分卡/情绪定位/双引擎融合）、退潮加权、瞬时风控 | signal_ashare 引擎 + strategy_book.py |
-| 盘后（每日） | 技术指标增量调度（technical_indicator_incremental）、因子增量、日终风控审计 | `src/zephyr/data/scheduler.py` + `config/schedule.yaml` |
+| 盘后（每日） | 技术指标增量调度（technical_indicator_incremental）、因子增量、日终风控审计 | `src/zephyr/data/scheduler.py` + `src/zephyr/data/config/schedule.yaml` |
 | 周末 | 技术指标全量回算（technical_indicator_full_refresh，覆盖 9 周期）、因子全量、IC/IR 评估 | 同上 |
 
 **裁定**：维持"盘中轻、盘后重、周末全量"三档节奏，不引入流批一体/实时数仓。3 秒 Tick 约束下盘中只算打板必需信号；一切重型计算（9 周期指标、因子评估）放盘后/周末——与硬件约束（单机 64GB）和数据频率（日频根频率）匹配。

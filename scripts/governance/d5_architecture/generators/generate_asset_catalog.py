@@ -33,11 +33,14 @@ _GOV_DIR = str(next(p for p in _THIS_FILE.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
 
-from _common import DB_DISPLAY_NAME
+from _common import DB_DISPLAY_NAME  # noqa: E402  # noqa: import-integrity  sys.path 动态加载的本地模块
 from _shared.constants import get_depgraph_pg_connection
 from zephyr.shared.io.paths import REPO_ROOT
 
 OUTPUT_PATH = REPO_ROOT / "docs" / "02_enterprise_architecture" / "01_global_architecture_diagram" / "asset_catalog.md"
+
+SQL_COUNT_DATAFLOW_JOBS = "SELECT COUNT(*) AS c FROM dataflow_jobs"
+SQL_COUNT_DATAFLOW_DATASETS = "SELECT COUNT(*) AS c FROM dataflow_datasets"
 
 
 def generate_asset_catalog() -> str:
@@ -81,9 +84,9 @@ def generate_asset_catalog() -> str:
         contracts = [dict(r) for r in cur.fetchall()]
 
         # 6. 数据流作业
-        cur = conn.execute("SELECT COUNT(*) AS c FROM dataflow_jobs")
+        cur = conn.execute(SQL_COUNT_DATAFLOW_JOBS)
         dataflow_jobs = cur.fetchone()["c"]
-        cur = conn.execute("SELECT COUNT(*) AS c FROM dataflow_datasets")
+        cur = conn.execute(SQL_COUNT_DATAFLOW_DATASETS)
         dataflow_datasets = cur.fetchone()["c"]
 
         # 7. 数据源 API 清单（join data_source_assets 取源名）

@@ -41,7 +41,7 @@ class SafetyGateL28L29:
         return results
 
     def _l28_dr_readiness(self, ctx: ActionContext) -> GateResult:
-        days_since = (time.time() - self.last_drill) / 86400.0 if self.last_drill > 0 else 999
+        days_since = (time.time() - self.last_drill) / 86400.0 if self.last_drill > 0 else 999  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         if days_since > 90 and ctx.action_type in ("REPAIR", "DEPLOY"):
             return GateResult(
                 "L28", GateVerdict.REJECT, GateType.HARD, f"DR drill {days_since:.0f}d overdue > 90d limit"

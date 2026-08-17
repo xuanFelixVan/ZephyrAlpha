@@ -54,14 +54,14 @@ class SecondaryAlertChannel:
         self.active_channel = self.channels[0] if self.channels else ""
         for ch in self.channels:
             self.channel_health[ch] = ChannelState.HEALTHY
-            self.last_heartbeat[ch] = time.time()
+            self.last_heartbeat[ch] = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
 
     def heartbeat(self, channel: str) -> None:
-        self.last_heartbeat[channel] = time.time()
+        self.last_heartbeat[channel] = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         self.channel_health[channel] = ChannelState.HEALTHY
 
     def check_channels(self) -> str:
-        now = time.time()
+        now = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         for ch in self.channels:
             if now - self.last_heartbeat.get(ch, 0) > self.heartbeat_interval * 3:
                 self.channel_health[ch] = ChannelState.DOWN

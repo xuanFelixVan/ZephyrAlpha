@@ -795,7 +795,7 @@ granularity_hierarchy:
 
 ## 4. 计算规则与约束验证
 
-> §8 图指标自动计算脚本：`scripts/governance/diagnose_depgraph.py`
+> §8 图指标自动计算脚本：`scripts/governance/d5_architecture/diagnose_depgraph.py`
 
 ### 4.1 邻接表构建
 

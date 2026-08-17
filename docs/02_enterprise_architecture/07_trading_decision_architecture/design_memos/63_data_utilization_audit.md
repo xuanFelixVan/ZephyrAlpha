@@ -41,7 +41,7 @@ depends_on:
 
 ### 2.1 项目处境
 
-- 业务数据库已建成 [schemas/categories/](../../../schemas/categories/) 下 **103 张表**的 DDL（market/fundamental/macro/cross 四大类前缀），覆盖 A 股/港股/美股/期货/期权/可转债/生猪期货/宏观经济等全品类（v2.1.0 核验：`market_stock_valuation.py` 于 2026-08-11 commit 81c7687540 新增，102→103）
+- 业务数据库已建成 [schemas/categories/](../../../../schemas/categories/) 下 **103 张表**的 DDL（market/fundamental/macro/cross 四大类前缀），覆盖 A 股/港股/美股/期货/期权/可转债/生猪期货/宏观经济等全品类（v2.1.0 核验：`market_stock_valuation.py` 于 2026-08-11 commit 81c7687540 新增，102→103）
 - design_memos 下 47 篇编号文档（不含 [AI_review_instructions.md](AI_review_instructions.md) 辅助文件；受扫 46 篇=47 篇-本备忘自引）共约 5.24M 字符，承载交易决策架构 why 层
 - [62_business_registry_construction](62_business_registry_construction.md) 已定稿 12 个业务注册表 schema（P0 完成 universe/benchmark/cost_model 三件套，P1 待施工 9 件套）
 - 62 号 line 1715 记录 [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) 已有 DS-001~076 共 76 条数据源登记（待 S6 改名为 data_asset_registry.yaml）
@@ -63,7 +63,7 @@ v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲�
 | **消费层文档覆盖**（v2.1.0 新增口径） | 未区分 | 未区分 | **37（35.9%）**——非 17/64 号规划文档外的消费方文档引用，**真问题在此，与 v0.2.0 的 38 张惊人稳定** |
 | 规划层文档覆盖（v2.1.0 新增口径） | 未识别 | 未识别 | **53（51.5%）**——仅 17/64 号资产清单/下载规范提及，消费用法未描述 |
 | 零覆盖 | 未识别 | 61（英文上界） | **13（12.6%）**——其中 12 张代码在用（真文档缺口），1 张真闲置 |
-| 代码零引用但规划已登记 | 未识别 | 未识别 | **6 张**（dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation）——DDL+规划文档有，代码/config/tasks.yaml 全零，采集未施工 |
+| 代码零引用但规划已登记 | 未识别 | 未识别 | **6 张**（dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation）——DDL+规划文档有，代码/`src/zephyr/data/config/tasks.yaml` 全零，采集未施工 |
 | P0"高价值闲置" | 8 张 | 全部 CODE_ONLY | v2.1.0 确认：批次 A 风险表代码均活跃，但**消费文档仍缺**（仅 17/64 号规划层提及）——§7 第一波施工内容不变 |
 | P4 生猪期货 | "完全不涉及" | 代码 7-8 次引用 | v2.1.0 实测：3 张生猪表代码各 1 次引用（采集模板级）+规划层覆盖——维持批次 D 暂缓 |
 
@@ -101,7 +101,7 @@ v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲�
 
 | 设施 | 位置 | 状态 | 说明 |
 |---|---|---|---|
-| 业务表 DDL 真源 | [schemas/categories/](../../../schemas/categories/) 103 个 .py | ✅ 全部入 git | 2026-08-11 提交 `022910926f`/`81c7687540` 补齐最后 8 张（calendar_event/dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation/technical_indicator） |
+| 业务表 DDL 真源 | [schemas/categories/](../../../../schemas/categories/) 103 个 .py | ✅ 全部入 git | 2026-08-11 提交 `022910926f`/`81c7687540` 补齐最后 8 张（calendar_event/dividend_tax_node/index_adjustment/ipo_schedule/margin_target_adjustment/msci_adjustment/stock_valuation/technical_indicator） |
 | 数据源登记注册表 | [dataflow_graph_registry.yaml](../../../01_policies_and_standards/_registry/catalogs/dataflow_graph_registry.yaml) | ✅ 76 条 DS-001~076 | data_asset_registry.yaml 待 S6 改名（62 号 P1-B），v2.1.0 核验 6 张代码零引用表**未登记**在内 |
 | 数据采集 Provider 层 | `src/zephyr/data/implementations/` 15 个 provider | ✅ production | akshare/baostock/cls/eastmoney_news/eia/fred/ifind/internal_compute/miniqmt/qweather/rss/tdx/tickflow/tqcenter/tushare——**无逐表 *_ingestion.py 脚本**，采集由 provider + 配置驱动 |
 | 调度配置 | `src/zephyr/data/config/tasks.yaml` | ✅ 存在 | §7.5 归档指引中的路径以此为准（非仓库根目录） |
@@ -124,7 +124,7 @@ v0.1.0 曾误判"43 张闲置"，v0.2.0 补代码层扫描修正为"3 张真闲�
 
 ### 3.1 表清单来源
 
-[schemas/categories/](../../../schemas/categories/) 下 103 个 `.py` 文件，每个对应一张 ClickHouse 业务表（文件名前缀 `market_`/`fundamental_`/`macro_`/`cross_` 对应业务域）。v2.1.0 核验：market 88 / fundamental 12 / macro 2 / cross 1 = 103。
+[schemas/categories/](../../../../schemas/categories/) 下 103 个 `.py` 文件，每个对应一张 ClickHouse 业务表（文件名前缀 `market_`/`fundamental_`/`macro_`/`cross_` 对应业务域）。v2.1.0 核验：market 88 / fundamental 12 / macro 2 / cross 1 = 103。
 
 ### 3.2 引用扫描方法（v0.2.0 三层校验 / v2.1.0 补覆盖分层口径）
 
@@ -266,16 +266,16 @@ Detective 扫描（每周 cron 触发）：
 
 | # | 业务域 | 表数 | 代表表（稳定 path） |
 |---|---|---|---|
-| 1 | A 股 K 线（含后复权/指数/板块/分钟级） | 15 | [kline_daily](../../../schemas/categories/market_kline_daily.py) / [kline_daily_hfq](../../../schemas/categories/market_kline_daily_hfq.py) / [kline_index](../../../schemas/categories/market_kline_index.py) / [kline_sector](../../../schemas/categories/market_kline_sector.py) |
-| 2 | ETF/LOF/可转债 K 线 | 12 | [kline_etf_daily](../../../schemas/categories/market_kline_etf_daily.py) / [kline_lof_1min](../../../schemas/categories/market_kline_lof_1min.py) / [kline_cb](../../../schemas/categories/market_kline_cb.py) |
-| 3 | 跨市场 K 线（港股/美股/期货） | 5 | [kline_hk_daily](../../../schemas/categories/market_kline_hk_daily.py) / [kline_us_daily](../../../schemas/categories/market_kline_us_daily.py) / [kline_futures](../../../schemas/categories/market_kline_futures.py) |
-| 4 | Tick / 实时快照 / 涨跌停 | 4 | [tick](../../../schemas/categories/market_tick.py) / [l2_tick](../../../schemas/categories/market_l2_tick.py) / [realtime_snapshot](../../../schemas/categories/market_realtime_snapshot.py) / [limit_up_down](../../../schemas/categories/market_limit_up_down.py) |
-| 5 | 基础元数据（股票/指数/板块/概念列表） | 21 | [stock_list](../../../schemas/categories/market_stock_list.py) / [index_list](../../../schemas/categories/market_index_list.py) / [sector_list](../../../schemas/categories/market_sector_list.py) / [concept_board](../../../schemas/categories/market_concept_board.py) / [etf_list](../../../schemas/categories/market_etf_list.py) / [convertible_bond_list](../../../schemas/categories/market_convertible_bond_list.py) |
-| 6 | 资金流/杠杆/事件（龙虎榜/大宗/拍卖/MSCI） | 11 | [money_flow](../../../schemas/categories/market_money_flow.py) / [margin_trading](../../../schemas/categories/market_margin_trading.py) / [hk_connect_flow](../../../schemas/categories/market_hk_connect_flow.py) / [dragon_tiger](../../../schemas/categories/market_dragon_tiger.py) / [block_trade](../../../schemas/categories/market_block_trade.py) / [msci_adjustment](../../../schemas/categories/market_msci_adjustment.py) |
-| 7 | 衍生品（期权/期货/生猪/可转债 IV） | 11 | [option_kline](../../../schemas/categories/market_option_kline.py) / [option_iv](../../../schemas/categories/market_option_iv.py) / [option_greeks](../../../schemas/categories/market_option_greeks.py) / [cb_iv](../../../schemas/categories/market_cb_iv.py) / [hog_futures_core](../../../schemas/categories/market_hog_futures_core.py) |
-| 8 | 基本面/宏观 | 22 | [balance_sheet](../../../schemas/categories/fundamental_balance_sheet.py) / [income_statement](../../../schemas/categories/fundamental_income_statement.py) / [cashflow_statement](../../../schemas/categories/fundamental_cashflow_statement.py) / [analyst_forecast](../../../schemas/categories/fundamental_analyst_forecast.py) / [restricted_shares](../../../schemas/categories/fundamental_restricted_shares.py) / [share_unlock](../../../schemas/categories/fundamental_share_unlock.py) / [edb_data](../../../schemas/categories/macro_edb_data.py) / [macro_data](../../../schemas/categories/macro_macro_data.py) / [stock_valuation](../../../schemas/categories/market_stock_valuation.py)（v2.1.0 新增归入） |
-| 9 | 衍生（技术指标/验证日志） | 2 | [technical_indicator](../../../schemas/categories/market_technical_indicator.py) / [cross_validation_log](../../../schemas/categories/cross_validation_log.py) |
-| | **合计** | **103**（15+12+5+4+21+11+11+22+2=103；v0.1.0 报 101 且算术合计 103 均有误，v0.2.0 修正为 102，v2.1.0 以 [schemas/categories/](../../../schemas/categories/) 实际 103 个 .py 文件为准修正——market 88 + fundamental 12 + macro 2 + cross 1；分类边界按代表表归集，单表归属以 §6 清单为准） | |
+| 1 | A 股 K 线（含后复权/指数/板块/分钟级） | 15 | [kline_daily](../../../../schemas/categories/market_kline_daily.py) / [kline_daily_hfq](../../../../schemas/categories/market_kline_daily_hfq.py) / [kline_index](../../../../schemas/categories/market_kline_index.py) / [kline_sector](../../../../schemas/categories/market_kline_sector.py) |
+| 2 | ETF/LOF/可转债 K 线 | 12 | [kline_etf_daily](../../../../schemas/categories/market_kline_etf_daily.py) / [kline_lof_1min](../../../../schemas/categories/market_kline_lof_1min.py) / [kline_cb](../../../../schemas/categories/market_kline_cb.py) |
+| 3 | 跨市场 K 线（港股/美股/期货） | 5 | [kline_hk_daily](../../../../schemas/categories/market_kline_hk_daily.py) / [kline_us_daily](../../../../schemas/categories/market_kline_us_daily.py) / [kline_futures](../../../../schemas/categories/market_kline_futures.py) |
+| 4 | Tick / 实时快照 / 涨跌停 | 4 | [tick](../../../../schemas/categories/market_tick.py) / [l2_tick](../../../../schemas/categories/market_l2_tick.py) / [realtime_snapshot](../../../../schemas/categories/market_realtime_snapshot.py) / [limit_up_down](../../../../schemas/categories/market_limit_up_down.py) |
+| 5 | 基础元数据（股票/指数/板块/概念列表） | 21 | [stock_list](../../../../schemas/categories/market_stock_list.py) / [index_list](../../../../schemas/categories/market_index_list.py) / [sector_list](../../../../schemas/categories/market_sector_list.py) / [concept_board](../../../../schemas/categories/market_concept_board.py) / [etf_list](../../../../schemas/categories/market_etf_list.py) / [convertible_bond_list](../../../../schemas/categories/market_convertible_bond_list.py) |
+| 6 | 资金流/杠杆/事件（龙虎榜/大宗/拍卖/MSCI） | 11 | [money_flow](../../../../schemas/categories/market_money_flow.py) / [margin_trading](../../../../schemas/categories/market_margin_trading.py) / [hk_connect_flow](../../../../schemas/categories/market_hk_connect_flow.py) / [dragon_tiger](../../../../schemas/categories/market_dragon_tiger.py) / [block_trade](../../../../schemas/categories/market_block_trade.py) / [msci_adjustment](../../../../schemas/categories/market_msci_adjustment.py) |
+| 7 | 衍生品（期权/期货/生猪/可转债 IV） | 11 | [option_kline](../../../../schemas/categories/market_option_kline.py) / [option_iv](../../../../schemas/categories/market_option_iv.py) / [option_greeks](../../../../schemas/categories/market_option_greeks.py) / [cb_iv](../../../../schemas/categories/market_cb_iv.py) / [hog_futures_core](../../../../schemas/categories/market_hog_futures_core.py) |
+| 8 | 基本面/宏观 | 22 | [balance_sheet](../../../../schemas/categories/fundamental_balance_sheet.py) / [income_statement](../../../../schemas/categories/fundamental_income_statement.py) / [cashflow_statement](../../../../schemas/categories/fundamental_cashflow_statement.py) / [analyst_forecast](../../../../schemas/categories/fundamental_analyst_forecast.py) / [restricted_shares](../../../../schemas/categories/fundamental_restricted_shares.py) / [share_unlock](../../../../schemas/categories/fundamental_share_unlock.py) / [edb_data](../../../../schemas/categories/macro_edb_data.py) / [macro_data](../../../../schemas/categories/macro_macro_data.py) / [stock_valuation](../../../../schemas/categories/market_stock_valuation.py)（v2.1.0 新增归入） |
+| 9 | 衍生（技术指标/验证日志） | 2 | [technical_indicator](../../../../schemas/categories/market_technical_indicator.py) / [cross_validation_log](../../../../schemas/categories/cross_validation_log.py) |
+| | **合计** | **103**（15+12+5+4+21+11+11+22+2=103；v0.1.0 报 101 且算术合计 103 均有误，v0.2.0 修正为 102，v2.1.0 以 [schemas/categories/](../../../../schemas/categories/) 实际 103 个 .py 文件为准修正——market 88 + fundamental 12 + macro 2 + cross 1；分类边界按代表表归集，单表归属以 §6 清单为准） | |
 
 ## 5. 引用审查结果
 
@@ -283,7 +283,7 @@ Detective 扫描（每周 cron 触发）：
 
 | 指标 | 数值 | 说明 |
 |---|---|---|
-| 总表数 | 103 | [schemas/categories/](../../../schemas/categories/) 实际 .py 文件数（market 88 + fundamental 12 + macro 2 + cross 1） |
+| 总表数 | 103 | [schemas/categories/](../../../../schemas/categories/) 实际 .py 文件数（market 88 + fundamental 12 + macro 2 + cross 1） |
 | 受扫文档数 | 46 篇 | 47 篇编号 design_memos - 本备忘自引（AI_review_instructions 辅助文件除外） |
 | **消费层文档覆盖**（非 17/64 号消费方文档命中） | **37（35.9%）** | **真问题在此**——策略/风控/数据层文档显式引用表名，< 80% 行业基准 |
 | 规划层文档覆盖（仅 17/64 号命中） | 53（51.5%） | 资产清单/下载规范级引用——"登记了要下/已建表"，未描述消费用法 |
@@ -493,7 +493,7 @@ v2.1.0 五源实测（design_memos 46 篇 + src/zephyr/ 代码 + config/ + tasks
 
 | # | 表名 | 稳定 path | 生命周期建议 | 理由 |
 |---|---|---|---|---|
-| 1 | `index_meta` | [market_index_meta](../../../schemas/categories/market_index_meta.py) | → DEPRECATED 观察期（默认建议，待人裁定） | 指数元数据——v0.2.0"补建激活"建议的前提是 `index_constituent` 代码 23 次引用需 meta 配合；v2.1.0 实测 `index_constituent` 已有规划层覆盖、`index_meta` 五源全零，补建价值取决于 62 号 universe/benchmark 注册表是否需要 meta 字段——**若 62 号 P1-A/B 施工不需要 → 确认 DEPRECATED**；若需要 → 转 ACTIVE 补建（§10 Q1） |
+| 1 | `index_meta` | [market_index_meta](../../../../schemas/categories/market_index_meta.py) | → DEPRECATED 观察期（默认建议，待人裁定） | 指数元数据——v0.2.0"补建激活"建议的前提是 `index_constituent` 代码 23 次引用需 meta 配合；v2.1.0 实测 `index_constituent` 已有规划层覆盖、`index_meta` 五源全零，补建价值取决于 62 号 universe/benchmark 注册表是否需要 meta 字段——**若 62 号 P1-A/B 施工不需要 → 确认 DEPRECATED**；若需要 → 转 ACTIVE 补建（§10 Q1） |
 
 > **弃用流程**（[atlan.com 2026-03](https://atlan.com/know/data-deprecation-process/)）：DEPRECATED 标记 → 影响分析（grep 下游消费者）→ 无人认领 → SUNSET（只读 1 季度）→ REMOVED（删 DDL + 采集脚本）。`index_meta` 当前零下游消费者，可直接进 DEPRECATED 观察期。
 
@@ -503,12 +503,12 @@ v2.1.0 五源实测（design_memos 46 篇 + src/zephyr/ 代码 + config/ + tasks
 
 | # | 表名 | 稳定 path | v2.1.0 实测状态 | 默认建议（待人裁定，§10 Q8） |
 |---|---|---|---|---|
-| 1 | `dividend_tax_node` | [market_dividend_tax_node](../../../schemas/categories/market_dividend_tax_node.py) | DB 层派生 VIEW（从 rights_issue 实时派生），无 Python 引用属正常 | **免归档**——VIEW 零存储零采集成本，标 dormant 保留；v0.2.0 的 DEPRECATED 建议撤销（当时误判为"需采集的实体表"） |
-| 2 | `msci_adjustment` | [market_msci_adjustment](../../../schemas/categories/market_msci_adjustment.py) | 规划已登记（17/64 号），采集未施工 | 保留 DDL + 标 `status: dormant`——MSCI 调仓事件有 alpha 价值（v0.2.0 论证保留），待 26 号事件驱动启用时补采集 |
-| 3 | `index_adjustment` | [market_index_adjustment](../../../schemas/categories/market_index_adjustment.py) | 规划已登记，采集未施工（v0.2.0"代码 17 次引用"不可复现） | 同上——指数调仓事件是 26 号既定事件源，待启用时补采集 |
-| 4 | `ipo_schedule` | [market_ipo_schedule](../../../schemas/categories/market_ipo_schedule.py) | 规划已登记，采集未施工（v0.2.0"代码 12 次引用"不可复现） | 同上——IPO 日程事件待启用 |
-| 5 | `margin_target_adjustment` | [market_margin_target_adjustment](../../../schemas/categories/market_margin_target_adjustment.py) | 规划已登记，采集未施工（v0.2.0"代码 14 次引用"不可复现） | 同上——两融标的调整事件待启用 |
-| 6 | `stock_valuation` | [market_stock_valuation](../../../schemas/categories/market_stock_valuation.py) | 2026-08-11 DDL 新增，规划层提及（1 次），采集未施工 | 同上——与 `daily_valuation`（代码 42 次活跃）的口径分工待 15 号明确；注意 MIN_AGE_DAYS=30 安全过滤适用（新建表 30 天内不判闲置） |
+| 1 | `dividend_tax_node` | [market_dividend_tax_node](../../../../schemas/categories/market_dividend_tax_node.py) | DB 层派生 VIEW（从 rights_issue 实时派生），无 Python 引用属正常 | **免归档**——VIEW 零存储零采集成本，标 dormant 保留；v0.2.0 的 DEPRECATED 建议撤销（当时误判为"需采集的实体表"） |
+| 2 | `msci_adjustment` | [market_msci_adjustment](../../../../schemas/categories/market_msci_adjustment.py) | 规划已登记（17/64 号），采集未施工 | 保留 DDL + 标 `status: dormant`——MSCI 调仓事件有 alpha 价值（v0.2.0 论证保留），待 26 号事件驱动启用时补采集 |
+| 3 | `index_adjustment` | [market_index_adjustment](../../../../schemas/categories/market_index_adjustment.py) | 规划已登记，采集未施工（v0.2.0"代码 17 次引用"不可复现） | 同上——指数调仓事件是 26 号既定事件源，待启用时补采集 |
+| 4 | `ipo_schedule` | [market_ipo_schedule](../../../../schemas/categories/market_ipo_schedule.py) | 规划已登记，采集未施工（v0.2.0"代码 12 次引用"不可复现） | 同上——IPO 日程事件待启用 |
+| 5 | `margin_target_adjustment` | [market_margin_target_adjustment](../../../../schemas/categories/market_margin_target_adjustment.py) | 规划已登记，采集未施工（v0.2.0"代码 14 次引用"不可复现） | 同上——两融标的调整事件待启用 |
+| 6 | `stock_valuation` | [market_stock_valuation](../../../../schemas/categories/market_stock_valuation.py) | 2026-08-11 DDL 新增，规划层提及（1 次），采集未施工 | 同上——与 `daily_valuation`（代码 42 次活跃）的口径分工待 15 号明确；注意 MIN_AGE_DAYS=30 安全过滤适用（新建表 30 天内不判闲置） |
 
 > **类别边界**：本类表不进 §6.2 消费文档施工队列（无代码消费可反推，§7.0.2 反推无源），仅登记注册表 + 标 dormant。若后续补采集施工（Provider 任务落地），自动转入 §6.2 队列。与 §6.1 真闲置的区别：本类有明确业务规划（17/64 号登记在册），`index_meta` 无任何消费方规划。
 >
@@ -1286,7 +1286,7 @@ hog_futures_core,D,Deferred,-,-,-,-,Q4生猪归档已建议
 | 不做 | 理由 |
 |---|---|
 | 不"接入"60 张文档缺口表 | 数据已在代码层接入，只需补文档——v0.1.0"三波接入"是对现状的误判（过度工程） |
-| 不在本备忘写每张表的 DDL/字段细节 | DDL 真源在 [schemas/categories/](../../../schemas/categories/)，备忘只引用稳定 path |
+| 不在本备忘写每张表的 DDL/字段细节 | DDL 真源在 [schemas/categories/](../../../../schemas/categories/)，备忘只引用稳定 path |
 | 不在本备忘写每张表的接入代码 | 代码施工在策略/风控模块各自文档，备忘只记录"该表应被哪篇文档消费" |
 | 不强制一次性补齐所有文档缺口 | 分波次补文档，每波完成后重评下一波优先级 |
 | 不为 3 张真闲置表写"如何归档"详细方案 | 归档操作在数据采集脚本层，不在 design_memos 层 |

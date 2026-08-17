@@ -28,7 +28,7 @@ scope: 07_trading_decision_architecture
 2. **文档规范**：遵循 `01_design_memo_management_spec §4`——frontmatter 字段集（ttl/doc_type/title/owner/language/status/version/date/topic/scope）、末尾必须有「修订记录」节、必须有「开放问题/待定问题/待裁定」等价节
 3. **不破坏交叉引用**：含 `#L行号` 锚点的引用不得断裂；章节编号不强制统一；不为"结构统一"重排已有章节
 4. **修订升版本**：改动后升 version（小改 1.x.0→1.x.1，大改→1.(x+1).0），修订记录补一行（日期+版本+改了什么+为什么改）
-5. **过度工程红线（判定基准：system_charter §2 硬边界 + 施工方式）**：以 [system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式为唯一判定基准——①约束一人力：1 人全栈开发+AI 协作者，代码 100% AI 生成；②施工方式：1 人在 TRAE 编译器上用多 AI 多对话并发施工；③约束二硬件：单机 PC 工作站（i7-12700KF / RTX 3090 24GB 显存<90% / 64GB RAM / 30Mbps 网络），无集群/K8s；④约束三资金：个人资金双账户（实盘+QMT 模拟），miniQMT 10笔/秒、Tick=3秒；⑤约束四规则：T+1、涨跌停、融券受限、日频及以上根频率；⑥约束五运维：单机部署无热备家用环境，RTO<5分钟；⑦约束六范式：AI 生成代码需交叉验证+依赖锁定+自治熔断。凡是超出这些硬边界的机制/设计（需多人协作才能用、为团队协作而设计、需集群/多机/热备、需外部对接/文档交付、超出单机算力/显存/资金/运维能力）= 过度工程，一律从文档中去掉或降级；**远期工程不算过度工程**——已显式标注 P4/P5/远期愿景/待裁定的予以保留，但远期属性必须在文档中明确可见
+5. **过度工程红线（判定基准：system_charter §2 硬边界 + 施工方式）**：以 [system_charter.md §2 硬边界约束](../../04_architecture_principles_decisions/system_charter.md#L61-72) + 实际施工方式为唯一判定基准——①约束一人力：1 人全栈开发+AI 协作者，代码 100% AI 生成；②施工方式：1 人在 TRAE 编译器上用多 AI 多对话并发施工；③约束二硬件：单机 PC 工作站（i7-12700KF / RTX 3090 24GB 显存<90% / 64GB RAM / 30Mbps 网络），无集群/K8s；④约束三资金：个人资金双账户（实盘+QMT 模拟），miniQMT 10笔/秒、Tick=3秒；⑤约束四规则：T+1、涨跌停、融券受限、日频及以上根频率；⑥约束五运维：单机部署无热备家用环境，RTO<5分钟；⑦约束六范式：AI 生成代码需交叉验证+依赖锁定+自治熔断。凡是超出这些硬边界的机制/设计（需多人协作才能用、为团队协作而设计、需集群/多机/热备、需外部对接/文档交付、超出单机算力/显存/资金/运维能力）= 过度工程，一律从文档中去掉或降级；**远期工程不算过度工程**——已显式标注 P4/P5/远期愿景/待裁定的予以保留，但远期属性必须在文档中明确可见
 6. **搜索约束**：WebSearch 限定 2026 年（尤其 2026-07/08），找最新研究/实践/开源实证；找到的更好算法登记到文档「考虑过的替代方案」或新增「前沿演进方向」节，不直接替换已定决策（已定决策修订需升版本+记理由）
 7. **循环审查（含 git 提交闭环）**：每轮做完整闭环（回填→审查→搜索→调整→过度工程清理），发现的问题/缺失**更新修复后立即提交 git**（`git add <你修改的文件>` + `git commit`，提交信息注明本轮修复的问题/缺失，禁止 `--no-verify` 绕过门禁），提交后重新通读全文再查一轮；如此循环，直到**问题数量=0 且缺失功能/模块数量=0**（连续 1 轮零改动需求确认）= 任务完成
 8. **不擅自定决策**：需人决策的开放问题标在「待定问题」节，AI 不替人拍板；已 active 的定稿决策如要推翻，必须升大版本+写推翻理由+标「待裁定」
@@ -134,7 +134,7 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
    - §5.2 benchmark_registry：4 条是否足够——审查是否需补中证A500/万得全A
    - §5.3 cost_model_registry：万3佣金/千1印花税/1bp滑点参数是否符合 2026 A股实际费率；square_root 冲击模型参数是否校准
 2. P1 七注册表 schema 审查（待施工，查设计）：
-   - §6.1.1 factor_registry：factor_class 10 类（Barra 6 + A股特色 4）——反查 src/zephyr/factor/ashare/ 验证分类覆盖
+   - §6.1.1 factor_registry：factor_class 10 类（Barra 6 + A股特色 4）——反查 src/zephyr/factor/ 验证分类覆盖
    - §6.1.2 strategy_registry：strategy_class 6 类——反查 20/24/25/26/27/22 号
    - §6.1.3 technical_indicator_registry：5 大类 + 9 周期——反查 16 号文档 + src/zephyr/factor/technical_indicators/
    - §6.2.1 execution_algo_registry：6 算法——反查 40 号 + src/zephyr/ex_sor/
@@ -1548,7 +1548,7 @@ d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\
 ■ 第 5 阶段：治本施工方案
 对每个裁定为"采纳"的方案：
 1. 施工步骤（具体到文件和函数）
-2. 过度工程审查（判定基准：[system_charter.md §2 硬边界约束](../04_architecture_principles_decisions/system_charter.md#L61-72) + 1 人在 TRAE 编译器上多 AI 多对话并发施工——超出硬边界的复杂度 = 过度工程 → 去掉或降级为远期；已显式标注 P4/P5/远期愿景/待裁定的远期工程不算，予以保留）
+2. 过度工程审查（判定基准：[system_charter.md §2 硬边界约束](../../04_architecture_principles_decisions/system_charter.md#L61-72) + 1 人在 TRAE 编译器上多 AI 多对话并发施工——超出硬边界的复杂度 = 过度工程 → 去掉或降级为远期；已显式标注 P4/P5/远期愿景/待裁定的远期工程不算，予以保留）
 3. 与现有架构的集成点
 4. 验证方法
 5. 风险与缓解

@@ -51,11 +51,11 @@ class OwnerAbsenceEscalation:
     auto_approved: int = 0
 
     def owner_ack(self) -> None:
-        self.last_ack = time.time()
+        self.last_ack = time.time()  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         self.state = AbsenceState.PRESENT
 
     def check_absence(self) -> AbsenceState:
-        elapsed = time.time() - self.last_ack
+        elapsed = time.time() - self.last_ack  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         if elapsed > self.critical_timeout:
             self.state = AbsenceState.ABSENT
         elif elapsed > self.warning_timeout:
@@ -67,7 +67,7 @@ class OwnerAbsenceEscalation:
             {
                 "id": decision_id,
                 "urgency": urgency,
-                "submitted_at": time.time(),
+                "submitted_at": time.time(),  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
             }
         )
         self._prune_stale()
@@ -79,5 +79,5 @@ class OwnerAbsenceEscalation:
         return {"decision": decision_id, "action": "queued", "reason": "awaiting_owner"}
 
     def _prune_stale(self) -> None:
-        cutoff = time.time() - self.max_queue_age
+        cutoff = time.time() - self.max_queue_age  # noqa: m46-time  M46豁免: epoch秒浮点时间戳用于存活心跳与时效计算，非本地时区展示
         self.pending_decisions = [d for d in self.pending_decisions if d["submitted_at"] > cutoff]
