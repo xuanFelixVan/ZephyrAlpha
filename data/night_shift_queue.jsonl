@@ -1,1 +1,0 @@
-{"id": "NSL-0001", "timestamp": "2026_05_08T20:01:57.203227", "task_id": "T-001", "module": "M8", "context": "uncertain rule match", "options": [], "auto_decision": "C", "requires_human": true, "human_decision": "APPROVE", "human_timestamp": "2026_05_08T20:01:57.203729", "human_notes": "looks good"}

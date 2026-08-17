@@ -6226,6 +6226,11 @@ capabilities:
 #   - rules/ 下 .yaml 不走 token 检查（已有命名检查 create_guard L232-278），但需走 trae_NNN_命名规则
 # ============================================================================
 creation_tokens:
+  # --- 09_llm_security_integration.md（AI 架构 LLM 安全栈集成施工图填充，2026-08-17，AI-FILL-09 子代理）---
+  - file: "docs/02_enterprise_architecture/09_ai_architecture/implementation_plans/09_llm_security_integration.md"
+    token: "auto-llm-security-integration-fill-20260817"
+    created_by: "AI-FILL-09"
+    capability: "llm_security_integration_plan"
   # --- doc_lifecycle.py（文档生命周期状态机，#ARCH-RECONCILER-AUTO-DELETE-GOV-001 T0/T1 治本核心，2026-08-14 统筹施工）---
   - file: "src/zephyr/governance/audit/doc_lifecycle.py"
     token: "auto-doc-lifecycle-20260814"

@@ -302,6 +302,31 @@ data/vector_db_e2e_test/
 # FAISS semantic test vector index binaries (regenerable runtime artifacts)
 data/semantic_test/
 
+# ── data/ 运行时/派生产物边界收口（AI-AUDIT03，2026-08-17）──
+# 病根：以下运行时/派生文件在对应忽略规则建立前已被跟踪，规则只挡新文件不摘旧跟踪，
+# 形成"已忽略仍入库"残留；另有若干运行时产物长期无规则裸奔。本块统一收口。
+# Secret leak scan baselines（scan_secret_leak.py 每跑一次存一份带时间戳基线；
+# 单份最大 26MB/11 万条 findings，且 baseline 内 "matched" 字段留存被扫出的密钥片段
+# ——含疑似真实 API key sk-e88e...（原始泄漏点已清，baseline 成为残留载体）；
+# 扫描器递归自扫本目录导致 findings 指数膨胀。纯运行时产物，--baseline 对比按需指定）
+data/security_baselines/
+# 数据摄入暂存（directory_contract.yaml：导入数据库后即删除的瞬态区；bdpan zip 大二进制）
+data/raw/
+# 旧 ide_health 机制运行时状态（pid/status/zombie_patterns，2026-06 后机制迁往 .runtime/）
+data/runtime/
+# telemetry 生产归档（零引用测试 tar.gz 孤儿；data/telemetry/ 本体走 auto-sync 跟踪设计不动）
+data/telemetry/prod/
+# 治理看门狗运行时状态（governance_watchdog.py 原子写，缺文件自重建）
+data/governance/watchdog_state.json
+# 夜班登记队列运行时状态（NightShiftQueue 缺文件返回空，自重建）
+data/night_shift_queue.jsonl
+# 零样本推理预测缓存（eval_sentiment.py 派生断点续作产物；评估集 news_sentiment_200.jsonl 保留跟踪）
+data/eval/zero_shot_predictions.jsonl
+# 对抗日志（唯一读写方 _archive/prototype/adversarial_log.py 已归档，防手动运行再入库）
+data/adversarial_log.jsonl
+# CircadianScheduler 运行时状态（进程内定时调度属 banned 模式，机制已退役）
+data/circadian_tasks/
+
 # Governance watchdog snapshots
 scripts/governance/meta/_backups/
 # Runtime-generated hash snapshot (validate_gate_engine_external.py _SNAPSHOT_PATH)
@@ -396,6 +421,8 @@ data/brain/quick_profiles/*
 # ClickHouse system artifacts (metadata dumps, access control, configs leaked to workdir)
 access/
 metadata/
+# meta/ — CH metadata snapshots（locks/ 等），原仅靠根白名单 /* 兜底，显式对齐同组（AI-AUDIT03）
+meta/
 preprocessed_configs/
 status
 uuid
