@@ -171,9 +171,11 @@ class MLExperimentPipeline:
     """
 
     _global_run_count: int = 0
-    global_run_count: int = _global_run_count  # public alias（Stage 4 公共化）
     _seen_idempotency_keys: set[str] = set()
-    seen_idempotency_keys: set[str] = _seen_idempotency_keys  # public alias（Stage 4 公共化）
+    # 治本（2026-08-17 #119）：R5 公共化批次机械生成的 global_run_count/
+    # seen_idempotency_keys 公共别名已删除——int 值拷贝/set 重绑定语义致写死路
+    # （对真源零效果），读亦恒为类定义时旧值（误导性陷阱）；状态操作唯一入口
+    # =reset_run_state()（11836062be 设计内公共 API）。删除前全仓 grep 实证零消费方。
     _MAX_RUNS_BEFORE_P_HACKING_WARNING = 9
     # 5.12.10 修复：移除 _BUILTINS_GUARD_ENABLED = True 死分支（flag永远True，else路径不可达）
 
