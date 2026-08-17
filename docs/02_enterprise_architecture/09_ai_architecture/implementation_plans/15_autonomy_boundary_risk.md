@@ -5,8 +5,8 @@ title: AI 自治边界与风险施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.1"
-date: 2026-08-17
+version: "0.2.2"
+date: 2026-08-18
 topic: autonomy_boundary_risk
 scope: 09_ai_architecture
 ---
@@ -26,7 +26,7 @@ scope: 09_ai_architecture
 | 所属 | [00_index.md](00_index.md) §1 目标架构·横切层 |
 | 依赖 | 61 号备忘（生命周期多 AI，`../../07_trading_decision_architecture/design_memos/61_lifecycle_multi_ai.md`，只读）+ 系统宪章约束六 |
 | 优先级 | P0——AI 自治边界是所有 AI 能力的安全前提 |
-| 状态 | draft（已填充 v0.2.1） |
+| 状态 | draft（已填充 v0.2.2） |
 
 ---
 
@@ -43,7 +43,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统（miniQM
 3. **Kill Switch 已有 5 套实现 + 1 个仿真器，但没有统一编排**。系统级（`security/access_control/kill_switch.py`，MOD-INF-018，human_gated）、交易级（`trading_kill_switch.py`，MOD-INF-016，五级）、回滚级（`infrastructure/rollback/kill_switch.py`，MOD-INF-021，L1/L2/L3 递进）、技能级（`skill_kill_switch.py`，MOD-INF-019）、容量保障级（`capacity_assurance/kill_switch.py`），外加 `kill_switch_sim.py` 仿真。各套独立触发、独立复位，缺"谁优先、谁兜底、多路径触发怎么收敛"的编排设计。
 4. **漂移检测能力偏"代码/治理漂移"，Agent 行为漂移只有设计没有落地**。`gov_drift` 域已有 74 个 Python 模块（baseline_manager / drift_engine / cascade_detector / spiral_ews / reward_hacking_rebound_detector / silence_detector / tamper_proof_audit 等），但检测对象是仓库 artifact、治理规则、奖励黑客反弹；面向 Agent 操作链的意图漂移（Context Drift）只在 `agent_role_based_access_control` 蓝图（决策 D-018-21）中有设计，代码未施工。
 5. **ARS 双轨结算仅有设计口径**。00_index §3.2 登记了「Fee+Principal 双轨防自利」，全仓检索未发现对应实现模块；检测侧可复用 `gov_drift/reward_hacking_rebound_detector.py`。
-6. **依赖文档状态**：14_execution_layer.md、09_llm_security_integration.md、16_ai_security_ops.md 当前均为 v0.1.0 空骨架（2026-08-17 实测），本文按"如已填充"降级处理——接口假设记入 §6 开放问题 Q4，不等待不阻塞。
+6. **依赖文档状态**：14_execution_layer.md、09_llm_security_integration.md、16_ai_security_ops.md 均已填充至 v0.3.0，00_index.md 为 v0.7.2（2026-08-18 实测 frontmatter）。接口核对结果见 §4.4，假设收口见 §6 开放问题 Q4。
 ### 2.2 核心问题
 
 **问题一：三分类如何落地为"每次写操作前的运行时判定"？**
@@ -321,9 +321,9 @@ Agent 若能通过自身动作直接影响自己的"收益结算"，优化目标
 
 ### 4.4 与其他文档的接口
 
-- **与 [14_execution_layer.md](14_execution_layer.md)（已填充 v0.2.0）**：四类 Agent 入口的自治边界标记 = 全部 L0/L1 起步（手动触发 + human_gated 产出），升级走 §4.3 逐级解锁。14 号文 Q5（执行层 Agent 自治等级划分待 15 号文对齐）的答复即此口径——本文 §3.3 候选映射表为其提供刻度。
-- **与 [09_llm_security_integration.md](09_llm_security_integration.md)（已填充 v0.2.0）**：边界互补——LSG 守 LLM 请求/响应（检测+阻断+记录），本文 gate 守文件/注册表写入（权限判定）；09 号文 KILLSWITCH 三级响应触发时，本文系统级 Kill Switch（VR-009）是执行载体之一（09 号文 §4.6 已登记"KILLSWITCH 触发 → L5 全量熔断"口径）。
-- **与 [16_ai_security_ops.md](16_ai_security_ops.md)（骨架 v0.1.0，接口假设）**：本文产出的风险事件（gate 拦截 / Drift 检出 / Kill Switch 触发）写审计链落盘，16 号文 Detect 环节消费——假设与 09 号文 §4.6 的"L6 事件 → 审计链 → 16 号文 Detect 消费"同一载体。假设入 §6 Q4，待 16 号文填充后核对。
+- **与 [14_execution_layer.md](14_execution_layer.md)（已填充 v0.3.0）**：四类 Agent 入口的自治边界标记 = 全部 L0/L1 起步（手动触发 + human_gated 产出），升级走 §4.3 逐级解锁。14 号文 Q5（执行层 Agent 自治等级划分待 15 号文对齐）的答复即此口径——本文 §3.3 候选映射表为其提供刻度；14 号文 Q5 标注的"待核对"在 Q3 标尺统一裁定前保持开放，由人关闭。
+- **与 [09_llm_security_integration.md](09_llm_security_integration.md)（已填充 v0.3.0）**：边界互补——LSG 守 LLM 请求/响应（检测+阻断+记录），本文 gate 守文件/注册表写入（权限判定）；09 号文 KILLSWITCH 三级响应触发时，本文系统级 Kill Switch（VR-009）是执行载体之一（09 号文 §4.6 已登记"KILLSWITCH 触发 → L5 全量熔断"口径）。
+- **与 [16_ai_security_ops.md](16_ai_security_ops.md)（已填充 v0.3.0，接口已核对）**：①事件流载体口径一致——16 号文接口节采用 09 号文 §4.6 已定口径（L6 安全事件经 `behavior_audit_logger.log_security_event()` 写审计链，Detect 环节消费）；②16 号文 §4.2 P0-1 定义统一安全事件 schema（event_id/时间戳/来源域/威胁类别/严重度/证据指针/关联会话），四类事件源各写 adapter 落盘统一事件目录——本文 Phase 0 新建的 gate（S0.2）与编排器（S0.3）产出的拦截/触发事件归属 access_control 与 gov_drift 域，**施工要求补充：两者的事件产出须按 16 号文统一事件 schema 落盘**（作为 S0.2/S0.3 验收的补充项，adapter 形态同 16 号文既有四类事件源）；③16 号文 §2.2 问题 5 与 §3.4 已引用本文"两级编排"做 KILLSWITCH 三级响应的策略层叠加映射，口径一致。
 - **与交易决策侧**：只读不改。61 号备忘 BM-RC-09（白名单+额度+快轨慢轨）是施工期双轨的已定裁定；30 号文 firm 层风控是 Principal 轨的资金侧管辖方；55 号告警通道未定型的 interim 载体（会话日志人工审查 + git_guard 审计输出）同样适用于本文告警。
 
 ---
@@ -348,7 +348,7 @@ Agent 若能通过自身动作直接影响自己的"收益结算"，优化目标
 | Q1 | Kill Switch "<1ms" 语义与 Windows 实测 | 待实测 | 00_index §3.2 的"<1ms"在 Windows+Python 用户态的可达语义=决策点内联拦截（§2.3/§3.4）。Phase 0 S0.4 实测两组延迟后：①数据写回 §2.3；②若内联拦截 P95 超 1ms，需裁定是否修订 00_index 口径（00_index 只读，本文不改，修订走 00 号文流程） |
 | Q2 | Agent Challenge 的实现形式 | 待裁定 | 检测器判"像漂移"后，Agent 以什么形式自证未漂移？候选：①challenge 工单（Agent 复述原始任务意图+当前动作链对齐说明，人审）；②交叉会话复审（另一 AI 会话做对齐判定，人兜底）。裁定后细化 §4.3 Phase 2 |
 | Q3 | 三套自治等级标尺的统一方案 | 待裁定 | PS-VOC-021（l0~l3 规划级）/ AutonomyMaturity（L0~L4 运行时信任）/ 00_index 有界自治（L0~L3 可操作档+L4 保留）三套并存（§2.2 问题三）。候选映射见 §3.3，两个已知张力（l3"全权自主"vs L3"中风险"封顶语义；L1 对应 NOTIFY+SUGGEST 单档或双档）需人裁定；裁定结果需同步 00_index §3.2（只读，走 00 号文流程）与 13 号文模块工厂定级口径 |
-| Q4 | 依赖文档接口假设核对 | 部分对齐，待 16 号文填充 | ①16_ai_security_ops.md 为 v0.1.0 骨架：本文假设"风险事件（gate 拦截/Drift 检出/Kill Switch 触发）→ 审计链落盘 → 16 号文 Detect 消费"（与 09 号文 §4.6 同载体），待 16 号文填充后核对；②14_execution_layer.md 已填充 v0.2.0：四类 Agent 全部 L0/L1 起步口径已对齐（本文 §3.3/§4.4，即 14 号文 Q5 的答复）；③09_llm_security_integration.md 已填充 v0.2.0：LSG 守请求响应 / 本文 gate 守文件写入的边界已对齐（§4.4） |
+| Q4 | 依赖文档接口假设核对 | 已核对（2026-08-18），剩余事件 schema 适配随 Phase 0 施工 | 三篇依赖均已填充 v0.3.0：①16_ai_security_ops.md：本文"风险事件 → 审计链落盘 → 16 号文 Detect 消费"假设核对成立（16 号文接口节采用 09 号文 §4.6 同口径）；新增施工要求——本文 S0.2 gate 与 S0.3 编排器的事件产出须按 16 号文 §4.2 P0-1 统一事件 schema 落盘（§4.4 第 3 条）；②14_execution_layer.md：四类 Agent 全部 L0/L1 起步口径已对齐（本文 §3.3/§4.4，即 14 号文 Q5 的答复；14 号文 Q5 的"待核对"待 Q3 裁定后由人关闭）；③09_llm_security_integration.md：LSG 守请求响应 / 本文 gate 守文件写入的边界已对齐（§4.4） |
 
 ---
 
@@ -359,6 +359,7 @@ Agent 若能通过自身动作直接影响自己的"收益结算"，优化目标
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | §1 主题组信息 + §2 背景（项目处境/核心问题/约束/已施工设施盘点实测清单）+ §3.1 三分类边界 why + §3.2 Agentic Drift 防护 why | AI-FILL-15 首轮填充（会话中途中断，§3.3~§6 未竟） |
 | 2026-08-17 | 0.2.1 | 续写补完：§3.3 有界自治 5 级（含三套标尺候选映射）/ §3.4 Kill Switch（多路径+两级编排）/ §3.5 ARS 双轨（双形态落地）；§4 施工计划（Phase 0 运行时 gate+编排器+延迟实测 / Phase 1 Drift 防护 / Phase 2 远期候选，含 depgraph L1 登记与转正）；§5 不做什么 8 条；§6 开放问题 Q1~Q4；新增修订记录节。红蓝对抗修正 2 处：§2.4 F 回滚测试路径为 `tests/rollback/`（34 文件，实测）；§2.1 依赖状态更新为当前值（14/09 号文已填充 v0.2.0，16 号文仍骨架） | AI-FILL-15 续写补完（指令块第 3/4/5/7 轮 + mop-up 纪律） |
+| 2026-08-18 | 0.2.2 | 收尾一致性轮：①依赖状态更新——14/09/16 号文均已填充 v0.3.0、00_index v0.7.2（实测 frontmatter），§2.1 第 6 条/§4.4/§6 Q4 同步改写；②与 16 号文接口假设核对成立，新增施工要求"S0.2 gate 与 S0.3 编排器事件产出按 16 号文 §4.2 P0-1 统一事件 schema 落盘"；③红蓝对抗复测全过——§2.4 全部路径与五项数字（gov_drift 74 / autonomy_core 113 / skills 58 / tests_autonomy 71 / tests_rollback 34）实测一致，00_index §3.1/§3.2 设计口径（三分类/Drift 四件套/有界自治 5 级/Kill Switch 多路径/ARS 双轨）逐条比对一致，00_index §5.2 目录树链接可达（其版本标签仍显 v0.2.1，留 00 号文维护方例行刷新） | AI-FILL-15 收尾轮（指令块第 5/6 轮一致性审查 + 红蓝对抗复测） |
 
 ---
 
