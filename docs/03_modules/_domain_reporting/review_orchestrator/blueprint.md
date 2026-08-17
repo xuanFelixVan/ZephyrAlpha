@@ -3,7 +3,7 @@ module_id: MOD-RPT-009
 title: "复盘编排器蓝图 — 日/周/月三频复盘链路编排+四段式周报模板（55 号 G26 §3.6）"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.5"
 ttl: permanent
 layer: L07_reporting
 layer_name: reporting

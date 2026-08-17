@@ -3,7 +3,7 @@ module_id: MOD-CMP-005
 title: "硬边界功能裁定门禁蓝图 — 能建/禁建清单 + FeatureGate"
 doc_type: blueprint
 status: Active
-version: "0.1.3"
+version: "0.1.5"
 ttl: permanent
 design_maturity: production
 layer: L1_foundation

@@ -3,7 +3,7 @@ module_id: MOD-EX-001
 title: "部分成交处理器蓝图 — Fill累积+加权均价+状态转换+查询"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.3"
 design_maturity: production
 ttl: permanent
 responsibility_domain: 
@@ -192,7 +192,7 @@ depgraph 前4个节点使用顺序编号，与设计文档功能编号错位：
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-EX-001` 的 2 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX-001` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-EX-001` 的 8 个 file 节点 | production | `extract_depgraph.py --modules MOD-EX-001` |
 | 数据流图 (dataflow) | 1 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -204,7 +204,7 @@ depgraph 前4个节点使用顺序编号，与设计文档功能编号错位：
 | module_id | MOD-EX-001 | MOD-EX-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | N/A | — |
-| file_count | 2 文件 | N/A | — |
+| file_count | 8 文件 | N/A | — |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -221,7 +221,13 @@ depgraph 前4个节点使用顺序编号，与设计文档功能编号错位：
 
 | 文件路径 | 实现状态 | 说明 |
 |---------|:---:|------|
+| `tests/ex_core/test_async_fill_dispatcher.py` | ✅ 已实现 | |
+| `tests/ex_core/test_corporate_action_adjuster.py` | ✅ 已实现 | |
 | `tests/ex_core/test_fill_id_dedup_persistence.py` | ✅ 已实现 | |
+| `tests/ex_core/test_open_order_resolver.py` | ✅ 已实现 | |
+| `tests/ex_core/test_pricing_policy.py` | ✅ 已实现 | |
+| `tests/ex_core/test_programmatic_trading_guard.py` | ✅ 已实现 | |
+| `tests/ex_core/test_trading_halt_resolver.py` | ✅ 已实现 | |
 
 ### 11.5 路径索引使用指南
 
