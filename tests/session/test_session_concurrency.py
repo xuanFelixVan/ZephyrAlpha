@@ -320,15 +320,29 @@ class TestSessionRegistryPidLiveness:
     原 TTL-only 设计会误判为活跃持续 1 小时；S3-A 改为 PID+TTL 双判据，零窗口期清理。
     """
 
-    def test_list_active_reaps_dead_pid_immediately(self, tmp_path):
-        """死 PID session 在 list_active() 中立即被清理（不等 TTL）。"""
+    def test_list_active_dead_pid_tombstoned_within_grace(self, tmp_path):
+        """死 PID session 立即从 active 排除（S3-A 功能判死零窗口），但心跳在
+        _REAP_GRACE_SECONDS 宽限窗内时物理保留 tombstone（086d0e24 worker 证3
+        近期活跃宽限窗的记录存续前提——记录被即删致 worker 证3 误判 rogue，
+        #119：2026-08-17 REGF/TDEBT/GOVB 三起拒启实证）。"""
         reg = SessionRegistry(project_root=tmp_path)
         reg.register("sess-dead", pid=_DEAD_PID)
         # 心跳是新鲜的（刚注册），但 PID 已死
         active = reg.list_active()
-        assert len(active) == 0  # 死 PID 立即 reap
-        # 注册表中也应被删除
-        assert "sess-dead" not in reg.load()
+        assert len(active) == 0  # 死 PID 功能判死：不进 active
+        # tombstone：心跳在宽限窗内 -> 物理保留
+        assert "sess-dead" in reg.load()
+
+    def test_list_active_reaps_dead_pid_after_grace(self, tmp_path):
+        """死 PID + 心跳超 _REAP_GRACE_SECONDS -> 物理删除（S3-A 清理语义保留）。"""
+        reg = SessionRegistry(project_root=tmp_path)
+        reg.register("sess-dead-old", pid=_DEAD_PID)
+        data = reg.load()
+        data["sess-dead-old"]["last_heartbeat"] = time.time() - 20 * 60
+        reg.save(data)
+        active = reg.list_active()
+        assert len(active) == 0
+        assert "sess-dead-old" not in reg.load()
 
     def test_list_active_keeps_alive_pid(self, tmp_path):
         """活 PID session 在 list_active() 中保留。"""
@@ -396,8 +410,8 @@ class TestSessionRegistryPidLiveness:
         active = reg.list_active()
         assert len(active) == 1
         assert active[0].session_id == "sess-alive"
-        # 死 PID 被清理
+        # 死 PID 功能判死：不进 active；心跳新鲜 -> tombstone 物理保留（#119）
         data = reg.load()
-        assert "sess-dead-1" not in data
-        assert "sess-dead-2" not in data
+        assert "sess-dead-1" in data
+        assert "sess-dead-2" in data
         assert "sess-alive" in data

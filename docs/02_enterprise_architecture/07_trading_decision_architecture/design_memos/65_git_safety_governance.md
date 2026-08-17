@@ -5,7 +5,7 @@ title: Git 安全治理体系——alias 失效修复与多层防护施工总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "2.3.1"
+version: "2.5.0"
 date: 2026-08-14
 topic: git_safety_governance
 scope: 07_trading_decision_architecture
@@ -34,11 +34,11 @@ related_modules:
   - src/zephyr/gov_enforcement/rule_bridge/git_commit_gateway.py
 ---
 
-> ## 结案报告（2026-08-16 补记）
+> ## 结案报告（2026-08-16 补记；2026-08-17 追加 AI-FOPEN-001）
 >
-> **实际开发**：2026-08-14 治理插队批（AI-GIT-001）起多轮施工——wipe 事故治本 S1-S6（删除原语拦截 + 四证清理 SOP + 观测层落盘 + 网关锚定修复）+ task_board 重建 + Phase 1 wrapper（命令包装层）7 项全部落码并激活，含 #68 快照注入打通 Trae AI 命令通道（计划任务每分钟保活，AI 命令归因聚合）。
+> **实际开发**：2026-08-14 治理插队批（AI-GIT-001）起多轮施工——wipe 事故治本 S1-S6（删除原语拦截 + 四证清理 SOP + 观测层落盘 + 网关锚定修复）+ task_board 重建 + Phase 1 wrapper（命令包装层）7 项全部落码并激活，含 #68 快照注入打通 Trae AI 命令通道（计划任务每分钟保活，AI 命令归因聚合）。2026-08-17 fail-open 敞口治理批（AI-FOPEN-001，Owner 裁定 B1+B2 全量，#ARCH-119）：4 个 depgraph 类硬阻断门禁（RENAME-DEPGRAPH-SYNC / NEW-FILE-DEPGRAPH-ENFORCEMENT / DEPGRAPH-PRE-REGISTRATION / PRE-MERGE-TOPO-CHECK）fail-open 分支统一接 `log_gate_failure` 持久化留痕（critical_warn + gate_id + 放行原因 + 受影响文件清单；DB 离线类同签名当日去重，真实错误逐次留痕）——放行语义不变只加留痕，下次 commit 网关 banner 自动浮现。
 >
-> **最终成果**：git 安全多层防护生产运行——危险命令拦截（clean -fd 等实证拦下）、删除审计、worktree 四证清理、AI 通道归因全链路实证；wrapper 40+15 测试全绿。
+> **最终成果**：git 安全多层防护生产运行——危险命令拦截（clean -fd 等实证拦下）、删除审计、worktree 四证清理、AI 通道归因全链路实证；wrapper 40+15 测试全绿。fail-open 敞口闭合（fa25c19e49，merge 8a872d0e59+48ce3d93cb，#ARCH-119 resolved）：PG 离线时 4 gate 不再静默放行——放行必留痕可查询 + banner 浮现；红队四向量实证（PG 真实停服等效）。
 >
 > **未做事项及原因**：wrapper 将 git branch -d（安全删除）误报为 -D 拦截——规则区分缺陷，归下一治理批顺手修（遗留 #72）；逃生通道已验证可绕行，非阻塞。
 
@@ -921,3 +921,4 @@ if (-not $env:ZEPHYR_SESSION_ID) {
 | 2.2.0 | 2026-08-14 | 文档实体精简（AI-GIT-001）：落实 v2.0.0/v2.1.0 精简裁定——§3 调研 14 轮折叠、§7 已 deprecated 17 项折叠为一览表（§7.D）、已施工项折叠为状态摘要、待施工项（§7.7 等）完整保留；施工状态经代码核实；新增 §13 关联施工小节指向 wipe 事故裁定书 S1-S6 |
 | 2.3.0 | 2026-08-14 | **定稿**：frontmatter status→active（三轮裁定收敛稳定，active=裁定确认非施工完成，Phase 1 仍待排期——与 66 号 active 先例一致）；正文状态刷新——§4.1 #4/§8.4/§10/§11/§13 task_board 与 S1-S6 关联施工标注闭环（AI-GIT-001 完工：S1 3e2bb5ed70/S2 69558c6479/S3 7383bcd1+95f94195+b36507d8/S4 67abc2ea+a6453e58/S5 7a08eb74/task_board 0e5ed3b9） |
 | 2.4.0 | 2026-08-14 | **深夜治理批全闭环**：①wrapper 激活（清除 $PROFILE 旧 v2.1.0 内联 block，保单一 dot-source；全新会话实证拦截+透传+审计+Session ID）；②§7.28+§11.2.2 施工落地（lock_files Mutex 全局命名锁+fsync 原子写+`--ttl` 五命令，9 测试）；③66 号裁定 7 plumbing 双层落地（wrapper+git_guard 拦 4 命令，SERIALIZER_MODE 白名单，45+16 测试）；④#56 闭环（sweep force-clean 四证语义审计、CLI heartbeat daemon 普及+对称 teardown，顺手治本 register pid=0/分支提取顺序/refs 前缀 3 bug）。**新边界发现**：Trae AI RunCommand 终端不加载 $PROFILE——wrapper 限人工交互终端（tracker #58） |
+| 2.5.0 | 2026-08-17 | 结案报告追加 AI-FOPEN-001 施工波（fail-open B1+B2 全量：4 gate fail-open 分支接 log_gate_failure 留痕 / pg_probe PG 前置探针 / FRESHNESS 离线 24h 豁免 / verify_schema_health exit 2 优雅化，fa25c19e49，merge 8a872d0e59+48ce3d93cb，#ARCH-119 resolved）；frontmatter 版本对齐尾部（原 2.3.1 滞后于 2.4.0 行） |

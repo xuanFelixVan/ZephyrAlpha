@@ -5,7 +5,7 @@ title: 提交队列串行化——多 AI 并发施工的集成层总案（三层
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.1.0"
+version: "1.2.0"
 date: 2026-08-14
 topic: commit_queue_serialization
 scope: 07_trading_decision_architecture
@@ -27,11 +27,11 @@ related_modules:
   - scripts/task_board.py
 ---
 
-> ## 结案报告（2026-08-16 补记）
+> ## 结案报告（2026-08-16 补记；2026-08-17 追加 AI-FOPEN-001）
 >
-> **实际开发**：三层防护中两层已落地——worktree 隔离强化（会话活性登记 + 心跳守护 + 四证清理）与 plumbing 底层命令拦截（wrapper 拦 read-tree/update-index 等 + git_guard 前置硬阻断，45/45+16/16 测试全绿）；§2.4 #9 task_board（任务板）按本档 schema 重建至生产态（SQLite WAL + CAS，17 测试全绿，含 8 线程并发恰一胜）。
+> **实际开发**：三层防护中两层已落地——worktree 隔离强化（会话活性登记 + 心跳守护 + 四证清理）与 plumbing 底层命令拦截（wrapper 拦 read-tree/update-index 等 + git_guard 前置硬阻断，45/45+16/16 测试全绿）；§2.4 #9 task_board（任务板）按本档 schema 重建至生产态（SQLite WAL + CAS，17 测试全绿，含 8 线程并发恰一胜）。2026-08-17 AI-FOPEN-001（B2）补强提交链路 PG 依赖韧性：新建 `pg_probe.py` PG 可用性前置探针（网关 commit 前置 TCP 5432 ≤1s 探测，失败不阻断只落 `.runtime/pg_probe_state.json`；merge 前置复跑），门禁读取区分「DB 离线降级」vs「真无违规」；DEPGRAPH-FRESHNESS 在探针证实离线超 24h 时豁免 saved_at 停更误伤（豁免留痕）；`verify_schema_health.py` 连接调用移入 try 块——PG 离线从崩溃式阻断转 exit 2 明确告警（[PG-UNREACHABLE] + 引导文案）。
 >
-> **最终成果**：多 AI 并发施工的隔离与任务认领基础设施就位并实证。
+> **最终成果**：多 AI 并发施工的隔离与任务认领基础设施就位并实证；提交链路在 PG 离线场景不再误判阻断/静默放行——探针前置 + 豁免留痕 + 优雅降级三件套落地（fa25c19e49，merge 8a872d0e59+48ce3d93cb，#ARCH-119 resolved；test_pg_probe.py 等 6 测试文件全绿）。
 >
 > **未做事项及原因**：commit queue（提交队列）本体未做——Serializer 串行器/死信/门禁外移为大工程量单项，MVP 待排期（遗留 #67 登记在案）。
 
@@ -427,3 +427,4 @@ Remove-Item Env:ZEPHYR_SERIALIZER_MODE
 | v0.4.0 | 2026-08-12 | 算法补全：7 处施工算法（enqueue 原子性/compaction 竞态/Serializer lease/worktree HEAD 同步/message 绝对路径等）；第二轮搜索实证 5 项（claude-fleet 三层同构/fak submit-drain 同构/AgenticFlict 27.67% 冲突率/VS Code 默认 worktree/Cursor 3.0 虚拟快照/agentlocks）；§11 新增测试 2 项 |
 | v1.0.0 | 2026-08-12 | 用户确认全部 3 项裁定，文档升 active：①队列串行化为集成层唯一提交入口；②worktree 强化为第二层防护（队列消除 merge 障碍后升级为可达的强制）；③AGENTS.md §10 新建"改完立即入队"铁律（已落地 §10.0）。§12 Q1/Q2/Q3/Q4/Q7 裁定闭环，Q5/Q6 待施工 |
 | v1.1.0 | 2026-08-14 | 文档实体精简（AI-GIT-001）：§2.1 事故链表化、§3.2 搜索实证摘要化、§12 已闭环开放问题折叠、§13 修订记录压缩；§4-§6/§8-§11 施工核心零改动；task_board.py 现状更新（wipe 丢失，按 §2.4 #9 schema 重建中） |
+| v1.2.0 | 2026-08-17 | 结案报告追加 AI-FOPEN-001（B2 提交链路 PG 韧性三件套：pg_probe 前置探针 + FRESHNESS 离线 24h 豁免 + verify_schema_health exit 2 优雅化，fa25c19e49，merge 8a872d0e59+48ce3d93cb，#ARCH-119 resolved） |

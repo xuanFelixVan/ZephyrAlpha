@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] MOD-REGIME-002(OverlaySignalsConstructor消费8转换评分→overlay_signals)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] score维度∈[0,100]; flag维度∈{0,1}; 无信号=0(平时不干预); PIT由调用方shift(1)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

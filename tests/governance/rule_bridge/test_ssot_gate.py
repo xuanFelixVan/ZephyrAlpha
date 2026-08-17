@@ -770,3 +770,161 @@ class TestRedBlueExtreme:
         )
         result = lookup.check_ssot_conflicts([("/abs/fake_case.py", "src/zephyr/fake_case.py")])
         assert result == [], "大小写不同的 module_path 应不匹配（检测能力限制）"
+# ---------------------------------------------------------------------------
+# 测试组 5：#111 维度1 alias 裁定通道（module 子命令 --force-override）
+# 背景：AI-DGR-001 实证 rollback_state_machine 命中注册 alias rollback 被硬阻断，
+# 裁定同名巧合却无逃生口。module 子命令补齐与 script 同款 --force-override：
+# 跳过 alias 模糊匹配+蓝图关键词匹配；exact/module_path 冲突仍阻断（不误放开）。
+# ---------------------------------------------------------------------------
+
+
+def _overlap_result(details):
+    from zephyr.infrastructure.registry_governance import OverlapResult
+
+    r = OverlapResult()
+    r.has_overlap = bool(details)
+    r.overlap_details = list(details)
+    return r
+
+
+class _StubRegistry:
+    # 可控桩：模拟 FunctionalDomainRegistry.check_overlap 的 skip_alias 语义
+    def __init__(self, exact_details, alias_details):
+        self._exact = list(exact_details)
+        self._alias = list(alias_details)
+
+    def check_overlap(self, domain, subdomain, covers=None, name='', description='', skip_alias=False):
+        details = list(self._exact) + ([] if skip_alias else list(self._alias))
+        return _overlap_result(details)
+
+
+@pytest.fixture
+def skip_dim2(monkeypatch):
+    # 仅跳过维度2（蓝图关键词匹配），保留维度1/维度3 真实逻辑
+    monkeypatch.setitem(sys.modules, 'zephyr.integration.mcp', None)
+
+
+class TestDim1AliasForceOverride:
+    # #111 维度1 alias 裁定通道
+
+    def _patch_registry(self, monkeypatch, exact, alias):
+        stub = _StubRegistry(exact, alias)
+        monkeypatch.setattr(
+            'zephyr.infrastructure.registry_governance.FunctionalDomainRegistry',
+            lambda: stub,
+        )
+
+    def test_alias_match_blocks_without_force(self, monkeypatch, skip_dim2):
+        # alias 命中 + 无 force_override → 阻断（含逃生口提示）
+        self._patch_registry(monkeypatch, [], ['Alias match rollback -> D_GOV_REPAIR (MOD-INF-021)'])
+        with pytest.raises(ScaffoldError, match='功能域重叠'):
+            check_duplicate_functionality(
+                name='rollback_state_machine',
+                description='回滚状态机探针',
+                expected_module_path='',
+            )
+
+    def test_alias_match_passed_with_force_override(self, monkeypatch, skip_dim2, capsys):
+        # alias 命中 + force_override=True → 放行且打印留痕
+        self._patch_registry(monkeypatch, [], ['Alias match rollback -> D_GOV_REPAIR (MOD-INF-021)'])
+        check_duplicate_functionality(
+            name='rollback_state_machine',
+            description='回滚状态机探针',
+            force_override=True,
+            expected_module_path='',
+        )
+        out = capsys.readouterr().out
+        assert '裁定通道放行' in out
+        assert 'Alias match rollback' in out
+
+    def test_exact_overlap_not_skipped_by_force(self, monkeypatch, skip_dim2):
+        # exact domain/subdomain 冲突 + force_override=True → 仍阻断（不误放开）
+        self._patch_registry(monkeypatch, ['Exact domain/subdomain overlap: D_GOV/repair -> MOD-INF-021'], [])
+        with pytest.raises(ScaffoldError, match='功能域重叠'):
+            check_duplicate_functionality(
+                name='rollback_state_machine',
+                description='回滚状态机探针',
+                force_override=True,
+                expected_module_path='',
+            )
+
+
+class TestCheckOverlapSkipAlias:
+    # registry_governance.check_overlap 的 skip_alias 参数直测（临时注册表）
+
+    def _make_registry(self, tmp_path):
+        import yaml
+
+        from zephyr.infrastructure.registry_governance import FunctionalDomainRegistry
+
+        data = {
+            'registry_id': 'REG-FUNC-DOMAIN-001',
+            'entries': [
+                {
+                    'domain': 'D_GOV_REPAIR',
+                    'subdomain': 'gov_repair',
+                    'ssot_module': 'MOD-INF-021',
+                    'ssot_path': 'src/zephyr/gov_repair/x.py',
+                    'covers': [],
+                    'aliases': ['rollback'],
+                    'change_policy': 'evolving',
+                    'modification_permission': 'human_gated',
+                }
+            ],
+        }
+        p = tmp_path / 'functional_domain_registry.yaml'
+        p.write_text(yaml.safe_dump(data, allow_unicode=True), encoding='utf-8')
+        return FunctionalDomainRegistry(registry_path=p)
+
+    def test_alias_hit_when_not_skipped(self, tmp_path):
+        reg = self._make_registry(tmp_path)
+        r = reg.check_overlap(domain='', subdomain='', name='rollback_state_machine', description='', skip_alias=False)
+        assert r.has_overlap is True
+        assert any('Alias match' in d for d in r.overlap_details)
+
+    def test_alias_filtered_when_skipped(self, tmp_path):
+        reg = self._make_registry(tmp_path)
+        r = reg.check_overlap(domain='', subdomain='', name='rollback_state_machine', description='', skip_alias=True)
+        assert r.has_overlap is False
+
+    def test_exact_hit_regardless_of_skip_alias(self, tmp_path):
+        reg = self._make_registry(tmp_path)
+        r = reg.check_overlap(domain='D_GOV_REPAIR', subdomain='gov_repair', name='', description='', skip_alias=True)
+        assert r.has_overlap is True
+        assert any('Exact domain/subdomain overlap' in d for d in r.overlap_details)
+
+
+class TestModuleCliForceOverrideWiring:
+    # CLI → create_module 的 force_override 透传
+
+    def _run_main(self, monkeypatch, argv):
+        import scripts.scaffold as sc
+
+        captured = {}
+
+        class _FakeEngine:
+            def __init__(self, dry_run=False):
+                pass
+
+            def create_module(self, package, name, description='', domain='', subdomain='', force_override=False):
+                captured['force_override'] = force_override
+
+        monkeypatch.setattr(sc, 'ScaffoldEngine', _FakeEngine)
+        monkeypatch.setattr('sys.argv', argv)
+        sc.main()
+        return captured
+
+    def test_module_force_override_flag_wired(self, monkeypatch):
+        captured = self._run_main(
+            monkeypatch,
+            ['scaffold.py', 'module', 'governance', 'probe_govb001_xyz', '--force-override'],
+        )
+        assert captured['force_override'] is True
+
+    def test_module_force_override_default_off(self, monkeypatch):
+        captured = self._run_main(
+            monkeypatch,
+            ['scaffold.py', 'module', 'governance', 'probe_govb001_xyz'],
+        )
+        assert captured['force_override'] is False
+

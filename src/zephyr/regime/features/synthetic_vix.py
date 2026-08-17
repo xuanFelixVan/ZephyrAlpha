@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] MOD-REGIME-002(OverlaySignalsConstructor消费vix_pct→S1 vix_panic/S2 vix)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] vix_pct∈[0,1]; 数据缺失返回空Series(调用方回退vol_pct); PIT由调用方shift(1)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费#12筹码结构/#5空间位置/S2底部筹码)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] total_distribution Σ=1.0; age_layers各层Σ=1.0; 32网格网格0=最低价网格31=最高价
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/chip_distribution_engine/blueprint.md
 # [STABILITY] evolving

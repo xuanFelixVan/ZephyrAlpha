@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费F2a hurst_dfa + F2b kalman_slope)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] hurst_dfa ∈ (0,1); kalman_slope ∈ [-1,1]; PIT严格(t-1及以前)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

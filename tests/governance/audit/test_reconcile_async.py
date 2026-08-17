@@ -1323,3 +1323,69 @@ class TestWorkerAdmission:
         )
         assert not ok
         assert "证3" in reason
+
+
+# ---------------------------------------------------------------------------
+# TestDenialStatusPlacement — #109 拒启 status 落点分诊回归
+# ---------------------------------------------------------------------------
+
+
+class TestDenialStatusPlacement:
+    '''#109 治本回归：worker 拒启（三证）时 status 落点按拒启类型分诊。
+
+    病灶（2026-08-17 AI-GOVB-001 复现）：launch 在 worktree 写 pending，
+    证2/证3 拒启却把 failed 写主仓（anchor_main_root 无条件剥离）——
+    pending@worktree 永不更新 + failed@主仓双文件分裂，外部观测即
+    「worktree 状态文件未落盘」。分诊：worktree 根存活→落 worktree 原位；
+    根已失（证1）→落主仓（原行为）。
+    '''
+
+    def _wt_payload(self, tmp_repo, sid, **over):
+        wt = tmp_repo / '.worktrees' / sid
+        wt.mkdir(parents=True)
+        (wt / '.git').write_text('gitdir: x', encoding='utf-8')
+        (wt / '.runtime' / 'reconcile_reports').mkdir(parents=True)
+        base = {
+            'commit_sha': 'sha_deny_' + sid.lower(),
+            'session_id': sid,
+            'project_root': str(wt),
+            'committed_files': [],
+            'commit_message': 'm',
+            'started_at': int(time.time()),
+        }
+        base.update(over)
+        return wt, base
+
+    def test_denial_writes_failed_status_to_live_worktree(self, tmp_repo):
+        '''证3 拒启（session 无活跃）且 worktree 存活 → failed status 落 worktree 原位。'''
+        from zephyr.governance.audit.reconcile_worker import _run_worker
+
+        wt, payload = self._wt_payload(tmp_repo, 'AI-DENY-001')
+        rc = _run_worker(payload)
+        assert rc == 1
+        sf = wt / '.runtime' / 'reconcile_reports' / ('reconcile_status_' + payload['commit_sha'] + '.json')
+        assert sf.is_file(), 'worktree 原位应有 failed status（#109 split-brain 回归）'
+        data = json.loads(sf.read_text(encoding='utf-8'))
+        assert data['status'] == 'failed'
+        assert any('三证拒启' in e for e in data['errors'])
+
+    def test_denial_writes_failed_status_to_main_when_worktree_gone(self, tmp_repo):
+        '''证1 拒启（worktree 目录不存在）→ failed status 落主仓（原行为保留）。'''
+        from zephyr.governance.audit.reconcile_worker import _run_worker
+
+        wt = tmp_repo / '.worktrees' / 'AI-GONE-002'
+        payload = {
+            'commit_sha': 'sha_gone_002',
+            'session_id': 'AI-GONE-002',
+            'project_root': str(wt),
+            'committed_files': [],
+            'commit_message': 'm',
+            'started_at': int(time.time()),
+        }
+        rc = _run_worker(payload)
+        assert rc == 1
+        sf = tmp_repo / '.runtime' / 'reconcile_reports' / 'reconcile_status_sha_gone_002.json'
+        assert sf.is_file(), '主仓应有 failed status（证1 原行为保留）'
+        data = json.loads(sf.read_text(encoding='utf-8'))
+        assert data['status'] == 'failed'
+        assert any('三证拒启' in e for e in data['errors'])

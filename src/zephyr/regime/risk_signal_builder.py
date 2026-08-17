@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas; zephyr.regime.features.risk_features; zephyr.regime.regime_feature_builder
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder.build_shrinkage_schedule消费→risk_signal_inputs)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] params系数∈[0.30,1.00]; 无异常=1.0; PIT严格(build_for_date(dt)只用≤dt-1,预计算shift(1)); 数据缺失→参数=1.0降级
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

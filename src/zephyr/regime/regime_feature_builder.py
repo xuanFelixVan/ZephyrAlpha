@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas; zephyr.data.ch_reader; zephyr.data.table_registry; zephyr.regime.features.trend_features; zephyr.regime.features.market_features; zephyr.regime.core.regime_detector
 # [CONSUMERS] scripts/tests/run_c1_shrinkage_validation.py(real模式); BM-BT-03-E(回测验证)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] HMM 6特征X矩阵(T,6)列序钉死; PIT严格(detect(t)只用≤t-1数据); walk-forward季度重拟合训练/测试无重叠; ClickHouse不可用抛RegimeFeatureError
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving

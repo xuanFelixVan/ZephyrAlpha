@@ -5,7 +5,7 @@ title: 回撤 Protocol 落地 spec
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.39.2"
+version: "1.39.3"
 date: 2026-08-15
 topic: drawdown_protocol_impl
 scope: 07_trading_decision_architecture
@@ -99,7 +99,7 @@ scope: 07_trading_decision_architecture
 
 | 缺口 | 待裁定 | 现状 |
 |---|---|---|
-| RiskOrchestrator 统一编排器 | §6.5（P1） | 无代码；当前 `default_risk_manager_orchestrator` 部分承载，三层喂入靠调用方手动 |
+| RiskOrchestrator 统一编排器 | §6.5（P1） | ✅ 编排层已建（落地名 `RiskLayerOrchestrator`，MOD-L06-001，`src/zephyr/ex_core/risk_layer_orchestrator.py`，RWIRE-001 #ARCH-100）——三层喂入（drawdown/VaR/尾部/systemic→position_cap + Kill Switch 交战）已编排接线；§6.5 日度校准动作执行者语义仍=设计契约未接入；生产实例化经 `trading_session` risk_layer 注入缝（默认 None=未实例化），组合根装配待运行时装配批 |
 | state_store 持久化层 + DrawdownStateMachine | §6.6 / §6.12（P1/P0） | 无代码；`capital_curve_manager.peak` / `drawdown_tracker` 窗口纯内存，重启即丢；architecture_issue_registry 已登记"Redis 状态外部化层"待办 |
 | detect_ghost_positions | §6.11（P1） | ✅ 已施工（v1.39.0，commit 1d814359）：`stop_loss.detect_ghost_positions` + `DefaultRiskValidator.detect_ghost_positions` 双类型检测；盘前启动序列接入待 §6.12 |
 | Kill Switch 平仓/撤单执行链路 | §6.11 / §6.14（P1/P0） | ✅ 已施工（v1.39.0）：`execute_kill_switch_liquidation` 15 笔/秒分片 ⌈N/15⌉ 批；L2 broker 端硬止损 + L3 看门狗进程仍缺（§6.11） |
@@ -218,7 +218,7 @@ scope: 07_trading_decision_architecture
 
 | 层 | 职责 | 触发 | 本项目现状 |
 |---|---|---|---|
-| L1 代码层 | `stop_loss.trigger_kill_switch` 发市价平仓 + 撤挂单 | drawdown_controller.kill_switch_advised | ✅ **已施工**（v1.39.0，commit 1d814359：`execute_kill_switch_liquidation` 15 笔/秒分片 ⌈N/15⌉ 批 + 逐笔异常汇总；事件记录 + 状态置位 + 新开仓拒绝此前已落码） |
+| L1 代码层 | `stop_loss.trigger_kill_switch` 发市价平仓 + 撤挂单 | drawdown_controller.kill_switch_advised | ✅ **已施工**（v1.39.0，commit 1d814359：`execute_kill_switch_liquidation` 15 笔/秒分片 ⌈N/15⌉ 批 + 逐笔异常汇总；事件记录 + 状态置位 + 新开仓拒绝此前已落码）；生产接线对账（v1.39.3，RWIRE-001 完工现实）：`risk_layer_orchestrator`（MOD-L06-001）生产代码已调用 `trigger_kill_switch`/`execute_kill_switch_liquidation`，经 `trading_session` risk_layer 可选注入装配（默认 None=未实例化） |
 | L2 平台层 | broker 端硬止损单（bracket/OCO），不依赖策略连接 | 开仓时同步挂 broker 端 stop | ❌ **缺失**（miniQMT 通道需确认是否支持 broker-side bracket） |
 | L3 看门狗层 | 独立进程监控"持仓 vs 策略状态"一致性，不一致即强平 | 定时轮询 broker 持仓 vs DefaultRiskValidator 状态 | ❌ **缺失** |
 | L4 人工层 | 人工复位 + 持仓清零确认（§3.7 `requires_manual_reset`） | Kill Switch 触发后强制 | ✅ 已实现 |
@@ -1658,3 +1658,4 @@ def graduation_criteria_met(strategy_pnls, expected_phases):
 | 2026-08-13 | 1.39.0 | AI-DRWD-001 施工：§3.5 口径修正 + §6.11 两项落码——execute_kill_switch_liquidation（15 笔/秒分片）+ detect_ghost_positions 双类型 + reset_kill_switch 确认校验；81 测试全绿，commit 1d814359 | Kill Switch 平仓/撤单执行链路与 Ghost 检测从伪代码落码，§3.5 执行路径全 ✅ |
 | 2026-08-14 | 1.39.1 | 压缩精简：已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） | AI-DOCS-001 文档压缩：v1.39.0 已施工内容（Kill Switch 平仓链路 + Ghost 检测）折叠为 ✅ 已施工标记 + 接口级摘要；§9 施工记录折叠；过程性叙述/调试记录/迭代版本细节/对标散文删除（表格保留）；阈值表/Kill Switch 触发契约/36 号·37 号联动契约/§3.13 等待做项/开放问题 ㉓/全部数值参数逐项保留；章节标题与编号一字未动 |
 | 2026-08-15 | 1.39.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.5 ⚠️15% EMERGENCY 矛盾块压缩（证据三方/裁决候选全录留 §7 ㉓，正文只留矛盾点+当前行为+倾向+指针）；§3.4 毕业准则块去来源重复（准则数值保留，来源/理由真源 §3.20）；§9 v1.39.0 施工记录折叠为 ✅ 一段（接口摘要已在 §3.5/§3.5.1/§2.4④）；§1 状态行瘦身。全篇扫描无其他可压缩点——8/15/20/25 与 5/10/15 阈值、VaR 2/4/6%+CVaR 10%、degraded 5 条件、撤单率 12%/15%、复位 20日3次/冷却3日/永久5次、BM-XXX/开放问题/跨文档链接逐项零丢失 |
+| 2026-08-17 | 1.39.3 | D9 文档漂移对账（AI-GOVB-001 #105）：§2.4④ RiskOrchestrator「无代码」→已建（落地名 RiskLayerOrchestrator，MOD-L06-001，RWIRE-001 #ARCH-100）；§3.5.1 L1 行补生产接线对账（编排层已调用 stop_loss 两入口，trading_session 注入缝默认 None 未实例化）；stop_loss.py [CONSUMERS] 补 MOD-L06-001 | RWIRE-001 完工后文档措辞与代码现实对账；仅措辞同步，零语义变更 |

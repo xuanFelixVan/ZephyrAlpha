@@ -301,25 +301,25 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 101 | 53 号 §3.8 五态降级机（NORMAL→THROTTLED→SOFT_HALT→HARD_HALT→UNWINDING）裁定落点与代码不符 | 独立复核实证（2026-08-16） | 53 号 v1.7.7 修订记录称"降级维度真源=§3.8 五态（落地 rollback_state_machine.py）"，实测该文件为回滚步骤编排机（RollbackStep/StepStatus），五态枚举 src 全仓零命中；晋级迁移 FSM 已经 Owner 裁定方案 C 废弃（不另建，阶段维度真源=paper_live_transition 三阶段门禁）；53 号结案报告已按实测修正 | ✅ 已闭环（2026-08-17 AI-DGR-001 派单施工，[GW:AI-DGR-001]）：governance/lifecycle_governance/rollback_state_machine.py 新建（MOD-GOV-045，§3.8 伪代码逐行落码——单向更保守/fail-closed/Hysteresis/≥30 笔地板/JsonStateStore 持久化）+ paper_live_transition.py check_promotion_allowed 晋级前置 NORMAL 耦合点；57 新测试两轮全绿+既有 28 项零回归；#ARCH-QUANT-003 resolved；53 号 v1.7.8 锚点全同步 |
-| 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 102 | regime_detector.py 文件头 MATURITY=design vs 蓝图 design_maturity=production 不一致 | 独立复核实证（2026-08-16） | 文件级标记与模块级状态（_domain_regime/regime_detector/blueprint.md L7=production）矛盾；C1/Phase 2 均已通过且检测器在数据流实际运行，以蓝图为准，文件头标记待对齐 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：主文件实证已 production（前批已修）；同域核对 12 文件同类漂移（MOD-REGIME-002×11+MOD-REGIME-005×1）design→production 对齐；VAL-002 八文件锚定设计备忘无 production 声明，design 合法保留） |
 | 103 | tests/git test_git_command_timeout_handled 环境敏感失败 | 独立复核实证（2026-08-16） | 测试期望 git 命令超时返回 COMMIT_FAILED，本机执行过快未触发超时致断言失败（148 过/1 失败/1 xpassed）；非功能缺陷，属测试环境假设缺陷 | ⏳ 观察（换机/负载变化时再评估） |
 
 ### P1-补6 · 2026-08-17 AI-RFIX-001 登记（第六统筹并入，承接方已甄别）
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 105 | D9 文档漂移：stop_loss.py 头注+35 号"已施工"措辞 vs 生产零调用 | AI-RFIX-001 反馈⑤ | 按避让纪律原拟移交 RWIRE-001 接线批一并修正——RWIRE-001 已 merge 完工（2b3b68b5d2），承接方改挂后续治理/接线批 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
-| 106 | memo 36 §3.10 动作 1-3 执行者"RiskOrchestrator"措辞与 RWIRE 落地 risk_layer_orchestrator.py（MOD-L06-001）命名对账 | AI-RFIX-001 反馈⑤ | memo 已标"禁止按可执行语气直读"（设计契约）；命名漂移对账+memo 措辞同步，后续批 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 105 | D9 文档漂移：stop_loss.py 头注+35 号"已施工"措辞 vs 生产零调用 | AI-RFIX-001 反馈⑤ | 按避让纪律原拟移交 RWIRE-001 接线批一并修正——RWIRE-001 已 merge 完工（2b3b68b5d2），承接方改挂后续治理/接线批 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：stop_loss.py [CONSUMERS] 补 MOD-L06-001；memo35 v1.39.3——§2.4④ RiskOrchestrator「无代码」→已建（落地名 RiskLayerOrchestrator）、§3.5.1 L1 行补生产接线对账（编排层已调用 stop_loss 两入口，trading_session 注入缝默认 None 未实例化，组合根装配待运行时装配批）） |
+| 106 | memo 36 §3.10 动作 1-3 执行者"RiskOrchestrator"措辞与 RWIRE 落地 risk_layer_orchestrator.py（MOD-L06-001）命名对账 | AI-RFIX-001 反馈⑤ | memo 已标"禁止按可执行语气直读"（设计契约）；命名漂移对账+memo 措辞同步，后续批 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：memo36 v1.11.1——§3.10 执行者状态标注/组件状态表/「production 口径澄清」三处命名对账（落地名 RiskLayerOrchestrator MOD-L06-001，盘中编排已接线；§3.10 校准动作调用点未接入仍=设计契约），零语义变更） |
 | 107 | POT 连续 5 日失败→阈值调整升级计数器 | AI-RFIX-001 反馈⑤ | 需跨日持久化计数器，随 state_store 持久化批（REDIS-001 在途范围不含，归其后续批） | 🔵 已派单（AI-POT-001，2026-08-17） |
 | 108 | tests/risk/test_ml_experiment_pipeline.py::test_p_hacking_warning 既有失败 | AI-RFIX-001 反馈⑤+第六统筹实证 | dev HEAD 同败实证（'no_models' vs 'p_hacking_warning'），shim 模块 standalone 复现，与本批零依赖链；tests 域归后续测试债批 | ✅ 施工完成待统筹核验（2026-08-17 AI-TDEBT-002）：根因=R5 公共化批次（3df7eb98cf batch 13/15）机械改写测试用公共别名 global_run_count/seen_idempotency_keys——int 值拷贝+set 重绑定别名对真源 _global_run_count 写死路；裁定=按真源对齐测试（setup 走 reset_run_state() 设计内公共 API，p_hacking 经公开 run() 实驱动 10 次越阈，同 test_adversarial_ml.py attack_03 模式）；103 项两轮全绿 |
-| 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | 🔵 已派单（AI-GOVB-001 随批治理，2026-08-17） |
+| 109 | worktree 内 post-commit reconciler 状态文件未落盘（spawn 降级 WMI 路径） | AI-RFIX-001 反馈⑤+第六统筹实证 | #ARCH-105 同族病灶（WMI 降级 spawn 通道）；主仓通道健康实证——merge commit f8a14cf7 状态文件已落盘 .runtime/reconcile_reports/；归 #ARCH-105 专项一并治理 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：复现坐实——WMI spawn 通道正常，三证拒启时 failed status 无条件 anchor_main_root 落主仓而 launch pending 在 worktree=split-brain（外部观测即「状态文件未落盘」）；治本=落点分诊（worktree 存活→failed 落 worktree 原位与 pending 同址，证1→落主仓原行为保留）+2 回归测试 10/10 绿；#ARCH-105 同族病灶本批收口） |
 
 ### P1-补7 · 2026-08-17 AI-DGR-001 登记（53 号 §3.8 五态降级机施工批）【编号注记：原登记 #105-#107 与 RFIX-001 已入 dev 的 #105-#109 撞号，merge 重编 #110-#112——2026-08-17 第六统筹】
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
 | 110 | MOD-GOV-045 rollback_state_machine depgraph 登记 | AI-DGR-001（原 #105） | NEW-FILE-DEPGRAPH 门禁强制：已登记 file 粒度节点（build_status=generated，design_maturity=design——pre-merge 正确态；#ARCH-70 通道 merge 后重扫自动同身份转 production，无需手工 transition）。⚠️ 教训实证：design_maturity 提前手工转 production 会被主仓锚定的后台重扫当孤儿收割（文件未上主仓盘），pre-merge 必须保持 design | ✅ 已闭环（2026-08-17 merge 后统筹全量重扫，该节点实证 stable+production） |
-| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | 🔵 已派单（AI-GOVB-001，2026-08-17） |
+| 111 | scaffold module 功能域 alias 门禁对裁定同名碰撞无逃生口 | AI-DGR-001 实证（原 #106） | `rollback_state_machine` 名含 alias "rollback"（D_GOV_REPAIR/MOD-INF-021 注册别名）被 SSoT 门禁硬阻断；Owner 派单已预先裁定同名巧合（#ARCH-QUANT-003），但 module 子命令无 --force-override（仅 script 子命令有）——本次按 dry-run 查重已过+module_path 唯一实证手工补登 creation_token 闭环。门禁增强（裁定通道/白名单）属 GOVA 治理域 | ✅ 已闭环（2026-08-17 AI-GOVB-001，4078c7d757：module 子命令补 --force-override 裁定通道（与 script 同款并扩展——跳过功能域 alias 模糊匹配+蓝图关键词匹配；exact/module_path 冲突仍阻断不误放开；放行命中打印留痕）；check_overlap 加 skip_alias 参数；8 新测试，两轮 46/46 全绿） |
 | 112 | 五态降级机执行侧动作接线（撤单/阻断/减仓/平仓入交易运行时） | AI-DGR-001（原 #107） | 本批只产出姿态（FSM 永不生成/撤销订单）；执行动作消费方接线属 SHADOW 阶段施工（53 号 §3.6 表已同步标注"执行侧接线待施工"） | ⏳ 待 SHADOW 阶段 |
 
 ### P1-补8 · 2026-08-17 THD/LVL3 反馈遗留并入（第六统筹）
@@ -341,6 +341,16 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 119 | ml_experiment_pipeline 公共别名 global_run_count/seen_idempotency_keys 写死路（int 值拷贝/set 重绑定对 _global_run_count 真源零效果） | AI-TDEBT-002 #108 取证副产品 | R5 公共化批次（943708475e batch 6/15 等）机械生成的别名对赋值不可写；#108 修复后全仓零消费方（grep 实证），残留=诱导性陷阱（未来消费方写入静默失效）。处方=别名改 @property 类级同步或删除别名（需评估公共化批次全仓同类模式，归 R5 遗留清查） | ✅ 施工完成待统筹核验（2026-08-17 AI-TDEBT-002）：裁定=删除双别名（非改 @property——状态操作唯一入口 reset_run_state() 已够，读路径恒旧值属误导应消除）；删除前全仓 grep 实证零消费方（py 源+getattr 动态访问模式双查），tests/risk+ml_experiment 98 项全绿 |
 
 > **所改文件清单（警示乙：AI-19 今晚 74 文件测试重组 merge 冲突裁决用）**：tests/risk/test_ml_experiment_pipeline.py、tests/governance/governance_e2e/test_naming_e2e.py、src/zephyr/governance/security_governance/adversarial_tester.py、src/zephyr/governance/persistence/base_repo.py、architecture_model/contracts/consumer_registry.yaml、本 tracker。
+
+### P1-补10 · 2026-08-17 AI-GOVB-001 登记（治理 B 包）【编号注记：分支原登 #118-#122 与 TDEBT-002 已入 dev 的 #118/#119 撞号，merge 重编 #120-#124——2026-08-17 第八统筹】
+
+| # | 遗留项 | 来源 | 说明 | 状态 |
+|---|---|---|---|---|
+| 120 | scaffold.py 维度3 raise 内存量 Unicode 箭头（L950/957/960-963）及文档串多处（分支原登 #118） | AI-GOVB-001 提交实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批：维度3 raise 6 行全部转 ->——scaffold.py 全部 raise 消息 ASCII 化完成，MSG-STYLE 门禁实证通过；残余 → 仅在 docstring/注释/print，非门禁语义面） | ✅ |
+| 121 | 心跳 daemon idle>1800s 自退 × 证3 worker 拒启组合缺口（分支原登 #119） | AI-GOVB-001 复现+横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批，第一性原理归因修正：真凶非阈值间隙而是 **S3-A 零窗口 reap 物理删除死记录使 086d0e24 证3 宽限窗形同虚设**——claim 懒注册写网关 pid，commit 后进程退出即死，list_active 即删记录，WMI spawn 延迟窗内 worker 证3 读不到「近期活跃」记录；治本=list_active 死记录转 tombstone（功能判死零窗口保留，active/held/claim 消费方全过滤），心跳超 _REAP_GRACE_SECONDS(=900s，与 PAYLOAD_TTL 同源） 才物理删除；2 测试改写+1 新增，99/99 绿） | ✅ |
+| 122 | lock_files.py CLI 防呆缺陷：--session 被当文件名 acquire（分支原登 #120） | AI-GOVB-001 开工探测实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批：main() 对 check/acquire/release/guard-write 四命令加 -- 前缀文件参数拒绝+用法提示；5 新测试 14/14 绿；垃圾锁 --session 已 cleanup 清除） | ✅ |
+| 123 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量（分支原登 #121） | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
+| 124 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry）（分支原登 #122） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

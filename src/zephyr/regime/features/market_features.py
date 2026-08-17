@@ -4,7 +4,7 @@
 # [DEPENDENCIES] numpy; pandas
 # [CONSUMERS] MOD-REGIME-002(RegimeFeatureBuilder消费F1 realized_vol_pct + F3 cross_asset_corr + F4 ad_ratio + F5 volume_anomaly)
 # [STARTUP] imported
-# [MATURITY] design
+# [MATURITY] production
 # [INVARIANTS] realized_vol_pct∈[0,1]; cross_asset_corr∈[-1,1]; ad_ratio∈[-1,1]; volume_anomaly为z-score; PIT严格(t及以前)
 # [MODIFY-GUARD] blueprint=docs/03_modules/_domain_regime/regime_feature_builder/blueprint.md
 # [STABILITY] evolving
