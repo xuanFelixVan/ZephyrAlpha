@@ -32,13 +32,13 @@ description: >-
 #   backtest/regime_validation/+logs 实证)；Step2 编号 EXP-{TYPE}-{NNN} 全项目无重号；schema 按 62 号 v1.34.0
 #   指令 mlflow_run_id→fallback_ref；条目=真实可溯源实验 5 条（4 条 regime_validation 已 completed +
 #   1 条 walk_forward running），性能/检测字段诚实留 null（62 号 §4 原则 6 运行时可空）。
-#   已知 dangling：UNI-BASKET-001（regime 验证 10 大盘股篮子未登记 universe_registry）→ 见文件末 pending_fk。
+#   已知 dangling：UNI-BASKET-001 → ✅ 已核销（2026-08-17 AI-REGF-001 补登 universe_registry，证据 logs/c1_repro/basket_data_spec.json；pending_fk 状态翻 resolved）。
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: draft
-version: 1.1.2
+version: 1.1.3
 created: '2026-08-13'
-last_updated: '2026-08-15'
+last_updated: '2026-08-17'
 related_arch: '#ARCH-BREG-001'
 unique_key:
 - experiment_id
@@ -149,7 +149,7 @@ experiments:
       slippage_bps: 1                # 1bp
       risk_free_rate: 0.02           # 实证值（非 metrics.py 默认 0.025）
     data_period: "2015-01-01~2026-06-30"
-    universe: UNI-BASKET-001         # ⚠️ pending：regime 验证 10 大盘股篮子未登记 universe_registry（见 pending_fk）
+    universe: UNI-BASKET-001         # ✅ 已登记 universe_registry（2026-08-17 AI-REGF-001 补登核销）
     benchmark_id: BMK-ABSOLUTE-001   # 开/关自我对比，无市场基准；绝对收益口径
     cost_model_ref: CST-ASTOCK-001   # 万3佣金+1bp滑点实证对齐 A 股标准成本模型
     result_summary:
@@ -241,7 +241,7 @@ experiments:
       b4_hit_threshold: "6/8"        # ≥6/8 事件吻合
       states: 4                      # 9 态 BIC 证据降为 4 态（13 号裁定）
     data_period: "2015-01-01~2026-06-30"
-    universe: UNI-BASKET-001         # ⚠️ pending（同 EXP-REGIME-001）
+    universe: UNI-BASKET-001         # ✅ 已登记 universe_registry（同 EXP-REGIME-001 核销）
     benchmark_id: null               # 模型质量验证无基准
     cost_model_ref: null             # 模型指标验证（样本/校准/转换），非交易成本场景
     result_summary:
@@ -333,7 +333,7 @@ experiments:
       a2_effective_params: "7/8"     # #9 KDJ 因 high/low 缺失降级；#4/8/12 stub=1.0；#11/13 stub=0.0
       a3_fix: overlay_gated          # 方案 A：#1<1.0 门控 overlay（ungated 系统性退化 -0.0196 超噪声）
     data_period: "2015-01-01~2026-06-30"
-    universe: UNI-BASKET-001         # ⚠️ pending（同 EXP-REGIME-001）
+    universe: UNI-BASKET-001         # ✅ 已登记 universe_registry（同 EXP-REGIME-001 核销）
     benchmark_id: BMK-ABSOLUTE-001
     cost_model_ref: CST-ASTOCK-001   # 同 C1 框架成本口径
     result_summary:
@@ -522,7 +522,7 @@ experiments:
       walk_forward_quarters: 46      # 46 季度滚动窗口 HMM refit
       target_stat: "各窗口 MaxDD 改善 CV<0.5"  # 正式统计门槛（未产出）
     data_period: "2015-01-01~2026-06-30"
-    universe: UNI-BASKET-001         # ⚠️ pending（同 EXP-REGIME-001）
+    universe: UNI-BASKET-001         # ✅ 已登记 universe_registry（同 EXP-REGIME-001 核销）
     benchmark_id: BMK-ABSOLUTE-001
     cost_model_ref: CST-ASTOCK-001
     result_summary: null             # 正式统计未产出（诚实留白）
@@ -603,7 +603,10 @@ pending_fk:
       regime 验证 10 大盘股等权篮子（logs/c1_repro/basket_data_spec.json 实证存在）
       未登记 universe_registry——62 号 Step 4 弱 FK forward-ref 规则允许 pending，
       待 universe_registry 补登 UNI-BASKET-001 后回填核销。
-    status: pending
+    status: resolved
+    resolved_at: '2026-08-17'
+    resolved_by: AI-REGF-001
+    resolution: universe_registry.yaml 补登 UNI-BASKET-001（static 10 股等权篮子，MOD-REGIME_VAL-002 归属），引用语义真实保留不修正
 
 # ── 不登记记录（防幻觉审计留痕）──
 # 1. logs/experiment_tracking_fallback/test/dcb3d7b350fe：FallbackBackend API smoke 测试残留

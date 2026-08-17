@@ -39,7 +39,7 @@ scope: 07_trading_decision_architecture
 | [14_regime_s2_diagnosis.md](14_regime_s2_diagnosis.md) | S2 算法错配诊断报告 | draft v0.4.5 |
 | [15_data_feature_layer_spec.md](15_data_feature_layer_spec.md) | G01 数据与特征层规范 | active v1.0.0（2026-08-12 重建 6a4f5392） |
 | [16_technical_indicator_build_plan.md](16_technical_indicator_build_plan.md) | 技术指标施工计划（9周期覆盖+增量/全量调度） | active v1.0.0（2026-08-12 重建） |
-| [16_technical_indicator_catalog.md](16_technical_indicator_catalog.md) | 技术指标目录（8大类指标规范） | active v1.0.0（2026-08-12 重建） |
+| [16_technical_indicator_catalog.md](16_technical_indicator_catalog.md) | 技术指标目录（5大类指标规范：trend/momentum/volatility/volume/reversal，对齐代码真源） | active v1.0.0（2026-08-12 重建） |
 | [17_special_trading_days_data_assets.md](17_special_trading_days_data_assets.md) | A股特殊交易日数据资产全景与治理（完整清单+已施工盘点+hk_trade_calendar修复#ARCH-DATA-001+治本方案#ARCH-DATA-002） | active v1.0.0 |
 | [18_cold_archive_build_plan.md](18_cold_archive_build_plan.md) | 冷归档施工计划 | active v0.2.0 |
 | [19_northbound_hold_snapshot.md](19_northbound_hold_snapshot.md) | 北向资金季度持仓快照 fetcher 施工计划（日频断档替代方案，tushare hk_hold 已验证） | draft v0.1.0 |

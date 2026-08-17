@@ -32,7 +32,11 @@ description: >-
 #   迁移时存量修复（E5 半派生，同 domain 目录同名文件唯一匹配才重映射）：8 处锚点路径修复
 #   （backtest/{tick_replay,matching_logic,portfolio,metrics}.py→backtest/core/、factor/momentum.py→factor/technical_indicators/）
 #   + DS-005/JOB-005 module_id 空值回填 MOD-SIGNAL-ASHARE；遗留 13 条存量锚点漂移（旧文件 2026-07-06 快照遗留，
-#   文件改名/删除所致，非本次引入）待后续修复——见 62 号 §12 P1-B 第 6 项。
+#   文件改名/删除所致，非本次引入）——✅ 已修复（2026-08-17 AI-REGF-001，tracker #12：旧文件 13 条 jobs.source_code_ref
+#   逐条修复=迁移类 6 条（backtest/*→backtest/core/、factor/momentum→technical_indicators）+功能继任类 7 条
+#   （aggregator→kline_resampler/synthesizer→signal_fundamental.synth/risk_checker→risk_validator/order_generator→
+#   order_manager/executor→execution_engine/result_deployer→report_generator/live_portfolio→fill_handler），
+#   复扫旧库 0 违规；见 62 号 §12 P1-B 第 6 项）。
 # v1.1.0 changelog(2026-08-14): 补登 DS-080 market_data.lhb_detail（龙虎榜明细，SRC-AKSHARE-001 东财口径）+ JOB-076 ingest.akshare_lhb
 #   ——seat_registry（REG-SEAT-001）席位形态分析的前提数据资产；同日补登 DS-077~079（renko/point_figure/kagi）。
 # v1.3.0 changelog(2026-08-15): 补登 DS-103 market_data.northbound_hold_snapshot（北向资金季度持仓快照，
@@ -41,9 +45,9 @@ description: >-
 owner: MOD-GOVERNANCE
 tier: tier_2_data_runtime
 status: active
-version: 1.3.0
+version: 1.3.1
 created: '2026-08-13'
-last_updated: '2026-08-15'
+last_updated: '2026-08-17'
 related_arch: '#ARCH-BREG-001'
 unique_key:
   sources: [source_id]

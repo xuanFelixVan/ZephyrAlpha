@@ -1,6 +1,6 @@
 # [BLUEPRINT] MOD-PLAN-003 | docs/03_modules/_domain_plan_engine/closing_session_decision/blueprint.md
 # [MODULE] zephyr.plan_engine.closing_session_decision
-# [DOMAIN] D_TRADING
+# [DOMAIN] D_PLAN
 # [DEPENDENCIES] zephyr.plan_engine.tomorrow_boundary_planner(TomorrowBoundary); zephyr.plan_engine.premarket_constraint_loader(ConstraintState)
 # [CONSUMERS] BM-BUY-02(买入融合); BM-SELL-02(卖出融合)
 # [STARTUP] imported

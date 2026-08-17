@@ -9188,15 +9188,15 @@ creation_tokens:
   - file: "docs/03_modules/_domain_plan_engine/tomorrow_boundary_planner/blueprint.md"
     token: "auto-buy-plan001-blueprint-20260813"
     created_by: "session-AI-SOP-001"
-    capability: "tomorrow_plan_engine"
+    capability: "tomorrow_boundary_planner"
   - file: "docs/03_modules/_domain_plan_engine/premarket_constraint_loader/blueprint.md"
     token: "auto-buy-plan002-blueprint-20260813"
     created_by: "session-AI-SOP-001"
-    capability: "tomorrow_plan_engine"
+    capability: "premarket_constraint_loader"
   - file: "docs/03_modules/_domain_plan_engine/closing_session_decision/blueprint.md"
     token: "auto-buy-plan003-blueprint-20260813"
     created_by: "session-AI-SOP-001"
-    capability: "tomorrow_plan_engine"
+    capability: "closing_session_decision"
 
   # --- 统筹文件 reconciler 误删恢复重登记（2026-08-14，事故#49，AI-SOP-001）---
   - file: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/construction_progress_tracker.md"

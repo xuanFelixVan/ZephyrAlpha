@@ -18,8 +18,8 @@ scope: 07_trading_decision_architecture
 > **最终成果**：83 测试两轮全绿；分批建仓、突破失败降级、买入时序、价格锚定、资金协同、T+1 约束按本档契约落码。
 >
 > **未做事项及原因**：
-> - 5 个新文件 token 与既有能力名称重叠——命名冲突待消解（遗留 #15），不影响功能。
-> - MOD-PLAN-001/002/003 域归属不一致——依赖图域修正待处理（遗留 #16），不影响功能。
+> - ~~5 个新文件 token 与既有能力名称重叠~~ ✅ 已消解（2026-08-17 AI-REGF-001，遗留 #15）：实证现库无硬碰撞，唯一异常=3 个 plan 蓝图共享伞名 tomorrow_plan_engine（跨 3 模块歧义+与先注册 decision_table_plan_engine(2026-08-05) 词干相近）——按后注册让先注册，3 token capability 改模块本名 tomorrow_boundary_planner/premarket_constraint_loader/closing_session_decision（blueprint_registry SSoT 对齐），另 2 token（buy_flow_batched_entry/trigger_list_registry）实证无碰撞保留；token 字符串未动，CREATE-GUARD 按 file 索引不受影响。
+> - ~~MOD-PLAN-001/002/003 域归属不一致~~ ✅ 已闭环（2026-08-17 AI-REGF-001，遗留 #16）：初判 D_TRADING 为最佳既存域；Owner 随后批准创建独立域——**D_PLAN 已落地**（functional_domain_registry 登记+depgraph domains 表同步+4 节点 domain_id D_TRADING→D_PLAN+3 代码文件头 [DOMAIN] 同步），DOMAIN-FK+N-17 校验通过；三模块职责=明日边界计算/盘前约束加载/尾盘加减仓决策，为买卖仓位三流提供共同上游边界。
 
 # 买入流 spec
 
