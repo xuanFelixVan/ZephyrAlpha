@@ -13,9 +13,9 @@ description: >-
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: "1.1.0"
+version: "1.1.1"
 created: '2026-07-18'
-last_updated: '2026-07-24'
+last_updated: '2026-08-18'
 # 裁定#20-A/#20-B/#20-D 建立（2026-07-18 治本）
 
 # ============================================================
@@ -1481,5 +1481,58 @@ entries:
     - d:\ZephyrAlpha\docs\02_enterprise_architecture\07_trading_decision_architecture\design_memos\62_business_registry_construction.md
   related_arch:
     - '#ARCH-BREG-001'
+  related_rulings: []
+  superseded_by: null
+
+# === AI 架构层开放问题批量裁定（#224，2026-08-18）===
+
+- ruling_id: '裁定#224'
+  title: AI 架构层施工图开放问题批量裁定（12 项，Owner 裁定回填批）
+  date: '2026-08-18'
+  category: 架构
+  status: active
+  summary: >-
+    Owner 对 09_ai_architecture implementation_plans 批开放问题的批量裁定（共 12 项），
+    由 AI-ADJ-003（本文档批）与 AI-ADJ-004（03/05/06/14 号文与候选/翻译/依赖注册表批）
+    两会话并行回填，关联 AI-ADJ-001/002 代码批 commit（见 git log）。本条目登记
+    裁定 6~11（AI-ADJ-003 落盘范围）：
+    裁定6 Kill Switch「<1ms」语义——确认为决策点内联拦截（2026-08-18 本机实测，
+    Python 3.12.8/Windows nt，最小计时脚本 1000 采样：内联拦截 P50=0.20μs/
+    P95=0.30μs/P99=0.30μs/max=1.70μs；文件标志位轮询 P50=0.032ms/P95=0.045ms/
+    P99=0.110ms/max=0.261ms，优于原 10ms~1s 预期但跨进程传播不承诺毫秒级），
+    00_index §3.2 与 15 号文 §2.3/§3.4 写回实测口径，00 Q5/15 Q1 关闭；
+    裁定7 Agent Challenge 实现形式——交叉会话复审为主形态（另一 AI 会话做对齐
+    判定），challenge 工单为统一落盘载体与降级形态（交叉会话不可用/超时→直接进
+    人审队列），人兜底不可省（61 号备忘「交接落盘可追溯」与约束⑥交叉验证范式），
+    15 号文 §3.2/§4.3 细化，15 Q2/00 Q6 关闭；
+    裁定8 自治标尺统一——00_index 有界自治 L0~L3（+L4 保留不启用）为项目唯一主
+    标尺（管「Agent 能做什么」）；PS-VOC-021 词表 l3 描述与主标尺封顶对齐（中风险
+    封顶，全权自主不启用）；AutonomyMaturity 映射定稿（L0 OBSERVE=L0；L1 NOTIFY+
+    L2 SUGGEST=L1 两亚档；L3 AUTO_MINOR=L2；L4 AUTO_FULL=保留不启用）；
+    AutonomyGuard level1~3 为正交维度（Owner 缺位运维白名单）不入映射；16 号文
+    A-L 系管「运维闭环自治深度」为另一根轴，不建映射只做交叉引用。15 §3.3 映射表
+    转定稿，15 Q3/16 Q4 关闭，00 §3.2 补「L4 保留不启用」口径；
+    裁定9 举报人机制降级远期 P4——威胁模型（自治 Agent 社会串谋者识别规避+信道
+    劫持）在「人调度多会话+落盘交接」架构下不成立，61 号备忘将多 Agent 自治编排
+    推迟到第三阶段重评；16 号文 §3.9 MVP 候选设计保留并标注 P4 远期，16 Q5 关闭，
+    00 §3.3 标注「举报人机制（远期 P4）」，CAND 候选库登记归 AI-ADJ-004；
+    裁定10 MOD-INF-033 Behavioral Auditor 本期不激活——运维闭环事件流只消费其
+    VERDICT（PASS/YELLOW/RED）事件语义，蓝图 AUTOMATION-GATE 三门槛（基线数据/
+    天数/误报率）未达前不启用，16 Q6 关闭；
+    裁定11 IM 模式确认为规范术语——IM=仅人工介入模式：Agent 可读取数据与执行
+    查询，一切修改操作需人工介入审批；属运行时执行模式（动态覆盖），静态权限类别
+    不变，告警解除后自动恢复；level_2=IM 基线+暂停涉事 Agent，level_3=IM 基线+
+    全局暂停。16 §3.13 转规范口径，16 Q7 关闭，00 §3.3 KILLSWITCH 行补括注。
+    其余 6 项裁定（03/05/06/14 号文与 functional_domain_registry/
+    candidate_module_registry/module_translation_registry/
+    cross_module_dependency_registry 回填）由 AI-ADJ-004 会话落盘，不在本条目
+    affected_files 内。
+  affected_files:
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\09_ai_architecture\implementation_plans\00_index.md
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\09_ai_architecture\implementation_plans\15_autonomy_boundary_risk.md
+    - d:\ZephyrAlpha\docs\02_enterprise_architecture\09_ai_architecture\implementation_plans\16_ai_security_ops.md
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\vocabularies\ai_autonomy_level_planned_vocabulary.yaml
+    - d:\ZephyrAlpha\docs\01_policies_and_standards\_registry\catalogs\ruling_registry.yaml
+  related_arch: []
   related_rulings: []
   superseded_by: null

@@ -10,7 +10,7 @@
 # ai_autonomy_level_planned 受控词表
 # ZephyrAlpha 2.0 规划的 AI 自治等级唯一真源
 # 维护者：ZephyrAlpha-Owner
-# 版本：1.0.0
+# 版本：1.0.1
 # 创建日期：2026-05-06
 #
 # 本词表定义 ai_autonomy_level_planned 字段的所有合法值（4 种）。
@@ -23,7 +23,7 @@
 schema_version: "1.0.0"
 doc_type: vocabulary
 module_id: PS-VOC-021
-version: "1.0.0"
+version: "1.0.1"
 date: "2026-05-02"
 owner: ZephyrAlpha-Owner
 title: "ai_autonomy_level_planned 受控词表"
@@ -55,6 +55,6 @@ values:
     ai_keywords: ["L2", "中自治", "读写", "关键审批", "半自主"]
 
   - value: l3
-    definition: "L3 高自治——AI 全权自主操作"
-    ai_consumption: "AI 可以完全自主地执行所有操作，无需人类干预。适用于成熟稳定的模块。"
-    ai_keywords: ["L3", "高自治", "全权", "自主", "无需审批"]
+    definition: "L3 高自治——中风险封顶，Owner 授权范围内自主；全权自主超出本项目自治上限，不启用"
+    ai_consumption: "AI 可在 Owner 授权范围内自主执行中风险及以下操作（本项目自治上限为中风险封顶，留痕可回滚）。全权自主不启用。"
+    ai_keywords: ["L3", "高自治", "中风险封顶", "授权自主", "全权不启用"]
