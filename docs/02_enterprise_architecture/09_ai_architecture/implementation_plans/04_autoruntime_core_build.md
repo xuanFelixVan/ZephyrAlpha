@@ -5,7 +5,7 @@ title: AutoRuntime Core 施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 date: 2026-08-17
 topic: autoruntime_core_build
 scope: 09_ai_architecture
@@ -190,6 +190,66 @@ AutoRuntime Core 是 ZephyrAlpha 的系统大脑（MOD-INF-035），负责全局
 
 **本文按实测将该假设精确化**：`autonomy_core/context/context_pipeline_auto.py`（production）的 `auto_start()` 在系统启动时初始化 ContextPipeline 并注册 EventBus 订阅（`zephyr.shared.event_bus`），其模块头消费者清单含 `zephyr.trading.boot_hooks`——即大脑在 boot 阶段经 `boot_hooks.py` 触发其自动注册，此后流水线由 EventBus 事件驱动。大脑的角色是 **boot 触发方 + 事件驱动订阅源**，不逐任务编排四段流水线；蓝图 references 声明的「MOD-CONTEXT_ENGINE——大脑消费上下文注入」成立，大脑不向 Context Engine 反向输出编排职责；`autonomy_core/context/` 子系统（39 个文件已 production）的剩余施工归 07 号文。双向确认动作已登记 §6 Q5。
 
+### 3.6 自治层不变量与契约（设计态登记）
+
+> 真源：depgraph 草稿 `.runtime/aidrafts/09_drafts_audit/依赖图/project-entity-depgraph.yaml` 的 invariants/events/contracts 段 + `01-跨域交叉点与因果链.md` D-AUTONOMY 模块表。depgraph 域模型中 D-AUTONOMY-CORE 对应系统大脑运行时（layer_domain_mapping L01），D-AUTONOMY-PERM 为自治保护层。本节为**设计态登记**——登记自治层三件套作为大脑施工的约束基线，不变量落地与事件/契约的代码实现归属 §4 Phase 1+ 各触发式阶段，不在 Phase 0 超前施工。
+
+**A. 自治不变量 INV-AU-001~008（8 项）**
+
+| 编号 | 名称 | 内容 | owner_domain | 执行点 | 违反动作 |
+|---|---|---|---|---|---|
+| INV-AU-001 | PERM 不改 CORE 状态 | PERM 只能读取 CORE 状态 + 发出阻止指令，不能修改 CORE 任何状态 | D-AUTONOMY-PERM | compile_time | block |
+| INV-AU-002 | PERM 预算豁免 | PERM 自身不受 budget 限制，防止死锁——PERM 扣光 budget 就无法阻止 CORE | D-AUTONOMY-PERM | runtime | alert |
+| INV-AU-003 | KillSwitch 直通不经 CORE | Kill Switch 直通路径不经过 CORE，不能被 CORE 拦截 | D-AUTONOMY-PERM | architecture | block |
+| INV-AU-004 | 交易时段仅监控 | 交易时段 PERM 仅做监控+告警，修复操作延至盘后 | D-AUTONOMY-PERM | runtime | alert |
+| INV-AU-005 | 决策可解释性 | 每笔 AI 自主决策必须有完整的决策溯源链 | D-AUTONOMY-CORE | runtime | block |
+| INV-AU-006 | AI 自主执行率阈值 | AI 自主执行率目标 >90%，单笔自主执行置信度 ≥95% | D-AUTONOMY-CORE | runtime | alert |
+| INV-AU-007 | 参数安全边界 | 参数变化幅度 ±20%/次，性能回撤 >5% 回滚，OOS 必须优于 IS | D-AUTONOMY-CORE | runtime | block |
+| INV-AU-008 | 能力只经 CapabilityCard 发现 | 自治域不依赖任何业务域实现细节，只通过 CapabilityCard 发现能力 | D-AUTONOMY-CORE | architecture | block |
+
+与本文既有决策的关系：INV-AU-004 与 §2.3「交易时段大脑降载」同向（盘中仅监控，动作延盘后）；INV-AU-008 是 L2 执行层 `capability_card.py`/`capability_registry.py`（已 production）的存在理由——能力发现唯一入口；INV-AU-006 的阈值口径是 §6 之外不再有歧义的量化基线（>90% / ≥95%）。
+
+**B. 自治事件体系 E-AU-01~14 + E-AP 系列（实测 14+4=18 个）**
+
+| 编号 | 事件 | payload 要点 | 源→目标 | 级别 |
+|---|---|---|---|---|
+| E-AU-01 | KillSwitchActivated | {reason, timestamp, initiator} | CORE→EX-CORE/PERM | P0 |
+| E-AU-02 | KillSwitchDeactivated | {timestamp, approver} | CORE→EX-CORE/PERM | P0 |
+| E-AU-03 | PermissionDenied | {subject, action, resource, policy_id} | PERM→CORE/OPS | P0 |
+| E-AU-04 | BudgetExceeded | {budget_type, current, limit, agent_id} | CORE→PERM/OPS | P1 |
+| E-AU-05 | HealthDegraded | {component, score, threshold} | CORE→PERM/OPS | P1 |
+| E-AU-06 | DriftDetected | {detector_id, drift_type, magnitude} | PERM→CORE/OPS | P1 |
+| E-AU-07 | EscalationTriggered | {reason, level, target_agent} | CORE→PERM/OPS | P1 |
+| E-AU-08 | SessionStateChanged | {session_id, old_state, new_state} | CORE→PERM | P1 |
+| E-AU-09 | StrategyRetired | {strategy_id, fingerprint_match, retirement_reason}（指纹匹配换名复活触发） | CORE→PERM/PF-CORE | P0 |
+| E-AU-10 | AutonomousExecutionRateDegraded | {rate, threshold, duration}（自主执行率 <90% 持续 1 小时触发，INV-AU-006 的事件面） | CORE→PERM/OPS | P0 |
+| E-AU-11 | OverfittingDetected | {oos_score, is_score, purge_gap, walk_forward_windows}（OOS<IS 或 Purged K-Fold 泄漏触发，INV-AU-007 的事件面） | CORE→PERM | P1 |
+| E-AU-12 | CrowdnessWarning | {factor_id, msci_risk_exposure, a_share_stampede_risk} | CORE→PERM/RISK | P1 |
+| E-AU-13 | BlackSwanDetected | {pattern_id, trigger_conditions, historical_occurrences} | CORE→PERM/RISK | P1 |
+| E-AU-14 | DecisionTraceBroken | {decision_id, break_point, expected_chain}（溯源链断链，INV-AU-005 的事件面） | CORE→PERM | P0 |
+| E-AP-01 | PERMIndependentHealthCheck | {core_reachable, perm_health_score}（PERM 独立健康检查发现 CORE 不可达，GAP-AP-01 的事件面） | PERM→CORE/OPS | P0 |
+| E-AP-02 | TradingSessionSwitch | {market, session_type, timestamp}（INV-AU-004 的切换信号） | PERM→CORE | P0 |
+| E-AP-05 | KillSwitchDirectActivated | {reason, timestamp, path:direct, issuer:PERM}（直通路径触发，INV-AU-003/GAP-AP-05 的事件面） | PERM→EX-CORE | P0 |
+| E-AP-07 | BacktestRealtimeDeviationAlert | {strategy_id, deviation_pct, threshold} | PERM→CORE/RISK | P1 |
+
+编号口径说明：草稿源中 E-AP 系列仅实测到 E-AP-01/02/05/07 四个（E-AP-03/04/06 编号在草稿中不存在），本节按实测登记，不补造跳号。
+
+**C. 自治契约 CTR-AU-001~006 + CTR-AP-001~003（6+3=9 个）**
+
+| 编号 | 契约 | schema | 源→目标 | 稳定性 |
+|---|---|---|---|---|
+| CTR-AU-001 | TraceContext | {agent_id, session_id, permission_level, audit_chain_hash} | CORE→PERM/INFRA-RUNTIME/INFRA-OPS/SECURITY/INTEGRATION/DATA/FACTOR/SIGNAL/PF-CORE/EX-CORE/RISK/ML-TRAIN/ML-SERVE/REPORTING/OPS | frozen |
+| CTR-AU-002 | RBACDecision | {subject, action, resource, verdict, policy_id} | PERM→CORE/INFRA-RUNTIME/DATA/FACTOR/SIGNAL/PF-CORE/EX-CORE/RISK | frozen |
+| CTR-AU-003 | AuditRecord | {event_type, actor, action, target, timestamp, merkle_hash} | PERM→COMPLIANCE/REPORTING | frozen |
+| CTR-AU-004 | HealthStatus | {component, score, latency_ms, error_rate} | CORE→OPS/INFRA-OPS | frozen |
+| CTR-AU-005 | LLMInference | {model_id, prompt_hash, response_hash, token_count, latency_ms} | CORE→ML-TRAIN/ML-SERVE/SIGNAL/REPORTING | frozen |
+| CTR-AU-006 | CapabilityCard | {capability_id, version, endpoint, health} | CORE→PERM/INFRA-RUNTIME | frozen |
+| CTR-AP-001 | CoreReadOnlyState | CoreState{session_states, agent_status, task_queue_depth, permission_mode}（INV-AU-001 的只读视图载体） | CORE→PERM | evolving |
+| CTR-AP-002 | PERMBlockCommand | BlockCommand{target_agent, reason, duration, issuer:PERM, audit_hash}（INV-AU-001 允许的「阻止指令」载体） | PERM→CORE | evolving |
+| CTR-AP-003 | PERMBudgetExemption | BudgetExemption{perm_operation_id, exempt:True, justification}（INV-AU-002 的豁免凭证） | PERM→CORE | evolving |
+
+契约与现状代码的映射：CTR-AU-006 已有 `capability_card.py`（production）承载；CTR-AU-004 与 `health_monitor.py` 的健康评分输出同型；CTR-AU-003 与 `ai_audit_logger.py`（GAP-007 环形缓冲待施工）同域；CTR-AP-001/002/003 为 PERM 侧契约，代码归属 D-AUTONOMY-PERM 域施工（不在本文施工范围，本文只登记 CORE 侧消费/生产点）。
+
 ---
 
 ## 4. 施工计划
@@ -199,6 +259,8 @@ AutoRuntime Core 是 ZephyrAlpha 的系统大脑（MOD-INF-035），负责全局
 > **施工模式**：扩展（蓝图 §16.1 裁定）——在既有组件上追加规模适配，不重写基线。
 >
 > **触发式施工原则**：Phase 1/2/3 的启动以蓝图 §17 触发矩阵的真实度量为准（如「全量扫描 >3s」「活跃 DAG >50」），未触发不施工。
+>
+> **施工顺序注记（depgraph 草稿 activation 段登记）**：D-AUTONOMY-CORE 的就绪前提（readiness_prerequisites，arb_ref=AUT-CORE-READY）为 **D-AUTONOMY-PERM.GAP-AP-01（PERM 独立健康检查就绪）+ D-AUTONOMY-PERM.GAP-AP-05（Kill Switch 直通路径就绪）**——即「PERM 顺序 0 先于 CORE 顺序 1」：PERM 侧两项就绪门禁必须先于 CORE 就绪成立，CORE 的就绪验收不得在 PERM 两项 GAP 未就绪前宣布完成（INV-AU-001/003 的激活时序面；两项 GAP 的施工归属 D-AUTONOMY-PERM 域，不在本文施工范围，本文登记为 CORE 侧就绪的阻塞条件）。域级自治口径：depgraph 草稿为全部域逐域标注 `ai_autonomy` 属性，实测 28 域——24 域 `ai_modifiable`，4 域 `human_gated`（D-RISK / D-COMPLIANCE / D-SECURITY / D-GOVERNANCE），无 `immutable` 域；逐域清单真源在 depgraph 草稿，本文不复制。
 
 ### Phase 0：蓝图-代码对齐 + T0 拐点（P0，当前规模即可做）
 
@@ -289,8 +351,8 @@ AutoRuntime Core 是 ZephyrAlpha 的系统大脑（MOD-INF-035），负责全局
 | Q2 | 与 `src/zephyr/runtime/` 既有运行时的关系 | ✅ 已闭环 | 实测裁定为不同物（§3.3）：在现有代码上扩展，不重写、不合并 |
 | Q3 | 蓝图-代码漂移 5 项的修订 | 待蓝图维护方/Owner 裁定 | §2.2 问题 1 的 5 项漂移（4 个幽灵文件条目 + §16 产出位置/测试目录 runtime→trading）；蓝图只读，本文不代改；Phase 0 步骤 0.1 跟踪 |
 | Q4 | T2「DreamCycle 轮转策略」的承载文件 | 待裁定（依赖 Q3） | 蓝图 §16.3 步骤 3 挂在幽灵文件 `circadian_scheduler.py` 名下；候选承载 `dream_cycle.py`/`night_shift_queue.py`；裁定前 Phase 2 步骤 2.3 不开工 |
-| Q5 | 与 07 号文（Context Engine）接口双向确认 | 部分闭环，待 07 回填 | 07 号文 v0.2.2 §6 Q2 假设经本文 §3.5 实测精确化（boot 触发注册 + EventBus 事件驱动，非逐任务调度）；待 07 号文回填确认后闭环 |
-| Q6 | 与 10 号文（LLM 基础设施）接口闭环 | 本文侧已确认，待 10 回填 | 10 号文 v0.2.2 §6 Q3 假设本文 §3.4 确认成立；联动动作列入 Phase 1 步骤 1.4；待 10 号文回填闭环其 Q3 |
+| Q5 | 与 07 号文（Context Engine）接口双向确认 | ✅ 已闭环（判定：部分成立） | 接口复审判定：07 号文 §6 Q2 假设「AutoRuntime 经 EventBus 调度 context_pipeline_auto，任务启动时触发四段流水线」**部分成立**——EventBus 事件驱动成立，「逐任务调度」不成立；以本文 §3.5 实测精确化口径为准（boot 阶段经 boot_hooks.py 触发注册，此后 EventBus 事件驱动，大脑不逐任务编排四段流水线） |
+| Q6 | 与 10 号文（LLM 基础设施）接口闭环 | ✅ 已闭环（判定：成立） | 接口复审判定：10 号文 §6 Q3 假设「AutoRuntime Core 继续承担 Ollama 进程管理与本地模型栈 boot；llm_runtime_gateway 门面被 AutoRuntime Core 消费而非取代其编排职责」**成立**（本文 §3.4 确认）；联动动作列入 Phase 1 步骤 1.4 |
 
 ---
 
@@ -300,3 +362,4 @@ AutoRuntime Core 是 ZephyrAlpha 的系统大脑（MOD-INF-035），负责全局
 |------|------|------|------|
 | 2026-08-17 | 0.2.0 | 骨架填充：§1 主题组 + §2 背景（含已施工设施实测盘点）+ §3 设计决策 + §4 Phase 0 | AI-FILL-04 首轮填充（会话中断，留存半成品） |
 | 2026-08-17 | 0.2.1 | 续写补完 §4 Phase 1~3 + §5 不做什么 + §6 开放问题 + 修订记录；过渡表述合规改写（GOV-DOC-016：运行模式行/漂移项/deprecated 行改当前状态描述）；实测修正 passports 10→7、07/10 号文版本与接口状态；漂移项 4→5（补 §16 产出位置与测试目录漂移） | AI-FILL-04 续写补完 |
+| 2026-08-17 | 0.2.2 | 回填 §3.6 自治层不变量与契约（设计态登记：INV-AU-001~008 / E-AU-01~14+E-AP 实测 4 个 / CTR-AU-001~006+CTR-AP-001~003，真源 depgraph 草稿 invariants/events/contracts 段）；§4 增施工顺序注记（GAP-AP-01/05 就绪门禁「PERM 顺序 0 先于 CORE 顺序 1」+ 域级 ai_autonomy 实测 28 域口径）；§6 Q5/Q6 接口复审判定回填并闭环（Q5 部分成立 / Q6 成立） | AI-FILL-04-R2 回填 |
