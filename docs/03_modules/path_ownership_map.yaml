@@ -6,9 +6,9 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-16T22:44:54Z'
+  generated_at: '2026-08-17T03:01:11Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
-  total_path_claims: 6059
+  total_path_claims: 6057
   total_ssot_claims: 16
   total_conflicts: 0
   conflict_resolution: 'ssot_claims_priority'
@@ -1575,13 +1575,6 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/compliance/__init__.py'
-    owner_blueprint: 'MOD-L10-001'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_domain_compliance/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/compliance/zero_knowledge_audit_stub/__init__.py'
     owner_blueprint: 'MOD-L10-001'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_domain_compliance/blueprint.md'
@@ -39903,13 +39896,6 @@ ownership:
     owner_blueprint: 'MOD-INF-013'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/security/adversarial_validation/_scenario-registry.yaml'
-    owner_blueprint: 'MOD-INF-030'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_cross_layer/red_blue_validator/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 

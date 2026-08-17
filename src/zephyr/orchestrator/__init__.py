@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-FEEDBACK_LOOP | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 # [DOMAIN] D_ORCHESTRATOR
 
 # [A_module] module_id=MOD-INF-039 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
