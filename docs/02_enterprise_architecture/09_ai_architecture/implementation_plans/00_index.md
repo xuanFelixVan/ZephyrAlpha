@@ -5,8 +5,8 @@ title: AI 架构设计——结构总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.7.2"
-date: 2026-08-17
+version: "0.7.3"
+date: 2026-08-18
 topic: ai_architecture_design
 scope: 09_ai_architecture
 ---
@@ -215,39 +215,39 @@ scope: 09_ai_architecture
 09_ai_architecture/
 │
 ├── 0x meta（3 文档）
-│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.2
-│   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.5.1 已填充
-│   └── 02_design_asset_inventory.md         ← 设计资产盘点 [轨道E] 随时 · draft v0.4.0 已填充
+│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.3
+│   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.6.0 已填充
+│   └── 02_design_asset_inventory.md         ← 设计资产盘点 [轨道E] 随时 · draft v0.5.1 已填充
 │
 ├── 1x 基础设施层（3 文档）
-│   ├── 04_autoruntime_core_build.md         ← AutoRuntime Core 五层同心圆 [轨道A] U1 · draft v0.2.1 已填充
-│   ├── 09_llm_security_integration.md       ← LLM 安全栈 L0~L8 [轨道B] U2 · draft v0.2.0 已填充
-│   └── 10_llm_infrastructure.md             ← 三层运行时 + MCP 工具调用 + 推理优化(GGUF量化/Ollama托管) + 模型注册(REG-ML-001+运行时注册对账) + 数据增强(TimeGAN) [轨道A] U1 · draft v0.2.2 已填充
+│   ├── 04_autoruntime_core_build.md         ← AutoRuntime Core 五层同心圆（含 §3.6 自治层不变量与契约 INV-AU-001~008） [轨道A] U1 · draft v0.2.2 已填充
+│   ├── 09_llm_security_integration.md       ← LLM 安全栈 L0~L8 [轨道B] U2 · draft v0.3.0 已填充
+│   └── 10_llm_infrastructure.md             ← 三层运行时 + MCP 工具调用 + 推理优化(GGUF量化/Ollama托管) + 模型注册(REG-ML-001+运行时注册对账) + 数据增强(TimeGAN) [轨道A] U1 · draft v0.3.0 已填充
 │
 ├── 2x 自我进化层（3 文档）
-│   ├── 11_evidence_skill_router.md          ← 证据关联 + 技能库(AutoSkill+Voyager) + 模型路由 [轨道C] U3 · draft v0.2.0 已填充
-│   ├── 12_reflexion_multi_agent.md          ← 自反Agent(L1/L2/L3反思+PreFlect+Agent-R) + 多Agent协作(投票壳=可选模式/FactorMAD/R&D-Agent/涌现检测) [轨道C] U4 · draft v0.2.0 已填充
-│   └── 13_module_factory.md                 ← 模块工厂（核心独创，独立文档因复杂度足够）[轨道C] U4+U8 · draft v0.2.0 已填充
+│   ├── 11_evidence_skill_router.md          ← 证据关联 + 技能库(AutoSkill+Voyager) + 模型路由 [轨道C] U3 · draft v0.3.0 已填充
+│   ├── 12_reflexion_multi_agent.md          ← 自反Agent(L1/L2/L3反思+PreFlect+Agent-R) + 多Agent协作(投票壳=可选模式/FactorMAD/R&D-Agent/涌现检测) [轨道C] U4 · draft v0.3.0 已填充
+│   └── 13_module_factory.md                 ← 模块工厂（核心独创，独立文档因复杂度足够）[轨道C] U4+U8 · draft v0.3.0 已填充
 │
 ├── 3x 执行层（1 文档）
-│   └── 14_execution_layer.md                ← 治理Agent + 业务Agent + 算法Agent + 自我迭代Agent [轨道D] U4+U7 · draft v0.2.0 已填充
+│   └── 14_execution_layer.md                ← 治理Agent + 业务Agent + 算法Agent + 自我迭代Agent [轨道D] U4+U7 · draft v0.3.0 已填充
 │
 ├── 4x 横切层（2 文档）
-│   ├── 15_autonomy_boundary_risk.md         ← AI 自治边界 + Agentic Drift + Agent 风险(有界自治5级/OWASP/Kill Switch/ARS双轨) [轨道D] U5 · draft v0.2.1 已填充
-│   └── 16_ai_security_ops.md                ← AI 安全(LLM guardrails/串谋/涌现/幻觉/记忆投毒/MCP Triple Gate/KILLSWITCH) + 自治运维(Detect→Diagnose→Remediate→Learn/TNR/成熟度/知识库/保命轨) [轨道D] U6 · draft v0.2.1 已填充
+│   ├── 15_autonomy_boundary_risk.md         ← AI 自治边界 + Agentic Drift + Agent 风险(有界自治5级/OWASP/Kill Switch/ARS双轨) [轨道D] U5 · draft v0.2.2 已填充
+│   └── 16_ai_security_ops.md                ← AI 安全(LLM guardrails/串谋/涌现/幻觉/记忆投毒/MCP Triple Gate/KILLSWITCH) + 自治运维(Detect→Diagnose→Remediate→Learn/TNR/成熟度/知识库/保命轨) [轨道D] U6 · draft v0.3.0 已填充
 │
 ├── 5x 元设计（5 文档）
-│   ├── 03_domain_boundary_definition.md     ← 域边界 [轨道A] P0 · draft v0.2.0 已填充
-│   ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 整合 [轨道B] U1 · active v0.2.0 已填充
-│   ├── 06_model_profiling_pipeline.md       ← 模型画像→考试→护照 [轨道B] U2 · draft v0.2.0 已填充
-│   ├── 07_context_engine_build.md           ← Context Engine [轨道B] U2 · draft v0.2.2 已填充
-│   └── 08_multi_ai_concurrency_governance.md ← 多 AI 并发治理 [轨道A] P0 · draft v0.2.1 已填充
+│   ├── 03_domain_boundary_definition.md     ← 域边界 [轨道A] P0 · draft v0.2.1 已填充
+│   ├── 05_intelligence_governance_consolidation.md ← intelligence_governance 整合 [轨道B] U1 · active v0.2.1 已填充
+│   ├── 06_model_profiling_pipeline.md       ← 模型画像→考试→护照 [轨道B] U2 · draft v0.3.0 已填充
+│   ├── 07_context_engine_build.md           ← Context Engine [轨道B] U2 · draft v0.3.0 已填充
+│   └── 08_multi_ai_concurrency_governance.md ← 多 AI 并发治理 [轨道A] P0 · draft v0.2.2 已填充
 │
 └── 6x 分阶段路线（1 文档）
     └── 17_phase_roadmap.md                  ← Phase 0 手动→Phase 1 半自动→Phase 2 全自动→Phase 3 自我进化 [轨道E] 依赖03~16 · draft v0.2.0 已填充
 ```
 
-> 状态标注口径：status/version 均为 2026-08-17 实测各文档 frontmatter 当前值；"已填充" = 背景+设计决策+施工计划已落盘。
+> 状态标注口径：status/version 均为 2026-08-18 实测各文档 frontmatter 当前值；"已填充" = 背景+设计决策+施工计划已落盘。
 
 **总计 18 文档**，全部已落盘；17 篇施工图+路线（01~17）已全部完成填充施工。
 
@@ -362,7 +362,7 @@ scope: 09_ai_architecture
 | Q4 | AI 自治运维闭环（Detect→Diagnose→Remediate→Learn）的施工优先级？ | 待裁定 | 设计完整，但需故障模式库先行积累才能生效；是先建库还是先建闭环？ |
 | Q5 | Kill Switch 多路径（<1ms AI 自动触发）能否在 Windows+miniQMT 环境下实现？ | 待裁定 | <1ms 需要内核级或 FPGA 级响应，Windows 用户态+Python 可能不可行 |
 | Q6 | Agentic Drift 防护中的"Agent Challenge"机制具体如何实现？ | 待裁定 | 设计描述为"双维度阈值+Hard-Gate+行为基线+Agent Challenge"，Challenge 的实现方式未细化 |
-| Q7 | 04 号文「自治层不变量与契约」节落盘后，本文补一行索引引用 | 待 04 号文落盘 | AI-FILL-00-R3 接口复审实测：04 号文（v0.2.1）尚无该节，真源缺失不立索引；待 AI-FILL-04 补建后回引 |
+| Q7 | 04 号文「自治层不变量与契约」节落盘后，本文补一行索引引用 | 已闭环 | 04 号文 v0.2.2 §3.6「自治层不变量与契约（设计态登记）」已落盘（2026-08-17，AI-FILL-04-R2 回填：INV-AU-001~008 / E-AU-01~14 / CTR-AU-001~006 等，真源 depgraph 草稿）；本文 §5.1 04 号文标注已补索引引用 |
 
 ---
 
@@ -379,6 +379,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.7.0 | §5.1 各文档补实测状态标注（01 v0.5.0 / 02 v0.4.0 / 03~16 v0.2.x 已填充；17 按「填充中→v0.2.0」口径登记，AI-FILL-17 并行施工中）；§5.2 补轨道+解锁点标注，derived_graphs/ 经实测目录不存在，标注待建；§6 待办重排为当前剩余项（17 号收口 / 交易决策侧联动 / 代码实施阶段） | AI-FILL-00 mop-up：16 篇施工图（01~16）填充完成并提交 dev 后，更新总索引施工顺序与解锁点标注为当前真实状态 |
 | 2026-08-17 | 0.7.1 | §5.1 回写 17 号最终状态（v0.2.0 已填充）+ 01 号版本标注同步（v0.5.1，第二轮补完收尾章节）；§6.1 填充收口两项全部勾销——AI-FILL-01~17 全部完成 | 17 号路线+01 号补完提交后状态同步 |
 | 2026-08-17 | 0.7.2 | 过期口径修订（接口复审实测，均有既有裁定/实证依据）：§1 架构图+§5.1「llama.cpp+GPTQ」→「GGUF 量化（Ollama 托管）」（10 号文 §3.3 实证否决 GPTQ，3090 无 INT4 tensor core）；§1+§5.1「模型注册(MLflow)」→「REG-ML-001+运行时注册对账」（51 号备忘 MLflow 已退役卸载）；§1「投票优先(3-5 Agent 投票→选最优)」→「主路径=单 Agent+红蓝对抗，投票壳=可选模式」（#ARCH-OE-011，12/14 号文已按此施工）；§3.1 治理激活时序补逐 Phase 验收指标（P0 审计完整性≥99%/P1 审批合规率≥90%/P2 漂移覆盖率≥60%/P3 审批合规率≥98%/P4 自动化≥70%/P5 边界违规≤1次/月）+M1~M5 成熟度分级与 M3→M4/M4→M5 跃迁条件（源：治理架构 §5.2、29-D-GOVERNANCE §13.1~13.2）；§6.2 U7/U8 更新为前置已就绪、转入 GP 排期待裁定（13/14/17 号文实测）；§7 新增 Q7（04 号文自治层不变量节待落盘后回引） | AI-FILL-00-R3 第三轮回填：过期口径修订+治理激活指标 |
+| 2026-08-18 | 0.7.3 | 最终状态回写（18 篇 frontmatter 全量实测）：§5.1 版本标注回写——05 active v0.2.1 / 06 v0.3.0 / 15 v0.2.2 / 16 v0.3.0（本批 4 篇版本变化），并同步实测发现的其他过期标注（01 v0.6.0 / 02 v0.5.1 / 03 v0.2.1 / 04 v0.2.2 / 07 v0.3.0 / 08 v0.2.2 / 09 v0.3.0 / 10 v0.3.0 / 11 v0.3.0 / 12 v0.3.0 / 13 v0.3.0 / 14 v0.3.0；17 v0.2.0 不变）；§5.1 口径注记日期更新为 2026-08-18；§7 Q7 闭环（04 号文 v0.2.2 §3.6 自治层不变量与契约已落盘，§5.1 补索引引用） | AI-FILL-00-R3 最终收口轮：填充批全部完成后的总索引状态回写 |
 
 ---
 
