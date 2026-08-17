@@ -181,7 +181,7 @@ build_status: generated
 | module_id | MOD-L08-001 | MOD-L08-001 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | generated | generated | ✅ |
-| file_count | 28 文件 | 14 文件（§0.1） | ❌ |
+| file_count | 28 文件 | 15 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
