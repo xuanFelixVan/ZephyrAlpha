@@ -186,6 +186,84 @@ class TestAnchorChecker:
         assert len(v) == 1 and "::" in v[0]
 
 
+# ---------------------------------------------------------------- list-purity（#118）
+
+_DAR_YAML = """module_id: MOD-GOVERNANCE
+sources: []
+datasets:
+{datasets_block}
+jobs:
+{jobs_block}
+"""
+
+
+class TestListPurity:
+    """#118（2026-08-17，DS-104 错位实证治本）：条目 id 键 vs 所在列表纯净性。"""
+
+    def _write_dar(self, ws, datasets_block: str, jobs_block: str):
+        return _write(ws, "data_asset_registry.yaml", _DAR_YAML.format(
+            datasets_block=datasets_block, jobs_block=jobs_block))
+
+    def test_dataset_misplaced_into_jobs_flagged(self, ws):
+        """dataset 条目混入 jobs 列表（DS-104 形态）→ [List-Purity] 违规。"""
+        reg = self._write_dar(
+            ws,
+            "- dataset_id: DS-T-001\n  entity_type: dataset\n  status: production",
+            "- job_id: JOB-T-001\n  entity_type: job\n  status: production\n"
+            "- dataset_id: DS-T-002\n  entity_type: dataset\n  status: production",
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert len(v) == 1
+        assert "List-Purity" in v[0] and "DS-T-002" in v[0] and "dataset_id" in v[0]
+        assert "job_id" in v[0]  # 期望键提示
+
+    def test_correct_placement_no_violation(self, ws):
+        """dataset/job 各归其位 → 零违规（不误报）。"""
+        reg = self._write_dar(
+            ws,
+            "- dataset_id: DS-T-001\n  entity_type: dataset\n  status: production",
+            "- job_id: JOB-T-001\n  entity_type: job\n  status: production",
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert v == []
+
+    def test_job_misplaced_into_datasets_flagged(self, ws):
+        """反向形态：job 条目混入 datasets 列表 → 同样被抓。"""
+        reg = self._write_dar(
+            ws,
+            "- dataset_id: DS-T-001\n  entity_type: dataset\n  status: production\n"
+            "- job_id: JOB-T-009\n  entity_type: job\n  status: production",
+            "- job_id: JOB-T-001\n  entity_type: job\n  status: production",
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert len(v) == 1 and "JOB-T-009" in v[0] and "List-Purity" in v[0]
+
+    def test_entry_without_any_id_no_false_positive(self, ws):
+        """缺 id 但无外键的条目不报（保持现状语义，不扩大打击面）。"""
+        reg = self._write_dar(
+            ws,
+            "- entity_type: dataset\n  status: candidate",
+            "- job_id: JOB-T-001\n  entity_type: job\n  status: production",
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert v == []
+
+    def test_deprecated_misplaced_still_flagged(self, ws):
+        """deprecated tombstone 错位同样被抓（错位不豁免）。"""
+        reg = self._write_dar(
+            ws,
+            "- dataset_id: DS-T-001\n  entity_type: dataset\n  status: production",
+            "- dataset_id: DS-T-OLD\n  entity_type: dataset\n  status: deprecated",
+        )
+        v: list[str] = []
+        anchor.check_registry_file(reg, v)
+        assert len(v) == 1 and "DS-T-OLD" in v[0]
+
+
 # ---------------------------------------------------------------- fingerprint
 
 class TestFingerprint:
