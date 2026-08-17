@@ -73,7 +73,7 @@ entry_conditions:
     name: gate_registry_entry
     type: registry_reference
     description: "验证 SYS-MASTER-CMP 已在 _registry.yaml 登记"
-    check: "src/zephyr/autonomy_core/gates/_registry.yaml contains gate_id: SYS-MASTER-CMP"
+    check: "src/zephyr/gov_enforcement/rule_enforcement/_registry.yaml contains gate_id: SYS-MASTER-CMP"
     severity: warning
     on_failure: warn
     verifiable: true
