@@ -68,16 +68,22 @@ def write_benchmark_results(
 
     # 5.74.3 修复：原子写入——tmp 文件 + flush + fsync + os.replace，
     # 防止写入中途崩溃产生截断的 JSONL 文件导致 load_benchmark_history 解析失败。
+    # 裁定4 加固：异常时清理 tmp 残留（存在才删）再原样抛出，防止留下 0 字节 .tmp。
     tmp_path = str(filepath) + ".tmp"
     lines_written = 0
-    with open(tmp_path, "w", encoding="utf-8") as f:
-        for p in profiles:
-            record = _profile_to_dict(p)
-            f.write(json.dumps(record, ensure_ascii=False) + "\n")
-            lines_written += 1
-        f.flush()
-        os.fsync(f.fileno())
-    os.replace(tmp_path, str(filepath))
+    try:
+        with open(tmp_path, "w", encoding="utf-8") as f:
+            for p in profiles:
+                record = _profile_to_dict(p)
+                f.write(json.dumps(record, ensure_ascii=False) + "\n")
+                lines_written += 1
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(tmp_path, str(filepath))
+    except BaseException:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
+        raise
 
     _log.info("ResultsWriter: wrote %d profiles -> %s", lines_written, filepath)
     return str(filepath)
