@@ -255,7 +255,13 @@ class DefaultRiskValidator(RiskValidator):
         校验项：
         1. 各标的持仓是否超单仓限额（HALT）
         2. 总杠杆是否超限（HALT）
-        3. 组合回撤是否超限额（HALT）
+
+        注（治本 2026-08-17）：组合回撤检查不在此快照接口内——
+        (holdings, market_values, total_nav) 单点快照数学上无法计算峰谷回撤
+        （需要峰值状态），此前 "1 - Σmarket_values/total_nav" 的实现把现金拖累
+        误计为回撤（满仓永不触发、持现金即误报 HALT），属错误的第二决策点。
+        回撤真源 = drawdown_tracker（MOD-RK-011，峰值追踪+三级阈值）+
+        drawdown_controller（MOD-POS-008）；熔断仲裁 = 本类 kill_switch 状态。
 
         Args:
             holdings: symbol → weight 字典
@@ -271,8 +277,6 @@ class DefaultRiskValidator(RiskValidator):
         # 5.145 审查修复：limits: Any -> RiskLimits，消除 dict 双模式（死代码）
         max_single = limits.max_single_position
         max_leverage = limits.max_gross_leverage
-        max_sector = limits.max_sector_concentration
-        drawdown_limit = limits.max_drawdown_limit
 
         for symbol, weight in holdings.items():
             if abs(weight) > max_single:
@@ -297,26 +301,6 @@ class DefaultRiskValidator(RiskValidator):
                     severity="HALT",
                 )
             )
-
-        if drawdown_limit and drawdown_limit > 0:
-            total_mv = sum(market_values.values())
-            if total_nav > 0:
-                total_mv_dec = Decimal(str(total_mv))
-                nav_dec = Decimal(str(total_nav)) if isinstance(total_nav, float) else total_nav
-                dd_from_peak = Decimal("1") - total_mv_dec / nav_dec
-                # 5.105.1 修复: drawdown_limit 可能是 float, Decimal > float 在 Python 3 抛 TypeError
-                # 或精度差异(float 0.2 的精确 Decimal 表示略大于 0.2)导致回撤达阈值时违规未触发
-                dd_limit_dec = Decimal(str(drawdown_limit)) if not isinstance(drawdown_limit, Decimal) else drawdown_limit
-                if dd_from_peak > dd_limit_dec:
-                    violations.append(
-                        ViolationDetail(
-                            constraint=ViolatedConstraint.DRAWDOWN_TRIGGER,
-                            description=f"回撤触发: {float(dd_from_peak):.4%} > {drawdown_limit:.4%}",
-                            limit_value=drawdown_limit,
-                            actual_value=float(dd_from_peak),
-                            severity="HALT",
-                        )
-                    )
 
         self._violation_history.extend(violations)
         return violations

@@ -205,7 +205,10 @@ class ABACGuard:
             TemporalCategory: 时间分类
         """
         if timestamp is None:
-            now = now_utc()
+            # 转本地时区：off_hours/lunch_peak/weekend 是本地人类作息概念，
+            # 且 timestamp 分支 datetime.fromtimestamp 为本地时间——两分支必须同
+            # 一参考系，否则默认路径（UTC）与显式路径（本地）对同一时刻分类不同。
+            now = now_utc().astimezone()
         else:
             now = datetime.fromtimestamp(timestamp)
         hour = now.hour
