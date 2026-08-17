@@ -2,7 +2,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md | §sector_ranking
 # [MODULE] zephyr.data.sector_ranking_engine
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] clickhouse_driver
+# [DEPENDENCIES] zephyr.data.ch_reader; zephyr.data.table_registry
 # [CONSUMERS] zephyr.data.sector_snapshot_collector (push_pool selection)
 # [STARTUP] manual
 # [MATURITY] production
@@ -40,9 +40,12 @@ from datetime import UTC, datetime
 
 log = logging.getLogger(__name__)
 
-_CH_HOST = "172.24.30.100"
-_CH_PORT = 9000
-_CH_DB = "c1_market"
+from zephyr.data import ch_reader
+from zephyr.data.table_registry import get_registry
+
+# 表名真源：business_data_categories.yaml via table_registry（裁定 #ARCH-CH-024）
+_TBL_SECTOR_SNAPSHOT = get_registry().table("market_sector_snapshot_880")
+_TBL_SECTOR_CONSTITUENT = get_registry().table("market_sector_constituent_880")
 
 _MKT_INDEX_CODES = [f"88000{i}.SH" for i in range(1, 10)]
 _MKT_BENCHMARK = "880001.SH"
@@ -59,23 +62,35 @@ _W_RELATIVE = 0.10
 SQL_LATEST_SNAPSHOT = (
     f"SELECT sector_code, now_price, last_close, before_5min_now, "
     f"amount, outside, inside "
-    f"FROM {_CH_DB}.sector_snapshot "
-    f"WHERE timestamp = (SELECT max(timestamp) FROM {_CH_DB}.sector_snapshot)"
+    f"FROM {_TBL_SECTOR_SNAPSHOT} "
+    f"WHERE timestamp = (SELECT max(timestamp) FROM {_TBL_SECTOR_SNAPSHOT})"
 )
 SQL_DEFAULT_POOL = (
     f"SELECT sector_code FROM ("
     f"  SELECT sector_code, count() as cnt"
-    f"  FROM {_CH_DB}.sector_constituent"
+    f"  FROM {_TBL_SECTOR_CONSTITUENT}"
     f"  WHERE sector_code NOT LIKE '88000%'"
     f"  GROUP BY sector_code ORDER BY cnt DESC LIMIT {{limit}}"
     f") ORDER BY sector_code"
 )
 
 
-def _get_ch_client():
-    """获取 ClickHouse 客户端。"""
-    from clickhouse_driver import Client
-    return Client(host=_CH_HOST, port=_CH_PORT, connect_timeout=10, send_receive_timeout=30)
+def _query_rows(sql: str) -> list[tuple]:
+    """通过 ch_reader 只读路径执行 SELECT，返回行元组列表。
+
+    治本（2026-08-17 AI-04 审计）：原实现裸 clickhouse_driver.Client 直连
+    硬编码 IP（172.24.30.100）、无凭据、无 readonly=1，违反裁定 #ARCH-CH-017
+    （禁硬编码 IP）与 read_only 安全约束（业务查询 MUST 只读连接）。
+    ch_reader 自动注入 FINAL（ReplacingMergeTree 去重），reader 账号 SELECT-only。
+    """
+    tsv = ch_reader.query(sql)
+    if not tsv or not tsv.strip():
+        return []
+    return [
+        tuple(line.split("\t"))
+        for line in tsv.strip().split("\n")
+        if line.strip()
+    ]
 
 
 def _pct_rank(values: list[float]) -> list[float]:
@@ -196,9 +211,7 @@ def get_push_pool(top_n: int = _DEFAULT_TOP_N) -> list[str]:
         推送池 sector_code 列表（9只mkt_index + top_n-9只动态排名sector）。
     """
     try:
-        client = _get_ch_client()
-        rows = client.execute(SQL_LATEST_SNAPSHOT)
-        client.disconnect()
+        rows = _query_rows(SQL_LATEST_SNAPSHOT)
 
         if not rows:
             log.warning("sector_snapshot 表无数据，回退到成分股数量Top%d", top_n)
@@ -226,11 +239,9 @@ def get_push_pool(top_n: int = _DEFAULT_TOP_N) -> list[str]:
 def _get_default_pool(top_n: int) -> list[str]:
     """默认推送池（基于成分股数量Top N）。"""
     try:
-        client = _get_ch_client()
         limit = top_n - len(_MKT_INDEX_CODES)
         sql = SQL_DEFAULT_POOL.format(limit=limit)
-        rows = client.execute(sql)
-        client.disconnect()
+        rows = _query_rows(sql)
         pool = _MKT_INDEX_CODES[:]
         pool.extend([r[0] for r in rows])
         return pool

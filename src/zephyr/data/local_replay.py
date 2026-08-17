@@ -56,6 +56,7 @@ _manifest_lock = Lock()
 # 默认库名（从环境变量读取，与 config/.env.clickhouse 的 CLICKHOUSE_DATABASE 一致）
 # 用途：历史积压 manifest 可能有不带 db. 前缀的裸表名，回灌时补全为 <db>.<table>
 # 治本：不再硬编码 "c1_market."，支持未来 c3_fundamental 等多库场景（裁定 #ARCH-CH-013 Phase 2）
+# 注：模块级常量是测试钉住的 monkeypatch 扩展缝（test_local_replay），保持常量形态。
 _DEFAULT_DB = os.environ.get("CLICKHOUSE_DATABASE", "c1_market")
 
 

@@ -311,7 +311,7 @@ def _get_integrator_safe() -> IntegratorScheduler | None:
 # ============== 入口 ==============
 
 def _build_parser() -> argparse.ArgumentParser:
-    """构造 argparse parser（7 子命令）。"""
+    """构造 argparse parser（8 子命令，与表头 [INVARIANTS] 一致）。"""
     parser = argparse.ArgumentParser(
         prog="integrator",
         description="数据源集成器 CLI（MOD-L00-004 §8.4）",

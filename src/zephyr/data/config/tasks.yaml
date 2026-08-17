@@ -943,7 +943,7 @@ tasks:
   extra:
     description: "宏观数据全量刷新（GDP/CPI/PMI/货币供应量）"
 
-  fallback_sources:
+  fallback_sources: []    # 规范化（2026-08-17 AI-04）：显式空列表替代 null，与其他无副源任务一致
 
   # --- EIA 能源数据（2026-08-04 新增，#ARCH-EDB-EXPAND）---
   # EIA API v2：免费需注册 key，石油库存/价格/天然气库存

@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L00-004 | docs/03_modules/_domain_data/data_source_integrator_blueprint.md
 # [MODULE] zephyr.data.implementations.tdx_provider
 # [DOMAIN] D_DATA
-# [DEPENDENCIES] mootdx SDK (Quotes.factory/index_bars/get_stock_list_in_sector)
+# [DEPENDENCIES] mootdx SDK (Quotes.factory/index_bars/get_stock_list_in_sector); zephyr.data.ch_reader; zephyr.data.table_registry
 # [CONSUMERS] zephyr.data.scheduler
 # [STARTUP] manual
 # [MATURITY] production
@@ -284,21 +284,24 @@ class TDXProvider(IngestProviderBase):
         """symbols=None 时从 sector_constituent 表获取全部板块代码。
 
         与 sector_snapshot_collector._get_all_sector_codes 同模式。
+        治本（2026-08-17 AI-04 审计）：纯 SELECT 改走 ch_reader 只读路径
+        （reader 账号 + FINAL 去重），原裸 clickhouse_driver.Client 违反
+        DatabaseService 访问协议与 read_only 安全约束。
         """
-        from clickhouse_driver import Client
-        from ..ch_config import load_ch_config
+        from .. import ch_reader
 
-        cfg = load_ch_config()
-        client = Client(
-            host=cfg["host"], port=int(cfg["port"]),
-            user=cfg["user"], password=cfg["password"],
-        )
-        rows = client.execute(
+        tsv = ch_reader.query(
             f"SELECT DISTINCT sector_code FROM {_TBL_SECTOR_CONSTITUENT} "
             "ORDER BY sector_code"
         )
-        client.disconnect()
-        return [r[0] for r in rows]
+        if not tsv or not tsv.strip():
+            # 区分"CH 不可达"与"表确实为空"：ch_reader 失败静默返回空串，
+            # 探活仍为空 → CH 不可达 → 显式抛错（防 0 行假成功掩盖故障，
+            # 对齐原裸 Client 连接失败即抛错的 fail-visible 语义）
+            if not (ch_reader.query("SELECT 1") or "").strip():
+                raise RuntimeError("ClickHouse 不可达（sector_constituent 探活无响应）")
+            return []
+        return [line.strip() for line in tsv.strip().split("\n") if line.strip()]
 
     def _fetch_kline_sector(
         self, payload: FetchPayload, policy: SourcePolicy
