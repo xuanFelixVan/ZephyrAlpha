@@ -61,3 +61,36 @@ state_machines:
     target: IN_PROGRESS
   - source: RETRY
     target: FAILED
+- fsm_id: factor_lifecycle
+  initial: research
+  owner_module: zephyr.factor.governance.lifecycle_state_machine
+  states:
+  - research
+  - development
+  - backtest
+  - paper
+  - grayscale
+  - production
+  - deprecated
+  - retired
+  transitions:
+  - source: research
+    target: development
+  - source: development
+    target: backtest
+  - source: backtest
+    target: paper
+  - source: paper
+    target: grayscale
+  - source: grayscale
+    target: production
+  - source: grayscale
+    target: paper
+  - source: production
+    target: deprecated
+  - source: deprecated
+    target: retired
+  - source: backtest
+    target: research
+  - source: paper
+    target: backtest

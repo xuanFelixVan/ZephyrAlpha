@@ -62,6 +62,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Final
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.io.file_utils import atomic_write
 
 if TYPE_CHECKING:  # 仅类型注解用；运行时 lazy import（防 state_store_redis 循环依赖）
     import redis
@@ -154,18 +155,12 @@ class JsonStateStore:
             StateStoreError: namespace 非法或写入失败。
         """
         path = self._path_for(namespace)
-        tmp_path = path.with_name(f"{path.name}.{os.getpid()}.tmp")
         try:
-            with open(tmp_path, "w", encoding="utf-8") as f:
-                json.dump(payload, f, ensure_ascii=False, default=str)
-                f.flush()
-                os.fsync(f.fileno())
-            os.replace(tmp_path, path)
+            atomic_write(
+                path,
+                json.dumps(payload, ensure_ascii=False, default=str),
+            )
         except OSError as exc:
-            try:
-                os.remove(tmp_path)
-            except OSError:
-                pass
             raise StateStoreError(
                 "状态写入失败",
                 details={"path": str(path), "error": str(exc)},
@@ -269,7 +264,8 @@ class AppendOnlyDedupSet:
             if dropped:
                 _logger.warning(
                     "去重集末行残缺已丢弃(crash容忍): path=%s fragment=%r",
-                    self._path, dropped[:64],
+                    self._path,
+                    dropped[:64],
                 )
         for line in lines:
             item = line.strip()

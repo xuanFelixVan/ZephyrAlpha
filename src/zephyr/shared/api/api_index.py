@@ -174,16 +174,17 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # └──────────────────────────────┴──────────────────────────────────────────┘
 
 # ═══════════════════════════════════════════════════════════════════════════
-# observer.py — 观察者模式 SSoT
+# observer.py / event_bus.py — 观察者模式 + 事件总线 SSoT
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# from zephyr.shared.infra.observer import ...
+# from zephyr.shared.infra.observer import Observer, EventType  # 文件观察事件
+# from zephyr.shared.event_bus import EventBus, DomainEvent      # 任务事件总线
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 符号                          │ 用途                                    │
 # ├──────────────────────────────┼──────────────────────────────────────────┤
-# │ EventBus                     │ 事件总线                                 │
-# │ Observer                     │ 观察者接口                               │
+# │ EventBus                     │ 事件总线（zephyr.shared.event_bus）      │
+# │ Observer                     │ 观察者接口（infra.observer）             │
 # └──────────────────────────────┴──────────────────────────────────────────┘
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -192,8 +193,8 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 #
 # from zephyr.shared.contracts.portfolio.money import Money, MoneyCurrencyMismatchError, MoneyPrecisionError
 # from zephyr.shared.contracts.market.instrument import Instrument, Stock, ETF, Future, Option, Bond, FX, Crypto
-# from zephyr.shared.contracts.core.runtime_plane_tag import RuntimePlaneTag
-# from zephyr.shared.contracts.core.timestamp import utc_now_iso, parse_iso_timestamp
+# from zephyr.shared.contracts.core.runtime_plane_tag import RuntimePlane
+# from zephyr.shared.contracts.core.timestamp import utcnow, ensure_utc
 
 # ═══════════════════════════════════════════════════════════════════════════
 # errors.py — 统一错误层次（Phase 1 新增）v0.1.0
@@ -392,7 +393,7 @@ AI 创建新代码前 MUST 先对照此索引，确认功能是否已有 SSoT �
 # shared-quickref.yaml — AI 零歧义快速参考（Phase 4 新增）v0.1.0
 # ═══════════════════════════════════════════════════════════════════════════
 #
-# 文件路径: src/zephyr/shared/shared-quickref.yaml
+# 文件路径: src/zephyr/shared/api/shared_quickref.yaml
 #
 # ┌──────────────────────────────┬──────────────────────────────────────────┐
 # │ 段落                          │ 用途                                    │

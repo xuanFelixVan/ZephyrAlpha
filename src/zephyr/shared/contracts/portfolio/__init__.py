@@ -3,6 +3,8 @@
 # [TTL] permanent
 """shared.contracts.portfolio — auto-generated package init."""
 
-from . import position
+from typing import Final
 
-__all__ = ["money", "performance_attribution_report", "position", "strategy_lifecycle_event"]
+from . import money, position
+
+__all__: Final = ["money", "position"]

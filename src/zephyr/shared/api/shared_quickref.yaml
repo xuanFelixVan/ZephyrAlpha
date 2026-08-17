@@ -101,7 +101,7 @@ foundation:
     - catch 时从抽象到具体——应先catch TaskError 后catch ZephyrBaseError 反了
   type_aliases:
     description: 13 语义类型别名（NewType）——增强类型安全+ AI 消费语义
-    file: src/zephyr/shared/types.py
+    file: src/zephyr/shared/foundation/types.py
     entry_point: from zephyr.shared.foundation.types import TaskId, ModuleId, SessionId, ...
     aliases:
     - symbol: TaskId
@@ -134,7 +134,7 @@ foundation:
     - 函数签名用裸 str 而非 TaskId——丢失语义信息
   constants:
     description: 22 共享枚举集中 re-export——从 schemas/observer/contracts 聚合
-    file: src/zephyr/shared/constants.py
+    file: src/zephyr/shared/foundation/constants.py
     note: 新模块需要的枚举应先查此文件是否已有——避免重复定义
 utilities:
   paths:
@@ -153,7 +153,7 @@ utilities:
     anti_patterns:
     - 用Path(__file__).parents[N] 自己算——必须从 paths.py 导入
   time_utils:
-    file: src/zephyr/shared/time_utils.py
+    file: src/zephyr/shared/utils/time_utils.py
     entry_point: from zephyr.shared.utils.time_utils import now_iso, now_utc
     note: 时间函数 SSoT——禁止用 datetime.utcnow()（已废弃）
   token_utils:
@@ -164,7 +164,7 @@ utilities:
     file: src/zephyr/shared/io/frontmatter_utils.py
     entry_point: from zephyr.shared.io.frontmatter_utils import parse_frontmatter
   diff_utils:
-    file: src/zephyr/shared/diff_utils.py
+    file: src/zephyr/shared/utils/diff_utils.py
     entry_point: from zephyr.shared.utils.diff_utils import compute_diff, apply_patch
     exports:
     - symbol: compute_diff
@@ -216,7 +216,7 @@ resilience:
     anti_patterns:
     - 跳过生命周期注册——所有模块MUST 注册到LifecycleManager
   feature_flags:
-    file: src/zephyr/shared/flags.py
+    file: src/zephyr/shared/foundation/flags.py
     entry_point: from zephyr.shared.foundation.flags import global_flag_registry, FeatureFlag,
       FlagState
     states:
@@ -227,8 +227,8 @@ resilience:
     - 在模块内硬编码条件判断取代FeatureFlag——必须用 FlagRegistry
 events:
   observer:
-    file: src/zephyr/shared/observer.py
-    note: 事件总线——subscribe/emit 模式。EventType 枚举驱动
+    file: src/zephyr/shared/infra/observer.py
+    note: 观察者/文件事件——subscribe/emit 模式。EventType 枚举驱动；任务事件总线 EventBus 在 src/zephyr/shared/event_bus.py
   event_schemas:
     file: src/zephyr/shared/events/event_schemas.py
     entry_point: from zephyr.shared.events import FileEventPayload, TimeEventPayload,
@@ -242,7 +242,7 @@ events:
     anti_patterns:
     - 用dict 传事件数据——必须用 Pydantic Schema
 logging:
-  file: src/zephyr/shared/logging.py
+  file: src/zephyr/shared/utils/logging.py
   entry_point: from zephyr.shared.utils.logging import get_logger, trace_context, configure_root_logger
   pattern: "from zephyr.shared.utils.logging import get_logger, trace_context\nlog = get_logger(__name__,\
     \ module_id=\"MOD-XXX-001\")\nwith trace_context() as trace_id:\n    log.info(\"\
@@ -252,18 +252,18 @@ logging:
   - 不传 module_id——结构化日志的必填字段
 core:
   models:
-    file: src/zephyr/core/models.py
-    entry_point: from zephyr.core.models import TaskCard, TaskStatus, GateLevel, DecompositionResult,
-      GateCheckResult, TaskAuditFinding, TaskNamespace
-    note: TaskCard 继承 schemas.Task（31字段全链路贯通）——所有模块的 Task 数据载体
+    file: src/zephyr/shared/foundation/models.py
+    entry_point: from zephyr.shared.foundation.models import TaskCard
+    note: TaskCard = Task 纯别名（SSoT: governance rule_enforcement task_types.Task）——所有模块的
+      Task 数据载体。禁止对 TaskCard 添加字段
     anti_patterns:
     - 直接操作 dict 而非 TaskCard——丢失字段校验和类型安全
   blueprint_decomposer:
-    file: src/zephyr/core/blueprint_decomposer.py
-    entry_point: from zephyr.core.blueprint_decomposer import BlueprintDecomposer
+    file: src/zephyr/shared/blueprint_tools/blueprint_decomposer.py
+    entry_point: from zephyr.shared.blueprint_tools.blueprint_decomposer import BlueprintDecomposer
     note: 蓝图分解引擎——YAML blueprint.md →TaskCard[]
 testing:
-  file: src/zephyr/shared/testing.py
+  file: src/zephyr/shared/utils/testing.py
   entry_point: from zephyr.shared.utils.testing import make_valid_task, make_p0_task, ...
   key_exports:
   - symbol: make_valid_task
@@ -283,8 +283,8 @@ testing:
   anti_patterns:
   - 手写 Task(...) 40字段构造——用 make_valid_task(**overrides)
 migration:
-  file: src/zephyr/shared/migration.py
-  entry_point: from zephyr.shared.foundation.migration import migrate_task, latest_schema_version
+  file: src/zephyr/shared/utils/migration.py
+  entry_point: from zephyr.shared.utils.migration import migrate_task, latest_schema_version
   key_exports:
   - symbol: migrate_task(data, version)
     note: BFS 最短路径版本化迁移
@@ -328,7 +328,7 @@ dlq:
   - 让handler 去catch Exception 就pass——事件丢失无痕，应用 DLQ 捕获
 version: 2.0.0
 health:
-  file: src/zephyr/shared/health.py
+  file: src/zephyr/shared/lifecycle/health.py
   entry_point: from zephyr.shared.lifecycle.health import AggregateHealth, collect_health
   key_exports:
   - symbol: AggregateHealth
@@ -422,8 +422,8 @@ cache:
   anti_patterns:
   - 全局 dict 做缓存——用 MemoryCache 获得 TTL/LRU/统计数据
 limiter:
-  file: src/zephyr/shared/limiter.py
-  entry_point: from zephyr.shared.resilience.limiter import TokenBucketLimiter, async_limited
+  file: src/zephyr/shared/infra/limiter.py
+  entry_point: from zephyr.shared.infra.limiter import TokenBucketLimiter, async_limited
   key_exports:
   - symbol: TokenBucketLimiter
     note: 令牌桶——支持warmup + burst + smooth 三种模式
@@ -432,14 +432,14 @@ limiter:
   anti_patterns:
   - time.sleep(1) 硬控速——用 TokenBucketLimiter 精确令牌管控
 idempotency:
-  file: src/zephyr/shared/idempotency.py
-  entry_point: from zephyr.shared.security.idempotency import IdempotencyStore, idempotency_key
+  file: src/zephyr/shared/infra/idempotency.py
+  entry_point: from zephyr.shared.infra.idempotency import IdempotencyStore, build_idempotency_key
   key_exports:
   - symbol: IdempotencyStore
     note: 幂等性存储——start/completed/failed/succeeded + Stripe 24h TTL + 5min lock
   - symbol: IdempotencyStatus
     note: STARTED/COMPLETED/FAILED
-  - symbol: idempotency_key(*parts)
+  - symbol: build_idempotency_key(prefix, *parts)
     note: 基于输入参数生成确定性幂等键
   anti_patterns:
   - 无幂等保护的 API 接收重复请求——外发支付写入必须加idempotency_key
@@ -457,24 +457,20 @@ context:
   anti_patterns:
   - 全局变量 ThreadLocal 传上下文——用 contextvars 保证 asyncio 正确传播
 metrics:
-  file: src/zephyr/shared/metrics.py
-  entry_point: from zephyr.shared.observability.metrics import MetricsRegistry, Counter, Gauge,
-    Histogram
+  file: src/zephyr/shared/observability/metrics.py
+  entry_point: from zephyr.shared.observability.metrics import MetricsRegistry, MetricType,
+    MetricSnapshot, get_registry
   key_exports:
   - symbol: MetricsRegistry
     note: 线程安全指标注册——get_or_create + auto_sum 计数
-  - symbol: Counter
-    note: 只增计数
-  - symbol: Gauge
-    note: 可升降计量器
-  - symbol: Histogram
-    note: 分布直方图
-  - symbol: prometheus_text(registry)
-    note: 导出 Prometheus text format
-  - symbol: get_default_registry()
-    note: 获取默认 MetricsRegistry 单例
+  - symbol: MetricType
+    note: 指标类型枚举
+  - symbol: MetricSnapshot
+    note: 指标快照 dataclass
+  - symbol: get_registry()
+    note: 获取 MetricsRegistry 单例
   anti_patterns:
-  - 让handler 去hardcode 指标名称——用 MetricsRegistry 统一管理+Prometheus 导出
+  - 让handler 去hardcode 指标名称——用 MetricsRegistry 统一管理
 pagination:
   file: src/zephyr/shared/utils/pagination.py
   entry_point: from zephyr.shared.utils.pagination import Page, CursorPage, paginate, paginate_cursor
@@ -511,7 +507,7 @@ time_utils_enhanced:
   anti_patterns:
   - datetime.utcnow()/datetime.now() 裸用——用 now_utc() 标准UTC+可测
 env:
-  file: src/zephyr/shared/env.py
+  file: src/zephyr/shared/foundation/env.py
   entry_point: from zephyr.shared.foundation.env import Env, current_env, is_dev, is_prod, is_test
   key_exports:
   - symbol: Env
@@ -541,8 +537,8 @@ lock:
   anti_patterns:
   - asyncio.Lock() 裸用——用 DistributedLock 获得 owner 追踪+过期+可观测
 outbox:
-  file: src/zephyr/shared/outbox.py
-  entry_point: from zephyr.shared.events.outbox import OutboxStore, MemoryOutboxStore, OutboxPublisher
+  file: src/zephyr/shared/infra/outbox.py
+  entry_point: from zephyr.shared.infra.outbox import OutboxStore, MemoryOutboxStore, OutboxPublisher
   key_exports:
   - symbol: OutboxStore
     note: Outbox 存储 Protocol——enqueue/dequeue/mark_processed/mark_failed
@@ -555,7 +551,7 @@ outbox:
   anti_patterns:
   - DB 写入+事件发布分离(无事务)——用 Outbox 模式保证恰好一次语义
 schema_registry:
-  file: src/zephyr/shared/schema_registry.py
+  file: src/zephyr/shared/schema/schema_registry.py
   entry_point: from zephyr.shared.schema.schema_registry import SchemaRegistry, get_schema_registry
   key_exports:
   - symbol: SchemaRegistry

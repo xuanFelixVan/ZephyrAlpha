@@ -47,7 +47,6 @@ from __future__ import annotations
 import hashlib
 import json
 import logging
-import sqlite3
 import time
 from dataclasses import dataclass, field
 from enum import Enum, unique
@@ -55,6 +54,7 @@ from pathlib import Path
 from typing import Any
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.io.sqlite_factory import get_db_connection
 
 __all__ = [
     "IdempotencyError",
@@ -242,7 +242,10 @@ class SQLiteIdempotencyStore:
     ) -> None:
         self._db_path = str(db_path)
         self._default_ttl = default_ttl_seconds
-        self._conn = sqlite3.connect(self._db_path)
+        # AI-15 审计治本（2026-08-17）：委托唯一真源 sqlite_factory.get_db_connection，
+        # 消除裸 sqlite3.connect（无 PRAGMA 基线）——WAL 对跨进程共享场景必需；
+        # autocommit 模式下显式 commit() 为无害 no-op，Row 工厂支持元组解包，语义不变。
+        self._conn = get_db_connection(self._db_path)
         self._conn.execute(_SQL_CREATE_TABLE)
         self._conn.commit()
 

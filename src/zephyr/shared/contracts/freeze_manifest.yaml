@@ -39,8 +39,9 @@ p0_critical_contracts:
     desc: "归一化行情数据 D_DATA 生产, D_FACTOR/D_SIGNAL/D_RISK 消费"
     producer: "D_DATA"
     consumers: ["D_FACTOR", "D_SIGNAL", "D_RISK"]
-    physical_path: "src/zephyr/shared/contracts/normalized_market_data.py"
+    physical_path: "src/zephyr/shared/contracts/market_data.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原 physical_path normalized_market_data.py 不存在，真源为 market_data.py（cross_layer_contracts.yaml CTR-001 已收敛）"
 
   - contract_id: "CTR-002"
     name: "FactorSignal"
@@ -51,12 +52,13 @@ p0_critical_contracts:
     status: "frozen"
 
   - contract_id: "CTR-003"
-    name: "Strategy"
-    desc: "策略定义 D_PORTFOLIO_CORE 生产, D_RISK/D_EXECUTION_CORE 消费"
-    producer: "D_PORTFOLIO_CORE"
-    consumers: ["D_RISK", "D_EXECUTION_CORE"]
-    physical_path: "src/zephyr/shared/contracts/strategy.py"
+    name: "RiskLimits"
+    desc: "风险限额 D_RISK 生产, D_PORTFOLIO_CORE 消费"
+    producer: "D_RISK"
+    consumers: ["D_PORTFOLIO_CORE"]
+    physical_path: "src/zephyr/shared/contracts/risk_limits.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原条目 Strategy 已不存在，freeze_manifest 与 cross_layer_contracts.yaml CTR-003 对齐为 RiskLimits"
 
   - contract_id: "CTR-004"
     name: "Order"
@@ -91,16 +93,18 @@ cross_cutting_contracts:
     status: "frozen"
 
   - contract_id: "CTR-ERR-001"
-    name: "CircuitBreakerTripped"
-    desc: "熔断器跳闸 基础设施 生产, 全层消费"
-    physical_path: "src/zephyr/shared/contracts/errors/circuit_breaker_tripped.py"
+    name: "DataQualityError"
+    desc: "行情质量门禁不通过错误 D_DATA 生产, 全层消费"
+    physical_path: "src/zephyr/shared/contracts/errors/data_quality_error.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原条目 CircuitBreakerTripped 已不存在，与 cross_layer_contracts.yaml CTR-ERR-001 对齐"
 
   - contract_id: "CTR-ERR-002"
-    name: "OrderRejected"
-    desc: "委托拒绝 D_EXECUTION_CORE 生产, D_RISK/D_PORTFOLIO_CORE/D_FRONTEND 消费"
-    physical_path: "src/zephyr/shared/contracts/errors/order_rejected.py"
+    name: "FactorComputationError"
+    desc: "因子计算失败错误 D_FACTOR 生产, D_SIGNAL/D_RISK 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/factor_computation_error.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原条目 OrderRejected 已不存在，与 cross_layer_contracts.yaml CTR-ERR-002 对齐"
 
   - contract_id: "CTR-ERR-003"
     name: "SignalDegradationWarning"
@@ -109,22 +113,25 @@ cross_cutting_contracts:
     status: "frozen"
 
   - contract_id: "CTR-ERR-004"
-    name: "ConfigDriftWarning"
-    desc: "配置漂移告警 D_GOV_ENFORCEMENT 生产, 基础设施/D_FRONTEND 消费"
-    physical_path: "src/zephyr/shared/contracts/errors/config_drift_warning.py"
+    name: "RiskLimitViolationError"
+    desc: "风险限额突破错误 D_RISK 生产, D_PORTFOLIO_CORE/D_EXECUTION_CORE 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/risk_limit_violation_error.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原条目 ConfigDriftWarning 已不存在，与 cross_layer_contracts.yaml CTR-ERR-004 对齐"
 
   - contract_id: "CTR-ERR-005"
-    name: "DataIngestionError"
-    desc: "数据接入错误 D_DATA 生产, 基础设施/D_RISK/D_FRONTEND 消费"
-    physical_path: "src/zephyr/shared/contracts/errors/data_ingestion_error.py"
+    name: "ExecutionRejectionError"
+    desc: "执行拒绝错误 D_EXECUTION_CORE 生产, D_RISK/D_PORTFOLIO_CORE 消费"
+    physical_path: "src/zephyr/shared/contracts/errors/execution_rejection_error.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原条目 DataIngestionError 已不存在，与 cross_layer_contracts.yaml CTR-ERR-005 对齐"
 
   - contract_id: "CTR-ERR-006"
-    name: "BudgetExhaustedWarning"
-    desc: "预算耗尽告警 D_GOV_ENFORCEMENT 生产, 基础设施/D_FRONTEND/遥测 消费"
-    physical_path: "src/zephyr/shared/contracts/errors/budget_exhausted_warning.py"
+    name: "ContractViolationError"
+    desc: "契约违反错误 全层消费"
+    physical_path: "src/zephyr/shared/contracts/errors/contract_violation_error.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原条目 BudgetExhaustedWarning 已不存在，与 cross_layer_contracts.yaml CTR-ERR-006 对齐"
 
 # ── 反压契约 ──
 backpressure_contracts:
@@ -246,8 +253,9 @@ extension_contracts:
   - contract_id: "OCP-002"
     name: "StrategyBase"
     desc: "策略扩展 D_PORTFOLIO_CORE 策略基类"
-    physical_path: "src/zephyr/pf_core/strategy_base.py"
+    physical_path: "src/zephyr/governance/strategies/strategy_base.py"
     status: "frozen"
+    note: "AI-15 审计治本（2026-08-17）：原 pf_core/strategy_base.py 不存在，真源已迁至 governance/strategies/"
 
   - contract_id: "OCP-003"
     name: "BrokerInterface"
@@ -287,14 +295,14 @@ frozen_layer_interfaces:
     note: "Phase B 就位 provider_base 接口完整"
 
   D_SIGNAL:
-    file: "src/zephyr/signal/aggregator_base.py"
+    file: "src/zephyr/signal_fundamental/gen/aggregator_base.py"
     classes: ["SignalAggregatorBase", "CapitalAllocatorBase", "DegradationMonitorBase"]
     version: "1.0"
     status: "skeleton_frozen"
     note: "Phase B 对齐 SynthesizedSignal 契约对齐 + 新增 2 接口"
 
   D_PORTFOLIO_CORE:
-    file: "src/zephyr/pf_core/strategy_base.py"
+    file: "src/zephyr/governance/strategies/strategy_base.py"
     classes: ["StrategyBase", "StrategyRegistry"]
     version: "1.0"
     status: "skeleton_frozen"
@@ -321,7 +329,7 @@ frozen_layer_interfaces:
     status: "skeleton_frozen"
 
   D_GOV_ENFORCEMENT:
-    file: "src/zephyr/compliance/security_gateway_base.py"
+    file: "src/zephyr/governance/security_governance/security_gateway_base.py"
     classes: ["SecurityGateway", "ComplianceEngine"]
     version: "1.0"
     status: "skeleton_frozen"
@@ -342,7 +350,7 @@ frozen_layer_interfaces:
     note: "Phase B 对齐 ExperimentResult 冲突修复"
 
   VMS:
-    file: "src/zephyr/vector-memory/interface.py"
+    file: "src/zephyr/integration/vector_memory/interface.py"
     classes: ["VectorMemoryBase", "EmbeddingEngineBase"]
     version: "1.0"
     status: "skeleton_frozen"

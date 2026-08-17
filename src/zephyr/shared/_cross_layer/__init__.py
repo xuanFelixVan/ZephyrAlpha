@@ -10,21 +10,27 @@
 # [ERROR_CONTRACT]
 # [TESTS]
 # [TTL] permanent
-"""_cross_layer: Cross-layer integration pipelines for domain blueprints."""
+"""_cross_layer: Cross-layer integration pipelines for domain blueprints.
+
+AI-15 审计治本（2026-08-17）：
+- 移除 AlphaSignalPipeline / alpha_signal_pipeline 悬空导出——真源已迁至
+  zephyr.signal_fundamental.pipeline（本包内该文件早已不存在，惰性映射必炸）。
+- 修复 _SUBMODULES 惰性导入路径：原指向不存在的
+  zephyr.cross_asset.cross_market_data_adapter.{name}，改回本包真实子模块路径。
+"""
+
+from typing import Final
 
 __all__ = [
-    "AlphaSignalPipeline",
     "MLExperimentPipeline",
-    "alpha_signal_pipeline",
     "ml_experiment_pipeline",
 ]
 
 _LAZY_IMPORTS = {
-    "AlphaSignalPipeline": ("zephyr.shared._cross_layer.alpha_signal_pipeline", "AlphaSignalPipeline"),
     "MLExperimentPipeline": ("zephyr.shared._cross_layer.ml_experiment_pipeline", "MLExperimentPipeline"),
 }
 
-_SUBMODULES = ["alpha_signal_pipeline", "ml_experiment_pipeline"]
+_SUBMODULES: Final = ["ml_experiment_pipeline"]
 
 
 def __getattr__(name):
@@ -39,7 +45,7 @@ def __getattr__(name):
     if name in _SUBMODULES:
         import importlib
 
-        mod = importlib.import_module(f"zephyr.cross_asset.cross_market_data_adapter.{name}")
+        mod = importlib.import_module(f"zephyr.shared._cross_layer.{name}")
         globals()[name] = mod
         return mod
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

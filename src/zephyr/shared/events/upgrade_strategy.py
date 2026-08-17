@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-016 | docs/03_modules/_cross_layer/shared_core/blueprint.md | §
 # [MODULE] zephyr.shared.events.upgrade_strategy
 # [DOMAIN] D_SHARED
-# [DEPENDENCIES] zephyr.shared.events.observer
-# [CONSUMERS]
+# [DEPENDENCIES] zephyr.shared.infra.observer(lazy); zephyr.infrastructure.event_store(lazy,可选)
+# [CONSUMERS] zephyr.shared.events.__init__; zephyr.integration.shared.events.upgrade_strategy(re-export shim); zephyr.infrastructure.event_bus_upgrade(deprecated shim)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] none
@@ -193,24 +193,52 @@ class EventBusUpgrade:
             "details": [],
         }
 
-        if not dry_run:
-            raise NotImplementedError(
-                "EventBusUpgrade.execute_upgrade is design-only; "
-                "use dry_run=True for plan preview. "
-                "Actual execution requires _execute_step/_rollback_step implementations."
-            )
-
         for step in plan.steps:
-            step.status = UpgradeStatus.COMPLETED
-            result["steps_completed"] += 1
-            result["details"].append(
-                {
-                    "step": step.step_id,
-                    "name": step.name,
-                    "status": "dry_run_passed",
-                    "would_rollback": step.rollback_action,
-                }
-            )
+            if dry_run:
+                step.status = UpgradeStatus.COMPLETED
+                result["steps_completed"] += 1
+                result["details"].append(
+                    {
+                        "step": step.step_id,
+                        "name": step.name,
+                        "status": "dry_run_passed",
+                        "would_rollback": step.rollback_action,
+                    }
+                )
+            else:
+                try:
+                    step.status = UpgradeStatus.IN_PROGRESS
+                    step.started_at = datetime.now(UTC).isoformat()
+                    self._execute_step(step)
+                    step.status = UpgradeStatus.COMPLETED
+                    step.completed_at = datetime.now(UTC).isoformat()
+                    result["steps_completed"] += 1
+                except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+                    step.status = UpgradeStatus.FAILED
+                    result["steps_failed"] += 1
+                    result["details"].append(
+                        {
+                            "step": step.step_id,
+                            "name": step.name,
+                            "status": "failed",
+                            "error": str(e),
+                            "rollback": step.rollback_action,
+                        }
+                    )
+
+                    for prev_step in reversed(plan.steps):
+                        if prev_step.status is not UpgradeStatus.COMPLETED:
+                            continue
+                        try:
+                            self._rollback_step(prev_step)
+                            prev_step.status = UpgradeStatus.ROLLED_BACK
+                        except Exception as re:  # noqa: BLE001 — 5.135治标: broad exception catch
+                            result["details"].append(
+                                {
+                                    "rollback_error": f"{prev_step.step_id}: {re}",
+                                }
+                            )
+                    break
 
         self._upgrade_history.append(plan)
         return result

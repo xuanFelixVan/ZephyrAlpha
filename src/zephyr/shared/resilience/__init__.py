@@ -15,6 +15,18 @@ SSoT: MOD-INF-016 §2.6 shared-resilience
 Version: 0.1.0
 """
 
+from zephyr.shared.resilience.circuit_breaker import (
+    CircuitBreaker,
+    CircuitOpenError,
+    CircuitState,
+)
+from zephyr.shared.resilience.fallback import FallbackChain, fallback
+from zephyr.shared.resilience.retry import (
+    RetryConfig,
+    RetryExhaustedError,
+    async_retry,
+)
+
 __all__ = [
     "CircuitBreaker",
     "CircuitOpenError",
