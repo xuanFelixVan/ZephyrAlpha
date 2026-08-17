@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.security.access_control; zephyr.infrastructure.budget_enforcement
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] 12-system probe contract; 15s poll interval; liveness/readiness/degraded triple-state
+# [INVARIANTS] 11-system probe contract（knowledge_base 随 KB 退役 d5b6f5dde1 移除，真源 health_probes.SYSTEMS）; 15s poll interval; liveness/readiness/degraded triple-state
 # [MODIFY-GUARD] health_probes.py; watchdog.py; health.py
 # [STABILITY] evolving
 # [SAFETY] H
@@ -19,7 +19,7 @@
 健康聚合器（Health Aggregator）
 
 依据：MOD-MASTER-002 蓝图 §十四
-每15s轮询12系统三态探针->生成健康面板快照->年度审计。
+每15s轮询11系统三态探针->生成健康面板快照->年度审计。
 """
 
 from __future__ import annotations
