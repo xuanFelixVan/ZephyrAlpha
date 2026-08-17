@@ -17,7 +17,7 @@
 
 """
 MOD-INF-019: Agent Spec — Phase Planner
-Blueprint: docs/03_modules/_domain-autonomy_core/agent-spec/blueprint.md
+Blueprint: docs/03_modules/_domain_autonomy_core/agent_spec/blueprint.md
 Author: factory-agent
 Version: 0.1.0
 """

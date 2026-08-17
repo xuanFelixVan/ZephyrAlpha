@@ -308,7 +308,7 @@ class DashboardPanelApp:
     # ===== 组装 =====
 
     def build_tabs(self) -> object:
-        """构建 10 个 Tab 的 pn.Tabs 布局"""
+        """构建 11 个 Tab 的 pn.Tabs 布局"""
         tabs_spec = [
             ("任务进度", self._tab_task_progress),
             ("知识库概览", self._tab_knowledge_overview),
@@ -365,7 +365,7 @@ def create_dashboard(
 
     header = pn.pane.Markdown(
         "# ZephyrAlpha Dashboard\n"
-        "Panel+HoloViz 仪表盘 (v3.1.0, #ARCH-047) — 10 Tab 治理+交易/回测",
+        "Panel+HoloViz 仪表盘 (v3.4.0, #ARCH-047) — 11 Tab 治理+交易/回测",
     )
     layout = pn.Column(header, tabs, sizing_mode="stretch_width")
     return layout

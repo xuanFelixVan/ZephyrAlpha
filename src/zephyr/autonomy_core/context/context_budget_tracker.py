@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context-engine/blueprint.md
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [MODULE] zephyr.autonomy_core.context.context_budget_tracker
 # [DOMAIN] D_AUTONOMY_CORE
 # [DEPENDENCIES] zephyr.shared.infra.observer; zephyr.autonomy_core.__init__; zephyr.shared.events.event_schemas; zephyr.shared.infra.cache

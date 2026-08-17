@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_infrastructure_operations/blueprint_experiment_tracking.md
+# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.dashboard.components.experiment_history
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES] panel ; plotly ; pandas ; zephyr.experiment_tracking.query ; zephyr.frontend.dashboard.components.backtest_performance(调色板常量)

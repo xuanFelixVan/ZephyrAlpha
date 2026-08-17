@@ -1,3 +1,4 @@
+# [BLUEPRINT] MOD-CONTEXT_ENGINE | docs/03_modules/_cross_layer/context_engine/blueprint.md
 # [TTL] permanent
 """
 

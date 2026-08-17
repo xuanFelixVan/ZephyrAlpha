@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain-frontend/hmi-core/blueprint.md
+# [BLUEPRINT] MOD-L08-001 | docs/03_modules/_domain_frontend/blueprint.md
 # [MODULE] zephyr.frontend.interface_base
 # [DOMAIN] D_FRONTEND
 # [DEPENDENCIES]
