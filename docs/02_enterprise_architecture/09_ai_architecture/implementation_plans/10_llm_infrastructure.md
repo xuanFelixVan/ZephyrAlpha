@@ -5,7 +5,7 @@ title: LLM 基础设施施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.2"
+version: "0.3.0"
 date: 2026-08-17
 topic: llm_infrastructure
 scope: 09_ai_architecture
@@ -142,6 +142,31 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 接入官方 MCP Registry 公共注册中心 | 面向公共 server 生态；本项目 server 全部自建内网，公共注册中心无适用场景，且 30Mbps 网络下引入外网依赖 |
 | 保持纯静态、不做发现 | 漂移问题无解（已实测发生），长期累积成隐性故障源 |
 
+### 3.2.1 业务侧 MCP Server 规划（交易域）
+
+> 源：集成架构 §5.2~5.4（草稿 `.runtime/aidrafts/09_drafts_audit/架构图/集成架构.md`，2026-08-17 读取核实）。现有 11 个 server 是施工治理侧设施；本节登记**业务侧**规划，两者共用 mcp.json 静态注册底座与 §3.2 的发现即校验机制。
+
+| MCP Server | 提供能力 | 消费 Agent | 安全等级 | 建设时序（集成架构 §5.4） |
+|---|---|---|---|---|
+| 行情数据 Server | tools: get_kline / get_tick / get_financial | 策略/研究 Agent | 只读 | Phase 1 ✅能建 |
+| 知识图谱 Server | resources: knowledge_graph / research_notes | 研究/进化 Agent | 只读 | Phase 2 ✅能建 |
+| 因子计算 Server | tools: calculate_factor / backtest_factor | 研究/进化 Agent | 只读+计算 | Phase 2 ✅能建 |
+| 运维监控 Server | tools: health_check / restart_service / query_logs | 运维 Agent | 写操作需审批 | Phase 3 ✅能建 |
+| 交易执行 Server | tools: place_order / cancel_order / query_position | 策略 Agent（受限） | 写操作需人工审批 | **Phase 4 ❌不能建**（QP-02 门禁未满足，登记 §5 不做清单） |
+
+**安全边界四规则**（集成架构 §5.3.2，Host 层强制执行）：①MCP Server 不可读取完整对话历史（Host 层过滤，仅传必要上下文）；②MCP Server 之间不可互相通信（Host 层隔离，跨 Server 交互由 Host 协调）；③交易类写操作必须人工审批（C-031 协作策略：写操作→推送审批→人工确认→执行）；④MCP 通信禁止传输持仓/策略数据（B-011/B-013.5 在 MCP 层同样生效）。
+
+**无状态缓存**：适配 MCP 2026-07-28 规范 tools/list 缓存 ttlMs——行情数据 Server ttlMs=3000（3 秒 Tick 刷新）、知识图谱 Server ttlMs=3600000。
+
+### 3.2.2 MCP Triple Gate 工程裁定
+
+> 源：26-D-SECURITY §8.2.3（草稿 `.runtime/aidrafts/09_drafts_audit/依赖图/26-D-SECURITY-安全域.md`，2026-08-17 读取核实）。
+
+- **llm_proxy.exe 双重角色**：所有 MCP 工具调用（无论本地/远程）必经 llm_proxy.exe 安全代理扫描——本地 MCP 调用走「Agent→llm_proxy.exe（安全扫描，不走出站白名单）→localhost MCP 服务器」；远程 MCP 调用走「Agent→llm_proxy.exe（安全扫描+出站白名单约束）→远程 MCP 服务」。llm_proxy.exe 同时承担安全代理（扫描全部 MCP 流量）与出站代理（仅远程流量受出站白名单约束）双重角色，Triple Gate 代理层复用该架构，不另建独立网关进程。
+- **传输层裁定**：本地 MCP = localhost HTTP+SSE（不出站）；**STDIO 传输层禁用**——本系统为 Windows 单机，STDIO 无消毒执行 OS 命令的攻击面（2026.4-5 OX Security/CSA 披露 20 万+实例受 RCE 影响）在本部署形态下无存在必要。
+- **注册时扫描**：MCP 工具注册时执行 MCP-Scan 扫描，剥离工具描述中的指令性语言；工具调用输出过 LSG G3 输出审查层验证（与 09 号文 P0 统一入口接线对齐）。
+- **威胁证据（裁定依据登记）**：MCPTox（AAAI-26，2026-02）实测工具投毒攻击成功率 72.8%（o1-mini，拒绝率 <3%）；Snyk ToxicSkills（2026）实测 36.8% 社区 Agent 技能含安全缺陷（76 个已确认恶意载荷）。
+
 ### 3.3 推理优化设计：GGUF/Ollama 为主路径，GPTQ INT4 实证否决
 
 **决策**：本地推理优化主路径 = **Ollama 托管的 GGUF 量化模型**（现状已是，qwen3:8b）；不引入 llama.cpp 独立集成（Ollama 内核即 llama.cpp）；**GPTQ INT4 不采用**。显存管理靠既有 EmbeddingRouter LRU 淘汰 + gpu_consensus_scheduler 协调，不新建显存调度器。
@@ -161,6 +186,22 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | bitsandbytes NF4 | 定位原型/notebook 场景，无生产 C++ 运行时，显存比 K-quants 多约 12% |
 | 更大本地模型（13B+ FP16） | 13B FP16 ≈ 26GB 超 21.6GB 硬上限；8B Q4_K_M（约 5GB）是 3090 上的甜点位 |
 
+**显存管理的时段维度（GPU 分时调度）**：
+
+> 源：12-D-ML-TRAIN §8.1（训练视角）+ 24-D-INFRA-RUNTIME §8.3（运行时视角）+ 13-D-ML-SERVE §8（推理视角），草稿位于 `.runtime/aidrafts/09_drafts_audit/依赖图/`，2026-08-17 读取核实。本地 LLM 推理显存配额服从该时段表，由既有 gpu_consensus_scheduler 执行，本文不新建调度器。
+
+| 时段 | GPU 模式 | 推理侧显存 | 训练侧显存 | 切换触发 |
+|---|---|---|---|---|
+| 盘前（08:30-09:00） | 推理模型加载 | 8-10GB | ❌禁止训练 | 定时加载推理模型 |
+| 盘中（09:15-15:00） | 推理优先 | 8-10GB（Whisper+LLM-7B+风控NN） | **0GB**（HC-01 交易时段保护） | — |
+| 午休（11:30-13:00） | LLM 最小集+轻量训练 | 4GB | 轻量训练（小模型） | 定时切换 |
+| 盘后（15:00-15:30） | 推理→训练切换中 | 4GB→卸载 | 16-18GB 加载中 | 定时切换 |
+| 夜间（15:30-08:30） | 训练优先 | LLM 最小集 4GB（与训练互斥时分共享） | 16-18GB 全量训练 | 定时切换 |
+
+- **时段优先级**：回测 > 推理 > 训练（GPU Resource Manager 时段优先调度，15-D-DATA-ENG / 21-D-KNOWLEDGE 依赖图同口径登记）。
+- **风控 NN 常驻**：风控 NN 常驻显存 2GB，任何时段（含 OOM 紧急卸载）不可卸载（24-D-INFRA-RUNTIME §8.3.2/§8.4.2）。
+- **权重 CPU RAM 热备**：推理/训练模型权重在 CPU RAM 保持热备——首次加载后不释放、仅从 GPU 卸载，恢复约 5s；时段全量切换约 60s（16-18GB 权重经 CPU RAM DMA 到 GPU）。
+- **异常处置矩阵**（24-D-INFRA-RUNTIME §8.3.2）：OOM→终止当前 GPU 任务+卸载非必要模型+保留风控 NN，释放显存后重载最小集；温度 >85°C（nvidia-smi 监控）→降频 GPU+减少并发推理+告警，<80°C 后恢复；推理延迟 >2×基线（P5 自监控）→切换轻量模型+告警，延迟恢复后切回原模型；驱动崩溃→P5 进程重启+降级 CPU 推理+告警。
 ### 3.4 模型注册设计：三处收敛对账，不建第四套，明确不用 MLflow
 
 **决策**：模型注册 SSoT 分层固定——**ML 训练产物**归 REG-ML-001（`model_registry.yaml`，晋升状态机 G1-G9 门禁见 62 号文）；**推理运行时模型**归 MOD-INF-039（`model_registry.py` dict）；**provider 价格**归 `config/model_pricing.yaml`。施工内容 = 三者对账校验（脚本比对模型名/tier/价格一致性），**不新建注册系统，不重新引入 MLflow**。
@@ -179,6 +220,16 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 统一为单一 YAML 注册表 | 混淆 human_gated（治理登记）与 ai_modifiable（运行时配置）自治等级；62 号文晋升门禁依附 REG-ML-001，迁移成本高 |
 | W&B / ZenML / ClearML 轻量平台 | 同 MLflow 退役根因：外部平台+重依赖，违反施工约束 |
 
+**注册治理字段补充（对账校验口径）**：
+
+> 源：12-D-ML-TRAIN §11.1 合规约束（草稿 `.runtime/aidrafts/09_drafts_audit/依赖图/12-D-ML-TRAIN-训练域.md`，2026-08-17 读取核实）。以下字段并入 Phase 3.1 三向对账脚本的校验维度，与 REG-ML-001 + 运行时注册（MOD-INF-039）对账口径对齐。
+
+| 治理字段 | 口径 | 对账校验要求 |
+|---|---|---|
+| training_data_hash | 每次训练生成训练数据集 SHA-256 指纹，写入模型注册表 training_data_hash 字段（数据集加载时自动计算，不可变） | REG-ML-001 条目必填；对账校验非空且与训练日志记录一致 |
+| 模型版本四元组 | 语义化版本号 + code_hash + param_hash + training_data_hash 四元组绑定，版本不可变 | 对账校验四元组完整性，缺一即判漂移 |
+| 训练审计哈希链 | 每次训练的完整参数+数据集版本+性能指标+审批记录写入模型日志，哈希链保护，保留 ≥5 年 | 审计链完整性纳入对账抽检范围 |
+
 ### 3.5 数据增强边界：归属 D-DATA 域，本文只声明集成点
 
 **决策**：数据增强（TimeGAN/条件扩散/轻量增强）**不是 LLM 基础设施的职责**——其真源是 D-DATA 域 95 号能力「金融时序数据增强」（`docs/02_enterprise_architecture/09_ai_architecture/依赖图/02-D-DATA-数据域.md` L109，含轻量增强+TimeGAN/RTSGAN+FWT 检索增强扩散+GBM-Diffusion，P2）。本文只声明：L2 本地推理层为数据增强的生成模型推理提供运行时承载（若该能力未来落地且需要本地推理）。
@@ -188,12 +239,52 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 - 规则 16（真源唯一）：数据增强的需求、选型、质量管理（KS test/增强比例 ≤30%/synthetic 标注）已在 D-DATA 依赖图登记，本文复制 = 双真源噪音。
 - FWT 检索增强扩散要求 GPU≥40GB（同文件 L759），超出 3090 24GB 硬约束——该子项在本硬件上不可行，属远期/换硬件后再议；TimeGAN 与轻量增强（时间扭曲/幅度缩放/Jittering 等）可在 3090 运行，但归 D-DATA 域施工。
 
+### 3.6 成本治理设计：LLMDeg-0~4 五级降级 + Redis 预算池（BudgetEngine 语义扩展）
+
+**决策**：BudgetEngine 由「pre_flight_check 二元门控」语义扩展为「五级成本降级 + 三维预算池」——DENY 不再是唯一终点，LLMDeg-1~3 提供渐退路径，LLMDeg-4 才是全阻断。降级数值按依赖图既定规格登记，本文不另立数值、不新建成本控制模块。
+
+**预算额度与监控（源：13-D-ML-SERVE §8.3 A7 搬入段，草稿 `.runtime/aidrafts/09_drafts_audit/依赖图/13-D-ML-SERVE-推理域.md`，2026-08-17 读取核实）**：
+
+| 维度 | 预算 | 监控频率 | 超预算处理 |
+|---|---|---|---|
+| 月度 API 总成本 | ¥500/月 | 日度 | >110% 降级至本地 LLM；>120% 暂停 API 调用 |
+| 单日 API 成本 | ¥30/天（软限制） | 实时 | 超限→当日剩余时间降级至本地 LLM |
+| 单次 API 调用成本 | ¥0.5/次 | 实时 | 超限→降级至本地 LLM 或拒绝 |
+| 月度本地推理成本 | 电费 ~¥50/月 | 月度 | 无硬限制（电费可控） |
+
+**五级降级策略（同源）**：
+
+| 降级级别 | 触发条件（月度成本） | 降级行为 | 恢复条件 |
+|---|---|---|---|
+| LLMDeg-0（正常） | <80% 预算 | 全功能路由（API+本地） | — |
+| LLMDeg-1（节约） | 80%~100% | 非关键任务 API→本地降级 | 回落至 80% 以下 |
+| LLMDeg-2（严格） | 100%~110% | 仅战略层+反思 L2/L3 使用 API | 回落至 100% 以下 |
+| LLMDeg-3（紧急） | >110% | 全部 API→本地降级+规则引擎兜底 | 人工确认后恢复 |
+| LLMDeg-4（熔断） | >120% | 暂停所有 API 调用，仅本地+规则引擎 | 紧急人工介入+预算重置 |
+
+**预算基础设施（源：25-D-INFRA-OPS §8.3.1 A7 搬入段，同草稿目录）**：
+
+| 组件 | 实现 | 功能 |
+|---|---|---|
+| 预算池 | Redis Hash 存储 | 按月/按 Agent/按模型类型三维设置预算上限；超预算自动降级路由（API→本地） |
+| Token 计数器 | Redis Counter + 持久化 | 实时统计 input/output token 用量，按 Agent/模型/时间维度聚合；每日快照至 Parquet |
+| 成本仪表盘 | Grafana 仪表盘 5 视图 | ①日/周/月 LLM 成本趋势 ②各 Agent 成本占比 ③本地 vs API 成本对比 ④预算消耗速率 ⑤超预算告警 |
+
+预算控制流程：每次调用前检查预算池余额 → 调用完成后更新 Token 计数器 → 消耗 ≥80% 触发告警 → ≥100% 自动降级（API→本地）→ 每日生成成本报告写 Parquet 归档。
+
+**成本感知路由判据（13-D-ML-SERVE §8.3）**：API→本地降级成立条件 = 预算消耗 >80% 且性能损失 <5%；反向本地→API 升级条件 = 本地推理失败/质量不足。
+
+**Why**：
+
+- 个人资金约束下 ¥500/月 API 预算是硬上限，本地推理（电费 ~¥50/月）是降级的经济兜底；LLM 不在交易实时路径（§2.3），降级对交易业务无损。
+- 与既有设施的关系：BudgetEngine.pre_flight_check 已被 OllamaChat/DeepSeekChat 消费（§2.4），五级降级是对 DENY 语义的细粒度化；落地点 = Phase 1.2 预算门接线时把 LLMDeg 级别注入 ModelRouter 路由决策，L2 默认优先与 LLMDeg-1「非关键任务转本地」同向。
+
 ---
 
 ## 4. 施工计划
 
 > 铁律（规则 19）：凡新建模块，第一步用 `scripts/governance/apply_depgraph.py` 将依赖关系登记到 depgraph 设计态（status=planned），最后一步验证通过后 planned→production。禁止先施工后补登记。
-> 04 号文（AutoRuntime Core）尚未填充，本文与运行时机脑的接口按 §6 Q3 的假设先行，04 填充后对齐。
+> 04 号文（AutoRuntime Core）已填充 v0.2.1，其 §3.4 确认本文 Q3 接口假设成立，联动动作（大脑 LLM 调用点改经门面）列入 04 号文 Phase 1 步骤 1.4。
 
 ### Phase 0：登记与对齐（P1，纯治理无代码）
 
@@ -208,28 +299,28 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
 | 1.1 | 新建 `llm_runtime_gateway` 门面：对外暴露单一 `infer(messages/prompt, complexity, max_cost)` 签名；内部按 ModelRouter.route() 决策分发——ECONOMY/MINIMAL 且本地能力命中 → OllamaChat（L2）；其余 → LLMGateway.call（L3） | 单测：同一会话 L2/L3 切换对调用方透明；签名仅一套 |
-| 1.2 | 预算门接线：门面入口统一调 BudgetEngine.pre_flight_check（复用 OllamaChat/DeepSeekChat 既有模式），DENY 阻断 | 预算 DENY 场景单测通过 |
-| 1.3 | LSG 安全扫描对齐：L3 路径沿用 LLMGateway 内嵌 LSG；L2 路径输入/输出扫描策略待 09 号文裁定（Q4），当前先复用现有 LSG gateway 做输入扫描 | L2 输入扫描有明确开启/旁路配置项 |
+| 1.2 | 预算门接线：门面入口统一调 BudgetEngine.pre_flight_check（复用 OllamaChat/DeepSeekChat 既有模式），DENY 阻断；同时将 LLMDeg-0~4 降级级别（§3.6）注入 ModelRouter 路由决策 | 预算 DENY 场景单测通过；LLMDeg-1~4 触发时路由走向符合 §3.6 降级表 |
+| 1.3 | LSG 安全扫描对齐：按 09 号文 v0.2.0 P0-1 裁定，L2/L3/Trae 三类通道同一 LSG 闸门（fail-closed），L2 本地路径**无旁路开关**（Q4 已闭环）；L2 路径经客户端工厂统一注入 LSG 网关（09 号文 §4.6 集成点假设，与本文门面同点落地） | L2 调用经 LSG 闸门的 L6 审计记录可见；代码中无 L2 旁路配置项 |
 | 1.4 | LLMGateway.route() 接 ModelRouter：替换现有「hint 直接映射」实现，接入 MOD-INF-024 的 perf-aware 决策 | route() 返回含 tier/reason/performance_score 字段 |
 
 ### Phase 2：MCP 动态发现与推理优化落地（P2）
 
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
-| 2.1 | MCP Client 发现件：连接后 list_tools 拉取实况，与 tool_contracts.yaml 契约 diff；未知工具告警 + 默认拒绝写操作（safety_level M/H 必须契约命中才放行） | 人为增删一个 mock 工具，diff 报告正确检出 |
+| 2.1 | MCP Client 发现件：连接后 list_tools 拉取实况，与 tool_contracts.yaml 契约 diff；未知工具告警 + 默认拒绝写操作（safety_level M/H 必须契约命中才放行）；传输层仅 localhost HTTP+SSE、STDIO 禁用（§3.2.2）；工具注册时执行 MCP-Scan 扫描并剥离指令性语言 | 人为增删一个 mock 工具，diff 报告正确检出；STDIO 类型 server 配置被拒绝 |
 | 2.2 | 漂移对账入遥测：diff 结果 emit 到 telemetry（复用 MOD-INF-015），漂移持续 >24h 升级告警 | telemetry.metrics_snapshot 可见 drift 指标 |
-| 2.3 | GGUF 模型管理件：登记 Ollama 已拉模型清单（ModelDiscovery 已有枚举能力）+ 显存预算表（每模型加载显存 vs 21.6GB 上限），新模型引入前查表 | 显存预算表落 config/（human_gated），超预算加载被阻断 |
+| 2.3 | GGUF 模型管理件：登记 Ollama 已拉模型清单（ModelDiscovery 已有枚举能力）+ 显存预算表（每模型加载显存 vs 21.6GB 上限，时段配额按 §3.3 时段表），新模型引入前查表 | 显存预算表落 config/（human_gated），超预算加载被阻断 |
 | 2.4 | 本地推理质量基线：用 model_profiling 的 exam 链路对 qwen3:8b 跑基线考试，成绩单存档（为后续换模型/换量化档位提供对比基准） | 基线成绩入库 data/model_profiles/ |
 
 ### Phase 3：注册对账自动化与收口（P2）
 
 | 步骤 | 内容 | 验收标准 |
 |---|---|---|
-| 3.1 | 注册对账脚本：MOD-INF-039 ↔ REG-ML-001 ↔ model_pricing.yaml 三向比对（模型名/tier/价格），CI 或 commit gate 挂载 | 对账脚本零误报跑通；人为改一处价格，对账检出 |
+| 3.1 | 注册对账脚本：MOD-INF-039 ↔ REG-ML-001 ↔ model_pricing.yaml 三向比对（模型名/tier/价格 + §3.4 治理字段 training_data_hash/版本四元组/审计哈希链），CI 或 commit gate 挂载 | 对账脚本零误报跑通；人为改一处价格或删一个治理字段，对账检出 |
 | 3.2 | 文档收尾：本文 Phase 完成状态回写；00_index §1 过期表述（MLflow/GPTQ）修订申请走 Q6 裁定 | Q6 有裁定结论 |
 | 3.3 | **depgraph 状态翻转**：`llm_runtime_gateway` 全部验收通过后 planned→production | depgraph 查询状态=production |
 
-**明确不在施工计划内**：数据增强实现（归 D-DATA 域）、llama.cpp/GPTQ 集成（§3.3 已否决）、MLflow 类平台（§3.4 已否决）。
+**明确不在施工计划内**：数据增强实现（归 D-DATA 域）、llama.cpp/GPTQ 集成（§3.3 已否决）、MLflow 类平台（§3.4 已否决）、交易执行 MCP Server（§3.2.1 Phase 4 裁定 ❌不能建）。
 
 ---
 
@@ -239,7 +330,7 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 |---|---|
 | 分布式推理 / 多卡并行 / vLLM 集群 | 单机单卡 3090 硬约束；无集群 |
 | 模型训练（SFT/全量微调/MAML/EWC） | 训练轨归 `src/zephyr/ml_train/` 与 13 号备忘体系；本文只管推理侧 |
-| GPU 集群调度 | 单卡无调度对象；既有 `gpu_consensus_scheduler.py` 已覆盖单机显存协调 |
+| GPU 集群调度 | 单卡无调度对象；既有 `gpu_consensus_scheduler.py` 已覆盖单机显存协调（含 §3.3 时段维度） |
 | 高并发推理服务（连续批处理/多租户） | 个人项目低并发；LLM 不在交易实时路径（T+1 日频） |
 | 重新引入 MLflow 或同类外部 MLOps 平台（W&B/ZenML/ClearML） | 51 号备忘已裁定 MLflow 退役并执行完毕，同类平台同根因排除 |
 | llama.cpp 独立集成 / GPTQ INT4 / ExLlamaV2 | §3.3：Ollama 已含 llama.cpp 内核；GPTQ 在 3090（Ampere 无 INT4 tensor core）实证反减速 |
@@ -247,6 +338,9 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | agent 编排系统 / L1 Trae 代码化 | 61 号备忘已裁定不做 agent 编排；L1 是人的工作层非代码 |
 | 公共 MCP Registry 接入 | server 全部自建内网，公共注册中心无适用场景 |
 | 13B+ 本地模型 FP16 常驻 | ≈26GB 超 21.6GB 显存硬上限 |
+| 交易执行 MCP Server（place_order/cancel_order/query_position 工具化） | 集成架构 §5.4 Phase 4 裁定 ❌不能建（QP-02 门禁未满足）；交易写操作维持 C-031 人工审批通道，不经 MCP（§3.2.1） |
+| MCP STDIO 传输层 | 26-D-SECURITY §8.2.3 裁定禁用：Windows 单机，STDIO 无消毒执行 OS 命令的攻击面无存在必要；本地 MCP 一律 localhost HTTP+SSE（§3.2.2） |
+| 独立 MCP 安全网关进程 | Triple Gate 代理层复用 llm_proxy.exe 双重角色架构（§3.2.2），不另建进程 |
 
 ---
 
@@ -256,13 +350,13 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 |---|------|------|------|
 | Q1 | MCP 工具调用标准化的实现路径？ | 部分已定·细节待裁定 | 方向已定：静态契约（tool_contracts.yaml）为治理底座 + Client 动态发现做漂移对账（§3.2）。待裁定：「未知工具默认拒绝写操作」的放行审批流挂在哪个既有门禁（候选：capability gate / commit gate） |
 | Q2 | llama.cpp+GPTQ INT4 的显存压缩是否在 RTX 3090 上验证过？ | 已实证·待裁定改表述 | 2026 实证：GGUF Q4_K_M 在 3090 上 7B≈4.1GB/约42tok/s；GPTQ INT4 显存收益相同但 B=1 反减速 1.3~2.2×。本文已按 GGUF 路径定决策；00_index §1「llama.cpp+GPTQ INT4」表述修订待 Owner 裁定（见 Q6） |
-| Q3 | 与 04 号文（AutoRuntime Core）的运行时接口对齐 | 待 04 填充后对齐 | 04 尚未填充。本文假设：AutoRuntime Core 继续承担 Ollama 进程管理与本地模型栈 boot（现状代码已如此），`llm_runtime_gateway` 门面被 AutoRuntime Core 消费而非取代其编排职责。04 填充后需回读本节核对 |
-| Q4 | L2 本地推理是否强制过 LSG 安全扫描？ | 待 09 填充后裁定 | 09 号文未填充。L3 路径 LSG 扫描已在 LLMGateway 内嵌；L2 本地模型输入多来自内部任务，全量扫描有延迟成本。假设：L2 输入扫描开启、输出扫描抽样，待 09 号文裁定 |
-| Q5 | 11 号文（证据技能路由）对模型路由的运行时依赖 | 待 11 填充后对齐 | 11 未填充。假设：11 的技能路由消费 ModelRouter（MOD-INF-024）+ capability_passport（MOD-INF-034），不直接消费本文门面；若 11 需要统一推理入口，Phase 1 门面签名需回看 |
+| Q3 | 与 04 号文（AutoRuntime Core）的运行时接口对齐 | **已闭环（假设成立）** | 04 号文 v0.2.1 已填充，其 §3.4 确认本文假设成立：AutoRuntime Core 继续承担 Ollama 进程管理与本地模型栈 boot（`_OllamaProcessManager`/`_LocalModelBootstrap` production），`llm_runtime_gateway` 门面被 AutoRuntime Core 消费而非取代其编排职责；联动动作（大脑 LLM 调用点 DeepSeekChat/EmbeddingRouter/LocalModelScheduler 消费处改经门面入口）列入 04 号文 Phase 1 步骤 1.4，不新建模块 |
+| Q4 | L2 本地推理是否强制过 LSG 安全扫描？ | **已闭环（09 已裁定：同闸门无旁路）** | 09 号文 v0.2.0 已填充，P0-1 裁定「本地 Ollama / API / Trae 三类通道同一 LSG 闸门」fail-closed 全量拦截——本文原假设（L2 输入扫描开启、输出扫描抽样）被该裁定取代，L2 不保留旁路配置项；09 号文 Q2 对本文集成点的假设（LLM 客户端工厂统一注入网关 + SecurityContext 传递 + MCP 工具调用过 L4 authorize_tool_call）与本文 Phase 1.3/2.1 方向一致，双向确认。Phase 1.3 验收标准已同步修订 |
+| Q5 | 11 号文（证据技能路由）对模型路由的运行时依赖 | **已闭环（假设成立）** | 11 号文 v0.2.0 已填充：级联路由 L3 成本路由消费 MOD-INF-024 ModelRouter（只消费不改结构，MODIFY-GUARD），护照消费 `capability_passport.py`（MOD-INF-034），不直接消费本文统一门面——本文 Q5 假设成立，Phase 1 门面签名无需回看 |
 | Q6 | 00_index §1「模型注册(MLflow)」与「llama.cpp+GPTQ INT4」两处表述已过期 | 待裁定（本文无权改 00_index） | MLflow 已退役（51 号备忘 v1.2.13 执行完毕）；GPTQ 已实证否决（§3.3）。建议 00_index 修订为「模型注册(REG-ML-001+运行时注册对账)」「推理优化(GGUF 量化,Ollama 托管)」，由 AI-FILL-00 或 Owner 落笔 |
 | Q7 | llm_gateway.py 头部蓝图标注不一致 | 待裁定 | 文件头 `[BLUEPRINT] MOD-INF-009` 与 docstring `MOD-INF-019: Agent Spec — LLM Gateway` 不一致；module_translation_registry/depgraph 真源需核对后订正其一 |
 | Q8 | mcp.json ↔ tool_contracts.yaml 漂移项归属 | 待裁定 | sandbox/red_blue_validator/clone_guard 仅见于 mcp.json；resource_optimization 仅见于 tool_contracts.yaml。是有意分层还是漏登记，Phase 0.3 前需 Owner 裁定 |
-| Q9 | 09_ai_architecture 目录被并行收口流程隔离搬迁事件 | 待裁定 | 2026-08-17 晚 coord 收口（reflog 3c9bb5a60b 前后）将整目录迁至 .runtime/quarantine/gova_leftover_20260817/（理由：66 文件缺 frontmatter 违反 TTL-METADATA 门禁 + DIRECTORY-CONTRACT 禁 csv）。本文已回迁原路径且 implementation_plans/ 同级文档已恢复（00/02 等链接可解析），但 依赖图/架构图 子树仍在隔离区——§3.5 对 02-D-DATA-数据域.md 的引用暂不可解析；子树恢复待 GOVA 会话/Owner 裁定（恢复清单见 .runtime/ai00_audit_pause_20260817.md 第四节第 4 步） |
+| Q9 | 09_ai_architecture 目录被并行收口流程隔离搬迁事件 | 待裁定 | 2026-08-17 晚 coord 收口（reflog 3c9bb5a60b 前后）将整目录迁至 .runtime/quarantine/gova_leftover_20260817/（理由：66 文件缺 frontmatter 违反 TTL-METADATA 门禁 + DIRECTORY-CONTRACT 禁 csv）。本文已回迁原路径且 implementation_plans/ 同级文档已恢复（00/02 等链接可解析），但 依赖图/架构图 子树仍在隔离区——§3.5 对 02-D-DATA-数据域.md 的引用暂不可解析（本轮 §3.2.1/§3.2.2/§3.3/§3.4/§3.6 新增引用的依赖图与架构图内容以 `.runtime/aidrafts/09_drafts_audit/` 草稿副本为读取源，已在各节标注）；子树恢复待 GOVA 会话/Owner 裁定（恢复清单见 .runtime/ai00_audit_pause_20260817.md 第四节第 4 步） |
 
 ---
 
@@ -274,6 +368,7 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 背景+21 项已施工设施实测盘点+5 项实测缺口；§3 五项设计决策（三层运行时/MCP/推理优化/模型注册/数据增强边界）含替代方案；§4 Phase 0→3 施工计划（depgraph L1 铁律）；§5 不做清单；§6 开放问题 Q1~Q8 | AI-FILL-10 填充；关键实测修正：MLflow 已退役（51 号备忘）、GPTQ 在 3090 实证反减速（GGUF 替代）、数据增强归属 D-DATA 域；04/06/09/11 依赖文档未填充按降级处理（接口假设入 Q3~Q5） |
 | 2026-08-17 | 0.2.1 | 开放问题新增 Q9（目录隔离搬迁事件记录）+ 拼接处空行修正 + doc_type 修正（implementation_plan→blueprint，按 doc_type_vocabulary 弃用映射 construction_plan→blueprint） | 并行 coord 收口流程将 09_ai_architecture 整树迁至 quarantine，本文回迁并记录事件待裁定；TTL-METADATA 门禁 hard block 要求合法 doc_type |
 | 2026-08-17 | 0.2.2 | Q9 表述更新：implementation_plans 已恢复、依赖图/架构图子树仍在隔离区 | 提交后复核发现 02-D-DATA-数据域.md 引用暂不可解析，修正事件记录准确性 |
+| 2026-08-17 | 0.3.0 | 回填五项：§3.2.1 交易域 MCP Server 规划（5 Server+安全边界 4 规则+ttlMs，Phase 4 交易执行 Server ❌不能建登记 §5）；§3.2.2 MCP Triple Gate 工程裁定（llm_proxy.exe 双重角色/STDIO 禁用/MCP-Scan 注册扫描/MCPTox 72.8%+ToxicSkills 36.8% 威胁证据）；§3.3 显存管理补 GPU 时段分时维度（盘中训练 0GB/推理 8-10GB、夜间训练 16-18GB、风控 NN 常驻 2GB 不可卸载、CPU RAM 热备 ~5s、OOM/温度>85°C/延迟>2×基线处置、时段优先级回测>推理>训练）；§3.4 注册治理字段补充（training_data_hash/版本四元组/审计哈希链≥5 年，对齐 REG-ML-001+MOD-INF-039 对账口径）；新增 §3.6 成本治理（LLMDeg-0~4 五级降级+月¥500/日¥30/单次¥0.5 预算+Redis 预算池月/Agent/模型三维+Token 计数器日快照 Parquet+成本仪表盘 5 视图+API→本地降级条件预算>80%且性能损失<5%）；开放问题 Q3/Q5 闭环（04 v0.2.1/11 v0.2.0 确认假设成立）、Q4 按 09 v0.2.0 P0-1 裁定闭环（L2 同闸门无旁路）并同步修订 Phase 1.2/1.3/2.1/2.3/3.1 与 §5 不做清单 | AI-FILL-10-R2 回填；源：.runtime/aidrafts/09_drafts_audit 依赖图 12/13/24/25/26 + 架构图/集成架构 §5.2~5.4 + 04/09/11 号文接口复审；依赖图/架构图子树仍在隔离区（Q9），以草稿副本为读取源并逐节标注 |
 
 ---
 
