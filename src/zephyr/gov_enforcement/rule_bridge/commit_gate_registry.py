@@ -11,7 +11,7 @@
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] check_all 永不抛异常——单个 gate 异常降级为 GateResult(passed=False)
-# [TESTS] tests/test_commit_gate_registry.py
+# [TESTS] tests/governance/rule_bridge/test_commit_gate_registry.py
 # [A_module] module_id=MOD-GOV_COMMIT_GATE_REGISTRY | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """commit_gate_registry.py — GitCommitGateway pre-commit 门禁注册表（架构债务 #AD-001 治本）
