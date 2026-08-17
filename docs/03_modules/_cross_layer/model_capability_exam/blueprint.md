@@ -510,7 +510,7 @@ class ExamMode(str, Enum):
 | 题库 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_test_cases.py` | ExamTestCases 27 题 |
 | 护照模型 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\capability_passport.py` | CapabilityPassport |
 | 包初始化 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\__init__.py` | 公共导出 |
-| 任务门控 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | TaskGate（消费端） |
+| 任务门控 | `D:\ZephyrAlpha\src\zephyr\trading\task_gate.py` | TaskGate（消费端） |
 | 护照数据 | `D:\ZephyrAlpha\data\brain\passports\` | JSON 护照文件 |
 | 测试代码 | `D:\ZephyrAlpha\tests\test_model_capability_exam.py` | 测试用例（待创建） |
 
@@ -948,7 +948,7 @@ STEP 3: 拆分后验证
 | 2 | 考试主控 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_orchestrator.py` | 修改 | 新增 ExamMode + 并发 + 超时 |
 | 3 | 护照模型 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\capability_passport.py` | 修改 | 新增 PassportIndex |
 | 4 | 题库 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\exam_test_cases.py` | 读取 | 不变更 |
-| 5 | 任务门控 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | 修改 | 支持 blocked 状态 |
+| 5 | 任务门控 | `D:\ZephyrAlpha\src\zephyr\trading\task_gate.py` | 修改 | 支持 blocked 状态 |
 | 6 | 护照数据目录 | `D:\ZephyrAlpha\data\brain\passports\` | 读取 | 不变更 |
 
 ---
@@ -971,7 +971,7 @@ STEP 3: 拆分后验证
 |:----:|--------|---------|
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\auto-runtime-core\blueprint.md` | §4 接口契约、§10 依赖关系 |
 | Tier 1 | `D:\ZephyrAlpha\docs\03_modules\_cross_layer\gate_engine\blueprint.md` | §4 接口契约 |
-| Tier 2 | `D:\ZephyrAlpha\src\zephyr\runtime\task_gate.py` | CapabilityPassport 数据模型 |
+| Tier 2 | `D:\ZephyrAlpha\src\zephyr\trading\task_gate.py` | CapabilityPassport 数据模型 |
 | Tier 3 | `D:\ZephyrAlpha\src\zephyr\intelligence\model_profiling\*.py` | §4 数据模型、§11 产出物路径 |
 
 ### 变更同步规则
