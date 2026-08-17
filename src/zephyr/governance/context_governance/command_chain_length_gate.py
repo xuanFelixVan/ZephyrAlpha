@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 命令体积门控max=20不可修改;超限必须阻断
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

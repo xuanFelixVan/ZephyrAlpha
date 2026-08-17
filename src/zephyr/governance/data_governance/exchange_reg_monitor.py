@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 交易所规则变更必须检测;API字段变更必须告警
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

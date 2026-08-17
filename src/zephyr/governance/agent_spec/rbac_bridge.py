@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] RBAC配额降级规则不可绕过;权限降级必须审计
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable
@@ -89,7 +89,6 @@ class EscalationRBACBridge:
     def guard(self, value):
         """写入：guard（Stage 4 公共化）。"""
         self._guard = value
-
 
 
     def request_escalation(self, agent_id: str, target_permission: str, reason: str) -> dict:

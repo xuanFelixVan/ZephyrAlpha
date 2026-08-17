@@ -157,7 +157,6 @@ class TransitionMixin:
     """状态机转换 mixin — 供 TaskRepository 继承。
 
 
-
     需要宿主类提供:
 
     - self._should_evaluate_gate(gate_id: str) -> bool
@@ -196,7 +195,6 @@ class TransitionMixin:
         执行状态机转换。
 
 
-
         参数
 
         ----
@@ -212,7 +210,6 @@ class TransitionMixin:
         note : str | None         本次转换的备注（写入 events payload）
 
 
-
         异常
 
         ----
@@ -220,7 +217,6 @@ class TransitionMixin:
         TaskNotFoundError      — task_id 不存在
 
         InvalidTransitionError — 非法状态转换
-
 
 
         返回
@@ -364,7 +360,6 @@ class TransitionMixin:
         new_status: TaskStatus,
     ) -> None:
         """当子任务状态变更时，重算依赖它的父任务状态。
-
 
 
         规则（蓝图 MOD-TASK_SYSTEM 盲点#1）：

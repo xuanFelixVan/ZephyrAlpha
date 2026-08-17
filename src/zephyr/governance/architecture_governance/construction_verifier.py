@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 施工验证不可跳过;验证checklist必须完整
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 升级裁决;四级约束;Kill Switch
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md;src/zephyr/escalation-engine/__init__.py
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md;src/zephyr/governance/escalation/__init__.py
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated

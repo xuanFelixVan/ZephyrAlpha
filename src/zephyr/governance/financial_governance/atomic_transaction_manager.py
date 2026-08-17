@@ -32,13 +32,9 @@
 
 # noqa: m03-duplicate  M03豁免: AI趋同演化(不同模块为相似问题生成相似代码),非复制粘贴;M05(文件复制对=0)已覆盖文件级复制检测
 
-
-
 """
 
 AtomicTransactionManager — SQLite + 文件系统的跨介质原子事务管理器 v2.0（ATM）。
-
-
 
 Task       : T-2-30 | SH-DB-001 v2.0
 
@@ -48,13 +44,7 @@ Depends    : T-1-23 (InputSanitizer) ✅
 
 References :
 
-
-
-
-
 设计要点 v2.0（见 SH-DB-001 blueprint v2.0）：
-
-
 
 1. **两阶段提交（2PC 简化版）**：
 
@@ -82,27 +72,15 @@ References :
 
    - 文件 rename 失败但 SQLite 已 COMMIT -> 写 compensation event + 标记 COMPENSATED
 
-
-
 2. **事务超时**：每个 transaction 有超时限制（默认 30s）。超时自动 ROLLBACK。
-
-
 
 3. **幂等保证**：同一 tx_id 重复调用 commit() 抛 TransactionError（tx_idempotency 去重）。
 
-
-
 4. **路径守卫**：所有 write_file(path, ...) 必须通过 InputSanitizer.validate_path。
-
-
 
 Usage::
 
-
-
     from zephyr.governance.financial_governance.atomic_transaction_manager import AtomicTransactionManager
-
-
 
     atm = AtomicTransactionManager(
 
@@ -189,11 +167,7 @@ Usage::
 # A4 --> O2
 """
 
-
-
 from __future__ import annotations
-
-
 
 from typing import Final
 
@@ -223,21 +197,15 @@ from threading import RLock
 
 from typing import Any, Literal, cast
 
-
-
 from zephyr.shared.io.paths import REPO_ROOT
 
 from zephyr.shared.utils.time_utils import now_iso  # 5.161 修复: 收敛 _now_iso 私有副本到真源
-
-
 
 _SCRIPTS_DIR = REPO_ROOT / "scripts"
 
 if str(_SCRIPTS_DIR) not in sys.path:
 
     sys.path.insert(0, str(_SCRIPTS_DIR))
-
-
 
 _SECURITY_SANITIZER_NAMES = {
 
@@ -248,10 +216,6 @@ _SECURITY_SANITIZER_NAMES = {
     "SanitizationError",
 
 }
-
-
-
-
 
 def __getattr__(name):
 
@@ -267,10 +231,6 @@ def __getattr__(name):
 
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
-
-
-
-
 __all__ = [
 
     "AtomicTransactionManager",
@@ -283,31 +243,19 @@ __all__ = [
 
 ]
 
-
-
 logger = logging.getLogger(__name__)
 
-
-
 DEFAULT_TIMEOUT_SECONDS: Final[float] = 30.0
-
-
-
-
 
 class TransactionError(RuntimeError):
 
     """ATM 内部状态错误（嵌套、double-commit、未初始化等）。
-
-
 
     5.99.20 修复：tx_id 和文件路径移至 details 字段，不暴露在消息中。
 
     """
 
     error_code = "ZA-GV-0021"
-
-
 
     def __init__(self, message: str, *, details: dict[str, Any] | None = None, error_code: str | None = None) -> None:
 
@@ -319,17 +267,11 @@ class TransactionError(RuntimeError):
 
             self.error_code = error_code
 
-
-
-
-
 class TransactionTimeoutError(TransactionError):
 
     """事务超时。"""
 
     error_code = "ZA-GV-0022"
-
-
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
 
@@ -338,10 +280,6 @@ class TransactionTimeoutError(TransactionError):
         if error_code is not None:
 
             self.error_code = error_code
-
-
-
-
 
 def _utf8_lf_bytes(content: str | bytes) -> bytes:
 
@@ -363,19 +301,11 @@ def _utf8_lf_bytes(content: str | bytes) -> bytes:
 
     return data
 
-
-
-
-
 def _new_tx_id() -> str:
 
     """生成单次事务 ID：tx-<unix_ms>-<hex8>。"""
 
     return f"tx-{int(time.time() * 1000):013d}-{secrets.token_hex(4)}"
-
-
-
-
 
 def _fsync_dir(path: Path) -> None:
 
@@ -395,10 +325,6 @@ def _fsync_dir(path: Path) -> None:
 
         os.close(fd)
 
-
-
-
-
 def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
 
     renamed: list[tuple[Path, Path, Path | None]] = []
@@ -410,8 +336,6 @@ def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
             os.replace(tmp, target)
 
             renamed.append((target, tmp, bak))
-
-
 
         dirs_to_fsync = {t.parent for t, _, _ in renamed}
 
@@ -425,8 +349,6 @@ def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
 
                 pass
 
-
-
         for _, _, bak in renamed:
 
             if bak is not None and bak.exists():
@@ -438,8 +360,6 @@ def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
                 except OSError:
 
                     logger.warning("[%s] failed to unlink .bak: %s", tx.tx_id, bak)
-
-
 
     except OSError as exc:
 
@@ -475,15 +395,9 @@ def _apply_post_commit_file_renames(tx, write_compensation_event) -> None:
 
         ) from exc
 
-
-
-
-
 class TransactionScope:
 
     """单次事务作用域。对 ATM 外部不可直接构造。"""
-
-
 
     __slots__ = (
 
@@ -502,8 +416,6 @@ class TransactionScope:
         "tx_id",
 
     )
-
-
 
     def __init__(
 
@@ -531,8 +443,6 @@ class TransactionScope:
 
         self._timeout: float = timeout
 
-
-
     def _check_timeout(self) -> None:
 
         elapsed = time.monotonic() - self._started_at
@@ -546,8 +456,6 @@ class TransactionScope:
                 details={"tx_id": self.tx_id},
 
             )
-
-
 
     def execute(
 
@@ -569,8 +477,6 @@ class TransactionScope:
 
         return self._atm._conn.execute(sql, params)
 
-
-
     def executemany(
 
         self,
@@ -591,8 +497,6 @@ class TransactionScope:
 
         return self._atm._conn.executemany(sql, seq_of_params)
 
-
-
     def write_file(
 
         self,
@@ -605,8 +509,6 @@ class TransactionScope:
 
         """将文件写入 stage 到临时文件，commit 时统一 rename。
 
-
-
         参数
 
         ----
@@ -618,8 +520,6 @@ class TransactionScope:
         content : str | bytes
 
             文件内容；统一规范化为 UTF-8 无 BOM + LF。
-
-
 
         返回
 
@@ -639,11 +539,7 @@ class TransactionScope:
 
         target.parent.mkdir(parents=True, exist_ok=True)
 
-
-
         data = _utf8_lf_bytes(content)
-
-
 
         tmp_path = target.with_name(f"{target.name}.atm-{self.tx_id}.tmp")
 
@@ -667,8 +563,6 @@ class TransactionScope:
 
                 ) from exc
 
-
-
         _flags = os.O_WRONLY | os.O_CREAT | os.O_TRUNC
 
         _binary_flag = getattr(os, "O_BINARY", 0)
@@ -685,23 +579,17 @@ class TransactionScope:
 
             os.close(fd)
 
-
-
         self._staged_files.append((target, tmp_path, bak_path))
 
         logger.debug("[%s] staged write_file: %s (bytes=%d)", self.tx_id, target, len(data))
 
         return target
 
-
-
     def staged_file_count(self) -> int:
 
         """当前事务 staged 的文件数。"""
 
         return len(self._staged_files)
-
-
 
     def _check_active(self) -> None:
 
@@ -735,15 +623,9 @@ class TransactionScope:
 
             )
 
-
-
-
-
 class AtomicTransactionManager:
 
     """对 SQLite + 文件系统的原子事务封装 v2.0。
-
-
 
     参数
 
@@ -773,8 +655,6 @@ class AtomicTransactionManager:
 
         可注入自定义 InputSanitizer（便于测试）。
 
-
-
     线程模型
 
     --------
@@ -784,8 +664,6 @@ class AtomicTransactionManager:
     跨线程复用安全。高并发建议每线程一个 ATM 实例。
 
     """
-
-
 
     def __init__(
 
@@ -811,13 +689,9 @@ class AtomicTransactionManager:
 
         self._sanitizer: InputSanitizer = sanitizer or InputSanitizer(root=str(self._root))
 
-
-
         self._db_abs_path: Path = self._sanitizer.validate_path(db_path, mode="write")
 
         self._db_abs_path.parent.mkdir(parents=True, exist_ok=True)
-
-
 
         self._isolation_level = isolation_level
 
@@ -831,13 +705,9 @@ class AtomicTransactionManager:
 
         self._lock = RLock()
 
-
-
         self._open_connection()
 
         self._ensure_tx_idempotency_table()
-
-
 
     def _open_connection(self) -> None:
 
@@ -864,8 +734,6 @@ class AtomicTransactionManager:
         conn.execute("PRAGMA wal_autocheckpoint = 4096")
 
         self._conn = conn
-
-
 
     def _ensure_tx_idempotency_table(self) -> None:
 
@@ -899,15 +767,11 @@ class AtomicTransactionManager:
 
         )
 
-
-
     @property
 
     def db_path(self) -> Path:
 
         return self._db_abs_path
-
-
 
     @property
 
@@ -915,15 +779,11 @@ class AtomicTransactionManager:
 
         return self._root
 
-
-
     @contextmanager
 
     def transaction(self) -> Iterator[TransactionScope]:
 
         """进入一次事务作用域。
-
-
 
         异常语义
 
@@ -955,19 +815,13 @@ class AtomicTransactionManager:
 
                 self._open_connection()
 
-
-
             tx = TransactionScope(atm=self, tx_id=_new_tx_id(), timeout=self._tx_timeout)
 
             self._active_tx = tx
 
-
-
             if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
 
             self._conn.execute("BEGIN IMMEDIATE")
-
-
 
             # 登记到幂等去重表
 
@@ -997,11 +851,7 @@ class AtomicTransactionManager:
 
                 )
 
-
-
             logger.debug("[%s] BEGIN IMMEDIATE + PREPARED", tx.tx_id)
-
-
 
             try:
 
@@ -1012,8 +862,6 @@ class AtomicTransactionManager:
                 self._rollback(tx)
 
                 raise
-
-
 
             # 超时检查
 
@@ -1031,8 +879,6 @@ class AtomicTransactionManager:
 
                 )
 
-
-
             try:
 
                 self._commit(tx)
@@ -1042,8 +888,6 @@ class AtomicTransactionManager:
                 self._rollback(tx)
 
                 raise
-
-
 
     def _pre_commit_verify(self, tx: TransactionScope) -> None:
 
@@ -1070,8 +914,6 @@ class AtomicTransactionManager:
                     details={"tx_id": tx.tx_id, "tmp_file": str(tmp)},
 
                 )
-
-
 
     def _write_compensation_event(self, tx: TransactionScope) -> None:
 
@@ -1135,17 +977,11 @@ class AtomicTransactionManager:
 
             logger.error("[%s] failed to write compensation event: %s", tx.tx_id, exc)
 
-
-
     def _commit(self, tx: TransactionScope) -> None:
 
         if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
 
-
-
         self._pre_commit_verify(tx)
-
-
 
         try:
 
@@ -1161,8 +997,6 @@ class AtomicTransactionManager:
 
             ) from exc
 
-
-
         try:
 
             self._conn.execute(
@@ -1177,13 +1011,9 @@ class AtomicTransactionManager:
 
             pass  # 尽力更新，失败不影响事务已提交的事实
 
-
-
         # 文件 rename 阶段
 
         _apply_post_commit_file_renames(tx, self._write_compensation_event)
-
-
 
         tx._committed = True
 
@@ -1199,15 +1029,11 @@ class AtomicTransactionManager:
 
         )
 
-
-
     def _rollback(self, tx: TransactionScope) -> None:
 
         if tx._rolled_back:
 
             return
-
-
 
         if self._conn is None: raise RuntimeError("connection not established")  # 5.88.1 修复: assert->if/raise
 
@@ -1218,8 +1044,6 @@ class AtomicTransactionManager:
         except sqlite3.Error as exc:
 
             logger.error("[%s] SQLite ROLLBACK failed: %s", tx.tx_id, exc)
-
-
 
         try:
 
@@ -1234,8 +1058,6 @@ class AtomicTransactionManager:
         except sqlite3.Error:
 
             pass
-
-
 
         for target, tmp, bak in tx._staged_files:
 
@@ -1263,8 +1085,6 @@ class AtomicTransactionManager:
 
                     logger.error("[%s] failed to restore bak: %s", tx.tx_id, bak)
 
-
-
         tx._rolled_back = True
 
         if self._active_tx is tx:
@@ -1272,8 +1092,6 @@ class AtomicTransactionManager:
             self._active_tx = None
 
         logger.info("[%s] rolled back", tx.tx_id)
-
-
 
     def close(self) -> None:
 
@@ -1291,25 +1109,17 @@ class AtomicTransactionManager:
 
                 self._conn = None
 
-
-
     def __enter__(self) -> AtomicTransactionManager:
 
         return self
-
-
 
     def __exit__(self, exc_type, exc, tb) -> None:
 
         self.close()
 
-
-
     def validate_write_path(self, rel_path: str) -> Path:
 
         """对外暴露的路径守卫快捷方法（与 write_file 内部逻辑一致）。
-
-
 
         治本：原实现 try/except SanitizationError/PathTraversalError 仅 re-raise，
 

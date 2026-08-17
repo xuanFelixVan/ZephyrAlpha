@@ -2,7 +2,7 @@
 # [MODULE] zephyr.governance.evidence_pack
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES]
-# [CONSUMERS] audit-orchestrator.integrity; replay_engine
+# [CONSUMERS] zephyr.gov_audit.evidence_pack (re-export); zephyr.gov_audit.__init__ (lazy facade)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 证据包不可变性; 签名后禁止修改
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 打包失败返回None
 # [TESTS] tests/audit-orchestrator/test_evidence_pack.py
-# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 from zephyr.shared.io.serialization import dumps
 import hashlib

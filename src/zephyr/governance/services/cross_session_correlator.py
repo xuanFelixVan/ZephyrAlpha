@@ -6,7 +6,7 @@
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 跨会话关联必须执行;异常必须触发告警
-# [MODIFY-GUARD] docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md
+# [MODIFY-GUARD] docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md
 # [STABILITY] evolving
 # [SAFETY] M
 # [AI_AUTONOMY] ai_modifiable

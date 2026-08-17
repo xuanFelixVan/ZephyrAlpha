@@ -22,7 +22,7 @@ Escalation Adapter — MOD-INF-022 统一集成入口.
 Provides a single import point for any module to integrate with the escalation protocol.
 Handles: level determination, circuit breaker, economic guard, delegation, audit.
 
-Blueprint: docs/03_modules/_domain-autonomy_perm/escalation-protocol/blueprint.md §2
+Blueprint: docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md §2
 
 Usage:
     from zephyr.governance.services.adapter import escalate_if_needed, check_operation

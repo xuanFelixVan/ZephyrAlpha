@@ -1,9 +1,9 @@
-# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_autonomy_perm/a2a_protocol/blueprint.md | §phase1-gate
+# [BLUEPRINT] MOD-INF-025 | docs/03_modules/_domain_infrastructure_operations/agent_to_agent_protocol/blueprint.md | §phase1-gate
 # [MODULE] zephyr.governance.a2a
 # [DOMAIN] D_GOVERNANCE
 # [A_module] module_id=MOD-INF-025 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
-# Phase 1 gate marker (kebab-case dir). Implementation in zephyr.infrastructure.a2a_protocol.
+# Phase 1 gate marker（a2a 为 trae_028 grandfathered 缩写目录，非 kebab-case）。Implementation in zephyr.infrastructure.a2a_protocol.
 
 """
 
@@ -18,7 +18,7 @@
 # - id: A1
 #   name_zh: ① 阶段门禁标记常量声明
 #   name_en: A2A_PHASE1_MARKER
-#   intro: 声明 a2a-v1 常量作为 A2A 协议 Phase1 门禁锚点（kebab-case 目录占位）
+#   intro: 声明 a2a-v1 常量作为 A2A 协议 Phase1 门禁锚点（grandfathered 缩写目录占位）
 #   desc: 模块级常量赋值；__all__ 为空列表不导出任何符号；真正实现位于 zephyr.infrastructure.a2a_protocol
 #   inputs: I1
 #   outputs: 阶段标记常量 'a2a-v1'

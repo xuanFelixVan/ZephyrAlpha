@@ -35,6 +35,27 @@ base_repo — 异常类、状态机常量、工具函数（从 task_repo.py 拆�
 
 Safety : H（基础设施核心，状态机错误会影响整个任务流水线）
 
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: 持久层基础请求
+#   fields: 状态机转换查询（from_status/to_status）/ 行记录 dict / FTS5 查询串
+#   code: allowed_transitions/is_terminal/_row_to_taskcard/search 入口
+# 层: 处理
+# - id: F1
+#   name: 状态机常量查询
+#   code: _ALLOWED_TRANSITIONS 表查找（合法迁移集 + 终态判定）
+# - id: F2
+#   name: 行→TaskCard 转换与工具函数
+#   code: _row_to_taskcard/now_iso/_new_id 纯函数
+# - id: F3
+#   name: FTS5 全文搜索
+#   code: search 构造 MATCH 查询并返回命中行
+# 层: 输出
+# - id: O1
+#   name: 基础设施返回值
+#   fields: 异常类 6 个 / 转换集合 / TaskCard / 搜索结果行
+#   downstream: task_repo.py 及治理持久层消费者
 """
 
 from __future__ import annotations
@@ -77,6 +98,7 @@ __all__ = [
 
 class TaskRepositoryError(RuntimeError):
     """TaskRepository 基础异常。"""
+
     error_code = "ZA-GV-0024"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -87,6 +109,7 @@ class TaskRepositoryError(RuntimeError):
 
 class TaskNotFoundError(TaskRepositoryError):
     """task_id 不存在。"""
+
     error_code = "ZA-GV-0025"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -97,6 +120,7 @@ class TaskNotFoundError(TaskRepositoryError):
 
 class InvalidTransitionError(TaskRepositoryError):
     """非法状态转换。"""
+
     error_code = "ZA-GV-0026"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -107,6 +131,7 @@ class InvalidTransitionError(TaskRepositoryError):
 
 class RejectedUpgradeCoolingOffError(TaskRepositoryError):
     """优先级升级被拒绝且仍在 48h 冷却期内。"""
+
     error_code = "ZA-GV-0027"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -117,6 +142,7 @@ class RejectedUpgradeCoolingOffError(TaskRepositoryError):
 
 class P0InflationFrozenError(TaskRepositoryError):
     """GOV-TASK-004 §2.5: P0 任务已达上限（5个），冻结新增 P0。"""
+
     error_code = "ZA-GV-0028"
 
     def __init__(self, *args, error_code: str | None = None, **kwargs):
@@ -256,9 +282,7 @@ def _parse_json_array_fields(d: dict) -> None:
         if isinstance(raw, str):
             parsed = json.loads(raw)
             if not isinstance(parsed, list):
-                raise ValueError(
-                    f"字段 {field} 期望 JSON 数组，实际得到 {type(parsed).__name__}: {raw!r}"
-                )
+                raise ValueError(f"字段 {field} 期望 JSON 数组，实际得到 {type(parsed).__name__}: {raw!r}")
             d[field] = parsed
         else:
             d[field] = raw
@@ -272,9 +296,7 @@ def _parse_json_dict_fields(d: dict) -> None:
         if isinstance(raw, str):
             parsed = json.loads(raw)
             if not isinstance(parsed, dict):
-                raise ValueError(
-                    f"字段 {field} 期望 JSON 对象，实际得到 {type(parsed).__name__}: {raw!r}"
-                )
+                raise ValueError(f"字段 {field} 期望 JSON 对象，实际得到 {type(parsed).__name__}: {raw!r}")
             d[field] = parsed
         else:
             d[field] = raw
@@ -369,7 +391,6 @@ def search(
     """T-DB-010: 使用 FTS5 全文搜索任务。
 
 
-
     query
 
         搜索词（支持 FTS5 查询语法）。
@@ -381,7 +402,6 @@ def search(
     limit
 
         返回结果上限（默认 50，最大 200）。
-
 
 
     返回 list[dict{task_id, title, status, priority, phase, snippet}]
@@ -469,6 +489,7 @@ def search(
     finally:
         conn.close()
 
+
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
 def new_id(prefix: str = "") -> str:
     # 治本（2026-08-17 #115）：prefix 恢复 ="" 默认值——R5 公共化批次建 wrapper 时丢失
@@ -482,4 +503,3 @@ def new_id(prefix: str = "") -> str:
 def is_valid_transition(from_status, to_status) -> bool:
     """公共接口：is_valid_transition（Stage 4 公共化）。"""
     return _is_valid_transition(from_status, to_status)
-

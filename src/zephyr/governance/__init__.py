@@ -1,4 +1,6 @@
 # [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
+# [MODULE] zephyr.governance
+# [DOMAIN] D_GOVERNANCE
 # [TTL] permanent
 """
 Agent 治理八件套 · Governance Domain — DOM-GOV-001 v0.2.0
@@ -101,6 +103,32 @@ except (ImportError, RuntimeError):
     pass
 
 
+# __all__ 尾部声明的子目录模块 basename -> canonical 子目录模块路径（PEP 562 惰性加载）。
+# 治本（2026-08-17 AI-AUDIT13）：原 __all__ 声明 11 个子目录 basename 但 __getattr__
+# 未覆盖——from zephyr.governance import auto_runner 等全部 ImportError（悬空声明）。
+# 此处补齐 lazy loader（注释原承诺"保留供 lazy loader 反查"），使 __all__ 声明为真。
+_LAZY_SUBMODULE_MAP: dict[str, str] = {
+    # 根目录核心模块 basename（ARCH-031 六核心之三；__all__ 声明但惰性未覆盖——
+    # depgraph_schema 原仅靠他模块传递 import 的副作用挂载，try 块失败即不可达；
+    # evidence_pack/integrity 属性不可达。2026-08-17 AI-AUDIT13 复检治本）
+    "depgraph_schema": "zephyr.governance.depgraph_schema",
+    "evidence_pack": "zephyr.governance.evidence_pack",
+    "integrity": "zephyr.governance.integrity",
+    "auto_runner": "zephyr.governance.ops_governance.auto_runner",
+    "budget_enforcement": "zephyr.governance.financial_governance.budget_enforcement",
+    "constitutional_update": "zephyr.gov_rule.constitutional_update.constitutional_update",
+    "database_manager": "zephyr.governance.persistence.database_manager",
+    "default_attribution_engine": "zephyr.governance.audit.default_attribution_engine",
+    "default_tca_engine": "zephyr.governance.audit.default_tca_engine",
+    "f5_boot_integration": "zephyr.governance.resilience_governance.f5_boot_integration",
+    "f5_event_subscriber": "zephyr.governance.resilience_governance.f5_event_subscriber",
+    "f5_shutdown_manager": "zephyr.governance.resilience_governance.f5_shutdown_manager",
+    "pipeline_base": "zephyr.governance.engine.pipeline_base",
+    "strategy_base": "zephyr.governance.strategies.strategy_base",
+    "strategy_registry": "zephyr.governance.strategies.strategy_registry",
+}
+
+
 def __getattr__(name):
     """延迟导入避免缺失模块阻塞整个包初始化."""
     if name == "budget_enforcer_mod":
@@ -115,6 +143,10 @@ def __getattr__(name):
         import zephyr.infrastructure.a2a_protocol as _mod
 
         return _mod
+    if name in _LAZY_SUBMODULE_MAP:
+        import importlib
+
+        return importlib.import_module(_LAZY_SUBMODULE_MAP[name])
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
@@ -179,7 +211,7 @@ try:
     import zephyr.gov_drift.detector_core.performance_baseline as performance_baseline
     import zephyr.gov_drift.detector_core.regime_detector as regime_detector
 
-    # 子目录模块（33个）
+    # 子目录桥接模块（gov_drift/behavioral_admission/architecture/context/data/escalation/financial/intelligence/lifecycle/ops）
     import zephyr.gov_enforcement.behavioral_admission.admission_response as admission_response
     import zephyr.gov_enforcement.behavioral_admission.ai_code_standards as ai_code_standards
     import zephyr.gov_enforcement.behavioral_admission.code_review_ai as code_review_ai
@@ -192,7 +224,7 @@ try:
     import zephyr.governance.architecture_governance.dependency_manager as dependency_manager
     import zephyr.governance.architecture_governance.local_first_arch as local_first_arch
     import zephyr.governance.architecture_governance.path_resolver as path_resolver
-    import zephyr.governance.architecture_governance.strategy_portfolio as strategy_portfolio  # noqa: import-integrity  module may not exist yet, wrapped in try/except
+    import zephyr.governance.financial_governance.strategy_portfolio as strategy_portfolio
     import zephyr.governance.context_governance.context_manager as context_manager
     import zephyr.governance.context_governance.context_recycling as context_recycling
     import zephyr.governance.context_governance.prompt_lifecycle as prompt_lifecycle
@@ -216,7 +248,7 @@ try:
     import zephyr.governance.lifecycle_governance.post_live_verification as post_live_verification
     import zephyr.governance.ops_governance.agent_dispatch as agent_dispatch
 
-    # 根目录模块（22个）
+    # 子目录桥接模块（续：ops/resilience/infrastructure.runtime）
     import zephyr.governance.ops_governance.bandwidth_optimizer as bandwidth_optimizer
     import zephyr.governance.ops_governance.environment_manager as environment_manager
     import zephyr.governance.ops_governance.ops_foundation as ops_foundation
@@ -366,7 +398,9 @@ __all__ = [
     # compliance_rule/market_schema/merkle_hourly/performance_attribution_report/gate_repo，
     # 其中 base/merkle_hourly/performance_attribution_report/market_schema 已被 commit
     # 213be2b5a3 删除，broker_interface/compliance_rule 是 capability 名非模块符号，
-    # gate_repo 从未存在）。剩余 14 项为子目录模块 basename，保留供 lazy loader 反查。
+    # gate_repo 从未存在）。剩余 14 项 = 11 个子目录模块 basename（经 _LAZY_SUBMODULE_MAP
+    # 惰性加载，2026-08-17 AI-AUDIT13 补齐）+ 3 个根目录模块（depgraph_schema/evidence_pack/
+    # integrity，Python 子模块导入机制天然可解析）。
     "auto_runner",
     "budget_enforcement",
     "database_manager",
