@@ -17,6 +17,7 @@
 
 from __future__ import annotations
 
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 from zephyr.signal_fundamental.gen.aggregator_base import (
     SignalAggregatorBase,
 )
@@ -25,7 +26,6 @@ from zephyr.signal_fundamental.strategy.capital_allocator import (
     CapitalAllocatorBase,
 )
 from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 # DegradationMonitorBase 真源已迁移至 D_SIGQC 域（2026-07-06 域边界修正）。
 # 通过 __getattr__ 跨域 re-export 向后兼容，避免直接 import 已迁移的符号导致 ImportError。

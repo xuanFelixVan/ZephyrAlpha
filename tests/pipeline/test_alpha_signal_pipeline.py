@@ -36,16 +36,17 @@ class TestPipelineStage:
 
 
 class TestPipelineError:
+    """PipelineError 契约对齐 shared/foundation/errors.py SSoT（5.76.1 修复后）。"""
+
     def test_instantiation(self):
-        err = PipelineError(PipelineStage.FACTOR_COMPUTE, "test error")
-        assert err.stage == PipelineStage.FACTOR_COMPUTE
+        err = PipelineError("test error")
         assert err.message == "test error"
-        assert err.detail == {}
-        assert "[factor_compute]" in str(err)
+        assert err.details == {}
+        assert err.error_code == "ZA-SH-0007"
 
     def test_with_detail(self):
-        err = PipelineError(PipelineStage.SIGNAL_SYNTHESIS, "fail", detail={"k": "v"})
-        assert err.detail == {"k": "v"}
+        err = PipelineError("fail", details={"k": "v"})
+        assert err.details == {"k": "v"}
 
 
 class TestPipelineResult:

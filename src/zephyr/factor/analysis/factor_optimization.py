@@ -114,7 +114,6 @@ def _neg_ir(
 ) -> float:
     """计算 -IR（用于最小化 = 最大化 IR）。"""
     synth = factor_panel.fillna(0).to_numpy() @ weights
-    synth_df = pd.DataFrame(synth, index=factor_panel.index, columns=factor_panel.columns[:1]).iloc[:, 0:1]
     # 组装面板用于 IC 计算
     synth_panel = pd.DataFrame(
         np.outer(synth, np.ones(factor_panel.shape[1])),
@@ -164,9 +163,11 @@ def optimize_weights(
     constraints = [{"type": "eq", "fun": lambda w: np.sum(w) - 1.0}]
     bounds = [(0.0, 1.0)] * n
     if objective == "max_ir":
-        loss = lambda w: _neg_ir(w, panel, forward_returns)
+        def loss(w: np.ndarray) -> float:
+            return _neg_ir(w, panel, forward_returns)
     elif objective == "min_variance":
-        loss = lambda w: float(np.var(panel.fillna(0).to_numpy() @ w))
+        def loss(w: np.ndarray) -> float:
+            return float(np.var(panel.fillna(0).to_numpy() @ w))
     else:
         log.warning("factor_optimization: 未知目标 '%s'，返回等权", objective)
         return {fid: 1.0 / n for fid in fids}

@@ -18,7 +18,7 @@ D_SIGNAL Signal Domain
 Signal域统一包。聚合信号生成、策略、合成、组合、资本配置和管线。
 
 子模块:
-  gen/       — 信号生成 (SignalAggregatorBase, CapitalAllocatorBase, DegradationMonitorBase)
+  gen/       — 信号生成 (SignalAggregatorBase, CapitalAllocatorBase)
   strategy/  — 资本配置策略 (CapitalAllocatorBase re-export, DefaultCapitalAllocator)
   synth/     — 信号合成 (SignalSynthesizerBase)
   combiner/  — 信号合成组合器 (SynthesizedSignal)
@@ -77,7 +77,9 @@ def __getattr__(name):
         "DegradationMonitorBase": "zephyr.signal_quality.degradation_monitor_base",
         "SignalSynthesizerBase": ".synth.signal_synthesizer",
         "AlphaSignalPipeline": ".pipeline",
-        "SynthesizedSignal": ".combiner.synthesized_signal",
+        # SynthesizedSignal 真源在 shared/contracts（CTR-P1-015 契约 SSoT），
+        # combiner/synthesized_signal.py 不存在——原指向悬空模块会 ModuleNotFoundError。
+        "SynthesizedSignal": "zephyr.shared.contracts.synthesized_signal",
         "CapitalAllocationResult": ".capital.capital_allocation_result",
         "DefaultSignalAggregator": ".gen.implementations.default_signal_aggregator",
         "DefaultCapitalAllocator": ".strategy.implementations.default_capital_allocator",

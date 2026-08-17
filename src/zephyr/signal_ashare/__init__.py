@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-038 | docs/03_modules/_domain_signal/blueprint.md
+# [BLUEPRINT] MOD-SIGNAL_ASHARE | (pending)
 # [MODULE] zephyr.signal_ashare
 # [DOMAIN] D_ASHARE_SIGNAL
 # [DEPENDENCIES]
@@ -12,7 +12,10 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT]
 # [TESTS]
-# [A_module] module_id=MOD-INF-038 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# 原 module_id=MOD-INF-038 与 shared/lifecycle/state_machine.py（MOD-INF-038 状态机引擎）
+# 在 depgraph 撞号（跨域同 ID 双文件），2026-08-17 审计治本修正为 MOD-SIGNAL_ASHARE，
+# 与本包 6 个子包 __init__ 的既有约定一致。
+# [A_module] module_id=MOD-SIGNAL_ASHARE | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
 # signal_ashare domain package

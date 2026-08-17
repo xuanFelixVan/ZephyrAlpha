@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SIG-026 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 D-SIGNAL-26 — A股板块分析引擎

@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-SIGQC-001 | docs/03_modules/_domain_signal_quality/blueprint.md
+# [BLUEPRINT] MOD-SIGQC-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_quality.degradation_monitor_base
 # [DOMAIN] D_SIGQC
 # [DEPENDENCIES] zephyr.trading.trading_contracts.market.signal_degradation_warning; zephyr.shared.contracts.synthesized_signal
@@ -70,8 +70,8 @@ from __future__ import annotations
 import abc
 from typing import ClassVar
 
-from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.trading.trading_contracts.market.signal_degradation_warning import SignalDegradationWarning
 
 
 class DegradationMonitorBase(abc.ABC):

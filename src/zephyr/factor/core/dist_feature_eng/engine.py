@@ -44,12 +44,14 @@ from __future__ import annotations
 
 import logging
 import time
-from concurrent.futures import ProcessPoolExecutor, TimeoutError as FutureTimeout
+from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import TimeoutError as FutureTimeout
 from dataclasses import dataclass, field
 
 import pandas as pd
 
 from zephyr.factor.core.backpressure.limiter import BackpressureLimiter
+from zephyr.factor.core.config_manager.loader import get_section
 from zephyr.factor.core.factor_dag.dag import FactorDAG
 from zephyr.factor.factor_base import FactorRegistry
 
@@ -67,6 +69,15 @@ class DistEngConfig:
 
     max_workers: int = 4
     factor_timeout_s: float = 120.0
+
+
+def _default_config() -> DistEngConfig:
+    """从 core/_config.yaml 的 dist_feature_eng 节构建默认配置（真源=YAML，缺省回退常量）。"""
+    s = get_section("dist_feature_eng")
+    return DistEngConfig(
+        max_workers=int(s.get("max_workers", 4)),
+        factor_timeout_s=float(s.get("factor_timeout_s", 120.0)),
+    )
 
 
 @dataclass
@@ -114,7 +125,7 @@ def compute_factor_for_symbol(
         return (symbol, factor_id, series, "")
     except KeyError:
         return (symbol, factor_id, None, f"factor '{factor_id}' not registered")
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001 — 子进程入口纯函数：单标的失败须回传 error 不抛出（进程池边界容错契约）
         return (symbol, factor_id, None, f"compute error: {e}")
 
 
@@ -134,7 +145,7 @@ class DistributedFeatureEngine:
         config: DistEngConfig | None = None,
         backpressure: BackpressureLimiter | None = None,
     ) -> None:
-        self._config = config or DistEngConfig()
+        self._config = config or _default_config()
         self._bp = backpressure
 
     def execute(
@@ -236,7 +247,7 @@ class DistributedFeatureEngine:
             except FutureTimeout:
                 failed.append(symbol)
                 log.warning("dist_feature_eng: %s/%s 超时", factor_id, symbol)
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 — 单标的失败不阻断其他标的（错误契约：记入 failed_symbols）
                 failed.append(symbol)
                 log.warning("dist_feature_eng: %s/%s 异常: %s", factor_id, symbol, e)
             finally:

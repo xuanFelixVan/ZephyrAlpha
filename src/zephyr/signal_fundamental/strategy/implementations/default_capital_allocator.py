@@ -39,9 +39,9 @@ import logging
 from datetime import UTC, datetime
 from enum import Enum
 
+from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 from zephyr.signal_fundamental.gen.aggregator_base import CapitalAllocatorBase
 from zephyr.trading.trading_contracts.execution.capital_allocation_result import CapitalAllocationResult
-from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
 
 _logger = logging.getLogger(__name__)
 

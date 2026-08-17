@@ -22,7 +22,7 @@
 # created: "2026-08-02"
 # ---
 
-"""
+r"""
 
 
 D-SIGNAL-21 A股主力行为分析引擎
@@ -159,12 +159,11 @@ D-SIGNAL-21 A股主力行为分析引擎
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
 from typing import Any
-
-import logging
 
 logger = logging.getLogger(__name__)
 

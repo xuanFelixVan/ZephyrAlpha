@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L03-001 | docs/03_modules/_domain_signal/blueprint.md
 # [MODULE] zephyr.signal_fundamental.pipeline
 # [DOMAIN] D_FUNDAMENTAL_SIGNAL
-# [DEPENDENCIES] zephyr.governance.__init__; zephyr.signal_fundamental.synth.signal_synthesizer; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal
+# [DEPENDENCIES] zephyr.shared.foundation.errors; zephyr.shared.utils.time_utils; zephyr.signal_fundamental.synth.signal_synthesizer; zephyr.shared.contracts.factor_signal; zephyr.shared.contracts.synthesized_signal
 # [CONSUMERS]
 # [STARTUP] manual
 # [MATURITY] production
@@ -63,9 +63,9 @@ __all__ = [
 
 try:
     from zephyr.factor.factor_base import FactorBase
-    from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
     from zephyr.shared.contracts.factor_signal import FactorSignal
     from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+    from zephyr.signal_fundamental.synth.signal_synthesizer import SignalSynthesizerBase
 
     _CONTRACTS_AVAILABLE = True
 except ImportError:
@@ -430,30 +430,35 @@ class AlphaSignalPipeline:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 self._synthesizers = []
 
-        if not self._synthesizers:
-            raw_confidences = []
-            for sig in factor_signals:
-                if hasattr(sig, "confidence"):
-                    raw_confidences.append(sig.confidence)
-                elif isinstance(sig, dict) and "confidence" in sig:
-                    raw_confidences.append(sig["confidence"])
-            avg_confidence = sum(raw_confidences) / len(raw_confidences) if raw_confidences else 0.5
-            return [
-                {
-                    "synthesized": True,
-                    "signal_count": len(factor_signals),
-                    "key": idempotency_key,
-                    "confidence": avg_confidence,
-                }
-            ]
-
         results = []
         for synth_cls in self._synthesizers:
             synth = synth_cls()
             if hasattr(synth, "synthesize"):
-                result = synth.synthesize(factor_signals, symbol="", as_of_timestamp=None)
+                try:
+                    result = synth.synthesize(factor_signals, symbol="", as_of_timestamp=None)
+                except Exception as e:  # noqa: BLE001 — 单合成器失败不阻断管线（与因子计算容错契约同构：降级记录后继续）
+                    self._degraded_reasons.append(f"Synthesizer {synth_cls.__name__} failed: {e}")
+                    continue
                 results.append(result)
-        return results
+
+        if results:
+            return results
+        # 无可用合成器（未注册或全部失败）→ 降级伪合成：沿用置信度均值通道，保证管线产出可降级信号
+        raw_confidences = []
+        for sig in factor_signals:
+            if hasattr(sig, "confidence"):
+                raw_confidences.append(sig.confidence)
+            elif isinstance(sig, dict) and "confidence" in sig:
+                raw_confidences.append(sig["confidence"])
+        avg_confidence = sum(raw_confidences) / len(raw_confidences) if raw_confidences else 0.5
+        return [
+            {
+                "synthesized": True,
+                "signal_count": len(factor_signals),
+                "key": idempotency_key,
+                "confidence": avg_confidence,
+            }
+        ]
 
     @staticmethod
     def _aggregate_confidence(synthesized: list) -> float:

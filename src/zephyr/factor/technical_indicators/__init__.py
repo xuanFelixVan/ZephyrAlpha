@@ -40,12 +40,6 @@ from __future__ import annotations
 
 from typing import Final
 
-from zephyr.factor.technical_indicators.indicator_base import (
-    TechnicalIndicatorBase,
-    TechnicalIndicatorMeta,
-    TechnicalIndicatorRegistry,
-    autodiscover_technical_indicators,
-)
 # 子模块导出供 sleeve alpha 择时 / tests 直接 import（from zephyr.factor.technical_indicators import momentum 等）
 from zephyr.factor.technical_indicators import (  # noqa: I001  包内子模块显式导出
     momentum,
@@ -53,6 +47,12 @@ from zephyr.factor.technical_indicators import (  # noqa: I001  包内子模块�
     trend,
     volatility,
     volume,
+)
+from zephyr.factor.technical_indicators.indicator_base import (
+    TechnicalIndicatorBase,
+    TechnicalIndicatorMeta,
+    TechnicalIndicatorRegistry,
+    autodiscover_technical_indicators,
 )
 
 __all__: Final[list[str]] = [

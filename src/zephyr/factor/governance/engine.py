@@ -86,8 +86,8 @@ from dataclasses import dataclass
 
 from zephyr.factor.core.evaluation.backtest import EvaluationResult
 from zephyr.factor.governance.grayscale_rollout import GrayscaleRollout, GrayscaleStatus
-from zephyr.factor.governance.six_step_flow import FlowStatus, SixStepFlow
 from zephyr.factor.governance.lifecycle_state_machine import GRAYSCALE, PRODUCTION
+from zephyr.factor.governance.six_step_flow import FlowStatus, SixStepFlow
 
 
 @dataclass

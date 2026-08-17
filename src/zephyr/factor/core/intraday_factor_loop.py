@@ -181,7 +181,7 @@ class IntradayFactorLoop:
             return pd.DataFrame()
 
         rows: dict[str, dict[str, float | int]] = {}
-        for symbol, tick_hash in zip(self._symbols, raw_ticks):
+        for symbol, tick_hash in zip(self._symbols, raw_ticks, strict=False):
             parsed = _parse_tick_hash(tick_hash)
             if parsed is not None:
                 rows[symbol] = parsed

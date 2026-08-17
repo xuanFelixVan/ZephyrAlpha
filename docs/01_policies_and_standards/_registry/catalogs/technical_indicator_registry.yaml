@@ -1393,7 +1393,9 @@ indicators:
   entry_role: "state"
   applies_to: []
   tags: ["基准", "指标"]
-  algorithm_status: "quantized"
+  # 2026-08-17 审计修正（AI-AUDIT08）：trend.py 实际无一目均衡表实现（code_symbol=null 设计态），
+  # algorithm_status 由机械推导的 quantized 更正为 pending_backtest，与 status=candidate 对齐。
+  algorithm_status: "pending_backtest"
   evidence: ""
   code_symbol: null
   code_fingerprint: null
