@@ -29,8 +29,13 @@
 核心职责：
   - Pre-trade 风控校验（订单是否符合 RiskLimits）
   - 持仓突破检测（当前持仓是否触发风控线）
-  - 熔断判定（drawdown / VaR breach -> kill_switch）
+  - 熔断判定（HALT 级违规 -> kill_switch，is_kill_switch_triggered）
   - 产出 RiskLimitViolationError（CTR-ERR-004）
+
+注意（2026-08-17 裁定）：回撤/VaR 的度量与告警不在本快照校验接口内——
+快照输入数学上无法计算峰谷回撤（需峰值状态）。回撤真源=
+zephyr.risk.core.drawdown_tracker（MOD-RK-011），VaR 真源=
+zephyr.risk.core.var_calculator（MOD-RK-05），禁止在此重建第二决策点。
 
 CTR 契约：
   消费者 — CTR-003 (RiskLimits) ← D_RISK（本层产出，内部消费）
