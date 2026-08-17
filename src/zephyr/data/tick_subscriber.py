@@ -65,6 +65,10 @@ _RUN_LOG_PATH = _REPO_ROOT / "tmp" / "tick_subscriber_run.log"
 _BIZ_RESUB_AFTER_S = 300.0
 # 业务心跳写出/看门狗循环间隔（对齐 guard 15s 心跳节奏）
 _BIZ_WATCHDOG_LOOP_S = 15.0
+# #117（2026-08-17 实盘实证）：启动时 QMT 离线致 universe 解析 0 只标的的边缘——
+# 看门狗盘中周期性重试 universe 解析+订阅，指数退避 60s 起翻倍、上限 900s
+_BIZ_UNIVERSE_RETRY_BASE_S = 60.0
+_BIZ_UNIVERSE_RETRY_MAX_S = 900.0
 
 
 def infer_market_type(stock_code: str) -> str:
@@ -259,6 +263,9 @@ class TickSubscriber:
         self._hb_day_base_written = 0
         self._is_trading_day: bool | None = None  # xtdata 日历判定（None=未刷新）
         self._started_ts: float = 0.0  # subscriber 启动时刻（heartbeat started_ts）
+        # #117：0 标的边缘重试状态（指数退避）
+        self._universe_retry_count = 0
+        self._universe_retry_next_ts = 0.0
 
     def _on_tick(self, datas: dict) -> None:
         """xtdata 回调入口——把 tick 放入队列（QMT 线程调用）。
@@ -658,6 +665,7 @@ class TickSubscriber:
             "errors": self._errors,
             "subscribed": len(self._subscribed),
             "resub_count": self._resub_count,
+            "universe_retry_count": self._universe_retry_count,
             "is_trading_day": self._is_trading_day,
         }
         try:
@@ -668,31 +676,87 @@ class TickSubscriber:
             log.warning("业务心跳写出失败: %s", e)
 
     def _biz_watchdog_loop(self) -> None:
-        """业务看门狗（裁定C/E）：周期写业务心跳 + 盘中无 tick 周期重订阅。
+        """业务看门狗（裁定C/E + #117）：周期写业务心跳 + 盘中异常自愈。
 
         裁定E 治本"预热后永久静默"：_wait_for_first_tick 失败后不再静默——
         盘中时段 last_tick_ts 超 _BIZ_RESUB_AFTER_S 未更新即重新订阅+重等首 tick。
         非盘中（收盘/周末/节假日）不重订阅：无 tick 推送属正常，重订阅无意义。
+
+        #117 治本"0 标的边缘"（2026-08-17 实盘实证静默 14h+）：启动时 QMT 离线
+        致板块获取全失败 → _symbols_resolved 为空 → 旧重订阅条件（含标的非空）
+        永不触发。盘中时段标的为 0 时周期性重试 universe 解析+订阅（指数退避），
+        解析成功即重置退避并交回既有"无 tick 重订阅"路径。
         """
         while self._running:
             self._write_biz_heartbeat()
             if self._is_market_open_now():
-                idle = time.time() - self._last_tick_ts if self._last_tick_ts else float("inf")
-                if idle > _BIZ_RESUB_AFTER_S and self._symbols_resolved:
-                    self._resub_count += 1
-                    log.warning(
-                        "业务看门狗: 盘中 %.0fs 无 tick（第 %d 次周期重订阅，%d 只标的）...",
-                        idle, self._resub_count, len(self._symbols_resolved),
-                    )
-                    self._subscribed.clear()
-                    self._subscribe_all_symbols(self._symbols_resolved)
-                    # 重等首 tick（Event 已 set 时立即返回，以 last_tick_ts 刷新判恢复）
-                    self._first_tick_received.wait(timeout=30.0)
-                    if self._last_tick_ts and time.time() - self._last_tick_ts < _BIZ_RESUB_AFTER_S:
-                        log.info("业务看门狗: 重订阅后 tick 流已恢复")
-                    else:
-                        log.warning("业务看门狗: 重订阅后 30s 仍无 tick（下轮继续重试）")
+                if not self._symbols_resolved:
+                    self._retry_empty_universe()
+                else:
+                    idle = time.time() - self._last_tick_ts if self._last_tick_ts else float("inf")
+                    if idle > _BIZ_RESUB_AFTER_S:
+                        self._resub_count += 1
+                        log.warning(
+                            "业务看门狗: 盘中 %.0fs 无 tick（第 %d 次周期重订阅，%d 只标的）...",
+                            idle, self._resub_count, len(self._symbols_resolved),
+                        )
+                        self._subscribed.clear()
+                        self._subscribe_all_symbols(self._symbols_resolved)
+                        # 重等首 tick（Event 已 set 时立即返回，以 last_tick_ts 刷新判恢复）
+                        self._first_tick_received.wait(timeout=30.0)
+                        if self._last_tick_ts and time.time() - self._last_tick_ts < _BIZ_RESUB_AFTER_S:
+                            log.info("业务看门狗: 重订阅后 tick 流已恢复")
+                        else:
+                            log.warning("业务看门狗: 重订阅后 30s 仍无 tick（下轮继续重试）")
             time.sleep(_BIZ_WATCHDOG_LOOP_S)
+
+    def _retry_empty_universe(self) -> None:
+        """#117：0 标的边缘自愈——盘中周期性重试 universe 解析+订阅（指数退避+留痕）。
+
+        触发：_symbols_resolved 为空（启动时 QMT 离线致板块获取全失败）且盘中。
+        退避：_BIZ_UNIVERSE_RETRY_BASE_S(60s) 起指数翻倍，上限 _BIZ_UNIVERSE_RETRY_MAX_S(900s)；
+        退避窗口内直接返回不重复尝试。解析成功（标的非空）即订阅+重等首 tick 判恢复，
+        并重置退避计时——后续若仍静默，由既有"无 tick 周期重订阅"路径接管。
+        留痕：WARNING/INFO 日志（run log 落盘）+ 心跳 JSON universe_retry_count 字段
+        （进程期累计，对齐 resub_count 语义，供 deadman 观察"是否发生过 0 标的重试"）。
+        """
+        now = time.time()
+        if now < self._universe_retry_next_ts:
+            return
+        self._universe_retry_count += 1
+        retry_no = self._universe_retry_count
+        log.warning(
+            "业务看门狗: 标的列表为空（启动时 universe 解析失败），盘中第 %d 次重试 universe 解析+订阅...",
+            retry_no,
+        )
+        symbols = self._get_all_symbols()
+        if not symbols:
+            backoff = min(
+                _BIZ_UNIVERSE_RETRY_BASE_S * (2 ** min(retry_no - 1, 4)),
+                _BIZ_UNIVERSE_RETRY_MAX_S,
+            )
+            self._universe_retry_next_ts = time.time() + backoff
+            log.warning(
+                "业务看门狗: universe 重解析仍 0 只（QMT 未恢复？），%.0fs 后第 %d 次重试",
+                backoff, retry_no + 1,
+            )
+            return
+        self._symbols_resolved = list(symbols)
+        self._subscribed.clear()
+        n = self._subscribe_all_symbols(self._symbols_resolved)
+        log.info(
+            "业务看门狗: universe 重解析成功（%d 只），已订阅 %d 只（第 %d 次重试）",
+            len(symbols), n, retry_no,
+        )
+        # 重等首 tick（Event 已 set 时立即返回，以 last_tick_ts 刷新判恢复）
+        self._first_tick_received.wait(timeout=30.0)
+        if self._last_tick_ts and time.time() - self._last_tick_ts < _BIZ_RESUB_AFTER_S:
+            log.info("业务看门狗: 0 标的恢复后 tick 流已恢复")
+        else:
+            log.warning("业务看门狗: 订阅成功但 30s 仍无 tick（交回无 tick 重订阅路径观察）")
+        # 解析成功即重置退避计时；retry_count 累计不重置（对齐 _resub_count 留痕语义）
+        # ——若仍静默，既有 idle>_BIZ_RESUB_AFTER_S 路径接管
+        self._universe_retry_next_ts = 0.0
 
     @staticmethod
     def _classify_qmt_path(path: str) -> str:

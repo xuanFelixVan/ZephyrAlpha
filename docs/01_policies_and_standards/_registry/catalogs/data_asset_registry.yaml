@@ -49,7 +49,7 @@ unique_key:
   sources: [source_id]
   datasets: [dataset_id]
   jobs: [job_id]
-entry_counts: {sources: 15, datasets: 103, jobs: 85}  # v1.3.0 实测修正（+DS-103/+JOB-083）
+entry_counts: {sources: 15, datasets: 105, jobs: 86}  # 2026-08-17 实测修正（AI-IPO-001 #118：DS-104 错位归位+JOB-084~086 补计）；派生快照值，以 yaml 实测为准——禁止凭此报数（#83 漏报教训）
 
 source_schema:
   source_id: str               # SRC-{PROVIDER}-{NNN}
@@ -4329,6 +4329,57 @@ datasets:
   code_symbol: null
   code_fingerprint: null
 
+# tracker #114 / 37号 §3.2a（2026-08-17，AI-IPO-001）：IPO 流动性抽离前瞻预警数据管道
+- dataset_id: DS-105
+  entity_name: meta.ipo_calendar
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/implementations/akshare_provider.py
+  produced_by_job: JOB-086
+  consumed_by_jobs: []
+  domain_id: D_MARKET
+  pit_policy: strict
+  format_summary: IPO日历与募资规模日快照（巨潮新股列表：申购/上市日期、发行价、总发行数量、募资规模亿元、发行市盈率；list_date=NULL=未定档），37号§3.2a IPO流动性抽离前瞻预警（compute_ipo_liquidity_drain）数据源
+  valid_since: '2023-08-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: meta.ipo_calendar
+  name_zh: IPO日历与募资规模
+  status: production
+  version: 1.0.0
+  created_at: '2026-08-17'
+  updated_at: '2026-08-17'
+  owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-17 akshare stock_new_ipo_cninfo 实盘探针：402 行（沪深北，含 393 已定档+9 未定档 list_date=NaT），发行价/总发行数量(万股)字段齐备，募资规模=发行价×总发行数量/1e4 可派生；单测覆盖 NaT/NaN 防御与幂等口径"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_ipo_calendar"
+  code_fingerprint: null
+- dataset_id: DS-104
+  entity_name: event.news_data
+  entity_type: dataset
+  scope: production
+  contract_ref: null
+  physical_type: src/zephyr/data/news_collector.py
+  produced_by_job: null
+  consumed_by_jobs: []
+  domain_id: D_ASHARE_SIGNAL
+  pit_policy: strict
+  format_summary: 新闻快讯主表（cls/eastmoney/rss/akshare 等多源 event_driven 写入，SCD 语义由 news_id 锚定）。覆盖缺口：bdpan 历史包止于 2024-07、全量多源直播 2026-07 上线，2024-08~2026-06 仅 akshare 细流（月千级 vs 健康月 8 万级）——事件驱动回测该窗口存在新闻盲区（INV-RET-004 最短木板类推，回补候选见 CAND-DAT-002）
+  valid_since: '2000-01-01'
+  module_id: MOD-L00-004
+  design_maturity: production
+  name: event.news_data
+  name_zh: 新闻快讯
+  status: production
+  version: 1.0.0
+  created_at: '2026-08-16'
+  updated_at: '2026-08-16'
+  owner: MOD-L00-004
+
 jobs:
 - job_id: JOB-001
   job_name: ingest.minqmt_kline
@@ -6799,25 +6850,33 @@ jobs:
   evidence: "2026-08-16 实盘回填：namechange 逐年分页（1990 起；无参调用被 tushare 默认截断 10000 行实证修复）→ST 区间→变化日全量快照 450 个/109902 行落库（2020-01-02~2026-08-07，接缝=实盘首快照 2026-08-10 键零碰撞）；单测 8 条全过；交叉核验：实盘 8-10 集合缺失仅 2 只、独立口径 stock_basic 8-14 名称含 ST=203 只、负面对照 000503 零命中；已知残留：退市无更名个股区间无终点（121 只留推导集，无 K 线不触达消费侧）"
   code_symbol: "src/zephyr/data/implementations/tushare_provider.py::TushareProvider._fetch_st_namechange_backfill"
   code_fingerprint: null
-  code_fingerprint: null
-- dataset_id: DS-104
-  entity_name: event.news_data
-  entity_type: dataset
+
+# tracker #114 / 37号 §3.2a（2026-08-17，AI-IPO-001）
+- job_id: JOB-086
+  job_name: ingest.akshare_ipo_calendar
+  entity_type: job
   scope: production
-  contract_ref: null
-  physical_type: src/zephyr/data/news_collector.py
-  produced_by_job: null
-  consumed_by_jobs: []
-  domain_id: D_ASHARE_SIGNAL
-  pit_policy: strict
-  format_summary: 新闻快讯主表（cls/eastmoney/rss/akshare 等多源 event_driven 写入，SCD 语义由 news_id 锚定）。覆盖缺口：bdpan 历史包止于 2024-07、全量多源直播 2026-07 上线，2024-08~2026-06 仅 akshare 细流（月千级 vs 健康月 8 万级）——事件驱动回测该窗口存在新闻盲区（INV-RET-004 最短木板类推，回补候选见 CAND-DAT-002）
-  valid_since: '2000-01-01'
+  source_code_ref: src/zephyr/data/implementations/akshare_provider.py
+  trigger_type: scheduled
+  run_context: production
+  inputs: []
+  outputs:
+  - DS-105
+  pit_relevance: strict
+  description: IPO日历与募资规模盘后日快照（巨潮 stock_new_ipo_cninfo 全量重拉，(trade_date,symbol) ReplacingMergeTree 同日幂等替换；tasks.yaml ipo_calendar_daily，daily_capital 18:00）——37号§3.2a IPO流动性抽离前瞻预警的数据管道（算法已按数据源无关接口施工于 liquidity_crisis_manager，本 JOB 承接数据接入）
   module_id: MOD-L00-004
   design_maturity: production
-  name: event.news_data
-  name_zh: 新闻快讯
+  name: ingest.akshare_ipo_calendar
+  name_zh: IPO日历接入
   status: production
   version: 1.0.0
-  created_at: '2026-08-16'
-  updated_at: '2026-08-16'
+  created_at: '2026-08-17'
+  updated_at: '2026-08-17'
   owner: MOD-L00-004
+  entry_role: "reference"
+  applies_to: ["stock", "market"]
+  tags: ["数据", "事件"]
+  algorithm_status: "not_applicable"
+  evidence: "2026-08-17 实盘探针 402 行；调度 tasks.yaml ipo_calendar_daily（daily_capital，trading_day_only）；天然无副源（官方披露口径仅巨潮承担），fallback_sources 显式置空"
+  code_symbol: "src/zephyr/data/implementations/akshare_provider.py::AkshareIngestProvider._fetch_ipo_calendar"
+  code_fingerprint: null

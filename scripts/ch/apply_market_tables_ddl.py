@@ -345,6 +345,8 @@ SETTINGS index_granularity = 8192
 # JOB-077 市场元数据与约束接入（DS-081~083，2026-08-15）— 真源: schemas/categories/ 同名文件
 # 不内联 fallback：DDL 部署必须 fail-closed（导入失败即报错），防止静默使用漂移副本建错表
 from schemas.categories.meta_stock_basic import STOCK_BASIC_DDL
+# tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）：IPO 日历/募资规模（巨潮新股列表）
+from schemas.categories.market_ipo_calendar import IPO_CALENDAR_DDL
 from schemas.categories.market_stk_limit import STK_LIMIT_DDL
 from schemas.categories.market_suspend import SUSPEND_DDL
 
@@ -364,6 +366,8 @@ _ALL_DDL: list[tuple[str, str]] = [
     ("c1_market.stock_basic", STOCK_BASIC_DDL),
     ("c1_market.stk_limit", STK_LIMIT_DDL),
     ("c1_market.suspend", SUSPEND_DDL),
+    # tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）
+    ("c1_market.ipo_calendar", IPO_CALENDAR_DDL),
 ]
 
 # 增量迁移（ALTER TABLE ADD COLUMN IF NOT EXISTS）
@@ -395,6 +399,7 @@ _EXPECTED_ENGINES: dict[str, str] = {
     "stock_basic": "ReplacingMergeTree",
     "stk_limit": "ReplacingMergeTree",
     "suspend": "ReplacingMergeTree",
+    "ipo_calendar": "ReplacingMergeTree",
 }
 
 _DATABASE = "c1_market"

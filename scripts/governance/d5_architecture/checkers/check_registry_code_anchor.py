@@ -5,7 +5,7 @@
 # [CONSUMERS] zephyr.gov_enforcement.commit_gates.registry_code_anchor_gate
 # [STARTUP] manual
 # [MATURITY] production
-# [INVARIANTS] 15 个含 code 锚点的业务注册表 code_path/code_symbol 存在性校验; 合并态豁免
+# [INVARIANTS] 15 个含 code 锚点的业务注册表 code_path/code_symbol 存在性校验; 条目 id 键 vs 所在列表纯净性校验（[List-Purity]，#118 DS-104 错位治本）; 合并态豁免
 # [MODIFY-GUARD] gate_id="REGISTRY-CODE-ANCHOR"; #ARCH-BREG-002 门禁A
 # [STABILITY] evolving
 # [SAFETY] M
@@ -26,6 +26,9 @@
   2. code_symbol 非空 → 格式 <relative_path>::<symbol>；文件必须存在；
      .py 文件额外做 AST 符号存在性校验（顶层 def/class 名或 Class.method 点号）
   3. status ∈ {deprecated, retired} 的条目豁免——锚点为历史记录（tombstone），非活链接
+  4. [List-Purity] 列表纯净性（#118，2026-08-17）：条目缺本列表期望 id 键却携带
+     外列表 id 键 → 错位违规（如 dataset 条目被追加进 jobs 列表——AI 只写文件尾
+     不看分区实证的静默漂移；错位条目对"按列表键读取"的未来消费者会整条蒸发）
 
 合并态豁免（同 check_rule_four_way_alignment.py 惯例）：
   .git/MERGE_HEAD 存在时半合并工作区不可信 → SKIP 返回 exit 0。
@@ -108,6 +111,49 @@ _ID_KEYS = (
     "model_id", "cycle_id", "event_type_id",
 )
 
+# 列表键 → 期望条目 id 键的 fallback 映射（[List-Purity]，#118）。
+# 首选真源是各注册表文件自身的 unique_key 声明（见 _expected_id_keys，SSoT 防
+# 第二真源漂移——portfolio_models 的合法 id 键实为 model_id 即实证）；本映射仅在
+# 注册表未声明 unique_key 时兜底。条目缺本列表期望键却含其他已知 id 键 = 写错列表
+# （如 DS-104 混入 jobs）。
+_LIST_ID_KEYS: dict[str, str] = {
+    "factors": "factor_id",
+    "strategies": "strategy_id",
+    "indicators": "indicator_id",
+    "universes": "universe_id",
+    "benchmarks": "benchmark_id",
+    "cost_models": "cost_model_id",
+    "execution_algos": "execution_algo_id",
+    "risk_limits": "risk_limit_id",
+    "sources": "source_id",
+    "datasets": "dataset_id",
+    "jobs": "job_id",
+    "chart_patterns": "pattern_id",
+    "fields": "field_id",
+    "experiments": "experiment_id",
+    "models": "model_id",
+    "cycles": "cycle_id",
+    "portfolio_models": "model_id",
+}
+
+
+def _expected_id_keys(reg_name: str, data: dict) -> dict[str, str]:
+    """列表键→期望条目 id 键：优先读注册表自身 unique_key 声明（SSoT），
+    未声明的列表回退 _LIST_ID_KEYS 静态映射。"""
+    out: dict[str, str] = {}
+    uk = data.get("unique_key")
+    if isinstance(uk, dict):  # data_asset 多列表形态：{列表键: [id键, ...]}
+        for lk, keys in uk.items():
+            if isinstance(keys, list) and keys:
+                out[lk] = str(keys[0])
+    elif isinstance(uk, list) and uk:  # 单列表形态：[id键]
+        for lk in REGISTRY_LISTS.get(reg_name, []):
+            out[lk] = str(uk[0])
+    for lk in REGISTRY_LISTS.get(reg_name, []):
+        if lk not in out and lk in _LIST_ID_KEYS:
+            out[lk] = _LIST_ID_KEYS[lk]
+    return out
+
 # code_symbol 格式： <relative_path>::<symbol>
 _SYMBOL_SEP = "::"
 
@@ -180,6 +226,7 @@ def check_registry_file(reg_path: Path, violations: list[str]) -> int:
         violations.append(f"  - [Parse] {reg_path.name} YAML 解析失败: {e}")
         return 0
     lists = REGISTRY_LISTS[reg_path.name]
+    expected_map = _expected_id_keys(reg_path.name, data)
     n = 0
     for lk in lists:
         for entry in data.get(lk) or []:
@@ -187,6 +234,18 @@ def check_registry_file(reg_path: Path, violations: list[str]) -> int:
                 continue
             n += 1
             eid = _entry_id(entry)
+            # [List-Purity]（#118）：缺本列表期望 id 键却携带外列表 id 键 → 错位违规。
+            # 判定精准化：缺 id 且无外键的条目不报（保持现状语义）；deprecated/retired
+            #  tombstone 同样须在正确列表（错位不豁免——漂移史即错位来源之一）。
+            expected_key = expected_map.get(lk)
+            if expected_key and not entry.get(expected_key):
+                foreign = [k for k in _ID_KEYS if k != expected_key and entry.get(k)]
+                if foreign:
+                    violations.append(
+                        f"  - [List-Purity] {reg_path.name} {lk}/{eid}: "
+                        f"条目缺本列表 id 键 '{expected_key}'，却含外列表键 '{foreign[0]}'"
+                        f"——条目疑似写错列表（错位）"
+                    )
             # status ∈ {deprecated, retired}：锚点为历史记录（tombstone），豁免存在性校验
             if entry.get("status") in ("deprecated", "retired"):
                 continue
@@ -265,7 +324,8 @@ def check(files: list[str] | None = None) -> int:
         if len(violations) > 50:
             print(f"  ... 共 {len(violations)} 条（前 50 条展示）")
         print("\n修复：代码改名/删除后须同步更新库条目 code_path/code_symbol，"
-              "或将条目标记 deprecated（分域真源：实现域 owner=代码，#ARCH-BREG-002）。")
+              "或将条目标记 deprecated（分域真源：实现域 owner=代码，#ARCH-BREG-002）；"
+              "[List-Purity] 错位条目须移入其 id 键对应的列表（datasets/jobs/sources 等，#118）。")
         return EXIT_FINDINGS
 
     print(f"[PASS] 业务注册表代码锚点校验通过（扫描 {len(targets)} 库 {total} 条目）")

@@ -1293,6 +1293,23 @@
   data_source: [akshare, internal]
   blueprint: null
 
+# --- tracker #114 / 37号 §3.2a IPO 流动性抽离前瞻预警（2026-08-17，AI-IPO-001）---
+- category_id: market_ipo_calendar
+  name: "IPO日历与募资规模日快照（巨潮新股列表；list_date=NULL表示未定档；raise_amount单位亿元）"
+  engine: clickhouse
+  database: c1_market
+  table: ipo_calendar
+  schema_file: schemas/categories/market_ipo_calendar.py
+  data_type: 元数据
+  lifecycle: permanent
+  sla_level: L2
+  enabled: true
+  hard_constraint: null
+  calc_mode: preload
+  frequency: 日频
+  data_source: [akshare]
+  blueprint: "docs/02_enterprise_architecture/07_trading_decision_architecture/design_memos/37_liquidity_crisis_protocol.md §3.2a"
+
 - category_id: market_stock_indicator
   name: "股票技术指标"
   engine: clickhouse

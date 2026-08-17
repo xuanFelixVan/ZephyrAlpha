@@ -1446,6 +1446,23 @@ tasks:
     trading_day_only: false    # 纯CH查询推导，非交易日也可运行
     derive_from_kline: true
 
+  # tracker #114 / 37号 §3.2a（2026-08-17，AI-IPO-001）：IPO 流动性抽离前瞻预警
+  # 数据管道——IPO 日历/募资规模盘后日快照（巨潮官方披露口径，天然无副源，
+  # fallback_sources 显式置空；未定档 IPO list_date=NULL，公告后次日快照纳入）。
+- task_id: ipo_calendar_daily
+  table: c1_market.ipo_calendar
+  source: akshare
+  schedule: daily_capital
+  incremental: false    # 日快照（同日重跑 ReplacingMergeTree 幂等替换）
+  date_col: trade_date
+  dependencies: []
+  capability: ipo_calendar
+  symbols:
+  fallback_sources: []
+  extra:
+    description: "IPO日历与募资规模盘后日快照（DS-105：巨潮 stock_new_ipo_cninfo 沪深北全市场；37号§3.2a 流动性抽离前瞻预警数据源）"
+    trading_day_only: true
+
 - task_id: concept_board_refresh
   table: c1_market.concept_board
   source: akshare

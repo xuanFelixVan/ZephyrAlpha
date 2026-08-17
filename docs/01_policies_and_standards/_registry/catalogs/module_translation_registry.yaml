@@ -2024,6 +2024,13 @@ entries:
   desc_zh: 本文件是 c1_market.index_weight 表结构的唯一真源（DDL-as-Code 模式）。
   desc_en: ''
   plain_zh: 本文件是 c1_market.index_weight 表结构的唯一真源（DDL-as-Code 模式）。
+- module_path: schemas/categories/market_ipo_calendar.py
+  domain_id: D_DATA
+  name_zh: IPO日历与募资规模表
+  name_en: market_ipo_calendar
+  desc_zh: 本文件是 c1_market.ipo_calendar 表结构的唯一真源（DDL-as-Code 模式）。
+  desc_en: ''
+  plain_zh: 新股上市日历和募资规模的落库表结构。哪天有新股上市、预备圈多少钱都提前记下来——大新股上市会抽走市场里的钱，提前知道才能提前收着点仓位。
 - module_path: schemas/categories/market_kline_15min.py
   domain_id: D_DATA
   name_zh: 行情kline15min

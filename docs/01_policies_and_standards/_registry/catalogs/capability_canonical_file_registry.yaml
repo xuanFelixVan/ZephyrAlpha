@@ -9430,6 +9430,11 @@ creation_tokens:
     token: "auto-68-code-algorithm-review-pipeline-20260817"
     created_by: "COORD-68-001"
     capability: "code_algorithm_review_pipeline"
+  # --- market_ipo_calendar.py（37号§3.2a IPO 日历/募资规模表 DDL-as-Code 真源，tracker #114，2026-08-17 AI-IPO-001 施工；tests/ 豁免 token）---
+  - file: "schemas/categories/market_ipo_calendar.py"
+    token: "ipo001-market-ipo-calendar-20260817"
+    created_by: "AI-IPO-001"
+    capability: "data_source_provider_abstraction"
 di_seam_exemptions:
   - module_path: "zephyr.trading.auto_runtime_core.AutoRuntimeCore"
     reason: "P0-5 LSG DI seam 标杆，已有 DI 但 AST 模式不匹配（动态注入）"
