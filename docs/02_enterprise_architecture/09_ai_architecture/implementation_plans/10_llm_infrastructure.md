@@ -5,7 +5,7 @@ title: LLM 基础设施施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.1"
+version: "0.2.2"
 date: 2026-08-17
 topic: llm_infrastructure
 scope: 09_ai_architecture
@@ -262,7 +262,7 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | Q6 | 00_index §1「模型注册(MLflow)」与「llama.cpp+GPTQ INT4」两处表述已过期 | 待裁定（本文无权改 00_index） | MLflow 已退役（51 号备忘 v1.2.13 执行完毕）；GPTQ 已实证否决（§3.3）。建议 00_index 修订为「模型注册(REG-ML-001+运行时注册对账)」「推理优化(GGUF 量化,Ollama 托管)」，由 AI-FILL-00 或 Owner 落笔 |
 | Q7 | llm_gateway.py 头部蓝图标注不一致 | 待裁定 | 文件头 `[BLUEPRINT] MOD-INF-009` 与 docstring `MOD-INF-019: Agent Spec — LLM Gateway` 不一致；module_translation_registry/depgraph 真源需核对后订正其一 |
 | Q8 | mcp.json ↔ tool_contracts.yaml 漂移项归属 | 待裁定 | sandbox/red_blue_validator/clone_guard 仅见于 mcp.json；resource_optimization 仅见于 tool_contracts.yaml。是有意分层还是漏登记，Phase 0.3 前需 Owner 裁定 |
-| Q9 | 09_ai_architecture 目录被并行收口流程隔离搬迁事件 | 待裁定 | 2026-08-17 晚 coord 收口（reflog 3c9bb5a60b 前后）将整目录迁至 .runtime/quarantine/gova_leftover_20260817/（理由：66 文件缺 frontmatter 违反 TTL-METADATA 门禁 + DIRECTORY-CONTRACT 禁 csv）。本文已回迁原路径（frontmatter 合规），但同级 00/02/04 等文档仍在隔离区，本文相对链接暂不可解析；整树恢复待 GOVA 会话/Owner 裁定（恢复清单见 .runtime/ai00_audit_pause_20260817.md 第四节第 4 步） |
+| Q9 | 09_ai_architecture 目录被并行收口流程隔离搬迁事件 | 待裁定 | 2026-08-17 晚 coord 收口（reflog 3c9bb5a60b 前后）将整目录迁至 .runtime/quarantine/gova_leftover_20260817/（理由：66 文件缺 frontmatter 违反 TTL-METADATA 门禁 + DIRECTORY-CONTRACT 禁 csv）。本文已回迁原路径且 implementation_plans/ 同级文档已恢复（00/02 等链接可解析），但 依赖图/架构图 子树仍在隔离区——§3.5 对 02-D-DATA-数据域.md 的引用暂不可解析；子树恢复待 GOVA 会话/Owner 裁定（恢复清单见 .runtime/ai00_audit_pause_20260817.md 第四节第 4 步） |
 
 ---
 
@@ -273,6 +273,7 @@ LLM 调用能力在项目中**并非空白，而是"两套平行体系 + 若干�
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 背景+21 项已施工设施实测盘点+5 项实测缺口；§3 五项设计决策（三层运行时/MCP/推理优化/模型注册/数据增强边界）含替代方案；§4 Phase 0→3 施工计划（depgraph L1 铁律）；§5 不做清单；§6 开放问题 Q1~Q8 | AI-FILL-10 填充；关键实测修正：MLflow 已退役（51 号备忘）、GPTQ 在 3090 实证反减速（GGUF 替代）、数据增强归属 D-DATA 域；04/06/09/11 依赖文档未填充按降级处理（接口假设入 Q3~Q5） |
 | 2026-08-17 | 0.2.1 | 开放问题新增 Q9（目录隔离搬迁事件记录）+ 拼接处空行修正 + doc_type 修正（implementation_plan→blueprint，按 doc_type_vocabulary 弃用映射 construction_plan→blueprint） | 并行 coord 收口流程将 09_ai_architecture 整树迁至 quarantine，本文回迁并记录事件待裁定；TTL-METADATA 门禁 hard block 要求合法 doc_type |
+| 2026-08-17 | 0.2.2 | Q9 表述更新：implementation_plans 已恢复、依赖图/架构图子树仍在隔离区 | 提交后复核发现 02-D-DATA-数据域.md 引用暂不可解析，修正事件记录准确性 |
 
 ---
 
