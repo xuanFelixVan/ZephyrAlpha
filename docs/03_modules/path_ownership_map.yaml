@@ -6,9 +6,9 @@
 # ============================================================================
 
 meta:
-  generated_at: '2026-08-17T07:03:48Z'
+  generated_at: '2026-08-17T07:33:29Z'
   auto_generated_by: 'scripts/governance/generators/generate_path_ownership_map.py'
-  total_path_claims: 6055
+  total_path_claims: 6048
   total_ssot_claims: 16
   total_conflicts: 0
   conflict_resolution: 'ssot_claims_priority'
@@ -2656,27 +2656,6 @@ ownership:
     owner_blueprint: 'MOD-INF-013'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_cross_layer/model_context_protocol_servers/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/shared/contracts/errors/contract_violation_error.py'
-    owner_blueprint: 'MOD-INTEGRATION'
-    claim_type: 'depgraph_node'
-    declared_in: ''
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/shared/contracts/errors/factor_computation_error.py'
-    owner_blueprint: 'MOD-INTEGRATION'
-    claim_type: 'depgraph_node'
-    declared_in: ''
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/shared/contracts/errors/signal_degradation_warning.py'
-    owner_blueprint: 'MOD-INF-009'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_cross_layer/pipeline/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -14741,20 +14720,6 @@ ownership:
     existence: 'stable'
     ownership_judgment: '本模块'
 
-  - path: 'src/zephyr/integration/shared/contracts/errors/data_quality_error.py'
-    owner_blueprint: 'MOD-INTEGRATION'
-    claim_type: 'depgraph_node'
-    declared_in: ''
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/shared/contracts/errors/execution_rejection_error.py'
-    owner_blueprint: 'MOD-INF-009'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_cross_layer/pipeline/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
   - path: 'src/zephyr/integration/shared/events/event_schemas.py'
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'depgraph_node'
@@ -14773,13 +14738,6 @@ ownership:
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/shared/contracts/errors/risk_limit_violation_error.py'
-    owner_blueprint: 'MOD-INF-009'
-    claim_type: 'depgraph_node'
-    declared_in: 'docs/03_modules/_cross_layer/pipeline/blueprint.md'
     existence: 'generated'
     ownership_judgment: '本模块'
 
@@ -28612,13 +28570,6 @@ ownership:
     owner_blueprint: 'MOD-INF-016'
     claim_type: 'depgraph_node'
     declared_in: 'docs/03_modules/_cross_layer/shared_core/blueprint.md'
-    existence: 'generated'
-    ownership_judgment: '本模块'
-
-  - path: 'src/zephyr/integration/shared/contracts/errors/__init__.py'
-    owner_blueprint: 'MOD-INTEGRATION'
-    claim_type: 'depgraph_node'
-    declared_in: ''
     existence: 'generated'
     ownership_judgment: '本模块'
 
