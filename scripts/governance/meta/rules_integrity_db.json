@@ -66,7 +66,7 @@
       "desc": "capability 索引 + creation_tokens 真源（create_guard/capability_overlap_gate 依赖）"
     },
     "src/zephyr/gov_enforcement/rule_bridge/commit_gate_registry.py": {
-      "hash": "bfd318a7678f1c77",
+      "hash": "831f1c72063c9bb7",
       "critical": true,
       "desc": "pre-commit 门禁注册表 + tests/豁免真源（TEST_EXEMPT_PREFIXES/is_test_exempt）"
     },

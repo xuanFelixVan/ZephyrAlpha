@@ -2,6 +2,11 @@
 # [BLUEPRINT] MOD-GOV_CODE_QUALITY_DOMAIN | docs/03_modules/_domain_governance/code_quality/blueprint.md
 # [MODULE] zephyr.gov_code_quality
 # [DOMAIN] D_GOV_CODE_QUALITY
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 """
 

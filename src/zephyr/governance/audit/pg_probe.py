@@ -53,6 +53,29 @@ docs/_working/reports/2026-08-17-fail-open-analysis.md）：
    离线时每次 commit 都触发降级，不去重会淹没审计视图（告警疲劳）。
 5. **去重失败=照样留痕**：去重查询本身失败（库锁/缺表）时宁可多记不可漏记
    （fail-open 对审计有利方向）。
+
+# [ALGO_FLOW]
+# 层: 输入
+# - id: I1
+#   name: PG 连接参数与探测目标
+#   fields: host/port（真源 depgraph_schema._load_pg_config：DATABASE_URL > config/.env.postgres）
+#   code: probe_pg / pg_probe_shows_offline 入口
+# - id: I2
+#   name: fail-open 留痕请求
+#   fields: project_root / gate_id / db_offline / reason / affected_files / session_id / stack_trace
+#   code: log_db_failopen 入口参数
+# 层: 处理
+# - id: F1
+#   name: TCP 探测 + 状态原子写
+#   code: socket 连接 5432（≤1s 超时）→ .runtime/pg_probe_state.json（tmp+replace，双锚点 first_offline_at/last_reachable_at）
+# - id: F2
+#   name: 降级留痕 + 当日同签名去重
+#   code: log_db_failopen → failover_sig=gate_id:category 查 reconcile_execution_log 去重 → log_gate_failure 落 critical_warn
+# 层: 输出
+# - id: O1
+#   name: 探针状态与留痕记录
+#   fields: pg_probe_state.json（offline 判定）+ reconcile_execution_log critical_warn 行
+#   code: pg_probe_shows_offline 返回 bool / log_db_failopen 返回 None（永不抛异常）
 """
 
 from __future__ import annotations
@@ -180,9 +203,7 @@ def refresh_pg_probe_state(project_root: object, timeout: float = _PROBE_TIMEOUT
         "port": port,
         "error": error,
         _STATE_KEY_LAST_REACHABLE: now if reachable else prev.get(_STATE_KEY_LAST_REACHABLE),
-        _STATE_KEY_FIRST_OFFLINE: (
-            None if reachable else (prev.get(_STATE_KEY_FIRST_OFFLINE) or now)
-        ),
+        _STATE_KEY_FIRST_OFFLINE: (None if reachable else (prev.get(_STATE_KEY_FIRST_OFFLINE) or now)),
     }
     try:
         path = root / PG_PROBE_STATE_REL
@@ -283,6 +304,8 @@ def log_db_failopen(
             log_gate_failure 同款签名（设计声明）并透传；此前缺失致
             depgraph_pre_registration_gate L243 传 stack_trace 时本函数 TypeError，
             fail-open 留痕路径 fail-crash（FOPEN-001 fa25c19e49 引入）。
+            （AI-AUDIT11 同义补记：B1 落地时 docstring 声明「与 log_gate_failure 同款签名」
+            但漏本参数，调用方 REAL_ERROR 路径传入即 TypeError 反而阻断留痕——补齐使契约声明为真。）
     """
     from zephyr.governance.audit.reconciliation_registry import log_gate_failure
 
@@ -290,7 +313,8 @@ def log_db_failopen(
     # 避免锚定失败后在 CWD 下创建垃圾目录；留痕缺失仅 warning（fail-open 语义不变）。
     if not Path(str(project_root)).is_dir():
         logger.warning(
-            "pg_probe: log_db_failopen 跳过——project_root 非真实目录: %r", str(project_root)[:80],
+            "pg_probe: log_db_failopen 跳过——project_root 非真实目录: %r",
+            str(project_root)[:80],
         )
         return
 
@@ -300,7 +324,9 @@ def log_db_failopen(
     # REAL_ERROR（探针在线而 gate 自身失败）逐次留痕——真实错误不静默。
     if db_offline and _already_logged_today(project_root, gate_id, signature):
         logger.info(
-            "%s fail-open 留痕当日同签名已存在（%s），跳过去重。", gate_id, signature,
+            "%s fail-open 留痕当日同签名已存在（%s），跳过去重。",
+            gate_id,
+            signature,
         )
         return
     files_summary = ""
@@ -310,13 +336,15 @@ def log_db_failopen(
         files_summary = f"受影响文件: {', '.join(shown)}{suffix}"
     detail = (
         f"[{signature}] {gate_id} fail-open 放行留痕（tracker #116 B1/B2）。"
-        f"放行原因: {reason}（{'DB 离线降级' if db_offline else '真实错误（探针未证实离线）'}）。"
-        + files_summary
+        f"放行原因: {reason}（{'DB 离线降级' if db_offline else '真实错误（探针未证实离线）'}）。" + files_summary
     )
     try:
         log_gate_failure(
-            project_root, gate_id, detail,
-            session_id=session_id, trigger_source=trigger_source,
+            project_root,
+            gate_id,
+            detail,
+            session_id=session_id,
+            trigger_source=trigger_source,
             stack_trace=stack_trace,
         )
     except Exception as e:  # noqa: BLE001 — 留痕失败不阻断 gate 主流程

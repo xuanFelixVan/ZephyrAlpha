@@ -314,6 +314,7 @@ repos:
         pass_filenames: false
         always_run: false
         files: "^(docs/03_modules/.*blueprint\\.md|src/zephyr/.*\\.py)$"
+        description: "检测蓝图↔代码↔依赖图三方漂移（module_id/属性/文件清单/依赖声明不一致即硬阻断），防蓝图与实现脱节"
 
       # ── GATE-FRONTMATTER: 文档前置元数据增量守门（ttl+doc_type，#ARCH-PRECOMMIT-INCREMENTAL）──
       # 治本（2026-08-06，Task 9）：消除"全仓 frontmatter 扫描卡死裸 commit"缺陷（与 Task 4 gate-naming 同套路）。

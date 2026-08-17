@@ -1,4 +1,10 @@
 # [BLUEPRINT] MOD-GOV_COMMIT_GATE_REGISTRY | (auto-injected by S4 reconciler) | §
+# [MODULE] zephyr.gov_enforcement.rule_bridge
+# [INVARIANTS] none
+# [MODIFY-GUARD] none
+# [STABILITY] evolving
+# [SAFETY] L
+# [AI_AUTONOMY] ai_modifiable
 # [TTL] permanent
 """
 

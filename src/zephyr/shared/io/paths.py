@@ -144,7 +144,10 @@ DB_DIR: Final[Path] = REPO_ROOT / "data"
 # Previously: from zephyr.governance.persistence.sqlite_schema import DB_PATH
 DB_PATH: Final[Path] = MAIN_REPO_ROOT / "data" / "databases" / "governance.db"
 
-GATES_DIR: Final[Path] = REPO_ROOT / "src" / "zephyr" / "governance" / "rule_enforcement"
+# 治本（2026-08-17，AI-AUDIT11）：真源漂移修正——原指向 src/zephyr/governance/rule_enforcement
+# （物理不存在，gov_enforcement 迁移遗留），dispatch_fle_gates 静默空转。唯一物理真源=
+# src/zephyr/gov_enforcement/rule_enforcement（_registry.yaml 所在）。
+GATES_DIR: Final[Path] = REPO_ROOT / "src" / "zephyr" / "gov_enforcement" / "rule_enforcement"
 SNAPSHOTS_DIR: Final[Path] = REPO_ROOT / ".runtime" / "snapshots"
 RATIONALE_LOG_PATH: Final[Path] = REPO_ROOT / "docs" / "02_enterprise_architecture" / "architecture-rationale-log.md"
 

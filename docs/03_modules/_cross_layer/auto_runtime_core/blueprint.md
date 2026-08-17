@@ -150,7 +150,7 @@ responsibility_domain:
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-INF-035` 的 69 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-035` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-INF-035` 的 68 个 file 节点 | design | `extract_depgraph.py --modules MOD-INF-035` |
 | 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | planned | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
@@ -162,7 +162,7 @@ responsibility_domain:
 | module_id | MOD-INF-035 | MOD-INF-035 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | planned | planned | ✅ |
-| file_count | 69 文件 | 26 文件（§0.1） | ❌ |
+| file_count | 68 文件 | 26 文件（§0.1） | ❌ |
 
 > 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
@@ -1436,7 +1436,7 @@ STEP 3: 拆分后验证
 2. **worktree 内 commit 用 `--no-verify`**：与 GitCommitGateway 自身行为一致（GitCommitGateway 也用 `--no-verify` 绕过 pre-commit hooks）；worktree commit 是隔离的中间工作，最终校验在 merge 回主分支时生效
 3. **GATE-COMMIT-GW worktree 上下文放行**：检测 cwd 含 `.aidrafts/sess-` 时放行（纵深防御——即使 AI 不用 `--no-verify`，gate 也不阻断 worktree commit）
 4. **文件同步（君子协定模式，2026-07-02）**：AI 的 Edit/Write 写到项目根（IDE 限制，无法改），worktree 内文件是创建时的旧版本。`session_worktree_commit` 在 `git add` 前自动 `shutil.copy2` 将 files 从项目根同步到 worktree，确保 stage 的是最新内容。AI 无需手动同步
-5. **worktree base 新鲜度检查（裁定#19-B，2026-07-18）**：`session_worktree_commit` 在 `_sync_files_to_worktree` 之前调 `_ensure_worktree_base_fresh`——检测 worktree HEAD vs 主工作区 HEAD 是否一致，落后则自动对齐（无 session commit → `git reset --hard <main HEAD>` 安全；有 session commit → `git rebase <main HEAD>` 冲突 fail-loud 返回 `base_sync_failed=True` 阻断）。**治本场景**：并发 session merge 到 dev 后 dev HEAD 前进到 T1，AI 在主工作区 Edit 文件（主工作区文件 = dev T1 内容 + AI 改动），`_sync_files_to_worktree` copy2 主工作区文件到 worktree（base T0），commit 内容 = (dev T1 + AI 改动) − (worktree base T0) = dev T0→T1 改动（搭便车）+ AI 改动。**后果**：① git 历史污染（dev 多 commit 被塞进 session commit）；② ARCH-REFERENCE L2 误判（dev 新 #ARCH-NNN 引用被算作本次 commit 新增触发 `ARCH_ATOMICITY_VIOLATION` 硬阻断）。**降级**：`git rev-parse HEAD` 失败时返回 None 放行（不阻断业务）
+5. **worktree base 新鲜度检查（裁定#19-B，2026-07-18）**：`session_worktree_commit` 在 `_sync_files_to_worktree` 之前调 `_ensure_worktree_base_fresh`——检测 worktree HEAD vs 主工作区 HEAD 是否一致，落后则自动对齐（无 session commit → `git reset 硬重置到 <main HEAD>`（--hard 模式）安全；有 session commit → `git rebase <main HEAD>` 冲突 fail-loud 返回 `base_sync_failed=True` 阻断）。**治本场景**：并发 session merge 到 dev 后 dev HEAD 前进到 T1，AI 在主工作区 Edit 文件（主工作区文件 = dev T1 内容 + AI 改动），`_sync_files_to_worktree` copy2 主工作区文件到 worktree（base T0），commit 内容 = (dev T1 + AI 改动) − (worktree base T0) = dev T0→T1 改动（搭便车）+ AI 改动。**后果**：① git 历史污染（dev 多 commit 被塞进 session commit）；② ARCH-REFERENCE L2 误判（dev 新 #ARCH-NNN 引用被算作本次 commit 新增触发 `ARCH_ATOMICITY_VIOLATION` 硬阻断）。**降级**：`git rev-parse HEAD` 失败时返回 None 放行（不阻断业务）
 6. **适用场景**：≥2 个并发 AI 对话时 MUST 走 worktree 模式；单 AI 对话可选
 7. **claim/overlap 门禁保留为 P2**：主工作目录直接 commit 路径仍走 GitCommitGateway + SessionRequiredGate/ClaimRequiredGate/HeldOverlapGate（防搭便车提交）
 

@@ -41,8 +41,8 @@
 
 治本方案
 --------
-在 GitCommitGateway pre-commit 阶段注册门禁（priority=113，紧接
-FOLDER-CAPACITY-HARD-LIMIT=112 之后）：
+在 GitCommitGateway pre-commit 阶段注册门禁（priority=116，紧接
+RELATIVE-PATH-LITERAL=115 之后）：
   1. 对每个 staged .py 文件，读取 [CONSUMERS] 字段内容
   2. 解析消费者声明（支持 4 种格式：简单模块路径/模块+函数名/抽象代号/方法级）
   3. 三类违规检测：
@@ -64,7 +64,7 @@ FOLDER-CAPACITY-HARD-LIMIT=112 之后）：
 4. **含中文括号内容跳过**：括号内含中文等非 ASCII 字符 → 视为描述性文字非
    函数名，跳过整个括号（宁可漏报不可误报）。
 5. **fail-open 原则**：git 失败 / ast 解析失败时不阻断 commit（与其他 gate 一致）。
-6. **priority=113**：紧接 FOLDER-CAPACITY-HARD-LIMIT=112，作为最新的 warn-only gate
+6. **priority=116**：原 113 被 DEPGRAPH-PRE-REGISTRATION 占用，后到者让位至 116
    （priority 冲突实证：109=RULING-COMMIT-VERIFIED, 110=CAPABILITY-LOOKUP-REQUIRED,
    111=GATE-PRECOMMIT-OFFLINE, 112=FOLDER-CAPACITY-HARD-LIMIT 已占用）。
 7. **noqa 行级逃生**：`# noqa: consumers-accuracy  <reason>` 标记当前文件豁免
@@ -440,7 +440,7 @@ def make_consumers_accuracy_gate() -> GateSpec:
     消费者模块路径错。
 
     Returns:
-        GateSpec(gate_id="CONSUMERS-ACCURACY", priority=113)。
+        GateSpec(gate_id="CONSUMERS-ACCURACY", priority=116)。
         warn-only：检出违规返回 (True, warning_detail)，不阻断 commit。
     """
 
@@ -563,7 +563,7 @@ def scan_all_for_consumers_accuracy(
                     content = fh.read()
             except OSError:
                 continue  # fail-open: 文件不可读
-            # noqa 豁免：baseline scan 也识别 # noqa: consumers-accuracy 标记
+            # noqa 豁免：baseline scan 也识别 consumers-accuracy 行级豁免标记
             if _CONSUMERS_ACCURACY_NOQA_RE.search(content):
                 continue
             violations.extend(check_consumers_accuracy(py_file, content, root))

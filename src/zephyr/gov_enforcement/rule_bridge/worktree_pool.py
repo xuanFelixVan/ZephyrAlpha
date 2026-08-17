@@ -164,7 +164,7 @@ import shutil
 import subprocess
 import threading
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from zephyr.shared.io.paths import REPO_ROOT
@@ -259,7 +259,7 @@ class WorktreePool:
 
     def _generate_pool_id(self) -> str:
         """生成唯一 pool_id（时间戳 + 4 hex 随机，避免跨进程碰撞）。"""
-        ts = datetime.now().strftime("%Y%m%d%H%M%S")
+        ts = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
         rand = secrets.token_hex(2)
         return f"{_POOL_ID_PREFIX}{ts}-{rand}"
 

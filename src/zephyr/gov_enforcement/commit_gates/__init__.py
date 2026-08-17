@@ -47,10 +47,10 @@ ORPHAN-MODULE 注意：gate 模块通过 YAML 动态加载（importlib），但 
 # - id: A1
 #   name_zh: ① ORPHAN-MODULE 静态引用锚定
 #   name_en: _ORPHAN_MODULE_STATIC_IMPORTS
-#   intro: 集中静态 import 5 个 make_*_gate 工厂（别名 _ 不 re-export），防 YAML 动态加载的 gate 被误判孤儿
-#   desc: L39-53：blueprint_node_id_hardcode/test_residue_ssot/secret_registry_consistency/secret_hardcode/commit_scope 五工厂静态锚定
+#   intro: 集中静态 import 7 个 make_*_gate 工厂（别名 _ 不 re-export），防 YAML 动态加载的 gate 被误判孤儿
+#   desc: L80-100：blueprint_node_id_hardcode/test_residue_ssot/secret_registry_consistency/secret_hardcode/commit_scope/reconciler_file_ops/registry_code_anchor 七工厂静态锚定
 #   inputs: I1
-#   outputs: 5 个门禁工厂静态引用
+#   outputs: 7 个门禁工厂静态引用
 # - id: A2
 #   name_zh: ② 包级导出封口
 #   name_en: __all__ = []
@@ -61,8 +61,8 @@ ORPHAN-MODULE 注意：gate 模块通过 YAML 动态加载（importlib），但 
 # 层: 输出
 # - id: O1
 #   name_zh: commit 门禁工厂锚定集
-#   name_en: 5 × make_*_gate factories
-#   intro: 5 个 pre-commit 门禁工厂经静态锚定 + YAML 动态注册进 GitCommitGateway
+#   name_en: 7 × make_*_gate factories
+#   intro: 7 个 pre-commit 门禁工厂经静态锚定 + YAML 动态注册进 GitCommitGateway
 #   downstream: zephyr.gov_enforcement.rule_bridge.git_commit_gateway（[CONSUMERS] 头）
 # [/ALGO_FLOW]
 #
