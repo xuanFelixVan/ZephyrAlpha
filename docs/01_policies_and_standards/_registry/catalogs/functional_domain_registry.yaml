@@ -1660,6 +1660,21 @@ entries:
   # 治本(2026-07-19): 从 DB 反向补 YAML 真源 (layer_id=L2_domain, lifecycle=operational, max_modules=150)
   # sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
 
+- domain: D_PLAN
+  subdomain: plan_engine
+  domain_name_zh: 预案引擎
+  ssot_module: MOD-PLAN-000
+  ssot_path: src/zephyr/plan_engine/
+  covers:
+  - 预案引擎，负责明日操作边界计算（MOD-PLAN-001）、盘前约束加载（MOD-PLAN-002）、尾盘加减仓决策（MOD-PLAN-003）；为买入/卖出/仓位三流提供共同上游边界与约束
+  aliases:
+  - plan_engine
+  - 预案引擎
+  - 明日预案
+  stability: stable
+  ai_autonomy: ai_modifiable
+  # 治本(2026-08-17): Owner 批准创建（#16 衍生遗留项），从 D_TRADING 拆出独立域；域 ID 取 D_PLAN 与 blueprint_id MOD-PLAN-XXX 域片段对齐（N-17 一致性）；sync 的 ON CONFLICT 不写这些列，DB 手工值会被保留；此处仅作文档
+
 
 # 治本（#ARCH-SSOT-GLOSSARY-MERGE-001）：补 4 个遗留图示用名域，stability=deprecated 不 sync DB
 # 这些域在数据流图示中沿用旧名（裁定#204 改名/拆分后），域中文名经 domain_name_mapping 查 YAML fallback

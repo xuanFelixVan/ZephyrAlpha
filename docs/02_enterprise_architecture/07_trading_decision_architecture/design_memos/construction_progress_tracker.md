@@ -199,7 +199,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 13 | field_dictionary source_system 3 个值 pending（当时 data_asset_registry 未就绪；现已建成） | AI-REG-FLD-001 | 重跑 E4 FK 检查复核 | ✅ 已闭环（2026-08-14 统筹复核：SRC-QMT-001/AKSHARE-001/INTERNAL-001 在 data_asset_registry L114/136/422 实证存在，pending 标注清零，commit f0ebfdd5） |
 | 14 | 52 号 §7 DSR 双实现未统编（阈值 0.5 vs 0.95），影响 dsr_value 字段语义 | AI-REG-EXP-001 | 需裁定统一阈值 | ⏳ 等裁定 |
 | 15 | BUY 队 5 个新文件 token 与既有 capability 名称重叠 | AI-BUY-001 | 命名冲突需消解 | ✅ 已闭环（2026-08-17 AI-REGF-001：读现库实证——353 能力定义+618 creation_token 全扫无硬碰撞，唯一异常=3 个 plan 蓝图共享伞名 tomorrow_plan_engine（跨 3 模块歧义+与先注册 decision_table_plan_engine(2026-08-05) 词干相近）；按后注册让先注册改 3 token capability 为模块本名（tomorrow_boundary_planner/premarket_constraint_loader/closing_session_decision），另 2 token 无碰撞保留；token 字符串未动，CREATE-GUARD 按 file 索引零影响，全仓 tomorrow_plan_engine 引用清零实证） |
-| 16 | MOD-PLAN-001/002/003 域不一致 | AI-BUY-001 | depgraph 域归属修正 | ✅ 已闭环（2026-08-17 AI-REGF-001 裁定：读三文件实际职责（盘后边界/盘前约束/尾盘决策，消费方 BM-BUY-02/BM-SELL-02，与 MOD-TRIG-001 同域同链路）——depgraph D_TRADING 实证正确且与文件头 [DOMAIN] 一致、DOMAIN-FK 通过，零变更；D_PLAN_ENGINE 新域创建属 Owner 书面审批权限（域归属铁律）不自建；blueprint_registry functional_domain=plan_engine 作功能标签保留（全库 10+ 处非映射标签先例）；裁定留痕 41 号结案报告） |
+| 16 | MOD-PLAN-001/002/003 域不一致 | AI-BUY-001 | depgraph 域归属修正 | ✅ 已闭环（2026-08-17 AI-REGF-001：初判 D_TRADING 维持→Owner 批准创建独立域——**D_PLAN 落地**（functional_domain_registry 登记+depgraph domains 同步+4 节点 domain_id D_TRADING→D_PLAN+3 代码文件头 [DOMAIN] 同步），DOMAIN-FK+N-17 通过；三模块职责=明日边界/盘前约束/尾盘决策，为买卖仓位三流提供共同上游边界） |
 | 17 | 33 号文档骨架化，直接影响第三批 33 BudgetChange 施工 | AI-FRA-001 | 第三批开工前需先充实 33 号文档 | ✅ 已闭环（实际 2026-08-12 批二回填 6a4f539214 已重建为 active v1.0.0；AI-BGT-001 核实重建质量并修行号漂移→v1.1.0） |
 
 ### P1-补 · 第二统筹会话补登（2026-08-13）

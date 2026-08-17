@@ -19,7 +19,7 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：
 > - ~~5 个新文件 token 与既有能力名称重叠~~ ✅ 已消解（2026-08-17 AI-REGF-001，遗留 #15）：实证现库无硬碰撞，唯一异常=3 个 plan 蓝图共享伞名 tomorrow_plan_engine（跨 3 模块歧义+与先注册 decision_table_plan_engine(2026-08-05) 词干相近）——按后注册让先注册，3 token capability 改模块本名 tomorrow_boundary_planner/premarket_constraint_loader/closing_session_decision（blueprint_registry SSoT 对齐），另 2 token（buy_flow_batched_entry/trigger_list_registry）实证无碰撞保留；token 字符串未动，CREATE-GUARD 按 file 索引不受影响。
-> - ~~MOD-PLAN-001/002/003 域归属不一致~~ ✅ 已裁定（2026-08-17 AI-REGF-001，遗留 #16）：读三文件实际职责（盘后边界计算/盘前约束加载/尾盘加减仓决策，消费方=买卖融合层 BM-BUY-02/BM-SELL-02，与 MOD-TRIG-001 同域同链路）——depgraph D_TRADING 实证为最佳既存域且与文件头 [DOMAIN] 一致、DOMAIN-FK 通过，零变更；D_PLAN_ENGINE 新域创建属 Owner 书面审批权限（域归属铁律），本批不自建，blueprint_registry functional_domain=plan_engine 作功能标签保留（全库 10+ 处非映射标签先例）。
+> - ~~MOD-PLAN-001/002/003 域归属不一致~~ ✅ 已闭环（2026-08-17 AI-REGF-001，遗留 #16）：初判 D_TRADING 为最佳既存域；Owner 随后批准创建独立域——**D_PLAN 已落地**（functional_domain_registry 登记+depgraph domains 表同步+4 节点 domain_id D_TRADING→D_PLAN+3 代码文件头 [DOMAIN] 同步），DOMAIN-FK+N-17 校验通过；三模块职责=明日边界计算/盘前约束加载/尾盘加减仓决策，为买卖仓位三流提供共同上游边界。
 
 # 买入流 spec
 
