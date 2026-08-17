@@ -329,3 +329,97 @@ class TestMonitorIntegration:
         assert monitor._pot_counter is None
         snap = monitor.assess(_pot_failing_returns(), now=datetime(2026, 8, 16, 15, 0, tzinfo=CST))
         assert snap.pot_fallback_historical is True
+
+
+# ── 9. 真 Redis 后端实测 (db15 隔离库, 配置缺失/不可达自动 skip) ──
+
+#: 测试专用 Redis DB（对齐 test_state_store_redis.py 裁定: db0/1/2=sim/live/治理 之外的隔离域）
+_TEST_REDIS_DB: int = 15
+_TEST_STATE_PREFIX = "za:test:pot_counter"
+
+
+def _redis_cfg_or_skip() -> dict:
+    """加载真实 Redis 配置并探活；缺失/不可达 → skip（不硬失败, 对齐项目既有裁定）。"""
+    redis = pytest.importorskip("redis")
+    from zephyr.infrastructure.redis_config import (
+        RedisConfigError,
+        load_redis_config,
+    )
+
+    try:
+        cfg = load_redis_config()
+    except RedisConfigError as exc:
+        pytest.skip(f"Redis 配置缺失，跳过 Redis 后端实测: {exc}")
+    cfg = {
+        **cfg,
+        "db": _TEST_REDIS_DB,
+        "socket_timeout": 2,
+        "socket_connect_timeout": 2,
+    }
+    conn = redis.Redis(**cfg)
+    try:
+        conn.ping()
+    except redis.RedisError as exc:
+        pytest.skip(f"Redis 不可达，跳过 Redis 后端实测: {exc}")
+    finally:
+        conn.close()
+    return cfg
+
+
+@pytest.fixture
+def redis_store():
+    """真实 RedisStateStore（db15 + 专用前缀），用前后各 flushdb 防串扰。"""
+    import redis
+
+    from zephyr.shared.state_store_redis import RedisStateStore
+
+    cfg = _redis_cfg_or_skip()
+    conn = redis.Redis(**cfg)
+    conn.flushdb()
+    yield RedisStateStore(conn, key_prefix=_TEST_STATE_PREFIX)
+    conn.flushdb()
+    conn.close()
+
+
+class TestRealRedisBackend:
+    """真 Redis 实测（AI-REDIS-001 裁定"有 infra 则真实"：项目已有 7.0.15@Hyper-V VM）。
+
+    补 contract-equivalence 内存替身无法覆盖的部分: 真实 wire 序列化往返、
+    服务端持久化跨实例、脏字节注入损坏语义。
+    """
+
+    def test_full_lifecycle_real_redis(self, redis_store):
+        """5 日失败降级 → 成功重置, 全生命周期在真 Redis 上与 Json 后端行为一致。"""
+        counter = PotFailureCounter(redis_store)
+        base = datetime(2026, 8, 10)
+        for i in range(POT_FAILURE_DAYS_FOR_ADJUSTMENT):
+            day = (base + timedelta(days=i)).strftime("%Y-%m-%d")
+            assert counter.record_failure(day) == i + 1
+        assert counter.get_adjusted_threshold() == POT_THRESHOLD_ADJUSTED
+        counter.record_success("2026-08-15")
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert redis_store.load(POT_FAILURE_COUNTER_NAMESPACE)["consecutive_failures"] == 0
+
+    def test_cross_instance_persistence_real_redis(self, redis_store):
+        """T 日实例 A 记录, T+1 日新实例读旧档续计 (服务端数据保留, 模拟进程重启跨日)。"""
+        PotFailureCounter(redis_store).record_failure("2026-08-16")
+        counter_t1 = PotFailureCounter(redis_store)
+        assert counter_t1.record_failure("2026-08-17") == 2
+
+    def test_corrupt_value_fails_closed_real_redis(self, redis_store):
+        """绕过 store 直注脏字节 → load 抛 StateCorruptError → 计数器按从未失败处理。"""
+        key = f"{_TEST_STATE_PREFIX}:{POT_FAILURE_COUNTER_NAMESPACE}"
+        redis_store._conn.set(key, "{corrupted json!!!")
+        counter = PotFailureCounter(redis_store)
+        assert counter.get_adjusted_threshold() == BASE_THRESHOLD
+        assert counter.record_failure("2026-08-16") == 1
+
+    def test_threshold_float_roundtrip_real_redis(self, redis_store):
+        """float 阈值经 SET/GET + JSON 往返精度无损 (0.85 精确回读为 float)。"""
+        counter = PotFailureCounter(redis_store)
+        base = datetime(2026, 8, 10)
+        for i in range(POT_FAILURE_DAYS_FOR_ADJUSTMENT):
+            counter.record_failure((base + timedelta(days=i)).strftime("%Y-%m-%d"))
+        raw = redis_store.load(POT_FAILURE_COUNTER_NAMESPACE)
+        assert isinstance(raw["adjusted_threshold"], float)
+        assert raw["adjusted_threshold"] == POT_THRESHOLD_ADJUSTED
