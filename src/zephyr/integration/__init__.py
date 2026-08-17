@@ -23,4 +23,4 @@ __all__ = [
     "ports",
     "preemption_manager",
     "routing_plugins",
-'llm_bridge', 'mcp_server', 'pipeline_routing']
+'llm_bridge', 'mcp_server']

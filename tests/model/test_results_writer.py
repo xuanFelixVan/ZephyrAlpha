@@ -15,8 +15,8 @@ from __future__ import annotations
 
 import json
 
-from zephyr.intelligence.model_profiling.pipeline_routing.profiler import CaseResult, ModelProfile
-from zephyr.intelligence.model_profiling.pipeline_routing.results_writer import (
+from zephyr.intelligence.model_profiling.profiler import CaseResult, ModelProfile
+from zephyr.intelligence.model_profiling.results_writer import (
     DEFAULT_OUTPUT_DIR,
     detect_drift,
     load_benchmark_history,

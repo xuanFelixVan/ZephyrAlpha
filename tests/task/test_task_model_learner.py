@@ -15,7 +15,7 @@ from __future__ import annotations
 
 import pytest
 
-from zephyr.intelligence.model_profiling.pipeline_routing.task_model_learner import (
+from zephyr.intelligence.model_profiling.task_model_learner import (
     MIN_SAMPLES_FOR_LEARNED,
     THROUGHPUT_MAX,
     ModelTaskEntry,

@@ -13,8 +13,8 @@
 
 from __future__ import annotations
 
-from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import BenchmarkCase
-from zephyr.intelligence.model_profiling.pipeline_routing.profiler import (
+from zephyr.intelligence.model_profiling.benchmark_suite import BenchmarkCase
+from zephyr.intelligence.model_profiling.profiler import (
     MAX_OLLAMA_MODELS,
     SKIP_MODEL_PATTERNS,
     CaseResult,

@@ -12,7 +12,7 @@
 # [TTL] task_bound
 
 
-from zephyr.intelligence.model_profiling.pipeline_routing.benchmark_suite import (
+from zephyr.intelligence.model_profiling.benchmark_suite import (
     ALL_BENCHMARK_CASES,
     CATEGORY_MAP,
     CODE_GEN_CASES,

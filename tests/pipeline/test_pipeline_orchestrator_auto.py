@@ -200,9 +200,9 @@ class TestRunModelBenchmark:
         orch.model_profiler = _make_mock_profiler(profiles)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
+            "zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"
         ) as mock_write, patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.side_effect = lambda p: {
                 "model_name": p.model_name,
@@ -238,9 +238,9 @@ class TestRunModelBenchmark:
         orch.model_profiler = _make_mock_profiler(profiles)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
+            "zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"
         ), patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.return_value = {"model_name": "test-model:latest", "task_scores": {}}
 
@@ -311,7 +311,7 @@ class TestGetBestModel:
         orch.model_profiler = _make_mock_profiler(profiles)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.return_value = {"model_name": "model-a:latest", "task_scores": {}}
 
@@ -353,7 +353,7 @@ class TestDetectModelDrift:
         orch = PipelineOrchestrator(config=config)
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.load_benchmark_history"
+            "zephyr.intelligence.model_profiling.results_writer.load_benchmark_history"
         ) as mock_load:
             mock_load.return_value = [{"average_score": 0.85}]  # 仅1条记录
 
@@ -374,9 +374,9 @@ class TestDetectModelDrift:
         ]
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.load_benchmark_history"
+            "zephyr.intelligence.model_profiling.results_writer.load_benchmark_history"
         ) as mock_load, patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.detect_drift"
+            "zephyr.intelligence.model_profiling.results_writer.detect_drift"
         ) as mock_detect:
             mock_load.return_value = history
             mock_detect.return_value = {
@@ -419,9 +419,9 @@ class TestProperties:
         orch.model_profiler = _make_mock_profiler([_FakeProfile()])
 
         with patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.write_benchmark_results"
+            "zephyr.intelligence.model_profiling.results_writer.write_benchmark_results"
         ), patch(
-            "zephyr.intelligence.model_profiling.pipeline_routing.results_writer.to_model_benchmark_result"
+            "zephyr.intelligence.model_profiling.results_writer.to_model_benchmark_result"
         ) as mock_convert:
             mock_convert.return_value = {"model_name": "test"}
             orch.run_model_benchmark()

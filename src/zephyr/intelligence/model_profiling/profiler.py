@@ -136,6 +136,37 @@ class ModelProfiler:
         self._max_models = max_ollama_models
         self._discovery = ModelDiscovery(ollama_url=ollama_url)
 
+    # ── Stage 4 公共化属性 + 方法 ──
+
+    @property
+    def url(self) -> str:
+        """Ollama 服务 URL（public API, Stage 4）."""
+        return self._url
+
+    @property
+    def timeout(self) -> float:
+        """单用例超时秒数（public API, Stage 4）."""
+        return self._timeout
+
+    @property
+    def max_models(self) -> int:
+        """Ollama 模型上限（public API, Stage 4）."""
+        return self._max_models
+
+    def should_skip_model(self, model_name: str) -> bool:
+        """跳过非对话模型（public API, Stage 4）."""
+        return self._should_skip_model(model_name)
+
+    @staticmethod
+    def score_output(case: BenchmarkCase, output: str) -> float:
+        """评分输出（public API, Stage 4）."""
+        return ModelProfiler._score_output(case, output)
+
+    @staticmethod
+    def percentile(sorted_data: list[float], p: float) -> float:
+        """百分位计算（public API, Stage 4）."""
+        return ModelProfiler._percentile(sorted_data, p)
+
     def profile_all(self) -> list[ModelProfile]:
         """对所有可用模型运行全量 benchmark。"""
         models = self._discovery.discover_all()

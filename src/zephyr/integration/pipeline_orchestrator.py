@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-INF-009 | docs/03_modules/_cross_layer/pipeline/blueprint.md | §4.1
 # [MODULE] zephyr.integration.pipeline_orchestrator
 # [DOMAIN] D_INTEGRATION
-# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.pipeline_routing.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.gov_audit.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.pipeline_routing.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker; zephyr.infrastructure.pipeline.models; zephyr.infrastructure.pipeline.circuit_breaker_manager; zephyr.infrastructure.pipeline.cost_tracker; zephyr.infrastructure.pipeline.ct_pipe_routing; zephyr.infrastructure.pipeline.dead_letter_queue; zephyr.infrastructure.pipeline.model_router; zephyr.infrastructure.pipeline.pipeline_lock; zephyr.infrastructure.pipeline.preemption_manager; zephyr.infrastructure.pipeline.routing_plugins
+# [DEPENDENCIES] zephyr.integration.__init__; zephyr.shared.__init__; zephyr.shared.contracts.protocols; zephyr.shared.models; zephyr.intelligence.model_profiling.profiler; zephyr.integration.local_model.local_model_scheduler; zephyr.governance.__init__; zephyr.gov_audit.writer; zephyr.autonomy_core.__init__; zephyr.shared.contracts.task_repository_protocol; zephyr.intelligence.model_profiling.results_writer; zephyr.shared.contracts.llm_gateway_protocol; zephyr.shared.infra.observer; zephyr.security.llm_defense.llm_security.gateway; zephyr.shared.contracts.security.__init__; zephyr.shared.protocols.a2a.layer3_coordination.__init__; zephyr.integration.local_model.embedding_router; zephyr.intelligence.model_evaluation.reranker; zephyr.infrastructure.pipeline.models; zephyr.infrastructure.pipeline.circuit_breaker_manager; zephyr.infrastructure.pipeline.cost_tracker; zephyr.infrastructure.pipeline.ct_pipe_routing; zephyr.infrastructure.pipeline.dead_letter_queue; zephyr.infrastructure.pipeline.model_router; zephyr.infrastructure.pipeline.pipeline_lock; zephyr.infrastructure.pipeline.preemption_manager; zephyr.infrastructure.pipeline.routing_plugins
 # [CONSUMERS] zephyr.trading.auto_runtime_core ; tests/pipeline/test_pipeline_orchestrator.py
 # [STARTUP] imported
 # [MATURITY] production
@@ -93,7 +93,7 @@ from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from zephyr.integration.local_model.local_model_scheduler import LocalModelScheduler
-    from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
+    from zephyr.intelligence.model_profiling.profiler import ModelProfiler
     from zephyr.shared.foundation.models import TaskCard
 
 from zephyr.infrastructure.pipeline.circuit_breaker_manager import CircuitBreakerManager
@@ -179,7 +179,7 @@ except ImportError:
 
 _PROFILER_AVAILABLE = False
 try:
-    from zephyr.intelligence.model_profiling.pipeline_routing.profiler import ModelProfiler
+    from zephyr.intelligence.model_profiling.profiler import ModelProfiler
 
     _PROFILER_AVAILABLE = True
 except ImportError:
@@ -761,7 +761,7 @@ class PipelineOrchestrator:
             return []
 
         profiles = self.model_profiler.profile_ollama_only()
-        from zephyr.intelligence.model_profiling.pipeline_routing.results_writer import (
+        from zephyr.intelligence.model_profiling.results_writer import (
             to_model_benchmark_result,
             write_benchmark_results,
         )
@@ -781,7 +781,7 @@ class PipelineOrchestrator:
         if best is None:
             return None
 
-        from zephyr.intelligence.model_profiling.pipeline_routing.results_writer import (
+        from zephyr.intelligence.model_profiling.results_writer import (
             to_model_benchmark_result,
         )
 
@@ -790,7 +790,7 @@ class PipelineOrchestrator:
     def detect_model_drift(self, model_name: str) -> dict[str, object] | None:
         """检测指定模型是否发生性能漂移。"""
         try:
-            from zephyr.intelligence.model_profiling.pipeline_routing.results_writer import (
+            from zephyr.intelligence.model_profiling.results_writer import (
                 detect_drift,
                 load_benchmark_history,
             )
