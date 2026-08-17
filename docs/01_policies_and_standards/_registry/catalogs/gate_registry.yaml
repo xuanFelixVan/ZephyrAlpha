@@ -3,7 +3,7 @@ doc_type: register
 ttl: permanent
 title: GATE 门禁登记表
 status: active
-generated_at: '2026-08-16T21:32:37Z'
+generated_at: '2026-08-17T04:48:09Z'
 generated_by: scripts/governance/generators/generate_gate_registry.py
 maintenance: auto
 source: .pre-commit-config.yaml + commit_gates/*.py + MANUAL_GATES
@@ -694,7 +694,7 @@ gates:
   source: commit-gate
 - gate_id: CONSUMERS-ACCURACY
   name: 'CONSUMERS-ACCURACY: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）（CommitGate,
-    priority=113）'
+    priority=116）'
   entry: in-process (GitCommitGateway)
   description: CONSUMERS 字段准确性 warn-only 门禁（CONSUMERS-ACCURACY）
   files_trigger: ''
@@ -997,7 +997,7 @@ gates:
   source: commit-gate
 - gate_id: ISSUE-RESOLVED-INTEGRITY
   name: 'ISSUE-RESOLVED-INTEGRITY: ISSUE-RESOLVED-INTEGRITY warn-only 门禁（CommitGate,
-    priority=117）'
+    priority=130）'
   entry: in-process (GitCommitGateway)
   description: ISSUE-RESOLVED-INTEGRITY warn-only 门禁
   files_trigger: ''
