@@ -5,7 +5,7 @@ title: AI 设计资产盘点
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.5.0"
+version: "0.5.1"
 date: 2026-08-17
 topic: ai_design_asset_inventory
 scope: 09_ai_architecture
@@ -41,7 +41,7 @@ scope: 09_ai_architecture
 
 | 快照 | 规模（实测） | 核实结论 |
 |------|-------------|---------|
-| `场内模块清单.csv` | 2434 行（路径/类型/blueprint_id 三列） | AI 相关行抽样 200 行，**134 行路径当前不存在**（如 `src/zephyr/model_profiler/`、`src/zephyr/vector_memory/`、`src/zephyr/agent_rbac/` 等顶层包已迁移至 `intelligence/model_profiling/`、`integration/vector_memory/`、`security/access_control/` 等现址）——快照生成时点早于多轮包迁移，blueprint_id 映射思路可借鉴，路径清单不可直接采用 |
+| `场内模块清单.csv` | 2434 行（路径/类型/blueprint_id 三列） | AI 相关行抽样 200 行，**134 行路径当前不存在**（如 `src/zephyr/model_profiler/`、`src/zephyr/vector_memory/`、`src/zephyr/agent_rbac/` 等顶层路径当前不存在，对应实体现址为 `intelligence/model_profiling/`、`integration/vector_memory/`、`security/access_control/`）——快照生成时点早于多轮包迁移，blueprint_id 映射思路可借鉴，路径清单不可直接采用 |
 | `project-entity-depgraph.yaml` | 28 域 / 138 边（metadata 自述 2026-05-22 生成） | 域 ID 为连字符格式（`D-AUTONOMY-CORE`），与注册表下划线格式（`D_AUTONOMY_CORE`）不一致；28 域口径与注册表 63 域口径差异大——以注册表为域真源，该快照仅反映 2026-05 时点的域划分草案 |
 
 > 处置：本文所有数字以 2026-08-17 当日实测为准；场外快照是否按当前代码树重生成，见开放问题 Q10。
@@ -312,6 +312,67 @@ scope: 09_ai_architecture
 | 蓝图 | `docs/03_modules/_cross_layer/` 下 17 篇 AI 相关蓝图 | auto_runtime_core / context_engine / model_profiler / model_capability_exam / large_language_model_security / model_context_protocol_servers / agent_orchestrator / audit_orchestrator / feedback_loop / gate_engine / orphan_judge / auto_fix_engine / behavioral_auditor / semantic_auditor / red_blue_validator / clone_guard / resource_optimization_engine | blueprint |
 | 蓝图 | `docs/03_modules/_cross_layer/_b_track_interfaces/`（7 篇接口文档） | agent_orchestrator / context_engine / feedback_loop_engine / llm_security_gateway / task_pipeline_service / vector_memory_service 接口 + index | blueprint |
 
+### 3.5 升级门禁与负向裁定登记（防重复评估）
+
+> 登记目的：以下"暂缓+触发条件"门禁项与"❌ 不可建"负向裁定均为场外草稿（`.runtime/aidrafts/09_drafts_audit/架构图/`）中**已拍板的结论**，触发条件满足前不再重新评估，防止未来 AI 会话重复立项论证。源文件为历史快照（非真源），本节仅登记其裁定结论与触发条件；裁定细节以源文件条目为准。
+>
+> 口径：触发条件按源文件原文浓缩；约束编号对应 system_charter §2 硬边界（一=单人力 / 二=单机硬件 / 三=资金与用途）。
+
+#### 3.5.1 升级门禁条件集（源：`架构图/Agent架构.md` §17 LP-001~021，AI 层相关 11 项）
+
+| 门禁编号 | 暂缓设施 | 触发条件（全部满足方可重估） |
+|---------|---------|------------------------------|
+| LP-001 | OPA Rego 策略引擎 | ① Agent 数量 ≥8 且规则 ≥20 条；② 有第二位开发人员加入（MVP 替代：YAML 配置 + if-else 硬编码） |
+| LP-002 | Agent 记忆向量检索（RAG 独立嵌入模型） | ① GPU 显存 ≥48GB；② 需要非结构化数据语义检索；③ AUM ≥500 万（MVP 替代：FAISS 轻量索引 + SQLite FTS5） |
+| LP-004 | 影子模式测试 | ① GPU 显存 ≥48GB；② 多 GPU 架构；③ 或战略 Agent 影子测试走 API 推理 |
+| LP-005 | EU AI Act 正式合规文档 | ① 面向欧洲客户/市场；② AUM ≥5000 万需机构级合规；③ 中国出台类似法规 |
+| LP-007 | 11 个 Agent 全部 MVP 实现 | MVP 建 5 个核心 → V2 增 4 个（稳定 ≥1 月）→ V3 增 2 个（稳定 ≥2 月 + AUM ≥80 万） |
+| LP-010 | Agent 密码学身份（DID + Ed25519） | ① Agent 数量 ≥15 个；② 多机部署需要跨节点身份验证；③ 安全审计要求密码学级别身份 |
+| LP-011 | 内部竞赛机制（ContestTrade） | ① Agent 数量 ≥8 个（同类 Agent ≥2 才能竞赛）；② GPU 显存 ≥48GB（并行推理）；③ AUM ≥200 万 |
+| LP-012 | 记忆图数据库（Neo4j / Graphiti） | ① GPU 显存 ≥48GB；② AUM ≥500 万需深度知识管理；③ 非结构化数据占比 >30% |
+| LP-014 | MCP×A2A 集成框架 | ① 外部工具 ≥10 个需 MCP 统一管理；② 多 Agent 框架互操作需求；③ 有第二位开发人员加入（MVP 替代：Python SDK 直接调用，无 MCP 中间层） |
+| LP-015 | Agent 365 OTel 企业级管道 | ① 多机部署需要统一遥测管道；② 企业级监控需求；③ 有第二位开发人员加入 |
+| LP-016 | NeMo Guardrails IORails 并行护栏 | ① GPU ≥48GB（IORails 需并行推理）；② Agent ≥15 个；③ 有第二位开发人员加入（MVP 替代：同 LP-001 串行检查） |
+
+> 注一：LP-003 / LP-006 / LP-008 / LP-009 / LP-013 源文件裁定为 🟢 能建，不在负向登记范围。
+> 注二：LP-017~021（D-ALT-DATA / D-CROSS-ASSET / D-COMPLIANCE / D-TRADING / D-FRONTEND 五域暂缓）属交易决策侧域级门禁，本文不展开，触发条件以源文件为准。
+
+#### 3.5.2 ❌ 负向裁定登记（源：`架构图/学习系统架构.md` §14.0 裁定总表，R-31~42 / R-64~67 / R-103~112 共 26 条）
+
+| 裁定编号 | 裁定对象 | 负向理由（硬边界） | 重估门禁 |
+|---------|---------|--------------------|---------|
+| R-31 | Rust/Go 延迟分层 | 约束二（单机 Windows + Python） | GPU 集群 + Linux + 多语言编译链就绪 |
+| R-32 | Agent 集群（MARL） | 约束一（单人）+ 约束二（单机） | 多机集群 + MARL 训练框架就绪 |
+| R-33 | 平台化基础设施 | 约束一（单人）+ 约束三（50 万 AUM） | 多团队 + 多账户 + AUM >1000 万 |
+| R-34 | EU AI Act 字面合规 | 约束三（个人使用不对外服务） | 对外提供服务或管理他人资金 |
+| R-35 | TEE 可信执行环境 | 约束二（单机 Windows，无 TEE 硬件） | SGX/TDX 硬件 + Linux 就绪 |
+| R-36 | 多管线并行架构（独立资金池） | 约束三（50 万 AUM 单一账户） | 多账户 + AUM >500 万 + 独立资金池 |
+| R-37 | DeepSCM 深度因果模型 | 约束二（深度因果模型需 GPU 集群训练） | GPU 集群 + Linux + PyTorch 分布式训练就绪 |
+| R-38 | ODL-Net 在线深度学习 | 约束二（在线深度学习需 GPU 集群） | GPU 集群 + 在线训练框架就绪 |
+| R-39 | Formal Verification 形式化验证 | 约束二（SMT 求解器需专业工具链） | Z3/PySMT 集成 + 形式化验证专家就绪 |
+| R-40 | Micro-Agent 微 Agent 架构 | 约束一（单人）+ 约束二（单机） | 多机集群 + 微 Agent 编排框架就绪 |
+| R-41 | Synthetic Backtesting 合成回测 | 约束二（生成模型需 GPU 集群） | GPU 集群 + 扩散模型/GAN 训练框架就绪 |
+| R-42 | SEC AI Trading Advisor 注册 | 约束三（个人使用不对外服务） | 对外提供服务或管理他人资金 |
+| R-64 | AlphaFin 统一多模态框架 | 约束二（统一多模态模型需 GPU 集群） | 统一多模态模型量化部署方案就绪 + RTX 3090 24GB 验证通过 |
+| R-65 | FinVision 端到端图表→策略 | 约束三（端到端生成绕过 DSL + AST 沙箱安全约束） | 端到端生成不绕过 DSL + AST 沙箱的安全方案设计完成 |
+| R-66 | AlphaEvolve 元级基础设施进化 | 约束三（DSL 语法进化可能破坏 AST 沙箱安全约束） | DSL 语法进化不破坏 AST 沙箱安全约束的验证方案就绪 |
+| R-67 | 可微因果发现（NOTEARS+） | 约束二（连续优化需 GPU 长时间训练） | RTX 3090 上 <100 变量训练时间 <4h 验证通过 |
+| R-103 | Monte Carlo Engine（GPU 加速） | 约束二（GPU 加速蒙特卡洛需 GPU 集群 + CUDA 并行） | GPU 集群 + CUDA 并行计算框架就绪 |
+| R-104 | VaR Calculator（蒙特卡洛 GPU） | 约束二（同 R-103） | GPU 集群 + CUDA 并行计算框架就绪 |
+| R-105 | Market Digital Twin（代理人引擎 + 订单簿仿真） | 约束一（单人）+ 约束二（需多机集群 + 高频数据源） | 多机集群 + 高频数据源接入就绪 |
+| R-106 | 数字孪生系列（依赖图/实时同步/混沌实验） | 约束一（单人）+ 约束二（实时同步 + 混沌实验需多机集群） | 多机集群 + 实时数据同步框架就绪 |
+| R-107 | Data Mesh（域所有权/数据产品/联邦治理） | 约束一（单人）+ 约束三（需多团队 + 数据产品目录平台） | 多团队 + 数据产品目录平台就绪 |
+| R-108 | CQRS/Event Sourcing 模型 | 约束二（需分布式事件存储 + 消息队列） | 分布式事件存储 + 消息队列就绪 |
+| R-109 | LLM 模型分级路由（M1/M3/M7/M9 四级） | 约束二（多 GPU 推理服务器 + 模型服务化框架需集群） | 多 GPU 推理服务器 + 模型服务化框架就绪 |
+| R-110 | PDF 预测引擎 | 约束二（PDF 结构化解析精度 ≥95% 需专用模型训练） | PDF 结构化解析精度 ≥95% 验证通过 |
+| R-111 | A 股特色数据（五类资金追踪/政策预期） | 约束五（Level-2 数据源 + 政策事件数据库需付费数据源） | Level-2 数据源 + 政策事件数据库就绪 |
+| R-112 | AI 治理框架（EU AI Act 合规） | 约束三（个人使用不对外服务） | 对外提供服务或管理他人资金 |
+
+#### 3.5.3 场外快照一行登记（历史快照，不作真源，不重复核实）
+
+- `依赖图/场内模块清单.csv`（2434 行）：早于多轮包迁移的历史快照，AI 相关抽样 200 行中 134 行路径当前不存在（67% 失效），blueprint_id 映射思路可借鉴、路径清单不可采用——不作真源，重生成与否待 Owner 裁定（Q10）。
+- `依赖图/project-entity-depgraph.yaml`（28 域 / 138 边，自述 2026-05-22 生成）：域 ID 连字符格式与注册表下划线格式不一致，28 域口径与注册表 63 域口径差异大——域真源 = functional_domain_registry，该快照仅反映 2026-05 时点域划分草案，不作真源，重生成与否待 Owner 裁定（Q10）。
+
 ---
 
 ## 4. 缺口分析与填补优先级
@@ -399,7 +460,7 @@ scope: 09_ai_architecture
 | Q7 | 施工期间 `09_ai_architecture/` 遭漂移隔离机制整体移出工作区（`.runtime/quarantine/drift_*` 多份快照，2026-08-17 18:06/18:35/18:38），目录为 untracked 状态 | 待裁定 | 本文档由 AI-FILL-02 重建并即时 staged；目录级恢复与防再隔离措施（是否收编进 git 跟踪/加白名单）待 Owner 裁定 |
 | Q8 | passports 当日实测 7 本（deepseek-v4 四档 + qwen2.5-coder_14b + qwen3-coder_30b + qwen3_8b），deepseek_r1 14b/8b 无护照 | 待裁定 | 是为 deepseek_r1 补考发证，还是接受当前护照集以在役模型为准？06 号文承接执行 |
 | Q9 | D_AUTONOMY_PERM（注册表 MOD-INF-022/024）ssot_path `src/zephyr/autonomy_perm/` 目录不存在 | 待裁定 | 补施工代码还是修正注册表条目？03 号文域裁定时一并处理 |
-| Q10 | `.runtime/aidrafts/09_drafts_audit/依赖图/` 两份快照（CSV 2434 行 / depgraph.yaml 28 域）抽样 67% 路径失效 | 待裁定 | 是否按当前代码树重生成依赖图快照？还是随草稿区清理一并处置？ |
+| Q10 | `.runtime/aidrafts/09_drafts_audit/依赖图/` 两份快照（CSV 2434 行 / depgraph.yaml 28 域）抽样 67% 路径失效 | 已核实降级历史快照，重生成与否待 Owner 裁定 | 核实结论已登记 §1.3 与 §3.5.3（一行登记，不重复核实）；是否按当前代码树重生成依赖图快照、还是随草稿区清理一并处置，待 Owner 裁定 |
 
 ---
 
@@ -412,6 +473,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.3.0 | 移除对 架构图/ 和 依赖图/ 草稿目录的所有引用；新增 §2"AI 自我进化设计"节（纯文字描述不带文件链接）；开放问题从 Q1-Q4 精简为 Q1-Q3 | 用户裁定草稿目录待删除 |
 | 2026-08-17 | 0.4.0 | 全量实测填充：新增 §1 盘点口径、§2 背景（20 组件覆盖率比对）、§3.1.1 增加代码映射列、§3.3 域盘点改实测口径（原 131/72/33 等数字无法复现，降级为全仓标记命中数）、§3.4 运行态设施从 5 行扩至 30+ 行（补 feedback_loop 338/security 166/a2a_protocol 89/orchestrator 70 等大包）、新增 §4 缺口分析（G1~G13 按 P0/P1/P2 + 依赖标注）、新增 §5 不做什么；开放问题扩为 Q1~Q7；修正失准档案（intelligence_governance ~20→25、passports 10+→10、注册表补全实际路径） | AI-FILL-02 指令：盘点类文档深度填充，实测纪律优先 |
 | 2026-08-17 | 0.5.0 | 第二轮深挖扩写：①§1.3 新增场外快照核实结论（CSV 抽样 67% 路径失效、depgraph.yaml 28 域与注册表 63 域口径不一致，均不作真源）；②§2.1 二十组件表重测（治理 Agent 升代码基础已存·gov_enforcement 185，三层运行时补 integration/local_model 6 实现，MCP 补 integration/mcp 20，汇总口径改 6/11/2/1）；③§3.3 域盘点锚定 functional_domain_registry（82 条/63 域），扩至 13 个 AI 相关域含 ssot_module/ssot_path/代码实测/标记命中，新登记 D_AUTONOMY_PERM（无码）、D_INFRA_A2A、D_INFRA_TELEMETRY、D_FEEDBACK_LOOP、D_BEHAVIORAL_AUDIT、D_SECURITY；④§3.4 重构为 3.4.1 代码包逐包实测（intelligence 43/autonomy_core 113/governance 295/security 179/feedback_loop 338/a2a 89/mcp 20/local_model 7/vector_memory 28/gov_enforcement 185 等，含子包分解与实测文件名）+ 3.4.2 数据资产 + 3.4.3 配置/脚本/注册表/蓝图；⑤§4.4 新增外部对标逐项对照表（14 框架+模块工厂：已有 2/部分 7/空白 4/不适用 3）；⑥实测修正：passports 7 本、model_profiling 24、03_modules 域目录 29 个、D_KNOWLEDGE 代码实体 vector_memory 28；⑦新增缺口 G14（autonomy_perm 无码）/G15（监控设施分散）/G16（场外快照失效），开放问题扩为 Q1~Q10 | AI-FILL-02 第二轮指令：逐域/逐包实测扩大盘点颗粒度，与 01 号文对标逐项对照 |
+| 2026-08-17 | 0.5.1 | 新增 §3.5 升级门禁与负向裁定登记：①§3.5.1 登记 Agent架构.md §17 LP-001~021 中 AI 层相关 11 项"暂缓+触发条件"门禁（OPA Rego/记忆 RAG/影子模式/EU AI Act/11 Agent 分期/DID 密码学身份/内部竞赛/Neo4j 记忆图谱/MCP×A2A/Agent 365 OTel/NeMo IORails）；②§3.5.2 登记学习系统架构.md §14.0 ❌ 负向裁定 26 条（R-31~42 / R-64~67 / R-103~112，含 FinVision 绕过 DSL+AST 沙箱 / AlphaEvolve DSL 语法进化 / LLM 四级路由 M1/M3/M7/M9 / Level-2 数据源门禁 / 可微因果发现等）；③§3.5.3 场外快照一行登记（CSV 抽样 67% 路径失效、depgraph.yaml 28 域 vs 注册表 63 域，均降级历史快照不作真源、不重复核实）；④Q10 状态改为"已核实降级历史快照，重生成与否待 Owner 裁定" | AI-FILL-02-R3 指令：登记负向裁定+触发条件，防未来重复评估 |
 
 ---
 
