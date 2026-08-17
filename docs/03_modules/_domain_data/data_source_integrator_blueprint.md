@@ -5,8 +5,8 @@ doc_type: blueprint
 status: Draft
 layer: L2_domain
 date: "2026-07-06"
-version: "0.4.2"
-last_updated: "2026-08-14"
+version: "0.4.3"
+last_updated: "2026-08-17"
 ttl: permanent
 supersedes:
   - "MOD-L00-001 §3.1 Provider 抽象部分（接管）"
@@ -345,7 +345,7 @@ class IngestProviderMeta:
 | Provider | source_name | SDK | 登录方式 | 线程安全 | 核心能力 |
 |----------|-------------|-----|---------|---------|---------|
 | MiniQmtIngestProvider | miniqmt | xtquant | 三要素 + 进程在跑 | single_thread | 行情/财务/板块/期权Greeks |
-| AkshareIngestProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东 |
+| AkshareIngestProvider | akshare | akshare | 无需登录 | shared（但内部有限流） | 分红/质押/解禁/宏观/股东/市场元数据（JOB-077）/IPO日历（#114） |
 | BaostockProvider | baostock | baostock | bs.login() 匿名 | **thread_local**（每线程独立登录） | K线/财务（滞后1周） |
 | TushareProvider | tushare | tushare | token | shared | 新闻（历史截止2024-08）/行业分类/LOF列表/资金流向/期货期限结构/ETF净值 |
 | TickFlowProvider | tickflow | tickflow | 无需 key | shared | 美股/港股 K线 |

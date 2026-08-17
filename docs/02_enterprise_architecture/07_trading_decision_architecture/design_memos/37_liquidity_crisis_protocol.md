@@ -5,7 +5,7 @@ title: 流动性危机处理
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "1.2.0"
+version: "1.2.1"
 date: 2026-08-17
 topic: liquidity_crisis_protocol
 scope: 07_trading_decision_architecture
@@ -19,7 +19,7 @@ scope: 07_trading_decision_architecture
 >
 > **未做事项及原因**：
 > - ~~LEVEL_3（最高级危机处置）生产接线未做——P0 风控接线批遗留，待后续批次。~~ **✅ 已闭环（2026-08-17 AI-LVL3-001，v1.2.0）**——`detector.check()` 嵌入 `risk_layer_orchestrator.evaluate_intraday`（与 VaR/ES/回撤同层），LEVEL_3 → `build_escape_directive` → `_engage_kill_switch` 单一仲裁点 → `execute_kill_switch_liquidation` 真实清算全链接通；§3.6 降级机接线（LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3%，复用 MOD-RK-21 `check_recovery`/`LiquidityRecoveryState`，降级只迁移警报级别不解除熔断闩锁——35 号 KILL 态人工复位不变式保持）。红队三向量非 mock 实证 16 项全绿（多信号 LEVEL_3 全链/情绪断路器 0.85 强制升级/冷却期逐级降级+非 LEVEL_3 逃逸守卫）。
-> - IPO 数据源接入未做——数据层施工范围，登记遗留（§6 待裁定行持续有效，tracker #42②）。
+> - ~~IPO 数据源接入未做~~ **✅ 已闭环（2026-08-17 AI-IPO-001，tracker #114）**——akshare `ipo_calendar` capability 落地（巨潮 `stock_new_ipo_cninfo` 替代源），c1_market.ipo_calendar 日快照表 + 盘后调度任务 + DS-105/JOB-086 数据资产登记；消费侧 `compute_ipo_liquidity_drain` 按 list_date+raise_amount 读取最新快照即可注入 IPOEvent。
 > - ~~编排层接入 35 号 §3.13 调用方~~ **✅ 并入 AI-LVL3-001 闭环**——35 号 §3.13 盘中循环的生产载体即 trading_session 调仓循环 + orchestrator.evaluate_intraday，systemic 评估已内嵌同 tick（tracker #42① 重叠项并入施工）。
 
 # 流动性危机处理
@@ -216,7 +216,7 @@ def compute_ipo_liquidity_drain(upcoming_ipos, market_avg_volume_20d):
 
 **与 [26_event_driven §2.5a](26_event_driven_strategy_detail.md) 的联动**：26 号管"alpha 方向+仓位策略"（IPO 上市前主仓位布局+保留现金+上市后存量板块降仓），37 号管"流动性检测+仓位上限节流"（drain_level→position_cap_adjustment）——互补：26 号是事件驱动 sleeve 主动策略，37 号是 firm 层被动仓位上限。
 
-**与 §3.2 的区别及数据源**：§3.2 Amihud/成交量萎缩是**事后**检测（流动性已恶化），§3.2a 是**事前**预警（上市日前已知募资规模→提前算 drain_ratio），时间轴正交。⚠️ 数据源 v1.1.0 施工核查修正——原文声称 IPO 日历/募资规模来自 `akshare_provider`（`stock_ipo_info`，production），但 2026-08-13 全仓 Grep 实证 `src/zephyr/data/implementations/akshare_provider.py` **无 ipo 相关 capability**。算法已按数据源无关接口施工（IPOEvent 列表注入）；数据管道接入列入 §6 待裁定。科创板/创业板前 5 日无涨跌幅限制是规则硬编码。
+**与 §3.2 的区别及数据源**：§3.2 Amihud/成交量萎缩是**事后**检测（流动性已恶化），§3.2a 是**事前**预警（上市日前已知募资规模→提前算 drain_ratio），时间轴正交。✅ 数据源 v1.2.1 已接入（2026-08-17 AI-IPO-001，tracker #114）——v1.1.0 施工核查曾实证原文声称的 `stock_ipo_info` capability 不存在；本版以替代源巨潮 `stock_new_ipo_cninfo`（匿名、沪深北全市场）落地 `ipo_calendar` capability：c1_market.ipo_calendar 日快照（trade_date 锚定 PIT strict，list_date=NULL=未定档，raise_amount 亿元=发行价×总发行数量/1e4 派生），tasks.yaml `ipo_calendar_daily` 盘后调度。消费侧从最新快照构造 IPOEvent 列表注入即可。科创板/创业板前 5 日无涨跌幅限制是规则硬编码。
 
 ### 3.3 决策③：流动性危机响应——停开仓仅平仓（对齐 §2.5.5 + LEVEL_1）
 
@@ -744,7 +744,7 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 欧洲 ML 流动性预测方法学（v1.0.13 新增） | 方法学参考非独立模块；MVP 阶段 Amihud 静态阈值已够（流动性高持续），预测模型边际价值低 | Phase 1.5 阈值校准时选"动态面板+三特征"轻量方案作为 ML 替代 + 实盘 6 月 Amihud 数据验证高持续性 |
 | AdjPIN 订单流信息/流动性分解（v1.0.13 新增） | §3.7.2 已拒绝 VPIN/PIN 家族，须先验证 PSOS 成分相对 OBI 增量价值；ECM 估计计算成本中等（每股每日迭代） | Phase 2，§3.3 LEVEL 响应发现"信息驱动 vs 纯流动性"区分不足 + §3.7.5 Latent build-up 未覆盖对称流动性冲击 + tick 买卖分类管道就绪 |
 | 与 G16 Kill Switch 对齐（✅ 已解决 v1.0.1） | G16 于 2026-08-10 升级 active v1.0.0，§3.5 Kill Switch 触发条件已填，双向引用已建立 | 已解决，详见决策④ |
-| IPO 数据源接入（v1.1.0 新增） | §3.2a 原文声称 akshare_provider `stock_ipo_info` 已 production，2026-08-13 施工全仓核查实证**该接口不存在**（akshare_provider 无 ipo capability）。算法已按数据源无关接口施工（IPOEvent 注入），数据管道接入属数据层施工范围 | 数据层登记 IPO 日历/募资规模 capability（akshare `stock_ipo_info` 或替代源）并接入后闭环 |
+| IPO 数据源接入（✅ 已解决 v1.2.1） | §3.2a 原文声称 akshare_provider `stock_ipo_info` 已 production，2026-08-13 施工全仓核查实证**该接口不存在**（akshare_provider 无 ipo capability）。算法已按数据源无关接口施工（IPOEvent 注入），数据管道接入属数据层施工范围 | ✅ 已闭环（2026-08-17 AI-IPO-001，tracker #114）：akshare `ipo_calendar` capability（替代源=巨潮 `stock_new_ipo_cninfo` 全市场新股列表，匿名无反爬）+ c1_market.ipo_calendar 表（DDL-as-Code）+ tasks.yaml `ipo_calendar_daily`（daily_capital）+ DS-105/JOB-086 登记 |
 
 ## 7. 待定问题（讨论要点 resolved）
 
@@ -809,5 +809,6 @@ def intraday_liquidity_loop(market_data_snapshot, position_state, recovery_state
 | 2026-08-12 | 1.0.17 / 1.0.18 | 作战地图全覆盖补丁 BM-RC-12-B / BM-RC-12 闭合 + BM-RC-06-A 锚定 | §3.7.16 跨市场传导登记远期+激活条件（管道不存在无承载，MVP 布尔级由 36号 §3.5.2 CONTAGION→BS005 承载；退化=全市场同向下跌最坏假设），父环节 BM-RC-12 闭合；§3.1 末尾补 BM-RC-06-A 映射块，环节级可追溯；frontmatter date→2026-08-12 |
 | 2026-08-13 | 1.1.0 | 施工落地 + 施工审查修复 3 处文档缺陷 | AI-LIQ-001：新建 MOD-RK-21 liquidity_crisis_manager 承载六算法（§3.1.1/§3.1.2/§3.5.1/§3.6/§3.8/§3.2a，检测委托 MOD-RK-10，阈值从 detector.config 读取），54 测试全绿；修 §3.1.1 公式代数错误（ΣVolAsk/(ΣVolBid+ΣVolAsk)）+ §3.8 涨跌停 spread 矛盾（LIMIT_DOWN→1.0/LIMIT_UP→None）+ §3.2a 数据源虚标（akshare 无 ipo capability→§6 待裁定）；commit d53693a1/16a089c8/db695f9d |
 | 2026-08-14 | 1.1.1 | 压缩精简 | 已施工内容折叠，零信息丢失审查通过（AI-DOCS-001） |
+| 2026-08-17 | 1.2.1 | IPO 数据源接入闭环（tracker #114，AI-IPO-001） | §3.2a 数据管道落地：akshare `ipo_calendar` capability（巨潮 `stock_new_ipo_cninfo` 替代源）+ c1_market.ipo_calendar 表 + ipo_calendar_daily 盘后调度 + DS-105/JOB-086；§6 待裁定行与结案报告同步闭环 |
 | 2026-08-15 | 1.1.2 | 第二轮循环压缩：可压缩点收敛=0（AI-DC2-05） | §3.4 差异对齐 380 字段要点化（spec/代码实现/G16 对齐三要点，过程性叙述删）；§5.2 第二阶段 500 字段按候选拆 6 子项（全部链接/参数保留）；全篇扫描无其他可压缩点——OBI 公式 ΣVolAsk/(ΣVolBid+ΣVolAsk)、0.65/0.5%/0.25%/0.50 阈值、min_hold 10/15/30 分钟、IPO 四级 0.01/0.02/0.03→1.0/0.90/0.75/0.60、LEVEL_1/2/3 响应矩阵、Amihud 1e-8/萎缩 0.5、BM 锚点/开放问题/链接逐项零丢失 |
 | 2026-08-17 | 1.2.0 | LEVEL_3 生产接线闭环（AI-LVL3-001） | 结案报告 L21 遗留第一项闭环：①`detector.check()` 嵌入 `risk_layer_orchestrator.evaluate_intraday`（与 VaR/ES/回撤同层，systemic_detector+systemic_input_provider 成对注入即生效）②LEVEL_3 → `build_escape_directive` → `_engage_kill_switch` 单一仲裁点 → `execute_kill_switch_liquidation` 消费链接通 ③§3.6 降级机接线（复用 MOD-RK-21 `check_recovery`/`LiquidityRecoveryState`，LEVEL_3→LEVEL_2 冷却 30min+信号≤2+spread<0.3% 逐级迁移，降级不解除熔断闩锁——35 号 KILL 态人工复位不变式保持）④tracker #42①编排层接入 35 号 §3.13 调用方并入本批闭环（生产载体=trading_session 调仓循环+orchestrator 同 tick）；红队三向量非 mock 实证 16 项全绿（多信号 LEVEL_3 全链/情绪断路器 0.85 强制升级/冷却期逐级降级+非 LEVEL_3 逃逸守卫），28 项 orchestrator 测试两轮全绿；IPO 数据源接入登记遗留（§6 持续有效） |

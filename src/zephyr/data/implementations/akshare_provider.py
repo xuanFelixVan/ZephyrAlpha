@@ -155,6 +155,8 @@ _TBL_ST_STOCK_LIST = get_registry().table("market_st_stock_list")
 _TBL_STOCK_BASIC = get_registry().table("meta_stock_basic")
 _TBL_STK_LIMIT = get_registry().table("market_stk_limit")
 _TBL_SUSPEND = get_registry().table("market_suspend")
+# tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）：IPO 日历/募资规模（巨潮新股列表）
+_TBL_IPO_CALENDAR = get_registry().table("market_ipo_calendar")
 
 # JOB-077 SQL 集中化（NO-BARE-SQL gate 合规，常量名匹配 ^_?SQL_\w+$ 豁免正则）
 # kline_daily 交易日序列/收盘价/每股日期数组（stk_limit 计算与 suspend 推导共用）
@@ -215,6 +217,8 @@ _AKSHARE_CAPABILITIES = frozenset({
     "stock_basic",      # DS-081 股票基本信息日快照（交易所官网清单，非东财）
     "stk_limit",        # DS-082 每日涨跌停价格（规则计算：昨收×(1±幅度)四舍五入到分）
     "suspend_status",   # DS-083 停复牌（东财停牌清单+百度停复牌公告+K线缺口推导）
+    # tracker #114 / 37号 §3.2a（2026-08-17 AI-IPO-001）
+    "ipo_calendar",     # DS-105 IPO 日历/募资规模（巨潮 stock_new_ipo_cninfo，沪深北全市场）
 })
 
 
@@ -434,6 +438,8 @@ class AkshareIngestProvider(IngestProviderBase):
             CapabilityContract("stock_basic", supports_symbols_null=True),
             CapabilityContract("stk_limit", supports_symbols_null=True),
             CapabilityContract("suspend_status", supports_symbols_null=True),
+            # tracker #114 / 37号 §3.2a：IPO 日历/募资规模（全量接口无 symbols）
+            CapabilityContract("ipo_calendar", supports_symbols_null=True),
         ],
         known_issues=["须断开VPN", "东财接口反爬严重"],
     )
@@ -5650,6 +5656,93 @@ class AkshareIngestProvider(IngestProviderBase):
         iso_date = end.isoformat()
         rows = self._suspend_snapshot_rows(ak, policy, iso_date)
         self._log.info(f"suspend 快照模式: {len(rows)} 行（{iso_date}）")
+        yield FetchResult(
+            table=table, columns=columns, rows=rows,
+            last_key=iso_date, elapsed_sec=time.monotonic() - t0,
+        )
+
+    # ---- 40c. IPO 日历与募资规模（ipo_calendar，tracker #114 / 37号 §3.2a，DS-105）----
+
+    def _fetch_ipo_calendar(
+        self, payload: FetchPayload, policy: SourcePolicy
+    ) -> Iterator[FetchResult]:
+        """IPO 日历与募资规模日快照（DS-105），写入 c1_market.ipo_calendar。
+
+        源：巨潮资讯网新股列表（akshare stock_new_ipo_cninfo，匿名，沪深北全市场，
+        官方披露口径，非东财接口规避反爬）。事件型流动性抽离（IPO 虹吸）前瞻预警
+        的数据管道——37号 §3.2a compute_ipo_liquidity_drain 消费 list_date+
+        raise_amount 做未来 5 日募资/市场日均成交额节流判定（如 2026-07-27 长鑫
+        科技 688825 募资 666 亿，drain_ratio≈2.5% → SEVERE → 仓位上限 75%）。
+        募资规模派生口径：raise_amount(亿元) = 发行价(元) × 总发行数量(万股) / 10000。
+        未定档 IPO 的 list_date=None（官方未公告），消费侧前瞻窗口过滤天然跳过，
+        公告后次日快照自动纳入。NaN 防御：数值列 NaN→None（CH Nullable(Decimal)
+        不收 NaN）；日期列 NaT→None（_norm_akshare_date 对 NaT.strftime 抛
+        ValueError，此处兜底）。
+        PIT strict：trade_date=快照交易日，全量重拉，(trade_date, symbol)
+        ReplacingMergeTree 同日重跑幂等替换。
+        """
+        import akshare as ak
+
+        table = payload.table or _TBL_IPO_CALENDAR
+        columns = [
+            "trade_date", "symbol", "name", "list_date", "subscribe_date",
+            "issue_price", "total_shares", "raise_amount", "pe_ratio", "data_source",
+        ]
+        iso_date = (payload.end or datetime.date.today()).isoformat()
+        t0 = time.monotonic()
+
+        def _num_or_none(v) -> float | None:
+            """NaN/None/非法值→None（NaN 自检 f!=f；CH Nullable(Decimal) 不收 NaN）。"""
+            f = safe_float(v)
+            if f is None or f != f:  # noqa: PLR0124 — NaN 自检惯用法（NaN != NaN 为 True）
+                return None
+            return f
+
+        def _date_or_none(v) -> str | None:
+            """NaT/NaN/None→None（_norm_akshare_date 对 pd.NaT.strftime 抛 ValueError）。"""
+            try:
+                s = self._norm_akshare_date(v)
+            except (ValueError, TypeError):
+                return None
+            return s or None
+
+        rows: list[tuple] = []
+        try:
+            df = self._call_with_policy(ak.stock_new_ipo_cninfo, policy)
+        except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch
+            self._log.warning(f"stock_new_ipo_cninfo 失败: {e}")
+            df = None
+        if df is not None and len(df) > 0:
+            for _, row in df.iterrows():
+                code = str(row.get("证劵代码") or "").strip()
+                if not code:
+                    continue
+                code = code.zfill(6)
+                if not code.isdigit() or len(code) != 6:
+                    continue
+                name = str(row.get("证券简称") or "").strip()
+                issue_price = _num_or_none(row.get("发行价"))
+                shares_wan = _num_or_none(row.get("总发行数量"))  # 万股
+                total_shares = int(shares_wan * 10000) if shares_wan else None
+                raise_amount = (
+                    round(issue_price * shares_wan / 10000, 4)
+                    if issue_price and shares_wan
+                    else None
+                )  # 亿元 = 元 × 万股 / 10000
+                rows.append((
+                    iso_date,                                   # trade_date
+                    code,                                       # symbol
+                    name,                                       # name
+                    _date_or_none(row.get("上市日期")),          # list_date
+                    _date_or_none(row.get("申购日期")),          # subscribe_date
+                    issue_price,                                # issue_price（元）
+                    total_shares,                               # total_shares（股）
+                    raise_amount,                               # raise_amount（亿元）
+                    _num_or_none(row.get("发行市盈率")),          # pe_ratio
+                    "akshare_cninfo",                           # data_source
+                ))
+
+        self._log.info(f"ipo_calendar 快照完成: {len(rows)} 行（{iso_date}）")
         yield FetchResult(
             table=table, columns=columns, rows=rows,
             last_key=iso_date, elapsed_sec=time.monotonic() - t0,

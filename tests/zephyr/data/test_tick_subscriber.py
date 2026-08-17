@@ -748,7 +748,7 @@ class TestQmtInstanceGuard:
 _BIZ_HB_CONTRACT_KEYS = {
     "ts", "pid", "started_ts", "last_tick_ts", "last_tick_age_s",
     "today_rows", "received", "written", "errors", "subscribed",
-    "resub_count", "is_trading_day",
+    "resub_count", "is_trading_day", "universe_retry_count",
 }
 
 
@@ -987,6 +987,112 @@ class TestBizWatchdog:
         assert sub._resub_count == 0
         assert fake.subscribe_calls == 0
         # 心跳仍在持续写出
+        assert (tmp_path / "biz.heartbeat").exists()
+
+
+class _UniverseRetryXtdata(_WatchdogXtdata):
+    """#117 测试桩：板块标的可配置（空列表模拟启动时 QMT 离线解析全失败）。"""
+
+    def __init__(self, sector_symbols=None):
+        super().__init__()
+        self._sector_symbols = list(sector_symbols) if sector_symbols is not None else ["000001.SZ"]
+        self.resolve_calls = 0
+
+    def get_stock_list_in_sector(self, sector):
+        self.resolve_calls += 1
+        return list(self._sector_symbols)
+
+
+class TestBizWatchdogEmptyUniverse:
+    """#117（2026-08-17 实盘实证）：启动时 QMT 离线致 0 标的——看门狗盘中周期重试
+    universe 解析+订阅（指数退避+留痕）；非盘中不重试。"""
+
+    def _patch_fast_retry(self, monkeypatch, tmp_path):
+        monkeypatch.setattr(ts_module, "_BIZ_HEARTBEAT_PATH", tmp_path / "biz.heartbeat")
+        monkeypatch.setattr(ts_module, "_BIZ_WATCHDOG_LOOP_S", 0.02)
+        monkeypatch.setattr(ts_module, "_BIZ_UNIVERSE_RETRY_BASE_S", 0.05)
+        monkeypatch.setattr(ts_module, "_BIZ_UNIVERSE_RETRY_MAX_S", 0.20)
+
+    def test_empty_symbols_intraday_retries_universe_resolution(self, tmp_path, monkeypatch):
+        """盘中 0 标的 → 重试 universe 解析成功 → 订阅 → 喂 tick 判恢复并重置退避。"""
+        self._patch_fast_retry(monkeypatch, tmp_path)
+        fake = _UniverseRetryXtdata(["000001.SZ"])
+        sub = _make_sub()
+        sub._xtdata = fake
+        sub._symbols_resolved = []  # 启动时解析全失败（#117 边缘）
+        sub._last_tick_ts = 0.0     # 从未收到 tick
+        sub._is_market_open_now = lambda: True
+
+        t = threading.Thread(target=sub._biz_watchdog_loop, daemon=True)
+        t.start()
+        deadline = time.time() + 5
+        while not sub._symbols_resolved and time.time() < deadline:
+            time.sleep(0.02)
+        assert sub._symbols_resolved == ["000001.SZ"]
+        assert fake.resolve_calls >= 1
+        assert fake.subscribe_calls >= 1
+        assert "000001.SZ" in sub._subscribed
+        # 喂 tick 释放重等首 tick → 判恢复并重置退避计时（retry_count 累计留痕不重置）
+        fake.callback({"000001.SZ": {"time": int(time.time() * 1000)}})
+        deadline = time.time() + 3
+        while sub._universe_retry_next_ts != 0.0 and time.time() < deadline:
+            time.sleep(0.02)
+        assert sub._universe_retry_next_ts == 0.0
+        assert sub._universe_retry_count >= 1
+        # 留痕：等下一轮心跳写出（loop 0.02s）后读取，再停线程
+        deadline = time.time() + 3
+        while time.time() < deadline:
+            payload = json.loads((tmp_path / "biz.heartbeat").read_text(encoding="utf-8"))
+            if payload["universe_retry_count"] >= 1:
+                break
+            time.sleep(0.02)
+        assert payload["universe_retry_count"] >= 1
+        sub.running = False
+        t.join(timeout=3)
+        assert not t.is_alive()
+
+    def test_empty_symbols_resolution_failure_backoff(self, tmp_path, monkeypatch):
+        """重解析持续 0 只（QMT 未恢复）→ 指数退避：窗口内不重复尝试、不触发订阅。"""
+        self._patch_fast_retry(monkeypatch, tmp_path)
+        fake = _UniverseRetryXtdata([])  # 解析持续失败
+        sub = _make_sub()
+        sub._xtdata = fake
+        sub._symbols_resolved = []
+        sub._is_market_open_now = lambda: True
+
+        t = threading.Thread(target=sub._biz_watchdog_loop, daemon=True)
+        t.start()
+        deadline = time.time() + 3
+        while sub._universe_retry_count < 2 and time.time() < deadline:
+            time.sleep(0.02)
+        first_two = sub._universe_retry_count
+        assert first_two >= 2
+        # 第 2 次失败后 backoff=0.10s（base 0.05×2）：短窗内不应立刻第 3 次
+        time.sleep(0.04)
+        assert sub._universe_retry_count <= first_two + 1
+        sub.running = False
+        t.join(timeout=3)
+        assert fake.subscribe_calls == 0  # 解析失败不触发订阅
+        assert sub._symbols_resolved == []
+
+    def test_empty_symbols_off_hours_no_retry(self, tmp_path, monkeypatch):
+        """非盘中 0 标的不重试（无 tick 推送属正常，留盘中自愈）。"""
+        self._patch_fast_retry(monkeypatch, tmp_path)
+        fake = _UniverseRetryXtdata(["000001.SZ"])
+        sub = _make_sub()
+        sub._xtdata = fake
+        sub._symbols_resolved = []
+        sub._is_market_open_now = lambda: False
+
+        t = threading.Thread(target=sub._biz_watchdog_loop, daemon=True)
+        t.start()
+        time.sleep(0.2)
+        sub.running = False
+        t.join(timeout=3)
+        assert sub._universe_retry_count == 0
+        assert fake.resolve_calls == 0
+        assert fake.subscribe_calls == 0
+        # 心跳仍在持续写出（含留痕键）
         assert (tmp_path / "biz.heartbeat").exists()
 
 
