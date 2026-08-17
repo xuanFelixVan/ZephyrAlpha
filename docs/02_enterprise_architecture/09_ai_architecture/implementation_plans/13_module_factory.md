@@ -5,7 +5,7 @@ title: 模块工厂施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
+version: "0.3.0"
 date: 2026-08-17
 valid_from: 2026-08-17
 last_verified: 2026-08-17
@@ -95,7 +95,7 @@ scope: 09_ai_architecture
 | 入库目标注册表（其余） | 同目录 `technical_indicator_registry.yaml` / `risk_limit_registry.yaml` / `execution_algo_registry.yaml` / `data_asset_registry.yaml` / `chart_pattern_registry.yaml` / `experiment_registry.yaml` 等 | 62 号 18 表体系的其余注册表落盘 | active |
 | 候选模块晋升管道 | `docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml`（REG-CAND-001，v1.1.0） | 通用代码模块点子库：deferred → 一问标准（q1 已实现/重复）→ apply_depgraph --add-design-node → depgraph 设计态晋升 | active |
 | 回测验证管道（C-003） | `src/zephyr/backtest/`：core/（engine_base、matching_engine、metrics、overfitting_detector、pit_manager、walk_forward 等 10 文件）、implementations/（event_driven / vectorized / shrinkage 3 引擎）、services/（decay_monitor、param_analyzer、report_generator 等 9 文件）、regime_validation/（3 文件）、io/（3 文件） | 因子/策略验证算力管道：过拟合检测（PBO/DSR 类）、walk-forward、PIT 防前视、衰减监控 | production |
-| 技能生命周期设施 | `src/zephyr/autonomy_core/skills/`（skill_factory.py / skill_constructor.py / skill_registry.py / skill_sandbox.py / skill_evaluator.py / skill_discovery.py 等，实测 57 个 skill_* 模块） | "怎么做"层设施；其沙箱/评估/注册模式供模块工厂受控生成环节复用 | production |
+| 技能生命周期设施 | `src/zephyr/autonomy_core/skills/`（skill_factory.py / skill_constructor.py / skill_registry.py / skill_sandbox.py / skill_evaluator.py / skill_discovery.py 等，实测 58 个 .py = 57 个 skill_* 模块 + __init__.py，与 17 号文口径一致） | "怎么做"层设施；其沙箱/评估/注册模式供模块工厂受控生成环节复用 | production |
 | 模块治理设施 | `src/zephyr/shared/protocols/module_birth_registry.py`（MOD-INF-016）、`src/zephyr/trading/module_onboarding_scanner.py`（MOD-INF-035，AST 扫描发现未注册模块） | 模块出生登记 + 接入扫描 | production |
 | 代码落地门禁 | `src/zephyr/gov_enforcement/commit_gates/`（module_id_consistency_gate.py / orphan_module_gate.py / registry_code_anchor_gate.py 等） | 生成代码入库前必须通过的 commit 门禁（模块 ID 一致性/孤儿模块/注册表锚点） | production |
 | 实验追踪 | `src/zephyr/experiment_tracking/` + `catalogs/experiment_registry.yaml` | 验证结果/回测实验登记 | production / active |
@@ -148,6 +148,16 @@ scope: 09_ai_architecture
 - 知识只进 KMS 不进业务注册表 → 放弃：因子/策略知识必须带 code_path、回测 evidence 才有战斗力，KMS 条目不具备这些字段。
 - 采集频率实时化 → 放弃：C3，日频/周频批量足够（知识半衰期远长于交易信号）。
 
+**采集侧质量控制与创意拓宽（草稿吸收，源：学习系统架构 §4.1 Step6 / §10.2.4 / §5.2 Step11 + 12-D-ML-TRAIN §9.2 R-84）**：
+
+| 机制 | 内容 | Phase |
+|------|------|-------|
+| 信息价值四维评分 | LLM 对每条知识片段评四维——相关性（与持仓/关注标的相关程度）/时效性（有效时间窗口）/信息量（相对已有知识的新增量）/可靠性（来源可信度+逻辑自洽性）；综合评分（加权平均）<0.3 → quality_gate=REJECT，不进入分类环节 | Phase 1（随分类器同期引入，同为 LLM 受控输出） |
+| 知识质量门禁四规则 | ①低质量知识（REJECT）自动拦截不进分类；②矛盾知识标记后降权，**不自动覆盖**已有条目；③NO_MATCH（映射无匹配）必须人工审核后才进生成环节；④试运行失败的模块不可重试超过 3 次 | Phase 1 起逐条落地（①②随分类器，③随映射引擎，④随验证编排） |
+| Factor Mining Agent 创意拓宽 | LLM 一次并发生成 10+ 因子假设 → 快速预评估 → 仅高潜力假设进深度提取——瓶颈从"需要更多想法"变为"更快评估想法"（Two Sigma 2025-2026）；挖掘侧完整分工见 §3.3 | Phase 2 候选 |
+
+门禁与评分的分工：评分是"值不值得学"（采集→分类之间的筛子），门禁是"学得对不对/能不能建"（分类→映射→生成之间的闸口），两者串联不合并。
+
 ### 3.2 知识分类设计（处理 1）
 
 **决策**：LLM 分类器 + 受控词表约束输出。分类目标不是发明新体系，而是把知识条目映射到**已定稿的注册表词表**：
@@ -164,6 +174,12 @@ scope: 09_ai_architecture
 - 训练专用分类模型（fine-tune 小模型）→ 放弃：单 GPU（C1）+ 标注样本不足百条，且词表会演进，维护成本远超 LLM prompt。
 - 纯人工分类 → Phase 0 默认做法，保留为 fallback；但 286+ 条目规模下人分类是瓶颈，Phase 1 必须自动化。
 - 多级层次分类树（TEJ Factor Library 式）→ 部分采纳：62 号 v2.0 已对标 TEJ 做了条目级多维标注，不再另建树（真源唯一）。
+
+**知识 11 类参照系 + 矛盾三态 + 语义去重（草稿吸收，源：学习系统架构 §5.1 / §5.2 Step6）**：
+
+1. **采集侧 11 类与入库侧词表的两级关系**：学习系统架构的知识分类体系为 11 类（strategy/factor/market_state/sector_rotation/risk/event/methodology/liquidity/game_theory/regime/lesson_learned）。入库真源仍是 62 号 factor 10 类/strategy 6 类词表（不双真源）；11 类作为**采集侧粗分流标签**使用——factor/strategy 直通入库通道，liquidity/game_theory/regime 归入市场状态类知识（分流到市场状态相关注册表或候选模块库），lesson_learned 归入内部经验源（§3.1 第四源），methodology 归入 KMS 知识条目。两级不冲突：采集侧回答"这条知识是什么"，入库侧回答"这条知识落到哪张表"。
+2. **矛盾三态处理**（新提取知识与库内已有知识比对）：一致 → 增强（提高置信度）；矛盾 → 标记矛盾 + 保留两者 + 降低置信度（不自动覆盖）；无匹配 → 新增。
+3. **因子语义去重**（补数值去重的盲区）：既有 IC 相关性 ≥0.7 的数值判冗之外，LLM 判定两因子经济学逻辑是否等价（即使数值不同）；语义等价 → 保留 IC 更高者 + 另一因子标"语义冗余"；语义不等价但数值相关 → 保留两者 + 标"数值相关但逻辑独立"。去重发生在映射环节检索阶段（§3.3），分类器只负责产出可比对的结构化描述。
 
 ### 3.3 知识→模块映射设计（处理 2，核心独创）
 
@@ -202,6 +218,11 @@ scope: 09_ai_architecture
 - 纯人工映射 → Phase 0 默认；不扩展到 Phase 1+。
 - surrogate 模型预测语义空间收益（AlphaSchema 的 reward surrogate + adaptive quota selection）→ 登记为 Phase 3 前沿演进方向（§3.7），Phase 1/2 样本量不足以训练 surrogate。
 
+**Factor Mining Agent 与因果增强（草稿吸收，Phase 2 候选；源：学习系统架构 §7.2 R-84 / §5.2 Step4 + 12-D-ML-TRAIN §9.2 + 20-D-RESEARCH §12.0）**：
+
+1. **Factor Mining Agent（R-84，Phase 2 候选）**：LLM 并发生成 10+ 因子假设 → 去重（与既有因子库 IC 相关性 <0.7 + §3.2 语义去重）→ 验证（IC 测试 + Walk-Forward + 过拟合检测）→ 辩论精炼（Generator 生成 / Critic 批判迭代，连续 2 轮无新批评或 ≤5 轮收敛）→ 产出走本文三段映射的四选一裁决入库。**与遗传编程变异的分工**：Factor Mining Agent 从零生成新因子假设（**创造**，扩展因子空间边界）；LLM 遗传编程变异对既有策略池做语义引导的变异进化（**改良**，在邻域内搜索更优解）。流水线顺序：Mining Agent 生成 → 辩论精炼 → 验证 → 注册 → 池中继续进化。两者互补不合并。
+2. **因果发现引擎 + 验证层（Phase 2 候选）**：62 号 schema 已 MUST `causal_graph`（注册时声明，防事后合理化），当前靠人工填写；因果发现引擎是该字段的自动填充工具链——PC 算法（causal-learn，α=0.01 严格阈值防伪因果，<50 变量本地可跑）→ LiNGAM 确定因果方向 → TimePC 时序约束（金融时序专用）→ Neural Granger 非线性检测 → **LLM 语义校验**（形式化发现的因果边须有经济学解释，无解释→标"疑似伪因果"降权）→ **验证层**（有自然实验/工具变量支持→高置信度；无支持→降权标"待验证"）。扩展：DoWhy 三阶段（工具变量 → do-calculus 干预推理 → 反事实推理），反事实输出辅助 §3.5 验证环节评估。causal-learn/DoWhy 均纯 Python，C6 兼容；该引擎只产出 schema 字段值与置信度标注，不改变映射裁决结构。
+
 ### 3.4 代码生成设计（处理 3）
 
 **决策**：DSL 约束 + AST 沙箱 + 模板骨架三件套的**受控生成**，不生成自由 Python。
@@ -226,18 +247,34 @@ scope: 09_ai_architecture
 - 人工写全部代码 → Phase 0/1 默认；Phase 2 起人写不过来（采集自动化后知识条目增速 > 人写速度）。
 - 自建 AST 沙箱 → 拒绝：skill_sandbox.py 已 production，重复建设。
 
+**受控生成的四项增强（草稿吸收，Phase 2/3 登记；源：学习系统架构 §7.2 + 12-D-ML-TRAIN §9.2 + 20-D-RESEARCH §12.11.2 + 23-D-AUT-PERM §17.3）**：
+
+1. **三重语义一致性约束（Phase 2，QuantaAlpha）**：假设（Hypothesis）⇄ 表达式（Expression）⇄ 代码（Code）三者语义一致——假设的经济逻辑 = 表达式的数学逻辑 = 代码的程序逻辑；LLM 交叉验证三者一致性，不一致 → 拒绝生成、要求重新对齐。与既有设计的关系：schema_plan 是"假设"的结构化载体，三重一致性把 §3.3 语义抽象与 §3.4 代码生成焊死，防止"语义说一套、代码做一套"的漂移；生成器输出该验证结果，§3.5 L1 将其列为检查项。
+2. **进化式代码生成 + 分析师 Agent 反馈循环（Phase 2 登记增强，Phase 3 完善）**：单次生成 → 多轮进化迭代——Generator（GLM-5.1）生成 → Critic（DeepSeek V4 Pro）批判（逻辑漏洞/过拟合风险/代码缺陷）→ Generator 按反馈修正 → 收敛（Critic 无新批评或 ≤3 轮）→ Judge（Claude）综合评估 → AST 沙箱 → L4 人审。进化收敛条件：连续 2 轮 Sharpe 无提升或达最大 5 轮；进化全程不违反 AST 沙箱约束；每轮代码 + 回测结果存技能库（走 §4.6 沉淀接口）供后续任务检索复用。**轨迹级进化**（QuantaAlpha，与 §3.7 登记呼应）：每次知识→模块映射视为一条研究轨迹（假设→构建→回测→优化），进化时定位轨迹中的次优步骤定向修正、交叉复用互补高奖励片段，而非整段重写。实证依据：Man Group AlphaGPT 反馈循环使 IC 从 0.58% → 2.23%。**边界声明**：30 号文已裁定"R&D-Agent 自进化策略搜索"为作战地图之外的研究议题（暂缓）——本增强与该裁定的兼容方式 = L4 人审不可降级（C2）+ 第 4 条限速，多轮进化的每一步都在沙箱与人审回路内，全自动无人审闭环留 Phase 3 远期。
+3. **可解释设计约束（Phase 2，R-51 Explainable By Design）**：生成阶段即嵌入可解释性，而非事后补挂 SHAP/LIME——生成模块 MUST 含 `self.explain()` 自然语言解释方法；因子表达式 MUST 附经济学假设文本（与三重一致性的"假设"对齐）；模块输出 MUST 含 top-3 特征贡献度（特征 + 贡献百分比）。验证侧门控见 §3.5 可解释性门控行。
+4. **自进化限速（23-D-AUT-PERM §17.3 吸收）**：每轮最多创建 1 个新模块（防失控）；元反思频率 ≤1 次/周；AutoSkill 发现的技能自动组合需人工审核。配套五禁见 §5 #11。
+
 ### 3.5 验证设计（验证）
 
 **决策**：四级验证 L1→L4，门槛与 62 号 PROMOTE_ENTRY 对齐，保证"验证通过即可走晋升"。
 
 | 级 | 内容 | 工具/依据 | 自动化 |
 |----|------|----------|--------|
-| L1 静态验证 | AST 安全扫描 + 复杂度上限 + 词表合规 + **因果安全截断测试**（截断输入时序，检测 lookahead——ALPHAQT-BENCH 2026 方法，§3.7） | skill_sandbox + AST 检查器 | 全自动 |
+| L1 静态验证 | AST 安全扫描 + 复杂度上限 + 词表合规 + **因果安全截断测试**（截断输入时序，检测 lookahead——ALPHAQT-BENCH 2026 方法，§3.7）+ **三重语义一致性交叉验证**（假设⇄表达式⇄代码，不一致拒绝，§3.4 增强 1） | skill_sandbox + AST 检查器 | 全自动 |
 | L2 回测验证 | C-003 全量回测：OOS Sharpe≥0.5、OOS max DD≤15%、OOS≥3 月；过拟合检查：PBO≤0.2、DSR≥1.0、CPCV 门禁（worst_dd≤15%、OOS 均值>0、std/mean≤0.5）、PF ratio≤2.0 | `src/zephyr/backtest/`（overfitting_detector/walk_forward）；门槛=62 号 §4.13 G1/G2（引用，阈值以其为准） | 全自动 |
 | L3 合规验证 | A 股规则模拟：T+1、涨跌停不可成交、融券受限、PIT available_at 防前视 | C-003 matching_engine/pit_manager（production 内建 A 股规则） | 全自动 |
+| L3+ 可解释性门控 | 生成物 MUST 附 SHAP/LIME 解释 + 经济学原理解释（§3.4 增强 3 的验证侧）；解释标注置信度三级（高/中/低），低置信度标"需人工验证"并转 L4 重点复核；**无法提供经济学原理解释的模块 → 拒绝部署**（Man Group AlphaGPT 门控原则）；承认 XAI 局限性（BIS FSI No.24：SHAP/LIME 存在不精确性与不稳定性），LLM 自然语言解释与数值解释不一致时以数值为准 | §3.4 可解释设计产物 + C-003 归因报告 | 全自动拦截 + L4 复核 |
 | L4 人工审核 | 人审台批量批准/驳回：展示 schema_plan、生成代码 diff、L1~L3 报告、经济含义一句话 | 极简人审台（C7）；对应 62 号 G8 人工签批（不可降级） | **人工，不可自动化** |
 
 验证结果沉淀：回测证据写条目 `evidence` 字段（v2.0 已预留，空=未回测），实验登记进 experiment_registry；失败案例进内部经验知识源（§3.1 第四源）——验证环节同时是知识再生产环节。
+
+**L2 增强：三阶段决策门控 + 高级回测（草稿吸收，源：学习系统架构 §8.1 + 20-D-RESEARCH §12.0 R-48；Phase 2 登记，叠加在 62 号 G1/G2 既有门槛之上，阈值真源不动）**：
+
+1. **三阶段决策门控**（AlgoXpert arXiv 2026）：
+   - **IS 阶段 → 稳定性门控**：参数扫描识别"稳定高原"，选高原中心点参数；避免悬崖型参数（参数微调即性能骤降的区域）。
+   - **WFA 阶段 → 多数通过门控 + 灾难否决门控**：多数通过 = WFA 各窗口中 >50% 盈利才通过；灾难否决 = 任一窗口最大回撤 >10% 直接 FAIL；**Purge Gap ≥5 个交易日**（训练集末尾 → Gap 期 → 测试集开头，防信息泄漏）。
+   - **OOS 阶段 → 参数锁定门控**：OOS 期间参数不可调整（防 OOS 过拟合）。
+2. **高级回测方法库（R-48，纯 Python scipy/statsmodels，C6 兼容）**：DSR 扩展（多策略同测时按策略间相关性调整多重检验阈值）/ CPCV v2（支持非 IID 金融时序的组合式净化交叉验证）/ White's Reality Check 增强（改进 bootstrap 适配金融厚尾，过拟合检测功效 +30%）/ Adaptive Walk-Forward（按市场波动率自适应训练/测试窗口，高波缩短、低波延长）。**与 62 号去重**：62 号 §4.13 G1/G2 门槛值（PBO≤0.2 / DSR≥1.0 / CPCV 门禁三条件 / PF ratio≤2.0）为既定真源，本条只扩充检测方法库与门控流程，不重复定义阈值。
 
 **why**：
 - 验证设施 100% 复用现有 C-003 + 62 号门禁算法，模块工厂只做**编排**（批量跑、汇总报告、拦截分流），不重写验证逻辑（C7）。
@@ -263,6 +300,12 @@ scope: 09_ai_architecture
 - strategy：entry/exit/position_sizing 三段、risk_rules 非空、benchmark_id、lifecycle_status、origin（human/llm_generated/hybrid）+ distilled_to_code（llm_generated 未蒸馏阻断上线，62 号 G5 关联）。
 - 共同：code_commit 绑定（G5）；v2.1 code_symbol/code_fingerprint 双向锚定（#ARCH-BREG-002）。
 
+**入库注记（草稿吸收）**：
+
+1. **权重中心接口原则**（源：学习系统架构 §11.3）：模块工厂产出的策略/信号类模块在交易侧消费时输出**目标组合权重而非订单**——Python 代码即使有 bug 最多产生错误目标权重，物理上无法绕过风控引擎。约束：所有权重 ≥0 且权重之和 =1；单只股票权重 ≤20%（B-002 集中度约束）；权重变更频率 ≤1 次/交易日（防过度交易）。
+2. **知识条目 append-only + Git-like 版本**（源：学习系统架构 §10.1 / §6.1 R-116）：知识与条目更新 = 新增一条 + 旧版标 superseded_by，历史不可删不可改；版本管理在 append-only 之上构建版本链，**回滚 = 当前生效指针回退到历史版本，不删除版本链**；每条知识可血缘追溯至原始来源。与本文既定写纪律一致：模块工厂对 62 侧注册表仅 candidate 追加（§4.5），不直接改既有条目。
+3. **Non-AI Module Boundary Guard：AI 权重 ≤30%**（源：学习系统架构 §11.1 R-101，与 15 号文同口径互参）：入库的 AI 生成信号类模块在组合中的权重 ≤30%（B-007 人类监督对齐），超限自动降权至 30% 以下；入库时标记模块 AI/non-AI 属性，供组合层守卫执行。
+
 **why**：
 - 真源唯一铁律：因子/策略真源已在 catalogs YAML（active，286 条目），模块工厂另建库=双真源漂移，结构性禁止。
 - 候选态入库 + 人审晋升的分离：模块工厂负责"到 candidate + evidence 齐"，是否上线由 62 号生命周期决定——职责边界清晰，模块工厂永不触碰"上线"按钮（C2）。
@@ -282,7 +325,7 @@ scope: 09_ai_architecture
 | AlphaSchema（[arXiv:2607.26642](https://arxiv.org/html/2607.26642v1)，2026-07） | schema plan={Event, Context, Qualities, Direction, Output} 语义空间 + surrogate 收益模型 + adaptive quota 选择（探索/利用/变异三平衡）；A 股实证 | 62 号 schema_plan 字段的原始对标，§3.3 已对齐；surrogate+quota 选择登记为 Phase 3 候选增强（需样本量积累） |
 | Hubble（[arXiv:2604.09601v2](https://arxiv.org/html/2604.09601v2)，2026-04） | DSL+AST 沙箱+dual-channel RAG+family-aware selection，104 候选零崩溃；正/负 RAG、公式相似度罚、持久诊断 artifacts | 实证 §3.4 五件套路线；正负 RAG（成功+失败案例双通道检索）登记为 Phase 2 增强候选 |
 | ALPHAQT-BENCH（[ACL 2026 Findings](https://aclanthology.org/2026.findings-acl.138.pdf)） | 多层评估协议：可执行性/因果安全（动态截断测 lookahead）/功能正确性/结构合规；揭示自由代码"静默语义错误" | §3.5 L1 已吸收"因果安全截断测试"；同时强化 §3.4 "表达式/模板优先"决策 |
-| QuantaAlpha（[arXiv:2602.07085v3](https://arxiv.org/html/2602.07085v3)，2026-05） | 轨迹级进化：每轮挖掘全程为 trajectory，做 mutation/crossover + 经验复用 | 轨迹级进化登记为 Phase 3 演进方向（与 ICL 案例库互补） |
+| QuantaAlpha（[arXiv:2602.07085v3](https://arxiv.org/html/2602.07085v3)，2026-05） | 轨迹级进化：每轮挖掘全程为 trajectory，做 mutation/crossover + 经验复用 | 轨迹级进化登记为 Phase 3 演进方向（与 ICL 案例库互补）；三重语义一致性已由 §3.4 增强 1 吸收 |
 | QuantGPT（[GitHub](https://github.com/Miasyster/QuantGPT)，2026-05） | LLM Agent 经 MCP 全自动发现→评估→迭代→验证因子 + 云端独立复核 + OOS 跟踪；零人工研究循环 | 零人工循环与 C2 冲突，不采纳其"无人"部分；其云端独立 OOS 复核思路可用 Shadow/Canary 替代（已有，62 号 §4.13） |
 
 ---
@@ -346,6 +389,7 @@ scope: 09_ai_architecture
 - **技能沉淀**：高频生成模式 → 候选技能，走 11 号技能库登记流程（接口见 §4.6）。
 - **反思驱动再生成**：验证失败案例 → 12 号自反 Agent 反思 → 再生成（接口见 §4.7）。
 - **轨迹级进化**：QuantaAlpha 式 trajectory mutation/crossover 的评估（§3.7）。
+- **S6 元学习机制细节（草稿 12-D-ML-TRAIN §10 吸收，Phase 3 候选增强登记）**：①Prompt 自优化 STOP 模式——LLM 分析 prompt 效果 → 自动生成改进 prompt → **人工审核** → 部署（prompt 变更必须人工审核，防 LLM 自我优化到不可控）；②代码自纠正 RISE 模式——模块代码运行异常 → LLM 自动定位 + 修正 → 人工审核 → 部署；③技能三元组——技能以（条件， 动作， 效果）结构化存储，按条件检索、按效果排序，新任务优先从技能库检索复用以加速收敛；④元反思四步闭环——经验回放 → 反思提炼 → 技能注册 → 元反思（反思"反思过程本身"的质量），频率 ≤1 次/周；⑤轻量 Agent 化四角色——PromptOptimizer / ArchitectureOptimizer / CodeGenerator / MethodologyLearner 四个逻辑 Agent 各管一个元学习维度，共享同一进程与 GPU 内存、消息队列协调，非物理分布式、不做 MARL（裁定 6❌硬边界门禁）。与 12 号分工：12 号自反 Agent 管"个案失败的反思"，本条 S6 管"学习策略自身的元优化"；个案语料接口见 §4.7。
 
 ### 4.5 与 62 号注册表的接口（入库 schema 与流程）
 
@@ -360,7 +404,7 @@ scope: 09_ai_architecture
 > 11 号文档（AI-FILL-11）填充中，以下为**接口假设**（依据：11 号骨架主题组信息 + `src/zephyr/autonomy_core/skills/` 已 production 的设施）；最终以 11 号定稿为准，差异记开放问题 Q2。
 
 - **复用方向（技能库 → 模块工厂）**：代码生成环节按任务描述检索技能库，复用已有技能作为模块组件（如"因子计算骨架""回测调用"类技能）。假设存在按描述检索技能的入口（skill_discovery/skill_registry 已 production，11 号将定义其对外接口）。
-- **沉淀方向（模块工厂 → 技能库）**：Phase 3 将高频生成模式沉淀为候选技能，走技能库自己的登记/验证流程（模块工厂不直接写技能库，只提交候选）。
+- **沉淀方向（模块工厂 → 技能库）**：Phase 3 将高频生成模式沉淀为候选技能，走技能库自己的登记/验证流程（模块工厂不直接写技能库，只提交候选）；进化式生成的每轮代码 + 回测结果（§3.4 增强 2）同走本接口沉淀。
 - **分工边界**：技能库存"怎么做"（可复用过程性知识），模块工厂管"创建什么"（知识→业务模块的转化）——与 11 号骨架开放问题 Q2 的表述一致，两边对齐后关闭。
 
 ### 4.7 与 12 号自反 Agent 的接口
@@ -386,7 +430,7 @@ scope: 09_ai_architecture
 
 | # | 不做 | 理由/出处 |
 |---|------|----------|
-| 1 | **不做 MAML/EWC 元训练** | 单 GPU RTX 3090 跑不动（C1）；01 号文 §5.3 已裁定 Phase 3 用 ICL 替代 |
+| 1 | **不做 MAML/EWC 元训练** | 单 GPU RTX 3090 跑不动（C1）；01 号文 §5.3 已裁定 Phase 3 用 ICL 替代（草稿"小参数可行"反证已记开放问题 Q9，裁定前本条维持） |
 | 2 | **不做零审核全自动** | LLM 生成交易策略代码零审核=自杀（01 号文 §5.2）；L4 人审 + 62 号 G8 人工签批不可降级（C2） |
 | 3 | **不做通用代码生成** | 只生成白名单形态（因子表达式/策略三段/技术指标/风控规则，§3.4）；通用代码生成是静默语义错误温床（ALPHAQT-BENCH 2026，§3.7） |
 | 4 | **不做实时模块工厂** | 日频/周频批量处理（C3）；不在 tick=3s 实时交易路径上 |
@@ -396,6 +440,7 @@ scope: 09_ai_architecture
 | 8 | **Phase 0/1 不做全自动采集爬虫** | 30Mbps 网络 + 版权风险 + 信噪比（§3.1）；人保持在筛选回路上 |
 | 9 | **不做全自动晋升/上线** | candidate→active 是 62 号 PROMOTE_ENTRY 职责；模块工厂止步于 candidate+evidence（§3.6 边界） |
 | 10 | **不做 agent 编排系统** | 61 号备忘 §2.3 已裁定：多 AI 协作=人调度多会话，非 agent 自治；模块工厂各环节由人调度触发，不自治串联 |
+| 11 | **不做自进化五禁项** | 草稿 23-D-AUT-PERM §17.1/§17.3 吸收：①不可自动修改 B-001~B-020 硬边界；②不可自动上线策略（B-007 人审）；③不可自动删除已有模块（只能标记退役）；④代码不可自动部署（需人工验证）；⑤禁止 MARL 训练/分布式协调（裁定 6❌硬边界门禁）。配套限速（每轮≤1 新模块/元反思≤1 次每周/技能组合人审）见 §3.4 增强 4 |
 
 **过度工程审查记录**（指令第 6 轮三问）：
 
@@ -416,6 +461,8 @@ scope: 09_ai_architecture
 | Q5 | discovery_agent 枚举是否扩展 `module_factory` 值 | 待用户裁定（62 侧只读不改） | 62 号 factor schema 枚举为 human/rd_agent/efs/hubble/quantevolver/other，模块工厂产出暂登记 `other`；枚举扩展属 62 侧 schema 变更，待裁定 |
 | Q6 | 模块工厂自身的 depgraph 节点编号与域归属 | 待 03 号域边界裁定 | Phase 0 S1 需先以占位节点登记；正式编号（MOD-xxx）与归属域（D_AI / D_INFRA / 其他）待 03 号文档（AI-FILL-03）域边界裁定后确定 |
 | Q7 | 潘潘课程剩余约 260 条是否作为 Phase 0 首批手动实例 | 待裁定 | 29 号文规划 546 条，实测已入库 286 条（factor 140 + strategy 146）；剩余条目天然是 Phase 0 SOP 的最佳练兵素材，但是否排入近期计划待人裁定 |
+| Q8 | S0 采集增强候选与本文"文本优先"裁定的口径差异 | 待 Owner 裁定（不进施工计划） | 草稿（学习系统架构 §3.2/§3.3）登记三项采集增强：①漂移感知调度（ADWIN/DDM 检测数据分布漂移 → 自动调整采集频率/数据增强策略）；②VLM 图表理解（本地 VLM 解析 K 线图/技术图表 → {chart_type, trend, support, resistance, pattern, signal} 结构化描述，RTX 3090 可推理）；③PIT 门控（采集数据全量时间戳标注 + 财务数据强制延迟 60-90 天报告期 + 特征存储防前视验证）。三项属自动化采集范畴，与本文 §3.1"人筛选 + 文本优先、不做全自动爬虫"裁定存在口径差异——按指令登记为开放问题，是否吸收为 Phase 2+ 采集增强候选待裁定 |
+| Q9 | MAML/EWC/LoRA"小参数可行"反证 vs 01 号文"用 ICL 替代"裁定 | 待 Owner 裁定（请求重新裁定，不改既定决策） | 草稿（12-D-ML-TRAIN §10.1 维度 5/7 + 20-D-RESEARCH §12.0 R-10/R-30/R-44）给出反证：①<1M 参数小模型 MAML 元训练在 RTX 3090 可行（新市场 5-10 episode 快速适应）；②在线 EWC 防遗忘为纯 Python Fisher 信息矩阵正则，无集群需求；③LoRA 适配器轻量微调（基础模型冻结）3090 可运行。与本文 C1/§5 #1"单 GPU 跑不动 MAML/EWC，Phase 3 用 ICL 替代"（01 号文 §5.3 裁定）冲突。草稿自身亦给出折中口径：小样本用 ICL、大样本用 MAML（R-62），MAML 管前向迁移、EWC 管后向保持。是否将"<1M 参数级 MAML/EWC + LoRA 适配器"从"不做"降级为"Phase 3 远期候选"待裁定；裁定前 §5 #1 维持不变 |
 
 ---
 
@@ -425,6 +472,7 @@ scope: 09_ai_architecture
 |------|------|------|------|
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 六环节现状实测+核心独特点论证+约束表+15 类设施盘点；§3 按流水线"输入→处理→输出→验证"填充六个设计决策（含替代方案）+前沿演进方向登记（AlphaSchema/Hubble/ALPHAQT-BENCH/QuantaAlpha/QuantGPT）；§4 Phase 0→3 施工计划（depgraph L1 铁律）+62/11/12 号接口；§5 不做什么 10 条+过度工程三问审查；§6 开放问题扩至 7 项 | 按 AI-FILL-13 指令填充；11/12 号依赖文档未填充，接口按规则降级为假设并登记 Q2/Q3 |
+| 2026-08-17 | 0.3.0 | 草稿缺口 15 项吸收：§3.1 信息价值四维评分+知识质量门禁四规则+Factor Mining 创意拓宽；§3.2 知识 11 类参照系+矛盾三态+语义去重；§3.3 Factor Mining Agent 分工+因果发现引擎/验证层候选；§3.4 三重语义一致性+进化式生成/分析师 Agent 反馈循环+可解释设计约束+自进化限速；§3.5 L1 三重一致性检查+L2 三阶段决策门控/高级回测+新增 L3+ 可解释性门控；§3.6 权重中心接口/append-only+Git-like 版本/AI 权重≤30% 注记；§4.4 S6 元学习机制细节登记（STOP/RISE/技能三元组/元反思四步/轻量 Agent 化四角色）；§5 新增 #11 自进化五禁；§6 新增 Q8（S0 采集增强口径差异）/Q9（MAML/EWC/LoRA 复核请求）；顺手修正 skills 设施数 57→58 个 .py（17 号文实测口径） | 按 AI-FILL-13-R2 指令回填；草稿源（学习系统架构 v8.1/12-D-ML-TRAIN/20-D-RESEARCH/23-D-AUT-PERM）实测核实后写入；与现行裁定冲突项（30 号文自进化搜索暂缓、01 号文 ICL 替代）不改既定决策，记 Q8/Q9 待 Owner 裁定 |
 
 ---
 
