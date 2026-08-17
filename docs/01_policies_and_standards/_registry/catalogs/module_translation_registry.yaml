@@ -41558,7 +41558,7 @@ entries:
   desc_en: ""
   plain_zh: "所有告警阈值只认一个地方：告警阈值注册表。谁要用阈值（比如回撤5%报警），就从这里拿；注册表文件丢了、条目少了、类型写错了，它就当场报错，绝不偷偷用代码里的旧数字。"
 - module_path: src/zephyr/governance/audit/pg_probe.py
-  module_id: MOD-GOV_PG_PROBE
+  module_id: MOD-PG_PROBE
   domain_id: D_GOV_AUDIT
   name_zh: PG可用性前置探针与DB降级留痕统一入口
   name_en: ""

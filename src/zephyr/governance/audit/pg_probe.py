@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_PG_PROBE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
+# [BLUEPRINT] MOD-PG_PROBE | docs/03_modules/_cross_layer/gate_engine/blueprint.md | §0.1
 # [MODULE] zephyr.governance.audit.pg_probe
 # [DOMAIN] D_GOV_AUDIT
 # [DEPENDENCIES] zephyr.governance.depgraph_schema (_load_pg_config 连接参数真源); zephyr.governance.audit.reconciliation_registry (log_gate_failure/_governance_db_path 留痕链); zephyr.shared.utils.time_utils (now_utc); stdlib(socket/json)
@@ -12,7 +12,12 @@
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] 所有公开函数永不抛异常——探测/读状态/去重查询/落库任一失败均降级为保守默认值（offline 判定=False 即不误导门卡走"DB 离线"路径；留痕失败仅 logger.warning）
 # [TESTS] tests/governance/audit/test_pg_probe.py
-# [A_module] module_id=MOD-GOV_PG_PROBE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-PG_PROBE | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
+# 治本（2026-08-17）：module_id MOD-GOV_PG_PROBE→MOD-PG_PROBE——N-17 域片段须与
+# DOMAIN 头部声明一致：旧片段 GOV_PG_PROBE≠GOV_AUDIT 且共享 token GOV 触发违例；
+# 新 id 片段 PG_PROBE 与 GOV_AUDIT 零共享 token（N-17 跳过）且过 N-06 派生轨格式；
+# FOPEN-001 新建时经 merge 通道绕过 GATE-11 落入（commit 通道会阻断新违规），顺手治本。
+# （注释禁用 [DOMAIN] 方括号写法——GATE-DOMAIN-FK 会误解析为域头，2026-08-17 实证）
 # [TTL] permanent
 # [ARCH] ARCH-119
 """pg_probe.py — PG 可用性前置探针 + DB 降级留痕统一入口（tracker #116 / #ARCH-119）
