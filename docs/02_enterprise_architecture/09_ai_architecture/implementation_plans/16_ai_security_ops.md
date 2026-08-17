@@ -5,7 +5,7 @@ title: AI 安全与自治运维施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.0"
+version: "0.2.1"
 date: 2026-08-17
 topic: ai_security_ops
 scope: 09_ai_architecture
@@ -25,7 +25,7 @@ scope: 09_ai_architecture
 |---|---|
 | 主题组 | AI 安全与自治运维 |
 | 所属 | [00_index.md](00_index.md) §1 目标架构·横切层（AI 安全 + AI 自治运维） |
-| 依赖 | [09_llm_security_integration.md](09_llm_security_integration.md)（LSG 集成，v0.2.0 已填充）+ [15_autonomy_boundary_risk.md](15_autonomy_boundary_risk.md)（自治边界，填充中）+ MOD-INF-031 AutoFix Engine 蓝图 + MOD-INF-022 Escalation Protocol 蓝图 |
+| 依赖 | [09_llm_security_integration.md](09_llm_security_integration.md)（LSG 集成，v0.2.0 已填充）+ [15_autonomy_boundary_risk.md](15_autonomy_boundary_risk.md)（自治边界，v0.2.1 已填充）+ MOD-INF-031 AutoFix Engine 蓝图 + MOD-INF-022 Escalation Protocol 蓝图 |
 | 优先级 | P0——AI 安全是所有 AI 能力的信任锚点 |
 | 状态 | draft（骨架填充完成） |
 
@@ -50,7 +50,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 2. **修复动作如何满足 TNR（可撤销 + 不恶化）？** auto_fix_engine 的不变量已承载 TNR 语义（SafetyGate 前置拦截 = 不恶化的预防；WAL + ShadowWorkspace + CanaryFixer = 可撤销+验证后不恶化），但「可撤销」依赖 Rollback（MOD-INF-021）接线、「不恶化」依赖修复后回归验证，两条链路当前无端到端验收基线。
 3. **闭环成熟度 A-L0~A-L4 如何逐级解锁？** 与 15 号文实测发现的三套自治等级标尺（PS-VOC-021 / AutonomyMaturity L0~L4 / AutonomyGuard level1~3）语义不同——A-L 系是「运维闭环的自治深度」，需裁定映射关系（§6 Q4）。
 4. **知识库冷启动：先建库还是先建闭环？** 无库则 Diagnose 只能靠通用规则、Learn 无沉淀物；无闭环则库无数据来源。本文在 §4 给出「记录优先、并行冷启动」的候选方案（§6 Q2）。
-5. **KILLSWITCH 三级响应与 15 号文 5 套 Kill Switch 什么关系？** 15 号文盘点显示 5 套各自独立触发、独立复位、无统一编排；00_index §3.3 的三级响应是策略层语义。两者的映射是本文施工项，接口假设见 §6 Q3。
+5. **KILLSWITCH 三级响应与 15 号文 5 套 Kill Switch 什么关系？** 15 号文已定「两级编排」设计（系统级总开关 + 域级分开关 + 4 条收敛规则）；00_index §3.3 的三级响应是策略层语义。策略层与两级编排的叠加映射是本文施工项（§3.4、§6 Q3）。
 
 ### 2.3 约束条件
 
@@ -183,7 +183,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 
 **为什么需要三级而不是单一总开关**：爆炸半径不同。level_1（P1 high）只降级单一 Agent 的自治模式（暂降 IM 模式），系统其余部分照常；level_2（P0 critical）暂停涉事 Agent；level_3（global_critical）全局暂停。单一总开关会把「某 Agent 一次可疑调用」放大成「全系统停摆」——对 1 人运维来说，误报造成的全局停摆本身就是可用性事故。
 
-**与 15 号文 5 套 Kill Switch 的关系（接口假设，15 号文填充中，见 §6 Q3）**：三级响应是**策略层**（决定「这次事件该停什么」），5 套 Kill Switch 是**执行机构层**（决定「怎么停」）。映射候选：level_1 → 技能级（`skill_kill_switch.py`）+ 自治降级（`autonomy_regressor.py`）；level_2 → 系统级单 Agent 阻断（`security/access_control/kill_switch.py` 的单 Agent 阻断能力）；level_3 → 系统级全局熔断 + 交易级（`trading_kill_switch.py`）。编排收敛规则（谁优先、谁兜底）以 15 号文的施工结果为准。
+**与 15 号文两级编排的叠加关系（v0.2.1 已对齐口径，残余差异见 §6 Q3）**：三级响应是**策略层**（决定「这次事件该停什么」），15 号文的两级编排是**路由层**（系统级总开关 `security/access_control/kill_switch.py` VR-009 + 域级分开关 + 4 条收敛规则，决定「怎么停」），5 套 Kill Switch 是**执行机构层**。映射候选：level_1 → 技能级（`skill_kill_switch.py`）+ 自治降级（`autonomy_regressor.py`）；level_2 → 系统级单 Agent 阻断（VR-009 的单 Agent 阻断粒度）；level_3 → 系统级全局熔断 + 交易级（`trading_kill_switch.py`）联动。施工时按 15 号文收敛规则落地（影响资金先交易级、全局事故只拉系统级总开关）。
 
 ### 3.5 自治运维闭环 Detect→Diagnose→Remediate→Learn 的 why
 
@@ -266,8 +266,9 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 - 09 号文 Q3 的接口假设（事件总线/消费协议）由本文 §4.2 P0-1 的 schema 落地后回填确认。
 
 **与 [15_autonomy_boundary_risk.md](15_autonomy_boundary_risk.md) 的接口（边界违规 → 运维响应）**：
-- 接口假设（15 号文 §4 施工计划填充中，见 §6 Q3）：边界违规事件（三分类越权拦截、Drift DRIFT_DETECTED、自治回归 blocked）产生标准安全事件进入本文事件流；KILLSWITCH 三级编排复用 15 号文盘点的 5 套 Kill Switch 作为执行机构；自治降级动作（autonomous→auto_guard→blocked）与 level_1 响应对齐。
-- 真源边界：三分类运行时 gate、Drift 四件套、5 套 Kill Switch 的施工归 15 号文；本文只做事件消费与三级编排。
+- 已对齐口径（15 号文 v0.2.1 §4.6 接口节）：15 号文产出的风险事件（gate 拦截 / Drift 检出 / Kill Switch 触发）写审计链落盘，本文 Detect 环节消费——与 09 号文 §4.6「L6 事件 → 审计链 → 16 号文 Detect 消费」同一载体，即本文 §4.2 P0-1 的统一事件 schema。
+- 已对齐口径：15 号文确认「KILLSWITCH 三级响应触发时，系统级 Kill Switch（VR-009）是执行载体之一」，与本文 §3.4 策略层/路由层/执行机构层叠加框架兼容。
+- 真源边界：三分类运行时 gate、Drift 四件套、两级编排与 5 套 Kill Switch 的施工归 15 号文；本文只做事件消费与三级响应策略层。
 
 **与 [08_multi_ai_concurrency_governance.md](08_multi_ai_concurrency_governance.md) 的边界（git 安全 vs AI 安全运维）**：
 - git 安全（工作区防护/提交队列/GitCommitGateway）归 08 号文域，是施工期的供应链安全；本文的运维闭环覆盖运行期安全事件。交界面：commit gate 拦截事件（如 PURE-ASSERTION 违规、depgraph 漂移）可作为事件源接入本文 Detect，但 08 号文的门禁执行逻辑不改动。
@@ -301,7 +302,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 |---|------|------|------|
 | Q1 | LLM 安全栈（L0~L8）与 LLM 4层 guardrails（G1~G4）的关系？ | 待裁定 | 09 号文 §3.2 已给口径（G 系 = L 系运行时四段摘要视图，LSG 是实现载体，无重叠冲突），本文 §3.1 已采用；待 Owner 确认后由 00_index 对齐 |
 | Q2 | 自治运维闭环的施工优先级——先建库还是先建闭环？ | 待裁定 | 本文 §4 候选方案：并行冷启动——Phase 0 先通事件流（闭环骨架），知识库以「记录优先」随行落盘（P1-3），匹配能力（Learn）放到 P2-1；不立匹配目标值 |
-| Q3 | 与 15 号文的接口假设是否成立？ | 待确认（接口假设） | 15 号文 §4 施工计划填充中。本文 §3.4/§4.5 假设：①KILLSWITCH 三级 = 策略层，15 号文 5 套 Kill Switch = 执行机构层；②边界违规/Drift/自治回归事件进本文统一事件流。若 15 号文采用不同编排方案，本文 §4.4 P2-3 需对齐修订 |
+| Q3 | 与 15 号文的接口是否已对齐？ | 已对齐（残余差异待施工时裁定） | 15 号文 v0.2.1 已确认：风险事件写审计链 → 本文 Detect 消费（与 09 号文同一载体）；VR-009 系统级开关是 KILLSWITCH 执行载体之一。残余差异：本文三级响应是策略层，15 号文两级编排是路由层——「三级 → 两级 → 5 套执行机构」的叠加映射表（§3.4 候选）需在 P2-3 施工时与 15 号文收敛规则逐条核对 |
 | Q4 | A-L0~A-L4 与 15 号文三套自治等级标尺的映射？ | 待裁定 | 15 号文 §2.2 实测发现 PS-VOC-021（l0~l3）/ AutonomyMaturity（L0~L4）/ AutonomyGuard（level1~3）三套并存；本文 A-L 系是第四套（运维闭环自治深度）。统一方案需人裁定，本文只声明语义边界不替人拍板 |
 | Q5 | 举报人机制（whistleblower）是否保留？ | 待裁定 | 00_index §3.3 串谋检测含「举报人机制」，全仓实测无实现。选项：a) 补实现（Agent 可上报其他 Agent 可疑行为）；b) 从设计移除（当前多 Agent 规模小，collusion_detector+ai_agent_monitor 已覆盖主要面）；c) 降级远期。本文不替人拍板 |
 | Q6 | MOD-INF-033 Behavioral Auditor 是否本期激活？ | 待裁定 | 蓝图 activation_phase=requires_100ai（远期容量），其 VERDICT（PASS/YELLOW/RED）语义与本文事件流高度相关。候选：本期只消费其设计中的事件语义，不激活模块本身 |
@@ -315,6 +316,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 |------|------|------|------|
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 背景（四域实测处境/核心问题/约束/设施盘点 A~H 八类）、§3 设计决策（G1~G4 消费口径/四威胁收口/MCP Triple Gate/KILLSWITCH 三级策略层/四环闭环/TNR 不变量/A-L 成熟度/知识库与保命轨）、§4 施工计划（depgraph 登记→Phase 0 事件流+TNR 基线→Phase 1 诊断修复接线+知识库落盘→Phase 2 Learn 回写+三级编排+保命轨演练→接口→收尾验证）、§5 不做什么 8 项、§6 开放问题扩至 Q1~Q7 | 按 AI-FILL-16 指令执行填充；15 号文填充中，接口假设写入 Q3；举报人机制/行为审计激活/IM 语义等待裁定项写入 Q5~Q7 |
+| 2026-08-17 | 0.2.1 | 第 2 轮循环：15 号文 v0.2.1 补完落地后对齐——§1 依赖状态、§2.2 问题五、§3.4 叠加框架（策略层/路由层/执行机构层）、§4.5 接口、§6 Q3 状态更新为「已对齐（残余差异待施工时裁定）」 | 红蓝对抗验证轮发现 15 号文接口口径已落地，消除过时假设表述（PURE-ASSERTION） |
 
 ---
 
