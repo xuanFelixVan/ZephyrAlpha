@@ -26,4 +26,6 @@ from dataclasses import dataclass
 
 @dataclass
 class AutonomyMaturity:
+    # 主标尺（00_index 有界自治）映射：L0 OBSERVE=L0 人工；L1 NOTIFY/L2 SUGGEST=L1 建议（两亚档）；
+    # L3 AUTO_MINOR=L2 低风险；L4 AUTO_FULL=保留不启用（=L3 中风险之上不开放）
     level: int = 0  # L0: OBSERVE, L1: NOTIFY, L2: SUGGEST, L3: AUTO_MINOR, L4: AUTO_FULL
