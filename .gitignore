@@ -417,6 +417,8 @@ data/brain/quick_profiles/*
 # ClickHouse system artifacts (metadata dumps, access control, configs leaked to workdir)
 access/
 metadata/
+# meta/ — CH metadata snapshots（locks/ 等），原仅靠根白名单 /* 兜底，显式对齐同组（AI-AUDIT03）
+meta/
 preprocessed_configs/
 status
 uuid
