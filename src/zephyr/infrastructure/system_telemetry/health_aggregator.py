@@ -49,6 +49,7 @@ class AnnualHealthReport(BaseModel):
     degradation_ratio: dict[str, float] = Field(default_factory=dict)
 
 
+# class-name-alias: system_telemetry 健康聚合器（poll_all 三态探针快照+事件驱动触发），区别于 health_monitor/health_aggregator.py 的 check_all 并行检查
 class HealthAggregator:
     _MAX_SNAPSHOTS = 1440
 

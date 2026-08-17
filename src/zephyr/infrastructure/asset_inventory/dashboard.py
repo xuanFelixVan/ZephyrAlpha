@@ -192,14 +192,18 @@ class KnowledgeTransferGate:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 lines.append("  (索引解析失败)")
 
+        # 治本（AI-14 审计 R1-04）：原代码直连 get_depgraph_pg_connection 绕过
+        # DatabaseService 统一访问协议（read_only=True 双连接）。Dashboard 是纯只读查询，
+        # 必须经 DatabaseService.get_depgraph_conn(read_only=True)。
         try:
-            from zephyr.governance.depgraph_schema import get_depgraph_pg_connection
+            from zephyr.infrastructure.database_service import DatabaseService
 
-            conn = get_depgraph_pg_connection(autocommit=True)
+            ds = DatabaseService()
+            conn = ds.get_depgraph_conn(read_only=True)
             with conn.cursor() as cur:
                 cur.execute("SELECT node_id FROM nodes ORDER BY fan_in DESC LIMIT 5")
                 top = [row["node_id"] for row in cur.fetchall()]
-            conn.close()
+            # 池化连接不归本模块关闭——归连接池（§5.64.1）
             if top:
                 lines.append(f"  最高依赖:  {', '.join(str(t) for t in top)}")
         except Exception as e:  # noqa: BLE001 — 5.135治标: broad exception catch

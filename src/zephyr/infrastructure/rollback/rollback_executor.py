@@ -498,6 +498,24 @@ class RollbackExecutor:
 
         self.write_audit_log(audit_record)
 
+        # 治本（AI-14 审计 R1-01）：discard 完成同样发布 rollback_completed——
+        # discard_changes 不走 execute()，是两轨回滚模型的另一完成点（蓝图 §2.2）。
+        try:
+            from zephyr.shared.event_bus import bus
+
+            bus.emit(
+                "rollback_completed",
+                payload={
+                    "operation": DiscardDecision.DISCARD.value,
+                    "commit_sha": "",
+                    "files_reverted": len(files_discarded),
+                    "lost_tasks": 0,
+                    "session_id": audit_session,
+                },
+            )
+        except Exception:  # noqa: BLE001 — 事件发布失败不阻断 discard 结果
+            logger.warning("rollback_completed emit failed for discard", exc_info=True)
+
         return DiscardResult(
             success=True,
             files_discarded=files_discarded,
@@ -780,6 +798,9 @@ class RollbackExecutor:
                 execution_id=execution_id,
             )
 
+            # 治本（AI-14 审计 R1-05）：exit_code_resolution 仅成功路径解析——失败路径
+            # exit_code 恒为 0（46 码契约尚未接线，见 ARCH 遗留），原实现无视成败一律解析
+            # 出 PASS/"No action needed"，审计输出说谎。蓝图 §9 全量接线需架构决策。
             try:
                 from zephyr.infrastructure.rollback.contract import resolve_exit_code
 
@@ -788,6 +809,30 @@ class RollbackExecutor:
             except Exception:  # noqa: BLE001 — 5.135治标: broad exception catch
                 # 5.12.1 修复：原 except: pass 静默吞 exit_code 解析失败（门禁决策信号丢失）
                 logger.debug("exit_code resolution failed for execution_id=%s", execution_id, exc_info=True)
+
+            # 治本（AI-14 审计 R1-01）：发布 rollback_completed 事件——该事件此前全仓
+            # 零发布者，导致 SLAMonitor RTO/RPO 记录与 WAL GC 两条订阅链整体死链。
+            # execute() 是 FULL_REVERT/PARTIAL_REVERT/DISCARD/HARD_RESET 四操作统一出口，
+            # dry_run 不发布（无真实恢复）。emit 失败不阻断回滚结果（审计已落盘）。
+            if not dry_run:
+                try:
+                    from zephyr.shared.event_bus import bus
+
+                    bus.emit(
+                        "rollback_completed",
+                        payload={
+                            "execution_id": execution_id,
+                            "operation": operation.value,
+                            "commit_sha": commit_sha,
+                            "files_reverted": files_reverted,
+                            "lost_tasks": 0,
+                            "session_id": audit_session,
+                        },
+                    )
+                except Exception:  # noqa: BLE001 — 事件发布失败不阻断回滚结果
+                    logger.warning(
+                        "rollback_completed emit failed for execution_id=%s", execution_id, exc_info=True
+                    )
 
             self.write_in_flight(execution_id, "complete", "SUCCESS")
 

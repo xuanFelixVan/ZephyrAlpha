@@ -55,6 +55,11 @@ class Watchdog:
         """只读：external_file（Stage 4 公共化）。"""
         return self._external_file
 
+    @external_file.setter
+    def external_file(self, value):
+        """写入：external_file（Stage 4 公共化）——测试隔离注入点（tmp_path 重定向）。"""
+        self._external_file = value
+
 
     @property
     def panic_mode(self) -> bool:

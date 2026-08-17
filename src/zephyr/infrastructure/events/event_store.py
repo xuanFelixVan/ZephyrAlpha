@@ -40,6 +40,9 @@ class EventStoreQuery:
     limit: int = 100
 
 
+# class-name-alias: 本模块 EventStore=JSONL DomainEvent 存储（MOD-INF-016，data/events/
+# event_store.jsonl），区别于 zephyr.infrastructure.event_store.EventStore（SQLite 审计
+# 事件存储，MOD-INF-002，events.db）。语义与存储引擎均不同——非 re-export。
 class EventStore:
     def __init__(self, data_dir: Path | None = None) -> None:
         self._data_dir = data_dir or (REPO_ROOT / "data" / "events")

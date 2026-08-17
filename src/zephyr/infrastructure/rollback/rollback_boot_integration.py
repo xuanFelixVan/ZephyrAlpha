@@ -190,19 +190,30 @@ def subscribe_eventbus() -> None:
         logger.warning("RollbackBootIntegration: subscribe_eventbus failed: %s", e, exc_info=True)
 
 
-def _on_pipeline_failed(payload: object) -> None:
+def _extract_payload(event: object) -> dict:
+    """从 EventBusBackpressure Event 提取 payload dict（契约：handler 收 Event 非裸 dict）。
+
+    治本（AI-14 审计）：原 ``payload if isinstance(payload, dict) else {}`` 对 Event
+    对象恒为 {}——emit() 传的是 Event（topic/payload 包装），订阅端静默丢全部字段，
+    导致 commit_sha 永远缺失、自动回滚只打日志不实跑。
+    """
+    data = getattr(event, "payload", event)
+    return data if isinstance(data, dict) else {}
+
+
+def _on_pipeline_failed(event: object) -> None:
     """pipeline_failed 事件：管线失败触发回滚评估。轻量handler。"""
-    _trigger_rollback(payload, "pipeline_failed")
+    _trigger_rollback(_extract_payload(event), "pipeline_failed")
 
 
-def _on_mcp_call_failed(payload: object) -> None:
+def _on_mcp_call_failed(event: object) -> None:
     """mcp_call_failed 事件：MCP调用失败触发回滚评估。轻量handler。"""
-    _trigger_rollback(payload, "mcp_call_failed")
+    _trigger_rollback(_extract_payload(event), "mcp_call_failed")
 
 
-def _on_kill_switch_triggered(payload: object) -> None:
+def _on_kill_switch_triggered(event: object) -> None:
     """kill_switch_triggered 事件：KillSwitch触发回滚。轻量handler。"""
-    _trigger_rollback(payload, "kill_switch")
+    _trigger_rollback(_extract_payload(event), "kill_switch")
 
 
 def _on_rollback_completed(payload: object) -> None:
@@ -225,7 +236,9 @@ def _trigger_rollback(payload: object, source: str) -> None:
     """
     try:
         data = payload if isinstance(payload, dict) else {}
-        detail = data.get("detail", str(payload))
+        # 跨域键名兼容（Postel）：pipeline_failed/mcp_call_failed 发布端用 error_detail，
+        # drift/validation 发布端用 detail——两侧均在域外，读取端做双键容忍。
+        detail = data.get("detail") or data.get("error_detail") or str(payload)
         logger.warning("Rollback triggered by event '%s': %s", source, detail)
 
         from zephyr.infrastructure.rollback.auto_rollback_trigger import (

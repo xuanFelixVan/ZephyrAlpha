@@ -192,15 +192,25 @@ def _get_engine() -> object:
     return _engine_instance
 
 
-def _on_drift_detected(payload: object) -> None:
+def _extract_event_payload(event: object) -> dict:
+    """从 EventBusBackpressure Event 提取 payload dict（契约：handler 收 Event 非裸 dict）。
+
+    治本（AI-14 审计）：原 ``payload if isinstance(payload, dict) else {}`` 对 Event
+    对象恒为 {}——drift auto-fix 的 target 静默丢失，永不派发。
+    """
+    raw = getattr(event, "payload", event)
+    return raw if isinstance(raw, dict) else {}
+
+
+def _on_drift_detected(event: object) -> None:
     """drift_detected 事件：漂移检测触发自动修复。轻量handler。
 
     payload 期望字段: {timestamp, source_function, severity, detail}
     若 detail 中含可识别的 target 路径，调用 engine.fix("drift_fix", target)。
     """
     try:
-        data = payload if isinstance(payload, dict) else {}
-        detail = data.get("detail", str(payload))
+        data = _extract_event_payload(event)
+        detail = data.get("detail", str(data))
         logger.info("AutoFixEngine: drift_detected event received: %s", detail)
 
         target = data.get("target") or data.get("file_path") or ""
@@ -224,15 +234,15 @@ def _on_drift_detected(payload: object) -> None:
         logger.error("AutoFixEngine: _on_drift_detected failed: %s", e, exc_info=True)
 
 
-def _on_validation_result(payload: object) -> None:
+def _on_validation_result(event: object) -> None:
     """validation_result 事件：验证结果。轻量handler——仅日志记录。
 
     payload 期望字段: {timestamp, source_function, severity, detail}
     验证结果不触发修复（避免循环），仅记录用于审计。
     """
     try:
-        data = payload if isinstance(payload, dict) else {}
-        detail = data.get("detail", str(payload))
+        data = _extract_event_payload(event)
+        detail = data.get("detail", str(data))
         source = data.get("source_function", "unknown")
         severity = data.get("severity", "info")
         logger.info(

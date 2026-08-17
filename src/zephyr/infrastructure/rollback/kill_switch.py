@@ -110,6 +110,30 @@ class KillSwitchManager:
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
             f.flush()
 
+        # 治本（AI-14 审计 R1-03）：kill_switch_triggered 事件此前全仓零发布者，
+        # 4 个订阅方（SLAMonitor 恢复计时/Notifier 通知/HealthAggregator 快照/
+        # RollbackBootIntegration 回滚评估）整体死链。activate 是三级熔断统一激活
+        # 入口，在此发布事件补全生产链。emit 失败不阻断熔断落盘（熔断已生效）。
+        try:
+            import logging
+
+            from zephyr.shared.event_bus import bus
+
+            bus.emit(
+                "kill_switch_triggered",
+                payload={
+                    "level": entry.level.value,
+                    "target": entry.target,
+                    "reason": entry.reason,
+                    "source_function": "KillSwitchManager.activate",
+                },
+            )
+        except Exception:  # noqa: BLE001 — 事件发布失败不阻断熔断生效
+            logging.getLogger(__name__).warning(
+                "kill_switch_triggered emit failed for level=%s target=%s",
+                entry.level.value, entry.target, exc_info=True,
+            )
+
         return entry
 
     def deactivate(self, level: KillLevel, target: str) -> bool:

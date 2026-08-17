@@ -167,14 +167,21 @@ class Notifier:
 
         notifier = self
 
-        def _on_pipeline_failed(payload: object) -> None:
-            data = payload if isinstance(payload, dict) else {}
-            task_id = str(data.get("task_id", ""))
-            error = str(data.get("error", "pipeline failed"))
+        # 契约：EventBusBackpressure handler 收 Event 对象（非裸 dict），payload 经
+        # event.payload 提取（治本 AI-14：原 isinstance(payload, dict) 对 Event 恒 False，
+        # 通知内容静默失真）。键名跨域兼容：pipeline_failed 发布端用 pipeline_id/error_detail。
+        def _extract(event: object) -> dict:
+            raw = getattr(event, "payload", event)
+            return raw if isinstance(raw, dict) else {}
+
+        def _on_pipeline_failed(event: object) -> None:
+            data = _extract(event)
+            task_id = str(data.get("task_id") or data.get("pipeline_id", ""))
+            error = str(data.get("error") or data.get("error_detail") or "pipeline failed")
             notifier.notify_failure(task_id, error)
 
-        def _on_kill_switch_triggered(payload: object) -> None:
-            data = payload if isinstance(payload, dict) else {}
+        def _on_kill_switch_triggered(event: object) -> None:
+            data = _extract(event)
             reason = str(data.get("reason", "kill switch triggered"))
             notifier.notify_owner_attention("kill_switch", reason)
 
