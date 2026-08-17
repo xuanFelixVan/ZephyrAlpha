@@ -5,12 +5,12 @@
 # [CONSUMERS] validator.py; attack_registry.py; game_day_runner.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] MUST load from _scenario-registry.yaml; parsed scenarios MUST validate against AttackScenario model
-# [MODIFY-GUARD] Adding new fields to _scenario-registry.yaml MUST update AttackScenario model and this loader
+# [INVARIANTS] MUST load from _scenario_registry.yaml; parsed scenarios MUST validate against AttackScenario model
+# [MODIFY-GUARD] Adding new fields to _scenario_registry.yaml MUST update AttackScenario model and this loader
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] human_gated
-# [ERROR_CONTRACT] FileNotFoundError if _scenario-registry.yaml missing; Pydantic ValidationError on malformed scenarios
+# [ERROR_CONTRACT] FileNotFoundError if _scenario_registry.yaml missing; Pydantic ValidationError on malformed scenarios
 # [TESTS] tests/red_blue/test_scenario_loader.py
 # [A_module] module_id=MOD-INF-030 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
@@ -37,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 __all__: list[str] = ["ScenarioLoader"]
 
-_REGISTRY_PATH: Path = Path(__file__).parent / "_scenario-registry.yaml"
+_REGISTRY_PATH: Path = Path(__file__).parent / "_scenario_registry.yaml"
 
 
 def _map_tier(raw: str) -> AttackTier:

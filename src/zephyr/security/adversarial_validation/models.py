@@ -5,7 +5,7 @@
 # [CONSUMERS] scenario_loader.py; validator.py; defense_runner.py; bypass_recorder.py
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] AttackScenario fields MUST align with _scenario-registry.yaml keys; RedBlueReport fields per blueprint §4.2 contract
+# [INVARIANTS] AttackScenario fields MUST align with _scenario_registry.yaml keys; RedBlueReport fields per blueprint §4.2 contract
 # [MODIFY-GUARD] Adding fields to RedBlueReport is BREAKING — must follow blueprint §4.6 contract version rules
 # [STABILITY] evolving
 # [SAFETY] H

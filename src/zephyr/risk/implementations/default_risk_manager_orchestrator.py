@@ -116,7 +116,8 @@ class DefaultRiskManagerOrchestrator(RiskManagerOrchestratorBase):
         self._check_results: list[RiskCheckResult] = []
         self._active_limits: RiskLimits | None = None
         self._daily_pnl: Decimal = Decimal("0")
-        self._loss_limit: Decimal = Decimal("50000")
+        # 注：日亏损硬限（INV-004）走 daily_pnl_check(loss_limit=...) 配置注入
+        # （35 号 §3.6 裁决：RLM-KILL-SWITCH-006 组合日亏 4%），禁止码内硬编码第二真源。
         # G1-G6 监控器
         self._alert_generator = alert_generator
         self._liquidity_monitor = liquidity_monitor

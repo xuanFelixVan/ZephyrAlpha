@@ -52,7 +52,7 @@ _SCENARIO_REGISTRY_PATH = (
     / "zephyr"
     / "security"
     / "adversarial_validation"
-    / "_scenario-registry.yaml"
+    / "_scenario_registry.yaml"
 )
 
 

@@ -57,7 +57,7 @@ def safe_monitor(monkeypatch):
 @pytest.fixture
 def temp_registry(tmp_path: Path) -> Path:
     """创建临时场景注册表路径（文件不存在，由 ColdStart 初始化）。"""
-    return tmp_path / "_scenario-registry.yaml"
+    return tmp_path / "_scenario_registry.yaml"
 
 
 @pytest.fixture
@@ -564,7 +564,7 @@ class TestColdStartInit:
     def test_default_registry_path(self):
         cs = ColdStart()
         assert cs.registry_path is not None
-        assert cs.registry_path.name == "_scenario-registry.yaml"
+        assert cs.registry_path.name == "_scenario_registry.yaml"
 
     def test_custom_registry_path(self, temp_registry):
         cs = ColdStart(registry_path=temp_registry)
