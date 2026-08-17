@@ -947,20 +947,20 @@ def check_duplicate_functionality(
                                 f"\n  额外发现: basename 跨域重复\n"
                                 f"  新文件 basename: {basename}\n"
                                 f"  已有同 basename 文件:\n{exist_list}\n"
-                                f"  → 同 basename 跨域 = 复刻信号（责任唯一，真源唯一）"
+                                f"  -> 同 basename 跨域 = 复刻信号（责任唯一，真源唯一）"
                             )
                 conflict_list = "\n".join(f"    - {c}" for c in conflicts)
                 raise ScaffoldError(
                     f"SSoT门禁阻断：module_path 冲突\n"
                     f"  新文件预期 module_path: {expected_module_path}\n"
                     f"  已有文件声明了相同 module_path:\n{conflict_list}\n"
-                    f"  → 这是确凿的重复信号（同 module_path = 同文件身份）\n"
+                    f"  -> 这是确凿的重复信号（同 module_path = 同文件身份）\n"
                     f"{basename_extra}\n"
                     f"  复用决策（RULE-EIGHT）：\n"
-                    f"    完全覆盖 → 直接用已有文件\n"
-                    f"    80%覆盖 → 扩展已有文件（from zephyr.xxx import yyy 后加方法）\n"
-                    f"    50%覆盖 → 重构已有+扩展\n"
-                    f"    0%覆盖 → 确认 package/name 是否需要改名（module_path 必须唯一）"
+                    f"    完全覆盖 -> 直接用已有文件\n"
+                    f"    80%覆盖 -> 扩展已有文件（from zephyr.xxx import yyy 后加方法）\n"
+                    f"    50%覆盖 -> 重构已有+扩展\n"
+                    f"    0%覆盖 -> 确认 package/name 是否需要改名（module_path 必须唯一）"
                 )
         except ScaffoldError:
             raise

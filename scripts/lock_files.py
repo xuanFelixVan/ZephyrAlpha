@@ -679,6 +679,18 @@ def _parse_opt(args: list[str], flag: str) -> str | None:
     return None
 
 
+def _validate_file_arg(arg: str) -> str | None:
+    """防呆：文件参数以 -- 开头必为误用（如把 list 的 --session 写法带到 acquire）。
+    仓库内合法路径不会以 -- 开头——拒绝落锁并提示正确用法（#120，AI-POT-001
+    字面量 --session 垃圾锁实证）。
+    """
+    if arg.startswith("--"):
+        print(f"ERROR — 文件参数非法（以 -- 开头，疑选项串错位）: {arg}")
+        print("  正确用法: acquire <file> <owner> [--task <desc>] [--ttl <分钟>]；查锁用 list [--session <owner>]")
+        return None
+    return arg
+
+
 def main() -> int:
     args = sys.argv[1:]
 
@@ -692,7 +704,8 @@ def main() -> int:
         return cmd_status()
 
     if cmd == "check" and len(args) >= 2:
-        return cmd_check(args[1])
+        f = _validate_file_arg(args[1])
+        return 1 if f is None else cmd_check(f)
 
     if cmd == "acquire" and len(args) >= 3:
         task = _parse_opt(args, "--task") or ""
@@ -707,10 +720,14 @@ def main() -> int:
             except ValueError:
                 print(f"ERROR — --ttl 必须为正数（分钟），收到: {ttl_raw}")
                 return 1
-        return cmd_acquire(args[1], args[2], task, skip_naming, ttl_minutes)
+        f = _validate_file_arg(args[1])
+        if f is None:
+            return 1
+        return cmd_acquire(f, args[2], task, skip_naming, ttl_minutes)
 
     if cmd == "release" and len(args) >= 3:
-        return cmd_release(args[1], args[2])
+        f = _validate_file_arg(args[1])
+        return 1 if f is None else cmd_release(f, args[2])
 
     if cmd == "release-all" and len(args) >= 2:
         return cmd_release_all(args[1])
@@ -723,7 +740,8 @@ def main() -> int:
 
     if cmd == "guard-write" and len(args) >= 3:
         task = _parse_opt(args, "--task") or ""
-        return cmd_guard_write(args[1], args[2], task)
+        f = _validate_file_arg(args[1])
+        return 1 if f is None else cmd_guard_write(f, args[2], task)
 
     if cmd in ("help", "--help", "-h"):
         _print_help()

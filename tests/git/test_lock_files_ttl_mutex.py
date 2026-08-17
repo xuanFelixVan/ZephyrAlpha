@@ -199,3 +199,46 @@ def test_mutex_timeout_denies_and_rolls_back(isolated_lock_root: Path, monkeypat
     assert rc == 1 and "互斥锁超时" in out
     # 锁目录已回滚，不留 owner.json 存在但 registry 漏登记的半锁
     assert not lock_files._lock_dir("docs/g.md").exists()
+
+
+# ---------------------------------------------------------------------------
+# TestCliFileArgGuard — #120 防呆回归
+# ---------------------------------------------------------------------------
+
+
+class TestCliFileArgGuard:
+    '''#120 防呆：文件参数以 -- 开头拒绝落锁。
+
+    实证：AI-POT-001 误把 list --session 写法带到 acquire，字面量 --session
+    被当文件落锁（全仓唯一垃圾锁）。仓库内合法路径不会以 -- 开头。
+    '''
+
+    def test_acquire_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch, capsys):
+        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'acquire', '--session', 'AI-PROBE-001'])
+        rc = lock_files.main()
+        assert rc == 1
+        out = capsys.readouterr().out
+        assert '文件参数非法' in out
+        assert not (isolated_lock_root / '--session.lock').exists()
+
+    def test_guard_write_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'guard-write', '--task', 'AI-PROBE-001'])
+        assert lock_files.main() == 1
+
+    def test_release_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'release', '--session', 'AI-PROBE-001'])
+        assert lock_files.main() == 1
+
+    def test_check_rejects_dash_dash_file(self, isolated_lock_root, monkeypatch):
+        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'check', '--session'])
+        assert lock_files.main() == 1
+
+    def test_acquire_legit_file_still_works(self, isolated_lock_root, monkeypatch):
+        monkeypatch.setattr(
+            sys, 'argv',
+            ['lock_files.py', 'acquire', 'src/probe_govb120.py', 'AI-PROBE-001', '--skip-naming-check'],
+        )
+        rc = lock_files.main()
+        assert rc == 0
+        monkeypatch.setattr(sys, 'argv', ['lock_files.py', 'release', 'src/probe_govb120.py', 'AI-PROBE-001'])
+        assert lock_files.main() == 0

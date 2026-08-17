@@ -337,10 +337,10 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 
 | # | 遗留项 | 来源 | 说明 | 状态 |
 |---|---|---|---|---|
-| 118 | scaffold.py 维度3 raise 内存量 Unicode 箭头（L950/957/960-963）及文档串多处 | AI-GOVB-001 提交实证 | MSG-STYLE 门禁只扫「已修改」行——本批 dedent 翻新的两个 raise 已顺手转 ASCII ->；维度3 raise（module_path 冲突消息）等未触及行仍存 →，下次触及必被门禁拦，顺手转 -> 即可 | ⏳ 下一治理批顺手修 |
-| 119 | 心跳 daemon idle>1800s 自退 × 证3 worker 拒启组合缺口 | AI-GOVB-001 复现+横幅实证 | session 末次活动 >30min 后 commit：daemon 已自退且心跳超 900s 宽限窗→worker 证3 拒启（今日 REGF/TDEBT/GOVB 三起实证+主仓 critical_warn 噪音）。#109 落点分诊已治本（failed 与 pending 同址），拒启本身=设计内 rogue 防护；但「daemon idle 1800s 自退」与「证3 宽限窗 900s」存在间隙期——间隙期 commit 必被拒，宽限窗/daemon idle 阈值对齐待裁定 | ⏳ 待裁定 |
-| 120 | lock_files.py CLI 防呆缺陷：--session 被当文件名 acquire | AI-GOVB-001 开工探测实证 | 全仓唯一活跃锁=AI-POT-001 持有字面量 --session（TTL 自灭无实害）——疑 cquire 少传位置参数时 --session 被当 file 落锁；CLI 防呆（-- 前缀文件名拒锁）待修 | ⏳ 下一治理批顺手修 |
-| 121 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量 | AI-GOVB-001 提交期横幅实证 | 2 条 GATE-WORKTREE-DRIFT-WATCHDOG（AI-FILL 域 implementation_plans 两文档漂移）+3 条 2026-08-16 PG 停服期 GATE-PANORAMA-ALIGNMENT 失败——均非本批引入；PG 类属 FOPEN-001 前历史且 PG 已恢复；漂移类供统筹知情 | ⏳ 观察 |
+| 118 | scaffold.py 维度3 raise 内存量 Unicode 箭头（L950/957/960-963）及文档串多处 | AI-GOVB-001 提交实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批：维度3 raise 6 行全部转 ->——scaffold.py 全部 raise 消息 ASCII 化完成，MSG-STYLE 门禁实证通过；残余 → 仅在 docstring/注释/print，非门禁语义面） | ✅ |
+| 119 | 心跳 daemon idle>1800s 自退 × 证3 worker 拒启组合缺口 | AI-GOVB-001 复现+横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批，第一性原理归因修正：真凶非阈值间隙而是 **S3-A 零窗口 reap 物理删除死记录使 086d0e24 证3 宽限窗形同虚设**——claim 懒注册写网关 pid，commit 后进程退出即死，list_active 即删记录，WMI spawn 延迟窗内 worker 证3 读不到「近期活跃」记录；治本=list_active 死记录转 tombstone（功能判死零窗口保留，active/held/claim 消费方全过滤），心跳超 _REAP_GRACE_SECONDS(=900s，与 PAYLOAD_TTL 同源） 才物理删除；2 测试改写+1 新增，99/99 绿） | ✅ |
+| 120 | lock_files.py CLI 防呆缺陷：--session 被当文件名 acquire | AI-GOVB-001 开工探测实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批：main() 对 check/acquire/release/guard-write 四命令加 -- 前缀文件参数拒绝+用法提示；5 新测试 14/14 绿；垃圾锁 --session 已 cleanup 清除） | ✅ |
+| 121 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量 | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 

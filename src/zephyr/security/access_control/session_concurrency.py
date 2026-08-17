@@ -146,6 +146,15 @@ _SESSION_TTL_SECONDS: int = 3600  # pid>0 session 超时自动注销（1 小时�
 # 原 pid=0 仅靠 TTL=3600s，stale session 残留 1h 持有 held_files →
 # HELD_OVERLAP_VIOLATION 误阻断 → allow_overlap 62× 超阈。
 _HEARTBEAT_TIMEOUT_SECONDS: int = 90
+# 死记录物理删除宽限（#119 治本，2026-08-17 AI-GOVB-001）：
+# 与 reconcile_worker.PAYLOAD_TTL_SECONDS（=900s，worker 证3 近期活跃宽限窗）同源对齐
+# ——跨层不 import 防循环依赖，值变更须双向同步。
+# 背景：claim_file 懒注册以网关 python pid 写入，commit 后进程退出即 PID 死亡；
+# S3-A 零窗口 reap 会在 detached worker 启动（WMI spawn 秒级延迟）前物理删除该记录，
+# 使 086d0e24 证3 宽限窗形同虚设（2026-08-17 REGF/TDEBT/GOVB 三起 worker 拒启实证）。
+# 调和：死/过期记录先转 tombstone（功能判死——active/held/claim 各消费方经
+# _is_session_alive 过滤，S3-A 零窗口语义不变），心跳超此宽限才物理删除。
+_REAP_GRACE_SECONDS: int = 15 * 60
 # pid=0 逻辑 session 的 idle 上限（#ARCH-HEARTBEAT-002 治本，2026-07-23）：
 # heartbeat_daemon 原退出判据仅"session 不在 registry"，但 daemon 自己就是
 # last_heartbeat 唯一刷新源 → chat 异常关闭（未走 merge/abort）时 daemon 永久
@@ -448,15 +457,22 @@ class SessionRegistry:
                     expired.append(sid)
                 else:
                     active.append(info)
-            # 清理死/过期 session（S3-A: PID 死亡立即 reap，不等 TTL）
+            # 清理死/过期 session（S3-A 功能判死零窗口：active 列表立即排除；
+            # 物理删除走 _REAP_GRACE_SECONDS 宽限——tombstone 期各消费方经
+            # _is_session_alive 过滤，held_files/claim/冲突检测行为不变；
+            # 086d0e24 worker 证3 近期活跃宽限窗依赖记录存续，#119 治本）
             if expired:
+                reaped = 0
                 for sid in expired:
-                    del data[sid]
-                self._save(data)
-                logger.info(
-                    "SessionRegistry: cleaned %d dead/expired sessions (S3-A PID+TTL)",
-                    len(expired),
-                )
+                    if now - SessionInfo.from_dict(data[sid]).last_heartbeat > _REAP_GRACE_SECONDS:
+                        del data[sid]
+                        reaped += 1
+                if reaped:
+                    self._save(data)
+                    logger.info(
+                        "SessionRegistry: reaped %d dead/expired sessions (S3-A PID+TTL, grace %ds)",
+                        reaped, _REAP_GRACE_SECONDS,
+                    )
             return active
 
     def find_session_by_file(self, file_path: str) -> SessionInfo | None:
