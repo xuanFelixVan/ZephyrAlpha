@@ -222,7 +222,10 @@ class AdversarialTester:
 
         self._total_failed: int = 0
 
-    def run_one(self, test, detector) -> AdversarialResult:
+    def run_one(self, test, detector=None) -> AdversarialResult:
+        # 治本（2026-08-17 #115）：detector 恢复 =None 默认值——R5 公共化批次建 wrapper 时
+        # 丢失 _run_one(test, detector=None) 的默认值，公共签名比私有真源更严格（API 侧缺陷），
+        # 5 处单参调用点全部 TypeError。
         """公共接口：run_one（Stage 4 公共化）。"""
         return self._run_one(test, detector)
 

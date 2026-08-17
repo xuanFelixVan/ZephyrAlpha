@@ -120,7 +120,10 @@ class TestScaffoldSnakeCaseEnforcement:
 
     def test_scaffold_json_rejects_kebab_case(self) -> None:
         """scaffold.py json 模式应拒绝 kebab-case 文件名。"""
-        result = _run_scaffold("json", "test_dir/my-test-data", "Test data")
+        # 治本（2026-08-17 #115）：fixture 词 data->records——'data' 已注册为 SSoT 功能域别名
+        # （functional_domain_registry.yaml -> D_DATA/data_source_integrator MOD-L00-004），含 data 的
+        # fixture 会被 SSoT 功能域重叠门禁先拦截（拒绝原因错配，测试名不副实）。
+        result = _run_scaffold("json", "test_dir/my-test-records", "Test records")
         assert result.returncode != 0, f"kebab-case 文件名应被 scaffold 拒绝, got: {result.stdout}{result.stderr}"
 
     def test_scaffold_md_rejects_kebab_case(self) -> None:
@@ -142,7 +145,11 @@ class TestScaffoldSnakeCaseEnforcement:
 
     def test_scaffold_json_accepts_snake_case(self) -> None:
         """scaffold.py json 模式应接受 snake_case 文件名。"""
-        result = _run_scaffold("json", "test_dir/my_test_data", "Test data")
+        # 治本（2026-08-17 #115）：fixture 词 data->records——'data' 已注册为 SSoT 功能域别名
+        # （functional_domain_registry.yaml -> D_DATA/data_source_integrator MOD-L00-004），注册表状态
+        # 漂移致原 fixture 被 SSoT 门禁正当拦截（门禁按设计工作，非门禁缺陷）。已对 355 条别名
+        # 全量子串扫描实证 records 零碰撞。
+        result = _run_scaffold("json", "test_dir/my_test_records", "Test records")
         assert result.returncode == 0, f"snake_case 文件名应被 scaffold 接受, got: {result.stdout}{result.stderr}"
 
     def test_scaffold_md_accepts_snake_case(self) -> None:

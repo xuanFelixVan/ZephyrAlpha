@@ -3,7 +3,7 @@ module_id: MOD-GOV-045
 title: "降级/回退五态状态机蓝图 — 53 号 §3.8 伪代码代码落地（#ARCH-QUANT-003）"
 doc_type: blueprint
 status: Active
-version: "0.1.2"
+version: "0.1.4"
 ttl: permanent
 layer: L1_foundation
 layer_name: governance

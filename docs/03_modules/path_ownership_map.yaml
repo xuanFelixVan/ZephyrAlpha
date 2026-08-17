@@ -147,7 +147,7 @@ ownership:
     ownership_judgment: '本模块'
 
   - path: 'src/zephyr/governance/audit/pg_probe.py'
-    owner_blueprint: 'MOD-GOV_PG_PROBE'
+    owner_blueprint: 'MOD-PG_PROBE'
     claim_type: 'depgraph_node'
     declared_in: ''
     existence: 'stable'
