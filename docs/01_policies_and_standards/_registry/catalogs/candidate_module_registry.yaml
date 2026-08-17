@@ -14,10 +14,11 @@ description: >-
 owner: MOD-GOV-029
 tier: tier_1_governance
 status: active
-version: 1.1.0
+version: 1.1.1
 created: '2026-07-31'
-last_updated: '2026-08-16'
+last_updated: '2026-08-18'
 # 2026-08-16: +CAND-AUTONOMYCORE-002（FHS 引擎，双轮审查深挖④裁定，AI-RFIX-001）
+# 2026-08-18: +CAND-SEC-001（Whistleblower Agent MVP，裁定 9 联动降级远期 P4，AI-ADJ-004）
 
 # ============================================================
 # 设计原则
@@ -6576,3 +6577,79 @@ entries:
   next_review_date: '2027-08-16'
   review_frequency: yearly
   last_review_outcome: "首次登记——源可及性未证实，待事件驱动回测需求触发"
+
+# ----------------------------------------------------------
+# CAND-SEC-001: Whistleblower Agent MVP（举报人机制）（deferred，2026-08-18 裁定降级远期 P4）
+# 来源: 00_index §3.3 Agent 安全设计项 + 16 号文 §3.9 MVP 候选设计 / §6 Q5 选项 c
+# ----------------------------------------------------------
+- id: CAND-SEC-001
+  name: "Whistleblower Agent MVP / 举报人机制（独立监控 Agent）"
+  aliases: ["举报人机制", "whistleblower", "Whistleblower Agent", "举报 Agent", "独立监控 Agent"]
+  domain: D_SECURITY
+  domain_status: active
+  domain_node_count: 171
+  sub_layer: "security/access_control Agent 安全监控层"
+  panorama_position:
+    depgraph:
+      has_position: false
+      note: "全仓实测无实现（whistleblower/举报人零命中，16 号文 §6 Q5 2026-08-17 复核）；晋升时新建设计态节点"
+    dataflowgraph:
+      has_position: false
+      note: "举报事件流→加密落盘→仅 Trader 可解密，无业务数据流"
+    decisiongraph:
+      has_position: false
+      note: "不参与任何业务决策"
+    blueprint:
+      has_position: true
+      target_ref: "00_index §3.3 Agent 安全设计项 + 16 号文 §3.9 举报人机制 MVP 候选设计"
+      design_maturity: design
+  description: >-
+    独立 Whistleblower Agent：唯一职责是监控其他 Agent 的可疑行为（串谋/隐写/越权），
+    不参与任何业务逻辑；身份对其他 Agent 保密（防串谋者识别与规避监控者）；
+    可直接向人类报告、绕过正常通信渠道；举报记录加密存储、仅 Trader 可解密查看。
+    2026-08-18 Owner 裁定：降级远期（P4）——当前多 Agent 规模小，
+    collusion_detector+ai_agent_monitor 已覆盖主要面；
+    激活前提=多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评口子）。
+  capability: ""
+  problem_it_solves: "可见监控者可能被串谋者识别与规避——保密身份的独立举报人是 Agent 对抗性监控的最后一环；当前多 Agent 规模小，该缺口不阻塞（16 号文 §6 Q5 裁定依据）"
+  trigger_signals:
+  - "多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评结论）——激活前提"
+  - "串谋/隐写检测出现漏报实证（现有监控者被识别或规避）"
+  - "16 号文 §6 Q5 重评裁定采纳补实现（选项 a）"
+  keywords: ["whistleblower", "举报人", "串谋检测", "collusion", "Agent 安全", "covert monitoring", "加密举报"]
+  upstream_deps:
+  - {contract: "multi_agent_collusion_detector / ai_agent_monitor 安全事件流", from_domain: D_SECURITY, dep_type: S, availability: available, note: "16 号文统一事件 schema 落地后可直接消费"}
+  downstream_consumers:
+  - {consumer: "Owner/Trader（人类）", contract: "加密举报记录（仅 Trader 可解密查看）", note: "绕过正常通信渠道直报"}
+  contracts_to_produce:
+  - {id: "whistleblower_report 加密记录格式", name: "举报记录加密落盘契约（仅 Trader 可解密）"}
+  contracts_to_consume: []
+  prerequisites:
+  - {condition: "多 Agent 自治编排架构落地", check: "61 号备忘 §5.2 第三阶段重评结论", met: false, note: "2026-08-18 裁定明确的激活前提"}
+  design_admission:
+    q1_implemented: {result: pass, equivalent_nodes: [], evidence: "16 号文 §6 Q5：全仓检索 whistleblower/举报人零命中（2026-08-17 复核），无重复建设"}
+    blocking_question: none
+    result: deferred
+  status: deferred
+  priority: P2
+  created_at: '2026-08-18'
+  last_reviewed_at: '2026-08-18'
+  promoted_to: ""
+  source_draft: "00_index §3.3 Agent 安全设计项 + 16 号文 §3.9 举报人机制 MVP 候选设计（16_ai_security_ops.md）"
+  source_section: "00_index §3.3 / 16 号文 §3.9 / 16 号文 §6 Q5"
+  original_id: ""
+  estimated_complexity: M
+  estimated_effort: "3-5 人天（独立监控循环+加密落盘+直报告警通道）"
+  tech_notes: "身份保密=对其他 Agent 不可见（不出现在 Agent 注册/发现面）；直报通道绕过 A2A/事件总线等正常信道；举报记录加密存储（仅 Trader 私钥可解密）；施工时与 16 号文统一事件 schema 对齐消费侧；自身行为仍须落审计链（保密≠免审计）"
+  risks: ["身份保密与可审计性的张力（自身行为也须落审计链）", "直报通道被滥用为绕过正常治理的后门——须 human_gated 且仅告警语义", "多 Agent 编排长期不落地则维持候选态"]
+  alternatives: "不施工（当前状态）：collusion_detector（频率+通道）+ ai_agent_monitor（三路评分）覆盖主要串谋面（16 号文 §6 Q5 选项 b/c 依据）。代价：监控者被识别/规避场景无对抗性补位"
+  tags: ["candidate", "whistleblower", "举报人", "Agent 安全", "串谋检测", "远期"]
+  search_terms: ["whistleblower", "举报人机制", "Whistleblower Agent", "collusion monitor", "covert reporting"]
+  related_candidates: []
+  enables: []
+  blocked_by: []
+  next_review_date: '2027-08-18'
+  review_frequency: yearly
+  last_review_outcome: "2026-08-18 Owner 裁定（裁定 9 联动，16 号文 §6 Q5 选项 c 采纳）：降级远期（P4）登记候选——激活前提=多 Agent 自治编排架构落地（61 号备忘 §5.2 第三阶段重评）"
+  acquisition_method: self_build
+  acquisition_source: ''

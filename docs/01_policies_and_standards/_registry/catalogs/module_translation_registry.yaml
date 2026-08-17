@@ -16,9 +16,9 @@ description: '每个 .py 模块的中英文名+功能简介中英文+大白话�
 owner: MOD-INF-037
 tier: tier_1_governance
 status: active
-version: 1.8.2
+version: 1.8.3
 created: '2026-07-31'
-last_updated: 2026-08-06
+last_updated: 2026-08-18
 unique_key:
 - module_path
 entry_schema:
@@ -12609,13 +12609,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
-- module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/benchmark_suite.py
-  domain_id: D_INTELLIGENCE
-  name_zh: 基准测试套件
-  name_en: Benchmark Suite
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
 - module_path: tests/escalation/test_escalation_bridge.py
   domain_id: ''
   name_zh: Escalation桥接器测试
@@ -22052,13 +22045,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
-- module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/cli.py
-  domain_id: D_INTELLIGENCE
-  name_zh: 管道路由CLI
-  name_en: Cli
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
 - module_path: src/zephyr/pf_core/__init__.py
   domain_id: ''
   name_zh: 包入口
@@ -25003,13 +24989,6 @@ entries:
   domain_id: D_GOV_SCRIPTS
   name_zh: 自动生成全景图清单总表
   name_en: Generate Panorama Registry
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
-- module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/task_model_learner.py
-  domain_id: D_INTELLIGENCE
-  name_zh: 任务模型Learner
-  name_en: Task Model Learner
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
@@ -31985,13 +31964,6 @@ entries:
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
-- module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/__init__.py
-  domain_id: ''
-  name_zh: 包入口
-  name_en: Init
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
 - module_path: tests/bridges/test_bridges_drift_bridge.py
   domain_id: ''
   name_zh: Bridges漂移桥接器测试
@@ -32822,13 +32794,6 @@ entries:
   domain_id: ''
   name_zh: 构造合成护照
   name_en: Test Calibrate Model Diff
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
-- module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/results_writer.py
-  domain_id: D_INTELLIGENCE
-  name_zh: 将 benchmark 结果写入 JSONL 文件
-  name_en: Results Writer
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
@@ -36714,13 +36679,6 @@ entries:
   domain_id: D_GOVERNANCE
   name_zh: 策略Sandbox测试
   name_en: Test Policy Sandbox
-  desc_zh: ''
-  desc_en: ''
-  plain_zh: ''
-- module_path: src/zephyr/intelligence/model_profiling/pipeline_routing/profiler.py
-  domain_id: D_INTELLIGENCE
-  name_zh: 分析器
-  name_en: Profiler
   desc_zh: ''
   desc_en: ''
   plain_zh: ''
