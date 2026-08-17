@@ -5,7 +5,7 @@ title: AI 架构设计——结构总案
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.7.0"
+version: "0.7.1"
 date: 2026-08-17
 topic: ai_architecture_design
 scope: 09_ai_architecture
@@ -213,8 +213,8 @@ scope: 09_ai_architecture
 09_ai_architecture/
 │
 ├── 0x meta（3 文档）
-│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.0
-│   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.5.0 已填充
+│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.1
+│   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.5.1 已填充
 │   └── 02_design_asset_inventory.md         ← 设计资产盘点 [轨道E] 随时 · draft v0.4.0 已填充
 │
 ├── 1x 基础设施层（3 文档）
@@ -242,12 +242,12 @@ scope: 09_ai_architecture
 │   └── 08_multi_ai_concurrency_governance.md ← 多 AI 并发治理 [轨道A] P0 · draft v0.2.1 已填充
 │
 └── 6x 分阶段路线（1 文档）
-    └── 17_phase_roadmap.md                  ← Phase 0 手动→Phase 1 半自动→Phase 2 全自动→Phase 3 自我进化 [轨道E] 依赖03~16 · draft v0.1.0 填充中（AI-FILL-17 并行施工，目标 v0.2.0）
+    └── 17_phase_roadmap.md                  ← Phase 0 手动→Phase 1 半自动→Phase 2 全自动→Phase 3 自我进化 [轨道E] 依赖03~16 · draft v0.2.0 已填充
 ```
 
 > 状态标注口径：status/version 均为 2026-08-17 实测各文档 frontmatter 当前值；"已填充" = 背景+设计决策+施工计划已落盘。
 
-**总计 18 文档**，全部已落盘；16 篇（01~16）已完成填充施工，17 号路线填充中。
+**总计 18 文档**，全部已落盘；17 篇施工图+路线（01~17）已全部完成填充施工。
 
 **合并原则**：
 - 单一文档预计 ≤2000 行（对标 design_memos 经验）
@@ -332,10 +332,11 @@ scope: 09_ai_architecture
 ## 6. 待办（按施工顺序）
 
 > 施工顺序详细指令见 [AI_fill_instructions.md](AI_fill_instructions.md)。
-> 文档填充施工（AI-FILL-01~16）已全部完成，各文档 status/version 实测值见 §5.1 标注；以下为当前剩余待办。
+> 文档填充施工（AI-FILL-01~17）已全部完成，各文档 status/version 实测值见 §5.1 标注；以下为当前剩余待办。
 
-### 6.1 填充收口（进行中）
-- [ ] **AI-FILL-17**：17_phase_roadmap.md 分阶段实现路线填充（当前 draft v0.1.0，目标 v0.2.0；完成后回写 §5.1 标注）
+### 6.1 填充收口（已完成）
+- [x] **AI-FILL-17**：17_phase_roadmap.md 分阶段实现路线填充完成（draft v0.2.0，commit 459482ce），§5.1 标注已回写
+- [x] **AI-FILL-01 第二轮补完**：01_external_benchmark_analysis.md 补完收尾章节（v0.5.1，commit 5eb2d626）
 
 ### 6.2 与交易决策侧联动（只读不改，等对方就绪）
 - [ ] 确认派生图生成器是否支持跨域 AI 层视图
@@ -373,6 +374,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.5.0 | 新增 §3.3 AI 安全（LLM 4层 guardrails/Agent 安全/MCP Triple Gate/KILLSWITCH 三级响应/OWASP Agentic Top 10/HB-SEC 硬边界）；自我进化层新增多Agent协作（投票优先/FactorMAD/R&D-Agent/涌现行为检测）；基础设施层新增 LLM Agent 工具调用（MCP）/LLM 推理优化（llama.cpp+GPTQ）/模型注册（MLflow）/数据增强（TimeGAN）；标记 ABIDES-MARL/联邦多Agent 为远期（超硬件） | 扫描 A1/A5/A10 架构图后发现遗漏的 AI 层内容 |
 | 2026-08-17 | 0.6.0 | §5.1 目录结构增加轨道+解锁点标注；新增 §5.1 施工顺序与解锁点（5 轨道+8 解锁点+交易决策侧关联）；§6 待办按施工顺序重排为 8 组（6.1~6.8） | 用户要求排列施工顺序和解锁点，建立填充 SOP |
 | 2026-08-17 | 0.7.0 | §5.1 各文档补实测状态标注（01 v0.5.0 / 02 v0.4.0 / 03~16 v0.2.x 已填充；17 按「填充中→v0.2.0」口径登记，AI-FILL-17 并行施工中）；§5.2 补轨道+解锁点标注，derived_graphs/ 经实测目录不存在，标注待建；§6 待办重排为当前剩余项（17 号收口 / 交易决策侧联动 / 代码实施阶段） | AI-FILL-00 mop-up：16 篇施工图（01~16）填充完成并提交 dev 后，更新总索引施工顺序与解锁点标注为当前真实状态 |
+| 2026-08-17 | 0.7.1 | §5.1 回写 17 号最终状态（v0.2.0 已填充）+ 01 号版本标注同步（v0.5.1，第二轮补完收尾章节）；§6.1 填充收口两项全部勾销——AI-FILL-01~17 全部完成 | 17 号路线+01 号补完提交后状态同步 |
 
 ---
 
