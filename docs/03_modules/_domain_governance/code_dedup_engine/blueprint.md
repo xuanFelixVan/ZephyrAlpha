@@ -64,13 +64,13 @@ depends_on:
   at: §3.29
   why: "decision_auditor写入审计总线——017仅为生产者"
 references:
-  - path: "D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md"
+  - path: "D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md"
     section: "REQUIRED_SECTIONS"
     why: "蓝图模板 v3.3 合规基准"
   - path: "D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml"
     section: "§4"
     why: "蓝图规格化铁律"
-  - path: "D:/ZephyrAlpha/docs/01_policies_and_standards/governance/engineering/code-construction-standards.md"
+  - path: "D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml"
     section: "§7"
     why: "代码十五字段头部标准"
 summary: "代码去重引擎——全生命周期七维模型+46模块+Monoculture免疫(BRS)+原子修复(WAL)+决策审计链+主动函数发现+漏报盲审+微克隆检测+契约验证+跨边界感知。去重最大化悖论：找到'去重收益vs Monoculture风险vs碎片化风险vs引擎维护成本'的四体最优边界。"

@@ -40,7 +40,7 @@ references:
   - path: docs/03_modules/_domain_infrastructure_runtime/task_system/blueprint.md
     section: §3.3
     why: 任务系统状态机(10状态/19转换)是最大消费者
-  - path: docs/01_policies_and_standards/governance/engineering/code-construction-standards.md
+  - path: docs/01_policies_and_standards/rules/trae_047_engineering_file_header.yaml
     section: §7
     why: 十五字段防幻觉头部规范
 ssot_claims:
@@ -357,7 +357,7 @@ class Transition(Generic[S]):
 |------|---------|
 | `src/zephyr/shared/_state-machine-registry.yaml` | 实例注册 |
 | `docs/registry_of_registries.yaml` | REG-SM-001 entry_count |
-| `docs/02_enterprise_architecture/04_architecture_principles_decisions/dependency_path_panorama.md` | §5/§10 |
+| `docs/02_enterprise_architecture/04_architecture_principles_decisions/panorama/dependency_path_panorama.md` | §5/§10 |
 | `docs/03_modules/blueprint_registry.yaml` | 版本/状态 |
 
 ## §14 风险

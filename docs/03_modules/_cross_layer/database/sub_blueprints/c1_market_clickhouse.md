@@ -1328,7 +1328,7 @@ INFRA-DB-006 ClickHouse部署 → apply_schema.py 建表 → C1MarketWriter 写�
 - **验证**：`--verify` 全部一致，裸 DateTime 残留=0，全库 101 表覆盖
 - **DDL 真源同步**：`schemas/categories/market_*.py` 全部更新 DateTime64 类型声明
 - **AGENTS.md 同步**：新增 RULE-SCHEMA-TZ（第九件事）时区防线铁律
-- **验证报告**：`docs/_working/data_consolidation_report.md`
+- **验证报告**：数据整合验证报告（临时工作文档，已退役未归档）
 
 ### v1.0.3 (2026-07-15) version 列语义修复（裁定 #ARCH-CH-009）
 - **引擎策略修复**：§4.1-§4.8 DDL 示例 ENGINE 从 `MergeTree` → `ReplacingMergeTree`

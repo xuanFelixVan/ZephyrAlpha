@@ -819,7 +819,7 @@ class DegradationMatrix(BaseModel):
 | Blueprint Routing | 新增 R030 路由规则 | `config/blueprint_routing.yaml` | AI 通过关键字自动定位到本蓝图 |
 | Trigger Routing | 新增 task_keywords 映射 | `src/zephyr/agent-spec/skill-registry.yaml` | AI 通过触发词路由到资源优化技能 |
 | Blueprint Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/blueprint_registry.yaml` | 蓝图可被蓝图搜索 MCP 发现 |
-| Module Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/module_registry.yaml` | 模块可被模块索引发现 |
+| Module Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE 条目 | `docs/03_modules/blueprint_registry.yaml` | 模块可被模块索引发现 |
 | Cross-Module Dependency | 新增依赖关系 | `cross-module-dependency-registry.yaml` | 依赖链可追溯 |
 | Module ID Registry | 新增 MOD-RESOURCE_OPTIMIZATION_ENGINE ID | `module_id_registry.yaml` | ID 不冲突 |
 | AGENTS.md | 新增资源优化冷启动步骤 | `AGENTS.md` | 新 AI session 知道资源优化引擎存在 |

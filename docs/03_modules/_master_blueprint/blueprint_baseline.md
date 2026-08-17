@@ -38,7 +38,7 @@ depends_on:
   - {target: "architecture_model/layers/b_db.yaml", at: "全篇", why: "DB YAML SSoT——契约CT-DB-*的真源"}
   - {target: "architecture_model/layers/b_mcp.yaml", at: "全篇", why: "MCP YAML SSoT——契约CT-MCP-*的真源"}
   - {target: "architecture_model/layers/b_llm_security.yaml", at: "全篇", why: "LSG YAML SSoT——契约CT-LSG-*的真源"}
-  - {target: "architecture_model/layers/system_telemetry.yaml", at: "全篇", why: "Telemetry YAML SSoT——契约CT-TELE-*的真源"}
+  - {target: "architecture_model/layers/b_system_telemetry.yaml", at: "全篇", why: "Telemetry YAML SSoT——契约CT-TELE-*的真源"}
   - {target: "architecture_model/layers/b_core.yaml", at: "全篇", why: "Core YAML SSoT"}
   - {target: "architecture_model/layers/b_shared.yaml", at: "全篇", why: "Shared YAML SSoT"}
   - {target: "architecture_model/layers/b_orchestrator.yaml", at: "全篇", why: "Orchestrator YAML SSoT——边界定义"}

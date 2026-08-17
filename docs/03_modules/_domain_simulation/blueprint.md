@@ -40,7 +40,7 @@ summary: "实验层。ExperimentPipelineBase + ScoutAgentBase OCP 扩展点 + Ex
 tags: [experimentation, l13, c-track, ocp, scout-agent, ab-test, t2-deferred]
 priority: P2
 runtime_plane: warm
-ssot_yaml: "architecture_model/layers/l13_experimentation.yaml"
+ssot_yaml: "docs/03_modules/_domain_simulation/blueprint.md"
 c_track_status: "active"
 construction_gate: "ARB-11: C轨T2层已解除blocked，开工条件已满足。"
 responsibility_domain: 

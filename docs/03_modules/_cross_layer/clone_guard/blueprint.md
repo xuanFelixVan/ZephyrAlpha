@@ -37,7 +37,7 @@ depends_on:
   - {target: "architecture_issue_registry.yaml", at: "#ARCH-GOV-BUDGET-001", why: "I-GOV-3 等量退役约束——升级现有门禁不新增"}
   - {target: "architecture_issue_registry.yaml", at: "#ARCH-FORCE-MERGE-DEDUP-001", why: "强制合并去重裁决条目（待登记）"}
 references:
-  - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
+  - {path: "d:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
   - {path: "https://github.com/jwizenfeld04/Echo-Guard", section: "README", why: "Echo-Guard v0.4.1 主检测引擎——AST哈希+CodeSAGE嵌入+MCP+DRY严重性"}
   - {path: "https://github.com/semcod/redup", section: "README", why: "reDUP v0.4.46 深度分析引擎——六层检测+重构规划+影响评分+跨项目比较"}
   - {path: "https://ast-grep.github.io/", section: "docs", why: "ast-grep 规则引擎——tree-sitter YAML 结构化模式匹配/重写"}

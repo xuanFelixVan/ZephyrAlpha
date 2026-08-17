@@ -1,12 +1,12 @@
 registry:
   version: 2.7.14
   created: '2026-05-02'
-  last_updated: '2026-08-16'
+  last_updated: '2026-08-17'
   total_blueprints: 173
   scope: 03_modules/
   note: Auto-synced from 173 blueprint.md files by sync_registry_from_blueprints.py
 metadata:
-  generated_at: '2026-08-16'
+  generated_at: '2026-08-17'
   generated_by: sync_registry_from_blueprints.py
   canonical_source: 物理 docs/03_modules/**/blueprint.md frontmatter（SSoT）；本文件由 sync_registry_from_blueprints.py
     自动生成
@@ -536,7 +536,20 @@ blueprints:
   generation: 1
   last_updated: '2026-07-14'
   file_path: 03_modules/_domain_governance/alignment_loop/blueprint.md
-- module_id: MOD-GOV-SYNC-PANORAMA
+- module_id: MOD-GOVERNANCE
+  name: _domain_governance
+  title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
+  summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001（已归档，见references）。三轮审计29项D-GAP全覆盖。
+  layer: L1_foundation
+  functional_domain: governance
+  blueprint_status: Active
+  blueprint_level: domain
+  priority: P0
+  version: 0.13.5
+  generation: 2
+  last_updated: '2026-05-15'
+  file_path: 03_modules/_domain_governance/blueprint.md
+- module_id: MOD-GOV_SYNC_PANORAMA
   name: panorama_alignment_engine
   title: 五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐
   summary: '五图模块对齐引擎——depgraph/dataflowgraph/decisiongraph/blueprint.md 五图模块对齐。 4
@@ -553,19 +566,6 @@ blueprints:
   generation: 1
   last_updated: '2026-07-16'
   file_path: 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
-- module_id: MOD-GOVERNANCE
-  name: _domain_governance
-  title: Governance Domain 蓝图 — Agent治理八件套跨模块集成契约
-  summary: 治理域Level 1集成蓝图——覆盖Agent治理八件套（MOD-INF-018~025）跨模块集成契约。容量升级设计已拆分至MOD-GOV-CAP-001。三轮审计29项D-GAP全覆盖。
-  layer: L1_foundation
-  functional_domain: governance
-  blueprint_status: Active
-  blueprint_level: domain
-  priority: P0
-  version: 0.13.5
-  generation: 2
-  last_updated: '2026-05-15'
-  file_path: 03_modules/_domain_governance/blueprint.md
 - module_id: MOD-INF-001
   name: capacity_assurance
   title: Capacity Assurance 蓝图 — SLI/SLO框架+Error Budget五级响应+Token Budget限流+Kill Switch熔断
@@ -1759,19 +1759,6 @@ blueprints:
   last_updated: '2026-08-02'
   file_path: 03_modules/_domain_risk/concentration_monitor/blueprint.md
 - module_id: MOD-RK-08
-  name: liquidity_monitor
-  title: ''
-  summary: ''
-  layer: ''
-  functional_domain: ''
-  blueprint_status: Draft
-  blueprint_level: module
-  priority: P2
-  version: ''
-  generation: ''
-  last_updated: ''
-  file_path: 03_modules/_domain_risk/liquidity_monitor/blueprint.md
-- module_id: MOD-RK-08
   name: risk_budget_allocator
   title: 风险预算分配器蓝图 — ERC + 自定义预算 SLSQP 优化
   summary: ''
@@ -1829,7 +1816,7 @@ blueprints:
   summary: ''
   layer: ''
   functional_domain: ''
-  blueprint_status: Draft
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
   version: ''
@@ -1842,7 +1829,7 @@ blueprints:
   summary: ''
   layer: ''
   functional_domain: ''
-  blueprint_status: Draft
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
   version: ''
@@ -1881,7 +1868,7 @@ blueprints:
   summary: ''
   layer: ''
   functional_domain: ''
-  blueprint_status: Draft
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
   version: ''
@@ -1894,7 +1881,7 @@ blueprints:
   summary: ''
   layer: ''
   functional_domain: ''
-  blueprint_status: Draft
+  blueprint_status: Active
   blueprint_level: module
   priority: P2
   version: ''
@@ -1927,6 +1914,19 @@ blueprints:
   generation: ''
   last_updated: ''
   file_path: 03_modules/_domain_risk/liquidity_crisis_manager/blueprint.md
+- module_id: MOD-RK-22
+  name: liquidity_monitor
+  title: ''
+  summary: ''
+  layer: ''
+  functional_domain: ''
+  blueprint_status: Active
+  blueprint_level: module
+  priority: P2
+  version: ''
+  generation: ''
+  last_updated: ''
+  file_path: 03_modules/_domain_risk/liquidity_monitor/blueprint.md
 - module_id: MOD-RK-23
   name: strategy_deviation_monitor
   title: 策略偏离监控器蓝图 — 实盘 vs 回测净值偏离双口径持续度量（55 号 G26 §3.4）
@@ -2401,8 +2401,8 @@ blueprints:
 summary:
   total: 173
   by_blueprint_status:
-    Active: 159
-    Draft: 14
+    Active: 164
+    Draft: 9
   by_layer:
     L2_domain: 22
     L_BACKTEST: 8
@@ -2423,8 +2423,25 @@ summary:
     L03_trading: 3
   note: 由 sync_registry_from_blueprints.py 从 blueprints[] 派生——细则以物理 frontmatter 为准（construction_progress
     已于 2026-07-18 退役）
-  last_recomputed: '2026-08-16'
+  last_recomputed: '2026-08-17'
 changelog:
+- version: 2.7.17
+  date: '2026-08-17'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 173 份 blueprint.md；登记项相对上一版有
+    2 条差异摘要'
+  - 移除 MOD-GOV-SYNC-PANORAMA（曾位于 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md）
+  - 新增 MOD-GOV_SYNC_PANORAMA → 03_modules/_domain_governance/panorama_alignment_engine/blueprint.md
+- version: 2.7.16
+  date: '2026-08-17'
+  changes:
+  - '[auto-sync] blueprint-registry + module-registry；扫描 173 份 blueprint.md；登记项相对上一版有
+    5 条差异摘要'
+  - 'MOD-RK-13.blueprint_status: [Draft] → [Active]'
+  - 'MOD-RK-14.blueprint_status: [Draft] → [Active]'
+  - 'MOD-RK-18.blueprint_status: [Draft] → [Active]'
+  - 'MOD-RK-19.blueprint_status: [Draft] → [Active]'
+  - 新增 MOD-RK-22 → 03_modules/_domain_risk/liquidity_monitor/blueprint.md
 - version: 2.7.15
   date: '2026-08-16'
   changes:

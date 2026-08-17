@@ -28,9 +28,9 @@ scope: module
 stability: evolving
 verifiability: hybrid
 depends_on:
-  - target: MOD-INF-FLE
+  - target: MOD-INF-005
     at: "§10"
-    why: "FitnessFunctionFramework + FitnessInputs"
+    why: "FitnessFunctionFramework + FitnessInputs（fitness_functions 实现归属 governance_automation，depgraph 实证）"
   - target: MOD-DATABASE
     at: "§10"
     why: "TaskRepository"

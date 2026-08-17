@@ -46,7 +46,7 @@ references:
   - {id: "DD-07-01", at: "数据架构.md §7.5", why: "DuckDB→ClickHouse升级门禁决策(本架构提前触发)"}
   - {id: "DD-P3-01", at: "数据架构.md §3.2", why: "因子值窄表7列Schema决策(本架构采纳)"}
   - {id: "DD-P6-01", at: "数据架构.md §6.4", why: "图谱存储NetworkX→Neo4j修正(551K关系超舒适区)"}
-  - {id: "ARCH-BIZDB-DISCUSSION", at: "docs/_working/业务数据库架构_讨论记录.md", why: "11章推导过程记录，本母蓝图的完整输入"}
+  - {id: "ARCH-BIZDB-DISCUSSION", at: "（临时讨论记录，已退役未归档）", why: "11章推导过程记录，本母蓝图的完整输入"}
 responsibility_domain: 
 design_maturity: design
 build_status: planned
@@ -56,7 +56,7 @@ build_status: planned
 
 > module_id: MOD-ARCH_BIZDB | version: 1.0.0 | status: Active | layer: cross_layer | blueprint_level: architecture
 > 本文档为**母蓝图**，指导 C1~C4 / G2 / L4 各子施工蓝图。表级细化，不到字段级（字段级见各子蓝图 DDL-as-Code）。
-> **推导过程完整记录**：业务数据库架构_讨论记录.md（11章）
+> **推导过程完整记录**：业务数据库架构_讨论记录（11章，临时工作文档，已退役未归档）
 
 ## 概述
 
@@ -739,4 +739,4 @@ Step4: 完成 → CategoryManager自动发现(不加载) → 未来enabled=true�
 ---
 
 > **本文档为母蓝图，表级细化。字段级DDL见各子施工蓝图。**
-> **推导过程完整记录**：业务数据库架构_讨论记录.md（11章）
+> **推导过程完整记录**：业务数据库架构_讨论记录（11章，临时工作文档，已退役未归档）

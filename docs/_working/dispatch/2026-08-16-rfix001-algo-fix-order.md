@@ -1,3 +1,10 @@
+---
+doc_type: dispatch_order
+ttl: task_bound
+status: active
+date: 2026-08-16
+---
+
 施工会话 AI-RFIX-001。任务：双轮审查算法修复批落地（裁定书 docs/_working/reviews/2026-08-16-dual-review-adjudication.md §二/§六）。
 worktree 已由统筹创建：D:\ZephyrAlpha\.worktrees\AI-RFIX-001（分支 ai/AI-RFIX-001/task-algo-fix-batch，自 dev 4c287e18d7 切出）。进入后 `. .\activate_env.ps1`。
 

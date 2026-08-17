@@ -38,7 +38,7 @@ references:
 tags: [ml-platform, l11, c-track, placeholder]
 priority: P1
 runtime_plane: warm
-ssot_yaml: "architecture_model/layers/l11_ml_platform.yaml"
+ssot_yaml: "docs/03_modules/_domain_machine_learning_train/blueprint.md"
 responsibility_domain: 
 build_status: generated
 design_maturity: production

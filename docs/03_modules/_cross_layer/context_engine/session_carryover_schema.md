@@ -50,7 +50,7 @@ design_maturity: design
 
 ### 0.2 本文档不是
 
-- ❌ Context Engine 的完整 API → 见 `docs/03_modules/_cross_layer/_b_track_interfaces/context_engine-interface.md`
+- ❌ Context Engine 的完整 API → 见 `docs/03_modules/_cross_layer/_b_track_interfaces/context_engine_interface.md`
 - ❌ 单次 Session 内的任务追踪 → 见 `docs/03_modules/_cross_layer/_b_track_interfaces/agent_orchestrator_interface.md`
 - ❌ Session 的定义（本文档假设读者已知）→ Session = 一次"打开 Cursor → 编码 → 关闭"的连续工作周期
 

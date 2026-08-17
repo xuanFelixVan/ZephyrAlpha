@@ -1,5 +1,5 @@
 ---
-module_id: MOD-GOV-SYNC-PANORAMA
+module_id: MOD-GOV_SYNC_PANORAMA
 title: "五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐"
 doc_type: blueprint
 status: Active
@@ -37,8 +37,35 @@ build_status: generated
 
 # 五图模块对齐引擎蓝图 — depgraph/dataflow/decision/blueprint 五图对齐
 
-> module_id: MOD-GOV-SYNC-PANORAMA | version: 1.1.2 | status: Active
+> module_id: MOD-GOV_SYNC_PANORAMA | version: 1.1.2 | status: Active
 > actual_disk_path: sync_panorama_module.py + align_panoramas.py + blueprint_frontmatter_reconciler.py
+
+### §0.6 五图对齐视图
+
+<!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
+
+> **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-GOV_SYNC_PANORAMA`
+
+#### 全景位置
+
+| 图 | 位置 | 状态 | 链接 |
+|----|------|------|------|
+| 依赖图 (depgraph) | `blueprint_id=MOD-GOV_SYNC_PANORAMA` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-GOV_SYNC_PANORAMA` |
+| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
+| 蓝图 (blueprint) | 本文件 | Active | — |
+
+#### 四核心字段
+
+| 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
+|------|-------------------|--------------------------|:-------:|
+| module_id | MOD-GOV_SYNC_PANORAMA | MOD-GOV_SYNC_PANORAMA | ✅ |
+| domain_id | N/A | N/A | ✅ |
+| build_status | generated | generated | ✅ |
+| file_count | 5 文件 | N/A | — |
+
+> 冲突时以 depgraph 为准（ARCH-056 + ARCH-MM-001 声明 vs 验证框架）。
 
 ## 概述
 
@@ -208,7 +235,7 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 执行后：
 - `dataflow_jobs` 表新增一行（job_name=MOD-NEW-001, entity_type='module_placeholder'）
 - `decision_layers` 表新增一行（layer_id=MOD-NEW-001, track='placeholder'）
-- `docs/03_modules/MOD-NEW-001.md` 如已存在则更新 frontmatter（不存在则标记缺失跳过，需手动创建蓝图）
+- `docs/03_modules/MOD-NEW-001.md`（示例占位）如已存在则更新 frontmatter（不存在则标记缺失跳过，需手动创建蓝图）
 - 三图对齐率保持 100%（dataflow/decision 自动写入占位记录）
 
 ### 5.3 清单扩张的自动化保证
@@ -327,5 +354,4 @@ python scripts/governance/d5_architecture/generators/align_panoramas.py
 - 测试在 `tests/` 下
 - 配置在 `config/` 下
 - 治理脚本在 `scripts/governance/` 下
-
 

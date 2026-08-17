@@ -1,6 +1,7 @@
 ---
 module_id: MOD-RK-19
 doc_type: blueprint
+status: Active
 ttl: permanent
 blueprint_id: MOD-RK-19
 domain_id: D_RISK

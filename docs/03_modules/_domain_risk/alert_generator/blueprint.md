@@ -23,7 +23,7 @@ build_status: stable
 
 > **module_id**: MOD-RK-06 | **域**: D_RISK | **层**: L2 盘中/盘后监控
 > **优先级**: P0 | **成熟度**: design | **对标能力**: BM-RC-04-D
-> **SSoT**: depgraph MOD-RK-06 | **设计真源**: docs/_working/infrastructure_pipelines_engines_construction_plan.md §6.4 G1
+> **SSoT**: depgraph MOD-RK-06 | **设计真源**: 基础设施管线与引擎施工计划 §6.4 G1（临时工作文档，已退役未归档）
 
 ## 1. 定位
 

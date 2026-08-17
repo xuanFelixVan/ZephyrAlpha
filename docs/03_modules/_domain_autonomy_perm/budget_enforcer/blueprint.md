@@ -23,7 +23,7 @@ priority: P2
 activation_phase: current
 runtime_plane: hot
 depends_on:
-- {target: MOD-LLM_SECURITY", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
+- {target: "MOD-LLM_SECURITY", at: "§2", why: "LLM Security Gateway——IPI检测 + 策略文件签名验证 + Trust Ring 隔离"}
 responsibility_domain: 
 design_maturity: design
 build_status: generated
@@ -849,7 +849,7 @@ runtime_trust_rings:
 | per_level_fail_mode | L0 request: fail-closed; L1 turn: fail-closed; L2 task: fail-closed; L3 session: fail-open限流(tier_0+1/10上限); L3.5 workflow: fail-open限流; L4 global: fail-closed; L4.5 self: fail-open限流(仅统计不阻断) | — |
 | fail_mode_recovery | heartbeat: 每30s检查; 连续3次失败→触发fail_mode; 组件恢复→自动恢复 | — |
 | cold_start_anti_abuse | 1h内最多3个Session(超过→冷启动豁免降为1000token); 24h冷启动累计≤27500token(=5×5500) | — |
-| adversarial_testing | 5项: IPI注入policy修改 / cold start 10次快速重启 / parent-child无限委托 / stream_abort前恶意操作 / 多Provider race condition; gate: experimental→beta前必须全过 | 报告→docs/_working/audit/adversarial_test_report.md |
+| adversarial_testing | 5项: IPI注入policy修改 / cold start 10次快速重启 / parent-child无限委托 / stream_abort前恶意操作 / 多Provider race condition; gate: experimental→beta前必须全过 | 报告待产出（落 docs/_working/audit/ 后更新此行） |
 
 ### 2.30 启动校准阶段（Bootstrapping Calibration Phase）
 

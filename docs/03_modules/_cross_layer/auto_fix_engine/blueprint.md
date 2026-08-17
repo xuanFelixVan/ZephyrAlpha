@@ -43,7 +43,7 @@ depends_on:
   - {target: "MOD-INF-027", at: "section 4", why: "Audit Orchestrator (编排)"}
   - {target: "MOD-INF-029", at: "section 4", why: "Orphan Judge (孤儿修复)"}
 references:
-  - {path: "D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint-template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
+  - {path: "D:/ZephyrAlpha/docs/01_policies_and_standards/templates/blueprint_construction_template.md", section: "REQUIRED_SECTIONS", why: "蓝图模板 v3.5 合规基准"}
   - {path: "D:/ZephyrAlpha/docs/01_policies_and_standards/rules/trae_030_doc_numbering_metadata.yaml", section: "§0.5", why: "压缩工作流标准——Layer 1/2 执行规范"}
   - {id: "MOD-INF-027", at: "full", why: "Audit Orchestrator——AutoFixEngine 作为 Phase 3 修复的核心执行者"}
   - {id: "MOD-INF-029", at: "full", why: "Orphan Judge——EXTRACT_AND_MERGE / REGISTER / DELETE 判决的执行方"}

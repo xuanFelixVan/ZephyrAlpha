@@ -1,8 +1,9 @@
 ---
-module_id: MOD-RK-08
+module_id: MOD-RK-22
 doc_type: blueprint
+status: Active
 ttl: permanent
-blueprint_id: MOD-RK-08
+blueprint_id: MOD-RK-22
 domain_id: D_RISK
 path: src/zephyr/risk/core/liquidity_monitor.py
 design_maturity: production
@@ -14,7 +15,7 @@ stability: evolving
 responsibility_domain: 
 ---
 
-# MOD-RK-08 流动性监控器 (LiquidityMonitor)
+# MOD-RK-22 流动性监控器 (LiquidityMonitor)
 
 ## 1. 定位
 
@@ -96,13 +97,13 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 <!-- AUTOGEN: source=depgraph+dataflow+decision, generator=generate_blueprint_panorama.py, reconciler=sync_panorama_module.py -->
 
 > **自动生成**：本节由 generate_blueprint_panorama.py 从全景真源派生，禁止手写。
-> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RK-08`
+> 生成命令：`python scripts/governance/d5_architecture/generators/generate_blueprint_panorama.py MOD-RK-22`
 
 #### 全景位置
 
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
-| 依赖图 (depgraph) | `blueprint_id=MOD-RK-08` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-RK-08` |
+| 依赖图 (depgraph) | `blueprint_id=MOD-RK-22` 的 5 个 file 节点 | production | `extract_depgraph.py --modules MOD-RK-22` |
 | 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Draft | — |
@@ -111,7 +112,7 @@ is_illiquid = (amihud_illiq > amihud_threshold) OR (volume_shrinkage_ratio < vol
 
 | 字段 | depgraph 值（真源） | 蓝图 frontmatter 值（声明） | 是否一致 |
 |------|-------------------|--------------------------|:-------:|
-| module_id | MOD-RK-08 | MOD-RK-08 | ✅ |
+| module_id | MOD-RK-22 | MOD-RK-22 | ✅ |
 | domain_id | N/A | N/A | ✅ |
 | build_status | stable | stable | ✅ |
 | file_count | 5 文件 | N/A | — |

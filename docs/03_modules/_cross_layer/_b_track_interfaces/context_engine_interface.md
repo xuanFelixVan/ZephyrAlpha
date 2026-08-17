@@ -17,7 +17,7 @@ truth_source:
   - "03_modules/_cross_layer/context_engine/blueprint.md（MOD-CONTEXT_ENGINE — 详细设计与 CT 锚点；Phase 5 真源）"
   - "architecture_model/layers/b_context_engine.yaml（Context Engine YAML SSoT）"
 supersedes:
-  - "docs/03_modules/_cross_layer/_b_track_interfaces/context-interface-contract.md (will archive in B-b)"
+  - "context-interface-contract.md（旧接口契约文档，B-b 已完成归档，原件已退役）"
 related_kb:
   - "KBG-0015 Context Engine 架构与技术选型（pending B-e）"
 integration_points:

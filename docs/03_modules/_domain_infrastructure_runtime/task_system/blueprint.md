@@ -669,9 +669,9 @@ class TaskLifecycleManager:
 | PS-STD-001 | 必须 | §7——task_id/语义28/追踪3/Task共31/状态机 | ≥2.0.0 | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` |
 | PS-STD-011 | 必须 | MTH-012 涌现式设计 + MTH-013 路径合规 | ≥2.6.0 | `docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml` |
 | GOV-DOC-002 | 必须 | §5.1.2 路径映射 | — | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` |
-| GOV-TASK-001 | 必须 | 任务卡操作指南 | ≥3.0.0 | `docs/01_policies_and_standards/governance/task/task-card-standard.md` |
-| GOV-TASK-004 | 必须 | 取消权限、优先级裁决 | ≥2.0.0 | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` |
-| GOV-TASK-005 | 必须 | 关闭三步法 | ≥1.1.0 | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` |
+| GOV-TASK-001 | 必须 | 任务卡操作指南 | ≥3.0.0 | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` |
+| GOV-TASK-004 | 必须 | 取消权限、优先级裁决 | ≥2.0.0 | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` |
+| GOV-TASK-005 | 必须 | 关闭三步法 | ≥1.1.0 | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` |
 | MOD-INF-005 | 必须 | 脚本系统 12 维度 | ≥3.0.0 | `docs/03_modules/_domain_governance/governance_automation/blueprint.md` |
 | MOD-GATE_ENGINE | 必须 | 门禁引擎 G0-G7 任务门禁 + G1-G5 KMS决策门 | ≥2.0.0 | `docs/03_modules/_cross_layer/gate_engine/blueprint.md` |
 | MOD-INF-009 | 必须 | 管线调度 SSoT——任务管线 M1-M11 双管线路由 + Fast/Batch双通道 | ≥2.0.0 | `docs/03_modules/_cross_layer/pipeline/blueprint.md` |
@@ -795,7 +795,7 @@ class TaskLifecycleManager:
 | # | 需更新的文件 | 完整路径（相对优先） | 更新内容 | 更新原因 |
 |---|------------|------------|---------|---------|
 | 1 | 蓝图注册表 | `docs/03_modules/blueprint_registry.yaml` | MOD-TASK_SYSTEM 条目更新 | 版本升级 |
-| 2 | 任务卡元注册表 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 迁移状态更新 | v0.2.0→v0.3.0 |
+| 2 | 任务卡元注册表 | `docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml` | 迁移状态更新 | v0.2.0→v0.3.0 |
 | 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | TaskCard 继承 Task | 基座对齐 |
 | 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | 对接 task_repo | 数据层真源 |
 | 5 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | MCP 5 Tool | 接入 SQLite |
@@ -898,10 +898,10 @@ class TaskLifecycleManager:
 | 项目 | 内容 |
 |------|------|
 | 对应蓝图契约 | §13 |
-| 产出位置 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` |
+| 产出位置 | `docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml` |
 | 验收标准 | 记录 MOD-TASK_SYSTEM v0.2.0→v0.9.3 迁移 |
 | AI 自治范围 | ai_modifiable |
-| 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md')); print('OK')"` |
+| 验证命令 | `python -c "import yaml; d=yaml.safe_load(open('docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml')); print('OK')"` |
 | 检查点 | task-card-meta-registry.md 包含 MOD-TASK_SYSTEM 迁移记录 |
 | G7 检查项 | 迁移状态是否准确？ |
 
@@ -990,7 +990,7 @@ class TaskLifecycleManager:
 | # | 产出物 | 存放完整路径（相对优先） | 是否存在 | 内容非空 | §0对齐 |
 |---|--------|---------------|:---:|:---:|:---:|
 | 1 | blueprint_registry.yaml | `docs/03_modules/blueprint_registry.yaml` | ☐ | ☐ | ☐ |
-| 2 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | ☐ | ☐ | ☐ |
+| 2 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml` | ☐ | ☐ | ☐ |
 | 3 | core/models.py | `src/zephyr/shared/shared_services/models.py` | ☐ | ☐ | ☐ |
 | 4 | blueprint_decomposer.py | `src/zephyr/shared/shared_services/blueprint_decomposer.py` | ☐ | ☐ | ☐ |
 | 5 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | ☐ | ☐ | ☐ |
@@ -1393,16 +1393,16 @@ STEP 3: 拆分后验证
 | 2 | 目录结构标准 | GOV-DOC-002 | — | `docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml` | 路径映射、边界判据 |
 | 3 | 治理方法论 | PS-STD-011 | 2.6.0+ | `docs/01_policies_and_standards/rules/trae_024_methodology_diagnosis.yaml` | MTH-012 涌现式设计 + MTH-013 路径合规创建 |
 | 4 | 脚本系统蓝图 | MOD-INF-005 | 3.0.0+ | `docs/03_modules/_domain_governance/governance_automation/blueprint.md` | 审计消费方 |
-| 5 | 任务卡操作指南 | GOV-TASK-001 | 3.0.0+ | `docs/01_policies_and_standards/governance/task/task-card-standard.md` | 正文结构与门禁速查 |
-| 6 | 任务生命周期标准 | GOV-TASK-004 | 2.0.0+ | `docs/01_policies_and_standards/governance/task/task-lifecycle-standard.md` | 取消权限、优先级裁决 |
-| 7 | 任务关闭标准 | GOV-TASK-005 | 1.1.0+ | `docs/01_policies_and_standards/governance/task/task-closure-standard.md` | 关闭三步法 |
+| 5 | 任务卡操作指南 | GOV-TASK-001 | 3.0.0+ | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` | 正文结构与门禁速查 |
+| 6 | 任务生命周期标准 | GOV-TASK-004 | 2.0.0+ | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` | 取消权限、优先级裁决 |
+| 7 | 任务关闭标准 | GOV-TASK-005 | 1.1.0+ | `docs/01_policies_and_standards/rules/trae_034_task_card_standard.yaml` | 关闭三步法 |
 | 8 | Task Pydantic 模型 | shared/schemas.py | 现有代码 | `src/zephyr/shared/schemas.py` | Task 结构定义 SSoT |
 | 9 | 模型基准排名 | REG-LLM-001 | 1.1.0+ | `docs/01_policies_and_standards/_registry/catalogs/frontier_llm_benchmark_ranking.yaml` | execution_model 数据依据 |
-| 10 | 模型路由策略 | GOV-AI-002 | 2.0.0+ | `docs/01_policies_and_standards/governance/ai/model-routing-policy.md` | 任务分配决策树 |
+| 10 | 模型路由策略 | GOV-AI-002 | 2.0.0+ | `docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml` | 任务分配决策树 |
 | 11 | AGENTS.md 项目基准 | — | 4.6.1+ | `AGENTS.md` | 项目全局规则 |
 | 12 | Task 模型基座 | shared/schemas.py | 现有代码 | `src/zephyr/shared/schemas.py` | Task 31 字段——TaskCard 继承 |
 | 13 | task_repo.py | — | 现有代码 | `src/zephyr/governance/task_repo.py` | SQLite CRUD + 10状态机——数据层真源 |
-| 14 | 任务卡元注册表 | task-card-meta-registry | V-13 | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 迁移状态追踪 |
+| 14 | 任务卡元注册表 | task-card-meta-registry | V-13 | `docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml` | 迁移状态追踪 |
 
 ---
 
@@ -1435,7 +1435,7 @@ STEP 3: 拆分后验证
 | 8 | task_manager_server.py | `src/zephyr/integration/mcp/task_manager_server.py` | 重写 | 接入 task_repo(SQLite) 真源 |
 | 9 | task_completion_gate.py | `src/zephyr/gov_enforcement/rule_enforcement/task_completion_gate.py` | 读取 | 需同步 G7 门禁 |
 | 10 | metadata_registry.yaml | `docs/01_policies_and_standards/rules/trae_043_meta_rule_metadata.yaml` | 读取 | §7 字段真源 |
-| 11 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md` | 修改 | 更新迁移状态 |
+| 11 | task-card-meta-registry.md | `docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml` | 修改 | 更新迁移状态 |
 
 ---
 

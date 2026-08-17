@@ -5962,7 +5962,7 @@ Encoding Defense Layers — LSG + LLM 协作
 
 ### 导航路径
 
-1. `docs/blueprint_registry.yaml` → MOD-LLM_SECURITY → 本文件
+1. `docs/03_modules/blueprint_registry.yaml` → MOD-LLM_SECURITY → 本文件
 2. `python -m zephyr.agent_spec load SKILL-DOM-GAT-001` → 加载安全 Skill
 3. `src/zephyr/security/llm_defense/llm_security/gateway.py` → 代码入口
 
