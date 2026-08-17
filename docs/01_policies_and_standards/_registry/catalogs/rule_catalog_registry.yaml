@@ -4,7 +4,7 @@ ttl: permanent
 doc_type: register
 title: 规则路径目录（唯一真源 SSoT）
 status: active
-generated_at: '2026-08-17T04:34:40Z'
+generated_at: '2026-08-17T06:35:23Z'
 generated_by: scripts/governance/d3_metadata/generate_rule_catalog.py
 maintenance: auto
 total_files: 217
@@ -19,7 +19,7 @@ files:
   title: 规则体系总索引
   doc_type: index
   status: active
-  version: 2.2.0
+  version: 2.2.1
   rule_form: declarative
   scope: global
   stability: stable
@@ -954,7 +954,7 @@ files:
   title: 元规则-元数据与度量
   doc_type: ''
   status: ''
-  version: 1.0.0
+  version: 1.0.1
   rule_form: ''
   scope: meta_metadata_metrics
   stability: evolving
@@ -2500,7 +2500,7 @@ files:
   title: 登记表集中存储目录索引
   doc_type: index
   status: active
-  version: 2.3.0
+  version: 2.4.0
   rule_form: declarative
   scope: global
   stability: stable
