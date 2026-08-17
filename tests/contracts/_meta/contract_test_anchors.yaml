@@ -18,7 +18,7 @@ anchors:
   CT-PIPE-ORC-001:
     - tests/pipeline/test_ct_pipe_routing_pipeline.py
     - tests/pipeline/test_pipeline_orchestrator.py
-  CT-TELE-FLE-001: tests/observability/test_l12_telemetry.py
+  CT-TELE-FLE-001: tests/infrastructure/test_l12_telemetry_unit.py
   CT-ORC-GATE-001: tests/governance/orchestrator/test_gate_engine_unit.py
   CT-SCRIPT-GATE-001: tests/governance/integration/test_all_scripts.py
   # B 轨集成契约（architecture-model layers b_* 登记）

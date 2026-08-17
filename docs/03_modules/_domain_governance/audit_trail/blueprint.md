@@ -4,7 +4,7 @@ submodule_path: src/zephyr/gov_audit
 title: "Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证"
 doc_type: blueprint
 status: Active
-version: "2.1.3"
+version: "2.1.4"
 generation: 9
 layer: L0_infrastructure
 layer_name: infrastructure
@@ -63,7 +63,7 @@ design_maturity: design
 build_status: planned
 ---
 
-> module_id: MOD-INF-020 | version: 2.1.3 | status: active | domain: infra_ops
+> module_id: MOD-INF-020 | version: 2.1.4 | status: active | domain: infra_ops
 > actual_disk_path: src/zephyr/audit-trail/ (352 .py files) | generation: 9 | construction_progress: partially_implemented
 
 # Audit Trail 蓝图 — 不可变动作审计与密码学完整性保证
@@ -1752,7 +1752,6 @@ class LamportClockV2:
 | `tests/bridges/test_bridges_feedback_bridge.py` | ✅ 已实现 | |
 | `tests/bridges/test_bridges_spec_auditor.py` | ✅ 已实现 | |
 | `tests/bridges/test_bridges_tiered_storage_bridge.py` | ✅ 已实现 | |
-| `tests/bridges/test_bridges_trust_bridge.py` | ✅ 已实现 | |
 | `tests/drift/test_drift_bridge.py` | ✅ 已实现 | |
 | `tests/external/test_external_tool_audit.py` | ✅ 已实现 | |
 | `tests/feedback/test_feedback_bridge.py` | ✅ 已实现 | |

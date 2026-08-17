@@ -200,7 +200,9 @@ def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
     """
     result: list[tuple[int, str]] = []
     current_line = 0
-    for raw_line in diff_stdout.splitlines():
+    for raw_line in diff_stdout.split("\n"):
+        if raw_line == "":
+            continue  # \r\r\n -> \n\n 翻译幻影空行，不占新文件行号（AI-00 收口治本，同胚主仓 4a3d5a3b）
         m = _HUNK_HEADER_RE.match(raw_line)
         if m:
             current_line = int(m.group(1))

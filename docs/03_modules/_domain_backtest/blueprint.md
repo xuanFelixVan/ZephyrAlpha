@@ -39,7 +39,7 @@ template_for: ''
 title: 'D_BACKTEST 回测引擎域蓝图'
 ttl: permanent
 verifiability: automated
-version: 1.3.6
+version: 1.3.7
 responsibility_domain: 
 design_maturity: production
 build_status: generated
@@ -996,10 +996,6 @@ D_BACKTEST域当前7个模块(MVP),v1.1.0扩展到15个。容量阈值≤150,无
 | `tests/backtest/test_deadzone_provider.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_engine.py` | ✅ 已实现 | |
 | `tests/backtest/test_shrinkage_provider.py` | ✅ 已实现 | |
-| `tests/test_backtest_decisiongraph_adapter.py` | ✅ 已实现 | |
-| `tests/test_event_driven_engine.py` | ✅ 已实现 | |
-| `tests/test_matching_engine.py` | ✅ 已实现 | |
-| `tests/test_tick_replay_data_handler.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南
 

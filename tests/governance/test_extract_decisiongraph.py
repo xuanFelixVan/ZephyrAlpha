@@ -24,19 +24,19 @@ from pathlib import Path
 
 import pytest
 
-_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "governance" / "extract_decisiongraph.py"
+_SCRIPT = Path(__file__).resolve().parent.parent.parent / "scripts" / "governance" / "extract_decisiongraph.py"
 
 
 def _db_available() -> bool:
     try:
-        sys.path.insert(0, "src")
         from zephyr.governance.persistence.decisiongraph_schema import (
             get_decisiongraph_pg_connection,
         )
+
         conn = get_decisiongraph_pg_connection()
         conn.close()
         return True
-    except Exception:
+    except Exception:  # noqa: BLE001 — DB 可用性探测必须永不抛异常（降级 skip）
         return False
 
 
@@ -49,20 +49,22 @@ class TestCLIEntryPoint:
     def test_help_exits_zero(self):
         result = subprocess.run(
             [sys.executable, str(_SCRIPT), "--help"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode == 0, f"--help 失败: {result.stderr}"
         assert "extract" in result.stdout.lower() or "decision" in result.stdout.lower()
 
     def test_main_function_exists(self):
-        sys.path.insert(0, str(_SCRIPT.parent.parent.parent))
         try:
             import importlib.util
+
             spec = importlib.util.spec_from_file_location("extract_decisiongraph", _SCRIPT)
             mod = importlib.util.module_from_spec(spec)
             # 不执行 main，仅检查可加载
             assert spec is not None
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 加载失败须转为 pytest.fail 报告
             pytest.fail(f"脚本无法加载: {e}")
 
 
@@ -73,6 +75,8 @@ class TestSummaryCommand:
     def test_summary_exits_zero(self):
         result = subprocess.run(
             [sys.executable, str(_SCRIPT), "--summary"],
-            capture_output=True, text=True, timeout=60,
+            capture_output=True,
+            text=True,
+            timeout=60,
         )
         assert result.returncode == 0, f"--summary 失败: {result.stderr}"

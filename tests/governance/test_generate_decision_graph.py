@@ -25,8 +25,8 @@ from pathlib import Path
 
 import pytest
 
-_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "governance" / "generate_decision_graph.py"
-_YAML = Path(__file__).resolve().parent.parent / "architecture_model" / "domain" / "decision_graph_model.yaml"
+_SCRIPT = Path(__file__).resolve().parent.parent.parent / "scripts" / "governance" / "generate_decision_graph.py"
+_YAML = Path(__file__).resolve().parent.parent.parent / "architecture_model" / "domain" / "decision_graph_model.yaml"
 
 
 class TestYAMLTruthSource:
@@ -37,6 +37,7 @@ class TestYAMLTruthSource:
 
     def test_yaml_loadable_with_4_tracks(self):
         import yaml
+
         with open(_YAML, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         tracks = data.get("tracks", [])
@@ -44,6 +45,7 @@ class TestYAMLTruthSource:
 
     def test_yaml_loadable_with_10_layers(self):
         import yaml
+
         with open(_YAML, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         layers = data.get("layers", [])
@@ -51,6 +53,7 @@ class TestYAMLTruthSource:
 
     def test_yaml_contains_invariants(self):
         import yaml
+
         with open(_YAML, encoding="utf-8") as f:
             data = yaml.safe_load(f)
         invariants = data.get("invariants", [])
@@ -66,7 +69,9 @@ class TestCLIEntryPoint:
     def test_help_exits_zero(self):
         result = subprocess.run(
             [sys.executable, str(_SCRIPT), "--help"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode == 0, f"--help 失败: {result.stderr}"
 

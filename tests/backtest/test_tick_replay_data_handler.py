@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-BT-001 | docs/03_modules/_domain_backtest/blueprint.md
-# [MODULE] tests.test_tick_replay_data_handler
+# [MODULE] tests.backtest.test_tick_replay_data_handler
 # [DOMAIN] D_BACKTEST
 # [STABILITY] stable
 # [SAFETY] L
@@ -8,22 +8,23 @@
 # [A_module] module_id=MOD-BT-001 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 """tick_replay + data_handler 正式测试（原 scripts/tests/ 临时验证脚本转正）"""
+
 from datetime import datetime
 from decimal import Decimal
 
 import pandas as pd
 
-from zephyr.backtest.core.tick_replay import (
-    TickReplayEngine,
-    TickReplayConfig,
-    TickEvent,
-)
 from zephyr.backtest.core.data_handler import (
     BacktestDataHandler,
-    MultiSourceDataHandler,
     DataHandlerError,
+    MultiSourceDataHandler,
 )
 from zephyr.backtest.core.matching_logic import TickSnapshot
+from zephyr.backtest.core.tick_replay import (
+    TickEvent,
+    TickReplayConfig,
+    TickReplayEngine,
+)
 
 
 class MockTickProvider:
@@ -50,16 +51,26 @@ class MockTickProvider:
                 "last_settlement": Decimal("0"),
                 "settlement_price": Decimal("0"),
                 "transaction_num": 100,
-                "ask_price_1": price, "ask_price_2": price + 0.01,
-                "ask_price_3": price + 0.02, "ask_price_4": price + 0.03,
+                "ask_price_1": price,
+                "ask_price_2": price + 0.01,
+                "ask_price_3": price + 0.02,
+                "ask_price_4": price + 0.03,
                 "ask_price_5": price + 0.04,
-                "bid_price_1": price - 0.01, "bid_price_2": price - 0.02,
-                "bid_price_3": price - 0.03, "bid_price_4": price - 0.04,
+                "bid_price_1": price - 0.01,
+                "bid_price_2": price - 0.02,
+                "bid_price_3": price - 0.03,
+                "bid_price_4": price - 0.04,
                 "bid_price_5": price - 0.05,
-                "ask_vol_1": 100, "ask_vol_2": 200, "ask_vol_3": 300,
-                "ask_vol_4": 400, "ask_vol_5": 500,
-                "bid_vol_1": 100, "bid_vol_2": 200, "bid_vol_3": 300,
-                "bid_vol_4": 400, "bid_vol_5": 500,
+                "ask_vol_1": 100,
+                "ask_vol_2": 200,
+                "ask_vol_3": 300,
+                "ask_vol_4": 400,
+                "ask_vol_5": 500,
+                "bid_vol_1": 100,
+                "bid_vol_2": 200,
+                "bid_vol_3": 300,
+                "bid_vol_4": 400,
+                "bid_vol_5": 500,
                 "symbol": symbol,
             }
             rows.append(row)
@@ -119,6 +130,7 @@ def test_tick_replay_multi_symbol():
 
 def test_tick_replay_5s_aggregation():
     """TickReplayEngine 5秒K线聚合"""
+
     class MockProvider5s:
         def fetch_historical(self, symbol, start, end, interval="tick"):
             base_time = datetime(2024, 1, 15, 9, 30, 0)
@@ -127,23 +139,40 @@ def test_tick_replay_5s_aggregation():
                 ts = base_time.replace(second=i)
                 price = 10.50 + i * 0.01
                 row = {
-                    "timestamp": ts, "last_price": price, "open": 10.50,
-                    "high": price + 0.02, "low": price - 0.02,
-                    "prev_close": 10.49, "amount": Decimal("1000000"),
-                    "volume": Decimal("10000"), "pvolume": 0,
-                    "stock_status": 0, "open_interest": 0,
-                    "last_settlement": Decimal("0"), "settlement_price": Decimal("0"),
+                    "timestamp": ts,
+                    "last_price": price,
+                    "open": 10.50,
+                    "high": price + 0.02,
+                    "low": price - 0.02,
+                    "prev_close": 10.49,
+                    "amount": Decimal("1000000"),
+                    "volume": Decimal("10000"),
+                    "pvolume": 0,
+                    "stock_status": 0,
+                    "open_interest": 0,
+                    "last_settlement": Decimal("0"),
+                    "settlement_price": Decimal("0"),
                     "transaction_num": 100,
-                    "ask_price_1": price, "ask_price_2": price + 0.01,
-                    "ask_price_3": price + 0.02, "ask_price_4": price + 0.03,
+                    "ask_price_1": price,
+                    "ask_price_2": price + 0.01,
+                    "ask_price_3": price + 0.02,
+                    "ask_price_4": price + 0.03,
                     "ask_price_5": price + 0.04,
-                    "bid_price_1": price - 0.01, "bid_price_2": price - 0.02,
-                    "bid_price_3": price - 0.03, "bid_price_4": price - 0.04,
+                    "bid_price_1": price - 0.01,
+                    "bid_price_2": price - 0.02,
+                    "bid_price_3": price - 0.03,
+                    "bid_price_4": price - 0.04,
                     "bid_price_5": price - 0.05,
-                    "ask_vol_1": 100, "ask_vol_2": 200, "ask_vol_3": 300,
-                    "ask_vol_4": 400, "ask_vol_5": 500,
-                    "bid_vol_1": 100, "bid_vol_2": 200, "bid_vol_3": 300,
-                    "bid_vol_4": 400, "bid_vol_5": 500,
+                    "ask_vol_1": 100,
+                    "ask_vol_2": 200,
+                    "ask_vol_3": 300,
+                    "ask_vol_4": 400,
+                    "ask_vol_5": 500,
+                    "bid_vol_1": 100,
+                    "bid_vol_2": 200,
+                    "bid_vol_3": 300,
+                    "bid_vol_4": 400,
+                    "bid_vol_5": 500,
                     "symbol": symbol,
                 }
                 rows.append(row)
@@ -158,10 +187,12 @@ def test_tick_replay_5s_aggregation():
     )
     events = []
     agg_events = []
+
     def on_tick_agg(e: TickEvent) -> None:
         events.append(e)
         if e.sequence == -1:
             agg_events.append(e)
+
     engine.run(callback=on_tick_agg)
     assert len(agg_events) >= 1, f"expected >=1 agg bar, got {len(agg_events)}"
 
@@ -189,16 +220,18 @@ def test_multi_source_data_handler_tick_mode():
 def test_multi_source_data_handler_batch_mode():
     """MultiSourceDataHandler batch 模式（DataFrame）"""
     dates = pd.date_range("2024-01-01", periods=5, freq="D")
-    batch_df = pd.DataFrame({
-        "date": dates,
-        "symbol": ["600000.SH"] * 5,
-        "open": [10.0, 10.1, 10.2, 10.3, 10.4],
-        "high": [10.5, 10.6, 10.7, 10.8, 10.9],
-        "low": [9.9, 10.0, 10.1, 10.2, 10.3],
-        "close": [10.2, 10.3, 10.4, 10.5, 10.6],
-        "volume": [100000] * 5,
-        "amount": [1000000] * 5,
-    })
+    batch_df = pd.DataFrame(
+        {
+            "date": dates,
+            "symbol": ["600000.SH"] * 5,
+            "open": [10.0, 10.1, 10.2, 10.3, 10.4],
+            "high": [10.5, 10.6, 10.7, 10.8, 10.9],
+            "low": [9.9, 10.0, 10.1, 10.2, 10.3],
+            "close": [10.2, 10.3, 10.4, 10.5, 10.6],
+            "volume": [100000] * 5,
+            "amount": [1000000] * 5,
+        }
+    )
     handler = MultiSourceDataHandler(
         symbols=["600000.SH"],
         start=datetime(2024, 1, 1),
@@ -220,16 +253,18 @@ def test_multi_source_data_handler_batch_mode():
 def test_multi_source_data_handler_get_history_pit():
     """MultiSourceDataHandler get_history (PIT)"""
     dates = pd.date_range("2024-01-01", periods=5, freq="D")
-    batch_df = pd.DataFrame({
-        "date": dates,
-        "symbol": ["600000.SH"] * 5,
-        "open": [10.0, 10.1, 10.2, 10.3, 10.4],
-        "high": [10.5, 10.6, 10.7, 10.8, 10.9],
-        "low": [9.9, 10.0, 10.1, 10.2, 10.3],
-        "close": [10.2, 10.3, 10.4, 10.5, 10.6],
-        "volume": [100000] * 5,
-        "amount": [1000000] * 5,
-    })
+    batch_df = pd.DataFrame(
+        {
+            "date": dates,
+            "symbol": ["600000.SH"] * 5,
+            "open": [10.0, 10.1, 10.2, 10.3, 10.4],
+            "high": [10.5, 10.6, 10.7, 10.8, 10.9],
+            "low": [9.9, 10.0, 10.1, 10.2, 10.3],
+            "close": [10.2, 10.3, 10.4, 10.5, 10.6],
+            "volume": [100000] * 5,
+            "amount": [1000000] * 5,
+        }
+    )
     handler = MultiSourceDataHandler(
         symbols=["600000.SH"],
         start=datetime(2024, 1, 1),

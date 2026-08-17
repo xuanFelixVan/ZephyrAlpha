@@ -4,7 +4,7 @@ submodule_path: src/zephyr/ex_core
 title: "Trade Execution Core 蓝图+施工图 — 交易执行引擎"
 doc_type: blueprint
 status: Active
-version: "2.2.7"
+version: "2.2.8"
 layer: L2_domain
 layer_name: trade_execution
 functional_domain: execution
@@ -1197,7 +1197,6 @@ ex_core/adapters/miniqmt_broker.py (新建, 实盘Broker)
 | `tests/ex_core/test_price_cage.py` | ✅ 已实现 | |
 | `tests/ex_core/test_risk_layer_orchestrator.py` | ✅ 已实现 | |
 | `tests/ex_core/test_trading_session.py` | ✅ 已实现 | |
-| `tests/test_miniqmt_broker.py` | ✅ 已实现 | |
 | `tests/trading/pipeline/test_l06_trade_execution.py` | ✅ 已实现 | |
 
 ### 1.5 路径索引使用指南

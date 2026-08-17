@@ -16,7 +16,7 @@ from typing import Any
 import yaml
 from zephyr.shared.io.paths import REPO_ROOT
 
-ANCHORS = REPO_ROOT / "tests/contract/contract-test-anchors.yaml"
+ANCHORS = REPO_ROOT / "tests/contracts/_meta/contract_test_anchors.yaml"
 
 
 def _paths_for_entry(rel: Any) -> list[str]:

@@ -1,5 +1,5 @@
 # [BLUEPRINT] MOD-L06-001 | docs/03_modules/_domain_execution_core/blueprint.md
-# [MODULE] tests.test_miniqmt_broker
+# [MODULE] tests.ex_core.test_miniqmt_broker
 # [STABILITY] stable
 # [SAFETY] L
 # [AI_AUTONOMY] ai_modifiable
@@ -12,6 +12,7 @@
   - account 参数传 StockAccount 对象，非 str session_id
   - start() 在 connect() 时调一次，submit_order 不再调 start()
 """
+
 import importlib.util
 from datetime import date, datetime
 from decimal import Decimal
@@ -21,11 +22,9 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 # 绕开 zephyr.ex_core.adapters.__init__.py 的循环导入，直接按文件加载模块
-# 注意：tests/ 目录比 scripts/tests/ 浅一层，用 parents[1] 获取项目根
 _spec = importlib.util.spec_from_file_location(
     "zephyr.ex_core.adapters.miniqmt_broker",
-    Path(__file__).resolve().parents[1]
-    / "src" / "zephyr" / "ex_core" / "adapters" / "miniqmt_broker.py",
+    Path(__file__).resolve().parents[2] / "src" / "zephyr" / "ex_core" / "adapters" / "miniqmt_broker.py",
 )
 _mod = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_mod)
@@ -193,7 +192,10 @@ def test_pre_trade_simulate():
     """测试回测=实盘一致性：预成交模拟"""
     logic = MatchingLogic(MatchingConfig())
     broker = MiniQmtBroker(
-        path="mock", session_id="test", account_id="test_account", matching_logic=logic,
+        path="mock",
+        session_id="test",
+        account_id="test_account",
+        matching_logic=logic,
     )
 
     ob = OrderBookSnapshot(
@@ -222,4 +224,5 @@ def test_thread_safety():
     broker = MiniQmtBroker(path="mock", session_id="test", account_id="test_account")
     assert hasattr(broker, "_lock"), "broker 必须有 _lock"
     import threading
+
     assert isinstance(broker.lock, type(threading.Lock())), "_lock 必须是 threading.Lock 实例"

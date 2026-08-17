@@ -24,7 +24,7 @@ from pathlib import Path
 
 import pytest
 
-_SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "governance" / "apply_decisiongraph.py"
+_SCRIPT = Path(__file__).resolve().parent.parent.parent / "scripts" / "governance" / "apply_decisiongraph.py"
 
 
 class TestCLIEntryPoint:
@@ -36,15 +36,17 @@ class TestCLIEntryPoint:
     def test_help_exits_zero(self):
         result = subprocess.run(
             [sys.executable, str(_SCRIPT), "--help"],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True,
+            text=True,
+            timeout=30,
         )
         assert result.returncode == 0, f"--help 失败: {result.stderr}"
         out = (result.stdout + result.stderr).lower()
         assert "apply" in out or "decision" in out
 
     def test_module_loadable(self):
-        sys.path.insert(0, "src")
         import importlib.util
+
         spec = importlib.util.spec_from_file_location("apply_decisiongraph", _SCRIPT)
         assert spec is not None, "无法创建模块 spec"
 

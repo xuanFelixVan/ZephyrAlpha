@@ -5,7 +5,7 @@ title: "Feedback Loop Engine 蓝图 — 氛围编程原生元自知全维自防�
 doc_type: blueprint
 template_for: blueprint
 status: Draft
-version: "0.35.5"
+version: "0.35.6"
 layer: L1_foundation
 owner: ZephyrAlpha-Owner
 classification: confidential
@@ -54,7 +54,7 @@ responsibility_domain:
 
 本蓝图描述 Feedback Loop Engine——ZephyrAlpha 的自我改进闭环引擎。它解决了系统运行时异常检测、根因诊断、自动修复和自我进化的问题。核心职责包括：regime→predict→detect→diagnose→act→verify→self-heal→govern 全链路自治、67+ Detector 多模态检测、三级检测池并行化、32 代进化×429 盲点覆盖。当前规模单线程 30s 轮询，目标容量 100 AI Session 并发/500 findings/cycle/240 events/s。上游依赖 ScriptSystem(MOD-INF-005)提供扫描结果，下游被 AutoRuntime(MOD-INF-035)消费异常调度。
 
-> module_id: MOD-FEEDBACK_LOOP | version: 0.35.5 | status: Draft | layer: cross_layer
+> module_id: MOD-FEEDBACK_LOOP | version: 0.35.6 | status: Draft | layer: cross_layer
 > actual_disk_path: src/zephyr/feedback_loop/ | generation: 1 | construction_progress: completed
 >
 > **标准锚点（防幻觉）**——本蓝图必须严格遵循以下标准：
@@ -1135,6 +1135,7 @@ STEP 3: 拆分后验证
 | `tests/resource/test_resource_starvation_aware.py` | ✅ 已实现 | |
 | `tests/risk/test_blast_radius_detector.py` | ✅ 已实现 | |
 | `tests/risk/test_drawdown_tracker.py` | ✅ 已实现 | |
+| `tests/risk/test_var_backtester.py` | ✅ 已实现 | |
 | `tests/rollback/test_rollback_integrity.py` | ✅ 已实现 | |
 | `tests/safety/test_attack_simulator.py` | ✅ 已实现 | |
 | `tests/safety/test_scheduler_safety.py` | ✅ 已实现 | |

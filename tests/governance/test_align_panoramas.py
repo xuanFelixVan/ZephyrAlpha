@@ -1,6 +1,6 @@
 # [A_test] module_id: MOD-GOV_align_panoramas | layer=test | stability=volatile | safety=L | ai_autonomy=ai_modifiable
 # [BLUEPRINT] MOD-GOV_ALIGN_PANORAMAS | docs/02_enterprise_architecture/architecture_diagram_construction_plan.md | §test
-# [MODULE] tests.test_align_panoramas
+# [MODULE] tests.governance.test_align_panoramas
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] scripts.governance.d5_architecture.generators.align_panoramas
 # [CONSUMERS] pytest;CI_pipeline
@@ -36,13 +36,17 @@ import pytest
 
 # 动态加载 scripts/ 下的模块（非 Python 包，需 importlib）
 _SCRIPT_PATH = (
-    Path(__file__).resolve().parents[1]
-    / "scripts" / "governance" / "d5_architecture" / "generators"
+    Path(__file__).resolve().parents[2]
+    / "scripts"
+    / "governance"
+    / "d5_architecture"
+    / "generators"
     / "align_panoramas.py"
 )
 
 try:
     import sys
+
     _spec = importlib.util.spec_from_file_location("align_panoramas", _SCRIPT_PATH)
     _mod = importlib.util.module_from_spec(_spec)
     sys.modules["align_panoramas"] = _mod  # 注册到 sys.modules（dataclass 需要）
@@ -147,8 +151,7 @@ class TestDetectOrphans:
     def test_blueprint_not_started_exempt_from_orphans(self):
         """ARCH-059: 蓝图先行模块（仅 blueprint 图）不报告为孤儿。"""
         nodes = [
-            _make_node("MOD-BP-AHEAD", "blueprint",
-                       design_maturity="design", build_status="planned"),
+            _make_node("MOD-BP-AHEAD", "blueprint", design_maturity="design", build_status="planned"),
         ]
         assert _detect_orphans(nodes) == []
 
@@ -330,8 +333,7 @@ class TestDetectDesignOnlyInOne:
     def test_blueprint_not_started_exempt_from_design_isolation(self):
         """ARCH-059: 蓝图先行模块（仅 blueprint 图）不报告为设计态孤立。"""
         nodes = [
-            _make_node("MOD-BP-DESIGN", "blueprint",
-                       design_maturity="design", build_status="planned"),
+            _make_node("MOD-BP-DESIGN", "blueprint", design_maturity="design", build_status="planned"),
         ]
         assert _detect_design_only_in_one(nodes) == []
 
@@ -393,11 +395,15 @@ class TestPanoramaAlignmentReport:
     def test_to_markdown_state_drifts_has_blueprint_column(self):
         """状态漂移表含 blueprint 列。"""
         report = PanoramaAlignmentReport(
-            state_drifts=[{
-                "module_id": "MOD-X",
-                "depgraph": "production", "dataflow": "-",
-                "decision": "-", "blueprint": "design",
-            }],
+            state_drifts=[
+                {
+                    "module_id": "MOD-X",
+                    "depgraph": "production",
+                    "dataflow": "-",
+                    "decision": "-",
+                    "blueprint": "design",
+                }
+            ],
             issues_total=1,
         )
         md = report.to_markdown()
@@ -408,11 +414,15 @@ class TestPanoramaAlignmentReport:
     def test_to_markdown_domain_mismatches_has_blueprint_column(self):
         """域不一致表含 blueprint 列。"""
         report = PanoramaAlignmentReport(
-            domain_mismatches=[{
-                "module_id": "MOD-Y",
-                "depgraph": "D_A", "dataflow": "-",
-                "decision": "-", "blueprint": "D_B",
-            }],
+            domain_mismatches=[
+                {
+                    "module_id": "MOD-Y",
+                    "depgraph": "D_A",
+                    "dataflow": "-",
+                    "decision": "-",
+                    "blueprint": "D_B",
+                }
+            ],
             issues_total=1,
         )
         md = report.to_markdown()
