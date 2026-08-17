@@ -3,7 +3,7 @@ module_id: MOD-REGIME-001
 title: "Regime检测器蓝图 — 12态灰度概率+8转换评分+Shrinkage产出（系统最上游·可验证接口）"
 doc_type: blueprint
 status: Active
-version: "0.1.8"
+version: "0.1.9"
 design_maturity: production
 build_status: generated
 ttl: permanent
@@ -419,7 +419,7 @@ else:
 | 图 | 位置 | 状态 | 链接 |
 |----|------|------|------|
 | 依赖图 (depgraph) | `blueprint_id=MOD-REGIME-001` 的 6 个 file 节点 | production | `extract_depgraph.py --modules MOD-REGIME-001` |
-| 数据流图 (dataflow) | （无节点） | N/A | `apply_dataflowgraph.py --list-datasets` |
+| 数据流图 (dataflow) | 0 个 Dataset / 1 个 Job | active | `apply_dataflowgraph.py --list-datasets` |
 | 决策架构图 (decision) | 0 个决策节点 / 1 个决策层 | N/A | `generate_decision_diagram.py` |
 | 蓝图 (blueprint) | 本文件 | Active | — |
 
