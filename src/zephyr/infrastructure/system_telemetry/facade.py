@@ -14,6 +14,10 @@
 # [TESTS] tests/system-telemetry/test_facade.py
 # [A_module] module_id=MOD-INF-015 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
+# noqa: m10-time-trigger  M10豁免: Telemetry后台调度循环属遥测内维（心跳/flush/TTL清理）——
+# 心跳本质周期信号（无事件恰是需探活之时，事件驱动无法检测进程挂死），对标watchdog.py/
+# structured_sink.py既有豁免实践；2026-06-29治本记录（删daily_backup定时任务）实证治理方
+# 已在案裁定修剪本循环，仅保留探活/维护类任务；PERM-TRIGGER门禁只管新增文件（diff-filter=A）
 
 """Telemetry — 系统遥测门面类（MOD-INF-015 v2.1.0）
 
