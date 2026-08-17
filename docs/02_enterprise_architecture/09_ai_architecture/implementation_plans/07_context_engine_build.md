@@ -5,7 +5,7 @@ title: Context Engine 施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.2.2"
+version: "0.3.0"
 date: 2026-08-17
 topic: context_engine_build
 scope: 09_ai_architecture
@@ -24,9 +24,9 @@ scope: 09_ai_architecture
 |---|---|
 | 主题组 | Context Engine 施工 |
 | 所属 | [00_index.md](00_index.md) §1 目标架构·AI 执行层·业务 Agent |
-| 依赖 | MOD-CONTEXT_ENGINE 蓝图（部分实现）；04/10/14 号施工图为空骨架，接口为假设（见 §6 Q2~Q4） |
+| 依赖 | MOD-CONTEXT_ENGINE 蓝图（部分实现）；04 v0.2.1 §3.5 已双向对齐（Q2 部分成立，boot 接线缺口见 §6）；10 v0.2.2 / 14 v0.2.0 已填充但均无 CE 产出承接（Q3/Q4 证伪登记，见 §6） |
 | 优先级 | P1——上下文管理是 AI 层核心能力 |
-| 状态 | draft（骨架填充完成 v0.2.2，待 Gateway 提交） |
+| 状态 | draft（v0.3.0：Agent 记忆四层候选登记 + 接口复审回填完成） |
 
 ---
 
@@ -57,6 +57,8 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | 上下文压缩 | `DocCompressor`（规则式：保留 Markdown 标题/frontmatter/不可变块）已接入 Assembler | 接口规范 §4.1 设计的 llm_summary（本地 Qwen 分 slot 摘要）/rule_based/truncate 三档策略仅落地规则式一档 |
 | 记忆检索 | `build_context()` 经 `vector_bridge.py`（VMSSearchProtocol，5s 超时，VMS 不可用降级）；`memory_bank.py` 提供 6 个结构化 .md 跨 session 持久上下文；D_INTELLIGENCE 域 `unified_memory_api.py` 提供 recall/write/search | inject 段未接 UnifiedMemoryAPI；检索结果无质量评分 |
 | 一致性 | 组合根已消除"Assembler ≠ 四段"的审计歧义 | 蓝图漂移（22 vs 39 文件、§1.1 索引仅 1 行、build_status=planned vs 代码 production）误导新 session |
+
+> **边界注记（记忆 vs 知识域）**：源 21-D-KNOWLEDGE §0/§6——D-AUTONOMY-05 管"怎么记住"（存储机制/检索机制/记忆生命周期），D-KNOWLEDGE 管"记住什么"（知识结构/知识关系/知识质量），两者正交；类比：海马体（记忆存取）vs 新皮层（知识表征）。落到 CE 语境：本文管"上下文怎么进 prompt"，记忆存取机制的分层候选见 §3.5，知识结构本体归 D-KNOWLEDGE。
 
 ### 2.3 约束条件
 
@@ -184,6 +186,38 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 - **HTTP API 服务化**（接口规范 §4.2 beta 骨架）：单机单人场景无需 HTTP 层，不启用（见 §5）。
 - **多 IDE MCP 通道矩阵**（接口规范 §5：Cursor/Trae/Claude-Desktop 三通道）：当前施工方式仅 TRAE 单 IDE，全矩阵属远期。
 
+### 3.5 Agent 记忆层（候选——分层记忆最小设计登记）
+
+> 来源：草稿《Agent架构》§7.1~7.5（`.runtime/aidrafts/09_drafts_audit/架构图/Agent架构.md`）+《21-D-KNOWLEDGE》§10 知识库架构第 5 条与 A7 搬入段 +《12-D-ML-TRAIN》§A7（LP-002）。本节为**设计候选登记**：四层中情景/语义/程序三层是跨会话持久层，与 §5 第 2 条"不做跨会话长期记忆"的既有边界存在冲突——本节不擅自改动 §5，冲突登记为 §6 Q9 待 Owner 裁定。
+
+**四层记忆模型**（2025-2026 行业共识 Mem0/Letta/LangMem/Zep 等，单机 Redis+SQLite+Parquet 轻量落地）：
+
+| 层 | 存储 | 生命周期/保留策略 | 容量约束 | 用途 | 对应域 |
+|---|---|---|---|---|---|
+| 工作记忆 | Redis（内存） | 单次会话，会话结束清空 | 上下文窗口 4K-32K tokens；窗口使用 >80% 触发摘要压缩（压缩早期对话、保留关键决策点） | 当前对话上下文、中间推理步骤、临时计算结果 | D-INFRA-RUNTIME |
+| 情景记忆 | Redis 热区 + SQLite 温区 | 90 天热 → 1 年温 → 7 年冷（Parquet） | 热区近 1000 条决策轨迹 | 决策轨迹、反思记录、异常事件日志 | D-AUTONOMY-CORE |
+| 语义记忆 | SQLite + Parquet | 永久保留，版本化管理 | 无硬上限 | 市场知识、因子定义、策略规则、用户偏好 | D-KNOWLEDGE |
+| 程序记忆 | 文件系统（SKILL.md + scripts/） | 版本化保留，旧版保留 ≥5 年 | 技能库（草稿口径 28 项，本文未实测） | 技能模板、成功模式、执行流程、最佳实践 | D-AUTONOMY-CORE |
+
+**巩固 / 去重 / 五阶段流水线**（巩固去重参考 LangMem 与 AgentDock；五阶段参考 CoALA/TMLR 2024、Mem0/Letta/Zep 生产实践）：
+
+- **巩固（情景→语义固化）**：同类事件出现 ≥3 次 → 提取共性事实写入语义记忆（草稿示例："连续 3 次该因子在震荡市 IC<0.01"→"该因子在震荡市无效"）。
+- **去重**：语义记忆新增时向量相似度检测，相似度 >0.95 合并（区别于信号去重阈值 >0.9）。
+- **五阶段流水线**：①写入（原始交互入工作记忆，Redis 实时）→ ②抽取（LLM 提取关键事实/模式入语义记忆 SQLite）→ ③整合（>0.95 去重 + 冲突解决 + 时间戳版本化）→ ④检索（按相关性召回：FAISS 向量检索 + SQLite 结构化查询）→ ⑤遗忘（90 天热→1 年温→7 年冷分级衰减）。
+
+**记忆安全约束**（草稿 §7.5）：
+
+- 敏感数据（持仓/金额/交易记录）不写入任何记忆层，写入前脱敏过滤；
+- 情景记忆写入后**不可篡改**（不可变日志 + 哈希校验，仅可追加反思）；
+- **跨层一致性**：同一事实在情景/语义/程序记忆中不可矛盾，写入时做跨层一致性检查；
+- 情景记忆 **RPO=0**（崩溃后可从 Parquet 冷存储恢复），语义记忆定期快照。
+
+**风险警示**：Databricks 2026-04 研究——无策展的记忆会把一次性错误固化成"永久谎言"（Agent 引用既往运行的错误输出，再以更高信心复用）。草稿的缓解路径是自反 Agent 反思机制 + 上述巩固去重；落到 CE 语境，对应 §3.3 压缩保 provenance 与 validate 段校验职责——记忆写入链不经策展/校验即入库即为此风险的具象化。
+
+**硬件约束注记**（12-D-ML-TRAIN §A7 LP-002 / 21-D-KNOWLEDGE LP 段裁定）：Agent 记忆向量检索（RAG）判"暂缓（不能建）"——嵌入模型约需 2GB 显存，挤占盘中 8-10GB 本地 LLM 配额，且量化系统记忆核心是结构化数据而非自然语言。MVP 替代：SQLite FTS5 全文检索 + Redis 缓存，语义记忆用结构化表（因子定义/策略规则/市场状态映射）。故上表"FAISS 向量检索"在硬件门禁（GPU 显存 ≥48GB 等 LP-002 门禁条件）解除前降级为 FTS5。
+
+**与 CE 既有设计的关系**：工作记忆的">80% 摘要压缩"与 §3.3 压缩策略同族（压缩对象从 manifest 文档扩展到会话历史）；memory_bank.py（6 个结构化 .md 跨 session 持久上下文）是分层记忆的最小既有实现，可视为语义/情景记忆的纯手工雏形。是否将四层记忆从候选升级为施工范围，以及升级后的域归属（CE 管道 / D-AUTONOMY-CORE / D-KNOWLEDGE 分层承接），统一由 §6 Q9 裁定。
+
 ---
 
 ## 4. 施工计划
@@ -226,14 +260,14 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 ### Phase 2：集成接线（依赖 04/10/14 填充后，4~6 周）
 
 **目标**：CE 与运行时底座、LLM 基础设施、执行层双向对齐。
-**现状**：04/10/14 号施工图均为空骨架（v0.1.0，2026-08-17 实测）；接口为本文假设（§6 Q2~Q4）。
+**现状**：04 v0.2.1 / 10 v0.2.2 / 14 v0.2.0 均已填充（2026-08-17 接口复审实测）；Q2 经 04 §3.5 双向对齐判部分成立，Q3/Q4 判证伪——CE 产出（final_context）目前无下游契约承接方，契约归属待 Owner 裁定（§6 Q2~Q4）。
 **改动**：
 
 | # | 步骤 | 优先级 |
 |---|---|---|
-| P2-1 | 与 14_execution_layer.md 对齐：确认业务 Agent 经 Orchestrator 以 `TaskCard.context_assembly_manifest` 触发 `run_context_four_stage()` 的消费链（CT-ORC-CE-001） | P1 |
-| P2-2 | 与 10_llm_infrastructure.md 对齐：定义 final_context 到 LLM prompt 的传递契约（system/user 分配、预算扣减顺序） | P1 |
-| P2-3 | 与 04_autoruntime_core_build.md 对齐：确认 context_pipeline_auto 的 EventBus 订阅是否由 AutoRuntime 调度 | P2 |
+| P2-1 | 与 14_execution_layer.md 对齐：确认业务 Agent 经 Orchestrator 以 `TaskCard.context_assembly_manifest` 触发 `run_context_four_stage()` 的消费链（CT-ORC-CE-001）；该消费链在 14 v0.2.0 中实测不存在，前置裁定：§6 Q4 | P1 |
+| P2-2 | 与 10_llm_infrastructure.md 对齐：定义 final_context 到 LLM prompt 的传递契约（system/user 分配、预算扣减顺序）；10 v0.2.2 实测无 final_context 承接，前置裁定：§6 Q3 | P1 |
+| P2-3 | 与 04_autoruntime_core_build.md 对齐：04 §3.5 已确认 boot 触发注册 + EventBus 事件驱动（非逐任务调度）；剩余缺口为 boot_hooks.py 未 import CE 的实际接线（§6 Q2） | P2 |
 | P2-4 | 压缩后 provenance 自动化校验入 validate 段（source_traces 可解析 + stale 标记） | P1 |
 
 **验证**：04/10/14 填充文档与本节接口描述双向一致；新增校验用例入 tests/context/。
@@ -249,14 +283,14 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 ## 5. 不做什么
 
 1. **不做通用对话记忆**——CE 仅服务量化交易相关的代码生成/审计/策略分析任务上下文，不做开放域聊天式对话管理。
-2. **不做跨会话长期记忆**——单会话内上下文归 CE；跨会话长期记忆由技能库/证据库/memory_bank（6 个结构化 .md）负责，CE 不扩展为通用记忆系统。
+2. **不做跨会话长期记忆**——单会话内上下文归 CE；跨会话长期记忆由技能库/证据库/memory_bank（6 个结构化 .md）负责，CE 不扩展为通用记忆系统。（注：§3.5 登记的四层记忆候选与该条存在张力，是否突破由 §6 Q9 裁定，本条在裁定前维持有效。）
 3. **不做多模态上下文**——仅处理文本（代码/markdown/日志），图表/音频/视频不在范围。
 4. **不做 HTTP API 服务化**——接口规范 §4.2 的 HTTP 骨架不启用；单机单人场景 Python 库调用足够。
 5. **不做多 IDE MCP 通道全矩阵**——当前施工方式仅 TRAE 单 IDE；Cursor/Claude-Desktop 通道列远期。
 6. **不做分布式上下文同步**——单机文件锁 + 单会话上下文足够，不引入 Redis/Kafka。
 7. **不做自动上下文猜测**——manifest 必须由人类或上层 Agent 显式指定，CE 不主动猜测用户意图。
 8. **不新建模块/子包**——39 个文件已偏多，Phase 0 只做标记收敛，物理删除需 Owner 裁定（§6 Q5）。
-9. **不替 04/10/14 号文档定接口**——三者均为空骨架，本文仅记录接口假设（§6 Q2~Q4），待对方填充后双向确认。
+9. **不替 04/10/14 号文档定接口**——三者均已填充（04 v0.2.1 / 10 v0.2.2 / 14 v0.2.0）；Q2 已与 04 双向对齐（部分成立），Q3/Q4 证伪后契约归属待 Owner 裁定（§6 Q3/Q4），本文不擅自补定。
 
 ---
 
@@ -265,13 +299,14 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | # | 问题 | 状态 | 说明 |
 |---|------|------|------|
 | Q1 | Context Engine 与 D_INTELLIGENCE 的关系？ | 待裁定 | 边界已在 §3.2 按实测划分（CE=注入管道/D_INTELLIGENCE=数据层，经 VMSSearchProtocol 单向桥接）。遗留点：`vector_bridge.py` 是否应物理迁移到 D_INTELLIGENCE 域，需 Owner 裁定。 |
-| Q2 | CE 与 04 AutoRuntime Core 的接口？ | 待 04 填充后确认（降级处理） | 04 号文档为空骨架（v0.1.0）。**接口假设**：AutoRuntime 经 EventBus 调度 context_pipeline_auto，任务启动时触发四段流水线。待 04 填充后双向验证。 |
-| Q3 | CE 与 10 LLM 基础设施的上下文传递契约？ | 待 10 填充后确认（降级处理） | 10 号文档为空骨架（v0.1.0）。**接口假设**：`ContextFourStageResult.final_context` 以字符串注入 LLM prompt，system/user 分配与预算扣减顺序待 10 号定义。 |
-| Q4 | CE 与 14 执行层业务 Agent 的消费接口？ | 待 14 填充后确认（降级处理） | 14 号文档为空骨架（v0.1.0）。**接口假设**：业务 Agent 经 Orchestrator 以 `TaskCard.context_assembly_manifest` 触发 `run_context_four_stage()` 并消费 `final_context`（CT-ORC-CE-001）。 |
+| Q2 | CE 与 04 AutoRuntime Core 的接口？ | 部分成立（2026-08-17 接口复审） | 04 号文 v0.2.1 §3.5 已将本文原假设精确化并双向确认：大脑角色为 **boot 触发注册方 + EventBus 事件驱动订阅源**，不逐任务编排四段流水线；蓝图 references"大脑消费上下文注入"成立。**实测缺口**：`context_pipeline_auto.py` 头部 [CONSUMERS] 声明 `zephyr.trading.boot_hooks`，但实测 `boot_hooks.py` 存在却未 import CE（[CONSUMERS] 声明漂移，src 内亦无其他消费方 import 本模块）——事件驱动机制代码 production、boot 触发链当前无实际接线。接线归属（04 侧补接 vs 蓝图/头部声明修正）待 Owner 裁定。 |
+| Q3 | CE 与 10 LLM 基础设施的上下文传递契约？ | 已证伪（2026-08-17 接口复审），契约归属待 Owner 裁定 | 10 号文 v0.2.2 已填充，全文实测无 `final_context`/`ContextFourStageResult`/`run_context_four_stage` 承接——原接口假设不成立。CE 产出（final_context）目前无下游契约承接方，与 Q4 同为 18 篇中唯一"接口无人认领"区。归属候选：07 自定义 / 10 门面承接 / 14 消费链定义。 |
+| Q4 | CE 与 14 执行层业务 Agent 的消费接口？ | 已证伪（2026-08-17 接口复审），契约归属待 Owner 裁定 | 14 号文 v0.2.0 已填充，全文实测无 `TaskCard.context_assembly_manifest` 触发链、无 `run_context_four_stage()`/`final_context` 消费链——原接口假设（CT-ORC-CE-001 消费方）不成立。同 Q3：归属候选 07 自定义 / 10 门面承接 / 14 消费链定义。 |
 | Q5 | 24 个辅助文件是否物理删除？ | 待裁定 | Phase 0 建议仅标记 deprecated_candidate 不删除。若 Owner 确认 playground/CLI 类永不再用，可物理删除以减维护面。 |
 | Q6 | inject 空占位的修复优先级？ | 待裁定 | inject_by_* 生产返回空（实测源码注释确认）。修复需接 UnifiedMemoryAPI。若 14 号业务 Agent 仅消费 manifest 组装结果，inject 可继续为空——优先级取决于 14 号填充结论。 |
-| Q8 | doc_type 词表不合规阻断 Gateway 提交？ | 待裁定（**待 Gateway 提交**） | 本文 frontmatter `doc_type: implementation_plan` 不在受控词表（doc_type_vocabulary.yaml v3.1.0 仅 9 个 active 值：policy/register/index/template/vocabulary/blueprint/audit_report/architecture_view/gate），TTL-METADATA 门禁 hard block。全 18 篇同病（00 号 architecture_design、指令集 instruction_set 同理）。需 Owner 裁定：扩词表收 implementation_plan，或全目录 doc_type 迁移。文件已 `git add` 暂存（不受 clean 影响），commit message 留存于 `.runtime/aifill07_commit_msg.txt` 供修正后重跑。
+| Q8 | doc_type 词表不合规阻断 Gateway 提交？ | 已闭环（2026-08-17） | frontmatter `doc_type` 已迁移为受控词表内 `architecture_view`，v0.2.2 已经 Gateway 提交（commit e9087fa902）。原"暂存待提交"表述作废。 |
 | Q7 | 蓝图漂移同步责任与机制？ | 待裁定 | MOD-CONTEXT_ENGINE 蓝图 v1.1.3 实测漂移：22 vs 39 文件、§1.1 索引仅列 `__init__.py`、build_status=planned vs 代码全 production、[CONSUMERS] 声称的 zephyr.trading.boot_hooks 实测存在但未 import 本模块。蓝图不在本文修改权限内——需裁定由谁同步、是否改为 depgraph 单向派生。 |
+| Q9 | §3.5 四层记忆候选是否突破 §5"不做跨会话长期记忆"边界？ | 待裁定 | §3.5 登记的四层记忆中情景/语义/程序三层为跨会话持久层，与 §5 第 2 条既有边界冲突。选项：A. 维持 §5，§3.5 降级为远期参考（P4 登记）；B. 将记忆层纳入施工范围——需同时裁定域归属（CE 管道 / D-AUTONOMY-CORE / D-KNOWLEDGE 分层承接）与硬件门禁（LP-002：RAG 向量检索暂缓，FTS5+Redis MVP 替代）。裁定前 §5 第 2 条维持有效。 |
 
 ---
 
@@ -283,6 +318,7 @@ Context Engine（MOD-CONTEXT_ENGINE）的代码落位在 `src/zephyr/autonomy_co
 | 2026-08-17 | 0.2.0 | 填充 §2 背景（处境/核心问题/约束/39 文件设施盘点）、§3 设计决策（四段管道/D_INTELLIGENCE 边界/压缩策略/替代方案）、§4 施工计划（Phase 0~3）、§5 不做什么、§6 开放问题（Q1~Q7） | AI-FILL-07 首轮骨架填充；实测修正"22 文件"为 39 文件、inject 空占位、蓝图漂移等关键事实 |
 | 2026-08-17 | 0.2.2 | 新增 Q8：Gateway 提交被 TTL-METADATA 门禁阻断（doc_type=implementation_plan 不在受控词表 9 值内），文件暂存待 Owner 裁定词表后提交；去除文件 BOM 以通过 frontmatter 解析 | AI-FILL-07 git 提交闭环执行结果：门禁 hard block，按规则 7 降级为暂存+标注 |
 | 2026-08-17 | 0.2.1 | 红蓝对抗修正：文件行数统一更正为总行数口径（(Get-Content).Count）；boot_hooks.py 存在性误判更正（文件存在但未 import CE，属 [CONSUMERS] 漂移）；context_governance 文件数 13→14（含 __init__.py）；修复 system_charter.md 相对链接层级 | AI-FILL-07 第 5/6/7 轮审查发现的事实性偏差 |
+| 2026-08-17 | 0.3.0 | §3.5 新增 Agent 记忆四层候选登记（工作/情景/语义/程序 + 巩固≥3次固化 + 去重>0.95 + 五阶段流水线 + 记忆安全约束 + Databricks 2026 无策展警示 + LP-002 硬件门禁 FTS5 降级）；§2.2 补记忆 vs 知识域边界注记（21-D-KNOWLEDGE §0/§6）；接口复审回填：Q2 部分成立（04 §3.5 精确化 + boot_hooks 未接线漂移登记）、Q3/Q4 证伪（10/14 无 CE 产出承接）、Q8 闭环、新增 Q9（记忆候选 vs §5 边界）；§1/§4 Phase 2/§5-2/§5-9 同步实测口径 | AI-FILL-07-R2 回填：草稿源（Agent架构 §7.1~7.5 / 21-D-KNOWLEDGE §10 第5条·A7 段 / 12-D-ML-TRAIN §A7）+ 04/10/14 接口复审实测 |
 
 ---
 
