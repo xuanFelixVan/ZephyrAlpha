@@ -33,8 +33,8 @@
 
 module_id: MOD-GOVERNANCE
 registry_version: "2.4.0"
-last_updated: "2026-08-01"
-total_registered: 73  # Phase 3 reconciler→gate 收敛（2026-07-03）：实际条目数 73（74→73 修正，原值含 1 个已删除条目未同步）。MODULE-ID-CONSISTENCY gate 现强制 count 与实际一致。
+last_updated: "2026-08-17"
+total_registered: 74  # Phase 3 reconciler→gate 收敛（2026-07-03）：实际条目数 73（74→73 修正，原值含 1 个已删除条目未同步）。MODULE-ID-CONSISTENCY gate 现强制 count 与实际一致。2026-08-17 AI-02：GOV-AI-002 幽灵 ID 补登（73→74）。
 
 # ID 分配规则
 allocation_rules:
@@ -44,7 +44,7 @@ allocation_rules:
     以下编号已跳过（从未分配或已合并/废弃）：
     - PS-STD-005: 从未分配（Stage F 归一化时跳过）
     - PS-STD-007/008: 从未分配（Stage F 归一化时跳过）
-    - GOV-AI-002: 从未分配（B-e 批次跳号）
+    - GOV-AI-002: 原登记"从未分配（B-e 批次跳号）"，2026-08-17 AI-02 审计实证全仓 5 处存活引用，已正式补登（指向 trae_040，见 registered_ids）
     - GOV-TASK-002/003: 从未分配（B-e 批次跳号）
     如需使用这些编号，应先确认无历史冲突再分配。
   domain_prefixes:
@@ -137,43 +137,43 @@ registered_ids:
     note: "2026-06-26 v2.3.0：document-metadata-index-registry.yaml 删除（与 rule_catalog_registry.yaml 同源同数据真重复），职能由 PS-REG-018 承接"
   - module_id: PS-REG-004
     title: "Architecture Compliance Contract"
-    path: "docs/01_policies_and_standards/_registry/contracts/architecture-contract.yaml"
+    path: "docs/01_policies_and_standards/_registry/contracts/architecture_contract.yaml"
     status: active
   - module_id: PS-REG-005
     title: "登记表总索引（Registry Master Index）"
-    path: "docs/01_policies_and_standards/_registry/catalogs/registry-master-index.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/registry_master_index.yaml"
     status: active
   - module_id: PS-REG-006
     title: "运行时基础设施登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml"
     status: active
   - module_id: PS-REG-007
     title: "跨模块依赖登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/cross-module-dependency-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/cross_module_dependency_registry.yaml"
     status: active
   - module_id: PS-REG-008
     title: "脚本健康与清单登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/script-health-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/scripts_registry.yaml"
     status: active
   - module_id: PS-REG-009
     title: "AI 风险登记册"
-    path: "docs/01_policies_and_standards/_registry/catalogs/ai-risk-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai_risk_register.yaml"
     status: active
   - module_id: PS-REG-010
     title: "知识条目登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge-article-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/knowledge_article_registry.yaml"
     status: planned
   - module_id: PS-REG-011
     title: "AI Session/Agent 登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/ai-session-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/ai_session_registry.yaml"
     status: planned
   - module_id: PS-REG-012
     title: "Frontmatter 字段定义登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter-field-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/frontmatter_field_registry.yaml"
     status: active
   - module_id: PS-REG-013
     title: "项目目录登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/directory-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/directory_registry.yaml"
     status: active
   - module_id: PS-REG-014
     title: "GATE 门禁登记表"
@@ -189,15 +189,15 @@ registered_ids:
     status: active
   - module_id: PS-REG-017
     title: "任务卡元层登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/task-card-meta-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/task_card_meta_registry.yaml"
     status: active
   - module_id: PS-REG-018
     title: "规则路径目录"
-    path: "docs/01_policies_and_standards/_registry/catalogs/rule-catalog-registry.yaml"
+    path: "docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml"
     status: active
   - module_id: PS-REG-019
     title: "声明式契约跟踪登记表"
-    path: "docs/01_policies_and_standards/_registry/catalogs/declarative-contract-tracker-registry.md"
+    path: "docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml"
     status: active
   - module_id: PS-REG-021
     title: "能力→真源文件反查注册表"
@@ -240,6 +240,11 @@ registered_ids:
     title: "AI 自治权限注册表"
     path: "docs/01_policies_and_standards/_registry/catalogs/ai_autonomy_authority_registry.yaml"
     status: active
+  - module_id: GOV-AI-002
+    title: "模型路由策略（DeepSeek 主力 + Claude 救援决策树）"
+    path: "docs/01_policies_and_standards/rules/trae_040_ai_model_routing.yaml"
+    status: active
+    note: "2026-08-17 AI-02 审计：原编号登记为「B-e 批次跳号从未分配」，但全仓 5 处存活引用（b_execution_model.yaml×2 / b_pipeline.yaml / config/blueprint_routing.yaml / config/nav_table_mapping.yaml×2）均以其指代模型路由规则——幽灵 ID 显性化登记，真源文件为 trae_040（与 GOV-AI-004 同文件不同节，aliases 合并不另立文件）"
   - module_id: GOV-AI-003
     title: "AI 幻觉自检清单"
     path: "docs/01_policies_and_standards/rules/trae_039_ai_hallucination_detection.yaml"
@@ -421,7 +426,6 @@ registered_ids:
 # planned_count: ~110（估算：域 ~90 + shared ~5 + frontend ~7 + scripts ~8）
 # partial_state（2026-08-01 审计提取）：当前仅 15/~110 模块在 layers/b_*.yaml 分配了 module_id（b_core 等仍无 ID）。完整填充需 S0-4 reconciler 实现——注意 MODULE-ID-CONSISTENCY gate 将 total_registered 与全文件 `  - module_id:` 条目数绑定，故填充 registered_modules 必须同步 bump total_registered 并与 registered_ids 去重。
 registered_modules: []  # 代码模块在各分区 YAML 中定义——P8-FIX-S0（2026-06-30）：registered_modules 仍为空，total_registered=73 仅含 registered_ids 条目数（74→73 修正，2026-08-01 审计复核）。代码模块 ID 应从 layers/*.yaml 自动派生（S0-4 reconciler 将实现）。
-# TODO: 执行 python scripts/governance/.../populate_module_registry.py 从 layers/*.yaml 自动提取模块 ID 填充此列表
 
 # 保留 ID 段（预留给特殊用途）
 reserved_ranges:

@@ -64,7 +64,7 @@ triggers:
     notes: "v0.2.0 — 内部调用 drift_detector.trigger_recovery() 真实实现，fallback 到 stub"
 
   compression_needed:
-    handler: "zephyr.autonomy_core.context_budget_tracker.handle_compression_needed"
+    handler: "zephyr.autonomy_core.context.context_budget_tracker.handle_compression_needed"
     description: "Token 预算紧张时通过 DocCompressor 压缩文档"
     safety: "M"
     enabled: true
@@ -103,17 +103,11 @@ triggers:
     retry: false
     notes: "v0.2.0 — 真实实现：读取 blueprint_routing.yaml + blueprint_scorer 统一打分"
 
-# --- AUTO-GENERATED WIRING STATUS START ---
-# trigger: compression_needed → handle_compression_needed（✅ 真实） ✅→ (已兑现) [experimental（T-V2-006）]
-# trigger: onboarding → handle_onboarding_stub（🔲 stub） 🔲→ zephyr.mcp.handoff_auto_loader.HandoffAutoLoader.load_context [experimentalf（T-V2-009）]
-# trigger: drift_detected → handle_drift_detected（✅ 真实） ✅→ zephyr.gov_enforcement.rule_enforcement.drift_detector.trigger_recovery [experimental（T-V2-009）]
-# trigger: cleanup_due → handle_cleanup_stub（🔲 stub） 🔲→ scripts.governance.archive_drafts_zone.archive_expired_drafts [experimentalg+]
-# trigger: blueprint_published → handle_blueprint_stub（🔲 stub） 🔲→ zephyr.feedback_loop.decision_engine.DecisionEngine.reflect_on_blueprint [experimental（T-V2-008）]
-#
-# 真实 handler 实施后:
-#   (1) 更新 trigger_router.yaml triggers.<type>.handler 为真实路径
-#   (2) 删除 trigger_router.py 中对应 handle_*_stub 函数
-#   (3) 更新 CT-005 wiring.<trigger>.current 从 🔲 stub → ✅ 真实
-#   (4) 运行本脚本重新生成本区块
-#   每次替换须经 Owner 审批（Human-Gated）。
-# --- AUTO-GENERATED WIRING STATUS END ---
+# --- WIRING STATUS（2026-08-17 AI-02 审计治本）---
+# 原 AUTO-GENERATED 区块的生成脚本已不存在（全仓实证零命中），区块内容与
+# declarative_contract_tracker_registry.yaml CT-005 wiring 节双写漂移（且含 zephyr.mcp.* /
+# zephyr.gates.* 等域重组前失效路径前缀）。真源唯一收敛：wiring 计划/状态以
+# docs/01_policies_and_standards/_registry/catalogs/declarative_contract_tracker_registry.yaml
+# CT-005 条目为唯一真源，本文件不再复制。真实 handler 替换流程见该条目。
+# 每次替换须经 Owner 审批（Human-Gated）。
+# --- WIRING STATUS END ---

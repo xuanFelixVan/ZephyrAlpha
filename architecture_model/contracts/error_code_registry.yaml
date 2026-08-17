@@ -11,8 +11,8 @@ module_id: MOD-GOVERNANCE
 doc_type: register
 title: ZephyrAlpha 业务异常 error_code SSoT 注册表
 status: active
-version: 2.2.0
-date: '2026-08-15'
+version: 2.3.0
+date: '2026-08-17'
 owner: ZephyrAlpha-Owner
 description: '本文件是所有自定义异常类 error_code 字段的唯一真源（SSoT）。 格式：ZA-XX-NNNN（项目前缀-域前缀-4位序号）。 grep 唯一命中：每个 code 在全项目仅出现一次。
 
@@ -1000,11 +1000,12 @@ error_codes:
   class: PatchConflictError
   module: zephyr.shared.utils.diff_utils
   file: src/zephyr/shared/utils/diff_utils.py
+  description: "canonical 归属=diff_utils（2026-07-06 4d4ecfd6e6 先引入）；存量重码：state_store.py::StateStoreError 同码占用（2026-08-16 7f72f36a86 后引入），后引入者改号 ZA-SH-0051 留 #ARCH-ERRCODE-001 专项（动存量生产模块，归 src 域窗口施工）"
 - code: ZA-SH-0050
-  class: AlertThresholdConfigError
-  module: zephyr.shared.alerts.threshold_loader
-  file: src/zephyr/shared/alerts/threshold_loader.py
-  description: 告警阈值注册表缺失/畸形 fail-closed（55 号 §3.3 统读，tracker #87，AI-THD-001）
+  class: StateCorruptError
+  module: zephyr.shared.state_store
+  file: src/zephyr/shared/state_store.py
+  description: "canonical 归属=state_store（2026-08-16 7f72f36a86 先引入）；存量重码：threshold_loader.py::AlertThresholdConfigError 同码占用（2026-08-17 6c181232a3 后引入，55 号 §3.3 统读/tracker #87/AI-THD-001），后引入者改号 ZA-SH-0052 留 #ARCH-ERRCODE-001 专项（动存量生产模块，归 src 域窗口施工）"
 - code: ZA-TR-0001
   class: RiskLimitViolationError
   module: zephyr.trading.trading_contracts.risk.risk_limit_violation_error
@@ -1013,10 +1014,13 @@ error_codes:
   class: MoneyPrecisionError
   module: zephyr.trading.trading_contracts.portfolio.contracts.money
   file: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
+  deprecated: '2026-07-19: 克隆收敛（5.99.22/23，9ac942756c）——trading 侧 money.py 已收敛为 re-export 过渡层，MoneyPrecisionError 唯一定义点归 shared 侧（ZA-SH-0031），本码在代码中已无存活定义点'
+  replacement: ZA-SH-0031
 - code: ZA-TR-0003
-  class: MoneyCurrencyMismatchError
-  module: zephyr.trading.trading_contracts.portfolio.contracts.money
-  file: src/zephyr/trading/trading_contracts/portfolio/contracts/money.py
+  class: InvalidSettlementInputError
+  module: zephyr.trading.settlement_reconciliation
+  file: src/zephyr/trading/settlement_reconciliation.py
+  description: '结算对账输入非法（2026-08-02 由 2934b4c1ad 引入）。历史沿革：本码原配属 trading 侧 MoneyCurrencyMismatchError 副本，2026-07-19 克隆收敛（9ac942756c）后该副本退役，真源归 shared 侧 ZA-SH-0032；2026-08-17 AI-02 审计实证当前唯一存活定义点为本条目，注册表改指对齐（原注册条目为 stale 残留）'
 - code: ZA-TR-0004
   class: StagingError
   module: zephyr.trading.staging_area
@@ -1090,7 +1094,7 @@ error_codes:
 known_issues:
 - issue: 全域登记缺口——代码实测 316 个码 vs 本表 233 条（2026-08-15 补登 RK/RPT 两域 23 条后）；未登记集中域=MKT/PA/POS/REGIME 等（4 个前缀未声明 domain_prefixes）
   remediation: '#ARCH-ERRCODE-001 专项（全域补登 + 前缀声明 + code↔registry 一致性校验门禁缺失补课）'
-- issue: 存量跨文件重码 15 处（实证清单：ZA-TR-0001/0004、ZA-BT-0009/0010/0011/0012、ZA-MKT-0003、ZA-PA-0002、ZA-POS-0001/0002/0003/0008、ZA-REGIME-0021、ZA-RK-0009、ZA-SH-0014）——违反本表「grep 唯一命中」不变量
+- issue: 存量跨文件重码 17 处（实证清单：ZA-TR-0001/0004、ZA-BT-0009/0010/0011/0012、ZA-MKT-0003、ZA-PA-0002、ZA-POS-0001/0002/0003/0008、ZA-REGIME-0021、ZA-RK-0009、ZA-SH-0014、ZA-SH-0049、ZA-SH-0050）——违反本表「grep 唯一命中」不变量。2026-08-17 AI-02 审计新增实证 2 处：ZA-SH-0049（state_store.py::StateStoreError 2026-08-16 后引入）+ ZA-SH-0050（threshold_loader.py::AlertThresholdConfigError 2026-08-17 后引入），git 首引入裁定见对应条目 description
   remediation: '#ARCH-ERRCODE-001 专项按 git 首引入定 canonical、后引入者改号（动存量生产代码，避让并发会话窗口择期施工）'
 # ============================================================
 # 关联系统

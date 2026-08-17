@@ -1,3 +1,11 @@
+# --- 治理锚定 ---
+# blueprint: MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
+# module_id: MOD-GOVERNANCE
+# stability: stable
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
 schema_version: "1.0.0"
 created: "2026-05-09"
 owner: ZephyrAlpha-Owner

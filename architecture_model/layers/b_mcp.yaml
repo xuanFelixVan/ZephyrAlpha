@@ -17,6 +17,9 @@ modules:
     priority: P1
     runtime_plane: warm
     description: MCP 协议服务端集合——task_manager (已实现decompose_blueprint) + gate_engine / doc_guard / sentinel (skeleton) + blueprint_search (已实现find_relevant_blueprint) + sandbox (规划中)
+    # files 清单保留例外（2026-08-17 AI-02 审计裁定）：本清单有测试机栅强制消费
+    # （tests/architecture/test_cross_module_contracts.py::test_b_mcp_all_servers_listed
+    # 完整性契约——MCP 服务端暴露面必须全量登记），与磁盘实证一致，予以保留。
     files:
       - _base_server.py
       - blueprint_search_server.py

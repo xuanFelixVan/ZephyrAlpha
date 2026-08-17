@@ -509,7 +509,7 @@ STEP 5   — 按需定位具体注册表 → 开工
 | 代码构建 | `rules/trae_010_code_naming_organization.yaml` | GOV-ENG-001 |
 | 脚本质量 | `scripts/governance/quality_standard.md` | SCRIPT-QUALITY-001 |
 | AI 压缩工作流 | `rules/trae_030_doc_numbering_metadata.yaml` | GOV-DOC-011 |
-| Session 状态机 / 门禁 / 事故响应 / VC 入口 | `docs/.../operational/vibe_coding/`（session-state-runbook / gate-runbook / incident-runbook / index） | OPS-VC-001~005 |
+| Session 状态机 / 门禁 / 事故响应 / VC 入口 | `docs/.../operational/vibe_coding/`（session-state-runbook / gate-runbook / incident-runbook / index；**draft 待创建**，见 module_id_registry OPS-VC 条目） | OPS-VC-001~005 |
 | 模板 | `docs/03_modules/template_registry.yaml` | REG-TEMPLATE-001 |
 
 > 详细规则、施工指导、方法论参考 → 见 [`.trae/rules/onboarding_detail.md`](file:///d:/ZephyrAlpha/.trae/rules/onboarding_detail.md)

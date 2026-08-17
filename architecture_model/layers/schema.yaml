@@ -5,7 +5,7 @@
 # 单树声明（2026-06-30 治本）：双树已合并，architecture_model/ 是唯一架构模型存储位置。
 # EA artifacts（contracts/cross_cutting/domain/events/technology）迁入本树顶层子目录。
 
-schema_version: "1.2.0"
+schema_version: "1.3.0"
 
 description: "根目录 architecture_model 分区与模块条目的运营 Schema"
 
@@ -46,6 +46,8 @@ operational_schema:
     submodule_path:
       type: string
       required: true
+      nullable: true
+      description: "模块物理锚点目录/文件；无代码锚点的概念层（如 Trae IDE 内置执行层）允许 null（v1.3.0 起）"
     module_id:
       type: string
       required: false
@@ -65,8 +67,17 @@ operational_schema:
       values: [hot, warm, cold, all]
     optional_fields:
       description: >
-        下列字段可出现于单模块：files, components, blueprint_ref, construction_phases（字符串或结构化列表由实现约定）,
+        下列字段可出现于单模块：components, blueprint_ref, construction_phases（字符串或结构化列表由实现约定）,
         version, file_count 等，均可选。
+        2026-08-17 AI-02 审计裁定：modules[].files / test_coverage 等手工路径清单字段原则上退役——
+        实测 13 个 b_*.yaml 的 files 清单 40 处引用失效、b_db test_coverage 测试路径 6/7 失效
+        （域重组迁移残留，无机栅感知漂移）。文件↔模块归属唯一真源为 depgraph
+        （generate_project_depgraph.py 从代码头部 [BLUEPRINT]/[MODULE] 扫描派生），
+        测试↔模块归属真源为 tests/ 目录 pytest 收集（depgraph test_depends 边）。
+        唯一例外：b_mcp.yaml files 清单——有测试机栅强制消费
+        （test_cross_module_contracts.py::test_b_mcp_all_servers_listed 完整性契约，
+        MCP 服务端暴露面必须全量登记），且与磁盘实证一致，予以保留。
+        除该机栅背书清单外，禁止在 layers YAML 手工维护路径清单（多真源同步必然漂移）。
     interfaces:
       type: array
       required: false
@@ -75,8 +86,14 @@ operational_schema:
         contract_id:
           type: string
           required: true
+          # 2026-08-17 AI-02 审计治本：原正则 CT-[A-Z0-9]+-[A-Z0-9-]+-\d{3} 强制 4 段式，
+          # 误伤真源实际格式（cross_layer_contracts.yaml / master blueprint 实证）：
+          # CT 允许 1~2 个大写名段+数字尾（CT-DB-001 / CT-EXEC-TRAE-001），含 1 条历史
+          # 小写名段合法登记（CT-SESSION-handoff-001，blueprint_baseline §22.3），并兼容
+          # 主蓝图层间关系型无数字尾 ID（CT-ORC-DB）；EXT 允许纯数字尾（EXT-001）或
+          # 名段+数字尾（EXT-ORC-SANDBOX-001，b_orchestrator 扩展登记）。
           pattern: >-
-            ^(CT-[A-Z0-9]+-[A-Z0-9-]+-\d{3}|EXT-[A-Z0-9]+-[A-Z0-9-]+-\d{3}|CTR-[A-Z0-9-]+|OCP-[A-Z0-9-]+|AI-GOV-[A-Z0-9-]+)$
+            ^(CT-[A-Z0-9]+(-[A-Za-z0-9]+)*(-\d{3})?|EXT-(\d{3}|[A-Z0-9]+(-[A-Z0-9]+)*-\d{3})|CTR-[A-Z0-9-]+|OCP-[A-Z0-9-]+|AI-GOV-[A-Z0-9-]+)$
         role:
           type: enum
           values: [producer, consumer, both, internal]
@@ -110,6 +127,11 @@ file_root_optional:
     - depends_on
 
 changelog:
+  - version: "1.3.0"
+    date: "2026-08-17"
+    changes:
+      - "contract_id 正则对齐真源格式（AI-02 审计）：CT 分支兼容 3/4 段式+历史小写名段+层间关系型无数字尾 ID；EXT 分支兼容纯数字尾"
+      - "modules[].files 手工文件清单字段退役（40/40 失效实证），文件归属唯一真源收敛至 depgraph 代码头部扫描"
   - version: "1.2.0"
     date: "2026-06-30"
     changes:

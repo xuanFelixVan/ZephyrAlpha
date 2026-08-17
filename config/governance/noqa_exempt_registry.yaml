@@ -1,3 +1,11 @@
+# --- 治理锚定 ---
+# blueprint: MOD-INF-002 | docs/03_modules/_domain_governance/governance_automation/blueprint.md | §
+# module_id: MOD-INF-002
+# stability: evolving
+# safety_level: L
+# ai_autonomy: human_gated
+# ttl: permanent
+# --- 治理锚定结束 ---
 # noqa_exempt_registry.yaml
 #
 # #ARCH-VOCAB-NOQA-CONVERGENCE-001 Phase 1: 结构化豁免登记表

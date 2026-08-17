@@ -115,7 +115,7 @@ technologies:
     related_ref: 架构决策
 
   - id: T-A07
-    name: "文档治理守卫 / doc_guard_pre_commit.py"
+    name: "文档治理守卫 / doc_guard_server.py"
     quadrant: adopt
     category: governance
     version: null
@@ -478,13 +478,14 @@ technologies:
 
   # ─── Build（6 条）───
   - id: T-B01
-    name: "文档治理守卫 / doc_guard_pre_commit.py"
+    name: "文档治理守卫 / doc_guard_server.py"
     quadrant: build
     category: governance
-    physical_path: scripts/hooks/doc_guard_pre_commit.py
+    physical_path: src/zephyr/integration/mcp/doc_guard_server.py
     build_reason: "文件治理规则高度定制化，无通用工具覆盖"
     design_doc: "架构决策/0002"
     status: implemented
+    note: "2026-08-17 AI-02 审计：原 physical_path scripts/hooks/doc_guard_pre_commit.py 从未存在于 git 历史（幽灵路径，status=implemented 失实）——实际实现形态为 MCP server（doc_guard_server.py），改指真实实现"
 
   - id: T-B02
     name: "BrokerInterface + OMS / 交易执行引擎"

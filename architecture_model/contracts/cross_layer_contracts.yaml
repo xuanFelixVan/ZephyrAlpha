@@ -958,8 +958,8 @@ contracts:
     domain: D_PF_CORE
     registry: StrategyRegistry
     autodiscover: null
-    physical_path: src/zephyr/pf_core/strategy_base.py
-    registry_path: src/zephyr/pf_core/strategy_registry.py
+    physical_path: src/zephyr/governance/strategies/strategy_base.py
+    registry_path: src/zephyr/governance/strategies/strategy_registry.py
     description: "Portfolio 策略基类契约。所有策略必须继承 StrategyBase，实现 generate_target_weights()，向 StrategyRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: StrategyMeta, description: "返回策略元数据"}
@@ -1170,7 +1170,7 @@ contracts:
       - {name: tick_replay_data, type: "array[{timestamp: ISO8601, price: float, volume: int}]", required: false, description: "tick 回放数据(可选,启用 tick 级回放时填充)"}
       - {name: benchmark_curve, type: "array[{timestamp: ISO8601, value: float}]", required: false, description: "基准曲线(可选)"}
       - {name: drawdown_curve, type: "array[{timestamp: ISO8601, drawdown: float}]", required: false, description: "回撤曲线(可选)"}
-      - {name: schema_version, type: str, required: true, default: "1.0.0", description: "契约版本,默认 1.0.0"}
+      - {name: schema_version, type: str, required: false, default: "1.0.0", description: "契约版本,默认 1.0.0"}
   # ARCH-047
 
   # --- CT-TEL-001~004: System Telemetry 契约（ARB-14 裁决，MOD-INF-015 提供）---
@@ -1329,9 +1329,9 @@ ocp_extension_points:
     domain: D_FACTOR
     registry: FactorRegistry
     autodiscover: autodiscover_factors
-    physical_path: src/zephyr/factor/base.py
-    registry_path: src/zephyr/factor/registry.py
-    loader_path: src/zephyr/factor/loader.py
+    physical_path: src/zephyr/factor/factor_base.py
+    registry_path: src/zephyr/factor/factor_base.py  # FactorRegistry 与 FactorBase 同文件（2026-08-17 AI-02 实证）
+    loader_path: src/zephyr/factor/factor_base.py  # autodiscover_factors 同文件定义（2026-08-17 AI-02 实证；独立 loader.py 不存在）
     description: "Factor 因子基类契约。所有因子必须继承 FactorBase，实现 compute()，向 FactorRegistry 注册。 (INV-007: implementors must ensure cross-layer calls carry idempotency_key)"
     abstract_methods:
       - {name: meta, type: property, returns: FactorMeta, description: "返回因子元数据"}

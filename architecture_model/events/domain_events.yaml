@@ -21,9 +21,10 @@ partition:
   type: cross-cutting
   description: >
     领域事件 SSoT（设计清单）。25 条核心事件，分 7 域（Research 3 / Backtest 3 / Signal 3 / Portfolio 2 /
-    Execution 7 / Risk 4 / Ops 3）+ 2 条量化红线补充事件。
+    Execution 7 / Risk 4 / Ops 3，其中含 2 条量化红线补充事件 E-RK-03/E-RK-04）。
     当前运行时：单进程架构，事件通过进程内回调分发（非消息总线）。
     来源：domain-event-catalog.md v1.0.0 迁移。
+    2026-08-17 AI-02 审计修正计数口径：实数 25 条（含红线 2 条），原"25+2"暗示 27 条的表述失真。
   source_views:
     - domain-event-catalog.md
   related_kb_refs:
@@ -70,7 +71,7 @@ frequency_levels:
     observability: "每条必 alert + 留痕"
 
 # =============================================================================
-# 22 条领域事件
+# 25 条领域事件
 # =============================================================================
 events:
   # ─── Research 域（3 条）───

@@ -16,16 +16,6 @@ modules:
     priority: P0
     runtime_plane: warm
     description: 任务生命周期 + Agent 调度 + 沙箱执行 + 幻觉检测。状态机 DRAFT→QUEUED→ASSIGNED→RUNNING→REVIEWING→COMPLETED
-    files:
-      - agent_health_monitor.py
-      - agent_orchestrator.py
-      - deferred_queue.py
-      - file_task_mapper.py
-      - hallucination_detector.py
-      - rollback_manager.py
-      - state_synchronizer.py
-      - trigger_router.py
-      - wave_generator.py
     interfaces:
       - contract_id: CT-ORC-SCRIPT-001
         role: both
