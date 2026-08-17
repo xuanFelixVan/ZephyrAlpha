@@ -197,9 +197,9 @@ def rank_buy_orders(target_holdings: dict[str, float], confidence_scores: dict[s
 | `compute_batch_split()` | ①A/B/C 调节置信度（41 §3.2.1）→②按策略类型取激进阈值→③≥阈值 AGGRESSIVE 1 批 / <阈值 SCALED 2 批 | 步骤③阈值分支 |
 | `detect_breakout_failure()` | ①取前低（41 §3.3）→②连续 2 根收盘<前低→SUPPORT_BROKEN→③连续 2 根收盘<入场价→BREAKOUT_FAILED | 支撑破位优先于突破失败（41 v1.7.0 修正） |
 | `schedule_buy_orders()` | ①<14:50 WAIT→②14:50-14:55 PLACE_LIMIT→③14:55-14:57 CHECK_AND_AMEND→④14:57-15:00 CLOSING_AUCTION_ONLY→⑤AFTER_HOURS（41 §3.4） | 14:57 不可撤单分界 |
-| `compute_anchor_price()` | ①累计 VWAP→②BREAKOUT 锚压力位×0.99-1.00→③PULLBACK 锚支撑位×1.00-1.01→④兜底 min(目标价,VWAP)（41 §3.5） | 突破略低/回踩略高方向相反 |
+| `compute_anchor_price()` | ①累计 VWAP→②BREAKOUT 锚压力位×0.995→③PULLBACK 锚支撑位×1.005→④兜底 min(目标价,VWAP)（41 §3.5） | 突破略低/回踩略高方向相反；2026-08-17 改确定性中点偏移（原 random.uniform 非确定性） |
 | `clip_to_available_capital()` | ①目标投资额≤可用资金→原样返回→②否则 scale=可用/目标，非 CASH 权重按比例缩，CASH 补足（41 §3.6） | 保相对排序不抹零 |
-| `rank_buy_orders()` | ①剔除 CASH→②流动性升序→③置信度降序→④权重降序（41 §3.6） | 流动性差先挂防无对手盘 |
+| `rank_buy_orders()` | ①剔除 CASH 及 "_" 前缀元数据键（如 clip 产出的 `_degrade_reason`）→②流动性升序→③置信度降序→④权重降序（41 §3.6） | 流动性差先挂防无对手盘 |
 | `build_plan()` | ①compute_batch_split→②AGGRESSIVE 单批 / SCALED 双批（确认仓挂 2/3 触发条件）→③sector_quality=None 记 degrade_reason | 编排 §3.2.1+§3.2.3 |
 | `check_batch2_release()` | ①激进模式直返 False→②三条件计数（距首仓≥1 交易日/回落不破入场价/量比<1）→③≥2 项放行（41 §3.2.2） | 2/3 阈值 |
 | `gate_batch_order()` | ①闸未注入→DisciplineGuardError（Fail-Closed）→②KillSwitchLite 熔断→HARD_BLOCK→③委托 DisciplineGuard.check（41 §2.3/§3.1，43 §4.3，AI-ASM-001 接线） | 熔断先于检测 |
@@ -236,8 +236,8 @@ class BatchedEntryPlan:
 ### 4.4 输出契约
 | 接口 | 成功输出 | 失败输出 |
 |------|---------|---------|
-| `build_plan()` | `BatchedEntryPlan`（批次 weight_fraction 和=1.0） | 错误码契约 ZA-PA-0006（BatchPlanError，代码头声明） |
-| `clip_to_available_capital()` | 削减后权重字典（含 `_degrade_reason` 标记） | ZA-PA-0007（InsufficientCapitalError，代码头声明）；当前实现以降级标记代替抛出 |
+| `build_plan()` | `BatchedEntryPlan`（批次 weight_fraction 和=1.0） | 不抛领域异常（2026-08-17 勘正：原代码头 ZA-PA-0006 BatchPlanError 幻影声明已移除） |
+| `clip_to_available_capital()` | 削减后权重字典（含 `_degrade_reason` 标记） | 不抛错，以降级标记代替抛出（2026-08-17 勘正：原 ZA-PA-0007 InsufficientCapitalError 幻影声明已移除，与 MOD-PA-007 AllocationError 撞号） |
 | `check_batch2_release()` | bool（≥2/3 条件为 True） | — |
 | `check_degrade()` | None 或 (降级类型,动作,联动) 三元组 | — |
 | `gate_batch_order()` | `DisciplineVerdict`（PASS/WARNING/HARD_BLOCK+kill_switch_triggered） | ZA-CMP-0002（DisciplineGuardError，闸未注入 Fail-Closed，AI-ASM-001 接线） |
@@ -367,7 +367,7 @@ class BatchedEntryPlan:
 |---|-------------|------|------|---------|------|
 | 1 | 激进阈值为初始值未经实盘校准 | 中 | 中 | 首仓 30-50% 试单兜底+G04 回测校准后更新常量 | 风险 |
 | 2 | VWAP 用 close×volume 分钟近似 | 低 | 低 | MVP 精度可接受，演进路径升级逐笔 | 负面后果 |
-| 3 | compute_anchor_price 用 random.uniform 引入非确定性 | 低 | 低 | 区间 [0.99,1.00]/[1.00,1.01] 有界，测试断言区间 | 负面后果 |
+| 3 | ~~compute_anchor_price 用 random.uniform 引入非确定性~~（2026-08-17 已消除：改确定性中点偏移 ×0.995/×1.005，回测=实盘一致性恢复） | 低 | 低 | 已闭环 | 负面后果 |
 
 ## §14 施工指引 <!-- temporal_type: construction_temporary（施工已完成，本节保留状态记录） -->
 ### 14.1 施工策略
@@ -406,7 +406,7 @@ class BatchedEntryPlan:
 | 1 | C-031→批次比例映射 | 算法 | 41 §3.2.1 伪代码为精确规格：A/B/C 调节±0.1→clamp[0,1]→阈值分支→AGGRESSIVE 首仓 min(0.70+(adj-th),1.0)/SCALED 首仓 0.30+(adj/th)×0.20 | compute_batch_split |
 | 2 | 突破失败检测 | 算法 | 41 §3.3 伪代码+v1.7.0 顺序修正：SUPPORT_BROKEN 先于 BREAKOUT_FAILED 检查 | detect_breakout_failure |
 | 3 | 尾盘时序五段 | 算法 | 41 §3.4 窗口表：WAIT/PLACE_LIMIT/CHECK_AND_AMEND/CLOSING_AUCTION_ONLY/AFTER_HOURS | schedule_buy_orders |
-| 4 | 三档锚定 | 算法 | 41 §3.5：VWAP=Σ(close×vol)/Σvol；突破×[0.99,1.00]；回踩×[1.00,1.01]；兜底 min(目标价,VWAP) | compute_anchor_price |
+| 4 | 三档锚定 | 算法 | 41 §3.5：VWAP=Σ(close×vol)/Σvol；突破×0.995；回踩×1.005（2026-08-17 确定性中点，原 [0.99,1.00]/[1.00,1.01] 随机区间）；兜底 min(目标价,VWAP) | compute_anchor_price |
 | 5 | pro-rata 削减+三级排序 | 算法 | 41 §3.6：scale=available/target_invest；排序键(流动性升,置信度降,权重降) | clip_to_available_capital / rank_buy_orders |
 ### 14.8 施工参考卡
 | # | 类型 | 名称 | 用途/说明 | 参数/字段 | 输出/约束 |

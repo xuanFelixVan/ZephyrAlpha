@@ -1,7 +1,7 @@
 # [BLUEPRINT] MOD-L07-001 | docs/03_modules/_domain_reporting/blueprint.md
 # [MODULE] zephyr.reporting.default_attribution_engine
 # [DOMAIN] D_REPORTING
-# [DEPENDENCIES] zephyr.governance.observability_governance.analytics_base; zephyr.shared.contracts.performance_attribution_report
+# [DEPENDENCIES] zephyr.reporting.analytics_base; zephyr.shared.contracts.performance_attribution_report
 # [CONSUMERS]
 # [STARTUP] imported
 # [MATURITY] production

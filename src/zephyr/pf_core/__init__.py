@@ -25,7 +25,7 @@ D_PORTFOLIO_CORE Portfolio Construction — Package root
 #   name_zh: ① canonical 路径映射表
 #   name_en: _LAZY_IMPORTS / _SUBMODULES
 #   intro: ARCH-GOV-SHIM-001 后 shim 已删，符号直接映射到 canonical 模块路径
-#   desc: L34-55：10 符号（StrategyBase→governance.strategies.strategy_base、RiskLimits→trading.trading_contracts.risk.risk_limits 等）+ 5 子模块映射
+#   desc: L34-55：10 符号（StrategyBase→governance.strategies.strategy_base、RiskLimits→shared.contracts.risk_limits 等）+ 5 子模块映射
 #   inputs: I1
 #   outputs: (module_path, attr_name) 或子模块路径
 # - id: A2
@@ -81,7 +81,9 @@ _LAZY_IMPORTS = {
     "ComplianceRule": ("zephyr.shared.contracts.compliance_rule", "ComplianceRule"),
     "PerformanceAttributionReport": ("zephyr.shared.contracts.performance_attribution_report", "PerformanceAttributionReport"),
     # ARCH-GOV-SHIM-001 阶段2：RiskLimits 直接指向 canonical 路径（原 pf_core.risk_limits shim 已删除）
-    "RiskLimits": ("zephyr.trading.trading_contracts.risk.risk_limits", "RiskLimits"),
+    # 2026-08-17 修正：canonical 以 cross_layer_contracts.yaml CTR-003 physical_path 为准
+    # （src/zephyr/shared/contracts/risk_limits.py），与 pf_core 核心模块实际 import 真源一致
+    "RiskLimits": ("zephyr.shared.contracts.risk_limits", "RiskLimits"),
 }
 
 # ARCH-GOV-SHIM-001 阶段3：_SUBMODULES 改为 dict 映射 canonical 路径（原 pf_core shim 已删除）
@@ -89,7 +91,9 @@ _SUBMODULES = {
     "strategy_registry": "zephyr.governance.strategies.strategy_base",
     "compliance_rule": "zephyr.shared.contracts.compliance_rule",
     "default_equity_strategy": "zephyr.pf_core.default_equity_strategy",
-    "performance_attribution_report": "zephyr.pf_core.performance_attribution_report",
+    # 2026-08-17 修正：原指向已删除的 pf_core shim（ModuleNotFoundError），
+    # canonical=shared.contracts（cross_layer_contracts.yaml CTR-P1-009 physical_path）
+    "performance_attribution_report": "zephyr.shared.contracts.performance_attribution_report",
     "strategy_base": "zephyr.governance.strategies.strategy_base",
 }
 

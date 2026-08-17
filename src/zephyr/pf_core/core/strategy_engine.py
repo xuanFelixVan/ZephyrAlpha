@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-PF-001 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 Strategy Engine — 策略引擎 (MOD-PF-001)
@@ -318,11 +318,6 @@ class StrategyRecord:
     status_since: datetime
     activated_at: datetime | None = None
     performance_snapshot: dict[str, float] = field(default_factory=dict)
-
-    @property
-    def in_cold_start(self) -> bool:
-        """是否处于冷启动期 (ACTIVE 且距激活未满 cold_start_days)。"""
-        return False  # 由引擎结合 config 判定 (record 不持 config)
 
 
 @dataclass(frozen=True)

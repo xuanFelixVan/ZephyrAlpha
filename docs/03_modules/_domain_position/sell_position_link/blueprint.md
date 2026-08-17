@@ -72,7 +72,7 @@ responsibility_domain:
 
 ## 5. 错误契约
 
-- `InvalidSellPositionLinkInputError` (ZA-POS-0008): 价格非正、ATR非正、分钟数非正、因子越界
+- `InvalidSellPositionLinkInputError` (ZA-POS-0016): 价格非正、ATR非正、分钟数非正、因子越界
 
 ## 6. 测试
 

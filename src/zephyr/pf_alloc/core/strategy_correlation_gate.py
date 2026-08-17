@@ -94,7 +94,9 @@ class GateVerdict(str, Enum):
 class InvalidCorrelationInputError(ZephyrBaseError):
     """相关性门禁输入数据非法(如指标越界、策略自相关)。"""
 
-    error_code = "ZA-PA-0002"
+    # 2026-08-17 改号 ZA-PA-0002→ZA-PA-0004：与 signal_synthesis_combiner(MOD-PA-002)
+    # 重码，按 #ARCH-ERRCODE-001「后引入者改号」裁定；0004 对齐本模块 MOD-PA-004
+    error_code = "ZA-PA-0004"
 
 
 # ──────────────────────────────────────────────────────────────────────────────

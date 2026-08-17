@@ -1013,7 +1013,7 @@ error_codes:
 known_issues:
 - issue: 全域登记缺口——代码实测 316 个码 vs 本表 233 条（2026-08-15 补登 RK/RPT 两域 23 条后）；未登记集中域=MKT/PA/POS/REGIME 等（4 个前缀未声明 domain_prefixes）
   remediation: '#ARCH-ERRCODE-001 专项（全域补登 + 前缀声明 + code↔registry 一致性校验门禁缺失补课）'
-- issue: 存量跨文件重码 15 处（实证清单：ZA-TR-0001/0004、ZA-BT-0009/0010/0011/0012、ZA-MKT-0003、ZA-PA-0002、ZA-POS-0001/0002/0003/0008、ZA-REGIME-0021、ZA-RK-0009、ZA-SH-0014）——违反本表「grep 唯一命中」不变量
+- issue: 存量跨文件重码 15 处（实证清单：ZA-TR-0001/0004、ZA-BT-0009/0010/0011/0012、ZA-MKT-0003、ZA-REGIME-0021、ZA-RK-0009、ZA-SH-0014）——违反本表「grep 唯一命中」不变量。2026-08-17 进展：position/pf_alloc 域 6 码（ZA-POS-0001/0002/0003/0008、ZA-PA-0002）已按裁定完成改号（后引入者：position_state_machine→ZA-POS-0011/0012/0013、sell_position_link→ZA-POS-0016、strategy_correlation_gate→ZA-PA-0004），余 9 处待专项
   remediation: '#ARCH-ERRCODE-001 专项按 git 首引入定 canonical、后引入者改号（动存量生产代码，避让并发会话窗口择期施工）'
 # ============================================================
 # 关联系统

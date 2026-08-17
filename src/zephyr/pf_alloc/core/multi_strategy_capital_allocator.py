@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-PA-003 | layer=module | stability=evolving | safety=M | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 Multi-Strategy Capital Allocator — 多策略资金分配器 (MOD-PA-003)
@@ -287,7 +287,8 @@ class MultiStrategyCapitalAllocator:
             requests: 策略分配请求列表
             max_drawdown: 当前组合最大回撤 (正数, 如 0.12=12%)
             cold_start_days_elapsed: 冷启动已过交易日数
-            last_rebalance_date: 上次再平衡日期
+            last_rebalance_date: 上次再平衡日期（==today 时判定今日已再平衡，拒绝本次；
+                覆盖进程重启后内存频率计数归零的缺口）
             today: 今日日期 (用于频率控制)
             now: 时间戳
 
@@ -299,8 +300,9 @@ class MultiStrategyCapitalAllocator:
         cfg = self._config
         self._validate(requests, max_drawdown, cold_start_days_elapsed)
 
-        # 1. 再平衡频率控制
-        rebalance_allowed = self._can_rebalance(today)
+        # 1. 再平衡频率控制（last_rebalance_date==today 视为今日已再平衡——
+        #    覆盖进程重启后内存计数归零的缺口，2026-08-17 修复参数静默忽略隐患）
+        rebalance_allowed = self._can_rebalance(today) and last_rebalance_date != today
         if not rebalance_allowed:
             # 频率超限: 返回空分配标记不允许 (调用方应沿用上次)
             return AllocationResult(
