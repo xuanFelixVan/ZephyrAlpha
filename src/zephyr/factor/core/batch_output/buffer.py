@@ -34,6 +34,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 
 from zephyr.data import ch_writer
+from zephyr.factor.core.config_manager.loader import get_section
 from zephyr.shared.contracts.factor_signal import FactorSignal
 
 log = logging.getLogger(__name__)
@@ -71,6 +72,16 @@ class BatchOutputConfig:
     batch_size: int = 500
     flush_interval_s: float = 5.0
     target_table: str = "c1_market.factor_signal"
+
+
+def _default_config() -> BatchOutputConfig:
+    """从 core/_config.yaml 的 batch_output 节构建默认配置（真源=YAML，缺省回退常量）。"""
+    s = get_section("batch_output")
+    return BatchOutputConfig(
+        batch_size=int(s.get("batch_size", 500)),
+        flush_interval_s=float(s.get("flush_interval_s", 5.0)),
+        target_table=str(s.get("target_table", "c1_market.factor_signal")),
+    )
 
 
 @dataclass
@@ -157,7 +168,7 @@ class FactorSignalBuffer:
         table: str | None = None,
         writer: Callable[[str, str, bytes], object] | None = None,
     ) -> None:
-        self._config = config or BatchOutputConfig()
+        self._config = config or _default_config()
         self._table = table or self._config.target_table
         self._writer: Callable[[str, str, bytes], object] = writer or _default_writer
         self._buffer: list[FactorSignal] = []
@@ -229,7 +240,7 @@ class FactorSignalBuffer:
 
         try:
             outcome = self._writer(self._table, _COLUMNS_CLAUSE, tsv_bytes)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — writer 失败由调用方经 FlushOutcome.outcome 处理（错误契约：不抛出）
             log.error("batch_output flush 失败 (table=%s): %s", self._table, e)
             outcome = None
 

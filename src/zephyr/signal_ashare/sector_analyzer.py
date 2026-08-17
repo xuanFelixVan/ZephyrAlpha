@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SIG-026 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 D-SIGNAL-26 — A股板块分析引擎
@@ -455,7 +455,10 @@ class SectorAnalyzer:
         )
 
         status = self._determine_status(
-            strength_score, rotation_warning, breakdown, launch_ready
+            strength_score,
+            rotation_warning=rotation_warning,
+            breakdown=breakdown,
+            launch_ready=launch_ready,
         )
 
         return SectorAnalysisResult(
@@ -478,6 +481,7 @@ class SectorAnalyzer:
     def _determine_status(
         self,
         strength_score: float,
+        *,
         rotation_warning: bool,
         breakdown: bool,
         launch_ready: bool,

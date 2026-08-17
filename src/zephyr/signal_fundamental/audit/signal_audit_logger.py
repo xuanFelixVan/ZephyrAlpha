@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SIG-006 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 D-SIGNAL-06 — 信号审计日志
@@ -37,7 +37,7 @@ D-SIGNAL-06 — 信号审计日志
 #   code: SignalAuditEvent L63
 # - id: I2
 #   name: 审计日志配置 AuditLogConfig
-#   fields: log_dir(空=内存模式) + 单文件上限10MB + 保留5年(SEC合规) + 是否启用链式哈希
+#   fields: log_dir(空=内存模式) + 保留5年(SEC合规) + 是否启用链式哈希（日志按日滚动命名 audit_YYYYMMDD.log）
 #   code: AuditLogConfig L92
 # - id: I3
 #   name: 审计查询条件
@@ -107,10 +107,10 @@ import hashlib
 import json
 import os
 import threading
-from dataclasses import asdict, dataclass, field
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
 
 class SignalEventType(str, Enum):
@@ -166,7 +166,6 @@ class AuditLogConfig:
     """审计日志配置"""
 
     log_dir: str = ""  # 空字符串=内存模式（测试用），非空=文件WORM模式
-    max_file_size_mb: int = 10  # 单文件最大10MB
     retention_years: int = 5  # 保留5年（SEC合规）
     enable_hash_chain: bool = True  # 启用链式哈希
 

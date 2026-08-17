@@ -102,6 +102,15 @@ class TestIntradayVwap:
 class TestRegistryCoverage:
     """因子注册表覆盖——确保两因子已注册可被 IntradayFactorLoop 发现。"""
 
+    @pytest.fixture(autouse=True)
+    def _ensure_registered(self):
+        """xdist 同 worker 内其他测试文件会 FactorRegistry.clear()（全局单例污染），
+        本类断言注册表内容前须幂等恢复注册（直接 register 既有类对象，保身份断言）。"""
+        if "intraday_close" not in FactorRegistry.registry:
+            FactorRegistry.register(IntradayClose)
+        if "intraday_vwap" not in FactorRegistry.registry:
+            FactorRegistry.register(IntradayVwap)
+
     def test_intraday_close_registered(self):
         assert "intraday_close" in FactorRegistry.registry
 

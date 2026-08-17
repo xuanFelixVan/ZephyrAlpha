@@ -40,9 +40,9 @@ import time
 import uuid
 from datetime import UTC, datetime
 
-from zephyr.signal_fundamental.gen.aggregator_base import SignalAggregatorBase
 from zephyr.shared.contracts.factor_signal import FactorSignal
 from zephyr.shared.contracts.synthesized_signal import SynthesizedSignal
+from zephyr.signal_fundamental.gen.aggregator_base import SignalAggregatorBase
 
 _logger = logging.getLogger(__name__)
 
@@ -106,7 +106,8 @@ class DefaultSignalAggregator(SignalAggregatorBase):
             idempotency_key=idempotency_key,
             regime="normal",
             suggested_position_pct=abs(signal_value) / 10.0,
-            contributing_factors={},
+            # 基类契约：contributing_factors 必须记录每个因子的权重（下游归因分析）
+            contributing_factors={c["factor_id"]: c["weight"] for c in contributions},
         )
 
     def _equal_weight(self, signals: list[FactorSignal]) -> tuple[float, list[dict], float]:

@@ -44,6 +44,7 @@ from typing import Callable
 import pandas as pd
 
 from zephyr.factor.core.backpressure.limiter import BackpressureLimiter
+from zephyr.factor.core.config_manager.loader import get_section
 from zephyr.factor.core.factor_dag.dag import FactorDAG
 from zephyr.factor.factor_base import FactorRegistry
 
@@ -93,6 +94,20 @@ class DagExecutorConfig:
 
     max_workers: int = 4
     factor_timeout_s: float = 60.0
+
+
+def _default_config() -> DagExecutorConfig:
+    """从 core/_config.yaml 的 dag_manager 节构建默认配置（真源=YAML，缺省回退常量）。"""
+    s = get_section("dag_manager")
+    return DagExecutorConfig(
+        max_workers=int(s.get("max_workers", 4)),
+        factor_timeout_s=float(s.get("factor_timeout_s", 60.0)),
+    )
+
+
+def _get_max_layers() -> int:
+    """从 core/_config.yaml 的 factor_dag 节读取单 DAG 最大拓扑层数（防环+防爆炸）。"""
+    return int(get_section("factor_dag").get("max_layers", 20))
 
 
 @dataclass
@@ -149,7 +164,7 @@ class DagExecutor:
         config: DagExecutorConfig | None = None,
         backpressure: BackpressureLimiter | None = None,
     ) -> None:
-        self._config = config or DagExecutorConfig()
+        self._config = config or _default_config()
         self._bp = backpressure  # None 时不限流
 
     def execute(
@@ -188,6 +203,11 @@ class DagExecutor:
         kwargs_map = extra_kwargs or {}
         cache = cached_results or {}
         layers = dag.topological_layers()
+        max_layers = _get_max_layers()
+        if len(layers) > max_layers:
+            raise ValueError(
+                f"DAG 拓扑层数 {len(layers)} 超过上限 max_layers={max_layers}（core/_config.yaml factor_dag 节）"
+            )
         results: dict[str, FactorExecutionResult] = {}
         failed_set: set[str] = set()
 
@@ -299,7 +319,7 @@ class DagExecutor:
                 factor_id, success=False, series=None,
                 error=f"factor '{factor_id}' not registered",
             )
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — 单因子失败不阻断同层其他因子（错误契约：记入 FactorExecutionResult.error）
             log.warning("dag_manager: 因子 %s 计算失败: %s", factor_id, e)
             return FactorExecutionResult(
                 factor_id, success=False, series=None, error=f"compute error: {e}"

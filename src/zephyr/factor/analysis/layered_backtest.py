@@ -117,8 +117,7 @@ def layered_returns(
         return pd.DataFrame()
     fv = factor_values.loc[common]
     fr = forward_returns.loc[common]
-    # 按 factor value 排序后分组
-    sorted_idx = fv.sort_values().index
+    # 按 factor value 排名分位分组
     layers = pd.qcut(fv.rank(method="first"), n_layers, labels=False)
     grouped = fr.groupby(layers).agg(["mean", "count"])
     grouped.columns = ["avg_return", "count"]

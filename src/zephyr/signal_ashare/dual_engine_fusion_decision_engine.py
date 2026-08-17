@@ -22,7 +22,7 @@
 # created: "2026-08-02"
 # ---
 
-"""
+r"""
 
 
 D-SIGNAL-35 A股双引擎融合决策输出器
@@ -288,6 +288,18 @@ class DualEngineFusionDecisionEngine:
         if not self._validate_input(input_data):
             logger.warning("DualEngineFusionDecisionEngine: 输入数据不合法，返回降级结果")
             return self._degraded_result("输入数据校验失败")
+
+        # 降级传播契约：上游引擎结果已降级时，融合结果必须降级且不产出决策
+        # （降级输入融合出的分数与真实弱信号不可区分，会掩盖上游数据质量问题）
+        degraded_upstreams = [
+            name
+            for name, res in (("youzi", input_data.youzi_result), ("quant", input_data.quant_result))
+            if res.is_degraded
+        ]
+        if degraded_upstreams:
+            reason = f"上游引擎结果降级: {','.join(degraded_upstreams)}"
+            logger.warning("DualEngineFusionDecisionEngine: %s，返回降级结果", reason)
+            return self._degraded_result(reason)
 
         audit_trail: list[dict[str, Any]] = []
 

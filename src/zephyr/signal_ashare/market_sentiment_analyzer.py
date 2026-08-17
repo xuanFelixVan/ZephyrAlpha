@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-SIG-025 | layer=module | stability=stable | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""
+r"""
 
 
 D-SIGNAL-25 — A股市场情绪分析引擎

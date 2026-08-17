@@ -95,7 +95,15 @@ import logging
 import numpy as np
 import pandas as pd
 
+from zephyr.factor.analysis import load_analysis_config
+
 log = logging.getLogger(__name__)
+
+
+def _get_default_method() -> str:
+    """从配置读取默认合成方法（analysis/_config.yaml multifactor_synthesis 节）。"""
+    cfg = load_analysis_config()
+    return str(cfg.get("multifactor_synthesis", {}).get("default_method", "ic_weighted"))
 
 
 def synthesize_equal_weight(
@@ -180,19 +188,22 @@ def synthesize_regression(
 
 def synthesize(
     factor_values: dict[str, pd.Series],
-    method: str = "ic_weighted",
+    method: str | None = None,
     **kwargs,
 ) -> pd.Series:
     """多因子合成统一入口。
 
     Args:
         factor_values: factor_id → pd.Series
-        method: 合成方法 "equal_weight" / "ic_weighted" / "regression"
+        method: 合成方法 "equal_weight" / "ic_weighted" / "regression"；
+            None 时从 analysis/_config.yaml 的 multifactor_synthesis.default_method 读取
         **kwargs: 方法特定参数（如 ic_weights, forward_returns）
 
     Returns:
         合成信号 pd.Series
     """
+    if method is None:
+        method = _get_default_method()
     if method == "equal_weight":
         return synthesize_equal_weight(factor_values)
     if method == "ic_weighted":

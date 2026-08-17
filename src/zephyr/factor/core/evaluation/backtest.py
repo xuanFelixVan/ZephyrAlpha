@@ -41,13 +41,13 @@ import pandas as pd
 
 from zephyr.data import ch_reader
 from zephyr.data.table_registry import get_registry
-from zephyr.factor.factor_base import FactorRegistry
 from zephyr.factor.core.evaluation.metrics import (
     check_overfitting,
     compute_ic_series,
     compute_ir,
     compute_oos_positive_rate,
 )
+from zephyr.factor.factor_base import FactorRegistry
 
 log = logging.getLogger(__name__)
 

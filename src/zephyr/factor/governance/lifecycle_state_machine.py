@@ -102,16 +102,20 @@ RETIRED = "retired"
 
 
 def _build_config() -> StateMachineConfig[str]:
-    """构建因子生命周期状态机配置。"""
+    """构建因子生命周期状态机配置。
+
+    状态清单与初始态从 governance/_config.yaml 的 lifecycle_state_machine 节读取
+    （真源=YAML，与治理子包"参数从 _config.yaml 读取不硬编码"约定一致）；
+    转换拓扑（transitions）为结构性约束，保留在代码。
+    """
+    cfg = load_governance_config().get("lifecycle_state_machine", {})
+    state_names = list(cfg.get("states", [])) or [
+        RESEARCH, DEVELOPMENT, BACKTEST, PAPER, GRAYSCALE, PRODUCTION, DEPRECATED, RETIRED,
+    ]
+    initial = str(cfg.get("initial", RESEARCH))
     states = [
-        StateDefinition(RESEARCH, is_terminal=False),
-        StateDefinition(DEVELOPMENT, is_terminal=False),
-        StateDefinition(BACKTEST, is_terminal=False),
-        StateDefinition(PAPER, is_terminal=False),
-        StateDefinition(GRAYSCALE, is_terminal=False),
-        StateDefinition(PRODUCTION, is_terminal=False),
-        StateDefinition(DEPRECATED, is_terminal=False),
-        StateDefinition(RETIRED, is_terminal=True),
+        StateDefinition(name, is_terminal=(name == RETIRED))
+        for name in state_names
     ]
     # 合法转换：线性推进 + 回退 + 废弃路径
     from zephyr.shared.lifecycle.state_machine import Transition
@@ -132,7 +136,7 @@ def _build_config() -> StateMachineConfig[str]:
         fsm_id=FSM_ID,
         states=states,
         transitions=transitions,
-        initial=RESEARCH,
+        initial=initial,
         owner_module="zephyr.factor.governance.lifecycle_state_machine",
     )
 
@@ -147,8 +151,7 @@ def register_factor_lifecycle() -> str:
     config = _build_config()
     try:
         registry.register(config)
-    except Exception:
-        # 已注册则跳过（幂等）
+    except Exception:  # noqa: BLE001 — 已注册则跳过（幂等）；注册表不可用不阻断 FSM 创建
         pass
     return FSM_ID
 

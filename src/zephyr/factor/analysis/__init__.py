@@ -39,13 +39,14 @@ D_FACTOR analysis 子包——因子分析与评估工具链。
 # I1 --> A1
 # A1 --> O1
 """
+
 from __future__ import annotations
 
 from pathlib import Path
 
 import yaml
 
-__all__ = ["load_analysis_config"]
+__all__ = ["load_analysis_config", "layered_backtest", "factor_optimization"]
 
 _CONFIG_PATH = Path(__file__).parent / "_config.yaml"
 

@@ -33,6 +33,8 @@ import time
 from dataclasses import dataclass
 from enum import Enum
 
+from zephyr.factor.core.config_manager.loader import get_section
+
 
 class BackpressureState(str, Enum):
     """三态状态机。"""
@@ -57,6 +59,17 @@ class BackpressureConfig:
     acquire_timeout_s: float = 30.0
     high_watermark: float = 0.8
     low_watermark: float = 0.5
+
+
+def _default_config() -> BackpressureConfig:
+    """从 core/_config.yaml 的 backpressure 节构建默认配置（真源=YAML，缺省回退常量）。"""
+    s = get_section("backpressure")
+    return BackpressureConfig(
+        max_inflight=int(s.get("max_inflight", 8)),
+        acquire_timeout_s=float(s.get("acquire_timeout_s", 30.0)),
+        high_watermark=float(s.get("high_watermark", 0.8)),
+        low_watermark=float(s.get("low_watermark", 0.5)),
+    )
 
 
 @dataclass
@@ -87,7 +100,7 @@ class BackpressureLimiter:
     """
 
     def __init__(self, config: BackpressureConfig | None = None) -> None:
-        self._config = config or BackpressureConfig()
+        self._config = config or _default_config()
         self._semaphore = threading.Semaphore(self._config.max_inflight)
         self._lock = threading.Lock()
         self._inflight = 0

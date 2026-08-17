@@ -216,7 +216,7 @@ design_maturity: production
 | 5 | `signal_fundamental/capital/default_capital_allocator.py` | §3.1 | DefaultCapitalAllocator + AllocationMethod | 已实现 |
 | 6 | `signal_fundamental/capital/capital_allocation_result.py` | §4.2 | CapitalAllocationResult 数据模型 | 已实现 |
 | 7 | `signal_fundamental/synth/signal_synthesizer.py` | §3.1 | SignalSynthesizerBase | 已实现 |
-| 8 | `signal_fundamental/combiner/synthesized_signal.py` | §4.2 | SynthesizedSignal 数据模型 | 已实现 |
+| 8 | `signal_fundamental/combiner/__init__.py` | §4.2 | SynthesizedSignal 兼容导出（真源=`shared/contracts/synthesized_signal.py`，CTR-P1-015） | 已实现 |
 | 9 | `signal_fundamental/pipeline.py` | §3.1 | 信号生成管线 | 已实现 |
 | 10 | `signal_fundamental/strategy/capital_allocator.py` | §3.1 | 策略层资金分配（re-export） | 已实现 |
 | 11 | `signal_fundamental/strategy/implementations/default_capital_allocator.py` | §3.1 | 策略层默认资金分配实现 | 已实现 |
