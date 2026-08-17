@@ -5,10 +5,10 @@ title: AI 执行层施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.3.0"
-date: 2026-08-17
+version: "0.3.1"
+date: 2026-08-18
 valid_from: 2026-08-17
-last_verified: 2026-08-17
+last_verified: 2026-08-18
 topic: execution_layer
 scope: 09_ai_architecture
 ---
@@ -239,7 +239,7 @@ A7《Agent架构》及其依赖图派生物描述的是一套"多 Agent 自治�
 
 **步骤 S0.2：治理 Agent 入口施工（P0-1）**
 - 建薄入口模块（目标 <200 行，只组装不重写）：声明治理职责边界、组装 intelligence_governance + gates + access_control 调用面、工单读写落盘。
-- 依赖：05 号文整合出口（若 05 号文未定型，入口直接组装包级 __all__ 导出，记 §6 Q6 核对项）。
+- 依赖：05 号文整合出口——**已核对 2026-08-18：包级 `__all__` 已修复（AI-ADJ-001，PEP 562 惰性外观，commit 8efacc2c70），降级路径「直接组装包级 `__all__`」可用**；原"05 号文未定型时须改用子模块路径导入"的临时口径作废（子模块路径导入仍是合法惯例，但不再是唯一选择），见 §6 Q6。
 - 验收：①一个样例 gate 检查工单端到端跑通（输入工单→gate verdict→审计落盘）；②入口模块自身过全部既有 gate；③无新业务逻辑（code review 确认纯组装）。
 
 **步骤 S0.3：业务 Agent 入口施工（P0-2，与 S0.2 可并行）**
@@ -292,7 +292,7 @@ A7《Agent架构》及其依赖图派生物描述的是一套"多 Agent 自治�
 | Q3 | 对自我进化层的接口假设核对 | 部分核对（2026-08-17 复审） | 11/12/13 号文已填充 v0.2.0。复审结论=锚点近似非等同：①模型路由锚点 intelligence_governance/model_router.py（production）与 11 号文正式接口的逐字段映射待核对；②"自反闭环"锚点实测不存在（feedback_loop/evolution/self_reflection.py 为 30 行运维诊断桩，12 号文 §2.1 实测），真正组件=12 号文新建 MOD-REFLEXION_AGENT（intelligence/reflexion/，planned）；③spec_engine 是蓝图→Skill 引擎（MOD-INF-019），13 号文为新建四模块流水线，Phase 1 改接 13 号文正式接口。待办：①的字段映射核对 + ②③正式接口冻结后替换锚点 |
 | Q4 | 四个入口模块的域归属与模块编号 | 待裁定 | 候选：归入既有 D_ORCHESTRATOR 域 vs 新建执行层域。涉及 functional_domain_registry 变更，需人裁定后按规则登记 |
 | Q5 | 执行层 Agent 自治等级（L0~L3）划分 | 待核对 | 15 号文（自治边界）已填充 v0.2.1（2026-08-17）。本文暂定四类入口全部按最低自治（手动触发+human_gated 产出）施工；待对齐 15 号文有界自治 5 级映射 |
-| Q6 | 治理 Agent 入口与 05 号文整合出口的衔接 | 待核对 | 05 号文已填充 v0.2.0（2026-08-17）。若 05 号文产出统一入口，治理 Agent 入口改为消费该出口；若 05 号文维持包级导出，治理入口直接组装 __all__。待逐条核对 |
+| Q6 | 治理 Agent 入口与 05 号文整合出口的衔接 | **已核对 2026-08-18：包级 `__all__` 已修复，降级路径可用** | 05 号文包级 `__all__` 已修复（AI-ADJ-001：PEP 562 惰性外观，42 个真实符号+契约测试 4 项，commit 8efacc2c70，28 消费方测试文件 570 测试绿）——S0.2 降级路径「直接组装包级 `__all__`」现已成为可用面；此前"治理入口若先施工须用子模块路径导入"的临时口径同时作废（子模块路径导入仍是合法惯例，但不再是唯一选择）。05 号文 Q6 与本问同源，已同步更新 |
 | Q7 | 本目录 18 篇骨架的 doc_type 合规性 | 待裁定 | 骨架统一用 doc_type=implementation_plan，但 doc_type_vocabulary.yaml 受控词表无此值（construction_plan 已于 2026-06-29 合并入 blueprint），TTL-METADATA 门禁硬阻断。本文已改 doc_type=blueprint（并补 valid_from/last_verified）以过门禁；00_index.md 用 architecture_design 同样不在词表。建议协调者统一裁定本目录 doc_type 取值后回填各文 |
 
 ---
@@ -304,6 +304,7 @@ A7《Agent架构》及其依赖图派生物描述的是一套"多 Agent 自治�
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成（doc_type 由 implementation_plan 修正为 blueprint——受控词表无 implementation_plan 值，门禁硬阻断，见 Q7）：§2 背景（项目处境/核心问题/约束/已施工设施盘点实测清单）、§3 设计决策（总决策=角色化薄入口+四类 Agent why+协同闭环）、§4 施工计划（Phase 0 五步+Phase 1 三步，含 depgraph L1 登记）、§5 不做什么（8 条边界）、§6 开放问题（Q1~Q6） | AI-FILL-14 填充；依赖文档（05/11/12/13/15 号文）未填充的接口假设降级入 §6 Q3/Q5/Q6 |
 | 2026-08-17 | 0.3.0 | 回填四条+口径修正：①§3.1 职责边界声明形式化（Agent Card 子集 capabilities/autonomyBoundaries/healthCheck + 能力注册 5 步 + 冷启动 6 步 SLO<30min + 退役指纹库相似度>90% 拒注册）；②新增 §3.6 版本纪律（L1~L4 四层版本化 + 影子/金丝雀 5%/蓝绿/热修复四模式 + 兼容性矩阵 + "回滚代码不回滚上下文=行为不一致" + HB-A7-006 prompt 变更人工审核、审计保留≥5 年）；③§3.4 补 STOP 模式 prompt 自优化闭环 + Meta-Harness（防自指失控 human_gated 断点）；④新增 §3.7 附注（A7 运行规格素材：自治级别/能力边界/熔断分级/反思仅异常触发 ~80% token 节省/代码生成六约束——机制参考非整体搬入）；口径修正：skills 58 模块 / intelligence_governance 24+1=25 个 .py / 注册表 factor_id 140·strategy_id 146 / Q3 接口复审（锚点近似非等同、自反闭环实测不存在→MOD-REFLEXION_AGENT）/ Q5·Q6 依赖文档版本事实更正 | AI-FILL-14-R2 回填；草稿源=09_drafts_audit（Agent架构 §2.1/§2.3/§5.1/§5.5、01-跨域 D-AUTONOMY 段、17-D-COMPLIANCE HB-A7-006、12-D-ML-TRAIN §10.1、08-D-EX-CORE §10/§11、09-D-EX-SOR §9.6）；数字均经实测复核（skills=58 个 .py、intelligence_governance=25 个 .py 含 1 个 __init__、factor_id=140、strategy_id=146） |
+| 2026-08-18 | 0.3.1 | 裁定 1 联动回填（05 号文包入口已修复）：§4 S0.2 依赖行与 §6 Q6 更新为「已核对 2026-08-18：包级 `__all__` 已修复（AI-ADJ-001，PEP 562 惰性外观，commit 8efacc2c70），降级路径「直接组装包级 __all__」可用」；原"05 号文未定型时须用子模块路径导入"临时口径作废（子模块路径导入仍是合法惯例，但不再是唯一选择） | AI-ADJ-004 按 Owner 裁定 1 联动回填 |
 
 ---
 

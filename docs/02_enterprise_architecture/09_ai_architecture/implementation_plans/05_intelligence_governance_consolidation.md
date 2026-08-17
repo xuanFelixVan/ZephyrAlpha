@@ -5,7 +5,7 @@ title: intelligence_governance 包整合施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: active
-version: "0.2.1"
+version: "0.2.2"
 date: 2026-08-18
 topic: intelligence_governance_consolidation
 scope: 09_ai_architecture
@@ -117,6 +117,8 @@ scope: 09_ai_architecture
 
 **决定**：保留单一 `__init__.py` 作为唯一公共入口，修复内容为——①`__all__` 与实存模块/类对齐（删掉漂移名 `DriftConfig/DriftType/KnowledgeEntry/KnowledgeIndex/get_drift_config/get_index`（前 4 项定义在包外、后 2 项全仓无类/def 定义），补列漏掉的 5 个模块）；②对 10 个有实测消费方的核心类做显式 re-export，其余保持"子模块路径导入"惯例；③入口内不写任何业务逻辑。
 
+**裁定与施工状态（已裁定+已施工 2026-08-18）**：本方案已获裁定并完成施工（AI-ADJ-001，commit 8efacc2c70）——`__init__.py` 已修复为 PEP 562 惰性外观（`_SYMBOL_TO_MODULE` 映射 + `__getattr__` 按需 import，包级零 eager 子模块加载），`__all__` 42 个真实符号（剔除 6 个幻影名与双义 `DebateRound`——双义名包级不导出、子模块路径自取），新增契约测试 `tests/governance/test_intelligence_governance_facade.py` 4 项守住出口契约，28 个消费方测试文件 570 测试全绿。形式=修复为惰性外观，非新建 facade，与本文裁定一致。
+
 **Why**：
 - 名义入口已存在且被 S4 reconciler 自动注入注释管理——新建 facade 会变成第二入口，违反真源唯一，且 reconciler 可能覆盖手写 facade。
 - 24 个模块总计仅 ~3,200 行、1 人维护——为 ~3,200 行代码再建一层 facade 抽象是典型过度工程（system_charter §2 约束一人力）。
@@ -203,7 +205,7 @@ scope: 09_ai_architecture
 [14_execution_layer.md](14_execution_layer.md) 已填充（v0.3.0，2026-08-18 核对）。文档级核对结论：
 
 1. **接口形态核对——一致**：14 号文 §3.1 治理 Agent「处理=调用 intelligence_governance/ 治理能力包 + feedback_loop/gates/ 门闸组 + security/access_control/ guards」，即**薄入口直接组装本包**，与本文 §3.1 决策（修复现有入口、不建 facade）及现有 12 个消费方的子模块路径导入惯例一致，无设计冲突。
-2. **14 号文降级路径的隐藏依赖（新发现）**：14 号文 Phase 0 S0.2 注记"若 05 号文未定型，入口直接组装包级 `__all__` 导出"——但本文 §2.1 实测当前 `__init__.py` 的 `__all__` 已腐烂（无 import、含幻觉名），**该降级路径在本文 Phase 1 修复前不可用**；治理 Agent 入口若先于 Phase 1 施工，必须改用子模块路径导入（与现有消费方一致）。已记入 §6 Q6。
+2. **14 号文降级路径的隐藏依赖（新发现，2026-08-18 已解除）**：14 号文 Phase 0 S0.2 注记"若 05 号文未定型，入口直接组装包级 `__all__` 导出"——本文 §2.1 实测当时 `__init__.py` 的 `__all__` 已腐烂（无 import、含幻觉名），该降级路径一度不可用；**2026-08-18 入口已修复为 PEP 562 惰性外观（§3.1 裁定+施工状态，commit 8efacc2c70），降级路径现已成为可用面**——"治理入口若先施工须用子模块路径导入"的临时口径同时作废（子模块路径导入仍是合法惯例，但不再是唯一选择）。见 §6 Q6。
 3. **"治理 Agent → 本包"调用矩阵**（按 14 号文 §3.1/§3.3 职责映射，组号见 §3.2）：
 
    | 14 号文职责/场景 | 消费本包模块 | 组 |
@@ -241,12 +243,12 @@ scope: 09_ai_architecture
 
 | # | 问题 | 状态 | 说明 |
 |---|------|------|------|
-| Q1 | intelligence_governance 包是否需要统一入口？ | **已回答，待用户裁定后施工** | §3.1：需要，但形式 = 修复现有 `__init__.py` 而非新建 facade。与 [02_design_asset_inventory.md](02_design_asset_inventory.md) 开放问题 Q1 同源，02 号文状态同步属 AI-FILL-02 职责。 |
-| Q2 | 与 D_ORCHESTRATOR 的关系？ | **边界假设已落盘；03 号文已填充且分析倾向同向，待 Owner 裁定收口** | §3.3：本包 = 治理决策原语；编排已被 61 号备忘否定式裁定。03 号文（v0.2.1）§3.3 D5 分析倾向①"维持域+文档明确'生命周期基础设施≠编排'"与本文假设同向兼容；但 03 号文 Q5 仍为「待裁定」，Owner 拍板若与 §3.3 假设冲突，以 03 号文为准并修订本文档（升版本）。 |
+| Q1 | intelligence_governance 包是否需要统一入口？ | **已裁定+已施工 2026-08-18** | §3.1：需要，形式 = 修复现有 `__init__.py` 而非新建 facade——已按裁定施工为 PEP 562 惰性外观（`__all__` 42 个真实符号，剔除 6 幻影名与双义 DebateRound），契约测试 `tests/governance/test_intelligence_governance_facade.py` 4 项，28 个消费方测试文件 570 测试全绿（AI-ADJ-001，commit 8efacc2c70）。与 [02_design_asset_inventory.md](02_design_asset_inventory.md) 开放问题 Q1 同源，02 号文状态同步属 AI-FILL-02 职责。 |
+| Q2 | 与 D_ORCHESTRATOR 的关系？ | **已裁定 2026-08-18（按裁定 2 关闭）** | 03 号文 §3.3 D5 已裁定采纳倾向①：D_ORCHESTRATOR 维持域名不改，语义澄清为「任务/阶段的确定性流转 + Agent 生命周期基础设施（回滚/容错/健康/质量门/契约）」，明确「生命周期基础设施 ≠ Agent 自治编排」（61 号备忘 §2.3/§4.1/§5.1 冻结编排路线，§5.2 第三阶段重评口子保留）。本文 §3.3 边界假设（本包=治理决策原语，4 个疑似编排模块定性为门/路由/协议原语）与裁定同向，按裁定收口。 |
 | Q3 | 文件头 `[TESTS]`/`[CONSUMERS]`/`[BLUEPRINT]` 漂移是否影响 S4 reconciler/提交门禁？ | 待核实 | §2.1 实测三类漂移；若门禁消费这些声明，Phase 1 纠偏需同步门禁预期——需用户确认门禁输入源。 |
 | Q4 | 14 个无静态消费方模块是否存在运行时间接消费？可否退役任何模块？ | 待实测 | 需逐个追冷启动/升级协议调用链（如 self_test 挂冷启动 STEP 4.8）；裁定前一律保留（§3.2）。 |
-| Q5 | memory_provider / provider_base（数据域特征）与 model_router / model_provider_data（画像域特征）是否迁移出本包？ | 待 03 号文裁定（其分析倾向降低包级迁移可能性） | §3.4：本期只登记不动；迁移牵涉域归属，属 03 号文职责。03 号文（v0.2.1）§3.3 D4 分析倾向①"intelligence_governance 整包维持 D_GOVERNANCE+横切标签，不迁域"（§4.6 亦假设该倾向成立）——包级不动则文件级迁出概率进一步降低；最终仍待 Owner 裁定。 |
-| Q6 | 治理 Agent 调用本包的接口形态（直接 import vs 经 governance services 适配层）？ | **已核对（2026-08-18，14 号文 v0.3.0）；入口级回核随 Phase 1 验收** | 核对结论（§4.4）：14 号文治理 Agent = 薄入口直接组装本包，与本文 §3.1 及现有 12 消费方惯例一致，无接口缺口。新发现：14 号文 S0.2 降级路径"组装包级 `__all__`"依赖本文 Phase 1 修复（当前 `__all__` 腐烂不可用），治理入口若先施工须用子模块路径导入；14 号文 Q6 与本问同源，其状态同步属 AI-FILL-14 职责。 |
+| Q5 | memory_provider / provider_base（数据域特征）与 model_router / model_provider_data（画像域特征）是否迁移出本包？ | **已裁定 2026-08-18（按裁定 2 的 D4 关闭）** | 03 号文 §3.3 D4 已裁定采纳倾向①：intelligence_governance 整包维持 D_GOVERNANCE 归属+横切标签，不迁域不新建子域——包级不动则文件级迁出亦不执行，本期登记口径关闭（§3.4 登记事实保留）。 |
+| Q6 | 治理 Agent 调用本包的接口形态（直接 import vs 经 governance services 适配层）？ | **已核对（2026-08-18 二次核对：降级路径可用）** | 核对结论（§4.4）：14 号文治理 Agent = 薄入口直接组装本包，与本文 §3.1 及现有 12 消费方惯例一致，无接口缺口。2026-08-18 更新：包级 `__all__` 已修复（AI-ADJ-001，commit 8efacc2c70），14 号文 S0.2 降级路径"组装包级 `__all__`"现已成为可用面；此前"治理入口若先施工须用子模块路径导入"的临时口径作废（子模块路径导入仍是合法惯例，但不再是唯一选择）。14 号文 Q6 与本问同源，已同步更新。 |
 | Q7 | TTL-METADATA 门禁与本文档集 frontmatter 冲突：门禁 valid doc_type 列表不含 `implementation_plan` | **本文档已收口；目录级 doc_type 统一裁定待 Owner** | 本文档 doc_type 已修正为合法值 `architecture_view`，2026-08-17 Gateway 补提交成功（commit a65a8b8a）。目录级取值仍不统一（00=index、03/05=architecture_view、14=blueprint），14 号文 Q7 已登记该裁定需求，统一裁定后如需回填本文 doc_type 再升版。 |
 
 ---
@@ -258,6 +260,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.1.0 | 骨架建立 | 新建 |
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 实测盘点 24 模块职责/消费方矩阵（修正"~20 文件"为实测 24 模块 3,223 行；发现 `__init__.py` 无 import、文件头三类声明漂移）；§3 四项决策（入口修复而非 facade、文档级七组分组零物理改动、D_ORCHESTRATOR 边界假设、错位文件只登记）；§4 Phase 0→2 + 远期；§5 七项不做；§6 开放问题扩至 Q1-Q6 | AI-FILL-05 填充：将"约 20 文件无统一入口"的模糊表述落实为可复验的实测现状与可施工方案；03/14 号文未填充，接口假设降级入开放问题；当日晚 Gateway 提交被 TTL-METADATA 门禁硬阻断（doc_type=implementation_plan 非法，见 Q7），按规则暂存待裁定 |
 | 2026-08-18 | 0.2.1 | 一致性回填（依赖文档已填充，纯口径/状态更新，无设计变更）：①§2.3 只读纪律更新——03 号文 v0.2.1、14 号文 v0.3.0 均已填充，接口假设核对完成；②§4.1/§4.4 Phase 2 文档级核对落盘——接口形态一致（薄入口直接组装本包）、新增"治理 Agent→本包"调用矩阵、新发现 14 号文 S0.2 降级路径"组装包级 __all__"依赖本文 Phase 1（当前 __all__ 腐烂不可用）；③§6 状态更新——Q2（03 号文 D5 分析倾向同向，待 Owner 裁定）、Q5（03 号文 D4 倾向①降低迁移可能性）、Q6（已核对）、Q7（本文档 doc_type=architecture_view 合规，已于 2026-08-17 补提交 a65a8b8a 收口；目录级 doc_type 统一裁定移交 14 号文 Q7）；实测复核：25 个 .py、`__init__.py` 零 import、包外 12 消费文件、02 号文 Q1 同源、引用文档路径全部存在；④红蓝对抗复测修正 §2.4-E 一处漂移——governance 子目录 29→30（新增 1 个兄弟子目录，本包边界不变） | AI-FILL-05 第 5 轮一致性审查：03/14 号文填充完成后回核接口假设，消除"v0.1.0 空骨架"过期口径；红蓝对抗验证全部通过（import 扫描 17 行命中复核 12 消费文件清单与 §2.4-B 完全一致；3,223 行总数复测一致） |
+| 2026-08-18 | 0.2.2 | Owner 裁定回填+施工事实登记：①§3.1/Q1 标「已裁定+已施工 2026-08-18」——`__init__.py` 已修复为 PEP 562 惰性外观（`__all__` 42 个真实符号，剔除 6 幻影名与双义 DebateRound），契约测试 `tests/governance/test_intelligence_governance_facade.py` 4 项，28 个消费方测试文件 570 测试全绿（AI-ADJ-001，commit 8efacc2c70），形式=修复为惰性外观非新建 facade，与裁定一致；②Q2 按裁定 2 关闭——03 号文 D5 裁定：D_ORCHESTRATOR=任务/阶段确定性流转+Agent 生命周期基础设施，≠Agent 自治编排；③Q5 按裁定 2 的 D4 关闭——整包维持 D_GOVERNANCE+横切标签，不迁域不新建子域，文件级迁出不执行；④Q6/§4.4 降级路径口径更新——包级 `__all__` 已修复可用，"须用子模块路径导入"临时口径作废（子模块路径导入仍是合法惯例但不再是唯一选择） | 裁定 1（包入口已修复）+ 裁定 2（D4/D5 域边界）；AI-ADJ-004 回填 |
 
 ---
 
