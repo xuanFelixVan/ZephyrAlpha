@@ -200,11 +200,14 @@ def _parse_diff_with_line_numbers(diff_stdout: str) -> list[tuple[int, str]]:
     """
     result: list[tuple[int, str]] = []
     current_line = 0
-    # 2026-08-17 AI-00 收口治本：splitlines() → split("\n")——HEAD 侧 \r\r\n 双 CR
-    # 损坏文件（2026-08-16 EOL 批残留）的删除行被 splitlines 按 \r 再切出幻影空行，
-    # 落入 else 分支虚增 current_line（+2/删除行），致 added 行号膨胀（实证：真 118 行
-    # 被报为 575），AST 豁免行号集（干净解析）与膨胀行号失配 → SQL_* 常量被裸 SQL 误报。
+    # 2026-08-17 AI-00 收口治本：splitlines() → split("\n") + 跳过裸空行——HEAD 侧 \r\r\n
+    # 双 CR 损坏文件（2026-08-16 EOL 批残留）的删除行，经 subprocess text=True
+    # （universal_newlines）翻译为 \n\n，切出幻影空行落入 else 分支虚增 current_line
+    # （+1/删除行，实证 migrate_data.py 真 118 行报为 575），AST 豁免行号集与膨胀行号
+    # 失配 → SQL_* 常量被裸 SQL 误报。unified=0 diff 无合法裸空行（空行必带 +/- 前缀）。
     for raw_line in diff_stdout.split("\n"):
+        if raw_line == "":
+            continue  # \r\r\n→\n\n 翻译幻影空行 / diff 末尾空串，不占新文件行号
         m = _HUNK_HEADER_RE.match(raw_line)
         if m:
             current_line = int(m.group(1))
