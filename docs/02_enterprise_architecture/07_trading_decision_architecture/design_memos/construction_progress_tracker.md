@@ -341,6 +341,7 @@ completes_when: "全部批次施工完工且遗留项清零后归档（归档不
 | 119 | 心跳 daemon idle>1800s 自退 × 证3 worker 拒启组合缺口 | AI-GOVB-001 复现+横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批，第一性原理归因修正：真凶非阈值间隙而是 **S3-A 零窗口 reap 物理删除死记录使 086d0e24 证3 宽限窗形同虚设**——claim 懒注册写网关 pid，commit 后进程退出即死，list_active 即删记录，WMI spawn 延迟窗内 worker 证3 读不到「近期活跃」记录；治本=list_active 死记录转 tombstone（功能判死零窗口保留，active/held/claim 消费方全过滤），心跳超 _REAP_GRACE_SECONDS(=900s，与 PAYLOAD_TTL 同源） 才物理删除；2 测试改写+1 新增，99/99 绿） | ✅ |
 | 120 | lock_files.py CLI 防呆缺陷：--session 被当文件名 acquire | AI-GOVB-001 开工探测实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批：main() 对 check/acquire/release/guard-write 四命令加 -- 前缀文件参数拒绝+用法提示；5 新测试 14/14 绿；垃圾锁 --session 已 cleanup 清除） | ✅ |
 | 121 | RECONCILER-HEALTH 横幅 24h 5 条 critical 存量 | AI-GOVB-001 提交期横幅实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批逐条归因：①3 条 GATE-PANORAMA-ALIGNMENT=08-16 PG 停服期历史（PG 已恢复+FOPEN-001 fail-open 留痕已治理）——已按 acknowledge_critical_warns 正式 ack 消音，横幅 24h 窗未 ack 归零；②2 条 DRIFT-WATCHDOG=AI-FILL 填报会话主仓直改 tracked 文档但**未注册 SessionRegistry 写入方**（work ∅→hash 实证），自愈合机制已自动 ack——FILL 侧流程缺口供统筹知情；③另 1 条 GATE-RULE-AUDIT 08-15 存量已出 24h 窗自然消音） | ✅ |
+| 122 | session_concurrency.py [CONSUMERS] 声明漂移（reconcile_worker/runner 括号内函数名误写为消费者自身函数而非被消费的 SessionRegistry） | AI-GOVB-001 续批提交期 CONSUMERS-ACCURACY 门禁实证 | ✅ 已闭环（2026-08-17 AI-GOVB-001 续批顺手修：声明勘正为 reconcile_worker (SessionRegistry) / reconcile_runner (SessionRegistry)——与 #105 同类的头注派生数据漂移） | ✅ |
 
 ### P2 · 测试/代码健康（存量问题，非施工引入）
 
