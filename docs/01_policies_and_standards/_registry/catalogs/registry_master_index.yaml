@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-17T18:13:45Z
+# 自动生成于 2026-08-17T19:14:18Z
 # 来源: _registry/catalogs/*.yaml frontmatter
 # 手工编辑无效——修改请通过各登记表的 frontmatter
 
-generated_at: '2026-08-17T18:13:45Z'
+generated_at: '2026-08-17T19:14:18Z'
 generated_by: scripts/governance/generators/generate_registry_master_index.py
 source: _registry/catalogs/*.yaml → frontmatter
 total_registries: 45
@@ -61,7 +61,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/candidate_module_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 104
+  entry_count: 105
   status: active
 - registry_id: PS-REG-021
   name: 能力→真源文件反查注册表
@@ -253,7 +253,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/module_translation_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 5931
+  entry_count: 5925
   status: active
 - registry_id: CFG-noqa-exempt-registry
   name: noqa_exempt_registry
@@ -325,7 +325,7 @@ registries:
   physical_path: docs/01_policies_and_standards/_registry/catalogs/ruling_registry.yaml
   format: yaml
   maintenance: manual
-  entry_count: 58
+  entry_count: 59
   status: active
 - registry_id: REG-SEAT-001
   name: Seat Registry
