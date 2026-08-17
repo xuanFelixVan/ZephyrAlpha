@@ -470,7 +470,10 @@ def search(
         conn.close()
 
 # ── Stage 4 公共化（2026-07-29）：public wrapper ──
-def new_id(prefix) -> str:
+def new_id(prefix: str = "") -> str:
+    # 治本（2026-08-17 #115）：prefix 恢复 ="" 默认值——R5 公共化批次建 wrapper 时丢失
+    # _new_id(prefix: str = "") 的默认值，公共签名比私有真源更严格（API 侧缺陷），
+    # 零参调用点全部 TypeError。
     """公共接口：new_id（Stage 4 公共化）。"""
     return _new_id(prefix)
 

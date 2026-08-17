@@ -84,8 +84,11 @@ class TestExperimentResult:
 
 class TestMLExperimentPipeline:
     def setup_method(self):
-        MLExperimentPipeline.global_run_count = 0
-        MLExperimentPipeline.seen_idempotency_keys = set()
+        # 治本（2026-08-17 #108）：状态隔离走真源设计的公共 API reset_run_state()，
+        # 不再直接写 global_run_count/seen_idempotency_keys 公共别名——
+        # 两者是 R5 公共化批次机械生成的值拷贝别名（int 赋值即分叉、set 重绑定即分叉），
+        # 对 _global_run_count/_seen_idempotency_keys 真源零效果（写死路）。
+        MLExperimentPipeline.reset_run_state()
 
     def test_instantiation(self):
         pipe = MLExperimentPipeline()
@@ -104,9 +107,15 @@ class TestMLExperimentPipeline:
         assert result.idempotency_key == "key-abc"
 
     def test_p_hacking_warning(self):
-        MLExperimentPipeline.global_run_count = 10
+        # 治本（2026-08-17 #108）：p-hacking 检测真源=_global_run_count（run() 内自增，
+        # 阈值 _MAX_RUNS_BEFORE_P_HACKING_WARNING=9）。原断言写公共别名 global_run_count=10
+        # 系 R5 公共化机械改写引入的写死路（int 值拷贝别名），对真源零效果。
+        # 对齐真源信号约定：经公开 run() 真实驱动 10 次（同 tests/ml_experiment/test_adversarial_ml.py
+        # attack_03 的 20 次驱动模式），第 10 次越阈触发告警。
         pipe = MLExperimentPipeline()
-        result = pipe.run()
+        result = None
+        for _ in range(10):
+            result = pipe.run()
         assert result.status == "p_hacking_warning"
         assert any("p_hacking" in e.get("message", "") or "p-hacking" in e.get("message", "") for e in result.errors)
 

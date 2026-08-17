@@ -21,7 +21,7 @@ module_id: MOD-GOVERNANCE
 schema_version: "1.0"
 doc_type: register
 ttl: permanent
-last_updated: "2026-08-02"
+last_updated: "2026-08-17"
 
 consumers:
   # ─── P0 数据契约消费者 ───
@@ -185,11 +185,11 @@ consumers:
       - {domain: D_FRONTEND, module: "backtest_visualization", tier: 2, pinned_version: "1.0.0", registered_at: "2026-07-04", consumption_channel: "result_repository.py (D_BACKTEST io/)", rendering_stack: "Panel+HoloViz"}
 
 summary:
-  total_contracts_registered: 21
-  total_consumer_entries: 63
+  total_contracts_registered: 22
+  total_consumer_entries: 66
   tier_distribution:
-    tier_1_critical: 43
-    tier_2_secondary: 20
+    tier_1_critical: 45
+    tier_2_secondary: 21
   note: >
     消费者注册表是 CTR-VER-001 版本协商的前置基础设施。
     任何 P0/P1 契约的 MAJOR 版本变更前，必须通过本表查询所有注册消费者并提前 30 天通知。
@@ -199,4 +199,4 @@ summary:
     2026-07-04 新增 CTR-P1-016 BacktestResult 与 CTR-P1-017 BacktestRunArtifact 的 D_FRONTEND 消费关系,
     支撑前端 Panel+HoloViz 可视化消费 D_BACKTEST 时序明细产物。
     2026-08-02 audit-02 第3轮复审修正 summary 计数漂移：total_contracts_registered 20→21、
-    total_consumer_entries 97→63、tier_1_critical 37→43、tier_2_secondary 13→20（原值未随 2026-07-04 新增同步）。
+    total_consumer_entries 97→63、tier_1_critical 37→43、tier_2_secondary 13→20（原值未随 2026-07-04 新增同步）。 2026-08-17 AI-TDEBT-002 修正 summary 计数漂移：total_contracts_registered 21->22、total_consumer_entries 63->66、tier_1_critical 43->45、tier_2_secondary 20->21（原值未随 2026-08-02 CTR-007 TargetPortfolio 注册同步，ef5c13ea0c）。
