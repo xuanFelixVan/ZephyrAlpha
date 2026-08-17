@@ -1,3 +1,5 @@
+# [BLUEPRINT] MOD-EX-001 | (auto-injected by S4 reconciler) | §
+# [TTL] permanent
 """OrderExecutionSaga 单元测试 — MOD-EX-057 / D-EX-CORE-57
 
 覆盖: 六步完整流程 / 风控拒绝 / 信号失效 / 下单被拒 / 成交超时 / 持仓回滚 /
