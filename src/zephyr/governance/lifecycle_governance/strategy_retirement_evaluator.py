@@ -59,7 +59,7 @@ from typing import Final, Sequence
 import yaml
 
 from zephyr.reporting.report_publisher import ReportPublisher, ReportSource
-from zephyr.risk.core.strategy_deviation_monitor import ALERT_THRESHOLD_REGISTRY_PATH
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -141,39 +141,21 @@ class RetirementEvaluationReport:
 
 def _load_retirement_thresholds(registry_path: Path | None = None) -> dict[str, float]:
     """从告警阈值注册表加载退役判据阈值（fail-closed）。"""
-    path = registry_path or ALERT_THRESHOLD_REGISTRY_PATH
-    if not path.exists():
-        raise RetirementConfigError(
-            "告警阈值注册表不存在", details={"path": str(path)}
-        )
     try:
-        data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    except yaml.YAMLError as exc:
+        return load_alert_thresholds(
+            {
+                "THD-RETIRE-001": "underperformance_gap",
+                "THD-RETIRE-002": "sharpe_floor",
+                "THD-RETIRE-003": "drawdown_drift_multiplier",
+                "THD-DEVIATION-002": "deviation_retire",
+            },
+            registry_path=registry_path,
+        )
+    except Exception as exc:
         raise RetirementConfigError(
-            "告警阈值注册表 YAML 畸形",
-            details={"path": str(path), "error": str(exc)},
+            "阈值注册表加载失败",
+            details={"error": str(exc), "path": str(registry_path or ALERT_THRESHOLD_REGISTRY_PATH)},
         ) from exc
-    entries = {e["threshold_id"]: e for e in (data or {}).get("thresholds", [])}
-    out: dict[str, float] = {}
-    for tid, key in (
-        ("THD-RETIRE-001", "underperformance_gap"),
-        ("THD-RETIRE-002", "sharpe_floor"),
-        ("THD-RETIRE-003", "drawdown_drift_multiplier"),
-        ("THD-DEVIATION-002", "deviation_retire"),
-    ):
-        entry = entries.get(tid)
-        if entry is None:
-            raise RetirementConfigError(
-                "注册表缺条目", details={"threshold_id": tid, "path": str(path)}
-            )
-        try:
-            out[key] = float(entry["value"])
-        except (TypeError, ValueError) as exc:
-            raise RetirementConfigError(
-                "阈值条目 value 非数值",
-                details={"threshold_id": tid, "value": repr(entry.get("value"))},
-            ) from exc
-    return out
 
 
 def _as_float_list(values: Sequence[float], *, name: str) -> list[float]:

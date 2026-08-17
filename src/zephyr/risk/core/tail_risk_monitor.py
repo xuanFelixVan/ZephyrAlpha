@@ -1,17 +1,17 @@
 # [BLUEPRINT] MOD-RK-15 | docs/03_modules/_domain_risk/tail_risk_monitor/blueprint.md
 # [MODULE] zephyr.risk.core.tail_risk_monitor
 # [DOMAIN] D_RISK
-# [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; scipy.stats; MOD-RK-05(VaR基准)
+# [DEPENDENCIES] zephyr.shared.foundation.errors; numpy; scipy.stats; MOD-RK-05(VaR基准); zephyr.shared.state_store(可选,注入启用POT失败计数器)
 # [CONSUMERS] MOD-RK-03(Portfolio Risk Monitor,尾部告警) ; MOD-RK-17(Kill Switch,极值触发)
 # [STARTUP] imported
 # [MATURITY] production
-# [INVARIANTS] ES>=VaR(尾部期望大于分位);POT shape>0=厚尾;tail_index=1/shape;jump_count单调非减(窗口内);FRTB加价>=0
+# [INVARIANTS] ES>=VaR(尾部期望大于分位);POT shape>0=厚尾;tail_index=1/shape;jump_count单调非减(窗口内);FRTB加价>=0;POT失败计数器读失败按最保守计(fail-closed);连续5日失败→阈值0.90→0.85(跨日持久化)
 # [MODIFY-GUARD] blueprint.md
 # [STABILITY] evolving
 # [SAFETY] H
 # [AI_AUTONOMY] ai_modifiable
 # [ERROR_CONTRACT] InvalidTailRiskInputError
-# [TESTS] tests/risk/test_tail_risk_monitor.py
+# [TESTS] tests/risk/test_tail_risk_monitor.py; tests/risk/test_pot_failure_counter.py
 # [A_module] module_id=MOD-RK-15 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
@@ -35,7 +35,10 @@ D-RISK §1.2 L2 Real-Time 盘中监控核心模块。尾部风险度量与监控
 属 A 类基础设施 (统计拟合 + 阈值判定, 数学逻辑明确), 阈值为 C 类可调参数。
 依据: D:\临时工作区\依赖图	-D-RISK-风控域.md §1.2 RK-15, §2 依赖(RK-05→RK-15)
 SSoT: depgraph MOD-RK-15
-Version: 0.1.0
+Version: 0.2.0
+
+v0.2.0 (2026-08-17 AI-POT-001): 新增 PotFailureCounter 跨日持久化计数器
+(连续 5 日失败→阈值 0.90→0.85, fail-closed, 双后端 JsonStateStore/RedisStateStore)。
 
 # [ALGO_FLOW]
 # 层: 输入
@@ -72,7 +75,7 @@ Version: 0.1.0
 #   name_zh: ③ POT广义帕累托拟合
 #   name_en: fit_pot
 #   intro: 对最差的10%亏损拟合GPD分布看尾巴有多厚
-#   desc: losses=-r[r<0]; u=quantile(losses,0.9); 超额losses>u部分用scipy.genpareto.fit(floc=0)估shape ξ/scale β; tail_index=1/ξ; 样本不足返回None+warning降级(仅历史ES,pot_fallback_historical=True)
+#   desc: losses=-r[r<0]; u=quantile(losses,0.9); 超额losses>u部分用scipy.genpareto.fit(floc=0)估shape ξ/scale β; tail_index=1/ξ; 样本不足返回None+warning降级(仅历史ES,pot_fallback_historical=True); 连续5日失败→阈值0.90→0.85(PotFailureCounter跨日持久化)
 #   inputs: I1 I3
 #   outputs: PotFitResult(shape/scale/threshold/n_exceedances/tail_index)
 #   invariant: ξ>0=厚尾; tail_index=1/ξ
@@ -144,6 +147,7 @@ import numpy as np
 from scipy import stats
 
 from zephyr.shared.foundation.errors import ZephyrBaseError
+from zephyr.shared.state_store import StateStoreError
 
 __all__: Final = [
     "TailRiskConfig",
@@ -152,9 +156,120 @@ __all__: Final = [
     "TailRiskSnapshot",
     "TailRiskMonitor",
     "InvalidTailRiskInputError",
+    "PotFailureCounter",
+    "POT_FAILURE_COUNTER_NAMESPACE",
+    "POT_FAILURE_DAYS_FOR_ADJUSTMENT",
+    "POT_THRESHOLD_ADJUSTED",
 ]
 
 logger = logging.getLogger(__name__)
+
+#: POT 失败计数器命名空间（state_store 持久化）
+POT_FAILURE_COUNTER_NAMESPACE: Final = "pot_failure_counter"
+
+#: 连续失败阈值触发升级天数
+POT_FAILURE_DAYS_FOR_ADJUSTMENT: Final = 5
+
+#: 降级后的 POT 阈值分位数（0.90 → 0.85，获取更多 exceedances）
+POT_THRESHOLD_ADJUSTED: Final = 0.85
+
+
+class PotFailureCounter:
+    """POT 连续失败计数器——跨日持久化，fail-closed。
+
+    记录每日 POT 拟合是否失败（fit_pot 返回 None）。
+    连续 N 日失败 → 建议阈值降级（0.90→0.85）。
+
+    持久化 schema（JsonStateStore/RedisStateStore）:
+        {
+            "consecutive_failures": int,   # 连续失败天数
+            "last_failure_date": str,      # 最后失败日期 "YYYY-MM-DD"
+            "adjusted_threshold": float,   # 调整后的阈值（默认 0.90）
+        }
+
+    Fail-closed:
+        - 读失败（StateCorruptError/StateStoreError）→ 按从未失败处理
+        - 写失败 → 只记录 warning，不阻断主链路
+    """
+
+    def __init__(self, store, config: TailRiskConfig | None = None) -> None:
+        self._store = store
+        self._config = config or TailRiskConfig()
+        self._namespace = POT_FAILURE_COUNTER_NAMESPACE
+
+    def _load(self) -> dict:
+        """读取计数器状态；失败返回 fresh 状态（fail-closed）。"""
+        default = {
+            "consecutive_failures": 0,
+            "last_failure_date": "",
+            "adjusted_threshold": self._config.pot_threshold_quantile,
+        }
+        try:
+            rec = self._store.load(self._namespace)
+        except Exception:
+            logger.warning(
+                "POT 计数器读失败，按从未失败处理",
+                exc_info=True,
+            )
+            return default
+        if rec is None:
+            return default
+        # 防御：损坏记录（缺键/类型异常）→ 合并默认值，fail-closed 不阻断
+        for k, v in default.items():
+            if k not in rec:
+                rec[k] = v
+        try:
+            rec["consecutive_failures"] = int(rec["consecutive_failures"])
+        except (TypeError, ValueError):
+            rec["consecutive_failures"] = 0
+        try:
+            rec["adjusted_threshold"] = float(rec["adjusted_threshold"])
+        except (TypeError, ValueError):
+            rec["adjusted_threshold"] = self._config.pot_threshold_quantile
+        return rec
+
+    def _save(self, rec: dict) -> None:
+        """持久化计数器状态；失败只 warning。"""
+        try:
+            self._store.save(self._namespace, rec)
+        except Exception:
+            logger.warning("POT 计数器写失败，已降级内存态", exc_info=True)
+
+    def record_failure(self, date_str: str) -> int:
+        """记录一次 POT 失败。返回当前连续失败天数。"""
+        rec = self._load()
+        if rec["last_failure_date"] == date_str:
+            # 同一天多次失败，不重复计数
+            return rec["consecutive_failures"]
+        rec["consecutive_failures"] = rec["consecutive_failures"] + 1
+        rec["last_failure_date"] = date_str
+        if rec["consecutive_failures"] >= POT_FAILURE_DAYS_FOR_ADJUSTMENT:
+            rec["adjusted_threshold"] = POT_THRESHOLD_ADJUSTED
+            logger.warning(
+                "POT 连续 %d 日失败 → 阈值降级 %.2f → %.2f",
+                rec["consecutive_failures"],
+                self._config.pot_threshold_quantile,
+                POT_THRESHOLD_ADJUSTED,
+            )
+        self._save(rec)
+        return rec["consecutive_failures"]
+
+    def record_success(self, date_str: str) -> None:
+        """记录一次 POT 成功，重置连续失败计数。"""
+        rec = self._load()
+        base_threshold = self._config.pot_threshold_quantile
+        if rec["consecutive_failures"] == 0 and rec["adjusted_threshold"] == base_threshold:
+            return  # 无变化，省一次写
+        rec["consecutive_failures"] = 0
+        rec["last_failure_date"] = date_str
+        rec["adjusted_threshold"] = base_threshold
+        self._save(rec)
+        logger.info("POT 拟合成功，连续失败计数重置")
+
+    def get_adjusted_threshold(self) -> float:
+        """获取当前 POT 阈值分位数（可能被连续失败降级）。"""
+        rec = self._load()
+        return rec.get("adjusted_threshold", self._config.pot_threshold_quantile)
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -349,10 +464,16 @@ class TailRiskMonitor:
         # snapshot.expected_shortfall → CVaR
         # snapshot.pot.shape → 厚尾程度
         # snapshot.alert_level → 告警级别
+
+    Args:
+        config: 尾部风险配置
+        state_store: Crash-only 状态外部化存储（#ARCH-QUANT-002），注入后启用
+            POT 连续失败跨日持久化计数器（连续 5 日失败→阈值 0.90→0.85）
     """
 
-    def __init__(self, config: TailRiskConfig | None = None) -> None:
+    def __init__(self, config: TailRiskConfig | None = None, *, state_store=None) -> None:
         self._config = config or TailRiskConfig()
+        self._pot_counter = PotFailureCounter(state_store, self._config) if state_store else None
 
     @property
     def config(self) -> TailRiskConfig:
@@ -378,6 +499,10 @@ class TailRiskMonitor:
         """
         now = now or datetime.now(timezone.utc)
         cfg = self._config
+        # POT 阈值动态调整：连续失败降级
+        pot_threshold_quantile = cfg.pot_threshold_quantile
+        if self._pot_counter is not None:
+            pot_threshold_quantile = self._pot_counter.get_adjusted_threshold()
         returns = self._validate_returns(returns, cfg.min_samples)
 
         # 1. VaR (历史模拟)
@@ -387,8 +512,15 @@ class TailRiskMonitor:
         es_var_ratio = es_pct / var_pct if var_pct > 0 else 1.0
 
         # 3. POT 拟合 (None=样本不足/拟合失败 → 降级纯历史 ES, 双轮审查深挖③裁定)
-        pot = self.fit_pot(returns, cfg.pot_threshold_quantile)
+        pot = self.fit_pot(returns, pot_threshold_quantile)
         pot_fallback_historical = pot is None
+        # 跨日持久化计数器记录
+        if self._pot_counter is not None:
+            date_str = now.strftime("%Y-%m-%d")
+            if pot_fallback_historical:
+                self._pot_counter.record_failure(date_str)
+            else:
+                self._pot_counter.record_success(date_str)
         if pot_fallback_historical:
             logger.warning(
                 "POT 未生效, 本次快照为纯历史模拟 ES (pot_fallback_historical=True): "
@@ -475,7 +607,7 @@ class TailRiskMonitor:
     def fit_pot(
         self,
         returns: np.ndarray,
-        threshold_quantile: float = 0.90,
+        threshold_quantile: float | None = None,
     ) -> PotFitResult | None:
         """POT 模型拟合 (广义帕累托分布)。
 
@@ -483,7 +615,7 @@ class TailRiskMonitor:
 
         Args:
             returns: 收益率序列
-            threshold_quantile: 阈值分位数 (0.90=取最差 10%)
+            threshold_quantile: 阈值分位数 (None=使用配置或动态调整值, 默认 0.90)
 
         Returns:
             PotFitResult, None=超过阈值样本不足 (降级为纯历史模拟 ES,
@@ -491,6 +623,8 @@ class TailRiskMonitor:
             双轮审查深挖③裁定: 60 日窗口 + 常态负日占比下 exceedances 常 <5,
             小样本 GPD 拟合是噪声发生器, 样本不足时跳过 POT 仅历史 ES)
         """
+        if threshold_quantile is None:
+            threshold_quantile = self._config.pot_threshold_quantile
         returns = np.asarray(returns, dtype=float)
         if len(returns) < self._config.min_samples:
             logger.warning(

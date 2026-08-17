@@ -60,6 +60,7 @@ from typing import Callable, Final, Sequence
 
 import yaml
 
+from zephyr.shared.alerts.threshold_loader import load_alert_thresholds
 from zephyr.shared.foundation.errors import ZephyrBaseError
 from zephyr.shared.io.paths import REPO_ROOT
 
@@ -130,38 +131,20 @@ class DeviationAlertedEvent:
 
 def _load_deviation_thresholds(registry_path: Path | None = None) -> dict[str, float]:
     """从告警阈值注册表加载偏离三阈值（fail-closed：缺文件/缺条目/非数值直接报错）。"""
-    path = registry_path or ALERT_THRESHOLD_REGISTRY_PATH
-    if not path.exists():
-        raise DeviationConfigError(
-            "告警阈值注册表不存在", details={"path": str(path)}
-        )
     try:
-        data = yaml.safe_load(path.read_text(encoding="utf-8"))
-    except yaml.YAMLError as exc:
+        out = load_alert_thresholds(
+            {"THD-DEVIATION-001": "warn", "THD-DEVIATION-002": "retire", "THD-DEVIATION-003": "correlation_floor"},
+            registry_path=registry_path,
+        )
+    except Exception as exc:
+        details = {"error": str(exc), "path": str(registry_path or ALERT_THRESHOLD_REGISTRY_PATH)}
+        if hasattr(exc, "details") and isinstance(exc.details, dict):
+            details.update(exc.details)
         raise DeviationConfigError(
-            "告警阈值注册表 YAML 畸形",
-            details={"path": str(path), "error": str(exc)},
+            "阈值注册表加载失败",
+            details=details,
         ) from exc
-    entries = {e["threshold_id"]: e for e in (data or {}).get("thresholds", [])}
-    out: dict[str, float] = {}
-    for tid, key in (
-        ("THD-DEVIATION-001", "warn"),
-        ("THD-DEVIATION-002", "retire"),
-        ("THD-DEVIATION-003", "correlation_floor"),
-    ):
-        entry = entries.get(tid)
-        if entry is None:
-            raise DeviationConfigError(
-                "注册表缺条目", details={"threshold_id": tid, "path": str(path)}
-            )
-        try:
-            out[key] = float(entry["value"])
-        except (TypeError, ValueError) as exc:
-            raise DeviationConfigError(
-                "阈值条目 value 非数值",
-                details={"threshold_id": tid, "value": repr(entry.get("value"))},
-            ) from exc
-    if not 0 < out["warn"] < out["retire"]:
+    if not (0 < out["warn"] and out["warn"] < out["retire"]):
         raise DeviationConfigError(
             f"偏离阈值须满足 0 < warn < retire: {out['warn']}, {out['retire']}"
         )
