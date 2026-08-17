@@ -37,7 +37,7 @@ from __future__ import annotations
 
 __manifest__ = """
 args: []
-description: 危险 Shell 命令检测（ABS-38~39 — rm -rf / / format / fork bomb）
+description: 危险 Shell 命令检测（ABS-38~39 — 递归强制删除根目录 / format 磁盘格式化 / fork bomb）
 dimensions:
 - D6
 priority: P0
@@ -54,7 +54,12 @@ _SCRIPT_DIR = Path(__file__).resolve()
 _GOV_DIR = str(next(p for p in _SCRIPT_DIR.parents if (p / "_shared").exists()))
 if _GOV_DIR not in sys.path:
     sys.path.insert(0, _GOV_DIR)
-from _shared.constants import EXIT_PASS, EXCLUDE_DIRS, REPO_ROOT, SCAN_EXTENSIONS_CODE  # 治本 #ARCH-TOOL-HEALTH-V1：EXCLUDE_DIRS 用于 L111
+from _shared.constants import (
+    EXCLUDE_DIRS,
+    EXIT_PASS,
+    REPO_ROOT,
+    SCAN_EXTENSIONS_CODE,
+)  # 治本 #ARCH-TOOL-HEALTH-V1：EXCLUDE_DIRS 用于 L111
 from _shared.encoding import ensure_utf8_stdout
 from _shared.walk import iter_files  # 治本 #ARCH-TOOL-HEALTH-V1：iter_files 用于 L111
 

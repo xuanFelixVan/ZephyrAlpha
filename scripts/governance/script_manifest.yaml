@@ -1,8 +1,8 @@
-# 自动生成于 2026-08-17T19:17:40Z
+# 自动生成于 2026-08-17T21:34:42Z
 # 来源: scripts/governance/**/*.py __manifest__ 块
 # 手工编辑无效——修改请通过各 .py 文件的 __manifest__ 块
 
-generated_at: '2026-08-17T19:17:40Z'
+generated_at: '2026-08-17T21:34:42Z'
 generated_by: scripts/governance/generators/generate_script_manifest.py
 source: scripts/governance/**/*.py → __manifest__ 块
 total_scripts: 404
@@ -2816,7 +2816,7 @@ scripts:
   timeout_seconds: 30
   args: []
   warn_only: false
-  description: 危险 Shell 命令检测（ABS-38~39 — rm -rf / / format / fork bomb）
+  description: 危险 Shell 命令检测（ABS-38~39 — 递归强制删除根目录 / format 磁盘格式化 / fork bomb）
   tags:
   - Critical
   - Security

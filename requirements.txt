@@ -17,10 +17,12 @@ mcp>=1.0.0,<2.0.0
 openai>=1.0.0,<2.0.0
 sentence-transformers>=3.0.0,<4.0.0
 structlog>=24.1.0,<25.0.0
-pyarrow>=15.0.0,<20.0.0
+pyarrow>=15.0.0,<26.0.0  # 上界与 SSoT pyproject.toml 对齐（<20→<26：datasets 4.x 要求 pyarrow>=21）
 psycopg2-binary>=2.9.0,<3.0.0
 # ClickHouse native protocol 驱动：核心基础设施 database_service(MOD-INF-002) lazy-import (#ARCH-REQ-CLASSIFY-001)
 clickhouse-driver>=0.2.6,<1.0.0
+# H1 Redis 业务热缓存驱动 (MOD-H1_REDIS_HOT, INFRA-DB-007)——SSoT pyproject.toml 核心依赖，本镜像曾遗漏
+redis>=5.0.0,<6.0.0
 plotly>=6.0.0,<7.0.0
 streamlit>=1.50.0,<2.0.0
 # v3.0.0 可视化技术栈切换 (#ARCH-047): Panel+HoloViz+plotly_resampler

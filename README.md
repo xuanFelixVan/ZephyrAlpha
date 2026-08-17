@@ -26,7 +26,7 @@ python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
 pip install -r requirements-dev.txt
-# 可选：端到端演示 demo_e2e_pipeline.py（L00 需 Akshare/Baostock）
+# 可选：端到端演示 scripts/construction/demo_e2e_pipeline.py（L00 需 Akshare/Baostock）
 pip install -r requirements-demo.txt
 # 或等价：pip install -e ".[demo]"
 ```
@@ -44,7 +44,7 @@ pip install -r requirements-demo.txt
 端到端演示（依赖网络与 Akshare）：
 
 ```bash
-python scripts/demos/demo_e2e_pipeline.py
+python scripts/construction/demo_e2e_pipeline.py
 ```
 
 ## 核心文档
@@ -54,8 +54,8 @@ python scripts/demos/demo_e2e_pipeline.py
 | 目录结构标准 | [trae_028_doc_structure_naming.yaml](docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml) |
 | 文档与规则元数据（SSoT） | [rule_catalog_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/rule_catalog_registry.yaml) |
 | 登记表总索引 | [registry_of_registries.yaml](docs/registry_of_registries.yaml) |
-| 架构概览 | [navigation_index.md](docs/02_enterprise_architecture/00_overview_entry/navigation_index.md) |
-| 知识库 | [08_knowledge/](docs/08_knowledge/) |
+| 架构概览 | `docs/02_enterprise_architecture/00_overview_entry/navigation_index.md`（派生产物不入库——`python scripts/serve_docs.py` 按需生成） |
+| 知识库 | `docs/08_knowledge/`（规划落盘区——ke-*.md 知识条目沉淀后生成，当前无条目；命名契约见 g4_activate/g5_extract 规则） |
 
 ## 技术栈
 
@@ -88,8 +88,8 @@ python scripts/demos/demo_e2e_pipeline.py
 | 组件 | 版本 | 用途（真源指向） | 连接配置 |
 |---|---|---|---|
 | Python | >=3.12 | 主运行时（真源：[pyproject.toml](pyproject.toml) `requires-python = ">=3.12"`） | — |
-| PostgreSQL | 16 | depgraph 依赖架构图库（28 表，真源：[infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) `INFRA-DB-003`） | [config/.env.postgres](config/.env.postgres) |
-| ClickHouse | 26.6.1 | c1_market 行情仓库 + c3_fundamental 基础库，运行在 Hyper-V VM `172.24.30.100:9000`（真源：`INFRA-DB-006` note 字段） | [config/.env.clickhouse](config/.env.clickhouse) |
+| PostgreSQL | 16 | depgraph 依赖架构图库（28 表，真源：[infrastructure_registry.yaml](docs/01_policies_and_standards/_registry/catalogs/infrastructure_registry.yaml) `INFRA-DB-003`） | `config/.env.postgres`（gitignored，本地自建） |
+| ClickHouse | 26.6.1 | c1_market 行情仓库 + c3_fundamental 基础库，运行在 Hyper-V VM `172.24.30.100:9000`（真源：`INFRA-DB-006` note 字段） | `config/.env.clickhouse`（gitignored，本地自建） |
 | ChromaDB | 0.5.23 | 向量检索（VMS 双后端过渡期，`data/vector_db/`；真源下限：[pyproject.toml](pyproject.toml) `chromadb>=0.4.24,<1.0.0`，0.5.23 为实际安装版本） | — |
 | SQLite | 3.45.1 | 任务库 `governance.db`（随 Python 自带，版本随 Python 走，无独立真源） | — |
 
