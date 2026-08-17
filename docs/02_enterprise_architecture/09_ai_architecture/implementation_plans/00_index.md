@@ -160,9 +160,9 @@ scope: 09_ai_architecture
 
 | 机制 | 内容 | 状态 |
 |------|------|------|
-| 有界自治 5 级 | L0 人工 → L1 建议 → L2 低风险 → L3 中风险 | 设计完成 |
+| 有界自治 5 级 | L0 人工 → L1 建议 → L2 低风险 → L3 中风险（L4 保留不启用） | 设计完成 |
 | OWASP ASI+AST+MCP | 10 类 Agent 安全威胁映射（目标劫持/提示注入/工具滥用/串谋/涌现等） | 设计完成 |
-| Kill Switch 多路径 | AI 自动(<1ms) / 人工一键(<100ms) / 定时熔断(<1ms) / 外部信号 | 设计完成 |
+| Kill Switch 多路径 | AI 自动=决策点内联拦截（同进程同步检查，实测微秒级，15 号文 §2.3 实测口径） / 人工一键(<100ms) / 定时熔断 / 外部信号 | 设计完成 |
 | 保障缺口管理 | Assurance Gap：每 Agent 命名问责人 | 设计完成 |
 | ARS 双轨结算 | Fee+Principal 双轨，防止 Agent 自利行为 | 设计完成 |
 
@@ -171,9 +171,9 @@ scope: 09_ai_architecture
 | 机制 | 内容 | 状态 |
 |------|------|------|
 | LLM 4层 guardrails | G1 输入过滤（Prompt 注入检测+Spotlighting 分隔）→ G2 模型运行（工具调用验证+意图分类+目标偏移检测）→ G3 输出审查（幻觉检测+敏感信息+Schema 检查）→ G4 权限审计（最小权限+操作审计+实时阻断） | 设计完成 |
-| Agent 安全 | 串谋检测 9 种探测 + 隐写术 + 举报人机制 + 涌现检测（行为基线）+ 幻觉防护 + 记忆投毒 6 层防御 + 沙箱分级隔离 + 红队 6 维度对抗 | 设计完成 |
+| Agent 安全 | 串谋检测 9 种探测 + 隐写术 + 举报人机制（远期 P4） + 涌现检测（行为基线）+ 幻觉防护 + 记忆投毒 6 层防御 + 沙箱分级隔离 + 红队 6 维度对抗 | 设计完成 |
 | MCP Triple Gate | Gate1 输入过滤 + Gate2 对齐审查 + Gate3 权限隔离 | 设计完成 |
-| KILLSWITCH 三级响应 | level_1 P1(high)→暂降 IM 模式 / level_2 P0(critical)→暂停 Agent / level_3 global_critical→全局暂停 | 设计完成 |
+| KILLSWITCH 三级响应 | level_1 P1(high)→暂降 IM 模式（仅人工介入：读/查询放行，写操作一律人审） / level_2 P0(critical)→暂停 Agent / level_3 global_critical→全局暂停 | 设计完成 |
 | OWASP Agentic Top 10 | ASI01~ASI10 完整映射（行为劫持/提示注入/身份权限/供应链/级联故障/数据泄露/未授权行为/信任链断裂/供应链/失控 Agent） | 设计完成 |
 | HB-SEC 硬边界 | HB-SEC-01~13 共 13 条不可绕过约束（出站白名单/LLM 脱敏 100%/密钥管理/SBOM/工具白名单/预算熔断等） | 设计完成 |
 
@@ -215,7 +215,7 @@ scope: 09_ai_architecture
 09_ai_architecture/
 │
 ├── 0x meta（3 文档）
-│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.3
+│   ├── 00_index.md                          ← 结构设计+施工约束 [轨道F] 本文 · v0.7.4
 │   ├── 01_external_benchmark_analysis.md    ← 外部对标信息库 [轨道E] 随时 · draft v0.6.0 已填充
 │   └── 02_design_asset_inventory.md         ← 设计资产盘点 [轨道E] 随时 · draft v0.5.1 已填充
 │
@@ -233,8 +233,8 @@ scope: 09_ai_architecture
 │   └── 14_execution_layer.md                ← 治理Agent + 业务Agent + 算法Agent + 自我迭代Agent [轨道D] U4+U7 · draft v0.3.0 已填充
 │
 ├── 4x 横切层（2 文档）
-│   ├── 15_autonomy_boundary_risk.md         ← AI 自治边界 + Agentic Drift + Agent 风险(有界自治5级/OWASP/Kill Switch/ARS双轨) [轨道D] U5 · draft v0.2.2 已填充
-│   └── 16_ai_security_ops.md                ← AI 安全(LLM guardrails/串谋/涌现/幻觉/记忆投毒/MCP Triple Gate/KILLSWITCH) + 自治运维(Detect→Diagnose→Remediate→Learn/TNR/成熟度/知识库/保命轨) [轨道D] U6 · draft v0.3.0 已填充
+│   ├── 15_autonomy_boundary_risk.md         ← AI 自治边界 + Agentic Drift + Agent 风险(有界自治5级/OWASP/Kill Switch/ARS双轨) [轨道D] U5 · draft v0.2.3 已填充
+│   └── 16_ai_security_ops.md                ← AI 安全(LLM guardrails/串谋/涌现/幻觉/记忆投毒/MCP Triple Gate/KILLSWITCH) + 自治运维(Detect→Diagnose→Remediate→Learn/TNR/成熟度/知识库/保命轨) [轨道D] U6 · draft v0.3.1 已填充
 │
 ├── 5x 元设计（5 文档）
 │   ├── 03_domain_boundary_definition.md     ← 域边界 [轨道A] P0 · draft v0.2.1 已填充
@@ -360,8 +360,8 @@ scope: 09_ai_architecture
 | Q2 | 模块工厂 Phase 0→1 的施工优先级如何排序？ | 待裁定 | 知识→模块映射是核心独特点，但依赖 factor_registry/strategy_registry 等 P1 注册表先就位 |
 | Q3 | 自反Agent 的施工顺序——先 L1 单轨迹反思还是直接上 L1+L2？ | 待裁定 | L1 最轻量可先行，L2 需要 N=5 次同类任务累积才有意义 |
 | Q4 | AI 自治运维闭环（Detect→Diagnose→Remediate→Learn）的施工优先级？ | 待裁定 | 设计完整，但需故障模式库先行积累才能生效；是先建库还是先建闭环？ |
-| Q5 | Kill Switch 多路径（<1ms AI 自动触发）能否在 Windows+miniQMT 环境下实现？ | 待裁定 | <1ms 需要内核级或 FPGA 级响应，Windows 用户态+Python 可能不可行 |
-| Q6 | Agentic Drift 防护中的"Agent Challenge"机制具体如何实现？ | 待裁定 | 设计描述为"双维度阈值+Hard-Gate+行为基线+Agent Challenge"，Challenge 的实现方式未细化 |
+| Q5 | Kill Switch 多路径（<1ms AI 自动触发）能否在 Windows+miniQMT 环境下实现？ | 已裁定 2026-08-18 | 内联拦截语义成立：「AI 自动 <1ms」= 决策点内联拦截（同进程同步检查，实测微秒级：2026-08-18 本机 1000 采样 P50=0.20μs/P95=0.30μs/P99=0.30μs），不承诺外部信号毫秒级传播；实测数据已写回 15 号文 §2.3，§3.2 口径已按裁定修订 |
+| Q6 | Agentic Drift 防护中的"Agent Challenge"机制具体如何实现？ | 已裁定 2026-08-18 | 裁定：交叉会话复审为主形态（另一 AI 会话做对齐判定），challenge 工单为统一落盘载体与降级形态（交叉会话不可用/超时时直接进人审队列），人兜底不可省；工单字段与流转已在 15 号文 §4.3 细化 |
 | Q7 | 04 号文「自治层不变量与契约」节落盘后，本文补一行索引引用 | 已闭环 | 04 号文 v0.2.2 §3.6「自治层不变量与契约（设计态登记）」已落盘（2026-08-17，AI-FILL-04-R2 回填：INV-AU-001~008 / E-AU-01~14 / CTR-AU-001~006 等，真源 depgraph 草稿）；本文 §5.1 04 号文标注已补索引引用 |
 
 ---
@@ -380,6 +380,7 @@ scope: 09_ai_architecture
 | 2026-08-17 | 0.7.1 | §5.1 回写 17 号最终状态（v0.2.0 已填充）+ 01 号版本标注同步（v0.5.1，第二轮补完收尾章节）；§6.1 填充收口两项全部勾销——AI-FILL-01~17 全部完成 | 17 号路线+01 号补完提交后状态同步 |
 | 2026-08-17 | 0.7.2 | 过期口径修订（接口复审实测，均有既有裁定/实证依据）：§1 架构图+§5.1「llama.cpp+GPTQ」→「GGUF 量化（Ollama 托管）」（10 号文 §3.3 实证否决 GPTQ，3090 无 INT4 tensor core）；§1+§5.1「模型注册(MLflow)」→「REG-ML-001+运行时注册对账」（51 号备忘 MLflow 已退役卸载）；§1「投票优先(3-5 Agent 投票→选最优)」→「主路径=单 Agent+红蓝对抗，投票壳=可选模式」（#ARCH-OE-011，12/14 号文已按此施工）；§3.1 治理激活时序补逐 Phase 验收指标（P0 审计完整性≥99%/P1 审批合规率≥90%/P2 漂移覆盖率≥60%/P3 审批合规率≥98%/P4 自动化≥70%/P5 边界违规≤1次/月）+M1~M5 成熟度分级与 M3→M4/M4→M5 跃迁条件（源：治理架构 §5.2、29-D-GOVERNANCE §13.1~13.2）；§6.2 U7/U8 更新为前置已就绪、转入 GP 排期待裁定（13/14/17 号文实测）；§7 新增 Q7（04 号文自治层不变量节待落盘后回引） | AI-FILL-00-R3 第三轮回填：过期口径修订+治理激活指标 |
 | 2026-08-18 | 0.7.3 | 最终状态回写（18 篇 frontmatter 全量实测）：§5.1 版本标注回写——05 active v0.2.1 / 06 v0.3.0 / 15 v0.2.2 / 16 v0.3.0（本批 4 篇版本变化），并同步实测发现的其他过期标注（01 v0.6.0 / 02 v0.5.1 / 03 v0.2.1 / 04 v0.2.2 / 07 v0.3.0 / 08 v0.2.2 / 09 v0.3.0 / 10 v0.3.0 / 11 v0.3.0 / 12 v0.3.0 / 13 v0.3.0 / 14 v0.3.0；17 v0.2.0 不变）；§5.1 口径注记日期更新为 2026-08-18；§7 Q7 闭环（04 号文 v0.2.2 §3.6 自治层不变量与契约已落盘，§5.1 补索引引用） | AI-FILL-00-R3 最终收口轮：填充批全部完成后的总索引状态回写 |
+| 2026-08-18 | 0.7.4 | Owner 裁定回填（裁定 6/7/8/9/11 落点本文）：①裁定 6——§3.2 Kill Switch 行口径改为「AI 自动=决策点内联拦截（同进程同步检查，实测微秒级，15 号文 §2.3 实测口径）/ 人工一键<100ms / 定时熔断 / 外部信号」，§1 架构图同步改写（内联拦截实测微秒级/人工<100ms/定时熔断/外部信号）；§7 Q5 关闭（内联拦截语义成立，实测写回 15 号文 §2.3）；②裁定 7——§7 Q6 关闭（交叉会话复审为主+challenge 工单落盘/降级+人兜底，细化见 15 号文 §4.3）；③裁定 8——§3.2「有界自治 5 级」补齐「（L4 保留不启用）」消除 5 级 vs 4 档计数差；④裁定 9——§3.3「举报人机制」标注（远期 P4）；⑤裁定 11——§3.3 KILLSWITCH 行「暂降 IM 模式」补括注（仅人工介入：读/查询放行，写操作一律人审）；§5.1 本文/15/16 号文版本标注同步（v0.7.4/v0.2.3/v0.3.1） | Owner 2026-08-18 裁定批（AI-ADJ-003 回填；15/16 号文同批复位） |
 
 ---
 

@@ -5,8 +5,8 @@ title: AI 安全与自治运维施工图
 owner: ZephyrAlpha-Owner
 language: zh
 status: draft
-version: "0.3.0"
-date: 2026-08-17
+version: "0.3.1"
+date: 2026-08-18
 topic: ai_security_ops
 scope: 09_ai_architecture
 ---
@@ -87,7 +87,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 | 幻觉防护 | LSG L3 输出安全（幻觉检测，09 号文域）+ `access_control/detectors/false_completion_detector.py` | L3 四层输出验证；虚假完成检测（声称完成但产出不足） | production |
 | 记忆投毒 | `governance/security_governance/memory_poison_guard.py` + `access_control/guards/memory_provenance_guard.py` + `gov_drift/baseline_poisoning_guard.py` + `feedback_loop/detectors/drift/gradual_poisoning_detector.py` + `detectors/drift/context_window_contamination_detector.py` + LSG `poisoning_monitor.py` | 存储前检测 + 来源溯源 + 基线防投毒 + 渐进投毒检测 + 上下文窗口污染检测 + LSG 投毒监控（00_index §3.3「记忆投毒 6 层防御」的六个实现落点） | production |
 | 越权/注入 | `access_control/guards/`（18 个：input/output/rbac/abac/path/toctou/sequence/rule_injection/replay_attack/memory 等）+ `security_governance/ipi_defense.py` | 间接注入防御 + 操作守卫层 | production |
-| 举报人机制 | — | 00_index §3.3 设计项，全仓检索无实现 | **缺口（见 §6 Q5）** |
+| 举报人机制 | — | 00_index §3.3 设计项，全仓检索无实现 | **P4 远期（2026-08-18 裁定降级，MVP 设计保留 §3.9）** |
 
 **C. 监控与诊断（Detect / Diagnose）**
 
@@ -150,7 +150,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 |------|------|-----------|
 | MOD-INF-031 AutoFix Engine | `docs/03_modules/_cross_layer/auto_fix_engine/blueprint.md`（v5.1.2，Active） | Remediate 环节实现真源 |
 | MOD-INF-022 Escalation Protocol | `docs/03_modules/_domain_autonomy_perm/escalation_protocol/blueprint.md` | 升级/保命轨设计真源 |
-| MOD-INF-033 Behavioral Auditor | `docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md`（Draft，activation_phase=requires_100ai） | 行为审计 VERDICT 设计（远期激活，见 §6 Q6） |
+| MOD-INF-033 Behavioral Auditor | `docs/03_modules/_cross_layer/behavioral_auditor/blueprint.md`（Draft，activation_phase=requires_100ai） | 行为审计 VERDICT 设计（2026-08-18 裁定：本期不激活模块，事件流只消费 VERDICT(PASS/YELLOW/RED) 语义；AUTOMATION-GATE 三门槛未达前不启用，见 §6 Q6） |
 | MOD-INF-030 RedBlue Validator | `docs/03_modules/_cross_layer/red_blue_validator/blueprint.md` | 红蓝对抗设计真源 |
 | MOD-INF-018 Agent RBAC | `docs/03_modules/_domain_autonomy_core/agent_role_based_access_control/blueprint.md` | access_control 实现真源（含记忆投毒防护决策 D-018-74） |
 
@@ -170,7 +170,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 
 | 威胁 | 现有设施 | 本文施工动作 | 缺口 |
 |------|---------|-------------|------|
-| 串谋 | collusion_detector（频率+通道）+ ai_agent_monitor（三路评分） | 事件接入口径统一 | 9 种探测未全覆盖；举报人机制无实现（§6 Q5） |
+| 串谋 | collusion_detector（频率+通道）+ ai_agent_monitor（三路评分） | 事件接入口径统一 | 9 种探测未全覆盖；举报人机制 P4 远期（2026-08-18 裁定降级，§6 Q5） |
 | 涌现 | emergent_behavior_detector（熵/耦合/相关维度） | CRITICAL 态 → KILLSWITCH level 判定输入 | 行为基线数据积累期（与 15 号文 Drift 基线共用） |
 | 幻觉 | LSG L3 输出验证 + false_completion_detector | 幻觉事件流入 Learn（修复策略库标记易幻觉任务类型）+置信度处置矩阵（§3.20） | 幻觉检测深度化是 LSG 层内事项（09 号文域） |
 | 记忆投毒 | 六层落点（§2.4-B） | 投毒事件统一进审计链 + 触发记忆隔离动作 | 跨设施联防策略（哪层先报、谁做最终隔离）未编排 |
@@ -206,7 +206,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 
 ### 3.7 自治成熟度 A-L0~A-L4 的 why
 
-**决策**：A-L 系是「运维闭环」的自治深度标尺（00_index §3.4）：A-L0 无自治（只记录）→ A-L1 告警 → A-L2 自愈建议 → A-L3 渐进自治 → A-L4 安全关键自治。它与 15 号文的三套标尺（模块规划等级/运行时信任阶梯/Owner 缺位白名单）语义不同——那些标尺管「Agent 能做什么」，A-L 系管「运维闭环能自动修到什么程度」。映射关系待裁定（§6 Q4）。
+**决策**：A-L 系是「运维闭环」的自治深度标尺（00_index §3.4）：A-L0 无自治（只记录）→ A-L1 告警 → A-L2 自愈建议 → A-L3 渐进自治 → A-L4 安全关键自治。它与 15 号文的三套标尺（模块规划等级/运行时信任阶梯/Owner 缺位白名单）语义不同——那些标尺管「Agent 能做什么」，A-L 系管「运维闭环能自动修到什么程度」。已裁定（2026-08-18，§6 Q4 关闭）：A-L 系是另一根轴，不建映射、只做交叉引用。
 
 **why 逐级解锁而非一步到 A-L3**：每升一级的解锁条件 = 上一级连续 N 周零 TNR 违规 + 修复策略库对当期故障模式的覆盖率达标。个人项目没有冗余人力为「自治事故」兜底，成熟度必须用实证换。
 
@@ -236,7 +236,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 
 **配套机制参数**：①隐写术通信检测——Agent 间通信信息熵超正常范围 2σ 触发告警，并施加通道容量限制（限制消息长度与频率，压低隐写可用带宽）；②身份轮换——基于任务类型随机分配协作关系，同一组 Agent 持续协作不超过 3 个任务周期，轮换记录写审计链。
 
-**举报人机制 MVP 候选设计**（00_index §3.3 设计项，src 侧实测无实现，§6 Q5）：独立 Whistleblower Agent，唯一职责是监控其他 Agent 的可疑行为，不参与任何业务逻辑；身份对其他 Agent 保密（防串谋者识别与规避）；可直接向人类报告，绕过正常通信渠道；举报记录加密存储、仅 Trader 可解密查看。采纳与否待 Owner 裁定（Q5）。
+**举报人机制 MVP 候选设计**（P4 远期——2026-08-18 裁定降级；00_index §3.3 设计项，src 侧实测无实现，§6 Q5）：独立 Whistleblower Agent，唯一职责是监控其他 Agent 的可疑行为，不参与任何业务逻辑；身份对其他 Agent 保密（防串谋者识别与规避）；可直接向人类报告，绕过正常通信渠道；举报记录加密存储、仅 Trader 可解密查看。MVP 候选设计保留为远期参考，本期不施工（裁定依据见 §6 Q5）。
 
 **隐性串谋登记**（参数真源：风险架构 §15.4）：与显式串谋（策略指纹相似）不同，隐性串谋的策略逻辑不同但行为趋同（多 Agent RL 在重复博弈中自发形成超竞争定价，无需通信）。检测参数=行为相关性>90% 且策略指纹相似度<80% → 执行去耦 + 人工判定。本文将其登记为 Detect 环节事件源；「执行去耦」动作归交易侧风控域，本文不施工。
 
@@ -292,7 +292,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 | level_3_shutdown（完全停止+保存状态） | global_critical→全局暂停 | 已有 |
 | 纯文本文件+版本控制 | 安全边界声明提取为项目根目录 KILLSWITCH.md | 能建（随 §4.4 P2-3 一并落盘） |
 
-**术语统一（与 15 号文同口径）**：KILLSWITCH level_1「暂降 IM 模式」中，IM 模式=**仅人工介入模式**——Agent 可读取数据与执行查询，但一切修改操作需人工介入审批；IM 模式是运行时执行模式（动态覆盖后的实际约束状态），不是静态权限类别变更，告警解除后自动恢复。level_2=IM 模式基线上叠加暂停涉事 Agent；level_3=IM 模式基线上叠加全局暂停（所有 Agent 暂停，仅 Trader 可操作）。该候选答案待 Owner 确认（§6 Q7）。
+**术语统一（与 15 号文同口径）**：KILLSWITCH level_1「暂降 IM 模式」中，IM 模式=**仅人工介入模式**——Agent 可读取数据与执行查询，但一切修改操作需人工介入审批；IM 模式是运行时执行模式（动态覆盖后的实际约束状态），不是静态权限类别变更，告警解除后自动恢复。level_2=IM 模式基线上叠加暂停涉事 Agent；level_3=IM 模式基线上叠加全局暂停（所有 Agent 暂停，仅 Trader 可操作）。该定义已于 2026-08-18 经 Owner 裁定确认为规范术语（§6 Q7 关闭）。
 
 **学习系统独立 Kill Switch**：与交易流水线 Kill Switch 物理隔离，不依赖学习系统软件逻辑，直接切断学习系统与交易流水线的连接；触发条件=学习系统异常（模块失控/LLM 幻觉泛滥/成本超限）；恢复=人工确认。作用范围仅限学习系统操作，与本文 §3.4 的全局三级响应互补不重叠。
 
@@ -325,7 +325,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 
 ### 3.15 A-L3 升级门禁与 A-L4 双轨裁定 why
 
-**尺度声明**：本节的 A-L1~A-L4 是运维架构口径（Gartner 成熟度：A-L1 人工审批/A-L2 人工确认/A-L3 人工通知/A-L4 全自动），与本文 §3.7 的 A-L0~A-L4（00_index §3.4 运维闭环自治深度）是不同标尺，映射关系并入 §6 Q4 待裁定。
+**尺度声明**：本节的 A-L1~A-L4 是运维架构口径（Gartner 成熟度：A-L1 人工审批/A-L2 人工确认/A-L3 人工通知/A-L4 全自动），与本文 §3.7 的 A-L0~A-L4（00_index §3.4 运维闭环自治深度）是不同标尺；已裁定（2026-08-18，§6 Q4 关闭）：各自治深度标尺均为独立轴，不建映射、只做交叉引用。
 
 **A-L3 升级门禁**（5 条件全部满足才可升级）：①A-L2 运行时间≥3 个月；②A-L2 自动修复成功率>90%（至少 50 次真实故障修复记录）；③A-L2 期间 0 次误操作导致交易中断；④AI 置信度阈值≥95%；⑤自治熔断 5 条件全部实现并验证。
 
@@ -489,10 +489,10 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 | Q1 | LLM 安全栈（L0~L8）与 LLM 4层 guardrails（G1~G4）的关系？ | 待裁定 | 09 号文 §3.2 已给口径（G 系 = L 系运行时四段摘要视图，LSG 是实现载体，无重叠冲突），本文 §3.1 已采用；待 Owner 确认后由 00_index 对齐 |
 | Q2 | 自治运维闭环的施工优先级——先建库还是先建闭环？ | 待裁定 | 本文 §4 候选方案：并行冷启动——Phase 0 先通事件流（闭环骨架），知识库以「记录优先」随行落盘（P1-3），匹配能力（Learn）放到 P2-1；不立匹配目标值 |
 | Q3 | 与 15 号文的接口是否已对齐？ | 已对齐（残余差异待施工时裁定） | 15 号文 v0.2.1 已确认：风险事件写审计链 → 本文 Detect 消费（与 09 号文同一载体）；VR-009 系统级开关是 KILLSWITCH 执行载体之一。残余差异：本文三级响应是策略层，15 号文两级编排是路由层——「三级 → 两级 → 5 套执行机构」的叠加映射表（§3.4 候选）需在 P2-3 施工时与 15 号文收敛规则逐条核对 |
-| Q4 | A-L0~A-L4 与 15 号文三套自治等级标尺的映射？ | 待裁定 | 15 号文 §2.2 实测发现 PS-VOC-021（l0~l3）/ AutonomyMaturity（L0~L4）/ AutonomyGuard（level1~3）三套并存；本文 A-L 系是第四套（运维闭环自治深度）；运维架构 A-L1~A-L4（Gartner 成熟度：人工审批/人工确认/人工通知/全自动，§3.15 已登记其升级门禁与双轨裁定）是第五套外部标尺，映射一并纳入本问题裁定范围。统一方案需人裁定，本文只声明语义边界不替人拍板 |
-| Q5 | 举报人机制（whistleblower）是否保留？ | 已有 MVP 候选设计，待 Owner 裁定采纳 | 00_index §3.3 串谋检测含「举报人机制」，全仓实测无实现（whistleblower/举报人零命中，2026-08-17 复核）。草稿侧已给出 MVP 候选设计（§3.9：独立 Whistleblower Agent 不参与业务逻辑/身份对其他 Agent 保密/绕过正常通信渠道直报人类/举报记录加密存储仅 Trader 可解密）。原选项保留：a) 按 §3.9 候选设计补实现；b) 从设计移除（当前多 Agent 规模小，collusion_detector+ai_agent_monitor 已覆盖主要面）；c) 降级远期。待 Owner 裁定采纳与否 |
-| Q6 | MOD-INF-033 Behavioral Auditor 是否本期激活？ | 待裁定 | 蓝图 activation_phase=requires_100ai（远期容量），其 VERDICT（PASS/YELLOW/RED）语义与本文事件流高度相关。候选：本期只消费其设计中的事件语义，不激活模块本身 |
-| Q7 | KILLSWITCH level_1「暂降 IM 模式」中 IM 的准确定义？ | 已有候选答案待 Owner 确认 | 00_index §3.3 用语。候选答案：IM 模式=仅人工介入模式——Agent 可读取数据与执行查询，一切修改操作需人工介入审批；属运行时执行模式（动态覆盖），静态权限类别不变，告警解除后自动恢复。与草稿侧 ABAC 口径（安全架构 §3.4 术语声明）一致，已写入 §3.13；待 Owner 确认 |
+| Q4 | A-L0~A-L4 与 15 号文三套自治等级标尺的映射？ | 已裁定 2026-08-18 | 裁定（自治标尺统一批）：00_index 有界自治 L0~L3（+L4 保留不启用）为项目唯一主标尺，管「Agent 能做什么」；本文 A-L 系管「运维闭环自治深度」，是另一根轴——不建映射，只做交叉引用；运维架构 A-L1~A-L4（Gartner 口径，§3.15）同为外部参考尺度，不建映射。15 号文 §3.3 映射表已转定稿 |
+| Q5 | 举报人机制（whistleblower）是否保留？ | 已裁定 2026-08-18（降级远期 P4，MVP 设计保留） | 裁定：降级远期（P4）。理由：威胁模型（自治 Agent 社会的串谋者识别规避+信道劫持）在「人调度多会话+落盘交接」架构下不成立；61 号备忘将多 Agent 自治编排推迟到第三阶段重评。§3.9 MVP 候选设计保留并标注 P4 远期，远期重评时经 CAND 候选库激活（CAND 登记由并行批处理）；00_index §3.3 已标注「举报人机制（远期 P4）」，§2.4-B/§3.2 缺口表述已同步 |
+| Q6 | MOD-INF-033 Behavioral Auditor 是否本期激活？ | 已裁定 2026-08-18 | 裁定：本期不激活模块本身，运维闭环事件流只消费其 VERDICT（PASS/YELLOW/RED）事件语义。蓝图 AUTOMATION-GATE 三门槛（基线数据/天数/误报率）未达前不启用；§2.4-H 对应行状态已更新 |
+| Q7 | KILLSWITCH level_1「暂降 IM 模式」中 IM 的准确定义？ | 已裁定 2026-08-18（候选确认为规范术语） | 裁定确认候选为规范术语：IM 模式=仅人工介入模式——Agent 可读取数据与执行查询，一切修改操作需人工介入审批；属运行时执行模式（动态覆盖），静态权限类别不变，告警解除后自动恢复。level_2=IM 基线+暂停涉事 Agent；level_3=IM 基线+全局暂停。§3.13 已转规范口径，00_index §3.3 KILLSWITCH 行已补括注 |
 
 ---
 
@@ -504,6 +504,7 @@ ZephyrAlpha 是个人 + 100% AI 生成代码的 A 股量化交易系统。当 AI
 | 2026-08-17 | 0.2.0 | 骨架填充完成：§2 背景（四域实测处境/核心问题/约束/设施盘点 A~H 八类）、§3 设计决策（G1~G4 消费口径/四威胁收口/MCP Triple Gate/KILLSWITCH 三级策略层/四环闭环/TNR 不变量/A-L 成熟度/知识库与保命轨）、§4 施工计划（depgraph 登记→Phase 0 事件流+TNR 基线→Phase 1 诊断修复接线+知识库落盘→Phase 2 Learn 回写+三级编排+保命轨演练→接口→收尾验证）、§5 不做什么 8 项、§6 开放问题扩至 Q1~Q7 | 按 AI-FILL-16 指令执行填充；15 号文填充中，接口假设写入 Q3；举报人机制/行为审计激活/IM 语义等待裁定项写入 Q5~Q7 |
 | 2026-08-17 | 0.2.1 | 第 2 轮循环：15 号文 v0.2.1 补完落地后对齐——§1 依赖状态、§2.2 问题五、§3.4 叠加框架（策略层/路由层/执行机构层）、§4.5 接口、§6 Q3 状态更新为「已对齐（残余差异待施工时裁定）」 | 红蓝对抗验证轮发现 15 号文接口口径已落地，消除过时假设表述（PURE-ASSERTION） |
 | 2026-08-17 | 0.3.0 | 草稿缺口 18 项吸收：§2.4-B 涌现状态机按 src 源码实测修正（高相关对≥3→CRITICAL 为最高严重度、存在应力前基线→HYSTERETIC 滞后观察态，修正原 HYSTERETIC↔CRITICAL 顺序表述）；新增 §3.9~§3.20 参数基线（串谋 9 探测阈值+隐写术+身份轮换+举报人 MVP+隐性串谋+金融红队库/涌现与目标偏移量化/幻觉置信度处置矩阵/记忆投毒 6 层参数/Agent IAM+预算控制/KILLSWITCH.md 8 要素+IM 术语统一+学习系统独立 Kill Switch/运维闭环运行参数+AUT 策略库+TNR 事务性/A-L3 升级门禁+A-L4 双轨/红队运营 6 维评分+触发矩阵+红白对抗四层面/Per-Agent 熔断器/可观测性 GTS+GEB+Decision Audit Trail/Agent SLO+Event Schema 版本化）；§4.2 P0-1 补 schema_version 验收、§4.4 新增 P2-5 混沌实验库接线、§4.6 补 AI 安全量化验收基线（第 5 条）；§5 第 3 条明确通用 A-L4 排除+新增第 9 条 FCFT 不采纳；§6 Q4 尺度说明扩展、Q5 标记「已有 MVP 候选设计待裁定采纳」、Q7 标记「已有候选答案待确认」 | 按 AI-FILL-16-R2 指令回填：草稿源（.runtime/aidrafts/09_drafts_audit 安全架构/22/23/25/26/30/19/10/运维架构/Agent 架构/学习系统/风险架构/交易决策架构）逐项实测核对后吸收；FCFT 与治理裁定冲突处以裁定为准仅登记远期 |
+| 2026-08-18 | 0.3.1 | Owner 裁定回填（裁定 8⑤/9/10/11 落点本文）：①裁定 8⑤——§6 Q4 关闭（A-L 系管「运维闭环自治深度」，为独立轴不建映射只做交叉引用），§3.7/§3.15「待裁定」指针同步改裁定口径；②裁定 9——§3.9 举报人段标注「P4 远期，2026-08-18 裁定降级」（MVP 候选设计保留），§6 Q5 关闭，§2.4-B 盘点行与 §3.2 缺口表述同步；③裁定 10——§6 Q6 关闭（本期不激活 MOD-INF-033 模块，事件流只消费 VERDICT(PASS/YELLOW/RED) 语义，AUTOMATION-GATE 三门槛未达前不启用），§2.4-H 状态更新；④裁定 11——§3.13 IM 术语「候选待确认」转规范口径（IM=仅人工介入：读/查询放行，写操作一律人审；运行时动态覆盖，告警解除自动恢复），§6 Q7 关闭 | Owner 2026-08-18 裁定批（AI-ADJ-003 回填；00_index/15 号文同批复位） |
 
 ---
 
