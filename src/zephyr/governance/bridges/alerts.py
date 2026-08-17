@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
 # [MODULE] zephyr.governance.bridges.alerts
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.escalation.budget_alert

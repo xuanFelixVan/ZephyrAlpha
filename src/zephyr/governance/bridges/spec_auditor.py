@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain-governance/audit-trail/blueprint.md
+# [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md
 # [MODULE] zephyr.governance.bridges.spec_auditor
 # [DOMAIN] D_GOVERNANCE
 # [DEPENDENCIES] zephyr.shared.contracts.protocols

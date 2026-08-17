@@ -17314,3 +17314,34 @@ entries:
   created: '2026-08-17'
   last_updated: '2026-08-17'
   owner_approval: '2026-08-17 Owner 裁定 B1+B2 全量（tracker #116）'
+
+# --- #ARCH-KEBAB-DIR-001: governance/ 5 个连字符目录 snake_case 豁免裁定登记（AI-AUDIT13 审计发现未登记） ---
+- issue_id: '#ARCH-KEBAB-DIR-001'
+  title: governance/ 下 5 个 kebab-case 目录（agent-rbac/agent-spec/audit-trail/budget-enforcer/drift-detector）snake_case 豁免裁定登记
+  severity: P2中
+  category: governance
+  discovered: 2026-08-17 AI-AUDIT13 责任区审计（审计重点③：连字符目录豁免裁定是否留有登记——实测未登记）
+  adjudication: |-
+    2026-08-17 AI-AUDIT13 自主裁定（依据指令 0.8 框架：证据先行 + 第一性原理 + 面向 100% AI 开发的可发现性/门禁强制）：
+    【证据】trae_028 gov_doc_003_naming_ssot 强制"文件名/目录名统一 snake_case，一条规则零例外"，
+    prohibitions 明确"禁止目录名使用 kebab-case"；check_naming_convention.py N-10 自 2026-06-19
+    起移除 src/zephyr/ 下 kebab 豁免且 _DIR_ROOT_KEBAB_EXEMPT 为空集；
+    trae_028 gov_doc_003_directory_semantics.progressive_convergence.pending_directories 实测为 []
+    且 resolved 清单仅含 R5 数字后缀目录——5 个 kebab 目录无任何豁免/渐进收敛登记。
+    【第一性原理】5 目录分两类：(a) agent-rbac/audit-trail 持有 G-CT-001/002 契约桥接
+    （tests/governance/audit/test_p0_i2_construction_order.py 按路径断言存在，载荷性）；
+    (b) agent-spec/budget-enforcer/drift-detector 仅存 Phase-1 标记常量（全仓零消费者，
+    真实现已分别迁至 agent_spec/、financial_governance/budget_enforcement.py、gov_drift/）。
+    【裁定】不批量改名（遵守 progressive_convergence 策略"历史违规目录不批量改名，下次 refactor
+    顺带修正"，避免跨多代理责任区的大重构：涉及 tests + scripts B_TRACK_DIRS 白名单 + depgraph 节点）；
+    但豁免必须留痕——已在 trae_028 progressive_convergence.pending_directories 登记 5 条
+    （含各自收敛动作与同步点），本条目为裁定依据留痕。agent-spec/ 因与 snake_case agent_spec/
+    双轨并存，收敛优先级最高（建议下次 refactor 直接并入 agent_spec/ 并删除 PHASE1_MARKER）。
+  impact:
+  - 'docs/01_policies_and_standards/rules/trae_028_doc_structure_naming.yaml（progressive_convergence.pending_directories 登记 5 条）'
+  - 'docs/01_policies_and_standards/_registry/catalogs/architecture_issue_registry.yaml（本条目）'
+  fix_phase: '已登记（2026-08-17 AI-AUDIT13）；物理收敛留给后续 refactor 顺带执行（渐进收敛策略）'
+  status: decided
+  related_rules: 'trae_028 gov_doc_003_naming_ssot; trae_028 gov_doc_003_directory_semantics; ARCH-033（渐进收敛策略先源）; ARCH-031'
+  created: '2026-08-17'
+  last_updated: '2026-08-17'

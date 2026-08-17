@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.burn_rate_monitor
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.governance.ops_governance.budget_models
@@ -20,7 +20,7 @@ Burn Rate Monitor — MOD-INF-024
 
 Four-window burn rate (5min/30min/2h/24h) with distribution shift detection
 and alert routing into the escalation protocol.
-Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md §5
+Blueprint: docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md §5
 """
 
 from __future__ import annotations

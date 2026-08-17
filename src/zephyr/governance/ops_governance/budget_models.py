@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+# [BLUEPRINT] MOD-INF-024 | docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
 # [MODULE] zephyr.governance.ops_governance.budget_models
 # [DOMAIN] D_OPS
 # [DEPENDENCIES]
@@ -20,7 +20,7 @@ Budget Enforcer data models — MOD-INF-024
 
 Token/Cost/Time 3D seven-level (L0-L6) budget system with pre-flight gate,
 model routing, degradation management, and tamper-evident audit.
-Blueprint: docs/03_modules/_domain-autonomy_perm/budget-enforcer/blueprint.md
+Blueprint: docs/03_modules/_domain_autonomy_perm/budget_enforcer/blueprint.md
 """
 
 from __future__ import annotations

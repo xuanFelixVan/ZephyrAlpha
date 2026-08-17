@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-GOV_ROLLBACK | docs/03_modules/_domain_governance/rollback/blueprint.md | §
+# [BLUEPRINT] MOD-GOV_ROLLBACK | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md | §
 # [MODULE] zephyr.governance.rollback.contracts
 # [DOMAIN] D_INFRA_RECOVERY
 # [DEPENDENCIES] zephyr.infrastructure.rollback.contracts (RollbackHandler)

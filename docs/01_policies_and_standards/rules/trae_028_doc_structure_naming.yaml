@@ -1267,7 +1267,32 @@ sections:
     progressive_convergence:
       description: 历史违规目录渐进收敛策略与待处理清单(ARCH-033阶段C-6完成,全部收敛,2026-07-04更新)
       strategy: 历史违规目录不批量改名(避免过度工程),在下次refactor时顺带修正;多真源问题优先处理
-      pending_directories: []
+      pending_directories:
+      - path: src/zephyr/governance/agent-rbac/
+        violation: kebab-case目录名(N-10/SSoT)
+        action: 渐进收敛(下次refactor顺带改名agent_rbac;G-CT-001契约桥接有消费者,改名须同步tests/governance/audit/test_p0_i2_construction_order.py与MODIFY-GUARD头)
+        status: pending
+        note: "AI-AUDIT13裁定登记2026-08-17(ARCH-KEBAB-DIR-001);保留原因:契约桥接有测试消费者;豁免非永久,仅渐进收敛占位"
+      - path: src/zephyr/governance/agent-spec/
+        violation: kebab-case目录名(N-10/SSoT)
+        action: 渐进收敛(下次refactor顺带并入agent_spec/;AGENT_SPEC_PHASE1_MARKER零消费者可顺带删除)
+        status: pending
+        note: "AI-AUDIT13裁定登记2026-08-17(ARCH-KEBAB-DIR-001);与snake_case agent_spec/并存,属历史双轨残留"
+      - path: src/zephyr/governance/audit-trail/
+        violation: kebab-case目录名(N-10/SSoT)
+        action: 渐进收敛(下次refactor顺带改名audit_trail;G-CT-002契约桥接有消费者,改名须同步tests/governance/audit/test_p0_i2_construction_order.py与MODIFY-GUARD头)
+        status: pending
+        note: "AI-AUDIT13裁定登记2026-08-17(ARCH-KEBAB-DIR-001);保留原因:契约桥接有测试消费者"
+      - path: src/zephyr/governance/budget-enforcer/
+        violation: kebab-case目录名(N-10/SSoT)
+        action: 渐进收敛(下次refactor顺带改名budget_enforcer;BUDGET_ENFORCER_PHASE1_MARKER零消费者可顺带删除;真实现已迁至financial_governance/budget_enforcement.py)
+        status: pending
+        note: "AI-AUDIT13裁定登记2026-08-17(ARCH-KEBAB-DIR-001);纯标记目录,无实现"
+      - path: src/zephyr/governance/drift-detector/
+        violation: kebab-case目录名(N-10/SSoT)
+        action: 渐进收敛(下次refactor顺带改名drift_detector;DRIFT_DETECTOR_PHASE1_MARKER零消费者可顺带删除;真实现已迁至gov_drift/)
+        status: pending
+        note: "AI-AUDIT13裁定登记2026-08-17(ARCH-KEBAB-DIR-001);纯标记目录,无实现"
       resolved_directories:
       - path: src/zephyr/security/access_control/auto_fix_engine_03/
         violation: R5数字后缀

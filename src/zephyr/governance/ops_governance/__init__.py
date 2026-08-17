@@ -1,4 +1,6 @@
-# [A_module] module_id=MOD-GOV-ops_governance | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [BLUEPRINT] MOD-GOVERNANCE | docs/03_modules/_domain_governance/blueprint.md | §
+# [MODULE] zephyr.governance.ops_governance
+# [DOMAIN] D_GOV_OPS_RESILIENCE
 # [TTL] permanent
 """
 

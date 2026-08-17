@@ -1,8 +1,8 @@
 # [BLUEPRINT] MOD-INF-020 | docs/03_modules/_domain_governance/audit_trail/blueprint.md | §8
 # [MODULE] zephyr.governance.integrity
-# [DOMAIN] D_GOV_DRIFT
-# [DEPENDENCIES] zephyr.gov_audit.models; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.trust_bridge
-# [CONSUMERS] audit-orchestrator.pipeline_runner; cli
+# [DOMAIN] D_GOV_AUDIT
+# [DEPENDENCIES] zephyr.gov_audit.models; zephyr.gov_audit.merkle_hourly; zephyr.gov_audit.trust_bridge; zephyr.gov_audit.integrity (IntegrityVerifier 惰性转引)
+# [CONSUMERS] zephyr.gov_audit.cli; zephyr.feedback_loop.scheduler; zephyr.gov_audit.__init__ (lazy re-export IntegrityGuard)
 # [STARTUP] imported
 # [MATURITY] production
 # [INVARIANTS] 校验所有审计组件健康状态; 不通过则禁止审计操作
@@ -12,7 +12,7 @@
 # [AI_AUTONOMY] human_gated
 # [ERROR_CONTRACT] 校验失败返回pass=False
 # [TESTS] tests/audit-orchestrator/test_integrity.py
-# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
+# [A_module] module_id=MOD-INF-020 | layer=module | stability=evolving | safety=H | ai_autonomy=ai_modifiable
 # [TTL] permanent
 import logging
 from typing import Any
@@ -21,23 +21,24 @@ from zephyr.gov_audit.models import AuditContext
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["IntegrityGuard", "HashEntry", "Manifest", "DriftReport"]
+__all__ = ["IntegrityGuard", "IntegrityVerifier"]
 
 
-class MerkleAggregator:
-    def __init__(self) -> None:
-        self._roots: dict[str, str] = {}
+def __getattr__(name: str):
+    """IntegrityVerifier 惰性转引到 canonical 真源 zephyr.gov_audit.integrity。
 
-    def aggregate(self, hour_key: str, entries: list) -> str:
-        import hashlib
+    治本（2026-08-17 AI-AUDIT13）：原本地 stub（compute_hash 返回 ""、verify 恒 True、
+    无 verify_chain）被 zephyr.gov_audit.cli 与 zephyr.feedback_loop.scheduler 当作
+    真验证器调用——审计链完整性检查形同虚设（stub verify 恒通过 / verify_chain
+    AttributeError 被 except 吞掉）。真实现唯一真源在 gov_audit.integrity
+    （哈希链 + HMAC + Ed25519 + Merkle，MOD-INF-020 §5），此处 PEP 562 惰性转引，
+    消除第二真源并修复两条断链消费者。无 import 时循环风险（调用方触发时才解析）。
+    """
+    if name == "IntegrityVerifier":
+        from zephyr.gov_audit.integrity import IntegrityVerifier
 
-        payload = f"{hour_key}:{len(entries)}".encode()
-        root = hashlib.sha256(payload).hexdigest()
-        self._roots[hour_key] = root
-        return root
-
-    def verify(self, hour_key: str, expected_root: str) -> bool:
-        return self._roots.get(hour_key) == expected_root
+        return IntegrityVerifier
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
 class IntegrityGuard:
@@ -96,38 +97,3 @@ class IntegrityGuard:
             "merkle": self._merkle_bridge is not None and self._merkle_bridge.is_available(),
             "trust": self._trust_bridge is not None and self._trust_bridge.is_available(),
         }
-
-
-class IntegrityVerifier:
-    def __init__(self, algorithm="sha256"):
-        self.algorithm = algorithm
-
-    def compute_hash(self, data):
-        return ""
-
-    def verify(self, data, expected_hash):
-        return True
-
-
-class HashEntry:
-    def __init__(self, entry_id="", hash_value="", algorithm="sha256", timestamp=None):
-        self.entry_id = entry_id
-        self.hash_value = hash_value
-        self.algorithm = algorithm
-        self.timestamp = timestamp
-
-
-class Manifest:
-    def __init__(self, manifest_id="", entries=None, created=None, checksum=""):
-        self.manifest_id = manifest_id
-        self.entries = entries or []
-        self.created = created
-        self.checksum = checksum
-
-
-class DriftReport:
-    def __init__(self, report_id="", drifts=None, timestamp=None, summary=""):
-        self.report_id = report_id
-        self.drifts = drifts or []
-        self.timestamp = timestamp
-        self.summary = summary

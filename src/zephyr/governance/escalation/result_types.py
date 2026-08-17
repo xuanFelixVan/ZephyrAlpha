@@ -1,4 +1,4 @@
-# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+# [BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 # [MODULE] zephyr.governance.escalation.result_types
 # [DOMAIN] D_GOV_OPS_RESILIENCE
 # [DEPENDENCIES] zephyr.shared.contracts.rollback_types
@@ -15,7 +15,7 @@
 # [A_module] module_id=MOD-INF-021 | layer=module | stability=evolving | safety=L | ai_autonomy=ai_modifiable
 # [TTL] permanent
 
-"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain-autonomy_core/rollback-system/blueprint.md
+"""[BLUEPRINT] MOD-INF-021 | docs/03_modules/_domain_autonomy_core/rollback_system/blueprint.md
 
 G-CT-003 — RollbackResult backward-compat re-export facade.
 Canonical home is now: zephyr.shared.contracts.rollback_types
